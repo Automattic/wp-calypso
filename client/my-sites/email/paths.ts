@@ -1,5 +1,4 @@
 import { stringify } from 'qs';
-import { GOOGLE_WORKSPACE_PRODUCT_TYPE, GSUITE_PRODUCT_TYPE } from 'calypso/lib/gsuite/constants';
 import { isUnderDomainManagementAll, domainManagementRoot } from 'calypso/my-sites/domains/paths';
 
 type QueryStringParameters = { [ key: string ]: string | undefined };
@@ -43,7 +42,7 @@ function getPath(
 ) {
 	if ( siteName && domainName ) {
 		// Encodes only real domain names and not parameter placeholders
-		if ( domainName.startsWith( ':' ) ) {
+		if ( ! domainName.startsWith( ':' ) ) {
 			// Encodes domain names so addresses with slashes in the path (e.g. used in site redirects) don't break routing.
 			// Note they are encoded twice since page.js decodes the path by default.
 			domainName = encodeURIComponent( encodeURIComponent( domainName ) );
@@ -80,17 +79,21 @@ export const getAddEmailForwardsPath: EmailPathUtilityFunction = (
 export function getAddGSuiteUsersPath(
 	siteName: string | null | undefined,
 	domainName: string | null | undefined,
-	productType: typeof GOOGLE_WORKSPACE_PRODUCT_TYPE | typeof GSUITE_PRODUCT_TYPE,
+	productType: string,
 	relativeTo?: string,
 	source?: string
 ) {
-	if ( domainName ) {
+	if ( siteName && domainName ) {
 		return getPath( siteName, domainName, productType + '/add-users', relativeTo, {
 			source,
 		} );
 	}
 
-	return '/email/' + productType + '/add-users/' + siteName;
+	if ( siteName ) {
+		return '/email/' + productType + '/add-users/' + siteName;
+	}
+
+	return '/email';
 }
 
 export const getManageTitanAccountPath: EmailPathUtilityFunction = (
@@ -125,7 +128,7 @@ export const getTitanSetUpMailboxPath: EmailPathUtilityFunction = (
 export const getTitanSetUpThankYouPath = (
 	siteName: string | null | undefined,
 	domainName: string | null | undefined,
-	emailAddress?: string,
+	emailAddress?: string | null,
 	relativeTo?: string
 ) =>
 	getPath(
@@ -145,7 +148,7 @@ export const getTitanControlPanelRedirectPath: EmailPathUtilityFunction = (
 
 export const getEmailManagementPath = (
 	siteName: string | null | undefined,
-	domainName: string | null | undefined,
+	domainName?: string | null | undefined,
 	relativeTo?: string | null,
 	urlParameters?: QueryStringParameters
 ) => getPath( siteName, domainName, 'manage', relativeTo, urlParameters );

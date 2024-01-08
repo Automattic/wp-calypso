@@ -5,19 +5,19 @@
 import { GOOGLE_WORKSPACE_PRODUCT_TYPE, GSUITE_PRODUCT_TYPE } from 'calypso/lib/gsuite/constants';
 import {
 	emailManagementAllSitesPrefix,
-	emailManagementAddEmailForwards,
-	emailManagementAddGSuiteUsers,
-	emailManagementManageTitanAccount,
-	emailManagementManageTitanMailboxes,
-	emailManagementNewTitanAccount,
-	emailManagementTitanSetUpMailbox,
-	emailManagementTitanSetUpThankYou,
-	emailManagementTitanControlPanelRedirect,
-	emailManagement,
-	emailManagementForwarding,
-	emailManagementPurchaseNewEmailAccount,
-	emailManagementInDepthComparison,
-	emailManagementMailboxes,
+	getAddEmailForwardsPath,
+	getAddGSuiteUsersPath,
+	getManageTitanAccountPath,
+	getManageTitanMailboxesPath,
+	getNewTitanAccountPath,
+	getTitanSetUpMailboxPath,
+	getTitanSetUpThankYouPath,
+	getTitanControlPanelRedirectPath,
+	getEmailManagementPath,
+	getForwardingPath,
+	getPurchaseNewEmailAccountPath,
+	getEmailInDepthComparisonPath,
+	getMailboxesPath,
 	isUnderEmailManagementAll,
 } from '../paths';
 
@@ -25,205 +25,165 @@ const siteName = 'hello.wordpress.com';
 const domainName = 'hello.com';
 
 describe( 'path helper functions', () => {
-	it( 'emailManagementAddEmailForwards', () => {
-		expect( emailManagementAddEmailForwards( siteName, domainName ) ).toEqual(
+	it( 'getAddEmailForwardsPath', () => {
+		expect( getAddEmailForwardsPath( siteName, domainName ) ).toEqual(
 			`/email/${ domainName }/forwarding/add/${ siteName }`
 		);
-		expect(
-			emailManagementAddEmailForwards( ':site', ':domain', emailManagementAllSitesPrefix )
-		).toEqual( '/email/all/:domain/forwarding/add/:site' );
-		expect( emailManagementAddEmailForwards( ':site', ':domain' ) ).toEqual(
+		expect( getAddEmailForwardsPath( ':site', ':domain', emailManagementAllSitesPrefix ) ).toEqual(
+			'/email/all/:domain/forwarding/add/:site'
+		);
+		expect( getAddEmailForwardsPath( ':site', ':domain' ) ).toEqual(
 			'/email/:domain/forwarding/add/:site'
 		);
-		expect( emailManagementAddEmailForwards( siteName, '' ) ).toEqual(
-			`/email//forwarding/add/${ siteName }`
-		);
-		expect( emailManagementAddEmailForwards( '', '' ) ).toEqual( `/email//forwarding/add/` );
+		expect( getAddEmailForwardsPath( siteName, null ) ).toEqual( `/email/${ siteName }` );
+		expect( getAddEmailForwardsPath( null, null ) ).toEqual( `/email` );
 	} );
 
-	it( 'emailManagementAddGSuiteUsers', () => {
+	it( 'getAddGSuiteUsersPath', () => {
 		const productTypePlaceholder = `:productType(${ GOOGLE_WORKSPACE_PRODUCT_TYPE }|${ GSUITE_PRODUCT_TYPE })`;
 
-		expect( emailManagementAddGSuiteUsers( siteName, domainName, 'google-workspace' ) ).toEqual(
+		expect( getAddGSuiteUsersPath( siteName, domainName, 'google-workspace' ) ).toEqual(
 			`/email/${ domainName }/google-workspace/add-users/${ siteName }`
 		);
-		expect( emailManagementAddGSuiteUsers( ':site', ':domain', productTypePlaceholder ) ).toEqual(
+		expect( getAddGSuiteUsersPath( ':site', ':domain', productTypePlaceholder ) ).toEqual(
 			`/email/:domain/${ productTypePlaceholder }/add-users/:site`
 		);
-		expect( emailManagementAddGSuiteUsers( ':site', ':domain', 'google-workspace' ) ).toEqual(
+		expect( getAddGSuiteUsersPath( ':site', ':domain', 'google-workspace' ) ).toEqual(
 			'/email/:domain/google-workspace/add-users/:site'
 		);
-		expect( emailManagementAddGSuiteUsers( siteName, null, 'google-workspace' ) ).toEqual(
+
+		expect( getAddGSuiteUsersPath( siteName, null, 'google-workspace' ) ).toEqual(
 			`/email/google-workspace/add-users/${ siteName }`
 		);
-		expect( emailManagementAddGSuiteUsers( null, null, 'google-workspace' ) ).toEqual(
-			`/email/google-workspace/add-users/null`
-		);
+		expect( getAddGSuiteUsersPath( null, null, 'google-workspace' ) ).toEqual( `/email` );
 	} );
 
-	it( 'emailManagementManageTitanAccount', () => {
-		expect( emailManagementManageTitanAccount( siteName, domainName ) ).toEqual(
+	it( 'getManageTitanAccountPath', () => {
+		expect( getManageTitanAccountPath( siteName, domainName ) ).toEqual(
 			`/email/${ domainName }/titan/manage/${ siteName }`
 		);
-		expect(
-			emailManagementManageTitanAccount( ':site', ':domain', emailManagementAllSitesPrefix )
-		).toEqual( '/email/all/:domain/titan/manage/:site' );
-		expect( emailManagementManageTitanAccount( ':site', ':domain' ) ).toEqual(
+		expect( getManageTitanAccountPath( ':site', ':domain' ) ).toEqual(
 			'/email/:domain/titan/manage/:site'
 		);
-		expect( emailManagementManageTitanAccount( siteName, '' ) ).toEqual(
-			`/email//titan/manage/${ siteName }`
-		);
-		expect( emailManagementManageTitanAccount( null, '' ) ).toEqual( '/email//titan/manage/null' );
+		expect( getManageTitanAccountPath( siteName, null ) ).toEqual( `/email/${ siteName }` );
+		expect( getManageTitanAccountPath( null, null ) ).toEqual( '/email' );
 	} );
 
-	it( 'emailManagementManageTitanMailboxes', () => {
-		expect( emailManagementManageTitanMailboxes( siteName, domainName ) ).toEqual(
+	it( 'getManageTitanMailboxesPath', () => {
+		expect( getManageTitanMailboxesPath( siteName, domainName ) ).toEqual(
 			`/email/${ domainName }/titan/manage-mailboxes/${ siteName }`
 		);
 		expect(
-			emailManagementManageTitanMailboxes( ':site', ':domain', emailManagementAllSitesPrefix )
+			getManageTitanMailboxesPath( ':site', ':domain', emailManagementAllSitesPrefix )
 		).toEqual( '/email/all/:domain/titan/manage-mailboxes/:site' );
-		expect( emailManagementManageTitanMailboxes( ':site', ':domain' ) ).toEqual(
+		expect( getManageTitanMailboxesPath( ':site', ':domain' ) ).toEqual(
 			'/email/:domain/titan/manage-mailboxes/:site'
 		);
-		expect( emailManagementManageTitanMailboxes( siteName, '' ) ).toEqual(
-			`/email//titan/manage-mailboxes/${ siteName }`
-		);
-		expect( emailManagementManageTitanMailboxes( null, '' ) ).toEqual(
-			'/email//titan/manage-mailboxes/null'
-		);
+		expect( getManageTitanMailboxesPath( siteName, null ) ).toEqual( `/email/${ siteName }` );
+		expect( getManageTitanMailboxesPath( null, null ) ).toEqual( '/email' );
 	} );
 
-	it( 'emailManagementNewTitanAccount', () => {
-		expect( emailManagementNewTitanAccount( siteName, domainName ) ).toEqual(
+	it( 'getNewTitanAccountPath', () => {
+		expect( getNewTitanAccountPath( siteName, domainName ) ).toEqual(
 			`/email/${ domainName }/titan/new/${ siteName }`
 		);
-		expect(
-			emailManagementNewTitanAccount( ':site', ':domain', emailManagementAllSitesPrefix )
-		).toEqual( '/email/all/:domain/titan/new/:site' );
-		expect( emailManagementNewTitanAccount( ':site', ':domain' ) ).toEqual(
+		expect( getNewTitanAccountPath( ':site', ':domain' ) ).toEqual(
 			'/email/:domain/titan/new/:site'
 		);
-		expect( emailManagementNewTitanAccount( siteName, '' ) ).toEqual(
-			`/email//titan/new/${ siteName }`
-		);
-		expect( emailManagementNewTitanAccount( null, '' ) ).toEqual( '/email//titan/new/null' );
+		expect( getNewTitanAccountPath( siteName, null ) ).toEqual( `/email/${ siteName }` );
+		expect( getNewTitanAccountPath( null, null ) ).toEqual( '/email' );
 	} );
 
-	it( 'emailManagementTitanSetUpMailbox', () => {
-		expect( emailManagementTitanSetUpMailbox( siteName, domainName ) ).toEqual(
+	it( 'getTitanSetUpMailboxPath', () => {
+		expect( getTitanSetUpMailboxPath( siteName, domainName ) ).toEqual(
 			`/email/${ domainName }/titan/set-up-mailbox/${ siteName }`
 		);
-		expect(
-			emailManagementTitanSetUpMailbox( ':site', ':domain', emailManagementAllSitesPrefix )
-		).toEqual( '/email/all/:domain/titan/set-up-mailbox/:site' );
-		expect( emailManagementTitanSetUpMailbox( ':site', ':domain' ) ).toEqual(
+		expect( getTitanSetUpMailboxPath( ':site', ':domain' ) ).toEqual(
 			'/email/:domain/titan/set-up-mailbox/:site'
 		);
-		expect( emailManagementTitanSetUpMailbox( siteName, '' ) ).toEqual(
-			`/email//titan/set-up-mailbox/${ siteName }`
-		);
-		expect( emailManagementTitanSetUpMailbox( null, '' ) ).toEqual(
-			`/email//titan/set-up-mailbox/null`
-		);
+		expect( getTitanSetUpMailboxPath( siteName, null ) ).toEqual( `/email/${ siteName }` );
+		expect( getTitanSetUpMailboxPath( null, null ) ).toEqual( `/email` );
 	} );
 
-	it( 'emailManagementTitanSetUpThankYou', () => {
-		expect( emailManagementTitanSetUpThankYou( siteName, domainName ) ).toEqual(
+	it( 'getTitanSetUpThankYouPath', () => {
+		expect( getTitanSetUpThankYouPath( siteName, domainName ) ).toEqual(
 			`/email/${ domainName }/titan/set-up-mailbox/thank-you/${ siteName }`
 		);
 		expect(
-			emailManagementTitanSetUpThankYou( ':site', ':domain', null, emailManagementAllSitesPrefix )
+			getTitanSetUpThankYouPath( ':site', ':domain', null, emailManagementAllSitesPrefix )
 		).toEqual( '/email/all/:domain/titan/set-up-mailbox/thank-you/:site' );
-		expect( emailManagementTitanSetUpThankYou( siteName, '' ) ).toEqual(
-			`/email//titan/set-up-mailbox/thank-you/${ siteName }`
-		);
-		expect( emailManagementTitanSetUpThankYou( null, '' ) ).toEqual(
-			`/email//titan/set-up-mailbox/thank-you/null`
-		);
+		expect( getTitanSetUpThankYouPath( siteName, null ) ).toEqual( `/email/${ siteName }` );
+		expect( getTitanSetUpThankYouPath( null, null ) ).toEqual( `/email` );
 	} );
 
-	it( 'emailManagementTitanControlPanelRedirect', () => {
-		expect( emailManagementTitanControlPanelRedirect( siteName, domainName ) ).toEqual(
+	it( 'getTitanControlPanelRedirectPath', () => {
+		expect( getTitanControlPanelRedirectPath( siteName, domainName ) ).toEqual(
 			`/email/${ domainName }/titan/control-panel/${ siteName }`
 		);
 		expect(
-			emailManagementTitanControlPanelRedirect( ':site', ':domain', emailManagementAllSitesPrefix )
+			getTitanControlPanelRedirectPath( ':site', ':domain', emailManagementAllSitesPrefix )
 		).toEqual( '/email/all/:domain/titan/control-panel/:site' );
-		expect( emailManagementTitanControlPanelRedirect( ':site', ':domain' ) ).toEqual(
+		expect( getTitanControlPanelRedirectPath( ':site', ':domain' ) ).toEqual(
 			'/email/:domain/titan/control-panel/:site'
 		);
-		expect( emailManagementTitanControlPanelRedirect( siteName, '' ) ).toEqual(
-			`/email//titan/control-panel/${ siteName }`
-		);
-		expect( emailManagementTitanControlPanelRedirect( null, '' ) ).toEqual(
-			`/email//titan/control-panel/null`
-		);
+		expect( getTitanControlPanelRedirectPath( siteName, null ) ).toEqual( `/email/${ siteName }` );
+		expect( getTitanControlPanelRedirectPath( null, null ) ).toEqual( `/email` );
 	} );
 
-	it( 'emailManagement', () => {
-		expect( emailManagement( siteName, domainName ) ).toEqual(
+	it( 'getEmailManagementPath', () => {
+		expect( getEmailManagementPath( siteName, domainName ) ).toEqual(
 			`/email/${ domainName }/manage/${ siteName }`
 		);
-		expect( emailManagement( ':site', ':domain', emailManagementAllSitesPrefix ) ).toEqual(
+		expect( getEmailManagementPath( ':site', ':domain', emailManagementAllSitesPrefix ) ).toEqual(
 			'/email/all/:domain/manage/:site'
 		);
-		expect( emailManagement( ':site', ':domain' ) ).toEqual( '/email/:domain/manage/:site' );
-		expect( emailManagement( ':site' ) ).toEqual( '/email/:site' );
-		expect( emailManagement( siteName, null ) ).toEqual( `/email/${ siteName }` );
-		expect( emailManagement( null, null ) ).toEqual( `/email` );
+		expect( getEmailManagementPath( ':site', ':domain' ) ).toEqual( '/email/:domain/manage/:site' );
+		expect( getEmailManagementPath( ':site' ) ).toEqual( '/email/:site' );
+		expect( getEmailManagementPath( siteName, null ) ).toEqual( `/email/${ siteName }` );
+		expect( getEmailManagementPath( null, null ) ).toEqual( `/email` );
 	} );
 
-	it( 'emailManagementForwarding', () => {
-		expect( emailManagementForwarding( siteName, domainName ) ).toEqual(
+	it( 'getForwardingPath', () => {
+		expect( getForwardingPath( siteName, domainName ) ).toEqual(
 			`/email/${ domainName }/forwarding/${ siteName }`
 		);
-		expect(
-			emailManagementForwarding( ':site', ':domain', emailManagementAllSitesPrefix )
-		).toEqual( '/email/all/:domain/forwarding/:site' );
-		expect( emailManagementForwarding( ':site', ':domain' ) ).toEqual(
-			'/email/:domain/forwarding/:site'
+		expect( getForwardingPath( ':site', ':domain', emailManagementAllSitesPrefix ) ).toEqual(
+			'/email/all/:domain/forwarding/:site'
 		);
-		expect( emailManagementForwarding( siteName, '' ) ).toEqual(
-			`/email//forwarding/${ siteName }`
-		);
-		expect( emailManagementForwarding( null, '' ) ).toEqual( `/email//forwarding/null` );
+		expect( getForwardingPath( ':site', ':domain' ) ).toEqual( '/email/:domain/forwarding/:site' );
+		expect( getForwardingPath( siteName, null ) ).toEqual( `/email/${ siteName }` );
+		expect( getForwardingPath( null, null ) ).toEqual( `/email` );
 	} );
 
-	it( 'emailManagementPurchaseNewEmailAccount', () => {
-		expect( emailManagementPurchaseNewEmailAccount( siteName, domainName ) ).toEqual(
+	it( 'getPurchaseNewEmailAccountPath', () => {
+		expect( getPurchaseNewEmailAccountPath( siteName, domainName ) ).toEqual(
 			`/email/${ domainName }/purchase/${ siteName }`
 		);
 		expect(
-			emailManagementPurchaseNewEmailAccount( ':site', ':domain', emailManagementAllSitesPrefix )
+			getPurchaseNewEmailAccountPath( ':site', ':domain', emailManagementAllSitesPrefix )
 		).toEqual( '/email/all/:domain/purchase/:site' );
-		expect( emailManagementPurchaseNewEmailAccount( ':site', ':domain' ) ).toEqual(
+		expect( getPurchaseNewEmailAccountPath( ':site', ':domain' ) ).toEqual(
 			'/email/:domain/purchase/:site'
 		);
-		expect( emailManagementPurchaseNewEmailAccount( siteName, '' ) ).toEqual(
-			`/email//purchase/${ siteName }`
-		);
-		expect( emailManagementPurchaseNewEmailAccount( null, '' ) ).toEqual( `/email//purchase/null` );
+		expect( getPurchaseNewEmailAccountPath( siteName, null ) ).toEqual( `/email/${ siteName }` );
+		expect( getPurchaseNewEmailAccountPath( null, null ) ).toEqual( `/email` );
 	} );
 
-	it( 'emailManagementInDepthComparison', () => {
-		expect( emailManagementInDepthComparison( siteName, domainName ) ).toEqual(
+	it( 'getEmailInDepthComparisonPath', () => {
+		expect( getEmailInDepthComparisonPath( siteName, domainName ) ).toEqual(
 			`/email/${ domainName }/compare/${ siteName }`
 		);
-		expect( emailManagementInDepthComparison( ':site', ':domain' ) ).toEqual(
+		expect( getEmailInDepthComparisonPath( ':site', ':domain' ) ).toEqual(
 			'/email/:domain/compare/:site'
 		);
-		expect( emailManagementInDepthComparison( siteName, '' ) ).toEqual(
-			`/email//compare/${ siteName }`
-		);
-		expect( emailManagementInDepthComparison( null, '' ) ).toEqual( `/email//compare/null` );
+		expect( getEmailInDepthComparisonPath( siteName, null ) ).toEqual( `/email/${ siteName }` );
+		expect( getEmailInDepthComparisonPath( null, null ) ).toEqual( `/email` );
 	} );
 
-	it( 'emailManagementMailboxes', () => {
-		expect( emailManagementMailboxes( siteName ) ).toEqual( `/mailboxes/${ siteName }` );
-		expect( emailManagementMailboxes( ':site' ) ).toEqual( '/mailboxes/:site' );
-		expect( emailManagementMailboxes() ).toEqual( '/mailboxes' );
+	it( 'getMailboxesPath', () => {
+		expect( getMailboxesPath( siteName ) ).toEqual( `/mailboxes/${ siteName }` );
+		expect( getMailboxesPath( ':site' ) ).toEqual( '/mailboxes/:site' );
+		expect( getMailboxesPath() ).toEqual( '/mailboxes' );
 	} );
 
 	it.each( [
