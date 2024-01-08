@@ -205,8 +205,9 @@ const Hosting = ( props ) => {
 
 	const isSiteAtomic =
 		transferStatus === transferStates.COMPLETE || transferStatus === transferStates.COMPLETED;
-
 	const canSiteGoAtomic = ! isSiteAtomic && hasSftpFeature;
+	const showHostingActivationBanner =
+		canSiteGoAtomic && hasFetchedTransferStatusAtLeastOnce.current;
 
 	const getUpgradeBanner = () => {
 		// The eCommerce Trial requires a different upsell path.
@@ -246,7 +247,7 @@ const Hosting = ( props ) => {
 				icon="bug"
 			/>
 		);
-		if ( canSiteGoAtomic && hasFetchedTransferStatusAtLeastOnce.current ) {
+		if ( showHostingActivationBanner ) {
 			return (
 				<>
 					{ failureNotice }
