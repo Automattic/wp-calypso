@@ -1,14 +1,13 @@
-import { Card, ConfettiAnimation } from '@automattic/components';
+import { ConfettiAnimation } from '@automattic/components';
 import CheckoutMasterbar, { CheckoutMasterbarProps } from 'calypso/components/checkout-masterbar';
 import Main from 'calypso/components/main';
 import PurchaseDetail from 'calypso/components/purchase-detail';
 import ThankYouHeader from './header';
-import ThankYouProduct, { ThankYouProductProps } from './product';
 import DefaultUpsell, { DefaultUpsellProps } from './upsell';
 
 import './style.scss';
 
-interface ThankYouLayoutContainerProps {
+interface ThankYouV2Props {
 	title: React.ReactNode;
 	subtitle: React.ReactNode;
 	buttons?: React.ReactNode;
@@ -18,18 +17,9 @@ interface ThankYouLayoutContainerProps {
 	masterbarProps?: CheckoutMasterbarProps;
 }
 
-const ThankYouLayout: React.FC< ThankYouLayoutContainerProps > = (
-	props: ThankYouLayoutContainerProps
-) => {
-	const {
-		title,
-		subtitle,
-		buttons,
-		products,
-		purchaseDetailsProps,
-		upsellProps,
-		masterbarProps,
-	} = props;
+const ThankYouV2: React.FC< ThankYouV2Props > = ( props: ThankYouV2Props ) => {
+	const { title, subtitle, buttons, products, purchaseDetailsProps, upsellProps, masterbarProps } =
+		props;
 
 	return (
 		<Main className="is-redesign-v2 checkout-thank-you">
@@ -39,9 +29,7 @@ const ThankYouLayout: React.FC< ThankYouLayoutContainerProps > = (
 
 			<ThankYouHeader title={ title } subtitle={ subtitle } buttons={ buttons } />
 
-			<div className="checkout-thank-you__products">
-				{ products }
-			</div>
+			<div className="checkout-thank-you__products">{ products }</div>
 
 			{ purchaseDetailsProps && (
 				<div className="checkout-thank-you__purchase-details-list">
@@ -56,4 +44,4 @@ const ThankYouLayout: React.FC< ThankYouLayoutContainerProps > = (
 	);
 };
 
-export default ThankYouLayout;
+export default ThankYouV2;

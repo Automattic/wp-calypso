@@ -1,19 +1,11 @@
-import {
-	isDomainTransfer,
-	isDomainMapping,
-	isDomainRegistration,
-} from '@automattic/calypso-products';
-import { Button, ClipboardButton } from '@wordpress/components';
 import { translate } from 'i18n-calypso';
-import { useState } from 'react';
 import emailImage from 'calypso/assets/images/thank-you-upsell/email.svg';
-import ThankYouLayout from 'calypso/components/thank-you-v2';
-import { domainManagementList, domainManagementRoot } from 'calypso/my-sites/domains/paths';
+import ThankYouV2 from 'calypso/components/thank-you-v2';
 import { emailManagement } from 'calypso/my-sites/email/paths';
 import { useSelector } from 'calypso/state';
 import { getSelectedSiteSlug, getSelectedSiteId } from 'calypso/state/ui/selectors';
-import ProductDomain from '../products/product-domain';
 import { getDomainPurchaseType } from '../../utils';
+import ProductDomain from '../products/product-domain';
 
 interface DomainOnlyThankYouContainerProps {
 	purchases: ReceiptPurchase[];
@@ -48,7 +40,9 @@ export const getDomainPurchaseDetails = ( limit: number ) => {
 	return details.slice( 0, limit ?? details.length );
 };
 
-export const DomainOnlyThankYou: React.FC< DomainOnlyThankYouContainerProps > = ( { purchases } ) => {
+export const DomainOnlyThankYou: React.FC< DomainOnlyThankYouContainerProps > = ( {
+	purchases,
+} ) => {
 	const [ , predicate ] = getDomainPurchaseType( purchases );
 	const domains = purchases.filter( predicate ).map( ( purchase ) => purchase?.meta );
 	const firstDomain = domains[ 0 ];
@@ -67,12 +61,12 @@ export const DomainOnlyThankYou: React.FC< DomainOnlyThankYouContainerProps > = 
 		trackEvent: 'calypso_domain_only_thank_you_professional_email_click',
 	};
 
-	const products = purchases.filter( predicate ).filter( predicate ).map( ( purchase, index ) => {
-		return ( <ProductDomain purchase={ purchase } key={ index } siteSlug={ siteSlug } /> );
+	const products = purchases.filter( predicate ).map( ( purchase, index ) => {
+		return <ProductDomain purchase={ purchase } key={ index } siteSlug={ siteSlug } />;
 	} );
 
 	return (
-		<ThankYouLayout
+		<ThankYouV2
 			title={ translate( 'Your own corner of the web' ) }
 			subtitle={ translate(
 				'All set! We’re just setting up your new domain so you can start spreading the word.',

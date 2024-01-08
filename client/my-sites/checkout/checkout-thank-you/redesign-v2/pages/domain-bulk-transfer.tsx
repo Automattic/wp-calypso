@@ -2,7 +2,7 @@ import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { Button } from '@wordpress/components';
 import { useI18n } from '@wordpress/react-i18n';
 import { translate } from 'i18n-calypso';
-import ThankYouLayout from 'calypso/components/thank-you-v2';
+import ThankYouV2 from 'calypso/components/thank-you-v2';
 import { preventWidows } from 'calypso/lib/formatting';
 import ProductDomain from '../products/product-domain';
 
@@ -24,7 +24,7 @@ const DomainBulkTransferThankYou: React.FC< DomainBulkTransferThankYouProps > = 
 	};
 
 	const products = purchases.map( ( purchase, index ) => {
-		return ( <ProductDomain purchase={ purchase } currency={ currency } key={ index } /> );
+		return <ProductDomain purchase={ purchase } currency={ currency } key={ index } />;
 	} );
 
 	const purchaseDetailsProps = [
@@ -39,13 +39,13 @@ const DomainBulkTransferThankYou: React.FC< DomainBulkTransferThankYouProps > = 
 			key: 'domain-resources',
 			title: translate( 'Will my email continue to work?' ),
 			description: translate(
-				'We\'ll automatically import any MX, TXT, and A records for your domain, so your email will transfer seamlessly.'
+				"We'll automatically import any MX, TXT, and A records for your domain, so your email will transfer seamlessly."
 			),
 		},
 	];
 
 	return (
-		<ThankYouLayout
+		<ThankYouV2
 			title={ translate( 'Your domain transfer has started', 'Your domain transfers have started', {
 				count: purchases.length,
 			} ) }

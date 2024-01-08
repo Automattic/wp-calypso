@@ -1,6 +1,6 @@
 import { isDomainProduct, isPlan } from '@automattic/calypso-products';
 import { translate } from 'i18n-calypso';
-import ThankYouLayout from 'calypso/components/thank-you-v2';
+import ThankYouV2 from 'calypso/components/thank-you-v2';
 import ThankYouProduct from 'calypso/components/thank-you-v2/product';
 import { useSelector } from 'calypso/state';
 import { getSelectedSiteSlug, getSelectedSiteId } from 'calypso/state/ui/selectors';
@@ -46,7 +46,7 @@ export const GenericThankYou: React.FC< GenericThankYouContainerProps > = ( { pu
 	} );
 
 	return (
-		<ThankYouLayout
+		<ThankYouV2
 			title={ translate( 'Great Choices!' ) }
 			subtitle={ translate( 'All set! Ready to take your site even further?' ) }
 			products={ products }

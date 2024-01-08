@@ -1,6 +1,6 @@
 import { translate } from 'i18n-calypso';
 import moment from 'moment';
-import ThankYouLayout from 'calypso/components/thank-you-v2';
+import ThankYouV2 from 'calypso/components/thank-you-v2';
 import { preventWidows } from 'calypso/lib/formatting';
 import { useSelector } from 'calypso/state';
 import { getSiteOptions, getSiteSlug } from 'calypso/state/sites/selectors';
@@ -60,7 +60,7 @@ export const PlanOnlyThankYou: React.FC< PlanOnlyThankYouProps > = ( { purchases
 	} );
 
 	return (
-		<ThankYouLayout
+		<ThankYouV2
 			title={ translate( 'Get the best out of your site' ) }
 			subtitle={ preventWidows(
 				translate(

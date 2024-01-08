@@ -1,6 +1,6 @@
 import { translate } from 'i18n-calypso';
 import emailImage from 'calypso/assets/images/thank-you-upsell/email.svg';
-import ThankYouLayout from 'calypso/components/thank-you-v2';
+import ThankYouV2 from 'calypso/components/thank-you-v2';
 import { emailManagement } from 'calypso/my-sites/email/paths';
 import { useSelector } from 'calypso/state';
 import { getSelectedSiteSlug, getSelectedSiteId } from 'calypso/state/ui/selectors';
@@ -32,7 +32,7 @@ const DomainTransferToAnyUser: React.FC< DomainTransferToAnyUserContainerProps >
 	const products = [ <ProductDomain domainName={ domain } siteSlug={ siteSlug } /> ];
 
 	return (
-		<ThankYouLayout
+		<ThankYouV2
 			title={ translate( 'Your domain transfer is underway' ) }
 			subtitle={ translate(
 				'Domain transfers can take a few minutes, we’ll email you once it’s set up.'
