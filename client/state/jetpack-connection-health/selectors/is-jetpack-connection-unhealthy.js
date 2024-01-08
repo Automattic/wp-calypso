@@ -1,4 +1,5 @@
 import 'calypso/state/jetpack-connection-health/init';
+import getJetpackConnectionHealth from './get-jetpack-connection-health';
 
 /**
  * Returns true if the current site Jetpack connection was checked and is unhealthy
@@ -7,14 +8,11 @@ import 'calypso/state/jetpack-connection-health/init';
  * @returns {boolean}             Whether the current site can have connection problem
  */
 export default function isJetpackConnectionUnhealthy( state, siteId ) {
-	const siteState = state.jetpackConnectionHealth[ siteId ];
+	const siteConnectionHealth = getJetpackConnectionHealth( state, siteId );
 
-	if ( ! siteState?.connectionHealth ) {
+	if ( ! siteConnectionHealth ) {
 		return false;
 	}
 
-	return (
-		true === siteState.connectionHealth.jetpack_connection_problem &&
-		siteState.connectionHealth.error
-	);
+	return true === siteConnectionHealth.jetpack_connection_problem && siteConnectionHealth.error;
 }
