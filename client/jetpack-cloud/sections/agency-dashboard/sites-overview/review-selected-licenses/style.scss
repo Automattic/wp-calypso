@@ -1,0 +1,23 @@
+.review-licenses__lightbox.jetpack-lightbox__modal {
+	display: block;
+
+	.main.is-wide-layout {
+		max-width: unset;
+		width: 100%;
+		margin-block-start: 36px;
+	}
+
+	.current-section {
+		display: none;
+	}
+
+	.partner-portal-layout__container {
+		min-height: auto;
+	}
+
+	.payment-method-add__wrapper {
+		margin-block-end: 32px;
+		box-shadow: none;
+		padding: 0 24px;
+	}
+}

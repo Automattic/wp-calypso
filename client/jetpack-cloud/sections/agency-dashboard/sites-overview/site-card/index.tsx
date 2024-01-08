@@ -1,3 +1,4 @@
+import { isEnabled } from '@automattic/calypso-config';
 import { Card, Gridicon, Button } from '@automattic/components';
 import { Icon, chevronDown, chevronUp } from '@wordpress/icons';
 import classNames from 'classnames';
@@ -8,6 +9,7 @@ import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import {
 	getSelectedLicenses,
 	getSelectedLicensesSiteId,
+	getSelectedSiteLicenses,
 } from 'calypso/state/jetpack-agency-dashboard/selectors';
 import { getIsPartnerOAuthTokenLoaded } from 'calypso/state/partner-portal/partner/selectors';
 import { useJetpackAgencyDashboardRecordTrackEvent } from '../../hooks';
@@ -36,6 +38,8 @@ export default function SiteCard( { rows, columns }: Props ) {
 	const [ expandedColumn, setExpandedColumn ] = useState< AllowedTypes | null >( null );
 	const blogId = rows.site.value.blog_id;
 	const isConnectionHealthy = rows.site.value?.is_connection_healthy;
+
+	const isMultiSiteLicenseSelectionEnabled = isEnabled( 'jetpack/multi-site-license-selection' );
 
 	const { data } = useFetchTestConnection( isPartnerOAuthTokenLoaded, isConnectionHealthy, blogId );
 
@@ -80,14 +84,16 @@ export default function SiteCard( { rows, columns }: Props ) {
 	const isFavorite = rows.isFavorite;
 
 	const selectedLicenses = useSelector( getSelectedLicenses );
+	const selectedSiteLicenses = useSelector( getSelectedSiteLicenses );
 	const selectedLicensesSiteId = useSelector( getSelectedLicensesSiteId );
 
 	const currentSiteHasSelectedLicenses =
 		selectedLicensesSiteId === blogId && selectedLicenses?.length;
 
 	// We should disable the license selection for all sites, but the active one.
-	const shouldDisableLicenseSelection =
-		selectedLicenses?.length && ! currentSiteHasSelectedLicenses;
+	const shouldDisableLicenseSelection = isMultiSiteLicenseSelectionEnabled
+		? selectedSiteLicenses?.length
+		: selectedLicenses?.length && ! currentSiteHasSelectedLicenses;
 
 	return (
 		<Card

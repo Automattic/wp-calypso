@@ -44,7 +44,15 @@ import type { SiteDetails } from '@automattic/data-stores';
 
 import './style.scss';
 
-function PaymentMethodAdd( { selectedSite }: { selectedSite?: SiteDetails | null } ) {
+function PaymentMethodAdd( {
+	selectedSite,
+	goBack,
+	isModalView,
+}: {
+	selectedSite?: SiteDetails | null;
+	goBack?: ( issueLicense?: boolean ) => void;
+	isModalView?: boolean;
+} ) {
 	const translate = useTranslate();
 	const reduxDispatch = useDispatch();
 	const paymentMethodRequired = useSelector( doesPartnerRequireAPaymentMethod );
@@ -161,17 +169,20 @@ function PaymentMethodAdd( { selectedSite }: { selectedSite?: SiteDetails | null
 		// product - will make sure there will be a license issuing for that product
 		//
 		// isSiteCreationFlow - will make sure there will be site creation
-		if ( returnQueryArg || products || isSiteCreationFlow ) {
+		if ( returnQueryArg || products || isSiteCreationFlow || goBack ) {
 			reduxDispatch(
 				fetchStoredCards( {
 					startingAfter: '',
 					endingBefore: '',
 				} )
 			);
+			if ( goBack ) {
+				goBack( true );
+			}
 		} else {
 			page( partnerPortalBasePath( '/payment-methods' ) );
 		}
-	}, [ returnQueryArg, products, isSiteCreationFlow, reduxDispatch ] );
+	}, [ goBack, returnQueryArg, products, isSiteCreationFlow, reduxDispatch ] );
 
 	useEffect( () => {
 		if ( paymentMethodRequired ) {
@@ -235,14 +246,19 @@ function PaymentMethodAdd( { selectedSite }: { selectedSite?: SiteDetails | null
 	};
 
 	return (
-		<Layout className="payment-method-add" title={ translate( 'Payment Methods' ) }>
+		<Layout
+			className="payment-method-add"
+			title={ isModalView ? '' : translate( 'Payment Methods' ) }
+		>
 			{ ( !! returnQueryArg || products ) && (
 				<AssignLicenseStepProgress currentStep="addPaymentMethod" selectedSite={ selectedSite } />
 			) }
 
-			<LayoutHeader>
-				<CardHeading size={ 36 }>{ translate( 'Payment Methods' ) }</CardHeading>
-			</LayoutHeader>
+			{ ! isModalView && (
+				<LayoutHeader>
+					<CardHeading size={ 36 }>{ translate( 'Payment Methods' ) }</CardHeading>
+				</LayoutHeader>
+			) }
 
 			<CheckoutProvider
 				onPaymentComplete={ () => {
@@ -297,9 +313,9 @@ function PaymentMethodAdd( { selectedSite }: { selectedSite?: SiteDetails | null
 							<div className="payment-method-add__navigation-buttons">
 								<Button
 									className="payment-method-add__back-button"
-									href={ getPreviousPageLink() }
+									href={ goBack ? undefined : getPreviousPageLink() }
 									disabled={ isStripeLoading || ! isIssueAndAssignLicensesReady }
-									onClick={ onGoToPaymentMethods }
+									onClick={ () => ( goBack ? goBack() : onGoToPaymentMethods() ) }
 								>
 									{ translate( 'Go back' ) }
 								</Button>
@@ -320,8 +336,12 @@ function PaymentMethodAdd( { selectedSite }: { selectedSite?: SiteDetails | null
 
 export default function PaymentMethodAddWrapper( {
 	selectedSite,
+	goBack,
+	isModalView,
 }: {
 	selectedSite?: SiteDetails | null;
+	goBack?: ( issueLicense?: boolean ) => void;
+	isModalView?: boolean;
 } ) {
 	const locale = useSelector( getCurrentUserLocale );
 
@@ -330,7 +350,11 @@ export default function PaymentMethodAddWrapper( {
 			<StripeSetupIntentIdProvider
 				fetchStripeSetupIntentId={ () => getStripeConfiguration( { needs_intent: true } ) }
 			>
-				<PaymentMethodAdd selectedSite={ selectedSite } />
+				<PaymentMethodAdd
+					selectedSite={ selectedSite }
+					goBack={ goBack }
+					isModalView={ isModalView }
+				/>
 			</StripeSetupIntentIdProvider>
 		</StripeHookProvider>
 	);
