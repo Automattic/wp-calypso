@@ -5,7 +5,7 @@ type QueryStringParameters = { [ key: string ]: string | undefined };
 
 type EmailPathUtilityFunction = (
 	siteName: string | null | undefined,
-	domainName: string | null | undefined,
+	domainName?: string | null | undefined,
 	relativeTo?: string,
 	urlParameters?: QueryStringParameters
 ) => string;
@@ -146,11 +146,11 @@ export const getTitanControlPanelRedirectPath: EmailPathUtilityFunction = (
 	urlParameters
 ) => getPath( siteName, domainName, 'titan/control-panel', relativeTo, urlParameters );
 
-export const getEmailManagementPath = (
-	siteName: string | null | undefined,
-	domainName?: string | null | undefined,
-	relativeTo?: string | null,
-	urlParameters?: QueryStringParameters
+export const getEmailManagementPath: EmailPathUtilityFunction = (
+	siteName,
+	domainName,
+	relativeTo,
+	urlParameters
 ) => getPath( siteName, domainName, 'manage', relativeTo, urlParameters );
 
 export const getForwardingPath: EmailPathUtilityFunction = ( siteName, domainName, relativeTo ) =>

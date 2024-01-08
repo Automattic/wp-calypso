@@ -51,7 +51,6 @@ describe( 'path helper functions', () => {
 		expect( getAddGSuiteUsersPath( ':site', ':domain', 'google-workspace' ) ).toEqual(
 			'/email/:domain/google-workspace/add-users/:site'
 		);
-
 		expect( getAddGSuiteUsersPath( siteName, null, 'google-workspace' ) ).toEqual(
 			`/email/google-workspace/add-users/${ siteName }`
 		);
@@ -106,6 +105,9 @@ describe( 'path helper functions', () => {
 	} );
 
 	it( 'getTitanSetUpThankYouPath', () => {
+		expect( getTitanSetUpThankYouPath( siteName, domainName, 'info@example.com' ) ).toEqual(
+			`/email/${ domainName }/titan/set-up-mailbox/thank-you/${ siteName }?email=info%40example.com`
+		);
 		expect( getTitanSetUpThankYouPath( siteName, domainName ) ).toEqual(
 			`/email/${ domainName }/titan/set-up-mailbox/thank-you/${ siteName }`
 		);
