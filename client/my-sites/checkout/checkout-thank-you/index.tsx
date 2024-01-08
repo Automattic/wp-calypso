@@ -77,6 +77,10 @@ import { requestThenActivate } from 'calypso/state/themes/actions';
 import { getActiveTheme } from 'calypso/state/themes/selectors';
 import { IAppState } from 'calypso/state/types';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import {
+	renderThankYouRedesignI2,
+	shouldRenderThankYouRedesignI2,
+} from '../checkout-thank-you-i2/common/render-thank-you-redesign-i2';
 import AtomicStoreThankYouCard from './atomic-store-thank-you-card';
 import BloggerPlanDetails from './blogger-plan-details';
 import BusinessPlanDetails from './business-plan-details';
@@ -675,6 +679,11 @@ export class CheckoutThankYou extends Component<
 			! wasBulkDomainTransfer
 		) {
 			return null;
+		}
+
+		// Render the i2 version of Congrats page
+		if ( shouldRenderThankYouRedesignI2( purchases ) ) {
+			return renderThankYouRedesignI2();
 		}
 
 		// standard thanks page
