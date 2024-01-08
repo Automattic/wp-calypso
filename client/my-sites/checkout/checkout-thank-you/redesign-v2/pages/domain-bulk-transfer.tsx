@@ -71,7 +71,7 @@ const DomainBulkTransferThankYou: React.FC< DomainBulkTransferThankYouProps > = 
 					</div>
 				</>
 			}
-			buttons={
+			headerButtons={
 				<>
 					<Button
 						href="/setup/domain-transfer"

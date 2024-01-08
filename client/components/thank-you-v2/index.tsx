@@ -10,7 +10,7 @@ import './style.scss';
 interface ThankYouV2Props {
 	title: React.ReactNode;
 	subtitle: React.ReactNode;
-	buttons?: React.ReactNode;
+	headerButtons?: React.ReactNode;
 	products?: React.ReactNode;
 	purchaseDetailsProps?: PurchaseDetail.propTypes[];
 	upsellProps?: DefaultUpsellProps;
@@ -18,8 +18,15 @@ interface ThankYouV2Props {
 }
 
 const ThankYouV2: React.FC< ThankYouV2Props > = ( props: ThankYouV2Props ) => {
-	const { title, subtitle, buttons, products, purchaseDetailsProps, upsellProps, masterbarProps } =
-		props;
+	const {
+		title,
+		subtitle,
+		headerButtons,
+		products,
+		purchaseDetailsProps,
+		upsellProps,
+		masterbarProps,
+	} = props;
 
 	return (
 		<Main className="is-redesign-v2 checkout-thank-you">
@@ -27,7 +34,7 @@ const ThankYouV2: React.FC< ThankYouV2Props > = ( props: ThankYouV2Props ) => {
 
 			<ConfettiAnimation delay={ 1000 } />
 
-			<ThankYouHeader title={ title } subtitle={ subtitle } buttons={ buttons } />
+			<ThankYouHeader title={ title } subtitle={ subtitle } buttons={ headerButtons } />
 
 			<div className="checkout-thank-you__products">{ products }</div>
 
