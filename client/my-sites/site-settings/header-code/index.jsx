@@ -12,6 +12,7 @@ import DocumentHead from 'calypso/components/data/document-head';
 import QuerySiteSettings from 'calypso/components/data/query-site-settings';
 import EmptyContent from 'calypso/components/empty-content';
 import HeaderCake from 'calypso/components/header-cake';
+import InlineSupportLink from 'calypso/components/inline-support-link';
 import Main from 'calypso/components/main';
 import NavigationHeader from 'calypso/components/navigation-header';
 import { successNotice, errorNotice } from 'calypso/state/notices/actions';
@@ -112,10 +113,13 @@ const HeaderCodeSettings = ( {
 						/>
 						<p className="header-code__text">
 							{ translate(
-								'The following code will be inserted within {{code}}<head>{{/code}} on your site.',
+								'The following code will be inserted within {{code}}<head>{{/code}} on your site. {{link}}Learn more{{/link}}.',
 								{
 									components: {
 										code: <code />,
+										link: (
+											<InlineSupportLink supportContext="insert-header-code" showIcon={ false } />
+										),
 									},
 								}
 							) }
