@@ -52,7 +52,6 @@ const usePatternPages = (
 			}
 			pagesToShow.push( {
 				name: pattern?.name || '',
-				hasPages: true,
 				title: title,
 				isSelected: !! selected,
 			} );
@@ -98,12 +97,10 @@ const usePatternPages = (
 	pagesToShow = pageCategoriesInOrder
 		.map( ( category: Category ) => {
 			const { name } = category;
-			const hasPages = name && pagesMapByCategory[ name ]?.length;
-			if ( hasPages ) {
-				const firstPage = pagesMapByCategory[ name ][ 0 ];
+			const firstPage = name && pagesMapByCategory[ name ][ 0 ];
+			if ( firstPage ) {
 				return {
 					name,
-					hasPages,
 					title: getPagePatternTitle( firstPage ),
 					isSelected: pageSlugs.includes( name ),
 				};
