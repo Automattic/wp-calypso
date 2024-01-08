@@ -25,7 +25,6 @@ export interface Tour {
 		| 'left'
 		| 'top left';
 	nextStepOnTargetClick?: string;
-	hideSteps?: boolean;
 	forceShowSkipButton?: boolean;
 }
 
@@ -34,6 +33,7 @@ interface Props {
 	tours: Tour[];
 	preferenceName: string;
 	redirectAfterTourEnds?: string;
+	hideSteps?: boolean;
 }
 
 // This hook will return the async element matching the target selector.
@@ -67,7 +67,13 @@ const useAsyncElement = ( target: string, timeoutDuration: number ): HTMLElement
 	return asyncElement;
 };
 
-const GuidedTour = ( { className, tours, preferenceName, redirectAfterTourEnds }: Props ) => {
+const GuidedTour = ( {
+	className,
+	tours,
+	preferenceName,
+	redirectAfterTourEnds,
+	hideSteps = false,
+}: Props ) => {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 
@@ -85,7 +91,6 @@ const GuidedTour = ( { className, tours, preferenceName, redirectAfterTourEnds }
 		target,
 		popoverPosition,
 		nextStepOnTargetClick,
-		hideSteps = false,
 		forceShowSkipButton = false,
 	} = tours[ currentStep ];
 
@@ -161,7 +166,7 @@ const GuidedTour = ( { className, tours, preferenceName, redirectAfterTourEnds }
 				<div>
 					{
 						// Show the step count if there are multiple steps and we're not on the last step, unless we explicitly choose to hide them
-						tours.length > 1 && ! hideSteps && (
+						tours.length > 1 && ! { hideSteps } && (
 							<span className="guided-tour__popover-step-count">
 								{ translate( 'Step %(currentStep)d of %(totalSteps)d', {
 									args: { currentStep: currentStep + 1, totalSteps: tours.length },

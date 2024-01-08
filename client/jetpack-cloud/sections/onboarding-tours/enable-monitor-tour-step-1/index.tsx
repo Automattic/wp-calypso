@@ -26,9 +26,7 @@ export default function EnableMonitorTourStep1() {
 								) }
 							</>
 						),
-
 						nextStepOnTargetClick: '.dashboard-bulk-actions__edit-button',
-						hideSteps: true,
 					},
 					{
 						target: '.dashboard-bulk-actions__custom_notification_button',
@@ -46,9 +44,9 @@ export default function EnableMonitorTourStep1() {
 						),
 
 						nextStepOnTargetClick: '.dashboard-bulk-actions__custom_notification_button',
-						hideSteps: true,
 					},
 				] }
+				hideSteps={ true }
 			/>
 		)
 	);
