@@ -27,7 +27,7 @@ export const setJetpackConnectionHealthy = ( siteId ) => ( {
 /**
  * Sets the Jetpack connection status to unhealthy along with error code.
  *
- * This action is called when the Jetpack health status API returns an jetpack error.
+ * This action is called when the Jetpack health status API returns a Jetpack error as defined in jetpack/connection-health/constants.js file.
  * @param {number} siteId The site id to which the status belongs
  * @param {string} errorCode The error code
  * @returns {Object} An action object
@@ -39,7 +39,7 @@ export const setJetpackConnectionUnhealthy = ( siteId, errorCode ) => ( {
 } );
 
 /**
- * Requests the Jetpack connection status from the server
+ * Requests the Jetpack connection health status from the server
  *
  * This is called when the Jetpack connection is maybe unhealthy and we want to confirm
  * the status by calling the health status API.

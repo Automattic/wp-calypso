@@ -13,10 +13,8 @@ export default function isJetpackConnectionUnhealthy( state, siteId ) {
 		return false;
 	}
 
-	let error = siteState.connectionHealth.error;
-	if ( siteState.connectionHealth.error === undefined ) {
-		error = '';
-	}
-
-	return true === siteState.connectionHealth.jetpack_connection_problem && '' !== error;
+	return (
+		true === siteState.connectionHealth.jetpack_connection_problem &&
+		siteState.connectionHealth.error
+	);
 }

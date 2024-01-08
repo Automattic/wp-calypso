@@ -46,11 +46,11 @@ export const JetpackConnectionHealthBanner = ( { siteId }: Props ) => {
 		dispatch( requestJetpackConnectionHealthStatus( siteId ) );
 	}, [ dispatch, siteId ] );
 
-	if ( isJetpackConnectionHealthAPIError || jetpackConnectionHealth?.is_healthy ) {
+	if ( isJetpackConnectionHealthAPIError || ! jetpackConnectionHealth?.error ) {
 		return;
 	}
 
-	const errorType = jetpackConnectionHealth?.error || '';
+	const errorType = jetpackConnectionHealth?.error ?? '';
 
 	if ( errorType === DNS_ERROR ) {
 		return (

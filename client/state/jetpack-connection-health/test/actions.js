@@ -127,7 +127,7 @@ describe( 'action', () => {
 					[ siteId ]: {
 						lastRequestTime: Date.now() - 1000 * 60 * 4,
 						connectionHealth: {
-							error: '',
+							error: null,
 						},
 					},
 				},

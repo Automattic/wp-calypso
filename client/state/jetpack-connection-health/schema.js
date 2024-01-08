@@ -9,9 +9,6 @@ const lastRequestTime = {
 const connectionHealth = {
 	type: 'object',
 	properties: {
-		is_healthy: {
-			type: 'boolean',
-		},
 		jetpack_connection_problem: {
 			type: 'boolean',
 		},
