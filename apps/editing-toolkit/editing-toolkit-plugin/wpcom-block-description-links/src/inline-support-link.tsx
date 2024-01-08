@@ -34,7 +34,7 @@ export default function DescriptionSupportLink( {
 			<br />
 			<Button
 				onClick={ () => {
-					if ( ! setShowHelpCenter && setShowSupportDoc ) {
+					if ( setShowHelpCenter && setShowSupportDoc ) {
 						setShowHelpCenter( true );
 						setShowSupportDoc( localizeUrl( url ), postId );
 					} else {
