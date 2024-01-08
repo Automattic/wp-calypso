@@ -51,7 +51,8 @@ type LaunchpadUpdateSettings = {
 	checklist_statuses?: Record< string, boolean >;
 	is_checklist_dismissed?: {
 		slug: string;
-		is_dismissed: boolean;
+		is_dismissed?: boolean;
+		dismissed_until?: number | null;
 	};
 	launchpad_screen?: 'off' | 'minimized' | 'full' | 'skipped';
 };
@@ -173,28 +174,54 @@ export const updateLaunchpadSettings = (
 		  } as APIFetchOptions );
 };
 
-interface DismissSettings {
+interface PermanentDismiss {
 	isDismissed: boolean;
-	dismissUntil?: number;
+}
+interface TemporaryDismiss {
+	dismissedUntil: number;
 }
 
+type DismissSettings = PermanentDismiss | TemporaryDismiss;
+
+const isPermanentDismiss = ( settings: DismissSettings ): settings is PermanentDismiss =>
+	'isDismissed' in settings;
+const isTemporaryDismiss = ( settings: DismissSettings ): settings is TemporaryDismiss =>
+	'dismissedUntil' in settings;
+
+const getDismissParams = ( settings: DismissSettings ) => {
+	if ( isPermanentDismiss( settings ) ) {
+		return {
+			is_dismissed: settings.isDismissed,
+		};
+	}
+
+	if ( isTemporaryDismiss( settings ) ) {
+		return {
+			dismissed_until: settings.dismissedUntil,
+		};
+	}
+};
 export const useLaunchpadDismisser = ( siteSlug: SiteSlug, checklistSlug: string ) => {
 	const queryClient = useQueryClient();
 	const key = getKey( siteSlug, checklistSlug );
 
 	return useMutation( {
-		mutationFn: ( settings: DismissSettings ) =>
-			updateLaunchpadSettings( siteSlug, {
+		mutationFn: ( settings: DismissSettings ) => {
+			return updateLaunchpadSettings( siteSlug, {
 				is_checklist_dismissed: {
 					slug: checklistSlug,
-					is_dismissed: settings.isDismissed,
+					...getDismissParams( settings ),
 				},
-			} ),
-		onMutate: async ( settings: DismissSettings ) => {
+			} );
+		},
+		onMutate: async () => {
 			await queryClient.cancelQueries( { queryKey: key } );
 			const previous = queryClient.getQueryData< LaunchpadResponse >( key );
 
-			queryClient.setQueryData( key, { ...previous, is_dismissed: settings.isDismissed } );
+			queryClient.setQueryData( key, {
+				...previous,
+				is_dismissed: true,
+			} );
 			return { previous };
 		},
 		onSuccess: () => {

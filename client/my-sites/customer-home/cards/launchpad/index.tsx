@@ -2,6 +2,7 @@ import { Button, CircularProgressBar, Gridicon } from '@automattic/components';
 import { useLaunchpadDismisser, useSortedLaunchpadTasks } from '@automattic/data-stores';
 import { Launchpad, type Task } from '@automattic/launchpad';
 import { useTranslate } from 'i18n-calypso';
+import moment, { Duration } from 'moment';
 import { FC } from 'react';
 import EllipsisMenu from 'calypso/components/ellipsis-menu';
 import PopoverMenuItem from 'calypso/components/popover-menu/item';
@@ -11,7 +12,6 @@ import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import type { AppState } from 'calypso/types';
 
 import './style.scss';
-
 interface CustomerHomeLaunchpadProps {
 	checklistSlug: string;
 	onSiteLaunched?: () => void;
@@ -40,6 +40,14 @@ const CustomerHomeLaunchpad: FC< CustomerHomeLaunchpadProps > = ( {
 		return null;
 	}
 
+	const temporaryDismiss = ( duration: Duration ) => {
+		dismiss( {
+			dismissedUntil: moment().add( duration ).utc().unix(),
+		} );
+	};
+
+	const permanentDismiss = () => dismiss( { isDismissed: true } );
+
 	return (
 		<div className="customer-home-launchpad">
 			<div className="customer-home-launchpad__header">
@@ -56,9 +64,15 @@ const CustomerHomeLaunchpad: FC< CustomerHomeLaunchpadProps > = ( {
 						/>
 						{ isDismissible && (
 							<EllipsisMenu position="bottom" toggleTitle={ translate( 'Dismiss settings' ) }>
-								{ /* <PopoverMenuItem>{ translate( 'Hide for a day' ) } </PopoverMenuItem>
-								<PopoverMenuItem onClick={() => dismiss({isDismissed: false})} >{ translate( 'Hide for a week' ) }</PopoverMenuItem> */ }
-								<PopoverMenuItem onClick={ () => dismiss( { isDismissed: true } ) }>
+								<PopoverMenuItem onClick={ () => temporaryDismiss( moment.duration( 1, 'days' ) ) }>
+									{ translate( 'Hide for a day' ) }
+								</PopoverMenuItem>
+								<PopoverMenuItem
+									onClick={ () => temporaryDismiss( moment.duration( 1, 'weeks' ) ) }
+								>
+									{ translate( 'Hide for a week' ) }
+								</PopoverMenuItem>
+								<PopoverMenuItem onClick={ permanentDismiss }>
 									{ translate( 'Hide forever' ) }
 								</PopoverMenuItem>
 							</EllipsisMenu>
