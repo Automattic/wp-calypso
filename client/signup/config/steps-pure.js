@@ -28,7 +28,6 @@ export function generateSteps( {
 	createWpForTeamsSite = noop,
 	createSiteOrDomain = noop,
 	createSiteWithCart = noop,
-	setDesignOnSite = noop,
 	setThemeOnSite = noop,
 	setOptionsOnSite = noop,
 	setStoreFeatures = noop,
@@ -876,31 +875,6 @@ export function generateSteps( {
 			optionalDependencies: [ 'intent' ],
 			apiRequestFunction: setIntentOnSite,
 			delayApiRequestUntilComplete: true,
-		},
-
-		'design-setup-site': {
-			stepName: 'design-setup-site',
-			apiRequestFunction: setDesignOnSite,
-			delayApiRequestUntilComplete: true,
-			dependencies: [ 'siteSlug' ],
-			providesDependencies: [
-				'selectedDesign',
-				'selectedSiteCategory',
-				'cartItem',
-				'isLetUsChooseSelected',
-				'siteSlug',
-			],
-			optionalDependencies: [
-				'selectedDesign',
-				'selectedSiteCategory',
-				'cartItem',
-				'isLetUsChooseSelected',
-				'siteSlug',
-			],
-			props: {
-				showDesignPickerCategories: true,
-				showDesignPickerCategoriesAllFilter: true,
-			},
 		},
 
 		'new-or-existing-site': {

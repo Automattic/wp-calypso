@@ -40,7 +40,7 @@ export const getProductPricingInfo = (
 			);
 		// If a monthly product is found, calculate the actual cost and discount percentage
 		if ( monthlyProduct ) {
-			const monthlyProductBundleCost = parseFloat( product.amount );
+			const monthlyProductBundleCost = parseFloat( product.amount ) * quantity;
 			const actualCost = isDailyPricing ? monthlyProductBundleCost / 365 : monthlyProductBundleCost;
 			const discountedCost = actualCost - productBundleCost;
 			discountInfo.discountPercentage = productBundleCost

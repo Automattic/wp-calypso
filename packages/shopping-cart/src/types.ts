@@ -525,10 +525,6 @@ export interface ResponseCartProduct {
 	is_included_for_100yearplan: boolean;
 
 	product_variants: ResponseCartProductVariant[];
-
-	// Temporary optional properties for the monthly pricing test
-	related_monthly_plan_cost_display?: string;
-	related_monthly_plan_cost_integer?: number;
 }
 
 export interface ResponseCartProductVariant {

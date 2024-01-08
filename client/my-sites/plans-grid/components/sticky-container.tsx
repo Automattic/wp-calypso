@@ -4,20 +4,55 @@ import classNames from 'classnames';
 import { useRef, type ElementType, useState, useLayoutEffect, ReactNode } from 'react';
 
 type Props = {
+	/**
+	 * Function that renders the content when the element is stuck
+	 * @param isStuck - Indicates if the element is stuck
+	 * @returns ReactNode
+	 */
 	children: ( isStuck: boolean ) => ReactNode;
-	stickyClass?: string; // class to apply when the element is "stuck"
-	element?: ElementType; // which element to render, defaults to div
-	stickyOffset?: number; // offset from the top of the scrolling container to control when the element should start sticking, default 0
-	disabled?: boolean; // force disabled sticky behaviour if set to true
+
+	/**
+	 * CSS class applied when the element is "stuck"
+	 */
+	stickyClass?: string;
+
+	/**
+	 * Element type to render (defaults to div)
+	 */
+	element?: ElementType;
+
+	/**
+	 * Offset from the top of the scrolling container to trigger stickiness (default 0)
+	 */
+	stickyOffset?: number;
+
+	/**
+	 * Set to true to disable sticky behavior
+	 */
+	disabled?: boolean;
+
+	/**
+	 * Manually set z-index. Useful for managing the stacking order of sticky elements when multiple components compete.
+	 * Higher z-index values will make the element appear on top of elements with lower z-index values.
+	 */
+	zIndex?: number;
 };
 
-const styles = ( { disabled, stickyOffset }: { disabled: boolean; stickyOffset: number } ) =>
+const styles = ( {
+	disabled,
+	stickyOffset,
+	zIndex,
+}: {
+	disabled: boolean;
+	stickyOffset: number;
+	zIndex: number;
+} ) =>
 	disabled
 		? ''
 		: css`
 				position: sticky;
 				top: ${ stickyOffset + 'px' };
-				z-index: 2;
+				z-index: ${ zIndex };
 		  `;
 
 const Container = styled.div`
@@ -25,7 +60,14 @@ const Container = styled.div`
 `;
 
 export function StickyContainer( props: Props ) {
-	const { stickyOffset = 0, stickyClass = '', element = 'div', disabled = false, children } = props;
+	const {
+		stickyOffset = 0,
+		zIndex = 2,
+		stickyClass = '',
+		element = 'div',
+		disabled = false,
+		children,
+	} = props;
 
 	const stickyRef = useRef( null );
 	const [ isStuck, setIsStuck ] = useState( false );
@@ -69,7 +111,7 @@ export function StickyContainer( props: Props ) {
 		return () => {
 			observer.disconnect();
 		};
-	}, [ stickyOffset ] );
+	}, [ disabled, stickyOffset ] );
 
 	return (
 		<>
@@ -91,6 +133,7 @@ export function StickyContainer( props: Props ) {
 				stickyOffset={ stickyOffset }
 				disabled={ disabled }
 				className={ classNames( { [ stickyClass ]: isStuck } ) }
+				zIndex={ zIndex }
 			>
 				{ children( isStuck ) }
 			</Container>
