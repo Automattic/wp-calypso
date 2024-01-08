@@ -166,6 +166,7 @@ export function* createSenseiSite( {
 			lang_id: lang_id,
 			site_creation_flow: 'sensei',
 			enable_fse: true,
+			theme: 'pub/course',
 			timezone_string: guessTimezone(),
 			...( selectedDesign?.template && { template: selectedDesign.template } ),
 			...( selectedFonts && {
@@ -430,13 +431,6 @@ export const setProgressTitle = ( progressTitle: string | undefined ) => ( {
 	progressTitle,
 } );
 
-export const setStepProgress = (
-	stepProgress: { count: number; progress: number } | undefined
-) => ( {
-	type: 'SET_STEP_PROGRESS' as const,
-	stepProgress,
-} );
-
 export const setGoals = ( goals: SiteGoal[] ) => ( {
 	type: 'SET_GOALS' as const,
 	goals,
@@ -475,6 +469,15 @@ export const setStoreLocationCountryCode = ( storeLocationCountryCode: string ) 
 export const setEcommerceFlowRecurType = ( ecommerceFlowRecurType: string ) => ( {
 	type: 'SET_ECOMMERCE_FLOW_RECUR_TYPE' as const,
 	ecommerceFlowRecurType,
+} );
+
+export const setCouponCode = ( couponCode: string ) => ( {
+	type: 'SET_COUPON_CODE' as const,
+	couponCode,
+} );
+
+export const resetCouponCode = () => ( {
+	type: 'RESET_COUPON_CODE' as const,
 } );
 
 export const setDomainForm = ( step: Record< string, string > ) => {
@@ -569,7 +572,6 @@ export type OnboardAction = ReturnType<
 	| typeof setPendingAction
 	| typeof setProgress
 	| typeof setProgressTitle
-	| typeof setStepProgress
 	| typeof setGoals
 	| typeof clearImportGoal
 	| typeof clearDIFMGoal
@@ -584,6 +586,7 @@ export type OnboardAction = ReturnType<
 	| typeof setVerticalId
 	| typeof setStoreLocationCountryCode
 	| typeof setEcommerceFlowRecurType
+	| typeof setCouponCode
 	| typeof setHideFreePlan
 	| typeof setHidePlansFeatureComparison
 	| typeof setProductCartItems

@@ -48,7 +48,7 @@
 		"@wordpress/keycodes": "^3.48.0",
 		"@wordpress/react-i18n": "^3.46.0",
 		"classnames": "^2.3.2",
-		"typescript": "^5.3.2",
+		"typescript": "^5.3.3",
 		"wpcom": "workspace:^",
 		"wpcom-proxy-request": "workspace:^"
 	},

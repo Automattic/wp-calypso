@@ -4,7 +4,12 @@ import { mapValues } from 'lodash';
 import titlecase from 'to-title-case';
 import { THEME_TIERS } from 'calypso/components/theme-tier/constants';
 import { gaRecordEvent } from 'calypso/lib/analytics/ga';
-import { RETIRED_THEME_SLUGS_SET } from 'calypso/state/themes/constants';
+import { buildRelativeSearchUrl } from 'calypso/lib/build-url';
+import {
+	RETIRED_THEME_SLUGS_SET,
+	STATIC_FILTERS,
+	DEFAULT_STATIC_FILTER,
+} from 'calypso/state/themes/constants';
 
 export function trackClick( componentName, eventName, verb = 'click' ) {
 	const stat = `${ componentName } ${ eventName } ${ verb }`;
@@ -72,11 +77,11 @@ export function localizeThemesPath( path, locale, isLoggedOut = true ) {
 	return path;
 }
 
-export function addOptionsToGetUrl( options, { tabFilter, styleVariationSlug } ) {
+export function addOptionsToGetUrl( options, { tabFilter, tierFilter, styleVariationSlug } ) {
 	return mapValues( options, ( option ) =>
 		Object.assign( {}, option, {
 			...( option.getUrl && {
-				getUrl: ( t ) => option.getUrl( t, { tabFilter, styleVariationSlug } ),
+				getUrl: ( t ) => option.getUrl( t, { tabFilter, tierFilter, styleVariationSlug } ),
 			} ),
 		} )
 	);
@@ -168,4 +173,36 @@ export function getTierRouteParam() {
 	return isEnabled( 'themes/tiers' )
 		? `:tier(${ Object.keys( THEME_TIERS ).join( '|' ) })?`
 		: ':tier(free|premium|marketplace)?';
+}
+
+export function isStaticFilter( currentFilter ) {
+	return Object.values( STATIC_FILTERS ).includes( currentFilter );
+}
+
+export function constructThemeShowcaseUrl( {
+	category,
+	vertical,
+	tier,
+	filter,
+	siteSlug,
+	search,
+	locale,
+	isLoggedIn,
+	isCollectionView,
+} ) {
+	const siteIdSection = siteSlug ? `/${ siteSlug }` : '';
+	const categorySection = category && category !== DEFAULT_STATIC_FILTER ? `/${ category }` : '';
+	const verticalSection = vertical ? `/${ vertical }` : '';
+	const tierSection = tier && tier !== 'all' ? `/${ tier }` : '';
+
+	let filterSection = filter ? `/filter/${ filter }` : '';
+	filterSection = filterSection.replace( /\s/g, '+' );
+
+	const collectionSection = isCollectionView ? `/collection` : '';
+
+	let url = `/themes${ categorySection }${ verticalSection }${ tierSection }${ filterSection }${ collectionSection }${ siteIdSection }`;
+
+	url = localizeThemesPath( url, locale, ! isLoggedIn );
+
+	return buildRelativeSearchUrl( url, search );
 }

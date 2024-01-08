@@ -24,7 +24,7 @@ export const ReviewModal = ( { isVisible, onClose, slug, productName, productTyp
 	const [ content, setContent ] = useState< string >( '' );
 	const [ rating, setRating ] = useState< number >( 5 );
 
-	const createReview = useCreateMarketplaceReviewMutation();
+	const createReview = useCreateMarketplaceReviewMutation( { productType, slug } );
 
 	if ( createReview.isSuccess ) {
 		return (

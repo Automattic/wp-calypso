@@ -86,7 +86,6 @@ export default function LicenseList() {
 								parentLicenseId={ license.licenseId }
 								licenseKey={ license.licenseKey }
 								product={ license.product }
-								username={ license.username }
 								blogId={ license.blogId }
 								siteUrl={ license.siteUrl }
 								hasDownloads={ license.hasDownloads }

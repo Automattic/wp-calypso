@@ -137,7 +137,7 @@ function useAvailableUpgradeTiers(
 	// TODO: Add the loading state of the plan usage query to avoid redundant re-rendering.
 	const { data: usageData } = usePlanUsageQuery( siteId );
 
-	if ( ! commercialProduct || ! usageData ) {
+	if ( ! commercialProduct?.price_tier_list || ! usageData ) {
 		return MOCK_PLAN_DATA;
 	}
 

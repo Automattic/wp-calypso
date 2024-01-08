@@ -14,7 +14,6 @@ import {
 	isWpcomEnterpriseGridPlan,
 	isFreePlan,
 } from '@automattic/calypso-products';
-import { Gridicon } from '@automattic/components';
 import { WpcomPlansUI } from '@automattic/data-stores';
 import { formatCurrency } from '@automattic/format-currency';
 import { isMobile } from '@automattic/viewport';
@@ -125,7 +124,7 @@ const SignupFlowPlanFeatureActionButton = ( {
 						onClick={ () => handleUpgradeButtonClick( false ) }
 						borderless
 					>
-						{ btnText } <Gridicon icon="arrow-right" />
+						{ btnText }
 					</PlanButton>
 				) }
 			</div>

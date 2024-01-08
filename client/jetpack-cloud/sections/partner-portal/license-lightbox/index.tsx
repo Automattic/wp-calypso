@@ -1,4 +1,4 @@
-import { Button } from '@automattic/components';
+import { Button, Gridicon } from '@automattic/components';
 import { useBreakpoint } from '@automattic/viewport-react';
 import classNames from 'classnames';
 import { FunctionComponent, useCallback } from 'react';
@@ -24,11 +24,15 @@ export type LicenseLightBoxProps = {
 	extraAsideContent?: JSX.Element;
 	className?: string;
 	quantity?: number;
+	isCTAExternalLink?: boolean;
+	ctaHref?: string;
 };
 
 const LicenseLightbox: FunctionComponent< LicenseLightBoxProps > = ( {
 	ctaLabel,
 	isCTAPrimary = true,
+	isCTAExternalLink = false,
+	ctaHref,
 	isDisabled,
 	onActivate,
 	onClose,
@@ -66,10 +70,15 @@ const LicenseLightbox: FunctionComponent< LicenseLightBoxProps > = ( {
 				<Button
 					className="license-lightbox__cta-button"
 					primary={ isCTAPrimary }
-					onClick={ onCTAClick }
+					onClick={ ! isCTAExternalLink ? onCTAClick : undefined }
 					disabled={ isDisabled }
+					href={ ctaHref }
+					target={ isCTAExternalLink ? '_blank' : undefined }
 				>
 					{ ctaLabel }
+					{ isCTAExternalLink && (
+						<Gridicon className="license-lightbox__cta-button-external-link" icon="external" />
+					) }
 				</Button>
 				{ extraAsideContent }
 			</JetpackLightboxAside>

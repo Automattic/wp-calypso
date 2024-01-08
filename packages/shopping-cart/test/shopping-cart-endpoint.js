@@ -13,16 +13,12 @@ import {
 const cart = {
 	products: [],
 	total_tax_integer: 0,
-	total_tax_display: '$0',
 	total_cost_integer: 0,
-	total_cost_display: '$0',
 	currency: 'USD',
 	credits_integer: 0,
-	credits_display: '$0',
 	allowed_payment_methods: [],
 	coupon: '',
 	is_coupon_applied: false,
-	coupon_discounts_integer: [],
 	locale: 'en-us',
 	tax: {
 		location: {},

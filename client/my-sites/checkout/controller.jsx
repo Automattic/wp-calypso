@@ -77,6 +77,10 @@ export function checkoutAkismetSiteless( context, next ) {
 	sitelessCheckout( context, next, { sitelessCheckoutType: 'akismet' } );
 }
 
+export function checkoutMarketplaceSiteless( context, next ) {
+	sitelessCheckout( context, next, { sitelessCheckoutType: 'marketplace' } );
+}
+
 function sitelessCheckout( context, next, extraProps ) {
 	const state = context.store.getState();
 	const isLoggedOut = ! isUserLoggedIn( state );
