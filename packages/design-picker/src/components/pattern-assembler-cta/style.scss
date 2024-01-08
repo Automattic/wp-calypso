@@ -29,7 +29,6 @@
 		padding: 96px 64px;
 	}
 
-
 	@media ( min-width: 1600px ) {
 		flex-direction: column;
 	}
@@ -133,13 +132,19 @@
 	}
 
 	.pattern-assembler-cta__image-wrapper {
-		padding-left: 35px;
 		text-align: right;
+
+		@include break-wide {
+			padding-left: 35px;
+		}
 	}
 
 	.pattern-assembler-cta__image {
 		width: 100%;
-		min-width: 380px;
-		max-width: 405px;
+
+		@include break-wide {
+			min-width: 380px;
+			max-width: 405px;
+		}
 	}
 }
