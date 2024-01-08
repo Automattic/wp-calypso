@@ -3,6 +3,7 @@ import { useDispatch, useSelector } from 'calypso/state';
 import { setJetpackConnectionMaybeUnhealthy } from 'calypso/state/jetpack-connection-health/actions';
 import getSelectedSiteId from 'calypso/state/ui/selectors/get-selected-site-id';
 import 'calypso/state/jetpack-connection-health/init';
+import getJetpackConnectionHealth from './get-jetpack-connection-health';
 
 /**
  * Returns true if the current site has possible Jetpack connection problem
@@ -11,7 +12,7 @@ import 'calypso/state/jetpack-connection-health/init';
  * @returns {boolean}             Whether the current site can have connection problem
  */
 export default function isJetpackConnectionProblem( state, siteId ) {
-	const siteState = state.jetpackConnectionHealth[ siteId ];
+	const siteState = getJetpackConnectionHealth( state, siteId );
 
 	if ( siteState?.connectionHealth?.jetpack_connection_problem === undefined ) {
 		return false;
