@@ -36,11 +36,7 @@ import { getAtomicHostingIsLoadingSftpData } from 'calypso/state/selectors/get-a
 import isSiteWpcomStaging from 'calypso/state/selectors/is-site-wpcom-staging';
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import { requestSite } from 'calypso/state/sites/actions';
-import {
-	isSiteOnECommerceTrial,
-	isSiteOnHostingTrial,
-	isSiteOnMigrationTrial,
-} from 'calypso/state/sites/plans/selectors';
+import { isSiteOnBusinessTrial, isSiteOnECommerceTrial } from 'calypso/state/sites/plans/selectors';
 import isJetpackSite from 'calypso/state/sites/selectors/is-jetpack-site';
 import { getReaderTeams } from 'calypso/state/teams/selectors';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
@@ -89,7 +85,7 @@ const MainCards = ( {
 	isBasicHostingDisabled,
 	isGithubIntegrationEnabled,
 	isWpcomStagingSite,
-	isMigrationTrial,
+	isBusinessTrial,
 	siteId,
 } ) => {
 	const mainCards = [
@@ -157,7 +153,7 @@ const MainCards = ( {
 		<ShowEnabledFeatureCards
 			cards={ mainCards }
 			availableTypes={ availableTypes }
-			showDisabledCards={ ! isMigrationTrial }
+			showDisabledCards={ ! isBusinessTrial }
 		/>
 	);
 };
@@ -185,8 +181,7 @@ const Hosting = ( props ) => {
 		teams,
 		clickActivate,
 		isECommerceTrial,
-		isMigrationTrial,
-		isHostingTrial,
+		isBusinessTrial,
 		isWpcomStagingSite,
 		siteId,
 		siteSlug,
@@ -300,7 +295,7 @@ const Hosting = ( props ) => {
 								isBasicHostingDisabled={ ! hasAtomicFeature || ! isSiteAtomic }
 								isGithubIntegrationEnabled={ isGithubIntegrationEnabled }
 								isWpcomStagingSite={ isWpcomStagingSite }
-								isMigrationTrial={ isMigrationTrial }
+								isBusinessTrial={ isBusinessTrial }
 								siteId={ siteId }
 							/>
 						</Column>
@@ -321,8 +316,6 @@ const Hosting = ( props ) => {
 	const shouldShowUpgradeBanner =
 		! hasAtomicFeature || ( ! isTransferring && ! hasSftpFeature && ! isWpcomStagingSite );
 	const banner = shouldShowUpgradeBanner ? getUpgradeBanner() : getAtomicActivationNotice();
-
-	const isBusinessTrial = isMigrationTrial || isHostingTrial;
 
 	return (
 		<Main wideLayout className="hosting">
@@ -363,8 +356,7 @@ export default connect(
 			teams: getReaderTeams( state ),
 			isJetpack: isJetpackSite( state, siteId ),
 			isECommerceTrial: isSiteOnECommerceTrial( state, siteId ),
-			isMigrationTrial: isSiteOnMigrationTrial( state, siteId ),
-			isHostingTrial: isSiteOnHostingTrial( state, siteId ),
+			isBusinessTrial: isSiteOnBusinessTrial( state, siteId ),
 			transferState: getAutomatedTransferStatus( state, siteId ),
 			hasSftpFeature,
 			hasAtomicFeature,
