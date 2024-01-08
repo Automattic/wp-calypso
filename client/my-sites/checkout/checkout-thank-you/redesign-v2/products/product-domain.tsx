@@ -15,8 +15,14 @@ type ProductDomainProps = {
 	currency?: string;
 };
 
-const ProductDomain = ( { purchase, domainName, shareSite, siteSlug, currency }: ProductDomainProps ) => {
-	const { __, _n } = useI18n();
+const ProductDomain = ( {
+	purchase,
+	domainName,
+	shareSite,
+	siteSlug,
+	currency,
+}: ProductDomainProps ) => {
+	const { __ } = useI18n();
 	const [ isCopying, setIsCopying ] = useState( false );
 	const domain = domainName ?? purchase?.meta;
 
@@ -41,8 +47,8 @@ const ProductDomain = ( { purchase, domainName, shareSite, siteSlug, currency }:
 		);
 	};
 
-	const actions = domainName || ! isDomainTransfer( purchase )
-		? (
+	const actions =
+		domainName || ! isDomainTransfer( purchase ) ? (
 			<>
 				{ shareSite && (
 					<ClipboardButton
@@ -62,16 +68,11 @@ const ProductDomain = ( { purchase, domainName, shareSite, siteSlug, currency }:
 					{ translate( 'Manage domains' ) }
 				</Button>
 			</>
-		)
-		: purchaseLabel( purchase.priceInteger );
+		) : (
+			purchaseLabel( purchase.priceInteger )
+		);
 
-	return (
-		<ThankYouProduct
-			name={ domain }
-			key={ 'domain-' + domain }
-			actions={ actions }
-		/>
-	);
+	return <ThankYouProduct name={ domain } key={ 'domain-' + domain } actions={ actions } />;
 };
 
 export default ProductDomain;

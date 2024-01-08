@@ -4,7 +4,6 @@ import { Button } from '@automattic/components';
 import styled from '@emotion/styled';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback, useEffect, useMemo } from 'react';
-import { ThankYouData, ThankYouSectionProps } from 'calypso/components/thank-you/types';
 import { useWPCOMPlugins } from 'calypso/data/marketplace/use-wpcom-plugins-query';
 import { waitFor } from 'calypso/my-sites/marketplace/util';
 import { useSelector, useDispatch } from 'calypso/state';
@@ -25,6 +24,17 @@ import { isJetpackSite } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import { ThankYouPluginSection } from './marketplace-thank-you-plugin-section';
 import MasterbarStyled from './masterbar-styled';
+
+type ThankYouData = [
+	ThankYouPluginSection[],
+	boolean,
+	JSX.Element,
+	string,
+	string,
+	string[],
+	boolean,
+	React.ReactElement | null,
+];
 
 export default function usePluginsThankYouData( pluginSlugs: string[] ): ThankYouData {
 	const dispatch = useDispatch();
@@ -157,13 +167,9 @@ export default function usePluginsThankYouData( pluginSlugs: string[] ): ThankYo
 		pluginSlugs,
 	] );
 
-	const pluginsSection: ThankYouSectionProps = {
-		sectionKey: 'plugin_information',
-		nextSteps: pluginsInformationList.map( ( plugin: any ) => ( {
-			stepKey: `plugin_information_${ plugin.slug }`,
-			stepSection: <ThankYouPluginSection plugin={ plugin } />,
-		} ) ),
-	};
+	const pluginsSection: ThankYouPluginSection[] = pluginsInformationList.map( ( plugin: any ) => {
+		return <ThankYouPluginSection plugin={ plugin } />;
+	} );
 
 	const goBackSection = (
 		<MasterbarStyled

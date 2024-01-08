@@ -1,4 +1,5 @@
 import { Spinner } from '@automattic/components';
+import { translate } from 'i18n-calypso';
 import { useEffect, useState } from 'react';
 
 import './style.scss';
@@ -6,14 +7,18 @@ import './style.scss';
 export type ThankYouProductProps = {
 	name: string;
 	details?: string;
+	icon?: string;
 	actions?: React.ReactNode;
+	preview?: React.ReactNode;
 	isLoading?: boolean;
 };
 
 const ThankYouProduct = ( {
 	name,
 	details,
+	icon,
 	actions,
+	preview,
 	isLoading = false,
 }: ThankYouProductProps ) => {
 	const [ shouldShowLoader, setShouldShowLoader ] = useState( isLoading );
@@ -24,6 +29,16 @@ const ThankYouProduct = ( {
 
 	return (
 		<li className="checkout-thank-you__product">
+			{ icon && (
+				<img
+					className="checkout-thank-you__product-icon"
+					src={ icon }
+					width={ 50 }
+					height={ 50 }
+					alt={ translate( "%(name)s's icon", { args: { name } } ) }
+				/>
+			) }
+
 			<div className="checkout-thank-you__product-info">
 				{ shouldShowLoader ? (
 					<Spinner />
@@ -34,7 +49,10 @@ const ThankYouProduct = ( {
 					</>
 				) }
 			</div>
+
 			{ actions && <div className="checkout-thank-you__product-actions">{ actions }</div> }
+
+			{ preview && <div className="checkout-thank-you__product-preview">{ preview }</div> }
 		</li>
 	);
 };

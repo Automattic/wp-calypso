@@ -1,12 +1,11 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { WPCOM_FEATURES_MANAGE_PLUGINS } from '@automattic/calypso-products';
-import { Button } from '@automattic/components';
-import styled from '@emotion/styled';
-import { Spinner } from '@wordpress/components';
+import { Button } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import moment from 'moment';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
+import ThankYouProduct from 'calypso/components/thank-you-v2/product';
 import { getPluginPurchased } from 'calypso/lib/plugins/utils';
 import { useSelector } from 'calypso/state';
 import {
@@ -17,74 +16,6 @@ import {
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import { getSiteAdminUrl } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
-
-const PluginSectionContainer = styled.div`
-	display: flex;
-	flex-direction: row;
-	width: 100%;
-	box-sizing: border-box;
-	align-items: center;
-	gap: 16px;
-	padding: 24px;
-	border-radius: 2px;
-	border: 1px solid var( --color-border-subtle );
-	flex-wrap: wrap;
-
-	div {
-		min-width: auto;
-	}
-
-	@media ( min-width: 782px ) {
-		width: 720px;
-	}
-
-	@media ( min-width: 480px ) {
-		padding: 20px 25px;
-	}
-`;
-
-const PluginSectionContent = styled.div`
-	display: flex;
-	flex-direction: column;
-	flex-grow: 1;
-	flex-basis: 100%;
-	@media ( min-width: 480px ) {
-		flex-basis: initial;
-	}
-`;
-
-const PluginSectionName = styled.div`
-	font-size: 16px;
-	font-weight: 500;
-	line-height: 24px;
-	color: var( --studio-gray-100 );
-	flex-grow: 1;
-`;
-
-const PluginSectionExpirationDate = styled.div`
-	font-size: 14px;
-	line-height: 22px;
-	color: var( --studio-gray-60 );
-`;
-
-const PluginSectionButtons = styled.div`
-	display: flex;
-	flex-shrink: 0;
-	gap: 16px;
-	min-width: auto;
-`;
-
-const PluginButton = styled( Button )`
-	border-radius: 4px;
-`;
-
-const PluginIcon = styled.img`
-	border-radius: 10px;
-	box-shadow:
-		0px 15px 20px rgba( 0, 0, 0, 0.04 ),
-		0px 13px 10px rgba( 0, 0, 0, 0.03 ),
-		0px 6px 6px rgba( 0, 0, 0, 0.02 );
-`;
 
 export const ThankYouPluginSection = ( { plugin }: { plugin: any } ) => {
 	const translate = useTranslate();
@@ -138,47 +69,38 @@ export const ThankYouPluginSection = ( { plugin }: { plugin: any } ) => {
 	);
 
 	return (
-		<PluginSectionContainer>
+		<>
 			<QuerySitePurchases siteId={ siteId } />
-			<PluginIcon
-				width={ 50 }
-				height={ 50 }
-				src={ plugin.icon }
-				alt={
-					translate( "%(plugin)s's icon", {
-						args: {
-							plugin: plugin.name,
-						},
-					} ) as string
+			<ThankYouProduct
+				name={ plugin.name }
+				details={ expirationDate }
+				icon={ plugin.icon }
+				actions={
+					<>
+						<Button
+							variant="secondary"
+							href={ setupURL }
+							onClick={ () =>
+								sendTrackEvent( 'calypso_plugin_thank_you_manage_plugin_click', setupURL )
+							}
+						>
+							{ translate( 'Manage plugin' ) }
+						</Button>
+						{ documentationURL && (
+							<Button
+								variant="secondary"
+								href={ documentationURL }
+								onClick={ () =>
+									sendTrackEvent( 'calypso_plugin_thank_you_plugin_guide_click', documentationURL )
+								}
+							>
+								{ translate( 'Plugin guide' ) }
+							</Button>
+						) }
+					</>
 				}
+				isLoading={ expirationDate === '' }
 			/>
-			<PluginSectionContent>
-				<PluginSectionName>{ plugin.name }</PluginSectionName>
-				{ isLoadingPurchases && <Spinner /> }
-				{ expirationDate && (
-					<PluginSectionExpirationDate>{ expirationDate }</PluginSectionExpirationDate>
-				) }
-			</PluginSectionContent>
-			<PluginSectionButtons>
-				<PluginButton
-					href={ setupURL }
-					onClick={ () =>
-						sendTrackEvent( 'calypso_plugin_thank_you_manage_plugin_click', setupURL )
-					}
-				>
-					{ translate( 'Manage plugin' ) }
-				</PluginButton>
-				{ documentationURL && (
-					<PluginButton
-						href={ documentationURL }
-						onClick={ () =>
-							sendTrackEvent( 'calypso_plugin_thank_you_plugin_guide_click', documentationURL )
-						}
-					>
-						{ translate( 'Plugin guide' ) }
-					</PluginButton>
-				) }
-			</PluginSectionButtons>
-		</PluginSectionContainer>
+		</>
 	);
 };

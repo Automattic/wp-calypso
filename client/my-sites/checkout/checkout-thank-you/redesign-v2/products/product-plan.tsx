@@ -1,4 +1,4 @@
-import { Button, Spinner } from '@automattic/components';
+import { Button } from '@wordpress/components';
 import { translate } from 'i18n-calypso';
 import moment from 'moment';
 import { useEffect, useMemo, useState } from 'react';
@@ -25,7 +25,7 @@ const ProductPlan = ( { purchase, siteSlug, siteId }: ProductPlanProps ) => {
 	const [ expirationDate, setExpirationDate ] = useState( '' );
 
 	const purchases = useSelector( ( state ) => getSitePurchases( state, siteId ) );
-	console.log( 'purchases', purchases );
+
 	const productPurchase = useMemo(
 		() => getPurchaseByProductSlug( purchases, purchase.productSlug ),
 		[ purchase.productSlug, purchases ]
@@ -50,14 +50,14 @@ const ProductPlan = ( { purchase, siteSlug, siteId }: ProductPlanProps ) => {
 			} ) }
 			key={ 'plan-' + purchase.productSlug }
 			details={ expirationDate }
-			actions={ (
+			actions={
 				<>
 					<Button primary href={ `/home/${ siteSlug }` }>
 						{ translate( 'Let’s work on the site' ) }
 					</Button>
 					<Button href={ `/plans/my-plan/${ siteSlug }` }>{ translate( 'Manage plan' ) }</Button>
 				</>
-			) }
+			}
 			isLoading={ expirationDate === '' }
 		/>
 	);
