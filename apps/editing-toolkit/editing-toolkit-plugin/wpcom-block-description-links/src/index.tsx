@@ -18,12 +18,12 @@ const createLocalizedDescriptionWithLearnMore = (
 	title: string,
 	description: string | ReactElement< string | JSXElementConstructor< any > >,
 	url: string,
-	postID: number
+	postId: number
 ) => {
 	const localizedUrl = localizeUrl( url, window.wpcomBlockDescriptionLinksLocale );
 	return createInterpolateElement( '<InlineSupportLink />', {
 		InlineSupportLink: (
-			<DescriptionSupportLink title={ String( title ) } url={ localizedUrl } postID={ postID }>
+			<DescriptionSupportLink title={ String( title ) } url={ localizedUrl } postId={ postId }>
 				{ description }
 			</DescriptionSupportLink>
 		),
@@ -65,18 +65,18 @@ const addBlockSupportLinks = (
 	const additonalDescLink =
 		childrenBlockInfoWithDifferentUrl[ name ]?.link || blockInfoMapping[ blockName ]?.link;
 
-	const additionalDescPostID =
+	const additionalDescPostId =
 		childrenBlockInfoWithDifferentUrl[ name ]?.ID || blockInfoMapping[ blockName ]?.ID;
 
 	/**
 	 * Some elements are children, but have their own url for Learn More, and we want to show those.
 	 */
-	if ( additonalDescLink && additionalDescPostID ) {
+	if ( additonalDescLink && additionalDescPostId ) {
 		settings.description = createLocalizedDescriptionWithLearnMore(
 			String( settings.title ),
 			settings.description,
 			additonalDescLink,
-			additionalDescPostID
+			additionalDescPostId
 		);
 	}
 

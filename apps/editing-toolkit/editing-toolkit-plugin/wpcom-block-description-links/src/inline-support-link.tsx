@@ -10,14 +10,14 @@ interface Props {
 	children: string | ReactElement< string | JSXElementConstructor< any > >;
 	title: string;
 	url: string;
-	postID: number;
+	postId: number;
 }
 
 export default function DescriptionSupportLink( {
 	children,
 	title,
 	url,
-	postID,
+	postId,
 }: Props ): JSX.Element {
 	// This was cooked up to only apply the link in the BlockEditor sidebar.
 	// Since there was no identifier in the environment to differentiate.
@@ -36,7 +36,7 @@ export default function DescriptionSupportLink( {
 				onClick={ () => {
 					if ( ! setShowHelpCenter && setShowSupportDoc ) {
 						setShowHelpCenter( true );
-						setShowSupportDoc( localizeUrl( url ), postID );
+						setShowSupportDoc( localizeUrl( url ), postId );
 					} else {
 						window.open( url, '_blank' );
 					}
