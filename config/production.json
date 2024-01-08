@@ -175,7 +175,6 @@
 		"subscription-management/comments-list-controls": true,
 		"subscription-management/migrate-subscribers": true,
 		"subscription-management-redirect-following": true,
-		"themes/atomic-homepage-replace": true,
 		"themes/block-theme-previews-premium-and-woo": false,
 		"themes/discovery": true,
 		"themes/display-thank-you-page-for-bundle": true,
