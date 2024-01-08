@@ -5,6 +5,7 @@ import { Icon, Modal, Button } from '@wordpress/components';
 import { useDispatch } from '@wordpress/data';
 import { __ } from '@wordpress/i18n';
 import { external } from '@wordpress/icons';
+import debugFactory from 'debug';
 import React, { useState, useEffect } from 'react';
 /**
  * Internal dependencies
@@ -21,25 +22,30 @@ import './generator-modal.scss';
  */
 import type { GeneratorModalProps } from '../../types';
 
+const debug = debugFactory( 'jetpack-ai-calypso:generator-modal' );
+
 export const GeneratorModal: React.FC< GeneratorModalProps > = ( {
 	isOpen,
 	onClose,
 	siteDetails,
 } ) => {
 	// eslint-disable-next-line @typescript-eslint/no-unused-vars
-	const { setSiteDetails } = useDispatch( STORE_NAME );
+	const { setSiteDetails, fetchAiAssistantFeature } = useDispatch( STORE_NAME );
 	const [ isLoading, setIsLoading ] = useState( true );
-	const { selectedLogo, getAiAssistantFeature } = useLogoGenerator();
+	const { selectedLogo } = useLogoGenerator();
 	const siteId = siteDetails?.ID;
 
 	useEffect( () => {
-		setSiteDetails( siteDetails );
-	}, [ siteDetails, setSiteDetails ] );
+		if ( siteId ) {
+			setSiteDetails( siteDetails );
+		}
+	}, [ siteId, siteDetails, setSiteDetails ] );
 
 	useEffect( () => {
 		if ( isOpen ) {
 			if ( siteId ) {
-				getAiAssistantFeature( String( siteId ) );
+				debug( 'fetching ai assistant feature for site', siteId );
+				fetchAiAssistantFeature( String( siteId ) );
 			}
 
 			setTimeout( () => {
@@ -48,7 +54,7 @@ export const GeneratorModal: React.FC< GeneratorModalProps > = ( {
 		} else {
 			setIsLoading( true );
 		}
-	}, [ isOpen, getAiAssistantFeature, siteId ] );
+	}, [ isOpen, fetchAiAssistantFeature, siteId ] );
 
 	const handleApplyLogo = () => {
 		onClose();
