@@ -1,5 +1,5 @@
 import { Button, CircularProgressBar, Gridicon } from '@automattic/components';
-import { useLauchpadDismisser, useSortedLaunchpadTasks } from '@automattic/data-stores';
+import { useLaunchpadDismisser, useSortedLaunchpadTasks } from '@automattic/data-stores';
 import { Launchpad, type Task } from '@automattic/launchpad';
 import { useTranslate } from 'i18n-calypso';
 import { FC } from 'react';
@@ -26,7 +26,7 @@ const CustomerHomeLaunchpad: FC< CustomerHomeLaunchpadProps > = ( {
 	const translate = useTranslate();
 	const siteSlug = useSelector( ( state: AppState ) => getSiteSlug( state, siteId ) || '' );
 
-	const { mutate: dismiss } = useLauchpadDismisser( siteSlug, checklistSlug );
+	const { mutate: dismiss } = useLaunchpadDismisser( siteSlug, checklistSlug );
 
 	const {
 		data: { checklist, is_dismissed: isDismissed, is_dismissible: isDismissible, title },

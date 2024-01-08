@@ -178,7 +178,7 @@ interface DismissSettings {
 	dismissUntil?: number;
 }
 
-export const useLauchpadDismisser = ( siteSlug: SiteSlug, checklistSlug: string ) => {
+export const useLaunchpadDismisser = ( siteSlug: SiteSlug, checklistSlug: string ) => {
 	const queryClient = useQueryClient();
 	const key = getKey( siteSlug, checklistSlug );
 
