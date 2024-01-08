@@ -787,6 +787,7 @@ const PlansFeaturesMain = ( {
 								layoutClassName="plans-features-main__plan-type-selector-layout"
 								enableStickyBehavior={ enablePlanTypeSelectorStickyBehavior }
 								stickyPlanTypeSelectorOffset={ masterbarHeight - 1 }
+								coupon={ coupon }
 							/>
 						) }
 						<div
@@ -862,6 +863,7 @@ const PlansFeaturesMain = ( {
 												<PlanTypeSelector
 													{ ...planTypeSelectorProps }
 													layoutClassName="plans-features-main__plan-type-selector-layout"
+													coupon={ coupon }
 												/>
 											) }
 											<ComparisonGrid
