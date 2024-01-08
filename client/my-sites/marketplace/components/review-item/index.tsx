@@ -1,5 +1,5 @@
 import { isEnabled } from '@automattic/calypso-config';
-import { Gridicon, Button } from '@automattic/components';
+import { Gridicon, Button, ConfettiAnimation } from '@automattic/components';
 import Card from '@automattic/components/src/card';
 import { CheckboxControl, TextareaControl } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
@@ -16,6 +16,7 @@ import {
 	ProductDefinitionProps,
 	useCreateMarketplaceReviewMutation,
 	useDeleteMarketplaceReviewMutation,
+	useMarketplaceReviewsQuery,
 	useUpdateMarketplaceReviewMutation,
 } from 'calypso/data/marketplace/use-marketplace-reviews';
 import { getAvatarURL } from 'calypso/data/marketplace/utils';
@@ -225,14 +226,32 @@ export const MarketplaceReviewItem = ( props: MarketplaceReviewItemProps ) => {
 	);
 };
 
+const THANK_YOU_ANIMATION_DURATION = 5000; // in ms
+
 export function MarketplaceCreateReviewItem( props: ProductDefinitionProps ) {
 	const { productType, slug } = props;
-	const user = useSelector( getCurrentUser );
 	const translate = useTranslate();
+	const currentUser = useSelector( getCurrentUser );
 	const [ content, setContent ] = useState< string >( '' );
 	const [ rating, setRating ] = useState< number >( 0 );
 	const [ errorMessage, setErrorMessage ] = useState( '' );
+	const [ showThankYouSection, setShowThankYouSection ] = useState( false );
 	const [ showContentArea, setShowContentArea ] = useState( false );
+
+	const { data: userReviews } = useMarketplaceReviewsQuery( {
+		productType,
+		slug,
+		perPage: 1,
+		author: currentUser?.ID ?? undefined,
+		status: 'all',
+	} );
+
+	const resetFields = () => {
+		setShowContentArea( false );
+		setErrorMessage( '' );
+		setContent( '' );
+		setRating( 0 );
+	};
 
 	const createReviewMutation = useCreateMarketplaceReviewMutation( { productType, slug } );
 	const createReview = () => {
@@ -243,7 +262,12 @@ export function MarketplaceCreateReviewItem( props: ProductDefinitionProps ) {
 					setErrorMessage( error.message );
 				},
 				onSuccess: () => {
-					setErrorMessage( '' );
+					resetFields();
+					setShowThankYouSection( true );
+
+					setTimeout( () => {
+						setShowThankYouSection( false );
+					}, THANK_YOU_ANIMATION_DURATION );
 				},
 			}
 		);
@@ -254,58 +278,82 @@ export function MarketplaceCreateReviewItem( props: ProductDefinitionProps ) {
 		setShowContentArea( true );
 	};
 
+	if ( !! userReviews?.length && ! showThankYouSection ) {
+		return null;
+	}
+
 	return (
 		<div className="marketplace-create-review-item__container">
-			{ errorMessage && (
-				<Card className="marketplace-review-item__error-message" highlight="error">
-					{ errorMessage }
-				</Card>
-			) }
-
-			<div className="marketplace-review-item__review-container-header">
-				<div className="marketplace-review-item__profile-picture">
-					<Gravatar user={ user } size={ 36 } />
-				</div>
-
-				<div className="marketplace-review-item__rating-data">
-					<div className="marketplace-review-item__author">{ user?.display_name }</div>
-				</div>
-				<div className="marketplace-review-item__date">{ moment().format( 'll' ) }</div>
-			</div>
-
-			<div className="marketplace-review-item__review-rating">
-				<h2>{ translate( 'How would you rate your overall experience?' ) }</h2>
-				<ReviewsRatingsStars size="medium-large" rating={ 0 } onSelectRating={ onSelectRating } />
-			</div>
-			{ showContentArea && (
+			{ ! showThankYouSection ? (
 				<>
-					<TextareaControl
-						rows={ 4 }
-						cols={ 40 }
-						name="content"
-						value={ content }
-						onChange={ setContent }
-					/>
+					{ errorMessage && (
+						<Card className="marketplace-review-item__error-message" highlight="error">
+							{ errorMessage }
+						</Card>
+					) }
 
-					<div className="marketplace-review-item__review-actions">
-						<div>
-							{ isEnabled( 'marketplace-reviews-notification' ) && (
-								<CheckboxControl
-									className="marketplace-review-item__checkbox"
-									label={ translate( 'Notify me when my review is approved and published.' ) }
-									checked={ false }
-									onChange={ () => alert( 'Not implemented yet' ) }
-								/>
-							) }
+					<div className="marketplace-review-item__review-container-header">
+						<div className="marketplace-review-item__profile-picture">
+							<Gravatar user={ currentUser } size={ 36 } />
 						</div>
-						<div className="marketplace-review-item__review-actions-editable">
-							<Button
-								className="marketplace-review-item__review-submit"
-								primary
-								onClick={ createReview }
-							>
-								{ translate( 'Leave my review' ) }
-							</Button>
+
+						<div className="marketplace-review-item__rating-data">
+							<div className="marketplace-review-item__author">{ currentUser?.display_name }</div>
+						</div>
+						<div className="marketplace-review-item__date">{ moment().format( 'll' ) }</div>
+					</div>
+
+					<div className="marketplace-review-item__review-rating">
+						<h2>{ translate( 'How would you rate your overall experience?' ) }</h2>
+						<ReviewsRatingsStars
+							size="medium-large"
+							rating={ 0 }
+							onSelectRating={ onSelectRating }
+						/>
+					</div>
+					{ showContentArea && (
+						<>
+							<TextareaControl
+								rows={ 4 }
+								cols={ 40 }
+								name="content"
+								value={ content }
+								onChange={ setContent }
+							/>
+
+							<div className="marketplace-review-item__review-actions">
+								<div>
+									{ isEnabled( 'marketplace-reviews-notification' ) && (
+										<CheckboxControl
+											className="marketplace-review-item__checkbox"
+											label={ translate( 'Notify me when my review is approved and published.' ) }
+											checked={ false }
+											onChange={ () => alert( 'Not implemented yet' ) }
+										/>
+									) }
+								</div>
+								<div className="marketplace-review-item__review-actions-editable">
+									<Button
+										className="marketplace-review-item__review-submit"
+										primary
+										onClick={ createReview }
+									>
+										{ translate( 'Leave my review' ) }
+									</Button>
+								</div>
+							</div>
+						</>
+					) }
+				</>
+			) : (
+				<>
+					<ConfettiAnimation delay={ 1000 } />
+					<div className="marketplace-create-review-item__thank-you">
+						<h2>{ translate( 'Thank you for your feedback!' ) }</h2>
+						<div className="marketplace-create-review-item__thank-you-subtitle">
+							{ translate(
+								'Your review is currently under moderation and will notify you once your feedback is published.'
+							) }
 						</div>
 					</div>
 				</>

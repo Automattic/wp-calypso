@@ -131,9 +131,8 @@ export const ReviewsModal = ( props: Props ) => {
 					</div>
 				) }
 
-				{ ! userHasReviewed && (
-					<MarketplaceCreateReviewItem productType={ productType } slug={ slug } />
-				) }
+				<MarketplaceCreateReviewItem productType={ productType } slug={ slug } />
+
 				<div className="marketplace-reviews-modal__reviews-list">
 					<MarketplaceReviewsList productType={ productType } slug={ slug } />
 				</div>

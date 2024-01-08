@@ -162,3 +162,26 @@ $border-color: #eee;
 	border: 1px solid $border-color;
 	border-radius: 9px; /* stylelint-disable-line scales/radii */
 }
+
+.marketplace-create-review-item__thank-you {
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	align-items: center;
+	gap: 8px;
+	text-align: center;
+
+	h2 {
+		font-family: Recoleta, sans-serif;
+		font-size: $font-title-large;
+		line-height: 40px;
+		color: var(--studio-gray-100);
+	}
+
+	.marketplace-create-review-item__thank-you-subtitle {
+		font-family: "SF Pro Text", $sans;
+		font-size: $font-body-small;
+		line-height: 20px;
+		color: var(--studio-gray-60);
+	}
+}
