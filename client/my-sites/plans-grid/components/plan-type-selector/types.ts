@@ -50,6 +50,7 @@ export type IntervalTypeProps = Pick<
 	| 'selectedFeature'
 	| 'currentSitePlanSlug'
 	| 'usePricingMetaForGridPlans'
+	| 'title'
 	| 'coupon'
 >;
 
