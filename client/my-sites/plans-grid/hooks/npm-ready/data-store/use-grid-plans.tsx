@@ -77,10 +77,12 @@ export type UsePricingMetaForGridPlans = ( {
 	planSlugs,
 	withoutProRatedCredits,
 	storageAddOns,
+	coupon,
 }: {
 	planSlugs: PlanSlug[];
 	withoutProRatedCredits?: boolean;
 	storageAddOns: ( AddOnMeta | null )[] | null;
+	coupon: string | null;
 } ) => { [ planSlug: string ]: PricingMetaForGridPlan } | null;
 
 export type UseFreeTrialPlanSlugs = ( {
@@ -160,6 +162,7 @@ interface Props {
 	 */
 	isSubdomainNotGenerated?: boolean;
 	storageAddOns: ( AddOnMeta | null )[] | null;
+	coupon?: string | null;
 }
 
 const usePlanTypesWithIntent = ( {
@@ -280,6 +283,7 @@ const useGridPlans = ( {
 	eligibleForFreeHostingTrial,
 	isSubdomainNotGenerated,
 	storageAddOns,
+	coupon = null,
 }: Props ): Omit< GridPlan, 'features' >[] | null => {
 	const freeTrialPlanSlugs = useFreeTrialPlanSlugs( {
 		intent: intent ?? 'default',
@@ -321,7 +325,7 @@ const useGridPlans = ( {
 	} );
 
 	// TODO: pricedAPIPlans to be queried from data-store package
-	const pricedAPIPlans = Plans.usePlans();
+	const pricedAPIPlans = Plans.usePlans( { coupon } );
 	const pricingMeta = usePricingMetaForGridPlans( {
 		planSlugs: availablePlanSlugs,
 		storageAddOns,
