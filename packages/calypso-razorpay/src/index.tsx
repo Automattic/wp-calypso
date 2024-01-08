@@ -1,18 +1,17 @@
 import debugFactory from 'debug';
+import Razorpay from 'razorpay';
 import { useRef, useEffect, useState, useContext, createContext, PropsWithChildren } from 'react';
 
 const debug = debugFactory( 'calypso-razorpay' );
 
 export interface RazorpayConfiguration {
-	js_url: string;
-	public_key: string;
-	processor_id: string;
+	key_id: string;
 }
 
 export type RazorpayLoadingError = undefined | null | Error;
 
 export interface RazorpayData {
-	razorpay: boolean | null; // TODO: see what razorpay.js provides that is analogous to Stripe
+	razorpay: Razorpay | null;
 	razorpayConfiguration: null | RazorpayConfiguration;
 	isRazorpayLoading: boolean;
 	razorpayLoadingError: RazorpayLoadingError;
@@ -21,7 +20,7 @@ export interface RazorpayData {
 const RazorpayContext = createContext< RazorpayData | undefined >( undefined );
 
 export interface UseRazorpayJs {
-	razorpay: boolean | null;
+	razorpay: Razorpay | null;
 	isRazorpayLoading: boolean;
 	razorpayLoadingError: RazorpayLoadingError;
 }
@@ -39,7 +38,7 @@ export class RazorpayConfigurationError extends Error {}
  * This is internal. You probably actually want the useRazorpay hook.
  *
  * Its parameter is the value returned by useRazorpayConfiguration
- * @param {Object} razorpayConfiguration An object containing !!!TODO!!!
+ * @param {RazorpayConfiguration} razorpayConfiguration Object holding Razorpay configuration options
  * @param {Error|undefined} [razorpayConfigurationError] Any error that occured trying to load the configuration
  * @returns {UseRazorpayJs} The Razorpay data
  */
@@ -63,7 +62,7 @@ function useRazorpayJs(
 				return;
 			}
 			debug( 'loading razorpay...' );
-			const razorpay = await loadRazorpay( razorpayConfiguration );
+			const razorpay = new Razorpay( razorpayConfiguration );
 			debug( 'razorpay loaded!' );
 			if ( isSubscribed ) {
 				setState( {
@@ -119,11 +118,7 @@ function useRazorpayConfiguration(
 				if ( ! isSubscribed ) {
 					return;
 				}
-				if (
-					! configuration.js_url ||
-					! configuration.public_key ||
-					! configuration.processor_id
-				) {
+				if ( ! configuration.js_url || ! configuration.key_id ) {
 					debug( 'invalid razorpay configuration; missing some data', configuration );
 					throw new RazorpayConfigurationError(
 						'Error loading payment method configuration. Received invalid data from the server.'
