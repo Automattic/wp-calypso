@@ -66,7 +66,7 @@ const addBlockSupportLinks = (
 		childrenBlockInfoWithDifferentUrl[ name ]?.link || blockInfoMapping[ blockName ]?.link;
 
 	const additionalDescPostId =
-		childrenBlockInfoWithDifferentUrl[ name ]?.ID || blockInfoMapping[ blockName ]?.ID;
+		childrenBlockInfoWithDifferentUrl[ name ]?.postId || blockInfoMapping[ blockName ]?.postId;
 
 	/**
 	 * Some elements are children, but have their own url for Learn More, and we want to show those.
@@ -92,7 +92,7 @@ const addBlockSupportLinks = (
 				description: string | ReactElement< string | JSXElementConstructor< any > >;
 			} ) => {
 				const link = blockInfoWithVariations[ name ][ variation.name ]?.link;
-				const postId = blockInfoWithVariations[ name ][ variation.name ]?.ID;
+				const postId = blockInfoWithVariations[ name ][ variation.name ]?.postId;
 
 				if ( ! link ) {
 					return variation;
