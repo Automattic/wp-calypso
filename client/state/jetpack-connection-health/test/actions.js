@@ -4,10 +4,12 @@ import {
 	JETPACK_CONNECTION_MAYBE_UNHEALTHY,
 	JETPACK_CONNECTION_UNHEALTHY,
 	JETPACK_CONNECTION_HEALTH_REQUEST,
+	JETPACK_CONNECTION_HEALTH_REQUEST_FAILURE,
 } from 'calypso/state/action-types';
 import {
 	setJetpackConnectionHealthy,
 	setJetpackConnectionMaybeUnhealthy,
+	setJetpackConnectionRequestFailure,
 	setJetpackConnectionUnhealthy,
 	requestJetpackConnectionHealthStatus,
 } from '../actions';
@@ -119,25 +121,18 @@ describe( 'action', () => {
 				errorCode: 'foo_bar',
 			} );
 		} );
-
-		test( 'should return current state if 5 minutes have not passed yet', async () => {
+	} );
+	describe( 'setJetpackConnectionRequestFailure', () => {
+		test( 'should return a jetpack connection request failure action', () => {
 			const siteId = 123456;
-			stateSpy.mockReturnValue( {
-				jetpackConnectionHealth: {
-					[ siteId ]: {
-						lastRequestTime: Date.now() - 1000 * 60 * 4,
-						connectionHealth: {
-							error: null,
-						},
-					},
-				},
+			const errorCode = 'test';
+			const setTransferAction = setJetpackConnectionRequestFailure( siteId, errorCode );
+
+			expect( setTransferAction ).toEqual( {
+				type: JETPACK_CONNECTION_HEALTH_REQUEST_FAILURE,
+				siteId,
+				error: errorCode,
 			} );
-			const isHealthy = await requestJetpackConnectionHealthStatus( siteId )(
-				dispatchSpy,
-				stateSpy
-			);
-			expect( isHealthy ).toEqual( undefined );
-			expect( dispatchSpy ).not.toHaveBeenCalled();
 		} );
 	} );
 } );

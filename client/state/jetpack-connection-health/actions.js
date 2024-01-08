@@ -37,6 +37,20 @@ export const setJetpackConnectionUnhealthy = ( siteId, errorCode ) => ( {
 } );
 
 /**
+ * Sets the Jetpack connection health status request failure message.
+ *
+ * This action is called when the Jetpack health status API fails to be reached.
+ * @param {number} siteId The site id to which the status belongs
+ * @param {string} error The error message
+ * @returns {Object} An action object
+ */
+export const setJetpackConnectionRequestFailure = ( siteId, error ) => ( {
+	type: JETPACK_CONNECTION_HEALTH_REQUEST_FAILURE,
+	siteId,
+	error,
+} );
+
+/**
  * Requests the Jetpack connection health status from the server
  *
  * This is called when the Jetpack connection is maybe unhealthy and we want to confirm
@@ -75,11 +89,7 @@ export const requestJetpackConnectionHealthStatus = ( siteId ) => ( dispatch, ge
 			}
 		} )
 		.catch( ( error ) => {
-			dispatch( {
-				type: JETPACK_CONNECTION_HEALTH_REQUEST_FAILURE,
-				siteId,
-				error: error.message,
-			} );
+			dispatch( setJetpackConnectionRequestFailure( siteId, error.message ) );
 		} );
 };
 
