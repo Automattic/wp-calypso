@@ -26,7 +26,7 @@ export interface Tour {
 		| 'top left';
 	nextStepOnTargetClick?: string;
 	hideSteps?: boolean;
-	showSkipButton?: boolean;
+	forceShowSkipButton?: boolean;
 }
 
 interface Props {
@@ -86,7 +86,7 @@ const GuidedTour = ( { className, tours, preferenceName, redirectAfterTourEnds }
 		popoverPosition,
 		nextStepOnTargetClick,
 		hideSteps = false,
-		showSkipButton = false,
+		forceShowSkipButton = false,
 	} = tours[ currentStep ];
 
 	const targetElement = useAsyncElement( target, 3000 );
@@ -173,7 +173,7 @@ const GuidedTour = ( { className, tours, preferenceName, redirectAfterTourEnds }
 				<div className="guided-tour__popover-footer-right-content">
 					<>
 						{ ( ( ! nextStepOnTargetClick && tours.length > 1 && currentStep < tours.length - 1 ) ||
-							showSkipButton ) && (
+							forceShowSkipButton ) && (
 							// Show the skip button if there are multiple steps and we're not on the last step, unless we explicitly choose to add them
 							<Button borderless onClick={ endTour }>
 								{ translate( 'Skip' ) }
