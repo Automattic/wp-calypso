@@ -1,7 +1,7 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { HELP_CENTER_STORE } from '@automattic/help-center/src/stores';
 import { localizeUrl } from '@automattic/i18n-utils';
-import { ExternalLink } from '@wordpress/components';
+import { Button } from '@wordpress/components';
 import { useDispatch } from '@wordpress/data';
 import { __ } from '@wordpress/i18n';
 import { useState, JSXElementConstructor, ReactElement } from 'react';
@@ -32,25 +32,26 @@ export default function DescriptionSupportLink( {
 		<>
 			{ children }
 			<br />
-			<ExternalLink
-				onClick={ ( e ) => {
-					if ( setShowHelpCenter && setShowSupportDoc ) {
-						e.preventDefault();
+			<Button
+				onClick={ () => {
+					if ( ! setShowHelpCenter && setShowSupportDoc ) {
 						setShowHelpCenter( true );
 						setShowSupportDoc( localizeUrl( url ), postID );
+					} else {
+						window.open( url, '_blank' );
 					}
 					recordTracksEvent( 'calypso_block_description_support_link_click', {
 						block: title,
 						support_link: url,
 					} );
 				} }
-				ref={ ( reference ) => ref !== reference && setRef( reference ) }
 				style={ { display: 'block', marginTop: 10, maxWidth: 'fit-content' } }
-				className="fse-inline-support-link"
-				href={ url }
+				ref={ ( reference ) => ref !== reference && setRef( reference ) }
+				className="fse-inline-support-link is-compact"
+				variant="primary"
 			>
-				{ __( 'Learn more', 'full-site-editing' ) }
-			</ExternalLink>
+				{ __( 'Block guide', 'full-site-editing' ) }
+			</Button>
 		</>
 	);
 }
