@@ -23,7 +23,7 @@ interface UseAtomicTransferQueryOptions {
 	refetchInterval?: number;
 }
 
-export const endStates: TransferStates[] = [
+const endStates: TransferStates[] = [
 	transferStates.NONE,
 	transferStates.COMPLETE,
 	transferStates.COMPLETED,

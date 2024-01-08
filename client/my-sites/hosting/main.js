@@ -7,7 +7,7 @@ import {
 } from '@automattic/calypso-products';
 import { Button } from '@automattic/components';
 import { localize } from 'i18n-calypso';
-import { Fragment, useState } from 'react';
+import { Fragment, useRef } from 'react';
 import { connect } from 'react-redux';
 import DocumentHead from 'calypso/components/data/document-head';
 import QueryJetpackModules from 'calypso/components/data/query-jetpack-modules';
@@ -28,10 +28,7 @@ import { GitHubCard } from 'calypso/my-sites/hosting/github';
 import TrialBanner from 'calypso/my-sites/plans/trials/trial-banner';
 import { isAutomatticTeamMember } from 'calypso/reader/lib/teams';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
-import {
-	endStates,
-	useAtomicTransferQuery,
-} from 'calypso/state/atomic-transfer/use-atomic-transfer-query';
+import { useAtomicTransferQuery } from 'calypso/state/atomic-transfer/use-atomic-transfer-query';
 import { fetchAutomatedTransferStatus } from 'calypso/state/automated-transfer/actions';
 import { transferStates } from 'calypso/state/automated-transfer/constants';
 import { getAutomatedTransferStatus } from 'calypso/state/automated-transfer/selectors';
@@ -201,20 +198,21 @@ const Hosting = ( props ) => {
 		isJetpack,
 	} = props;
 
-	const [ transferRefetchEnabled, setTransferRefetchEnabled ] = useState( hasSftpFeature );
-
 	const { isTransferring, transferStatus } = useAtomicTransferQuery( siteSlug, {
 		refetchInterval: 5000,
-		enabled: transferRefetchEnabled,
 	} );
+
+	const hasFetchedTransferStatus = transferStatus !== undefined;
+	const hasFetchedTransferStatusAtLeastOnce = useRef( false );
+	if ( hasFetchedTransferStatus ) {
+		hasFetchedTransferStatusAtLeastOnce.current = true;
+	}
 
 	const isSiteAtomic =
 		transferStatus === transferStates.COMPLETE || transferStatus === transferStates.COMPLETED;
 
-	if ( endStates.includes( transferStatus ) && transferRefetchEnabled ) {
-		// the result won't chnage so no need to call the API
-		setTransferRefetchEnabled( false );
-	}
+	const canSiteGoAtomic = ! isSiteAtomic && hasSftpFeature;
+
 	const getUpgradeBanner = () => {
 		// The eCommerce Trial requires a different upsell path.
 		const targetPlan = ! isECommerceTrial
@@ -253,7 +251,7 @@ const Hosting = ( props ) => {
 				icon="bug"
 			/>
 		);
-		if ( ! isSiteAtomic && hasSftpFeature && ! isTransferring && transferStatus !== undefined ) {
+		if ( canSiteGoAtomic && hasFetchedTransferStatusAtLeastOnce.current ) {
 			return (
 				<>
 					{ failureNotice }
