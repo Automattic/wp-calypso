@@ -1,29 +1,49 @@
+import { isDomainTransfer } from '@automattic/calypso-products';
+import formatCurrency from '@automattic/format-currency';
 import { Button, ClipboardButton } from '@wordpress/components';
+import { useI18n } from '@wordpress/react-i18n';
 import { translate } from 'i18n-calypso';
 import { useState } from 'react';
+import ThankYouProduct from 'calypso/components/thank-you-v2/product';
 import { domainManagementList, domainManagementRoot } from 'calypso/my-sites/domains/paths';
 
-import './style.scss';
-
 type ProductDomainProps = {
-	domain: string;
+	purchase?: ReceiptPurchase;
+	domainName?: string;
 	shareSite?: boolean;
 	siteSlug?: string | null;
+	currency?: string;
 };
 
-const ProductDomain = ( { domain, shareSite, siteSlug }: ProductDomainProps ) => {
+const ProductDomain = ( { purchase, domainName, shareSite, siteSlug, currency }: ProductDomainProps ) => {
+	const { __, _n } = useI18n();
 	const [ isCopying, setIsCopying ] = useState( false );
+	const domain = domainName ?? purchase?.meta;
+
 	const handleShareSite = ( processing: boolean ) => () => {
 		setIsCopying( processing );
 	};
-	return (
-		<div className="checkout-thank-you__header-details">
-			<div className="checkout-thank-you__header-details-content">
-				<>
-					<div className="checkout-thank-you__header-details-content-name">{ domain }</div>
-				</>
-			</div>
-			<div className="checkout-thank-you__header-details-buttons">
+
+	const purchaseLabel = ( priceInteger: number ) => {
+		if ( priceInteger === 0 ) {
+			return __( 'We’ve paid for an extra year' );
+		}
+
+		const priceFormatted = formatCurrency( priceInteger, currency, {
+			stripZeros: true,
+			isSmallestUnit: true,
+		} );
+
+		return sprintf(
+			/* translators: %1$s: price formatted */
+			__( '%1$s for one year' ),
+			priceFormatted
+		);
+	};
+
+	const actions = domainName || ! isDomainTransfer( purchase )
+		? (
+			<>
 				{ shareSite && (
 					<ClipboardButton
 						// @ts-expect-error The button props are passed into a Button component internally, but the types don't account that.
@@ -41,8 +61,16 @@ const ProductDomain = ( { domain, shareSite, siteSlug }: ProductDomainProps ) =>
 				>
 					{ translate( 'Manage domains' ) }
 				</Button>
-			</div>
-		</div>
+			</>
+		)
+		: purchaseLabel( purchase.priceInteger );
+
+	return (
+		<ThankYouProduct
+			name={ domain }
+			key={ 'domain-' + domain }
+			actions={ actions }
+		/>
 	);
 };
 

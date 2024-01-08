@@ -2,8 +2,9 @@ import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { Button } from '@wordpress/components';
 import { useI18n } from '@wordpress/react-i18n';
 import { translate } from 'i18n-calypso';
+import ThankYouLayout from 'calypso/components/thank-you-v2';
 import { preventWidows } from 'calypso/lib/formatting';
-import ThankYouLayout from '../redesign-v2/ThankYouLayout';
+import ProductDomain from '../products/product-domain';
 
 interface DomainBulkTransferThankYouProps {
 	purchases: ReceiptPurchase[];
@@ -22,53 +23,24 @@ const DomainBulkTransferThankYou: React.FC< DomainBulkTransferThankYouProps > = 
 		} );
 	};
 
-	const purchaseLabel = ( priceInteger: number ) => {
-		if ( priceInteger === 0 ) {
-			return __( 'We’ve paid for an extra year' );
-		}
-
-		const priceFormatted = formatCurrency( priceInteger, currency, {
-			stripZeros: true,
-			isSmallestUnit: true,
-		} );
-
-		return sprintf(
-			/* translators: %1$s: price formatted */
-			__( '%1$s for one year' ),
-			priceFormatted
-		);
-	};
-
-	const productsProps = purchases?.map( ( { meta, priceInteger } ) => {
-		return {
-			key: 'domain-' + meta,
-			name: meta,
-			actions: purchaseLabel( priceInteger ),
-		};
+	const products = purchases.map( ( purchase, index ) => {
+		return ( <ProductDomain purchase={ purchase } currency={ currency } key={ index } /> );
 	} );
 
 	const purchaseDetailsProps = [
 		{
 			key: 'domain-essentials',
-			title: translate( 'Dive into domain essentials' ),
+			title: translate( 'Want to speed this up?' ),
 			description: translate(
-				'Check out our support documentation for step-by-step instructions and expert guidance on your domain set up.'
+				'Check your inbox for an email from your current domain provider for instructions on how to speed up the transfer process.'
 			),
-			buttonText: translate( 'Master the domain basics' ),
-			href: '/support/domains',
-			onClick: () =>
-				recordTracksEvent( 'calypso_domain_transfer_to_any_user_support_domains_click' ),
 		},
 		{
 			key: 'domain-resources',
-			title: translate( 'Your go-to domain resource' ),
+			title: translate( 'Will my email continue to work?' ),
 			description: translate(
-				'Dive into our comprehensive support documentation to learn the basics of domains, from registration to management.'
+				'We\'ll automatically import any MX, TXT, and A records for your domain, so your email will transfer seamlessly.'
 			),
-			buttonText: translate( 'Domain support resources' ),
-			href: '/support/domains',
-			onClick: () =>
-				recordTracksEvent( 'calypso_domain_transfer_to_any_user_support_domains_click' ),
 		},
 	];
 
@@ -119,7 +91,7 @@ const DomainBulkTransferThankYou: React.FC< DomainBulkTransferThankYouProps > = 
 					</Button>
 				</>
 			}
-			productsProps={ productsProps }
+			products={ products }
 			purchaseDetailsProps={ purchaseDetailsProps }
 		/>
 	);

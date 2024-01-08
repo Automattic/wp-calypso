@@ -25,7 +25,7 @@ import {
 	shouldFetchSitePlans,
 } from '@automattic/calypso-products';
 import page from '@automattic/calypso-router';
-import { Card, ConfettiAnimation } from '@automattic/components';
+import { Card } from '@automattic/components';
 import { dispatch } from '@wordpress/data';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
@@ -83,8 +83,6 @@ import BusinessPlanDetails from './business-plan-details';
 import ChargebackDetails from './chargeback-details';
 import DomainMappingDetails from './domain-mapping-details';
 import DomainRegistrationDetails from './domain-registration-details';
-import DomainBulkTransferThankYou from './domains/domain-bulk-transfer-thank-you';
-import DomainOnlyThankYou from './domains/domain-only-thank-you-redesign-v2';
 import DomainThankYou from './domains/domain-thank-you';
 import EcommercePlanDetails from './ecommerce-plan-details';
 import FailedPurchaseDetails from './failed-purchase-details';
@@ -95,15 +93,16 @@ import JetpackPlanDetails from './jetpack-plan-details';
 import PersonalPlanDetails from './personal-plan-details';
 import PremiumPlanDetails from './premium-plan-details';
 import ProPlanDetails from './pro-plan-details';
-import CheckoutMasterbar from './redesign-v2/sections/CheckoutMasterbar';
-import Footer from './redesign-v2/sections/Footer';
+import DomainBulkTransferThankYou from './redesign-v2/pages/domain-bulk-transfer';
+import { DomainOnlyThankYou } from './redesign-v2/pages/domain-only';
+import { GenericThankYou } from './redesign-v2/pages/generic';
+import { PlanOnlyThankYou } from './redesign-v2/pages/plan-only';
 import { isRedesignV2 } from './redesign-v2/utils';
 import SiteRedirectDetails from './site-redirect-details';
 import StarterPlanDetails from './starter-plan-details';
 import TransferPending from './transfer-pending';
 import './style.scss';
-import './redesign-v2/style.scss';
-import { isBulkDomainTransfer, isDomainOnly } from './utils';
+import { getDomainPurchaseType, isBulkDomainTransfer, isDomainOnly } from './utils';
 import type { SitesPlansResult } from '../src/hooks/product-variants';
 import type { WithCamelCaseSlug, WithSnakeCaseSlug } from '@automattic/calypso-products';
 import type { OnboardActions, SiteDetails } from '@automattic/data-stores';
@@ -529,7 +528,7 @@ export class CheckoutThankYou extends Component<
 		let failedPurchases = [];
 		let wasJetpackPlanPurchased = false;
 		let wasEcommercePlanPurchased = false;
-		let showHappinessSupport = ! isRedesignV2( this.props ) && ! this.props.isSimplified;
+		let showHappinessSupport = ! this.props.isSimplified;
 		let delayedTransferPurchase: ReceiptPurchase | undefined;
 		let wasDomainProduct = false;
 		let wasGSuiteOrGoogleWorkspace = false;
@@ -576,36 +575,31 @@ export class CheckoutThankYou extends Component<
 		}
 
 		/** REDESIGN *********************************************************************************/
+		if ( isRedesignV2( this.props ) ) {
+			let pageContent = null;
 
-		let thankYouLayout = null;
+			if ( wasBulkDomainTransfer ) {
+				pageContent = (
+					<DomainBulkTransferThankYou purchases={ purchases } currency={ this.props.currency } />
+				);
+			} else if ( isDomainOnly( purchases ) ) {
+				pageContent = <DomainOnlyThankYou purchases={ purchases } />;
+			} else if ( purchases.length === 1 && isPlan( purchases[ 0 ] ) ) {
+				pageContent = <PlanOnlyThankYou purchases={ purchases } />;
+			} else if ( this.isDataLoaded() ) {
+				pageContent = <GenericThankYou purchases={ purchases } />;
+			} else if ( ! this.isDataLoaded() ) {
+				// TODO: Render skeleton
+			}
 
-		if ( wasBulkDomainTransfer ) {
-			thankYouLayout = (
-				<DomainBulkTransferThankYou purchases={ purchases } currency={ this.props.currency } />
-			);
-		} else if ( isDomainOnly( purchases ) ) {
-			thankYouLayout = <DomainOnlyThankYou purchases={ purchases } />;
-		}
-
-		if ( thankYouLayout ) {
-			return (
-				<>
-					<PageViewTracker { ...this.getAnalyticsProperties() } title="Checkout Thank You" />
-					{ this.isDataLoaded() && (
-						<>
-							<ConfettiAnimation delay={ 1000 } />
-							<CheckoutMasterbar
-								siteId={ this.props.selectedSite?.ID }
-								siteSlug={ this.props.selectedSiteSlug }
-								backText={
-									this.props.selectedSiteSlug ? translate( 'Back to dashboard' ) : undefined
-								}
-							/>
-						</>
-					) }
-					{ thankYouLayout }
-				</>
-			);
+			if ( pageContent ) {
+				return (
+					<>
+						<PageViewTracker { ...this.getAnalyticsProperties() } title="Checkout Thank You" />
+						{ pageContent }
+					</>
+				);
+			}
 		}
 
 		/** LEGACY - The ultimate goal is to remove everything below *********************************/
@@ -653,7 +647,7 @@ export class CheckoutThankYou extends Component<
 				</Main>
 			);
 		} else if ( wasDomainProduct && ! wasBulkDomainTransfer ) {
-			const [ purchaseType, predicate ] = this.getDomainPurchaseType( purchases );
+			const [ purchaseType, predicate ] = getDomainPurchaseType( purchases );
 			const [ domainPurchase, domainName ] = findPurchaseAndDomain( purchases, predicate );
 
 			if ( selectedFeature === 'email-license' && domainName ) {
@@ -713,24 +707,8 @@ export class CheckoutThankYou extends Component<
 
 		// standard thanks page
 		return (
-			<Main
-				className={ classNames( 'checkout-thank-you', {
-					'is-redesign-v2': isRedesignV2( this.props ),
-				} ) }
-			>
+			<Main className={ classNames( 'checkout-thank-you' ) }>
 				<PageViewTracker { ...this.getAnalyticsProperties() } title="Checkout Thank You" />
-				{ this.isDataLoaded() && isRedesignV2( this.props ) && (
-					<>
-						<ConfettiAnimation delay={ 1000 } />
-						<CheckoutMasterbar
-							siteId={ this.props.selectedSite?.ID }
-							siteSlug={ this.props.selectedSiteSlug }
-							backText={
-								this.props.selectedSiteSlug ? translate( 'Back to dashboard' ) : undefined
-							}
-						/>
-					</>
-				) }
 				<Card className="checkout-thank-you__content">{ this.productRelatedMessages() }</Card>
 				{ showHappinessSupport && (
 					<Card className="checkout-thank-you__footer">
@@ -914,10 +892,9 @@ export class CheckoutThankYou extends Component<
 					primaryCta={ this.primaryCta }
 					displayMode={ displayMode }
 					purchases={ purchases }
-					isRedesignV2={ isRedesignV2( this.props ) }
 					currency={ receipt.data?.currency }
 				>
-					{ ! isRedesignV2( this.props ) && ! isSimplified && primaryPurchase && (
+					{ ! isSimplified && primaryPurchase && (
 						<CheckoutThankYouFeaturesHeader
 							isDataLoaded={ this.isDataLoaded() }
 							isGenericReceipt={ this.isGenericReceipt() }
@@ -928,14 +905,10 @@ export class CheckoutThankYou extends Component<
 
 					{ ! isSimplified && component && (
 						<div className="checkout-thank-you__purchase-details-list">
-							{ isRedesignV2( this.props ) ? (
-								<Footer purchases={ purchases } />
-							) : (
-								<PurchaseDetailsWrapper
-									{ ...this.props }
-									componentAndPrimaryPurchaseAndDomain={ componentAndPrimaryPurchaseAndDomain }
-								/>
-							) }
+							<PurchaseDetailsWrapper
+								{ ...this.props }
+								componentAndPrimaryPurchaseAndDomain={ componentAndPrimaryPurchaseAndDomain }
+							/>
 						</div>
 					) }
 				</CheckoutThankYouHeader>

@@ -1,29 +1,31 @@
 import { Spinner } from '@automattic/components';
 import { useEffect, useState } from 'react';
 
+import './style.scss';
+
 export type ThankYouProductProps = {
 	name: string;
 	details?: string;
 	actions?: React.ReactNode;
-	isProductLoading?: boolean;
+	isLoading?: boolean;
 };
 
 const ThankYouProduct = ( {
 	name,
 	details,
 	actions,
-	isProductLoading = false,
+	isLoading = false,
 }: ThankYouProductProps ) => {
-	const [ isLoading, setIsLoading ] = useState( false );
+	const [ shouldShowLoader, setShouldShowLoader ] = useState( isLoading );
 
 	useEffect( () => {
-		setIsLoading( isProductLoading );
-	}, [ isProductLoading ] );
+		setShouldShowLoader( isLoading );
+	}, [ isLoading ] );
 
 	return (
 		<li className="checkout-thank-you__product">
 			<div className="checkout-thank-you__product-info">
-				{ isLoading ? (
+				{ shouldShowLoader ? (
 					<Spinner />
 				) : (
 					<>

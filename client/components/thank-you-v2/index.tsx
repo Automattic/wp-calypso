@@ -1,9 +1,10 @@
+import { Card, ConfettiAnimation } from '@automattic/components';
+import CheckoutMasterbar, { CheckoutMasterbarProps } from 'calypso/components/checkout-masterbar';
 import Main from 'calypso/components/main';
 import PurchaseDetail from 'calypso/components/purchase-detail';
-import CheckoutMasterbar, { CheckoutMasterbarProps } from './sections/CheckoutMasterbar';
-import ThankYouHeader from './sections/header/Default';
-import ThankYouProduct, { ThankYouProductProps } from './sections/product/Default';
-import DefaultUpsell, { DefaultUpsellProps } from './sections/upsell/Default';
+import ThankYouHeader from './header';
+import ThankYouProduct, { ThankYouProductProps } from './product';
+import DefaultUpsell, { DefaultUpsellProps } from './upsell';
 
 import './style.scss';
 
@@ -11,7 +12,7 @@ interface ThankYouLayoutContainerProps {
 	title: React.ReactNode;
 	subtitle: React.ReactNode;
 	buttons?: React.ReactNode;
-	productsProps: ThankYouProductProps[];
+	products?: React.ReactNode;
 	purchaseDetailsProps?: PurchaseDetail.propTypes[];
 	upsellProps?: DefaultUpsellProps;
 	masterbarProps?: CheckoutMasterbarProps;
@@ -24,7 +25,7 @@ const ThankYouLayout: React.FC< ThankYouLayoutContainerProps > = (
 		title,
 		subtitle,
 		buttons,
-		productsProps,
+		products,
 		purchaseDetailsProps,
 		upsellProps,
 		masterbarProps,
@@ -34,20 +35,18 @@ const ThankYouLayout: React.FC< ThankYouLayoutContainerProps > = (
 		<Main className="is-redesign-v2 checkout-thank-you">
 			<CheckoutMasterbar { ...masterbarProps } />
 
+			<ConfettiAnimation delay={ 1000 } />
+
 			<ThankYouHeader title={ title } subtitle={ subtitle } buttons={ buttons } />
 
-			{ productsProps && (
-				<div className="checkout-thank-you__products">
-					{ productsProps.map( ( productProps ) => (
-						<ThankYouProduct { ...productProps } />
-					) ) }
-				</div>
-			) }
+			<div className="checkout-thank-you__products">
+				{ products }
+			</div>
 
 			{ purchaseDetailsProps && (
 				<div className="checkout-thank-you__purchase-details-list">
-					{ purchaseDetailsProps.map( ( purchaseDetailProps ) => (
-						<PurchaseDetail { ...purchaseDetailProps } />
+					{ purchaseDetailsProps.map( ( purchaseDetailProps, index ) => (
+						<PurchaseDetail { ...purchaseDetailProps } key={ 'details' + index } />
 					) ) }
 				</div>
 			) }

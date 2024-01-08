@@ -1,12 +1,12 @@
 import './style.scss';
 
-interface DefaultThankYouHeaderContainerProps {
+interface ThankYouHeaderProps {
 	title: React.ReactNode;
 	subtitle: React.ReactNode;
 	buttons?: React.ReactNode;
 }
 
-const ThankYouHeader: React.FC< DefaultThankYouHeaderContainerProps > = ( {
+const ThankYouHeader: React.FC< ThankYouHeaderProps > = ( {
 	title,
 	subtitle,
 	buttons,

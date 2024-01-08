@@ -1,22 +1,32 @@
 @import "@wordpress/base-styles/breakpoints";
 @import "@wordpress/base-styles/mixins";
 
+// Design i2 overrides, the purchase-detail component is also used by the /plans/my-plan page to render plan features.
+.is-redesign-v2.checkout-thank-you,
 .is-redesign-v2 {
+	--color-accent: var(--studio-blue-50);
+	--color-accent-60: var(--studio-blue-60);
+
+	&.main {
+		max-width: 750px;
+		padding: 0 24px 0;
+		display: flex;
+		flex-direction: column;
+
+		> .card {
+			border: none;
+			box-shadow: none;
+		}
+	}
+
 	.checkout-thank-you__purchase-details-list {
 		max-width: 650px;
 		text-align: initial;
 		margin: 40px auto 80px;
 		display: flex;
 		justify-content: center;
-
-		// Each of the checkout thank you pages "details" component sections specifically wrap
-		// all purchase details in a single unclassed div, so we need to target it for the
-		// flexbox styles instead of .checkout-thank-you__purchase-details-list directly.
-		> div {
-			display: flex;
-			flex-wrap: wrap;
-			gap: 30px;
-		}
+		flex-wrap: wrap;
+		gap: 30px;
 
 		@include break-mobile {
 			margin-top: 50px;
@@ -79,48 +89,8 @@
 		}
 	}
 
-	div.checkout-thank-you__purchase-details-list {
-		padding: 0 25px;
-		margin-bottom: 50px;
-		justify-content: space-between;
-		flex-wrap: nowrap;
-
-		@media (max-width: $break-medium ) {
-			flex-direction: column;
-			padding: 0;
-			flex-wrap: wrap;
-		}
-
-		div.purchase-detail {
-			flex: 1;
-			width: unset;
-			max-width: unset;
-		}
-
-		h3 {
-			font-size: 1rem;
-			font-weight: 500;
-		}
-
-		p {
-			font-size: 0.875rem;
-			margin-top: 5px;
-			margin-bottom: 16px;
-		}
-
-		a {
-			text-decoration: underline;
-			font-size: 0.875rem;
-			font-weight: 500;
-		}
-
-		.purchase-detail__button {
-			svg {
-				display: none;
-			}
-		}
-
-		display: flex;
-		gap: 40px;
+	.components-button {
+		border-radius: 4px;
+		padding: 10px 24px;
 	}
 }

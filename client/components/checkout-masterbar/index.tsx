@@ -1,6 +1,6 @@
 import page from '@automattic/calypso-router';
 import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
-import MasterbarStyled from '../masterbar-styled';
+import MasterbarStyled from './masterbar-styled';
 
 export type CheckoutMasterbarProps = {
 	siteId?: number | null;

@@ -104,3 +104,14 @@ export function isDomainOnly( purchases: ReceiptPurchase[] ): boolean {
 		)
 	);
 }
+
+export function getDomainPurchaseType( purchases: ReceiptPurchase[] ) {
+	const hasDomainMapping = purchases.some( isDomainMapping );
+
+	if ( hasDomainMapping && purchases.some( isDomainRegistration ) ) {
+		return [ 'REGISTRATION', isDomainRegistration ];
+	} else if ( hasDomainMapping ) {
+		return [ 'MAPPING', isDomainMapping ];
+	}
+	return [ 'TRANSFER', isDomainTransfer ];
+}
