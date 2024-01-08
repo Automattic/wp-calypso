@@ -63,7 +63,7 @@ export type UseLaunchpadOptions = {
 
 export const fetchLaunchpad = (
 	siteSlug: SiteSlug,
-	checklistSlug: string,
+	checklistSlug?: string | null,
 	launchpadContext?: string
 ): Promise< LaunchpadResponse > => {
 	const slug = encodeURIComponent( siteSlug as string );
@@ -87,7 +87,7 @@ export const fetchLaunchpad = (
 		  } as APIFetchOptions );
 };
 
-const getKey = ( siteSlug: SiteSlug, checklistSlug: string ) => {
+const getKey = ( siteSlug: SiteSlug, checklistSlug?: string | null ) => {
 	return [ 'launchpad', siteSlug, checklistSlug ];
 };
 
@@ -111,11 +111,11 @@ const defaultSuccessCallback = ( response: LaunchpadResponse ) => {
 	return response;
 };
 
-type SiteSlug = string | number;
+type SiteSlug = string | number | null;
 
 export const useLaunchpad = (
 	siteSlug: SiteSlug,
-	checklistSlug: string,
+	checklistSlug?: string | null,
 	options?: UseLaunchpadOptions,
 	launchpad_context?: string | undefined
 ) => {
@@ -142,7 +142,7 @@ export const useLaunchpad = (
 
 export const useSortedLaunchpadTasks = (
 	siteSlug: SiteSlug,
-	checklistSlug: string,
+	checklistSlug?: string | null,
 	launchpadContext?: string
 ) => {
 	const launchpadOptions = {
@@ -156,7 +156,7 @@ export const updateLaunchpadSettings = (
 	siteSlug: SiteSlug,
 	settings: LaunchpadUpdateSettings = {}
 ) => {
-	const slug = encodeURIComponent( siteSlug );
+	const slug = siteSlug ? encodeURIComponent( siteSlug ) : null;
 	const requestUrl = `/sites/${ slug }/launchpad`;
 
 	return canAccessWpcomApis()

@@ -33,7 +33,11 @@ export const HelpCenterLaunchpad = () => {
 
 	const siteId = useSelector( ( state ) => getSelectedSiteId( state ) );
 	const site = useSelect(
-		( select ) => siteId && ( select( SITE_STORE ) as SiteSelect ).getSite( siteId ),
+		( select ) => {
+			if ( siteId ) {
+				return ( select( SITE_STORE ) as SiteSelect ).getSite( siteId );
+			}
+		},
 		[ siteId ]
 	);
 	let siteIntent = site && site?.options?.site_intent;
@@ -60,9 +64,6 @@ export const HelpCenterLaunchpad = () => {
 		} );
 	};
 
-	if ( ! siteIntent || ! siteSlug ) {
-		return null;
-	}
 	return (
 		<div className="inline-help__launchpad-container">
 			<a
