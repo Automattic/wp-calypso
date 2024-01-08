@@ -1223,9 +1223,9 @@ export const getJetpackProductsWhatIsIncluded = (): Record< string, Array< Trans
 	];
 	const statsCommercialIncludesInfo = [
 		translate( 'Real-time data on visitors' ),
-		translate( 'Traffic stats and trends for post and pages' ),
+		translate( 'Traffic stats and trends for posts and pages' ),
 		translate( 'Detailed statistics about links leading to your site' ),
-		translate( 'GDPR compliant' ),
+		translate( 'GDPR compliance' ),
 		translate( 'Access to upcoming advanced features' ),
 		translate( 'Priority support' ),
 		translate( 'Commercial use' ),

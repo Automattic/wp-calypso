@@ -164,8 +164,7 @@ export interface CheckoutThankYouConnectedProps {
 		themeId: string,
 		siteId: number,
 		source?: string,
-		purchased?: boolean,
-		keepCurrentHomepage?: boolean
+		purchased?: boolean
 	) => void;
 	requestSite: ( siteId: number ) => void;
 }

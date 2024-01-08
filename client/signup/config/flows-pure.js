@@ -466,12 +466,11 @@ export function generateFlows( {
 				'courses',
 				'store-options',
 				'store-features',
-				'design-setup-site',
 			],
 			destination: getDestinationFromIntent,
 			description:
 				'Sets up a site that has already been created and paid for (if purchases were made)',
-			lastModified: '2021-10-14',
+			lastModified: '2024-01-08',
 			providesDependenciesInQuery: [ 'siteId', 'siteSlug' ],
 			optionalDependenciesInQuery: [ 'siteId' ],
 			get pageTitle() {

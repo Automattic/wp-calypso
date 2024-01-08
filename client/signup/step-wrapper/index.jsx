@@ -5,7 +5,7 @@ import PropTypes from 'prop-types';
 import { Component } from 'react';
 import FormattedHeader from 'calypso/components/formatted-header';
 import NavigationLink from 'calypso/signup/navigation-link';
-import { isReskinnedFlow } from '../utils';
+import { isReskinnedFlow } from '../is-flow';
 import './style.scss';
 
 class StepWrapper extends Component {

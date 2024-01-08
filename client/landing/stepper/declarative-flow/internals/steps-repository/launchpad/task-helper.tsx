@@ -33,7 +33,7 @@ import { Dispatch, SetStateAction } from 'react';
 import { NavigationControls } from 'calypso/landing/stepper/declarative-flow/internals/types';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { ADD_TIER_PLAN_HASH } from 'calypso/my-sites/earn/memberships/constants';
-import { isVideoPressFlow } from 'calypso/signup/utils';
+import { isVideoPressFlow } from 'calypso/signup/is-flow';
 import { ONBOARD_STORE, SITE_STORE } from '../../../../stores';
 import { goToCheckout } from '../../../../utils/checkout';
 import { launchpadFlowTasks } from './tasks';
@@ -49,7 +49,7 @@ interface GetEnhancedTasksProps {
 	setShowPlansModal: Dispatch< SetStateAction< boolean > >;
 	queryClient: QueryClient;
 	goToStep?: NavigationControls[ 'goToStep' ];
-	flow: string | null;
+	flow: string;
 	isEmailVerified?: boolean;
 	checklistStatuses?: ChecklistStatuses;
 	planCartItem?: MinimalRequestCartProduct | null;

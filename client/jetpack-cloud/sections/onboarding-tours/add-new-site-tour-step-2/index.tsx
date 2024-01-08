@@ -44,7 +44,7 @@ export default function AddNewSiteTourStep2( { siteItems }: Props ) {
 								<br />
 								<br />
 								{ translate(
-									'Sites with jetpack installed will automatically appear in the site management view.'
+									'Sites with Jetpack installed will automatically appear in the site management view.'
 								) }
 							</>
 						),

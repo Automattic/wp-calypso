@@ -90,7 +90,7 @@ const DoYouLoveJetpackStatsNotice = ( {
 	}
 
 	const noPurchaseTitle = isWPCOMPaidStatsFlow
-		? translate( 'Grow faster with Advanced Stats' )
+		? translate( 'Grow faster with Jetpack Stats' )
 		: translate( 'Do you love Jetpack Stats?' );
 	const freeTitle = translate( 'Want to get the most out of Jetpack Stats?' );
 
@@ -100,7 +100,7 @@ const DoYouLoveJetpackStatsNotice = ( {
 
 	const description = isWPCOMPaidStatsFlow
 		? translate(
-				'Finesse your scaling up strategy with detailed insights and data. Upgrade to an Explorer plan for a richer understanding and smarter decision-making.'
+				'Finesse your scaling-up strategy with detailed insights and data. Upgrade to an Explorer plan for a richer understanding and smarter decision-making.'
 		  )
 		: translate( 'Upgrade to get priority support and access to upcoming advanced features.' );
 

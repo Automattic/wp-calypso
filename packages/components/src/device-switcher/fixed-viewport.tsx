@@ -1,4 +1,5 @@
 import { CSSProperties } from 'react';
+import { DEVICE_TYPES } from './constants';
 
 // Device viewport width in pixels
 const DEVICE_COMPUTER_WIDTH = 1080;
@@ -20,7 +21,7 @@ export const useViewportScale = ( device: string, viewportWidth: number ) => {
 		return 1;
 	}
 
-	if ( 'computer' !== device && viewportWidth > deviceWidth ) {
+	if ( DEVICE_TYPES.COMPUTER !== device && viewportWidth > deviceWidth ) {
 		// Use device width as max width for tablet and phone
 		width = deviceWidth;
 	}

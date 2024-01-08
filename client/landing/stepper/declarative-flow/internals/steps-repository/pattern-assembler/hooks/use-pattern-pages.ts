@@ -1,6 +1,7 @@
 import { useSearchParams } from 'react-router-dom';
 import { INITIAL_PAGES, ORDERED_PATTERN_PAGES_CATEGORIES } from '../constants';
 import { useCategoriesOrder } from '../hooks';
+import { getPagePatternTitle } from '../utils';
 import type { Pattern, Category, CustomPageTitle } from '../types';
 
 const usePatternPages = (
@@ -51,7 +52,6 @@ const usePatternPages = (
 			}
 			pagesToShow.push( {
 				name: pattern?.name || '',
-				hasPages: true,
 				title: title,
 				isSelected: !! selected,
 			} );
@@ -82,18 +82,32 @@ const usePatternPages = (
 		pageSlugs = INITIAL_PAGES;
 	}
 
-	pages = pageSlugs.map( ( slug ) => pagesMapByCategory[ slug ]?.[ 0 ] ).filter( Boolean );
+	pages = pageSlugs
+		.map( ( slug ) => {
+			const firstPage = pagesMapByCategory[ slug ]?.[ 0 ];
+			if ( firstPage ) {
+				return {
+					...firstPage,
+					title: getPagePatternTitle( firstPage ),
+				};
+			}
+		} )
+		.filter( Boolean ) as Pattern[];
 
-	pagesToShow = pageCategoriesInOrder.map( ( category: Category ) => {
-		const { name } = category;
-		const hasPages = name && pagesMapByCategory[ name ]?.length;
-		return {
-			name,
-			hasPages,
-			title: hasPages ? pagesMapByCategory[ name ][ 0 ].title : '',
-			isSelected: name ? pageSlugs.includes( name ) : false,
-		};
-	} );
+	pagesToShow = pageCategoriesInOrder
+		.map( ( category: Category ) => {
+			const { name } = category;
+			const firstPage = name && pagesMapByCategory[ name ]?.[ 0 ];
+			if ( firstPage ) {
+				return {
+					name,
+					title: getPagePatternTitle( firstPage ),
+					isSelected: pageSlugs.includes( name ),
+				};
+			}
+		} )
+		.filter( Boolean );
+
 	const setPageSlugs = ( slugs: string[] ) => {
 		setSearchParams(
 			( currentSearchParams ) => {

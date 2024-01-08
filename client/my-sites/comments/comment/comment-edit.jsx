@@ -1,9 +1,11 @@
 import { Button, Popover, Gridicon } from '@automattic/components';
+import { Spinner } from '@wordpress/components';
 import { localize } from 'i18n-calypso';
 import { get, pick } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component, createRef } from 'react';
 import { connect } from 'react-redux';
+import AsyncLoad from 'calypso/components/async-load';
 import QuerySiteSettings from 'calypso/components/data/query-site-settings';
 import FormButton from 'calypso/components/forms/form-button';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
@@ -25,6 +27,7 @@ import { getSiteComment } from 'calypso/state/comments/selectors';
 import { removeNotice, successNotice } from 'calypso/state/notices/actions';
 import getSiteSetting from 'calypso/state/selectors/get-site-setting';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import { hasBlocks } from './utils';
 
 const noop = () => {};
 
@@ -41,6 +44,8 @@ export class CommentEdit extends Component {
 		commentDate: this.props.commentDate || '',
 		isDatePopoverVisible: false,
 		storedCommentDate: '',
+		// Cache whether the comment has blocks. We don't want change that mid-typing (in case the user adds `<!-- wp:`).
+		originalCommentHasBlocks: hasBlocks( this.props.commentContent ),
 	};
 
 	datePopoverButtonRef = createRef();
@@ -68,8 +73,10 @@ export class CommentEdit extends Component {
 
 	setAuthorUrlValue = ( event ) => this.setState( { authorUrl: event.target.value } );
 
-	setCommentContentValue = ( event, callback = noop ) =>
-		this.setState( { commentContent: event.target.value }, callback );
+	setCommentContentValue = ( event, callback = noop ) => {
+		const commentContent = typeof event === 'string' ? event : event.target.value;
+		this.setState( { commentContent }, callback );
+	};
 
 	setCommentDateValue = ( commentDate ) =>
 		this.setState( { commentDate: this.props.moment( commentDate ).format() } );
@@ -126,8 +133,14 @@ export class CommentEdit extends Component {
 			toggleEditMode,
 			translate,
 		} = this.props;
-		const { authorDisplayName, authorUrl, commentContent, commentDate, isDatePopoverVisible } =
-			this.state;
+		const {
+			authorDisplayName,
+			authorUrl,
+			commentContent,
+			commentDate,
+			isDatePopoverVisible,
+			originalCommentHasBlocks,
+		} = this.state;
 
 		return (
 			<div className="comment__edit">
@@ -198,11 +211,19 @@ export class CommentEdit extends Component {
 							</div>
 						</Popover>
 					</FormFieldset>
-
-					<CommentHtmlEditor
-						commentContent={ commentContent }
-						onChange={ this.setCommentContentValue }
-					/>
+					{ originalCommentHasBlocks ? (
+						<AsyncLoad
+							require="./comment-block-editor"
+							placeholder={ <Spinner style={ { margin: 20 } } /> }
+							commentContent={ commentContent }
+							onChange={ this.setCommentContentValue }
+						/>
+					) : (
+						<CommentHtmlEditor
+							onChange={ this.setCommentContentValue }
+							commentContent={ commentContent }
+						/>
+					) }
 
 					<div className="comment__edit-buttons">
 						<FormButton compact onClick={ this.submitEdit }>
