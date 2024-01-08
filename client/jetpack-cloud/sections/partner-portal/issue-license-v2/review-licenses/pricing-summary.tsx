@@ -14,9 +14,11 @@ import type { SiteDetails } from '@automattic/data-stores';
 export default function PricingSummary( {
 	selectedLicenses,
 	selectedSite,
+	handleIssueLicense,
 }: {
 	selectedLicenses: SelectedLicenseProp[];
 	selectedSite?: SiteDetails | null;
+	handleIssueLicense?: () => void;
 } ) {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
@@ -71,7 +73,7 @@ export default function PricingSummary( {
 			<Button
 				primary
 				className="review-licenses__cta-button"
-				onClick={ handleCTAClick }
+				onClick={ handleIssueLicense ?? handleCTAClick }
 				busy={ ! isFormReady }
 			>
 				{ translate( 'Issue %(numLicenses)d license', 'Issue %(numLicenses)d licenses', {

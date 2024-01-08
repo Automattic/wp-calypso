@@ -1,3 +1,4 @@
+import { isEnabled } from '@automattic/calypso-config';
 import page from '@automattic/calypso-router';
 import { Button, Count } from '@automattic/components';
 import { isWithinBreakpoint } from '@automattic/viewport';
@@ -22,6 +23,7 @@ import {
 	checkIfJetpackSiteGotDisconnected,
 	getSelectedLicenses,
 	getSelectedLicensesSiteId,
+	getSelectedSiteLicenses,
 } from 'calypso/state/jetpack-agency-dashboard/selectors';
 import { errorNotice } from 'calypso/state/notices/actions';
 import useProductsQuery from 'calypso/state/partner-portal/licenses/hooks/use-products-query';
@@ -33,6 +35,7 @@ import DashboardBanners from './dashboard-banners';
 import DashboardDataContext from './dashboard-data-context';
 import useQueryProvisioningBlogIds from './hooks/use-query-provisioning-blog-ids';
 import { DASHBOARD_PRODUCT_SLUGS_BY_TYPE } from './lib/constants';
+import ReviewSelectedLicenses from './review-selected-licenses';
 import SiteAddLicenseNotification from './site-add-license-notification';
 import SiteContent from './site-content';
 import useDashboardShowLargeScreen from './site-content/hooks/use-dashboard-show-large-screen';
@@ -58,14 +61,20 @@ export default function SitesOverview() {
 
 	const showLargeScreen = useDashboardShowLargeScreen( siteTableRef, containerRef );
 
+	const isMultiSiteLicenseSelectionEnabled = isEnabled( 'jetpack/multi-site-license-selection' );
+
 	const selectedLicenses = useSelector( getSelectedLicenses );
+	const selectedSiteLicenses = useSelector( getSelectedSiteLicenses );
 	const selectedLicensesSiteId = useSelector( getSelectedLicensesSiteId );
 
-	const selectedLicensesCount = selectedLicenses?.length;
+	const selectedLicensesCount = isMultiSiteLicenseSelectionEnabled
+		? selectedSiteLicenses.reduce( ( acc, { products } ) => acc + products.length, 0 )
+		: selectedLicenses?.length;
 
 	const highlightFavoriteTab = getQueryArg( window.location.href, 'highlight' ) === 'favorite-tab';
 
 	const [ highlightTab, setHighlightTab ] = useState( false );
+	const [ showReviewLicenses, setShowReviewLicenses ] = useState( false );
 
 	const {
 		search,
@@ -140,6 +149,14 @@ export default function SitesOverview() {
 			);
 		}
 	}, [ isError, translate, dispatch ] );
+
+	useEffect( () => {
+		if ( isMultiSiteLicenseSelectionEnabled ) {
+			return () => {
+				dispatch( resetSite() );
+			};
+		}
+	}, [ isMultiSiteLicenseSelectionEnabled, dispatch ] );
 
 	const pageTitle = translate( 'Sites' );
 
@@ -218,6 +235,19 @@ export default function SitesOverview() {
 		} );
 	}, [ selectedLicensesSiteId, serializedLicenses ] );
 
+	const handleIssueLicenses = () => {
+		if ( isMultiSiteLicenseSelectionEnabled ) {
+			setShowReviewLicenses( true );
+			return;
+		}
+		dispatch(
+			recordTracksEvent( 'calypso_jetpack_agency_dashboard_licenses_select', {
+				site_id: selectedLicensesSiteId,
+				products: serializedLicenses,
+			} )
+		);
+	};
+
 	const renderIssueLicenseButton = () => {
 		return (
 			<div className="sites-overview__licenses-buttons">
@@ -231,15 +261,8 @@ export default function SitesOverview() {
 				<Button
 					primary
 					className="sites-overview__licenses-buttons-issue-license"
-					href={ issueLicenseRedirectUrl }
-					onClick={ () =>
-						dispatch(
-							recordTracksEvent( 'calypso_jetpack_agency_dashboard_licenses_select', {
-								site_id: selectedLicensesSiteId,
-								products: serializedLicenses,
-							} )
-						)
-					}
+					href={ isMultiSiteLicenseSelectionEnabled ? undefined : issueLicenseRedirectUrl }
+					onClick={ handleIssueLicenses }
 				>
 					{ translate( 'Issue %(numLicenses)d license', 'Issue %(numLicenses)d licenses', {
 						context: 'button label',
@@ -382,6 +405,13 @@ export default function SitesOverview() {
 				<div className="sites-overview__issue-licenses-button-small-screen">
 					{ renderIssueLicenseButton() }
 				</div>
+			) }
+			{ showReviewLicenses && (
+				<ReviewSelectedLicenses
+					onClose={ () => setShowReviewLicenses( false ) }
+					selectedLicenses={ selectedSiteLicenses }
+					sites={ data?.sites ?? [] }
+				/>
 			) }
 		</div>
 	);

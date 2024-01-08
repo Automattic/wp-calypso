@@ -1,3 +1,4 @@
+import { isEnabled } from '@automattic/calypso-config';
 import classNames from 'classnames';
 import { Fragment, useContext } from 'react';
 import useFetchTestConnection from 'calypso/data/agency-dashboard/use-fetch-test-connection';
@@ -6,6 +7,7 @@ import { resetSite } from 'calypso/state/jetpack-agency-dashboard/actions';
 import {
 	getSelectedLicenses,
 	getSelectedLicensesSiteId,
+	getSelectedSiteLicenses,
 } from 'calypso/state/jetpack-agency-dashboard/selectors';
 import { getIsPartnerOAuthTokenLoaded } from 'calypso/state/partner-portal/partner/selectors';
 import SitesOverviewContext from '../context';
@@ -41,7 +43,10 @@ export default function SiteTableRow( { index, columns, item, setExpanded, isExp
 
 	const isPartnerOAuthTokenLoaded = useSelector( getIsPartnerOAuthTokenLoaded );
 	const selectedLicenses = useSelector( getSelectedLicenses );
+	const selectedSiteLicenses = useSelector( getSelectedSiteLicenses );
 	const selectedLicensesSiteId = useSelector( getSelectedLicensesSiteId );
+
+	const isMultiSiteLicenseSelectionEnabled = isEnabled( 'jetpack/multi-site-license-selection' );
 
 	const { data } = useFetchTestConnection( isPartnerOAuthTokenLoaded, isConnectionHealthy, blogId );
 	const isConnected = data?.connected ?? true;
@@ -50,8 +55,9 @@ export default function SiteTableRow( { index, columns, item, setExpanded, isExp
 		selectedLicensesSiteId === blogId && selectedLicenses?.length;
 
 	// We should disable the license selection for all sites, but the active one.
-	const shouldDisableLicenseSelection =
-		selectedLicenses?.length && ! currentSiteHasSelectedLicenses;
+	const shouldDisableLicenseSelection = isMultiSiteLicenseSelectionEnabled
+		? selectedSiteLicenses?.length
+		: selectedLicenses?.length && ! currentSiteHasSelectedLicenses;
 
 	const hasSiteConnectionError = ! isConnected;
 	const siteError = item.monitor.error || hasSiteConnectionError;
@@ -72,7 +78,9 @@ export default function SiteTableRow( { index, columns, item, setExpanded, isExp
 						return;
 					}
 
-					dispatch( resetSite() );
+					if ( ! isMultiSiteLicenseSelectionEnabled ) {
+						dispatch( resetSite() );
+					}
 					event.preventDefault();
 				} }
 			>
