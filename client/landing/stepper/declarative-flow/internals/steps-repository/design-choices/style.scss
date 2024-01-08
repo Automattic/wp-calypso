@@ -2,18 +2,20 @@
 	.step-container__header {
 		margin-top: 96px;
 		margin-bottom: 50px;
-
-		.formatted-header .formatted-header__subtitle {
-			text-align: center;
-		}
 	}
 }
 
-.design-choices__container {
+.design-choices__body {
 	display: flex;
 	flex-direction: row;
 	justify-content: center;
 	gap: 43px;
+}
+
+.design-choices__footer {
+	margin-top: 52px;
+	text-align: center;
+	color: var(--studio-gray-60);
 }
 
 .design-choices__design-your-own {

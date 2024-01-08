@@ -23,7 +23,6 @@ const DesignChoicesStep: Step = ( { navigation, flow, stepName } ) => {
 	const translate = useTranslate();
 	const { submit, goBack } = navigation;
 	const headerText = translate( 'Bring your vision to life' );
-	const subHeaderText = translate( 'You can change your mind later.' );
 	const intent = useSelect(
 		( select ) => ( select( ONBOARD_STORE ) as OnboardSelect ).getIntent(),
 		[]
@@ -53,27 +52,36 @@ const DesignChoicesStep: Step = ( { navigation, flow, stepName } ) => {
 				flowName={ flow }
 				stepName={ stepName }
 				isHorizontalLayout={ false }
-				formattedHeader={
-					<FormattedHeader headerText={ headerText } subHeaderText={ subHeaderText } />
-				}
+				formattedHeader={ <FormattedHeader headerText={ headerText } /> }
 				stepContent={
-					<div className="design-choices__container">
-						<DesignChoice
-							title={ translate( 'Choose a theme' ) }
-							description={ translate( 'Choose one of our professionally designed themes.' ) }
-							imageSrc={ themeGalleryIllustrationImage }
-							destination="designSetup"
-							onSelect={ handleSubmit }
-						/>
-						<DesignChoice
-							className="design-choices__design-your-own"
-							title={ translate( 'Design your own' ) }
-							description={ translate( 'Design your own homepage with custom styles and pages.' ) }
-							imageSrc={ patternAssemblerIllustrationImage }
-							destination="pattern-assembler"
-							onSelect={ handleSubmit }
-						/>
-					</div>
+					<>
+						<div className="design-choices__body">
+							<DesignChoice
+								title={ translate( 'Choose a theme' ) }
+								description={ translate( 'Choose one of our professionally designed themes.' ) }
+								imageSrc={ themeGalleryIllustrationImage }
+								destination="designSetup"
+								onSelect={ handleSubmit }
+							/>
+							<DesignChoice
+								className="design-choices__design-your-own"
+								title={ translate( 'Design your own' ) }
+								description={ translate(
+									'Design your own homepage with custom styles and pages.'
+								) }
+								imageSrc={ patternAssemblerIllustrationImage }
+								destination="pattern-assembler"
+								onSelect={ handleSubmit }
+							/>
+						</div>
+						<div className="design-choices__footer">
+							<p>
+								{ translate(
+									'Explore our themes or design your own, and you can return here if you change your mind.'
+								) }
+							</p>
+						</div>
+					</>
 				}
 				goBack={ goBack }
 				recordTracksEvent={ recordTracksEvent }
