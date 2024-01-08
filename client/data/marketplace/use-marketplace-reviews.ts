@@ -280,7 +280,7 @@ export const useInfiniteMarketplaceReviewsQuery = (
 		perPage,
 		'infinite',
 	];
-	const queryFn = ( { pageParam = 1 } ) =>
+	const queryFn = ( { pageParam } ) =>
 		fetchMarketplaceReviews( productType, slug, pageParam, perPage, author, author_exclude );
 
 	return useInfiniteQuery< MarketplaceReviewsQueryResponse >( {
@@ -292,6 +292,7 @@ export const useInfiniteMarketplaceReviewsQuery = (
 			}
 			return allPages.length + 1;
 		},
+		initialPageParam: 1,
 		enabled,
 		staleTime,
 	} );
