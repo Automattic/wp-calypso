@@ -70,6 +70,7 @@ class FeaturesGrid extends Component< FeaturesGridProps > {
 						stickyClass="is-sticky-top-buttons-row"
 						element="tr"
 						stickyOffset={ stickyRowOffset }
+						zIndex={ 2 }
 					>
 						{ ( isStuck: boolean ) =>
 							this.renderTopButtons( gridPlansWithoutSpotlight, { isTableCell: true, isStuck } )
