@@ -425,6 +425,7 @@ const PlansFeaturesMain = ( {
 		isSubdomainNotGenerated: ! resolvedSubdomainName.result,
 		storageAddOns,
 		coupon,
+		selectedSiteId: siteId,
 	} );
 
 	const planFeaturesForFeaturesGrid = usePlanFeaturesForGridPlans( {
