@@ -83,9 +83,7 @@ const CustomerHomeLaunchpad: FC< CustomerHomeLaunchpadProps > = ( {
 						<Button
 							className="themes__activation-modal-close-icon"
 							borderless
-							onClick={ () => {
-								dismiss( { isDismissed: true } );
-							} }
+							onClick={ permanentDismiss }
 						>
 							<div> { translate( 'Dismiss guide' ) } </div>
 							<Gridicon icon="cross" size={ 12 } />
