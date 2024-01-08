@@ -1,4 +1,3 @@
-import { isEnabled } from '@automattic/calypso-config';
 import { includes } from 'lodash';
 import isSiteAtomic from 'calypso/state/selectors/is-site-wpcom-atomic';
 import { getTheme } from 'calypso/state/themes/selectors/get-theme';
@@ -14,17 +13,15 @@ import 'calypso/state/themes/init';
  * @returns {boolean} True if the theme has auto loading homepage. Otherwise, False.
  */
 export function themeHasAutoLoadingHomepage( state, themeId, siteId ) {
-	if ( isEnabled( 'themes/atomic-homepage-replace' ) ) {
-		const atomic = isSiteAtomic( state, siteId );
-		const atomicAutoLoading = includes(
-			getThemeTaxonomySlugs( getTheme( state, siteId, themeId ), 'theme_feature' ),
-			'auto-loading-homepage'
-		);
+	const atomic = isSiteAtomic( state, siteId );
+	const atomicAutoLoading = includes(
+		getThemeTaxonomySlugs( getTheme( state, siteId, themeId ), 'theme_feature' ),
+		'auto-loading-homepage'
+	);
 
-		// If the Atomic site has the theme in its library, use that value.
-		if ( atomic && atomicAutoLoading ) {
-			return atomicAutoLoading;
-		}
+	// If the Atomic site has the theme in its library, use that value.
+	if ( atomic && atomicAutoLoading ) {
+		return atomicAutoLoading;
 	}
 
 	// Fall back to the full `wpcom` library.

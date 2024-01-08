@@ -1,5 +1,8 @@
 import { isEnabled } from '@automattic/calypso-config';
-import { Gridicon } from '@automattic/components';
+import { Gridicon, Button } from '@automattic/components';
+import Card from '@automattic/components/src/card';
+import { CheckboxControl, TextareaControl } from '@wordpress/components';
+import classnames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import moment from 'moment';
 import { useState } from 'react';
@@ -7,11 +10,13 @@ import { useSelector } from 'react-redux';
 import ConfirmModal from 'calypso/components/confirm-modal';
 import InfiniteScroll from 'calypso/components/infinite-scroll';
 import Rating from 'calypso/components/rating';
+import ReviewsRatingsStars from 'calypso/components/reviews-rating-stars/reviews-ratings-stars';
 import {
 	useMarketplaceReviewsQuery,
 	MarketplaceReviewResponse,
 	MarketplaceReviewsQueryProps,
 	useDeleteMarketplaceReviewMutation,
+	useUpdateMarketplaceReviewMutation,
 	useInfiniteMarketplaceReviewsQuery,
 } from 'calypso/data/marketplace/use-marketplace-reviews';
 import './style.scss';
@@ -23,6 +28,7 @@ export const MarketplaceReviewsList = ( props: MarketplaceReviewsQueryProps ) =>
 	const translate = useTranslate();
 	const [ isConfirmModalVisible, setIsConfirmModalVisible ] = useState( false );
 	const currentUserId = useSelector( getCurrentUserId );
+	const [ errorMessage, setErrorMessage ] = useState( '' );
 	const { data, fetchNextPage, error } = useInfiniteMarketplaceReviewsQuery( {
 		...props,
 		author_exclude: currentUserId ?? undefined,
@@ -33,16 +39,43 @@ export const MarketplaceReviewsList = ( props: MarketplaceReviewsQueryProps ) =>
 		...props,
 		perPage: 1,
 		author: currentUserId ?? undefined,
+		status: 'all',
 	} );
 
 	const deleteReviewMutation = useDeleteMarketplaceReviewMutation( {
 		...props,
-		perPage: 1,
-		author: currentUserId ?? undefined,
 	} );
 	const deleteReview = ( reviewId: number ) => {
 		setIsConfirmModalVisible( false );
-		deleteReviewMutation.mutate( { reviewId: reviewId } );
+		deleteReviewMutation.mutate(
+			{ reviewId: reviewId },
+			{
+				onError: ( error ) => {
+					setErrorMessage( error.message );
+				},
+				onSuccess: () => {
+					setErrorMessage( '' );
+				},
+			}
+		);
+	};
+
+	const updateReviewMutation = useUpdateMarketplaceReviewMutation( { ...props } );
+
+	const [ isEditing, setIsEditing ] = useState< boolean >( false );
+	const [ editorContent, setEditorContent ] = useState< string >( '' );
+	const [ editorRating, setEditorRating ] = useState< number >( 0 );
+
+	const setEditing = ( review: MarketplaceReviewResponse ) => {
+		setIsEditing( true );
+		setEditorContent( review.content.rendered );
+		setEditorRating( review.meta.wpcom_marketplace_rating );
+	};
+
+	const clearEditing = () => {
+		setIsEditing( false );
+		setEditorContent( '' );
+		setEditorRating( 0 );
 	};
 
 	if ( ! isEnabled( 'marketplace-reviews-show' ) ) {
@@ -56,7 +89,9 @@ export const MarketplaceReviewsList = ( props: MarketplaceReviewsQueryProps ) =>
 		return null;
 	}
 
-	if ( Array.isArray( reviews ) && reviews?.length === 0 ) {
+	const allReviews = [ ...userReviews, ...reviews ];
+
+	if ( Array.isArray( allReviews ) && allReviews?.length === 0 ) {
 		return (
 			<div className="marketplace-reviews-list__no-reviews">
 				<h2 className="marketplace-reviews-list__no-reviews-title">
@@ -74,11 +109,29 @@ export const MarketplaceReviewsList = ( props: MarketplaceReviewsQueryProps ) =>
 	return (
 		<div className="marketplace-reviews-list__container">
 			<div className="marketplace-reviews-list__customer-reviews">
-				{ [ ...userReviews, ...reviews ].map( ( review: MarketplaceReviewResponse ) => (
+				{ allReviews.map( ( review: MarketplaceReviewResponse, i ) => (
 					<div
-						className="marketplace-reviews-list__review-container"
+						className={ classnames( 'marketplace-reviews-list__review-container', {
+							last: i === allReviews.length - 1,
+						} ) }
 						key={ `review-${ review.id }` }
 					>
+						{ review.author === currentUserId && errorMessage && (
+							<Card className="marketplace-reviews-list__error-message" highlight="error">
+								{ errorMessage }
+							</Card>
+						) }
+						{ review.author === currentUserId && review.status === 'hold' && (
+							<Card className="marketplace-reviews-list__pending-review" highlight="warning">
+								<Gridicon className="marketplace-reviews-list__card-icon" icon="info" size={ 18 } />
+								<div className="marketplace-reviews-list__card-text">
+									<span>{ translate( 'Your review is pending approval.' ) }</span>
+									{ isEnabled( 'marketplace-reviews-notification' ) && (
+										<span>{ translate( ' You will be notified once it is published.' ) }</span>
+									) }
+								</div>
+							</Card>
+						) }
 						<div className="marketplace-reviews-list__review-container-header">
 							<div className="marketplace-reviews-list__profile-picture">
 								{ getAvatarURL( review ) ? (
@@ -104,21 +157,78 @@ export const MarketplaceReviewsList = ( props: MarketplaceReviewsQueryProps ) =>
 								{ moment( review.date ).format( 'll' ) }
 							</div>
 						</div>
-
-						<div
-							// sanitized with sanitizeSectionContent
-							// eslint-disable-next-line react/no-danger
-							dangerouslySetInnerHTML={ {
-								__html: sanitizeSectionContent( review.content.rendered ),
-							} }
-							className="marketplace-reviews-list__content"
-						></div>
+						{ isEditing && review.author === currentUserId ? (
+							<>
+								<div className="marketplace-reviews-list__review-rating">
+									<h2>{ translate( 'Let us know how your experience has changed' ) }</h2>
+									<ReviewsRatingsStars
+										size="medium-large"
+										rating={ editorRating }
+										onSelectRating={ setEditorRating }
+									/>
+								</div>
+								<TextareaControl
+									rows={ 4 }
+									cols={ 40 }
+									name="content"
+									value={ editorContent }
+									onChange={ setEditorContent }
+								/>
+							</>
+						) : (
+							<div
+								// sanitized with sanitizeSectionContent
+								// eslint-disable-next-line react/no-danger
+								dangerouslySetInnerHTML={ {
+									__html: sanitizeSectionContent( review.content.rendered ),
+								} }
+								className="marketplace-reviews-list__content"
+							></div>
+						) }
 						<div className="marketplace-reviews-list__review-actions">
-							{ review.author === currentUserId && (
+							{ isEditing && review.author === currentUserId && (
+								<>
+									<div>
+										{ isEnabled( 'marketplace-reviews-notification' ) && (
+											<CheckboxControl
+												className="marketplace-reviews-list__checkbox"
+												label={ translate( 'Notify me when my review is approved and published.' ) }
+												checked={ false }
+												onChange={ () => alert( 'Not implemented yet' ) }
+											/>
+										) }
+									</div>
+									<div className="marketplace-reviews-list__review-actions-editable">
+										<Button className="is-link" onClick={ clearEditing }>
+											{ translate( 'Cancel' ) }
+										</Button>
+										<Button
+											className="marketplace-reviews-list__review-submit"
+											primary
+											onClick={ () => {
+												updateReviewMutation.mutate(
+													{
+														reviewId: review.id,
+														productType: props.productType,
+														slug: props.slug,
+														content: editorContent,
+														rating: editorRating,
+													},
+													{ onError: ( error ) => alert( error.message ) }
+												);
+												clearEditing();
+											} }
+										>
+											{ translate( 'Save my review' ) }
+										</Button>
+									</div>
+								</>
+							) }
+							{ ! isEditing && review.author === currentUserId && (
 								<div className="marketplace-reviews-list__review-actions-editable">
 									<button
 										className="marketplace-reviews-list__review-actions-editable-button"
-										onClick={ () => alert( 'Not implemented yet' ) }
+										onClick={ () => setEditing( review ) }
 									>
 										<Gridicon icon="pencil" size={ 18 } />
 										{ translate( 'Edit my review' ) }

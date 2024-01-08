@@ -1,5 +1,8 @@
+import { isEnabled } from '@automattic/calypso-config';
+import { Icon, starEmpty } from '@wordpress/icons';
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
+import { useCallback, useState } from 'react';
 import JetpackIcons from 'calypso/components/jetpack/sidebar/menu-items/jetpack-icons';
 import Sidebar, {
 	SidebarV2Main as SidebarMain,
@@ -10,8 +13,10 @@ import Sidebar, {
 } from 'calypso/layout/sidebar-v2';
 import { useDispatch, useSelector } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import { isAgencyUser } from 'calypso/state/partner-portal/partner/selectors';
 import getJetpackAdminUrl from 'calypso/state/sites/selectors/get-jetpack-admin-url';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import UserFeedbackModalForm from '../user-feedback-modal-form';
 import SidebarHeader from './header';
 import JetpackCloudSiteSelector from './site-selector';
 
@@ -42,6 +47,8 @@ type Props = {
 	};
 };
 
+const USER_FEEDBACK_FORM_URL_HASH = '#product-feedback';
+
 const JetpackCloudSidebar = ( {
 	className,
 	isJetpackManage,
@@ -51,6 +58,7 @@ const JetpackCloudSidebar = ( {
 	description,
 	backButtonProps,
 }: Props ) => {
+	const isAgency = useSelector( isAgencyUser );
 	const siteId = useSelector( ( state ) => getSelectedSiteId( state ) );
 	const jetpackAdminUrl = useSelector( ( state ) =>
 		siteId ? getJetpackAdminUrl( state, siteId ) : null
@@ -58,6 +66,25 @@ const JetpackCloudSidebar = ( {
 
 	const translate = useTranslate();
 	const dispatch = useDispatch();
+
+	const isUserFeedbackEnabled = isEnabled( 'jetpack/user-feedback-form' );
+
+	// Determine whether to initially show the user feedback form.
+	const shouldShowUserFeedbackForm =
+		isUserFeedbackEnabled && window.location.hash === USER_FEEDBACK_FORM_URL_HASH;
+
+	const [ showUserFeedbackForm, setShowUserFeedbackForm ] = useState( shouldShowUserFeedbackForm );
+
+	const onShareProductFeedback = useCallback( () => {
+		dispatch( recordTracksEvent( 'calypso_jetpack_sidebar_share_product_feedback_click' ) );
+		setShowUserFeedbackForm( true );
+	}, [ dispatch ] );
+
+	const onCloseUserFeedbackForm = useCallback( () => {
+		// Remove any hash from the URL.
+		history.pushState( null, '', window.location.pathname + window.location.search );
+		setShowUserFeedbackForm( false );
+	}, [] );
 
 	return (
 		<Sidebar className={ classNames( 'jetpack-cloud-sidebar', className ) }>
@@ -118,10 +145,24 @@ const JetpackCloudSidebar = ( {
 							);
 						} }
 					/>
+
+					{ isUserFeedbackEnabled && isAgency && (
+						<SidebarNavigatorMenuItem
+							title={ translate( 'Share product feedback', {
+								comment: 'Jetpack Cloud sidebar navigation item',
+							} ) }
+							link={ USER_FEEDBACK_FORM_URL_HASH }
+							path=""
+							icon={ <Icon icon={ starEmpty } /> }
+							onClickMenuItem={ onShareProductFeedback }
+						/>
+					) }
 				</ul>
 			</SidebarFooter>
 
 			<JetpackCloudSiteSelector />
+
+			<UserFeedbackModalForm show={ showUserFeedbackForm } onClose={ onCloseUserFeedbackForm } />
 		</Sidebar>
 	);
 };

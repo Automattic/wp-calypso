@@ -1,5 +1,6 @@
 import { Global, css } from '@emotion/react';
 import styled from '@emotion/styled';
+import classNames from 'classnames';
 import { useRef, type ElementType, useState, useLayoutEffect, ReactNode } from 'react';
 
 type Props = {
@@ -41,6 +42,9 @@ export function StickyContainer( props: Props ) {
 		}
 		const observer = new IntersectionObserver(
 			( [ entry ] ) => {
+				if ( disabled ) {
+					return;
+				}
 				if ( entry.intersectionRatio === 0 ) {
 					// The element is out of view
 					setIsStuck( false );
@@ -86,7 +90,7 @@ export function StickyContainer( props: Props ) {
 				ref={ stickyRef }
 				stickyOffset={ stickyOffset }
 				disabled={ disabled }
-				className={ isStuck ? stickyClass : '' }
+				className={ classNames( { [ stickyClass ]: isStuck } ) }
 			>
 				{ children( isStuck ) }
 			</Container>

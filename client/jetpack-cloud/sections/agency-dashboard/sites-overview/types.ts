@@ -303,6 +303,12 @@ export interface UpdateMonitorSettingsArgs {
 	params: UpdateMonitorSettingsParams;
 }
 
+export interface SubmitProductFeedbackParams {
+	rating: number;
+	feedback: string;
+	source_url: string;
+}
+
 export type SiteMonitorStatus = {
 	[ siteId: number ]: 'loading' | 'completed';
 };

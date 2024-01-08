@@ -21,6 +21,7 @@ export const MarketplaceReviewsCards = forwardRef< HTMLDivElement, MarketplaceRe
 			...props,
 			perPage: 1,
 			author: currentUserId ?? undefined,
+			status: 'all',
 		} );
 		const { data: reviews, error } = useMarketplaceReviewsQuery( {
 			...props,

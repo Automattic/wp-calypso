@@ -1,7 +1,8 @@
 import { hydrate, QueryClient } from '@tanstack/react-query';
 import { persistQueryClient } from '@tanstack/react-query-persist-client';
 import { throttle } from 'lodash';
-import { shouldPersist, MAX_AGE, SERIALIZE_THROTTLE } from 'calypso/state/initial-state';
+import { MAX_AGE, SERIALIZE_THROTTLE } from 'calypso/state/constants';
+import { shouldPersist } from 'calypso/state/initial-state';
 import {
 	getPersistedStateItem,
 	loadPersistedState,

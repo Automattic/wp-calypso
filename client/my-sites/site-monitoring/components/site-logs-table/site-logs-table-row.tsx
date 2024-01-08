@@ -92,7 +92,7 @@ function renderCell(
 	}
 
 	if ( ( column === 'date' || column === 'timestamp' ) && typeof value === 'string' ) {
-		const dateFormat = locale === 'en' ? 'h:mm A [on] ll' : 'h:mm A, ll';
+		const dateFormat = locale === 'en' ? 'll [at] h:mm A' : 'h:mm A, ll';
 		const formattedDate = moment( value )
 			.utcOffset( siteGmtOffset * 60 )
 			.format( dateFormat );
