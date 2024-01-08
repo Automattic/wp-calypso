@@ -52,15 +52,13 @@ export const IntervalTypeDropdown: React.FunctionComponent< IntervalTypeProps > 
 	} ) );
 
 	return (
-		<>
-			<div className="plan-type-selector__interval-type-dropdown-container">
-				<CustomSelectControl
-					className="plan-type-selector__interval-type-dropdown"
-					label=""
-					options={ selectOptionsList }
-					value={ selectOptionsList.find( ( { key } ) => key === supportedIntervalType ) }
-				/>
-			</div>
-		</>
+		<div className="plan-type-selector__interval-type-dropdown-container">
+			<CustomSelectControl
+				className="plan-type-selector__interval-type-dropdown"
+				label=""
+				options={ selectOptionsList }
+				value={ selectOptionsList.find( ( { key } ) => key === supportedIntervalType ) }
+			/>
+		</div>
 	);
 };
