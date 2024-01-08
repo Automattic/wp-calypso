@@ -34,7 +34,7 @@ const validMeshColors = {
 
 type MeshColor = keyof typeof validMeshColors;
 
-export type DefaultUpsellProps = {
+export type ThankYouUpsellProps = {
 	title: string;
 	description: string;
 	trackEvent: string;
@@ -64,7 +64,7 @@ const ContentDiv = styled( 'div' )< { meshColor: MeshColor } >`
 
 `;
 
-const DefaultUpsell = ( {
+const ThankYouUpsell = ( {
 	title,
 	description,
 	trackEvent,
@@ -73,7 +73,7 @@ const DefaultUpsell = ( {
 	href,
 	meshColor = 'blue',
 	onClick,
-}: DefaultUpsellProps ) => {
+}: ThankYouUpsellProps ) => {
 	const handleClick = () => {
 		recordTracksEvent( trackEvent );
 		if ( onClick ) {
@@ -110,4 +110,4 @@ const DefaultUpsell = ( {
 	);
 };
 
-export default DefaultUpsell;
+export default ThankYouUpsell;

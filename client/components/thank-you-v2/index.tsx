@@ -3,7 +3,7 @@ import CheckoutMasterbar, { CheckoutMasterbarProps } from 'calypso/components/ch
 import Main from 'calypso/components/main';
 import PurchaseDetail from 'calypso/components/purchase-detail';
 import ThankYouHeader from './header';
-import DefaultUpsell, { DefaultUpsellProps } from './upsell';
+import ThankYouUpsell, { ThankYouUpsellProps } from './upsell';
 
 import './style.scss';
 
@@ -13,7 +13,7 @@ interface ThankYouV2Props {
 	headerButtons?: React.ReactNode;
 	products?: React.ReactNode;
 	purchaseDetailsProps?: PurchaseDetail.propTypes[];
-	upsellProps?: DefaultUpsellProps;
+	upsellProps?: ThankYouUpsellProps;
 	masterbarProps?: CheckoutMasterbarProps;
 }
 
@@ -46,7 +46,7 @@ const ThankYouV2: React.FC< ThankYouV2Props > = ( props: ThankYouV2Props ) => {
 				</div>
 			) }
 
-			{ upsellProps && <DefaultUpsell { ...upsellProps } /> }
+			{ upsellProps && <ThankYouUpsell { ...upsellProps } /> }
 		</Main>
 	);
 };
