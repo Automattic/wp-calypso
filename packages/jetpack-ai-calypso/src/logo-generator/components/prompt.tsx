@@ -7,7 +7,7 @@ import { useDispatch } from '@wordpress/data';
 import { __, sprintf } from '@wordpress/i18n';
 import { Icon, info } from '@wordpress/icons';
 import debugFactory from 'debug';
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useState, useRef } from 'react';
 /**
  * Internal dependencies
  */
@@ -41,6 +41,8 @@ export const Prompt: React.FC = () => {
 	const enhanceLabel = __( 'Enhance prompt', 'jetpack' );
 	const enhanceButtonLabel = isEnhancingPrompt ? enhancingLabel : enhanceLabel;
 
+	const inputRef = useRef< HTMLDivElement | null >( null );
+
 	const onEnhance = useCallback( async () => {
 		debug( 'enhancing prompt', prompt );
 		setIsEnhancingPrompt( true );
@@ -66,6 +68,13 @@ export const Prompt: React.FC = () => {
 	useEffect( () => {
 		setRequestsRemaining( currentLimit - currentUsage );
 	}, [ currentLimit, currentUsage ] );
+
+	useEffect( () => {
+		// Update prompt after enhancement
+		if ( inputRef.current && inputRef.current.textContent !== prompt ) {
+			inputRef.current.textContent = prompt;
+		}
+	}, [ prompt ] );
 
 	const onGenerate = useCallback( async () => {
 		debug( 'getting image for prompt', prompt );
@@ -94,7 +103,6 @@ export const Prompt: React.FC = () => {
 	] );
 
 	const onPromptInput = useCallback( ( event: React.ChangeEvent< HTMLInputElement > ) => {
-		// TODO: double check this, never used textContent before as a replacement to input.value
 		setPrompt( event.target.textContent || '' );
 	}, [] );
 
@@ -117,7 +125,10 @@ export const Prompt: React.FC = () => {
 			</div>
 			<div className="jetpack-ai-logo-generator__prompt-query">
 				<div
+					ref={ inputRef }
 					contentEditable={ ! isBusy && ! requireUpgrade }
+					// The content editable div is expected to be updated by the enhance prompt, so warnings are suppressed
+					suppressContentEditableWarning={ true }
 					className="prompt-query__input"
 					onInput={ onPromptInput }
 					placeholder={ __(
