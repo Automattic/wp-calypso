@@ -17,7 +17,6 @@ import { guessTimezone, localizeUrl } from '@automattic/i18n-utils';
 import languages from '@automattic/languages';
 import { ToggleControl } from '@wordpress/components';
 import classNames from 'classnames';
-import i18n from 'i18n-calypso';
 import { flowRight, get } from 'lodash';
 import { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
@@ -895,9 +894,7 @@ export class SiteSettingsFormGeneral extends Component {
 			isAtomicAndEditingToolkitDeactivated,
 			isWpcomStagingSite,
 			isUnlaunchedSite: propsisUnlaunchedSite,
-			locale,
 		} = this.props;
-		const isEnglishLocale = [ 'en', 'en-gb' ].includes( locale );
 		const classes = classNames( 'site-settings__general-settings', {
 			'is-loading': isRequestingSettings,
 		} );
@@ -961,18 +958,11 @@ export class SiteSettingsFormGeneral extends Component {
 							<UpsellNudge
 								feature={ WPCOM_FEATURES_NO_WPCOM_BRANDING }
 								plan={ PLAN_BUSINESS }
-								title={
-									isEnglishLocale ||
-									i18n.hasTranslation(
-										'Remove the footer credit entirely with WordPress.com %(businessPlanName)s'
-									)
-										? translate(
-												'Remove the footer credit entirely with WordPress.com %(businessPlanName)s',
+								title={ translate(
+									'Remove the footer credit entirely with WordPress.com %(businessPlanName)s',
 
-												{ args: { businessPlanName: getPlan( PLAN_BUSINESS ).getTitle() } }
-										  )
-										: translate( 'Remove the footer credit entirely with WordPress.com Business' )
-								}
+									{ args: { businessPlanName: getPlan( PLAN_BUSINESS ).getTitle() } }
+								) }
 								description={ translate(
 									'Upgrade to remove the footer credit, use advanced SEO tools and more'
 								) }
@@ -1000,7 +990,12 @@ export class SiteSettingsFormGeneral extends Component {
 						<Gridicon icon="info-outline" />
 						<span>
 							{ translate(
-								'Your site contains premium styles that will only be visible once you upgrade to a Premium plan.'
+								'Your site contains premium styles that will only be visible once you upgrade to a %(planName)s plan.',
+								{
+									args: {
+										planName: getPlan( PLAN_PREMIUM )?.getTitle() ?? '',
+									},
+								}
 							) }
 						</span>
 					</div>

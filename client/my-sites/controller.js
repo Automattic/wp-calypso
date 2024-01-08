@@ -1,6 +1,7 @@
 import config from '@automattic/calypso-config';
 import { PLAN_FREE, PLAN_JETPACK_FREE } from '@automattic/calypso-products';
 import page from '@automattic/calypso-router';
+import { englishLocales } from '@automattic/i18n-utils';
 import { removeQueryArgs } from '@wordpress/url';
 import i18n from 'i18n-calypso';
 import { some, startsWith } from 'lodash';
@@ -62,6 +63,7 @@ import {
 import { successNotice, warningNotice, errorNotice } from 'calypso/state/notices/actions';
 import { savePreference } from 'calypso/state/preferences/actions';
 import { hasReceivedRemotePreferences, getPreference } from 'calypso/state/preferences/selectors';
+import getCurrentLocaleSlug from 'calypso/state/selectors/get-current-locale-slug';
 import getP2HubBlogId from 'calypso/state/selectors/get-p2-hub-blog-id';
 import getPrimaryDomainBySiteId from 'calypso/state/selectors/get-primary-domain-by-site-id';
 import getPrimarySiteId from 'calypso/state/selectors/get-primary-site-id';
@@ -72,6 +74,7 @@ import isSiteP2Hub from 'calypso/state/selectors/is-site-p2-hub';
 import isSiteWpcomStaging from 'calypso/state/selectors/is-site-wpcom-staging';
 import isSiteWPForTeams from 'calypso/state/selectors/is-site-wpforteams';
 import wasTrialSite from 'calypso/state/selectors/was-trial-site';
+import wasUpgradedFromTrialSite from 'calypso/state/selectors/was-upgraded-from-trial-site';
 import { requestSite } from 'calypso/state/sites/actions';
 import { getDomainsBySiteId } from 'calypso/state/sites/domains/selectors';
 import {
@@ -85,6 +88,7 @@ import { isSupportSession } from 'calypso/state/support/selectors';
 import { setSelectedSiteId, setAllSitesSelected } from 'calypso/state/ui/actions';
 import { setLayoutFocus } from 'calypso/state/ui/layout-focus/actions';
 import { getSelectedSite, getSelectedSiteId } from 'calypso/state/ui/selectors';
+
 /*
  * @FIXME Shorthand, but I might get rid of this.
  */
@@ -127,6 +131,46 @@ export function createNavigation( context ) {
 			siteBasePath={ basePath }
 		/>
 	);
+}
+
+export function renderRebloggingEmptySites( context ) {
+	const { getState } = getStore( context );
+	const state = getState();
+	const locale = getCurrentLocaleSlug( state );
+	setSectionMiddleware( { group: 'sites' } )( context );
+	recordTracksEvent( 'calypso_post_share_no_sites' );
+
+	const actionURL = addQueryArgs(
+		{
+			blog_post: context.query?.url,
+		},
+		'/setup/reblogging'
+	);
+
+	context.primary = createElement( () =>
+		NoSitesMessage( {
+			title:
+				englishLocales.includes( locale ) || i18n.hasTranslation( 'Create a site to reblog' )
+					? i18n.translate( 'Create a site to reblog' )
+					: null,
+			line:
+				englishLocales.includes( locale ) ||
+				i18n.hasTranslation(
+					"Create your first website to reblog content from other sites you're following."
+				)
+					? i18n.translate(
+							"Create your first website to reblog content from other sites you're following."
+					  )
+					: null,
+			actionURL,
+			actionCallback: () => {
+				recordTracksEvent( 'calypso_post_share_no_sites_create_site_click' );
+			},
+		} )
+	);
+
+	makeLayout( context, noop );
+	clientRender( context );
 }
 
 export function renderEmptySites( context ) {
@@ -296,9 +340,11 @@ function onSelectedSiteAvailable( context ) {
 	// Use getSitePlanSlug() as it ignores expired plans.
 	const currentPlanSlug = getSitePlanSlug( state, selectedSite.ID );
 
-	// If we had a trial plan, and the user doesn't have an active paid plan, redirect to fullpage trial expired page.
+	// If we had a trial plan, and the user doesn't have a paid plan (active or expired),
+	// redirect to full-page trial expired page.
 	if (
 		wasTrialSite( state, selectedSite.ID ) &&
+		! wasUpgradedFromTrialSite( state, selectedSite.ID ) &&
 		[ PLAN_FREE, PLAN_JETPACK_FREE ].includes( currentPlanSlug )
 	) {
 		const permittedPathPrefixes = [
@@ -505,7 +551,11 @@ export function siteSelection( context, next ) {
 
 	// The user doesn't have any sites: render `NoSitesMessage`
 	if ( currentUser && currentUser.site_count === 0 && shouldRenderNoSites ) {
-		renderEmptySites( context );
+		if ( context.query?.is_post_share ) {
+			renderRebloggingEmptySites( context );
+		} else {
+			renderEmptySites( context );
+		}
 		recordNoSitesPageView( context, siteFragment );
 		return;
 	}

@@ -34,10 +34,16 @@ export type PanelObject = {
 	selectedPatterns?: Pattern[];
 };
 
-export type ScreenName = 'main' | 'styles' | 'confirmation' | 'activation' | 'upsell' | 'pages';
+export type ScreenName = 'main' | 'styles' | 'confirmation' | 'upsell' | 'pages';
 
 export type Tag = {
 	slug: string;
 	title: string;
 	description: string;
+};
+
+export type CustomPageTitle = {
+	title: string;
+	ID: number;
+	selected: boolean;
 };

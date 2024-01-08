@@ -82,7 +82,7 @@ describe( 'Onboarding: Site Assembler', () => {
 
 		it( 'Select "Start designing" and land on the Site Assembler', async function () {
 			await startSiteFlow.clickButton( 'Design your own' );
-			await page.waitForURL( /setup\/site-setup\/patternAssembler/, {
+			await page.waitForURL( /setup\/site-setup\/pattern-assembler/, {
 				timeout: 30 * 1000,
 			} );
 		} );

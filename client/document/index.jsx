@@ -15,6 +15,7 @@ import EnvironmentBadge, {
 import Head from 'calypso/components/head';
 import JetpackLogo from 'calypso/components/jetpack-logo';
 import { LoadingEllipsis } from 'calypso/components/loading-ellipsis';
+import WooCommerceLogo from 'calypso/components/woocommerce-logo';
 import WordPressLogo from 'calypso/components/wordpress-logo';
 import { isGravPoweredOAuth2Client } from 'calypso/lib/oauth2-clients';
 import { jsonStringifyForHtml } from 'calypso/server/sanitize';
@@ -98,7 +99,7 @@ class Document extends Component {
 
 		const theme = config( 'theme' );
 
-		const LoadingLogo = chooseLoadingLogo( this.props, app?.isWpMobileApp );
+		const LoadingLogo = chooseLoadingLogo( this.props, app?.isWpMobileApp, app?.isWcMobileApp );
 
 		const isRTL = isLocaleRtl( lang );
 
@@ -145,7 +146,7 @@ class Document extends Component {
 						[ 'is-group-' + sectionGroup ]: sectionGroup,
 						[ 'is-section-' + sectionName ]: sectionName,
 						'is-white-signup': sectionName === 'signup',
-						'is-mobile-app-view': app?.isWpMobileApp,
+						'is-mobile-app-view': app?.isWpMobileApp || app?.isWcMobileApp,
 					} ) }
 				>
 					{ /* eslint-disable wpcalypso/jsx-classname-namespace, react/no-danger */ }
@@ -280,11 +281,16 @@ class Document extends Component {
 	}
 }
 
-function chooseLoadingLogo( { useLoadingEllipsis }, isMobileApp ) {
+function chooseLoadingLogo( { useLoadingEllipsis }, isWpMobileApp, isWcMobileApp ) {
 	if ( useLoadingEllipsis ) {
 		return LoadingEllipsis;
 	}
-	if ( config.isEnabled( 'jetpack-cloud' ) || isMobileApp ) {
+
+	if ( isWcMobileApp ) {
+		return WooCommerceLogo;
+	}
+
+	if ( config.isEnabled( 'jetpack-cloud' ) || isWpMobileApp ) {
 		return JetpackLogo;
 	}
 

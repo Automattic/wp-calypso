@@ -1,52 +1,71 @@
-import { Dialog, Button, Card, Spinner } from '@automattic/components';
-import { TextareaControl } from '@wordpress/components';
-import { translate } from 'i18n-calypso';
-import { useState } from 'react';
-import CardHeading from 'calypso/components/card-heading';
-import ReviewsRatingsStars from 'calypso/components/reviews-rating-stars/reviews-ratings-stars';
+import page from '@automattic/calypso-router';
+import { Dialog, Button } from '@automattic/components';
+import { getLocaleSlug, useTranslate } from 'i18n-calypso';
+import { useSelector } from 'react-redux';
+import Rating from 'calypso/components/rating';
+import { PluginPeriodVariations } from 'calypso/data/marketplace/types';
 import {
-	ProductType,
-	ErrorResponse,
-	useCreateMarketplaceReviewMutation,
+	ProductProps,
+	useMarketplaceReviewsQuery,
+	useMarketplaceReviewsStatsQuery,
 } from 'calypso/data/marketplace/use-marketplace-reviews';
-
+import { getProductSlugByPeriodVariation } from 'calypso/lib/plugins/utils';
+import { MarketplaceReviewsList } from 'calypso/my-sites/marketplace/components/reviews-list';
 import './styles.scss';
+import { getCurrentUser } from 'calypso/state/current-user/selectors';
+import {
+	canPublishProductReviews,
+	hasActivePluginSubscription,
+} from 'calypso/state/marketplace/selectors';
+import { getProductsList, isMarketplaceProduct } from 'calypso/state/products-list/selectors';
+import { getSelectedSite } from 'calypso/state/ui/selectors';
+import { AppState } from 'calypso/types';
 
 type Props = {
 	isVisible: boolean;
 	onClose: () => void;
-	slug: string;
 	productName: string;
-	productType: ProductType;
-};
+	variations?: PluginPeriodVariations;
+} & ProductProps;
 
-export const ReviewsModal = ( { isVisible, onClose, slug, productName, productType }: Props ) => {
-	const [ content, setContent ] = useState< string >( '' );
-	const [ rating, setRating ] = useState< number >( 5 );
+export const ReviewsModal = ( props: Props ) => {
+	const translate = useTranslate();
+	const { isVisible, onClose, productName, productType, slug, variations } = props;
+	const currentUser = useSelector( getCurrentUser );
+	const selectedSite = useSelector( getSelectedSite );
+	const isMarketplacePlugin = useSelector(
+		( state ) => productType === 'plugin' && isMarketplaceProduct( state, slug )
+	);
 
-	const createReview = useCreateMarketplaceReviewMutation();
+	const { data: userReviews } = useMarketplaceReviewsQuery( {
+		productType,
+		slug,
+		perPage: 1,
+		author: currentUser?.ID ?? undefined,
+		status: 'all',
+	} );
+	const { data: reviewsStats } = useMarketplaceReviewsStatsQuery( {
+		productType,
+		slug,
+	} );
 
-	if ( createReview.isSuccess ) {
-		return (
-			<Dialog
-				className="marketplace-reviews-modal"
-				isVisible={ isVisible }
-				onClose={ onClose }
-				showCloseIcon
-			>
-				<Card className="marketplace-reviews-modal__card-success">
-					<CardHeading className="marketplace-reviews-modal__card-success-title" tagName="h1">
-						{ translate( 'Thank you for your feedback!' ) }
-					</CardHeading>
-					<CardHeading className="marketplace-reviews-modal__card-success-body" tagName="p">
-						{ translate(
-							'Your review it‘s currently under moderation for adherence to our guidelines and will be published soon.'
-						) }
-					</CardHeading>
-				</Card>
-			</Dialog>
-		);
-	}
+	const userHasReviewed = !! userReviews?.length;
+	const canPublishReview = useSelector( ( state: AppState ) =>
+		canPublishProductReviews( state, productType, slug, variations )
+	);
+	const hasActiveSubscription = useSelector( ( state: AppState ) =>
+		hasActivePluginSubscription( state, variations )
+	);
+	const askForReview = canPublishReview && ! userHasReviewed;
+
+	const { ratings_average: averageRating, ratings_count: numberOfReviews } = reviewsStats || {};
+	const normalizedRating = ( ( averageRating ?? 0 ) * 100 ) / 5; // Normalize to 100
+
+	// Purchase Marketplace Plugin
+	const productsList = useSelector( getProductsList );
+	const variationPeriod = 'monthly';
+	const variation = variations?.[ variationPeriod ];
+	const marketplaceProductSlug = getProductSlugByPeriodVariation( variation, productsList );
 
 	return (
 		<Dialog
@@ -55,50 +74,67 @@ export const ReviewsModal = ( { isVisible, onClose, slug, productName, productTy
 			onClose={ onClose }
 			showCloseIcon
 		>
-			<Card className="marketplace-reviews-modal__card">
-				<CardHeading tagName="h1" size={ 21 }>
-					{ translate( 'Add New Review for %(productName)s', { args: { productName } } ) }
-				</CardHeading>
-				<form
-					onSubmit={ ( e ) => {
-						e.preventDefault();
-						const requestData = {
-							productType: productType,
-							slug: slug,
-							content: content,
-							rating: Number( rating ),
-						};
-						createReview.mutate( requestData );
-					} }
-				>
-					<TextareaControl
-						rows={ 12 }
-						cols={ 40 }
-						label="Your review"
-						name="content"
-						value={ content }
-						onChange={ setContent }
-					/>
-					<ReviewsRatingsStars onSelectRating={ setRating } showSelectedRating rating={ rating } />
-					<div className="marketplace-reviews-modal__buttons-container">
-						<Button
-							className="marketplace-reviews-modal__button-submit"
-							primary
-							type="submit"
-							disabled={ createReview.isLoading }
-						>
-							{ createReview.isLoading && <Spinner className="card__icon" /> }
-							<span>{ translate( 'Submit' ) }</span>
-						</Button>
-						<Button onClick={ onClose }>{ translate( 'Cancel' ) }</Button>
+			<div className="marketplace-reviews-modal__header">
+				<div className="marketplace-reviews-modal__title">{ productName }</div>
+			</div>
+
+			<div className="marketplace-reviews-modal__content">
+				{ averageRating !== undefined && numberOfReviews !== undefined && (
+					<div className="marketplace-reviews-modal__summary">
+						<div className="marketplace-reviews-modal__stats">
+							<div className="marketplace-reviews-modal__ratings-average">
+								{ averageRating.toLocaleString( getLocaleSlug() ?? 'default', {
+									minimumFractionDigits: 1,
+									maximumFractionDigits: 1,
+								} ) }
+							</div>
+							<div className="marketplace-reviews-modal__ratings">
+								<Rating rating={ normalizedRating } />
+								<div className="marketplace-reviews-modal__ratings-count">
+									{ numberOfReviews > 0 &&
+										translate( '%(numberOfReviews)d review', '%(numberOfReviews)d reviews', {
+											count: numberOfReviews,
+											args: {
+												numberOfReviews,
+											},
+										} ) }
+									{ numberOfReviews === 0 && translate( 'No reviews' ) }
+								</div>
+							</div>
+						</div>
+						{ askForReview && (
+							<div className="marketplace-reviews-modal__summary-button">
+								<Button primary onClick={ () => alert( 'Not implemented yet' ) }>
+									{ translate( 'Leave my review' ) }
+								</Button>
+							</div>
+						) }
+						{ /* TODO: Add theme purchase */ }
+						{ ! askForReview &&
+							! hasActiveSubscription &&
+							isMarketplacePlugin &&
+							selectedSite?.slug && (
+								<div className="marketplace-reviews-modal__summary-button">
+									<Button
+										primary
+										onClick={ () =>
+											page(
+												`/checkout/${ selectedSite.slug || '' }/${ marketplaceProductSlug }?#step2`
+											)
+										}
+									>
+										{ translate( 'Purchase and activate this plugin' ) }
+									</Button>
+								</div>
+							) }
 					</div>
-				</form>
-				{ createReview.isError && (
-					<span className="marketplace-reviews-modal__error">
-						{ ( createReview.error as ErrorResponse ).message }
-					</span>
 				) }
-			</Card>
+
+				{ /* TODO: Add the review creation section */ }
+				<div className="marketplace-reviews-modal__reviews-list">
+					<MarketplaceReviewsList productType={ productType } slug={ slug } />
+				</div>
+			</div>
 		</Dialog>
 	);
 };

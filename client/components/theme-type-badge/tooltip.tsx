@@ -106,20 +106,25 @@ const ThemeTypeBadgeTooltip = ( {
 		} );
 	}, [ themeId ] );
 
+	const premiumPlan = plans?.data?.[ PLAN_PREMIUM ];
 	let message;
 	if ( isLockedStyleVariation ) {
-		message =
-			isEnglishLocale ||
-			i18n.hasTranslation(
-				'Unlock this style, and tons of other features, by upgrading to a %(premiumPlanName)s plan.'
-			)
-				? translate(
-						'Unlock this style, and tons of other features, by upgrading to a %(premiumPlanName)s plan.',
-						{ args: { premiumPlanName: plans?.data?.[ PLAN_PREMIUM ]?.productNameShort ?? '' } }
-				  )
-				: translate(
-						'Unlock this style, and tons of other features, by upgrading to a Premium plan.'
-				  );
+		message = createInterpolateElement(
+			// Translators: %(premiumPlanName)s is the name of the premium plan that includes this theme. Examples: "Explorer" or "Premium".
+			translate(
+				'Unlock this style, and tons of other features, by upgrading to a <Link>%(premiumPlanName)s plan</Link>.',
+				{ args: { premiumPlanName: premiumPlan?.productNameShort || '' }, textOnly: true }
+			),
+			{
+				Link: (
+					<ThemeTypeBadgeTooltipUpgradeLink
+						canGoToCheckout={ canGoToCheckout }
+						plan={ premiumPlan?.planSlug || '' }
+						siteSlug={ siteSlug }
+					/>
+				),
+			}
+		);
 	} else if ( type === PREMIUM_THEME ) {
 		if ( isPurchased ) {
 			message = translate( 'You have purchased this theme.' );
@@ -130,14 +135,9 @@ const ThemeTypeBadgeTooltip = ( {
 					: translate( 'This premium theme is included in your plan.' );
 		} else {
 			message = createInterpolateElement(
-				isEnglishLocale ||
-					i18n.hasTranslation(
-						'This theme is included in the <Link>%(premiumPlanName)s plan</Link>.'
-					)
-					? ( translate( 'This theme is included in the <Link>%(premiumPlanName)s plan</Link>.', {
-							args: { premiumPlanName: plans?.data?.[ PLAN_PREMIUM ]?.productNameShort ?? '' },
-					  } ) as string )
-					: translate( 'This premium theme is included in the <Link>Premium plan</Link>.' ),
+				translate( 'This theme is included in the <Link>%(premiumPlanName)s plan</Link>.', {
+					args: { premiumPlanName: plans?.data?.[ PLAN_PREMIUM ]?.productNameShort ?? '' },
+				} ) as string,
 				{
 					Link: (
 						<ThemeTypeBadgeTooltipUpgradeLink
@@ -153,21 +153,14 @@ const ThemeTypeBadgeTooltip = ( {
 		message = isIncludedCurrentPlan
 			? translate( 'This community theme is included in your plan.' )
 			: createInterpolateElement(
-					isEnglishLocale ||
-						i18n.hasTranslation(
-							'This community theme can only be installed if you have the <Link>%(businessPlanName)s plan</Link> or higher on your site.'
-						)
-						? ( translate(
-								'This community theme can only be installed if you have the <Link>%(businessPlanName)s plan</Link> or higher on your site.',
-								{
-									args: {
-										businessPlanName: plans?.data?.[ PLAN_BUSINESS ]?.productNameShort ?? '',
-									},
-								}
-						  ) as string )
-						: translate(
-								'This community theme can only be installed if you have the <Link>Business plan</Link> or higher on your site.'
-						  ),
+					translate(
+						'This community theme can only be installed if you have the <Link>%(businessPlanName)s plan</Link> or higher on your site.',
+						{
+							args: {
+								businessPlanName: plans?.data?.[ PLAN_BUSINESS ]?.productNameShort ?? '',
+							},
+						}
+					) as string,
 					{
 						Link: (
 							<ThemeTypeBadgeTooltipUpgradeLink
@@ -189,25 +182,13 @@ const ThemeTypeBadgeTooltip = ( {
 				} );
 			} else {
 				message = createInterpolateElement(
-					isEnglishLocale ||
-						i18n.hasTranslation(
-							'This theme is included in the <Link>%(businessPlanName)s plan</Link>.'
-						)
-						? translate( 'This theme is included in the <Link>%(businessPlanName)s plan</Link>.', {
-								args: {
-									bundleName,
-									businessPlanName: plans?.data?.[ PLAN_BUSINESS ]?.productNameShort ?? '',
-								},
-								textOnly: true,
-						  } )
-						: // Translators: %(bundleName)s is the name of the bundle, sometimes represented as a product name. Examples: "WooCommerce" or "Special".:
-						  translate(
-								'This %(bundleName)s theme is included in the <Link>Business plan</Link>.',
-								{
-									args: { bundleName },
-									textOnly: true,
-								}
-						  ),
+					translate( 'This theme is included in the <Link>%(businessPlanName)s plan</Link>.', {
+						args: {
+							bundleName,
+							businessPlanName: plans?.data?.[ PLAN_BUSINESS ]?.productNameShort ?? '',
+						},
+						textOnly: true,
+					} ),
 					{
 						Link: (
 							<ThemeTypeBadgeTooltipUpgradeLink
@@ -222,31 +203,16 @@ const ThemeTypeBadgeTooltip = ( {
 		}
 	} else if ( type === MARKETPLACE_THEME ) {
 		if ( isPurchased && isIncludedCurrentPlan ) {
-			message =
-				isEnglishLocale ||
-				i18n.hasTranslation(
-					'You have a subscription for this theme, and it will be usable as long as you keep a %(businessPlanName)s plan or higher on your site.'
-				)
-					? translate(
-							'You have a subscription for this theme, and it will be usable as long as you keep a %(businessPlanName)s plan or higher on your site.',
-							{ args: { businessPlanName: plans?.data?.[ PLAN_BUSINESS ]?.productNameShort ?? '' } }
-					  )
-					: translate(
-							'You have a subscription for this theme, and it will be usable as long as you keep a Business plan or higher on your site.'
-					  );
+			message = translate(
+				'You have a subscription for this theme, and it will be usable as long as you keep a %(businessPlanName)s plan or higher on your site.',
+				{ args: { businessPlanName: plans?.data?.[ PLAN_BUSINESS ]?.productNameShort ?? '' } }
+			);
 		} else if ( isPurchased && ! isIncludedCurrentPlan ) {
 			message = createInterpolateElement(
-				isEnglishLocale ||
-					i18n.hasTranslation(
-						'You have a subscription for this theme, but it will only be usable if you have the <link>%(businessPlanName)s plan</link> on your site.'
-					)
-					? ( translate(
-							'You have a subscription for this theme, but it will only be usable if you have the <link>%(businessPlanName)s plan</link> on your site.',
-							{ args: { businessPlanName: plans?.data?.[ PLAN_BUSINESS ]?.productNameShort ?? '' } }
-					  ) as string )
-					: translate(
-							'You have a subscription for this theme, but it will only be usable if you have the <link>Business plan</link> on your site.'
-					  ),
+				translate(
+					'You have a subscription for this theme, but it will only be usable if you have the <link>%(businessPlanName)s plan</link> on your site.',
+					{ args: { businessPlanName: plans?.data?.[ PLAN_BUSINESS ]?.productNameShort ?? '' } }
+				) as string,
 				{
 					link: (
 						<ThemeTypeBadgeTooltipUpgradeLink
@@ -270,30 +236,17 @@ const ThemeTypeBadgeTooltip = ( {
 			);
 		} else if ( ! isPurchased && ! isIncludedCurrentPlan ) {
 			message = createInterpolateElement(
-				isEnglishLocale ||
-					i18n.hasTranslation(
-						'This theme costs %(annualPrice)s per year or %(monthlyPrice)s per month, and can only be purchased if you have the <Link>%(businessPlanName)s plan</Link> on your site.'
-					)
-					? /* translators: annualPrice and monthlyPrice are prices for the theme, examples: US$50, US$7; */
-					  ( translate(
-							'This theme costs %(annualPrice)s per year or %(monthlyPrice)s per month, and can only be purchased if you have the <Link>%(businessPlanName)s plan</Link> on your site.',
-							{
-								args: {
-									annualPrice: subscriptionPrices.year ?? '',
-									monthlyPrice: subscriptionPrices.month ?? '',
-									businessPlanName: plans?.data?.[ PLAN_BUSINESS ]?.productNameShort ?? '',
-								},
-							}
-					  ) as string )
-					: ( translate(
-							'This theme costs %(annualPrice)s per year or %(monthlyPrice)s per month, and can only be purchased if you have the <Link>Business plan</Link> on your site.',
-							{
-								args: {
-									annualPrice: subscriptionPrices.year ?? '',
-									monthlyPrice: subscriptionPrices.month ?? '',
-								},
-							}
-					  ) as string ),
+				/* translators: annualPrice and monthlyPrice are prices for the theme, examples: US$50, US$7; */
+				translate(
+					'This theme costs %(annualPrice)s per year or %(monthlyPrice)s per month, and can only be purchased if you have the <Link>%(businessPlanName)s plan</Link> on your site.',
+					{
+						args: {
+							annualPrice: subscriptionPrices.year ?? '',
+							monthlyPrice: subscriptionPrices.month ?? '',
+							businessPlanName: plans?.data?.[ PLAN_BUSINESS ]?.productNameShort ?? '',
+						},
+					}
+				) as string,
 				{
 					Link: (
 						<ThemeTypeBadgeTooltipUpgradeLink

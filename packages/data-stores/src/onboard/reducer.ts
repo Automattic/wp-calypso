@@ -367,16 +367,6 @@ const progressTitle: Reducer< string | undefined, OnboardAction > = ( state, act
 	return state;
 };
 
-const stepProgress: Reducer< { count: number; progress: number } | undefined, OnboardAction > = (
-	state,
-	action
-) => {
-	if ( action.type === 'SET_STEP_PROGRESS' ) {
-		return action.stepProgress;
-	}
-	return state;
-};
-
 const goals: Reducer< SiteGoal[], OnboardAction > = ( state = [], action ) => {
 	if ( action.type === 'SET_GOALS' ) {
 		return action.goals;
@@ -389,16 +379,6 @@ const goals: Reducer< SiteGoal[], OnboardAction > = ( state = [], action ) => {
 	}
 	if ( [ 'RESET_GOALS', 'RESET_ONBOARD_STORE' ].includes( action.type ) ) {
 		return [];
-	}
-	return state;
-};
-
-const editEmail: Reducer< string, OnboardAction > = ( state = '', action ) => {
-	if ( action.type === 'SET_EDIT_EMAIL' ) {
-		return action.email;
-	}
-	if ( action.type === 'RESET_ONBOARD_STORE' ) {
-		return '';
 	}
 	return state;
 };
@@ -428,6 +408,16 @@ const ecommerceFlowRecurType: Reducer< string, OnboardAction > = ( state = '', a
 		return action.ecommerceFlowRecurType;
 	}
 	if ( action.type === 'RESET_ONBOARD_STORE' ) {
+		return '';
+	}
+	return state;
+};
+
+const couponCode: Reducer< string, OnboardAction > = ( state = '', action ) => {
+	if ( action.type === 'SET_COUPON_CODE' ) {
+		return action.couponCode;
+	}
+	if ( [ 'RESET_COUPON_CODE', 'RESET_ONBOARD_STORE' ].includes( action.type ) ) {
 		return '';
 	}
 	return state;
@@ -622,9 +612,7 @@ const reducer = combineReducers( {
 	pendingAction,
 	progress,
 	progressTitle,
-	stepProgress,
 	goals,
-	editEmail,
 	hideFreePlan,
 	hidePlansFeatureComparison,
 	siteDescription,
@@ -633,6 +621,7 @@ const reducer = combineReducers( {
 	verticalId,
 	storeLocationCountryCode,
 	ecommerceFlowRecurType,
+	couponCode,
 	planCartItem,
 	productCartItems,
 	isMigrateFromWp,

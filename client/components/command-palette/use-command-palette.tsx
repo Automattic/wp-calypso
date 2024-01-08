@@ -13,6 +13,7 @@ import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getCurrentRoutePattern } from 'calypso/state/selectors/get-current-route-pattern';
 import { useSitesSorting } from 'calypso/state/sites/hooks/use-sites-sorting';
 import { useCurrentSiteRankTop } from './use-current-site-rank-top';
+import type { AppState } from 'calypso/types';
 
 const FillDefaultIconWhite = styled.div( {
 	flexShrink: 0,
@@ -25,12 +26,15 @@ type CloseFunction = ( commandName?: string, isExecuted?: boolean ) => void;
 type OnClickSiteFunction = ( {
 	close,
 	site,
+	command,
 }: {
 	close: CloseFunction;
 	site: SiteExcerptData;
+	command: Command;
 } ) => void;
 interface SiteFunctions {
-	onClick: ( { site, close }: { site: SiteExcerptData; close: CloseFunction } ) => void;
+	capabilityFilter?: string;
+	onClick: OnClickSiteFunction;
 	filter?: ( site: SiteExcerptData ) => boolean | undefined | null;
 	filterNotice?: string;
 	emptyListNotice?: string;
@@ -39,9 +43,10 @@ export interface CommandCallBackParams {
 	close: CloseFunction;
 	setSearch: ( search: string ) => void;
 	setPlaceholderOverride: ( placeholder: string ) => void;
+	command: Command;
 }
 
-interface Command {
+export interface Command {
 	name: string;
 	label: string;
 	subLabel?: string;
@@ -89,7 +94,7 @@ const useSiteToAction = () => {
 					label: `${ siteName }`,
 					subLabel: `${ site.URL }`,
 					searchLabel: `${ site.ID } ${ siteName } ${ site.URL }`,
-					callback: ( { close }: { close: CloseFunction } ) => {
+					callback: ( { close } ) => {
 						dispatch(
 							recordTracksEvent( 'calypso_hosting_command_palette_site_select', {
 								command: selectedCommand.name,
@@ -102,7 +107,7 @@ const useSiteToAction = () => {
 								command_site_plan_id: site.plan?.product_id,
 							} )
 						);
-						onClickSite( { site, close } );
+						onClickSite( { site, close, command: selectedCommand } );
 					},
 					image: (
 						<FillDefaultIconWhite>
@@ -149,6 +154,8 @@ export const useCommandPalette = ( {
 
 	const currentRoute = useSelector( ( state: object ) => getCurrentRoutePattern( state ) );
 
+	const userCapabilities = useSelector( ( state: AppState ) => state.currentUser.capabilities );
+
 	// Logic for selected command (sites)
 	if ( selectedCommandName ) {
 		const selectedCommand = commands.find( ( c ) => c.name === selectedCommandName );
@@ -156,8 +163,14 @@ export const useCommandPalette = ( {
 		let filterNotice = undefined;
 		let emptyListNotice = undefined;
 		if ( selectedCommand?.siteFunctions ) {
-			const { onClick, filter } = selectedCommand.siteFunctions;
+			const { capabilityFilter, onClick, filter } = selectedCommand.siteFunctions;
 			let filteredSites = filter ? sortedSites.filter( filter ) : sortedSites;
+			filteredSites = capabilityFilter
+				? filteredSites.filter( ( site ) => {
+						const siteCapabilities = userCapabilities[ site.ID ];
+						return siteCapabilities?.[ capabilityFilter ];
+				  } )
+				: filteredSites;
 			if ( sortedSites.length === 0 ) {
 				emptyListNotice = __( "You don't have any sites yet." );
 			} else if ( filteredSites.length === 0 ) {

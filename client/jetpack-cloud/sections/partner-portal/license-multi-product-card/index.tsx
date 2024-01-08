@@ -17,7 +17,6 @@ import ProductPriceWithDiscount from '../primary/product-price-with-discount-inf
 import '../license-product-card/style.scss';
 
 interface Props {
-	tabIndex: number;
 	products: APIProductFamilyProduct[];
 	isSelected: boolean;
 	isDisabled?: boolean;
@@ -34,7 +33,6 @@ interface Props {
 
 export default function LicenseMultiProductCard( props: Props ) {
 	const {
-		tabIndex,
 		products,
 		isSelected,
 		isDisabled,
@@ -72,8 +70,8 @@ export default function LicenseMultiProductCard( props: Props ) {
 	const onKeyDown = useCallback(
 		// eslint-disable-next-line @typescript-eslint/no-explicit-any
 		( e: any ) => {
-			// Spacebar
-			if ( 32 === e.keyCode ) {
+			// Enter
+			if ( 13 === e.keyCode ) {
 				onSelect();
 			}
 		},
@@ -157,7 +155,7 @@ export default function LicenseMultiProductCard( props: Props ) {
 				role="checkbox"
 				aria-checked={ isSelected }
 				aria-disabled={ isDisabled }
-				tabIndex={ tabIndex }
+				tabIndex={ 0 }
 			>
 				<div className="license-product-card__inner">
 					<div className="license-product-card__details">
@@ -168,9 +166,10 @@ export default function LicenseMultiProductCard( props: Props ) {
 								</h3>
 
 								<MultipleChoiceQuestion
+									name={ `${ product.family_slug }-variant-options` }
 									question={ translate( 'Select variant:' ) }
 									answers={ variantOptions }
-									selectedAnswerId={ product?.slug }
+									selectedAnswerId={ product.slug }
 									onAnswerChange={ onChangeOption }
 									shouldShuffleAnswers={ false }
 								/>

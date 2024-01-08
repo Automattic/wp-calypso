@@ -2,12 +2,6 @@ $profile-picture-size: 36px;
 $border-color: #eee;
 
 .marketplace-reviews-list__container {
-	padding: 0 16px;
-
-	@include breakpoint-deprecated( ">1040px" ) {
-		padding: 0;
-	}
-
 	.marketplace-reviews-list__title {
 		font-family: $brand-serif;
 		font-size: $font-title-large;
@@ -25,7 +19,7 @@ $border-color: #eee;
 				padding-top: 0;
 			}
 
-			&:last-of-type {
+			&.last {
 				padding-bottom: 0;
 			}
 
@@ -72,10 +66,45 @@ $border-color: #eee;
 				}
 			}
 
+			.marketplace-reviews-list__review-rating {
+				margin-top: 16px;
+				margin-bottom: 16px;
+				display: flex;
+				align-items: center;
+				justify-content: space-between;
+
+				h2 {
+					font-family: "SF Pro Text", $sans;
+					font-size: $font-title-small;
+					font-weight: 500;
+					line-height: 26px;
+					overflow-wrap: anywhere;
+					color: var(--studio-gray-100);
+				}
+			}
+
 			.marketplace-reviews-list__content {
 				color: var(--studio-gray-100);
 				font-size: $font-body-small;
 				margin-top: 16px;
+
+				p {
+					margin-bottom: 0;
+				}
+
+				&.edting {
+					background-color: var(--studio-gray-0);
+					padding: 16px;
+				}
+			}
+
+			.marketplace-reviews-list__editor {
+				color: var(--studio-gray-100);
+				background-color: var(--studio-gray-0);
+				border-radius: 4px;
+				font-size: $font-body-small;
+				margin-top: 16px;
+				padding: 16px;
 
 				p {
 					margin-bottom: 0;
@@ -96,6 +125,7 @@ $border-color: #eee;
 
 .marketplace-reviews-list__review-actions {
 	display: flex;
+	align-items: baseline;
 	flex-wrap: wrap;
 	justify-content: space-between;
 	margin-top: 15px;
@@ -103,11 +133,23 @@ $border-color: #eee;
 
 	.marketplace-reviews-list__review-actions-editable {
 		display: flex;
+		align-items: center;
+
+		.marketplace-reviews-list__review-submit {
+			margin-left: 16px;
+		}
 
 		.marketplace-reviews-list__review-actions-editable-button {
 			color: var(--studio-blue-50);
 			margin-right: 15px;
 			cursor: pointer;
+			display: flex;
+			align-items: center;
+		}
+
+		.gridicon {
+			margin-right: 5px;
+			color: var(--studio-gray-10);
 		}
 	}
 }
@@ -138,4 +180,26 @@ $border-color: #eee;
 		font-size: $font-body-small;
 		max-width: 400px;
 	}
+}
+
+.marketplace-reviews-list__pending-review,
+.marketplace-reviews-list__error-message {
+	display: flex;
+	align-items: flex-start;
+	gap: 8px;
+	align-self: stretch;
+
+	.marketplace-reviews-list__card-icon {
+		color: var(--studio-gray-10);
+	}
+
+	.marketplace-reviews-list__card-text {
+		font-family: "SF Pro Text", $sans;
+		font-size: $font-body-small;
+		line-height: 20px;
+	}
+}
+
+.confirm-modal {
+	z-index: z-index(".dialog__backdrop", ".confirm-modal");
 }

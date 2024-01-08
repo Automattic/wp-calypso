@@ -1,15 +1,18 @@
-import { getPlan, PLAN_BUSINESS, PLAN_ECOMMERCE } from '@automattic/calypso-products';
+import { getPlan, PLAN_BUSINESS, PLAN_ECOMMERCE, PLAN_PREMIUM } from '@automattic/calypso-products';
 import page from '@automattic/calypso-router';
 import { Button, JetpackLogo, WooLogo, CloudLogo, Tooltip } from '@automattic/components';
 import { formatCurrency } from '@automattic/format-currency';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback, useRef, useState } from 'react';
 import useIssueLicenses from 'calypso/jetpack-cloud/sections/partner-portal/hooks/use-issue-licenses';
+import { partnerPortalBasePath } from 'calypso/lib/jetpack/paths';
 import { getPlanFeaturesObject } from 'calypso/lib/plans/features-list';
-import { useDispatch } from 'calypso/state';
+import { addQueryArgs } from 'calypso/lib/url';
+import { useDispatch, useSelector } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { infoNotice } from 'calypso/state/notices/actions';
 import useProductsQuery from 'calypso/state/partner-portal/licenses/hooks/use-products-query';
+import { doesPartnerRequireAPaymentMethod } from 'calypso/state/partner-portal/partner/selectors';
 import FeatureItem from './feature-item';
 import './style.scss';
 
@@ -38,6 +41,7 @@ export default function CardContent( {
 	const tooltipRef = useRef< HTMLDivElement | null >( null );
 	const [ showPopover, setShowPopover ] = useState( false );
 	const { data: agencyProducts } = useProductsQuery();
+	const paymentMethodRequired = useSelector( doesPartnerRequireAPaymentMethod );
 
 	const getLogo = ( planSlug: string ) => {
 		switch ( planSlug ) {
@@ -64,7 +68,8 @@ export default function CardContent( {
 	const getFeaturesHeading = ( planSlug: string ) => {
 		switch ( planSlug ) {
 			case PLAN_BUSINESS:
-				return translate( 'Everything in {{a}}Premium{{/a}}, plus:', {
+				return translate( 'Everything in {{a}}%(planName)s{{/a}}, plus:', {
+					args: { planName: getPlan( PLAN_PREMIUM )?.getTitle() ?? '' },
 					components: {
 						a: (
 							// For Business plan, we want to redirect user to find out more about features included in the  Premium plan.
@@ -77,7 +82,9 @@ export default function CardContent( {
 					},
 				} );
 			case PLAN_ECOMMERCE:
-				return translate( 'Everything in Business, plus:' );
+				return translate( 'Everything in %(planName)s, plus:', {
+					args: { planName: getPlan( PLAN_BUSINESS )?.getTitle() ?? '' },
+				} );
 			default:
 				return '';
 		}
@@ -138,6 +145,19 @@ export default function CardContent( {
 		const productSlug =
 			planSlug === PLAN_BUSINESS ? 'wpcom-hosting-business' : 'wpcom-hosting-ecommerce';
 
+		if ( paymentMethodRequired ) {
+			const nextStep = addQueryArgs(
+				{
+					product: productSlug,
+					source: 'create-site',
+				},
+				partnerPortalBasePath( '/payment-methods/add' )
+			);
+
+			page( nextStep );
+			return;
+		}
+
 		setIsRequesting( true );
 
 		dispatch( infoNotice( translate( 'A new WordPress.com site is on the way!' ) ) );
@@ -147,7 +167,7 @@ export default function CardContent( {
 
 		setIsRequesting( false );
 		page.redirect( `/dashboard?provisioning=true` );
-	}, [ dispatch, planSlug, issueLicenses, translate, setIsRequesting ] );
+	}, [ planSlug, paymentMethodRequired, setIsRequesting, dispatch, translate, issueLicenses ] );
 
 	if ( ! plan ) {
 		return null;

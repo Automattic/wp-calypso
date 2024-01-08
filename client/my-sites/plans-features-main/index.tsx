@@ -17,9 +17,10 @@ import {
 	UrlFriendlyTermType,
 } from '@automattic/calypso-products';
 import page from '@automattic/calypso-router';
-import { Button, Spinner, LoadingPlaceholder } from '@automattic/components';
+import { Button, Spinner } from '@automattic/components';
 import { WpcomPlansUI } from '@automattic/data-stores';
 import { isAnyHostingFlow } from '@automattic/onboarding';
+import { isMobile } from '@automattic/viewport';
 import styled from '@emotion/styled';
 import { useDispatch } from '@wordpress/data';
 import {
@@ -34,7 +35,6 @@ import classNames from 'classnames';
 import { localize, useTranslate } from 'i18n-calypso';
 import { ReactNode } from 'react';
 import { useSelector } from 'react-redux';
-import AsyncLoad from 'calypso/components/async-load';
 import QueryActivePromotions from 'calypso/components/data/query-active-promotions';
 import QueryPlans from 'calypso/components/data/query-plans';
 import QueryProductsList from 'calypso/components/data/query-products-list';
@@ -140,6 +140,7 @@ export interface PlansFeaturesMainProps {
 	withDiscount?: string;
 	discountEndDate?: Date;
 	hidePlansFeatureComparison?: boolean;
+	coupon?: string;
 
 	/**
 	 * @deprecated use intent mechanism instead
@@ -176,7 +177,6 @@ export interface PlansFeaturesMainProps {
 	showBiennialToggle?: boolean;
 	hideUnavailableFeatures?: boolean; // used to hide features that are not available, instead of strike-through as explained in #76206
 	showLegacyStorageFeature?: boolean;
-	showPressablePromoBanner?: boolean;
 	isSpotlightOnCurrentPlan?: boolean;
 	renderSiblingWhenLoaded?: () => ReactNode; // renders additional components as last dom node when plans grid dependecies are fully loaded
 }
@@ -237,9 +237,9 @@ const PlansFeaturesMain = ( {
 	isStepperUpgradeFlow = false,
 	isLaunchPage = false,
 	showLegacyStorageFeature = false,
-	showPressablePromoBanner = false,
 	isSpotlightOnCurrentPlan,
 	renderSiblingWhenLoaded,
+	coupon,
 }: PlansFeaturesMainProps ) => {
 	const [ isModalOpen, setIsModalOpen ] = useState( false );
 	const [ lastClickedPlan, setLastClickedPlan ] = useState< string | null >( null );
@@ -261,6 +261,7 @@ const PlansFeaturesMain = ( {
 	const { setShowDomainUpsellDialog } = useDispatch( WpcomPlansUI.store );
 	const domainFromHomeUpsellFlow = useSelector( getDomainFromHomeUpsellInQuery );
 	const showUpgradeableStorage = config.isEnabled( 'plans/upgradeable-storage' );
+	const showPlanTypeSelectorDropdown = config.isEnabled( 'onboarding/interval-dropdown' );
 	const observableForOdieRef = useObservableForOdie();
 	const currentPlanManageHref = useCurrentPlanManageHref();
 	const canUserManageCurrentPlan = useSelector( ( state: IAppState ) =>
@@ -406,20 +407,6 @@ const PlansFeaturesMain = ( {
 	const showEscapeHatch =
 		intentFromSiteMeta.intent && ! isInSignup && 'plans-default-wpcom' !== intent;
 
-	const onShowPressablePromoBanner = useCallback( () => {
-		recordTracksEvent( 'calypso_multisite_promo_banner_impression', {
-			service: 'pressable',
-			flow: flowName,
-		} );
-	}, [] );
-
-	const onClickPressablePromoBannerCta = useCallback( () => {
-		recordTracksEvent( 'calypso_multisite_promo_banner_cta_click', {
-			service: 'pressable',
-			flow: flowName,
-		} );
-	}, [] );
-
 	const eligibleForFreeHostingTrial = useSelector( isUserEligibleForFreeHostingTrial );
 
 	const gridPlans = useGridPlans( {
@@ -533,6 +520,7 @@ const PlansFeaturesMain = ( {
 			selectedPlan,
 			selectedFeature,
 			showBiennialToggle,
+			showPlanTypeSelectorDropdown,
 			kind: planTypeSelector,
 			plans: gridPlansForFeaturesGrid.map( ( gridPlan ) => gridPlan.planSlug ),
 			currentSitePlanSlug: sitePlanSlug,
@@ -553,6 +541,7 @@ const PlansFeaturesMain = ( {
 		isPlansInsideStepper,
 		isStepperUpgradeFlow,
 		showBiennialToggle,
+		showPlanTypeSelectorDropdown,
 		eligibleForWpcomMonthlyPlans,
 	] );
 
@@ -711,6 +700,12 @@ const PlansFeaturesMain = ( {
 
 	const isPlansGridReady = ! isLoadingGridPlans && ! resolvedSubdomainName.isLoading;
 
+	const enablePlanTypeSelectorStickyBehavior = isMobile() && showPlanTypeSelectorDropdown;
+	const stickyPlanTypeSelectorHeight = 48;
+	const comparisonGridStickyRowOffset = enablePlanTypeSelectorStickyBehavior
+		? stickyPlanTypeSelectorHeight + masterbarHeight
+		: masterbarHeight;
+
 	return (
 		<>
 			<div
@@ -719,7 +714,7 @@ const PlansFeaturesMain = ( {
 					'is-pricing-grid-2023-plans-features-main'
 				) }
 			>
-				<QueryPlans />
+				<QueryPlans coupon={ coupon } />
 				<QuerySites siteId={ siteId } />
 				<QuerySitePlans siteId={ siteId } />
 				<QueryActivePromotions />
@@ -784,9 +779,12 @@ const PlansFeaturesMain = ( {
 				{ isPlansGridReady && (
 					<>
 						{ ! hidePlanSelector && (
-							<div className="plans-features-main__plan-type-selector">
-								<PlanTypeSelector { ...planTypeSelectorProps } />
-							</div>
+							<PlanTypeSelector
+								{ ...planTypeSelectorProps }
+								layoutClassName="plans-features-main__plan-type-selector-layout"
+								enableStickyBehavior={ enablePlanTypeSelectorStickyBehavior }
+								stickyPlanTypeSelectorOffset={ masterbarHeight }
+							/>
 						) }
 						<div
 							className={ classNames(
@@ -857,9 +855,10 @@ const PlansFeaturesMain = ( {
 												{ translate( 'Compare our plans and find yours' ) }
 											</PlanComparisonHeader>
 											{ ! hidePlanSelector && showPlansComparisonGrid && (
-												<div className="plans-features-main__plan-type-selector">
-													<PlanTypeSelector { ...planTypeSelectorProps } />
-												</div>
+												<PlanTypeSelector
+													{ ...planTypeSelectorProps }
+													layoutClassName="plans-features-main__plan-type-selector-layout"
+												/>
 											) }
 											<ComparisonGrid
 												gridPlans={ gridPlansForComparisonGrid }
@@ -875,7 +874,7 @@ const PlansFeaturesMain = ( {
 												planActionOverrides={ planActionOverrides }
 												intent={ intent }
 												showUpgradeableStorage={ showUpgradeableStorage }
-												stickyRowOffset={ masterbarHeight }
+												stickyRowOffset={ comparisonGridStickyRowOffset }
 												usePricingMetaForGridPlans={ usePricingMetaForGridPlans }
 												allFeaturesList={ FEATURES_LIST }
 												onStorageAddOnClick={ handleStorageAddOnClick }
@@ -900,14 +899,6 @@ const PlansFeaturesMain = ( {
 								) }
 							</div>
 						</div>
-						{ showPressablePromoBanner && (
-							<AsyncLoad
-								require="./components/pressable-promo-banner"
-								onShow={ onShowPressablePromoBanner }
-								onClick={ onClickPressablePromoBannerCta }
-								placeholder={ <LoadingPlaceholder /> }
-							/>
-						) }
 					</>
 				) }
 			</div>

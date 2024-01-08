@@ -24,7 +24,7 @@ export const TrialPlan = ( {
 
 	const formats = new Intl.ListFormat( i18n.getLocaleSlug() ?? 'en', {
 		style: 'long',
-		type: 'unit',
+		type: 'conjunction',
 	} ).format( trialLimitations );
 
 	return (

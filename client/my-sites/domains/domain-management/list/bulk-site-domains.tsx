@@ -4,7 +4,6 @@ import { DomainsTable, ResponseDomain, useDomainsTable } from '@automattic/domai
 import { useTranslate } from 'i18n-calypso';
 import { useMemo, useState } from 'react';
 import SiteAddressChanger from 'calypso/blocks/site-address-changer';
-import { UsePresalesChat } from 'calypso/components/data/domain-management';
 import InlineSupportLink from 'calypso/components/inline-support-link';
 import Main from 'calypso/components/main';
 import BodySectionCssClass from 'calypso/layout/body-section-css-class';
@@ -176,7 +175,6 @@ export default function BulkSiteDomains( props: BulkSiteDomainsProps ) {
 					/>
 				) }
 			</Main>
-			<UsePresalesChat />
 		</>
 	);
 }

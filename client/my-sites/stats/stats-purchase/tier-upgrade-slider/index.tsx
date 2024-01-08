@@ -1,4 +1,5 @@
 import { PricingSlider, RenderThumbFunction, Popover } from '@automattic/components';
+import { Icon, info } from '@wordpress/icons';
 import classNames from 'classnames';
 import { useState, useRef } from 'react';
 import './styles.scss';
@@ -12,6 +13,7 @@ type TierUIStrings = {
 interface TierStep {
 	lhValue: string;
 	rhValue: string;
+	upgradePrice?: string;
 }
 
 type TierUpgradeSliderProps = {
@@ -58,12 +60,7 @@ function TierUpgradeSlider( {
 		return <div { ...props }>{ thumbSVG }</div>;
 	} ) as RenderThumbFunction;
 
-	// We need at least two steps for the slider to work.
-	let errorMessage = null;
 	const maxIndex = steps.length - 1;
-	if ( maxIndex < 1 ) {
-		errorMessage = <p>Slider has not been configured properly.</p>;
-	}
 
 	// Bounds check the initial index value.
 	let initialIndex = Math.floor( initialValue );
@@ -88,13 +85,10 @@ function TierUpgradeSlider( {
 	const infoReferenceElement = useRef( null );
 	const showPopup = currentPlanIndex === sliderMax && popupInfoString !== undefined;
 	const lhValue = steps[ currentPlanIndex ]?.lhValue;
-	const rhValue = steps[ currentPlanIndex ]?.rhValue;
+	const originalPrice = steps[ currentPlanIndex ]?.rhValue;
+	const discountedPrice = steps[ currentPlanIndex ]?.upgradePrice;
 
-	const secondaryCalloutIsHidden = rhValue === '';
-
-	if ( errorMessage !== null ) {
-		return errorMessage;
-	}
+	const secondaryCalloutIsHidden = originalPrice === '';
 
 	return (
 		<div className={ componentClassNames }>
@@ -106,30 +100,40 @@ function TierUpgradeSlider( {
 				{ ! secondaryCalloutIsHidden && (
 					<div className="tier-upgrade-slider__step-callout right-aligned">
 						<h2>{ uiStrings.price }</h2>
-						<p ref={ infoReferenceElement }>{ rhValue }</p>
+						<p ref={ infoReferenceElement }>
+							{ discountedPrice ? (
+								<>
+									<span>{ discountedPrice }</span>
+									<span className="full-price-label">{ originalPrice }</span>
+								</>
+							) : (
+								<span>{ originalPrice }</span>
+							) }
+							{ showPopup && <Icon icon={ info } /> }
+						</p>
 					</div>
 				) }
 			</div>
-			<PricingSlider
-				className="tier-upgrade-slider__slider"
-				thumbClassName="tier-upgrade-slider__thumb"
-				renderThumb={ handleRenderThumb }
-				value={ currentPlanIndex }
-				minValue={ sliderMin }
-				maxValue={ sliderMax }
-				onChange={ handleSliderChange }
-				marks={ marks }
-			/>
+			{ steps.length > 1 && (
+				<PricingSlider
+					className="tier-upgrade-slider__slider"
+					thumbClassName="tier-upgrade-slider__thumb"
+					renderThumb={ handleRenderThumb }
+					value={ currentPlanIndex }
+					minValue={ sliderMin }
+					maxValue={ sliderMax }
+					onChange={ handleSliderChange }
+					marks={ marks }
+				/>
+			) }
 			<Popover
 				position="right"
 				context={ infoReferenceElement?.current }
 				isVisible={ showPopup }
 				focusOnShow={ false }
-				className="tier-upgrade-slider__extension-popover-wrapper"
+				className="stats-purchase__info-popover"
 			>
-				<div className="tier-upgrade-slider__extension-popover-content">
-					{ showPopup && popupInfoString }
-				</div>
+				<div className="stats-purchase__info-popover-content">{ showPopup && popupInfoString }</div>
 			</Popover>
 			<p className="tier-upgrade-slider__info-message">{ uiStrings.strategy }</p>
 		</div>

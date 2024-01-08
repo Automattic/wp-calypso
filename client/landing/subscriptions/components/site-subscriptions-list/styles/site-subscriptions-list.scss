@@ -63,6 +63,10 @@
 			.rss-label {
 				@extend %rss-label;
 			}
+
+			.gift-label {
+				@extend %gift-label;
+			}
 		}
 
 		.title-url {

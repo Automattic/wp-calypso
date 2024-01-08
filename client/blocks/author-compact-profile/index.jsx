@@ -1,5 +1,6 @@
+import formatNumber from '@automattic/components/src/number-formatters/lib/format-number';
 import classnames from 'classnames';
-import { numberFormat, localize } from 'i18n-calypso';
+import { localize, getLocaleSlug } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import ReaderAuthorLink from 'calypso/blocks/reader-author-link';
@@ -86,7 +87,7 @@ class AuthorCompactProfile extends Component {
 							{ this.props.translate( '%(followCount)s subscriber', '%(followCount)s subscribers', {
 								count: followCount,
 								args: {
-									followCount: numberFormat( followCount ),
+									followCount: formatNumber( followCount, getLocaleSlug() ),
 								},
 							} ) }
 						</div>

@@ -1,3 +1,6 @@
+// NOTE: if we decide to use this again in the future, see https://github.com/Automattic/wp-calypso/pull/85597
+// for more context on why this was disabled. It needs to be updated to avoid
+// adding so much noise to the channel.
 import fs from 'fs';
 import { exit } from 'process';
 import fetch from 'node-fetch';

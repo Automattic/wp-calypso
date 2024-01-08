@@ -42,6 +42,7 @@ export class Theme extends Component {
 			taxonomies: PropTypes.object,
 			update: PropTypes.object,
 			soft_launched: PropTypes.bool,
+			isCustomGeneratedTheme: PropTypes.bool,
 		} ),
 		// If true, highlight this theme as active
 		active: PropTypes.bool,
@@ -145,8 +146,21 @@ export class Theme extends Component {
 	}
 
 	renderScreenshot() {
-		const { isExternallyManagedTheme, selectedStyleVariation, theme } = this.props;
+		const { isExternallyManagedTheme, selectedStyleVariation, theme, siteSlug, translate } =
+			this.props;
 		const { description, screenshot } = theme;
+
+		if ( theme.isCustomGeneratedTheme ) {
+			return (
+				<iframe
+					scrolling="no"
+					loading="lazy"
+					title={ translate( 'Custom Theme Preview' ) }
+					className="theme__site-preview"
+					src={ `//${ siteSlug }/?hide_banners=true&preview_overlay=true&preview=true&cys-hide-admin-bar=1` }
+				/>
+			);
+		}
 
 		if ( ! screenshot ) {
 			return (
@@ -268,7 +282,19 @@ export class Theme extends Component {
 
 	renderMoreButton = () => {
 		const { active, buttonContents, index, theme } = this.props;
-		if ( isEmpty( buttonContents ) ) {
+
+		let moreOptions = buttonContents;
+		if ( isEnabled( 'themes/tiers' ) ) {
+			if ( active && buttonContents.info ) {
+				moreOptions = { info: buttonContents.info };
+			} else if ( buttonContents.deleteTheme ) {
+				moreOptions = { deleteTheme: buttonContents.deleteTheme };
+			} else {
+				moreOptions = {};
+			}
+		}
+
+		if ( isEmpty( moreOptions ) ) {
 			return null;
 		}
 
@@ -280,7 +306,7 @@ export class Theme extends Component {
 				active={ active }
 				onMoreButtonClick={ this.props.onMoreButtonClick }
 				onMoreButtonItemClick={ this.props.onMoreButtonItemClick }
-				options={ buttonContents }
+				options={ moreOptions }
 			/>
 		);
 	};

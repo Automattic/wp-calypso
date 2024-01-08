@@ -10,10 +10,6 @@ interface PlanFeatures2023GridHeaderPriceProps {
 	isLargeCurrency: boolean;
 	isPlanUpgradeCreditEligible: boolean;
 	currentSitePlanSlug?: string | null;
-	/**
-	 * @deprecated Site id is not used here to be cleaned up
-	 */
-	siteId?: number | null;
 	visibleGridPlans: GridPlan[];
 }
 

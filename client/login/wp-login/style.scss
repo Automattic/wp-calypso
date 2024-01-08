@@ -459,7 +459,7 @@ $image-height: 47px;
 		max-width: 758px;
 		margin-top: 24px;
 
-		@include break-mobile {
+		@include break-medium {
 			margin-top: 20.5vh;
 		}
 
@@ -502,7 +502,7 @@ $image-height: 47px;
 
 	.wp-login__main-footer {
 
-		width: var(--login-form-column-max-width);
+		max-width: var(--login-form-column-max-width);
 		margin: 0 auto;
 
 		.login__lost-password-link {

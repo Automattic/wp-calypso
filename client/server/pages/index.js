@@ -30,7 +30,7 @@ import sections from 'calypso/sections';
 import isSectionEnabled from 'calypso/sections-filter';
 import { serverRouter, getCacheKey } from 'calypso/server/isomorphic-routing';
 import analytics from 'calypso/server/lib/analytics';
-import isWpMobileApp from 'calypso/server/lib/is-wp-mobile-app';
+import { isWpMobileApp, isWcMobileApp } from 'calypso/server/lib/is-mobile-app';
 import performanceMark from 'calypso/server/lib/performance-mark/index';
 import {
 	serverRender,
@@ -195,6 +195,7 @@ function getDefaultContext( request, response, entrypoint = 'entry-main' ) {
 		// use ipv4 address when is ipv4 mapped address
 		clientIp: request.ip ? request.ip.replace( '::ffff:', '' ) : request.ip,
 		isWpMobileApp: isWpMobileApp( request.useragent.source ),
+		isWcMobileApp: isWcMobileApp( request.useragent.source ),
 		isDebug,
 	};
 

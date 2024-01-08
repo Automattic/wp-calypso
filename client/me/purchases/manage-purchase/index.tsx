@@ -327,6 +327,16 @@ class ManagePurchase extends Component<
 		return hasSetupAds && purchase && isPlan( purchase );
 	}
 
+	isPendingDomainRegistration( purchase: Purchase ): boolean {
+		if ( ! isDomainRegistration( purchase ) ) {
+			return false;
+		}
+		const domain = this.props.domainsDetails[ purchase.siteId ].find(
+			( domain ) => domain.name === purchase.meta
+		);
+		return domain?.pendingRegistrationAtRegistry ?? false;
+	}
+
 	renderRenewButton() {
 		const { purchase, translate } = this.props;
 		if ( ! purchase ) {
@@ -339,6 +349,10 @@ class ManagePurchase extends Component<
 			isAkismetFreeProduct( purchase ) ||
 			( is100Year( purchase ) && ! isCloseToExpiration( purchase ) )
 		) {
+			return null;
+		}
+
+		if ( this.isPendingDomainRegistration( purchase ) ) {
 			return null;
 		}
 
@@ -395,7 +409,11 @@ class ManagePurchase extends Component<
 	}
 
 	renderSelectNewButton() {
-		const { translate, siteId } = this.props;
+		const { translate, siteId, purchase } = this.props;
+
+		if ( purchase && this.isPendingDomainRegistration( purchase ) ) {
+			return null;
+		}
 
 		return (
 			<Button className="manage-purchase__renew-button" href={ `/plans/${ siteId }` } compact>
@@ -567,7 +585,11 @@ class ManagePurchase extends Component<
 	}
 
 	renderSelectNewNavItem() {
-		const { translate, siteId } = this.props;
+		const { translate, siteId, purchase } = this.props;
+
+		if ( purchase && this.isPendingDomainRegistration( purchase ) ) {
+			return null;
+		}
 
 		return (
 			<CompactCard tagName="button" displayAsLink href={ `/plans/${ siteId }` }>
@@ -1350,6 +1372,7 @@ class ManagePurchase extends Component<
 						{ ! preventRenewal &&
 							! renderMonthlyRenewalOption &&
 							! isActive100YearPurchase &&
+							! this.isPendingDomainRegistration( purchase ) &&
 							this.renderRenewNowNavItem() }
 						{ ! preventRenewal && renderMonthlyRenewalOption && this.renderRenewAnnuallyNavItem() }
 						{ ! preventRenewal && renderMonthlyRenewalOption && this.renderRenewMonthlyNavItem() }

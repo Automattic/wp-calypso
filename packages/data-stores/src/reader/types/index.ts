@@ -70,6 +70,8 @@ export type SiteSubscriptionsResponseItem = {
 	meta: SiteSubscriptionMeta;
 	is_wpforteams_site: boolean;
 	is_paid_subscription: boolean;
+	is_gift: boolean;
+	gift_id: number;
 	is_rss: boolean;
 	isDeleted: boolean;
 	resubscribed: boolean;

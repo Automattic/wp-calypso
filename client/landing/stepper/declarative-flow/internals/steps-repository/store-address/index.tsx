@@ -68,10 +68,6 @@ const StoreAddress: Step = function StoreAddress( { navigation } ) {
 	const { __ } = useI18n();
 	const [ errors, setErrors ] = useState( {} as Record< FormFields, string > );
 	const { saveSiteSettings } = useDispatch( SITE_STORE );
-	const stepProgress = useSelect(
-		( select ) => ( select( ONBOARD_STORE ) as OnboardSelect ).getStepProgress(),
-		[]
-	);
 
 	const comingFromThemeActivation = useComingFromThemeActivationParam();
 
@@ -330,7 +326,6 @@ const StoreAddress: Step = function StoreAddress( { navigation } ) {
 			intent={ intent }
 			stepContent={ getContent() }
 			recordTracksEvent={ recordTracksEvent }
-			stepProgress={ stepProgress }
 			hideSkip
 			hideBack={ ! comingFromThemeActivation }
 		/>

@@ -50,10 +50,10 @@ export const getStoreType = ( state: State ) => state.storeType;
 export const getPendingAction = ( state: State ) => state.pendingAction;
 export const getProgress = ( state: State ) => state.progress;
 export const getProgressTitle = ( state: State ) => state.progressTitle;
-export const getStepProgress = ( state: State ) => state.stepProgress;
 export const getGoals = ( state: State ) => state.goals;
 export const getStoreLocationCountryCode = ( state: State ) => state.storeLocationCountryCode;
 export const getEcommerceFlowRecurType = ( state: State ) => state.ecommerceFlowRecurType;
+export const getCouponCode = ( state: State ) => state.couponCode;
 export const getState = ( state: State ) => state;
 export const hasPaidDesign = ( state: State ): boolean => {
 	if ( ! state.selectedDesign ) {
@@ -74,8 +74,6 @@ export const hasSelectedDesign = ( state: State ) => !! state.selectedDesign;
 
 export const hasSelectedDesignWithoutFonts = ( state: State ) =>
 	hasSelectedDesign( state ) && ! state.selectedFonts;
-
-export const getEditEmail = ( state: State ) => state.editEmail;
 
 export const getDomainForm = ( state: State ) => state.domainForm;
 export const getDomainCartItem = ( state: State ) => state.domainCartItem;

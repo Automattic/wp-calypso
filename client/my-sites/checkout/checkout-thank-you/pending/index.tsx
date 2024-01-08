@@ -6,7 +6,6 @@ import { localizeUrl } from '@automattic/i18n-utils';
 import { useShoppingCart } from '@automattic/shopping-cart';
 import { useTranslate } from 'i18n-calypso';
 import React, { useState, useEffect, useRef } from 'react';
-import QueryOrderTransaction from 'calypso/components/data/query-order-transaction';
 import { LoadingEllipsis } from 'calypso/components/loading-ellipsis';
 import Main from 'calypso/components/main';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
@@ -14,14 +13,15 @@ import { logToLogstash } from 'calypso/lib/logstash';
 import { AUTO_RENEWAL } from 'calypso/lib/url/support';
 import CalypsoShoppingCartProvider from 'calypso/my-sites/checkout/calypso-shopping-cart-provider';
 import { getRedirectFromPendingPage } from 'calypso/my-sites/checkout/src/lib/pending-page';
+import { sendMessageToOpener } from 'calypso/my-sites/checkout/src/lib/popup';
 import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
 import { useSelector, useDispatch } from 'calypso/state';
 import { errorNotice, successNotice } from 'calypso/state/notices/actions';
 import { SUCCESS } from 'calypso/state/order-transactions/constants';
 import { fetchReceipt } from 'calypso/state/receipts/actions';
 import { getReceiptById } from 'calypso/state/receipts/selectors';
-import getOrderTransaction from 'calypso/state/selectors/get-order-transaction';
 import getOrderTransactionError from 'calypso/state/selectors/get-order-transaction-error';
+import usePurchaseOrder from '../../src/hooks/use-purchase-order';
 import { convertErrorToString } from '../../src/lib/analytics';
 import type { RedirectInstructions } from 'calypso/my-sites/checkout/src/lib/pending-page';
 import type { ReceiptState } from 'calypso/state/receipts/types';
@@ -95,7 +95,6 @@ function CheckoutPending( {
 
 	return (
 		<Main className="checkout-thank-you__pending">
-			{ orderId && <QueryOrderTransaction orderId={ orderId } pollIntervalMs={ 5000 } /> }
 			<PageViewTracker
 				path={
 					siteSlug
@@ -131,6 +130,22 @@ function performRedirect( url: string ): void {
 	window.location.href = url;
 }
 
+// If the current page is in the pop-up, notify to the opener and delay the redirection.
+// Otherwise, do the redirection immediately.
+function notifyAndPerformRedirect(
+	siteSlug: string = '',
+	{ isError, isUnknown, url }: RedirectInstructions
+): void {
+	if (
+		sendMessageToOpener( siteSlug, isError || isUnknown ? 'checkoutFailed' : 'checkoutCompleted' )
+	) {
+		window.setTimeout( () => performRedirect( url ), 3000 );
+		return;
+	}
+
+	performRedirect( url );
+}
+
 function getSaaSProductRedirectUrl( receipt: ReceiptState ) {
 	let saasRedirectUrl;
 
@@ -164,9 +179,9 @@ function useRedirectOnTransactionSuccess( {
 	fromSiteSlug?: string;
 } ): { headingText: React.ReactNode } {
 	const translate = useTranslate();
-	const transaction: OrderTransaction | null = useSelector( ( state ) =>
-		orderId ? getOrderTransaction( state, orderId ) : null
-	);
+
+	const { isLoading: isLoadingOrder, order: transaction } = usePurchaseOrder( orderId, 5000 );
+
 	const transactionReceiptId = isTransactionSuccessful( transaction )
 		? transaction.receiptId
 		: undefined;
@@ -233,6 +248,7 @@ function useRedirectOnTransactionSuccess( {
 		}
 
 		const redirectInstructions = getRedirectFromPendingPage( {
+			isLoadingOrder,
 			error,
 			transaction,
 			orderId,
@@ -259,8 +275,13 @@ function useRedirectOnTransactionSuccess( {
 			translate,
 			reduxDispatch,
 		} );
-		performRedirect( redirectInstructions.url );
+
+		notifyAndPerformRedirect( siteSlug, redirectInstructions );
 	}, [
+		isLoadingOrder,
+		saasRedirectUrl,
+		isConnectAfterCheckoutFlow,
+		connectingJetpackText,
 		error,
 		finalReceiptId,
 		isReceiptLoaded,
@@ -282,7 +303,7 @@ function useRedirectOnTransactionSuccess( {
 }
 
 function isTransactionSuccessful(
-	transaction: OrderTransaction | null
+	transaction: OrderTransaction | null | undefined
 ): transaction is OrderTransactionSuccess {
 	return transaction?.processingStatus === SUCCESS;
 }

@@ -1,5 +1,4 @@
 import config from '@automattic/calypso-config';
-import { setPlansListExperiment } from '@automattic/calypso-products';
 import page from '@automattic/calypso-router';
 import {
 	getLanguage,
@@ -8,7 +7,6 @@ import {
 } from '@automattic/i18n-utils';
 import { QueryClientProvider } from '@tanstack/react-query';
 import { translate } from 'i18n-calypso';
-import { useEffect } from 'react';
 import { Provider as ReduxProvider } from 'react-redux';
 import CalypsoI18nProvider from 'calypso/components/calypso-i18n-provider';
 import EmptyContent from 'calypso/components/empty-content';
@@ -16,7 +14,6 @@ import MomentProvider from 'calypso/components/localized-moment/provider';
 import { RouteProvider } from 'calypso/components/route';
 import Layout from 'calypso/layout';
 import LayoutLoggedOut from 'calypso/layout/logged-out';
-import { useExperiment } from 'calypso/lib/explat';
 import { login, createAccountUrl } from 'calypso/lib/paths';
 import { CalypsoReactQueryDevtools } from 'calypso/lib/react-query-devtools-helper';
 import { getSiteFragment } from 'calypso/lib/route';
@@ -25,6 +22,8 @@ import {
 	getImmediateLoginEmail,
 	getImmediateLoginLocale,
 } from 'calypso/state/immediate-login/selectors';
+import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
+import { getSelectedSite } from 'calypso/state/ui/selectors';
 import { makeLayoutMiddleware } from './shared.js';
 import { render, hydrate } from './web-util.js';
 
@@ -47,14 +46,6 @@ export const ProviderWrappedLayout = ( {
 } ) => {
 	const state = store.getState();
 	const userLoggedIn = isUserLoggedIn( state );
-
-	const [ isLoading, experimentAssignment ] = useExperiment( 'wpcom_plan_name_change' );
-
-	useEffect( () => {
-		if ( ! isLoading ) {
-			setPlansListExperiment( 'wpcom_plan_name_change', experimentAssignment?.variationName );
-		}
-	}, [ isLoading ] );
 
 	const layout = userLoggedIn ? (
 		<Layout primary={ primary } secondary={ secondary } />
@@ -189,6 +180,25 @@ export function redirectLoggedOutToSignup( context, next ) {
 	}
 
 	return page.redirect( createAccountUrl( { redirectTo: context.path, ref: 'reader-lp' } ) );
+}
+
+/**
+ * Middleware to redirect a user if they don't have the appropriate capability.
+ * @param   {string}   capability Capability to check
+ * @returns {Function}            Middleware function
+ */
+export function redirectIfCurrentUserCannot( capability ) {
+	return ( context, next ) => {
+		const state = context.store.getState();
+		const site = getSelectedSite( state );
+		const currentUserCan = canCurrentUser( state, site.ID, capability );
+
+		if ( site && ! currentUserCan ) {
+			return page.redirect( `/home/${ site.slug }` );
+		}
+
+		next();
+	};
 }
 
 /**

@@ -3,6 +3,7 @@ import domReady from '@wordpress/dom-ready';
 import { __, sprintf } from '@wordpress/i18n';
 import { registerPlugin } from '@wordpress/plugins';
 import { FC, useEffect } from 'react';
+import { NOTICE_ID } from './constants';
 import { useCanPreviewButNeedUpgrade } from './hooks/use-can-preview-but-need-upgrade';
 import { useHideTemplatePartHint } from './hooks/use-hide-template-part-hint';
 import { usePreviewingTheme } from './hooks/use-previewing-theme';
@@ -11,8 +12,6 @@ import { LivePreviewUpgradeNotice } from './upgrade-notice';
 import { getUnlock } from './utils';
 
 const unlock = getUnlock();
-
-const NOTICE_ID = 'wpcom-live-preview/notice';
 
 /**
  * This is an interim solution to clarify to users that they are currently live previewing a theme.
@@ -57,9 +56,7 @@ const LivePreviewNotice: FC< {
 const LivePreviewNoticePlugin = () => {
 	const siteEditorStore = useSelect( ( select ) => select( 'core/edit-site' ), [] );
 	const previewingTheme = usePreviewingTheme();
-	const { canPreviewButNeedUpgrade, upgradePlan } = useCanPreviewButNeedUpgrade( {
-		previewingTheme,
-	} );
+	const { canPreviewButNeedUpgrade, upgradePlan } = useCanPreviewButNeedUpgrade( previewingTheme );
 	const dashboardLink = useSelect(
 		( select ) =>
 			unlock &&
@@ -80,7 +77,7 @@ const LivePreviewNoticePlugin = () => {
 	if ( canPreviewButNeedUpgrade ) {
 		return (
 			<>
-				<LivePreviewUpgradeModal { ...{ themeId: previewingTheme.id as string, upgradePlan } } />
+				<LivePreviewUpgradeModal { ...{ previewingTheme, upgradePlan } } />
 				<LivePreviewUpgradeNotice { ...{ previewingTheme, dashboardLink } } />
 			</>
 		);

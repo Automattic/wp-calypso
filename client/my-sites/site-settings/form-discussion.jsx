@@ -167,48 +167,55 @@ class SiteSettingsFormDiscussion extends Component {
 						'Comments should be displayed with the older comments at the top of each page'
 					) }
 				/>
-				<SupportInfo
-					text={ translate( 'Allow readers to use markdown in comments' ) }
-					link={
-						isJetpack && ! isAtomic
-							? 'https://jetpack.com/support/markdown/'
-							: localizeUrl( 'https://wordpress.com/support/markdown-quick-reference/' )
-					}
-				/>
-				<ToggleControl
-					checked={ !! fields.wpcom_publish_comments_with_markdown }
-					disabled={ isRequestingSettings || isSavingSettings }
-					onChange={ handleAutosavingToggle( 'wpcom_publish_comments_with_markdown' ) }
-					label={ translate( 'Use Markdown for comments.' ) }
-				/>
-
-				{ this.props.isJetpack && (
-					<SupportInfo
-						text={ translate( 'Hovercards appear when you place your mouse over any Gravatar.' ) }
-						link="https://jetpack.com/support/gravatar-hovercards/"
+				<div className="site-settings__tooltip-container">
+					<ToggleControl
+						checked={ !! fields.wpcom_publish_comments_with_markdown }
+						disabled={ isRequestingSettings || isSavingSettings }
+						onChange={ handleAutosavingToggle( 'wpcom_publish_comments_with_markdown' ) }
+						label={ translate( 'Use Markdown for comments.' ) }
 					/>
-				) }
-				<JetpackModuleToggle
-					disabled={ isRequestingSettings || isSavingSettings }
-					label={ translate( 'Enable pop-up business cards over commenters’ Gravatars' ) }
-					moduleSlug="gravatar-hovercards"
-					siteId={ siteId }
-				/>
-
-				{ this.props.isJetpack && (
 					<SupportInfo
-						text={ translate(
-							'Comment Likes are a fun, easy way to demonstrate your appreciation or agreement.'
-						) }
-						link="https://jetpack.com/support/comment-likes/"
+						text={ translate( 'Allow readers to use markdown in comments' ) }
+						link={
+							isJetpack && ! isAtomic
+								? 'https://jetpack.com/support/markdown/'
+								: localizeUrl( 'https://wordpress.com/support/markdown-quick-reference/' )
+						}
 					/>
-				) }
-				<JetpackModuleToggle
-					disabled={ isRequestingSettings || isSavingSettings }
-					label={ translate( 'Enable comment likes' ) }
-					moduleSlug="comment-likes"
-					siteId={ siteId }
-				/>
+				</div>
+
+				<div className="site-settings__tooltip-container">
+					<JetpackModuleToggle
+						disabled={ isRequestingSettings || isSavingSettings }
+						label={ translate( 'Enable pop-up business cards over commenters’ Gravatars' ) }
+						moduleSlug="gravatar-hovercards"
+						siteId={ siteId }
+					/>
+
+					{ this.props.isJetpack && (
+						<SupportInfo
+							text={ translate( 'Hovercards appear when you place your mouse over any Gravatar.' ) }
+							link="https://jetpack.com/support/gravatar-hovercards/"
+						/>
+					) }
+				</div>
+
+				<div className="site-settings__tooltip-container">
+					<JetpackModuleToggle
+						disabled={ isRequestingSettings || isSavingSettings }
+						label={ translate( 'Enable comment likes' ) }
+						moduleSlug="comment-likes"
+						siteId={ siteId }
+					/>
+					{ this.props.isJetpack && (
+						<SupportInfo
+							text={ translate(
+								'Comment Likes are a fun, easy way to demonstrate your appreciation or agreement.'
+							) }
+							link="https://jetpack.com/support/comment-likes/"
+						/>
+					) }
+				</div>
 			</FormFieldset>
 		);
 	}
