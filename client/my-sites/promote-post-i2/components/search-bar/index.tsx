@@ -50,7 +50,7 @@ const FILTER_OPTIONS_DEFAULT = {
 
 export default function SearchBar( props: Props ) {
 	const { mode, handleSetSearch, postType, handleFilterPostTypeChange } = props;
-	const isWooStore = () => config.isEnabled( 'is_running_in_woo_site' );
+	const isWooStore = config.isEnabled( 'is_running_in_woo_site' );
 
 	const sortOptions: Array< DropdownOption > = [
 		{
@@ -98,6 +98,21 @@ export default function SearchBar( props: Props ) {
 		},
 	];
 
+	const wooPostTypeOptions = [
+		{
+			value: 'product',
+			label: translate( 'Products' ),
+		},
+		{
+			value: 'post',
+			label: translate( 'Posts' ),
+		},
+		{
+			value: 'pages',
+			label: translate( 'Page' ),
+		},
+	];
+
 	const [ searchInput, setSearchInput ] = React.useState< string | undefined >( '' );
 	const [ sortOption, setSortOption ] = React.useState( SORT_OPTIONS_DEFAULT );
 	const [ filterOption, setFilterOption ] = React.useState( FILTER_OPTIONS_DEFAULT );
@@ -107,7 +122,7 @@ export default function SearchBar( props: Props ) {
 		handleSetSearch( {
 			search: '',
 			order: SORT_OPTIONS_DEFAULT,
-			filter: isWooStore() ? { status: '', postType: postType } : FILTER_OPTIONS_DEFAULT,
+			filter: { ...FILTER_OPTIONS_DEFAULT, postType: postType || '' },
 		} );
 	}, [] );
 
@@ -156,6 +171,10 @@ export default function SearchBar( props: Props ) {
 			postType: option.value,
 		};
 
+		if ( handleFilterPostTypeChange ) {
+			handleFilterPostTypeChange( option.value );
+		}
+
 		setFilterOption( newFilter );
 		handleSetSearch( {
 			search: searchInput || '',
@@ -190,15 +209,20 @@ export default function SearchBar( props: Props ) {
 	};
 
 	const getPostTypeFilterLabel = () => {
-		const selectedOption = postTypeOptions.find( ( item ) => item.value === filterOption.postType )
-			?.label;
+		const options = isWooStore ? wooPostTypeOptions : postTypeOptions;
 
-		return selectedOption
-			? // translators: filterOption is something like All, Posts and Pages
-			  translate( 'Post type: %(filterOption)s', {
-					args: { filterOption: selectedOption },
-			  } )
-			: undefined;
+		const selectedOption = options.find( ( item ) => item.value === postType )?.label;
+
+		if ( isDesktop ) {
+			return selectedOption
+				? // translators: filterOption is something like All, Posts and Pages
+				  translate( 'Post type: %(filterOption)s', {
+						args: { filterOption: selectedOption },
+				  } )
+				: undefined;
+		}
+
+		return selectedOption || undefined;
 	};
 
 	return (
@@ -223,20 +247,19 @@ export default function SearchBar( props: Props ) {
 			<div className="promote-post-i2__search-bar-options">
 				{ mode === 'posts' && (
 					<>
-						{ isWooStore() && isDesktop && (
+						{ isWooStore && isDesktop && (
 							<WooItemsFilter handleChangeFilter={ onChangeFilter } postType={ postType || '' } />
 						) }
 
-						{ ! isWooStore() ||
-							( ! isDesktop && (
-								<SelectDropdown
-									className="promote-post-i2__search-bar-dropdown post-type"
-									onSelect={ onChangePostTypeFilter }
-									options={ postTypeOptions }
-									initialSelected={ filterOption.postType }
-									selectedText={ getPostTypeFilterLabel() }
-								/>
-							) ) }
+						{ ( ! isWooStore || ! isDesktop ) && (
+							<SelectDropdown
+								className="promote-post-i2__search-bar-dropdown post-type"
+								onSelect={ onChangePostTypeFilter }
+								options={ isWooStore ? wooPostTypeOptions : postTypeOptions }
+								initialSelected={ postType }
+								selectedText={ getPostTypeFilterLabel() }
+							/>
+						) }
 						<SelectDropdown
 							onSelect={ onChangeOrderOption }
 							options={ sortOptions }

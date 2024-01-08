@@ -35,8 +35,8 @@ const fetchErrorListMessage = translate(
 );
 
 export default function PostsList( props: Props ) {
-	const isWooStore = () => config.isEnabled( 'is_running_in_woo_site' );
-	const initialPostType = isWooStore() ? 'product' : '';
+	const isWooStore = config.isEnabled( 'is_running_in_woo_site' );
+	const initialPostType = isWooStore ? 'product' : '';
 	const [ postType, setPostType ] = React.useState( initialPostType );
 	const {
 		isLoading,
