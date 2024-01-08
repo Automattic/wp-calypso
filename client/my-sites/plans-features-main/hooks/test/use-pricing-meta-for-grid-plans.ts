@@ -122,6 +122,7 @@ describe( 'usePricingMetaForGridPlans', () => {
 		const pricingMeta = usePricingMetaForGridPlans( {
 			planSlugs: [ PLAN_PERSONAL ],
 			withoutProRatedCredits: false,
+			storageAddOns: null,
 		} );
 
 		const expectedPricingMeta = {
