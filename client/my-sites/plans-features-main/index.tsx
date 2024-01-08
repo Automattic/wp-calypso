@@ -715,7 +715,7 @@ const PlansFeaturesMain = ( {
 					'is-pricing-grid-2023-plans-features-main'
 				) }
 			>
-				<QueryPlans coupon={ coupon } />
+				<QueryPlans />
 				<QuerySites siteId={ siteId } />
 				<QuerySitePlans siteId={ siteId } />
 				<QueryActivePromotions />
@@ -822,6 +822,7 @@ const PlansFeaturesMain = ( {
 									allFeaturesList={ FEATURES_LIST }
 									onStorageAddOnClick={ handleStorageAddOnClick }
 									showRefundPeriod={ isAnyHostingFlow( flowName ) }
+									coupon={ coupon }
 								/>
 								{ showEscapeHatch && hidePlansFeatureComparison && (
 									<div className="plans-features-main__escape-hatch">
@@ -883,6 +884,7 @@ const PlansFeaturesMain = ( {
 												planTypeSelectorProps={
 													! hidePlanSelector ? planTypeSelectorProps : undefined
 												}
+												coupon={ coupon }
 											/>
 											<ComparisonGridToggle
 												onClick={ toggleShowPlansComparisonGrid }
