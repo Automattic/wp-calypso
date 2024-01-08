@@ -1,7 +1,7 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { HELP_CENTER_STORE } from '@automattic/help-center/src/stores';
 import { localizeUrl } from '@automattic/i18n-utils';
-import { Button } from '@wordpress/components';
+import { Button, ExternalLink } from '@wordpress/components';
 import { useDispatch } from '@wordpress/data';
 import { __ } from '@wordpress/i18n';
 import { useState, JSXElementConstructor, ReactElement } from 'react';
@@ -32,26 +32,39 @@ export default function DescriptionSupportLink( {
 		<>
 			{ children }
 			<br />
-			<Button
-				onClick={ () => {
-					if ( setShowHelpCenter && setShowSupportDoc ) {
+			{ setShowHelpCenter ? (
+				<Button
+					onClick={ () => {
 						setShowHelpCenter( true );
 						setShowSupportDoc( localizeUrl( url ), postId );
-					} else {
-						window.open( url, '_blank' );
-					}
-					recordTracksEvent( 'calypso_block_description_support_link_click', {
-						block: title,
-						support_link: url,
-					} );
-				} }
-				style={ { marginTop: 10 } }
-				ref={ ( reference ) => ref !== reference && setRef( reference ) }
-				className="fse-inline-support-link is-compact"
-				variant="primary"
-			>
-				{ __( 'Block guide', 'full-site-editing' ) }
-			</Button>
+						recordTracksEvent( 'calypso_block_description_support_link_click', {
+							block: title,
+							support_link: url,
+						} );
+					} }
+					style={ { marginTop: 10 } }
+					ref={ ( reference ) => ref !== reference && setRef( reference ) }
+					className="fse-inline-support-link is-compact"
+					variant="primary"
+				>
+					{ __( 'Block guide', 'full-site-editing' ) }
+				</Button>
+			) : (
+				<ExternalLink
+					onClick={ () => {
+						recordTracksEvent( 'calypso_block_description_support_link_click', {
+							block: title,
+							support_link: url,
+						} );
+					} }
+					ref={ ( reference ) => ref !== reference && setRef( reference ) }
+					style={ { display: 'block', marginTop: 10, maxWidth: 'fit-content' } }
+					className="fse-inline-support-link"
+					href={ url }
+				>
+					{ __( 'Learn more', 'full-site-editing' ) }
+				</ExternalLink>
+			) }
 		</>
 	);
 }
