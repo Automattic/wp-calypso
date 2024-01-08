@@ -5,6 +5,7 @@ import { useDispatch, useSelector } from 'calypso/state';
 import { requestJetpackConnectionHealthStatus } from 'calypso/state/jetpack-connection-health/actions';
 import getJetpackConnectionHealth from 'calypso/state/jetpack-connection-health/selectors/get-jetpack-connection-health';
 import getJetpackConnectionHealthRequestError from 'calypso/state/jetpack-connection-health/selectors/get-jetpack-connection-health-request-error';
+import { shouldRequestJetpackConnectionHealthStatus } from 'calypso/state/jetpack-connection-health/selectors/should-request-jetpack-connection-health-status';
 import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
 import { AppState } from 'calypso/types';
 import {
@@ -34,6 +35,10 @@ export const JetpackConnectionHealthBanner = ( { siteId }: Props ) => {
 		( state ) => !! isSiteAutomatedTransfer( state, siteId )
 	);
 
+	const shouldRequestJetpackConnectionHealth = useSelector( ( state ) =>
+		shouldRequestJetpackConnectionHealthStatus( state, siteId )
+	);
+
 	const isJetpackConnectionHealthAPIError = useSelector( ( state ) =>
 		getJetpackConnectionHealthRequestError( state as AppState, siteId )
 	);
@@ -43,8 +48,11 @@ export const JetpackConnectionHealthBanner = ( { siteId }: Props ) => {
 	);
 
 	useEffect( () => {
+		if ( ! shouldRequestJetpackConnectionHealth ) {
+			return;
+		}
 		dispatch( requestJetpackConnectionHealthStatus( siteId ) );
-	}, [ dispatch, siteId ] );
+	}, [ dispatch, shouldRequestJetpackConnectionHealth, siteId ] );
 
 	if ( isJetpackConnectionHealthAPIError || ! jetpackConnectionHealth?.error ) {
 		return;

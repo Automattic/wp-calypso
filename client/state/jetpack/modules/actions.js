@@ -13,10 +13,7 @@ import {
 	JETPACK_MODULES_REQUEST_FAILURE,
 	JETPACK_MODULES_REQUEST_SUCCESS,
 } from 'calypso/state/action-types';
-import {
-	setJetpackConnectionHealthy,
-	setJetpackConnectionMaybeUnhealthy,
-} from 'calypso/state/jetpack-connection-health/actions';
+import { setJetpackConnectionMaybeUnhealthy } from 'calypso/state/jetpack-connection-health/actions';
 import { errorNotice, successNotice } from 'calypso/state/notices/actions';
 
 import 'calypso/state/jetpack/init';
@@ -153,7 +150,6 @@ export const fetchModuleList = ( siteId ) => {
 					...omit( module, 'activated' ),
 				} ) );
 
-				dispatch( setJetpackConnectionHealthy( siteId ) );
 				dispatch( receiveJetpackModules( siteId, modules ) );
 				dispatch( {
 					type: JETPACK_MODULES_REQUEST_SUCCESS,

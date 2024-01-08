@@ -6,12 +6,9 @@ import {
 	JETPACK_CONNECTION_HEALTH_REQUEST,
 	JETPACK_CONNECTION_HEALTH_REQUEST_FAILURE,
 } from 'calypso/state/action-types';
-import getJetpackConnectionHealthLastRequestTime from 'calypso/state/jetpack-connection-health/selectors/get-jetpack-connection-health-last-request-time';
 import isJetpackConnectionUnhealthy from 'calypso/state/jetpack-connection-health/selectors/is-jetpack-connection-unhealthy';
 
 import 'calypso/state/jetpack-connection-health/init';
-
-export const STALE_CONNECTION_HEALTH_THRESHOLD = 1000 * 60 * 5; // 5 minutes
 
 /**
  * Sets the Jetpack connection status to healthy
@@ -44,17 +41,12 @@ export const setJetpackConnectionUnhealthy = ( siteId, errorCode ) => ( {
  *
  * This is called when the Jetpack connection is maybe unhealthy and we want to confirm
  * the status by calling the health status API.
- * We also throttle the requests to avoid calling the API too often.
+ * It's called used in the JetpackConnectionHealthBanner component.
  * @param {number} siteId The site id to which the status belongs
  * @returns {Function} Action thunk
  */
 export const requestJetpackConnectionHealthStatus = ( siteId ) => ( dispatch, getState ) => {
 	const currentState = getState();
-	const lastRequestTime = getJetpackConnectionHealthLastRequestTime( currentState, siteId );
-	if ( lastRequestTime && Date.now() - lastRequestTime < STALE_CONNECTION_HEALTH_THRESHOLD ) {
-		return;
-	}
-
 	const reduxIsUnhealthy = isJetpackConnectionUnhealthy( currentState, siteId );
 
 	dispatch( {
