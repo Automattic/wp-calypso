@@ -11,7 +11,7 @@ import { SetStateAction, useCallback, useEffect, useState } from 'react';
 /**
  * Internal dependencies
  */
-import { EVENT_PROMPT_SUBMIT, EVENT_PROMPT_ENHANCE } from '../../constants';
+import { EVENT_PROMPT_SUBMIT, EVENT_PROMPT_ENHANCE, MINIMUM_PROMPT_LENGTH } from '../../constants';
 import AiIcon from '../assets/icons/ai';
 import useLogoGenerator from '../hooks/use-logo-generator';
 import { STORE_NAME } from '../store';
@@ -23,6 +23,7 @@ export const Prompt: React.FC = () => {
 	const { addLogoToHistory, increaseAiAssistantRequestsCount } = useDispatch( STORE_NAME );
 	const [ prompt, setPrompt ] = useState( '' );
 	const [ requestsRemaining, setRequestsRemaining ] = useState( 0 );
+	const hasPrompt = prompt?.length >= MINIMUM_PROMPT_LENGTH;
 
 	const {
 		generateImage,
@@ -103,7 +104,11 @@ export const Prompt: React.FC = () => {
 					{ __( 'Describe your site:', 'jetpack' ) }
 				</div>
 				<div className="jetpack-ai-logo-generator__prompt-actions">
-					<Button variant="link" disabled={ isBusy || requireUpgrade } onClick={ onEnhance }>
+					<Button
+						variant="link"
+						disabled={ isBusy || requireUpgrade || ! hasPrompt }
+						onClick={ onEnhance }
+					>
 						<AiIcon />
 						<span>{ enhanceButtonLabel }</span>
 					</Button>
@@ -125,7 +130,7 @@ export const Prompt: React.FC = () => {
 					variant="primary"
 					className="jetpack-ai-logo-generator__prompt-submit"
 					onClick={ onGenerate }
-					disabled={ isBusy || requireUpgrade }
+					disabled={ isBusy || requireUpgrade || ! hasPrompt }
 				>
 					{ __( 'Generate', 'jetpack' ) }
 				</Button>
