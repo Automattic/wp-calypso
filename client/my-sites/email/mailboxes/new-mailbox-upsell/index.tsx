@@ -44,7 +44,7 @@ const NewMailboxUpsell = ( { domains }: { domains: ResponseDomain[] } ) => {
 		if ( hasTitanMailWithUs( domainItem ) ) {
 			provider = 'titan';
 			isFreeTrialNow = isUserOnTitanFreeTrial( domainItem );
-			upsellURL = getNewTitanAccountPath( selectedSiteSlug, domainItem.domain, null, {
+			upsellURL = getNewTitanAccountPath( selectedSiteSlug, domainItem.domain, '', {
 				source: MAILBOXES_SOURCE,
 			} );
 		} else if ( hasGSuiteWithUs( domainItem ) ) {
