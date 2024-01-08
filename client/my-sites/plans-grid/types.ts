@@ -77,12 +77,17 @@ export interface ComparisonGridProps extends CommonGridProps {
 	selectedPlan?: string;
 }
 
+export type UseCheckPlanAvailabilityForPurchase = ( { planSlugs }: { planSlugs: PlanSlug[] } ) => {
+	[ planSlug in PlanSlug ]?: boolean;
+};
+
 export type GridContextProps = {
 	gridPlans: GridPlan[];
 	allFeaturesList: FeatureList;
 	intent?: PlansIntent;
 	selectedSiteId?: number | null;
 	usePricingMetaForGridPlans: UsePricingMetaForGridPlans;
+	useCheckPlanAvailabilityForPurchase: UseCheckPlanAvailabilityForPurchase;
 	children: React.ReactNode;
 	coupon?: string;
 };
