@@ -216,7 +216,6 @@ export function RenderDomainUpsell( { isFreePlan, isMonthlyPlan, searchTerm, sit
 			illustrationAlwaysShow={ true }
 			illustrationHeader={ domainSuggestionName ? domainNameSVG : null }
 			badgeText={ domainSuggestionName }
-			timing={ 2 }
 			taskId={ TASK_DOMAIN_UPSELL }
 		/>
 	);
