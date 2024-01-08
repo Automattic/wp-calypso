@@ -585,6 +585,18 @@ $image-height: 47px;
 	.login__social-tos {
 		margin-top: 24px;
 	}
+
+	.two-factor-authentication__verification-code-form.card {
+		padding-bottom: 0;
+
+		button.button {
+			margin-bottom: 16px;
+		}
+	}
+
+	.two-factor-authentication__actions.card {
+		padding-top: 0;
+	}
 }
 
 .layout.is-section-login.is-grav-powered-client {
