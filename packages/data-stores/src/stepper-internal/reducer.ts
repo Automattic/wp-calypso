@@ -9,15 +9,15 @@ type StepData = Record< string, unknown > & {
 	previousStep: string;
 };
 
-export const stepData: Reducer< StepData | undefined, StepperInternalAction > = (
-	state = undefined,
+export const stepData: Reducer< StepData | null, StepperInternalAction > = (
+	state = null,
 	action
 ) => {
 	if ( action.type === 'SET_STEP_DATA' ) {
 		return action.data;
 	}
 	if ( action.type === 'CLEAR_STEP_DATA' ) {
-		return undefined;
+		return null;
 	}
 	return state;
 };
