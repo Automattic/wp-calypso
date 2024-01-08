@@ -24,7 +24,7 @@
 	"types": "dist/types",
 	"scripts": {
 		"clean": "tsc --build ./tsconfig.json ./tsconfig-cjs.json --clean && rm -rf dist",
-		"build": "tsc --build ./tsconfig.json ./tsconfig-cjs.json && copy-assets",
+		"build": "export NODE_ENV='production' && yarn calypso-build --env source='verbum-block-editor'",
 		"prepack": "yarn run clean && yarn run build",
 		"watch": "tsc --build ./tsconfig.json --watch",
 		"prepare": "yarn build"
