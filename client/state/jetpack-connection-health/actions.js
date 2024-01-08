@@ -6,6 +6,7 @@ import {
 	JETPACK_CONNECTION_HEALTH_REQUEST,
 	JETPACK_CONNECTION_HEALTH_REQUEST_FAILURE,
 } from 'calypso/state/action-types';
+import getJetpackConnectionHealthLastRequestTime from 'calypso/state/jetpack-connection-health/selectors/get-jetpack-connection-health-last-request-time';
 import isJetpackConnectionUnhealthy from 'calypso/state/jetpack-connection-health/selectors/is-jetpack-connection-unhealthy';
 
 import 'calypso/state/jetpack-connection-health/init';
@@ -49,7 +50,7 @@ export const setJetpackConnectionUnhealthy = ( siteId, errorCode ) => ( {
  */
 export const requestJetpackConnectionHealthStatus = ( siteId ) => ( dispatch, getState ) => {
 	const currentState = getState();
-	const lastRequestTime = currentState.jetpackConnectionHealth[ siteId ]?.lastRequestTime;
+	const lastRequestTime = getJetpackConnectionHealthLastRequestTime( currentState, siteId );
 	if ( lastRequestTime && Date.now() - lastRequestTime < STALE_CONNECTION_HEALTH_THRESHOLD ) {
 		return;
 	}
@@ -92,7 +93,6 @@ export const requestJetpackConnectionHealthStatus = ( siteId ) => ( dispatch, ge
  * Instead, we call it only in case the other jetpack enpoints have failed (e.g. modules).
  * By setting the status to maybe unhealthy, we call the health status API to show the
  * error message in the UI.
- *
  * @param {number} siteId The site id to which the status belongs
  * @returns {Object} An action object
  */
