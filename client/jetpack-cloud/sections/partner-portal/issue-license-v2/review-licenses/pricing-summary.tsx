@@ -15,10 +15,12 @@ export default function PricingSummary( {
 	selectedLicenses,
 	selectedSite,
 	handleIssueLicense,
+	isLoading,
 }: {
 	selectedLicenses: SelectedLicenseProp[];
 	selectedSite?: SiteDetails | null;
 	handleIssueLicense?: () => void;
+	isLoading?: boolean;
 } ) {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
@@ -74,7 +76,7 @@ export default function PricingSummary( {
 				primary
 				className="review-licenses__cta-button"
 				onClick={ handleIssueLicense ?? handleCTAClick }
-				busy={ ! isFormReady }
+				busy={ ! isFormReady || isLoading }
 			>
 				{ translate( 'Issue %(numLicenses)d license', 'Issue %(numLicenses)d licenses', {
 					context: 'button label',

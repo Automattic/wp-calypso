@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useState } from 'react';
+import useMultipleIssueAndAssignLicenses from 'calypso/jetpack-cloud/sections/partner-portal/hooks/use-multiple-issue-and-assign-licenses';
 import useProductAndPlans from 'calypso/jetpack-cloud/sections/partner-portal/issue-license-v2/licenses-form/hooks/use-product-and-plans';
 import ReviewLicenses from 'calypso/jetpack-cloud/sections/partner-portal/issue-license-v2/review-licenses';
 import { useSelector } from 'calypso/state';
@@ -23,9 +24,35 @@ export default function ReviewSelectedLicenses( { onClose, selectedLicenses, sit
 	const [ showAddCard, setShowAddCard ] = useState( false );
 	const [ paymentMethodAdded, setPaymentMethodAdded ] = useState( false );
 
+	const { issueAndAssign, status } = useMultipleIssueAndAssignLicenses();
+
 	const issueAndAssignLicenses = useCallback( () => {
-		// TODO: Implement issue and assign licenses
-	}, [] );
+		const allLicenses = [] as Array< { slug: string; siteId: number } >;
+		selectedLicenses.forEach( ( license ) => {
+			license.products.forEach( ( product ) => {
+				const productBundle = filteredProductsAndBundles.find(
+					( productBundle ) => DASHBOARD_PRODUCT_SLUGS_BY_TYPE[ product ] === productBundle.slug
+				);
+
+				if ( ! productBundle ) {
+					return;
+				}
+
+				allLicenses.push( {
+					siteId: license.siteId,
+					slug: productBundle.slug,
+				} );
+			} );
+		} );
+		issueAndAssign( allLicenses );
+	}, [ filteredProductsAndBundles, issueAndAssign, selectedLicenses ] );
+
+	const isLoading = status.some( ( item ) => item.status === 'loading' );
+	const isSuccessful =
+		status.length > 0 &&
+		status.every( ( item ) => item.status === 'success' && item.type === 'assign-license' );
+
+	console.log( 'status', status );
 
 	const handleIssueLicense = () => {
 		if ( paymentMethodRequired ) {
@@ -40,6 +67,12 @@ export default function ReviewSelectedLicenses( { onClose, selectedLicenses, sit
 			setPaymentMethodAdded( true );
 		}
 	};
+
+	useEffect( () => {
+		if ( isSuccessful ) {
+			onClose();
+		}
+	}, [ isSuccessful, onClose ] );
 
 	useEffect( () => {
 		if ( paymentMethodAdded && ! paymentMethodRequired ) {
@@ -88,6 +121,7 @@ export default function ReviewSelectedLicenses( { onClose, selectedLicenses, sit
 			showAddCard={ showAddCard }
 			handleIssueLicense={ handleIssueLicense }
 			handleGoBack={ handleGoBack }
+			isLoading={ isLoading }
 		/>
 	);
 }

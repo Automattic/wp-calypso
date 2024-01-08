@@ -20,6 +20,7 @@ interface Props {
 	showAddCard?: boolean;
 	handleGoBack?: ( issueLicense?: boolean ) => void;
 	handleIssueLicense?: () => void;
+	isLoading?: boolean;
 }
 
 export default function ReviewLicenses( {
@@ -30,6 +31,7 @@ export default function ReviewLicenses( {
 	showAddCard,
 	handleGoBack,
 	handleIssueLicense,
+	isLoading,
 }: Props ) {
 	const translate = useTranslate();
 
@@ -72,6 +74,7 @@ export default function ReviewLicenses( {
 							selectedLicenses={ selectedLicenses }
 							selectedSite={ selectedSite }
 							handleIssueLicense={ handleIssueLicense }
+							isLoading={ isLoading }
 						/>
 					</JetpackLightboxAside>
 				</>
