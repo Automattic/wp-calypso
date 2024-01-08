@@ -29,8 +29,11 @@ export class PlanStorageBar extends Component {
 		}
 
 		const percent = Math.min(
-			Math.round(
-				( ( mediaStorage.storage_used_bytes / mediaStorage.max_storage_bytes ) * 1000 ) / 10
+			parseFloat(
+				(
+					( ( mediaStorage.storage_used_bytes / mediaStorage.max_storage_bytes ) * 1000 ) /
+					10
+				).toFixed( 2 )
 			),
 			100
 		);
