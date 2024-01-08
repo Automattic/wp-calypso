@@ -12,13 +12,13 @@ import getJetpackConnectionHealth from './get-jetpack-connection-health';
  * @returns {boolean}             Whether the current site can have connection problem
  */
 export default function isJetpackConnectionProblem( state, siteId ) {
-	const siteState = getJetpackConnectionHealth( state, siteId );
+	const connectionHealth = getJetpackConnectionHealth( state, siteId );
 
-	if ( siteState?.connectionHealth?.jetpack_connection_problem === undefined ) {
+	if ( connectionHealth?.jetpack_connection_problem === undefined ) {
 		return false;
 	}
 
-	return siteState.connectionHealth.jetpack_connection_problem;
+	return connectionHealth.jetpack_connection_problem;
 }
 
 /**

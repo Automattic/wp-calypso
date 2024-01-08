@@ -7,5 +7,5 @@ import 'calypso/state/jetpack-connection-health/init';
  * @returns {{ error?: string, jetpack_connection_problem?: boolean } | null}          Jetpack connection health
  */
 export default function getJetpackConnectionHealth( state, siteId ) {
-	return state.jetpackConnectionHealth[ siteId ]?.connectionHealth ?? null;
+	return state?.jetpackConnectionHealth?.[ siteId ]?.connectionHealth ?? null;
 }

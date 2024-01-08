@@ -212,6 +212,7 @@ describe( 'PluginsBrowser basic tests', () => {
 					lastRequestTime,
 					connectionHealth: {
 						jetpack_connection_problem: true,
+						error: 'test',
 					},
 				},
 			},
