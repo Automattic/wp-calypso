@@ -47,7 +47,7 @@ const usePricingMetaForGridPlans: UsePricingMetaForGridPlans = ( {
 	// sitePlans - unclear if all plans are included
 	const sitePlans = Plans.useSitePlans( { siteId: selectedSiteId } );
 	const currentPlan = Plans.useCurrentPlan( { siteId: selectedSiteId } );
-	const introOffers = Plans.useIntroOffers( { siteId: selectedSiteId } );
+	const introOffers = Plans.useIntroOffers( { siteId: selectedSiteId, coupon } );
 	const purchasedPlan = Purchases.useSitePurchaseById( {
 		siteId: selectedSiteId,
 		purchaseId: currentPlan?.purchaseId,

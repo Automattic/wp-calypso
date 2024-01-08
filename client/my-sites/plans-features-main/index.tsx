@@ -527,6 +527,7 @@ const PlansFeaturesMain = ( {
 			currentSitePlanSlug: sitePlanSlug,
 			usePricingMetaForGridPlans,
 			recordTracksEvent,
+			coupon,
 		};
 	}, [
 		_customerType,
@@ -544,6 +545,7 @@ const PlansFeaturesMain = ( {
 		showBiennialToggle,
 		showPlanTypeSelectorDropdown,
 		eligibleForWpcomMonthlyPlans,
+		coupon,
 	] );
 
 	/**
