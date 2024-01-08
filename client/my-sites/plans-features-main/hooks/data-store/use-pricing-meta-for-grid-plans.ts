@@ -23,7 +23,7 @@ interface Props {
 	planSlugs: PlanSlug[];
 	withoutProRatedCredits?: boolean;
 	storageAddOns?: ( AddOnMeta | null )[] | null;
-	coupon?: string | null;
+	coupon?: string;
 }
 
 function getTotalPrices( planPrices: PlanPrices, addOnPrice = 0 ): PlanPrices {
@@ -51,7 +51,7 @@ const usePricingMetaForGridPlans: UsePricingMetaForGridPlans = ( {
 	planSlugs,
 	withoutProRatedCredits = false,
 	storageAddOns,
-	coupon = null,
+	coupon,
 }: Props ) => {
 	// TODO: pass this in as a prop to uncouple the dependency
 	const selectedSiteId = useSelector( getSelectedSiteId ) ?? undefined;

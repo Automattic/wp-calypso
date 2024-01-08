@@ -82,7 +82,7 @@ export type UsePricingMetaForGridPlans = ( {
 	planSlugs: PlanSlug[];
 	withoutProRatedCredits?: boolean;
 	storageAddOns: ( AddOnMeta | null )[] | null;
-	coupon: string | null;
+	coupon?: string;
 } ) => { [ planSlug: string ]: PricingMetaForGridPlan } | null;
 
 export type UseFreeTrialPlanSlugs = ( {
@@ -162,7 +162,7 @@ interface Props {
 	 */
 	isSubdomainNotGenerated?: boolean;
 	storageAddOns: ( AddOnMeta | null )[] | null;
-	coupon?: string | null;
+	coupon?: string;
 }
 
 const usePlanTypesWithIntent = ( {
@@ -283,7 +283,7 @@ const useGridPlans = ( {
 	eligibleForFreeHostingTrial,
 	isSubdomainNotGenerated,
 	storageAddOns,
-	coupon = null,
+	coupon,
 }: Props ): Omit< GridPlan, 'features' >[] | null => {
 	const freeTrialPlanSlugs = useFreeTrialPlanSlugs( {
 		intent: intent ?? 'default',
@@ -329,6 +329,7 @@ const useGridPlans = ( {
 	const pricingMeta = usePricingMetaForGridPlans( {
 		planSlugs: availablePlanSlugs,
 		storageAddOns,
+		coupon,
 	} );
 
 	// Null return would indicate that we are still loading the data. No grid without grid plans.
