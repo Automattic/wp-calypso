@@ -20,6 +20,7 @@ import {
 import { getProductsList, isMarketplaceProduct } from 'calypso/state/products-list/selectors';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import { AppState } from 'calypso/types';
+import { MarketplaceCreateReviewItem } from '../review-item';
 
 type Props = {
 	isVisible: boolean;
@@ -130,7 +131,9 @@ export const ReviewsModal = ( props: Props ) => {
 					</div>
 				) }
 
-				{ /* TODO: Add the review creation section */ }
+				{ ! userHasReviewed && (
+					<MarketplaceCreateReviewItem productType={ productType } slug={ slug } />
+				) }
 				<div className="marketplace-reviews-modal__reviews-list">
 					<MarketplaceReviewsList productType={ productType } slug={ slug } />
 				</div>

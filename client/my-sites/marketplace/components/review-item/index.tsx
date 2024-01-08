@@ -7,22 +7,27 @@ import moment from 'moment';
 import { useState } from 'react';
 import { useSelector } from 'react-redux';
 import ConfirmModal from 'calypso/components/confirm-modal';
+import Gravatar from 'calypso/components/gravatar';
 import Rating from 'calypso/components/rating';
 import ReviewsRatingsStars from 'calypso/components/reviews-rating-stars/reviews-ratings-stars';
 import {
 	MarketplaceReviewResponse,
 	MarketplaceReviewsQueryProps,
+	ProductDefinitionProps,
+	useCreateMarketplaceReviewMutation,
 	useDeleteMarketplaceReviewMutation,
 	useUpdateMarketplaceReviewMutation,
 } from 'calypso/data/marketplace/use-marketplace-reviews';
 import { getAvatarURL } from 'calypso/data/marketplace/utils';
 import { sanitizeSectionContent } from 'calypso/lib/plugins/sanitize-section-content';
-import { getCurrentUserId } from 'calypso/state/current-user/selectors';
+import { getCurrentUser, getCurrentUserId } from 'calypso/state/current-user/selectors';
 import './style.scss';
 
-export const MarketplaceReviewItem = (
-	props: { review: MarketplaceReviewResponse } & MarketplaceReviewsQueryProps
-) => {
+type MarketplaceReviewItemProps = {
+	review?: MarketplaceReviewResponse;
+} & MarketplaceReviewsQueryProps;
+
+export const MarketplaceReviewItem = ( props: MarketplaceReviewItemProps ) => {
 	const { review } = props;
 	const translate = useTranslate();
 	const [ isConfirmModalVisible, setIsConfirmModalVisible ] = useState( false );
@@ -84,6 +89,10 @@ export const MarketplaceReviewItem = (
 		);
 		clearEditing();
 	};
+
+	if ( ! review ) {
+		return null;
+	}
 
 	return (
 		<div className="marketplace-review-item__review-container" key={ `review-${ review.id }` }>
@@ -215,3 +224,92 @@ export const MarketplaceReviewItem = (
 		</div>
 	);
 };
+
+export function MarketplaceCreateReviewItem( props: ProductDefinitionProps ) {
+	const { productType, slug } = props;
+	const user = useSelector( getCurrentUser );
+	const translate = useTranslate();
+	const [ content, setContent ] = useState< string >( '' );
+	const [ rating, setRating ] = useState< number >( 0 );
+	const [ errorMessage, setErrorMessage ] = useState( '' );
+	const [ showContentArea, setShowContentArea ] = useState( false );
+
+	const createReviewMutation = useCreateMarketplaceReviewMutation( { productType, slug } );
+	const createReview = () => {
+		createReviewMutation.mutate(
+			{ productType, slug, content, rating },
+			{
+				onError: ( error ) => {
+					setErrorMessage( error.message );
+				},
+				onSuccess: () => {
+					setErrorMessage( '' );
+				},
+			}
+		);
+	};
+
+	const onSelectRating = ( value: number ) => {
+		setRating( value );
+		setShowContentArea( true );
+	};
+
+	return (
+		<div className="marketplace-create-review-item__container">
+			{ errorMessage && (
+				<Card className="marketplace-review-item__error-message" highlight="error">
+					{ errorMessage }
+				</Card>
+			) }
+
+			<div className="marketplace-review-item__review-container-header">
+				<div className="marketplace-review-item__profile-picture">
+					<Gravatar user={ user } size={ 36 } />
+				</div>
+
+				<div className="marketplace-review-item__rating-data">
+					<div className="marketplace-review-item__author">{ user?.display_name }</div>
+				</div>
+				<div className="marketplace-review-item__date">{ moment().format( 'll' ) }</div>
+			</div>
+
+			<div className="marketplace-review-item__review-rating">
+				<h2>{ translate( 'How would you rate your overall experience?' ) }</h2>
+				<ReviewsRatingsStars size="medium-large" rating={ 0 } onSelectRating={ onSelectRating } />
+			</div>
+			{ showContentArea && (
+				<>
+					<TextareaControl
+						rows={ 4 }
+						cols={ 40 }
+						name="content"
+						value={ content }
+						onChange={ setContent }
+					/>
+
+					<div className="marketplace-review-item__review-actions">
+						<div>
+							{ isEnabled( 'marketplace-reviews-notification' ) && (
+								<CheckboxControl
+									className="marketplace-review-item__checkbox"
+									label={ translate( 'Notify me when my review is approved and published.' ) }
+									checked={ false }
+									onChange={ () => alert( 'Not implemented yet' ) }
+								/>
+							) }
+						</div>
+						<div className="marketplace-review-item__review-actions-editable">
+							<Button
+								className="marketplace-review-item__review-submit"
+								primary
+								onClick={ createReview }
+							>
+								{ translate( 'Leave my review' ) }
+							</Button>
+						</div>
+					</div>
+				</>
+			) }
+		</div>
+	);
+}
