@@ -14,31 +14,14 @@
 	}
 }
 
-.header-code__editor .cm-editor {
-	border: 1px solid var(--studio-gray-5);
+.header-code__editor {
+	font-family: $code;
 	font-size: $font-body-small;
 	margin-bottom: 1em;
-	outline: none;
+	min-height: 250px;
 
-	&.cm-focused {
-		border-color: var(--studio-gray-10);
-	}
-
-	* {
-		font-family: $code;
-	}
-}
-
-.header-code__editor.is-loading .cm-editor {
-	@include placeholder();
-	pointer-events: none;
-
-	&:after {
-		display: none;
-	}
-
-	.cm-line {
-		visibility: hidden;
+	&.is-loading {
+		@include placeholder();
 	}
 }
 
