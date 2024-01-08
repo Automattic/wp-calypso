@@ -1447,7 +1447,6 @@ const getPlanPremiumDetails = (): IncompleteWPcomPlan => ( {
 		FEATURE_STYLE_CUSTOMIZATION,
 		FEATURE_LIVE_CHAT_SUPPORT,
 		FEATURE_WORDADS,
-		FEATURE_STATS_PAID,
 		FEATURE_PAYMENT_TRANSACTION_FEES_4,
 	],
 	getBlogOnboardingHighlightedFeatures: () => [ FEATURE_CUSTOM_DOMAIN ],
@@ -1486,7 +1485,6 @@ const getPlanPremiumDetails = (): IncompleteWPcomPlan => ( {
 		FEATURE_PREMIUM_THEMES_V2,
 		FEATURE_WORDADS,
 		FEATURE_STYLE_CUSTOMIZATION,
-		FEATURE_STATS_PAID,
 		FEATURE_PAYMENT_TRANSACTION_FEES_4,
 	],
 	getCheckoutFeatures: () => [
@@ -1504,6 +1502,7 @@ const getPlanPremiumDetails = (): IncompleteWPcomPlan => ( {
 		FEATURE_VIDEOPRESS_JP,
 		FEATURE_UNLTD_SOCIAL_MEDIA_JP,
 		FEATURE_SITE_ACTIVITY_LOG_JP,
+		FEATURE_STATS_PAID,
 	],
 	get2023PricingGridSignupStorageOptions: () => {
 		return [
