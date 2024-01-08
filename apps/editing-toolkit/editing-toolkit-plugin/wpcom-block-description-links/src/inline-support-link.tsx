@@ -45,7 +45,7 @@ export default function DescriptionSupportLink( {
 						support_link: url,
 					} );
 				} }
-				style={ { display: 'block', marginTop: 10, maxWidth: 'fit-content' } }
+				style={ { marginTop: 10 } }
 				ref={ ( reference ) => ref !== reference && setRef( reference ) }
 				className="fse-inline-support-link is-compact"
 				variant="primary"
