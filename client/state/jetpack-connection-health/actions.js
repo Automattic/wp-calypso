@@ -41,6 +41,11 @@ export const setJetpackConnectionUnhealthy = ( siteId, errorCode ) => ( {
  *
  * This is called when the Jetpack connection is maybe unhealthy and we want to confirm
  * the status by calling the health status API.
+ *
+ * The jetpack health status API is expensive, we don't want to call it on every page load.
+ * Instead, we call it only in case the other jetpack enpoints have failed (e.g. modules and JITM).
+ * By setting the status to maybe unhealthy, we call the health status API to show the
+ * error message in the UI.
  * It's called used in the JetpackConnectionHealthBanner component.
  * @param {number} siteId The site id to which the status belongs
  * @returns {Function} Action thunk
@@ -82,7 +87,7 @@ export const requestJetpackConnectionHealthStatus = ( siteId ) => ( dispatch, ge
  * Sets the Jetpack connection status to maybe unhealthy
  *
  * The jetpack health status API is expensive, we don't want to call it on every page load.
- * Instead, we call it only in case the other jetpack enpoints have failed (e.g. modules).
+ * Instead, we call it only in case the other jetpack enpoints have failed (e.g. modules and JITM).
  * By setting the status to maybe unhealthy, we call the health status API to show the
  * error message in the UI.
  * @param {number} siteId The site id to which the status belongs
