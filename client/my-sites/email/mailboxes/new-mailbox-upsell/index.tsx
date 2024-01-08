@@ -6,9 +6,9 @@ import { hasGSuiteWithUs } from 'calypso/lib/gsuite';
 import { hasTitanMailWithUs, isUserOnTitanFreeTrial } from 'calypso/lib/titan';
 import { MAILBOXES_SOURCE } from 'calypso/my-sites/email/mailboxes/constants';
 import {
-	emailManagement,
-	emailManagementAddGSuiteUsers,
-	emailManagementNewTitanAccount,
+	getEmailManagementPath,
+	getAddGSuiteUsersPath,
+	getNewTitanAccountPath,
 } from 'calypso/my-sites/email/paths';
 import { useSelector } from 'calypso/state';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
@@ -30,7 +30,9 @@ const NewMailboxUpsell = ( { domains }: { domains: ResponseDomain[] } ) => {
 	}
 
 	// By default, upsell CTA links to the email management landing page.
-	let upsellURL = emailManagement( selectedSiteSlug, null, null, { source: MAILBOXES_SOURCE } );
+	let upsellURL = getEmailManagementPath( selectedSiteSlug, null, null, {
+		source: MAILBOXES_SOURCE,
+	} );
 
 	let isFreeTrialNow = false;
 	let provider = '';
@@ -42,16 +44,12 @@ const NewMailboxUpsell = ( { domains }: { domains: ResponseDomain[] } ) => {
 		if ( hasTitanMailWithUs( domainItem ) ) {
 			provider = 'titan';
 			isFreeTrialNow = isUserOnTitanFreeTrial( domainItem );
-			upsellURL = emailManagementNewTitanAccount( selectedSiteSlug, domainItem.domain, null, {
+			upsellURL = getNewTitanAccountPath( selectedSiteSlug, domainItem.domain, null, {
 				source: MAILBOXES_SOURCE,
 			} );
 		} else if ( hasGSuiteWithUs( domainItem ) ) {
 			provider = 'google';
-			upsellURL = emailManagementAddGSuiteUsers(
-				selectedSiteSlug,
-				domainItem.domain,
-				'google-workspace'
-			);
+			upsellURL = getAddGSuiteUsersPath( selectedSiteSlug, domainItem.domain, 'google-workspace' );
 		}
 	}
 

@@ -14,7 +14,7 @@ import {
 	FIELD_PASSWORD_RESET_EMAIL,
 } from 'calypso/my-sites/email/form/mailboxes/constants';
 import { EmailProvider } from 'calypso/my-sites/email/form/mailboxes/types';
-import { emailManagementTitanSetUpThankYou } from 'calypso/my-sites/email/paths';
+import { getTitanSetUpThankYouPath } from 'calypso/my-sites/email/paths';
 import { useDispatch, useSelector } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getCurrentUserEmail } from 'calypso/state/current-user/selectors';
@@ -40,7 +40,7 @@ interface DispatchCompleteSetupClickProps {
 
 const goToThankYouPage = ( siteSlug: string, selectedDomainName: string, mailboxName: string ) => {
 	const emailAddress = `${ mailboxName }@${ selectedDomainName }`;
-	page( emailManagementTitanSetUpThankYou( siteSlug, selectedDomainName, emailAddress ) );
+	page( getTitanSetUpThankYouPath( siteSlug, selectedDomainName, emailAddress ) );
 };
 
 const dispatchCompleteSetupClick = ( dispatchProps: DispatchCompleteSetupClickProps ) => {

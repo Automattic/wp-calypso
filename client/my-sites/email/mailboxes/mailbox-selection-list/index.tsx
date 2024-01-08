@@ -26,7 +26,7 @@ import { TITAN_PROVIDER_NAME } from 'calypso/lib/titan/constants';
 import { CALYPSO_CONTACT } from 'calypso/lib/url/support';
 import { recordEmailAppLaunchEvent } from 'calypso/my-sites/email/email-management/home/utils';
 import NewMailboxUpsell from 'calypso/my-sites/email/mailboxes/new-mailbox-upsell';
-import { emailManagementMailboxes } from 'calypso/my-sites/email/paths';
+import { getMailboxesPath } from 'calypso/my-sites/email/paths';
 import { recordPageView, enhanceWithSiteMainProduct } from 'calypso/state/analytics/actions';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { withEnhancers } from 'calypso/state/utils';
@@ -229,7 +229,7 @@ const MailboxSelectionList = ( { domains }: { domains: ResponseDomain[] } ) => {
 	useEffect( () => {
 		const recorder = withEnhancers( recordPageView, [ enhanceWithSiteMainProduct ] );
 		dispatch(
-			recorder( emailManagementMailboxes( ':site' ), 'Mailboxes', undefined, {
+			recorder( getMailboxesPath( ':site' ), 'Mailboxes', undefined, {
 				has_error: isError,
 				context: 'mailbox-selection-list',
 			} )

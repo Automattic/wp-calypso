@@ -9,7 +9,7 @@ import {
 	getNumberOfMailboxesText,
 	resolveEmailPlanStatus,
 } from 'calypso/my-sites/email/email-management/home/utils';
-import { emailManagement } from 'calypso/my-sites/email/paths';
+import { getEmailManagementPath } from 'calypso/my-sites/email/paths';
 import { useSelector } from 'calypso/state';
 import getCurrentRoute from 'calypso/state/selectors/get-current-route';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
@@ -58,7 +58,7 @@ const EmailListActiveItem = ( { domain, source = '' }: EmailListActiveItemProps 
 
 	return (
 		<CompactCard
-			href={ emailManagement( selectedSite?.slug, domain.name, currentRoute, { source } ) }
+			href={ getEmailManagementPath( selectedSite?.slug, domain.name, currentRoute, { source } ) }
 		>
 			<span className="email-list-active__item-icon">
 				<EmailTypeIcon domain={ domain } />

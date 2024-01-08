@@ -24,7 +24,7 @@ import {
 	domainManagementDomainConnectMapping,
 	domainManagementRoot,
 } from 'calypso/my-sites/domains/paths';
-import { emailManagement } from 'calypso/my-sites/email/paths';
+import { getEmailManagementPath } from 'calypso/my-sites/email/paths';
 import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import DomainManagement from '.';
 
@@ -165,7 +165,7 @@ export default {
 	},
 
 	domainManagementEmailRedirect( pageContext ) {
-		page.redirect( emailManagement( pageContext.params.site, pageContext.params.domain ) );
+		page.redirect( getEmailManagementPath( pageContext.params.site, pageContext.params.domain ) );
 	},
 
 	domainManagementDns( pageContext, next ) {

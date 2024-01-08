@@ -37,14 +37,14 @@ import {
 	hasEmailSubscription,
 } from 'calypso/my-sites/email/email-management/home/utils';
 import {
-	emailManagement,
-	emailManagementAddEmailForwards,
-	emailManagementAddGSuiteUsers,
-	emailManagementManageTitanAccount,
-	emailManagementManageTitanMailboxes,
-	emailManagementNewTitanAccount,
-	emailManagementPurchaseNewEmailAccount,
-	emailManagementTitanControlPanelRedirect,
+	getEmailManagementPath,
+	getAddEmailForwardsPath,
+	getAddGSuiteUsersPath,
+	getManageTitanAccountPath,
+	getManageTitanMailboxesPath,
+	getNewTitanAccountPath,
+	getPurchaseNewEmailAccountPath,
+	getTitanControlPanelRedirectPath,
 } from 'calypso/my-sites/email/paths';
 import { getManagePurchaseUrlFor } from 'calypso/my-sites/purchases/paths';
 import {
@@ -64,7 +64,7 @@ const UpgradeNavItem = ( { currentRoute, domain, selectedSiteSlug } ) => {
 
 	return (
 		<VerticalNavItem
-			path={ emailManagementPurchaseNewEmailAccount( selectedSiteSlug, domain.name, currentRoute ) }
+			path={ getPurchaseNewEmailAccountPath( selectedSiteSlug, domain.name, currentRoute ) }
 			onClick={ () => recordTracksEvent( 'calypso_upsell_email', { context: 'email-forwarding' } ) }
 		>
 			{ translate( 'Upgrade to Professional Email' ) }
@@ -104,7 +104,7 @@ function EmailPlan( { domain, hideHeaderCake = false, selectedSite, source } ) {
 	const hasSubscription = hasEmailSubscription( domain );
 
 	const handleBack = () => {
-		page( emailManagement( selectedSite.slug ) );
+		page( getEmailManagementPath( selectedSite.slug ) );
 	};
 
 	const handleRenew = ( event ) => {
@@ -121,7 +121,7 @@ function EmailPlan( { domain, hideHeaderCake = false, selectedSite, source } ) {
 		if ( hasGSuiteWithUs( domain ) ) {
 			return {
 				disabled: ! canAddMailboxes,
-				path: emailManagementAddGSuiteUsers(
+				path: getAddGSuiteUsersPath(
 					selectedSite.slug,
 					domain.name,
 					getProductType( getGSuiteProductSlug( domain ) ),
@@ -135,7 +135,7 @@ function EmailPlan( { domain, hideHeaderCake = false, selectedSite, source } ) {
 			if ( getTitanSubscriptionId( domain ) ) {
 				return {
 					disabled: ! canAddMailboxes,
-					path: emailManagementNewTitanAccount( selectedSite.slug, domain.name, currentRoute, {
+					path: getNewTitanAccountPath( selectedSite.slug, domain.name, currentRoute, {
 						source,
 					} ),
 				};
@@ -143,10 +143,10 @@ function EmailPlan( { domain, hideHeaderCake = false, selectedSite, source } ) {
 
 			const showExternalControlPanelLink = ! config.isEnabled( 'titan/iframe-control-panel' );
 			const controlPanelUrl = showExternalControlPanelLink
-				? emailManagementTitanControlPanelRedirect( selectedSite.slug, domain.name, currentRoute, {
+				? getTitanControlPanelRedirectPath( selectedSite.slug, domain.name, currentRoute, {
 						context: TITAN_CONTROL_PANEL_CONTEXT_CREATE_EMAIL,
 				  } )
-				: emailManagementManageTitanAccount( selectedSite.slug, domain.name, currentRoute, {
+				: getManageTitanAccountPath( selectedSite.slug, domain.name, currentRoute, {
 						context: TITAN_CONTROL_PANEL_CONTEXT_CREATE_EMAIL,
 				  } );
 
@@ -158,7 +158,7 @@ function EmailPlan( { domain, hideHeaderCake = false, selectedSite, source } ) {
 
 		// All site admins are allowed to add/remove email forwards
 		return {
-			path: emailManagementAddEmailForwards( selectedSite.slug, domain.name, currentRoute ),
+			path: getAddEmailForwardsPath( selectedSite.slug, domain.name, currentRoute ),
 		};
 	}
 
@@ -214,12 +214,12 @@ function EmailPlan( { domain, hideHeaderCake = false, selectedSite, source } ) {
 		if ( hasTitanMailWithUs( domain ) ) {
 			if ( config.isEnabled( 'titan/iframe-control-panel' ) ) {
 				return {
-					path: emailManagementManageTitanAccount( selectedSite.slug, domain.name, currentRoute ),
+					path: getManageTitanAccountPath( selectedSite.slug, domain.name, currentRoute ),
 				};
 			}
 
 			return {
-				path: emailManagementManageTitanMailboxes( selectedSite.slug, domain.name, currentRoute ),
+				path: getManageTitanMailboxesPath( selectedSite.slug, domain.name, currentRoute ),
 			};
 		}
 

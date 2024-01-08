@@ -1,6 +1,6 @@
 import { translate } from 'i18n-calypso';
 import emailImage from 'calypso/assets/images/thank-you-upsell/email.svg';
-import { emailManagement } from 'calypso/my-sites/email/paths';
+import { getEmailManagementPath } from 'calypso/my-sites/email/paths';
 import { useSelector } from 'calypso/state';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import ThankYouLayout from '../redesign-v2/ThankYouLayout';
@@ -43,7 +43,7 @@ const DomainOnlyThankYou: React.FC< DomainOnlyThankYouContainerProps > = ( { dom
 				) }
 				meshColor="blue"
 				icon={ emailImage }
-				href={ emailManagement( siteSlug ?? firstDomain, firstDomain ) }
+				href={ getEmailManagementPath( siteSlug ?? firstDomain, firstDomain ) }
 				buttonText={ translate( 'Add email' ) }
 				trackEvent="calypso_domain_only_thank_you_professional_email_click"
 			/>

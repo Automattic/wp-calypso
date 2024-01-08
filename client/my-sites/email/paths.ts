@@ -34,140 +34,7 @@ function resolveRootPath( relativeTo?: string | null ) {
 	return emailManagementPrefix;
 }
 
-// Retrieves the URL of the Add New Mailboxes page for email forwarding
-export const emailManagementAddEmailForwards: EmailPathUtilityFunction = (
-	siteName,
-	domainName,
-	relativeTo,
-	urlParameters
-) => getEmailManagementPath( siteName, domainName, 'forwarding/add', relativeTo, urlParameters );
-
-// Retrieves the URL of the Add New Mailboxes page either for G Suite or Google Workspace
-export function emailManagementAddGSuiteUsers(
-	siteName: string | null | undefined,
-	domainName: string | null | undefined,
-	productType: typeof GOOGLE_WORKSPACE_PRODUCT_TYPE | typeof GSUITE_PRODUCT_TYPE,
-	relativeTo?: string,
-	source?: string
-) {
-	if ( domainName ) {
-		return getEmailManagementPath( siteName, domainName, productType + '/add-users', relativeTo, {
-			source,
-		} );
-	}
-
-	return '/email/' + productType + '/add-users/' + siteName;
-}
-
-export const emailManagementManageTitanAccount: EmailPathUtilityFunction = (
-	siteName,
-	domainName,
-	relativeTo,
-	urlParameters
-) => getEmailManagementPath( siteName, domainName, 'titan/manage', relativeTo, urlParameters );
-
-export const emailManagementManageTitanMailboxes: EmailPathUtilityFunction = (
-	siteName,
-	domainName,
-	relativeTo,
-	urlParameters
-) =>
-	getEmailManagementPath(
-		siteName,
-		domainName,
-		'titan/manage-mailboxes',
-		relativeTo,
-		urlParameters
-	);
-
-export const emailManagementNewTitanAccount: EmailPathUtilityFunction = (
-	siteName,
-	domainName,
-	relativeTo,
-	urlParameters
-) => getEmailManagementPath( siteName, domainName, 'titan/new', relativeTo, urlParameters );
-
-// Retrieves the URL to set up Titan mailboxes
-export const emailManagementTitanSetUpMailbox: EmailPathUtilityFunction = (
-	siteName,
-	domainName,
-	relativeTo,
-	urlParameters
-) =>
-	getEmailManagementPath( siteName, domainName, 'titan/set-up-mailbox', relativeTo, urlParameters );
-
-export const emailManagementTitanSetUpThankYou = (
-	siteName: string | null | undefined,
-	domainName: string | null | undefined,
-	emailAddress?: string,
-	relativeTo?: string
-) =>
-	getEmailManagementPath(
-		siteName,
-		domainName,
-		'titan/set-up-mailbox/thank-you',
-		relativeTo,
-		emailAddress ? { email: emailAddress } : {}
-	);
-
-export const emailManagementTitanControlPanelRedirect: EmailPathUtilityFunction = (
-	siteName,
-	domainName,
-	relativeTo,
-	urlParameters
-) =>
-	getEmailManagementPath( siteName, domainName, 'titan/control-panel', relativeTo, urlParameters );
-
-export const emailManagement = (
-	siteName: string | null | undefined,
-	domainName: string | null | undefined,
-	relativeTo?: string | null,
-	urlParameters?: QueryStringParameters
-) => getEmailManagementPath( siteName, domainName, 'manage', relativeTo, urlParameters );
-
-export const emailManagementForwarding: EmailPathUtilityFunction = (
-	siteName,
-	domainName,
-	relativeTo
-) => getEmailManagementPath( siteName, domainName, 'forwarding', relativeTo );
-
-// Retrieves the URL of the Email Comparison page
-export const emailManagementPurchaseNewEmailAccount = (
-	siteName: string | null | undefined,
-	domainName: string | null | undefined,
-	relativeTo?: string,
-	source?: string,
-	emailProviderSlug?: string,
-	intervalLength?: string
-) =>
-	getEmailManagementPath( siteName, domainName, 'purchase', relativeTo, {
-		interval: intervalLength,
-		provider: emailProviderSlug,
-		source,
-	} );
-
-// Retrieves the URL of the Email In-Depth Comparison page
-export const emailManagementInDepthComparison = (
-	siteName: string | null | undefined,
-	domainName: string | null | undefined,
-	relativeTo?: string,
-	source?: string,
-	intervalLength?: string
-) =>
-	getEmailManagementPath( siteName, domainName, 'compare', relativeTo, {
-		interval: intervalLength,
-		referrer: relativeTo,
-		source,
-	} );
-
-export function emailManagementMailboxes( siteName?: string ) {
-	if ( siteName ) {
-		return `/mailboxes/${ siteName }`;
-	}
-	return `/mailboxes`;
-}
-
-function getEmailManagementPath(
+function getPath(
 	siteName: string | null | undefined,
 	domainName: string | null | undefined,
 	slug: string,
@@ -200,3 +67,120 @@ function getEmailManagementPath(
 
 	return '/email';
 }
+
+// Retrieves the URL of the Add New Mailboxes page for email forwarding
+export const getAddEmailForwardsPath: EmailPathUtilityFunction = (
+	siteName,
+	domainName,
+	relativeTo,
+	urlParameters
+) => getPath( siteName, domainName, 'forwarding/add', relativeTo, urlParameters );
+
+// Retrieves the URL of the Add New Mailboxes page either for G Suite or Google Workspace
+export function getAddGSuiteUsersPath(
+	siteName: string | null | undefined,
+	domainName: string | null | undefined,
+	productType: typeof GOOGLE_WORKSPACE_PRODUCT_TYPE | typeof GSUITE_PRODUCT_TYPE,
+	relativeTo?: string,
+	source?: string
+) {
+	if ( domainName ) {
+		return getPath( siteName, domainName, productType + '/add-users', relativeTo, {
+			source,
+		} );
+	}
+
+	return '/email/' + productType + '/add-users/' + siteName;
+}
+
+export const getManageTitanAccountPath: EmailPathUtilityFunction = (
+	siteName,
+	domainName,
+	relativeTo,
+	urlParameters
+) => getPath( siteName, domainName, 'titan/manage', relativeTo, urlParameters );
+
+export const getManageTitanMailboxesPath: EmailPathUtilityFunction = (
+	siteName,
+	domainName,
+	relativeTo,
+	urlParameters
+) => getPath( siteName, domainName, 'titan/manage-mailboxes', relativeTo, urlParameters );
+
+export const getNewTitanAccountPath: EmailPathUtilityFunction = (
+	siteName,
+	domainName,
+	relativeTo,
+	urlParameters
+) => getPath( siteName, domainName, 'titan/new', relativeTo, urlParameters );
+
+// Retrieves the URL to set up Titan mailboxes
+export const getTitanSetUpMailboxPath: EmailPathUtilityFunction = (
+	siteName,
+	domainName,
+	relativeTo,
+	urlParameters
+) => getPath( siteName, domainName, 'titan/set-up-mailbox', relativeTo, urlParameters );
+
+export const getTitanSetUpThankYouPath = (
+	siteName: string | null | undefined,
+	domainName: string | null | undefined,
+	emailAddress?: string,
+	relativeTo?: string
+) =>
+	getPath(
+		siteName,
+		domainName,
+		'titan/set-up-mailbox/thank-you',
+		relativeTo,
+		emailAddress ? { email: emailAddress } : {}
+	);
+
+export const getTitanControlPanelRedirectPath: EmailPathUtilityFunction = (
+	siteName,
+	domainName,
+	relativeTo,
+	urlParameters
+) => getPath( siteName, domainName, 'titan/control-panel', relativeTo, urlParameters );
+
+export const getEmailManagementPath = (
+	siteName: string | null | undefined,
+	domainName: string | null | undefined,
+	relativeTo?: string | null,
+	urlParameters?: QueryStringParameters
+) => getPath( siteName, domainName, 'manage', relativeTo, urlParameters );
+
+export const getForwardingPath: EmailPathUtilityFunction = ( siteName, domainName, relativeTo ) =>
+	getPath( siteName, domainName, 'forwarding', relativeTo );
+
+// Retrieves the URL of the Email Comparison page
+export const getPurchaseNewEmailAccountPath = (
+	siteName: string | null | undefined,
+	domainName: string | null | undefined,
+	relativeTo?: string,
+	source?: string,
+	emailProviderSlug?: string,
+	intervalLength?: string
+) =>
+	getPath( siteName, domainName, 'purchase', relativeTo, {
+		interval: intervalLength,
+		provider: emailProviderSlug,
+		source,
+	} );
+
+// Retrieves the URL of the Email In-Depth Comparison page
+export const getEmailInDepthComparisonPath = (
+	siteName: string | null | undefined,
+	domainName: string | null | undefined,
+	relativeTo?: string,
+	source?: string,
+	intervalLength?: string
+) =>
+	getPath( siteName, domainName, 'compare', relativeTo, {
+		interval: intervalLength,
+		referrer: relativeTo,
+		source,
+	} );
+
+export const getMailboxesPath = ( siteName?: string ) =>
+	siteName ? `/mailboxes/${ siteName }` : `/mailboxes`;

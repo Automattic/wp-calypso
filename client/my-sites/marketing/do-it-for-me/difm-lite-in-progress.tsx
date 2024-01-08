@@ -11,7 +11,7 @@ import { useCurrentRoute } from 'calypso/components/route';
 import { hasGSuiteWithUs } from 'calypso/lib/gsuite';
 import { hasTitanMailWithUs } from 'calypso/lib/titan';
 import { domainManagementList } from 'calypso/my-sites/domains/paths';
-import { emailManagement } from 'calypso/my-sites/email/paths';
+import { getEmailManagementPath } from 'calypso/my-sites/email/paths';
 import { useDispatch, useSelector } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getSitePurchases, isFetchingSitePurchases } from 'calypso/state/purchases/selectors';
@@ -142,7 +142,7 @@ function WebsiteContentSubmitted( { primaryDomain, siteSlug }: Props ) {
 			action={ translate( 'Manage domain' ) }
 			actionURL={ domainManagementList( siteSlug, currentRoute ) }
 			secondaryAction={ hasEmailWithUs ? translate( 'Manage email' ) : translate( 'Add email' ) }
-			secondaryActionURL={ emailManagement( siteSlug, null ) }
+			secondaryActionURL={ getEmailManagementPath( siteSlug, null ) }
 			secondaryActionCallback={ recordEmailClick }
 			illustration={ SiteBuildInProgressIllustration }
 			illustrationWidth={ 144 }

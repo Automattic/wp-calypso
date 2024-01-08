@@ -2,7 +2,7 @@ import { translate } from 'i18n-calypso';
 import AnimatedIcon from 'calypso/components/animated-icon';
 import InlineSupportLink from 'calypso/components/inline-support-link';
 import { domainManagementEdit, domainManagementList } from 'calypso/my-sites/domains/paths';
-import { emailManagementTitanSetUpMailbox } from 'calypso/my-sites/email/paths';
+import { getTitanSetUpMailboxPath } from 'calypso/my-sites/email/paths';
 import { requestSiteChecklistTaskUpdate } from 'calypso/state/checklist/actions';
 import { verifyEmail } from 'calypso/state/current-user/email-verification/actions';
 import { CHECKLIST_KNOWN_TASKS } from 'calypso/state/data-layer/wpcom/checklist/index.js';
@@ -294,7 +294,7 @@ export const getTask = (
 				),
 				actionText: translate( 'Set up mailbox' ),
 				isSkippable: false,
-				actionUrl: emailManagementTitanSetUpMailbox( siteSlug, task.domain ),
+				actionUrl: getTitanSetUpMailboxPath( siteSlug, task.domain ),
 			};
 			break;
 		case CHECKLIST_KNOWN_TASKS.BLOG_PREVIEWED:
