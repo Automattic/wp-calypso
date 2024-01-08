@@ -1,5 +1,5 @@
 import {
-	DEFAULT_ASSEMBLER_DESIGN,
+	getAssemblerDesign,
 	themeGalleryIllustrationImage,
 	patternAssemblerIllustrationImage,
 } from '@automattic/design-picker';
@@ -39,7 +39,7 @@ const DesignChoicesStep: Step = ( { navigation, flow, stepName } ) => {
 		} );
 
 		if ( destination === 'pattern-assembler' ) {
-			setSelectedDesign( DEFAULT_ASSEMBLER_DESIGN );
+			setSelectedDesign( getAssemblerDesign() );
 		}
 
 		submit?.( { destination } );
