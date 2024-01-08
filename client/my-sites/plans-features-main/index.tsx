@@ -715,7 +715,7 @@ const PlansFeaturesMain = ( {
 					'is-pricing-grid-2023-plans-features-main'
 				) }
 			>
-				<QueryPlans />
+				<QueryPlans coupon={ coupon } />
 				<QuerySites siteId={ siteId } />
 				<QuerySitePlans siteId={ siteId } />
 				<QueryActivePromotions />

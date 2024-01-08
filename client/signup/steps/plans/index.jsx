@@ -277,10 +277,12 @@ export class PlansStep extends Component {
 			'is-wide-layout': false,
 			'is-extra-wide-layout': true,
 		} );
+		const { signupDependencies } = this.props;
+		const { coupon } = signupDependencies;
 
 		return (
 			<>
-				<QueryPlans />
+				<QueryPlans coupon={ coupon } />
 				<MarketingMessage path="signup/plans" />
 				<div className={ classes }>{ this.plansFeaturesSelection() }</div>
 			</>
