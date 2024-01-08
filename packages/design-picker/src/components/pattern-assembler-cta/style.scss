@@ -132,19 +132,16 @@
 	}
 
 	.pattern-assembler-cta__image-wrapper {
+		padding-left: 35px;
 		text-align: right;
-
-		@include break-wide {
-			padding-left: 35px;
-		}
 	}
 
 	.pattern-assembler-cta__image {
+		max-width: 405px;
 		width: 100%;
 
 		@include break-wide {
 			min-width: 380px;
-			max-width: 405px;
 		}
 	}
 }
