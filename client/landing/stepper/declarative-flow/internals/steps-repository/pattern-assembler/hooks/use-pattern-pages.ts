@@ -97,7 +97,7 @@ const usePatternPages = (
 	pagesToShow = pageCategoriesInOrder
 		.map( ( category: Category ) => {
 			const { name } = category;
-			const firstPage = name && pagesMapByCategory[ name ][ 0 ];
+			const firstPage = name && pagesMapByCategory[ name ]?.[ 0 ];
 			if ( firstPage ) {
 				return {
 					name,
