@@ -1916,7 +1916,6 @@ __metadata:
     "@wordpress/plugins": "npm:^6.16.0"
     "@wordpress/private-apis": "npm:^0.30.0"
     "@wordpress/rich-text": "npm:^6.25.0"
-    "@wordpress/router": "npm:^0.17.0"
     "@wordpress/url": "npm:^3.49.0"
     debug: "npm:^4.3.3"
     lodash: "npm:^4.17.21"
