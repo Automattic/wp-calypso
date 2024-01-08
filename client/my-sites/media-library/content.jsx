@@ -165,8 +165,8 @@ export class MediaLibraryContent extends Component {
 					upgradeNudgeName = 'plan-media-storage-error-video';
 					upgradeNudgeFeature = 'video-upload';
 					message = translate(
-						'%(occurrences)d file could not be uploaded because your site does not support video files. Upgrade to a %(planName)s plan for video support.',
-						'%(occurrences)d files could not be uploaded because your site does not support video files. Upgrade to a %(planName)s plan for video support.',
+						'%(occurrences)d file could not be uploaded because your site does not support video files. Upgrade to the %(planName)s plan for video support.',
+						'%(occurrences)d files could not be uploaded because your site does not support video files. Upgrade to the %(planName)s plan for video support.',
 						i18nOptions
 					);
 					break;
