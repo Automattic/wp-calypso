@@ -272,13 +272,13 @@ export class PlansStep extends Component {
 	}
 
 	render() {
+		const { signupDependencies } = this.props;
+		const { coupon } = signupDependencies;
 		const classes = classNames( 'plans plans-step', {
 			'has-no-sidebar': true,
 			'is-wide-layout': false,
 			'is-extra-wide-layout': true,
 		} );
-		const { signupDependencies } = this.props;
-		const { coupon } = signupDependencies;
 
 		return (
 			<>
