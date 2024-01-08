@@ -4,10 +4,7 @@ import domainMappingProps from 'calypso/my-sites/checkout/checkout-thank-you/dom
 import domainRegistrationThankYouProps from 'calypso/my-sites/checkout/checkout-thank-you/domains/thank-you-content/domain-registration';
 import domainTransferProps from 'calypso/my-sites/checkout/checkout-thank-you/domains/thank-you-content/domain-transfer';
 import { recordEmailAppLaunchEvent } from 'calypso/my-sites/email/email-management/home/utils';
-import {
-	emailManagementMailboxes,
-	emailManagementPurchaseNewEmailAccount,
-} from 'calypso/my-sites/email/paths';
+import { getMailboxesPath, getPurchaseNewEmailAccountPath } from 'calypso/my-sites/email/paths';
 import { FullWidthButton } from 'calypso/my-sites/marketplace/components';
 import type { ThankYouNextStepProps } from 'calypso/components/thank-you/types';
 import type {
@@ -33,9 +30,9 @@ interface StepCTAProps {
 const StepCTA = ( { email, primary, siteName }: StepCTAProps ) => {
 	const titanAppsUrlPrefix = useTitanAppsUrlPrefix();
 
-	const redirectUrl = `${ window.location.protocol }//${
-		window.location.host
-	}${ emailManagementMailboxes( siteName ) }`;
+	const redirectUrl = `${ window.location.protocol }//${ window.location.host }${ getMailboxesPath(
+		siteName
+	) }`;
 
 	return (
 		<FullWidthButton
@@ -89,7 +86,7 @@ export function buildDomainStepForProfessionalEmail(
 			),
 			stepCta: (
 				<FullWidthButton
-					href={ emailManagementPurchaseNewEmailAccount( selectedSiteSlug ?? domain, domain ) }
+					href={ getPurchaseNewEmailAccountPath( selectedSiteSlug ?? domain, domain ) }
 					className={ `domain-${ domainType }__thank-you-button domain-thank-you__button` }
 					primary={ primary }
 					busy={ false }
