@@ -1,5 +1,4 @@
 import page from '@automattic/calypso-router';
-import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
 import MasterbarStyled from './masterbar-styled';
 
 export type CheckoutMasterbarProps = {
@@ -22,7 +21,6 @@ const CheckoutMasterbar = ( { siteId, siteSlug, backText }: CheckoutMasterbarPro
 
 	return (
 		<>
-			<QuerySitePurchases siteId={ siteId } />
 			<MasterbarStyled
 				onClick={ () => page( `/home/${ siteSlug ?? '' }` ) }
 				backText={ backText ?? '' }

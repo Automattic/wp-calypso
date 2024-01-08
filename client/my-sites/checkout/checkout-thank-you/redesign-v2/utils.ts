@@ -30,5 +30,6 @@ export const isRedesignV2 = ( props: CheckoutThankYouCombinedProps ) => {
 	if ( purchases.length === 1 ) {
 		return isWpComPlan( purchases[ 0 ].productSlug );
 	}
+
 	return false;
 };
