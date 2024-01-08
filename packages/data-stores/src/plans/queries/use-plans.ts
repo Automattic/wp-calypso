@@ -18,7 +18,7 @@ function usePlans( { coupon }: { coupon?: string } = {} ): UseQueryResult< Plans
 	coupon && params.append( 'coupon_code', coupon );
 
 	return useQuery( {
-		queryKey: queryKeys.plans(),
+		queryKey: queryKeys.plans( coupon ),
 		queryFn: async (): Promise< PlansIndex > => {
 			const data: PricedAPIPlan[] = await wpcomRequest( {
 				path: `/plans`,
