@@ -270,6 +270,7 @@ export const useCommandsArrayWpcom = ( {
 	const emailUrl = `/contact-form?${ new URLSearchParams( {
 		mode: 'EMAIL',
 		'disable-gpt': 'true',
+		'source-command-palette': 'true',
 	} ).toString() }`;
 
 	const commands: Command[] = [

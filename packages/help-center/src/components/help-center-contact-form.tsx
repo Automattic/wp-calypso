@@ -350,6 +350,12 @@ export const HelpCenterContactForm = () => {
 							}`
 						);
 					}
+
+					if ( params.get( 'source-command-palette' ) === 'true' ) {
+						ticketMeta.push(
+							`This is user feedback for Hosting Command Pallete. Please post the user message to #dotcom-yolo on Slack.`
+						);
+					}
 					const kayakoMessage = [ ...ticketMeta, '\n', message ].join( '\n' );
 
 					submitTicket( {
