@@ -1,14 +1,17 @@
 /**
  * External dependencies
  */
+import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { __ } from '@wordpress/i18n';
+import debugFactory from 'debug';
 import { useCallback } from 'react';
 import wpcomProxyRequest from 'wpcom-proxy-request';
 /**
  * Internal dependencies
  */
 import { stashLogo } from '../lib/logo-storage';
+import { EVENT_PROMPT_SUBMIT } from '../../constants';
 import { requestJwt } from '../lib/request-token';
 import { saveToMediaLibrary } from '../lib/save-to-media-library';
 import { setSiteLogo } from '../lib/set-site-logo';
@@ -18,6 +21,8 @@ import { STORE_NAME } from '../store';
  */
 import type { Selectors } from '../store/types';
 
+const debug = debugFactory( 'jetpack-ai-calypso:use-logo-generator' );
+
 const useLogoGenerator = () => {
 	const {
 		setSelectedLogoIndex,
@@ -26,6 +31,7 @@ const useLogoGenerator = () => {
 		setIsApplyingLogo,
 		setIsRequestingImage,
 		setIsEnhancingPrompt,
+		increaseAiAssistantRequestsCount,
 		addLogoToHistory,
 	} = useDispatch( STORE_NAME );
 
@@ -42,6 +48,7 @@ const useLogoGenerator = () => {
 		requireUpgrade,
 	} = useSelect( ( select ) => {
 		const selectors: Selectors = select( STORE_NAME );
+
 		return {
 			logos: selectors.getLogos(),
 			selectedLogo: selectors.getSelectedLogo(),
@@ -65,6 +72,8 @@ const useLogoGenerator = () => {
 		if ( ! siteId || ! selectedLogo ) {
 			throw new Error( 'Missing siteId or logo' );
 		}
+
+		debug( 'Saving logo for site', siteId );
 
 		// If the logo is already saved, return its mediaId and mediaURL.
 		if ( selectedLogo.mediaId ) {
@@ -102,6 +111,8 @@ const useLogoGenerator = () => {
 			throw new Error( 'Missing siteId or logo' );
 		}
 
+		debug( 'Applying logo for site', siteId );
+
 		try {
 			const { mediaId } = await saveLogo();
 
@@ -123,6 +134,8 @@ const useLogoGenerator = () => {
 	const generateImage = async function ( { prompt }: { prompt: string } ): Promise< any > {
 		const tokenData = await requestJwt( { siteDetails } );
 		const isSimple = ! siteDetails.is_wpcom_atomic;
+
+		debug( 'Generating image with prompt', prompt );
 
 		const imageGenerationPrompt = `I NEED to test how the tool works with extremely simple prompts. DO NOT add any detail, just use it AS-IS:
 Create a text-free vector logo that symbolically represents the user request, using abstract or symbolic imagery.
@@ -171,6 +184,8 @@ User request: ${ prompt }
 			throw new Error( 'No token provided' );
 		}
 
+		debug( 'Enhancing prompt', prompt );
+
 		const systemMessage = `Enhance the prompt you receive.
 The prompt is meant for generating a logo. Return the same prompt enhanced, and make each enhancement wrapped in brackets.
 For example: user's prompt: A logo for an ice cream shop. Returned prompt: A logo for an ice cream shop [that is pink] [and vibrant].`;
@@ -213,6 +228,28 @@ For example: user's prompt: A logo for an ice cream shop. Returned prompt: A log
 		[ siteId, addLogoToHistory ]
 	);
 
+	const generateLogo = async function ( { prompt }: { prompt: string } ): Promise< any > {
+		debug( 'Generating logo for site', siteId );
+
+		increaseAiAssistantRequestsCount();
+		setIsRequestingImage( true );
+		recordTracksEvent( EVENT_PROMPT_SUBMIT );
+
+		const image = await generateImage( { prompt } );
+
+		if ( ! image || ! image.data.length ) {
+			// TODO: handle unexpected/error response
+		}
+
+		// response_format=url returns object with url, otherwise b64_json
+		const logo = {
+			url: image.data[ 0 ].url,
+			description: prompt,
+		};
+		storeLogo( logo );
+		setIsRequestingImage( false );
+	};
+
 	return {
 		logos,
 		selectedLogo,
@@ -226,6 +263,8 @@ For example: user's prompt: A logo for an ice cream shop. Returned prompt: A log
 		applyLogo,
 		generateImage,
 		enhancePrompt,
+		storeLogo,
+		generateLogo,
 		setIsEnhancingPrompt,
 		setIsRequestingImage,
 		setIsSavingLogoToLibrary,
@@ -237,7 +276,6 @@ For example: user's prompt: A logo for an ice cream shop. Returned prompt: A log
 		isBusy,
 		getAiAssistantFeature,
 		requireUpgrade,
-		storeLogo,
 	};
 };
 
