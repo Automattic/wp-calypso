@@ -724,19 +724,16 @@ export class SiteSettingsFormGeneral extends Component {
 					isSaving={ isSavingSettings }
 					onButtonClick={ handleSubmitForm }
 					showButton
-					title={ translate( 'Privacy {{learnMoreLink/}}', {
-						components: {
-							learnMoreLink: (
-								<InfoPopover position="bottom right">
-									{ translate( 'Control who can view your site. ' ) }
-									<InlineSupportLink showIcon={ false } supportContext="privacy">
-										{ translate( 'Learn more' ) }
-									</InlineSupportLink>
-								</InfoPopover>
-							),
-						},
-						comment: 'Privacy Settings header',
-					} ) }
+					title={ translate(
+						'Privacy {{infoPopover}} Control who can view your site. {{a}} Learn more {{/a}}. {{/infoPopover}}',
+						{
+							components: {
+								a: <InlineSupportLink showIcon={ false } supportContext="privacy" />,
+								infoPopover: <InfoPopover position="bottom right" />,
+							},
+							comment: 'Privacy Settings header',
+						}
+					) }
 				/>
 				<Card>
 					<form> { this.visibilityOptionsComingSoon() }</form>
