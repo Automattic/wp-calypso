@@ -115,7 +115,7 @@ describe( DataHelper.createSuiteTitle( 'Onboarding: Write Focus' ), function () 
 			await page.waitForURL( new RegExp( newSiteDetails.blog_details.site_slug ) );
 		} );
 
-		it( 'Close ideas for writing topics modal', async function () {
+		it( 'Close writing topics modal', async function () {
 			const editorParent = await editorPage.getEditorParent();
 			await editorParent.getByLabel( 'Close', { exact: true } ).click();
 		} );
