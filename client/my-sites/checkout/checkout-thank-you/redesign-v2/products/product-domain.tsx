@@ -40,11 +40,7 @@ const ProductDomain = ( {
 			isSmallestUnit: true,
 		} );
 
-		return sprintf(
-			/* translators: %1$s: price formatted */
-			__( '%1$s for one year' ),
-			priceFormatted
-		);
+		return translate( '%(priceFormatted)s for one year', { args: { priceFormatted } } );
 	};
 
 	const actions =
