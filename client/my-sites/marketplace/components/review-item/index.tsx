@@ -25,7 +25,7 @@ import { getCurrentUser, getCurrentUserId } from 'calypso/state/current-user/sel
 import './style.scss';
 
 type MarketplaceReviewItemProps = {
-	review?: MarketplaceReviewResponse;
+	review: MarketplaceReviewResponse;
 } & MarketplaceReviewsQueryProps;
 
 export const MarketplaceReviewItem = ( props: MarketplaceReviewItemProps ) => {
@@ -90,10 +90,6 @@ export const MarketplaceReviewItem = ( props: MarketplaceReviewItemProps ) => {
 		);
 		clearEditing();
 	};
-
-	if ( ! review ) {
-		return null;
-	}
 
 	return (
 		<div className="marketplace-review-item__review-container" key={ `review-${ review.id }` }>
@@ -226,8 +222,6 @@ export const MarketplaceReviewItem = ( props: MarketplaceReviewItemProps ) => {
 	);
 };
 
-const THANK_YOU_ANIMATION_DURATION = 5000; // in ms
-
 export function MarketplaceCreateReviewItem( props: ProductDefinitionProps ) {
 	const { productType, slug } = props;
 	const translate = useTranslate();
@@ -238,7 +232,7 @@ export function MarketplaceCreateReviewItem( props: ProductDefinitionProps ) {
 	const [ showThankYouSection, setShowThankYouSection ] = useState( false );
 	const [ showContentArea, setShowContentArea ] = useState( false );
 
-	const { data: userReviews } = useMarketplaceReviewsQuery( {
+	const { data: userReviews, isFetching: isFetchingUserReviews } = useMarketplaceReviewsQuery( {
 		productType,
 		slug,
 		perPage: 1,
@@ -264,10 +258,6 @@ export function MarketplaceCreateReviewItem( props: ProductDefinitionProps ) {
 				onSuccess: () => {
 					resetFields();
 					setShowThankYouSection( true );
-
-					setTimeout( () => {
-						setShowThankYouSection( false );
-					}, THANK_YOU_ANIMATION_DURATION );
 				},
 			}
 		);
@@ -277,6 +267,11 @@ export function MarketplaceCreateReviewItem( props: ProductDefinitionProps ) {
 		setRating( value );
 		setShowContentArea( true );
 	};
+
+	// Hide the Thank You section if user removed their review
+	if ( ! userReviews?.length && ! isFetchingUserReviews && showThankYouSection ) {
+		setShowThankYouSection( false );
+	}
 
 	if ( !! userReviews?.length && ! showThankYouSection ) {
 		return null;
@@ -352,7 +347,7 @@ export function MarketplaceCreateReviewItem( props: ProductDefinitionProps ) {
 						<h2>{ translate( 'Thank you for your feedback!' ) }</h2>
 						<div className="marketplace-create-review-item__thank-you-subtitle">
 							{ translate(
-								'Your review is currently under moderation and will notify you once your feedback is published.'
+								'We appreciate you sharing your experience with this plugin! Your review will help to guide other users.'
 							) }
 						</div>
 					</div>

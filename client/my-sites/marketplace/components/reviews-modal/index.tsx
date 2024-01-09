@@ -57,7 +57,6 @@ export const ReviewsModal = ( props: Props ) => {
 	const hasActiveSubscription = useSelector( ( state: AppState ) =>
 		hasActivePluginSubscription( state, variations )
 	);
-	const askForReview = canPublishReview && ! userHasReviewed;
 
 	const { ratings_average: averageRating, ratings_count: numberOfReviews } = reviewsStats || {};
 	const normalizedRating = ( ( averageRating ?? 0 ) * 100 ) / 5; // Normalize to 100
@@ -103,15 +102,10 @@ export const ReviewsModal = ( props: Props ) => {
 								</div>
 							</div>
 						</div>
-						{ askForReview && (
-							<div className="marketplace-reviews-modal__summary-button">
-								<Button primary onClick={ () => alert( 'Not implemented yet' ) }>
-									{ translate( 'Leave my review' ) }
-								</Button>
-							</div>
-						) }
+
 						{ /* TODO: Add theme purchase */ }
-						{ ! askForReview &&
+						{ ! canPublishReview &&
+							! userHasReviewed &&
 							! hasActiveSubscription &&
 							isMarketplacePlugin &&
 							selectedSite?.slug && (
