@@ -1,6 +1,5 @@
 import { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import wpcom from 'calypso/lib/wp';
 import { PRODUCTS_LIST_REQUEST, PRODUCTS_LIST_REQUEST_FAILURE } from 'calypso/state/action-types';
 import { receiveProductsList } from 'calypso/state/products-list/actions';
 import { isProductsListFetching } from 'calypso/state/products-list/selectors';
@@ -29,8 +28,13 @@ export default function QueryProductsList( {
 			return;
 		}
 		dispatch( { type: PRODUCTS_LIST_REQUEST } );
-		wpcom.req
-			.get( { apiNamespace: 'jetpack/v4', path: '/products', query: { type, currency } } )
+		// Calling the endpoint directly because jetpack/v4/products doesn't have tiers information (why?).
+		globalThis
+			.fetch(
+				'https://public-api.wordpress.com/rest/v1.1/products?' +
+					new URLSearchParams( { currency: currency ?? '', type } )
+			)
+			.then( ( response ) => response.json() )
 			.then( ( productsList: Array< object > ) =>
 				// eslint-disable-next-line @typescript-eslint/ban-ts-comment
 				// @ts-ignore

@@ -1,14 +1,12 @@
 import config from '@automattic/calypso-config';
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
-import DomainTip from 'calypso/blocks/domain-tip';
 import StatsNavigation from 'calypso/blocks/stats-navigation';
 import { navItems } from 'calypso/blocks/stats-navigation/constants';
 import DocumentHead from 'calypso/components/data/document-head';
 import JetpackColophon from 'calypso/components/jetpack-colophon';
 import Main from 'calypso/components/main';
 import NavigationHeader from 'calypso/components/navigation-header';
-import { getSuggestionsVendor } from 'calypso/lib/domains/suggestions';
 import version_compare from 'calypso/lib/version-compare';
 import { SubscriberLaunchpad } from 'calypso/my-sites/subscribers/components/subscriber-launchpad';
 import { useSelector } from 'calypso/state';
@@ -88,15 +86,6 @@ const StatsSubscribersPage = ( { period }: StatsSubscribersPageProps ) => {
 					screenReader={ navItems.subscribers?.label }
 					navigationItems={ [] }
 				></NavigationHeader>
-				{ siteId && (
-					<div>
-						<DomainTip
-							siteId={ siteId }
-							event="stats_subscribers_domain"
-							vendor={ getSuggestionsVendor() }
-						/>
-					</div>
-				) }
 				<StatsNavigation selectedItem="subscribers" siteId={ siteId } slug={ siteSlug } />
 				{ showLaunchpad ? (
 					<SubscriberLaunchpad launchpadContext="subscriber-stats" />

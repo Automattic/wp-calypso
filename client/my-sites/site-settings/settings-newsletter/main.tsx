@@ -110,7 +110,7 @@ const NewsletterSettingsForm = wrapSettingsForm( getFormSettings )( ( {
 
 	const shouldShowSubscriptionOnCommentModule = useSelector( ( state ) => {
 		const isJetpackSite = isJetpackSiteSelector( state, siteId, {
-			treatAtomicAsJetpackSite: true,
+			treatAtomicAsJetpackSite: false,
 		} );
 
 		return ! isJetpackSite;
@@ -156,7 +156,6 @@ const NewsletterSettingsForm = wrapSettingsForm( getFormSettings )( ( {
 					/>
 				</Card>
 			) }
-
 			{ /* @ts-expect-error SettingsSectionHeader is not typed and is causing errors */ }
 			<SettingsSectionHeader
 				disabled={ disabled }

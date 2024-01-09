@@ -198,8 +198,12 @@
 
 	.site-icon-setting__heading {
 		@include breakpoint-deprecated( ">660px" ) {
-			justify-content: space-between;
+			justify-content: normal;
 			white-space: nowrap;
+		}
+
+		.info-popover {
+			margin-left: 6px;
 		}
 	}
 
@@ -275,6 +279,11 @@
 			font-weight: 400;
 		}
 	}
+
+	.site-settings__tooltip-container {
+		display: flex;
+		justify-content: space-between;
+	}
 }
 
 .site-settings__site-options {
@@ -336,6 +345,10 @@
 	@include break-small {
 		margin-left: auto;
 		margin-top: 0;
+	}
+
+	svg {
+		margin-right: 6px;
 	}
 }
 
@@ -505,7 +518,7 @@
 
 button.site-settings__general-settings-set-guessed-timezone.button.is-borderless.is-compact {
 	text-decoration: underline;
-	color: var(--color-primary);
+	color: var(--color-link);
 	font-style: inherit;
 	font-weight: 400;
 

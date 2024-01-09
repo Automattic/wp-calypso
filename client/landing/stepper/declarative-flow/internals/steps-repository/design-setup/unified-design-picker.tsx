@@ -605,7 +605,6 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 									themeId ?? '',
 									site?.ID ?? 0,
 									'assembler',
-									false,
 									false
 								) as ThunkAction< PromiseLike< string >, any, any, AnyAction >
 							)

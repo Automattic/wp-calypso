@@ -478,7 +478,7 @@ module.exports = {
 		],
 
 		'wpcalypso/no-unsafe-wp-apis': [
-			'error',
+			'warn',
 			{
 				'@wordpress/block-editor': [
 					'__experimentalBlock',

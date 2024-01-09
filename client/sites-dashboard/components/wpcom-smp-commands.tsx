@@ -28,20 +28,56 @@ import {
 	comment as feedbackIcon,
 } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
-import { CommandCallBackParams } from 'calypso/components/command-palette/use-command-palette';
+import { useCallback } from 'react';
+import {
+	Command,
+	CommandCallBackParams,
+} from 'calypso/components/command-palette/use-command-palette';
+import WooCommerceLogo from 'calypso/components/woocommerce-logo';
+import {
+	EDGE_CACHE_ENABLE_DISABLE_NOTICE_ID,
+	getEdgeCacheStatus,
+	useSetEdgeCacheMutation,
+	purgeEdgeCache,
+} from 'calypso/data/hosting/use-cache';
 import { SiteExcerptData } from 'calypso/data/sites/site-excerpt-types';
 import { navigate } from 'calypso/lib/navigate';
 import { useAddNewSiteUrl } from 'calypso/lib/paths/use-add-new-site-url';
 import wpcom from 'calypso/lib/wp';
 import { useOpenPhpMyAdmin } from 'calypso/my-sites/hosting/phpmyadmin-card';
-import { useDispatch } from 'calypso/state';
+import { useDispatch, useSelector } from 'calypso/state';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { clearWordPressCache } from 'calypso/state/hosting/actions';
 import { createNotice, removeNotice } from 'calypso/state/notices/actions';
 import { NoticeStatus } from 'calypso/state/notices/types';
+import getCurrentRoutePattern from 'calypso/state/selectors/get-current-route-pattern';
 import { generateSiteInterfaceLink, isCustomDomain, isNotAtomicJetpack, isP2Site } from '../utils';
 
 interface useCommandsArrayWpcomOptions {
 	setSelectedCommandName: ( name: string ) => void;
+}
+
+function useCommandNavigation() {
+	const dispatch = useDispatch();
+	const currentRoute = useSelector( ( state ) => getCurrentRoutePattern( state ) );
+	// Callback to navigate to a command's destination
+	// used on command callback or siteFunctions onClick
+	const commandNavigation = useCallback(
+		( url: string ) =>
+			( { close, command }: Pick< CommandCallBackParams, 'close' | 'command' > ) => {
+				dispatch(
+					recordTracksEvent( 'calypso_hosting_command_palette_navigate', {
+						command: command.name,
+						current_route: currentRoute,
+						is_wp_admin: url.includes( '/wp-admin' ),
+					} )
+				);
+				close();
+				navigate( url );
+			},
+		[ currentRoute, dispatch ]
+	);
+	return commandNavigation;
 }
 
 export const useCommandsArrayWpcom = ( {
@@ -56,12 +92,16 @@ export const useCommandsArrayWpcom = ( {
 			setPlaceholderOverride( placeholder );
 		};
 
+	const commandNavigation = useCommandNavigation();
 	const dispatch = useDispatch();
+
+	const { setEdgeCache } = useSetEdgeCacheMutation();
+
 	const displayNotice = (
 		message: string,
 		noticeType: NoticeStatus = 'is-success',
 		duration: undefined | number | null = 5000,
-		additionalOptions: { button?: string; onClick?: () => void } = {}
+		additionalOptions: { button?: string; id?: string; onClick?: () => void } = {}
 	) => {
 		const { notice } = dispatch(
 			createNotice( noticeType, message, { duration, ...additionalOptions } )
@@ -76,11 +116,15 @@ export const useCommandsArrayWpcom = ( {
 
 	const siteFilters = {
 		hostingEnabled: {
-			filter: ( site: SiteExcerptData ) => site?.is_wpcom_atomic,
+			capabilityFilter: 'manage_options',
+			filter: ( site: SiteExcerptData ) => {
+				return site?.is_wpcom_atomic;
+			},
 			filterNotice: __( 'Only listing sites with hosting features enabled.' ),
 			emptyListNotice: __( 'No sites with hosting features enabled.' ),
 		},
 		hostingEnabledAndPublic: {
+			capabilityFilter: 'manage_options',
 			filter: ( site: SiteExcerptData ) =>
 				site?.is_wpcom_atomic && ! site?.is_coming_soon && ! site?.is_private,
 			filterNotice: __( 'Only listing public sites with hosting features enabled.' ),
@@ -175,45 +219,19 @@ export const useCommandsArrayWpcom = ( {
 		displayNotice( __( 'SFTP/SSH password reset and copied to clipboard.' ) );
 	};
 
-	const getEdgeCacheStatus = async ( siteId: number ) => {
-		const response = await wpcom.req.get( {
-			path: `/sites/${ siteId }/hosting/edge-cache/active`,
-			apiNamespace: 'wpcom/v2',
-		} );
-
-		return response;
-	};
-
 	const clearEdgeCache = async ( siteId: number ) => {
 		try {
 			const response = await getEdgeCacheStatus( siteId );
 
 			if ( response ) {
 				// If global cache is active, purge the cache
-				await wpcom.req.post( {
-					path: `/sites/${ siteId }/hosting/edge-cache/purge`,
-					apiNamespace: 'wpcom/v2',
-				} );
-				displayNotice( __( 'Successfully cleared cache.' ) );
-			} else {
-				// If global edge cache is not active, clear WordPress cache
-				dispatch( clearWordPressCache( siteId, 'Cache not active' ) );
+				await purgeEdgeCache( siteId );
 			}
+			// Always clear the WordPress cache.
+			dispatch( clearWordPressCache( siteId, 'Clear cache via command palette' ) );
 		} catch ( error ) {
 			displayNotice( __( 'Failed to clear cache.' ), 'is-error' );
 		}
-	};
-
-	// Toggle cache function
-	const setEdgeCache = async ( siteId: number, newStatus: boolean ) => {
-		const response = await wpcom.req.post( {
-			path: `/sites/${ siteId }/hosting/edge-cache/active`,
-			apiNamespace: 'wpcom/v2',
-			body: {
-				active: newStatus,
-			},
-		} );
-		return response;
 	};
 
 	const enableEdgeCache = async ( siteId: number ) => {
@@ -222,46 +240,26 @@ export const useCommandsArrayWpcom = ( {
 		// Check if the cache is already active
 		if ( currentStatus ) {
 			// Display a different notice if the cache is already active
-			displayNotice( __( 'Edge cache is already enabled.' ), 'is-success' );
+			displayNotice( __( 'Edge cache is already enabled.' ), 'is-success', 5000, {
+				id: EDGE_CACHE_ENABLE_DISABLE_NOTICE_ID,
+			} );
 			return;
 		}
 
-		const { removeNotice: removeLoadingNotice } = displayNotice(
-			__( 'Enabling edge cache…' ),
-			'is-plain',
-			5000
-		);
-		try {
-			await setEdgeCache( siteId, true );
-			removeLoadingNotice();
-			displayNotice( __( 'Edge cache enabled.' ) );
-		} catch ( error ) {
-			removeLoadingNotice();
-			displayNotice( __( 'Failed to enable edge cache.' ), 'is-error' );
-		}
+		setEdgeCache( siteId, true );
 	};
 
 	const disableEdgeCache = async ( siteId: number ) => {
 		const currentStatus = await getEdgeCacheStatus( siteId );
 
 		if ( ! currentStatus ) {
-			displayNotice( __( 'Edge cache is already disabled.' ), 'is-success' );
+			displayNotice( __( 'Edge cache is already disabled.' ), 'is-success', 5000, {
+				id: EDGE_CACHE_ENABLE_DISABLE_NOTICE_ID,
+			} );
 			return;
 		}
 
-		const { removeNotice: removeLoadingNotice } = displayNotice(
-			__( 'Disabling edge cache…' ),
-			'is-plain',
-			5000
-		);
-		try {
-			await setEdgeCache( siteId, false );
-			removeLoadingNotice();
-			displayNotice( __( 'Edge cache disabled.' ) );
-		} catch ( error ) {
-			removeLoadingNotice();
-			displayNotice( __( 'Failed to disable edge cache.' ), 'is-error' );
-		}
+		setEdgeCache( siteId, false );
 	};
 
 	const { openPhpMyAdmin } = useOpenPhpMyAdmin();
@@ -274,7 +272,7 @@ export const useCommandsArrayWpcom = ( {
 		'disable-gpt': 'true',
 	} ).toString() }`;
 
-	const commands = [
+	const commands: Command[] = [
 		{
 			name: 'viewMySites',
 			label: __( 'View my sites' ),
@@ -283,10 +281,7 @@ export const useCommandsArrayWpcom = ( {
 				_x( 'manage sites', 'Keyword for the View my sites command' ),
 				_x( 'sites dashboard', 'Keyword for the View my sites command' ),
 			].join( ' ' ),
-			callback: ( { close }: { close: () => void } ) => {
-				close();
-				navigate( `/sites` );
-			},
+			callback: commandNavigation( `/sites` ),
 			icon: wordpressIcon,
 		},
 		{
@@ -308,7 +303,7 @@ export const useCommandsArrayWpcom = ( {
 			label: __( 'Clear cache' ),
 			callback: setStateCallback( 'clearCache', __( 'Select a site to clear cache' ) ),
 			siteFunctions: {
-				onClick: ( { site, close }: { site: SiteExcerptData; close: () => void } ) => {
+				onClick: ( { site, close } ) => {
 					close();
 					clearEdgeCache( site.ID );
 				},
@@ -321,7 +316,7 @@ export const useCommandsArrayWpcom = ( {
 			label: __( 'Enable edge cache' ),
 			callback: setStateCallback( 'enableEdgeCache', __( 'Select a site to enable edge cache' ) ),
 			siteFunctions: {
-				onClick: ( { site, close }: { site: SiteExcerptData; close: () => void } ) => {
+				onClick: ( { site, close } ) => {
 					close();
 					enableEdgeCache( site.ID );
 				},
@@ -334,7 +329,7 @@ export const useCommandsArrayWpcom = ( {
 			label: __( 'Disable edge cache' ),
 			callback: setStateCallback( 'disableEdgeCache', __( 'Select a site to disable edge cache' ) ),
 			siteFunctions: {
-				onClick: ( { site, close }: { site: SiteExcerptData; close: () => void } ) => {
+				onClick: ( { site, close } ) => {
 					close();
 					disableEdgeCache( site.ID );
 				},
@@ -358,10 +353,8 @@ export const useCommandsArrayWpcom = ( {
 				__( 'Select site to manage cache settings' )
 			),
 			siteFunctions: {
-				onClick: ( { site, close }: { site: SiteExcerptData; close: () => void } ) => {
-					close();
-					navigate( `/hosting-config/${ site.slug }#cache` );
-				},
+				onClick: ( param ) =>
+					commandNavigation( `/hosting-config/${ param.site.slug }#cache` )( param ),
 				...siteFilters.hostingEnabled,
 			},
 			icon: cacheIcon,
@@ -377,10 +370,7 @@ export const useCommandsArrayWpcom = ( {
 			context: [ '/sites' ],
 			callback: setStateCallback( 'openSiteDashboard', __( 'Select site to open dashboard' ) ),
 			siteFunctions: {
-				onClick: ( { site, close }: { site: SiteExcerptData; close: () => void } ) => {
-					close();
-					navigate( `/home/${ site.slug }` );
-				},
+				onClick: ( param ) => commandNavigation( `/home/${ param.site.slug }` )( param ),
 			},
 			icon: dashboardIcon,
 		},
@@ -406,10 +396,8 @@ export const useCommandsArrayWpcom = ( {
 				__( 'Select site to open hosting configuration' )
 			),
 			siteFunctions: {
-				onClick: ( { site, close }: { site: SiteExcerptData; close: () => void } ) => {
-					close();
-					navigate( `/hosting-config/${ site.slug }` );
-				},
+				capabilityFilter: 'manage_options',
+				onClick: ( param ) => commandNavigation( `/hosting-config/${ param.site.slug }` )( param ),
 				filter: ( site: SiteExcerptData ) => ! isP2Site( site ) && ! isNotAtomicJetpack( site ),
 				filterNotice: __( 'Only listing sites hosted on WordPress.com.' ),
 			},
@@ -427,7 +415,7 @@ export const useCommandsArrayWpcom = ( {
 			context: [ '/sites' ],
 			callback: setStateCallback( 'openPHPmyAdmin', __( 'Select site to open phpMyAdmin' ) ),
 			siteFunctions: {
-				onClick: async ( { site, close }: { site: SiteExcerptData; close: () => void } ) => {
+				onClick: async ( { site, close } ) => {
 					close();
 					await openPhpMyAdmin( site.ID );
 				},
@@ -445,20 +433,33 @@ export const useCommandsArrayWpcom = ( {
 				_x( 'gravatar', 'Keyword for the Open my profile command' ),
 			].join( ' ' ),
 			context: [ '/sites' ],
-			callback: ( { close }: { close: () => void } ) => {
-				close();
-				navigate( `/me` );
-			},
+			callback: commandNavigation( `/me` ),
 			icon: profileIcon,
 		},
 		{
 			name: 'openReader',
 			label: __( 'Open reader' ),
-			callback: ( { close }: { close: () => void } ) => {
-				close();
-				navigate( `/read` );
-			},
+			callback: commandNavigation( `/read` ),
 			icon: <Gridicon icon="reader" />,
+		},
+		{
+			name: 'openJetpackSettings',
+			label: __( 'Open Jetpack settings' ),
+			callback: setStateCallback(
+				'openJetpackSettings',
+				__( 'Select site to open Jetpack settings' )
+			),
+			siteFunctions: {
+				capabilityFilter: 'manage_options',
+				onClick: ( param ) =>
+					commandNavigation( `${ param.site.URL }/wp-admin/admin.php?page=jetpack#/dashboard` )(
+						param
+					),
+				filter: ( site: SiteExcerptData ) => site?.is_wpcom_atomic || isNotAtomicJetpack( site ),
+				filterNotice: __( 'Only listing sites with Jetpack settings available.' ),
+				emptyListNotice: __( 'No sites with Jetpack settings available.' ),
+			},
+			icon: <JetpackLogo className="gridicon" size={ 18 } />,
 		},
 		{
 			name: 'addJetpack',
@@ -470,9 +471,25 @@ export const useCommandsArrayWpcom = ( {
 				),
 				_x( 'connect jetpack', 'Keyword for Add Jetpack to a self-hosted site command' ),
 			].join( ' ' ),
-			callback: ( { close }: { close: () => void } ) => {
-				close();
-				navigate( `/jetpack/connect?cta_from=command-palette` );
+			callback: commandNavigation( `/jetpack/connect?cta_from=command-palette` ),
+			icon: <JetpackLogo className="gridicon" size={ 18 } />,
+		},
+		{
+			name: 'manageJetpackModules',
+			label: __( 'Manage Jetpack modules' ),
+			callback: setStateCallback(
+				'manageJetpackModules',
+				__( 'Select site to manage Jetpack modules' )
+			),
+			siteFunctions: {
+				capabilityFilter: 'manage_options',
+				onClick: ( param ) =>
+					commandNavigation( `${ param.site.URL }/wp-admin/admin.php?page=jetpack_modules` )(
+						param
+					),
+				filter: ( site: SiteExcerptData ) => site?.is_wpcom_atomic || isNotAtomicJetpack( site ),
+				filterNotice: __( 'Only listing sites with Jetpack modules available.' ),
+				emptyListNotice: __( 'No sites with Jetpack modules available.' ),
 			},
 			icon: <JetpackLogo className="gridicon" size={ 18 } />,
 		},
@@ -483,10 +500,7 @@ export const useCommandsArrayWpcom = ( {
 				_x( 'Import site to WordPress.com', 'Keyword for Import site to WordPress.com command' ),
 				_x( 'migrate site', 'Keyword for Import site to WordPress.com command' ),
 			].join( ' ' ),
-			callback: ( { close }: { close: () => void } ) => {
-				close();
-				navigate( `/start/import?ref=command-palette` );
-			},
+			callback: commandNavigation( `/start/import?ref=command-palette` ),
 			icon: downloadIcon,
 		},
 		{
@@ -497,10 +511,7 @@ export const useCommandsArrayWpcom = ( {
 				_x( 'create site', 'Keyword for the Add new site command' ),
 			].join( ' ' ),
 			context: [ '/sites' ],
-			callback: ( { close }: { close: () => void } ) => {
-				close();
-				navigate( createSiteUrl );
-			},
+			callback: commandNavigation( createSiteUrl ),
 			icon: plusIcon,
 		},
 		{
@@ -512,10 +523,7 @@ export const useCommandsArrayWpcom = ( {
 				_x( 'email', 'Keyword for the Open account settings command' ),
 				_x( 'language', 'Keyword for the Open account settings command' ),
 			].join( ' ' ),
-			callback: ( { close }: { close: () => void } ) => {
-				close();
-				navigate( `/me/account` );
-			},
+			callback: commandNavigation( `/me/account` ),
 			icon: profileIcon,
 		},
 		{
@@ -531,20 +539,14 @@ export const useCommandsArrayWpcom = ( {
 				_x( 'upgrades', 'Keyword for the View my purchases command' ),
 			].join( ' ' ),
 			context: [ '/sites' ],
-			callback: ( { close }: { close: () => void } ) => {
-				close();
-				navigate( `/me/purchases` );
-			},
+			callback: commandNavigation( `/me/purchases` ),
 			icon: creditCardIcon,
 		},
 		{
 			name: 'registerDomain',
 			label: __( 'Register new domain' ),
 			context: [ '/sites' ],
-			callback: ( { close }: { close: () => void } ) => {
-				close();
-				navigate( `/start/domain/domain-only?ref=command-palette` );
-			},
+			callback: commandNavigation( `/start/domain/domain-only?ref=command-palette` ),
 			icon: domainsIcon,
 		},
 		{
@@ -562,10 +564,7 @@ export const useCommandsArrayWpcom = ( {
 				_x( 'whois', 'Keyword for the Manage domains command' ),
 			].join( ' ' ),
 			context: [ '/sites' ],
-			callback: ( { close }: { close: () => void } ) => {
-				close();
-				navigate( `/domains/manage` );
-			},
+			callback: commandNavigation( `/domains/manage` ),
 			icon: domainsIcon,
 		},
 		{
@@ -580,10 +579,11 @@ export const useCommandsArrayWpcom = ( {
 			context: [ '/sites' ],
 			callback: setStateCallback( 'manageDns', __( 'Select site to open DNS records' ) ),
 			siteFunctions: {
-				onClick: ( { site, close }: { site: SiteExcerptData; close: () => void } ) => {
-					close();
-					navigate( `/domains/manage/${ site.slug }/dns/${ site.slug }` );
-				},
+				capabilityFilter: 'manage_options',
+				onClick: ( param ) =>
+					commandNavigation( `/domains/manage/${ param.site.slug }/dns/${ param.site.slug }` )(
+						param
+					),
 				filter: ( site: SiteExcerptData ) =>
 					isCustomDomain( site.slug ) && ! isNotAtomicJetpack( site ),
 				filterNotice: __( 'Only listing sites with DNS management available.' ),
@@ -599,7 +599,7 @@ export const useCommandsArrayWpcom = ( {
 				__( 'Select site to copy SSH connection string' )
 			),
 			siteFunctions: {
-				onClick: async ( { site, close }: { site: SiteExcerptData; close: () => void } ) => {
+				onClick: async ( { site, close } ) => {
 					close();
 					await copySshSftpDetails( site.ID, 'connectionString', site.slug );
 				},
@@ -615,10 +615,7 @@ export const useCommandsArrayWpcom = ( {
 				__( 'Select site to open SFTP/SSH credentials' )
 			),
 			siteFunctions: {
-				onClick: ( { site, close }: { site: SiteExcerptData; close: () => void } ) => {
-					close();
-					navigate( `/hosting-config/${ site.slug }` );
-				},
+				onClick: ( param ) => commandNavigation( `/hosting-config/${ param.site.slug }` )( param ),
 				...siteFilters.hostingEnabled,
 			},
 			icon: keyIcon,
@@ -631,7 +628,7 @@ export const useCommandsArrayWpcom = ( {
 				__( 'Select site to reset SFTP/SSH password' )
 			),
 			siteFunctions: {
-				onClick: async ( { site, close }: { site: SiteExcerptData; close: () => void } ) => {
+				onClick: async ( { site, close } ) => {
 					close();
 					resetSshSftpPassword( site.ID, site.slug );
 				},
@@ -644,10 +641,7 @@ export const useCommandsArrayWpcom = ( {
 			label: __( 'Open Jetpack Stats' ),
 			callback: setStateCallback( 'openJetpackStats', __( 'Select site to open Jetpack Stats' ) ),
 			siteFunctions: {
-				onClick: ( { site, close }: { site: SiteExcerptData; close: () => void } ) => {
-					close();
-					navigate( `/stats/${ site.slug }` );
-				},
+				onClick: ( param ) => commandNavigation( `/stats/${ param.site.slug }` )( param ),
 			},
 			icon: statsIcon,
 		},
@@ -661,10 +655,7 @@ export const useCommandsArrayWpcom = ( {
 			].join( ' ' ),
 			callback: setStateCallback( 'openActivityLog', __( 'Select site to open activity log' ) ),
 			siteFunctions: {
-				onClick: ( { site, close }: { site: SiteExcerptData; close: () => void } ) => {
-					close();
-					navigate( `/activity-log/${ site.slug }` );
-				},
+				onClick: ( param ) => commandNavigation( `/activity-log/${ param.site.slug }` )( param ),
 				filter: ( site: SiteExcerptData ) => ! isP2Site( site ) && ! isNotAtomicJetpack( site ),
 				filterNotice: __( 'Only listing sites hosted on WordPress.com.' ),
 			},
@@ -675,10 +666,8 @@ export const useCommandsArrayWpcom = ( {
 			label: __( 'Open Jetpack Backup' ),
 			callback: setStateCallback( 'openJetpackBackup', __( 'Select site to open Jetpack Backup' ) ),
 			siteFunctions: {
-				onClick: ( { site, close }: { site: SiteExcerptData; close: () => void } ) => {
-					close();
-					navigate( `/backup/${ site.slug }` );
-				},
+				capabilityFilter: 'manage_options',
+				onClick: ( param ) => commandNavigation( `/backup/${ param.site.slug }` )( param ),
 				filter: ( site: SiteExcerptData ) => ! isP2Site( site ) && ! isNotAtomicJetpack( site ),
 				filterNotice: __( 'Only listing sites with Jetpack Backup enabled.' ),
 			},
@@ -692,10 +681,7 @@ export const useCommandsArrayWpcom = ( {
 				__( 'Select site to view monitoring metrics' )
 			),
 			siteFunctions: {
-				onClick: ( { site, close }: { site: SiteExcerptData; close: () => void } ) => {
-					close();
-					navigate( `/site-monitoring/${ site.slug }` );
-				},
+				onClick: ( param ) => commandNavigation( `/site-monitoring/${ param.site.slug }` )( param ),
 				...siteFilters.hostingEnabled,
 			},
 			icon: statsIcon,
@@ -712,10 +698,8 @@ export const useCommandsArrayWpcom = ( {
 			].join( ' ' ),
 			callback: setStateCallback( 'openPHPLogs', __( 'Select site to open PHP logs' ) ),
 			siteFunctions: {
-				onClick: ( { site, close }: { site: SiteExcerptData; close: () => void } ) => {
-					close();
-					navigate( `/site-monitoring/${ site.slug }/php` );
-				},
+				onClick: ( param ) =>
+					commandNavigation( `/site-monitoring/${ param.site.slug }/php` )( param ),
 				...siteFilters.hostingEnabled,
 			},
 			icon: acitvityLogIcon,
@@ -735,10 +719,8 @@ export const useCommandsArrayWpcom = ( {
 				__( 'Select site to open web server logs' )
 			),
 			siteFunctions: {
-				onClick: ( { site, close }: { site: SiteExcerptData; close: () => void } ) => {
-					close();
-					navigate( `/site-monitoring/${ site.slug }/web` );
-				},
+				onClick: ( param ) =>
+					commandNavigation( `/site-monitoring/${ param.site.slug }/web` )( param ),
 				...siteFilters.hostingEnabled,
 			},
 			icon: acitvityLogIcon,
@@ -759,10 +741,8 @@ export const useCommandsArrayWpcom = ( {
 				__( 'Select site to manage staging sites' )
 			),
 			siteFunctions: {
-				onClick: ( { site, close }: { site: SiteExcerptData; close: () => void } ) => {
-					close();
-					navigate( `/hosting-config/${ site.slug }#staging-site` );
-				},
+				onClick: ( param ) =>
+					commandNavigation( `/hosting-config/${ param.site.slug }#staging-site` )( param ),
 				...siteFilters.hostingEnabled,
 			},
 			icon: toolIcon,
@@ -772,10 +752,8 @@ export const useCommandsArrayWpcom = ( {
 			label: __( 'Change PHP version' ),
 			callback: setStateCallback( 'changePHPVersion', __( 'Select site to change PHP version' ) ),
 			siteFunctions: {
-				onClick: ( { site, close }: { site: SiteExcerptData; close: () => void } ) => {
-					close();
-					navigate( `/hosting-config/${ site.slug }#web-server-settings` );
-				},
+				onClick: ( param ) =>
+					commandNavigation( `/hosting-config/${ param.site.slug }#web-server-settings` )( param ),
 				...siteFilters.hostingEnabled,
 			},
 			icon: toolIcon,
@@ -795,10 +773,10 @@ export const useCommandsArrayWpcom = ( {
 				__( 'Select site to change admin interface style' )
 			),
 			siteFunctions: {
-				onClick: ( { site, close }: { site: SiteExcerptData; close: () => void } ) => {
-					close();
-					navigate( `/hosting-config/${ site.slug }#admin-interface-style` );
-				},
+				onClick: ( param ) =>
+					commandNavigation( `/hosting-config/${ param.site.slug }#admin-interface-style` )(
+						param
+					),
 				...siteFilters.hostingEnabled,
 			},
 			icon: pageIcon,
@@ -814,13 +792,13 @@ export const useCommandsArrayWpcom = ( {
 			context: [ '/posts' ],
 			callback: setStateCallback( 'addNewPost', __( 'Select site to add new post' ) ),
 			siteFunctions: {
-				onClick: ( { site, close }: { site: SiteExcerptData; close: () => void } ) => {
-					close();
-					const link = generateSiteInterfaceLink( site, {
+				capabilityFilter: 'edit_posts',
+				onClick: ( param ) => {
+					const link = generateSiteInterfaceLink( param.site, {
 						calypso: '/post',
 						wpAdmin: '/post-new.php',
 					} );
-					navigate( link );
+					commandNavigation( link )( param );
 				},
 			},
 			icon: plusIcon,
@@ -834,13 +812,13 @@ export const useCommandsArrayWpcom = ( {
 			].join( ' ' ),
 			callback: setStateCallback( 'managePosts', __( 'Select site to manage posts' ) ),
 			siteFunctions: {
-				onClick: ( { site, close }: { site: SiteExcerptData; close: () => void } ) => {
-					close();
-					const link = generateSiteInterfaceLink( site, {
+				capabilityFilter: 'edit_posts',
+				onClick: ( param ) => {
+					const link = generateSiteInterfaceLink( param.site, {
 						calypso: '/posts',
 						wpAdmin: '/edit.php',
 					} );
-					navigate( link );
+					commandNavigation( link )( param );
 				},
 			},
 			icon: editIcon,
@@ -854,13 +832,13 @@ export const useCommandsArrayWpcom = ( {
 			].join( ' ' ),
 			callback: setStateCallback( 'viewMediaUploads', __( 'Select site to view media uploads' ) ),
 			siteFunctions: {
-				onClick: ( { site, close }: { site: SiteExcerptData; close: () => void } ) => {
-					close();
-					const link = generateSiteInterfaceLink( site, {
+				capabilityFilter: 'upload_files',
+				onClick: ( param ) => {
+					const link = generateSiteInterfaceLink( param.site, {
 						calypso: '/media',
 						wpAdmin: '/upload.php',
 					} );
-					navigate( link );
+					commandNavigation( link )( param );
 				},
 			},
 			icon: mediaIcon,
@@ -870,13 +848,13 @@ export const useCommandsArrayWpcom = ( {
 			label: __( 'Upload media' ),
 			callback: setStateCallback( 'uploadMedia', __( 'Select site to upload media' ) ),
 			siteFunctions: {
-				onClick: ( { site, close }: { site: SiteExcerptData; close: () => void } ) => {
-					close();
-					const link = generateSiteInterfaceLink( site, {
+				capabilityFilter: 'upload_files',
+				onClick: ( param ) => {
+					const link = generateSiteInterfaceLink( param.site, {
 						calypso: '/media',
 						wpAdmin: '/media-new.php',
 					} );
-					navigate( link );
+					commandNavigation( link )( param );
 				},
 			},
 			icon: mediaIcon,
@@ -891,13 +869,13 @@ export const useCommandsArrayWpcom = ( {
 			].join( ' ' ),
 			callback: setStateCallback( 'managePages', __( 'Select site to manage pages' ) ),
 			siteFunctions: {
-				onClick: ( { site, close }: { site: SiteExcerptData; close: () => void } ) => {
-					close();
-					const link = generateSiteInterfaceLink( site, {
+				capabilityFilter: 'edit_pages',
+				onClick: ( param ) => {
+					const link = generateSiteInterfaceLink( param.site, {
 						calypso: '/pages',
 						wpAdmin: '/edit.php?post_type=page',
 					} );
-					navigate( link );
+					commandNavigation( link )( param );
 				},
 			},
 			icon: editIcon,
@@ -913,13 +891,13 @@ export const useCommandsArrayWpcom = ( {
 			context: [ '/pages' ],
 			callback: setStateCallback( 'addNewPage', __( 'Select site to add new page' ) ),
 			siteFunctions: {
-				onClick: ( { site, close }: { site: SiteExcerptData; close: () => void } ) => {
-					close();
-					const link = generateSiteInterfaceLink( site, {
+				capabilityFilter: 'edit_pages',
+				onClick: ( param ) => {
+					const link = generateSiteInterfaceLink( param.site, {
 						calypso: '/page',
 						wpAdmin: '/post-new.php?post_type=page',
 					} );
-					navigate( link );
+					commandNavigation( link )( param );
 				},
 			},
 			icon: plusIcon,
@@ -934,13 +912,13 @@ export const useCommandsArrayWpcom = ( {
 			].join( ' ' ),
 			callback: setStateCallback( 'manageComments', __( 'Select site to manage comments' ) ),
 			siteFunctions: {
-				onClick: ( { site, close }: { site: SiteExcerptData; close: () => void } ) => {
-					close();
-					const link = generateSiteInterfaceLink( site, {
+				capabilityFilter: 'moderate_comments',
+				onClick: ( param ) => {
+					const link = generateSiteInterfaceLink( param.site, {
 						calypso: '/comments',
 						wpAdmin: '/edit-comments.php',
 					} );
-					navigate( link );
+					commandNavigation( link )( param );
 				},
 			},
 			icon: postCommentsIcon,
@@ -956,13 +934,13 @@ export const useCommandsArrayWpcom = ( {
 			].join( ' ' ),
 			callback: setStateCallback( 'manageThemes', __( 'Select site to manage themes' ) ),
 			siteFunctions: {
-				onClick: ( { site, close }: { site: SiteExcerptData; close: () => void } ) => {
-					close();
-					const link = generateSiteInterfaceLink( site, {
+				capabilityFilter: 'install_themes',
+				onClick: ( param ) => {
+					const link = generateSiteInterfaceLink( param.site, {
 						calypso: '/themes',
 						wpAdmin: '/themes.php',
 					} );
-					navigate( link );
+					commandNavigation( link )( param );
 				},
 				filter: ( site: SiteExcerptData ) => ! isP2Site( site ),
 			},
@@ -978,13 +956,13 @@ export const useCommandsArrayWpcom = ( {
 			].join( ' ' ),
 			callback: setStateCallback( 'installTheme', __( 'Select site to install theme' ) ),
 			siteFunctions: {
-				onClick: ( { site, close }: { site: SiteExcerptData; close: () => void } ) => {
-					close();
-					const link = generateSiteInterfaceLink( site, {
+				capabilityFilter: 'install_themes',
+				onClick: ( param ) => {
+					const link = generateSiteInterfaceLink( param.site, {
 						calypso: '/themes',
 						wpAdmin: '/theme-install.php',
 					} );
-					navigate( link );
+					commandNavigation( link )( param );
 				},
 				filter: ( site: SiteExcerptData ) => site?.jetpack,
 			},
@@ -1003,13 +981,13 @@ export const useCommandsArrayWpcom = ( {
 			].join( ' ' ),
 			callback: setStateCallback( 'managePlugins', __( 'Select site to manage plugins' ) ),
 			siteFunctions: {
-				onClick: ( { site, close }: { site: SiteExcerptData; close: () => void } ) => {
-					close();
-					const link = generateSiteInterfaceLink( site, {
+				capabilityFilter: 'install_plugins',
+				onClick: ( param ) => {
+					const link = generateSiteInterfaceLink( param.site, {
 						calypso: '/plugins',
 						wpAdmin: '/plugins.php',
 					} );
-					navigate( link );
+					commandNavigation( link )( param );
 				},
 				filter: ( site: SiteExcerptData ) => ! isP2Site( site ),
 			},
@@ -1025,13 +1003,13 @@ export const useCommandsArrayWpcom = ( {
 			].join( ' ' ),
 			callback: setStateCallback( 'installPlugin', __( 'Select site to install plugin' ) ),
 			siteFunctions: {
-				onClick: ( { site, close }: { site: SiteExcerptData; close: () => void } ) => {
-					close();
-					const link = generateSiteInterfaceLink( site, {
+				capabilityFilter: 'install_plugins',
+				onClick: ( param ) => {
+					const link = generateSiteInterfaceLink( param.site, {
 						calypso: '/plugins',
 						wpAdmin: '/plugin-install.php',
 					} );
-					navigate( link );
+					commandNavigation( link )( param );
 				},
 				filter: ( site: SiteExcerptData ) => site?.jetpack,
 			},
@@ -1048,10 +1026,8 @@ export const useCommandsArrayWpcom = ( {
 			context: [ '/sites' ],
 			callback: setStateCallback( 'changePlan', __( 'Select site to change plan' ) ),
 			siteFunctions: {
-				onClick: ( { site, close }: { site: SiteExcerptData; close: () => void } ) => {
-					close();
-					navigate( `/plans/${ site.slug }` );
-				},
+				capabilityFilter: 'manage_options',
+				onClick: ( param ) => commandNavigation( `/plans/${ param.site.slug }` )( param ),
 				filter: ( site: SiteExcerptData ) => ! isP2Site( site ) && ! site?.is_wpcom_staging_site,
 			},
 			icon: creditCardIcon,
@@ -1066,10 +1042,8 @@ export const useCommandsArrayWpcom = ( {
 			].join( ' ' ),
 			callback: setStateCallback( 'manageMyPlan', __( 'Select site to manage your plan' ) ),
 			siteFunctions: {
-				onClick: ( { site, close }: { site: SiteExcerptData; close: () => void } ) => {
-					close();
-					navigate( `/plans/my-plan/${ site.slug }` );
-				},
+				capabilityFilter: 'manage_options',
+				onClick: ( param ) => commandNavigation( `/plans/my-plan/${ param.site.slug }` )( param ),
 				filter: ( site: SiteExcerptData ) => ! isP2Site( site ) && ! site?.is_wpcom_staging_site,
 			},
 			icon: creditCardIcon,
@@ -1087,13 +1061,13 @@ export const useCommandsArrayWpcom = ( {
 			].join( ' ' ),
 			callback: setStateCallback( 'manageUsers', __( 'Select site to manage users' ) ),
 			siteFunctions: {
-				onClick: ( { site, close }: { site: SiteExcerptData; close: () => void } ) => {
-					close();
-					const link = generateSiteInterfaceLink( site, {
+				capabilityFilter: 'list_users',
+				onClick: ( param ) => {
+					const link = generateSiteInterfaceLink( param.site, {
 						calypso: '/people/team',
 						wpAdmin: '/users.php',
 					} );
-					navigate( link );
+					commandNavigation( link )( param );
 				},
 			},
 			icon: peopleIcon,
@@ -1108,13 +1082,13 @@ export const useCommandsArrayWpcom = ( {
 			].join( ' ' ),
 			callback: setStateCallback( 'addNewUser', __( 'Select site to add new user' ) ),
 			siteFunctions: {
-				onClick: ( { site, close }: { site: SiteExcerptData; close: () => void } ) => {
-					close();
-					const link = generateSiteInterfaceLink( site, {
+				capabilityFilter: 'list_users',
+				onClick: ( param ) => {
+					const link = generateSiteInterfaceLink( param.site, {
 						calypso: '/people/new',
 						wpAdmin: '/user-new.php',
 					} );
-					navigate( link );
+					commandNavigation( link )( param );
 				},
 			},
 			icon: peopleIcon,
@@ -1130,10 +1104,9 @@ export const useCommandsArrayWpcom = ( {
 			context: [ '/subscribers' ],
 			callback: setStateCallback( 'addSubscribers', __( 'Select site to add subscribers' ) ),
 			siteFunctions: {
-				onClick: ( { site, close }: { site: SiteExcerptData; close: () => void } ) => {
-					close();
-					navigate( `/subscribers/${ site.slug }#add-subscribers` );
-				},
+				capabilityFilter: 'manage_options',
+				onClick: ( param ) =>
+					commandNavigation( `/subscribers/${ param.site.slug }#add-subscribers` )( param ),
 			},
 			icon: subscriberIcon,
 		},
@@ -1142,10 +1115,8 @@ export const useCommandsArrayWpcom = ( {
 			label: __( 'Manage subscribers' ),
 			callback: setStateCallback( 'manageSubscribers', __( 'Select site to manage subscribers' ) ),
 			siteFunctions: {
-				onClick: ( { site, close }: { site: SiteExcerptData; close: () => void } ) => {
-					close();
-					navigate( `/subscribers/${ site.slug }` );
-				},
+				capabilityFilter: 'manage_options',
+				onClick: ( param ) => commandNavigation( `/subscribers/${ param.site.slug }` )( param ),
 			},
 			icon: subscriberIcon,
 		},
@@ -1158,7 +1129,8 @@ export const useCommandsArrayWpcom = ( {
 				__( 'Select site to download subscribers' )
 			),
 			siteFunctions: {
-				onClick: ( { site, close }: { site: SiteExcerptData; close: () => void } ) => {
+				capabilityFilter: 'manage_options',
+				onClick: ( { site, close } ) => {
 					close();
 					window.location.assign(
 						`https://dashboard.wordpress.com/wp-admin/index.php?page=subscribers&blog=${ site.ID }&blog_subscribers=csv&type=all`
@@ -1173,12 +1145,31 @@ export const useCommandsArrayWpcom = ( {
 			context: [ '/posts' ],
 			callback: setStateCallback( 'import', __( 'Select site to import content' ) ),
 			siteFunctions: {
-				onClick: ( { site, close }: { site: SiteExcerptData; close: () => void } ) => {
-					close();
-					navigate( `/import/${ site.slug }` );
-				},
+				capabilityFilter: 'manage_options',
+				onClick: ( param ) => commandNavigation( `/import/${ param.site.slug }` )( param ),
 			},
 			icon: downloadIcon,
+		},
+		{
+			name: 'openWooCommerceSettings',
+			label: __( 'Open WooCommerce settings' ),
+			callback: setStateCallback(
+				'openWooCommerceSettings',
+				__( 'Select site to open WooCommerce settings' )
+			),
+			siteFunctions: {
+				capabilityFilter: 'manage_options',
+				onClick: ( param ) => {
+					if ( param.site.options?.is_wpcom_store ) {
+						commandNavigation( `${ param.site.URL }/wp-admin/admin.php?page=wc-admin` )( param );
+					} else {
+						commandNavigation( `/woocommerce-installation/${ param.site.slug }` )( param );
+					}
+				},
+				filter: ( site: SiteExcerptData ) => ! isP2Site( site ) && ! isNotAtomicJetpack( site ),
+				filterNotice: __( 'Only listing sites hosted on WordPress.com.' ),
+			},
+			icon: <WooCommerceLogo size={ 24 } className="woo-command-palette" />,
 		},
 		{
 			name: 'manageSettingsGeneral',
@@ -1189,13 +1180,13 @@ export const useCommandsArrayWpcom = ( {
 				__( 'Select site to manage general settings' )
 			),
 			siteFunctions: {
-				onClick: ( { site, close }: { site: SiteExcerptData; close: () => void } ) => {
-					close();
-					const link = generateSiteInterfaceLink( site, {
+				capabilityFilter: 'manage_options',
+				onClick: ( param ) => {
+					const link = generateSiteInterfaceLink( param.site, {
 						calypso: '/settings/general',
 						wpAdmin: '/options-general.php',
 					} );
-					navigate( link );
+					commandNavigation( link )( param );
 				},
 			},
 			icon: settingsIcon,
@@ -1209,13 +1200,13 @@ export const useCommandsArrayWpcom = ( {
 				__( 'Select site to manage writing settings' )
 			),
 			siteFunctions: {
-				onClick: ( { site, close }: { site: SiteExcerptData; close: () => void } ) => {
-					close();
-					const link = generateSiteInterfaceLink( site, {
+				capabilityFilter: 'manage_options',
+				onClick: ( param ) => {
+					const link = generateSiteInterfaceLink( param.site, {
 						calypso: '/settings/writing',
 						wpAdmin: '/options-writing.php',
 					} );
-					navigate( link );
+					commandNavigation( link )( param );
 				},
 			},
 			icon: settingsIcon,
@@ -1229,13 +1220,13 @@ export const useCommandsArrayWpcom = ( {
 				__( 'Select site to manage reading settings' )
 			),
 			siteFunctions: {
-				onClick: ( { site, close }: { site: SiteExcerptData; close: () => void } ) => {
-					close();
-					const link = generateSiteInterfaceLink( site, {
+				capabilityFilter: 'manage_options',
+				onClick: ( param ) => {
+					const link = generateSiteInterfaceLink( param.site, {
 						calypso: '/settings/reading',
 						wpAdmin: '/options-reading.php',
 					} );
-					navigate( link );
+					commandNavigation( link )( param );
 				},
 			},
 			icon: settingsIcon,
@@ -1249,13 +1240,13 @@ export const useCommandsArrayWpcom = ( {
 				__( 'Select site to manage discussion settings' )
 			),
 			siteFunctions: {
-				onClick: ( { site, close }: { site: SiteExcerptData; close: () => void } ) => {
-					close();
-					const link = generateSiteInterfaceLink( site, {
+				capabilityFilter: 'manage_options',
+				onClick: ( param ) => {
+					const link = generateSiteInterfaceLink( param.site, {
 						calypso: '/settings/discussion',
 						wpAdmin: '/options-discussion.php',
 					} );
-					navigate( link );
+					commandNavigation( link )( param );
 				},
 			},
 			icon: settingsIcon,
@@ -1269,10 +1260,9 @@ export const useCommandsArrayWpcom = ( {
 				__( 'Select site to manage newsletter settings' )
 			),
 			siteFunctions: {
-				onClick: ( { site, close }: { site: SiteExcerptData; close: () => void } ) => {
-					close();
-					navigate( `/settings/newsletter/${ site.slug }` );
-				},
+				capabilityFilter: 'manage_options',
+				onClick: ( param ) =>
+					commandNavigation( `/settings/newsletter/${ param.site.slug }` )( param ),
 			},
 			icon: settingsIcon,
 		},
@@ -1285,10 +1275,9 @@ export const useCommandsArrayWpcom = ( {
 				__( 'Select site to manage podcast settings' )
 			),
 			siteFunctions: {
-				onClick: ( { site, close }: { site: SiteExcerptData; close: () => void } ) => {
-					close();
-					navigate( `/settings/podcasting/${ site.slug }` );
-				},
+				capabilityFilter: 'manage_options',
+				onClick: ( param ) =>
+					commandNavigation( `/settings/podcasting/${ param.site.slug }` )( param ),
 			},
 			icon: settingsIcon,
 		},

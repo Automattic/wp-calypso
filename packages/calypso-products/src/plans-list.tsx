@@ -445,7 +445,6 @@ import {
 	PRODUCT_JETPACK_CREATOR_YEARLY,
 	PRODUCT_JETPACK_CREATOR_MONTHLY,
 } from './constants';
-import { getPlansListExperiment } from './experiments';
 import type {
 	BillingTerm,
 	Plan,
@@ -782,10 +781,8 @@ const getPlanPersonalDetails = (): IncompleteWPcomPlan => ( {
 	group: GROUP_WPCOM,
 	type: TYPE_PERSONAL,
 	getTitle: () =>
-		getPlansListExperiment( 'wpcom_plan_name_change' ) === 'treatment'
-			? // translators: Starter is a plan name
-			  i18n.translate( 'Starter' )
-			: i18n.translate( 'Personal' ),
+		// translators: Starter is a plan name
+		i18n.translate( 'Starter' ),
 	getAudience: () => i18n.translate( 'Best for personal use' ),
 	getBlogAudience: () => i18n.translate( 'Best for personal use' ),
 	getPortfolioAudience: () => i18n.translate( 'Best for personal use' ),
@@ -959,10 +956,8 @@ const getPlanEcommerceDetails = (): IncompleteWPcomPlan => ( {
 	group: GROUP_WPCOM,
 	type: TYPE_ECOMMERCE,
 	getTitle: () =>
-		getPlansListExperiment( 'wpcom_plan_name_change' ) === 'treatment'
-			? // translators: Entrepreneur is a plan name
-			  i18n.translate( 'Entrepreneur' )
-			: i18n.translate( 'Commerce' ),
+		// translators: Entrepreneur is a plan name
+		i18n.translate( 'Entrepreneur' ),
 	getAudience: () => i18n.translate( 'Best for online stores' ),
 	getBlogAudience: () => i18n.translate( 'Best for online stores' ),
 	getPortfolioAudience: () => i18n.translate( 'Best for online stores' ),
@@ -1346,10 +1341,8 @@ const getPlanPremiumDetails = (): IncompleteWPcomPlan => ( {
 	group: GROUP_WPCOM,
 	type: TYPE_PREMIUM,
 	getTitle: () =>
-		getPlansListExperiment( 'wpcom_plan_name_change' ) === 'treatment'
-			? // translators: Explorer is a plan name
-			  i18n.translate( 'Explorer' )
-			: i18n.translate( 'Premium' ),
+		// translators: Explorer is a plan name
+		i18n.translate( 'Explorer' ),
 	getAudience: () => i18n.translate( 'Best for freelancers' ),
 	getBlogAudience: () => i18n.translate( 'Best for freelancers' ),
 	getPortfolioAudience: () => i18n.translate( 'Best for freelancers' ),
@@ -1420,6 +1413,7 @@ const getPlanPremiumDetails = (): IncompleteWPcomPlan => ( {
 		FEATURE_PREMIUM_THEMES_V2,
 		FEATURE_UNLTD_SOCIAL_MEDIA_JP,
 		FEATURE_VIDEOPRESS_JP,
+		FEATURE_STATS_PAID,
 		FEATURE_PAYMENT_TRANSACTION_FEES_4,
 	],
 	getNewsletterHighlightedFeatures: () => [
@@ -1444,6 +1438,7 @@ const getPlanPremiumDetails = (): IncompleteWPcomPlan => ( {
 		FEATURE_VIDEOPRESS_JP,
 		FEATURE_UNLTD_SOCIAL_MEDIA_JP,
 		FEATURE_WORDADS,
+		FEATURE_STATS_PAID,
 	],
 	getLinkInBioHighlightedFeatures: () => [ FEATURE_CUSTOM_DOMAIN ],
 	getBlogOnboardingSignupFeatures: () => [
@@ -1498,6 +1493,7 @@ const getPlanPremiumDetails = (): IncompleteWPcomPlan => ( {
 		FEATURE_PREMIUM_THEMES_V2,
 		FEATURE_WORDADS,
 		FEATURE_STYLE_CUSTOMIZATION,
+		FEATURE_STATS_PAID,
 		FEATURE_VIDEOPRESS_JP,
 		FEATURE_UNLTD_SOCIAL_MEDIA_JP,
 		FEATURE_SITE_ACTIVITY_LOG_JP,
@@ -1506,6 +1502,7 @@ const getPlanPremiumDetails = (): IncompleteWPcomPlan => ( {
 		FEATURE_VIDEOPRESS_JP,
 		FEATURE_UNLTD_SOCIAL_MEDIA_JP,
 		FEATURE_SITE_ACTIVITY_LOG_JP,
+		FEATURE_STATS_PAID,
 	],
 	get2023PricingGridSignupStorageOptions: () => {
 		return [
@@ -1570,10 +1567,8 @@ const getPlanBusinessDetails = (): IncompleteWPcomPlan => ( {
 	group: GROUP_WPCOM,
 	type: TYPE_BUSINESS,
 	getTitle: () =>
-		getPlansListExperiment( 'wpcom_plan_name_change' ) === 'treatment'
-			? // translators: Creator is a plan name
-			  i18n.translate( 'Creator' )
-			: i18n.translate( 'Business' ),
+		// translators: Creator is a plan name
+		i18n.translate( 'Creator' ),
 	getAudience: () => i18n.translate( 'Best for small businesses' ),
 	getBlogAudience: () => i18n.translate( 'Best for small businesses' ),
 	getPortfolioAudience: () => i18n.translate( 'Best for small businesses' ),

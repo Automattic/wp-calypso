@@ -60,10 +60,15 @@ function minimumCurrencyTransactionAmount(
 	currency: string,
 	connectedAccountDefaultCurrency: string
 ): number {
-	if ( connectedAccountDefaultCurrency.toUpperCase() === currency ) {
-		return currency_min[ currency ];
+	const currencyMin = currency_min?.[ currency ];
+	if ( ! currencyMin ) {
+		return 0;
 	}
-	return currency_min[ currency ] * 2;
+
+	if ( connectedAccountDefaultCurrency?.toUpperCase() === currency ) {
+		return currencyMin;
+	}
+	return currencyMin * 2;
 }
 
 const MAX_LENGTH_CUSTOM_CONFIRMATION_EMAIL_MESSAGE = 2000;
@@ -94,7 +99,7 @@ const RecurringPaymentsPlanAddEditModal = ( {
 		product?.buyer_can_change_amount ?? false
 	);
 
-	const currencyList = Object.keys( connectedAccountMinimumCurrency );
+	const currencyList = Object.keys( connectedAccountMinimumCurrency ?? {} );
 
 	const defaultCurrency = useMemo( () => {
 		if ( product?.currency ) {

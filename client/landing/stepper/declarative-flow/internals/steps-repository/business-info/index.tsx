@@ -58,11 +58,6 @@ const BusinessInfo: Step = function ( props ) {
 
 	const { saveSiteSettings } = useDispatch( SITE_STORE );
 
-	const stepProgress = useSelect(
-		( select ) => ( select( ONBOARD_STORE ) as OnboardSelect ).getStepProgress(),
-		[]
-	);
-
 	function updateProductTypes( type: string ) {
 		const productTypes = getProfileValue( 'product_types' ) || [];
 
@@ -292,7 +287,6 @@ const BusinessInfo: Step = function ( props ) {
 						/>
 					}
 					stepContent={ getContent() }
-					stepProgress={ stepProgress }
 					recordTracksEvent={ recordTracksEvent }
 				/>
 			</div>

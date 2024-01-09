@@ -10,8 +10,8 @@ import { useEffect, useMemo, useState } from 'react';
 import InfoPopover from 'calypso/components/info-popover';
 import { getStripeConfiguration } from 'calypso/lib/store-transactions';
 import CalypsoShoppingCartProvider from 'calypso/my-sites/checkout/calypso-shopping-cart-provider';
-import PurchaseModal from 'calypso/my-sites/checkout/upsell-nudge/purchase-modal';
-import { useIsEligibleForOneClickCheckout } from 'calypso/my-sites/checkout/upsell-nudge/purchase-modal/use-is-eligible-for-one-click-checkout';
+import PurchaseModal from 'calypso/my-sites/checkout/purchase-modal';
+import { useIsEligibleForOneClickCheckout } from 'calypso/my-sites/checkout/purchase-modal/use-is-eligible-for-one-click-checkout';
 import { BrowserView } from 'calypso/signup/difm/components/BrowserView';
 import {
 	HOME_PAGE,

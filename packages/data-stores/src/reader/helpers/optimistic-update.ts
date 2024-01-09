@@ -67,15 +67,19 @@ const invalidateSiteSubscriptionDetails = (
 	{ blogId, subscriptionId, isLoggedIn, id }: SiteSubScriptionDetailsParameters
 ) => {
 	queryClient.invalidateQueries( { queryKey: [ 'read', 'site-subscriptions' ] } );
-	queryClient.invalidateQueries(
-		buildQueryKey( [ 'read', 'site-subscription-details', blogId ], isLoggedIn, id )
-	);
-	queryClient.invalidateQueries(
-		buildQueryKey( [ 'read', 'site-subscription-details', blogId, '' ], isLoggedIn, id )
-	);
-	queryClient.invalidateQueries(
-		buildQueryKey( [ 'read', 'site-subscription-details', '', subscriptionId ], isLoggedIn, id )
-	);
+	queryClient.invalidateQueries( {
+		queryKey: buildQueryKey( [ 'read', 'site-subscription-details', blogId ], isLoggedIn, id ),
+	} );
+	queryClient.invalidateQueries( {
+		queryKey: buildQueryKey( [ 'read', 'site-subscription-details', blogId, '' ], isLoggedIn, id ),
+	} );
+	queryClient.invalidateQueries( {
+		queryKey: buildQueryKey(
+			[ 'read', 'site-subscription-details', '', subscriptionId ],
+			isLoggedIn,
+			id
+		),
+	} );
 };
 
 export { alterSiteSubscriptionDetails, invalidateSiteSubscriptionDetails };

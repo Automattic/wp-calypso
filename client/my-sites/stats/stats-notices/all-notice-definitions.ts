@@ -108,7 +108,7 @@ const ALL_STATS_NOTICES: StatsNoticeType[] = [
 	},
 	{
 		component: TierUpgradeNotice,
-		noticeId: 'tier_upgrade_notice',
+		noticeId: 'tier_upgrade',
 		isVisibleFunc: ( {
 			isOdysseyStats,
 			isWpcom,
