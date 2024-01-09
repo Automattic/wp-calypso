@@ -29,6 +29,12 @@ function QueryTheme( { siteId, themeId } ) {
 	return null;
 }
 
+/**
+ * Query a theme from the API.
+ * @deprecated use useSingleTheme() instead
+ * @param siteId
+ * @param themeId
+ */
 export function useQueryTheme( siteId, themeId ) {
 	const dispatch = useDispatch();
 

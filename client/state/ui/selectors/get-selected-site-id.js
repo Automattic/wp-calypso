@@ -5,5 +5,5 @@ import 'calypso/state/ui/init';
  * @returns {?number}       Selected site ID
  */
 export default function getSelectedSiteId( state ) {
-	return state.ui.selectedSiteId;
+	return state.ui?.selectedSiteId;
 }
