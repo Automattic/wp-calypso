@@ -15,7 +15,6 @@ export type PlanTypeSelectorProps = {
 	siteSlug?: string | null;
 	selectedPlan?: string;
 	selectedFeature?: string;
-	showBiennialToggle?: boolean;
 	showPlanTypeSelectorDropdown?: boolean; // feature flag used for the plan selector dropdown
 	isInSignup: boolean;
 	plans: PlanSlug[];
@@ -35,18 +34,19 @@ export type PlanTypeSelectorProps = {
 	 * Coupon code for use in pricing hook usage.
 	 */
 	coupon?: string;
+	displayedIntervals: UrlFriendlyTermType[];
 };
 export type IntervalTypeProps = Pick<
 	PlanTypeSelectorProps,
 	| 'intervalType'
 	| 'selectedSiteId'
+	| 'displayedIntervals'
 	| 'plans'
 	| 'isInSignup'
 	| 'eligibleForWpcomMonthlyPlans'
 	| 'isPlansInsideStepper'
 	| 'hideDiscountLabel'
 	| 'redirectTo'
-	| 'showBiennialToggle'
 	| 'showPlanTypeSelectorDropdown'
 	| 'selectedPlan'
 	| 'selectedFeature'
