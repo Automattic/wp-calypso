@@ -25,10 +25,11 @@ export function getGlobalStylesId( siteIdOrSlug: number | string, stylesheet: st
 
 export function getGlobalStylesVariations( siteIdOrSlug: number | string, stylesheet: string ) {
 	return async () => {
+		const params = new URLSearchParams( { wp_theme_preview: stylesheet } );
 		const variations: GlobalStyles[] = await wpcom.req.get( {
 			path: `/sites/${ encodeURIComponent(
 				siteIdOrSlug
-			) }/global-styles/themes/${ stylesheet }/variations`,
+			) }/global-styles/themes/${ stylesheet }/variations?${ params }`,
 			apiNamespace: 'wp/v2',
 		} );
 

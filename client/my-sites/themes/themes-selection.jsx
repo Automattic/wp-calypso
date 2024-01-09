@@ -138,7 +138,7 @@ class ThemesSelection extends Component {
 		let options = this.props.getOptions( themeId, styleVariation );
 
 		const { tabFilter, tier } = this.props;
-		const wrappedActivateAction = ( action ) => {
+		const wrappedActivateOrLivePreviewAction = ( action ) => {
 			return ( t ) => {
 				this.props.setThemePreviewOptions( themeId, null, null, {
 					styleVariation,
@@ -192,7 +192,13 @@ class ThemesSelection extends Component {
 				styleVariationSlug: styleVariation?.slug,
 			} );
 			if ( options.activate ) {
-				options.activate.action = wrappedActivateAction( options.activate.action );
+				options.activate.action = wrappedActivateOrLivePreviewAction( options.activate.action );
+			}
+
+			if ( options.livePreview ) {
+				options.livePreview.action = wrappedActivateOrLivePreviewAction(
+					options.livePreview.action
+				);
 			}
 
 			if ( options.preview ) {

@@ -262,7 +262,7 @@ function getAllThemeOptions( { translate, isFSEActive } ) {
 			comment: 'label for previewing a block theme',
 		} ),
 		action: ( themeId, siteId ) => {
-			return livePreviewAction( siteId, themeId, false, undefined, 'list' );
+			return livePreviewAction( siteId, themeId, 'list' );
 		},
 		hideForTheme: ( state, themeId, siteId ) =>
 			! getIsLivePreviewSupported( state, themeId, siteId ),
