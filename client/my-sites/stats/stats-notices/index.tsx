@@ -3,6 +3,7 @@ import { useState, useEffect } from 'react';
 import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
 import version_compare from 'calypso/lib/version-compare';
 import {
+	DEFAULT_NOTICES_VISIBILITY,
 	Notices,
 	useNoticesVisibilityQuery,
 	processConflictNotices,
@@ -125,7 +126,7 @@ const NewStatsNotices = ( { siteId, isOdysseyStats, statsPurchaseSuccess }: Stat
 	}
 
 	const calculatedNoticesVisibility = ensureOnlyOneNoticeVisible(
-		serverNoticesVisibility,
+		serverNoticesVisibility ?? DEFAULT_NOTICES_VISIBILITY,
 		noticeOptions
 	);
 
