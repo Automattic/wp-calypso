@@ -10,6 +10,7 @@ import {
 	headerCode,
 	legacyRedirects,
 	manageConnection,
+	redirectIfCantAddHeaderCode,
 	redirectIfCantDeleteSite,
 	redirectIfCantStartSiteOwnerTransfer,
 	redirectToGeneral,
@@ -115,6 +116,7 @@ export default function () {
 	page(
 		'/settings/header-code/:site_id',
 		siteSelection,
+		redirectIfCantAddHeaderCode,
 		navigation,
 		setScroll,
 		headerCode,
