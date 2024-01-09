@@ -18,6 +18,14 @@ import JetpackPluginImage from 'calypso/assets/images/jetpack/licensing-activati
 import { domainManagementEdit, domainManagementList } from 'calypso/my-sites/domains/paths';
 import type { ReceiptPurchase } from 'calypso/state/receipts/types';
 
+type FindPredicate = (
+	product: ( WithSnakeCaseSlug | WithCamelCaseSlug ) & {
+		is_domain_registration?: boolean;
+		isDomainRegistration?: boolean;
+		meta: string;
+	}
+) => boolean;
+
 const buildKeyValuePairByProductSlugs = (
 	productSlugs: ReadonlyArray< string >,
 	value: string
