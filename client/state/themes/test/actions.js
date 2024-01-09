@@ -225,7 +225,7 @@ describe( 'actions', () => {
 		describe( 'with a Jetpack site', () => {
 			useNock( ( nock ) => {
 				nock( 'https://public-api.wordpress.com:443' )
-					.get( '/rest/v1/sites/77203074/themes' )
+					.get( '/rest/v1/sites/77203074/themes?request_type=my-themes' )
 					.reply( 200, {
 						// The endpoint doesn't return `found` for Jetpack sites
 						themes: [
@@ -233,7 +233,7 @@ describe( 'actions', () => {
 							{ ID: 'twentysixteen', name: 'Twenty Sixteen' },
 						],
 					} )
-					.get( '/rest/v1/sites/1916284/themes' )
+					.get( '/rest/v1/sites/1916284/themes?request_type=my-themes' )
 					.reply( 403, {
 						error: 'authorization_required',
 						message: 'User cannot access this private blog.',
@@ -241,21 +241,21 @@ describe( 'actions', () => {
 			} );
 
 			test( 'should dispatch fetch action when thunk triggered', () => {
-				requestThemes( 77203074 )( spy );
+				requestThemes( 77203074, { request_type: 'my-themes' } )( spy );
 
 				expect( spy ).toHaveBeenCalledWith( {
 					type: THEMES_REQUEST,
 					siteId: 77203074,
-					query: {},
+					query: { request_type: 'my-themes' },
 				} );
 			} );
 
 			test( 'should dispatch fail action when request fails', () => {
-				return requestThemes( 1916284 )( spy ).then( () => {
+				return requestThemes( 1916284, { request_type: 'my-themes' } )( spy ).then( () => {
 					expect( spy ).toHaveBeenCalledWith( {
 						type: THEMES_REQUEST_FAILURE,
 						siteId: 1916284,
-						query: {},
+						query: { request_type: 'my-themes' },
 						error: expect.objectContaining( { message: 'User cannot access this private blog.' } ),
 					} );
 				} );

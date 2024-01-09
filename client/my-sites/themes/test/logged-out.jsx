@@ -102,7 +102,7 @@ describe( 'logged-out', () => {
 			receiveThemes(
 				[],
 				'wpcom',
-				{ ...DEFAULT_THEME_QUERY, collection: 'recommended' },
+				{ ...DEFAULT_THEME_QUERY, collection: 'recommended', request_type: 'showcase' },
 				themes.length
 			)
 		);
@@ -120,7 +120,7 @@ describe( 'logged-out', () => {
 			receiveThemes(
 				themes,
 				'wpcom',
-				{ ...DEFAULT_THEME_QUERY, collection: 'recommended' },
+				{ ...DEFAULT_THEME_QUERY, collection: 'recommended', request_type: 'showcase' },
 				themes.length
 			)
 		);
@@ -141,7 +141,7 @@ describe( 'logged-out', () => {
 		store.dispatch( {
 			type: THEMES_REQUEST_FAILURE,
 			siteId: 'wpcom',
-			query: { ...DEFAULT_THEME_QUERY, collection: 'recommended' },
+			query: { ...DEFAULT_THEME_QUERY, collection: 'recommended', request_type: 'showcase' },
 			error: 'Error',
 		} );
 		render( <TestComponent store={ store } /> );
