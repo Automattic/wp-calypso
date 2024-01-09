@@ -86,9 +86,9 @@ export default function WPCheckoutOrderSummary( {
 	const plan = responseCart.products.find( ( product ) => isPlan( product ) );
 	const hasMonthlyPlanInCart = Boolean( plan && isMonthly( plan?.product_slug ) );
 
-	const productSlug = plan?.product_slug;
-	console.log( 'isWooExpressPlan: ', isWooExpressPlan( productSlug ) );
-	console.log( plan );
+	// const productSlug = plan?.product_slug;
+	// console.log( 'isWooExpressPlan: ', isWooExpressPlan( productSlug ) );
+	// console.log( plan );
 
 	const shouldHideCheckoutIncludedPurchases = useHideCheckoutIncludedPurchases() === 'treatment';
 
