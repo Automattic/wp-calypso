@@ -27,7 +27,7 @@ const ProductGrid: React.FC< Props > = ( { products } ) => {
 	return (
 		<ul className="overview-products__items">
 			{ products.map( ( productData: ProductData ) => {
-				if ( productData.data === undefined ) {
+				if ( ! productData.data ) {
 					return null;
 				}
 				return (

@@ -14,7 +14,7 @@ interface Props {
 const ProductItem: React.FC< Props > = ( { productData, onMoreAboutClick } ) => {
 	const translate = useTranslate();
 
-	if ( productData.data === undefined ) {
+	if ( ! productData.data ) {
 		return null;
 	}
 
