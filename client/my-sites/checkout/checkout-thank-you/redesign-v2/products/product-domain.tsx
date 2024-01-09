@@ -71,6 +71,8 @@ const ProductDomain = ( {
 					{ translate( 'Manage domains' ) }
 				</Button>
 			</>
+		) : (
+			<p>{ purchaseLabel( purchase?.priceInteger ) }</p>
 		);
 
 	return (
