@@ -29,17 +29,12 @@
 
 				.task__description,
 				.task__title {
-					max-width: 70%;
+					max-width: 80%;
 				}
 			}
 
 			@media (max-width: $break-wide) {
 				max-width: calc(115% - 200px);
-
-				.task__description,
-				.task__title {
-					max-width: 70%;
-				}
 			}
 
 			@media ( max-width: $break-wide ) {
