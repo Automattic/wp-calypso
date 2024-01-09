@@ -245,7 +245,7 @@ const useSuccessHttpCodeSeries = () => {
 	return { series, statusCodes };
 };
 
-const useErrorHttpCodeSeries = () => {
+const useClientErrorHttpCodeSeries = () => {
 	const { __ } = useI18n();
 	const series: HTTPCodeSerie[] = [
 		{
@@ -272,6 +272,14 @@ const useErrorHttpCodeSeries = () => {
 			label: __( '404: Not Found Request' ),
 			stroke: 'rgba(9, 181, 133, 1)',
 		},
+	];
+	const statusCodes = series.map( ( { statusCode } ) => statusCode );
+	return { series, statusCodes };
+};
+
+const useServerErrorHttpCodeSeries = () => {
+	const { __ } = useI18n();
+	const series: HTTPCodeSerie[] = [
 		{
 			statusCode: 500,
 			fill: 'rgba(235, 101, 148, 0.1)',
@@ -304,10 +312,15 @@ export const MetricsTab = () => {
 		timeRange,
 		successHttpCodes.statusCodes
 	);
-	const errorHttpCodes = useErrorHttpCodeSeries();
-	const { data: dataForErrorCodesChart } = useSiteMetricsStatusCodesData(
+	const clientErrorHttpCodes = useClientErrorHttpCodeSeries();
+	const { data: dataForClientErrorCodesChart } = useSiteMetricsStatusCodesData(
 		timeRange,
-		errorHttpCodes.statusCodes
+		clientErrorHttpCodes.statusCodes
+	);
+	const serverErrorHttpCodes = useServerErrorHttpCodeSeries();
+	const { data: dataForServerErrorCodesChart } = useSiteMetricsStatusCodesData(
+		timeRange,
+		serverErrorHttpCodes.statusCodes
 	);
 
 	const startDate = moment( timeRange.start * 1000 );
@@ -422,14 +435,33 @@ export const MetricsTab = () => {
 			></SiteMonitoringLineChart>
 			<SiteMonitoringLineChart
 				timeRange={ timeRange }
-				title={ __( 'Unsuccessful HTTP responses' ) }
-				subtitle={ __( 'Requests per minute that encountered errors or issues during processing' ) }
-				data={ dataForErrorCodesChart as uPlot.AlignedData }
-				series={ errorHttpCodes.series }
+				title={ __( 'Unsuccessful HTTP responses with client errors (4xx)' ) }
+				subtitle={ __(
+					'Requests per minute that encountered errors related to request bad syntax or requests that can not be fulfilled.'
+				) }
+				data={ dataForClientErrorCodesChart as uPlot.AlignedData }
+				series={ clientErrorHttpCodes.series }
 				options={ {
 					plugins: [
 						timeHighlightPlugin( 'auto' ),
-						tooltipsPlugin( withSeries( HttpChartTooltip, errorHttpCodes.series ), {
+						tooltipsPlugin( withSeries( HttpChartTooltip, clientErrorHttpCodes.series ), {
+							position: 'followCursor',
+						} ),
+					],
+				} }
+			></SiteMonitoringLineChart>
+			<SiteMonitoringLineChart
+				timeRange={ timeRange }
+				title={ __( 'Unsuccessful HTTP responses with server errors (5xx)' ) }
+				subtitle={ __(
+					'Requests per minute that encountered errors related to server processing.'
+				) }
+				data={ dataForServerErrorCodesChart as uPlot.AlignedData }
+				series={ serverErrorHttpCodes.series }
+				options={ {
+					plugins: [
+						timeHighlightPlugin( 'auto' ),
+						tooltipsPlugin( withSeries( HttpChartTooltip, serverErrorHttpCodes.series ), {
 							position: 'followCursor',
 						} ),
 					],
