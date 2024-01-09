@@ -32,7 +32,7 @@ export const useGetSiteSuggestionsQuery = ( {
 	refetchOnWindowFocus?: boolean;
 } ) =>
 	useQuery( {
-		cacheTime: 0,
+		gcTime: 0,
 		queryFn: () => getSiteSuggestions( params ),
 		refetchOnWindowFocus,
 		enabled,

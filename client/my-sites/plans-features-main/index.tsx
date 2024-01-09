@@ -701,7 +701,7 @@ const PlansFeaturesMain = ( {
 	const isPlansGridReady = ! isLoadingGridPlans && ! resolvedSubdomainName.isLoading;
 
 	const enablePlanTypeSelectorStickyBehavior = isMobile() && showPlanTypeSelectorDropdown;
-	const stickyPlanTypeSelectorHeight = 48;
+	const stickyPlanTypeSelectorHeight = isMobile() ? 62 : 48;
 	const comparisonGridStickyRowOffset = enablePlanTypeSelectorStickyBehavior
 		? stickyPlanTypeSelectorHeight + masterbarHeight
 		: masterbarHeight;
