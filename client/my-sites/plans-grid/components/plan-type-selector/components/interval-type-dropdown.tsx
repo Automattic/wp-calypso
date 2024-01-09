@@ -48,9 +48,9 @@ export const IntervalTypeDropdown: React.FunctionComponent< IntervalTypeProps > 
 				{ option.discountText ? <span className="discount"> { option.discountText } </span> : null }
 			</IntervalTypeOption>
 		),
-		// TODO: The "url" attribute is actually a string of query params. We should revisit this in the
+		// TODO: The "url" attribute can be either a relative url or only query params. We should revisit this in the
 		// useIntervalOptions hook.
-		queryParams: option.url,
+		url: option.url,
 	} ) );
 
 	return (
@@ -63,7 +63,7 @@ export const IntervalTypeDropdown: React.FunctionComponent< IntervalTypeProps > 
 				onChange={ ( {
 					selectedItem,
 				}: {
-					selectedItem: { key: SupportedUrlFriendlyTermType; queryParams: string };
+					selectedItem: { key: SupportedUrlFriendlyTermType; url: string };
 				} ) => onPlanTypeSelectorChange && onPlanTypeSelectorChange( selectedItem ) }
 			/>
 		</div>

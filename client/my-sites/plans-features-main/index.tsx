@@ -33,6 +33,7 @@ import {
 	useRef,
 	useState,
 } from '@wordpress/element';
+import { hasQueryArg } from '@wordpress/url';
 import classNames from 'classnames';
 import { localize, useTranslate } from 'i18n-calypso';
 import { ReactNode } from 'react';
@@ -722,9 +723,13 @@ const PlansFeaturesMain = ( {
 		[]
 	);
 
-	const handlePlanTypeSelectorChange = useCallback( ( selectedItem: { queryParams: string } ) => {
-		const currentPath = window.location.pathname;
-		page( currentPath + selectedItem.queryParams );
+	const handlePlanTypeSelectorChange = useCallback( ( selectedItem: { url: string } ) => {
+		if ( hasQueryArg( selectedItem.url, 'intervalType' ) ) {
+			const currentPath = window.location.pathname;
+			return page( currentPath + selectedItem.url );
+		}
+
+		page( selectedItem.url );
 	}, [] );
 
 	const comparisonGridContainerClasses = classNames(
