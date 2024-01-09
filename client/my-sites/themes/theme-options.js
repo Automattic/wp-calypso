@@ -348,7 +348,7 @@ export const getWooMyCustomThemeOptions = ( { translate, siteAdminUrl, siteSlug,
 		customize: {
 			...options.customize,
 			label: translate( 'Advanced customization in the Editor' ),
-			extendedLabel: translate( 'Advance customization in the Editor' ),
+			extendedLabel: translate( 'Advanced customization in the Editor' ),
 		},
 		preview: {
 			label: translate( 'Store preview' ),
