@@ -58,7 +58,11 @@ export function requestThemes( siteId, query = {}, locale ) {
 				let themes;
 				if ( siteId === 'wporg' ) {
 					themes = map( rawThemes, normalizeWporgTheme );
-				} else if ( siteId === 'wpcom' || query.request_type === 'showcase' ) {
+				} else if (
+					siteId === 'wpcom' ||
+					query.request_type === 'showcase' ||
+					! query.request_type
+				) {
 					themes = map( rawThemes, normalizeWpcomTheme );
 					dispatch( updateThemeTiers( tiers ) );
 				} else {
