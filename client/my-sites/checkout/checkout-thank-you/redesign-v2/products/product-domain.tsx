@@ -69,10 +69,17 @@ const ProductDomain = ( {
 				</Button>
 			</>
 		) : (
-			purchaseLabel( purchase.priceInteger )
+			<p>{ purchaseLabel( purchase.priceInteger ) }</p>
 		);
 
-	return <ThankYouProduct name={ domain } key={ 'domain-' + domain } actions={ actions } />;
+	return (
+		<ThankYouProduct
+			name={ domain }
+			isFree={ purchase.priceInteger === 0 }
+			actions={ actions }
+			key={ 'domain-' + domain }
+		/>
+	);
 };
 
 export default ProductDomain;

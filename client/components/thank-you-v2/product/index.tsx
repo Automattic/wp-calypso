@@ -1,4 +1,5 @@
 import { Spinner } from '@automattic/components';
+import classNames from 'classnames';
 import { translate } from 'i18n-calypso';
 import { useEffect, useState } from 'react';
 
@@ -10,6 +11,7 @@ export type ThankYouProductProps = {
 	icon?: string;
 	actions?: React.ReactNode;
 	preview?: React.ReactNode;
+	isFree?: boolean;
 	isLoading?: boolean;
 };
 
@@ -19,6 +21,7 @@ const ThankYouProduct = ( {
 	icon,
 	actions,
 	preview,
+	isFree = false,
 	isLoading = false,
 }: ThankYouProductProps ) => {
 	const [ shouldShowLoader, setShouldShowLoader ] = useState( isLoading );
@@ -28,7 +31,7 @@ const ThankYouProduct = ( {
 	}, [ isLoading ] );
 
 	return (
-		<li className="thank-you__product">
+		<li className={ classNames( 'thank-you__product', { 'is-free': isFree } ) }>
 			{ icon && (
 				<img
 					className="thank-you__product-icon"

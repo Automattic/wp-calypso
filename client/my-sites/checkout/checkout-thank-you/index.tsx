@@ -578,8 +578,6 @@ export class CheckoutThankYou extends Component<
 		/** REFACTORED REDESIGN **/
 
 		if ( isRefactored( this.props ) ) {
-			// isSimplified = true;
-
 			let pageContent = null;
 
 			if ( ! wasBulkDomainTransfer && isDomainOnly( purchases ) ) {
@@ -594,7 +592,7 @@ export class CheckoutThankYou extends Component<
 					<Main className="is-redesign-v2">
 						<PageViewTracker { ...this.getAnalyticsProperties() } title="Checkout Thank You" />
 
-						{ this.isDataLoaded && siteId && <QuerySitePurchases siteId={ siteId } /> }
+						{ this.isDataLoaded() && siteId && <QuerySitePurchases siteId={ siteId } /> }
 
 						<MasterbarStyled
 							onClick={ () => page( `/home/${ siteSlug ?? '' }` ) }

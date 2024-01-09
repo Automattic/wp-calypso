@@ -26,16 +26,20 @@ const ThankYouDetail = ( {
 
 	return (
 		<div className="thank-you__detail">
-			<h3 className="thank-you__detail-title">{ title }</h3>
-			<div className="thank-you__detail-description">{ description }</div>
-			<Button
-				className="thank-you__detail-button"
-				href={ localizeUrl( href ) }
-				onClick={ onClick ?? noop }
-				target={ isExternal ? '_blank' : '_self' }
-			>
-				{ buttonText } { isExternal && <Gridicon icon="external" /> }
-			</Button>
+			{ title && <h3 className="thank-you__detail-title">{ title }</h3> }
+
+			{ description && <div className="thank-you__detail-description">{ description }</div> }
+
+			{ buttonText && (
+				<Button
+					className="thank-you__detail-button"
+					href={ localizeUrl( href ) }
+					onClick={ onClick ?? noop }
+					target={ isExternal ? '_blank' : '_self' }
+				>
+					{ buttonText } { isExternal && <Gridicon icon="external" /> }
+				</Button>
+			) }
 		</div>
 	);
 };

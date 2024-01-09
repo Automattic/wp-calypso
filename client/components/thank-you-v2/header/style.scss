@@ -53,5 +53,35 @@
 
 .thank-you__header-buttons {
 	margin-top: 32px;
-	margin-bottom: 20px;
+
+	.is-secondary {
+		border: 1px solid var(--studio-gray-10);
+		box-shadow: none;
+		color: var(--studio-gray-100);
+		margin-right: 20px;
+
+		@media (max-width: $break-medium ) {
+			margin-right: 0;
+		}
+
+		&:hover {
+			border: 1px solid var(--studio-gray-70);
+		}
+	}
+
+	.components-button {
+		border-radius: 4px;
+		font-weight: 500;
+		font-size: 0.875rem;
+		height: 48px;
+		justify-content: center;
+		padding: 10px 24px;
+		width: 240px;
+		margin-bottom: 20px;
+
+		@media (max-width: $break-medium ) {
+			width: 100%;
+			justify-content: center;
+		}
+	}
 }
