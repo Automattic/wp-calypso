@@ -4,7 +4,7 @@ describe( 'isJetpackConnectionUnhealthy()', () => {
 	test( 'should return false if the site may have Jetpack connection problem but was not validated yet', () => {
 		const stateIn = {
 			jetpackConnectionHealth: {
-				123456: { connectionHealth: { jetpack_connection_problem: true, error: '' } },
+				123456: { connectionHealth: { jetpack_connection_problem: true } },
 			},
 		};
 		const siteId = 123456;
