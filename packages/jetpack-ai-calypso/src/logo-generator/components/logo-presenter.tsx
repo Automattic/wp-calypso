@@ -20,7 +20,7 @@ import type React from 'react';
 
 const SaveInLibraryButton: React.FC = () => {
 	const { saveLogo, selectedLogo, isSavingLogoToLibrary: saving } = useLogoGenerator();
-	const saved = !! selectedLogo.mediaId;
+	const saved = !! selectedLogo?.mediaId;
 
 	const handleClick = async () => {
 		if ( ! saved && ! saving ) {
