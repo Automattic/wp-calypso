@@ -725,7 +725,7 @@ export class SiteSettingsFormGeneral extends Component {
 					onButtonClick={ handleSubmitForm }
 					showButton
 					title={ translate(
-						'Privacy {{infoPopover}} Control who can view your site. {{a}} Learn more {{/a}}. {{/infoPopover}}',
+						'Privacy {{infoPopover}} Control who can view your site. {{a}}Learn more{{/a}}. {{/infoPopover}}',
 						{
 							components: {
 								a: <InlineSupportLink showIcon={ false } supportContext="privacy" />,
