@@ -29,7 +29,7 @@ import { dispatch } from '@wordpress/data';
 import { __ } from '@wordpress/i18n';
 import { addQueryArgs } from '@wordpress/url';
 import { translate } from 'i18n-calypso';
-import { Dispatch, SetStateAction } from 'react';
+import { Dispatch, ReactNode, SetStateAction } from 'react';
 import { NavigationControls } from 'calypso/landing/stepper/declarative-flow/internals/types';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { ADD_TIER_PLAN_HASH } from 'calypso/my-sites/earn/memberships/constants';
@@ -63,10 +63,16 @@ interface EnhancedTask extends Task {
 	useCalypsoPath?: boolean;
 }
 
-type TaskId = 'setup_free' | 'setup_blog' | 'setup_newsletter' | 'design_edited';
+type TaskId = 'setup_free' | 'setup_blog' | 'setup_newsletter' | 'design_edited' | 'plan_selected';
 interface TaskContext {
 	siteInfoQueryArgs?: { siteId?: number; siteSlug?: string | null };
+	displayGlobalStylesWarning?: boolean;
+	shouldDisplayWarning?: boolean;
+	globalStylesMinimumPlan?: string;
+	isVideoPressFlowWithUnsupportedPlan?: boolean;
+	getPlanTaskSubtitle: ( task: Task ) => ReactNode;
 }
+
 type TaskAction = ( task: Task, flow: string, context: TaskContext ) => EnhancedTask;
 type TaskActionTable = Record< TaskId, TaskAction >;
 
@@ -106,6 +112,42 @@ const actions: TaskActionTable = {
 				canvas: 'edit',
 			} ),
 			useCalypsoPath: true,
+		} ) satisfies EnhancedTask,
+
+	plan_selected: (
+		task,
+		flow,
+		{
+			siteInfoQueryArgs,
+			getPlanTaskSubtitle,
+			displayGlobalStylesWarning,
+			shouldDisplayWarning,
+			globalStylesMinimumPlan,
+			isVideoPressFlowWithUnsupportedPlan,
+		}
+	) =>
+		( {
+			...task,
+			actionDispatch: () => {
+				recordTaskClickTracksEvent( flow, task.completed, task.id );
+				if ( displayGlobalStylesWarning ) {
+					recordTracksEvent( 'calypso_launchpad_global_styles_gating_plan_selected_task_clicked', {
+						flow,
+					} );
+				}
+			},
+			calypso_path: addQueryArgs( `/plans/${ siteInfoQueryArgs?.siteSlug }`, {
+				...( shouldDisplayWarning && {
+					plan: globalStylesMinimumPlan,
+					feature: isVideoPressFlowWithUnsupportedPlan
+						? FEATURE_VIDEO_UPLOADS
+						: FEATURE_STYLE_CUSTOMIZATION,
+				} ),
+			} ),
+			completed: task.completed && ! isVideoPressFlowWithUnsupportedPlan,
+			subtitle: getPlanTaskSubtitle( task ),
+			useCalypsoPath: true,
+		} ) satisfies EnhancedTask,
 		} ) satisfies EnhancedTask,
 } as const;
 
@@ -322,6 +364,11 @@ export function getEnhancedTasks( {
 	};
 	const context: TaskContext = {
 		siteInfoQueryArgs,
+		displayGlobalStylesWarning,
+		shouldDisplayWarning,
+		globalStylesMinimumPlan,
+		isVideoPressFlowWithUnsupportedPlan,
+		getPlanTaskSubtitle,
 	};
 
 	return ( tasks || [] ).map( ( task ) => {
@@ -331,37 +378,8 @@ export function getEnhancedTasks( {
 			case 'setup_blog':
 			case 'setup_newsletter':
 			case 'design_edited':
-				return getTaskDefinition( task, flow, context );
 			case 'plan_selected':
-				/* eslint-disable no-case-declarations */
-				const openPlansPage = () => {
-					recordTaskClickTracksEvent( flow, task.completed, task.id );
-					if ( displayGlobalStylesWarning ) {
-						recordTracksEvent(
-							'calypso_launchpad_global_styles_gating_plan_selected_task_clicked',
-							{ flow }
-						);
-					}
-					const plansUrl = addQueryArgs( `/plans/${ siteSlug }`, {
-						...( shouldDisplayWarning && {
-							plan: globalStylesMinimumPlan,
-							feature: isVideoPressFlowWithUnsupportedPlan
-								? FEATURE_VIDEO_UPLOADS
-								: FEATURE_STYLE_CUSTOMIZATION,
-						} ),
-					} );
-					window.location.assign( plansUrl );
-				};
-
-				const completed = task.completed && ! isVideoPressFlowWithUnsupportedPlan;
-
-				taskData = {
-					actionDispatch: openPlansPage,
-					completed,
-					subtitle: getPlanTaskSubtitle( task ),
-				};
-				/* eslint-enable no-case-declarations */
-				break;
+				return getTaskDefinition( task, flow, context );
 			case 'plan_completed':
 				taskData = {
 					actionDispatch: () => {
