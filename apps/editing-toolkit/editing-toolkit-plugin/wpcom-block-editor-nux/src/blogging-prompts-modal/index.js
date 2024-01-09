@@ -1,5 +1,4 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
-import { Gridicon } from '@automattic/components';
 import apiFetch from '@wordpress/api-fetch';
 import { createBlock } from '@wordpress/blocks';
 import { Button, Modal } from '@wordpress/components';
@@ -8,6 +7,7 @@ import { addQueryArgs, getQueryArg } from '@wordpress/url';
 import { useTranslate } from 'i18n-calypso';
 import moment from 'moment';
 import { useEffect, useState } from 'react';
+import { ArrowLeftIcon, ArrowRightIcon } from './icons';
 
 import './style.scss';
 
@@ -73,7 +73,7 @@ export const BloggingPromptsModalInner = () => {
 						variant="secondary"
 						className="blogging-prompts-modal__prompt-navigation-button"
 					>
-						<Gridicon icon="arrow-left" size={ 18 } />
+						<ArrowLeftIcon />
 					</Button>
 					<h2 className="blogging-prompts-modal__prompt-text">{ prompts[ promptIndex ]?.text }</h2>
 					<Button
@@ -82,7 +82,7 @@ export const BloggingPromptsModalInner = () => {
 						variant="secondary"
 						className="blogging-prompts-modal__prompt-navigation-button"
 					>
-						<Gridicon icon="arrow-right" size={ 18 } />
+						<ArrowRightIcon />
 					</Button>
 				</div>
 				<Button onClick={ selectPrompt } variant="secondary">
