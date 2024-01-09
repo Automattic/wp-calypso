@@ -81,6 +81,8 @@
 		&,
 		&:visited,
 		&:hover span.name {
+			display: flex;
+			align-items: center;
 			color: var(--color-text);
 		}
 		.components-flex {
