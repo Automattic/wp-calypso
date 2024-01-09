@@ -59,6 +59,26 @@ interface GetEnhancedTasksProps {
 }
 
 const PLANS_LIST = getPlans();
+interface EnhancedTask extends Task {
+	useCalypsoPath?: boolean;
+}
+type TaskId = 'setup_free';
+type TaskAction = ( task: Task, flow: string ) => EnhancedTask;
+type TaskActionTable = Record< TaskId, TaskAction >;
+
+const actions: TaskActionTable = {
+	setup_free: ( task, flow ) => {
+		return {
+			...task,
+			actionDispatch: () => recordTaskClickTracksEvent( flow, task.completed, task.id ),
+			useCalypsoPath: true,
+		} satisfies EnhancedTask;
+	},
+} as const;
+
+const getTaskDefinition = ( task: Task, flow: string ) => {
+	return actions[ task.id as TaskId ]( task, flow );
+};
 
 /**
  * Some attributes of these enhanced tasks will soon be fetched through a WordPress REST
@@ -272,15 +292,7 @@ export function getEnhancedTasks( {
 		let taskData = {};
 		switch ( task.id ) {
 			case 'setup_free':
-				taskData = {
-					actionDispatch: () => {
-						recordTaskClickTracksEvent( flow, task.completed, task.id );
-						window.location.assign(
-							addQueryArgs( `/setup/${ flow }/freePostSetup`, siteInfoQueryArgs )
-						);
-					},
-				};
-				break;
+				return getTaskDefinition( task, flow );
 			case 'setup_blog':
 				taskData = {
 					actionDispatch: () => {
