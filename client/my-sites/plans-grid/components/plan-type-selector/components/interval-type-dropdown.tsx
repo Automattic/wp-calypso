@@ -16,7 +16,6 @@ const AddOnOption = styled.a`
 	display: flex;
 	.discount {
 		color: var( --studio-green-50 );
-		display: inline-block;
 		display: flex;
 		line-height: 14px;
 		border-radius: 3px;
@@ -24,7 +23,7 @@ const AddOnOption = styled.a`
 	}
 	.name {
 		margin-right: 4px;
-		line-height: 19px;
+		line-height: 20px;
 	}
 	.is-highlighted & {
 		background-color: #f6f7f7;
