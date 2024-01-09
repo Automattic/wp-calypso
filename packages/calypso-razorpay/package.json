@@ -36,7 +36,6 @@
 	"homepage": "https://github.com/Automattic/wp-calypso/tree/HEAD/packages/calypso-stripe#readme",
 	"dependencies": {
 		"debug": "^4.3.3",
-		"razorpay": "^2.9.2",
 		"react": "^18.2.0",
 		"react-dom": "^18.2.0"
 	},
