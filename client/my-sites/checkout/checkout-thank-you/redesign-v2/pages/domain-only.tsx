@@ -1,6 +1,8 @@
+import { Button } from '@wordpress/components';
 import { translate } from 'i18n-calypso';
 import emailImage from 'calypso/assets/images/thank-you-upsell/email.svg';
 import ThankYouV2 from 'calypso/components/thank-you-v2';
+import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { emailManagement } from 'calypso/my-sites/email/paths';
 import { useSelector } from 'calypso/state';
 import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';
@@ -55,9 +57,16 @@ export const DomainOnlyThankYou: React.FC< DomainOnlyThankYouContainerProps > = 
 		),
 		meshColor: 'blue',
 		icon: emailImage,
-		href: emailManagement( siteSlug ?? firstDomain, firstDomain ),
-		buttonText: translate( 'Add email' ),
-		trackEvent: 'calypso_domain_only_thank_you_professional_email_click',
+		action: (
+			<Button
+				href={ emailManagement( siteSlug ?? firstDomain, firstDomain ) }
+				onClick={ () =>
+					recordTracksEvent( 'calypso_domain_only_thank_you_professional_email_click' )
+				}
+			>
+				{ translate( 'Add email' ) }
+			</Button>
+		),
 	};
 
 	const products = purchases.filter( predicate ).map( ( purchase, index ) => {

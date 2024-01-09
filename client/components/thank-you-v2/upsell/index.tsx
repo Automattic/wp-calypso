@@ -1,5 +1,4 @@
 import styled from '@emotion/styled';
-import { Button } from '@wordpress/components';
 import { translate } from 'i18n-calypso';
 import blueMeshDesktopImg from 'calypso/assets/images/thank-you-upsell/mesh-blue-desktop.png';
 import blueMeshMobileImg from 'calypso/assets/images/thank-you-upsell/mesh-blue-mobile.png';
@@ -9,7 +8,6 @@ import pinkMeshDesktopImg from 'calypso/assets/images/thank-you-upsell/mesh-pink
 import pinkMeshMobileImg from 'calypso/assets/images/thank-you-upsell/mesh-pink-mobile.png';
 import purpleMeshDesktopImg from 'calypso/assets/images/thank-you-upsell/mesh-purple-desktop.png';
 import purpleMeshMobileImg from 'calypso/assets/images/thank-you-upsell/mesh-purple-mobile.png';
-import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 
 import './style.scss';
 
@@ -37,12 +35,9 @@ type MeshColor = keyof typeof validMeshColors;
 export type ThankYouUpsellProps = {
 	title: string;
 	description: string;
-	trackEvent: string;
 	icon: string;
-	buttonText: string;
-	href: string;
 	meshColor?: MeshColor;
-	onClick?: () => void;
+	action?: React.ReactNode;
 };
 
 const ContentDiv = styled( 'div' )< { meshColor: MeshColor } >`
@@ -67,20 +62,10 @@ const ContentDiv = styled( 'div' )< { meshColor: MeshColor } >`
 const ThankYouUpsell = ( {
 	title,
 	description,
-	trackEvent,
 	icon,
-	buttonText,
-	href,
 	meshColor = 'blue',
-	onClick,
+	action,
 }: ThankYouUpsellProps ) => {
-	const handleClick = () => {
-		recordTracksEvent( trackEvent );
-		if ( onClick ) {
-			onClick();
-		}
-	};
-
 	return (
 		<div className="checkout-thank-you__upsell">
 			<div className="checkout-thank-you__upsell-title">
@@ -100,11 +85,7 @@ const ThankYouUpsell = ( {
 						</div>
 					</div>
 				</div>
-				<div className="checkout-thank-you__upsell-content-actions">
-					<Button variant="primary" href={ href } onClick={ handleClick }>
-						{ buttonText }
-					</Button>
-				</div>
+				<div className="checkout-thank-you__upsell-content-actions">{ action }</div>
 			</ContentDiv>
 		</div>
 	);
