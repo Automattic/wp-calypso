@@ -79,7 +79,6 @@ const MiniCarousel = ( { slug, isSitePrivate } ) => {
 
 	const showGoogleAnalyticsPromo =
 		! useSelector( isBlockDismissed( EVENT_GOOGLE_ANALYTICS_BANNER_DISMISS ) ) &&
-		! jetpackNonAtomic &&
 		( isFreePlan( currentPlanSlug ) || isPersonalPlan( currentPlanSlug ) );
 
 	const viewEvents = useMemo( () => {
