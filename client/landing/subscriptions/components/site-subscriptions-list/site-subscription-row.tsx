@@ -1,5 +1,6 @@
 import { Gridicon } from '@automattic/components';
 import { Reader, SubscriptionManager } from '@automattic/data-stores';
+import { localizeUrl } from '@automattic/i18n-utils';
 import { __experimentalHStack as HStack } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import { useMemo, useRef } from 'react';
@@ -101,7 +102,7 @@ const SiteSubscriptionRow = ( {
 
 	const hostname = useMemo( () => {
 		try {
-			return new URL( url ).hostname;
+			return new URL( localizeUrl( url ) ).hostname;
 		} catch ( e ) {
 			return '';
 		}
