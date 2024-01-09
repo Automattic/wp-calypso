@@ -39,7 +39,7 @@ export default function PremiumGlobalStylesUpgradeModal( {
 	const translate = useTranslate();
 	const premiumPlanProduct = useSelector( ( state ) => getProductBySlug( state, PLAN_PREMIUM ) );
 	const translations = useGlobalStylesUpgradeTranslations( { numOfSelectedGlobalStyles } );
-	const isPremiumPlanProductLoading = ! premiumPlanProduct;
+	const isPremiumPlanProductLoaded = !! premiumPlanProduct;
 	const pricingMeta = usePricingMetaForGridPlans( {
 		planSlugs: [ PLAN_PREMIUM ],
 		storageAddOns: null,
@@ -48,6 +48,8 @@ export default function PremiumGlobalStylesUpgradeModal( {
 	const pricing = pricingMeta?.[ PLAN_PREMIUM ];
 	const isPricingLoaded =
 		pricing?.currencyCode && pricing?.originalPrice.monthly && pricing?.originalPrice.full;
+
+	const isLoaded = isPremiumPlanProductLoaded && isPricingLoaded;
 
 	const featureList = (
 		<div className="upgrade-modal__included">
@@ -68,15 +70,13 @@ export default function PremiumGlobalStylesUpgradeModal( {
 			<QueryProductsList />
 			<Dialog
 				className={ classNames( 'upgrade-modal', 'premium-global-styles-upgrade-modal', {
-					loading: isPremiumPlanProductLoading,
+					loading: isPremiumPlanProductLoaded,
 				} ) }
 				isFullScreen
 				isVisible={ isOpen }
 				onClose={ () => closeModal() }
 			>
-				{ isPremiumPlanProductLoading ? (
-					<LoadingEllipsis />
-				) : (
+				{ isLoaded ? (
 					<>
 						<div className="upgrade-modal__col">
 							<h1 className="upgrade-modal__heading">{ translate( 'Unlock premium styles' ) }</h1>
@@ -154,6 +154,8 @@ export default function PremiumGlobalStylesUpgradeModal( {
 							<ScreenReaderText>{ translate( 'Close modal' ) }</ScreenReaderText>
 						</Button>
 					</>
+				) : (
+					<LoadingEllipsis />
 				) }
 			</Dialog>
 		</>
