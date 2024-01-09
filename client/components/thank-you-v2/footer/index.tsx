@@ -1,6 +1,5 @@
 import { Button, Gridicon } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
-import PropTypes from 'prop-types';
 import { isOutsideCalypso } from 'calypso/lib/url';
 
 import './style.scss';
@@ -10,7 +9,7 @@ export type ThankYouDetailProps = {
 	description?: string;
 	buttonText?: string;
 	href?: string;
-	onClick?: PropTypes.func;
+	onClick?: () => void;
 };
 
 const ThankYouDetail = ( {

@@ -6,6 +6,7 @@ import { translate } from 'i18n-calypso';
 import { useState } from 'react';
 import ThankYouProduct from 'calypso/components/thank-you-v2/product';
 import { domainManagementList, domainManagementRoot } from 'calypso/my-sites/domains/paths';
+import type { ReceiptPurchase } from 'calypso/state/receipts/types';
 
 type ProductDomainProps = {
 	purchase?: ReceiptPurchase;
