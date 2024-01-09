@@ -303,9 +303,8 @@ function useAddProductFromBillingIntent( {
 
 			if ( cartProduct ) {
 				productsForCart.push( cartProduct );
-			}
-
-			if ( productsForCart.length < 1 ) {
+				dispatch( { type: 'PRODUCTS_ADD', products: productsForCart } );
+			} else {
 				debug( 'creating products from billing intent failed' );
 				dispatch( {
 					type: 'PRODUCTS_ADD_ERROR',
@@ -313,10 +312,7 @@ function useAddProductFromBillingIntent( {
 						textOnly: true,
 					} ),
 				} );
-				return;
 			}
-
-			dispatch( { type: 'PRODUCTS_ADD', products: productsForCart } );
 		} )();
 	}, [ addHandler, dispatch, intentId, translate ] );
 }
