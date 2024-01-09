@@ -10,7 +10,7 @@ import { shuffle } from '@automattic/js-utils';
 import classnames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import PropTypes from 'prop-types';
-import { useEffect, useLayoutEffect, useMemo, useState, useRef } from 'react';
+import { useEffect, useLayoutEffect, useMemo, useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import FormattedHeader from 'calypso/components/formatted-header';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
@@ -45,7 +45,6 @@ export default function DesignPickerStep( props ) {
 	const dispatch = useDispatch();
 	const translate = useTranslate();
 
-	const [ selectedDesign ] = useState( null );
 	const scrollTop = useRef( 0 );
 
 	const getThemeFilters = () => {
@@ -157,7 +156,7 @@ export default function DesignPickerStep( props ) {
 		upgradePlan();
 	}
 
-	function submitDesign( _selectedDesign = selectedDesign ) {
+	function submitDesign( _selectedDesign ) {
 		recordTracksEvent( 'calypso_signup_select_design', getEventPropsByDesign( _selectedDesign ) );
 		props.goToNextStep();
 	}
