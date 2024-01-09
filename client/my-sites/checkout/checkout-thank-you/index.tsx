@@ -32,8 +32,10 @@ import { localize } from 'i18n-calypso';
 import { Component } from 'react';
 import { connect } from 'react-redux';
 import PlanThankYouCard from 'calypso/blocks/plan-thank-you-card';
+import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
 import HappinessSupport from 'calypso/components/happiness-support';
 import Main from 'calypso/components/main';
+import MasterbarStyled from 'calypso/components/masterbar-styled';
 import Notice from 'calypso/components/notice';
 import PurchaseDetail from 'calypso/components/purchase-detail';
 import WordPressLogo from 'calypso/components/wordpress-logo';
@@ -83,7 +85,6 @@ import BusinessPlanDetails from './business-plan-details';
 import ChargebackDetails from './chargeback-details';
 import DomainMappingDetails from './domain-mapping-details';
 import DomainRegistrationDetails from './domain-registration-details';
-import DomainOnlyThankYou from './domains/domain-only-thank-you-redesign-v2';
 import DomainThankYou from './domains/domain-thank-you';
 import EcommercePlanDetails from './ecommerce-plan-details';
 import FailedPurchaseDetails from './failed-purchase-details';
@@ -94,15 +95,16 @@ import JetpackPlanDetails from './jetpack-plan-details';
 import PersonalPlanDetails from './personal-plan-details';
 import PremiumPlanDetails from './premium-plan-details';
 import ProPlanDetails from './pro-plan-details';
+import { DomainOnlyThankYou } from './redesign-v2/pages/domain-only';
 import CheckoutMasterbar from './redesign-v2/sections/CheckoutMasterbar';
 import Footer from './redesign-v2/sections/Footer';
-import { isRedesignV2 } from './redesign-v2/utils';
+import { isRedesignV2, isRefactored } from './redesign-v2/utils';
 import SiteRedirectDetails from './site-redirect-details';
 import StarterPlanDetails from './starter-plan-details';
 import TransferPending from './transfer-pending';
 import './style.scss';
 import './redesign-v2/style.scss';
-import { isBulkDomainTransfer } from './utils';
+import { getDomainPurchaseType, isBulkDomainTransfer, isDomainOnly } from './utils';
 import type { SitesPlansResult } from '../src/hooks/product-variants';
 import type { WithCamelCaseSlug, WithSnakeCaseSlug } from '@automattic/calypso-products';
 import type { OnboardActions, SiteDetails } from '@automattic/data-stores';
@@ -573,6 +575,40 @@ export class CheckoutThankYou extends Component<
 			/* eslint-enable wpcalypso/jsx-classname-namespace */
 		}
 
+		/** REFACTORED REDESIGN **/
+
+		if ( isRefactored( this.props ) ) {
+			let pageContent = null;
+
+			if ( ! wasBulkDomainTransfer && isDomainOnly( purchases ) ) {
+				pageContent = <DomainOnlyThankYou purchases={ purchases } />;
+			}
+
+			if ( pageContent ) {
+				const siteId = this.props.selectedSite?.ID;
+				const siteSlug = this.props.selectedSite?.slug;
+
+				return (
+					<Main className="is-redesign-v2">
+						<PageViewTracker { ...this.getAnalyticsProperties() } title="Checkout Thank You" />
+
+						{ this.isDataLoaded() && siteId && <QuerySitePurchases siteId={ siteId } /> }
+
+						<MasterbarStyled
+							onClick={ () => page( `/home/${ siteSlug ?? '' }` ) }
+							backText={ translate( 'Back to dashboard' ) }
+							canGoBack={ !! siteId }
+							showContact={ true }
+						/>
+
+						{ pageContent }
+					</Main>
+				);
+			}
+		}
+
+		/** LEGACY - The ultimate goal is to remove everything below **/
+
 		if ( wasEcommercePlanPurchased ) {
 			// Continue to show the TransferPending progress bar until both the Atomic transfer is complete _and_ we've verified WooCommerce is finished installed.
 			if ( ! this.props.transferComplete || ! this.props.isWooCommerceInstalled ) {
@@ -616,7 +652,7 @@ export class CheckoutThankYou extends Component<
 				</Main>
 			);
 		} else if ( wasDomainProduct && ! wasBulkDomainTransfer ) {
-			const [ purchaseType, predicate ] = this.getDomainPurchaseType( purchases );
+			const [ purchaseType, predicate ] = getDomainPurchaseType( purchases );
 			const [ domainPurchase, domainName ] = findPurchaseAndDomain( purchases, predicate );
 
 			if ( selectedFeature === 'email-license' && domainName ) {
@@ -722,17 +758,6 @@ export class CheckoutThankYou extends Component<
 		}
 
 		return null;
-	}
-
-	getDomainPurchaseType( purchases: ReceiptPurchase[] ): [ string, FindPredicate ] {
-		const hasDomainMapping = purchases.some( isDomainMapping );
-
-		if ( hasDomainMapping && purchases.some( isDomainRegistration ) ) {
-			return [ 'REGISTRATION', isDomainRegistration ];
-		} else if ( hasDomainMapping ) {
-			return [ 'MAPPING', isDomainMapping ];
-		}
-		return [ 'TRANSFER', isDomainTransfer ];
 	}
 
 	startTransfer = ( event: { preventDefault: () => void } ) => {

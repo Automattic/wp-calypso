@@ -16,11 +16,6 @@ export const isRedesignV2 = ( props: CheckoutThankYouCombinedProps ) => {
 
 	const purchases = getPurchases( props );
 
-	// Domain only purchases.
-	if ( isDomainOnly( purchases ) ) {
-		return true;
-	}
-
 	// We are in the bulk domain transfer flow.
 	if ( isBulkDomainTransfer( purchases ) ) {
 		return true;
@@ -30,5 +25,26 @@ export const isRedesignV2 = ( props: CheckoutThankYouCombinedProps ) => {
 	if ( purchases.length === 1 ) {
 		return isWpComPlan( purchases[ 0 ].productSlug );
 	}
+	return false;
+};
+
+/**
+ * Determines whether the current checkout flow should use the refactored redesign.
+ * @returns {boolean}
+ */
+export const isRefactored = ( props: CheckoutThankYouCombinedProps ) => {
+	// Fallback to old design when there is a failed purchase.
+	const failedPurchases = getFailedPurchases( props );
+	if ( failedPurchases.length > 0 ) {
+		return false;
+	}
+
+	const purchases = getPurchases( props );
+
+	// Domain only purchases.
+	if ( isDomainOnly( purchases ) ) {
+		return true;
+	}
+
 	return false;
 };
