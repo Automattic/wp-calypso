@@ -75,6 +75,7 @@ interface StatsPersonalPurchaseProps {
 }
 
 const COMPONENT_CLASS_NAME = 'stats-purchase-single';
+const FLAGS_CHECKOUT_FLOWS_V2 = 'stats/checkout-flows-v2';
 
 const StatsUpgradeInstructions = () => {
 	const translate = useTranslate();
@@ -149,9 +150,13 @@ Thanks\n\n`;
 		setPurchaseTierQuantity( value );
 	}, [] );
 
+	const pageTitle = config.isEnabled( FLAGS_CHECKOUT_FLOWS_V2 )
+		? translate( 'Welcome to Jetpack Stats' )
+		: translate( 'Jetpack Stats' );
+
 	return (
 		<>
-			<h1>{ translate( 'Jetpack Stats' ) }</h1>
+			<h1>{ pageTitle }</h1>
 			{ ! isCommercialOwned && (
 				<>
 					<p>{ translate( 'The most advanced stats Jetpack has to offer.' ) }</p>
@@ -306,9 +311,13 @@ const StatsPersonalPurchase = ( {
 		page( `/stats/purchase/${ siteSlug }?productType=commercial&flags=stats/type-detection` );
 	};
 
+	const pageTitle = config.isEnabled( FLAGS_CHECKOUT_FLOWS_V2 )
+		? translate( 'Name your price for Jetpack Stats' )
+		: translate( 'Jetpack Stats' );
+
 	return (
 		<>
-			<h1>{ translate( 'Jetpack Stats' ) }</h1>
+			<h1>{ pageTitle }</h1>
 			<p>{ translate( 'The most advanced stats Jetpack has to offer.' ) }</p>
 			<PersonalPurchase
 				subscriptionValue={ subscriptionValue }
