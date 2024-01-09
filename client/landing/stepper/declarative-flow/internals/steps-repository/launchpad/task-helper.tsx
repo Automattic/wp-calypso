@@ -64,11 +64,10 @@ interface EnhancedTask extends Task {
 }
 
 type TaskId = 'setup_free' | 'setup_blog' | 'setup_newsletter' | 'design_edited';
-type TaskAction = (
-	task: Task,
-	flow: string,
-	siteInfoQueryArgs?: { siteId?: number; siteSlug?: string | null }
-) => EnhancedTask;
+interface TaskContext {
+	siteInfoQueryArgs?: { siteId?: number; siteSlug?: string | null };
+}
+type TaskAction = ( task: Task, flow: string, context: TaskContext ) => EnhancedTask;
 type TaskActionTable = Record< TaskId, TaskAction >;
 
 const actions: TaskActionTable = {
@@ -78,7 +77,8 @@ const actions: TaskActionTable = {
 			actionDispatch: () => recordTaskClickTracksEvent( flow, task.completed, task.id ),
 			useCalypsoPath: true,
 		} ) satisfies EnhancedTask,
-	setup_blog: ( task, flow, siteInfoQueryArgs ) =>
+
+	setup_blog: ( task, flow, { siteInfoQueryArgs } ) =>
 		( {
 			...task,
 			actionDispatch: () => recordTaskClickTracksEvent( flow, task.completed, task.id ),
@@ -86,7 +86,8 @@ const actions: TaskActionTable = {
 			disabled: task.completed && ! isBlogOnboardingFlow( flow ),
 			useCalypsoPath: true,
 		} ) satisfies EnhancedTask,
-	setup_newsletter: ( task, flow, siteInfoQueryArgs ) =>
+
+	setup_newsletter: ( task, flow, { siteInfoQueryArgs } ) =>
 		( {
 			...task,
 			actionDispatch: () => recordTaskClickTracksEvent( flow, task.completed, task.id ),
@@ -96,7 +97,8 @@ const actions: TaskActionTable = {
 			),
 			useCalypsoPath: true,
 		} ) satisfies EnhancedTask,
-	design_edited: ( task, flow, siteInfoQueryArgs ) =>
+
+	design_edited: ( task, flow, { siteInfoQueryArgs } ) =>
 		( {
 			...task,
 			actionDispatch: () => recordTaskClickTracksEvent( flow, task.completed, task.id ),
@@ -107,12 +109,8 @@ const actions: TaskActionTable = {
 		} ) satisfies EnhancedTask,
 } as const;
 
-const getTaskDefinition = (
-	task: Task,
-	flow: string,
-	siteInfoQueryArgs?: { siteId?: number; siteSlug?: string | null }
-) => {
-	return actions[ task.id as TaskId ]( task, flow, siteInfoQueryArgs );
+const getTaskDefinition = ( task: Task, flow: string, taskContext: TaskContext ) => {
+	return actions[ task.id as TaskId ]( task, flow, taskContext );
 };
 
 /**
@@ -322,6 +320,9 @@ export function getEnhancedTasks( {
 
 		submit?.();
 	};
+	const context: TaskContext = {
+		siteInfoQueryArgs,
+	};
 
 	return ( tasks || [] ).map( ( task ) => {
 		let taskData = {};
@@ -330,7 +331,7 @@ export function getEnhancedTasks( {
 			case 'setup_blog':
 			case 'setup_newsletter':
 			case 'design_edited':
-				return getTaskDefinition( task, flow, siteInfoQueryArgs );
+				return getTaskDefinition( task, flow, context );
 			case 'plan_selected':
 				/* eslint-disable no-case-declarations */
 				const openPlansPage = () => {
