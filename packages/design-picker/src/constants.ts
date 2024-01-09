@@ -87,6 +87,7 @@ export const ASSEMBLER_V2_DESIGN = {
 } as Design;
 
 export const FREE_THEME = 'free';
+export const PERSONAL_THEME = 'personal';
 export const PREMIUM_THEME = 'premium';
 export const DOT_ORG_THEME = 'dot-org';
 export const BUNDLED_THEME = 'bundled';

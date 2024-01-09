@@ -14,7 +14,7 @@ const DEFAULT_CLIENT_NOTICES_VISIBILITY = {
 	client_paid_plan_purchase_success: true,
 	client_free_plan_purchase_success: true,
 };
-const DEFAULT_NOTICES_VISIBILITY = {
+export const DEFAULT_NOTICES_VISIBILITY = {
 	...DEFAULT_CLIENT_NOTICES_VISIBILITY,
 	...DEFAULT_SERVER_NOTICES_VISIBILITY,
 };

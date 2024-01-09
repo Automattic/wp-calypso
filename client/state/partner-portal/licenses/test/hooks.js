@@ -402,10 +402,7 @@ describe( 'useTOSConsentMutation', () => {
 
 describe( 'useBillingDashboardQuery', () => {
 	function createQueryClient() {
-		const logger = {
-			error: jest.fn(),
-		};
-		return new QueryClient( { logger } );
+		return new QueryClient();
 	}
 
 	it( 'returns transformed request data', async () => {

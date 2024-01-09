@@ -1,5 +1,9 @@
 import config from '@automattic/calypso-config';
-import { InfiniteQueryObserverResult, useInfiniteQuery } from '@tanstack/react-query';
+import {
+	InfiniteQueryObserverResult,
+	keepPreviousData,
+	useInfiniteQuery,
+} from '@tanstack/react-query';
 import wpcom from 'calypso/lib/wp';
 import { SearchOptions } from 'calypso/my-sites/promote-post-i2/components/search-bar';
 import { PostQueryResult } from './types';
@@ -47,7 +51,7 @@ const usePostsQueryPaged = (
 	const searchQueryParams = getSearchOptionsQueryParams( searchOptions );
 	return useInfiniteQuery( {
 		queryKey: [ 'promote-post-posts', siteId, searchQueryParams ],
-		queryFn: async ( { pageParam = 1 } ) => {
+		queryFn: async ( { pageParam } ) => {
 			// Fetch blazable posts
 			const postsResponse = await queryPosts( siteId, `page=${ pageParam }${ searchQueryParams }` );
 
@@ -65,11 +69,12 @@ const usePostsQueryPaged = (
 		...queryOptions,
 		enabled: !! siteId,
 		retryDelay: 3000,
-		keepPreviousData: true,
+		placeholderData: keepPreviousData,
 		refetchOnWindowFocus: false,
 		meta: {
 			persist: false,
 		},
+		initialPageParam: 1,
 		getNextPageParam: ( lastPage ) => {
 			if ( lastPage.has_more_pages ) {
 				return lastPage.page + 1;

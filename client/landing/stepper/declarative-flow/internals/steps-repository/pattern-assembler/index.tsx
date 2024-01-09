@@ -377,13 +377,12 @@ const PatternAssembler = ( props: StepProps & NoticesProps ) => {
 			Promise.resolve()
 				.then( () =>
 					reduxDispatch(
-						activateOrInstallThenActivate(
-							themeId,
-							site?.ID,
-							'assembler',
-							false,
-							false
-						) as ThunkAction< PromiseLike< string >, any, any, AnyAction >
+						activateOrInstallThenActivate( themeId, site?.ID, 'assembler', false ) as ThunkAction<
+							PromiseLike< string >,
+							any,
+							any,
+							AnyAction
+						>
 					)
 				)
 				.then( ( activeThemeStylesheet: string ) =>

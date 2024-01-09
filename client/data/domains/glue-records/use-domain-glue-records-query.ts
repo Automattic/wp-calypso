@@ -51,6 +51,6 @@ export default function useDomainGlueRecordsQuery(
 		select: selectGlueRecords,
 		enabled: false,
 		staleTime: 5 * 60 * 1000,
-		cacheTime: 5 * 60 * 1000,
+		gcTime: 5 * 60 * 1000,
 	} );
 }
