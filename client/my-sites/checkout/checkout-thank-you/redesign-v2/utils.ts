@@ -32,3 +32,24 @@ export const isRedesignV2 = ( props: CheckoutThankYouCombinedProps ) => {
 	}
 	return false;
 };
+
+/**
+ * Determines whether the current checkout flow should use the refactored redesign.
+ * @returns {boolean}
+ */
+export const isRefactored = ( props: CheckoutThankYouCombinedProps ) => {
+	// Fallback to old design when there is a failed purchase.
+	const failedPurchases = getFailedPurchases( props );
+	if ( failedPurchases.length > 0 ) {
+		return false;
+	}
+
+	const purchases = getPurchases( props );
+
+	// Domain only purchases.
+	if ( isDomainOnly( purchases ) ) {
+		return true;
+	}
+
+	return false;
+};
