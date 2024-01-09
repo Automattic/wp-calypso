@@ -4,6 +4,7 @@
 		"allowJs": true,
 		"checkJs": false,
 		"declarationDir": "dist/types",
+		"jsxImportSource": "react",
 		"outDir": "dist/esm",
 		"rootDir": "src"
 	},

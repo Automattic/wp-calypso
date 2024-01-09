@@ -1,4 +1,4 @@
-import { createRoot } from '@wordpress/element';
+import { createRoot } from 'react-dom/client';
 import { addApiMiddleware } from './api';
 import { Editor } from './editor';
 import { loadBlocksWithCustomizations } from './load-blocks';
@@ -16,7 +16,7 @@ export const attachGutenberg = (
 	isRTL = false
 ) => {
 	const editor = document.createElement( 'div' );
-	editor.id = 'editor__wrapper';
+	editor.className = 'verbum-editor-wrapper';
 
 	// Insert after the textarea, and hide it
 	textarea.after( editor );
