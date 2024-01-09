@@ -71,6 +71,38 @@ const setupStore = ( { site = defaultSite, theme = defaultTheme, asWpComTheme = 
 };
 
 describe( 'thanks-modal', () => {
+	describe( 'when activating an FSE theme', () => {
+		test( 'displays the "Customize site" call to action and links it to the site editor', async () => {
+			const adminURL = 'https://example.wordpress.com/';
+			const store = setupStore( {
+				site: {
+					...defaultSite,
+					options: { admin_url: adminURL },
+				},
+				theme: {
+					...defaultTheme,
+					theme_type: 'managed-external',
+					taxonomies: {
+						theme_feature: [ fseThemeFeature ],
+					},
+				},
+			} );
+
+			const encodedURL = `${ adminURL }site-editor.php?calypso_origin=${ encodeURIComponent(
+				defaultSite?.URL
+			) }`;
+
+			render( <TestComponent store={ store } /> );
+
+			await waitFor( () => {
+				const editSiteCallToAction = screen.getByText( 'Customize site' );
+
+				expect( editSiteCallToAction ).toBeInTheDocument();
+				expect( editSiteCallToAction.closest( 'a' ) ).toHaveAttribute( 'href', encodedURL );
+			} );
+		} );
+	} );
+
 	describe( 'when activating an FSE AND Dotcom theme', () => {
 		test( 'does not display the modal since it will redirect to `/marketplace/thank-you`', async () => {
 			const store = setupStore( {
@@ -120,6 +152,29 @@ describe( 'thanks-modal', () => {
 			await waitFor( () => {
 				const editSiteCallToAction = screen.queryByText( 'Customize site' );
 				expect( editSiteCallToAction ).not.toBeInTheDocument();
+			} );
+		} );
+	} );
+
+	describe( 'when activating a non-FSE theme that does not have a front page', () => {
+		test( 'displays the "Customize site" call to action and links it to the customizer', async () => {
+			const store = setupStore( {
+				theme: {
+					...defaultTheme,
+					theme_type: 'managed-external',
+				},
+			} );
+
+			render( <TestComponent store={ store } /> );
+
+			await waitFor( () => {
+				const customizeSiteCallToAction = screen.getByText( 'Customize site' );
+
+				expect( customizeSiteCallToAction ).toBeInTheDocument();
+				expect( customizeSiteCallToAction.closest( 'a' ) ).toHaveAttribute(
+					'href',
+					'/customize/example.com'
+				);
 			} );
 		} );
 	} );
