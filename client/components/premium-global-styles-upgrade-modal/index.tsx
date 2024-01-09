@@ -1,11 +1,5 @@
 import { PLAN_PREMIUM } from '@automattic/calypso-products';
-import {
-	Button,
-	Gridicon,
-	LoadingPlaceholder,
-	Dialog,
-	ScreenReaderText,
-} from '@automattic/components';
+import { Button, Gridicon, Dialog, ScreenReaderText } from '@automattic/components';
 import { formatCurrency } from '@automattic/format-currency';
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
@@ -70,7 +64,7 @@ export default function PremiumGlobalStylesUpgradeModal( {
 			<QueryProductsList />
 			<Dialog
 				className={ classNames( 'upgrade-modal', 'premium-global-styles-upgrade-modal', {
-					loading: isPremiumPlanProductLoaded,
+					loading: ! isLoaded,
 				} ) }
 				isFullScreen
 				isVisible={ isOpen }
@@ -107,41 +101,31 @@ export default function PremiumGlobalStylesUpgradeModal( {
 										args: { planTitle: translations.planTitle },
 									} ) }
 								</div>
-								{ isPricingLoaded ? (
-									<PlanPrice
-										className="upgrade-modal__plan-price"
-										currencyCode={ pricing?.currencyCode }
-										rawPrice={ pricing?.originalPrice?.monthly }
-										displayPerMonthNotation={ false }
-										isLargeCurrency
-										isSmallestUnit
-									/>
-								) : (
-									<LoadingPlaceholder style={ { height: '48px' } } />
-								) }
+								<PlanPrice
+									className="upgrade-modal__plan-price"
+									currencyCode={ pricing?.currencyCode }
+									rawPrice={ pricing?.originalPrice?.monthly }
+									displayPerMonthNotation={ false }
+									isLargeCurrency
+									isSmallestUnit
+								/>
 								<div className="upgrade-modal__plan-billing-time-frame">
 									{ translate(
 										'per month, {{span}}%(rawPrice)s{{/span}} billed annually, excl. taxes',
 										{
 											args: {
-												rawPrice: isPricingLoaded
-													? formatCurrency(
-															pricing?.originalPrice.full ?? 0,
-															pricing?.currencyCode ?? '',
-															{
-																stripZeros: true,
-																isSmallestUnit: true,
-															}
-													  )
-													: '',
+												rawPrice: formatCurrency(
+													pricing?.originalPrice.full ?? 0,
+													pricing?.currencyCode ?? '',
+													{
+														stripZeros: true,
+														isSmallestUnit: true,
+													}
+												),
 											},
 											comment: 'excl. taxes is short for excluding taxes',
 											components: {
-												span: isPricingLoaded ? (
-													<span />
-												) : (
-													<LoadingPlaceholder style={ { display: 'inline-block', width: '30%' } } />
-												),
+												span: <span />,
 											},
 										}
 									) }
