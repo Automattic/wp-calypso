@@ -19,9 +19,9 @@ describe( 'getJetpackConnectionHealthRequestError()', () => {
 		};
 		const siteId = 123456;
 		const output = getJetpackConnectionHealthRequestError( stateIn, siteId );
-		expect( output ).toBe( '' );
+		expect( output ).toBe( null );
 	} );
-	test( 'should return an empty string if site id doesnt exist', () => {
+	test( 'should return null if site id doesnt exist', () => {
 		const stateIn = {
 			jetpackConnectionHealth: {
 				123456: {},
@@ -29,6 +29,12 @@ describe( 'getJetpackConnectionHealthRequestError()', () => {
 		};
 		const siteId = 456;
 		const output = getJetpackConnectionHealthRequestError( stateIn, siteId );
-		expect( output ).toBe( '' );
+		expect( output ).toBe( null );
+	} );
+	test( 'should not break if jetpackConnectionHealth object is missing', () => {
+		const stateIn = {};
+		const siteId = 123456;
+		const output = getJetpackConnectionHealthRequestError( stateIn, siteId );
+		expect( output ).toBe( null );
 	} );
 } );

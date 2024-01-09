@@ -65,4 +65,11 @@ describe( 'shouldRequestJetpackConnectionHealthStatus()', () => {
 		const output = shouldRequestJetpackConnectionHealthStatus( stateIn, siteId );
 		expect( output ).toBe( false );
 	} );
+
+	test( 'should not break if jetpackConnectionHealth object is missing', () => {
+		const stateIn = {};
+		const siteId = 123456;
+		const output = shouldRequestJetpackConnectionHealthStatus( stateIn, siteId );
+		expect( output ).toBe( false );
+	} );
 } );

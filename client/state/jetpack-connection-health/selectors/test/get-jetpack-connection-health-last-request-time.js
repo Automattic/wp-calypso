@@ -11,12 +11,18 @@ describe( 'getJetpackConnectionHealthRequestError()', () => {
 		const output = getJetpackConnectionHealthLastRequestTime( stateIn, siteId );
 		expect( output ).toBe( 1234 );
 	} );
-	test( 'should return undefined if there is no last request time in state', () => {
+	test( 'should return null if there is no last request time in state', () => {
 		const stateIn = {
 			jetpackConnectionHealth: {},
 		};
 		const siteId = 123456;
 		const output = getJetpackConnectionHealthLastRequestTime( stateIn, siteId );
-		expect( output ).toBe( undefined );
+		expect( output ).toBe( null );
+	} );
+	test( 'should not break if jetpackConnectionHealth object is missing', () => {
+		const stateIn = {};
+		const siteId = 123456;
+		const output = getJetpackConnectionHealthLastRequestTime( stateIn, siteId );
+		expect( output ).toBe( null );
 	} );
 } );
