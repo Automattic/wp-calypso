@@ -6,8 +6,8 @@ import ThankYouUpsell, { ThankYouUpsellProps } from './upsell';
 import './style.scss';
 
 interface ThankYouV2Props {
-	title: React.ReactNode;
-	subtitle: React.ReactNode;
+	title: string;
+	subtitle: string;
 	headerButtons?: React.ReactNode;
 	products?: React.ReactNode;
 	footerDetails?: ThankYouDetailProps[];
