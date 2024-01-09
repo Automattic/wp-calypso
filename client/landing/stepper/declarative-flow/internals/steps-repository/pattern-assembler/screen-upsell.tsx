@@ -8,6 +8,7 @@ import QueryPlans from 'calypso/components/data/query-plans';
 import useGlobalStylesUpgradeTranslations from 'calypso/components/premium-global-styles-upgrade-modal/use-global-styles-upgrade-translations';
 import PlanPrice from 'calypso/my-sites/plan-price';
 import usePricingMetaForGridPlans from 'calypso/my-sites/plans-features-main/hooks/data-store/use-pricing-meta-for-grid-plans';
+import useCheckPlanAvailabilityForPurchase from 'calypso/my-sites/plans-features-main/hooks/use-check-plan-availability-for-purchase';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { useScreen } from './hooks';
 import NavigatorTitle from './navigator-title';
@@ -28,9 +29,9 @@ const ScreenUpsell = ( { numOfSelectedGlobalStyles = 1, onCheckout, onTryStyle }
 	// TODO clk pricing
 	const pricingMeta = usePricingMetaForGridPlans( {
 		planSlugs: [ PLAN_PREMIUM ],
-		storageAddOns: null,
 		selectedSiteId,
 		coupon: undefined,
+		useCheckPlanAvailabilityForPurchase,
 	} );
 
 	const pricing = pricingMeta?.[ PLAN_PREMIUM ];

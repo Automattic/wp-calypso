@@ -4,7 +4,8 @@ import type {
 	PlansIntent,
 	UsePricingMetaForGridPlans,
 } from './hooks/npm-ready/data-store/use-grid-plans';
-import type { GridContextProps, UseCheckPlanAvailabilityForPurchase } from './types';
+import type { GridContextProps } from './types';
+import type { UseCheckPlanAvailabilityForPurchase } from '../plans-features-main/hooks/data-store/use-pricing-meta-for-grid-plans';
 import type { FeatureList } from '@automattic/calypso-products';
 
 interface PlansGridContext {

@@ -9,6 +9,7 @@ import {
 	isWpComPlan,
 	isWpcomEnterpriseGridPlan,
 } from '@automattic/calypso-products';
+import { UseCheckPlanAvailabilityForPurchase } from 'calypso/my-sites/plans-features-main/hooks/data-store/use-pricing-meta-for-grid-plans';
 import { UsePricingMetaForGridPlans } from 'calypso/my-sites/plans-grid/hooks/npm-ready/data-store/use-grid-plans';
 
 /**
@@ -22,6 +23,7 @@ export default function useMaxDiscountsForPlanTerms(
 	plans: PlanSlug[],
 	urlFriendlyTerms: UrlFriendlyTermType[] = [],
 	usePricingMetaForGridPlans: UsePricingMetaForGridPlans,
+	useCheckPlanAvailabilityForPurchase: UseCheckPlanAvailabilityForPurchase,
 	selectedSiteId?: number | null
 ): Record< UrlFriendlyTermType, number > {
 	const termDefinitionsMapping = urlFriendlyTerms.map( ( urlFriendlyTerm ) => ( {
@@ -52,9 +54,9 @@ export default function useMaxDiscountsForPlanTerms(
 	const plansPricing = usePricingMetaForGridPlans( {
 		planSlugs: allRelatedPlanSlugs,
 		withoutProRatedCredits: true,
-		storageAddOns: null,
 		selectedSiteId,
 		coupon: undefined,
+		useCheckPlanAvailabilityForPurchase,
 	} );
 
 	const termWiseMaxDiscount: Record< UrlFriendlyTermType, number > = {} as Record<
