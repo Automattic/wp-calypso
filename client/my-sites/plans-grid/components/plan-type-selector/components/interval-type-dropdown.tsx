@@ -5,9 +5,9 @@ import useIntervalOptions from '../hooks/use-interval-options';
 import { IntervalTypeProps, SupportedUrlFriendlyTermType } from '../types';
 
 const IntervalTypeOption = styled.div`
-	& div.name,
-	&:visited div.name,
-	&:hover div.name {
+	& span.name,
+	&:visited span.name,
+	&:hover span.name {
 		color: var( --color-text );
 	}
 
