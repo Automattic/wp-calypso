@@ -16,6 +16,11 @@ jest.mock( '../staging-site-card/staging-site-production-card', () => () => (
 		<span>Staging site</span>
 	</div>
 ) );
+jest.mock( 'calypso/lib/wp', () => ( {
+	req: {
+		get: jest.fn(),
+	},
+} ) );
 
 import {
 	FEATURE_SFTP,
@@ -27,25 +32,32 @@ import {
 	WPCOM_FEATURES_ATOMIC,
 } from '@automattic/calypso-products';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { render, screen } from '@testing-library/react';
+import { render, screen, waitFor } from '@testing-library/react';
 import { Provider } from 'react-redux';
 import { createStore } from 'redux';
+import wp from 'calypso/lib/wp';
 import { transferStates } from 'calypso/state/automated-transfer/constants';
 import Hosting from '../main';
+
+const wpcomGetStub = wp.req.get;
 
 const getTestConfig = ( {
 	isAtomicSite = false,
 	isWpcomStagingSite = false,
 	planSlug = PLAN_FREE,
 	siteFeatures = [],
-	transferState = transferStates.NONE,
+	transferStatus = transferStates.NONE,
 } ) => {
+	wpcomGetStub.mockResolvedValue( {
+		status: transferStatus,
+	} );
+
 	return {
 		isAtomicSite,
 		isWpcomStagingSite,
 		planSlug,
 		siteFeatures,
-		transferState,
+		transferStatus,
 	};
 };
 
@@ -54,7 +66,7 @@ const createTestStore = ( {
 	isWpcomStagingSite,
 	planSlug,
 	siteFeatures,
-	transferState,
+	transferStatus,
 } ) => {
 	const TEST_SITE_ID = 1;
 	return createStore( ( state ) => state, {
@@ -65,7 +77,7 @@ const createTestStore = ( {
 		},
 		automatedTransfer: {
 			[ TEST_SITE_ID ]: {
-				status: transferState,
+				status: transferStatus,
 			},
 		},
 		documentHead: { unreadCount: 0 },
@@ -92,6 +104,7 @@ const createTestStore = ( {
 					jetpack: false,
 					options: {
 						is_automated_transfer: isAtomicSite,
+						is_wpcom_atomic: isAtomicSite,
 					},
 					URL: 'test-site-example.wordpress.com',
 				},
@@ -157,6 +170,7 @@ const verifyStringsAreWithinFeatureExample = ( strings, featureExampleElement ) 
 
 describe( 'Hosting Configuration', () => {
 	beforeAll( () => {
+		jest.resetAllMocks();
 		// Mock the missing `window.matchMedia` function that's not even in JSDOM
 		Object.defineProperty( window, 'matchMedia', {
 			writable: true,
@@ -213,13 +227,15 @@ describe( 'Hosting Configuration', () => {
 	} );
 
 	describe( 'Site on Creator plan', () => {
-		it( 'should show activation notice when the site is not Atomic', () => {
+		it( 'should show activation notice when the site is not Atomic', async () => {
 			const testConfig = getTestConfig( {
 				planSlug: PLAN_BUSINESS_MONTHLY,
 				siteFeatures: [ WPCOM_FEATURES_ATOMIC, FEATURE_SFTP, FEATURE_SITE_STAGING_SITES ],
+				transferStatus: 'none',
 			} );
 
 			renderComponentWithStoreAndQueryClient( createTestStore( testConfig ) );
+			await waitFor( () => expect( wpcomGetStub ).toHaveBeenCalled() );
 
 			expect(
 				screen.getByText( 'Please activate the hosting access to begin using these features.' )
@@ -234,15 +250,16 @@ describe( 'Hosting Configuration', () => {
 			verifyStringsAreWithinFeatureExample( expectedStrings, mainFeatureExampleElement );
 		} );
 
-		it( 'should not show the activation notice when the site is Atomic', () => {
+		it( 'should not show the activation notice when the site is Atomic', async () => {
 			const testConfig = getTestConfig( {
 				isAtomicSite: true,
 				planSlug: PLAN_BUSINESS_MONTHLY,
 				siteFeatures: [ WPCOM_FEATURES_ATOMIC, FEATURE_SFTP, FEATURE_SITE_STAGING_SITES ],
-				transferState: transferStates.COMPLETE,
+				transferStatus: transferStates.COMPLETE,
 			} );
 
 			renderComponentWithStoreAndQueryClient( createTestStore( testConfig ) );
+			await waitFor( () => expect( wpcomGetStub ).toHaveBeenCalled() );
 
 			expect(
 				screen.queryByText( 'Please activate the hosting access to begin using these features.' )
@@ -256,15 +273,16 @@ describe( 'Hosting Configuration', () => {
 			} );
 		} );
 
-		it( 'should show the transferring notice when the site is transferring to Atomic', () => {
+		it( 'should show the transferring notice when the site is transferring to Atomic', async () => {
 			const testConfig = getTestConfig( {
 				isAtomicSite: false,
 				planSlug: PLAN_BUSINESS_MONTHLY,
 				siteFeatures: [ WPCOM_FEATURES_ATOMIC, FEATURE_SFTP, FEATURE_SITE_STAGING_SITES ],
-				transferState: transferStates.START,
+				transferStatus: transferStates.START,
 			} );
 
 			renderComponentWithStoreAndQueryClient( createTestStore( testConfig ) );
+			await waitFor( () => expect( wpcomGetStub ).toHaveBeenCalled() );
 
 			expect(
 				screen.getByText( 'Please wait while we activate the hosting features.' )
@@ -280,15 +298,16 @@ describe( 'Hosting Configuration', () => {
 	} );
 
 	describe( 'Site on Woo Express/eCommerce Trial plan', () => {
-		it( 'should show the upsell banner with alternate text and show the basic features', () => {
+		it( 'should show the upsell banner with alternate text and show the basic features', async () => {
 			const testConfig = getTestConfig( {
 				isAtomicSite: true,
 				planSlug: PLAN_ECOMMERCE_TRIAL_MONTHLY,
 				siteFeatures: [ WPCOM_FEATURES_ATOMIC ],
-				transferState: transferStates.COMPLETE,
+				transferStatus: transferStates.COMPLETE,
 			} );
 
 			renderComponentWithStoreAndQueryClient( createTestStore( testConfig ) );
+			await waitFor( () => expect( wpcomGetStub ).toHaveBeenCalled() );
 
 			expect(
 				screen.getByText( 'Upgrade your plan to access all hosting features' )
@@ -306,7 +325,6 @@ describe( 'Hosting Configuration', () => {
 
 			stringsForBasicFeatureCards.forEach( ( string ) => {
 				const elementForString = screen.getByText( string );
-
 				expect( elementForString ).toBeVisible();
 				expect( mainFeatureExampleElement ).not.toContainElement( elementForString );
 			} );
@@ -320,7 +338,7 @@ describe( 'Hosting Configuration', () => {
 				isWpcomStagingSite: true,
 				planSlug: PLAN_BUSINESS_MONTHLY,
 				siteFeatures: [ WPCOM_FEATURES_ATOMIC, FEATURE_SFTP, FEATURE_SITE_STAGING_SITES ],
-				transferState: transferStates.COMPLETE,
+				transferStatus: transferStates.COMPLETE,
 			} );
 
 			renderComponentWithStoreAndQueryClient( createTestStore( testConfig ) );
