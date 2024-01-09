@@ -1,12 +1,13 @@
+import page from '@automattic/calypso-router';
 import styled from '@emotion/styled';
 import { CustomSelectControl } from '@wordpress/components';
 import useIntervalOptions from '../hooks/use-interval-options';
 import { IntervalTypeProps, SupportedUrlFriendlyTermType } from '../types';
 
-const AddOnOption = styled.a`
-	& span.name,
-	&:visited span.name,
-	&:hover span.name {
+const IntervalTypeOption = styled.div`
+	& div.name,
+	&:visited div.name,
+	&:hover div.name {
 		color: var( --color-text );
 	}
 
@@ -43,11 +44,12 @@ export const IntervalTypeDropdown: React.FunctionComponent< IntervalTypeProps > 
 	const selectOptionsList = Object.values( optionsList ).map( ( option ) => ( {
 		key: option.key,
 		name: (
-			<AddOnOption href={ option.url }>
+			<IntervalTypeOption>
 				<span className="name"> { option.name } </span>
 				{ option.discountText ? <span className="discount"> { option.discountText } </span> : null }
-			</AddOnOption>
+			</IntervalTypeOption>
 		),
+		url: option.url,
 	} ) );
 
 	return (
@@ -57,6 +59,13 @@ export const IntervalTypeDropdown: React.FunctionComponent< IntervalTypeProps > 
 				label=""
 				options={ selectOptionsList }
 				value={ selectOptionsList.find( ( { key } ) => key === supportedIntervalType ) }
+				onChange={ ( {
+					selectedItem,
+				}: {
+					selectedItem: { key: SupportedUrlFriendlyTermType; url: string };
+				} ) => {
+					page( `/start/plans${ selectedItem.url }` );
+				} }
 			/>
 		</div>
 	);
