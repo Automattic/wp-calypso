@@ -1,4 +1,5 @@
 import { PatternRenderer } from '@automattic/block-renderer';
+import { isEnabled } from '@automattic/calypso-config';
 import { DeviceSwitcher } from '@automattic/components';
 import { useGlobalStyle } from '@automattic/global-styles';
 import { Popover } from '@wordpress/components';
@@ -6,6 +7,7 @@ import classnames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import React, { useRef, useEffect, useState, useMemo, CSSProperties, useCallback } from 'react';
 import { useDebouncedCallback } from 'use-debounce';
+import AsyncLoad from 'calypso/components/async-load';
 import { PATTERN_ASSEMBLER_EVENTS } from './events';
 import { injectTitlesToPageListBlock } from './html-transformers';
 import PatternActionBar from './pattern-action-bar';
@@ -151,14 +153,15 @@ const PatternLargePreview = ( {
 		};
 
 		return (
-			// eslint-disable-next-line jsx-a11y/no-noninteractive-element-interactions
-			<li
+			// eslint-disable-next-line jsx-a11y/no-noninteractive-element-interactions, jsx-a11y/no-static-element-interactions
+			<div
 				key={ clientId }
 				aria-label={ pattern.title }
 				className={ classnames( 'pattern-large-preview__pattern', {
 					'pattern-large-preview__pattern--active': isActive,
 				} ) }
 				data-client-id={ clientId }
+				data-key={ clientId }
 				onMouseDown={ handleMouseDown }
 				onMouseEnter={ handleMouseEnter }
 			>
@@ -197,7 +200,38 @@ const PatternLargePreview = ( {
 						/>
 					</Popover>
 				) }
-			</li>
+			</div>
+		);
+	};
+
+	const renderPatternList = () => {
+		const listProps = {
+			className: 'pattern-large-preview__patterns',
+			style: patternLargePreviewStyle,
+		};
+
+		const listItems = [
+			...( header ? [ renderPattern( 'header', header ) ] : [] ),
+			...sections.map( ( pattern, i ) => renderPattern( 'section', pattern, i ) ),
+			...( footer ? [ renderPattern( 'footer', footer ) ] : [] ),
+		];
+
+		if ( ! isEnabled( 'pattern-assembler/framer-motion-reorder' ) ) {
+			return (
+				<ul ref={ listRef } { ...listProps }>
+					{ listItems }
+				</ul>
+			);
+		}
+
+		return (
+			<AsyncLoad
+				require="@automattic/framer-motion-reorder-list"
+				placeholder={ null }
+				forwardedRef={ listRef }
+				items={ listItems }
+				{ ...listProps }
+			/>
 		);
 	};
 
@@ -293,15 +327,7 @@ const PatternLargePreview = ( {
 			onZoomOutScaleChange={ handleZoomOutScale }
 		>
 			{ hasSelectedPattern ? (
-				<ul
-					className="pattern-large-preview__patterns"
-					style={ patternLargePreviewStyle }
-					ref={ listRef }
-				>
-					{ header && renderPattern( 'header', header ) }
-					{ sections.map( ( pattern, i ) => renderPattern( 'section', pattern, i ) ) }
-					{ footer && renderPattern( 'footer', footer ) }
-				</ul>
+				renderPatternList()
 			) : (
 				<div className="pattern-large-preview__placeholder">
 					<h2>{ translate( 'Welcome to your homepage.' ) }</h2>

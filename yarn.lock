@@ -909,6 +909,19 @@ __metadata:
   languageName: unknown
   linkType: soft
 
+"@automattic/framer-motion-reorder-list@workspace:packages/framer-motion-reorder-list":
+  version: 0.0.0-use.local
+  resolution: "@automattic/framer-motion-reorder-list@workspace:packages/framer-motion-reorder-list"
+  dependencies:
+    "@automattic/calypso-typescript-config": "workspace:^"
+    framer-motion: "npm:10.13.0"
+    react: "npm:^18.2.0"
+    react-dom: "npm:^18.2.0"
+    tslib: "npm:^2.3.0"
+    typescript: "npm:^4.7.4"
+  languageName: unknown
+  linkType: soft
+
 "@automattic/generate-password@workspace:^, @automattic/generate-password@workspace:packages/generate-password":
   version: 0.0.0-use.local
   resolution: "@automattic/generate-password@workspace:packages/generate-password"
@@ -17431,6 +17444,27 @@ __metadata:
   dependencies:
     map-cache: "npm:^0.2.2"
   checksum: 5891d1c1d1d5e1a7fb3ccf28515c06731476fa88f7a50f4ede8a0d8d239a338448e7f7cc8b73db48da19c229fa30066104fe6489862065a4f1ed591c42fbeabf
+  languageName: node
+  linkType: hard
+
+"framer-motion@npm:10.13.0":
+  version: 10.13.0
+  resolution: "framer-motion@npm:10.13.0"
+  dependencies:
+    "@emotion/is-prop-valid": "npm:^0.8.2"
+    tslib: "npm:^2.4.0"
+  peerDependencies:
+    react: ^18.0.0
+    react-dom: ^18.0.0
+  dependenciesMeta:
+    "@emotion/is-prop-valid":
+      optional: true
+  peerDependenciesMeta:
+    react:
+      optional: true
+    react-dom:
+      optional: true
+  checksum: 0d2584643d6cc888c4d66a08c7400fbfce0dd4378ca41f1913546a8cdfebf7a93a4c29f9f3cc7c255af6c4e3064714d72b31941fbc7a3df0440fb559844bfb3f
   languageName: node
   linkType: hard
 
