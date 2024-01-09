@@ -280,12 +280,18 @@ export const useInfiniteMarketplaceReviewsQuery = (
 		perPage,
 		'infinite',
 	];
-	const queryFn = ( { pageParam } ) =>
-		fetchMarketplaceReviews( productType, slug, pageParam, perPage, author, author_exclude );
 
 	return useInfiniteQuery< MarketplaceReviewsQueryResponse >( {
 		queryKey,
-		queryFn,
+		queryFn: ( { pageParam } ) =>
+			fetchMarketplaceReviews(
+				productType,
+				slug,
+				pageParam as number,
+				perPage,
+				author,
+				author_exclude
+			),
 		getNextPageParam: ( lastPage, allPages ) => {
 			if ( lastPage.headers[ 'X-WP-TotalPages' ] <= allPages.length ) {
 				return;
