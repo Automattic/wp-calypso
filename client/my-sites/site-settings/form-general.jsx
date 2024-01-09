@@ -30,6 +30,7 @@ import FormLabel from 'calypso/components/forms/form-label';
 import FormRadio from 'calypso/components/forms/form-radio';
 import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
 import FormInput from 'calypso/components/forms/form-text-input';
+import InfoPopover from 'calypso/components/info-popover';
 import InlineSupportLink from 'calypso/components/inline-support-link';
 import SiteLanguagePicker from 'calypso/components/language-picker/site-language-picker';
 import Notice from 'calypso/components/notice';
@@ -726,11 +727,12 @@ export class SiteSettingsFormGeneral extends Component {
 					title={ translate( 'Privacy {{learnMoreLink/}}', {
 						components: {
 							learnMoreLink: (
-								<InlineSupportLink
-									supportContext="privacy"
-									showText={ false }
-									iconStyle="info-outline"
-								/>
+								<InfoPopover position="bottom right">
+									{ translate( 'Control who can view your site. ' ) }
+									<InlineSupportLink showIcon={ false } supportContext="privacy">
+										{ translate( 'Learn more' ) }
+									</InlineSupportLink>
+								</InfoPopover>
 							),
 						},
 						comment: 'Privacy Settings header',

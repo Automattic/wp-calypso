@@ -586,14 +586,8 @@ button.site-settings__general-settings-set-guessed-timezone.button.is-borderless
 	pointer-events: none;
 }
 
-#site-privacy-settings .inline-support-link {
-	color: var(--color-text-subtle);
-
-	svg {
-		vertical-align: middle;
-		height: 18px;
-		width: 18px;
-	}
+#site-privacy-settings .section-header__label-text button {
+	vertical-align: middle;
 }
 
 .site-settings__writing-settings {
