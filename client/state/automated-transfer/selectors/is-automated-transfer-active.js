@@ -17,6 +17,8 @@ export const isActive = ( status ) =>
 				transferStates.FAILURE,
 				transferStates.ERROR,
 				transferStates.REVERTED,
+				transferStates.CONFLICTS,
+				transferStates.INQUIRING,
 		  ].includes( status )
 		: false;
 /**
