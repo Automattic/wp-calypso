@@ -63,7 +63,7 @@ interface EnhancedTask extends Task {
 	useCalypsoPath?: boolean;
 }
 
-type TaskId = 'setup_free' | 'setup_blog' | 'setup_newsletter';
+type TaskId = 'setup_free' | 'setup_blog' | 'setup_newsletter' | 'design_edited';
 type TaskAction = (
 	task: Task,
 	flow: string,
@@ -94,6 +94,15 @@ const actions: TaskActionTable = {
 				`/setup/newsletter-post-setup/newsletterPostSetup`,
 				siteInfoQueryArgs
 			),
+			useCalypsoPath: true,
+		} ) satisfies EnhancedTask,
+	design_edited: ( task, flow, siteInfoQueryArgs ) =>
+		( {
+			...task,
+			actionDispatch: () => recordTaskClickTracksEvent( flow, task.completed, task.id ),
+			calypso_path: addQueryArgs( `/site-editor/${ siteInfoQueryArgs?.siteSlug }`, {
+				canvas: 'edit',
+			} ),
 			useCalypsoPath: true,
 		} ) satisfies EnhancedTask,
 } as const;
@@ -320,19 +329,8 @@ export function getEnhancedTasks( {
 			case 'setup_free':
 			case 'setup_blog':
 			case 'setup_newsletter':
-				return getTaskDefinition( task, flow, siteInfoQueryArgs );
 			case 'design_edited':
-				taskData = {
-					actionDispatch: () => {
-						recordTaskClickTracksEvent( flow, task.completed, task.id );
-						window.location.assign(
-							addQueryArgs( `/site-editor/${ siteSlug }`, {
-								canvas: 'edit',
-							} )
-						);
-					},
-				};
-				break;
+				return getTaskDefinition( task, flow, siteInfoQueryArgs );
 			case 'plan_selected':
 				/* eslint-disable no-case-declarations */
 				const openPlansPage = () => {
