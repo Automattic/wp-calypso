@@ -397,3 +397,15 @@ body.is-section-signup.is-white-signup {
 		}
 	}
 }
+
+/**
+ * Styles required for the 2023 pricing grid plan type dropdown, sticky behavior to work
+ */
+body.is-section-plans .layout__content .main {
+	@include plan-type-selector-custom-mobile-breakpoint {
+		padding: 0;
+		.is-2023-pricing-grid .plans-wrapper {
+			margin: 0;
+		}
+	}
+}

@@ -70,7 +70,11 @@ class FeaturesGrid extends Component< FeaturesGridProps > {
 						stickyClass="is-sticky-top-buttons-row"
 						element="tr"
 						stickyOffset={ stickyRowOffset }
-						zIndex={ 2 }
+						/**
+						 * 1_000_000 is the z index of the dropdown menu
+						 * which needs to be hidden by the sticky behavior
+						 */
+						zIndex={ 1_000_002 }
 					>
 						{ ( isStuck: boolean ) =>
 							this.renderTopButtons( gridPlansWithoutSpotlight, { isTableCell: true, isStuck } )
