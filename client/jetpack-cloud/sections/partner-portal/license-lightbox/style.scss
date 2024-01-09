@@ -5,7 +5,7 @@
 	padding: 1rem;
 }
 
-.license-lightbox__payment-plan-title {
+.license-lightbox__manage-license-title {
 	font-size: 1rem;
 	margin-block-end: 8px;
 }
@@ -25,5 +25,21 @@
 
 	&.is-primary .license-lightbox__cta-button-external-link {
 		color: var(--studio-white);
+	}
+}
+
+.license-lightbox__separator {
+	font-size: 1rem;
+	font-weight: 600;
+	display: flex;
+	align-items: center;
+
+	&::before,
+	&::after {
+		flex: 1;
+		content: "";
+		padding: 0.5px;
+		background: var(--studio-gray-5);
+		margin: 2rem 15px;
 	}
 }

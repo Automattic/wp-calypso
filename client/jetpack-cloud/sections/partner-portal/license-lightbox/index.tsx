@@ -10,7 +10,7 @@ import useMobileSidebar from 'calypso/components/jetpack/jetpack-lightbox/hooks/
 import JetpackProductInfo from 'calypso/components/jetpack/jetpack-product-info';
 import { APIProductFamilyProduct } from 'calypso/state/partner-portal/types';
 import { useLicenseLightboxData } from './hooks/use-license-lightbox-data';
-import LicenseLightboxPaymentPlan from './license-lightbox-payment-plan';
+import LicenseLightboxManageLicense from './license-lightbox-payment-plan';
 
 import './style.scss';
 
@@ -27,6 +27,7 @@ export type LicenseLightBoxProps = {
 	isCTAExternalLink?: boolean;
 	ctaHref?: string;
 	showPaymentPlan?: boolean;
+	showSecondaryContent?: boolean;
 };
 
 const LicenseLightbox: FunctionComponent< LicenseLightBoxProps > = ( {
@@ -42,6 +43,7 @@ const LicenseLightbox: FunctionComponent< LicenseLightBoxProps > = ( {
 	className,
 	quantity,
 	showPaymentPlan = true,
+	showSecondaryContent = true,
 } ) => {
 	const isLargeScreen = useBreakpoint( '>782px' );
 	const { title, product: productInfo } = useLicenseLightboxData( product );
@@ -68,7 +70,7 @@ const LicenseLightbox: FunctionComponent< LicenseLightBoxProps > = ( {
 
 			<JetpackLightboxAside ref={ sidebarRef }>
 				{ showPaymentPlan && (
-					<LicenseLightboxPaymentPlan product={ product } quantity={ quantity } />
+					<LicenseLightboxManageLicense product={ product } quantity={ quantity } />
 				) }
 
 				<Button
@@ -85,6 +87,11 @@ const LicenseLightbox: FunctionComponent< LicenseLightBoxProps > = ( {
 					) }
 				</Button>
 				{ extraAsideContent }
+				{ showSecondaryContent && (
+					<>
+						<div className="license-lightbox__separator">Or</div>
+					</>
+				) }
 			</JetpackLightboxAside>
 		</JetpackLightbox>
 	);

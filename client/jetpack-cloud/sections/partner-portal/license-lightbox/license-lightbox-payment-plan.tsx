@@ -8,12 +8,14 @@ type Props = {
 	quantity?: number;
 };
 
-const LicenseLightboxPaymentPlan: FunctionComponent< Props > = ( { product, quantity } ) => {
+const LicenseLightboxManageLicense: FunctionComponent< Props > = ( { product, quantity } ) => {
 	const translate = useTranslate();
 
 	return (
-		<div className="license-lightbox__payment-plan">
-			<h3 className="license-lightbox__payment-plan-title">{ translate( 'Payment plan:' ) }</h3>
+		<div className="license-lightbox__manage-license">
+			<h3 className="license-lightbox__manage-license-title">
+				{ translate( 'Jetpack Manage License:' ) }
+			</h3>
 
 			<div className="license-lightbox__pricing">
 				<ProductPriceWithDiscount product={ product } quantity={ quantity } />
@@ -22,4 +24,4 @@ const LicenseLightboxPaymentPlan: FunctionComponent< Props > = ( { product, quan
 	);
 };
 
-export default LicenseLightboxPaymentPlan;
+export default LicenseLightboxManageLicense;
