@@ -15,8 +15,7 @@ export async function requestJwt( {
 	expirationTime,
 }: RequestTokenOptions = {} ): Promise< TokenDataProps > {
 	// Default values
-	// @ts-expect-error meh
-	const siteId = siteDetails?.ID || window.JP_CONNECTION_INITIAL_STATE.siteSuffix;
+	const siteId = String( siteDetails?.ID || window.JP_CONNECTION_INITIAL_STATE.siteSuffix );
 	expirationTime = expirationTime || JWT_TOKEN_EXPIRATION_TIME;
 
 	const isSimple = ! siteDetails?.is_wpcom_atomic;
