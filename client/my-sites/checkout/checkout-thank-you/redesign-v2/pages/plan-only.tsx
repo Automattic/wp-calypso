@@ -73,11 +73,6 @@ export const PlanOnlyThankYou: React.FC< PlanOnlyThankYouProps > = ( { purchases
 			) }
 			products={ products }
 			purchaseDetailsProps={ purchaseDetailsProps }
-			masterbarProps={ {
-				siteSlug,
-				siteId,
-				backText: siteSlug ? translate( 'Back to dashboard' ) : undefined,
-			} }
 		/>
 	);
 };

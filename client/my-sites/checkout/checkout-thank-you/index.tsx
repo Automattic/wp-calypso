@@ -35,6 +35,7 @@ import PlanThankYouCard from 'calypso/blocks/plan-thank-you-card';
 import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
 import HappinessSupport from 'calypso/components/happiness-support';
 import Main from 'calypso/components/main';
+import MasterbarStyled from 'calypso/components/masterbar-styled';
 import Notice from 'calypso/components/notice';
 import PurchaseDetail from 'calypso/components/purchase-detail';
 import WordPressLogo from 'calypso/components/wordpress-logo';
@@ -594,12 +595,21 @@ export class CheckoutThankYou extends Component<
 			}
 
 			if ( pageContent ) {
+				const siteId = this.props.selectedSite?.ID;
+				const siteSlug = this.props.selectedSite?.slug;
+
 				return (
 					<>
 						<PageViewTracker { ...this.getAnalyticsProperties() } title="Checkout Thank You" />
-						{ this.isDataLoaded && this.props.selectedSite?.ID && (
-							<QuerySitePurchases siteId={ this.props.selectedSite?.ID } />
-						) }
+						{ this.isDataLoaded && siteId && <QuerySitePurchases siteId={ siteId } /> }
+
+						<MasterbarStyled
+							onClick={ () => page( `/home/${ siteSlug ?? '' }` ) }
+							backText={ translate( 'Back to dashboard' ) }
+							canGoBack={ !! siteId }
+							showContact={ true }
+						/>
+
 						{ pageContent }
 					</>
 				);

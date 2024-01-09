@@ -3,7 +3,7 @@ import emailImage from 'calypso/assets/images/thank-you-upsell/email.svg';
 import ThankYouV2 from 'calypso/components/thank-you-v2';
 import { emailManagement } from 'calypso/my-sites/email/paths';
 import { useSelector } from 'calypso/state';
-import { getSelectedSiteSlug, getSelectedSiteId } from 'calypso/state/ui/selectors';
+import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import { getDomainPurchaseType } from '../../utils';
 import ProductDomain from '../products/product-domain';
 
@@ -47,7 +47,6 @@ export const DomainOnlyThankYou: React.FC< DomainOnlyThankYouContainerProps > = 
 	const domains = purchases.filter( predicate ).map( ( purchase ) => purchase?.meta );
 	const firstDomain = domains[ 0 ];
 	const siteSlug = useSelector( getSelectedSiteSlug );
-	const siteId = useSelector( getSelectedSiteId );
 
 	const upsellProps = {
 		title: translate( 'Professional email' ),
@@ -78,11 +77,6 @@ export const DomainOnlyThankYou: React.FC< DomainOnlyThankYouContainerProps > = 
 			products={ products }
 			purchaseDetailsProps={ getDomainPurchaseDetails() }
 			upsellProps={ upsellProps }
-			masterbarProps={ {
-				siteSlug,
-				siteId,
-				backText: siteSlug ? translate( 'Back to home' ) : undefined,
-			} }
 		/>
 	);
 };

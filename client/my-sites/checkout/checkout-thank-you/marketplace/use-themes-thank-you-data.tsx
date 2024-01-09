@@ -2,6 +2,7 @@ import page from '@automattic/calypso-router';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect, useMemo } from 'react';
 import { useQueryThemes } from 'calypso/components/data/query-theme';
+import MasterbarStyled from 'calypso/components/masterbar-styled';
 import { useDispatch, useSelector } from 'calypso/state';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
 import { clearActivated } from 'calypso/state/themes/actions';
@@ -9,7 +10,6 @@ import { getThemes } from 'calypso/state/themes/selectors';
 import { hasExternallyManagedThemes as getHasExternallyManagedThemes } from 'calypso/state/themes/selectors/is-externally-managed-theme';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import { ThankYouThemeSection } from './marketplace-thank-you-theme-section';
-import MasterbarStyled from './masterbar-styled';
 
 type ThankYouThemeData = [
 	Theme,

@@ -1,5 +1,4 @@
 import { ConfettiAnimation } from '@automattic/components';
-import CheckoutMasterbar, { CheckoutMasterbarProps } from 'calypso/components/checkout-masterbar';
 import Main from 'calypso/components/main';
 import PurchaseDetail from 'calypso/components/purchase-detail';
 import ThankYouHeader from './header';
@@ -14,24 +13,13 @@ interface ThankYouV2Props {
 	products?: React.ReactNode;
 	purchaseDetailsProps?: PurchaseDetail.propTypes[];
 	upsellProps?: ThankYouUpsellProps;
-	masterbarProps?: CheckoutMasterbarProps;
 }
 
 const ThankYouV2: React.FC< ThankYouV2Props > = ( props: ThankYouV2Props ) => {
-	const {
-		title,
-		subtitle,
-		headerButtons,
-		products,
-		purchaseDetailsProps,
-		upsellProps,
-		masterbarProps,
-	} = props;
+	const { title, subtitle, headerButtons, products, purchaseDetailsProps, upsellProps } = props;
 
 	return (
 		<Main className="is-redesign-v2 checkout-thank-you">
-			<CheckoutMasterbar { ...masterbarProps } />
-
 			<ConfettiAnimation delay={ 1000 } />
 
 			<ThankYouHeader title={ title } subtitle={ subtitle } buttons={ headerButtons } />

@@ -1,8 +1,8 @@
 import page from '@automattic/calypso-router';
 import { useTranslate } from 'i18n-calypso';
+import MasterbarStyled from 'calypso/components/masterbar-styled';
 import { useSelector } from 'calypso/state';
 import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';
-import MasterbarStyled from './masterbar-styled';
 import { hasMultipleProductTypes } from './utils';
 
 export function MarketplaceGoBackSection( {

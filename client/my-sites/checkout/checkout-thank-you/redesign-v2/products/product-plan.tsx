@@ -52,10 +52,12 @@ const ProductPlan = ( { purchase, siteSlug, siteId }: ProductPlanProps ) => {
 			details={ expirationDate }
 			actions={
 				<>
-					<Button primary href={ `/home/${ siteSlug }` }>
+					<Button variant="primary" href={ `/home/${ siteSlug }` }>
 						{ translate( 'Let’s work on the site' ) }
 					</Button>
-					<Button href={ `/plans/my-plan/${ siteSlug }` }>{ translate( 'Manage plan' ) }</Button>
+					<Button variant="secondary" href={ `/plans/my-plan/${ siteSlug }` }>
+						{ translate( 'Manage plan' ) }
+					</Button>
 				</>
 			}
 			isLoading={ expirationDate === '' }

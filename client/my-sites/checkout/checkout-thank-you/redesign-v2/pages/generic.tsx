@@ -51,11 +51,6 @@ export const GenericThankYou: React.FC< GenericThankYouContainerProps > = ( { pu
 			subtitle={ translate( 'All set! Ready to take your site even further?' ) }
 			products={ products }
 			purchaseDetailsProps={ purchaseDetailsProps.slice( 0, 2 ) }
-			masterbarProps={ {
-				siteSlug,
-				siteId,
-				backText: siteSlug ? translate( 'Back to dashboard' ) : undefined,
-			} }
 		/>
 	);
 };
