@@ -1,12 +1,14 @@
 import debugFactory from 'debug';
-import Razorpay from 'razorpay';
 import { useRef, useEffect, useState, useContext, createContext, PropsWithChildren } from 'react';
 
 const debug = debugFactory( 'calypso-razorpay' );
 
 export interface RazorpayConfiguration {
-	key_id: string;
+	js_url: string;
+	options: { key: string };
 }
+
+export type Razorpay = object;
 
 export type RazorpayLoadingError = undefined | null | Error;
 
@@ -53,28 +55,48 @@ function useRazorpayJs(
 	} );
 	useEffect( () => {
 		let isSubscribed = true;
-
 		async function loadAndInitRazorpay() {
 			if ( razorpayConfigurationError ) {
 				throw razorpayConfigurationError;
 			}
 			if ( ! razorpayConfiguration ) {
+				debug( 'Skip loading Razorpay; configuration not available' );
 				return;
 			}
-			debug( 'loading razorpay...' );
-			const razorpay = new Razorpay( razorpayConfiguration );
-			debug( 'razorpay loaded!' );
-			if ( isSubscribed ) {
-				setState( {
-					razorpay,
-					isRazorpayLoading: false,
-					razorpayLoadingError: undefined,
-				} );
+			if ( ! razorpayConfiguration.js_url ) {
+				throw new RazorpayConfigurationError( 'Razorpay library URL not specified.' );
 			}
+
+			const script = document.createElement( 'script' );
+			script.src = razorpayConfiguration.js_url;
+			script.async = true;
+			script.onload = () => {
+				debug( 'Razorpay JS library loaded!' );
+
+				// @ts-expect-error Razorpay object is defined in a dynamically loaded library.
+				if ( ! Razorpay ) {
+					throw new RazorpayConfigurationError(
+						'Razorpay loading error: Razorpay object not defined'
+					);
+				}
+
+				// @ts-expect-error Razorpay object is defined in a dynamically loaded library.
+				// We've checked that it exists before getting here.
+				const razorpay = new Razorpay( razorpayConfiguration.options );
+
+				if ( isSubscribed ) {
+					setState( {
+						razorpay,
+						isRazorpayLoading: false,
+						razorpayLoadingError: undefined,
+					} );
+				}
+			};
+			document.body.appendChild( script );
 		}
 
 		loadAndInitRazorpay().catch( ( error ) => {
-			debug( 'error while loading razorpay', error );
+			debug( 'Error while loading Razorpay!' );
 			if ( isSubscribed ) {
 				setState( {
 					razorpay: null,
@@ -111,20 +133,22 @@ function useRazorpayConfiguration(
 	const memoizedRequestArgs = useMemoCompare( requestArgs, areRequestArgsEqual );
 
 	useEffect( () => {
-		debug( 'loading razorpay configuration' );
+		debug( 'Loading razorpay configuration' );
 		let isSubscribed = true;
 		fetchRazorpayConfiguration( memoizedRequestArgs || { sandbox: true } )
 			.then( ( configuration ) => {
 				if ( ! isSubscribed ) {
 					return;
 				}
-				if ( ! configuration.js_url || ! configuration.key_id ) {
-					debug( 'invalid razorpay configuration; missing some data', configuration );
+				if ( ! configuration.js_url ) {
+					debug( 'Invalid razorpay configuration; js_url missing' );
+					debug( configuration );
 					throw new RazorpayConfigurationError(
 						'Error loading payment method configuration. Received invalid data from the server.'
 					);
 				}
-				debug( 'razorpay configuration received', configuration );
+				debug( 'Razorpay configuration received' );
+				debug( configuration );
 				setRazorpayConfiguration( configuration ?? null );
 			} )
 			.catch( ( error ) => {
@@ -154,10 +178,12 @@ export function RazorpayHookProvider( {
 	const configurationArgs = {
 		sandbox: true,
 	};
+
 	const { razorpayConfiguration, razorpayConfigurationError } = useRazorpayConfiguration(
 		fetchRazorpayConfiguration,
 		configurationArgs
 	);
+
 	const { razorpay, isRazorpayLoading, razorpayLoadingError } = useRazorpayJs(
 		razorpayConfiguration,
 		razorpayConfigurationError
