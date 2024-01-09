@@ -76,9 +76,9 @@ const DesignChoicesStep: Step = ( { navigation, flow, stepName } ) => {
 						</div>
 						<div className="design-choices__footer">
 							<p>
-								{ translate(
-									'Explore our themes or design your own, and you can return here if you change your mind.'
-								) }
+								{ translate( 'Explore our themes or design your own.' ) }
+								<br />
+								{ translate( 'You can return here if you change your mind.' ) }
 							</p>
 						</div>
 					</>
