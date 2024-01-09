@@ -10,6 +10,7 @@ import { useCommandsArrayWpcom } from './wpcom-smp-commands';
 const HostingCommandPaletteBannerRoot = styled.div( {
 	marginBottom: 25,
 	'.hosting-command-palette-banner': {
+		background: 'linear-gradient(270deg, #E9EFF5 12.03%, rgba(233, 239, 245, 0) 40.39%)',
 		display: 'flex',
 		alignItems: 'center',
 		justifyContent: 'left',
@@ -66,7 +67,6 @@ const CommandBoxWrapper = styled.div( {
 const CommandBox = styled.div( {
 	gridRowStart: 1,
 	gridColumnStart: 1,
-	border: '1px solid var(--studio-gray-5)',
 	borderRadius: 2,
 	display: 'flex',
 	justifyContent: 'flex-start',
@@ -78,6 +78,8 @@ const CommandBox = styled.div( {
 	fontSize: 13,
 	lineHeight: '20px',
 	letterSpacing: -0.15,
+	backgroundColor: 'var(--color-surface)',
+	boxShadow: '1px 1px 1px 0px #0000001F',
 	'&.command-box__fadeIn': {
 		animation: `${ fadeIn } 1s ease-in-out`,
 		opacity: 1,
