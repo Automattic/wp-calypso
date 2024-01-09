@@ -112,7 +112,7 @@
 		"onboarding/import-from-wix": true,
 		"onboarding/import-from-wordpress": true,
 		"onboarding/import-redirect-to-themes": true,
-		"onboarding/interval-dropdown": false,
+		"onboarding/interval-dropdown": true,
 		"p2/p2-plus": true,
 		"pattern-assembler/v2": false,
 		"plans/hosting-trial": true,
