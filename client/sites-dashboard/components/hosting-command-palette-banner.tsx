@@ -119,7 +119,7 @@ const StyledShortcut = styled.span< ShortcutIconProps >( ( props ) =>
 				border: '1px solid',
 				borderRadius: 2,
 				padding: '0px 8px',
-				marginRight: 6,
+				marginRight: 12,
 		  }
 		: {
 				fontWeight: 600,
