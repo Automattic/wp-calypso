@@ -16,7 +16,7 @@ export default ( state, siteId, themeId ) => {
 		siteHasFeature( state, siteId, theme.retained_benefits.tier.feature );
 
 	return {
-		themeTier: theme.retained_benefits?.is_eligible ? theme.retained_benefits.tier : themeTier,
+		themeTier: theme?.retained_benefits?.is_eligible ? theme.retained_benefits.tier : themeTier,
 		isThemeAllowedOnSite: isThemeAllowedOnSite || themeHasRetainedBenefits,
 	};
 };

@@ -8,9 +8,9 @@ import { AppState } from 'calypso/types';
 export type SourceType = 'wpcom' | 'wporg' | 'jetpack';
 
 const request =
-	( siteId: number, themeId: string, sourceType: SourceType ) =>
+	( siteId: number | null, themeId: string, sourceType: SourceType ) =>
 	( dispatch: CalypsoDispatch, getState: AppState ) => {
-		if ( ! isRequestingTheme( getState(), siteId, themeId ) ) {
+		if ( ! isRequestingTheme( getState(), siteId as number, themeId ) ) {
 			dispatch( requestSingleTheme( themeId, siteId, sourceType ) );
 		}
 	};
@@ -21,9 +21,8 @@ export function useQuerySingleTheme(
 	sourceType: SourceType
 ) {
 	const dispatch = useDispatch();
-
 	useEffect( () => {
-		if ( siteId && themeId ) {
+		if ( sourceType && themeId ) {
 			dispatch( request( siteId, themeId, sourceType ) );
 		}
 	}, [ dispatch, siteId, sourceType, themeId ] );

@@ -11,14 +11,19 @@ import { getSelectedSiteId } from 'calypso/state/ui/selectors';
  * @returns {?Object}         Theme object
  */
 export const getTheme = createSelector(
-	( state, siteId, themeId ) => {
+	( state, sourceAndSiteId, themeId ) => {
+		let siteId = sourceAndSiteId;
+
+		if ( 'wpcom' === sourceAndSiteId && isUserLoggedIn( state ) ) {
+			siteId = getSelectedSiteId( state );
+		} else if ( 'wpcom' === sourceAndSiteId && ! isUserLoggedIn( state ) ) {
+			siteId = 'wpcom';
+		}
+
 		let manager = state.themes.queries[ siteId ];
 
-		if ( ! manager && siteId === 'wpcom' ) {
-			const fallbackSiteId = isUserLoggedIn( state ) ? getSelectedSiteId( state ) : null;
-			if ( fallbackSiteId ) {
-				manager = state.themes.queries[ fallbackSiteId ];
-			}
+		if ( ! manager && sourceAndSiteId === 'wpcom' ) {
+			manager = state.themes.queries.wpcom;
 		}
 
 		if ( ! manager ) {
@@ -26,6 +31,32 @@ export const getTheme = createSelector(
 		}
 
 		return manager.getItem( themeId );
+	},
+	( state ) => state.themes.queries
+);
+
+export const isThemeInstalledOnSite = createSelector(
+	( state, sourceAndSiteId, themeId ) => {
+		const query = '[["request_type","my-themes"]]';
+		let siteId = sourceAndSiteId;
+
+		if ( 'wpcom' === sourceAndSiteId && isUserLoggedIn( state ) ) {
+			siteId = getSelectedSiteId( state );
+		} else if ( 'wpcom' === sourceAndSiteId && ! isUserLoggedIn( state ) ) {
+			siteId = 'wpcom';
+		}
+
+		let manager = state.themes.queries[ siteId ];
+
+		if ( ! manager && sourceAndSiteId === 'wpcom' ) {
+			manager = state.themes.queries.wpcom;
+		}
+
+		if ( ! manager ) {
+			return false;
+		}
+
+		return manager.getItems( query ).has( themeId );
 	},
 	( state ) => state.themes.queries
 );

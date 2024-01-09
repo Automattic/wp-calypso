@@ -86,7 +86,6 @@ import {
 	isWporgTheme,
 	getCanonicalTheme,
 	getPremiumThemePrice,
-	getTheme,
 	getThemeDemoUrl,
 	getThemeDetailsUrl,
 	getThemeForumUrl,
@@ -101,6 +100,7 @@ import {
 	isThemeWooCommerce,
 } from 'calypso/state/themes/selectors';
 import { getIsLoadingCart } from 'calypso/state/themes/selectors/get-is-loading-cart';
+import { isThemeInstalledOnSite } from 'calypso/state/themes/selectors/get-theme';
 import { getBackPath } from 'calypso/state/themes/themes-ui/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import EligibilityWarningModal from '../themes/atomic-transfer-dialog';
@@ -1642,6 +1642,7 @@ export default connect(
 		const backPath = getBackPath( state );
 		const isCurrentUserPaid = isUserPaid( state );
 		const theme = getCanonicalTheme( state, siteId, themeId );
+
 		const error = theme
 			? false
 			: getThemeRequestErrors( state, themeId, 'wpcom' ) ||
@@ -1691,7 +1692,7 @@ export default connect(
 			isStandaloneJetpack,
 			isVip: isVipSite( state, siteId ),
 			isPremium: isThemePremium( state, themeId ),
-			isThemeInstalled: !! getTheme( state, siteId, themeId ),
+			isThemeInstalled: isThemeInstalledOnSite( state, themeId, siteId ),
 			isThemePurchased: isPremiumThemeAvailable( state, themeId, siteId ),
 			isBundledSoftwareSet: doesThemeBundleSoftwareSet( state, themeId ),
 			isThemeBundleWooCommerce: isThemeWooCommerce( state, themeId ),

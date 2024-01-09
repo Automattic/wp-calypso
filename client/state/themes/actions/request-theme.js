@@ -110,7 +110,6 @@ export function requestSingleTheme( themeId, siteId, sourceType, locale ) {
 			siteId,
 			themeId,
 		} );
-
 		if ( sourceType === 'wporg' ) {
 			return fetchWporgThemeInformation( themeId )
 				.then( ( theme ) => {
@@ -122,14 +121,14 @@ export function requestSingleTheme( themeId, siteId, sourceType, locale ) {
 					dispatch( receiveTheme( normalizeWporgTheme( theme ), siteId ) );
 					dispatch( {
 						type: THEME_REQUEST_SUCCESS,
-						siteId,
+						sourceType,
 						themeId,
 					} );
 				} )
 				.catch( ( error ) => {
 					dispatch( {
 						type: THEME_REQUEST_FAILURE,
-						siteId,
+						sourceType,
 						themeId,
 						error,
 					} );
@@ -138,7 +137,7 @@ export function requestSingleTheme( themeId, siteId, sourceType, locale ) {
 
 		if ( sourceType === 'wpcom' ) {
 			const path = siteId ? `/sites/${ siteId }/themes/${ themeId }` : `/themes/${ themeId }`;
-			return makeWpcomRequest( dispatch, path, themeId, siteId, locale );
+			return makeWpcomRequest( dispatch, path, themeId, siteId ?? 'wpcom', locale );
 		}
 
 		/*
