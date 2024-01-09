@@ -62,22 +62,39 @@ const PLANS_LIST = getPlans();
 interface EnhancedTask extends Task {
 	useCalypsoPath?: boolean;
 }
-type TaskId = 'setup_free';
-type TaskAction = ( task: Task, flow: string ) => EnhancedTask;
+
+type TaskId = 'setup_free' | 'setup_blog';
+type TaskAction = (
+	task: Task,
+	flow: string,
+	siteInfoQueryArgs?: { siteId?: number; siteSlug?: string | null }
+) => EnhancedTask;
 type TaskActionTable = Record< TaskId, TaskAction >;
 
 const actions: TaskActionTable = {
-	setup_free: ( task, flow ) => {
-		return {
+	setup_free: ( task, flow ) =>
+		( {
 			...task,
 			actionDispatch: () => recordTaskClickTracksEvent( flow, task.completed, task.id ),
 			useCalypsoPath: true,
-		} satisfies EnhancedTask;
-	},
+		} ) satisfies EnhancedTask,
+	setup_blog: ( task, flow, siteInfoQueryArgs ) =>
+		( {
+			...task,
+			actionDispatch: () => recordTaskClickTracksEvent( flow, task.completed, task.id ),
+			//TODO: Move logic to backend
+			calypso_path: addQueryArgs( `/setup/${ flow }/setup-blog`, siteInfoQueryArgs ),
+			disabled: task.completed && ! isBlogOnboardingFlow( flow ),
+			useCalypsoPath: true,
+		} ) satisfies EnhancedTask,
 } as const;
 
-const getTaskDefinition = ( task: Task, flow: string ) => {
-	return actions[ task.id as TaskId ]( task, flow );
+const getTaskDefinition = (
+	task: Task,
+	flow: string,
+	siteInfoQueryArgs?: { siteId?: number; siteSlug?: string | null }
+) => {
+	return actions[ task.id as TaskId ]( task, flow, siteInfoQueryArgs );
 };
 
 /**
@@ -155,7 +172,7 @@ export function getEnhancedTasks( {
 	// We have to use the site id if the flow allows the user to change the site address
 	// as the domain name of the site may be changed.
 	// See https://github.com/Automattic/wp-calypso/pull/84532.
-	const siteInfoQueryArgs =
+	const siteInfoQueryArgs: { siteId?: number; siteSlug?: string | null } =
 		isBlogOnboardingFlow( flow ) || isSiteAssemblerFlow( flow )
 			? { siteId: site?.ID }
 			: { siteSlug };
@@ -294,16 +311,7 @@ export function getEnhancedTasks( {
 			case 'setup_free':
 				return getTaskDefinition( task, flow );
 			case 'setup_blog':
-				taskData = {
-					actionDispatch: () => {
-						recordTaskClickTracksEvent( flow, task.completed, task.id );
-						window.location.assign(
-							addQueryArgs( `/setup/${ flow }/setup-blog`, siteInfoQueryArgs )
-						);
-					},
-					disabled: task.completed && ! isBlogOnboardingFlow( flow ),
-				};
-				break;
+				return getTaskDefinition( task, flow, siteInfoQueryArgs );
 			case 'setup_newsletter':
 				taskData = {
 					actionDispatch: () => {
