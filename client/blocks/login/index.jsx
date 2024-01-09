@@ -2,6 +2,7 @@ import config from '@automattic/calypso-config';
 import page from '@automattic/calypso-router';
 import { localizeUrl } from '@automattic/i18n-utils';
 import classNames from 'classnames';
+import emailValidator from 'email-validator';
 import { localize } from 'i18n-calypso';
 import { capitalize, get, isEmpty, startsWith } from 'lodash';
 import PropTypes from 'prop-types';
@@ -12,6 +13,7 @@ import AsyncLoad from 'calypso/components/async-load';
 import JetpackPlusWpComLogo from 'calypso/components/jetpack-plus-wpcom-logo';
 import Notice from 'calypso/components/notice';
 import WooCommerceConnectCartHeader from 'calypso/components/woocommerce-connect-cart-header';
+import wooDnaConfig from 'calypso/jetpack-connect/woo-dna-config';
 import { preventWidows } from 'calypso/lib/formatting';
 import { getSignupUrl, isReactLostPasswordScreenEnabled } from 'calypso/lib/login';
 import {
@@ -141,6 +143,17 @@ class Login extends Component {
 		if ( ! prevProps.accountType && isPasswordlessAccount( this.props.accountType ) ) {
 			this.props.sendEmailLogin();
 		}
+
+		if (
+			this.props.isJetpackWooDnaFlow &&
+			this.props.requestError?.code === 'unknown_user' &&
+			emailValidator.validate( this.props.usernameOrEmail )
+		) {
+			this.sendMagicLoginLink( {
+				createAccount: true,
+			} );
+		}
+
 		// Passwordless email link sent.
 		if ( prevProps.isSendingEmail && this.props.emailRequested ) {
 			this.handleTwoFactorRequested( 'link' );
@@ -161,8 +174,8 @@ class Login extends Component {
 		}
 	}
 
-	sendMagicLoginLink = () => {
-		this.props.sendEmailLogin();
+	sendMagicLoginLink = ( options = {} ) => {
+		this.props.sendEmailLogin( options );
 		this.handleTwoFactorRequested( 'link' );
 	};
 
@@ -592,9 +605,8 @@ class Login extends Component {
 	}
 
 	renderToS() {
-		const { isSocialFirst, translate, twoFactorEnabled } = this.props;
-
-		if ( ! isSocialFirst || twoFactorEnabled ) {
+		const { isSocialFirst, translate, twoFactorAuthType } = this.props;
+		if ( ! isSocialFirst || twoFactorAuthType ) {
 			return null;
 		}
 
@@ -702,7 +714,7 @@ class Login extends Component {
 			);
 		}
 
-		if ( twoFactorEnabled ) {
+		if ( twoFactorEnabled && twoFactorAuthType ) {
 			return (
 				<Fragment>
 					<AsyncLoad
@@ -847,6 +859,7 @@ export default connect(
 		isSecurityKeySupported: isTwoFactorAuthTypeSupported( state, 'webauthn' ),
 		linkingSocialService: getSocialAccountLinkService( state ),
 		partnerSlug: getPartnerSlugFromQuery( state ),
+		isJetpackWooDnaFlow: wooDnaConfig( getCurrentQueryArguments( state ) ).isWooDnaFlow(),
 		isJetpackWooCommerceFlow:
 			'woocommerce-onboarding' === get( getCurrentQueryArguments( state ), 'from' ),
 		isWooCoreProfilerFlow: isWooCommerceCoreProfilerFlow( state ),
@@ -881,7 +894,7 @@ export default connect(
 		...ownProps,
 		...stateProps,
 		...dispatchProps,
-		sendEmailLogin: () =>
+		sendEmailLogin: ( options = {} ) =>
 			dispatchProps.sendEmailLogin( stateProps.usernameOrEmail, {
 				redirectTo: stateProps.redirectTo,
 				loginFormFlow: true,
@@ -890,6 +903,7 @@ export default connect(
 					( ownProps.isJetpack && 'jetpack' ) ||
 					( ownProps.isGravPoweredClient && ownProps.oauth2Client.name ) ||
 					null,
+				...options,
 			} ),
 	} )
 )( localize( Login ) );

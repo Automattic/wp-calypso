@@ -7,17 +7,24 @@ import { Component } from 'react';
 import { connect } from 'react-redux';
 import AutoDirection from 'calypso/components/auto-direction';
 import QueryComment from 'calypso/components/data/query-comment';
+import EmbedContainer from 'calypso/components/embed-container';
 import { stripHTML, decodeEntities } from 'calypso/lib/formatting';
 import CommentLink from 'calypso/my-sites/comments/comment/comment-link';
 import CommentPostLink from 'calypso/my-sites/comments/comment/comment-post-link';
 import { getParentComment, getSiteComment } from 'calypso/state/comments/selectors';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
+import { hasBlocks } from './utils';
 
 export class CommentContent extends Component {
 	static propTypes = {
 		commentId: PropTypes.number,
 		isBulkMode: PropTypes.bool,
 		isPostView: PropTypes.bool,
+	};
+
+	state = {
+		// Cache whether the comment has blocks. We don't want change that mid-typing (in case the user adds `<!-- wp:`).
+		originalCommentHasBlocks: hasBlocks( this.props.commentRawContent ),
 	};
 
 	renderInReplyTo = () => {
@@ -88,12 +95,26 @@ export class CommentContent extends Component {
 								{ this.renderInReplyTo() }
 							</div>
 						) }
-
 						<AutoDirection>
-							<div
-								className="comment__content-body"
-								dangerouslySetInnerHTML={ { __html: DOMPurify.sanitize( commentContent ) } } // eslint-disable-line react/no-danger
-							/>
+							<EmbedContainer>
+								{ this.state.originalCommentHasBlocks ? (
+									<div
+										className="comment__content-body with-blocks"
+										// eslint-disable-next-line react/no-danger
+										dangerouslySetInnerHTML={ {
+											__html: commentContent,
+										} }
+									/>
+								) : (
+									<div
+										className="comment__content-body"
+										// eslint-disable-next-line react/no-danger
+										dangerouslySetInnerHTML={ {
+											__html: DOMPurify.sanitize( commentContent ),
+										} }
+									/>
+								) }
+							</EmbedContainer>
 						</AutoDirection>
 					</div>
 				) }
@@ -117,6 +138,7 @@ const mapStateToProps = ( state, { commentId } ) => {
 
 	return {
 		commentContent: get( comment, 'content' ),
+		commentRawContent: get( comment, 'raw_content' ),
 		commentStatus: get( comment, 'status' ),
 		isParentCommentLoaded: ! parentCommentId || !! parentCommentContent,
 		parentCommentContent,

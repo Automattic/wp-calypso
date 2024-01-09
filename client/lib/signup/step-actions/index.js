@@ -464,31 +464,6 @@ export function submitWebsiteContent( callback, { siteSlug }, step, reduxStore )
 		} );
 }
 
-export function setDesignOnSite( callback, { siteSlug, selectedDesign } ) {
-	if ( ! selectedDesign ) {
-		defer( callback );
-		return;
-	}
-
-	const { theme } = selectedDesign;
-
-	wpcom.req
-		.post( `/sites/${ siteSlug }/themes/mine`, { theme, dont_change_homepage: true } )
-		.then( () =>
-			wpcom.req.post( {
-				path: `/sites/${ siteSlug }/theme-setup`,
-				apiNamespace: 'wpcom/v2',
-				body: { trim_content: true },
-			} )
-		)
-		.then( () => {
-			callback();
-		} )
-		.catch( ( errors ) => {
-			callback( [ errors ] );
-		} );
-}
-
 export function setOptionsOnSite( callback, { siteSlug, siteTitle, tagline } ) {
 	if ( ! siteTitle && ! tagline ) {
 		defer( callback );

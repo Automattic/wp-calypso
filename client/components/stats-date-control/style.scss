@@ -23,14 +23,13 @@ $date-control-shortcut-min-width: 140px;
 
 		.stats-date-control-picker-dates__inputs,
 		.stats-date-control-picker-dates__buttons {
-			filter: blur(5px);
+			filter: blur(10px);
 			z-index: 0;
 		}
 
 		.stats-date-control-picker-date__overlay {
 			position: absolute;
 			z-index: 1;
-			background: rgba(255, 255, 255, 0.5);
 		}
 	}
 }

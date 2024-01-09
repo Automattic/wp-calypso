@@ -14,6 +14,7 @@ interface PatternListItemProps {
 	isShown: boolean;
 	isSelected?: boolean;
 	composite?: Record< string, unknown >;
+	transformPatternHtml?: ( patternHtml: string ) => string;
 	onSelect: ( selectedPattern: Pattern | null ) => void;
 }
 
@@ -24,6 +25,7 @@ interface PatternListRendererProps {
 	selectedPatterns?: Pattern[];
 	activeClassName: string;
 	composite?: Record< string, unknown >;
+	transformPatternHtml?: ( patternHtml: string ) => string;
 	onSelect: ( selectedPattern: Pattern | null ) => void;
 	isShowMorePatterns?: boolean;
 }
@@ -39,6 +41,7 @@ const PatternListItem = ( {
 	isShown,
 	isSelected,
 	composite,
+	transformPatternHtml,
 	onSelect,
 }: PatternListItemProps ) => {
 	const ref = useRef< HTMLButtonElement >();
@@ -82,6 +85,7 @@ const PatternListItem = ( {
 						viewportWidth={ DEFAULT_VIEWPORT_WIDTH }
 						viewportHeight={ DEFAULT_VIEWPORT_HEIGHT }
 						minHeight={ PLACEHOLDER_HEIGHT }
+						transformHtml={ transformPatternHtml }
 					/>
 				) : (
 					<div key={ pattern.ID } style={ { height: PLACEHOLDER_HEIGHT } } />
@@ -98,6 +102,7 @@ const PatternListRenderer = ( {
 	selectedPatterns,
 	activeClassName,
 	composite,
+	transformPatternHtml,
 	onSelect,
 	isShowMorePatterns,
 }: PatternListRendererProps ) => {
@@ -119,6 +124,7 @@ const PatternListRenderer = ( {
 					isShown={ shownPatterns.includes( pattern ) }
 					isSelected={ pattern.ID === selectedPattern?.ID }
 					composite={ composite }
+					transformPatternHtml={ transformPatternHtml }
 					onSelect={ onSelect }
 				/>
 			) ) }

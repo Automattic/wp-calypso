@@ -54,20 +54,20 @@ export const useCreateSenseiSite = () => {
 		[]
 	);
 
-	const [ progress, setProgress ] = useState< Progress >( {
-		percentage: 0,
-		title: '',
-	} );
-
 	const { __ } = useI18n();
 	const locale = useLocale();
 	const visibility = useNewSiteVisibility();
 
-	const createAndConfigureSite = useCallback( async () => {
-		const siteProgressTitle = __( 'Laying out the foundations' );
-		const cartProgressTitle = __( 'Preparing Your Bundle' );
-		const styleProgressTitle = __( 'Applying your site styles' );
+	const siteProgressTitle = __( 'Laying out the foundations' );
+	const cartProgressTitle = __( 'Preparing Your Bundle' );
+	const styleProgressTitle = __( 'Applying your site styles' );
 
+	const [ progress, setProgress ] = useState< Progress >( {
+		percentage: 0,
+		title: siteProgressTitle,
+	} );
+
+	const createAndConfigureSite = useCallback( async () => {
 		setProgress( {
 			percentage: 25,
 			title: siteProgressTitle,
@@ -114,7 +114,6 @@ export const useCreateSenseiSite = () => {
 			if ( styleVariation && userGlobalStylesId ) {
 				await updateGlobalStyles( siteId, userGlobalStylesId, styleVariation );
 			}
-			wait( 1200 );
 		}
 		setProgress( {
 			percentage: 100,
@@ -123,7 +122,6 @@ export const useCreateSenseiSite = () => {
 
 		return { site: newSite };
 	}, [
-		__,
 		createSenseiSite,
 		currentUser?.username,
 		getNewSite,
@@ -133,6 +131,9 @@ export const useCreateSenseiSite = () => {
 		setIntentOnSite,
 		setSelectedSite,
 		visibility,
+		siteProgressTitle,
+		cartProgressTitle,
+		styleProgressTitle,
 	] );
 
 	return { createAndConfigureSite, progress };

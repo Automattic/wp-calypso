@@ -1,4 +1,3 @@
-import { PLAN_BUSINESS, PLAN_PREMIUM } from '@automattic/calypso-products';
 import { useEffect } from 'react';
 import difmImage from 'calypso/assets/images/difm/difm.svg';
 import DIFMLanding from 'calypso/my-sites/marketing/do-it-for-me/difm-landing';
@@ -50,7 +49,6 @@ export default function NewOrExistingSiteStep( props: Props ) {
 	};
 
 	const showNewOrExistingSiteChoice = existingSiteCount > 0;
-	const planSlug = 'do-it-for-me-store' === flowName ? PLAN_BUSINESS : PLAN_PREMIUM;
 
 	return (
 		<StepWrapper
@@ -63,7 +61,7 @@ export default function NewOrExistingSiteStep( props: Props ) {
 					}
 					onSecondarySubmit={ () => newOrExistingSiteSelected( 'new-site' ) }
 					showNewOrExistingSiteChoice={ showNewOrExistingSiteChoice }
-					planSlug={ planSlug }
+					isStoreFlow={ 'do-it-for-me-store' === flowName }
 				/>
 			}
 			hideFormattedHeader={ true }

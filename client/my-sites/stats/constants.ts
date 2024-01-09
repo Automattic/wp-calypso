@@ -53,3 +53,13 @@ export const STATS_FEATURE_INTERVAL_DROPDOWN_WEEK = `StatsIntervalDropdown/${ ST
 export const STATS_FEATURE_INTERVAL_DROPDOWN_MONTH = `StatsIntervalDropdown/${ STATS_PERIOD.MONTH }`;
 export const STATS_FEATURE_INTERVAL_DROPDOWN_YEAR = `StatsIntervalDropdown/${ STATS_PERIOD.YEAR }`;
 export const STATS_FEATURE_DOWNLOAD_CSV = 'StatsDownloadCsv';
+export const STATS_FEATURE_SUMMARY_LINKS = 'StatsModuleSummaryLinks';
+export const STATS_FEATURE_SUMMARY_LINKS_DAY = 'StatsModuleSummaryLinks/day';
+export const STATS_FEATURE_SUMMARY_LINKS_7_DAYS = 'StatsModuleSummaryLinks/7_days';
+export const STATS_FEATURE_SUMMARY_LINKS_30_DAYS = 'StatsModuleSummaryLinks/30_days';
+export const STATS_FEATURE_SUMMARY_LINKS_QUARTER = 'StatsModuleSummaryLinks/quarter';
+export const STATS_FEATURE_SUMMARY_LINKS_YEAR = 'StatsModuleSummaryLinks/year';
+export const STATS_FEATURE_SUMMARY_LINKS_ALL = 'StatsModuleSummaryLinks/all';
+
+// other
+export const STATS_DO_YOU_LOVE_JETPACK_STATS_NOTICE = 'DoYouLoveJetpackStatsNotice';

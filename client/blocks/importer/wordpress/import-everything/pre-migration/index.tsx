@@ -1,6 +1,6 @@
 import { SiteDetails } from '@automattic/data-stores';
 import { useTranslate } from 'i18n-calypso';
-import React, { useEffect, useState, useMemo } from 'react';
+import React, { useEffect, useState, useMemo, useCallback } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useSiteMigrateInfo } from 'calypso/blocks/importer/hooks/use-site-can-migrate';
 import { useSiteCredentialsInfo } from 'calypso/blocks/importer/hooks/use-site-credentials-info';
@@ -82,12 +82,12 @@ export const PreMigrationScreen: React.FunctionComponent< PreMigrationProps > = 
 		};
 	}, [ sourceSiteId, sourceSiteUrl, targetSite.ID, targetSite.slug, isMigrateFromWp, isTrial ] );
 
-	const toggleCredentialsForm = () => {
-		setShowCredentials( ! showCredentials );
+	const toggleCredentialsForm = useCallback( () => {
+		setShowCredentials( ( prevShowCredentials ) => ! prevShowCredentials );
 		dispatch(
 			recordTracksEvent( 'calypso_site_migration_credentials_form_toggle', migrationTrackingProps )
 		);
-	};
+	}, [ dispatch, migrationTrackingProps ] );
 
 	const [ queryTargetSitePlanStatus, setQueryTargetSitePlanStatus ] = useState<
 		'init' | 'fetching' | 'fetched'
@@ -103,8 +103,11 @@ export const PreMigrationScreen: React.FunctionComponent< PreMigrationProps > = 
 		},
 	} );
 
-	const { hasCredentials, isRequesting: isFetchingCredentials } =
-		useSiteCredentialsInfo( sourceSiteId );
+	const {
+		hasCredentials,
+		isRequesting: isFetchingCredentials,
+		hasLoaded: hasCredentialLoaded,
+	} = useSiteCredentialsInfo( sourceSiteId );
 
 	const onUpgradeAndMigrateClick = () => {
 		fetchMigrationEnabledStatus();
@@ -170,7 +173,7 @@ export const PreMigrationScreen: React.FunctionComponent< PreMigrationProps > = 
 			setRenderState( 'upgrade-plan' );
 		} else if ( showCredentials ) {
 			setRenderState( 'credentials' );
-		} else if ( isFetchingCredentials || isFetchingMigrationData ) {
+		} else if ( ! hasCredentialLoaded || isFetchingCredentials || isFetchingMigrationData ) {
 			setRenderState( 'loading' );
 		} else if ( ! sourceSiteId ) {
 			setRenderState( 'not-authorized' );
@@ -206,6 +209,7 @@ export const PreMigrationScreen: React.FunctionComponent< PreMigrationProps > = 
 					targetSite={ targetSite }
 					migrationTrackingProps={ migrationTrackingProps }
 					startImport={ startImport }
+					allowFtp={ false }
 				/>
 			);
 

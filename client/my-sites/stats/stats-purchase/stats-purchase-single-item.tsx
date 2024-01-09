@@ -3,11 +3,12 @@ import page from '@automattic/calypso-router';
 import { Button as CalypsoButton } from '@automattic/components';
 import { Button, Panel, PanelBody, CheckboxControl } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
-import React, { useState } from 'react';
+import React, { useState, useCallback } from 'react';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { useSelector } from 'calypso/state';
 import getIsSiteWPCOM from 'calypso/state/selectors/is-site-wpcom';
 import getSiteAdminUrl from 'calypso/state/sites/selectors/get-site-admin-url';
+import useStatsPurchases from '../hooks/use-stats-purchases';
 import { StatsCommercialUpgradeSlider, getTierQuentity } from './stats-commercial-upgrade-slider';
 import gotoCheckoutPage from './stats-purchase-checkout-redirect';
 import PersonalPurchase from './stats-purchase-personal';
@@ -75,6 +76,24 @@ interface StatsPersonalPurchaseProps {
 
 const COMPONENT_CLASS_NAME = 'stats-purchase-single';
 
+const StatsUpgradeInstructions = () => {
+	const translate = useTranslate();
+	return (
+		<div>
+			<p>
+				{ translate(
+					'Upgrade and increase your site views limit to continue using our advanced stats features.'
+				) }
+			</p>
+			<div className="stats-purchase-wizard__notice">
+				{ translate(
+					'The remainder of your current plan will be credited towards the upgrade, ensuring you only pay the price difference. Starting from the next billing cycle, standard charges will apply.'
+				) }
+			</div>
+		</div>
+	);
+};
+
 const StatsCommercialPurchase = ( {
 	siteId,
 	siteSlug,
@@ -89,6 +108,7 @@ const StatsCommercialPurchase = ( {
 	const isWPCOMSite = useSelector( ( state ) => siteId && getIsSiteWPCOM( state, siteId ) );
 	const isTierUpgradeSliderEnabled = config.isEnabled( 'stats/tier-upgrade-slider' );
 	const tiers = useAvailableUpgradeTiers( siteId ) || [];
+	const { isCommercialOwned } = useStatsPurchases( siteId );
 
 	// The button of @automattic/components has built-in color scheme support for Calypso.
 	const ButtonComponent = isWPCOMSite ? CalypsoButton : Button;
@@ -125,15 +145,20 @@ Thanks\n\n`;
 		setTimeout( () => ( window.location.href = emailHref ), 250 );
 	};
 
-	const handleSliderChanged = ( value: number ) => {
+	const handleSliderChanged = useCallback( ( value: number ) => {
 		setPurchaseTierQuantity( value );
-	};
+	}, [] );
 
 	return (
 		<>
 			<h1>{ translate( 'Jetpack Stats' ) }</h1>
-			<p>{ translate( 'The most advanced stats Jetpack has to offer.' ) }</p>
-			<StatsBenefitsCommercial />
+			{ ! isCommercialOwned && (
+				<>
+					<p>{ translate( 'The most advanced stats Jetpack has to offer.' ) }</p>
+					<StatsBenefitsCommercial />
+				</>
+			) }
+			{ isCommercialOwned && <StatsUpgradeInstructions /> }
 			{ ! isTierUpgradeSliderEnabled && (
 				<>
 					<StatsCommercialPriceDisplay planValue={ planValue } currencyCode={ currencyCode } />

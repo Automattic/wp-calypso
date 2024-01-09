@@ -459,7 +459,7 @@ $image-height: 47px;
 		max-width: 758px;
 		margin-top: 24px;
 
-		@include break-mobile {
+		@include break-medium {
 			margin-top: 20.5vh;
 		}
 
@@ -519,15 +519,6 @@ $image-height: 47px;
 				margin-top: 40px;
 			}
 		}
-	}
-
-	.wp-login__links {
-		align-items: center;
-		margin-left: auto;
-		margin-right: auto;
-		margin-top: 30px;
-		max-width: 400px;
-		// margin: 0 auto;
 	}
 
 	.layout__primary {
@@ -593,6 +584,18 @@ $image-height: 47px;
 
 	.login__social-tos {
 		margin-top: 24px;
+	}
+
+	.two-factor-authentication__verification-code-form.card {
+		padding-bottom: 0;
+
+		button.button {
+			margin-bottom: 16px;
+		}
+	}
+
+	.two-factor-authentication__actions.card {
+		padding-top: 0;
 	}
 }
 

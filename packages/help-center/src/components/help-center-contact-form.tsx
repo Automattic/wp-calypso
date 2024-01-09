@@ -19,6 +19,7 @@ import { useDebounce } from 'use-debounce';
 import { decodeEntities, preventWidows } from 'calypso/lib/formatting';
 import { isWcMobileApp } from 'calypso/lib/mobile-app';
 import { getQueryArgs } from 'calypso/lib/query-args';
+import { getOdieStorage } from 'calypso/odie/data';
 import { getCurrentUserEmail, getCurrentUserId } from 'calypso/state/current-user/selectors';
 import { getSectionName } from 'calypso/state/ui/selectors';
 /**
@@ -114,7 +115,7 @@ export const HelpCenterContactForm = () => {
 		};
 	}, [] );
 
-	const { setSite, resetStore, setUserDeclaredSite, setShowMessagingChat, setSubject, setMessage } =
+	const { resetStore, setUserDeclaredSite, setShowMessagingChat, setSubject, setMessage } =
 		useDispatch( HELP_CENTER_STORE );
 
 	const {
@@ -237,9 +238,7 @@ export const HelpCenterContactForm = () => {
 			section: sectionName,
 		} );
 
-		const savedCurrentSite = currentSite;
 		resetStore();
-		setSite( savedCurrentSite );
 
 		navigate( '/' );
 	}
@@ -291,6 +290,8 @@ export const HelpCenterContactForm = () => {
 		const productId = plan?.getProductId();
 		const productName = plan?.getTitle();
 		const productTerm = getPlanTermLabel( productSlug, ( text ) => text );
+		const wapuuChatId = getOdieStorage( 'last_chat_id' );
+		const aiChatId = wapuuFlow ? wapuuChatId ?? '' : gptResponse?.answer_id;
 
 		switch ( mode ) {
 			case 'CHAT':
@@ -316,9 +317,21 @@ export const HelpCenterContactForm = () => {
 						initialChatMessage += `<strong>Automated AI response from ${ gptResponse.source } that was presented to user before they started chat</strong>:<br />`;
 						initialChatMessage += gptResponse.response;
 					}
-					openChatWidget( initialChatMessage, supportSite.URL, () =>
-						setHasSubmittingError( true )
-					);
+
+					if ( wapuuFlow ) {
+						initialChatMessage += '<br /><br />';
+						initialChatMessage += wapuuChatId
+							? `<strong>Wapuu chat reference: ${ wapuuChatId }</strong>:<br />`
+							: '<strong>Wapuu chat reference is not available</strong>:<br />';
+						initialChatMessage += 'User was chatting with Wapuu before they started chat<br />';
+					}
+
+					openChatWidget( {
+						aiChatId: aiChatId,
+						message: initialChatMessage,
+						siteUrl: supportSite.URL,
+						onError: () => setHasSubmittingError( true ),
+					} );
 					break;
 				}
 				break;
@@ -347,7 +360,7 @@ export const HelpCenterContactForm = () => {
 						is_chat_overflow: overflow,
 						source: 'source_wpcom_help_center',
 						blog_url: supportSite.URL,
-						ai_chat_id: gptResponse?.answer_id,
+						ai_chat_id: aiChatId,
 						ai_message: gptResponse?.response,
 					} )
 						.then( () => {

@@ -36,6 +36,7 @@ import BlazePageViewTracker from './components/blaze-page-view-tracker';
 import CreditBalance from './components/credit-balance';
 import MainWrapper from './components/main-wrapper';
 import PostsListBanner from './components/posts-list-banner';
+import WooBanner from './components/woo-banner';
 import useOpenPromoteWidget from './hooks/use-open-promote-widget';
 import { getAdvertisingDashboardPath } from './utils';
 
@@ -199,6 +200,8 @@ export default function PromotedPosts( { tab }: Props ) {
 
 	const showBanner = ! campaignsIsLoading && ( totalCampaignsUnfiltered || 0 ) < 3;
 
+	const isWooBlaze = config.isEnabled( 'is_running_in_woo_site' );
+
 	// Add Hotjar script to the page.
 	addHotJarScript();
 
@@ -216,9 +219,13 @@ export default function PromotedPosts( { tab }: Props ) {
 					`${ baseClassName }_${ isMobile ? 'mobile' : 'desktop' }`
 				) }
 			>
-				{ translate(
-					'Use Blaze to grow your audience by promoting your content across Tumblr and WordPress.com.'
-				) }
+				{ isWooBlaze
+					? translate(
+							'Increase your sales by promoting your products and pages across millions of blogs and sites.'
+					  )
+					: translate(
+							'Use Blaze to grow your audience by promoting your content across Tumblr and WordPress.com.'
+					  ) }
 			</div>
 		);
 	};
@@ -234,7 +241,9 @@ export default function PromotedPosts( { tab }: Props ) {
 						'advertising__page-header_has-banner': showBanner,
 					} ) }
 					children={ headerSubtitle( false ) /* for desktop */ }
-					headerText={ translate( 'Advertising' ) }
+					headerText={
+						isWooBlaze ? translate( 'Blaze for WooCommerce' ) : translate( 'Advertising' )
+					}
 					align="left"
 				/>
 
@@ -252,7 +261,7 @@ export default function PromotedPosts( { tab }: Props ) {
 			</div>
 			{ headerSubtitle( true ) /* for mobile */ }
 
-			{ showBanner && <PostsListBanner /> }
+			{ showBanner && ( isWooBlaze ? <WooBanner /> : <PostsListBanner /> ) }
 
 			<PromotePostTabBar tabs={ tabs } selectedTab={ selectedTab } />
 

@@ -33,6 +33,12 @@ import {
 	CommandCallBackParams,
 } from 'calypso/components/command-palette/use-command-palette';
 import WooCommerceLogo from 'calypso/components/woocommerce-logo';
+import {
+	EDGE_CACHE_ENABLE_DISABLE_NOTICE_ID,
+	getEdgeCacheStatus,
+	useSetEdgeCacheMutation,
+	purgeEdgeCache,
+} from 'calypso/data/hosting/use-cache';
 import { SiteExcerptData } from 'calypso/data/sites/site-excerpt-types';
 import { navigate } from 'calypso/lib/navigate';
 import { useAddNewSiteUrl } from 'calypso/lib/paths/use-add-new-site-url';
@@ -86,13 +92,15 @@ export const useCommandsArrayWpcom = ( {
 		};
 
 	const commandNavigation = useCommandNavigation();
-
 	const dispatch = useDispatch();
+
+	const { setEdgeCache } = useSetEdgeCacheMutation();
+
 	const displayNotice = (
 		message: string,
 		noticeType: NoticeStatus = 'is-success',
 		duration: undefined | number | null = 5000,
-		additionalOptions: { button?: string; onClick?: () => void } = {}
+		additionalOptions: { button?: string; id?: string; onClick?: () => void } = {}
 	) => {
 		const { notice } = dispatch(
 			createNotice( noticeType, message, { duration, ...additionalOptions } )
@@ -107,11 +115,15 @@ export const useCommandsArrayWpcom = ( {
 
 	const siteFilters = {
 		hostingEnabled: {
-			filter: ( site: SiteExcerptData ) => site?.is_wpcom_atomic,
+			capabilityFilter: 'manage_options',
+			filter: ( site: SiteExcerptData ) => {
+				return site?.is_wpcom_atomic;
+			},
 			filterNotice: __( 'Only listing sites with hosting features enabled.' ),
 			emptyListNotice: __( 'No sites with hosting features enabled.' ),
 		},
 		hostingEnabledAndPublic: {
+			capabilityFilter: 'manage_options',
 			filter: ( site: SiteExcerptData ) =>
 				site?.is_wpcom_atomic && ! site?.is_coming_soon && ! site?.is_private,
 			filterNotice: __( 'Only listing public sites with hosting features enabled.' ),
@@ -206,45 +218,19 @@ export const useCommandsArrayWpcom = ( {
 		displayNotice( __( 'SFTP/SSH password reset and copied to clipboard.' ) );
 	};
 
-	const getEdgeCacheStatus = async ( siteId: number ) => {
-		const response = await wpcom.req.get( {
-			path: `/sites/${ siteId }/hosting/edge-cache/active`,
-			apiNamespace: 'wpcom/v2',
-		} );
-
-		return response;
-	};
-
 	const clearEdgeCache = async ( siteId: number ) => {
 		try {
 			const response = await getEdgeCacheStatus( siteId );
 
 			if ( response ) {
 				// If global cache is active, purge the cache
-				await wpcom.req.post( {
-					path: `/sites/${ siteId }/hosting/edge-cache/purge`,
-					apiNamespace: 'wpcom/v2',
-				} );
-				displayNotice( __( 'Successfully cleared cache.' ) );
-			} else {
-				// If global edge cache is not active, clear WordPress cache
-				dispatch( clearWordPressCache( siteId, 'Cache not active' ) );
+				await purgeEdgeCache( siteId );
 			}
+			// Always clear the WordPress cache.
+			dispatch( clearWordPressCache( siteId, 'Clear cache via command palette' ) );
 		} catch ( error ) {
 			displayNotice( __( 'Failed to clear cache.' ), 'is-error' );
 		}
-	};
-
-	// Toggle cache function
-	const setEdgeCache = async ( siteId: number, newStatus: boolean ) => {
-		const response = await wpcom.req.post( {
-			path: `/sites/${ siteId }/hosting/edge-cache/active`,
-			apiNamespace: 'wpcom/v2',
-			body: {
-				active: newStatus,
-			},
-		} );
-		return response;
 	};
 
 	const enableEdgeCache = async ( siteId: number ) => {
@@ -253,46 +239,26 @@ export const useCommandsArrayWpcom = ( {
 		// Check if the cache is already active
 		if ( currentStatus ) {
 			// Display a different notice if the cache is already active
-			displayNotice( __( 'Edge cache is already enabled.' ), 'is-success' );
+			displayNotice( __( 'Edge cache is already enabled.' ), 'is-success', 5000, {
+				id: EDGE_CACHE_ENABLE_DISABLE_NOTICE_ID,
+			} );
 			return;
 		}
 
-		const { removeNotice: removeLoadingNotice } = displayNotice(
-			__( 'Enabling edge cache…' ),
-			'is-plain',
-			5000
-		);
-		try {
-			await setEdgeCache( siteId, true );
-			removeLoadingNotice();
-			displayNotice( __( 'Edge cache enabled.' ) );
-		} catch ( error ) {
-			removeLoadingNotice();
-			displayNotice( __( 'Failed to enable edge cache.' ), 'is-error' );
-		}
+		setEdgeCache( siteId, true );
 	};
 
 	const disableEdgeCache = async ( siteId: number ) => {
 		const currentStatus = await getEdgeCacheStatus( siteId );
 
 		if ( ! currentStatus ) {
-			displayNotice( __( 'Edge cache is already disabled.' ), 'is-success' );
+			displayNotice( __( 'Edge cache is already disabled.' ), 'is-success', 5000, {
+				id: EDGE_CACHE_ENABLE_DISABLE_NOTICE_ID,
+			} );
 			return;
 		}
 
-		const { removeNotice: removeLoadingNotice } = displayNotice(
-			__( 'Disabling edge cache…' ),
-			'is-plain',
-			5000
-		);
-		try {
-			await setEdgeCache( siteId, false );
-			removeLoadingNotice();
-			displayNotice( __( 'Edge cache disabled.' ) );
-		} catch ( error ) {
-			removeLoadingNotice();
-			displayNotice( __( 'Failed to disable edge cache.' ), 'is-error' );
-		}
+		setEdgeCache( siteId, false );
 	};
 
 	const { openPhpMyAdmin } = useOpenPhpMyAdmin();
@@ -423,6 +389,7 @@ export const useCommandsArrayWpcom = ( {
 				__( 'Select site to open hosting configuration' )
 			),
 			siteFunctions: {
+				capabilityFilter: 'manage_options',
 				onClick: ( param ) => commandNavigation( `/hosting-config/${ param.site.slug }` )( param ),
 				filter: ( site: SiteExcerptData ) => ! isP2Site( site ) && ! isNotAtomicJetpack( site ),
 				filterNotice: __( 'Only listing sites hosted on WordPress.com.' ),
@@ -469,6 +436,25 @@ export const useCommandsArrayWpcom = ( {
 			icon: <Gridicon icon="reader" />,
 		},
 		{
+			name: 'openJetpackSettings',
+			label: __( 'Open Jetpack settings' ),
+			callback: setStateCallback(
+				'openJetpackSettings',
+				__( 'Select site to open Jetpack settings' )
+			),
+			siteFunctions: {
+				capabilityFilter: 'manage_options',
+				onClick: ( param ) =>
+					commandNavigation( `${ param.site.URL }/wp-admin/admin.php?page=jetpack#/dashboard` )(
+						param
+					),
+				filter: ( site: SiteExcerptData ) => site?.is_wpcom_atomic || isNotAtomicJetpack( site ),
+				filterNotice: __( 'Only listing sites with Jetpack settings available.' ),
+				emptyListNotice: __( 'No sites with Jetpack settings available.' ),
+			},
+			icon: <JetpackLogo className="gridicon" size={ 18 } />,
+		},
+		{
 			name: 'addJetpack',
 			label: __( 'Add Jetpack to a self-hosted site' ),
 			searchLabel: [
@@ -479,6 +465,25 @@ export const useCommandsArrayWpcom = ( {
 				_x( 'connect jetpack', 'Keyword for Add Jetpack to a self-hosted site command' ),
 			].join( ' ' ),
 			callback: commandNavigation( `/jetpack/connect?cta_from=command-palette` ),
+			icon: <JetpackLogo className="gridicon" size={ 18 } />,
+		},
+		{
+			name: 'manageJetpackModules',
+			label: __( 'Manage Jetpack modules' ),
+			callback: setStateCallback(
+				'manageJetpackModules',
+				__( 'Select site to manage Jetpack modules' )
+			),
+			siteFunctions: {
+				capabilityFilter: 'manage_options',
+				onClick: ( param ) =>
+					commandNavigation( `${ param.site.URL }/wp-admin/admin.php?page=jetpack_modules` )(
+						param
+					),
+				filter: ( site: SiteExcerptData ) => site?.is_wpcom_atomic || isNotAtomicJetpack( site ),
+				filterNotice: __( 'Only listing sites with Jetpack modules available.' ),
+				emptyListNotice: __( 'No sites with Jetpack modules available.' ),
+			},
 			icon: <JetpackLogo className="gridicon" size={ 18 } />,
 		},
 		{
@@ -567,6 +572,7 @@ export const useCommandsArrayWpcom = ( {
 			context: [ '/sites' ],
 			callback: setStateCallback( 'manageDns', __( 'Select site to open DNS records' ) ),
 			siteFunctions: {
+				capabilityFilter: 'manage_options',
 				onClick: ( param ) =>
 					commandNavigation( `/domains/manage/${ param.site.slug }/dns/${ param.site.slug }` )(
 						param
@@ -653,6 +659,7 @@ export const useCommandsArrayWpcom = ( {
 			label: __( 'Open Jetpack Backup' ),
 			callback: setStateCallback( 'openJetpackBackup', __( 'Select site to open Jetpack Backup' ) ),
 			siteFunctions: {
+				capabilityFilter: 'manage_options',
 				onClick: ( param ) => commandNavigation( `/backup/${ param.site.slug }` )( param ),
 				filter: ( site: SiteExcerptData ) => ! isP2Site( site ) && ! isNotAtomicJetpack( site ),
 				filterNotice: __( 'Only listing sites with Jetpack Backup enabled.' ),
@@ -778,6 +785,7 @@ export const useCommandsArrayWpcom = ( {
 			context: [ '/posts' ],
 			callback: setStateCallback( 'addNewPost', __( 'Select site to add new post' ) ),
 			siteFunctions: {
+				capabilityFilter: 'edit_posts',
 				onClick: ( param ) => {
 					const link = generateSiteInterfaceLink( param.site, {
 						calypso: '/post',
@@ -797,6 +805,7 @@ export const useCommandsArrayWpcom = ( {
 			].join( ' ' ),
 			callback: setStateCallback( 'managePosts', __( 'Select site to manage posts' ) ),
 			siteFunctions: {
+				capabilityFilter: 'edit_posts',
 				onClick: ( param ) => {
 					const link = generateSiteInterfaceLink( param.site, {
 						calypso: '/posts',
@@ -816,6 +825,7 @@ export const useCommandsArrayWpcom = ( {
 			].join( ' ' ),
 			callback: setStateCallback( 'viewMediaUploads', __( 'Select site to view media uploads' ) ),
 			siteFunctions: {
+				capabilityFilter: 'upload_files',
 				onClick: ( param ) => {
 					const link = generateSiteInterfaceLink( param.site, {
 						calypso: '/media',
@@ -831,6 +841,7 @@ export const useCommandsArrayWpcom = ( {
 			label: __( 'Upload media' ),
 			callback: setStateCallback( 'uploadMedia', __( 'Select site to upload media' ) ),
 			siteFunctions: {
+				capabilityFilter: 'upload_files',
 				onClick: ( param ) => {
 					const link = generateSiteInterfaceLink( param.site, {
 						calypso: '/media',
@@ -851,6 +862,7 @@ export const useCommandsArrayWpcom = ( {
 			].join( ' ' ),
 			callback: setStateCallback( 'managePages', __( 'Select site to manage pages' ) ),
 			siteFunctions: {
+				capabilityFilter: 'edit_pages',
 				onClick: ( param ) => {
 					const link = generateSiteInterfaceLink( param.site, {
 						calypso: '/pages',
@@ -872,6 +884,7 @@ export const useCommandsArrayWpcom = ( {
 			context: [ '/pages' ],
 			callback: setStateCallback( 'addNewPage', __( 'Select site to add new page' ) ),
 			siteFunctions: {
+				capabilityFilter: 'edit_pages',
 				onClick: ( param ) => {
 					const link = generateSiteInterfaceLink( param.site, {
 						calypso: '/page',
@@ -892,6 +905,7 @@ export const useCommandsArrayWpcom = ( {
 			].join( ' ' ),
 			callback: setStateCallback( 'manageComments', __( 'Select site to manage comments' ) ),
 			siteFunctions: {
+				capabilityFilter: 'moderate_comments',
 				onClick: ( param ) => {
 					const link = generateSiteInterfaceLink( param.site, {
 						calypso: '/comments',
@@ -913,6 +927,7 @@ export const useCommandsArrayWpcom = ( {
 			].join( ' ' ),
 			callback: setStateCallback( 'manageThemes', __( 'Select site to manage themes' ) ),
 			siteFunctions: {
+				capabilityFilter: 'install_themes',
 				onClick: ( param ) => {
 					const link = generateSiteInterfaceLink( param.site, {
 						calypso: '/themes',
@@ -934,6 +949,7 @@ export const useCommandsArrayWpcom = ( {
 			].join( ' ' ),
 			callback: setStateCallback( 'installTheme', __( 'Select site to install theme' ) ),
 			siteFunctions: {
+				capabilityFilter: 'install_themes',
 				onClick: ( param ) => {
 					const link = generateSiteInterfaceLink( param.site, {
 						calypso: '/themes',
@@ -958,6 +974,7 @@ export const useCommandsArrayWpcom = ( {
 			].join( ' ' ),
 			callback: setStateCallback( 'managePlugins', __( 'Select site to manage plugins' ) ),
 			siteFunctions: {
+				capabilityFilter: 'install_plugins',
 				onClick: ( param ) => {
 					const link = generateSiteInterfaceLink( param.site, {
 						calypso: '/plugins',
@@ -979,6 +996,7 @@ export const useCommandsArrayWpcom = ( {
 			].join( ' ' ),
 			callback: setStateCallback( 'installPlugin', __( 'Select site to install plugin' ) ),
 			siteFunctions: {
+				capabilityFilter: 'install_plugins',
 				onClick: ( param ) => {
 					const link = generateSiteInterfaceLink( param.site, {
 						calypso: '/plugins',
@@ -1001,6 +1019,7 @@ export const useCommandsArrayWpcom = ( {
 			context: [ '/sites' ],
 			callback: setStateCallback( 'changePlan', __( 'Select site to change plan' ) ),
 			siteFunctions: {
+				capabilityFilter: 'manage_options',
 				onClick: ( param ) => commandNavigation( `/plans/${ param.site.slug }` )( param ),
 				filter: ( site: SiteExcerptData ) => ! isP2Site( site ) && ! site?.is_wpcom_staging_site,
 			},
@@ -1016,6 +1035,7 @@ export const useCommandsArrayWpcom = ( {
 			].join( ' ' ),
 			callback: setStateCallback( 'manageMyPlan', __( 'Select site to manage your plan' ) ),
 			siteFunctions: {
+				capabilityFilter: 'manage_options',
 				onClick: ( param ) => commandNavigation( `/plans/my-plan/${ param.site.slug }` )( param ),
 				filter: ( site: SiteExcerptData ) => ! isP2Site( site ) && ! site?.is_wpcom_staging_site,
 			},
@@ -1034,6 +1054,7 @@ export const useCommandsArrayWpcom = ( {
 			].join( ' ' ),
 			callback: setStateCallback( 'manageUsers', __( 'Select site to manage users' ) ),
 			siteFunctions: {
+				capabilityFilter: 'list_users',
 				onClick: ( param ) => {
 					const link = generateSiteInterfaceLink( param.site, {
 						calypso: '/people/team',
@@ -1054,6 +1075,7 @@ export const useCommandsArrayWpcom = ( {
 			].join( ' ' ),
 			callback: setStateCallback( 'addNewUser', __( 'Select site to add new user' ) ),
 			siteFunctions: {
+				capabilityFilter: 'list_users',
 				onClick: ( param ) => {
 					const link = generateSiteInterfaceLink( param.site, {
 						calypso: '/people/new',
@@ -1075,6 +1097,7 @@ export const useCommandsArrayWpcom = ( {
 			context: [ '/subscribers' ],
 			callback: setStateCallback( 'addSubscribers', __( 'Select site to add subscribers' ) ),
 			siteFunctions: {
+				capabilityFilter: 'manage_options',
 				onClick: ( param ) =>
 					commandNavigation( `/subscribers/${ param.site.slug }#add-subscribers` )( param ),
 			},
@@ -1085,6 +1108,7 @@ export const useCommandsArrayWpcom = ( {
 			label: __( 'Manage subscribers' ),
 			callback: setStateCallback( 'manageSubscribers', __( 'Select site to manage subscribers' ) ),
 			siteFunctions: {
+				capabilityFilter: 'manage_options',
 				onClick: ( param ) => commandNavigation( `/subscribers/${ param.site.slug }` )( param ),
 			},
 			icon: subscriberIcon,
@@ -1098,6 +1122,7 @@ export const useCommandsArrayWpcom = ( {
 				__( 'Select site to download subscribers' )
 			),
 			siteFunctions: {
+				capabilityFilter: 'manage_options',
 				onClick: ( { site, close } ) => {
 					close();
 					window.location.assign(
@@ -1113,6 +1138,7 @@ export const useCommandsArrayWpcom = ( {
 			context: [ '/posts' ],
 			callback: setStateCallback( 'import', __( 'Select site to import content' ) ),
 			siteFunctions: {
+				capabilityFilter: 'manage_options',
 				onClick: ( param ) => commandNavigation( `/import/${ param.site.slug }` )( param ),
 			},
 			icon: downloadIcon,
@@ -1125,6 +1151,7 @@ export const useCommandsArrayWpcom = ( {
 				__( 'Select site to open WooCommerce settings' )
 			),
 			siteFunctions: {
+				capabilityFilter: 'manage_options',
 				onClick: ( param ) => {
 					if ( param.site.options?.is_wpcom_store ) {
 						commandNavigation( `${ param.site.URL }/wp-admin/admin.php?page=wc-admin` )( param );
@@ -1146,6 +1173,7 @@ export const useCommandsArrayWpcom = ( {
 				__( 'Select site to manage general settings' )
 			),
 			siteFunctions: {
+				capabilityFilter: 'manage_options',
 				onClick: ( param ) => {
 					const link = generateSiteInterfaceLink( param.site, {
 						calypso: '/settings/general',
@@ -1165,6 +1193,7 @@ export const useCommandsArrayWpcom = ( {
 				__( 'Select site to manage writing settings' )
 			),
 			siteFunctions: {
+				capabilityFilter: 'manage_options',
 				onClick: ( param ) => {
 					const link = generateSiteInterfaceLink( param.site, {
 						calypso: '/settings/writing',
@@ -1184,6 +1213,7 @@ export const useCommandsArrayWpcom = ( {
 				__( 'Select site to manage reading settings' )
 			),
 			siteFunctions: {
+				capabilityFilter: 'manage_options',
 				onClick: ( param ) => {
 					const link = generateSiteInterfaceLink( param.site, {
 						calypso: '/settings/reading',
@@ -1203,6 +1233,7 @@ export const useCommandsArrayWpcom = ( {
 				__( 'Select site to manage discussion settings' )
 			),
 			siteFunctions: {
+				capabilityFilter: 'manage_options',
 				onClick: ( param ) => {
 					const link = generateSiteInterfaceLink( param.site, {
 						calypso: '/settings/discussion',
@@ -1222,6 +1253,7 @@ export const useCommandsArrayWpcom = ( {
 				__( 'Select site to manage newsletter settings' )
 			),
 			siteFunctions: {
+				capabilityFilter: 'manage_options',
 				onClick: ( param ) =>
 					commandNavigation( `/settings/newsletter/${ param.site.slug }` )( param ),
 			},
@@ -1236,6 +1268,7 @@ export const useCommandsArrayWpcom = ( {
 				__( 'Select site to manage podcast settings' )
 			),
 			siteFunctions: {
+				capabilityFilter: 'manage_options',
 				onClick: ( param ) =>
 					commandNavigation( `/settings/podcasting/${ param.site.slug }` )( param ),
 			},

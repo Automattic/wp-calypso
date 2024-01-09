@@ -70,6 +70,7 @@ import isSiteWPForTeams from 'calypso/state/selectors/is-site-wpforteams';
 import isVipSite from 'calypso/state/selectors/is-vip-site';
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import { useSiteGlobalStylesStatus } from 'calypso/state/sites/hooks/use-site-global-styles-status';
+import { isSiteOnECommerceTrial } from 'calypso/state/sites/plans/selectors';
 import { getSiteSlug, isJetpackSite } from 'calypso/state/sites/selectors';
 import {
 	setThemePreviewOptions,
@@ -97,6 +98,7 @@ import {
 	isThemeActivationSyncStarted as getIsThemeActivationSyncStarted,
 	getIsLivePreviewSupported,
 	getThemeType,
+	isThemeWooCommerce,
 } from 'calypso/state/themes/selectors';
 import { getIsLoadingCart } from 'calypso/state/themes/selectors/get-is-loading-cart';
 import { getBackPath } from 'calypso/state/themes/themes-ui/selectors';
@@ -555,7 +557,14 @@ class ThemeSheet extends Component {
 			isVip,
 			retired,
 			isThemeAllowedOnSite,
+			isSiteWooExpressFreeTrial,
+			isThemeBundleWooCommerce,
 		} = this.props;
+
+		// Woo Express plans don't show banner on Woo themes.
+		if ( isThemeBundleWooCommerce && isSiteWooExpressFreeTrial ) {
+			return false;
+		}
 
 		// Show theme upsell banner on Simple sites.
 		return (
@@ -1012,6 +1021,8 @@ class ThemeSheet extends Component {
 			isThemeActivationSyncStarted,
 			isThemeAllowedOnSite,
 			isThemeInstalled,
+			isSiteWooExpressFreeTrial,
+			isThemeBundleWooCommerce,
 		} = this.props;
 		const { isAtomicTransferCompleted } = this.state;
 		if ( isActive ) {
@@ -1027,7 +1038,9 @@ class ThemeSheet extends Component {
 				( ( ! isThemeAllowedOnSite || isPremium ) &&
 					! isThemePurchased &&
 					! isExternallyManagedTheme ) ||
-				( isBundledSoftwareSet && ! canInstallPlugins )
+				( isBundledSoftwareSet &&
+					! canInstallPlugins &&
+					! ( isSiteWooExpressFreeTrial && isThemeBundleWooCommerce ) )
 			) {
 				// upgrade plan
 				return translate( 'Upgrade to activate', {
@@ -1108,6 +1121,7 @@ class ThemeSheet extends Component {
 			isExternallyManagedTheme,
 			isLoggedIn,
 			tabFilter,
+			tier,
 			selectedStyleVariationSlug: styleVariationSlug,
 			themeType,
 			siteId,
@@ -1119,7 +1133,7 @@ class ThemeSheet extends Component {
 				href={
 					getUrl &&
 					( key === 'customize' || ! isExternallyManagedTheme || ! isLoggedIn || ! siteId )
-						? getUrl( this.props.themeId, { tabFilter, styleVariationSlug } )
+						? getUrl( this.props.themeId, { tabFilter, tierFilter: tier, styleVariationSlug } )
 						: null
 				}
 				onClick={ () => {
@@ -1379,6 +1393,7 @@ class ThemeSheet extends Component {
 			const forceDisplay =
 				( isPremium && ! isThemePurchased ) ||
 				( isBundledSoftwareSet && ! isSiteBundleEligible ) ||
+				! isThemeAllowedOnSite ||
 				( isExternallyManagedTheme &&
 					! isThemeInstalled &&
 					( ! isMarketplaceThemeSubscribed || ! isSiteEligibleForManagedExternalThemes ) );
@@ -1558,6 +1573,7 @@ const ThemeSheetWithOptions = ( props ) => {
 		isActive,
 		isLoggedIn,
 		isPremium,
+		isThemeAllowedOnSite,
 		isThemePurchased,
 		isStandaloneJetpack,
 		demoUrl,
@@ -1567,6 +1583,8 @@ const ThemeSheetWithOptions = ( props ) => {
 		isExternallyManagedTheme,
 		isSiteEligibleForManagedExternalThemes,
 		isMarketplaceThemeSubscribed,
+		isSiteWooExpressFreeTrial,
+		isThemeBundleWooCommerce,
 	} = props;
 
 	let defaultOption;
@@ -1593,9 +1611,16 @@ const ThemeSheetWithOptions = ( props ) => {
 		! isThemeInstalled
 	) {
 		defaultOption = 'subscribe';
-	} else if ( isPremium && ! isThemePurchased && ! isBundledSoftwareSet ) {
+	} else if (
+		( isPremium && ! isThemePurchased && ! isBundledSoftwareSet ) ||
+		! isThemeAllowedOnSite
+	) {
 		defaultOption = 'purchase';
-	} else if ( ! canInstallPlugins && isBundledSoftwareSet ) {
+	} else if (
+		! canInstallPlugins &&
+		isBundledSoftwareSet &&
+		! ( isSiteWooExpressFreeTrial && isThemeBundleWooCommerce )
+	) {
 		defaultOption = 'upgradePlanForBundledThemes';
 	} else {
 		defaultOption = 'activate';
@@ -1674,6 +1699,8 @@ export default connect(
 			isThemeInstalled: !! getTheme( state, siteId, themeId ),
 			isThemePurchased: isPremiumThemeAvailable( state, themeId, siteId ),
 			isBundledSoftwareSet: doesThemeBundleSoftwareSet( state, themeId ),
+			isThemeBundleWooCommerce: isThemeWooCommerce( state, themeId ),
+			isSiteWooExpressFreeTrial: isSiteOnECommerceTrial( state, siteId ),
 			isSiteBundleEligible: isSiteEligibleForBundledSoftware( state, siteId ),
 			forumUrl: getThemeForumUrl( state, themeId, siteId ),
 			hasUnlimitedPremiumThemes: siteHasFeature( state, siteId, WPCOM_FEATURES_PREMIUM_THEMES ),

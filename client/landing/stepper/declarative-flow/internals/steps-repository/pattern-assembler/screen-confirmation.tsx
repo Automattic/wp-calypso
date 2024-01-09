@@ -1,4 +1,5 @@
 import { Button } from '@automattic/components';
+import { Design } from '@automattic/design-picker';
 import { NavigatorHeader } from '@automattic/onboarding';
 import {
 	__experimentalVStack as VStack,
@@ -6,17 +7,38 @@ import {
 } from '@wordpress/components';
 import { Icon, image, verse, layout } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
+import { useSelector } from 'react-redux';
+import { getActiveTheme } from 'calypso/state/themes/selectors';
 import { useScreen } from './hooks';
 import NavigatorTitle from './navigator-title';
+import type { IAppState } from 'calypso/state/types';
 import './screen-confirmation.scss';
 
 interface Props {
+	isNewSite: boolean;
+	siteId?: number;
+	selectedDesign?: Design;
 	onConfirm: () => void;
 }
 
-const ScreenConfirmation = ( { onConfirm }: Props ) => {
+const ScreenConfirmation = ( { isNewSite, siteId = 0, selectedDesign, onConfirm }: Props ) => {
 	const translate = useTranslate();
-	const { title, description, continueLabel } = useScreen( 'confirmation' );
+	const { title, continueLabel } = useScreen( 'confirmation' );
+
+	const currentThemeId = useSelector( ( state: IAppState ) => getActiveTheme( state, siteId ) );
+	const willThemeChange = currentThemeId !== selectedDesign?.slug;
+
+	const description =
+		currentThemeId && willThemeChange && ! isNewSite
+			? translate(
+					'Your new theme is %(newThemeName)s. Time to add some content and bring your site to life!',
+					{
+						args: {
+							newThemeName: selectedDesign?.title ?? '',
+						},
+					}
+			  )
+			: translate( 'Time to add some content and bring your site to life!' );
 
 	const list = [
 		{

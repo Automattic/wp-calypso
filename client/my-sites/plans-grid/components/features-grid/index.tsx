@@ -1,8 +1,8 @@
 import {
 	FEATURE_CUSTOM_DOMAIN,
+	getPlan,
 	getPlanClass,
 	isBusinessTrial,
-	isFreePlan,
 	isWooExpressMediumPlan,
 	isWooExpressPlan,
 	isWooExpressSmallPlan,
@@ -70,6 +70,7 @@ class FeaturesGrid extends Component< FeaturesGridProps > {
 						stickyClass="is-sticky-top-buttons-row"
 						element="tr"
 						stickyOffset={ stickyRowOffset }
+						zIndex={ 2 }
 					>
 						{ ( isStuck: boolean ) =>
 							this.renderTopButtons( gridPlansWithoutSpotlight, { isTableCell: true, isStuck } )
@@ -238,8 +239,7 @@ class FeaturesGrid extends Component< FeaturesGridProps > {
 	}
 
 	renderPlanPrice( renderedGridPlans: GridPlan[], options?: PlanRowOptions ) {
-		const { isLargeCurrency, isPlanUpgradeCreditEligible, currentSitePlanSlug, siteId } =
-			this.props;
+		const { isLargeCurrency, isPlanUpgradeCreditEligible, currentSitePlanSlug } = this.props;
 		return renderedGridPlans.map( ( { planSlug } ) => {
 			return (
 				<PlanDivOrTdContainer
@@ -253,7 +253,6 @@ class FeaturesGrid extends Component< FeaturesGridProps > {
 						isPlanUpgradeCreditEligible={ isPlanUpgradeCreditEligible }
 						isLargeCurrency={ isLargeCurrency }
 						currentSitePlanSlug={ currentSitePlanSlug }
-						siteId={ siteId }
 						visibleGridPlans={ renderedGridPlans }
 					/>
 				</PlanDivOrTdContainer>
@@ -342,7 +341,6 @@ class FeaturesGrid extends Component< FeaturesGridProps > {
 			currentSitePlanSlug,
 			translate,
 			planActionOverrides,
-			siteId,
 			isLargeCurrency,
 			onUpgradeClick,
 		} = this.props;
@@ -365,7 +363,12 @@ class FeaturesGrid extends Component< FeaturesGridProps > {
 				) {
 					buttonText = translate( 'Get Essential', { textOnly: true } );
 				} else if ( isBusinessTrial( currentSitePlanSlug || '' ) ) {
-					buttonText = translate( 'Get Business', { textOnly: true } );
+					buttonText = translate( 'Get %(plan)s', {
+						textOnly: true,
+						args: {
+							plan: getPlan( planSlug )?.getTitle() || '',
+						},
+					} );
 				}
 
 				return (
@@ -376,9 +379,6 @@ class FeaturesGrid extends Component< FeaturesGridProps > {
 					>
 						<PlanFeatures2023GridActions
 							availableForPurchase={ availableForPurchase }
-							className={ getPlanClass( planSlug ) }
-							freePlan={ isFreePlan( planSlug ) }
-							isWpcomEnterpriseGridPlan={ isWpcomEnterpriseGridPlan( planSlug ) }
 							isInSignup={ isInSignup }
 							isLaunchPage={ isLaunchPage }
 							isMonthlyPlan={ isMonthlyPlan }
@@ -390,7 +390,6 @@ class FeaturesGrid extends Component< FeaturesGridProps > {
 							buttonText={ buttonText }
 							planActionOverrides={ planActionOverrides }
 							showMonthlyPrice={ true }
-							siteId={ siteId }
 							isStuck={ options?.isStuck || false }
 							isLargeCurrency={ isLargeCurrency }
 							storageOptions={ storageOptions }

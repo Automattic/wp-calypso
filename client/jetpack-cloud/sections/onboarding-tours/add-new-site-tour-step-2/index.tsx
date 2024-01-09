@@ -7,6 +7,8 @@ import SitesOverviewContext from '../../agency-dashboard/sites-overview/context'
 import { SiteData } from '../../agency-dashboard/sites-overview/types';
 import { JETPACK_MANAGE_ONBOARDING_TOURS_PREFERENCE_NAME } from '../constants';
 
+import '../style.scss';
+
 interface Props {
 	siteItems: Array< SiteData >;
 }
@@ -21,14 +23,16 @@ export default function AddNewSiteTourStep2( { siteItems }: Props ) {
 	const shouldRenderAddSiteTourStep2 = hasFinishedStep1 && mostRecentConnectedSite;
 
 	const tourHTMLTarget =
-		siteItems.length > 20
+		siteItems.length < 20
 			? 'tr.is-most-recent-jetpack-connected-site td:first-of-type'
 			: '.site-table__table th:first-of-type';
 
 	return (
 		shouldRenderAddSiteTourStep2 && (
 			<GuidedTour
+				className="onboarding-tours__guided-tour"
 				preferenceName={ JETPACK_MANAGE_ONBOARDING_TOURS_PREFERENCE_NAME[ 'addSiteStep2' ] }
+				redirectAfterTourEnds="/overview"
 				tours={ [
 					{
 						target: tourHTMLTarget,
@@ -40,11 +44,10 @@ export default function AddNewSiteTourStep2( { siteItems }: Props ) {
 								<br />
 								<br />
 								{ translate(
-									'Sites with jetpack installed will automatically appear in the site management view.'
+									'Sites with Jetpack installed will automatically appear in the site management view.'
 								) }
 							</>
 						),
-						redirectOnButtonClick: '/overview',
 					},
 				] }
 			/>

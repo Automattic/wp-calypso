@@ -3,7 +3,8 @@ import { useTranslate } from 'i18n-calypso';
 import { useEffect } from 'react';
 import selectAlphabeticallySortedProductOptions from 'calypso/jetpack-cloud/sections/partner-portal/lib/select-alphabetically-sorted-product-options';
 import { wpcomJetpackLicensing as wpcomJpl } from 'calypso/lib/wp';
-import { useDispatch } from 'calypso/state';
+import { useDispatch, useSelector } from 'calypso/state';
+import { getIsPartnerOAuthTokenLoaded } from 'calypso/state/partner-portal/partner/selectors';
 import { APIProductFamily, APIProductFamilyProduct } from 'calypso/state/partner-portal/types';
 import { errorNotice } from '../../../notices/actions';
 
@@ -49,11 +50,14 @@ function queryProducts(): Promise< APIProductFamily[] > {
 export default function useProductsQuery(): UseQueryResult< APIProductFamilyProduct[], unknown > {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
+	const isPartnerOAuthTokenLoaded = useSelector( getIsPartnerOAuthTokenLoaded );
 
 	const query = useQuery( {
 		queryKey: [ 'partner-portal', 'licenses', 'products' ],
 		queryFn: queryProducts,
 		select: selectAlphabeticallySortedProductOptions,
+		enabled: isPartnerOAuthTokenLoaded,
+		refetchOnWindowFocus: false,
 	} );
 
 	const { isError } = query;

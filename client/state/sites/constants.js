@@ -24,6 +24,7 @@ export const SITE_REQUEST_FIELDS = [
 	'is_wpcom_staging_site',
 	'was_ecommerce_trial',
 	'was_migration_trial',
+	'was_upgraded_from_trial',
 	'was_hosting_trial',
 	'description',
 	'user_interactions',

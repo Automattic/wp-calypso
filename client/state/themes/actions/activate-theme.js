@@ -1,4 +1,3 @@
-import { isEnabled } from '@automattic/calypso-config';
 import { translate } from 'i18n-calypso';
 import { CALYPSO_CONTACT } from 'calypso/lib/url/support';
 import wpcom from 'calypso/lib/wp';
@@ -28,16 +27,9 @@ import 'calypso/state/themes/init';
  * @param {number}  siteId             Site ID
  * @param {string}  source             The source that is requesting theme activation, e.g. 'showcase'
  * @param {boolean} purchased          Whether the theme has been purchased prior to activation
- * @param {boolean} dontChangeHomepage Prevent theme from switching homepage content if this is what it'd normally do when activated
  * @returns {Function}                 Action thunk
  */
-export function activateTheme(
-	themeId,
-	siteId,
-	source = 'unknown',
-	purchased = false,
-	dontChangeHomepage = false
-) {
+export function activateTheme( themeId, siteId, source = 'unknown', purchased = false ) {
 	return ( dispatch, getState ) => {
 		const themeOptions = getThemePreviewThemeOptions( getState() );
 		const styleVariationSlug =
@@ -54,10 +46,6 @@ export function activateTheme(
 		return wpcom.req
 			.post( `/sites/${ siteId }/themes/mine?_locale=user`, {
 				theme: themeId,
-				...( dontChangeHomepage && { dont_change_homepage: true } ),
-				...( isEnabled( 'themes/theme-switch-persist-template' ) && {
-					persist_homepage_template: true,
-				} ),
 			} )
 			.then( async ( theme ) => {
 				if ( styleVariationSlug ) {

@@ -63,7 +63,7 @@
 		"jest-fetch-mock": "^3.0.3",
 		"nock": "^13.4.0",
 		"node-fetch": "^2.6.6",
-		"typescript": "^5.3.2",
+		"typescript": "^5.3.3",
 		"wait-for-expect": "^3.0.2",
 		"wpcom-proxy-request": "workspace:^"
 	}

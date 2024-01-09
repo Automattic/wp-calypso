@@ -171,7 +171,13 @@ const withAIAssemblerFlow: Flow = {
 				}
 
 				case 'site-prompt': {
-					return navigate( 'patternAssembler' );
+					if ( providedDependencies?.aiSitePrompt ) {
+						await saveSiteSettings( siteId, {
+							wpcom_ai_site_prompt: providedDependencies.aiSitePrompt,
+						} );
+					}
+
+					return navigate( 'pattern-assembler' );
 				}
 
 				case 'processing': {
@@ -208,7 +214,7 @@ const withAIAssemblerFlow: Flow = {
 					return exitFlow( `/site-editor/${ siteSlug }?${ params }` );
 				}
 
-				case 'patternAssembler': {
+				case 'pattern-assembler': {
 					return navigate( 'processing' );
 				}
 
@@ -257,7 +263,7 @@ const withAIAssemblerFlow: Flow = {
 					return navigate( 'launchpad' );
 				}
 
-				case 'patternAssembler': {
+				case 'pattern-assembler': {
 					return navigate( 'site-prompt' );
 				}
 			}
@@ -266,7 +272,7 @@ const withAIAssemblerFlow: Flow = {
 		const goNext = () => {
 			switch ( _currentStep ) {
 				case 'site-prompt': {
-					return navigate( 'patternAssembler' );
+					return navigate( 'pattern-assembler' );
 				}
 
 				case 'launchpad':

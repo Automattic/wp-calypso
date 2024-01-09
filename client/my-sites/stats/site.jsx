@@ -27,6 +27,7 @@ import JetpackColophon from 'calypso/components/jetpack-colophon';
 import Main from 'calypso/components/main';
 import NavigationHeader from 'calypso/components/navigation-header';
 import memoizeLast from 'calypso/lib/memoize-last';
+import version_compare from 'calypso/lib/version-compare';
 import {
 	recordGoogleEvent,
 	recordTracksEvent,
@@ -37,10 +38,11 @@ import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import getCurrentRouteParameterized from 'calypso/state/selectors/get-current-route-parameterized';
 import isJetpackModuleActive from 'calypso/state/selectors/is-jetpack-module-active';
 import isPrivateSite from 'calypso/state/selectors/is-private-site';
-import { isJetpackSite } from 'calypso/state/sites/selectors';
+import { getJetpackStatsAdminVersion, isJetpackSite } from 'calypso/state/sites/selectors';
 import { requestModuleSettings } from 'calypso/state/stats/module-settings/actions';
 import { getModuleSettings } from 'calypso/state/stats/module-settings/selectors';
 import { getModuleToggles } from 'calypso/state/stats/module-toggles/selectors';
+import { getUpsellModalView } from 'calypso/state/stats/paid-stats-upsell/selectors';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import HighlightsSection from './highlights-section';
 import MiniCarousel from './mini-carousel';
@@ -56,6 +58,7 @@ import StatsPeriodHeader from './stats-period-header';
 import StatsPeriodNavigation from './stats-period-navigation';
 import StatsPlanUsage from './stats-plan-usage';
 import statsStrings from './stats-strings';
+import StatsUpsellModal from './stats-upsell-modal';
 import { getPathWithUpdatedQueryString } from './utils';
 
 // Sync hidable modules with StatsNavigation.
@@ -201,6 +204,7 @@ class StatsSite extends Component {
 			isOdysseyStats,
 			context,
 			moduleSettings,
+			statsAdminVersion,
 		} = this.props;
 
 		let defaultPeriod = PAST_SEVEN_DAYS;
@@ -291,6 +295,13 @@ class StatsSite extends Component {
 				'stats__module-list--traffic-no-authors': this.isModuleHidden( 'authors' ),
 				'stats__module-list--traffic-no-videos': this.isModuleHidden( 'videos' ),
 			}
+		);
+
+		// The Plan Usage API endpoint would not be available for Odyssey Stats before Jetpack version `0.15.0-alpha`.
+		const isPlanUsageEnabled = !! (
+			config.isEnabled( 'stats/plan-usage' ) &&
+			( ! isOdysseyStats ||
+				( statsAdminVersion && version_compare( statsAdminVersion, '0.15.0-alpha', '>=' ) ) )
 		);
 
 		return (
@@ -463,7 +474,7 @@ class StatsSite extends Component {
 						}
 					</div>
 				</div>
-				{ config.isEnabled( 'stats/plan-usage' ) && (
+				{ isPlanUsageEnabled && (
 					<StatsPlanUsage siteId={ siteId } isOdysseyStats={ isOdysseyStats } />
 				) }
 				{ /* Only load Jetpack Upsell Section for Odyssey Stats */ }
@@ -473,6 +484,7 @@ class StatsSite extends Component {
 				<PromoCards isOdysseyStats={ isOdysseyStats } pageSlug="traffic" slug={ slug } />
 				<JetpackColophon />
 				<AsyncLoad require="calypso/lib/analytics/track-resurrections" placeholder={ null } />
+				{ this.props.upsellModalView && <StatsUpsellModal siteId={ siteId } /> }
 			</div>
 		);
 	}
@@ -579,6 +591,7 @@ export default connect(
 		const siteId = getSelectedSiteId( state );
 		const canUserManageOptions = canCurrentUser( state, siteId, 'manage_options' );
 		const isJetpack = isJetpackSite( state, siteId );
+		const statsAdminVersion = getJetpackStatsAdminVersion( state, siteId );
 		const isOdysseyStats = config.isEnabled( 'is_running_in_jetpack_site' );
 
 		// Odyssey Stats: This UX is not possible in Odyssey as this page would not be able to render in the first place.
@@ -596,18 +609,29 @@ export default connect(
 		const canUserViewStats =
 			isOdysseyStats || canUserManageOptions || canCurrentUser( state, siteId, 'view_stats' );
 
+		const slug = getSelectedSiteSlug( state );
+		const upsellModalView =
+			config.isEnabled( 'stats/paid-wpcom-v2' ) && getUpsellModalView( state, siteId );
+
 		return {
 			canUserViewStats,
 			isJetpack,
 			isSitePrivate: isPrivateSite( state, siteId ),
 			siteId,
-			slug: getSelectedSiteSlug( state ),
+			slug,
 			showEnableStatsModule,
 			path: getCurrentRouteParameterized( state, siteId ),
 			isOdysseyStats,
 			moduleSettings: getModuleSettings( state, siteId, 'traffic' ),
 			moduleToggles: getModuleToggles( state, siteId, 'traffic' ),
+			upsellModalView,
+			statsAdminVersion,
 		};
 	},
-	{ recordGoogleEvent, enableJetpackStatsModule, recordTracksEvent, requestModuleSettings }
+	{
+		recordGoogleEvent,
+		enableJetpackStatsModule,
+		recordTracksEvent,
+		requestModuleSettings,
+	}
 )( localize( StatsSite ) );

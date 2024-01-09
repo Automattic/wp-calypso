@@ -191,9 +191,8 @@ class Pages extends Component {
 		const { search, status } = this.props.query;
 
 		return (
-			( ! config.isEnabled( 'unified-pages/virtual-home-page' ) ||
-				/** Blog posts page is for themes that don't support FSE */
-				! isFSEActive ) &&
+			/** Blog posts page is for themes that don't support FSE */
+			! isFSEActive &&
 			site &&
 			( homepageType === 'posts' || ( homepageType === 'page' && ! homepageId ) ) &&
 			/** Under the "Published" tab */
@@ -212,7 +211,6 @@ class Pages extends Component {
 		const { search, status } = this.props.query;
 
 		return (
-			config.isEnabled( 'unified-pages/virtual-home-page' ) &&
 			/** Virtual homepage is for themes that support FSE */
 			isFSEActive &&
 			site &&

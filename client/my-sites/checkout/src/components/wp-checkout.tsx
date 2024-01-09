@@ -62,7 +62,6 @@ import { isMarketplaceProduct } from 'calypso/state/products-list/selectors';
 import getPreviousRoute from 'calypso/state/selectors/get-previous-route';
 import useCouponFieldState from '../hooks/use-coupon-field-state';
 import { useHideCheckoutUpsellNudge } from '../hooks/use-hide-checkout-upsell-nudge';
-import { useShouldCollapseLastStep } from '../hooks/use-should-collapse-last-step';
 import { useToSFoldableCard } from '../hooks/use-tos-foldable-card';
 import { validateContactDetails } from '../lib/contact-validation';
 import getContactDetailsType from '../lib/get-contact-details-type';
@@ -92,7 +91,11 @@ import type {
 	CheckoutPageErrorCallback,
 	StepChangedCallback,
 } from '@automattic/composite-checkout';
-import type { RemoveProductFromCart, MinimalRequestCartProduct } from '@automattic/shopping-cart';
+import type {
+	RemoveProductFromCart,
+	MinimalRequestCartProduct,
+	ResponseCart,
+} from '@automattic/shopping-cart';
 import type { CountryListItem } from '@automattic/wpcom-checkout';
 import type { PropsWithChildren, ReactNode } from 'react';
 
@@ -333,17 +336,10 @@ export default function WPCheckout( {
 	const { transactionStatus } = useTransactionStatus();
 	const paymentMethod = usePaymentMethod();
 	const showToSFoldableCard = useToSFoldableCard();
-	const shouldCollapseLastStep = useShouldCollapseLastStep();
-	const excluded3PDAccountProductSlugs = [ 'sensei_pro_monthly', 'sensei_pro_yearly' ];
 	const shouldHideCheckoutUpsellNudge = useHideCheckoutUpsellNudge() === 'treatment';
 
-	const hasMarketplaceProduct = useSelector( ( state ) => {
-		return responseCart?.products
-			?.filter(
-				( p ) => ! ( p.product_slug && excluded3PDAccountProductSlugs.includes( p.product_slug ) )
-			)
-			.some( ( p ) => isMarketplaceProduct( state, p.product_slug ) );
-	} );
+	const hasMarketplaceProduct =
+		useDoesCartHaveMarketplaceProductRequiringConfirmation( responseCart );
 
 	const has100YearPlan = cartHas100YearPlan( responseCart );
 
@@ -627,31 +623,6 @@ export default function WPCheckout( {
 					) }
 					<PaymentMethodStep
 						activeStepHeader={ <GoogleDomainsCopy responseCart={ responseCart } /> }
-						activeStepFooter={
-							! shouldCollapseLastStep && (
-								<>
-									<BeforeSubmitCheckoutHeader />
-									{ hasMarketplaceProduct && (
-										<AcceptTermsOfServiceCheckbox
-											isAccepted={ is3PDAccountConsentAccepted }
-											onChange={ setIs3PDAccountConsentAccepted }
-											isSubmitted={ isSubmitted }
-											message={ translate(
-												'You agree that an account may be created on a third party developer’s site related to the products you have purchased.'
-											) }
-										/>
-									) }
-									{ has100YearPlan && (
-										<AcceptTermsOfServiceCheckbox
-											isAccepted={ is100YearPlanTermsAccepted }
-											onChange={ setIs100YearPlanTermsAccepted }
-											isSubmitted={ isSubmitted }
-											message={ translate( 'I have read and agree to all of the above.' ) }
-										/>
-									) }
-								</>
-							)
-						}
 						editButtonText={ String( translate( 'Edit' ) ) }
 						editButtonAriaLabel={ String( translate( 'Edit the payment method' ) ) }
 						nextStepButtonText={ String( translate( 'Continue' ) ) }
@@ -845,16 +816,11 @@ function CheckoutTermsAndCheckboxes( {
 	const cartKey = useCartKey();
 	const { responseCart } = useShoppingCart( cartKey );
 	const has100YearPlan = cartHas100YearPlan( responseCart );
-	const hasMarketplaceProduct = useSelector( ( state ) => {
-		return responseCart.products.some( ( p ) => isMarketplaceProduct( state, p.product_slug ) );
-	} );
+	const hasMarketplaceProduct =
+		useDoesCartHaveMarketplaceProductRequiringConfirmation( responseCart );
 
 	const translate = useTranslate();
-	const shouldCollapseLastStep = useShouldCollapseLastStep();
 
-	if ( ! shouldCollapseLastStep ) {
-		return null;
-	}
 	return (
 		<CheckoutTermsAndCheckboxesWrapper>
 			<BeforeSubmitCheckoutHeader />
@@ -894,6 +860,22 @@ function SubmitButtonHeader() {
 			} ) }
 		</SubmitButtonHeaderWrapper>
 	);
+}
+
+function useDoesCartHaveMarketplaceProductRequiringConfirmation(
+	responseCart: ResponseCart
+): boolean {
+	const excluded3PDAccountProductSlugs = [ 'sensei_pro_monthly', 'sensei_pro_yearly' ];
+	return useSelector( ( state ) => {
+		return responseCart.products
+			.filter(
+				( product ) =>
+					! (
+						product.product_slug && excluded3PDAccountProductSlugs.includes( product.product_slug )
+					)
+			)
+			.some( ( product ) => isMarketplaceProduct( state, product.product_slug ) );
+	} );
 }
 
 const JetpackCheckoutSeals = () => {

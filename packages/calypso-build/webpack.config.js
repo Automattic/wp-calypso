@@ -125,6 +125,7 @@ function getWebpackConfig(
 		node: false,
 		plugins: [
 			new webpack.DefinePlugin( {
+				'typeof window': JSON.stringify( 'object' ),
 				'process.env.NODE_ENV': JSON.stringify( process.env.NODE_ENV ),
 				'process.env.FORCE_REDUCED_MOTION': JSON.stringify(
 					!! process.env.FORCE_REDUCED_MOTION || false

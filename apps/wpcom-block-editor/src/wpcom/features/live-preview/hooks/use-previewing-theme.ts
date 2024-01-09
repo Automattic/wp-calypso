@@ -1,5 +1,5 @@
 import { useSelect } from '@wordpress/data';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useMemo } from 'react';
 import wpcom from 'calypso/lib/wp';
 import {
 	currentlyPreviewingTheme,
@@ -7,6 +7,7 @@ import {
 	PREMIUM_THEME,
 	WOOCOMMERCE_THEME,
 } from '../utils';
+import useLocation from './use-location';
 import type { Theme } from 'calypso/types';
 
 /**
@@ -38,20 +39,26 @@ const getThemeFeature = ( theme?: Theme ) => {
 	return theme?.theme_tier?.feature ?? undefined;
 };
 
+export const usePreviewingThemeSlug = () => {
+	const location = useLocation();
+	const previewingThemeSlug = useMemo( () => currentlyPreviewingTheme(), [ location?.search ] );
+	return previewingThemeSlug;
+};
+
 export const usePreviewingTheme = () => {
-	const { previewingThemeSlug, previewingThemeName } = useSelect( ( select ) => {
-		// This needs to be inside `useSelect`, so that we can recompute `previewingThemeSlug` when the active theme changes.
-		// This is a workaround because we're not listening to the changes to the `wp_theme_preview` param in the URL.
-		const previewingThemeSlug = currentlyPreviewingTheme();
+	const previewingThemeSlug = usePreviewingThemeSlug();
+	const { previewingThemeName } = useSelect(
+		( select ) => {
+			// eslint-disable-next-line @typescript-eslint/no-explicit-any
+			const previewingTheme = ( select( 'core' ) as any ).getTheme( previewingThemeSlug );
 
-		// eslint-disable-next-line @typescript-eslint/no-explicit-any
-		const previewingTheme = ( select( 'core' ) as any ).getTheme( previewingThemeSlug );
-
-		return {
-			previewingThemeSlug,
-			previewingThemeName: previewingTheme?.name?.rendered || previewingThemeSlug,
-		};
-	}, [] );
+			return {
+				previewingThemeSlug,
+				previewingThemeName: previewingTheme?.name?.rendered || previewingThemeSlug,
+			};
+		},
+		[ previewingThemeSlug ]
+	);
 
 	const previewingThemeId =
 		( previewingThemeSlug as string )?.split( '/' )?.[ 1 ] || previewingThemeSlug;

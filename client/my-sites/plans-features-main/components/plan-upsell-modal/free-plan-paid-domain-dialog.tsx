@@ -3,6 +3,7 @@ import { localizeUrl } from '@automattic/i18n-utils';
 import { useEffect, useState } from '@wordpress/element';
 import { useTranslate } from 'i18n-calypso';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
+import PlanButton from 'calypso/my-sites/plans-grid/components/plan-button';
 import {
 	ButtonContainer,
 	DialogContainer,
@@ -10,7 +11,6 @@ import {
 	Row,
 	RowWithBorder,
 	SubHeading,
-	StyledButton,
 	DomainName,
 } from './components';
 import SuggestedPlanSection from './components/suggested-plan-section';
@@ -88,13 +88,13 @@ export function FreePlanPaidDomainDialog( {
 								comment: '%(wpcomFreeDomain)s is a WordPress.com subdomain, e.g. foo.wordpress.com',
 							} ) }
 					</DomainName>
-					<StyledButton
+					<PlanButton
 						disabled={ generatedWPComSubdomain.isLoading || ! generatedWPComSubdomain.result }
 						busy={ isBusy }
 						onClick={ handleFreePlanClick }
 					>
 						{ translate( 'Continue with Free plan' ) }
-					</StyledButton>
+					</PlanButton>
 				</Row>
 			</ButtonContainer>
 		</DialogContainer>

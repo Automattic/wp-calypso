@@ -2,6 +2,8 @@ import { useTranslate } from 'i18n-calypso';
 import GuidedTour from 'calypso/jetpack-cloud/components/guided-tour';
 import { JETPACK_MANAGE_ONBOARDING_TOURS_PREFERENCE_NAME } from '../constants';
 
+import '../style.scss';
+
 export default function AddNewSiteTourStep1() {
 	const translate = useTranslate();
 	const urlParams = new URLSearchParams( window.location.search );
@@ -10,6 +12,7 @@ export default function AddNewSiteTourStep1() {
 	return (
 		shouldRenderAddSiteTourStep1 && (
 			<GuidedTour
+				className="onboarding-tours__guided-tour"
 				preferenceName={ JETPACK_MANAGE_ONBOARDING_TOURS_PREFERENCE_NAME[ 'addSiteStep1' ] }
 				tours={ [
 					{
@@ -22,12 +25,13 @@ export default function AddNewSiteTourStep1() {
 								<br />
 								<br />
 								{ translate(
-									'Sites with jetpack installed will automatically appear in the site management view.'
+									'Sites with Jetpack installed will automatically appear in the site management view.'
 								) }
 							</>
 						),
 
 						nextStepOnTargetClick: '#sites-overview-add-sites-button .split-button__toggle',
+						forceShowSkipButton: true,
 					},
 				] }
 			/>
