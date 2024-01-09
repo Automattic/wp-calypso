@@ -730,7 +730,7 @@ export class SiteSettingsFormGeneral extends Component {
 								<InfoPopover position="bottom right">
 									{ translate( 'Control who can view your site. ' ) }
 									<InlineSupportLink showIcon={ false } supportContext="privacy">
-										{ translate( 'Learn more.' ) }
+										{ translate( 'Learn more' ) }
 									</InlineSupportLink>
 								</InfoPopover>
 							),
