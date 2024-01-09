@@ -6,7 +6,7 @@ import type { ValidateVerificationCodeParams } from '../../sites-overview/types'
 
 export default function useValidateVerificationCode(): {
 	mutate: ( params: ValidateVerificationCodeParams ) => void;
-	isLoading: boolean;
+	isPending: boolean;
 	isSuccess: boolean;
 	isError: boolean;
 	errorMessage?: string;
