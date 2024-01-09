@@ -29,7 +29,7 @@ describe( 'isRedesignV2', () => {
 		expect( isRedesignV2( props ) ).toBe( false );
 	} );
 
-	it( 'should return true if there are multiple purchases that only contains domains', () => {
+	it( 'should return false if there are multiple purchases that only contains domains', () => {
 		const props = {
 			receipt: {
 				data: {
@@ -41,7 +41,7 @@ describe( 'isRedesignV2', () => {
 				},
 			},
 		};
-		expect( isRedesignV2( props ) ).toBe( true );
+		expect( isRedesignV2( props ) ).toBe( false );
 	} );
 
 	it( 'should return false if the purchase is not supported', () => {
