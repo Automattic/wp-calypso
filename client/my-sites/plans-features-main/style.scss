@@ -406,6 +406,7 @@ body.is-section-plans .layout__content .main {
 		padding: 0;
 		.is-2023-pricing-grid .plans-wrapper {
 			margin: 0;
+			padding: 17px max(calc(50% - 612px), 30px);
 		}
 	}
 }

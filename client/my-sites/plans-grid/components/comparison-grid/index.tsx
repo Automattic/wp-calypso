@@ -1094,11 +1094,7 @@ const ComparisonGrid = ( {
 					disabled={ isBottomHeaderInView }
 					stickyClass="is-sticky-header-row"
 					stickyOffset={ stickyRowOffset }
-					/**
-					 * 1_000_000 is the z index of the dropdown menu
-					 * which needs to be hidden by the sticky behavior
-					 */
-					zIndex={ 1_000_001 }
+					zIndex={ 1 }
 				>
 					{ ( isStuck: boolean ) => (
 						<ComparisonGridHeader
