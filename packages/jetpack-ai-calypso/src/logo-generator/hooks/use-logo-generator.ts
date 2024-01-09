@@ -66,6 +66,41 @@ const useLogoGenerator = () => {
 	const { ID = null, name = null, description = null } = siteDetails || {};
 	const siteId = ID ? String( ID ) : null;
 
+	const generateFirstPrompt = async function (): Promise< string > {
+		const tokenData = await requestJwt( { siteDetails } );
+
+		if ( ! tokenData || ! tokenData.token ) {
+			// TODO: handle error
+			throw new Error( 'No token provided' );
+		}
+
+		debug( 'Generating first prompt for site', siteId );
+
+		const firstPromptGenerationPrompt = `Generate a simple and short prompt asking for a logo based on the site's name and description, without going into details.
+Example for a site named "The minimalist fashion blog", described as "Daily inspiration for all things fashion": "A logo for a minimalist fashion site focused on daily sartorial inspiration".
+
+Site name: ${ name }
+Site description: ${ description }`;
+
+		const body = {
+			question: firstPromptGenerationPrompt,
+			feature: 'jetpack-ai-logo-generator',
+			stream: false,
+		};
+
+		const data = await wpcomProxyRequest< { choices: Array< { message: { content: string } } > } >(
+			{
+				apiNamespace: 'wpcom/v2',
+				path: '/jetpack-ai-query',
+				method: 'POST',
+				token: tokenData.token,
+				body,
+			}
+		);
+
+		return data?.choices?.[ 0 ]?.message?.content;
+	};
+
 	const saveLogo = useCallback<
 		() => Promise< { mediaId: number; mediaURL: string } >
 	>( async () => {
@@ -259,6 +294,7 @@ For example: user's prompt: A logo for an ice cream shop. Returned prompt: A log
 			name,
 			description,
 		},
+		generateFirstPrompt,
 		saveLogo,
 		applyLogo,
 		generateImage,
