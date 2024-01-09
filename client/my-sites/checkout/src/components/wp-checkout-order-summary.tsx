@@ -86,6 +86,10 @@ export default function WPCheckoutOrderSummary( {
 	const plan = responseCart.products.find( ( product ) => isPlan( product ) );
 	const hasMonthlyPlanInCart = Boolean( plan && isMonthly( plan?.product_slug ) );
 
+	const productSlug = plan?.product_slug;
+	console.log( 'isWooExpressPlan: ', isWooExpressPlan( productSlug ) );
+	console.log( plan );
+
 	const shouldHideCheckoutIncludedPurchases = useHideCheckoutIncludedPurchases() === 'treatment';
 
 	return (
@@ -118,7 +122,26 @@ export default function WPCheckoutOrderSummary( {
 				<CheckoutSummaryPriceListTitle>{ translate( 'Your order' ) }</CheckoutSummaryPriceListTitle>
 			) }
 			<CheckoutSummaryPriceList />
+			<CheckoutSummaryAdditionalDetails plan={ plan } />
 		</CheckoutSummaryCard>
+	);
+}
+
+function CheckoutSummaryAdditionalDetails( props: { plan: ResponseCartProduct | undefined } ) {
+	const { plan } = props;
+	const cost = plan?.product_cost_display;
+	const productName = plan?.product_name;
+	const subtotal = plan?.item_subtotal_display;
+	return (
+		plan && (
+			<div>
+				<p>{ `You'll be charged ${ subtotal } for the first 3 months of your ${ productName } plan.` }</p>
+				<p>
+					{ `Once the offer period has expired, you'll be charged ${ cost } on an annual basis. You can cancel
+				your plan at any point in the first 3 months.` }
+				</p>
+			</div>
+		)
 	);
 }
 
