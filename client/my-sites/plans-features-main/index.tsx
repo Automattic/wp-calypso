@@ -816,6 +816,10 @@ const PlansFeaturesMain = ( {
 								enableStickyBehavior={ enablePlanTypeSelectorStickyBehavior }
 								stickyPlanTypeSelectorOffset={ masterbarHeight - 1 }
 								coupon={ coupon }
+								onPlanTypeSelectorChange={ ( selectedItem ) => {
+									const currentPath = window.location.pathname;
+									page( currentPath + selectedItem.queryParams );
+								} }
 							/>
 						) }
 						<div

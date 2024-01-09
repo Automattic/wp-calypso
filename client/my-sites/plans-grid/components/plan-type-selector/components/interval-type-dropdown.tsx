@@ -1,4 +1,3 @@
-import page from '@automattic/calypso-router';
 import styled from '@emotion/styled';
 import { CustomSelectControl } from '@wordpress/components';
 import useIntervalOptions from '../hooks/use-interval-options';
@@ -35,7 +34,7 @@ const IntervalTypeOption = styled.div`
 `;
 
 export const IntervalTypeDropdown: React.FunctionComponent< IntervalTypeProps > = ( props ) => {
-	const { intervalType, displayedIntervals } = props;
+	const { intervalType, displayedIntervals, onPlanTypeSelectorChange } = props;
 	const supportedIntervalType = (
 		displayedIntervals.includes( intervalType ) ? intervalType : 'yearly'
 	) as SupportedUrlFriendlyTermType;
@@ -49,7 +48,9 @@ export const IntervalTypeDropdown: React.FunctionComponent< IntervalTypeProps > 
 				{ option.discountText ? <span className="discount"> { option.discountText } </span> : null }
 			</IntervalTypeOption>
 		),
-		url: option.url,
+		// TODO: The "url" attribute is actually a string of query params. We should revisit this in the
+		// useIntervalOptions hook.
+		queryParams: option.url,
 	} ) );
 
 	return (
@@ -62,10 +63,8 @@ export const IntervalTypeDropdown: React.FunctionComponent< IntervalTypeProps > 
 				onChange={ ( {
 					selectedItem,
 				}: {
-					selectedItem: { key: SupportedUrlFriendlyTermType; url: string };
-				} ) => {
-					page( `/start/plans${ selectedItem.url }` );
-				} }
+					selectedItem: { key: SupportedUrlFriendlyTermType; queryParams: string };
+				} ) => onPlanTypeSelectorChange && onPlanTypeSelectorChange( selectedItem ) }
 			/>
 		</div>
 	);
