@@ -95,6 +95,7 @@ import JetpackPlanDetails from './jetpack-plan-details';
 import PersonalPlanDetails from './personal-plan-details';
 import PremiumPlanDetails from './premium-plan-details';
 import ProPlanDetails from './pro-plan-details';
+import { DomainBulkTransferThankYou } from './redesign-v2/pages/domain-bulk-transfer';
 import { DomainOnlyThankYou } from './redesign-v2/pages/domain-only';
 import CheckoutMasterbar from './redesign-v2/sections/CheckoutMasterbar';
 import Footer from './redesign-v2/sections/Footer';
@@ -580,7 +581,11 @@ export class CheckoutThankYou extends Component<
 		if ( isRefactored( this.props ) ) {
 			let pageContent = null;
 
-			if ( ! wasBulkDomainTransfer && isDomainOnly( purchases ) ) {
+			if ( wasBulkDomainTransfer ) {
+				pageContent = (
+					<DomainBulkTransferThankYou purchases={ purchases } currency={ this.props.currency } />
+				);
+			} else if ( isDomainOnly( purchases ) ) {
 				pageContent = <DomainOnlyThankYou purchases={ purchases } />;
 			}
 

@@ -16,11 +16,6 @@ export const isRedesignV2 = ( props: CheckoutThankYouCombinedProps ) => {
 
 	const purchases = getPurchases( props );
 
-	// We are in the bulk domain transfer flow.
-	if ( isBulkDomainTransfer( purchases ) ) {
-		return true;
-	}
-
 	// ThankYou page for only purchasing a plan.
 	if ( purchases.length === 1 ) {
 		return isWpComPlan( purchases[ 0 ].productSlug );
@@ -40,6 +35,11 @@ export const isRefactored = ( props: CheckoutThankYouCombinedProps ) => {
 	}
 
 	const purchases = getPurchases( props );
+
+	// We are in the bulk domain transfer flow.
+	if ( isBulkDomainTransfer( purchases ) ) {
+		return true;
+	}
 
 	// Domain only purchases.
 	if ( isDomainOnly( purchases ) ) {
