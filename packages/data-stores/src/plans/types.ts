@@ -11,7 +11,16 @@ export type PlanSlug = ( typeof plansSlugs )[ number ];
 export type PlanPath = PlanSlug;
 
 export type PlanBillingPeriod = 'MONTHLY' | 'ANNUALLY';
-export type PlanNonlocalizedShortName = 'Free' | 'Personal' | 'Premium' | 'Business' | 'eCommerce';
+export type PlanNonlocalizedShortName =
+	| 'Free'
+	| 'Personal'
+	| 'Premium'
+	| 'Business'
+	| 'eCommerce'
+	| 'Starter'
+	| 'Explorer'
+	| 'Creator'
+	| 'Entrepreneur';
 
 export type PlanAction = {
 	type: string;
