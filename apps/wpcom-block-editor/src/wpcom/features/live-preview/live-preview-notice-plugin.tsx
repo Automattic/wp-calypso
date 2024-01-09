@@ -63,10 +63,6 @@ const LivePreviewNoticePlugin = () => {
 		[ siteEditorStore ]
 	);
 
-	// Do nothing in the Post Editor context.
-	if ( ! siteEditorStore ) {
-		return null;
-	}
 	// Do nothing if the user is NOT previewing a theme.
 	if ( ! previewingTheme.name ) {
 		return null;
