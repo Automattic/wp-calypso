@@ -722,6 +722,11 @@ const PlansFeaturesMain = ( {
 		[]
 	);
 
+	const handlePlanTypeSelectorChange = useCallback( ( selectedItem: { queryParams: string } ) => {
+		const currentPath = window.location.pathname;
+		page( currentPath + selectedItem.queryParams );
+	}, [] );
+
 	const comparisonGridContainerClasses = classNames(
 		'plans-features-main__comparison-grid-container',
 		{
@@ -815,11 +820,7 @@ const PlansFeaturesMain = ( {
 								layoutClassName="plans-features-main__plan-type-selector-layout"
 								enableStickyBehavior={ enablePlanTypeSelectorStickyBehavior }
 								stickyPlanTypeSelectorOffset={ masterbarHeight - 1 }
-								coupon={ coupon }
-								onPlanTypeSelectorChange={ ( selectedItem ) => {
-									const currentPath = window.location.pathname;
-									page( currentPath + selectedItem.queryParams );
-								} }
+								onPlanTypeSelectorChange={ handlePlanTypeSelectorChange }
 							/>
 						) }
 						<div
