@@ -63,7 +63,7 @@ interface EnhancedTask extends Task {
 	useCalypsoPath?: boolean;
 }
 
-type TaskId = 'setup_free' | 'setup_blog';
+type TaskId = 'setup_free' | 'setup_blog' | 'setup_newsletter';
 type TaskAction = (
 	task: Task,
 	flow: string,
@@ -82,9 +82,18 @@ const actions: TaskActionTable = {
 		( {
 			...task,
 			actionDispatch: () => recordTaskClickTracksEvent( flow, task.completed, task.id ),
-			//TODO: Move logic to backend
 			calypso_path: addQueryArgs( `/setup/${ flow }/setup-blog`, siteInfoQueryArgs ),
 			disabled: task.completed && ! isBlogOnboardingFlow( flow ),
+			useCalypsoPath: true,
+		} ) satisfies EnhancedTask,
+	setup_newsletter: ( task, flow, siteInfoQueryArgs ) =>
+		( {
+			...task,
+			actionDispatch: () => recordTaskClickTracksEvent( flow, task.completed, task.id ),
+			calypso_path: addQueryArgs(
+				`/setup/newsletter-post-setup/newsletterPostSetup`,
+				siteInfoQueryArgs
+			),
 			useCalypsoPath: true,
 		} ) satisfies EnhancedTask,
 } as const;
@@ -309,19 +318,9 @@ export function getEnhancedTasks( {
 		let taskData = {};
 		switch ( task.id ) {
 			case 'setup_free':
-				return getTaskDefinition( task, flow );
 			case 'setup_blog':
-				return getTaskDefinition( task, flow, siteInfoQueryArgs );
 			case 'setup_newsletter':
-				taskData = {
-					actionDispatch: () => {
-						recordTaskClickTracksEvent( flow, task.completed, task.id );
-						window.location.assign(
-							addQueryArgs( `/setup/newsletter-post-setup/newsletterPostSetup`, siteInfoQueryArgs )
-						);
-					},
-				};
-				break;
+				return getTaskDefinition( task, flow, siteInfoQueryArgs );
 			case 'design_edited':
 				taskData = {
 					actionDispatch: () => {
