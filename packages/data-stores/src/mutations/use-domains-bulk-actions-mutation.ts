@@ -2,6 +2,7 @@ import { UseMutationOptions, useMutation, useQueryClient } from '@tanstack/react
 import { useCallback } from 'react';
 import wpcomRequest from 'wpcom-proxy-request';
 import { getAllDomainsQueryKey } from '../queries/use-all-domains-query';
+import { getBulkDomainUpdateStatusQueryKey } from '../queries/use-bulk-domain-update-status-query';
 import { getSiteDomainsQueryKey } from '../queries/use-site-domains-query';
 
 interface UpdateContactInfoVariables {
@@ -54,17 +55,16 @@ export function useDomainsBulkActionsMutation<
 					} );
 			}
 		},
-		onSuccess: ( data: TData, variables: BulkUpdateVariables ) => {
-			const { type } = variables;
-
-			if ( type !== 'set-auto-renew' ) {
+		onSuccess: ( data, variables ) => {
+			if ( variables.type !== 'set-auto-renew' ) {
 				return;
 			}
 
-			const { blogIds } = variables;
+			// Makes sure the success notice is shown once statuses have been updated
+			queryClient.invalidateQueries( { queryKey: getBulkDomainUpdateStatusQueryKey() } );
 
 			// Refreshes data for all the domains that were updated
-			blogIds.forEach( ( blogId ) => {
+			variables.blogIds.forEach( ( blogId ) => {
 				queryClient.invalidateQueries( { queryKey: getSiteDomainsQueryKey( blogId ) } );
 				queryClient.invalidateQueries( { queryKey: getAllDomainsQueryKey( { no_wpcom: true } ) } );
 			} );
