@@ -67,25 +67,21 @@ const ThankYouUpsell = ( {
 	action,
 }: ThankYouUpsellProps ) => {
 	return (
-		<div className="checkout-thank-you__upsell">
-			<div className="checkout-thank-you__upsell-title">
-				{ translate( 'This might interest you' ) }
-			</div>
-			<ContentDiv className="checkout-thank-you__upsell-content" meshColor={ meshColor }>
-				<div className="checkout-thank-you__upsell-content-details">
-					<div className="checkout-thank-you__upsell-content-details-image">
-						<div className="checkout-thank-you__upsell-content-details-image-content">
-							<img className="checkout-thank-you__upsell-image-content-icon" alt="" src={ icon } />
+		<div className="thank-you__upsell">
+			<div className="thank-you__upsell-title">{ translate( 'This might interest you' ) }</div>
+			<ContentDiv className="thank-you__upsell-content" meshColor={ meshColor }>
+				<div className="thank-you__upsell-content-details">
+					<div className="thank-you__upsell-content-details-image">
+						<div className="thank-you__upsell-content-details-image-content">
+							<img className="thank-you__upsell-image-content-icon" alt="" src={ icon } />
 						</div>
 					</div>
-					<div className="checkout-thank-you__upsell-content-text">
-						<h3 className="checkout-thank-you__upsell-content-text-title">{ title }</h3>
-						<div className="checkout-thank-you__upsell-content-text-description">
-							{ description }
-						</div>
+					<div className="thank-you__upsell-content-text">
+						<h3 className="thank-you__upsell-content-text-title">{ title }</h3>
+						<div className="thank-you__upsell-content-text-description">{ description }</div>
 					</div>
 				</div>
-				<div className="checkout-thank-you__upsell-content-actions">{ action }</div>
+				<div className="thank-you__upsell-content-actions">{ action }</div>
 			</ContentDiv>
 		</div>
 	);

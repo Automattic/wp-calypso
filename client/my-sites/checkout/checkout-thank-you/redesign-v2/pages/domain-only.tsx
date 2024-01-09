@@ -13,10 +13,9 @@ interface DomainOnlyThankYouContainerProps {
 	purchases: ReceiptPurchase[];
 }
 
-export const getDomainPurchaseDetails = ( limit: number ) => {
+export const getDomainFooterDetails = ( limit: number ) => {
 	const details = [
 		{
-			key: 'domain-essentials',
 			title: translate( 'Dive into domain essentials' ),
 			description: translate(
 				'Check out our support documentation for step-by-step instructions and expert guidance on your domain set up.'
@@ -27,13 +26,12 @@ export const getDomainPurchaseDetails = ( limit: number ) => {
 				recordTracksEvent( 'calypso_domain_transfer_to_any_user_support_domains_click' ),
 		},
 		{
-			key: 'domain-resources',
 			title: translate( 'Your go-to domain resource' ),
 			description: translate(
 				'Dive into our comprehensive support documentation to learn the basics of domains, from registration to management.'
 			),
 			buttonText: translate( 'Domain support resources' ),
-			href: '/support/domains',
+			href: '/support/category/domains-and-email/',
 			onClick: () =>
 				recordTracksEvent( 'calypso_domain_transfer_to_any_user_support_domains_click' ),
 		},
@@ -84,7 +82,7 @@ export const DomainOnlyThankYou: React.FC< DomainOnlyThankYouContainerProps > = 
 				}
 			) }
 			products={ products }
-			purchaseDetailsProps={ getDomainPurchaseDetails() }
+			footerDetails={ getDomainFooterDetails() }
 			upsellProps={ upsellProps }
 		/>
 	);

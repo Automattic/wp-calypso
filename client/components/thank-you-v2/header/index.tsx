@@ -8,10 +8,10 @@ interface ThankYouHeaderProps {
 
 const ThankYouHeader: React.FC< ThankYouHeaderProps > = ( { title, subtitle, buttons } ) => {
 	return (
-		<div className="checkout-thank-you__header">
-			<h1 className="checkout-thank-you__header-heading">{ title }</h1>
-			<h2 className="checkout-thank-you__header-text">{ subtitle }</h2>
-			{ buttons && <div className="checkout-thank-you__header-buttons">{ buttons }</div> }
+		<div className="thank-you__header">
+			<h1 className="thank-you__header-title">{ title }</h1>
+			<h2 className="thank-you__header-subtitle">{ subtitle }</h2>
+			{ buttons && <div className="thank-you__header-buttons">{ buttons }</div> }
 		</div>
 	);
 };

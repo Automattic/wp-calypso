@@ -1,11 +1,7 @@
 @import "@wordpress/base-styles/breakpoints";
 @import "@wordpress/base-styles/mixins";
 
-.checkout-thank-you__purchase-details-list {
-	margin-bottom: 50px !important;
-}
-
-.checkout-thank-you__upsell {
+.thank-you__upsell {
 	display: flex;
 	width: 100%;
 	max-width: 650px;
@@ -16,7 +12,7 @@
 	gap: 12px !important;
 	text-align: left;
 
-	.checkout-thank-you__upsell-title {
+	.thank-you__upsell-title {
 		margin: 0 24px;
 		color: var(--gray-gray-100, #101517);
 		font-size: $font-body;
@@ -31,7 +27,7 @@
 		}
 	}
 
-	.checkout-thank-you__upsell-content {
+	.thank-you__upsell-content {
 		display: flex;
 		width: 100%;
 		padding-right: 0;
@@ -49,7 +45,7 @@
 		}
 	}
 
-	.checkout-thank-you__upsell-content-details {
+	.thank-you__upsell-content-details {
 		display: flex;
 		align-items: center;
 		gap: 16px;
@@ -64,7 +60,7 @@
 		}
 	}
 
-	.checkout-thank-you__upsell-content-details-image {
+	.thank-you__upsell-content-details-image {
 		width: 73px;
 		display: flex;
 		align-items: center;
@@ -74,7 +70,7 @@
 			flex-direction: column;
 			align-items: start;
 		}
-		.checkout-thank-you__upsell-content-details-image-content {
+		.thank-you__upsell-content-details-image-content {
 			margin: 0 0 0 24px;
 			@media (max-width: $break-mobile ) {
 				margin: 24px 0 0 20px;
@@ -83,7 +79,7 @@
 
 	}
 
-	.checkout-thank-you__upsell-content-text {
+	.thank-you__upsell-content-text {
 		display: flex;
 		flex-direction: column;
 		justify-content: center;
@@ -99,7 +95,7 @@
 		}
 	}
 
-	.checkout-thank-you__upsell-content-text-description {
+	.thank-you__upsell-content-text-description {
 		color: var(--color-text-subtle, #50575e);
 		font-size: $font-body-small;
 		font-family: "SF Pro Text", $sans;
@@ -109,7 +105,7 @@
 		letter-spacing: -0.15px;
 	}
 
-	.checkout-thank-you__upsell-content-text-title {
+	.thank-you__upsell-content-text-title {
 		color: var(--studio-gray-100, #101517);
 		font-size: $font-body;
 		font-family: "SF Pro Text", $sans;
@@ -120,7 +116,7 @@
 	}
 
 
-	.checkout-thank-you__upsell-content-actions {
+	.thank-you__upsell-content-actions {
 		display: flex;
 		height: 40px;
 		padding: 10px 24px 10px 0;

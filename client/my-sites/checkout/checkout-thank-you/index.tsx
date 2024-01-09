@@ -576,13 +576,14 @@ export class CheckoutThankYou extends Component<
 		}
 
 		/** REFACTORED REDESIGN **/
+
 		if ( isRefactored( this.props ) ) {
+			// isSimplified = true;
+
 			let pageContent = null;
 
 			if ( ! wasBulkDomainTransfer && isDomainOnly( purchases ) ) {
 				pageContent = <DomainOnlyThankYou purchases={ purchases } />;
-			} else if ( ! this.isDataLoaded() ) {
-				// TODO: Render skeleton
 			}
 
 			if ( pageContent ) {
@@ -590,7 +591,7 @@ export class CheckoutThankYou extends Component<
 				const siteSlug = this.props.selectedSite?.slug;
 
 				return (
-					<>
+					<Main className="is-redesign-v2">
 						<PageViewTracker { ...this.getAnalyticsProperties() } title="Checkout Thank You" />
 
 						{ this.isDataLoaded && siteId && <QuerySitePurchases siteId={ siteId } /> }
@@ -603,7 +604,7 @@ export class CheckoutThankYou extends Component<
 						/>
 
 						{ pageContent }
-					</>
+					</Main>
 				);
 			}
 		}

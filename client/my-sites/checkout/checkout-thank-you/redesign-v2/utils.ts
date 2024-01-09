@@ -16,11 +16,6 @@ export const isRedesignV2 = ( props: CheckoutThankYouCombinedProps ) => {
 
 	const purchases = getPurchases( props );
 
-	// Domain only purchases.
-	if ( isDomainOnly( purchases ) ) {
-		return true;
-	}
-
 	// We are in the bulk domain transfer flow.
 	if ( isBulkDomainTransfer( purchases ) ) {
 		return true;

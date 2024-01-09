@@ -28,10 +28,10 @@ const ThankYouProduct = ( {
 	}, [ isLoading ] );
 
 	return (
-		<li className="checkout-thank-you__product">
+		<li className="thank-you__product">
 			{ icon && (
 				<img
-					className="checkout-thank-you__product-icon"
+					className="thank-you__product-icon"
 					src={ icon }
 					width={ 50 }
 					height={ 50 }
@@ -39,20 +39,20 @@ const ThankYouProduct = ( {
 				/>
 			) }
 
-			<div className="checkout-thank-you__product-info">
+			<div className="thank-you__product-info">
 				{ shouldShowLoader ? (
 					<Spinner />
 				) : (
 					<>
-						<div className="checkout-thank-you__product-name">{ name }</div>
-						<div className="checkout-thank-you__product-details">{ details }</div>
+						<div className="thank-you__product-name">{ name }</div>
+						<div className="thank-you__product-details">{ details }</div>
 					</>
 				) }
 			</div>
 
-			{ actions && <div className="checkout-thank-you__product-actions">{ actions }</div> }
+			{ actions && <div className="thank-you__product-actions">{ actions }</div> }
 
-			{ preview && <div className="checkout-thank-you__product-preview">{ preview }</div> }
+			{ preview && <div className="thank-you__product-preview">{ preview }</div> }
 		</li>
 	);
 };
