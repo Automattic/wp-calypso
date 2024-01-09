@@ -1,8 +1,8 @@
 import './style.scss';
 
 interface ThankYouHeaderProps {
-	title: React.ReactNode;
-	subtitle: React.ReactNode;
+	title: string;
+	subtitle: string;
 	buttons?: React.ReactNode;
 }
 

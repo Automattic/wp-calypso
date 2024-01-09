@@ -22,7 +22,7 @@ const ThankYouDetail = ( {
 }: ThankYouDetailProps ) => {
 	const noop = () => {};
 
-	const isExternal = isOutsideCalypso( href );
+	const isExternal = isOutsideCalypso( href ?? '' );
 
 	return (
 		<div className="thank-you__detail">
@@ -30,7 +30,7 @@ const ThankYouDetail = ( {
 
 			{ description && <div className="thank-you__detail-description">{ description }</div> }
 
-			{ buttonText && (
+			{ buttonText && href && (
 				<Button
 					className="thank-you__detail-button"
 					href={ localizeUrl( href ) }

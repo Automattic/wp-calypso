@@ -105,8 +105,8 @@ import TransferPending from './transfer-pending';
 import './style.scss';
 import './redesign-v2/style.scss';
 import { getDomainPurchaseType, isBulkDomainTransfer, isDomainOnly } from './utils';
+import type { FindPredicate } from './utils';
 import type { SitesPlansResult } from '../src/hooks/product-variants';
-import type { WithCamelCaseSlug, WithSnakeCaseSlug } from '@automattic/calypso-products';
 import type { OnboardActions, SiteDetails } from '@automattic/data-stores';
 import type { UserData } from 'calypso/lib/user/user';
 import type { DomainThankYouType } from 'calypso/my-sites/checkout/checkout-thank-you/domains/types';
@@ -178,14 +178,6 @@ interface CheckoutThankYouState {
 export type CheckoutThankYouCombinedProps = CheckoutThankYouProps &
 	CheckoutThankYouConnectedProps &
 	LocalizeProps;
-
-type FindPredicate = (
-	product: ( WithSnakeCaseSlug | WithCamelCaseSlug ) & {
-		is_domain_registration?: boolean;
-		isDomainRegistration?: boolean;
-		meta: string;
-	}
-) => boolean;
 
 export function getPurchases( props: CheckoutThankYouCombinedProps ): ReceiptPurchase[] {
 	return [
@@ -675,10 +667,7 @@ export class CheckoutThankYou extends Component<
 			const emailFallback = email ? email : this.props.user?.email ?? '';
 			const siteSlug = this.props.domainOnlySiteFlow ? domainName : this.props.selectedSiteSlug;
 			const domains = purchases.filter( predicate ).map( ( purchase ) => purchase?.meta );
-			// support redesign v2 for domain only purchases
-			if ( isRedesignV2( this.props ) ) {
-				return <DomainOnlyThankYou domains={ domains ?? [] } />;
-			}
+
 			return (
 				<DomainThankYou
 					domain={ domainName ?? '' }

@@ -8,6 +8,7 @@ import { useSelector } from 'calypso/state';
 import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import { getDomainPurchaseType } from '../../utils';
 import ProductDomain from '../products/product-domain';
+import type { ReceiptPurchase } from 'calypso/state/receipts/types';
 
 interface DomainOnlyThankYouContainerProps {
 	purchases: ReceiptPurchase[];
