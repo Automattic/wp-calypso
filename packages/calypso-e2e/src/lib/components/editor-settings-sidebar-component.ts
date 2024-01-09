@@ -8,7 +8,7 @@ const panel = '[aria-label="Editor settings"]';
 const selectors = {
 	section: ( name: string ) =>
 		`${ panel } .components-panel__body-title button:has-text("${ name }")`,
-	showRevisionButton: '.edit-post-last-revision__panel', // Revision is a link, not a panel.
+	showRevisionButton: '.editor-post-last-revision__panel', // Revision is a link, not a panel.
 
 	// Status & Visibility
 	visibilityButton: '.edit-post-post-visibility__toggle',
