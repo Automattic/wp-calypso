@@ -75,7 +75,7 @@ const ProductDomain = ( {
 	return (
 		<ThankYouProduct
 			name={ domain }
-			isFree={ purchase.priceInteger === 0 }
+			isFree={ purchase ? purchase.priceInteger === 0 : false }
 			actions={ actions }
 			key={ 'domain-' + domain }
 		/>
