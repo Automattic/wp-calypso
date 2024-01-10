@@ -1,3 +1,4 @@
+import config from '@automattic/calypso-config';
 import { PRODUCT_1GB_SPACE } from '@automattic/calypso-products';
 import { Button } from '@automattic/components';
 import {
@@ -158,6 +159,13 @@ const PlansWrapper: React.FC< Props > = ( props ) => {
 					removePaidDomain={ removePaidDomain }
 					setSiteUrlAsFreeDomainSuggestion={ setSiteUrlAsFreeDomainSuggestion }
 					renderSiblingWhenLoaded={ () => props.shouldIncludeFAQ && <PlanFAQ /> }
+					showPlanTypeSelectorDropdown={
+						/**
+						 *	Override the default feature flag to prevent this feature from rendering in untested locations
+						 *  The hardcoded 'false' short curicuit should be removed once the feature is fully tested in the given context
+						 */
+						config.isEnabled( 'onboarding/interval-dropdown' ) && false
+					}
 				/>
 			</div>
 		);
