@@ -1,11 +1,11 @@
 /**
- * External dependencies
+ * Internal dependencies
  */
-import proxy from 'wpcom-proxy-request';
+import { getSiteLogoHistory } from '../lib/logo-storage';
+import wpcomLimitedRequest from '../lib/wpcom-limited-request';
 /**
  * Types & Constants
  */
-import { getSiteLogoHistory } from '../lib/logo-storage';
 import {
 	ACTION_INCREASE_AI_ASSISTANT_REQUESTS_COUNT,
 	ACTION_REQUEST_AI_ASSISTANT_FEATURE,
@@ -24,6 +24,7 @@ import {
 } from './constants';
 import type { AiFeatureProps, AiAssistantFeatureEndpointResponseProps, Logo } from './types';
 import type { SiteDetails } from '@automattic/data-stores';
+
 /**
  * Map the response from the `sites/$site/ai-assistant-feature`
  * endpoint to the AI Assistant feature props.
@@ -71,7 +72,7 @@ const actions = {
 			dispatch( { type: ACTION_REQUEST_AI_ASSISTANT_FEATURE } );
 
 			try {
-				const response: AiAssistantFeatureEndpointResponseProps = await proxy( {
+				const response: AiAssistantFeatureEndpointResponseProps = await wpcomLimitedRequest( {
 					apiNamespace: 'wpcom/v2',
 					path:
 						'/sites/' + encodeURIComponent( String( siteId ) ) + '/jetpack-ai/ai-assistant-feature',
