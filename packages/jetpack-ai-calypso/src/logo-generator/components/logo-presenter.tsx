@@ -25,7 +25,7 @@ const SaveInLibraryButton: React.FC = () => {
 	const handleClick = async () => {
 		if ( ! saved && ! saving ) {
 			try {
-				await saveLogo();
+				await saveLogo( selectedLogo );
 			} catch ( error ) {
 				// TODO: Handle error
 			}
