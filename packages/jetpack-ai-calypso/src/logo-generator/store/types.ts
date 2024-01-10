@@ -117,12 +117,6 @@ export type AiFeatureStateProps = AiFeatureProps & {
 	};
 };
 
-export type LogoSuggestionProps = {
-	prompt: string;
-	imageSrc?: string;
-	url?: string;
-};
-
 export type Logo = {
 	url: string;
 	description: string;
@@ -137,7 +131,6 @@ export type LogoGeneratorStateProp = {
 		isEnhancingPrompt: boolean;
 	};
 	siteDetails?: SiteDetails;
-	suggestions: Array< LogoSuggestionProps >;
 	features: {
 		aiAssistantFeature?: AiFeatureStateProps;
 	};
