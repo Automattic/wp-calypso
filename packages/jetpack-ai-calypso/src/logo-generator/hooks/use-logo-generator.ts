@@ -1,22 +1,27 @@
 /**
  * External dependencies
  */
+import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { __ } from '@wordpress/i18n';
+import debugFactory from 'debug';
 import { useCallback } from 'react';
-import wpcomProxyRequest from 'wpcom-proxy-request';
 /**
  * Internal dependencies
  */
+import { EVENT_PROMPT_SUBMIT } from '../../constants';
 import { stashLogo } from '../lib/logo-storage';
 import { requestJwt } from '../lib/request-token';
 import { saveToMediaLibrary } from '../lib/save-to-media-library';
 import { setSiteLogo } from '../lib/set-site-logo';
+import wpcomLimitedRequest from '../lib/wpcom-limited-request';
 import { STORE_NAME } from '../store';
 /**
  * Types
  */
 import type { Selectors } from '../store/types';
+
+const debug = debugFactory( 'jetpack-ai-calypso:use-logo-generator' );
 
 const useLogoGenerator = () => {
 	const {
@@ -26,6 +31,7 @@ const useLogoGenerator = () => {
 		setIsApplyingLogo,
 		setIsRequestingImage,
 		setIsEnhancingPrompt,
+		increaseAiAssistantRequestsCount,
 		addLogoToHistory,
 	} = useDispatch( STORE_NAME );
 
@@ -42,6 +48,7 @@ const useLogoGenerator = () => {
 		requireUpgrade,
 	} = useSelect( ( select ) => {
 		const selectors: Selectors = select( STORE_NAME );
+
 		return {
 			logos: selectors.getLogos(),
 			selectedLogo: selectors.getSelectedLogo(),
@@ -59,12 +66,49 @@ const useLogoGenerator = () => {
 	const { ID = null, name = null, description = null } = siteDetails || {};
 	const siteId = ID ? String( ID ) : null;
 
+	const generateFirstPrompt = async function (): Promise< string > {
+		const tokenData = await requestJwt( { siteDetails } );
+
+		if ( ! tokenData || ! tokenData.token ) {
+			// TODO: handle error
+			throw new Error( 'No token provided' );
+		}
+
+		debug( 'Generating first prompt for site', siteId );
+
+		const firstPromptGenerationPrompt = `Generate a simple and short prompt asking for a logo based on the site's name and description, without going into details.
+Example for a site named "The minimalist fashion blog", described as "Daily inspiration for all things fashion": "A logo for a minimalist fashion site focused on daily sartorial inspiration".
+
+Site name: ${ name }
+Site description: ${ description }`;
+
+		const body = {
+			question: firstPromptGenerationPrompt,
+			feature: 'jetpack-ai-logo-generator',
+			stream: false,
+		};
+
+		const data = await wpcomLimitedRequest< {
+			choices: Array< { message: { content: string } } >;
+		} >( {
+			apiNamespace: 'wpcom/v2',
+			path: '/jetpack-ai-query',
+			method: 'POST',
+			token: tokenData.token,
+			body,
+		} );
+
+		return data?.choices?.[ 0 ]?.message?.content;
+	};
+
 	const saveLogo = useCallback<
 		() => Promise< { mediaId: number; mediaURL: string } >
 	>( async () => {
 		if ( ! siteId || ! selectedLogo ) {
 			throw new Error( 'Missing siteId or logo' );
 		}
+
+		debug( 'Saving logo for site', siteId );
 
 		// If the logo is already saved, return its mediaId and mediaURL.
 		if ( selectedLogo.mediaId ) {
@@ -102,6 +146,8 @@ const useLogoGenerator = () => {
 			throw new Error( 'Missing siteId or logo' );
 		}
 
+		debug( 'Applying logo for site', siteId );
+
 		try {
 			const { mediaId } = await saveLogo();
 
@@ -123,6 +169,8 @@ const useLogoGenerator = () => {
 	const generateImage = async function ( { prompt }: { prompt: string } ): Promise< any > {
 		const tokenData = await requestJwt( { siteDetails } );
 		const isSimple = ! siteDetails.is_wpcom_atomic;
+
+		debug( 'Generating image with prompt', prompt );
 
 		const imageGenerationPrompt = `I NEED to test how the tool works with extremely simple prompts. DO NOT add any detail, just use it AS-IS:
 Create a text-free vector logo that symbolically represents the user request, using abstract or symbolic imagery.
@@ -151,7 +199,7 @@ User request: ${ prompt }
 			// 	query: `prompt=${ prompt }&token=${ tokenData.token }&response_format=url`,
 			// } );
 		} else {
-			data = await wpcomProxyRequest( {
+			data = await wpcomLimitedRequest( {
 				apiNamespace: 'wpcom/v2',
 				path: '/jetpack-ai-image',
 				method: 'POST',
@@ -170,6 +218,8 @@ User request: ${ prompt }
 			// TODO: handle error
 			throw new Error( 'No token provided' );
 		}
+
+		debug( 'Enhancing prompt', prompt );
 
 		const systemMessage = `Enhance the prompt you receive.
 The prompt is meant for generating a logo. Return the same prompt enhanced, and make each enhancement wrapped in brackets.
@@ -192,15 +242,15 @@ For example: user's prompt: A logo for an ice cream shop. Returned prompt: A log
 			stream: false,
 		};
 
-		const data = await wpcomProxyRequest< { choices: Array< { message: { content: string } } > } >(
-			{
-				apiNamespace: 'wpcom/v2',
-				path: '/jetpack-ai-query',
-				method: 'POST',
-				token: tokenData.token,
-				body,
-			}
-		);
+		const data = await wpcomLimitedRequest< {
+			choices: Array< { message: { content: string } } >;
+		} >( {
+			apiNamespace: 'wpcom/v2',
+			path: '/jetpack-ai-query',
+			method: 'POST',
+			token: tokenData.token,
+			body,
+		} );
 
 		return data?.choices?.[ 0 ]?.message?.content;
 	};
@@ -213,6 +263,28 @@ For example: user's prompt: A logo for an ice cream shop. Returned prompt: A log
 		[ siteId, addLogoToHistory ]
 	);
 
+	const generateLogo = async function ( { prompt }: { prompt: string } ): Promise< any > {
+		debug( 'Generating logo for site', siteId );
+
+		increaseAiAssistantRequestsCount();
+		setIsRequestingImage( true );
+		recordTracksEvent( EVENT_PROMPT_SUBMIT );
+
+		const image = await generateImage( { prompt } );
+
+		if ( ! image || ! image.data.length ) {
+			// TODO: handle unexpected/error response
+		}
+
+		// response_format=url returns object with url, otherwise b64_json
+		const logo = {
+			url: image.data[ 0 ].url,
+			description: prompt,
+		};
+		storeLogo( logo );
+		setIsRequestingImage( false );
+	};
+
 	return {
 		logos,
 		selectedLogo,
@@ -222,10 +294,13 @@ For example: user's prompt: A logo for an ice cream shop. Returned prompt: A log
 			name,
 			description,
 		},
+		generateFirstPrompt,
 		saveLogo,
 		applyLogo,
 		generateImage,
 		enhancePrompt,
+		storeLogo,
+		generateLogo,
 		setIsEnhancingPrompt,
 		setIsRequestingImage,
 		setIsSavingLogoToLibrary,
@@ -237,7 +312,6 @@ For example: user's prompt: A logo for an ice cream shop. Returned prompt: A log
 		isBusy,
 		getAiAssistantFeature,
 		requireUpgrade,
-		storeLogo,
 	};
 };
 

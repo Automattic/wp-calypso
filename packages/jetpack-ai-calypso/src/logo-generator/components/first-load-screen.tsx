@@ -9,12 +9,20 @@ import React from 'react';
 import { ImageLoader } from './image-loader';
 import './first-load-screen.scss';
 
-export const FirstLoadScreen: React.FC = () => {
+export const FirstLoadScreen: React.FC< {
+	state?: 'loadingFeature' | 'analyzing' | 'generating';
+} > = ( { state = 'loadingFeature' } ) => {
+	const loadingLabel = __( 'Loading…', 'jetpack' );
+	const analyzingLabel = __( 'Analyzing your site to create the perfect logo…', 'jetpack' );
+	const generatingLabel = __( 'Generating logo…', 'jetpack' );
+
 	return (
 		<div className="jetpack-ai-logo-generator-modal__loading-wrapper">
 			<ImageLoader />
 			<span className="jetpack-ai-logo-generator-modal__loading-message">
-				{ __( 'Analyzing your site to create the perfect logo…', 'jetpack' ) }
+				{ state === 'loadingFeature' && loadingLabel }
+				{ state === 'analyzing' && analyzingLabel }
+				{ state === 'generating' && generatingLabel }
 			</span>
 		</div>
 	);

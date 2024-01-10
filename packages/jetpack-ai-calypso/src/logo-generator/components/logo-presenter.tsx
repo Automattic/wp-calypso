@@ -79,11 +79,16 @@ const UseOnSiteButton: React.FC< { onApplyLogo: () => void } > = ( { onApplyLogo
 };
 
 export const LogoPresenter: React.FC< LogoPresenterProps > = ( {
-	logo,
+	logo = null,
 	loading = false,
 	onApplyLogo,
 } ) => {
 	const { isRequestingImage } = useLogoGenerator();
+
+	if ( ! logo ) {
+		return null;
+	}
+
 	return (
 		<div className="jetpack-ai-logo-generator-modal-presenter">
 			<div className="jetpack-ai-logo-generator-modal-presenter__container">
