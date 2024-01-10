@@ -3,7 +3,6 @@
  */
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { Button } from '@wordpress/components';
-import { useDispatch } from '@wordpress/data';
 import { __, sprintf } from '@wordpress/i18n';
 import { Icon, info } from '@wordpress/icons';
 import debugFactory from 'debug';
@@ -11,31 +10,27 @@ import { useCallback, useEffect, useState, useRef } from 'react';
 /**
  * Internal dependencies
  */
-import { EVENT_PROMPT_SUBMIT, EVENT_PROMPT_ENHANCE, MINIMUM_PROMPT_LENGTH } from '../../constants';
+import { EVENT_PROMPT_ENHANCE, MINIMUM_PROMPT_LENGTH } from '../../constants';
 import AiIcon from '../assets/icons/ai';
 import useLogoGenerator from '../hooks/use-logo-generator';
-import { STORE_NAME } from '../store';
 import './prompt.scss';
 
 const debug = debugFactory( 'jetpack-ai-calypso:prompt-box' );
 
-export const Prompt: React.FC = () => {
-	const { increaseAiAssistantRequestsCount } = useDispatch( STORE_NAME );
-	const [ prompt, setPrompt ] = useState( '' );
+export const Prompt: React.FC< { initialPrompt?: string } > = ( { initialPrompt = '' } ) => {
+	const [ prompt, setPrompt ] = useState( initialPrompt );
 	const [ requestsRemaining, setRequestsRemaining ] = useState( 0 );
 	const hasPrompt = prompt?.length >= MINIMUM_PROMPT_LENGTH;
 
 	const {
-		generateImage,
+		generateLogo,
 		enhancePrompt,
-		setIsRequestingImage,
 		setIsEnhancingPrompt,
 		isBusy,
 		isEnhancingPrompt,
 		site,
 		getAiAssistantFeature,
 		requireUpgrade,
-		storeLogo,
 	} = useLogoGenerator();
 
 	const enhancingLabel = __( 'Enhancing…', 'jetpack' );
@@ -45,7 +40,7 @@ export const Prompt: React.FC = () => {
 	const inputRef = useRef< HTMLDivElement | null >( null );
 
 	const onEnhance = useCallback( async () => {
-		debug( 'enhancing prompt', prompt );
+		debug( 'Enhancing prompt', prompt );
 		setIsEnhancingPrompt( true );
 		recordTracksEvent( EVENT_PROMPT_ENHANCE );
 
@@ -55,7 +50,7 @@ export const Prompt: React.FC = () => {
 			setIsEnhancingPrompt( false );
 		} catch ( error ) {
 			// TODO: handle error
-			debug( 'error enhancing prompt', error );
+			debug( 'Error enhancing prompt', error );
 			setIsEnhancingPrompt( false );
 		}
 	}, [ enhancePrompt, prompt, setIsEnhancingPrompt ] );
@@ -78,24 +73,8 @@ export const Prompt: React.FC = () => {
 	}, [ prompt ] );
 
 	const onGenerate = useCallback( async () => {
-		debug( 'getting image for prompt', prompt );
-		increaseAiAssistantRequestsCount();
-		setIsRequestingImage( true );
-		recordTracksEvent( EVENT_PROMPT_SUBMIT );
-		const image = await generateImage( { prompt } );
-
-		if ( ! image || ! image.data.length ) {
-			// TODO: handle unexpected/error response
-		}
-
-		// response_format=url returns object with url, otherwise b64_json
-		const logo = {
-			url: image.data[ 0 ].url,
-			description: prompt,
-		};
-		storeLogo( logo );
-		setIsRequestingImage( false );
-	}, [ storeLogo, prompt, generateImage, setIsRequestingImage, increaseAiAssistantRequestsCount ] );
+		generateLogo( { prompt } );
+	}, [ generateLogo, prompt ] );
 
 	const onPromptInput = useCallback( ( event: React.ChangeEvent< HTMLInputElement > ) => {
 		setPrompt( event.target.textContent || '' );
