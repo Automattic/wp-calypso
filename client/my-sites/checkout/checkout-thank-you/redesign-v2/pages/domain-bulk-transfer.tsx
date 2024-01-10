@@ -12,10 +12,10 @@ interface DomainBulkTransferThankYouProps {
 	currency: string;
 }
 
-export const DomainBulkTransferThankYou: React.FC< DomainBulkTransferThankYouProps > = ( {
+export default function DomainBulkTransferThankYou( {
 	purchases,
 	currency,
-} ) => {
+}: DomainBulkTransferThankYouProps ) {
 	const { __, _n } = useI18n();
 
 	const handleUserClick = ( destination: string ) => {
@@ -51,12 +51,14 @@ export const DomainBulkTransferThankYou: React.FC< DomainBulkTransferThankYouPro
 
 	const footerDetails = [
 		{
+			key: 'footer-transfer-speed-up',
 			title: translate( 'Want to speed this up?' ),
 			description: translate(
 				'Check your inbox for an email from your current domain provider for instructions on how to speed up the transfer process.'
 			),
 		},
 		{
+			key: 'footer-transfer-dns-records',
 			title: translate( 'Will my email continue to work?' ),
 			description: translate(
 				"We'll automatically import any MX, TXT, and A records for your domain, so your email will transfer seamlessly."
@@ -98,4 +100,4 @@ export const DomainBulkTransferThankYou: React.FC< DomainBulkTransferThankYouPro
 			footerDetails={ footerDetails }
 		/>
 	);
-};
+}
