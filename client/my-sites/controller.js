@@ -444,6 +444,7 @@ function createSitesComponent( context ) {
 			getSiteSelectionHeaderText={ context.getSiteSelectionHeaderText }
 			fromSite={ context.query.site }
 			clearPageTitle={ context.clearPageTitle }
+			isPostShare={ context.query?.is_post_share }
 		/>
 	);
 }
