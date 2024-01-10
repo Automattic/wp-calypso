@@ -722,11 +722,6 @@ class ThemeSheet extends Component {
 	renderThemeBadge = () => {
 		const { siteId, siteSlug, softLaunched, themeId, themeTier, themeType } = this.props;
 
-		// community: http://calypso.localhost:3000/theme/astra/xjlctest.wordpress.com
-		// partner: http://calypso.localhost:3000/theme/yuna/xjlctest.wordpress.com
-		// sensei: http://calypso.localhost:3000/theme/course/xjlctest.wordpress.com
-		// woocommerce: http://calypso.localhost:3000/theme/amulet/xjlctest.wordpress.com
-
 		const isCommunityTheme = themeType === DOT_ORG_THEME;
 		const isPartnerTheme = themeTier.slug === 'partner';
 		const isSenseiOrWooCommerceTheme = themeType === BUNDLED_THEME;
