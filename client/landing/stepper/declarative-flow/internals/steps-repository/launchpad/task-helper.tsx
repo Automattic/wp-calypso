@@ -59,9 +59,10 @@ interface GetEnhancedTasksProps {
 }
 
 const PLANS_LIST = getPlans();
-interface EnhancedTask extends Omit< Task, 'badge_text' > {
+interface EnhancedTask extends Omit< Task, 'badge_text' | 'title' > {
 	useCalypsoPath?: boolean;
 	badge_text?: ReactNode | string;
+	title?: ReactNode | string;
 }
 
 type TaskId =
@@ -80,7 +81,8 @@ type TaskId =
 	| 'setup_general'
 	| 'setup_link_in_bio'
 	| 'links_added'
-	| 'link_in_bio_launched';
+	| 'link_in_bio_launched'
+	| 'site_launched';
 
 interface TaskContext {
 	siteInfoQueryArgs?: { siteId?: number; siteSlug?: string | null };
@@ -96,6 +98,9 @@ interface TaskContext {
 	completeMigrateContentTask?: () => Promise< void >;
 	site: SiteDetails | null;
 	submit?: NavigationControls[ 'submit' ];
+	getLaunchSiteTaskTitle: ( task: Task ) => ReactNode;
+	getIsLaunchSiteTaskDisabled: () => boolean;
+	completeLaunchSiteTask: ( task: Task ) => Promise< void >;
 }
 
 type TaskAction = ( task: Task, flow: string, context: TaskContext ) => EnhancedTask;
@@ -313,6 +318,19 @@ const actions: TaskActionTable = {
 					submit?.();
 				}
 			},
+			useCalypsoPath: false,
+		} ) satisfies EnhancedTask,
+	site_launched: (
+		task,
+		_,
+		{ getLaunchSiteTaskTitle, getIsLaunchSiteTaskDisabled, completeLaunchSiteTask }
+	) =>
+		( {
+			...task,
+			isLaunchTask: true,
+			title: getLaunchSiteTaskTitle( task ),
+			disabled: getIsLaunchSiteTaskDisabled(),
+			actionDispatch: () => completeLaunchSiteTask( task ),
 			useCalypsoPath: false,
 		} ) satisfies EnhancedTask,
 } as const;
@@ -542,6 +560,9 @@ export function getEnhancedTasks( {
 		mustVerifyEmailBeforePosting,
 		site,
 		submit,
+		completeLaunchSiteTask,
+		getLaunchSiteTaskTitle,
+		getIsLaunchSiteTaskDisabled,
 	};
 
 	return ( tasks || [] ).map( ( task ) => {
@@ -563,17 +584,8 @@ export function getEnhancedTasks( {
 			case 'setup_link_in_bio':
 			case 'links_added':
 			case 'link_in_bio_launched':
-				return getTaskDefinition( task, flow, context );
 			case 'site_launched':
-				taskData = {
-					isLaunchTask: true,
-					title: getLaunchSiteTaskTitle( task ),
-					disabled: getIsLaunchSiteTaskDisabled(),
-					actionDispatch: () => {
-						completeLaunchSiteTask( task );
-					},
-				};
-				break;
+				return getTaskDefinition( task, flow, context );
 			case 'blog_launched': {
 				taskData = {
 					isLaunchTask: true,
