@@ -80,7 +80,7 @@ const ActivityLogV2: FunctionComponent = () => {
 						'by type and date range to quickly find the information you need.'
 				)
 			) }
-			buttonLink={ `https://cloud.jetpack.com/pricing/${ selectedSiteSlug }` }
+			buttonLink={ `/partner-portal/issue-license?site_id=${ siteId }` }
 			buttonText={ translate( 'Upgrade now' ) }
 			onClick={ () =>
 				dispatch( recordTracksEvent( 'calypso_jetpack_activity_log_upgrade_click' ) )
