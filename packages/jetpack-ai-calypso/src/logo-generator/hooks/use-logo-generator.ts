@@ -166,7 +166,11 @@ Site description: ${ description }`;
 		}
 	}, [ saveLogo, selectedLogo, setIsApplyingLogo, siteId ] );
 
-	const generateImage = async function ( { prompt }: { prompt: string } ): Promise< any > {
+	const generateImage = async function ( {
+		prompt,
+	}: {
+		prompt: string;
+	} ): Promise< { data: Array< { url: string } > } > {
 		const tokenData = await requestJwt( { siteDetails } );
 		const isSimple = ! siteDetails.is_wpcom_atomic;
 
@@ -208,7 +212,7 @@ User request: ${ prompt }
 			} );
 		}
 
-		return data;
+		return data as { data: { url: string }[] };
 	};
 
 	const enhancePrompt = async function ( { prompt }: { prompt: string } ): Promise< string > {
