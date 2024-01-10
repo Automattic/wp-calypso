@@ -115,6 +115,11 @@ const PlanComparisonHeader = styled.h1`
 	}
 `;
 
+export type SupportIntervalTypes = Extract<
+	UrlFriendlyTermType,
+	'monthly' | 'yearly' | '2yearly' | '3yearly'
+>;
+
 export interface PlansFeaturesMainProps {
 	siteId?: number | null;
 	intent?: PlansIntent | null;
@@ -135,7 +140,8 @@ export interface PlansFeaturesMainProps {
 	flowName?: string | null;
 	removePaidDomain?: () => void;
 	setSiteUrlAsFreeDomainSuggestion?: ( freeDomainSuggestion: { domain_name: string } ) => void;
-	intervalType?: Extract< UrlFriendlyTermType, 'monthly' | 'yearly' | '2yearly' | '3yearly' >;
+	intervalType?: SupportIntervalTypes;
+	onIntervalTypeChange?( intervalType: SupportIntervalTypes );
 	planTypeSelector?: 'interval';
 	withDiscount?: string;
 	discountEndDate?: Date;
@@ -229,6 +235,7 @@ const PlansFeaturesMain = ( {
 	customerType = 'personal',
 	planTypeSelector = 'interval',
 	intervalType = 'yearly',
+	onIntervalTypeChange,
 	hidePlansFeatureComparison = false,
 	hideUnavailableFeatures = false,
 	isInSignup = false,
@@ -784,6 +791,7 @@ const PlansFeaturesMain = ( {
 								layoutClassName="plans-features-main__plan-type-selector-layout"
 								enableStickyBehavior={ enablePlanTypeSelectorStickyBehavior }
 								stickyPlanTypeSelectorOffset={ masterbarHeight - 1 }
+								onIntervalTypeChange={ onIntervalTypeChange }
 							/>
 						) }
 						<div

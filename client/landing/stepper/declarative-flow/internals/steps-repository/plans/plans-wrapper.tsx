@@ -18,11 +18,11 @@ import { useSelect, useDispatch } from '@wordpress/data';
 import { useI18n } from '@wordpress/react-i18n';
 import classNames from 'classnames';
 import { localize, useTranslate } from 'i18n-calypso';
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { connect } from 'react-redux';
 import { useSite } from 'calypso/landing/stepper/hooks/use-site';
 import { getPlanCartItem } from 'calypso/lib/cart-values/cart-items';
-import PlansFeaturesMain from 'calypso/my-sites/plans-features-main';
+import PlansFeaturesMain, { SupportIntervalTypes } from 'calypso/my-sites/plans-features-main';
 import PlanFAQ from 'calypso/my-sites/plans-features-main/components/plan-faq';
 import StepWrapper from 'calypso/signup/step-wrapper';
 import { getIntervalType } from 'calypso/signup/steps/plans/util';
@@ -73,6 +73,7 @@ const PlansWrapper: React.FC< Props > = ( props ) => {
 		};
 	}, [] );
 	const { flowName, selectedSiteId, setSelectedSiteId } = props;
+	const [ intervalType, setIntervalType ] = useState( getIntervalType() );
 
 	const { setPlanCartItem, setDomain, setDomainCartItem, setProductCartItems } =
 		useDispatch( ONBOARD_STORE );
@@ -137,6 +138,13 @@ const PlansWrapper: React.FC< Props > = ( props ) => {
 		setDomain( freeDomainSuggestion );
 	};
 
+	const handleIntervalTypeChange = ( intervalType: SupportIntervalTypes ) => {
+		setIntervalType( intervalType );
+		const url = new URL( window.location );
+		url.searchParams.set( 'intervalType', intervalType );
+		window.history.pushState( null, '', url.toString() );
+	};
+
 	const plansFeaturesList = () => {
 		return (
 			<div>
@@ -147,7 +155,8 @@ const PlansWrapper: React.FC< Props > = ( props ) => {
 					hideFreePlan={ hideFreePlan }
 					isInSignup={ isInSignup }
 					isStepperUpgradeFlow={ true }
-					intervalType={ getIntervalType() }
+					intervalType={ intervalType }
+					onIntervalTypeChange={ handleIntervalTypeChange }
 					onUpgradeClick={ onUpgradeClick }
 					paidDomainName={ getPaidDomainName() }
 					customerType={ customerType }
@@ -222,7 +231,6 @@ const PlansWrapper: React.FC< Props > = ( props ) => {
 		const fallbackHeaderText = headerText;
 		const subHeaderText = getSubHeaderText();
 		const fallbackSubHeaderText = subHeaderText;
-
 		return (
 			<>
 				<StepWrapper

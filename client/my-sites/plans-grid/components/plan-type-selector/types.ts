@@ -1,11 +1,13 @@
 import { UrlFriendlyTermType, type PlanSlug } from '@automattic/calypso-products';
 import { type TranslateResult } from 'i18n-calypso';
+import { SupportIntervalTypes } from 'calypso/my-sites/plans-features-main/index';
 import { type UsePricingMetaForGridPlans } from '../../hooks/npm-ready/data-store/use-grid-plans';
 
 export type PlanTypeSelectorProps = {
 	kind: 'interval';
 	basePlansPath?: string | null;
 	intervalType: UrlFriendlyTermType;
+	onIntervalTypeChange?( intervalType: SupportIntervalTypes ): void;
 	customerType: string;
 	withDiscount?: string;
 	enableStickyBehavior?: boolean;
