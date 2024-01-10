@@ -15,7 +15,6 @@ import {
 } from '@automattic/onboarding';
 import { MinimalRequestCartProduct } from '@automattic/shopping-cart';
 import { useDesktopBreakpoint } from '@automattic/viewport-react';
-import { Notice } from '@wordpress/components';
 import { useSelect, useDispatch } from '@wordpress/data';
 import { useI18n } from '@wordpress/react-i18n';
 import classNames from 'classnames';
@@ -29,6 +28,7 @@ import PlanFAQ from 'calypso/my-sites/plans-features-main/components/plan-faq';
 import StepWrapper from 'calypso/signup/step-wrapper';
 import { getIntervalType } from 'calypso/signup/steps/plans/util';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import { warningNotice } from 'calypso/state/notices/actions';
 import { setSelectedSiteId } from 'calypso/state/ui/actions';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { ONBOARD_STORE } from '../../../../stores';
@@ -42,6 +42,7 @@ interface Props {
 	onSubmit: ( planCartItem: MinimalRequestCartProduct | null ) => void;
 	selectedSiteId: number | null;
 	setSelectedSiteId: ( siteId: number ) => void;
+	warningNotice: ( message: string ) => void;
 }
 
 function getPlansIntent( flowName: string | null ): PlansIntent | null {
@@ -74,13 +75,13 @@ const PlansWrapper: React.FC< Props > = ( props ) => {
 			 ).getHidePlansFeatureComparison(),
 		};
 	}, [] );
-	const { flowName, selectedSiteId, setSelectedSiteId } = props;
-	const [ showTrialHostWarning, setShowTrialHostWarning ] = React.useState( false );
+	const { flowName, selectedSiteId, setSelectedSiteId, warningNotice } = props;
 	const { setPlanCartItem, setDomain, setDomainCartItem, setProductCartItems } =
 		useDispatch( ONBOARD_STORE );
 
 	const site = useSite();
 	const siteId = site?.ID;
+	const { __ } = useI18n();
 
 	useEffect( () => {
 		if ( ! selectedSiteId && siteId ) {
@@ -88,11 +89,12 @@ const PlansWrapper: React.FC< Props > = ( props ) => {
 		}
 
 		if ( window.location.href.indexOf( 'hosting-trial-not-eligible' ) !== -1 ) {
-			setShowTrialHostWarning( true );
+			warningNotice(
+				__( 'Looks like you’ve already used your free trial. Let’s find you the perfect plan.' )
+			);
 		}
 	}, [ selectedSiteId, siteId, setSelectedSiteId ] );
 
-	const { __ } = useI18n();
 	const translate = useTranslate();
 	const isDesktop = useDesktopBreakpoint();
 	const stepName = 'plans';
@@ -146,20 +148,6 @@ const PlansWrapper: React.FC< Props > = ( props ) => {
 	const plansFeaturesList = () => {
 		return (
 			<div>
-				{ showTrialHostWarning && (
-					<div className="not-eligible">
-						<Notice
-							className="not-eligible-for-hosting-trial-notice"
-							status="warning"
-							onDismiss={ () => setShowTrialHostWarning( false ) }
-							isDismissible={ true }
-						>
-							{ __(
-								'Looks like you’ve already used your free trial. Let’s find you the perfect plan.'
-							) }
-						</Notice>
-					</div>
-				) }
 				<PlansFeaturesMain
 					isPlansInsideStepper={ true }
 					siteId={ site?.ID }
@@ -287,6 +275,7 @@ export default connect(
 		};
 	},
 	{
+		warningNotice,
 		setSelectedSiteId: setSelectedSiteId,
 	}
 )( localize( PlansWrapper ) );
