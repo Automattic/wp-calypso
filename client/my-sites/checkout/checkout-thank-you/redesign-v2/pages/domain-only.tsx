@@ -52,7 +52,7 @@ export const DomainOnlyThankYou: React.FC< DomainOnlyThankYouContainerProps > = 
 		description: translate(
 			'85% of people trust an email address with a custom domain name over a generic one.'
 		),
-		meshColor: 'blue', // Must use double quote to avoid type error, see <ThankYouUpsell>
+		meshColor: 'blue',
 		icon: emailImage,
 		action: (
 			<Button
