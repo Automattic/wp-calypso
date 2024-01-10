@@ -22,7 +22,7 @@ export const SubscribeModalOnCommentSetting = ( {
 				checked={ !! value }
 				onChange={ handleToggle( SUBSCRIBE_MODAL_ON_COMMENT_OPTION ) }
 				disabled={ disabled }
-				label={ translate( 'Enable comment subscriber pop-up' ) }
+				label={ translate( 'Enable subscription pop-up for commenters' ) }
 			/>
 			<FormSettingExplanation>
 				{ translate( 'Ask your readers to subscribe after commenting.' ) }
