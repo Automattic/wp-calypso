@@ -477,6 +477,7 @@ interface PaletteColor {
 }
 
 export interface GlobalStyles {
+	slug?: string;
 	title?: string;
 	settings: {
 		color: {
