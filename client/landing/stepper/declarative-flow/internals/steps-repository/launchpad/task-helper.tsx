@@ -253,17 +253,18 @@ const actions: TaskActionTable = {
 		} ),
 		useCalypsoPath: true,
 	} ),
-	setup_general: ( task, flow, { siteInfoQueryArgs } ) => ( {
-		...task,
-		disabled: false,
-		actionDispatch: () => {
-			recordTaskClickTracksEvent( flow, task.completed, task.id );
-		},
-		calypso_path: addQueryArgs( `/setup/update-options/options`, {
-			...siteInfoQueryArgs,
-			flowToReturnTo: flow,
-		} ),
-	} ),
+	setup_general: ( task, flow, { siteInfoQueryArgs } ) =>
+		( {
+			...task,
+			disabled: false,
+			actionDispatch: () => {
+				recordTaskClickTracksEvent( flow, task.completed, task.id );
+			},
+			calypso_path: addQueryArgs( `/setup/update-options/options`, {
+				...siteInfoQueryArgs,
+				flowToReturnTo: flow,
+			} ),
+		} ) satisfies EnhancedTask,
 	setup_link_in_bio: ( task, flow, { siteInfoQueryArgs } ) =>
 		( {
 			...task,
