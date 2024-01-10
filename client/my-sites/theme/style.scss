@@ -224,6 +224,10 @@ $button-border: 4px;
 
 	.theme__sheet-main-info-type {
 		margin-left: 8px;
+
+		&.is-soft-launched {
+			flex-basis: unset;
+		}
 	}
 
 	.theme__sheet-main-info-tag {

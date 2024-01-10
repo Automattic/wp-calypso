@@ -720,7 +720,7 @@ class ThemeSheet extends Component {
 	};
 
 	renderThemeBadge = () => {
-		const { siteId, siteSlug, themeId, themeTier, themeType } = this.props;
+		const { siteId, siteSlug, softLaunched, themeId, themeTier, themeType } = this.props;
 
 		// community: http://calypso.localhost:3000/theme/astra/xjlctest.wordpress.com
 		// partner: http://calypso.localhost:3000/theme/yuna/xjlctest.wordpress.com
@@ -737,14 +737,18 @@ class ThemeSheet extends Component {
 
 		return config.isEnabled( 'themes/tiers' ) ? (
 			<ThemeTierBadge
-				className="theme__sheet-main-info-type"
+				className={ classNames( 'theme__sheet-main-info-type', {
+					'is-soft-launched': softLaunched,
+				} ) }
 				showUpgradeBadge={ false }
 				themeId={ themeId }
 				isLockedStyleVariation={ false }
 			/>
 		) : (
 			<ThemeTypeBadge
-				className="theme__sheet-main-info-type"
+				className={ classNames( 'theme__sheet-main-info-type', {
+					'is-soft-launched': softLaunched,
+				} ) }
 				siteId={ siteId }
 				siteSlug={ siteSlug }
 				themeId={ themeId }
