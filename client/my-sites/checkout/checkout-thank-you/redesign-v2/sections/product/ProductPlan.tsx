@@ -3,7 +3,7 @@ import { useLaunchpad } from '@automattic/data-stores';
 import { useDispatch as useWPDispatch } from '@wordpress/data';
 import { translate } from 'i18n-calypso';
 import moment from 'moment';
-import { useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { SITE_STORE } from 'calypso/landing/stepper/stores';
 import { getPurchaseByProductSlug } from 'calypso/lib/purchases/utils';
 import { useSelector } from 'calypso/state';
@@ -32,7 +32,7 @@ const ProductPlan = ( { siteSlug, primaryPurchase, siteID }: ProductPlanProps ) 
 		[ primaryPurchase.productSlug, purchases ]
 	);
 
-	const [ launchPadScreenUpdated, setLaunchPadScreenUpdated ] = useState< boolean >( false );
+	const [ letsWorkButtonBusy, setLetsWorkButtonBusy ] = useState< boolean >( false );
 	const [ redirectTo, setRedirectTo ] = useState< 'home' | 'launchpad' >( 'home' );
 
 	const { saveSiteSettings } = useWPDispatch( SITE_STORE );
@@ -57,18 +57,6 @@ const ProductPlan = ( { siteSlug, primaryPurchase, siteID }: ProductPlanProps ) 
 			: false;
 
 	useEffect( () => {
-		// when launchpad is off or skipped, we need to update the launchpad_screen option to full
-		// otherwise the full screen launchpad will redirect to /home straight away
-		if ( launchpad ) {
-			if ( launchpad.launchpad_screen !== 'full' ) {
-				saveSiteSettings( siteID, { launchpad_screen: 'full' } ).then( () => {
-					setLaunchPadScreenUpdated( true );
-				} );
-			} else if ( launchpad.launchpad_screen === 'full' ) {
-				setLaunchPadScreenUpdated( true );
-			}
-		}
-
 		if ( launchpad && launchpad.is_enabled && hasRemainingTasks ) {
 			setRedirectTo( 'launchpad' );
 		} else {
@@ -76,13 +64,30 @@ const ProductPlan = ( { siteSlug, primaryPurchase, siteID }: ProductPlanProps ) 
 		}
 	}, [ launchpad ] );
 
+	useEffect( () => {
+		setLetsWorkButtonBusy( isLoading );
+	}, [ isLoading ] );
+
 	const letsWorkHref =
-		redirectTo === 'launchpad' && hasRemainingTasks && launchPadScreenUpdated
+		redirectTo === 'launchpad' && hasRemainingTasks
 			? `/setup/build/launchpad?siteSlug=${ siteSlug }&showLaunchpad=true`
 			: `/home/${ siteSlug }`;
 
-	const letsworkButtonBusy =
-		isLoading || ( redirectTo === 'launchpad' && ! launchPadScreenUpdated );
+	const letsWorkButtonOnClick = useCallback(
+		( e: React.MouseEvent< HTMLElement > ) => {
+			if ( redirectTo === 'launchpad' ) {
+				e.preventDefault();
+				setLetsWorkButtonBusy( true );
+				// when launchpad is off or skipped, we need to update the launchpad_screen option to full
+				// otherwise the full screen launchpad will redirect to /home straight away
+				saveSiteSettings( siteID, { launchpad_screen: 'full' } ).then( () => {
+					setLetsWorkButtonBusy( false );
+					window.location.assign( letsWorkHref );
+				} );
+			}
+		},
+		[ letsWorkHref, redirectTo ]
+	);
 
 	return (
 		<div className="checkout-thank-you__header-details">
@@ -105,7 +110,12 @@ const ProductPlan = ( { siteSlug, primaryPurchase, siteID }: ProductPlanProps ) 
 				) }
 			</div>
 			<div className="checkout-thank-you__header-details-buttons">
-				<Button busy={ letsworkButtonBusy } primary href={ letsWorkHref }>
+				<Button
+					busy={ letsWorkButtonBusy }
+					primary
+					href={ letsWorkHref }
+					onClick={ letsWorkButtonOnClick }
+				>
 					{ translate( 'Let’s work on the site' ) }
 				</Button>
 				<Button href={ `/plans/my-plan/${ siteSlug }` }>{ translate( 'Manage plan' ) }</Button>
