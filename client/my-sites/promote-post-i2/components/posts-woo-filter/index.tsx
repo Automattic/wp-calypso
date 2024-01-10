@@ -38,17 +38,13 @@ export default function WooItemsFilter( props: Props ) {
 			label: translate( 'Posts' ),
 		},
 		{
-			value: 'pages',
+			value: 'page',
 			label: translate( 'Page' ),
 		},
 	];
 
 	return (
-		<SegmentedControl
-			className="promote-post-i2__search-bar-segemented-control-woo"
-			compact
-			primary
-		>
+		<SegmentedControl className="woo-filter">
 			{ options.map( ( option ) => (
 				<SegmentedControl.Item
 					key={ option.value }

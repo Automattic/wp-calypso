@@ -13,10 +13,8 @@ $font-sf-pro-display: "SF Pro Display", $sans;
 
 .promote-post-i2__search-bar-wrapper {
 	margin-bottom: 20px;
-	flex-wrap: wrap;
-	display: grid;
-	grid-template-columns: 1fr auto;
-
+	display: flex;
+	flex-direction: row;
 	.promote-post-i2__search-bar-options {
 		display: flex;
 
@@ -31,11 +29,16 @@ $font-sf-pro-display: "SF Pro Display", $sans;
 				}
 			}
 		}
+
+
 	}
 
 	.segmented-control {
 		border-radius: 4px;
 		height: 44px;
+		&.woo-filter {
+			height: 200px;
+		}
 
 		.segmented-control__item,
 		&.is-primary .segmented-control__item.is-selected {
@@ -53,6 +56,10 @@ $font-sf-pro-display: "SF Pro Display", $sans;
 
 				color: var(--studio-gray-60);
 			}
+		}
+
+		&.control-woo {
+			min-width: 460px;
 		}
 
 		&.is-primary {

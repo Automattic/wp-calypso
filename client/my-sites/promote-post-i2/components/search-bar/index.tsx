@@ -108,7 +108,7 @@ export default function SearchBar( props: Props ) {
 			label: translate( 'Posts' ),
 		},
 		{
-			value: 'pages',
+			value: 'page',
 			label: translate( 'Page' ),
 		},
 	];
@@ -139,23 +139,6 @@ export default function SearchBar( props: Props ) {
 		} );
 	};
 
-	const onChangeFilter = ( filter: string ) => {
-		const newFilter = {
-			...filterOption,
-			postType: filter,
-		};
-
-		if ( handleFilterPostTypeChange ) {
-			handleFilterPostTypeChange( filter );
-		}
-
-		handleSetSearch( {
-			search: searchInput || '',
-			order: sortOption,
-			filter: newFilter,
-		} );
-	};
-
 	const onChangeSearch = ( search: string ) => {
 		setSearchInput( search );
 		handleSetSearch( {
@@ -165,14 +148,14 @@ export default function SearchBar( props: Props ) {
 		} );
 	};
 
-	const onChangePostTypeFilter = ( option: DropdownOption ) => {
+	const onChangePostTypeFilter = ( option: string ) => {
 		const newFilter = {
 			...filterOption,
-			postType: option.value,
+			postType: option,
 		};
 
 		if ( handleFilterPostTypeChange ) {
-			handleFilterPostTypeChange( option.value );
+			handleFilterPostTypeChange( option );
 		}
 
 		setFilterOption( newFilter );
@@ -248,13 +231,16 @@ export default function SearchBar( props: Props ) {
 				{ mode === 'posts' && (
 					<>
 						{ isWooStore && isDesktop && (
-							<WooItemsFilter handleChangeFilter={ onChangeFilter } postType={ postType || '' } />
+							<WooItemsFilter
+								handleChangeFilter={ onChangePostTypeFilter }
+								postType={ postType || '' }
+							/>
 						) }
 
 						{ ( ! isWooStore || ! isDesktop ) && (
 							<SelectDropdown
 								className="promote-post-i2__search-bar-dropdown post-type"
-								onSelect={ onChangePostTypeFilter }
+								onSelect={ ( option: DropdownOption ) => onChangePostTypeFilter( option.value ) }
 								options={ isWooStore ? wooPostTypeOptions : postTypeOptions }
 								initialSelected={ postType }
 								selectedText={ getPostTypeFilterLabel() }
