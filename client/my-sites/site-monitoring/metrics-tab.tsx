@@ -217,6 +217,7 @@ export interface HTTPCodeSerie {
 	fill: string;
 	label: string;
 	stroke: string;
+	showInLegend?: boolean;
 }
 
 const seriesDefaultProps = {
@@ -232,18 +233,21 @@ const useSuccessHttpCodeSeries = () => {
 			fill: 'rgba(104, 179, 232, 0.1)',
 			label: __( '200: OK Response' ),
 			stroke: 'rgba(104, 179, 232, 1)',
+			showInLegend: true,
 		},
 		{
 			statusCode: 301,
 			fill: 'rgba(235, 101, 148, 0.2)',
 			label: __( '301: Moved Permanently' ),
 			stroke: 'rgba(235, 101, 148, 1)',
+			showInLegend: true,
 		},
 		{
 			statusCode: 302,
 			fill: 'rgba(9, 181, 133, 0.1)',
 			label: __( '302: Moved Temporarily' ),
 			stroke: 'rgba(9, 181, 133, 1)',
+			showInLegend: true,
 		},
 	];
 	const statusCodes = series.map( ( { statusCode } ) => statusCode );
@@ -259,26 +263,36 @@ const useClientErrorHttpCodeSeries = () => {
 			fill: 'rgba(242, 215, 107, 0.1)',
 			label: __( '400: Bad Request' ),
 			stroke: 'rgba(242, 215, 107, 1)',
+			showInLegend: true,
 		},
 		{
 			statusCode: 401,
 			fill: 'rgba(235, 101, 148, 0.1)',
 			label: __( '401: Unauthorized' ),
 			stroke: 'rgba(235, 101, 148, 1)',
+			showInLegend: true,
 		},
 		{
 			statusCode: 403,
 			fill: 'rgba(104, 179, 232, 0.1)',
 			label: __( '403: Forbidden' ),
 			stroke: 'rgba(104, 179, 232, 1)',
+			showInLegend: true,
 		},
 		{
 			statusCode: 404,
 			fill: 'rgba(9, 181, 133, 0.1)',
 			label: __( '404: Not Found' ),
 			stroke: 'rgba(9, 181, 133, 1)',
+			showInLegend: true,
 		},
 		// remaining 4xx errors
+		{
+			...seriesDefaultProps,
+			statusCode: 400,
+			label: __( '4xx errors' ),
+			showInLegend: true,
+		},
 		{
 			...seriesDefaultProps,
 			statusCode: 402,
@@ -413,26 +427,36 @@ const useServerErrorHttpCodeSeries = () => {
 			fill: 'rgba(242, 215, 107, 0.1)',
 			label: __( '500: Internal Server Error' ),
 			stroke: 'rgba(242, 215, 107, 1)',
+			showInLegend: true,
 		},
 		{
 			statusCode: 502,
 			fill: 'rgba(235, 101, 148, 0.1)',
 			label: __( '502: Bad Gateway' ),
 			stroke: 'rgba(235, 101, 148, 1)',
+			showInLegend: true,
 		},
 		{
 			statusCode: 503,
 			fill: 'rgba(104, 179, 232, 0.1)',
 			label: __( '503: Service Unavailable' ),
 			stroke: 'rgba(104, 179, 232, 1)',
+			showInLegend: true,
 		},
 		{
 			statusCode: 504,
 			fill: 'rgba(9, 181, 133, 0.1)',
 			label: __( '504: Gateway Timeout' ),
 			stroke: 'rgba(9, 181, 133, 1)',
+			showInLegend: true,
 		},
 		// remaining 5xx errors
+		{
+			...seriesDefaultProps,
+			statusCode: 500,
+			label: __( '5xx errors' ),
+			showInLegend: true,
+		},
 		{
 			...seriesDefaultProps,
 			statusCode: 501,

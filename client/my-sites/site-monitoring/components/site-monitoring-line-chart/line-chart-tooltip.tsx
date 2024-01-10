@@ -109,14 +109,20 @@ export function HttpChartTooltip( { data, idx, series = [], ...rest }: HttpChart
 			totalRequests,
 		},
 	} );
+	const filteredTooltipSeries = series
+		.map( ( serie, serieI ) => ( {
+			color: serie.stroke,
+			label: serie.label,
+			value: rountToTwoDecimals( data[ serieI + 1 ][ idx ] ),
+			showInLegend: serie.showInLegend,
+		} ) )
+		.filter( ( serie ) => {
+			return !! serie.showInLegend || serie.value > 0;
+		} );
 	return (
 		<LineChartTooltip
 			{ ...rest }
-			tooltipSeries={ series.map( ( serie, serieI ) => ( {
-				color: serie.stroke,
-				label: serie.label,
-				value: rountToTwoDecimals( data[ serieI + 1 ][ idx ] ),
-			} ) ) }
+			tooltipSeries={ filteredTooltipSeries }
 			footer={ `${ totalRequestsString } - ${ dateString }` }
 		/>
 	);

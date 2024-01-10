@@ -227,6 +227,17 @@ export const SiteMonitoringLineChart = ( {
 					}
 				},
 			},
+			hooks: {
+				init: [
+					( u ) => {
+						[ ...u.root.querySelectorAll( '.u-legend .u-series' ) ].forEach( ( el, i ) => {
+							if ( ! u.series[ i ].showInLegend ) {
+								el.style.display = 'none';
+							}
+						} );
+					},
+				],
+			},
 		};
 
 		return {
