@@ -35,7 +35,7 @@ export interface UseRazorpayJs {
 	razorpayLoadingError: RazorpayLoadingError;
 }
 
-export type GetRazorpayConfigurationArgs = { sandbox: boolean }; // TODO: fix this dummy argument
+export type GetRazorpayConfigurationArgs = { sandbox: boolean };
 export type GetRazorpayConfiguration = (
 	requestArgs: GetRazorpayConfigurationArgs
 ) => Promise< RazorpayConfiguration >;
@@ -167,12 +167,19 @@ function useRazorpayConfiguration(
 	return { razorpayConfiguration, razorpayConfigurationError };
 }
 
-// TODO
 function areRequestArgsEqual(
-	previous: undefined | null | GetRazorpayConfigurationArgs,
-	next: undefined | null | GetRazorpayConfigurationArgs
+	previous: GetRazorpayConfigurationArgs | null | undefined,
+	next: GetRazorpayConfigurationArgs | null | undefined
 ): boolean {
-	return !! previous && !! next; // TODO
+	if ( ! previous && ! next ) {
+		// Catch if both are either null or undefined; don't need to distinguish these
+		return true;
+	}
+	if ( ! previous || ! next ) {
+		// Catch if one is an object and the other is not
+		return false;
+	}
+	return previous.sandbox === next.sandbox;
 }
 
 export function RazorpayHookProvider( {
