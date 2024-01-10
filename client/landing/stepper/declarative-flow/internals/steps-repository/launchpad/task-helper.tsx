@@ -190,25 +190,16 @@ const actions: TaskActionTable = {
 			},
 			useCalypsoPath: false,
 		} ) satisfies EnhancedTask,
+	migrate_content: ( task, flow, { mustVerifyEmailBeforePosting, completeMigrateContentTask } ) =>
+		( {
+			...task,
+			disabled: mustVerifyEmailBeforePosting || false,
+			actionDispatch: () => {
 				recordTaskClickTracksEvent( flow, task.completed, task.id );
-				goToStep( 'subscribers' );
-			}
-		},
-		useCalypsoPath: false,
-	} ),
-	migrate_content: (
-		task,
-		flow,
-		{ mustVerifyEmailBeforePosting, completeMigrateContentTask }
-	) => ( {
-		...task,
-		disabled: mustVerifyEmailBeforePosting || false,
-		actionDispatch: () => {
-			recordTaskClickTracksEvent( flow, task.completed, task.id );
-			completeMigrateContentTask?.();
-		},
-		useCalypsoPath: true,
-	} ),
+				completeMigrateContentTask?.();
+			},
+			useCalypsoPath: true,
+		} ) satisfies EnhancedTask,
 } as const;
 
 const getTaskDefinition = ( task: Task, flow: string, taskContext: TaskContext ) => {
