@@ -213,11 +213,12 @@ function getFormattedDataForPieChart(
 	} );
 }
 export interface HTTPCodeSerie {
-	statusCode: number;
+	statusCode?: number;
 	fill: string;
 	label: string;
 	stroke: string;
 	showInLegend?: boolean;
+	showInTooltip?: boolean;
 }
 
 const seriesDefaultProps = {
@@ -234,6 +235,7 @@ const useSuccessHttpCodeSeries = () => {
 			label: __( '200: OK Response' ),
 			stroke: 'rgba(104, 179, 232, 1)',
 			showInLegend: true,
+			showInTooltip: true,
 		},
 		{
 			statusCode: 301,
@@ -241,6 +243,7 @@ const useSuccessHttpCodeSeries = () => {
 			label: __( '301: Moved Permanently' ),
 			stroke: 'rgba(235, 101, 148, 1)',
 			showInLegend: true,
+			showInTooltip: true,
 		},
 		{
 			statusCode: 302,
@@ -248,6 +251,7 @@ const useSuccessHttpCodeSeries = () => {
 			label: __( '302: Moved Temporarily' ),
 			stroke: 'rgba(9, 181, 133, 1)',
 			showInLegend: true,
+			showInTooltip: true,
 		},
 	];
 	const statusCodes = series.map( ( { statusCode } ) => statusCode );
@@ -264,6 +268,7 @@ const useClientErrorHttpCodeSeries = () => {
 			label: __( '400: Bad Request' ),
 			stroke: 'rgba(242, 215, 107, 1)',
 			showInLegend: true,
+			showInTooltip: true,
 		},
 		{
 			statusCode: 401,
@@ -271,6 +276,7 @@ const useClientErrorHttpCodeSeries = () => {
 			label: __( '401: Unauthorized' ),
 			stroke: 'rgba(235, 101, 148, 1)',
 			showInLegend: true,
+			showInTooltip: true,
 		},
 		{
 			statusCode: 403,
@@ -278,6 +284,7 @@ const useClientErrorHttpCodeSeries = () => {
 			label: __( '403: Forbidden' ),
 			stroke: 'rgba(104, 179, 232, 1)',
 			showInLegend: true,
+			showInTooltip: true,
 		},
 		{
 			statusCode: 404,
@@ -285,12 +292,12 @@ const useClientErrorHttpCodeSeries = () => {
 			label: __( '404: Not Found' ),
 			stroke: 'rgba(9, 181, 133, 1)',
 			showInLegend: true,
+			showInTooltip: true,
 		},
 		// remaining 4xx errors
 		{
 			...seriesDefaultProps,
-			statusCode: 400,
-			label: __( '4xx errors' ),
+			label: __( 'Other 4xx errors' ),
 			showInLegend: true,
 		},
 		{
@@ -428,6 +435,7 @@ const useServerErrorHttpCodeSeries = () => {
 			label: __( '500: Internal Server Error' ),
 			stroke: 'rgba(242, 215, 107, 1)',
 			showInLegend: true,
+			showInTooltip: true,
 		},
 		{
 			statusCode: 502,
@@ -435,6 +443,7 @@ const useServerErrorHttpCodeSeries = () => {
 			label: __( '502: Bad Gateway' ),
 			stroke: 'rgba(235, 101, 148, 1)',
 			showInLegend: true,
+			showInTooltip: true,
 		},
 		{
 			statusCode: 503,
@@ -442,6 +451,7 @@ const useServerErrorHttpCodeSeries = () => {
 			label: __( '503: Service Unavailable' ),
 			stroke: 'rgba(104, 179, 232, 1)',
 			showInLegend: true,
+			showInTooltip: true,
 		},
 		{
 			statusCode: 504,
@@ -449,12 +459,12 @@ const useServerErrorHttpCodeSeries = () => {
 			label: __( '504: Gateway Timeout' ),
 			stroke: 'rgba(9, 181, 133, 1)',
 			showInLegend: true,
+			showInTooltip: true,
 		},
 		// remaining 5xx errors
 		{
 			...seriesDefaultProps,
-			statusCode: 500,
-			label: __( '5xx errors' ),
+			label: __( 'Other 5xx errors' ),
 			showInLegend: true,
 		},
 		{
