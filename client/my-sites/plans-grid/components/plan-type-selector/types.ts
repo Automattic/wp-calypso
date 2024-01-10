@@ -36,6 +36,7 @@ export type PlanTypeSelectorProps = {
 export type IntervalTypeProps = Pick<
 	PlanTypeSelectorProps,
 	| 'intervalType'
+	| 'onIntervalTypeChange'
 	| 'plans'
 	| 'isInSignup'
 	| 'eligibleForWpcomMonthlyPlans'

@@ -141,7 +141,7 @@ export interface PlansFeaturesMainProps {
 	removePaidDomain?: () => void;
 	setSiteUrlAsFreeDomainSuggestion?: ( freeDomainSuggestion: { domain_name: string } ) => void;
 	intervalType?: SupportIntervalTypes;
-	onIntervalTypeChange?( intervalType: SupportIntervalTypes );
+	onIntervalTypeChange?( intervalType: SupportIntervalTypes ): void;
 	planTypeSelector?: 'interval';
 	withDiscount?: string;
 	discountEndDate?: Date;

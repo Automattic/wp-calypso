@@ -140,7 +140,7 @@ const PlansWrapper: React.FC< Props > = ( props ) => {
 
 	const handleIntervalTypeChange = ( intervalType: SupportIntervalTypes ) => {
 		setIntervalType( intervalType );
-		const url = new URL( window.location );
+		const url = new URL( window.location.href );
 		url.searchParams.set( 'intervalType', intervalType );
 		window.history.pushState( null, '', url.toString() );
 	};

@@ -1,5 +1,6 @@
 import styled from '@emotion/styled';
 import { CustomSelectControl } from '@wordpress/components';
+import { SupportIntervalTypes } from 'calypso/my-sites/plans-features-main/index';
 import useIntervalOptions from '../hooks/use-interval-options';
 import { IntervalTypeProps, SupportedUrlFriendlyTermType } from '../types';
 
@@ -34,7 +35,7 @@ const AddOnOption = styled.a`
 `;
 
 type Option = {
-	key: string;
+	key: SupportIntervalTypes;
 	name: JSX.Element;
 	value: string;
 };
