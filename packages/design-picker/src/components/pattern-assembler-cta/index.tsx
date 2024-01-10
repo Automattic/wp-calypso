@@ -2,7 +2,7 @@ import { Button } from '@automattic/components';
 import { useViewportMatch } from '@wordpress/compose';
 import { useTranslate } from 'i18n-calypso';
 import { ReactNode } from 'react';
-import patternAssemblerImage from '../assets/images/pattern-assembler.svg';
+import assemblerIllustrationImage from '../assets/images/assembler-illustration.png';
 import './style.scss';
 
 type PatternAssemblerCtaData = {
@@ -49,7 +49,7 @@ const PatternAssemblerCta = ( { onButtonClick }: PatternAssemblerCtaProps ) => {
 			<div className="pattern-assembler-cta__image-wrapper">
 				<img
 					className="pattern-assembler-cta__image"
-					src={ patternAssemblerImage }
+					src={ assemblerIllustrationImage }
 					alt="Pattern Assembler"
 				/>
 			</div>
