@@ -424,6 +424,8 @@ const PlansFeaturesMain = ( {
 		showLegacyStorageFeature,
 		isSubdomainNotGenerated: ! resolvedSubdomainName.result,
 		storageAddOns,
+		coupon,
+		selectedSiteId: siteId,
 	} );
 
 	const planFeaturesForFeaturesGrid = usePlanFeaturesForGridPlans( {
@@ -526,6 +528,8 @@ const PlansFeaturesMain = ( {
 			currentSitePlanSlug: sitePlanSlug,
 			usePricingMetaForGridPlans,
 			recordTracksEvent,
+			coupon,
+			selectedSiteId: siteId,
 		};
 	}, [
 		_customerType,
@@ -543,6 +547,8 @@ const PlansFeaturesMain = ( {
 		showBiennialToggle,
 		showPlanTypeSelectorDropdown,
 		eligibleForWpcomMonthlyPlans,
+		coupon,
+		siteId,
 	] );
 
 	/**
@@ -783,7 +789,8 @@ const PlansFeaturesMain = ( {
 								{ ...planTypeSelectorProps }
 								layoutClassName="plans-features-main__plan-type-selector-layout"
 								enableStickyBehavior={ enablePlanTypeSelectorStickyBehavior }
-								stickyPlanTypeSelectorOffset={ masterbarHeight }
+								stickyPlanTypeSelectorOffset={ masterbarHeight - 1 }
+								coupon={ coupon }
 							/>
 						) }
 						<div
@@ -808,7 +815,7 @@ const PlansFeaturesMain = ( {
 									isLaunchPage={ isLaunchPage }
 									onUpgradeClick={ handleUpgradeClick }
 									selectedFeature={ selectedFeature }
-									siteId={ siteId }
+									selectedSiteId={ siteId }
 									intervalType={ intervalType }
 									hideUnavailableFeatures={ hideUnavailableFeatures }
 									currentSitePlanSlug={ sitePlanSlug }
@@ -821,6 +828,7 @@ const PlansFeaturesMain = ( {
 									allFeaturesList={ FEATURES_LIST }
 									onStorageAddOnClick={ handleStorageAddOnClick }
 									showRefundPeriod={ isAnyHostingFlow( flowName ) }
+									coupon={ coupon }
 								/>
 								{ showEscapeHatch && hidePlansFeatureComparison && (
 									<div className="plans-features-main__escape-hatch">
@@ -858,6 +866,7 @@ const PlansFeaturesMain = ( {
 												<PlanTypeSelector
 													{ ...planTypeSelectorProps }
 													layoutClassName="plans-features-main__plan-type-selector-layout"
+													coupon={ coupon }
 												/>
 											) }
 											<ComparisonGrid
@@ -867,7 +876,7 @@ const PlansFeaturesMain = ( {
 												onUpgradeClick={ handleUpgradeClick }
 												selectedFeature={ selectedFeature }
 												selectedPlan={ selectedPlan }
-												siteId={ siteId }
+												selectedSiteId={ siteId }
 												intervalType={ intervalType }
 												hideUnavailableFeatures={ hideUnavailableFeatures }
 												currentSitePlanSlug={ sitePlanSlug }
@@ -882,6 +891,7 @@ const PlansFeaturesMain = ( {
 												planTypeSelectorProps={
 													! hidePlanSelector ? planTypeSelectorProps : undefined
 												}
+												coupon={ coupon }
 											/>
 											<ComparisonGridToggle
 												onClick={ toggleShowPlansComparisonGrid }

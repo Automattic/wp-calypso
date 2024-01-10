@@ -30,6 +30,20 @@ import ThirdPartyPluginsTermsOfService from './third-party-plugins-terms-of-serv
 import TitanTermsOfService from './titan-terms-of-service';
 import type { ResponseCart } from '@automattic/shopping-cart';
 
+const TermsCollapsedContent = styled.div`
+	& .foldable-card__main {
+		position: relative;
+		left: 20px;
+	}
+
+	& .foldable-card__expand {
+		position: absolute;
+		left: -24px;
+		top: -3px;
+		width: 20px;
+	}
+`;
+
 export default function CheckoutTerms( { cart }: { cart: ResponseCart } ) {
 	const isGiftPurchase = cart.is_gift_purchase;
 	const translate = useTranslate();
@@ -45,20 +59,6 @@ export default function CheckoutTerms( { cart }: { cart: ResponseCart } ) {
 	// subscription behind the scenes so we need to show the full TOS including
 	// renewal text.
 	const hasDomainTransfer = cart.products.some( ( product ) => isDomainTransfer( product ) );
-
-	const TermsCollapsedContent = styled.div`
-		& .foldable-card__main {
-			position: relative;
-			left: 20px;
-		}
-
-		& .foldable-card__expand {
-			position: absolute;
-			left: -24px;
-			top: -3px;
-			width: 20px;
-		}
-	`;
 
 	const showToSFoldableCard = useToSFoldableCard();
 

@@ -1,9 +1,5 @@
-import config from '@automattic/calypso-config';
 import {
-	FEATURE_STATS_PAID,
 	PRODUCT_JETPACK_AI_MONTHLY,
-	PRODUCT_JETPACK_STATS_PWYW_YEARLY,
-	PRODUCT_JETPACK_STATS_YEARLY,
 	PRODUCT_WPCOM_CUSTOM_DESIGN,
 	PRODUCT_WPCOM_UNLIMITED_THEMES,
 	PRODUCT_1GB_SPACE,
@@ -19,12 +15,10 @@ import { getProductsList } from 'calypso/state/products-list/selectors';
 import getBillingTransactionFilters from 'calypso/state/selectors/get-billing-transaction-filters';
 import getFeaturesBySiteId from 'calypso/state/selectors/get-site-features';
 import { usePastBillingTransactions } from 'calypso/state/sites/hooks/use-billing-history';
-import { getSiteOption } from 'calypso/state/sites/selectors';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import { STORAGE_LIMIT } from '../constants';
 import customDesignIcon from '../icons/custom-design';
 import jetpackAIIcon from '../icons/jetpack-ai';
-import jetpackStatsIcon from '../icons/jetpack-stats';
 import spaceUpgradeIcon from '../icons/space-upgrade';
 import unlimitedThemesIcon from '../icons/unlimited-themes';
 import isStorageAddonEnabled from '../is-storage-addon-enabled';
@@ -75,10 +69,6 @@ const useActiveAddOnsDefs = ( selectedSite: SiteDetails | null ) => {
 	const featureSlugsCustomDesign = useAddOnFeatureSlugs( PRODUCT_WPCOM_CUSTOM_DESIGN );
 	const featureSlugs1GBSpace50 = useAddOnFeatureSlugs( PRODUCT_1GB_SPACE, 50 );
 	const featureSlugs1GBSpace100 = useAddOnFeatureSlugs( PRODUCT_1GB_SPACE, 100 );
-	const featureSlugsJetpackStatsYearly = useAddOnFeatureSlugs( PRODUCT_JETPACK_STATS_YEARLY );
-	const featureSlugsJetpackStatsPWYWYearly = useAddOnFeatureSlugs(
-		PRODUCT_JETPACK_STATS_PWYW_YEARLY
-	);
 
 	/*
 	 * TODO: `useAddOnDisplayCost` be refactored instead to return an index of `{ [ slug ]: "display cost" }`
@@ -88,7 +78,6 @@ const useActiveAddOnsDefs = ( selectedSite: SiteDetails | null ) => {
 	const displayCostCustomDesign = useAddOnDisplayCost( PRODUCT_WPCOM_CUSTOM_DESIGN );
 	const displayCost1GBSpace50 = useAddOnDisplayCost( PRODUCT_1GB_SPACE, 50 );
 	const displayCost1GBSpace100 = useAddOnDisplayCost( PRODUCT_1GB_SPACE, 100 );
-	const displayCostJetpackStatsYearly = useAddOnDisplayCost( PRODUCT_JETPACK_STATS_YEARLY );
 
 	/*
 	 * TODO: `useAddOnPrices` be refactored instead to return an index of `{ [ slug ]: AddOnPrice }`
@@ -155,31 +144,6 @@ const useActiveAddOnsDefs = ( selectedSite: SiteDetails | null ) => {
 				purchased: false,
 				checkoutLink: checkoutLink( selectedSite?.slug ?? null, PRODUCT_1GB_SPACE, 100 ),
 			},
-			{
-				productSlug: PRODUCT_JETPACK_STATS_PWYW_YEARLY,
-				featureSlugs: featureSlugsJetpackStatsPWYWYearly,
-				icon: jetpackStatsIcon,
-				overrides: null,
-				displayCost: translate( 'Varies', {
-					comment:
-						'Used to describe price of Jetpack Stats, which can be either a pay-what-you-want product or fixed price product. In the future, it can also be a metered product.',
-				} ),
-				featured: true,
-				description: translate(
-					'Upgrade Jetpack Stats to unlock priority support and all upcoming premium features.'
-				),
-			},
-			{
-				productSlug: PRODUCT_JETPACK_STATS_YEARLY,
-				featureSlugs: featureSlugsJetpackStatsYearly,
-				icon: jetpackStatsIcon,
-				overrides: null,
-				displayCost: displayCostJetpackStatsYearly,
-				featured: true,
-				description: translate(
-					'Upgrade Jetpack Stats to unlock priority support and all upcoming premium features.'
-				),
-			},
 		],
 		[
 			addOnPrices1GBSpace100,
@@ -189,14 +153,11 @@ const useActiveAddOnsDefs = ( selectedSite: SiteDetails | null ) => {
 			displayCost1GBSpace50,
 			displayCostCustomDesign,
 			displayCostJetpackAIMonthly,
-			displayCostJetpackStatsYearly,
 			displayCostUnlimitedThemes,
 			featureSlugs1GBSpace100,
 			featureSlugs1GBSpace50,
 			featureSlugsCustomDesign,
 			featureSlugsJetpackAIMonthly,
-			featureSlugsJetpackStatsPWYWYearly,
-			featureSlugsJetpackStatsYearly,
 			featureSlugsUnlimitedThemes,
 			selectedSite?.slug,
 			translate,
@@ -213,9 +174,6 @@ const useAddOns = ( siteId?: number, isInSignup = false ): ( AddOnMeta | null )[
 	const activeAddOns = useActiveAddOnsDefs( selectedSite );
 	const productsList = useSelector( getProductsList );
 	const siteFeatures = useSelector( ( state ) => getFeaturesBySiteId( state, siteId ) );
-	const isSiteMarkedCommercial = useSelector( ( state ) =>
-		getSiteOption( state, siteId, 'is_commercial' )
-	);
 
 	return useMemo(
 		() =>
@@ -225,45 +183,6 @@ const useAddOns = ( siteId?: number, isInSignup = false ): ( AddOnMeta | null )[
 					if (
 						addOn.productSlug === PRODUCT_JETPACK_AI_MONTHLY &&
 						siteFeatures?.active?.includes( WPCOM_FEATURES_AI_ASSISTANT )
-					) {
-						return false;
-					}
-
-					// TODO: Remove this check once paid WPCOM stats is live.
-					// gate the Jetpack Stats add-on on a feature flag
-					if (
-						[ PRODUCT_JETPACK_STATS_PWYW_YEARLY, PRODUCT_JETPACK_STATS_YEARLY ].includes(
-							addOn.productSlug
-						) &&
-						! config.isEnabled( 'stats/paid-wpcom-stats' )
-					) {
-						return false;
-					}
-
-					// Hide Stats Personal add-on if the site is marked as commercial.
-					if (
-						isSiteMarkedCommercial === true &&
-						PRODUCT_JETPACK_STATS_PWYW_YEARLY === addOn.productSlug
-					) {
-						return false;
-					}
-
-					// Hide Stats Commercial add-on if the site is not marked as commercial.
-					if (
-						isSiteMarkedCommercial === false &&
-						PRODUCT_JETPACK_STATS_YEARLY === addOn.productSlug
-					) {
-						return false;
-					}
-
-					// TODO: Show the Stats Commercial add-on for a commercial site that has purchased the Personal plan.
-
-					// remove Jetpack Stats add-on if the site already has a paid stats feature through a paid plan.
-					if (
-						[ PRODUCT_JETPACK_STATS_PWYW_YEARLY, PRODUCT_JETPACK_STATS_YEARLY ].includes(
-							addOn.productSlug
-						) &&
-						siteFeatures?.active?.includes( FEATURE_STATS_PAID )
 					) {
 						return false;
 					}
@@ -333,15 +252,7 @@ const useAddOns = ( siteId?: number, isInSignup = false ): ( AddOnMeta | null )[
 						description,
 					};
 				} ),
-		[
-			activeAddOns,
-			isLoading,
-			mediaStorage,
-			productsList,
-			siteFeatures,
-			spaceUpgradesPurchased,
-			isSiteMarkedCommercial,
-		]
+		[ activeAddOns, isLoading, mediaStorage, productsList, siteFeatures, spaceUpgradesPurchased ]
 	);
 };
 

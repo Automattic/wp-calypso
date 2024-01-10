@@ -79,7 +79,7 @@ const SiteOwnerTransferEligibility = ( {
 	const [ tempSiteOwner, setTempSiteOwner ] = useState< User >();
 	const [ siteTransferEligibilityError, setSiteTransferEligibilityError ] = useState( '' );
 
-	const { checkSiteTransferEligibility, isLoading: isCheckingSiteTransferEligibility } =
+	const { checkSiteTransferEligibility, isPending: isCheckingSiteTransferEligibility } =
 		useCheckSiteTransferEligibility( siteId, {
 			onMutate: () => {
 				setSiteTransferEligibilityError( '' );

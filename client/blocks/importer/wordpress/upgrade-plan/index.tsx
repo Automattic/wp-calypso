@@ -45,7 +45,7 @@ export const UpgradePlan: React.FunctionComponent< Props > = ( props: Props ) =>
 		// If the user's email is unverified, we still want to show the trial plan option
 		migrationTrialEligibility?.error_code === 'email-unverified';
 
-	const { addHostingTrial, isLoading: isAddingTrial } = useAddHostingTrialMutation( {
+	const { addHostingTrial, isPending: isAddingTrial } = useAddHostingTrialMutation( {
 		onSuccess: () => {
 			// After the trial is added, we need to request the site again to get the updated plan
 			site && dispatch( requestSite( site.ID ) );
