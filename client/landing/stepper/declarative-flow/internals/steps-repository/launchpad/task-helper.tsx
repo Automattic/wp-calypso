@@ -72,7 +72,8 @@ type TaskId =
 	| 'plan_selected'
 	| 'plan_completed'
 	| 'subscribers_added'
-	| 'migrate_content';
+	| 'migrate_content'
+	| 'first_post_published';
 
 interface TaskContext {
 	siteInfoQueryArgs?: { siteId?: number; siteSlug?: string | null };
@@ -200,6 +201,22 @@ const actions: TaskActionTable = {
 			},
 			useCalypsoPath: true,
 		} ) satisfies EnhancedTask,
+	first_post_published: ( task, flow, { mustVerifyEmailBeforePosting, siteInfoQueryArgs } ) => ( {
+		...task,
+		disabled:
+			mustVerifyEmailBeforePosting ||
+			( task.completed && isBlogOnboardingFlow( flow || null ) ) ||
+			false,
+		actionDispatch: () => {
+			recordTaskClickTracksEvent( flow, task.completed, task.id );
+		},
+		calypso_path: ! isBlogOnboardingFlow( flow || null )
+			? `/post/${ siteInfoQueryArgs?.siteSlug }`
+			: addQueryArgs( `https://${ siteInfoQueryArgs?.siteSlug }/wp-admin/post-new.php`, {
+					origin: window.location.origin,
+			  } ),
+		useCalypsoPath: true,
+	} ),
 } as const;
 
 const getTaskDefinition = ( task: Task, flow: string, taskContext: TaskContext ) => {
@@ -438,24 +455,8 @@ export function getEnhancedTasks( {
 			case 'plan_completed':
 			case 'subscribers_added':
 			case 'migrate_content':
-				return getTaskDefinition( task, flow, context );
 			case 'first_post_published':
-				taskData = {
-					disabled:
-						mustVerifyEmailBeforePosting ||
-						( task.completed && isBlogOnboardingFlow( flow || null ) ) ||
-						false,
-					actionDispatch: () => {
-						recordTaskClickTracksEvent( flow, task.completed, task.id );
-						const newPostUrl = ! isBlogOnboardingFlow( flow || null )
-							? `/post/${ siteSlug }`
-							: addQueryArgs( `https://${ siteSlug }/wp-admin/post-new.php`, {
-									origin: window.location.origin,
-							  } );
-						window.location.assign( newPostUrl );
-					},
-				};
-				break;
+				return getTaskDefinition( task, flow, context );
 			case 'first_post_published_newsletter':
 				taskData = {
 					isLaunchTask: true,
