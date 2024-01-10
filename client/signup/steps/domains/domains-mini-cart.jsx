@@ -198,8 +198,8 @@ class DomainsMiniCart extends Component {
 				<div className="domains__domain-side-content domains__domain-cart">
 					<div className="domains__domain-cart-rows">
 						{ this.props.wpcomSubdomainSelected && this.freeDomain() }
-						{ this.props.domainsInCart.map( ( domain, i ) => (
-							<div key={ `row${ i }` } className="domains__domain-cart-row">
+						{ this.props.domainsInCart.map( ( domain ) => (
+							<div key={ `row-${ domain.meta }` } className="domains__domain-cart-row">
 								{ this.domainNameAndCost( domain ) }
 							</div>
 						) ) }
@@ -226,8 +226,8 @@ class DomainsMiniCart extends Component {
 				<div className="domains__domain-cart-title">{ translate( 'Your domains' ) }</div>
 				<div className="domains__domain-cart-rows">
 					{ this.props.wpcomSubdomainSelected && this.freeDomain() }
-					{ this.props.domainsInCart.map( ( domain, i ) => (
-						<div key={ `row${ i }` } className="domains__domain-cart-row">
+					{ this.props.domainsInCart.map( ( domain ) => (
+						<div key={ `row-${ domain.meta }` } className="domains__domain-cart-row">
 							{ this.domainNameAndCost( domain ) }
 						</div>
 					) ) }
