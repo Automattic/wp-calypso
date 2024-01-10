@@ -60,8 +60,20 @@ export function BoldTLD( { domain } ) {
 class DomainsMiniCart extends Component {
 	domainNameAndCost = ( domain ) => {
 		const isRemoving = this.props.domainRemovalQueue.some( ( item ) => item.meta === domain.meta );
+		const formattedOriginalCost = formatCurrency(
+			domain.item_original_cost_integer,
+			domain.currency,
+			{
+				isSmallestUnit: true,
+				stripZeros: true,
+			}
+		);
+		const formattedCost = formatCurrency( domain.item_subtotal_integer, domain.currency, {
+			isSmallestUnit: true,
+			stripZeros: true,
+		} );
 		const priceText = translate( '%(cost)s/year', {
-			args: { cost: domain.item_original_cost_display },
+			args: { cost: formattedOriginalCost },
 		} );
 		const costDifference = domain.item_original_cost - domain.cost;
 		const hasPromotion = costDifference > 0;
@@ -74,11 +86,11 @@ class DomainsMiniCart extends Component {
 					</div>
 					<div className="domain-product-price__price">
 						{ hasPromotion && <del>{ priceText }</del> }
-						<span className="domains__price">{ domain.item_subtotal_display }</span>
+						<span className="domains__price">{ formattedCost }</span>
 					</div>
 				</div>
 				<div>
-					{ hasPromotion && domain.item_subtotal === 0 && (
+					{ hasPromotion && domain.item_subtotal_integer === 0 && (
 						<span className="savings-message">
 							{ translate( 'Free for the first year with annual paid plans.' ) }
 						</span>
