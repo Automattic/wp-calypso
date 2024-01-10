@@ -114,13 +114,18 @@ export type FindPredicate = (
 	}
 ) => boolean;
 
-export function getDomainPurchaseType( purchases: ReceiptPurchase[] ): [ string, FindPredicate ] {
+export function getDomainPurchaseTypeAndPredicate(
+	purchases: ReceiptPurchase[]
+): [ string, FindPredicate ] {
 	const hasDomainMapping = purchases.some( isDomainMapping );
 
 	if ( hasDomainMapping && purchases.some( isDomainRegistration ) ) {
 		return [ 'REGISTRATION', isDomainRegistration ];
-	} else if ( hasDomainMapping ) {
+	}
+
+	if ( hasDomainMapping ) {
 		return [ 'MAPPING', isDomainMapping ];
 	}
+
 	return [ 'TRANSFER', isDomainTransfer ];
 }

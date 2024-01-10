@@ -1,7 +1,7 @@
 @import "@wordpress/base-styles/breakpoints";
 @import "@wordpress/base-styles/mixins";
 
-.thank-you__details-list {
+.thank-you__footer {
 	max-width: 650px;
 	margin: 40px auto 30px;
 	width: 100%;
@@ -10,7 +10,7 @@
 		margin-top: 50px;
 	}
 
-	.thank-you__details-list-inner {
+	.thank-you__footer-inner {
 		@include break-small {
 			display: flex;
 			gap: 30px;
@@ -18,7 +18,7 @@
 		}
 	}
 
-	.thank-you__detail {
+	.thank-you__footer-detail {
 		margin-bottom: 50px;
 
 		@include break-small {
@@ -26,14 +26,14 @@
 		}
 	}
 
-	.thank-you__detail-title {
+	.thank-you__footer-detail-title {
 		font-size: $font-body;
 		line-height: 20px;
 		font-weight: 500;
 		color: var(--studio-gray-100);
 	}
 
-	.thank-you__detail-description {
+	.thank-you__footer-detail-description {
 		color: var(--color-text-subtle);
 		font-size: $font-body-small;
 		line-height: 20px;
@@ -41,7 +41,7 @@
 		margin: 8px 0 16px;
 	}
 
-	.thank-you__detail-button {
+	.thank-you__footer-detail-button {
 		border: none;
 		display: inline;
 		margin: inherit;

@@ -32,14 +32,6 @@ const validMeshColors = {
 
 type MeshColor = keyof typeof validMeshColors;
 
-export type ThankYouUpsellProps = {
-	title: string;
-	description: string;
-	icon: string;
-	meshColor?: MeshColor;
-	action?: React.ReactNode;
-};
-
 const ContentDiv = styled( 'div' )< { meshColor: MeshColor } >`
 	background-repeat: no-repeat;
 	background-position-x: -54px;
@@ -59,13 +51,21 @@ const ContentDiv = styled( 'div' )< { meshColor: MeshColor } >`
 
 `;
 
-const ThankYouUpsell = ( {
+export type ThankYouUpsellProps = {
+	title: string;
+	description: string;
+	icon: string;
+	meshColor?: MeshColor;
+	action?: React.ReactNode;
+};
+
+export default function ThankYouUpsell( {
 	title,
 	description,
 	icon,
 	meshColor = 'blue',
 	action,
-}: ThankYouUpsellProps ) => {
+}: ThankYouUpsellProps ) {
 	return (
 		<div className="thank-you__upsell">
 			<div className="thank-you__upsell-title">{ translate( 'This might interest you' ) }</div>
@@ -73,7 +73,7 @@ const ThankYouUpsell = ( {
 				<div className="thank-you__upsell-content-details">
 					<div className="thank-you__upsell-content-details-image">
 						<div className="thank-you__upsell-content-details-image-content">
-							<img className="thank-you__upsell-image-content-icon" alt="" src={ icon } />
+							<img alt={ translate( 'Icon for %(title)s', { args: { title } } ) } src={ icon } />
 						</div>
 					</div>
 					<div className="thank-you__upsell-content-text">
@@ -85,6 +85,4 @@ const ThankYouUpsell = ( {
 			</ContentDiv>
 		</div>
 	);
-};
-
-export default ThankYouUpsell;
+}

@@ -29,10 +29,14 @@ export const isRedesignV2 = ( props: CheckoutThankYouCombinedProps ) => {
 };
 
 /**
- * Determines whether the current checkout flow should use the refactored redesign.
+ * Determines whether the current checkout flow renders a redesigned congrats page
+ * using the new component `<ThankYouV2>` instead of `<ThankYouLayout>`. The ultimate
+ * goal is to refactor and migrate all thank you pages to use `<ThankYouV2>`, so that
+ * consistent structure and styling are applied.
+ *
  * @returns {boolean}
  */
-export const isRefactored = ( props: CheckoutThankYouCombinedProps ) => {
+export const isRefactoredForThankYouV2 = ( props: CheckoutThankYouCombinedProps ) => {
 	// Fallback to old design when there is a failed purchase.
 	const failedPurchases = getFailedPurchases( props );
 	if ( failedPurchases.length > 0 ) {
@@ -41,7 +45,6 @@ export const isRefactored = ( props: CheckoutThankYouCombinedProps ) => {
 
 	const purchases = getPurchases( props );
 
-	// Domain only purchases.
 	if ( isDomainOnly( purchases ) ) {
 		return true;
 	}

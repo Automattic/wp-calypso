@@ -6,11 +6,11 @@ import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { emailManagement } from 'calypso/my-sites/email/paths';
 import { useSelector } from 'calypso/state';
 import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';
-import { getDomainPurchaseType } from '../../utils';
-import ProductDomain from '../products/product-domain';
+import { getDomainPurchaseTypeAndPredicate } from '../../utils';
+import ThankYouDomainProduct from '../products/domain-product';
 import type { ReceiptPurchase } from 'calypso/state/receipts/types';
 
-interface DomainOnlyThankYouContainerProps {
+interface DomainOnlyThankYouProps {
 	purchases: ReceiptPurchase[];
 }
 
@@ -23,8 +23,8 @@ export const getDomainFooterDetails = ( limit?: number ) => {
 				'Check out our support documentation for step-by-step instructions and expert guidance on your domain set up.'
 			),
 			buttonText: translate( 'Master the domain basics' ),
-			href: '/support/domains',
-			onClick: () => {
+			buttonHref: '/support/domains',
+			buttonOnClick: () => {
 				recordTracksEvent( 'calypso_thank_you_footer_domain_essentials' );
 			},
 		},
@@ -35,8 +35,8 @@ export const getDomainFooterDetails = ( limit?: number ) => {
 				'Dive into our comprehensive support documentation to learn the basics of domains, from registration to management.'
 			),
 			buttonText: translate( 'Domain support resources' ),
-			href: '/support/category/domains-and-email/',
-			onClick: () => {
+			buttonHref: '/support/category/domains-and-email/',
+			buttonOnClick: () => {
 				recordTracksEvent( 'calypso_thank_you_footer_domain_resources' );
 			},
 		},
@@ -45,10 +45,8 @@ export const getDomainFooterDetails = ( limit?: number ) => {
 	return details.slice( 0, limit ?? details.length );
 };
 
-export const DomainOnlyThankYou: React.FC< DomainOnlyThankYouContainerProps > = ( {
-	purchases,
-} ) => {
-	const [ , predicate ] = getDomainPurchaseType( purchases );
+export default function DomainOnlyThankYou( { purchases } ): React.FC< DomainOnlyThankYouProps > {
+	const [ , predicate ] = getDomainPurchaseTypeAndPredicate( purchases );
 	const domains = purchases.filter( predicate ).map( ( purchase ) => purchase?.meta );
 	const firstDomain = domains[ 0 ];
 	const siteSlug = useSelector( getSelectedSiteSlug );
@@ -76,7 +74,7 @@ export const DomainOnlyThankYou: React.FC< DomainOnlyThankYouContainerProps > = 
 		const domainNameSlug = purchase.meta.replace( '.', '-' );
 
 		return (
-			<ProductDomain
+			<ThankYouDomainProduct
 				purchase={ purchase }
 				key={ `domain-${ domainNameSlug }` }
 				siteSlug={ siteSlug }
@@ -100,4 +98,4 @@ export const DomainOnlyThankYou: React.FC< DomainOnlyThankYouContainerProps > = 
 			upsellProps={ upsellProps }
 		/>
 	);
-};
+}

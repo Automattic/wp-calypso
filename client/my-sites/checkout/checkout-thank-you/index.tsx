@@ -95,16 +95,16 @@ import PersonalPlanDetails from './personal-plan-details';
 import PremiumPlanDetails from './premium-plan-details';
 import ProPlanDetails from './pro-plan-details';
 import MasterbarStyled from './redesign-v2/masterbar-styled';
-import { DomainOnlyThankYou } from './redesign-v2/pages/domain-only';
+import DomainOnlyThankYou from './redesign-v2/pages/domain-only';
 import CheckoutMasterbar from './redesign-v2/sections/CheckoutMasterbar';
 import Footer from './redesign-v2/sections/Footer';
-import { isRedesignV2, isRefactored } from './redesign-v2/utils';
+import { isRedesignV2, isRefactoredForThankYouV2 } from './redesign-v2/utils';
 import SiteRedirectDetails from './site-redirect-details';
 import StarterPlanDetails from './starter-plan-details';
 import TransferPending from './transfer-pending';
 import './style.scss';
 import './redesign-v2/style.scss';
-import { getDomainPurchaseType, isBulkDomainTransfer, isDomainOnly } from './utils';
+import { getDomainPurchaseTypeAndPredicate, isBulkDomainTransfer, isDomainOnly } from './utils';
 import type { FindPredicate } from './utils';
 import type { SitesPlansResult } from '../src/hooks/product-variants';
 import type { OnboardActions, SiteDetails } from '@automattic/data-stores';
@@ -569,7 +569,7 @@ export class CheckoutThankYou extends Component<
 
 		/** REFACTORED REDESIGN **/
 
-		if ( isRefactored( this.props ) ) {
+		if ( isRefactoredForThankYouV2( this.props ) ) {
 			let pageContent = null;
 
 			if ( ! wasBulkDomainTransfer && isDomainOnly( purchases ) ) {
@@ -644,7 +644,7 @@ export class CheckoutThankYou extends Component<
 				</Main>
 			);
 		} else if ( wasDomainProduct && ! wasBulkDomainTransfer ) {
-			const [ purchaseType, predicate ] = getDomainPurchaseType( purchases );
+			const [ purchaseType, predicate ] = getDomainPurchaseTypeAndPredicate( purchases );
 			const [ domainPurchase, domainName ] = findPurchaseAndDomain( purchases, predicate );
 
 			if ( selectedFeature === 'email-license' && domainName ) {

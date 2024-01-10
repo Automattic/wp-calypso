@@ -4,31 +4,31 @@ import { isOutsideCalypso } from 'calypso/lib/url';
 
 import './style.scss';
 
-export type ThankYouDetailProps = {
+export type ThankYouFooterDetailProps = {
 	key: string;
 	title?: string;
 	description?: string;
 	buttonText?: string;
-	href?: string;
-	onClick?: () => void;
+	buttonHref?: string;
+	buttonOnClick?: () => void;
 };
 
-const ThankYouDetail = ( {
+const ThankYouFooterDetail = ( {
 	title,
 	description,
 	buttonText,
-	href,
-	onClick,
-}: ThankYouDetailProps ) => {
+	buttonHref,
+	buttonOnClick,
+}: ThankYouFooterDetailProps ) => {
 	let button = null;
 
-	if ( buttonText && href && onClick ) {
-		const isExternal = isOutsideCalypso( href );
+	if ( buttonText && buttonHref && buttonOnClick ) {
+		const isExternal = isOutsideCalypso( buttonHref );
 		button = (
 			<Button
-				className="thank-you__detail-button"
-				href={ localizeUrl( href ) }
-				onClick={ onClick }
+				className="thank-you__footer-detail-button"
+				href={ localizeUrl( buttonHref ) }
+				onClick={ buttonOnClick }
 				target={ isExternal ? '_blank' : '_self' }
 				rel={ isExternal ? 'noreferrer noopener' : '' }
 			>
@@ -38,10 +38,10 @@ const ThankYouDetail = ( {
 	}
 
 	return (
-		<div className="thank-you__detail">
-			{ title && <h3 className="thank-you__detail-title">{ title }</h3> }
+		<div className="thank-you__footer-detail">
+			{ title && <h3 className="thank-you__footer-detail-title">{ title }</h3> }
 
-			{ description && <div className="thank-you__detail-description">{ description }</div> }
+			{ description && <div className="thank-you__footer-detail-description">{ description }</div> }
 
 			{ button }
 		</div>
@@ -49,19 +49,17 @@ const ThankYouDetail = ( {
 };
 
 type ThankYouFooterProps = {
-	footerDetails: ThankYouDetailProps[];
+	details: ThankYouFooterDetailProps[];
 };
 
-const ThankYouFooter = ( { footerDetails }: ThankYouFooterProps ) => {
+export default function ThankYouFooter( { details }: ThankYouFooterProps ) {
 	return (
-		<div className="thank-you__details-list">
-			<div className="thank-you__details-list-inner">
-				{ footerDetails.map( ( detailsProps ) => (
-					<ThankYouDetail { ...detailsProps } />
+		<div className="thank-you__footer">
+			<div className="thank-you__footer-inner">
+				{ details.map( ( detailsProps ) => (
+					<ThankYouFooterDetail { ...detailsProps } />
 				) ) }
 			</div>
 		</div>
 	);
-};
-
-export default ThankYouFooter;
+}

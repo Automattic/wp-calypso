@@ -10,20 +10,18 @@ export type ThankYouProductProps = {
 	details?: string;
 	icon?: string;
 	actions?: React.ReactNode;
-	preview?: React.ReactNode;
 	isFree?: boolean;
 	isLoading?: boolean;
 };
 
-const ThankYouProduct = ( {
+export default function ThankYouProduct( {
 	name,
 	details,
 	icon,
 	actions,
-	preview,
 	isFree = false,
 	isLoading = false,
-}: ThankYouProductProps ) => {
+}: ThankYouProductProps ) {
 	const [ shouldShowLoader, setShouldShowLoader ] = useState( isLoading );
 
 	useEffect( () => {
@@ -48,16 +46,12 @@ const ThankYouProduct = ( {
 				) : (
 					<>
 						<div className="thank-you__product-name">{ name }</div>
-						<div className="thank-you__product-details">{ details }</div>
+						{ details && <div>{ details }</div> }
 					</>
 				) }
 			</div>
 
 			{ actions && <div className="thank-you__product-actions">{ actions }</div> }
-
-			{ preview && <div className="thank-you__product-preview">{ preview }</div> }
 		</li>
 	);
-};
-
-export default ThankYouProduct;
+}

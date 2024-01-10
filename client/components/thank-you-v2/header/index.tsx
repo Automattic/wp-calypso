@@ -8,7 +8,11 @@ interface ThankYouHeaderProps {
 	buttons?: React.ReactNode;
 }
 
-const ThankYouHeader: React.FC< ThankYouHeaderProps > = ( { title, subtitle, buttons } ) => {
+export default function ThankYouHeader( {
+	title,
+	subtitle,
+	buttons,
+} ): React.FC< ThankYouHeaderProps > {
 	return (
 		<div className="thank-you__header">
 			<h1 className="thank-you__header-title">{ title }</h1>
@@ -16,6 +20,4 @@ const ThankYouHeader: React.FC< ThankYouHeaderProps > = ( { title, subtitle, but
 			{ buttons && <div className="thank-you__header-buttons">{ buttons }</div> }
 		</div>
 	);
-};
-
-export default ThankYouHeader;
+}

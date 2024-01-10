@@ -1,6 +1,6 @@
-import { isRefactored } from '../utils';
+import { isRefactoredForThankYouV2 } from '../utils';
 
-describe( 'isRefactored', () => {
+describe( 'isRefactoredForThankYouV2', () => {
 	it( 'should return false if there is a failed purchase', () => {
 		const props = {
 			receipt: {
@@ -13,7 +13,7 @@ describe( 'isRefactored', () => {
 				},
 			},
 		};
-		expect( isRefactored( props ) ).toBe( false );
+		expect( isRefactoredForThankYouV2( props ) ).toBe( false );
 	} );
 
 	it( 'should return true if there are multiple purchases that only contains domains', () => {
@@ -28,7 +28,7 @@ describe( 'isRefactored', () => {
 				},
 			},
 		};
-		expect( isRefactored( props ) ).toBe( true );
+		expect( isRefactoredForThankYouV2( props ) ).toBe( true );
 	} );
 
 	it( 'should return false if the purchase is not supported', () => {
@@ -40,6 +40,6 @@ describe( 'isRefactored', () => {
 				},
 			},
 		};
-		expect( isRefactored( props ) ).toBe( false );
+		expect( isRefactoredForThankYouV2( props ) ).toBe( false );
 	} );
 } );

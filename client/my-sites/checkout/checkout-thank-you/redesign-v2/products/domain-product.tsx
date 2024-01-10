@@ -8,7 +8,7 @@ import ThankYouProduct from 'calypso/components/thank-you-v2/product';
 import { domainManagementList, domainManagementRoot } from 'calypso/my-sites/domains/paths';
 import type { ReceiptPurchase } from 'calypso/state/receipts/types';
 
-type ProductDomainProps = {
+type ThankYouDomainProductProps = {
 	purchase?: ReceiptPurchase;
 	domainName?: string;
 	shareSite?: boolean;
@@ -16,22 +16,9 @@ type ProductDomainProps = {
 	currency?: string;
 };
 
-const ProductDomain = ( {
-	purchase,
-	domainName,
-	shareSite,
-	siteSlug,
-	currency,
-}: ProductDomainProps ) => {
+const DomainTransferSection = ( { purchase }: { purchase: ReceiptPurchase } ) => {
 	const { __ } = useI18n();
-	const [ isCopying, setIsCopying ] = useState( false );
-	const domain = domainName ?? purchase?.meta;
-
-	// Do not proceed if a domain is not specified by domain name or a purchase object.
-	if ( ! domain ) {
-		return null;
-	}
-
+	
 	const purchaseLabel = ( priceInteger: number ) => {
 		if ( priceInteger === 0 ) {
 			return __( 'We’ve paid for an extra year' );
@@ -44,10 +31,31 @@ const ProductDomain = ( {
 
 		return translate( '%(priceFormatted)s for one year', { args: { priceFormatted } } );
 	};
+	
+	return (
+		<p>{ purchaseLabel( purchase.priceInteger ) }</p>
+	);
+}
+
+export default function ThankYouDomainProduct( {
+	purchase,
+	domainName,
+	shareSite,
+	siteSlug,
+	currency,
+}: ThankYouDomainProductProps ) {
+	const { __ } = useI18n();
+	const [ isCopying, setIsCopying ] = useState( false );
+	const domain = domainName ?? purchase?.meta;
+
+	// Do not proceed if a domain is not specified by domain name or a purchase object.
+	if ( ! domain ) {
+		return null;
+	}
 
 	const actions =
 		purchase && isDomainTransfer( purchase ) ? (
-			<p>{ purchaseLabel( purchase.priceInteger ) }</p>
+			<DomainTransferSection purchase={ purchase } />
 		) : (
 			<>
 				{ shareSite && domain && (
@@ -78,5 +86,3 @@ const ProductDomain = ( {
 		/>
 	);
 };
-
-export default ProductDomain;
