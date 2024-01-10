@@ -37,6 +37,7 @@ import getSites from 'calypso/state/selectors/get-sites';
 import { setAllSitesSelected } from 'calypso/state/ui/actions/set-sites';
 import Header from './header';
 import PaymentMethodListV2 from './payment-methods-v2';
+import PaymentMethodAddV2 from './primary/payment-method-add-v2';
 import WPCOMAtomicHosting from './primary/wpcom-atomic-hosting';
 
 const isNewCardAdditionEnabled = isEnabled( 'jetpack/card-addition-improvements' );
@@ -154,7 +155,11 @@ export const paymentMethodAddContext: Callback = ( context, next ) => {
 	const state = context.store.getState();
 	const sites = getSites( state );
 	const selectedSite = siteId ? sites?.find( ( site ) => site?.ID === parseInt( siteId ) ) : null;
-	context.primary = <PaymentMethodAdd selectedSite={ selectedSite } />;
+	context.primary = isNewCardAdditionEnabled ? (
+		<PaymentMethodAddV2 />
+	) : (
+		<PaymentMethodAdd selectedSite={ selectedSite } />
+	);
 	next();
 };
 
