@@ -1,5 +1,4 @@
-import { recordTracksEvent } from '@automattic/calypso-analytics';
-import { Button, Gridicon } from '@automattic/components';
+import { Button } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { isOutsideCalypso } from 'calypso/lib/url';
 
@@ -10,7 +9,7 @@ export type ThankYouDetailProps = {
 	description?: string;
 	buttonText?: string;
 	href?: string;
-	clickEventName?: string;
+	onClick?: () => void;
 };
 
 const ThankYouDetail = ( {
@@ -18,17 +17,24 @@ const ThankYouDetail = ( {
 	description,
 	buttonText,
 	href,
-	clickEventName,
+	onClick,
 }: ThankYouDetailProps ) => {
-	const handleClick = () => {
-		if ( ! clickEventName ) {
-			return;
-		}
+	let button = null;
 
-		recordTracksEvent( clickEventName );
-	};
-
-	const isExternal = isOutsideCalypso( href ?? '' );
+	if ( buttonText && href && onClick ) {
+		const isExternal = isOutsideCalypso( href );
+		button = (
+			<Button
+				className="thank-you__detail-button"
+				href={ localizeUrl( href ) }
+				onClick={ onClick }
+				target={ isExternal ? '_blank' : '_self' }
+				rel={ isExternal ? 'noreferrer noopener' : '' }
+			>
+				{ buttonText }
+			</Button>
+		);
+	}
 
 	return (
 		<div className="thank-you__detail">
@@ -36,16 +42,7 @@ const ThankYouDetail = ( {
 
 			{ description && <div className="thank-you__detail-description">{ description }</div> }
 
-			{ buttonText && href && (
-				<Button
-					className="thank-you__detail-button"
-					href={ localizeUrl( href ) }
-					onClick={ handleClick }
-					target={ isExternal ? '_blank' : '_self' }
-				>
-					{ buttonText } { isExternal && <Gridicon icon="external" /> }
-				</Button>
-			) }
+			{ button }
 		</div>
 	);
 };

@@ -23,7 +23,9 @@ export const getDomainFooterDetails = ( limit?: number ) => {
 			),
 			buttonText: translate( 'Master the domain basics' ),
 			href: '/support/domains',
-			clickEventName: 'calypso_thank_you_footer_domain_essentials',
+			onClick: () => {
+				recordTracksEvent( 'calypso_thank_you_footer_domain_essentials' );
+			},
 		},
 		{
 			title: translate( 'Your go-to domain resource' ),
@@ -32,7 +34,9 @@ export const getDomainFooterDetails = ( limit?: number ) => {
 			),
 			buttonText: translate( 'Domain support resources' ),
 			href: '/support/category/domains-and-email/',
-			clickEventName: 'calypso_thank_you_footer_domain_resources',
+			onClick: () => {
+				recordTracksEvent( 'calypso_thank_you_footer_domain_resources' );
+			},
 		},
 	];
 

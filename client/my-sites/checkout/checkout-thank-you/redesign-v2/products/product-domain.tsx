@@ -32,10 +32,6 @@ const ProductDomain = ( {
 		return null;
 	}
 
-	const handleShareSite = ( processing: boolean ) => () => {
-		setIsCopying( processing );
-	};
-
 	const purchaseLabel = ( priceInteger: number ) => {
 		if ( priceInteger === 0 ) {
 			return __( 'We’ve paid for an extra year' );
@@ -57,8 +53,8 @@ const ProductDomain = ( {
 				{ shareSite && domain && (
 					<ClipboardButton
 						className="is-primary"
-						onCopy={ handleShareSite( true ) }
-						onFinishCopy={ handleShareSite( false ) }
+						onCopy={ () => setIsCopying( true ) }
+						onFinishCopy={ () => setIsCopying( false ) }
 						text={ domain }
 					>
 						{ isCopying ? translate( 'Site copied' ) : translate( 'Share site' ) }

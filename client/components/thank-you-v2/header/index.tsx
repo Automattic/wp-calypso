@@ -3,8 +3,8 @@ import { TranslateResult } from 'i18n-calypso';
 import './style.scss';
 
 interface ThankYouHeaderProps {
-	title: string | TranslateResult;
-	subtitle: string | TranslateResult;
+	title: TranslateResult;
+	subtitle: TranslateResult;
 	buttons?: React.ReactNode;
 }
 

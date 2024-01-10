@@ -590,7 +590,7 @@ export class CheckoutThankYou extends Component<
 							onClick={ () => page( `/home/${ siteSlug ?? '' }` ) }
 							backText={ translate( 'Back to home' ) }
 							canGoBack={ !! siteId }
-							showContact={ true }
+							showContact
 						/>
 
 						{ pageContent }
