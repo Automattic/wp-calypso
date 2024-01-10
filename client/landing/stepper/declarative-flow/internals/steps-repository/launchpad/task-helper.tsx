@@ -235,15 +235,16 @@ const actions: TaskActionTable = {
 			actionDispatch: () => recordTaskClickTracksEvent( flow, task.completed, task.id ),
 			useCalypsoPath: true,
 		} ) satisfies EnhancedTask,
-	design_selected: ( task, flow, { siteInfoQueryArgs } ) => ( {
-		...task,
-		actionDispatch: () => recordTaskClickTracksEvent( flow, task.completed, task.id ),
-		calypso_path: addQueryArgs( `/setup/update-design/designSetup`, {
-			...siteInfoQueryArgs,
-			flowToReturnTo: flow,
-		} ),
-		useCalypsoPath: true,
-	} ),
+	design_selected: ( task, flow, { siteInfoQueryArgs } ) =>
+		( {
+			...task,
+			actionDispatch: () => recordTaskClickTracksEvent( flow, task.completed, task.id ),
+			calypso_path: addQueryArgs( `/setup/update-design/designSetup`, {
+				...siteInfoQueryArgs,
+				flowToReturnTo: flow,
+			} ),
+			useCalypsoPath: true,
+		} ) satisfies EnhancedTask,
 	design_completed: ( task, flow, { siteInfoQueryArgs } ) =>
 		( {
 			...task,
