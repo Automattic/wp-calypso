@@ -170,7 +170,6 @@ const verifyStringsAreWithinFeatureExample = ( strings, featureExampleElement ) 
 
 describe( 'Hosting Configuration', () => {
 	beforeAll( () => {
-		jest.resetAllMocks();
 		// Mock the missing `window.matchMedia` function that's not even in JSDOM
 		Object.defineProperty( window, 'matchMedia', {
 			writable: true,
@@ -185,6 +184,10 @@ describe( 'Hosting Configuration', () => {
 				dispatchEvent: jest.fn(),
 			} ) ),
 		} );
+	} );
+
+	afterAll( () => {
+		jest.resetAllMocks();
 	} );
 
 	describe( 'Site on free plan', () => {
