@@ -67,7 +67,8 @@ export default function useIntervalOptions( props: IntervalTypeProps ): Interval
 	const termWiseMaxDiscount = useMaxDiscountsForPlanTerms(
 		props.plans,
 		Object.keys( optionList ) as Array< SupportedUrlFriendlyTermType >,
-		props.usePricingMetaForGridPlans
+		props.usePricingMetaForGridPlans,
+		props.selectedSiteId
 	);
 
 	const additionalPathProps = {

@@ -13,7 +13,7 @@ interface PricedAPISitePlansIndex {
 }
 
 interface Props {
-	siteId?: string | number | null;
+	siteId: string | number | null | undefined;
 }
 
 /**

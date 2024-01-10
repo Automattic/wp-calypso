@@ -19,7 +19,7 @@ import { GridPlan } from '../hooks/npm-ready/data-store/use-grid-plans';
 
 function usePerMonthDescription( { planSlug }: { planSlug: PlanSlug } ) {
 	const translate = useTranslate();
-	const { helpers, gridPlansIndex, coupon } = usePlansGridContext();
+	const { helpers, gridPlansIndex, coupon, selectedSiteId } = usePlansGridContext();
 	const {
 		isMonthlyPlan,
 		pricing: { currencyCode, originalPrice, discountedPrice, billingPeriod, introOffer },
@@ -39,6 +39,7 @@ function usePerMonthDescription( { planSlug }: { planSlug: PlanSlug } ) {
 	// (or other) credits should not apply.
 	const yearlyVariantPlanSlug = getPlanSlugForTermVariant( planSlug, TERM_ANNUALLY );
 
+	// TODO clk pricing
 	const yearlyVariantPricing =
 		yearlyVariantPlanSlug &&
 		helpers?.usePricingMetaForGridPlans( {
@@ -46,6 +47,7 @@ function usePerMonthDescription( { planSlug }: { planSlug: PlanSlug } ) {
 			withoutProRatedCredits: true,
 			storageAddOns: storageAddOnsForPlan,
 			coupon,
+			selectedSiteId,
 		} )?.[ yearlyVariantPlanSlug ];
 
 	if (

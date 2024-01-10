@@ -29,7 +29,7 @@ import { Plans } from '@automattic/data-stores';
 import { isSamePlan } from '../../../lib/is-same-plan';
 import useHighlightLabels from './use-highlight-labels';
 import usePlansFromTypes from './use-plans-from-types';
-import type { AddOnMeta, PlanIntroductoryOffer, PricedAPIPlan } from '@automattic/data-stores';
+import type { AddOnMeta, PricedAPIPlan } from '@automattic/data-stores';
 import type { TranslateResult } from 'i18n-calypso';
 
 // TODO clk: move to plans data store
@@ -48,41 +48,47 @@ export interface PlanFeaturesForGridPlan {
 	conditionalFeatures?: FeatureObject[];
 }
 
-// TODO clk: move to plans data store
-export interface PricingMetaForGridPlan {
-	billingPeriod?: PricedAPIPlan[ 'bill_period' ] | null;
-	currencyCode?: PricedAPIPlan[ 'currency_code' ] | null;
-	originalPrice: {
-		monthly: number | null;
-		full: number | null;
-	};
-	// if discounted prices are provided (not null), they will take precedence over originalPrice.
-	// UI will show original with a strikethrough or grayed out
-	discountedPrice: {
-		monthly: number | null;
-		full: number | null;
-	};
-	// intro offers override billing and pricing shown in the UI
-	// they are currently defined off the site plans (so not defined when siteId is not available)
-	introOffer?: PlanIntroductoryOffer | null;
-	// Expiry date is only available from site plans and is the expiry date of an existing plan.
-	expiry?: string | null;
-}
-
 export type UsePricedAPIPlans = ( { planSlugs }: { planSlugs: PlanSlug[] } ) => {
 	[ planSlug: string ]: PricedAPIPlan | null | undefined;
 } | null;
 
+// TODO clk: move to plans data store
+export interface PricingMetaForGridPlan {
+	billingPeriod?: Plans.PlanPricing[ 'billPeriod' ];
+	currencyCode?: Plans.PlanPricing[ 'currencyCode' ];
+	originalPrice: Plans.PlanPricing[ 'originalPrice' ];
+	/**
+	 * If discounted prices are provided (not null), they will take precedence over originalPrice.
+	 * UI will show original with a strikethrough or grayed out
+	 */
+	discountedPrice: Plans.PlanPricing[ 'discountedPrice' ];
+	/**
+	 * Intro offers override billing and pricing shown in the UI
+	 * they are currently defined off the site plans (so not defined when siteId is not available)
+	 */
+	introOffer?: Plans.PlanPricing[ 'introOffer' ];
+	expiry?: Plans.SitePlan[ 'expiry' ];
+}
+
+// TODO clk: move to plans data store
 export type UsePricingMetaForGridPlans = ( {
 	planSlugs,
-	withoutProRatedCredits,
-	storageAddOns,
+	selectedSiteId,
 	coupon,
+	storageAddOns,
+	withoutProRatedCredits,
 }: {
 	planSlugs: PlanSlug[];
-	withoutProRatedCredits?: boolean;
+	/**
+	 * `selectedSiteId` required on purpose to mitigate risk with not passing something through when we should
+	 */
+	selectedSiteId: number | null | undefined;
+	/**
+	 * `coupon` required on purpose to mitigate risk with not passing somethiing through when we should
+	 */
+	coupon: string | undefined;
 	storageAddOns: ( AddOnMeta | null )[] | null;
-	coupon?: string;
+	withoutProRatedCredits?: boolean;
 } ) => { [ planSlug: string ]: PricingMetaForGridPlan } | null;
 
 export type UseFreeTrialPlanSlugs = ( {
@@ -163,6 +169,7 @@ interface Props {
 	isSubdomainNotGenerated?: boolean;
 	storageAddOns: ( AddOnMeta | null )[] | null;
 	coupon?: string;
+	selectedSiteId?: number | null;
 }
 
 const usePlanTypesWithIntent = ( {
@@ -284,6 +291,7 @@ const useGridPlans = ( {
 	isSubdomainNotGenerated,
 	storageAddOns,
 	coupon,
+	selectedSiteId,
 }: Props ): Omit< GridPlan, 'features' >[] | null => {
 	const freeTrialPlanSlugs = useFreeTrialPlanSlugs( {
 		intent: intent ?? 'default',
@@ -330,6 +338,7 @@ const useGridPlans = ( {
 		planSlugs: availablePlanSlugs,
 		storageAddOns,
 		coupon,
+		selectedSiteId,
 	} );
 
 	// Null return would indicate that we are still loading the data. No grid without grid plans.

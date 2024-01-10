@@ -23,8 +23,7 @@ import {
 	PLAN_PREMIUM,
 } from '@automattic/calypso-products';
 import { Button, Dialog, ScreenReaderText } from '@automattic/components';
-import { ProductsList } from '@automattic/data-stores';
-import { usePlans } from '@automattic/data-stores/src/plans';
+import { Plans, ProductsList } from '@automattic/data-stores';
 import { useBreakpoint } from '@automattic/viewport-react';
 import { Tooltip } from '@wordpress/components';
 import { useSelect } from '@wordpress/data';
@@ -103,7 +102,7 @@ export const ThemeUpgradeModal = ( {
 		( select ) => select( ProductsList.store ).getProductBySlug( 'business-bundle-monthly' ),
 		[]
 	);
-	const plans = usePlans();
+	const plans = Plans.usePlans( { coupon: undefined } );
 
 	//Wait until we have theme and product data to show content
 	const isLoading = ! premiumPlanProduct || ! businessPlanProduct || ! theme.data;

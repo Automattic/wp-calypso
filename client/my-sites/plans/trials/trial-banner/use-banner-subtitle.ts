@@ -26,7 +26,10 @@ export default function useBannerSubtitle(
 		month: 'long',
 		day: 'numeric',
 	} );
-	const wooExpressIntroOffers = Plans.useIntroOffersForWooExpress( { siteId: selectedSiteId } );
+	const wooExpressIntroOffers = Plans.useIntroOffersForWooExpress( {
+		siteId: selectedSiteId,
+		coupon: undefined,
+	} );
 	const anyWooExpressIntroOffer = Object.values( wooExpressIntroOffers ?? {} )[ 0 ];
 
 	useEffect( () => {
