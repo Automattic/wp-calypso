@@ -34,7 +34,7 @@ interface StatsCommercialPurchaseProps {
 	adminUrl: string;
 	redirectUri: string;
 	from: string;
-	showClassificationDispute?: boolean;
+	isCommercial?: boolean;
 }
 
 interface StatsSingleItemPagePurchaseProps {
@@ -102,7 +102,7 @@ const StatsCommercialPurchase = ( {
 	from,
 	adminUrl,
 	redirectUri,
-	showClassificationDispute = true,
+	isCommercial = true,
 }: StatsCommercialPurchaseProps ) => {
 	const translate = useTranslate();
 	const isWPCOMSite = useSelector( ( state ) => siteId && getIsSiteWPCOM( state, siteId ) );
@@ -121,7 +121,7 @@ const StatsCommercialPurchase = ( {
 
 	const isOdysseyStats = config.isEnabled( 'is_running_in_jetpack_site' );
 
-	const handleClick = ( event: React.MouseEvent, isOdysseyStats: boolean ) => {
+	const handleRequestUpdateClick = ( event: React.MouseEvent, isOdysseyStats: boolean ) => {
 		event.preventDefault();
 
 		const event_from = isOdysseyStats ? 'jetpack_odyssey' : 'calypso';
@@ -143,6 +143,13 @@ Thanks\n\n`;
 		) }&body=${ encodeURIComponent( emailBody ) }`;
 
 		setTimeout( () => ( window.location.href = emailHref ), 250 );
+	};
+
+	const handleSwitchToPersonalClick = ( event: React.MouseEvent, isOdysseyStats: boolean ) => {
+		event.preventDefault();
+		const event_from = isOdysseyStats ? 'jetpack_odyssey' : 'calypso';
+		recordTracksEvent( `${ event_from }_stats_purchase_commercial_switch_to_personal_clicked` );
+		setTimeout( () => page( `/stats/purchase/${ siteSlug }?productType=personal` ), 250 );
 	};
 
 	const handleSliderChanged = useCallback( ( value: number ) => {
@@ -201,8 +208,8 @@ Thanks\n\n`;
 					</ButtonComponent>
 				</>
 			) }
-
-			{ showClassificationDispute && (
+			{ /** Hide the section for upgrades */ }
+			{ ! isCommercialOwned && (
 				<div className={ `${ COMPONENT_CLASS_NAME }__additional-card-panel` }>
 					<Panel className={ `${ COMPONENT_CLASS_NAME }__card-panel` }>
 						<PanelBody title={ translate( 'This is not a commercial site' ) } initialOpen={ false }>
@@ -254,20 +261,42 @@ Thanks\n\n`;
 										/>
 									</li>
 								</ul>
-								{ isAdsChecked && isSellingChecked && isBusinessChecked && isDonationChecked && (
-									<Button
-										variant="secondary"
-										disabled={
-											! isAdsChecked ||
-											! isSellingChecked ||
-											! isBusinessChecked ||
-											! isDonationChecked
-										}
-										onClick={ ( e: React.MouseEvent ) => handleClick( e, isOdysseyStats ) }
-									>
-										{ translate( 'Request update' ) }
-									</Button>
-								) }
+								{ isAdsChecked &&
+									isSellingChecked &&
+									isBusinessChecked &&
+									isDonationChecked &&
+									( isCommercial ? (
+										<Button
+											variant="secondary"
+											disabled={
+												! isAdsChecked ||
+												! isSellingChecked ||
+												! isBusinessChecked ||
+												! isDonationChecked
+											}
+											onClick={ ( e: React.MouseEvent ) =>
+												handleRequestUpdateClick( e, isOdysseyStats )
+											}
+										>
+											{ translate( 'Request update' ) }
+										</Button>
+									) : (
+										// Otherwise if the site is personal or not identified yet, we should allow products switch.
+										<Button
+											variant="secondary"
+											disabled={
+												! isAdsChecked ||
+												! isSellingChecked ||
+												! isBusinessChecked ||
+												! isDonationChecked
+											}
+											onClick={ ( e: React.MouseEvent ) =>
+												handleSwitchToPersonalClick( e, isOdysseyStats )
+											}
+										>
+											{ translate( 'Choose a non-commercial license' ) }
+										</Button>
+									) ) }
 							</div>
 						</PanelBody>
 					</Panel>
@@ -382,7 +411,7 @@ const StatsSingleItemPagePurchase = ( {
 				adminUrl={ adminUrl || '' }
 				redirectUri={ redirectUri }
 				from={ from }
-				showClassificationDispute={ !! isCommercial }
+				isCommercial={ !! isCommercial }
 			/>
 		</StatsSingleItemPagePurchaseFrame>
 	);
