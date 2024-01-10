@@ -87,7 +87,8 @@ type TaskId =
 	| 'blog_launched'
 	| 'videopress_upload'
 	| 'videopress_launched'
-	| 'domain_upsell';
+	| 'domain_upsell'
+	| 'verify_email';
 
 interface TaskContext {
 	siteInfoQueryArgs?: { siteId?: number; siteSlug?: string | null };
@@ -109,6 +110,7 @@ interface TaskContext {
 	launchpadUploadVideoLink: string;
 	videoPressUploadCompleted: boolean;
 	domainUpsellCompleted: boolean;
+	isEmailVerified: boolean;
 }
 
 type TaskAction = ( task: Task, flow: string, context: TaskContext ) => EnhancedTask;
@@ -432,6 +434,14 @@ const actions: TaskActionTable = {
 					? ''
 					: translate( 'Upgrade plan' ),
 		} ) satisfies EnhancedTask,
+	verify_email: ( task, flow, { isEmailVerified } ) => ( {
+		...task,
+		completed: isEmailVerified,
+		actionDispatch: () => {
+			recordTaskClickTracksEvent( flow, task.completed, task.id );
+		},
+		useCalypsoPath: true,
+	} ),
 } as const;
 
 const getTaskDefinition = ( task: Task, flow: string, taskContext: TaskContext ) => {
@@ -665,6 +675,7 @@ export function getEnhancedTasks( {
 		launchpadUploadVideoLink,
 		videoPressUploadCompleted,
 		domainUpsellCompleted,
+		isEmailVerified,
 	};
 
 	return ( tasks || [] ).map( ( task ) => {
@@ -691,16 +702,8 @@ export function getEnhancedTasks( {
 			case 'videopress_upload':
 			case 'videopress_launched':
 			case 'domain_upsell':
-				return getTaskDefinition( task, flow, context );
 			case 'verify_email':
-				taskData = {
-					completed: isEmailVerified,
-					actionDispatch: () => {
-						recordTaskClickTracksEvent( flow, task.completed, task.id );
-						window.location.replace( task.calypso_path || '/me/account' );
-					},
-				};
-				break;
+				return getTaskDefinition( task, flow, context );
 			case 'set_up_payments':
 				taskData = {
 					badge_text: task.completed ? translate( 'Connected' ) : null,
