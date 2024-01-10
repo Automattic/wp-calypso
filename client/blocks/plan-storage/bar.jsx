@@ -28,15 +28,14 @@ export class PlanStorageBar extends Component {
 			return null;
 		}
 
-		const percent = Math.min(
-			parseFloat(
-				(
-					( ( mediaStorage.storage_used_bytes / mediaStorage.max_storage_bytes ) * 1000 ) /
-					10
-				).toFixed( 2 )
-			),
-			100
-		);
+		const percentInteger =
+			( ( mediaStorage.storage_used_bytes / mediaStorage.max_storage_bytes ) * 1000 ) / 10;
+
+		// Format to 2 decimal places when under 1%.
+		const percent =
+			percentInteger < 1
+				? Math.min( parseFloat( percentInteger.toFixed( 2 ) ), 100 )
+				: Math.min( Math.round( percentInteger ), 100 );
 
 		const classes = classNames( className, 'plan-storage__bar', {
 			'is-alert': percent > ALERT_PERCENT,
