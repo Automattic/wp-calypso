@@ -20,6 +20,7 @@ import {
 	ACTION_SET_IS_REQUESTING_IMAGE,
 	ACTION_SET_IS_APPLYING_LOGO,
 	ACTION_SET_IS_ENHANCING_PROMPT,
+	ACTION_SET_SITE_HISTORY,
 } from './constants';
 import INITIAL_STATE from './initial-state';
 import type { TierLimitProp } from './types';
@@ -269,6 +270,14 @@ export default function reducer( state = INITIAL_STATE, action: any ) {
 					...( state._meta ?? {} ),
 					isEnhancingPrompt: action.isEnhancingPrompt,
 				},
+			};
+		}
+
+		case ACTION_SET_SITE_HISTORY: {
+			return {
+				...state,
+				history: action.history,
+				selectedLogoIndex: action.history.length ? action.history.length - 1 : 0,
 			};
 		}
 	}

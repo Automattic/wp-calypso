@@ -7,3 +7,7 @@ export const EVENT_PROMPT_ENHANCE = 'calypso_jp_ai_logo_generator_prompt_enhance
 
 // Feature constants
 export const MINIMUM_PROMPT_LENGTH = 10;
+export const DEFAULT_LOGO = {
+	url: 'https://s.w.org/style/images/about/WordPress-logotype-wmark.png',
+	description: 'A publishing company in the form of a greek statue.',
+};
