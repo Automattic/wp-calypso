@@ -73,7 +73,8 @@ type TaskId =
 	| 'plan_completed'
 	| 'subscribers_added'
 	| 'migrate_content'
-	| 'first_post_published';
+	| 'first_post_published'
+	| 'first_post_published_newsletter';
 
 interface TaskContext {
 	siteInfoQueryArgs?: { siteId?: number; siteSlug?: string | null };
@@ -217,6 +218,15 @@ const actions: TaskActionTable = {
 			  } ),
 		useCalypsoPath: true,
 	} ),
+
+	first_post_published_newsletter: ( task, flow, { mustVerifyEmailBeforePosting } ) =>
+		( {
+			...task,
+			isLaunchTask: true,
+			disabled: mustVerifyEmailBeforePosting || false,
+			actionDispatch: () => recordTaskClickTracksEvent( flow, task.completed, task.id ),
+			useCalypsoPath: true,
+		} ) satisfies EnhancedTask,
 } as const;
 
 const getTaskDefinition = ( task: Task, flow: string, taskContext: TaskContext ) => {
@@ -456,17 +466,8 @@ export function getEnhancedTasks( {
 			case 'subscribers_added':
 			case 'migrate_content':
 			case 'first_post_published':
-				return getTaskDefinition( task, flow, context );
 			case 'first_post_published_newsletter':
-				taskData = {
-					isLaunchTask: true,
-					disabled: mustVerifyEmailBeforePosting || false,
-					actionDispatch: () => {
-						recordTaskClickTracksEvent( flow, task.completed, task.id );
-						window.location.assign( `/post/${ siteSlug }` );
-					},
-				};
-				break;
+				return getTaskDefinition( task, flow, context );
 			case 'design_selected':
 			case 'design_completed':
 				taskData = {
