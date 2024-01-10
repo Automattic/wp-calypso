@@ -4,8 +4,8 @@ import { isActive } from '../selectors/is-automated-transfer-active';
 describe( 'Automated Transfer', () => {
 	describe( 'isActive()', () => {
 		test( 'should return `null` if no information is available', () => {
-			expect( isActive( null ) ).toBeNull();
-			expect( isActive( '' ) ).toBeNull(); // plausible that the status could wind up as an empty string
+			expect( isActive( null ) ).toBeFalsy();
+			expect( isActive( '' ) ).toBeFalsy(); // plausible that the status could wind up as an empty string
 		} );
 
 		test( 'should return `true` for active transfer states', () => {

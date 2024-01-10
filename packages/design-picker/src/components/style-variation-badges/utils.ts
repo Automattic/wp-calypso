@@ -1,4 +1,5 @@
 import { hexToRgb } from '@automattic/onboarding';
+import debugFactory from 'debug';
 import type {
 	StyleVariation,
 	StyleVariationSettingsColorPalette,
@@ -10,6 +11,8 @@ interface Hsl {
 	s: number;
 	l: number;
 }
+
+const debug = debugFactory( 'design-picker:style-variation-badges' );
 
 const COLOR_BASE_CANDIDATE_KEYS = [ 'base', 'background', 'primary' ];
 const HSL_BEST_DIFFERENCE_VALUE = 155;
@@ -112,8 +115,7 @@ export function getStylesColorFromVariation(
 	try {
 		return { background: colorBase, text: findColorBestAnalogous( colorList, colorBase ) };
 	} catch ( e ) {
-		// eslint-disable-next-line no-console
-		console.error( e, variation );
+		debug( e, variation );
 		return null;
 	}
 }

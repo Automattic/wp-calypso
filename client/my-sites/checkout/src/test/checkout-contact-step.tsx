@@ -66,7 +66,7 @@ describe( 'Checkout contact step', () => {
 	} );
 
 	it( 'does render the contact step when the purchase is free and some items are recurring', async () => {
-		const cartChanges = { total_cost_integer: 0, total_cost_display: '0' };
+		const cartChanges = { total_cost_integer: 0 };
 		render( <MockCheckout { ...defaultPropsForMockCheckout } cartChanges={ cartChanges } /> );
 		expect( await screen.findByText( /Enter your (billing|contact) information/ ) ).toBeVisible();
 	} );
@@ -74,7 +74,6 @@ describe( 'Checkout contact step', () => {
 	it( 'does not render the contact step when the purchase is free and all items are one-time purchases', async () => {
 		const cartChanges = {
 			total_cost_integer: 0,
-			total_cost_display: '0',
 			products: [ oneTimePurchase ],
 		};
 		render( <MockCheckout { ...defaultPropsForMockCheckout } cartChanges={ cartChanges } /> );
@@ -84,7 +83,6 @@ describe( 'Checkout contact step', () => {
 	it( 'renders the step after the contact step as active if the purchase is free and all items are one-time purchases', async () => {
 		const cartChanges = {
 			total_cost_integer: 0,
-			total_cost_display: '0',
 			products: [ oneTimePurchase ],
 		};
 		render( <MockCheckout { ...defaultPropsForMockCheckout } cartChanges={ cartChanges } /> );

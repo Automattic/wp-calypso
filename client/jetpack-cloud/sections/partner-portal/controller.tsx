@@ -13,7 +13,6 @@ import BillingDashboard from 'calypso/jetpack-cloud/sections/partner-portal/prim
 import CompanyDetailsDashboard from 'calypso/jetpack-cloud/sections/partner-portal/primary/company-details-dashboard';
 import DownloadProducts from 'calypso/jetpack-cloud/sections/partner-portal/primary/download-products';
 import InvoicesDashboard from 'calypso/jetpack-cloud/sections/partner-portal/primary/invoices-dashboard';
-import IssueLicense from 'calypso/jetpack-cloud/sections/partner-portal/primary/issue-license';
 import Licenses from 'calypso/jetpack-cloud/sections/partner-portal/primary/licenses';
 import PartnerAccess from 'calypso/jetpack-cloud/sections/partner-portal/primary/partner-access';
 import PaymentMethodAdd from 'calypso/jetpack-cloud/sections/partner-portal/primary/payment-method-add';
@@ -37,7 +36,11 @@ import { ToSConsent } from 'calypso/state/partner-portal/types';
 import getSites from 'calypso/state/selectors/get-sites';
 import { setAllSitesSelected } from 'calypso/state/ui/actions/set-sites';
 import Header from './header';
+import PaymentMethodListV2 from './payment-methods-v2';
+import PaymentMethodAddV2 from './primary/payment-method-add-v2';
 import WPCOMAtomicHosting from './primary/wpcom-atomic-hosting';
+
+const isNewCardAdditionEnabled = isEnabled( 'jetpack/card-addition-improvements' );
 
 const setSidebar = ( context: Context, isLicenseContext: boolean = false ): void => {
 	context.secondary = isLicenseContext ? (
@@ -110,15 +113,9 @@ export const issueLicenseContext: Callback = ( context, next ) => {
 	const selectedSite = siteId ? sites.find( ( site ) => site?.ID === parseInt( siteId ) ) : null;
 	context.header = <Header />;
 	setSidebar( context, true );
-	if ( isEnabled( 'jetpack/bundle-licensing' ) ) {
-		context.primary = (
-			<IssueLicenseV2 selectedSite={ selectedSite } suggestedProduct={ suggestedProduct } />
-		);
-	} else {
-		context.primary = (
-			<IssueLicense selectedSite={ selectedSite } suggestedProduct={ suggestedProduct } />
-		);
-	}
+	context.primary = (
+		<IssueLicenseV2 selectedSite={ selectedSite } suggestedProduct={ suggestedProduct } />
+	);
 	next();
 };
 
@@ -146,7 +143,7 @@ export const assignLicenseContext: Callback = ( context, next ) => {
 export const paymentMethodListContext: Callback = ( context, next ) => {
 	context.header = <Header />;
 	setSidebar( context );
-	context.primary = <PaymentMethodList />;
+	context.primary = isNewCardAdditionEnabled ? <PaymentMethodListV2 /> : <PaymentMethodList />;
 	next();
 };
 
@@ -158,7 +155,11 @@ export const paymentMethodAddContext: Callback = ( context, next ) => {
 	const state = context.store.getState();
 	const sites = getSites( state );
 	const selectedSite = siteId ? sites?.find( ( site ) => site?.ID === parseInt( siteId ) ) : null;
-	context.primary = <PaymentMethodAdd selectedSite={ selectedSite } />;
+	context.primary = isNewCardAdditionEnabled ? (
+		<PaymentMethodAddV2 />
+	) : (
+		<PaymentMethodAdd selectedSite={ selectedSite } />
+	);
 	next();
 };
 

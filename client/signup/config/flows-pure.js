@@ -27,7 +27,7 @@ export function generateFlows( {
 	const flows = [
 		{
 			name: HOSTING_LP_FLOW,
-			steps: [ 'user-hosting' ],
+			steps: [ userSocialStep ],
 			destination: getHostingFlowDestination,
 			description: 'Create an account and redirect the user to the hosted site flow forking step.',
 			lastModified: '2023-07-18',
@@ -186,7 +186,7 @@ export function generateFlows( {
 			optionalDependenciesInQuery: [ 'coupon' ],
 			props: {
 				plans: {
-					showBiennialToggle: true,
+					displayedIntervals: [ 'yearly', '2yearly', '3yearly' ],
 					/**
 					 * This intent is geared towards customizations related to the paid media flow
 					 * Current customizations are as follows
@@ -466,12 +466,11 @@ export function generateFlows( {
 				'courses',
 				'store-options',
 				'store-features',
-				'design-setup-site',
 			],
 			destination: getDestinationFromIntent,
 			description:
 				'Sets up a site that has already been created and paid for (if purchases were made)',
-			lastModified: '2021-10-14',
+			lastModified: '2024-01-08',
 			providesDependenciesInQuery: [ 'siteId', 'siteSlug' ],
 			optionalDependenciesInQuery: [ 'siteId' ],
 			get pageTitle() {

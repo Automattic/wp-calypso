@@ -13,6 +13,7 @@ import {
 	checkoutAkismetSiteless,
 	checkoutPending,
 	checkoutJetpackSiteless,
+	checkoutMarketplaceSiteless,
 	checkoutThankYou,
 	licensingThankYouManualActivationInstructions,
 	licensingThankYouManualActivationLicenseKey,
@@ -103,6 +104,15 @@ export default function () {
 		'/checkout/100-year/thank-you/:site/:receiptId',
 		loggedInSiteSelection,
 		hundredYearCheckoutThankYou,
+		makeLayout,
+		clientRender
+	);
+
+	page(
+		`/checkout/marketplace/:productSlug`, // It should be intentId but sitelessCheckout expect param to be productSlug.
+		setLocaleMiddleware(),
+		noSite,
+		checkoutMarketplaceSiteless,
 		makeLayout,
 		clientRender
 	);

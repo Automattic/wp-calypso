@@ -2,7 +2,7 @@ import { PLAN_BUSINESS, PLAN_PREMIUM, getPlan } from '@automattic/calypso-produc
 import { Button, Gridicon } from '@automattic/components';
 import { PureComponent } from 'react';
 import formatCurrency from 'calypso/../packages/format-currency/src';
-import upsellImage from 'calypso/assets/images/checkout-upsell/upsell-rocket-2.png';
+import upsellImage from 'calypso/assets/images/checkout-upsell/upsell-rocket.png';
 import DocumentHead from 'calypso/components/data/document-head';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 
@@ -51,7 +51,7 @@ export class BusinessPlanUpgradeUpsell extends PureComponent {
 				className="business-plan-upgrade-upsell-new-design__image"
 				src={ upsellImage }
 				alt=""
-				width="454"
+				width="320"
 			/>
 		);
 	}

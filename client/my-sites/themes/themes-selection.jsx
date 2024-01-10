@@ -137,10 +137,14 @@ class ThemesSelection extends Component {
 	getOptions = ( themeId, styleVariation, context ) => {
 		let options = this.props.getOptions( themeId, styleVariation );
 
-		const { tabFilter } = this.props;
+		const { tabFilter, tier } = this.props;
 		const wrappedActivateAction = ( action ) => {
 			return ( t ) => {
-				this.props.setThemePreviewOptions( themeId, null, null, { styleVariation, tabFilter } );
+				this.props.setThemePreviewOptions( themeId, null, null, {
+					styleVariation,
+					tabFilter,
+					tierFilter: tier,
+				} );
 				return action( t, context );
 			};
 		};
@@ -184,6 +188,7 @@ class ThemesSelection extends Component {
 		if ( options ) {
 			options = addOptionsToGetUrl( options, {
 				tabFilter,
+				tierFilter: tier,
 				styleVariationSlug: styleVariation?.slug,
 			} );
 			if ( options.activate ) {
