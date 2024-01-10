@@ -177,7 +177,7 @@ export const useESPluginsInfinite = (
 		},
 		initialPageParam,
 		getNextPageParam: ( lastPage ) => {
-			return lastPage?.data?.page_handle;
+			return lastPage?.data?.page_handle || undefined;
 		},
 		enabled,
 		staleTime,
