@@ -52,51 +52,6 @@ export type UsePricedAPIPlans = ( { planSlugs }: { planSlugs: PlanSlug[] } ) => 
 	[ planSlug: string ]: PricedAPIPlan | null | undefined;
 } | null;
 
-// TODO clk: move to plans data store
-export interface PricingMetaForGridPlan {
-	billingPeriod?: Plans.PlanPricing[ 'billPeriod' ];
-	currencyCode?: Plans.PlanPricing[ 'currencyCode' ];
-	originalPrice: Plans.PlanPricing[ 'originalPrice' ];
-	/**
-	 * If discounted prices are provided (not null), they will take precedence over originalPrice.
-	 * UI will show original with a strikethrough or grayed out
-	 */
-	discountedPrice: Plans.PlanPricing[ 'discountedPrice' ];
-	/**
-	 * Intro offers override billing and pricing shown in the UI
-	 * they are currently defined off the site plans (so not defined when siteId is not available)
-	 */
-	introOffer?: Plans.PlanPricing[ 'introOffer' ];
-	expiry?: Plans.SitePlan[ 'expiry' ];
-}
-
-// TODO clk: move to plans data store
-export type UsePricingMetaForGridPlans = ( {
-	planSlugs,
-	selectedSiteId,
-	coupon,
-	useCheckPlanAvailabilityForPurchase,
-	storageAddOns,
-	withoutProRatedCredits,
-}: {
-	planSlugs: PlanSlug[];
-	/**
-	 * `selectedSiteId` required on purpose to mitigate risk with not passing something through when we should
-	 */
-	selectedSiteId: number | null | undefined;
-	/**
-	 * `coupon` required on purpose to mitigate risk with not passing somethiing through when we should
-	 */
-	coupon: string | undefined;
-	/**
-	 * `useCheckPlanAvailabilityForPurchase` required on purpose to avoid inconsistent data across Calypso.
-	 * It's a function that is not available in the data store, but can be easily mocked in other contexts.
-	 */
-	useCheckPlanAvailabilityForPurchase: UseCheckPlanAvailabilityForPurchase;
-	storageAddOns: ( AddOnMeta | null )[] | null;
-	withoutProRatedCredits?: boolean;
-} ) => { [ planSlug: string ]: PricingMetaForGridPlan } | null;
-
 export type UseFreeTrialPlanSlugs = ( {
 	intent,
 	eligibleForFreeHostingTrial,
