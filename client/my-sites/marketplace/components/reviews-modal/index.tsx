@@ -20,7 +20,7 @@ import {
 import { getProductsList, isMarketplaceProduct } from 'calypso/state/products-list/selectors';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import { AppState } from 'calypso/types';
-import { MarketplaceCreateReviewItem } from '../review-item';
+import { MarketplaceCreateReviewItem } from '../review-item/create-review-item';
 
 type Props = {
 	isVisible: boolean;
