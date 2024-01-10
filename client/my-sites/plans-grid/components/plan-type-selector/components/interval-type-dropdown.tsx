@@ -34,8 +34,7 @@ const AddOnOption = styled.a`
 `;
 
 export const IntervalTypeDropdown: React.FunctionComponent< IntervalTypeProps > = ( props ) => {
-	const { intervalType, displayedIntervals, eligibleForWpcomMonthlyPlans } = props;
-	const showBiennialToggle = displayedIntervals.includes( '2yearly' );
+	const { intervalType, displayedIntervals } = props;
 	const supportedIntervalType = (
 		displayedIntervals.includes( intervalType ) ? intervalType : 'yearly'
 	) as SupportedUrlFriendlyTermType;
@@ -50,12 +49,6 @@ export const IntervalTypeDropdown: React.FunctionComponent< IntervalTypeProps > 
 			</AddOnOption>
 		),
 	} ) );
-
-	if ( ! showBiennialToggle ) {
-		if ( ! eligibleForWpcomMonthlyPlans ) {
-			return null;
-		}
-	}
 
 	return (
 		<div className="plan-type-selector__interval-type-dropdown-container">

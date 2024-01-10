@@ -72,12 +72,6 @@ export default function useIntervalOptions( props: IntervalTypeProps ): Interval
 		)
 	) as IntervalSelectOptionsMap;
 
-	if ( ! props.eligibleForWpcomMonthlyPlans ) {
-		displayedOptionList = Object.fromEntries(
-			Object.entries( optionList ).filter( ( [ , value ] ) => value.key !== 'monthly' )
-		) as IntervalSelectOptionsMap;
-	}
-
 	const termWiseMaxDiscount = useMaxDiscountsForPlanTerms(
 		props.plans,
 		Object.keys( displayedOptionList ) as Array< SupportedUrlFriendlyTermType >,
