@@ -63,6 +63,7 @@ interface EnhancedTask extends Omit< Task, 'badge_text' | 'title' > {
 	useCalypsoPath?: boolean;
 	badge_text?: ReactNode | string;
 	title?: ReactNode | string;
+	actionUrl?: string;
 }
 
 type TaskId =
@@ -83,7 +84,8 @@ type TaskId =
 	| 'links_added'
 	| 'link_in_bio_launched'
 	| 'site_launched'
-	| 'blog_launched';
+	| 'blog_launched'
+	| 'videopress_upload';
 
 interface TaskContext {
 	siteInfoQueryArgs?: { siteId?: number; siteSlug?: string | null };
@@ -102,6 +104,8 @@ interface TaskContext {
 	getLaunchSiteTaskTitle: ( task: Task ) => ReactNode;
 	getIsLaunchSiteTaskDisabled: () => boolean;
 	completeLaunchSiteTask: ( task: Task ) => Promise< void >;
+	launchpadUploadVideoLink: string;
+	videoPressUploadCompleted: boolean;
 }
 
 type TaskAction = ( task: Task, flow: string, context: TaskContext ) => EnhancedTask;
@@ -347,6 +351,21 @@ const actions: TaskActionTable = {
 			actionDispatch: () => completeLaunchSiteTask( task ),
 			useCalypsoPath: false,
 		} ) satisfies EnhancedTask,
+	videopress_upload: (
+		task,
+		flow,
+		{ launchpadUploadVideoLink, isVideoPressFlowWithUnsupportedPlan, videoPressUploadCompleted }
+	) =>
+		( {
+			...task,
+			//TODO: Verify if this is the correct actionUrl and if useCalypsoPath is needed
+			actionUrl: launchpadUploadVideoLink,
+			disabled: isVideoPressFlowWithUnsupportedPlan || videoPressUploadCompleted,
+			actionDispatch: () => {
+				recordTaskClickTracksEvent( flow, task.completed, task.id );
+			},
+			calypso_path: launchpadUploadVideoLink,
+		} ) satisfies EnhancedTask,
 } as const;
 
 const getTaskDefinition = ( task: Task, flow: string, taskContext: TaskContext ) => {
@@ -577,6 +596,8 @@ export function getEnhancedTasks( {
 		completeLaunchSiteTask,
 		getLaunchSiteTaskTitle,
 		getIsLaunchSiteTaskDisabled,
+		launchpadUploadVideoLink,
+		videoPressUploadCompleted,
 	};
 
 	return ( tasks || [] ).map( ( task ) => {
@@ -600,17 +621,8 @@ export function getEnhancedTasks( {
 			case 'link_in_bio_launched':
 			case 'site_launched':
 			case 'blog_launched':
-				return getTaskDefinition( task, flow, context );
 			case 'videopress_upload':
-				taskData = {
-					actionUrl: launchpadUploadVideoLink,
-					disabled: isVideoPressFlowWithUnsupportedPlan || videoPressUploadCompleted,
-					actionDispatch: () => {
-						recordTaskClickTracksEvent( flow, task.completed, task.id );
-						window.location.replace( launchpadUploadVideoLink );
-					},
-				};
-				break;
+				return getTaskDefinition( task, flow, context );
 			case 'videopress_launched':
 				taskData = {
 					isLaunchTask: true,
