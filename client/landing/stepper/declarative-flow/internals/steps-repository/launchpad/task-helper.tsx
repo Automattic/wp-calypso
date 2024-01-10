@@ -85,7 +85,8 @@ type TaskId =
 	| 'link_in_bio_launched'
 	| 'site_launched'
 	| 'blog_launched'
-	| 'videopress_upload';
+	| 'videopress_upload'
+	| 'videopress_launched';
 
 interface TaskContext {
 	siteInfoQueryArgs?: { siteId?: number; siteSlug?: string | null };
@@ -366,6 +367,35 @@ const actions: TaskActionTable = {
 			},
 			calypso_path: launchpadUploadVideoLink,
 		} ) satisfies EnhancedTask,
+	videopress_launched: ( task, _, { site, siteInfoQueryArgs, submit } ) =>
+		( {
+			...task,
+			isLaunchTask: true,
+			actionDispatch: () => {
+				if ( site?.ID ) {
+					const { setPendingAction, setProgressTitle } = dispatch(
+						ONBOARD_STORE
+					) as OnboardActions;
+					const { launchSite } = dispatch( SITE_STORE ) as SiteActions;
+
+					setPendingAction( async () => {
+						setProgressTitle( __( 'Launching video site' ) );
+						await launchSite( site.ID );
+
+						// Waits for half a second so that the loading screen doesn't flash away too quickly
+						await new Promise( ( res ) => setTimeout( res, 500 ) );
+						window.location.replace(
+							addQueryArgs( `/home/${ siteInfoQueryArgs?.siteSlug }`, {
+								forceLoadLaunchpadData: true,
+							} )
+						);
+					} );
+
+					submit?.();
+				}
+			},
+			useCalypsoPath: false,
+		} ) satisfies EnhancedTask,
 } as const;
 
 const getTaskDefinition = ( task: Task, flow: string, taskContext: TaskContext ) => {
@@ -622,35 +652,8 @@ export function getEnhancedTasks( {
 			case 'site_launched':
 			case 'blog_launched':
 			case 'videopress_upload':
-				return getTaskDefinition( task, flow, context );
 			case 'videopress_launched':
-				taskData = {
-					isLaunchTask: true,
-					actionDispatch: () => {
-						if ( site?.ID ) {
-							const { setPendingAction, setProgressTitle } = dispatch(
-								ONBOARD_STORE
-							) as OnboardActions;
-							const { launchSite } = dispatch( SITE_STORE ) as SiteActions;
-
-							setPendingAction( async () => {
-								setProgressTitle( __( 'Launching video site' ) );
-								await launchSite( site.ID );
-
-								// Waits for half a second so that the loading screen doesn't flash away too quickly
-								await new Promise( ( res ) => setTimeout( res, 500 ) );
-								window.location.replace(
-									addQueryArgs( `/home/${ siteSlug }`, {
-										forceLoadLaunchpadData: true,
-									} )
-								);
-							} );
-
-							submit?.();
-						}
-					},
-				};
-				break;
+				return getTaskDefinition( task, flow, context );
 			case 'domain_upsell':
 				taskData = {
 					completed: domainUpsellCompleted,
