@@ -76,7 +76,7 @@ const useLogoGenerator = () => {
 		debug( 'Generating first prompt for site', siteId );
 
 		const firstPromptGenerationPrompt = `Generate a simple and short prompt asking for a logo based on the site's name and description, without going into details.
-Example for a site named "The minimalist fashion blog", described as "Daily inspiration for all things fashion": "A logo for a minimalist fashion site focused on daily sartorial inspiration".
+Example for a site named "The minimalist fashion blog", described as "Daily inspiration for all things fashion": A logo for a minimalist fashion site focused on daily sartorial inspiration.
 
 Site name: ${ name }
 Site description: ${ description }`;
