@@ -14,7 +14,9 @@ import {
 import page from '@automattic/calypso-router';
 import { Button, Card, Gridicon } from '@automattic/components';
 import {
+	BUNDLED_THEME,
 	DEFAULT_GLOBAL_STYLES_VARIATION_SLUG,
+	DOT_ORG_THEME,
 	ThemePreview as ThemeWebPreview,
 	getDesignPreviewUrl,
 	isDefaultGlobalStylesVariationSlug,
@@ -46,6 +48,8 @@ import PremiumGlobalStylesUpgradeModal from 'calypso/components/premium-global-s
 import SectionHeader from 'calypso/components/section-header';
 import { THEME_TIERS } from 'calypso/components/theme-tier/constants';
 import getThemeTier from 'calypso/components/theme-tier/get-theme-tier';
+import ThemeTierBadge from 'calypso/components/theme-tier/theme-tier-badge';
+import ThemeTypeBadge from 'calypso/components/theme-type-badge';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { decodeEntities, preventWidows } from 'calypso/lib/formatting';
 import { PerformanceTrackerStop } from 'calypso/lib/performance-tracking';
@@ -715,6 +719,36 @@ class ThemeSheet extends Component {
 		);
 	};
 
+	renderThemeBadge = () => {
+		const { siteId, siteSlug, themeId, themeTier, themeType } = this.props;
+
+		// community: http://calypso.localhost:3000/theme/astra/xjlctest.wordpress.com
+		// partner: http://calypso.localhost:3000/theme/yuna/xjlctest.wordpress.com
+		// sensei: http://calypso.localhost:3000/theme/course/xjlctest.wordpress.com
+		// woocommerce: http://calypso.localhost:3000/theme/amulet/xjlctest.wordpress.com
+
+		const isCommunityTheme = themeType === DOT_ORG_THEME;
+		const isPartnerTheme = themeTier.slug === 'partner';
+		const isSenseiOrWooCommerceTheme = themeType === BUNDLED_THEME;
+
+		if ( isCommunityTheme || isPartnerTheme || isSenseiOrWooCommerceTheme ) {
+			return config.isEnabled( 'themes/tiers' ) ? (
+				<ThemeTierBadge
+					showUpgradeBadge={ false }
+					themeId={ themeId }
+					isLockedStyleVariation={ false }
+				/>
+			) : (
+				<ThemeTypeBadge
+					siteId={ siteId }
+					siteSlug={ siteSlug }
+					themeId={ themeId }
+					isLockedStyleVariation={ false }
+				/>
+			);
+		}
+	};
+
 	renderHeader = () => {
 		const {
 			author,
@@ -748,6 +782,8 @@ class ThemeSheet extends Component {
 								<span className="theme__sheet-bar-soft-launched">{ translate( 'A8C Only' ) }</span>
 							) }
 						</h1>
+						{ this.renderThemeBadge() }
+						<div className="theme__sheet-main-info-type">{  }</div>
 						<span className="theme__sheet-main-info-tag">{ tag }</span>
 					</div>
 					<div className="theme__sheet-main-actions">
