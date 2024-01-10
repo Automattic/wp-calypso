@@ -5,7 +5,7 @@ module.exports = {
 	...base,
 	rootDir: '../../client',
 	cacheDirectory: path.join( __dirname, '../../.cache/jest' ),
-	testPathIgnorePatterns: [ '<rootDir>/server/', '**/hosting/test/index.js' ],
+	testPathIgnorePatterns: [ '<rootDir>/server/' ],
 
 	moduleNameMapper: {
 		'^@automattic/calypso-config$': '<rootDir>/server/config/index.js',
