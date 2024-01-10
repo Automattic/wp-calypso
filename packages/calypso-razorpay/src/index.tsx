@@ -8,7 +8,15 @@ export interface RazorpayConfiguration {
 	options: { key: string };
 }
 
-export type Razorpay = object;
+declare class Razorpay {
+	constructor( options: RazorpayConfiguration[ 'options' ] );
+}
+
+declare global {
+	interface Window {
+		Razorpay?: typeof Razorpay;
+	}
+}
 
 export type RazorpayLoadingError = undefined | null | Error;
 
@@ -73,16 +81,14 @@ function useRazorpayJs(
 			script.onload = () => {
 				debug( 'Razorpay JS library loaded!' );
 
-				// @ts-expect-error Razorpay object is defined in a dynamically loaded library.
-				if ( ! Razorpay ) {
+				if ( typeof window === 'undefined' || ! window.Razorpay ) {
 					throw new RazorpayConfigurationError(
 						'Razorpay loading error: Razorpay object not defined'
 					);
 				}
 
-				// @ts-expect-error Razorpay object is defined in a dynamically loaded library.
 				// We've checked that it exists before getting here.
-				const razorpay = new Razorpay( razorpayConfiguration.options );
+				const razorpay = new window.Razorpay( razorpayConfiguration.options );
 
 				if ( isSubscribed ) {
 					setState( {
