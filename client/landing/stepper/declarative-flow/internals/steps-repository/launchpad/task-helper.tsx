@@ -714,38 +714,7 @@ export function getEnhancedTasks( {
 		completePaidNewsletterTask,
 		setShowPlansModal,
 	};
-
-	return ( tasks || [] ).map( ( task ) => {
-		let taskData = {};
-		switch ( task.id ) {
-			case 'setup_free':
-			case 'setup_blog':
-			case 'setup_newsletter':
-			case 'design_edited':
-			case 'plan_selected':
-			case 'plan_completed':
-			case 'subscribers_added':
-			case 'migrate_content':
-			case 'first_post_published':
-			case 'first_post_published_newsletter':
-			case 'design_selected':
-			case 'design_completed':
-			case 'setup_general':
-			case 'setup_link_in_bio':
-			case 'links_added':
-			case 'link_in_bio_launched':
-			case 'site_launched':
-			case 'blog_launched':
-			case 'videopress_upload':
-			case 'videopress_launched':
-			case 'domain_upsell':
-			case 'verify_email':
-			case 'set_up_payments':
-			case 'newsletter_plan_created':
-				return getTaskDefinition( task, flow, context );
-		}
-		return { ...task, ...taskData };
-	} );
+	return ( tasks || [] ).map( ( task ) => getTaskDefinition( task, flow, context ) );
 }
 
 function isDomainUpsellCompleted(
