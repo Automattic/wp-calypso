@@ -36,7 +36,7 @@ const ProductDomain = ( {
 			return __( 'We’ve paid for an extra year' );
 		}
 
-		const priceFormatted = formatCurrency( priceInteger, currency, {
+		const priceFormatted = formatCurrency( priceInteger, currency ?? 'USD', {
 			stripZeros: true,
 			isSmallestUnit: true,
 		} );
@@ -45,11 +45,12 @@ const ProductDomain = ( {
 	};
 
 	const actions =
-		domainName || ( purchase && ! isDomainTransfer( purchase ) ) ? (
+		purchase && isDomainTransfer( purchase ) ? (
+			<p>{ purchaseLabel( purchase.priceInteger ) }</p>
+		) : (
 			<>
-				{ shareSite && (
+				{ shareSite && domain && (
 					<ClipboardButton
-						// @ts-expect-error The button props are passed into a Button component internally, but the types don't account that.
 						variant="primary"
 						onCopy={ handleShareSite( true ) }
 						onFinishCopy={ handleShareSite( false ) }
@@ -65,14 +66,12 @@ const ProductDomain = ( {
 					{ translate( 'Manage domains' ) }
 				</Button>
 			</>
-		) : (
-			<p>{ purchaseLabel( purchase.priceInteger ) }</p>
 		);
 
 	return (
 		<ThankYouProduct
 			name={ domain }
-			isFree={ purchase ? purchase.priceInteger === 0 : false }
+			isFree={ purchase?.priceInteger === 0 }
 			actions={ actions }
 			key={ 'domain-' + domain }
 		/>
