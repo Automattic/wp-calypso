@@ -42,8 +42,9 @@ export const IntervalTypeDropdown: React.FunctionComponent< IntervalTypeProps > 
 
 	const selectOptionsList = Object.values( optionsList ).map( ( option ) => ( {
 		key: option.key,
+		value: option.url,
 		name: (
-			<AddOnOption href={ option.url }>
+			<AddOnOption>
 				<span className="name"> { option.name } </span>
 				{ option.discountText ? <span className="discount"> { option.discountText } </span> : null }
 			</AddOnOption>
@@ -57,6 +58,9 @@ export const IntervalTypeDropdown: React.FunctionComponent< IntervalTypeProps > 
 				label=""
 				options={ selectOptionsList }
 				value={ selectOptionsList.find( ( { key } ) => key === supportedIntervalType ) }
+				onChange={ ( { selectedItem } ) => {
+					window.location.replace( selectedItem.value );
+				} }
 			/>
 		</div>
 	);
