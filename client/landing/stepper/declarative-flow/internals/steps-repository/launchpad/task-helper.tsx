@@ -79,7 +79,8 @@ type TaskId =
 	| 'design_completed'
 	| 'setup_general'
 	| 'setup_link_in_bio'
-	| 'links_added';
+	| 'links_added'
+	| 'link_in_bio_launched';
 
 interface TaskContext {
 	siteInfoQueryArgs?: { siteId?: number; siteSlug?: string | null };
@@ -93,6 +94,8 @@ interface TaskContext {
 	goToStep?: NavigationControls[ 'goToStep' ];
 	mustVerifyEmailBeforePosting?: boolean;
 	completeMigrateContentTask?: () => Promise< void >;
+	site: SiteDetails | null;
+	submit?: NavigationControls[ 'submit' ];
 }
 
 type TaskAction = ( task: Task, flow: string, context: TaskContext ) => EnhancedTask;
@@ -280,6 +283,32 @@ const actions: TaskActionTable = {
 		} ),
 		useCalypsoPath: true,
 	} ),
+	link_in_bio_launched: ( task, flow, { site, siteInfoQueryArgs, submit } ) =>
+		( {
+			...task,
+			isLaunchTask: true,
+			actionDispatch: async () => {
+				if ( site?.ID ) {
+					const { setPendingAction, setProgressTitle } = dispatch(
+						ONBOARD_STORE
+					) as OnboardActions;
+					const { launchSite } = dispatch( SITE_STORE ) as SiteActions;
+
+					setPendingAction( async () => {
+						setProgressTitle( __( 'Launching Link in bio' ) );
+						await launchSite( site.ID );
+
+						// Waits for half a second so that the loading screen doesn't flash away too quickly
+						await new Promise( ( res ) => setTimeout( res, 500 ) );
+						recordTaskClickTracksEvent( flow, task.completed, task.id );
+						return { goToHome: true, siteSlug: siteInfoQueryArgs?.siteSlug };
+					} );
+
+					submit?.();
+				}
+			},
+			useCalypsoPath: false,
+		} ) satisfies EnhancedTask,
 } as const;
 
 const getTaskDefinition = ( task: Task, flow: string, taskContext: TaskContext ) => {
@@ -505,6 +534,8 @@ export function getEnhancedTasks( {
 		goToStep,
 		completeMigrateContentTask,
 		mustVerifyEmailBeforePosting,
+		site,
+		submit,
 	};
 
 	return ( tasks || [] ).map( ( task ) => {
@@ -525,32 +556,8 @@ export function getEnhancedTasks( {
 			case 'setup_general':
 			case 'setup_link_in_bio':
 			case 'links_added':
-				return getTaskDefinition( task, flow, context );
 			case 'link_in_bio_launched':
-				taskData = {
-					isLaunchTask: true,
-					actionDispatch: () => {
-						if ( site?.ID ) {
-							const { setPendingAction, setProgressTitle } = dispatch(
-								ONBOARD_STORE
-							) as OnboardActions;
-							const { launchSite } = dispatch( SITE_STORE ) as SiteActions;
-
-							setPendingAction( async () => {
-								setProgressTitle( __( 'Launching Link in bio' ) );
-								await launchSite( site.ID );
-
-								// Waits for half a second so that the loading screen doesn't flash away too quickly
-								await new Promise( ( res ) => setTimeout( res, 500 ) );
-								recordTaskClickTracksEvent( flow, task.completed, task.id );
-								return { goToHome: true, siteSlug };
-							} );
-
-							submit?.();
-						}
-					},
-				};
-				break;
+				return getTaskDefinition( task, flow, context );
 			case 'site_launched':
 				taskData = {
 					isLaunchTask: true,
