@@ -103,6 +103,13 @@ const PersonalPurchase = ( {
 	const showOldSlider = ! isTierUpgradeSliderEnabled;
 	// const showOldSlider = true;
 
+	let continueButtonText = isStandalone
+		? translate( 'Get Stats' )
+		: translate( 'Get Jetpack Stats' );
+	if ( config.isEnabled( 'stats/checkout-flows-v2' ) ) {
+		continueButtonText = translate( 'Contribute and continue' );
+	}
+
 	return (
 		<div>
 			<div className={ `${ COMPONENT_CLASS_NAME }__notice` }>
@@ -252,7 +259,7 @@ const PersonalPurchase = ( {
 						} )
 					}
 				>
-					{ isStandalone ? translate( 'Get Stats' ) : translate( 'Get Jetpack Stats' ) }
+					{ continueButtonText }
 				</ButtonComponent>
 			) }
 		</div>
