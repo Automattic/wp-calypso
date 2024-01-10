@@ -61,14 +61,14 @@ class DomainsMiniCart extends Component {
 	domainNameAndCost = ( domain ) => {
 		const isRemoving = this.props.domainRemovalQueue.some( ( item ) => item.meta === domain.meta );
 		const formattedOriginalCost = formatCurrency(
-			domain.item_original_cost_integer,
+			domain.item_original_cost_integer ?? 0,
 			domain.currency,
 			{
 				isSmallestUnit: true,
 				stripZeros: true,
 			}
 		);
-		const formattedCost = formatCurrency( domain.item_subtotal_integer, domain.currency, {
+		const formattedCost = formatCurrency( domain.item_subtotal_integer ?? 0, domain.currency, {
 			isSmallestUnit: true,
 			stripZeros: true,
 		} );
