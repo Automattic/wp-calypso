@@ -49,6 +49,8 @@ import type {
 	TitanProductUser,
 } from '@automattic/shopping-cart';
 
+const hasCheckoutVersion2 = hasCheckoutVersion( '2' );
+
 export const NonProductLineItem = styled( WPNonProductLineItem )< {
 	theme?: Theme;
 	total?: boolean;
@@ -81,13 +83,25 @@ export const NonProductLineItem = styled( WPNonProductLineItem )< {
 export const LineItem = styled( CheckoutLineItem )< {
 	theme?: Theme;
 } >`
-	display: flex;
-	flex-wrap: wrap;
-	justify-content: space-between;
+	${ hasCheckoutVersion2
+		? `display: grid;
+	grid-template-columns: 3fr 1fr;
+	grid-template-rows: auto;
+	grid-template-areas:
+		'label price'
+		'meta .     '
+		'term remove';
+	gap: 8px;
+	margin-bottom: 32px;
+	padding: 10px 0;`
+		: `display: flex;
+			flex-wrap: wrap;
+			justify-content: space-between;
+			padding: 20px 0;` }
+
 	font-weight: ${ ( { theme } ) => theme.weights.normal };
 	color: ${ ( { theme } ) => theme.colors.textColorDark };
 	font-size: 1.1em;
-	padding: ${ hasCheckoutVersion( '2' ) ? '10px' : '20px' } 0;
 	position: relative;
 
 	.checkout-line-item__price {
@@ -113,6 +127,10 @@ const GiftBadge = styled.span`
 	font-size: small;
 `;
 
+const LineItemMetaWrapper = styled.div< { theme?: Theme } >`
+	grid-area: meta;
+`;
+
 const LineItemMeta = styled.div< { theme?: Theme } >`
 	color: ${ ( props ) => props.theme.colors.textColorLight };
 	font-size: 14px;
@@ -124,6 +142,8 @@ const LineItemMeta = styled.div< { theme?: Theme } >`
 	flex-wrap: wrap;
 	overflow-wrap: anywhere;
 	gap: 2px 10px;
+
+	${ hasCheckoutVersion2 ? `grid-area: term` : null }
 `;
 
 const UpgradeCreditInformationLineItem = styled( LineItemMeta )< { theme?: Theme } >`
@@ -160,37 +180,55 @@ const NotApplicableCallout = styled.div< { theme?: Theme } >`
 `;
 
 const LineItemTitle = styled.div< { theme?: Theme; isSummary?: boolean } >`
-	flex: 1;
 	word-break: break-word;
-	display: flex;
-	gap: 0.5em;
 	font-weight: ${ ( { theme } ) => theme.weights.bold };
-	font-size: ${ hasCheckoutVersion( '2' ) ? '14px' : 'inherit' };
+
+	${ hasCheckoutVersion2
+		? `grid-area: label;
+		   font-size: 14px;
+		   align-self: center;`
+		: `flex: 1;
+		   display: flex;
+		   gap: 0.5em;
+		   font-size: inherit;` }
 `;
 
 const LineItemPriceWrapper = styled.span< { theme?: Theme; isSummary?: boolean } >`
-	margin-left: 12px;
-	font-size: ${ hasCheckoutVersion( '2' ) ? '14px' : 'inherit' };
+	${ hasCheckoutVersion2
+		? `margin-left: 0px;
+		   font-size: 14px;
+		   grid-area: price;
+		   justify-self: flex-end;`
+		: `
+		margin-left: 12px;
+		font-size: inherit;` }
 	.rtl & {
 		margin-right: 12px;
 		margin-left: 0;
 	}
 `;
-const BillingLine = styled.div`
-	width: 100%;
-	display: ${ hasCheckoutVersion( '2' ) ? 'flex' : 'block' };
-	justify-content: ${ hasCheckoutVersion( '2' ) ? 'space-between' : 'inherit' };
-	align-items: ${ hasCheckoutVersion( '2' ) ? 'center' : 'inherit' };
+
+const DropdownWrapper = styled.span`
+	${ hasCheckoutVersion2 ? `grid-area: term;` : null }
 `;
+
 const DeleteButtonWrapper = styled.div`
 	width: 100%;
-	display: ${ hasCheckoutVersion( '2' ) ? 'flex' : 'inherit' };
-	justify-content: ${ hasCheckoutVersion( '2' ) ? 'flex-end' : 'inherit' };
+
+	${ hasCheckoutVersion2
+		? `
+	grid-area: remove;
+	display: grid;
+	align-items: center;
+	justify-content: end;
+	`
+		: `display: inherit };
+	justify-content: 'inherit' }` };
 `;
 
 const DeleteButton = styled( Button )< { theme?: Theme } >`
 	width: auto;
-	font-size: ${ hasCheckoutVersion( '2' ) ? '14px' : '0.75rem' };
+	${ hasCheckoutVersion2 ? `font-size:  14px; text-decoration: none;` : `font-size: 0.75rem` };
 	color: ${ ( props ) => props.theme.colors.textColorLight };
 `;
 
@@ -260,9 +298,17 @@ function WPNonProductLineItem( {
 			<LineItemTitle id={ itemSpanId } isSummary={ isSummary }>
 				{ label }
 			</LineItemTitle>
-			<span aria-labelledby={ itemSpanId } className="checkout-line-item__price">
-				<LineItemPrice actualAmount={ actualAmountDisplay } isSummary={ isSummary } />
-			</span>
+			{ hasCheckoutVersion2 ? (
+				<LineItemPrice
+					aria-labelledby={ itemSpanId }
+					actualAmount={ actualAmountDisplay }
+					isSummary={ isSummary }
+				/>
+			) : (
+				<span aria-labelledby={ itemSpanId } className="checkout-line-item__price">
+					<LineItemPrice actualAmount={ actualAmountDisplay } isSummary={ isSummary } />
+				</span>
+			) }
 			{ hasDeleteButton && removeProductFromCart && (
 				<>
 					<DeleteButtonWrapper>
@@ -279,9 +325,7 @@ function WPNonProductLineItem( {
 								setIsModalVisible( true );
 							} }
 						>
-							{ hasCheckoutVersion( '2' )
-								? translate( 'Remove' )
-								: translate( 'Remove from cart' ) }
+							{ hasCheckoutVersion2 ? translate( 'Remove' ) : translate( 'Remove from cart' ) }
 						</DeleteButton>
 					</DeleteButtonWrapper>
 
@@ -1198,36 +1242,46 @@ function CheckoutLineItem( {
 					</DesktopGiftWrapper>
 				) }
 			</LineItemTitle>
-			<span aria-labelledby={ itemSpanId } className="checkout-line-item__price">
-				{ hasCheckoutVersion( '2' ) ? (
-					<LineItemPrice
-						actualAmount={ formatCurrency( costBeforeDiscounts, product.currency, {
-							isSmallestUnit: true,
-							stripZeros: true,
-						} ) }
-						isSummary={ isSummary }
-					/>
-				) : (
+			{ hasCheckoutVersion2 ? (
+				<LineItemPrice
+					actualAmount={ formatCurrency( costBeforeDiscounts, product.currency, {
+						isSmallestUnit: true,
+						stripZeros: true,
+					} ) }
+					isSummary={ isSummary }
+				/>
+			) : (
+				<span aria-labelledby={ itemSpanId } className="checkout-line-item__price">
 					<LineItemPrice
 						isDiscounted={ isDiscounted }
 						actualAmount={ actualAmountDisplay }
 						originalAmount={ originalAmountDisplay }
 						isSummary={ isSummary }
 					/>
-				) }
-			</span>
+				</span>
+			) }
 
-			{ ! hasCheckoutVersion( '2' ) && product && ! containsPartnerCoupon && (
+			{ product && ! containsPartnerCoupon && (
 				<>
-					<UpgradeCreditInformationLineItem>
-						<UpgradeCreditInformation product={ product } />
-					</UpgradeCreditInformationLineItem>
-					<LineItemMeta>
-						<LineItemSublabelAndPrice product={ product } />
-						<DomainDiscountCallout product={ product } />
-						<IntroductoryOfferCallout product={ product } />
-						<JetpackAkismetSaleCouponCallout product={ product } />
-					</LineItemMeta>
+					{ hasCheckoutVersion2 ? (
+						<LineItemMetaWrapper>
+							<LineItemMeta>
+								<LineItemSublabelAndPrice product={ product } />
+							</LineItemMeta>
+						</LineItemMetaWrapper>
+					) : (
+						<>
+							<UpgradeCreditInformationLineItem>
+								<UpgradeCreditInformation product={ product } />
+							</UpgradeCreditInformationLineItem>
+							<LineItemMeta>
+								<LineItemSublabelAndPrice product={ product } />
+								<DomainDiscountCallout product={ product } />
+								<IntroductoryOfferCallout product={ product } />
+								<JetpackAkismetSaleCouponCallout product={ product } />
+							</LineItemMeta>
+						</>
+					) }
 				</>
 			) }
 
@@ -1241,69 +1295,69 @@ function CheckoutLineItem( {
 
 			{ isEmail && <EmailMeta product={ product } isRenewal={ isRenewal } /> }
 
-			<BillingLine>
-				{ children }
-				{ hasDeleteButton && removeProductFromCart && (
-					<>
-						<DeleteButtonWrapper>
-							<DeleteButton
-								className="checkout-line-item__remove-product"
-								buttonType="text-button"
-								aria-label={ String(
-									translate( 'Remove %s from cart', {
-										args: label,
-									} )
-								) }
-								disabled={ isDisabled }
-								onClick={ () => {
-									setIsModalVisible( true );
-									onRemoveProductClick?.( label );
-								} }
-							>
-								{ hasCheckoutVersion( '2' )
-									? translate( 'Remove' )
-									: translate( 'Remove from cart' ) }
-							</DeleteButton>
-						</DeleteButtonWrapper>
+			{ hasCheckoutVersion2 && ! isEmail ? (
+				<DropdownWrapper>{ children }</DropdownWrapper>
+			) : (
+				<>{ children }</>
+			) }
+			{ hasDeleteButton && removeProductFromCart && (
+				<>
+					<DeleteButtonWrapper>
+						<DeleteButton
+							className="checkout-line-item__remove-product"
+							buttonType="text-button"
+							aria-label={ String(
+								translate( 'Remove %s from cart', {
+									args: label,
+								} )
+							) }
+							disabled={ isDisabled }
+							onClick={ () => {
+								setIsModalVisible( true );
+								onRemoveProductClick?.( label );
+							} }
+						>
+							{ hasCheckoutVersion2 ? translate( 'Remove' ) : translate( 'Remove from cart' ) }
+						</DeleteButton>
+					</DeleteButtonWrapper>
 
-						<CheckoutModal
-							isVisible={ isModalVisible }
-							closeModal={ () => {
-								setIsModalVisible( false );
-							} }
-							primaryAction={ () => {
-								let product_uuids_to_remove = [ product.uuid ];
+					<CheckoutModal
+						isVisible={ isModalVisible }
+						closeModal={ () => {
+							setIsModalVisible( false );
+						} }
+						primaryAction={ () => {
+							let product_uuids_to_remove = [ product.uuid ];
 
-								// Gifts need to be all or nothing, to prevent leaving
-								// the site in a state where it requires other purchases
-								// in order to actually work correctly for the period of
-								// the gift (for example, gifting a plan renewal without
-								// a domain renewal would likely lead the site's domain
-								// to expire soon afterwards).
-								if ( product.is_gift_purchase ) {
-									product_uuids_to_remove = responseCart.products
-										.filter( ( cart_product ) => cart_product.is_gift_purchase )
-										.map( ( cart_product ) => cart_product.uuid );
-								}
+							// Gifts need to be all or nothing, to prevent leaving
+							// the site in a state where it requires other purchases
+							// in order to actually work correctly for the period of
+							// the gift (for example, gifting a plan renewal without
+							// a domain renewal would likely lead the site's domain
+							// to expire soon afterwards).
+							if ( product.is_gift_purchase ) {
+								product_uuids_to_remove = responseCart.products
+									.filter( ( cart_product ) => cart_product.is_gift_purchase )
+									.map( ( cart_product ) => cart_product.uuid );
+							}
 
-								Promise.all( product_uuids_to_remove.map( removeProductFromCart ) ).catch( () => {
-									// Nothing needs to be done here. CartMessages will display the error to the user.
-								} );
-								onRemoveProduct?.( label );
-							} }
-							cancelAction={ () => {
-								onRemoveProductCancel?.( label );
-							} }
-							secondaryAction={ () => {
-								onRemoveProductCancel?.( label );
-							} }
-							secondaryButtonCTA={ String( translate( 'Cancel' ) ) }
-							title={ modalCopy.title }
-							copy={ modalCopy.description }
-						/>
-					</>
-				) }
-			</BillingLine>
+							Promise.all( product_uuids_to_remove.map( removeProductFromCart ) ).catch( () => {
+								// Nothing needs to be done here. CartMessages will display the error to the user.
+							} );
+							onRemoveProduct?.( label );
+						} }
+						cancelAction={ () => {
+							onRemoveProductCancel?.( label );
+						} }
+						secondaryAction={ () => {
+							onRemoveProductCancel?.( label );
+						} }
+						secondaryButtonCTA={ String( translate( 'Cancel' ) ) }
+						title={ modalCopy.title }
+						copy={ modalCopy.description }
+					/>
+				</>
+			) }
 		</div>
 	);
 	/* eslint-enable wpcalypso/jsx-classname-namespace */
