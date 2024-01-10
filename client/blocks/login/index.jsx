@@ -17,6 +17,7 @@ import wooDnaConfig from 'calypso/jetpack-connect/woo-dna-config';
 import { preventWidows } from 'calypso/lib/formatting';
 import { getSignupUrl, isReactLostPasswordScreenEnabled } from 'calypso/lib/login';
 import {
+	isBlazeProAuth2Client,
 	isCrowdsignalOAuth2Client,
 	isJetpackCloudOAuth2Client,
 	isWooOAuth2Client,
@@ -442,6 +443,10 @@ class Login extends Component {
 						</p>
 					);
 				}
+			}
+
+			if ( isBlazeProAuth2Client( oauth2Client ) ) {
+				headerText = <h3>{ translate( 'Sign up' ) }</h3>;
 			}
 
 			if ( isJetpackCloudOAuth2Client( oauth2Client ) ) {

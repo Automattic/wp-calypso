@@ -9,6 +9,7 @@ import {
 	isJetpackCloudOAuth2Client,
 	isWooOAuth2Client,
 	isIntenseDebateOAuth2Client,
+	isBlazeProAuth2Client,
 } from 'calypso/lib/oauth2-clients';
 import { login } from 'calypso/lib/paths';
 
@@ -118,6 +119,14 @@ export function getSignupUrl( currentQuery, currentRoute, oauth2Client, locale, 
 		if ( wccomFrom ) {
 			oauth2Params.set( 'wccom-from', wccomFrom );
 		}
+		return `${ signupUrl }/wpcc?${ oauth2Params.toString() }`;
+	}
+
+	if ( oauth2Client && isBlazeProAuth2Client( oauth2Client ) ) {
+		const oauth2Params = new URLSearchParams( {
+			oauth2_client_id: oauth2Client.id,
+			oauth2_redirect: redirectTo,
+		} );
 		return `${ signupUrl }/wpcc?${ oauth2Params.toString() }`;
 	}
 

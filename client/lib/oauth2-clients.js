@@ -23,6 +23,10 @@ export const isWooOAuth2Client = ( oauth2Client ) => {
 	return oauth2Client && [ 50019, 50915, 50916 ].includes( oauth2Client.id );
 };
 
+export const isBlazeProAuth2Client = ( oauth2Client ) => {
+	return oauth2Client && [ 92099 ].includes( oauth2Client.id );
+};
+
 export const isJetpackCloudOAuth2Client = ( oauth2Client ) => {
 	// 68663 => Jetpack Cloud Dev,
 	return oauth2Client && [ 68663, 69040, 69041 ].includes( oauth2Client.id );
