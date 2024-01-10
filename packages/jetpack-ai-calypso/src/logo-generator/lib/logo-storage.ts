@@ -1,4 +1,3 @@
-import { DEFAULT_LOGO } from '../../constants';
 /**
  * Types
  */
@@ -21,7 +20,13 @@ export function stashLogo( { siteId, url, description }: SaveToStorageProps ) {
 
 export function getSiteLogoHistory( siteId: string ) {
 	const storedString = localStorage.getItem( `logo-history-${ siteId }` );
-	const storedContent = storedString ? JSON.parse( storedString ) : [ DEFAULT_LOGO ];
+	const storedContent = storedString ? JSON.parse( storedString ) : [];
 
 	return storedContent;
+}
+
+export function isLogoHistoryEmpty( siteId: string ) {
+	const storedContent = getSiteLogoHistory( siteId );
+
+	return storedContent.length === 0;
 }
