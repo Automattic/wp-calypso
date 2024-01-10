@@ -157,6 +157,8 @@ export class SecretsManager {
 			storeSandboxCookieValue: 'FAKE_VALUE',
 			testCouponCode: 'FAKE_VALUE',
 			wpccAuthPath: 'FAKE_VALUE',
+			wooSignupPath: 'FAKE_VALUE',
+			wooLoginPath: 'FAKE_VALUE',
 			calypsoOauthApplication: {
 				client_id: 'FAKE_VALUE',
 				client_secret: 'FAKE_VALUE',
