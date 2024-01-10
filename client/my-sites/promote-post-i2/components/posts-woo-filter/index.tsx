@@ -44,7 +44,7 @@ export default function WooItemsFilter( props: Props ) {
 	];
 
 	return (
-		<SegmentedControl className="woo-filter">
+		<SegmentedControl primary compact>
 			{ options.map( ( option ) => (
 				<SegmentedControl.Item
 					key={ option.value }

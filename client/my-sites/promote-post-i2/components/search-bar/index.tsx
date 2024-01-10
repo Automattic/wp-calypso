@@ -247,6 +247,7 @@ export default function SearchBar( props: Props ) {
 							/>
 						) }
 						<SelectDropdown
+							className="promote-post-i2__search-bar-dropdown order-by"
 							onSelect={ onChangeOrderOption }
 							options={ sortOptions }
 							initialSelected={ sortOption.orderBy }
