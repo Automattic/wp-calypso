@@ -25,7 +25,9 @@ export function getSiteFragment( path: URLString ): SiteSlug | SiteId | false {
 		// Avoid confusing the subscription ID for the site ID in gifting checkouts.
 		( basePath.includes( '/gift/' ) && basePath.startsWith( '/checkout/' ) ) ||
 		// Avoid confusing the subscription ID for the site ID in Akismet checkouts.
-		( basePath.includes( '/akismet/' ) && basePath.startsWith( '/checkout/' ) )
+		( basePath.includes( '/akismet/' ) && basePath.startsWith( '/checkout/' ) ) ||
+		// Avoid confusing the subscription ID for the site ID in Marketplace checkouts.
+		( basePath.includes( '/marketplace/' ) && basePath.startsWith( '/checkout/' ) )
 	) {
 		return false;
 	}
