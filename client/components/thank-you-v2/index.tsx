@@ -1,4 +1,5 @@
 import { ConfettiAnimation } from '@automattic/components';
+import { TranslateResult } from 'i18n-calypso';
 import ThankYouFooter, { ThankYouDetailProps } from './footer';
 import ThankYouHeader from './header';
 import ThankYouUpsell, { ThankYouUpsellProps } from './upsell';
@@ -6,8 +7,8 @@ import ThankYouUpsell, { ThankYouUpsellProps } from './upsell';
 import './style.scss';
 
 interface ThankYouV2Props {
-	title: string;
-	subtitle: string;
+	title: string | TranslateResult;
+	subtitle: string | TranslateResult;
 	headerButtons?: React.ReactNode;
 	products?: React.ReactNode;
 	footerDetails?: ThankYouDetailProps[];
