@@ -73,16 +73,22 @@ export interface PricingMetaForGridPlan {
 // TODO clk: move to plans data store
 export type UsePricingMetaForGridPlans = ( {
 	planSlugs,
-	withoutProRatedCredits,
-	storageAddOns,
-	coupon,
 	selectedSiteId,
+	coupon,
+	storageAddOns,
+	withoutProRatedCredits,
 }: {
 	planSlugs: PlanSlug[];
-	withoutProRatedCredits?: boolean;
+	/**
+	 * `selectedSiteId` required on purpose to mitigate risk with not passing something through when we should
+	 */
+	selectedSiteId: number | null | undefined;
+	/**
+	 * `coupon` required on purpose to mitigate risk with not passing somethiing through when we should
+	 */
+	coupon: string | undefined;
 	storageAddOns: ( AddOnMeta | null )[] | null;
-	coupon?: string;
-	selectedSiteId?: number | null;
+	withoutProRatedCredits?: boolean;
 } ) => { [ planSlug: string ]: PricingMetaForGridPlan } | null;
 
 export type UseFreeTrialPlanSlugs = ( {

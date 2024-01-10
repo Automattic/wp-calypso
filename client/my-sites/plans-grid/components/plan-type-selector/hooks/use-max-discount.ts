@@ -25,6 +25,7 @@ export default function useMaxDiscount(
 		withoutProRatedCredits: true,
 		storageAddOns: null,
 		selectedSiteId,
+		coupon: undefined,
 	} );
 	// TODO clk pricing
 	const yearlyPlansPricing = usePricingMetaForGridPlans( {
@@ -32,6 +33,7 @@ export default function useMaxDiscount(
 		withoutProRatedCredits: true,
 		storageAddOns: null,
 		selectedSiteId,
+		coupon: undefined,
 	} );
 
 	const discounts = wpcomMonthlyPlans.map( ( planSlug ) => {

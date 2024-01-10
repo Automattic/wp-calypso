@@ -47,6 +47,7 @@ export default function useMaxDiscountsForPlanTerms(
 		withoutProRatedCredits: true,
 		storageAddOns: null,
 		selectedSiteId,
+		coupon: undefined,
 	} );
 	// TODO clk pricing
 	const nonMonthlyPlansPricing = usePricingMetaForGridPlans( {
@@ -54,6 +55,7 @@ export default function useMaxDiscountsForPlanTerms(
 		withoutProRatedCredits: true,
 		storageAddOns: null,
 		selectedSiteId,
+		coupon: undefined,
 	} );
 
 	const getTermInMonths = ( term: UrlFriendlyTermType ): number => {

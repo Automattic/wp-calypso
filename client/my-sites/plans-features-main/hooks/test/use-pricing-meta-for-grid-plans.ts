@@ -94,6 +94,7 @@ describe( 'usePricingMetaForGridPlans', () => {
 			withoutProRatedCredits: false,
 			storageAddOns: null,
 			selectedSiteId: 100,
+			coupon: undefined,
 		} );
 
 		const expectedPricingMeta = {
@@ -132,6 +133,7 @@ describe( 'usePricingMetaForGridPlans', () => {
 			withoutProRatedCredits: false,
 			storageAddOns: null,
 			selectedSiteId: 100,
+			coupon: undefined,
 		} );
 
 		const expectedPricingMeta = {
@@ -171,6 +173,7 @@ describe( 'usePricingMetaForGridPlans', () => {
 			withoutProRatedCredits: false,
 			storageAddOns: null,
 			selectedSiteId: 100,
+			coupon: undefined,
 		} );
 
 		const expectedPricingMeta = {
@@ -210,6 +213,7 @@ describe( 'usePricingMetaForGridPlans', () => {
 			withoutProRatedCredits: true,
 			storageAddOns: null,
 			selectedSiteId: 100,
+			coupon: undefined,
 		} );
 
 		const expectedPricingMeta = {

@@ -30,6 +30,7 @@ const ScreenUpsell = ( { numOfSelectedGlobalStyles = 1, onCheckout, onTryStyle }
 		planSlugs: [ PLAN_PREMIUM ],
 		storageAddOns: null,
 		selectedSiteId,
+		coupon: undefined,
 	} );
 
 	const pricing = pricingMeta?.[ PLAN_PREMIUM ];
