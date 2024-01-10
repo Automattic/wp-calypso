@@ -11,7 +11,7 @@ export interface GeneratorModalProps {
 }
 
 export interface LogoPresenterProps {
-	logo: Logo;
+	logo?: Logo;
 	loading?: boolean;
 	onApplyLogo: () => void;
 }
