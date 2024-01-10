@@ -55,7 +55,6 @@
 		"jetpack/server-credentials-advanced-flow": true,
 		"jetpack/simplify-pricing-structure": false,
 		"jetpack/standalone-plugin-onboarding-update-v1": true,
-		"jetpack/user-feedback-form": true,
 		"jetpack/card-addition-improvements": false,
 		"layout/app-banner": false,
 		"layout/guided-tours": false,
