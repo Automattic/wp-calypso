@@ -20,7 +20,7 @@ import './prompt.scss';
 const debug = debugFactory( 'jetpack-ai-calypso:prompt-box' );
 
 export const Prompt: React.FC = () => {
-	const { addLogoToHistory, increaseAiAssistantRequestsCount } = useDispatch( STORE_NAME );
+	const { increaseAiAssistantRequestsCount } = useDispatch( STORE_NAME );
 	const [ prompt, setPrompt ] = useState( '' );
 	const [ requestsRemaining, setRequestsRemaining ] = useState( 0 );
 	const hasPrompt = prompt?.length >= MINIMUM_PROMPT_LENGTH;
@@ -35,6 +35,7 @@ export const Prompt: React.FC = () => {
 		site,
 		getAiAssistantFeature,
 		requireUpgrade,
+		storeLogo,
 	} = useLogoGenerator();
 
 	const enhancingLabel = __( 'Enhancing…', 'jetpack' );
@@ -92,15 +93,9 @@ export const Prompt: React.FC = () => {
 			url: image.data[ 0 ].url,
 			description: prompt,
 		};
-		addLogoToHistory( logo );
+		storeLogo( logo );
 		setIsRequestingImage( false );
-	}, [
-		addLogoToHistory,
-		prompt,
-		generateImage,
-		setIsRequestingImage,
-		increaseAiAssistantRequestsCount,
-	] );
+	}, [ storeLogo, prompt, generateImage, setIsRequestingImage, increaseAiAssistantRequestsCount ] );
 
 	const onPromptInput = useCallback( ( event: React.ChangeEvent< HTMLInputElement > ) => {
 		setPrompt( event.target.textContent || '' );

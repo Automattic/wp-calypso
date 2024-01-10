@@ -64,3 +64,9 @@ export type TokenDataEndpointResponseProps = {
 	token: string;
 	blog_id: string;
 };
+
+export type SaveToStorageProps = {
+	siteId: string | number;
+	url: string;
+	description: string;
+};
