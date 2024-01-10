@@ -1,3 +1,4 @@
+import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { Button, Gridicon } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { isOutsideCalypso } from 'calypso/lib/url';
@@ -9,7 +10,7 @@ export type ThankYouDetailProps = {
 	description?: string;
 	buttonText?: string;
 	href?: string;
-	onClick?: () => void;
+	clickEventName?: string;
 };
 
 const ThankYouDetail = ( {
@@ -17,9 +18,15 @@ const ThankYouDetail = ( {
 	description,
 	buttonText,
 	href,
-	onClick,
+	clickEventName,
 }: ThankYouDetailProps ) => {
-	const noop = () => {};
+	const handleClick = () => {
+		if ( ! clickEventName ) {
+			return;
+		}
+
+		recordTracksEvent( clickEventName );
+	};
 
 	const isExternal = isOutsideCalypso( href ?? '' );
 
@@ -33,7 +40,7 @@ const ThankYouDetail = ( {
 				<Button
 					className="thank-you__detail-button"
 					href={ localizeUrl( href ) }
-					onClick={ onClick ?? noop }
+					onClick={ handleClick }
 					target={ isExternal ? '_blank' : '_self' }
 				>
 					{ buttonText } { isExternal && <Gridicon icon="external" /> }
