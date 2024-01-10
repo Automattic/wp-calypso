@@ -103,6 +103,7 @@ export default function SubscriptionsContentWrapper() {
 
 function NoPurchasesMessage() {
 	const selectedSite = useSelector( getSelectedSite );
+	const selectedSiteId = useSelector( getSelectedSiteId );
 	const translate = useTranslate();
 	return isJetpackCloud() ? (
 		<JetpackRnaActionCard
@@ -111,7 +112,11 @@ function NoPurchasesMessage() {
 				'Check out how Jetpack’s security, performance, and growth tools can improve your site.'
 			) }
 			ctaButtonLabel={ translate( 'Compare plans' ) }
-			ctaButtonURL={ selectedSite ? `/pricing/${ selectedSite.slug }` : '/pricing' }
+			ctaButtonURL={
+				selectedSiteId
+					? `/partner-portal/issue-license?site_id=${ selectedSiteId }`
+					: '/partner-portal/issue-license'
+			}
 		/>
 	) : (
 		<CompactCard className="subscriptions__list">
