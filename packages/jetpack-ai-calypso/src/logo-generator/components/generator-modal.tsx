@@ -11,6 +11,7 @@ import { useState, useEffect, useCallback } from 'react';
  * Internal dependencies
  */
 import useLogoGenerator from '../hooks/use-logo-generator';
+import { isLogoHistoryEmpty } from '../lib/logo-storage';
 import { STORE_NAME } from '../store';
 import { FirstLoadScreen } from './first-load-screen';
 import { HistoryCarousel } from './history-carousel';
@@ -37,7 +38,7 @@ export const GeneratorModal: React.FC< GeneratorModalProps > = ( {
 	>( null );
 	const [ initialPrompt, setInitialPrompt ] = useState< string | undefined >();
 	const [ isFirstCallOnOpen, setIsFirstCallOnOpen ] = useState( true );
-	const { selectedLogo, getAiAssistantFeature, generateFirstPrompt, generateLogo, logos } =
+	const { selectedLogo, getAiAssistantFeature, generateFirstPrompt, generateLogo } =
 		useLogoGenerator();
 	const siteId = siteDetails?.ID;
 
@@ -79,7 +80,7 @@ export const GeneratorModal: React.FC< GeneratorModalProps > = ( {
 			const feature = await getFeature();
 
 			// If there is any logo we do not need to generate a first logo again.
-			if ( logos.length > 0 ) {
+			if ( ! isLogoHistoryEmpty( String( siteId ) ) ) {
 				setLoadingState( null );
 				return;
 			}
@@ -95,7 +96,7 @@ export const GeneratorModal: React.FC< GeneratorModalProps > = ( {
 			debug( 'Error fetching feature', error );
 			setLoadingState( null );
 		}
-	}, [ loadLogoHistory, siteId, getFeature, logos.length, generateFirstLogo ] );
+	}, [ loadLogoHistory, siteId, getFeature, generateFirstLogo ] );
 
 	const handleApplyLogo = () => {
 		onClose();
