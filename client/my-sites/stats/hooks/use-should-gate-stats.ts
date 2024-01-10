@@ -76,8 +76,8 @@ export const shouldGateStats = ( state: object, siteId: number | null, statType:
 		return false;
 	}
 
-	// check if the site has paid stats feature
-	if ( siteHasPaidStats || ! siteFeatures ) {
+	// check if the site features have loaded and the site has paid stats feature
+	if ( ! siteFeatures || siteHasPaidStats ) {
 		return false;
 	}
 
