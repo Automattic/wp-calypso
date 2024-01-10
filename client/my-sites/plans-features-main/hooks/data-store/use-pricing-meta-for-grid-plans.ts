@@ -21,8 +21,8 @@ interface Props {
 	storageAddOns?: ( AddOnMeta | null )[] | null;
 }
 
-function getTotalPrice( planPrice: number | null, addOnPrice = 0 ): number | null {
-	return null !== planPrice ? planPrice + addOnPrice : null;
+function getTotalPrice( planPrice: number | null | undefined, addOnPrice = 0 ): number | null {
+	return null !== planPrice && undefined !== planPrice ? planPrice + addOnPrice : null;
 }
 
 /*
@@ -156,8 +156,8 @@ const usePricingMetaForGridPlans: UsePricingMetaForGridPlans = ( {
 				 */
 				if ( availableForPurchase ) {
 					const originalPrice = {
-						monthly: getTotalPrice( plan.pricing.originalPrice.monthly, storageAddOnPriceMonthly ),
-						full: getTotalPrice( plan.pricing.originalPrice.full, storageAddOnPriceYearly ),
+						monthly: getTotalPrice( plan?.pricing.originalPrice.monthly, storageAddOnPriceMonthly ),
+						full: getTotalPrice( plan?.pricing.originalPrice.full, storageAddOnPriceYearly ),
 					};
 					const discountedPrice = {
 						monthly:
@@ -166,11 +166,11 @@ const usePricingMetaForGridPlans: UsePricingMetaForGridPlans = ( {
 										sitePlan.pricing.discountedPrice.monthly,
 										storageAddOnPriceMonthly
 								  )
-								: getTotalPrice( plan.pricing.discountedPrice.monthly, storageAddOnPriceMonthly ),
+								: getTotalPrice( plan?.pricing.discountedPrice.monthly, storageAddOnPriceMonthly ),
 						full:
 							sitePlan && ! withoutProRatedCredits
 								? getTotalPrice( sitePlan.pricing.discountedPrice.full, storageAddOnPriceYearly )
-								: getTotalPrice( plan.pricing.discountedPrice.full, storageAddOnPriceYearly ),
+								: getTotalPrice( plan?.pricing.discountedPrice.full, storageAddOnPriceYearly ),
 					};
 
 					return [
@@ -190,10 +190,10 @@ const usePricingMetaForGridPlans: UsePricingMetaForGridPlans = ( {
 					{
 						originalPrice: {
 							monthly: getTotalPrice(
-								plan.pricing.originalPrice.monthly,
+								plan?.pricing.originalPrice.monthly,
 								storageAddOnPriceMonthly
 							),
-							full: getTotalPrice( plan.pricing.originalPrice.full, storageAddOnPriceYearly ),
+							full: getTotalPrice( plan?.pricing.originalPrice.full, storageAddOnPriceYearly ),
 						},
 						discountedPrice: {
 							monthly: null,
