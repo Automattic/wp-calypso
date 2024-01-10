@@ -2,8 +2,6 @@
  * Types & Constants
  */
 import {
-	ACTION_DECREASE_NEW_ASYNC_REQUEST_COUNTDOWN,
-	ACTION_ENQUEUE_ASYNC_REQUEST,
 	ACTION_INCREASE_AI_ASSISTANT_REQUESTS_COUNT,
 	ACTION_REQUEST_AI_ASSISTANT_FEATURE,
 	ACTION_SET_AI_ASSISTANT_FEATURE_REQUIRE_UPGRADE,
@@ -142,39 +140,6 @@ export default function reducer(
 						requestsCount,
 						requireUpgrade,
 						usagePeriod: { ...usagePeriod },
-					},
-				},
-			};
-		}
-
-		case ACTION_DECREASE_NEW_ASYNC_REQUEST_COUNTDOWN: {
-			return {
-				...state,
-				features: {
-					...state.features,
-					aiAssistantFeature: {
-						...state.features.aiAssistantFeature,
-						_meta: {
-							...state?.features?.aiAssistantFeature?._meta,
-							asyncRequestCountdown:
-								( state?.features?.aiAssistantFeature?._meta?.asyncRequestCountdown || 0 ) - 1,
-						},
-					},
-				},
-			};
-		}
-
-		case ACTION_ENQUEUE_ASYNC_REQUEST: {
-			return {
-				...state,
-				features: {
-					...state.features,
-					aiAssistantFeature: {
-						...state.features.aiAssistantFeature,
-						_meta: {
-							...state?.features?.aiAssistantFeature?._meta,
-							asyncRequestTimerId: action.timerId,
-						},
 					},
 				},
 			};
