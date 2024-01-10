@@ -18,11 +18,11 @@ declare global {
 	}
 }
 
-export type RazorpayLoadingError = undefined | null | Error;
+export type RazorpayLoadingError = Error | null | undefined;
 
 export interface RazorpayData {
 	razorpay: Razorpay | null;
-	razorpayConfiguration: null | RazorpayConfiguration;
+	razorpayConfiguration: RazorpayConfiguration | null;
 	isRazorpayLoading: boolean;
 	razorpayLoadingError: RazorpayLoadingError;
 }
@@ -54,7 +54,7 @@ export class RazorpayConfigurationError extends Error {}
  */
 function useRazorpayJs(
 	razorpayConfiguration: RazorpayConfiguration | null,
-	razorpayConfigurationError: undefined | Error
+	razorpayConfigurationError: Error | undefined
 ): UseRazorpayJs {
 	const [ state, setState ] = useState< UseRazorpayJs >( {
 		razorpay: null,
@@ -126,16 +126,16 @@ function useRazorpayJs(
  */
 function useRazorpayConfiguration(
 	fetchRazorpayConfiguration: GetRazorpayConfiguration,
-	requestArgs?: undefined | null | GetRazorpayConfigurationArgs
+	requestArgs?: GetRazorpayConfigurationArgs | null | undefined
 ): {
 	razorpayConfiguration: RazorpayConfiguration | null;
-	razorpayConfigurationError: undefined | Error;
+	razorpayConfigurationError: Error | undefined;
 } {
 	const [ razorpayConfigurationError, setRazorpayConfigurationError ] = useState<
-		undefined | Error
+		Error | undefined
 	>();
 	const [ razorpayConfiguration, setRazorpayConfiguration ] =
-		useState< null | RazorpayConfiguration >( null );
+		useState< RazorpayConfiguration | null >( null );
 	const memoizedRequestArgs = useMemoCompare( requestArgs, areRequestArgsEqual );
 
 	useEffect( () => {
