@@ -1,0 +1,24 @@
+.payment-method-form {
+	display: flex;
+	flex-direction: column;
+	gap: 24px;
+}
+
+.payment-method-form__title {
+	font-size: rem(20px);
+	line-height: 1.2;
+	font-weight: 500;
+}
+
+.payment-method-form__footer {
+	display: flex;
+	gap: 16px;
+}
+
+.payment-method-form__submit-button {
+	flex-grow: 1;
+
+	.checkout-steps__submit-button-wrapper {
+		padding: 0;
+	}
+}
