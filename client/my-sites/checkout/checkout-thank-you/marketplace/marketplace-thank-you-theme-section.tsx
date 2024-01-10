@@ -6,6 +6,7 @@ import styled from '@emotion/styled';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback, useEffect } from 'react';
 import QueryActiveTheme from 'calypso/components/data/query-active-theme';
+import ThankYouProduct from 'calypso/components/thank-you-v2/product';
 import { useActiveThemeQuery } from 'calypso/data/themes/use-active-theme-query';
 import ActivationModal from 'calypso/my-sites/themes/activation-modal';
 import { useSelector, useDispatch } from 'calypso/state';
@@ -22,19 +23,8 @@ import {
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import useIsValidThankYouTheme from './use-is-valid-thank-you-theme';
 
-const ThemeSectionContainer = styled.div`
-	display: flex;
-	flex-direction: column;
-	width: 100%;
-	box-sizing: border-box;
-
-	@media ( min-width: 782px ) {
-		width: 720px;
-	}
-`;
-
 const ThemeSectionImageContainer = styled.div`
-	padding: 8px 8px 0 8px;
+	margin: 8px 8px 0 8px;
 	border-radius: 16px;
 	box-shadow:
 		0px 15px 20px rgba( 0, 0, 0, 0.04 ),
@@ -55,58 +45,6 @@ const ThemeSectionMShotsContainer = styled.div`
 const ThemeSectionImage = styled.img`
 	border-radius: 13px;
 	width: 100%;
-`;
-
-const ThemeSectionContent = styled.div`
-	display: flex;
-	justify-content: space-between;
-	align-items: center;
-	flex-wrap: wrap;
-	row-gap: 16px;
-
-	padding: 24px;
-	@media ( min-width: 480px ) {
-		padding: 20px 25px;
-	}
-	border: 1px solid var( --color-border-subtle );
-`;
-
-const ThemeSectionName = styled.div`
-	font-size: 16px;
-	font-weight: 500;
-	line-height: 24px;
-	flex-grow: 1;
-	color: var( --studio-gray-100 );
-	& small {
-		font-size: 14px;
-		line-height: 22px;
-		font-weight: 400;
-		color: var( --studio-gray-60 );
-	}
-`;
-
-const ThemeSectionButtons = styled.div`
-	display: flex;
-	column-gap: 16px;
-	row-gap: 12px;
-	align-items: flex-start;
-	flex-wrap: wrap;
-
-	.gridicon.gridicons-external {
-		margin-right: 4px;
-	}
-`;
-
-const ThemeButton = styled( Button )`
-	border-radius: 4px;
-`;
-
-const ThemeNameSectionWrapper = styled.div`
-	display: flex;
-	row-gap: 12px;
-	column-gap: 16px;
-	flex-grow: 1;
-	flex-wrap: wrap;
 `;
 
 export const ThankYouThemeSection = ( {
@@ -160,7 +98,9 @@ export const ThankYouThemeSection = ( {
 			return;
 		}
 		sendTrackEvent( 'calypso_theme_thank_you_activate_theme_click' );
-		dispatch( activate( theme.id, siteId, 'marketplace-thank-you', false, isOnboardingFlow ) );
+		dispatch(
+			activate( theme.id, siteId, 'marketplace-thank-you', false, false, isOnboardingFlow )
+		);
 	}, [ theme.id, siteId, isOnboardingFlow, dispatch, isActive, sendTrackEvent ] );
 
 	useEffect( () => {
@@ -170,22 +110,19 @@ export const ThankYouThemeSection = ( {
 	}, [ isOnboardingFlow, handleActivateTheme ] );
 
 	return (
-		<ThemeSectionContainer>
+		<>
 			<QueryActiveTheme siteId={ siteId } />
 			<ActivationModal source="details" />
-			<ThemeSectionContent>
-				<ThemeNameSectionWrapper>
-					<ThemeSectionName>
-						<h5>{ theme.name }</h5>
-						<small>
-							{ theme.author
-								? translate( 'by %(author)s', { args: { author: theme.author } } )
-								: null }
-						</small>
-					</ThemeSectionName>
-					<ThemeSectionButtons>
-						<ThemeButton
-							primary
+			<ThankYouProduct
+				key={ `theme_information_${ theme.id }` }
+				name={ theme.name }
+				details={
+					theme.author ? translate( 'by %(author)s', { args: { author: theme.author } } ) : null
+				}
+				actions={
+					<>
+						<Button
+							variant="primary"
 							busy={ ( isActivating && ! hasActivated ) || isLoading }
 							onClick={ handleActivateTheme }
 							href={ isActive ? customizeUrl : undefined }
@@ -194,42 +131,48 @@ export const ThankYouThemeSection = ( {
 							{ isActive
 								? translate( 'Customize this design' )
 								: translate( 'Activate this design' ) }
-						</ThemeButton>
+						</Button>
 
 						{ isActive ? (
-							<ThemeButton href={ siteUrl } disabled={ ! isValidThankyouSectionTheme }>
+							<Button
+								variant="secondary"
+								href={ siteUrl }
+								disabled={ ! isValidThankyouSectionTheme }
+							>
 								<Gridicon size={ 18 } icon="external" />
 								{ translate( 'View site' ) }
-							</ThemeButton>
+							</Button>
 						) : null }
-					</ThemeSectionButtons>
-				</ThemeNameSectionWrapper>
-				<ThemeSectionImageContainer>
-					{ ! isDefaultGlobalStylesVariationSlug( themeStyleVariation?.slug ) ? (
-						<ThemeSectionMShotsContainer>
-							<DesignPreviewImage
-								design={ {
-									...theme,
-									slug: theme.id,
-									recipe: { stylesheet: theme.stylesheet },
-								} }
-								styleVariation={ themeStyleVariation }
+					</>
+				}
+				preview={
+					<ThemeSectionImageContainer>
+						{ ! isDefaultGlobalStylesVariationSlug( themeStyleVariation?.slug ) ? (
+							<ThemeSectionMShotsContainer>
+								<DesignPreviewImage
+									design={ {
+										...theme,
+										slug: theme.id,
+										recipe: { stylesheet: theme.stylesheet },
+									} }
+									styleVariation={ themeStyleVariation }
+								/>
+							</ThemeSectionMShotsContainer>
+						) : (
+							<ThemeSectionImage
+								src={ theme.screenshot }
+								alt={
+									translate( "%(theme)s's icon", {
+										args: {
+											theme: theme.name,
+										},
+									} ) as string
+								}
 							/>
-						</ThemeSectionMShotsContainer>
-					) : (
-						<ThemeSectionImage
-							src={ theme.screenshot }
-							alt={
-								translate( "%(theme)s's icon", {
-									args: {
-										theme: theme.name,
-									},
-								} ) as string
-							}
-						/>
-					) }
-				</ThemeSectionImageContainer>
-			</ThemeSectionContent>
-		</ThemeSectionContainer>
+						) }
+					</ThemeSectionImageContainer>
+				}
+			/>
+		</>
 	);
 };

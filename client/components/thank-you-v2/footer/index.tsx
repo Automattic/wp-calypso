@@ -11,6 +11,7 @@ export type ThankYouDetailProps = {
 	buttonText?: string;
 	href?: string;
 	clickEventName?: string;
+	onClick?: () => void;
 };
 
 const ThankYouDetail = ( {
@@ -40,7 +41,7 @@ const ThankYouDetail = ( {
 				<Button
 					className="thank-you__detail-button"
 					href={ localizeUrl( href ) }
-					onClick={ handleClick }
+					onClick={ onClick ?? handleClick }
 					target={ isExternal ? '_blank' : '_self' }
 				>
 					{ buttonText } { isExternal && <Gridicon icon="external" /> }
