@@ -1,11 +1,11 @@
 /**
  * External dependencies
  */
-import wpcomProxyRequest from 'wpcom-proxy-request';
+import wpcomLimitedRequest from './wpcom-limited-request';
 /**
  * Types
  */
-import { SaveToMediaLibraryProps, SaveToMediaLibraryResponseProps } from '../../types';
+import type { SaveToMediaLibraryProps, SaveToMediaLibraryResponseProps } from '../../types';
 
 export async function saveToMediaLibrary( { siteId, url, attrs = {} }: SaveToMediaLibraryProps ) {
 	const body = {
@@ -13,7 +13,7 @@ export async function saveToMediaLibrary( { siteId, url, attrs = {} }: SaveToMed
 		attrs: [ attrs ],
 	};
 
-	const response = await wpcomProxyRequest< SaveToMediaLibraryResponseProps >( {
+	const response = await wpcomLimitedRequest< SaveToMediaLibraryResponseProps >( {
 		path: `/sites/${ String( siteId ) }/media/new`,
 		apiVersion: '1.1',
 		body,
