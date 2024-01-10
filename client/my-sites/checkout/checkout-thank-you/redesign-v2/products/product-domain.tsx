@@ -44,7 +44,7 @@ const ProductDomain = ( {
 	};
 
 	const actions =
-		domainName || ! isDomainTransfer( purchase ) ? (
+		domainName || ( purchase && ! isDomainTransfer( purchase ) ) ? (
 			<>
 				{ shareSite && (
 					<ClipboardButton
