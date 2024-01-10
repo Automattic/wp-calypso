@@ -1,7 +1,13 @@
+/**
+ * External dependencies
+ */
 import debugFactory from 'debug';
-import wpcomProxyRequest from 'wpcom-proxy-request';
+/**
+ * Internal dependencies
+ */
 import { JWT_TOKEN_EXPIRATION_TIME, JWT_TOKEN_ID } from '../../constants';
 import { RequestTokenOptions, TokenDataProps, TokenDataEndpointResponseProps } from '../../types';
+import wpcomLimitedRequest from './wpcom-limited-request';
 
 const debug = debugFactory( 'jetpack-ai-calypso:request-token' );
 
@@ -40,12 +46,12 @@ export async function requestJwt( {
 	let data: TokenDataEndpointResponseProps;
 
 	if ( ! isSimple ) {
-		data = await wpcomProxyRequest( {
+		data = await wpcomLimitedRequest( {
 			path: '/jetpack/v4/jetpack-ai-jwt?_cacheBuster=' + Date.now(),
 			method: 'POST',
 		} );
 	} else {
-		data = await wpcomProxyRequest( {
+		data = await wpcomLimitedRequest( {
 			apiNamespace: 'wpcom/v2',
 			path: '/sites/' + siteId + '/jetpack-openai-query/jwt',
 			method: 'POST',

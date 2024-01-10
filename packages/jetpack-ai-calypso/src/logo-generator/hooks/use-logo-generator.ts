@@ -6,15 +6,15 @@ import { useDispatch, useSelect } from '@wordpress/data';
 import { __ } from '@wordpress/i18n';
 import debugFactory from 'debug';
 import { useCallback } from 'react';
-import wpcomProxyRequest from 'wpcom-proxy-request';
 /**
  * Internal dependencies
  */
-import { stashLogo } from '../lib/logo-storage';
 import { EVENT_PROMPT_SUBMIT } from '../../constants';
+import { stashLogo } from '../lib/logo-storage';
 import { requestJwt } from '../lib/request-token';
 import { saveToMediaLibrary } from '../lib/save-to-media-library';
 import { setSiteLogo } from '../lib/set-site-logo';
+import wpcomLimitedRequest from '../lib/wpcom-limited-request';
 import { STORE_NAME } from '../store';
 /**
  * Types
@@ -88,15 +88,15 @@ Site description: ${ description }`;
 			stream: false,
 		};
 
-		const data = await wpcomProxyRequest< { choices: Array< { message: { content: string } } > } >(
-			{
-				apiNamespace: 'wpcom/v2',
-				path: '/jetpack-ai-query',
-				method: 'POST',
-				token: tokenData.token,
-				body,
-			}
-		);
+		const data = await wpcomLimitedRequest< {
+			choices: Array< { message: { content: string } } >;
+		} >( {
+			apiNamespace: 'wpcom/v2',
+			path: '/jetpack-ai-query',
+			method: 'POST',
+			token: tokenData.token,
+			body,
+		} );
 
 		return data?.choices?.[ 0 ]?.message?.content;
 	};
@@ -199,7 +199,7 @@ User request: ${ prompt }
 			// 	query: `prompt=${ prompt }&token=${ tokenData.token }&response_format=url`,
 			// } );
 		} else {
-			data = await wpcomProxyRequest( {
+			data = await wpcomLimitedRequest( {
 				apiNamespace: 'wpcom/v2',
 				path: '/jetpack-ai-image',
 				method: 'POST',
@@ -242,15 +242,15 @@ For example: user's prompt: A logo for an ice cream shop. Returned prompt: A log
 			stream: false,
 		};
 
-		const data = await wpcomProxyRequest< { choices: Array< { message: { content: string } } > } >(
-			{
-				apiNamespace: 'wpcom/v2',
-				path: '/jetpack-ai-query',
-				method: 'POST',
-				token: tokenData.token,
-				body,
-			}
-		);
+		const data = await wpcomLimitedRequest< {
+			choices: Array< { message: { content: string } } >;
+		} >( {
+			apiNamespace: 'wpcom/v2',
+			path: '/jetpack-ai-query',
+			method: 'POST',
+			token: tokenData.token,
+			body,
+		} );
 
 		return data?.choices?.[ 0 ]?.message?.content;
 	};
