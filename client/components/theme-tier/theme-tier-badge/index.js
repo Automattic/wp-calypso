@@ -15,6 +15,7 @@ import './style.scss';
 export default function ThemeTierBadge( {
 	canGoToCheckout = true,
 	isLockedStyleVariation,
+	showUpgradeBadge = true,
 	themeId,
 } ) {
 	const siteId = useSelector( getSelectedSiteId );
@@ -50,7 +51,11 @@ export default function ThemeTierBadge( {
 
 	return (
 		<div className="theme-tier-badge">
-			<ThemeTierBadgeContextProvider canGoToCheckout={ canGoToCheckout } themeId={ themeId }>
+			<ThemeTierBadgeContextProvider
+				canGoToCheckout={ canGoToCheckout }
+				showUpgradeBadge={ showUpgradeBadge }
+				themeId={ themeId }
+			>
 				{ getBadge() }
 			</ThemeTierBadgeContextProvider>
 		</div>
