@@ -95,8 +95,9 @@ const usePricingMetaForGridPlans: UsePricingMetaForGridPlans = ( {
 
 				/**
 				 * 0. No plan or sitePlan (when selected site exists): planSlug is for a priceless plan.
+				 * TODO clk: the condition on `.pricing` here needs investigation. There should be a pricing object for all returned API plans.
 				 */
-				if ( ! plan || ( selectedSiteId && ! sitePlan ) ) {
+				if ( ! plan?.pricing || ( selectedSiteId && ! sitePlan?.pricing ) ) {
 					return [
 						planSlug,
 						{
