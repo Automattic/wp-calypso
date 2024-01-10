@@ -5,6 +5,7 @@ import proxy from 'wpcom-proxy-request';
 /**
  * Types & Constants
  */
+import { getSiteLogoHistory } from '../lib/logo-storage';
 import {
 	ACTION_INCREASE_AI_ASSISTANT_REQUESTS_COUNT,
 	ACTION_REQUEST_AI_ASSISTANT_FEATURE,
@@ -19,10 +20,10 @@ import {
 	ACTION_SET_IS_REQUESTING_IMAGE,
 	ACTION_SET_IS_APPLYING_LOGO,
 	ACTION_SET_IS_ENHANCING_PROMPT,
+	ACTION_SET_SITE_HISTORY,
 } from './constants';
 import type { AiFeatureProps, AiAssistantFeatureEndpointResponseProps, Logo } from './types';
 import type { SiteDetails } from '@automattic/data-stores';
-
 /**
  * Map the response from the `sites/$site/ai-assistant-feature`
  * endpoint to the AI Assistant feature props.
@@ -171,6 +172,14 @@ const actions = {
 		return {
 			type: ACTION_SET_IS_ENHANCING_PROMPT,
 			isEnhancingPrompt,
+		};
+	},
+
+	loadLogoHistory( siteId: string ) {
+		const history = getSiteLogoHistory( siteId );
+		return {
+			type: ACTION_SET_SITE_HISTORY,
+			history,
 		};
 	},
 };

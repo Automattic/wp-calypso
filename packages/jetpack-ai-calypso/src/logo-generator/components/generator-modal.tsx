@@ -30,7 +30,7 @@ export const GeneratorModal: React.FC< GeneratorModalProps > = ( {
 	siteDetails,
 } ) => {
 	// eslint-disable-next-line @typescript-eslint/no-unused-vars
-	const { setSiteDetails, fetchAiAssistantFeature } = useDispatch( STORE_NAME );
+	const { setSiteDetails, fetchAiAssistantFeature, loadLogoHistory } = useDispatch( STORE_NAME );
 	const [ isLoading, setIsLoading ] = useState( true );
 	const { selectedLogo } = useLogoGenerator();
 	const siteId = siteDetails?.ID;
@@ -46,6 +46,7 @@ export const GeneratorModal: React.FC< GeneratorModalProps > = ( {
 			if ( siteId ) {
 				debug( 'fetching ai assistant feature for site', siteId );
 				fetchAiAssistantFeature( String( siteId ) );
+				loadLogoHistory( siteId );
 			}
 
 			setTimeout( () => {
@@ -54,7 +55,7 @@ export const GeneratorModal: React.FC< GeneratorModalProps > = ( {
 		} else {
 			setIsLoading( true );
 		}
-	}, [ isOpen, fetchAiAssistantFeature, siteId ] );
+	}, [ isOpen, fetchAiAssistantFeature, siteId, loadLogoHistory ] );
 
 	const handleApplyLogo = () => {
 		onClose();
