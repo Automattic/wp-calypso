@@ -1,4 +1,5 @@
 import { useI18n } from '@wordpress/react-i18n';
+import { addQueryArgs } from '@wordpress/url';
 import { useSelector } from 'react-redux';
 import EmptyContent from 'calypso/components/empty-content';
 import { isUserEligibleForFreeHostingTrial } from 'calypso/state/selectors/is-user-eligible-for-free-hosting-trial';
@@ -11,11 +12,16 @@ interface HostingFlowForkingPageProps {
 
 export const HostingFlowForkingPage = ( { siteCount }: HostingFlowForkingPageProps ) => {
 	const { __ } = useI18n();
-
 	const isEligible = useSelector( isUserEligibleForFreeHostingTrial );
 
 	if ( ! isEligible ) {
-		window.location.replace( '/setup/new-hosted-site/plans?ref=hosting-trial-not-eligible' );
+		const query = new URLSearchParams( window.location.search );
+		const queryParams = Object.fromEntries( query );
+		const urlWithQueryParams = addQueryArgs(
+			'/setup/new-hosted-site/plans?hosting-trial-not-eligible=true',
+			queryParams
+		);
+		window.location.replace( urlWithQueryParams );
 		return false;
 	}
 
