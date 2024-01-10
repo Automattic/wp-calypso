@@ -190,7 +190,7 @@ const DeleteButtonWrapper = styled.div`
 
 const DeleteButton = styled( Button )< { theme?: Theme } >`
 	width: auto;
-	font-size: ${ hasCheckoutVersion( '2' ) ? '14px' : 'inherit' };
+	font-size: ${ hasCheckoutVersion( '2' ) ? '14px' : '0.75rem' };
 	color: ${ ( props ) => props.theme.colors.textColorLight };
 `;
 

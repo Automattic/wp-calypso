@@ -29,7 +29,6 @@ export default function BundleDetails( { parentLicenseId }: Props ) {
 					key={ item.licenseId }
 					licenseKey={ item.licenseKey }
 					product={ item.product }
-					username={ item.username }
 					blogId={ item.blogId }
 					siteUrl={ item.siteUrl }
 					hasDownloads={ item.hasDownloads }

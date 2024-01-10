@@ -5,7 +5,6 @@ import { useEffect } from 'react';
 import { getLocaleFromQueryParam, getLocaleFromPathname } from 'calypso/boot/locale';
 import recordGTMDatalayerEvent from 'calypso/lib/analytics/ad-tracking/woo/record-gtm-datalayer-event';
 import { logToLogstash } from 'calypso/lib/logstash';
-import { useSiteSetupFlowProgress } from '../hooks/use-site-setup-flow-progress';
 import { useSiteSlugParam } from '../hooks/use-site-slug-param';
 import { USER_STORE, ONBOARD_STORE, SITE_STORE } from '../stores';
 import { getLoginUrl } from '../utils/path';
@@ -160,11 +159,8 @@ const wooexpress: Flow = {
 		);
 		const siteSlugParam = useSiteSlugParam();
 
-		const { setStepProgress, setPluginsToVerify } = useDispatch( ONBOARD_STORE );
+		const { setPluginsToVerify } = useDispatch( ONBOARD_STORE );
 		setPluginsToVerify( [ 'woocommerce' ] );
-
-		const flowProgress = useSiteSetupFlowProgress( currentStep, intent );
-		setStepProgress( flowProgress );
 
 		const { getSiteIdBySlug, getSiteOption } = useSelect(
 			( select ) => select( SITE_STORE ) as SiteSelect,

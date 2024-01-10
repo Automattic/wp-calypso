@@ -25,7 +25,7 @@ export default function useChatWidget(
 	enabled = true
 ) {
 	const sectionName = useSelector( getSectionName );
-	const { isLoading: isSubmittingZendeskUserFields, mutateAsync: submitZendeskUserFields } =
+	const { isPending: isSubmittingZendeskUserFields, mutateAsync: submitZendeskUserFields } =
 		useUpdateZendeskUserFieldsMutation();
 	const { setShowHelpCenter, resetStore } = useDispatch( HELP_CENTER_STORE );
 
@@ -60,7 +60,7 @@ export default function useChatWidget(
 	};
 
 	return {
-		isOpeningChatWidget: isSubmittingZendeskUserFields || ! isMessagingScriptLoaded,
+		isOpeningChatWidget: enabled && ( isSubmittingZendeskUserFields || ! isMessagingScriptLoaded ),
 		openChatWidget,
 	};
 }

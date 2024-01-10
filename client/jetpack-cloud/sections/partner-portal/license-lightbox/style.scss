@@ -16,4 +16,14 @@
 	display: block;
 	width: 100%;
 	padding: 10px 16px;
+
+	.license-lightbox__cta-button-external-link {
+		inset-inline-start: 4px;
+		width: 18px;
+		height: 18px;
+	}
+
+	&.is-primary .license-lightbox__cta-button-external-link {
+		color: var(--studio-white);
+	}
 }

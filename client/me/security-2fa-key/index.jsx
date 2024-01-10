@@ -114,17 +114,15 @@ class Security2faKey extends Component {
 					<Card>
 						{ isBrowserSupported && (
 							<p>
-								<>
-									{ this.props.translate(
-										'Security keys offer a more robust form of two-step authentication. Your security key may be a physical device, or you can use passkey support built into your browser.'
-									) }{ ' ' }
-									<InlineSupportLink
-										showIcon={ false }
-										supportContext="two-step-authentication-security-key"
-									>
-										{ translate( 'Learn more' ) }
-									</InlineSupportLink>
-								</>
+								{ this.props.translate(
+									'Security keys offer a more robust form of two-step authentication. Your security key may be a physical device, or you can use passkey support built into your browser.'
+								) }{ ' ' }
+								<InlineSupportLink
+									showIcon={ false }
+									supportContext="two-step-authentication-security-key"
+								>
+									{ translate( 'Learn more' ) }
+								</InlineSupportLink>
 							</p>
 						) }
 						{ ! isBrowserSupported && (

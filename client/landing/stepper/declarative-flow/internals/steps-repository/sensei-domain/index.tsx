@@ -29,12 +29,12 @@ const SenseiDomain: Step = ( { navigation } ) => {
 
 	const onSkip = () => {
 		setDomain( domain );
-		submit?.( { domain: domain } );
+		submit?.();
 	};
 
 	const onAddDomain = ( selectedDomain: typeof domain ) => {
 		setDomain( selectedDomain );
-		submit?.( { domain: selectedDomain } );
+		submit?.();
 	};
 
 	const domainSuggestion = domain?.domain_name ?? siteTitle;

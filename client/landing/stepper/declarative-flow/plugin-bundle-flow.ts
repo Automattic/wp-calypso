@@ -7,7 +7,6 @@ import { useComingFromThemeActivationParam } from '../hooks/use-coming-from-them
 import { useSite } from '../hooks/use-site';
 import { useSiteIdParam } from '../hooks/use-site-id-param';
 import { useSitePluginSlug } from '../hooks/use-site-plugin-slug';
-import { useSiteSetupFlowProgress } from '../hooks/use-site-setup-flow-progress';
 import { useSiteSlugParam } from '../hooks/use-site-slug-param';
 import { useCanUserManageOptions } from '../hooks/use-user-can-manage-options';
 import { ONBOARD_STORE, SITE_STORE, USER_STORE } from '../stores';
@@ -101,23 +100,14 @@ const pluginBundleFlow: Flow = {
 			( select ) => ( select( ONBOARD_STORE ) as OnboardSelect ).getStoreType(),
 			[]
 		);
-		const { setPendingAction, setStepProgress, resetOnboardStoreWithSkipFlags } =
-			useDispatch( ONBOARD_STORE );
+		const { setPendingAction, resetOnboardStoreWithSkipFlags } = useDispatch( ONBOARD_STORE );
 		const { setIntentOnSite, setGoalsOnSite, setDesignOnSite } = useDispatch( SITE_STORE );
 		const siteDetails = useSelect(
 			( select ) => site && ( select( SITE_STORE ) as SiteSelect ).getSite( site.ID ),
 			[ site ]
 		);
 		const dispatch = reduxDispatch();
-
-		// Since we're mimicking a subset of the site-setup-flow, we're safe to use the siteSetupProgress.
-		const flowProgress = useSiteSetupFlowProgress( currentStep, intent );
-
 		const pluginSlug = useSitePluginSlug();
-
-		if ( flowProgress ) {
-			setStepProgress( flowProgress );
-		}
 
 		const exitFlow = ( to: string ) => {
 			setPendingAction( () => {

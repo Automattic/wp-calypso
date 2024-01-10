@@ -31,7 +31,6 @@ import './style.scss';
 interface Props {
 	licenseKey: string;
 	product: string;
-	username: string | null;
 	blogId: number | null;
 	siteUrl: string | null;
 	hasDownloads: boolean;
@@ -47,7 +46,6 @@ interface Props {
 export default function LicensePreview( {
 	licenseKey,
 	product,
-	username,
 	blogId,
 	siteUrl,
 	hasDownloads,
@@ -120,7 +118,7 @@ export default function LicensePreview( {
 	const isSiteAtomic =
 		isEnabled( 'jetpack/pro-dashboard-wpcom-atomic-hosting' ) && site?.is_wpcom_atomic;
 
-	const isParentLicense = isEnabled( 'jetpack/bundle-licensing' ) && quantity && parentLicenseId;
+	const isParentLicense = quantity && parentLicenseId;
 
 	const bundleCountContent = quantity && (
 		<Badge className="license-preview__license-count" type="info">
@@ -267,7 +265,6 @@ export default function LicensePreview( {
 						licenseKey={ licenseKey }
 						product={ product }
 						siteUrl={ siteUrl }
-						username={ username }
 						blogId={ blogId }
 						hasDownloads={ hasDownloads }
 						issuedAt={ issuedAt }

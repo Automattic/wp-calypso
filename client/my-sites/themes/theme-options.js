@@ -1,9 +1,11 @@
-import { WPCOM_FEATURES_INSTALL_PLUGINS } from '@automattic/calypso-products';
+import { WPCOM_FEATURES_INSTALL_PLUGINS, getPlan } from '@automattic/calypso-products';
 import { addQueryArgs } from '@wordpress/url';
 import { localize } from 'i18n-calypso';
 import { mapValues, pickBy, flowRight as compose } from 'lodash';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
+import { THEME_TIERS } from 'calypso/components/theme-tier/constants';
+import getThemeTier from 'calypso/components/theme-tier/get-theme-tier';
 import withIsFSEActive from 'calypso/data/themes/with-is-fse-active';
 import { localizeThemesPath } from 'calypso/my-sites/themes/helpers';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
@@ -57,7 +59,12 @@ function getAllThemeOptions( { translate, isFSEActive } ) {
 				} )
 			);
 
-			return `/checkout/${ slug }/value_bundle?redirect_to=${ redirectTo }`;
+			const { themeTier } = getThemeTier( state, siteId, themeId );
+			const tierMinimumUpsellPlan = THEME_TIERS[ themeTier?.slug ]?.minimumUpsellPlan;
+			const mappedPlan = getPlan( tierMinimumUpsellPlan );
+			const planPathSlug = mappedPlan?.getPathSlug();
+
+			return `/checkout/${ slug }/${ planPathSlug }?redirect_to=${ redirectTo }`;
 		},
 		hideForTheme: ( state, themeId, siteId ) =>
 			( isJetpackSite( state, siteId ) && ! isSiteWpcomAtomic( state, siteId ) ) || // No individual theme purchase on a JP site
@@ -255,7 +262,7 @@ function getAllThemeOptions( { translate, isFSEActive } ) {
 			comment: 'label for previewing a block theme',
 		} ),
 		action: ( themeId, siteId ) => {
-			return livePreviewAction( themeId, siteId, 'list' );
+			return livePreviewAction( siteId, themeId, false, undefined, 'list' );
 		},
 		hideForTheme: ( state, themeId, siteId ) =>
 			! getIsLivePreviewSupported( state, themeId, siteId ),
@@ -327,6 +334,31 @@ function getAllThemeOptions( { translate, isFSEActive } ) {
 		info,
 	};
 }
+
+export const getWooMyCustomThemeOptions = ( { translate, siteAdminUrl, siteSlug, options } ) => {
+	return {
+		assembler: {
+			key: 'assembler',
+			label: translate( 'Quick editing in the Assembler' ),
+			extendedLabel: translate( 'Quick editing in the Assembler' ),
+			getUrl: () => {
+				return `${ siteAdminUrl }admin.php?page=wc-admin&path=%2Fcustomize-store%2Fassembler-hub&customizing=true`;
+			},
+		},
+		customize: {
+			...options.customize,
+			label: translate( 'Advance customization in the Editor' ),
+			extendedLabel: translate( 'Advance customization in the Editor' ),
+		},
+		preview: {
+			label: translate( 'Store preview' ),
+			extendedLabel: translate( 'Store preview' ),
+			getUrl: () => {
+				return `//${ siteSlug }`;
+			},
+		},
+	};
+};
 
 const connectOptionsHoc = connect(
 	( state, props ) => {

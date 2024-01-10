@@ -311,7 +311,6 @@ export const MOCK_USE_QUERY_RESULT = {
 	isLoading: false,
 	isLoadingError: false,
 	isPlaceholderData: false,
-	isPreviousData: false,
 	isRefetchError: false,
 	isRefetching: false,
 	isStale: false,

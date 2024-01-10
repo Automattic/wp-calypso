@@ -20,6 +20,7 @@ import {
 import { getProductsList, isMarketplaceProduct } from 'calypso/state/products-list/selectors';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import { AppState } from 'calypso/types';
+import { MarketplaceCreateReviewItem } from '../review-item';
 
 type Props = {
 	isVisible: boolean;
@@ -42,6 +43,7 @@ export const ReviewsModal = ( props: Props ) => {
 		slug,
 		perPage: 1,
 		author: currentUser?.ID ?? undefined,
+		status: 'all',
 	} );
 	const { data: reviewsStats } = useMarketplaceReviewsStatsQuery( {
 		productType,
@@ -55,7 +57,6 @@ export const ReviewsModal = ( props: Props ) => {
 	const hasActiveSubscription = useSelector( ( state: AppState ) =>
 		hasActivePluginSubscription( state, variations )
 	);
-	const askForReview = canPublishReview && ! userHasReviewed;
 
 	const { ratings_average: averageRating, ratings_count: numberOfReviews } = reviewsStats || {};
 	const normalizedRating = ( ( averageRating ?? 0 ) * 100 ) / 5; // Normalize to 100
@@ -101,15 +102,10 @@ export const ReviewsModal = ( props: Props ) => {
 								</div>
 							</div>
 						</div>
-						{ askForReview && (
-							<div className="marketplace-reviews-modal__summary-button">
-								<Button primary onClick={ () => alert( 'Not implemented yet' ) }>
-									{ translate( 'Leave my review' ) }
-								</Button>
-							</div>
-						) }
+
 						{ /* TODO: Add theme purchase */ }
-						{ ! askForReview &&
+						{ ! canPublishReview &&
+							! userHasReviewed &&
 							! hasActiveSubscription &&
 							isMarketplacePlugin &&
 							selectedSite?.slug && (
@@ -129,7 +125,8 @@ export const ReviewsModal = ( props: Props ) => {
 					</div>
 				) }
 
-				{ /* TODO: Add the review creation section */ }
+				<MarketplaceCreateReviewItem productType={ productType } slug={ slug } />
+
 				<div className="marketplace-reviews-modal__reviews-list">
 					<MarketplaceReviewsList productType={ productType } slug={ slug } />
 				</div>

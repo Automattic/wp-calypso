@@ -32,12 +32,12 @@ export const useStartSiteOwnerTransfer = (
 		},
 	} );
 
-	const { mutate, isLoading } = mutation;
+	const { mutate, isPending } = mutation;
 
 	const startSiteOwnerTransfer = useCallback(
 		( args: MutationVariables ) => mutate( args ),
 		[ mutate ]
 	);
 
-	return { startSiteOwnerTransfer, isLoading };
+	return { startSiteOwnerTransfer, isPending };
 };

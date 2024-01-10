@@ -5,7 +5,7 @@ import {
 	PLAN_ECOMMERCE_3_YEARS,
 } from '@automattic/calypso-products';
 import { useLocale } from '@automattic/i18n-utils';
-import { useFlowProgress, ECOMMERCE_FLOW, ecommerceFlowRecurTypes } from '@automattic/onboarding';
+import { ECOMMERCE_FLOW, ecommerceFlowRecurTypes } from '@automattic/onboarding';
 import { useSelect, useDispatch } from '@wordpress/data';
 import { useEffect } from 'react';
 import { getLocaleFromQueryParam, getLocaleFromPathname } from 'calypso/boot/locale';
@@ -152,14 +152,13 @@ const ecommerceFlow: Flow = {
 
 	useStepNavigation( _currentStepName, navigate ) {
 		const flowName = this.name;
-		const { setStepProgress, setPlanCartItem, setPluginsToVerify } = useDispatch( ONBOARD_STORE );
+		const { setPlanCartItem, setPluginsToVerify, resetCouponCode } = useDispatch( ONBOARD_STORE );
 		setPluginsToVerify( [ 'woocommerce' ] );
-		const flowProgress = useFlowProgress( { stepName: _currentStepName, flowName } );
-		setStepProgress( flowProgress );
-		const { selectedDesign, recurType } = useSelect(
+		const { selectedDesign, recurType, couponCode } = useSelect(
 			( select ) => ( {
 				selectedDesign: ( select( ONBOARD_STORE ) as OnboardSelect ).getSelectedDesign(),
 				recurType: ( select( ONBOARD_STORE ) as OnboardSelect ).getEcommerceFlowRecurType(),
+				couponCode: ( select( ONBOARD_STORE ) as OnboardSelect ).getCouponCode(),
 			} ),
 			[]
 		);
@@ -213,11 +212,13 @@ const ecommerceFlow: Flow = {
 						} );
 
 						const returnUrl = encodeURIComponent( `/setup/${ flowName }/checkPlan?${ urlParams }` );
+						const couponCodeParam = couponCode ? `coupon=${ couponCode }` : '';
+						resetCouponCode();
 
 						return window.location.assign(
 							`/checkout/${ encodeURIComponent(
 								( siteSlug as string ) ?? ''
-							) }?redirect_to=${ returnUrl }&signup=1`
+							) }?redirect_to=${ returnUrl }&signup=1&${ couponCodeParam }`
 						);
 					}
 					return navigate( `checkPlan?siteSlug=${ siteSlug }` );

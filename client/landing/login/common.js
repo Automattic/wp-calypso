@@ -60,8 +60,8 @@ export const configureReduxStore = ( currentUser, reduxStore ) => {
 	}
 
 	if ( config.isEnabled( 'network-connection' ) ) {
-		asyncRequire( 'calypso/lib/network-connection', ( networkConnection ) =>
-			networkConnection.init( reduxStore )
+		asyncRequire( 'calypso/lib/network-connection' ).then( ( networkConnection ) =>
+			networkConnection.default.init( reduxStore )
 		);
 	}
 };

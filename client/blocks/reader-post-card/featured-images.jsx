@@ -17,6 +17,7 @@ const ReaderFeaturedImages = ( { post, postUrl, canonicalMedia, isCompactPost, h
 				href={ postUrl }
 				fetched={ canonicalMedia.fetched }
 				isCompactPost={ isCompactPost }
+				hasExcerpt={ hasExcerpt }
 			/>
 		);
 	}
@@ -56,6 +57,8 @@ const ReaderFeaturedImages = ( { post, postUrl, canonicalMedia, isCompactPost, h
 				imageWidth={ imageWidth }
 				imageHeight={ imageHeight }
 				children={ <div style={ { width: width } } /> }
+				isCompactPost={ isCompactPost }
+				hasExcerpt={ hasExcerpt }
 			/>
 		);
 

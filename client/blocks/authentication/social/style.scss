@@ -64,28 +64,6 @@
 	}
 }
 
-// This is only for compatibility with not social first login, it will be removed after the experiment ends.
-.is-white-login .auth-form__social:not(.is-social-first) {
-	.auth-form__social-buttons-container {
-		width: unset;
-		.social-buttons__button {
-			> svg {
-				border: 1px solid var(--studio-gray-10);
-				border-radius: 24px; /* stylelint-disable-line scales/radii */
-			}
-		}
-	}
-}
-
-.is-white-login .auth-form__social:not(.is-social-first),
-.is-white-signup .auth-form__social:not(.is-social-first) {
-	.social-buttons__button {
-		> svg {
-			padding: 12px;
-		}
-	}
-}
-
 .auth-form__social.is-social-first {
 	.auth-form__social-buttons-container {
 		gap: 16px;

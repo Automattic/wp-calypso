@@ -106,7 +106,8 @@ export class CartCheckoutPage {
 	 * Validates that the card payment input fields are visible.
 	 */
 	async validatePaymentForm(): Promise< void > {
-		await this.page.waitForSelector( selectors.cardholderName );
+		const cardholderNameLocator = this.page.locator( selectors.cardholderName );
+		await cardholderNameLocator.waitFor( { state: 'visible', timeout: 20 * 1000 } );
 	}
 	/**
 	 * Validates that an item is in the cart with the expected text. Throws if it isn't.

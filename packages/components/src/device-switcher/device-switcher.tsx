@@ -1,6 +1,4 @@
-import { RangeControl } from '@wordpress/components';
 import { useResizeObserver } from '@wordpress/compose';
-import { search } from '@wordpress/icons';
 import classnames from 'classnames';
 import { useState, useEffect, useRef } from 'react';
 import { DEVICE_TYPES } from './constants';
@@ -28,11 +26,12 @@ interface Props {
 
 // Transition animation delay
 const ANIMATION_DURATION = 250;
+const { COMPUTER, TABLET, PHONE } = DEVICE_TYPES;
 
 const DeviceSwitcher = ( {
 	children,
 	className = '',
-	defaultDevice = DEVICE_TYPES.COMPUTER,
+	defaultDevice = COMPUTER,
 	isShowDeviceSwitcherToolbar,
 	isShowFrameBorder,
 	isShowFrameShadow = true,
@@ -45,14 +44,20 @@ const DeviceSwitcher = ( {
 	onZoomOutScaleChange,
 }: Props ) => {
 	const [ device, setDevice ] = useState< Device >( defaultDevice );
+	const [ isZoomActive, setIsZoomActive ] = useState( false );
 	const [ containerResizeListener, { width, height } ] = useResizeObserver();
+	const { zoomOutStyles, handleZoomOutScaleChange } = useZoomOut( onZoomOutScaleChange );
+
 	const timerRef = useRef< null | ReturnType< typeof setTimeout > >( null );
-	const { zoomOutScale, zoomOutStyles, handleZoomOutScaleChange } =
-		useZoomOut( onZoomOutScaleChange );
 
 	const handleDeviceClick = ( nextDevice: Device ) => {
 		setDevice( nextDevice );
 		onDeviceChange?.( nextDevice );
+	};
+
+	const handleZoomClick = () => {
+		setIsZoomActive( ! isZoomActive );
+		handleZoomOutScaleChange( ! isZoomActive ? 0.5 : 1 );
 	};
 
 	// Animate on viewport size update
@@ -99,27 +104,20 @@ const DeviceSwitcher = ( {
 				'device-switcher__container--frame-fixed-viewport': isFixedViewport,
 				'device-switcher__container--frame-shadow': isShowFrameShadow,
 				'device-switcher__container--frame-bordered': isShowFrameBorder,
-				'device-switcher__container--is-computer': device === 'computer',
-				'device-switcher__container--is-tablet': device === 'tablet',
-				'device-switcher__container--is-phone': device === 'phone',
+				'device-switcher__container--is-computer': device === COMPUTER,
+				'device-switcher__container--is-tablet': device === TABLET,
+				'device-switcher__container--is-phone': device === PHONE,
 				'device-switcher__container--is-fullscreen': isFullscreen,
 			} ) }
 		>
 			<div className="device-switcher__header">
 				{ isShowDeviceSwitcherToolbar && (
-					<DeviceSwitcherToolbar device={ device } onDeviceClick={ handleDeviceClick } />
-				) }
-				{ isZoomable && (
-					<RangeControl
-						className="device-switcher__zoom-out"
-						beforeIcon={ search }
-						withInputField={ false }
-						showTooltip={ false }
-						__nextHasNoMarginBottom
-						value={ Math.round( zoomOutScale * 100 ) }
-						onChange={ ( value ) => value !== undefined && handleZoomOutScaleChange( value / 100 ) }
-						min={ 25 }
-						max={ 100 }
+					<DeviceSwitcherToolbar
+						device={ device }
+						isZoomable={ !! isZoomable }
+						isZoomActive={ isZoomActive }
+						onDeviceClick={ handleDeviceClick }
+						onZoomClick={ handleZoomClick }
 					/>
 				) }
 			</div>
