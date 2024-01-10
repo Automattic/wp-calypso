@@ -27,6 +27,11 @@ const ProductDomain = ( {
 	const [ isCopying, setIsCopying ] = useState( false );
 	const domain = domainName ?? purchase?.meta;
 
+	// Do not proceed if a domain is not specified by domain name or a purchase object.
+	if ( ! domain ) {
+		return null;
+	}
+
 	const handleShareSite = ( processing: boolean ) => () => {
 		setIsCopying( processing );
 	};
@@ -51,7 +56,7 @@ const ProductDomain = ( {
 			<>
 				{ shareSite && domain && (
 					<ClipboardButton
-						variant="primary"
+						className="is-primary"
 						onCopy={ handleShareSite( true ) }
 						onFinishCopy={ handleShareSite( false ) }
 						text={ domain }
