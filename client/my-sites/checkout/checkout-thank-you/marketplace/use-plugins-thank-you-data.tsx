@@ -3,7 +3,6 @@ import page from '@automattic/calypso-router';
 import { Button } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback, useEffect, useMemo } from 'react';
-import MasterbarStyled from 'calypso/components/masterbar-styled';
 import { useWPCOMPlugins } from 'calypso/data/marketplace/use-wpcom-plugins-query';
 import { waitFor } from 'calypso/my-sites/marketplace/util';
 import { useSelector, useDispatch } from 'calypso/state';
@@ -22,6 +21,7 @@ import { areFetched, areFetching, getPlugins } from 'calypso/state/plugins/wporg
 import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
+import MasterbarStyled from '../redesign-v2/masterbar-styled';
 import { ThankYouPluginSection } from './marketplace-thank-you-plugin-section';
 
 type ThankYouData = [
