@@ -71,7 +71,8 @@ type TaskId =
 	| 'design_edited'
 	| 'plan_selected'
 	| 'plan_completed'
-	| 'subscribers_added';
+	| 'subscribers_added'
+	| 'migrate_content';
 
 interface TaskContext {
 	siteInfoQueryArgs?: { siteId?: number; siteSlug?: string | null };
@@ -83,6 +84,8 @@ interface TaskContext {
 	translatedPlanName?: ReactNode | string;
 	isCurrentPlanFree?: boolean;
 	goToStep?: NavigationControls[ 'goToStep' ];
+	mustVerifyEmailBeforePosting?: boolean;
+	completeMigrateContentTask?: () => Promise< void >;
 }
 
 type TaskAction = ( task: Task, flow: string, context: TaskContext ) => EnhancedTask;
@@ -185,6 +188,19 @@ const actions: TaskActionTable = {
 			}
 		},
 		useCalypsoPath: false,
+	} ),
+	migrate_content: (
+		task,
+		flow,
+		{ mustVerifyEmailBeforePosting, completeMigrateContentTask }
+	) => ( {
+		...task,
+		disabled: mustVerifyEmailBeforePosting || false,
+		actionDispatch: () => {
+			recordTaskClickTracksEvent( flow, task.completed, task.id );
+			completeMigrateContentTask?.();
+		},
+		useCalypsoPath: true,
 	} ),
 } as const;
 
@@ -409,6 +425,8 @@ export function getEnhancedTasks( {
 		isCurrentPlanFree,
 		translatedPlanName,
 		goToStep,
+		completeMigrateContentTask,
+		mustVerifyEmailBeforePosting,
 	};
 
 	return ( tasks || [] ).map( ( task ) => {
@@ -421,21 +439,8 @@ export function getEnhancedTasks( {
 			case 'plan_selected':
 			case 'plan_completed':
 			case 'subscribers_added':
-				return getTaskDefinition( task, flow, context );
 			case 'migrate_content':
-				taskData = {
-					disabled: mustVerifyEmailBeforePosting || false,
-					actionDispatch: () => {
-						recordTaskClickTracksEvent( flow, task.completed, task.id );
-
-						// Mark task done
-						completeMigrateContentTask();
-
-						// Go to importers
-						window.location.assign( `/import/${ siteSlug }` );
-					},
-				};
-				break;
+				return getTaskDefinition( task, flow, context );
 			case 'first_post_published':
 				taskData = {
 					disabled:
