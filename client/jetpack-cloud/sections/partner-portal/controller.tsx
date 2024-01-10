@@ -1,3 +1,4 @@
+import { isEnabled } from '@automattic/calypso-config';
 import page, { type Callback, type Context } from '@automattic/calypso-router';
 import IssueLicenseV2 from 'calypso/jetpack-cloud/sections/partner-portal/issue-license-v2';
 import {
@@ -35,7 +36,10 @@ import { ToSConsent } from 'calypso/state/partner-portal/types';
 import getSites from 'calypso/state/selectors/get-sites';
 import { setAllSitesSelected } from 'calypso/state/ui/actions/set-sites';
 import Header from './header';
+import PaymentMethodListV2 from './payment-methods-v2';
 import WPCOMAtomicHosting from './primary/wpcom-atomic-hosting';
+
+const isNewCardAdditionEnabled = isEnabled( 'jetpack/card-addition-improvements' );
 
 const setSidebar = ( context: Context, isLicenseContext: boolean = false ): void => {
 	context.secondary = isLicenseContext ? (
@@ -138,7 +142,7 @@ export const assignLicenseContext: Callback = ( context, next ) => {
 export const paymentMethodListContext: Callback = ( context, next ) => {
 	context.header = <Header />;
 	setSidebar( context );
-	context.primary = <PaymentMethodList />;
+	context.primary = isNewCardAdditionEnabled ? <PaymentMethodListV2 /> : <PaymentMethodList />;
 	next();
 };
 
