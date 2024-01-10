@@ -742,7 +742,6 @@ class ThemeSheet extends Component {
 				} ) }
 				showUpgradeBadge={ false }
 				themeId={ themeId }
-				isLockedStyleVariation={ false }
 			/>
 		) : (
 			<ThemeTypeBadge
@@ -752,7 +751,6 @@ class ThemeSheet extends Component {
 				siteId={ siteId }
 				siteSlug={ siteSlug }
 				themeId={ themeId }
-				isLockedStyleVariation={ false }
 			/>
 		);
 	};
