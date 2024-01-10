@@ -230,10 +230,10 @@ export const SiteMonitoringLineChart = ( {
 			},
 			hooks: {
 				init: [
-					( u ) => {
-						[ ...u.root.querySelectorAll< HTMLElement >( '.u-legend .u-series' ) ].forEach(
+					( uPlot ) => {
+						[ ...uPlot.root.querySelectorAll< HTMLElement >( '.u-legend .u-series' ) ].forEach(
 							( el, i ) => {
-								const serie = u.series[ i ] as SeriesProp;
+								const serie = uPlot.series[ i ] as SeriesProp;
 								if ( ! serie.showInLegend ) {
 									el.style.display = 'none';
 								}
