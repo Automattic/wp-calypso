@@ -65,7 +65,11 @@ export function redirectIfCantStartSiteOwnerTransfer( context, next ) {
 export function redirectIfCantAddHeaderCode( context, next ) {
 	const state = context.store.getState();
 	const siteId = getSelectedSiteId( state );
-	if ( ! isSiteAutomatedTransfer( state, siteId ) && ! isJetpackSite( state, siteId ) ) {
+
+	if (
+		( ! isSiteAutomatedTransfer( state, siteId ) && ! isJetpackSite( state, siteId ) ) ||
+		! canCurrentUser( state, siteId, 'manage_options' )
+	) {
 		return page.redirect( '/settings/general/' + getSelectedSiteSlug( state ) );
 	}
 	next();

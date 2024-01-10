@@ -77,7 +77,7 @@ class SiteTools extends Component {
 		);
 
 		const headerCode = translate( 'Header code' );
-		const headerCodeText = translate( 'Insert code within the Header element of your site.' );
+		const headerCodeText = translate( 'Insert code within the <head> of your site.' );
 
 		const deleteSite = translate( 'Delete your site permanently' );
 		const deleteSiteText = translate(
