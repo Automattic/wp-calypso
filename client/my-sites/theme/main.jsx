@@ -735,19 +735,14 @@ class ThemeSheet extends Component {
 			return null;
 		}
 
+		const className = classNames( 'theme__sheet-main-info-type', {
+			'is-soft-launched': softLaunched,
+		} );
 		return config.isEnabled( 'themes/tiers' ) ? (
-			<ThemeTierBadge
-				className={ classNames( 'theme__sheet-main-info-type', {
-					'is-soft-launched': softLaunched,
-				} ) }
-				showUpgradeBadge={ false }
-				themeId={ themeId }
-			/>
+			<ThemeTierBadge className={ className } showUpgradeBadge={ false } themeId={ themeId } />
 		) : (
 			<ThemeTypeBadge
-				className={ classNames( 'theme__sheet-main-info-type', {
-					'is-soft-launched': softLaunched,
-				} ) }
+				className={ className }
 				siteId={ siteId }
 				siteSlug={ siteSlug }
 				themeId={ themeId }
