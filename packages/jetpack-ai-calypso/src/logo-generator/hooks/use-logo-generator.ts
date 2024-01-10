@@ -166,7 +166,11 @@ Site description: ${ description }`;
 		}
 	}, [ saveLogo, selectedLogo, setIsApplyingLogo, siteId ] );
 
-	const generateImage = async function ( { prompt }: { prompt: string } ): Promise< any > {
+	const generateImage = async function ( {
+		prompt,
+	}: {
+		prompt: string;
+	} ): Promise< { data: Array< { url: string } > } > {
 		const tokenData = await requestJwt( { siteDetails } );
 		const isSimple = ! siteDetails.is_wpcom_atomic;
 
@@ -183,7 +187,7 @@ User request: ${ prompt }
 
 		if ( ! tokenData || ! tokenData.token ) {
 			// TODO: handle error
-			return;
+			throw new Error( 'No token provided' );
 		}
 		let data;
 		const body = {
@@ -208,7 +212,7 @@ User request: ${ prompt }
 			} );
 		}
 
-		return data;
+		return data as { data: { url: string }[] };
 	};
 
 	const enhancePrompt = async function ( { prompt }: { prompt: string } ): Promise< string > {
@@ -263,26 +267,31 @@ For example: user's prompt: A logo for an ice cream shop. Returned prompt: A log
 		[ siteId, addLogoToHistory ]
 	);
 
-	const generateLogo = async function ( { prompt }: { prompt: string } ): Promise< any > {
+	const generateLogo = async function ( { prompt }: { prompt: string } ): Promise< void > {
 		debug( 'Generating logo for site', siteId );
 
-		increaseAiAssistantRequestsCount();
 		setIsRequestingImage( true );
-		recordTracksEvent( EVENT_PROMPT_SUBMIT );
+		try {
+			increaseAiAssistantRequestsCount();
+			recordTracksEvent( EVENT_PROMPT_SUBMIT );
 
-		const image = await generateImage( { prompt } );
+			const image = await generateImage( { prompt } );
 
-		if ( ! image || ! image.data.length ) {
-			// TODO: handle unexpected/error response
+			if ( ! image || ! image.data.length ) {
+				throw new Error( 'No image returned' );
+			}
+
+			// response_format=url returns object with url, otherwise b64_json
+			const logo = {
+				url: image.data[ 0 ].url,
+				description: prompt,
+			};
+			storeLogo( logo );
+		} catch ( error ) {
+			// TODO: handle error
+		} finally {
+			setIsRequestingImage( false );
 		}
-
-		// response_format=url returns object with url, otherwise b64_json
-		const logo = {
-			url: image.data[ 0 ].url,
-			description: prompt,
-		};
-		storeLogo( logo );
-		setIsRequestingImage( false );
 	};
 
 	return {
