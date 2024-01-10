@@ -87,7 +87,7 @@ class DomainsMiniCart extends Component {
 					</div>
 					<div className="domain-product-price__price">
 						{ hasPromotion && <del>{ priceText }</del> }
-						<span className="domains__price">{ formattedCost }</span>
+						<span className="domains__price">{ domain.temporary ? '...' : formattedCost }</span>
 					</div>
 				</div>
 				<div>
