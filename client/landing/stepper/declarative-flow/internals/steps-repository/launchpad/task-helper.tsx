@@ -433,6 +433,7 @@ const actions: TaskActionTable = {
 				domainUpsellCompleted || isBlogOnboardingFlow( flow ) || isSiteAssemblerFlow( flow )
 					? ''
 					: translate( 'Upgrade plan' ),
+			useCalypsoPath: false,
 		} ) satisfies EnhancedTask,
 	verify_email: ( task, flow, { isEmailVerified } ) => ( {
 		...task,
