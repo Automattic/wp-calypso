@@ -11,7 +11,7 @@
 	}
 
 	.thank-you__details-list-inner {
-		@include break-mobile {
+		@include break-small {
 			display: flex;
 			gap: 30px;
 			padding: 0 25px;
@@ -21,9 +21,8 @@
 	.thank-you__detail {
 		margin-bottom: 50px;
 
-		@include break-mobile {
+		@include break-small {
 			width: 50%;
-			margin-bottom: 0;
 		}
 	}
 
