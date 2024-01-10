@@ -227,6 +227,7 @@ const StatsPurchasePage = ( {
 						<>
 							{
 								// blog is commercial, we are forcing a product or the site is not identified yet - show the commercial purchase page
+								// TODO: remove StatsPurchaseWizard component as it's not in use anymore.
 								( ( ! isForceProductRedirect && ( isCommercial || isCommercial === null ) ) ||
 									redirectToCommercial ) && (
 									<div className="stats-purchase-page__notice">
