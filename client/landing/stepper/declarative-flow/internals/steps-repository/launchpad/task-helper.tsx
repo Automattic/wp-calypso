@@ -88,7 +88,8 @@ type TaskId =
 	| 'videopress_upload'
 	| 'videopress_launched'
 	| 'domain_upsell'
-	| 'verify_email';
+	| 'verify_email'
+	| 'set_up_payments';
 
 interface TaskContext {
 	siteInfoQueryArgs?: { siteId?: number; siteSlug?: string | null };
@@ -111,6 +112,7 @@ interface TaskContext {
 	videoPressUploadCompleted: boolean;
 	domainUpsellCompleted: boolean;
 	isEmailVerified: boolean;
+	stripeConnectUrl?: string;
 }
 
 type TaskAction = ( task: Task, flow: string, context: TaskContext ) => EnhancedTask;
@@ -443,6 +445,16 @@ const actions: TaskActionTable = {
 		},
 		useCalypsoPath: true,
 	} ),
+	set_up_payments: ( task, flow, { stripeConnectUrl, siteInfoQueryArgs } ) => ( {
+		...task,
+		badge_text: task.completed ? translate( 'Connected' ) : null,
+		actionDispatch: () => {
+			recordTaskClickTracksEvent( flow, task.completed, task.id );
+		},
+		calypso_path: stripeConnectUrl
+			? stripeConnectUrl
+			: `/earn/payments/${ siteInfoQueryArgs?.siteSlug }#launchpad`,
+	} ),
 } as const;
 
 const getTaskDefinition = ( task: Task, flow: string, taskContext: TaskContext ) => {
@@ -677,6 +689,7 @@ export function getEnhancedTasks( {
 		videoPressUploadCompleted,
 		domainUpsellCompleted,
 		isEmailVerified,
+		stripeConnectUrl,
 	};
 
 	return ( tasks || [] ).map( ( task ) => {
@@ -704,18 +717,8 @@ export function getEnhancedTasks( {
 			case 'videopress_launched':
 			case 'domain_upsell':
 			case 'verify_email':
-				return getTaskDefinition( task, flow, context );
 			case 'set_up_payments':
-				taskData = {
-					badge_text: task.completed ? translate( 'Connected' ) : null,
-					actionDispatch: () => {
-						recordTaskClickTracksEvent( flow, task.completed, task.id );
-						stripeConnectUrl
-							? window.location.assign( stripeConnectUrl )
-							: window.location.assign( `/earn/payments/${ siteSlug }#launchpad` );
-					},
-				};
-				break;
+				return getTaskDefinition( task, flow, context );
 			case 'newsletter_plan_created':
 				taskData = {
 					actionDispatch: () => {
