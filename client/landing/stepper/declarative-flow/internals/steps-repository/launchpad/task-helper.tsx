@@ -76,7 +76,8 @@ type TaskId =
 	| 'first_post_published'
 	| 'first_post_published_newsletter'
 	| 'design_selected'
-	| 'design_completed';
+	| 'design_completed'
+	| 'setup_general';
 
 interface TaskContext {
 	siteInfoQueryArgs?: { siteId?: number; siteSlug?: string | null };
@@ -246,6 +247,17 @@ const actions: TaskActionTable = {
 			flowToReturnTo: flow,
 		} ),
 		useCalypsoPath: true,
+	} ),
+	setup_general: ( task, flow, { siteInfoQueryArgs } ) => ( {
+		...task,
+		disabled: false,
+		actionDispatch: () => {
+			recordTaskClickTracksEvent( flow, task.completed, task.id );
+		},
+		calypso_path: addQueryArgs( `/setup/update-options/options`, {
+			...siteInfoQueryArgs,
+			flowToReturnTo: flow,
+		} ),
 	} ),
 } as const;
 
@@ -489,21 +501,8 @@ export function getEnhancedTasks( {
 			case 'first_post_published_newsletter':
 			case 'design_selected':
 			case 'design_completed':
-				return getTaskDefinition( task, flow, context );
 			case 'setup_general':
-				taskData = {
-					disabled: false,
-					actionDispatch: () => {
-						recordTaskClickTracksEvent( flow, task.completed, task.id );
-						window.location.assign(
-							addQueryArgs( `/setup/update-options/options`, {
-								...siteInfoQueryArgs,
-								flowToReturnTo: flow,
-							} )
-						);
-					},
-				};
-				break;
+				return getTaskDefinition( task, flow, context );
 			case 'setup_link_in_bio':
 				taskData = {
 					actionDispatch: () => {
