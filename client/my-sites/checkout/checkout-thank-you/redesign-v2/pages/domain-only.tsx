@@ -8,6 +8,7 @@ import { useSelector } from 'calypso/state';
 import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import { getDomainPurchaseTypeAndPredicate } from '../../utils';
 import ThankYouDomainProduct from '../products/domain-product';
+import type ThankYouUpsellMeshColor from 'calypso/components/thank-you-v2/upsell';
 import type { ReceiptPurchase } from 'calypso/state/receipts/types';
 
 interface DomainOnlyThankYouProps {
@@ -56,7 +57,7 @@ export default function DomainOnlyThankYou( { purchases }: DomainOnlyThankYouPro
 		description: translate(
 			'85% of people trust an email address with a custom domain name over a generic one.'
 		),
-		meshColor: 'blue',
+		meshColor: 'blue' as ThankYouUpsellMeshColor,
 		icon: emailImage,
 		action: (
 			<Button
