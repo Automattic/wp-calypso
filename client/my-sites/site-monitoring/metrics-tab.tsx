@@ -219,6 +219,11 @@ export interface HTTPCodeSerie {
 	stroke: string;
 }
 
+const seriesDefaultProps = {
+	fill: 'rgba(196, 196, 196, 0.1)',
+	stroke: 'rgba(196, 196, 196, 1)',
+};
+
 const useSuccessHttpCodeSeries = () => {
 	const { __ } = useI18n();
 	const series: HTTPCodeSerie[] = [
@@ -248,6 +253,7 @@ const useSuccessHttpCodeSeries = () => {
 const useClientErrorHttpCodeSeries = () => {
 	const { __ } = useI18n();
 	const series: HTTPCodeSerie[] = [
+		// most common 4xx errors
 		{
 			statusCode: 400,
 			fill: 'rgba(242, 215, 107, 0.1)',
@@ -256,21 +262,142 @@ const useClientErrorHttpCodeSeries = () => {
 		},
 		{
 			statusCode: 401,
-			fill: 'rgba(140, 143, 148, 0.1)',
-			label: __( '401: Unauthorized Request' ),
-			stroke: 'rgba(140, 143, 148, 1)',
+			fill: 'rgba(235, 101, 148, 0.1)',
+			label: __( '401: Unauthorized' ),
+			stroke: 'rgba(235, 101, 148, 1)',
 		},
 		{
 			statusCode: 403,
 			fill: 'rgba(104, 179, 232, 0.1)',
-			label: __( '403: Forbidden Request' ),
+			label: __( '403: Forbidden' ),
 			stroke: 'rgba(104, 179, 232, 1)',
 		},
 		{
 			statusCode: 404,
 			fill: 'rgba(9, 181, 133, 0.1)',
-			label: __( '404: Not Found Request' ),
+			label: __( '404: Not Found' ),
 			stroke: 'rgba(9, 181, 133, 1)',
+		},
+		// remaining 4xx errors
+		{
+			...seriesDefaultProps,
+			statusCode: 402,
+			label: __( '402 Payment Required' ),
+		},
+		{
+			...seriesDefaultProps,
+			statusCode: 405,
+			label: __( '405: Method Not Allowed' ),
+		},
+		{
+			...seriesDefaultProps,
+			statusCode: 406,
+			label: __( '406: Not Acceptable' ),
+		},
+		{
+			...seriesDefaultProps,
+			statusCode: 407,
+			label: __( '407: Proxy Authentication Required' ),
+		},
+		{
+			...seriesDefaultProps,
+			statusCode: 408,
+			label: __( 'Request Timeout' ),
+		},
+		{
+			...seriesDefaultProps,
+			statusCode: 409,
+			label: __( '409: Conflict' ),
+		},
+		{
+			...seriesDefaultProps,
+			statusCode: 410,
+			label: __( '410: Gone' ),
+		},
+		{
+			...seriesDefaultProps,
+			statusCode: 411,
+			label: __( '411: Length Required' ),
+		},
+		{
+			...seriesDefaultProps,
+			statusCode: 412,
+			label: __( '412: Precondition Failed' ),
+		},
+		{
+			...seriesDefaultProps,
+			statusCode: 413,
+			label: __( '413: Content Too Large' ),
+		},
+		{
+			...seriesDefaultProps,
+			statusCode: 414,
+			label: __( '414: URI Too Long' ),
+		},
+		{
+			...seriesDefaultProps,
+			statusCode: 415,
+			label: __( '415: Unsupported Media Type' ),
+		},
+		{
+			...seriesDefaultProps,
+			statusCode: 416,
+			label: __( '416: Range Not Satisfiable' ),
+		},
+		{
+			...seriesDefaultProps,
+			statusCode: 417,
+			label: __( '417: Expectation Failed' ),
+		},
+		{
+			...seriesDefaultProps,
+			statusCode: 421,
+			label: __( '421: Misdirected Request' ),
+		},
+		{
+			...seriesDefaultProps,
+			statusCode: 422,
+			label: __( '422: Unprocessable Content' ),
+		},
+		{
+			...seriesDefaultProps,
+			statusCode: 423,
+			label: __( '423: Locked' ),
+		},
+		{
+			...seriesDefaultProps,
+			statusCode: 424,
+			label: __( '424: Failed Dependency' ),
+		},
+		{
+			...seriesDefaultProps,
+			statusCode: 425,
+			label: __( '425: Too Early' ),
+		},
+		{
+			...seriesDefaultProps,
+			statusCode: 426,
+			label: __( '426: Upgrade Required' ),
+		},
+		{
+			...seriesDefaultProps,
+			statusCode: 428,
+			label: __( '428: Precondition Required' ),
+		},
+		{
+			...seriesDefaultProps,
+			statusCode: 429,
+			label: __( '429: Too Many Requests' ),
+		},
+		{
+			...seriesDefaultProps,
+			statusCode: 431,
+			label: __( '431: Request Header Fields Too Large' ),
+		},
+		{
+			...seriesDefaultProps,
+			statusCode: 451,
+			label: __( '451: Unavailable For Legal Reasons' ),
 		},
 	];
 	const statusCodes = series.map( ( { statusCode } ) => statusCode );
@@ -280,11 +407,66 @@ const useClientErrorHttpCodeSeries = () => {
 const useServerErrorHttpCodeSeries = () => {
 	const { __ } = useI18n();
 	const series: HTTPCodeSerie[] = [
+		// most common 5xx errors
 		{
 			statusCode: 500,
+			fill: 'rgba(242, 215, 107, 0.1)',
+			label: __( '500: Internal Server Error' ),
+			stroke: 'rgba(242, 215, 107, 1)',
+		},
+		{
+			statusCode: 502,
 			fill: 'rgba(235, 101, 148, 0.1)',
-			label: __( '500: Internal server error' ),
+			label: __( '502: Bad Gateway' ),
 			stroke: 'rgba(235, 101, 148, 1)',
+		},
+		{
+			statusCode: 503,
+			fill: 'rgba(104, 179, 232, 0.1)',
+			label: __( '503: Service Unavailable' ),
+			stroke: 'rgba(104, 179, 232, 1)',
+		},
+		{
+			statusCode: 504,
+			fill: 'rgba(9, 181, 133, 0.1)',
+			label: __( '504: Gateway Timeout' ),
+			stroke: 'rgba(9, 181, 133, 1)',
+		},
+		// remaining 5xx errors
+		{
+			...seriesDefaultProps,
+			statusCode: 501,
+			label: __( '501: Not Implemented' ),
+		},
+		{
+			...seriesDefaultProps,
+			statusCode: 505,
+			label: __( '505: HTTP Version Not Supported' ),
+		},
+		{
+			...seriesDefaultProps,
+			statusCode: 506,
+			label: __( '506: Variant Also Negotiates' ),
+		},
+		{
+			...seriesDefaultProps,
+			statusCode: 507,
+			label: __( '507: Insufficient Storage' ),
+		},
+		{
+			...seriesDefaultProps,
+			statusCode: 508,
+			label: __( '508: Loop Detected ' ),
+		},
+		{
+			...seriesDefaultProps,
+			statusCode: 510,
+			label: __( '510: Not Extended' ),
+		},
+		{
+			...seriesDefaultProps,
+			statusCode: 511,
+			label: __( '511: Network Authentication Required ' ),
 		},
 	];
 	const statusCodes = series.map( ( { statusCode } ) => statusCode );
