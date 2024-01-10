@@ -81,7 +81,7 @@ const ActivityLogV2: FunctionComponent = () => {
 				)
 			) }
 			buttonLink={ `https://cloud.jetpack.com/pricing/${ selectedSiteSlug }` }
-			buttonText={ translate( 'Upgrade Now' ) }
+			buttonText={ translate( 'Upgrade now' ) }
 			onClick={ () =>
 				dispatch( recordTracksEvent( 'calypso_jetpack_activity_log_upgrade_click' ) )
 			}
