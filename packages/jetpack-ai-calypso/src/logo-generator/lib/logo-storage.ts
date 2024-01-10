@@ -2,14 +2,16 @@
  * Types
  */
 import { SaveToStorageProps } from '../../types';
+import { Logo } from '../store/types';
 
-export function stashLogo( { siteId, url, description }: SaveToStorageProps ) {
+export function stashLogo( { siteId, url, description, mediaId }: SaveToStorageProps ) {
 	const storedString = localStorage.getItem( `logo-history-${ siteId }` );
 	const storedContent = storedString ? JSON.parse( storedString ) : [];
 
-	const logo = {
+	const logo: Logo = {
 		url,
 		description,
+		mediaId,
 	};
 
 	storedContent.push( logo );
