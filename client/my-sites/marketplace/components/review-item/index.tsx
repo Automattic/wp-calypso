@@ -146,6 +146,7 @@ export const MarketplaceReviewItem = ( props: MarketplaceReviewItemProps ) => {
 						rows={ 4 }
 						cols={ 40 }
 						name="content"
+						className="marketplace-review-item__editor"
 						value={ editorContent }
 						onChange={ setEditorContent }
 					/>

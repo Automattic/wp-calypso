@@ -119,6 +119,7 @@ export function MarketplaceCreateReviewItem( props: MarketplaceCreateReviewItemP
 							<TextareaControl
 								rows={ 4 }
 								cols={ 40 }
+								className="marketplace-review-item__editor"
 								name="content"
 								value={ content }
 								onChange={ setContent }
