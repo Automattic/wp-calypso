@@ -77,10 +77,12 @@ export type UsePricingMetaForGridPlans = ( {
 	planSlugs,
 	withoutProRatedCredits,
 	storageAddOns,
+	coupon,
 }: {
 	planSlugs: PlanSlug[];
 	withoutProRatedCredits?: boolean;
 	storageAddOns: ( AddOnMeta | null )[] | null;
+	coupon?: string;
 } ) => { [ planSlug: string ]: PricingMetaForGridPlan } | null;
 
 export type UseFreeTrialPlanSlugs = ( {
@@ -160,6 +162,7 @@ interface Props {
 	 */
 	isSubdomainNotGenerated?: boolean;
 	storageAddOns: ( AddOnMeta | null )[] | null;
+	coupon?: string;
 }
 
 const usePlanTypesWithIntent = ( {
@@ -280,6 +283,7 @@ const useGridPlans = ( {
 	eligibleForFreeHostingTrial,
 	isSubdomainNotGenerated,
 	storageAddOns,
+	coupon,
 }: Props ): Omit< GridPlan, 'features' >[] | null => {
 	const freeTrialPlanSlugs = useFreeTrialPlanSlugs( {
 		intent: intent ?? 'default',
@@ -321,10 +325,11 @@ const useGridPlans = ( {
 	} );
 
 	// TODO: pricedAPIPlans to be queried from data-store package
-	const pricedAPIPlans = Plans.usePlans();
+	const pricedAPIPlans = Plans.usePlans( { coupon } );
 	const pricingMeta = usePricingMetaForGridPlans( {
 		planSlugs: availablePlanSlugs,
 		storageAddOns,
+		coupon,
 	} );
 
 	// Null return would indicate that we are still loading the data. No grid without grid plans.

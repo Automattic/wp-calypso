@@ -10,7 +10,7 @@ import type {
 import type { DomainSuggestion } from '../domain-suggestions';
 import type { FeatureId } from '../shared-types';
 // somewhat hacky, but resolves the circular dependency issue
-import type { Design, FontPair, StyleVariation } from '@automattic/design-picker/src/types';
+import type { Design, StyleVariation } from '@automattic/design-picker/src/types';
 import type { MinimalRequestCartProduct } from '@automattic/shopping-cart';
 import type { Reducer } from 'redux';
 
@@ -92,19 +92,6 @@ const randomizedDesigns: Reducer< { featured: Design[] }, OnboardAction > = (
 	}
 	if ( action.type === 'RESET_ONBOARD_STORE' ) {
 		return { featured: [] };
-	}
-	return state;
-};
-
-const selectedFonts: Reducer< FontPair | undefined, OnboardAction > = (
-	state = undefined,
-	action
-) => {
-	if ( action.type === 'SET_FONTS' ) {
-		return action.fonts;
-	}
-	if ( action.type === 'RESET_FONTS' || action.type === 'RESET_ONBOARD_STORE' ) {
-		return undefined;
 	}
 	return state;
 };
@@ -241,36 +228,6 @@ const planCartItem: Reducer< MinimalRequestCartProduct | null, OnboardAction > =
 const siteAccentColor: Reducer< string, OnboardAction > = ( state = '', action ) => {
 	if ( action.type === 'SET_SITE_ACCENT_COLOR' ) {
 		return action.siteAccentColor;
-	}
-	if ( action.type === 'RESET_ONBOARD_STORE' ) {
-		return '';
-	}
-	return state;
-};
-
-const anchorPodcastId: Reducer< string | null, OnboardAction > = ( state = '', action ) => {
-	if ( action.type === 'SET_ANCHOR_PODCAST_ID' ) {
-		return action.anchorPodcastId;
-	}
-	if ( action.type === 'RESET_ONBOARD_STORE' ) {
-		return '';
-	}
-	return state;
-};
-
-const anchorEpisodeId: Reducer< string | null, OnboardAction > = ( state = '', action ) => {
-	if ( action.type === 'SET_ANCHOR_PODCAST_EPISODE_ID' ) {
-		return action.anchorEpisodeId;
-	}
-	if ( action.type === 'RESET_ONBOARD_STORE' ) {
-		return '';
-	}
-	return state;
-};
-
-const anchorSpotifyUrl: Reducer< string | null, OnboardAction > = ( state = '', action ) => {
-	if ( action.type === 'SET_ANCHOR_PODCAST_SPOTIFY_URL' ) {
-		return action.anchorSpotifyUrl;
 	}
 	if ( action.type === 'RESET_ONBOARD_STORE' ) {
 		return '';
@@ -581,9 +538,6 @@ const paidSubscribers: Reducer< boolean, OnboardAction > = ( state = false, acti
 };
 
 const reducer = combineReducers( {
-	anchorPodcastId,
-	anchorEpisodeId,
-	anchorSpotifyUrl,
 	domain,
 	domainCartItem,
 	domainSearch,
@@ -597,7 +551,6 @@ const reducer = combineReducers( {
 	domainTransferAuthCodes,
 	shouldImportDomainTransferDnsRecords,
 	storeType,
-	selectedFonts,
 	selectedDesign,
 	selectedStyleVariation,
 	selectedSite,

@@ -20,6 +20,7 @@ export const IntervalTypeToggle: React.FunctionComponent< IntervalTypeProps > = 
 		currentSitePlanSlug,
 		usePricingMetaForGridPlans,
 		title,
+		coupon,
 	} = props;
 	const [ spanRef, setSpanRef ] = useState< HTMLSpanElement >();
 	const segmentClasses = classNames( 'price-toggle', {
@@ -31,6 +32,7 @@ export const IntervalTypeToggle: React.FunctionComponent< IntervalTypeProps > = 
 		planSlugs: currentSitePlanSlug ? [ currentSitePlanSlug ] : [],
 		withoutProRatedCredits: true,
 		storageAddOns: null,
+		coupon,
 	} );
 	const currentPlanBillingPeriod = currentSitePlanSlug
 		? pricingMeta?.[ currentSitePlanSlug ]?.billingPeriod
@@ -68,7 +70,10 @@ export const IntervalTypeToggle: React.FunctionComponent< IntervalTypeProps > = 
 	return (
 		<>
 			{ title && <div className="plan-type-selector__title">{ title }</div> }
-			<div className="plan-type-selector__interval-type">
+			<div
+				className="plan-type-selector__interval-type"
+				ref={ intervalType === 'monthly' ? ( ref ) => ref && ! spanRef && setSpanRef( ref ) : null }
+			>
 				<SegmentedControl compact className={ segmentClasses } primary={ true }>
 					{ intervalTabs.map( ( interval ) => (
 						<SegmentedControl.Item
@@ -83,13 +88,7 @@ export const IntervalTypeToggle: React.FunctionComponent< IntervalTypeProps > = 
 							} ) }
 							isPlansInsideStepper={ props.isPlansInsideStepper }
 						>
-							<span
-								ref={
-									intervalType === 'monthly'
-										? ( ref ) => ref && ! spanRef && setSpanRef( ref )
-										: null
-								}
-							>
+							<span>
 								{ interval === 'monthly' ? translate( 'Pay monthly' ) : null }
 								{ interval === 'yearly' && ! showBiennialToggle
 									? translate( 'Pay annually' )

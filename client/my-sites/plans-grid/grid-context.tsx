@@ -13,6 +13,7 @@ interface PlansGridContext {
 	gridPlansIndex: { [ key: string ]: GridPlan };
 	allFeaturesList: FeatureList;
 	helpers?: Record< 'usePricingMetaForGridPlans', UsePricingMetaForGridPlans >;
+	coupon?: string;
 }
 
 const PlansGridContext = createContext< PlansGridContext >( {} as PlansGridContext );
@@ -23,6 +24,7 @@ const PlansGridContextProvider = ( {
 	usePricingMetaForGridPlans,
 	allFeaturesList,
 	children,
+	coupon,
 }: GridContextProps ) => {
 	const gridPlansIndex = gridPlans.reduce(
 		( acc, gridPlan ) => ( {
@@ -40,6 +42,7 @@ const PlansGridContextProvider = ( {
 				gridPlansIndex,
 				allFeaturesList,
 				helpers: { usePricingMetaForGridPlans },
+				coupon,
 			} }
 		>
 			{ children }

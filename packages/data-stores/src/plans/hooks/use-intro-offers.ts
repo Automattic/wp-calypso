@@ -9,6 +9,7 @@ interface IntroOffersIndex {
 
 interface Props {
 	siteId?: string | number | null;
+	coupon?: string;
 }
 
 /**
@@ -18,9 +19,9 @@ interface Props {
  * @returns {IntroOffersIndex | undefined} - an object `{ [ planSlug: string ]: PlanIntroductoryOffer | null }`,
  * or `undefined` if we haven't observed any metadata yet
  */
-const useIntroOffers = ( { siteId }: Props ): IntroOffersIndex | undefined => {
+const useIntroOffers = ( { siteId, coupon }: Props ): IntroOffersIndex | undefined => {
 	const sitePlans = useSitePlans( { siteId } );
-	const plans = usePlans();
+	const plans = usePlans( { coupon } );
 
 	return useMemo( () => {
 		if ( ! sitePlans.data && ! plans.data ) {
@@ -33,7 +34,7 @@ const useIntroOffers = ( { siteId }: Props ): IntroOffersIndex | undefined => {
 
 				return {
 					...acc,
-					[ planSlug ]: plan?.introOffer ?? null,
+					[ planSlug ]: plan?.pricing?.introOffer ?? null,
 				};
 			},
 			{}

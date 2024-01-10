@@ -1,4 +1,6 @@
 export { default } from './components';
+export { default as themeGalleryIllustrationImage } from './components/assets/images/theme-gallery-illustration.svg';
+export { default as patternAssemblerIllustrationImage } from './components/assets/images/pattern-assembler.svg';
 export { default as FeaturedPicksButtons } from './components/featured-picks-buttons';
 export { default as BadgeContainer } from './components/badge-container';
 export { default as StyleVariationBadges } from './components/style-variation-badges';
@@ -13,11 +15,7 @@ export {
 	usePatternAssemblerCtaData,
 } from './components/pattern-assembler-cta';
 export {
-	availableDesignsConfig,
 	getAssemblerDesign,
-	getAvailableDesigns,
-	getFontTitle,
-	getDesignUrl,
 	getDesignPreviewUrl,
 	isAssemblerDesign,
 	isBlankCanvasDesign,
@@ -26,8 +24,6 @@ export {
 	isAssemblerSupported,
 } from './utils';
 export {
-	FONT_PAIRINGS,
-	ANCHORFM_FONT_PAIRINGS,
 	DEFAULT_GLOBAL_STYLES_VARIATION_SLUG,
 	DEFAULT_VIEWPORT_WIDTH,
 	DEFAULT_VIEWPORT_HEIGHT,
@@ -42,7 +38,6 @@ export {
 	MARKETPLACE_THEME,
 } from './constants';
 export type {
-	FontPair,
 	Design,
 	Category,
 	StyleVariation,
