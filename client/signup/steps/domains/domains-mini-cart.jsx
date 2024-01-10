@@ -60,18 +60,18 @@ export function BoldTLD( { domain } ) {
 class DomainsMiniCart extends Component {
 	domainNameAndCost = ( domain ) => {
 		const isRemoving = this.props.domainRemovalQueue.some( ( item ) => item.meta === domain.meta );
-		const formattedOriginalCost = formatCurrency(
-			domain.item_original_cost_integer ?? 0,
-			domain.currency,
-			{
-				isSmallestUnit: true,
-				stripZeros: true,
-			}
-		);
-		const formattedCost = formatCurrency( domain.item_subtotal_integer ?? 0, domain.currency, {
-			isSmallestUnit: true,
-			stripZeros: true,
-		} );
+		const formattedOriginalCost = domain.temporary
+			? '...'
+			: formatCurrency( domain.item_original_cost_integer ?? 0, domain.currency, {
+					isSmallestUnit: true,
+					stripZeros: true,
+			  } );
+		const formattedCost = domain.temporary
+			? '...'
+			: formatCurrency( domain.item_subtotal_integer ?? 0, domain.currency, {
+					isSmallestUnit: true,
+					stripZeros: true,
+			  } );
 		const priceText = translate( '%(cost)s/year', {
 			args: { cost: formattedOriginalCost },
 		} );
