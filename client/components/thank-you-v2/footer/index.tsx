@@ -5,6 +5,7 @@ import { isOutsideCalypso } from 'calypso/lib/url';
 import './style.scss';
 
 export type ThankYouDetailProps = {
+	key: string;
 	title?: string;
 	description?: string;
 	buttonText?: string;
@@ -55,8 +56,8 @@ const ThankYouFooter = ( { footerDetails }: ThankYouFooterProps ) => {
 	return (
 		<div className="thank-you__details-list">
 			<div className="thank-you__details-list-inner">
-				{ footerDetails.map( ( detailsProps, index ) => (
-					<ThankYouDetail { ...detailsProps } key={ 'detail' + index } />
+				{ footerDetails.map( ( detailsProps ) => (
+					<ThankYouDetail { ...detailsProps } />
 				) ) }
 			</div>
 		</div>

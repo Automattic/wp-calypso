@@ -17,6 +17,7 @@ interface DomainOnlyThankYouContainerProps {
 export const getDomainFooterDetails = ( limit?: number ) => {
 	const details = [
 		{
+			key: 'footer-domain-essentials',
 			title: translate( 'Dive into domain essentials' ),
 			description: translate(
 				'Check out our support documentation for step-by-step instructions and expert guidance on your domain set up.'
@@ -28,6 +29,7 @@ export const getDomainFooterDetails = ( limit?: number ) => {
 			},
 		},
 		{
+			key: 'footer-domain-resources',
 			title: translate( 'Your go-to domain resource' ),
 			description: translate(
 				'Dive into our comprehensive support documentation to learn the basics of domains, from registration to management.'
@@ -70,8 +72,17 @@ export const DomainOnlyThankYou: React.FC< DomainOnlyThankYouContainerProps > = 
 		),
 	};
 
-	const products = purchases.filter( predicate ).map( ( purchase, index ) => {
-		return <ProductDomain purchase={ purchase } key={ index } siteSlug={ siteSlug } shareSite />;
+	const products = purchases.filter( predicate ).map( ( purchase ) => {
+		const domainNameSlug = purchase.meta.replace( '.', '-' );
+
+		return (
+			<ProductDomain
+				purchase={ purchase }
+				key={ `domain-${ domainNameSlug }` }
+				siteSlug={ siteSlug }
+				shareSite
+			/>
+		);
 	} );
 
 	return (
