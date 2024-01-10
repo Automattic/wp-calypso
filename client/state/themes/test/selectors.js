@@ -9,6 +9,8 @@ import {
 } from '@automattic/calypso-products';
 import { getQueryArgs } from '@wordpress/url';
 import ThemeQueryManager from 'calypso/lib/query-manager/theme';
+import getThemeTierByTheme from 'calypso/state/themes/selectors/get-theme-tier-by-theme';
+import isThemeAllowedOnSite from 'calypso/state/themes/selectors/is-theme-allowed-on-site';
 import {
 	getTheme,
 	getCanonicalTheme,
@@ -66,6 +68,13 @@ const twentyfifteen = {
 	author_uri: 'https://wordpress.org/',
 };
 
+const freeThemeTier = {
+	slug: 'free',
+	name: 'Free',
+	plan: PLAN_FREE,
+	feature: FEATURE_WOOP,
+};
+
 const twentysixteen = {
 	id: 'twentysixteen',
 	name: 'Twenty Sixteen',
@@ -75,6 +84,7 @@ const twentysixteen = {
 	stylesheet: 'pub/twentysixteen',
 	demo_uri: 'https://twentysixteendemo.wordpress.com/',
 	author_uri: 'https://wordpress.org/',
+	theme_tier: freeThemeTier,
 };
 
 const mood = {
@@ -3437,5 +3447,77 @@ describe( '#getThemeTier', () => {
 	test( 'should return the tier object if it exists', () => {
 		const themeTiers = getThemeTier( state, 'free' );
 		expect( themeTiers ).toEqual( { foo: 'bar' } );
+	} );
+} );
+describe( '#getThemeTierByTheme', () => {
+	test( 'should return an empty object if the theme is not found', () => {
+		const state = {
+			themes: {
+				queries: {
+					wpcom: null,
+				},
+			},
+		};
+		const themeTiers = getThemeTierByTheme( state, 'twentysixteen' );
+		expect( themeTiers ).toEqual( {} );
+	} );
+	test( 'should return the tier object if it exists', () => {
+		const state = {
+			themes: {
+				queries: {
+					wpcom: new ThemeQueryManager( {
+						items: { twentysixteen },
+					} ),
+				},
+			},
+		};
+		const themeTiers = getThemeTierByTheme( state, 'twentysixteen' );
+		expect( themeTiers ).toEqual( freeThemeTier );
+	} );
+} );
+describe( '#isThemeAllowedOnSite', () => {
+	test( 'returns true if the user has the required feature', () => {
+		const state = {
+			sites: {
+				features: {
+					1: {
+						data: {
+							active: [ FEATURE_WOOP ],
+						},
+					},
+				},
+			},
+			themes: {
+				queries: {
+					wpcom: new ThemeQueryManager( {
+						items: { twentysixteen },
+					} ),
+				},
+			},
+		};
+		const themeTiers = isThemeAllowedOnSite( state, 1, 'twentysixteen' );
+		expect( themeTiers ).toEqual( true );
+	} );
+	test( 'returns false if the user does not have the required feature', () => {
+		const state = {
+			sites: {
+				features: {
+					1: {
+						data: {
+							active: [],
+						},
+					},
+				},
+			},
+			themes: {
+				queries: {
+					wpcom: new ThemeQueryManager( {
+						items: { twentysixteen },
+					} ),
+				},
+			},
+		};
+		const themeTiers = isThemeAllowedOnSite( state, 1, 'twentysixteen' );
+		expect( themeTiers ).toEqual( false );
 	} );
 } );
