@@ -188,10 +188,11 @@ describe( 'Hosting Configuration', () => {
 	} );
 
 	describe( 'Site on free plan', () => {
-		it( 'should show upsell banner and all cards should be within FeatureExample', () => {
+		it( 'should show upsell banner and all cards should be within FeatureExample', async () => {
 			const testConfig = getTestConfig( { planSlug: PLAN_FREE } );
 
 			renderComponentWithStoreAndQueryClient( createTestStore( testConfig ) );
+			await waitFor( () => expect( wpcomGetStub ).toHaveBeenCalled() );
 
 			expect(
 				screen.getByText( 'Upgrade to the Creator plan to access all hosting features:' )
@@ -208,13 +209,16 @@ describe( 'Hosting Configuration', () => {
 	} );
 
 	describe( 'Site on Personal plan', () => {
-		it( 'should show upsell banner and all cards should be within FeatureExample', () => {
+		it( 'should show upsell banner and all cards should be within FeatureExample', async () => {
 			const testConfig = getTestConfig( { planSlug: PLAN_PERSONAL } );
+
 			renderComponentWithStoreAndQueryClient( createTestStore( testConfig ) );
+			await waitFor( () => expect( wpcomGetStub ).toHaveBeenCalled() );
 
 			expect(
 				screen.getByText( 'Upgrade to the Creator plan to access all hosting features:' )
 			).toBeVisible();
+
 			expect( screen.getByText( 'Upgrade to Creator Plan' ) ).toBeVisible();
 
 			const [ mainFeatureExampleElement ] = screen.getAllByTestId( 'feature-example-wrapper' );
@@ -332,7 +336,7 @@ describe( 'Hosting Configuration', () => {
 	} );
 
 	describe( 'Staging site', () => {
-		it( 'should show the primary site card and not show the upsell nudge', () => {
+		it( 'should show the primary site card and not show the upsell nudge', async () => {
 			const testConfig = getTestConfig( {
 				isAtomicSite: true,
 				isWpcomStagingSite: true,
@@ -342,6 +346,7 @@ describe( 'Hosting Configuration', () => {
 			} );
 
 			renderComponentWithStoreAndQueryClient( createTestStore( testConfig ) );
+			await waitFor( () => expect( wpcomGetStub ).toHaveBeenCalled() );
 
 			expect(
 				screen.queryByText( 'Upgrade to the Creator plan to access all hosting features:' )
