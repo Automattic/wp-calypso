@@ -235,7 +235,6 @@ export function useRazorpay(): RazorpayData {
 	return razorpayData;
 }
 
-// See https://usehooks.com/useMemoCompare/
 function useMemoCompare< A, B >(
 	next: B,
 	compare: ( previous: A | B | undefined, next: B ) => boolean
