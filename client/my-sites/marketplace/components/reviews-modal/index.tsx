@@ -78,7 +78,10 @@ export const ReviewsModal = ( props: Props ) => {
 		<Dialog
 			className="marketplace-reviews-modal"
 			isVisible={ isVisible }
-			onClose={ onClose }
+			onClose={ () => {
+				onClose();
+				setEditCompletedTimes( 0 );
+			} }
 			showCloseIcon
 		>
 			<div className="marketplace-reviews-modal__header">
