@@ -20,6 +20,7 @@ const ThankYouDetail = ( {
 	buttonText,
 	href,
 	clickEventName,
+	onClick,
 }: ThankYouDetailProps ) => {
 	const handleClick = () => {
 		if ( ! clickEventName ) {
