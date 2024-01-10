@@ -82,7 +82,8 @@ type TaskId =
 	| 'setup_link_in_bio'
 	| 'links_added'
 	| 'link_in_bio_launched'
-	| 'site_launched';
+	| 'site_launched'
+	| 'blog_launched';
 
 interface TaskContext {
 	siteInfoQueryArgs?: { siteId?: number; siteSlug?: string | null };
@@ -321,6 +322,19 @@ const actions: TaskActionTable = {
 			useCalypsoPath: false,
 		} ) satisfies EnhancedTask,
 	site_launched: (
+		task,
+		_,
+		{ getLaunchSiteTaskTitle, getIsLaunchSiteTaskDisabled, completeLaunchSiteTask }
+	) =>
+		( {
+			...task,
+			isLaunchTask: true,
+			title: getLaunchSiteTaskTitle( task ),
+			disabled: getIsLaunchSiteTaskDisabled(),
+			actionDispatch: () => completeLaunchSiteTask( task ),
+			useCalypsoPath: false,
+		} ) satisfies EnhancedTask,
+	blog_launched: (
 		task,
 		_,
 		{ getLaunchSiteTaskTitle, getIsLaunchSiteTaskDisabled, completeLaunchSiteTask }
@@ -585,18 +599,8 @@ export function getEnhancedTasks( {
 			case 'links_added':
 			case 'link_in_bio_launched':
 			case 'site_launched':
+			case 'blog_launched':
 				return getTaskDefinition( task, flow, context );
-			case 'blog_launched': {
-				taskData = {
-					isLaunchTask: true,
-					title: getLaunchSiteTaskTitle( task ),
-					disabled: getIsLaunchSiteTaskDisabled(),
-					actionDispatch: () => {
-						completeLaunchSiteTask( task );
-					},
-				};
-				break;
-			}
 			case 'videopress_upload':
 				taskData = {
 					actionUrl: launchpadUploadVideoLink,
