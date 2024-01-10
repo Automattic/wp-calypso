@@ -625,7 +625,6 @@ export class RenderDomainsStep extends Component {
 						...( state.temporaryCart || [] ),
 						{
 							meta: suggestion.domain_name,
-							item_subtotal_display: '...',
 							temporary: true,
 						},
 					],
