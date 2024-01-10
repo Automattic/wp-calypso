@@ -40,7 +40,6 @@
 		"full-site-editing/beta-opt-in": true,
 		"cookie-banner": true,
 		"google-my-business": false,
-		"gutenboarding/alpha-templates": true,
 		"help": true,
 		"home/layout-dev": true,
 		"i18n/empathy-mode": false,
