@@ -8,11 +8,7 @@ interface ThankYouHeaderProps {
 	buttons?: React.ReactNode;
 }
 
-export default function ThankYouHeader( {
-	title,
-	subtitle,
-	buttons,
-} ): React.FC< ThankYouHeaderProps > {
+export default function ThankYouHeader( { title, subtitle, buttons }: ThankYouHeaderProps ) {
 	return (
 		<div className="thank-you__header">
 			<h1 className="thank-you__header-title">{ title }</h1>

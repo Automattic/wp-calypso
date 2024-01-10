@@ -45,7 +45,7 @@ export const getDomainFooterDetails = ( limit?: number ) => {
 	return details.slice( 0, limit ?? details.length );
 };
 
-export default function DomainOnlyThankYou( { purchases } ): React.FC< DomainOnlyThankYouProps > {
+export default function DomainOnlyThankYou( { purchases }: DomainOnlyThankYouProps ) {
 	const [ , predicate ] = getDomainPurchaseTypeAndPredicate( purchases );
 	const domains = purchases.filter( predicate ).map( ( purchase ) => purchase?.meta );
 	const firstDomain = domains[ 0 ];

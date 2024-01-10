@@ -73,7 +73,10 @@ export default function ThankYouUpsell( {
 				<div className="thank-you__upsell-content-details">
 					<div className="thank-you__upsell-content-details-image">
 						<div className="thank-you__upsell-content-details-image-content">
-							<img alt={ translate( 'Icon for %(title)s', { args: { title } } ) } src={ icon } />
+							<img
+								alt={ translate( 'Icon for %(title)s', { args: { title } } ) as string }
+								src={ icon }
+							/>
 						</div>
 					</div>
 					<div className="thank-you__upsell-content-text">

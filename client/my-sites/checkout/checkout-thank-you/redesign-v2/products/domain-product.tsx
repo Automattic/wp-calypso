@@ -16,26 +16,24 @@ type ThankYouDomainProductProps = {
 	currency?: string;
 };
 
-const DomainTransferSection = ( { purchase }: { purchase: ReceiptPurchase } ) => {
+const DomainTransferSection = ( { purchase }: { purchase: ReceiptPurchase; currency: string } ) => {
 	const { __ } = useI18n();
-	
+
 	const purchaseLabel = ( priceInteger: number ) => {
 		if ( priceInteger === 0 ) {
 			return __( 'We’ve paid for an extra year' );
 		}
 
-		const priceFormatted = formatCurrency( priceInteger, currency ?? 'USD', {
+		const priceFormatted = formatCurrency( priceInteger, currency, {
 			stripZeros: true,
 			isSmallestUnit: true,
 		} );
 
 		return translate( '%(priceFormatted)s for one year', { args: { priceFormatted } } );
 	};
-	
-	return (
-		<p>{ purchaseLabel( purchase.priceInteger ) }</p>
-	);
-}
+
+	return <p>{ purchaseLabel( purchase.priceInteger ) }</p>;
+};
 
 export default function ThankYouDomainProduct( {
 	purchase,
@@ -44,7 +42,6 @@ export default function ThankYouDomainProduct( {
 	siteSlug,
 	currency,
 }: ThankYouDomainProductProps ) {
-	const { __ } = useI18n();
 	const [ isCopying, setIsCopying ] = useState( false );
 	const domain = domainName ?? purchase?.meta;
 
@@ -55,7 +52,7 @@ export default function ThankYouDomainProduct( {
 
 	const actions =
 		purchase && isDomainTransfer( purchase ) ? (
-			<DomainTransferSection purchase={ purchase } />
+			<DomainTransferSection purchase={ purchase } currency={ currency ?? 'USD' } />
 		) : (
 			<>
 				{ shareSite && domain && (
@@ -85,4 +82,4 @@ export default function ThankYouDomainProduct( {
 			key={ 'domain-' + domain }
 		/>
 	);
-};
+}
