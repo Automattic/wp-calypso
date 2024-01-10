@@ -1,3 +1,4 @@
+import config from '@automattic/calypso-config';
 import { getPlan, PLAN_FREE } from '@automattic/calypso-products';
 import { Button } from '@automattic/components';
 import { isSiteAssemblerFlow, isTailoredSignupFlow } from '@automattic/onboarding';
@@ -160,6 +161,7 @@ export class PlansStep extends Component {
 					removePaidDomain={ this.removePaidDomain }
 					setSiteUrlAsFreeDomainSuggestion={ this.setSiteUrlAsFreeDomainSuggestion }
 					coupon={ coupon }
+					showPlanTypeSelectorDropdown={ config.isEnabled( 'onboarding/interval-dropdown' ) }
 				/>
 			</div>
 		);

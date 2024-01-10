@@ -186,6 +186,10 @@ export interface PlansFeaturesMainProps {
 	showLegacyStorageFeature?: boolean;
 	isSpotlightOnCurrentPlan?: boolean;
 	renderSiblingWhenLoaded?: () => ReactNode; // renders additional components as last dom node when plans grid dependecies are fully loaded
+	/**
+	 * Shows the plan type selector dropdown instead of the default toggle
+	 */
+	showPlanTypeSelectorDropdown?: boolean;
 }
 
 const SecondaryFormattedHeader = ( { siteSlug }: { siteSlug?: string | null } ) => {
@@ -246,6 +250,7 @@ const PlansFeaturesMain = ( {
 	showLegacyStorageFeature = false,
 	isSpotlightOnCurrentPlan,
 	renderSiblingWhenLoaded,
+	showPlanTypeSelectorDropdown = false,
 	coupon,
 }: PlansFeaturesMainProps ) => {
 	const [ isModalOpen, setIsModalOpen ] = useState( false );
@@ -268,7 +273,6 @@ const PlansFeaturesMain = ( {
 	const { setShowDomainUpsellDialog } = useDispatch( WpcomPlansUI.store );
 	const domainFromHomeUpsellFlow = useSelector( getDomainFromHomeUpsellInQuery );
 	const showUpgradeableStorage = config.isEnabled( 'plans/upgradeable-storage' );
-	const showPlanTypeSelectorDropdown = config.isEnabled( 'onboarding/interval-dropdown' );
 	const observableForOdieRef = useObservableForOdie();
 	const currentPlanManageHref = useCurrentPlanManageHref();
 	const canUserManageCurrentPlan = useSelector( ( state: IAppState ) =>
