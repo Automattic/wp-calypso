@@ -1,4 +1,5 @@
 import { Button, Spinner } from '@automattic/components';
+import { useLaunchpad } from '@automattic/data-stores';
 import { translate } from 'i18n-calypso';
 import moment from 'moment';
 import { useEffect, useMemo, useState } from 'react';
@@ -39,6 +40,15 @@ const ProductPlan = ( { siteSlug, primaryPurchase, siteID }: ProductPlanProps ) 
 		}
 	}, [ isLoadingPurchases, productPurchase ] );
 
+	const { data: launchpad, isLoading } = useLaunchpad( siteSlug );
+	const hasRemainingTasks =
+		launchpad && launchpad.checklist
+			? launchpad.checklist.filter( ( item ) => item?.completed === false ).length > 0
+			: false;
+	const letsWorkHref = hasRemainingTasks
+		? `/setup/${ launchpad?.site_intent }/launchpad?siteSlug=${ siteSlug }&siteId=${ siteID }&showLaunchpad=true`
+		: `/home/${ siteSlug }`;
+
 	return (
 		<div className="checkout-thank-you__header-details">
 			<div className="checkout-thank-you__header-details-content">
@@ -60,7 +70,7 @@ const ProductPlan = ( { siteSlug, primaryPurchase, siteID }: ProductPlanProps ) 
 				) }
 			</div>
 			<div className="checkout-thank-you__header-details-buttons">
-				<Button primary href={ `/home/${ siteSlug }` }>
+				<Button busy={ isLoading } primary href={ letsWorkHref }>
 					{ translate( 'Let’s work on the site' ) }
 				</Button>
 				<Button href={ `/plans/my-plan/${ siteSlug }` }>{ translate( 'Manage plan' ) }</Button>
