@@ -1,6 +1,6 @@
 import { getPlan } from '@automattic/calypso-products';
 import { PremiumBadge } from '@automattic/components';
-import { Plans } from '@automattic/data-stores/src/plans';
+import { Plans } from '@automattic/data-stores';
 import { createInterpolateElement } from '@wordpress/element';
 import { useTranslate } from 'i18n-calypso';
 import { useSelector } from 'calypso/state';
