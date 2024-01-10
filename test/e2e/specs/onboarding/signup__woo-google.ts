@@ -1,7 +1,5 @@
 /**
- * @group quarantined
- *
- * Use the quarantined group because it would fail when using the calypso-release group. We can't run this test in the Local or Calypso live environment because the redirect URL is not in the allowed list.
+ * @group calypso-release
  *
  * Google blocks Chrome-based browsers that are controlled via automation
  * from performing login to their services.
@@ -17,12 +15,19 @@ import {
 	TOTPClient,
 	DataHelper,
 	UserSignupPage,
+	envVariables,
 } from '@automattic/calypso-e2e';
 import { Page, Browser } from 'playwright';
+import { skipDescribeIf } from '../../jest-helpers';
 
 declare const browser: Browser;
 
-describe(
+skipDescribeIf(
+	// We can only run this spec for wordpress.com or wpcalypso.wordpress.com because only these two are allowed to use Google login.
+	! [ 'https://wordpress.com', 'https://wpcalypso.wordpress.com' ].includes(
+		envVariables.CALYPSO_BASE_URL
+	)
+)(
 	DataHelper.createSuiteTitle( 'Signup: WordPress.com WPCC > WooCommerce via Google' ),
 	function () {
 		const credentials = SecretsManager.secrets.testAccounts.googleLoginUser;
