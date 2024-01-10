@@ -9,6 +9,7 @@ interface IntroOffersIndex {
 
 interface Props {
 	siteId: string | number | null | undefined;
+	coupon: string | undefined;
 }
 
 /**
@@ -20,8 +21,11 @@ interface Props {
  *     undefined if we haven't observed any metadata yet, or
  *     null if there are no WooExpress intro offers
  */
-const useIntroOffersForWooExpress = ( { siteId }: Props ): IntroOffersIndex | undefined | null => {
-	const introOffers = useIntroOffers( { siteId, coupon: undefined } );
+const useIntroOffersForWooExpress = ( {
+	siteId,
+	coupon,
+}: Props ): IntroOffersIndex | undefined | null => {
+	const introOffers = useIntroOffers( { siteId, coupon } );
 
 	return useMemo( () => {
 		if ( ! introOffers ) {
