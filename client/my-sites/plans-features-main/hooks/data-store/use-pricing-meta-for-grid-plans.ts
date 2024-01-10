@@ -95,8 +95,9 @@ const usePricingMetaForGridPlans: UsePricingMetaForGridPlans = ( {
 
 				/**
 				 * 0. No plan or sitePlan (when selected site exists): planSlug is for a priceless plan.
+				 * TODO clk: the condition on `.pricing` here needs investigation. There should be a pricing object for all returned API plans.
 				 */
-				if ( ! plan || ( selectedSiteId && ! sitePlan ) ) {
+				if ( ! plan?.pricing || ( selectedSiteId && ! sitePlan?.pricing ) ) {
 					return [
 						planSlug,
 						{
@@ -156,21 +157,21 @@ const usePricingMetaForGridPlans: UsePricingMetaForGridPlans = ( {
 				 */
 				if ( availableForPurchase ) {
 					const originalPrice = {
-						monthly: getTotalPrice( plan?.pricing.originalPrice.monthly, storageAddOnPriceMonthly ),
-						full: getTotalPrice( plan?.pricing.originalPrice.full, storageAddOnPriceYearly ),
+						monthly: getTotalPrice( plan.pricing.originalPrice.monthly, storageAddOnPriceMonthly ),
+						full: getTotalPrice( plan.pricing.originalPrice.full, storageAddOnPriceYearly ),
 					};
 					const discountedPrice = {
 						monthly:
-							sitePlan && ! withoutProRatedCredits
+							sitePlan?.pricing && ! withoutProRatedCredits
 								? getTotalPrice(
 										sitePlan.pricing.discountedPrice.monthly,
 										storageAddOnPriceMonthly
 								  )
-								: getTotalPrice( plan?.pricing.discountedPrice.monthly, storageAddOnPriceMonthly ),
+								: getTotalPrice( plan.pricing.discountedPrice.monthly, storageAddOnPriceMonthly ),
 						full:
-							sitePlan && ! withoutProRatedCredits
+							sitePlan?.pricing && ! withoutProRatedCredits
 								? getTotalPrice( sitePlan.pricing.discountedPrice.full, storageAddOnPriceYearly )
-								: getTotalPrice( plan?.pricing.discountedPrice.full, storageAddOnPriceYearly ),
+								: getTotalPrice( plan.pricing.discountedPrice.full, storageAddOnPriceYearly ),
 					};
 
 					return [
@@ -190,10 +191,10 @@ const usePricingMetaForGridPlans: UsePricingMetaForGridPlans = ( {
 					{
 						originalPrice: {
 							monthly: getTotalPrice(
-								plan?.pricing.originalPrice.monthly,
+								plan.pricing.originalPrice.monthly,
 								storageAddOnPriceMonthly
 							),
-							full: getTotalPrice( plan?.pricing.originalPrice.full, storageAddOnPriceYearly ),
+							full: getTotalPrice( plan.pricing.originalPrice.full, storageAddOnPriceYearly ),
 						},
 						discountedPrice: {
 							monthly: null,
@@ -214,8 +215,10 @@ const usePricingMetaForGridPlans: UsePricingMetaForGridPlans = ( {
 				[ planSlug ]: {
 					originalPrice: planPrices?.[ planSlug ]?.originalPrice,
 					discountedPrice: planPrices?.[ planSlug ]?.discountedPrice,
-					billingPeriod: plans.data?.[ planSlug ]?.pricing.billPeriod,
-					currencyCode: plans.data?.[ planSlug ]?.pricing.currencyCode,
+					// TODO clk: the condition on `.pricing` here needs investigation. There should be a pricing object for all returned API plans.
+					billingPeriod: plans.data?.[ planSlug ]?.pricing?.billPeriod,
+					// TODO clk: the condition on `.pricing` here needs investigation. There should be a pricing object for all returned API plans.
+					currencyCode: plans.data?.[ planSlug ]?.pricing?.currencyCode,
 					expiry: sitePlans.data?.[ planSlug ]?.expiry,
 					introOffer: introOffers?.[ planSlug ],
 				},
