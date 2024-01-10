@@ -57,7 +57,12 @@ const ProductPlan = ( { siteSlug, primaryPurchase, siteID }: ProductPlanProps ) 
 			: false;
 
 	useEffect( () => {
-		if ( launchpad && launchpad.is_enabled && hasRemainingTasks ) {
+		if (
+			launchpad &&
+			launchpad.is_enabled &&
+			hasRemainingTasks &&
+			launchpad.launchpad_screen !== 'off'
+		) {
 			setRedirectTo( 'launchpad' );
 		} else {
 			setRedirectTo( 'home' );
@@ -78,15 +83,19 @@ const ProductPlan = ( { siteSlug, primaryPurchase, siteID }: ProductPlanProps ) 
 			if ( redirectTo === 'launchpad' ) {
 				e.preventDefault();
 				setLetsWorkButtonBusy( true );
-				// when launchpad is off or skipped, we need to update the launchpad_screen option to full
-				// otherwise the full screen launchpad will redirect to /home straight away
-				saveSiteSettings( siteID, { launchpad_screen: 'full' } ).then( () => {
+
+				const redirect = async () => {
+					if ( launchpad.launchpad_screen === 'skipped' ) {
+						await saveSiteSettings( siteID, { launchpad_screen: 'full' } );
+					}
 					setLetsWorkButtonBusy( false );
 					window.location.assign( letsWorkHref );
-				} );
+				};
+
+				redirect();
 			}
 		},
-		[ letsWorkHref, redirectTo ]
+		[ launchpad, letsWorkHref, redirectTo ]
 	);
 
 	return (
