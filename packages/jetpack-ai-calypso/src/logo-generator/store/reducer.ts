@@ -23,9 +23,29 @@ import {
 	ACTION_SET_SITE_HISTORY,
 } from './constants';
 import INITIAL_STATE from './initial-state';
-import type { TierLimitProp } from './types';
+import type { AiFeatureStateProps, TierLimitProp } from './types';
+import type { SiteDetails } from '@automattic/data-stores';
 
-export default function reducer( state = INITIAL_STATE, action: any ) {
+export default function reducer(
+	state = INITIAL_STATE,
+	action: {
+		type: string;
+		feature?: AiFeatureStateProps;
+		count?: number;
+		requireUpgrade?: boolean;
+		tierPlansEnabled?: boolean;
+		siteDetails?: SiteDetails;
+		selectedLogoIndex?: number;
+		isSavingLogoToLibrary?: boolean;
+		isApplyingLogo?: boolean;
+		logo?: { url: string; description: string };
+		mediaId?: number;
+		url?: string;
+		isRequestingImage?: boolean;
+		isEnhancingPrompt?: boolean;
+		history?: Array< { url: string; description: string; mediaId?: number } >;
+	}
+) {
 	switch ( action.type ) {
 		case ACTION_REQUEST_AI_ASSISTANT_FEATURE:
 			return {
@@ -52,9 +72,9 @@ export default function reducer( state = INITIAL_STATE, action: any ) {
 					aiAssistantFeature: {
 						...action.feature,
 						// re evaluate requireUpgrade as the logo generator does not allow free usage
-						requireUpgrade: action.feature.currentTier
+						requireUpgrade: action.feature?.currentTier
 							? action.feature.currentTier.value === 0
-							: action.feature.requireUpgrade,
+							: action.feature?.requireUpgrade,
 						_meta: {
 							...state?.features?.aiAssistantFeature?._meta,
 							isRequesting: false,
@@ -69,8 +89,9 @@ export default function reducer( state = INITIAL_STATE, action: any ) {
 			const usagePeriod = state?.features?.aiAssistantFeature?.usagePeriod || { requestsCount: 0 };
 
 			// Increase requests counters
-			const requestsCount = state?.features?.aiAssistantFeature?.requestsCount + action.count;
-			usagePeriod.requestsCount += action.count;
+			const requestsCount =
+				( state?.features?.aiAssistantFeature?.requestsCount || 0 ) + ( action.count ?? 1 );
+			usagePeriod.requestsCount += action.count ?? 1;
 
 			// Current tier value
 			const currentTierValue = state?.features?.aiAssistantFeature?.currentTier?.value;
@@ -98,7 +119,7 @@ export default function reducer( state = INITIAL_STATE, action: any ) {
 			const currentCount =
 				isUnlimitedTierPlan || isFreeTierPlan // @todo: update once tier data is available
 					? requestsCount
-					: state?.features?.aiAssistantFeature?.usagePeriod?.requestsCount;
+					: state?.features?.aiAssistantFeature?.usagePeriod?.requestsCount || 0;
 
 			/**
 			 * Compute the AI Assistant Feature data optimistically,
@@ -277,7 +298,7 @@ export default function reducer( state = INITIAL_STATE, action: any ) {
 			return {
 				...state,
 				history: action.history,
-				selectedLogoIndex: action.history.length ? action.history.length - 1 : 0,
+				selectedLogoIndex: action.history?.length ? action.history.length - 1 : 0,
 			};
 		}
 	}
