@@ -8,18 +8,41 @@ export const NEXT_STORE_SITE_PLAN_PERSONAL: SitePlan = {
 	planSlug: 'personal-bundle',
 	productSlug: 'personal-bundle',
 	productId: 1,
+	pricing: {
+		currencyCode: 'USD',
+		introOffer: null,
+		originalPrice: {
+			monthly: 400,
+			full: 4800,
+		},
+		discountedPrice: {
+			monthly: null,
+			full: null,
+		},
+	},
 };
 
 export const NEXT_STORE_SITE_PLAN_BUSINESS: SitePlan = {
 	planSlug: 'business-bundle',
 	productSlug: 'business-bundle',
 	productId: 2,
-	introOffer: {
-		formattedPrice: '$15.00',
-		rawPrice: 15,
-		intervalUnit: 'month',
-		intervalCount: 1,
-		isOfferComplete: false,
+	pricing: {
+		introOffer: {
+			formattedPrice: '$15.00',
+			rawPrice: 15,
+			intervalUnit: 'month',
+			intervalCount: 1,
+			isOfferComplete: false,
+		},
+		originalPrice: {
+			monthly: 2500,
+			full: 30000,
+		},
+		discountedPrice: {
+			monthly: null,
+			full: null,
+		},
+		currencyCode: 'USD',
 	},
 };
 
@@ -37,22 +60,43 @@ export const NEXT_STORE_PLAN_PERSONAL: PlanNext = {
 	productSlug: 'personal-bundle',
 	productId: 1,
 	productNameShort: 'Personal',
-	billPeriod: -1,
-	currencyCode: 'USD',
+	pricing: {
+		billPeriod: 365,
+		currencyCode: 'USD',
+		introOffer: null,
+		originalPrice: {
+			monthly: 400,
+			full: 4800,
+		},
+		discountedPrice: {
+			monthly: null,
+			full: null,
+		},
+	},
 };
 
 export const NEXT_STORE_PLAN_BUSINESS: PlanNext = {
 	planSlug: 'business-bundle',
 	productSlug: 'business-bundle',
 	productId: 2,
-	introOffer: {
-		formattedPrice: '$25.00',
-		rawPrice: 25,
-		intervalUnit: 'month',
-		intervalCount: 1,
-		isOfferComplete: false,
-	},
 	productNameShort: 'Business',
-	billPeriod: 365,
-	currencyCode: 'USD',
+	pricing: {
+		billPeriod: 365,
+		currencyCode: 'USD',
+		introOffer: {
+			formattedPrice: '$25.00',
+			rawPrice: 25,
+			intervalUnit: 'month',
+			intervalCount: 1,
+			isOfferComplete: false,
+		},
+		originalPrice: {
+			monthly: 2500,
+			full: 30000,
+		},
+		discountedPrice: {
+			monthly: null,
+			full: null,
+		},
+	},
 };
