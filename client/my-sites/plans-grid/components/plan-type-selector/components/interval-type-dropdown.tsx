@@ -9,30 +9,27 @@ const AddOnOption = styled.a`
 	&:hover span.name {
 		color: var( --color-text );
 	}
+
+	font-weight: 500;
+	padding: 13px 13px 13px 16px;
+	font-size: 14px;
+	display: flex;
 	.discount {
-		color: var( --studio-green-40 );
-		display: inline-block;
-		font-size: 0.7rem;
+		color: var( --studio-green-50 );
+		display: flex;
+		line-height: 14px;
+		border-radius: 3px;
+		line-height: 20px;
 	}
 	.name {
 		margin-right: 4px;
+		line-height: 20px;
 	}
-`;
-
-const StyledCustomSelectControl = styled( CustomSelectControl )`
-	&,
-	&:visited,
-	&:hover span.name {
-		color: var( --color-text );
+	.is-highlighted & {
+		background-color: #f6f7f7;
 	}
-	.components-custom-select-control__button {
-		min-width: 225px;
-	}
-	.components-custom-select-control__menu {
-		margin: 0;
-	}
-	.components-custom-select-control__item {
-		grid-template-columns: auto min-content;
+	button & {
+		padding-right: 32px;
 	}
 `;
 
@@ -42,20 +39,25 @@ export const IntervalTypeDropdown: React.FunctionComponent< IntervalTypeProps > 
 		[ 'yearly', '2yearly', '3yearly', 'monthly' ].includes( intervalType ) ? intervalType : 'yearly'
 	) as SupportedUrlFriendlyTermType;
 	const optionsList = useIntervalOptions( props );
+
 	const selectOptionsList = Object.values( optionsList ).map( ( option ) => ( {
 		key: option.key,
 		name: (
 			<AddOnOption href={ option.url }>
 				<span className="name"> { option.name } </span>
-				<span className="discount"> { option.discountText } </span>
+				{ option.discountText ? <span className="discount"> { option.discountText } </span> : null }
 			</AddOnOption>
 		),
 	} ) );
+
 	return (
-		<StyledCustomSelectControl
-			label=""
-			options={ selectOptionsList }
-			value={ selectOptionsList.find( ( { key } ) => key === supportedIntervalType ) }
-		/>
+		<div className="plan-type-selector__interval-type-dropdown-container">
+			<CustomSelectControl
+				className="plan-type-selector__interval-type-dropdown"
+				label=""
+				options={ selectOptionsList }
+				value={ selectOptionsList.find( ( { key } ) => key === supportedIntervalType ) }
+			/>
+		</div>
 	);
 };

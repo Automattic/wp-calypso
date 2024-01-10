@@ -75,9 +75,10 @@ const JetpackCloudSidebar = ( {
 
 	const [ showUserFeedbackForm, setShowUserFeedbackForm ] = useState( shouldShowUserFeedbackForm );
 
-	const onShowUserFeedbackForm = useCallback( () => {
+	const onShareProductFeedback = useCallback( () => {
+		dispatch( recordTracksEvent( 'calypso_jetpack_sidebar_share_product_feedback_click' ) );
 		setShowUserFeedbackForm( true );
-	}, [] );
+	}, [ dispatch ] );
 
 	const onCloseUserFeedbackForm = useCallback( () => {
 		// Remove any hash from the URL.
@@ -153,7 +154,7 @@ const JetpackCloudSidebar = ( {
 							link={ USER_FEEDBACK_FORM_URL_HASH }
 							path=""
 							icon={ <Icon icon={ starEmpty } /> }
-							onClickMenuItem={ onShowUserFeedbackForm }
+							onClickMenuItem={ onShareProductFeedback }
 						/>
 					) }
 				</ul>

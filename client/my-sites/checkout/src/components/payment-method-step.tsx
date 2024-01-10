@@ -51,6 +51,7 @@ const CheckoutTermsWrapper = styled.div< {
 
 	& .checkout__terms-foldable-card {
 		box-shadow: none;
+		padding: 0;
 		& .foldable-card__header {
 			font-size: 12px;
 			font-weight: 500;
@@ -104,15 +105,9 @@ export default function BeforeSubmitCheckoutHeader() {
 
 	return (
 		<>
-			{ ! showToSFoldableCard ? (
-				<CheckoutTermsWrapper showToSFoldableCard={ showToSFoldableCard }>
-					<CheckoutTerms cart={ responseCart } />
-				</CheckoutTermsWrapper>
-			) : (
-				<CheckoutTermsWrapper showToSFoldableCard={ showToSFoldableCard }>
-					<CheckoutTerms cart={ responseCart } />
-				</CheckoutTermsWrapper>
-			) }
+			<CheckoutTermsWrapper showToSFoldableCard={ showToSFoldableCard }>
+				<CheckoutTerms cart={ responseCart } />
+			</CheckoutTermsWrapper>
 
 			{ ! hasCheckoutVersion( '2' ) && (
 				<WPOrderReviewSection>

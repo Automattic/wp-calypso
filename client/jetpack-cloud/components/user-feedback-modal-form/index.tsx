@@ -2,10 +2,14 @@ import { Button, FormLabel } from '@automattic/components';
 import { Modal } from '@wordpress/components';
 import { Icon, close } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
-import { ChangeEvent, useCallback, useState } from 'react';
+import { ChangeEvent, useCallback, useEffect, useState } from 'react';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormTextarea from 'calypso/components/forms/form-textarea';
 import ReviewsRatingsStars from 'calypso/components/reviews-rating-stars/reviews-ratings-stars';
+import { useDispatch } from 'calypso/state';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import { successNotice } from 'calypso/state/notices/actions';
+import useSubmitProductFeedback from './use-submit-product-feedback';
 
 import './style.scss';
 
@@ -19,17 +23,45 @@ const DEFAULT_RATING_VALUE = 0;
 
 export default function UserFeedbackModalForm( { show, onClose }: Props ) {
 	const translate = useTranslate();
+	const dispatch = useDispatch();
 
 	const [ feedback, setFeedback ] = useState( DEFAULT_FEEDBACK_VALUE );
 	const [ rating, setRating ] = useState( DEFAULT_RATING_VALUE );
+
+	const { isSubmittingFeedback, submitFeedback, isSubmissionSuccessful } =
+		useSubmitProductFeedback();
+
+	const onModalClose = useCallback( () => {
+		setFeedback( DEFAULT_FEEDBACK_VALUE );
+		setRating( DEFAULT_RATING_VALUE );
+		onClose?.();
+
+		dispatch( recordTracksEvent( 'calypso_jetpack_user_feedback_form_close' ) );
+	}, [ dispatch, onClose ] );
+
+	useEffect( () => {
+		if ( isSubmissionSuccessful ) {
+			dispatch(
+				successNotice( translate( 'Thank you for your feedback!' ), {
+					id: 'submit-product-feedback-success',
+					duration: 5000,
+				} )
+			);
+			onModalClose();
+		}
+	}, [ dispatch, isSubmissionSuccessful, onModalClose, translate ] );
 
 	const onFeedbackChange = useCallback( ( event: ChangeEvent< HTMLInputElement > ) => {
 		setFeedback( event.currentTarget.value );
 	}, [] );
 
-	const onRatingChange = useCallback( ( rating: number ) => {
-		setRating( rating );
-	}, [] );
+	const onRatingChange = useCallback(
+		( rating: number ) => {
+			dispatch( recordTracksEvent( 'calypso_jetpack_user_feedback_form_rating_click' ) );
+			setRating( rating );
+		},
+		[ dispatch ]
+	);
 
 	const hasCompletedForm = !! feedback && !! rating;
 
@@ -38,14 +70,22 @@ export default function UserFeedbackModalForm( { show, onClose }: Props ) {
 			return;
 		}
 
-		// TODO: send feedback to backend
-	}, [ hasCompletedForm ] );
+		dispatch(
+			recordTracksEvent( 'calypso_jetpack_user_feedback_form_submit', {
+				rating,
+				feedback,
+			} )
+		);
 
-	const onModalClose = useCallback( () => {
-		setFeedback( DEFAULT_FEEDBACK_VALUE );
-		setRating( DEFAULT_RATING_VALUE );
-		onClose?.();
-	}, [ onClose ] );
+		const sourceUrl = `${ window.location.origin }${ window.location.pathname }`;
+		submitFeedback( { feedback, rating, source_url: sourceUrl } );
+	}, [ dispatch, feedback, hasCompletedForm, rating, submitFeedback ] );
+
+	useEffect( () => {
+		if ( show ) {
+			dispatch( recordTracksEvent( 'calypso_jetpack_user_feedback_form_open' ) );
+		}
+	}, [ dispatch, show ] );
 
 	if ( ! show ) {
 		return null;
@@ -87,12 +127,15 @@ export default function UserFeedbackModalForm( { show, onClose }: Props ) {
 						placeholder="Add your feedback here"
 						value={ feedback }
 						onChange={ onFeedbackChange }
+						onClick={ () =>
+							dispatch( recordTracksEvent( 'calypso_jetpack_user_feedback_form_textarea_click' ) )
+						}
 					/>
 				</FormFieldset>
 
 				<FormFieldset>
 					<FormLabel htmlFor="textarea">
-						{ translate( 'How satisfied with Jetpack Manage are you?' ) }
+						{ translate( 'How satisfied are you with Jetpack Manage?' ) }
 					</FormLabel>
 					<ReviewsRatingsStars rating={ rating } onSelectRating={ onRatingChange } />
 				</FormFieldset>
@@ -100,6 +143,7 @@ export default function UserFeedbackModalForm( { show, onClose }: Props ) {
 
 			<div className="user-feedback-modal-form__footer">
 				<Button
+					busy={ isSubmittingFeedback }
 					className="user-feedback-modal-form__footer-submit"
 					primary
 					disabled={ ! hasCompletedForm }

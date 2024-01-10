@@ -45,7 +45,7 @@ export default function StoreFeaturesStep( props: Props ) {
 	 * Branch steps to skip design selection for WooCommerce flow
 	 */
 	const EXCLUDED_STORE_STEPS: { [ key: string ]: string[] } = {
-		power: [ 'design-setup-site' ],
+		power: [],
 		simple: [],
 	};
 	const getExcludedSteps = ( providedDependencies?: Dependencies ) =>

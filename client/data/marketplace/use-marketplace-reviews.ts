@@ -34,6 +34,8 @@ export type PaginationProps = {
 	perPage?: number;
 };
 
+export type ProductDefinitionProps = Omit< ProductProps, 'author' >;
+
 export type MarketplaceReviewsQueryProps = ProductProps & FilteringProps & PaginationProps;
 
 export type MarketplaceReviewBody = {
@@ -270,47 +272,64 @@ export const useInfiniteMarketplaceReviewsQuery = (
 ) => {
 	const queryKey: QueryKey = [
 		queryKeyBase,
-		'infinite',
 		productType,
 		slug,
 		author,
 		author_exclude,
 		page,
 		perPage,
+		'infinite',
 	];
-	const queryFn = ( { pageParam = 1 } ) =>
-		fetchMarketplaceReviews( productType, slug, pageParam, perPage, author, author_exclude );
 
 	return useInfiniteQuery< MarketplaceReviewsQueryResponse >( {
 		queryKey,
-		queryFn,
+		queryFn: ( { pageParam } ) =>
+			fetchMarketplaceReviews(
+				productType,
+				slug,
+				pageParam as number,
+				perPage,
+				author,
+				author_exclude
+			),
 		getNextPageParam: ( lastPage, allPages ) => {
 			if ( lastPage.headers[ 'X-WP-TotalPages' ] <= allPages.length ) {
 				return;
 			}
 			return allPages.length + 1;
 		},
+		initialPageParam: 1,
 		enabled,
 		staleTime,
 	} );
 };
 
-export const useCreateMarketplaceReviewMutation = () => {
+export const useCreateMarketplaceReviewMutation = ( {
+	productType,
+	slug,
+}: ProductDefinitionProps ) => {
 	const queryClient = useQueryClient();
-	return useMutation( {
+	const queryKeyPrefix = [ queryKeyBase, productType, slug ];
+
+	return useMutation< MarketplaceReviewResponse, ErrorResponse, MarketplaceReviewBody >( {
 		mutationFn: createReview,
 		onSuccess: () => {
-			queryClient.invalidateQueries( { queryKey: queryKeyBase } );
+			queryClient.invalidateQueries( { queryKey: queryKeyPrefix } );
 		},
 	} );
 };
 
-export const useUpdateMarketplaceReviewMutation = () => {
+export const useUpdateMarketplaceReviewMutation = ( {
+	productType,
+	slug,
+}: ProductDefinitionProps ) => {
 	const queryClient = useQueryClient();
-	return useMutation( {
+	const queryKeyPrefix = [ queryKeyBase, productType, slug ];
+
+	return useMutation< MarketplaceReviewResponse, ErrorResponse, UpdateMarketplaceReviewProps >( {
 		mutationFn: updateReview,
 		onSuccess: () => {
-			queryClient.invalidateQueries( { queryKey: queryKeyBase } );
+			queryClient.invalidateQueries( { queryKey: queryKeyPrefix } );
 		},
 	} );
 };
@@ -318,28 +337,14 @@ export const useUpdateMarketplaceReviewMutation = () => {
 export const useDeleteMarketplaceReviewMutation = ( {
 	productType,
 	slug,
-	page,
-	perPage,
-	author,
-	author_exclude,
-}: MarketplaceReviewsQueryProps ) => {
+}: ProductDefinitionProps ) => {
 	const queryClient = useQueryClient();
-	const queryKey: QueryKey = [
-		queryKeyBase,
-		productType,
-		slug,
-		author,
-		author_exclude,
-		page,
-		perPage,
-	];
-	return useMutation( {
+	const queryKeyPrefix = [ queryKeyBase, productType, slug ];
+
+	return useMutation< MarketplaceReviewResponse, ErrorResponse, DeleteMarketplaceReviewProps >( {
 		mutationFn: deleteReview,
 		onSuccess: () => {
-			queryClient.invalidateQueries( { queryKey } );
-		},
-		onError: ( error: Error ) => {
-			alert( error.message );
+			queryClient.invalidateQueries( { queryKey: queryKeyPrefix } );
 		},
 	} );
 };
@@ -352,7 +357,7 @@ export const useMarketplaceReviewsStatsQuery = (
 		refetchOnMount = true,
 	}: MarketplaceReviewsStatsQueryOptions = {}
 ) => {
-	const queryKey: QueryKey = [ queryKeyBase, productProps ];
+	const queryKey: QueryKey = [ queryKeyBase, productProps.productType, productProps.slug, 'stats' ];
 	const queryFn = () => fetchMarketplaceReviewsStats( productProps );
 	return useQuery( {
 		queryKey,
@@ -371,7 +376,13 @@ export const useIsUserAllowedToReview = (
 		refetchOnMount = true,
 	}: MarketplaceReviewsValidateQueryOptions = {}
 ) => {
-	const queryKey: QueryKey = [ ...queryKeyBase, 'validate', productProps ];
+	const queryKey: QueryKey = [
+		queryKeyBase,
+		productProps.productType,
+		productProps.slug,
+		'validate',
+	];
+
 	const queryFn = () => fetchIsUserAllowedToReview( productProps );
 	return useQuery( {
 		queryKey,

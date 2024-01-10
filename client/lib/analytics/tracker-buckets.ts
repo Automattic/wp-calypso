@@ -76,7 +76,7 @@ export const AdTrackersBuckets: { [ key in AdTracker ]: Bucket | null } = {
 
 const checkGtagInit = (): boolean => 'dataLayer' in window && 'gtag' in window;
 
-const checkWooGTMInit = (): boolean => {
+const checkGtmInit = (): boolean => {
 	return 'dataLayer' in window && 'google_tag_manager' in window;
 };
 
@@ -85,7 +85,7 @@ export const AdTrackersInitGuards: Partial< { [ key in AdTracker ]: () => boolea
 	gaEnhancedEcommerce: checkGtagInit,
 	floodlight: checkGtagInit,
 	googleAds: checkGtagInit,
-	googleTagManager: checkWooGTMInit,
+	googleTagManager: checkGtmInit,
 	bing: () => 'uetq' in window,
 	outbrain: () => 'obApi' in window,
 	pinterest: () => 'pintrk' in window,

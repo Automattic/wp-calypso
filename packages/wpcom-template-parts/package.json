@@ -39,7 +39,7 @@
 	"devDependencies": {
 		"@automattic/calypso-typescript-config": "workspace:^",
 		"@types/social-logos": "^2.3.1",
-		"typescript": "^5.3.2"
+		"typescript": "^5.3.3"
 	},
 	"peerDependencies": {
 		"@wordpress/data": "^9.18.0",
