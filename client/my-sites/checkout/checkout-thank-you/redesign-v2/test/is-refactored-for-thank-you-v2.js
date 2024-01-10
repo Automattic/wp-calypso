@@ -41,7 +41,7 @@ describe( 'isRefactoredForThankYouV2', () => {
 				},
 			},
 		};
-		expect( isRefactored( props ) ).toBe( true );
+		expect( isRefactoredForThankYouV2( props ) ).toBe( true );
 	} );
 
 	it( 'should return false if the purchase is not supported', () => {

@@ -5,7 +5,7 @@ import { translate } from 'i18n-calypso';
 import ThankYouV2 from 'calypso/components/thank-you-v2';
 import { preventWidows } from 'calypso/lib/formatting';
 import { usePresalesChat } from 'calypso/lib/presales-chat';
-import ProductDomain from '../products/product-domain';
+import ThankYouDomainProduct from '../products/domain-product';
 
 interface DomainBulkTransferThankYouProps {
 	purchases: ReceiptPurchase[];
@@ -46,7 +46,7 @@ export const DomainBulkTransferThankYou: React.FC< DomainBulkTransferThankYouPro
 	);
 
 	const products = purchases.map( ( purchase, index ) => {
-		return <ProductDomain purchase={ purchase } currency={ currency } key={ index } />;
+		return <ThankYouDomainProduct purchase={ purchase } currency={ currency } key={ index } />;
 	} );
 
 	const footerDetails = [
