@@ -491,6 +491,7 @@ export function noSite( context, next ) {
 	const isDomainOnlyFlow = context.query?.isDomainOnly === '1' || ! siteFragment;
 	const isJetpackCheckoutFlow = context.pathname.includes( '/checkout/jetpack' );
 	const isAkismetCheckoutFlow = context.pathname.includes( '/checkout/akismet' );
+	const isMarketplaceSitelessCheckoutFlow = context.pathname.includes( '/checkout/marketplace' );
 	const isDomainsManage = context.pathname === '/domains/manage/';
 	const isGiftCheckoutFlow = context.pathname.includes( '/gift/' );
 	const isRenewal = context.pathname.includes( '/renew/' );
@@ -499,6 +500,7 @@ export function noSite( context, next ) {
 		! isDomainOnlyFlow &&
 		! isJetpackCheckoutFlow &&
 		! isAkismetCheckoutFlow &&
+		! isMarketplaceSitelessCheckoutFlow &&
 		! isGiftCheckoutFlow &&
 		! isDomainsManage &&
 		// We allow renewals without a site through because we want to show these

@@ -311,7 +311,7 @@ export const useCreateMarketplaceReviewMutation = ( {
 	const queryClient = useQueryClient();
 	const queryKeyPrefix = [ queryKeyBase, productType, slug ];
 
-	return useMutation( {
+	return useMutation< MarketplaceReviewResponse, ErrorResponse, MarketplaceReviewBody >( {
 		mutationFn: createReview,
 		onSuccess: () => {
 			queryClient.invalidateQueries( { queryKey: queryKeyPrefix } );
