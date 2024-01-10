@@ -244,15 +244,16 @@ const actions: TaskActionTable = {
 		} ),
 		useCalypsoPath: true,
 	} ),
-	design_completed: ( task, flow, { siteInfoQueryArgs } ) => ( {
-		...task,
-		actionDispatch: () => recordTaskClickTracksEvent( flow, task.completed, task.id ),
-		calypso_path: addQueryArgs( `/setup/update-design/designSetup`, {
-			...siteInfoQueryArgs,
-			flowToReturnTo: flow,
-		} ),
-		useCalypsoPath: true,
-	} ),
+	design_completed: ( task, flow, { siteInfoQueryArgs } ) =>
+		( {
+			...task,
+			actionDispatch: () => recordTaskClickTracksEvent( flow, task.completed, task.id ),
+			calypso_path: addQueryArgs( `/setup/update-design/designSetup`, {
+				...siteInfoQueryArgs,
+				flowToReturnTo: flow,
+			} ),
+			useCalypsoPath: true,
+		} ) satisfies EnhancedTask,
 	setup_general: ( task, flow, { siteInfoQueryArgs } ) =>
 		( {
 			...task,
