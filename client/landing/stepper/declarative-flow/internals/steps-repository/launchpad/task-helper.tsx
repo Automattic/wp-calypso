@@ -264,15 +264,16 @@ const actions: TaskActionTable = {
 			flowToReturnTo: flow,
 		} ),
 	} ),
-	setup_link_in_bio: ( task, flow, { siteInfoQueryArgs } ) => ( {
-		...task,
-		actionDispatch: () => recordTaskClickTracksEvent( flow, task.completed, task.id ),
-		calypso_path: addQueryArgs(
-			`/setup/link-in-bio-post-setup/linkInBioPostSetup`,
-			siteInfoQueryArgs
-		),
-		useCalypsoPath: true,
-	} ),
+	setup_link_in_bio: ( task, flow, { siteInfoQueryArgs } ) =>
+		( {
+			...task,
+			actionDispatch: () => recordTaskClickTracksEvent( flow, task.completed, task.id ),
+			calypso_path: addQueryArgs(
+				`/setup/link-in-bio-post-setup/linkInBioPostSetup`,
+				siteInfoQueryArgs
+			),
+			useCalypsoPath: true,
+		} ) satisfies EnhancedTask,
 	links_added: ( task, flow, { siteInfoQueryArgs } ) =>
 		( {
 			...task,
