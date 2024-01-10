@@ -1,6 +1,6 @@
 import { localizeUrl } from '@automattic/i18n-utils';
 import { translate } from 'i18n-calypso';
-import { SUPPORT_URL } from './const';
+import { SUPPORT_URL, INSIGHTS_SUPPORT_URL } from './const';
 
 export default function () {
 	const statsStrings = {};
@@ -142,6 +142,11 @@ export default function () {
 		} ),
 		empty: translate( 'Most viewed {{link}}tags & categories{{/link}} will be listed here.', {
 			comment: '{{link}} links to support documentation.',
+			components: {
+				link: (
+					<a href={ localizeUrl( `${ INSIGHTS_SUPPORT_URL }#:~:text=Tags%20,%20Categories` ) } />
+				),
+			},
 			context: 'Stats: Info box label when the Tags module is empty',
 		} ),
 	};
