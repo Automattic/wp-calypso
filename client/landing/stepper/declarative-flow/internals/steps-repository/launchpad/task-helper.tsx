@@ -78,7 +78,8 @@ type TaskId =
 	| 'design_selected'
 	| 'design_completed'
 	| 'setup_general'
-	| 'setup_link_in_bio';
+	| 'setup_link_in_bio'
+	| 'links_added';
 
 interface TaskContext {
 	siteInfoQueryArgs?: { siteId?: number; siteSlug?: string | null };
@@ -267,6 +268,16 @@ const actions: TaskActionTable = {
 			`/setup/link-in-bio-post-setup/linkInBioPostSetup`,
 			siteInfoQueryArgs
 		),
+		useCalypsoPath: true,
+	} ),
+	links_added: ( task, flow, { siteInfoQueryArgs } ) => ( {
+		...task,
+		actionDispatch: () => {
+			recordTaskClickTracksEvent( flow, task.completed, task.id );
+		},
+		calypso_path: addQueryArgs( `/site-editor/${ siteInfoQueryArgs?.siteSlug }`, {
+			canvas: 'edit',
+		} ),
 		useCalypsoPath: true,
 	} ),
 } as const;
@@ -513,19 +524,8 @@ export function getEnhancedTasks( {
 			case 'design_completed':
 			case 'setup_general':
 			case 'setup_link_in_bio':
-				return getTaskDefinition( task, flow, context );
 			case 'links_added':
-				taskData = {
-					actionDispatch: () => {
-						recordTaskClickTracksEvent( flow, task.completed, task.id );
-						window.location.assign(
-							addQueryArgs( `/site-editor/${ siteSlug }`, {
-								canvas: 'edit',
-							} )
-						);
-					},
-				};
-				break;
+				return getTaskDefinition( task, flow, context );
 			case 'link_in_bio_launched':
 				taskData = {
 					isLaunchTask: true,
