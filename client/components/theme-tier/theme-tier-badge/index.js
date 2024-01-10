@@ -1,4 +1,5 @@
 import { BUNDLED_THEME, DOT_ORG_THEME, MARKETPLACE_THEME } from '@automattic/design-picker';
+import classNames from 'classnames';
 import { useSelector } from 'calypso/state';
 import { getThemeType, isThemePurchased } from 'calypso/state/themes/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
@@ -14,6 +15,7 @@ import './style.scss';
 
 export default function ThemeTierBadge( {
 	canGoToCheckout = true,
+	className = '',
 	isLockedStyleVariation,
 	showUpgradeBadge = true,
 	themeId,
@@ -50,7 +52,7 @@ export default function ThemeTierBadge( {
 	};
 
 	return (
-		<div className="theme-tier-badge">
+		<div className={ classNames( 'theme-tier-badge', className ) }>
 			<ThemeTierBadgeContextProvider
 				canGoToCheckout={ canGoToCheckout }
 				showUpgradeBadge={ showUpgradeBadge }

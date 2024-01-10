@@ -19,6 +19,7 @@ import './style.scss';
 
 interface Props {
 	canGoToCheckout?: boolean;
+	className?: string;
 	isLockedStyleVariation?: boolean;
 	siteId: number | null;
 	siteSlug: string | null;
@@ -27,6 +28,7 @@ interface Props {
 
 const ThemeTypeBadge = ( {
 	canGoToCheckout,
+	className,
 	isLockedStyleVariation,
 	siteId,
 	siteSlug,
@@ -110,7 +112,7 @@ const ThemeTypeBadge = ( {
 		badgeContent = <PremiumBadge { ...badgeContentProps } />;
 	}
 
-	return <div className="theme-type-badge">{ badgeContent }</div>;
+	return <div className={ classNames( 'theme-type-badge', className ) }>{ badgeContent }</div>;
 };
 
 export default ThemeTypeBadge;

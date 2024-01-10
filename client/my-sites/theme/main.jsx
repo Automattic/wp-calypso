@@ -731,22 +731,26 @@ class ThemeSheet extends Component {
 		const isPartnerTheme = themeTier.slug === 'partner';
 		const isSenseiOrWooCommerceTheme = themeType === BUNDLED_THEME;
 
-		if ( isCommunityTheme || isPartnerTheme || isSenseiOrWooCommerceTheme ) {
-			return config.isEnabled( 'themes/tiers' ) ? (
-				<ThemeTierBadge
-					showUpgradeBadge={ false }
-					themeId={ themeId }
-					isLockedStyleVariation={ false }
-				/>
-			) : (
-				<ThemeTypeBadge
-					siteId={ siteId }
-					siteSlug={ siteSlug }
-					themeId={ themeId }
-					isLockedStyleVariation={ false }
-				/>
-			);
+		if ( ! isCommunityTheme && ! isPartnerTheme && ! isSenseiOrWooCommerceTheme ) {
+			return null;
 		}
+
+		return config.isEnabled( 'themes/tiers' ) ? (
+			<ThemeTierBadge
+				className="theme__sheet-main-info-type"
+				showUpgradeBadge={ false }
+				themeId={ themeId }
+				isLockedStyleVariation={ false }
+			/>
+		) : (
+			<ThemeTypeBadge
+				className="theme__sheet-main-info-type"
+				siteId={ siteId }
+				siteSlug={ siteSlug }
+				themeId={ themeId }
+				isLockedStyleVariation={ false }
+			/>
+		);
 	};
 
 	renderHeader = () => {
@@ -778,12 +782,11 @@ class ThemeSheet extends Component {
 					<div className="theme__sheet-main-info">
 						<h1 className="theme__sheet-main-info-title">
 							{ title }
+							{ this.renderThemeBadge() }
 							{ softLaunched && (
 								<span className="theme__sheet-bar-soft-launched">{ translate( 'A8C Only' ) }</span>
 							) }
 						</h1>
-						{ this.renderThemeBadge() }
-						<div className="theme__sheet-main-info-type">{  }</div>
 						<span className="theme__sheet-main-info-tag">{ tag }</span>
 					</div>
 					<div className="theme__sheet-main-actions">
