@@ -226,25 +226,9 @@ const StatsPurchasePage = ( {
 					! isLoading && isTypeDetectionEnabled && showPurchasePage && (
 						<>
 							{
-								// blog doesn't have any plan but is not categorised as either personal or commectial - show old purchase wizard
-								! isForceProductRedirect && isCommercial === null && (
-									<StatsPurchaseWizard
-										siteSlug={ siteSlug }
-										commercialProduct={ commercialProduct }
-										maxSliderPrice={ maxSliderPrice ?? 10 }
-										pwywProduct={ pwywProduct }
-										siteId={ siteId }
-										redirectUri={ query.redirect_uri ?? '' }
-										from={ query.from ?? '' }
-										disableFreeProduct={ ! noPlanOwned }
-										initialStep={ initialStep }
-										initialSiteType={ initialSiteType }
-									/>
-								)
-							}
-							{
-								// blog is commercial or we are forcing a product - show the commercial purchase page
-								( ( ! isForceProductRedirect && isCommercial ) || redirectToCommercial ) && (
+								// blog is commercial, we are forcing a product or the site is not identified yet - show the commercial purchase page
+								( ( ! isForceProductRedirect && ( isCommercial || isCommercial === null ) ) ||
+									redirectToCommercial ) && (
 									<div className="stats-purchase-page__notice">
 										<StatsSingleItemPagePurchase
 											siteSlug={ siteSlug ?? '' }
