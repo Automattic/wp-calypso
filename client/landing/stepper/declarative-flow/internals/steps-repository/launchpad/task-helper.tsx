@@ -179,10 +179,17 @@ const actions: TaskActionTable = {
 			disabled: task.completed && ! isCurrentPlanFree,
 			useCalypsoPath: true,
 		} ) satisfies EnhancedTask,
-	subscribers_added: ( task, flow, { goToStep } ) => ( {
-		...task,
-		actionDispatch: () => {
-			if ( goToStep ) {
+	subscribers_added: ( task, flow, { goToStep } ) =>
+		( {
+			...task,
+			actionDispatch: () => {
+				if ( goToStep ) {
+					recordTaskClickTracksEvent( flow, task.completed, task.id );
+					goToStep( 'subscribers' );
+				}
+			},
+			useCalypsoPath: false,
+		} ) satisfies EnhancedTask,
 				recordTaskClickTracksEvent( flow, task.completed, task.id );
 				goToStep( 'subscribers' );
 			}
