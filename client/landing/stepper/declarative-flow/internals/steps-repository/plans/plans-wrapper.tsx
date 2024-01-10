@@ -138,11 +138,13 @@ const PlansWrapper: React.FC< Props > = ( props ) => {
 		setDomain( freeDomainSuggestion );
 	};
 
-	const handleIntervalTypeChange = ( intervalType: SupportIntervalTypes ) => {
-		setIntervalType( intervalType );
-		const url = new URL( window.location.href );
-		url.searchParams.set( 'intervalType', intervalType );
-		window.history.pushState( null, '', url.toString() );
+	const handleIntervalTypeChange = ( nextIntervalType: SupportIntervalTypes ) => {
+		if ( nextIntervalType !== intervalType ) {
+			setIntervalType( nextIntervalType );
+			const url = new URL( window.location.href );
+			url.searchParams.set( 'intervalType', nextIntervalType );
+			window.history.pushState( null, '', url.toString() );
+		}
 	};
 
 	const plansFeaturesList = () => {
