@@ -1,4 +1,3 @@
-import { PLAN_ANNUAL_PERIOD } from '@automattic/calypso-products';
 import styled from '@emotion/styled';
 import { CustomSelectControl } from '@wordpress/components';
 import useIntervalOptions from '../hooks/use-interval-options';
@@ -35,14 +34,7 @@ const AddOnOption = styled.a`
 `;
 
 export const IntervalTypeDropdown: React.FunctionComponent< IntervalTypeProps > = ( props ) => {
-	const {
-		intervalType,
-		displayedIntervals,
-		currentSitePlanSlug,
-		usePricingMetaForGridPlans,
-		eligibleForWpcomMonthlyPlans,
-		coupon,
-	} = props;
+	const { intervalType, displayedIntervals, eligibleForWpcomMonthlyPlans } = props;
 	const showBiennialToggle = displayedIntervals.includes( '2yearly' );
 	const supportedIntervalType = (
 		displayedIntervals.includes( intervalType ) ? intervalType : 'yearly'
@@ -58,24 +50,6 @@ export const IntervalTypeDropdown: React.FunctionComponent< IntervalTypeProps > 
 			</AddOnOption>
 		),
 	} ) );
-	const pricingMeta = usePricingMetaForGridPlans( {
-		planSlugs: currentSitePlanSlug ? [ currentSitePlanSlug ] : [],
-		withoutProRatedCredits: true,
-		storageAddOns: null,
-		selectedSiteId: props.selectedSiteId,
-		coupon,
-	} );
-
-	const currentPlanBillingPeriod = currentSitePlanSlug
-		? pricingMeta?.[ currentSitePlanSlug ]?.billingPeriod
-		: null;
-
-	if ( showBiennialToggle ) {
-		// skip showing toggle if current plan's term is higher than 1 year
-		if ( currentPlanBillingPeriod && PLAN_ANNUAL_PERIOD < currentPlanBillingPeriod ) {
-			return null;
-		}
-	}
 
 	if ( ! showBiennialToggle ) {
 		if ( ! eligibleForWpcomMonthlyPlans ) {
