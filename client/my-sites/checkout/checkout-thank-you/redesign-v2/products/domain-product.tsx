@@ -16,7 +16,12 @@ type ThankYouDomainProductProps = {
 	currency?: string;
 };
 
-const DomainTransferSection = ( { purchase }: { purchase: ReceiptPurchase; currency: string } ) => {
+type DomainTransferSectionProps = {
+	purchase: ReceiptPurchase;
+	currency: string;
+};
+
+const DomainTransferSection = ( { purchase, currency }: DomainTransferSectionProps ) => {
 	const { __ } = useI18n();
 
 	const purchaseLabel = ( priceInteger: number ) => {

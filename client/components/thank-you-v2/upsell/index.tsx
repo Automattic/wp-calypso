@@ -30,9 +30,9 @@ const validMeshColors = {
 	},
 };
 
-export type ThankYouUpsellMeshColor = keyof typeof validMeshColors;
+type MeshColor = keyof typeof validMeshColors & string;
 
-const ContentDiv = styled( 'div' )< { meshColor: ThankYouUpsellMeshColor } >`
+const ContentDiv = styled( 'div' )< { meshColor: MeshColor } >`
 	background-repeat: no-repeat;
 	background-position-x: -54px;
 	background-size: 100px 100%;
@@ -55,7 +55,7 @@ export type ThankYouUpsellProps = {
 	title: string;
 	description: string;
 	icon: string;
-	meshColor?: ThankYouUpsellMeshColor;
+	meshColor?: MeshColor;
 	action?: React.ReactNode;
 };
 
