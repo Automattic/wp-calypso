@@ -95,7 +95,8 @@ import PersonalPlanDetails from './personal-plan-details';
 import PremiumPlanDetails from './premium-plan-details';
 import ProPlanDetails from './pro-plan-details';
 import MasterbarStyled from './redesign-v2/masterbar-styled';
-import DomainOnlyThankYou from './redesign-v2/pages/domain-only';
+import { DomainBulkTransferThankYou } from './redesign-v2/pages/domain-bulk-transfer';
+import { DomainOnlyThankYou } from './redesign-v2/pages/domain-only';
 import CheckoutMasterbar from './redesign-v2/sections/CheckoutMasterbar';
 import Footer from './redesign-v2/sections/Footer';
 import { isRedesignV2, isRefactoredForThankYouV2 } from './redesign-v2/utils';
@@ -572,7 +573,11 @@ export class CheckoutThankYou extends Component<
 		if ( isRefactoredForThankYouV2( this.props ) ) {
 			let pageContent = null;
 
-			if ( ! wasBulkDomainTransfer && isDomainOnly( purchases ) ) {
+			if ( wasBulkDomainTransfer ) {
+				pageContent = (
+					<DomainBulkTransferThankYou purchases={ purchases } currency={ this.props.currency } />
+				);
+			} else if ( isDomainOnly( purchases ) ) {
 				pageContent = <DomainOnlyThankYou purchases={ purchases } />;
 			}
 

@@ -1,3 +1,4 @@
+import { domainProductSlugs } from 'calypso/lib/domains/constants';
 import { isRefactoredForThankYouV2 } from '../utils';
 
 describe( 'isRefactoredForThankYouV2', () => {
@@ -29,6 +30,18 @@ describe( 'isRefactoredForThankYouV2', () => {
 			},
 		};
 		expect( isRefactoredForThankYouV2( props ) ).toBe( true );
+	} );
+
+	it( 'should return true if there purchases contain only domain transfers', () => {
+		const props = {
+			receipt: {
+				data: {
+					purchases: [ { productSlug: domainProductSlugs.TRANSFER_IN } ],
+					failedPurchases: [],
+				},
+			},
+		};
+		expect( isRefactored( props ) ).toBe( true );
 	} );
 
 	it( 'should return false if the purchase is not supported', () => {
