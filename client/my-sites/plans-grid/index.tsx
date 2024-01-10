@@ -26,6 +26,7 @@ const WrappedComparisonGrid = ( {
 	showUpgradeableStorage,
 	onStorageAddOnClick,
 	stickyRowOffset,
+	coupon,
 	...otherProps
 }: ComparisonGridExternalProps ) => {
 	const handleUpgradeClick = useUpgradeClickHandler( {
@@ -39,6 +40,7 @@ const WrappedComparisonGrid = ( {
 			gridPlans={ gridPlans }
 			usePricingMetaForGridPlans={ usePricingMetaForGridPlans }
 			allFeaturesList={ allFeaturesList }
+			coupon={ coupon }
 		>
 			<ComparisonGrid
 				intervalType={ intervalType }
@@ -59,8 +61,15 @@ const WrappedComparisonGrid = ( {
 };
 
 const WrappedFeaturesGrid = ( props: FeaturesGridExternalProps ) => {
-	const { siteId, intent, gridPlans, usePricingMetaForGridPlans, allFeaturesList, onUpgradeClick } =
-		props;
+	const {
+		siteId,
+		intent,
+		gridPlans,
+		usePricingMetaForGridPlans,
+		allFeaturesList,
+		onUpgradeClick,
+		coupon,
+	} = props;
 	const translate = useTranslate();
 	const isPlanUpgradeCreditEligible = useIsPlanUpgradeCreditVisible(
 		siteId,
@@ -84,6 +93,7 @@ const WrappedFeaturesGrid = ( props: FeaturesGridExternalProps ) => {
 			intent={ intent }
 			gridPlans={ gridPlans }
 			usePricingMetaForGridPlans={ usePricingMetaForGridPlans }
+			coupon={ coupon }
 			allFeaturesList={ allFeaturesList }
 		>
 			<FeaturesGrid
