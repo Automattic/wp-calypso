@@ -19,7 +19,7 @@ import { GridPlan } from '../hooks/npm-ready/data-store/use-grid-plans';
 
 function usePerMonthDescription( { planSlug }: { planSlug: PlanSlug } ) {
 	const translate = useTranslate();
-	const { helpers, gridPlansIndex } = usePlansGridContext();
+	const { helpers, gridPlansIndex, coupon } = usePlansGridContext();
 	const {
 		isMonthlyPlan,
 		pricing: { currencyCode, originalPrice, discountedPrice, billingPeriod, introOffer },
@@ -45,6 +45,7 @@ function usePerMonthDescription( { planSlug }: { planSlug: PlanSlug } ) {
 			planSlugs: [ yearlyVariantPlanSlug ],
 			withoutProRatedCredits: true,
 			storageAddOns: storageAddOnsForPlan,
+			coupon,
 		} )?.[ yearlyVariantPlanSlug ];
 
 	if (

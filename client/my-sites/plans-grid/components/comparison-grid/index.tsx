@@ -496,6 +496,7 @@ const ComparisonGridHeader = forwardRef< HTMLDivElement, ComparisonGridHeaderPro
 		const { prices, currencyCode } = usePlanPricingInfoFromGridPlans( {
 			gridPlans: visibleGridPlans,
 		} );
+		const { coupon } = usePlansGridContext();
 
 		const isLargeCurrency = useIsLargeCurrency( {
 			prices,
@@ -518,6 +519,7 @@ const ComparisonGridHeader = forwardRef< HTMLDivElement, ComparisonGridHeaderPro
 								{ ...planTypeSelectorProps }
 								title={ translate( 'Billing Cycle' ) }
 								hideDiscountLabel={ true }
+								coupon={ coupon }
 							/>
 						</PlanTypeSelectorWrapper>
 					) }

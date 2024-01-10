@@ -19,6 +19,7 @@ interface Props {
 	planSlugs: PlanSlug[];
 	withoutProRatedCredits?: boolean;
 	storageAddOns?: ( AddOnMeta | null )[] | null;
+	coupon?: string;
 }
 
 function getTotalPrice( planPrice: number | null | undefined, addOnPrice = 0 ): number | null {
@@ -34,6 +35,7 @@ const usePricingMetaForGridPlans: UsePricingMetaForGridPlans = ( {
 	planSlugs,
 	withoutProRatedCredits = false,
 	storageAddOns,
+	coupon,
 }: Props ) => {
 	// TODO: pass this in as a prop to uncouple the dependency
 	const selectedSiteId = useSelector( getSelectedSiteId ) ?? undefined;
@@ -41,11 +43,11 @@ const usePricingMetaForGridPlans: UsePricingMetaForGridPlans = ( {
 	const planAvailabilityForPurchase = useCheckPlanAvailabilityForPurchase( { planSlugs } );
 
 	// plans - should have a definition for all plans, being the main source of API data
-	const plans = Plans.usePlans();
+	const plans = Plans.usePlans( { coupon } );
 	// sitePlans - unclear if all plans are included
 	const sitePlans = Plans.useSitePlans( { siteId: selectedSiteId } );
 	const currentPlan = Plans.useCurrentPlan( { siteId: selectedSiteId } );
-	const introOffers = Plans.useIntroOffers( { siteId: selectedSiteId } );
+	const introOffers = Plans.useIntroOffers( { siteId: selectedSiteId, coupon } );
 	const purchasedPlan = Purchases.useSitePurchaseById( {
 		siteId: selectedSiteId,
 		purchaseId: currentPlan?.purchaseId,

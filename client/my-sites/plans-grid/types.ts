@@ -83,6 +83,7 @@ export type GridContextProps = {
 	intent?: PlansIntent;
 	usePricingMetaForGridPlans: UsePricingMetaForGridPlans;
 	children: React.ReactNode;
+	coupon?: string;
 };
 
 export type ComparisonGridExternalProps = Omit< GridContextProps, 'children' > &

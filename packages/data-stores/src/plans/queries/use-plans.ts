@@ -12,15 +12,18 @@ interface PlansIndex {
 /**
  * Plans from `/plans` endpoint, transformed into a map of planSlug => PlanNext
  */
-function usePlans(): UseQueryResult< PlansIndex > {
+function usePlans( { coupon }: { coupon?: string } = {} ): UseQueryResult< PlansIndex > {
 	const queryKeys = useQueryKeysFactory();
+	const params = new URLSearchParams();
+	coupon && params.append( 'coupon_code', coupon );
 
 	return useQuery( {
-		queryKey: queryKeys.plans(),
+		queryKey: queryKeys.plans( coupon ),
 		queryFn: async (): Promise< PlansIndex > => {
 			const data: PricedAPIPlan[] = await wpcomRequest( {
 				path: `/plans`,
 				apiVersion: '1.5',
+				query: params.toString(),
 			} );
 
 			return Object.fromEntries(

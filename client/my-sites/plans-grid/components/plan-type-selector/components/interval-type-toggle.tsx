@@ -20,6 +20,7 @@ export const IntervalTypeToggle: React.FunctionComponent< IntervalTypeProps > = 
 		currentSitePlanSlug,
 		usePricingMetaForGridPlans,
 		title,
+		coupon,
 	} = props;
 	const [ spanRef, setSpanRef ] = useState< HTMLSpanElement >();
 	const segmentClasses = classNames( 'price-toggle', {
@@ -31,6 +32,7 @@ export const IntervalTypeToggle: React.FunctionComponent< IntervalTypeProps > = 
 		planSlugs: currentSitePlanSlug ? [ currentSitePlanSlug ] : [],
 		withoutProRatedCredits: true,
 		storageAddOns: null,
+		coupon,
 	} );
 	const currentPlanBillingPeriod = currentSitePlanSlug
 		? pricingMeta?.[ currentSitePlanSlug ]?.billingPeriod

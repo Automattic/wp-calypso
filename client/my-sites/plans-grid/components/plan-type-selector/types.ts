@@ -30,6 +30,10 @@ export type PlanTypeSelectorProps = {
 	 * Whether to render the selector along with a title if passed.
 	 */
 	title?: TranslateResult;
+	/**
+	 * Coupon code for use in pricing hook usage.
+	 */
+	coupon?: string;
 };
 export type IntervalTypeProps = Pick<
 	PlanTypeSelectorProps,
@@ -47,6 +51,7 @@ export type IntervalTypeProps = Pick<
 	| 'currentSitePlanSlug'
 	| 'usePricingMetaForGridPlans'
 	| 'title'
+	| 'coupon'
 >;
 
 export type SupportedUrlFriendlyTermType = Extract<

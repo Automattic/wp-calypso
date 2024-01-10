@@ -424,6 +424,7 @@ const PlansFeaturesMain = ( {
 		showLegacyStorageFeature,
 		isSubdomainNotGenerated: ! resolvedSubdomainName.result,
 		storageAddOns,
+		coupon,
 	} );
 
 	const planFeaturesForFeaturesGrid = usePlanFeaturesForGridPlans( {
@@ -526,6 +527,7 @@ const PlansFeaturesMain = ( {
 			currentSitePlanSlug: sitePlanSlug,
 			usePricingMetaForGridPlans,
 			recordTracksEvent,
+			coupon,
 		};
 	}, [
 		_customerType,
@@ -543,6 +545,7 @@ const PlansFeaturesMain = ( {
 		showBiennialToggle,
 		showPlanTypeSelectorDropdown,
 		eligibleForWpcomMonthlyPlans,
+		coupon,
 	] );
 
 	/**
@@ -784,6 +787,7 @@ const PlansFeaturesMain = ( {
 								layoutClassName="plans-features-main__plan-type-selector-layout"
 								enableStickyBehavior={ enablePlanTypeSelectorStickyBehavior }
 								stickyPlanTypeSelectorOffset={ masterbarHeight - 1 }
+								coupon={ coupon }
 							/>
 						) }
 						<div
@@ -821,6 +825,7 @@ const PlansFeaturesMain = ( {
 									allFeaturesList={ FEATURES_LIST }
 									onStorageAddOnClick={ handleStorageAddOnClick }
 									showRefundPeriod={ isAnyHostingFlow( flowName ) }
+									coupon={ coupon }
 								/>
 								{ showEscapeHatch && hidePlansFeatureComparison && (
 									<div className="plans-features-main__escape-hatch">
@@ -858,6 +863,7 @@ const PlansFeaturesMain = ( {
 												<PlanTypeSelector
 													{ ...planTypeSelectorProps }
 													layoutClassName="plans-features-main__plan-type-selector-layout"
+													coupon={ coupon }
 												/>
 											) }
 											<ComparisonGrid
@@ -882,6 +888,7 @@ const PlansFeaturesMain = ( {
 												planTypeSelectorProps={
 													! hidePlanSelector ? planTypeSelectorProps : undefined
 												}
+												coupon={ coupon }
 											/>
 											<ComparisonGridToggle
 												onClick={ toggleShowPlansComparisonGrid }
