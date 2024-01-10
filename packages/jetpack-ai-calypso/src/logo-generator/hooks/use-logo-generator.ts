@@ -8,6 +8,7 @@ import wpcomProxyRequest from 'wpcom-proxy-request';
 /**
  * Internal dependencies
  */
+import { stashLogo } from '../lib/logo-storage';
 import { requestJwt } from '../lib/request-token';
 import { saveToMediaLibrary } from '../lib/save-to-media-library';
 import { setSiteLogo } from '../lib/set-site-logo';
@@ -25,6 +26,7 @@ const useLogoGenerator = () => {
 		setIsApplyingLogo,
 		setIsRequestingImage,
 		setIsEnhancingPrompt,
+		addLogoToHistory,
 	} = useDispatch( STORE_NAME );
 
 	const {
@@ -203,6 +205,14 @@ For example: user's prompt: A logo for an ice cream shop. Returned prompt: A log
 		return data?.choices?.[ 0 ]?.message?.content;
 	};
 
+	const storeLogo = useCallback(
+		( logo: { url: string; description: string } ) => {
+			addLogoToHistory( logo );
+			stashLogo( { ...logo, siteId: String( siteId ) } );
+		},
+		[ siteId, addLogoToHistory ]
+	);
+
 	return {
 		logos,
 		selectedLogo,
@@ -227,6 +237,7 @@ For example: user's prompt: A logo for an ice cream shop. Returned prompt: A log
 		isBusy,
 		getAiAssistantFeature,
 		requireUpgrade,
+		storeLogo,
 	};
 };
 
