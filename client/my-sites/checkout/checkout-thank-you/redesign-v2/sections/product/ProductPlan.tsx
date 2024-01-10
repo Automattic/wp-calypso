@@ -46,7 +46,7 @@ const ProductPlan = ( { siteSlug, primaryPurchase, siteID }: ProductPlanProps ) 
 			? launchpad.checklist.filter( ( item ) => item?.completed === false ).length > 0
 			: false;
 	const letsWorkHref = hasRemainingTasks
-		? `/setup/${ launchpad?.site_intent }/launchpad?siteSlug=${ siteSlug }&siteId=${ siteID }&showLaunchpad=true`
+		? `/setup/build/launchpad?siteSlug=${ siteSlug }&siteId=${ siteID }&showLaunchpad=true`
 		: `/home/${ siteSlug }`;
 
 	return (
