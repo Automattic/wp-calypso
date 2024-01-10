@@ -75,8 +75,9 @@ class DomainsMiniCart extends Component {
 		const priceText = translate( '%(cost)s/year', {
 			args: { cost: formattedOriginalCost },
 		} );
-		const costDifference = domain.item_original_cost - domain.cost;
-		const hasPromotion = costDifference > 0;
+		const hasPromotion = domain.cost_overrides?.some(
+			( override ) => ! override.does_override_original_cost
+		);
 
 		return isRemoving ? null : (
 			<>
