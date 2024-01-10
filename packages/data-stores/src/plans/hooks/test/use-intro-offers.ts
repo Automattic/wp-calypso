@@ -32,7 +32,7 @@ describe( 'useIntroOffers selector', () => {
 
 		expect( introOffers ).toEqual( {
 			[ MockData.NEXT_STORE_SITE_PLAN_BUSINESS.planSlug ]:
-				MockData.NEXT_STORE_SITE_PLAN_BUSINESS.introOffer,
+				MockData.NEXT_STORE_SITE_PLAN_BUSINESS.pricing.introOffer,
 		} );
 	} );
 
@@ -68,7 +68,8 @@ describe( 'useIntroOffers selector', () => {
 		const introOffers = useIntroOffers( { siteId: 1 } );
 
 		expect( introOffers ).toEqual( {
-			[ MockData.NEXT_STORE_PLAN_BUSINESS.planSlug ]: MockData.NEXT_STORE_PLAN_BUSINESS.introOffer,
+			[ MockData.NEXT_STORE_PLAN_BUSINESS.planSlug ]:
+				MockData.NEXT_STORE_PLAN_BUSINESS.pricing.introOffer,
 		} );
 	} );
 
@@ -90,7 +91,7 @@ describe( 'useIntroOffers selector', () => {
 		expect( introOffers ).toEqual( {
 			[ MockData.NEXT_STORE_PLAN_PERSONAL.planSlug ]: null,
 			[ MockData.NEXT_STORE_SITE_PLAN_BUSINESS.planSlug ]:
-				MockData.NEXT_STORE_SITE_PLAN_BUSINESS.introOffer,
+				MockData.NEXT_STORE_SITE_PLAN_BUSINESS.pricing.introOffer,
 		} );
 	} );
 } );

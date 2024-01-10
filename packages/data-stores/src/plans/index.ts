@@ -17,6 +17,7 @@ export type {
 	PlanPath,
 	PlanBillingPeriod,
 	PlanSimplifiedFeature,
+	PlanPricing,
 } from './types';
 
 /** Queries */
