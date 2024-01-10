@@ -213,7 +213,7 @@ function getFormattedDataForPieChart(
 	} );
 }
 export interface HTTPCodeSerie {
-	statusCode?: number;
+	statusCode: number;
 	fill: string;
 	label: string;
 	stroke: string;
@@ -297,6 +297,7 @@ const useClientErrorHttpCodeSeries = () => {
 		// remaining 4xx errors
 		{
 			...seriesDefaultProps,
+			statusCode: 0,
 			label: __( 'Other 4xx errors' ),
 			showInLegend: true,
 		},
@@ -464,6 +465,7 @@ const useServerErrorHttpCodeSeries = () => {
 		// remaining 5xx errors
 		{
 			...seriesDefaultProps,
+			statusCode: 0,
 			label: __( 'Other 5xx errors' ),
 			showInLegend: true,
 		},

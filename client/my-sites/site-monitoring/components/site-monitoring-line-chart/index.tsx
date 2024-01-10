@@ -35,6 +35,7 @@ interface SeriesProp {
 	stroke: string;
 	scale?: string;
 	unit?: string;
+	showInLegend?: boolean;
 }
 
 export function formatChartHour( date: Date ): string {
@@ -230,11 +231,14 @@ export const SiteMonitoringLineChart = ( {
 			hooks: {
 				init: [
 					( u ) => {
-						[ ...u.root.querySelectorAll( '.u-legend .u-series' ) ].forEach( ( el, i ) => {
-							if ( ! u.series[ i ].showInLegend ) {
-								el.style.display = 'none';
+						[ ...u.root.querySelectorAll< HTMLElement >( '.u-legend .u-series' ) ].forEach(
+							( el, i ) => {
+								const serie = u.series[ i ] as SeriesProp;
+								if ( ! serie.showInLegend ) {
+									el.style.display = 'none';
+								}
 							}
-						} );
+						);
 					},
 				],
 			},
