@@ -59,11 +59,19 @@ interface GetEnhancedTasksProps {
 }
 
 const PLANS_LIST = getPlans();
-interface EnhancedTask extends Task {
+interface EnhancedTask extends Omit< Task, 'badge_text' > {
 	useCalypsoPath?: boolean;
+	badge_text?: ReactNode | string;
 }
 
-type TaskId = 'setup_free' | 'setup_blog' | 'setup_newsletter' | 'design_edited' | 'plan_selected';
+type TaskId =
+	| 'setup_free'
+	| 'setup_blog'
+	| 'setup_newsletter'
+	| 'design_edited'
+	| 'plan_selected'
+	| 'plan_completed';
+
 interface TaskContext {
 	siteInfoQueryArgs?: { siteId?: number; siteSlug?: string | null };
 	displayGlobalStylesWarning?: boolean;
@@ -71,6 +79,8 @@ interface TaskContext {
 	globalStylesMinimumPlan?: string;
 	isVideoPressFlowWithUnsupportedPlan?: boolean;
 	getPlanTaskSubtitle: ( task: Task ) => ReactNode;
+	translatedPlanName?: ReactNode | string;
+	isCurrentPlanFree?: boolean;
 }
 
 type TaskAction = ( task: Task, flow: string, context: TaskContext ) => EnhancedTask;
@@ -148,6 +158,21 @@ const actions: TaskActionTable = {
 			subtitle: getPlanTaskSubtitle( task ),
 			useCalypsoPath: true,
 		} ) satisfies EnhancedTask,
+	plan_completed: (
+		task,
+		flow,
+		{ siteInfoQueryArgs, getPlanTaskSubtitle, translatedPlanName, isCurrentPlanFree }
+	) =>
+		( {
+			...task,
+			actionDispatch: () => {
+				recordTaskClickTracksEvent( flow, task.completed, task.id );
+			},
+			calypso_path: addQueryArgs( `/setup/${ flow }/plans`, siteInfoQueryArgs ),
+			badge_text: task.completed ? translatedPlanName : task.badge_text,
+			subtitle: getPlanTaskSubtitle( task ),
+			disabled: task.completed && ! isCurrentPlanFree,
+			useCalypsoPath: true,
 		} ) satisfies EnhancedTask,
 } as const;
 
@@ -369,6 +394,8 @@ export function getEnhancedTasks( {
 		globalStylesMinimumPlan,
 		isVideoPressFlowWithUnsupportedPlan,
 		getPlanTaskSubtitle,
+		isCurrentPlanFree,
+		translatedPlanName,
 	};
 
 	return ( tasks || [] ).map( ( task ) => {
@@ -379,20 +406,8 @@ export function getEnhancedTasks( {
 			case 'setup_newsletter':
 			case 'design_edited':
 			case 'plan_selected':
-				return getTaskDefinition( task, flow, context );
 			case 'plan_completed':
-				taskData = {
-					actionDispatch: () => {
-						recordTaskClickTracksEvent( flow, task.completed, task.id );
-						const plansUrl = addQueryArgs( `/setup/${ flow }/plans`, siteInfoQueryArgs );
-
-						window.location.assign( plansUrl );
-					},
-					badge_text: task.completed ? translatedPlanName : task.badge_text,
-					subtitle: getPlanTaskSubtitle( task ),
-					disabled: task.completed && ! isCurrentPlanFree,
-				};
-				break;
+				return getTaskDefinition( task, flow, context );
 			case 'subscribers_added':
 				taskData = {
 					actionDispatch: () => {
