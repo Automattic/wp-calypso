@@ -12,7 +12,9 @@ import { MarketplaceReviewItem } from 'calypso/my-sites/marketplace/components/r
 import { getCurrentUserId } from 'calypso/state/current-user/selectors';
 import './style.scss';
 
-export const MarketplaceReviewsList = ( props: MarketplaceReviewsQueryProps ) => {
+export const MarketplaceReviewsList = (
+	props: { onEditCompleted?: () => void } & MarketplaceReviewsQueryProps
+) => {
 	const translate = useTranslate();
 	const currentUserId = useSelector( getCurrentUserId );
 	const { data, fetchNextPage, error } = useInfiniteMarketplaceReviewsQuery( {

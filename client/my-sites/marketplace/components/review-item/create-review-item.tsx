@@ -4,7 +4,7 @@ import Card from '@automattic/components/src/card';
 import { CheckboxControl, TextareaControl } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import moment from 'moment';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import Gravatar from 'calypso/components/gravatar';
 import ReviewsRatingsStars from 'calypso/components/reviews-rating-stars/reviews-ratings-stars';
@@ -16,8 +16,12 @@ import {
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
 import './style.scss';
 
-export function MarketplaceCreateReviewItem( props: ProductDefinitionProps ) {
-	const { productType, slug } = props;
+type MarketplaceCreateReviewItemProps = {
+	forceShowThankYou?: number;
+} & ProductDefinitionProps;
+
+export function MarketplaceCreateReviewItem( props: MarketplaceCreateReviewItemProps ) {
+	const { productType, slug, forceShowThankYou = 0 } = props;
 	const translate = useTranslate();
 	const currentUser = useSelector( getCurrentUser );
 	const [ content, setContent ] = useState< string >( '' );
@@ -25,6 +29,7 @@ export function MarketplaceCreateReviewItem( props: ProductDefinitionProps ) {
 	const [ errorMessage, setErrorMessage ] = useState( '' );
 	const [ showThankYouSection, setShowThankYouSection ] = useState( false );
 	const [ showContentArea, setShowContentArea ] = useState( false );
+	const [ triggerConfetti, setTriggerConfetti ] = useState( false );
 
 	const { data: userReviews, isFetching: isFetchingUserReviews } = useMarketplaceReviewsQuery( {
 		productType,
@@ -52,6 +57,7 @@ export function MarketplaceCreateReviewItem( props: ProductDefinitionProps ) {
 				onSuccess: () => {
 					resetFields();
 					setShowThankYouSection( true );
+					setTriggerConfetti( true );
 				},
 			}
 		);
@@ -62,18 +68,26 @@ export function MarketplaceCreateReviewItem( props: ProductDefinitionProps ) {
 		setShowContentArea( true );
 	};
 
+	// Retrigger confetti after an update
+	useEffect( () => {
+		setTriggerConfetti( false );
+		setTimeout( () => {
+			setTriggerConfetti( true );
+		}, 0 );
+	}, [ forceShowThankYou ] );
+
 	// Hide the Thank You section if user removed their review
 	if ( ! userReviews?.length && ! isFetchingUserReviews && showThankYouSection ) {
 		setShowThankYouSection( false );
 	}
 
-	if ( !! userReviews?.length && ! showThankYouSection ) {
+	if ( !! userReviews?.length && ! showThankYouSection && ! forceShowThankYou ) {
 		return null;
 	}
 
 	return (
 		<div className="marketplace-create-review-item__container">
-			{ ! showThankYouSection ? (
+			{ ! showThankYouSection && ! forceShowThankYou ? (
 				<>
 					{ errorMessage && (
 						<Card className="marketplace-review-item__error-message" highlight="error">
@@ -136,7 +150,7 @@ export function MarketplaceCreateReviewItem( props: ProductDefinitionProps ) {
 				</>
 			) : (
 				<>
-					<ConfettiAnimation delay={ 1000 } />
+					<ConfettiAnimation trigger={ triggerConfetti } delay={ 1000 } />
 					<div className="marketplace-create-review-item__thank-you">
 						<h2>{ translate( 'Thank you for your feedback!' ) }</h2>
 						<div className="marketplace-create-review-item__thank-you-subtitle">

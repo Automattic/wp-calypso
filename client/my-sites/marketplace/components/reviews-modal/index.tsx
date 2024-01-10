@@ -1,6 +1,7 @@
 import page from '@automattic/calypso-router';
 import { Dialog, Button } from '@automattic/components';
 import { getLocaleSlug, useTranslate } from 'i18n-calypso';
+import { useState } from 'react';
 import { useSelector } from 'react-redux';
 import Rating from 'calypso/components/rating';
 import { PluginPeriodVariations } from 'calypso/data/marketplace/types';
@@ -37,8 +38,9 @@ export const ReviewsModal = ( props: Props ) => {
 	const isMarketplacePlugin = useSelector(
 		( state ) => productType === 'plugin' && isMarketplaceProduct( state, slug )
 	);
+	const [ editCompletedTimes, setEditCompletedTimes ] = useState( 0 );
 
-	const { data: userReviews } = useMarketplaceReviewsQuery( {
+	const { data: userReviews, isFetching: isFetchingUserReviews } = useMarketplaceReviewsQuery( {
 		productType,
 		slug,
 		perPage: 1,
@@ -57,6 +59,11 @@ export const ReviewsModal = ( props: Props ) => {
 	const hasActiveSubscription = useSelector( ( state: AppState ) =>
 		hasActivePluginSubscription( state, variations )
 	);
+
+	// Hide the Thank You section if user removed their review
+	if ( ! userReviews?.length && ! isFetchingUserReviews && editCompletedTimes ) {
+		setEditCompletedTimes( 0 );
+	}
 
 	const { ratings_average: averageRating, ratings_count: numberOfReviews } = reviewsStats || {};
 	const normalizedRating = ( ( averageRating ?? 0 ) * 100 ) / 5; // Normalize to 100
@@ -125,10 +132,18 @@ export const ReviewsModal = ( props: Props ) => {
 					</div>
 				) }
 
-				<MarketplaceCreateReviewItem productType={ productType } slug={ slug } />
+				<MarketplaceCreateReviewItem
+					productType={ productType }
+					slug={ slug }
+					forceShowThankYou={ editCompletedTimes }
+				/>
 
 				<div className="marketplace-reviews-modal__reviews-list">
-					<MarketplaceReviewsList productType={ productType } slug={ slug } />
+					<MarketplaceReviewsList
+						productType={ productType }
+						slug={ slug }
+						onEditCompleted={ () => setEditCompletedTimes( editCompletedTimes + 1 ) }
+					/>
 				</div>
 			</div>
 		</Dialog>

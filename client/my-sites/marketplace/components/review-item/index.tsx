@@ -22,6 +22,7 @@ import './style.scss';
 
 type MarketplaceReviewItemProps = {
 	review: MarketplaceReviewResponse;
+	onEditCompleted?: () => void;
 } & MarketplaceReviewsQueryProps;
 
 export const MarketplaceReviewItem = ( props: MarketplaceReviewItemProps ) => {
@@ -80,6 +81,7 @@ export const MarketplaceReviewItem = ( props: MarketplaceReviewItemProps ) => {
 					setErrorMessage( error.message );
 				},
 				onSuccess: () => {
+					props.onEditCompleted?.();
 					setErrorMessage( '' );
 				},
 			}
