@@ -11,13 +11,13 @@ import { createBlock, serialize, type BlockInstance } from '@wordpress/blocks';
 import { Popover, SlotFillProvider, KeyboardShortcuts } from '@wordpress/components';
 import { useStateWithHistory, useResizeObserver } from '@wordpress/compose';
 import { useDispatch } from '@wordpress/data';
+import React, { useState, useEffect, useCallback } from '@wordpress/element';
 import { rawShortcut } from '@wordpress/keycodes';
 import classNames from 'classnames';
-import { useState, useEffect, useCallback } from 'react';
 import { safeParse } from '../utils';
 import { editorSettings } from './editor-settings';
 import { EditorProps, StateWithUndoManager } from './editor-types';
-import type { MouseEvent, KeyboardEvent } from 'react';
+import type { MouseEvent, KeyboardEvent, FC } from 'react';
 import css from '!!css-loader!sass-loader!./inline-iframe-style.scss';
 import './editor-style.scss';
 
@@ -28,7 +28,7 @@ const iframedCSS = css.reduce( ( css: string, [ , item ]: [ string, string ] ) =
 /**
  * Editor component
  */
-export const Editor: React.FC< EditorProps > = ( { initialContent = '', onChange, isRTL } ) => {
+export const Editor: FC< EditorProps > = ( { initialContent = '', onChange, isRTL } ) => {
 	// We keep the content in state so we can access the blocks in the editor.
 	const {
 		value: editorContent,
@@ -119,7 +119,7 @@ export const Editor: React.FC< EditorProps > = ( { initialContent = '', onChange
 									onClick={ selectLastBlock }
 								>
 									{ contentResizeListener }
-									<BlockList renderAppender={ false } />
+									<BlockList />
 								</div>
 							</BlockCanvas>
 						</BlockTools>

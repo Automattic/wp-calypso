@@ -19,6 +19,9 @@ function getWebpackConfig( env = { source: '' }, argv = {} ) {
 	return {
 		...webpackConfig,
 		mode: 'production',
+		entry: {
+			'block-editor': path.join( __dirname, 'src', 'index.ts' ),
+		},
 		output: {
 			...webpackConfig.output,
 			path: outputPath,

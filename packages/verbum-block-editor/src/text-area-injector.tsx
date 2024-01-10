@@ -1,9 +1,8 @@
-import { createRoot } from 'react-dom/client';
+import React, { createRoot } from '@wordpress/element';
 import { addApiMiddleware } from './api';
 import { Editor } from './editor';
 import { loadBlocksWithCustomizations } from './load-blocks';
 import { loadTextFormatting } from './load-text-formatting';
-
 /**
  * Add Gutenberg editor to the page.
  * @param textarea   Textarea element.

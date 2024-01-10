@@ -1714,10 +1714,34 @@ __metadata:
   languageName: unknown
   linkType: soft
 
+"@automattic/verbum-block-editor-injector@workspace:apps/verbum-block-editor":
+  version: 0.0.0-use.local
+  resolution: "@automattic/verbum-block-editor-injector@workspace:apps/verbum-block-editor"
+  dependencies:
+    "@automattic/babel-plugin-transform-wpcalypso-async": "workspace:^"
+    "@automattic/calypso-apps-builder": "workspace:^"
+    "@automattic/calypso-babel-config": "workspace:^"
+    "@automattic/calypso-build": "workspace:^"
+    "@automattic/calypso-eslint-overrides": "workspace:^"
+    "@automattic/languages": "workspace:^"
+    "@automattic/verbum-block-editor": "workspace:^"
+    "@automattic/wp-babel-makepot": "workspace:^"
+    "@babel/core": "npm:^7.23.6"
+    "@wordpress/dependency-extraction-webpack-plugin": "npm:^4.31.0"
+    autoprefixer: "npm:^10.2.5"
+    gettext-parser: "npm:^6.0.0"
+    html-webpack-plugin: "npm:^5.6.0"
+    jest: "npm:^29.7.0"
+    mkdirp: "npm:^3.0.1"
+    webpack: "npm:^5.89.0"
+  languageName: unknown
+  linkType: soft
+
 "@automattic/verbum-block-editor@workspace:^, @automattic/verbum-block-editor@workspace:packages/verbum-block-editor":
   version: 0.0.0-use.local
   resolution: "@automattic/verbum-block-editor@workspace:packages/verbum-block-editor"
   dependencies:
+    "@automattic/calypso-apps-builder": "workspace:^"
     "@automattic/calypso-build": "workspace:^"
     "@automattic/calypso-color-schemes": "workspace:^"
     "@automattic/calypso-typescript-config": "workspace:^"
@@ -22974,6 +22998,15 @@ __metadata:
   bin:
     mkdirp: bin/cmd.js
   checksum: 46ea0f3ffa8bc6a5bc0c7081ffc3907777f0ed6516888d40a518c5111f8366d97d2678911ad1a6882bf592fa9de6c784fea32e1687bb94e1f4944170af48a5cf
+  languageName: node
+  linkType: hard
+
+"mkdirp@npm:^3.0.1":
+  version: 3.0.1
+  resolution: "mkdirp@npm:3.0.1"
+  bin:
+    mkdirp: dist/cjs/src/bin.js
+  checksum: 9f2b975e9246351f5e3a40dcfac99fcd0baa31fbfab615fe059fb11e51f10e4803c63de1f384c54d656e4db31d000e4767e9ef076a22e12a641357602e31d57d
   languageName: node
   linkType: hard
 

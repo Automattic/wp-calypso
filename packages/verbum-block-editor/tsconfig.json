@@ -4,9 +4,9 @@
 		"allowJs": true,
 		"checkJs": false,
 		"declarationDir": "dist/types",
-		"jsxImportSource": "react",
 		"outDir": "dist/esm",
-		"rootDir": "src"
+		"rootDir": "src",
+		"jsx": "react"
 	},
 	"include": [ "src", "src/*.json", "types" ],
 	"exclude": [ "**/__tests__/*", "**/__mocks__/*" ],
