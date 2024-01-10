@@ -22,6 +22,7 @@ interface Props {
 	onCtaClick?: () => void;
 	isCTAExternalLink?: boolean;
 	ctaHref?: string;
+	showPaymentPlan?: boolean;
 }
 
 export default function LicenseInfoModal( {
@@ -35,6 +36,7 @@ export default function LicenseInfoModal( {
 	onCtaClick,
 	isCTAExternalLink,
 	ctaHref,
+	showPaymentPlan,
 }: Props ) {
 	const isMobile = useMobileBreakpoint();
 	const translate = useTranslate();
@@ -94,6 +96,7 @@ export default function LicenseInfoModal( {
 				onActivate={ onIssueLicense }
 				onClose={ onHideLicenseInfo }
 				extraAsideContent={ extraAsideContent }
+				showPaymentPlan={ showPaymentPlan }
 			/>
 		)
 	);

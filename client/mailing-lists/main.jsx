@@ -96,6 +96,8 @@ class MainComponent extends Component {
 			return this.props.translate( 'Research' );
 		} else if ( 'community' === category ) {
 			return this.props.translate( 'Community' );
+		} else if ( 'affiliates' === category ) {
+			return this.props.translate( 'Affiliates' );
 		} else if ( 'digest' === category ) {
 			return this.props.translate( 'Digests' );
 		} else if ( 'news' === category ) {
@@ -136,6 +138,10 @@ class MainComponent extends Component {
 		} else if ( 'community' === category ) {
 			return this.props.translate(
 				'Information on WordPress.com courses and events (online and in-person).'
+			);
+		} else if ( 'affiliates' === category ) {
+			return this.props.translate(
+				'Communications regarding the refer.wordpress.com affiliate program.'
 			);
 		} else if ( 'digest' === category ) {
 			return this.props.translate( 'Popular content from the blogs you follow.' );

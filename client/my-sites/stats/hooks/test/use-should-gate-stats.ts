@@ -28,9 +28,38 @@ describe( 'shouldGateStats in Calypso', () => {
 		jest.clearAllMocks();
 	} );
 
+	it( 'should not gate stats when site features are not loaded', () => {
+		const mockState = {
+			sites: {
+				features: {
+					[ siteId ]: {
+						data: null,
+					},
+				},
+				items: {
+					[ siteId ]: {
+						jetpack: false, // true for atomic sites
+						options: {
+							is_wpcom_atomic: false,
+						},
+					},
+				},
+			},
+		};
+		const isGatedStats = shouldGateStats( mockState, siteId, gatedStatType );
+		expect( isGatedStats ).toBe( false );
+	} );
+
 	it( 'should gate stats when site is atomic without site feature', () => {
 		const mockState = {
 			sites: {
+				features: {
+					[ siteId ]: {
+						data: {
+							active: [],
+						},
+					},
+				},
 				items: {
 					[ siteId ]: {
 						jetpack: true, // true for atomic sites

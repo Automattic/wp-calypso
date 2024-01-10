@@ -783,7 +783,7 @@ const PlansFeaturesMain = ( {
 								{ ...planTypeSelectorProps }
 								layoutClassName="plans-features-main__plan-type-selector-layout"
 								enableStickyBehavior={ enablePlanTypeSelectorStickyBehavior }
-								stickyPlanTypeSelectorOffset={ masterbarHeight }
+								stickyPlanTypeSelectorOffset={ masterbarHeight - 1 }
 							/>
 						) }
 						<div

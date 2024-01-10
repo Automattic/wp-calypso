@@ -71,6 +71,7 @@ export default function BoostLicenseInfoModal( { onClose, site, upgradeOnly }: P
 			ctaHref={
 				is_atomic ? `${ url_with_scheme }/wp-admin/admin.php?page=jetpack#/dashboard` : undefined
 			}
+			showPaymentPlan={ ! is_atomic }
 			extraAsideContent={
 				<>
 					{ ! upgradeOnly && (
