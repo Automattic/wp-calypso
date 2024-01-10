@@ -1,4 +1,7 @@
-import { isDefaultGlobalStylesVariationSlug, DEFAULT_GLOBAL_STYLES_VARIATION_SLUG } from '@automattic/design-picker';
+import {
+	isDefaultGlobalStylesVariationSlug,
+	DEFAULT_GLOBAL_STYLES_VARIATION_SLUG,
+} from '@automattic/design-picker';
 import { recordTracksEvent, withAnalytics } from 'calypso/state/analytics/actions';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
 import { LIVE_PREVIEW_START } from 'calypso/state/themes/action-types';
@@ -22,7 +25,7 @@ export function livePreview( siteId: number, themeId: string, source?: 'list' | 
 		const theme = getCanonicalTheme( state, siteId, themeId );
 		const themeOptions = getThemePreviewThemeOptions( state );
 		const hasStyleVariations = theme?.style_variations && theme?.style_variations.length > 0;
-		const styleVariationSlug = themeOptions.styleVariation?.slug;
+		const styleVariationSlug = themeOptions?.styleVariation?.slug;
 		const analysis = recordTracksEvent( 'calypso_block_theme_live_preview_click', {
 			active_theme: getActiveTheme( state, siteId ),
 			site_id: siteId,
