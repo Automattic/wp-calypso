@@ -86,7 +86,8 @@ type TaskId =
 	| 'site_launched'
 	| 'blog_launched'
 	| 'videopress_upload'
-	| 'videopress_launched';
+	| 'videopress_launched'
+	| 'domain_upsell';
 
 interface TaskContext {
 	siteInfoQueryArgs?: { siteId?: number; siteSlug?: string | null };
@@ -107,6 +108,7 @@ interface TaskContext {
 	completeLaunchSiteTask: ( task: Task ) => Promise< void >;
 	launchpadUploadVideoLink: string;
 	videoPressUploadCompleted: boolean;
+	domainUpsellCompleted: boolean;
 }
 
 type TaskAction = ( task: Task, flow: string, context: TaskContext ) => EnhancedTask;
@@ -396,6 +398,40 @@ const actions: TaskActionTable = {
 			},
 			useCalypsoPath: false,
 		} ) satisfies EnhancedTask,
+	domain_upsell: ( task, flow, { siteInfoQueryArgs, domainUpsellCompleted, site } ) =>
+		( {
+			...task,
+			completed: domainUpsellCompleted,
+			actionDispatch: () => {
+				recordTaskClickTracksEvent( flow, domainUpsellCompleted, task.id );
+
+				if ( isBlogOnboardingFlow( flow ) || isSiteAssemblerFlow( flow ) ) {
+					window.location.assign(
+						addQueryArgs( `/setup/${ flow }/domains`, {
+							...siteInfoQueryArgs,
+							flowToReturnTo: flow,
+							new: site?.name,
+							domainAndPlanPackage: true,
+						} )
+					);
+
+					return;
+				}
+
+				const destinationUrl = domainUpsellCompleted
+					? `/domains/manage/${ siteInfoQueryArgs?.siteSlug }`
+					: addQueryArgs( `/setup/domain-upsell/domains`, {
+							...siteInfoQueryArgs,
+							flowToReturnTo: flow,
+							new: site?.name,
+					  } );
+				window.location.assign( destinationUrl );
+			},
+			badge_text:
+				domainUpsellCompleted || isBlogOnboardingFlow( flow ) || isSiteAssemblerFlow( flow )
+					? ''
+					: translate( 'Upgrade plan' ),
+		} ) satisfies EnhancedTask,
 } as const;
 
 const getTaskDefinition = ( task: Task, flow: string, taskContext: TaskContext ) => {
@@ -628,6 +664,7 @@ export function getEnhancedTasks( {
 		getIsLaunchSiteTaskDisabled,
 		launchpadUploadVideoLink,
 		videoPressUploadCompleted,
+		domainUpsellCompleted,
 	};
 
 	return ( tasks || [] ).map( ( task ) => {
@@ -653,41 +690,8 @@ export function getEnhancedTasks( {
 			case 'blog_launched':
 			case 'videopress_upload':
 			case 'videopress_launched':
-				return getTaskDefinition( task, flow, context );
 			case 'domain_upsell':
-				taskData = {
-					completed: domainUpsellCompleted,
-					actionDispatch: () => {
-						recordTaskClickTracksEvent( flow, domainUpsellCompleted, task.id );
-
-						if ( isBlogOnboardingFlow( flow ) || isSiteAssemblerFlow( flow ) ) {
-							window.location.assign(
-								addQueryArgs( `/setup/${ flow }/domains`, {
-									...siteInfoQueryArgs,
-									flowToReturnTo: flow,
-									new: site?.name,
-									domainAndPlanPackage: true,
-								} )
-							);
-
-							return;
-						}
-
-						const destinationUrl = domainUpsellCompleted
-							? `/domains/manage/${ siteSlug }`
-							: addQueryArgs( `/setup/domain-upsell/domains`, {
-									...siteInfoQueryArgs,
-									flowToReturnTo: flow,
-									new: site?.name,
-							  } );
-						window.location.assign( destinationUrl );
-					},
-					badge_text:
-						domainUpsellCompleted || isBlogOnboardingFlow( flow ) || isSiteAssemblerFlow( flow )
-							? ''
-							: translate( 'Upgrade plan' ),
-				};
-				break;
+				return getTaskDefinition( task, flow, context );
 			case 'verify_email':
 				taskData = {
 					completed: isEmailVerified,
