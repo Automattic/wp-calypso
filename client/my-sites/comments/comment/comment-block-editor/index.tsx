@@ -29,7 +29,7 @@ const CommentBlockEditor = ( {
 	}, [ siteId ] );
 
 	return (
-		<div className="editor__wrapper">
+		<div className="verbum-editor-wrapper">
 			<Editor initialContent={ commentContent } onChange={ onChange } isRTL={ isRTL } />
 		</div>
 	);
