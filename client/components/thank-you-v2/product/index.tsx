@@ -38,7 +38,7 @@ const ThankYouProduct = ( {
 					src={ icon }
 					width={ 50 }
 					height={ 50 }
-					alt={ translate( "%(name)s's icon", { args: { name } } ) }
+					alt={ translate( "%(name)s's icon", { args: { name } } ) as string }
 				/>
 			) }
 
