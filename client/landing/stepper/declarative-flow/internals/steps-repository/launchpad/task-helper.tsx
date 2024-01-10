@@ -74,7 +74,9 @@ type TaskId =
 	| 'subscribers_added'
 	| 'migrate_content'
 	| 'first_post_published'
-	| 'first_post_published_newsletter';
+	| 'first_post_published_newsletter'
+	| 'design_selected'
+	| 'design_completed';
 
 interface TaskContext {
 	siteInfoQueryArgs?: { siteId?: number; siteSlug?: string | null };
@@ -227,6 +229,24 @@ const actions: TaskActionTable = {
 			actionDispatch: () => recordTaskClickTracksEvent( flow, task.completed, task.id ),
 			useCalypsoPath: true,
 		} ) satisfies EnhancedTask,
+	design_selected: ( task, flow, { siteInfoQueryArgs } ) => ( {
+		...task,
+		actionDispatch: () => recordTaskClickTracksEvent( flow, task.completed, task.id ),
+		calypso_path: addQueryArgs( `/setup/update-design/designSetup`, {
+			...siteInfoQueryArgs,
+			flowToReturnTo: flow,
+		} ),
+		useCalypsoPath: true,
+	} ),
+	design_completed: ( task, flow, { siteInfoQueryArgs } ) => ( {
+		...task,
+		actionDispatch: () => recordTaskClickTracksEvent( flow, task.completed, task.id ),
+		calypso_path: addQueryArgs( `/setup/update-design/designSetup`, {
+			...siteInfoQueryArgs,
+			flowToReturnTo: flow,
+		} ),
+		useCalypsoPath: true,
+	} ),
 } as const;
 
 const getTaskDefinition = ( task: Task, flow: string, taskContext: TaskContext ) => {
@@ -467,21 +487,9 @@ export function getEnhancedTasks( {
 			case 'migrate_content':
 			case 'first_post_published':
 			case 'first_post_published_newsletter':
-				return getTaskDefinition( task, flow, context );
 			case 'design_selected':
 			case 'design_completed':
-				taskData = {
-					actionDispatch: () => {
-						recordTaskClickTracksEvent( flow, task.completed, task.id );
-						window.location.assign(
-							addQueryArgs( `/setup/update-design/designSetup`, {
-								...siteInfoQueryArgs,
-								flowToReturnTo: flow,
-							} )
-						);
-					},
-				};
-				break;
+				return getTaskDefinition( task, flow, context );
 			case 'setup_general':
 				taskData = {
 					disabled: false,
