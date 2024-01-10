@@ -15,6 +15,7 @@ import {
 } from '@automattic/onboarding';
 import { MinimalRequestCartProduct } from '@automattic/shopping-cart';
 import { useDesktopBreakpoint } from '@automattic/viewport-react';
+import { Notice } from '@wordpress/components';
 import { useSelect, useDispatch } from '@wordpress/data';
 import { useI18n } from '@wordpress/react-i18n';
 import classNames from 'classnames';
@@ -74,7 +75,7 @@ const PlansWrapper: React.FC< Props > = ( props ) => {
 		};
 	}, [] );
 	const { flowName, selectedSiteId, setSelectedSiteId } = props;
-
+	const [ showTrialHostWarning, setShowTrialHostWarning ] = React.useState( false );
 	const { setPlanCartItem, setDomain, setDomainCartItem, setProductCartItems } =
 		useDispatch( ONBOARD_STORE );
 
@@ -84,6 +85,10 @@ const PlansWrapper: React.FC< Props > = ( props ) => {
 	useEffect( () => {
 		if ( ! selectedSiteId && siteId ) {
 			setSelectedSiteId( siteId );
+		}
+
+		if ( window.location.href.indexOf( 'hosting-trial-not-eligible' ) !== -1 ) {
+			setShowTrialHostWarning( true );
 		}
 	}, [ selectedSiteId, siteId, setSelectedSiteId ] );
 
@@ -141,6 +146,20 @@ const PlansWrapper: React.FC< Props > = ( props ) => {
 	const plansFeaturesList = () => {
 		return (
 			<div>
+				{ showTrialHostWarning && (
+					<div className="not-eligible">
+						<Notice
+							className="not-eligible-for-hosting-trial-notice"
+							status="warning"
+							onDismiss={ () => setShowTrialHostWarning( false ) }
+							isDismissible={ true }
+						>
+							{ __(
+								'Looks like you’ve already used your free trial. Let’s find you the perfect plan.'
+							) }
+						</Notice>
+					</div>
+				) }
 				<PlansFeaturesMain
 					isPlansInsideStepper={ true }
 					siteId={ site?.ID }
