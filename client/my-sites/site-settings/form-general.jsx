@@ -429,22 +429,24 @@ export class SiteSettingsFormGeneral extends Component {
 						</>
 					) }
 				{ ! isNonAtomicJetpackSite && (
-					<FormLabel className="site-settings__visibility-label is-public">
-						<FormRadio
-							name="blog_public"
-							value="1"
-							checked={ isPublicChecked }
-							onChange={ () =>
-								this.handleVisibilityOptionChange( {
-									blog_public: isWpcomStagingSite ? 0 : 1,
-									wpcom_coming_soon: 0,
-									wpcom_public_coming_soon: 0,
-								} )
-							}
-							disabled={ isRequestingSettings }
-							onClick={ eventTracker( 'Clicked Site Visibility Radio Button' ) }
-							label={ translate( 'Public' ) }
-						/>
+					<>
+						<FormLabel className="site-settings__visibility-label is-public">
+							<FormRadio
+								name="blog_public"
+								value="1"
+								checked={ isPublicChecked }
+								onChange={ () =>
+									this.handleVisibilityOptionChange( {
+										blog_public: isWpcomStagingSite ? 0 : 1,
+										wpcom_coming_soon: 0,
+										wpcom_public_coming_soon: 0,
+									} )
+								}
+								disabled={ isRequestingSettings }
+								onClick={ eventTracker( 'Clicked Site Visibility Radio Button' ) }
+								label={ translate( 'Public' ) }
+							/>
+						</FormLabel>
 						<FormSettingExplanation>
 							{ isWpcomStagingSite
 								? translate(
@@ -452,7 +454,7 @@ export class SiteSettingsFormGeneral extends Component {
 								  )
 								: translate( 'Your site is visible to everyone.' ) }
 						</FormSettingExplanation>
-					</FormLabel>
+					</>
 				) }
 
 				{ ! isWpcomStagingSite && (

@@ -256,10 +256,13 @@ describe( 'SiteSettingsFormGeneral', () => {
 			const { container, getByLabelText } = renderWithRedux(
 				<SiteSettingsFormGeneral { ...testProps } />
 			);
+
 			expect(
 				container.querySelectorAll( '.site-settings__general-settings-launch-site' ).length
 			).toBe( 0 );
 			expect( container.querySelectorAll( '[name="blog_public"]' ).length ).toBe( 4 );
+
+			console.log( container.innerHTML );
 
 			const publicRadio = getByLabelText( 'Public' );
 			const discourageRadio = getByLabelText( 'Discourage search engines from indexing this site', {
