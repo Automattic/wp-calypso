@@ -1,8 +1,10 @@
+import { TranslateResult } from 'i18n-calypso';
+
 import './style.scss';
 
 interface ThankYouHeaderProps {
-	title: string;
-	subtitle: string;
+	title: string | TranslateResult;
+	subtitle: string | TranslateResult;
 	buttons?: React.ReactNode;
 }
 
