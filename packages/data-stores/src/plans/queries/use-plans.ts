@@ -12,7 +12,7 @@ interface PlansIndex {
 /**
  * Plans from `/plans` endpoint, transformed into a map of planSlug => PlanNext
  */
-function usePlans( { coupon }: { coupon: string | undefined } ): UseQueryResult< PlansIndex > {
+function usePlans( { coupon }: { coupon?: string } = {} ): UseQueryResult< PlansIndex > {
 	const queryKeys = useQueryKeysFactory();
 	const params = new URLSearchParams();
 	coupon && params.append( 'coupon_code', coupon );
