@@ -16,13 +16,14 @@ export const IntervalTypeToggle: React.FunctionComponent< IntervalTypeProps > = 
 		isInSignup,
 		eligibleForWpcomMonthlyPlans,
 		hideDiscountLabel,
-		showBiennialToggle,
 		currentSitePlanSlug,
 		usePricingMetaForGridPlans,
+		displayedIntervals,
 		title,
 		coupon,
 		selectedSiteId,
 	} = props;
+	const showBiennialToggle = displayedIntervals.includes( '2yearly' );
 	const [ spanRef, setSpanRef ] = useState< HTMLSpanElement >();
 	const segmentClasses = classNames( 'price-toggle', {
 		'is-signup': isInSignup,

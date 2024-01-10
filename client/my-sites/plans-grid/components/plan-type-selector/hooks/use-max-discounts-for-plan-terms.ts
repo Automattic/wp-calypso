@@ -2,9 +2,10 @@ import {
 	PlanSlug,
 	URL_FRIENDLY_TERMS_MAPPING,
 	UrlFriendlyTermType,
+	getBillingMonthsForTerm,
+	getPlan,
 	getPlanMultipleTermsVariantSlugs,
 	getPlanSlugForTermVariant,
-	isMonthly,
 	isWpComPlan,
 	isWpcomEnterpriseGridPlan,
 } from '@automattic/calypso-products';
@@ -36,68 +37,61 @@ export default function useMaxDiscountsForPlanTerms(
 		.filter( Boolean )
 		.filter( isWpComPlan ) as PlanSlug[];
 
-	const wpcomMonthlyPlanSlugs = allRelatedPlanSlugs.filter( isMonthly );
-	const wpcomNonMonthlyPlans = allRelatedPlanSlugs.filter(
-		( planSlug ) => ! isMonthly( planSlug )
+	const lowestTerm = terms.reduce( ( currentLowestTerm, term ) => {
+		return getBillingMonthsForTerm( currentLowestTerm ) <= getBillingMonthsForTerm( term )
+			? currentLowestTerm
+			: term;
+	}, terms[ 0 ] );
+	const lowestTermInMonths = getBillingMonthsForTerm( lowestTerm );
+
+	const lowestTermPlanSlugs = allRelatedPlanSlugs.filter(
+		( planSlug ) => getPlan( planSlug )?.term === lowestTerm
 	);
 
 	// TODO clk pricing
-	const monthlyPlansPricing = usePricingMetaForGridPlans( {
-		planSlugs: wpcomMonthlyPlanSlugs,
+	const plansPricing = usePricingMetaForGridPlans( {
+		planSlugs: allRelatedPlanSlugs,
 		withoutProRatedCredits: true,
 		storageAddOns: null,
 		selectedSiteId,
 		coupon: undefined,
 	} );
-	// TODO clk pricing
-	const nonMonthlyPlansPricing = usePricingMetaForGridPlans( {
-		planSlugs: wpcomNonMonthlyPlans,
-		withoutProRatedCredits: true,
-		storageAddOns: null,
-		selectedSiteId,
-		coupon: undefined,
-	} );
-
-	const getTermInMonths = ( term: UrlFriendlyTermType ): number => {
-		switch ( term ) {
-			case '3yearly':
-				return 36;
-			case '2yearly':
-				return 24;
-			case 'yearly':
-				return 12;
-			case 'monthly':
-			default:
-				return 1;
-		}
-	};
 
 	const termWiseMaxDiscount: Record< UrlFriendlyTermType, number > = {} as Record<
 		UrlFriendlyTermType,
 		number
 	>;
 	termDefinitionsMapping.forEach( ( termMapping ) => {
-		const termDiscounts = wpcomMonthlyPlanSlugs.map( ( monthlyPlanSlug ) => {
-			const monthlyPlanPricing = monthlyPlansPricing?.[ monthlyPlanSlug ];
-			const monthlyPlanCost = monthlyPlanPricing?.originalPrice.full;
-			if ( ! monthlyPlanCost ) {
+		if ( termMapping.term === lowestTerm ) {
+			return 0;
+		}
+		const termDiscounts = lowestTermPlanSlugs.map( ( lowestTermPlanSlug ) => {
+			const lowestTermPlanPricing = plansPricing?.[ lowestTermPlanSlug ];
+			const lowestTermPlanCost = lowestTermPlanPricing?.originalPrice.full;
+			if ( ! lowestTermPlanCost ) {
 				return 0;
 			}
+			const lowestTermMonthlyCost = lowestTermPlanCost / lowestTermInMonths;
 
 			/**
 			 * Calculate the monthly cost of the term price
 			 */
-			const variantPlanSlug = getPlanSlugForTermVariant( monthlyPlanSlug, termMapping.term ) ?? '';
-			const variantPlanPricing = nonMonthlyPlansPricing?.[ variantPlanSlug ];
+			const variantPlanSlug =
+				getPlanSlugForTermVariant( lowestTermPlanSlug, termMapping.term ) ?? '';
+			const variantPlanPricing = plansPricing?.[ variantPlanSlug ];
 			const variantTermPrice =
 				variantPlanPricing?.discountedPrice?.full || variantPlanPricing?.originalPrice?.full || 0;
 			if ( ! variantTermPrice ) {
 				return 0;
 			}
-			const variantTermInMonths = getTermInMonths( termMapping.urlFriendlyTerm );
+			const variantTermInMonths = getBillingMonthsForTerm(
+				URL_FRIENDLY_TERMS_MAPPING[ termMapping.urlFriendlyTerm ]
+			);
 			const variantTermMonthlyCost = variantTermPrice / variantTermInMonths;
 
-			return Math.floor( ( ( monthlyPlanCost - variantTermMonthlyCost ) * 100 ) / monthlyPlanCost );
+			return Math.floor(
+				( ( lowestTermMonthlyCost - variantTermMonthlyCost ) * 100 ) / lowestTermMonthlyCost
+			);
 		} );
 		termWiseMaxDiscount[ termMapping.urlFriendlyTerm ] = termDiscounts.length
 			? Math.max( ...termDiscounts )

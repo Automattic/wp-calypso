@@ -34,9 +34,9 @@ const AddOnOption = styled.a`
 `;
 
 export const IntervalTypeDropdown: React.FunctionComponent< IntervalTypeProps > = ( props ) => {
-	const { intervalType } = props;
+	const { intervalType, displayedIntervals } = props;
 	const supportedIntervalType = (
-		[ 'yearly', '2yearly', '3yearly', 'monthly' ].includes( intervalType ) ? intervalType : 'yearly'
+		displayedIntervals.includes( intervalType ) ? intervalType : 'yearly'
 	) as SupportedUrlFriendlyTermType;
 	const optionsList = useIntervalOptions( props );
 
