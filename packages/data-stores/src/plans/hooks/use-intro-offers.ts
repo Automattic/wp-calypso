@@ -33,7 +33,7 @@ const useIntroOffers = ( { siteId }: Props ): IntroOffersIndex | undefined => {
 
 				return {
 					...acc,
-					[ planSlug ]: plan?.pricing?.introOffer ?? null,
+					[ planSlug ]: plan?.introOffer ?? null,
 				};
 			},
 			{}
