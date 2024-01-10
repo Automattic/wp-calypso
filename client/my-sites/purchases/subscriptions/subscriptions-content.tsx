@@ -111,7 +111,7 @@ function NoPurchasesMessage() {
 			subHeaderText={ translate(
 				'Check out how Jetpack’s security, performance, and growth tools can improve your site.'
 			) }
-			ctaButtonLabel={ translate( 'Compare plans' ) }
+			ctaButtonLabel={ translate( 'View products' ) }
 			ctaButtonURL={
 				selectedSiteId
 					? `/partner-portal/issue-license?site_id=${ selectedSiteId }`
