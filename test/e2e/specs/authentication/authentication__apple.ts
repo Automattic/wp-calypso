@@ -84,6 +84,8 @@ describe( DataHelper.createSuiteTitle( 'Authentication: Apple' ), function () {
 	describe( 'WooCommerce', function () {
 		beforeAll( async () => {
 			page = await browser.newPage();
+			// Wait 30s to avoid OTP code reuse error.
+			await page.waitForTimeout( 30000 );
 		} );
 
 		it( 'Navigate to Login page', async function () {
