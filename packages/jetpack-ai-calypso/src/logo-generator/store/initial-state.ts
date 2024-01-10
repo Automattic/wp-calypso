@@ -38,13 +38,7 @@ const INITIAL_STATE: LogoGeneratorStateProp = {
 			},
 		},
 	},
-	// TODO: Remove this sample logo
-	history: [
-		{
-			url: 'https://s.w.org/style/images/about/WordPress-logotype-wmark.png',
-			description: 'A publishing company in the form of a greek statue.',
-		},
-	],
+	history: [],
 	selectedLogoIndex: 0,
 };
 
