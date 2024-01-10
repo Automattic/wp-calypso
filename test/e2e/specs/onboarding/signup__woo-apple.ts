@@ -1,5 +1,7 @@
 /**
- * @group calypso-release
+ * @group quarantined
+ *
+ * This test is quarantined because we would encounter "Too many verification codes have been sent" error if we run it too frequently.
  *
  */
 
