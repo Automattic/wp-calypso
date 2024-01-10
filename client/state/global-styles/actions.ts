@@ -3,21 +3,23 @@ import type { ActiveTheme, GlobalStyles } from '@automattic/data-stores';
 
 export function getGlobalStylesId( siteIdOrSlug: number | string, stylesheet: string ) {
 	return async () => {
-		const theme: ActiveTheme = await wpcom.req.get( {
-			path: `/sites/${ encodeURIComponent( siteIdOrSlug ) }/themes/${ stylesheet }`,
+		const themes: ActiveTheme[] = await wpcom.req.get( {
+			path: `/sites/${ encodeURIComponent( siteIdOrSlug ) }/themes?${ new URLSearchParams( {
+				status: 'active',
+				wp_theme_preview: stylesheet,
+			} ).toString() }`,
 			apiNamespace: 'wp/v2',
 		} );
 
-		const globalStylesUrl = theme?._links?.[ 'wp:user-global-styles' ]?.[ 0 ]?.href;
+		const globalStylesUrl = themes[ 0 ]?._links?.[ 'wp:user-global-styles' ]?.[ 0 ]?.href;
 		if ( globalStylesUrl ) {
 			// eslint-disable-next-line no-useless-escape
 			const match = globalStylesUrl.match( /global-styles\/(?<id>[\/\w-]+)/ );
 			if ( match && match.groups ) {
-				return match.groups.id;
+				return +match.groups.id;
 			}
 		}
-
-		return null;
+		return 0;
 	};
 }
 
