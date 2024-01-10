@@ -588,7 +588,7 @@ export class CheckoutThankYou extends Component<
 
 						<MasterbarStyled
 							onClick={ () => page( `/home/${ siteSlug ?? '' }` ) }
-							backText={ translate( 'Back to dashboard' ) }
+							backText={ translate( 'Back to home' ) }
 							canGoBack={ !! siteId }
 							showContact
 						/>
