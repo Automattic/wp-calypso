@@ -210,22 +210,23 @@ const actions: TaskActionTable = {
 			},
 			useCalypsoPath: true,
 		} ) satisfies EnhancedTask,
-	first_post_published: ( task, flow, { mustVerifyEmailBeforePosting, siteInfoQueryArgs } ) => ( {
-		...task,
-		disabled:
-			mustVerifyEmailBeforePosting ||
-			( task.completed && isBlogOnboardingFlow( flow || null ) ) ||
-			false,
-		actionDispatch: () => {
-			recordTaskClickTracksEvent( flow, task.completed, task.id );
-		},
-		calypso_path: ! isBlogOnboardingFlow( flow || null )
-			? `/post/${ siteInfoQueryArgs?.siteSlug }`
-			: addQueryArgs( `https://${ siteInfoQueryArgs?.siteSlug }/wp-admin/post-new.php`, {
-					origin: window.location.origin,
-			  } ),
-		useCalypsoPath: true,
-	} ),
+	first_post_published: ( task, flow, { mustVerifyEmailBeforePosting, siteInfoQueryArgs } ) =>
+		( {
+			...task,
+			disabled:
+				mustVerifyEmailBeforePosting ||
+				( task.completed && isBlogOnboardingFlow( flow || null ) ) ||
+				false,
+			actionDispatch: () => {
+				recordTaskClickTracksEvent( flow, task.completed, task.id );
+			},
+			calypso_path: ! isBlogOnboardingFlow( flow || null )
+				? `/post/${ siteInfoQueryArgs?.siteSlug }`
+				: addQueryArgs( `https://${ siteInfoQueryArgs?.siteSlug }/wp-admin/post-new.php`, {
+						origin: window.location.origin,
+				  } ),
+			useCalypsoPath: true,
+		} ) satisfies EnhancedTask,
 
 	first_post_published_newsletter: ( task, flow, { mustVerifyEmailBeforePosting } ) =>
 		( {
