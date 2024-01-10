@@ -33,6 +33,16 @@ const AddOnOption = styled.a`
 	}
 `;
 
+type Option = {
+	key: string;
+	name: JSX.Element;
+	value: string;
+};
+
+type OnChangeValue = {
+	selectedItem: Option;
+};
+
 export const IntervalTypeDropdown: React.FunctionComponent< IntervalTypeProps > = ( props ) => {
 	const { intervalType } = props;
 	const supportedIntervalType = (
@@ -40,7 +50,7 @@ export const IntervalTypeDropdown: React.FunctionComponent< IntervalTypeProps > 
 	) as SupportedUrlFriendlyTermType;
 	const optionsList = useIntervalOptions( props );
 
-	const selectOptionsList = Object.values( optionsList ).map( ( option ) => ( {
+	const selectOptionsList: Option[] = Object.values( optionsList ).map( ( option ) => ( {
 		key: option.key,
 		value: option.url,
 		name: (
@@ -58,7 +68,7 @@ export const IntervalTypeDropdown: React.FunctionComponent< IntervalTypeProps > 
 				label=""
 				options={ selectOptionsList }
 				value={ selectOptionsList.find( ( { key } ) => key === supportedIntervalType ) }
-				onChange={ ( { selectedItem } ) => {
+				onChange={ ( { selectedItem }: OnChangeValue ) => {
 					window.location.replace( selectedItem.value );
 				} }
 			/>
