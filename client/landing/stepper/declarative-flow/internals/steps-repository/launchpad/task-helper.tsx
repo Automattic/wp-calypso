@@ -89,7 +89,8 @@ type TaskId =
 	| 'videopress_launched'
 	| 'domain_upsell'
 	| 'verify_email'
-	| 'set_up_payments';
+	| 'set_up_payments'
+	| 'newsletter_plan_created';
 
 interface TaskContext {
 	siteInfoQueryArgs?: { siteId?: number; siteSlug?: string | null };
@@ -113,6 +114,8 @@ interface TaskContext {
 	domainUpsellCompleted: boolean;
 	isEmailVerified: boolean;
 	stripeConnectUrl?: string;
+	completePaidNewsletterTask: () => Promise< void >;
+	setShowPlansModal: Dispatch< SetStateAction< boolean > >;
 }
 
 type TaskAction = ( task: Task, flow: string, context: TaskContext ) => EnhancedTask;
@@ -455,6 +458,24 @@ const actions: TaskActionTable = {
 			? stripeConnectUrl
 			: `/earn/payments/${ siteInfoQueryArgs?.siteSlug }#launchpad`,
 	} ),
+	newsletter_plan_created: (
+		task,
+		flow,
+		{ siteInfoQueryArgs, site, completePaidNewsletterTask, setShowPlansModal }
+	) =>
+		( {
+			...task,
+			actionDispatch: () => {
+				recordTaskClickTracksEvent( flow, task.completed, task.id );
+				completePaidNewsletterTask();
+				site?.ID
+					? setShowPlansModal( true )
+					: window.location.assign(
+							`/earn/payments/${ siteInfoQueryArgs?.siteSlug }?launchpad=add-product${ ADD_TIER_PLAN_HASH }`
+					  );
+			},
+			useCalypsoPath: false,
+		} ) satisfies EnhancedTask,
 } as const;
 
 const getTaskDefinition = ( task: Task, flow: string, taskContext: TaskContext ) => {
@@ -690,6 +711,8 @@ export function getEnhancedTasks( {
 		domainUpsellCompleted,
 		isEmailVerified,
 		stripeConnectUrl,
+		completePaidNewsletterTask,
+		setShowPlansModal,
 	};
 
 	return ( tasks || [] ).map( ( task ) => {
@@ -718,20 +741,8 @@ export function getEnhancedTasks( {
 			case 'domain_upsell':
 			case 'verify_email':
 			case 'set_up_payments':
-				return getTaskDefinition( task, flow, context );
 			case 'newsletter_plan_created':
-				taskData = {
-					actionDispatch: () => {
-						recordTaskClickTracksEvent( flow, task.completed, task.id );
-						completePaidNewsletterTask();
-						site?.ID
-							? setShowPlansModal( true )
-							: window.location.assign(
-									`/earn/payments/${ siteSlug }?launchpad=add-product${ ADD_TIER_PLAN_HASH }`
-							  );
-					},
-				};
-				break;
+				return getTaskDefinition( task, flow, context );
 		}
 		return { ...task, ...taskData };
 	} );
