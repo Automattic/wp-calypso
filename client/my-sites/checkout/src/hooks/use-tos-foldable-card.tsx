@@ -12,7 +12,7 @@ export function useToSFoldableCard(): boolean {
 	);
 
 	const section = useSelector( getSectionName );
-	const enabledSections = [ 'business-plan-upgrade-upsell', 'checkout' ];
+	const enabledSections = [ 'business-plan-upgrade-upsell', 'plugins', 'signup', 'checkout' ];
 
 	const isWPcomCheckout =
 		section &&
