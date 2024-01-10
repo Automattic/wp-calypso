@@ -70,7 +70,8 @@ type TaskId =
 	| 'setup_newsletter'
 	| 'design_edited'
 	| 'plan_selected'
-	| 'plan_completed';
+	| 'plan_completed'
+	| 'subscribers_added';
 
 interface TaskContext {
 	siteInfoQueryArgs?: { siteId?: number; siteSlug?: string | null };
@@ -81,6 +82,7 @@ interface TaskContext {
 	getPlanTaskSubtitle: ( task: Task ) => ReactNode;
 	translatedPlanName?: ReactNode | string;
 	isCurrentPlanFree?: boolean;
+	goToStep?: NavigationControls[ 'goToStep' ];
 }
 
 type TaskAction = ( task: Task, flow: string, context: TaskContext ) => EnhancedTask;
@@ -174,6 +176,16 @@ const actions: TaskActionTable = {
 			disabled: task.completed && ! isCurrentPlanFree,
 			useCalypsoPath: true,
 		} ) satisfies EnhancedTask,
+	subscribers_added: ( task, flow, { goToStep } ) => ( {
+		...task,
+		actionDispatch: () => {
+			if ( goToStep ) {
+				recordTaskClickTracksEvent( flow, task.completed, task.id );
+				goToStep( 'subscribers' );
+			}
+		},
+		useCalypsoPath: false,
+	} ),
 } as const;
 
 const getTaskDefinition = ( task: Task, flow: string, taskContext: TaskContext ) => {
@@ -396,6 +408,7 @@ export function getEnhancedTasks( {
 		getPlanTaskSubtitle,
 		isCurrentPlanFree,
 		translatedPlanName,
+		goToStep,
 	};
 
 	return ( tasks || [] ).map( ( task ) => {
@@ -407,17 +420,8 @@ export function getEnhancedTasks( {
 			case 'design_edited':
 			case 'plan_selected':
 			case 'plan_completed':
-				return getTaskDefinition( task, flow, context );
 			case 'subscribers_added':
-				taskData = {
-					actionDispatch: () => {
-						if ( goToStep ) {
-							recordTaskClickTracksEvent( flow, task.completed, task.id );
-							goToStep( 'subscribers' );
-						}
-					},
-				};
-				break;
+				return getTaskDefinition( task, flow, context );
 			case 'migrate_content':
 				taskData = {
 					disabled: mustVerifyEmailBeforePosting || false,
