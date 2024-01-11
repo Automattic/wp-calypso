@@ -998,7 +998,7 @@ __metadata:
     "@automattic/languages": "workspace:^"
     "@testing-library/jest-dom": "npm:^6.1.5"
     "@testing-library/react": "npm:^14.1.2"
-    "@types/react": "npm:^18.2.6"
+    "@types/react": "npm:^18.2.47"
     "@wordpress/compose": "npm:^6.25.0"
     "@wordpress/i18n": "npm:^4.48.0"
     react: "npm:^18.2.0"
@@ -8137,14 +8137,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/react@npm:^18.2":
-  version: 18.2.13
-  resolution: "@types/react@npm:18.2.13"
+"@types/react@npm:*, @types/react@npm:^18.0.21, @types/react@npm:^18.2.47":
+  version: 18.2.47
+  resolution: "@types/react@npm:18.2.47"
   dependencies:
     "@types/prop-types": "npm:*"
     "@types/scheduler": "npm:*"
     csstype: "npm:^3.0.2"
-  checksum: 59b434ab9f2cf4874c8715a3d848d7cfd257419af8c0e486e2af5b6760c99aab62a511cb3456a3044d8250c93539016ca84fbd23eaac988e74987e268df2eef2
+  checksum: e98ea1827fe60636d0f7ce206397159a29fc30613fae43e349e32c10ad3c0b7e0ed2ded2f3239e07bd5a3cba8736b6114ba196acccc39905ca4a06f56a8d2841
   languageName: node
   linkType: hard
 
@@ -12181,7 +12181,7 @@ __metadata:
     "@testing-library/jest-dom": "npm:^6.1.5"
     "@testing-library/react": "npm:^14.1.2"
     "@testing-library/user-event": "npm:^14.5.1"
-    "@types/react": "npm:^18.2.14"
+    "@types/react": "npm:^18.2.47"
     "@types/redux-mock-store": "npm:1.0.6"
     "@wordpress/a11y": "npm:^3.48.0"
     "@wordpress/api-fetch": "npm:^6.45.0"
@@ -32138,7 +32138,7 @@ __metadata:
     "@types/node": "npm:^20.8.6"
     "@types/page": "npm:^1.11.5"
     "@types/qs": "npm:^6.9.7"
-    "@types/react": "npm:^18.2.6"
+    "@types/react": "npm:^18.2.47"
     "@types/react-modal": "npm:^3.13.1"
     "@types/react-router-dom": "npm:^5.3.3"
     "@types/react-transition-group": "npm:^4.4.4"

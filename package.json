@@ -165,7 +165,7 @@
 		"@types/node": "^20.8.6",
 		"@types/page": "^1.11.5",
 		"@types/qs": "^6.9.7",
-		"@types/react": "^18.2.6",
+		"@types/react": "^18.2.47",
 		"@types/react-modal": "^3.13.1",
 		"@types/react-router-dom": "^5.3.3",
 		"@types/react-transition-group": "^4.4.4",
@@ -304,7 +304,6 @@
 		"yargs": "^17.0.1"
 	},
 	"resolutions": {
-		"@types/react": "^18.2",
 		"@types/wordpress__block-editor": "npm:noop-package@1.0.0",
 		"@types/wordpress__editor": "npm:noop-package@1.0.0",
 		"keytar@npm:7.7.0/node-addon-api": "3.1.0",
