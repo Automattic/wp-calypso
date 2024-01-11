@@ -227,8 +227,8 @@ function CheckoutSummaryWooOfferDetails( props: {
 	return (
 		plan && (
 			<div>
-				<p>{ priceText }</p>
-				<p>{ detailsText }</p>
+				<CheckoutSummaryWooOfferDetailsText>{ priceText }</CheckoutSummaryWooOfferDetailsText>
+				<CheckoutSummaryWooOfferDetailsText>{ detailsText }</CheckoutSummaryWooOfferDetailsText>
 			</div>
 		)
 	);
@@ -1058,4 +1058,10 @@ const SwitchToAnnualPlanButton = styled.button`
 	&:hover {
 		text-decoration: none;
 	}
+`;
+
+const CheckoutSummaryWooOfferDetailsText = styled.p`
+	font-size: 12px;
+	font-weight: 400;
+	line-height: 19px;
 `;
