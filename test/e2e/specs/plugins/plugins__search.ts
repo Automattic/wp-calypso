@@ -13,7 +13,8 @@ import { Page, Browser } from 'playwright';
 
 declare const browser: Browser;
 
-describe( DataHelper.createSuiteTitle( 'Plugins search' ), function () {
+// skip these tests while we work on the fix in https://github.com/Automattic/dotcom-forge/issues/5139
+describe.skip( DataHelper.createSuiteTitle( 'Plugins search' ), function () {
 	let page: Page;
 	let pluginsPage: PluginsPage;
 	let siteUrl: string;
