@@ -1,12 +1,12 @@
 import { PLAN_PREMIUM } from '@automattic/calypso-products';
 import { Button, Gridicon, LoadingPlaceholder, PlanPrice } from '@automattic/components';
+import { Plans } from '@automattic/data-stores';
 import { formatCurrency } from '@automattic/format-currency';
 import { NavigatorHeader } from '@automattic/onboarding';
 import { useTranslate } from 'i18n-calypso';
 import { useSelector } from 'react-redux';
 import QueryPlans from 'calypso/components/data/query-plans';
 import useGlobalStylesUpgradeTranslations from 'calypso/components/premium-global-styles-upgrade-modal/use-global-styles-upgrade-translations';
-import usePricingMetaForGridPlans from 'calypso/my-sites/plans-features-main/hooks/data-store/use-pricing-meta-for-grid-plans';
 import useCheckPlanAvailabilityForPurchase from 'calypso/my-sites/plans-features-main/hooks/use-check-plan-availability-for-purchase';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { useScreen } from './hooks';
@@ -26,7 +26,7 @@ const ScreenUpsell = ( { numOfSelectedGlobalStyles = 1, onCheckout, onTryStyle }
 	const selectedSiteId = useSelector( getSelectedSiteId ) ?? undefined;
 
 	// TODO clk pricing
-	const pricingMeta = usePricingMetaForGridPlans( {
+	const pricingMeta = Plans.usePricingMetaForGridPlans( {
 		planSlugs: [ PLAN_PREMIUM ],
 		selectedSiteId,
 		coupon: undefined,

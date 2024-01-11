@@ -36,7 +36,7 @@ interface Props {
 	/**
 	 * `storageAddOmns` TODO: should become a required prop.
 	 */
-	storageAddOns?: ( AddOnMeta | null )[] | null;
+	storageAddOns: ( AddOnMeta | null )[] | null;
 	withoutProRatedCredits?: boolean;
 }
 

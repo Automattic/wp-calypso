@@ -25,11 +25,10 @@ import {
 	isEcommercePlan,
 	TYPE_P2_PLUS,
 } from '@automattic/calypso-products';
-import { Plans, type AddOnMeta, type PricedAPIPlan } from '@automattic/data-stores';
+import { Plans, type AddOnMeta } from '@automattic/data-stores';
 import { isSamePlan } from '../../../lib/is-same-plan';
 import useHighlightLabels from './use-highlight-labels';
 import usePlansFromTypes from './use-plans-from-types';
-import type { UseCheckPlanAvailabilityForPurchase } from 'calypso/my-sites/plans-features-main/hooks/data-store/use-pricing-meta-for-grid-plans';
 import type { TranslateResult } from 'i18n-calypso';
 
 // TODO clk: move to plans data store
@@ -47,10 +46,6 @@ export interface PlanFeaturesForGridPlan {
 	// used for comparison grid so far
 	conditionalFeatures?: FeatureObject[];
 }
-
-export type UsePricedAPIPlans = ( { planSlugs }: { planSlugs: PlanSlug[] } ) => {
-	[ planSlug: string ]: PricedAPIPlan | null | undefined;
-} | null;
 
 export type UseFreeTrialPlanSlugs = ( {
 	intent,
@@ -76,7 +71,7 @@ export type GridPlan = {
 	tagline: TranslateResult;
 	planTitle: TranslateResult;
 	availableForPurchase: boolean;
-	pricing: PricingMetaForGridPlan;
+	pricing: Plans.PricingMetaForGridPlan;
 	storageAddOnsForPlan: ( AddOnMeta | null )[] | null;
 	productNameShort?: string | null;
 	billingTimeframe?: TranslateResult | null;
@@ -109,8 +104,7 @@ export type PlansIntent =
 interface Props {
 	// allFeaturesList temporary until feature definitions are ported to calypso-products package
 	allFeaturesList: FeatureList;
-	usePricingMetaForGridPlans: UsePricingMetaForGridPlans;
-	useCheckPlanAvailabilityForPurchase: UseCheckPlanAvailabilityForPurchase;
+	useCheckPlanAvailabilityForPurchase: Plans.UseCheckPlanAvailabilityForPurchase;
 	useFreeTrialPlanSlugs: UseFreeTrialPlanSlugs;
 	eligibleForFreeHostingTrial: boolean;
 	storageAddOns: ( AddOnMeta | null )[] | null;
@@ -237,7 +231,6 @@ const usePlanTypesWithIntent = ( {
 
 // TODO clk: move to plans data store
 const useGridPlans = ( {
-	usePricingMetaForGridPlans,
 	useCheckPlanAvailabilityForPurchase,
 	useFreeTrialPlanSlugs,
 	term = TERM_MONTHLY,
@@ -293,7 +286,7 @@ const useGridPlans = ( {
 
 	// TODO: pricedAPIPlans to be queried from data-store package
 	const pricedAPIPlans = Plans.usePlans( { coupon } );
-	const pricingMeta = usePricingMetaForGridPlans( {
+	const pricingMeta = Plans.usePricingMetaForGridPlans( {
 		planSlugs: availablePlanSlugs,
 		storageAddOns,
 		coupon,
