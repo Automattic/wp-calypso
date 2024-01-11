@@ -34,16 +34,6 @@ const domainSearch: Reducer< string, OnboardAction > = ( state = '', action ) =>
 	return state;
 };
 
-const domainCategory: Reducer< string | undefined, OnboardAction > = ( state, action ) => {
-	if ( action.type === 'SET_DOMAIN_CATEGORY' ) {
-		return action.domainCategory;
-	}
-	if ( action.type === 'RESET_ONBOARD_STORE' ) {
-		return undefined;
-	}
-	return state;
-};
-
 const selectedDesign: Reducer< Design | undefined, OnboardAction > = ( state, action ) => {
 	if ( action.type === 'SET_SELECTED_DESIGN' ) {
 		return action.selectedDesign;
@@ -435,7 +425,6 @@ const reducer = combineReducers( {
 	domain,
 	domainCartItem,
 	domainSearch,
-	domainCategory,
 	domainForm,
 	selectedFeatures,
 	domainTransferNames,

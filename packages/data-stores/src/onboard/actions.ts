@@ -179,11 +179,6 @@ export const setDomain = ( domain: DomainSuggestion | undefined ) => ( {
 	domain,
 } );
 
-export const setDomainCategory = ( domainCategory: string | undefined ) => ( {
-	type: 'SET_DOMAIN_CATEGORY' as const,
-	domainCategory,
-} );
-
 export const setDomainSearch = ( domainSearch: string ) => ( {
 	type: 'SET_DOMAIN_SEARCH_TERM' as const,
 	domainSearch,
@@ -375,7 +370,6 @@ export type OnboardAction = ReturnType<
 	| typeof setStoreType
 	| typeof setDomainsTransferData
 	| typeof setDomain
-	| typeof setDomainCategory
 	| typeof setDomainSearch
 	| typeof setPluginsToVerify
 	| typeof setProfilerData
