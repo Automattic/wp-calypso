@@ -52,7 +52,8 @@
 				box-shadow: 0 3px 8px rgba(0, 0, 0, 0.12), 0 3px 1px rgba(0, 0, 0, 0.04);
 				background-color: var(--studio-white);
 
-				&:hover {
+				&:hover,
+				.notouch &:hover {
 					background-color: var(--studio-white);
 					border-color: rgba(0, 0, 0, 0.04);
 				}
