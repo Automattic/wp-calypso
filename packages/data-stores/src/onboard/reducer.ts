@@ -28,7 +28,7 @@ const selectedDesign: Reducer< Design | undefined, OnboardAction > = ( state, ac
 	if ( action.type === 'SET_SELECTED_DESIGN' ) {
 		return action.selectedDesign;
 	}
-	if ( [ 'RESET_SELECTED_DESIGN', 'RESET_ONBOARD_STORE' ].includes( action.type ) ) {
+	if ( action.type === 'RESET_ONBOARD_STORE' ) {
 		return undefined;
 	}
 	return state;

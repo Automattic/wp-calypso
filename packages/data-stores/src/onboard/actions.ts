@@ -265,10 +265,6 @@ export const resetIntent = () => ( {
 	type: 'RESET_INTENT' as const,
 } );
 
-export const resetSelectedDesign = () => ( {
-	type: 'RESET_SELECTED_DESIGN' as const,
-} );
-
 export const setVerticalId = ( verticalId: string ) => ( {
 	type: 'SET_VERTICAL_ID' as const,
 	verticalId,
@@ -362,7 +358,6 @@ export type OnboardAction = ReturnType<
 	| typeof setGoals
 	| typeof resetGoals
 	| typeof resetIntent
-	| typeof resetSelectedDesign
 	| typeof setDomainForm
 	| typeof setDomainCartItem
 	| typeof setSiteDescription
