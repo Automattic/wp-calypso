@@ -1,7 +1,6 @@
 import { isDomainTransfer } from '@automattic/calypso-products';
 import formatCurrency from '@automattic/format-currency';
 import { Button, ClipboardButton } from '@wordpress/components';
-import { useI18n } from '@wordpress/react-i18n';
 import { translate } from 'i18n-calypso';
 import { useState } from 'react';
 import ThankYouProduct from 'calypso/components/thank-you-v2/product';
@@ -22,11 +21,9 @@ type DomainTransferSectionProps = {
 };
 
 const DomainTransferSection = ( { purchase, currency }: DomainTransferSectionProps ) => {
-	const { __ } = useI18n();
-
 	const purchaseLabel = ( priceInteger: number ) => {
 		if ( priceInteger === 0 ) {
-			return __( 'We’ve paid for an extra year' );
+			return translate( 'We’ve paid for an extra year' );
 		}
 
 		const priceFormatted = formatCurrency( priceInteger, currency, {
