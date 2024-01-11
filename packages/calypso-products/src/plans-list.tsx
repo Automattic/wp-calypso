@@ -1454,6 +1454,7 @@ const getPlanPremiumDetails = (): IncompleteWPcomPlan => ( {
 		FEATURE_VIDEOPRESS_JP,
 		FEATURE_UNLTD_SOCIAL_MEDIA_JP,
 		FEATURE_SITE_ACTIVITY_LOG_JP,
+		FEATURE_STATS_PAID,
 	],
 	getBlogSignupFeatures: () =>
 		[

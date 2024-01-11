@@ -126,6 +126,7 @@ $theme-info-height: 54px;
 	transform: scale(0.28);
 	transform-origin: top left;
 	translate: 0 -10px;
+	pointer-events: none;
 }
 
 .theme__no-screenshot {

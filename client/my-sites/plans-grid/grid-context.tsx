@@ -9,10 +9,12 @@ import type { FeatureList } from '@automattic/calypso-products';
 
 interface PlansGridContext {
 	intent?: PlansIntent;
+	selectedSiteId?: number | null;
 	gridPlans: GridPlan[];
 	gridPlansIndex: { [ key: string ]: GridPlan };
 	allFeaturesList: FeatureList;
 	helpers?: Record< 'usePricingMetaForGridPlans', UsePricingMetaForGridPlans >;
+	coupon?: string;
 }
 
 const PlansGridContext = createContext< PlansGridContext >( {} as PlansGridContext );
@@ -22,7 +24,9 @@ const PlansGridContextProvider = ( {
 	gridPlans,
 	usePricingMetaForGridPlans,
 	allFeaturesList,
+	selectedSiteId,
 	children,
+	coupon,
 }: GridContextProps ) => {
 	const gridPlansIndex = gridPlans.reduce(
 		( acc, gridPlan ) => ( {
@@ -36,10 +40,12 @@ const PlansGridContextProvider = ( {
 		<PlansGridContext.Provider
 			value={ {
 				intent,
+				selectedSiteId,
 				gridPlans,
 				gridPlansIndex,
 				allFeaturesList,
 				helpers: { usePricingMetaForGridPlans },
+				coupon,
 			} }
 		>
 			{ children }

@@ -1,3 +1,4 @@
+import { isDefaultGlobalStylesVariationSlug } from '@automattic/design-picker';
 import { recordTracksEvent, withAnalytics } from 'calypso/state/analytics/actions';
 import { getGlobalStylesId, updateGlobalStyles } from 'calypso/state/global-styles/actions';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
@@ -29,6 +30,11 @@ export function livePreview(
 			source,
 			theme_type: getThemeType( getState(), themeId ),
 			theme: themeId,
+			theme_style:
+				themeId +
+				( isDefaultGlobalStylesVariationSlug( styleVariation?.slug )
+					? ''
+					: `-${ styleVariation?.slug }` ),
 		} );
 		dispatch( withAnalytics( analysis, { type: LIVE_PREVIEW_START, themeId } ) );
 		if ( isJetpackSite( getState(), siteId ) && ! getTheme( getState(), siteId, themeId ) ) {

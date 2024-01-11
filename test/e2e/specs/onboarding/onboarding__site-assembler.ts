@@ -30,7 +30,7 @@ describe( 'Onboarding: Site Assembler', () => {
 	} );
 
 	describe( 'Create site', function () {
-		it( 'Navigate to /new', async function () {
+		it( 'Navigate to /start', async function () {
 			await page.goto( DataHelper.getCalypsoURL( 'start' ) );
 		} );
 

@@ -339,16 +339,16 @@ export const getWooMyCustomThemeOptions = ( { translate, siteAdminUrl, siteSlug,
 	return {
 		assembler: {
 			key: 'assembler',
-			label: translate( 'Quick editing in the Assembler' ),
-			extendedLabel: translate( 'Quick editing in the Assembler' ),
+			label: translate( 'Quick editing in the Store Designer' ),
+			extendedLabel: translate( 'Quick editing in the Store Designer' ),
 			getUrl: () => {
 				return `${ siteAdminUrl }admin.php?page=wc-admin&path=%2Fcustomize-store%2Fassembler-hub&customizing=true`;
 			},
 		},
 		customize: {
 			...options.customize,
-			label: translate( 'Advance customization in the Editor' ),
-			extendedLabel: translate( 'Advance customization in the Editor' ),
+			label: translate( 'Advanced customization in the Editor' ),
+			extendedLabel: translate( 'Advanced customization in the Editor' ),
 		},
 		preview: {
 			label: translate( 'Store preview' ),
