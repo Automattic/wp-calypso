@@ -11,6 +11,35 @@ export type UseCheckPlanAvailabilityForPurchase = ( { planSlugs }: { planSlugs: 
 	[ planSlug in PlanSlug ]?: boolean;
 };
 
+interface Props {
+	planSlugs: PlanSlug[];
+
+	/**
+	 * `selectedSiteId` required on purpose to mitigate risk with not passing something through when we should
+	 */
+	selectedSiteId: number | null | undefined;
+
+	/**
+	 * `coupon` required on purpose to mitigate risk with not passing somethiing through when we should
+	 */
+	coupon: string | undefined;
+
+	/**
+	 * `useCheckPlanAvailabilityForPurchase` required on purpose to avoid inconsistent data across Calypso.
+	 *     - It returns an index of planSlugs and whether they are available for purchase (non-available plans
+	 * will not have the discounted prices attached).
+	 *     - It's a function that is not available in the data store, but can be easily mocked in other contexts.
+	 *     - For Calypso instances, this should be the same function. So find other/existing cases and import the same.
+	 */
+	useCheckPlanAvailabilityForPurchase: UseCheckPlanAvailabilityForPurchase;
+
+	/**
+	 * `storageAddOmns` TODO: should become a required prop.
+	 */
+	storageAddOns?: ( AddOnMeta | null )[] | null;
+	withoutProRatedCredits?: boolean;
+}
+
 function getTotalPrice( planPrice: number | null, addOnPrice = 0 ): number | null {
 	return null !== planPrice ? planPrice + addOnPrice : null;
 }
@@ -18,40 +47,28 @@ function getTotalPrice( planPrice: number | null, addOnPrice = 0 ): number | nul
 /**
  * This hook is a re-projection of the the pricing metadata derived from `usePlans` and `useSitePlans` hooks.
  * It returns the pricing metadata as needed for the Calypso grid components, which may be adjusted based on the selected site,
- * storage add-ons, current plan (will use the actual purchase price for `originalPrice`), etc.
+ * storage add-ons, current plan (will use the actual purchase price for `originalPrice` in this case), etc.
  *
  * For most uses within Calypso (e.g. pricing grids), this should work. However, if you need to access the pricing metadata directly,
  * you should use the `usePlans` and `useSitePlans` hooks instead.
  *
- * Check the properties, inline docs here, and `PricingMetaForGridPlan` type for additional details.
+ * Check the properties, incode docs (numbered set of cases), and `PricingMetaForGridPlan` type for additional details.
  */
 const usePricingMetaForGridPlans = ( {
 	planSlugs,
+	selectedSiteId,
+	coupon,
 	useCheckPlanAvailabilityForPurchase,
 	withoutProRatedCredits = false,
 	storageAddOns,
-	selectedSiteId,
-}: {
-	planSlugs: PlanSlug[];
-	withoutProRatedCredits?: boolean;
-	storageAddOns?: ( AddOnMeta | null )[] | null;
-	selectedSiteId?: number | null;
-	/**
-	 * `useCheckPlanAvailabilityForPurchase` "required" on purpose to avoid inconsistent data across Calypso.
-	 * - It's a function that is not available in the data store, but can be easily mocked in other contexts.
-	 * - It returns an index of planSlugs and whether they are available for purchase (non-available plans
-	 * will not have the discounted prices attached).
-	 * - For Calypso instances, this should be the same function. So find other/existing cases and import the same.
-	 */
-	useCheckPlanAvailabilityForPurchase: UseCheckPlanAvailabilityForPurchase;
-} ): { [ planSlug: string ]: Plans.PricingMetaForGridPlan } | null => {
+}: Props ): { [ planSlug: string ]: Plans.PricingMetaForGridPlan } | null => {
 	const planAvailabilityForPurchase = useCheckPlanAvailabilityForPurchase( { planSlugs } );
 	// plans - should have a definition for all plans, being the main source of API data
-	const plans = Plans.usePlans();
+	const plans = Plans.usePlans( { coupon } );
 	// sitePlans - unclear if all plans are included
 	const sitePlans = Plans.useSitePlans( { siteId: selectedSiteId } );
 	const currentPlan = Plans.useCurrentPlan( { siteId: selectedSiteId } );
-	const introOffers = Plans.useIntroOffers( { siteId: selectedSiteId } );
+	const introOffers = Plans.useIntroOffers( { siteId: selectedSiteId, coupon } );
 	const purchasedPlan = Purchases.useSitePurchaseById( {
 		siteId: selectedSiteId,
 		purchaseId: currentPlan?.purchaseId,
@@ -64,8 +81,8 @@ const usePricingMetaForGridPlans = ( {
 	let planPrices:
 		| {
 				[ planSlug in PlanSlug ]?: {
-					originalPrice: Plans.PricingMetaForGridPlan[ 'originalPrice' ];
-					discountedPrice: Plans.PricingMetaForGridPlan[ 'discountedPrice' ];
+					originalPrice: Plans.PlanPricing[ 'originalPrice' ];
+					discountedPrice: Plans.PlanPricing[ 'discountedPrice' ];
 				};
 		  }
 		| null = null;
@@ -74,7 +91,7 @@ const usePricingMetaForGridPlans = ( {
 		/**
 		 * Null until all data is ready, at least in initial state.
 		 * - For now a simple loader is shown until these are resolved
-		 * - `sitePlans` being a dependent query will only get fetching status when enabled (when `siteId` exists)
+		 * - `sitePlans` being a dependent query will only get fetching status when enabled (when `selectedSiteId` exists)
 		 */
 		planPrices = null;
 	} else {
@@ -97,8 +114,9 @@ const usePricingMetaForGridPlans = ( {
 
 				/**
 				 * 0. No plan or sitePlan (when selected site exists): planSlug is for a priceless plan.
+				 * TODO clk: the condition on `.pricing` here needs investigation. There should be a pricing object for all returned API plans.
 				 */
-				if ( ! plan || ( selectedSiteId && ! sitePlan ) ) {
+				if ( ! plan?.pricing || ( selectedSiteId && ! sitePlan?.pricing ) ) {
 					return [
 						planSlug,
 						{
@@ -116,7 +134,8 @@ const usePricingMetaForGridPlans = ( {
 
 				/**
 				 * 1. Original prices only for current site's plan.
-				 * Ensures the spotlight (current) plan shows the price with which the plan was purchased.
+				 *   - The current site's plan gets the price with which the plan was purchased
+				 *     (so may not be the most recent billing plan's).
 				 */
 				if ( selectedSiteId && currentPlan?.planSlug === planSlug ) {
 					let monthlyPrice = sitePlan?.pricing.originalPrice.monthly;
@@ -164,14 +183,14 @@ const usePricingMetaForGridPlans = ( {
 					};
 					const discountedPrice = {
 						monthly:
-							sitePlan && ! withoutProRatedCredits
+							sitePlan?.pricing && ! withoutProRatedCredits
 								? getTotalPrice(
 										sitePlan.pricing.discountedPrice.monthly,
 										storageAddOnPriceMonthly
 								  )
 								: getTotalPrice( plan.pricing.discountedPrice.monthly, storageAddOnPriceMonthly ),
 						full:
-							sitePlan && ! withoutProRatedCredits
+							sitePlan?.pricing && ! withoutProRatedCredits
 								? getTotalPrice( sitePlan.pricing.discountedPrice.full, storageAddOnPriceYearly )
 								: getTotalPrice( plan.pricing.discountedPrice.full, storageAddOnPriceYearly ),
 					};
@@ -217,8 +236,10 @@ const usePricingMetaForGridPlans = ( {
 				[ planSlug ]: {
 					originalPrice: planPrices?.[ planSlug ]?.originalPrice,
 					discountedPrice: planPrices?.[ planSlug ]?.discountedPrice,
-					billingPeriod: plans.data?.[ planSlug ]?.pricing.billPeriod,
-					currencyCode: plans.data?.[ planSlug ]?.pricing.currencyCode,
+					// TODO clk: the condition on `.pricing` here needs investigation. There should be a pricing object for all returned API plans.
+					billingPeriod: plans.data?.[ planSlug ]?.pricing?.billPeriod,
+					// TODO clk: the condition on `.pricing` here needs investigation. There should be a pricing object for all returned API plans.
+					currencyCode: plans.data?.[ planSlug ]?.pricing?.currencyCode,
 					expiry: sitePlans.data?.[ planSlug ]?.expiry,
 					introOffer: introOffers?.[ planSlug ],
 				},
