@@ -1,6 +1,5 @@
 import { isP2Plus } from '@automattic/calypso-products';
 import P2PlusPlanFooter from './footer/P2PlusPlanFooter';
-import PlanFooter from './footer/PlanFooter';
 import type { ReceiptPurchase } from 'calypso/state/receipts/types';
 
 const Footer = ( { purchases }: { purchases: ReceiptPurchase[] } ) => {
@@ -8,7 +7,7 @@ const Footer = ( { purchases }: { purchases: ReceiptPurchase[] } ) => {
 		return <P2PlusPlanFooter />;
 	}
 
-	return <PlanFooter />;
+	return null;
 };
 
 export default Footer;
