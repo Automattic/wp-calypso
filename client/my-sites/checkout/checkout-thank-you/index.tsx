@@ -575,7 +575,10 @@ export class CheckoutThankYou extends Component<
 
 			if ( wasBulkDomainTransfer ) {
 				pageContent = (
-					<DomainBulkTransferThankYou purchases={ purchases } currency={ this.props.currency } />
+					<DomainBulkTransferThankYou
+						purchases={ purchases }
+						currency={ this.props.receipt.data?.currency ?? 'USD' }
+					/>
 				);
 			} else if ( isDomainOnly( purchases ) ) {
 				pageContent = <DomainOnlyThankYou purchases={ purchases } />;

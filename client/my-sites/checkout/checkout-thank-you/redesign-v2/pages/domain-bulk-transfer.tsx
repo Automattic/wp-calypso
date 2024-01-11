@@ -6,6 +6,7 @@ import ThankYouV2 from 'calypso/components/thank-you-v2';
 import { preventWidows } from 'calypso/lib/formatting';
 import { usePresalesChat } from 'calypso/lib/presales-chat';
 import ThankYouDomainProduct from '../products/domain-product';
+import type { ReceiptPurchase } from 'calypso/state/receipts/types';
 
 interface DomainBulkTransferThankYouProps {
 	purchases: ReceiptPurchase[];
