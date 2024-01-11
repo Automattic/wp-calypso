@@ -1,12 +1,18 @@
+import { OnboardActions, SiteActions } from '@automattic/data-stores';
 import {
 	isBlogOnboardingFlow,
 	isDesignFirstFlow,
 	isSiteAssemblerFlow,
 	isStartWritingFlow,
+	replaceProductsInCart,
 } from '@automattic/onboarding';
 import { MinimalRequestCartProduct } from '@automattic/shopping-cart';
+import { dispatch } from '@wordpress/data';
+import { __ } from '@wordpress/i18n';
 import { translate } from 'i18n-calypso';
-import { isDomainUpsellCompleted } from '../../task-helper';
+import { ONBOARD_STORE, SITE_STORE } from 'calypso/landing/stepper/stores';
+import { goToCheckout } from 'calypso/landing/stepper/utils/checkout';
+import { isDomainUpsellCompleted, recordTaskClickTracksEvent } from '../../task-helper';
 import { EnhancedTask, Task, TaskAction, TaskActionTable, TaskContext } from '../../types';
 
 const getCompletedTasks = ( tasks: Task[] ): Record< string, boolean > =>
@@ -70,15 +76,60 @@ const getLaunchSiteTaskTitle = ( task: Task, flow: string, context: TaskContext 
 	return task.title;
 };
 
-const getSiteLaunched: TaskAction = ( task, flow, context ): EnhancedTask => {
-	const { completeLaunchSiteTask } = context;
+const completeLaunchSiteTask = async ( task: Task, flow: string, context: TaskContext ) => {
+	const { site, siteSlug, submit } = context;
+	if ( ! site?.ID ) {
+		return;
+	}
 
+	const onboardingCartItems = getOnboardingCartItems( context );
+	const { setPendingAction, setProgressTitle } = dispatch( ONBOARD_STORE ) as OnboardActions;
+
+	setPendingAction( async () => {
+		// If user selected products during onboarding, update cart and redirect to checkout
+		if ( onboardingCartItems.length ) {
+			setProgressTitle( __( 'Directing to checkout' ) );
+			await replaceProductsInCart( siteSlug as string, onboardingCartItems );
+			goToCheckout( {
+				flowName: flow ?? '',
+				stepName: 'launchpad',
+				siteSlug: siteSlug ?? '',
+				destination: `/setup/${ flow }/site-launch?siteSlug=${ siteSlug }`,
+				cancelDestination: `/home/${ siteSlug }`,
+			} );
+			return { goToCheckout: true };
+		}
+
+		// Launch the site or blog immediately if no items in cart
+		const { launchSite } = dispatch( SITE_STORE ) as SiteActions;
+		setProgressTitle(
+			task.id === 'blog_launched' ? __( 'Launching blog' ) : __( 'Launching website' )
+		);
+
+		await launchSite( site.ID );
+		// Waits for half a second so that the loading screen doesn't flash away too quickly
+		await new Promise( ( res ) => setTimeout( res, 500 ) );
+		recordTaskClickTracksEvent( flow, task.completed, task.id );
+
+		return {
+			siteSlug,
+			// For the blog onboarding flow and the assembler-first flow.
+			isLaunched: true,
+			// For the general onboarding flow.
+			goToHome: true,
+		};
+	} );
+
+	submit?.();
+};
+
+const getSiteLaunched: TaskAction = ( task, flow, context ): EnhancedTask => {
 	return {
 		...task,
 		isLaunchTask: true,
 		title: getLaunchSiteTaskTitle( task, flow, context ),
 		disabled: getIsLaunchSiteTaskDisabled( flow, context ),
-		actionDispatch: () => completeLaunchSiteTask( task ),
+		actionDispatch: () => completeLaunchSiteTask( task, flow, context ),
 		useCalypsoPath: false,
 	};
 };

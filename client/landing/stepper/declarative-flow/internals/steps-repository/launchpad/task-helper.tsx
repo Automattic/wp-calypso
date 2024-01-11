@@ -289,9 +289,10 @@ export function getEnhancedTasks( {
 				globalStylesMinimumPlan,
 				domainUpsellCompleted,
 				site,
-				completeLaunchSiteTask,
 				isEmailVerified,
 				planCartItem,
+				siteSlug,
+				submit,
 			} );
 
 			if ( enhanced ) {

@@ -74,7 +74,8 @@ export interface TaskContext {
 	planCartItem?: MinimalRequestCartProduct | null;
 	domainCartItem?: MinimalRequestCartProduct | null;
 	productCartItems?: MinimalRequestCartProduct[] | null;
-	completeLaunchSiteTask: ( task: Task ) => Promise< void >;
+	siteSlug: string | null;
+	submit: NavigationControls[ 'submit' ];
 }
 
 export type TaskAction = ( task: Task, flow: string, context: TaskContext ) => EnhancedTask;
