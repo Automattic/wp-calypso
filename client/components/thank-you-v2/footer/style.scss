@@ -16,14 +16,14 @@
 		gap: 40px;
 		margin-bottom: 50px;
 
-		@include break-small {
+		@include break-medium {
 			padding: 0 25px;
 			flex-direction: row;
 		}
 	}
 
 	.thank-you__footer-detail {
-		@include break-small {
+		@include break-medium {
 			width: 50%;
 		}
 	}
