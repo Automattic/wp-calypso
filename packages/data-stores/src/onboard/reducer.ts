@@ -208,9 +208,6 @@ const goals: Reducer< SiteGoal[], OnboardAction > = ( state = [], action ) => {
 	if ( action.type === 'SET_GOALS' ) {
 		return action.goals;
 	}
-	if ( action.type === 'CLEAR_IMPORT_GOAL' ) {
-		return state.filter( ( goal ) => goal !== SiteGoal.Import );
-	}
 	if ( [ 'RESET_GOALS', 'RESET_ONBOARD_STORE' ].includes( action.type ) ) {
 		return [];
 	}

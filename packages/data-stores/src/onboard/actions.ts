@@ -257,10 +257,6 @@ export const setGoals = ( goals: SiteGoal[] ) => ( {
 	goals,
 } );
 
-export const clearImportGoal = () => ( {
-	type: 'CLEAR_IMPORT_GOAL' as const,
-} );
-
 export const resetGoals = () => ( {
 	type: 'RESET_GOALS' as const,
 } );
@@ -364,7 +360,6 @@ export type OnboardAction = ReturnType<
 	| typeof setProgress
 	| typeof setProgressTitle
 	| typeof setGoals
-	| typeof clearImportGoal
 	| typeof resetGoals
 	| typeof resetIntent
 	| typeof resetSelectedDesign
