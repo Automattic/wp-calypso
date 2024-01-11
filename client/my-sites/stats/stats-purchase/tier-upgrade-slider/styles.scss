@@ -126,6 +126,7 @@ $track-height: 4px;
 		text-align: right;
 	}
 	.full-price-label {
+		font-size: $font-title-medium;
 		color: var(--studio-gray-40);
 		text-decoration: line-through;
 	}
