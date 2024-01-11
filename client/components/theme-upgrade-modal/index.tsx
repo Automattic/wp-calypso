@@ -1,3 +1,4 @@
+import config from '@automattic/calypso-config';
 import {
 	FEATURE_ACCEPT_PAYMENTS,
 	FEATURE_AD_FREE_EXPERIENCE,
@@ -432,7 +433,10 @@ export const ThemeUpgradeModal = ( {
 		featureListHeader = translate( 'Included with your %(businessPlanName)s plan', {
 			args: { businessPlanName: plans.data?.[ PLAN_BUSINESS ]?.productNameShort || '' },
 		} );
-	} else if ( theme?.data?.theme_tier?.feature === FEATURE_PERSONAL_THEMES ) {
+	} else if (
+		config.isEnabled( 'themes/tiers' ) &&
+		theme?.data?.theme_tier?.feature === FEATURE_PERSONAL_THEMES
+	) {
 		modalData = getPersonalPlanModalData();
 		featureList = getPersonalPlanFeatureList();
 		featureListHeader = translate( 'Included with your %(plan)s plan', {
