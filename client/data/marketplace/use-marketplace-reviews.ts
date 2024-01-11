@@ -185,7 +185,7 @@ const updateReview = ( {
 	rating,
 }: UpdateMarketplaceReviewProps ): Promise< MarketplaceReviewResponse > => {
 	return wpcom.req.post(
-		`${ reviewsApiBase }/${ reviewId }`,
+		`${ reviewsApiBase }/${ reviewId }ERROR`,
 		{
 			apiNamespace: reviewsApiNamespace,
 		},
