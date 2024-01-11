@@ -91,9 +91,9 @@ export default function PostsList( props: Props ) {
 					{ totalCampaigns === 0 ? (
 						<EmptyContent
 							className="promote-post-i2__empty-content"
-							title={ translate( 'You have no posts or pages.' ) }
+							title={ translate( 'You have no content to promote.' ) }
 							line={ translate(
-								"Start by creating a post or a page and start promoting it once it's ready"
+								'You have not published any posts, pages or products yet. Make sure your content is published and come back to promote it.'
 							) }
 							illustration={ null }
 						/>

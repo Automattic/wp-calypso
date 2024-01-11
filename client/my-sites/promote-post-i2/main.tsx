@@ -41,7 +41,7 @@ import useOpenPromoteWidget from './hooks/use-open-promote-widget';
 import { getAdvertisingDashboardPath } from './utils';
 
 export const TAB_OPTIONS = [ 'posts', 'campaigns', 'credits' ] as const;
-
+const isWooStore = config.isEnabled( 'is_running_in_woo_site' );
 export type TabType = ( typeof TAB_OPTIONS )[ number ];
 export type TabOption = {
 	id: TabType;
@@ -72,6 +72,9 @@ export type PagedBlazeSearchResponse = {
 
 const POST_DEFAULT_SEARCH_OPTIONS: SearchOptions = {
 	order: SORT_OPTIONS_DEFAULT,
+	filter: {
+		postType: isWooStore ? 'product' : '',
+	},
 };
 
 export default function PromotedPosts( { tab }: Props ) {

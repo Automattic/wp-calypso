@@ -116,7 +116,7 @@ export default function SearchBar( props: Props ) {
 	const [ searchInput, setSearchInput ] = React.useState< string | undefined >( '' );
 	const [ sortOption, setSortOption ] = React.useState( SORT_OPTIONS_DEFAULT );
 	const [ filterOption, setFilterOption ] = React.useState( FILTER_OPTIONS_DEFAULT );
-	const isDesktop = useMediaQuery( '(min-width: 500px)' );
+	const isDesktop = useMediaQuery( '(min-width: 1055px)' );
 
 	useEffect( () => {
 		handleSetSearch( {
@@ -196,16 +196,12 @@ export default function SearchBar( props: Props ) {
 
 		const selectedOption = options.find( ( item ) => item.value === postType )?.label;
 
-		if ( isDesktop ) {
-			return selectedOption
-				? // translators: filterOption is something like All, Posts and Pages
-				  translate( 'Post type: %(filterOption)s', {
-						args: { filterOption: selectedOption },
-				  } )
-				: undefined;
-		}
-
-		return selectedOption || undefined;
+		return selectedOption
+			? // translators: filterOption is something like All, Posts and Pages
+			  translate( 'Post type: %(filterOption)s', {
+					args: { filterOption: selectedOption },
+			  } )
+			: undefined;
 	};
 
 	return (
