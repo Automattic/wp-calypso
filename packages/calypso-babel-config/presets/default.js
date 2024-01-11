@@ -11,18 +11,6 @@ function modulesOption( opts ) {
 	return false; // Default
 }
 
-function importSourceOption( opts ) {
-	if ( opts && opts.importSource !== undefined ) {
-		return opts.importSource;
-	}
-
-	if ( typeof process.env.IMPORT_SOURCE !== 'undefined' ) {
-		return process.env.IMPORT_SOURCE;
-	}
-
-	return undefined; // Default
-}
-
 module.exports = ( api, opts ) => ( {
 	presets: [
 		[
@@ -41,7 +29,7 @@ module.exports = ( api, opts ) => ( {
 			require.resolve( '@babel/preset-react' ),
 			{
 				runtime: 'automatic',
-				importSource: importSourceOption( opts ),
+				importSource: opts.importSource ?? process.env.IMPORT_SOURCE,
 			},
 		],
 		[ require.resolve( '@babel/preset-typescript' ), { allowDeclareFields: true } ],
