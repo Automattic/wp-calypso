@@ -11,6 +11,7 @@ import { CheckoutProvider, CheckoutFormSubmit } from '@automattic/composite-chec
 import { isValueTruthy } from '@automattic/wpcom-checkout';
 import { CardElement, useElements } from '@stripe/react-stripe-js';
 import { useSelect } from '@wordpress/data';
+import { Icon, info } from '@wordpress/icons';
 import { getQueryArg } from '@wordpress/url';
 import { TranslateResult, useTranslate } from 'i18n-calypso';
 import { useCallback, useMemo, useEffect } from 'react';
@@ -287,11 +288,11 @@ function PaymentMethodForm() {
 
 					{ 0 < paymentMethods.length && useAsPrimaryPaymentMethod && (
 						<p className="payment-method-form__notice">
-							<small>
-								{ translate(
-									'By adding your primary payment method, you authorize automatic monthly charges for your active licenses.'
-								) }
-							</small>
+							<Icon className="payment-method-form__notice-icon" size={ 20 } icon={ info } />
+
+							{ translate(
+								'By adding your primary payment method, you authorize automatic monthly charges for your active licenses.'
+							) }
 						</p>
 					) }
 				</div>
