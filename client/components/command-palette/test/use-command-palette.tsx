@@ -6,6 +6,7 @@ import { renderHook } from '@testing-library/react';
 import React from 'react';
 import { Provider } from 'react-redux';
 import configureStore from 'redux-mock-store';
+import { useCommandsArrayWpcom } from '../../../sites-dashboard/components/wpcom-smp-commands';
 import { useCommandPalette } from '../use-command-palette';
 import { useCurrentSiteRankTop } from '../use-current-site-rank-top';
 
@@ -52,6 +53,10 @@ jest.mock( 'cmdk', () => ( {
 	useCommandState: jest.fn(),
 } ) );
 
+jest.mock( '../../../sites-dashboard/components/wpcom-smp-commands', () => ( {
+	useCommandsArrayWpcom: jest.fn(),
+} ) );
+
 // Mock the module that contains useCurrentSiteRankTop
 jest.mock( '../../command-palette/use-current-site-rank-top' );
 
@@ -63,6 +68,8 @@ describe( 'useCommandPalette', () => {
 		( useCurrentSiteRankTop as jest.Mock ).mockReturnValue( {
 			currentSiteId: 1,
 		} );
+
+		( useCommandsArrayWpcom as jest.Mock ).mockReturnValue( commands );
 
 		// Wrap test logic within the QueryClientProvider and Provider
 		const { result } = renderHook(
@@ -82,6 +89,8 @@ describe( 'useCommandPalette', () => {
 		);
 
 		// Assert that the hook returns the expected commands in the expected order
-		expect( result.current.commands ).toEqual( commands );
+		expect( result.current.commands.map( ( { name, label } ) => ( { name, label } ) ) ).toEqual(
+			commands
+		);
 	} );
 } );
