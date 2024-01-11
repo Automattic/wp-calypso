@@ -108,7 +108,14 @@ class StepUpgrade extends Component {
 								<ProductIcon slug="business-bundle" />
 							</div>
 							<div className="migrate__plan-upsell-info">
-								<div className="migrate__plan-name">{ translate( 'WordPress.com Business' ) }</div>
+								<div className="migrate__plan-name">
+									{
+										// translators: %(planName)s is the name of the Creator/Business plan
+										translate( 'WordPress.com %(planName)s', {
+											args: { planName: getPlan( PLAN_BUSINESS )?.getTitle() },
+										} )
+									}
+								</div>
 								<div className="migrate__plan-price">
 									<PlanPrice rawPrice={ planPrice } currencyCode={ currency } />
 								</div>
