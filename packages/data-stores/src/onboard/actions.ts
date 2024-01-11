@@ -214,11 +214,6 @@ export const setHasUsedPlansStep = ( hasUsedPlansStep: boolean ) => ( {
 	hasUsedPlansStep,
 } );
 
-export const setPlanProductId = ( planProductId: number | undefined ) => ( {
-	type: 'SET_PLAN_PRODUCT_ID' as const,
-	planProductId,
-} );
-
 export const setPlanCartItem = ( planCartItem: MinimalRequestCartProduct | null ) => ( {
 	type: 'SET_PLAN_CART_ITEM' as const,
 	planCartItem,
@@ -265,11 +260,6 @@ export const setSiteAccentColor = ( siteAccentColor: string ) => ( {
 	type: 'SET_SITE_ACCENT_COLOR' as const,
 	siteAccentColor,
 } );
-
-export function updatePlan( planProductId: number ) {
-	// keep updatePlan for backwards compat
-	return setPlanProductId( planProductId );
-}
 
 export const startOnboarding = () => ( {
 	type: 'ONBOARDING_START' as const,
@@ -426,7 +416,6 @@ export type OnboardAction = ReturnType<
 	| typeof setDomainSearch
 	| typeof setHasUsedDomainsStep
 	| typeof setHasUsedPlansStep
-	| typeof setPlanProductId
 	| typeof setPluginsToVerify
 	| typeof setProfilerData
 	| typeof setSelectedDesign

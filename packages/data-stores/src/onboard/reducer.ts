@@ -64,16 +64,6 @@ const hasUsedPlansStep: Reducer< boolean, OnboardAction > = ( state = false, act
 	return state;
 };
 
-const planProductId: Reducer< number | undefined, OnboardAction > = ( state, action ) => {
-	if ( action.type === 'SET_PLAN_PRODUCT_ID' ) {
-		return action.planProductId;
-	}
-	if ( action.type === 'RESET_ONBOARD_STORE' ) {
-		return undefined;
-	}
-	return state;
-};
-
 const selectedDesign: Reducer< Design | undefined, OnboardAction > = ( state, action ) => {
 	if ( action.type === 'SET_SELECTED_DESIGN' ) {
 		return action.selectedDesign;
@@ -498,7 +488,6 @@ const reducer = combineReducers( {
 	selectedStyleVariation,
 	selectedSite,
 	siteTitle,
-	planProductId,
 	hasOnboardingStarted,
 	intent,
 	startingPoint,

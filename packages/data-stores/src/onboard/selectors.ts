@@ -23,7 +23,6 @@ export const getBulkDomainsData = ( state: State ) => {
 	}
 	return domainTransferData;
 };
-export const getPlanProductId = ( state: State ) => state.planProductId;
 export const getPlanCartItem = ( state: State ) => state.planCartItem;
 export const getProductCartItems = ( state: State ) => state.productCartItems;
 export const getSelectedDesign = ( state: State ) => state.selectedDesign;
