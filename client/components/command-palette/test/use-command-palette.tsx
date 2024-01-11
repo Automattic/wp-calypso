@@ -155,7 +155,6 @@ describe( 'useCommandPalette', () => {
 		( useCurrentSiteRankTop as jest.Mock ).mockReturnValue( {
 			currentSiteId: 1,
 		} );
-
 		( useCommandsArrayWpcom as jest.Mock ).mockReturnValue( commands );
 
 		// Wrap test logic within the QueryClientProvider and Provider
@@ -186,7 +185,6 @@ describe( 'useCommandPalette', () => {
 		( useCurrentSiteRankTop as jest.Mock ).mockReturnValue( {
 			currentSiteId: 1,
 		} );
-
 		( useCommandsArrayWpcom as jest.Mock ).mockReturnValue( commandsWithViewMySite );
 
 		const { result } = renderHook(
