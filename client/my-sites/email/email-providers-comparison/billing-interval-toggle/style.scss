@@ -53,7 +53,8 @@
 				background-color: var(--studio-white);
 
 				&:hover,
-				.notouch &:hover {
+				.notouch &:hover,
+				&:focus {
 					background-color: var(--studio-white);
 					border-color: rgba(0, 0, 0, 0.04);
 				}
