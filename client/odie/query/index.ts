@@ -2,7 +2,7 @@ import { useMutation, UseMutationResult, useQuery } from '@tanstack/react-query'
 import apiFetch from '@wordpress/api-fetch';
 import { canAccessWpcomApis } from 'wpcom-proxy-request';
 import wpcom from 'calypso/lib/wp';
-import { WAPUU_ERROR_MESSAGE } from '..';
+import { WAPUU_ERROR_MESSAGE, ODIE_THUMBS_DOWN_RATING_VALUE } from '..';
 import { useOdieAssistantContext } from '../context';
 import { setOdieStorage } from '../data';
 import type { Chat, Message, MessageRole, MessageType, OdieAllowedBots } from '../types';
@@ -187,7 +187,6 @@ export const useOdieGetChat = (
 		refetchOnWindowFocus: false,
 		enabled: !! chatId && ! chat.chat_id,
 		select: ( data ) => {
-			const negativeFeedbackThreshold = 3;
 			const modifiedMessages: Message[] = [];
 
 			data.messages.forEach( ( message ) => {
@@ -196,7 +195,7 @@ export const useOdieGetChat = (
 				// Check if the message has negative feedback
 				if (
 					message.rating_value &&
-					message.rating_value < negativeFeedbackThreshold &&
+					message.rating_value === ODIE_THUMBS_DOWN_RATING_VALUE &&
 					! message.context?.flags?.forward_to_human_support
 				) {
 					// Add a new 'dislike-feedback' message right after the current message
