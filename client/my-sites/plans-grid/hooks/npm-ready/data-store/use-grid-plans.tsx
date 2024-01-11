@@ -89,7 +89,7 @@ export type UsePricingMetaForGridPlans = ( {
 	 */
 	coupon: string | undefined;
 	/**
-	 * `useCheckPlanAvailabilityForPurchase` "required" on purpose to avoid inconsistent data across Calypso.
+	 * `useCheckPlanAvailabilityForPurchase` required on purpose to avoid inconsistent data across Calypso.
 	 * It's a function that is not available in the data store, but can be easily mocked in other contexts.
 	 */
 	useCheckPlanAvailabilityForPurchase: UseCheckPlanAvailabilityForPurchase;
