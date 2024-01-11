@@ -72,8 +72,4 @@ $thumb-horizontal-padding: 16px;
 		// On focus styling
 		outline: none;
 	}
-
-	&[aria-valuenow="0"] {
-		border-color: var(--jp-gray);
-	}
 }
