@@ -221,10 +221,6 @@ export const setSiteLogo = ( siteLogo: string | null ) => ( {
 	siteLogo,
 } );
 
-export const startOnboarding = () => ( {
-	type: 'ONBOARDING_START' as const,
-} );
-
 export const setIntent = ( intent: string ) => ( {
 	type: 'SET_INTENT' as const,
 	intent,
@@ -371,7 +367,6 @@ export type OnboardAction = ReturnType<
 	| typeof setSelectedStyleVariation
 	| typeof setSelectedSite
 	| typeof setSiteTitle
-	| typeof startOnboarding
 	| typeof setIntent
 	| typeof setStartingPoint
 	| typeof setStoreAddressValue

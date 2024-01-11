@@ -135,16 +135,6 @@ const planCartItem: Reducer< MinimalRequestCartProduct | null, OnboardAction > =
 	return state;
 };
 
-const hasOnboardingStarted: Reducer< boolean, OnboardAction > = ( state = false, action ) => {
-	if ( action.type === 'ONBOARDING_START' ) {
-		return true;
-	}
-	if ( action.type === 'RESET_ONBOARD_STORE' ) {
-		return false;
-	}
-	return state;
-};
-
 const intent: Reducer< string, OnboardAction > = ( state = '', action ) => {
 	if ( action.type === 'SET_INTENT' ) {
 		return action.intent;
@@ -423,7 +413,6 @@ const reducer = combineReducers( {
 	selectedStyleVariation,
 	selectedSite,
 	siteTitle,
-	hasOnboardingStarted,
 	intent,
 	startingPoint,
 	pendingAction,
