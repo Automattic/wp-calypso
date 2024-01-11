@@ -9,8 +9,6 @@ import {
 } from '@automattic/calypso-products';
 import { getQueryArgs } from '@wordpress/url';
 import ThemeQueryManager from 'calypso/lib/query-manager/theme';
-import getThemeTierByTheme from 'calypso/state/themes/selectors/get-theme-tier-by-theme';
-import isThemeAllowedOnSite from 'calypso/state/themes/selectors/is-theme-allowed-on-site';
 import {
 	getTheme,
 	getCanonicalTheme,
@@ -55,6 +53,8 @@ import {
 	getIsLivePreviewSupported,
 	getThemeTiers,
 	getThemeTier,
+	getThemeTierForTheme,
+	isThemeAllowedOnSite,
 } from '../selectors';
 
 const twentyfifteen = {
@@ -3449,7 +3449,7 @@ describe( '#getThemeTier', () => {
 		expect( themeTiers ).toEqual( { foo: 'bar' } );
 	} );
 } );
-describe( '#getThemeTierByTheme', () => {
+describe( '#getThemeTierForTheme', () => {
 	test( 'should return an empty object if the theme is not found', () => {
 		const state = {
 			themes: {
@@ -3458,7 +3458,7 @@ describe( '#getThemeTierByTheme', () => {
 				},
 			},
 		};
-		const themeTiers = getThemeTierByTheme( state, 'twentysixteen' );
+		const themeTiers = getThemeTierForTheme( state, 'twentysixteen' );
 		expect( themeTiers ).toEqual( {} );
 	} );
 	test( 'should return the tier object if it exists', () => {
@@ -3471,7 +3471,7 @@ describe( '#getThemeTierByTheme', () => {
 				},
 			},
 		};
-		const themeTiers = getThemeTierByTheme( state, 'twentysixteen' );
+		const themeTiers = getThemeTierForTheme( state, 'twentysixteen' );
 		expect( themeTiers ).toEqual( freeThemeTier );
 	} );
 } );
