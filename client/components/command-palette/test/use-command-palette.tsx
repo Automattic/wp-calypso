@@ -88,26 +88,7 @@ const commandsWithViewMySiteResult = [
 	},
 ];
 
-const commandsWithViewMySiteOnSites = [
-	{
-		name: 'getHelp',
-		label: 'Get help',
-	},
-	{
-		name: 'viewMySites',
-		label: 'View my sites',
-	},
-	{
-		name: 'clearCache',
-		label: 'Clear cache',
-	},
-	{
-		name: 'enableEdgeCache',
-		label: 'Enable edge cache',
-	},
-];
-
-const commandsWithViewMySiteonSitesResult = [
+const commandsWithViewMySiteOnSitesResult = [
 	{
 		name: 'getHelp',
 		label: 'Get help',
@@ -207,7 +188,7 @@ describe( 'useCommandPalette', () => {
 			currentSiteId: 1,
 		} );
 		( getCurrentRoutePattern as jest.Mock ).mockReturnValue( '/sites' );
-		( useCommandsArrayWpcom as jest.Mock ).mockReturnValue( commandsWithViewMySiteOnSites );
+		( useCommandsArrayWpcom as jest.Mock ).mockReturnValue( commandsWithViewMySite );
 
 		const { result } = renderHook(
 			() =>
@@ -226,7 +207,7 @@ describe( 'useCommandPalette', () => {
 		);
 
 		expect( result.current.commands.map( ( { name, label } ) => ( { name, label } ) ) ).toEqual(
-			commandsWithViewMySiteonSitesResult
+			commandsWithViewMySiteOnSitesResult
 		);
 	} );
 } );
