@@ -119,12 +119,12 @@ export default function WPCheckoutOrderSummary( {
 				<CheckoutSummaryPriceListTitle>{ translate( 'Your order' ) }</CheckoutSummaryPriceListTitle>
 			) }
 			<CheckoutSummaryPriceList />
-			<CheckoutSummaryAdditionalDetails plan={ plan } siteId={ siteId } />
+			<CheckoutSummaryWooOfferDetails plan={ plan } siteId={ siteId } />
 		</CheckoutSummaryCard>
 	);
 }
 
-function CheckoutSummaryAdditionalDetails( props: {
+function CheckoutSummaryWooOfferDetails( props: {
 	plan: ResponseCartProduct | undefined;
 	siteId: number | undefined;
 } ) {
