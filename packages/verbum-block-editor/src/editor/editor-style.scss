@@ -14,15 +14,12 @@
 		overflow: hidden;
 		position: sticky;
 		display: grid;
-		grid-template-rows: 0fr;
 		border: 1px solid var(--color-neutral-0);
 		// Avoid double border.
 		border-bottom: none;
 
 		&.is-editing {
 			overflow: visible;
-			grid-template-rows: 1fr;
-			transition: all 0.5s 0.5s ease-in-out;
 		}
 
 		@at-root body.admin-bar & {

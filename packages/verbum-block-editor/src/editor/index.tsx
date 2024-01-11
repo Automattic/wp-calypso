@@ -35,7 +35,9 @@ export const Editor: FC< EditorProps > = ( { initialContent = '', onChange, isRT
 		setValue,
 		undo,
 		redo,
-	} = useStateWithHistory( safeParse( initialContent ) ) as unknown as StateWithUndoManager;
+	} = useStateWithHistory(
+		initialContent !== '' ? safeParse( initialContent ) : [ createBlock( 'core/paragraph' ) ]
+	) as unknown as StateWithUndoManager;
 	const [ isEditing, setIsEditing ] = useState( false );
 
 	const handleContentUpdate = useCallback(
