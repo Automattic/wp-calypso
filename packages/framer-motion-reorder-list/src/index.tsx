@@ -1,6 +1,10 @@
 import { Reorder } from 'framer-motion';
 import { CSSProperties, Ref } from 'react';
 
+interface FramerMotionReorderListItemProps {
+	item: any;
+}
+
 interface FramerMotionReorderListProps {
 	forwardedRef?: Ref< HTMLDivElement >;
 	className?: string;
@@ -9,13 +13,9 @@ interface FramerMotionReorderListProps {
 	onReorder: ( newOrder: any[] ) => void;
 }
 
-interface FramerMotionReorderListItemProps {
-	item: any;
-}
-
 const FramerMotionReorderListItem = ( { item }: FramerMotionReorderListItemProps ) => {
 	return (
-		<Reorder.Item value={ item } style={ { originX: '0px', originY: '0px' } }>
+		<Reorder.Item value={ item.key } style={ { originX: '0px', originY: '0px' } }>
 			{ item }
 		</Reorder.Item>
 	);

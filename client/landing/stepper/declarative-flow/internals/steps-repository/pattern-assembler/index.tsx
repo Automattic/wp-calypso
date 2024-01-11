@@ -587,6 +587,10 @@ const PatternAssembler = ( props: StepProps & NoticesProps ) => {
 		moveDownSection( position );
 	};
 
+	const onReorderSections = ( orderedSections: Pattern[] ) => {
+		setSections( orderedSections );
+	};
+
 	const onDeleteHeader = () => onSelect( 'header', null );
 
 	const onDeleteFooter = () => onSelect( 'footer', null );
@@ -744,6 +748,7 @@ const PatternAssembler = ( props: StepProps & NoticesProps ) => {
 					onDeleteSection={ onDeleteSection }
 					onMoveUpSection={ onMoveUpSection }
 					onMoveDownSection={ onMoveDownSection }
+					onReorderSections={ onReorderSections }
 					onDeleteHeader={ onDeleteHeader }
 					onDeleteFooter={ onDeleteFooter }
 					onShuffle={ onShuffle }
