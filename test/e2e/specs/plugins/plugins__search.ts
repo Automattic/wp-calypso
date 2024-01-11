@@ -13,8 +13,7 @@ import { Page, Browser } from 'playwright';
 
 declare const browser: Browser;
 
-// skip these tests while we work on the fix in https://github.com/Automattic/dotcom-forge/issues/5139
-describe.skip( DataHelper.createSuiteTitle( 'Plugins search' ), function () {
+describe( DataHelper.createSuiteTitle( 'Plugins search' ), function () {
 	let page: Page;
 	let pluginsPage: PluginsPage;
 	let siteUrl: string;
@@ -40,15 +39,16 @@ describe.skip( DataHelper.createSuiteTitle( 'Plugins search' ), function () {
 		await sidebarCompoonent.navigate( 'Plugins' );
 	} );
 
-	it( 'Search for "jetpack"', async function () {
+	it( 'Search for "woocommerce"', async function () {
 		pluginsPage = new PluginsPage( page );
-		await pluginsPage.search( 'jetpack' );
-		await pluginsPage.validateExpectedSearchResultFound( 'Jetpack Protect' );
+		await pluginsPage.search( 'woocommerce' );
+		// for this assumption we need to use a plugin whose name isn't changed often
+		await pluginsPage.validateExpectedSearchResultFound( 'WooCommerce' );
 	} );
 
 	it( 'Click on a search result', async function () {
-		await pluginsPage.clickSearchResult( 'Jetpack Protect' );
-		await pluginsPage.validatePluginDetailsHasHeaderTitle( 'Jetpack Protect' );
+		await pluginsPage.clickSearchResult( 'WooCommerce' );
+		await pluginsPage.validatePluginDetailsHasHeaderTitle( 'WooCommerce' );
 	} );
 
 	it( 'Click on breadcrumbs "Search Results"', async function () {
@@ -57,17 +57,17 @@ describe.skip( DataHelper.createSuiteTitle( 'Plugins search' ), function () {
 		} else {
 			await pluginsPage.clickBackBreadcrumb();
 		}
-		await pluginsPage.validateExpectedSearchResultFound( 'Jetpack Protect' );
+		await pluginsPage.validateExpectedSearchResultFound( 'WooCommerce' );
 	} );
 
 	it( 'Click on breadcrumbs "Plugins"', async function () {
-		await pluginsPage.clickSearchResult( 'Jetpack Protect' );
+		await pluginsPage.clickSearchResult( 'WooCommerce' );
 		if ( envVariables.VIEWPORT_NAME !== 'mobile' ) {
 			await pluginsPage.clickPluginsBreadcrumb();
 			await pluginsPage.validateHasSection( PluginsPage.paidSection );
 		} else {
 			await pluginsPage.clickBackBreadcrumb();
-			await pluginsPage.validateExpectedSearchResultFound( 'Jetpack Protect' );
+			await pluginsPage.validateExpectedSearchResultFound( 'WooCommerce' );
 		}
 	} );
 
@@ -76,9 +76,9 @@ describe.skip( DataHelper.createSuiteTitle( 'Plugins search' ), function () {
 			'Search Engine Optimization',
 			envVariables.VIEWPORT_NAME !== 'mobile'
 		);
-		await pluginsPage.search( 'jetpack' );
+		await pluginsPage.search( 'woocommerce' );
 
 		// Check if its redirecting to the default plugins page
-		await page.waitForURL( new RegExp( `/plugins/${ siteUrl }\\?s=jetpack`, 'g' ) );
+		await page.waitForURL( new RegExp( `/plugins/${ siteUrl }\\?s=woocommerce`, 'g' ) );
 	} );
 } );
