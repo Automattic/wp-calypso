@@ -187,3 +187,16 @@ export type SetDomainNoticeResponseDataSuccess = {
 		};
 	};
 };
+
+export type DomainDiagnostics = {
+	email_dns_records: {
+		records: {
+			[ dnsRecordType: string ]: {
+				status: string;
+				correct_record: string;
+			};
+		};
+		is_using_wpcom_name_servers: boolean;
+		all_essential_email_dns_records_are_correct: boolean;
+	};
+};
