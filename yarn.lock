@@ -914,7 +914,7 @@ __metadata:
   resolution: "@automattic/framer-motion-reorder-list@workspace:packages/framer-motion-reorder-list"
   dependencies:
     "@automattic/calypso-typescript-config": "workspace:^"
-    framer-motion: "npm:10.13.0"
+    framer-motion: "npm:10.17.0"
     react: "npm:^18.2.0"
     react-dom: "npm:^18.2.0"
     tslib: "npm:^2.3.0"
@@ -17447,9 +17447,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"framer-motion@npm:10.13.0":
-  version: 10.13.0
-  resolution: "framer-motion@npm:10.13.0"
+"framer-motion@npm:10.17.0":
+  version: 10.17.0
+  resolution: "framer-motion@npm:10.17.0"
   dependencies:
     "@emotion/is-prop-valid": "npm:^0.8.2"
     tslib: "npm:^2.4.0"
@@ -17464,7 +17464,7 @@ __metadata:
       optional: true
     react-dom:
       optional: true
-  checksum: 0d2584643d6cc888c4d66a08c7400fbfce0dd4378ca41f1913546a8cdfebf7a93a4c29f9f3cc7c255af6c4e3064714d72b31941fbc7a3df0440fb559844bfb3f
+  checksum: 6ffa7967251945c63dbd2c448ab7e0b47acfde7c6ba6980a84ab0493453929f2b7973acae0cb9b40523a0c7976b327b1765805d1f9a442bc97153a04550ed5f1
   languageName: node
   linkType: hard
 

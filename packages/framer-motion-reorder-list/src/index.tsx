@@ -3,6 +3,8 @@ import { CSSProperties, Ref } from 'react';
 
 interface FramerMotionReorderListItemProps {
 	item: any;
+	onReorderStart: () => void;
+	onReorderEnd: () => void;
 }
 
 interface FramerMotionReorderListProps {
@@ -11,11 +13,23 @@ interface FramerMotionReorderListProps {
 	style?: CSSProperties;
 	items: any[];
 	onReorder: ( newOrder: any[] ) => void;
+	onReorderStart: () => void;
+	onReorderEnd: () => void;
 }
 
-const FramerMotionReorderListItem = ( { item }: FramerMotionReorderListItemProps ) => {
+const FramerMotionReorderListItem = ( {
+	item,
+	onReorderStart,
+	onReorderEnd,
+}: FramerMotionReorderListItemProps ) => {
 	return (
-		<Reorder.Item value={ item.key } style={ { originX: '0px', originY: '0px' } }>
+		<Reorder.Item
+			style={ { originX: '0px', originY: '0px' } }
+			value={ item.key }
+			layout="position"
+			onDragStart={ onReorderStart }
+			onDragEnd={ onReorderEnd }
+		>
 			{ item }
 		</Reorder.Item>
 	);
@@ -27,6 +41,8 @@ const FramerMotionReorderList = ( {
 	style,
 	items,
 	onReorder,
+	onReorderStart,
+	onReorderEnd,
 }: FramerMotionReorderListProps ) => {
 	const itemValues = items.map( ( item ) => item.key );
 
@@ -41,7 +57,12 @@ const FramerMotionReorderList = ( {
 			onReorder={ onReorder }
 		>
 			{ items.map( ( item ) => (
-				<FramerMotionReorderListItem key={ item.key } item={ item } />
+				<FramerMotionReorderListItem
+					key={ item.key }
+					item={ item }
+					onReorderStart={ onReorderStart }
+					onReorderEnd={ onReorderEnd }
+				/>
 			) ) }
 		</Reorder.Group>
 	);

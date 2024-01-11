@@ -82,6 +82,7 @@ const PatternLargePreview = ( {
 
 	const [ activeElement, setActiveElement ] = useState< HTMLElement | null >( null );
 	const [ shouldShowTooltip, setShouldShowTooltip ] = useState( false );
+	const [ isReordering, setIsReordering ] = useState( false );
 
 	const popoverAnchor = useMemo( () => {
 		if ( ! activeElement ) {
@@ -120,6 +121,7 @@ const PatternLargePreview = ( {
 		const isSection = type === 'section';
 		const clientId = isSection ? pattern.key : type;
 		const isActive = activeElement?.dataset?.clientId === clientId;
+		const shouldShowActionBar = isActive && ! isReordering;
 
 		const handleMouseDown = ( event: React.MouseEvent< HTMLElement > ) => {
 			const target = event.target as HTMLElement | null;
@@ -177,7 +179,7 @@ const PatternLargePreview = ( {
 						transformHtml={ transformPatternHtml }
 					/>
 				) }
-				{ isActive && (
+				{ shouldShowActionBar && (
 					<Popover
 						animate={ false }
 						focusOnMount={ false }
@@ -231,6 +233,15 @@ const PatternLargePreview = ( {
 			onReorderSections( orderedSections );
 		};
 
+		const handleReorderStart = () => {
+			setIsReordering( true );
+			setShouldShowTooltip( false );
+		};
+
+		const handleReorderEnd = () => {
+			setIsReordering( false );
+		};
+
 		return (
 			<AsyncLoad
 				require="@automattic/framer-motion-reorder-list"
@@ -238,6 +249,8 @@ const PatternLargePreview = ( {
 				forwardedRef={ listRef }
 				items={ listItems }
 				onReorder={ handleReorder }
+				onReorderStart={ handleReorderStart }
+				onReorderEnd={ handleReorderEnd }
 				{ ...listProps }
 			/>
 		);
