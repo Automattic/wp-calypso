@@ -191,6 +191,7 @@ export interface PlansFeaturesMainProps {
 	 * Shows the plan type selector dropdown instead of the default toggle
 	 */
 	showPlanTypeSelectorDropdown?: boolean;
+	onPlanTypeSelectorChange?: ( selectedItem: { url: string } ) => void;
 }
 
 const SecondaryFormattedHeader = ( { siteSlug }: { siteSlug?: string | null } ) => {
@@ -253,6 +254,7 @@ const PlansFeaturesMain = ( {
 	renderSiblingWhenLoaded,
 	showPlanTypeSelectorDropdown = false,
 	coupon,
+	onPlanTypeSelectorChange,
 }: PlansFeaturesMainProps ) => {
 	const [ isModalOpen, setIsModalOpen ] = useState( false );
 	const [ lastClickedPlan, setLastClickedPlan ] = useState< string | null >( null );
@@ -724,6 +726,10 @@ const PlansFeaturesMain = ( {
 	);
 
 	const handlePlanTypeSelectorChange = useCallback( ( selectedItem: { url: string } ) => {
+		if ( onPlanTypeSelectorChange ) {
+			return onPlanTypeSelectorChange( selectedItem );
+		}
+
 		if ( hasQueryArg( selectedItem.url, 'intervalType' ) ) {
 			const currentPath = window.location.pathname;
 			return page( currentPath + selectedItem.url );

@@ -1,6 +1,7 @@
 import config from '@automattic/calypso-config';
 import { PRODUCT_1GB_SPACE } from '@automattic/calypso-products';
 import { Button } from '@automattic/components';
+import { useNavigate } from 'react-router';
 import {
 	START_WRITING_FLOW,
 	isLinkInBioFlow,
@@ -90,6 +91,7 @@ const PlansWrapper: React.FC< Props > = ( props ) => {
 	const { __ } = useI18n();
 	const translate = useTranslate();
 	const isDesktop = useDesktopBreakpoint();
+	const navigate = useNavigate();
 	const stepName = 'plans';
 	const customerType = 'personal';
 	const headerText = __( 'Choose a plan' );
@@ -98,6 +100,10 @@ const PlansWrapper: React.FC< Props > = ( props ) => {
 	const hideFreePlan = plansIntent
 		? reduxHideFreePlan && 'plans-blog-onboarding' === plansIntent
 		: reduxHideFreePlan;
+
+	const onPlanTypeSelectorChange = ( selectedItem: { url: string } ) => {
+		navigate( selectedItem.url );
+	};
 
 	const onUpgradeClick = ( cartItems?: MinimalRequestCartProduct[] | null ) => {
 		const planCartItem = getPlanCartItem( cartItems );
@@ -164,8 +170,9 @@ const PlansWrapper: React.FC< Props > = ( props ) => {
 						 *	Override the default feature flag to prevent this feature from rendering in untested locations
 						 *  The hardcoded 'false' short curicuit should be removed once the feature is fully tested in the given context
 						 */
-						config.isEnabled( 'onboarding/interval-dropdown' ) && false
+						config.isEnabled( 'onboarding/interval-dropdown' )
 					}
+					onPlanTypeSelectorChange={ onPlanTypeSelectorChange }
 				/>
 			</div>
 		);
