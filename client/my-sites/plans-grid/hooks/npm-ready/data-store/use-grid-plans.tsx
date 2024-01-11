@@ -93,7 +93,7 @@ export type UsePricingMetaForGridPlans = ( {
 	 * It's a function that is not available in the data store, but can be easily mocked in other contexts.
 	 */
 	useCheckPlanAvailabilityForPurchase: UseCheckPlanAvailabilityForPurchase;
-	storageAddOns?: ( AddOnMeta | null )[] | null;
+	storageAddOns: ( AddOnMeta | null )[] | null;
 	withoutProRatedCredits?: boolean;
 } ) => { [ planSlug: string ]: PricingMetaForGridPlan } | null;
 
@@ -122,6 +122,7 @@ export type GridPlan = {
 	planTitle: TranslateResult;
 	availableForPurchase: boolean;
 	pricing: PricingMetaForGridPlan;
+	storageAddOnsForPlan: ( AddOnMeta | null )[] | null;
 	productNameShort?: string | null;
 	billingTimeframe?: TranslateResult | null;
 	current?: boolean;
@@ -130,7 +131,6 @@ export type GridPlan = {
 		product_slug: string;
 	} | null;
 	highlightLabel?: React.ReactNode | null;
-	storageAddOnsForPlan?: ( AddOnMeta | null )[] | null;
 };
 
 // TODO clk: move to plans data store
@@ -158,6 +158,7 @@ interface Props {
 	useCheckPlanAvailabilityForPurchase: UseCheckPlanAvailabilityForPurchase;
 	useFreeTrialPlanSlugs: UseFreeTrialPlanSlugs;
 	eligibleForFreeHostingTrial: boolean;
+	storageAddOns: ( AddOnMeta | null )[] | null;
 	selectedFeature?: string | null;
 	term?: ( typeof TERMS_LIST )[ number ]; // defaults to monthly
 	intent?: PlansIntent;
@@ -171,7 +172,6 @@ interface Props {
 	 * If the subdomain generation is unsuccessful we do not show the free plan
 	 */
 	isSubdomainNotGenerated?: boolean;
-	storageAddOns?: ( AddOnMeta | null )[] | null;
 	coupon?: string;
 	selectedSiteId?: number | null;
 }

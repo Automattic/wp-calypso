@@ -28,6 +28,7 @@ export default function useMaxDiscount(
 		selectedSiteId,
 		coupon: undefined,
 		useCheckPlanAvailabilityForPurchase,
+		storageAddOns: null,
 	} );
 	// TODO clk pricing
 	const yearlyPlansPricing = usePricingMetaForGridPlans( {
@@ -36,6 +37,7 @@ export default function useMaxDiscount(
 		selectedSiteId,
 		coupon: undefined,
 		useCheckPlanAvailabilityForPurchase,
+		storageAddOns: null,
 	} );
 
 	const discounts = wpcomMonthlyPlans.map( ( planSlug ) => {
