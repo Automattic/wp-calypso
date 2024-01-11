@@ -130,7 +130,6 @@ function CheckoutSummaryAdditionalDetails( props: {
 } ) {
 	const translate = useTranslate();
 	const { plan, siteId } = props;
-	const productSlug = plan?.product_slug;
 	const wooExpressIntroOffers = Plans.useIntroOffersForWooExpress( {
 		siteId,
 	} );
@@ -140,6 +139,7 @@ function CheckoutSummaryAdditionalDetails( props: {
 	if ( ! wooExpressIntroOffer || ! plan ) {
 		return null;
 	}
+	const productSlug = plan.product_slug;
 	const shouldShowAdditionalDetails = Boolean(
 		productSlug && isWooExpressPlan( productSlug ) && !! wooExpressIntroOffer
 	);
