@@ -36,7 +36,7 @@
 	},
 	"devDependencies": {
 		"@automattic/calypso-typescript-config": "workspace:^",
-		"typescript": "^4.7.4"
+		"typescript": "^5.3.3"
 	},
 	"private": true
 }
