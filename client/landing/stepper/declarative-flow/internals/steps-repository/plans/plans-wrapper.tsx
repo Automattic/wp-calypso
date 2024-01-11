@@ -1,7 +1,6 @@
 import config from '@automattic/calypso-config';
 import { PRODUCT_1GB_SPACE } from '@automattic/calypso-products';
 import { Button } from '@automattic/components';
-import { useNavigate } from 'react-router';
 import {
 	START_WRITING_FLOW,
 	isLinkInBioFlow,
@@ -22,6 +21,7 @@ import classNames from 'classnames';
 import { localize, useTranslate } from 'i18n-calypso';
 import React, { useEffect } from 'react';
 import { connect } from 'react-redux';
+import { useNavigate } from 'react-router';
 import { useSite } from 'calypso/landing/stepper/hooks/use-site';
 import { getPlanCartItem } from 'calypso/lib/cart-values/cart-items';
 import PlansFeaturesMain from 'calypso/my-sites/plans-features-main';
@@ -101,8 +101,8 @@ const PlansWrapper: React.FC< Props > = ( props ) => {
 		? reduxHideFreePlan && 'plans-blog-onboarding' === plansIntent
 		: reduxHideFreePlan;
 
-	const onPlanTypeSelectorChange = ( selectedItem: { url: string } ) => {
-		navigate( selectedItem.url );
+	const onPlanTypeSelectorChange = ( path: string ) => {
+		navigate( path );
 	};
 
 	const onUpgradeClick = ( cartItems?: MinimalRequestCartProduct[] | null ) => {
