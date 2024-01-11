@@ -13,7 +13,7 @@ export default function getDomainFooterDetails( limit?: number ): ThankYouFooter
 			buttonText: translate( 'Master the domain basics' ),
 			buttonHref: '/support/domains',
 			buttonOnClick: () => {
-				recordTracksEvent( 'calypso_thank_you_footer_domain_essentials' );
+				recordTracksEvent( 'calypso_thank_you_footer-domain-essentials' );
 			},
 		},
 		{
@@ -25,7 +25,7 @@ export default function getDomainFooterDetails( limit?: number ): ThankYouFooter
 			buttonText: translate( 'Domain support resources' ),
 			buttonHref: '/support/category/domains-and-email/',
 			buttonOnClick: () => {
-				recordTracksEvent( 'calypso_thank_you_footer_domain_resources' );
+				recordTracksEvent( 'calypso_thank_you_footer-domain-resources' );
 			},
 		},
 	];
