@@ -99,13 +99,20 @@ export const StagingSiteCard = ( {
 		return stagingSites?.length ? stagingSites[ 0 ] : {};
 	}, [ stagingSites ] );
 
-	const { data: lock, isLoading: isLoadingLockQuery } = useGetLockQuery( siteId, {
+	const {
+		data: lock,
+		isError: isErrorLockQuery,
+		isLoading: isLoadingLockQuery,
+	} = useGetLockQuery( siteId, {
 		enabled: ! disabled || !! stagingSite.id,
 		refetchInterval: 5000,
-		onError: () => {
-			setIsErrorValidQuota( true );
-		},
 	} );
+
+	useEffect( () => {
+		if ( isErrorLockQuery ) {
+			setIsErrorValidQuota( true );
+		}
+	}, [ isErrorLockQuery, siteId ] );
 
 	const hasCompletedInitialLoading =
 		! isLoadingStagingSites && ! isLoadingQuotaValidation && ! isLoadingLockQuery;

@@ -1,5 +1,9 @@
 ## next
 
+## 2.1.0
+
+- Fixed mobile cookie banner button's vertical positioning
+
 ## 2.0.0
 
 - Update the default bucket selection when the cookie banner expands, leaving "advertising unticked.

@@ -4,7 +4,7 @@ import { localizeUrl } from '@automattic/i18n-utils';
 import { useBreakpoint } from '@automattic/viewport-react';
 import classnames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import DocumentHead from 'calypso/components/data/document-head';
 import QueryEligibility from 'calypso/components/data/query-atat-eligibility';
@@ -92,7 +92,6 @@ function PluginDetails( props ) {
 	const requestingPluginsForSites = useSelector( ( state ) => isRequestingForAllSites( state ) );
 	const analyticsPath = selectedSite ? '/plugins/:plugin/:site' : '/plugins/:plugin';
 	const isLoggedIn = useSelector( isUserLoggedIn );
-	const reviewsListRef = useRef();
 	const { localizePath } = useLocalizedPlugins();
 
 	// Plugin information.
@@ -388,7 +387,7 @@ function PluginDetails( props ) {
 						<PluginDetailsHeader
 							plugin={ fullPlugin }
 							isPlaceholder={ showPlaceholder }
-							reviewsListRef={ reviewsListRef }
+							onReviewsClick={ () => setIsReviewsModalVisible( true ) }
 						/>
 					</div>
 					<div className="plugin-details__content">
@@ -475,7 +474,6 @@ function PluginDetails( props ) {
 						slug={ fullPlugin.slug }
 						productType="plugin"
 						showMarketplaceReviews={ () => setIsReviewsModalVisible( true ) }
-						ref={ reviewsListRef }
 					/>
 				</div>
 			) }

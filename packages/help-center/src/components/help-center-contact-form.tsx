@@ -94,8 +94,8 @@ export const HelpCenterContactForm = () => {
 	const [ hideSiteInfo, setHideSiteInfo ] = useState( false );
 	const [ hasSubmittingError, setHasSubmittingError ] = useState< boolean >( false );
 	const locale = useLocale();
-	const { isLoading: submittingTicket, mutateAsync: submitTicket } = useSubmitTicketMutation();
-	const { isLoading: submittingTopic, mutateAsync: submitTopic } = useSubmitForumsMutation();
+	const { isPending: submittingTicket, mutateAsync: submitTicket } = useSubmitTicketMutation();
+	const { isPending: submittingTopic, mutateAsync: submitTopic } = useSubmitForumsMutation();
 	const userId = useSelector( getCurrentUserId );
 	const { data: userSites } = useUserSites( userId );
 	const userWithNoSites = userSites?.sites.length === 0;

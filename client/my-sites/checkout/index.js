@@ -108,16 +108,14 @@ export default function () {
 		clientRender
 	);
 
-	if ( isEnabled( 'marketplace-siteless-checkout' ) ) {
-		page(
-			`/checkout/marketplace/:productSlug`,
-			setLocaleMiddleware(),
-			noSite,
-			checkoutMarketplaceSiteless,
-			makeLayout,
-			clientRender
-		);
-	}
+	page(
+		`/checkout/marketplace/:productSlug`, // It should be intentId but sitelessCheckout expect param to be productSlug.
+		setLocaleMiddleware(),
+		noSite,
+		checkoutMarketplaceSiteless,
+		makeLayout,
+		clientRender
+	);
 
 	// Akismet siteless checkout works logged-out, so do not include redirectLoggedOut or siteSelection.
 	if ( isEnabled( 'akismet/siteless-checkout' ) ) {

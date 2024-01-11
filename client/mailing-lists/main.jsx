@@ -96,6 +96,8 @@ class MainComponent extends Component {
 			return this.props.translate( 'Research' );
 		} else if ( 'community' === category ) {
 			return this.props.translate( 'Community' );
+		} else if ( 'affiliates' === category ) {
+			return this.props.translate( 'Affiliates' );
 		} else if ( 'digest' === category ) {
 			return this.props.translate( 'Digests' );
 		} else if ( 'news' === category ) {
@@ -104,6 +106,8 @@ class MainComponent extends Component {
 			return this.props.translate( 'Promotions' );
 		} else if ( 'reports' === category ) {
 			return this.props.translate( 'Reports' );
+		} else if ( 'learn' === category ) {
+			return this.props.translate( 'Learn Faster to Grow Faster' );
 		} else if ( 'jetpack_marketing' === category ) {
 			return this.props.translate( 'Jetpack Suggestions' );
 		} else if ( 'jetpack_research' === category ) {
@@ -137,6 +141,10 @@ class MainComponent extends Component {
 			return this.props.translate(
 				'Information on WordPress.com courses and events (online and in-person).'
 			);
+		} else if ( 'affiliates' === category ) {
+			return this.props.translate(
+				'Communications regarding the refer.wordpress.com affiliate program.'
+			);
 		} else if ( 'digest' === category ) {
 			return this.props.translate( 'Popular content from the blogs you follow.' );
 		} else if ( 'news' === category ) {
@@ -148,6 +156,10 @@ class MainComponent extends Component {
 		} else if ( 'reports' === category ) {
 			return this.props.translate(
 				'Complimentary reports and updates regarding site performance and traffic.'
+			);
+		} else if ( 'learn' === category ) {
+			return this.props.translate(
+				'Take your WordPress.com site to new heights with expert webinars, courses, and community forums.'
 			);
 		} else if ( 'jetpack_marketing' === category ) {
 			return this.props.translate( 'Tips for getting the most out of Jetpack.' );

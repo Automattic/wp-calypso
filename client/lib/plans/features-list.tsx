@@ -1967,7 +1967,7 @@ export const FEATURES_LIST: FeatureList = {
 	},
 	[ FEATURE_STATS_PAID ]: {
 		getSlug: () => FEATURE_STATS_PAID,
-		getTitle: () => i18n.translate( 'Jetpack Stats' ),
+		getTitle: () => i18n.translate( 'Advanced stats' ),
 		getDescription: () =>
 			i18n.translate( 'Finesse your scaling up strategy with detailed insights and data.' ),
 	},

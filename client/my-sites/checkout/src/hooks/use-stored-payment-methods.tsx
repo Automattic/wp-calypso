@@ -130,7 +130,7 @@ export function useStoredPaymentMethods( {
 	return {
 		paymentMethods,
 		isLoading: isLoggedOut ? false : isLoading,
-		isDeleting: mutation.isLoading,
+		isDeleting: mutation.isPending,
 		error: errorMessage,
 		deletePaymentMethod,
 	};
