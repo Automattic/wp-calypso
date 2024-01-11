@@ -113,4 +113,4 @@ Please refer to the [Writing Tests](docs/writing_tests.md) and [Style Guide](doc
 
 ## Troubleshooting
 
-Please refer to the [Troubleshooting](docs/troubleshooting.md) page, or ask at [#kitkat](https://a8c.slack.com/archives/CQD1HH4MA).
+Please refer to the [Troubleshooting](docs/troubleshooting.md) page.

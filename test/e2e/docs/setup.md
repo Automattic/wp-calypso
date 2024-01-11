@@ -73,5 +73,3 @@ At any point, run `arch` to verify whether shell is running with Rosetta 2 emula
 ## Apple Silicon (arm64)
 
 Steps in the [Setup](../README.md#quick-start) should be enough to get the user up and running.
-
-In case there is an unexpected issue, please reach out to @automattic/KitKat.
