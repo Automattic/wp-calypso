@@ -87,10 +87,6 @@ export default function WPCheckoutOrderSummary( {
 	const plan = responseCart.products.find( ( product ) => isPlan( product ) );
 	const hasMonthlyPlanInCart = Boolean( plan && isMonthly( plan?.product_slug ) );
 
-	// const productSlug = plan?.product_slug;
-	// console.log( 'isWooExpressPlan: ', isWooExpressPlan( productSlug ) );
-	// console.log( plan );
-
 	const shouldHideCheckoutIncludedPurchases = useHideCheckoutIncludedPurchases() === 'treatment';
 
 	return (
@@ -133,13 +129,19 @@ function CheckoutSummaryAdditionalDetails( props: {
 	siteId: number | undefined;
 } ) {
 	const { plan, siteId } = props;
+	const productSlug = plan?.product_slug;
 	const wooExpressIntroOffers = Plans.useIntroOffersForWooExpress( {
 		siteId,
 	} );
 	const wooExpressIntroOffer =
 		wooExpressIntroOffers && plan ? wooExpressIntroOffers[ plan.product_slug ] : undefined;
+	const shouldShowAdditionalDetails = Boolean(
+		productSlug && isWooExpressPlan( productSlug ) && !! wooExpressIntroOffer
+	);
 
-	// console.log( 'wooExpressIntroOffer: ', wooExpressIntroOffer );
+	if ( ! shouldShowAdditionalDetails ) {
+		return null;
+	}
 
 	const cost = plan?.product_cost_display;
 	const productName = plan?.product_name;
