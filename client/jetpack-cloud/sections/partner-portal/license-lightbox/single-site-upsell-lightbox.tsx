@@ -14,7 +14,6 @@ import { getSiteSlug } from 'calypso/state/sites/selectors';
 import type { SelectorProduct } from 'calypso/my-sites/plans/jetpack-plans/types';
 
 interface Props {
-	currentLicenseInfo: string | null;
 	currentProduct: APIProductFamilyProduct;
 	partnerCanIssueLicense: boolean;
 	productSlug: string;
@@ -120,6 +119,7 @@ export default function SingleSellUpsellLightbox( {
 						</div>
 					}
 					secondaryAsideContent={
+						//
 						<>
 							<Button
 								onClick={ onProceedToCheckout }
