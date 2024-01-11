@@ -53,12 +53,6 @@ export const hasPaidDesign = ( state: State ): boolean => {
 	}
 	return state.selectedDesign.is_premium;
 };
-export const hasPaidDomain = ( state: State ): boolean => {
-	if ( ! state.domain ) {
-		return false;
-	}
-	return ! state.domain.is_free;
-};
 export const hasSiteTitle = ( state: State ) => state.siteTitle.trim().length > 1; // for valid domain results, we need at least 2 characters
 
 // Selectors dependent on other selectors (cannot be put in alphabetical order)
