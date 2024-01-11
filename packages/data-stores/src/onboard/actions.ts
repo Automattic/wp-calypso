@@ -251,11 +251,6 @@ export const setSelectedSite = ( selectedSite: number | undefined ) => ( {
 	selectedSite,
 } );
 
-export const setShowSignupDialog = ( showSignup: boolean ) => ( {
-	type: 'SET_SHOW_SIGNUP_DIALOG' as const,
-	showSignup,
-} );
-
 export const setSiteTitle = ( siteTitle: string ) => ( {
 	type: 'SET_SITE_TITLE' as const,
 	siteTitle,
@@ -443,7 +438,6 @@ export type OnboardAction = ReturnType<
 	| typeof setSelectedDesign
 	| typeof setSelectedStyleVariation
 	| typeof setSelectedSite
-	| typeof setShowSignupDialog
 	| typeof setSiteTitle
 	| typeof startOnboarding
 	| typeof setIntent

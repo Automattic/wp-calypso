@@ -146,16 +146,6 @@ const selectedSite: Reducer< number | undefined, OnboardAction > = (
 	return state;
 };
 
-const showSignupDialog: Reducer< boolean, OnboardAction > = ( state = false, action ) => {
-	if ( action.type === 'SET_SHOW_SIGNUP_DIALOG' ) {
-		return action.showSignup;
-	}
-	if ( action.type === 'RESET_ONBOARD_STORE' ) {
-		return false;
-	}
-	return state;
-};
-
 const siteTitle: Reducer< string, OnboardAction > = ( state = '', action ) => {
 	if ( action.type === 'SET_SITE_TITLE' ) {
 		return action.siteTitle;
@@ -518,7 +508,6 @@ const reducer = combineReducers( {
 	selectedStyleVariation,
 	selectedSite,
 	siteTitle,
-	showSignupDialog,
 	planProductId,
 	hasOnboardingStarted,
 	intent,
