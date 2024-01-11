@@ -46,7 +46,7 @@ export default function ThankYouProduct( {
 				) : (
 					<>
 						<div className="thank-you__product-name">{ name }</div>
-						{ details && <div>{ details }</div> }
+						{ details && <div className="thank-you__product-details">{ details }</div> }
 					</>
 				) }
 			</div>

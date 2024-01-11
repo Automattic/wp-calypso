@@ -40,6 +40,12 @@
 			color: var(--studio-gray-100);
 			flex-grow: 1;
 		}
+
+		.thank-you__product-detail {
+			font-size: $font-body-small;
+			line-height: 22px;
+			color: var(--studio-gray-60);
+		}
 	}
 
 	.thank-you__product-actions {
