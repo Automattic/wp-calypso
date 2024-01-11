@@ -150,7 +150,6 @@ jest.mock( '../../../state/selectors/get-current-route-pattern' );
 
 describe( 'useCommandPalette', () => {
 	it( 'should return the commands in the order that they are added to the commands array with no change', () => {
-		// Create a QueryClient instance
 		const queryClient = new QueryClient();
 
 		( useCurrentSiteRankTop as jest.Mock ).mockReturnValue( {
@@ -181,8 +180,7 @@ describe( 'useCommandPalette', () => {
 		);
 	} );
 
-	it( 'should return the View My Sites command first before other commands from commandsWithViewMySite array', () => {
-		// Create a QueryClient instance
+	it( 'should return the View My Sites command first before other commands from commandsWithViewMySite array when no context is specified', () => {
 		const queryClient = new QueryClient();
 
 		( useCurrentSiteRankTop as jest.Mock ).mockReturnValue( {
@@ -191,7 +189,6 @@ describe( 'useCommandPalette', () => {
 
 		( useCommandsArrayWpcom as jest.Mock ).mockReturnValue( commandsWithViewMySite );
 
-		// Wrap test logic within the QueryClientProvider and Provider
 		const { result } = renderHook(
 			() =>
 				useCommandPalette( {
@@ -214,7 +211,6 @@ describe( 'useCommandPalette', () => {
 	} );
 
 	it( 'should return all the commands in the order they are added to commandsWithViewMySiteOnSite; View My Site should be hidden in /sites context', () => {
-		// Create a QueryClient instance
 		const queryClient = new QueryClient();
 
 		( useCurrentSiteRankTop as jest.Mock ).mockReturnValue( {
