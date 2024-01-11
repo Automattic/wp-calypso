@@ -157,7 +157,6 @@ describe( 'useCommandPalette', () => {
 		} );
 		( useCommandsArrayWpcom as jest.Mock ).mockReturnValue( commands );
 
-		// Wrap test logic within the QueryClientProvider and Provider
 		const { result } = renderHook(
 			() =>
 				useCommandPalette( {
