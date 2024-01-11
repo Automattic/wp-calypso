@@ -89,6 +89,7 @@ export type ResponseDomain = {
 	isEligibleForInboundTransfer: boolean;
 	isIcannVerificationSuspended: boolean;
 	isLocked: boolean;
+	isMappedToAtomicSite: boolean;
 	isMoveToNewSitePending: boolean;
 	isPendingIcannVerification: boolean;
 	isPendingRenewal: boolean;
