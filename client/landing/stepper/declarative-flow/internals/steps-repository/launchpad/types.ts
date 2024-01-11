@@ -1,4 +1,5 @@
-import { type SiteDetails } from '@automattic/data-stores';
+import { ChecklistStatuses, type SiteDetails } from '@automattic/data-stores';
+import { MinimalRequestCartProduct } from '@automattic/shopping-cart';
 import { ReactNode } from 'react';
 
 export interface Task {
@@ -70,7 +71,9 @@ export interface TaskContext {
 	isEmailVerified: boolean;
 	tasks: Task[];
 	checklistStatuses?: ChecklistStatuses;
-	getLaunchSiteTaskTitle: ( task: Task ) => ReactNode;
+	planCartItem?: MinimalRequestCartProduct | null;
+	domainCartItem?: MinimalRequestCartProduct | null;
+	productCartItems?: MinimalRequestCartProduct[] | null;
 	completeLaunchSiteTask: ( task: Task ) => Promise< void >;
 }
 
