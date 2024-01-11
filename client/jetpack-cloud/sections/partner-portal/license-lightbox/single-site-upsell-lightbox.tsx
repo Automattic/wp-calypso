@@ -121,6 +121,9 @@ export default function SingleSellUpsellLightbox( {
 					secondaryAsideContent={
 						//
 						<>
+							<div className="license-lightbox__secondary-checkout-heading">
+								{ translate( 'Purchase a yearly license:' ) }
+							</div>
 							<Button
 								onClick={ onProceedToCheckout }
 								className="license-lightbox__secondary-content-button"
