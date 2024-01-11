@@ -1,8 +1,5 @@
 import { DomainTransferData } from './types';
 import type { State } from './reducer';
-export const getAnchorPodcastId = ( state: State ) => state.anchorPodcastId;
-export const getAnchorEpisodeId = ( state: State ) => state.anchorEpisodeId;
-export const getAnchorSpotifyUrl = ( state: State ) => state.anchorSpotifyUrl;
 /**
  * Merge persisted domain names with unpersisted auth codes.
  * We don't want to persist auth codes due to their sensitive nature.
@@ -38,7 +35,6 @@ export const getSelectedDesign = ( state: State ) => state.selectedDesign;
 export const getSelectedStyleVariation = ( state: State ) => state.selectedStyleVariation;
 export const getSelectedDomain = ( state: State ) => state.domain;
 export const getSelectedFeatures = ( state: State ) => state.selectedFeatures;
-export const getSelectedFonts = ( state: State ) => state.selectedFonts;
 export const getSelectedSite = ( state: State ) => state.selectedSite;
 export const getSelectedSiteTitle = ( state: State ) => state.siteTitle;
 export const getSelectedSiteLogo = ( state: State ) => state.siteLogo;
@@ -71,9 +67,6 @@ export const hasSiteTitle = ( state: State ) => state.siteTitle.trim().length > 
 
 // Selectors dependent on other selectors (cannot be put in alphabetical order)
 export const hasSelectedDesign = ( state: State ) => !! state.selectedDesign;
-
-export const hasSelectedDesignWithoutFonts = ( state: State ) =>
-	hasSelectedDesign( state ) && ! state.selectedFonts;
 
 export const getDomainForm = ( state: State ) => state.domainForm;
 export const getDomainCartItem = ( state: State ) => state.domainCartItem;

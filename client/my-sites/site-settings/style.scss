@@ -590,6 +590,10 @@ button.site-settings__general-settings-set-guessed-timezone.button.is-borderless
 	pointer-events: none;
 }
 
+#site-privacy-settings .section-header__label-text button {
+	vertical-align: middle;
+}
+
 .site-settings__writing-settings {
 	.theme-enhancements__card {
 		.form-fieldset.minileven {

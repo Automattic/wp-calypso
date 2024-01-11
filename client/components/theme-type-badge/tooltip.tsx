@@ -1,6 +1,6 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { PLAN_BUSINESS, PLAN_PREMIUM } from '@automattic/calypso-products';
-import { usePlans } from '@automattic/data-stores/src/plans';
+import { Plans } from '@automattic/data-stores';
 import {
 	BUNDLED_THEME,
 	DOT_ORG_THEME,
@@ -72,7 +72,7 @@ const ThemeTypeBadgeTooltip = ( {
 }: Props ) => {
 	const translate = useTranslate();
 	// Using API plans because the updated getTitle() method doesn't take the experiment assignment into account.
-	const plans = usePlans();
+	const plans = Plans.usePlans( { coupon: undefined } );
 	const type = useSelector( ( state ) => getThemeType( state, themeId ) );
 	const bundleSettings = useBundleSettingsByTheme( themeId );
 	const isIncludedCurrentPlan = useSelector(

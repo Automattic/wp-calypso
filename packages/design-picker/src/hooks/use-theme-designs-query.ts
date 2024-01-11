@@ -63,7 +63,6 @@ function apiThemeToDesign( { id, name, taxonomies, stylesheet, price }: any ): D
 		},
 		is_premium,
 		categories: taxonomies?.theme_subject ?? [],
-		features: [],
 		is_featured_picks: isFeaturedPicks,
 		showFirst: isFeaturedPicks,
 		...( STATIC_PREVIEWS.includes( id ) && { preview: 'static' } ),
@@ -72,7 +71,6 @@ function apiThemeToDesign( { id, name, taxonomies, stylesheet, price }: any ): D
 
 		// Deprecated; used for /start flow
 		stylesheet,
-		template: id,
 		theme: id,
 	};
 }
