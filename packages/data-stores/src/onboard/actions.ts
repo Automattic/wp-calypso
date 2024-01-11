@@ -265,11 +265,6 @@ export const setVerticalId = ( verticalId: string ) => ( {
 	verticalId,
 } );
 
-export const setStoreLocationCountryCode = ( storeLocationCountryCode: string ) => ( {
-	type: 'SET_STORE_LOCATION_COUNTRY_CODE' as const,
-	storeLocationCountryCode,
-} );
-
 export const setEcommerceFlowRecurType = ( ecommerceFlowRecurType: string ) => ( {
 	type: 'SET_ECOMMERCE_FLOW_RECUR_TYPE' as const,
 	ecommerceFlowRecurType,
@@ -357,7 +352,6 @@ export type OnboardAction = ReturnType<
 	| typeof setSiteDescription
 	| typeof setSiteLogo
 	| typeof setVerticalId
-	| typeof setStoreLocationCountryCode
 	| typeof setEcommerceFlowRecurType
 	| typeof setCouponCode
 	| typeof setHideFreePlan

@@ -211,16 +211,6 @@ const verticalId: Reducer< string, OnboardAction > = ( state = '', action ) => {
 	return state;
 };
 
-const storeLocationCountryCode: Reducer< string, OnboardAction > = ( state = '', action ) => {
-	if ( action.type === 'SET_STORE_LOCATION_COUNTRY_CODE' ) {
-		return action.storeLocationCountryCode;
-	}
-	if ( action.type === 'RESET_ONBOARD_STORE' ) {
-		return '';
-	}
-	return state;
-};
-
 const ecommerceFlowRecurType: Reducer< string, OnboardAction > = ( state = '', action ) => {
 	if ( action.type === 'SET_ECOMMERCE_FLOW_RECUR_TYPE' ) {
 		return action.ecommerceFlowRecurType;
@@ -407,7 +397,6 @@ const reducer = combineReducers( {
 	siteDescription,
 	siteLogo,
 	verticalId,
-	storeLocationCountryCode,
 	ecommerceFlowRecurType,
 	couponCode,
 	planCartItem,

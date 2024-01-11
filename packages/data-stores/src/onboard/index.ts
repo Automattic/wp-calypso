@@ -45,7 +45,6 @@ export function register(): typeof STORE_KEY {
 			'siteLogo',
 			'storeType',
 			'verticalId',
-			'storeLocationCountryCode',
 			'ecommerceFlowRecurType',
 			'couponCode',
 			'domainCartItem',
