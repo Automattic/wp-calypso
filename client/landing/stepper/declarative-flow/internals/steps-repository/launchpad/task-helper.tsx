@@ -282,13 +282,14 @@ export function getEnhancedTasks( {
 	return ( tasks || [] ).map( ( task ) => {
 		if ( shouldUseNewTaskDefinitions( flow ) ) {
 			const enhanced = getTaskDefinition( flow, task, {
+				checklistStatuses,
+				tasks,
 				siteInfoQueryArgs,
 				displayGlobalStylesWarning,
 				globalStylesMinimumPlan,
 				domainUpsellCompleted,
 				site,
 				getLaunchSiteTaskTitle,
-				getIsLaunchSiteTaskDisabled,
 				completeLaunchSiteTask,
 				isEmailVerified,
 			} );
@@ -332,7 +333,7 @@ export function getEnhancedTasks( {
 	} );
 }
 
-function isDomainUpsellCompleted(
+export function isDomainUpsellCompleted(
 	site: SiteDetails | null,
 	checklistStatuses: ChecklistStatuses
 ): boolean {

@@ -68,20 +68,10 @@ export interface TaskContext {
 	site: SiteDetails | null;
 	domainUpsellCompleted: boolean;
 	isEmailVerified: boolean;
-	// translatedPlanName?: ReactNode | string;
-	// isCurrentPlanFree?: boolean;
-	// goToStep?: NavigationControls[ 'goToStep' ];
-	// mustVerifyEmailBeforePosting?: boolean;
-	// completeMigrateContentTask?: () => Promise< void >;
-	// submit?: NavigationControls[ 'submit' ];
+	tasks: Task[];
+	checklistStatuses?: ChecklistStatuses;
 	getLaunchSiteTaskTitle: ( task: Task ) => ReactNode;
-	getIsLaunchSiteTaskDisabled: () => boolean;
 	completeLaunchSiteTask: ( task: Task ) => Promise< void >;
-	// launchpadUploadVideoLink: string;
-	// videoPressUploadCompleted: boolean;
-	// stripeConnectUrl?: string;
-	// completePaidNewsletterTask: () => Promise< void >;
-	// setShowPlansModal: Dispatch< SetStateAction< boolean > >;
 }
 
 export type TaskAction = ( task: Task, flow: string, context: TaskContext ) => EnhancedTask;
