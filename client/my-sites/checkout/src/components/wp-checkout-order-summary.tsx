@@ -154,27 +154,70 @@ function CheckoutSummaryAdditionalDetails( props: {
 	const intervalCount = wooExpressIntroOffer.intervalCount;
 	const intervalUnit = wooExpressIntroOffer.intervalUnit;
 
-	const priceText = translate(
-		"You'll be charged %(intervalPrice)s for the first %(intervalCount)d %(intervalUnit)s of your %(productName)s plan.",
-		{
-			args: {
-				intervalPrice,
-				intervalCount,
-				intervalUnit,
-				productName,
-			},
-		}
-	);
-	const detailsText = translate(
-		"Once the offer period has expired, you'll be charged %(cost)s on an annual basis. You can cancel your plan at any point in the first %(intervalCount)d %(intervalUnit)s.",
-		{
-			args: {
-				cost,
-				intervalCount,
-				intervalUnit,
-			},
-		}
-	);
+	let priceTextStringSingular = '';
+	let priceTextStringPlural = '';
+	let detailsTextStringSingular = '';
+	let detailsTextStringPlural = '';
+	switch ( intervalUnit ) {
+		case 'year':
+			priceTextStringSingular =
+				"You'll be charged %(intervalPrice)s for the first year of your %(productName)s plan.";
+			priceTextStringPlural =
+				"You'll be charged %(intervalPrice)s for the first %(intervalCount)d years of your %(productName)s plan.";
+			detailsTextStringSingular =
+				"Once the offer period has expired, you'll be charged %(cost)s on an annual basis. You can cancel your plan at any point in the first year.";
+			detailsTextStringPlural =
+				"Once the offer period has expired, you'll be charged %(cost)s on an annual basis. You can cancel your plan at any point in the first %(intervalCount)d years.";
+			break;
+		case 'month':
+			priceTextStringSingular =
+				"You'll be charged %(intervalPrice)s for the first month of your %(productName)s plan.";
+			priceTextStringPlural =
+				"You'll be charged %(intervalPrice)s for the first %(intervalCount)d months of your %(productName)s plan.";
+			detailsTextStringSingular =
+				"Once the offer period has expired, you'll be charged %(cost)s on an annual basis. You can cancel your plan at any point in the first month.";
+			detailsTextStringPlural =
+				"Once the offer period has expired, you'll be charged %(cost)s on an annual basis. You can cancel your plan at any point in the first %(intervalCount)d months.";
+			break;
+		case 'week':
+			priceTextStringSingular =
+				"You'll be charged %(intervalPrice)s for the first week of your %(productName)s plan.";
+			priceTextStringPlural =
+				"You'll be charged %(intervalPrice)s for the first %(intervalCount)d weeks of your %(productName)s plan.";
+			detailsTextStringSingular =
+				"Once the offer period has expired, you'll be charged %(cost)s on an annual basis. You can cancel your plan at any point in the first week.";
+			detailsTextStringPlural =
+				"Once the offer period has expired, you'll be charged %(cost)s on an annual basis. You can cancel your plan at any point in the first %(intervalCount)d weeks.";
+			break;
+		case 'day':
+			priceTextStringSingular =
+				"You'll be charged %(intervalPrice)s for the first day of your %(productName)s plan.";
+			priceTextStringPlural =
+				"You'll be charged %(intervalPrice)s for the first %(intervalCount)d days of your %(productName)s plan.";
+			detailsTextStringSingular =
+				"Once the offer period has expired, you'll be charged %(cost)s on an annual basis. You can cancel your plan at any point in the first day.";
+			detailsTextStringPlural =
+				"Once the offer period has expired, you'll be charged %(cost)s on an annual basis. You can cancel your plan at any point in the first %(intervalCount)d days.";
+			break;
+	}
+
+	const priceText = translate( priceTextStringSingular, priceTextStringPlural, {
+		count: intervalCount,
+		args: {
+			intervalPrice,
+			intervalCount,
+			intervalUnit,
+			productName,
+		},
+	} );
+	const detailsText = translate( detailsTextStringSingular, detailsTextStringPlural, {
+		count: intervalCount,
+		args: {
+			cost,
+			intervalCount,
+			intervalUnit,
+		},
+	} );
 
 	return (
 		plan && (
