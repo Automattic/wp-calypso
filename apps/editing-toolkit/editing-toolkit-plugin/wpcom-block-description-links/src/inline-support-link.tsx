@@ -47,7 +47,7 @@ export default function DescriptionSupportLink( {
 					className="fse-inline-support-link is-compact"
 					variant="primary"
 				>
-					{ __( 'Block guide', 'full-site-editing' ) }
+					{ __( 'Learn more', 'full-site-editing' ) }
 				</Button>
 			) : (
 				<ExternalLink
