@@ -19,14 +19,13 @@ import { STORE_NAME } from '../store';
 /**
  * Types
  */
-import type { Selectors } from '../store/types';
+import type { Logo, Selectors } from '../store/types';
 
 const debug = debugFactory( 'jetpack-ai-calypso:use-logo-generator' );
 
 const useLogoGenerator = () => {
 	const {
 		setSelectedLogoIndex,
-		updateSelectedLogo,
 		setIsSavingLogoToLibrary,
 		setIsApplyingLogo,
 		setIsRequestingImage,
@@ -77,7 +76,7 @@ const useLogoGenerator = () => {
 		debug( 'Generating first prompt for site', siteId );
 
 		const firstPromptGenerationPrompt = `Generate a simple and short prompt asking for a logo based on the site's name and description, without going into details.
-Example for a site named "The minimalist fashion blog", described as "Daily inspiration for all things fashion": "A logo for a minimalist fashion site focused on daily sartorial inspiration".
+Example for a site named "The minimalist fashion blog", described as "Daily inspiration for all things fashion": A logo for a minimalist fashion site focused on daily sartorial inspiration.
 
 Site name: ${ name }
 Site description: ${ description }`;
@@ -102,44 +101,50 @@ Site description: ${ description }`;
 	};
 
 	const saveLogo = useCallback<
-		() => Promise< { mediaId: number; mediaURL: string } >
-	>( async () => {
-		if ( ! siteId || ! selectedLogo ) {
-			throw new Error( 'Missing siteId or logo' );
-		}
+		( logo: Logo ) => Promise< { mediaId: number; mediaURL: string } >
+	>(
+		async ( logo ) => {
+			if ( ! siteId ) {
+				throw new Error( 'Missing siteId or logo' );
+			}
 
-		debug( 'Saving logo for site', siteId );
+			debug( 'Saving logo for site', siteId );
 
-		// If the logo is already saved, return its mediaId and mediaURL.
-		if ( selectedLogo.mediaId ) {
-			return { mediaId: selectedLogo.mediaId, mediaURL: selectedLogo.url };
-		}
+			// If the logo is already saved, return its mediaId and mediaURL.
+			if ( logo.mediaId ) {
+				return { mediaId: logo.mediaId, mediaURL: logo.url };
+			}
 
-		// eslint-disable-next-line no-useless-catch
-		try {
+			const savedLogo = {
+				mediaId: 0,
+				mediaURL: '',
+			};
+
 			setIsSavingLogoToLibrary( true );
-
-			const { ID: mediaId, URL: mediaURL } = await saveToMediaLibrary( {
-				siteId,
-				url: selectedLogo.url,
-				attrs: {
-					caption: selectedLogo.description,
-					description: selectedLogo.description,
-					title: __( 'Site logo', 'jetpack' ),
-					alt: selectedLogo.description,
-				},
-			} );
-
-			updateSelectedLogo( mediaId, mediaURL );
-			setIsSavingLogoToLibrary( false );
-
-			return { mediaId, mediaURL };
-		} catch ( error ) {
-			// TODO: Handle error when saving to media library fails.
-			setIsSavingLogoToLibrary( false );
-			throw error;
-		}
-	}, [ siteId, selectedLogo, setIsSavingLogoToLibrary, updateSelectedLogo ] );
+			try {
+				const { ID: mediaId, URL: mediaURL } = await saveToMediaLibrary( {
+					siteId,
+					url: logo.url,
+					attrs: {
+						caption: logo.description,
+						description: logo.description,
+						title: __( 'Site logo', 'jetpack' ),
+						alt: logo.description,
+					},
+				} );
+				savedLogo.mediaId = mediaId;
+				savedLogo.mediaURL = mediaURL;
+			} catch ( error ) {
+				// TODO: Handle error when saving to media library fails.
+				// eslint-disable-next-line no-console
+				console.error( error );
+			} finally {
+				setIsSavingLogoToLibrary( false );
+			}
+			return savedLogo;
+		},
+		[ siteId, setIsSavingLogoToLibrary ]
+	);
 
 	const applyLogo = useCallback( async () => {
 		if ( ! siteId || ! selectedLogo ) {
@@ -148,23 +153,22 @@ Site description: ${ description }`;
 
 		debug( 'Applying logo for site', siteId );
 
+		setIsApplyingLogo( true );
 		try {
-			const { mediaId } = await saveLogo();
-
-			setIsApplyingLogo( true );
+			const { mediaId } = selectedLogo;
 
 			await setSiteLogo( {
 				siteId: siteId,
-				imageId: mediaId,
+				imageId: String( mediaId ),
 			} );
-
-			setIsApplyingLogo( false );
 		} catch ( error ) {
 			// TODO: Handle error when setting site logo fails.
+			// eslint-disable-next-line no-console
+			console.error( error );
+		} finally {
 			setIsApplyingLogo( false );
-			throw error;
 		}
-	}, [ saveLogo, selectedLogo, setIsApplyingLogo, siteId ] );
+	}, [ selectedLogo, setIsApplyingLogo, siteId ] );
 
 	const generateImage = async function ( {
 		prompt,
@@ -202,6 +206,7 @@ User request: ${ prompt }
 			// 	method: 'GET',
 			// 	query: `prompt=${ prompt }&token=${ tokenData.token }&response_format=url`,
 			// } );
+			throw new Error( 'Site type not implemented' );
 		} else {
 			data = await wpcomLimitedRequest( {
 				apiNamespace: 'wpcom/v2',
@@ -260,7 +265,7 @@ For example: user's prompt: A logo for an ice cream shop. Returned prompt: A log
 	};
 
 	const storeLogo = useCallback(
-		( logo: { url: string; description: string } ) => {
+		( logo: Logo ) => {
 			addLogoToHistory( logo );
 			stashLogo( { ...logo, siteId: String( siteId ) } );
 		},
@@ -282,13 +287,20 @@ For example: user's prompt: A logo for an ice cream shop. Returned prompt: A log
 			}
 
 			// response_format=url returns object with url, otherwise b64_json
-			const logo = {
+			const logo: Logo = {
 				url: image.data[ 0 ].url,
 				description: prompt,
 			};
-			storeLogo( logo );
+			const savedLogo = await saveLogo( logo );
+			storeLogo( {
+				url: savedLogo.mediaURL,
+				description: prompt,
+				mediaId: savedLogo.mediaId,
+			} );
 		} catch ( error ) {
 			// TODO: handle error
+			// eslint-disable-next-line no-console
+			console.error( error );
 		} finally {
 			setIsRequestingImage( false );
 		}
