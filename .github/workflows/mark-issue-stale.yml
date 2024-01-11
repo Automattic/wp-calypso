@@ -9,11 +9,13 @@ jobs:
   stale:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/stale@v8
+      - name: Mark issues and pull requests as stale
+        id: stale
+        uses: actions/stale@v8
         with:
           repo-token: ${{ secrets.GITHUB_TOKEN }}
           # Message to be added to stale issues.
-          stale-issue-message: 'This issue is stale because 720 days have passed with no activity. A member of @kitkat-team will review and if required close this issue within 7 days. If you disagree and would like this issue to remain open, please provide additional context, updated reproduction steps and/or screenshots.'
+          stale-issue-message: 'This issue is stale because 720 days have passed with no activity. A member of the Dotcom Product Ambassadors Guild will review and if required close this issue within 7 days. If you disagree and would like this issue to remain open, please provide additional context, updated reproduction steps and/or screenshots.'
           # Days before issue is considered stale.
           days-before-issue-stale: 720
           # Override stale setting for PRs.
@@ -34,3 +36,42 @@ jobs:
           stale-pr-label: '[Status] Stale'
           # Increase number of operations executed per run.
           operations-per-run: 525
+      - name: Build Stale issues list
+        id: stale-build-list
+        uses: actions/github-script@v6
+        env:
+          ISSUES: ${{ steps.stale.outputs.staled-issues-prs }}
+        with:
+          script: |
+            const staleIssues = JSON.parse( process.env.ISSUES );
+            let staleIssuesList = '';
+            staleIssues.forEach(function(issue) {
+                if ( true === issue.markedStaleThisRun ) {
+                    staleIssuesList += `\\n- ${issue.title} (https://github.com/automattic/wp-calypso/issues/${issue.number})`;
+                }
+            });
+            return staleIssuesList;
+      - name: Post about Stale issues on Slack
+        id: stale-post-slack
+        uses: slackapi/slack-github-action@v1.24.0
+        if: ${{ fromJSON( steps.stale-build-list.outputs.result ) != '' }}
+        with:
+          channel-id: ${{ secrets.SLACK_QUALITY_CHANNEL }}
+          payload: |
+            {
+                "blocks": [
+                    {
+                        "type": "section",
+                        "text": {
+                            "type": "mrkdwn",
+                            "text": "The following issues have just been marked as stale. Please review them and take appropriate action:\n ${{ fromJSON( steps.stale-build-list.outputs.result ) }}"
+                        }
+                    }
+                ],
+                "text": "The following issues have just been marked as stale. Please review them and take appropriate action.",
+                "unfurl_links": false,
+                "unfurl_media": false
+            }
+        env:
+          SLACK_QUALITY_CHANNEL: ${{ secrets.SLACK_QUALITY_CHANNEL }}
+          SLACK_BOT_TOKEN: ${{ secrets.SLACK_TOKEN }}
