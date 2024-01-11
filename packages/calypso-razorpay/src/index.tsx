@@ -10,7 +10,7 @@ export interface RazorpayConfiguration {
 
 export declare class Razorpay {
 	constructor( options: RazorpayConfiguration[ 'options' ] );
-	open: () => any;
+	open: () => unknown;
 }
 
 declare global {
