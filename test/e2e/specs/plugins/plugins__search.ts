@@ -39,7 +39,7 @@ describe( DataHelper.createSuiteTitle( 'Plugins search' ), function () {
 		await sidebarCompoonent.navigate( 'Plugins' );
 	} );
 
-	it( 'Search for "jetpack"', async function () {
+	it( 'Search for "woocommerce"', async function () {
 		pluginsPage = new PluginsPage( page );
 		await pluginsPage.search( 'woocommerce' );
 		// for this assumption we need to use a plugin whose name isn't changed often
