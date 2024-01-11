@@ -7,7 +7,7 @@ const getDiscountText = ( discountPercentage: number, translate: LocalizeProps[ 
 	if ( ! discountPercentage ) {
 		return '';
 	}
-	return translate( 'up to %(discount)d% off', {
+	return translate( 'up to %(discount)d%% off', {
 		args: { discount: discountPercentage },
 		comment: 'Discount percentage',
 	} );
@@ -25,10 +25,11 @@ type IntervalSelectOptionsMap = Record<
 >;
 export default function useIntervalOptions( props: IntervalTypeProps ): IntervalSelectOptionsMap {
 	const translate = useTranslate();
-	let optionList: Record<
+	const { displayedIntervals } = props;
+	const optionList: Record<
 		SupportedUrlFriendlyTermType,
 		{
-			key: string;
+			key: SupportedUrlFriendlyTermType;
 			name: TranslateResult;
 			discountText: TranslateResult;
 			url: string;
@@ -64,10 +65,18 @@ export default function useIntervalOptions( props: IntervalTypeProps ): Interval
 			termInMonths: 1,
 		},
 	};
+
+	let displayedOptionList = Object.fromEntries(
+		Object.entries( optionList ).filter( ( [ , value ] ) =>
+			displayedIntervals.includes( value.key )
+		)
+	) as IntervalSelectOptionsMap;
+
 	const termWiseMaxDiscount = useMaxDiscountsForPlanTerms(
 		props.plans,
-		Object.keys( optionList ) as Array< SupportedUrlFriendlyTermType >,
-		props.usePricingMetaForGridPlans
+		Object.keys( displayedOptionList ) as Array< SupportedUrlFriendlyTermType >,
+		props.usePricingMetaForGridPlans,
+		props.selectedSiteId
 	);
 
 	const additionalPathProps = {
@@ -85,11 +94,11 @@ export default function useIntervalOptions( props: IntervalTypeProps ): Interval
 		isJetpackAppFlow = new URLSearchParams( window.location.search ).get( 'jetpackAppPlans' );
 	}
 
-	optionList = Object.fromEntries(
-		Object.keys( optionList ).map( ( key ) => [
-			key,
+	displayedOptionList = Object.fromEntries(
+		Object.keys( displayedOptionList ).map( ( key ) => [
+			key as SupportedUrlFriendlyTermType,
 			{
-				...optionList[ key as SupportedUrlFriendlyTermType ],
+				...displayedOptionList[ key as SupportedUrlFriendlyTermType ],
 				url: generatePath( props, {
 					intervalType: key,
 					domain: isDomainUpsellFlow,
@@ -105,5 +114,5 @@ export default function useIntervalOptions( props: IntervalTypeProps ): Interval
 		] )
 	) as IntervalSelectOptionsMap;
 
-	return optionList;
+	return displayedOptionList;
 }

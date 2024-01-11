@@ -36,9 +36,9 @@ export const useGithubDisconnectRepoMutation = (
 		},
 	} );
 
-	const { mutate, isLoading } = mutation;
+	const { mutate, isPending } = mutation;
 
 	const disconnectRepo = useCallback( ( siteId: number | null ) => mutate( siteId ), [ mutate ] );
 
-	return { disconnectRepo, isLoading };
+	return { disconnectRepo, isPending };
 };

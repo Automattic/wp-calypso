@@ -43,7 +43,7 @@ const MigrationTrialAcknowledgeInternal = function ( props: Props ) {
 	const isEligibleForTrialPlan = migrationTrialEligibility?.eligible;
 	const eligibilityErrorCode = migrationTrialEligibility?.error_code;
 	const plan = getPlan( PLAN_BUSINESS );
-	const { addHostingTrial, isLoading: isAddingTrial } = useAddHostingTrialMutation( {
+	const { addHostingTrial, isPending: isAddingTrial } = useAddHostingTrialMutation( {
 		onSuccess: () => {
 			navigateToImporterStep();
 		},

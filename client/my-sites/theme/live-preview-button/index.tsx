@@ -5,17 +5,25 @@ import TrackComponentView from 'calypso/lib/analytics/track-component-view';
 import { useDispatch, useSelector } from 'calypso/state';
 import { livePreview } from 'calypso/state/themes/actions';
 import { getIsLivePreviewSupported } from 'calypso/state/themes/selectors';
+import type { GlobalStyles } from '@automattic/data-stores';
 
 interface Props {
-	themeId: string;
 	siteId: number;
+	themeId: string;
+	hasStyleVariations: boolean;
+	styleVariation?: GlobalStyles;
 }
 
 /**
  * Live Preview leveraging Gutenberg's Block Theme Previews
  * @see pbxlJb-3Uv-p2
  */
-export const LivePreviewButton: FC< Props > = ( { themeId, siteId } ) => {
+export const LivePreviewButton: FC< Props > = ( {
+	siteId,
+	themeId,
+	hasStyleVariations,
+	styleVariation,
+} ) => {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 
@@ -30,7 +38,7 @@ export const LivePreviewButton: FC< Props > = ( { themeId, siteId } ) => {
 
 	const handleClick = () => {
 		setIsLoading( true );
-		dispatch( livePreview( themeId, siteId, 'detail' ) );
+		dispatch( livePreview( siteId, themeId, hasStyleVariations, styleVariation, 'detail' ) );
 	};
 
 	return (

@@ -1,7 +1,5 @@
-export * from './available-designs-config';
 export * from './available-designs';
 export * from './designs';
-export * from './fonts';
 export * from './global-styles';
 import { SHOW_ALL_SLUG } from '../constants';
 import { isBlankCanvasDesign } from './available-designs';

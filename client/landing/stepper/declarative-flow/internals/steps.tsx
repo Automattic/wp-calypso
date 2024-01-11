@@ -21,6 +21,11 @@ export const STEPS = {
 
 	COURSES: { slug: 'courses', asyncComponent: () => import( './steps-repository/courses' ) },
 
+	DESIGN_CHOICES: {
+		slug: 'design-choices',
+		asyncComponent: () => import( './steps-repository/design-choices' ),
+	},
+
 	DESIGN_SETUP: {
 		slug: 'designSetup',
 		asyncComponent: () => import( './steps-repository/design-setup' ),
