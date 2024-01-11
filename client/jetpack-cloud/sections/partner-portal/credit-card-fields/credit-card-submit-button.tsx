@@ -51,9 +51,10 @@ export default function CreditCardSubmitButton( {
 			return __( 'Processing…' );
 		}
 		if ( formStatus === FormStatus.READY ) {
-			return activeButtonText || isNewCardAdditionEnabled
-				? __( 'Add card' )
-				: __( 'Save payment method' );
+			return (
+				activeButtonText ||
+				( isNewCardAdditionEnabled ? __( 'Add card' ) : __( 'Save payment method' ) )
+			);
 		}
 		return __( 'Please wait…' );
 	}, [ formStatus, __, activeButtonText, isNewCardAdditionEnabled ] );
