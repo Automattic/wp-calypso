@@ -1,6 +1,6 @@
 import { translate } from 'i18n-calypso';
-import ThankYouFooterDetailProps from 'calypso/components/thank-you-v2/footer';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
+import type ThankYouFooterDetailProps from 'calypso/components/thank-you-v2/footer';
 
 export default function getDomainFooterDetails( limit?: number ): ThankYouFooterDetailProps[] {
 	const details = [
