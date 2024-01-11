@@ -179,11 +179,6 @@ export const setDomain = ( domain: DomainSuggestion | undefined ) => ( {
 	domain,
 } );
 
-export const setDomainSearch = ( domainSearch: string ) => ( {
-	type: 'SET_DOMAIN_SEARCH_TERM' as const,
-	domainSearch,
-} );
-
 export const setPlanCartItem = ( planCartItem: MinimalRequestCartProduct | null ) => ( {
 	type: 'SET_PLAN_CART_ITEM' as const,
 	planCartItem,
@@ -370,7 +365,6 @@ export type OnboardAction = ReturnType<
 	| typeof setStoreType
 	| typeof setDomainsTransferData
 	| typeof setDomain
-	| typeof setDomainSearch
 	| typeof setPluginsToVerify
 	| typeof setProfilerData
 	| typeof setSelectedDesign

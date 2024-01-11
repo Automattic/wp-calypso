@@ -34,7 +34,6 @@ export function register(): typeof STORE_KEY {
 		persist: [
 			'domainTransferNames',
 			'domain',
-			'domainSearch',
 			'domainForm',
 			'goals',
 			'intent',

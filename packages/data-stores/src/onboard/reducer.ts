@@ -24,16 +24,6 @@ const domain: Reducer< DomainSuggestion | undefined, OnboardAction > = ( state, 
 	return state;
 };
 
-const domainSearch: Reducer< string, OnboardAction > = ( state = '', action ) => {
-	if ( action.type === 'SET_DOMAIN_SEARCH_TERM' ) {
-		return action.domainSearch;
-	}
-	if ( action.type === 'RESET_ONBOARD_STORE' ) {
-		return '';
-	}
-	return state;
-};
-
 const selectedDesign: Reducer< Design | undefined, OnboardAction > = ( state, action ) => {
 	if ( action.type === 'SET_SELECTED_DESIGN' ) {
 		return action.selectedDesign;
@@ -424,7 +414,6 @@ const paidSubscribers: Reducer< boolean, OnboardAction > = ( state = false, acti
 const reducer = combineReducers( {
 	domain,
 	domainCartItem,
-	domainSearch,
 	domainForm,
 	selectedFeatures,
 	domainTransferNames,
