@@ -32,7 +32,7 @@ class Course extends Component {
 						<HelpTeaserButton
 							href={ `/plans/${ this.props.primarySiteSlug }` }
 							// translators: %(planName)s is the name of the Creator/Business plan.
-							title={ translate( 'Join this course with the %(planName)s Plan.', {
+							title={ translate( 'Join this course with the %(planName)s plan.', {
 								args: { planName: getPlan( PLAN_BUSINESS )?.getTitle() },
 							} ) }
 							description={ translate(
