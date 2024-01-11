@@ -130,7 +130,7 @@ export default function SingleSellUpsellLightbox( {
 								href={ checkoutURL }
 								disabled={ false }
 							>
-								{ translate( 'Proceed to checkout' ) }
+								{ translate( 'Purchase via Jetpack.com' ) }
 							</Button>
 							<div className="license-lightbox__secondary-checkout-notice">
 								{ translate(
