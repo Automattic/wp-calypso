@@ -128,6 +128,7 @@ function CheckoutSummaryAdditionalDetails( props: {
 	plan: ResponseCartProduct | undefined;
 	siteId: number | undefined;
 } ) {
+	const translate = useTranslate();
 	const { plan, siteId } = props;
 	const productSlug = plan?.product_slug;
 	const wooExpressIntroOffers = Plans.useIntroOffersForWooExpress( {
@@ -135,6 +136,10 @@ function CheckoutSummaryAdditionalDetails( props: {
 	} );
 	const wooExpressIntroOffer =
 		wooExpressIntroOffers && plan ? wooExpressIntroOffers[ plan.product_slug ] : undefined;
+	// Appeasing the typescript checker
+	if ( ! wooExpressIntroOffer || ! plan ) {
+		return null;
+	}
 	const shouldShowAdditionalDetails = Boolean(
 		productSlug && isWooExpressPlan( productSlug ) && !! wooExpressIntroOffer
 	);
@@ -143,20 +148,39 @@ function CheckoutSummaryAdditionalDetails( props: {
 		return null;
 	}
 
-	const cost = plan?.product_cost_display;
-	const productName = plan?.product_name;
-	const intervalPrice = wooExpressIntroOffer?.formattedPrice;
-	const intervalCount = wooExpressIntroOffer?.intervalCount;
-	const intervalUnit = wooExpressIntroOffer?.intervalUnit;
+	const cost = plan.product_cost_display;
+	const productName = plan.product_name;
+	const intervalPrice = wooExpressIntroOffer.formattedPrice;
+	const intervalCount = wooExpressIntroOffer.intervalCount;
+	const intervalUnit = wooExpressIntroOffer.intervalUnit;
+
+	const priceText = translate(
+		"You'll be charged %(intervalPrice)s for the first %(intervalCount)d %(intervalUnit)s of your %(productName)s plan.",
+		{
+			args: {
+				intervalPrice,
+				intervalCount,
+				intervalUnit,
+				productName,
+			},
+		}
+	);
+	const detailsText = translate(
+		"Once the offer period has expired, you'll be charged %(cost)s on an annual basis. You can cancel your plan at any point in the first %(intervalCount)d %(intervalUnit)s.",
+		{
+			args: {
+				cost,
+				intervalCount,
+				intervalUnit,
+			},
+		}
+	);
 
 	return (
 		plan && (
 			<div>
-				<p>{ `You'll be charged ${ intervalPrice } for the first ${ intervalCount } ${ intervalUnit } of your ${ productName } plan.` }</p>
-				<p>
-					{ `Once the offer period has expired, you'll be charged ${ cost } on an annual basis. You can cancel
-				your plan at any point in the first 3 months.` }
-				</p>
+				<p>{ priceText }</p>
+				<p>{ detailsText }</p>
 			</div>
 		)
 	);
