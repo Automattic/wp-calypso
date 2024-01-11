@@ -43,3 +43,22 @@
 		margin: 2rem 15px;
 	}
 }
+
+.review-licenses__notice,
+.license-lightbox__secondary-checkout-notice {
+	color: var(--studio-gray-50);
+	font-size: rem(12px);
+	margin-block-end: 16px;
+	padding-top: 1rem;
+
+	a {
+		text-decoration: underline;
+		color: var(--studio-black);
+	}
+}
+
+.license-lightbox__secondary-content-button {
+	border: 2px solid var(--color-accent);
+	font-weight: 700;
+	font-size: 1rem;
+}

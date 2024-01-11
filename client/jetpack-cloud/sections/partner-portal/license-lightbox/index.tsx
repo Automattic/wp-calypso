@@ -22,6 +22,7 @@ export type LicenseLightBoxProps = {
 	onClose: () => void;
 	product: APIProductFamilyProduct;
 	extraAsideContent?: JSX.Element;
+	secondaryAsideContent?: JSX.Element;
 	className?: string;
 	quantity?: number;
 	isCTAExternalLink?: boolean;
@@ -40,6 +41,7 @@ const LicenseLightbox: FunctionComponent< LicenseLightBoxProps > = ( {
 	onClose,
 	product,
 	extraAsideContent,
+	secondaryAsideContent,
 	className,
 	quantity,
 	showPaymentPlan = true,
@@ -92,6 +94,7 @@ const LicenseLightbox: FunctionComponent< LicenseLightBoxProps > = ( {
 						<div className="license-lightbox__separator">Or</div>
 					</>
 				) }
+				{ secondaryAsideContent }
 			</JetpackLightboxAside>
 		</JetpackLightbox>
 	);
