@@ -1,5 +1,8 @@
 import styled from '@emotion/styled';
 import { CustomSelectControl } from '@wordpress/components';
+// TODO: Check if the ReactNode type exists in @wordpress/element
+import React from 'react';
+import { Link } from 'react-router-dom';
 import useIntervalOptions from '../hooks/use-interval-options';
 import { IntervalTypeProps, SupportedUrlFriendlyTermType } from '../types';
 
@@ -33,8 +36,26 @@ const AddOnOption = styled.a`
 	}
 `;
 
+const ConditionalIntervalTypeOption = ( {
+	isPlansInsideStepper,
+	href,
+	children,
+}: {
+	isPlansInsideStepper: boolean;
+	href: string;
+	// TODO: Verify children type
+	children: React.ReactNode[];
+} ) => {
+	// TODO: Consider using generatePath helper
+	return isPlansInsideStepper ? (
+		<Link to={ href }>{ children }</Link>
+	) : (
+		<AddOnOption href={ href }>{ children }</AddOnOption>
+	);
+};
+
 export const IntervalTypeDropdown: React.FunctionComponent< IntervalTypeProps > = ( props ) => {
-	const { intervalType, displayedIntervals } = props;
+	const { intervalType, displayedIntervals, isPlansInsideStepper } = props;
 	const supportedIntervalType = (
 		displayedIntervals.includes( intervalType ) ? intervalType : 'yearly'
 	) as SupportedUrlFriendlyTermType;
@@ -43,10 +64,13 @@ export const IntervalTypeDropdown: React.FunctionComponent< IntervalTypeProps > 
 	const selectOptionsList = Object.values( optionsList ).map( ( option ) => ( {
 		key: option.key,
 		name: (
-			<AddOnOption href={ option.url }>
+			<ConditionalIntervalTypeOption
+				href={ option.url }
+				isPlansInsideStepper={ isPlansInsideStepper }
+			>
 				<span className="name"> { option.name } </span>
 				{ option.discountText ? <span className="discount"> { option.discountText } </span> : null }
-			</AddOnOption>
+			</ConditionalIntervalTypeOption>
 		),
 	} ) );
 
