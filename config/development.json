@@ -111,6 +111,7 @@
 		"lasagna": true,
 		"launchpad-updates": true,
 		"launchpad/navigator": false,
+		"launchpad/new-task-definition-parser": true,
 		"layout/app-banner": true,
 		"layout/guided-tours": true,
 		"layout/query-selected-editor": true,
