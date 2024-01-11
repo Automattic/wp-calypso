@@ -68,7 +68,6 @@
 }
 
 .emails-save-paying-annually__popover {
-	transform: translateX(20px);
 	z-index: z-index("root", ".masterbar") - 1;
 
 	.popover__inner {
@@ -83,6 +82,7 @@
 
 	&.is-right {
 		display: none;
+		transform: translateX(20px);
 
 		@include break-wide {
 			display: block;
@@ -90,6 +90,8 @@
 	}
 
 	&.is-bottom {
+		transform: translateY(5px);
+
 		@include break-wide {
 			display: none;
 		}
@@ -100,6 +102,14 @@
 
 		&::before {
 			border-right-color: var(--color-neutral-100);
+		}
+	}
+
+	&.is-bottom .popover__arrow {
+		border-bottom-color: var(--color-neutral-100);
+
+		&::before {
+			border-bottom-color: var(--color-neutral-100);
 		}
 	}
 }
