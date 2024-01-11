@@ -398,13 +398,6 @@ export const setDomainsTransferData = ( bulkDomainsData: DomainTransferData | un
 	bulkDomainsData,
 } );
 
-export const setShouldImportDomainTransferDnsRecords = (
-	shouldImportDomainTransferDnsRecords: boolean
-) => ( {
-	type: 'SET_SHOULD_IMPORT_DOMAIN_TRANSFER_DNS_RECORDS' as const,
-	shouldImportDomainTransferDnsRecords,
-} );
-
 export const setHideFreePlan = ( hideFreePlan: boolean ) => ( {
 	type: 'SET_HIDE_FREE_PLAN' as const,
 	hideFreePlan,
@@ -443,7 +436,6 @@ export type OnboardAction = ReturnType<
 	| typeof resetOnboardStoreWithSkipFlags
 	| typeof setStoreType
 	| typeof setDomainsTransferData
-	| typeof setShouldImportDomainTransferDnsRecords
 	| typeof setDomain
 	| typeof setDomainCategory
 	| typeof setDomainSearch

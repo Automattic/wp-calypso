@@ -23,8 +23,6 @@ export const getBulkDomainsData = ( state: State ) => {
 	}
 	return domainTransferData;
 };
-export const getBulkDomainsImportDnsRecords = ( state: State ) =>
-	state.shouldImportDomainTransferDnsRecords;
 export const getIsRedirecting = ( state: State ) => state.isRedirecting;
 export const getPlanProductId = ( state: State ) => state.planProductId;
 export const getPlanCartItem = ( state: State ) => state.planCartItem;

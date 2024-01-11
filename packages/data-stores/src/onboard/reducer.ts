@@ -501,19 +501,6 @@ export const domainTransferAuthCodes: Reducer<
 	return state;
 };
 
-export const shouldImportDomainTransferDnsRecords: Reducer< boolean, OnboardAction > = (
-	state = true,
-	action
-) => {
-	if ( action.type === 'SET_SHOULD_IMPORT_DOMAIN_TRANSFER_DNS_RECORDS' ) {
-		return action.shouldImportDomainTransferDnsRecords;
-	}
-	if ( action.type === 'RESET_ONBOARD_STORE' ) {
-		return true;
-	}
-	return state;
-};
-
 const paidSubscribers: Reducer< boolean, OnboardAction > = ( state = false, action ) => {
 	if ( action.type === 'SET_PAID_SUBSCRIBERS' ) {
 		return action.paidSubscribers;
@@ -536,7 +523,6 @@ const reducer = combineReducers( {
 	selectedFeatures,
 	domainTransferNames,
 	domainTransferAuthCodes,
-	shouldImportDomainTransferDnsRecords,
 	storeType,
 	selectedDesign,
 	selectedStyleVariation,

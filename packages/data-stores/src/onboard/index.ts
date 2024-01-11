@@ -33,7 +33,6 @@ export function register(): typeof STORE_KEY {
 		selectors,
 		persist: [
 			'domainTransferNames',
-			'shouldImportDomainTransferDnsRecords',
 			'domain',
 			'domainSearch',
 			'domainForm',
