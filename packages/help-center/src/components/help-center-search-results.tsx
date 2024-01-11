@@ -134,8 +134,13 @@ function HelpSearchResults( {
 		sectionName
 	);
 
-	const searchResults = searchData ?? [];
+	let searchResults: SearchResult[] = searchData ?? [];
 	const hasAPIResults = searchResults.length > 0;
+
+	// Remove duplicates from the API results.
+	searchResults = searchResults.filter(
+		( value, index ) => index === searchResults.findIndex( ( t ) => t.post_id === value.post_id )
+	);
 
 	useEffect( () => {
 		// Cancel all queued speak messages.
