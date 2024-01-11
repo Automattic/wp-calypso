@@ -14,8 +14,8 @@ const WasThisHelpfulButtons = ( {
 	message: Message;
 	onDislike?: () => void;
 } ) => {
-	const THUMBS_DOWN_RATING_VALUE = 2;
-	const THUMBS_UP_RATING_VALUE = 4;
+	const THUMBS_DOWN_RATING_VALUE = 0;
+	const THUMBS_UP_RATING_VALUE = 1;
 
 	const translate = useTranslate();
 	const { setMessageLikedStatus, trackEvent } = useOdieAssistantContext();
