@@ -83,19 +83,6 @@ const planProductId: Reducer< number | undefined, OnboardAction > = ( state, act
 	return state;
 };
 
-const randomizedDesigns: Reducer< { featured: Design[] }, OnboardAction > = (
-	state = { featured: [] },
-	action
-) => {
-	if ( action.type === 'SET_RANDOMIZED_DESIGNS' ) {
-		return action.randomizedDesigns;
-	}
-	if ( action.type === 'RESET_ONBOARD_STORE' ) {
-		return { featured: [] };
-	}
-	return state;
-};
-
 const selectedDesign: Reducer< Design | undefined, OnboardAction > = ( state, action ) => {
 	if ( action.type === 'SET_SELECTED_DESIGN' ) {
 		return action.selectedDesign;
@@ -557,7 +544,6 @@ const reducer = combineReducers( {
 	siteTitle,
 	showSignupDialog,
 	planProductId,
-	randomizedDesigns,
 	hasOnboardingStarted,
 	lastLocation,
 	intent,

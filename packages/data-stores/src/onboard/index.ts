@@ -44,7 +44,6 @@ export function register(): typeof STORE_KEY {
 			'paidSubscribers',
 			'lastLocation',
 			'planProductId',
-			'randomizedDesigns',
 			'selectedDesign',
 			'selectedFeatures',
 			'selectedSite',

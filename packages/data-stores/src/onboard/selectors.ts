@@ -30,7 +30,6 @@ export const getPlanProductId = ( state: State ) => state.planProductId;
 export const getPlanCartItem = ( state: State ) => state.planCartItem;
 export const getProductCartItems = ( state: State ) => state.productCartItems;
 export const getLastLocation = ( state: State ) => state.lastLocation;
-export const getRandomizedDesigns = ( state: State ) => state.randomizedDesigns;
 export const getSelectedDesign = ( state: State ) => state.selectedDesign;
 export const getSelectedStyleVariation = ( state: State ) => state.selectedStyleVariation;
 export const getSelectedDomain = ( state: State ) => state.domain;

@@ -239,11 +239,6 @@ export const setProductCartItems = ( productCartItems: MinimalRequestCartProduct
 	productCartItems,
 } );
 
-export const setRandomizedDesigns = ( randomizedDesigns: { featured: Design[] } ) => ( {
-	type: 'SET_RANDOMIZED_DESIGNS' as const,
-	randomizedDesigns,
-} );
-
 export const setSelectedDesign = ( selectedDesign: Design | undefined ) => ( {
 	type: 'SET_SELECTED_DESIGN' as const,
 	selectedDesign,
@@ -459,7 +454,6 @@ export type OnboardAction = ReturnType<
 	| typeof setPlanProductId
 	| typeof setPluginsToVerify
 	| typeof setProfilerData
-	| typeof setRandomizedDesigns
 	| typeof setSelectedDesign
 	| typeof setSelectedStyleVariation
 	| typeof setSelectedSite
