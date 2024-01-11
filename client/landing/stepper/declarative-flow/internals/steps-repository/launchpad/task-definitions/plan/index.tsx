@@ -3,11 +3,18 @@ import { localizeUrl } from '@automattic/i18n-utils';
 import { ExternalLink } from '@wordpress/components';
 import { addQueryArgs } from '@wordpress/url';
 import { translate } from 'i18n-calypso';
-import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
-import { recordTaskClickTracksEvent } from '../../task-helper';
-import { EnhancedTask, Task, TaskAction, TaskActionTable } from '../../types';
+import {
+	recordGlobalStylesGattingPlanSelectedResetStylesEvent,
+	recordTaskClickTracksEvent,
+} from '../../tracking';
+import { EnhancedTask, Task, TaskAction, TaskActionTable, TaskContext } from '../../types';
 
-const getPlanTaskSubtitle = ( task: Task, flow: string, displayGlobalStylesWarning: boolean ) => {
+const getPlanTaskSubtitle = (
+	task: Task,
+	flow: string,
+	context: TaskContext,
+	displayGlobalStylesWarning: boolean
+) => {
 	if ( ! displayGlobalStylesWarning ) {
 		return task.subtitle;
 	}
@@ -20,10 +27,9 @@ const getPlanTaskSubtitle = ( task: Task, flow: string, displayGlobalStylesWarni
 					href={ localizeUrl( 'https://wordpress.com/support/using-styles/#reset-all-styles' ) }
 					onClick={ ( event ) => {
 						event.stopPropagation();
-						recordTracksEvent(
-							'calypso_launchpad_global_styles_gating_plan_selected_reset_styles',
-							{ flow }
-						);
+						recordGlobalStylesGattingPlanSelectedResetStylesEvent( task, flow, context, {
+							displayGlobalStylesWarning,
+						} );
 					} }
 				/>
 			),
@@ -49,10 +55,10 @@ const getPlanSelected: TaskAction = ( task, flow, context ): EnhancedTask => {
 	return {
 		...task,
 		actionDispatch: () => {
-			recordTaskClickTracksEvent( flow, task.completed, task.id );
+			recordTaskClickTracksEvent( task, flow, context );
 			if ( displayGlobalStylesWarning ) {
-				recordTracksEvent( 'calypso_launchpad_global_styles_gating_plan_selected_task_clicked', {
-					flow,
+				recordGlobalStylesGattingPlanSelectedResetStylesEvent( task, flow, context, {
+					displayGlobalStylesWarning,
 				} );
 			}
 		},
@@ -65,7 +71,7 @@ const getPlanSelected: TaskAction = ( task, flow, context ): EnhancedTask => {
 			} ),
 		} ),
 		completed: task.completed && ! isVideoPressFlowWithUnsupportedPlan,
-		subtitle: getPlanTaskSubtitle( task, flow, displayGlobalStylesWarning ),
+		subtitle: getPlanTaskSubtitle( task, flow, context, displayGlobalStylesWarning ),
 		useCalypsoPath: true,
 	};
 };

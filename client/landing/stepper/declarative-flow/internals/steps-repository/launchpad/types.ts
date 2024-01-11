@@ -1,6 +1,7 @@
 import { ChecklistStatuses, type SiteDetails } from '@automattic/data-stores';
 import { MinimalRequestCartProduct } from '@automattic/shopping-cart';
 import { ReactNode } from 'react';
+import { NavigationControls } from '../../types';
 
 export interface Task {
 	id: string;

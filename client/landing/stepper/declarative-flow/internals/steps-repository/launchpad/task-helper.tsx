@@ -38,7 +38,7 @@ import { goToCheckout } from '../../../../utils/checkout';
 import { getDeprecatedTaskDefinition } from './get-deprecated-task-data';
 import { getTaskDefinition } from './task-definitions';
 import { launchpadFlowTasks } from './tasks';
-import { EnhancedTask, LaunchpadChecklist, Task } from './types';
+import { LaunchpadChecklist, Task } from './types';
 
 interface GetEnhancedTasksProps {
 	tasks: Task[] | null | undefined;
@@ -99,8 +99,6 @@ export function getEnhancedTasks( {
 	if ( ! tasks ) {
 		return [];
 	}
-
-	const enhancedTaskList: EnhancedTask[] = [];
 
 	const isCurrentPlanFree = site?.plan ? isFreePlanProduct( site?.plan ) : true;
 
@@ -298,11 +296,10 @@ export function getEnhancedTasks( {
 			if ( enhanced ) {
 				// eslint-disable-next-line no-console
 				console.log( 'using new task definitions', enhanced.id );
-				return enhancedTaskList.push( enhanced );
+				return enhanced;
 			}
 		}
 
-		// @deprecated code flow, please use the new getTaskDefinition method
 		return getDeprecatedTaskDefinition(
 			task,
 			flow,
@@ -341,7 +338,9 @@ export function isDomainUpsellCompleted(
 	return ! site?.plan?.is_free || checklistStatuses?.domain_upsell_deferred === true;
 }
 
-// Records a generic task click Tracks event
+/**
+ * @deprecated Please use recordTaskClickTracksEvent instead from tracking.ts
+ */
 export function recordTaskClickTracksEvent(
 	flow: string | null | undefined,
 	is_completed: boolean,

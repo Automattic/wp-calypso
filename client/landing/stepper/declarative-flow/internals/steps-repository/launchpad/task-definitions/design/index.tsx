@@ -1,5 +1,5 @@
 import { addQueryArgs } from '@wordpress/url';
-import { recordTaskClickTracksEvent } from '../../task-helper';
+import { recordTaskClickTracksEvent } from '../../tracking';
 import { TaskAction, TaskActionTable, EnhancedTask } from '../../types';
 
 const getPlanSelected: TaskAction = ( task, flow, context ): EnhancedTask => {
@@ -7,7 +7,7 @@ const getPlanSelected: TaskAction = ( task, flow, context ): EnhancedTask => {
 
 	return {
 		...task,
-		actionDispatch: () => recordTaskClickTracksEvent( flow, task.completed, task.id ),
+		actionDispatch: () => recordTaskClickTracksEvent( task, flow, context ),
 		calypso_path: addQueryArgs( `/setup/update-design/designSetup`, {
 			...siteInfoQueryArgs,
 			flowToReturnTo: flow,
@@ -16,14 +16,18 @@ const getPlanSelected: TaskAction = ( task, flow, context ): EnhancedTask => {
 	};
 };
 
-const getDesignEdited: TaskAction = ( task, flow, { siteInfoQueryArgs } ) => ( {
-	...task,
-	actionDispatch: () => recordTaskClickTracksEvent( flow, task.completed, task.id ),
-	calypso_path: addQueryArgs( `/site-editor/${ siteInfoQueryArgs?.siteSlug }`, {
-		canvas: 'edit',
-	} ),
-	useCalypsoPath: true,
-} );
+const getDesignEdited: TaskAction = ( task, flow, context ) => {
+	const { siteInfoQueryArgs } = context;
+
+	return {
+		...task,
+		actionDispatch: () => recordTaskClickTracksEvent( task, flow, context ),
+		calypso_path: addQueryArgs( `/site-editor/${ siteInfoQueryArgs?.siteSlug }`, {
+			canvas: 'edit',
+		} ),
+		useCalypsoPath: true,
+	};
+};
 
 export const actions: Partial< TaskActionTable > = {
 	design_selected: getPlanSelected,
