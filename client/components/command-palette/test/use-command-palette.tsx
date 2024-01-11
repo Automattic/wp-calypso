@@ -103,15 +103,48 @@ const commandsWithViewMySiteOnSitesResult = [
 	},
 ];
 
+const commandsWithContext = [
+	{
+		name: 'getHelp',
+		label: 'Get help',
+		context: [ '/sites' ],
+	},
+	{
+		name: 'clearCache',
+		label: 'Clear cache',
+		context: [ '/sites' ],
+	},
+	{
+		name: 'enableEdgeCache',
+		label: 'Enable edge cache',
+		context: [ '/settings' ],
+	},
+];
+
+const commandsWithContextResult = [
+	{
+		name: 'enableEdgeCache',
+		label: 'Enable edge cache',
+		context: [ '/settings' ],
+	},
+	{
+		name: 'getHelp',
+		label: 'Get help',
+		context: [ '/sites' ],
+	},
+	{
+		name: 'clearCache',
+		label: 'Clear cache',
+		context: [ '/sites' ],
+	},
+];
+
 jest.mock( 'cmdk', () => ( {
 	useCommandState: jest.fn(),
 } ) );
-
 jest.mock( '../../../sites-dashboard/components/wpcom-smp-commands', () => ( {
 	useCommandsArrayWpcom: jest.fn(),
 } ) );
-
-// Mock the module that contains useCurrentSiteRankTop
 jest.mock( '../../command-palette/use-current-site-rank-top' );
 jest.mock( '../../../state/selectors/get-current-route-pattern' );
 
@@ -209,5 +242,36 @@ describe( 'useCommandPalette', () => {
 		expect( result.current.commands.map( ( { name, label } ) => ( { name, label } ) ) ).toEqual(
 			commandsWithViewMySiteOnSitesResult
 		);
+	} );
+
+	it( 'should return Enable Edge Cache command first as it matches the context; all other commands should follow in the order they are added to commandsWithContext array', () => {
+		// Create a QueryClient instance
+		const queryClient = new QueryClient();
+
+		( useCurrentSiteRankTop as jest.Mock ).mockReturnValue( {
+			currentSiteId: 1,
+		} );
+		( getCurrentRoutePattern as jest.Mock ).mockReturnValue( '/settings' );
+		( useCommandsArrayWpcom as jest.Mock ).mockReturnValue( commandsWithContext );
+
+		const { result } = renderHook(
+			() =>
+				useCommandPalette( {
+					selectedCommandName: '',
+					setSelectedCommandName: () => {},
+					search: '',
+				} ),
+			{
+				wrapper: ( { children } ) => (
+					<Provider store={ store }>
+						<QueryClientProvider client={ queryClient }>{ children }</QueryClientProvider>
+					</Provider>
+				),
+			}
+		);
+
+		expect(
+			result.current.commands.map( ( { name, label, context } ) => ( { name, label, context } ) )
+		).toEqual( commandsWithContextResult );
 	} );
 } );
