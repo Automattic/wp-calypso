@@ -113,6 +113,7 @@ export function StickyContainer( props: Props ) {
 		};
 	}, [ disabled, stickyOffset ] );
 
+	const isStuckFinalState = ! disabled && isStuck;
 	return (
 		<>
 			<Global
@@ -132,10 +133,10 @@ export function StickyContainer( props: Props ) {
 				ref={ stickyRef }
 				stickyOffset={ stickyOffset }
 				disabled={ disabled }
-				className={ classNames( { [ stickyClass ]: isStuck } ) }
+				className={ classNames( { [ stickyClass ]: isStuckFinalState } ) }
 				zIndex={ zIndex }
 			>
-				{ children( isStuck ) }
+				{ children( isStuckFinalState ) }
 			</Container>
 		</>
 	);

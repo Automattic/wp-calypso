@@ -622,7 +622,6 @@ export default function CheckoutMain( {
 		disabledThankYouPage,
 		siteSlug: updatedSiteSlug,
 		sitelessCheckoutType,
-		checkoutFlow,
 		connectAfterCheckout,
 		adminUrl,
 		fromSiteSlug,

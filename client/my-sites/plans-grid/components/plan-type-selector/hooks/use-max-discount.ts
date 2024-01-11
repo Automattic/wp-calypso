@@ -10,7 +10,8 @@ import { UsePricingMetaForGridPlans } from 'calypso/my-sites/plans-grid/hooks/np
 
 export default function useMaxDiscount(
 	plans: PlanSlug[],
-	usePricingMetaForGridPlans: UsePricingMetaForGridPlans
+	usePricingMetaForGridPlans: UsePricingMetaForGridPlans,
+	selectedSiteId?: number | null
 ): number {
 	const [ maxDiscount, setMaxDiscount ] = useState( 0 );
 	const wpcomMonthlyPlans = ( plans || [] ).filter( isWpComPlan ).filter( isMonthly );
@@ -18,15 +19,21 @@ export default function useMaxDiscount(
 		.map( ( planSlug ) => getPlanSlugForTermVariant( planSlug, TERM_ANNUALLY ) )
 		.filter( Boolean ) as PlanSlug[];
 
+	// TODO clk pricing
 	const monthlyPlansPricing = usePricingMetaForGridPlans( {
 		planSlugs: wpcomMonthlyPlans,
 		withoutProRatedCredits: true,
 		storageAddOns: null,
+		selectedSiteId,
+		coupon: undefined,
 	} );
+	// TODO clk pricing
 	const yearlyPlansPricing = usePricingMetaForGridPlans( {
 		planSlugs: yearlyVariantPlanSlugs,
 		withoutProRatedCredits: true,
 		storageAddOns: null,
+		selectedSiteId,
+		coupon: undefined,
 	} );
 
 	const discounts = wpcomMonthlyPlans.map( ( planSlug ) => {

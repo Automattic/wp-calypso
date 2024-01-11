@@ -25,7 +25,7 @@ const DEFAULT_VALUE = {};
 
 const UserSettings = ( { value = DEFAULT_VALUE }: UserSettingsProps ) => {
 	const [ formState, setFormState ] = useState( value );
-	const { mutate, isLoading, isSuccess, error } = SubscriptionManager.useUserSettingsMutation();
+	const { mutate, isPending, isSuccess, error } = SubscriptionManager.useUserSettingsMutation();
 	const [ notice, setNotice ] = useState< NoticeState | null >( null );
 
 	useEffect( () => {
@@ -82,7 +82,7 @@ const UserSettings = ( { value = DEFAULT_VALUE }: UserSettingsProps ) => {
 				value={ formState.blocked ?? false }
 				onChange={ ( value ) => onChange?.( { blocked: value.target.checked } ) }
 			/>
-			<Button className="user-settings__submit-button" disabled={ isLoading } onClick={ onSubmit }>
+			<Button className="user-settings__submit-button" disabled={ isPending } onClick={ onSubmit }>
 				{ translate( 'Save changes', {
 					context: 'Save the subscription management user changes',
 				} ) }
