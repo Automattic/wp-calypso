@@ -103,8 +103,8 @@ function TierUpgradeSlider( {
 						<p ref={ infoReferenceElement }>
 							{ discountedPrice ? (
 								<>
-									<span>{ discountedPrice }</span>
 									<span className="full-price-label">{ originalPrice }</span>
+									<span>{ discountedPrice }</span>
 								</>
 							) : (
 								<span>{ originalPrice }</span>

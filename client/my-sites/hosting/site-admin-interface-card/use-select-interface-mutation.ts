@@ -92,6 +92,6 @@ export const useSiteInterfaceMutation = (
 	return {
 		...mutation,
 		setSiteInterface: mutate,
-		isLoading: mutation.isLoading || isRequestingMenu,
+		isLoading: mutation.isPending || isRequestingMenu,
 	};
 };

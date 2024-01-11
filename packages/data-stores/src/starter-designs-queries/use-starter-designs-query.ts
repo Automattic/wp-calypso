@@ -113,9 +113,6 @@ function apiStarterDesignsToDesign( design: StarterDesign ): Design {
 		style_variations,
 		is_virtual: design.is_virtual && !! design.recipe?.pattern_ids?.length,
 		...( preview_data && { preview_data } ),
-		// Deprecated; used for /start flow
-		features: [],
-		template: '',
 		theme: '',
 		screenshot,
 	};

@@ -31,7 +31,6 @@ function getPlanAndDomainBundle( planSlug: string ) {
 	cart.products.push( {
 		...getEmptyResponseCartProduct(),
 		extra: { domain_to_bundle: 'test.live' },
-		item_subtotal_display: '$10',
 		item_subtotal_integer: 10,
 		product_slug: planSlug,
 	} );

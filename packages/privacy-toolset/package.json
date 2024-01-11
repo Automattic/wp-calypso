@@ -1,7 +1,7 @@
 {
 	"name": "@automattic/privacy-toolset",
-	"version": "2.0.0",
-	"description": "Privacy tools and components for Automattic solutions",
+	"version": "2.1.0",
+	"description": "Privacy tools and components for Automattic solutions.",
 	"homepage": "https://github.com/Automattic/wp-calypso",
 	"license": "GPL-2.0-or-later",
 	"author": "Automattic Inc.",

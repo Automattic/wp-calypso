@@ -103,11 +103,18 @@ const PersonalPurchase = ( {
 	const showOldSlider = ! isTierUpgradeSliderEnabled;
 	// const showOldSlider = true;
 
+	let continueButtonText = isStandalone
+		? translate( 'Get Stats' )
+		: translate( 'Get Jetpack Stats' );
+	if ( config.isEnabled( 'stats/checkout-flows-v2' ) ) {
+		continueButtonText = translate( 'Contribute and continue' );
+	}
+
 	return (
 		<div>
 			<div className={ `${ COMPONENT_CLASS_NAME }__notice` }>
 				{ translate(
-					'This plan is for personal sites only. If your site is used for a commercial activity, {{Button}}you will need to choose a commercial plan{{/Button}}.',
+					'This plan is for non-commercial sites only. Sites with any commercial activity {{Button}}require a commercial license{{/Button}}.',
 					{
 						components: {
 							Button: <Button variant="link" href="#" onClick={ handleClick } />,
@@ -252,7 +259,7 @@ const PersonalPurchase = ( {
 						} )
 					}
 				>
-					{ isStandalone ? translate( 'Get Stats' ) : translate( 'Get Jetpack Stats' ) }
+					{ continueButtonText }
 				</ButtonComponent>
 			) }
 		</div>

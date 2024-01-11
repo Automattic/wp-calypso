@@ -15,6 +15,8 @@ import {
 	isWpcomEnterpriseGridPlan,
 	type PlanSlug,
 	UrlFriendlyTermType,
+	getBillingMonthsForTerm,
+	URL_FRIENDLY_TERMS_MAPPING,
 } from '@automattic/calypso-products';
 import page from '@automattic/calypso-router';
 import { Button, Spinner } from '@automattic/components';
@@ -136,6 +138,12 @@ export interface PlansFeaturesMainProps {
 	removePaidDomain?: () => void;
 	setSiteUrlAsFreeDomainSuggestion?: ( freeDomainSuggestion: { domain_name: string } ) => void;
 	intervalType?: Extract< UrlFriendlyTermType, 'monthly' | 'yearly' | '2yearly' | '3yearly' >;
+	/**
+	 * An array of intervals to be displayed in the plan type selector. Defaults to [ 'yearly', '2yearly', '3yearly', 'monthly' ]
+	 */
+	displayedIntervals?: Array<
+		Extract< UrlFriendlyTermType, 'monthly' | 'yearly' | '2yearly' | '3yearly' >
+	>;
 	planTypeSelector?: 'interval';
 	withDiscount?: string;
 	discountEndDate?: Date;
@@ -174,11 +182,14 @@ export interface PlansFeaturesMainProps {
 	isStepperUpgradeFlow?: boolean;
 	isLaunchPage?: boolean | null;
 	isPlansInsideStepper?: boolean;
-	showBiennialToggle?: boolean;
 	hideUnavailableFeatures?: boolean; // used to hide features that are not available, instead of strike-through as explained in #76206
 	showLegacyStorageFeature?: boolean;
 	isSpotlightOnCurrentPlan?: boolean;
 	renderSiblingWhenLoaded?: () => ReactNode; // renders additional components as last dom node when plans grid dependecies are fully loaded
+	/**
+	 * Shows the plan type selector dropdown instead of the default toggle
+	 */
+	showPlanTypeSelectorDropdown?: boolean;
 }
 
 const SecondaryFormattedHeader = ( { siteSlug }: { siteSlug?: string | null } ) => {
@@ -225,7 +236,7 @@ const PlansFeaturesMain = ( {
 	hideEcommercePlan,
 	hideEnterprisePlan,
 	intent: intentFromProps, // do not set a default value for this prop here
-	showBiennialToggle,
+	displayedIntervals = [ 'yearly', '2yearly', '3yearly', 'monthly' ],
 	customerType = 'personal',
 	planTypeSelector = 'interval',
 	intervalType = 'yearly',
@@ -239,6 +250,7 @@ const PlansFeaturesMain = ( {
 	showLegacyStorageFeature = false,
 	isSpotlightOnCurrentPlan,
 	renderSiblingWhenLoaded,
+	showPlanTypeSelectorDropdown = false,
 	coupon,
 }: PlansFeaturesMainProps ) => {
 	const [ isModalOpen, setIsModalOpen ] = useState( false );
@@ -261,7 +273,6 @@ const PlansFeaturesMain = ( {
 	const { setShowDomainUpsellDialog } = useDispatch( WpcomPlansUI.store );
 	const domainFromHomeUpsellFlow = useSelector( getDomainFromHomeUpsellInQuery );
 	const showUpgradeableStorage = config.isEnabled( 'plans/upgradeable-storage' );
-	const showPlanTypeSelectorDropdown = config.isEnabled( 'onboarding/interval-dropdown' );
 	const observableForOdieRef = useObservableForOdie();
 	const currentPlanManageHref = useCurrentPlanManageHref();
 	const canUserManageCurrentPlan = useSelector( ( state: IAppState ) =>
@@ -424,6 +435,8 @@ const PlansFeaturesMain = ( {
 		showLegacyStorageFeature,
 		isSubdomainNotGenerated: ! resolvedSubdomainName.result,
 		storageAddOns,
+		coupon,
+		selectedSiteId: siteId,
 	} );
 
 	const planFeaturesForFeaturesGrid = usePlanFeaturesForGridPlans( {
@@ -507,6 +520,20 @@ const PlansFeaturesMain = ( {
 		_customerType = 'business';
 	}
 
+	let filteredDisplayedIntervals = displayedIntervals;
+	// Hide interval terms that are less than the current plan's term in months
+	if ( currentPlan?.productSlug && ! isFreePlan( currentPlan.productSlug ) ) {
+		const currentPlanIntervalTypeBillingMonths = getBillingMonthsForTerm(
+			getPlan( currentPlan.productSlug )?.term || ''
+		);
+		filteredDisplayedIntervals = displayedIntervals.filter( ( intervalType ) => {
+			const intervalTypeInMonths = getBillingMonthsForTerm(
+				URL_FRIENDLY_TERMS_MAPPING[ intervalType ] || ''
+			);
+			return intervalTypeInMonths >= currentPlanIntervalTypeBillingMonths;
+		} );
+	}
+
 	const planTypeSelectorProps = useMemo( () => {
 		return {
 			basePlansPath,
@@ -519,17 +546,20 @@ const PlansFeaturesMain = ( {
 			siteSlug,
 			selectedPlan,
 			selectedFeature,
-			showBiennialToggle,
+			displayedIntervals: filteredDisplayedIntervals,
 			showPlanTypeSelectorDropdown,
 			kind: planTypeSelector,
 			plans: gridPlansForFeaturesGrid.map( ( gridPlan ) => gridPlan.planSlug ),
 			currentSitePlanSlug: sitePlanSlug,
 			usePricingMetaForGridPlans,
 			recordTracksEvent,
+			coupon,
+			selectedSiteId: siteId,
 		};
 	}, [
 		_customerType,
 		basePlansPath,
+		filteredDisplayedIntervals,
 		gridPlansForFeaturesGrid,
 		intervalType,
 		planTypeSelector,
@@ -540,9 +570,10 @@ const PlansFeaturesMain = ( {
 		isInSignup,
 		isPlansInsideStepper,
 		isStepperUpgradeFlow,
-		showBiennialToggle,
 		showPlanTypeSelectorDropdown,
 		eligibleForWpcomMonthlyPlans,
+		coupon,
+		siteId,
 	] );
 
 	/**
@@ -783,7 +814,8 @@ const PlansFeaturesMain = ( {
 								{ ...planTypeSelectorProps }
 								layoutClassName="plans-features-main__plan-type-selector-layout"
 								enableStickyBehavior={ enablePlanTypeSelectorStickyBehavior }
-								stickyPlanTypeSelectorOffset={ masterbarHeight }
+								stickyPlanTypeSelectorOffset={ masterbarHeight - 1 }
+								coupon={ coupon }
 							/>
 						) }
 						<div
@@ -808,7 +840,7 @@ const PlansFeaturesMain = ( {
 									isLaunchPage={ isLaunchPage }
 									onUpgradeClick={ handleUpgradeClick }
 									selectedFeature={ selectedFeature }
-									siteId={ siteId }
+									selectedSiteId={ siteId }
 									intervalType={ intervalType }
 									hideUnavailableFeatures={ hideUnavailableFeatures }
 									currentSitePlanSlug={ sitePlanSlug }
@@ -821,6 +853,7 @@ const PlansFeaturesMain = ( {
 									allFeaturesList={ FEATURES_LIST }
 									onStorageAddOnClick={ handleStorageAddOnClick }
 									showRefundPeriod={ isAnyHostingFlow( flowName ) }
+									coupon={ coupon }
 								/>
 								{ showEscapeHatch && hidePlansFeatureComparison && (
 									<div className="plans-features-main__escape-hatch">
@@ -858,6 +891,7 @@ const PlansFeaturesMain = ( {
 												<PlanTypeSelector
 													{ ...planTypeSelectorProps }
 													layoutClassName="plans-features-main__plan-type-selector-layout"
+													coupon={ coupon }
 												/>
 											) }
 											<ComparisonGrid
@@ -867,7 +901,7 @@ const PlansFeaturesMain = ( {
 												onUpgradeClick={ handleUpgradeClick }
 												selectedFeature={ selectedFeature }
 												selectedPlan={ selectedPlan }
-												siteId={ siteId }
+												selectedSiteId={ siteId }
 												intervalType={ intervalType }
 												hideUnavailableFeatures={ hideUnavailableFeatures }
 												currentSitePlanSlug={ sitePlanSlug }
@@ -882,6 +916,7 @@ const PlansFeaturesMain = ( {
 												planTypeSelectorProps={
 													! hidePlanSelector ? planTypeSelectorProps : undefined
 												}
+												coupon={ coupon }
 											/>
 											<ComparisonGridToggle
 												onClick={ toggleShowPlansComparisonGrid }

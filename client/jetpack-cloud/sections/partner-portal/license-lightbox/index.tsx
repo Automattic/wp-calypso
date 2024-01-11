@@ -10,7 +10,7 @@ import useMobileSidebar from 'calypso/components/jetpack/jetpack-lightbox/hooks/
 import JetpackProductInfo from 'calypso/components/jetpack/jetpack-product-info';
 import { APIProductFamilyProduct } from 'calypso/state/partner-portal/types';
 import { useLicenseLightboxData } from './hooks/use-license-lightbox-data';
-import LicenseLightboxPaymentPlan from './license-lightbox-payment-plan';
+import LicenseLightboxJetpackManageLicense from './license-lightbox-jetpack-manage-license';
 
 import './style.scss';
 
@@ -22,10 +22,12 @@ export type LicenseLightBoxProps = {
 	onClose: () => void;
 	product: APIProductFamilyProduct;
 	extraAsideContent?: JSX.Element;
+	secondaryAsideContent?: JSX.Element;
 	className?: string;
 	quantity?: number;
 	isCTAExternalLink?: boolean;
 	ctaHref?: string;
+	showPaymentPlan?: boolean;
 };
 
 const LicenseLightbox: FunctionComponent< LicenseLightBoxProps > = ( {
@@ -38,8 +40,10 @@ const LicenseLightbox: FunctionComponent< LicenseLightBoxProps > = ( {
 	onClose,
 	product,
 	extraAsideContent,
+	secondaryAsideContent,
 	className,
 	quantity,
+	showPaymentPlan = true,
 } ) => {
 	const isLargeScreen = useBreakpoint( '>782px' );
 	const { title, product: productInfo } = useLicenseLightboxData( product );
@@ -65,7 +69,9 @@ const LicenseLightbox: FunctionComponent< LicenseLightBoxProps > = ( {
 			</JetpackLightboxMain>
 
 			<JetpackLightboxAside ref={ sidebarRef }>
-				<LicenseLightboxPaymentPlan product={ product } quantity={ quantity } />
+				{ showPaymentPlan && (
+					<LicenseLightboxJetpackManageLicense product={ product } quantity={ quantity } />
+				) }
 
 				<Button
 					className="license-lightbox__cta-button"
@@ -81,6 +87,12 @@ const LicenseLightbox: FunctionComponent< LicenseLightBoxProps > = ( {
 					) }
 				</Button>
 				{ extraAsideContent }
+				{ secondaryAsideContent && (
+					<>
+						<div className="license-lightbox__separator">Or</div>
+					</>
+				) }
+				{ secondaryAsideContent }
 			</JetpackLightboxAside>
 		</JetpackLightbox>
 	);

@@ -20,9 +20,12 @@ import { sanitizeSectionContent } from 'calypso/lib/plugins/sanitize-section-con
 import { getCurrentUserId } from 'calypso/state/current-user/selectors';
 import './style.scss';
 
-export const MarketplaceReviewItem = (
-	props: { review: MarketplaceReviewResponse } & MarketplaceReviewsQueryProps
-) => {
+type MarketplaceReviewItemProps = {
+	review: MarketplaceReviewResponse;
+	onEditCompleted?: () => void;
+} & MarketplaceReviewsQueryProps;
+
+export const MarketplaceReviewItem = ( props: MarketplaceReviewItemProps ) => {
 	const { review } = props;
 	const translate = useTranslate();
 	const [ isConfirmModalVisible, setIsConfirmModalVisible ] = useState( false );
@@ -78,6 +81,7 @@ export const MarketplaceReviewItem = (
 					setErrorMessage( error.message );
 				},
 				onSuccess: () => {
+					props.onEditCompleted?.();
 					setErrorMessage( '' );
 				},
 			}
@@ -142,6 +146,7 @@ export const MarketplaceReviewItem = (
 						rows={ 4 }
 						cols={ 40 }
 						name="content"
+						className="marketplace-review-item__editor"
 						value={ editorContent }
 						onChange={ setEditorContent }
 					/>
