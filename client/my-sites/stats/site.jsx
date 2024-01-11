@@ -548,6 +548,8 @@ class StatsSite extends Component {
 		// render purchase flow for Jetpack sites created after February 2024
 		if ( this.props.redirectToPurchase && this.props.slug ) {
 			page.redirect( `/stats/purchase/${ this.props.slug }` );
+
+			return;
 		}
 
 		return this.renderStats();
@@ -603,6 +605,9 @@ export default connect(
 		const isJetpack = isJetpackSite( state, siteId );
 		const statsAdminVersion = getJetpackStatsAdminVersion( state, siteId );
 		const isOdysseyStats = config.isEnabled( 'is_running_in_jetpack_site' );
+		const isSiteJetpackNotAtomic = isJetpackSite( state, siteId, {
+			treatAtomicAsJetpackSite: false,
+		} );
 
 		// Odyssey Stats: This UX is not possible in Odyssey as this page would not be able to render in the first place.
 		const showEnableStatsModule =
@@ -629,6 +634,7 @@ export default connect(
 		const redirectToPurchase =
 			config.isEnabled( 'stats/checkout-flows-v2' ) &&
 			isJetpack &&
+			isSiteJetpackNotAtomic &&
 			siteCreatedTimeStamp &&
 			new Date( siteCreatedTimeStamp ) > new Date( '2024-01-01' );
 
