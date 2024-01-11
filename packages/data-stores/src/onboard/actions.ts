@@ -219,11 +219,6 @@ export const setIsRedirecting = ( isRedirecting: boolean ) => ( {
 	isRedirecting,
 } );
 
-export const setLastLocation = ( path: string ) => ( {
-	type: 'SET_LAST_LOCATION' as const,
-	path,
-} );
-
 export const setPlanProductId = ( planProductId: number | undefined ) => ( {
 	type: 'SET_PLAN_PRODUCT_ID' as const,
 	planProductId,
@@ -442,7 +437,6 @@ export type OnboardAction = ReturnType<
 	| typeof setHasUsedDomainsStep
 	| typeof setHasUsedPlansStep
 	| typeof setIsRedirecting
-	| typeof setLastLocation
 	| typeof setPlanProductId
 	| typeof setPluginsToVerify
 	| typeof setProfilerData

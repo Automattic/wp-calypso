@@ -41,7 +41,6 @@ export function register(): typeof STORE_KEY {
 			'hasUsedPlansStep',
 			'intent',
 			'paidSubscribers',
-			'lastLocation',
 			'planProductId',
 			'selectedDesign',
 			'selectedFeatures',

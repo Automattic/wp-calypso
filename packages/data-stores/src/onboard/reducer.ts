@@ -232,16 +232,6 @@ const hasOnboardingStarted: Reducer< boolean, OnboardAction > = ( state = false,
 	return state;
 };
 
-const lastLocation: Reducer< string, OnboardAction > = ( state = '', action ) => {
-	if ( action.type === 'SET_LAST_LOCATION' ) {
-		return action.path;
-	}
-	if ( action.type === 'RESET_ONBOARD_STORE' ) {
-		return '';
-	}
-	return state;
-};
-
 const intent: Reducer< string, OnboardAction > = ( state = '', action ) => {
 	if ( action.type === 'SET_INTENT' ) {
 		return action.intent;
@@ -531,7 +521,6 @@ const reducer = combineReducers( {
 	showSignupDialog,
 	planProductId,
 	hasOnboardingStarted,
-	lastLocation,
 	intent,
 	startingPoint,
 	pendingAction,
