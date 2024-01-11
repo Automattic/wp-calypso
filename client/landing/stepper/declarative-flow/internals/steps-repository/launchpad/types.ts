@@ -61,11 +61,10 @@ export type TaskId =
 
 export interface TaskContext {
 	siteInfoQueryArgs?: { siteId?: number; siteSlug?: string | null };
-	displayGlobalStylesWarning?: boolean;
+	displayGlobalStylesWarning: boolean;
 	shouldDisplayWarning?: boolean;
 	globalStylesMinimumPlan?: string;
 	isVideoPressFlowWithUnsupportedPlan?: boolean;
-	getPlanTaskSubtitle: ( task: Task ) => ReactNode | string | null;
 	site: SiteDetails | null;
 	domainUpsellCompleted: boolean;
 	isEmailVerified: boolean;

@@ -282,7 +282,6 @@ export function getEnhancedTasks( {
 	return ( tasks || [] ).map( ( task ) => {
 		if ( shouldUseNewTaskDefinitions( flow ) ) {
 			const enhanced = getTaskDefinition( flow, task, {
-				getPlanTaskSubtitle,
 				siteInfoQueryArgs,
 				displayGlobalStylesWarning,
 				globalStylesMinimumPlan,
