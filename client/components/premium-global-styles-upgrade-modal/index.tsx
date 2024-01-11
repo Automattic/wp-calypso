@@ -10,6 +10,7 @@ import PlanPrice from 'calypso/my-sites/plan-price';
 import usePricingMetaForGridPlans from 'calypso/my-sites/plans-features-main/hooks/data-store/use-pricing-meta-for-grid-plans';
 import { useSelector } from 'calypso/state';
 import { getProductBySlug } from 'calypso/state/products-list/selectors';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import useGlobalStylesUpgradeTranslations from './use-global-styles-upgrade-translations';
 import './style.scss';
 
@@ -33,10 +34,13 @@ export default function PremiumGlobalStylesUpgradeModal( {
 }: PremiumGlobalStylesUpgradeModalProps ) {
 	const translate = useTranslate();
 	const premiumPlanProduct = useSelector( ( state ) => getProductBySlug( state, PLAN_PREMIUM ) );
+	const selectedSiteId = useSelector( getSelectedSiteId );
 	const translations = useGlobalStylesUpgradeTranslations( { numOfSelectedGlobalStyles } );
 	const isPremiumPlanProductLoaded = !! premiumPlanProduct;
 	const pricingMeta = usePricingMetaForGridPlans( {
+		coupon: undefined,
 		planSlugs: [ PLAN_PREMIUM ],
+		selectedSiteId,
 		storageAddOns: null,
 	} );
 
