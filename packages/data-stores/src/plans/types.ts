@@ -105,6 +105,7 @@ export interface SitePlan {
 	currentPlan?: boolean;
 	/**
 	 * This value is only returned for the current plan on the site.
+	 * It is only available from site plans and is the expiry date of an existing plan.
 	 */
 	expiry?: string;
 	/**

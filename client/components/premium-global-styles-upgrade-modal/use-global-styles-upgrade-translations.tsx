@@ -1,5 +1,5 @@
 import { PLAN_PREMIUM } from '@automattic/calypso-products';
-import { usePlans } from '@automattic/data-stores/src/plans';
+import { Plans } from '@automattic/data-stores';
 import { useTranslate } from 'i18n-calypso';
 
 interface Props {
@@ -8,7 +8,7 @@ interface Props {
 
 const useGlobalStylesUpgradeTranslations = ( { numOfSelectedGlobalStyles = 1 }: Props ) => {
 	const translate = useTranslate();
-	const plans = usePlans();
+	const plans = Plans.usePlans( { coupon: undefined } );
 	const planTitle = plans?.data?.[ PLAN_PREMIUM ]?.productNameShort ?? '';
 
 	const features = [

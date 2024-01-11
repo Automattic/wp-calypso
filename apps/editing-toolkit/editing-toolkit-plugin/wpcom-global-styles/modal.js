@@ -1,7 +1,7 @@
 /* global wpcomGlobalStyles */
 
 import { recordTracksEvent } from '@automattic/calypso-analytics';
-import { usePlans } from '@automattic/data-stores/src/plans';
+import { Plans } from '@automattic/data-stores';
 import { PLAN_PREMIUM } from '@automattic/data-stores/src/plans/constants';
 import { Button, Modal } from '@wordpress/components';
 import { useDispatch, useSelect } from '@wordpress/data';
@@ -16,7 +16,7 @@ import './modal.scss';
 const GlobalStylesModal = () => {
 	const isSiteEditor = useSelect( ( select ) => !! select( 'core/edit-site' ), [] );
 	const { viewCanvasPath } = useCanvas();
-	const plans = usePlans();
+	const plans = Plans.usePlans( { coupon: undefined } );
 
 	const isVisible = useSelect(
 		( select ) => {

@@ -13,6 +13,7 @@
 		{ "path": "./calypso-config" },
 		{ "path": "./calypso-e2e" },
 		{ "path": "./calypso-products" },
+		{ "path": "./calypso-razorpay" },
 		{ "path": "./calypso-stripe" },
 		{ "path": "./calypso-url" },
 		{ "path": "./components" },
