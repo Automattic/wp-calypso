@@ -45,7 +45,7 @@ const TitanSetUpThankYou = ( {
 }: TitanSetUpThankYouProps ) => {
 	const currentRoute = useSelector( getCurrentRoute );
 	const selectedSite = useSelector( getSelectedSite );
-	const selectedSiteSlug = isDomainOnlySite ? domainName : selectedSite?.slug;
+	const selectedSiteSlug = selectedSite?.slug ?? ( isDomainOnlySite ? domainName : null );
 	const titanAppsUrlPrefix = useTitanAppsUrlPrefix();
 	const translate = useTranslate();
 

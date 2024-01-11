@@ -142,7 +142,7 @@ function WebsiteContentSubmitted( { primaryDomain, siteSlug }: Props ) {
 			action={ translate( 'Manage domain' ) }
 			actionURL={ domainManagementList( siteSlug, currentRoute ) }
 			secondaryAction={ hasEmailWithUs ? translate( 'Manage email' ) : translate( 'Add email' ) }
-			secondaryActionURL={ getEmailManagementPath( siteSlug, null ) }
+			secondaryActionURL={ getEmailManagementPath( siteSlug ) }
 			secondaryActionCallback={ recordEmailClick }
 			illustration={ SiteBuildInProgressIllustration }
 			illustrationWidth={ 144 }

@@ -185,5 +185,5 @@ export const getEmailInDepthComparisonPath = (
 		source,
 	} );
 
-export const getMailboxesPath = ( siteName?: string ) =>
+export const getMailboxesPath = ( siteName?: string | null ) =>
 	siteName ? `/mailboxes/${ siteName }` : `/mailboxes`;
