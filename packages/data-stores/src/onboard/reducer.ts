@@ -183,16 +183,6 @@ const planCartItem: Reducer< MinimalRequestCartProduct | null, OnboardAction > =
 	return state;
 };
 
-const siteAccentColor: Reducer< string, OnboardAction > = ( state = '', action ) => {
-	if ( action.type === 'SET_SITE_ACCENT_COLOR' ) {
-		return action.siteAccentColor;
-	}
-	if ( action.type === 'RESET_ONBOARD_STORE' ) {
-		return '';
-	}
-	return state;
-};
-
 const hasOnboardingStarted: Reducer< boolean, OnboardAction > = ( state = false, action ) => {
 	if ( action.type === 'ONBOARDING_START' ) {
 		return true;
@@ -499,7 +489,6 @@ const reducer = combineReducers( {
 	hidePlansFeatureComparison,
 	siteDescription,
 	siteLogo,
-	siteAccentColor,
 	verticalId,
 	storeLocationCountryCode,
 	ecommerceFlowRecurType,

@@ -256,11 +256,6 @@ export const setSiteLogo = ( siteLogo: string | null ) => ( {
 	siteLogo,
 } );
 
-export const setSiteAccentColor = ( siteAccentColor: string ) => ( {
-	type: 'SET_SITE_ACCENT_COLOR' as const,
-	siteAccentColor,
-} );
-
 export const startOnboarding = () => ( {
 	type: 'ONBOARDING_START' as const,
 } );
@@ -439,7 +434,6 @@ export type OnboardAction = ReturnType<
 	| typeof setDomainCartItem
 	| typeof setSiteDescription
 	| typeof setSiteLogo
-	| typeof setSiteAccentColor
 	| typeof setVerticalId
 	| typeof setStoreLocationCountryCode
 	| typeof setEcommerceFlowRecurType

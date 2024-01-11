@@ -47,7 +47,6 @@ export function register(): typeof STORE_KEY {
 			'siteTitle',
 			'siteDescription',
 			'siteLogo',
-			'siteAccentColor',
 			'storeType',
 			'verticalId',
 			'storeLocationCountryCode',
