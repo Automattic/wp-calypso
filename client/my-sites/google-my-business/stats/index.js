@@ -237,7 +237,7 @@ class GoogleMyBusinessStats extends Component {
 						<Notice
 							status="is-error"
 							showDismiss={ false }
-							text={ translate( 'There is an error with your Google My Business account.' ) }
+							text={ translate( 'There is an error with your Google Business Profile account.' ) }
 						>
 							<NoticeAction href={ CALYPSO_CONTACT }>
 								{ translate( 'Contact Support' ) }

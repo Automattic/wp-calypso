@@ -64,10 +64,10 @@ class GoogleMyBusinessNewAccount extends Component {
 			<Main className="gmb-new-account" wideLayout>
 				<PageViewTracker path="/google-my-business/new/:site" title="Google My Business > New" />
 
-				<DocumentHead title={ translate( 'Google My Business' ) } />
+				<DocumentHead title={ translate( 'Google Business Profile' ) } />
 
 				<HeaderCake isCompact={ false } alwaysShowActionText={ false } onClick={ this.goBack }>
-					{ translate( 'Google My Business' ) }
+					{ translate( 'Google Business Profile' ) }
 				</HeaderCake>
 
 				<Card>

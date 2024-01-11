@@ -72,7 +72,7 @@ const wordads = {
 	showIntervals: true,
 } as NavItem;
 const googleMyBusiness = {
-	label: translate( 'Google My Business' ),
+	label: translate( 'Google Business Profile' ),
 	path: '/google-my-business/stats',
 	showIntervals: false,
 } as NavItem;
@@ -115,5 +115,5 @@ Object.defineProperty( insights, 'label', { get: () => translate( 'Insights' ) }
 Object.defineProperty( store, 'label', { get: () => translate( 'Store' ) } );
 Object.defineProperty( wordads, 'label', { get: () => translate( 'Ads' ) } );
 Object.defineProperty( googleMyBusiness, 'label', {
-	get: () => translate( 'Google My Business' ),
+	get: () => translate( 'Google Business Profile' ),
 } );
