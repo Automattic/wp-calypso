@@ -22,6 +22,7 @@ import {
 } from '@automattic/calypso-products';
 import { Gridicon } from '@automattic/components';
 import { FormStatus, useFormStatus } from '@automattic/composite-checkout';
+import { Plans } from '@automattic/data-stores';
 import { formatCurrency } from '@automattic/format-currency';
 import { isNewsletterOrLinkInBioFlow, isAnyHostingFlow } from '@automattic/onboarding';
 import { useShoppingCart } from '@automattic/shopping-cart';
@@ -122,20 +123,34 @@ export default function WPCheckoutOrderSummary( {
 				<CheckoutSummaryPriceListTitle>{ translate( 'Your order' ) }</CheckoutSummaryPriceListTitle>
 			) }
 			<CheckoutSummaryPriceList />
-			<CheckoutSummaryAdditionalDetails plan={ plan } />
+			<CheckoutSummaryAdditionalDetails plan={ plan } siteId={ siteId } />
 		</CheckoutSummaryCard>
 	);
 }
 
-function CheckoutSummaryAdditionalDetails( props: { plan: ResponseCartProduct | undefined } ) {
-	const { plan } = props;
+function CheckoutSummaryAdditionalDetails( props: {
+	plan: ResponseCartProduct | undefined;
+	siteId: number | undefined;
+} ) {
+	const { plan, siteId } = props;
+	const wooExpressIntroOffers = Plans.useIntroOffersForWooExpress( {
+		siteId,
+	} );
+	const wooExpressIntroOffer =
+		wooExpressIntroOffers && plan ? wooExpressIntroOffers[ plan.product_slug ] : undefined;
+
+	// console.log( 'wooExpressIntroOffer: ', wooExpressIntroOffer );
+
 	const cost = plan?.product_cost_display;
 	const productName = plan?.product_name;
-	const subtotal = plan?.item_subtotal_display;
+	const intervalPrice = wooExpressIntroOffer?.formattedPrice;
+	const intervalCount = wooExpressIntroOffer?.intervalCount;
+	const intervalUnit = wooExpressIntroOffer?.intervalUnit;
+
 	return (
 		plan && (
 			<div>
-				<p>{ `You'll be charged ${ subtotal } for the first 3 months of your ${ productName } plan.` }</p>
+				<p>{ `You'll be charged ${ intervalPrice } for the first ${ intervalCount } ${ intervalUnit } of your ${ productName } plan.` }</p>
 				<p>
 					{ `Once the offer period has expired, you'll be charged ${ cost } on an annual basis. You can cancel
 				your plan at any point in the first 3 months.` }
