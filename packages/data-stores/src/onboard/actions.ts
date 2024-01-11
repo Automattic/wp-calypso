@@ -236,15 +236,6 @@ export const setStoreType = ( storeType: string ) => ( {
 	storeType,
 } );
 
-export const setStoreAddressValue = (
-	store_address_field: string,
-	store_address_value: string
-) => ( {
-	type: 'SET_STORE_ADDRESS_VALUE' as const,
-	store_address_field,
-	store_address_value,
-} );
-
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const setPendingAction = ( pendingAction: undefined | ( () => Promise< any > ) ) => ( {
 	type: 'SET_PENDING_ACTION' as const,
@@ -369,7 +360,6 @@ export type OnboardAction = ReturnType<
 	| typeof setSiteTitle
 	| typeof setIntent
 	| typeof setStartingPoint
-	| typeof setStoreAddressValue
 	| typeof setPendingAction
 	| typeof setProgress
 	| typeof setProgressTitle
