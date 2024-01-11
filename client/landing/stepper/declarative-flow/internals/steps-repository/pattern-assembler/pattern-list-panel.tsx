@@ -2,6 +2,7 @@ import { Button } from '@wordpress/components';
 import { chevronDown } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback, useMemo, useState } from 'react';
+import { isEnabled } from 'calypso/server/config';
 import { PATTERN_ASSEMBLER_EVENTS } from './events';
 import { injectTitlesToPageListBlock } from './html-transformers';
 import PatternSelector from './pattern-selector';
@@ -37,7 +38,9 @@ const PatternListPanel = ( {
 	isNewSite,
 }: PatternListPanelProps ) => {
 	const translate = useTranslate();
-	const [ isShowMorePatterns, setIsShowMorePatterns ] = useState( false );
+	const [ isShowMorePatterns, setIsShowMorePatterns ] = useState(
+		isEnabled( 'pattern-assembler/v2' )
+	);
 	const categoryPatterns = selectedCategory ? patternsMapByCategory[ selectedCategory ] : [];
 	const category = useMemo(
 		() => selectedCategory && categories.find( ( { name } ) => name === selectedCategory ),
