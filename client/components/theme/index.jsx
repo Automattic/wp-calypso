@@ -335,7 +335,7 @@ export class Theme extends Component {
 
 	render() {
 		const { selectedStyleVariation, theme } = this.props;
-		const { name, description, style_variations = [] } = theme;
+		const { name, description, style_variations = [], isCustomGeneratedTheme } = theme;
 		const themeDescription = decodeEntities( description );
 
 		if ( this.props.isPlaceholder ) {
@@ -358,7 +358,7 @@ export class Theme extends Component {
 				isActive={ this.props.active }
 				isLoading={ this.props.loading }
 				isSoftLaunched={ this.props.softLaunched }
-				isShowDescriptionOnImageHover
+				isShowDescriptionOnImageHover={ ! isCustomGeneratedTheme }
 				onClick={ this.setBookmark }
 				onImageClick={ this.onScreenshotClick }
 				onStyleVariationClick={ this.onStyleVariationClick }
