@@ -1,3 +1,4 @@
+import { isNumber } from 'lodash';
 import { useMemo } from 'react';
 import slugToSelectorProduct from '../../slug-to-selector-product';
 import useItemPrice from '../../use-item-price';
@@ -18,7 +19,7 @@ export const usePricingBreakdown = ( {
 		product?.monthlyProductSlug || ''
 	);
 
-	const bundlePrice = discountedPrice || originalPrice || 0;
+	const bundlePrice = isNumber( discountedPrice ) ? discountedPrice : originalPrice || 0;
 
 	return useMemo( () => {
 		const items: Array< PricingBreakdownItem > = [];
