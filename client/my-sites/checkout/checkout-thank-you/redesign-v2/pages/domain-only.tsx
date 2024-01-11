@@ -8,42 +8,12 @@ import { useSelector } from 'calypso/state';
 import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import { getDomainPurchaseTypeAndPredicate } from '../../utils';
 import ThankYouDomainProduct from '../products/domain-product';
+import getDomainFooterDetails from './content/get-domain-footer-details';
 import type { ReceiptPurchase } from 'calypso/state/receipts/types';
 
 interface DomainOnlyThankYouProps {
 	purchases: ReceiptPurchase[];
 }
-
-export const getDomainFooterDetails = ( limit?: number ) => {
-	const details = [
-		{
-			key: 'footer-domain-essentials',
-			title: translate( 'Dive into domain essentials' ),
-			description: translate(
-				'Check out our support documentation for step-by-step instructions and expert guidance on your domain set up.'
-			),
-			buttonText: translate( 'Master the domain basics' ),
-			buttonHref: '/support/domains',
-			buttonOnClick: () => {
-				recordTracksEvent( 'calypso_thank_you_footer_domain_essentials' );
-			},
-		},
-		{
-			key: 'footer-domain-resources',
-			title: translate( 'Your go-to domain resource' ),
-			description: translate(
-				'Dive into our comprehensive support documentation to learn the basics of domains, from registration to management.'
-			),
-			buttonText: translate( 'Domain support resources' ),
-			buttonHref: '/support/category/domains-and-email/',
-			buttonOnClick: () => {
-				recordTracksEvent( 'calypso_thank_you_footer_domain_resources' );
-			},
-		},
-	];
-
-	return details.slice( 0, limit ?? details.length );
-};
 
 export default function DomainOnlyThankYou( { purchases }: DomainOnlyThankYouProps ) {
 	const [ , predicate ] = getDomainPurchaseTypeAndPredicate( purchases );
@@ -70,12 +40,10 @@ export default function DomainOnlyThankYou( { purchases }: DomainOnlyThankYouPro
 	};
 
 	const products = purchases.filter( predicate ).map( ( purchase ) => {
-		const domainNameSlug = purchase.meta.replace( '.', '-' );
-
 		return (
 			<ThankYouDomainProduct
 				purchase={ purchase }
-				key={ `domain-${ domainNameSlug }` }
+				key={ `domain-${ purchase.meta }` }
 				siteSlug={ siteSlug }
 				shareSite
 			/>

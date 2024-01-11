@@ -14,7 +14,7 @@ interface ThankYouV2Props {
 	upsellProps?: ThankYouUpsellProps;
 }
 
-const ThankYouV2: React.FC< ThankYouV2Props > = ( props: ThankYouV2Props ) => {
+export default function ThankYouV2( props: ThankYouV2Props ) {
 	const { title, subtitle, headerButtons, products, footerDetails, upsellProps } = props;
 
 	return (
@@ -28,6 +28,4 @@ const ThankYouV2: React.FC< ThankYouV2Props > = ( props: ThankYouV2Props ) => {
 			{ upsellProps && <ThankYouUpsell { ...upsellProps } /> }
 		</div>
 	);
-};
-
-export default ThankYouV2;
+}
