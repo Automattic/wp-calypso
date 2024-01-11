@@ -444,6 +444,9 @@ import {
 	PRODUCT_JETPACK_CREATOR_BI_YEARLY,
 	PRODUCT_JETPACK_CREATOR_YEARLY,
 	PRODUCT_JETPACK_CREATOR_MONTHLY,
+	PLAN_AGENCY_BLUE_HOST,
+	TYPE_AGENCY_BLUE_HOST,
+	FEATURE_UNLIMITED_MANAGED_MIGRATIONS,
 } from './constants';
 import type {
 	BillingTerm,
@@ -1970,6 +1973,23 @@ const get2023EnterprisGrideDetails = (): IncompleteWPcomPlan => ( {
 	get2023PricingGridSignupStorageOptions: () => [],
 } );
 
+// Not a real plan. This is introduced as a pilot as part of pau2Xa-5rG-p2.
+const get2023AgencyPlanDetails = (): IncompleteWPcomPlan => ( {
+	...getDotcomPlanDetails(),
+	group: GROUP_WPCOM,
+	type: TYPE_AGENCY_BLUE_HOST,
+	getTitle: () => i18n.translate( 'Agency' ),
+	getAudience: () => i18n.translate( 'Best for agencies' ),
+	getPlanTagline: () =>
+		i18n.translate(
+			"Manage multiple WordPress sites with WP Cloud's powerful infrastructure and Bluehost's platform experience."
+		),
+	getDescription: () => '',
+	get2023PricingGridSignupWpcomFeatures: () => [ FEATURE_UNLIMITED_MANAGED_MIGRATIONS ],
+	get2023PricingGridSignupJetpackFeatures: () => [],
+	get2023PricingGridSignupStorageOptions: () => [],
+} );
+
 const getJetpackPersonalDetails = (): IncompleteJetpackPlan => ( {
 	group: GROUP_JETPACK,
 	type: TYPE_PERSONAL,
@@ -3007,6 +3027,15 @@ export const PLANS_LIST: Record< string, Plan | JetpackPlan | WPComPlan > = {
 		getBillingTimeFrame: () => '',
 		getProductId: () => 0,
 		getStoreSlug: () => PLAN_ENTERPRISE_GRID_WPCOM,
+		getPathSlug: () => 'enterprise',
+	},
+	// Not a real plan. This is introduced as a pilot as part of pau2Xa-5rG-p2.
+	[ PLAN_AGENCY_BLUE_HOST ]: {
+		...get2023AgencyPlanDetails(),
+		term: TERM_ANNUALLY,
+		getBillingTimeFrame: () => '',
+		getProductId: () => 0,
+		getStoreSlug: () => PLAN_AGENCY_BLUE_HOST,
 		getPathSlug: () => 'enterprise',
 	},
 

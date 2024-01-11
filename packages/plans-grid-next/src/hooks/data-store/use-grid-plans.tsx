@@ -22,6 +22,7 @@ import {
 	isBusinessPlan,
 	isEcommercePlan,
 	TYPE_P2_PLUS,
+	TYPE_AGENCY_BLUE_HOST,
 } from '@automattic/calypso-products';
 import { Plans, type AddOnMeta } from '@automattic/data-stores';
 import { isSamePlan } from '../../lib/is-same-plan';
@@ -92,6 +93,7 @@ const usePlanTypesWithIntent = ( {
 		TYPE_BUSINESS,
 		TYPE_ECOMMERCE,
 		...( isEnterpriseAvailable ? [ TYPE_ENTERPRISE_GRID_WPCOM ] : [] ),
+		TYPE_AGENCY_BLUE_HOST,
 		TYPE_WOOEXPRESS_SMALL,
 		TYPE_WOOEXPRESS_MEDIUM,
 		TYPE_P2_PLUS,
@@ -141,8 +143,8 @@ const usePlanTypesWithIntent = ( {
 				TYPE_PERSONAL,
 				TYPE_PREMIUM,
 				TYPE_BUSINESS,
-				TYPE_ECOMMERCE,
 				...( isEnterpriseAvailable ? [ TYPE_ENTERPRISE_GRID_WPCOM ] : [] ),
+				TYPE_AGENCY_BLUE_HOST,
 			];
 			break;
 		case 'plans-business-trial':

@@ -17,6 +17,7 @@ import {
 	UrlFriendlyTermType,
 	getBillingMonthsForTerm,
 	URL_FRIENDLY_TERMS_MAPPING,
+	PLAN_AGENCY_BLUE_HOST,
 } from '@automattic/calypso-products';
 import page from '@automattic/calypso-router';
 import { Button, Spinner } from '@automattic/components';
@@ -478,7 +479,11 @@ const PlansFeaturesMain = ( {
 
 	// we neeed only the visible ones for comparison grid (these should extend into plans-ui data store selectors)
 	const gridPlansForComparisonGrid = useMemo( () => {
-		const hiddenPlans = [ PLAN_HOSTING_TRIAL_MONTHLY, PLAN_ENTERPRISE_GRID_WPCOM ];
+		const hiddenPlans = [
+			PLAN_HOSTING_TRIAL_MONTHLY,
+			PLAN_ENTERPRISE_GRID_WPCOM,
+			PLAN_AGENCY_BLUE_HOST,
+		];
 
 		return filteredPlansForPlanFeatures.reduce( ( acc, gridPlan ) => {
 			if ( gridPlan.isVisible && ! hiddenPlans.includes( gridPlan.planSlug ) ) {

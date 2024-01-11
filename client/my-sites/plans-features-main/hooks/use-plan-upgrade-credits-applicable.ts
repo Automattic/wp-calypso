@@ -1,5 +1,9 @@
-import { PlanSlug, PLAN_ENTERPRISE_GRID_WPCOM } from '@automattic/calypso-products';
-import { useMaxPlanUpgradeCredits } from 'calypso/my-sites/plans-features-main/hooks/use-max-plan-upgrade-credits';
+import {
+	PlanSlug,
+	PLAN_ENTERPRISE_GRID_WPCOM,
+	PLAN_AGENCY_BLUE_HOST,
+} from '@automattic/calypso-products';
+import { useMaxPlanUpgradeCredits } from 'calypso/my-sites/plans-grid/hooks/use-calculate-max-plan-upgrade-credit';
 import { useSelector } from 'calypso/state';
 import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
 import { getSitePlanSlug } from 'calypso/state/sites/plans/selectors';
@@ -28,7 +32,7 @@ export function usePlanUpgradeCreditsApplicable(
 	);
 	const isHigherPlanAvailable = function () {
 		const visiblePlansWithoutEnterprise = visiblePlans.filter(
-			( planName ) => planName !== PLAN_ENTERPRISE_GRID_WPCOM
+			( planName ) => ! [ PLAN_ENTERPRISE_GRID_WPCOM, PLAN_AGENCY_BLUE_HOST ].includes( planName )
 		);
 		const highestPlanName = visiblePlansWithoutEnterprise.pop();
 		return highestPlanName !== currentSitePlanSlug;

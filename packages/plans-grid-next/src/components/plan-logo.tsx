@@ -8,8 +8,9 @@ import {
 	isPremiumPlan,
 	isFreePlan,
 	PlanSlug,
+	isAgencyBlueHostPlan,
 } from '@automattic/calypso-products';
-import { CloudLogo, VIPLogo, WooLogo } from '@automattic/components';
+import { CloudLogo, VIPLogo, WooLogo, BluehostLogo } from '@automattic/components';
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import { usePlansGridContext } from '../grid-context';
@@ -104,6 +105,16 @@ const PlanLogo: React.FunctionComponent< {
 						activeTooltipId={ activeTooltipId }
 					>
 						<VIPLogo />
+					</Plans2023Tooltip>
+				) }
+				{ isAgencyBlueHostPlan( planSlug ) && (
+					<Plans2023Tooltip
+						text={ translate( 'The trusted choice for enterprise agency hosting.' ) }
+						id="agency-bluehost-logo"
+						setActiveTooltipId={ setActiveTooltipId }
+						activeTooltipId={ activeTooltipId }
+					>
+						<BluehostLogo />
 					</Plans2023Tooltip>
 				) }
 			</header>

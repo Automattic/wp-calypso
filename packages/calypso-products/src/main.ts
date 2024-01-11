@@ -43,6 +43,7 @@ import {
 	PLAN_HOSTING_TRIAL_MONTHLY,
 	PLAN_MIGRATION_TRIAL_MONTHLY,
 	GROUP_P2,
+	TYPE_AGENCY_BLUE_HOST,
 } from './constants';
 import { featureGroups, wooExpressFeatureGroups } from './feature-group-plan-map';
 import { PLANS_LIST } from './plans-list';
@@ -149,6 +150,10 @@ export function getPlanClass( planKey: string ): string {
 
 	if ( isWpcomEnterpriseGridPlan( planKey ) ) {
 		return 'is-wpcom-enterprise-grid-plan';
+	}
+
+	if ( isAgencyBlueHostPlan( planKey ) ) {
+		return 'is-agency-blue-host-host';
 	}
 
 	if ( isProPlan( planKey ) ) {
@@ -355,6 +360,11 @@ export function is100YearPlan( planSlug: string ): boolean {
 // This is not a real plan, but added to display Enterprise in the pricing grid.
 export function isWpcomEnterpriseGridPlan( planSlug: string ): boolean {
 	return planMatches( planSlug, { type: TYPE_ENTERPRISE_GRID_WPCOM, group: GROUP_WPCOM } );
+}
+
+// Not a real plan. This is introduced as a pilot as part of pau2Xa-5rG-p2.
+export function isAgencyBlueHostPlan( planSlug: string ): boolean {
+	return planMatches( planSlug, { type: TYPE_AGENCY_BLUE_HOST, group: GROUP_WPCOM } );
 }
 
 export function isWooExpressPlusPlan( planSlug: string ): boolean {

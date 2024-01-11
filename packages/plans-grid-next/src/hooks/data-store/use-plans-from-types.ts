@@ -7,6 +7,7 @@ import {
 	TERMS_LIST,
 	TYPE_P2_PLUS,
 	GROUP_P2,
+	TYPE_AGENCY_BLUE_HOST,
 } from '@automattic/calypso-products';
 import warn from '@wordpress/warning';
 import type { PlansIntent } from '../../types';
@@ -24,6 +25,7 @@ const usePlansFromTypes = ( { planTypes, term, intent }: Props ): PlanSlug[] => 
 		const planQuery: { type: string; term?: string; group?: string } = [
 			TYPE_FREE,
 			TYPE_ENTERPRISE_GRID_WPCOM,
+			TYPE_AGENCY_BLUE_HOST,
 			TYPE_WOO_EXPRESS_PLUS,
 			TYPE_P2_PLUS,
 		].includes( type )

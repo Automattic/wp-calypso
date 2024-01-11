@@ -55,6 +55,7 @@ export const PLAN_WPCOM_PRO_MONTHLY = 'pro-plan-monthly';
 export const PLAN_WPCOM_PRO_2_YEARS = 'pro-plan-2y';
 export const PLAN_WPCOM_STARTER = 'starter-plan';
 export const PLAN_ENTERPRISE_GRID_WPCOM = 'plan-enterprise-grid-wpcom'; // Not a real plan; we show the VIP section in the plans grid as part of pdgrnI-1Qp-p2.
+export const PLAN_AGENCY_BLUE_HOST = 'plan-agency-blue-host'; // Not a real plan. This is introduced as a pilot as part of pau2Xa-5rG-p2.
 export const PLAN_MIGRATION_TRIAL_MONTHLY = 'wp_bundle_migration_trial_monthly';
 export const PLAN_HOSTING_TRIAL_MONTHLY = 'wp_bundle_hosting_trial_monthly';
 
@@ -94,6 +95,7 @@ export const WPCOM_PLANS = < const >[
 	PLAN_WPCOM_PRO_2_YEARS,
 	PLAN_WPCOM_STARTER,
 	PLAN_ENTERPRISE_GRID_WPCOM,
+	PLAN_AGENCY_BLUE_HOST,
 	PLAN_WOOEXPRESS_MEDIUM,
 	PLAN_WOOEXPRESS_MEDIUM_MONTHLY,
 	PLAN_WOOEXPRESS_SMALL,

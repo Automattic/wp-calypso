@@ -304,6 +304,7 @@ import {
 	FEATURE_COMMISSION_FEE_WOO_FEATURES,
 	FEATURE_PERSONAL_THEMES,
 	FEATURE_STATS_PAID,
+	FEATURE_UNLIMITED_MANAGED_MIGRATIONS,
 } from '@automattic/calypso-products';
 import { localizeUrl } from '@automattic/i18n-utils';
 import i18n from 'i18n-calypso';
@@ -2691,6 +2692,13 @@ export const FEATURES_LIST: FeatureList = {
 		getDescription: () => '',
 	},
 	/* END: Woo Express Features */
+
+	/* START: Bluehost features */
+	[ FEATURE_UNLIMITED_MANAGED_MIGRATIONS ]: {
+		getSlug: () => FEATURE_UNLIMITED_MANAGED_MIGRATIONS,
+		getTitle: () => i18n.translate( 'Unlimited managed migrations' ),
+	},
+	/* END: Bluehost features */
 };
 
 export const getPlanFeaturesObject = ( planFeaturesList?: Array< string > ) => {

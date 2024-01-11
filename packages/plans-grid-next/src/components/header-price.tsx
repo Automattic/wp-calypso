@@ -1,5 +1,9 @@
-import { isWpcomEnterpriseGridPlan, type PlanSlug } from '@automattic/calypso-products';
-import { PlanPrice } from '@automattic/components';
+import {
+	PlanPrice,
+	isAgencyBlueHostPlan,
+	isWpcomEnterpriseGridPlan,
+	type PlanSlug,
+} from '@automattic/calypso-products';
 import styled from '@emotion/styled';
 import { useTranslate } from 'i18n-calypso';
 import { usePlansGridContext } from '../grid-context';
@@ -153,6 +157,21 @@ const PlanFeatures2023GridHeaderPrice = ( {
 	const isAnyVisibleGridPlanOnIntroOffer = visibleGridPlans.some(
 		( { pricing } ) => pricing.introOffer && ! pricing.introOffer.isOfferComplete
 	);
+
+	if ( isAgencyBlueHostPlan( planSlug ) ) {
+		return (
+			<HeaderPriceContainer>
+				<PlanPrice
+					currencyCode="USD"
+					rawPrice={ 6500 }
+					displayPerMonthNotation={ false }
+					isLargeCurrency={ isLargeCurrency }
+					isSmallestUnit={ true }
+					priceDisplayWrapperClassName="plans-grid-2023__html-price-display-wrapper"
+				/>
+			</HeaderPriceContainer>
+		);
+	}
 
 	if ( isWpcomEnterpriseGridPlan( planSlug ) || ! isPricedPlan ) {
 		return null;

@@ -2,6 +2,7 @@ import {
 	FEATURE_CUSTOM_DOMAIN,
 	getPlan,
 	getPlanClass,
+	isAgencyBlueHostPlan,
 	isBusinessTrial,
 	isWooExpressMediumPlan,
 	isWooExpressPlan,
@@ -424,8 +425,10 @@ class FeaturesGrid extends Component< FeaturesGridProps > {
 		const { translate, gridPlans } = this.props;
 
 		return renderedGridPlans.map( ( { planSlug } ) => {
-			const shouldRenderEnterpriseLogos = isWpcomEnterpriseGridPlan( planSlug );
-			const shouldShowFeatureTitle = ! isWpComFreePlan( planSlug ) && ! shouldRenderEnterpriseLogos;
+			const shouldShowFeatureTitle =
+				! isWpComFreePlan( planSlug ) &&
+				! isWpcomEnterpriseGridPlan( planSlug ) &&
+				! isAgencyBlueHostPlan( planSlug );
 			const indexInGridPlansForFeaturesGrid = gridPlans.findIndex(
 				( { planSlug: slug } ) => slug === planSlug
 			);
@@ -438,12 +441,13 @@ class FeaturesGrid extends Component< FeaturesGridProps > {
 				translate( 'Everything in %(planShortName)s, plus:', {
 					args: { planShortName: previousProductName },
 				} );
+			const bluehostTitle = translate( 'Perfect for agencies, with:' );
 			const classes = classNames(
 				'plan-features-2023-grid__common-title',
 				getPlanClass( planSlug )
 			);
 			const rowspanProp =
-				options?.isTableCell && shouldRenderEnterpriseLogos ? { rowSpan: '2' } : {};
+				options?.isTableCell && isWpcomEnterpriseGridPlan( planSlug ) ? { rowSpan: '2' } : {};
 			return (
 				<PlanDivOrTdContainer
 					key={ planSlug }
@@ -451,8 +455,11 @@ class FeaturesGrid extends Component< FeaturesGridProps > {
 					className="plan-features-2023-grid__table-item"
 					{ ...rowspanProp }
 				>
-					{ shouldShowFeatureTitle && <div className={ classes }>{ title }</div> }
-					{ shouldRenderEnterpriseLogos && this.renderEnterpriseClientLogos() }
+					{ isAgencyBlueHostPlan( planSlug ) && <div className={ classes }>{ bluehostTitle }</div> }
+					{ ! isAgencyBlueHostPlan( planSlug ) && shouldShowFeatureTitle && (
+						<div className={ classes }>{ title }</div>
+					) }
+					{ isWpcomEnterpriseGridPlan( planSlug ) && this.renderEnterpriseClientLogos() }
 				</PlanDivOrTdContainer>
 			);
 		} );

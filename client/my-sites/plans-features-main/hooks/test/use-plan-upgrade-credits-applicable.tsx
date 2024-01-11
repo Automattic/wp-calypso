@@ -9,6 +9,7 @@ import {
 	PLAN_ECOMMERCE,
 	PLAN_FREE,
 	PlanSlug,
+	PLAN_AGENCY_BLUE_HOST,
 } from '@automattic/calypso-products';
 import { useMaxPlanUpgradeCredits } from 'calypso/my-sites/plans-features-main/hooks/use-max-plan-upgrade-credits';
 import { usePlanUpgradeCreditsApplicable } from 'calypso/my-sites/plans-features-main/hooks/use-plan-upgrade-credits-applicable';
@@ -51,6 +52,7 @@ const plansList: PlanSlug[] = [
 	PLAN_BUSINESS,
 	PLAN_ECOMMERCE,
 	PLAN_ENTERPRISE_GRID_WPCOM,
+	PLAN_AGENCY_BLUE_HOST,
 ];
 describe( 'usePlanUpgradeCreditsApplicable hook', () => {
 	beforeEach( () => {

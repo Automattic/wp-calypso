@@ -467,3 +467,6 @@ export const FEATURE_TYPE_JETPACK_SCAN = 'jetpack_scan';
 export const FEATURE_TYPE_JETPACK_SEARCH = 'jetpack_search';
 export const FEATURE_TYPE_JETPACK_STATS = 'jetpack_stats';
 export const FEATURE_TYPE_JETPACK_VIDEOPRESS = 'jetpack_videopress';
+
+// Bluehost features
+export const FEATURE_UNLIMITED_MANAGED_MIGRATIONS = 'unlimited-managed-migrations';

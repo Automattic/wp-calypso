@@ -107,6 +107,14 @@
 		}
 	}
 
+	&.is-agency-blue-host-host {
+		background-color: var(--studio-gray-80);
+		color: var(--studio-gray-0);
+
+		&:focus {
+			box-shadow: 0 0 0 2px var(--studio-white), 0 0 0 4px var(--studio-gray-80);
+		}
+	}
 	&.is-p2-plus-plan {
 		background-color: var(--color-accent);
 		color: var(--color-text-inverted);
