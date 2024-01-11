@@ -27,7 +27,7 @@ export default function ThemeTierBadge( {
 		isThemePurchased( state, themeId, siteId )
 	);
 	const themeTier = useSelector( ( state ) => getThemeTierForTheme( state, themeId ) );
-	const isThemeAllowed = useSelector( ( state ) => isThemeAllowedOnSite( state, themeId ) );
+	const isThemeAllowed = useSelector( ( state ) => isThemeAllowedOnSite( state, siteId, themeId ) );
 
 	const getBadge = () => {
 		if ( BUNDLED_THEME === themeType ) {

@@ -14,7 +14,7 @@ import ThemeTierTooltipTracker from './theme-tier-tooltip-tracker';
 export default function ThemeTierUpgradeBadge() {
 	const translate = useTranslate();
 	const { themeId } = useThemeTierBadgeContext();
-	const { themeTier } = useSelector( ( state ) => getThemeTierForTheme( state, themeId ) );
+	const themeTier = useSelector( ( state ) => getThemeTierForTheme( state, themeId ) );
 
 	const tierMinimumUpsellPlan = THEME_TIERS[ themeTier?.slug ]?.minimumUpsellPlan;
 	const mappedPlan = getPlan( tierMinimumUpsellPlan );

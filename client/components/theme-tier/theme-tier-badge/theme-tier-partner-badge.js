@@ -24,7 +24,7 @@ export default function ThemeTierPartnerBadge() {
 	const subscriptionPrices = useSelector( ( state ) =>
 		getMarketplaceThemeSubscriptionPrices( state, themeId )
 	);
-	const isThemeAllowed = useSelector( ( state ) => isThemeAllowedOnSite( state, themeId ) );
+	const isThemeAllowed = useSelector( ( state ) => isThemeAllowedOnSite( state, siteId, themeId ) );
 
 	const labelText = isThemeAllowed
 		? translate( 'Subscribe' )
