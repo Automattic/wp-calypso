@@ -19,7 +19,7 @@ export default function PaymentMethodListV2() {
 				<LayoutHeader>
 					<Breadcrumb
 						items={ [
-							{ label: translate( 'Payment Methods' ), href: '/partner-portal/payment-method' },
+							{ label: translate( 'Payment Methods' ), href: '/partner-portal/payment-methods' },
 							{ label: translate( 'Add new card' ) },
 						] }
 					/>
