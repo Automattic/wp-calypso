@@ -8,7 +8,6 @@ import { SiteGoal, STORE_KEY } from './constants';
 import { ProfilerData } from './types';
 import type { DomainTransferData, State } from '.';
 import type { DomainSuggestion } from '../domain-suggestions';
-import type { FeatureId } from '../shared-types';
 // somewhat hacky, but resolves the circular dependency issue
 import type { Design, StyleVariation } from '@automattic/design-picker/src/types';
 import type { MinimalRequestCartProduct } from '@automattic/shopping-cart';
@@ -24,11 +23,6 @@ function isBlankCanvasDesign( design: { slug: string } | undefined ): boolean {
 type Language = {
 	value: number;
 };
-
-export const addFeature = ( featureId: FeatureId ) => ( {
-	type: 'ADD_FEATURE' as const,
-	featureId,
-} );
 
 export interface CreateSiteBaseActionParameters {
 	username: string;
@@ -169,11 +163,6 @@ export function* createSenseiSite( {
 
 	return success;
 }
-
-export const removeFeature = ( featureId: FeatureId ) => ( {
-	type: 'REMOVE_FEATURE' as const,
-	featureId,
-} );
 
 export const resetFonts = () => ( {
 	type: 'RESET_FONTS' as const,
@@ -385,8 +374,6 @@ export const setPaidSubscribers = ( paidSubscribers: boolean ) => ( {
 } );
 
 export type OnboardAction = ReturnType<
-	| typeof addFeature
-	| typeof removeFeature
 	| typeof resetFonts
 	| typeof resetOnboardStore
 	| typeof resetOnboardStoreWithSkipFlags
