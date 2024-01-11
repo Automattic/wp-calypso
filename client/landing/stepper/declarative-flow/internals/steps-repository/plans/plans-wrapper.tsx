@@ -27,8 +27,10 @@ import PlansFeaturesMain from 'calypso/my-sites/plans-features-main';
 import PlanFAQ from 'calypso/my-sites/plans-features-main/components/plan-faq';
 import StepWrapper from 'calypso/signup/step-wrapper';
 import { getIntervalType } from 'calypso/signup/steps/plans/util';
+import { useSelector } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { warningNotice } from 'calypso/state/notices/actions';
+import { isUserEligibleForFreeHostingTrial } from 'calypso/state/selectors/is-user-eligible-for-free-hosting-trial';
 import { setSelectedSiteId } from 'calypso/state/ui/actions';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { ONBOARD_STORE } from '../../../../stores';
@@ -82,18 +84,19 @@ const PlansWrapper: React.FC< Props > = ( props ) => {
 	const site = useSite();
 	const siteId = site?.ID;
 	const { __ } = useI18n();
+	const isEligible = useSelector( isUserEligibleForFreeHostingTrial );
 
 	useEffect( () => {
 		if ( ! selectedSiteId && siteId ) {
 			setSelectedSiteId( siteId );
 		}
 
-		if ( window.location.href.indexOf( 'hosting-trial-not-eligible' ) !== -1 ) {
+		if ( ! isEligible && flowName === 'new-hosted-site' ) {
 			warningNotice(
 				__( 'Looks like you’ve already used your free trial. Let’s find you the perfect plan.' )
 			);
 		}
-	}, [ selectedSiteId, siteId, setSelectedSiteId ] );
+	}, [ isEligible, selectedSiteId, siteId, setSelectedSiteId ] );
 
 	const translate = useTranslate();
 	const isDesktop = useDesktopBreakpoint();
