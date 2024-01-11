@@ -24,7 +24,7 @@ const FramerMotionReorderListItem = ( {
 }: FramerMotionReorderListItemProps ) => {
 	return (
 		<Reorder.Item
-			style={ { originX: '0px', originY: '0px' } }
+			style={ { originX: '0px', originY: '0px', position: 'relative' } }
 			value={ item.key }
 			layout="position"
 			onDragStart={ onReorderStart }
