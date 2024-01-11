@@ -1,16 +1,15 @@
-import config from '@automattic/calypso-config';
 import {
 	FEATURE_WOOP,
-	WPCOM_FEATURES_ATOMIC,
-	WPCOM_FEATURES_PREMIUM_THEMES,
+	PLAN_BUSINESS,
 	PLAN_PERSONAL,
 	PLAN_PREMIUM,
-	PLAN_BUSINESS,
+	WPCOM_FEATURES_ATOMIC,
+	WPCOM_FEATURES_PREMIUM_THEMES,
 } from '@automattic/calypso-products';
 import { getCalypsoUrl } from '@automattic/calypso-url';
 import { useDispatch } from '@wordpress/data';
 import { __ } from '@wordpress/i18n';
-import { useEffect, useState, useCallback } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import wpcom from 'calypso/lib/wp';
 import tracksRecordEvent from '../../tracking/track-record-event';
 import { UPGRADE_DONE_NOTICE_ID } from '../constants';
@@ -139,10 +138,7 @@ export const useCanPreviewButNeedUpgrade = (
 
 	const handleCanPreviewButNeedUpgrade = useCallback(
 		( previewingTheme: ReturnType< typeof usePreviewingTheme > ) => {
-			const livePreviewUpgradeTypes = [ WOOCOMMERCE_THEME, PREMIUM_THEME ];
-			if ( config.isEnabled( 'themes/tiers' ) ) {
-				livePreviewUpgradeTypes.push( PERSONAL_THEME );
-			}
+			const livePreviewUpgradeTypes = [ WOOCOMMERCE_THEME, PREMIUM_THEME, PERSONAL_THEME ];
 
 			/**
 			 * Currently, Live Preview only supports upgrades for WooCommerce and Premium themes.
