@@ -14,12 +14,6 @@ export const isRedesignV2 = ( props: CheckoutThankYouCombinedProps ) => {
 		return false;
 	}
 
-	const purchases = getPurchases( props );
-
-	// ThankYou page for only purchasing a plan.
-	if ( purchases.length === 1 ) {
-		return isWpComPlan( purchases[ 0 ].productSlug );
-	}
 	return false;
 };
 
@@ -46,6 +40,10 @@ export const isRefactoredForThankYouV2 = ( props: CheckoutThankYouCombinedProps 
 
 	if ( isDomainOnly( purchases ) ) {
 		return true;
+	}
+
+	if ( purchases.length === 1 ) {
+		return isWpComPlan( purchases[ 0 ].productSlug );
 	}
 
 	return false;

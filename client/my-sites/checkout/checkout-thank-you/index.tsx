@@ -97,6 +97,7 @@ import ProPlanDetails from './pro-plan-details';
 import MasterbarStyled from './redesign-v2/masterbar-styled';
 import DomainBulkTransferThankYou from './redesign-v2/pages/domain-bulk-transfer';
 import DomainOnlyThankYou from './redesign-v2/pages/domain-only';
+import PlanOnlyThankYou from './redesign-v2/pages/plan-only';
 import CheckoutMasterbar from './redesign-v2/sections/CheckoutMasterbar';
 import Footer from './redesign-v2/sections/Footer';
 import { isRedesignV2, isRefactoredForThankYouV2 } from './redesign-v2/utils';
@@ -582,6 +583,8 @@ export class CheckoutThankYou extends Component<
 				);
 			} else if ( isDomainOnly( purchases ) ) {
 				pageContent = <DomainOnlyThankYou purchases={ purchases } />;
+			} else if ( purchases.length === 1 && isPlan( purchases[ 0 ] ) ) {
+				pageContent = <PlanOnlyThankYou purchases={ purchases } />;
 			}
 
 			if ( pageContent ) {
