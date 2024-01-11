@@ -33,6 +33,7 @@ export default function PlanOnlyThankYou( { purchases }: PlanOnlyThankYouProps )
 	// Promote themes in the footer details for sites that are 6 months old or older.
 	if ( isMonthsOld( siteCreatedTimeStamp ?? '', 6 ) ) {
 		footerDetails.push( {
+			key: 'footer-site-refresh',
 			title: translate( 'A site refresh' ),
 			description: translate(
 				'A new look and feel can help you stand out from the crowd. Get a new theme and make an impression.'
@@ -46,6 +47,7 @@ export default function PlanOnlyThankYou( { purchases }: PlanOnlyThankYouProps )
 	}
 
 	footerDetails.push( {
+		key: 'footer-support',
 		title: translate( 'Everything you need to know' ),
 		description: translate( 'Explore our support guides and find an answer to every question.' ),
 		buttonText: translate( 'Explore support resources' ),
