@@ -66,19 +66,6 @@ const selectedFeatures: Reducer< FeatureId[], OnboardAction > = (
 	return state;
 };
 
-const selectedSite: Reducer< number | undefined, OnboardAction > = (
-	state = undefined,
-	action
-) => {
-	if ( action.type === 'SET_SELECTED_SITE' ) {
-		return action.selectedSite;
-	}
-	if ( action.type === 'RESET_ONBOARD_STORE' ) {
-		return undefined;
-	}
-	return state;
-};
-
 const siteTitle: Reducer< string, OnboardAction > = ( state = '', action ) => {
 	if ( action.type === 'SET_SITE_TITLE' ) {
 		return action.siteTitle;
@@ -408,7 +395,6 @@ const reducer = combineReducers( {
 	storeType,
 	selectedDesign,
 	selectedStyleVariation,
-	selectedSite,
 	siteTitle,
 	intent,
 	startingPoint,

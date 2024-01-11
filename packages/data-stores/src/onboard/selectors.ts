@@ -28,7 +28,6 @@ export const getProductCartItems = ( state: State ) => state.productCartItems;
 export const getSelectedDesign = ( state: State ) => state.selectedDesign;
 export const getSelectedStyleVariation = ( state: State ) => state.selectedStyleVariation;
 export const getSelectedDomain = ( state: State ) => state.domain;
-export const getSelectedSite = ( state: State ) => state.selectedSite;
 export const getSelectedSiteTitle = ( state: State ) => state.siteTitle;
 export const getSelectedSiteLogo = ( state: State ) => state.siteLogo;
 export const getSelectedSiteDescription = ( state: State ) => state.siteDescription;

@@ -201,11 +201,6 @@ export const setSelectedStyleVariation = (
 	selectedStyleVariation,
 } );
 
-export const setSelectedSite = ( selectedSite: number | undefined ) => ( {
-	type: 'SET_SELECTED_SITE' as const,
-	selectedSite,
-} );
-
 export const setSiteTitle = ( siteTitle: string ) => ( {
 	type: 'SET_SITE_TITLE' as const,
 	siteTitle,
@@ -348,7 +343,6 @@ export type OnboardAction = ReturnType<
 	| typeof setProfilerData
 	| typeof setSelectedDesign
 	| typeof setSelectedStyleVariation
-	| typeof setSelectedSite
 	| typeof setSiteTitle
 	| typeof setIntent
 	| typeof setStartingPoint

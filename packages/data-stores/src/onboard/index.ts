@@ -40,7 +40,6 @@ export function register(): typeof STORE_KEY {
 			'paidSubscribers',
 			'selectedDesign',
 			'selectedFeatures',
-			'selectedSite',
 			'siteTitle',
 			'siteDescription',
 			'siteLogo',
