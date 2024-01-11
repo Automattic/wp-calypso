@@ -10,7 +10,7 @@ import useMobileSidebar from 'calypso/components/jetpack/jetpack-lightbox/hooks/
 import JetpackProductInfo from 'calypso/components/jetpack/jetpack-product-info';
 import { APIProductFamilyProduct } from 'calypso/state/partner-portal/types';
 import { useLicenseLightboxData } from './hooks/use-license-lightbox-data';
-import LicenseLightboxManageLicense from './license-lightbox-payment-plan';
+import LicenseLightboxJetpackManageLicense from './license-lightbox-jetpack-manage-license';
 
 import './style.scss';
 
@@ -70,7 +70,7 @@ const LicenseLightbox: FunctionComponent< LicenseLightBoxProps > = ( {
 
 			<JetpackLightboxAside ref={ sidebarRef }>
 				{ showPaymentPlan && (
-					<LicenseLightboxManageLicense product={ product } quantity={ quantity } />
+					<LicenseLightboxJetpackManageLicense product={ product } quantity={ quantity } />
 				) }
 
 				<Button
