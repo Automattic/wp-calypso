@@ -633,7 +633,6 @@ export default connect(
 		// TODO: update the date to the release date when the feature is ready.
 		const redirectToPurchase =
 			config.isEnabled( 'stats/checkout-flows-v2' ) &&
-			isJetpack &&
 			isSiteJetpackNotAtomic &&
 			siteCreatedTimeStamp &&
 			new Date( siteCreatedTimeStamp ) > new Date( '2024-01-01' );
