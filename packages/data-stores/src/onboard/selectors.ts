@@ -44,17 +44,7 @@ export const getStoreLocationCountryCode = ( state: State ) => state.storeLocati
 export const getEcommerceFlowRecurType = ( state: State ) => state.ecommerceFlowRecurType;
 export const getCouponCode = ( state: State ) => state.couponCode;
 export const getState = ( state: State ) => state;
-export const hasPaidDesign = ( state: State ): boolean => {
-	if ( ! state.selectedDesign ) {
-		return false;
-	}
-	return state.selectedDesign.is_premium;
-};
 export const hasSiteTitle = ( state: State ) => state.siteTitle.trim().length > 1; // for valid domain results, we need at least 2 characters
-
-// Selectors dependent on other selectors (cannot be put in alphabetical order)
-export const hasSelectedDesign = ( state: State ) => !! state.selectedDesign;
-
 export const getDomainForm = ( state: State ) => state.domainForm;
 export const getDomainCartItem = ( state: State ) => state.domainCartItem;
 export const getHideFreePlan = ( state: State ) => state.hideFreePlan;
