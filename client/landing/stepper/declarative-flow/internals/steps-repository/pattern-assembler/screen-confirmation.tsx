@@ -11,6 +11,7 @@ import { useSelector } from 'react-redux';
 import { getActiveTheme } from 'calypso/state/themes/selectors';
 import { useScreen } from './hooks';
 import NavigatorTitle from './navigator-title';
+import Survey from './survey';
 import type { IAppState } from 'calypso/state/types';
 import './screen-confirmation.scss';
 
@@ -18,10 +19,19 @@ interface Props {
 	isNewSite: boolean;
 	siteId?: number;
 	selectedDesign?: Design;
+	surveyDismissed: boolean;
+	setSurveyDismissed: ( dismissed: boolean ) => void;
 	onConfirm: () => void;
 }
 
-const ScreenConfirmation = ( { isNewSite, siteId = 0, selectedDesign, onConfirm }: Props ) => {
+const ScreenConfirmation = ( {
+	isNewSite,
+	siteId = 0,
+	selectedDesign,
+	surveyDismissed,
+	setSurveyDismissed,
+	onConfirm,
+}: Props ) => {
 	const translate = useTranslate();
 	const { title, continueLabel } = useScreen( 'confirmation' );
 
@@ -79,6 +89,13 @@ const ScreenConfirmation = ( { isNewSite, siteId = 0, selectedDesign, onConfirm 
 						</HStack>
 					) ) }
 				</VStack>
+				{ ! surveyDismissed && (
+					<Survey
+						eventName="assembler-january-2024"
+						eventUrl="https://automattic.survey.fm/assembler-simple-survey"
+						setSurveyDismissed={ setSurveyDismissed }
+					/>
+				) }
 			</div>
 			<div className="screen-container__footer">
 				<Button className="pattern-assembler__button" primary onClick={ onConfirm }>
