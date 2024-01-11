@@ -1,8 +1,8 @@
+import { isEnabled } from '@automattic/calypso-config';
 import { Button } from '@wordpress/components';
 import { chevronDown } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback, useMemo, useState } from 'react';
-import { isEnabled } from 'calypso/server/config';
 import { PATTERN_ASSEMBLER_EVENTS } from './events';
 import { injectTitlesToPageListBlock } from './html-transformers';
 import PatternSelector from './pattern-selector';
