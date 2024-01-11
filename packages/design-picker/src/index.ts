@@ -15,11 +15,7 @@ export {
 	usePatternAssemblerCtaData,
 } from './components/pattern-assembler-cta';
 export {
-	availableDesignsConfig,
 	getAssemblerDesign,
-	getAvailableDesigns,
-	getFontTitle,
-	getDesignUrl,
 	getDesignPreviewUrl,
 	isAssemblerDesign,
 	isBlankCanvasDesign,
@@ -28,8 +24,6 @@ export {
 	isAssemblerSupported,
 } from './utils';
 export {
-	FONT_PAIRINGS,
-	ANCHORFM_FONT_PAIRINGS,
 	DEFAULT_GLOBAL_STYLES_VARIATION_SLUG,
 	DEFAULT_VIEWPORT_WIDTH,
 	DEFAULT_VIEWPORT_HEIGHT,
@@ -44,7 +38,6 @@ export {
 	MARKETPLACE_THEME,
 } from './constants';
 export type {
-	FontPair,
 	Design,
 	Category,
 	StyleVariation,

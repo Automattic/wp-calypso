@@ -1432,6 +1432,7 @@ describe( 'actions', () => {
 								site_id: 2211667,
 								source: 'detail',
 								theme: 'pendant',
+								theme_style: 'pendant',
 								theme_type: 'free',
 							},
 							service: 'tracks',

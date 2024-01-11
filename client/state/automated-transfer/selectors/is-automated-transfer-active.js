@@ -8,8 +8,19 @@ import 'calypso/state/automated-transfer/init';
  * @param {string} status name of current state in automated transfer
  * @returns {?boolean} is transfer currently active? null if unknown
  */
-export const isActive = ( status ) => ( status ? status === transferStates.START : null );
-
+export const isActive = ( status ) =>
+	status
+		? ! [
+				transferStates.NONE,
+				transferStates.COMPLETE,
+				transferStates.COMPLETED,
+				transferStates.FAILURE,
+				transferStates.ERROR,
+				transferStates.REVERTED,
+				transferStates.CONFLICTS,
+				transferStates.INQUIRING,
+		  ].includes( status )
+		: false;
 /**
  * Indicates whether or not an automated transfer is active for a given site
  * @param {Object} state app state
