@@ -37,7 +37,6 @@ export function register(): typeof STORE_KEY {
 			'domainSearch',
 			'domainForm',
 			'goals',
-			'hasUsedPlansStep',
 			'intent',
 			'paidSubscribers',
 			'selectedDesign',

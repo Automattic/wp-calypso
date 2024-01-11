@@ -204,11 +204,6 @@ export const setDomainSearch = ( domainSearch: string ) => ( {
 	domainSearch,
 } );
 
-export const setHasUsedPlansStep = ( hasUsedPlansStep: boolean ) => ( {
-	type: 'SET_HAS_USED_PLANS_STEP' as const,
-	hasUsedPlansStep,
-} );
-
 export const setPlanCartItem = ( planCartItem: MinimalRequestCartProduct | null ) => ( {
 	type: 'SET_PLAN_CART_ITEM' as const,
 	planCartItem,
@@ -404,7 +399,6 @@ export type OnboardAction = ReturnType<
 	| typeof setDomain
 	| typeof setDomainCategory
 	| typeof setDomainSearch
-	| typeof setHasUsedPlansStep
 	| typeof setPluginsToVerify
 	| typeof setProfilerData
 	| typeof setSelectedDesign

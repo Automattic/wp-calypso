@@ -44,16 +44,6 @@ const domainCategory: Reducer< string | undefined, OnboardAction > = ( state, ac
 	return state;
 };
 
-const hasUsedPlansStep: Reducer< boolean, OnboardAction > = ( state = false, action ) => {
-	if ( action.type === 'SET_HAS_USED_PLANS_STEP' ) {
-		return action.hasUsedPlansStep;
-	}
-	if ( action.type === 'RESET_ONBOARD_STORE' ) {
-		return false;
-	}
-	return state;
-};
-
 const selectedDesign: Reducer< Design | undefined, OnboardAction > = ( state, action ) => {
 	if ( action.type === 'SET_SELECTED_DESIGN' ) {
 		return action.selectedDesign;
@@ -458,7 +448,6 @@ const reducer = combineReducers( {
 	domainSearch,
 	domainCategory,
 	domainForm,
-	hasUsedPlansStep,
 	selectedFeatures,
 	domainTransferNames,
 	domainTransferAuthCodes,
