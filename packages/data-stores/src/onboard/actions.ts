@@ -214,11 +214,6 @@ export const setHasUsedPlansStep = ( hasUsedPlansStep: boolean ) => ( {
 	hasUsedPlansStep,
 } );
 
-export const setIsRedirecting = ( isRedirecting: boolean ) => ( {
-	type: 'SET_IS_REDIRECTING' as const,
-	isRedirecting,
-} );
-
 export const setPlanProductId = ( planProductId: number | undefined ) => ( {
 	type: 'SET_PLAN_PRODUCT_ID' as const,
 	planProductId,
@@ -431,7 +426,6 @@ export type OnboardAction = ReturnType<
 	| typeof setDomainSearch
 	| typeof setHasUsedDomainsStep
 	| typeof setHasUsedPlansStep
-	| typeof setIsRedirecting
 	| typeof setPlanProductId
 	| typeof setPluginsToVerify
 	| typeof setProfilerData

@@ -64,15 +64,6 @@ const hasUsedPlansStep: Reducer< boolean, OnboardAction > = ( state = false, act
 	return state;
 };
 
-const isRedirecting: Reducer< boolean, OnboardAction > = ( state = false, action ) => {
-	if ( action.type === 'SET_IS_REDIRECTING' ) {
-		return action.isRedirecting;
-	}
-	// This reducer is intentionally not cleared by 'RESET_ONBOARD_STORE' to prevent
-	// a flash of the IntentGathering step after the store is reset.
-	return state;
-};
-
 const planProductId: Reducer< number | undefined, OnboardAction > = ( state, action ) => {
 	if ( action.type === 'SET_PLAN_PRODUCT_ID' ) {
 		return action.planProductId;
@@ -497,7 +488,6 @@ const reducer = combineReducers( {
 	domainSearch,
 	domainCategory,
 	domainForm,
-	isRedirecting,
 	hasUsedDomainsStep,
 	hasUsedPlansStep,
 	selectedFeatures,
