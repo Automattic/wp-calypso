@@ -204,11 +204,6 @@ export const setDomainSearch = ( domainSearch: string ) => ( {
 	domainSearch,
 } );
 
-export const setHasUsedDomainsStep = ( hasUsedDomainsStep: boolean ) => ( {
-	type: 'SET_HAS_USED_DOMAINS_STEP' as const,
-	hasUsedDomainsStep,
-} );
-
 export const setHasUsedPlansStep = ( hasUsedPlansStep: boolean ) => ( {
 	type: 'SET_HAS_USED_PLANS_STEP' as const,
 	hasUsedPlansStep,
@@ -409,7 +404,6 @@ export type OnboardAction = ReturnType<
 	| typeof setDomain
 	| typeof setDomainCategory
 	| typeof setDomainSearch
-	| typeof setHasUsedDomainsStep
 	| typeof setHasUsedPlansStep
 	| typeof setPluginsToVerify
 	| typeof setProfilerData
