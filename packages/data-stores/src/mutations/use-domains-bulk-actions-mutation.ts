@@ -63,11 +63,13 @@ export function useDomainsBulkActionsMutation<
 			// Makes sure the success notice is shown once statuses have been updated
 			queryClient.invalidateQueries( { queryKey: getBulkDomainUpdateStatusQueryKey() } );
 
-			// Refreshes data for all the domains that were updated
+			// Forces a refresh of the list of domains for sites with domains that were updated
 			variables.blogIds.forEach( ( blogId ) => {
 				queryClient.invalidateQueries( { queryKey: getSiteDomainsQueryKey( blogId ) } );
-				queryClient.invalidateQueries( { queryKey: getAllDomainsQueryKey( { no_wpcom: true } ) } );
 			} );
+
+			// Forces a refresh of the list of all domains
+			queryClient.invalidateQueries( { queryKey: getAllDomainsQueryKey( { no_wpcom: true } ) } );
 		},
 		...options,
 	} );
