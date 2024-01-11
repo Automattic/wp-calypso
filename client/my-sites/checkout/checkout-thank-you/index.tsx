@@ -32,6 +32,7 @@ import { localize } from 'i18n-calypso';
 import { Component } from 'react';
 import { connect } from 'react-redux';
 import PlanThankYouCard from 'calypso/blocks/plan-thank-you-card';
+import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
 import HappinessSupport from 'calypso/components/happiness-support';
 import Main from 'calypso/components/main';
 import Notice from 'calypso/components/notice';
@@ -83,7 +84,6 @@ import BusinessPlanDetails from './business-plan-details';
 import ChargebackDetails from './chargeback-details';
 import DomainMappingDetails from './domain-mapping-details';
 import DomainRegistrationDetails from './domain-registration-details';
-import DomainOnlyThankYou from './domains/domain-only-thank-you-redesign-v2';
 import DomainThankYou from './domains/domain-thank-you';
 import EcommercePlanDetails from './ecommerce-plan-details';
 import FailedPurchaseDetails from './failed-purchase-details';
@@ -94,17 +94,19 @@ import JetpackPlanDetails from './jetpack-plan-details';
 import PersonalPlanDetails from './personal-plan-details';
 import PremiumPlanDetails from './premium-plan-details';
 import ProPlanDetails from './pro-plan-details';
+import MasterbarStyled from './redesign-v2/masterbar-styled';
+import DomainOnlyThankYou from './redesign-v2/pages/domain-only';
 import CheckoutMasterbar from './redesign-v2/sections/CheckoutMasterbar';
 import Footer from './redesign-v2/sections/Footer';
-import { isRedesignV2 } from './redesign-v2/utils';
+import { isRedesignV2, isRefactoredForThankYouV2 } from './redesign-v2/utils';
 import SiteRedirectDetails from './site-redirect-details';
 import StarterPlanDetails from './starter-plan-details';
 import TransferPending from './transfer-pending';
 import './style.scss';
 import './redesign-v2/style.scss';
-import { isBulkDomainTransfer } from './utils';
+import { getDomainPurchaseTypeAndPredicate, isBulkDomainTransfer, isDomainOnly } from './utils';
+import type { FindPredicate } from './utils';
 import type { SitesPlansResult } from '../src/hooks/product-variants';
-import type { WithCamelCaseSlug, WithSnakeCaseSlug } from '@automattic/calypso-products';
 import type { OnboardActions, SiteDetails } from '@automattic/data-stores';
 import type { UserData } from 'calypso/lib/user/user';
 import type { DomainThankYouType } from 'calypso/my-sites/checkout/checkout-thank-you/domains/types';
@@ -176,14 +178,6 @@ interface CheckoutThankYouState {
 export type CheckoutThankYouCombinedProps = CheckoutThankYouProps &
 	CheckoutThankYouConnectedProps &
 	LocalizeProps;
-
-type FindPredicate = (
-	product: ( WithSnakeCaseSlug | WithCamelCaseSlug ) & {
-		is_domain_registration?: boolean;
-		isDomainRegistration?: boolean;
-		meta: string;
-	}
-) => boolean;
 
 export function getPurchases( props: CheckoutThankYouCombinedProps ): ReceiptPurchase[] {
 	return [
@@ -573,6 +567,40 @@ export class CheckoutThankYou extends Component<
 			/* eslint-enable wpcalypso/jsx-classname-namespace */
 		}
 
+		/** REFACTORED REDESIGN **/
+
+		if ( isRefactoredForThankYouV2( this.props ) ) {
+			let pageContent = null;
+
+			if ( ! wasBulkDomainTransfer && isDomainOnly( purchases ) ) {
+				pageContent = <DomainOnlyThankYou purchases={ purchases } />;
+			}
+
+			if ( pageContent ) {
+				const siteId = this.props.selectedSite?.ID;
+				const siteSlug = this.props.selectedSite?.slug;
+
+				return (
+					<Main className="is-redesign-v2">
+						<PageViewTracker { ...this.getAnalyticsProperties() } title="Checkout Thank You" />
+
+						{ this.isDataLoaded() && siteId && <QuerySitePurchases siteId={ siteId } /> }
+
+						<MasterbarStyled
+							onClick={ () => page( `/home/${ siteSlug ?? '' }` ) }
+							backText={ translate( 'Back to dashboard' ) }
+							canGoBack={ !! siteId }
+							showContact
+						/>
+
+						{ pageContent }
+					</Main>
+				);
+			}
+		}
+
+		/** LEGACY - The ultimate goal is to remove everything below **/
+
 		if ( wasEcommercePlanPurchased ) {
 			// Continue to show the TransferPending progress bar until both the Atomic transfer is complete _and_ we've verified WooCommerce is finished installed.
 			if ( ! this.props.transferComplete || ! this.props.isWooCommerceInstalled ) {
@@ -616,7 +644,7 @@ export class CheckoutThankYou extends Component<
 				</Main>
 			);
 		} else if ( wasDomainProduct && ! wasBulkDomainTransfer ) {
-			const [ purchaseType, predicate ] = this.getDomainPurchaseType( purchases );
+			const [ purchaseType, predicate ] = getDomainPurchaseTypeAndPredicate( purchases );
 			const [ domainPurchase, domainName ] = findPurchaseAndDomain( purchases, predicate );
 
 			if ( selectedFeature === 'email-license' && domainName ) {
@@ -639,10 +667,7 @@ export class CheckoutThankYou extends Component<
 			const emailFallback = email ? email : this.props.user?.email ?? '';
 			const siteSlug = this.props.domainOnlySiteFlow ? domainName : this.props.selectedSiteSlug;
 			const domains = purchases.filter( predicate ).map( ( purchase ) => purchase?.meta );
-			// support redesign v2 for domain only purchases
-			if ( isRedesignV2( this.props ) ) {
-				return <DomainOnlyThankYou domains={ domains ?? [] } />;
-			}
+
 			return (
 				<DomainThankYou
 					domain={ domainName ?? '' }
@@ -722,17 +747,6 @@ export class CheckoutThankYou extends Component<
 		}
 
 		return null;
-	}
-
-	getDomainPurchaseType( purchases: ReceiptPurchase[] ): [ string, FindPredicate ] {
-		const hasDomainMapping = purchases.some( isDomainMapping );
-
-		if ( hasDomainMapping && purchases.some( isDomainRegistration ) ) {
-			return [ 'REGISTRATION', isDomainRegistration ];
-		} else if ( hasDomainMapping ) {
-			return [ 'MAPPING', isDomainMapping ];
-		}
-		return [ 'TRANSFER', isDomainTransfer ];
 	}
 
 	startTransfer = ( event: { preventDefault: () => void } ) => {
