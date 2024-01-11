@@ -7,6 +7,7 @@ import React from 'react';
 import { Provider } from 'react-redux';
 import configureStore from 'redux-mock-store';
 import { useCommandsArrayWpcom } from '../../../sites-dashboard/components/wpcom-smp-commands';
+import { getCurrentRoutePattern } from '../../../state/selectors/get-current-route-pattern';
 import { useCommandPalette } from '../use-command-palette';
 import { useCurrentSiteRankTop } from '../use-current-site-rank-top';
 
@@ -87,6 +88,40 @@ const commandsWithViewMySiteResult = [
 	},
 ];
 
+const commandsWithViewMySiteOnSites = [
+	{
+		name: 'getHelp',
+		label: 'Get help',
+	},
+	{
+		name: 'viewMySites',
+		label: 'View my sites',
+	},
+	{
+		name: 'clearCache',
+		label: 'Clear cache',
+	},
+	{
+		name: 'enableEdgeCache',
+		label: 'Enable edge cache',
+	},
+];
+
+const commandsWithViewMySiteonSitesResult = [
+	{
+		name: 'getHelp',
+		label: 'Get help',
+	},
+	{
+		name: 'clearCache',
+		label: 'Clear cache',
+	},
+	{
+		name: 'enableEdgeCache',
+		label: 'Enable edge cache',
+	},
+];
+
 jest.mock( 'cmdk', () => ( {
 	useCommandState: jest.fn(),
 } ) );
@@ -97,6 +132,7 @@ jest.mock( '../../../sites-dashboard/components/wpcom-smp-commands', () => ( {
 
 // Mock the module that contains useCurrentSiteRankTop
 jest.mock( '../../command-palette/use-current-site-rank-top' );
+jest.mock( '../../../state/selectors/get-current-route-pattern' );
 
 describe( 'useCommandPalette', () => {
 	it( 'should return the commands in the order that they are added to the commands array with no change', () => {
@@ -160,6 +196,37 @@ describe( 'useCommandPalette', () => {
 
 		expect( result.current.commands.map( ( { name, label } ) => ( { name, label } ) ) ).toEqual(
 			commandsWithViewMySiteResult
+		);
+	} );
+
+	it( 'should return all the commands in the order they are added to commandsWithViewMySiteOnSite; View My Site should be hidden in /sites context', () => {
+		// Create a QueryClient instance
+		const queryClient = new QueryClient();
+
+		( useCurrentSiteRankTop as jest.Mock ).mockReturnValue( {
+			currentSiteId: 1,
+		} );
+		( getCurrentRoutePattern as jest.Mock ).mockReturnValue( '/sites' );
+		( useCommandsArrayWpcom as jest.Mock ).mockReturnValue( commandsWithViewMySiteOnSites );
+
+		const { result } = renderHook(
+			() =>
+				useCommandPalette( {
+					selectedCommandName: '',
+					setSelectedCommandName: () => {},
+					search: '',
+				} ),
+			{
+				wrapper: ( { children } ) => (
+					<Provider store={ store }>
+						<QueryClientProvider client={ queryClient }>{ children }</QueryClientProvider>
+					</Provider>
+				),
+			}
+		);
+
+		expect( result.current.commands.map( ( { name, label } ) => ( { name, label } ) ) ).toEqual(
+			commandsWithViewMySiteonSitesResult
 		);
 	} );
 } );
