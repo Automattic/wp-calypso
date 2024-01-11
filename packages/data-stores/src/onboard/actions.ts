@@ -164,10 +164,6 @@ export function* createSenseiSite( {
 	return success;
 }
 
-export const resetFonts = () => ( {
-	type: 'RESET_FONTS' as const,
-} );
-
 export const resetOnboardStore = () => ( {
 	type: 'RESET_ONBOARD_STORE' as const,
 	skipFlags: [] as string[],
@@ -374,7 +370,6 @@ export const setPaidSubscribers = ( paidSubscribers: boolean ) => ( {
 } );
 
 export type OnboardAction = ReturnType<
-	| typeof resetFonts
 	| typeof resetOnboardStore
 	| typeof resetOnboardStoreWithSkipFlags
 	| typeof setStoreType
