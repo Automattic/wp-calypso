@@ -28,7 +28,7 @@ describe( 'index', () => {
 		expect( screen.getByText( 'Create a site' ) ).toBeInTheDocument();
 	} );
 
-	test( 'NOT Eligible users should redirect to /setup/new-hosted-site with query parameters on it', async () => {
+	test( 'NOT Eligible users should be redirected to /setup/new-hosted-site with query parameters on it', async () => {
 		const mockStore = configureStore();
 		const store = mockStore( {
 			currentUser: {
@@ -54,5 +54,6 @@ describe( 'index', () => {
 		expect( window.location.replace ).toHaveBeenCalledWith(
 			'/setup/new-hosted-site/plans?hosting-trial-not-eligible=true&param1=test&param2=test2'
 		);
+		expect( screen.queryByText( 'Create a site' ) ).toBeNull();
 	} );
 } );
