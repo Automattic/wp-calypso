@@ -476,3 +476,13 @@
 		}
 	}
 }
+
+.domain-diagnostics-card__accordion {
+	code {
+		display: block;
+		margin-top: 16px;
+		padding: 16px;
+		font-size: $font-body-small;
+		background-color: var(--studio-gray-0);
+	}
+}

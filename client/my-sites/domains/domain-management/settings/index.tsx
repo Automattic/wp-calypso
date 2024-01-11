@@ -5,6 +5,7 @@ import { useEffect } from '@wordpress/element';
 import { Icon, info } from '@wordpress/icons';
 import { removeQueryArgs } from '@wordpress/url';
 import i18n, { getLocaleSlug, useTranslate } from 'i18n-calypso';
+import { useState } from 'react';
 import { connect } from 'react-redux';
 import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
 import Accordion from 'calypso/components/domains/accordion';
@@ -25,7 +26,9 @@ import {
 	isSubdomain,
 } from 'calypso/lib/domains';
 import { transferStatus, type as domainTypes } from 'calypso/lib/domains/constants';
+import { DomainDiagnostics } from 'calypso/lib/domains/types';
 import { findRegistrantWhois } from 'calypso/lib/domains/whois/utils';
+import wpcom from 'calypso/lib/wp';
 import DomainDeleteInfoCard from 'calypso/my-sites/domains/domain-management/components/domain/domain-info-card/delete';
 import DomainDisconnectCard from 'calypso/my-sites/domains/domain-management/components/domain/domain-info-card/disconnect';
 import DomainEmailInfoCard from 'calypso/my-sites/domains/domain-management/components/domain/domain-info-card/email';
@@ -61,6 +64,7 @@ import { IAppState } from 'calypso/state/types';
 import ConnectedDomainDetails from './cards/connected-domain-details';
 import ContactsPrivacyInfo from './cards/contact-information/contacts-privacy-info';
 import ContactVerificationCard from './cards/contact-verification-card';
+import DomainDiagnosticsCard from './cards/domain-diagnostics-card';
 import DomainForwardingCard from './cards/domain-forwarding-card';
 import DomainOnlyConnectCard from './cards/domain-only-connect';
 import DomainSecurityDetails from './cards/domain-security-details';
@@ -93,6 +97,7 @@ const Settings = ( {
 }: SettingsPageProps ) => {
 	const translate = useTranslate();
 	const contactInformation = findRegistrantWhois( whoisData );
+	const [ domainDiagnostics, setDomainDiagnostics ] = useState< DomainDiagnostics | null >();
 
 	const queryParams = new URLSearchParams( window.location.search );
 
@@ -101,6 +106,24 @@ const Settings = ( {
 			requestWhois( selectedDomainName );
 		}
 	}, [ contactInformation, requestWhois, selectedDomainName ] );
+
+	useEffect( () => {
+		if ( ! domain?.isMappedToAtomicSite ) {
+			return;
+		}
+
+		wpcom.req
+			.get( {
+				apiNamespace: 'wpcom/v2',
+				path: `/domains/diagnostics/${ selectedDomainName }`,
+			} )
+			.catch( ( error: Error ) => {
+				throw error;
+			} )
+			.then( ( response: any ) => {
+				setDomainDiagnostics( response );
+			} );
+	}, [ domain, selectedDomainName ] );
 
 	const hasConnectableSites = useSelector( ( state ) => canAnySiteConnectDomains( state ) );
 
@@ -588,6 +611,29 @@ const Settings = ( {
 		);
 	};
 
+	const renderDiagnosticsSection = () => {
+		if ( ! domain?.isMappedToAtomicSite ) {
+			return null;
+		}
+		if ( ! domainDiagnostics ) {
+			return null;
+		}
+		if ( domainDiagnostics.email_dns_records.all_essential_email_dns_records_are_correct ) {
+			return null;
+		}
+
+		return (
+			<Accordion
+				className="domain-diagnostics-card__accordion"
+				title={ translate( 'Diagnostics', { textOnly: true } ) }
+				subtitle={ translate( 'There are some issues with your domain', { textOnly: true } ) }
+				key="diagnostics"
+			>
+				<DomainDiagnosticsCard diagnostics={ domainDiagnostics } />
+			</Accordion>
+		);
+	};
+
 	const renderContactVerificationSection = () => {
 		if ( ! domain || ! domain.currentUserCanManage ) {
 			return null;
@@ -693,6 +739,7 @@ const Settings = ( {
 				{ renderStatusSection() }
 				{ renderDetailsSection() }
 				{ renderTranferInMappedDomainSection() }
+				{ renderDiagnosticsSection() }
 				{ renderSetAsPrimaryDomainSection() }
 				{ renderNameServersSection() }
 				{ renderDnsRecords() }
