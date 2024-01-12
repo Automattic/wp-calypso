@@ -9,10 +9,10 @@ import { TITAN_CONTROL_PANEL_CONTEXT_GET_MOBILE_APP } from 'calypso/lib/titan/co
 import { addQueryArgs } from 'calypso/lib/url';
 import { recordEmailAppLaunchEvent } from 'calypso/my-sites/email/email-management/home/utils';
 import {
-	emailManagement,
-	emailManagementMailboxes,
-	emailManagementTitanControlPanelRedirect,
-	emailManagementTitanSetUpMailbox,
+	getEmailManagementPath,
+	getMailboxesPath,
+	getTitanControlPanelRedirectPath,
+	getTitanSetUpMailboxPath,
 } from 'calypso/my-sites/email/paths';
 import { FullWidthButton } from 'calypso/my-sites/marketplace/components';
 import { useSelector } from 'calypso/state';
@@ -49,15 +49,15 @@ const TitanSetUpThankYou = ( {
 	const titanAppsUrlPrefix = useTitanAppsUrlPrefix();
 	const translate = useTranslate();
 
-	const emailManagementPath = emailManagement( selectedSiteSlug, domainName, currentRoute );
-	const mailboxesPath = emailManagementMailboxes( selectedSiteSlug );
+	const emailManagementPath = getEmailManagementPath( selectedSiteSlug, domainName, currentRoute );
+	const mailboxesPath = getMailboxesPath( selectedSiteSlug );
 
 	const thankYouImage = {
 		alt: translate( 'Thank you' ),
 		src: thankYouEmail,
 	};
 
-	const titanControlPanelUrl = emailManagementTitanControlPanelRedirect(
+	const titanControlPanelUrl = getTitanControlPanelRedirectPath(
 		selectedSiteSlug,
 		domainName,
 		currentRoute,
@@ -140,7 +140,7 @@ const TitanSetUpThankYou = ( {
 				),
 				stepCta: (
 					<FullWidthButton
-						href={ emailManagementTitanSetUpMailbox( selectedSiteSlug ?? '', domainName ) }
+						href={ getTitanSetUpMailboxPath( selectedSiteSlug, domainName ) }
 						primary={ ! siteNeedsSetup }
 					>
 						{ translate( 'Set up mailbox' ) }
