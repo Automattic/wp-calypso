@@ -54,6 +54,14 @@ const LicenseLightboxPurchaseViaJetpackcom: FunctionComponent< Props > = ( {
 		onHideLicenseInfo();
 	}, [ currentProduct, dispatch, onHideLicenseInfo ] );
 
+	const monthlyPrice = parseFloat( currentProduct.amount );
+
+	let yearlyPrice = 0;
+
+	if ( currentProduct.currency === 'USD' ) {
+		yearlyPrice = monthlyPrice * 12;
+	}
+
 	const learnMoreLink =
 		'https://jetpack.com/support/jetpack-manage-instructions/jetpack-manage-billing-payment-faqs';
 
@@ -74,7 +82,13 @@ const LicenseLightboxPurchaseViaJetpackcom: FunctionComponent< Props > = ( {
 				href={ checkoutURL }
 				disabled={ false }
 			>
-				{ translate( 'Purchase via Jetpack.com' ) }
+				{ yearlyPrice > 0
+					? translate( 'Purchase for $%(yearlyPrice)s', {
+							args: {
+								yearlyPrice,
+							},
+					  } )
+					: translate( 'Purchase via Jetpack.com' ) }
 			</Button>
 			<div className="license-lightbox__secondary-checkout-notice">
 				{ translate(
