@@ -30,7 +30,22 @@ const getDesignEdited: TaskAction = ( task, flow, context ) => {
 	};
 };
 
+const getDesignCompleted: TaskAction = ( task, flow, context ) => {
+	const { siteInfoQueryArgs } = context;
+
+	return {
+		...task,
+		actionDispatch: () => recordTaskClickTracksEvent( task, flow, context ),
+		calypso_path: addQueryArgs( task.calypso_path, {
+			...siteInfoQueryArgs,
+			flowToReturnTo: flow,
+		} ),
+		useCalypsoPath: true,
+	};
+};
+
 export const actions: Partial< TaskActionTable > = {
 	design_selected: getPlanSelected,
 	design_edited: getDesignEdited,
+	design_completed: getDesignCompleted,
 };

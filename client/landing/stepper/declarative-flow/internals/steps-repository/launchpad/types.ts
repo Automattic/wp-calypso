@@ -21,6 +21,7 @@ export interface TranslatedLaunchpadStrings {
 export type TaskId =
 	| 'setup_free'
 	| 'design_edited'
+	| 'design_completed'
 	| 'design_selected'
 	| 'domain_upsell'
 	| 'first_post_published'
@@ -34,7 +35,6 @@ export type TaskId =
 // | 'subscribers_added'
 // | 'migrate_content'
 // | 'first_post_published_newsletter'
-// | 'design_completed'
 // | 'setup_general'
 // | 'setup_link_in_bio'
 // | 'links_added'
