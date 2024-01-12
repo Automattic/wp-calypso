@@ -28,6 +28,7 @@ export type TaskId =
 	| 'first_post_published_newsletter'
 	| 'setup_blog'
 	| 'setup_newsletter'
+	| 'verify_email'
 	| 'site_launched'
 	| 'plan_selected';
 //
@@ -42,7 +43,6 @@ export type TaskId =
 // | 'blog_launched'
 // | 'videopress_upload'
 // | 'videopress_launched'
-// | 'verify_email'
 // | 'set_up_payments'
 // | 'newsletter_plan_created';
 
