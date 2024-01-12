@@ -190,6 +190,7 @@ export type SetDomainNoticeResponseDataSuccess = {
 
 export type DomainDiagnostics = {
 	email_dns_records: {
+		code?: string;
 		records: {
 			[ dnsRecordType: string ]: {
 				status: string;
