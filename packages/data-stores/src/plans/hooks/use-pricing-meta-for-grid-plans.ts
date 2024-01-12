@@ -5,7 +5,10 @@ import {
 	calculateMonthlyPrice,
 } from '@automattic/calypso-products';
 import { useSelect } from '@wordpress/data';
-import { Plans, WpcomPlansUI, Purchases, type AddOnMeta } from '../../';
+import * as Plans from '../';
+import * as Purchases from '../../purchases';
+import * as WpcomPlansUI from '../../wpcom-plans-ui';
+import type { AddOnMeta } from '../../add-ons/types';
 
 export type UseCheckPlanAvailabilityForPurchase = ( { planSlugs }: { planSlugs: PlanSlug[] } ) => {
 	[ planSlug in PlanSlug ]?: boolean;
