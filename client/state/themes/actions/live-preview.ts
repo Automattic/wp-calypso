@@ -1,7 +1,4 @@
-import {
-	isDefaultGlobalStylesVariationSlug,
-	DEFAULT_GLOBAL_STYLES_VARIATION_SLUG,
-} from '@automattic/design-picker';
+import { isDefaultGlobalStylesVariationSlug } from '@automattic/design-picker';
 import { recordTracksEvent, withAnalytics } from 'calypso/state/analytics/actions';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
 import { LIVE_PREVIEW_START } from 'calypso/state/themes/action-types';
@@ -48,11 +45,7 @@ export function livePreview( siteId: number, themeId: string, source?: 'list' | 
 
 		if ( hasStyleVariations ) {
 			await dispatch(
-				activateStyleVariation(
-					themeId,
-					siteId,
-					styleVariationSlug ?? DEFAULT_GLOBAL_STYLES_VARIATION_SLUG
-				)
+				activateStyleVariation( themeId, siteId, themeOptions?.styleVariation ?? {} )
 			);
 		}
 

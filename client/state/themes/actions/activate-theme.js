@@ -44,7 +44,7 @@ export function activateTheme( themeId, siteId, source = 'unknown', purchased = 
 			} )
 			.then( async ( theme ) => {
 				if ( styleVariationSlug ) {
-					await dispatch( activateStyleVariation( themeId, siteId, styleVariationSlug ) );
+					await dispatch( activateStyleVariation( themeId, siteId, themeOptions.styleVariation ) );
 				}
 
 				return theme;
