@@ -3,7 +3,7 @@ import { translate } from 'i18n-calypso';
 import emailImage from 'calypso/assets/images/thank-you-upsell/email.svg';
 import ThankYouV2 from 'calypso/components/thank-you-v2';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
-import { emailManagement } from 'calypso/my-sites/email/paths';
+import { getEmailManagementPath } from 'calypso/my-sites/email/paths';
 import { useSelector } from 'calypso/state';
 import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import { getDomainPurchaseTypeAndPredicate } from '../../utils';
@@ -29,7 +29,7 @@ export default function DomainOnlyThankYou( { purchases }: DomainOnlyThankYouPro
 		icon: emailImage,
 		action: (
 			<Button
-				href={ emailManagement( siteSlug ?? firstDomain, firstDomain ) }
+				href={ getEmailManagementPath( siteSlug ?? firstDomain, firstDomain ) }
 				onClick={ () =>
 					recordTracksEvent( 'calypso_domain_only_thank_you_professional_email_click' )
 				}
