@@ -121,7 +121,7 @@ export const Editor: FC< EditorProps > = ( { initialContent = '', onChange, isRT
 									onClick={ selectLastBlock }
 								>
 									{ contentResizeListener }
-									<BlockList />
+									<BlockList renderAppender={ false } />
 								</div>
 							</BlockCanvas>
 						</BlockTools>
