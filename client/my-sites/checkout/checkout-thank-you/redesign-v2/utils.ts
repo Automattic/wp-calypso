@@ -1,4 +1,4 @@
-import { isWpComPlan } from '@automattic/calypso-products';
+import { isWpComPlan, isP2Plus } from '@automattic/calypso-products';
 import { CheckoutThankYouCombinedProps, getFailedPurchases, getPurchases } from '..';
 import { isBulkDomainTransfer, isDomainOnly } from '../utils';
 
@@ -43,7 +43,9 @@ export const isRefactoredForThankYouV2 = ( props: CheckoutThankYouCombinedProps 
 	}
 
 	if ( purchases.length === 1 ) {
-		return isWpComPlan( purchases[ 0 ].productSlug );
+		const purchase = purchases[ 0 ];
+
+		return isWpComPlan( purchase.productSlug ) || isP2Plus( purchase );
 	}
 
 	return false;

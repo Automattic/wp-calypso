@@ -584,7 +584,7 @@ export class CheckoutThankYou extends Component<
 			} else if ( isDomainOnly( purchases ) ) {
 				pageContent = <DomainOnlyThankYou purchases={ purchases } />;
 			} else if ( purchases.length === 1 && isPlan( purchases[ 0 ] ) ) {
-				pageContent = <PlanOnlyThankYou purchases={ purchases } />;
+				pageContent = <PlanOnlyThankYou purchase={ purchases[ 0 ] } />;
 			}
 
 			if ( pageContent ) {

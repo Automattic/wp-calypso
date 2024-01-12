@@ -1,3 +1,4 @@
+import { isP2Plus } from '@automattic/calypso-products';
 import { translate } from 'i18n-calypso';
 import moment from 'moment';
 import ThankYouV2 from 'calypso/components/thank-you-v2';
@@ -9,10 +10,10 @@ import ThankYouPlanProduct from '../products/plan-product';
 import type { ReceiptPurchase } from 'calypso/state/receipts/types';
 
 interface PlanOnlyThankYouProps {
-	purchases: ReceiptPurchase[];
+	purchase: ReceiptPurchase;
 }
 
-export default function PlanOnlyThankYou( { purchases }: PlanOnlyThankYouProps ) {
+export default function PlanOnlyThankYou( { purchase }: PlanOnlyThankYouProps ) {
 	const isMonthsOld = ( rawDate: string, months: number ) => {
 		if ( ! rawDate || ! months ) {
 			return false;
@@ -30,8 +31,21 @@ export default function PlanOnlyThankYou( { purchases }: PlanOnlyThankYouProps )
 
 	const footerDetails = [];
 
-	// Promote themes in the footer details for sites that are 6 months old or older.
-	if ( isMonthsOld( siteCreatedTimeStamp ?? '', 6 ) ) {
+	if ( isP2Plus( purchase ) ) {
+		footerDetails.push( {
+			key: 'footer-add-members',
+			title: translate( 'Go further, together' ),
+			description: translate(
+				'Invite people to the P2 to create a fully interactive work environment and start getting better results.'
+			),
+			buttonText: translate( 'Add members' ),
+			buttonHref: `/people/new/${ siteSlug }`,
+			buttonOnClick: () => {
+				recordTracksEvent( 'calypso_plan_thank_you_add_members_click' );
+			},
+		} );
+	} else if ( isMonthsOld( siteCreatedTimeStamp ?? '', 6 ) ) {
+		// Promote themes in the footer details for sites that are 6 months old or older.
 		footerDetails.push( {
 			key: 'footer-site-refresh',
 			title: translate( 'A site refresh' ),
@@ -57,17 +71,6 @@ export default function PlanOnlyThankYou( { purchases }: PlanOnlyThankYouProps )
 		},
 	} );
 
-	const products = purchases.map( ( purchase ) => {
-		return (
-			<ThankYouPlanProduct
-				purchase={ purchase }
-				key={ `plan-${ purchase.productSlug }` }
-				siteSlug={ siteSlug }
-				siteId={ siteId }
-			/>
-		);
-	} );
-
 	return (
 		<ThankYouV2
 			title={ translate( 'Get the best out of your site' ) }
@@ -75,12 +78,14 @@ export default function PlanOnlyThankYou( { purchases }: PlanOnlyThankYouProps )
 				translate(
 					'All set! Start exploring the features included with your {{strong}}%(productName)s{{/strong}} plan',
 					{
-						args: { productName: purchases[ 0 ].productName },
+						args: { productName: purchase.productName },
 						components: { strong: <strong /> },
 					}
 				)
 			) }
-			products={ products }
+			products={
+				<ThankYouPlanProduct purchase={ purchase } siteSlug={ siteSlug } siteId={ siteId } />
+			}
 			footerDetails={ footerDetails }
 		/>
 	);
