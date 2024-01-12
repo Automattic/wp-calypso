@@ -2,14 +2,22 @@ import { Button } from '@automattic/components';
 import { sprintf } from '@wordpress/i18n';
 import { useTranslate } from 'i18n-calypso';
 import { useState } from 'react';
+import { useDispatch } from 'react-redux';
 import Accordion from 'calypso/components/domains/accordion';
 import useDomainDiagnosticsQuery from 'calypso/data/domains/diagnostics/use-domain-diagnostics-query';
 import wpcom from 'calypso/lib/wp';
+import { errorNotice, successNotice } from 'calypso/state/notices/actions';
 import type { ResponseDomain } from 'calypso/lib/domains/types';
 
 import './style.scss';
 
+const noticeOptions = {
+	duration: 5000,
+	id: `domain-diagnostics-notification`,
+};
+
 export default function DomainDiagnosticsCard( { domain }: { domain: ResponseDomain } ) {
+	const dispatch = useDispatch();
 	const translate = useTranslate();
 	const {
 		data,
@@ -94,11 +102,23 @@ export default function DomainDiagnosticsCard( { domain }: { domain: ResponseDom
 				apiNamespace: 'wpcom/v2',
 				path: `/domains/dns/restore-default-email-records/${ domain.name }`,
 			} )
-			.catch( ( error: Error ) => {
-				throw error;
-			} )
-			.then( () => {
+			.then( ( response: { status: number } ) => {
+				dispatch(
+					successNotice(
+						translate( 'The default email DNS records were successfully fixed!' ),
+						noticeOptions
+					)
+				);
 				refetchDomainDiagnostics();
+			} )
+			.catch( ( error: Error ) => {
+				dispatch(
+					errorNotice(
+						translate( 'There was a problem when restoring default email DNS records' ),
+						noticeOptions
+					)
+				);
+				return;
 			} )
 			.finally( () => {
 				setIsRestoringDefaultRecords( false );
