@@ -37,7 +37,6 @@ export default function PremiumGlobalStylesUpgradeModal( {
 	const premiumPlanProduct = useSelector( ( state ) => getProductBySlug( state, PLAN_PREMIUM ) );
 	const selectedSiteId = useSelector( getSelectedSiteId );
 	const translations = useGlobalStylesUpgradeTranslations( { numOfSelectedGlobalStyles } );
-	const selectedSiteId = useSelector( getSelectedSiteId );
 	const isPremiumPlanProductLoaded = !! premiumPlanProduct;
 	const pricingMeta = usePricingMetaForGridPlans( {
 		coupon: undefined,
@@ -45,8 +44,6 @@ export default function PremiumGlobalStylesUpgradeModal( {
 		selectedSiteId,
 		storageAddOns: null,
 		useCheckPlanAvailabilityForPurchase,
-		selectedSiteId,
-		coupon: undefined,
 	} );
 
 	const pricing = pricingMeta?.[ PLAN_PREMIUM ];
