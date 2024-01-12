@@ -25,16 +25,16 @@ export type TaskId =
 	| 'design_selected'
 	| 'domain_upsell'
 	| 'first_post_published'
+	| 'first_post_published_newsletter'
 	| 'setup_blog'
+	| 'setup_newsletter'
 	| 'site_launched'
 	| 'plan_selected';
 //
 // TODO: Add the rest of the task ids
-// | 'setup_newsletter'
 // | 'plan_completed'
 // | 'subscribers_added'
 // | 'migrate_content'
-// | 'first_post_published_newsletter'
 // | 'setup_general'
 // | 'setup_link_in_bio'
 // | 'links_added'

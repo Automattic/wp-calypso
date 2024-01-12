@@ -1,6 +1,7 @@
 import { Task, TaskId, TaskContext } from '../types';
 import { actions as designActions } from './design';
 import { actions as domainActions } from './domain';
+import { actions as newsLetterActions } from './newsletter';
 import { actions as planActions } from './plan';
 import { actions as postActions } from './post';
 import { actions as setupActions } from './setup';
@@ -14,6 +15,7 @@ const ALL_ACTIONS = new Map(
 		...domainActions,
 		...postActions,
 		...siteActions,
+		...newsLetterActions,
 	} )
 );
 
