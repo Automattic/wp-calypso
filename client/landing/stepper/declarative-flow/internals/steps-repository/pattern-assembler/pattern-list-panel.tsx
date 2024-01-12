@@ -1,3 +1,4 @@
+import { isEnabled } from '@automattic/calypso-config';
 import { Button } from '@wordpress/components';
 import { chevronDown } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
@@ -37,7 +38,9 @@ const PatternListPanel = ( {
 	isNewSite,
 }: PatternListPanelProps ) => {
 	const translate = useTranslate();
-	const [ isShowMorePatterns, setIsShowMorePatterns ] = useState( false );
+	const [ isShowMorePatterns, setIsShowMorePatterns ] = useState(
+		isEnabled( 'pattern-assembler/v2' )
+	);
 	const categoryPatterns = selectedCategory ? patternsMapByCategory[ selectedCategory ] : [];
 	const category = useMemo(
 		() => selectedCategory && categories.find( ( { name } ) => name === selectedCategory ),
