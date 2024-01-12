@@ -1,13 +1,13 @@
-import page from '@automattic/calypso-router';
 import { useTranslate } from 'i18n-calypso';
 import { useContext, useCallback } from 'react';
 import SitesOverviewContext from 'calypso/jetpack-cloud/sections/agency-dashboard/sites-overview/context';
+import useSubmitForm from 'calypso/jetpack-cloud/sections/partner-portal/issue-license-v2/hooks/use-submit-form';
 import LicenseLightbox from 'calypso/jetpack-cloud/sections/partner-portal/license-lightbox';
 import LicenseLightboxPurchaseViaJetpackcom from 'calypso/jetpack-cloud/sections/partner-portal/license-lightbox/license-lightbox-purchase-via-jetpackcom';
-import { addQueryArgs } from 'calypso/lib/url';
-import { useDispatch } from 'calypso/state';
+import { useDispatch, useSelector } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { APIProductFamilyProduct } from 'calypso/state/partner-portal/types';
+import getSites from 'calypso/state/selectors/get-sites';
 
 interface Props {
 	currentProduct: APIProductFamilyProduct;
@@ -34,6 +34,14 @@ export default function SingleSiteUpsellLightbox( {
 		onClose?.();
 	}, [ hideLicenseInfo, onClose ] );
 
+	const sites = useSelector( getSites );
+
+	const selectedSite = siteId
+		? sites.find( ( site ) => site?.ID === parseInt( siteId as unknown as string ) )
+		: null;
+
+	const { submitForm } = useSubmitForm( selectedSite );
+
 	const onIssueLicense = useCallback( () => {
 		if ( ! currentProduct ) {
 			return;
@@ -45,17 +53,13 @@ export default function SingleSiteUpsellLightbox( {
 			} )
 		);
 		onHideLicenseInfo();
-		page(
-			addQueryArgs(
-				{
-					product_slug: currentProduct.slug,
-					source: 'dashboard',
-					site_id: siteId,
-				},
-				'/partner-portal/issue-license/'
-			)
-		);
-	}, [ currentProduct, dispatch, onHideLicenseInfo, siteId ] );
+		submitForm( [
+			{
+				...currentProduct,
+				quantity: 1,
+			},
+		] );
+	}, [ currentProduct, dispatch, onHideLicenseInfo, submitForm ] );
 
 	const learnMoreLink =
 		'https://jetpack.com/support/jetpack-manage-instructions/jetpack-manage-billing-payment-faqs';
