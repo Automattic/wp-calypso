@@ -29,7 +29,6 @@ import {
 	getTaxBreakdownLineItemsFromCart,
 	getTotalLineItemFromCart,
 	hasCheckoutVersion,
-	getCreditsLineItemFromCart,
 	getSubtotalWithCredits,
 	doesPurchaseHaveFullCredits,
 } from '@automattic/wpcom-checkout';
@@ -125,7 +124,6 @@ export default function WPCheckoutOrderSummary( {
 function CheckoutSummaryPriceList() {
 	const cartKey = useCartKey();
 	const { responseCart } = useShoppingCart( cartKey );
-	const creditsLineItem = getCreditsLineItemFromCart( responseCart );
 	const taxLineItems = getTaxBreakdownLineItemsFromCart( responseCart );
 	const totalLineItem = getTotalLineItemFromCart( responseCart );
 	const translate = useTranslate();
@@ -179,13 +177,6 @@ function CheckoutSummaryPriceList() {
 						<span>{ taxLineItem.formattedAmount }</span>
 					</CheckoutSummaryLineItem>
 				) ) }
-				{ ! hasCheckoutVersion( '2' ) && creditsLineItem && responseCart.sub_total_integer > 0 && (
-					<CheckoutSummaryLineItem key={ 'checkout-summary-line-item-' + creditsLineItem.id }>
-						<span>{ creditsLineItem.label }</span>
-						<span>{ creditsLineItem.formattedAmount }</span>
-					</CheckoutSummaryLineItem>
-				) }
-
 				<CheckoutSummaryTotal>
 					<span>{ translate( 'Total' ) }</span>
 					<span className="wp-checkout-order-summary__total-price">
