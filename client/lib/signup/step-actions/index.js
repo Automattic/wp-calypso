@@ -1248,35 +1248,36 @@ export function isAddOnsFulfilled( stepName, defaultDependencies, nextProps ) {
 }
 
 export function maybeAddStorageAddonToCart( stepName, defaultDependencies, nextProps ) {
-	const { submitSignupStep, sitePlanSlug, signupDependencies } = nextProps;
+	const { submitSignupStep, sitePlanSlug, store } = nextProps;
 	const fulfilledDependencies = [];
 	const cartItem = [];
 
-	if ( signupDependencies.storage ) {
-		switch ( signupDependencies.storage ) {
-			case FEATURE_50GB_STORAGE_ADD_ON:
-				cartItem.push( {
-					product_slug: PRODUCT_1GB_SPACE,
-					quantity: 50,
-					volume: 1,
-					extra: { feature_slug: FEATURE_50GB_STORAGE_ADD_ON },
-				} );
-				recordTracksEvent( 'calypso_signup_storage_add_on_selected', {
-					add_on_slug: FEATURE_50GB_STORAGE_ADD_ON,
-				} );
-				break;
-			case FEATURE_100GB_STORAGE_ADD_ON:
-				cartItem.push( {
-					product_slug: PRODUCT_1GB_SPACE,
-					quantity: 100,
-					volume: 1,
-					extra: { feature_slug: FEATURE_100GB_STORAGE_ADD_ON },
-				} );
-				recordTracksEvent( 'calypso_signup_storage_add_on_selected', {
-					add_on_slug: FEATURE_100GB_STORAGE_ADD_ON,
-				} );
-				break;
-		}
+	const state = store.getState();
+	const selectedStorage = get( getSignupDependencyStore( state ), 'storage', null );
+
+	switch ( selectedStorage ) {
+		case FEATURE_50GB_STORAGE_ADD_ON:
+			cartItem.push( {
+				product_slug: PRODUCT_1GB_SPACE,
+				quantity: 50,
+				volume: 1,
+				extra: { feature_slug: FEATURE_50GB_STORAGE_ADD_ON },
+			} );
+			recordTracksEvent( 'calypso_signup_storage_add_on_selected', {
+				add_on_slug: FEATURE_50GB_STORAGE_ADD_ON,
+			} );
+			break;
+		case FEATURE_100GB_STORAGE_ADD_ON:
+			cartItem.push( {
+				product_slug: PRODUCT_1GB_SPACE,
+				quantity: 100,
+				volume: 1,
+				extra: { feature_slug: FEATURE_100GB_STORAGE_ADD_ON },
+			} );
+			recordTracksEvent( 'calypso_signup_storage_add_on_selected', {
+				add_on_slug: FEATURE_100GB_STORAGE_ADD_ON,
+			} );
+			break;
 	}
 
 	submitSignupStep( { stepName, cartItem, wasSkipped: true }, { cartItem } );
