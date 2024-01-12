@@ -2,9 +2,12 @@
 @import "@wordpress/base-styles/mixins";
 
 .billing-interval-toggle {
-	align-content: space-between;
+	align-items: center;
+	display: flex;
 
 	.segmented-control.is-compact {
+		background-color: var(--studio-gray-5);
+		border-radius: 6px; /* stylelint-disable-line scales/radii */
 		margin: 25px auto 75px;
 		max-width: 480px;
 
@@ -12,12 +15,53 @@
 			margin-bottom: 25px;
 		}
 
-		.segmented-control__link {
-			padding: 0;
+		.segmented-control__item {
+			border: 6px;
+			padding: 2px;
 
-			.segmented-control__text span {
-				display: block;
-				padding: 8px 12px;
+			&.is-selected + .segmented-control__item .segmented-control__link {
+				border-left-color: transparent;
+
+				&:hover {
+					border-left-color: var(--studio-gray-10);
+				}
+			}
+
+			.segmented-control__link {
+				color: var(--studio-gray-90);
+				font-weight: 500;
+				padding: 6px 11px;
+				border: 1px solid transparent;
+				border-radius: 4px;
+
+				&:hover {
+					border: 1px solid var(--studio-gray-10);
+					background-color: unset;
+				}
+
+				&:focus {
+					box-shadow: 0 0 0 1px var(--studio-gray-90);
+					outline: none;
+				}
+			}
+
+			&.is-selected .segmented-control__link {
+				color: var(--studio-gray-80);
+				font-weight: 400;
+				border: 0.5px solid rgba(0, 0, 0, 0.04);
+				box-shadow: 0 3px 8px rgba(0, 0, 0, 0.12), 0 3px 1px rgba(0, 0, 0, 0.04);
+				background-color: var(--studio-white);
+
+				&:hover,
+				.notouch &:hover,
+				&:focus {
+					background-color: var(--studio-white);
+					border-color: rgba(0, 0, 0, 0.04);
+				}
+			}
+
+			.segmented-control__text {
+				white-space: initial;
 			}
 		}
 	}
@@ -27,11 +71,18 @@
 	z-index: z-index("root", ".masterbar") - 1;
 
 	.popover__inner {
-		padding: 10px;
+		padding: 8px 10px;
+		max-width: 210px;
+		background-color: var(--color-neutral-100);
+		border-color: var(--color-neutral-100);
+		color: var(--color-neutral-0);
+		border-radius: 2px;
+		text-align: left;
 	}
 
 	&.is-right {
 		display: none;
+		transform: translateX(20px);
 
 		@include break-wide {
 			display: block;
@@ -39,8 +90,26 @@
 	}
 
 	&.is-bottom {
+		transform: translateY(5px);
+
 		@include break-wide {
 			display: none;
+		}
+	}
+
+	&.is-right .popover__arrow {
+		border-right-color: var(--color-neutral-100);
+
+		&::before {
+			border-right-color: var(--color-neutral-100);
+		}
+	}
+
+	&.is-bottom .popover__arrow {
+		border-bottom-color: var(--color-neutral-100);
+
+		&::before {
+			border-bottom-color: var(--color-neutral-100);
 		}
 	}
 }

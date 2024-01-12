@@ -1,24 +1,24 @@
 /** @jest-environment jsdom */
 import { PLAN_FREE } from '@automattic/calypso-products';
 import { screen, render } from '@testing-library/react';
+import React from 'react';
 import PlanTypeSelector from '../plan-type-selector';
 
 describe( '<PlanTypeSelector />', () => {
-	const myProps = {
-		selectedPlan: PLAN_FREE,
-		hideFreePlan: true,
-		withWPPlanTabs: true,
-		displayedIntervals: [ 'monthly', 'yearly' ],
-		usePricingMetaForGridPlans: () => null,
-	};
-
 	test( 'Should show IntervalTypeToggle when kind is set to `interval`', () => {
 		render(
 			<PlanTypeSelector
-				{ ...myProps }
-				kind="interval"
-				intervalType="monthly"
+				customerType="personal"
+				displayedIntervals={ [ 'monthly', 'yearly' ] }
 				eligibleForWpcomMonthlyPlans
+				intervalType="monthly"
+				isInSignup
+				isPlansInsideStepper={ false }
+				isStepperUpgradeFlow={ false }
+				kind="interval"
+				plans={ [] }
+				selectedPlan={ PLAN_FREE }
+				usePricingMetaForGridPlans={ () => null }
 			/>
 		);
 
