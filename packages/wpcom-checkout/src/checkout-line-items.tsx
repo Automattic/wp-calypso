@@ -583,7 +583,7 @@ function returnModalCopy(
 			return {
 				title: String( translate( 'You are about to remove your coupon from the cart' ) ),
 				description: String(
-					translate( 'When you press Continue, we will need you to confirm your payment details.' )
+					translate( 'When you press Continue, you will need to confirm your payment details.' )
 				),
 			};
 		default:
@@ -592,7 +592,7 @@ function returnModalCopy(
 					title: String( translate( 'You are about to remove your renewal from the cart' ) ),
 					description: String(
 						translate(
-							'When you press Continue, we will remove your renewal from the cart and your product will keep its current expiry date.'
+							'When you press Continue, your renewal will be removed from the cart and your product will keep its current expiry date.'
 						)
 					),
 				};
@@ -602,9 +602,9 @@ function returnModalCopy(
 				title: String( translate( 'You are about to remove your product from the cart' ) ),
 				description: String(
 					createUserAndSiteBeforeTransaction
-						? translate( 'When you press Continue, we will remove your product from the cart.' )
+						? translate( 'When you press Continue, your product will be removed from the cart.' )
 						: translate(
-								'When you press Continue, we will remove your product from the cart and your site will continue to run without it.'
+								'When you press Continue, your product will be removed from the cart and your site will continue to run without it.'
 						  )
 				),
 			};
