@@ -141,41 +141,46 @@ function useAvailableUpgradeTiers(
 		return MOCK_PLAN_DATA;
 	}
 
-	const currentTierPrice = usageData.current_tier.minimum_price;
+	let tiersForUi = [];
 
-	let tiersForUi = commercialProduct.price_tier_list.map(
-		( tier: PriceTierListItemProps ): StatsPlanTierUI => {
-			// TODO: Some description of transform logic here.
-			// So as to clarify what we should expect from the API.
-			let tierUpgradePrice = 0;
+	// If usage is not available then we do not filter tiers lower than current tier.
+	if ( usageData ) {
+		const currentTierPrice = usageData?.current_tier?.minimum_price;
 
-			// If there is a purchased paid tier,
-			// the upgrade price is the difference between the current tier and the target tier.
-			if ( currentTierPrice && tier.minimum_price > currentTierPrice ) {
-				tierUpgradePrice = tier.minimum_price - currentTierPrice;
-			}
+		tiersForUi = commercialProduct.price_tier_list.map(
+			( tier: PriceTierListItemProps ): StatsPlanTierUI => {
+				// TODO: Some description of transform logic here.
+				// So as to clarify what we should expect from the API.
+				let tierUpgradePrice = 0;
 
-			if ( tier?.maximum_units === null ) {
-				// Special transformation for highest tier extension.
+				// If there is a purchased paid tier,
+				// the upgrade price is the difference between the current tier and the target tier.
+				if ( currentTierPrice && tier.minimum_price > currentTierPrice ) {
+					tierUpgradePrice = tier.minimum_price - currentTierPrice;
+				}
+
+				if ( tier?.maximum_units === null ) {
+					// Special transformation for highest tier extension.
+					return {
+						minimum_price: tier.minimum_price,
+						upgrade_price: tierUpgradePrice,
+						price: tier.minimum_price_monthly_display,
+						views: EXTENSION_THRESHOLD_IN_MILLION * ( tier.transform_quantity_divide_by || 1 ),
+						extension: true,
+						transform_quantity_divide_by: tier.transform_quantity_divide_by,
+						per_unit_fee: tier.per_unit_fee,
+					};
+				}
+
 				return {
 					minimum_price: tier.minimum_price,
 					upgrade_price: tierUpgradePrice,
 					price: tier.minimum_price_monthly_display,
-					views: EXTENSION_THRESHOLD_IN_MILLION * ( tier.transform_quantity_divide_by || 1 ),
-					extension: true,
-					transform_quantity_divide_by: tier.transform_quantity_divide_by,
-					per_unit_fee: tier.per_unit_fee,
+					views: tier.maximum_units,
 				};
 			}
-
-			return {
-				minimum_price: tier.minimum_price,
-				upgrade_price: tierUpgradePrice,
-				price: tier.minimum_price_monthly_display,
-				views: tier.maximum_units,
-			};
-		}
-	);
+		);
+	}
 
 	tiersForUi = tiersForUi.length > 0 ? tiersForUi : MOCK_PLAN_DATA;
 
