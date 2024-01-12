@@ -149,15 +149,13 @@ jest.mock( '../../command-palette/use-current-site-rank-top' );
 jest.mock( '../../../state/selectors/get-current-route-pattern' );
 
 describe( 'useCommandPalette', () => {
-	it( 'should return the commands in the order that they are added to the commands array with no change', () => {
-		const queryClient = new QueryClient();
+	const queryClient = new QueryClient();
+	( useCurrentSiteRankTop as jest.Mock ).mockReturnValue( {
+		currentSiteId: 1,
+	} );
 
-		( useCurrentSiteRankTop as jest.Mock ).mockReturnValue( {
-			currentSiteId: 1,
-		} );
-		( useCommandsArrayWpcom as jest.Mock ).mockReturnValue( commands );
-
-		const { result } = renderHook(
+	const renderUseCommandPalette = () =>
+		renderHook(
 			() =>
 				useCommandPalette( {
 					selectedCommandName: '',
@@ -172,35 +170,17 @@ describe( 'useCommandPalette', () => {
 				),
 			}
 		);
-
+	it( 'should return the commands in the order that they are added to the commands array with no change', () => {
+		( useCommandsArrayWpcom as jest.Mock ).mockReturnValue( commands );
+		const { result } = renderUseCommandPalette();
 		expect( result.current.commands.map( ( { name, label } ) => ( { name, label } ) ) ).toEqual(
 			commands
 		);
 	} );
 
 	it( 'should return the View My Sites command first before other commands from commandsWithViewMySite array when no context is specified', () => {
-		const queryClient = new QueryClient();
-
-		( useCurrentSiteRankTop as jest.Mock ).mockReturnValue( {
-			currentSiteId: 1,
-		} );
 		( useCommandsArrayWpcom as jest.Mock ).mockReturnValue( commandsWithViewMySite );
-
-		const { result } = renderHook(
-			() =>
-				useCommandPalette( {
-					selectedCommandName: '',
-					setSelectedCommandName: () => {},
-					search: '',
-				} ),
-			{
-				wrapper: ( { children } ) => (
-					<Provider store={ store }>
-						<QueryClientProvider client={ queryClient }>{ children }</QueryClientProvider>
-					</Provider>
-				),
-			}
-		);
+		const { result } = renderUseCommandPalette();
 
 		expect( result.current.commands.map( ( { name, label } ) => ( { name, label } ) ) ).toEqual(
 			commandsWithViewMySiteResult
@@ -208,29 +188,9 @@ describe( 'useCommandPalette', () => {
 	} );
 
 	it( 'should return all the commands in the order they are added to commandsWithViewMySiteOnSite; View My Site should be hidden in /sites context', () => {
-		const queryClient = new QueryClient();
-
-		( useCurrentSiteRankTop as jest.Mock ).mockReturnValue( {
-			currentSiteId: 1,
-		} );
 		( getCurrentRoutePattern as jest.Mock ).mockReturnValue( '/sites' );
 		( useCommandsArrayWpcom as jest.Mock ).mockReturnValue( commandsWithViewMySite );
-
-		const { result } = renderHook(
-			() =>
-				useCommandPalette( {
-					selectedCommandName: '',
-					setSelectedCommandName: () => {},
-					search: '',
-				} ),
-			{
-				wrapper: ( { children } ) => (
-					<Provider store={ store }>
-						<QueryClientProvider client={ queryClient }>{ children }</QueryClientProvider>
-					</Provider>
-				),
-			}
-		);
+		const { result } = renderUseCommandPalette();
 
 		expect( result.current.commands.map( ( { name, label } ) => ( { name, label } ) ) ).toEqual(
 			commandsWithViewMySiteOnSitesResult
@@ -238,31 +198,10 @@ describe( 'useCommandPalette', () => {
 	} );
 
 	it( 'should return Enable Edge Cache command first as it matches the context; all other commands should follow in the order they are added to commandsWithContext array', () => {
-		// Create a QueryClient instance
-		const queryClient = new QueryClient();
-
-		( useCurrentSiteRankTop as jest.Mock ).mockReturnValue( {
-			currentSiteId: 1,
-		} );
 		( getCurrentRoutePattern as jest.Mock ).mockReturnValue( '/settings' );
 		( useCommandsArrayWpcom as jest.Mock ).mockReturnValue( commandsWithContext );
 
-		const { result } = renderHook(
-			() =>
-				useCommandPalette( {
-					selectedCommandName: '',
-					setSelectedCommandName: () => {},
-					search: '',
-				} ),
-			{
-				wrapper: ( { children } ) => (
-					<Provider store={ store }>
-						<QueryClientProvider client={ queryClient }>{ children }</QueryClientProvider>
-					</Provider>
-				),
-			}
-		);
-
+		const { result } = renderUseCommandPalette();
 		expect(
 			result.current.commands.map( ( { name, label, context } ) => ( { name, label, context } ) )
 		).toEqual( commandsWithContextResult );
