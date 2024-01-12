@@ -29,10 +29,7 @@ interface StepCTAProps {
 
 const StepCTA = ( { email, primary, siteName }: StepCTAProps ) => {
 	const titanAppsUrlPrefix = useTitanAppsUrlPrefix();
-
-	const redirectUrl = `${ window.location.protocol }//${ window.location.host }${ getMailboxesPath(
-		siteName
-	) }`;
+	const redirectUrl = new URL( getMailboxesPath( siteName ), window.location.href ).href;
 
 	return (
 		<FullWidthButton
