@@ -36,13 +36,13 @@ describe( 'Logged Out Landing Page', () => {
 } );
 
 describe( 'Logged In Landing Page', () => {
-	test( 'user with no sites goes to reader', async () => {
+	test( 'user with no sites goes to Sites Dashboard', async () => {
 		const state = { currentUser: { id: 1 }, sites: { items: {} } };
 		const { page } = initRouter( { state } );
 
 		page( '/' );
 
-		await waitFor( () => expect( page.current ).toBe( '/read' ) );
+		await waitFor( () => expect( page.current ).toBe( '/sites' ) );
 	} );
 
 	test( 'user with a primary site but no permissions goes to stats', async () => {
