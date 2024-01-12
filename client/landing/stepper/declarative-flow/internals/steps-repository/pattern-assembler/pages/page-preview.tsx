@@ -1,4 +1,5 @@
 import { PatternRenderer } from '@automattic/block-renderer';
+import { isEnabled } from '@automattic/calypso-config';
 import { __unstableCompositeItem as CompositeItem } from '@wordpress/components';
 import classnames from 'classnames';
 import { CSSProperties, useCallback, useEffect, useMemo, useRef, useState } from 'react';
@@ -40,6 +41,9 @@ const Page = ( { className, style, patterns, transformPatternHtml }: PageProps )
 	const transformPagePatternHtml = useCallback(
 		( patternHtml: string ) => {
 			const transformedPatternHtml = transformPatternHtml( patternHtml );
+			if ( isEnabled( 'pattern-assembler/v2' ) ) {
+				return transformedPatternHtml;
+			}
 			return prependTitleBlockToPagePattern( transformedPatternHtml, pageTitle );
 		},
 		[ transformPatternHtml, pageTitle ]

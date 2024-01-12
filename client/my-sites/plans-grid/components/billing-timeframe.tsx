@@ -48,6 +48,7 @@ function usePerMonthDescription( { planSlug }: { planSlug: PlanSlug } ) {
 			storageAddOns: storageAddOnsForPlan,
 			coupon,
 			selectedSiteId,
+			useCheckPlanAvailabilityForPurchase: helpers?.useCheckPlanAvailabilityForPurchase,
 		} )?.[ yearlyVariantPlanSlug ];
 
 	if (

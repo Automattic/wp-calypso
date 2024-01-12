@@ -49,7 +49,7 @@ import {
 	domainManagementList,
 	domainManagementTransferInPrecheck,
 } from 'calypso/my-sites/domains/paths';
-import { emailManagement } from 'calypso/my-sites/email/paths';
+import { getEmailManagementPath } from 'calypso/my-sites/email/paths';
 import TitanSetUpThankYou from 'calypso/my-sites/email/titan-set-up-thank-you';
 import { fetchAtomicTransfer } from 'calypso/state/atomic-transfer/actions';
 import { transferStates } from 'calypso/state/atomic-transfer/constants';
@@ -464,7 +464,7 @@ export class CheckoutThankYou extends Component<
 			if ( purchases.some( isGSuiteOrExtraLicenseOrGoogleWorkspace ) ) {
 				const purchase = purchases.find( isGSuiteOrExtraLicenseOrGoogleWorkspace );
 				if ( purchase ) {
-					return page( emailManagement( siteSlug, purchase.meta ) );
+					return page( getEmailManagementPath( siteSlug, purchase.meta ) );
 				}
 			}
 		}
