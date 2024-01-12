@@ -73,44 +73,40 @@ export default function SingleSiteUpsellLightbox( {
 	}, [ dispatch ] );
 
 	return (
-		<>
-			{ true && (
-				<LicenseLightbox
-					className="license-lightbox__single-site-upsell"
-					product={ currentProduct }
-					isDisabled={ ! partnerCanIssueLicense }
-					ctaLabel={ translate( 'Issue License' ) }
-					onActivate={ onIssueLicense }
-					onClose={ onClose }
-					extraAsideContent={
-						<div className="review-licenses__notice">
-							{ translate(
-								'You will be billed at the end of every month. Your first month may be less than the above amount. {{a}}Learn more{{/a}}',
-								{
-									components: {
-										a: (
-											<a
-												href={ learnMoreLink }
-												target="_blank"
-												rel="noopener noreferrer"
-												onClick={ onClickLearnMore }
-											/>
-										),
-									},
-								}
-							) }
-						</div>
-					}
-					secondaryAsideContent={
-						<LicenseLightboxPurchaseViaJetpackcom
-							productSlug={ productSlug }
-							onClose={ hideLicenseInfo }
-							siteId={ siteId }
-						/>
-					}
-					showPaymentPlan
+		<LicenseLightbox
+			className="license-lightbox__single-site-upsell"
+			product={ currentProduct }
+			isDisabled={ ! partnerCanIssueLicense }
+			ctaLabel={ translate( 'Issue License' ) }
+			onActivate={ onIssueLicense }
+			onClose={ onClose }
+			extraAsideContent={
+				<div className="review-licenses__notice">
+					{ translate(
+						'You will be billed at the end of every month. Your first month may be less than the above amount. {{a}}Learn more{{/a}}',
+						{
+							components: {
+								a: (
+									<a
+										href={ learnMoreLink }
+										target="_blank"
+										rel="noopener noreferrer"
+										onClick={ onClickLearnMore }
+									/>
+								),
+							},
+						}
+					) }
+				</div>
+			}
+			secondaryAsideContent={
+				<LicenseLightboxPurchaseViaJetpackcom
+					productSlug={ productSlug }
+					onClose={ hideLicenseInfo }
+					siteId={ siteId }
 				/>
-			) }
-		</>
+			}
+			showPaymentPlan
+		/>
 	);
 }
