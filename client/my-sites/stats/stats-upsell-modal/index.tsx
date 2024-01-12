@@ -28,6 +28,10 @@ export default function StatsUpsellModal( { siteId }: { siteId: number } ) {
 	const eventPrefix = isEnabled( 'is_running_in_jetpack_site' ) ? 'jetpack_odyssey' : 'calypso';
 	const statType = useSelector( ( state ) => getUpsellModalStatType( state, siteId ) );
 
+	const planPriceShow = plan?.product_display_price.replace(
+		plan.raw_price.toString(),
+		( plan.raw_price / 12 ).toString()
+	);
 	const closeModal = () => {
 		dispatch( toggleUpsellModal( siteId, statType ) );
 	};
@@ -88,7 +92,7 @@ export default function StatsUpsellModal( { siteId }: { siteId: number } ) {
 						<div
 							className="stats-upsell-modal__price-amount"
 							// eslint-disable-next-line react/no-danger
-							dangerouslySetInnerHTML={ { __html: planMonthly?.product_display_price ?? '' } }
+							dangerouslySetInnerHTML={ { __html: planPriceShow ?? '' } }
 						></div>
 					) }
 					<div className="stats-upsell-modal__price-per-month">
