@@ -1,7 +1,7 @@
 import { ConfettiAnimation } from '@automattic/components';
 import { translate } from 'i18n-calypso';
 import emailImage from 'calypso/assets/images/thank-you-upsell/email.svg';
-import { emailManagement } from 'calypso/my-sites/email/paths';
+import { getEmailManagementPath } from 'calypso/my-sites/email/paths';
 import ThankYouLayout from '../redesign-v2/ThankYouLayout';
 import DomainTransferToAnyUserFooter from '../redesign-v2/sections/footer/DomainTransferToAnyUserFooter';
 import DefaultThankYouHeader from '../redesign-v2/sections/header/Default';
@@ -35,7 +35,7 @@ const DomainTransferToAnyUser: React.FC< DomainTransferToAnyUserContainerProps >
 				) }
 				meshColor="blue"
 				icon={ emailImage }
-				href={ emailManagement( domain, domain ) }
+				href={ getEmailManagementPath( domain, domain ) }
 				buttonText={ translate( 'Add email' ) }
 				trackEvent="calypso_domain_transfer_thank_you_professional_email_click"
 			/>

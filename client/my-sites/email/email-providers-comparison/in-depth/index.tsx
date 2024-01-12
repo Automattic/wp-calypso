@@ -15,7 +15,7 @@ import {
 	googleWorkspaceFeatures,
 } from 'calypso/my-sites/email/email-providers-comparison/in-depth/data';
 import { IntervalLength } from 'calypso/my-sites/email/email-providers-comparison/interval-length';
-import { emailManagementInDepthComparison } from 'calypso/my-sites/email/paths';
+import { getEmailInDepthComparisonPath } from 'calypso/my-sites/email/paths';
 import { useDispatch, useSelector } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
@@ -50,7 +50,7 @@ const EmailProvidersInDepthComparison = ( {
 		);
 
 		page(
-			emailManagementInDepthComparison(
+			getEmailInDepthComparisonPath(
 				selectedSite.slug,
 				selectedDomainName,
 				referrer,

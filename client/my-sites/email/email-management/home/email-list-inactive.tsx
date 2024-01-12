@@ -1,7 +1,7 @@
 import { Button, CompactCard } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import SectionHeader from 'calypso/components/section-header';
-import { emailManagementPurchaseNewEmailAccount } from 'calypso/my-sites/email/paths';
+import { getPurchaseNewEmailAccountPath } from 'calypso/my-sites/email/paths';
 import { useOdieAssistantContext } from 'calypso/odie/context';
 import { useSelector } from 'calypso/state';
 import getCurrentRoute from 'calypso/state/selectors/get-current-route';
@@ -26,8 +26,8 @@ const EmailListInactiveItem = ( { domain, source }: EmailListInactiveItemProps )
 			<span>{ domain.name }</span>
 
 			<Button
-				href={ emailManagementPurchaseNewEmailAccount(
-					selectedSite?.slug ?? '',
+				href={ getPurchaseNewEmailAccountPath(
+					selectedSite?.slug,
 					domain.name,
 					currentRoute,
 					source
