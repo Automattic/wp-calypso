@@ -1,7 +1,7 @@
+import { Plans } from '@automattic/data-stores';
 import { FeatureObject } from 'calypso/lib/plans/features-list';
 import { type PlanTypeSelectorProps } from './components/plan-type-selector';
 import type { GridPlan, PlansIntent } from './hooks/npm-ready/data-store/use-grid-plans';
-import type { UseCheckPlanAvailabilityForPurchase } from '../plans-features-main/hooks/data-store/use-pricing-meta-for-grid-plans';
 import type { FeatureList, PlanSlug, WPComStorageAddOnSlug } from '@automattic/calypso-products';
 import type { MinimalRequestCartProduct } from '@automattic/shopping-cart';
 import type { LocalizeProps, TranslateResult } from 'i18n-calypso';
@@ -79,7 +79,7 @@ export type GridContextProps = {
 	allFeaturesList: FeatureList;
 	intent?: PlansIntent;
 	selectedSiteId?: number | null;
-	useCheckPlanAvailabilityForPurchase: UseCheckPlanAvailabilityForPurchase;
+	useCheckPlanAvailabilityForPurchase: Plans.UseCheckPlanAvailabilityForPurchase;
 	children: React.ReactNode;
 	coupon?: string;
 };
