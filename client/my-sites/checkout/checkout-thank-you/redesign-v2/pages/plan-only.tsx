@@ -3,8 +3,8 @@ import moment from 'moment';
 import ThankYouV2 from 'calypso/components/thank-you-v2';
 import { preventWidows } from 'calypso/lib/formatting';
 import { useSelector } from 'calypso/state';
-import { getSiteOptions, getSiteSlug } from 'calypso/state/sites/selectors';
-import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import { getSiteOptions } from 'calypso/state/sites/selectors';
+import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import ThankYouPlanProduct from '../products/plan-product';
 import type { ReceiptPurchase } from 'calypso/state/receipts/types';
 
@@ -23,7 +23,7 @@ export default function PlanOnlyThankYou( { purchases }: PlanOnlyThankYouProps )
 	};
 
 	const siteId = useSelector( getSelectedSiteId );
-	const siteSlug = useSelector( ( state ) => getSiteSlug( state, siteId ) );
+	const siteSlug = useSelector( getSelectedSiteSlug );
 	const siteCreatedTimeStamp = useSelector(
 		( state ) => getSiteOptions( state, siteId ?? 0 )?.created_at
 	);

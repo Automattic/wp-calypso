@@ -26,7 +26,6 @@ export default function ThankYouPlanProduct( {
 	const isLoadingPurchases = useSelector(
 		( state ) => isFetchingSitePurchases( state ) || ! hasLoadedSitePurchasesFromServer( state )
 	);
-	const [ expirationDate, setExpirationDate ] = useState( '' );
 
 	const purchases = useSelector( ( state ) => getSitePurchases( state, siteId ) );
 
@@ -34,6 +33,8 @@ export default function ThankYouPlanProduct( {
 		() => getPurchaseByProductSlug( purchases, purchase.productSlug ),
 		[ purchase.productSlug, purchases ]
 	);
+
+	const [ expirationDate, setExpirationDate ] = useState( '' );
 
 	useEffect( () => {
 		if ( ! isLoadingPurchases && productPurchase ) {
