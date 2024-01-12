@@ -21,7 +21,6 @@ import PropTypes from 'prop-types';
 import { PureComponent } from 'react';
 import { connect } from 'react-redux';
 import { preventWidows } from 'calypso/lib/formatting';
-import { usePresalesChat } from 'calypso/lib/presales-chat';
 import { getTitanEmailUrl, hasTitanMailWithUs } from 'calypso/lib/titan';
 import { getTitanAppsUrlPrefix } from 'calypso/lib/titan/get-titan-urls';
 import {
@@ -41,7 +40,6 @@ import getCheckoutUpgradeIntent from '../../../state/selectors/get-checkout-upgr
 import './style.scss';
 import Product from './redesign-v2/sections/Product';
 import getHeading from './redesign-v2/sections/get-heading';
-import { isBulkDomainTransfer } from './utils';
 
 export class CheckoutThankYouHeader extends PureComponent {
 	static propTypes = {
@@ -71,15 +69,8 @@ export class CheckoutThankYouHeader extends PureComponent {
 	}
 
 	getText() {
-		const {
-			translate,
-			_n,
-			isDataLoaded,
-			hasFailedPurchases,
-			primaryPurchase,
-			displayMode,
-			purchases,
-		} = this.props;
+		const { translate, isDataLoaded, hasFailedPurchases, primaryPurchase, displayMode } =
+			this.props;
 
 		if ( hasFailedPurchases ) {
 			return translate( 'Some of the items in your cart could not be added.' );
@@ -97,31 +88,6 @@ export class CheckoutThankYouHeader extends PureComponent {
 						) }
 					</p>
 				</div>
-			);
-		}
-
-		if ( isBulkDomainTransfer( purchases ) ) {
-			return (
-				<>
-					<div>
-						{ preventWidows(
-							_n(
-								"We've got it from here. Your domain is being transferred with no downtime.",
-								"We've got it from here! Your domains are being transferred with no downtime.",
-								purchases?.length
-							)
-						) }
-					</div>
-					<div>
-						{ preventWidows(
-							_n(
-								"We'll send an email when your domain is ready to use.",
-								"We'll send an email when your domains are ready to use.",
-								purchases?.length
-							)
-						) }
-					</div>
-				</>
 			);
 		}
 
@@ -545,16 +511,6 @@ export class CheckoutThankYouHeader extends PureComponent {
 	}
 
 	getHeaderText() {
-		const { purchases, _n } = this.props;
-
-		if ( isBulkDomainTransfer( purchases ) ) {
-			return _n(
-				'Your domain transfer has started',
-				'Your domain transfers have started',
-				purchases?.length
-			);
-		}
-
 		return getHeading( {
 			...this.props,
 			isSearch: this.isSearch(),
@@ -569,7 +525,6 @@ export class CheckoutThankYouHeader extends PureComponent {
 			primaryPurchase,
 			isRedesignV2,
 			selectedSite,
-			purchases,
 		} = this.props;
 		const classes = { 'is-placeholder': ! isDataLoaded };
 
@@ -588,7 +543,6 @@ export class CheckoutThankYouHeader extends PureComponent {
 
 		return (
 			<div className={ classNames( 'checkout-thank-you__header', classes ) }>
-				{ isBulkDomainTransfer( purchases ) && <UsePresalesChat /> }
 				{ ! isRedesignV2 && (
 					<div className="checkout-thank-you__header-icon">
 						<img src={ `/calypso/images/upgrades/${ svg }` } alt="" />
@@ -657,10 +611,6 @@ export class CheckoutThankYouHeader extends PureComponent {
 			</ul>
 		);
 	}
-}
-
-export function UsePresalesChat() {
-	usePresalesChat( 'wpcom' );
 }
 
 export default connect(
