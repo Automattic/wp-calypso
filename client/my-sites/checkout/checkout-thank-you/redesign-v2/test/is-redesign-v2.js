@@ -69,7 +69,7 @@ describe( 'isRedesignV2', () => {
 		expect( isRedesignV2( props ) ).toBe( false );
 	} );
 
-	it( 'should return true for supported plans and there are no failed purchases', () => {
+	it( 'should return false for wpcom plans', () => {
 		const wpcomPlans = findPlansKeys( { group: GROUP_WPCOM } );
 		const supportedPlans = [ ...wpcomPlans ];
 		for ( const plan of supportedPlans ) {
@@ -81,7 +81,7 @@ describe( 'isRedesignV2', () => {
 					},
 				},
 			};
-			expect( isRedesignV2( props ) ).toBe( true );
+			expect( isRedesignV2( props ) ).toBe( false );
 		}
 	} );
 } );
