@@ -11,17 +11,17 @@ import { APIProductFamilyProduct } from 'calypso/state/partner-portal/types';
 import getSites from 'calypso/state/selectors/get-sites';
 
 interface Props {
-	currentProduct: APIProductFamilyProduct;
+	manageProduct: APIProductFamilyProduct;
 	partnerCanIssueLicense: boolean;
-	productSlug: string;
+	nonManageProductSlug: string;
 	onClose: () => void;
 	siteId?: number;
 }
 
 export default function SingleSiteUpsellLightbox( {
-	currentProduct,
+	manageProduct,
 	partnerCanIssueLicense,
-	productSlug,
+	nonManageProductSlug,
 	onClose,
 	siteId,
 }: Props ) {
@@ -44,23 +44,23 @@ export default function SingleSiteUpsellLightbox( {
 	const { submitForm } = useSubmitForm( selectedSite );
 
 	const onIssueLicense = useCallback( () => {
-		if ( ! currentProduct ) {
+		if ( ! manageProduct ) {
 			return;
 		}
 
 		dispatch(
 			recordTracksEvent( 'calypso_jetpack_single_site_upsell_purchase_click', {
-				product: currentProduct.slug,
+				product: manageProduct.slug,
 			} )
 		);
 		onHideLicenseInfo();
 		submitForm( [
 			{
-				...currentProduct,
+				...manageProduct,
 				quantity: 1,
 			},
 		] );
-	}, [ currentProduct, dispatch, onHideLicenseInfo, submitForm ] );
+	}, [ manageProduct, dispatch, onHideLicenseInfo, submitForm ] );
 
 	const learnMoreLink = localizeUrl(
 		'https://jetpack.com/support/jetpack-manage-instructions/jetpack-manage-billing-payment-faqs'
@@ -75,7 +75,7 @@ export default function SingleSiteUpsellLightbox( {
 	return (
 		<LicenseLightbox
 			className="license-lightbox__single-site-upsell"
-			product={ currentProduct }
+			product={ manageProduct }
 			isDisabled={ ! partnerCanIssueLicense }
 			ctaLabel={ translate( 'Issue License' ) }
 			onActivate={ onIssueLicense }
@@ -101,7 +101,7 @@ export default function SingleSiteUpsellLightbox( {
 			}
 			secondaryAsideContent={
 				<LicenseLightboxPurchaseViaJetpackcom
-					productSlug={ productSlug }
+					nonManageProductSlug={ nonManageProductSlug }
 					onClose={ hideLicenseInfo }
 					siteId={ siteId }
 				/>

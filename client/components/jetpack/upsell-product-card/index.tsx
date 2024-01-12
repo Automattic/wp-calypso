@@ -41,13 +41,13 @@ import type {
 import './style.scss';
 
 interface UpsellProductCardProps {
-	productSlug: string;
+	nonManageProductSlug: string;
 	siteId: number | null;
 	onCtaButtonClick: () => void;
 }
 
 const UpsellProductCard: React.FC< UpsellProductCardProps > = ( {
-	productSlug,
+	nonManageProductSlug,
 	siteId,
 	onCtaButtonClick,
 } ) => {
@@ -57,7 +57,7 @@ const UpsellProductCard: React.FC< UpsellProductCardProps > = ( {
 	const nonManageCurrencyCode = useSelector( getCurrentUserCurrencyCode );
 	const selectedSiteSlug = useSelector( getSelectedSiteSlug );
 	const partner = useSelector( getCurrentPartner );
-	const item = slugToSelectorProduct( productSlug ) as SelectorProduct;
+	const item = slugToSelectorProduct( nonManageProductSlug ) as SelectorProduct;
 	const siteProduct: SiteProduct | undefined = useSelector( ( state ) =>
 		getSiteAvailableProduct( state, siteId, item.productSlug )
 	);
@@ -85,7 +85,7 @@ const UpsellProductCard: React.FC< UpsellProductCardProps > = ( {
 	const { data: products, isFetching: isFetchingManagePrices } = useProductsQuery();
 
 	if ( hasJetpackPartnerAccess ) {
-		const manageProductSlug = productSlug.replace( '_yearly', '' ).replace( /_/g, '-' );
+		const manageProductSlug = nonManageProductSlug.replace( '_yearly', '' ).replace( /_/g, '-' );
 		manageProduct = products?.find( ( product ) => product.slug === manageProductSlug );
 		isFetchingPrices = isFetchingManagePrices || !! isFetchingNonManagePrices;
 		if ( manageProduct ) {
@@ -148,17 +148,17 @@ const UpsellProductCard: React.FC< UpsellProductCardProps > = ( {
 		textOnly: true,
 	} );
 	const upsellImageUrl = useMemo( () => {
-		if ( isJetpackBackupSlug( productSlug ) ) {
+		if ( isJetpackBackupSlug( nonManageProductSlug ) ) {
 			return BackupImage;
 		}
-		if ( isJetpackScanSlug( productSlug ) ) {
+		if ( isJetpackScanSlug( nonManageProductSlug ) ) {
 			return ScanImage;
 		}
-		if ( isJetpackSearchSlug( productSlug ) ) {
+		if ( isJetpackSearchSlug( nonManageProductSlug ) ) {
 			return SearchImage;
 		}
 		return DefaultImage;
-	}, [ productSlug ] );
+	}, [ nonManageProductSlug ] );
 
 	const { displayName, description, features } = item;
 
@@ -198,9 +198,9 @@ const UpsellProductCard: React.FC< UpsellProductCardProps > = ( {
 				) }
 				{ showLightbox && hasJetpackPartnerAccess && siteId && manageProduct && (
 					<SingleSiteUpsellLightbox
-						currentProduct={ manageProduct }
+						manageProduct={ manageProduct }
 						onClose={ () => setShowLightbox( false ) }
-						productSlug={ productSlug }
+						nonManageProductSlug={ nonManageProductSlug }
 						partnerCanIssueLicense={ true }
 						siteId={ siteId }
 					/>
