@@ -1,10 +1,11 @@
+import { Task } from '@automattic/launchpad';
 import { isBlogOnboardingFlow, isSiteAssemblerFlow } from '@automattic/onboarding';
 import { addQueryArgs } from '@wordpress/url';
 import { translate } from 'i18n-calypso';
 import { recordTaskClickTracksEvent } from '../../tracking';
-import { TaskAction, TaskActionTable, EnhancedTask } from '../../types';
+import { TaskAction, TaskActionTable } from '../../types';
 
-const getDomainUpSell: TaskAction = ( task, flow, context ): EnhancedTask => {
+const getDomainUpSell: TaskAction = ( task, flow, context ): Task => {
 	const { siteInfoQueryArgs, domainUpsellCompleted, site } = context;
 
 	const getDestionationUrl = () => {

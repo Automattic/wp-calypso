@@ -1,5 +1,6 @@
 import { FEATURE_VIDEO_UPLOADS, FEATURE_STYLE_CUSTOMIZATION } from '@automattic/calypso-products';
 import { localizeUrl } from '@automattic/i18n-utils';
+import { Task } from '@automattic/launchpad';
 import { ExternalLink } from '@wordpress/components';
 import { addQueryArgs } from '@wordpress/url';
 import { translate } from 'i18n-calypso';
@@ -7,7 +8,7 @@ import {
 	recordGlobalStylesGattingPlanSelectedResetStylesEvent,
 	recordTaskClickTracksEvent,
 } from '../../tracking';
-import { EnhancedTask, Task, TaskAction, TaskActionTable, TaskContext } from '../../types';
+import { TaskAction, TaskActionTable, TaskContext } from '../../types';
 
 const getPlanTaskSubtitle = (
 	task: Task,
@@ -43,7 +44,7 @@ const getPlanTaskSubtitle = (
 	);
 };
 
-const getPlanSelected: TaskAction = ( task, flow, context ): EnhancedTask => {
+const getPlanSelected: TaskAction = ( task, flow, context ): Task => {
 	const {
 		siteInfoQueryArgs,
 		displayGlobalStylesWarning,

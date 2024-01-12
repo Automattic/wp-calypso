@@ -1,4 +1,5 @@
 import { OnboardActions, SiteActions } from '@automattic/data-stores';
+import { Task } from '@automattic/launchpad';
 import {
 	isBlogOnboardingFlow,
 	isDesignFirstFlow,
@@ -14,7 +15,7 @@ import { ONBOARD_STORE, SITE_STORE } from 'calypso/landing/stepper/stores';
 import { goToCheckout } from 'calypso/landing/stepper/utils/checkout';
 import { isDomainUpsellCompleted } from '../../task-helper';
 import { recordTaskClickTracksEvent } from '../../tracking';
-import { EnhancedTask, Task, TaskAction, TaskActionTable, TaskContext } from '../../types';
+import { TaskAction, TaskActionTable, TaskContext } from '../../types';
 
 const getCompletedTasks = ( tasks: Task[] ): Record< string, boolean > =>
 	tasks.reduce(
@@ -124,7 +125,7 @@ const completeLaunchSiteTask = async ( task: Task, flow: string, context: TaskCo
 	submit?.();
 };
 
-const getSiteLaunched: TaskAction = ( task, flow, context ): EnhancedTask => {
+const getSiteLaunched: TaskAction = ( task, flow, context ): Task => {
 	return {
 		...task,
 		isLaunchTask: true,

@@ -1,5 +1,6 @@
 import { FEATURE_VIDEO_UPLOADS, FEATURE_STYLE_CUSTOMIZATION } from '@automattic/calypso-products';
 import { type SiteDetails, type OnboardActions, type SiteActions } from '@automattic/data-stores';
+import { Task } from '@automattic/launchpad';
 import { isBlogOnboardingFlow, isSiteAssemblerFlow } from '@automattic/onboarding';
 import { dispatch } from '@wordpress/data';
 import { __ } from '@wordpress/i18n';
@@ -11,7 +12,6 @@ import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { ADD_TIER_PLAN_HASH } from 'calypso/my-sites/earn/memberships/constants';
 import { ONBOARD_STORE, SITE_STORE } from '../../../../stores';
 import { recordTaskClickTracksEvent } from './task-helper';
-import { Task } from './types';
 
 /**
  * @deprecated The method should not be updated, use the new task-definitions modules to add/update the task definitions

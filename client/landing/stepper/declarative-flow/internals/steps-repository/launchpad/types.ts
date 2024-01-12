@@ -1,19 +1,9 @@
 import { ChecklistStatuses, type SiteDetails } from '@automattic/data-stores';
+//TODO: Temporary export until we can replace all depencecies with ./types.ts Task;
+export type { Task } from '@automattic/launchpad';
+import { Task } from '@automattic/launchpad';
 import { MinimalRequestCartProduct } from '@automattic/shopping-cart';
-import { ReactNode } from 'react';
 import { NavigationControls } from '../../types';
-
-export interface Task {
-	id: string;
-	completed: boolean;
-	disabled: boolean;
-	title?: string;
-	subtitle?: string | React.ReactNode | null;
-	badge_text?: string;
-	actionDispatch?: () => void;
-	isLaunchTask?: boolean;
-	calypso_path?: string;
-}
 
 export type LaunchpadChecklist = Task[];
 
@@ -26,13 +16,6 @@ export interface TranslatedLaunchpadStrings {
 	title: string;
 	launchTitle?: string;
 	subtitle: string;
-}
-
-export interface EnhancedTask extends Omit< Task, 'badge_text' | 'title' > {
-	useCalypsoPath?: boolean;
-	badge_text?: ReactNode | string;
-	title?: ReactNode | string;
-	actionUrl?: string;
 }
 
 export type TaskId =
@@ -81,5 +64,5 @@ export interface TaskContext {
 	submit: NavigationControls[ 'submit' ];
 }
 
-export type TaskAction = ( task: Task, flow: string, context: TaskContext ) => EnhancedTask;
+export type TaskAction = ( task: Task, flow: string, context: TaskContext ) => Task;
 export type TaskActionTable = Record< TaskId, TaskAction >;

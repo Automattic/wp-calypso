@@ -1,7 +1,8 @@
+import { Task } from '@automattic/launchpad';
 import { recordTaskClickTracksEvent } from '../../tracking';
-import { EnhancedTask, TaskAction, TaskActionTable } from '../../types';
+import { TaskAction, TaskActionTable } from '../../types';
 
-const getSetupFree: TaskAction = ( task, flow, context ): EnhancedTask => ( {
+const getSetupFree: TaskAction = ( task, flow, context ): Task => ( {
 	...task,
 	actionDispatch: () => recordTaskClickTracksEvent( task, flow, context ),
 	useCalypsoPath: true,

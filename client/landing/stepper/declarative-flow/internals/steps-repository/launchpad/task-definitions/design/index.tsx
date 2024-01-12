@@ -1,8 +1,9 @@
+import { Task } from '@automattic/launchpad';
 import { addQueryArgs } from '@wordpress/url';
 import { recordTaskClickTracksEvent } from '../../tracking';
-import { TaskAction, TaskActionTable, EnhancedTask } from '../../types';
+import { TaskAction, TaskActionTable } from '../../types';
 
-const getPlanSelected: TaskAction = ( task, flow, context ): EnhancedTask => {
+const getPlanSelected: TaskAction = ( task, flow, context ): Task => {
 	const { siteInfoQueryArgs } = context;
 
 	return {

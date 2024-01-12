@@ -1,9 +1,10 @@
+import { Task } from '@automattic/launchpad';
 import { isBlogOnboardingFlow, isNewsletterFlow } from '@automattic/onboarding';
 import { addQueryArgs } from '@wordpress/url';
 import { recordTaskClickTracksEvent } from '../../tracking';
-import { EnhancedTask, TaskAction, TaskActionTable } from '../../types';
+import { TaskAction, TaskActionTable } from '../../types';
 
-const getFirstPostPublished: TaskAction = ( task, flow, context ): EnhancedTask => {
+const getFirstPostPublished: TaskAction = ( task, flow, context ): Task => {
 	const { siteInfoQueryArgs, isEmailVerified } = context;
 	const mustVerifyEmailBeforePosting = isNewsletterFlow( flow || null ) && ! isEmailVerified;
 	return {
