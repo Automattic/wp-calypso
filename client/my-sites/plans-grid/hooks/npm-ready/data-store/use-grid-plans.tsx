@@ -25,11 +25,11 @@ import {
 	isEcommercePlan,
 	TYPE_P2_PLUS,
 } from '@automattic/calypso-products';
-import { Plans } from '@automattic/data-stores';
+import { Plans, type AddOnMeta, type PricedAPIPlan } from '@automattic/data-stores';
 import { isSamePlan } from '../../../lib/is-same-plan';
 import useHighlightLabels from './use-highlight-labels';
 import usePlansFromTypes from './use-plans-from-types';
-import type { AddOnMeta, PricedAPIPlan } from '@automattic/data-stores';
+import type { UseCheckPlanAvailabilityForPurchase } from 'calypso/my-sites/plans-features-main/hooks/data-store/use-pricing-meta-for-grid-plans';
 import type { TranslateResult } from 'i18n-calypso';
 
 // TODO clk: move to plans data store
@@ -75,6 +75,7 @@ export type UsePricingMetaForGridPlans = ( {
 	planSlugs,
 	selectedSiteId,
 	coupon,
+	useCheckPlanAvailabilityForPurchase,
 	storageAddOns,
 	withoutProRatedCredits,
 }: {
@@ -87,6 +88,11 @@ export type UsePricingMetaForGridPlans = ( {
 	 * `coupon` required on purpose to mitigate risk with not passing somethiing through when we should
 	 */
 	coupon: string | undefined;
+	/**
+	 * `useCheckPlanAvailabilityForPurchase` required on purpose to avoid inconsistent data across Calypso.
+	 * It's a function that is not available in the data store, but can be easily mocked in other contexts.
+	 */
+	useCheckPlanAvailabilityForPurchase: UseCheckPlanAvailabilityForPurchase;
 	storageAddOns: ( AddOnMeta | null )[] | null;
 	withoutProRatedCredits?: boolean;
 } ) => { [ planSlug: string ]: PricingMetaForGridPlan } | null;
@@ -113,9 +119,11 @@ export type GridPlan = {
 		conditionalFeatures?: FeatureObject[];
 	};
 	tagline: TranslateResult;
-	availableForPurchase: boolean;
-	productNameShort?: string | null;
 	planTitle: TranslateResult;
+	availableForPurchase: boolean;
+	pricing: PricingMetaForGridPlan;
+	storageAddOnsForPlan: ( AddOnMeta | null )[] | null;
+	productNameShort?: string | null;
 	billingTimeframe?: TranslateResult | null;
 	current?: boolean;
 	isMonthlyPlan?: boolean;
@@ -123,8 +131,6 @@ export type GridPlan = {
 		product_slug: string;
 	} | null;
 	highlightLabel?: React.ReactNode | null;
-	pricing: PricingMetaForGridPlan;
-	storageAddOnsForPlan: ( AddOnMeta | null )[] | null;
 };
 
 // TODO clk: move to plans data store
@@ -149,8 +155,10 @@ interface Props {
 	// allFeaturesList temporary until feature definitions are ported to calypso-products package
 	allFeaturesList: FeatureList;
 	usePricingMetaForGridPlans: UsePricingMetaForGridPlans;
+	useCheckPlanAvailabilityForPurchase: UseCheckPlanAvailabilityForPurchase;
 	useFreeTrialPlanSlugs: UseFreeTrialPlanSlugs;
 	eligibleForFreeHostingTrial: boolean;
+	storageAddOns: ( AddOnMeta | null )[] | null;
 	selectedFeature?: string | null;
 	term?: ( typeof TERMS_LIST )[ number ]; // defaults to monthly
 	intent?: PlansIntent;
@@ -158,16 +166,12 @@ interface Props {
 	sitePlanSlug?: PlanSlug | null;
 	hideEnterprisePlan?: boolean;
 	isInSignup?: boolean;
-	useCheckPlanAvailabilityForPurchase?: ( { planSlugs }: { planSlugs: PlanSlug[] } ) => {
-		[ planSlug in PlanSlug ]?: boolean;
-	};
 	showLegacyStorageFeature?: boolean;
 
 	/**
 	 * If the subdomain generation is unsuccessful we do not show the free plan
 	 */
 	isSubdomainNotGenerated?: boolean;
-	storageAddOns: ( AddOnMeta | null )[] | null;
 	coupon?: string;
 	selectedSiteId?: number | null;
 }
@@ -279,6 +283,7 @@ const usePlanTypesWithIntent = ( {
 // TODO clk: move to plans data store
 const useGridPlans = ( {
 	usePricingMetaForGridPlans,
+	useCheckPlanAvailabilityForPurchase,
 	useFreeTrialPlanSlugs,
 	term = TERM_MONTHLY,
 	intent,
@@ -286,7 +291,6 @@ const useGridPlans = ( {
 	sitePlanSlug,
 	hideEnterprisePlan,
 	isInSignup,
-	useCheckPlanAvailabilityForPurchase,
 	eligibleForFreeHostingTrial,
 	isSubdomainNotGenerated,
 	storageAddOns,
@@ -319,7 +323,7 @@ const useGridPlans = ( {
 		term,
 		intent,
 	} );
-	const plansAvailabilityForPurchase = useCheckPlanAvailabilityForPurchase?.( {
+	const plansAvailabilityForPurchase = useCheckPlanAvailabilityForPurchase( {
 		planSlugs: availablePlanSlugs,
 	} );
 
@@ -339,6 +343,7 @@ const useGridPlans = ( {
 		storageAddOns,
 		coupon,
 		selectedSiteId,
+		useCheckPlanAvailabilityForPurchase,
 	} );
 
 	// Null return would indicate that we are still loading the data. No grid without grid plans.
