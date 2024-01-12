@@ -32,7 +32,7 @@ describe( 'isRefactoredForThankYouV2', () => {
 		expect( isRefactoredForThankYouV2( props ) ).toBe( true );
 	} );
 
-	it( 'should return true if there purchases contain only domain transfers', () => {
+	it( 'should return true if the purchases contain only domain transfers', () => {
 		const props = {
 			receipt: {
 				data: {

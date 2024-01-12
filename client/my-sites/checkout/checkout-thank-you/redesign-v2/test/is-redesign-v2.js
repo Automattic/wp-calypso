@@ -45,7 +45,7 @@ describe( 'isRedesignV2', () => {
 		expect( isRedesignV2( props ) ).toBe( false );
 	} );
 
-	it( 'should return false if there purchases contain only domain transfers', () => {
+	it( 'should return false if the purchases contain only domain transfers', () => {
 		const props = {
 			receipt: {
 				data: {

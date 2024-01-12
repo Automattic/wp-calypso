@@ -5,6 +5,7 @@ import { translate } from 'i18n-calypso';
 import ThankYouV2 from 'calypso/components/thank-you-v2';
 import { preventWidows } from 'calypso/lib/formatting';
 import { usePresalesChat } from 'calypso/lib/presales-chat';
+import { domainManagementRoot } from 'calypso/my-sites/domains/paths';
 import ThankYouDomainProduct from '../products/domain-product';
 import type { ReceiptPurchase } from 'calypso/state/receipts/types';
 
@@ -36,9 +37,9 @@ export default function DomainBulkTransferThankYou( {
 			</Button>
 
 			<Button
-				href="/domains/manage"
+				href={ domainManagementRoot() }
 				className="manage-all-domains"
-				onClick={ () => handleUserClick( '/domains/manage' ) }
+				onClick={ () => handleUserClick( domainManagementRoot() ) }
 				variant="primary"
 			>
 				{ _n( 'Manage your domain', 'Manage your domains', purchases?.length ?? 0 ) }
