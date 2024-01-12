@@ -6,9 +6,9 @@ import { useSelector } from 'calypso/state';
 import {
 	isMarketplaceThemeSubscribed,
 	getMarketplaceThemeSubscriptionPrices,
+	isThemeAllowedOnSite,
 } from 'calypso/state/themes/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
-import useThemeTier from '../use-theme-tier';
 import ThemeTierBadgeCheckoutLink from './theme-tier-badge-checkout-link';
 import { useThemeTierBadgeContext } from './theme-tier-badge-context';
 import ThemeTierBadgeTracker from './theme-tier-badge-tracker';
@@ -24,14 +24,14 @@ export default function ThemeTierPartnerBadge() {
 	const subscriptionPrices = useSelector( ( state ) =>
 		getMarketplaceThemeSubscriptionPrices( state, themeId )
 	);
-	const { isThemeAllowedOnSite } = useThemeTier( siteId, themeId );
+	const isThemeAllowed = useSelector( ( state ) => isThemeAllowedOnSite( state, siteId, themeId ) );
 
-	const labelText = isThemeAllowedOnSite
+	const labelText = isThemeAllowed
 		? translate( 'Subscribe' )
 		: translate( 'Upgrade and Subscribe' );
 
 	const getTooltipMessage = () => {
-		if ( isPartnerThemePurchased && ! isThemeAllowedOnSite ) {
+		if ( isPartnerThemePurchased && ! isThemeAllowed ) {
 			return createInterpolateElement(
 				translate(
 					'You have a subscription for this theme, but it will only be usable if you have the <link>%(businessPlanName)s plan</link> on your site.',
@@ -42,7 +42,7 @@ export default function ThemeTierPartnerBadge() {
 				}
 			);
 		}
-		if ( ! isPartnerThemePurchased && isThemeAllowedOnSite ) {
+		if ( ! isPartnerThemePurchased && isThemeAllowed ) {
 			/* translators: annualPrice and monthlyPrice are prices for the theme, examples: US$50, US$7; */
 			return translate(
 				'This theme is only available while your current plan is active and costs %(annualPrice)s per year or %(monthlyPrice)s per month.',
@@ -54,7 +54,7 @@ export default function ThemeTierPartnerBadge() {
 				}
 			);
 		}
-		if ( ! isPartnerThemePurchased && ! isThemeAllowedOnSite ) {
+		if ( ! isPartnerThemePurchased && ! isThemeAllowed ) {
 			return createInterpolateElement(
 				/* translators: annualPrice and monthlyPrice are prices for the theme, examples: US$50, US$7; */
 				translate(
@@ -83,7 +83,7 @@ export default function ThemeTierPartnerBadge() {
 
 	return (
 		<>
-			{ ( ! isPartnerThemePurchased || ! isThemeAllowedOnSite ) && (
+			{ ( ! isPartnerThemePurchased || ! isThemeAllowed ) && (
 				<>
 					<ThemeTierBadgeTracker />
 					<PremiumBadge
