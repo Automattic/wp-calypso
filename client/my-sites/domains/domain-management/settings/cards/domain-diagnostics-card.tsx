@@ -136,7 +136,12 @@ export default function DomainDiagnosticsCard( { domain }: { domain: ResponseDom
 
 	const renderFixButton = () => {
 		return (
-			<Button busy={ isRestoringDefaultRecords } onClick={ fixDnsIssues } primary>
+			<Button
+				busy={ isRestoringDefaultRecords }
+				disabled={ isRestoringDefaultRecords }
+				onClick={ fixDnsIssues }
+				primary
+			>
 				{ translate( 'Fix DNS issues automatically' ) }
 			</Button>
 		);
