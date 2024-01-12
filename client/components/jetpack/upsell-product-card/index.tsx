@@ -168,6 +168,7 @@ const UpsellProductCard: React.FC< UpsellProductCardProps > = ( {
 				</ul>
 				<div className="upsell-product-card__price-container">
 					<DisplayPrice
+						isFree={ originalPrice === 0 }
 						discountedPrice={ discountedPrice }
 						currencyCode={ currencyCode }
 						originalPrice={ originalPrice ?? 0 }
