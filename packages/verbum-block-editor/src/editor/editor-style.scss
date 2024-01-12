@@ -31,9 +31,16 @@
 			overflow: hidden;
 			justify-content: space-between;
 			align-items: center;
+			min-height: 52px;
+			padding: 2px;
+			border-bottom: solid 1px #dcdcde;
 
 			.editor__header-toolbar {
 				flex-grow: 1;
+
+				.block-editor-block-contextual-toolbar.components-accessible-toolbar {
+					border-bottom: none;
+				}
 
 				.block-editor-block-toolbar {
 
@@ -86,6 +93,8 @@
 	}
 
 	.editor__main {
+		border: 1px solid var(--color-neutral-0);
+		margin-bottom: 10px;
 		&.loading-placeholder {
 			&.loading {
 				display: flex;
@@ -93,9 +102,11 @@
 				align-items: center;
 			}
 		}
-		border: solid 1px var(--color-neutral-0);
-		margin-bottom: 10px;
-		min-height: 140px;
+
+		&,
+		& iframe {
+			min-height: 140px;
+		}
 	}
 }
 
