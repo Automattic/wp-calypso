@@ -13,6 +13,7 @@ const CostOverridesListStyle = styled.div`
 	font-size: 12px;
 	font-weight: 400;
 	margin-top: 10px;
+	margin-bottom: 20px;
 
 	& .cost-overrides-list-item {
 		display: grid;
