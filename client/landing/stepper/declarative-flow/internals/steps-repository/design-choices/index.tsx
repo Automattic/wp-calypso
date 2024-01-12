@@ -1,7 +1,7 @@
 import {
 	getAssemblerDesign,
-	themeGalleryIllustrationImage,
-	patternAssemblerIllustrationImage,
+	themesIllustrationImage,
+	assemblerIllustrationImage,
 } from '@automattic/design-picker';
 import { StepContainer } from '@automattic/onboarding';
 import { useDispatch, useSelect } from '@wordpress/data';
@@ -59,7 +59,7 @@ const DesignChoicesStep: Step = ( { navigation, flow, stepName } ) => {
 							<DesignChoice
 								title={ translate( 'Choose a theme' ) }
 								description={ translate( 'Choose one of our professionally designed themes.' ) }
-								imageSrc={ themeGalleryIllustrationImage }
+								imageSrc={ themesIllustrationImage }
 								destination="designSetup"
 								onSelect={ handleSubmit }
 							/>
@@ -69,7 +69,7 @@ const DesignChoicesStep: Step = ( { navigation, flow, stepName } ) => {
 								description={ translate(
 									'Design your own homepage with custom styles and pages.'
 								) }
-								imageSrc={ patternAssemblerIllustrationImage }
+								imageSrc={ assemblerIllustrationImage }
 								destination="pattern-assembler"
 								onSelect={ handleSubmit }
 							/>

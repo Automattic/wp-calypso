@@ -22,12 +22,10 @@ jest.mock( '@automattic/data-stores', () => ( {
 		useSitePurchaseById: jest.fn(),
 	},
 } ) );
-jest.mock( '../use-check-plan-availability-for-purchase', () => jest.fn() );
 
 import { PLAN_PERSONAL, PLAN_PREMIUM } from '@automattic/calypso-products';
 import { Plans, Purchases } from '@automattic/data-stores';
 import usePricingMetaForGridPlans from '../data-store/use-pricing-meta-for-grid-plans';
-import useCheckPlanAvailabilityForPurchase from '../use-check-plan-availability-for-purchase';
 
 describe( 'usePricingMetaForGridPlans', () => {
 	beforeEach( () => {
@@ -83,11 +81,12 @@ describe( 'usePricingMetaForGridPlans', () => {
 			productSlug: PLAN_PREMIUM,
 			planSlug: PLAN_PREMIUM,
 		} ) );
-		useCheckPlanAvailabilityForPurchase.mockImplementation( () => {
+
+		const useCheckPlanAvailabilityForPurchase = () => {
 			return {
 				[ PLAN_PREMIUM ]: true,
 			};
-		} );
+		};
 
 		const pricingMeta = usePricingMetaForGridPlans( {
 			planSlugs: [ PLAN_PREMIUM ],
@@ -95,6 +94,7 @@ describe( 'usePricingMetaForGridPlans', () => {
 			storageAddOns: null,
 			selectedSiteId: 100,
 			coupon: undefined,
+			useCheckPlanAvailabilityForPurchase,
 		} );
 
 		const expectedPricingMeta = {
@@ -122,11 +122,12 @@ describe( 'usePricingMetaForGridPlans', () => {
 			productSlug: PLAN_PREMIUM,
 			planSlug: PLAN_PREMIUM,
 		} ) );
-		useCheckPlanAvailabilityForPurchase.mockImplementation( () => {
+
+		const useCheckPlanAvailabilityForPurchase = () => {
 			return {
 				[ PLAN_PREMIUM ]: false,
 			};
-		} );
+		};
 
 		const pricingMeta = usePricingMetaForGridPlans( {
 			planSlugs: [ PLAN_PREMIUM ],
@@ -134,6 +135,7 @@ describe( 'usePricingMetaForGridPlans', () => {
 			storageAddOns: null,
 			selectedSiteId: 100,
 			coupon: undefined,
+			useCheckPlanAvailabilityForPurchase,
 		} );
 
 		const expectedPricingMeta = {
@@ -161,12 +163,13 @@ describe( 'usePricingMetaForGridPlans', () => {
 			productSlug: PLAN_PERSONAL,
 			planSlug: PLAN_PERSONAL,
 		} ) );
-		useCheckPlanAvailabilityForPurchase.mockImplementation( () => {
+
+		const useCheckPlanAvailabilityForPurchase = () => {
 			return {
 				[ PLAN_PERSONAL ]: true,
 				[ PLAN_PREMIUM ]: true,
 			};
-		} );
+		};
 
 		const pricingMeta = usePricingMetaForGridPlans( {
 			planSlugs: [ PLAN_PREMIUM ],
@@ -174,6 +177,7 @@ describe( 'usePricingMetaForGridPlans', () => {
 			storageAddOns: null,
 			selectedSiteId: 100,
 			coupon: undefined,
+			useCheckPlanAvailabilityForPurchase,
 		} );
 
 		const expectedPricingMeta = {
@@ -201,12 +205,13 @@ describe( 'usePricingMetaForGridPlans', () => {
 			productSlug: PLAN_PERSONAL,
 			planSlug: PLAN_PERSONAL,
 		} ) );
-		useCheckPlanAvailabilityForPurchase.mockImplementation( () => {
+
+		const useCheckPlanAvailabilityForPurchase = () => {
 			return {
 				[ PLAN_PREMIUM ]: true,
 				[ PLAN_PERSONAL ]: true,
 			};
-		} );
+		};
 
 		const pricingMeta = usePricingMetaForGridPlans( {
 			planSlugs: [ PLAN_PREMIUM ],
@@ -214,6 +219,7 @@ describe( 'usePricingMetaForGridPlans', () => {
 			storageAddOns: null,
 			selectedSiteId: 100,
 			coupon: undefined,
+			useCheckPlanAvailabilityForPurchase,
 		} );
 
 		const expectedPricingMeta = {

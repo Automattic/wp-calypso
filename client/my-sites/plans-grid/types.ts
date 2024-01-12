@@ -5,6 +5,7 @@ import type {
 	PlansIntent,
 	UsePricingMetaForGridPlans,
 } from './hooks/npm-ready/data-store/use-grid-plans';
+import type { UseCheckPlanAvailabilityForPurchase } from '../plans-features-main/hooks/data-store/use-pricing-meta-for-grid-plans';
 import type { FeatureList, PlanSlug, WPComStorageAddOnSlug } from '@automattic/calypso-products';
 import type { MinimalRequestCartProduct } from '@automattic/shopping-cart';
 import type { LocalizeProps, TranslateResult } from 'i18n-calypso';
@@ -83,6 +84,7 @@ export type GridContextProps = {
 	intent?: PlansIntent;
 	selectedSiteId?: number | null;
 	usePricingMetaForGridPlans: UsePricingMetaForGridPlans;
+	useCheckPlanAvailabilityForPurchase: UseCheckPlanAvailabilityForPurchase;
 	children: React.ReactNode;
 	coupon?: string;
 };

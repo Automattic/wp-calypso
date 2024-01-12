@@ -140,6 +140,7 @@ export type AssertConditionResult = {
 
 export interface Plugin {
 	slug: string;
+	active: boolean;
 }
 
 export interface PluginsResponse {

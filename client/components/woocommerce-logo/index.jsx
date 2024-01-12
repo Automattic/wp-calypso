@@ -2,7 +2,7 @@ import PropTypes from 'prop-types';
 
 import './style.scss';
 
-function WooCommerceLogo( { className = 'woocommerce-logo', size = 72 } ) {
+function WooCommerceLogo( { className = 'woo-logo', size = 72 } ) {
 	return (
 		<svg className={ className } width={ size } viewBox="0 0 72 43">
 			<path
