@@ -7,6 +7,7 @@ import Accordion from 'calypso/components/domains/accordion';
 import Notice from 'calypso/components/notice';
 import useDomainDiagnosticsQuery from 'calypso/data/domains/diagnostics/use-domain-diagnostics-query';
 import wpcom from 'calypso/lib/wp';
+import { fetchDns } from 'calypso/state/domains/dns/actions';
 import { errorNotice, successNotice } from 'calypso/state/notices/actions';
 import type { ResponseDomain } from 'calypso/lib/domains/types';
 
@@ -110,6 +111,7 @@ export default function DomainDiagnosticsCard( { domain }: { domain: ResponseDom
 						noticeOptions
 					)
 				);
+				dispatch( fetchDns( domain.name, true ) );
 				refetchDomainDiagnostics();
 			} )
 			.catch( () => {
