@@ -18,7 +18,6 @@ describe( '<PlanTypeSelector />', () => {
 				kind="interval"
 				plans={ [] }
 				selectedPlan={ PLAN_FREE }
-				usePricingMetaForGridPlans={ () => null }
 			/>
 		);
 
