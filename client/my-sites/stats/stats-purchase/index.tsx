@@ -231,9 +231,7 @@ const StatsPurchasePage = ( {
 								// blog is commercial, we are forcing a product or the site is not identified yet - show the commercial purchase page
 								// TODO: remove StatsPurchaseWizard component as it's not in use anymore.
 								( ( ! isForceProductRedirect &&
-									( isCommercial || isCommercial === null ) &&
-									// If user has already got a commercial plan, we should not show the PWYW plan.
-									! isCommercialOwned ) ||
+									( isCommercial || isCommercial === null || isCommercialOwned ) ) ||
 									redirectToCommercial ) && (
 									<div className="stats-purchase-page__notice">
 										<StatsSingleItemPagePurchase
@@ -250,7 +248,8 @@ const StatsPurchasePage = ( {
 							}
 							{
 								// blog is personal or we are forcing a product - show the personal purchase page
-								( ( ! isForceProductRedirect && ( isCommercial === false || isCommercialOwned ) ) ||
+								// If user has already got a commercial license, we should not show the PWYW plan.
+								( ( ! isForceProductRedirect && isCommercial === false && ! isCommercialOwned ) ||
 									redirectToPersonal ) && (
 									<StatsSingleItemPersonalPurchasePage
 										siteSlug={ siteSlug || '' }
