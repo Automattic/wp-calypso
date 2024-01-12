@@ -35,7 +35,7 @@ export function getDeprecatedTaskDefinition(
 	completeMigrateContentTask: () => Promise< void >,
 	site: SiteDetails | null,
 	submit: NavigationControls[ 'submit' ] | undefined,
-	getLaunchSiteTaskTitle: ( task: Task ) => string | undefined,
+	getLaunchSiteTaskTitle: ( task: Task ) => ReactNode | string | undefined,
 	getIsLaunchSiteTaskDisabled: () => boolean,
 	completeLaunchSiteTask: ( task: Task ) => Promise< void >,
 	launchpadUploadVideoLink: string,
