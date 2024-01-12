@@ -43,8 +43,8 @@ interface Props {
 	withoutProRatedCredits?: boolean;
 }
 
-function getTotalPrice( planPrice: number | null, addOnPrice = 0 ): number | null {
-	return null !== planPrice ? planPrice + addOnPrice : null;
+function getTotalPrice( planPrice: number | null | undefined, addOnPrice = 0 ): number | null {
+	return null !== planPrice && undefined !== planPrice ? planPrice + addOnPrice : null;
 }
 
 /**
