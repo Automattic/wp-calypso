@@ -15,6 +15,7 @@ import Main from 'calypso/components/main';
 import NavigationHeader from 'calypso/components/navigation-header';
 import Notice from 'calypso/components/notice';
 import NoticeAction from 'calypso/components/notice/notice-action';
+import useDomainDiagnosticsQuery from 'calypso/data/domains/diagnostics/use-domain-diagnostics-query';
 import { useGetDomainsQuery } from 'calypso/data/domains/use-get-domains-query';
 import useHomeLayoutQuery, { getCacheKey } from 'calypso/data/home/use-home-layout-query';
 import { addHotJarScript } from 'calypso/lib/analytics/hotjar';
@@ -27,6 +28,7 @@ import Primary from 'calypso/my-sites/customer-home/locations/primary';
 import Secondary from 'calypso/my-sites/customer-home/locations/secondary';
 import Tertiary from 'calypso/my-sites/customer-home/locations/tertiary';
 import WooCommerceHomePlaceholder from 'calypso/my-sites/customer-home/wc-home-placeholder';
+import { domainManagementEdit } from 'calypso/my-sites/domains/paths';
 import { bumpStat, composeAnalytics, recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getCurrentUserCountryCode } from 'calypso/state/current-user/selectors';
 import { verifyIcannEmail } from 'calypso/state/domains/management/actions';
@@ -87,6 +89,14 @@ const Home = ( {
 	const siteDomains = useSelector( ( state ) => getDomainsBySiteId( state, siteId ) );
 	const customDomains = siteDomains?.filter( ( domain ) => ! domain.isWPCOMDomain );
 	const customDomain = customDomains?.length ? customDomains[ 0 ] : undefined;
+
+	const { data: domainDiagnosticData, isFetching: isFetchingDomainDiagnostics } =
+		useDomainDiagnosticsQuery( customDomain?.name, {
+			staleTime: 5 * 60 * 1000,
+			gcTime: 5 * 60 * 1000,
+			enabled: customDomain !== undefined,
+		} );
+	const emailDnsDiagnostics = domainDiagnosticData?.email_dns_records;
 
 	useEffect( () => {
 		if ( ! isFreePlanProduct( sitePlan ) ) {
@@ -197,6 +207,45 @@ const Home = ( {
 		return null;
 	};
 
+	const renderDnsSettingsDiagnosticNotice = () => {
+		if (
+			isFetchingDomainDiagnostics ||
+			! emailDnsDiagnostics ||
+			emailDnsDiagnostics.code === 'domain_not_mapped_to_atomic_site' ||
+			emailDnsDiagnostics.all_essential_email_dns_records_are_correct
+		) {
+			return null;
+		}
+		const hasErrors = Object.values( emailDnsDiagnostics.records ).some(
+			( record ) => record.status === 'incorrect'
+		);
+
+		if ( hasErrors ) {
+			return (
+				<Notice
+					text={ translate(
+						"There are some issues with your domain's email DNS settings. {{a}}Click here{{/a}} to see the full diagnostic for your domain.",
+						{
+							components: {
+								a: (
+									<a
+										href={ domainManagementEdit( siteId, customDomain.name, null, {
+											diagnostics: true,
+										} ) }
+									/>
+								),
+							},
+						}
+					) }
+					icon="cross-circle"
+					showDismiss={ false }
+					status="is-warning"
+				/>
+			);
+		}
+		return null;
+	};
+
 	return (
 		<Main wideLayout className="customer-home__main">
 			<PageViewTracker path="/home/:site" title={ translate( 'My Home' ) } />
@@ -217,6 +266,7 @@ const Home = ( {
 			) : null }
 
 			{ renderUnverifiedEmailNotice() }
+			{ renderDnsSettingsDiagnosticNotice() }
 
 			{ isLoading && <div className="customer-home__loading-placeholder"></div> }
 			{ ! isLoading && layout && ! homeLayoutError ? (
