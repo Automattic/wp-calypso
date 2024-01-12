@@ -1,9 +1,11 @@
+import { Button } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import { useState } from 'react';
 import QueryJetpackPartnerPortalStoredCards from 'calypso/components/data/query-jetpack-partner-portal-stored-cards';
 import Layout from 'calypso/jetpack-cloud/components/layout';
 import LayoutBody from 'calypso/jetpack-cloud/components/layout/body';
 import LayoutHeader, {
+	LayoutHeaderActions as Actions,
 	LayoutHeaderSubtitle as Subtitle,
 	LayoutHeaderTitle as Title,
 } from 'calypso/jetpack-cloud/components/layout/header';
@@ -54,6 +56,11 @@ export default function PaymentMethodListV2() {
 				<LayoutHeader>
 					<Title>{ title } </Title>
 					<Subtitle>{ subtitle }</Subtitle>
+					<Actions>
+						<Button href="/partner-portal/payment-methods/add" primary>
+							{ translate( 'Add new card' ) }
+						</Button>
+					</Actions>
 				</LayoutHeader>
 			</LayoutTop>
 
