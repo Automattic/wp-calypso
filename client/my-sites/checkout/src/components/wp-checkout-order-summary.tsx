@@ -146,7 +146,7 @@ function CheckoutSummaryPriceList() {
 		<>
 			{ ! hasCheckoutVersion( '2' ) && (
 				<CheckoutFirstSubtotalLineItem key="checkout-summary-line-item-subtotal-one">
-					<span>{ translate( 'Subtotal before discounts' ) }</span>
+					<span>{ translate( 'Products' ) }</span>
 					<span>
 						{ formatCurrency( subtotalBeforeDiscounts, responseCart.currency, {
 							isSmallestUnit: true,
