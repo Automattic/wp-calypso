@@ -11,7 +11,7 @@ export type PlanTypeSelectorProps = {
 	withDiscount?: string;
 	enableStickyBehavior?: boolean;
 	stickyPlanTypeSelectorOffset?: number;
-	onPlanTypeSelectorChange?: ( selectedItem: { url: string } ) => void;
+	onPlanTypeSelectorChange?: ( selectedItem: { key: string } ) => void;
 	layoutClassName?: string;
 	siteSlug?: string | null;
 	selectedPlan?: string;

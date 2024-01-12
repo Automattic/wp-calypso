@@ -48,9 +48,6 @@ export const IntervalTypeDropdown: React.FunctionComponent< IntervalTypeProps > 
 				{ option.discountText ? <span className="discount"> { option.discountText } </span> : null }
 			</IntervalTypeOption>
 		),
-		// TODO: The "url" attribute can be either a relative url or only query params. We should revisit this in the
-		// useIntervalOptions hook.
-		url: option.url,
 	} ) );
 
 	return (
