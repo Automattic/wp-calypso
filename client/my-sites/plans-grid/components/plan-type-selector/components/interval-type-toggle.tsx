@@ -30,7 +30,12 @@ export const IntervalTypeToggle: React.FunctionComponent< IntervalTypeProps > = 
 		'is-signup': isInSignup,
 	} );
 	const popupIsVisible = Boolean( intervalType === 'monthly' && props.plans.length );
-	const maxDiscount = useMaxDiscount( props.plans, usePricingMetaForGridPlans, useCheckPlanAvailabilityForPurchase, selectedSiteId );
+	const maxDiscount = useMaxDiscount(
+		props.plans,
+		usePricingMetaForGridPlans,
+		useCheckPlanAvailabilityForPurchase,
+		selectedSiteId
+	);
 	// TODO clk pricing
 	const pricingMeta = usePricingMetaForGridPlans( {
 		planSlugs: currentSitePlanSlug ? [ currentSitePlanSlug ] : [],
