@@ -14,7 +14,7 @@ import type { Purchase } from 'calypso/lib/purchases/types';
 const JETPACK_STATS_TIERED_BILLING_LIVE_DATE = '2024-01-04T05:30:00+00:00';
 
 const filterPurchasesByProducts = ( ownedPurchases: Purchase[], productSlugs: string[] ) => {
-	if ( ! ownedPurchases.length ) {
+	if ( ! ownedPurchases?.length ) {
 		return [];
 	}
 
