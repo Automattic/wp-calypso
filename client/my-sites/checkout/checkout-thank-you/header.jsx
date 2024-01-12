@@ -28,7 +28,7 @@ import {
 	domainManagementEdit,
 	domainManagementTransferInPrecheck,
 } from 'calypso/my-sites/domains/paths';
-import { emailManagementEdit } from 'calypso/my-sites/email/paths';
+import { getEmailManagementPath } from 'calypso/my-sites/email/paths';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { recordStartTransferClickInThankYou } from 'calypso/state/domains/actions';
 import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
@@ -431,7 +431,7 @@ export class CheckoutThankYouHeader extends PureComponent {
 
 		if ( primaryPurchase && isTitanMail( primaryPurchase ) ) {
 			return (
-				<Button href={ emailManagementEdit( selectedSite.slug, primaryPurchase.meta ) }>
+				<Button href={ getEmailManagementPath( selectedSite.slug, primaryPurchase.meta ) }>
 					{ translate( 'Manage email' ) }
 				</Button>
 			);

@@ -19,6 +19,7 @@ export const IntervalTypeToggle: React.FunctionComponent< IntervalTypeProps > = 
 		currentSitePlanSlug,
 		usePricingMetaForGridPlans,
 		displayedIntervals,
+		useCheckPlanAvailabilityForPurchase,
 		title,
 		coupon,
 		selectedSiteId,
@@ -28,15 +29,21 @@ export const IntervalTypeToggle: React.FunctionComponent< IntervalTypeProps > = 
 	const segmentClasses = classNames( 'price-toggle', {
 		'is-signup': isInSignup,
 	} );
-	const popupIsVisible = Boolean( intervalType === 'monthly' && isInSignup && props.plans.length );
-	const maxDiscount = useMaxDiscount( props.plans, usePricingMetaForGridPlans, selectedSiteId );
+	const popupIsVisible = Boolean( intervalType === 'monthly' && props.plans.length );
+	const maxDiscount = useMaxDiscount(
+		props.plans,
+		usePricingMetaForGridPlans,
+		useCheckPlanAvailabilityForPurchase,
+		selectedSiteId
+	);
 	// TODO clk pricing
 	const pricingMeta = usePricingMetaForGridPlans( {
 		planSlugs: currentSitePlanSlug ? [ currentSitePlanSlug ] : [],
 		withoutProRatedCredits: true,
-		storageAddOns: null,
 		coupon,
 		selectedSiteId,
+		useCheckPlanAvailabilityForPurchase,
+		storageAddOns: null,
 	} );
 	const currentPlanBillingPeriod = currentSitePlanSlug
 		? pricingMeta?.[ currentSitePlanSlug ]?.billingPeriod

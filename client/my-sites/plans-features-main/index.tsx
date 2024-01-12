@@ -552,6 +552,7 @@ const PlansFeaturesMain = ( {
 			plans: gridPlansForFeaturesGrid.map( ( gridPlan ) => gridPlan.planSlug ),
 			currentSitePlanSlug: sitePlanSlug,
 			usePricingMetaForGridPlans,
+			useCheckPlanAvailabilityForPurchase,
 			recordTracksEvent,
 			coupon,
 			selectedSiteId: siteId,
@@ -850,6 +851,7 @@ const PlansFeaturesMain = ( {
 									showUpgradeableStorage={ showUpgradeableStorage }
 									stickyRowOffset={ masterbarHeight }
 									usePricingMetaForGridPlans={ usePricingMetaForGridPlans }
+									useCheckPlanAvailabilityForPurchase={ useCheckPlanAvailabilityForPurchase }
 									allFeaturesList={ FEATURES_LIST }
 									onStorageAddOnClick={ handleStorageAddOnClick }
 									showRefundPeriod={ isAnyHostingFlow( flowName ) }
@@ -910,6 +912,7 @@ const PlansFeaturesMain = ( {
 												showUpgradeableStorage={ showUpgradeableStorage }
 												stickyRowOffset={ comparisonGridStickyRowOffset }
 												usePricingMetaForGridPlans={ usePricingMetaForGridPlans }
+												useCheckPlanAvailabilityForPurchase={ useCheckPlanAvailabilityForPurchase }
 												allFeaturesList={ FEATURES_LIST }
 												onStorageAddOnClick={ handleStorageAddOnClick }
 												showRefundPeriod={ isAnyHostingFlow( flowName ) }
