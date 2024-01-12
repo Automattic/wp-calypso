@@ -8,10 +8,10 @@ import { ImportWrapper } from '../import';
 import { BASE_ROUTE } from '../import/config';
 import { generateStepPath } from '../import/helper';
 
-const ImportReadyNot: Step = function ImportStep( props ) {
+const ImportReadyWpcom: Step = function ImportStep( props ) {
 	const { navigation } = props;
 	const fromUrl = useQuery().get( 'from' ) || '';
-	const { data: urlData, isFetched } = useAnalyzeUrlQuery( fromUrl );
+	const { data: urlData, isFetched, isFetching } = useAnalyzeUrlQuery( fromUrl );
 
 	const goToHomeStep = useCallback( () => {
 		navigation.goToStep?.( BASE_ROUTE );
@@ -24,13 +24,17 @@ const ImportReadyNot: Step = function ImportStep( props ) {
 
 	return (
 		<ImportWrapper { ...props }>
-			<ReadyAlreadyOnWPCOMStep
-				urlData={ urlData }
-				goToStep={ ( step, section ) => navigation.goToStep?.( generateStepPath( step, section ) ) }
-				recordTracksEvent={ recordTracksEvent }
-			/>
+			{ ! isFetching && urlData && (
+				<ReadyAlreadyOnWPCOMStep
+					urlData={ urlData }
+					goToStep={ ( step, section ) =>
+						navigation.goToStep?.( generateStepPath( step, section ) )
+					}
+					recordTracksEvent={ recordTracksEvent }
+				/>
+			) }
 		</ImportWrapper>
 	);
 };
 
-export default ImportReadyNot;
+export default ImportReadyWpcom;
