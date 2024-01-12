@@ -10,6 +10,7 @@ import { useDispatch } from 'react-redux';
 import QueryPlans from 'calypso/components/data/query-plans';
 import TrackComponentView from 'calypso/lib/analytics/track-component-view';
 import usePricingMetaForGridPlans from 'calypso/my-sites/plans-features-main/hooks/data-store/use-pricing-meta-for-grid-plans';
+import useCheckPlanAvailabilityForPurchase from 'calypso/my-sites/plans-features-main/hooks/use-check-plan-availability-for-purchase';
 import { useSelector } from 'calypso/state';
 import { getPlanBySlug } from 'calypso/state/plans/selectors';
 import { toggleUpsellModal } from 'calypso/state/stats/paid-stats-upsell/actions';
@@ -25,10 +26,12 @@ export default function StatsUpsellModal( { siteId }: { siteId: number } ) {
 	const selectedSiteId = useSelector( ( state ) => getSelectedSiteId( state ) );
 	const planMonthly = usePricingMetaForGridPlans( {
 		planSlugs: [ PLAN_PREMIUM ],
-		storageAddOns: null,
 		selectedSiteId,
 		coupon: undefined,
+		useCheckPlanAvailabilityForPurchase,
+		storageAddOns: null,
 	} );
+
 	const pricing = planMonthly?.[ PLAN_PREMIUM ];
 	const siteSlug = useSelector( getSelectedSiteSlug );
 	const planName = plan?.product_name_short ?? '';
