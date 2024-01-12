@@ -27,9 +27,7 @@ import PlansFeaturesMain from 'calypso/my-sites/plans-features-main';
 import PlanFAQ from 'calypso/my-sites/plans-features-main/components/plan-faq';
 import StepWrapper from 'calypso/signup/step-wrapper';
 import { getIntervalType } from 'calypso/signup/steps/plans/util';
-import { useSelector } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
-import { isUserEligibleForFreeHostingTrial } from 'calypso/state/selectors/is-user-eligible-for-free-hosting-trial';
 import { setSelectedSiteId } from 'calypso/state/ui/actions';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { ONBOARD_STORE } from '../../../../stores';
@@ -75,21 +73,21 @@ const PlansWrapper: React.FC< Props > = ( props ) => {
 			 ).getHidePlansFeatureComparison(),
 		};
 	}, [] );
+
 	const { flowName, selectedSiteId, setSelectedSiteId } = props;
 	const { setPlanCartItem, setDomain, setDomainCartItem, setProductCartItems } =
 		useDispatch( ONBOARD_STORE );
 
 	const site = useSite();
 	const siteId = site?.ID;
-	const { __ } = useI18n();
-	const isEligible = useSelector( isUserEligibleForFreeHostingTrial );
 
 	useEffect( () => {
 		if ( ! selectedSiteId && siteId ) {
 			setSelectedSiteId( siteId );
 		}
-	}, [ isEligible, selectedSiteId, siteId, setSelectedSiteId ] );
+	}, [ selectedSiteId, siteId, setSelectedSiteId ] );
 
+	const { __ } = useI18n();
 	const translate = useTranslate();
 	const isDesktop = useDesktopBreakpoint();
 	const stepName = 'plans';

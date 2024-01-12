@@ -276,6 +276,71 @@ describe( 'PlanFeatures2023GridActions', () => {
 
 				expect( upgradeButton ).toHaveTextContent( 'Upgrade – $20' );
 			} );
+
+			test( 'should render the trial ended message when user is not eligible anymore and is on the new-hosted-site flow', () => {
+				delete window.location;
+				window.location = {
+					pathname: '/setup/new-hosted-site/plans',
+					replace: jest.fn(),
+				};
+				usePlansGridContext.mockImplementation( () => ( {
+					gridPlansIndex: {
+						[ PLAN_BUSINESS ]: {
+							isMonthlyPlan: false,
+							pricing: {
+								...pricing,
+								billingPeriod: PLAN_TRIENNIAL_PERIOD,
+							},
+						},
+					},
+				} ) );
+				render(
+					<PlanFeatures2023GridActions
+						{ ...defaultProps }
+						hasFreeTrialPlan={ false }
+						isInSignup={ true }
+						planSlug={ PLAN_BUSINESS }
+						isStuck={ false }
+					/>
+				);
+
+				expect(
+					screen.getByText( "You've already used your free trial! Thanks!" )
+				).toBeInTheDocument();
+			} );
+
+			test( 'should NOT render the trial ended message outside the new-hosted-site flow', () => {
+				delete window.location;
+				window.location = {
+					pathname: '/plans',
+					replace: jest.fn(),
+				};
+
+				usePlansGridContext.mockImplementation( () => ( {
+					gridPlansIndex: {
+						[ PLAN_BUSINESS ]: {
+							isMonthlyPlan: false,
+							pricing: {
+								...pricing,
+								billingPeriod: PLAN_TRIENNIAL_PERIOD,
+							},
+						},
+					},
+				} ) );
+				render(
+					<PlanFeatures2023GridActions
+						{ ...defaultProps }
+						hasFreeTrialPlan={ false }
+						isInSignup={ true }
+						planSlug={ PLAN_BUSINESS }
+						isStuck={ false }
+					/>
+				);
+
+				expect(
+					screen.queryByText( "You've already used your free trial! Thanks!" )
+				).not.toBeInTheDocument();
+			} );
 		} );
 	} );
 } );
