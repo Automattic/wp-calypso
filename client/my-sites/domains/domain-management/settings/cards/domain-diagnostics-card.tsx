@@ -41,6 +41,12 @@ export default function DomainDiagnosticsCard( { domain }: { domain: ResponseDom
 	const recordsToCheck = [ 'spf', 'dkim1', 'dkim2', 'dmarc' ];
 	const emailDnsDiagnostics = data.email_dns_records;
 
+	if ( ! emailDnsDiagnostics ) {
+		return null;
+	}
+	if ( emailDnsDiagnostics.code === 'domain_not_mapped_to_atomic_site' ) {
+		return null;
+	}
 	if ( emailDnsDiagnostics.all_essential_email_dns_records_are_correct ) {
 		return null;
 	}
