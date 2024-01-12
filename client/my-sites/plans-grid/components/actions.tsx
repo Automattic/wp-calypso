@@ -13,6 +13,7 @@ import {
 	isP2FreePlan,
 	isWpcomEnterpriseGridPlan,
 	isFreePlan,
+	isBusinessPlan,
 } from '@automattic/calypso-products';
 import { WpcomPlansUI } from '@automattic/data-stores';
 import { formatCurrency } from '@automattic/format-currency';
@@ -23,6 +24,8 @@ import { useCallback } from '@wordpress/element';
 import { localize, TranslateResult, useTranslate } from 'i18n-calypso';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { useManageTooltipToggle } from 'calypso/my-sites/plans-grid/hooks/use-manage-tooltip-toggle';
+import { useSelector } from 'calypso/state';
+import { isUserEligibleForFreeHostingTrial } from 'calypso/state/selectors/is-user-eligible-for-free-hosting-trial';
 import { usePlansGridContext } from '../grid-context';
 import useDefaultStorageOption from '../hooks/npm-ready/data-store/use-default-storage-option';
 import PlanButton from './plan-button';
@@ -78,6 +81,7 @@ const SignupFlowPlanFeatureActionButton = ( {
 	busy?: boolean;
 } ) => {
 	const translate = useTranslate();
+	const isEligibleForTrial = useSelector( isUserEligibleForFreeHostingTrial );
 
 	let btnText = translate( 'Get %(plan)s', {
 		args: {
@@ -127,6 +131,26 @@ const SignupFlowPlanFeatureActionButton = ( {
 						{ btnText }
 					</PlanButton>
 				) }
+			</div>
+		);
+	}
+
+	if (
+		! hasFreeTrialPlan &&
+		isBusinessPlan( planSlug ) &&
+		! isEligibleForTrial &&
+		window.location.pathname.indexOf( 'new-hosted-site' ) !== -1
+	) {
+		return (
+			<div className="plan-features-2023-grid__multiple-actions-container">
+				<PlanButton
+					planSlug={ planSlug }
+					onClick={ () => handleUpgradeButtonClick( false ) }
+					busy={ busy }
+				>
+					{ btnText }
+				</PlanButton>
+				<span>{ ! isStuck && translate( "You've already used your free trial! Thanks!" ) }</span>
 			</div>
 		);
 	}

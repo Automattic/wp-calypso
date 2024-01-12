@@ -366,6 +366,10 @@ $mobile-card-max-width: 440px;
 	display: flex;
 	flex-direction: column;
 	gap: 8px;
+
+	span {
+		text-align: center;
+	}
 }
 
 .plan-features-2023-grid__row:last-of-type .plan-features-2023-grid__table-item {

@@ -29,7 +29,6 @@ import StepWrapper from 'calypso/signup/step-wrapper';
 import { getIntervalType } from 'calypso/signup/steps/plans/util';
 import { useSelector } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
-import { warningNotice } from 'calypso/state/notices/actions';
 import { isUserEligibleForFreeHostingTrial } from 'calypso/state/selectors/is-user-eligible-for-free-hosting-trial';
 import { setSelectedSiteId } from 'calypso/state/ui/actions';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
@@ -44,7 +43,6 @@ interface Props {
 	onSubmit: ( planCartItem: MinimalRequestCartProduct | null ) => void;
 	selectedSiteId: number | null;
 	setSelectedSiteId: ( siteId: number ) => void;
-	warningNotice: ( message: string ) => void;
 }
 
 function getPlansIntent( flowName: string | null ): PlansIntent | null {
@@ -77,7 +75,7 @@ const PlansWrapper: React.FC< Props > = ( props ) => {
 			 ).getHidePlansFeatureComparison(),
 		};
 	}, [] );
-	const { flowName, selectedSiteId, setSelectedSiteId, warningNotice } = props;
+	const { flowName, selectedSiteId, setSelectedSiteId } = props;
 	const { setPlanCartItem, setDomain, setDomainCartItem, setProductCartItems } =
 		useDispatch( ONBOARD_STORE );
 
@@ -89,12 +87,6 @@ const PlansWrapper: React.FC< Props > = ( props ) => {
 	useEffect( () => {
 		if ( ! selectedSiteId && siteId ) {
 			setSelectedSiteId( siteId );
-		}
-
-		if ( ! isEligible && flowName === 'new-hosted-site' ) {
-			warningNotice(
-				__( 'Looks like you’ve already used your free trial. Let’s find you the perfect plan.' )
-			);
 		}
 	}, [ isEligible, selectedSiteId, siteId, setSelectedSiteId ] );
 
@@ -278,7 +270,6 @@ export default connect(
 		};
 	},
 	{
-		warningNotice,
 		setSelectedSiteId: setSelectedSiteId,
 	}
 )( localize( PlansWrapper ) );
