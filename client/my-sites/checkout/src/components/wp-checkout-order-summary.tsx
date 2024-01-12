@@ -33,6 +33,7 @@ import {
 	getCreditsLineItemFromCart,
 	getSubtotalWithoutCoupon,
 	getSubtotalWithCredits,
+	doesPurchaseHaveFullCredits,
 } from '@automattic/wpcom-checkout';
 import { keyframes } from '@emotion/react';
 import styled from '@emotion/styled';
@@ -50,6 +51,7 @@ import getFlowPlanFeatures from '../lib/get-flow-plan-features';
 import getJetpackProductFeatures from '../lib/get-jetpack-product-features';
 import getPlanFeatures from '../lib/get-plan-features';
 import { CheckIcon } from './check-icon';
+import { CostOverridesList, filterAndGroupCostOverridesForDisplay } from './cost-overrides-list';
 import { getRefundPolicies, getRefundWindows, RefundPolicy } from './refund-policies';
 import type { ResponseCart, ResponseCartProduct } from '@automattic/shopping-cart';
 import type { TranslateResult } from 'i18n-calypso';
@@ -124,7 +126,7 @@ export default function WPCheckoutOrderSummary( {
 
 function CheckoutSummaryPriceList() {
 	const cartKey = useCartKey();
-	const { responseCart } = useShoppingCart( cartKey );
+	const { responseCart, removeCoupon } = useShoppingCart( cartKey );
 	const couponLineItem = getCouponLineItemFromCart( responseCart );
 	const creditsLineItem = getCreditsLineItemFromCart( responseCart );
 	const taxLineItems = getTaxBreakdownLineItemsFromCart( responseCart );
@@ -132,9 +134,24 @@ function CheckoutSummaryPriceList() {
 	const translate = useTranslate();
 	const subtotalWithoutCoupon = getSubtotalWithoutCoupon( responseCart );
 	const subtotalWithCredits = getSubtotalWithCredits( responseCart );
+	const costOverridesList = filterAndGroupCostOverridesForDisplay( responseCart );
+	const isFullCredits = doesPurchaseHaveFullCredits( responseCart );
+	// Clamp the credits display value to the total
+	const creditsForDisplay = isFullCredits
+		? responseCart.sub_total_with_taxes_integer
+		: responseCart.credits_integer;
 
 	return (
 		<>
+			{ ! hasCheckoutVersion( '2' ) && costOverridesList.length > 0 && (
+				<CostOverridesList
+					costOverridesList={ costOverridesList }
+					currency={ responseCart.currency }
+					removeCoupon={ removeCoupon }
+					couponCode={ responseCart.coupon }
+					creditsInteger={ creditsForDisplay }
+				/>
+			) }
 			<CheckoutSummaryAmountWrapper>
 				<CheckoutSummaryLineItem key="checkout-summary-line-item-subtotal">
 					<span>{ translate( 'Subtotal' ) }</span>
