@@ -124,7 +124,7 @@ export default function WPCheckoutOrderSummary( {
 
 function CheckoutSummaryPriceList() {
 	const cartKey = useCartKey();
-	const { responseCart, removeCoupon } = useShoppingCart( cartKey );
+	const { responseCart } = useShoppingCart( cartKey );
 	const creditsLineItem = getCreditsLineItemFromCart( responseCart );
 	const taxLineItems = getTaxBreakdownLineItemsFromCart( responseCart );
 	const totalLineItem = getTotalLineItemFromCart( responseCart );
@@ -159,7 +159,6 @@ function CheckoutSummaryPriceList() {
 				<CostOverridesList
 					costOverridesList={ costOverridesList }
 					currency={ responseCart.currency }
-					removeCoupon={ removeCoupon }
 					couponCode={ responseCart.coupon }
 					creditsInteger={ creditsForDisplay }
 				/>

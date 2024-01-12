@@ -104,7 +104,7 @@ export function CostOverridesList( {
 }: {
 	costOverridesList: Array< CostOverrideForDisplay >;
 	currency: string;
-	removeCoupon: RemoveCouponFromCart;
+	removeCoupon?: RemoveCouponFromCart;
 	couponCode: ResponseCart[ 'coupon' ];
 	creditsInteger: number;
 } ) {
@@ -140,34 +140,54 @@ export function CostOverridesList( {
 					</span>
 				</div>
 			) }
-			{ couponOverrides.map( ( costOverride ) => {
-				return (
-					<div
-						className="cost-overrides-list-item cost-overrides-list-item--coupon"
-						key={ costOverride.humanReadableReason }
-					>
-						<span className="cost-overrides-list-item__reason">
-							{ couponCode.length > 0
-								? translate( 'Coupon: %(couponCode)s', { args: { couponCode } } )
-								: costOverride.humanReadableReason }
-						</span>
-						<span className="cost-overrides-list-item__discount">
-							{ formatCurrency( -costOverride.discountAmount, currency, { isSmallestUnit: true } ) }
-						</span>
-						<span className="cost-overrides-list-item__actions">
-							<DeleteButton
-								buttonType="text-button"
-								disabled={ isDisabled }
-								className="cost-overrides-list-item__actions-remove"
-								onClick={ removeCoupon }
-								aria-label={ translate( 'Remove coupon' ) }
-							>
-								{ translate( 'Remove' ) }
-							</DeleteButton>
-						</span>
-					</div>
-				);
-			} ) }
+			{ ! removeCoupon &&
+				couponOverrides.map( ( costOverride ) => {
+					return (
+						<div className="cost-overrides-list-item" key={ costOverride.humanReadableReason }>
+							<span className="cost-overrides-list-item__reason">
+								{ couponCode.length > 0
+									? translate( 'Coupon: %(couponCode)s', { args: { couponCode } } )
+									: costOverride.humanReadableReason }
+							</span>
+							<span className="cost-overrides-list-item__discount">
+								{ formatCurrency( -costOverride.discountAmount, currency, {
+									isSmallestUnit: true,
+								} ) }
+							</span>
+						</div>
+					);
+				} ) }
+			{ removeCoupon &&
+				couponOverrides.map( ( costOverride ) => {
+					return (
+						<div
+							className="cost-overrides-list-item cost-overrides-list-item--coupon"
+							key={ costOverride.humanReadableReason }
+						>
+							<span className="cost-overrides-list-item__reason">
+								{ couponCode.length > 0
+									? translate( 'Coupon: %(couponCode)s', { args: { couponCode } } )
+									: costOverride.humanReadableReason }
+							</span>
+							<span className="cost-overrides-list-item__discount">
+								{ formatCurrency( -costOverride.discountAmount, currency, {
+									isSmallestUnit: true,
+								} ) }
+							</span>
+							<span className="cost-overrides-list-item__actions">
+								<DeleteButton
+									buttonType="text-button"
+									disabled={ isDisabled }
+									className="cost-overrides-list-item__actions-remove"
+									onClick={ removeCoupon }
+									aria-label={ translate( 'Remove coupon' ) }
+								>
+									{ translate( 'Remove' ) }
+								</DeleteButton>
+							</span>
+						</div>
+					);
+				} ) }
 		</CostOverridesListStyle>
 	);
 }
