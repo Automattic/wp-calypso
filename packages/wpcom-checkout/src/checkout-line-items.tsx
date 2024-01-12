@@ -469,7 +469,7 @@ function returnModalCopy(
 	isRenewal = false,
 	product?: ResponseCartProduct
 ): ModalCopy {
-	const domainNameString = product ? product.meta : 'your selected domain';
+	const domainNameString = product ? product.meta : translate( 'your selected domain' );
 
 	switch ( productType ) {
 		case 'gift purchase':
