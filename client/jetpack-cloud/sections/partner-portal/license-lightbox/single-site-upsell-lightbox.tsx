@@ -21,7 +21,7 @@ interface Props {
 	siteId?: number;
 }
 
-export default function SingleSellUpsellLightbox( {
+export default function SingleSiteUpsellLightbox( {
 	currentProduct,
 	partnerCanIssueLicense,
 	productSlug,
