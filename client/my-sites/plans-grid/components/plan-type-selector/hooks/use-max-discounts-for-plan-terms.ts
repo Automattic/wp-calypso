@@ -47,7 +47,6 @@ export default function useMaxDiscountsForPlanTerms(
 		( planSlug ) => getPlan( planSlug )?.term === lowestTerm
 	);
 
-	// TODO clk pricing
 	const plansPricing = Plans.usePricingMetaForGridPlans( {
 		planSlugs: allRelatedPlanSlugs,
 		withoutProRatedCredits: true,

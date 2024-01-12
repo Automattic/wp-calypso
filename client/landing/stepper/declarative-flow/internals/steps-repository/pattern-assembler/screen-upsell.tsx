@@ -24,8 +24,6 @@ const ScreenUpsell = ( { numOfSelectedGlobalStyles = 1, onCheckout, onTryStyle }
 	const { title, description } = useScreen( 'upsell' );
 	const translations = useGlobalStylesUpgradeTranslations( { numOfSelectedGlobalStyles } );
 	const selectedSiteId = useSelector( getSelectedSiteId ) ?? undefined;
-
-	// TODO clk pricing
 	const pricingMeta = Plans.usePricingMetaForGridPlans( {
 		planSlugs: [ PLAN_PREMIUM ],
 		selectedSiteId,
@@ -33,7 +31,6 @@ const ScreenUpsell = ( { numOfSelectedGlobalStyles = 1, onCheckout, onTryStyle }
 		useCheckPlanAvailabilityForPurchase,
 		storageAddOns: null,
 	} );
-
 	const pricing = pricingMeta?.[ PLAN_PREMIUM ];
 	const isPricingLoaded =
 		pricing?.currencyCode && pricing?.originalPrice.monthly && pricing?.originalPrice.full;

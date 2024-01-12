@@ -18,8 +18,6 @@ export default function useMaxDiscount(
 	const yearlyVariantPlanSlugs = wpcomMonthlyPlans
 		.map( ( planSlug ) => getPlanSlugForTermVariant( planSlug, TERM_ANNUALLY ) )
 		.filter( Boolean ) as PlanSlug[];
-
-	// TODO clk pricing
 	const monthlyPlansPricing = Plans.usePricingMetaForGridPlans( {
 		planSlugs: wpcomMonthlyPlans,
 		withoutProRatedCredits: true,
@@ -28,7 +26,6 @@ export default function useMaxDiscount(
 		useCheckPlanAvailabilityForPurchase,
 		storageAddOns: null,
 	} );
-	// TODO clk pricing
 	const yearlyPlansPricing = Plans.usePricingMetaForGridPlans( {
 		planSlugs: yearlyVariantPlanSlugs,
 		withoutProRatedCredits: true,
