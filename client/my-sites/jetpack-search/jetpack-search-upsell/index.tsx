@@ -18,10 +18,8 @@ import SidebarNavigation from 'calypso/components/sidebar-navigation';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import useTrackCallback from 'calypso/lib/jetpack/use-track-callback';
-import { getPurchaseURLCallback } from 'calypso/my-sites/plans/jetpack-plans/get-purchase-url-callback';
 import { useSelector, useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
-import { getCurrentUserCurrencyCode } from 'calypso/state/currency-code/selectors';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import getSelectedSiteId from 'calypso/state/ui/selectors/get-selected-site-id';
@@ -38,11 +36,6 @@ export default function JetpackSearchUpsell() {
 	);
 	const dispatch = useDispatch();
 	const translate = useTranslate();
-	const currencyCode = useSelector( getCurrentUserCurrencyCode );
-	const createCheckoutURL = getPurchaseURLCallback( selectedSiteSlug, {
-		// For the Search upsell in Jetpack Cloud, we want to redirect back here to the Search page after checkout.
-		redirect_to: window.location.href,
-	} );
 
 	const WPComUpgradeUrl =
 		'https://jetpack.com/upgrade/search/?utm_campaign=my-sites-jetpack-search&utm_source=calypso&site=' +
@@ -68,8 +61,6 @@ export default function JetpackSearchUpsell() {
 					<UpsellProductCard
 						productSlug={ PRODUCT_JETPACK_SEARCH }
 						siteId={ siteId }
-						currencyCode={ currencyCode }
-						getButtonURL={ createCheckoutURL }
 						onCtaButtonClick={ onClick }
 					/>
 				</div>

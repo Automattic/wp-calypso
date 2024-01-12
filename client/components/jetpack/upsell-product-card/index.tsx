@@ -1,27 +1,34 @@
 import {
 	TERM_ANNUALLY,
+	TERM_MONTHLY,
 	isJetpackBackupSlug,
 	isJetpackScanSlug,
 	isJetpackSearchSlug,
 } from '@automattic/calypso-products';
 import { Gridicon } from '@automattic/components';
-import { useTranslate } from 'i18n-calypso';
-import { useMemo } from 'react';
+import { TranslateResult, useTranslate } from 'i18n-calypso';
+import { useMemo, useState } from 'react';
 import BackupImage from 'calypso/assets/images/jetpack/rna-image-backup.png';
 import DefaultImage from 'calypso/assets/images/jetpack/rna-image-default.png';
 import ScanImage from 'calypso/assets/images/jetpack/rna-image-scan.png';
 import SearchImage from 'calypso/assets/images/jetpack/rna-image-search.png';
 import DisplayPrice from 'calypso/components/jetpack/card/jetpack-product-card/display-price';
 import JetpackRnaActionCard from 'calypso/components/jetpack/card/jetpack-rna-action-card';
+import SingleSellUpsellLightbox from 'calypso/jetpack-cloud/sections/partner-portal/license-lightbox/single-site-upsell-lightbox';
+import { getPurchaseURLCallback } from 'calypso/my-sites/plans/jetpack-plans/get-purchase-url-callback';
 import productAboveButtonText from 'calypso/my-sites/plans/jetpack-plans/product-card/product-above-button-text';
 import productTooltip from 'calypso/my-sites/plans/jetpack-plans/product-card/product-tooltip';
 import slugToSelectorProduct from 'calypso/my-sites/plans/jetpack-plans/slug-to-selector-product';
 import useItemPrice from 'calypso/my-sites/plans/jetpack-plans/use-item-price';
 import { useSelector } from 'calypso/state';
+import { getCurrentUserCurrencyCode } from 'calypso/state/currency-code/selectors';
+import useProductsQuery from 'calypso/state/partner-portal/licenses/hooks/use-products-query';
+import { hasJetpackPartnerAccess as hasJetpackPartnerAccessSelector } from 'calypso/state/partner-portal/partner/selectors';
+import { APIProductFamilyProduct } from 'calypso/state/partner-portal/types';
 import { getSiteAvailableProduct } from 'calypso/state/sites/products/selectors';
+import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import type {
 	Duration,
-	PurchaseURLCallback,
 	SelectorProduct,
 	SiteProduct,
 } from 'calypso/my-sites/plans/jetpack-plans/types';
@@ -31,38 +38,75 @@ import './style.scss';
 interface UpsellProductCardProps {
 	productSlug: string;
 	siteId: number | null;
-	currencyCode: string | null;
 	onCtaButtonClick: () => void;
-	getButtonURL?: PurchaseURLCallback;
-	billingTerm?: Duration;
 }
 
 const UpsellProductCard: React.FC< UpsellProductCardProps > = ( {
 	productSlug,
 	siteId,
-	currencyCode,
-	getButtonURL,
 	onCtaButtonClick,
-	billingTerm = TERM_ANNUALLY,
 } ) => {
 	const translate = useTranslate();
+	const [ showLightbox, setShowLightbox ] = useState( false );
+	const hasJetpackPartnerAccess = useSelector( hasJetpackPartnerAccessSelector );
+	const nonManageCurrencyCode = useSelector( getCurrentUserCurrencyCode );
+	const selectedSiteSlug = useSelector( getSelectedSiteSlug );
 	const item = slugToSelectorProduct( productSlug ) as SelectorProduct;
 	const siteProduct: SiteProduct | undefined = useSelector( ( state ) =>
 		getSiteAvailableProduct( state, siteId, item.productSlug )
 	);
 
+	let aboveButtonText: TranslateResult | null;
+	let billingTerm: Duration;
+	let ctaButtonURL: string | undefined;
+	let currencyCode: string | null;
+	let discountedPrice: number | undefined;
+	let isFetchingPrices: boolean;
+	let manageProduct: APIProductFamilyProduct | undefined;
+	let onCtaButtonClickInternal = onCtaButtonClick;
+	let originalPrice: number;
+
 	// Calculate the product price.
 	const {
-		originalPrice,
-		discountedPrice,
-		priceTierList,
-		isFetching: pricesAreFetching,
+		originalPrice: nonManageOriginalPrice,
+		discountedPrice: nonManageDiscountedPrice,
+		priceTierList: nonManagePriceTierList,
+		isFetching: isFetchingNonManagePrices,
 	} = useItemPrice( siteId, item, item?.monthlyProductSlug || '' );
 
-	// For Jetpack Search - ie. "*estimated price based off of {number} records"
-	const aboveButtonText = productAboveButtonText( item, siteProduct, false, false );
+	const { data: products, isFetching: isFetchingManagePrices } = useProductsQuery();
 
-	const ctaButtonURL = getButtonURL && getButtonURL( item, false );
+	if ( hasJetpackPartnerAccess ) {
+		const manageProductSlug = productSlug.replace( '_yearly', '' ).replace( /_/g, '-' );
+		manageProduct = products?.find( ( product ) => product.slug === manageProductSlug );
+		isFetchingPrices = isFetchingManagePrices || !! isFetchingNonManagePrices;
+		if ( manageProduct ) {
+			aboveButtonText = null;
+			billingTerm = TERM_MONTHLY;
+			ctaButtonURL = '#';
+			currencyCode = manageProduct.currency;
+			originalPrice = parseFloat( manageProduct.amount );
+			onCtaButtonClickInternal = () => {
+				setShowLightbox( true );
+				onCtaButtonClick();
+			};
+		}
+	} else {
+		const getButtonURL = getPurchaseURLCallback( selectedSiteSlug || '', {
+			// We want to redirect back here after checkout.
+			redirect_to: window.location.href,
+		} );
+
+		// For Jetpack Search - ie. "*estimated price based off of {number} records"
+		aboveButtonText = productAboveButtonText( item, siteProduct, false, false );
+		billingTerm = TERM_ANNUALLY;
+		ctaButtonURL = getButtonURL( item, false );
+		currencyCode = nonManageCurrencyCode;
+		discountedPrice = nonManageDiscountedPrice;
+		isFetchingPrices = !! isFetchingNonManagePrices;
+		originalPrice = nonManageOriginalPrice;
+	}
+
 	const ctaButtonLabel = translate( 'Add Jetpack %(productName)s', {
 		args: {
 			productName: item.displayName,
@@ -71,11 +115,13 @@ const UpsellProductCard: React.FC< UpsellProductCardProps > = ( {
 	} );
 
 	const percentDiscount =
-		originalPrice !== undefined && discountedPrice !== undefined
-			? Math.floor( ( ( originalPrice - discountedPrice ) / originalPrice ) * 100 )
+		nonManageOriginalPrice !== undefined && nonManageDiscountedPrice !== undefined
+			? Math.floor(
+					( ( nonManageOriginalPrice - nonManageDiscountedPrice ) / nonManageOriginalPrice ) * 100
+			  )
 			: 0;
 
-	const showDiscountLabel = !! percentDiscount && percentDiscount > 0;
+	const showDiscountLabel = ! hasJetpackPartnerAccess && !! percentDiscount && percentDiscount > 0;
 	const discountText = showDiscountLabel
 		? translate( '%(percent)d%% off', {
 				args: {
@@ -125,22 +171,32 @@ const UpsellProductCard: React.FC< UpsellProductCardProps > = ( {
 						discountedPrice={ discountedPrice }
 						currencyCode={ currencyCode }
 						originalPrice={ originalPrice ?? 0 }
-						pricesAreFetching={ pricesAreFetching }
+						pricesAreFetching={ isFetchingPrices }
 						belowPriceText={ item.belowPriceText }
 						tooltipText={
-							priceTierList.length > 0 &&
-							productTooltip( item, priceTierList, currencyCode ?? 'USD' )
+							! hasJetpackPartnerAccess &&
+							nonManagePriceTierList.length > 0 &&
+							productTooltip( item, nonManagePriceTierList, currencyCode ?? 'USD' )
 						}
 						billingTerm={ billingTerm }
 						productName={ displayName }
 						hideSavingLabel={ false }
 					/>
-					{ showDiscountLabel && ! pricesAreFetching && (
+					{ showDiscountLabel && ! isFetchingPrices && (
 						<div className="upsell-product-card__discount-label">{ discountText }</div>
 					) }
 				</div>
 				{ aboveButtonText && (
 					<p className="upsell-product-card__above-button">{ aboveButtonText }</p>
+				) }
+				{ showLightbox && hasJetpackPartnerAccess && siteId && manageProduct && (
+					<SingleSellUpsellLightbox
+						currentProduct={ manageProduct }
+						onClose={ () => setShowLightbox( false ) }
+						productSlug={ productSlug }
+						partnerCanIssueLicense={ true }
+						siteId={ siteId }
+					/>
 				) }
 			</>
 		);
@@ -150,7 +206,7 @@ const UpsellProductCard: React.FC< UpsellProductCardProps > = ( {
 		<JetpackRnaActionCard
 			headerText={ displayName }
 			subHeaderText={ description }
-			onCtaButtonClick={ onCtaButtonClick }
+			onCtaButtonClick={ onCtaButtonClickInternal }
 			ctaButtonURL={ ctaButtonURL }
 			ctaButtonLabel={ ctaButtonLabel }
 			cardImage={ upsellImageUrl }
