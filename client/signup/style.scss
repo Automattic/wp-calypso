@@ -1,6 +1,7 @@
 @import "@automattic/onboarding/styles/mixins";
 @import "@wordpress/base-styles/breakpoints";
 @import "@wordpress/base-styles/mixins";
+@import "../jetpack-connect/colors.scss";
 
 body.is-section-signup {
 	// Use WordPress.com’s brand color for the signup background
