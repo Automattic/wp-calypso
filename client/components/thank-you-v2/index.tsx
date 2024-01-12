@@ -1,3 +1,4 @@
+import { ConfettiAnimation } from '@automattic/components';
 import { TranslateResult } from 'i18n-calypso';
 import ThankYouFooter, { ThankYouFooterDetailProps } from './footer';
 import ThankYouHeader from './header';
@@ -19,6 +20,8 @@ export default function ThankYouV2( props: ThankYouV2Props ) {
 
 	return (
 		<div className="thank-you">
+			<ConfettiAnimation delay={ 1000 } />
+
 			<ThankYouHeader title={ title } subtitle={ subtitle } buttons={ headerButtons } />
 
 			{ products && <div className="thank-you__products">{ products }</div> }

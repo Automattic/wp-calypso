@@ -76,6 +76,7 @@ export default function useIntervalOptions( props: IntervalTypeProps ): Interval
 		props.plans,
 		Object.keys( displayedOptionList ) as Array< SupportedUrlFriendlyTermType >,
 		props.usePricingMetaForGridPlans,
+		props.useCheckPlanAvailabilityForPurchase,
 		props.selectedSiteId
 	);
 

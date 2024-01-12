@@ -88,8 +88,8 @@ async function getLoggedInLandingPage( { dispatch, getState } ) {
 	const primarySiteSlug = getSiteSlug( getState(), primarySiteId );
 
 	if ( ! primarySiteSlug ) {
-		// there is no primary site or the site info couldn't be fetched. Redirect to Reader.
-		return '/read';
+		// there is no primary site or the site info couldn't be fetched. Redirect to Sites Dashboard.
+		return '/sites';
 	}
 
 	const isCustomerHomeEnabled = canCurrentUserUseCustomerHome( getState(), primarySiteId );

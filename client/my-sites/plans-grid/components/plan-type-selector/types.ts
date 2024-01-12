@@ -1,5 +1,6 @@
 import { UrlFriendlyTermType, type PlanSlug } from '@automattic/calypso-products';
 import { type TranslateResult } from 'i18n-calypso';
+import { UseCheckPlanAvailabilityForPurchase } from 'calypso/my-sites/plans-features-main/hooks/data-store/use-pricing-meta-for-grid-plans';
 import { type UsePricingMetaForGridPlans } from '../../hooks/npm-ready/data-store/use-grid-plans';
 
 export type PlanTypeSelectorProps = {
@@ -25,6 +26,7 @@ export type PlanTypeSelectorProps = {
 	isStepperUpgradeFlow: boolean;
 	currentSitePlanSlug?: PlanSlug | null;
 	usePricingMetaForGridPlans: UsePricingMetaForGridPlans;
+	useCheckPlanAvailabilityForPurchase: UseCheckPlanAvailabilityForPurchase;
 	recordTracksEvent?: ( eventName: string, eventProperties: Record< string, unknown > ) => void;
 	/**
 	 * Whether to render the selector along with a title if passed.
@@ -52,6 +54,7 @@ export type IntervalTypeProps = Pick<
 	| 'selectedFeature'
 	| 'currentSitePlanSlug'
 	| 'usePricingMetaForGridPlans'
+	| 'useCheckPlanAvailabilityForPurchase'
 	| 'title'
 	| 'coupon'
 >;

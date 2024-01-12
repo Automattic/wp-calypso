@@ -49,7 +49,7 @@ import {
 	domainManagementList,
 	domainManagementTransferInPrecheck,
 } from 'calypso/my-sites/domains/paths';
-import { emailManagement } from 'calypso/my-sites/email/paths';
+import { getEmailManagementPath } from 'calypso/my-sites/email/paths';
 import TitanSetUpThankYou from 'calypso/my-sites/email/titan-set-up-thank-you';
 import { fetchAtomicTransfer } from 'calypso/state/atomic-transfer/actions';
 import { transferStates } from 'calypso/state/atomic-transfer/constants';
@@ -95,6 +95,7 @@ import PersonalPlanDetails from './personal-plan-details';
 import PremiumPlanDetails from './premium-plan-details';
 import ProPlanDetails from './pro-plan-details';
 import MasterbarStyled from './redesign-v2/masterbar-styled';
+import DomainBulkTransferThankYou from './redesign-v2/pages/domain-bulk-transfer';
 import DomainOnlyThankYou from './redesign-v2/pages/domain-only';
 import CheckoutMasterbar from './redesign-v2/sections/CheckoutMasterbar';
 import Footer from './redesign-v2/sections/Footer';
@@ -464,7 +465,7 @@ export class CheckoutThankYou extends Component<
 			if ( purchases.some( isGSuiteOrExtraLicenseOrGoogleWorkspace ) ) {
 				const purchase = purchases.find( isGSuiteOrExtraLicenseOrGoogleWorkspace );
 				if ( purchase ) {
-					return page( emailManagement( siteSlug, purchase.meta ) );
+					return page( getEmailManagementPath( siteSlug, purchase.meta ) );
 				}
 			}
 		}
@@ -572,7 +573,14 @@ export class CheckoutThankYou extends Component<
 		if ( isRefactoredForThankYouV2( this.props ) ) {
 			let pageContent = null;
 
-			if ( ! wasBulkDomainTransfer && isDomainOnly( purchases ) ) {
+			if ( wasBulkDomainTransfer ) {
+				pageContent = (
+					<DomainBulkTransferThankYou
+						purchases={ purchases }
+						currency={ this.props.receipt.data?.currency ?? 'USD' }
+					/>
+				);
+			} else if ( isDomainOnly( purchases ) ) {
 				pageContent = <DomainOnlyThankYou purchases={ purchases } />;
 			}
 
