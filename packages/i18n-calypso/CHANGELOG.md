@@ -1,3 +1,8 @@
+## 7.0.0
+
+- Update React peer dependency to v18.
+- Improve TypeScript type definitions.
+
 ## 6.0.1
 
 - Fix an issue in the published build of i18n-calypso which prevented it from installing correctly.
