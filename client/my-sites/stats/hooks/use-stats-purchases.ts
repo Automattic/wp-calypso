@@ -11,7 +11,7 @@ import { useSelector } from 'calypso/state';
 import { isFetchingSitePurchases, getSitePurchases } from 'calypso/state/purchases/selectors';
 import type { Purchase } from 'calypso/lib/purchases/types';
 
-const JETPACK_STATS_TIERED_BILLING_LIVE_DATE = '2024-01-04T05:30:00+00:00';
+const JETPACK_STATS_TIERED_BILLING_LIVE_DATE_2024_01_04 = '2024-01-04T05:30:00+00:00';
 
 const filterPurchasesByProducts = ( ownedPurchases: Purchase[], productSlugs: string[] ) => {
 	if ( ! ownedPurchases?.length ) {
@@ -67,7 +67,7 @@ export default function useStatsPurchases( siteId: number | null ) {
 		if ( purchases.length === 0 ) {
 			return false;
 		}
-		return purchases[ 0 ].subscribedDate < JETPACK_STATS_TIERED_BILLING_LIVE_DATE;
+		return purchases[ 0 ].subscribedDate < JETPACK_STATS_TIERED_BILLING_LIVE_DATE_2024_01_04;
 	}, [ sitePurchases ] );
 
 	return {
