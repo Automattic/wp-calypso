@@ -25,9 +25,8 @@ import {
 	shouldFetchSitePlans,
 } from '@automattic/calypso-products';
 import page from '@automattic/calypso-router';
-import { Card, ConfettiAnimation } from '@automattic/components';
+import { Card } from '@automattic/components';
 import { dispatch } from '@wordpress/data';
-import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
 import { Component } from 'react';
 import { connect } from 'react-redux';
@@ -98,9 +97,7 @@ import MasterbarStyled from './redesign-v2/masterbar-styled';
 import DomainBulkTransferThankYou from './redesign-v2/pages/domain-bulk-transfer';
 import DomainOnlyThankYou from './redesign-v2/pages/domain-only';
 import PlanOnlyThankYou from './redesign-v2/pages/plan-only';
-import CheckoutMasterbar from './redesign-v2/sections/CheckoutMasterbar';
-import Footer from './redesign-v2/sections/Footer';
-import { isRedesignV2, isRefactoredForThankYouV2 } from './redesign-v2/utils';
+import { isRefactoredForThankYouV2 } from './redesign-v2/utils';
 import SiteRedirectDetails from './site-redirect-details';
 import StarterPlanDetails from './starter-plan-details';
 import TransferPending from './transfer-pending';
@@ -523,7 +520,7 @@ export class CheckoutThankYou extends Component<
 		let failedPurchases = [];
 		let wasJetpackPlanPurchased = false;
 		let wasEcommercePlanPurchased = false;
-		let showHappinessSupport = ! isRedesignV2( this.props ) && ! this.props.isSimplified;
+		let showHappinessSupport = ! this.props.isSimplified;
 		let delayedTransferPurchase: ReceiptPurchase | undefined;
 		let wasDomainProduct = false;
 		let wasGSuiteOrGoogleWorkspace = false;
@@ -592,7 +589,7 @@ export class CheckoutThankYou extends Component<
 				const siteSlug = this.props.selectedSite?.slug;
 
 				return (
-					<Main className="is-redesign-v2">
+					<Main className="checkout-thank-you is-redesign-v2">
 						<PageViewTracker { ...this.getAnalyticsProperties() } title="Checkout Thank You" />
 
 						{ this.isDataLoaded() && siteId && <QuerySitePurchases siteId={ siteId } /> }
@@ -715,24 +712,8 @@ export class CheckoutThankYou extends Component<
 
 		// standard thanks page
 		return (
-			<Main
-				className={ classNames( 'checkout-thank-you', {
-					'is-redesign-v2': isRedesignV2( this.props ),
-				} ) }
-			>
+			<Main className="checkout-thank-you">
 				<PageViewTracker { ...this.getAnalyticsProperties() } title="Checkout Thank You" />
-				{ this.isDataLoaded() && isRedesignV2( this.props ) && (
-					<>
-						<ConfettiAnimation delay={ 1000 } />
-						<CheckoutMasterbar
-							siteId={ this.props.selectedSite?.ID }
-							siteSlug={ this.props.selectedSiteSlug }
-							backText={
-								this.props.selectedSiteSlug ? translate( 'Back to dashboard' ) : undefined
-							}
-						/>
-					</>
-				) }
 				<Card className="checkout-thank-you__content">{ this.productRelatedMessages() }</Card>
 				{ showHappinessSupport && (
 					<Card className="checkout-thank-you__footer">
@@ -916,10 +897,9 @@ export class CheckoutThankYou extends Component<
 					primaryCta={ this.primaryCta }
 					displayMode={ displayMode }
 					purchases={ purchases }
-					isRedesignV2={ isRedesignV2( this.props ) }
 					currency={ receipt.data?.currency }
 				>
-					{ ! isRedesignV2( this.props ) && ! isSimplified && primaryPurchase && (
+					{ ! isSimplified && primaryPurchase && (
 						<CheckoutThankYouFeaturesHeader
 							isDataLoaded={ this.isDataLoaded() }
 							isGenericReceipt={ this.isGenericReceipt() }
@@ -930,14 +910,10 @@ export class CheckoutThankYou extends Component<
 
 					{ ! isSimplified && component && (
 						<div className="checkout-thank-you__purchase-details-list">
-							{ isRedesignV2( this.props ) ? (
-								<Footer purchases={ purchases } />
-							) : (
-								<PurchaseDetailsWrapper
-									{ ...this.props }
-									componentAndPrimaryPurchaseAndDomain={ componentAndPrimaryPurchaseAndDomain }
-								/>
-							) }
+							<PurchaseDetailsWrapper
+								{ ...this.props }
+								componentAndPrimaryPurchaseAndDomain={ componentAndPrimaryPurchaseAndDomain }
+							/>
 						</div>
 					) }
 				</CheckoutThankYouHeader>

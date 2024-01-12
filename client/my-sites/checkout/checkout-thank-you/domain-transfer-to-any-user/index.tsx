@@ -35,7 +35,7 @@ const DomainTransferToAnyUser: React.FC< DomainTransferToAnyUserContainerProps >
 	};
 
 	return (
-		<Main className="is-redesign-v2">
+		<Main className="checkout-thank-you is-redesign-v2">
 			<MasterbarStyled canGoBack={ false } />
 
 			<ThankYouV2
