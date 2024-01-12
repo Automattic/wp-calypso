@@ -1,4 +1,5 @@
 import { Button } from '@automattic/components';
+import formatCurrency from '@automattic/format-currency';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { useTranslate } from 'i18n-calypso';
 import { FunctionComponent, useContext, useCallback } from 'react';
@@ -64,6 +65,10 @@ const LicenseLightboxPurchaseViaJetpackcom: FunctionComponent< Props > = ( {
 		);
 	}, [ dispatch ] );
 
+	const formattedNonManagePrice = nonManageProductPrice
+		? formatCurrency( nonManageProductPrice, 'USD' )
+		: null;
+
 	return (
 		<>
 			<div className="license-lightbox__secondary-checkout-heading">
@@ -75,7 +80,13 @@ const LicenseLightboxPurchaseViaJetpackcom: FunctionComponent< Props > = ( {
 				href={ checkoutURL }
 				disabled={ false }
 			>
-				{ translate( 'Purchase via Jetpack.com' ) }
+				{ formattedNonManagePrice
+					? translate( 'Purchase for %(formattedNonManagePrice)s', {
+							args: {
+								formattedNonManagePrice,
+							},
+					  } )
+					: translate( 'Purchase via Jetpack.com' ) }
 			</Button>
 			<div className="license-lightbox__secondary-checkout-notice">
 				{ translate(
