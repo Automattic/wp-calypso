@@ -193,7 +193,7 @@ export interface PlansFeaturesMainProps {
 	 * Shows the plan type selector dropdown instead of the default toggle
 	 */
 	showPlanTypeSelectorDropdown?: boolean;
-	onPlanTypeSelectorChange?: ( path: string ) => void;
+	onPlanIntervalChange?: ( path: string ) => void;
 }
 
 const SecondaryFormattedHeader = ( { siteSlug }: { siteSlug?: string | null } ) => {
@@ -256,7 +256,7 @@ const PlansFeaturesMain = ( {
 	renderSiblingWhenLoaded,
 	showPlanTypeSelectorDropdown = false,
 	coupon,
-	onPlanTypeSelectorChange,
+	onPlanIntervalChange,
 }: PlansFeaturesMainProps ) => {
 	const [ isModalOpen, setIsModalOpen ] = useState( false );
 	const [ lastClickedPlan, setLastClickedPlan ] = useState< string | null >( null );
@@ -751,8 +751,8 @@ const PlansFeaturesMain = ( {
 				jetpackAppPlans: isJetpackAppFlow,
 			} );
 
-			if ( onPlanTypeSelectorChange ) {
-				return onPlanTypeSelectorChange( pathOrQueryParam );
+			if ( onPlanIntervalChange ) {
+				return onPlanIntervalChange( pathOrQueryParam );
 			}
 
 			if ( hasQueryArg( pathOrQueryParam, 'intervalType' ) ) {
@@ -859,7 +859,7 @@ const PlansFeaturesMain = ( {
 								enableStickyBehavior={ enablePlanTypeSelectorStickyBehavior }
 								stickyPlanTypeSelectorOffset={ masterbarHeight - 1 }
 								coupon={ coupon }
-								onPlanTypeSelectorChange={ handlePlanTypeSelectorChange }
+								onPlanIntervalChange={ handlePlanTypeSelectorChange }
 							/>
 						) }
 						<div

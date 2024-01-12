@@ -11,7 +11,7 @@ export type PlanTypeSelectorProps = {
 	withDiscount?: string;
 	enableStickyBehavior?: boolean;
 	stickyPlanTypeSelectorOffset?: number;
-	onPlanTypeSelectorChange?: ( selectedItem: { key: SupportedUrlFriendlyTermType } ) => void;
+	onPlanIntervalChange?: ( selectedItem: { key: SupportedUrlFriendlyTermType } ) => void;
 	layoutClassName?: string;
 	siteSlug?: string | null;
 	selectedPlan?: string;
@@ -55,7 +55,7 @@ export type IntervalTypeProps = Pick<
 	| 'usePricingMetaForGridPlans'
 	| 'title'
 	| 'coupon'
-	| 'onPlanTypeSelectorChange'
+	| 'onPlanIntervalChange'
 >;
 
 export type SupportedUrlFriendlyTermType = Extract<

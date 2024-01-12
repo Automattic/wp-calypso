@@ -101,7 +101,7 @@ const PlansWrapper: React.FC< Props > = ( props ) => {
 		? reduxHideFreePlan && 'plans-blog-onboarding' === plansIntent
 		: reduxHideFreePlan;
 
-	const onPlanTypeSelectorChange = ( path: string ) => {
+	const onPlanIntervalChange = ( path: string ) => {
 		navigate( path );
 	};
 
@@ -172,7 +172,7 @@ const PlansWrapper: React.FC< Props > = ( props ) => {
 						 */
 						config.isEnabled( 'onboarding/interval-dropdown' ) && false
 					}
-					onPlanTypeSelectorChange={ onPlanTypeSelectorChange }
+					onPlanIntervalChange={ onPlanIntervalChange }
 				/>
 			</div>
 		);
