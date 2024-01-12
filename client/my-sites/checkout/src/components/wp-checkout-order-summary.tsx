@@ -137,8 +137,24 @@ function CheckoutSummaryPriceList() {
 		? responseCart.sub_total_with_taxes_integer
 		: responseCart.credits_integer;
 
+	const subtotalBeforeDiscounts = responseCart.products.reduce(
+		( total, product ) => product.item_original_subtotal_integer + total,
+		0
+	);
+
 	return (
 		<>
+			{ ! hasCheckoutVersion( '2' ) && (
+				<CheckoutFirstSubtotalLineItem key="checkout-summary-line-item-subtotal-one">
+					<span>{ translate( 'Subtotal before discounts' ) }</span>
+					<span>
+						{ formatCurrency( subtotalBeforeDiscounts, responseCart.currency, {
+							isSmallestUnit: true,
+							stripZeros: true,
+						} ) }
+					</span>
+				</CheckoutFirstSubtotalLineItem>
+			) }
 			{ ! hasCheckoutVersion( '2' ) && costOverridesList.length > 0 && (
 				<CostOverridesList
 					costOverridesList={ costOverridesList }
@@ -876,12 +892,31 @@ const CheckoutSummaryAmountWrapper = styled.div`
 	padding: 20px 0;
 `;
 
+const CheckoutFirstSubtotalLineItem = styled.div`
+	display: flex;
+	flex-wrap: wrap;
+	font-size: 14px;
+	justify-content: space-between;
+	line-height: 20px;
+	margin-bottom: 16px;
+
+	&:nth-last-of-type( 2 ) {
+		border-bottom: 1px solid ${ ( props ) => props.theme.colors.borderColorLight };
+		margin-bottom: 20px;
+		padding-bottom: 20px;
+	}
+
+	.is-loading & {
+		animation: ${ pulse } 1.5s ease-in-out infinite;
+	}
+`;
+
 const CheckoutSummaryLineItem = styled.div`
 	display: flex;
 	flex-wrap: wrap;
 	font-size: 14px;
 	justify-content: space-between;
-	line-heigh: 20px;
+	line-height: 20px;
 	margin-bottom: 4px;
 
 	&:nth-last-of-type( 2 ) {
