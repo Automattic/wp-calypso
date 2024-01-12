@@ -7,6 +7,12 @@ import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
 import CardHeading from 'calypso/components/card-heading';
 import InlineSupportLink from 'calypso/components/inline-support-link';
+import {
+	useEdgeCacheQuery,
+	useSetEdgeCacheMutation,
+	useIsSetEdgeCacheMutating,
+	useClearEdgeCacheMutation,
+} from 'calypso/data/hosting/use-cache';
 import { clearWordPressCache } from 'calypso/state/hosting/actions';
 import getRequest from 'calypso/state/selectors/get-request';
 import isPrivateSite from 'calypso/state/selectors/is-private-site';
@@ -14,9 +20,6 @@ import isSiteComingSoon from 'calypso/state/selectors/is-site-coming-soon';
 import { shouldRateLimitAtomicCacheClear } from 'calypso/state/selectors/should-rate-limit-atomic-cache-clear';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import { EdgeCacheLoadingPlaceholder } from './edge-cache-loading-placeholder';
-import { useClearEdgeCacheMutation } from './use-clear-edge-cache';
-import { useEdgeCacheQuery } from './use-edge-cache';
-import { useToggleEdgeCacheMutation } from './use-toggle-edge-cache';
 
 const Hr = styled.hr( {
 	marginBottom: '16px',
@@ -74,34 +77,17 @@ export const CacheCard = ( {
 
 	const isEdgeCacheEligible = ! isPrivate && ! isComingSoon;
 
-	const { toggleEdgeCache, isLoading: toggleEdgeCacheLoading } = useToggleEdgeCacheMutation(
-		siteId,
-		{
-			onSettled: ( ...args ) => {
-				const active = args[ 2 ];
-				recordTracksEvent(
-					active
-						? 'calypso_hosting_configuration_edge_cache_enable'
-						: 'calypso_hosting_configuration_edge_cache_disable',
-					{
-						site_id: siteId,
-					}
-				);
-			},
-		}
-	);
-	const { clearEdgeCache, isLoading: clearEdgeCacheLoading } = useClearEdgeCacheMutation( siteId, {
-		onSuccess: () => {
-			recordTracksEvent( 'calypso_hosting_configuration_clear_wordpress_cache', {
-				site_id: siteId,
-			} );
-		},
-	} );
+	const { setEdgeCache } = useSetEdgeCacheMutation();
+	const isEdgeCacheMutating = useIsSetEdgeCacheMutating( siteId );
+	const { clearEdgeCache, isLoading: clearEdgeCacheLoading } = useClearEdgeCacheMutation( siteId );
 
 	const isClearingCache = isClearingWordpressCache || clearEdgeCacheLoading;
 
 	const clearCache = () => {
 		if ( isEdgeCacheActive ) {
+			recordTracksEvent( 'calypso_hosting_configuration_clear_wordpress_cache', {
+				site_id: siteId,
+			} );
 			clearEdgeCache();
 		}
 		clearAtomicWordPressCache( siteId, 'Manually clearing again.' );
@@ -119,7 +105,7 @@ export const CacheCard = ( {
 						isClearingCache ||
 						shouldRateLimitCacheClear ||
 						getEdgeCacheLoading ||
-						toggleEdgeCacheLoading
+						isEdgeCacheMutating
 					}
 				>
 					<span>{ translate( 'Clear cache' ) }</span>
@@ -152,7 +138,7 @@ export const CacheCard = ( {
 	//autorenew
 	return (
 		<Card className="cache-card">
-			<Icon class="card-icon" icon={ cacheIcon } size={ 32 } />
+			<Icon className="card-icon" icon={ cacheIcon } size={ 32 } />
 			<CardHeading id="cache" size={ 20 }>
 				{ translate( 'Cache' ) }
 			</CardHeading>
@@ -171,9 +157,24 @@ export const CacheCard = ( {
 						<>
 							<ToggleLabel>{ translate( 'Global edge cache' ) }</ToggleLabel>
 							<ToggleControl
-								disabled={ clearEdgeCacheLoading || getEdgeCacheLoading || ! isEdgeCacheEligible }
+								disabled={
+									clearEdgeCacheLoading ||
+									getEdgeCacheLoading ||
+									! isEdgeCacheEligible ||
+									isEdgeCacheMutating
+								}
 								checked={ isEdgeCacheActive }
-								onChange={ toggleEdgeCache }
+								onChange={ ( active ) => {
+									recordTracksEvent(
+										active
+											? 'calypso_hosting_configuration_edge_cache_enable'
+											: 'calypso_hosting_configuration_edge_cache_disable',
+										{
+											site_id: siteId,
+										}
+									);
+									setEdgeCache( siteId, active );
+								} }
 								label={ edgeCacheToggleDescription }
 							/>
 							<Hr />

@@ -92,7 +92,7 @@ export default function UpdateCompanyDetailsForm() {
 				postalCode,
 				state,
 			} }
-			isLoading={ updateCompanyDetails.isLoading }
+			isLoading={ updateCompanyDetails.isPending }
 			onSubmit={ onSubmit }
 			submitLabel={ translate( 'Update details' ) }
 		/>

@@ -134,7 +134,7 @@ class DeleteSite extends Component {
 		const exportLink = '/export/' + siteSlug;
 		const deleteDisabled =
 			typeof this.state.confirmDomain !== 'string' ||
-			this.state.confirmDomain.toLowerCase().replace( /\s/g, '' ) !== siteDomain;
+			this.state.confirmDomain.replace( /\s/g, '' ) !== siteDomain;
 		const isAtomicRemovalInProgress = isFreePlan && isAtomic;
 
 		const deleteButtons = [

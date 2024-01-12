@@ -40,7 +40,6 @@
 		"@wordpress/react-i18n": "^3.46.0",
 		"canvas-confetti": "^1.6.0",
 		"classnames": "^2.3.2",
-		"framer-motion": "6.2.8",
 		"gridicons": "^3.4.2",
 		"i18n-calypso": "workspace:^",
 		"lodash": "^4.17.21",
@@ -73,7 +72,7 @@
 		"postcss": "^8.4.5",
 		"qrcode.react": "^3.1.0",
 		"resize-observer-polyfill": "^1.5.1",
-		"typescript": "^5.3.2",
+		"typescript": "^5.3.3",
 		"webpack": "^5.89.0"
 	},
 	"scripts": {

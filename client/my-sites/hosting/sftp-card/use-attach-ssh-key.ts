@@ -37,9 +37,9 @@ export const useAttachSshKeyMutation = (
 		},
 	} );
 
-	const { mutate, isLoading } = mutation;
+	const { mutate, isPending } = mutation;
 
 	const attachSshKey = useCallback( ( args: MutationVariables ) => mutate( args ), [ mutate ] );
 
-	return { attachSshKey, isLoading };
+	return { attachSshKey, isPending };
 };

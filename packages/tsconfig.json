@@ -13,6 +13,7 @@
 		{ "path": "./calypso-config" },
 		{ "path": "./calypso-e2e" },
 		{ "path": "./calypso-products" },
+		{ "path": "./calypso-razorpay" },
 		{ "path": "./calypso-stripe" },
 		{ "path": "./calypso-url" },
 		{ "path": "./components" },
@@ -54,6 +55,7 @@
 		{ "path": "./viewport-react" },
 		{ "path": "./whats-new" },
 		{ "path": "./wpcom-checkout" },
+		{ "path": "./verbum-block-editor" },
 		{ "path": "./wpcom-template-parts" }
 	]
 }

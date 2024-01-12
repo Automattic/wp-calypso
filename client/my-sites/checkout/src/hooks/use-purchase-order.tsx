@@ -140,7 +140,7 @@ export default function usePurchaseOrder(
 			return rawOrder ? transformRawOrderToOrderTransaction( rawOrder ) : undefined;
 		},
 		enabled: shouldFetch,
-		refetchInterval: ( data ) => ( isOrderComplete( data ) ? false : pollInterval ),
+		refetchInterval: ( query ) => ( isOrderComplete( query.state.data ) ? false : pollInterval ),
 	} );
 
 	const output = { isLoading: shouldFetch ? isLoading : false, order };

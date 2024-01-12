@@ -42,6 +42,7 @@ export class Theme extends Component {
 			taxonomies: PropTypes.object,
 			update: PropTypes.object,
 			soft_launched: PropTypes.bool,
+			isCustomGeneratedTheme: PropTypes.bool,
 		} ),
 		// If true, highlight this theme as active
 		active: PropTypes.bool,
@@ -145,8 +146,21 @@ export class Theme extends Component {
 	}
 
 	renderScreenshot() {
-		const { isExternallyManagedTheme, selectedStyleVariation, theme } = this.props;
+		const { isExternallyManagedTheme, selectedStyleVariation, theme, siteSlug, translate } =
+			this.props;
 		const { description, screenshot } = theme;
+
+		if ( theme.isCustomGeneratedTheme ) {
+			return (
+				<iframe
+					scrolling="no"
+					loading="lazy"
+					title={ translate( 'Custom Theme Preview' ) }
+					className="theme__site-preview"
+					src={ `//${ siteSlug }/?hide_banners=true&preview_overlay=true&preview=true&cys-hide-admin-bar=1` }
+				/>
+			);
+		}
 
 		if ( ! screenshot ) {
 			return (
@@ -321,7 +335,7 @@ export class Theme extends Component {
 
 	render() {
 		const { selectedStyleVariation, theme } = this.props;
-		const { name, description, style_variations = [] } = theme;
+		const { name, description, style_variations = [], isCustomGeneratedTheme } = theme;
 		const themeDescription = decodeEntities( description );
 
 		if ( this.props.isPlaceholder ) {
@@ -344,7 +358,7 @@ export class Theme extends Component {
 				isActive={ this.props.active }
 				isLoading={ this.props.loading }
 				isSoftLaunched={ this.props.softLaunched }
-				isShowDescriptionOnImageHover
+				isShowDescriptionOnImageHover={ ! isCustomGeneratedTheme }
 				onClick={ this.setBookmark }
 				onImageClick={ this.onScreenshotClick }
 				onStyleVariationClick={ this.onStyleVariationClick }

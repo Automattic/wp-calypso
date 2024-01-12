@@ -1,10 +1,10 @@
-import { useFlowProgress, COPY_SITE_FLOW } from '@automattic/onboarding';
-import { useDispatch, useSelect } from '@wordpress/data';
+import { COPY_SITE_FLOW } from '@automattic/onboarding';
+import { useSelect } from '@wordpress/data';
 import { addQueryArgs } from '@wordpress/url';
 import { translate } from 'i18n-calypso';
 import { useEffect, useState } from 'react';
 import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
-import { ONBOARD_STORE, SITE_STORE } from 'calypso/landing/stepper/stores';
+import { SITE_STORE } from 'calypso/landing/stepper/stores';
 import {
 	clearSignupDestinationCookie,
 	setSignupCompleteSlug,
@@ -100,12 +100,7 @@ const copySite: Flow = {
 
 	useStepNavigation( _currentStepSlug, navigate ) {
 		const flowName = this.name;
-		const { setStepProgress } = useDispatch( ONBOARD_STORE );
-
-		const flowProgress = useFlowProgress( { stepName: _currentStepSlug, flowName } );
 		const urlQueryParams = useQuery();
-
-		setStepProgress( flowProgress );
 
 		const submit = async ( providedDependencies: ProvidedDependencies = {} ) => {
 			recordSubmitStep( providedDependencies, '', flowName, _currentStepSlug );

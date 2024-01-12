@@ -4,16 +4,25 @@ import classnames from 'classnames';
 import { translate } from 'i18n-calypso';
 import { useRef } from 'react';
 import { DEVICES_SUPPORTED, DEVICE_TYPES } from './constants';
-import { computer, tablet, phone } from './icons';
+import { computer, tablet, phone, zoomIn, zoomOut } from './icons';
 import type { Device } from './types';
 import './toolbar.scss';
 
 interface ToolbarProps {
 	device: Device;
+	isZoomable: boolean;
+	isZoomActive: boolean;
 	onDeviceClick: ( device: Device ) => void;
+	onZoomClick: () => void;
 }
 
-const DeviceSwitcherToolbar = ( { device: currentDevice, onDeviceClick }: ToolbarProps ) => {
+const DeviceSwitcherToolbar = ( {
+	device: currentDevice,
+	isZoomable,
+	isZoomActive,
+	onDeviceClick,
+	onZoomClick,
+}: ToolbarProps ) => {
 	const devices = useRef( {
 		[ DEVICE_TYPES.COMPUTER ]: { title: translate( 'Desktop' ), icon: computer, iconSize: 36 },
 		[ DEVICE_TYPES.TABLET ]: { title: translate( 'Tablet' ), icon: tablet, iconSize: 24 },
@@ -28,6 +37,7 @@ const DeviceSwitcherToolbar = ( { device: currentDevice, onDeviceClick }: Toolba
 						key={ device }
 						aria-label={ devices.current[ device ].title }
 						className={ classnames( {
+							[ device ]: true,
 							'is-selected': device === currentDevice,
 						} ) }
 						onClick={ () => onDeviceClick( device ) }
@@ -38,6 +48,15 @@ const DeviceSwitcherToolbar = ( { device: currentDevice, onDeviceClick }: Toolba
 						/>
 					</Button>
 				) ) }
+				{ isZoomable && (
+					<Button
+						aria-label={ translate( 'Zoom out 50%' ) }
+						className={ classnames( { zoom: true, 'is-selected': isZoomActive } ) }
+						onClick={ () => onZoomClick() }
+					>
+						<Icon icon={ isZoomActive ? zoomIn : zoomOut } size={ 24 } />
+					</Button>
+				) }
 			</div>
 		</div>
 	);

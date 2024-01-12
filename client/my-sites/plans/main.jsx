@@ -282,6 +282,7 @@ class Plans extends Component {
 				showLegacyStorageFeature={ this.props.siteHasLegacyStorage }
 				intent={ plansIntent }
 				isSpotlightOnCurrentPlan={ ! this.props.isDomainAndPlanPackageFlow }
+				showPlanTypeSelectorDropdown={ isEnabled( 'onboarding/interval-dropdown' ) }
 			/>
 		);
 	}

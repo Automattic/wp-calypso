@@ -13,7 +13,6 @@ interface Props {
 	licenseKey: string;
 	product: string;
 	siteUrl: string | null;
-	username: string | null;
 	blogId: number | null;
 	hasDownloads: boolean;
 	issuedAt: string;
@@ -31,7 +30,6 @@ export default function LicenseDetails( {
 	licenseKey,
 	product,
 	siteUrl,
-	username,
 	blogId,
 	hasDownloads,
 	issuedAt,
@@ -80,11 +78,6 @@ export default function LicenseDetails( {
 						<FormattedDate date={ attachedAt } format={ DETAILS_DATE_FORMAT_SHORT } />
 					</li>
 				) }
-
-				<li className="license-details__list-item">
-					<h4 className="license-details__label">{ translate( "Owner's User ID" ) }</h4>
-					{ username ? <span>{ username }</span> : <Gridicon icon="minus" /> }
-				</li>
 
 				{ licenseState === LicenseState.Attached && (
 					<li className="license-details__list-item">

@@ -858,7 +858,6 @@ body.is-section-signup.is-white-signup .layout:not(.dops):not(.is-wccom-oauth-fl
 		}
 	}
 
-	.signup__step.is-design-setup-site,
 	.signup__step.is-difm-design-setup-site {
 		.step-wrapper__header {
 			@include breakpoint-deprecated("<660px") {
