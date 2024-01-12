@@ -1,7 +1,6 @@
 import { plansLink } from '@automattic/calypso-products';
 import { useCallback } from '@wordpress/element';
 import { addQueryArgs } from '@wordpress/url';
-// TODO: Consider moving type reference
 import { PlanTypeSelectorProps } from 'calypso/my-sites/plans-grid/components/plan-type-selector/types';
 
 interface PathArgs {
