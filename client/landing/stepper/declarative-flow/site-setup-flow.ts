@@ -557,7 +557,7 @@ const siteSetupFlow: Flow = {
 		const goToStep = ( step: string ) => {
 			switch ( step ) {
 				case 'import':
-					return navigate( `import?siteSlug=${ siteSlugParam }` );
+					return navigate( `import?siteSlug=${ siteSlug }` );
 
 				default:
 					return navigate( step );
