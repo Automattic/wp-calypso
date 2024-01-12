@@ -36,10 +36,6 @@ jest.mock(
 	'calypso/my-sites/plans-grid/hooks/npm-ready/data-store/use-restructured-plan-features-for-comparison-grid',
 	() => jest.fn()
 );
-jest.mock(
-	'calypso/my-sites/plans-features-main/hooks/data-store/use-pricing-meta-for-grid-plans',
-	() => jest.fn()
-);
 jest.mock( '@automattic/data-stores', () => ( {
 	...jest.requireActual( '@automattic/data-stores' ),
 	Plans: {
