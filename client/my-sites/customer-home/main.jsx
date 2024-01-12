@@ -94,7 +94,7 @@ const Home = ( {
 		useDomainDiagnosticsQuery( customDomain?.name, {
 			staleTime: 5 * 60 * 1000,
 			gcTime: 5 * 60 * 1000,
-			enabled: customDomain !== undefined,
+			enabled: customDomain !== undefined && customDomain.isMappedToAtomicSite,
 		} );
 	const emailDnsDiagnostics = domainDiagnosticData?.email_dns_records;
 
