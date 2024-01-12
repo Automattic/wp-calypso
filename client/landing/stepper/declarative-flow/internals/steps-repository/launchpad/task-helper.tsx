@@ -61,7 +61,7 @@ interface GetEnhancedTasksProps {
 
 const PLANS_LIST = getPlans();
 
-const MIGRATED_FLOWS = [ 'free' ];
+const MIGRATED_FLOWS = [ 'free', 'start-writing' ];
 
 const shouldUseNewTaskDefinitions = ( flow: string ) => {
 	if ( isEnabled( 'launchpad/new-task-definition-parser' ) && MIGRATED_FLOWS.includes( flow ) ) {

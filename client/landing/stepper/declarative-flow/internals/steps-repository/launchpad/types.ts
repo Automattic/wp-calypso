@@ -24,11 +24,11 @@ export type TaskId =
 	| 'design_selected'
 	| 'domain_upsell'
 	| 'first_post_published'
+	| 'setup_blog'
 	| 'site_launched'
 	| 'plan_selected';
 //
 // TODO: Add the rest of the task ids
-// | 'setup_blog'
 // | 'setup_newsletter'
 // | 'plan_completed'
 // | 'subscribers_added'
