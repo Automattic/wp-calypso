@@ -10,10 +10,10 @@ import ThankYouPlanProduct from '../products/plan-product';
 import type { ReceiptPurchase } from 'calypso/state/receipts/types';
 
 interface PlanOnlyThankYouProps {
-	purchase: ReceiptPurchase;
+	primaryPurchase: ReceiptPurchase;
 }
 
-export default function PlanOnlyThankYou( { purchase }: PlanOnlyThankYouProps ) {
+export default function PlanOnlyThankYou( { primaryPurchase }: PlanOnlyThankYouProps ) {
 	const isMonthsOld = ( rawDate: string, months: number ) => {
 		if ( ! rawDate || ! months ) {
 			return false;
@@ -31,7 +31,7 @@ export default function PlanOnlyThankYou( { purchase }: PlanOnlyThankYouProps ) 
 
 	const footerDetails = [];
 
-	if ( isP2Plus( purchase ) ) {
+	if ( isP2Plus( primaryPurchase ) ) {
 		footerDetails.push( {
 			key: 'footer-add-members',
 			title: translate( 'Go further, together' ),
@@ -78,13 +78,13 @@ export default function PlanOnlyThankYou( { purchase }: PlanOnlyThankYouProps ) 
 				translate(
 					'All set! Start exploring the features included with your {{strong}}%(productName)s{{/strong}} plan',
 					{
-						args: { productName: purchase.productName },
+						args: { productName: primaryPurchase.productName },
 						components: { strong: <strong /> },
 					}
 				)
 			) }
 			products={
-				<ThankYouPlanProduct purchase={ purchase } siteSlug={ siteSlug } siteId={ siteId } />
+				<ThankYouPlanProduct purchase={ primaryPurchase } siteSlug={ siteSlug } siteId={ siteId } />
 			}
 			footerDetails={ footerDetails }
 		/>
