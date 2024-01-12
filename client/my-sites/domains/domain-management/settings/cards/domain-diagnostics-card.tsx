@@ -4,6 +4,7 @@ import { useTranslate } from 'i18n-calypso';
 import { useState } from 'react';
 import { useDispatch } from 'react-redux';
 import Accordion from 'calypso/components/domains/accordion';
+import Notice from 'calypso/components/notice';
 import useDomainDiagnosticsQuery from 'calypso/data/domains/diagnostics/use-domain-diagnostics-query';
 import wpcom from 'calypso/lib/wp';
 import { errorNotice, successNotice } from 'calypso/state/notices/actions';
@@ -102,7 +103,7 @@ export default function DomainDiagnosticsCard( { domain }: { domain: ResponseDom
 				apiNamespace: 'wpcom/v2',
 				path: `/domains/dns/restore-default-email-records/${ domain.name }`,
 			} )
-			.then( ( response: { status: number } ) => {
+			.then( () => {
 				dispatch(
 					successNotice(
 						translate( 'The default email DNS records were successfully fixed!' ),
@@ -111,7 +112,7 @@ export default function DomainDiagnosticsCard( { domain }: { domain: ResponseDom
 				);
 				refetchDomainDiagnostics();
 			} )
-			.catch( ( error: Error ) => {
+			.catch( () => {
 				dispatch(
 					errorNotice(
 						translate( 'There was a problem when restoring default email DNS records' ),
@@ -142,7 +143,11 @@ export default function DomainDiagnosticsCard( { domain }: { domain: ResponseDom
 			expanded
 		>
 			<div>
-				<p>{ translate( "There are some issues with your domain's email DNS settings:" ) }</p>
+				<Notice
+					status="is-warning"
+					text={ translate( "There are some issues with your domain's email DNS settings." ) }
+					showDismiss={ false }
+				/>
 				<ul>{ recordsToCheck.map( ( record ) => renderDiagnosticForRecord( record ) ) }</ul>
 				{ ! emailDnsDiagnostics.is_using_wpcom_name_servers && renderFixInstructions() }
 				{ emailDnsDiagnostics.is_using_wpcom_name_servers && renderFixButton() }
