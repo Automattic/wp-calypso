@@ -14,7 +14,7 @@ import ScanImage from 'calypso/assets/images/jetpack/rna-image-scan.png';
 import SearchImage from 'calypso/assets/images/jetpack/rna-image-search.png';
 import DisplayPrice from 'calypso/components/jetpack/card/jetpack-product-card/display-price';
 import JetpackRnaActionCard from 'calypso/components/jetpack/card/jetpack-rna-action-card';
-import SingleSellUpsellLightbox from 'calypso/jetpack-cloud/sections/partner-portal/license-lightbox/single-site-upsell-lightbox';
+import SingleSiteUpsellLightbox from 'calypso/jetpack-cloud/sections/partner-portal/license-lightbox/single-site-upsell-lightbox';
 import { getPurchaseURLCallback } from 'calypso/my-sites/plans/jetpack-plans/get-purchase-url-callback';
 import productAboveButtonText from 'calypso/my-sites/plans/jetpack-plans/product-card/product-above-button-text';
 import productTooltip from 'calypso/my-sites/plans/jetpack-plans/product-card/product-tooltip';
@@ -190,7 +190,7 @@ const UpsellProductCard: React.FC< UpsellProductCardProps > = ( {
 					<p className="upsell-product-card__above-button">{ aboveButtonText }</p>
 				) }
 				{ showLightbox && hasJetpackPartnerAccess && siteId && manageProduct && (
-					<SingleSellUpsellLightbox
+					<SingleSiteUpsellLightbox
 						currentProduct={ manageProduct }
 						onClose={ () => setShowLightbox( false ) }
 						productSlug={ productSlug }
