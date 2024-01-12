@@ -7,7 +7,7 @@ import {
 } from '@automattic/calypso-products';
 import { Gridicon } from '@automattic/components';
 import { TranslateResult, useTranslate } from 'i18n-calypso';
-import { useMemo, useState } from 'react';
+import { ReactNode, useMemo, useState } from 'react';
 import BackupImage from 'calypso/assets/images/jetpack/rna-image-backup.png';
 import DefaultImage from 'calypso/assets/images/jetpack/rna-image-default.png';
 import ScanImage from 'calypso/assets/images/jetpack/rna-image-scan.png';
@@ -65,6 +65,7 @@ const UpsellProductCard: React.FC< UpsellProductCardProps > = ( {
 	let manageProduct: APIProductFamilyProduct | undefined;
 	let onCtaButtonClickInternal = onCtaButtonClick;
 	let originalPrice: number;
+	let tooltipText: TranslateResult | ReactNode;
 
 	// Calculate the product price.
 	const {
@@ -105,6 +106,9 @@ const UpsellProductCard: React.FC< UpsellProductCardProps > = ( {
 		discountedPrice = nonManageDiscountedPrice;
 		isFetchingPrices = !! isFetchingNonManagePrices;
 		originalPrice = nonManageOriginalPrice;
+		if ( nonManagePriceTierList.length > 0 ) {
+			tooltipText = productTooltip( item, nonManagePriceTierList, currencyCode ?? 'USD' );
+		}
 	}
 
 	const ctaButtonLabel = translate( 'Add Jetpack %(productName)s', {
@@ -175,11 +179,7 @@ const UpsellProductCard: React.FC< UpsellProductCardProps > = ( {
 						originalPrice={ originalPrice ?? 0 }
 						pricesAreFetching={ isFetchingPrices }
 						belowPriceText={ item.belowPriceText }
-						tooltipText={
-							! hasJetpackPartnerAccess &&
-							nonManagePriceTierList.length > 0 &&
-							productTooltip( item, nonManagePriceTierList, currencyCode ?? 'USD' )
-						}
+						tooltipText={ tooltipText }
 						billingTerm={ billingTerm }
 						productName={ displayName }
 						hideSavingLabel={ false }
