@@ -121,7 +121,7 @@ export default function DomainDiagnosticsCard( { domain }: { domain: ResponseDom
 			key="diagnostics"
 		>
 			<div>
-				<p>{ translate( "There are some issues with your domain's DNS settings:" ) }</p>
+				<p>{ translate( "There are some issues with your domain's email DNS settings:" ) }</p>
 				<ul>{ recordsToCheck.map( ( record ) => renderDiagnosticForRecord( record ) ) }</ul>
 				{ ! emailDnsDiagnostics.is_using_wpcom_name_servers && renderFixInstructions() }
 				{ emailDnsDiagnostics.is_using_wpcom_name_servers && renderFixButton() }
