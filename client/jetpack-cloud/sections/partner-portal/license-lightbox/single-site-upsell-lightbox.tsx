@@ -1,3 +1,4 @@
+import { localizeUrl } from '@automattic/i18n-utils';
 import { useTranslate } from 'i18n-calypso';
 import { useContext, useCallback } from 'react';
 import SitesOverviewContext from 'calypso/jetpack-cloud/sections/agency-dashboard/sites-overview/context';
@@ -61,8 +62,9 @@ export default function SingleSiteUpsellLightbox( {
 		] );
 	}, [ currentProduct, dispatch, onHideLicenseInfo, submitForm ] );
 
-	const learnMoreLink =
-		'https://jetpack.com/support/jetpack-manage-instructions/jetpack-manage-billing-payment-faqs';
+	const learnMoreLink = localizeUrl(
+		'https://jetpack.com/support/jetpack-manage-instructions/jetpack-manage-billing-payment-faqs'
+	);
 
 	const onClickLearnMore = useCallback( () => {
 		dispatch(
