@@ -61,6 +61,7 @@ const UpsellProductCard: React.FC< UpsellProductCardProps > = ( {
 	let ctaButtonURL: string | undefined;
 	let currencyCode: string | null;
 	let discountedPrice: number | undefined;
+	let discountText: TranslateResult | undefined;
 	let isFetchingPrices: boolean;
 	let manageProduct: APIProductFamilyProduct | undefined;
 	let onCtaButtonClickInternal = onCtaButtonClick;
@@ -106,8 +107,23 @@ const UpsellProductCard: React.FC< UpsellProductCardProps > = ( {
 		discountedPrice = nonManageDiscountedPrice;
 		isFetchingPrices = !! isFetchingNonManagePrices;
 		originalPrice = nonManageOriginalPrice;
+
 		if ( nonManagePriceTierList.length > 0 ) {
 			tooltipText = productTooltip( item, nonManagePriceTierList, currencyCode ?? 'USD' );
+		}
+
+		if ( nonManageOriginalPrice !== undefined && nonManageDiscountedPrice !== undefined ) {
+			const percentDiscount = Math.floor(
+				( ( nonManageOriginalPrice - nonManageDiscountedPrice ) / nonManageOriginalPrice ) * 100
+			);
+			if ( !! percentDiscount && percentDiscount > 0 ) {
+				discountText = translate( '%(percent)d%% off', {
+					args: {
+						percent: percentDiscount,
+					},
+					comment: 'Should be as concise as possible.',
+				} );
+			}
 		}
 	}
 
@@ -117,23 +133,6 @@ const UpsellProductCard: React.FC< UpsellProductCardProps > = ( {
 			context: 'The Jetpack product name, ie- Backup, Scan, Search, etc.',
 		},
 	} );
-
-	const percentDiscount =
-		nonManageOriginalPrice !== undefined && nonManageDiscountedPrice !== undefined
-			? Math.floor(
-					( ( nonManageOriginalPrice - nonManageDiscountedPrice ) / nonManageOriginalPrice ) * 100
-			  )
-			: 0;
-
-	const showDiscountLabel = ! hasJetpackPartnerAccess && !! percentDiscount && percentDiscount > 0;
-	const discountText = showDiscountLabel
-		? translate( '%(percent)d%% off', {
-				args: {
-					percent: percentDiscount,
-				},
-				comment: 'Should be as concise as possible.',
-		  } )
-		: null;
 
 	const upsellImageAlt = translate( 'Buy Jetpack %(productName)s', {
 		args: {
@@ -184,7 +183,7 @@ const UpsellProductCard: React.FC< UpsellProductCardProps > = ( {
 						productName={ displayName }
 						hideSavingLabel={ false }
 					/>
-					{ showDiscountLabel && ! isFetchingPrices && (
+					{ discountText && ! isFetchingPrices && (
 						<div className="upsell-product-card__discount-label">{ discountText }</div>
 					) }
 				</div>
