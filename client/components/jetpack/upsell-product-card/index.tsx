@@ -12,6 +12,8 @@ import BackupImage from 'calypso/assets/images/jetpack/rna-image-backup.png';
 import DefaultImage from 'calypso/assets/images/jetpack/rna-image-default.png';
 import ScanImage from 'calypso/assets/images/jetpack/rna-image-scan.png';
 import SearchImage from 'calypso/assets/images/jetpack/rna-image-search.png';
+import QueryJetpackPartnerPortalPartner from 'calypso/components/data/query-jetpack-partner-portal-partner';
+import QueryJetpackPartnerKey from 'calypso/components/data/query-jetpack-partner-portal-partner-key';
 import DisplayPrice from 'calypso/components/jetpack/card/jetpack-product-card/display-price';
 import JetpackRnaActionCard from 'calypso/components/jetpack/card/jetpack-rna-action-card';
 import SingleSiteUpsellLightbox from 'calypso/jetpack-cloud/sections/partner-portal/license-lightbox/single-site-upsell-lightbox';
@@ -23,7 +25,10 @@ import useItemPrice from 'calypso/my-sites/plans/jetpack-plans/use-item-price';
 import { useSelector } from 'calypso/state';
 import { getCurrentUserCurrencyCode } from 'calypso/state/currency-code/selectors';
 import useProductsQuery from 'calypso/state/partner-portal/licenses/hooks/use-products-query';
-import { hasJetpackPartnerAccess as hasJetpackPartnerAccessSelector } from 'calypso/state/partner-portal/partner/selectors';
+import {
+	getCurrentPartner,
+	hasJetpackPartnerAccess as hasJetpackPartnerAccessSelector,
+} from 'calypso/state/partner-portal/partner/selectors';
 import { APIProductFamilyProduct } from 'calypso/state/partner-portal/types';
 import { getSiteAvailableProduct } from 'calypso/state/sites/products/selectors';
 import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';
@@ -51,6 +56,7 @@ const UpsellProductCard: React.FC< UpsellProductCardProps > = ( {
 	const hasJetpackPartnerAccess = useSelector( hasJetpackPartnerAccessSelector );
 	const nonManageCurrencyCode = useSelector( getCurrentUserCurrencyCode );
 	const selectedSiteSlug = useSelector( getSelectedSiteSlug );
+	const partner = useSelector( getCurrentPartner );
 	const item = slugToSelectorProduct( productSlug ) as SelectorProduct;
 	const siteProduct: SiteProduct | undefined = useSelector( ( state ) =>
 		getSiteAvailableProduct( state, siteId, item.productSlug )
@@ -213,6 +219,8 @@ const UpsellProductCard: React.FC< UpsellProductCardProps > = ( {
 			cardImage={ upsellImageUrl }
 			cardImageAlt={ upsellImageAlt }
 		>
+			{ hasJetpackPartnerAccess && ! partner && <QueryJetpackPartnerPortalPartner /> }
+			{ hasJetpackPartnerAccess && <QueryJetpackPartnerKey /> }
 			{ renderProductCardBody() }
 		</JetpackRnaActionCard>
 	);
