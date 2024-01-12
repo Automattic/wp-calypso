@@ -75,7 +75,6 @@ function MembershipsSection( { query }: MembershipsSectionProps ) {
 			dispatch(
 				requestDisconnectSiteStripeAccount(
 					site?.ID,
-					connectedAccountId,
 					translate( 'Please wait, disconnecting Stripe\u2026' ),
 					translate( 'Stripe account is disconnected.' )
 				)
