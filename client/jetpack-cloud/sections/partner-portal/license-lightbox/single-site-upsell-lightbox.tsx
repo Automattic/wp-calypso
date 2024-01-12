@@ -103,7 +103,6 @@ export default function SingleSiteUpsellLightbox( {
 					}
 					secondaryAsideContent={
 						<LicenseLightboxPurchaseViaJetpackcom
-							currentProduct={ currentProduct }
 							productSlug={ productSlug }
 							onClose={ hideLicenseInfo }
 							siteId={ siteId }

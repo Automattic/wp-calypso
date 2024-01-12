@@ -8,7 +8,6 @@ import slugToSelectorProduct from 'calypso/my-sites/plans/jetpack-plans/slug-to-
 import { SelectorProduct } from 'calypso/my-sites/plans/jetpack-plans/types';
 import { useDispatch, useSelector } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
-import { APIProductFamilyProduct } from 'calypso/state/partner-portal/types';
 import { getSiteSlug } from 'calypso/state/sites/selectors';
 
 import './style.scss';
@@ -17,14 +16,12 @@ type Props = {
 	productSlug: string;
 	onClose: () => void;
 	siteId?: number;
-	currentProduct: APIProductFamilyProduct;
 };
 
 const LicenseLightboxPurchaseViaJetpackcom: FunctionComponent< Props > = ( {
 	productSlug,
 	onClose,
 	siteId,
-	currentProduct,
 } ) => {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
@@ -49,11 +46,11 @@ const LicenseLightboxPurchaseViaJetpackcom: FunctionComponent< Props > = ( {
 	const onProceedToCheckout = useCallback( () => {
 		dispatch(
 			recordTracksEvent( 'calypso_jetpack_single_site_upsell_proceed_to_checkout_click', {
-				product: currentProduct.slug,
+				product: productSlug,
 			} )
 		);
 		onHideLicenseInfo();
-	}, [ currentProduct, dispatch, onHideLicenseInfo ] );
+	}, [ productSlug, dispatch, onHideLicenseInfo ] );
 
 	const learnMoreLink = localizeUrl(
 		'https://jetpack.com/support/jetpack-manage-instructions/jetpack-manage-billing-payment-faqs'
