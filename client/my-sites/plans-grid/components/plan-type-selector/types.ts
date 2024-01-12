@@ -4,14 +4,18 @@ import { type UsePricingMetaForGridPlans } from '../../hooks/npm-ready/data-stor
 
 export type PlanTypeSelectorProps = {
 	kind: 'interval';
+	selectedSiteId?: number | null;
 	basePlansPath?: string | null;
 	intervalType: UrlFriendlyTermType;
 	customerType: string;
 	withDiscount?: string;
+	enableStickyBehavior?: boolean;
+	stickyPlanTypeSelectorOffset?: number;
+	layoutClassName?: string;
 	siteSlug?: string | null;
 	selectedPlan?: string;
 	selectedFeature?: string;
-	showBiennialToggle?: boolean;
+	showPlanTypeSelectorDropdown?: boolean; // feature flag used for the plan selector dropdown
 	isInSignup: boolean;
 	plans: PlanSlug[];
 	eligibleForWpcomMonthlyPlans?: boolean;
@@ -26,22 +30,30 @@ export type PlanTypeSelectorProps = {
 	 * Whether to render the selector along with a title if passed.
 	 */
 	title?: TranslateResult;
+	/**
+	 * Coupon code for use in pricing hook usage.
+	 */
+	coupon?: string;
+	displayedIntervals: UrlFriendlyTermType[];
 };
 export type IntervalTypeProps = Pick<
 	PlanTypeSelectorProps,
 	| 'intervalType'
+	| 'selectedSiteId'
+	| 'displayedIntervals'
 	| 'plans'
 	| 'isInSignup'
 	| 'eligibleForWpcomMonthlyPlans'
 	| 'isPlansInsideStepper'
 	| 'hideDiscountLabel'
 	| 'redirectTo'
-	| 'showBiennialToggle'
+	| 'showPlanTypeSelectorDropdown'
 	| 'selectedPlan'
 	| 'selectedFeature'
 	| 'currentSitePlanSlug'
 	| 'usePricingMetaForGridPlans'
 	| 'title'
+	| 'coupon'
 >;
 
 export type SupportedUrlFriendlyTermType = Extract<

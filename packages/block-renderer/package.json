@@ -30,7 +30,7 @@
 	},
 	"dependencies": {
 		"@automattic/global-styles": "workspace:^",
-		"@tanstack/react-query": "^4.36.1",
+		"@tanstack/react-query": "^5.15.5",
 		"@wordpress/block-editor": "^12.16.0",
 		"@wordpress/compose": "^6.25.0",
 		"classnames": "^2.3.2",
@@ -42,7 +42,7 @@
 		"@automattic/calypso-typescript-config": "workspace:^",
 		"react": "^18.2.0",
 		"react-dom": "^18.2.0",
-		"typescript": "^5.3.2"
+		"typescript": "^5.3.3"
 	},
 	"peerDependencies": {
 		"@wordpress/data": "^9.18.0",

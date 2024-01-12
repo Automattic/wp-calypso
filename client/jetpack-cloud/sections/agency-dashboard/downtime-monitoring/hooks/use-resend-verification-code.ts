@@ -3,7 +3,7 @@ import type { ResendVerificationCodeParams } from '../../sites-overview/types';
 
 export default function useResendVerificationCode(): {
 	mutate: ( params: ResendVerificationCodeParams ) => void;
-	isLoading: boolean;
+	isPending: boolean;
 	isSuccess: boolean;
 	isError: boolean;
 	data: any;

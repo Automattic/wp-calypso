@@ -1,5 +1,5 @@
 import { QueryClient, QueryCache, dehydrate, QueryOptions, QueryKey } from '@tanstack/react-query';
-import { MAX_AGE, BASE_STALE_TIME } from 'calypso/state/initial-state';
+import { MAX_AGE, BASE_STALE_TIME } from 'calypso/state/constants';
 import type { Query, QueryState } from '@tanstack/react-query';
 
 const fetchedQueryHashes = new WeakMap< QueryClient, Set< string > >();
@@ -35,7 +35,7 @@ const sharedCache = new QueryCacheSSR();
 
 export function createQueryClientSSR() {
 	const queryClient = new QueryClient( {
-		defaultOptions: { queries: { cacheTime: MAX_AGE, staleTime: BASE_STALE_TIME } },
+		defaultOptions: { queries: { gcTime: MAX_AGE, staleTime: BASE_STALE_TIME } },
 		queryCache: sharedCache,
 	} );
 

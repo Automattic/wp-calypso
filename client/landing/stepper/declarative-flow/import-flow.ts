@@ -9,7 +9,6 @@ import { ProcessingResult } from 'calypso/landing/stepper/declarative-flow/inter
 import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
 import { useSiteSlugParam } from 'calypso/landing/stepper/hooks/use-site-slug-param';
 import { ONBOARD_STORE } from 'calypso/landing/stepper/stores';
-import { useSiteSetupFlowProgress } from '../hooks/use-site-setup-flow-progress';
 import DesignSetup from './internals/steps-repository/design-setup';
 import ImportStep from './internals/steps-repository/import';
 import ImportList from './internals/steps-repository/import-list';
@@ -62,7 +61,7 @@ const importFlow: Flow = {
 	},
 
 	useStepNavigation( _currentStep, navigate ) {
-		const { setStepProgress, setPendingAction } = useDispatch( ONBOARD_STORE );
+		const { setPendingAction } = useDispatch( ONBOARD_STORE );
 		const { addTempSiteToSourceOption } = useAddTempSiteToSourceOptionMutation();
 		const urlQueryParams = useQuery();
 		const fromParam = urlQueryParams.get( 'from' );
@@ -76,11 +75,6 @@ const importFlow: Flow = {
 			( select ) => ( select( ONBOARD_STORE ) as OnboardSelect ).getIsMigrateFromWp(),
 			[]
 		);
-		const flowProgress = useSiteSetupFlowProgress( _currentStep, 'import' );
-
-		if ( flowProgress ) {
-			setStepProgress( flowProgress );
-		}
 
 		const exitFlow = ( to: string ) => {
 			setPendingAction( () => {

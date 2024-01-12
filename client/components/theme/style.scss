@@ -111,6 +111,24 @@ $theme-info-height: 54px;
 	width: 100%;
 }
 
+.theme__site-preview {
+	position: absolute;
+	top: 0;
+	display: block;
+	box-sizing: border-box;
+	padding: 1px;
+	// The idea is to zoom-out the iframe to get most of the content
+	// into the thumbnail and then we scale it down so it remains the
+	// size of the parent component (357% * 0.28 ~= 100%)
+	min-height: 375%;
+	width: 357%;
+	max-width: 357%;
+	transform: scale(0.28);
+	transform-origin: top left;
+	translate: 0 -10px;
+	pointer-events: none;
+}
+
 .theme__no-screenshot {
 	position: absolute;
 	top: 0;

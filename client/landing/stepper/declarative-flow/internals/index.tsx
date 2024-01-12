@@ -28,8 +28,7 @@ import { ONBOARD_STORE } from '../../stores';
 import kebabCase from '../../utils/kebabCase';
 import { getAssemblerSource } from './analytics/record-design';
 import recordStepStart from './analytics/record-step-start';
-import StepRoute from './components/step-route';
-import StepperLoader from './components/stepper-loader';
+import { StepRoute, StepperLoader } from './components';
 import { AssertConditionState, Flow, StepperStep, StepProps } from './types';
 import './global.scss';
 import type { OnboardSelect, StepperInternalSelect } from '@automattic/data-stores';
@@ -115,6 +114,7 @@ export const FlowRenderer: React.FC< { flow: Flow } > = ( { flow } ) => {
 		setStepData( {
 			path: path,
 			intent: intent,
+			previousStep: currentStepRoute,
 			...extraData,
 		} );
 

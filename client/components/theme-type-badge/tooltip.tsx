@@ -1,6 +1,6 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { PLAN_BUSINESS, PLAN_PREMIUM } from '@automattic/calypso-products';
-import { usePlans } from '@automattic/data-stores/src/plans';
+import { Plans } from '@automattic/data-stores';
 import {
 	BUNDLED_THEME,
 	DOT_ORG_THEME,
@@ -72,7 +72,7 @@ const ThemeTypeBadgeTooltip = ( {
 }: Props ) => {
 	const translate = useTranslate();
 	// Using API plans because the updated getTitle() method doesn't take the experiment assignment into account.
-	const plans = usePlans();
+	const plans = Plans.usePlans( { coupon: undefined } );
 	const type = useSelector( ( state ) => getThemeType( state, themeId ) );
 	const bundleSettings = useBundleSettingsByTheme( themeId );
 	const isIncludedCurrentPlan = useSelector(
@@ -106,11 +106,24 @@ const ThemeTypeBadgeTooltip = ( {
 		} );
 	}, [ themeId ] );
 
+	const premiumPlan = plans?.data?.[ PLAN_PREMIUM ];
 	let message;
 	if ( isLockedStyleVariation ) {
-		message = translate(
-			'Unlock this style, and tons of other features, by upgrading to a %(premiumPlanName)s plan.',
-			{ args: { premiumPlanName: plans?.data?.[ PLAN_PREMIUM ]?.productNameShort ?? '' } }
+		message = createInterpolateElement(
+			// Translators: %(premiumPlanName)s is the name of the premium plan that includes this theme. Examples: "Explorer" or "Premium".
+			translate(
+				'Unlock this style, and tons of other features, by upgrading to a <Link>%(premiumPlanName)s plan</Link>.',
+				{ args: { premiumPlanName: premiumPlan?.productNameShort || '' }, textOnly: true }
+			),
+			{
+				Link: (
+					<ThemeTypeBadgeTooltipUpgradeLink
+						canGoToCheckout={ canGoToCheckout }
+						plan={ premiumPlan?.planSlug || '' }
+						siteSlug={ siteSlug }
+					/>
+				),
+			}
 		);
 	} else if ( type === PREMIUM_THEME ) {
 		if ( isPurchased ) {
