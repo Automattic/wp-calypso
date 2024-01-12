@@ -1,15 +1,22 @@
 import { Button } from '@automattic/components';
 import { sprintf } from '@wordpress/i18n';
 import { useTranslate } from 'i18n-calypso';
+import { useState } from 'react';
 import Accordion from 'calypso/components/domains/accordion';
 import useDomainDiagnosticsQuery from 'calypso/data/domains/diagnostics/use-domain-diagnostics-query';
+import wpcom from 'calypso/lib/wp';
 import type { ResponseDomain } from 'calypso/lib/domains/types';
 
 import './style.scss';
 
 export default function DomainDiagnosticsCard( { domain }: { domain: ResponseDomain } ) {
 	const translate = useTranslate();
-	const { data, isFetching } = useDomainDiagnosticsQuery( domain.name );
+	const {
+		data,
+		isFetching,
+		refetch: refetchDomainDiagnostics,
+	} = useDomainDiagnosticsQuery( domain.name );
+	const [ isRestoringDefaultRecords, setIsRestoringDefaultRecords ] = useState( false );
 
 	if ( ! domain.isMappedToAtomicSite ) {
 		return null;
@@ -80,13 +87,27 @@ export default function DomainDiagnosticsCard( { domain }: { domain: ResponseDom
 	};
 
 	const fixDnsIssues = () => {
-		// TODO: Implement
-		return;
+		setIsRestoringDefaultRecords( true );
+
+		wpcom.req
+			.post( {
+				apiNamespace: 'wpcom/v2',
+				path: `/domains/dns/restore-default-email-records/${ domain.name }`,
+			} )
+			.catch( ( error: Error ) => {
+				throw error;
+			} )
+			.then( () => {
+				refetchDomainDiagnostics();
+			} )
+			.finally( () => {
+				setIsRestoringDefaultRecords( false );
+			} );
 	};
 
 	const renderFixButton = () => {
 		return (
-			<Button onClick={ fixDnsIssues } primary>
+			<Button busy={ isRestoringDefaultRecords } onClick={ fixDnsIssues } primary>
 				{ translate( 'Fix DNS issues automatically' ) }
 			</Button>
 		);
