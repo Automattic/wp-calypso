@@ -114,6 +114,7 @@ export const FEATURE_SITE_BACKUPS_AND_RESTORE = 'site-backups-and-restore';
 export const FEATURE_SECURITY_SETTINGS = 'security-settings';
 export const FEATURE_WOOP = 'woop';
 export const FEATURE_PREMIUM_THEMES = 'unlimited-premium-themes';
+export const FEATURE_PERSONAL_THEMES = 'personal-themes';
 export const FEATURE_STATS_PAID = 'stats-paid';
 export const FEATURE_STATS_FREE = 'stats-free';
 
