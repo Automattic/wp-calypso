@@ -53,8 +53,8 @@ const MasterbarStyled = ( {
 	contact = <DefaultMasterbarContact />,
 	showContact = true,
 }: {
-	onClick: () => void;
-	backText: string;
+	onClick?: () => void;
+	backText?: string;
 	canGoBack: boolean;
 	contact?: JSX.Element | null;
 	showContact?: boolean;
@@ -68,7 +68,7 @@ const MasterbarStyled = ( {
 			` }
 		/>
 		<WordPressLogoStyled size={ 24 } />
-		{ canGoBack && (
+		{ canGoBack && backText && onClick && (
 			<ItemStyled icon="chevron-left" onClick={ onClick }>
 				{ backText }
 			</ItemStyled>
