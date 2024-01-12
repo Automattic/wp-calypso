@@ -2,6 +2,8 @@
 
 - Update React peer dependency to v18.
 - Improve TypeScript type definitions.
+- Update dependency `@wordpress/compose` to `^6.25.0`.
+- Update dependency `use-subscription` to `1.6.0`.
 
 ## 6.0.1
 
