@@ -1,10 +1,11 @@
+import { Button } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
-import Layout from 'calypso/jetpack-cloud/components/layout';
-import LayoutHeader, {
-	LayoutHeaderSubtitle as Subtitle,
-	LayoutHeaderTitle as Title,
-} from 'calypso/jetpack-cloud/components/layout/header';
-import LayoutTop from 'calypso/jetpack-cloud/components/layout/top';
+import CardHeading from 'calypso/components/card-heading';
+import Layout from '../layout';
+import LayoutHeader from '../layout/header';
+import LayoutTop from '../layout/top';
+
+import './styles.scss';
 
 export default function PaymentMethodListV2() {
 	const translate = useTranslate();
@@ -18,9 +19,12 @@ export default function PaymentMethodListV2() {
 		<Layout className="payment-method-list" title={ title } wide>
 			<LayoutTop>
 				<LayoutHeader>
-					<Title>{ title } </Title>
-					<Subtitle>{ subtitle }</Subtitle>
+					<CardHeading size={ 36 }>{ title }</CardHeading>
+					<Button href="/partner-portal/payment-methods/add" primary>
+						{ translate( 'Add new card' ) }
+					</Button>
 				</LayoutHeader>
+				<p className="payment-method-list__description">{ subtitle }</p>
 			</LayoutTop>
 		</Layout>
 	);
