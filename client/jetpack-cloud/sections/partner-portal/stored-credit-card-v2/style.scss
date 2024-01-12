@@ -22,12 +22,13 @@
 }
 
 .stored-credit-card-v2__card-number {
-	margin-block-start: 80px;
+	margin-block-start: 90px;
 	font-size: rem(24px);
 	font-weight: 700;
 
-	@include break-small {
-		font-size: rem(28px);
+	@include break-mobile {
+		font-size: rem(35px);
+		margin-block-start: 65px;
 	}
 }
 
@@ -38,9 +39,8 @@
 .stored-credit-card-v2__card-info-value {
 	font-size: rem(14px);
 	font-weight: 700;
-	max-width: 150px;
 
-	@include break-small {
+	@include break-mobile {
 		font-size: rem(18px);
 	}
 }
@@ -55,11 +55,27 @@
 .stored-credit-card-v2__payment-logo {
 	position: absolute;
 	top: -20px;
-	right: 30px;
+	right: 0;
 
 	svg {
 		width: 100px;
 		height: 100px;
+	}
+
+	// This is a hack to fix the position of the payment logos
+	// because the SVGs are not all the same size
+	// Ideal solution would be to create a  new component with all the SVGs the same size.
+	&.stored-credit-card-v2__payment-logo-visa {
+		right: 17px;
+	}
+
+	&.stored-credit-card-v2__payment-logo-discover,
+	&.stored-credit-card-v2__payment-logo-amex {
+		right: 23px;
+	}
+
+	&.stored-credit-card-v2__payment-logo-diners {
+		right: -4px;
 	}
 }
 
@@ -70,3 +86,4 @@
 		fill: var(--studio-white);
 	}
 }
+
