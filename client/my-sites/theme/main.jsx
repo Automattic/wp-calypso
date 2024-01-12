@@ -721,7 +721,7 @@ class ThemeSheet extends Component {
 	};
 
 	renderThemeBadge = () => {
-		const { siteId, siteSlug, softLaunched, themeId, themeTier, themeType } = this.props;
+		const { siteId, siteSlug, themeId, themeTier, themeType } = this.props;
 
 		const isCommunityTheme = themeType === DOT_ORG_THEME;
 		const isPartnerTheme = themeTier.slug === 'partner';
@@ -731,14 +731,15 @@ class ThemeSheet extends Component {
 			return null;
 		}
 
-		const className = classNames( 'theme__sheet-main-info-type', {
-			'is-soft-launched': softLaunched,
-		} );
 		return config.isEnabled( 'themes/tiers' ) ? (
-			<ThemeTierBadge className={ className } showUpgradeBadge={ false } themeId={ themeId } />
+			<ThemeTierBadge
+				className="theme__sheet-main-info-type"
+				showUpgradeBadge={ false }
+				themeId={ themeId }
+			/>
 		) : (
 			<ThemeTypeBadge
-				className={ className }
+				className="theme__sheet-main-info-type"
 				siteId={ siteId }
 				siteSlug={ siteSlug }
 				themeId={ themeId }
