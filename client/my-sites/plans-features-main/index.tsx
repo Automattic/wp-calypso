@@ -57,6 +57,7 @@ import useStorageAddOns from 'calypso/my-sites/add-ons/hooks/use-storage-add-ons
 import PlanNotice from 'calypso/my-sites/plans-features-main/components/plan-notice';
 import usePlanTypeDestinationCallback from 'calypso/my-sites/plans-features-main/hooks/use-plan-type-destination-callback';
 import { FeaturesGrid, ComparisonGrid, PlanTypeSelector } from 'calypso/my-sites/plans-grid';
+import { SupportedUrlFriendlyTermType } from 'calypso/my-sites/plans-grid/components/plan-type-selector/types';
 import useGridPlans from 'calypso/my-sites/plans-grid/hooks/npm-ready/data-store/use-grid-plans';
 import usePlanFeaturesForGridPlans from 'calypso/my-sites/plans-grid/hooks/npm-ready/data-store/use-plan-features-for-grid-plans';
 import useRestructuredPlanFeaturesForComparisonGrid from 'calypso/my-sites/plans-grid/hooks/npm-ready/data-store/use-restructured-plan-features-for-comparison-grid';
@@ -727,44 +728,47 @@ const PlansFeaturesMain = ( {
 		[]
 	);
 
-	const handlePlanTypeSelectorChange = useCallback( ( selectedItem: { key: string } ) => {
-		const additionalPathProps = {
-			...( planTypeSelectorProps.redirectTo
-				? { redirect_to: planTypeSelectorProps.redirectTo }
-				: {} ),
-		};
+	const handlePlanTypeSelectorChange = useCallback(
+		( selectedItem: { key: SupportedUrlFriendlyTermType } ) => {
+			const additionalPathProps = {
+				...( planTypeSelectorProps.redirectTo
+					? { redirect_to: planTypeSelectorProps.redirectTo }
+					: {} ),
+			};
 
-		let isDomainUpsellFlow: string | null = '';
-		let isDomainAndPlanPackageFlow: string | null = '';
-		let isJetpackAppFlow: string | null = '';
+			let isDomainUpsellFlow: string | null = '';
+			let isDomainAndPlanPackageFlow: string | null = '';
+			let isJetpackAppFlow: string | null = '';
 
-		if ( typeof window !== 'undefined' ) {
-			isDomainUpsellFlow = new URLSearchParams( window.location.search ).get( 'domain' );
-			isDomainAndPlanPackageFlow = new URLSearchParams( window.location.search ).get(
-				'domainAndPlanPackage'
-			);
-			isJetpackAppFlow = new URLSearchParams( window.location.search ).get( 'jetpackAppPlans' );
-		}
+			if ( typeof window !== 'undefined' ) {
+				isDomainUpsellFlow = new URLSearchParams( window.location.search ).get( 'domain' );
+				isDomainAndPlanPackageFlow = new URLSearchParams( window.location.search ).get(
+					'domainAndPlanPackage'
+				);
+				isJetpackAppFlow = new URLSearchParams( window.location.search ).get( 'jetpackAppPlans' );
+			}
 
-		const pathOrQueryParam = getPlanTypeDestination( planTypeSelectorProps, {
-			intervalType: selectedItem.key,
-			domain: isDomainUpsellFlow,
-			domainAndPlanPackage: isDomainAndPlanPackageFlow,
-			jetpackAppPlans: isJetpackAppFlow,
-			...additionalPathProps,
-		} );
+			const pathOrQueryParam = getPlanTypeDestination( planTypeSelectorProps, {
+				intervalType: selectedItem.key,
+				domain: isDomainUpsellFlow,
+				domainAndPlanPackage: isDomainAndPlanPackageFlow,
+				jetpackAppPlans: isJetpackAppFlow,
+				...additionalPathProps,
+			} );
 
-		if ( onPlanTypeSelectorChange ) {
-			return onPlanTypeSelectorChange( pathOrQueryParam );
-		}
+			if ( onPlanTypeSelectorChange ) {
+				return onPlanTypeSelectorChange( pathOrQueryParam );
+			}
 
-		if ( hasQueryArg( pathOrQueryParam, 'intervalType' ) ) {
-			const currentPath = window.location.pathname;
-			return page( currentPath + pathOrQueryParam );
-		}
+			if ( hasQueryArg( pathOrQueryParam, 'intervalType' ) ) {
+				const currentPath = window.location.pathname;
+				return page( currentPath + pathOrQueryParam );
+			}
 
-		page( pathOrQueryParam );
-	}, [] );
+			page( pathOrQueryParam );
+		},
+		[]
+	);
 
 	const comparisonGridContainerClasses = classNames(
 		'plans-features-main__comparison-grid-container',
