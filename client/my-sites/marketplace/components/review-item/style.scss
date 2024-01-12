@@ -92,13 +92,14 @@ $border-color: #eee;
 		}
 	}
 
-	.marketplace-review-item__editor {
+	.marketplace-review-item__editor textarea {
 		color: var(--studio-gray-100);
 		background-color: var(--studio-gray-0);
 		border-radius: 4px;
 		font-size: $font-body-small;
 		margin-top: 16px;
 		padding: 16px;
+		border: 0;
 
 		p {
 			margin-bottom: 0;
