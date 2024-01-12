@@ -301,6 +301,7 @@ describe( 'PlanFeatures2023GridActions', () => {
 						isInSignup={ true }
 						planSlug={ PLAN_BUSINESS }
 						isStuck={ false }
+						intent="plans-new-hosted-site"
 					/>
 				);
 
@@ -334,6 +335,7 @@ describe( 'PlanFeatures2023GridActions', () => {
 						isInSignup={ true }
 						planSlug={ PLAN_BUSINESS }
 						isStuck={ false }
+						intent="plans-default-wpcom"
 					/>
 				);
 
