@@ -42,7 +42,7 @@ export default function PaidPlanIsRequiredDialog( {
 			</Heading>
 			<SubHeading id="plan-upsell-modal-description">
 				{ translate(
-					'Custom domains are only available with a paid plan. And they are free for the first year with an annual paid plan.'
+					"Custom domains are only available with a paid plan. Choose annual billing and receive the domain's first year free."
 				) }
 			</SubHeading>
 			<ButtonContainer>
