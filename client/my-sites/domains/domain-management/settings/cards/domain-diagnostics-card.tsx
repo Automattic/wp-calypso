@@ -28,26 +28,18 @@ export default function DomainDiagnosticsCard( { domain }: { domain: ResponseDom
 	} = useDomainDiagnosticsQuery( domain.name );
 	const [ isRestoringDefaultRecords, setIsRestoringDefaultRecords ] = useState( false );
 
-	if ( ! domain.isMappedToAtomicSite ) {
-		return null;
-	}
-	if ( isFetching ) {
-		return null;
-	}
-	if ( ! data ) {
+	if ( ! domain.isMappedToAtomicSite || isFetching || ! data ) {
 		return null;
 	}
 
 	const recordsToCheck = [ 'spf', 'dkim1', 'dkim2', 'dmarc' ];
 	const emailDnsDiagnostics = data.email_dns_records;
 
-	if ( ! emailDnsDiagnostics ) {
-		return null;
-	}
-	if ( emailDnsDiagnostics.code === 'domain_not_mapped_to_atomic_site' ) {
-		return null;
-	}
-	if ( emailDnsDiagnostics.all_essential_email_dns_records_are_correct ) {
+	if (
+		! emailDnsDiagnostics ||
+		emailDnsDiagnostics.code === 'domain_not_mapped_to_atomic_site' ||
+		emailDnsDiagnostics.all_essential_email_dns_records_are_correct
+	) {
 		return null;
 	}
 
@@ -128,7 +120,6 @@ export default function DomainDiagnosticsCard( { domain }: { domain: ResponseDom
 						noticeOptions
 					)
 				);
-				return;
 			} )
 			.finally( () => {
 				setIsRestoringDefaultRecords( false );
@@ -162,9 +153,10 @@ export default function DomainDiagnosticsCard( { domain }: { domain: ResponseDom
 					text={ translate( "There are some issues with your domain's email DNS settings." ) }
 					showDismiss={ false }
 				/>
-				<ul>{ recordsToCheck.map( ( record ) => renderDiagnosticForRecord( record ) ) }</ul>
-				{ ! emailDnsDiagnostics.is_using_wpcom_name_servers && renderFixInstructions() }
-				{ emailDnsDiagnostics.is_using_wpcom_name_servers && renderFixButton() }
+				<ul>{ recordsToCheck.map( renderDiagnosticForRecord ) }</ul>
+				{ emailDnsDiagnostics.is_using_wpcom_name_servers
+					? renderFixButton()
+					: renderFixInstructions() }
 			</div>
 		</Accordion>
 	);
