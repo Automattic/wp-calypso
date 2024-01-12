@@ -117,6 +117,7 @@ export default function DomainDiagnosticsCard( { domain }: { domain: ResponseDom
 						noticeOptions
 					)
 				);
+				// Fetch DNS records to update the DNS records section's UI
 				dispatch( fetchDns( domain.name, true ) );
 				refetchDomainDiagnostics();
 			} )
