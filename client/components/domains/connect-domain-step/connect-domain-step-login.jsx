@@ -116,7 +116,7 @@ export default function ConnectDomainStepLogin( {
 									{
 										em: createElement( 'em' ),
 										a: createElement( 'a', {
-											href: 'https://wordpress.com/site-profiler',
+											href: localizeUrl( 'https://wordpress.com/site-profiler' ),
 											target: '_blank',
 										} ),
 									}
