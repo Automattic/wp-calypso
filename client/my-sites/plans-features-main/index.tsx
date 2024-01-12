@@ -577,6 +577,8 @@ const PlansFeaturesMain = ( {
 		siteId,
 	] );
 
+	const isEligibleForTrial = useSelector( isUserEligibleForFreeHostingTrial );
+
 	/**
 	 * The effects on /plans page need to be checked if this variable is initialized
 	 */
@@ -588,6 +590,7 @@ const PlansFeaturesMain = ( {
 				loggedInFreePlan: {
 					status: 'enabled',
 				},
+				isEligibleForTrial,
 			};
 		}
 

@@ -26,6 +26,7 @@ export interface PlanActionOverrides {
 		text?: TranslateResult;
 		callback?: () => void;
 	};
+	isEligibleForTrial: boolean;
 }
 
 // A generic type representing the response of an async request.
@@ -71,6 +72,7 @@ export interface FeaturesGridProps extends CommonGridProps {
 	isCustomDomainAllowedOnFreePlan: boolean; // indicate when a custom domain is allowed to be used with the Free plan.
 	paidDomainName?: string;
 	showLegacyStorageFeature: boolean;
+	intent?: PlansIntent;
 }
 
 export interface ComparisonGridProps extends CommonGridProps {

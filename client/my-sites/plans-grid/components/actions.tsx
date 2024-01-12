@@ -24,9 +24,7 @@ import { useCallback } from '@wordpress/element';
 import { localize, TranslateResult, useTranslate } from 'i18n-calypso';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { useManageTooltipToggle } from 'calypso/my-sites/plans-grid/hooks/use-manage-tooltip-toggle';
-import { useSelector } from 'calypso/state';
-import { isUserEligibleForFreeHostingTrial } from 'calypso/state/selectors/is-user-eligible-for-free-hosting-trial';
-import { usePlansGridContext } from '../grid-context';
+import { PlansIntent, usePlansGridContext } from '../grid-context';
 import useDefaultStorageOption from '../hooks/npm-ready/data-store/use-default-storage-option';
 import PlanButton from './plan-button';
 import { Plans2023Tooltip } from './plans-2023-tooltip';
@@ -47,6 +45,7 @@ type PlanFeaturesActionsButtonProps = {
 	isStuck: boolean;
 	isLargeCurrency?: boolean;
 	storageOptions?: StorageOption[];
+	intent: PlansIntent | null;
 };
 
 const DummyDisabledButton = styled.div`
@@ -70,6 +69,8 @@ const SignupFlowPlanFeatureActionButton = ( {
 	hasFreeTrialPlan,
 	handleUpgradeButtonClick,
 	busy,
+	isEligibleForTrial,
+	intent,
 }: {
 	planSlug: PlanSlug;
 	planTitle: TranslateResult;
@@ -79,9 +80,10 @@ const SignupFlowPlanFeatureActionButton = ( {
 	hasFreeTrialPlan: boolean;
 	handleUpgradeButtonClick: ( isFreeTrialPlan?: boolean ) => void;
 	busy?: boolean;
+	isEligibleForTrial?: boolean;
+	intent?: PlansIntent | null;
 } ) => {
 	const translate = useTranslate();
-	const isEligibleForTrial = useSelector( isUserEligibleForFreeHostingTrial );
 
 	let btnText = translate( 'Get %(plan)s', {
 		args: {
@@ -139,7 +141,7 @@ const SignupFlowPlanFeatureActionButton = ( {
 		! hasFreeTrialPlan &&
 		isBusinessPlan( planSlug ) &&
 		! isEligibleForTrial &&
-		window.location.pathname.indexOf( 'new-hosted-site' ) !== -1
+		intent === 'plans-new-hosted-site'
 	) {
 		return (
 			<div className="plan-features-2023-grid__multiple-actions-container">
@@ -448,6 +450,7 @@ const PlanFeaturesActionsButton: React.FC< PlanFeaturesActionsButtonProps > = ( 
 	isLargeCurrency,
 	isMonthlyPlan,
 	storageOptions,
+	intent,
 } ) => {
 	const translate = useTranslate();
 	const { gridPlansIndex } = usePlansGridContext();
@@ -515,6 +518,8 @@ const PlanFeaturesActionsButton: React.FC< PlanFeaturesActionsButtonProps > = ( 
 				busy={
 					isFreePlan( planSlug ) && planActionOverrides?.loggedInFreePlan?.status === 'blocked'
 				}
+				isEligibleForTrial={ planActionOverrides?.isEligibleForTrial }
+				intent={ intent }
 			/>
 		);
 	}
