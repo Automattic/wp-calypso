@@ -15,6 +15,18 @@
 
 .professional-email-upsell__header {
 	text-align: center;
+
+	.billing-interval-toggle {
+		.segmented-control.is-primary {
+			background-color: var(--studio-gray-0);
+			border: 1px solid var(--studio-gray-5);
+
+			&.is-compact {
+				margin-bottom: 0;
+				max-width: unset;
+			}
+		}
+	}
 }
 
 .professional-email-upsell__discounted {
