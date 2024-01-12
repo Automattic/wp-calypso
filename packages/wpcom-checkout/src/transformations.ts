@@ -1,3 +1,4 @@
+import { isJetpackPlan, isJetpackProduct } from '@automattic/calypso-products';
 import { formatCurrency } from '@automattic/format-currency';
 import { translate } from 'i18n-calypso';
 import type { LineItemType } from './types';
@@ -140,6 +141,50 @@ export function getSubtotalWithoutCoupon( responseCart: ResponseCart ): number {
 	return responseCart.sub_total_integer + responseCart.coupon_savings_total_integer;
 }
 
+export function getOriginalSubtotal( responseCart: ResponseCart ): number {
+	return responseCart.products.reduce( ( total, product ) => {
+		return total + product.item_original_subtotal_integer;
+	}, 0 );
+}
+
+export function getJetpackIntroductoryDiscount( responseCart: ResponseCart ): number {
+	const jetpackProduct = responseCart.products.find(
+		( product ) => isJetpackProduct( product ) || isJetpackPlan( product )
+	);
+
+	if ( ! jetpackProduct || ! jetpackProduct.introductory_offer_terms?.enabled ) {
+		return 0; // No Jetpack product found, or no introductory offer
+	}
+
+	if ( 24 === jetpackProduct.months_per_bill_period ) {
+		// If the plan is 2-year plan, we show introductory discount for yearly variant (and the price leftover is "multi-year discount")
+		const yearlyVariant = jetpackProduct.product_variants.find(
+			( variant ) => 12 === variant.bill_period_in_months
+		);
+
+		if ( ! yearlyVariant ) {
+			return 0; // No yearly variant found
+		}
+
+		return yearlyVariant.price_before_discounts_integer - yearlyVariant.price_integer;
+	}
+
+	// If the Jetpack is not a 2-year plan, we just simply return difference of original and current subtotal (without coupon)
+	return (
+		jetpackProduct.item_original_cost_integer -
+		jetpackProduct.item_subtotal_integer +
+		( jetpackProduct.coupon_savings_integer ?? 0 )
+	);
+}
+
+export function getJetpackBiYearlyDiscount( responseCart: ResponseCart ): number {
+	const introDiscount = getJetpackIntroductoryDiscount( responseCart );
+	const originalSubtotal = getOriginalSubtotal( responseCart );
+	const subtotal = getSubtotalWithoutCoupon( responseCart );
+
+	// Bi-yearly discount is calculated as a leftover from introductory discount
+	return originalSubtotal - introDiscount - subtotal;
+}
 /**
  * Credits are the only type of cart discount that is applied to the cart as a
  * whole and not to individual line items. The subtotal is only a subtotal of

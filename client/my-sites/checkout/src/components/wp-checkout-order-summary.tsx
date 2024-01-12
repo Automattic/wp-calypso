@@ -33,12 +33,16 @@ import {
 	getCreditsLineItemFromCart,
 	getSubtotalWithoutCoupon,
 	getSubtotalWithCredits,
+	getOriginalSubtotal,
+	getJetpackIntroductoryDiscount,
+	getJetpackBiYearlyDiscount,
 } from '@automattic/wpcom-checkout';
 import { keyframes } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useTranslate } from 'i18n-calypso';
 import * as React from 'react';
 import { hasFreeCouponTransfersOnly } from 'calypso/lib/cart-values/cart-items';
+import isJetpackCheckout from 'calypso/lib/jetpack/is-jetpack-checkout';
 import { isWcMobileApp } from 'calypso/lib/mobile-app';
 import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
 import { getSignupCompleteFlowName } from 'calypso/signup/storageUtils';
@@ -122,6 +126,48 @@ export default function WPCheckoutOrderSummary( {
 	);
 }
 
+function JetpackCheckoutSummaryPriceListPart( { responseCart }: { responseCart: ResponseCart } ) {
+	const translate = useTranslate();
+	const originalSubtotal = getOriginalSubtotal( responseCart );
+	const jetpackIntroDiscount = getJetpackIntroductoryDiscount( responseCart );
+	const jetpackBiYearlyDiscount = getJetpackBiYearlyDiscount( responseCart );
+	return (
+		<>
+			<CheckoutSummaryLineItem key="checkout-summary-line-item-plan-subscription">
+				<span>{ translate( 'Plan subscription' ) }</span>
+				<span>
+					{ formatCurrency( originalSubtotal, responseCart.currency, {
+						isSmallestUnit: true,
+						stripZeros: true,
+					} ) }
+				</span>
+			</CheckoutSummaryLineItem>
+			{ !! jetpackIntroDiscount && (
+				<CheckoutSummaryLineItem isDiscount key="checkout-summary-line-item-intro-offer">
+					<span>{ translate( 'Introductory offer' ) }</span>
+					<span>
+						-&nbsp;
+						{ formatCurrency( jetpackIntroDiscount, responseCart.currency, {
+							isSmallestUnit: true,
+						} ) }
+					</span>
+				</CheckoutSummaryLineItem>
+			) }
+			{ !! jetpackBiYearlyDiscount && (
+				<CheckoutSummaryLineItem isDiscount key="checkout-summary-line-item-bi-yearly-offer">
+					<span>{ translate( 'Multi-year discount' ) }</span>
+					<span>
+						-&nbsp;
+						{ formatCurrency( jetpackBiYearlyDiscount, responseCart.currency, {
+							isSmallestUnit: true,
+						} ) }
+					</span>
+				</CheckoutSummaryLineItem>
+			) }
+		</>
+	);
+}
+
 function CheckoutSummaryPriceList() {
 	const cartKey = useCartKey();
 	const { responseCart } = useShoppingCart( cartKey );
@@ -136,6 +182,9 @@ function CheckoutSummaryPriceList() {
 	return (
 		<>
 			<CheckoutSummaryAmountWrapper>
+				{ isJetpackCheckout() && (
+					<JetpackCheckoutSummaryPriceListPart responseCart={ responseCart } />
+				) }
 				<CheckoutSummaryLineItem key="checkout-summary-line-item-subtotal">
 					<span>{ translate( 'Subtotal' ) }</span>
 					<span>
@@ -873,13 +922,15 @@ const CheckoutSummaryAmountWrapper = styled.div`
 	padding: 20px 0;
 `;
 
-const CheckoutSummaryLineItem = styled.div`
+const CheckoutSummaryLineItem = styled.div< { isDiscount?: boolean } >`
 	display: flex;
 	flex-wrap: wrap;
 	font-size: 14px;
 	justify-content: space-between;
 	line-heigh: 20px;
 	margin-bottom: 4px;
+
+	color: ${ ( props ) => ( props.isDiscount ? props.theme.colors.discount : 'inherit' ) };
 
 	&:nth-last-of-type( 2 ) {
 		border-bottom: 1px solid ${ ( props ) => props.theme.colors.borderColorLight };
