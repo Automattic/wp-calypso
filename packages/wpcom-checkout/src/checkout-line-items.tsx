@@ -91,8 +91,8 @@ export const LineItem = styled( CheckoutLineItem )< {
 		'label price'
 		'meta .     '
 		'term remove';
-	gap: 8px;
-	margin-bottom: 32px;
+	gap: 2px;
+	margin-bottom: 8px;
 	padding: 10px 0;`
 		: `display: flex;
 			flex-wrap: wrap;
@@ -209,7 +209,7 @@ const LineItemPriceWrapper = styled.span< { theme?: Theme; isSummary?: boolean }
 `;
 
 const DropdownWrapper = styled.span`
-	${ hasCheckoutVersion2 ? `grid-area: term;` : null }
+	${ hasCheckoutVersion2 ? `grid-area: term; margin-top: 6px;` : null }
 `;
 
 const DeleteButtonWrapper = styled.div`
