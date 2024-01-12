@@ -26,12 +26,10 @@ import { formatCurrency } from '@automattic/format-currency';
 import { isNewsletterOrLinkInBioFlow, isAnyHostingFlow } from '@automattic/onboarding';
 import { useShoppingCart } from '@automattic/shopping-cart';
 import {
-	getCouponLineItemFromCart,
 	getTaxBreakdownLineItemsFromCart,
 	getTotalLineItemFromCart,
 	hasCheckoutVersion,
 	getCreditsLineItemFromCart,
-	getSubtotalWithoutCoupon,
 	getSubtotalWithCredits,
 	doesPurchaseHaveFullCredits,
 } from '@automattic/wpcom-checkout';
@@ -127,12 +125,10 @@ export default function WPCheckoutOrderSummary( {
 function CheckoutSummaryPriceList() {
 	const cartKey = useCartKey();
 	const { responseCart, removeCoupon } = useShoppingCart( cartKey );
-	const couponLineItem = getCouponLineItemFromCart( responseCart );
 	const creditsLineItem = getCreditsLineItemFromCart( responseCart );
 	const taxLineItems = getTaxBreakdownLineItemsFromCart( responseCart );
 	const totalLineItem = getTotalLineItemFromCart( responseCart );
 	const translate = useTranslate();
-	const subtotalWithoutCoupon = getSubtotalWithoutCoupon( responseCart );
 	const subtotalWithCredits = getSubtotalWithCredits( responseCart );
 	const costOverridesList = filterAndGroupCostOverridesForDisplay( responseCart );
 	const isFullCredits = doesPurchaseHaveFullCredits( responseCart );
@@ -156,22 +152,12 @@ function CheckoutSummaryPriceList() {
 				<CheckoutSummaryLineItem key="checkout-summary-line-item-subtotal">
 					<span>{ translate( 'Subtotal' ) }</span>
 					<span>
-						{ formatCurrency(
-							hasCheckoutVersion( '2' ) ? subtotalWithCredits : subtotalWithoutCoupon,
-							responseCart.currency,
-							{
-								isSmallestUnit: true,
-								stripZeros: true,
-							}
-						) }
+						{ formatCurrency( subtotalWithCredits, responseCart.currency, {
+							isSmallestUnit: true,
+							stripZeros: true,
+						} ) }
 					</span>
 				</CheckoutSummaryLineItem>
-				{ ! hasCheckoutVersion( '2' ) && couponLineItem && (
-					<CheckoutSummaryLineItem key={ 'checkout-summary-line-item-' + couponLineItem.id }>
-						<span>{ couponLineItem.label }</span>
-						<span>{ couponLineItem.formattedAmount }</span>
-					</CheckoutSummaryLineItem>
-				) }
 				{ taxLineItems.map( ( taxLineItem ) => (
 					<CheckoutSummaryLineItem key={ 'checkout-summary-line-item-' + taxLineItem.id }>
 						<span>{ taxLineItem.label }</span>
