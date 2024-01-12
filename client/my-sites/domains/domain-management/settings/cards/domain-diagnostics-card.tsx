@@ -139,6 +139,7 @@ export default function DomainDiagnosticsCard( { domain }: { domain: ResponseDom
 			title={ translate( 'Diagnostics', { textOnly: true } ) }
 			subtitle={ translate( 'There are some issues with your domain', { textOnly: true } ) }
 			key="diagnostics"
+			expanded
 		>
 			<div>
 				<p>{ translate( "There are some issues with your domain's email DNS settings:" ) }</p>
