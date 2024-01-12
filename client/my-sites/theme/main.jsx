@@ -14,7 +14,9 @@ import {
 import page from '@automattic/calypso-router';
 import { Button, Card, Gridicon } from '@automattic/components';
 import {
+	BUNDLED_THEME,
 	DEFAULT_GLOBAL_STYLES_VARIATION_SLUG,
+	DOT_ORG_THEME,
 	ThemePreview as ThemeWebPreview,
 	getDesignPreviewUrl,
 	isDefaultGlobalStylesVariationSlug,
@@ -45,6 +47,8 @@ import Main from 'calypso/components/main';
 import PremiumGlobalStylesUpgradeModal from 'calypso/components/premium-global-styles-upgrade-modal';
 import SectionHeader from 'calypso/components/section-header';
 import { THEME_TIERS } from 'calypso/components/theme-tier/constants';
+import ThemeTierBadge from 'calypso/components/theme-tier/theme-tier-badge';
+import ThemeTypeBadge from 'calypso/components/theme-type-badge';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { decodeEntities, preventWidows } from 'calypso/lib/formatting';
 import { PerformanceTrackerStop } from 'calypso/lib/performance-tracking';
@@ -716,6 +720,32 @@ class ThemeSheet extends Component {
 		);
 	};
 
+	renderThemeBadge = () => {
+		const { siteId, siteSlug, softLaunched, themeId, themeTier, themeType } = this.props;
+
+		const isCommunityTheme = themeType === DOT_ORG_THEME;
+		const isPartnerTheme = themeTier.slug === 'partner';
+		const isSenseiOrWooCommerceTheme = themeType === BUNDLED_THEME;
+
+		if ( ! isCommunityTheme && ! isPartnerTheme && ! isSenseiOrWooCommerceTheme ) {
+			return null;
+		}
+
+		const className = classNames( 'theme__sheet-main-info-type', {
+			'is-soft-launched': softLaunched,
+		} );
+		return config.isEnabled( 'themes/tiers' ) ? (
+			<ThemeTierBadge className={ className } showUpgradeBadge={ false } themeId={ themeId } />
+		) : (
+			<ThemeTypeBadge
+				className={ className }
+				siteId={ siteId }
+				siteSlug={ siteSlug }
+				themeId={ themeId }
+			/>
+		);
+	};
+
 	renderHeader = () => {
 		const {
 			author,
@@ -745,6 +775,7 @@ class ThemeSheet extends Component {
 					<div className="theme__sheet-main-info">
 						<h1 className="theme__sheet-main-info-title">
 							{ title }
+							{ this.renderThemeBadge() }
 							{ softLaunched && (
 								<span className="theme__sheet-bar-soft-launched">{ translate( 'A8C Only' ) }</span>
 							) }

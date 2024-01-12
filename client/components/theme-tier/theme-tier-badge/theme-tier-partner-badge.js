@@ -17,7 +17,7 @@ import ThemeTierTooltipTracker from './theme-tier-tooltip-tracker';
 export default function ThemeTierPartnerBadge() {
 	const translate = useTranslate();
 	const siteId = useSelector( getSelectedSiteId );
-	const { themeId } = useThemeTierBadgeContext();
+	const { showUpgradeBadge, themeId } = useThemeTierBadgeContext();
 	const isPartnerThemePurchased = useSelector( ( state ) =>
 		siteId ? isMarketplaceThemeSubscribed( state, themeId, siteId ) : false
 	);
@@ -83,7 +83,7 @@ export default function ThemeTierPartnerBadge() {
 
 	return (
 		<>
-			{ ( ! isPartnerThemePurchased || ! isThemeAllowed ) && (
+			{ showUpgradeBadge && ( ! isPartnerThemePurchased || ! isThemeAllowedOnSite ) && (
 				<>
 					<ThemeTierBadgeTracker />
 					<PremiumBadge
