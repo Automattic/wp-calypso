@@ -561,6 +561,7 @@ const PlansFeaturesMain = ( {
 			recordTracksEvent,
 			coupon,
 			selectedSiteId: siteId,
+			withDiscount,
 		};
 	}, [
 		_customerType,
@@ -580,6 +581,7 @@ const PlansFeaturesMain = ( {
 		eligibleForWpcomMonthlyPlans,
 		coupon,
 		siteId,
+		withDiscount,
 	] );
 
 	/**
@@ -730,12 +732,6 @@ const PlansFeaturesMain = ( {
 
 	const handlePlanTypeSelectorChange = useCallback(
 		( selectedItem: { key: SupportedUrlFriendlyTermType } ) => {
-			const additionalPathProps = {
-				...( planTypeSelectorProps.redirectTo
-					? { redirect_to: planTypeSelectorProps.redirectTo }
-					: {} ),
-			};
-
 			let isDomainUpsellFlow: string | null = '';
 			let isDomainAndPlanPackageFlow: string | null = '';
 			let isJetpackAppFlow: string | null = '';
@@ -753,7 +749,6 @@ const PlansFeaturesMain = ( {
 				domain: isDomainUpsellFlow,
 				domainAndPlanPackage: isDomainAndPlanPackageFlow,
 				jetpackAppPlans: isJetpackAppFlow,
-				...additionalPathProps,
 			} );
 
 			if ( onPlanTypeSelectorChange ) {
