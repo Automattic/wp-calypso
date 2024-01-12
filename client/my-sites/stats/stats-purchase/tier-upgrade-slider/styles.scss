@@ -29,7 +29,14 @@ $track-height: 4px;
 
 	border: 1px solid var(--gray-gray-5);
 	border-radius: 5px; // stylelint-disable-line scales/radii
-	padding: 12px;
+	padding: 16px;
+
+	// Remove the box shadow on the slider thumb when not holding.
+	.tier-upgrade-slider__slider:not(.jp-components-pricing-slider--is-holding) {
+		.jp-components-pricing-slider__thumb.tier-upgrade-slider__thumb {
+			box-shadow: none;
+		}
+	}
 
 	.jp-components-pricing-slider__thumb.tier-upgrade-slider__thumb {
 		width: $thumb-width;
@@ -97,8 +104,9 @@ $track-height: 4px;
 
 .tier-upgrade-slider__info-message {
 	color: var(--studio-gray-40);
-	margin: 12px 0;
+	margin: 12px 0 0;
 	text-align: center;
+	font-size: $font-body-small;
 }
 
 .tier-upgrade-slider__step-callouts {
@@ -106,18 +114,19 @@ $track-height: 4px;
 	justify-content: space-between;
 
 	h2 {
-		font-weight: 500;
+		font-size: $font-body-small;
+		font-weight: 600;
 	}
 	p {
-		/* stylelint-disable-next-line declaration-property-unit-allowed-list */
-		font-size: 2em;
-		font-weight: 500;
+		font-size: $font-headline-small;
+		font-weight: bold;
 		margin: 0;
 	}
 	.right-aligned {
 		text-align: right;
 	}
 	.full-price-label {
+		font-size: $font-title-medium;
 		color: var(--studio-gray-40);
 		text-decoration: line-through;
 	}

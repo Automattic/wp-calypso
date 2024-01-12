@@ -32,12 +32,17 @@ export interface AllDomainsQueryArgs {
 	no_wpcom?: boolean;
 }
 
+export const getAllDomainsQueryKey = ( queryArgs: AllDomainsQueryArgs = {} ) => [
+	'all-domains',
+	queryArgs,
+];
+
 export function useAllDomainsQuery< TError = unknown, TData = AllDomainsQueryFnData >(
 	queryArgs: AllDomainsQueryArgs = {},
 	options: Omit< UseQueryOptions< AllDomainsQueryFnData, TError, TData >, 'queryKey' > = {}
 ) {
 	return useQuery< AllDomainsQueryFnData, TError, TData >( {
-		queryKey: [ 'all-domains', queryArgs ],
+		queryKey: getAllDomainsQueryKey( queryArgs ),
 		queryFn: () =>
 			wpcomRequest< AllDomainsQueryFnData >( {
 				path: addQueryArgs( '/all-domains', queryArgs ),

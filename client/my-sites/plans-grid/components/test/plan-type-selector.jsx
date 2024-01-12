@@ -8,6 +8,7 @@ describe( '<PlanTypeSelector />', () => {
 		selectedPlan: PLAN_FREE,
 		hideFreePlan: true,
 		withWPPlanTabs: true,
+		displayedIntervals: [ 'monthly', 'yearly' ],
 		usePricingMetaForGridPlans: () => null,
 	};
 

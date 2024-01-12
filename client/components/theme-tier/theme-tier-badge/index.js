@@ -1,9 +1,13 @@
 import { BUNDLED_THEME, DOT_ORG_THEME, MARKETPLACE_THEME } from '@automattic/design-picker';
 import classNames from 'classnames';
 import { useSelector } from 'calypso/state';
-import { getThemeType, isThemePurchased } from 'calypso/state/themes/selectors';
+import {
+	getThemeType,
+	isThemePurchased,
+	getThemeTierForTheme,
+	isThemeAllowedOnSite,
+} from 'calypso/state/themes/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
-import useThemeTier from '../use-theme-tier';
 import { ThemeTierBadgeContextProvider } from './theme-tier-badge-context';
 import ThemeTierBundledBadge from './theme-tier-bundled-badge';
 import ThemeTierCommunityBadge from './theme-tier-community-badge';
@@ -25,7 +29,8 @@ export default function ThemeTierBadge( {
 	const isLegacyPremiumPurchased = useSelector( ( state ) =>
 		isThemePurchased( state, themeId, siteId )
 	);
-	const { themeTier, isThemeAllowedOnSite } = useThemeTier( siteId, themeId );
+	const themeTier = useSelector( ( state ) => getThemeTierForTheme( state, themeId ) );
+	const isThemeAllowed = useSelector( ( state ) => isThemeAllowedOnSite( state, siteId, themeId ) );
 
 	const getBadge = () => {
 		if ( BUNDLED_THEME === themeType ) {
@@ -44,7 +49,7 @@ export default function ThemeTierBadge( {
 			return <ThemeTierPartnerBadge />;
 		}
 
-		if ( isThemeAllowedOnSite || ( 'premium' === themeTier.slug && isLegacyPremiumPurchased ) ) {
+		if ( isThemeAllowed || ( 'premium' === themeTier.slug && isLegacyPremiumPurchased ) ) {
 			return null;
 		}
 
