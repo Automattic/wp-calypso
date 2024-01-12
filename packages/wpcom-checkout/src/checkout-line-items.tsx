@@ -691,6 +691,14 @@ export function LineItemSublabelAndPrice( { product }: { product: ResponseCartPr
 		stripZeros: true,
 	} );
 
+	if ( hasCheckoutVersion2 ) {
+		return (
+			<>
+				<DefaultLineItemSublabel product={ product } />
+			</>
+		);
+	}
+
 	if ( isP2Plus( product ) ) {
 		// This is the price for one item for products with a quantity (eg. seats in a license).
 		const itemPrice = formatCurrency(
