@@ -1,18 +1,32 @@
 import { Button } from '@automattic/components';
 import { sprintf } from '@wordpress/i18n';
 import { useTranslate } from 'i18n-calypso';
-import type { DomainDiagnostics } from 'calypso/lib/domains/types';
+import Accordion from 'calypso/components/domains/accordion';
+import useDomainDiagnosticsQuery from 'calypso/data/domains/diagnostics/use-domain-diagnostics-query';
+import type { ResponseDomain } from 'calypso/lib/domains/types';
 
 import './style.scss';
 
-export default function DomainDiagnosticsCard( {
-	diagnostics,
-}: {
-	diagnostics: DomainDiagnostics;
-} ) {
+export default function DomainDiagnosticsCard( { domain }: { domain: ResponseDomain } ) {
 	const translate = useTranslate();
-	const emailDnsDiagnostics = diagnostics.email_dns_records;
+	const { data, isFetching } = useDomainDiagnosticsQuery( domain.name );
+
+	if ( ! domain.isMappedToAtomicSite ) {
+		return null;
+	}
+	if ( isFetching ) {
+		return null;
+	}
+	if ( ! data ) {
+		return null;
+	}
+
 	const recordsToCheck = [ 'spf', 'dkim1', 'dkim2', 'dmarc' ];
+	const emailDnsDiagnostics = data.email_dns_records;
+
+	if ( emailDnsDiagnostics.all_essential_email_dns_records_are_correct ) {
+		return null;
+	}
 
 	const renderDiagnosticForRecord = ( record: string ) => {
 		const uppercaseRecord = record.toUpperCase();
@@ -79,11 +93,18 @@ export default function DomainDiagnosticsCard( {
 	};
 
 	return (
-		<div>
-			<p>{ translate( "There are some issues with your domain's DNS settings:" ) }</p>
-			<ul>{ recordsToCheck.map( ( record ) => renderDiagnosticForRecord( record ) ) }</ul>
-			{ ! emailDnsDiagnostics.is_using_wpcom_name_servers && renderFixInstructions() }
-			{ emailDnsDiagnostics.is_using_wpcom_name_servers && renderFixButton() }
-		</div>
+		<Accordion
+			className="domain-diagnostics-card__accordion"
+			title={ translate( 'Diagnostics', { textOnly: true } ) }
+			subtitle={ translate( 'There are some issues with your domain', { textOnly: true } ) }
+			key="diagnostics"
+		>
+			<div>
+				<p>{ translate( "There are some issues with your domain's DNS settings:" ) }</p>
+				<ul>{ recordsToCheck.map( ( record ) => renderDiagnosticForRecord( record ) ) }</ul>
+				{ ! emailDnsDiagnostics.is_using_wpcom_name_servers && renderFixInstructions() }
+				{ emailDnsDiagnostics.is_using_wpcom_name_servers && renderFixButton() }
+			</div>
+		</Accordion>
 	);
 }
