@@ -1,9 +1,9 @@
-import { ConfettiAnimation } from '@automattic/components';
 import { ThemeProvider, Global, css } from '@emotion/react';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect } from 'react';
 import DocumentHead from 'calypso/components/data/document-head';
-import { ThankYou } from 'calypso/components/thank-you';
+import Main from 'calypso/components/main';
+import ThankYouV2 from 'calypso/components/thank-you-v2';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import MarketplaceProgressBar from 'calypso/my-sites/marketplace/components/progressbar';
 import theme from 'calypso/my-sites/marketplace/theme';
@@ -44,8 +44,6 @@ const MarketplaceThankYou = ( {
 	const isRequestingPlugins = useSelector( ( state ) =>
 		siteId ? isRequesting( state, siteId ) : false
 	);
-
-	const defaultThankYouFooter = useThankYouFoooter( pluginSlugs, themeSlugs );
 
 	const [
 		pluginsSection,
@@ -135,11 +133,12 @@ const MarketplaceThankYou = ( {
 		themesProgressbarSteps,
 	} );
 
-	const sections = [
+	const products = [
 		...( hasThemes ? [ themesSection ] : [] ),
 		...( hasPlugins ? [ pluginsSection ] : [] ),
-		defaultThankYouFooter,
 	];
+
+	const footerDetails = useThankYouFoooter( pluginSlugs, themeSlugs );
 
 	return (
 		<ThemeProvider theme={ theme }>
@@ -170,20 +169,19 @@ const MarketplaceThankYou = ( {
 					/>
 				</div>
 			) }
+
 			{ ! showProgressBar && (
-				<div className="marketplace-thank-you__container">
-					<ConfettiAnimation delay={ 1000 } />
-					<ThankYou
-						containerClassName="marketplace-thank-you"
-						sections={ sections }
-						showSupportSection={ false }
-						thankYouTitle={ title }
-						thankYouSubtitle={ subtitle }
-						thankYouHeaderBody={ thankYouHeaderAction }
-						headerBackgroundColor="#fff"
-						headerTextColor="#000"
-					/>
-				</div>
+				<Main className="is-redesign-v2">
+					<div className="marketplace-thank-you__container">
+						<ThankYouV2
+							title={ title }
+							subtitle={ subtitle }
+							headerButtons={ thankYouHeaderAction }
+							products={ products }
+							footerDetails={ footerDetails }
+						/>
+					</div>
+				</Main>
 			) }
 		</ThemeProvider>
 	);

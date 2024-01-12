@@ -2,15 +2,26 @@ import page from '@automattic/calypso-router';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect, useMemo } from 'react';
 import { useQueryThemes } from 'calypso/components/data/query-theme';
-import { ThankYouSectionProps, ThankYouThemeData } from 'calypso/components/thank-you/types';
 import { useDispatch, useSelector } from 'calypso/state';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
 import { clearActivated } from 'calypso/state/themes/actions';
 import { getThemes } from 'calypso/state/themes/selectors';
 import { hasExternallyManagedThemes as getHasExternallyManagedThemes } from 'calypso/state/themes/selectors/is-externally-managed-theme';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
+import MasterbarStyled from '../redesign-v2/masterbar-styled';
 import { ThankYouThemeSection } from './marketplace-thank-you-theme-section';
-import MasterbarStyled from './masterbar-styled';
+
+type ThankYouThemeData = [
+	Theme,
+	ThankYouThemeSection[],
+	boolean,
+	JSX.Element,
+	string,
+	string,
+	string[],
+	boolean,
+	React.ReactElement | null,
+];
 
 export function useThemesThankYouData(
 	themeSlugs: string[],
@@ -48,21 +59,17 @@ export function useThemesThankYouData(
 		};
 	}, [ dispatch, siteId ] );
 
-	const themesSection: ThankYouSectionProps = {
-		sectionKey: 'theme_information',
-		nextSteps: themesList
-			.filter( ( theme ) => theme )
-			.map( ( theme ) => ( {
-				stepKey: `theme_information_${ theme.id }`,
-				stepSection: (
-					<ThankYouThemeSection
-						theme={ theme }
-						isOnboardingFlow={ isOnboardingFlow }
-						continueWithPluginBundle={ continueWithPluginBundle }
-					/>
-				),
-			} ) ),
-	};
+	const themesSection: ThankYouThemeSection[] = themesList
+		.filter( ( theme ) => theme )
+		.map( ( theme: any ) => {
+			return (
+				<ThankYouThemeSection
+					theme={ theme }
+					isOnboardingFlow={ isOnboardingFlow }
+					continueWithPluginBundle={ continueWithPluginBundle }
+				/>
+			);
+		} );
 
 	const goBackSection = (
 		<MasterbarStyled

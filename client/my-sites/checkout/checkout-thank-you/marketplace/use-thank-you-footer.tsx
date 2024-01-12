@@ -1,17 +1,16 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { useLocale, useLocalizeUrl } from '@automattic/i18n-utils';
-import { Button } from '@wordpress/components';
 import { useI18n } from '@wordpress/react-i18n';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback } from 'react';
-import { ThankYouSectionProps, ThankYouNextStepProps } from 'calypso/components/thank-you/types';
+import PurchaseDetail from 'calypso/components/purchase-detail';
 import { useSelector } from 'calypso/state';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 
 export function useThankYouFoooter(
 	pluginSlugs: Array< string >,
 	themeSlugs: Array< string >
-): ThankYouSectionProps {
+): PurchaseDetail.propTypes[] {
 	const [ hasPlugins, hasThemes ] = [ pluginSlugs, themeSlugs ].map(
 		( slugs ) => slugs.length !== 0
 	);
@@ -40,11 +39,7 @@ export function useThankYouFoooter(
 
 	const steps = useNextSteps( footerSteps, pluginSlugs, themeSlugs );
 
-	return {
-		sectionKey: 'thank_you_footer',
-		nextStepsClassName: 'thank-you__footer',
-		nextSteps: steps.slice( 0, 3 ),
-	};
+	return steps.slice( 0, 2 );
 }
 
 function usePluginSteps(): FooterStep[] {
@@ -119,7 +114,7 @@ function useNextSteps(
 	footerSteps: FooterStep[],
 	pluginSlugs: Array< string >,
 	themeSlugs: Array< string >
-): ThankYouNextStepProps[] {
+): PurchaseDetail.propTypes[] {
 	const siteId = useSelector( getSelectedSiteId );
 
 	const sendTrackEvent = useCallback(
@@ -135,19 +130,11 @@ function useNextSteps(
 
 	return footerSteps.map( ( step ) => {
 		return {
-			stepKey: step.key,
-			stepTitle: step.title,
-			stepDescription: step.description,
-			stepCta: (
-				<Button
-					variant="link"
-					href={ step.link }
-					target={ step.blankTarget !== false ? '_blank' : undefined } // the default is to open in a new tab
-					onClick={ () => sendTrackEvent( step.eventKey ) }
-				>
-					{ step.linkText }
-				</Button>
-			),
+			title: step.title,
+			description: step.description,
+			buttonText: step.linkText,
+			href: step.link,
+			onClick: () => sendTrackEvent( step.eventKey ),
 		};
 	} );
 }
