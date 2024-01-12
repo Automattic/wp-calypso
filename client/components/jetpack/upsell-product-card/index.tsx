@@ -78,6 +78,7 @@ const UpsellProductCard: React.FC< UpsellProductCardProps > = ( {
 	const {
 		originalPrice: nonManageOriginalPrice,
 		discountedPrice: nonManageDiscountedPrice,
+		discountedPriceTotal: nonManageDiscountedPriceTotal,
 		priceTierList: nonManagePriceTierList,
 		isFetching: isFetchingNonManagePrices,
 	} = useItemPrice( siteId, item, item?.monthlyProductSlug || '' );
@@ -201,6 +202,9 @@ const UpsellProductCard: React.FC< UpsellProductCardProps > = ( {
 						manageProduct={ manageProduct }
 						onClose={ () => setShowLightbox( false ) }
 						nonManageProductSlug={ nonManageProductSlug }
+						nonManageProductPrice={
+							nonManageCurrencyCode === 'USD' ? nonManageDiscountedPriceTotal : null
+						}
 						partnerCanIssueLicense={ true }
 						siteId={ siteId }
 					/>

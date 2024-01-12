@@ -14,12 +14,14 @@ import './style.scss';
 
 type Props = {
 	nonManageProductSlug: string;
+	nonManageProductPrice?: number | null;
 	onClose: () => void;
 	siteId?: number;
 };
 
 const LicenseLightboxPurchaseViaJetpackcom: FunctionComponent< Props > = ( {
 	nonManageProductSlug,
+	nonManageProductPrice,
 	onClose,
 	siteId,
 } ) => {

@@ -14,6 +14,7 @@ interface Props {
 	manageProduct: APIProductFamilyProduct;
 	partnerCanIssueLicense: boolean;
 	nonManageProductSlug: string;
+	nonManageProductPrice?: number | null;
 	onClose: () => void;
 	siteId?: number;
 }
@@ -22,6 +23,7 @@ export default function SingleSiteUpsellLightbox( {
 	manageProduct,
 	partnerCanIssueLicense,
 	nonManageProductSlug,
+	nonManageProductPrice,
 	onClose,
 	siteId,
 }: Props ) {
@@ -102,6 +104,7 @@ export default function SingleSiteUpsellLightbox( {
 			secondaryAsideContent={
 				<LicenseLightboxPurchaseViaJetpackcom
 					nonManageProductSlug={ nonManageProductSlug }
+					nonManageProductPrice={ nonManageProductPrice }
 					onClose={ hideLicenseInfo }
 					siteId={ siteId }
 				/>
