@@ -8,7 +8,7 @@ export default ( state = {}, action ) => {
 				...state,
 
 				[ action.siteId ]: {
-					isConnected: get( action, 'data.connected_account_id', null ) !== null,
+					isConnected: get( action, 'data.connected_account_id', null ) > 0,
 					connectedAccountDescription: get( action, 'data.connected_account_description', null ),
 					connectedAccountDefaultCurrency: get(
 						action,
