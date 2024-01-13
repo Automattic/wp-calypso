@@ -2,6 +2,7 @@ import { isP2Plus } from '@automattic/calypso-products';
 import { translate } from 'i18n-calypso';
 import moment from 'moment';
 import ThankYouV2 from 'calypso/components/thank-you-v2';
+import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { preventWidows } from 'calypso/lib/formatting';
 import { useSelector } from 'calypso/state';
 import { getSiteOptions } from 'calypso/state/sites/selectors';

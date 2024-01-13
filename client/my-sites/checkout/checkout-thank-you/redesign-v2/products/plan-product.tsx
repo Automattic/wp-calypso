@@ -14,8 +14,8 @@ import { ReceiptPurchase } from 'calypso/state/receipts/types';
 
 export type ThankYouPlanProductProps = {
 	purchase: ReceiptPurchase;
-	siteSlug: string;
-	siteId: number;
+	siteSlug?: string;
+	siteId?: number;
 };
 
 export default function ThankYouPlanProduct( {
