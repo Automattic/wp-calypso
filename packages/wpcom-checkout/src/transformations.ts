@@ -140,6 +140,28 @@ export function getSubtotalWithoutCoupon( responseCart: ResponseCart ): number {
 	return responseCart.sub_total_integer + responseCart.coupon_savings_total_integer;
 }
 
+export function getSubtotalWithoutDiscounts( responseCart: ResponseCart ): number {
+	return responseCart.products.reduce( ( total, product ) => {
+		// We can't sum the original price for introductory offers because they
+		// are not cost overrides and their original price is actually a later
+		// price that will be charged after the offer ends.
+		if ( product.introductory_offer_terms?.enabled ) {
+			return product.item_subtotal_integer + total;
+		}
+		return product.item_original_subtotal_integer + total;
+	}, 0 );
+}
+
+export function getTotalDiscountsWithoutCredits( responseCart: ResponseCart ): number {
+	return -responseCart.products.reduce( ( total, product ) => {
+		product.cost_overrides?.forEach( ( override ) => {
+			const discount = override.old_subtotal_integer - override.new_subtotal_integer;
+			total = total + discount;
+		} );
+		return total;
+	}, 0 );
+}
+
 /**
  * Credits are the only type of cart discount that is applied to the cart as a
  * whole and not to individual line items. The subtotal is only a subtotal of
