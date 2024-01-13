@@ -135,10 +135,15 @@ function CheckoutSummaryPriceList() {
 		? responseCart.sub_total_with_taxes_integer
 		: responseCart.credits_integer;
 
-	const subtotalBeforeDiscounts = responseCart.products.reduce(
-		( total, product ) => product.item_original_subtotal_integer + total,
-		0
-	);
+	const subtotalBeforeDiscounts = responseCart.products.reduce( ( total, product ) => {
+		// We can't sum the original price for introductory offers because they
+		// are not cost overrides and their original price is actually a later
+		// price that will be charged after the offer ends.
+		if ( product.introductory_offer_terms?.enabled ) {
+			return product.item_subtotal_integer + total;
+		}
+		return product.item_original_subtotal_integer + total;
+	}, 0 );
 
 	return (
 		<>
