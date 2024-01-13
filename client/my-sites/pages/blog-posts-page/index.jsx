@@ -1,47 +1,49 @@
 import { Button, FoldableCard, Gridicon } from '@automattic/components';
-import { localize } from 'i18n-calypso';
+import { useTranslate } from 'i18n-calypso';
 import PropTypes from 'prop-types';
-import React, { useState } from 'react';
-import { connect } from 'react-redux';
+import { Fragment, useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import ExternalLink from 'calypso/components/external-link';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormLabel from 'calypso/components/forms/form-label';
 import FormSelect from 'calypso/components/forms/form-select';
+import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
 import InlineSupportLink from 'calypso/components/inline-support-link';
 import useDropdownPagesQuery from 'calypso/data/dropdown-pages/use-dropdown-pages';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { successNotice } from 'calypso/state/notices/actions';
 import { updateSiteFrontPage } from 'calypso/state/sites/actions';
-import {
-	getSiteFrontPageType,
-	getSitePostsPage,
-	getSiteFrontPage,
-} from 'calypso/state/sites/selectors';
+import { getSiteFrontPageType, getSiteUrl } from 'calypso/state/sites/selectors';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 
 import './style.scss';
 
 const noop = () => {};
 
-const BlogPostsPage = ( props ) => {
-	const { site, frontPageType, translate, recordCalloutClick, updateFrontPage, displayNotice } =
-		props;
-	const isCurrentlySetAsHomepage = frontPageType === 'posts';
+const BlogPostsPage = () => {
+	const translate = useTranslate();
+	const dispatch = useDispatch();
 
 	const [ selectedPageId, setSelectedPageId ] = useState( '' );
 	const [ isExpanded, setIsExpanded ] = useState( false );
+	const [ hasUpdatedHomepage, setHasUpdatedHomepage ] = useState( false );
 
-	const getPostsPageLink = () => site.URL;
+	const siteId = useSelector( ( state ) => getSelectedSiteId( state ) );
+	const isCurrentlySetAsHomepage =
+		useSelector( ( state ) => getSiteFrontPageType( state, siteId ) ) === 'posts';
+	const postPagesLink = useSelector( ( state ) => getSiteUrl( state, siteId ) );
 
 	const renderPageOptions = ( pages, level = 0 ) => {
+		// Indent child pages.
 		const indentation = Array.from( { length: level }, () => '—' ).join( '' );
 
 		return pages.map( ( page ) => (
-			<React.Fragment key={ page.ID }>
+			<Fragment key={ page.ID }>
 				<option key={ page.ID } value={ page.ID }>
 					{ indentation } { page.title }
 				</option>
 				{ page.children && renderPageOptions( page.children, level + 1 ) }
-			</React.Fragment>
+			</Fragment>
 		) );
 	};
 
@@ -55,7 +57,7 @@ const BlogPostsPage = ( props ) => {
 	};
 
 	const useChangeDefaultHomepageOption = () => {
-		const { data: pages } = useDropdownPagesQuery( site.ID );
+		const { data: pages } = useDropdownPagesQuery( siteId );
 
 		return (
 			<FormSelect
@@ -69,19 +71,27 @@ const BlogPostsPage = ( props ) => {
 	};
 
 	const setFrontPage = () => {
-		updateFrontPage( site.ID, {
-			show_on_front: 'page',
-			page_on_front: selectedPageId,
-		} );
-		displayNotice( translate( 'Default homepage successfully updated!' ), {
-			id: 'default-homepage-notice',
-			duration: 4000,
-		} );
+		setHasUpdatedHomepage( true );
+		dispatch(
+			updateSiteFrontPage( siteId, {
+				show_on_front: 'page',
+				page_on_front: selectedPageId,
+			} )
+		);
+		dispatch(
+			successNotice( translate( 'Homepage successfully updated.' ), {
+				id: 'homepage-update-notice',
+				duration: 4000,
+			} )
+		);
 	};
 
-	const handleClick = () => {
+	const handleCardClick = () => {
 		setIsExpanded( ! isExpanded );
-		recordCalloutClick( site.ID );
+	};
+
+	const recordCalloutClick = () => {
+		dispatch( recordTracksEvent( 'calypso_pages_blog_posts_callout_click', { blog_id: siteId } ) );
 	};
 
 	const changeDefaultHomepageOption = useChangeDefaultHomepageOption();
@@ -94,13 +104,13 @@ const BlogPostsPage = ( props ) => {
 		<FoldableCard
 			className="blog-posts-page__info"
 			header={ renderPostsPageInfo() }
-			onClick={ handleClick }
+			onClick={ handleCardClick }
 			icon={ isExpanded ? 'chevron-down' : 'cog' }
 		>
 			<FormFieldset className="blog-posts-page__change-option">
 				<FormLabel>{ translate( 'Change homepage:' ) } </FormLabel>
 				{ changeDefaultHomepageOption }
-				<p className="blog-posts-page__explanation">
+				<FormSettingExplanation className="blog-posts-page__explanation">
 					{ translate(
 						"The default homepage's content and layout is determined by your active theme. {{aboutTemplatesLink}}Learn more{{/aboutTemplatesLink}}.",
 						{
@@ -111,13 +121,20 @@ const BlogPostsPage = ( props ) => {
 							},
 						}
 					) }
-				</p>
+				</FormSettingExplanation>
 			</FormFieldset>
 			<div className="blog-posts-page__actions">
-				<ExternalLink href={ getPostsPageLink() } target="_blank" rel="noopener noreferrer" icon>
+				<ExternalLink
+					className="blog-posts-page__link"
+					onClick={ recordCalloutClick }
+					href={ postPagesLink }
+					target="_blank"
+					rel="noopener noreferrer"
+					icon
+				>
 					{ translate( 'Preview homepage' ) }
 				</ExternalLink>
-				<Button disabled={ ! selectedPageId.length } onClick={ setFrontPage }>
+				<Button disabled={ ! selectedPageId.length || hasUpdatedHomepage } onClick={ setFrontPage }>
 					{ translate( 'Save' ) }
 				</Button>
 			</div>
@@ -126,9 +143,6 @@ const BlogPostsPage = ( props ) => {
 };
 
 BlogPostsPage.propTypes = {
-	site: PropTypes.object,
-	frontPageType: PropTypes.string,
-	postsPage: PropTypes.object,
 	translate: PropTypes.func,
 	recordCalloutClick: PropTypes.func,
 	updateSiteFrontPage: PropTypes.func,
@@ -139,21 +153,4 @@ BlogPostsPage.defaultProps = {
 	recordCalloutClick: noop,
 };
 
-const mapDispatchToProps = ( dispatch ) => ( {
-	recordCalloutClick: ( siteId ) => {
-		dispatch( recordTracksEvent( 'calypso_pages_blog_posts_callout_click', { blog_id: siteId } ) );
-	},
-	updateFrontPage: ( siteId, frontPageData ) =>
-		dispatch( updateSiteFrontPage( siteId, frontPageData ) ),
-	displayNotice: ( text, options ) => dispatch( successNotice( text, options ) ),
-} );
-
-export default connect(
-	( state, props ) => ( {
-		frontPageType: getSiteFrontPageType( state, props.site.ID ),
-		isFrontPage: getSiteFrontPageType( state, props.site.ID ) === 'posts',
-		postsPage: getSitePostsPage( state, props.site.ID ),
-		frontPage: getSiteFrontPage( state, props.site.ID ),
-	} ),
-	mapDispatchToProps
-)( localize( BlogPostsPage ) );
+export default BlogPostsPage;
