@@ -1,5 +1,5 @@
-import { useLocale } from '@automattic/i18n-utils';
 import { calculateMonthlyPriceForPlan } from '@automattic/calypso-products';
+import { useLocale } from '@automattic/i18n-utils';
 import { useQuery, type UseQueryResult } from '@tanstack/react-query';
 import wpcomRequest from 'wpcom-proxy-request';
 import unpackIntroOffer from './lib/unpack-intro-offer';
@@ -18,12 +18,13 @@ function usePlans( { coupon }: { coupon: string | undefined } ): UseQueryResult<
 	const locale = useLocale();
 	const params = new URLSearchParams();
 	coupon && params.append( 'coupon_code', coupon );
+	params.append( 'locale', locale );
 
 	return useQuery( {
 		queryKey: queryKeys.plans( coupon ),
 		queryFn: async (): Promise< PlansIndex > => {
 			const data: PricedAPIPlan[] = await wpcomRequest( {
-				path: `/plans?locale=${ locale }`,
+				path: `/plans`,
 				apiVersion: '1.5',
 				query: params.toString(),
 			} );
