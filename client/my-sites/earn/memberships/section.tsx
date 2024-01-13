@@ -1,6 +1,6 @@
 import { Card, Button, Dialog, Gridicon } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
-import { useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import QueryMembershipsEarnings from 'calypso/components/data/query-memberships-earnings';
 import QueryMembershipsSettings from 'calypso/components/data/query-memberships-settings';
 import { LoadingEllipsis } from 'calypso/components/loading-ellipsis';
@@ -45,6 +45,7 @@ function MembershipsSection( { query }: MembershipsSectionProps ) {
 	const hasConnectedAccount = useSelector( ( state ) =>
 		getIsConnectedForSiteId( state, site?.ID )
 	);
+	const [ showDisconnectStripeDialog, setShowDisconnectStripeDialog ] = useState( false );
 
 	const products = useSelector( ( state ) => getProductsForSiteId( state, site?.ID ) );
 
@@ -79,7 +80,7 @@ function MembershipsSection( { query }: MembershipsSectionProps ) {
 				)
 			);
 		}
-		setDisconnectedConnectedAccountId( null );
+		setShowDisconnectStripeDialog( false );
 	}
 
 	function renderSettings() {
@@ -100,7 +101,10 @@ function MembershipsSection( { query }: MembershipsSectionProps ) {
 					) }
 				</SectionHeader>
 				{ hasConnectedAccount ? (
-					<Card className="memberships__settings-link">
+					<Card
+						onClick={ () => setShowDisconnectStripeDialog( true ) }
+						className="memberships__settings-link"
+					>
 						<div className="memberships__module-plans-content">
 							<div className="memberships__module-plans-icon">
 								<Gridicon size={ 24 } icon="link-break" />
@@ -149,7 +153,7 @@ function MembershipsSection( { query }: MembershipsSectionProps ) {
 				</p>
 				<Dialog
 					className="memberships__stripe-disconnect-modal"
-					isVisible={ hasConnectedAccount }
+					isVisible={ showDisconnectStripeDialog }
 					buttons={ [
 						{
 							label: translate( 'Cancel' ),
