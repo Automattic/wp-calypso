@@ -130,6 +130,7 @@ function useNextSteps(
 
 	return footerSteps.map( ( step ) => {
 		return {
+			key: step.key,
 			title: step.title,
 			description: step.description,
 			buttonText: step.linkText,

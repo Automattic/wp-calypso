@@ -1,8 +1,8 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import page from '@automattic/calypso-router';
-import { Gridicon, Button } from '@automattic/components';
 import { DesignPreviewImage, isDefaultGlobalStylesVariationSlug } from '@automattic/design-picker';
 import styled from '@emotion/styled';
+import { Button } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback, useEffect } from 'react';
 import QueryActiveTheme from 'calypso/components/data/query-active-theme';
@@ -24,21 +24,18 @@ import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import useIsValidThankYouTheme from './use-is-valid-thank-you-theme';
 
 const ThemeSectionImageContainer = styled.div`
-	margin: 8px 8px 0 8px;
+	padding: 8px;
 	border-radius: 16px;
+	font-size: 0;
 	box-shadow:
 		0px 15px 20px rgba( 0, 0, 0, 0.04 ),
 		0px 13px 10px rgba( 0, 0, 0, 0.03 ),
 		0px 6px 6px rgba( 0, 0, 0, 0.02 );
-	width: 100%;
 `;
 
 const ThemeSectionMShotsContainer = styled.div`
 	border-radius: 13px;
-	margin-bottom: 8px;
-	position: relative;
 	overflow: hidden;
-	padding-top: 74%;
 	width: 100%;
 `;
 
@@ -139,7 +136,6 @@ export const ThankYouThemeSection = ( {
 								href={ siteUrl }
 								disabled={ ! isValidThankyouSectionTheme }
 							>
-								<Gridicon size={ 18 } icon="external" />
 								{ translate( 'View site' ) }
 							</Button>
 						) : null }

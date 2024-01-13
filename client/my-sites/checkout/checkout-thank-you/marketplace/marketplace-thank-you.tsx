@@ -171,16 +171,14 @@ const MarketplaceThankYou = ( {
 			) }
 
 			{ ! showProgressBar && (
-				<Main className="is-redesign-v2">
-					<div className="marketplace-thank-you__container">
-						<ThankYouV2
-							title={ title }
-							subtitle={ subtitle }
-							headerButtons={ thankYouHeaderAction }
-							products={ products }
-							footerDetails={ footerDetails }
-						/>
-					</div>
+				<Main className="marketplace-thank-you__container">
+					<ThankYouV2
+						title={ title }
+						subtitle={ subtitle }
+						headerButtons={ thankYouHeaderAction }
+						products={ products }
+						footerDetails={ footerDetails }
+					/>
 				</Main>
 			) }
 		</ThemeProvider>
