@@ -731,7 +731,7 @@ const PlansFeaturesMain = ( {
 		[]
 	);
 
-	const handlePlanTypeSelectorChange = useCallback(
+	const handlePlanIntervalChange = useCallback(
 		( selectedItem: { key: SupportedUrlFriendlyTermType } ) => {
 			let isDomainUpsellFlow: string | null = '';
 			let isDomainAndPlanPackageFlow: string | null = '';
@@ -860,7 +860,7 @@ const PlansFeaturesMain = ( {
 								enableStickyBehavior={ enablePlanTypeSelectorStickyBehavior }
 								stickyPlanTypeSelectorOffset={ masterbarHeight - 1 }
 								coupon={ coupon }
-								onPlanIntervalChange={ handlePlanTypeSelectorChange }
+								onPlanIntervalChange={ handlePlanIntervalChange }
 							/>
 						) }
 						<div
@@ -937,6 +937,7 @@ const PlansFeaturesMain = ( {
 												<PlanTypeSelector
 													{ ...planTypeSelectorProps }
 													layoutClassName="plans-features-main__plan-type-selector-layout"
+													onPlanIntervalChange={ handlePlanIntervalChange }
 													coupon={ coupon }
 												/>
 											) }
