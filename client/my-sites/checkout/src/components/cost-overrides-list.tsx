@@ -83,7 +83,10 @@ export function CostOverridesList( {
 		<CostOverridesListStyle>
 			{ nonCouponOverrides.map( ( costOverride ) => {
 				return (
-					<div className="cost-overrides-list-item" key={ costOverride.humanReadableReason }>
+					<div
+						className="cost-overrides-list-item"
+						key={ costOverride.humanReadableReason + costOverride.overrideCode }
+					>
 						<span className="cost-overrides-list-item__reason">
 							{ costOverride.humanReadableReason }
 						</span>
