@@ -92,7 +92,7 @@ class GoogleMyBusinessSelectBusinessType extends Component {
 				>
 					{ translate( 'Connect to Google Business Profile', {
 						comment:
-							'Call to Action to connect the site to a business listing in Google My Business',
+							'Call to Action to connect the site to a business listing in Google Business Profile',
 					} ) }
 				</KeyringConnectButton>
 			);

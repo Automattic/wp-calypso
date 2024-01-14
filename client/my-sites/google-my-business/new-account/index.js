@@ -79,12 +79,12 @@ class GoogleMyBusinessNewAccount extends Component {
 						/>
 
 						<h1 className="gmb-new-account__heading">
-							{ translate( 'It looks like you might be new to Google My Business' ) }
+							{ translate( 'It looks like you might be new to Google Business Profile' ) }
 						</h1>
 
 						<p>
 							{ translate(
-								'Google My Business lists your local business on Google Search and Google Maps. ' +
+								'Google Business Profile lists your local business on Google Search and Google Maps. ' +
 									'It works for businesses that have a physical location, or serve a local area.'
 							) }
 						</p>
