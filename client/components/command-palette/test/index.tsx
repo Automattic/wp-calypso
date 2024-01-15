@@ -108,6 +108,20 @@ describe( 'CommandPalette', () => {
 		} );
 	} );
 
+	it( 'should close the palette when you select a specific command', () => {
+		renderCommandPalette();
+
+		waitFor( () => {
+			expect( screen.getByPlaceholderText( 'Search for commands' ) ).toBeInTheDocument();
+			const getHelpCommand = screen.getByText( 'Get help' );
+			fireEvent.click( getHelpCommand );
+		} );
+
+		waitFor( () => {
+			expect( screen.queryByPlaceholderText( 'Search for commands' ) ).toBeNull();
+		} );
+	} );
+
 	it( 'should return only "Get help" command as it matches label and "Send feedback" as it matches searchLabel; other commands are hidden', () => {
 		renderCommandPalette();
 
