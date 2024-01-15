@@ -8,6 +8,7 @@ import {
 	WPCOM_FEATURES_INSTALL_PURCHASED_PLUGINS,
 	PLAN_BUSINESS_MONTHLY,
 	getPlan,
+	PLAN_HOSTING_TRIAL_MONTHLY,
 } from '@automattic/calypso-products';
 import page from '@automattic/calypso-router';
 import { Button, CompactCard, Gridicon } from '@automattic/components';
@@ -55,6 +56,7 @@ interface ExternalProps {
 	isOnboarding?: boolean;
 	showDataCenterPicker?: boolean;
 	disableContinueButton?: boolean;
+	showFreeTrial?: boolean;
 }
 
 type Props = ExternalProps & ReturnType< typeof mergeProps > & LocalizeProps;
@@ -83,6 +85,7 @@ export const EligibilityWarnings = ( {
 	makeSitePublic,
 	translate,
 	disableContinueButton,
+	showFreeTrial,
 }: Props ) => {
 	const warnings = eligibilityData.eligibilityWarnings || [];
 	const listHolds = eligibilityData.eligibilityHolds || [];
@@ -118,6 +121,9 @@ export const EligibilityWarnings = ( {
 			let redirectUrl = `/checkout/${ siteSlug }/${ planSlug }`;
 			if ( context === 'plugins-upload' ) {
 				redirectUrl = `${ redirectUrl }?redirect_to=/plugins/upload/${ siteSlug }`;
+			}
+			if ( showFreeTrial ) {
+				redirectUrl = `/checkout/${ siteSlug }/${ PLAN_HOSTING_TRIAL_MONTHLY }`;
 			}
 			page.redirect( redirectUrl );
 			return;
@@ -251,7 +257,7 @@ export const EligibilityWarnings = ( {
 						busy={ siteIsLaunching || siteIsSavingSettings || disableContinueButton }
 						onClick={ logEventAndProceed }
 					>
-						{ getProceedButtonText( listHolds, translate, context ) }
+						{ getProceedButtonText( listHolds, translate, context, showFreeTrial ) }
 					</Button>
 				</div>
 			</CompactCard>
@@ -277,11 +283,15 @@ function getSiteIsEligibleMessage(
 function getProceedButtonText(
 	holds: string[],
 	translate: LocalizeProps[ 'translate' ],
-	context: string | null
+	context: string | null,
+	showFreeTrial?: boolean
 ) {
 	if ( siteRequiresUpgrade( holds ) ) {
 		if ( context === 'plugin-details' || context === 'plugins' ) {
 			return translate( 'Upgrade and activate plugin' );
+		}
+		if ( showFreeTrial ) {
+			return translate( 'Start your free trial' );
 		}
 		return translate( 'Upgrade and continue' );
 	}

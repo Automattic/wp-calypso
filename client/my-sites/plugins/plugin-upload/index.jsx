@@ -31,6 +31,8 @@ import {
 	isJetpackSiteMultiSite,
 } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
+import { isUserEligibleForFreeHostingTrial } from 'calypso/state/selectors/is-user-eligible-for-free-hosting-trial';
+import { TrialAcknowledgeModal } from 'calypso/my-sites/plans/trials/trial-acknowledge/acknowlege-modal';
 
 class PluginUpload extends Component {
 	state = {
@@ -94,7 +96,8 @@ class PluginUpload extends Component {
 	}
 
 	render() {
-		const { translate, isJetpackMultisite, siteId, siteSlug } = this.props;
+		const { translate, isJetpackMultisite, siteId, siteSlug, isEligibleForHostingTrial } =
+			this.props;
 		const { showEligibility } = this.state;
 
 		return (
@@ -108,9 +111,11 @@ class PluginUpload extends Component {
 					<EligibilityWarnings
 						backUrl={ `/plugins/${ siteSlug }` }
 						onProceed={ this.onProceedClick }
+						showFreeTrial={ isEligibleForHostingTrial }
 					/>
 				) }
 				{ ! isJetpackMultisite && ! showEligibility && this.renderUploadCard() }
+				{ isEligibleForHostingTrial && <TrialAcknowledgeModal /> }
 			</Main>
 		);
 	}
@@ -125,6 +130,7 @@ const mapStateToProps = ( state ) => {
 	// Use this selector to take advantage of eligibility card placeholders
 	// before data has loaded.
 	const isEligible = isEligibleForAutomatedTransfer( state, siteId );
+	const isEligibleForHostingTrial = isUserEligibleForFreeHostingTrial( state );
 	const hasEligibilityMessages = ! (
 		isEmpty( eligibilityHolds ) && isEmpty( eligibilityWarnings )
 	);
@@ -142,6 +148,7 @@ const mapStateToProps = ( state ) => {
 		siteAdminUrl: getSiteAdminUrl( state, siteId ),
 		showEligibility: ! isJetpack && ( hasEligibilityMessages || ! isEligible ),
 		automatedTransferStatus: getAutomatedTransferStatus( state, siteId ),
+		isEligibleForHostingTrial,
 	};
 };
 
