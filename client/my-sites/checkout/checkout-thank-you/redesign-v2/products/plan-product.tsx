@@ -65,7 +65,7 @@ export default function ThankYouPlanProduct( {
 					</Button>
 				</>
 			}
-			isLoading={ expirationDate === '' }
+			isLoading={ isLoadingPurchases }
 		/>
 	);
 }
