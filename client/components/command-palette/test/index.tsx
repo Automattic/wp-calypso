@@ -43,6 +43,12 @@ const commands = [
 const mockStore = configureStore();
 const store = mockStore( INITIAL_STATE );
 
+window.ResizeObserver = jest.fn( () => ( {
+	observe: jest.fn(),
+	unobserve: jest.fn(),
+	disconnect: jest.fn(),
+} ) );
+
 jest.mock( '../../../state/selectors/get-current-route-pattern' );
 jest.mock( '../use-command-palette' );
 
@@ -73,6 +79,30 @@ describe( 'CommandPalette', () => {
 		waitFor( () => {
 			expect( screen.getByPlaceholderText( 'Search for commands' ) ).toBeInTheDocument();
 			expect( screen.getByText( 'Get help' ) ).toBeInTheDocument();
+		} );
+	} );
+
+	it( 'should return only "Get help" command as it matches search, other commands should be hidden', () => {
+		( useCommandPalette as jest.Mock ).mockReturnValue( {
+			commands: commands,
+			filterNotice: 'Mock Filter Notice',
+			emptyListNotice: 'Mock Empty List Notice',
+		} );
+
+		renderCommandPalette();
+
+		waitFor( () => {
+			console.log( 'Hello', screen.debug() );
+			expect( screen.getByPlaceholderText( 'Search for commands' ) ).toBeInTheDocument();
+			fireEvent.change( screen.getByPlaceholderText( 'Search for commands' ), {
+				target: { value: 'help' },
+			} );
+		} );
+
+		waitFor( () => {
+			expect( screen.getByText( 'Get help' ) ).toBeInTheDocument();
+			expect( screen.queryByText( 'Clear cache' ) ).toBeNull();
+			expect( screen.queryByText( 'Enable edge cache' ) ).toBeNull();
 		} );
 	} );
 } );
