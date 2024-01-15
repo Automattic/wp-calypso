@@ -1,12 +1,9 @@
 import { BUNDLED_THEME, DOT_ORG_THEME, MARKETPLACE_THEME } from '@automattic/design-picker';
 import classNames from 'classnames';
 import { useSelector } from 'calypso/state';
-import {
-	getThemeType,
-	isThemePurchased,
-	getThemeTierForTheme,
-	isThemeAllowedOnSite,
-} from 'calypso/state/themes/selectors';
+import { useIsThemeAllowedOnSite } from 'calypso/state/themes/hooks/use-is-theme-allowed-on-site';
+import { useThemeTierForTheme } from 'calypso/state/themes/hooks/use-theme-tier-for-theme';
+import { getThemeType, isThemePurchased } from 'calypso/state/themes/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { ThemeTierBadgeContextProvider } from './theme-tier-badge-context';
 import ThemeTierBundledBadge from './theme-tier-bundled-badge';
@@ -29,8 +26,8 @@ export default function ThemeTierBadge( {
 	const isLegacyPremiumPurchased = useSelector( ( state ) =>
 		isThemePurchased( state, themeId, siteId )
 	);
-	const themeTier = useSelector( ( state ) => getThemeTierForTheme( state, themeId ) );
-	const isThemeAllowed = useSelector( ( state ) => isThemeAllowedOnSite( state, siteId, themeId ) );
+	const themeTier = useThemeTierForTheme( themeId );
+	const isThemeAllowed = useIsThemeAllowedOnSite( siteId, themeId );
 
 	const getBadge = () => {
 		if ( BUNDLED_THEME === themeType ) {

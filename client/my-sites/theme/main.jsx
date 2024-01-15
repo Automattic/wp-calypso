@@ -79,6 +79,8 @@ import {
 	setThemePreviewOptions,
 	themeStartActivationSync as themeStartActivationSyncAction,
 } from 'calypso/state/themes/actions';
+import { useIsThemeAllowedOnSite } from 'calypso/state/themes/hooks/use-is-theme-allowed-on-site';
+import { useThemeTierForTheme } from 'calypso/state/themes/hooks/use-theme-tier-for-theme';
 import {
 	doesThemeBundleSoftwareSet,
 	isThemeActive,
@@ -102,8 +104,6 @@ import {
 	getIsLivePreviewSupported,
 	getThemeType,
 	isThemeWooCommerce,
-	getThemeTierForTheme,
-	isThemeAllowedOnSite,
 } from 'calypso/state/themes/selectors';
 import { getIsLoadingCart } from 'calypso/state/themes/selectors/get-is-loading-cart';
 import { getBackPath } from 'calypso/state/themes/themes-ui/selectors';
@@ -1165,7 +1165,12 @@ class ThemeSheet extends Component {
 				href={
 					getUrl &&
 					( key === 'customize' || ! isExternallyManagedTheme || ! isLoggedIn || ! siteId )
-						? getUrl( this.props.themeId, { tabFilter, tierFilter: tier, styleVariationSlug } )
+						? getUrl( this.props.themeId, {
+								tabFilter,
+								tierFilter: tier,
+								styleVariationSlug,
+								themeTier: this.props.themeTier,
+						  } )
 						: null
 				}
 				onClick={ () => {
@@ -1605,7 +1610,6 @@ const ThemeSheetWithOptions = ( props ) => {
 		isActive,
 		isLoggedIn,
 		isPremium,
-		isThemeAllowed,
 		isThemePurchased,
 		isStandaloneJetpack,
 		demoUrl,
@@ -1618,6 +1622,7 @@ const ThemeSheetWithOptions = ( props ) => {
 		isSiteWooExpressFreeTrial,
 		isThemeBundleWooCommerce,
 	} = props;
+	const isThemeAllowed = useIsThemeAllowedOnSite( siteId, props.themeId );
 
 	let defaultOption;
 	let secondaryOption = 'tryandcustomize';
@@ -1655,9 +1660,13 @@ const ThemeSheetWithOptions = ( props ) => {
 		defaultOption = 'activate';
 	}
 
+	const themeTier = useThemeTierForTheme( props.themeId );
+
 	return (
 		<ConnectedThemeSheet
 			{ ...props }
+			themeTier={ themeTier }
+			isThemeAllowed={ isThemeAllowed }
 			demo_uri={ demoUrl }
 			siteId={ siteId }
 			defaultOption={ defaultOption }
@@ -1688,8 +1697,6 @@ export default connect(
 		const productionSiteSlug = getSiteSlug( state, productionSite?.ID );
 		const isJetpack = isJetpackSite( state, siteId );
 		const isStandaloneJetpack = isJetpack && ! isAtomic;
-		const themeTier = getThemeTierForTheme( state, themeId );
-		const isThemeAllowed = isThemeAllowedOnSite( state, siteId, themeId );
 
 		const isExternallyManagedTheme = getIsExternallyManagedTheme( state, theme?.id );
 		const isLoading =
@@ -1705,8 +1712,6 @@ export default connect(
 
 		return {
 			...theme,
-			themeTier,
-			isThemeAllowed,
 			themeId,
 			price: getPremiumThemePrice( state, themeId, siteId ),
 			error,
