@@ -16,13 +16,13 @@ import { useSite } from 'calypso/landing/stepper/hooks/use-site';
 import { useSiteSlug } from 'calypso/landing/stepper/hooks/use-site-slug';
 import { useSelector } from 'calypso/state';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
-import { TrialPlan } from './trial-plan';
 import type {
 	Step,
 	ProvidedDependencies,
 } from 'calypso/landing/stepper/declarative-flow/internals/types';
 import type { UserData } from 'calypso/lib/user/user';
 import type { SiteSlug } from 'calypso/types';
+import { TrialPlan } from 'calypso/my-sites/plans/trials/trial-acknowledge/trial-plan';
 
 interface Props {
 	user: UserData;
