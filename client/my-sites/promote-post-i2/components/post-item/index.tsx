@@ -125,9 +125,9 @@ export default function PostItem( { post }: { post: BlazablePost } ) {
 				</div>
 			</td>
 
+			<td className="post-item__post-type">{ getPostType( post.type ) }</td>
 			{ post.type !== 'product' ? (
 				<>
-					<td className="post-item__post-type">{ getPostType( post.type ) }</td>
 					<td className="post-item__post-publish-date">{ postDate }</td>
 					<td className="post-item__post-views">{ formatNumber( viewCount, true ) }</td>
 					<td className="post-item__post-likes">{ formatNumber( likeCount, true ) }</td>
