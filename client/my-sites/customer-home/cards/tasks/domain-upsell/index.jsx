@@ -12,7 +12,7 @@ import { useMemo } from '@wordpress/element';
 import { useTranslate } from 'i18n-calypso';
 import { useState } from 'react';
 import { useSelector } from 'react-redux';
-import domainUpsellMobileIllustration from 'calypso/assets/images/customer-home/illustration--task-domain-upsell-mobile.svg';
+import domainUpsellIllustration from 'calypso/assets/images/customer-home/illustration--task-domain-upsell.svg';
 import { useQueryProductsList } from 'calypso/components/data/query-products-list';
 import { domainRegistration } from 'calypso/lib/cart-values/cart-items';
 import { preventWidows } from 'calypso/lib/formatting';
@@ -191,16 +191,6 @@ export function RenderDomainUpsell( { isFreePlan, isMonthlyPlan, searchTerm, sit
 			  )
 			: cardSubtitleFreePlansCopy;
 
-	const domainNameSVG = (
-		<svg viewBox="0 0 40 18" id="map">
-			<text x="-115" y="15">
-				{ domainSuggestionName.length > 34
-					? `${ domainSuggestionName.slice( 0, 32 ) }...`
-					: domainSuggestionName }
-			</text>
-		</svg>
-	);
-
 	return (
 		<Task
 			customClass="task__domain-upsell"
@@ -212,9 +202,8 @@ export function RenderDomainUpsell( { isFreePlan, isMonthlyPlan, searchTerm, sit
 			hasSecondaryAction={ true }
 			secondaryActionText={ translate( 'Find other domains' ) }
 			secondaryActionUrl={ searchLink }
-			illustration={ domainUpsellMobileIllustration }
-			illustrationHeader={ domainSuggestionName ? domainNameSVG : null }
-			badgeText={ domainSuggestionName }
+			illustration={ domainUpsellIllustration }
+			illustrationAlwaysShow={ true }
 			taskId={ TASK_DOMAIN_UPSELL }
 		/>
 	);
