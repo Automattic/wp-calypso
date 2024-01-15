@@ -7,17 +7,17 @@ exports[`FormTextInputWithValueGeneration should render 1`] = `
     role="group"
   >
     <input
+      aria-label="enter value"
       class="form-text-input form-text-input-with-value-generation__input"
       maxlength="10"
       type="text"
       value=""
     />
     <button
+      aria-label="generate value"
       class="components-button form-text-input-with-value-generation__button is-compact"
       type="button"
-    >
-      Random
-    </button>
+    />
   </div>
 </div>
 `;

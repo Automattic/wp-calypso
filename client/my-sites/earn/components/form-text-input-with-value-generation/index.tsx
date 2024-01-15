@@ -19,6 +19,8 @@ type FormTextInputWithValueGenerationProps = {
 	disabled?: boolean;
 	isError?: boolean;
 	isValid?: boolean;
+	textInputAriaLabel?: string;
+	buttonAriaLabel?: string;
 	maxLength?: string;
 };
 
@@ -33,6 +35,8 @@ const FormTextInputWithValueGeneration = ( {
 	disabled = false,
 	isError = false,
 	isValid = false,
+	textInputAriaLabel = 'enter value',
+	buttonAriaLabel = 'generate value',
 	maxLength = '10',
 	...props
 }: FormTextInputWithValueGenerationProps ) => {
@@ -73,12 +77,14 @@ const FormTextInputWithValueGeneration = ( {
 				onChange={ onChange }
 				value={ value }
 				maxLength={ maxLength }
+				aria-label={ textInputAriaLabel }
 			/>
 			<Button
 				size="compact"
 				className="form-text-input-with-value-generation__button"
 				disabled={ disabled }
 				onClick={ onAction }
+				aria-label={ buttonAriaLabel }
 			>
 				{ action }
 			</Button>

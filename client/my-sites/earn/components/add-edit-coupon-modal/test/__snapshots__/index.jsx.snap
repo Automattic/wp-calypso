@@ -81,6 +81,7 @@ exports[`RecurringPaymentsCouponAddEditModal should render empty form when no co
                 role="group"
               >
                 <input
+                  aria-label="enter value"
                   class="form-text-input form-text-input-with-value-generation__input"
                   id="coupon_code"
                   maxlength="10"
@@ -88,6 +89,7 @@ exports[`RecurringPaymentsCouponAddEditModal should render empty form when no co
                   value=""
                 />
                 <button
+                  aria-label="generate value"
                   class="components-button form-text-input-with-value-generation__button is-compact"
                   type="button"
                 >
@@ -597,6 +599,7 @@ exports[`RecurringPaymentsCouponAddEditModal should render form correctly when a
                 role="group"
               >
                 <input
+                  aria-label="enter value"
                   class="form-text-input form-text-input-with-value-generation__input"
                   id="coupon_code"
                   maxlength="10"
@@ -604,6 +607,7 @@ exports[`RecurringPaymentsCouponAddEditModal should render form correctly when a
                   value="COUPON1"
                 />
                 <button
+                  aria-label="generate value"
                   class="components-button form-text-input-with-value-generation__button is-compact"
                   type="button"
                 >
