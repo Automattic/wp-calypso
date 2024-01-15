@@ -114,7 +114,10 @@ export default function DomainDiagnosticsCard( { domain }: { domain: ResponseDom
 		wpcom.req
 			.post( {
 				apiNamespace: 'wpcom/v2',
-				path: `/domains/dns/restore-default-email-records/${ domain.name }`,
+				path: `/dns/email/set-default-records`,
+				body: {
+					domain: domain.name,
+				},
 			} )
 			.then( () => {
 				dispatch(
