@@ -33,6 +33,7 @@ const noop = () => {};
 export class Banner extends Component {
 	static propTypes = {
 		callToAction: PropTypes.string,
+		secondaryCallToAction: PropTypes.string,
 		className: PropTypes.string,
 		compactButton: PropTypes.bool,
 		description: PropTypes.oneOfType( [ PropTypes.node, PropTypes.symbol ] ),
@@ -43,6 +44,7 @@ export class Banner extends Component {
 		dismissTemporary: PropTypes.bool,
 		dismissWithoutSavingPreference: PropTypes.bool,
 		event: PropTypes.string,
+		secondaryEvent: PropTypes.string,
 		feature: PropTypes.string,
 		horizontal: PropTypes.bool,
 		href: PropTypes.string,
@@ -137,6 +139,19 @@ export class Banner extends Component {
 		onClick( e );
 	};
 
+	handleSecondaryClick = () => {
+		const { secondaryEvent, feature, compact, tracksClickName, tracksClickProperties } = this.props;
+
+		if ( secondaryEvent && tracksClickName ) {
+			this.props.recordTracksEvent?.( tracksClickName, {
+				cta_name: secondaryEvent,
+				cta_feature: feature,
+				cta_size: compact ? 'compact' : 'regular',
+				...tracksClickProperties,
+			} );
+		}
+	};
+
 	handleDismiss = ( e ) => {
 		const { event, feature, onDismiss, tracksDismissName, tracksDismissProperties } = this.props;
 
@@ -210,7 +225,9 @@ export class Banner extends Component {
 	getContent() {
 		const {
 			callToAction,
+			secondaryCallToAction,
 			forceHref,
+			secondaryHref,
 			description,
 			event,
 			feature,
@@ -293,6 +310,17 @@ export class Banner extends Component {
 									{ preventWidows( callToAction ) }
 								</Button>
 							) ) }
+
+						{ secondaryCallToAction && (
+							<Button
+								compact={ compactButton }
+								href={ secondaryHref }
+								onClick={ this.handleSecondaryClick }
+								primary={ false }
+							>
+								{ preventWidows( secondaryCallToAction ) }
+							</Button>
+						) }
 					</div>
 				) }
 			</div>

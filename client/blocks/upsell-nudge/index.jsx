@@ -37,6 +37,7 @@ const debug = debugFactory( 'calypso:upsell-nudge' );
  */
 export const UpsellNudge = ( {
 	callToAction,
+	secondaryCallToAction,
 	canManageSite,
 	canUserUpgrade,
 	className,
@@ -48,11 +49,13 @@ export const UpsellNudge = ( {
 	dismissPreferenceName,
 	dismissTemporary,
 	event,
+	secondaryEvent,
 	feature,
 	forceDisplay,
 	forceHref,
 	horizontal,
 	href,
+	secondaryHref,
 	isJetpackDevDocs,
 	isJetpack,
 	isAtomic,
@@ -132,6 +135,7 @@ export const UpsellNudge = ( {
 	return (
 		<Banner
 			callToAction={ callToAction }
+			secondaryCallToAction={ secondaryCallToAction }
 			className={ classes }
 			compact={ compact }
 			compactButton={ compactButton }
@@ -140,10 +144,12 @@ export const UpsellNudge = ( {
 			dismissPreferenceName={ dismissPreferenceName }
 			dismissTemporary={ dismissTemporary }
 			event={ event }
+			secondaryEvent={ secondaryEvent }
 			feature={ feature }
 			forceHref={ forceHref }
 			horizontal={ horizontal }
 			href={ href }
+			secondaryHref={ secondaryHref }
 			icon={ icon }
 			jetpack={ isJetpack || isJetpackDevDocs } //Force show Jetpack example in Devdocs
 			isAtomic={ isAtomic }

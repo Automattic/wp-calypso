@@ -54,8 +54,11 @@ export function HostingUpsellNudge( { siteId, targetPlan }: HostingUpsellNudgePr
 			compactButton={ false }
 			title={ title }
 			event="calypso_hosting_configuration_upgrade_click"
+			secondaryEvent="calypso_hosting_configuration_upgrade_free_trial_click"
 			href={ href }
 			callToAction={ callToAction }
+			secondaryCallToAction={ translate( 'Try for free' ) }
+			secondaryHref="/setup/new-hosted-site/trialAcknowledge?source=hosting-configuration"
 			plan={ plan }
 			feature={ feature }
 			showIcon={ true }
