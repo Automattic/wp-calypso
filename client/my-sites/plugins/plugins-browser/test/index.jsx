@@ -62,15 +62,6 @@ jest.mock( 'calypso/lib/route/path', () => ( {
 	getMessagePathForJITM: jest.fn( () => '/plugins/' ),
 } ) );
 
-jest.mock(
-	'calypso/components/jetpack/connection-health/use-check-jetpack-connection-health',
-	() => ( {
-		useCheckJetpackConnectionHealth: jest.fn( () => ( {
-			data: { is_healthy: false },
-		} ) ),
-	} )
-);
-
 import {
 	FEATURE_INSTALL_PLUGINS,
 	PLAN_FREE,
@@ -86,7 +77,7 @@ import {
 import { screen } from '@testing-library/react';
 import { merge } from 'lodash';
 import documentHead from 'calypso/state/document-head/reducer';
-import { jetpackConnectionHealth } from 'calypso/state/jetpack-connection-health/reducer';
+import { reducer as jetpackConnectionHealth } from 'calypso/state/jetpack-connection-health/reducer';
 import plugins from 'calypso/state/plugins/reducer';
 import productsList from 'calypso/state/products-list/reducer';
 import siteConnection from 'calypso/state/site-connection/reducer';
@@ -213,10 +204,17 @@ describe( 'PluginsBrowser basic tests', () => {
 	} );
 
 	test( 'should show notice if site is not connected to wpcom', () => {
+		const lastRequestTime = Date.now() - 1000 * 60 * 4;
 		const initialState = {
 			ui: { selectedSiteId: 1 },
 			jetpackConnectionHealth: {
-				1: { jetpack_connection_problem: true },
+				1: {
+					lastRequestTime,
+					connectionHealth: {
+						jetpack_connection_problem: true,
+						error: 'test',
+					},
+				},
 			},
 			sites: {
 				items: { 1: { jetpack: true } },
