@@ -15,6 +15,7 @@ import {
 	getAllStoredCards,
 	isFetchingStoredCards,
 } from 'calypso/state/partner-portal/stored-cards/selectors';
+import PartnerPortalSidebarNavigation from '../sidebar-navigation';
 import StoredCreditCardV2 from '../stored-credit-card-v2';
 import EmptyState from './empty-state';
 import type { PaymentMethod } from 'calypso/jetpack-cloud/sections/partner-portal/payment-methods';
@@ -57,7 +58,12 @@ export default function PaymentMethodListV2() {
 	};
 
 	return (
-		<Layout className="payment-method-list-v2" title={ title } wide>
+		<Layout
+			className="payment-method-list-v2"
+			title={ title }
+			sidebarNavigation={ <PartnerPortalSidebarNavigation /> }
+			wide
+		>
 			<QueryJetpackPartnerPortalStoredCards paging={ paging } />
 
 			<LayoutTop>
