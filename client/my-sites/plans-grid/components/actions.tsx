@@ -140,7 +140,9 @@ const SignupFlowPlanFeatureActionButton = ( {
 				{ btnText }
 			</PlanButton>
 			{ postButtonText && (
-				<span className="plan-features-2023-grid__actions-span">{ postButtonText }</span>
+				<span className="plan-features-2023-grid__actions-post-button-text">
+					{ postButtonText }
+				</span>
 			) }
 		</>
 	);

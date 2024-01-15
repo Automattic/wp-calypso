@@ -26,7 +26,6 @@ export interface PlanActionOverrides {
 		text?: TranslateResult;
 		callback?: () => void;
 	};
-
 	trialAlreadyUsed?: {
 		postButtonText?: TranslateResult;
 	};
