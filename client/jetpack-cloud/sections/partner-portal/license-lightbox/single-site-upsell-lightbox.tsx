@@ -1,7 +1,6 @@
 import { localizeUrl } from '@automattic/i18n-utils';
 import { useTranslate } from 'i18n-calypso';
-import { useContext, useCallback } from 'react';
-import SitesOverviewContext from 'calypso/jetpack-cloud/sections/agency-dashboard/sites-overview/context';
+import { useCallback, useEffect } from 'react';
 import useSubmitForm from 'calypso/jetpack-cloud/sections/partner-portal/issue-license-v2/hooks/use-submit-form';
 import LicenseLightbox from 'calypso/jetpack-cloud/sections/partner-portal/license-lightbox';
 import LicenseLightboxPurchaseViaJetpackcom from 'calypso/jetpack-cloud/sections/partner-portal/license-lightbox/license-lightbox-purchase-via-jetpackcom';
@@ -30,12 +29,10 @@ export default function SingleSiteUpsellLightbox( {
 	const dispatch = useDispatch();
 	const translate = useTranslate();
 
-	const { hideLicenseInfo } = useContext( SitesOverviewContext );
-
 	const onHideLicenseInfo = useCallback( () => {
-		hideLicenseInfo();
+		dispatch( recordTracksEvent( 'calypso_jetpack_agency_upsell_lightbox_closed' ) );
 		onClose?.();
-	}, [ hideLicenseInfo, onClose ] );
+	}, [ dispatch, onClose ] );
 
 	const sites = useSelector( getSites );
 
@@ -74,6 +71,13 @@ export default function SingleSiteUpsellLightbox( {
 		);
 	}, [ dispatch ] );
 
+	// Recording the event when the lightbox is displayed.
+	useEffect( () => {
+		dispatch( recordTracksEvent( 'calypso_jetpack_agency_upsell_lightbox_opened' ) );
+		// We only want to run this once
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [] );
+
 	return (
 		<LicenseLightbox
 			className="license-lightbox__single-site-upsell"
@@ -81,7 +85,8 @@ export default function SingleSiteUpsellLightbox( {
 			isDisabled={ ! partnerCanIssueLicense }
 			ctaLabel={ translate( 'Issue License' ) }
 			onActivate={ onIssueLicense }
-			onClose={ onClose }
+			fireCloseOnCTAClick={ false }
+			onClose={ onHideLicenseInfo }
 			extraAsideContent={
 				<div className="review-licenses__notice">
 					{ translate(
@@ -105,7 +110,6 @@ export default function SingleSiteUpsellLightbox( {
 				<LicenseLightboxPurchaseViaJetpackcom
 					nonManageProductSlug={ nonManageProductSlug }
 					nonManageProductPrice={ nonManageProductPrice }
-					onClose={ hideLicenseInfo }
 					siteId={ siteId }
 				/>
 			}
