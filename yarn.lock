@@ -106,7 +106,7 @@ __metadata:
     gettext-parser: "npm:^4.0.3"
     lodash: "npm:^4.17.21"
   peerDependencies:
-    "@babel/core": ^7.23.6
+    "@babel/core": ^7.23.7
   languageName: unknown
   linkType: soft
 
@@ -124,7 +124,7 @@ __metadata:
   resolution: "@automattic/babel-plugin-transform-wpcalypso-async@workspace:packages/babel-plugin-transform-wpcalypso-async"
   dependencies:
     "@automattic/calypso-typescript-config": "workspace:^"
-    "@babel/core": "npm:^7.23.6"
+    "@babel/core": "npm:^7.23.7"
     lodash: "npm:^4.17.21"
   languageName: unknown
   linkType: soft
@@ -251,16 +251,16 @@ __metadata:
     "@automattic/babel-plugin-preserve-i18n": "workspace:^"
     "@automattic/babel-plugin-transform-wpcalypso-async": "workspace:^"
     "@babel/cli": "npm:^7.23.4"
-    "@babel/core": "npm:^7.23.6"
-    "@babel/helpers": "npm:^7.23.6"
+    "@babel/core": "npm:^7.23.7"
+    "@babel/helpers": "npm:^7.23.7"
     "@babel/plugin-proposal-class-properties": "npm:^7.18.6"
     "@babel/plugin-transform-react-jsx": "npm:^7.23.4"
-    "@babel/plugin-transform-runtime": "npm:^7.23.6"
-    "@babel/preset-env": "npm:^7.23.6"
+    "@babel/plugin-transform-runtime": "npm:^7.23.7"
+    "@babel/preset-env": "npm:^7.23.7"
     "@babel/preset-react": "npm:^7.23.3"
     "@babel/preset-typescript": "npm:^7.23.3"
-    "@babel/register": "npm:^7.22.15"
-    "@babel/runtime": "npm:^7.23.6"
+    "@babel/register": "npm:^7.23.7"
+    "@babel/runtime": "npm:^7.23.7"
     "@emotion/babel-plugin": "npm:^11.11.0"
     "@wordpress/babel-plugin-import-jsx-pragma": "npm:^4.31.0"
     babel-plugin-dynamic-import-node: "npm:^2.3.3"
@@ -277,7 +277,7 @@ __metadata:
     "@automattic/calypso-typescript-config": "workspace:^"
     "@automattic/webpack-rtl-plugin": "workspace:^"
     "@babel/compat-data": "npm:^7.23.5"
-    "@babel/core": "npm:^7.23.6"
+    "@babel/core": "npm:^7.23.7"
     "@types/webpack-env": "npm:^1.18.4"
     "@wordpress/browserslist-config": "npm:^5.31.0"
     "@wordpress/dependency-extraction-webpack-plugin": "npm:^4.31.0"
@@ -388,7 +388,7 @@ __metadata:
   dependencies:
     "@automattic/calypso-eslint-overrides": "workspace:^"
     "@automattic/calypso-typescript-config": "workspace:^"
-    "@babel/core": "npm:^7.23.6"
+    "@babel/core": "npm:^7.23.7"
     babel-jest: "npm:^29.6.1"
     enhanced-resolve: "npm:^5.8.3"
     jest: "npm:^29.7.0"
@@ -1051,7 +1051,7 @@ __metadata:
     typescript: "npm:^5.3.3"
     webpack: "npm:^5.89.0"
   peerDependencies:
-    "@babel/runtime": ^7.23.6
+    "@babel/runtime": ^7.23.7
     react: ^18.2.0
     react-dom: ^18.2.0
   peerDependenciesMeta:
@@ -1076,7 +1076,7 @@ __metadata:
     "@automattic/calypso-typescript-config": "workspace:^"
     "@automattic/languages": "workspace:^"
     "@automattic/search": "workspace:^"
-    "@babel/runtime": "npm:^7.23.6"
+    "@babel/runtime": "npm:^7.23.7"
     "@wordpress/base-styles": "npm:^4.39.0"
     "@wordpress/components": "npm:^25.14.0"
     "@wordpress/i18n": "npm:^4.48.0"
@@ -1186,7 +1186,7 @@ __metadata:
   resolution: "@automattic/load-script@workspace:packages/load-script"
   dependencies:
     "@automattic/calypso-typescript-config": "workspace:^"
-    "@babel/runtime": "npm:^7.23.6"
+    "@babel/runtime": "npm:^7.23.7"
     debug: "npm:^4.3.3"
   languageName: unknown
   linkType: soft
@@ -1327,7 +1327,7 @@ __metadata:
     "@automattic/webpack-extensive-lodash-replacement-plugin": "workspace:^"
     "@automattic/webpack-inline-constant-exports-plugin": "workspace:^"
     "@automattic/wp-babel-makepot": "workspace:^"
-    "@babel/core": "npm:^7.23.6"
+    "@babel/core": "npm:^7.23.7"
     "@size-limit/file": "npm:^8.2.6"
     "@tanstack/react-query": "npm:^5.15.5"
     "@wordpress/base-styles": "npm:^4.39.0"
@@ -1516,7 +1516,7 @@ __metadata:
     "@automattic/calypso-storybook": "workspace:^"
     "@automattic/calypso-typescript-config": "workspace:^"
     "@automattic/typography": "workspace:^"
-    "@babel/runtime": "npm:^7.23.6"
+    "@babel/runtime": "npm:^7.23.7"
     "@storybook/addon-actions": "npm:^7.6.3"
     "@storybook/cli": "npm:^7.6.3"
     "@storybook/react": "npm:^7.6.3"
@@ -1619,7 +1619,7 @@ __metadata:
     typescript: "npm:^5.3.3"
     webpack: "npm:^5.89.0"
   peerDependencies:
-    "@babel/runtime": ^7.23.6
+    "@babel/runtime": ^7.23.7
     react: ^18.2.0
     react-dom: ^18.2.0
   peerDependenciesMeta:
@@ -1878,10 +1878,10 @@ __metadata:
     "@automattic/calypso-eslint-overrides": "workspace:^"
     "@automattic/calypso-typescript-config": "workspace:^"
     "@babel/cli": "npm:^7.23.4"
-    "@babel/core": "npm:^7.23.6"
+    "@babel/core": "npm:^7.23.7"
     "@babel/plugin-proposal-class-properties": "npm:^7.18.6"
-    "@babel/plugin-proposal-decorators": "npm:^7.23.6"
-    "@babel/preset-env": "npm:^7.23.6"
+    "@babel/plugin-proposal-decorators": "npm:^7.23.7"
+    "@babel/preset-env": "npm:^7.23.7"
     "@babel/preset-react": "npm:^7.23.3"
     "@babel/preset-typescript": "npm:^7.23.3"
     commander: "npm:^5.1.0"
@@ -1906,7 +1906,7 @@ __metadata:
     "@automattic/calypso-eslint-overrides": "workspace:^"
     "@automattic/calypso-url": "workspace:^"
     "@automattic/typography": "workspace:^"
-    "@babel/runtime": "npm:^7.23.6"
+    "@babel/runtime": "npm:^7.23.7"
     "@wordpress/api-fetch": "npm:^6.45.0"
     "@wordpress/base-styles": "npm:^4.39.0"
     "@wordpress/block-editor": "npm:^12.16.0"
@@ -1997,7 +1997,7 @@ __metadata:
     "@automattic/typography": "workspace:^"
     "@automattic/viewport": "workspace:^"
     "@automattic/whats-new": "workspace:^"
-    "@babel/core": "npm:^7.23.6"
+    "@babel/core": "npm:^7.23.7"
     "@floating-ui/utils": "npm:^0.1.6"
     "@popperjs/core": "npm:^2.11.8"
     "@sentry/browser": "npm:^7.54.0"
@@ -2152,7 +2152,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@babel/core@npm:^7.1.6, @babel/core@npm:^7.11.6, @babel/core@npm:^7.12.3, @babel/core@npm:^7.13.16, @babel/core@npm:^7.16.0, @babel/core@npm:^7.18.9, @babel/core@npm:^7.23.0, @babel/core@npm:^7.23.2, @babel/core@npm:^7.23.6":
+"@babel/core@npm:^7.1.6, @babel/core@npm:^7.11.6, @babel/core@npm:^7.12.3, @babel/core@npm:^7.13.16, @babel/core@npm:^7.16.0, @babel/core@npm:^7.18.9, @babel/core@npm:^7.23.0, @babel/core@npm:^7.23.2, @babel/core@npm:^7.23.7":
   version: 7.23.7
   resolution: "@babel/core@npm:7.23.7"
   dependencies:
@@ -2439,7 +2439,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@babel/helpers@npm:^7.23.6, @babel/helpers@npm:^7.23.7":
+"@babel/helpers@npm:^7.23.7":
   version: 7.23.7
   resolution: "@babel/helpers@npm:7.23.7"
   dependencies:
@@ -2518,7 +2518,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@babel/plugin-proposal-decorators@npm:^7.23.6":
+"@babel/plugin-proposal-decorators@npm:^7.23.7":
   version: 7.23.7
   resolution: "@babel/plugin-proposal-decorators@npm:7.23.7"
   dependencies:
@@ -2919,22 +2919,21 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@babel/plugin-transform-classes@npm:^7.23.5":
-  version: 7.23.5
-  resolution: "@babel/plugin-transform-classes@npm:7.23.5"
+"@babel/plugin-transform-classes@npm:^7.23.8":
+  version: 7.23.8
+  resolution: "@babel/plugin-transform-classes@npm:7.23.8"
   dependencies:
     "@babel/helper-annotate-as-pure": "npm:^7.22.5"
-    "@babel/helper-compilation-targets": "npm:^7.22.15"
+    "@babel/helper-compilation-targets": "npm:^7.23.6"
     "@babel/helper-environment-visitor": "npm:^7.22.20"
     "@babel/helper-function-name": "npm:^7.23.0"
-    "@babel/helper-optimise-call-expression": "npm:^7.22.5"
     "@babel/helper-plugin-utils": "npm:^7.22.5"
     "@babel/helper-replace-supers": "npm:^7.22.20"
     "@babel/helper-split-export-declaration": "npm:^7.22.6"
     globals: "npm:^11.1.0"
   peerDependencies:
     "@babel/core": ^7.0.0-0
-  checksum: 07988f52b4893151887d1ea6ff79e5fe834078c5731bd09babd5659edbbae21ea4e2de326a02443a63fd776b4c945da6177f07875b56fe66e0b7899e830a9e92
+  checksum: 227ac5166501e04d9e7fbd5eda6869b084ffa4af6830ac12544ac6ea14953ca00eb1762b0df9349c0f6c8d2a799385910f558066cd0fb85b9ca437b1131a6043
   languageName: node
   linkType: hard
 
@@ -3373,7 +3372,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@babel/plugin-transform-runtime@npm:^7.16.0, @babel/plugin-transform-runtime@npm:^7.23.6":
+"@babel/plugin-transform-runtime@npm:^7.16.0, @babel/plugin-transform-runtime@npm:^7.23.7":
   version: 7.23.7
   resolution: "@babel/plugin-transform-runtime@npm:7.23.7"
   dependencies:
@@ -3506,9 +3505,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@babel/preset-env@npm:^7.1.6, @babel/preset-env@npm:^7.16.0, @babel/preset-env@npm:^7.23.2, @babel/preset-env@npm:^7.23.6":
-  version: 7.23.7
-  resolution: "@babel/preset-env@npm:7.23.7"
+"@babel/preset-env@npm:^7.1.6, @babel/preset-env@npm:^7.16.0, @babel/preset-env@npm:^7.23.2, @babel/preset-env@npm:^7.23.7":
+  version: 7.23.8
+  resolution: "@babel/preset-env@npm:7.23.8"
   dependencies:
     "@babel/compat-data": "npm:^7.23.5"
     "@babel/helper-compilation-targets": "npm:^7.23.6"
@@ -3543,7 +3542,7 @@ __metadata:
     "@babel/plugin-transform-block-scoping": "npm:^7.23.4"
     "@babel/plugin-transform-class-properties": "npm:^7.23.3"
     "@babel/plugin-transform-class-static-block": "npm:^7.23.4"
-    "@babel/plugin-transform-classes": "npm:^7.23.5"
+    "@babel/plugin-transform-classes": "npm:^7.23.8"
     "@babel/plugin-transform-computed-properties": "npm:^7.23.3"
     "@babel/plugin-transform-destructuring": "npm:^7.23.3"
     "@babel/plugin-transform-dotall-regex": "npm:^7.23.3"
@@ -3592,7 +3591,7 @@ __metadata:
     semver: "npm:^6.3.1"
   peerDependencies:
     "@babel/core": ^7.0.0-0
-  checksum: ac9def873cec52ee02a550bde6e22eced16d1ae331bb8ebc82c03e4c91c12ac17e3e4027647e61612937bcc25ac46e71370aaf99dc2e85dbd11f7777ffeed54e
+  checksum: e602ad954645f1a509644e3d2c72b3c63bdc2273c377e7a83b78f076eca215887ea3624ffc36aaad03deb9ac8acd89e247fd4562b96e0f2b679485e20d8ff25f
   languageName: node
   linkType: hard
 
@@ -3653,18 +3652,18 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@babel/register@npm:^7.0.0, @babel/register@npm:^7.13.16, @babel/register@npm:^7.22.15":
-  version: 7.22.15
-  resolution: "@babel/register@npm:7.22.15"
+"@babel/register@npm:^7.0.0, @babel/register@npm:^7.13.16, @babel/register@npm:^7.22.15, @babel/register@npm:^7.23.7":
+  version: 7.23.7
+  resolution: "@babel/register@npm:7.23.7"
   dependencies:
     clone-deep: "npm:^4.0.1"
     find-cache-dir: "npm:^2.0.0"
     make-dir: "npm:^2.1.0"
-    pirates: "npm:^4.0.5"
+    pirates: "npm:^4.0.6"
     source-map-support: "npm:^0.5.16"
   peerDependencies:
     "@babel/core": ^7.0.0-0
-  checksum: 895cc773c3b3eae909478ea2a9735ef6edd634b04b4aaaad2ce576fd591c2b3c70ff8c90423e769a291bee072186e7e4801480c1907e31ba3053c6cdba5571cb
+  checksum: b2466e41a4394e725b57e139ba45c3f61b88546d3cb443e84ce46cb34071b60c6cdb706a14c58a1443db530691a54f51da1f0c97f6c1aecbb838a2fb7eb5dbb9
   languageName: node
   linkType: hard
 
@@ -3675,12 +3674,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@babel/runtime@npm:^7.1.2, @babel/runtime@npm:^7.12.1, @babel/runtime@npm:^7.12.13, @babel/runtime@npm:^7.12.5, @babel/runtime@npm:^7.13.10, @babel/runtime@npm:^7.16.0, @babel/runtime@npm:^7.17.8, @babel/runtime@npm:^7.18.3, @babel/runtime@npm:^7.21.0, @babel/runtime@npm:^7.23.2, @babel/runtime@npm:^7.23.6, @babel/runtime@npm:^7.5.5, @babel/runtime@npm:^7.6.3, @babel/runtime@npm:^7.7.6, @babel/runtime@npm:^7.8.4, @babel/runtime@npm:^7.9.2":
-  version: 7.23.7
-  resolution: "@babel/runtime@npm:7.23.7"
+"@babel/runtime@npm:^7.1.2, @babel/runtime@npm:^7.12.1, @babel/runtime@npm:^7.12.13, @babel/runtime@npm:^7.12.5, @babel/runtime@npm:^7.13.10, @babel/runtime@npm:^7.16.0, @babel/runtime@npm:^7.17.8, @babel/runtime@npm:^7.18.3, @babel/runtime@npm:^7.21.0, @babel/runtime@npm:^7.23.2, @babel/runtime@npm:^7.23.7, @babel/runtime@npm:^7.5.5, @babel/runtime@npm:^7.6.3, @babel/runtime@npm:^7.7.6, @babel/runtime@npm:^7.8.4, @babel/runtime@npm:^7.9.2":
+  version: 7.23.8
+  resolution: "@babel/runtime@npm:7.23.8"
   dependencies:
     regenerator-runtime: "npm:^0.14.0"
-  checksum: 3e304133ee55b0750e03e53cb4efb47fb2bdcdb5795f85bbffa10595196c34b9be60eb65bd6d833c87f49fc827f0365f86f95f51d85b188004d3128bb5129c93
+  checksum: ba5e8fbb32ef04f6cab5e89c54a0497c2fde7b730595cc1af93496270314f13ff2c6a9360fdb2f0bdd4d6b376752ce3cf85642bd6b876969a6a62954934c2df8
   languageName: node
   linkType: hard
 
@@ -12090,8 +12089,8 @@ __metadata:
     5to6-codemod: "npm:^1.8.0"
     "@automattic/calypso-eslint-overrides": "workspace:^"
     "@automattic/calypso-typescript-config": "workspace:^"
-    "@babel/core": "npm:^7.23.6"
-    "@babel/preset-env": "npm:^7.23.6"
+    "@babel/core": "npm:^7.23.7"
+    "@babel/preset-env": "npm:^7.23.7"
     jscodeshift: "npm:^0.13.0"
     lodash: "npm:^4.17.21"
     react-codemod: "npm:^5.0.5"
@@ -12163,7 +12162,7 @@ __metadata:
     "@automattic/webpack-inline-constant-exports-plugin": "workspace:^"
     "@automattic/wpcom-checkout": "workspace:^"
     "@automattic/wpcom-template-parts": "workspace:^"
-    "@babel/core": "npm:^7.23.6"
+    "@babel/core": "npm:^7.23.7"
     "@emotion/css": "npm:^11.11.2"
     "@emotion/jest": "npm:^11.11.0"
     "@emotion/react": "npm:^11.11.1"
@@ -16240,12 +16239,12 @@ __metadata:
   resolution: "eslint-plugin-wpcalypso@workspace:packages/eslint-plugin-wpcalypso"
   dependencies:
     "@automattic/calypso-typescript-config": "workspace:^"
-    "@babel/core": "npm:^7.23.6"
+    "@babel/core": "npm:^7.23.7"
     "@babel/eslint-parser": "npm:^7.23.3"
     "@babel/parser": "npm:^7.23.6"
     eslint: "npm:^8.56.0"
   peerDependencies:
-    "@babel/core": ">=7.23.6"
+    "@babel/core": ">=7.23.7"
     eslint: ">=8.56.0"
     eslint-plugin-inclusive-language: ^2.2.1
     eslint-plugin-jsdoc: ^46.10.1
@@ -18927,7 +18926,7 @@ __metadata:
   dependencies:
     "@automattic/calypso-typescript-config": "workspace:^"
     "@automattic/interpolate-components": "workspace:^"
-    "@babel/runtime": "npm:^7.23.6"
+    "@babel/runtime": "npm:^7.23.7"
     "@tannin/sprintf": "npm:^1.1.0"
     "@wordpress/compose": "npm:^6.25.0"
     debug: "npm:^4.3.3"
@@ -24542,10 +24541,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"pirates@npm:^4.0.1, pirates@npm:^4.0.4, pirates@npm:^4.0.5":
-  version: 4.0.5
-  resolution: "pirates@npm:4.0.5"
-  checksum: 58b6ff0f137a3d70ff34ac4802fd19819cdc19b53e9c95adecae6c7cfc77719a11f561ad85d46e79e520ef57c31145a564c8bc3bee8cfee75d441fab2928a51d
+"pirates@npm:^4.0.1, pirates@npm:^4.0.4, pirates@npm:^4.0.6":
+  version: 4.0.6
+  resolution: "pirates@npm:4.0.6"
+  checksum: 00d5fa51f8dded94d7429700fb91a0c1ead00ae2c7fd27089f0c5b63e6eca36197fe46384631872690a66f390c5e27198e99006ab77ae472692ab9c2ca903f36
   languageName: node
   linkType: hard
 
@@ -32125,10 +32124,10 @@ __metadata:
     "@automattic/whats-new": "workspace:^"
     "@automattic/wp-babel-makepot": "workspace:^"
     "@automattic/wpcom-template-parts": "workspace:^"
-    "@babel/core": "npm:^7.23.6"
+    "@babel/core": "npm:^7.23.7"
     "@babel/eslint-parser": "npm:^7.23.3"
-    "@babel/register": "npm:^7.22.15"
-    "@babel/runtime": "npm:^7.23.6"
+    "@babel/register": "npm:^7.23.7"
+    "@babel/runtime": "npm:^7.23.7"
     "@bartekbp/typescript-checkstyle": "npm:^5.0.0"
     "@pmmmwh/react-refresh-webpack-plugin": "npm:^0.5.11"
     "@signal-noise/stylelint-scales": "npm:^2.0.3"
@@ -32344,7 +32343,7 @@ __metadata:
   resolution: "wpcom-xhr-request@workspace:packages/wpcom-xhr-request"
   dependencies:
     "@automattic/calypso-typescript-config": "workspace:^"
-    "@babel/runtime": "npm:^7.23.6"
+    "@babel/runtime": "npm:^7.23.7"
     debug: "npm:^4.3.3"
     superagent: "npm:^3.8.3"
     wp-error: "npm:^1.3.0"
@@ -32357,7 +32356,7 @@ __metadata:
   dependencies:
     "@automattic/calypso-eslint-overrides": "workspace:^"
     "@automattic/calypso-typescript-config": "workspace:^"
-    "@babel/core": "npm:^7.23.6"
+    "@babel/core": "npm:^7.23.7"
     babel-loader: "npm:^8.2.3"
     debug: "npm:^4.3.3"
     npm-run-all: "npm:^4.1.5"
