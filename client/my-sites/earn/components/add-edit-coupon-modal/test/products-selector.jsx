@@ -150,34 +150,36 @@ describe( 'ProductsSelector', () => {
 
 		act( () => screen.getByRole( 'button', { name: '2 products selected.' } ).click() );
 
-		expect( screen.getByRole( 'menuitemcheckbox', { name: 'Any product' } ) ).not.toBeChecked();
-		expect(
-			screen.getByRole( 'menuitemcheckbox', { name: 'Yearly Subscription : $40.00 / year' } )
-		).toBeChecked();
-		expect(
-			screen.getByRole( 'menuitemcheckbox', { name: 'Monthly Subscription : $5.00 / month' } )
-		).toBeChecked();
+		const anyProductCheckbox = screen.getByRole( 'menuitemcheckbox', { name: 'Any product' } );
+		const yearlyProductCheckbox = screen.getByRole( 'menuitemcheckbox', {
+			name: 'Yearly Subscription : $40.00 / year',
+		} );
+		const monthlyProductCheckbox = screen.getByRole( 'menuitemcheckbox', {
+			name: 'Monthly Subscription : $5.00 / month',
+		} );
 
-		act( () =>
-			screen
-				.getByRole( 'menuitemcheckbox', { name: 'Yearly Subscription : $40.00 / year' } )
-				.click()
-		);
-		expect(
-			screen.getByRole( 'menuitemcheckbox', { name: 'Yearly Subscription : $40.00 / year' } )
-		).not.toBeChecked();
+		// Only the monthly and yearly products are checked.
+		// Despite this being all current products, "Any product" is not checked, as "Any product" means "Do not limit by product".
+		expect( anyProductCheckbox ).not.toBeChecked();
+		expect( yearlyProductCheckbox ).toBeChecked();
+		expect( monthlyProductCheckbox ).toBeChecked();
 
-		act( () =>
-			screen
-				.getByRole( 'menuitemcheckbox', { name: 'Monthly Subscription : $5.00 / month' } )
-				.click()
-		);
-		expect( screen.getByRole( 'menuitemcheckbox', { name: 'Any product' } ) ).toBeChecked();
-		expect(
-			screen.getByRole( 'menuitemcheckbox', { name: 'Yearly Subscription : $40.00 / year' } )
-		).toBeChecked();
-		expect(
-			screen.getByRole( 'menuitemcheckbox', { name: 'Monthly Subscription : $5.00 / month' } )
-		).toBeChecked();
+		// Unchecking yearly product leaves only monthly product selected.
+		act( () => yearlyProductCheckbox.click() );
+		expect( anyProductCheckbox ).not.toBeChecked();
+		expect( yearlyProductCheckbox ).not.toBeChecked();
+		expect( monthlyProductCheckbox ).toBeChecked();
+
+		// Unchecking monthly product leaves no products selected, meaning no products are limited, so all products are selected, including "Any product".
+		act( () => monthlyProductCheckbox.click() );
+		expect( anyProductCheckbox ).toBeChecked();
+		expect( yearlyProductCheckbox ).toBeChecked();
+		expect( monthlyProductCheckbox ).toBeChecked();
+
+		// Clicking yearly product causes yearly product to be the only product selected again, deselecting other options.
+		act( () => yearlyProductCheckbox.click() );
+		expect( anyProductCheckbox ).not.toBeChecked();
+		expect( yearlyProductCheckbox ).toBeChecked();
+		expect( monthlyProductCheckbox ).not.toBeChecked();
 	} );
 } );

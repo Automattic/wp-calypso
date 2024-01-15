@@ -387,6 +387,7 @@ exports[`RecurringPaymentsCouponAddEditModal should render empty form when no co
                 </div>
               </div>
               <select
+                aria-label="duration selection"
                 class="form-select"
                 disabled=""
                 id="duration"
@@ -465,6 +466,7 @@ exports[`RecurringPaymentsCouponAddEditModal should render empty form when no co
                 </div>
               </div>
               <input
+                aria-label="limit coupon to specific emails text input"
                 class="form-text-input"
                 disabled=""
                 id="email_allow_list"
@@ -901,6 +903,7 @@ exports[`RecurringPaymentsCouponAddEditModal should render form correctly when a
                 </div>
               </div>
               <select
+                aria-label="duration selection"
                 class="form-select"
                 disabled=""
                 id="duration"
@@ -980,6 +983,7 @@ exports[`RecurringPaymentsCouponAddEditModal should render form correctly when a
                 </div>
               </div>
               <input
+                aria-label="limit coupon to specific emails text input"
                 class="form-text-input"
                 id="email_allow_list"
                 type="text"
@@ -1025,26 +1029,4 @@ exports[`RecurringPaymentsCouponAddEditModal should render form correctly when a
     </div>
   </div>
 </body>
-`;
-
-exports[`RecurringPaymentsCouponAddEditModal should show discount amount input when discount type is amount 1`] = `
-<input
-  class="form-text-input"
-  id="discount_amount"
-  name="discount_percentage"
-  type="text"
-  value=""
-/>
-`;
-
-exports[`RecurringPaymentsCouponAddEditModal should show discount amount input when discount type is amount 2`] = `
-<input
-  class="form-text-input form-currency-input"
-  id="discount_amount"
-  name="discount_value"
-  placeholder="0.00"
-  step="0.01"
-  type="number"
-  value=""
-/>
 `;

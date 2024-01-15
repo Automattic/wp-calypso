@@ -616,6 +616,7 @@ exports[`CouponsList should display new coupon modal when clicking add coupon 1`
                 </div>
               </div>
               <select
+                aria-label="duration selection"
                 class="form-select"
                 disabled=""
                 id="duration"
@@ -694,6 +695,7 @@ exports[`CouponsList should display new coupon modal when clicking add coupon 1`
                 </div>
               </div>
               <input
+                aria-label="limit coupon to specific emails text input"
                 class="form-text-input"
                 disabled=""
                 id="email_allow_list"

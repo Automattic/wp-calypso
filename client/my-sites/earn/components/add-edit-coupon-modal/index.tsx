@@ -582,6 +582,7 @@ const RecurringPaymentsCouponAddEditModal = ( {
 						value={ editedDuration }
 						onChange={ onSelectDuration }
 						disabled={ ! editedUseDuration }
+						aria-label="duration selection"
 					>
 						<option value={ COUPON_DURATION_FOREVER }>{ translate( 'Forever' ) }</option>
 						<option value={ COUPON_DURATION_1_MONTH }>{ translate( '1 Month' ) }</option>
@@ -605,6 +606,7 @@ const RecurringPaymentsCouponAddEditModal = ( {
 						onChange={ onEmailAllowListChange }
 						disabled={ ! editedUseEmailAllowList }
 						onBlur={ onEmailAllowListBlur }
+						aria-label="limit coupon to specific emails text input"
 					/>
 					<FormSettingExplanation>
 						{ translate(

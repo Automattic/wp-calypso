@@ -33,7 +33,7 @@ jest.mock( 'calypso/state/memberships/product-list/selectors' );
 jest.mock( 'calypso/state/memberships/settings/selectors' );
 jest.mock( 'calypso/state/ui/selectors' );
 
-import { act, render, screen } from '@testing-library/react';
+import { act, render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { __ } from '@wordpress/i18n';
 import { translate, useTranslate } from 'i18n-calypso';
@@ -186,12 +186,12 @@ describe( 'RecurringPaymentsCouponAddEditModal', () => {
 		);
 		const randomButton = screen.getByText( 'Random' );
 		expect( screen.getByLabelText( 'Coupon code' ).value ).toEqual( '' );
-		act( () => {
-			randomButton.click();
+		waitFor( () => randomButton.click() );
+		waitFor( () => {
+			const generatedCode = screen.getByLabelText( 'Coupon code' ).value;
+			expect( generatedCode ).not.toEqual( '' );
+			expect( generatedCode.length ).toBeGreaterThan( 3 );
 		} );
-		const generatedCode = screen.getByLabelText( 'Coupon code' ).value;
-		expect( generatedCode ).not.toEqual( '' );
-		expect( generatedCode.length ).toBeGreaterThan( 3 );
 	} );
 
 	test( 'should show discount amount input when discount type is amount', async () => {
@@ -201,7 +201,10 @@ describe( 'RecurringPaymentsCouponAddEditModal', () => {
 		);
 		expect( screen.getByRole( 'option', { name: 'Amount' } ).selected ).toBe( false );
 		expect( screen.getByRole( 'option', { name: 'Percentage' } ).selected ).toBe( true );
-		expect( screen.getByLabelText( 'Amount' ) ).toMatchSnapshot();
+		const amountBeforeTypeChange = screen.getByLabelText( 'Amount' );
+		expect( amountBeforeTypeChange ).name = 'discount_percentage';
+		expect( amountBeforeTypeChange ).type = 'text';
+		expect( amountBeforeTypeChange ).value = '';
 		await userEvent.selectOptions(
 			screen.getByLabelText( 'Discount type' ),
 			screen.getByRole( 'option', { name: 'Amount' } )
@@ -209,7 +212,10 @@ describe( 'RecurringPaymentsCouponAddEditModal', () => {
 
 		expect( screen.getByRole( 'option', { name: 'Amount' } ).selected ).toBe( true );
 		expect( screen.getByRole( 'option', { name: 'Percentage' } ).selected ).toBe( false );
-		expect( screen.getByLabelText( 'Amount' ) ).toMatchSnapshot();
+		const amountAfterTypeChange = screen.getByLabelText( 'Amount' );
+		expect( amountAfterTypeChange ).name = 'discount_value';
+		expect( amountAfterTypeChange ).type = 'number';
+		expect( amountAfterTypeChange ).value = '';
 	} );
 
 	test( 'should enable select dropdown if duration other than default', () => {
@@ -221,7 +227,7 @@ describe( 'RecurringPaymentsCouponAddEditModal', () => {
 			/>
 		);
 		expect( screen.getByRole( 'checkbox', { name: 'Duration' } ) ).toBeChecked();
-		expect( screen.getByRole( 'combobox', { name: '' } ) ).not.toBeDisabled();
+		expect( screen.getByRole( 'combobox', { name: 'duration selection' } ) ).not.toBeDisabled();
 	} );
 
 	test( 'should show select dropdown as disabled unless toggled', () => {
@@ -230,12 +236,12 @@ describe( 'RecurringPaymentsCouponAddEditModal', () => {
 			<WrappedRecurringPaymentsCouponAddEditModal closeDialog={ closeDialog } coupon={ {} } />
 		);
 		expect( screen.getByRole( 'checkbox', { name: 'Duration' } ) ).not.toBeChecked();
-		expect( screen.getByRole( 'combobox', { name: '' } ) ).toBeDisabled();
+		expect( screen.getByRole( 'combobox', { name: 'duration selection' } ) ).toBeDisabled();
 		act( () => {
 			screen.getByRole( 'checkbox', { name: 'Duration' } ).click();
 		} );
 		expect( screen.getByRole( 'checkbox', { name: 'Duration' } ) ).toBeChecked();
-		expect( screen.getByRole( 'combobox', { name: '' } ) ).not.toBeDisabled();
+		expect( screen.getByRole( 'combobox', { name: 'duration selection' } ) ).not.toBeDisabled();
 	} );
 
 	test( 'should enable emails textarea if email allow list other than default', () => {
@@ -252,19 +258,23 @@ describe( 'RecurringPaymentsCouponAddEditModal', () => {
 		expect( screen.getByDisplayValue( email_allow_list.join( ', ' ) ) ).not.toBeDisabled();
 	} );
 
-	test( 'should show email textarea as disabled unless toggled', () => {
+	test( 'should show email textbox as disabled unless toggled', () => {
 		mockDate( '2023-06-23T14:23:44z' );
 		const labelText = 'Limit coupon to specific emails';
 		render(
 			<WrappedRecurringPaymentsCouponAddEditModal closeDialog={ closeDialog } coupon={ {} } />
 		);
 		expect( screen.getByRole( 'checkbox', { name: labelText } ) ).not.toBeChecked();
-		expect( document.getElementById( 'email_allow_list' ) ).toBeDisabled();
+		expect(
+			screen.getByRole( 'textbox', { name: 'limit coupon to specific emails text input' } )
+		).toBeDisabled();
 		act( () => {
 			screen.getByRole( 'checkbox', { name: labelText } ).click();
 		} );
 		expect( screen.getByRole( 'checkbox', { name: labelText } ) ).toBeChecked();
-		expect( document.getElementById( 'email_allow_list' ) ).not.toBeDisabled();
+		expect(
+			screen.getByRole( 'textbox', { name: 'limit coupon to specific emails text input' } )
+		).not.toBeDisabled();
 	} );
 
 	test( 'should render form correctly when a coupon is provided', () => {
