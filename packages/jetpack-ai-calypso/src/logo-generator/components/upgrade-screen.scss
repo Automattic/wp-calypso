@@ -1,0 +1,22 @@
+.jetpack-ai-logo-generator-modal__body.needs-feature {
+	@media (min-width: 700px) {
+		width: 470px;
+		min-height: unset;
+	}
+}
+
+.jetpack-ai-logo-generator-modal__upgrade-message-wrapper {
+	display: flex;
+	flex-direction: column;
+	gap: 24px;
+}
+
+.jetpack-ai-logo-generator-modal__upgrade-message {
+	font-size: $font-body-small;
+}
+
+.jetpack-ai-logo-generator-modal__upgrade-actions {
+	display: flex;
+	justify-content: flex-end;
+	gap: 12px;
+}
