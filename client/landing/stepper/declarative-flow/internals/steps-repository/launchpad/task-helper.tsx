@@ -279,19 +279,7 @@ export function getEnhancedTasks( {
 
 	return ( tasks || [] ).map( ( task ) => {
 		if ( shouldUseNewTaskDefinitions( flow ) ) {
-			const enhanced = getTaskDefinition( flow, task, {
-				checklistStatuses,
-				tasks,
-				siteInfoQueryArgs,
-				displayGlobalStylesWarning,
-				globalStylesMinimumPlan,
-				domainUpsellCompleted,
-				site,
-				isEmailVerified,
-				planCartItem,
-				siteSlug,
-				submit,
-			} );
+			const enhanced = getTaskDefinition( flow, task, { site, tasks } );
 
 			if ( enhanced ) {
 				// eslint-disable-next-line no-console

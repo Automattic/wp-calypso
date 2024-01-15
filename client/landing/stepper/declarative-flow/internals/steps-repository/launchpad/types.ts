@@ -1,9 +1,7 @@
-import { ChecklistStatuses, type SiteDetails } from '@automattic/data-stores';
 //TODO: Temporary export until we can replace all depencecies with ./types.ts Task;
 export type { Task } from '@automattic/launchpad';
+import { SiteDetails } from '@automattic/data-stores';
 import { Task } from '@automattic/launchpad';
-import { MinimalRequestCartProduct } from '@automattic/shopping-cart';
-import { NavigationControls } from '../../types';
 
 export type LaunchpadChecklist = Task[];
 
@@ -18,50 +16,11 @@ export interface TranslatedLaunchpadStrings {
 	subtitle: string;
 }
 
-export type TaskId =
-	| 'setup_free'
-	| 'design_edited'
-	| 'design_selected'
-	| 'domain_upsell'
-	| 'first_post_published'
-	| 'site_launched'
-	| 'plan_selected';
-//
-// TODO: Add the rest of the task ids
-// | 'setup_blog'
-// | 'setup_newsletter'
-// | 'plan_completed'
-// | 'subscribers_added'
-// | 'migrate_content'
-// | 'first_post_published_newsletter'
-// | 'design_completed'
-// | 'setup_general'
-// | 'setup_link_in_bio'
-// | 'links_added'
-// | 'link_in_bio_launched'
-// | 'blog_launched'
-// | 'videopress_upload'
-// | 'videopress_launched'
-// | 'verify_email'
-// | 'set_up_payments'
-// | 'newsletter_plan_created';
+export type TaskId = 'setup_free';
 
 export interface TaskContext {
-	siteInfoQueryArgs?: { siteId?: number; siteSlug?: string | null };
-	displayGlobalStylesWarning: boolean;
-	shouldDisplayWarning?: boolean;
-	globalStylesMinimumPlan?: string;
-	isVideoPressFlowWithUnsupportedPlan?: boolean;
-	site: SiteDetails | null;
-	domainUpsellCompleted: boolean;
-	isEmailVerified: boolean;
 	tasks: Task[];
-	checklistStatuses?: ChecklistStatuses;
-	planCartItem?: MinimalRequestCartProduct | null;
-	domainCartItem?: MinimalRequestCartProduct | null;
-	productCartItems?: MinimalRequestCartProduct[] | null;
-	siteSlug: string | null;
-	submit: NavigationControls[ 'submit' ];
+	site: SiteDetails | null;
 }
 
 export type TaskAction = ( task: Task, flow: string, context: TaskContext ) => Task;
