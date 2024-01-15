@@ -147,7 +147,7 @@ class FeaturesGrid extends Component< FeaturesGridProps > {
 	}
 
 	renderMobileView() {
-		const { translate, selectedFeature, gridPlans, gridPlanForSpotlight } = this.props;
+		const { translate, selectedFeature, gridPlans, gridPlanForSpotlight, isInSignup } = this.props;
 		const CardContainer = (
 			props: React.ComponentProps< typeof FoldableCard > & { planSlug: string }
 		) => {
@@ -175,22 +175,15 @@ class FeaturesGrid extends Component< FeaturesGridProps > {
 					getPlanClass( gridPlan.planSlug )
 				);
 
-				if ( isFreePlan( gridPlan.planSlug ) ) {
-					return (
-						<div className={ planCardClasses } key={ `${ gridPlan.planSlug }-${ index }` }>
-							{ this.renderPlanLogos( [ gridPlan ] ) }
-							{ this.renderPlanHeaders( [ gridPlan ] ) }
-						</div>
-					);
-				}
+				const isNotFreePlan = ! isFreePlan( gridPlan.planSlug );
 
 				const planCardJsx = (
 					<div className={ planCardClasses } key={ `${ gridPlan.planSlug }-${ index }` }>
 						{ this.renderPlanLogos( [ gridPlan ] ) }
 						{ this.renderPlanHeaders( [ gridPlan ] ) }
-						{ this.renderPlanTagline( [ gridPlan ] ) }
-						{ this.renderPlanPrice( [ gridPlan ] ) }
-						{ this.renderBillingTimeframe( [ gridPlan ] ) }
+						{ isNotFreePlan && isInSignup && this.renderPlanTagline( [ gridPlan ] ) }
+						{ isNotFreePlan && this.renderPlanPrice( [ gridPlan ] ) }
+						{ isNotFreePlan && this.renderBillingTimeframe( [ gridPlan ] ) }
 						{ this.renderMobileFreeDomain( gridPlan ) }
 						{ this.renderPlanStorageOptions( [ gridPlan ] ) }
 						{ this.renderTopButtons( [ gridPlan ] ) }
