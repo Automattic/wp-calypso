@@ -32,6 +32,11 @@ const commands = [
 		label: 'Get help',
 	},
 	{
+		name: 'sendFeedback',
+		label: 'Send feedback',
+		searchLabel: 'find help',
+	},
+	{
 		name: 'clearCache',
 		label: 'Clear cache',
 	},
@@ -82,7 +87,7 @@ describe( 'CommandPalette', () => {
 		} );
 	} );
 
-	it( 'should return only "Get help" command as it matches search, other commands should be hidden', () => {
+	it( 'should return only "Get help" command as it matches label and "Send feedback" as it matches searchLabel; other commands are hidden', () => {
 		renderCommandPalette();
 
 		waitFor( () => {
@@ -94,6 +99,7 @@ describe( 'CommandPalette', () => {
 
 		waitFor( () => {
 			expect( screen.getByText( 'Get help' ) ).toBeInTheDocument();
+			expect( screen.getByText( 'Send feedback' ) ).toBeInTheDocument();
 			expect( screen.queryByText( 'Clear cache' ) ).toBeNull();
 			expect( screen.queryByText( 'Enable edge cache' ) ).toBeNull();
 		} );
