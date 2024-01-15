@@ -346,7 +346,7 @@ describe( 'RecurringPaymentsCouponAddEditModal', () => {
 
 		expect( limitDurationToggle.checked ).toBe( limitedByDuration );
 		expect( limitDurationSelection.disabled ).toBe( ! limitedByDuration );
-		expect( limitCouponsToggle ).toBe( limitedByEmail );
+		expect( limitCouponsToggle.checked ).toBe( limitedByEmail );
 		expect( limitCouponsTextInput ).not.toBeDisabled( ! limitedByEmail );
 		expect( limitCouponsTextInput.value ).toEqual( testCoupon1.email_allow_list.join( ', ' ) );
 	} );
