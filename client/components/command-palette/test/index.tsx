@@ -21,11 +21,6 @@ const INITIAL_STATE = {
 			},
 		},
 	},
-	preferences: {
-		remoteValues: {
-			'sites-sorting': 'alphabetically-asc',
-		},
-	},
 	ui: {
 		selectedSiteId: 1,
 	},
