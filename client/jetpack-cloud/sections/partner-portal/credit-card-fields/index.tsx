@@ -1,3 +1,4 @@
+import { isEnabled } from '@automattic/calypso-config';
 import { FormStatus, useFormStatus } from '@automattic/composite-checkout';
 import { Field } from '@automattic/wpcom-checkout';
 import { useSelect, useDispatch } from '@wordpress/data';
@@ -13,6 +14,7 @@ import CreditCardLoading from './credit-card-loading';
 import SetAsPrimaryPaymentMethod from './set-as-primary-payment-method';
 import type { StoreState } from '@automattic/wpcom-checkout';
 import type { StripeElementChangeEvent, StripeElementStyle } from '@stripe/stripe-js';
+
 import './style.scss';
 
 export default function CreditCardFields() {
@@ -73,6 +75,8 @@ export default function CreditCardFields() {
 	const { formStatus } = useFormStatus();
 	const isDisabled = formStatus !== FormStatus.READY;
 
+	const isNewCardAdditionEnabled = isEnabled( 'jetpack/card-addition-improvements' );
+
 	return (
 		<>
 			{ ! isStripeFullyLoaded && <CreditCardLoading /> }
@@ -87,7 +91,7 @@ export default function CreditCardFields() {
 					className="credit-card-fields__input-field"
 					type="Text"
 					autoComplete="cc-name"
-					label={ __( 'Name' ) }
+					label={ isNewCardAdditionEnabled ? __( 'Name on card' ) : __( 'Name' ) }
 					value={ cardholderName?.value ?? '' }
 					onChange={ ( value ) => setFieldValue( 'cardholderName', value ) }
 					isError={ !! cardholderNameErrorMessage }
