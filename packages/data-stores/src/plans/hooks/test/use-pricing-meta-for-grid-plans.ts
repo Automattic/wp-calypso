@@ -5,10 +5,6 @@
 /**
  * Default mock implementations
  */
-jest.mock( 'react-redux', () => ( {
-	...jest.requireActual( 'react-redux' ),
-	useSelector: ( selector ) => selector(),
-} ) );
 jest.mock( '@wordpress/data' );
 jest.mock( '@automattic/data-stores', () => ( {
 	Plans: {
@@ -22,8 +18,20 @@ jest.mock( '@automattic/data-stores', () => ( {
 	},
 } ) );
 
+jest.mock( '../../', () => ( {
+	usePlans: jest.fn(),
+	useSitePlans: jest.fn(),
+	useIntroOffers: jest.fn(),
+	useCurrentPlan: jest.fn(),
+} ) );
+
+jest.mock( '../../../purchases', () => ( {
+	useSitePurchaseById: jest.fn(),
+} ) );
+
 import { PLAN_PERSONAL, PLAN_PREMIUM } from '@automattic/calypso-products';
-import { Plans, Purchases } from '@automattic/data-stores';
+import * as Plans from '../../';
+import * as Purchases from '../../../purchases';
 import usePricingMetaForGridPlans from '../use-pricing-meta-for-grid-plans';
 
 describe( 'usePricingMetaForGridPlans', () => {
