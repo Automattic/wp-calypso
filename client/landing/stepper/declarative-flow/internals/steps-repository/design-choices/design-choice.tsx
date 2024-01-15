@@ -1,4 +1,5 @@
 import classnames from 'classnames';
+import { preventWidows } from 'calypso/lib/formatting';
 import './design-choice.scss';
 
 interface Props {
@@ -24,7 +25,7 @@ const DesignChoice = ( {
 		onClick={ () => onSelect( destination ) }
 	>
 		<div className="design-choice__title">{ title }</div>
-		<div className="design-choice__description">{ description }</div>
+		<div className="design-choice__description">{ preventWidows( description ) }</div>
 		<div className="design-choice__image-container">
 			<img src={ imageSrc } alt={ title } />
 		</div>

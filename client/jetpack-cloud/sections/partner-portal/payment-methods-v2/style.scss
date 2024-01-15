@@ -62,3 +62,10 @@
 		}
 	}
 }
+
+.payment-method-list-v2__stored-cards {
+	margin-block-start: 50px;
+	display: flex;
+	flex-wrap: wrap;
+	gap: 24px;
+}

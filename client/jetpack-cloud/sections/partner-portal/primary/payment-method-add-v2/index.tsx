@@ -1,11 +1,17 @@
+import { Card } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import Layout from 'calypso/jetpack-cloud/components/layout';
+import LayoutBody from 'calypso/jetpack-cloud/components/layout/body';
 import LayoutHeader, {
 	LayoutHeaderSubtitle as Subtitle,
 	LayoutHeaderTitle as Title,
 	LayoutHeaderBreadcrumb as Breadcrumb,
 } from 'calypso/jetpack-cloud/components/layout/header';
 import LayoutTop from 'calypso/jetpack-cloud/components/layout/top';
+import PaymentMethodForm from '../../payment-method-form';
+import PaymentMethodStripeInfo from '../../payment-method-stripe-info';
+
+import './style.scss';
 
 export default function PaymentMethodListV2() {
 	const translate = useTranslate();
@@ -27,6 +33,18 @@ export default function PaymentMethodListV2() {
 					<Subtitle>{ subtitle }</Subtitle>
 				</LayoutHeader>
 			</LayoutTop>
+
+			<LayoutBody>
+				<div className="payment-method-add__content">
+					<Card className="payment-method-add__card payment-form">
+						<PaymentMethodForm />
+					</Card>
+
+					<Card className="payment-method-add__card aside">
+						<PaymentMethodStripeInfo />
+					</Card>
+				</div>
+			</LayoutBody>
 		</Layout>
 	);
 }
