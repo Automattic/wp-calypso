@@ -339,12 +339,14 @@ function PaymentMethodFormFooter( {
 
 	const { formStatus } = useFormStatus();
 
+	const shouldDisableBackButton = formStatus !== FormStatus.READY || disableBackButton;
+
 	return (
 		<div className="payment-method-form__footer">
 			<Button
 				className="payment-method-form__back-button"
-				href={ backButtonHref }
-				disabled={ formStatus !== FormStatus.READY || disableBackButton }
+				href={ shouldDisableBackButton ? undefined : backButtonHref }
+				disabled={ shouldDisableBackButton }
 				onClick={ onGoToPaymentMethods }
 			>
 				{ translate( 'Go back' ) }
