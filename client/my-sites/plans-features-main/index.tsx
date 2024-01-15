@@ -962,7 +962,12 @@ const PlansFeaturesMain = ( {
 												onStorageAddOnClick={ handleStorageAddOnClick }
 												showRefundPeriod={ isAnyHostingFlow( flowName ) }
 												planTypeSelectorProps={
-													! hidePlanSelector ? planTypeSelectorProps : undefined
+													! hidePlanSelector
+														? {
+																...planTypeSelectorProps,
+																onPlanIntervalChange: handlePlanIntervalChange,
+														  }
+														: undefined
 												}
 												coupon={ coupon }
 											/>
