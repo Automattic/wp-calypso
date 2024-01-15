@@ -1,24 +1,13 @@
-import { Task, TaskId, TaskContext } from '../types';
-import { actions as designActions } from './design';
-import { actions as domainActions } from './domain';
-import { actions as planActions } from './plan';
-import { actions as postActions } from './post';
-import { actions as setupActions } from './setup';
-import { actions as siteActions } from './site';
+import { Task, TaskId, TaskContext, TaskActionTable } from '../types';
+import * as setupActions from './setup';
 
-const ALL_ACTIONS = new Map(
-	Object.entries( {
-		...planActions,
-		...setupActions,
-		...designActions,
-		...domainActions,
-		...postActions,
-		...siteActions,
-	} )
-);
+const ALL_ACTIONS: TaskActionTable = {
+	setup_free: setupActions.getSetupFreeTask,
+};
 
 export const getTaskDefinition = ( flow: string, task: Task, context: TaskContext ) => {
-	return ALL_ACTIONS.has( task.id as TaskId )
-		? ALL_ACTIONS.get( task.id as TaskId )?.( task, flow, context )
-		: null;
+	if ( task.id in ALL_ACTIONS ) {
+		return ALL_ACTIONS[ task.id as TaskId ]( task, flow, context );
+	}
+	return null;
 };
