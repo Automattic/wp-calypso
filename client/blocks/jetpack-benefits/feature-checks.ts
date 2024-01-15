@@ -30,6 +30,14 @@ import {
 	isJetpackStatsPaidProductSlug,
 	FEATURE_STATS_PAID,
 	FEATURE_STATS_FREE,
+	FEATURE_TYPE_JETPACK_ANTI_SPAM,
+	FEATURE_TYPE_JETPACK_ACTIVITY_LOG,
+	FEATURE_TYPE_JETPACK_BACKUP,
+	FEATURE_TYPE_JETPACK_BOOST,
+	FEATURE_TYPE_JETPACK_SCAN,
+	FEATURE_TYPE_JETPACK_SEARCH,
+	FEATURE_TYPE_JETPACK_STATS,
+	FEATURE_TYPE_JETPACK_VIDEOPRESS,
 } from '@automattic/calypso-products';
 
 export const productHasActivityLog = ( productSlug: string ): boolean => {
@@ -142,4 +150,32 @@ export const productHasVideoPress = ( productSlug: string ): boolean => {
 		] ) ||
 		[ PRODUCT_JETPACK_VIDEOPRESS, PRODUCT_JETPACK_VIDEOPRESS_MONTHLY ].includes( productSlug )
 	);
+};
+
+/**
+ * Checks if a product has a feature type.
+ * @param {string} productSlug The product slug.
+ * @param {string} featureType The feature type.
+ * @returns {boolean} Whether or not a product has a feature type.
+ */
+export const productHasFeatureType = ( productSlug: string, featureType: string ): boolean => {
+	switch ( featureType ) {
+		case FEATURE_TYPE_JETPACK_ANTI_SPAM:
+			return productHasAntiSpam( productSlug );
+		case FEATURE_TYPE_JETPACK_ACTIVITY_LOG:
+			return productHasActivityLog( productSlug );
+		case FEATURE_TYPE_JETPACK_BACKUP:
+			return productHasBackups( productSlug );
+		case FEATURE_TYPE_JETPACK_BOOST:
+			return productHasBoost( productSlug );
+		case FEATURE_TYPE_JETPACK_SCAN:
+			return productHasScan( productSlug );
+		case FEATURE_TYPE_JETPACK_SEARCH:
+			return productHasSearch( productSlug );
+		case FEATURE_TYPE_JETPACK_STATS:
+			return productHasStats( productSlug );
+		case FEATURE_TYPE_JETPACK_VIDEOPRESS:
+			return productHasVideoPress( productSlug );
+	}
+	return false;
 };
