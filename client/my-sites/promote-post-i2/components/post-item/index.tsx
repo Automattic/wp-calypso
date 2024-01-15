@@ -125,11 +125,23 @@ export default function PostItem( { post }: { post: BlazablePost } ) {
 				</div>
 			</td>
 
-			<td className="post-item__post-type">{ getPostType( post.type ) }</td>
-			<td className="post-item__post-publish-date">{ postDate }</td>
-			<td className="post-item__post-views">{ formatNumber( viewCount, true ) }</td>
-			<td className="post-item__post-likes">{ formatNumber( likeCount, true ) }</td>
-			<td className="post-item__post-comments">{ formatNumber( commentCount, true ) }</td>
+			{ post.type !== 'product' ? (
+				<>
+					<td className="post-item__post-type">{ getPostType( post.type ) }</td>
+					<td className="post-item__post-publish-date">{ postDate }</td>
+					<td className="post-item__post-views">{ formatNumber( viewCount, true ) }</td>
+					<td className="post-item__post-likes">{ formatNumber( likeCount, true ) }</td>
+					<td className="post-item__post-comments">{ formatNumber( commentCount, true ) }</td>
+				</>
+			) : (
+				<>
+					<td className="post-item__sku">{ post.sku ?? '-' }</td>
+					<td className="post-item__price">{ post.price ?? '-' }</td>
+					<td className="post-item__post-publish-date">{ postDate }</td>
+					<td className="post-item__sku">{ post.visitors ?? '-' }</td>
+				</>
+			) }
+
 			<td className="post-item__post-view">
 				<a href={ post.post_url } className="post-item__view-link" target="_blank" rel="noreferrer">
 					{ __( 'View' ) }

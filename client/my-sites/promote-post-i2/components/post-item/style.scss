@@ -27,7 +27,10 @@ body.is-section-promote-post-i2 {
 		&-likes,
 		&-comments,
 		&-view,
-		&-promote {
+		&-promote,
+		&-sku,
+		&-price,
+		&-visitors {
 			vertical-align: middle;
 		}
 
@@ -87,6 +90,16 @@ body.is-section-promote-post-i2 {
 			color: $studio-simplenote-blue-50;
 			text-decoration-line: underline;
 			width: 5.4%;
+		}
+
+		&-price {
+			font-size: 0.875rem;
+			width: 10%;
+		}
+
+		&-sku {
+			font-size: 0.875rem;
+			width: 10%;
 		}
 	}
 
