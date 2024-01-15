@@ -36,7 +36,7 @@ function DismissEmailDnsIssuesDialog( { onClose, isVisible } ) {
 			<h1>{ __( 'Are you sure you want to ignore this issue?' ) }</h1>
 			<p>
 				{ __(
-					"If you use this site to send emails and don't fix the email DNS issues, your subscribers might not receive emails correctly."
+					"If you use this site to send emails and don't fix the DNS issues, your subscribers might not receive emails correctly."
 				) }
 			</p>
 		</Dialog>
