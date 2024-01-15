@@ -1,9 +1,7 @@
-import { TITAN_MAIL_MONTHLY_SLUG, TITAN_MAIL_YEARLY_SLUG } from '@automattic/calypso-products';
-import { Badge, Gridicon } from '@automattic/components';
-import formatCurrency from '@automattic/format-currency';
+import page from '@automattic/calypso-router';
+import { Gridicon } from '@automattic/components';
 import { MOBILE_BREAKPOINT } from '@automattic/viewport';
 import { useBreakpoint } from '@automattic/viewport-react';
-import classNames from 'classnames';
 import i18n, { useTranslate } from 'i18n-calypso';
 import { useState } from 'react';
 import poweredByTitanLogo from 'calypso/assets/images/email-providers/titan/powered-by-titan-caps.svg';
@@ -11,6 +9,7 @@ import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { titanMailMonthly, titanMailYearly } from 'calypso/lib/cart-values/cart-items';
 import { BillingIntervalToggle } from 'calypso/my-sites/email/email-providers-comparison/billing-interval-toggle';
 import { IntervalLength } from 'calypso/my-sites/email/email-providers-comparison/interval-length';
+import ProfessionalEmailPrice from 'calypso/my-sites/email/email-providers-comparison/price/professional-email';
 import { MailboxForm } from 'calypso/my-sites/email/form/mailboxes';
 import { NewMailBoxList } from 'calypso/my-sites/email/form/mailboxes/components/new-mailbox-list';
 import { MailboxOperations } from 'calypso/my-sites/email/form/mailboxes/components/utilities/mailbox-operations';
@@ -23,8 +22,8 @@ import {
 import { EmailProvider } from 'calypso/my-sites/email/form/mailboxes/types';
 import { useDispatch, useSelector } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
-import { getProductCost } from 'calypso/state/products-list/selectors';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
+import MasterbarStyled from '../../checkout-thank-you/redesign-v2/masterbar-styled';
 import ProfessionalEmailUpsellPlaceholder from './placeholder';
 import type { MinimalRequestCartProduct } from '@automattic/shopping-cart';
 import type { TranslateResult } from 'i18n-calypso';
@@ -60,7 +59,6 @@ const getCartItems = (
 };
 
 type ProfessionalEmailUpsellProps = {
-	currencyCode: string;
 	domainName: string;
 	handleClickAccept: ( action: string ) => void;
 	handleClickDecline: () => void;
@@ -70,7 +68,6 @@ type ProfessionalEmailUpsellProps = {
 };
 
 const ProfessionalEmailUpsell = ( {
-	currencyCode,
 	domainName,
 	handleClickAccept,
 	handleClickDecline,
@@ -81,14 +78,6 @@ const ProfessionalEmailUpsell = ( {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 	const [ selectedIntervalLength, setSelectedIntervalLength ] = useState( intervalLength );
-
-	const productCost = useSelector( ( state ) => {
-		if ( selectedIntervalLength === IntervalLength.ANNUALLY ) {
-			return getProductCost( state, TITAN_MAIL_YEARLY_SLUG );
-		}
-
-		return getProductCost( state, TITAN_MAIL_MONTHLY_SLUG );
-	} );
 
 	const selectedSite = useSelector( getSelectedSite );
 	const isDomainOnlySite =
@@ -106,34 +95,6 @@ const ProfessionalEmailUpsell = ( {
 		);
 	};
 
-	const getFormattedPrice = (
-		currencyCode: string,
-		intervalLength: IntervalLength,
-		productCost: number
-	): TranslateResult => {
-		const translateOptions = {
-			components: {
-				price: (
-					<span className="professional-email-upsell__discounted">
-						{ formatCurrency( productCost ?? 0, currencyCode ) }
-					</span>
-				),
-			},
-			comment: '{{price/}} is the formatted price, e.g. $20',
-		};
-		if ( intervalLength === IntervalLength.MONTHLY ) {
-			return translate( '{{price/}} /mailbox /month', translateOptions );
-		}
-
-		return translate( '{{price/}} /mailbox /year', translateOptions );
-	};
-
-	const formattedPrice = getFormattedPrice(
-		currencyCode,
-		selectedIntervalLength,
-		productCost ?? 0
-	);
-
 	const onSubmit = async ( mailboxOperations: MailboxOperations ) => {
 		if ( ! ( await mailboxOperations.validateAndCheck( false ) ) ) {
 			return;
@@ -146,98 +107,105 @@ const ProfessionalEmailUpsell = ( {
 
 	const pricingComponent = (
 		<div className="professional-email-upsell__pricing">
-			<span>
-				<Badge type="success">{ translate( '3 months free' ) }</Badge>
-			</span>
-			<span
-				className={ classNames( 'professional-email-upsell__standard-price', {
-					'is-discounted': true,
-				} ) }
-			>
-				{ formattedPrice }
-			</span>
+			<ProfessionalEmailPrice intervalLength={ selectedIntervalLength } isDomainInCart />
 		</div>
+	);
+
+	const pageViewTracker = (
+		<PageViewTracker
+			path="/checkout/offer-professional-email/:domain/:receiptId/:site"
+			title="Post Checkout - Professional Email Upsell"
+		/>
+	);
+
+	const content = (
+		<>
+			<header className="professional-email-upsell__header">
+				<h3 className="professional-email-upsell__small-title">
+					{ isDomainOnlySite
+						? translate( "Hold tight, we're getting your domain ready." )
+						: translate( "Hold tight, we're getting your site ready." ) }
+				</h3>
+				<h1 className="professional-email-upsell__title wp-brand-font">
+					{ translate( 'Add Professional Email @%(domain)s', {
+						args: {
+							domain: domainName,
+						},
+						comment: '%(domain)s is a domain name, like example.com',
+					} ) }
+				</h1>
+				<h3 className="professional-email-upsell__small-subtitle">
+					{ i18n.hasTranslation( 'No setup required. Easy to manage.' )
+						? translate( 'No setup required. Easy to manage.' )
+						: null }
+				</h3>
+				<BillingIntervalToggle
+					intervalLength={ selectedIntervalLength }
+					onIntervalChange={ changeIntervalLength }
+				/>
+			</header>
+
+			<div className="professional-email-upsell__content">
+				{ isMobileView && pricingComponent }
+
+				<div className="professional-email-upsell__form">
+					<NewMailBoxList
+						cancelActionText={ translate( 'Skip for now' ) }
+						fieldLabelTexts={ {
+							[ FIELD_MAILBOX ]: translate( 'Enter email address' ),
+							[ FIELD_PASSWORD ]: translate( 'Set password' ),
+						} }
+						hiddenFieldNames={ [ FIELD_NAME, FIELD_PASSWORD_RESET_EMAIL ] }
+						isInitialMailboxPurchase
+						onCancel={ handleClickDecline }
+						onSubmit={ onSubmit }
+						provider={ EmailProvider.Titan }
+						selectedDomainName={ domainName }
+						showCancelButton
+						submitActionText={ translate( 'Add Professional Email' ) }
+					/>
+				</div>
+
+				<div className="professional-email-upsell__features">
+					{ ! isMobileView && pricingComponent }
+					<h2>{ translate( 'Why get Professional Email?' ) }</h2>
+					<ul className="professional-email-upsell__feature-list">
+						<ProfessionalEmailFeature>
+							{ translate( "Trusted email address that's truly yours" ) }
+						</ProfessionalEmailFeature>
+						<ProfessionalEmailFeature>
+							{ translate( 'Increase your credibility' ) }
+						</ProfessionalEmailFeature>
+						<ProfessionalEmailFeature>
+							{ translate( 'Build your brand with every email you send' ) }
+						</ProfessionalEmailFeature>
+						<ProfessionalEmailFeature>
+							{ translate( 'Reach your recipients’ primary inbox' ) }
+						</ProfessionalEmailFeature>
+					</ul>
+
+					<img
+						className="professional-email-upsell__titan-logo"
+						src={ poweredByTitanLogo }
+						alt={ translate( 'Powered by Titan', { textOnly: true } ) }
+					/>
+				</div>
+			</div>
+		</>
 	);
 
 	return (
 		<>
-			<PageViewTracker
-				path="/checkout/offer-professional-email/:domain/:receiptId/:site"
-				title="Post Checkout - Professional Email Upsell"
+			{ pageViewTracker }
+
+			<MasterbarStyled
+				onClick={ () => page( `/home/${ selectedSite?.slug ?? '' }` ) }
+				backText={ translate( 'Back to dashboard' ) }
+				canGoBack={ !! selectedSite?.ID }
+				showContact
 			/>
-			{ isLoading ? (
-				<ProfessionalEmailUpsellPlaceholder />
-			) : (
-				<>
-					<header className="professional-email-upsell__header">
-						<h3 className="professional-email-upsell__small-title">
-							{ isDomainOnlySite
-								? translate( "Hold tight, we're getting your domain ready." )
-								: translate( "Hold tight, we're getting your site ready." ) }
-						</h3>
-						<h1 className="professional-email-upsell__title wp-brand-font">
-							{ translate( 'Add Professional Email @%(domain)s', {
-								args: {
-									domain: domainName,
-								},
-								comment: '%(domain)s is a domain name, like example.com',
-							} ) }
-						</h1>
-						<h3 className="professional-email-upsell__small-subtitle">
-							{ i18n.hasTranslation( 'No setup required. Easy to manage.' )
-								? translate( 'No setup required. Easy to manage.' )
-								: null }
-						</h3>
-						<BillingIntervalToggle
-							intervalLength={ selectedIntervalLength }
-							onIntervalChange={ changeIntervalLength }
-						/>
-					</header>
-					<div className="professional-email-upsell__content">
-						{ isMobileView && pricingComponent }
-						<div className="professional-email-upsell__form">
-							<NewMailBoxList
-								cancelActionText={ translate( 'Skip for now' ) }
-								fieldLabelTexts={ {
-									[ FIELD_MAILBOX ]: translate( 'Enter email address' ),
-									[ FIELD_PASSWORD ]: translate( 'Set password' ),
-								} }
-								hiddenFieldNames={ [ FIELD_NAME, FIELD_PASSWORD_RESET_EMAIL ] }
-								isInitialMailboxPurchase
-								onCancel={ handleClickDecline }
-								onSubmit={ onSubmit }
-								provider={ EmailProvider.Titan }
-								selectedDomainName={ domainName }
-								showCancelButton
-								submitActionText={ translate( 'Add Professional Email' ) }
-							/>
-						</div>
-						<div className="professional-email-upsell__features">
-							{ ! isMobileView && pricingComponent }
-							<h2>{ translate( 'Why get Professional Email?' ) }</h2>
-							<ul className="professional-email-upsell__feature-list">
-								<ProfessionalEmailFeature>
-									{ translate( "Trusted email address that's truly yours" ) }
-								</ProfessionalEmailFeature>
-								<ProfessionalEmailFeature>
-									{ translate( 'Increase your credibility' ) }
-								</ProfessionalEmailFeature>
-								<ProfessionalEmailFeature>
-									{ translate( 'Build your brand with every email you send' ) }
-								</ProfessionalEmailFeature>
-								<ProfessionalEmailFeature>
-									{ translate( 'Reach your recipients’ primary inbox' ) }
-								</ProfessionalEmailFeature>
-							</ul>
-							<img
-								className="professional-email-upsell__titan-logo"
-								src={ poweredByTitanLogo }
-								alt={ translate( 'Powered by Titan', { textOnly: true } ) }
-							/>
-						</div>
-					</div>
-				</>
-			) }
+
+			{ isLoading ? <ProfessionalEmailUpsellPlaceholder /> : content }
 		</>
 	);
 };

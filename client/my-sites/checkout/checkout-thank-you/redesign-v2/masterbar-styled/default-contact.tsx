@@ -28,6 +28,7 @@ const ContactContainer = styled.div`
 		text-decoration: underline;
 		line-height: 20px;
 		font-size: 14px;
+		padding: 0;
 	}
 	.gridicon {
 		display: block;
