@@ -81,6 +81,19 @@ describe( 'CommandPalette', () => {
 		} );
 	} );
 
+	it( 'should close the command palette when Escape key is pressed', async () => {
+		renderCommandPalette();
+
+		waitFor( () => {
+			expect( screen.getByPlaceholderText( 'Search for commands' ) ).toBeInTheDocument();
+			fireEvent.keyDown( document, { key: 'Escape' } );
+		} );
+
+		waitFor( () => {
+			expect( screen.queryByPlaceholderText( 'Search for commands' ) ).toBeNull();
+		} );
+	} );
+
 	it( 'should return only "Get help" command as it matches label and "Send feedback" as it matches searchLabel; other commands are hidden', () => {
 		renderCommandPalette();
 
