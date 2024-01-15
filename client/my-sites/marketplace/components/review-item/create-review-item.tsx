@@ -4,7 +4,7 @@ import Card from '@automattic/components/src/card';
 import { CheckboxControl, TextareaControl } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import moment from 'moment';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import Gravatar from 'calypso/components/gravatar';
 import ReviewsRatingsStars from 'calypso/components/reviews-rating-stars/reviews-ratings-stars';
@@ -18,10 +18,11 @@ import './style.scss';
 
 type MarketplaceCreateReviewItemProps = {
 	forceShowThankYou?: number;
+	canPublishReview: boolean;
 } & ProductDefinitionProps;
 
 export function MarketplaceCreateReviewItem( props: MarketplaceCreateReviewItemProps ) {
-	const { productType, slug, forceShowThankYou = 0 } = props;
+	const { productType, slug, forceShowThankYou = 0, canPublishReview } = props;
 	const translate = useTranslate();
 	const currentUser = useSelector( getCurrentUser );
 	const [ content, setContent ] = useState< string >( '' );
@@ -29,6 +30,7 @@ export function MarketplaceCreateReviewItem( props: MarketplaceCreateReviewItemP
 	const [ errorMessage, setErrorMessage ] = useState( '' );
 	const [ showThankYouSection, setShowThankYouSection ] = useState( false );
 	const [ showContentArea, setShowContentArea ] = useState( false );
+	const [ cannotPublishReviewError, setCannotPublishReviewError ] = useState( '' );
 
 	const { data: userReviews, isFetching: isFetchingUserReviews } = useMarketplaceReviewsQuery( {
 		productType,
@@ -44,6 +46,18 @@ export function MarketplaceCreateReviewItem( props: MarketplaceCreateReviewItemP
 		setContent( '' );
 		setRating( 0 );
 	};
+
+	useEffect( () => {
+		if ( canPublishReview ) {
+			setCannotPublishReviewError( '' );
+		} else {
+			setCannotPublishReviewError(
+				translate(
+					'Only active users can leave a review. Please purchase a new subscription of the product to leave a review.'
+				)
+			);
+		}
+	}, [ canPublishReview ] );
 
 	const createReviewMutation = useCreateMarketplaceReviewMutation( { productType, slug } );
 	const createReview = () => {
@@ -104,7 +118,12 @@ export function MarketplaceCreateReviewItem( props: MarketplaceCreateReviewItemP
 							onSelectRating={ onSelectRating }
 						/>
 					</div>
-					{ showContentArea && (
+					{ showContentArea && cannotPublishReviewError && (
+						<Card className="marketplace-review-item__error-message" highlight="error">
+							{ cannotPublishReviewError }
+						</Card>
+					) }
+					{ showContentArea && ! cannotPublishReviewError && (
 						<>
 							<TextareaControl
 								rows={ 4 }
