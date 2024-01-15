@@ -199,5 +199,6 @@ export type DomainDiagnostics = {
 		};
 		is_using_wpcom_name_servers: boolean;
 		all_essential_email_dns_records_are_correct: boolean;
+		dismissed_email_dns_issues_notice: boolean;
 	};
 };
