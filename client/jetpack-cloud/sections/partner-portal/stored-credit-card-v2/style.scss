@@ -25,6 +25,7 @@
 	margin-block-start: 90px;
 	font-size: rem(24px);
 	font-weight: 700;
+	line-height: 1.5;
 
 	@include break-mobile {
 		font-size: rem(35px);
@@ -34,11 +35,13 @@
 
 .stored-credit-card-v2__card-info-heading {
 	font-size: rem(11px);
+	text-wrap: nowrap;
 }
 
 .stored-credit-card-v2__card-info-value {
 	font-size: rem(14px);
 	font-weight: 700;
+	line-height: 1;
 
 	@include break-mobile {
 		font-size: rem(18px);
