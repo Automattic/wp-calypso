@@ -15,6 +15,7 @@ const WrappedComparisonGrid = ( {
 	intent,
 	gridPlans,
 	useCheckPlanAvailabilityForPurchase,
+	recordTracksEvent,
 	allFeaturesList,
 	onUpgradeClick,
 	intervalType,
@@ -40,6 +41,7 @@ const WrappedComparisonGrid = ( {
 			selectedSiteId={ selectedSiteId }
 			gridPlans={ gridPlans }
 			useCheckPlanAvailabilityForPurchase={ useCheckPlanAvailabilityForPurchase }
+			recordTracksEvent={ recordTracksEvent }
 			allFeaturesList={ allFeaturesList }
 			coupon={ coupon }
 		>
@@ -67,6 +69,7 @@ const WrappedFeaturesGrid = ( props: FeaturesGridExternalProps ) => {
 		intent,
 		gridPlans,
 		useCheckPlanAvailabilityForPurchase,
+		recordTracksEvent,
 		allFeaturesList,
 		onUpgradeClick,
 		coupon,
@@ -96,6 +99,7 @@ const WrappedFeaturesGrid = ( props: FeaturesGridExternalProps ) => {
 			gridPlans={ gridPlans }
 			coupon={ coupon }
 			useCheckPlanAvailabilityForPurchase={ useCheckPlanAvailabilityForPurchase }
+			recordTracksEvent={ recordTracksEvent }
 			allFeaturesList={ allFeaturesList }
 		>
 			<FeaturesGrid
