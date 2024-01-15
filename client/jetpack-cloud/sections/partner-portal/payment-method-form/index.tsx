@@ -7,7 +7,13 @@ import {
 	useStripeSetupIntentId,
 } from '@automattic/calypso-stripe';
 import { Button } from '@automattic/components';
-import { CheckoutProvider, CheckoutFormSubmit } from '@automattic/composite-checkout';
+import {
+	CheckoutProvider,
+	CheckoutFormSubmit,
+	useFormStatus,
+	FormStatus,
+	PaymentMethod,
+} from '@automattic/composite-checkout';
 import { isValueTruthy } from '@automattic/wpcom-checkout';
 import { CardElement, useElements } from '@stripe/react-stripe-js';
 import { useSelect } from '@wordpress/data';
@@ -131,12 +137,6 @@ function PaymentMethodForm() {
 	const { issueLicenses } = useIssueLicenses();
 
 	useReturnUrl( ! paymentMethodRequired );
-
-	const onGoToPaymentMethods = () => {
-		reduxDispatch(
-			recordTracksEvent( 'calypso_partner_portal_payment_method_card_go_back_click' )
-		);
-	};
 
 	const handleChangeError = useCallback(
 		( { transactionError }: { transactionError: string | null } ) => {
@@ -281,37 +281,79 @@ function PaymentMethodForm() {
 			<div className="payment-method-form">
 				<h1 className="payment-method-form__title">{ translate( 'Credit card details' ) } </h1>
 
-				<div className="payment-method-form__main">
-					{ 0 === paymentMethods.length && <CreditCardLoading /> }
+				<PaymentMethodFormMain
+					paymentMethods={ paymentMethods }
+					useAsPrimaryPaymentMethod={ useAsPrimaryPaymentMethod }
+				/>
 
-					{ paymentMethods && paymentMethods[ 0 ] && paymentMethods[ 0 ].activeContent }
-
-					{ 0 < paymentMethods.length && useAsPrimaryPaymentMethod && (
-						<p className="payment-method-form__notice">
-							<Icon className="payment-method-form__notice-icon" size={ 20 } icon={ info } />
-
-							{ translate(
-								'By adding your primary payment method, you authorize automatic monthly charges for your active licenses.'
-							) }
-						</p>
-					) }
-				</div>
-
-				<div className="payment-method-form__footer">
-					<Button
-						className="payment-method-form__back-button"
-						href={ getPreviousPageLink() }
-						disabled={ isStripeLoading || ! isIssueAndAssignLicensesReady }
-						onClick={ onGoToPaymentMethods }
-					>
-						{ translate( 'Go back' ) }
-					</Button>
-					<span className="payment-method-form__submit-button">
-						<CheckoutFormSubmit />
-					</span>
-				</div>
+				<PaymentMethodFormFooter
+					disableBackButton={ isStripeLoading || ! isIssueAndAssignLicensesReady }
+					backButtonHref={ getPreviousPageLink() }
+				/>
 			</div>
 		</CheckoutProvider>
+	);
+}
+
+function PaymentMethodFormMain( {
+	paymentMethods,
+	useAsPrimaryPaymentMethod,
+}: {
+	paymentMethods: PaymentMethod[];
+	useAsPrimaryPaymentMethod: boolean;
+} ) {
+	const translate = useTranslate();
+
+	return (
+		<div className="payment-method-form__main">
+			{ 0 === paymentMethods.length && <CreditCardLoading /> }
+
+			{ paymentMethods && paymentMethods[ 0 ] && paymentMethods[ 0 ].activeContent }
+
+			{ 0 < paymentMethods.length && useAsPrimaryPaymentMethod && (
+				<p className="payment-method-form__notice">
+					<Icon className="payment-method-form__notice-icon" size={ 20 } icon={ info } />
+
+					{ translate(
+						'By adding your primary payment method, you authorize automatic monthly charges for your active licenses.'
+					) }
+				</p>
+			) }
+		</div>
+	);
+}
+
+function PaymentMethodFormFooter( {
+	disableBackButton,
+	backButtonHref,
+}: {
+	disableBackButton: boolean;
+	backButtonHref: string;
+} ) {
+	const translate = useTranslate();
+	const dispatch = useDispatch();
+
+	const onGoToPaymentMethods = () => {
+		dispatch( recordTracksEvent( 'calypso_partner_portal_payment_method_card_go_back_click' ) );
+	};
+
+	const { formStatus } = useFormStatus();
+
+	return (
+		<div className="payment-method-form__footer">
+			<Button
+				className="payment-method-form__back-button"
+				href={ backButtonHref }
+				disabled={ formStatus !== FormStatus.READY || disableBackButton }
+				onClick={ onGoToPaymentMethods }
+			>
+				{ translate( 'Go back' ) }
+			</Button>
+
+			<span className="payment-method-form__submit-button">
+				<CheckoutFormSubmit />
+			</span>
+		</div>
 	);
 }
 

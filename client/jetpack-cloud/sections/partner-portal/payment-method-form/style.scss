@@ -16,11 +16,15 @@
 }
 
 .payment-method-form__submit-button {
-	flex-grow: 1;
-
 	.checkout-steps__submit-button-wrapper {
 		padding: 0;
 	}
+}
+
+.payment-method-form__back-button {
+	display: flex;
+	align-items: center;
+	justify-content: center;
 }
 
 .payment-method-form__notice,
