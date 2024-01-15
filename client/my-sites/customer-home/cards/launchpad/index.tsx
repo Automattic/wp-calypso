@@ -1,8 +1,11 @@
 import { Button, CircularProgressBar, Gridicon } from '@automattic/components';
-import { useLaunchpadDismisser, useSortedLaunchpadTasks } from '@automattic/data-stores';
+import {
+	TemporaryDismiss,
+	useLaunchpadDismisser,
+	useSortedLaunchpadTasks,
+} from '@automattic/data-stores';
 import { Launchpad, type Task } from '@automattic/launchpad';
 import { useTranslate } from 'i18n-calypso';
-import moment, { Duration } from 'moment';
 import { FC } from 'react';
 import EllipsisMenu from 'calypso/components/ellipsis-menu';
 import PopoverMenuItem from 'calypso/components/popover-menu/item';
@@ -40,9 +43,9 @@ const CustomerHomeLaunchpad: FC< CustomerHomeLaunchpadProps > = ( {
 		return null;
 	}
 
-	const temporaryDismiss = ( duration: Duration ) => {
+	const temporaryDismiss = ( { dismissBy }: Pick< TemporaryDismiss, 'dismissBy' > ) => {
 		dismiss( {
-			dismissedUntil: moment().add( duration ).utc().unix(),
+			dismissBy,
 		} );
 	};
 
@@ -64,12 +67,10 @@ const CustomerHomeLaunchpad: FC< CustomerHomeLaunchpadProps > = ( {
 						/>
 						{ isDismissible && (
 							<EllipsisMenu position="bottom" toggleTitle={ translate( 'Dismiss settings' ) }>
-								<PopoverMenuItem onClick={ () => temporaryDismiss( moment.duration( 1, 'days' ) ) }>
+								<PopoverMenuItem onClick={ () => temporaryDismiss( { dismissBy: '+ 1 day' } ) }>
 									{ translate( 'Hide for a day' ) }
 								</PopoverMenuItem>
-								<PopoverMenuItem
-									onClick={ () => temporaryDismiss( moment.duration( 1, 'weeks' ) ) }
-								>
+								<PopoverMenuItem onClick={ () => temporaryDismiss( { dismissBy: '+ 1 week' } ) }>
 									{ translate( 'Hide for a week' ) }
 								</PopoverMenuItem>
 								<PopoverMenuItem onClick={ permanentDismiss }>

@@ -174,19 +174,20 @@ export const updateLaunchpadSettings = (
 		  } as APIFetchOptions );
 };
 
-interface PermanentDismiss {
+export interface PermanentDismiss {
 	isDismissed: boolean;
 }
-interface TemporaryDismiss {
-	dismissedUntil: number;
+export interface TemporaryDismiss {
+	dismissBy: '+ 1 day' | '+ 1 week';
 }
 
 type DismissSettings = PermanentDismiss | TemporaryDismiss;
 
 const isPermanentDismiss = ( settings: DismissSettings ): settings is PermanentDismiss =>
 	'isDismissed' in settings;
+
 const isTemporaryDismiss = ( settings: DismissSettings ): settings is TemporaryDismiss =>
-	'dismissedUntil' in settings;
+	'dismissBy' in settings;
 
 const getDismissParams = ( settings: DismissSettings ) => {
 	if ( isPermanentDismiss( settings ) ) {
@@ -197,10 +198,11 @@ const getDismissParams = ( settings: DismissSettings ) => {
 
 	if ( isTemporaryDismiss( settings ) ) {
 		return {
-			dismissed_until: settings.dismissedUntil,
+			dismiss_by: settings.dismissBy,
 		};
 	}
 };
+
 export const useLaunchpadDismisser = ( siteSlug: SiteSlug, checklistSlug: string ) => {
 	const queryClient = useQueryClient();
 	const key = getKey( siteSlug, checklistSlug );
@@ -222,6 +224,7 @@ export const useLaunchpadDismisser = ( siteSlug: SiteSlug, checklistSlug: string
 				...previous,
 				is_dismissed: true,
 			} );
+
 			return { previous };
 		},
 		onSuccess: () => {
