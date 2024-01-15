@@ -52,14 +52,13 @@ export default function SingleSiteUpsellLightbox( {
 				product: manageProduct.slug,
 			} )
 		);
-		onHideLicenseInfo();
 		submitForm( [
 			{
 				...manageProduct,
 				quantity: 1,
 			},
 		] );
-	}, [ manageProduct, dispatch, onHideLicenseInfo, submitForm ] );
+	}, [ manageProduct, dispatch, submitForm ] );
 
 	const learnMoreLink = localizeUrl(
 		'https://jetpack.com/support/jetpack-manage-instructions/jetpack-manage-billing-payment-faqs'
