@@ -3,13 +3,13 @@ import { isEnabled } from '@automattic/calypso-config';
 import { PLAN_PREMIUM } from '@automattic/calypso-products';
 import page from '@automattic/calypso-router';
 import { Gridicon, PlanPrice } from '@automattic/components';
+import { Plans } from '@automattic/data-stores';
 import { Button, Modal } from '@wordpress/components';
 import { close } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { useDispatch } from 'react-redux';
 import QueryPlans from 'calypso/components/data/query-plans';
 import TrackComponentView from 'calypso/lib/analytics/track-component-view';
-import usePricingMetaForGridPlans from 'calypso/my-sites/plans-features-main/hooks/data-store/use-pricing-meta-for-grid-plans';
 import useCheckPlanAvailabilityForPurchase from 'calypso/my-sites/plans-features-main/hooks/use-check-plan-availability-for-purchase';
 import { useSelector } from 'calypso/state';
 import { getPlanBySlug } from 'calypso/state/plans/selectors';
@@ -24,7 +24,7 @@ export default function StatsUpsellModal( { siteId }: { siteId: number } ) {
 	const dispatch = useDispatch();
 	const plan = useSelector( ( state ) => getPlanBySlug( state, PLAN_PREMIUM ) );
 	const selectedSiteId = useSelector( ( state ) => getSelectedSiteId( state ) );
-	const planMonthly = usePricingMetaForGridPlans( {
+	const planMonthly = Plans.usePricingMetaForGridPlans( {
 		planSlugs: [ PLAN_PREMIUM ],
 		selectedSiteId,
 		coupon: undefined,
