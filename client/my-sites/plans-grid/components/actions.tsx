@@ -67,8 +67,7 @@ const SignupFlowPlanFeatureActionButton = ( {
 	isLargeCurrency,
 	hasFreeTrialPlan,
 	handleUpgradeButtonClick,
-	busy,
-	postButtonText,
+	planActionOverrides,
 }: {
 	planSlug: PlanSlug;
 	planTitle: TranslateResult;
@@ -77,10 +76,13 @@ const SignupFlowPlanFeatureActionButton = ( {
 	isLargeCurrency: boolean;
 	hasFreeTrialPlan: boolean;
 	handleUpgradeButtonClick: ( isFreeTrialPlan?: boolean ) => void;
-	busy?: boolean;
-	postButtonText?: TranslateResult | false | undefined;
+	planActionOverrides?: PlanActionOverrides;
 } ) => {
 	const translate = useTranslate();
+	const busy =
+		isFreePlan( planSlug ) && planActionOverrides?.loggedInFreePlan?.status === 'blocked';
+	const postButtonText =
+		isBusinessPlan( planSlug ) && planActionOverrides?.trialAlreadyUsed?.postButtonText;
 
 	let btnText = translate( 'Get %(plan)s', {
 		args: {
@@ -498,12 +500,7 @@ const PlanFeaturesActionsButton: React.FC< PlanFeaturesActionsButtonProps > = ( 
 				isLargeCurrency={ !! isLargeCurrency }
 				hasFreeTrialPlan={ !! freeTrialPlanSlug }
 				handleUpgradeButtonClick={ handleUpgradeButtonClick }
-				busy={
-					isFreePlan( planSlug ) && planActionOverrides?.loggedInFreePlan?.status === 'blocked'
-				}
-				postButtonText={
-					isBusinessPlan( planSlug ) && planActionOverrides?.trialAlreadyUsed?.postButtonText
-				}
+				planActionOverrides={ planActionOverrides }
 			/>
 		);
 	}
