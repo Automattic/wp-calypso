@@ -80,6 +80,28 @@ function WrappedProductsSelector( props ) {
 }
 
 describe( 'ProductsSelector', () => {
+	const getAnyProductCheckbox = () =>
+		screen.getByRole( 'menuitemcheckbox', { name: 'Any product' } );
+	const getYearlyProductCheckbox = () =>
+		screen.getByRole( 'menuitemcheckbox', {
+			name: 'Yearly Subscription : $40.00 / year',
+		} );
+	const getMonthlyProductCheckbox = () =>
+		screen.getByRole( 'menuitemcheckbox', {
+			name: 'Monthly Subscription : $5.00 / month',
+		} );
+	const getButtonText = ( selectedCount ) => {
+		if ( selectedCount > 0 ) {
+			if ( selectedCount > 1 ) {
+				return selectedCount + ' products selected.';
+			}
+			return '1 product selected';
+		}
+		return 'Any product';
+	};
+	const getDropdownButton = ( selectedCount ) =>
+		screen.getByRole( 'button', { name: getButtonText( selectedCount ) } );
+
 	beforeEach( () => {
 		jest.clearAllMocks();
 
@@ -93,14 +115,22 @@ describe( 'ProductsSelector', () => {
 		const setEditedPlanIdsAllowList = ( list ) => {
 			editedPlanIdsAllowList = list;
 		};
-		const { container } = render(
+		render(
 			<WrappedProductsSelector
 				onSelectedPlanIdsChange={ ( list ) => setEditedPlanIdsAllowList( list ) }
 				initialSelectedList={ editedPlanIdsAllowList }
 				allowMultiple={ true }
 			/>
 		);
-		expect( container ).toMatchSnapshot();
+
+		act( () => getDropdownButton( editedPlanIdsAllowList.length ).click() );
+		const anyProductCheckbox = getAnyProductCheckbox();
+		const yearlyProductCheckbox = getYearlyProductCheckbox();
+		const monthlyProductCheckbox = getMonthlyProductCheckbox();
+
+		expect( anyProductCheckbox ).toBeChecked();
+		expect( yearlyProductCheckbox ).toBeChecked();
+		expect( monthlyProductCheckbox ).toBeChecked();
 	} );
 
 	test( 'should render with 1 product selected when 1 product has been selected', () => {
@@ -108,14 +138,15 @@ describe( 'ProductsSelector', () => {
 		const setEditedPlanIdsAllowList = ( list ) => {
 			editedPlanIdsAllowList = list;
 		};
-		const { container } = render(
+		render(
 			<WrappedProductsSelector
 				onSelectedPlanIdsChange={ ( list ) => setEditedPlanIdsAllowList( list ) }
 				initialSelectedList={ editedPlanIdsAllowList }
 				allowMultiple={ true }
 			/>
 		);
-		expect( container ).toMatchSnapshot();
+		// Expect the button with the correct name to be rendered.
+		expect( getDropdownButton( editedPlanIdsAllowList.length ) ).not.toBeNull();
 	} );
 
 	test( 'should render with 2 products selected when 2 products have been selected', () => {
@@ -123,14 +154,15 @@ describe( 'ProductsSelector', () => {
 		const setEditedPlanIdsAllowList = ( list ) => {
 			editedPlanIdsAllowList = list;
 		};
-		const { container } = render(
+		render(
 			<WrappedProductsSelector
 				onSelectedPlanIdsChange={ ( list ) => setEditedPlanIdsAllowList( list ) }
 				initialSelectedList={ editedPlanIdsAllowList }
 				allowMultiple={ true }
 			/>
 		);
-		expect( container ).toMatchSnapshot();
+		// Expect the button with the correct name to be rendered.
+		expect( getDropdownButton( editedPlanIdsAllowList.length ) ).not.toBeNull();
 	} );
 
 	test( 'clicking the button should show a dropdown with selected items selected', () => {
@@ -146,17 +178,10 @@ describe( 'ProductsSelector', () => {
 			/>
 		);
 
-		expect( document.body ).toMatchSnapshot();
-
-		act( () => screen.getByRole( 'button', { name: '2 products selected.' } ).click() );
-
-		const anyProductCheckbox = screen.getByRole( 'menuitemcheckbox', { name: 'Any product' } );
-		const yearlyProductCheckbox = screen.getByRole( 'menuitemcheckbox', {
-			name: 'Yearly Subscription : $40.00 / year',
-		} );
-		const monthlyProductCheckbox = screen.getByRole( 'menuitemcheckbox', {
-			name: 'Monthly Subscription : $5.00 / month',
-		} );
+		act( () => getDropdownButton( editedPlanIdsAllowList.length ).click() );
+		const anyProductCheckbox = getAnyProductCheckbox();
+		const yearlyProductCheckbox = getYearlyProductCheckbox();
+		const monthlyProductCheckbox = getMonthlyProductCheckbox();
 
 		// Only the monthly and yearly products are checked.
 		// Despite this being all current products, "Any product" is not checked, as "Any product" means "Do not limit by product".
