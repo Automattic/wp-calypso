@@ -8,7 +8,7 @@ import {
 	GROUP_JETPACK,
 	GROUP_WPCOM,
 } from '@automattic/calypso-products';
-import { Button, Card, Gridicon } from '@automattic/components';
+import { Button, Card, Gridicon, PlanPrice } from '@automattic/components';
 import { isMobile } from '@automattic/viewport';
 import classNames from 'classnames';
 import DOMPurify from 'dompurify';
@@ -21,7 +21,6 @@ import JetpackLogo from 'calypso/components/jetpack-logo';
 import TrackComponentView from 'calypso/lib/analytics/track-component-view';
 import { preventWidows } from 'calypso/lib/formatting';
 import { addQueryArgs } from 'calypso/lib/url';
-import PlanPrice from 'calypso/my-sites/plan-price';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import isSiteWPForTeams from 'calypso/state/selectors/is-site-wpforteams';
