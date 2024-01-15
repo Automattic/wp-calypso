@@ -2,6 +2,8 @@ import { FEATURE_SFTP, PLAN_BUSINESS, WPCOM_PLANS, getPlan } from '@automattic/c
 import { useTranslate } from 'i18n-calypso';
 import UpsellNudge from 'calypso/blocks/upsell-nudge';
 import { preventWidows } from 'calypso/lib/formatting';
+import { useSelector } from 'calypso/state';
+import { isUserEligibleForFreeHostingTrial } from 'calypso/state/selectors/is-user-eligible-for-free-hosting-trial';
 import iconCloud from './icons/icon-cloud.svg';
 import iconComments from './icons/icon-comments.svg';
 import iconDatabase from './icons/icon-database.svg';
@@ -47,6 +49,9 @@ export function HostingUpsellNudge( { siteId, targetPlan }: HostingUpsellNudgePr
 	const href = targetPlan ? targetPlan.href : `/checkout/${ siteId }/business`;
 	const plan = targetPlan ? targetPlan.plan : PLAN_BUSINESS;
 	const title = targetPlan ? targetPlan.title : titleText;
+	const isEligibleForTrial = useSelector( isUserEligibleForFreeHostingTrial );
+	const secondaryCallToAction = isEligibleForTrial && translate( 'Start for free' );
+	const secondaryHref = '/setup/new-hosted-site/trialAcknowledge?source=hosting-configuration';
 
 	return (
 		<UpsellNudge
@@ -57,8 +62,8 @@ export function HostingUpsellNudge( { siteId, targetPlan }: HostingUpsellNudgePr
 			secondaryEvent="calypso_hosting_configuration_upgrade_free_trial_click"
 			href={ href }
 			callToAction={ callToAction }
-			secondaryCallToAction={ translate( 'Try for free' ) }
-			secondaryHref="/setup/new-hosted-site/trialAcknowledge?source=hosting-configuration"
+			secondaryCallToAction={ secondaryCallToAction }
+			secondaryHref={ secondaryHref }
 			plan={ plan }
 			feature={ feature }
 			showIcon={ true }
