@@ -9,6 +9,7 @@ import LayoutHeader, {
 } from 'calypso/jetpack-cloud/components/layout/header';
 import LayoutTop from 'calypso/jetpack-cloud/components/layout/top';
 import PaymentMethodForm from '../../payment-method-form';
+import PaymentMethodStripeInfo from '../../payment-method-stripe-info';
 
 import './style.scss';
 
@@ -35,8 +36,12 @@ export default function PaymentMethodListV2() {
 
 			<LayoutBody>
 				<div className="payment-method-add__content">
-					<Card className="payment-method-add__card">
+					<Card className="payment-method-add__card payment-form">
 						<PaymentMethodForm />
+					</Card>
+
+					<Card className="payment-method-add__card aside">
+						<PaymentMethodStripeInfo />
 					</Card>
 				</div>
 			</LayoutBody>
