@@ -1,4 +1,4 @@
-import { Button, FormInputValidation, Gridicon } from '@automattic/components';
+import { Button, FormInputValidation, Gridicon, SegmentedControl } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import { FunctionComponent, useState, FormEventHandler } from 'react';
 import FormInputCheckbox from 'calypso/components/forms/form-checkbox';
@@ -10,7 +10,6 @@ import FormSettingExplanation from 'calypso/components/forms/form-setting-explan
 import FormTextInput from 'calypso/components/forms/form-text-input';
 import FormTextArea from 'calypso/components/forms/form-textarea';
 import InfoPopover from 'calypso/components/info-popover';
-import SegmentedControl from 'calypso/components/segmented-control';
 import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { FormState, FormMode, FormErrors, INITIAL_FORM_INTERACTION } from '../form';
