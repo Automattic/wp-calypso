@@ -139,6 +139,19 @@ export default function DomainDiagnosticsCard( { domain }: { domain: ResponseDom
 		);
 	};
 
+	const noticeText =
+		'If you use this domain name to send email from your WordPress.com website, the following email records are required.';
+	// TODO: Add the corresponding support doc link when it's published
+	// const supportLink = '';
+	// const noticeText = createInterpolateElement(
+	// 	translate(
+	// 		'If you use this domain name to send email from your WordPress.com website, the following email records are required. <a>Learn more</a>.'
+	// 	),
+	// 	{
+	// 		a: createElement( 'a', { href: localizeUrl( supportLink ) } ),
+	// 	}
+	// );
+
 	return (
 		<Accordion
 			className="domain-diagnostics-card__accordion"
@@ -148,11 +161,7 @@ export default function DomainDiagnosticsCard( { domain }: { domain: ResponseDom
 			expanded
 		>
 			<div>
-				<Notice
-					status="is-warning"
-					text={ translate( "There are some issues with your domain's email DNS settings." ) }
-					showDismiss={ false }
-				/>
+				<Notice status="is-warning" text={ noticeText } showDismiss={ false } />
 				<ul>{ recordsToCheck.map( renderDiagnosticForRecord ) }</ul>
 				{ emailDnsDiagnostics.is_using_wpcom_name_servers
 					? renderFixButton()
