@@ -36,7 +36,7 @@
 		"@automattic/calypso-babel-config": "workspace:^",
 		"@automattic/webpack-rtl-plugin": "workspace:^",
 		"@babel/compat-data": "^7.23.5",
-		"@babel/core": "^7.23.6",
+		"@babel/core": "^7.23.7",
 		"@types/webpack-env": "^1.18.4",
 		"@wordpress/browserslist-config": "^5.31.0",
 		"@wordpress/dependency-extraction-webpack-plugin": "^4.31.0",
