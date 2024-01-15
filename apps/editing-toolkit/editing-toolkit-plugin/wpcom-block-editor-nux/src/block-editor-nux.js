@@ -16,7 +16,6 @@ import { HasSeenVideoCelebrationModalProvider } from '../../dotcom-fse/lib/video
 import { BloggingPromptsModal } from './blogging-prompts-modal';
 import DraftPostModal from './draft-post-modal';
 import FirstPostPublishedModal from './first-post-published-modal';
-import LivePreviewModal from './live-preview-modal';
 import PurchaseNotice from './purchase-notice';
 import SellerCelebrationModal from './seller-celebration-modal';
 import PostPublishedSharingModal from './sharing-modal';
@@ -128,7 +127,6 @@ registerPlugin( 'wpcom-block-editor-nux', {
 					<SellerCelebrationModal />
 					<PurchaseNotice />
 					<VideoPressCelebrationModal />
-					<LivePreviewModal />
 					<BloggingPromptsModal />
 				</ShouldShowFirstPostPublishedModalProvider>
 			</HasSeenVideoCelebrationModalProvider>
