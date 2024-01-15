@@ -1,20 +1,20 @@
-import { getThemeIdFromStylesheet } from '@automattic/data-stores';
 import wpcom from 'calypso/lib/wp';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
+import { getCanonicalTheme } from 'calypso/state/themes/selectors';
 import type { ActiveTheme, GlobalStyles } from '@automattic/data-stores';
 import type { CalypsoDispatch } from 'calypso/state/types';
 import type { AppState } from 'calypso/types';
 
-export function getGlobalStylesId( siteId: number, stylesheet: string ) {
+export function getGlobalStylesId( siteId: number, themeId: string ) {
 	return async ( dispatch: CalypsoDispatch, getState: () => AppState ) => {
 		const state = getState();
-		const themeId = isJetpackSite( state, siteId )
-			? getThemeIdFromStylesheet( stylesheet )
-			: stylesheet;
+		const theme = getCanonicalTheme( state, siteId, themeId );
+		const stylesheet = theme?.stylesheet || themeId;
+		const wpThemePreview = isJetpackSite( state, siteId ) ? themeId : stylesheet;
 		const themes: ActiveTheme[] = await wpcom.req.get( {
 			path: `/sites/${ encodeURIComponent( siteId ) }/themes?${ new URLSearchParams( {
 				status: 'active',
-				wp_theme_preview: themeId,
+				wp_theme_preview: wpThemePreview,
 			} ).toString() }`,
 			apiNamespace: 'wp/v2',
 		} );
