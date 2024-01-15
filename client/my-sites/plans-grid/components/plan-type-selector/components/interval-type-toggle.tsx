@@ -16,23 +16,34 @@ export const IntervalTypeToggle: React.FunctionComponent< IntervalTypeProps > = 
 		isInSignup,
 		eligibleForWpcomMonthlyPlans,
 		hideDiscountLabel,
-		showBiennialToggle,
 		currentSitePlanSlug,
 		usePricingMetaForGridPlans,
+		displayedIntervals,
+		useCheckPlanAvailabilityForPurchase,
 		title,
 		coupon,
+		selectedSiteId,
 	} = props;
+	const showBiennialToggle = displayedIntervals.includes( '2yearly' );
 	const [ spanRef, setSpanRef ] = useState< HTMLSpanElement >();
 	const segmentClasses = classNames( 'price-toggle', {
 		'is-signup': isInSignup,
 	} );
-	const popupIsVisible = Boolean( intervalType === 'monthly' && isInSignup && props.plans.length );
-	const maxDiscount = useMaxDiscount( props.plans, usePricingMetaForGridPlans );
+	const popupIsVisible = Boolean( intervalType === 'monthly' && props.plans.length );
+	const maxDiscount = useMaxDiscount(
+		props.plans,
+		usePricingMetaForGridPlans,
+		useCheckPlanAvailabilityForPurchase,
+		selectedSiteId
+	);
+	// TODO clk pricing
 	const pricingMeta = usePricingMetaForGridPlans( {
 		planSlugs: currentSitePlanSlug ? [ currentSitePlanSlug ] : [],
 		withoutProRatedCredits: true,
-		storageAddOns: null,
 		coupon,
+		selectedSiteId,
+		useCheckPlanAvailabilityForPurchase,
+		storageAddOns: null,
 	} );
 	const currentPlanBillingPeriod = currentSitePlanSlug
 		? pricingMeta?.[ currentSitePlanSlug ]?.billingPeriod

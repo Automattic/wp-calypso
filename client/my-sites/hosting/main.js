@@ -193,7 +193,7 @@ const Hosting = ( props ) => {
 		isJetpack,
 	} = props;
 
-	const { isTransferring, transferStatus } = useAtomicTransferQuery( siteSlug, {
+	const { isTransferring, transferStatus } = useAtomicTransferQuery( siteId, {
 		refetchInterval: 5000,
 	} );
 

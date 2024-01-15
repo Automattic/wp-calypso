@@ -331,7 +331,6 @@ type ComparisonGridHeaderProps = {
 	onPlanChange: ( currentPlan: PlanSlug, event: ChangeEvent< HTMLSelectElement > ) => void;
 	currentSitePlanSlug?: string | null;
 	onUpgradeClick: ( planSlug: PlanSlug ) => void;
-	siteId?: number | null;
 	planActionOverrides?: PlanActionOverrides;
 	selectedPlan?: string;
 	showRefundPeriod?: boolean;
@@ -481,7 +480,6 @@ const ComparisonGridHeader = forwardRef< HTMLDivElement, ComparisonGridHeaderPro
 			onPlanChange,
 			currentSitePlanSlug,
 			onUpgradeClick,
-			siteId,
 			planActionOverrides,
 			selectedPlan,
 			isHiddenInMobile,
@@ -492,6 +490,7 @@ const ComparisonGridHeader = forwardRef< HTMLDivElement, ComparisonGridHeaderPro
 		ref
 	) => {
 		const translate = useTranslate();
+		const { selectedSiteId } = usePlansGridContext();
 		const allVisible = visibleGridPlans.length === displayedGridPlans.length;
 		const { prices, currencyCode } = usePlanPricingInfoFromGridPlans( {
 			gridPlans: visibleGridPlans,
@@ -503,7 +502,7 @@ const ComparisonGridHeader = forwardRef< HTMLDivElement, ComparisonGridHeaderPro
 			currencyCode: currencyCode || 'USD',
 		} );
 		const isPlanUpgradeCreditEligible = useIsPlanUpgradeCreditVisible(
-			siteId ?? 0,
+			selectedSiteId ?? 0,
 			displayedGridPlans.map( ( { planSlug } ) => planSlug )
 		);
 
@@ -542,7 +541,6 @@ const ComparisonGridHeader = forwardRef< HTMLDivElement, ComparisonGridHeaderPro
 						isLargeCurrency={ isLargeCurrency }
 						planActionOverrides={ planActionOverrides }
 						selectedPlan={ selectedPlan }
-						siteId={ siteId }
 						showRefundPeriod={ showRefundPeriod }
 						isStuck={ isStuck }
 					/>
@@ -957,7 +955,6 @@ const ComparisonGrid = ( {
 	isLaunchPage,
 	currentSitePlanSlug,
 	onUpgradeClick,
-	siteId,
 	planActionOverrides,
 	selectedPlan,
 	selectedFeature,
@@ -1100,7 +1097,6 @@ const ComparisonGrid = ( {
 				>
 					{ ( isStuck: boolean ) => (
 						<ComparisonGridHeader
-							siteId={ siteId }
 							displayedGridPlans={ displayedGridPlans }
 							visibleGridPlans={ visibleGridPlans }
 							isInSignup={ isInSignup }
@@ -1140,7 +1136,6 @@ const ComparisonGrid = ( {
 					onPlanChange={ onPlanChange }
 					currentSitePlanSlug={ currentSitePlanSlug }
 					onUpgradeClick={ onUpgradeClick }
-					siteId={ siteId }
 					planActionOverrides={ planActionOverrides }
 					selectedPlan={ selectedPlan }
 					showRefundPeriod={ showRefundPeriod }

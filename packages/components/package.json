@@ -40,7 +40,6 @@
 		"@wordpress/react-i18n": "^3.46.0",
 		"canvas-confetti": "^1.6.0",
 		"classnames": "^2.3.2",
-		"framer-motion": "6.2.8",
 		"gridicons": "^3.4.2",
 		"i18n-calypso": "workspace:^",
 		"lodash": "^4.17.21",

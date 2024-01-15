@@ -555,7 +555,13 @@ const siteSetupFlow: Flow = {
 		};
 
 		const goToStep = ( step: string ) => {
-			navigate( step );
+			switch ( step ) {
+				case 'import':
+					return navigate( `import?siteSlug=${ siteSlug }` );
+
+				default:
+					return navigate( step );
+			}
 		};
 
 		return { goNext, goBack, goToStep, submit, exitFlow };

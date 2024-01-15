@@ -5,6 +5,7 @@ import type {
 	PlansIntent,
 	UsePricingMetaForGridPlans,
 } from './hooks/npm-ready/data-store/use-grid-plans';
+import type { UseCheckPlanAvailabilityForPurchase } from '../plans-features-main/hooks/data-store/use-pricing-meta-for-grid-plans';
 import type { FeatureList, PlanSlug, WPComStorageAddOnSlug } from '@automattic/calypso-products';
 import type { MinimalRequestCartProduct } from '@automattic/shopping-cart';
 import type { LocalizeProps, TranslateResult } from 'i18n-calypso';
@@ -39,7 +40,7 @@ export interface CommonGridProps {
 	/**
 	 * Site id may not be used in ComparisonGrid, but need to be investigated further
 	 */
-	siteId?: number | null;
+	selectedSiteId?: number | null;
 	isInSignup: boolean;
 	isLaunchPage?: boolean | null;
 	isReskinned?: boolean;
@@ -81,7 +82,9 @@ export type GridContextProps = {
 	gridPlans: GridPlan[];
 	allFeaturesList: FeatureList;
 	intent?: PlansIntent;
+	selectedSiteId?: number | null;
 	usePricingMetaForGridPlans: UsePricingMetaForGridPlans;
+	useCheckPlanAvailabilityForPurchase: UseCheckPlanAvailabilityForPurchase;
 	children: React.ReactNode;
 	coupon?: string;
 };

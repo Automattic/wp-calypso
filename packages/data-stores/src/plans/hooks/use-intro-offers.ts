@@ -8,8 +8,8 @@ interface IntroOffersIndex {
 }
 
 interface Props {
-	siteId?: string | number | null;
-	coupon?: string;
+	siteId: string | number | null | undefined;
+	coupon: string | undefined;
 }
 
 /**

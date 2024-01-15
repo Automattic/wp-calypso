@@ -186,7 +186,7 @@ export function generateFlows( {
 			optionalDependenciesInQuery: [ 'coupon' ],
 			props: {
 				plans: {
-					showBiennialToggle: true,
+					displayedIntervals: [ 'yearly', '2yearly', '3yearly' ],
 					/**
 					 * This intent is geared towards customizations related to the paid media flow
 					 * Current customizations are as follows

@@ -9,16 +9,23 @@ import type { CountryListItem, ContactDetailsType } from '@automattic/wpcom-chec
 const BillingFormFields = styled.div`
 	margin-bottom: 16px;
 
-	.form-input-validation {
+	& .form-input-validation {
 		padding: 6px 6px 11px;
 	}
 
-	.form-input-validation .gridicon {
+	& .form-input-validation .gridicon,
+	& .form-input-validation svg {
 		float: none;
 		margin-left: 0;
+		margin-right: 2px;
 		width: 18px;
 		vertical-align: text-top;
 		height: 18px;
+
+		.rtl & {
+			margin-left: 2px;
+			margin-right: 0;
+		}
 	}
 `;
 

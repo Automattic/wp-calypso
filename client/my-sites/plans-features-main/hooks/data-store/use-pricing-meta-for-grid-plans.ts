@@ -6,42 +6,32 @@ import {
 } from '@automattic/calypso-products';
 import { Plans, WpcomPlansUI, Purchases } from '@automattic/data-stores';
 import { useSelect } from '@wordpress/data';
-import { useSelector } from 'react-redux';
-import getSelectedSiteId from 'calypso/state/ui/selectors/get-selected-site-id';
-import useCheckPlanAvailabilityForPurchase from '../use-check-plan-availability-for-purchase';
-import type { AddOnMeta } from '@automattic/data-stores';
 import type {
 	UsePricingMetaForGridPlans,
 	PricingMetaForGridPlan,
 } from 'calypso/my-sites/plans-grid/hooks/npm-ready/data-store/use-grid-plans';
 
-interface Props {
-	planSlugs: PlanSlug[];
-	withoutProRatedCredits?: boolean;
-	storageAddOns?: ( AddOnMeta | null )[] | null;
-	coupon?: string;
-}
-
 function getTotalPrice( planPrice: number | null | undefined, addOnPrice = 0 ): number | null {
 	return null !== planPrice && undefined !== planPrice ? planPrice + addOnPrice : null;
 }
 
+export type UseCheckPlanAvailabilityForPurchase = ( { planSlugs }: { planSlugs: PlanSlug[] } ) => {
+	[ planSlug in PlanSlug ]?: boolean;
+};
+
 /*
  * Returns the pricing metadata needed for the plans-ui components.
- * - see PricingMetaForGridPlan type for details
- * - will migrate to data-store once dependencies are resolved (when site & plans data-stores more complete)
+ * - see `PricingMetaForGridPlan` type for details
  */
 const usePricingMetaForGridPlans: UsePricingMetaForGridPlans = ( {
 	planSlugs,
+	useCheckPlanAvailabilityForPurchase,
 	withoutProRatedCredits = false,
 	storageAddOns,
+	selectedSiteId,
 	coupon,
-}: Props ) => {
-	// TODO: pass this in as a prop to uncouple the dependency
-	const selectedSiteId = useSelector( getSelectedSiteId ) ?? undefined;
-	// TODO: pass this in as a prop to uncouple the dependency
+} ) => {
 	const planAvailabilityForPurchase = useCheckPlanAvailabilityForPurchase( { planSlugs } );
-
 	// plans - should have a definition for all plans, being the main source of API data
 	const plans = Plans.usePlans( { coupon } );
 	// sitePlans - unclear if all plans are included
@@ -52,7 +42,6 @@ const usePricingMetaForGridPlans: UsePricingMetaForGridPlans = ( {
 		siteId: selectedSiteId,
 		purchaseId: currentPlan?.purchaseId,
 	} );
-
 	const selectedStorageOptions = useSelect(
 		( select ) => select( WpcomPlansUI.store ).getSelectedStorageOptions(),
 		[]

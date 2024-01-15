@@ -53,8 +53,6 @@ export const MarketplaceReviewsCards = ( props: MarketplaceReviewsCardsProps ) =
 				<div className="marketplace-reviews-cards__read-all">
 					<Button
 						className="is-link"
-						borderless
-						primary
 						onClick={ () => props.showMarketplaceReviews && props.showMarketplaceReviews() }
 						href=""
 					>

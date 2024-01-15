@@ -1,6 +1,6 @@
 /* global wpcomGlobalStyles */
 import { recordTracksEvent } from '@automattic/calypso-analytics';
-import { usePlans } from '@automattic/data-stores/src/plans';
+import { Plans } from '@automattic/data-stores';
 import { PLAN_PREMIUM } from '@automattic/data-stores/src/plans/constants';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { ExternalLink, Notice } from '@wordpress/components';
@@ -60,7 +60,7 @@ function GlobalStylesViewNotice() {
 	const { canvas } = useCanvas();
 	const [ isRendered, setIsRendered ] = useState( false );
 	const { globalStylesInUse } = useGlobalStylesConfig();
-	const plans = usePlans();
+	const plans = Plans.usePlans( { coupon: undefined } );
 
 	useEffect( () => {
 		if ( ! globalStylesInUse ) {
@@ -112,7 +112,7 @@ function GlobalStylesEditNotice() {
 		[ canvas ]
 	);
 	const { previewPostWithoutCustomStyles, canPreviewPost } = usePreview();
-	const plans = usePlans();
+	const plans = Plans.usePlans( { coupon: undefined } );
 
 	const { createWarningNotice, removeNotice } = useDispatch( 'core/notices' );
 	const { editEntityRecord } = useDispatch( 'core' );

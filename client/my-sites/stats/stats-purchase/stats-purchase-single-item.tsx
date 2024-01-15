@@ -161,6 +161,10 @@ Thanks\n\n`;
 		? translate( 'Welcome to Jetpack Stats' )
 		: translate( 'Jetpack Stats' );
 
+	const continueButtonText = config.isEnabled( FLAGS_CHECKOUT_FLOWS_V2 )
+		? translate( 'Upgrade and continue' )
+		: translate( 'Purchase' );
+
 	return (
 		<>
 			<h1>{ pageTitle }</h1>
@@ -209,7 +213,7 @@ Thanks\n\n`;
 							} )
 						}
 					>
-						{ translate( 'Purchase' ) }
+						{ continueButtonText }
 					</ButtonComponent>
 				</>
 			) }

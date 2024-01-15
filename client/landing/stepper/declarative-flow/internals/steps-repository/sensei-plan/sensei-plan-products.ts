@@ -43,7 +43,7 @@ export function useBusinessPlanPricing( billingPeriod: PlanBillingPeriod ) {
 	const { supportedPlans } = useSupportedPlans( locale, billingPeriod );
 
 	const businessPlan = supportedPlans.find( ( plan ) => {
-		return plan && 'business' === plan.periodAgnosticSlug;
+		return plan && [ 'business', 'creator' ].includes( plan.periodAgnosticSlug );
 	} );
 
 	const slug = businessPlan?.periodAgnosticSlug;

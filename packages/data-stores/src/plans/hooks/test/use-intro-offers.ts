@@ -28,7 +28,7 @@ describe( 'useIntroOffers selector', () => {
 			},
 		} ) );
 
-		const introOffers = useIntroOffers( { siteId: 1 } );
+		const introOffers = useIntroOffers( { siteId: 1, coupon: undefined } );
 
 		expect( introOffers ).toEqual( {
 			[ MockData.NEXT_STORE_SITE_PLAN_BUSINESS.planSlug ]:
@@ -48,7 +48,7 @@ describe( 'useIntroOffers selector', () => {
 			},
 		} ) );
 
-		const introOffers = useIntroOffers( { siteId: 1 } );
+		const introOffers = useIntroOffers( { siteId: 1, coupon: undefined } );
 
 		expect( introOffers ).toEqual( {
 			[ MockData.NEXT_STORE_SITE_PLAN_PERSONAL.planSlug ]: null,
@@ -65,7 +65,7 @@ describe( 'useIntroOffers selector', () => {
 			},
 		} ) );
 
-		const introOffers = useIntroOffers( { siteId: 1 } );
+		const introOffers = useIntroOffers( { siteId: 1, coupon: undefined } );
 
 		expect( introOffers ).toEqual( {
 			[ MockData.NEXT_STORE_PLAN_BUSINESS.planSlug ]:
@@ -86,7 +86,7 @@ describe( 'useIntroOffers selector', () => {
 			},
 		} ) );
 
-		const introOffers = useIntroOffers( { siteId: 1 } );
+		const introOffers = useIntroOffers( { siteId: 1, coupon: undefined } );
 
 		expect( introOffers ).toEqual( {
 			[ MockData.NEXT_STORE_PLAN_PERSONAL.planSlug ]: null,

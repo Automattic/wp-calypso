@@ -22,18 +22,14 @@ jest.mock( '@automattic/data-stores', () => ( {
 		useSitePurchaseById: jest.fn(),
 	},
 } ) );
-jest.mock( '../use-check-plan-availability-for-purchase', () => jest.fn() );
 
 import { PLAN_PERSONAL, PLAN_PREMIUM } from '@automattic/calypso-products';
 import { Plans, Purchases } from '@automattic/data-stores';
-import getSelectedSiteId from 'calypso/state/ui/selectors/get-selected-site-id';
 import usePricingMetaForGridPlans from '../data-store/use-pricing-meta-for-grid-plans';
-import useCheckPlanAvailabilityForPurchase from '../use-check-plan-availability-for-purchase';
 
 describe( 'usePricingMetaForGridPlans', () => {
 	beforeEach( () => {
 		jest.clearAllMocks();
-		getSelectedSiteId.mockImplementation( () => 100 );
 		Purchases.useSitePurchaseById.mockImplementation( () => undefined );
 		Plans.useIntroOffers.mockImplementation( () => ( {
 			[ PLAN_PREMIUM ]: null,
@@ -85,16 +81,20 @@ describe( 'usePricingMetaForGridPlans', () => {
 			productSlug: PLAN_PREMIUM,
 			planSlug: PLAN_PREMIUM,
 		} ) );
-		useCheckPlanAvailabilityForPurchase.mockImplementation( () => {
+
+		const useCheckPlanAvailabilityForPurchase = () => {
 			return {
 				[ PLAN_PREMIUM ]: true,
 			};
-		} );
+		};
 
 		const pricingMeta = usePricingMetaForGridPlans( {
 			planSlugs: [ PLAN_PREMIUM ],
 			withoutProRatedCredits: false,
 			storageAddOns: null,
+			selectedSiteId: 100,
+			coupon: undefined,
+			useCheckPlanAvailabilityForPurchase,
 		} );
 
 		const expectedPricingMeta = {
@@ -122,16 +122,20 @@ describe( 'usePricingMetaForGridPlans', () => {
 			productSlug: PLAN_PREMIUM,
 			planSlug: PLAN_PREMIUM,
 		} ) );
-		useCheckPlanAvailabilityForPurchase.mockImplementation( () => {
+
+		const useCheckPlanAvailabilityForPurchase = () => {
 			return {
 				[ PLAN_PREMIUM ]: false,
 			};
-		} );
+		};
 
 		const pricingMeta = usePricingMetaForGridPlans( {
 			planSlugs: [ PLAN_PREMIUM ],
 			withoutProRatedCredits: false,
 			storageAddOns: null,
+			selectedSiteId: 100,
+			coupon: undefined,
+			useCheckPlanAvailabilityForPurchase,
 		} );
 
 		const expectedPricingMeta = {
@@ -159,17 +163,21 @@ describe( 'usePricingMetaForGridPlans', () => {
 			productSlug: PLAN_PERSONAL,
 			planSlug: PLAN_PERSONAL,
 		} ) );
-		useCheckPlanAvailabilityForPurchase.mockImplementation( () => {
+
+		const useCheckPlanAvailabilityForPurchase = () => {
 			return {
 				[ PLAN_PERSONAL ]: true,
 				[ PLAN_PREMIUM ]: true,
 			};
-		} );
+		};
 
 		const pricingMeta = usePricingMetaForGridPlans( {
 			planSlugs: [ PLAN_PREMIUM ],
 			withoutProRatedCredits: false,
 			storageAddOns: null,
+			selectedSiteId: 100,
+			coupon: undefined,
+			useCheckPlanAvailabilityForPurchase,
 		} );
 
 		const expectedPricingMeta = {
@@ -197,17 +205,21 @@ describe( 'usePricingMetaForGridPlans', () => {
 			productSlug: PLAN_PERSONAL,
 			planSlug: PLAN_PERSONAL,
 		} ) );
-		useCheckPlanAvailabilityForPurchase.mockImplementation( () => {
+
+		const useCheckPlanAvailabilityForPurchase = () => {
 			return {
 				[ PLAN_PREMIUM ]: true,
 				[ PLAN_PERSONAL ]: true,
 			};
-		} );
+		};
 
 		const pricingMeta = usePricingMetaForGridPlans( {
 			planSlugs: [ PLAN_PREMIUM ],
 			withoutProRatedCredits: true,
 			storageAddOns: null,
+			selectedSiteId: 100,
+			coupon: undefined,
+			useCheckPlanAvailabilityForPurchase,
 		} );
 
 		const expectedPricingMeta = {

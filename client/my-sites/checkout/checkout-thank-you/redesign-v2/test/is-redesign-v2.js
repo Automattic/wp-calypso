@@ -1,4 +1,5 @@
 import { findPlansKeys, GROUP_WPCOM } from '@automattic/calypso-products';
+import { domainProductSlugs } from 'calypso/lib/domains/constants';
 import { isRedesignV2 } from '../utils';
 
 describe( 'isRedesignV2', () => {
@@ -29,7 +30,7 @@ describe( 'isRedesignV2', () => {
 		expect( isRedesignV2( props ) ).toBe( false );
 	} );
 
-	it( 'should return true if there are multiple purchases that only contains domains', () => {
+	it( 'should return false if there are multiple purchases that only contains domains', () => {
 		const props = {
 			receipt: {
 				data: {
@@ -41,7 +42,19 @@ describe( 'isRedesignV2', () => {
 				},
 			},
 		};
-		expect( isRedesignV2( props ) ).toBe( true );
+		expect( isRedesignV2( props ) ).toBe( false );
+	} );
+
+	it( 'should return false if the purchases contain only domain transfers', () => {
+		const props = {
+			receipt: {
+				data: {
+					purchases: [ { productSlug: domainProductSlugs.TRANSFER_IN } ],
+					failedPurchases: [],
+				},
+			},
+		};
+		expect( isRedesignV2( props ) ).toBe( false );
 	} );
 
 	it( 'should return false if the purchase is not supported', () => {

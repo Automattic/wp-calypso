@@ -24,7 +24,7 @@ const ProductItem: React.FC< Props > = ( { productData, onMoreAboutClick } ) => 
 		<>
 			{ productData.description } <br />
 			<Button
-				className="more-info-link license-lightbox-link"
+				className="more-info-link"
 				onClick={ () => onMoreAboutClick( productData.data.slug ) }
 				plain
 			>
