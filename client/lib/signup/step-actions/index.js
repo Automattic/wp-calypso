@@ -1308,7 +1308,6 @@ export const buildUpgradeFunction = ( planProps, cartItems ) => {
 	if ( planCartItem ) {
 		planProps.recordTracksEvent( 'calypso_signup_plan_select', {
 			product_slug: planCartItem.product_slug,
-			free_trial: planCartItem.free_trial,
 			from_section: stepSectionName ? stepSectionName : 'default',
 		} );
 
