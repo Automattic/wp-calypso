@@ -23,7 +23,6 @@
 	"facebook_api_key": "249643311490",
 	"features": {
 		"ad-tracking": false,
-		"akismet/siteless-checkout": true,
 		"akismet/checkout-quantity-dropdown": false,
 		"calypsoify/plugins": true,
 		"cancellation-offers": true,
