@@ -126,7 +126,7 @@ export default function AgencySignupForm() {
 			{ hasFetched && ! partner && (
 				<CompanyDetailsForm
 					includeTermsOfService={ true }
-					isLoading={ createPartner.isLoading }
+					isLoading={ createPartner.isPending }
 					onSubmit={ onSubmit }
 					submitLabel={ translate( 'Continue' ) }
 					showSignupFields={ true }

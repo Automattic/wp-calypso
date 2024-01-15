@@ -20,14 +20,34 @@ import { sanitizeSectionContent } from 'calypso/lib/plugins/sanitize-section-con
 import { getCurrentUserId } from 'calypso/state/current-user/selectors';
 import './style.scss';
 
-export const MarketplaceReviewItem = (
-	props: { review: MarketplaceReviewResponse } & MarketplaceReviewsQueryProps
-) => {
+type MarketplaceReviewItemProps = {
+	review: MarketplaceReviewResponse;
+	onEditCompleted?: () => void;
+} & MarketplaceReviewsQueryProps;
+
+export const MarketplaceReviewItem = ( props: MarketplaceReviewItemProps ) => {
 	const { review } = props;
 	const translate = useTranslate();
 	const [ isConfirmModalVisible, setIsConfirmModalVisible ] = useState( false );
 	const currentUserId = useSelector( getCurrentUserId );
 	const [ errorMessage, setErrorMessage ] = useState( '' );
+
+	const [ isEditing, setIsEditing ] = useState< boolean >( false );
+	const [ editorContent, setEditorContent ] = useState< string >( '' );
+	const [ editorRating, setEditorRating ] = useState< number >( 0 );
+
+	const setEditing = ( review: MarketplaceReviewResponse ) => {
+		setIsEditing( true );
+		setEditorContent( review.content.rendered );
+		setEditorRating( review.meta.wpcom_marketplace_rating );
+	};
+
+	const clearEditing = () => {
+		setIsEditing( false );
+		setEditorContent( '' );
+		setEditorRating( 0 );
+	};
+
 	const deleteReviewMutation = useDeleteMarketplaceReviewMutation( {
 		...props,
 	} );
@@ -47,21 +67,26 @@ export const MarketplaceReviewItem = (
 	};
 
 	const updateReviewMutation = useUpdateMarketplaceReviewMutation( { ...props } );
-
-	const [ isEditing, setIsEditing ] = useState< boolean >( false );
-	const [ editorContent, setEditorContent ] = useState< string >( '' );
-	const [ editorRating, setEditorRating ] = useState< number >( 0 );
-
-	const setEditing = ( review: MarketplaceReviewResponse ) => {
-		setIsEditing( true );
-		setEditorContent( review.content.rendered );
-		setEditorRating( review.meta.wpcom_marketplace_rating );
-	};
-
-	const clearEditing = () => {
-		setIsEditing( false );
-		setEditorContent( '' );
-		setEditorRating( 0 );
+	const updateReview = ( reviewId: number ) => {
+		updateReviewMutation.mutate(
+			{
+				reviewId: reviewId,
+				productType: props.productType,
+				slug: props.slug,
+				content: editorContent,
+				rating: editorRating,
+			},
+			{
+				onError: ( error ) => {
+					setErrorMessage( error.message );
+				},
+				onSuccess: () => {
+					props.onEditCompleted?.();
+					setErrorMessage( '' );
+				},
+			}
+		);
+		clearEditing();
 	};
 
 	return (
@@ -121,6 +146,7 @@ export const MarketplaceReviewItem = (
 						rows={ 4 }
 						cols={ 40 }
 						name="content"
+						className="marketplace-review-item__editor"
 						value={ editorContent }
 						onChange={ setEditorContent }
 					/>
@@ -155,19 +181,7 @@ export const MarketplaceReviewItem = (
 							<Button
 								className="marketplace-review-item__review-submit"
 								primary
-								onClick={ () => {
-									updateReviewMutation.mutate(
-										{
-											reviewId: review.id,
-											productType: props.productType,
-											slug: props.slug,
-											content: editorContent,
-											rating: editorRating,
-										},
-										{ onError: ( error ) => alert( error.message ) }
-									);
-									clearEditing();
-								} }
+								onClick={ () => updateReview( review.id ) }
 							>
 								{ translate( 'Save my review' ) }
 							</Button>

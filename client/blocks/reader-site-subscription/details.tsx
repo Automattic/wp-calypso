@@ -42,13 +42,13 @@ const SiteSubscriptionDetails = ( {
 
 	const {
 		mutate: subscribe,
-		isLoading: subscribing,
+		isPending: subscribing,
 		isSuccess: subscribed,
 		error: subscribeError,
 	} = SubscriptionManager.useSiteSubscribeMutation();
 	const {
 		mutate: unsubscribe,
-		isLoading: unsubscribing,
+		isPending: unsubscribing,
 		isSuccess: unsubscribed,
 		error: unsubscribeError,
 	} = SubscriptionManager.useSiteUnsubscribeMutation();

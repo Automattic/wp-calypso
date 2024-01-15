@@ -28,12 +28,12 @@ const StyledPopover = styled( Popover )`
 			}
 
 			&.popover-enter {
-				transform: translate( 30px, 0 );
+				transform: translate( 10px, 0 );
 			}
 
 			&.popover-enter-active,
 			&.popover-enter-done {
-				transform: translate( 20px, 0 );
+				transform: translate( 0, 0 );
 			}
 
 			.popover__arrow {

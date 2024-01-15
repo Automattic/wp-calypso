@@ -24,7 +24,7 @@ export const GithubAuthorizeCard = () => {
 		getKeyringServiceByName( state, 'github-deploy' )
 	) as Service;
 
-	const { mutate: authorize, isLoading: isAuthorizing } = useMutation< void, unknown, string >( {
+	const { mutate: authorize, isPending: isAuthorizing } = useMutation< void, unknown, string >( {
 		mutationFn: async ( connectURL ) => {
 			dispatch( recordTracksEvent( 'calypso_hosting_github_authorize_click' ) );
 			await new Promise( ( resolve ) => requestExternalAccess( connectURL, resolve ) );

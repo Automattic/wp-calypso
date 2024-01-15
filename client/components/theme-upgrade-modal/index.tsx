@@ -1,3 +1,4 @@
+import config from '@automattic/calypso-config';
 import {
 	FEATURE_ACCEPT_PAYMENTS,
 	FEATURE_AD_FREE_EXPERIENCE,
@@ -6,12 +7,14 @@ import {
 	FEATURE_CDN,
 	FEATURE_CPUS,
 	FEATURE_CUSTOM_DOMAIN,
+	FEATURE_FAST_DNS,
 	FEATURE_GLOBAL_EDGE_CACHING,
 	FEATURE_ISOLATED_INFRA,
 	FEATURE_LIVE_CHAT_SUPPORT,
 	FEATURE_MANAGED_HOSTING,
 	FEATURE_MULTI_SITE,
 	FEATURE_NO_ADS,
+	FEATURE_PERSONAL_THEMES,
 	FEATURE_PLUGINS_THEMES,
 	FEATURE_PREMIUM_THEMES_V2,
 	FEATURE_STYLE_CUSTOMIZATION,
@@ -20,11 +23,11 @@ import {
 	FEATURE_WORDADS,
 	PLAN_BUSINESS,
 	PLAN_ECOMMERCE,
+	PLAN_PERSONAL,
 	PLAN_PREMIUM,
 } from '@automattic/calypso-products';
 import { Button, Dialog, ScreenReaderText } from '@automattic/components';
-import { ProductsList } from '@automattic/data-stores';
-import { usePlans } from '@automattic/data-stores/src/plans';
+import { Plans, ProductsList } from '@automattic/data-stores';
 import { useBreakpoint } from '@automattic/viewport-react';
 import { Tooltip } from '@wordpress/components';
 import { useSelect } from '@wordpress/data';
@@ -91,6 +94,10 @@ export const ThemeUpgradeModal = ( {
 	const firstThemeSoftwareSet = themeSoftwareSet?.[ 0 ];
 	const bundleSettings = useBundleSettings( firstThemeSoftwareSet?.slug );
 
+	const personalPlanProduct = useSelect(
+		( select ) => select( ProductsList.store ).getProductBySlug( PLAN_PERSONAL ),
+		[]
+	);
 	const premiumPlanProduct = useSelect(
 		( select ) => select( ProductsList.store ).getProductBySlug( 'value_bundle' ),
 		[]
@@ -103,10 +110,56 @@ export const ThemeUpgradeModal = ( {
 		( select ) => select( ProductsList.store ).getProductBySlug( 'business-bundle-monthly' ),
 		[]
 	);
-	const plans = usePlans();
+	const plans = Plans.usePlans( { coupon: undefined } );
 
 	//Wait until we have theme and product data to show content
 	const isLoading = ! premiumPlanProduct || ! businessPlanProduct || ! theme.data;
+
+	const getPersonalPlanModalData = (): UpgradeModalContent => {
+		const planPrice = personalPlanProduct?.combined_cost_display;
+
+		return {
+			header: (
+				<h1 className="theme-upgrade-modal__heading">
+					{ translate( 'Unlock this personal theme' ) }
+				</h1>
+			),
+			text: (
+				<p>
+					{ translate(
+						'Get access to Personal themes, and a ton of other features, with a subscription to the %(plan)s plan. It’s {{strong}}%(planPrice)s{{/strong}} a year, risk-free with a 14-day money-back guarantee.',
+						{
+							components: {
+								strong: <strong />,
+							},
+							args: {
+								planPrice: planPrice || '',
+								plan: plans.data?.[ PLAN_PERSONAL ]?.productNameShort || '',
+							},
+						}
+					) }
+				</p>
+			),
+			price: null,
+			action: (
+				<div className="theme-upgrade-modal__actions bundle">
+					<Button
+						className="theme-upgrade-modal__cancel"
+						onClick={ () => closeModal( 'cancel_button' ) }
+					>
+						{ translate( 'Cancel' ) }
+					</Button>
+					<Button
+						className="theme-upgrade-modal__upgrade-plan"
+						primary
+						onClick={ () => checkout() }
+					>
+						{ translate( 'Upgrade to activate' ) }
+					</Button>
+				</div>
+			),
+		};
+	};
 
 	const getStandardPurchaseModalData = (): UpgradeModalContent => {
 		const planPrice = premiumPlanProduct?.combined_cost_display;
@@ -320,6 +373,15 @@ export const ThemeUpgradeModal = ( {
 		] );
 	};
 
+	const getPersonalPlanFeatureList = () => {
+		return getPlanFeaturesObject( [
+			FEATURE_PERSONAL_THEMES,
+			FEATURE_CUSTOM_DOMAIN,
+			FEATURE_AD_FREE_EXPERIENCE,
+			FEATURE_FAST_DNS,
+		] );
+	};
+
 	const getBundledFirstPartyPurchaseFeatureList = () => {
 		return getPlanFeaturesObject( [
 			FEATURE_CUSTOM_DOMAIN,
@@ -369,6 +431,15 @@ export const ThemeUpgradeModal = ( {
 		featureList = getExternallyManagedFeatureList();
 		featureListHeader = translate( 'Included with your %(businessPlanName)s plan', {
 			args: { businessPlanName: plans.data?.[ PLAN_BUSINESS ]?.productNameShort || '' },
+		} );
+	} else if (
+		config.isEnabled( 'themes/tiers' ) &&
+		theme?.data?.theme_tier?.feature === FEATURE_PERSONAL_THEMES
+	) {
+		modalData = getPersonalPlanModalData();
+		featureList = getPersonalPlanFeatureList();
+		featureListHeader = translate( 'Included with your %(plan)s plan', {
+			args: { plan: plans.data?.[ PLAN_PERSONAL ]?.productNameShort || '' },
 		} );
 	} else {
 		modalData = getStandardPurchaseModalData();

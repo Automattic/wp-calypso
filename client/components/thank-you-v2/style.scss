@@ -1,0 +1,17 @@
+@import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/mixins";
+
+.thank-you {
+	--color-accent: var(--studio-blue-50);
+	--color-accent-60: var(--studio-blue-60);
+
+	display: flex;
+	flex-direction: column;
+	max-width: 750px;
+
+	.thank-you__products {
+		margin: 0 auto;
+		max-width: 650px;
+		width: 100%;
+	}
+}

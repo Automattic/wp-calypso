@@ -1,7 +1,7 @@
+import { SegmentedControl } from '@automattic/components';
 import classNames from 'classnames';
 import PropTypes from 'prop-types';
 import { Children, Component } from 'react';
-import SegmentedControl from 'calypso/components/segmented-control';
 
 import './segmented.scss';
 
@@ -27,7 +27,6 @@ class NavSegmented extends Component {
 
 				<SegmentedControl>{ this.getControlItems() }</SegmentedControl>
 			</div>
-			/* eslint-enable wpcalyspo/jsx-classname-namespace */
 		);
 	}
 

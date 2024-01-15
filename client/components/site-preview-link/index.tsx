@@ -75,7 +75,7 @@ export default function SitePreviewLink( {
 		}
 	}, [ checked, shouldBeChecked ] );
 
-	const { createLink, isLoading: isCreating } = useCreateSitePreviewLink( {
+	const { createLink, isPending: isCreating } = useCreateSitePreviewLink( {
 		siteId,
 		onSuccess: () => {
 			showSuccessNotice( translate( 'Preview link enabled.' ) );
@@ -87,7 +87,7 @@ export default function SitePreviewLink( {
 		},
 	} );
 
-	const { deleteLink, isLoading: isDeleting } = useDeleteSitePreviewLink( {
+	const { deleteLink, isPending: isDeleting } = useDeleteSitePreviewLink( {
 		siteId,
 		onSuccess: () => {
 			showSuccessNotice( translate( 'Preview link disabled.' ) );

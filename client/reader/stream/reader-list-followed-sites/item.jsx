@@ -99,7 +99,7 @@ const ReaderListFollowingItem = ( props ) => {
 					{ follow.description?.length > 0 && (
 						<span className="reader-sidebar-site_description">{ follow.description }</span>
 					) }
-					{ urlForDisplay.length > 0 && (
+					{ urlForDisplay?.length > 0 && (
 						<span className="reader-sidebar-site_url">{ urlForDisplay }</span>
 					) }
 				</span>

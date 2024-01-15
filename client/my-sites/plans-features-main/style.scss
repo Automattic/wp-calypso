@@ -390,14 +390,23 @@ body.is-section-signup.is-white-signup {
 }
 
 .plans-features-main__plan-type-selector-layout {
-	display: flex;
-	align-content: space-between;
-	justify-content: center;
-	margin: 0 20px 24px;
 	.segmented-control.price-toggle {
 		.is-section-signup &,
 		.is-section-stepper & {
 			border: solid 1px var(--studio-gray-5);
+		}
+	}
+}
+
+/**
+ * Styles required for the 2023 pricing grid plan type dropdown, sticky behavior to work
+ */
+body.is-section-plans .layout__content .main {
+	@include plan-type-selector-custom-mobile-breakpoint {
+		padding: 0;
+		.is-2023-pricing-grid .plans-wrapper {
+			margin: 0;
+			padding: 17px max(calc(50% - 612px), 30px);
 		}
 	}
 }

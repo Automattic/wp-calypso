@@ -1,6 +1,7 @@
 import { Button } from '@automattic/components';
 import {
 	FREE_THEME,
+	PERSONAL_THEME,
 	PREMIUM_THEME,
 	DOT_ORG_THEME,
 	BUNDLED_THEME,
@@ -42,6 +43,13 @@ function getHidePlanPropsBasedOnSignupDependencies(
 	 */
 	if ( signupDependencies.themeType === PREMIUM_THEME ) {
 		return { hidePersonalPlan: true, hideFreePlan: true };
+	}
+
+	/**
+	 * Personal themes: Display Personal, Premium, Business and eCommerce
+	 */
+	if ( signupDependencies.themeType === PERSONAL_THEME ) {
+		return { hideFreePlan: true };
 	}
 
 	return {};

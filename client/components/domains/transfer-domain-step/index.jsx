@@ -1,4 +1,4 @@
-import { PLAN_PERSONAL, isPlan } from '@automattic/calypso-products';
+import { PLAN_PERSONAL, getPlan, isPlan } from '@automattic/calypso-products';
 import page from '@automattic/calypso-router';
 import { Button } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
@@ -409,10 +409,23 @@ class TransferDomainStep extends Component {
 				<div>
 					<UpsellNudge
 						description={ translate(
-							'Only .blog domains are included with your plan, to use a different tld upgrade to a Personal plan.'
+							// translators: %s is the Starter/Personal plan name
+							'Only .blog domains are included with your plan, to use a different tld upgrade to a %(planName)s plan.',
+							{
+								args: {
+									planName: getPlan( PLAN_PERSONAL )?.getTitle(),
+								},
+							}
 						) }
 						plan={ PLAN_PERSONAL }
-						title={ translate( 'Personal plan required' ) }
+						title={
+							// translators: %s is the Starter/Personal plan name
+							translate( '%(planName)s plan required', {
+								args: {
+									planName: getPlan( PLAN_PERSONAL )?.getTitle(),
+								},
+							} )
+						}
 						showIcon={ true }
 					/>
 					{ content }

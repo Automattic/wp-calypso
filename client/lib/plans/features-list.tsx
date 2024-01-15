@@ -302,6 +302,8 @@ import {
 	FEATURE_GROUP_PAYMENT_TRANSACTION_FEES,
 	FEATURE_COMMISSION_FEE_STANDARD_FEATURES,
 	FEATURE_COMMISSION_FEE_WOO_FEATURES,
+	FEATURE_PERSONAL_THEMES,
+	FEATURE_STATS_PAID,
 } from '@automattic/calypso-products';
 import { localizeUrl } from '@automattic/i18n-utils';
 import i18n from 'i18n-calypso';
@@ -535,6 +537,15 @@ export const FEATURES_LIST: FeatureList = {
 						'Access to all of our advanced premium theme templates, including templates specifically tailored for businesses.'
 				  );
 		},
+	},
+
+	[ FEATURE_PERSONAL_THEMES ]: {
+		getSlug: () => FEATURE_PERSONAL_THEMES,
+		getTitle: () => i18n.translate( 'Unlimited personal themes' ),
+		getDescription: () =>
+			i18n.translate(
+				'Unlimited access to all of our personal themes, including designs specifically tailored for businesses.'
+			),
 	},
 
 	[ FEATURE_MONETISE ]: {
@@ -1964,6 +1975,14 @@ export const FEATURES_LIST: FeatureList = {
 		getDescription: () =>
 			i18n.translate( 'Unlock access to 50,000+ plugins, design templates, and integrations.' ),
 	},
+	[ FEATURE_STATS_PAID ]: {
+		getSlug: () => FEATURE_STATS_PAID,
+		getTitle: () => i18n.translate( 'Advanced stats' ),
+		getDescription: () =>
+			i18n.translate(
+				'Deep-dive analytics and conversion data to help you make decisions to grow your site.'
+			),
+	},
 	[ FEATURE_BANDWIDTH ]: {
 		getSlug: () => FEATURE_BANDWIDTH,
 		getTitle: () => i18n.translate( 'Unrestricted bandwidth' ),
@@ -2224,7 +2243,7 @@ export const FEATURES_LIST: FeatureList = {
 		getSlug: () => FEATURE_STATS_JP,
 		getTitle: () => i18n.translate( 'Visitor stats' ),
 		getDescription: () =>
-			i18n.translate( 'At-a-glance and deep-dive data to measure your site’s success.' ),
+			i18n.translate( 'Basic integrated analytics to measure your site’s performance.' ),
 	},
 	[ FEATURE_SPAM_JP ]: {
 		getSlug: () => FEATURE_SPAM_JP,

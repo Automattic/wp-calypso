@@ -6,7 +6,6 @@ import CardHeading from 'calypso/components/card-heading';
 import ReviewsRatingsStars from 'calypso/components/reviews-rating-stars/reviews-ratings-stars';
 import {
 	ProductType,
-	ErrorResponse,
 	useCreateMarketplaceReviewMutation,
 } from 'calypso/data/marketplace/use-marketplace-reviews';
 
@@ -85,18 +84,16 @@ export const ReviewModal = ( { isVisible, onClose, slug, productName, productTyp
 							className="marketplace-review-modal__button-submit"
 							primary
 							type="submit"
-							disabled={ createReview.isLoading }
+							disabled={ createReview.isPending }
 						>
-							{ createReview.isLoading && <Spinner className="card__icon" /> }
+							{ createReview.isPending && <Spinner className="card__icon" /> }
 							<span>{ translate( 'Submit' ) }</span>
 						</Button>
 						<Button onClick={ onClose }>{ translate( 'Cancel' ) }</Button>
 					</div>
 				</form>
 				{ createReview.isError && (
-					<span className="marketplace-review-modal__error">
-						{ ( createReview.error as ErrorResponse ).message }
-					</span>
+					<span className="marketplace-review-modal__error">{ createReview.error.message }</span>
 				) }
 			</Card>
 		</Dialog>

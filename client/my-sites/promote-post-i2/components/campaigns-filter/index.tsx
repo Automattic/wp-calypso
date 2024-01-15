@@ -1,6 +1,6 @@
+import { SegmentedControl } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import { useRef } from 'react';
-import SegmentedControl from 'calypso/components/segmented-control';
 
 export type CampaignsFilterType = '' | 'active' | 'created' | 'finished' | 'rejected';
 

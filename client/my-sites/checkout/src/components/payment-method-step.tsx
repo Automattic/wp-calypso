@@ -105,15 +105,9 @@ export default function BeforeSubmitCheckoutHeader() {
 
 	return (
 		<>
-			{ ! showToSFoldableCard ? (
-				<CheckoutTermsWrapper showToSFoldableCard={ showToSFoldableCard }>
-					<CheckoutTerms cart={ responseCart } />
-				</CheckoutTermsWrapper>
-			) : (
-				<CheckoutTermsWrapper showToSFoldableCard={ showToSFoldableCard }>
-					<CheckoutTerms cart={ responseCart } />
-				</CheckoutTermsWrapper>
-			) }
+			<CheckoutTermsWrapper showToSFoldableCard={ showToSFoldableCard }>
+				<CheckoutTerms cart={ responseCart } />
+			</CheckoutTermsWrapper>
 
 			{ ! hasCheckoutVersion( '2' ) && (
 				<WPOrderReviewSection>

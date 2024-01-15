@@ -100,7 +100,7 @@ export default function TermsOfServiceConsent() {
 							className="terms-of-service-consent__proceed"
 							onClick={ agreeToTOS }
 							disabled={ ! checkedTOS }
-							busy={ consent.isLoading }
+							busy={ consent.isPending }
 							primary
 						>
 							{ translate( 'Proceed' ) }

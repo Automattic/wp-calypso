@@ -97,7 +97,7 @@ export const PreMigrationScreen: React.FunctionComponent< PreMigrationProps > = 
 		isRequestingSitePlans( state, targetSite.ID )
 	);
 
-	const { isLoading: isAddingTrial } = useAddHostingTrialMutation( {
+	const { isPending: isAddingTrial } = useAddHostingTrialMutation( {
 		onSuccess: () => {
 			setQueryTargetSitePlanStatus( 'fetching' );
 		},

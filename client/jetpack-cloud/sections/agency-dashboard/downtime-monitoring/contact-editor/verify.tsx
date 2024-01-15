@@ -83,14 +83,14 @@ export default function VerifyContactForm( {
 	);
 
 	const {
-		isLoading: isSubmittingVerificationCode,
+		isPending: isSubmittingVerificationCode,
 		isVerified: isSubmittingVerificationCodeSuccess,
 		isError: isSubmittingVerificationCodeFailed,
 		errorMessage: submitVerificationCodeErrorMessage,
 		mutate: submitVerificationCode,
 	} = useValidateVerificationCode();
 	const {
-		isLoading: isRequestingVerificationCode,
+		isPending: isRequestingVerificationCode,
 		isSuccess: isRequestingVerificationCodeSuccess,
 		isError: isRequestingVerificationCodeFailed,
 		isVerified: isRequestingVerificationCodeAlreadyVerified,
@@ -98,7 +98,7 @@ export default function VerifyContactForm( {
 	} = useRequestVerificationCode();
 
 	const {
-		isLoading: isResendingVerificationCode,
+		isPending: isResendingVerificationCode,
 		isSuccess: isResendingVerificationCodeSuccess,
 		isError: isResendingVerificationCodeFailed,
 		mutate: resendVerificationCode,

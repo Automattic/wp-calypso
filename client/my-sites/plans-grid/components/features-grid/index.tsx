@@ -8,6 +8,7 @@ import {
 	isWooExpressSmallPlan,
 	isWpComFreePlan,
 	isWpcomEnterpriseGridPlan,
+	isFreePlan,
 } from '@automattic/calypso-products';
 import {
 	BloombergLogo,
@@ -70,6 +71,7 @@ class FeaturesGrid extends Component< FeaturesGridProps > {
 						stickyClass="is-sticky-top-buttons-row"
 						element="tr"
 						stickyOffset={ stickyRowOffset }
+						zIndex={ 2 }
 					>
 						{ ( isStuck: boolean ) =>
 							this.renderTopButtons( gridPlansWithoutSpotlight, { isTableCell: true, isStuck } )
@@ -129,13 +131,15 @@ class FeaturesGrid extends Component< FeaturesGridProps > {
 			getPlanClass( gridPlanForSpotlight.planSlug )
 		);
 
+		const isNotFreePlan = ! isFreePlan( gridPlanForSpotlight.planSlug );
+
 		return (
 			<div className={ spotlightPlanClasses }>
 				{ this.renderPlanLogos( [ gridPlanForSpotlight ] ) }
 				{ this.renderPlanHeaders( [ gridPlanForSpotlight ] ) }
-				{ this.renderPlanTagline( [ gridPlanForSpotlight ] ) }
-				{ this.renderPlanPrice( [ gridPlanForSpotlight ] ) }
-				{ this.renderBillingTimeframe( [ gridPlanForSpotlight ] ) }
+				{ isNotFreePlan && this.renderPlanTagline( [ gridPlanForSpotlight ] ) }
+				{ isNotFreePlan && this.renderPlanPrice( [ gridPlanForSpotlight ] ) }
+				{ isNotFreePlan && this.renderBillingTimeframe( [ gridPlanForSpotlight ] ) }
 				{ this.renderPlanStorageOptions( [ gridPlanForSpotlight ] ) }
 				{ this.renderTopButtons( [ gridPlanForSpotlight ] ) }
 			</div>
@@ -143,7 +147,7 @@ class FeaturesGrid extends Component< FeaturesGridProps > {
 	}
 
 	renderMobileView() {
-		const { translate, selectedFeature, gridPlans, gridPlanForSpotlight } = this.props;
+		const { translate, selectedFeature, gridPlans, gridPlanForSpotlight, isInSignup } = this.props;
 		const CardContainer = (
 			props: React.ComponentProps< typeof FoldableCard > & { planSlug: string }
 		) => {
@@ -170,13 +174,16 @@ class FeaturesGrid extends Component< FeaturesGridProps > {
 					'plan-features-2023-grid__mobile-plan-card',
 					getPlanClass( gridPlan.planSlug )
 				);
+
+				const isNotFreePlan = ! isFreePlan( gridPlan.planSlug );
+
 				const planCardJsx = (
 					<div className={ planCardClasses } key={ `${ gridPlan.planSlug }-${ index }` }>
 						{ this.renderPlanLogos( [ gridPlan ] ) }
 						{ this.renderPlanHeaders( [ gridPlan ] ) }
-						{ this.renderPlanTagline( [ gridPlan ] ) }
-						{ this.renderPlanPrice( [ gridPlan ] ) }
-						{ this.renderBillingTimeframe( [ gridPlan ] ) }
+						{ isNotFreePlan && isInSignup && this.renderPlanTagline( [ gridPlan ] ) }
+						{ isNotFreePlan && this.renderPlanPrice( [ gridPlan ] ) }
+						{ isNotFreePlan && this.renderBillingTimeframe( [ gridPlan ] ) }
 						{ this.renderMobileFreeDomain( gridPlan ) }
 						{ this.renderPlanStorageOptions( [ gridPlan ] ) }
 						{ this.renderTopButtons( [ gridPlan ] ) }

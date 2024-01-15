@@ -45,9 +45,9 @@ export const useUpdateSSHKeyMutation = (
 		},
 	} );
 
-	const { mutate, isLoading } = mutation;
+	const { mutate, isPending } = mutation;
 
 	const updateSSHKey = useCallback( ( args: MutationVariables ) => mutate( args ), [ mutate ] );
 
-	return { updateSSHKey, isLoading };
+	return { updateSSHKey, isPending };
 };

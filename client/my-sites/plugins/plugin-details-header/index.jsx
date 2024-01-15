@@ -1,13 +1,11 @@
 import { isEnabled } from '@automattic/calypso-config';
 import { Badge, Button } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
-import { useCallback } from 'react';
 import { useSelector } from 'react-redux';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import { useMarketplaceReviewsQuery } from 'calypso/data/marketplace/use-marketplace-reviews';
 import { formatNumberMetric } from 'calypso/lib/format-number-compact';
 import { preventWidows } from 'calypso/lib/formatting';
-import scrollTo from 'calypso/lib/scroll-to';
 import PluginIcon from 'calypso/my-sites/plugins/plugin-icon/plugin-icon';
 import PluginRatings from 'calypso/my-sites/plugins/plugin-ratings/';
 import { useLocalizedPlugins } from 'calypso/my-sites/plugins/utils';
@@ -20,7 +18,7 @@ const PluginDetailsHeader = ( {
 	plugin,
 	isPlaceholder,
 	isJetpackCloud,
-	reviewsListRef = null,
+	onReviewsClick = () => {},
 } ) => {
 	const moment = useLocalizedMoment();
 	const translate = useTranslate();
@@ -35,13 +33,6 @@ const PluginDetailsHeader = ( {
 		slug: plugin.slug,
 	} );
 	const numberOfReviews = marketplaceReviews?.length || 0;
-	const scrollToReviews = useCallback( () => {
-		scrollTo( {
-			x: 0,
-			y: reviewsListRef?.current?.offsetTop - 50,
-			duration: 1000,
-		} );
-	}, [ reviewsListRef ] );
 
 	if ( isPlaceholder ) {
 		return <PluginDetailsHeaderPlaceholder />;
@@ -93,7 +84,7 @@ const PluginDetailsHeader = ( {
 								<Button
 									borderless
 									className="plugin-details-header__number-reviews-link is-link"
-									onClick={ scrollToReviews }
+									onClick={ onReviewsClick }
 								>
 									{ translate( '%(numberOfReviews)d review', '%(numberOfReviews)d reviews', {
 										count: numberOfReviews,

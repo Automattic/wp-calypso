@@ -25,6 +25,7 @@ const embedsToLookFor = {
 	'.wp-embedded-content': embedWordPressPost,
 	'a[data-pin-do="embedPin"]': embedPinterest,
 	'div.embed-issuu': embedIssuu,
+	a: embedLink, // process plain links last
 };
 
 const cacheBustQuery = `?v=${ Math.floor( new Date().getTime() / ( 1000 * 60 * 60 * 24 * 10 ) ) }`; // A new query every 10 days
@@ -110,7 +111,10 @@ function embedTwitter( domNode ) {
 
 	loadAndRun( 'https://platform.twitter.com/widgets.js', embedTwitter.bind( null, domNode ) );
 }
-
+function embedLink( domNode ) {
+	debug( 'processing link for', domNode );
+	domNode.setAttribute( 'target', '_blank' );
+}
 function embedFacebook( domNode ) {
 	debug( 'processing facebook for', domNode );
 	if ( typeof fb !== 'undefined' ) {
