@@ -33,6 +33,7 @@
 		"@automattic/components": "workspace:^",
 		"@automattic/data-stores": "workspace:^",
 		"@automattic/i18n-utils": "workspace:^",
+		"@automattic/typography": "workspace:^",
 		"@tanstack/react-query": "^5.15.5",
 		"@wordpress/block-editor": "^12.16.0",
 		"@wordpress/block-library": "^8.25.0",
