@@ -16,7 +16,7 @@ import QueryJetpackPartnerPortalPartner from 'calypso/components/data/query-jetp
 import QueryJetpackPartnerKey from 'calypso/components/data/query-jetpack-partner-portal-partner-key';
 import DisplayPrice from 'calypso/components/jetpack/card/jetpack-product-card/display-price';
 import JetpackRnaActionCard from 'calypso/components/jetpack/card/jetpack-rna-action-card';
-import SingleSiteUpsellLightbox from 'calypso/jetpack-cloud/sections/partner-portal/license-lightbox/single-site-upsell-lightbox';
+import SingleSiteUpsellLightbox from 'calypso/jetpack-cloud/sections/partner-portal/single-site-upsell-lightbox';
 import { getPurchaseURLCallback } from 'calypso/my-sites/plans/jetpack-plans/get-purchase-url-callback';
 import productAboveButtonText from 'calypso/my-sites/plans/jetpack-plans/product-card/product-above-button-text';
 import productTooltip from 'calypso/my-sites/plans/jetpack-plans/product-card/product-tooltip';
