@@ -356,16 +356,18 @@ class ThemeSheet extends Component {
 	isRemoved = () =>
 		!! this.props.taxonomies?.theme_status?.find( ( status ) => status.slug === 'removed' );
 
-	onButtonClick = () => {
-		const { defaultOption, secondaryOption, themeId } = this.props;
-		const selectedStyleVariation = this.getSelectedStyleVariation();
-		if ( selectedStyleVariation ) {
-			this.props.setThemePreviewOptions( themeId, defaultOption, secondaryOption, {
-				styleVariation: selectedStyleVariation,
-			} );
-		}
+	onBeforeOptionAction = () => {
+		this.props.setThemePreviewOptions(
+			this.props.themeId,
+			this.props.defaultOption,
+			this.props.secondaryOption,
+			{ styleVariation: this.getSelectedStyleVariation() }
+		);
+	};
 
-		defaultOption.action && defaultOption.action( themeId );
+	onButtonClick = () => {
+		this.onBeforeOptionAction();
+		this.props.defaultOption.action?.( this.props.themeId );
 	};
 
 	onUnlockStyleButtonClick = () => {
@@ -500,12 +502,7 @@ class ThemeSheet extends Component {
 		// The embed live demo works only for WP.com themes
 		if ( isWpcomTheme && ! isExternallyManagedTheme ) {
 			const { preview } = this.props.options;
-			this.props.setThemePreviewOptions(
-				this.props.themeId,
-				this.props.defaultOption,
-				this.props.secondaryOption,
-				{ styleVariation: this.getSelectedStyleVariation() }
-			);
+			this.onBeforeOptionAction();
 			return preview.action( this.props.themeId );
 		}
 
@@ -759,7 +756,6 @@ class ThemeSheet extends Component {
 			softLaunched,
 			themeId,
 			translate,
-			styleVariations,
 		} = this.props;
 		const placeholder = <span className="theme__sheet-placeholder">loading.....</span>;
 		const title = name || placeholder;
@@ -791,8 +787,7 @@ class ThemeSheet extends Component {
 						<LivePreviewButton
 							siteId={ siteId }
 							themeId={ themeId }
-							hasStyleVariations={ styleVariations.length > 0 }
-							styleVariation={ this.getSelectedStyleVariation() }
+							onBeforeLivePreview={ this.onBeforeOptionAction }
 						/>
 						{ this.shouldRenderPreviewButton() && ! isLivePreviewSupported && (
 							<Button
