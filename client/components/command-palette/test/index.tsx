@@ -56,9 +56,16 @@ describe( 'CommandPalette', () => {
 	( getCurrentRoutePattern as jest.Mock ).mockReturnValue( '/sites' );
 
 	const renderCommandPalette = () => {
+		( useCommandPalette as jest.Mock ).mockReturnValue( {
+			commands: commands,
+			filterNotice: 'Mock Filter Notice',
+			emptyListNotice: 'Mock Empty List Notice',
+		} );
+
 		act( () => {
 			fireEvent.keyDown( document, { key: 'k', metaKey: true } );
 		} );
+
 		render(
 			<Provider store={ store }>
 				<CommandPalette />
@@ -67,13 +74,6 @@ describe( 'CommandPalette', () => {
 	};
 
 	it( 'should confirm that the command palette opens with the commands from the commands array', () => {
-		// Override the useCommandPalette mock values for this test case
-		( useCommandPalette as jest.Mock ).mockReturnValue( {
-			commands: commands,
-			filterNotice: 'Mock Filter Notice',
-			emptyListNotice: 'Mock Empty List Notice',
-		} );
-
 		renderCommandPalette();
 
 		waitFor( () => {
@@ -83,16 +83,9 @@ describe( 'CommandPalette', () => {
 	} );
 
 	it( 'should return only "Get help" command as it matches search, other commands should be hidden', () => {
-		( useCommandPalette as jest.Mock ).mockReturnValue( {
-			commands: commands,
-			filterNotice: 'Mock Filter Notice',
-			emptyListNotice: 'Mock Empty List Notice',
-		} );
-
 		renderCommandPalette();
 
 		waitFor( () => {
-			console.log( 'Hello', screen.debug() );
 			expect( screen.getByPlaceholderText( 'Search for commands' ) ).toBeInTheDocument();
 			fireEvent.change( screen.getByPlaceholderText( 'Search for commands' ), {
 				target: { value: 'help' },
