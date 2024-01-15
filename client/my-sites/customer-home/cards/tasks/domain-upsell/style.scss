@@ -80,8 +80,18 @@
 
 		}
 
-		.task__actions .is-link {
-			margin-left: 8px;
+		.task__actions {
+			button {
+				width: auto;
+			}
+			.is-link {
+				padding-left: 0;
+
+				@media (min-width: ( $break-wide + 1 ) ) {
+					padding-left: 8px;
+					margin-left: 8px;
+				}
+			}
 		}
 
 		.task__illustration {

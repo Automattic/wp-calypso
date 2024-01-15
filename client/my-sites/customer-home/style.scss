@@ -256,7 +256,11 @@ body.is-section-home.theme-default.color-scheme {
 	// edges of the space with it's inner list.
 	.card,
 	.task {
-		margin: 0 32px 32px;
+		margin: 32px;
+
+		@media ( min-width: ( $break-wide + 1 ) ) {
+			margin: 0 32px 32px;
+		}
 	}
 
 	// Extend the checklist to the edge of the primary content area
