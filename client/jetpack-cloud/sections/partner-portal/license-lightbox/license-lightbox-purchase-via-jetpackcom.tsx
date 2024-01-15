@@ -2,8 +2,7 @@ import { Button } from '@automattic/components';
 import formatCurrency from '@automattic/format-currency';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { useTranslate } from 'i18n-calypso';
-import { FunctionComponent, useContext, useCallback } from 'react';
-import SitesOverviewContext from 'calypso/jetpack-cloud/sections/agency-dashboard/sites-overview/context';
+import { FunctionComponent, useCallback } from 'react';
 import { getPurchaseURLCallback } from 'calypso/my-sites/plans/jetpack-plans/get-purchase-url-callback';
 import slugToSelectorProduct from 'calypso/my-sites/plans/jetpack-plans/slug-to-selector-product';
 import { SelectorProduct } from 'calypso/my-sites/plans/jetpack-plans/types';
@@ -16,20 +15,16 @@ import './style.scss';
 type Props = {
 	nonManageProductSlug: string;
 	nonManageProductPrice?: number | null;
-	onClose: () => void;
 	siteId?: number;
 };
 
 const LicenseLightboxPurchaseViaJetpackcom: FunctionComponent< Props > = ( {
 	nonManageProductSlug,
 	nonManageProductPrice,
-	onClose,
 	siteId,
 } ) => {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
-
-	const { hideLicenseInfo } = useContext( SitesOverviewContext );
 
 	const item = slugToSelectorProduct( nonManageProductSlug ) as SelectorProduct;
 
@@ -41,10 +36,6 @@ const LicenseLightboxPurchaseViaJetpackcom: FunctionComponent< Props > = ( {
 	} );
 
 	const checkoutURL = createCheckoutURL && createCheckoutURL( item, false );
-	const onHideLicenseInfo = useCallback( () => {
-		hideLicenseInfo();
-		onClose?.();
-	}, [ hideLicenseInfo, onClose ] );
 
 	const onProceedToCheckout = useCallback( () => {
 		dispatch(
@@ -52,8 +43,7 @@ const LicenseLightboxPurchaseViaJetpackcom: FunctionComponent< Props > = ( {
 				product: nonManageProductSlug,
 			} )
 		);
-		onHideLicenseInfo();
-	}, [ nonManageProductSlug, dispatch, onHideLicenseInfo ] );
+	}, [ nonManageProductSlug, dispatch ] );
 
 	const learnMoreLink = localizeUrl(
 		'https://jetpack.com/support/jetpack-manage-instructions/jetpack-manage-billing-payment-faqs'
