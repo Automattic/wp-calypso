@@ -21,5 +21,8 @@ export const getTaskDefinition = ( flow: string, task: Task, context: TaskContex
 		return null;
 	}
 
+	// eslint-disable-next-line no-console
+	console.log( 'Using new task definition parser', { taskId: task.id, flowId: flow } );
+
 	return DEFINITIONS[ task.id as TaskId ]( task, flow, context );
 };
