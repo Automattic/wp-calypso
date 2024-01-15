@@ -343,7 +343,6 @@ class FeaturesGrid extends Component< FeaturesGridProps > {
 			planActionOverrides,
 			isLargeCurrency,
 			onUpgradeClick,
-			intent,
 		} = this.props;
 
 		return renderedGridPlans.map(
@@ -394,7 +393,6 @@ class FeaturesGrid extends Component< FeaturesGridProps > {
 							isStuck={ options?.isStuck || false }
 							isLargeCurrency={ isLargeCurrency }
 							storageOptions={ storageOptions }
-							intent={ intent ?? null }
 						/>
 					</PlanDivOrTdContainer>
 				);
