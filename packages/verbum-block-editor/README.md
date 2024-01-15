@@ -1,5 +1,7 @@
 # Verbum Block Editor
 
+This lives in: [wp-calpyso/packages/verbum-block-editor](https://github.com/Automattic/wp-calypso/tree/trunk/packages/verbum-block-editor).
+
 Verbum Block Editor is a lightweight Gutenberg editor, tailored specifically for enhancing the commenting experience. It offers a user-friendly interface, enabling effortless composition and formatting of comments.
 
 ## Features
