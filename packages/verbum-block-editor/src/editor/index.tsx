@@ -7,6 +7,7 @@ import {
 	store as blockEditorStore,
 	// @ts-expect-error - Typings missing
 } from '@wordpress/block-editor';
+import { useCompatibilityStyles } from '@wordpress/block-editor/build-module/components/iframe/use-compatibility-styles';
 import { createBlock, serialize, type BlockInstance } from '@wordpress/blocks';
 import { Popover, SlotFillProvider, KeyboardShortcuts } from '@wordpress/components';
 import { useStateWithHistory, useResizeObserver } from '@wordpress/compose';
@@ -39,6 +40,10 @@ export const Editor: FC< EditorProps > = ( { initialContent = '', onChange, isRT
 		initialContent !== '' ? safeParse( initialContent ) : [ createBlock( 'core/paragraph' ) ]
 	) as unknown as StateWithUndoManager;
 	const [ isEditing, setIsEditing ] = useState( false );
+
+	const compatStylesIds = useCompatibilityStyles().map(
+		( el ) => el.getAttribute( 'id' ) as string
+	);
 
 	const handleContentUpdate = useCallback(
 		( content: BlockInstance[] ) => {
@@ -123,6 +128,9 @@ export const Editor: FC< EditorProps > = ( { initialContent = '', onChange, isRT
 									{ contentResizeListener }
 									<BlockList renderAppender={ false } />
 								</div>
+								{ compatStylesIds.map( ( id: string ) => (
+									<div hidden key={ id } id={ id }></div>
+								) ) }
 							</BlockCanvas>
 						</BlockTools>
 					</div>
