@@ -1,9 +1,11 @@
+import { Button } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import { useState } from 'react';
 import QueryJetpackPartnerPortalStoredCards from 'calypso/components/data/query-jetpack-partner-portal-stored-cards';
 import Layout from 'calypso/jetpack-cloud/components/layout';
 import LayoutBody from 'calypso/jetpack-cloud/components/layout/body';
 import LayoutHeader, {
+	LayoutHeaderActions as Actions,
 	LayoutHeaderSubtitle as Subtitle,
 	LayoutHeaderTitle as Title,
 } from 'calypso/jetpack-cloud/components/layout/header';
@@ -13,7 +15,9 @@ import {
 	getAllStoredCards,
 	isFetchingStoredCards,
 } from 'calypso/state/partner-portal/stored-cards/selectors';
+import StoredCreditCardV2 from '../stored-credit-card-v2';
 import EmptyState from './empty-state';
+import type { PaymentMethod } from 'calypso/jetpack-cloud/sections/partner-portal/payment-methods';
 
 import './style.scss';
 
@@ -32,11 +36,17 @@ export default function PaymentMethodListV2() {
 
 	const getBody = () => {
 		if ( isFetching ) {
-			// TODO: Show loading state.
+			return 'Loading...';
 		}
 
 		if ( storedCards.length ) {
-			// TODO: Show list of cards and implement pagination.
+			return (
+				<div className="payment-method-list-v2__stored-cards">
+					{ storedCards.map( ( card: PaymentMethod ) => (
+						<StoredCreditCardV2 key={ card.id } creditCard={ card } />
+					) ) }
+				</div>
+			);
 		}
 
 		return (
@@ -54,6 +64,11 @@ export default function PaymentMethodListV2() {
 				<LayoutHeader>
 					<Title>{ title } </Title>
 					<Subtitle>{ subtitle }</Subtitle>
+					<Actions>
+						<Button href="/partner-portal/payment-methods/add" primary>
+							{ translate( 'Add new card' ) }
+						</Button>
+					</Actions>
 				</LayoutHeader>
 			</LayoutTop>
 

@@ -1,4 +1,5 @@
 import { findPlansKeys, GROUP_WPCOM } from '@automattic/calypso-products';
+import { domainProductSlugs } from 'calypso/lib/domains/constants';
 import { isRedesignV2 } from '../utils';
 
 describe( 'isRedesignV2', () => {
@@ -37,6 +38,18 @@ describe( 'isRedesignV2', () => {
 						{ productSlug: 'domain_map' },
 						{ productSlug: 'dotblog_domain', isDomainRegistration: true },
 					],
+					failedPurchases: [],
+				},
+			},
+		};
+		expect( isRedesignV2( props ) ).toBe( false );
+	} );
+
+	it( 'should return false if the purchases contain only domain transfers', () => {
+		const props = {
+			receipt: {
+				data: {
+					purchases: [ { productSlug: domainProductSlugs.TRANSFER_IN } ],
 					failedPurchases: [],
 				},
 			},
