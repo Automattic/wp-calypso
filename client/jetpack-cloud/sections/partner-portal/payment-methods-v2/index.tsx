@@ -34,16 +34,25 @@ export default function PaymentMethodListV2() {
 
 	const [ paging ] = useState( { startingAfter: '', endingBefore: '' } ); // TODO: Implement pagination.
 
+	const primaryCard = storedCards.find( ( card ) => card.is_default );
+	const secondaryCards = storedCards.filter( ( card ) => ! card.is_default );
+
 	const getBody = () => {
 		if ( isFetching ) {
 			return 'Loading...';
 		}
 
-		if ( storedCards.length ) {
+		if ( storedCards.length > 0 ) {
 			return (
 				<div className="payment-method-list-v2__stored-cards">
-					{ storedCards.map( ( card: PaymentMethod ) => (
-						<StoredCreditCardV2 key={ card.id } creditCard={ card } />
+					{ primaryCard && <StoredCreditCardV2 creditCard={ primaryCard } /> }
+					{ secondaryCards.map( ( card: PaymentMethod, index ) => (
+						<StoredCreditCardV2
+							key={ card.id }
+							creditCard={ card }
+							showSecondaryCardCount={ secondaryCards.length > 1 }
+							secondaryCardCount={ index + 1 }
+						/>
 					) ) }
 				</div>
 			);
