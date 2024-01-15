@@ -12,7 +12,7 @@ import { useMemo } from '@wordpress/element';
 import { useTranslate } from 'i18n-calypso';
 import { useState } from 'react';
 import { useSelector } from 'react-redux';
-import domainUpsellIllustration from 'calypso/assets/images/customer-home/illustration--task-domain-upsell.svg';
+import domainUpsellMobileIllustration from 'calypso/assets/images/customer-home/illustration--task-domain-upsell-mobile.svg';
 import { useQueryProductsList } from 'calypso/components/data/query-products-list';
 import { domainRegistration } from 'calypso/lib/cart-values/cart-items';
 import { preventWidows } from 'calypso/lib/formatting';
@@ -202,7 +202,7 @@ export function RenderDomainUpsell( { isFreePlan, isMonthlyPlan, searchTerm, sit
 			hasSecondaryAction={ true }
 			secondaryActionText={ translate( 'Find other domains' ) }
 			secondaryActionUrl={ searchLink }
-			illustration={ domainUpsellIllustration }
+			illustration={ domainUpsellMobileIllustration }
 			illustrationAlwaysShow={ true }
 			taskId={ TASK_DOMAIN_UPSELL }
 		/>
