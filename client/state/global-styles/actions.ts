@@ -5,14 +5,14 @@ import type { ActiveTheme, GlobalStyles } from '@automattic/data-stores';
 import type { CalypsoDispatch } from 'calypso/state/types';
 import type { AppState } from 'calypso/types';
 
-export function getGlobalStylesId( siteIdOrSlug: number | string, stylesheet: string ) {
+export function getGlobalStylesId( siteId: number, stylesheet: string ) {
 	return async ( dispatch: CalypsoDispatch, getState: () => AppState ) => {
 		const state = getState();
-		const themeId = isJetpackSite( state, siteIdOrSlug )
+		const themeId = isJetpackSite( state, siteId )
 			? getThemeIdFromStylesheet( stylesheet )
 			: stylesheet;
 		const themes: ActiveTheme[] = await wpcom.req.get( {
-			path: `/sites/${ encodeURIComponent( siteIdOrSlug ) }/themes?${ new URLSearchParams( {
+			path: `/sites/${ encodeURIComponent( siteId ) }/themes?${ new URLSearchParams( {
 				status: 'active',
 				wp_theme_preview: themeId,
 			} ).toString() }`,
