@@ -4,11 +4,14 @@ import { useTranslate } from 'i18n-calypso';
 import { useState } from 'react';
 import Accordion from 'calypso/components/domains/accordion';
 import Notice from 'calypso/components/notice';
+import NoticeAction from 'calypso/components/notice/notice-action';
 import useDomainDiagnosticsQuery from 'calypso/data/domains/diagnostics/use-domain-diagnostics-query';
+import { setDomainNotice } from 'calypso/lib/domains/set-domain-notice';
 import wpcom from 'calypso/lib/wp';
 import { useDispatch } from 'calypso/state';
 import { fetchDns } from 'calypso/state/domains/dns/actions';
 import { errorNotice, successNotice } from 'calypso/state/notices/actions';
+import DismissEmailDnsIssuesDialog from './dismiss-email-dns-issues-dialog';
 import type { ResponseDomain } from 'calypso/lib/domains/types';
 
 import './style.scss';
@@ -27,6 +30,8 @@ export default function DomainDiagnosticsCard( { domain }: { domain: ResponseDom
 		refetch: refetchDomainDiagnostics,
 	} = useDomainDiagnosticsQuery( domain.name );
 	const [ isRestoringDefaultRecords, setIsRestoringDefaultRecords ] = useState( false );
+	const [ isDismissEmailDnsIssuesDialogVisible, setIsDismissEmailDnsIssuesDialogVisible ] =
+		useState( false );
 
 	if ( ! domain.isMappedToAtomicSite || isFetching || ! data ) {
 		return null;
@@ -42,6 +47,15 @@ export default function DomainDiagnosticsCard( { domain }: { domain: ResponseDom
 	) {
 		return null;
 	}
+
+	const isEmailDnsIssuesNoticeDismissed = ! emailDnsDiagnostics.dismissed_email_dns_issues_notice;
+
+	const dismissNotice = ( ignore: boolean ) => {
+		if ( ignore ) {
+			setDomainNotice( domain.name, 'email-dns-records-diagnostics', 'ignored' );
+		}
+		setIsDismissEmailDnsIssuesDialogVisible( false );
+	};
 
 	const renderDiagnosticForRecord = ( record: string ) => {
 		const uppercaseRecord = record.toUpperCase();
@@ -153,20 +167,33 @@ export default function DomainDiagnosticsCard( { domain }: { domain: ResponseDom
 	// );
 
 	return (
-		<Accordion
-			className="domain-diagnostics-card__accordion"
-			title={ translate( 'Diagnostics', { textOnly: true } ) }
-			subtitle={ translate( 'There are some issues with your domain', { textOnly: true } ) }
-			key="diagnostics"
-			expanded
-		>
-			<div>
-				<Notice status="is-warning" text={ noticeText } showDismiss={ false } />
-				<ul>{ recordsToCheck.map( renderDiagnosticForRecord ) }</ul>
-				{ emailDnsDiagnostics.is_using_wpcom_name_servers
-					? renderFixButton()
-					: renderFixInstructions() }
-			</div>
-		</Accordion>
+		<>
+			<DismissEmailDnsIssuesDialog
+				onClose={ dismissNotice }
+				isVisible={ isDismissEmailDnsIssuesDialogVisible }
+			/>
+
+			<Accordion
+				className="domain-diagnostics-card__accordion"
+				title={ translate( 'Diagnostics', { textOnly: true } ) }
+				subtitle={ translate( 'There are some issues with your domain', { textOnly: true } ) }
+				key="diagnostics"
+				expanded={ isEmailDnsIssuesNoticeDismissed }
+			>
+				<div>
+					<Notice status="is-warning" text={ noticeText } showDismiss={ false }>
+						{ isEmailDnsIssuesNoticeDismissed && (
+							<NoticeAction onClick={ () => setIsDismissEmailDnsIssuesDialogVisible( true ) }>
+								Dismiss
+							</NoticeAction>
+						) }
+					</Notice>
+					<ul>{ recordsToCheck.map( renderDiagnosticForRecord ) }</ul>
+					{ emailDnsDiagnostics.is_using_wpcom_name_servers
+						? renderFixButton()
+						: renderFixInstructions() }
+				</div>
+			</Accordion>
+		</>
 	);
 }
