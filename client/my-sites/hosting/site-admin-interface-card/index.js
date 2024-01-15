@@ -98,10 +98,12 @@ const SiteAdminInterfaceCard = ( { siteId, adminInterface } ) => {
 			</CardHeading>
 			<p>
 				{ translate(
-					'Set the style for the admin interface. {{supportLink}}Learn more{{/supportLink}}.',
+					'Set the admin interface style for all users. {{supportLink}}Learn more{{/supportLink}}.',
 					{
 						components: {
-							supportLink: <InlineSupportLink supportContext="dashboard" showIcon={ false } />,
+							supportLink: (
+								<InlineSupportLink supportContext="admin-interface-style" showIcon={ false } />
+							),
 						},
 					}
 				) }

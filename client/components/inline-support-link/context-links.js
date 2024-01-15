@@ -6,6 +6,10 @@ const contextLinks = {
 		link: 'https://wordpress.com/support/account-settings/',
 		post_id: 80368,
 	},
+	'admin-interface-style': {
+		link: 'https://wordpress.com/support/dashboard/#set-the-admin-interface-style',
+		post_id: 137,
+	},
 	advertising: {
 		link: 'https://wordpress.com/support/promote-a-post/',
 		post_id: 213203,
