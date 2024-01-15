@@ -81,12 +81,26 @@ describe( 'CommandPalette', () => {
 		} );
 	} );
 
-	it( 'should close the command palette when Escape key is pressed', async () => {
+	it( 'should close the command palette when Escape key is pressed', () => {
 		renderCommandPalette();
 
 		waitFor( () => {
 			expect( screen.getByPlaceholderText( 'Search for commands' ) ).toBeInTheDocument();
 			fireEvent.keyDown( document, { key: 'Escape' } );
+		} );
+
+		waitFor( () => {
+			expect( screen.queryByPlaceholderText( 'Search for commands' ) ).toBeNull();
+		} );
+	} );
+
+	it( 'should close the command palette when clicking outside the modal overlay', () => {
+		renderCommandPalette();
+
+		waitFor( () => {
+			expect( screen.getByPlaceholderText( 'Search for commands' ) ).toBeInTheDocument();
+			const overlayElement = document.querySelector( '.commands-command-menu__overlay' );
+			overlayElement && fireEvent.click( overlayElement );
 		} );
 
 		waitFor( () => {
