@@ -38,7 +38,7 @@ import { ONBOARD_STORE, SITE_STORE } from '../../../../stores';
 import { goToCheckout } from '../../../../utils/checkout';
 import { getTaskDefinition } from './task-definitions';
 import { launchpadFlowTasks } from './tasks';
-import { LaunchpadChecklist, Task } from './types';
+import { LaunchpadChecklist, Task, TaskContext } from './types';
 
 interface GetEnhancedTasksProps {
 	tasks: Task[] | null | undefined;
@@ -275,6 +275,12 @@ export function getEnhancedTasks( {
 		tasks.map( ( task ) => {
 			let taskData = {};
 
+			const context: TaskContext = {
+				site,
+				tasks,
+				siteInfoQueryArgs,
+			};
+
 			switch ( task.id ) {
 				case 'setup_free':
 					// DEPRECATED: This task is deprecated and will be removed in the future
@@ -288,7 +294,7 @@ export function getEnhancedTasks( {
 						},
 					};
 
-					taskData = getTaskDefinition( flow, task, { site, tasks } ) || deprecatedData;
+					taskData = getTaskDefinition( flow, task, context ) || deprecatedData;
 					break;
 				case 'setup_blog':
 					taskData = {
