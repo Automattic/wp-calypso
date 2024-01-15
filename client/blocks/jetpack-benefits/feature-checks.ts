@@ -32,6 +32,25 @@ import {
 	FEATURE_STATS_FREE,
 } from '@automattic/calypso-products';
 
+export const productHasActivityLog = ( productSlug: string ): boolean => {
+	// Any site with Jetpack free will have the activity log
+	// Highlighting the log here just for backup products or paid plans, since there are more benefits in these cases (more history, finding previous backups)
+	return isJetpackPlanSlug( productSlug ) || isJetpackBackupSlug( productSlug );
+};
+
+export const productHasAntiSpam = ( productSlug: string ): boolean => {
+	const ANTISPAM_FEATURES = [ FEATURE_JETPACK_ANTI_SPAM, FEATURE_JETPACK_ANTI_SPAM_MONTHLY ];
+
+	// check that this product is standalone anti-spam or one of the plans that contains it
+	return (
+		// standalone anti-spam product
+		isJetpackAntiSpamSlug( productSlug ) ||
+		// check plans for anti-spam features
+		( isJetpackPlanSlug( productSlug ) &&
+			planHasAtLeastOneFeature( productSlug, ANTISPAM_FEATURES ) )
+	);
+};
+
 export const productHasBackups = ( productSlug: string ): boolean => {
 	const BACKUP_FEATURES = [
 		FEATURE_JETPACK_BACKUP_DAILY_MONTHLY,
@@ -49,6 +68,19 @@ export const productHasBackups = ( productSlug: string ): boolean => {
 		isJetpackBackupSlug( productSlug ) ||
 		// check plans for Jetpack backup features
 		( isJetpackPlanSlug( productSlug ) && planHasAtLeastOneFeature( productSlug, BACKUP_FEATURES ) )
+	);
+};
+
+/**
+ * Checks if the product has Boost features
+ */
+export const productHasBoost = ( productSlug: string ): boolean => {
+	return (
+		// If the product is a standalone Boost product
+		isJetpackBoostSlug( productSlug ) ||
+		// If Boost is included in the plan
+		( isJetpackPlanSlug( productSlug ) &&
+			planHasAtLeastOneFeature( productSlug, [ FEATURE_CLOUD_CRITICAL_CSS ] ) )
 	);
 };
 
@@ -97,25 +129,6 @@ export const productHasStats = ( productSlug: string, onlyPaid = false ): boolea
 	return false;
 };
 
-export const productHasAntiSpam = ( productSlug: string ): boolean => {
-	const ANTISPAM_FEATURES = [ FEATURE_JETPACK_ANTI_SPAM, FEATURE_JETPACK_ANTI_SPAM_MONTHLY ];
-
-	// check that this product is standalone anti-spam or one of the plans that contains it
-	return (
-		// standalone anti-spam product
-		isJetpackAntiSpamSlug( productSlug ) ||
-		// check plans for anti-spam features
-		( isJetpackPlanSlug( productSlug ) &&
-			planHasAtLeastOneFeature( productSlug, ANTISPAM_FEATURES ) )
-	);
-};
-
-export const productHasActivityLog = ( productSlug: string ): boolean => {
-	// Any site with Jetpack free will have the activity log
-	// Highlighting the log here just for backup products or paid plans, since there are more benefits in these cases (more history, finding previous backups)
-	return isJetpackPlanSlug( productSlug ) || isJetpackBackupSlug( productSlug );
-};
-
 /**
  * Checks if the product IS Jetpack VideoPress, or if it contains Jetpack VideoPress as a feature.
  * @param productSlug The product slug
@@ -128,18 +141,5 @@ export const productHasVideoPress = ( productSlug: string ): boolean => {
 			FEATURE_JETPACK_VIDEOPRESS_MONTHLY,
 		] ) ||
 		[ PRODUCT_JETPACK_VIDEOPRESS, PRODUCT_JETPACK_VIDEOPRESS_MONTHLY ].includes( productSlug )
-	);
-};
-
-/**
- * Checks if the product has Boost features
- */
-export const productHasBoost = ( productSlug: string ): boolean => {
-	return (
-		// If the product is a standalone Boost product
-		isJetpackBoostSlug( productSlug ) ||
-		// If Boost is included in the plan
-		( isJetpackPlanSlug( productSlug ) &&
-			planHasAtLeastOneFeature( productSlug, [ FEATURE_CLOUD_CRITICAL_CSS ] ) )
 	);
 };
