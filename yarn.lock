@@ -1730,6 +1730,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@automattic/verbum-block-editor@workspace:packages/verbum-block-editor"
   dependencies:
+    "@automattic/calypso-apps-builder": "workspace:^"
     "@automattic/calypso-build": "workspace:^"
     "@automattic/calypso-color-schemes": "workspace:^"
     "@automattic/calypso-typescript-config": "workspace:^"
