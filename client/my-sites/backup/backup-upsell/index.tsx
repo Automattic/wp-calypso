@@ -13,11 +13,8 @@ import UpsellProductCard from 'calypso/components/jetpack/upsell-product-card';
 import { UpsellComponentProps } from 'calypso/components/jetpack/upsell-switch';
 import Main from 'calypso/components/main';
 import SidebarNavigation from 'calypso/components/sidebar-navigation';
-import { getPurchaseURLCallback } from 'calypso/my-sites/plans/jetpack-plans/get-purchase-url-callback';
 import { useSelector, useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
-import { getCurrentUserCurrencyCode } from 'calypso/state/currency-code/selectors';
-import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import getSelectedSiteId from 'calypso/state/ui/selectors/get-selected-site-id';
 
 import './style.scss';
@@ -67,12 +64,6 @@ const BackupsVPActiveBody: FunctionComponent = () => {
 
 const BackupsUpsellBody: FunctionComponent = () => {
 	const siteId = useSelector( getSelectedSiteId ) || -1;
-	const selectedSiteSlug = useSelector( getSelectedSiteSlug ) || '';
-	const currencyCode = useSelector( getCurrentUserCurrencyCode );
-	const createCheckoutURL = getPurchaseURLCallback( selectedSiteSlug, {
-		// For the Backup upsell in Jetpack Cloud, we want to redirect back here to the Backup page after checkout.
-		redirect_to: window.location.href,
-	} );
 	const dispatch = useDispatch();
 
 	const onClick = useCallback(
@@ -89,8 +80,6 @@ const BackupsUpsellBody: FunctionComponent = () => {
 			<UpsellProductCard
 				productSlug={ PRODUCT_JETPACK_BACKUP_T1_YEARLY }
 				siteId={ siteId }
-				currencyCode={ currencyCode }
-				getButtonURL={ createCheckoutURL }
 				onCtaButtonClick={ onClick }
 			/>
 		</>
