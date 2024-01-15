@@ -10,6 +10,7 @@ import LayoutHeader, {
 import LayoutTop from 'calypso/jetpack-cloud/components/layout/top';
 import PaymentMethodForm from '../../payment-method-form';
 import PaymentMethodStripeInfo from '../../payment-method-stripe-info';
+import PartnerPortalSidebarNavigation from '../../sidebar-navigation';
 
 import './style.scss';
 
@@ -20,7 +21,12 @@ export default function PaymentMethodListV2() {
 	const subtitle = translate( 'You will only be charged for paid licenses you issue.' );
 
 	return (
-		<Layout className="payment-method-add" title={ title } wide>
+		<Layout
+			className="payment-method-add"
+			title={ title }
+			sidebarNavigation={ <PartnerPortalSidebarNavigation /> }
+			wide
+		>
 			<LayoutTop>
 				<LayoutHeader>
 					<Breadcrumb
