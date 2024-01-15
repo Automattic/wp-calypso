@@ -59,7 +59,7 @@ export default function JetpackSearchUpsell() {
 					{ siteId && <QueryIntroOffers siteId={ siteId } /> }
 					{ siteId && <QuerySiteProducts siteId={ siteId } /> }
 					<UpsellProductCard
-						productSlug={ PRODUCT_JETPACK_SEARCH }
+						nonManageProductSlug={ PRODUCT_JETPACK_SEARCH }
 						siteId={ siteId }
 						onCtaButtonClick={ onClick }
 					/>
