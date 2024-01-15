@@ -541,7 +541,7 @@ const PlansFeaturesMain = ( {
 	}
 
 	const planTypeSelectorProps = useMemo( () => {
-		return {
+		const props = {
 			basePlansPath,
 			isStepperUpgradeFlow,
 			isInSignup,
@@ -564,25 +564,64 @@ const PlansFeaturesMain = ( {
 			selectedSiteId: siteId,
 			withDiscount,
 		};
+
+		const handlePlanIntervalChange = ( selectedItem: { key: SupportedUrlFriendlyTermType } ) => {
+			let isDomainUpsellFlow: string | null = '';
+			let isDomainAndPlanPackageFlow: string | null = '';
+			let isJetpackAppFlow: string | null = '';
+
+			if ( typeof window !== 'undefined' ) {
+				isDomainUpsellFlow = new URLSearchParams( window.location.search ).get( 'domain' );
+				isDomainAndPlanPackageFlow = new URLSearchParams( window.location.search ).get(
+					'domainAndPlanPackage'
+				);
+				isJetpackAppFlow = new URLSearchParams( window.location.search ).get( 'jetpackAppPlans' );
+			}
+
+			const pathOrQueryParam = getPlanTypeDestination( props, {
+				intervalType: selectedItem.key,
+				domain: isDomainUpsellFlow,
+				domainAndPlanPackage: isDomainAndPlanPackageFlow,
+				jetpackAppPlans: isJetpackAppFlow,
+			} );
+
+			if ( onPlanIntervalChange ) {
+				return onPlanIntervalChange( pathOrQueryParam );
+			}
+
+			if ( hasQueryArg( pathOrQueryParam, 'intervalType' ) ) {
+				const currentPath = window.location.pathname;
+				return page( currentPath + pathOrQueryParam );
+			}
+
+			page( pathOrQueryParam );
+		};
+
+		return {
+			...props,
+			onPlanIntervalChange: handlePlanIntervalChange,
+		};
 	}, [
-		_customerType,
 		basePlansPath,
-		filteredDisplayedIntervals,
-		gridPlansForFeaturesGrid,
-		intervalType,
-		planTypeSelector,
-		selectedFeature,
-		selectedPlan,
-		sitePlanSlug,
-		siteSlug,
-		isInSignup,
-		isPlansInsideStepper,
 		isStepperUpgradeFlow,
-		showPlanTypeSelectorDropdown,
+		isInSignup,
 		eligibleForWpcomMonthlyPlans,
+		isPlansInsideStepper,
+		intervalType,
+		_customerType,
+		siteSlug,
+		selectedPlan,
+		selectedFeature,
+		filteredDisplayedIntervals,
+		showPlanTypeSelectorDropdown,
+		planTypeSelector,
+		gridPlansForFeaturesGrid,
+		sitePlanSlug,
 		coupon,
 		siteId,
 		withDiscount,
+		getPlanTypeDestination,
+		onPlanIntervalChange,
 	] );
 
 	/**
@@ -731,41 +770,6 @@ const PlansFeaturesMain = ( {
 		[]
 	);
 
-	const handlePlanIntervalChange = useCallback(
-		( selectedItem: { key: SupportedUrlFriendlyTermType } ) => {
-			let isDomainUpsellFlow: string | null = '';
-			let isDomainAndPlanPackageFlow: string | null = '';
-			let isJetpackAppFlow: string | null = '';
-
-			if ( typeof window !== 'undefined' ) {
-				isDomainUpsellFlow = new URLSearchParams( window.location.search ).get( 'domain' );
-				isDomainAndPlanPackageFlow = new URLSearchParams( window.location.search ).get(
-					'domainAndPlanPackage'
-				);
-				isJetpackAppFlow = new URLSearchParams( window.location.search ).get( 'jetpackAppPlans' );
-			}
-
-			const pathOrQueryParam = getPlanTypeDestination( planTypeSelectorProps, {
-				intervalType: selectedItem.key,
-				domain: isDomainUpsellFlow,
-				domainAndPlanPackage: isDomainAndPlanPackageFlow,
-				jetpackAppPlans: isJetpackAppFlow,
-			} );
-
-			if ( onPlanIntervalChange ) {
-				return onPlanIntervalChange( pathOrQueryParam );
-			}
-
-			if ( hasQueryArg( pathOrQueryParam, 'intervalType' ) ) {
-				const currentPath = window.location.pathname;
-				return page( currentPath + pathOrQueryParam );
-			}
-
-			page( pathOrQueryParam );
-		},
-		[]
-	);
-
 	const comparisonGridContainerClasses = classNames(
 		'plans-features-main__comparison-grid-container',
 		{
@@ -860,7 +864,6 @@ const PlansFeaturesMain = ( {
 								enableStickyBehavior={ enablePlanTypeSelectorStickyBehavior }
 								stickyPlanTypeSelectorOffset={ masterbarHeight - 1 }
 								coupon={ coupon }
-								onPlanIntervalChange={ handlePlanIntervalChange }
 							/>
 						) }
 						<div
@@ -937,7 +940,6 @@ const PlansFeaturesMain = ( {
 												<PlanTypeSelector
 													{ ...planTypeSelectorProps }
 													layoutClassName="plans-features-main__plan-type-selector-layout"
-													onPlanIntervalChange={ handlePlanIntervalChange }
 													coupon={ coupon }
 												/>
 											) }
@@ -962,12 +964,7 @@ const PlansFeaturesMain = ( {
 												onStorageAddOnClick={ handleStorageAddOnClick }
 												showRefundPeriod={ isAnyHostingFlow( flowName ) }
 												planTypeSelectorProps={
-													! hidePlanSelector
-														? {
-																...planTypeSelectorProps,
-																onPlanIntervalChange: handlePlanIntervalChange,
-														  }
-														: undefined
+													! hidePlanSelector ? planTypeSelectorProps : undefined
 												}
 												coupon={ coupon }
 											/>
