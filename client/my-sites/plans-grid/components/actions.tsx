@@ -68,7 +68,7 @@ const SignupFlowPlanFeatureActionButton = ( {
 	hasFreeTrialPlan,
 	handleUpgradeButtonClick,
 	busy,
-	isEligibleForTrial,
+	postButtonText,
 }: {
 	planSlug: PlanSlug;
 	planTitle: TranslateResult;
@@ -78,10 +78,9 @@ const SignupFlowPlanFeatureActionButton = ( {
 	hasFreeTrialPlan: boolean;
 	handleUpgradeButtonClick: ( isFreeTrialPlan?: boolean ) => void;
 	busy?: boolean;
-	isEligibleForTrial?: boolean;
+	postButtonText?: TranslateResult | false | undefined;
 } ) => {
 	const translate = useTranslate();
-	const { intent } = usePlansGridContext();
 
 	let btnText = translate( 'Get %(plan)s', {
 		args: {
@@ -135,30 +134,15 @@ const SignupFlowPlanFeatureActionButton = ( {
 		);
 	}
 
-	if (
-		! hasFreeTrialPlan &&
-		isBusinessPlan( planSlug ) &&
-		! isEligibleForTrial &&
-		intent === 'plans-new-hosted-site'
-	) {
-		return (
-			<div className="plan-features-2023-grid__multiple-actions-container">
-				<PlanButton
-					planSlug={ planSlug }
-					onClick={ () => handleUpgradeButtonClick( false ) }
-					busy={ busy }
-				>
-					{ btnText }
-				</PlanButton>
-				<span>{ ! isStuck && translate( "You've already used your free trial! Thanks!" ) }</span>
-			</div>
-		);
-	}
-
 	return (
-		<PlanButton planSlug={ planSlug } onClick={ onClick } busy={ busy }>
-			{ btnText }
-		</PlanButton>
+		<>
+			<PlanButton planSlug={ planSlug } onClick={ onClick } busy={ busy }>
+				{ btnText }
+			</PlanButton>
+			{ postButtonText && (
+				<span className="plan-features-2023-grid__actions-span">{ postButtonText }</span>
+			) }
+		</>
 	);
 };
 
@@ -448,7 +432,6 @@ const PlanFeaturesActionsButton: React.FC< PlanFeaturesActionsButtonProps > = ( 
 	isLargeCurrency,
 	isMonthlyPlan,
 	storageOptions,
-	intent,
 } ) => {
 	const translate = useTranslate();
 	const { gridPlansIndex } = usePlansGridContext();
@@ -516,8 +499,9 @@ const PlanFeaturesActionsButton: React.FC< PlanFeaturesActionsButtonProps > = ( 
 				busy={
 					isFreePlan( planSlug ) && planActionOverrides?.loggedInFreePlan?.status === 'blocked'
 				}
-				isEligibleForTrial={ planActionOverrides?.isEligibleForTrial }
-				intent={ intent }
+				postButtonText={
+					isBusinessPlan( planSlug ) && planActionOverrides?.trialAlreadyUsed?.postButtonText
+				}
 			/>
 		);
 	}

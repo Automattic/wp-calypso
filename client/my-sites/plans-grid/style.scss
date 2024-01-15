@@ -242,6 +242,12 @@ $mobile-card-max-width: 440px;
 		font-weight: 600;
 	}
 
+	.plan-features-2023-grid__actions-span {
+		text-align: center;
+		font-size: 0.75rem;
+		display: block;
+		margin-top: 10px;
+	}
 
 	&.is-top-buttons {
 		padding: 0 20px;
@@ -366,11 +372,6 @@ $mobile-card-max-width: 440px;
 	display: flex;
 	flex-direction: column;
 	gap: 8px;
-
-	span {
-		text-align: center;
-		font-size: 0.75rem;
-	}
 }
 
 .plan-features-2023-grid__row:last-of-type .plan-features-2023-grid__table-item {

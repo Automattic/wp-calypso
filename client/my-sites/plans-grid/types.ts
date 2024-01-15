@@ -26,7 +26,10 @@ export interface PlanActionOverrides {
 		text?: TranslateResult;
 		callback?: () => void;
 	};
-	isEligibleForTrial: boolean;
+
+	trialAlreadyUsed?: {
+		postButtonText?: TranslateResult;
+	};
 }
 
 // A generic type representing the response of an async request.

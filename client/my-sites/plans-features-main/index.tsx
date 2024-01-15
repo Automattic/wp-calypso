@@ -590,8 +590,13 @@ const PlansFeaturesMain = ( {
 				loggedInFreePlan: {
 					status: 'enabled',
 				},
-				isEligibleForTrial,
 			};
+
+			if ( ! isEligibleForTrial && intentFromProps === 'plans-new-hosted-site' ) {
+				actionOverrides.trialAlreadyUsed = {
+					postButtonText: translate( "You've already used your free trial! Thanks!" ),
+				};
+			}
 		}
 
 		if ( sitePlanSlug && intentFromProps !== 'plans-p2' ) {
