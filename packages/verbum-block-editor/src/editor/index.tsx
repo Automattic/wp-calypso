@@ -41,6 +41,10 @@ export const Editor: FC< EditorProps > = ( { initialContent = '', onChange, isRT
 	) as unknown as StateWithUndoManager;
 	const [ isEditing, setIsEditing ] = useState( false );
 
+	/**
+	 * This prevents the editor from copying the theme styles inside the iframe. We don't want to copy the styles inside.
+	 * See: https://github.com/WordPress/gutenberg/blob/4c319590947b5f7853411e3c076861193942c6d2/packages/block-editor/src/components/iframe/index.js#L160
+	 */
 	const compatStylesIds = useCompatibilityStyles().map(
 		( el ) => el.getAttribute( 'id' ) as string
 	);
