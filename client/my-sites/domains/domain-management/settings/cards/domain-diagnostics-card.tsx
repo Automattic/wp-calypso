@@ -52,7 +52,9 @@ export default function DomainDiagnosticsCard( { domain }: { domain: ResponseDom
 
 	const dismissNotice = ( ignore: boolean ) => {
 		if ( ignore ) {
-			setDomainNotice( domain.name, 'email-dns-records-diagnostics', 'ignored' );
+			setDomainNotice( domain.name, 'email-dns-records-diagnostics', 'ignored', () => {
+				refetchDomainDiagnostics();
+			} );
 		}
 		setIsDismissEmailDnsIssuesDialogVisible( false );
 	};
