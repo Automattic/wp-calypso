@@ -100,7 +100,7 @@ const testCoupon3 = {
 	start_date: '2023-12-25',
 	end_date: '2024-10-23',
 	plan_ids_allow_list: [],
-	limit_per_user: 0,
+	limit_per_user: 5,
 	use_duration: true,
 	use_email_allow_list: true,
 	duration: COUPON_DURATION_3_MONTHS,
@@ -142,6 +142,20 @@ function WrappedRecurringPaymentsCouponAddEditModal( props ) {
 describe( 'RecurringPaymentsCouponAddEditModal', () => {
 	let modalRoot;
 
+	const getRandomButton = () => screen.getByText( 'Random' );
+	const getCodeTextbox = () => screen.getByLabelText( 'Coupon code' );
+	const getDiscountTypeSelect = () => screen.getByLabelText( 'Discount type' );
+	const getAmountOption = () => screen.getByRole( 'option', { name: 'Amount' } );
+	const getPercentageOption = () => screen.getByRole( 'option', { name: 'Percentage' } );
+	const getAmountInput = () => screen.getByLabelText( 'Amount' );
+	const getLimitDurationToggle = () => screen.getByRole( 'checkbox', { name: 'Duration' } );
+	const getLimitDurationSelection = () =>
+		screen.getByRole( 'combobox', { name: 'duration selection' } );
+	const getLimitCouponsToggle = () =>
+		screen.getByRole( 'checkbox', { name: 'Limit coupon to specific emails' } );
+	const getLimitCouponsTextInput = () =>
+		screen.getByRole( 'textbox', { name: 'limit coupon to specific emails text input' } );
+
 	beforeEach( () => {
 		jest.clearAllMocks();
 
@@ -176,7 +190,25 @@ describe( 'RecurringPaymentsCouponAddEditModal', () => {
 		render(
 			<WrappedRecurringPaymentsCouponAddEditModal closeDialog={ closeDialog } coupon={ {} } />
 		);
-		expect( document.body ).toMatchSnapshot();
+		const codeTextbox = getCodeTextbox();
+		const amountOption = getAmountOption();
+		const percentageOption = getPercentageOption();
+		const amountInput = getAmountInput();
+		const limitDurationToggle = getLimitDurationToggle();
+		const limitDurationSelection = getLimitDurationSelection();
+		const limitCouponsToggle = getLimitCouponsToggle();
+		const limitCouponsTextInput = getLimitCouponsTextInput();
+
+		expect( codeTextbox.value ).toEqual( '' );
+		expect( amountOption.selected ).toBe( false );
+		expect( percentageOption.selected ).toBe( true );
+		expect( amountInput ).name = 'discount_percentage';
+		expect( amountInput ).type = 'text';
+		expect( amountInput ).value = '';
+		expect( limitDurationToggle ).not.toBeChecked();
+		expect( limitDurationSelection ).toBeDisabled();
+		expect( limitCouponsToggle ).not.toBeChecked();
+		expect( limitCouponsTextInput ).toBeDisabled();
 	} );
 
 	test( 'should generate a new coupon code when the random button is clicked', () => {
@@ -184,11 +216,13 @@ describe( 'RecurringPaymentsCouponAddEditModal', () => {
 		render(
 			<WrappedRecurringPaymentsCouponAddEditModal closeDialog={ closeDialog } coupon={ {} } />
 		);
-		const randomButton = screen.getByText( 'Random' );
-		expect( screen.getByLabelText( 'Coupon code' ).value ).toEqual( '' );
+		const randomButton = getRandomButton();
+		const codeTextbox = getCodeTextbox();
+
+		expect( codeTextbox.value ).toEqual( '' );
 		waitFor( () => randomButton.click() );
 		waitFor( () => {
-			const generatedCode = screen.getByLabelText( 'Coupon code' ).value;
+			const generatedCode = codeTextbox.value;
 			expect( generatedCode ).not.toEqual( '' );
 			expect( generatedCode.length ).toBeGreaterThan( 3 );
 		} );
@@ -199,23 +233,24 @@ describe( 'RecurringPaymentsCouponAddEditModal', () => {
 		render(
 			<WrappedRecurringPaymentsCouponAddEditModal closeDialog={ closeDialog } coupon={ {} } />
 		);
-		expect( screen.getByRole( 'option', { name: 'Amount' } ).selected ).toBe( false );
-		expect( screen.getByRole( 'option', { name: 'Percentage' } ).selected ).toBe( true );
-		const amountBeforeTypeChange = screen.getByLabelText( 'Amount' );
-		expect( amountBeforeTypeChange ).name = 'discount_percentage';
-		expect( amountBeforeTypeChange ).type = 'text';
-		expect( amountBeforeTypeChange ).value = '';
-		await userEvent.selectOptions(
-			screen.getByLabelText( 'Discount type' ),
-			screen.getByRole( 'option', { name: 'Amount' } )
-		);
+		const discountTypeSelect = getDiscountTypeSelect();
+		const amountOption = getAmountOption();
+		const percentageOption = getPercentageOption();
+		const amountInput = getAmountInput();
 
-		expect( screen.getByRole( 'option', { name: 'Amount' } ).selected ).toBe( true );
-		expect( screen.getByRole( 'option', { name: 'Percentage' } ).selected ).toBe( false );
-		const amountAfterTypeChange = screen.getByLabelText( 'Amount' );
-		expect( amountAfterTypeChange ).name = 'discount_value';
-		expect( amountAfterTypeChange ).type = 'number';
-		expect( amountAfterTypeChange ).value = '';
+		expect( amountOption.selected ).toBe( false );
+		expect( percentageOption.selected ).toBe( true );
+		expect( amountInput ).name = 'discount_percentage';
+		expect( amountInput ).type = 'text';
+		expect( amountInput ).value = '';
+
+		await userEvent.selectOptions( discountTypeSelect, amountOption );
+
+		expect( amountOption.selected ).toBe( true );
+		expect( percentageOption.selected ).toBe( false );
+		expect( amountInput ).name = 'discount_value';
+		expect( amountInput ).type = 'number';
+		expect( amountInput ).value = '';
 	} );
 
 	test( 'should enable select dropdown if duration other than default', () => {
@@ -235,18 +270,19 @@ describe( 'RecurringPaymentsCouponAddEditModal', () => {
 		render(
 			<WrappedRecurringPaymentsCouponAddEditModal closeDialog={ closeDialog } coupon={ {} } />
 		);
-		expect( screen.getByRole( 'checkbox', { name: 'Duration' } ) ).not.toBeChecked();
-		expect( screen.getByRole( 'combobox', { name: 'duration selection' } ) ).toBeDisabled();
-		act( () => {
-			screen.getByRole( 'checkbox', { name: 'Duration' } ).click();
-		} );
-		expect( screen.getByRole( 'checkbox', { name: 'Duration' } ) ).toBeChecked();
-		expect( screen.getByRole( 'combobox', { name: 'duration selection' } ) ).not.toBeDisabled();
+		const limitDurationToggle = getLimitDurationToggle();
+		const limitDurationSelection = getLimitDurationSelection();
+		expect( limitDurationToggle ).not.toBeChecked();
+		expect( limitDurationSelection ).toBeDisabled();
+
+		act( () => limitDurationToggle.click() );
+
+		expect( limitDurationToggle ).toBeChecked();
+		expect( limitDurationSelection ).not.toBeDisabled();
 	} );
 
 	test( 'should enable emails textarea if email allow list other than default', () => {
 		mockDate( '2023-06-23T14:23:44z' );
-		const labelText = 'Limit coupon to specific emails';
 		const email_allow_list = [ '*@*.edu', '*@automattic.com' ];
 		render(
 			<WrappedRecurringPaymentsCouponAddEditModal
@@ -254,27 +290,27 @@ describe( 'RecurringPaymentsCouponAddEditModal', () => {
 				coupon={ { email_allow_list } }
 			/>
 		);
-		expect( screen.getByRole( 'checkbox', { name: labelText } ) ).toBeChecked();
-		expect( screen.getByDisplayValue( email_allow_list.join( ', ' ) ) ).not.toBeDisabled();
+		const limitCouponsToggle = getLimitCouponsToggle();
+		const limitCouponsTextInput = getLimitCouponsTextInput();
+		expect( limitCouponsToggle ).toBeChecked();
+		expect( limitCouponsTextInput ).not.toBeDisabled();
+		expect( limitCouponsTextInput.value ).toEqual( email_allow_list.join( ', ' ) );
 	} );
 
 	test( 'should show email textbox as disabled unless toggled', () => {
 		mockDate( '2023-06-23T14:23:44z' );
-		const labelText = 'Limit coupon to specific emails';
 		render(
 			<WrappedRecurringPaymentsCouponAddEditModal closeDialog={ closeDialog } coupon={ {} } />
 		);
-		expect( screen.getByRole( 'checkbox', { name: labelText } ) ).not.toBeChecked();
-		expect(
-			screen.getByRole( 'textbox', { name: 'limit coupon to specific emails text input' } )
-		).toBeDisabled();
-		act( () => {
-			screen.getByRole( 'checkbox', { name: labelText } ).click();
-		} );
-		expect( screen.getByRole( 'checkbox', { name: labelText } ) ).toBeChecked();
-		expect(
-			screen.getByRole( 'textbox', { name: 'limit coupon to specific emails text input' } )
-		).not.toBeDisabled();
+		const limitCouponsToggle = getLimitCouponsToggle();
+		const limitCouponsTextInput = getLimitCouponsTextInput();
+		expect( limitCouponsToggle ).not.toBeChecked();
+		expect( limitCouponsTextInput ).toBeDisabled();
+
+		act( () => limitCouponsToggle.click() );
+
+		expect( limitCouponsToggle ).toBeChecked();
+		expect( limitCouponsTextInput ).not.toBeDisabled();
 	} );
 
 	test( 'should render form correctly when a coupon is provided', () => {
@@ -285,6 +321,33 @@ describe( 'RecurringPaymentsCouponAddEditModal', () => {
 				coupon={ testCoupon1 }
 			/>
 		);
-		expect( document.body ).toMatchSnapshot();
+		const codeTextbox = getCodeTextbox();
+		const amountOption = getAmountOption();
+		const percentageOption = getPercentageOption();
+		const amountInput = getAmountInput();
+		const limitDurationToggle = getLimitDurationToggle();
+		const limitDurationSelection = getLimitDurationSelection();
+		const limitCouponsToggle = getLimitCouponsToggle();
+		const limitCouponsTextInput = getLimitCouponsTextInput();
+		const limitedByDuration = testCoupon1.limit_per_user > 0;
+		const limitedByEmail = testCoupon1.email_allow_list.length > 0;
+
+		expect( codeTextbox.value ).toEqual( testCoupon1.coupon_code );
+		expect( amountOption.selected ).toBe(
+			COUPON_DISCOUNT_TYPE_AMOUNT === testCoupon1.discount_type
+		);
+		expect( percentageOption.selected ).toBe(
+			COUPON_DISCOUNT_TYPE_PERCENTAGE === testCoupon1.discount_type
+		);
+		expect( amountInput ).name = 'discount_' + testCoupon1.discount_type;
+		expect( amountInput ).type =
+			COUPON_DISCOUNT_TYPE_AMOUNT === testCoupon1.discount_type ? 'number' : 'text';
+		expect( amountInput ).value = testCoupon1.discount_value;
+
+		expect( limitDurationToggle.checked ).toBe( limitedByDuration );
+		expect( limitDurationSelection.disabled ).toBe( ! limitedByDuration );
+		expect( limitCouponsToggle ).toBe( limitedByEmail );
+		expect( limitCouponsTextInput ).not.toBeDisabled( ! limitedByEmail );
+		expect( limitCouponsTextInput.value ).toEqual( testCoupon1.email_allow_list.join( ', ' ) );
 	} );
 } );

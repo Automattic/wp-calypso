@@ -310,7 +310,7 @@ exports[`CouponsList should display new coupon modal when clicking add coupon 1`
                 role="group"
               >
                 <input
-                  aria-label="enter value"
+                  aria-label="enter a custom coupon code"
                   class="form-text-input form-text-input-with-value-generation__input"
                   id="coupon_code"
                   maxlength="10"
@@ -318,7 +318,7 @@ exports[`CouponsList should display new coupon modal when clicking add coupon 1`
                   value=""
                 />
                 <button
-                  aria-label="generate value"
+                  aria-label="generate random coupon code"
                   class="components-button form-text-input-with-value-generation__button is-compact"
                   type="button"
                 >

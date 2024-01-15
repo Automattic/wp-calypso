@@ -431,7 +431,9 @@ const RecurringPaymentsCouponAddEditModal = ( {
 					<FormTextInputWithRandomCodeGeneration
 						id="coupon_code"
 						value={ editedCouponCode }
-						action="Random"
+						action={ translate( 'Random' ) }
+						buttonAriaLabel={ translate( 'generate random coupon code' ) }
+						textInputAriaLabel={ translate( 'enter a custom coupon code' ) }
 						onChange={ onCouponCodeChange }
 						onAction={ onCouponCodeRandomize }
 						isError={ ! isFormValid( 'coupon_code' ) }
