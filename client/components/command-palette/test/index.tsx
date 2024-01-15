@@ -52,7 +52,7 @@ jest.mock( '../../../state/selectors/get-current-route-pattern' );
 jest.mock( '../use-command-palette' );
 
 describe( 'CommandPalette', () => {
-	it( 'should return the commands in the order that they are added to the commands array with no change', () => {
+	it( 'should confirm that the command palette opens with the commands from the commands array', () => {
 		( getCurrentRoutePattern as jest.Mock ).mockReturnValue( '/sites' );
 
 		// Override the useCommandPalette mock values for this test case
