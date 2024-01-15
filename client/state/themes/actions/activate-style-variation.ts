@@ -22,8 +22,6 @@ export function activateStyleVariation(
 		const themeStylesheet = theme?.stylesheet || themeId;
 		const globalStylesId = await dispatch( getGlobalStylesId( siteId, themeStylesheet ) );
 
-		// Don't wait for the response to speed up the next action.
-		// We can do that until the race condition happens.
-		dispatch( updateGlobalStyles( siteId, globalStylesId, globalStyles ) );
+		await dispatch( updateGlobalStyles( siteId, globalStylesId, globalStyles ) );
 	};
 }

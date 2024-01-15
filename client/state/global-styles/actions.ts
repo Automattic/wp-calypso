@@ -1,12 +1,20 @@
+import { getThemeIdFromStylesheet } from '@automattic/data-stores';
 import wpcom from 'calypso/lib/wp';
+import { isJetpackSite } from 'calypso/state/sites/selectors';
 import type { ActiveTheme, GlobalStyles } from '@automattic/data-stores';
+import type { CalypsoDispatch } from 'calypso/state/types';
+import type { AppState } from 'calypso/types';
 
 export function getGlobalStylesId( siteIdOrSlug: number | string, stylesheet: string ) {
-	return async () => {
+	return async ( dispatch: CalypsoDispatch, getState: () => AppState ) => {
+		const state = getState();
+		const themeId = isJetpackSite( state, siteIdOrSlug )
+			? getThemeIdFromStylesheet( stylesheet )
+			: stylesheet;
 		const themes: ActiveTheme[] = await wpcom.req.get( {
 			path: `/sites/${ encodeURIComponent( siteIdOrSlug ) }/themes?${ new URLSearchParams( {
 				status: 'active',
-				wp_theme_preview: stylesheet,
+				wp_theme_preview: themeId,
 			} ).toString() }`,
 			apiNamespace: 'wp/v2',
 		} );
@@ -20,20 +28,6 @@ export function getGlobalStylesId( siteIdOrSlug: number | string, stylesheet: st
 			}
 		}
 		return 0;
-	};
-}
-
-export function getGlobalStylesVariations( siteIdOrSlug: number | string, stylesheet: string ) {
-	return async () => {
-		const params = new URLSearchParams( { wp_theme_preview: stylesheet } );
-		const variations: GlobalStyles[] = await wpcom.req.get( {
-			path: `/sites/${ encodeURIComponent(
-				siteIdOrSlug
-			) }/global-styles/themes/${ stylesheet }/variations?${ params }`,
-			apiNamespace: 'wp/v2',
-		} );
-
-		return variations;
 	};
 }
 
