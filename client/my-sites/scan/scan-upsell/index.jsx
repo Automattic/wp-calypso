@@ -76,7 +76,7 @@ function ScanUpsellBody() {
 			{ siteId && <QueryIntroOffers siteId={ siteId } /> }
 			{ siteId && <QuerySiteProducts siteId={ siteId } /> }
 			<UpsellProductCard
-				productSlug={ PRODUCT_JETPACK_SCAN }
+				nonManageProductSlug={ PRODUCT_JETPACK_SCAN }
 				siteId={ siteId }
 				onCtaButtonClick={ onClick }
 			/>

@@ -78,7 +78,7 @@ const BackupsUpsellBody: FunctionComponent = () => {
 			{ siteId && <QueryIntroOffers siteId={ siteId } /> }
 			{ siteId && <QuerySiteProducts siteId={ siteId } /> }
 			<UpsellProductCard
-				productSlug={ PRODUCT_JETPACK_BACKUP_T1_YEARLY }
+				nonManageProductSlug={ PRODUCT_JETPACK_BACKUP_T1_YEARLY }
 				siteId={ siteId }
 				onCtaButtonClick={ onClick }
 			/>
