@@ -7,17 +7,17 @@ import {
 	store as blockEditorStore,
 	// @ts-expect-error - Typings missing
 } from '@wordpress/block-editor';
-import { parse } from '@wordpress/blocks';
 import { createBlock, serialize, type BlockInstance } from '@wordpress/blocks';
 import { Popover, SlotFillProvider, KeyboardShortcuts } from '@wordpress/components';
 import { useStateWithHistory, useResizeObserver } from '@wordpress/compose';
 import { useDispatch } from '@wordpress/data';
-import { useState, useEffect, useCallback } from '@wordpress/element';
+import React, { useState, useEffect, useCallback } from '@wordpress/element';
 import { rawShortcut } from '@wordpress/keycodes';
 import classNames from 'classnames';
+import { safeParse } from '../utils';
 import { editorSettings } from './editor-settings';
 import { EditorProps, StateWithUndoManager } from './editor-types';
-import type { MouseEvent, KeyboardEvent } from 'react';
+import type { MouseEvent, KeyboardEvent, FC } from 'react';
 import css from '!!css-loader!sass-loader!./inline-iframe-style.scss';
 import './editor-style.scss';
 
@@ -28,14 +28,16 @@ const iframedCSS = css.reduce( ( css: string, [ , item ]: [ string, string ] ) =
 /**
  * Editor component
  */
-export const Editor: React.FC< EditorProps > = ( { initialContent = '', onChange, isRTL } ) => {
+export const Editor: FC< EditorProps > = ( { initialContent = '', onChange, isRTL } ) => {
 	// We keep the content in state so we can access the blocks in the editor.
 	const {
 		value: editorContent,
 		setValue,
 		undo,
 		redo,
-	} = useStateWithHistory( parse( initialContent ) ) as unknown as StateWithUndoManager;
+	} = useStateWithHistory(
+		initialContent !== '' ? safeParse( initialContent ) : [ createBlock( 'core/paragraph' ) ]
+	) as unknown as StateWithUndoManager;
 	const [ isEditing, setIsEditing ] = useState( false );
 
 	const handleContentUpdate = useCallback(
@@ -53,26 +55,27 @@ export const Editor: React.FC< EditorProps > = ( { initialContent = '', onChange
 
 	const selectLastBlock = ( event?: MouseEvent | KeyboardEvent ) => {
 		const lastBlock = editorContent[ editorContent.length - 1 ];
+		if ( lastBlock ) {
+			// If this is a click event only shift focus if the click is in the root.
+			// We don't want to shift focus if the click is in a block.
+			if ( event ) {
+				if ( ( event.target as HTMLDivElement ).dataset.isDropZone ) {
+					// If the last block isn't a paragraph, add a new one.
+					// This allows the user to add text after a non-text block without clicking the inserter.
+					if ( lastBlock.name !== 'core/paragraph' ) {
+						const newParagraph = createBlock( 'core/paragraph' );
+						handleContentUpdate( [ ...editorContent, newParagraph ] );
+						selectBlock( newParagraph.clientId );
+					}
 
-		// If this is a click event only shift focus if the click is in the root.
-		// We don't want to shift focus if the click is in a block.
-		if ( event ) {
-			if ( ( event.target as HTMLDivElement ).dataset.isDropZone ) {
-				// If the last block isn't a paragraph, add a new one.
-				// This allows the user to add text after a non-text block without clicking the inserter.
-				if ( lastBlock.name !== 'core/paragraph' ) {
-					const newParagraph = createBlock( 'core/paragraph' );
-					handleContentUpdate( [ ...editorContent, newParagraph ] );
-					selectBlock( newParagraph.clientId );
+					selectBlock( lastBlock.clientId );
+				} else {
+					return;
 				}
-
-				selectBlock( lastBlock.clientId );
-			} else {
-				return;
 			}
-		}
 
-		selectBlock( lastBlock.clientId );
+			selectBlock( lastBlock.clientId );
+		}
 	};
 
 	useEffect( () => {

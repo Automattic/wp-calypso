@@ -15,7 +15,10 @@ import {
 	getAllStoredCards,
 	isFetchingStoredCards,
 } from 'calypso/state/partner-portal/stored-cards/selectors';
+import PartnerPortalSidebarNavigation from '../sidebar-navigation';
+import StoredCreditCardV2 from '../stored-credit-card-v2';
 import EmptyState from './empty-state';
+import type { PaymentMethod } from 'calypso/jetpack-cloud/sections/partner-portal/payment-methods';
 
 import './style.scss';
 
@@ -34,11 +37,17 @@ export default function PaymentMethodListV2() {
 
 	const getBody = () => {
 		if ( isFetching ) {
-			// TODO: Show loading state.
+			return 'Loading...';
 		}
 
 		if ( storedCards.length ) {
-			// TODO: Show list of cards and implement pagination.
+			return (
+				<div className="payment-method-list-v2__stored-cards">
+					{ storedCards.map( ( card: PaymentMethod ) => (
+						<StoredCreditCardV2 key={ card.id } creditCard={ card } />
+					) ) }
+				</div>
+			);
 		}
 
 		return (
@@ -49,7 +58,12 @@ export default function PaymentMethodListV2() {
 	};
 
 	return (
-		<Layout className="payment-method-list-v2" title={ title } wide>
+		<Layout
+			className="payment-method-list-v2"
+			title={ title }
+			sidebarNavigation={ <PartnerPortalSidebarNavigation /> }
+			wide
+		>
 			<QueryJetpackPartnerPortalStoredCards paging={ paging } />
 
 			<LayoutTop>

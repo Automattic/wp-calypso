@@ -1,11 +1,10 @@
-import { ComponentSwapper } from '@automattic/components';
+import { ComponentSwapper, SegmentedControl } from '@automattic/components';
 import { Icon, lock } from '@wordpress/icons';
 import classnames from 'classnames';
 import { localize } from 'i18n-calypso';
 import { flowRight, find, get } from 'lodash';
 import moment from 'moment';
 import { connect, useDispatch } from 'react-redux';
-import SegmentedControl from 'calypso/components/segmented-control';
 import SelectDropdown from 'calypso/components/select-dropdown';
 import { recordGoogleEvent } from 'calypso/state/analytics/actions';
 import { getSiteSlug } from 'calypso/state/sites/selectors';

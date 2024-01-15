@@ -1,6 +1,6 @@
+import { PlanPrice } from '@automattic/components';
 import classNames from 'classnames';
 import PropTypes from 'prop-types';
-import PlanPrice from 'calypso/my-sites/plan-price';
 
 const ProductCardPriceGroup = ( props ) => {
 	const { billingTimeFrame, currencyCode, discountedPrice, fullPrice } = props;
