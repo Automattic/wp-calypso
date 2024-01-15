@@ -42,8 +42,10 @@ export const Capture: FunctionComponent< Props > = ( props ) => {
 };
 
 type StepProps = {
-	goToStep: GoToStep;
+	initialUrl?: string;
 	disableImportListStep?: boolean;
+	goToStep: GoToStep;
+	onValidFormSubmit?: ( dependencies: Record< string, unknown > ) => void;
 };
 
 const trackEventName = 'calypso_signup_step_start';
@@ -53,12 +55,14 @@ const trackEventParams = {
 };
 
 export const CaptureStep: React.FunctionComponent< StepProps > = ( {
-	goToStep,
+	initialUrl = '',
 	disableImportListStep,
+	goToStep,
+	onValidFormSubmit,
 } ) => {
 	const currentUser = useSelector( getCurrentUser );
 	const isStartingPointEventTriggeredRef = useRef( false );
-	const [ url, setUrl ] = useState( '' );
+	const [ url, setUrl ] = useState( initialUrl );
 	const {
 		data: urlData,
 		isFetching: isAnalyzing,
@@ -139,7 +143,9 @@ export const CaptureStep: React.FunctionComponent< StepProps > = ( {
 		<>
 			{ ! isAnalyzing && (
 				<Capture
-					onInputEnter={ setUrl }
+					onInputEnter={ ( url ) => {
+						onValidFormSubmit ? onValidFormSubmit( { url } ) : setUrl( url );
+					} }
 					onDontHaveSiteAddressClick={ onDontHaveSiteAddressClick }
 					hasError={ !! analyzerError }
 					onInputChange={ () => {

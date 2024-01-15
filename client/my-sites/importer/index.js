@@ -2,7 +2,7 @@ import page from '@automattic/calypso-router';
 import { get } from 'lodash';
 import { makeLayout, render as clientRender } from 'calypso/controller';
 import { navigation, redirectWithoutSite, sites, siteSelection } from 'calypso/my-sites/controller';
-import { importSite } from 'calypso/my-sites/importer/controller';
+import { importSite, importerList } from 'calypso/my-sites/importer/controller';
 
 export default function () {
 	page( '/import', siteSelection, navigation, sites, makeLayout, clientRender );
@@ -13,6 +13,16 @@ export default function () {
 		navigation,
 		redirectWithoutSite( '/import' ),
 		importSite,
+		makeLayout,
+		clientRender
+	);
+
+	page(
+		'/import/list/:site_id',
+		siteSelection,
+		navigation,
+		redirectWithoutSite( '/import' ),
+		importerList,
 		makeLayout,
 		clientRender
 	);
