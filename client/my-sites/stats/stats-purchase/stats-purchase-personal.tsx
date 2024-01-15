@@ -103,11 +103,23 @@ const PersonalPurchase = ( {
 	const showOldSlider = ! isTierUpgradeSliderEnabled;
 	// const showOldSlider = true;
 
+	let continueButtonText = isStandalone
+		? translate( 'Get Stats' )
+		: translate( 'Get Jetpack Stats' );
+	if ( config.isEnabled( 'stats/checkout-flows-v2' ) ) {
+		continueButtonText = translate( 'Contribute and continue' );
+	}
+
 	return (
 		<div>
+			<StatsBenefitsListing
+				subscriptionValue={ subscriptionValue }
+				defaultStartingValue={ defaultStartingValue }
+			/>
+
 			<div className={ `${ COMPONENT_CLASS_NAME }__notice` }>
 				{ translate(
-					'This plan is for personal sites only. If your site is used for a commercial activity, {{Button}}you will need to choose a commercial plan{{/Button}}.',
+					'This plan is for non-commercial sites only. Sites with any commercial activity {{Button}}require a commercial license{{/Button}}.',
 					{
 						components: {
 							Button: <Button variant="link" href="#" onClick={ handleClick } />,
@@ -148,29 +160,6 @@ const PersonalPurchase = ( {
 					onSliderChange={ handleSliderChanged }
 				/>
 			) }
-
-			<div className={ `${ COMPONENT_CLASS_NAME }__benefits` }>
-				<ul>
-					{ subscriptionValue > 0 ? (
-						<li className={ `${ COMPONENT_CLASS_NAME }__benefits-item--included` }>
-							{ translate( 'Instant access to upcoming features' ) }
-						</li>
-					) : (
-						<li className={ `${ COMPONENT_CLASS_NAME }__benefits-item--not-included` }>
-							{ translate( 'No access to upcoming features' ) }
-						</li>
-					) }
-					{ subscriptionValue >= defaultStartingValue ? (
-						<li className={ `${ COMPONENT_CLASS_NAME }__benefits-item--included` }>
-							{ translate( 'Priority support' ) }
-						</li>
-					) : (
-						<li className={ `${ COMPONENT_CLASS_NAME }__benefits-item--not-included` }>
-							{ translate( 'No priority support' ) }
-						</li>
-					) }
-				</ul>
-			</div>
 
 			{ subscriptionValue === 0 && (
 				<div className={ `${ COMPONENT_CLASS_NAME }__persnal-checklist` }>
@@ -252,11 +241,59 @@ const PersonalPurchase = ( {
 						} )
 					}
 				>
-					{ isStandalone ? translate( 'Get Stats' ) : translate( 'Get Jetpack Stats' ) }
+					{ continueButtonText }
 				</ButtonComponent>
 			) }
 		</div>
 	);
 };
+
+interface StatsBenefitsListingProps {
+	subscriptionValue: number;
+	defaultStartingValue: number;
+}
+
+function StatsBenefitsListing( {
+	subscriptionValue,
+	defaultStartingValue,
+}: StatsBenefitsListingProps ) {
+	const translate = useTranslate();
+	return (
+		<div className={ `${ COMPONENT_CLASS_NAME }__benefits` }>
+			<ul>
+				<li className={ `${ COMPONENT_CLASS_NAME }__benefits-item--included` }>
+					{ translate( 'Real-time data on visitors' ) }
+				</li>
+				<li className={ `${ COMPONENT_CLASS_NAME }__benefits-item--included` }>
+					{ translate( 'Traffic stats and trends for posts and pages' ) }
+				</li>
+				<li className={ `${ COMPONENT_CLASS_NAME }__benefits-item--included` }>
+					{ translate( 'Detailed statistics about links leading to your site' ) }
+				</li>
+				<li className={ `${ COMPONENT_CLASS_NAME }__benefits-item--included` }>
+					{ translate( 'GDPR compliance' ) }
+				</li>
+				{ subscriptionValue > 0 ? (
+					<li className={ `${ COMPONENT_CLASS_NAME }__benefits-item--included` }>
+						{ translate( 'Access to upcoming advanced features' ) }
+					</li>
+				) : (
+					<li className={ `${ COMPONENT_CLASS_NAME }__benefits-item--not-included` }>
+						{ translate( 'No access to upcoming advanced features' ) }
+					</li>
+				) }
+				{ subscriptionValue >= defaultStartingValue ? (
+					<li className={ `${ COMPONENT_CLASS_NAME }__benefits-item--included` }>
+						{ translate( 'Priority support' ) }
+					</li>
+				) : (
+					<li className={ `${ COMPONENT_CLASS_NAME }__benefits-item--not-included` }>
+						{ translate( 'No priority support' ) }
+					</li>
+				) }
+			</ul>
+		</div>
+	);
+}
 
 export default PersonalPurchase;

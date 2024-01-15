@@ -135,7 +135,7 @@ export default function UserFeedbackModalForm( { show, onClose }: Props ) {
 
 				<FormFieldset>
 					<FormLabel htmlFor="textarea">
-						{ translate( 'How satisfied with Jetpack Manage are you?' ) }
+						{ translate( 'How satisfied are you with Jetpack Manage?' ) }
 					</FormLabel>
 					<ReviewsRatingsStars rating={ rating } onSelectRating={ onRatingChange } />
 				</FormFieldset>

@@ -1,3 +1,4 @@
+import config from '@automattic/calypso-config';
 import {
 	PLAN_FREE,
 	PRODUCT_1GB_SPACE,
@@ -51,6 +52,13 @@ export function BusinessTrialPlans( props: BusinessTrialPlansProps ) {
 				hideUnavailableFeatures={ true }
 				hidePlansFeatureComparison={ true }
 				intent="plans-business-trial"
+				showPlanTypeSelectorDropdown={
+					/**
+					 *	Override the default feature flag to prevent this feature from rendering in untested locations
+					 *  The hardcoded 'false' short curicuit should be removed once the feature is fully tested in the given context
+					 */
+					config.isEnabled( 'onboarding/interval-dropdown' ) && false
+				}
 			/>
 		</div>
 	);

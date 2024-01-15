@@ -1,3 +1,4 @@
+import { StepperInternal } from '@automattic/data-stores';
 import React from 'react';
 
 /**
@@ -118,7 +119,7 @@ export type StepProps = {
 	 * If this is a step of a flow that extends another, pass the variantSlug of the variant flow, it can come handy.
 	 */
 	variantSlug?: string;
-	data?: Record< string, unknown >;
+	data?: StepperInternal.State[ 'stepData' ];
 	children?: React.ReactNode;
 };
 
@@ -139,6 +140,7 @@ export type AssertConditionResult = {
 
 export interface Plugin {
 	slug: string;
+	active: boolean;
 }
 
 export interface PluginsResponse {

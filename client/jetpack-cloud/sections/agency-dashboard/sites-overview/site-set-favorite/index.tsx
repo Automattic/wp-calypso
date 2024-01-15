@@ -132,7 +132,7 @@ export default function SiteSetFavorite( { isFavorite, siteId, siteUrl }: Props 
 		};
 	};
 
-	const { isLoading, mutate } = useToggleFavoriteSiteMutation( handleMutation() );
+	const { isPending, mutate } = useToggleFavoriteSiteMutation( handleMutation() );
 
 	const handleFavoriteChange = () => {
 		mutate( { siteId, isFavorite } );
@@ -149,7 +149,7 @@ export default function SiteSetFavorite( { isFavorite, siteId, siteUrl }: Props 
 		<Button
 			borderless
 			compact
-			disabled={ isLoading }
+			disabled={ isPending }
 			onClick={ handleFavoriteChange }
 			className={ classNames(
 				'site-set-favorite__favorite-icon',

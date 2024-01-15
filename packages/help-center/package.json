@@ -36,7 +36,7 @@
 		"@automattic/viewport": "workspace:^",
 		"@automattic/viewport-react": "workspace:^",
 		"@popperjs/core": "^2.11.8",
-		"@tanstack/react-query": "^4.36.1",
+		"@tanstack/react-query": "^5.15.5",
 		"@wordpress/base-styles": "^4.39.0",
 		"@wordpress/components": "^25.14.0",
 		"@wordpress/i18n": "^4.48.0",

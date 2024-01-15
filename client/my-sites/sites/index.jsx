@@ -29,10 +29,16 @@ class Sites extends Component {
 	static propTypes = {
 		siteBasePath: PropTypes.string.isRequired,
 		clearPageTitle: PropTypes.bool,
+		isPostShare: PropTypes.bool,
 	};
 
 	componentDidMount() {
 		const path = this.getPath();
+		recordTracksEvent( 'calypso_site_selector_view', {
+			path,
+			is_post_share: this.props.isPostShare,
+		} );
+
 		if ( this.props.fromSite && path ) {
 			recordTracksEvent( 'calypso_site_selector_site_missing', {
 				path,

@@ -19,6 +19,10 @@ $date-control-shortcut-min-width: 140px;
 		.stats-date-control-picker-date__overlay {
 			grid-column: 1;
 			grid-row: 1;
+
+			.stats-card-upsell__lock {
+				visibility: hidden;
+			}
 		}
 
 		.stats-date-control-picker-dates__inputs,
@@ -146,6 +150,8 @@ $date-control-shortcut-min-width: 140px;
 }
 
 .stats-date-control-picker__popover-content .stats-date-control-picker-date .stats-date-control-picker-date__heading {
+	display: flex;
+	align-items: center;
 	color: var(--gray-gray-80, #2c3338);
 	font-family: $font-sf-pro-text;
 	font-size: 14px; /* stylelint-disable-line declaration-property-unit-allowed-list */
@@ -156,6 +162,9 @@ $date-control-shortcut-min-width: 140px;
 	text-align: left;
 	padding: 8px 0;
 
+	svg {
+		fill: var(--gray-gray-80, #2c3338);
+	}
 	span {
 		color: var(--gray-gray-50, #646970);
 		font-size: 12px; /* stylelint-disable-line declaration-property-unit-allowed-list */

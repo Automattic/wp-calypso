@@ -331,7 +331,6 @@ type ComparisonGridHeaderProps = {
 	onPlanChange: ( currentPlan: PlanSlug, event: ChangeEvent< HTMLSelectElement > ) => void;
 	currentSitePlanSlug?: string | null;
 	onUpgradeClick: ( planSlug: PlanSlug ) => void;
-	siteId?: number | null;
 	planActionOverrides?: PlanActionOverrides;
 	selectedPlan?: string;
 	showRefundPeriod?: boolean;
@@ -481,7 +480,6 @@ const ComparisonGridHeader = forwardRef< HTMLDivElement, ComparisonGridHeaderPro
 			onPlanChange,
 			currentSitePlanSlug,
 			onUpgradeClick,
-			siteId,
 			planActionOverrides,
 			selectedPlan,
 			isHiddenInMobile,
@@ -492,17 +490,19 @@ const ComparisonGridHeader = forwardRef< HTMLDivElement, ComparisonGridHeaderPro
 		ref
 	) => {
 		const translate = useTranslate();
+		const { selectedSiteId } = usePlansGridContext();
 		const allVisible = visibleGridPlans.length === displayedGridPlans.length;
 		const { prices, currencyCode } = usePlanPricingInfoFromGridPlans( {
 			gridPlans: visibleGridPlans,
 		} );
+		const { coupon } = usePlansGridContext();
 
 		const isLargeCurrency = useIsLargeCurrency( {
 			prices,
 			currencyCode: currencyCode || 'USD',
 		} );
 		const isPlanUpgradeCreditEligible = useIsPlanUpgradeCreditVisible(
-			siteId ?? 0,
+			selectedSiteId ?? 0,
 			displayedGridPlans.map( ( { planSlug } ) => planSlug )
 		);
 
@@ -518,6 +518,7 @@ const ComparisonGridHeader = forwardRef< HTMLDivElement, ComparisonGridHeaderPro
 								{ ...planTypeSelectorProps }
 								title={ translate( 'Billing Cycle' ) }
 								hideDiscountLabel={ true }
+								coupon={ coupon }
 							/>
 						</PlanTypeSelectorWrapper>
 					) }
@@ -540,7 +541,6 @@ const ComparisonGridHeader = forwardRef< HTMLDivElement, ComparisonGridHeaderPro
 						isLargeCurrency={ isLargeCurrency }
 						planActionOverrides={ planActionOverrides }
 						selectedPlan={ selectedPlan }
-						siteId={ siteId }
 						showRefundPeriod={ showRefundPeriod }
 						isStuck={ isStuck }
 					/>
@@ -955,7 +955,6 @@ const ComparisonGrid = ( {
 	isLaunchPage,
 	currentSitePlanSlug,
 	onUpgradeClick,
-	siteId,
 	planActionOverrides,
 	selectedPlan,
 	selectedFeature,
@@ -1094,10 +1093,10 @@ const ComparisonGrid = ( {
 					disabled={ isBottomHeaderInView }
 					stickyClass="is-sticky-header-row"
 					stickyOffset={ stickyRowOffset }
+					zIndex={ 1 }
 				>
 					{ ( isStuck: boolean ) => (
 						<ComparisonGridHeader
-							siteId={ siteId }
 							displayedGridPlans={ displayedGridPlans }
 							visibleGridPlans={ visibleGridPlans }
 							isInSignup={ isInSignup }
@@ -1137,7 +1136,6 @@ const ComparisonGrid = ( {
 					onPlanChange={ onPlanChange }
 					currentSitePlanSlug={ currentSitePlanSlug }
 					onUpgradeClick={ onUpgradeClick }
-					siteId={ siteId }
 					planActionOverrides={ planActionOverrides }
 					selectedPlan={ selectedPlan }
 					showRefundPeriod={ showRefundPeriod }

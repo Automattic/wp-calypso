@@ -1,7 +1,7 @@
+import { SegmentedControl } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import SegmentedControl from 'calypso/components/segmented-control';
 import {
 	splitPostRevisionsDiffView,
 	unifyPostRevisionsDiffView,

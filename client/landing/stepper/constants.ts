@@ -5,8 +5,6 @@ export const WRITE_INTENT_DEFAULT_DESIGN: Design = {
 	title: 'Livro',
 	is_premium: false,
 	categories: [],
-	features: [],
-	template: 'livro',
 	theme: 'livro',
 };
 

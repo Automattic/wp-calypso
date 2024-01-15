@@ -43,9 +43,9 @@ export const useGithubConnectMutation = (
 		},
 	} );
 
-	const { mutate, isLoading } = mutation;
+	const { mutate, isPending } = mutation;
 
 	const connectBranch = useCallback( ( args: MutationVariables ) => mutate( args ), [ mutate ] );
 
-	return { connectBranch, isLoading };
+	return { connectBranch, isPending };
 };

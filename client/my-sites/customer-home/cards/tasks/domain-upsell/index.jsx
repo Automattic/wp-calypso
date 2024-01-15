@@ -213,10 +213,8 @@ export function RenderDomainUpsell( { isFreePlan, isMonthlyPlan, searchTerm, sit
 			secondaryActionText={ translate( 'Find other domains' ) }
 			secondaryActionUrl={ searchLink }
 			illustration={ domainUpsellMobileIllustration }
-			illustrationAlwaysShow={ true }
 			illustrationHeader={ domainSuggestionName ? domainNameSVG : null }
 			badgeText={ domainSuggestionName }
-			timing={ 2 }
 			taskId={ TASK_DOMAIN_UPSELL }
 		/>
 	);

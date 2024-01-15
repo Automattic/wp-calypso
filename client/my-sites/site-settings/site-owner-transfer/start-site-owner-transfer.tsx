@@ -260,7 +260,7 @@ const StartSiteOwnerTransfer = ( {
 
 	const purchases = useSelector( ( state ) => getSitePurchases( state, selectedSiteId ) );
 
-	const { startSiteOwnerTransfer, isLoading: isStartingSiteTransfer } = useStartSiteOwnerTransfer(
+	const { startSiteOwnerTransfer, isPending: isStartingSiteTransfer } = useStartSiteOwnerTransfer(
 		selectedSiteId,
 		{
 			onMutate: () => {

@@ -77,14 +77,14 @@ export const useWPORGInfinitePlugins = (
 		enabled = true,
 		staleTime = BASE_STALE_TIME,
 		refetchOnMount = true,
-	}: UseQueryOptions< any > = {}
+	}: Omit< UseQueryOptions< any >, 'queryKey' > = {}
 ): UseInfiniteQueryResult => {
 	const [ search, author ] = extractSearchInformation( options.searchTerm );
 	const locale = useSelector( getCurrentUserLocale );
 
 	return useInfiniteQuery( {
 		queryKey: getPluginsListKey( [ WPORG_CACHE_KEY ], options, true ),
-		queryFn: ( { pageParam = 1 } ) =>
+		queryFn: ( { pageParam } ) =>
 			fetchPluginsList( {
 				pageSize: options.pageSize,
 				page: pageParam,
@@ -103,6 +103,7 @@ export const useWPORGInfinitePlugins = (
 				pagination: extractPagination( data.pages ),
 			};
 		},
+		initialPageParam: 1,
 		getNextPageParam: ( lastPage: { info: { page: number; pages: number } } ) => {
 			// When on last page, the next page is undefined, according to docs.
 			// @see: https://tanstack.com/query/v4/docs/reference/useInfiniteQuery

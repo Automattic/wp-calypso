@@ -33,7 +33,7 @@ export const GithubConnectCard = ( { connection }: GithubConnectCardProps ) => {
 	const [ selectedRepo, setSelectedRepo ] = useState< string >( '' );
 	const [ selectedBranch, setSelectedBranch ] = useState< string >( '' );
 
-	const { connectBranch, isLoading: isConnecting } = useGithubConnectMutation( siteId, {
+	const { connectBranch, isPending: isConnecting } = useGithubConnectMutation( siteId, {
 		onSuccess: () => {
 			dispatch( successNotice( __( 'Repository connected.' ), noticeOptions ) );
 		},

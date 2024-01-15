@@ -242,7 +242,8 @@ body.is-section-home.theme-default.color-scheme {
 	}
 }
 
-.primary__customer-home-location-content {
+.primary__customer-home-location-content,
+.secondary__customer-home-location-content {
 	display: flex;
 	flex-direction: column;
 	padding: 0;
@@ -268,66 +269,66 @@ body.is-section-home.theme-default.color-scheme {
 	@include breakpoint-deprecated( ">660px" ) {
 		box-shadow: 0 0 0 1px var(--color-border-subtle);
 	}
-}
 
-.primary__customer-home-location-content .dot-pager__controls {
-	// The bottom margin is handled by the card
-	margin: 32px 32px 0;
-}
-
-.primary__customer-home-location-content .task {
-	box-shadow: none;
-
-	.task__text,
-	.task__illustration {
-		padding-top: 0;
-		padding-bottom: 0;
+	.dot-pager__controls {
+		// The bottom margin is handled by the card
+		margin: 32px 32px 0;
 	}
 
-	// Flush against the left and right
-	& > :first-child {
-		padding-left: 0;
-		margin-left: 0;
-	}
+	.task {
+		box-shadow: none;
 
-	& > :last-child {
-		padding-right: 0;
-		margin-right: 0;
-	}
-
-	.task__illustration {
-		text-align: right;
-	}
-
-	// 32px spacing for everything except the space before the CTA (48px)
-	.task__text {
-		gap: 32px;
-
-		& > * {
-			margin-top: 0;
-			margin-bottom: 0;
+		.task__text,
+		.task__illustration {
+			padding-top: 0;
+			padding-bottom: 0;
 		}
 
-		.task__actions {
-			// The extra space before the Call to Action
-			margin-top: 16px;
+		// Flush against the left and right
+		& > :first-child {
+			padding-left: 0;
+			margin-left: 0;
+		}
+
+		& > :last-child {
+			padding-right: 0;
+			margin-right: 0;
+		}
+
+		.task__illustration {
+			text-align: right;
+		}
+
+		// 32px spacing for everything except the space before the CTA (48px)
+		.task__text {
+			gap: 32px;
+
+			& > * {
+				margin-top: 0;
+				margin-bottom: 0;
+			}
+
+			.task__actions {
+				// The extra space before the Call to Action
+				margin-top: 16px;
+			}
 		}
 	}
-}
 
-.primary__customer-home-location-content .card.site-setup-list {
-	// The checklist here goes flush against the top, bottom & right
-	margin: 0;
-	box-shadow: none;
-
-	.site-setup-list__task {
+	.card.site-setup-list {
+		// The checklist here goes flush against the top, bottom & right
 		margin: 0;
-		padding: 32px 8px 32px 32px;
+		box-shadow: none;
 
-		// When the list switches to a single-column
-		@include breakpoint-deprecated( "<960px" ) {
-			// Less space at the top because the nav-item contributes
-			padding: 16px 32px 32px;
+		.site-setup-list__task {
+			margin: 0;
+			padding: 32px 8px 32px 32px;
+
+			// When the list switches to a single-column
+			@include breakpoint-deprecated( "<960px" ) {
+				// Less space at the top because the nav-item contributes
+				padding: 16px 32px 32px;
+			}
 		}
 	}
 }

@@ -30,7 +30,7 @@ export function DisconnectGitHubButton( { connection }: DisconnectGitHubButtonPr
 			} );
 		},
 	} );
-	const { mutate: disconnect, isLoading: isDisconnecting } = mutation;
+	const { mutate: disconnect, isPending: isDisconnecting } = mutation;
 
 	return (
 		<Button
