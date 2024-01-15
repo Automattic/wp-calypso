@@ -49,6 +49,9 @@ export function importSite( context, next ) {
 
 								page( importerPath );
 							} }
+							onImportListClick={ () => {
+								page( `/import/list/${ siteSlug }` );
+							} }
 						/>
 					</div>
 				</BrowserRouter>
@@ -79,7 +82,7 @@ export function importerList( context, next ) {
 					getFinalImporterUrl={ getFinalImporterUrl }
 					submit={ ( { url } ) => {
 						url.startsWith( 'importer' )
-							? page( `${ onboardingFlowRoute }/${ url }?flow=onboarding` )
+							? page( `${ onboardingFlowRoute }/${ url }&flow=onboarding` )
 							: page( url );
 					} }
 				/>

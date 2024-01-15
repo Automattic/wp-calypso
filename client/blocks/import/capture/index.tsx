@@ -46,6 +46,7 @@ type StepProps = {
 	disableImportListStep?: boolean;
 	goToStep: GoToStep;
 	onValidFormSubmit?: ( dependencies: Record< string, unknown > ) => void;
+	onImportListClick?: () => void;
 };
 
 const trackEventName = 'calypso_signup_step_start';
@@ -59,6 +60,7 @@ export const CaptureStep: React.FunctionComponent< StepProps > = ( {
 	disableImportListStep,
 	goToStep,
 	onValidFormSubmit,
+	onImportListClick,
 } ) => {
 	const currentUser = useSelector( getCurrentUser );
 	const isStartingPointEventTriggeredRef = useRef( false );
@@ -128,7 +130,9 @@ export const CaptureStep: React.FunctionComponent< StepProps > = ( {
 		}
 	};
 
-	const onDontHaveSiteAddressClick = disableImportListStep ? undefined : () => goToStep( 'list' );
+	const onDontHaveSiteAddressClick = () => {
+		onImportListClick ? onImportListClick() : goToStep( 'list' );
+	};
 
 	/**
 	 ↓ Effects
@@ -146,7 +150,9 @@ export const CaptureStep: React.FunctionComponent< StepProps > = ( {
 					onInputEnter={ ( url ) => {
 						onValidFormSubmit ? onValidFormSubmit( { url } ) : setUrl( url );
 					} }
-					onDontHaveSiteAddressClick={ onDontHaveSiteAddressClick }
+					onDontHaveSiteAddressClick={
+						disableImportListStep ? undefined : onDontHaveSiteAddressClick
+					}
 					hasError={ !! analyzerError }
 					onInputChange={ () => {
 						// resets the error when the user starts typing again
