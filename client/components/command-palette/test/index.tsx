@@ -47,17 +47,9 @@ jest.mock( '../../../state/selectors/get-current-route-pattern' );
 jest.mock( '../use-command-palette' );
 
 describe( 'CommandPalette', () => {
-	it( 'should confirm that the command palette opens with the commands from the commands array', () => {
-		( getCurrentRoutePattern as jest.Mock ).mockReturnValue( '/sites' );
+	( getCurrentRoutePattern as jest.Mock ).mockReturnValue( '/sites' );
 
-		// Override the useCommandPalette mock values for this test case
-		( useCommandPalette as jest.Mock ).mockReturnValue( {
-			commands: commands,
-			filterNotice: 'Mock Filter Notice',
-			emptyListNotice: 'Mock Empty List Notice',
-		} );
-
-		// Trigger the command palette opening
+	const renderCommandPalette = () => {
 		act( () => {
 			fireEvent.keyDown( document, { key: 'k', metaKey: true } );
 		} );
@@ -66,6 +58,17 @@ describe( 'CommandPalette', () => {
 				<CommandPalette />
 			</Provider>
 		);
+	};
+
+	it( 'should confirm that the command palette opens with the commands from the commands array', () => {
+		// Override the useCommandPalette mock values for this test case
+		( useCommandPalette as jest.Mock ).mockReturnValue( {
+			commands: commands,
+			filterNotice: 'Mock Filter Notice',
+			emptyListNotice: 'Mock Empty List Notice',
+		} );
+
+		renderCommandPalette();
 
 		waitFor( () => {
 			expect( screen.getByPlaceholderText( 'Search for commands' ) ).toBeInTheDocument();
