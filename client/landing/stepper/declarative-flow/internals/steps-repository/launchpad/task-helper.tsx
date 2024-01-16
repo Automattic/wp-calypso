@@ -280,6 +280,7 @@ export function getEnhancedTasks( {
 				site,
 				tasks,
 				siteInfoQueryArgs,
+				checklistStatuses,
 			};
 
 			switch ( task.id ) {
@@ -567,7 +568,7 @@ export function getEnhancedTasks( {
 					};
 					break;
 				case 'domain_upsell':
-					taskData = {
+					deprecatedData = {
 						completed: domainUpsellCompleted,
 						actionDispatch: () => {
 							recordTaskClickTracksEvent( flow, domainUpsellCompleted, task.id );
@@ -599,6 +600,8 @@ export function getEnhancedTasks( {
 								? ''
 								: translate( 'Upgrade plan' ),
 					};
+
+					taskData = getTaskDefinition( flow, task, context ) || deprecatedData;
 					break;
 				case 'verify_email':
 					taskData = {
@@ -639,9 +642,9 @@ export function getEnhancedTasks( {
 	return enhancedTaskList;
 }
 
-function isDomainUpsellCompleted(
+export function isDomainUpsellCompleted(
 	site: SiteDetails | null,
-	checklistStatuses: ChecklistStatuses
+	checklistStatuses?: ChecklistStatuses
 ): boolean {
 	return ! site?.plan?.is_free || checklistStatuses?.domain_upsell_deferred === true;
 }
