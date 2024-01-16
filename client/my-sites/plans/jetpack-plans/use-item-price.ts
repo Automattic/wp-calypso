@@ -26,6 +26,7 @@ interface ItemPrices {
 	originalPrice: number;
 	discountedPrice?: number;
 	discountedPriceDuration?: number;
+	discountedPriceTotal?: number | null;
 	priceTierList: PriceTierEntry[];
 }
 
@@ -155,8 +156,9 @@ const useItemPrice = (
 	}
 
 	let originalPrice = 0;
-	let discountedPrice = undefined;
-	let discountedPriceDuration = undefined;
+	let discountedPrice;
+	let discountedPriceDuration;
+	const discountedPriceTotal = introductoryOfferPrices.introOfferCost;
 
 	if ( item && itemCost ) {
 		originalPrice = itemCost;
@@ -199,6 +201,7 @@ const useItemPrice = (
 		originalPrice,
 		discountedPrice,
 		discountedPriceDuration,
+		discountedPriceTotal,
 		priceTierList,
 	};
 };

@@ -49,13 +49,13 @@ export function generateFlows( {
 		},
 		{
 			name: 'business',
-			steps: [ userSocialStep, 'domains', 'plans-business' ],
+			steps: [ userSocialStep, 'domains', 'plans-business', 'storage-addon' ],
 			destination: getSignupDestination,
 			description: 'Create an account and a blog and then add the business plan to the users cart.',
 			lastModified: '2023-10-11',
 			showRecaptcha: true,
-			providesDependenciesInQuery: [ 'coupon' ],
-			optionalDependenciesInQuery: [ 'coupon' ],
+			providesDependenciesInQuery: [ 'coupon', 'storage' ],
+			optionalDependenciesInQuery: [ 'coupon', 'storage' ],
 			hideProgressIndicator: true,
 		},
 		{

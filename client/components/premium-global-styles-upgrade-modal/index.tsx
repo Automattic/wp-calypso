@@ -1,13 +1,12 @@
 import { PLAN_PREMIUM } from '@automattic/calypso-products';
-import { Button, Gridicon, Dialog, ScreenReaderText } from '@automattic/components';
+import { Button, Gridicon, Dialog, ScreenReaderText, PlanPrice } from '@automattic/components';
+import { Plans } from '@automattic/data-stores';
 import { formatCurrency } from '@automattic/format-currency';
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import QueryPlans from 'calypso/components/data/query-plans';
 import QueryProductsList from 'calypso/components/data/query-products-list';
 import { LoadingEllipsis } from 'calypso/components/loading-ellipsis';
-import PlanPrice from 'calypso/my-sites/plan-price';
-import usePricingMetaForGridPlans from 'calypso/my-sites/plans-features-main/hooks/data-store/use-pricing-meta-for-grid-plans';
 import useCheckPlanAvailabilityForPurchase from 'calypso/my-sites/plans-features-main/hooks/use-check-plan-availability-for-purchase';
 import { useSelector } from 'calypso/state';
 import { getProductBySlug } from 'calypso/state/products-list/selectors';
@@ -38,7 +37,7 @@ export default function PremiumGlobalStylesUpgradeModal( {
 	const selectedSiteId = useSelector( getSelectedSiteId );
 	const translations = useGlobalStylesUpgradeTranslations( { numOfSelectedGlobalStyles } );
 	const isPremiumPlanProductLoaded = !! premiumPlanProduct;
-	const pricingMeta = usePricingMetaForGridPlans( {
+	const pricingMeta = Plans.usePricingMetaForGridPlans( {
 		coupon: undefined,
 		planSlugs: [ PLAN_PREMIUM ],
 		selectedSiteId,
