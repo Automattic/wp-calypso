@@ -29,7 +29,7 @@ const DndKitSortableItem = ( { id, item }: DndKitSortableItemProps ) => {
 	const { attributes, listeners, setNodeRef, transform, transition } = useSortable( { id } );
 
 	const style = {
-		transform: CSS.Transform.toString( transform ),
+		transform: CSS.Translate.toString( transform ),
 		transition,
 	};
 

@@ -155,7 +155,7 @@ const PatternLargePreview = ( {
 		};
 
 		return (
-			// eslint-disable-next-line jsx-a11y/no-noninteractive-element-interactions
+			// eslint-disable-next-line jsx-a11y/no-noninteractive-element-interactions, jsx-a11y/no-static-element-interactions
 			<div
 				key={ clientId }
 				aria-label={ pattern.title }
@@ -163,8 +163,8 @@ const PatternLargePreview = ( {
 					'pattern-large-preview__pattern--active': isActive,
 				} ) }
 				data-client-id={ clientId }
-				// onMouseDown={ handleMouseDown }
-				// onMouseEnter={ handleMouseEnter }
+				onMouseDown={ handleMouseDown }
+				onMouseEnter={ handleMouseEnter }
 			>
 				{ !! viewportHeight && (
 					<PatternRenderer
