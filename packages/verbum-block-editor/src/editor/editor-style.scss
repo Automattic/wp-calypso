@@ -1,14 +1,13 @@
 /* stylelint-disable declaration-property-unit-allowed-list */
-@use "sass:meta";
 
 .verbum-editor-wrapper {
 	width: 100%;
 	box-sizing: border-box;
 
-	@include meta.load-css("@wordpress/components/build-style/style");
-	@include meta.load-css("@wordpress/edit-post/build-style/style");
-	@include meta.load-css("@wordpress/block-editor/build-style/style");
-	@include meta.load-css("@wordpress/block-editor/build-style/content");
+	@import "@wordpress/components/build-style/style";
+	@import "@wordpress/edit-post/build-style/style";
+	@import "@wordpress/block-editor/build-style/style";
+	@import "@wordpress/block-editor/build-style/content";
 
 	.editor__header {
 		top: 0;
