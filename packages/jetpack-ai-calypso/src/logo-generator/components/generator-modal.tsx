@@ -5,6 +5,7 @@ import { Icon, Modal, Button } from '@wordpress/components';
 import { useDispatch } from '@wordpress/data';
 import { __ } from '@wordpress/i18n';
 import { external } from '@wordpress/icons';
+import classNames from 'classnames';
 import debugFactory from 'debug';
 import { useState, useEffect, useCallback } from 'react';
 /**
@@ -17,6 +18,7 @@ import { FirstLoadScreen } from './first-load-screen';
 import { HistoryCarousel } from './history-carousel';
 import { LogoPresenter } from './logo-presenter';
 import { Prompt } from './prompt';
+import { UpgradeScreen } from './upgrade-screen';
 import './generator-modal.scss';
 /**
  * Types
@@ -38,6 +40,8 @@ export const GeneratorModal: React.FC< GeneratorModalProps > = ( {
 	>( null );
 	const [ initialPrompt, setInitialPrompt ] = useState< string | undefined >();
 	const [ isFirstCallOnOpen, setIsFirstCallOnOpen ] = useState( true );
+	const [ needsFeature, setNeedsFeature ] = useState( false );
+	const [ upgradeURL, setUpgradeURL ] = useState( '' );
 	const { selectedLogo, getAiAssistantFeature, generateFirstPrompt, generateLogo } =
 		useLogoGenerator();
 	const siteId = siteDetails?.ID;
@@ -79,27 +83,41 @@ export const GeneratorModal: React.FC< GeneratorModalProps > = ( {
 		try {
 			const feature = await getFeature();
 
-			// If there is any logo we do not need to generate a first logo again.
+			// If the site requires an upgrade, set the upgrade URL and show the upgrade screen immediately.
+			setNeedsFeature( ! feature?.hasFeature ?? true );
+
+			if ( ! feature?.hasFeature ) {
+				const upgradeURL = new URL(
+					`${ location.origin }/checkout/${ siteDetails?.domain }/${ feature?.nextTier?.slug }`
+				);
+				upgradeURL.searchParams.set( 'redirect_to', location.href );
+				setUpgradeURL( upgradeURL.toString() );
+				setLoadingState( null );
+				return;
+			}
+
+			// If there is any logo, we do not need to generate a first logo again.
 			if ( ! isLogoHistoryEmpty( String( siteId ) ) ) {
 				setLoadingState( null );
 				return;
 			}
 
-			if ( feature?.requireUpgrade ) {
-				// TODO: Show upgrade screen.
-				setLoadingState( null );
-			} else {
-				// If the site does not require an upgrade, generate the first prompt based on the site's data.
-				generateFirstLogo();
-			}
+			// If the site does not require an upgrade and has no logos stored, generate the first prompt based on the site's data.
+			generateFirstLogo();
 		} catch ( error ) {
 			debug( 'Error fetching feature', error );
 			setLoadingState( null );
 		}
-	}, [ loadLogoHistory, siteId, getFeature, generateFirstLogo ] );
+	}, [ loadLogoHistory, siteId, getFeature, siteDetails?.domain, generateFirstLogo ] );
+
+	const closeModal = () => {
+		setLoadingState( null );
+		setNeedsFeature( false );
+		onClose();
+	};
 
 	const handleApplyLogo = () => {
-		onClose();
+		closeModal();
 
 		setTimeout( () => {
 			// Reload the page to update the logo.
@@ -134,37 +152,49 @@ export const GeneratorModal: React.FC< GeneratorModalProps > = ( {
 		}
 	}, [ isOpen ] );
 
+	let body: React.ReactNode;
+
+	if ( loadingState ) {
+		body = <FirstLoadScreen state={ loadingState } />;
+	} else if ( needsFeature ) {
+		body = <UpgradeScreen onCancel={ closeModal } upgradeURL={ upgradeURL } />;
+	} else {
+		body = (
+			<>
+				<Prompt initialPrompt={ initialPrompt } />
+				<LogoPresenter logo={ selectedLogo } onApplyLogo={ handleApplyLogo } />
+				<HistoryCarousel />
+				<div className="jetpack-ai-logo-generator__footer">
+					<Button
+						variant="link"
+						className="jetpack-ai-logo-generator__feedback-button"
+						href="https://jetpack.com/redirect/?source=jetpack-ai-feedback"
+						target="_blank"
+					>
+						<span>{ __( 'Provide feedback', 'jetpack' ) }</span>
+						<Icon icon={ external } className="icon" />
+					</Button>
+				</div>
+			</>
+		);
+	}
+
 	return (
 		<>
 			{ isOpen && (
 				<Modal
 					className="jetpack-ai-logo-generator-modal"
-					onRequestClose={ onClose }
+					onRequestClose={ closeModal }
 					shouldCloseOnClickOutside={ false }
 					shouldCloseOnEsc={ false }
 					title={ __( 'Jetpack AI Logo Generator', 'jetpack' ) }
 				>
-					<div className="jetpack-ai-logo-generator-modal__body">
-						{ loadingState ? (
-							<FirstLoadScreen state={ loadingState } />
-						) : (
-							<>
-								<Prompt initialPrompt={ initialPrompt } />
-								<LogoPresenter logo={ selectedLogo } onApplyLogo={ handleApplyLogo } />
-								<HistoryCarousel />
-								<div className="jetpack-ai-logo-generator__footer">
-									<Button
-										variant="link"
-										className="jetpack-ai-logo-generator__feedback-button"
-										href="https://jetpack.com/redirect/?source=jetpack-ai-feedback"
-										target="_blank"
-									>
-										<span>{ __( 'Provide feedback', 'jetpack' ) }</span>
-										<Icon icon={ external } className="icon" />
-									</Button>
-								</div>
-							</>
-						) }
+					<div
+						className={ classNames( 'jetpack-ai-logo-generator-modal__body', {
+							'needs-feature': needsFeature,
+						} ) }
+					>
+						{ body }
 					</div>
 				</Modal>
 			) }
