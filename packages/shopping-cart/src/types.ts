@@ -255,8 +255,8 @@ export interface ResponseCart< P = ResponseCartProduct > {
 	total_cost_integer: number;
 
 	/**
-	 * The difference between `cost_before_coupon` and the actual price for all
-	 * products in the currency's smallest unit.
+	 * The difference between the cost before any coupon and the actual price
+	 * for all products in the currency's smallest unit.
 	 *
 	 * Note that the difference may be caused by many factors, not just coupons.
 	 * It's best not to rely on it.
@@ -403,28 +403,6 @@ export interface ResponseCartProduct {
 	 * @deprecated This is a float and is unreliable. Use item_subtotal_integer
 	 */
 	cost: number;
-
-	/**
-	 * The cart item's price before a coupon (if any) was applied.
-	 *
-	 * This is slightly misleading because although this is the product's cost
-	 * before a coupon was applied, it already includes sale coupons (which are
-	 * actually discounts), and other discounts and does not include certain
-	 * other price changes (eg: domain discounts). It's best not to rely on it.
-	 * @deprecated This is a float and is unreliable. Use
-	 * item_original_subtotal_integer if you
-	 * can, although those have slightly different meanings.
-	 */
-	cost_before_coupon?: number;
-
-	/**
-	 * The difference between `cost_before_coupon` and the actual price.
-	 *
-	 * Note that the difference may be caused by many factors, not just coupons.
-	 * It's best not to rely on it.
-	 * @deprecated This is a float and is unreliable. Use coupon_savings_integer
-	 */
-	coupon_savings?: number;
 
 	/**
 	 * The amount of the local currency deducted by an applied coupon, if any.
