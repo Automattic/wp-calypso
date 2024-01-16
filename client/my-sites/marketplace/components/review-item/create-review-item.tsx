@@ -4,7 +4,7 @@ import Card from '@automattic/components/src/card';
 import { CheckboxControl, TextareaControl } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import moment from 'moment';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { useSelector } from 'react-redux';
 import Gravatar from 'calypso/components/gravatar';
 import ReviewsRatingsStars from 'calypso/components/reviews-rating-stars/reviews-ratings-stars';
@@ -30,7 +30,6 @@ export function MarketplaceCreateReviewItem( props: MarketplaceCreateReviewItemP
 	const [ errorMessage, setErrorMessage ] = useState( '' );
 	const [ showThankYouSection, setShowThankYouSection ] = useState( false );
 	const [ showContentArea, setShowContentArea ] = useState( false );
-	const [ cannotPublishReviewError, setCannotPublishReviewError ] = useState( '' );
 
 	const { data: userReviews, isFetching: isFetchingUserReviews } = useMarketplaceReviewsQuery( {
 		productType,
@@ -46,18 +45,6 @@ export function MarketplaceCreateReviewItem( props: MarketplaceCreateReviewItemP
 		setContent( '' );
 		setRating( 0 );
 	};
-
-	useEffect( () => {
-		if ( canPublishReview ) {
-			setCannotPublishReviewError( '' );
-		} else {
-			setCannotPublishReviewError(
-				translate(
-					'Only active users can leave a review. Please purchase a new subscription of the product to leave a review.'
-				)
-			);
-		}
-	}, [ canPublishReview ] );
 
 	const createReviewMutation = useCreateMarketplaceReviewMutation( { productType, slug } );
 	const createReview = () => {
@@ -118,12 +105,14 @@ export function MarketplaceCreateReviewItem( props: MarketplaceCreateReviewItemP
 							onSelectRating={ onSelectRating }
 						/>
 					</div>
-					{ showContentArea && cannotPublishReviewError && (
+					{ showContentArea && ! canPublishReview && (
 						<Card className="marketplace-review-item__error-message" highlight="error">
-							{ cannotPublishReviewError }
+							{ translate(
+								'Only active users can leave a review. Please purchase a new subscription of the product to leave a review.'
+							) }
 						</Card>
 					) }
-					{ showContentArea && ! cannotPublishReviewError && (
+					{ showContentArea && canPublishReview && (
 						<>
 							<TextareaControl
 								rows={ 4 }
