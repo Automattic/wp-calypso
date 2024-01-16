@@ -40,15 +40,13 @@ const FoldableCard: FC< FoldableCardProps > = ( {
 	disabled = false,
 	expandedSummary,
 	expanded = false,
-	headerTagName = 'span',
+	header = '',
 	icon = 'chevron-down',
 	iconSize = 24,
 	onClick = noop,
 	onClose = noop,
 	onOpen = noop,
 	screenReaderText = false,
-	summary,
-	hideSummary = false,
 	highlight,
 	smooth = false,
 	contentExpandedStyle,
@@ -122,39 +120,6 @@ const FoldableCard: FC< FoldableCardProps > = ( {
 		);
 	};
 
-	const renderHeader = () => {
-		const summaryElement = summary ? (
-			<span className="foldable-card__summary">{ summary }</span>
-		) : null;
-		const expandedSummaryElement = expandedSummary ? (
-			<span className="foldable-card__summary-expanded">{ expandedSummary }</span>
-		) : null;
-		const headerClickAction = clickableHeader ? getClickAction() : undefined;
-		const headerClasses = classNames( 'foldable-card__header', {
-			'is-clickable': clickableHeader,
-			'has-border': summary,
-		} );
-		const header = React.createElement(
-			headerTagName,
-			{ className: 'foldable-card__main' },
-			summaryElement,
-			expandedSummaryElement,
-			renderActionButton()
-		);
-
-		return (
-			<div className={ headerClasses } role="presentation" onClick={ headerClickAction }>
-				{ header }
-				{ ! hideSummary && (
-					<span className="foldable-card__secondary">
-						{ summaryElement }
-						{ expandedSummaryElement }
-					</span>
-				) }
-			</div>
-		);
-	};
-
 	const Container = compact ? CompactCard : Card;
 	const itemSiteClasses = classNames( 'foldable-card', className, {
 		'is-disabled': disabled,
@@ -165,7 +130,14 @@ const FoldableCard: FC< FoldableCardProps > = ( {
 
 	return (
 		<Container className={ itemSiteClasses } highlight={ highlight }>
-			{ renderHeader() }
+			<div
+				className="foldable-card__header is-clickable"
+				role="presentation"
+				onClick={ getClickAction() }
+			>
+				<span className="foldable-card__main">{ header }</span>
+				{ renderActionButton() }
+			</div>
 			{ ( isExpanded || smooth ) && renderContent() }
 		</Container>
 	);
