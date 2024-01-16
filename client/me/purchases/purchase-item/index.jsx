@@ -179,7 +179,7 @@ class PurchaseItem extends Component {
 					) )
 			) {
 				return translate(
-					'Free trial ends on {{span}}%(date)s{{/span}}, renews automatically at %(amount)s',
+					'Free trial ends on {{span}}%(date)s{{/span}}, renews automatically at %(amount)s {{abbr}}%(excludeTaxStringAbbrevation)s{{/abbr}}',
 					{
 						args: {
 							date: expiry.format( 'LL' ),
@@ -187,9 +187,11 @@ class PurchaseItem extends Component {
 								isSmallestUnit: true,
 								stripZeros: true,
 							} ),
+							excludeTaxStringAbbrevation: excludeTaxStringAbbrevation,
 						},
 						components: {
 							span: <span className="purchase-item__date" />,
+							abbr: <abbr title={ excludeTaxStringTitle } />,
 						},
 					}
 				);
@@ -258,9 +260,11 @@ class PurchaseItem extends Component {
 							isSmallestUnit: true,
 							stripZeros: true,
 						} ),
+						excludeTaxStringAbbrevation: excludeTaxStringAbbrevation,
 						date: renewDate.format( 'LL' ),
 					},
 					components: {
+						abbr: <abbr title={ excludeTaxStringTitle } />,
 						span: <span className="purchase-item__date" />,
 					},
 				};
@@ -271,7 +275,7 @@ class PurchaseItem extends Component {
 							i18n.hasTranslation( 'Renews monthly at %(amount)s on {{span}}%(date)s{{/span}}' )
 						) {
 							return translate(
-								'Renews monthly at %(amount)s on {{span}}%(date)s{{/span}}',
+								'Renews monthly at %(amount)s {{abbr}}%(excludeTaxStringAbbrevation)s{{/abbr}} on {{span}}%(date)s{{/span}}',
 								translateOptions
 							);
 						}
@@ -281,7 +285,7 @@ class PurchaseItem extends Component {
 							i18n.hasTranslation( 'Renews yearly at %(amount)s on {{span}}%(date)s{{/span}}' )
 						) {
 							return translate(
-								'Renews yearly at %(amount)s on {{span}}%(date)s{{/span}}',
+								'Renews yearly at %(amount)s {{abbr}}%(excludeTaxStringAbbrevation)s{{/abbr}} on {{span}}%(date)s{{/span}}',
 								translateOptions
 							);
 						}
@@ -289,11 +293,11 @@ class PurchaseItem extends Component {
 						if (
 							locale === 'en' ||
 							i18n.hasTranslation(
-								'Renews every two years at %(amount)s on {{span}}%(date)s{{/span}}'
+								'Renews every two years at %(amount)s {{abbr}}%(excludeTaxStringAbbrevation)s{{/abbr}} on {{span}}%(date)s{{/span}}'
 							)
 						) {
 							return translate(
-								'Renews every two years at %(amount)s on {{span}}%(date)s{{/span}}',
+								'Renews every two years at %(amount)s {{abbr}}%(excludeTaxStringAbbrevation)s{{/abbr}} on {{span}}%(date)s{{/span}}',
 								translateOptions
 							);
 						}
@@ -301,29 +305,34 @@ class PurchaseItem extends Component {
 						if (
 							locale === 'en' ||
 							i18n.hasTranslation(
-								'Renews every three years at %(amount)s on {{span}}%(date)s{{/span}}'
+								'Renews every three years at %(amount)s {{abbr}}%(excludeTaxStringAbbrevation)s{{/abbr}} on {{span}}%(date)s{{/span}}'
 							)
 						) {
 							return translate(
-								'Renews every three years at %(amount)s on {{span}}%(date)s{{/span}}',
+								'Renews every three years at %(amount)s {{abbr}}%(excludeTaxStringAbbrevation)s{{/abbr}} on {{span}}%(date)s{{/span}}',
 								translateOptions
 							);
 						}
 				}
 			}
 
-			return translate( 'Renews at %(amount)s on {{span}}%(date)s{{/span}}', {
-				args: {
-					amount: formatCurrency( purchase.priceInteger, purchase.currencyCode, {
-						isSmallestUnit: true,
-						stripZeros: true,
-					} ),
-					date: renewDate.format( 'LL' ),
-				},
-				components: {
-					span: <span className="purchase-item__date" />,
-				},
-			} );
+			return translate(
+				'Renews at %(amount)s {{abbr}}%(excludeTaxStringAbbrevation)s{{/abbr}} on {{span}}%(date)s{{/span}}',
+				{
+					args: {
+						amount: formatCurrency( purchase.priceInteger, purchase.currencyCode, {
+							isSmallestUnit: true,
+							stripZeros: true,
+						} ),
+						excludeTaxStringAbbrevation: excludeTaxStringAbbrevation,
+						date: renewDate.format( 'LL' ),
+					},
+					components: {
+						abbr: <abbr title={ excludeTaxStringTitle } />,
+						span: <span className="purchase-item__date" />,
+					},
+				}
+			);
 		}
 
 		if ( isExpiring( purchase ) && ! isAkismetFreeProduct( purchase ) ) {
