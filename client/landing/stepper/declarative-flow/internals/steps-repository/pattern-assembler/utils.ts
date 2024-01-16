@@ -50,3 +50,6 @@ export const getPagePatternTitle = ( { categories }: Pattern ) => {
 	);
 	return getTitleForRenamedCategories( category );
 };
+
+export const sortSectionsByKey = ( sections: Pattern[], sortOrder: any[] ) =>
+	sections.sort( ( a, b ) => sortOrder.indexOf( a.key ) - sortOrder.indexOf( b.key ) );

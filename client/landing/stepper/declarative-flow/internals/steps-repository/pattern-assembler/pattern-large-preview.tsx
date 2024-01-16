@@ -12,7 +12,7 @@ import { PATTERN_ASSEMBLER_EVENTS } from './events';
 import { injectTitlesToPageListBlock } from './html-transformers';
 import PatternActionBar from './pattern-action-bar';
 import PatternTooltipDeadClick from './pattern-tooltip-dead-click';
-import { encodePatternId } from './utils';
+import { encodePatternId, sortSectionsByKey } from './utils';
 import type { Pattern } from './types';
 import './pattern-large-preview.scss';
 
@@ -25,6 +25,7 @@ interface Props {
 	onDeleteSection: ( position: number ) => void;
 	onMoveUpSection: ( position: number ) => void;
 	onMoveDownSection: ( position: number ) => void;
+	onReorderSections: ( orderedSections: Pattern[] ) => void;
 	onDeleteHeader: () => void;
 	onDeleteFooter: () => void;
 	onShuffle: ( type: string, pattern: Pattern, position?: number ) => void;
@@ -46,6 +47,7 @@ const PatternLargePreview = ( {
 	onDeleteSection,
 	onMoveUpSection,
 	onMoveDownSection,
+	onReorderSections,
 	onDeleteHeader,
 	onDeleteFooter,
 	onShuffle,
@@ -226,7 +228,8 @@ const PatternLargePreview = ( {
 		}
 
 		const handleDragEnd = ( newOrder: any[] ) => {
-			console.log( newOrder );
+			const orderedSections = sortSectionsByKey( [ ...sections ], newOrder );
+			onReorderSections( orderedSections );
 		};
 
 		return (

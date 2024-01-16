@@ -60,7 +60,6 @@ const DndKitSortable = ( { items, onDragEnd }: DndKitSortableProps ) => {
 		const newIndex = itemsKeys.indexOf( over.id );
 
 		const newOrder = arrayMove( itemsKeys, oldIndex, newIndex );
-		console.log( '=>', newOrder );
 		onDragEnd( newOrder );
 	};
 
