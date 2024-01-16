@@ -44,10 +44,14 @@ export const Note = React.forwardRef( ( props, ref ) => {
 	} );
 
 	return (
-		<li id={ 'note-' + note.id } className={ classes } ref={ ref }>
-			{ detailView && note.header && note.header.length > 0 && (
-				<SummaryInSingle key={ 'note-summary-single-' + note.id } note={ note } />
-			) }
+		<li
+			id={ detailView ? 'note-details-' + note.id : 'note-' + note.id }
+			className={ classes }
+			tabIndex={ detailView ? -1 : 0 }
+			role={ detailView ? 'article' : 'listitem' }
+			aria-controls={ detailView ? null : 'note-details-' + note.id }
+			aria-selected={ detailView ? null : currentNote === note.id }
+		>
 			{ ! detailView && (
 				<SummaryInList
 					currentNote={ currentNote }

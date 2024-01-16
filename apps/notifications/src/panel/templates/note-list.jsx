@@ -343,7 +343,7 @@ export class NoteList extends Component {
 			<div className={ classes }>
 				<FilterBar controller={ this.props.filterController } />
 				<div ref={ this.storeScrollableContainer } className={ listViewClasses }>
-					<ol ref={ this.storeNoteList } className="wpnc__notes">
+					<ol ref={ this.storeNoteList } className="wpnc__notes" aria-live="polite">
 						<StatusBar
 							statusClasses={ this.state.statusClasses }
 							statusMessage={ this.state.statusMessage }
