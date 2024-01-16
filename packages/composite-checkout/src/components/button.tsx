@@ -6,6 +6,7 @@ import { Theme } from '../lib/theme';
 const CallToAction = styled( 'button' )< CallToActionProps >`
 	display: block;
 	width: ${ ( props: CallToActionProps ) => ( props.fullWidth ? '100%' : 'auto' ) };
+	height: 50px;
 	font-size: 16px;
 	border-radius: 4px;
 	padding: ${ ( props ) => ( props.buttonType === 'text-button' ? '0' : '10px 15px' ) };
