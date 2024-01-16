@@ -8,6 +8,7 @@ import { ECOMMERCE_FLOW, ecommerceFlowRecurTypes } from '@automattic/onboarding'
 import { QueryClientProvider } from '@tanstack/react-query';
 import { useDispatch } from '@wordpress/data';
 import defaultCalypsoI18n from 'i18n-calypso';
+import { useState, useEffect } from 'react';
 import ReactDom from 'react-dom';
 import { Provider } from 'react-redux';
 import { BrowserRouter } from 'react-router-dom';
@@ -29,7 +30,7 @@ import { FlowRenderer } from './declarative-flow/internals';
 import { AsyncHelpCenter } from './declarative-flow/internals/components';
 import 'calypso/components/environment-badge/style.scss';
 import 'calypso/assets/stylesheets/style.scss';
-import availableFlows from './declarative-flow/registered-flows';
+import registeredFlows from './declarative-flow/registered-flows';
 import { useQuery } from './hooks/use-query';
 import { ONBOARD_STORE, USER_STORE } from './stores';
 import { setupWpDataDebug } from './utils/devtools';
@@ -37,6 +38,7 @@ import { WindowLocaleEffectManager } from './utils/window-locale-effect-manager'
 import type { Flow } from './declarative-flow/internals/types';
 
 declare const window: AppWindow;
+let availableFlows = registeredFlows;
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 function initializeCalypsoUserStore( reduxStore: any, user: CurrentUser ) {
@@ -46,6 +48,7 @@ function initializeCalypsoUserStore( reduxStore: any, user: CurrentUser ) {
 function determineFlow() {
 	const flowNameFromPathName = window.location.pathname.split( '/' )[ 2 ];
 
+	console.log( ' === determineflow ===' );
 	return availableFlows[ flowNameFromPathName ] || availableFlows[ 'site-setup' ];
 }
 
@@ -83,7 +86,24 @@ const FlowSwitch: React.FC< { user: UserStore.CurrentUser | undefined; flow: Flo
 
 	user && receiveCurrentUser( user as UserStore.CurrentUser );
 
-	return <FlowRenderer flow={ flow } />;
+	console.log( ' === flowswitch ===' );
+
+	// Force-rerender when we hot-update a flow.
+	const [ flowVer, setFlowVer ] = useState( 0 );
+
+	useEffect( () => {
+		const bumpFlowVer = () => {
+			setFlowVer( ( prev ) => prev + 1 );
+		};
+
+		window.addEventListener( 'updateFlows', bumpFlowVer );
+
+		return () => {
+			window.removeEventListener( 'updateFlows', bumpFlowVer );
+		};
+	}, [] );
+
+	return <FlowRenderer flow={ flow } key={ flowVer } />;
 };
 interface AppWindow extends Window {
 	BUILD_TARGET?: string;
@@ -92,6 +112,7 @@ interface AppWindow extends Window {
 window.AppBoot = async () => {
 	// backward support the old Stepper URL structure (?flow=something)
 	const flowNameFromQueryParam = new URLSearchParams( window.location.search ).get( 'flow' );
+	console.log( ' === appboot ===' );
 	if ( flowNameFromQueryParam && availableFlows[ flowNameFromQueryParam ] ) {
 		window.location.href = `/setup/${ flowNameFromQueryParam }`;
 	}
@@ -150,3 +171,12 @@ window.AppBoot = async () => {
 		document.getElementById( 'wpcom' )
 	);
 };
+
+if ( module.hot ) {
+	module.hot.accept( './declarative-flow/registered-flows', async () => {
+		const { default: updatedFlows } = await import( './declarative-flow/registered-flows' );
+		availableFlows = updatedFlows;
+		const updateEvent = new Event( 'updateFlows' );
+		window.dispatchEvent( updateEvent );
+	} );
+}
