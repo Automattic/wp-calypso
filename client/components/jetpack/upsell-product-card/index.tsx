@@ -32,6 +32,7 @@ import {
 import { APIProductFamilyProduct } from 'calypso/state/partner-portal/types';
 import { getSiteAvailableProduct } from 'calypso/state/sites/products/selectors';
 import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';
+import UnusedLicenseNotice from '../unassigned-license-notice';
 import type {
 	Duration,
 	SelectorProduct,
@@ -41,12 +42,14 @@ import type {
 import './style.scss';
 
 interface UpsellProductCardProps {
+	featureType: string;
 	nonManageProductSlug: string;
 	siteId: number | null;
 	onCtaButtonClick: () => void;
 }
 
 const UpsellProductCard: React.FC< UpsellProductCardProps > = ( {
+	featureType,
 	nonManageProductSlug,
 	siteId,
 	onCtaButtonClick,
@@ -214,19 +217,22 @@ const UpsellProductCard: React.FC< UpsellProductCardProps > = ( {
 	};
 
 	return (
-		<JetpackRnaActionCard
-			headerText={ displayName }
-			subHeaderText={ description }
-			onCtaButtonClick={ onCtaButtonClickInternal }
-			ctaButtonURL={ ctaButtonURL }
-			ctaButtonLabel={ ctaButtonLabel }
-			cardImage={ upsellImageUrl }
-			cardImageAlt={ upsellImageAlt }
-		>
-			{ hasJetpackPartnerAccess && ! partner && <QueryJetpackPartnerPortalPartner /> }
-			{ hasJetpackPartnerAccess && <QueryJetpackPartnerKey /> }
-			{ renderProductCardBody() }
-		</JetpackRnaActionCard>
+		<>
+			{ hasJetpackPartnerAccess && <UnusedLicenseNotice featureType={ featureType } /> }
+			<JetpackRnaActionCard
+				headerText={ displayName }
+				subHeaderText={ description }
+				onCtaButtonClick={ onCtaButtonClickInternal }
+				ctaButtonURL={ ctaButtonURL }
+				ctaButtonLabel={ ctaButtonLabel }
+				cardImage={ upsellImageUrl }
+				cardImageAlt={ upsellImageAlt }
+			>
+				{ hasJetpackPartnerAccess && ! partner && <QueryJetpackPartnerPortalPartner /> }
+				{ hasJetpackPartnerAccess && <QueryJetpackPartnerKey /> }
+				{ renderProductCardBody() }
+			</JetpackRnaActionCard>
+		</>
 	);
 };
 

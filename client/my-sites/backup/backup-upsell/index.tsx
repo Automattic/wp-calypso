@@ -1,4 +1,7 @@
-import { PRODUCT_JETPACK_BACKUP_T1_YEARLY } from '@automattic/calypso-products';
+import {
+	FEATURE_TYPE_JETPACK_BACKUP,
+	PRODUCT_JETPACK_BACKUP_T1_YEARLY,
+} from '@automattic/calypso-products';
 import { useTranslate } from 'i18n-calypso';
 import { FunctionComponent, useCallback } from 'react';
 import VaultPressLogo from 'calypso/assets/images/jetpack/vaultpress-logo.svg';
@@ -78,6 +81,7 @@ const BackupsUpsellBody: FunctionComponent = () => {
 			{ siteId && <QueryIntroOffers siteId={ siteId } /> }
 			{ siteId && <QuerySiteProducts siteId={ siteId } /> }
 			<UpsellProductCard
+				featureType={ FEATURE_TYPE_JETPACK_BACKUP }
 				nonManageProductSlug={ PRODUCT_JETPACK_BACKUP_T1_YEARLY }
 				siteId={ siteId }
 				onCtaButtonClick={ onClick }
