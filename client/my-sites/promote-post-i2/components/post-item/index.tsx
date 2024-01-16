@@ -1,3 +1,4 @@
+import config from '@automattic/calypso-config';
 import { safeImageUrl } from '@automattic/calypso-url';
 import './style.scss';
 import { Button } from '@wordpress/components';
@@ -18,6 +19,7 @@ export default function PostItem( { post }: { post: BlazablePost } ) {
 	// API can return "false" as a featured image URL
 	const safeUrl = 'string' === typeof post?.featured_image && safeImageUrl( post.featured_image );
 	const featuredImage = safeUrl && resizeImageUrl( safeUrl, 108, 0 );
+	const isRunningInWooStore = config.isEnabled( 'is_running_in_woo_site' );
 
 	const postDate = (
 		<RelativeTime date={ post.date } showTooltip={ true } tooltipTitle={ __( 'Published date' ) } />
@@ -26,6 +28,7 @@ export default function PostItem( { post }: { post: BlazablePost } ) {
 	const viewCount = post?.monthly_view_count ?? 0;
 	const likeCount = post?.like_count ?? 0;
 	const commentCount = post?.comment_count ?? 0;
+	const visitorCount = post?.visitors ?? 0;
 
 	const mobileStatsSeparator = <span className="blazepress-mobile-stats-mid-dot">&#183;</span>;
 
@@ -86,22 +89,30 @@ export default function PostItem( { post }: { post: BlazablePost } ) {
 				</div>
 				<div className="post-item__post-data-row post-item__post-data-row-mobile">
 					<div className="post-item__stats-mobile">
-						{ sprintf(
-							// translators: %s is number of post's views
-							_n( '%s view', '%s views', viewCount ),
-							formatNumber( viewCount, true )
-						) }
+						{ post.type !== 'product' || ! isRunningInWooStore
+							? sprintf(
+									// translators: %s is number of post's views
+									_n( '%s view', '%s views', viewCount ),
+									formatNumber( viewCount, true )
+							  )
+							: post.price ?? '$0.00' }
 						{ mobileStatsSeparator }
-						{
-							// translators: %s is number of post's likes
-							sprintf( _n( '%s like', '%s likes', likeCount ), formatNumber( likeCount, true ) )
-						}
+						{ post.type !== 'product' || ! isRunningInWooStore
+							? // translators: %s is number of post's likes
+							  sprintf( _n( '%s like', '%s likes', likeCount ), formatNumber( likeCount, true ) )
+							: `SKU: ${ post.sku ?? '-' }` }
 						{ mobileStatsSeparator }
-						{ sprintf(
-							// translators: %s is number of post's comments
-							_n( '%s comment', '%s comments', commentCount ),
-							formatNumber( commentCount, true )
-						) }
+						{ post.type !== 'product' || ! isRunningInWooStore
+							? sprintf(
+									// translators: %s is number of post's comments
+									_n( '%s comment', '%s comments', commentCount ),
+									formatNumber( commentCount, true )
+							  )
+							: sprintf(
+									// translators: %s is number of post's views
+									_n( '%s visitor', '%s visitors', viewCount ),
+									formatNumber( visitorCount, true )
+							  ) }
 					</div>
 					<div className="post-item__actions-mobile">
 						<a
@@ -126,7 +137,7 @@ export default function PostItem( { post }: { post: BlazablePost } ) {
 			</td>
 
 			<td className="post-item__post-type">{ getPostType( post.type ) }</td>
-			{ post.type !== 'product' ? (
+			{ post.type !== 'product' || ! isRunningInWooStore ? (
 				<>
 					<td className="post-item__post-publish-date">{ postDate }</td>
 					<td className="post-item__post-views">{ formatNumber( viewCount, true ) }</td>
@@ -135,10 +146,10 @@ export default function PostItem( { post }: { post: BlazablePost } ) {
 				</>
 			) : (
 				<>
-					<td className="post-item__sku">{ post.sku ?? '-' }</td>
-					<td className="post-item__price">{ post.price ?? '-' }</td>
+					<td className="post-item__post-sku">{ post.sku ?? '-' }</td>
+					<td className="post-item__post-price">{ post.price ?? '-' }</td>
 					<td className="post-item__post-publish-date">{ postDate }</td>
-					<td className="post-item__sku">{ post.visitors ?? '-' }</td>
+					<td className="post-item__post-visitors">{ post.visitors ?? '-' }</td>
 				</>
 			) }
 
