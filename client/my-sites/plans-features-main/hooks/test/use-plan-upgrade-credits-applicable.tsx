@@ -24,7 +24,7 @@ jest.mock( 'calypso/state/sites/selectors', () => ( {
 jest.mock( 'calypso/state/sites/plans/selectors', () => ( {
 	getSitePlanSlug: jest.fn(),
 } ) );
-jest.mock( 'calypso/my-sites/plans-grid/hooks/use-calculate-max-plan-upgrade-credits', () => ( {
+jest.mock( 'calypso/my-sites/plans-features-main/hooks/use-max-plan-upgrade-credits', () => ( {
 	useMaxPlanUpgradeCredits: jest.fn(),
 } ) );
 jest.mock( 'calypso/state/selectors/is-site-automated-transfer', () => ( {
