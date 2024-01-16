@@ -377,7 +377,7 @@ export function getEnhancedTasks( {
 					taskData = getTaskDefinition( flow, task, context ) || deprecatedData;
 					break;
 				case 'plan_completed':
-					taskData = {
+					deprecatedData = {
 						actionDispatch: () => {
 							recordTaskClickTracksEvent( flow, task.completed, task.id );
 							const plansUrl = addQueryArgs( `/setup/${ flow }/plans`, siteInfoQueryArgs );
@@ -388,6 +388,7 @@ export function getEnhancedTasks( {
 						subtitle: getPlanTaskSubtitle( task ),
 						disabled: task.completed && ! isCurrentPlanFree,
 					};
+					taskData = getTaskDefinition( flow, task, context ) || deprecatedData;
 					break;
 				case 'subscribers_added':
 					taskData = {
