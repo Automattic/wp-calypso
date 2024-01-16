@@ -92,15 +92,18 @@ const Home = ( {
 	const siteDomains = useSelector( ( state ) => getDomainsBySiteId( state, siteId ) );
 	const customDomains = siteDomains?.filter( ( domain ) => ! domain.isWPCOMDomain );
 	const customDomain = customDomains?.length ? customDomains[ 0 ] : undefined;
+	const primaryDomain = customDomains?.length
+		? customDomains.find( ( domain ) => domain.isPrimary )
+		: undefined;
 
 	const {
 		data: domainDiagnosticData,
 		isFetching: isFetchingDomainDiagnostics,
 		refetch: refetchDomainDiagnosticData,
-	} = useDomainDiagnosticsQuery( customDomain?.name, {
+	} = useDomainDiagnosticsQuery( primaryDomain?.name, {
 		staleTime: 5 * 60 * 1000,
 		gcTime: 5 * 60 * 1000,
-		enabled: customDomain !== undefined && customDomain.isMappedToAtomicSite,
+		enabled: primaryDomain !== undefined && primaryDomain.isMappedToAtomicSite,
 	} );
 	const emailDnsDiagnostics = domainDiagnosticData?.email_dns_records;
 	const [ dismissedEmailDnsDiagnostics, setDismissedEmailDnsDiagnostics ] = useState( false );
@@ -239,7 +242,7 @@ const Home = ( {
 						components: {
 							diagnosticLink: (
 								<a
-									href={ domainManagementEdit( siteId, customDomain.name, null, {
+									href={ domainManagementEdit( siteId, primaryDomain.name, null, {
 										diagnostics: true,
 									} ) }
 								/>
@@ -254,7 +257,7 @@ const Home = ( {
 				showDismiss={ true }
 				onDismissClick={ () => {
 					setDismissedEmailDnsDiagnostics( true );
-					setDomainNotice( customDomain.name, 'email-dns-records-diagnostics', 'ignored', () => {
+					setDomainNotice( primaryDomain.name, 'email-dns-records-diagnostics', 'ignored', () => {
 						refetchDomainDiagnosticData();
 					} );
 				} }
