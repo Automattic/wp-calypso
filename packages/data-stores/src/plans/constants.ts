@@ -15,6 +15,11 @@ export const plansSlugs = [
 	TIMELESS_PLAN_PREMIUM,
 	TIMELESS_PLAN_BUSINESS,
 	TIMELESS_PLAN_ECOMMERCE,
+	// Keeping the old slugs for backwards compatibility.
+	'personal',
+	'premium',
+	'business',
+	'ecommerce',
 ] as const;
 
 export const DEFAULT_PAID_PLAN = TIMELESS_PLAN_PREMIUM;
