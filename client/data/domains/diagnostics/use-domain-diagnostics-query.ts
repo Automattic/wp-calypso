@@ -4,7 +4,8 @@ import wp from 'calypso/lib/wp';
 import { domainDiagnosticsQueryKey } from './domain-diagnostics-query-key';
 
 export default function useDomainDiagnosticsQuery(
-	domainName: string
+	domainName: string,
+	queryOptions = {}
 ): UseQueryResult< DomainDiagnostics > {
 	return useQuery( {
 		queryKey: domainDiagnosticsQueryKey( domainName ),
@@ -15,5 +16,6 @@ export default function useDomainDiagnosticsQuery(
 			} ),
 		refetchOnWindowFocus: false,
 		enabled: true,
+		...queryOptions,
 	} );
 }
