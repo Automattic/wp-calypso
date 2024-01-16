@@ -12,6 +12,7 @@ interface PlansGridContext {
 	allFeaturesList: FeatureList;
 	helpers: {
 		useCheckPlanAvailabilityForPurchase: Plans.UseCheckPlanAvailabilityForPurchase;
+		recordTracksEvent?: GridContextProps[ 'recordTracksEvent' ];
 	};
 	coupon?: string;
 }
@@ -22,6 +23,7 @@ const PlansGridContextProvider = ( {
 	intent,
 	gridPlans,
 	useCheckPlanAvailabilityForPurchase,
+	recordTracksEvent,
 	allFeaturesList,
 	selectedSiteId,
 	children,
@@ -43,7 +45,7 @@ const PlansGridContextProvider = ( {
 				gridPlans,
 				gridPlansIndex,
 				allFeaturesList,
-				helpers: { useCheckPlanAvailabilityForPurchase },
+				helpers: { useCheckPlanAvailabilityForPurchase, recordTracksEvent },
 				coupon,
 			} }
 		>
