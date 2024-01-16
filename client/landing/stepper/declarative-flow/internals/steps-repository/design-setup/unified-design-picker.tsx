@@ -409,9 +409,10 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 	const isBundled = selectedDesign?.software_sets && selectedDesign.software_sets.length > 0;
 
 	const selectedDesignTier =
-		useSelector( ( state ) =>
-			selectedDesignThemeId ? getThemeTierForTheme( state, selectedDesignThemeId ) : null
-		)?.slug ?? FREE_THEME;
+		useSelector(
+			( state ) =>
+				selectedDesignThemeId && getThemeTierForTheme( state, selectedDesignThemeId )?.slug
+		) ?? FREE_THEME;
 
 	const isLockedTheme =
 		( isEnabled( 'themes/tiers' ) &&
