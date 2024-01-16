@@ -44,7 +44,7 @@ export const ReviewModal = ( { isVisible, onClose, slug, productName, productTyp
 
 	const handleClose = () => {
 		recordTracksEvent( 'calypso_marketplace_reviews_add_dismiss', {
-			completed: createReview.isSuccess,
+			is_success: createReview.isSuccess,
 			is_error: createReview.isError,
 		} );
 
