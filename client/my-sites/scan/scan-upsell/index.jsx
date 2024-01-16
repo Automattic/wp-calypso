@@ -1,5 +1,6 @@
 import { PRODUCT_JETPACK_SCAN } from '@automattic/calypso-products';
 import { useTranslate } from 'i18n-calypso';
+import { FEATURE_TYPE_JETPACK_SCAN } from 'packages/calypso-products/src/constants/features';
 import { useCallback } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import VaultPressLogo from 'calypso/assets/images/jetpack/vaultpress-logo.svg';
@@ -76,6 +77,7 @@ function ScanUpsellBody() {
 			{ siteId && <QueryIntroOffers siteId={ siteId } /> }
 			{ siteId && <QuerySiteProducts siteId={ siteId } /> }
 			<UpsellProductCard
+				featureType={ FEATURE_TYPE_JETPACK_SCAN }
 				nonManageProductSlug={ PRODUCT_JETPACK_SCAN }
 				siteId={ siteId }
 				onCtaButtonClick={ onClick }
