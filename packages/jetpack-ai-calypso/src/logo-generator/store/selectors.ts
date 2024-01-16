@@ -112,6 +112,42 @@ const selectors = {
 	getRequireUpgrade( state: LogoGeneratorStateProp ): boolean {
 		return state.features.aiAssistantFeature?.requireUpgrade ?? true;
 	},
+
+	/**
+	 * Get the featureFetchError value.
+	 * @param {LogoGeneratorStateProp} state - The app state tree.
+	 * @returns {boolean}                      The featureFetchError value.
+	 */
+	getFeatureFetchError( state: LogoGeneratorStateProp ): string | Error | null {
+		return state._meta?.featureFetchError ?? null;
+	},
+
+	/**
+	 * Get the firstLogoPromptFetchError value.
+	 * @param {LogoGeneratorStateProp} state - The app state tree.
+	 * @returns {boolean}                      The firstLogoPromptFetchError value.
+	 */
+	getFirstLogoPromptFetchError( state: LogoGeneratorStateProp ): string | Error | null {
+		return state._meta?.firstLogoPromptFetchError ?? null;
+	},
+
+	/**
+	 * Get the enhancePromptFetchError value.
+	 * @param {LogoGeneratorStateProp} state - The app state tree.
+	 * @returns {boolean}                      The enhancePromptFetchError value.
+	 */
+	getEnhancePromptFetchError( state: LogoGeneratorStateProp ): string | Error | null {
+		return state._meta?.enhancePromptFetchError ?? null;
+	},
+
+	/**
+	 * Get the logoFetchError value.
+	 * @param {LogoGeneratorStateProp} state - The app state tree.
+	 * @returns {boolean}                      The logoFetchError value.
+	 */
+	getLogoFetchError( state: LogoGeneratorStateProp ): string | Error | null {
+		return state._meta?.logoFetchError ?? null;
+	},
 };
 
 export default selectors;

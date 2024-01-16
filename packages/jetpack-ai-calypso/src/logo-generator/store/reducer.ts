@@ -19,6 +19,10 @@ import {
 	ACTION_SET_IS_APPLYING_LOGO,
 	ACTION_SET_IS_ENHANCING_PROMPT,
 	ACTION_SET_SITE_HISTORY,
+	ACTION_SET_FEATURE_FETCH_ERROR,
+	ACTION_SET_FIRST_LOGO_PROMPT_FETCH_ERROR,
+	ACTION_SET_ENHANCE_PROMPT_FETCH_ERROR,
+	ACTION_SET_LOGO_FETCH_ERROR,
 } from './constants';
 import INITIAL_STATE from './initial-state';
 import type { AiFeatureStateProps, TierLimitProp } from './types';
@@ -42,12 +46,18 @@ export default function reducer(
 		isRequestingImage?: boolean;
 		isEnhancingPrompt?: boolean;
 		history?: Array< { url: string; description: string; mediaId?: number } >;
+		fetchError?: string | Error;
 	}
 ) {
 	switch ( action.type ) {
 		case ACTION_REQUEST_AI_ASSISTANT_FEATURE:
 			return {
 				...state,
+				_meta: {
+					...( state._meta ?? {} ),
+					// Reset the error state when requesting the feature.
+					featureFetchError: null,
+				},
 				features: {
 					...state.features,
 					aiAssistantFeature: {
@@ -266,6 +276,42 @@ export default function reducer(
 				selectedLogoIndex: action.history?.length ? action.history.length - 1 : 0,
 			};
 		}
+
+		case ACTION_SET_FEATURE_FETCH_ERROR:
+			return {
+				...state,
+				_meta: {
+					...( state._meta ?? {} ),
+					featureFetchError: action.fetchError,
+				},
+			};
+
+		case ACTION_SET_FIRST_LOGO_PROMPT_FETCH_ERROR:
+			return {
+				...state,
+				_meta: {
+					...( state._meta ?? {} ),
+					firstLogoPromptFetchError: action.fetchError,
+				},
+			};
+
+		case ACTION_SET_ENHANCE_PROMPT_FETCH_ERROR:
+			return {
+				...state,
+				_meta: {
+					...( state._meta ?? {} ),
+					enhancePromptFetchError: action.fetchError,
+				},
+			};
+
+		case ACTION_SET_LOGO_FETCH_ERROR:
+			return {
+				...state,
+				_meta: {
+					...( state._meta ?? {} ),
+					logoFetchError: action.fetchError,
+				},
+			};
 	}
 
 	return state;
