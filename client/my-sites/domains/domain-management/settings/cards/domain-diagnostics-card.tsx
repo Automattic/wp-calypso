@@ -29,7 +29,9 @@ export default function DomainDiagnosticsCard( { domain }: { domain: ResponseDom
 		data,
 		isFetching,
 		refetch: refetchDomainDiagnostics,
-	} = useDomainDiagnosticsQuery( domain.name );
+	} = useDomainDiagnosticsQuery( domain.name, {
+		enabled: domain.isPrimary && domain.isMappedToAtomicSite,
+	} );
 	const [ isRestoringDefaultRecords, setIsRestoringDefaultRecords ] = useState( false );
 	const [ isDismissEmailDnsIssuesDialogVisible, setIsDismissEmailDnsIssuesDialogVisible ] =
 		useState( false );
