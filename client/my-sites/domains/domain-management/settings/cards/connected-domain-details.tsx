@@ -3,6 +3,8 @@
 import { Button } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
+import { type as domainTypes } from 'calypso/lib/domains/constants';
+import { domainMappingSetup } from 'calypso/my-sites/domains/paths';
 import { getManagePurchaseUrlFor } from 'calypso/my-sites/purchases/paths';
 import type { DetailsCardProps } from './types';
 
@@ -27,6 +29,29 @@ const ConnectedDomainDetails = ( {
 				disabled={ isLoadingPurchase }
 			>
 				{ translate( 'View plan settings' ) }
+			</Button>
+		);
+	};
+
+	const renderMappingInstructionsButton = () => {
+		const registrationDatePlus3Days = moment.utc( domain.registrationDate ).add( 3, 'days' );
+		const shouldRenderMappingInstructions =
+			domain.type === domainTypes.MAPPED &&
+			! domain.pointsToWpcom &&
+			moment.utc().isAfter( registrationDatePlus3Days );
+
+		if ( ! shouldRenderMappingInstructions ) {
+			return null;
+		}
+
+		const setupStep = domain.connectionMode === 'advanced' ? 'advanced_update' : 'suggested_update';
+
+		return (
+			<Button
+				href={ domainMappingSetup( selectedSite.slug, domain.domain, setupStep ) }
+				disabled={ isLoadingPurchase }
+			>
+				{ translate( 'View mapping instructions' ) }
 			</Button>
 		);
 	};
@@ -61,7 +86,10 @@ const ConnectedDomainDetails = ( {
 	return (
 		<div className="details-card">
 			<div className="details-card__section">{ getDescriptionText() }</div>
-			<div className="details-card__section">{ renderPlanDetailsButton() }</div>
+			<div className="details-card__section">
+				{ renderPlanDetailsButton() }
+				{ renderMappingInstructionsButton() }
+			</div>
 		</div>
 	);
 };
