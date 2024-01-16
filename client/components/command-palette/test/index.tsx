@@ -39,6 +39,7 @@ const commands = [
 	{
 		name: 'clearCache',
 		label: 'Clear cache',
+		callback: jest.fn(),
 	},
 	{
 		name: 'enableEdgeCache',
@@ -155,6 +156,28 @@ describe( 'CommandPalette', () => {
 			expect( screen.getByText( 'Send feedback' ) ).toBeNull();
 			expect( screen.queryByText( 'Clear cache' ) ).toBeNull();
 			expect( screen.queryByText( 'Enable edge cache' ) ).toBeNull();
+		} );
+	} );
+
+	it( 'should navigate to a nested command and back to root commands', () => {
+		renderCommandPalette();
+
+		waitFor( () => {
+			expect( screen.getByPlaceholderText( 'Search for commands' ) ).toBeInTheDocument();
+			act( () => {
+				fireEvent.click( screen.getByText( 'Clear cache' ) );
+			} );
+		} );
+
+		waitFor( () => {
+			expect( screen.getByLabelText( 'Go back to the previous screen' ) ).toBeInTheDocument();
+			act( () => {
+				fireEvent.click( screen.getByLabelText( 'Go back to the previous screen' ) );
+			} );
+		} );
+
+		waitFor( () => {
+			expect( screen.queryByPlaceholderText( 'Search for commands' ) ).toBeInTheDocument();
 		} );
 	} );
 } );
