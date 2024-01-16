@@ -3,6 +3,7 @@ import {
 	PLAN_FREE,
 	PLAN_PERSONAL,
 	PLAN_PREMIUM,
+	getPlan,
 } from '@automattic/calypso-products';
 import { translate } from 'i18n-calypso';
 
@@ -22,11 +23,11 @@ export const THEME_TIERS = {
 		minimumUpsellPlan: PLAN_FREE,
 	},
 	personal: {
-		label: translate( 'Starter' ),
+		label: getPlan( PLAN_PERSONAL )?.getTitle(),
 		minimumUpsellPlan: PLAN_PERSONAL,
 	},
 	premium: {
-		label: translate( 'Explorer' ),
+		label: getPlan( PLAN_PREMIUM )?.getTitle(),
 		minimumUpsellPlan: PLAN_PREMIUM,
 	},
 	partner: {
