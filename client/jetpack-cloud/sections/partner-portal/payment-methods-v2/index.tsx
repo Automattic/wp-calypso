@@ -10,7 +10,8 @@ import LayoutHeader, {
 	LayoutHeaderTitle as Title,
 } from 'calypso/jetpack-cloud/components/layout/header';
 import LayoutTop from 'calypso/jetpack-cloud/components/layout/top';
-import { useSelector } from 'calypso/state';
+import { useSelector, useDispatch } from 'calypso/state';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import {
 	getAllStoredCards,
 	isFetchingStoredCards,
@@ -24,6 +25,7 @@ import './style.scss';
 
 export default function PaymentMethodListV2() {
 	const translate = useTranslate();
+	const dispatch = useDispatch();
 
 	const storedCards = useSelector( getAllStoredCards );
 	const isFetching = useSelector( isFetchingStoredCards );
@@ -37,6 +39,9 @@ export default function PaymentMethodListV2() {
 
 	const primaryCard = storedCards.find( ( card ) => card.is_default );
 	const secondaryCards = storedCards.filter( ( card ) => ! card.is_default );
+	const onAddNewCardClick = () => {
+		dispatch( recordTracksEvent( 'calypso_partner_portal_payments_add_new_card_button_click' ) );
+	};
 
 	const getBody = () => {
 		if ( isFetching ) {
@@ -83,7 +88,11 @@ export default function PaymentMethodListV2() {
 					<Subtitle>{ subtitle }</Subtitle>
 					<Actions>
 						{ showAddCardButton && (
-							<Button href="/partner-portal/payment-methods/add" primary>
+							<Button
+								href="/partner-portal/payment-methods/add"
+								primary
+								onClick={ onAddNewCardClick }
+							>
 								{ translate( 'Add new card' ) }
 							</Button>
 						) }

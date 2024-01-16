@@ -1,3 +1,4 @@
+import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { Gridicon, Button } from '@automattic/components';
 import classNames from 'classnames';
 import { useRef, useState } from 'react';
@@ -21,6 +22,7 @@ export default function CreditCardActions( {
 
 	const showActions = () => {
 		setIsOpen( true );
+		recordTracksEvent( 'calypso_partner_portal_payments_card_actions_button_click' );
 	};
 
 	const closeDropdown = () => {
