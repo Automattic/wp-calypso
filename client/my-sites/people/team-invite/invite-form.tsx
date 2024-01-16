@@ -18,8 +18,7 @@ import { getTokenValidation, getSendInviteState } from 'calypso/state/invites/se
 import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
 import isSiteWPForTeams from 'calypso/state/selectors/is-site-wpforteams';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
-import { useIncludeFollowers } from './hooks/use-include-followers';
-import { useInitialRole } from './hooks/use-initial-role';
+import { useInitialRole, useIncludeFollowers } from '../shared/hooks';
 import { useInvitingNotifications } from './hooks/use-inviting-notifications';
 import { useValidationNotifications } from './hooks/use-validation-notifications';
 
