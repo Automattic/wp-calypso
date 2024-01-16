@@ -365,6 +365,11 @@ export class NoteList extends Component {
 
 const mapStateToProps = ( state ) => ( {
 	isLoading: getIsLoading( state ),
+	/**
+	 * @todo Fixing this rule requires a larger refactor that isn't worth the time right now.
+	 * @see https://github.com/Automattic/wp-calypso/issues/14024
+	 */
+	// eslint-disable-next-line wpcalypso/redux-no-bound-selectors
 	isNoteHidden: ( noteId ) => getIsNoteHidden( state, noteId ),
 	isPanelOpen: getIsPanelOpen( state ),
 	selectedNoteId: getSelectedNoteId( state ),
