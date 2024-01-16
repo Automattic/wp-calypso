@@ -14,6 +14,7 @@ import {
 	verticalListSortingStrategy,
 } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
+import type { DragEndEvent } from '@dnd-kit/core';
 
 interface DndKitSortableItemProps {
 	id: string;
@@ -26,11 +27,15 @@ interface DndKitSortableProps {
 }
 
 const DndKitSortableItem = ( { id, item }: DndKitSortableItemProps ) => {
-	const { attributes, listeners, setNodeRef, transform, transition } = useSortable( { id } );
+	const { attributes, isDragging, listeners, setNodeRef, transform, transition } = useSortable( {
+		id,
+	} );
 
 	const style = {
+		position: 'relative',
 		transform: CSS.Translate.toString( transform ),
 		transition,
+		zIndex: isDragging ? 1 : undefined,
 	};
 
 	return (
@@ -50,9 +55,9 @@ const DndKitSortable = ( { items, onDragEnd }: DndKitSortableProps ) => {
 		} )
 	);
 
-	const handleDragEnd = ( event ) => {
+	const handleDragEnd = ( event: DragEndEvent ) => {
 		const { active, over } = event;
-		if ( active.id === over.id ) {
+		if ( ! over || active.id === over.id ) {
 			return;
 		}
 
