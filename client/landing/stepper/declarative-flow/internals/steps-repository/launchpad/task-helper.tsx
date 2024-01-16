@@ -281,6 +281,7 @@ export function getEnhancedTasks( {
 				tasks,
 				siteInfoQueryArgs,
 				checklistStatuses,
+				isEmailVerified,
 			};
 
 			switch ( task.id ) {
@@ -403,7 +404,7 @@ export function getEnhancedTasks( {
 					};
 					break;
 				case 'first_post_published':
-					taskData = {
+					deprecatedData = {
 						disabled:
 							mustVerifyEmailBeforePosting ||
 							( task.completed && isBlogOnboardingFlow( flow || null ) ) ||
@@ -418,6 +419,8 @@ export function getEnhancedTasks( {
 							window.location.assign( newPostUrl );
 						},
 					};
+
+					taskData = getTaskDefinition( flow, task, context ) || deprecatedData;
 					break;
 				case 'first_post_published_newsletter':
 					taskData = {
