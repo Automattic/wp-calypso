@@ -2,6 +2,8 @@
 export type { Task } from '@automattic/launchpad';
 import { ChecklistStatuses, SiteDetails } from '@automattic/data-stores';
 import { Task } from '@automattic/launchpad';
+import { MinimalRequestCartProduct } from '@automattic/shopping-cart';
+import { NavigationControls } from '../../types';
 
 export type LaunchpadChecklist = Task[];
 
@@ -22,7 +24,8 @@ export type TaskId =
 	| 'design_completed'
 	| 'design_edited'
 	| 'domain_upsell'
-	| 'first_post_published';
+	| 'first_post_published'
+	| 'site_launched';
 
 export interface TaskContext {
 	tasks: Task[];
@@ -30,6 +33,11 @@ export interface TaskContext {
 	siteInfoQueryArgs?: { siteId?: number; siteSlug?: string | null };
 	checklistStatuses?: ChecklistStatuses;
 	isEmailVerified?: boolean;
+	planCartItem?: MinimalRequestCartProduct | null;
+	domainCartItem?: MinimalRequestCartProduct | null;
+	productCartItems?: MinimalRequestCartProduct[] | null;
+	siteSlug: string | null;
+	submit: NavigationControls[ 'submit' ];
 }
 
 export type TaskAction = ( task: Task, flow: string, context: TaskContext ) => Task;

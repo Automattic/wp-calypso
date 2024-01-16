@@ -4,12 +4,14 @@ import { actions as designActions } from './design';
 import { actions as domainActions } from './domain';
 import { actions as postActions } from './post';
 import { actions as setupActions } from './setup';
+import { actions as siteActions } from './site';
 
 const DEFINITIONS = {
 	...setupActions,
 	...designActions,
 	...domainActions,
 	...postActions,
+	...siteActions,
 } satisfies TaskActionTable;
 
 const MIGRATED_FLOWS = [ 'free' ];
