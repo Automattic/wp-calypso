@@ -846,6 +846,14 @@ const UpgradeCreditHelpIconLink = () => {
 	);
 };
 
+function hasUpgradeCredit( product: ResponseCartProduct ): boolean {
+	return (
+		product.cost_overrides?.some(
+			( override ) => override.override_code === 'recent-plan-proration'
+		) ?? false
+	);
+}
+
 function UpgradeCreditInformation( { product }: { product: ResponseCartProduct } ) {
 	const translate = useTranslate();
 	const origCost = product.item_original_subtotal_integer;
@@ -864,7 +872,9 @@ function UpgradeCreditInformation( { product }: { product: ResponseCartProduct }
 		// Do not display discount reason if this is a renewal.
 		isRenewal ||
 		// Do not display discount reason if a coupon is applied.
-		isCouponApplied( product )
+		isCouponApplied( product ) ||
+		// Do not display upgrade credit if there is no upgrade credit.
+		! hasUpgradeCredit( product )
 	) {
 		return null;
 	}

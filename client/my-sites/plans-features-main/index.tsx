@@ -73,7 +73,6 @@ import { getSitePlanSlug, getSiteSlug, isCurrentPlanPaid } from 'calypso/state/s
 import ComparisonGridToggle from './components/comparison-grid-toggle';
 import PlanUpsellModal from './components/plan-upsell-modal';
 import { useModalResolutionCallback } from './components/plan-upsell-modal/hooks/use-modal-resolution-callback';
-import usePricingMetaForGridPlans from './hooks/data-store/use-pricing-meta-for-grid-plans';
 import useCheckPlanAvailabilityForPurchase from './hooks/use-check-plan-availability-for-purchase';
 import useCurrentPlanManageHref from './hooks/use-current-plan-manage-href';
 import useFilterPlansForPlanFeatures from './hooks/use-filter-plans-for-plan-features';
@@ -428,7 +427,6 @@ const PlansFeaturesMain = ( {
 
 	const gridPlans = useGridPlans( {
 		allFeaturesList: FEATURES_LIST,
-		usePricingMetaForGridPlans,
 		useFreeTrialPlanSlugs,
 		selectedFeature,
 		term,
@@ -541,7 +539,7 @@ const PlansFeaturesMain = ( {
 	}
 
 	const planTypeSelectorProps = useMemo( () => {
-		return {
+		const props = {
 			basePlansPath,
 			isStepperUpgradeFlow,
 			isInSignup,
@@ -557,33 +555,73 @@ const PlansFeaturesMain = ( {
 			kind: planTypeSelector,
 			plans: gridPlansForFeaturesGrid.map( ( gridPlan ) => gridPlan.planSlug ),
 			currentSitePlanSlug: sitePlanSlug,
-			usePricingMetaForGridPlans,
 			useCheckPlanAvailabilityForPurchase,
 			recordTracksEvent,
 			coupon,
 			selectedSiteId: siteId,
 			withDiscount,
 		};
+
+		const handlePlanIntervalChange = ( selectedItem: { key: SupportedUrlFriendlyTermType } ) => {
+			let isDomainUpsellFlow: string | null = '';
+			let isDomainAndPlanPackageFlow: string | null = '';
+			let isJetpackAppFlow: string | null = '';
+
+			if ( typeof window !== 'undefined' ) {
+				isDomainUpsellFlow = new URLSearchParams( window.location.search ).get( 'domain' );
+				isDomainAndPlanPackageFlow = new URLSearchParams( window.location.search ).get(
+					'domainAndPlanPackage'
+				);
+				isJetpackAppFlow = new URLSearchParams( window.location.search ).get( 'jetpackAppPlans' );
+			}
+
+			const pathOrQueryParam = getPlanTypeDestination( props, {
+				intervalType: selectedItem.key,
+				domain: isDomainUpsellFlow,
+				domainAndPlanPackage: isDomainAndPlanPackageFlow,
+				jetpackAppPlans: isJetpackAppFlow,
+			} );
+
+			if ( onPlanIntervalChange ) {
+				return onPlanIntervalChange( pathOrQueryParam );
+			}
+
+			if ( hasQueryArg( pathOrQueryParam, 'intervalType' ) ) {
+				const currentPath = window.location.pathname;
+				return page( currentPath + pathOrQueryParam );
+			}
+
+			page( pathOrQueryParam );
+		};
+
+		return {
+			...props,
+			onPlanIntervalChange: handlePlanIntervalChange,
+		};
 	}, [
-		_customerType,
 		basePlansPath,
-		filteredDisplayedIntervals,
-		gridPlansForFeaturesGrid,
-		intervalType,
-		planTypeSelector,
-		selectedFeature,
-		selectedPlan,
-		sitePlanSlug,
-		siteSlug,
-		isInSignup,
-		isPlansInsideStepper,
 		isStepperUpgradeFlow,
-		showPlanTypeSelectorDropdown,
+		isInSignup,
 		eligibleForWpcomMonthlyPlans,
+		isPlansInsideStepper,
+		intervalType,
+		_customerType,
+		siteSlug,
+		selectedPlan,
+		selectedFeature,
+		filteredDisplayedIntervals,
+		showPlanTypeSelectorDropdown,
+		planTypeSelector,
+		gridPlansForFeaturesGrid,
+		sitePlanSlug,
 		coupon,
 		siteId,
 		withDiscount,
+		getPlanTypeDestination,
+		onPlanIntervalChange,
 	] );
+
+	const isEligibleForTrial = useSelector( isUserEligibleForFreeHostingTrial );
 
 	/**
 	 * The effects on /plans page need to be checked if this variable is initialized
@@ -597,6 +635,12 @@ const PlansFeaturesMain = ( {
 					status: 'enabled',
 				},
 			};
+
+			if ( ! isEligibleForTrial && intentFromProps === 'plans-new-hosted-site' ) {
+				actionOverrides.trialAlreadyUsed = {
+					postButtonText: translate( "You've already used your free trial! Thanks!" ),
+				};
+			}
 		}
 
 		if ( sitePlanSlug && intentFromProps !== 'plans-p2' ) {
@@ -731,41 +775,6 @@ const PlansFeaturesMain = ( {
 		[]
 	);
 
-	const handlePlanIntervalChange = useCallback(
-		( selectedItem: { key: SupportedUrlFriendlyTermType } ) => {
-			let isDomainUpsellFlow: string | null = '';
-			let isDomainAndPlanPackageFlow: string | null = '';
-			let isJetpackAppFlow: string | null = '';
-
-			if ( typeof window !== 'undefined' ) {
-				isDomainUpsellFlow = new URLSearchParams( window.location.search ).get( 'domain' );
-				isDomainAndPlanPackageFlow = new URLSearchParams( window.location.search ).get(
-					'domainAndPlanPackage'
-				);
-				isJetpackAppFlow = new URLSearchParams( window.location.search ).get( 'jetpackAppPlans' );
-			}
-
-			const pathOrQueryParam = getPlanTypeDestination( planTypeSelectorProps, {
-				intervalType: selectedItem.key,
-				domain: isDomainUpsellFlow,
-				domainAndPlanPackage: isDomainAndPlanPackageFlow,
-				jetpackAppPlans: isJetpackAppFlow,
-			} );
-
-			if ( onPlanIntervalChange ) {
-				return onPlanIntervalChange( pathOrQueryParam );
-			}
-
-			if ( hasQueryArg( pathOrQueryParam, 'intervalType' ) ) {
-				const currentPath = window.location.pathname;
-				return page( currentPath + pathOrQueryParam );
-			}
-
-			page( pathOrQueryParam );
-		},
-		[]
-	);
-
 	const comparisonGridContainerClasses = classNames(
 		'plans-features-main__comparison-grid-container',
 		{
@@ -860,7 +869,6 @@ const PlansFeaturesMain = ( {
 								enableStickyBehavior={ enablePlanTypeSelectorStickyBehavior }
 								stickyPlanTypeSelectorOffset={ masterbarHeight - 1 }
 								coupon={ coupon }
-								onPlanIntervalChange={ handlePlanIntervalChange }
 							/>
 						) }
 						<div
@@ -894,11 +902,11 @@ const PlansFeaturesMain = ( {
 									showLegacyStorageFeature={ showLegacyStorageFeature }
 									showUpgradeableStorage={ showUpgradeableStorage }
 									stickyRowOffset={ masterbarHeight }
-									usePricingMetaForGridPlans={ usePricingMetaForGridPlans }
 									useCheckPlanAvailabilityForPurchase={ useCheckPlanAvailabilityForPurchase }
 									allFeaturesList={ FEATURES_LIST }
 									onStorageAddOnClick={ handleStorageAddOnClick }
 									showRefundPeriod={ isAnyHostingFlow( flowName ) }
+									recordTracksEvent={ recordTracksEvent }
 									coupon={ coupon }
 								/>
 								{ showEscapeHatch && hidePlansFeatureComparison && (
@@ -937,7 +945,6 @@ const PlansFeaturesMain = ( {
 												<PlanTypeSelector
 													{ ...planTypeSelectorProps }
 													layoutClassName="plans-features-main__plan-type-selector-layout"
-													onPlanIntervalChange={ handlePlanIntervalChange }
 													coupon={ coupon }
 												/>
 											) }
@@ -956,7 +963,6 @@ const PlansFeaturesMain = ( {
 												intent={ intent }
 												showUpgradeableStorage={ showUpgradeableStorage }
 												stickyRowOffset={ comparisonGridStickyRowOffset }
-												usePricingMetaForGridPlans={ usePricingMetaForGridPlans }
 												useCheckPlanAvailabilityForPurchase={ useCheckPlanAvailabilityForPurchase }
 												allFeaturesList={ FEATURES_LIST }
 												onStorageAddOnClick={ handleStorageAddOnClick }
@@ -965,6 +971,7 @@ const PlansFeaturesMain = ( {
 													! hidePlanSelector ? planTypeSelectorProps : undefined
 												}
 												coupon={ coupon }
+												recordTracksEvent={ recordTracksEvent }
 											/>
 											<ComparisonGridToggle
 												onClick={ toggleShowPlansComparisonGrid }

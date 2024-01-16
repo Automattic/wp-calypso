@@ -1,8 +1,8 @@
 import { Button } from '@automattic/components';
+import formatCurrency from '@automattic/format-currency';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { useTranslate } from 'i18n-calypso';
-import { FunctionComponent, useContext, useCallback } from 'react';
-import SitesOverviewContext from 'calypso/jetpack-cloud/sections/agency-dashboard/sites-overview/context';
+import { FunctionComponent, useCallback } from 'react';
 import { getPurchaseURLCallback } from 'calypso/my-sites/plans/jetpack-plans/get-purchase-url-callback';
 import slugToSelectorProduct from 'calypso/my-sites/plans/jetpack-plans/slug-to-selector-product';
 import { SelectorProduct } from 'calypso/my-sites/plans/jetpack-plans/types';
@@ -13,22 +13,20 @@ import { getSiteSlug } from 'calypso/state/sites/selectors';
 import './style.scss';
 
 type Props = {
-	productSlug: string;
-	onClose: () => void;
+	nonManageProductSlug: string;
+	nonManageProductPrice?: number | null;
 	siteId?: number;
 };
 
 const LicenseLightboxPurchaseViaJetpackcom: FunctionComponent< Props > = ( {
-	productSlug,
-	onClose,
+	nonManageProductSlug,
+	nonManageProductPrice,
 	siteId,
 } ) => {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 
-	const { hideLicenseInfo } = useContext( SitesOverviewContext );
-
-	const item = slugToSelectorProduct( productSlug ) as SelectorProduct;
+	const item = slugToSelectorProduct( nonManageProductSlug ) as SelectorProduct;
 
 	const selectedSiteSlug = useSelector( ( state ) => getSiteSlug( state, siteId ) ) || '';
 
@@ -38,19 +36,14 @@ const LicenseLightboxPurchaseViaJetpackcom: FunctionComponent< Props > = ( {
 	} );
 
 	const checkoutURL = createCheckoutURL && createCheckoutURL( item, false );
-	const onHideLicenseInfo = useCallback( () => {
-		hideLicenseInfo();
-		onClose?.();
-	}, [ hideLicenseInfo, onClose ] );
 
 	const onProceedToCheckout = useCallback( () => {
 		dispatch(
 			recordTracksEvent( 'calypso_jetpack_single_site_upsell_proceed_to_checkout_click', {
-				product: productSlug,
+				product: nonManageProductSlug,
 			} )
 		);
-		onHideLicenseInfo();
-	}, [ productSlug, dispatch, onHideLicenseInfo ] );
+	}, [ nonManageProductSlug, dispatch ] );
 
 	const learnMoreLink = localizeUrl(
 		'https://jetpack.com/support/jetpack-manage-instructions/jetpack-manage-billing-payment-faqs'
@@ -61,6 +54,10 @@ const LicenseLightboxPurchaseViaJetpackcom: FunctionComponent< Props > = ( {
 			recordTracksEvent( 'calypso_jetpack_agency_issue_license_review_licenses_learn_more_click' )
 		);
 	}, [ dispatch ] );
+
+	const formattedNonManagePrice = nonManageProductPrice
+		? formatCurrency( nonManageProductPrice, 'USD' )
+		: null;
 
 	return (
 		<>
@@ -73,9 +70,15 @@ const LicenseLightboxPurchaseViaJetpackcom: FunctionComponent< Props > = ( {
 				href={ checkoutURL }
 				disabled={ false }
 			>
-				{ translate( 'Purchase via Jetpack.com' ) }
+				{ formattedNonManagePrice
+					? translate( 'Purchase for %(formattedNonManagePrice)s', {
+							args: {
+								formattedNonManagePrice,
+							},
+					  } )
+					: translate( 'Purchase via Jetpack.com' ) }
 			</Button>
-			<div className="license-lightbox__secondary-checkout-notice">
+			<div className="review-licenses__notice">
 				{ translate(
 					"You will be able to add a new credit card during the checkout process. Use this method if you're billing a product to your client's credit card. {{a}}Learn more{{/a}}",
 					{

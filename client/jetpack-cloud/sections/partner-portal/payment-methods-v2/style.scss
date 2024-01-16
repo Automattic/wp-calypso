@@ -1,6 +1,17 @@
 @import "@wordpress/base-styles/breakpoints";
 @import "@wordpress/base-styles/mixins";
 
+.payment-method-list-v2 {
+	@include breakpoint-deprecated( "<660px" ) {
+		.jetpack-cloud-layout__header-main {
+			margin-block-end: 16px;
+		}
+
+		.jetpack-cloud-layout__header-actions .button {
+			width: 100%;
+		}
+	}
+}
 
 .payment-method-list-v2-empty-state {
 	margin-block-start: 60px;
@@ -68,4 +79,8 @@
 	display: flex;
 	flex-wrap: wrap;
 	gap: 24px;
+
+	@include breakpoint-deprecated( "<660px" ) {
+		margin-block-start: 32px;
+	}
 }

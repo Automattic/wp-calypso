@@ -25,11 +25,10 @@ import {
 	isEcommercePlan,
 	TYPE_P2_PLUS,
 } from '@automattic/calypso-products';
-import { Plans, type AddOnMeta, type PricedAPIPlan } from '@automattic/data-stores';
+import { Plans, type AddOnMeta } from '@automattic/data-stores';
 import { isSamePlan } from '../../../lib/is-same-plan';
 import useHighlightLabels from './use-highlight-labels';
 import usePlansFromTypes from './use-plans-from-types';
-import type { UseCheckPlanAvailabilityForPurchase } from 'calypso/my-sites/plans-features-main/hooks/data-store/use-pricing-meta-for-grid-plans';
 import type { TranslateResult } from 'i18n-calypso';
 
 // TODO clk: move to plans data store
@@ -47,55 +46,6 @@ export interface PlanFeaturesForGridPlan {
 	// used for comparison grid so far
 	conditionalFeatures?: FeatureObject[];
 }
-
-export type UsePricedAPIPlans = ( { planSlugs }: { planSlugs: PlanSlug[] } ) => {
-	[ planSlug: string ]: PricedAPIPlan | null | undefined;
-} | null;
-
-// TODO clk: move to plans data store
-export interface PricingMetaForGridPlan {
-	billingPeriod?: Plans.PlanPricing[ 'billPeriod' ];
-	currencyCode?: Plans.PlanPricing[ 'currencyCode' ];
-	originalPrice: Plans.PlanPricing[ 'originalPrice' ];
-	/**
-	 * If discounted prices are provided (not null), they will take precedence over originalPrice.
-	 * UI will show original with a strikethrough or grayed out
-	 */
-	discountedPrice: Plans.PlanPricing[ 'discountedPrice' ];
-	/**
-	 * Intro offers override billing and pricing shown in the UI
-	 * they are currently defined off the site plans (so not defined when siteId is not available)
-	 */
-	introOffer?: Plans.PlanPricing[ 'introOffer' ];
-	expiry?: Plans.SitePlan[ 'expiry' ];
-}
-
-// TODO clk: move to plans data store
-export type UsePricingMetaForGridPlans = ( {
-	planSlugs,
-	selectedSiteId,
-	coupon,
-	useCheckPlanAvailabilityForPurchase,
-	storageAddOns,
-	withoutProRatedCredits,
-}: {
-	planSlugs: PlanSlug[];
-	/**
-	 * `selectedSiteId` required on purpose to mitigate risk with not passing something through when we should
-	 */
-	selectedSiteId: number | null | undefined;
-	/**
-	 * `coupon` required on purpose to mitigate risk with not passing somethiing through when we should
-	 */
-	coupon: string | undefined;
-	/**
-	 * `useCheckPlanAvailabilityForPurchase` required on purpose to avoid inconsistent data across Calypso.
-	 * It's a function that is not available in the data store, but can be easily mocked in other contexts.
-	 */
-	useCheckPlanAvailabilityForPurchase: UseCheckPlanAvailabilityForPurchase;
-	storageAddOns: ( AddOnMeta | null )[] | null;
-	withoutProRatedCredits?: boolean;
-} ) => { [ planSlug: string ]: PricingMetaForGridPlan } | null;
 
 export type UseFreeTrialPlanSlugs = ( {
 	intent,
@@ -121,7 +71,7 @@ export type GridPlan = {
 	tagline: TranslateResult;
 	planTitle: TranslateResult;
 	availableForPurchase: boolean;
-	pricing: PricingMetaForGridPlan;
+	pricing: Plans.PricingMetaForGridPlan;
 	storageAddOnsForPlan: ( AddOnMeta | null )[] | null;
 	productNameShort?: string | null;
 	billingTimeframe?: TranslateResult | null;
@@ -154,8 +104,7 @@ export type PlansIntent =
 interface Props {
 	// allFeaturesList temporary until feature definitions are ported to calypso-products package
 	allFeaturesList: FeatureList;
-	usePricingMetaForGridPlans: UsePricingMetaForGridPlans;
-	useCheckPlanAvailabilityForPurchase: UseCheckPlanAvailabilityForPurchase;
+	useCheckPlanAvailabilityForPurchase: Plans.UseCheckPlanAvailabilityForPurchase;
 	useFreeTrialPlanSlugs: UseFreeTrialPlanSlugs;
 	eligibleForFreeHostingTrial: boolean;
 	storageAddOns: ( AddOnMeta | null )[] | null;
@@ -282,7 +231,6 @@ const usePlanTypesWithIntent = ( {
 
 // TODO clk: move to plans data store
 const useGridPlans = ( {
-	usePricingMetaForGridPlans,
 	useCheckPlanAvailabilityForPurchase,
 	useFreeTrialPlanSlugs,
 	term = TERM_MONTHLY,
@@ -338,7 +286,7 @@ const useGridPlans = ( {
 
 	// TODO: pricedAPIPlans to be queried from data-store package
 	const pricedAPIPlans = Plans.usePlans( { coupon } );
-	const pricingMeta = usePricingMetaForGridPlans( {
+	const pricingMeta = Plans.usePricingMetaForGridPlans( {
 		planSlugs: availablePlanSlugs,
 		storageAddOns,
 		coupon,
