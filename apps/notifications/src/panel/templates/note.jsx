@@ -1,7 +1,9 @@
 import classNames from 'classnames';
+import { useTranslate } from 'i18n-calypso';
 import * as React from 'react';
 import { connect } from 'react-redux';
 import { getActions } from '../helpers/notes';
+import actions from '../state/actions';
 import getIsNoteApproved from '../state/selectors/get-is-note-approved';
 import getIsNoteRead from '../state/selectors/get-is-note-read';
 import NoteBody from './body';
@@ -12,7 +14,9 @@ const hasBadge = ( body ) =>
 	body.some( ( { media } ) => media && media.some( ( { type } ) => 'badge' === type ) );
 
 export const Note = React.forwardRef( ( props, ref ) => {
-	const { currentNote, detailView, global, isApproved, isRead, note, selectedNote } = props;
+	const { currentNote, detailView, global, isApproved, isRead, note, selectedNote, unselectNote } =
+		props;
+	const translate = useTranslate();
 
 	let hasCommentReply = false;
 	let hasUnapprovedComment = false;
@@ -43,10 +47,19 @@ export const Note = React.forwardRef( ( props, ref ) => {
 		'wpnc__selected-note': parseInt( selectedNote, 10 ) === parseInt( note.id, 10 ),
 	} );
 
+	const noteBodyRef = React.useRef( null );
+
+	React.useEffect( () => {
+		if ( detailView && noteBodyRef.current ) {
+			noteBodyRef.current.focus();
+		}
+	}, [ detailView, noteBodyRef ] );
+
 	return (
 		<li
 			id={ detailView ? 'note-details-' + note.id : 'note-' + note.id }
 			className={ classes }
+			ref={ ref }
 			tabIndex={ detailView ? -1 : 0 }
 			role={ detailView ? 'article' : 'listitem' }
 			aria-controls={ detailView ? null : 'note-details-' + note.id }
@@ -60,7 +73,36 @@ export const Note = React.forwardRef( ( props, ref ) => {
 					global={ global }
 				/>
 			) }
-			{ detailView && <NoteBody key={ 'note-body-' + note.id } note={ note } global={ global } /> }
+			{ detailView && (
+				<div
+					className="wpnc__note-body"
+					role="region"
+					aria-label={ translate( 'Notification details' ) }
+					tabIndex={ -1 }
+					ref={ noteBodyRef }
+				>
+					{ note.header && note.header.length > 0 && (
+						<SummaryInSingle key={ 'note-summary-single-' + note.id } note={ note } />
+					) }
+
+					<NoteBody key={ 'note-body-' + note.id } note={ note } global={ global } />
+
+					<button
+						className="wpnc__back"
+						onClick={ () => {
+							const noteItemElement = document.getElementById( 'note-' + note.id );
+
+							if ( noteItemElement ) {
+								noteItemElement.focus();
+							}
+
+							unselectNote();
+						} }
+					>
+						<span className="screen-reader-text">{ translate( 'Back to notifications' ) }</span>
+					</button>
+				</div>
+			) }
 		</li>
 	);
 } );
@@ -70,4 +112,8 @@ const mapStateToProps = ( state, { note } ) => ( {
 	isRead: getIsNoteRead( state, note ),
 } );
 
-export default connect( mapStateToProps, null, null, { forwardRef: true } )( Note );
+const mapDispatchToProps = {
+	unselectNote: actions.ui.unselectNote,
+};
+
+export default connect( mapStateToProps, mapDispatchToProps, null, { forwardRef: true } )( Note );

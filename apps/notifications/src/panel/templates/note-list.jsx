@@ -340,7 +340,7 @@ export class NoteList extends Component {
 		} );
 
 		return (
-			<div className={ classes }>
+			<div className={ classes } id="wpnc__note-list">
 				<FilterBar controller={ this.props.filterController } />
 				<div ref={ this.storeScrollableContainer } className={ listViewClasses }>
 					<ol ref={ this.storeNoteList } className="wpnc__notes" aria-live="polite">
