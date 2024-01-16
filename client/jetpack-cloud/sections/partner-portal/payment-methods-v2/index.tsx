@@ -66,6 +66,8 @@ export default function PaymentMethodListV2() {
 		);
 	};
 
+	const showAddCardButton = ! isFetching && storedCards.length > 0;
+
 	return (
 		<Layout
 			className="payment-method-list-v2"
@@ -80,9 +82,11 @@ export default function PaymentMethodListV2() {
 					<Title>{ title } </Title>
 					<Subtitle>{ subtitle }</Subtitle>
 					<Actions>
-						<Button href="/partner-portal/payment-methods/add" primary>
-							{ translate( 'Add new card' ) }
-						</Button>
+						{ showAddCardButton && (
+							<Button href="/partner-portal/payment-methods/add" primary>
+								{ translate( 'Add new card' ) }
+							</Button>
+						) }
 					</Actions>
 				</LayoutHeader>
 			</LayoutTop>
