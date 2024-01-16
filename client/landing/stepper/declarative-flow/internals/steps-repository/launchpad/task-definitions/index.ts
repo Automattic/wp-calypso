@@ -2,6 +2,7 @@ import { isEnabled } from '@automattic/calypso-config';
 import { Task, TaskId, TaskContext, TaskActionTable } from '../types';
 import { actions as designActions } from './design';
 import { actions as domainActions } from './domain';
+import { actions as planActions } from './plan';
 import { actions as postActions } from './post';
 import { actions as setupActions } from './setup';
 import { actions as siteActions } from './site';
@@ -12,6 +13,7 @@ const DEFINITIONS = {
 	...domainActions,
 	...postActions,
 	...siteActions,
+	...planActions,
 } satisfies TaskActionTable;
 
 const MIGRATED_FLOWS = [ 'free' ];
