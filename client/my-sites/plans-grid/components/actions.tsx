@@ -13,6 +13,7 @@ import {
 	isP2FreePlan,
 	isWpcomEnterpriseGridPlan,
 	isFreePlan,
+	isBusinessPlan,
 } from '@automattic/calypso-products';
 import { WpcomPlansUI } from '@automattic/data-stores';
 import { formatCurrency } from '@automattic/format-currency';
@@ -65,7 +66,7 @@ const SignupFlowPlanFeatureActionButton = ( {
 	isLargeCurrency,
 	hasFreeTrialPlan,
 	handleUpgradeButtonClick,
-	busy,
+	planActionOverrides,
 }: {
 	planSlug: PlanSlug;
 	planTitle: TranslateResult;
@@ -74,9 +75,13 @@ const SignupFlowPlanFeatureActionButton = ( {
 	isLargeCurrency: boolean;
 	hasFreeTrialPlan: boolean;
 	handleUpgradeButtonClick: ( isFreeTrialPlan?: boolean ) => void;
-	busy?: boolean;
+	planActionOverrides?: PlanActionOverrides;
 } ) => {
 	const translate = useTranslate();
+	const busy =
+		isFreePlan( planSlug ) && planActionOverrides?.loggedInFreePlan?.status === 'blocked';
+	const postButtonText =
+		isBusinessPlan( planSlug ) && planActionOverrides?.trialAlreadyUsed?.postButtonText;
 
 	let btnText = translate( 'Get %(plan)s', {
 		args: {
@@ -131,9 +136,16 @@ const SignupFlowPlanFeatureActionButton = ( {
 	}
 
 	return (
-		<PlanButton planSlug={ planSlug } onClick={ onClick } busy={ busy }>
-			{ btnText }
-		</PlanButton>
+		<>
+			<PlanButton planSlug={ planSlug } onClick={ onClick } busy={ busy }>
+				{ btnText }
+			</PlanButton>
+			{ postButtonText && (
+				<span className="plan-features-2023-grid__actions-post-button-text">
+					{ postButtonText }
+				</span>
+			) }
+		</>
 	);
 };
 
@@ -487,9 +499,7 @@ const PlanFeaturesActionsButton: React.FC< PlanFeaturesActionsButtonProps > = ( 
 				isLargeCurrency={ !! isLargeCurrency }
 				hasFreeTrialPlan={ !! freeTrialPlanSlug }
 				handleUpgradeButtonClick={ handleUpgradeButtonClick }
-				busy={
-					isFreePlan( planSlug ) && planActionOverrides?.loggedInFreePlan?.status === 'blocked'
-				}
+				planActionOverrides={ planActionOverrides }
 			/>
 		);
 	}
