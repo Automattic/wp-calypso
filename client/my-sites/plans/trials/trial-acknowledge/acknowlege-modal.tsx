@@ -1,13 +1,11 @@
-import { HostingTrialAcknowledgement } from './hosting-acknowledge';
 import { Modal } from '@wordpress/components';
+import { HostingTrialAcknowledgement } from './hosting-acknowledge';
 
 type TrialAcknowledgeModalProps = {
 	setOpenModal: ( open: boolean ) => void;
 };
 
 export const TrialAcknowledgeModal = ( { setOpenModal }: TrialAcknowledgeModalProps ) => {
-	const dismissAndRecordEvent = ( dialogAction: string | undefined ) => {};
-
 	return (
 		<Modal onRequestClose={ () => setOpenModal( false ) } shouldCloseOnClickOutside={ false }>
 			<HostingTrialAcknowledgement

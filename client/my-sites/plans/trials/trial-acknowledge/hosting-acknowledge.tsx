@@ -13,7 +13,6 @@ import { getFeatureByKey } from 'calypso/lib/plans/features-list';
 import { TrialPlan } from './trial-plan';
 import { useVerifyEmail } from './use-verify-email';
 import './style.scss';
-import { type } from 'os';
 
 const FEATURES_NOT_INCLUDED_IN_FREE_TRIAL = [
 	FEATURE_CUSTOM_DOMAIN,
