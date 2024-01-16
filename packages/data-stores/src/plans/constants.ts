@@ -4,10 +4,10 @@ export const FREE_PLAN_PRODUCT_ID = 1;
 
 // plans constants
 export const TIMELESS_PLAN_FREE = 'free';
-export const TIMELESS_PLAN_PERSONAL = 'personal';
-export const TIMELESS_PLAN_PREMIUM = 'premium';
-export const TIMELESS_PLAN_BUSINESS = 'business';
-export const TIMELESS_PLAN_ECOMMERCE = 'ecommerce';
+export const TIMELESS_PLAN_PERSONAL = 'starter';
+export const TIMELESS_PLAN_PREMIUM = 'explorer';
+export const TIMELESS_PLAN_BUSINESS = 'creator';
+export const TIMELESS_PLAN_ECOMMERCE = 'entrepreneur';
 
 export const plansSlugs = [
 	TIMELESS_PLAN_FREE,
