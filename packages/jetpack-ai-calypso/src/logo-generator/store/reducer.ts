@@ -23,6 +23,8 @@ import {
 	ACTION_SET_FIRST_LOGO_PROMPT_FETCH_ERROR,
 	ACTION_SET_ENHANCE_PROMPT_FETCH_ERROR,
 	ACTION_SET_LOGO_FETCH_ERROR,
+	ACTION_SET_SAVE_TO_LIBRARY_ERROR,
+	ACTION_SET_LOGO_UPDATE_ERROR,
 } from './constants';
 import INITIAL_STATE from './initial-state';
 import type { AiFeatureStateProps, TierLimitProp } from './types';
@@ -46,7 +48,7 @@ export default function reducer(
 		isRequestingImage?: boolean;
 		isEnhancingPrompt?: boolean;
 		history?: Array< { url: string; description: string; mediaId?: number } >;
-		fetchError?: string | Error;
+		error?: string | Error | null;
 	}
 ) {
 	switch ( action.type ) {
@@ -282,7 +284,7 @@ export default function reducer(
 				...state,
 				_meta: {
 					...( state._meta ?? {} ),
-					featureFetchError: action.fetchError,
+					featureFetchError: action.error,
 				},
 			};
 
@@ -291,7 +293,7 @@ export default function reducer(
 				...state,
 				_meta: {
 					...( state._meta ?? {} ),
-					firstLogoPromptFetchError: action.fetchError,
+					firstLogoPromptFetchError: action.error,
 				},
 			};
 
@@ -300,7 +302,7 @@ export default function reducer(
 				...state,
 				_meta: {
 					...( state._meta ?? {} ),
-					enhancePromptFetchError: action.fetchError,
+					enhancePromptFetchError: action.error,
 				},
 			};
 
@@ -309,7 +311,25 @@ export default function reducer(
 				...state,
 				_meta: {
 					...( state._meta ?? {} ),
-					logoFetchError: action.fetchError,
+					logoFetchError: action.error,
+				},
+			};
+
+		case ACTION_SET_SAVE_TO_LIBRARY_ERROR:
+			return {
+				...state,
+				_meta: {
+					...( state._meta ?? {} ),
+					saveToLibraryError: action.error,
+				},
+			};
+
+		case ACTION_SET_LOGO_UPDATE_ERROR:
+			return {
+				...state,
+				_meta: {
+					...( state._meta ?? {} ),
+					logoUpdateError: action.error,
 				},
 			};
 	}

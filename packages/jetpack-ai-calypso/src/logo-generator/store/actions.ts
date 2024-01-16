@@ -25,6 +25,8 @@ import {
 	ACTION_SET_FIRST_LOGO_PROMPT_FETCH_ERROR,
 	ACTION_SET_ENHANCE_PROMPT_FETCH_ERROR,
 	ACTION_SET_LOGO_FETCH_ERROR,
+	ACTION_SET_LOGO_UPDATE_ERROR,
+	ACTION_SET_SAVE_TO_LIBRARY_ERROR,
 } from './constants';
 import type { AiFeatureProps, AiAssistantFeatureEndpointResponseProps, Logo } from './types';
 import type { SiteDetails } from '@automattic/data-stores';
@@ -89,7 +91,7 @@ const actions = {
 				);
 			} catch ( err ) {
 				// Mark the fetch as failed.
-				dispatch( { type: ACTION_SET_FEATURE_FETCH_ERROR, fetchError: err } );
+				dispatch( { type: ACTION_SET_FEATURE_FETCH_ERROR, error: err } );
 			}
 		};
 	},
@@ -188,31 +190,44 @@ const actions = {
 		};
 	},
 
-	setFeatureFetchError( fetchError: string | Error | null ) {
+	setFeatureFetchError( error: string | Error | null ) {
 		return {
 			type: ACTION_SET_FEATURE_FETCH_ERROR,
-			fetchError,
+			error,
 		};
 	},
 
-	setFirstLogoPromptFetchError( fetchError: string | Error | null ) {
+	setFirstLogoPromptFetchError( error: string | Error | null ) {
 		return {
 			type: ACTION_SET_FIRST_LOGO_PROMPT_FETCH_ERROR,
-			fetchError,
+			error,
 		};
 	},
 
-	setEnhancePromptFetchError( fetchError: string | Error | null ) {
+	setEnhancePromptFetchError( error: string | Error | null ) {
 		return {
 			type: ACTION_SET_ENHANCE_PROMPT_FETCH_ERROR,
-			fetchError,
+			error,
 		};
 	},
 
-	setLogoFetchError( fetchError: string | Error | null ) {
+	setLogoFetchError( error: string | Error | null ) {
 		return {
 			type: ACTION_SET_LOGO_FETCH_ERROR,
-			fetchError,
+			error,
+		};
+	},
+
+	setSaveToLibraryError( error: string | Error | null ) {
+		return {
+			type: ACTION_SET_SAVE_TO_LIBRARY_ERROR,
+			error,
+		};
+	},
+	setLogoUpdateError( error: string | Error | null ) {
+		return {
+			type: ACTION_SET_LOGO_UPDATE_ERROR,
+			error,
 		};
 	},
 };

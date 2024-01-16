@@ -11,8 +11,8 @@ import { useState, useEffect, useCallback } from 'react';
 /**
  * Internal dependencies
  */
-import useFetchErrors from '../hooks/use-fetch-errors';
 import useLogoGenerator from '../hooks/use-logo-generator';
+import useRequestErrors from '../hooks/use-request-errors';
 import { isLogoHistoryEmpty } from '../lib/logo-storage';
 import { STORE_NAME } from '../store';
 import { FeatureFetchFailureScreen } from './feature-fetch-failure-screen';
@@ -46,7 +46,7 @@ export const GeneratorModal: React.FC< GeneratorModalProps > = ( {
 	const [ upgradeURL, setUpgradeURL ] = useState( '' );
 	const { selectedLogo, getAiAssistantFeature, generateFirstPrompt, generateLogo } =
 		useLogoGenerator();
-	const { featureFetchError } = useFetchErrors();
+	const { featureFetchError } = useRequestErrors();
 	const siteId = siteDetails?.ID;
 
 	const getFeature = useCallback( async () => {

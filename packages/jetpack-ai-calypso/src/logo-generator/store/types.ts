@@ -133,6 +133,8 @@ export type LogoGeneratorStateProp = {
 		firstLogoPromptFetchError?: string | Error | null;
 		enhancePromptFetchError?: string | Error | null;
 		logoFetchError?: string | Error | null;
+		saveToLibraryError?: string | Error | null;
+		logoUpdateError?: string | Error | null;
 	};
 	siteDetails?: SiteDetails;
 	features: {
@@ -158,6 +160,8 @@ export type Selectors = {
 	getFirstLogoPromptFetchError(): string | Error | null;
 	getEnhancePromptFetchError(): string | Error | null;
 	getLogoFetchError(): string | Error | null;
+	getSaveToLibraryError(): string | Error | null;
+	getLogoUpdateError(): string | Error | null;
 };
 
 /*

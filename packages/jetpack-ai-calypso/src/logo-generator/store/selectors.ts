@@ -148,6 +148,24 @@ const selectors = {
 	getLogoFetchError( state: LogoGeneratorStateProp ): string | Error | null {
 		return state._meta?.logoFetchError ?? null;
 	},
+
+	/**
+	 * Get the saveToLibraryError value.
+	 * @param {LogoGeneratorStateProp} state - The app state tree.
+	 * @returns {boolean}                      The saveToLibraryError value.
+	 */
+	getSaveToLibraryError( state: LogoGeneratorStateProp ): string | Error | null {
+		return state._meta?.saveToLibraryError ?? null;
+	},
+
+	/**
+	 * Get the logoUpdateError value.
+	 * @param {LogoGeneratorStateProp} state - The app state tree.
+	 * @returns {boolean}                      The logoUpdateError value.
+	 */
+	getLogoUpdateError( state: LogoGeneratorStateProp ): string | Error | null {
+		return state._meta?.logoUpdateError ?? null;
+	},
 };
 
 export default selectors;
