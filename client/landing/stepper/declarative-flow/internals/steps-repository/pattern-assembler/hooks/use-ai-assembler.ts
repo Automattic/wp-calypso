@@ -1,3 +1,4 @@
+import { isEnabled } from '@automattic/calypso-config';
 import { useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import wpcomRequest from 'wpcom-proxy-request';
@@ -20,6 +21,7 @@ export default function useAIAssembler(): [ Function, Function, string, boolean 
 			apiNamespace: 'wpcom/v2',
 			body: {
 				description: prompt,
+				patterns_version: isEnabled( 'pattern-assembler/v2' ) ? '2' : '1',
 			},
 		} )
 			.catch( ( err ) => {
@@ -69,6 +71,11 @@ export default function useAIAssembler(): [ Function, Function, string, boolean 
 						// So that we close the drawer with patterns when moving to the assembler:
 						currentSearchParams.set( 'screen', 'main' );
 						currentSearchParams.delete( 'screen_parameter' );
+
+						if ( isEnabled( 'pattern-assembler/v2' ) ) {
+							// This sometimes gets lost in all the redirects.
+							currentSearchParams.set( 'flags', 'pattern-assembler/v2' );
+						}
 
 						return currentSearchParams;
 					},
