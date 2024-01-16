@@ -13,7 +13,7 @@ import formatCurrency from '@automattic/format-currency';
 import { ExternalLink } from '@wordpress/components';
 import { Icon, warning as warningIcon } from '@wordpress/icons';
 import classNames from 'classnames';
-import i18n, { localize, useTranslate } from 'i18n-calypso';
+import i18n, { localize, getLocaleSlug, useTranslate } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import akismetIcon from 'calypso/assets/images/icons/akismet-icon.svg';
@@ -67,6 +67,27 @@ class PurchaseItem extends Component {
 	getStatus() {
 		const { purchase, translate, locale, moment, name, isJetpack, isDisconnectedSite } = this.props;
 		const expiry = moment( purchase.expiryDate );
+		// To-do: There isn't currently a way to get the taxName based on the country.
+		// The country is not includedin the purchase information envelope
+		// We should add this information so we can utilize useTaxName to retrieve the correct taxName
+		// For now, we are using a fallback tax name
+		const taxName =
+			getLocaleSlug()?.startsWith( 'en' ) || i18n.hasTranslation( 'tax' )
+				? translate( 'tax' )
+				: translate( 'tax (VAT/GST/CT)' );
+
+		/* translators: "excl."" is an abbrevation of the word "exclude" */
+		/* translators: %s is the name of taxes in the country (eg: "VAT" or "GST"). */
+		const excludeTaxStringAbbrevation = translate( '(excl. %s)', {
+			textOnly: true,
+			args: [ taxName ],
+		} );
+
+		/* translators: %s is the name of taxes in the country (eg: "VAT" or "GST"). */
+		const excludeTaxStringTitle = translate( 'Renewal price exlcudes any applicable %s', {
+			textOnly: true,
+			args: [ taxName ],
+		} );
 
 		if ( purchase && isPartnerPurchase( purchase ) ) {
 			return translate( 'Managed by %(partnerName)s', {
