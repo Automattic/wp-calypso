@@ -1,4 +1,5 @@
 import { Button } from '@automattic/components';
+import { localizeUrl } from '@automattic/i18n-utils';
 import { sprintf } from '@wordpress/i18n';
 import { useTranslate } from 'i18n-calypso';
 import { useState } from 'react';
@@ -158,18 +159,15 @@ export default function DomainDiagnosticsCard( { domain }: { domain: ResponseDom
 		);
 	};
 
-	const noticeText =
-		'If you use this domain name to send email from your WordPress.com website, the following email records are required.';
-	// TODO: Add the corresponding support doc link when it's published
-	// const supportLink = '';
-	// const noticeText = translate(
-	// 	'If you use this domain name to send email from your WordPress.com website, the following email records are required. {{a}}Learn more{{/a}}.',
-	// 	{
-	// 		components: {
-	// 			a: <a href={ localizeUrl( supportLink ) } />,
-	// 		},
-	// 	}
-	// );
+	const supportLink = 'https://wordpress.com/support/set-up-email-authentication-for-your-domain/';
+	const noticeText = translate(
+		'If you use this domain name to send email from your WordPress.com website, the following email records are required. {{a}}Learn more{{/a}}.',
+		{
+			components: {
+				a: <a href={ localizeUrl( supportLink ) } />,
+			},
+		}
+	);
 
 	return (
 		<>
