@@ -15,10 +15,11 @@ interface Props {
 	search?: string;
 	usersQuery: UsersQuery;
 	showAddTeamMembersBtn?: boolean;
+	showCreateTeamMembers?: boolean;
 }
 function TeamMembers( props: Props ) {
 	const translate = useTranslate();
-	const { search, usersQuery, showAddTeamMembersBtn = true } = props;
+	const { search, usersQuery, showAddTeamMembersBtn = true, showCreateTeamMembers = true } = props;
 	const site = useSelector( ( state ) => getSelectedSite( state ) );
 
 	const listKey = [ 'team-members', site?.ID, search ].join( '-' );
@@ -27,7 +28,8 @@ function TeamMembers( props: Props ) {
 	const members = data?.users || [];
 	const membersTotal = data?.total;
 
-	const addTeamMemberLink = `/people/new/${ site?.slug }`;
+	const createTeamMemberLink = `/people/create/${ site?.slug }`;
+	const inviteTeamMemberLink = `/people/new/${ site?.slug }`;
 
 	function getPersonRef( user: Member ) {
 		return 'user-' + user?.ID;
@@ -79,9 +81,14 @@ function TeamMembers( props: Props ) {
 			return (
 				<>
 					<PeopleListSectionHeader isPlaceholder={ isLoading } label={ getHeaderLabel() }>
+						{ showCreateTeamMembers && (
+							<Button compact primary href={ createTeamMemberLink }>
+								{ translate( 'Create a team member' ) }
+							</Button>
+						) }
 						{ showAddTeamMembersBtn && (
-							<Button compact primary href={ addTeamMemberLink }>
-								{ translate( 'Add a team member' ) }
+							<Button compact primary href={ inviteTeamMemberLink }>
+								{ translate( 'Invite a team member' ) }
 							</Button>
 						) }
 					</PeopleListSectionHeader>
