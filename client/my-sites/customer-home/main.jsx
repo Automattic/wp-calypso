@@ -234,7 +234,7 @@ const Home = ( {
 		return (
 			<Notice
 				text={ translate(
-					"There are some issues with your domain's email DNS settings. {{diagnosticLink}}Click here{{/diagnosticLink}} to see the full diagnostic for your domain. {{supportLink}}Learn more{{/supportLink}}",
+					"There are some issues with your domain's email DNS settings. {{diagnosticLink}}Click here{{/diagnosticLink}} to see the full diagnostic for your domain. {{supportLink}}Learn more{{/supportLink}}.",
 					{
 						components: {
 							diagnosticLink: (
