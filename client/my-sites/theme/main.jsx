@@ -1157,6 +1157,7 @@ class ThemeSheet extends Component {
 			selectedStyleVariationSlug: styleVariationSlug,
 			themeType,
 			siteId,
+			themeTier,
 		} = this.props;
 
 		return (
@@ -1169,7 +1170,7 @@ class ThemeSheet extends Component {
 								tabFilter,
 								tierFilter: tier,
 								styleVariationSlug,
-								themeTier: this.props.themeTier,
+								themeTier,
 						  } )
 						: null
 				}

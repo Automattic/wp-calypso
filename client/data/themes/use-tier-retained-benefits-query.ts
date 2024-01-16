@@ -1,26 +1,21 @@
 import { useQuery } from '@tanstack/react-query';
+import { ThemeTier } from 'calypso/data/themes/types';
 import wpcom from 'calypso/lib/wp';
 
 export type RetainedBenefit = {
 	is_eligible: boolean;
 	eligibility_expiration_date: number;
-	tier: {
-		slug: string;
-		feature: string | null;
-		platform: string;
-	};
+	tier: ThemeTier;
 };
 
 export type TierRetainedBenefits = {
-	[ index: string ]: {
-		retained_benefits: RetainedBenefit;
-	};
+	[ index: string ]: RetainedBenefit;
 };
 
 export const useTierRetainedBenefitsQuery = (
 	siteId: number | null,
 	themeSlug: string
-): RetainedBenefit | undefined => {
+): RetainedBenefit | null => {
 	const queryKey = [ 'themeTierRetainedBenefits', siteId ];
 
 	const query = useQuery< TierRetainedBenefits >( {
@@ -34,9 +29,5 @@ export const useTierRetainedBenefitsQuery = (
 		enabled: !! siteId,
 	} );
 
-	if ( ! query || ! query.data || ! query.data[ themeSlug ] ) {
-		return undefined;
-	}
-
-	return query?.data?.[ themeSlug ]?.retained_benefits;
+	return query?.data?.[ themeSlug ] ?? null;
 };
