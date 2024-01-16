@@ -22,6 +22,7 @@ import { addHotJarScript } from 'calypso/lib/analytics/hotjar';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import TrackComponentView from 'calypso/lib/analytics/track-component-view';
 import withTrackingTool from 'calypso/lib/analytics/with-tracking-tool';
+import { setDomainNotice } from 'calypso/lib/domains/set-domain-notice';
 import { preventWidows } from 'calypso/lib/formatting';
 import { getQueryArgs } from 'calypso/lib/query-args';
 import Primary from 'calypso/my-sites/customer-home/locations/primary';
@@ -90,13 +91,17 @@ const Home = ( {
 	const customDomains = siteDomains?.filter( ( domain ) => ! domain.isWPCOMDomain );
 	const customDomain = customDomains?.length ? customDomains[ 0 ] : undefined;
 
-	const { data: domainDiagnosticData, isFetching: isFetchingDomainDiagnostics } =
-		useDomainDiagnosticsQuery( customDomain?.name, {
-			staleTime: 5 * 60 * 1000,
-			gcTime: 5 * 60 * 1000,
-			enabled: customDomain !== undefined && customDomain.isMappedToAtomicSite,
-		} );
+	const {
+		data: domainDiagnosticData,
+		isFetching: isFetchingDomainDiagnostics,
+		refetch: refetchDomainDiagnosticData,
+	} = useDomainDiagnosticsQuery( customDomain?.name, {
+		staleTime: 5 * 60 * 1000,
+		gcTime: 5 * 60 * 1000,
+		enabled: customDomain !== undefined && customDomain.isMappedToAtomicSite,
+	} );
 	const emailDnsDiagnostics = domainDiagnosticData?.email_dns_records;
+	const [ dismissedEmailDnsDiagnostics, setDismissedEmailDnsDiagnostics ] = useState( false );
 
 	useEffect( () => {
 		if ( ! isFreePlanProduct( sitePlan ) ) {
@@ -136,6 +141,12 @@ const Home = ( {
 			setLaunchedSiteId( siteId );
 		}
 	}, [ isSiteLaunching, siteId ] );
+
+	useEffect( () => {
+		if ( emailDnsDiagnostics?.dismissed_email_dns_issues_notice ) {
+			setDismissedEmailDnsDiagnostics( true );
+		}
+	}, [ emailDnsDiagnostics ] );
 
 	if ( ! canUserUseCustomerHome ) {
 		const title = translate( 'This page is not available on this site.' );
@@ -209,6 +220,7 @@ const Home = ( {
 
 	const renderDnsSettingsDiagnosticNotice = () => {
 		if (
+			dismissedEmailDnsDiagnostics ||
 			isFetchingDomainDiagnostics ||
 			! emailDnsDiagnostics ||
 			emailDnsDiagnostics.code === 'domain_not_mapped_to_atomic_site' ||
@@ -238,7 +250,13 @@ const Home = ( {
 						}
 					) }
 					icon="cross-circle"
-					showDismiss={ false }
+					showDismiss={ true }
+					onDismissClick={ () => {
+						setDismissedEmailDnsDiagnostics( true );
+						setDomainNotice( customDomain.name, 'email-dns-records-diagnostics', 'ignored', () => {
+							refetchDomainDiagnosticData();
+						} );
+					} }
 					status="is-warning"
 				/>
 			);
