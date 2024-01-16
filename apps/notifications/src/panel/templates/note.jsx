@@ -88,7 +88,7 @@ export const Note = React.forwardRef( ( props, ref ) => {
 					<NoteBody key={ 'note-body-' + note.id } note={ note } global={ global } />
 
 					<button
-						className="wpnc__back"
+						className="screen-reader-text"
 						onClick={ () => {
 							const noteItemElement = document.getElementById( 'note-' + note.id );
 
@@ -99,7 +99,7 @@ export const Note = React.forwardRef( ( props, ref ) => {
 							unselectNote();
 						} }
 					>
-						<span className="screen-reader-text">{ translate( 'Back to notifications' ) }</span>
+						{ translate( 'Back to notifications' ) }
 					</button>
 				</div>
 			) }
