@@ -1,8 +1,6 @@
 /**
  *WARNING: No ES6 modules here. Not transpiled! ****
  */
-
-const spawnSync = require( 'child_process' ).spawnSync;
 const path = require( 'path' );
 const getBaseWebpackConfig = require( '@automattic/calypso-build/webpack.config.js' );
 const ExtensiveLodashReplacementPlugin = require( '@automattic/webpack-extensive-lodash-replacement-plugin' );
@@ -41,21 +39,9 @@ function getWebpackConfig(
 		'output-path': outputPath,
 	} );
 
-	// While this used to be the output of "git describe", we don't really use
-	// tags enough to justify it. Now, the short sha will be good enough. The commit
-	// sha from process.env is set by TeamCity, and tracks GitHub. (rev-parse often
-	// does not.)
-	const gitDescribe = (
-		process.env.commit_sha ??
-		spawnSync( 'git', [ 'rev-parse', 'HEAD' ], {
-			encoding: 'utf8',
-		} ).stdout.replace( '\n', '' )
-	).slice( 0, 11 );
-
 	const pageMeta = {
 		nodePlatform: process.platform,
 		nodeVersion: process.version,
-		gitDescribe,
 	};
 
 	return {

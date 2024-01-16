@@ -195,6 +195,8 @@ async function copyMetaFiles( archiveDir ) {
 	// Calypso repo short sha is currently at 11 characters.
 	const cacheBuster = commitHash.slice( 0, 11 );
 
+	console.log( 'why is cache buster wrong?' );
+	console.log( cacheBuster );
 	const buildMeta = {
 		build_number: buildNumber ?? 'dev',
 		cache_buster: cacheBuster,
