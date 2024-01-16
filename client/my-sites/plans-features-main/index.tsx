@@ -621,6 +621,8 @@ const PlansFeaturesMain = ( {
 		onPlanIntervalChange,
 	] );
 
+	const isEligibleForTrial = useSelector( isUserEligibleForFreeHostingTrial );
+
 	/**
 	 * The effects on /plans page need to be checked if this variable is initialized
 	 */
@@ -633,6 +635,12 @@ const PlansFeaturesMain = ( {
 					status: 'enabled',
 				},
 			};
+
+			if ( ! isEligibleForTrial && intentFromProps === 'plans-new-hosted-site' ) {
+				actionOverrides.trialAlreadyUsed = {
+					postButtonText: translate( "You've already used your free trial! Thanks!" ),
+				};
+			}
 		}
 
 		if ( sitePlanSlug && intentFromProps !== 'plans-p2' ) {
