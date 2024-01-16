@@ -8,6 +8,7 @@ import { SiteGoal, STORE_KEY } from './constants';
 import { ProfilerData } from './types';
 import type { DomainTransferData, State } from '.';
 import type { DomainSuggestion } from '../domain-suggestions';
+import type { FeatureId } from '../shared-types';
 // somewhat hacky, but resolves the circular dependency issue
 import type { Design, StyleVariation } from '@automattic/design-picker/src/types';
 import type { MinimalRequestCartProduct } from '@automattic/shopping-cart';
@@ -23,6 +24,11 @@ function isBlankCanvasDesign( design: { slug: string } | undefined ): boolean {
 type Language = {
 	value: number;
 };
+
+export const addFeature = ( featureId: FeatureId ) => ( {
+	type: 'ADD_FEATURE' as const,
+	featureId,
+} );
 
 export interface CreateSiteBaseActionParameters {
 	username: string;
@@ -164,6 +170,15 @@ export function* createSenseiSite( {
 	return success;
 }
 
+export const removeFeature = ( featureId: FeatureId ) => ( {
+	type: 'REMOVE_FEATURE' as const,
+	featureId,
+} );
+
+export const resetFonts = () => ( {
+	type: 'RESET_FONTS' as const,
+} );
+
 export const resetOnboardStore = () => ( {
 	type: 'RESET_ONBOARD_STORE' as const,
 	skipFlags: [] as string[],
@@ -179,6 +194,41 @@ export const setDomain = ( domain: DomainSuggestion | undefined ) => ( {
 	domain,
 } );
 
+export const setDomainCategory = ( domainCategory: string | undefined ) => ( {
+	type: 'SET_DOMAIN_CATEGORY' as const,
+	domainCategory,
+} );
+
+export const setDomainSearch = ( domainSearch: string ) => ( {
+	type: 'SET_DOMAIN_SEARCH_TERM' as const,
+	domainSearch,
+} );
+
+export const setHasUsedDomainsStep = ( hasUsedDomainsStep: boolean ) => ( {
+	type: 'SET_HAS_USED_DOMAINS_STEP' as const,
+	hasUsedDomainsStep,
+} );
+
+export const setHasUsedPlansStep = ( hasUsedPlansStep: boolean ) => ( {
+	type: 'SET_HAS_USED_PLANS_STEP' as const,
+	hasUsedPlansStep,
+} );
+
+export const setIsRedirecting = ( isRedirecting: boolean ) => ( {
+	type: 'SET_IS_REDIRECTING' as const,
+	isRedirecting,
+} );
+
+export const setLastLocation = ( path: string ) => ( {
+	type: 'SET_LAST_LOCATION' as const,
+	path,
+} );
+
+export const setPlanProductId = ( planProductId: number | undefined ) => ( {
+	type: 'SET_PLAN_PRODUCT_ID' as const,
+	planProductId,
+} );
+
 export const setPlanCartItem = ( planCartItem: MinimalRequestCartProduct | null ) => ( {
 	type: 'SET_PLAN_CART_ITEM' as const,
 	planCartItem,
@@ -187,6 +237,11 @@ export const setPlanCartItem = ( planCartItem: MinimalRequestCartProduct | null 
 export const setProductCartItems = ( productCartItems: MinimalRequestCartProduct[] | null ) => ( {
 	type: 'SET_PRODUCT_CART_ITEMS' as const,
 	productCartItems,
+} );
+
+export const setRandomizedDesigns = ( randomizedDesigns: { featured: Design[] } ) => ( {
+	type: 'SET_RANDOMIZED_DESIGNS' as const,
+	randomizedDesigns,
 } );
 
 export const setSelectedDesign = ( selectedDesign: Design | undefined ) => ( {
@@ -199,6 +254,16 @@ export const setSelectedStyleVariation = (
 ) => ( {
 	type: 'SET_SELECTED_STYLE_VARIATION' as const,
 	selectedStyleVariation,
+} );
+
+export const setSelectedSite = ( selectedSite: number | undefined ) => ( {
+	type: 'SET_SELECTED_SITE' as const,
+	selectedSite,
+} );
+
+export const setShowSignupDialog = ( showSignup: boolean ) => ( {
+	type: 'SET_SHOW_SIGNUP_DIALOG' as const,
+	showSignup,
 } );
 
 export const setSiteTitle = ( siteTitle: string ) => ( {
@@ -216,6 +281,20 @@ export const setSiteLogo = ( siteLogo: string | null ) => ( {
 	siteLogo,
 } );
 
+export const setSiteAccentColor = ( siteAccentColor: string ) => ( {
+	type: 'SET_SITE_ACCENT_COLOR' as const,
+	siteAccentColor,
+} );
+
+export function updatePlan( planProductId: number ) {
+	// keep updatePlan for backwards compat
+	return setPlanProductId( planProductId );
+}
+
+export const startOnboarding = () => ( {
+	type: 'ONBOARDING_START' as const,
+} );
+
 export const setIntent = ( intent: string ) => ( {
 	type: 'SET_INTENT' as const,
 	intent,
@@ -229,6 +308,15 @@ export const setStartingPoint = ( startingPoint: string ) => ( {
 export const setStoreType = ( storeType: string ) => ( {
 	type: 'SET_STORE_TYPE' as const,
 	storeType,
+} );
+
+export const setStoreAddressValue = (
+	store_address_field: string,
+	store_address_value: string
+) => ( {
+	type: 'SET_STORE_ADDRESS_VALUE' as const,
+	store_address_field,
+	store_address_value,
 } );
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -252,6 +340,14 @@ export const setGoals = ( goals: SiteGoal[] ) => ( {
 	goals,
 } );
 
+export const clearImportGoal = () => ( {
+	type: 'CLEAR_IMPORT_GOAL' as const,
+} );
+
+export const clearDIFMGoal = () => ( {
+	type: 'CLEAR_DIFM_GOAL' as const,
+} );
+
 export const resetGoals = () => ( {
 	type: 'RESET_GOALS' as const,
 } );
@@ -260,9 +356,18 @@ export const resetIntent = () => ( {
 	type: 'RESET_INTENT' as const,
 } );
 
+export const resetSelectedDesign = () => ( {
+	type: 'RESET_SELECTED_DESIGN' as const,
+} );
+
 export const setVerticalId = ( verticalId: string ) => ( {
 	type: 'SET_VERTICAL_ID' as const,
 	verticalId,
+} );
+
+export const setStoreLocationCountryCode = ( storeLocationCountryCode: string ) => ( {
+	type: 'SET_STORE_LOCATION_COUNTRY_CODE' as const,
+	storeLocationCountryCode,
 } );
 
 export const setEcommerceFlowRecurType = ( ecommerceFlowRecurType: string ) => ( {
@@ -298,6 +403,13 @@ export const setDomainsTransferData = ( bulkDomainsData: DomainTransferData | un
 	bulkDomainsData,
 } );
 
+export const setShouldImportDomainTransferDnsRecords = (
+	shouldImportDomainTransferDnsRecords: boolean
+) => ( {
+	type: 'SET_SHOULD_IMPORT_DOMAIN_TRANSFER_DNS_RECORDS' as const,
+	shouldImportDomainTransferDnsRecords,
+} );
+
 export const setHideFreePlan = ( hideFreePlan: boolean ) => ( {
 	type: 'SET_HIDE_FREE_PLAN' as const,
 	hideFreePlan,
@@ -329,29 +441,50 @@ export const setPaidSubscribers = ( paidSubscribers: boolean ) => ( {
 } );
 
 export type OnboardAction = ReturnType<
+	| typeof addFeature
+	| typeof removeFeature
+	| typeof resetFonts
 	| typeof resetOnboardStore
 	| typeof resetOnboardStoreWithSkipFlags
 	| typeof setStoreType
 	| typeof setDomainsTransferData
+	| typeof setShouldImportDomainTransferDnsRecords
 	| typeof setDomain
+	| typeof setDomainCategory
+	| typeof setDomainSearch
+	| typeof setHasUsedDomainsStep
+	| typeof setHasUsedPlansStep
+	| typeof setIsRedirecting
+	| typeof setLastLocation
+	| typeof setPlanProductId
 	| typeof setPluginsToVerify
 	| typeof setProfilerData
+	| typeof setRandomizedDesigns
 	| typeof setSelectedDesign
 	| typeof setSelectedStyleVariation
+	| typeof setSelectedSite
+	| typeof setShowSignupDialog
 	| typeof setSiteTitle
+	| typeof startOnboarding
 	| typeof setIntent
 	| typeof setStartingPoint
+	| typeof setStoreAddressValue
 	| typeof setPendingAction
 	| typeof setProgress
 	| typeof setProgressTitle
 	| typeof setGoals
+	| typeof clearImportGoal
+	| typeof clearDIFMGoal
 	| typeof resetGoals
 	| typeof resetIntent
+	| typeof resetSelectedDesign
 	| typeof setDomainForm
 	| typeof setDomainCartItem
 	| typeof setSiteDescription
 	| typeof setSiteLogo
+	| typeof setSiteAccentColor
 	| typeof setVerticalId
+	| typeof setStoreLocationCountryCode
 	| typeof setEcommerceFlowRecurType
 	| typeof setCouponCode
 	| typeof setHideFreePlan

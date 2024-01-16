@@ -32,8 +32,11 @@ const StoreProfiler: Step = function StoreProfiler( { navigation, flow } ) {
 		( select ) => ( select( USER_STORE ) as UserSelect ).getNewUser(),
 		[]
 	);
-	const { setSiteTitle: saveSiteTitleToStore, setVerticalId: saveVerticalIdToStore } =
-		useDispatch( ONBOARD_STORE );
+	const {
+		setSiteTitle: saveSiteTitleToStore,
+		setVerticalId: saveVerticalIdToStore,
+		setStoreLocationCountryCode: saveCountryCodeToStore,
+	} = useDispatch( ONBOARD_STORE );
 
 	const verticals = useSiteVerticalsFeatured();
 	const verticalsOptions = React.useMemo( () => {
@@ -79,6 +82,7 @@ const StoreProfiler: Step = function StoreProfiler( { navigation, flow } ) {
 		if ( currentUser || newUser ) {
 			saveSiteTitleToStore( siteTitle );
 			saveVerticalIdToStore( verticalId );
+			saveCountryCodeToStore( storeCountryCode );
 			recordTracksEvent( 'calypso_signup_store_profiler_submit', {
 				has_site_title: !! siteTitle,
 				has_vertical: !! verticalId,

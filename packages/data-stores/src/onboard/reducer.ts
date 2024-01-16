@@ -24,11 +24,83 @@ const domain: Reducer< DomainSuggestion | undefined, OnboardAction > = ( state, 
 	return state;
 };
 
+const domainSearch: Reducer< string, OnboardAction > = ( state = '', action ) => {
+	if ( action.type === 'SET_DOMAIN_SEARCH_TERM' ) {
+		return action.domainSearch;
+	}
+	if ( action.type === 'RESET_ONBOARD_STORE' ) {
+		return '';
+	}
+	return state;
+};
+
+const domainCategory: Reducer< string | undefined, OnboardAction > = ( state, action ) => {
+	if ( action.type === 'SET_DOMAIN_CATEGORY' ) {
+		return action.domainCategory;
+	}
+	if ( action.type === 'RESET_ONBOARD_STORE' ) {
+		return undefined;
+	}
+	return state;
+};
+
+const hasUsedDomainsStep: Reducer< boolean, OnboardAction > = ( state = false, action ) => {
+	if ( action.type === 'SET_HAS_USED_DOMAINS_STEP' ) {
+		return action.hasUsedDomainsStep;
+	}
+	if ( action.type === 'RESET_ONBOARD_STORE' ) {
+		return false;
+	}
+	return state;
+};
+
+const hasUsedPlansStep: Reducer< boolean, OnboardAction > = ( state = false, action ) => {
+	if ( action.type === 'SET_HAS_USED_PLANS_STEP' ) {
+		return action.hasUsedPlansStep;
+	}
+	if ( action.type === 'RESET_ONBOARD_STORE' ) {
+		return false;
+	}
+	return state;
+};
+
+const isRedirecting: Reducer< boolean, OnboardAction > = ( state = false, action ) => {
+	if ( action.type === 'SET_IS_REDIRECTING' ) {
+		return action.isRedirecting;
+	}
+	// This reducer is intentionally not cleared by 'RESET_ONBOARD_STORE' to prevent
+	// a flash of the IntentGathering step after the store is reset.
+	return state;
+};
+
+const planProductId: Reducer< number | undefined, OnboardAction > = ( state, action ) => {
+	if ( action.type === 'SET_PLAN_PRODUCT_ID' ) {
+		return action.planProductId;
+	}
+	if ( action.type === 'RESET_ONBOARD_STORE' ) {
+		return undefined;
+	}
+	return state;
+};
+
+const randomizedDesigns: Reducer< { featured: Design[] }, OnboardAction > = (
+	state = { featured: [] },
+	action
+) => {
+	if ( action.type === 'SET_RANDOMIZED_DESIGNS' ) {
+		return action.randomizedDesigns;
+	}
+	if ( action.type === 'RESET_ONBOARD_STORE' ) {
+		return { featured: [] };
+	}
+	return state;
+};
+
 const selectedDesign: Reducer< Design | undefined, OnboardAction > = ( state, action ) => {
 	if ( action.type === 'SET_SELECTED_DESIGN' ) {
 		return action.selectedDesign;
 	}
-	if ( action.type === 'RESET_ONBOARD_STORE' ) {
+	if ( [ 'RESET_SELECTED_DESIGN', 'RESET_ONBOARD_STORE' ].includes( action.type ) ) {
 		return undefined;
 	}
 	return state;
@@ -51,6 +123,10 @@ const selectedFeatures: Reducer< FeatureId[], OnboardAction > = (
 	state: FeatureId[] = [],
 	action
 ) => {
+	if ( action.type === 'ADD_FEATURE' ) {
+		return [ ...state, action.featureId ];
+	}
+
 	if ( action.type === 'SET_DOMAIN' && action.domain && ! action.domain?.is_free ) {
 		return [ ...state, 'domain' ];
 	}
@@ -59,10 +135,37 @@ const selectedFeatures: Reducer< FeatureId[], OnboardAction > = (
 		return state.filter( ( id ) => id !== 'domain' );
 	}
 
+	if ( action.type === 'REMOVE_FEATURE' ) {
+		return state.filter( ( id ) => id !== action.featureId );
+	}
+
 	if ( action.type === 'RESET_ONBOARD_STORE' ) {
 		return [];
 	}
 
+	return state;
+};
+
+const selectedSite: Reducer< number | undefined, OnboardAction > = (
+	state = undefined,
+	action
+) => {
+	if ( action.type === 'SET_SELECTED_SITE' ) {
+		return action.selectedSite;
+	}
+	if ( action.type === 'RESET_ONBOARD_STORE' ) {
+		return undefined;
+	}
+	return state;
+};
+
+const showSignupDialog: Reducer< boolean, OnboardAction > = ( state = false, action ) => {
+	if ( action.type === 'SET_SHOW_SIGNUP_DIALOG' ) {
+		return action.showSignup;
+	}
+	if ( action.type === 'RESET_ONBOARD_STORE' ) {
+		return false;
+	}
 	return state;
 };
 
@@ -118,6 +221,36 @@ const planCartItem: Reducer< MinimalRequestCartProduct | null, OnboardAction > =
 	}
 	if ( action.type === 'RESET_ONBOARD_STORE' ) {
 		return null;
+	}
+	return state;
+};
+
+const siteAccentColor: Reducer< string, OnboardAction > = ( state = '', action ) => {
+	if ( action.type === 'SET_SITE_ACCENT_COLOR' ) {
+		return action.siteAccentColor;
+	}
+	if ( action.type === 'RESET_ONBOARD_STORE' ) {
+		return '';
+	}
+	return state;
+};
+
+const hasOnboardingStarted: Reducer< boolean, OnboardAction > = ( state = false, action ) => {
+	if ( action.type === 'ONBOARDING_START' ) {
+		return true;
+	}
+	if ( action.type === 'RESET_ONBOARD_STORE' ) {
+		return false;
+	}
+	return state;
+};
+
+const lastLocation: Reducer< string, OnboardAction > = ( state = '', action ) => {
+	if ( action.type === 'SET_LAST_LOCATION' ) {
+		return action.path;
+	}
+	if ( action.type === 'RESET_ONBOARD_STORE' ) {
+		return '';
 	}
 	return state;
 };
@@ -195,6 +328,12 @@ const goals: Reducer< SiteGoal[], OnboardAction > = ( state = [], action ) => {
 	if ( action.type === 'SET_GOALS' ) {
 		return action.goals;
 	}
+	if ( action.type === 'CLEAR_IMPORT_GOAL' ) {
+		return state.filter( ( goal ) => goal !== SiteGoal.Import );
+	}
+	if ( action.type === 'CLEAR_DIFM_GOAL' ) {
+		return state.filter( ( goal ) => goal !== SiteGoal.DIFM );
+	}
 	if ( [ 'RESET_GOALS', 'RESET_ONBOARD_STORE' ].includes( action.type ) ) {
 		return [];
 	}
@@ -204,6 +343,16 @@ const goals: Reducer< SiteGoal[], OnboardAction > = ( state = [], action ) => {
 const verticalId: Reducer< string, OnboardAction > = ( state = '', action ) => {
 	if ( action.type === 'SET_VERTICAL_ID' ) {
 		return action.verticalId;
+	}
+	if ( action.type === 'RESET_ONBOARD_STORE' ) {
+		return '';
+	}
+	return state;
+};
+
+const storeLocationCountryCode: Reducer< string, OnboardAction > = ( state = '', action ) => {
+	if ( action.type === 'SET_STORE_LOCATION_COUNTRY_CODE' ) {
+		return action.storeLocationCountryCode;
 	}
 	if ( action.type === 'RESET_ONBOARD_STORE' ) {
 		return '';
@@ -365,6 +514,19 @@ export const domainTransferAuthCodes: Reducer<
 	return state;
 };
 
+export const shouldImportDomainTransferDnsRecords: Reducer< boolean, OnboardAction > = (
+	state = true,
+	action
+) => {
+	if ( action.type === 'SET_SHOULD_IMPORT_DOMAIN_TRANSFER_DNS_RECORDS' ) {
+		return action.shouldImportDomainTransferDnsRecords;
+	}
+	if ( action.type === 'RESET_ONBOARD_STORE' ) {
+		return true;
+	}
+	return state;
+};
+
 const paidSubscribers: Reducer< boolean, OnboardAction > = ( state = false, action ) => {
 	if ( action.type === 'SET_PAID_SUBSCRIBERS' ) {
 		return action.paidSubscribers;
@@ -378,14 +540,26 @@ const paidSubscribers: Reducer< boolean, OnboardAction > = ( state = false, acti
 const reducer = combineReducers( {
 	domain,
 	domainCartItem,
+	domainSearch,
+	domainCategory,
 	domainForm,
+	isRedirecting,
+	hasUsedDomainsStep,
+	hasUsedPlansStep,
 	selectedFeatures,
 	domainTransferNames,
 	domainTransferAuthCodes,
+	shouldImportDomainTransferDnsRecords,
 	storeType,
 	selectedDesign,
 	selectedStyleVariation,
+	selectedSite,
 	siteTitle,
+	showSignupDialog,
+	planProductId,
+	randomizedDesigns,
+	hasOnboardingStarted,
+	lastLocation,
 	intent,
 	startingPoint,
 	pendingAction,
@@ -396,7 +570,9 @@ const reducer = combineReducers( {
 	hidePlansFeatureComparison,
 	siteDescription,
 	siteLogo,
+	siteAccentColor,
 	verticalId,
+	storeLocationCountryCode,
 	ecommerceFlowRecurType,
 	couponCode,
 	planCartItem,
