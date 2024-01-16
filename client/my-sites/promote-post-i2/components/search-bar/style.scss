@@ -145,6 +145,9 @@ $font-sf-pro-display: "SF Pro Display", $sans;
 	}
 
 	body.is-section-promote-post-i2:not(.is-sidebar-collapsed) .main.promote-post-i2 {
+		.promote-post-i2__search-bar-wrapper .segmented-control {
+			background: #fff;
+		}
 		.promote-post-i2__search-bar-wrapper .segmented-control.is-primary .segmented-control__item.is-selected {
 			margin: 0;
 		}
