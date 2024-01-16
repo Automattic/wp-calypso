@@ -22,35 +22,34 @@ import { Provider } from 'react-redux';
 import configureStore from 'redux-mock-store';
 import ProductsSelector from '../products-selector';
 
-const testProduct1 = {
-	ID: 9,
+const productData = {
 	currency: 'USD',
-	price: 5,
-	title: 'Monthly Subscription',
-	interval: '1 month',
 	buyer_can_change_amount: false,
 	multiple_per_user: false,
 	welcome_email_content: 'Welcome!',
 	subscribe_as_site_subscriber: true,
-	renewal_schedule: '1 month',
 	type: 'newsletter',
 	is_editable: false,
 };
 
+const testProduct1 = {
+	...productData,
+	ID: 9,
+	price: 5,
+	title: 'Monthly Subscription',
+	interval: '1 month',
+	renewal_schedule: '1 month',
+};
+
 const testProduct2 = {
+	...productData,
 	ID: 10,
-	currency: 'USD',
 	price: 40,
 	title: 'Yearly Subscription',
 	interval: '1 year',
-	buyer_can_change_amount: false,
-	multiple_per_user: false,
-	welcome_email_content: 'Welcome!',
-	subscribe_as_site_subscriber: true,
 	renewal_schedule: '1 year',
-	type: 'newsletter',
-	is_editable: false,
 };
+
 
 const initialState = {
 	sites: { items: {} },
