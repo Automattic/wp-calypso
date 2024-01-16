@@ -485,6 +485,7 @@ const ComparisonGridHeader = forwardRef< HTMLDivElement, ComparisonGridHeaderPro
 			showRefundPeriod,
 			isStuck,
 			planTypeSelectorProps,
+			proRatedCreditsApplicable,
 		},
 		ref
 	) => {
