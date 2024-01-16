@@ -1,5 +1,6 @@
 import { isFreePlanProduct } from '@automattic/calypso-products/src';
 import { Button } from '@automattic/components';
+import { localizeUrl } from '@automattic/i18n-utils';
 import { useQueryClient } from '@tanstack/react-query';
 import { ExternalLink } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
@@ -25,6 +26,7 @@ import withTrackingTool from 'calypso/lib/analytics/with-tracking-tool';
 import { setDomainNotice } from 'calypso/lib/domains/set-domain-notice';
 import { preventWidows } from 'calypso/lib/formatting';
 import { getQueryArgs } from 'calypso/lib/query-args';
+import { SET_UP_EMAIL_AUTHENTICATION_FOR_YOUR_DOMAIN } from 'calypso/lib/url/support';
 import Primary from 'calypso/my-sites/customer-home/locations/primary';
 import Secondary from 'calypso/my-sites/customer-home/locations/secondary';
 import Tertiary from 'calypso/my-sites/customer-home/locations/tertiary';
@@ -232,15 +234,18 @@ const Home = ( {
 		return (
 			<Notice
 				text={ translate(
-					"There are some issues with your domain's email DNS settings. {{a}}Click here{{/a}} to see the full diagnostic for your domain.",
+					"There are some issues with your domain's email DNS settings. {{diagnosticLink}}Click here{{/diagnosticLink}} to see the full diagnostic for your domain. {{supportLink}}Learn more{{/supportLink}}",
 					{
 						components: {
-							a: (
+							diagnosticLink: (
 								<a
 									href={ domainManagementEdit( siteId, customDomain.name, null, {
 										diagnostics: true,
 									} ) }
 								/>
+							),
+							supportLink: (
+								<a href={ localizeUrl( SET_UP_EMAIL_AUTHENTICATION_FOR_YOUR_DOMAIN ) } />
 							),
 						},
 					}
