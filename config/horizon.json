@@ -90,6 +90,7 @@
 		"network-connection": true,
 		"onboarding/design-choices": true,
 		"p2/p2-plus": true,
+		"pattern-assembler/preview-dnd": false,
 		"pattern-assembler/v2": false,
 		"plans/hosting-trial": true,
 		"plans/migration-trial": true,

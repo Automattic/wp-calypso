@@ -148,6 +148,7 @@
 		"onboarding/interval-dropdown": true,
 		"p2/p2-plus": true,
 		"page/export": true,
+		"pattern-assembler/preview-dnd": true,
 		"pattern-assembler/v2": false,
 		"plans/hosting-trial": true,
 		"plans/migration-trial": true,

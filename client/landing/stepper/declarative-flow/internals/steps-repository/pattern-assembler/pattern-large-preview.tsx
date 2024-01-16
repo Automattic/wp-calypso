@@ -1,4 +1,5 @@
 import { PatternRenderer } from '@automattic/block-renderer';
+import { isEnabled } from '@automattic/calypso-config';
 import { DeviceSwitcher } from '@automattic/components';
 import { useGlobalStyle } from '@automattic/global-styles';
 import { Popover } from '@wordpress/components';
@@ -6,6 +7,7 @@ import classnames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import React, { useRef, useEffect, useState, useMemo, CSSProperties, useCallback } from 'react';
 import { useDebouncedCallback } from 'use-debounce';
+import AsyncLoad from 'calypso/components/async-load';
 import { PATTERN_ASSEMBLER_EVENTS } from './events';
 import { injectTitlesToPageListBlock } from './html-transformers';
 import PatternActionBar from './pattern-action-bar';
@@ -152,15 +154,15 @@ const PatternLargePreview = ( {
 
 		return (
 			// eslint-disable-next-line jsx-a11y/no-noninteractive-element-interactions
-			<li
+			<div
 				key={ clientId }
 				aria-label={ pattern.title }
 				className={ classnames( 'pattern-large-preview__pattern', {
 					'pattern-large-preview__pattern--active': isActive,
 				} ) }
 				data-client-id={ clientId }
-				onMouseDown={ handleMouseDown }
-				onMouseEnter={ handleMouseEnter }
+				// onMouseDown={ handleMouseDown }
+				// onMouseEnter={ handleMouseEnter }
 			>
 				{ !! viewportHeight && (
 					<PatternRenderer
@@ -197,7 +199,46 @@ const PatternLargePreview = ( {
 						/>
 					</Popover>
 				) }
-			</li>
+			</div>
+		);
+	};
+
+	const renderPatternList = () => {
+		const listProps = {
+			className: 'pattern-large-preview__patterns',
+			style: patternLargePreviewStyle,
+		};
+
+		const listItems = [
+			...( header ? [ renderPattern( 'header', header ) ] : [] ),
+			...sections.map( ( pattern, i ) => renderPattern( 'section', pattern, i ) ),
+			...( footer ? [ renderPattern( 'footer', footer ) ] : [] ),
+		];
+
+		if ( ! isEnabled( 'pattern-assembler/preview-dnd' ) ) {
+			return (
+				<ul ref={ listRef } { ...listProps }>
+					{ listItems.map( ( item ) => (
+						<li key={ item.key }>{ item }</li>
+					) ) }
+				</ul>
+			);
+		}
+
+		const handleDragEnd = ( newOrder: any[] ) => {
+			console.log( newOrder );
+		};
+
+		return (
+			<ul ref={ listRef } { ...listProps }>
+				<AsyncLoad
+					require="@automattic/dnd-kit-sortable"
+					placeholder={ null }
+					items={ listItems }
+					onDragEnd={ handleDragEnd }
+					{ ...listProps }
+				/>
+			</ul>
 		);
 	};
 
@@ -293,15 +334,7 @@ const PatternLargePreview = ( {
 			onZoomOutScaleChange={ handleZoomOutScale }
 		>
 			{ hasSelectedPattern ? (
-				<ul
-					className="pattern-large-preview__patterns"
-					style={ patternLargePreviewStyle }
-					ref={ listRef }
-				>
-					{ header && renderPattern( 'header', header ) }
-					{ sections.map( ( pattern, i ) => renderPattern( 'section', pattern, i ) ) }
-					{ footer && renderPattern( 'footer', footer ) }
-				</ul>
+				renderPatternList()
 			) : (
 				<div className="pattern-large-preview__placeholder">
 					<h2>{ translate( 'Welcome to your homepage.' ) }</h2>
