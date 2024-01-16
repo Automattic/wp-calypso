@@ -41,10 +41,18 @@
 
 	.cta-wrapper {
 		display: flex;
+		flex-wrap: wrap;
 		gap: 1rem;
+
+		@media ( max-width: $break-mobile ) {
+			.button-action {
+				justify-content: center;
+				width: 100%;
+			}
+		}
 	}
 
-	@media (max-width: $break-small ) {
+	@media ( max-width: $break-small ) {
 		.domain {
 			font-size: 2rem;
 			line-height: 1;
