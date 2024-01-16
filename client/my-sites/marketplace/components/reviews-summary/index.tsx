@@ -1,3 +1,4 @@
+import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { isEnabled } from '@automattic/calypso-config';
 import { Button } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
@@ -9,6 +10,7 @@ import {
 	type ProductProps,
 } from 'calypso/data/marketplace/use-marketplace-reviews';
 import { ReviewModal } from 'calypso/my-sites/marketplace/components/review-modal';
+
 import './styles.scss';
 
 type Props = ProductProps & {
@@ -40,6 +42,14 @@ export const ReviewsSummary = ( { slug, productName, productType }: Props ) => {
 		averageRating = ( averageRating * 100 ) / 5;
 	}
 
+	const handleAddReviewClick = () => {
+		recordTracksEvent( 'calypso_marketplace_reviews_add_button_click', {
+			product_type: productType,
+			slug,
+		} );
+		setIsVisible( true );
+	};
+
 	return (
 		<>
 			<ReviewModal
@@ -64,7 +74,7 @@ export const ReviewsSummary = ( { slug, productName, productType }: Props ) => {
 					</div>
 				) }
 				{ userCanPublishReviews && (
-					<Button onClick={ () => setIsVisible( true ) }>{ translate( 'Add Review' ) }</Button>
+					<Button onClick={ handleAddReviewClick }>{ translate( 'Add Review' ) }</Button>
 				) }
 			</div>
 		</>
