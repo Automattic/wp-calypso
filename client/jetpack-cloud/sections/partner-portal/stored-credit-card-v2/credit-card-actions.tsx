@@ -6,6 +6,7 @@ import PopoverMenuItem from 'calypso/components/popover-menu/item';
 
 export default function CreditCardActions( {
 	cardActions,
+	isDisabled,
 }: {
 	cardActions: {
 		name: string;
@@ -13,6 +14,7 @@ export default function CreditCardActions( {
 		onClick: () => void;
 		className?: string;
 	}[];
+	isDisabled: boolean;
 } ) {
 	const buttonActionRef = useRef< HTMLButtonElement | null >( null );
 	const [ isOpen, setIsOpen ] = useState( false );
@@ -28,6 +30,7 @@ export default function CreditCardActions( {
 	return (
 		<>
 			<Button
+				disabled={ isDisabled }
 				borderless
 				compact
 				onClick={ showActions }
