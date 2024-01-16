@@ -22,6 +22,14 @@ import { USER_STORE, ONBOARD_STORE, SITE_STORE } from '../stores';
 import getQuantityFromStorageType from '../utils/get-quantity-from-storage-slug';
 import { getLoginUrl } from '../utils/path';
 import { recordSubmitStep } from './internals/analytics/record-submit-step';
+import CheckPlan from './internals/steps-repository/check-plan';
+import CreateSite from './internals/steps-repository/create-site';
+import DesignCarousel from './internals/steps-repository/design-carousel';
+import DomainsStep from './internals/steps-repository/domains';
+import ProcessingStep from './internals/steps-repository/processing-step';
+import StoreProfiler from './internals/steps-repository/store-profiler';
+import WaitForAtomic from './internals/steps-repository/wait-for-atomic';
+import WaitForPluginInstall from './internals/steps-repository/wait-for-plugin-install';
 import { AssertConditionState } from './internals/types';
 import type { Flow, ProvidedDependencies, AssertConditionResult } from './internals/types';
 import type {
@@ -69,8 +77,8 @@ const ecommerceFlow: Flow = {
 				asyncComponent: () => import( './internals/steps-repository/design-carousel' ),
 			},
 			{
-				slug: 'siteCreationStep',
-				asyncComponent: () => import( './internals/steps-repository/site-creation-step' ),
+				slug: 'createSite',
+				asyncComponent: () => import( './internals/steps-repository/create-site' ),
 			},
 			{
 				slug: 'processing',
@@ -226,9 +234,9 @@ const ecommerceFlow: Flow = {
 						] );
 						resetStorageAddonSlug();
 					}
-					return navigate( 'siteCreationStep' );
+					return navigate( 'createSite' );
 
-				case 'siteCreationStep':
+				case 'createSite':
 					return navigate( 'processing' );
 
 				case 'processing':

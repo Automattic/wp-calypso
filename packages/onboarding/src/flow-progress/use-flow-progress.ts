@@ -86,7 +86,7 @@ const flows: Record< string, { [ step: string ]: number } > = {
 		storeProfiler: 1,
 		designCarousel: 2,
 		domains: 3,
-		siteCreationStep: 4,
+		createSiteStep: 4,
 		processing: 4,
 		waitForAtomic: 4,
 		checkPlan: 4,
@@ -94,7 +94,7 @@ const flows: Record< string, { [ step: string ]: number } > = {
 	},
 	[ COPY_SITE_FLOW ]: {
 		domains: 0,
-		'site-creation-step': 1,
+		'create-site': 1,
 		processing: 2,
 		'automated-copy': 3,
 		'processing-copy': 3,

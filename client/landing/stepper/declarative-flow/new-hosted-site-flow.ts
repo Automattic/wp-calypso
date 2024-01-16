@@ -28,8 +28,8 @@ const hosting: Flow = {
 				asyncComponent: () => import( './internals/steps-repository/trial-acknowledge' ),
 			},
 			{
-				slug: 'siteCreationStep',
-				asyncComponent: () => import( './internals/steps-repository/site-creation-step' ),
+				slug: 'createSiteStep',
+				asyncComponent: () => import( './internals/steps-repository/create-site' ),
 			},
 			{
 				slug: 'processing',
@@ -66,14 +66,14 @@ const hosting: Flow = {
 						return navigate( 'trialAcknowledge' );
 					}
 
-					return navigate( 'siteCreationStep' );
+					return navigate( 'createSiteStep' );
 				}
 
 				case 'trialAcknowledge': {
-					return navigate( 'siteCreationStep' );
+					return navigate( 'createSiteStep' );
 				}
 
-				case 'siteCreationStep':
+				case 'createSiteStep':
 					return navigate( 'processing' );
 
 				case 'processing': {

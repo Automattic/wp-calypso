@@ -252,7 +252,7 @@ const CreateSite: Step = function CreateSite( { navigation, flow, data } ) {
 			<StepContainer
 				shouldHideNavButtons={ true }
 				hideFormattedHeader={ true }
-				stepName="site-creation-step"
+				stepName="create-site"
 				isHorizontalLayout={ true }
 				recordTracksEvent={ recordTracksEvent }
 				stepContent={

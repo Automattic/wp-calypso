@@ -10,7 +10,12 @@ import { USER_STORE, ONBOARD_STORE, SITE_STORE } from '../stores';
 import { getLoginUrl } from '../utils/path';
 import { recordSubmitStep } from './internals/analytics/record-submit-step';
 import { AssignTrialResult } from './internals/steps-repository/assign-trial-plan/constants';
+import CreateSite from './internals/steps-repository/create-site';
+import ErrorStep from './internals/steps-repository/error-step';
+import ProcessingStep from './internals/steps-repository/processing-step';
 import { ProcessingResult } from './internals/steps-repository/processing-step/constants';
+import WaitForAtomic from './internals/steps-repository/wait-for-atomic';
+import WaitForPluginInstall from './internals/steps-repository/wait-for-plugin-install';
 import { AssertConditionState } from './internals/types';
 import type { AssertConditionResult, Flow, ProvidedDependencies } from './internals/types';
 import type { OnboardSelect, SiteSelect, UserSelect } from '@automattic/data-stores';
@@ -21,8 +26,8 @@ const wooexpress: Flow = {
 	useSteps() {
 		return [
 			{
-				slug: 'siteCreationStep',
-				asyncComponent: () => import( './internals/steps-repository/site-creation-step' ),
+				slug: 'createSite',
+				asyncComponent: () => import( './internals/steps-repository/create-site' ),
 			},
 			{
 				slug: 'processing',
@@ -116,9 +121,9 @@ const wooexpress: Flow = {
 		};
 
 		// Despite sending a CHECKING state, this function gets called again with the
-		// /setup/wooexpress/siteCreationStep route which has no locale in the path so we need to
+		// /setup/wooexpress/createSite route which has no locale in the path so we need to
 		// redirect off of the first render.
-		// This effects both /setup/wooexpress/<locale> starting points and /setup/wooexpress/siteCreationStep/<locale> urls.
+		// This effects both /setup/wooexpress/<locale> starting points and /setup/wooexpress/createSite/<locale> urls.
 		// The double call also hapens on urls without locale.
 		useEffect( () => {
 			// Log when profiler data does not contain valid data.
@@ -187,7 +192,7 @@ const wooexpress: Flow = {
 			const adminUrl = siteId && getSiteOption( siteId, 'admin_url' );
 
 			switch ( currentStep ) {
-				case 'siteCreationStep': {
+				case 'createSite': {
 					return navigate( 'processing', {
 						currentStep,
 					} );
