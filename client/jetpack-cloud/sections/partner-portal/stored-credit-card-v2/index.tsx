@@ -1,7 +1,9 @@
 import { PaymentLogo } from '@automattic/wpcom-checkout';
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
+import PaymentMethodDeleteDialog from 'calypso/jetpack-cloud/sections/partner-portal/payment-method-delete-dialog';
 import CreditCardActions from './credit-card-actions';
+import { useDeleteCard } from './hooks/use-delete-card';
 import { useSetAsPrimaryCard } from './hooks/use-set-as-primary-card';
 import type { PaymentMethod } from 'calypso/jetpack-cloud/sections/partner-portal/payment-methods';
 
@@ -31,6 +33,13 @@ export default function StoredCreditCardV2( {
 		: translate( 'Secondary Card' );
 
 	const { isSetAsPrimaryCardPending, setAsPrimaryCard } = useSetAsPrimaryCard();
+	const {
+		isDeleteDialogVisible,
+		setIsDeleteDialogVisible,
+		closeDialog,
+		handleDelete,
+		isDeleteInProgress,
+	} = useDeleteCard( creditCard );
 
 	const cardActions = [
 		{
@@ -46,59 +55,73 @@ export default function StoredCreditCardV2( {
 		{
 			name: translate( 'Delete' ),
 			isEnabled: true,
-			onClick: () => {},
+			onClick: () => {
+				setIsDeleteDialogVisible( true );
+			},
 			className: 'stored-credit-card-v2__card-footer-actions-delete',
 		},
 	];
 
+	const isLoading = isSetAsPrimaryCardPending || isDeleteInProgress;
+
 	return (
-		<div
-			className={ classNames( 'stored-credit-card-v2__card', {
-				'is-loading': isSetAsPrimaryCardPending,
-			} ) }
-		>
-			<div className="stored-credit-card-v2__card-content">
-				<div className="stored-credit-card-v2__card-number">
-					**** **** **** { creditCard.card.last4 }
-				</div>
-				<div className="stored-credit-card-v2__card-details">
-					<span>
-						<div className="stored-credit-card-v2__card-info-heading">
-							{ translate( 'Card Holder name' ) }
-						</div>
-						<div className="stored-credit-card-v2__card-info-value"> { creditCard?.name }</div>
-					</span>
-					<span>
-						<div className="stored-credit-card-v2__card-info-heading">
-							{ translate( 'Expiry Date' ) }
-						</div>
-						<div className="stored-credit-card-v2__card-info-value">{ `${ expiryMonth }/${ expiryYear }` }</div>
-					</span>
-				</div>
-			</div>
-			<div className="stored-credit-card-v2__card-footer">
-				<span>
-					<div className="stored-credit-card-v2__card-footer-title">
-						{ isDefault ? translate( 'Primary Card' ) : secondaryCardCountText }
-					</div>
-					<div className="stored-credit-card-v2__card-footer-subtitle">
-						{ isDefault
-							? translate( 'This card is charged automatically each month.' )
-							: translate( 'This card is charged only if the primary one fails.' ) }
-					</div>
-				</span>
-				<span>
-					<CreditCardActions cardActions={ cardActions } isDisabled={ isSetAsPrimaryCardPending } />
-				</span>
-			</div>
+		<>
 			<div
-				className={ classNames(
-					'stored-credit-card-v2__payment-logo',
-					`stored-credit-card-v2__payment-logo-${ cardBrand }`
-				) }
+				className={ classNames( 'stored-credit-card-v2__card', {
+					'is-loading': isLoading,
+				} ) }
 			>
-				<PaymentLogo brand={ cardBrand } isSummary={ true } />
+				<div className="stored-credit-card-v2__card-content">
+					<div className="stored-credit-card-v2__card-number">
+						**** **** **** { creditCard.card.last4 }
+					</div>
+					<div className="stored-credit-card-v2__card-details">
+						<span>
+							<div className="stored-credit-card-v2__card-info-heading">
+								{ translate( 'Card Holder name' ) }
+							</div>
+							<div className="stored-credit-card-v2__card-info-value"> { creditCard?.name }</div>
+						</span>
+						<span>
+							<div className="stored-credit-card-v2__card-info-heading">
+								{ translate( 'Expiry Date' ) }
+							</div>
+							<div className="stored-credit-card-v2__card-info-value">{ `${ expiryMonth }/${ expiryYear }` }</div>
+						</span>
+					</div>
+				</div>
+				<div className="stored-credit-card-v2__card-footer">
+					<span>
+						<div className="stored-credit-card-v2__card-footer-title">
+							{ isDefault ? translate( 'Primary Card' ) : secondaryCardCountText }
+						</div>
+						<div className="stored-credit-card-v2__card-footer-subtitle">
+							{ isDefault
+								? translate( 'This card is charged automatically each month.' )
+								: translate( 'This card is charged only if the primary one fails.' ) }
+						</div>
+					</span>
+					<span>
+						<CreditCardActions cardActions={ cardActions } isDisabled={ isLoading } />
+					</span>
+				</div>
+				<div
+					className={ classNames(
+						'stored-credit-card-v2__payment-logo',
+						`stored-credit-card-v2__payment-logo-${ cardBrand }`
+					) }
+				>
+					<PaymentLogo brand={ cardBrand } isSummary={ true } />
+				</div>
 			</div>
-		</div>
+			{ isDeleteDialogVisible && (
+				<PaymentMethodDeleteDialog
+					paymentMethod={ creditCard }
+					isVisible={ true }
+					onClose={ closeDialog }
+					onConfirm={ handleDelete }
+				/>
+			) }
+		</>
 	);
 }
