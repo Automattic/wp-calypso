@@ -898,6 +898,7 @@ const PlansFeaturesMain = ( {
 									allFeaturesList={ FEATURES_LIST }
 									onStorageAddOnClick={ handleStorageAddOnClick }
 									showRefundPeriod={ isAnyHostingFlow( flowName ) }
+									recordTracksEvent={ recordTracksEvent }
 									coupon={ coupon }
 								/>
 								{ showEscapeHatch && hidePlansFeatureComparison && (
@@ -962,6 +963,7 @@ const PlansFeaturesMain = ( {
 													! hidePlanSelector ? planTypeSelectorProps : undefined
 												}
 												coupon={ coupon }
+												recordTracksEvent={ recordTracksEvent }
 											/>
 											<ComparisonGridToggle
 												onClick={ toggleShowPlansComparisonGrid }
