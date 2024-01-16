@@ -405,7 +405,7 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 		)?.slug ?? FREE_THEME;
 
 	const isLockedTheme =
-		selectedDesignTier === PERSONAL_THEME ||
+		( isEnabled( 'themes/tiers' ) && selectedDesignTier === PERSONAL_THEME ) ||
 		( selectedDesign?.is_premium && ! isPremiumThemeAvailable && ! didPurchaseSelectedTheme ) ||
 		( selectedDesign?.is_externally_managed &&
 			( ! isMarketplaceThemeSubscribed || ! isExternallyManagedThemeAvailable ) ) ||
@@ -469,7 +469,7 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 			plan = 'business-bundle';
 		} else if ( selectedDesign?.is_externally_managed ) {
 			plan = ! isExternallyManagedThemeAvailable ? PLAN_BUSINESS_MONTHLY : '';
-		} else if ( selectedDesignTier === PERSONAL_THEME ) {
+		} else if ( isEnabled( 'themes/tiers' ) && selectedDesignTier === PERSONAL_THEME ) {
 			plan = PLAN_PERSONAL;
 		} else {
 			plan = 'premium';
