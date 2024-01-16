@@ -23,6 +23,7 @@ import {
 import PartnerPortalSidebarNavigation from '../sidebar-navigation';
 import StoredCreditCardV2 from '../stored-credit-card-v2';
 import EmptyState from './empty-state';
+import LoadingState from './loading-state';
 import type { PaymentMethod } from 'calypso/jetpack-cloud/sections/partner-portal/payment-methods';
 
 import './style.scss';
@@ -77,7 +78,7 @@ export default function PaymentMethodListV2() {
 
 	const getBody = () => {
 		if ( isFetching ) {
-			return 'Loading...';
+			return <LoadingState />;
 		}
 
 		if ( storedCards.length > 0 ) {
