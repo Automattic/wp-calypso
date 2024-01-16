@@ -2,7 +2,7 @@
  * Global polyfills
  */
 import './load-config';
-import config from '@automattic/calypso-config';
+import config, { isEnabled } from '@automattic/calypso-config';
 import page from '@automattic/calypso-router';
 import { QueryClient } from '@tanstack/react-query';
 import '@automattic/calypso-polyfills';
@@ -22,11 +22,18 @@ import fixPath from './lib/fix-path';
 import setLocale from './lib/set-locale';
 import { setupContextMiddleware } from './page-middleware/setup-context';
 import registerBlazeDashboardPages from './routes';
+import themes from './themes';
 
 import 'calypso/assets/stylesheets/style.scss';
 import './app.scss';
 
 async function AppBoot() {
+	// Load the App theme
+	const theme = themes( isEnabled( 'is_running_in_woo_site' ) ? 'woo' : 'jetpack' );
+	Object.entries( theme ).forEach( ( [ key, value ] ) => {
+		document.documentElement.style.setProperty( key, value );
+	} );
+
 	const rootReducer = combineReducers( {
 		currentUser,
 		sites,

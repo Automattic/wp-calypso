@@ -12,6 +12,12 @@ jest.mock( 'react-redux', () => ( {
 	useSelector: jest.fn( ( selector ) => selector() ),
 } ) );
 jest.mock( '../../grid-context', () => ( { usePlansGridContext: jest.fn() } ) );
+jest.mock( '@automattic/data-stores', () => ( {
+	Plans: {
+		...jest.requireActual( '@automattic/data-stores' ).Plans,
+		usePricingMetaForGridPlans: jest.fn(),
+	},
+} ) );
 
 import {
 	PLAN_ANNUAL_PERIOD,
@@ -24,6 +30,7 @@ import {
 	PLAN_MONTHLY_PERIOD,
 	PLAN_TRIENNIAL_PERIOD,
 } from '@automattic/calypso-products';
+import { Plans } from '@automattic/data-stores';
 import { formatCurrency } from '@automattic/format-currency';
 import { render } from '@testing-library/react';
 import React from 'react';
@@ -53,12 +60,11 @@ describe( 'PlanFeatures2023GridBillingTimeframe', () => {
 			billingPeriod: PLAN_ANNUAL_PERIOD,
 		};
 
+		Plans.usePricingMetaForGridPlans.mockImplementation( () => ( {
+			[ PLAN_BUSINESS ]: planYearlyPricing,
+		} ) );
+
 		usePlansGridContext.mockImplementation( () => ( {
-			helpers: {
-				usePricingMetaForGridPlans: jest.fn( () => ( {
-					[ PLAN_BUSINESS ]: planYearlyPricing,
-				} ) ),
-			},
 			gridPlansIndex: {
 				[ PLAN_BUSINESS_MONTHLY ]: {
 					isMonthlyPlan: true,

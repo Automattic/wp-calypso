@@ -51,3 +51,8 @@ export interface LicenseAction {
 	isExternalLink?: boolean;
 	className?: string;
 }
+
+export interface SetAsPrimaryCardProps {
+	paymentMethodId: string;
+	useAsPrimaryPaymentMethod: boolean;
+}

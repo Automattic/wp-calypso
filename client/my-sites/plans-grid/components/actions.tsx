@@ -22,7 +22,6 @@ import styled from '@emotion/styled';
 import { useSelect } from '@wordpress/data';
 import { useCallback } from '@wordpress/element';
 import { localize, TranslateResult, useTranslate } from 'i18n-calypso';
-import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { useManageTooltipToggle } from 'calypso/my-sites/plans-grid/hooks/use-manage-tooltip-toggle';
 import { usePlansGridContext } from '../grid-context';
 import useDefaultStorageOption from '../hooks/npm-ready/data-store/use-default-storage-option';
@@ -438,7 +437,7 @@ const PlanFeaturesActionsButton: React.FC< PlanFeaturesActionsButtonProps > = ( 
 	storageOptions,
 } ) => {
 	const translate = useTranslate();
-	const { gridPlansIndex } = usePlansGridContext();
+	const { gridPlansIndex, helpers } = usePlansGridContext();
 	const {
 		planTitle,
 		pricing: { currencyCode, originalPrice, discountedPrice },
@@ -450,7 +449,7 @@ const PlanFeaturesActionsButton: React.FC< PlanFeaturesActionsButtonProps > = ( 
 			const upgradePlan = isFreeTrialPlan && freeTrialPlanSlug ? freeTrialPlanSlug : planSlug;
 
 			if ( ! isFreePlan( planSlug ) ) {
-				recordTracksEvent( 'calypso_plan_features_upgrade_click', {
+				helpers.recordTracksEvent?.( 'calypso_plan_features_upgrade_click', {
 					current_plan: currentSitePlanSlug,
 					upgrading_to: upgradePlan,
 					saw_free_trial_offer: !! freeTrialPlanSlug,
@@ -458,7 +457,7 @@ const PlanFeaturesActionsButton: React.FC< PlanFeaturesActionsButtonProps > = ( 
 			}
 			onUpgradeClick?.( upgradePlan );
 		},
-		[ currentSitePlanSlug, freeTrialPlanSlug, onUpgradeClick, planSlug ]
+		[ currentSitePlanSlug, freeTrialPlanSlug, helpers, onUpgradeClick, planSlug ]
 	);
 
 	if ( isWpcomEnterpriseGridPlan( planSlug ) ) {

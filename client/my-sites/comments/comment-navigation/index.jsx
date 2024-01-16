@@ -1,4 +1,4 @@
-import { Button, Count, Gridicon } from '@automattic/components';
+import { Button, Count, Gridicon, SegmentedControl } from '@automattic/components';
 import { localize } from 'i18n-calypso';
 import { get, includes, isEqual, map } from 'lodash';
 import { Component } from 'react';
@@ -9,7 +9,6 @@ import Search from 'calypso/components/search';
 import SectionNav from 'calypso/components/section-nav';
 import NavItem from 'calypso/components/section-nav/item';
 import NavTabs from 'calypso/components/section-nav/tabs';
-import SegmentedControl from 'calypso/components/segmented-control';
 import UrlSearch from 'calypso/lib/url-search';
 import {
 	bumpStat,

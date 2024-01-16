@@ -1,7 +1,7 @@
 import { isWpcomEnterpriseGridPlan, type PlanSlug } from '@automattic/calypso-products';
+import { PlanPrice } from '@automattic/components';
 import styled from '@emotion/styled';
 import { useTranslate } from 'i18n-calypso';
-import PlanPrice from 'calypso/my-sites/plan-price';
 import { usePlansGridContext } from '../grid-context';
 import type { GridPlan } from '../hooks/npm-ready/data-store/use-grid-plans';
 
