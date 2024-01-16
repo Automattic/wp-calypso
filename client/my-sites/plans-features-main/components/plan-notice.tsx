@@ -85,7 +85,7 @@ export default function PlanNotice( props: PlanNoticeProps ) {
 	let activeDiscount =
 		discountInformation &&
 		getDiscountByName( discountInformation.withDiscount, discountInformation.discountEndDate );
-	const proRatedCreditsApplicable = useProRatedCreditsApplicable( siteId, visiblePlans );
+	const planUpgradeCreditsApplicable = usePlanUpgradeCreditsApplicable( siteId, visiblePlans );
 	const currencyCode = useSelector( ( state ) => getCurrentUserCurrencyCode( state ) );
 
 	switch ( noticeType ) {
@@ -127,7 +127,7 @@ export default function PlanNotice( props: PlanNoticeProps ) {
 				</Notice>
 			);
 		case PLAN_UPGRADE_CREDIT_NOTICE:
-			return proRatedCreditsApplicable ? (
+			return planUpgradeCreditsApplicable ? (
 				<Notice
 					className="plan-features-main__notice"
 					showDismiss={ true }
@@ -140,7 +140,10 @@ export default function PlanNotice( props: PlanNoticeProps ) {
 						'We’ve applied the {{b}}%(amountInCurrency)s{{/b}} {{a}}upgrade credit{{/a}} from your current plan as a deduction to your new plan, below. This remaining credit will be applied at checkout if you upgrade today!',
 						{
 							args: {
-								amountInCurrency: formatCurrency( proRatedCreditsApplicable, currencyCode ?? '' ),
+								amountInCurrency: formatCurrency(
+									planUpgradeCreditsApplicable,
+									currencyCode ?? ''
+								),
 							},
 							components: {
 								b: <strong />,

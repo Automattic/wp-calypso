@@ -49,8 +49,8 @@ jest.mock(
 		usePlanUpgradeCreditsApplicable: jest.fn(),
 	} )
 );
-jest.mock( 'calypso/my-sites/plans-grid/hooks/use-calculate-max-plan-upgrade-credit', () => ( {
-	useMaxProRatedCreditsForPlans: jest.fn(),
+jest.mock( 'calypso/my-sites/plans-features-main/hooks/use-max-plan-upgrade-credits', () => ( {
+	useMaxPlanUpgradeCredits: jest.fn(),
 } ) );
 jest.mock( 'calypso/state/currency-code/selectors', () => ( {
 	getCurrentUserCurrencyCode: jest.fn(),
@@ -66,9 +66,6 @@ const mIsCurrentUserCurrentPlanOwner = isCurrentUserCurrentPlanOwner as jest.Moc
 >;
 const mUsePlanUpgradeCreditsApplicable = usePlanUpgradeCreditsApplicable as jest.MockedFunction<
 	typeof usePlanUpgradeCreditsApplicable
->;
-const mUseMaxProRatedCreditsForPlans = useMaxProRatedCreditsForPlans as jest.MockedFunction<
-	typeof useMaxProRatedCreditsForPlans
 >;
 const mGetCurrentUserCurrencyCode = getCurrentUserCurrencyCode as jest.MockedFunction<
 	typeof getCurrentUserCurrencyCode
