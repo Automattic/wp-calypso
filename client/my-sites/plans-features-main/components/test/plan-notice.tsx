@@ -44,9 +44,12 @@ jest.mock( 'calypso/components/marketing-message/use-marketing-message', () => (
 jest.mock( 'calypso/lib/discounts', () => ( {
 	getDiscountByName: jest.fn(),
 } ) );
-jest.mock( 'calypso/my-sites/plans-grid/hooks/use-is-plan-upgrade-credit-visible', () => ( {
-	usePlanUpgradeCreditsApplicable: jest.fn(),
-} ) );
+jest.mock(
+	'calypso/my-sites/plans-features-main/hooks/use-plan-upgrade-credits-applicable',
+	() => ( {
+		usePlanUpgradeCreditsApplicable: jest.fn(),
+	} )
+);
 jest.mock( 'calypso/my-sites/plans-grid/hooks/use-calculate-max-plan-upgrade-credit', () => ( {
 	useCalculateMaxPlanUpgradeCredit: jest.fn(),
 } ) );
