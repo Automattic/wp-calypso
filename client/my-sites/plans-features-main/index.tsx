@@ -80,6 +80,7 @@ import useObservableForOdie from './hooks/use-observable-for-odie';
 import usePlanBillingPeriod from './hooks/use-plan-billing-period';
 import usePlanFromUpsells from './hooks/use-plan-from-upsells';
 import usePlanIntentFromSiteMeta from './hooks/use-plan-intent-from-site-meta';
+import { usePlanUpgradeCreditsApplicable } from './hooks/use-plan-upgrade-credits-applicable';
 import useGetFreeSubdomainSuggestion from './hooks/use-suggested-free-domain-from-paid-domain';
 import type { MinimalRequestCartProduct } from '@automattic/shopping-cart';
 import type {
@@ -789,6 +790,10 @@ const PlansFeaturesMain = ( {
 	const comparisonGridStickyRowOffset = enablePlanTypeSelectorStickyBehavior
 		? stickyPlanTypeSelectorHeight + masterbarHeight
 		: masterbarHeight;
+	const planUpgradeCreditsApplicable = usePlanUpgradeCreditsApplicable(
+		siteId,
+		gridPlansForFeaturesGrid.map( ( gridPlan ) => gridPlan.planSlug )
+	);
 
 	return (
 		<>
@@ -908,6 +913,7 @@ const PlansFeaturesMain = ( {
 									showRefundPeriod={ isAnyHostingFlow( flowName ) }
 									recordTracksEvent={ recordTracksEvent }
 									coupon={ coupon }
+									planUpgradeCreditsApplicable={ planUpgradeCreditsApplicable }
 								/>
 								{ showEscapeHatch && hidePlansFeatureComparison && (
 									<div className="plans-features-main__escape-hatch">
@@ -972,6 +978,7 @@ const PlansFeaturesMain = ( {
 												}
 												coupon={ coupon }
 												recordTracksEvent={ recordTracksEvent }
+												planUpgradeCreditsApplicable={ planUpgradeCreditsApplicable }
 											/>
 											<ComparisonGridToggle
 												onClick={ toggleShowPlansComparisonGrid }

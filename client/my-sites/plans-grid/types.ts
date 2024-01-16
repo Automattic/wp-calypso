@@ -57,6 +57,7 @@ export interface CommonGridProps {
 	// only used for comparison grid
 	planTypeSelectorProps?: PlanTypeSelectorProps;
 	onUpgradeClick: ( planSlug: PlanSlug ) => void;
+	planUpgradeCreditsApplicable?: number | null;
 }
 
 export interface FeaturesGridProps extends CommonGridProps {
@@ -64,7 +65,6 @@ export interface FeaturesGridProps extends CommonGridProps {
 	isLargeCurrency: boolean;
 	translate: LocalizeProps[ 'translate' ];
 	currentPlanManageHref?: string;
-	isPlanUpgradeCreditEligible: boolean;
 	generatedWPComSubdomain: DataResponse< { domain_name: string } >;
 	gridPlanForSpotlight?: GridPlan;
 	isCustomDomainAllowedOnFreePlan: boolean; // indicate when a custom domain is allowed to be used with the Free plan.
@@ -97,10 +97,7 @@ export type ComparisonGridExternalProps = Omit< GridContextProps, 'children' > &
 	};
 
 export type FeaturesGridExternalProps = Omit< GridContextProps, 'children' > &
-	Omit<
-		FeaturesGridProps,
-		'onUpgradeClick' | 'isLargeCurrency' | 'translate' | 'isPlanUpgradeCreditEligible'
-	> & {
+	Omit< FeaturesGridProps, 'onUpgradeClick' | 'isLargeCurrency' | 'translate' > & {
 		onUpgradeClick?: (
 			cartItems?: MinimalRequestCartProduct[] | null,
 			clickedPlanSlug?: PlanSlug

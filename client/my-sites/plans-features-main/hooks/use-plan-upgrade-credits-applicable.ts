@@ -7,14 +7,15 @@ import { isCurrentPlanPaid, isJetpackSite } from 'calypso/state/sites/selectors'
 
 /**
  * This hook determines if the plan upgrade credit should be visible in the current plans display context
+ * and returns the credits value if applicable
  * @param siteId Considered site id
  * @param visiblePlans Plans that are visible to the user
- * @returns If the credit should be displayed to the user
+ * @returns number | null if the credit should not be displayed to the user
  */
-export function useIsPlanUpgradeCreditVisible(
+export function usePlanUpgradeCreditsApplicable(
 	siteId?: number | null,
 	visiblePlans: PlanSlug[] = []
-): boolean {
+): number | null {
 	const isSiteOnPaidPlan = !! useSelector(
 		( state ) => siteId && isCurrentPlanPaid( state, siteId )
 	);
@@ -36,5 +37,5 @@ export function useIsPlanUpgradeCreditVisible(
 	// !isJetpackNotAtomic means --> A non atomic jetpack site is not upgradeable (!isJetpackSite || isAtomicSite)
 	const isUpgradeEligibleSite = isSiteOnPaidPlan && ! isJetpackNotAtomic && isHigherPlanAvailable();
 
-	return isUpgradeEligibleSite && creditsValue > 0;
+	return isUpgradeEligibleSite ? creditsValue : null;
 }
