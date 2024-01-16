@@ -194,7 +194,7 @@ const ecommerceFlow: Flow = {
 						extra: { headstart_theme: selectedDesign?.recipe?.stylesheet },
 					} );
 
-					if ( storageAddonSlug ) {
+					if ( storageAddonSlug && recurType !== ecommerceFlowRecurTypes.MONTHLY ) {
 						setProductCartItems( [
 							{
 								product_slug: PRODUCT_1GB_SPACE,
