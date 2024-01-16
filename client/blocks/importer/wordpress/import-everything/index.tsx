@@ -1,10 +1,11 @@
 import { ProgressBar } from '@automattic/components';
-import { Hooray, Progress, SubTitle, Title, NextButton } from '@automattic/onboarding';
+import { Hooray, Progress, SubTitle, Title } from '@automattic/onboarding';
 import { createElement, createInterpolateElement } from '@wordpress/element';
 import { sprintf } from '@wordpress/i18n';
 import { localize } from 'i18n-calypso';
 import { get } from 'lodash';
 import { connect } from 'react-redux';
+import MigrationError from 'calypso/blocks/importer/wordpress/import-everything/migration-error';
 import PreMigrationScreen from 'calypso/blocks/importer/wordpress/import-everything/pre-migration';
 import { LoadingEllipsis } from 'calypso/components/loading-ellipsis';
 import { EVERY_FIVE_SECONDS, EVERY_TEN_SECONDS, Interval } from 'calypso/lib/interval';
@@ -263,25 +264,9 @@ export class ImportEverything extends SectionMigrate {
 	}
 
 	renderMigrationError() {
-		const { translate } = this.props;
+		const { targetSite } = this.props;
 
-		return (
-			<div className="import-layout__center">
-				<div>
-					<div className="import__heading import__heading-center">
-						<Title>{ translate( 'Import failed' ) }</Title>
-						<SubTitle>
-							{ translate( 'There was an error with your import.' ) }
-							<br />
-							{ translate( 'Please try again soon or contact support for help.' ) }
-						</SubTitle>
-						<div className="import__buttons-group">
-							<NextButton onClick={ this.resetMigration }>{ translate( 'Try again' ) }</NextButton>
-						</div>
-					</div>
-				</div>
-			</div>
-		);
+		return <MigrationError siteUrl={ targetSite.URL } resetMigration={ this.resetMigration } />;
 	}
 
 	renderDefaultHoorayScreen() {
