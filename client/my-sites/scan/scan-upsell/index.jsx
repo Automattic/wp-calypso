@@ -1,6 +1,6 @@
 import { PRODUCT_JETPACK_SCAN } from '@automattic/calypso-products';
+import { FEATURE_TYPE_JETPACK_SCAN } from '@automattic/calypso-products/src/constants/features';
 import { useTranslate } from 'i18n-calypso';
-import { FEATURE_TYPE_JETPACK_SCAN } from 'packages/calypso-products/src/constants/features';
 import { useCallback } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import VaultPressLogo from 'calypso/assets/images/jetpack/vaultpress-logo.svg';
