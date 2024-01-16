@@ -12,7 +12,7 @@ import { isCurrentPlanPaid, isJetpackSite } from 'calypso/state/sites/selectors'
  * @param visiblePlans Plans that are visible to the user
  * @returns number | null if the credit should not be displayed to the user
  */
-export function useProRatedCreditsApplicable(
+export function usePlanUpgradeCreditsApplicable(
 	siteId?: number | null,
 	visiblePlans: PlanSlug[] = []
 ): number | null {

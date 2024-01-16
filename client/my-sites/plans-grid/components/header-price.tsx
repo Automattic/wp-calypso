@@ -8,7 +8,7 @@ import type { GridPlan } from '../hooks/npm-ready/data-store/use-grid-plans';
 interface PlanFeatures2023GridHeaderPriceProps {
 	planSlug: PlanSlug;
 	isLargeCurrency: boolean;
-	proRatedCreditsApplicable?: number | null;
+	planUpgradeCreditsApplicable?: number | null;
 	currentSitePlanSlug?: string | null;
 	visibleGridPlans: GridPlan[];
 }
@@ -133,7 +133,7 @@ const HeaderPriceContainer = styled.div`
 const PlanFeatures2023GridHeaderPrice = ( {
 	planSlug,
 	isLargeCurrency,
-	proRatedCreditsApplicable,
+	planUpgradeCreditsApplicable,
 	visibleGridPlans,
 }: PlanFeatures2023GridHeaderPriceProps ) => {
 	const translate = useTranslate();
@@ -210,7 +210,7 @@ const PlanFeatures2023GridHeaderPrice = ( {
 		return (
 			<HeaderPriceContainer>
 				<Badge className="plan-features-2023-grid__badge">
-					{ proRatedCreditsApplicable
+					{ planUpgradeCreditsApplicable
 						? translate( 'Credit applied' )
 						: translate( 'One time discount' ) }
 				</Badge>

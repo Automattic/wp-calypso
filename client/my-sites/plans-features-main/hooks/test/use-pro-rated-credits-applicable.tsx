@@ -10,7 +10,7 @@ import {
 	PLAN_FREE,
 	PlanSlug,
 } from '@automattic/calypso-products';
-import { useProRatedCreditsApplicable } from 'calypso/my-sites/plans-features-main/hooks/use-pro-rated-credits-applicable';
+import { usePlanUpgradeCreditsApplicable } from 'calypso/my-sites/plans-features-main/hooks/use-plan-upgrade-credits-applicable';
 import { useCalculateMaxPlanUpgradeCredit } from 'calypso/my-sites/plans-grid/hooks/use-calculate-max-plan-upgrade-credit';
 import isAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
 import { getSitePlanSlug } from 'calypso/state/sites/plans/selectors';
@@ -52,7 +52,7 @@ const plansList: PlanSlug[] = [
 	PLAN_ECOMMERCE,
 	PLAN_ENTERPRISE_GRID_WPCOM,
 ];
-describe( 'useProRatedCreditsApplicable hook', () => {
+describe( 'usePlanUpgradeCreditsApplicable hook', () => {
 	beforeEach( () => {
 		jest.resetAllMocks();
 
@@ -65,7 +65,7 @@ describe( 'useProRatedCreditsApplicable hook', () => {
 
 	test( 'Show a plans upgrade credit when the necessary conditions are met above', () => {
 		const { result } = renderHookWithProvider( () =>
-			useProRatedCreditsApplicable( siteId, plansList )
+			usePlanUpgradeCreditsApplicable( siteId, plansList )
 		);
 		expect( result.current ).toEqual( 100 );
 	} );
@@ -73,7 +73,7 @@ describe( 'useProRatedCreditsApplicable hook', () => {
 	test( 'Plan upgrade credits should not be shown when a site is on the highest purchasable plan', () => {
 		mGetSitePlanSlug.mockImplementation( () => PLAN_ECOMMERCE );
 		const { result } = renderHookWithProvider( () =>
-			useProRatedCreditsApplicable( siteId, plansList )
+			usePlanUpgradeCreditsApplicable( siteId, plansList )
 		);
 		expect( result.current ).toEqual( null );
 	} );
@@ -83,7 +83,7 @@ describe( 'useProRatedCreditsApplicable hook', () => {
 		mIsJetpackSite.mockImplementation( () => true );
 
 		const { result } = renderHookWithProvider( () =>
-			useProRatedCreditsApplicable( siteId, plansList )
+			usePlanUpgradeCreditsApplicable( siteId, plansList )
 		);
 		expect( result.current ).toEqual( null );
 	} );
@@ -92,7 +92,7 @@ describe( 'useProRatedCreditsApplicable hook', () => {
 		mUsePlanUpgradeCredits.mockImplementation( () => 0 );
 
 		const { result } = renderHookWithProvider( () =>
-			useProRatedCreditsApplicable( siteId, plansList )
+			usePlanUpgradeCreditsApplicable( siteId, plansList )
 		);
 		expect( result.current ).toEqual( null );
 	} );
@@ -101,7 +101,7 @@ describe( 'useProRatedCreditsApplicable hook', () => {
 		mIsCurrentPlanPaid.mockImplementation( () => false );
 
 		const { result } = renderHookWithProvider( () =>
-			useProRatedCreditsApplicable( siteId, plansList )
+			usePlanUpgradeCreditsApplicable( siteId, plansList )
 		);
 		expect( result.current ).toEqual( null );
 	} );

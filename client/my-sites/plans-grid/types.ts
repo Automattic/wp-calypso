@@ -54,7 +54,7 @@ export interface CommonGridProps {
 	// only used for comparison grid
 	planTypeSelectorProps?: PlanTypeSelectorProps;
 	onUpgradeClick: ( planSlug: PlanSlug ) => void;
-	proRatedCreditsApplicable?: number | null;
+	planUpgradeCreditsApplicable?: number | null;
 }
 
 export interface FeaturesGridProps extends CommonGridProps {

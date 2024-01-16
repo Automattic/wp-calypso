@@ -27,7 +27,7 @@ describe( 'PlanFeatures2023GridHeaderPrice', () => {
 	const defaultProps = {
 		isLargeCurrency: false,
 		planSlug: PLAN_PERSONAL as PlanSlug,
-		proRatedCreditsApplicable: null,
+		planUpgradeCreditsApplicable: null,
 		visibleGridPlans: [],
 	};
 

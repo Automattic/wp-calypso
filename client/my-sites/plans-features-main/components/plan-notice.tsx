@@ -7,7 +7,7 @@ import MarketingMessage from 'calypso/components/marketing-message';
 import Notice from 'calypso/components/notice';
 import { getDiscountByName } from 'calypso/lib/discounts';
 import { ActiveDiscount } from 'calypso/lib/discounts/active-discounts';
-import { useProRatedCreditsApplicable } from 'calypso/my-sites/plans-features-main/hooks/use-pro-rated-credits-applicable';
+import { usePlanUpgradeCreditsApplicable } from 'calypso/my-sites/plans-features-main/hooks/use-plan-upgrade-credits-applicable';
 import { useCalculateMaxPlanUpgradeCredit } from 'calypso/my-sites/plans-grid/hooks/use-calculate-max-plan-upgrade-credit';
 import { useSelector } from 'calypso/state';
 import { getCurrentUserCurrencyCode } from 'calypso/state/currency-code/selectors';
@@ -52,7 +52,7 @@ function useResolveNoticeType(
 	const activeDiscount =
 		discountInformation &&
 		getDiscountByName( discountInformation.withDiscount, discountInformation.discountEndDate );
-	const proRatedCreditsApplicable = useProRatedCreditsApplicable( siteId, visiblePlans );
+	const planUpgradeCreditsApplicable = usePlanUpgradeCreditsApplicable( siteId, visiblePlans );
 	const sitePlan = useSelector( ( state ) => getSitePlan( state, siteId ) );
 	const sitePlanSlug = sitePlan?.product_slug ?? '';
 	const isCurrentPlanRetired = isProPlan( sitePlanSlug ) || isStarterPlan( sitePlanSlug );
@@ -71,7 +71,7 @@ function useResolveNoticeType(
 		return CURRENT_PLAN_IN_APP_PURCHASE_NOTICE;
 	} else if ( activeDiscount ) {
 		return ACTIVE_DISCOUNT_NOTICE;
-	} else if ( proRatedCreditsApplicable ) {
+	} else if ( planUpgradeCreditsApplicable ) {
 		return PLAN_UPGRADE_CREDIT_NOTICE;
 	}
 	return MARKETING_NOTICE;

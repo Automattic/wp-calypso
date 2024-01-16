@@ -34,7 +34,7 @@ function usePerMonthDescription( { planSlug }: { planSlug: PlanSlug } ) {
 
 	const yearlyVariantPricing = Plans.usePricingMetaForGridPlans( {
 		planSlugs: yearlyVariantPlanSlug ? [ yearlyVariantPlanSlug ] : [],
-		withoutProRatedCredits: true,
+		withoutPlanUpgradeCredits: true,
 		storageAddOns: storageAddOnsForPlan,
 		coupon,
 		selectedSiteId,

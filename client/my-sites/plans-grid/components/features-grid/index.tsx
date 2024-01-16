@@ -245,7 +245,7 @@ class FeaturesGrid extends Component< FeaturesGridProps > {
 	}
 
 	renderPlanPrice( renderedGridPlans: GridPlan[], options?: PlanRowOptions ) {
-		const { isLargeCurrency, proRatedCreditsApplicable, currentSitePlanSlug } = this.props;
+		const { isLargeCurrency, planUpgradeCreditsApplicable, currentSitePlanSlug } = this.props;
 		return renderedGridPlans.map( ( { planSlug } ) => {
 			return (
 				<PlanDivOrTdContainer
@@ -256,7 +256,7 @@ class FeaturesGrid extends Component< FeaturesGridProps > {
 				>
 					<PlanFeatures2023GridHeaderPrice
 						planSlug={ planSlug }
-						proRatedCreditsApplicable={ proRatedCreditsApplicable }
+						planUpgradeCreditsApplicable={ planUpgradeCreditsApplicable }
 						isLargeCurrency={ isLargeCurrency }
 						currentSitePlanSlug={ currentSitePlanSlug }
 						visibleGridPlans={ renderedGridPlans }

@@ -336,7 +336,7 @@ type ComparisonGridHeaderProps = {
 	isStuck: boolean;
 	isHiddenInMobile?: boolean;
 	planTypeSelectorProps?: PlanTypeSelectorProps;
-	proRatedCreditsApplicable?: number | null;
+	planUpgradeCreditsApplicable?: number | null;
 };
 
 type ComparisonGridHeaderCellProps = Omit< ComparisonGridHeaderProps, 'planTypeSelectorProps' > & {
@@ -365,7 +365,7 @@ const ComparisonGridHeaderCell = ( {
 	isLargeCurrency,
 	onUpgradeClick,
 	planActionOverrides,
-	proRatedCreditsApplicable,
+	planUpgradeCreditsApplicable,
 	showRefundPeriod,
 	isStuck,
 }: ComparisonGridHeaderCellProps ) => {
@@ -435,7 +435,7 @@ const ComparisonGridHeaderCell = ( {
 			</PlanSelector>
 			<PlanFeatures2023GridHeaderPrice
 				planSlug={ planSlug }
-				proRatedCreditsApplicable={ proRatedCreditsApplicable }
+				planUpgradeCreditsApplicable={ planUpgradeCreditsApplicable }
 				isLargeCurrency={ isLargeCurrency }
 				currentSitePlanSlug={ currentSitePlanSlug }
 				visibleGridPlans={ visibleGridPlans }
@@ -485,7 +485,7 @@ const ComparisonGridHeader = forwardRef< HTMLDivElement, ComparisonGridHeaderPro
 			showRefundPeriod,
 			isStuck,
 			planTypeSelectorProps,
-			proRatedCreditsApplicable,
+			planUpgradeCreditsApplicable,
 		},
 		ref
 	) => {
@@ -521,7 +521,7 @@ const ComparisonGridHeader = forwardRef< HTMLDivElement, ComparisonGridHeaderPro
 				{ visibleGridPlans.map( ( { planSlug }, index ) => (
 					<ComparisonGridHeaderCell
 						planSlug={ planSlug }
-						proRatedCreditsApplicable={ proRatedCreditsApplicable }
+						planUpgradeCreditsApplicable={ planUpgradeCreditsApplicable }
 						key={ planSlug }
 						isLastInRow={ index === visibleGridPlans.length - 1 }
 						isFooter={ isFooter }
@@ -958,7 +958,7 @@ const ComparisonGrid = ( {
 	onStorageAddOnClick,
 	showRefundPeriod,
 	planTypeSelectorProps,
-	proRatedCreditsApplicable,
+	planUpgradeCreditsApplicable,
 }: ComparisonGridProps ) => {
 	const { gridPlans } = usePlansGridContext();
 	const [ activeTooltipId, setActiveTooltipId ] = useManageTooltipToggle();
@@ -1105,7 +1105,7 @@ const ComparisonGrid = ( {
 							showRefundPeriod={ showRefundPeriod }
 							isStuck={ isStuck }
 							planTypeSelectorProps={ planTypeSelectorProps }
-							proRatedCreditsApplicable={ proRatedCreditsApplicable }
+							planUpgradeCreditsApplicable={ planUpgradeCreditsApplicable }
 						/>
 					) }
 				</StickyContainer>
@@ -1140,7 +1140,7 @@ const ComparisonGrid = ( {
 					isHiddenInMobile={ true }
 					ref={ bottomHeaderRef }
 					planTypeSelectorProps={ planTypeSelectorProps }
-					proRatedCreditsApplicable={ proRatedCreditsApplicable }
+					planUpgradeCreditsApplicable={ planUpgradeCreditsApplicable }
 				/>
 			</Grid>
 
