@@ -770,14 +770,14 @@ const CheckoutSummaryBody = styled.div`
 	margin: 0 auto;
 	max-width: 600px;
 	width: 100%;
-	padding: 0 24px 25px;
+	padding: 24px;
 
 	.is-visible & {
 		display: block;
 	}
 
 	@media ( ${ ( props ) => props.theme.breakpoints.tabletUp } ) {
-		padding: 0 0 25px;
+		padding: 24px;
 	}
 
 	@media ( ${ ( props ) => props.theme.breakpoints.desktopUp } ) {
