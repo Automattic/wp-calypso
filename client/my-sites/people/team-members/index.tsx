@@ -1,3 +1,4 @@
+import config from '@automattic/calypso-config';
 import { Card, Button } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import InfiniteList from 'calypso/components/infinite-list';
@@ -15,11 +16,10 @@ interface Props {
 	search?: string;
 	usersQuery: UsersQuery;
 	showAddTeamMembersBtn?: boolean;
-	showCreateTeamMembers?: boolean;
 }
 function TeamMembers( props: Props ) {
 	const translate = useTranslate();
-	const { search, usersQuery, showAddTeamMembersBtn = true, showCreateTeamMembers = true } = props;
+	const { search, usersQuery, showAddTeamMembersBtn = true } = props;
 	const site = useSelector( ( state ) => getSelectedSite( state ) );
 
 	const listKey = [ 'team-members', site?.ID, search ].join( '-' );
@@ -30,6 +30,8 @@ function TeamMembers( props: Props ) {
 
 	const createTeamMemberLink = `/people/create/${ site?.slug }`;
 	const inviteTeamMemberLink = `/people/new/${ site?.slug }`;
+
+	const showCreateTeamMembers = config.isEnabled( 'calypso/user-creation' );
 
 	function getPersonRef( user: Member ) {
 		return 'user-' + user?.ID;

@@ -1,18 +1,21 @@
+import config from '@automattic/calypso-config';
 import { Button, FormInputValidation } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { suggestEmailCorrection } from '@automattic/onboarding';
 import { useState } from '@wordpress/element';
-import { Icon, check } from '@wordpress/icons';
+import emailValidator from 'email-validator';
 import { useTranslate } from 'i18n-calypso';
 import { useDebouncedCallback } from 'use-debounce';
-import emailValidator from 'email-validator';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
-import ValidationFieldset from 'calypso/signup/validation-fieldset';
 import FormLabel from 'calypso/components/forms/form-label';
+import FormPasswordInput from 'calypso/components/forms/form-password-input';
 import FormTextInput from 'calypso/components/forms/form-text-input';
 import FormTextarea from 'calypso/components/forms/form-textarea';
+import { getLocaleSlug } from 'calypso/lib/i18n-utils';
+import wpcom from 'calypso/lib/wp';
 import RoleSelect from 'calypso/my-sites/people/role-select';
-import { useSelector, useDispatch } from 'calypso/state';
+import ValidationFieldset from 'calypso/signup/validation-fieldset';
+import { useSelector } from 'calypso/state';
 import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
 import { useInitialRole, useIncludeFollowers } from '../shared/hooks';
 import type { ChangeEvent, FormEvent } from 'react';
@@ -35,16 +38,36 @@ const CreateForm = ( { siteId }: CreateFormProps ) => {
 	const [ message, setMessage ] = useState( '' );
 	const [ formState, setFormState ] = useState( {
 		email: '',
+		username: '',
+		password: '',
 		firstName: '',
 		lastName: '',
 	} );
 	const [ errorMessages, setErrorMessages ] = useState( null );
 	const [ submitting, setSubmitting ] = useState( false );
 
-	const onFormSubmit = ( e: FormEvent ) => {
+	const onFormSubmit = async ( e: FormEvent ) => {
 		e.preventDefault();
 		setSubmitting( true );
+
+		console.log( " config( 'wpcom_signup_id' )", config( 'wpcom_signup_id' ) );
+
+		try {
+			const response = await wpcom.req.post( '/users/new', {
+				...formState,
+				validate: false,
+				locale: getLocaleSlug(),
+				client_id: config( 'wpcom_signup_id' ),
+				client_secret: config( 'wpcom_signup_key' ),
+				send_verification_email: true,
+			} );
+			console.log( 'response', response );
+		} catch ( err ) {
+			console.log( 'err', err );
+		}
+
 		console.log( 'SUBMIT' );
+		setSubmitting( false );
 	};
 
 	const handleAcceptDomainSuggestion = ( newEmail, newDomain, oldDomain ) => {
@@ -138,6 +161,22 @@ const CreateForm = ( { siteId }: CreateFormProps ) => {
 				explanation={ getRoleLearnMoreLink() }
 				formControlType="select"
 			/>
+
+			<FormLabel htmlFor="username">{ translate( 'Username' ) }</FormLabel>
+			<FormTextInput
+				autoCapitalize="off"
+				autoCorrect="off"
+				className="signup-form__input"
+				disabled={ submitting }
+				id="username"
+				name="username"
+				value={ formState.username }
+				// isError={ formState.isFieldInvalid( this.state.form, 'username' ) }
+				// isValid={ formState.isFieldValid( this.state.form, 'username' ) }
+				// onBlur={ this.handleBlur }
+				onChange={ handleInputChange }
+			/>
+
 			<ValidationFieldset errorMessages={ errorMessages }>
 				<FormLabel htmlFor="email">{ translate( 'Email' ) }</FormLabel>
 				<FormTextInput
@@ -153,6 +192,20 @@ const CreateForm = ( { siteId }: CreateFormProps ) => {
 					onChange={ onEmailInputChange }
 				/>
 			</ValidationFieldset>
+
+			<FormLabel htmlFor="password">{ translate( 'Choose a password' ) }</FormLabel>
+			<FormPasswordInput
+				className="signup-form__input"
+				disabled={ submitting }
+				id="password"
+				name="password"
+				value={ formState.password }
+				// isError={ formState.isFieldInvalid( this.state.form, 'password' ) }
+				// isValid={ formState.isFieldValid( this.state.form, 'password' ) }
+				// onBlur={ this.handleBlur }
+				onChange={ handleInputChange }
+				submitting={ submitting }
+			/>
 
 			<FormLabel htmlFor="firstName">{ translate( 'First name' ) }</FormLabel>
 			<FormTextInput
