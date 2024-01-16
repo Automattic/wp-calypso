@@ -1,7 +1,7 @@
 import { Button } from '@wordpress/components';
 import { translate } from 'i18n-calypso';
 import moment from 'moment';
-import { useEffect, useMemo, useState } from 'react';
+import { useMemo } from 'react';
 import ThankYouProduct from 'calypso/components/thank-you-v2/product';
 import { getPurchaseByProductSlug } from 'calypso/lib/purchases/utils';
 import { useSelector } from 'calypso/state';
@@ -34,17 +34,10 @@ export default function ThankYouPlanProduct( {
 		[ purchase.productSlug, purchases ]
 	);
 
-	const [ expirationDate, setExpirationDate ] = useState( '' );
-
-	useEffect( () => {
-		if ( ! isLoadingPurchases && productPurchase ) {
-			setExpirationDate(
-				translate( 'Expires on %s', {
-					args: moment( productPurchase.expiryDate ).format( 'LL' ),
-				} ).toString()
-			);
-		}
-	}, [ isLoadingPurchases, productPurchase ] );
+	const expirationDate =
+		! isLoadingPurchases && productPurchase
+			? translate( 'Expires on %s', { args: moment( productPurchase.expiryDate ).format( 'LL' ) } )
+			: '';
 
 	return (
 		<ThankYouProduct

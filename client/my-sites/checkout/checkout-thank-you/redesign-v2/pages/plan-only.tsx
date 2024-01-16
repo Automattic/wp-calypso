@@ -14,16 +14,16 @@ interface PlanOnlyThankYouProps {
 	primaryPurchase: ReceiptPurchase;
 }
 
+const isMonthsOld = ( rawDate?: string, months: number ) => {
+	if ( ! rawDate ) {
+		return false;
+	}
+
+	const parsedDate = moment( rawDate );
+	return moment().diff( parsedDate, 'months' ) > months;
+};
+
 export default function PlanOnlyThankYou( { primaryPurchase }: PlanOnlyThankYouProps ) {
-	const isMonthsOld = ( rawDate: string, months: number ) => {
-		if ( ! rawDate || ! months ) {
-			return false;
-		}
-
-		const parsedDate = moment( rawDate );
-		return moment().diff( parsedDate, 'months' ) > months;
-	};
-
 	const siteId = useSelector( getSelectedSiteId );
 	const siteSlug = useSelector( getSelectedSiteSlug );
 	const siteCreatedTimeStamp = useSelector(
@@ -45,7 +45,7 @@ export default function PlanOnlyThankYou( { primaryPurchase }: PlanOnlyThankYouP
 				recordTracksEvent( 'calypso_plan_thank_you_add_members_click' );
 			},
 		} );
-	} else if ( isMonthsOld( siteCreatedTimeStamp ?? '', 6 ) ) {
+	} else if ( isMonthsOld( siteCreatedTimeStamp, 6 ) ) {
 		// Promote themes in the footer details for sites that are 6 months old or older.
 		footerDetails.push( {
 			key: 'footer-site-refresh',

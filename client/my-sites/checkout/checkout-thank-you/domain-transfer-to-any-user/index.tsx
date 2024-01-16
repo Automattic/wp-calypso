@@ -43,7 +43,7 @@ const DomainTransferToAnyUser: React.FC< DomainTransferToAnyUserContainerProps >
 				subtitle={ translate(
 					'Domain transfers can take a few minutes, we’ll email you once it’s set up.'
 				) }
-				products={ <ThankYouDomainProduct domainName={ domain } key="transferred-domain" /> }
+				products={ <ThankYouDomainProduct domainName={ domain } /> }
 				footerDetails={ getDomainFooterDetails() }
 				upsellProps={ upsellProps }
 			/>
