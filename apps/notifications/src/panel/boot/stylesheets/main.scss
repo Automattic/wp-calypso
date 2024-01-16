@@ -482,6 +482,11 @@
 			z-index: 100;
 			text-align: left;
 			position: sticky;
+
+			.wpnc__settings {
+				display: flex;
+				flex-grow: 1;
+			}
 		}
 	}
 
