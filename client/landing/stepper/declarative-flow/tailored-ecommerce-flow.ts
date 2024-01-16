@@ -98,9 +98,11 @@ const ecommerceFlow: Flow = {
 		const pathLocaleSlug = getLocaleFromPathname();
 		const locale = queryLocaleSlug || pathLocaleSlug || useLocaleSlug;
 
-		const { recurType } = useSelect(
+		const { recurType, couponCode, storageAddonSlug } = useSelect(
 			( select ) => ( {
 				recurType: ( select( ONBOARD_STORE ) as OnboardSelect ).getEcommerceFlowRecurType(),
+				couponCode: ( select( ONBOARD_STORE ) as OnboardSelect ).getCouponCode(),
+				storageAddonSlug: ( select( ONBOARD_STORE ) as OnboardSelect ).getStorageAddonSlug(),
 			} ),
 			[]
 		);
@@ -116,6 +118,12 @@ const ecommerceFlow: Flow = {
 			if ( locale && locale !== 'en' ) {
 				flowParams.set( 'locale', locale );
 				hasFlowParams = true;
+			}
+
+			if ( couponCode || storageAddonSlug ) {
+				hasFlowParams = true;
+				flowParams.set( 'storage', storageAddonSlug );
+				flowParams.set( 'coupon', couponCode );
 			}
 
 			const redirectTarget =
