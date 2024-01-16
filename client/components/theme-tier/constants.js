@@ -22,11 +22,11 @@ export const THEME_TIERS = {
 		minimumUpsellPlan: PLAN_FREE,
 	},
 	personal: {
-		label: translate( 'Personal' ),
+		label: translate( 'Starter' ),
 		minimumUpsellPlan: PLAN_PERSONAL,
 	},
 	premium: {
-		label: translate( 'Premium' ),
+		label: translate( 'Explorer' ),
 		minimumUpsellPlan: PLAN_PREMIUM,
 	},
 	partner: {
