@@ -1,4 +1,3 @@
-import { isEnabled } from '@automattic/calypso-config';
 import { Gridicon } from '@automattic/components';
 import classNames from 'classnames';
 import { translate } from 'i18n-calypso';
@@ -30,9 +29,7 @@ const SubscribersHeaderPopover = ( { siteId }: SubscribersHeaderPopoverProps ) =
 	const { grandTotal } = useSubscribersPage();
 	const recordExport = useRecordExport();
 	const currentUserSiteCount = useSelector( getCurrentUserSiteCount );
-	const migrationUrl = isEnabled( 'subscription-management/migrate-subscribers' )
-		? '#migrate-subscribers'
-		: `https://wordpress.com/manage/${ siteId }`;
+	const migrationUrl = '#migrate-subscribers';
 
 	const onDownloadCsvClick = () => {
 		dispatch(
