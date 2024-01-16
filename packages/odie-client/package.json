@@ -30,7 +30,7 @@
 	},
 	"dependencies": {
 		"@automattic/components": "^2.0.1",
-		"@tanstack/react-query": "^4.36.1",
+		"@tanstack/react-query": "^5.15.5",
 		"@wordpress/data": "^9.18.0",
 		"@wordpress/i18n": "^4.48.0",
 		"@wordpress/icons": "^9.39.0",

@@ -1316,7 +1316,7 @@ __metadata:
   dependencies:
     "@automattic/calypso-typescript-config": "workspace:^"
     "@automattic/components": "npm:^2.0.1"
-    "@tanstack/react-query": "npm:^4.36.1"
+    "@tanstack/react-query": "npm:^5.15.5"
     "@wordpress/data": "npm:^9.18.0"
     "@wordpress/i18n": "npm:^4.48.0"
     "@wordpress/icons": "npm:^9.39.0"
@@ -7242,13 +7242,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@tanstack/query-core@npm:4.36.1":
-  version: 4.36.1
-  resolution: "@tanstack/query-core@npm:4.36.1"
-  checksum: f286529dbd4c9cdb237ef0bfa72d785c74b5d0958290e8d85c343043ba7be4bbc6cb771167d8c13ca12bd4f37412a3d8b69331f57daa375b2071fd4752aed66a
-  languageName: node
-  linkType: hard
-
 "@tanstack/query-core@npm:5.17.9":
   version: 5.17.9
   resolution: "@tanstack/query-core@npm:5.17.9"
@@ -7303,25 +7296,6 @@ __metadata:
     "@tanstack/react-query": ^5.17.9
     react: ^18.0.0
   checksum: 0a913e3b4772cccbccf15cd137c9dc2fd5836de2ee3f3b7bb5b0d2e52c97fc9aafee071658a614a5d8f274e83e45d2e4c9f022b3008f75b910d79c99e632d32f
-  languageName: node
-  linkType: hard
-
-"@tanstack/react-query@npm:^4.36.1":
-  version: 4.36.1
-  resolution: "@tanstack/react-query@npm:4.36.1"
-  dependencies:
-    "@tanstack/query-core": "npm:4.36.1"
-    use-sync-external-store: "npm:^1.2.0"
-  peerDependencies:
-    react: ^16.8.0 || ^17.0.0 || ^18.0.0
-    react-dom: ^16.8.0 || ^17.0.0 || ^18.0.0
-    react-native: "*"
-  peerDependenciesMeta:
-    react-dom:
-      optional: true
-    react-native:
-      optional: true
-  checksum: 15d9c98269d52fbdd49f4eb4b077b5d70346f904ea2ae51fd0400949d731afde658919a1143dd849fb50d4c5b6d0ab072e7b313a098ef316dd1c24089653f626
   languageName: node
   linkType: hard
 
