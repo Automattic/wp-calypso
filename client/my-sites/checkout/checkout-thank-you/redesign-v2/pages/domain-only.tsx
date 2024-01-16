@@ -3,7 +3,7 @@ import { translate } from 'i18n-calypso';
 import emailImage from 'calypso/assets/images/thank-you-upsell/email.svg';
 import ThankYouV2 from 'calypso/components/thank-you-v2';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
-import { getEmailManagementPath } from 'calypso/my-sites/email/paths';
+import { getProfessionalEmailCheckoutUpsellPath } from 'calypso/my-sites/email/paths';
 import { useSelector } from 'calypso/state';
 import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import { getDomainPurchaseTypeAndPredicate } from '../../utils';
@@ -13,12 +13,13 @@ import type { ReceiptPurchase } from 'calypso/state/receipts/types';
 
 interface DomainOnlyThankYouProps {
 	purchases: ReceiptPurchase[];
+	receiptId: number;
 }
 
-export default function DomainOnlyThankYou( { purchases }: DomainOnlyThankYouProps ) {
+export default function DomainOnlyThankYou( { purchases, receiptId }: DomainOnlyThankYouProps ) {
 	const [ , predicate ] = getDomainPurchaseTypeAndPredicate( purchases );
 	const domains = purchases.filter( predicate ).map( ( purchase ) => purchase?.meta );
-	const firstDomain = domains[ 0 ];
+	const firstDomainName = domains[ 0 ];
 	const siteSlug = useSelector( getSelectedSiteSlug );
 
 	const upsellProps = {
@@ -29,7 +30,7 @@ export default function DomainOnlyThankYou( { purchases }: DomainOnlyThankYouPro
 		icon: emailImage,
 		action: (
 			<Button
-				href={ getEmailManagementPath( siteSlug ?? firstDomain, firstDomain ) }
+				href={ getProfessionalEmailCheckoutUpsellPath( siteSlug, firstDomainName, receiptId ) }
 				onClick={ () =>
 					recordTracksEvent( 'calypso_domain_only_thank_you_professional_email_click' )
 				}
