@@ -1,6 +1,6 @@
 import { translate } from 'i18n-calypso';
 import { useCallback, useEffect, useState } from 'react';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { productHasFeatureType } from 'calypso/blocks/jetpack-benefits/feature-checks';
 import QueryJetpackPartnerPortalLicenses from 'calypso/components/data/query-jetpack-partner-portal-licenses';
 import Notice from 'calypso/components/notice';
@@ -13,6 +13,7 @@ import {
 	LicenseSortField,
 } from 'calypso/jetpack-cloud/sections/partner-portal/types';
 import { JETPACK_MANAGE_LICENCES_LINK } from 'calypso/jetpack-cloud/sections/sidebar-navigation/lib/constants';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getPaginatedLicenses } from 'calypso/state/partner-portal/licenses/selectors';
 import { getIsPartnerOAuthTokenLoaded } from 'calypso/state/partner-portal/partner/selectors';
 
@@ -28,6 +29,7 @@ interface UnusedLicenseNoticeProps {
 const UnusedLicenseNotice = ( { featureType }: UnusedLicenseNoticeProps ) => {
 	const [ showExistingLicenseNotice, setShowUnassignedLicenseNotice ] = useState( false );
 	const isPartnerOAuthTokenLoaded = useSelector( getIsPartnerOAuthTokenLoaded );
+	const dispatch = useDispatch();
 
 	const checkLicenseKeyForFeature = useCallback(
 		( licenseKey: string ) => {
@@ -67,6 +69,23 @@ const UnusedLicenseNotice = ( { featureType }: UnusedLicenseNoticeProps ) => {
 		}
 	}, [ checkLicenseKeyForFeature, licenses ] );
 
+	const onDismissClick = useCallback( () => {
+		dispatch(
+			recordTracksEvent( 'calypso_jetpack_manage_upsell_unassigned_license_notice_dismiss', {
+				featureType: featureType,
+			} )
+		);
+		setShowUnassignedLicenseNotice( false );
+	}, [ dispatch, featureType ] );
+
+	const onActionClick = useCallback( () => {
+		dispatch(
+			recordTracksEvent( 'calypso_jetpack_manage_upsell_unassigned_license_notice_action_click', {
+				featureType: featureType,
+			} )
+		);
+	}, [ dispatch, featureType ] );
+
 	return (
 		<>
 			{ isPartnerOAuthTokenLoaded && (
@@ -84,9 +103,12 @@ const UnusedLicenseNotice = ( { featureType }: UnusedLicenseNoticeProps ) => {
 					text={ translate(
 						'You have unassigned licenses that would give your site access to this feature.'
 					) }
-					onDismissClick={ () => setShowUnassignedLicenseNotice( false ) }
+					onDismissClick={ onDismissClick }
 				>
-					<NoticeAction href={ JETPACK_MANAGE_LICENCES_LINK + '/unassigned' }>
+					<NoticeAction
+						href={ JETPACK_MANAGE_LICENCES_LINK + '/unassigned' }
+						onClick={ onActionClick }
+					>
 						{ translate( 'View licenses' ) }
 					</NoticeAction>
 				</Notice>
