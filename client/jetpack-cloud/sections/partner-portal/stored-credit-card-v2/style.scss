@@ -4,6 +4,10 @@
 .stored-credit-card-v2__card {
 	position: relative;
 
+	&.is-loading {
+		opacity: 0.3;
+	}
+
 	.stored-credit-card-v2__card-content {
 		padding-inline: 24px;
 		height: 220px;

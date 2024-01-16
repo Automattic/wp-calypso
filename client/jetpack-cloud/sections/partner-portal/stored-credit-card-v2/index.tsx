@@ -2,6 +2,7 @@ import { PaymentLogo } from '@automattic/wpcom-checkout';
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import CreditCardActions from './credit-card-actions';
+import { useSetAsPrimaryCard } from './hooks/use-set-as-primary-card';
 import type { PaymentMethod } from 'calypso/jetpack-cloud/sections/partner-portal/payment-methods';
 
 import './style.scss';
@@ -29,11 +30,18 @@ export default function StoredCreditCardV2( {
 		  } )
 		: translate( 'Secondary Card' );
 
+	const { isSetAsPrimaryCardPending, setAsPrimaryCard } = useSetAsPrimaryCard();
+
 	const cardActions = [
 		{
 			name: translate( 'Set as primary card' ),
 			isEnabled: ! isDefault,
-			onClick: () => {},
+			onClick: () => {
+				setAsPrimaryCard( {
+					paymentMethodId: creditCard.id,
+					useAsPrimaryPaymentMethod: true,
+				} );
+			},
 		},
 		{
 			name: translate( 'Delete' ),
@@ -44,7 +52,11 @@ export default function StoredCreditCardV2( {
 	];
 
 	return (
-		<div className="stored-credit-card-v2__card">
+		<div
+			className={ classNames( 'stored-credit-card-v2__card', {
+				'is-loading': isSetAsPrimaryCardPending,
+			} ) }
+		>
 			<div className="stored-credit-card-v2__card-content">
 				<div className="stored-credit-card-v2__card-number">
 					**** **** **** { creditCard.card.last4 }
@@ -76,7 +88,7 @@ export default function StoredCreditCardV2( {
 					</div>
 				</span>
 				<span>
-					<CreditCardActions cardActions={ cardActions } />
+					<CreditCardActions cardActions={ cardActions } isDisabled={ isSetAsPrimaryCardPending } />
 				</span>
 			</div>
 			<div
