@@ -236,6 +236,7 @@ const Home = ( {
 			return (
 				<Notice
 					text={ translate(
+						// TODO: Add the corresponding support doc link when it's published
 						"There are some issues with your domain's email DNS settings. {{a}}Click here{{/a}} to see the full diagnostic for your domain.",
 						{
 							components: {
