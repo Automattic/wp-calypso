@@ -38,7 +38,7 @@ export const MarketplaceReviewItem = ( props: MarketplaceReviewItemProps ) => {
 
 	const setEditing = ( review: MarketplaceReviewResponse ) => {
 		setIsEditing( true );
-		setEditorContent( review.content.rendered );
+		setEditorContent( review.content.raw );
 		setEditorRating( review.meta.wpcom_marketplace_rating );
 	};
 
