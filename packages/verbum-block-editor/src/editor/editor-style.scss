@@ -1,13 +1,13 @@
 /* stylelint-disable declaration-property-unit-allowed-list */
-@import "@wordpress/components/build-style/style";
-@import "@wordpress/edit-post/build-style/style";
-@import "@wordpress/block-editor/build-style/style";
-@import "@wordpress/block-editor/build-style/content.css";
 
 .verbum-editor-wrapper {
 	width: 100%;
 	box-sizing: border-box;
 
+	@import "@wordpress/components/build-style/style";
+	@import "@wordpress/edit-post/build-style/style";
+	@import "@wordpress/block-editor/build-style/style";
+	@import "@wordpress/block-editor/build-style/content";
 
 	.editor__header {
 		top: 0;
@@ -33,6 +33,10 @@
 			align-items: center;
 			min-height: 52px;
 			border-bottom: solid 1px #dcdcde;
+
+			button {
+				box-shadow: none;
+			}
 
 			.editor__header-toolbar {
 				flex-grow: 1;
