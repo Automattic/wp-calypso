@@ -32,7 +32,7 @@ import {
 import { APIProductFamilyProduct } from 'calypso/state/partner-portal/types';
 import { getSiteAvailableProduct } from 'calypso/state/sites/products/selectors';
 import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';
-import UnusedLicenseNotice from './unassigned-license-notice';
+import UnusedLicenseNotice from '../unassigned-license-notice';
 import type {
 	Duration,
 	SelectorProduct,
