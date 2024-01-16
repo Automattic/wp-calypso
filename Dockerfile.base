@@ -6,6 +6,7 @@ FROM node:20.8.1-bullseye-slim as cache
 SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 
 ARG node_memory=8192
+ARG commit_sha="(unknown)"
 WORKDIR /calypso
 ENV NPM_CONFIG_CACHE=/calypso/.cache
 ENV PERSISTENT_CACHE=true
@@ -16,10 +17,12 @@ ENV CALYPSO_ENV=production
 ENV BUILD_TRANSLATION_CHUNKS=true
 ENV NODE_OPTIONS=--max-old-space-size=$node_memory
 ENV HOME=/calypso
+ENV IS_CI=true
+ENV COMMIT_SHA $commit_sha
 
 COPY . .
 
-RUN yarn \
+RUN yarn --inline-builds \
 	# Prime webpack caches, including sourcemaps.
 	&& NODE_ENV=production SOURCEMAP=hidden-source-map yarn build-client
 
