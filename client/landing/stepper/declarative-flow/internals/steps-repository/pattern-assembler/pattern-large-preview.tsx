@@ -211,18 +211,16 @@ const PatternLargePreview = ( {
 			style: patternLargePreviewStyle,
 		};
 
-		const listItems = [
-			...( header ? [ renderPattern( 'header', header ) ] : [] ),
-			...sections.map( ( pattern, i ) => renderPattern( 'section', pattern, i ) ),
-			...( footer ? [ renderPattern( 'footer', footer ) ] : [] ),
-		];
+		const sectionItems = sections.map( ( pattern, i ) => renderPattern( 'section', pattern, i ) );
 
 		if ( ! isEnabled( 'pattern-assembler/preview-dnd' ) ) {
 			return (
 				<ul ref={ listRef } { ...listProps }>
-					{ listItems.map( ( item ) => (
+					{ header && <li>{ renderPattern( 'header', header ) }</li> }
+					{ sectionItems.map( ( item ) => (
 						<li key={ item.key }>{ item }</li>
 					) ) }
+					{ footer && <li>{ renderPattern( 'footer', footer ) }</li> }
 				</ul>
 			);
 		}
@@ -234,13 +232,15 @@ const PatternLargePreview = ( {
 
 		return (
 			<ul ref={ listRef } { ...listProps }>
+				{ header && <li>{ renderPattern( 'header', header ) }</li> }
 				<AsyncLoad
 					require="@automattic/dnd-kit-sortable"
 					placeholder={ null }
-					items={ listItems }
+					items={ sectionItems }
 					onDragEnd={ handleDragEnd }
 					{ ...listProps }
 				/>
+				{ footer && <li>{ renderPattern( 'footer', footer ) }</li> }
 			</ul>
 		);
 	};

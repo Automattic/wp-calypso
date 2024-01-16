@@ -15,6 +15,7 @@ import {
 } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
 import type { DragEndEvent } from '@dnd-kit/core';
+import type { CSSProperties } from 'react';
 
 interface DndKitSortableItemProps {
 	id: string;
@@ -36,7 +37,7 @@ const DndKitSortableItem = ( { id, item }: DndKitSortableItemProps ) => {
 		transform: CSS.Translate.toString( transform ),
 		transition,
 		zIndex: isDragging ? 1 : undefined,
-	};
+	} as CSSProperties;
 
 	return (
 		<li ref={ setNodeRef } style={ style } { ...attributes } { ...listeners }>
