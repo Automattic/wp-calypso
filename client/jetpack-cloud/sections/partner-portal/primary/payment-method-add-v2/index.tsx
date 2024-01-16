@@ -31,9 +31,9 @@ export default function PaymentMethodListV2() {
 			sidebarNavigation={ <PartnerPortalSidebarNavigation /> }
 			wide
 		>
-			{ !! stepper && <LayoutStepper steps={ stepper.steps } current={ stepper.current } /> }
-
 			<LayoutTop>
+				{ !! stepper && <LayoutStepper steps={ stepper.steps } current={ stepper.current } /> }
+
 				<LayoutHeader>
 					{ ! stepper && (
 						<Breadcrumb
