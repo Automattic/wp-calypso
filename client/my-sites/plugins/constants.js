@@ -78,4 +78,4 @@ export const ECOMMERCE_BUNDLED_PLUGINS = [
 	'mailpoet-business',
 ];
 
-export const UNLISTED_PLUGINS = [ 'automated-db-schenker-shipping ' ];
+export const UNLISTED_PLUGINS = [ 'automated-db-schenker-shipping' ];
