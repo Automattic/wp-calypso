@@ -36,7 +36,7 @@ export default function DomainDiagnosticsCard( { domain }: { domain: ResponseDom
 	const [ isDismissEmailDnsIssuesDialogVisible, setIsDismissEmailDnsIssuesDialogVisible ] =
 		useState( false );
 
-	if ( ! domain.isMappedToAtomicSite || isFetching || ! data ) {
+	if ( ! domain.isPrimary || ! domain.isMappedToAtomicSite || isFetching || ! data ) {
 		return null;
 	}
 
