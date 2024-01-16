@@ -10,8 +10,8 @@ import {
 	PLAN_FREE,
 	PlanSlug,
 } from '@automattic/calypso-products';
+import { useMaxPlanUpgradeCredits } from 'calypso/my-sites/plans-features-main/hooks/use-max-plan-upgrade-credits';
 import { usePlanUpgradeCreditsApplicable } from 'calypso/my-sites/plans-features-main/hooks/use-plan-upgrade-credits-applicable';
-import { useCalculateMaxPlanUpgradeCredit } from 'calypso/my-sites/plans-grid/hooks/use-calculate-max-plan-upgrade-credit';
 import isAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
 import { getSitePlanSlug } from 'calypso/state/sites/plans/selectors';
 import { isCurrentPlanPaid, isJetpackSite } from 'calypso/state/sites/selectors';
@@ -24,8 +24,8 @@ jest.mock( 'calypso/state/sites/selectors', () => ( {
 jest.mock( 'calypso/state/sites/plans/selectors', () => ( {
 	getSitePlanSlug: jest.fn(),
 } ) );
-jest.mock( 'calypso/my-sites/plans-grid/hooks/use-calculate-max-plan-upgrade-credit', () => ( {
-	useCalculateMaxPlanUpgradeCredit: jest.fn(),
+jest.mock( 'calypso/my-sites/plans-features-main/hooks/use-max-plan-upgrade-credits', () => ( {
+	useMaxPlanUpgradeCredits: jest.fn(),
 } ) );
 jest.mock( 'calypso/state/selectors/is-site-automated-transfer', () => ( {
 	__esModule: true,
@@ -33,8 +33,8 @@ jest.mock( 'calypso/state/selectors/is-site-automated-transfer', () => ( {
 } ) );
 
 // Mocked types
-const mUsePlanUpgradeCredits = useCalculateMaxPlanUpgradeCredit as jest.MockedFunction<
-	typeof useCalculateMaxPlanUpgradeCredit
+const mUsePlanUpgradeCredits = useMaxPlanUpgradeCredits as jest.MockedFunction<
+	typeof useMaxPlanUpgradeCredits
 >;
 const mIsAutomatedTransfer = isAutomatedTransfer as jest.MockedFunction<
 	typeof isAutomatedTransfer

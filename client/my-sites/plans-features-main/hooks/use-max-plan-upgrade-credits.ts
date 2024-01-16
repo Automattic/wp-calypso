@@ -14,7 +14,7 @@ interface Props {
  * This is the maximum possible credit value possible when comparing credits per plan
  * @returns {number} The maximum amount of credits possible for a given set of plans
  */
-export function useCalculateMaxPlanUpgradeCredit( { siteId, plans }: Props ): number {
+export function useMaxPlanUpgradeCredits( { siteId, plans }: Props ): number {
 	const plansDetails = useSelector( ( state ) =>
 		plans.map( ( planName ) => ( {
 			isPlanAvailableForPurchase: isPlanAvailableForPurchase( state, siteId ?? 0, planName ),
