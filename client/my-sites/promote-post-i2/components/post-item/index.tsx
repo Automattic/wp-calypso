@@ -87,8 +87,8 @@ export default function PostItem( { post }: { post: BlazablePost } ) {
 				<div className="post-item__post-data-row post-item__post-data-row-mobile">
 					<div className="post-item__stats-mobile">
 						{ sprintf(
-							// translators: %s is number of post's views
-							_n( '%s view', '%s views', viewCount ),
+							// translators: %s is number of post's visitors
+							_n( '%s visitor', '%s visitors', viewCount ),
 							formatNumber( viewCount, true )
 						) }
 						{ mobileStatsSeparator }
