@@ -141,7 +141,7 @@ describe( '<PlanNotice /> Tests', () => {
 		mIsCurrentUserCurrentPlanOwner.mockImplementation( () => true );
 		mIsCurrentPlanPaid.mockImplementation( () => true );
 		mGetDiscountByName.mockImplementation( () => false );
-		mUsePlanUpgradeCreditsApplicable.mockImplementation( () => 1 );
+		mUsePlanUpgradeCreditsApplicable.mockImplementation( () => 100 );
 
 		renderWithProvider(
 			<PlanNotice
