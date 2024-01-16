@@ -8,8 +8,9 @@ export interface RazorpayConfiguration {
 	options: { key: string };
 }
 
-declare class Razorpay {
+export declare class Razorpay {
 	constructor( options: RazorpayConfiguration[ 'options' ] );
+	open: () => unknown;
 }
 
 declare global {

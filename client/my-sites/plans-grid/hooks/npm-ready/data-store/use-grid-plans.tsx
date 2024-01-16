@@ -25,11 +25,10 @@ import {
 	isEcommercePlan,
 	TYPE_P2_PLUS,
 } from '@automattic/calypso-products';
-import { Plans } from '@automattic/data-stores';
+import { Plans, type AddOnMeta } from '@automattic/data-stores';
 import { isSamePlan } from '../../../lib/is-same-plan';
 import useHighlightLabels from './use-highlight-labels';
 import usePlansFromTypes from './use-plans-from-types';
-import type { AddOnMeta, PricedAPIPlan } from '@automattic/data-stores';
 import type { TranslateResult } from 'i18n-calypso';
 
 // TODO clk: move to plans data store
@@ -47,49 +46,6 @@ export interface PlanFeaturesForGridPlan {
 	// used for comparison grid so far
 	conditionalFeatures?: FeatureObject[];
 }
-
-export type UsePricedAPIPlans = ( { planSlugs }: { planSlugs: PlanSlug[] } ) => {
-	[ planSlug: string ]: PricedAPIPlan | null | undefined;
-} | null;
-
-// TODO clk: move to plans data store
-export interface PricingMetaForGridPlan {
-	billingPeriod?: Plans.PlanPricing[ 'billPeriod' ];
-	currencyCode?: Plans.PlanPricing[ 'currencyCode' ];
-	originalPrice: Plans.PlanPricing[ 'originalPrice' ];
-	/**
-	 * If discounted prices are provided (not null), they will take precedence over originalPrice.
-	 * UI will show original with a strikethrough or grayed out
-	 */
-	discountedPrice: Plans.PlanPricing[ 'discountedPrice' ];
-	/**
-	 * Intro offers override billing and pricing shown in the UI
-	 * they are currently defined off the site plans (so not defined when siteId is not available)
-	 */
-	introOffer?: Plans.PlanPricing[ 'introOffer' ];
-	expiry?: Plans.SitePlan[ 'expiry' ];
-}
-
-// TODO clk: move to plans data store
-export type UsePricingMetaForGridPlans = ( {
-	planSlugs,
-	selectedSiteId,
-	coupon,
-	storageAddOns,
-	withoutProRatedCredits,
-}: {
-	planSlugs: PlanSlug[];
-	/**
-	 * `selectedSiteId` required on purpose to mitigate risk with not passing something through when we should
-	 */
-	selectedSiteId: number | null | undefined;
-	/**
-	 * `coupon` required on purpose to mitigate risk with not passing somethiing through when we should
-	 */
-	coupon: string | undefined;
-	storageAddOns: ( AddOnMeta | null )[] | null;
-	withoutProRatedCredits?: boolean;
-} ) => { [ planSlug: string ]: PricingMetaForGridPlan } | null;
 
 export type UseFreeTrialPlanSlugs = ( {
 	intent,
@@ -113,9 +69,11 @@ export type GridPlan = {
 		conditionalFeatures?: FeatureObject[];
 	};
 	tagline: TranslateResult;
-	availableForPurchase: boolean;
-	productNameShort?: string | null;
 	planTitle: TranslateResult;
+	availableForPurchase: boolean;
+	pricing: Plans.PricingMetaForGridPlan;
+	storageAddOnsForPlan: ( AddOnMeta | null )[] | null;
+	productNameShort?: string | null;
 	billingTimeframe?: TranslateResult | null;
 	current?: boolean;
 	isMonthlyPlan?: boolean;
@@ -123,8 +81,6 @@ export type GridPlan = {
 		product_slug: string;
 	} | null;
 	highlightLabel?: React.ReactNode | null;
-	pricing: PricingMetaForGridPlan;
-	storageAddOnsForPlan: ( AddOnMeta | null )[] | null;
 };
 
 // TODO clk: move to plans data store
@@ -148,9 +104,10 @@ export type PlansIntent =
 interface Props {
 	// allFeaturesList temporary until feature definitions are ported to calypso-products package
 	allFeaturesList: FeatureList;
-	usePricingMetaForGridPlans: UsePricingMetaForGridPlans;
+	useCheckPlanAvailabilityForPurchase: Plans.UseCheckPlanAvailabilityForPurchase;
 	useFreeTrialPlanSlugs: UseFreeTrialPlanSlugs;
 	eligibleForFreeHostingTrial: boolean;
+	storageAddOns: ( AddOnMeta | null )[] | null;
 	selectedFeature?: string | null;
 	term?: ( typeof TERMS_LIST )[ number ]; // defaults to monthly
 	intent?: PlansIntent;
@@ -158,16 +115,12 @@ interface Props {
 	sitePlanSlug?: PlanSlug | null;
 	hideEnterprisePlan?: boolean;
 	isInSignup?: boolean;
-	useCheckPlanAvailabilityForPurchase?: ( { planSlugs }: { planSlugs: PlanSlug[] } ) => {
-		[ planSlug in PlanSlug ]?: boolean;
-	};
 	showLegacyStorageFeature?: boolean;
 
 	/**
 	 * If the subdomain generation is unsuccessful we do not show the free plan
 	 */
 	isSubdomainNotGenerated?: boolean;
-	storageAddOns: ( AddOnMeta | null )[] | null;
 	coupon?: string;
 	selectedSiteId?: number | null;
 }
@@ -278,7 +231,7 @@ const usePlanTypesWithIntent = ( {
 
 // TODO clk: move to plans data store
 const useGridPlans = ( {
-	usePricingMetaForGridPlans,
+	useCheckPlanAvailabilityForPurchase,
 	useFreeTrialPlanSlugs,
 	term = TERM_MONTHLY,
 	intent,
@@ -286,7 +239,6 @@ const useGridPlans = ( {
 	sitePlanSlug,
 	hideEnterprisePlan,
 	isInSignup,
-	useCheckPlanAvailabilityForPurchase,
 	eligibleForFreeHostingTrial,
 	isSubdomainNotGenerated,
 	storageAddOns,
@@ -319,7 +271,7 @@ const useGridPlans = ( {
 		term,
 		intent,
 	} );
-	const plansAvailabilityForPurchase = useCheckPlanAvailabilityForPurchase?.( {
+	const plansAvailabilityForPurchase = useCheckPlanAvailabilityForPurchase( {
 		planSlugs: availablePlanSlugs,
 	} );
 
@@ -334,11 +286,12 @@ const useGridPlans = ( {
 
 	// TODO: pricedAPIPlans to be queried from data-store package
 	const pricedAPIPlans = Plans.usePlans( { coupon } );
-	const pricingMeta = usePricingMetaForGridPlans( {
+	const pricingMeta = Plans.usePricingMetaForGridPlans( {
 		planSlugs: availablePlanSlugs,
 		storageAddOns,
 		coupon,
 		selectedSiteId,
+		useCheckPlanAvailabilityForPurchase,
 	} );
 
 	// Null return would indicate that we are still loading the data. No grid without grid plans.

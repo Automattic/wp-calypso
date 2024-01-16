@@ -2,7 +2,7 @@ import { Dialog } from '@automattic/components';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
-import { emailManagement } from 'calypso/my-sites/email/paths';
+import { getEmailManagementPath } from 'calypso/my-sites/email/paths';
 
 class DeleteEmailForwardsDialog extends Component {
 	static propTypes = {
@@ -57,7 +57,7 @@ class DeleteEmailForwardsDialog extends Component {
 	}
 
 	getEmailForwardingPath() {
-		return emailManagement( this.props.selectedSite.slug, this.props.selectedDomainName );
+		return getEmailManagementPath( this.props.selectedSite.slug, this.props.selectedDomainName );
 	}
 }
 

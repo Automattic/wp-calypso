@@ -1,6 +1,6 @@
 import { UrlFriendlyTermType, type PlanSlug } from '@automattic/calypso-products';
+import { Plans } from '@automattic/data-stores';
 import { type TranslateResult } from 'i18n-calypso';
-import { type UsePricingMetaForGridPlans } from '../../hooks/npm-ready/data-store/use-grid-plans';
 
 export type PlanTypeSelectorProps = {
 	kind: 'interval';
@@ -11,6 +11,7 @@ export type PlanTypeSelectorProps = {
 	withDiscount?: string;
 	enableStickyBehavior?: boolean;
 	stickyPlanTypeSelectorOffset?: number;
+	onPlanIntervalChange?: ( selectedItem: { key: SupportedUrlFriendlyTermType } ) => void;
 	layoutClassName?: string;
 	siteSlug?: string | null;
 	selectedPlan?: string;
@@ -24,7 +25,7 @@ export type PlanTypeSelectorProps = {
 	redirectTo?: string | null;
 	isStepperUpgradeFlow: boolean;
 	currentSitePlanSlug?: PlanSlug | null;
-	usePricingMetaForGridPlans: UsePricingMetaForGridPlans;
+	useCheckPlanAvailabilityForPurchase: Plans.UseCheckPlanAvailabilityForPurchase;
 	recordTracksEvent?: ( eventName: string, eventProperties: Record< string, unknown > ) => void;
 	/**
 	 * Whether to render the selector along with a title if passed.
@@ -51,9 +52,10 @@ export type IntervalTypeProps = Pick<
 	| 'selectedPlan'
 	| 'selectedFeature'
 	| 'currentSitePlanSlug'
-	| 'usePricingMetaForGridPlans'
+	| 'useCheckPlanAvailabilityForPurchase'
 	| 'title'
 	| 'coupon'
+	| 'onPlanIntervalChange'
 >;
 
 export type SupportedUrlFriendlyTermType = Extract<

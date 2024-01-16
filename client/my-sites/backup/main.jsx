@@ -27,7 +27,6 @@ import { INDEX_FORMAT } from 'calypso/lib/jetpack/backup-utils';
 import useDateWithOffset from 'calypso/lib/jetpack/hooks/use-date-with-offset';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
-import { areJetpackCredentialsInvalid } from 'calypso/state/jetpack/credentials/selectors';
 import isRewindPoliciesInitialized from 'calypso/state/rewind/selectors/is-rewind-policies-initialized';
 import getActivityLogFilter from 'calypso/state/selectors/get-activity-log-filter';
 import getDoesRewindNeedCredentials from 'calypso/state/selectors/get-does-rewind-need-credentials';
@@ -130,10 +129,6 @@ function AdminContent( { selectedDate } ) {
 	const activityLogFilter = useSelector( ( state ) => getActivityLogFilter( state, siteId ) );
 	const isFiltering = ! isFilterEmpty( activityLogFilter );
 
-	const areCredentialsInvalid = useSelector( ( state ) =>
-		areJetpackCredentialsInvalid( state, siteId, 'main' )
-	);
-
 	const needCredentials = useSelector( ( state ) => getDoesRewindNeedCredentials( state, siteId ) );
 
 	const onDateChange = useCallback(
@@ -166,8 +161,6 @@ function AdminContent( { selectedDate } ) {
 						onDateChange={ onDateChange }
 						selectedDate={ selectedDate }
 						needCredentials={ needCredentials }
-						areCredentialsInvalid={ areCredentialsInvalid }
-						isAtomic={ isAtomic }
 					/>
 				</>
 			) }
@@ -175,13 +168,7 @@ function AdminContent( { selectedDate } ) {
 	);
 }
 
-function BackupStatus( {
-	selectedDate,
-	needCredentials,
-	onDateChange,
-	areCredentialsInvalid,
-	isAtomic,
-} ) {
+function BackupStatus( { selectedDate, needCredentials, onDateChange } ) {
 	const isFetchingSiteFeatures = useSelectedSiteSelector( isRequestingSiteFeatures );
 	const isPoliciesInitialized = useSelectedSiteSelector( isRewindPoliciesInitialized );
 	const siteSlug = useSelector( getSelectedSiteSlug );
@@ -230,10 +217,8 @@ function BackupStatus( {
 					</div>
 				) }
 
-				{ ! isAtomic && ( needCredentials || areCredentialsInvalid ) && <EnableRestoresBanner /> }
-				{ ! needCredentials && ( ! areCredentialsInvalid || isAtomic ) && hasRealtimeBackups && (
-					<BackupsMadeRealtimeBanner />
-				) }
+				{ needCredentials && <EnableRestoresBanner /> }
+				{ ! needCredentials && hasRealtimeBackups && <BackupsMadeRealtimeBanner /> }
 
 				<BackupDatePicker onDateChange={ onDateChange } selectedDate={ selectedDate } />
 				<BackupStorageSpace />

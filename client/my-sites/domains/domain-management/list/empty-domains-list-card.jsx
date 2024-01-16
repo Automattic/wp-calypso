@@ -28,9 +28,9 @@ function EmptyDomainsListCard( { selectedSite, hasDomainCredit, isCompact, hasNo
 	);
 	let secondLine;
 	let action = translate( 'Upgrade to a plan' );
-	let actionURL = `/plans/${ selectedSite.slug }`;
+	let actionURL = `/plans/${ selectedSite?.slug }`;
 	let secondaryAction = translate( 'Just search for a domain' );
-	let secondaryActionURL = domainAddNew( selectedSite.slug );
+	let secondaryActionURL = domainAddNew( selectedSite?.slug );
 	let contentType = 'no_plan';
 
 	const domainRegistrationProduct = useSelector( ( state ) =>

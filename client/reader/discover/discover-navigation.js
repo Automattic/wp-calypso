@@ -1,11 +1,10 @@
 import config from '@automattic/calypso-config';
 import page from '@automattic/calypso-router';
-import { Button, Gridicon } from '@automattic/components';
+import { Button, Gridicon, SegmentedControl } from '@automattic/components';
 import classNames from 'classnames';
 import { translate } from 'i18n-calypso';
 import { throttle } from 'lodash';
 import { useRef } from 'react';
-import SegmentedControl from 'calypso/components/segmented-control';
 import { addQueryArgs } from 'calypso/lib/url';
 import { recordAction, recordGaEvent } from 'calypso/reader/stats';
 import { WIDE_DISPLAY_CUTOFF } from 'calypso/reader/stream';

@@ -28,6 +28,7 @@ export type LicenseLightBoxProps = {
 	isCTAExternalLink?: boolean;
 	ctaHref?: string;
 	showPaymentPlan?: boolean;
+	fireCloseOnCTAClick?: boolean;
 };
 
 const LicenseLightbox: FunctionComponent< LicenseLightBoxProps > = ( {
@@ -44,14 +45,17 @@ const LicenseLightbox: FunctionComponent< LicenseLightBoxProps > = ( {
 	className,
 	quantity,
 	showPaymentPlan = true,
+	fireCloseOnCTAClick = true,
 } ) => {
 	const isLargeScreen = useBreakpoint( '>782px' );
 	const { title, product: productInfo } = useLicenseLightboxData( product );
 
 	const onCTAClick = useCallback( () => {
 		onActivate( product );
-		onClose();
-	}, [ product, onActivate, onClose ] );
+		if ( fireCloseOnCTAClick ) {
+			onClose();
+		}
+	}, [ product, onActivate, onClose, fireCloseOnCTAClick ] );
 
 	const { sidebarRef, mainRef, initMobileSidebar } = useMobileSidebar();
 

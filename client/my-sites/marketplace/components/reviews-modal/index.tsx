@@ -1,6 +1,7 @@
 import page from '@automattic/calypso-router';
 import { Dialog, Button } from '@automattic/components';
 import { getLocaleSlug, useTranslate } from 'i18n-calypso';
+import { useState } from 'react';
 import { useSelector } from 'react-redux';
 import Rating from 'calypso/components/rating';
 import { PluginPeriodVariations } from 'calypso/data/marketplace/types';
@@ -20,7 +21,7 @@ import {
 import { getProductsList, isMarketplaceProduct } from 'calypso/state/products-list/selectors';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import { AppState } from 'calypso/types';
-import { MarketplaceCreateReviewItem } from '../review-item';
+import { MarketplaceCreateReviewItem } from '../review-item/create-review-item';
 
 type Props = {
 	isVisible: boolean;
@@ -37,8 +38,9 @@ export const ReviewsModal = ( props: Props ) => {
 	const isMarketplacePlugin = useSelector(
 		( state ) => productType === 'plugin' && isMarketplaceProduct( state, slug )
 	);
+	const [ editCompletedTimes, setEditCompletedTimes ] = useState( 0 );
 
-	const { data: userReviews } = useMarketplaceReviewsQuery( {
+	const { data: userReviews, isFetching: isFetchingUserReviews } = useMarketplaceReviewsQuery( {
 		productType,
 		slug,
 		perPage: 1,
@@ -58,6 +60,11 @@ export const ReviewsModal = ( props: Props ) => {
 		hasActivePluginSubscription( state, variations )
 	);
 
+	// Hide the Thank You section if user removed their review
+	if ( ! userReviews?.length && ! isFetchingUserReviews && editCompletedTimes ) {
+		setEditCompletedTimes( 0 );
+	}
+
 	const { ratings_average: averageRating, ratings_count: numberOfReviews } = reviewsStats || {};
 	const normalizedRating = ( ( averageRating ?? 0 ) * 100 ) / 5; // Normalize to 100
 
@@ -71,7 +78,10 @@ export const ReviewsModal = ( props: Props ) => {
 		<Dialog
 			className="marketplace-reviews-modal"
 			isVisible={ isVisible }
-			onClose={ onClose }
+			onClose={ () => {
+				onClose();
+				setEditCompletedTimes( 0 );
+			} }
 			showCloseIcon
 		>
 			<div className="marketplace-reviews-modal__header">
@@ -125,10 +135,18 @@ export const ReviewsModal = ( props: Props ) => {
 					</div>
 				) }
 
-				<MarketplaceCreateReviewItem productType={ productType } slug={ slug } />
+				<MarketplaceCreateReviewItem
+					productType={ productType }
+					slug={ slug }
+					forceShowThankYou={ editCompletedTimes }
+				/>
 
 				<div className="marketplace-reviews-modal__reviews-list">
-					<MarketplaceReviewsList productType={ productType } slug={ slug } />
+					<MarketplaceReviewsList
+						productType={ productType }
+						slug={ slug }
+						onEditCompleted={ () => setEditCompletedTimes( editCompletedTimes + 1 ) }
+					/>
 				</div>
 			</div>
 		</Dialog>

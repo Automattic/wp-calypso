@@ -13,7 +13,6 @@ import QueryProductsList from 'calypso/components/data/query-products-list';
 import QuerySiteFeatures from 'calypso/components/data/query-site-features';
 import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
 import QueryUserPurchases from 'calypso/components/data/query-user-purchases';
-import EmptyContent from 'calypso/components/empty-content';
 import MainComponent from 'calypso/components/main';
 import NavigationHeader from 'calypso/components/navigation-header';
 import Notice from 'calypso/components/notice';
@@ -30,6 +29,7 @@ import PluginDetailsHeader from 'calypso/my-sites/plugins/plugin-details-header'
 import PluginDetailsNotices from 'calypso/my-sites/plugins/plugin-details-notices';
 import PluginDetailsSidebar from 'calypso/my-sites/plugins/plugin-details-sidebar';
 import PluginDetailsV2 from 'calypso/my-sites/plugins/plugin-management-v2/plugin-details-v2';
+import PluginNotFound from 'calypso/my-sites/plugins/plugin-not-found';
 import PluginSections from 'calypso/my-sites/plugins/plugin-sections';
 import PluginSectionsCustom from 'calypso/my-sites/plugins/plugin-sections/custom';
 import { RelatedPlugins } from 'calypso/my-sites/plugins/related-plugins';
@@ -284,7 +284,7 @@ function PluginDetails( props ) {
 	}
 
 	if ( existingPlugin === false ) {
-		return <PluginDoesNotExistView />;
+		return <PluginNotFound />;
 	}
 
 	const showPlaceholder = existingPlugin === 'unknown';
@@ -478,25 +478,6 @@ function PluginDetails( props ) {
 				</div>
 			) }
 			{ isMarketplaceProduct && ! showPlaceholder && <MarketplaceFooter /> }
-		</MainComponent>
-	);
-}
-
-function PluginDoesNotExistView() {
-	const translate = useTranslate();
-	const selectedSite = useSelector( getSelectedSite );
-	const actionUrl = '/plugins' + ( selectedSite ? '/' + selectedSite.slug : '' );
-	const action = translate( 'Browse all plugins' );
-
-	return (
-		<MainComponent wideLayout>
-			<EmptyContent
-				title={ translate( "Oops! We can't find this plugin!" ) }
-				line={ translate( "The plugin you are looking for doesn't exist." ) }
-				actionURL={ actionUrl }
-				action={ action }
-				illustration="/calypso/images/illustrations/illustration-404.svg"
-			/>
 		</MainComponent>
 	);
 }

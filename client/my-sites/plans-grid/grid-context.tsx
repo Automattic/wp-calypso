@@ -1,11 +1,8 @@
 import { createContext, useContext } from '@wordpress/element';
-import { GridContextProps } from './types';
-import type {
-	GridPlan,
-	PlansIntent,
-	UsePricingMetaForGridPlans,
-} from './hooks/npm-ready/data-store/use-grid-plans';
+import type { GridPlan, PlansIntent } from './hooks/npm-ready/data-store/use-grid-plans';
+import type { GridContextProps } from './types';
 import type { FeatureList } from '@automattic/calypso-products';
+import type { Plans } from '@automattic/data-stores';
 
 interface PlansGridContext {
 	intent?: PlansIntent;
@@ -13,7 +10,9 @@ interface PlansGridContext {
 	gridPlans: GridPlan[];
 	gridPlansIndex: { [ key: string ]: GridPlan };
 	allFeaturesList: FeatureList;
-	helpers?: Record< 'usePricingMetaForGridPlans', UsePricingMetaForGridPlans >;
+	helpers: {
+		useCheckPlanAvailabilityForPurchase: Plans.UseCheckPlanAvailabilityForPurchase;
+	};
 	coupon?: string;
 }
 
@@ -22,7 +21,7 @@ const PlansGridContext = createContext< PlansGridContext >( {} as PlansGridConte
 const PlansGridContextProvider = ( {
 	intent,
 	gridPlans,
-	usePricingMetaForGridPlans,
+	useCheckPlanAvailabilityForPurchase,
 	allFeaturesList,
 	selectedSiteId,
 	children,
@@ -44,7 +43,7 @@ const PlansGridContextProvider = ( {
 				gridPlans,
 				gridPlansIndex,
 				allFeaturesList,
-				helpers: { usePricingMetaForGridPlans },
+				helpers: { useCheckPlanAvailabilityForPurchase },
 				coupon,
 			} }
 		>
