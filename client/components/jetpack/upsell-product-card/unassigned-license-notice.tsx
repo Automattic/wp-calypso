@@ -72,7 +72,7 @@ const UnusedLicenseNotice = ( { featureType }: UnusedLicenseNoticeProps ) => {
 	const onDismissClick = useCallback( () => {
 		dispatch(
 			recordTracksEvent( 'calypso_jetpack_manage_upsell_unassigned_license_notice_dismiss', {
-				featureType: featureType,
+				feature_type: featureType,
 			} )
 		);
 		setShowUnassignedLicenseNotice( false );
@@ -81,7 +81,7 @@ const UnusedLicenseNotice = ( { featureType }: UnusedLicenseNoticeProps ) => {
 	const onActionClick = useCallback( () => {
 		dispatch(
 			recordTracksEvent( 'calypso_jetpack_manage_upsell_unassigned_license_notice_action_click', {
-				featureType: featureType,
+				feature_type: featureType,
 			} )
 		);
 	}, [ dispatch, featureType ] );
