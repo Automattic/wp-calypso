@@ -37,6 +37,7 @@ import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selecto
 class PluginUpload extends Component {
 	state = {
 		showEligibility: this.props.showEligibility,
+		showTrialAcknowledgeModal: false,
 	};
 
 	componentDidMount() {
@@ -67,7 +68,11 @@ class PluginUpload extends Component {
 	};
 
 	onProceedClick = () => {
-		this.setState( { showEligibility: false } );
+		const isFreeTrialEligible = this.props.isEligibleForHostingTrial;
+		this.setState( {
+			showEligibility: isFreeTrialEligible,
+			showTrialAcknowledgeModal: isFreeTrialEligible,
+		} );
 	};
 
 	renderUploadCard() {
@@ -95,10 +100,14 @@ class PluginUpload extends Component {
 		);
 	}
 
+	setOpenModal = ( isOpen ) => {
+		this.setState( { showTrialAcknowledgeModal: isOpen } );
+	};
+
 	render() {
 		const { translate, isJetpackMultisite, siteId, siteSlug, isEligibleForHostingTrial } =
 			this.props;
-		const { showEligibility } = this.state;
+		const { showEligibility, showTrialAcknowledgeModal } = this.state;
 
 		return (
 			<Main>
@@ -115,7 +124,9 @@ class PluginUpload extends Component {
 					/>
 				) }
 				{ ! isJetpackMultisite && ! showEligibility && this.renderUploadCard() }
-				{ isEligibleForHostingTrial && <TrialAcknowledgeModal /> }
+				{ isEligibleForHostingTrial && showTrialAcknowledgeModal && (
+					<TrialAcknowledgeModal setOpenModal={ this.setOpenModal } />
+				) }
 			</Main>
 		);
 	}
