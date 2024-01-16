@@ -51,7 +51,7 @@ const ConnectedDomainDetails = ( {
 				href={ domainMappingSetup( selectedSite.slug, domain.domain, setupStep ) }
 				disabled={ isLoadingPurchase }
 			>
-				{ translate( 'View mapping instructions' ) }
+				{ translate( 'View connection setup instructions' ) }
 			</Button>
 		);
 	};
