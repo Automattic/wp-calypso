@@ -85,22 +85,19 @@ describe( 'actions', () => {
 				.spyOn( wpcom.req, 'post' )
 				.mockImplementation( () => Promise.reject( { message: errorNoticeText } ) );
 			await requestAddCoupon( siteId, coupon, noticeText )( dispatch );
-			expect( wpcom.req.post.mock.calls ).toEqual( [
-				[
-					{
-						method: 'POST',
-						path: '/sites/1/memberships/coupons',
-						apiNamespace: 'wpcom/v2',
-					},
-					coupon,
-				],
-			] );
-			const dispatchedActionsWithUniqueIdsRemoved = dispatchedActions.map( ( action ) => {
-				if ( action.notice?.noticeId?.length > 0 ) {
-					action.notice.noticeId = 'UNIQUE-ID';
-				}
-				return action;
-			} );
+			expect( wpcom.req.post ).toHaveBeenCalledWith(
+				{
+					method: 'POST',
+					path: '/sites/1/memberships/coupons',
+					apiNamespace: 'wpcom/v2',
+				},
+				coupon
+			);
+
+			// dispatchedActions will include a randomly-generated noticeId.
+			// We need to include that random id in our expectation.
+			const noticeId = dispatchedActions[ 2 ].notice.noticeId;
+
 			const expectedActions = [
 				{
 					coupon,
@@ -119,13 +116,14 @@ describe( 'actions', () => {
 					notice: {
 						showDismiss: true,
 						duration: 10000,
-						noticeId: 'UNIQUE-ID',
+						noticeId,
 						status: 'is-error',
 						text: errorNoticeText,
 					},
 				},
 			];
-			expect( dispatchedActionsWithUniqueIdsRemoved ).toEqual( expectedActions );
+			// expect( dispatchedActionsWithUniqueIdsRemoved ).toEqual( expectedActions );
+			expect( dispatchedActions ).toEqual( expectedActions );
 		} );
 
 		test( 'should dispatch an http request to the add coupon endpoint and associated actions', async () => {
@@ -154,16 +152,14 @@ describe( 'actions', () => {
 				.spyOn( wpcom.req, 'post' )
 				.mockImplementation( () => Promise.resolve( serverResponseWithCouponContainingId ) );
 			await requestAddCoupon( siteId, coupon, noticeText )( dispatch );
-			expect( wpcom.req.post.mock.calls ).toEqual( [
-				[
-					{
-						method: 'POST',
-						path: '/sites/1/memberships/coupons',
-						apiNamespace: 'wpcom/v2',
-					},
-					coupon,
-				],
-			] );
+			expect( wpcom.req.post ).toHaveBeenCalledWith(
+				{
+					method: 'POST',
+					path: '/sites/1/memberships/coupons',
+					apiNamespace: 'wpcom/v2',
+				},
+				coupon
+			);
 			const dispatchedActionsWithUniqueIdsRemoved = dispatchedActions.map( ( action ) => {
 				if ( action.notice?.noticeId?.length > 0 ) {
 					action.notice.noticeId = 'UNIQUE-ID';
@@ -225,22 +221,17 @@ describe( 'actions', () => {
 				.spyOn( wpcom.req, 'post' )
 				.mockImplementation( () => Promise.reject( { message: errorNoticeText } ) );
 			await requestUpdateCoupon( siteId, couponContainingId, noticeText )( dispatch );
-			expect( wpcom.req.post.mock.calls ).toEqual( [
-				[
-					{
-						method: 'PUT',
-						path: '/sites/1/memberships/coupon/' + couponId,
-						apiNamespace: 'wpcom/v2',
-					},
-					couponContainingId,
-				],
-			] );
-			const dispatchedActionsWithUniqueIdsRemoved = dispatchedActions.map( ( action ) => {
-				if ( action.notice?.noticeId?.length > 0 ) {
-					action.notice.noticeId = 'UNIQUE-ID';
-				}
-				return action;
-			} );
+			expect( wpcom.req.post ).toHaveBeenCalledWith(
+				{
+					method: 'PUT',
+					path: '/sites/1/memberships/coupon/' + couponId,
+					apiNamespace: 'wpcom/v2',
+				},
+				couponContainingId
+			);
+			// dispatchedActions will include a randomly-generated noticeId.
+			// We need to include that random id in our expectation.
+			const noticeId = dispatchedActions[ 2 ].notice.noticeId;
 			const expectedActions = [
 				{
 					coupon: couponContainingId,
@@ -259,13 +250,13 @@ describe( 'actions', () => {
 					notice: {
 						showDismiss: true,
 						duration: 10000,
-						noticeId: 'UNIQUE-ID',
+						noticeId,
 						status: 'is-error',
 						text: errorNoticeText,
 					},
 				},
 			];
-			expect( dispatchedActionsWithUniqueIdsRemoved ).toEqual( expectedActions );
+			expect( dispatchedActions ).toEqual( expectedActions );
 		} );
 
 		test( 'should dispatch an http request to the update coupon endpoint and associated actions', async () => {
@@ -294,22 +285,17 @@ describe( 'actions', () => {
 				.spyOn( wpcom.req, 'post' )
 				.mockImplementation( () => Promise.resolve( serverResponseWithCouponContainingId ) );
 			await requestUpdateCoupon( siteId, couponContainingId, noticeText )( dispatch );
-			expect( wpcom.req.post.mock.calls ).toEqual( [
-				[
-					{
-						method: 'PUT',
-						path: '/sites/1/memberships/coupon/' + couponId,
-						apiNamespace: 'wpcom/v2',
-					},
-					couponContainingId,
-				],
-			] );
-			const dispatchedActionsWithUniqueIdsRemoved = dispatchedActions.map( ( action ) => {
-				if ( action.notice?.noticeId?.length > 0 ) {
-					action.notice.noticeId = 'UNIQUE-ID';
-				}
-				return action;
-			} );
+			expect( wpcom.req.post ).toHaveBeenCalledWith(
+				{
+					method: 'PUT',
+					path: '/sites/1/memberships/coupon/' + couponId,
+					apiNamespace: 'wpcom/v2',
+				},
+				couponContainingId
+			);
+			// dispatchedActions will include a randomly-generated noticeId.
+			// We need to include that random id in our expectation.
+			const noticeId = dispatchedActions[ 2 ].notice.noticeId;
 			const expectedActions = [
 				{
 					coupon: couponContainingId,
@@ -326,13 +312,13 @@ describe( 'actions', () => {
 					notice: {
 						showDismiss: true,
 						duration: 5000,
-						noticeId: 'UNIQUE-ID',
+						noticeId,
 						status: 'is-success',
 						text: noticeText,
 					},
 				},
 			];
-			expect( dispatchedActionsWithUniqueIdsRemoved ).toEqual( expectedActions );
+			expect( dispatchedActions ).toEqual( expectedActions );
 		} );
 	} );
 
@@ -365,21 +351,14 @@ describe( 'actions', () => {
 				.spyOn( wpcom.req, 'post' )
 				.mockImplementation( () => Promise.reject( { message: errorNoticeText } ) );
 			await requestDeleteCoupon( siteId, couponContainingId, noticeText )( dispatch );
-			expect( wpcom.req.post.mock.calls ).toEqual( [
-				[
-					{
-						method: 'DELETE',
-						path: '/sites/1/memberships/coupon/' + couponId,
-						apiNamespace: 'wpcom/v2',
-					},
-				],
-			] );
-			const dispatchedActionsWithUniqueIdsRemoved = dispatchedActions.map( ( action ) => {
-				if ( action.notice?.noticeId?.length > 0 ) {
-					action.notice.noticeId = 'UNIQUE-ID';
-				}
-				return action;
+			expect( wpcom.req.post ).toHaveBeenCalledWith( {
+				method: 'DELETE',
+				path: '/sites/1/memberships/coupon/' + couponId,
+				apiNamespace: 'wpcom/v2',
 			} );
+			// dispatchedActions will include a randomly-generated noticeId.
+			// We need to include that random id in our expectation.
+			const noticeId = dispatchedActions[ 2 ].notice.noticeId;
 			const expectedActions = [
 				{
 					coupon: couponContainingId,
@@ -399,13 +378,13 @@ describe( 'actions', () => {
 					notice: {
 						showDismiss: true,
 						duration: 10000,
-						noticeId: 'UNIQUE-ID',
+						noticeId,
 						status: 'is-error',
 						text: errorNoticeText,
 					},
 				},
 			];
-			expect( dispatchedActionsWithUniqueIdsRemoved ).toEqual( expectedActions );
+			expect( dispatchedActions ).toEqual( expectedActions );
 		} );
 
 		test( 'should dispatch an http request to the delete coupon endpoint and associated actions', async () => {
@@ -433,21 +412,14 @@ describe( 'actions', () => {
 				.spyOn( wpcom.req, 'post' )
 				.mockImplementation( () => Promise.resolve( { success: true } ) );
 			await requestDeleteCoupon( siteId, couponContainingId, noticeText )( dispatch );
-			expect( wpcom.req.post.mock.calls ).toEqual( [
-				[
-					{
-						method: 'DELETE',
-						path: '/sites/1/memberships/coupon/' + couponId,
-						apiNamespace: 'wpcom/v2',
-					},
-				],
-			] );
-			const dispatchedActionsWithUniqueIdsRemoved = dispatchedActions.map( ( action ) => {
-				if ( action.notice?.noticeId?.length > 0 ) {
-					action.notice.noticeId = 'UNIQUE-ID';
-				}
-				return action;
+			expect( wpcom.req.post ).toHaveBeenCalledWith( {
+				method: 'DELETE',
+				path: '/sites/1/memberships/coupon/' + couponId,
+				apiNamespace: 'wpcom/v2',
 			} );
+			// dispatchedActions will include a randomly-generated noticeId.
+			// We need to include that random id in our expectation.
+			const noticeId = dispatchedActions[ 1 ].notice.noticeId;
 			const expectedActions = [
 				{
 					coupon: couponContainingId,
@@ -459,13 +431,13 @@ describe( 'actions', () => {
 					notice: {
 						showDismiss: true,
 						duration: 5000,
-						noticeId: 'UNIQUE-ID',
+						noticeId,
 						status: 'is-success',
 						text: noticeText,
 					},
 				},
 			];
-			expect( dispatchedActionsWithUniqueIdsRemoved ).toEqual( expectedActions );
+			expect( dispatchedActions ).toEqual( expectedActions );
 		} );
 	} );
 } );
