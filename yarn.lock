@@ -581,7 +581,6 @@ __metadata:
     utility-types: "npm:^3.10.0"
     uuid: "npm:^8.3.2"
     webpack: "npm:^5.89.0"
-    wpcom-proxy-request: "workspace:^"
   peerDependencies:
     "@wordpress/data": ^9.18.0
     react: ^18.2.0
