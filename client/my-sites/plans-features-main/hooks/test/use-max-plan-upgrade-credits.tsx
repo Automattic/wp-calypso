@@ -12,7 +12,7 @@ import { getPlanDiscountedRawPrice } from 'calypso/state/sites/plans/selectors';
 import { getSitePlanRawPrice } from 'calypso/state/sites/plans/selectors/get-site-plan-raw-price';
 import isPlanAvailableForPurchase from 'calypso/state/sites/plans/selectors/is-plan-available-for-purchase';
 import { renderHookWithProvider } from 'calypso/test-helpers/testing-library';
-import { useCalculateMaxPlanUpgradeCredit } from '../use-calculate-max-plan-upgrade-credit';
+import { useMaxPlanUpgradeCredits } from '../use-max-plan-upgrade-credits';
 import type { PlanSlug } from '@automattic/calypso-products';
 
 jest.mock( 'calypso/state/sites/plans/selectors/is-plan-available-for-purchase', () => ( {
@@ -81,7 +81,7 @@ describe( 'useCalculateMaxPlanUpgradeCredit hook', () => {
 
 	test( 'Return the correct amount of credits given a plan list', () => {
 		const { result } = renderHookWithProvider( () =>
-			useCalculateMaxPlanUpgradeCredit( { siteId, plans } )
+			useMaxPlanUpgradeCredits( { siteId, plans } )
 		);
 		expect( result.current ).toEqual( 1000 );
 	} );
@@ -92,7 +92,7 @@ describe( 'useCalculateMaxPlanUpgradeCredit hook', () => {
 		);
 
 		const { result } = renderHookWithProvider( () =>
-			useCalculateMaxPlanUpgradeCredit( { siteId, plans } )
+			useMaxPlanUpgradeCredits( { siteId, plans } )
 		);
 		expect( result.current ).toEqual( 800 );
 	} );

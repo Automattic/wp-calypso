@@ -78,7 +78,7 @@ const LicenseLightboxPurchaseViaJetpackcom: FunctionComponent< Props > = ( {
 					  } )
 					: translate( 'Purchase via Jetpack.com' ) }
 			</Button>
-			<div className="license-lightbox__secondary-checkout-notice">
+			<div className="review-licenses__notice">
 				{ translate(
 					"You will be able to add a new credit card during the checkout process. Use this method if you're billing a product to your client's credit card. {{a}}Learn more{{/a}}",
 					{

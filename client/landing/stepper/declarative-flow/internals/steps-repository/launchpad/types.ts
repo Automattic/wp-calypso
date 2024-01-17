@@ -1,14 +1,7 @@
-export interface Task {
-	id: string;
-	completed: boolean;
-	disabled: boolean;
-	title?: string;
-	subtitle?: string | React.ReactNode | null;
-	badge_text?: string;
-	actionDispatch?: () => void;
-	isLaunchTask?: boolean;
-	calypso_path?: string;
-}
+//TODO: Temporary export until we can replace all depencecies with ./types.ts Task;
+export type { Task } from '@automattic/launchpad';
+import { SiteDetails } from '@automattic/data-stores';
+import { Task } from '@automattic/launchpad';
 
 export type LaunchpadChecklist = Task[];
 
@@ -22,3 +15,14 @@ export interface TranslatedLaunchpadStrings {
 	launchTitle?: string;
 	subtitle: string;
 }
+
+export type TaskId = 'setup_free';
+
+export interface TaskContext {
+	tasks: Task[];
+	site: SiteDetails | null;
+	siteInfoQueryArgs?: { siteId?: number; siteSlug?: string | null };
+}
+
+export type TaskAction = ( task: Task, flow: string, context: TaskContext ) => Task;
+export type TaskActionTable = Record< TaskId, TaskAction >;

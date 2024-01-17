@@ -1,4 +1,4 @@
-import { PRODUCT_JETPACK_SEARCH } from '@automattic/calypso-products';
+import { FEATURE_TYPE_JETPACK_SEARCH, PRODUCT_JETPACK_SEARCH } from '@automattic/calypso-products';
 import { addQueryArgs } from '@wordpress/url';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback } from 'react';
@@ -59,6 +59,7 @@ export default function JetpackSearchUpsell() {
 					{ siteId && <QueryIntroOffers siteId={ siteId } /> }
 					{ siteId && <QuerySiteProducts siteId={ siteId } /> }
 					<UpsellProductCard
+						featureType={ FEATURE_TYPE_JETPACK_SEARCH }
 						nonManageProductSlug={ PRODUCT_JETPACK_SEARCH }
 						siteId={ siteId }
 						onCtaButtonClick={ onClick }

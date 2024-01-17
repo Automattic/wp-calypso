@@ -49,7 +49,7 @@ export default function useMaxDiscountsForPlanTerms(
 
 	const plansPricing = Plans.usePricingMetaForGridPlans( {
 		planSlugs: allRelatedPlanSlugs,
-		withoutProRatedCredits: true,
+		withoutPlanUpgradeCredits: true,
 		selectedSiteId,
 		coupon: undefined,
 		useCheckPlanAvailabilityForPurchase,

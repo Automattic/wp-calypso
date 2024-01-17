@@ -97,7 +97,7 @@ describe( 'usePricingMetaForGridPlans', () => {
 
 		const pricingMeta = usePricingMetaForGridPlans( {
 			planSlugs: [ PLAN_PREMIUM ],
-			withoutProRatedCredits: false,
+			withoutPlanUpgradeCredits: false,
 			storageAddOns: null,
 			selectedSiteId: 100,
 			coupon: undefined,
@@ -138,7 +138,7 @@ describe( 'usePricingMetaForGridPlans', () => {
 
 		const pricingMeta = usePricingMetaForGridPlans( {
 			planSlugs: [ PLAN_PREMIUM ],
-			withoutProRatedCredits: false,
+			withoutPlanUpgradeCredits: false,
 			storageAddOns: null,
 			selectedSiteId: 100,
 			coupon: undefined,
@@ -165,7 +165,7 @@ describe( 'usePricingMetaForGridPlans', () => {
 		expect( pricingMeta ).toEqual( expectedPricingMeta );
 	} );
 
-	it( 'should return the original price and discounted price (prorated) when withoutProRatedCredits is false', () => {
+	it( 'should return the original price and discounted price (prorated) when withoutPlanUpgradeCredits is false', () => {
 		Plans.useCurrentPlan.mockImplementation( () => ( {
 			productSlug: PLAN_PERSONAL,
 			planSlug: PLAN_PERSONAL,
@@ -180,7 +180,7 @@ describe( 'usePricingMetaForGridPlans', () => {
 
 		const pricingMeta = usePricingMetaForGridPlans( {
 			planSlugs: [ PLAN_PREMIUM ],
-			withoutProRatedCredits: false,
+			withoutPlanUpgradeCredits: false,
 			storageAddOns: null,
 			selectedSiteId: 100,
 			coupon: undefined,
@@ -207,7 +207,7 @@ describe( 'usePricingMetaForGridPlans', () => {
 		expect( pricingMeta ).toEqual( expectedPricingMeta );
 	} );
 
-	it( 'should return the original price and discounted price (not prorated) when withoutProRatedCredits is true', () => {
+	it( 'should return the original price and discounted price (not prorated) when withoutPlanUpgradeCredits is true', () => {
 		Plans.useCurrentPlan.mockImplementation( () => ( {
 			productSlug: PLAN_PERSONAL,
 			planSlug: PLAN_PERSONAL,
@@ -222,7 +222,7 @@ describe( 'usePricingMetaForGridPlans', () => {
 
 		const pricingMeta = usePricingMetaForGridPlans( {
 			planSlugs: [ PLAN_PREMIUM ],
-			withoutProRatedCredits: true,
+			withoutPlanUpgradeCredits: true,
 			storageAddOns: null,
 			selectedSiteId: 100,
 			coupon: undefined,

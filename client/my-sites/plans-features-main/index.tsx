@@ -80,6 +80,7 @@ import useObservableForOdie from './hooks/use-observable-for-odie';
 import usePlanBillingPeriod from './hooks/use-plan-billing-period';
 import usePlanFromUpsells from './hooks/use-plan-from-upsells';
 import usePlanIntentFromSiteMeta from './hooks/use-plan-intent-from-site-meta';
+import { usePlanUpgradeCreditsApplicable } from './hooks/use-plan-upgrade-credits-applicable';
 import useGetFreeSubdomainSuggestion from './hooks/use-suggested-free-domain-from-paid-domain';
 import type { MinimalRequestCartProduct } from '@automattic/shopping-cart';
 import type {
@@ -621,6 +622,8 @@ const PlansFeaturesMain = ( {
 		onPlanIntervalChange,
 	] );
 
+	const isEligibleForTrial = useSelector( isUserEligibleForFreeHostingTrial );
+
 	/**
 	 * The effects on /plans page need to be checked if this variable is initialized
 	 */
@@ -633,6 +636,12 @@ const PlansFeaturesMain = ( {
 					status: 'enabled',
 				},
 			};
+
+			if ( ! isEligibleForTrial && intentFromProps === 'plans-new-hosted-site' ) {
+				actionOverrides.trialAlreadyUsed = {
+					postButtonText: translate( "You've already used your free trial! Thanks!" ),
+				};
+			}
 		}
 
 		if ( sitePlanSlug && intentFromProps !== 'plans-p2' ) {
@@ -781,6 +790,10 @@ const PlansFeaturesMain = ( {
 	const comparisonGridStickyRowOffset = enablePlanTypeSelectorStickyBehavior
 		? stickyPlanTypeSelectorHeight + masterbarHeight
 		: masterbarHeight;
+	const planUpgradeCreditsApplicable = usePlanUpgradeCreditsApplicable(
+		siteId,
+		gridPlansForFeaturesGrid.map( ( gridPlan ) => gridPlan.planSlug )
+	);
 
 	return (
 		<>
@@ -898,7 +911,9 @@ const PlansFeaturesMain = ( {
 									allFeaturesList={ FEATURES_LIST }
 									onStorageAddOnClick={ handleStorageAddOnClick }
 									showRefundPeriod={ isAnyHostingFlow( flowName ) }
+									recordTracksEvent={ recordTracksEvent }
 									coupon={ coupon }
+									planUpgradeCreditsApplicable={ planUpgradeCreditsApplicable }
 								/>
 								{ showEscapeHatch && hidePlansFeatureComparison && (
 									<div className="plans-features-main__escape-hatch">
@@ -962,6 +977,8 @@ const PlansFeaturesMain = ( {
 													! hidePlanSelector ? planTypeSelectorProps : undefined
 												}
 												coupon={ coupon }
+												recordTracksEvent={ recordTracksEvent }
+												planUpgradeCreditsApplicable={ planUpgradeCreditsApplicable }
 											/>
 											<ComparisonGridToggle
 												onClick={ toggleShowPlansComparisonGrid }

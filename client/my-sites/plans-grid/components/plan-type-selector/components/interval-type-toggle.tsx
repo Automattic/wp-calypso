@@ -37,7 +37,7 @@ export const IntervalTypeToggle: React.FunctionComponent< IntervalTypeProps > = 
 	);
 	const pricingMeta = Plans.usePricingMetaForGridPlans( {
 		planSlugs: currentSitePlanSlug ? [ currentSitePlanSlug ] : [],
-		withoutProRatedCredits: true,
+		withoutPlanUpgradeCredits: true,
 		coupon,
 		selectedSiteId,
 		useCheckPlanAvailabilityForPurchase,
