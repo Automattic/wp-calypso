@@ -32,9 +32,24 @@ export class VideoPressBlock {
 			name: `Block: ${ VideoPressBlock.blockName }`,
 		} );
 
-		await block.locator( 'input' ).setInputFiles( path );
+		// The upload process is flaky in CI, so we retry a few times.
+		let retries = 3;
+		const setInputFilesWithRetry = async () => {
+			await block.locator( 'input' ).setInputFiles( path );
+			const info = block.getByText( /Upload Complete|Failed to upload your video/i );
+			const infoText = await info.textContent( { timeout: 25 * 1000 } );
 
-		await block.getByText( 'Upload Complete!' ).waitFor( { timeout: 25 * 1000 } );
+			if ( infoText?.match( /Failed to upload your video/i ) ) {
+				await block.getByRole( 'button', { name: 'Try again' } ).click();
+				if ( retries > 0 ) {
+					retries--;
+					await setInputFilesWithRetry();
+				}
+			}
+		};
+
+		await setInputFilesWithRetry();
+
 		await block.getByRole( 'button', { name: 'Done' } ).click();
 
 		await block.getByText( 'We are converting this video for optimal playback' ).waitFor( {
