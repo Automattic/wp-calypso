@@ -4,17 +4,20 @@
 import { PRODUCT_JETPACK_SCAN } from '@automattic/calypso-products';
 import { FEATURE_TYPE_JETPACK_SCAN } from '@automattic/calypso-products/src/constants/features';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { render, screen, fireEvent } from '@testing-library/react';
+import { render, screen, fireEvent, within } from '@testing-library/react';
 import { Provider } from 'react-redux';
 import configureStore from 'redux-mock-store';
 import UpsellProductCard from 'calypso/components/jetpack/upsell-product-card';
+import SingleSiteUpsellLightbox from 'calypso/jetpack-cloud/sections/partner-portal/single-site-upsell-lightbox';
 
 jest.mock( 'calypso/state/ui/selectors/get-selected-site-id', () => jest.fn() );
 
 jest.mock( 'calypso/my-sites/plans/jetpack-plans/use-item-price', () =>
 	jest.fn().mockReturnValue( {
 		originalPrice: 10,
+		originalPriceTotal: 10,
 		discountedPrice: 5,
+		discountPriceTotal: 5,
 		discountedPriceDuration: 1,
 		priceTierList: [ 'free', 'personal', 'premium', 'business' ],
 		isFetching: false,
@@ -125,5 +128,87 @@ describe( 'SingleSiteUpsellLightbox', () => {
 		fireEvent.click( screen.getByText( 'Add Jetpack Scan' ) );
 
 		expect( mockOnClick ).toHaveBeenCalledTimes( 1 );
+	} );
+
+	test( 'modal shows the children and a close button', () => {
+		const createFakeApiProduct = {
+			name: 'Jetpack Scan Daily',
+			slug: 'jetpack-scan',
+			product_id: 2106,
+			currency: 'USD',
+			amount: 0,
+			price_interval: 'month',
+			family_slug: 'jetpack-scan',
+		};
+
+		const secondState = {
+			partnerPortal: {
+				partner: {
+					current: {
+						keys: { id: 1 },
+					},
+					activePartnerKey: 1,
+				},
+				licenses: {
+					paginated: null,
+				},
+			},
+			sites: {
+				products: {
+					2916284: {
+						data: {
+							jetpack_scan: { available: true },
+						},
+					},
+				},
+			},
+			currentUser: {
+				user: {
+					has_jetpack_partner_access: true,
+				},
+			},
+			productsList: {
+				items: {
+					'jetpack-scan': createFakeApiProduct,
+				},
+			},
+		};
+
+		const queryClient = new QueryClient();
+		const mockStore = configureStore();
+		const store = mockStore( secondState );
+
+		const mockOnClose = jest.fn();
+
+		// Render component
+		render(
+			<Provider store={ store }>
+				<QueryClientProvider client={ queryClient }>
+					<SingleSiteUpsellLightbox
+						manageProduct={ createFakeApiProduct }
+						onClose={ mockOnClose }
+						nonManageProductSlug="jetpack_scan"
+						nonManageProductPrice={ null }
+						partnerCanIssueLicense={ true }
+						siteId={ 2916284 }
+					/>
+				</QueryClientProvider>
+			</Provider>
+		);
+
+		const lightboxElement = document.querySelectorAll( '.jetpack-lightbox__content-wrapper' );
+		const issueLicenseButton = within( lightboxElement[ 0 ] ).getByText( 'Issue license' );
+
+		expect( screen.getByText( 'Purchase via Jetpack.com' ) ).toHaveAttribute(
+			'href',
+			'https://wordpress.com/checkout/jetpack/jetpack_scan?redirect_to=https%3A%2F%2Fexample.com%2F'
+		);
+
+		expect( issueLicenseButton ).toBeTruthy();
+		expect( issueLicenseButton ).toHaveClass( 'button license-lightbox__cta-button is-primary' );
+
+		const closeIcon = screen.getByLabelText( 'Close' );
+		fireEvent.click( closeIcon );
+		expect( mockOnClose ).toHaveBeenCalledTimes( 1 );
 	} );
 } );
