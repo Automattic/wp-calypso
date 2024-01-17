@@ -161,62 +161,64 @@ export const MarketplaceReviewItem = ( props: MarketplaceReviewItemProps ) => {
 					className="marketplace-review-item__content"
 				></div>
 			) }
-			<div className="marketplace-review-item__review-actions">
-				{ isEditing && review.author === currentUserId && (
-					<>
-						<div>
-							{ isEnabled( 'marketplace-reviews-notification' ) && (
-								<CheckboxControl
-									className="marketplace-review-item__checkbox"
-									label={ translate( 'Notify me when my review is approved and published.' ) }
-									checked={ false }
-									onChange={ () => alert( 'Not implemented yet' ) }
-								/>
-							) }
-						</div>
+			{ review.author === currentUserId && (
+				<div className="marketplace-review-item__review-actions">
+					{ isEditing && (
+						<>
+							<div>
+								{ isEnabled( 'marketplace-reviews-notification' ) && (
+									<CheckboxControl
+										className="marketplace-review-item__checkbox"
+										label={ translate( 'Notify me when my review is approved and published.' ) }
+										checked={ false }
+										onChange={ () => alert( 'Not implemented yet' ) }
+									/>
+								) }
+							</div>
+							<div className="marketplace-review-item__review-actions-editable">
+								<Button className="is-link" onClick={ clearEditing }>
+									{ translate( 'Cancel' ) }
+								</Button>
+								<Button
+									className="marketplace-review-item__review-submit"
+									primary
+									onClick={ () => updateReview( review.id ) }
+								>
+									{ translate( 'Save my review' ) }
+								</Button>
+							</div>
+						</>
+					) }
+					{ ! isEditing && (
 						<div className="marketplace-review-item__review-actions-editable">
-							<Button className="is-link" onClick={ clearEditing }>
-								{ translate( 'Cancel' ) }
-							</Button>
-							<Button
-								className="marketplace-review-item__review-submit"
-								primary
-								onClick={ () => updateReview( review.id ) }
+							<button
+								className="marketplace-review-item__review-actions-editable-button"
+								onClick={ () => setEditing( review ) }
 							>
-								{ translate( 'Save my review' ) }
-							</Button>
+								<Gridicon icon="pencil" size={ 18 } />
+								{ translate( 'Edit my review' ) }
+							</button>
+							<button
+								className="marketplace-review-item__review-actions-editable-button"
+								onClick={ () => setIsConfirmModalVisible( true ) }
+							>
+								<Gridicon icon="trash" size={ 18 } />
+								{ translate( 'Delete my review' ) }
+							</button>
+							<div className="marketplace-review-item__review-actions-editable-confirm-modal">
+								<ConfirmModal
+									isVisible={ isConfirmModalVisible }
+									confirmButtonLabel={ translate( 'Yes' ) }
+									text={ translate( 'Do you really want to delete your review?' ) }
+									title={ translate( 'Delete my review' ) }
+									onCancel={ () => setIsConfirmModalVisible( false ) }
+									onConfirm={ () => deleteReview( review.id ) }
+								/>
+							</div>
 						</div>
-					</>
-				) }
-				{ ! isEditing && review.author === currentUserId && (
-					<div className="marketplace-review-item__review-actions-editable">
-						<button
-							className="marketplace-review-item__review-actions-editable-button"
-							onClick={ () => setEditing( review ) }
-						>
-							<Gridicon icon="pencil" size={ 18 } />
-							{ translate( 'Edit my review' ) }
-						</button>
-						<button
-							className="marketplace-review-item__review-actions-editable-button"
-							onClick={ () => setIsConfirmModalVisible( true ) }
-						>
-							<Gridicon icon="trash" size={ 18 } />
-							{ translate( 'Delete my review' ) }
-						</button>
-						<div className="marketplace-review-item__review-actions-editable-confirm-modal">
-							<ConfirmModal
-								isVisible={ isConfirmModalVisible }
-								confirmButtonLabel={ translate( 'Yes' ) }
-								text={ translate( 'Do you really want to delete your review?' ) }
-								title={ translate( 'Delete my review' ) }
-								onCancel={ () => setIsConfirmModalVisible( false ) }
-								onConfirm={ () => deleteReview( review.id ) }
-							/>
-						</div>
-					</div>
-				) }
-			</div>
+					) }
+				</div>
+			) }
 		</div>
 	);
 };
