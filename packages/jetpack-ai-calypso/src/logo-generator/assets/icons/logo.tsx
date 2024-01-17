@@ -1,3 +1,8 @@
+/**
+ * Internal dependencies
+ */
+import './icons.scss';
+
 export default () => {
 	return (
 		<svg
