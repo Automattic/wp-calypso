@@ -72,11 +72,6 @@ export default function useAIAssembler(): [ Function, Function, string, boolean 
 						currentSearchParams.set( 'screen', 'main' );
 						currentSearchParams.delete( 'screen_parameter' );
 
-						if ( isEnabled( 'pattern-assembler/v2' ) ) {
-							// This sometimes gets lost in all the redirects.
-							currentSearchParams.set( 'flags', 'pattern-assembler/v2' );
-						}
-
 						return currentSearchParams;
 					},
 					{ replace: true }
