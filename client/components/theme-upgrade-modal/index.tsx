@@ -130,7 +130,7 @@ export const ThemeUpgradeModal = ( {
 			text: (
 				<p>
 					{ translate(
-						'Get access to %(plan)s themes, and a ton of other features, with a subscription to the %(plan)s plan. It’s {{strong}}%(planPrice)s{{/strong}} a year, risk-free with a 14-day money-back guarantee.',
+						'Get access to this theme, and a ton of other features, with a subscription to the %(plan)s plan. It’s {{strong}}%(planPrice)s{{/strong}} a year, risk-free with a 14-day money-back guarantee.',
 						{
 							components: {
 								strong: <strong />,
@@ -174,7 +174,7 @@ export const ThemeUpgradeModal = ( {
 			text: (
 				<p>
 					{ translate(
-						'Get access to our %(premiumPlanName)s themes, and a ton of other features, with a subscription to the %(premiumPlanName)s plan. It’s {{strong}}%(planPrice)s{{/strong}} a year, risk-free with a 14-day money-back guarantee.',
+						'Get access to this theme, and a ton of other features, with a subscription to the %(premiumPlanName)s plan. It’s {{strong}}%(planPrice)s{{/strong}} a year, risk-free with a 14-day money-back guarantee.',
 						{
 							components: {
 								strong: <strong />,
