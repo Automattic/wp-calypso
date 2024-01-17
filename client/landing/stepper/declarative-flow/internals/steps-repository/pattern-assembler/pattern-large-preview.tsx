@@ -5,9 +5,10 @@ import { Popover } from '@wordpress/components';
 import classnames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import React, { useRef, useEffect, useState, useMemo, CSSProperties, useCallback } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import { useDebouncedCallback } from 'use-debounce';
 import { PATTERN_ASSEMBLER_EVENTS } from './events';
-import { injectTitlesToPageListBlock } from './html-transformers';
+import { injectTitlesToPageListBlock, injectImages } from './html-transformers';
 import PatternActionBar from './pattern-action-bar';
 import PatternTooltipDeadClick from './pattern-tooltip-dead-click';
 import { encodePatternId } from './utils';
@@ -50,6 +51,7 @@ const PatternLargePreview = ( {
 	recordTracksEvent,
 	isNewSite,
 }: Props ) => {
+	const [ searchParams ] = useSearchParams();
 	const translate = useTranslate();
 	const hasSelectedPattern = Boolean( header || sections.length || footer );
 	const frameRef = useRef< HTMLDivElement | null >( null );
@@ -103,9 +105,16 @@ const PatternLargePreview = ( {
 		( patternHtml: string ) => {
 			const pageTitles = pages?.map( ( page ) => page.title );
 			if ( pageTitles ) {
-				return injectTitlesToPageListBlock( patternHtml, pageTitles, {
+				patternHtml = injectTitlesToPageListBlock( patternHtml, pageTitles, {
 					replaceCurrentPages: isNewSite,
 				} );
+			}
+
+			if ( searchParams.has( 'images' ) ) {
+				const images = searchParams.get( 'images' )?.split( ',' ) || [];
+				if ( images.length ) {
+					patternHtml = injectImages( patternHtml, images );
+				}
 			}
 			return patternHtml;
 		},

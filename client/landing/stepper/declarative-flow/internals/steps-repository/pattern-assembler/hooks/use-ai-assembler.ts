@@ -60,6 +60,10 @@ export default function useAIAssembler(): [ Function, Function, string, boolean 
 							currentSearchParams.set( 'custom_pages', JSON.stringify( pageTitles ) );
 						}
 
+						if ( response.images ) {
+							currentSearchParams.set( 'images', response.images.join( ',' ) );
+						}
+
 						if ( response.style ) {
 							currentSearchParams.set( 'color_variation_title', response.style );
 						}
