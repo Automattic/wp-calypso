@@ -1,6 +1,6 @@
 import { ProgressBar } from '@automattic/components';
 import { MigrationStatus, MigrationStatusError, type SiteDetails } from '@automattic/data-stores';
-import { Hooray, NextButton, Progress, SubTitle, Title } from '@automattic/onboarding';
+import { Hooray, Progress, SubTitle, Title } from '@automattic/onboarding';
 import { createElement, createInterpolateElement } from '@wordpress/element';
 import { sprintf } from '@wordpress/i18n';
 import { localize } from 'i18n-calypso';
@@ -24,6 +24,7 @@ import NotAuthorized from '../../components/not-authorized';
 import { isTargetSitePlanCompatible } from '../../util';
 import { WPImportOption } from '../types';
 import { clearMigrateSource, retrieveMigrateSource } from '../utils';
+import MigrationError from './migration-error';
 import type { UrlData } from 'calypso/blocks/import/types';
 import type { StepNavigator } from 'calypso/blocks/importer/types';
 
@@ -260,22 +261,15 @@ export class ImportEverything extends SectionMigrate {
 	}
 
 	renderMigrationError() {
-		const { translate } = this.props;
-
 		return (
 			<div className="import-layout__center">
 				<div>
-					<div className="import__heading import__heading-center">
-						<Title>{ translate( 'Import failed' ) }</Title>
-						<SubTitle>
-							{ this.getErrorTitle() }
-							<br />
-							{ translate( 'Please try again soon or contact support for help.' ) }
-						</SubTitle>
-						<div className="import__buttons-group">
-							<NextButton onClick={ this.resetMigration }>{ translate( 'Try again' ) }</NextButton>
-						</div>
-					</div>
+					{ this.state.migrationErrorStatus && (
+						<MigrationError
+							status={ this.state.migrationErrorStatus }
+							resetMigration={ this.resetMigration }
+						/>
+					) }
 				</div>
 			</div>
 		);
@@ -449,64 +443,6 @@ export class ImportEverything extends SectionMigrate {
 		}
 
 		return sprintf( translate( 'Restoring up %(percentage)d%%…' ), format );
-	}
-
-	getErrorTitle(): string {
-		const { translate } = this.props;
-
-		if ( this.state.migrationStatus !== MigrationStatus.ERROR ) {
-			return '';
-		}
-
-		switch ( this.state.migrationErrorStatus as unknown as MigrationStatusError ) {
-			// Start of migration #1
-			case MigrationStatusError.ACTIVATE_REWIND:
-			case MigrationStatusError.BACKUP_QUEUEING:
-				return translate( 'Impossible to start the import.' );
-
-			// Start of backup
-			// eslint-disable-next-line inclusive-language/use-inclusive-words
-			case MigrationStatusError.MISSING_SOURCE_MASTER_USER:
-				return translate( 'Impossible to start the backup.' );
-
-			// During backup
-			case MigrationStatusError.NO_BACKUP_STATUS:
-			case MigrationStatusError.BACKUP_SITE_NOT_ACCESSIBLE:
-			case MigrationStatusError.BACKUP_UNKNOWN:
-				return translate( 'There was an error during the backup.' );
-
-			// End of backup #1
-			case MigrationStatusError.WOA_GET_TRANSFER_RECORD:
-			case MigrationStatusError.MISSING_WOA_CREDENTIALS:
-				return translate( 'There was an error during the backup.' );
-
-			// Start of restore
-			case MigrationStatusError.RESTORE_QUEUE:
-			case MigrationStatusError.RESTORE_FAILED:
-				return translate( 'There was an error to start the restore.' );
-
-			// During restore
-			case MigrationStatusError.RESTORE_STATUS:
-				return translate( 'There was an error during the restore.' );
-
-			// End of restore
-			case MigrationStatusError.FIX_EXTERNAL_USER_ID:
-			case MigrationStatusError.GET_SOURCE_EXTERNAL_USER_ID:
-			case MigrationStatusError.GET_USER_TOKEN:
-			case MigrationStatusError.UPDATE_TARGET_USER_TOKEN:
-				return translate( 'There was an error at the end of the restore.' );
-
-			// Start of migration #2
-			// End of backup #2
-			case MigrationStatusError.WOA_TRANSFER:
-				return translate( 'Impossible to perform the import.' );
-
-			// Miscellanous
-			case MigrationStatusError.GENERAL:
-			case MigrationStatusError.UNKNOWN:
-			default:
-				return translate( 'There was an error with your import.' );
-		}
 	}
 }
 
