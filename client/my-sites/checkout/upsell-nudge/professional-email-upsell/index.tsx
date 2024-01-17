@@ -111,92 +111,12 @@ const ProfessionalEmailUpsell = ( {
 		</div>
 	);
 
-	const pageViewTracker = (
-		<PageViewTracker
-			path="/checkout/offer-professional-email/:domain/:receiptId/:site"
-			title="Post Checkout - Professional Email Upsell"
-		/>
-	);
-
-	const content = (
-		<>
-			<header className="professional-email-upsell__header">
-				<h3 className="professional-email-upsell__small-title">
-					{ isDomainOnlySite
-						? translate( "Hold tight, we're getting your domain ready." )
-						: translate( "Hold tight, we're getting your site ready." ) }
-				</h3>
-				<h1 className="professional-email-upsell__title wp-brand-font">
-					{ translate( 'Add Professional Email @%(domain)s', {
-						args: {
-							domain: domainName,
-						},
-						comment: '%(domain)s is a domain name, like example.com',
-					} ) }
-				</h1>
-				<h3 className="professional-email-upsell__small-subtitle">
-					{ i18n.hasTranslation( 'No setup required. Easy to manage.' )
-						? translate( 'No setup required. Easy to manage.' )
-						: null }
-				</h3>
-				<BillingIntervalToggle
-					intervalLength={ selectedIntervalLength }
-					onIntervalChange={ changeIntervalLength }
-				/>
-			</header>
-
-			<div className="professional-email-upsell__content">
-				{ isMobileView && pricingComponent }
-
-				<div className="professional-email-upsell__form">
-					<NewMailBoxList
-						cancelActionText={ translate( 'Skip for now' ) }
-						fieldLabelTexts={ {
-							[ FIELD_MAILBOX ]: translate( 'Enter email address' ),
-							[ FIELD_PASSWORD ]: translate( 'Set password' ),
-						} }
-						hiddenFieldNames={ [ FIELD_NAME, FIELD_PASSWORD_RESET_EMAIL ] }
-						isInitialMailboxPurchase
-						onCancel={ handleClickDecline }
-						onSubmit={ onSubmit }
-						provider={ EmailProvider.Titan }
-						selectedDomainName={ domainName }
-						showCancelButton
-						submitActionText={ translate( 'Add Professional Email' ) }
-					/>
-				</div>
-
-				<div className="professional-email-upsell__features">
-					{ ! isMobileView && pricingComponent }
-					<h2>{ translate( 'Why get Professional Email?' ) }</h2>
-					<ul className="professional-email-upsell__feature-list">
-						<ProfessionalEmailFeature>
-							{ translate( "Trusted email address that's truly yours" ) }
-						</ProfessionalEmailFeature>
-						<ProfessionalEmailFeature>
-							{ translate( 'Increase your credibility' ) }
-						</ProfessionalEmailFeature>
-						<ProfessionalEmailFeature>
-							{ translate( 'Build your brand with every email you send' ) }
-						</ProfessionalEmailFeature>
-						<ProfessionalEmailFeature>
-							{ translate( 'Reach your recipients’ primary inbox' ) }
-						</ProfessionalEmailFeature>
-					</ul>
-
-					<img
-						className="professional-email-upsell__titan-logo"
-						src={ poweredByTitanLogo }
-						alt={ translate( 'Powered by Titan', { textOnly: true } ) }
-					/>
-				</div>
-			</div>
-		</>
-	);
-
 	return (
 		<>
-			{ pageViewTracker }
+			<PageViewTracker
+				path="/checkout/offer-professional-email/:domain/:receiptId/:site"
+				title="Post Checkout - Professional Email Upsell"
+			/>
 
 			<MasterbarStyled
 				onClick={ () => page( `/home/${ selectedSite?.slug ?? '' }` ) }
@@ -205,7 +125,84 @@ const ProfessionalEmailUpsell = ( {
 				showContact
 			/>
 
-			{ isLoading ? <ProfessionalEmailUpsellPlaceholder /> : content }
+			{ isLoading ? (
+				<ProfessionalEmailUpsellPlaceholder />
+			) : (
+				<>
+					<header className="professional-email-upsell__header">
+						<h3 className="professional-email-upsell__small-title">
+							{ isDomainOnlySite
+								? translate( "Hold tight, we're getting your domain ready." )
+								: translate( "Hold tight, we're getting your site ready." ) }
+						</h3>
+						<h1 className="professional-email-upsell__title wp-brand-font">
+							{ translate( 'Add Professional Email @%(domain)s', {
+								args: {
+									domain: domainName,
+								},
+								comment: '%(domain)s is a domain name, like example.com',
+							} ) }
+						</h1>
+						<h3 className="professional-email-upsell__small-subtitle">
+							{ i18n.hasTranslation( 'No setup required. Easy to manage.' )
+								? translate( 'No setup required. Easy to manage.' )
+								: null }
+						</h3>
+						<BillingIntervalToggle
+							intervalLength={ selectedIntervalLength }
+							onIntervalChange={ changeIntervalLength }
+						/>
+					</header>
+
+					<div className="professional-email-upsell__content">
+						{ isMobileView && pricingComponent }
+
+						<div className="professional-email-upsell__form">
+							<NewMailBoxList
+								cancelActionText={ translate( 'Skip for now' ) }
+								fieldLabelTexts={ {
+									[ FIELD_MAILBOX ]: translate( 'Enter email address' ),
+									[ FIELD_PASSWORD ]: translate( 'Set password' ),
+								} }
+								hiddenFieldNames={ [ FIELD_NAME, FIELD_PASSWORD_RESET_EMAIL ] }
+								isInitialMailboxPurchase
+								onCancel={ handleClickDecline }
+								onSubmit={ onSubmit }
+								provider={ EmailProvider.Titan }
+								selectedDomainName={ domainName }
+								showCancelButton
+								submitActionText={ translate( 'Add Professional Email' ) }
+							/>
+						</div>
+
+						<div className="professional-email-upsell__features">
+							{ ! isMobileView && pricingComponent }
+
+							<h2>{ translate( 'Why get Professional Email?' ) }</h2>
+							<ul className="professional-email-upsell__feature-list">
+								<ProfessionalEmailFeature>
+									{ translate( "Trusted email address that's truly yours" ) }
+								</ProfessionalEmailFeature>
+								<ProfessionalEmailFeature>
+									{ translate( 'Increase your credibility' ) }
+								</ProfessionalEmailFeature>
+								<ProfessionalEmailFeature>
+									{ translate( 'Build your brand with every email you send' ) }
+								</ProfessionalEmailFeature>
+								<ProfessionalEmailFeature>
+									{ translate( 'Reach your recipients’ primary inbox' ) }
+								</ProfessionalEmailFeature>
+							</ul>
+
+							<img
+								className="professional-email-upsell__titan-logo"
+								src={ poweredByTitanLogo }
+								alt={ translate( 'Powered by Titan', { textOnly: true } ) }
+							/>
+						</div>
+					</div>
+				</>
+			) }
 		</>
 	);
 };
