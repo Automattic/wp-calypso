@@ -1,5 +1,5 @@
 import { Button } from '@wordpress/components';
-import { translate } from 'i18n-calypso';
+import { useTranslate } from 'i18n-calypso';
 import emailImage from 'calypso/assets/images/thank-you-upsell/email.jpg';
 import ThankYouV2 from 'calypso/components/thank-you-v2';
 import { ThankYouUpsellProps } from 'calypso/components/thank-you-v2/upsell';
@@ -18,6 +18,7 @@ interface DomainOnlyThankYouProps {
 }
 
 export default function DomainOnlyThankYou( { purchases, receiptId }: DomainOnlyThankYouProps ) {
+	const translate = useTranslate();
 	const [ , predicate ] = getDomainPurchaseTypeAndPredicate( purchases );
 	const domains = purchases.filter( predicate ).map( ( purchase ) => purchase?.meta );
 	const firstDomainName = domains[ 0 ];
@@ -27,10 +28,12 @@ export default function DomainOnlyThankYou( { purchases, receiptId }: DomainOnly
 		title: translate( 'Professional email' ),
 		description: (
 			<>
-				{ translate( 'Establish credibility and build trust by using a custom email address.' ) }
-				<br />
 				{ translate(
-					'Studies show that 85% of people trust custom domain email addresses more than generic ones.'
+					'Establish credibility and build trust by using a custom email address.{{br /}}Studies show that 85% of people trust custom domain email addresses more than generic ones.',
+					{
+						comment: 'Upsell for Professional Email on checkout thank you page',
+						components: { br: <br /> },
+					}
 				) }
 			</>
 		),
