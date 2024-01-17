@@ -2,24 +2,12 @@
  * @jest-environment jsdom
  */
 
-const mockUseTranslate = () => ( text ) => text;
-const mockTranslate = ( text ) => text;
-
-jest.mock( 'i18n-calypso', () => ( {
-	...jest.requireActual( 'i18n-calypso' ),
-	useTranslate: jest.fn(),
-	translate: jest.fn(),
-} ) );
-jest.mock( '@wordpress/i18n', () => ( {
-	...jest.requireActual( '@wordpress/i18n' ),
-	__: jest.fn(),
-} ) );
-
-import { act, render, screen } from '@testing-library/react';
-import { __ } from '@wordpress/i18n';
-import { translate, useTranslate } from 'i18n-calypso';
-import { Provider } from 'react-redux';
-import configureStore from 'redux-mock-store';
+import { screen } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
+import membershipsReducer from 'calypso/state/memberships/reducer';
+import siteSettingsReducer from 'calypso/state/site-settings/reducer';
+import uiReducer from 'calypso/state/ui/reducer';
+import { renderWithProvider } from '../../../../../test-helpers/testing-library';
 import ProductsSelector from '../products-selector';
 
 const productData = {
@@ -50,7 +38,6 @@ const testProduct2 = {
 	renewal_schedule: '1 year',
 };
 
-
 const initialState = {
 	sites: { items: {} },
 	siteSettings: { items: {} },
@@ -67,17 +54,6 @@ const initialState = {
 	},
 };
 
-function WrappedProductsSelector( props ) {
-	const mockStore = configureStore();
-	const store = mockStore( initialState );
-
-	return (
-		<Provider store={ store }>
-			<ProductsSelector { ...props } />
-		</Provider>
-	);
-}
-
 describe( 'ProductsSelector', () => {
 	const getAnyProductCheckbox = () =>
 		screen.getByRole( 'menuitemcheckbox', { name: 'Any product' } );
@@ -89,40 +65,33 @@ describe( 'ProductsSelector', () => {
 		screen.getByRole( 'menuitemcheckbox', {
 			name: 'Monthly Subscription : $5.00 / month',
 		} );
-	const getButtonText = ( selectedCount ) => {
-		if ( selectedCount > 0 ) {
-			if ( selectedCount > 1 ) {
-				return selectedCount + ' products selected.';
-			}
-			return '1 product selected';
-		}
-		return 'Any product';
-	};
-	const getDropdownButton = ( selectedCount ) =>
-		screen.getByRole( 'button', { name: getButtonText( selectedCount ) } );
+	const getDropdownButton = ( name ) => screen.getByRole( 'button', { name } );
 
-	beforeEach( () => {
-		jest.clearAllMocks();
-
-		useTranslate.mockImplementation( mockUseTranslate );
-		translate.mockImplementation( mockTranslate );
-		__.mockImplementation( mockTranslate );
-	} );
-
-	test( 'should render with any product selected when no specific products have been selected', () => {
+	test( 'should render with any product selected when no specific products have been selected', async () => {
+		const render = ( el, options ) =>
+			renderWithProvider( el, {
+				...options,
+				initialState,
+				reducers: {
+					ui: uiReducer,
+					memberships: membershipsReducer,
+					siteSettings: siteSettingsReducer,
+				},
+			} );
+		const user = userEvent.setup();
 		let editedPlanIdsAllowList = [];
 		const setEditedPlanIdsAllowList = ( list ) => {
 			editedPlanIdsAllowList = list;
 		};
 		render(
-			<WrappedProductsSelector
+			<ProductsSelector
 				onSelectedPlanIdsChange={ ( list ) => setEditedPlanIdsAllowList( list ) }
 				initialSelectedList={ editedPlanIdsAllowList }
-				allowMultiple={ true }
+				allowMultiple
 			/>
 		);
 
-		act( () => getDropdownButton( editedPlanIdsAllowList.length ).click() );
+		await user.click( getDropdownButton( 'Any product' ) );
 		const anyProductCheckbox = getAnyProductCheckbox();
 		const yearlyProductCheckbox = getYearlyProductCheckbox();
 		const monthlyProductCheckbox = getMonthlyProductCheckbox();
@@ -133,51 +102,82 @@ describe( 'ProductsSelector', () => {
 	} );
 
 	test( 'should render with 1 product selected when 1 product has been selected', () => {
+		const render = ( el, options ) =>
+			renderWithProvider( el, {
+				...options,
+				initialState,
+				reducers: {
+					ui: uiReducer,
+					memberships: membershipsReducer,
+					siteSettings: siteSettingsReducer,
+				},
+			} );
 		let editedPlanIdsAllowList = [ testProduct1.ID ];
 		const setEditedPlanIdsAllowList = ( list ) => {
 			editedPlanIdsAllowList = list;
 		};
 		render(
-			<WrappedProductsSelector
+			<ProductsSelector
 				onSelectedPlanIdsChange={ ( list ) => setEditedPlanIdsAllowList( list ) }
 				initialSelectedList={ editedPlanIdsAllowList }
-				allowMultiple={ true }
+				allowMultiple
 			/>
 		);
 		// Expect the button with the correct name to be rendered.
-		expect( getDropdownButton( editedPlanIdsAllowList.length ) ).not.toBeNull();
+		expect( getDropdownButton( '1 product selected' ) ).toBeInTheDocument();
 	} );
 
 	test( 'should render with 2 products selected when 2 products have been selected', () => {
+		const render = ( el, options ) =>
+			renderWithProvider( el, {
+				...options,
+				initialState,
+				reducers: {
+					ui: uiReducer,
+					memberships: membershipsReducer,
+					siteSettings: siteSettingsReducer,
+				},
+			} );
 		let editedPlanIdsAllowList = [ testProduct1.ID, testProduct2.ID ];
 		const setEditedPlanIdsAllowList = ( list ) => {
 			editedPlanIdsAllowList = list;
 		};
 		render(
-			<WrappedProductsSelector
+			<ProductsSelector
 				onSelectedPlanIdsChange={ ( list ) => setEditedPlanIdsAllowList( list ) }
 				initialSelectedList={ editedPlanIdsAllowList }
-				allowMultiple={ true }
+				allowMultiple
 			/>
 		);
 		// Expect the button with the correct name to be rendered.
-		expect( getDropdownButton( editedPlanIdsAllowList.length ) ).not.toBeNull();
+		expect( getDropdownButton( '2 products selected.' ) ).not.toBeNull();
 	} );
 
-	test( 'clicking the button should show a dropdown with selected items selected', () => {
+	test( 'clicking the button should show a dropdown with selected items selected', async () => {
+		const render = ( el, options ) =>
+			renderWithProvider( el, {
+				...options,
+				initialState,
+				reducers: {
+					ui: uiReducer,
+					memberships: membershipsReducer,
+					siteSettings: siteSettingsReducer,
+				},
+			} );
+		const user = userEvent.setup();
 		let editedPlanIdsAllowList = [ testProduct1.ID, testProduct2.ID ];
 		const setEditedPlanIdsAllowList = ( list ) => {
 			editedPlanIdsAllowList = list;
 		};
 		render(
-			<WrappedProductsSelector
+			<ProductsSelector
 				onSelectedPlanIdsChange={ ( list ) => setEditedPlanIdsAllowList( list ) }
 				initialSelectedList={ editedPlanIdsAllowList }
-				allowMultiple={ true }
+				allowMultiple
 			/>
 		);
 
-		act( () => getDropdownButton( editedPlanIdsAllowList.length ).click() );
+		await user.click( getDropdownButton( '2 products selected.' ) );
 		const anyProductCheckbox = getAnyProductCheckbox();
 		const yearlyProductCheckbox = getYearlyProductCheckbox();
 		const monthlyProductCheckbox = getMonthlyProductCheckbox();
@@ -189,19 +189,19 @@ describe( 'ProductsSelector', () => {
 		expect( monthlyProductCheckbox ).toBeChecked();
 
 		// Unchecking yearly product leaves only monthly product selected.
-		act( () => yearlyProductCheckbox.click() );
+		await user.click( yearlyProductCheckbox );
 		expect( anyProductCheckbox ).not.toBeChecked();
 		expect( yearlyProductCheckbox ).not.toBeChecked();
 		expect( monthlyProductCheckbox ).toBeChecked();
 
 		// Unchecking monthly product leaves no products selected, meaning no products are limited, so all products are selected, including "Any product".
-		act( () => monthlyProductCheckbox.click() );
+		await user.click( monthlyProductCheckbox );
 		expect( anyProductCheckbox ).toBeChecked();
 		expect( yearlyProductCheckbox ).toBeChecked();
 		expect( monthlyProductCheckbox ).toBeChecked();
 
 		// Clicking yearly product causes yearly product to be the only product selected again, deselecting other options.
-		act( () => yearlyProductCheckbox.click() );
+		await user.click( yearlyProductCheckbox );
 		expect( anyProductCheckbox ).not.toBeChecked();
 		expect( yearlyProductCheckbox ).toBeChecked();
 		expect( monthlyProductCheckbox ).not.toBeChecked();

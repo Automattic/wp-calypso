@@ -35,8 +35,8 @@ const FormTextInputWithValueGeneration = ( {
 	disabled = false,
 	isError = false,
 	isValid = false,
-	textInputAriaLabel = translate( 'enter value' ),
-	buttonAriaLabel = translate( 'generate value' ),
+	textInputAriaLabel = translate( 'Enter value' ),
+	buttonAriaLabel = translate( 'Generate value' ),
 	maxLength = '10',
 	...props
 }: FormTextInputWithValueGenerationProps ) => {

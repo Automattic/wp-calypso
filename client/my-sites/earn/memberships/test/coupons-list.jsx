@@ -37,92 +37,77 @@ import {
 } from '../constants';
 import CouponsList from '../coupons-list';
 
-const testProduct1 = {
-	ID: 9,
+const productData = {
 	currency: 'USD',
+	buyer_can_change_amount: false,
+	multiple_per_user: false,
+	welcome_email_content: 'Welcome!',
+	subscribe_as_site_subscriber: true,
+	type: 'newsletter',
+	is_editable: false,
+};
+
+const testProduct1 = {
+	...productData,
+	ID: 9,
 	price: 5,
 	title: 'Monthly Subscription',
 	interval: '1 month',
-	buyer_can_change_amount: false,
-	multiple_per_user: false,
-	welcome_email_content: 'Welcome!',
-	subscribe_as_site_subscriber: true,
 	renewal_schedule: '1 month',
-	type: 'newsletter',
-	is_editable: false,
 };
 
 const testProduct2 = {
+	...productData,
 	ID: 10,
-	currency: 'USD',
 	price: 40,
 	title: 'Yearly Subscription',
 	interval: '1 year',
-	buyer_can_change_amount: false,
-	multiple_per_user: false,
-	welcome_email_content: 'Welcome!',
-	subscribe_as_site_subscriber: true,
 	renewal_schedule: '1 year',
-	type: 'newsletter',
-	is_editable: false,
+};
+
+const couponData = {
+	cannot_be_combined: false,
+	can_be_combined: true, // TODO: remove after backend migration to 'cannot_be_combined';
+	first_time_purchase_only: false,
+	start_date: '2023-12-25',
+	end_date: '2024-10-23',
+	plan_ids_allow_list: [],
+	limit_per_user: 0,
+	use_duration: false,
+	use_email_allow_list: true,
+	duration: COUPON_DURATION_FOREVER,
+	email_allow_list: [ '*@*.edu', '*@*.org' ],
+	discount_type: COUPON_DISCOUNT_TYPE_PERCENTAGE,
+	discount_value: 0,
+	discount_percentage: 90,
+	discount_currency: 'USD',
 };
 
 const testCoupon1 = {
+	...couponData,
 	ID: 1,
 	coupon_code: 'COUPON1',
-	cannot_be_combined: false,
-	can_be_combined: true, // TODO: remove after backend migration to 'cannot_be_combined';
-	first_time_purchase_only: false,
-	start_date: '2023-12-25',
-	end_date: '2024-10-23',
-	plan_ids_allow_list: [],
-	limit_per_user: 0,
-	use_duration: false,
-	use_email_allow_list: true,
-	duration: COUPON_DURATION_FOREVER,
-	email_allow_list: [ '*@*.edu', '*@*.org' ],
-	discount_type: COUPON_DISCOUNT_TYPE_PERCENTAGE,
-	discount_value: 0,
-	discount_percentage: 90,
-	discount_currency: 'USD',
 };
+
 const testCoupon2 = {
+	...couponData,
 	ID: 2,
 	coupon_code: 'COUPON2',
-	cannot_be_combined: false,
-	can_be_combined: true, // TODO: remove after backend migration to 'cannot_be_combined';
-	first_time_purchase_only: false,
-	start_date: '2023-12-25',
-	end_date: '2024-10-23',
-	plan_ids_allow_list: [],
-	limit_per_user: 0,
-	use_duration: false,
-	use_email_allow_list: true,
-	duration: COUPON_DURATION_FOREVER,
-	email_allow_list: [ '*@*.edu', '*@*.org' ],
-	discount_type: COUPON_DISCOUNT_TYPE_PERCENTAGE,
-	discount_value: 0,
-	discount_percentage: 90,
-	discount_currency: 'USD',
 };
+
 const testCoupon3 = {
+	...couponData,
 	ID: 3,
 	coupon_code: 'COUPON3',
 	cannot_be_combined: true,
 	can_be_combined: false, // TODO: remove after backend migration to 'cannot_be_combined';
 	first_time_purchase_only: true,
-	start_date: '2023-12-25',
-	end_date: '2024-10-23',
-	plan_ids_allow_list: [],
-	limit_per_user: 0,
 	use_duration: true,
-	use_email_allow_list: true,
 	duration: COUPON_DURATION_3_MONTHS,
 	email_allow_list: [],
 	discount_type: COUPON_DISCOUNT_TYPE_AMOUNT,
 	discount_value: 10,
 	discount_percentage: 0,
-	discount_currency: 'USD',
 };
 
 const initialState = {

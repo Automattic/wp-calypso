@@ -121,9 +121,8 @@ describe( 'RecurringPaymentsCouponAddEditModal', () => {
 		const discountTypeSelect = getDiscountTypeSelect();
 		const amountOption = getAmountOption();
 		const discountPercentageInput = getDiscountPercentageInput();
-		const missingDiscountPercentageInput = queryDiscountPercentageInput();
-		const discountValueInput = getDiscountValueInput();
 		const missingDiscountValueInput = queryDiscountValueInput();
+		const missingDiscountPercentageInput = queryDiscountPercentageInput();
 
 		expect( discountTypeSelect ).toHaveValue( COUPON_DISCOUNT_TYPE_PERCENTAGE );
 		expect( discountPercentageInput ).toBeInTheDocument();
@@ -131,6 +130,7 @@ describe( 'RecurringPaymentsCouponAddEditModal', () => {
 
 		await user.selectOptions( discountTypeSelect, amountOption );
 
+		const discountValueInput = getDiscountValueInput();
 		expect( discountTypeSelect ).toHaveValue( COUPON_DISCOUNT_TYPE_AMOUNT );
 		expect( missingDiscountPercentageInput ).not.toBeInTheDocument();
 		expect( discountValueInput ).toBeInTheDocument();
