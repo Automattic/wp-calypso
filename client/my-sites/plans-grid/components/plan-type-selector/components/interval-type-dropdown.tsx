@@ -1,5 +1,7 @@
 import styled from '@emotion/styled';
 import { CustomSelectControl } from '@wordpress/components';
+import { useLayoutEffect, useState } from '@wordpress/element';
+import { detectElementOverlap } from 'calypso/my-sites/plans-grid/util';
 import useIntervalOptions from '../hooks/use-interval-options';
 import { IntervalTypeProps, SupportedUrlFriendlyTermType } from '../types';
 
@@ -39,6 +41,27 @@ export const IntervalTypeDropdown: React.FunctionComponent< IntervalTypeProps > 
 		displayedIntervals.includes( intervalType ) ? intervalType : 'yearly'
 	) as SupportedUrlFriendlyTermType;
 	const optionsList = useIntervalOptions( props );
+	const [ hasOverlap, setHasOverlap ] = useState( false );
+	const [ selectedItem, setSelectedItem ] = useState( null );
+
+	// TODO: Fix overlap detection ( need to make two selections before overlap detects properly )
+	// TODO: Consider generalizing this for the storage add-on dropdown
+	useLayoutEffect( () => {
+		// TODO: Use a ref here
+		const discountTextElement = document.querySelector< HTMLDivElement >(
+			'.components-custom-select-control__button .discount'
+		);
+
+		const chevronElement = document.querySelector< HTMLDivElement >(
+			'.components-input-control__suffix svg'
+		);
+
+		if ( ! discountTextElement || ! chevronElement ) {
+			return setHasOverlap( false );
+		}
+
+		setHasOverlap( detectElementOverlap( discountTextElement, chevronElement ) );
+	}, [ selectedItem ] );
 
 	const selectOptionsList = Object.values( optionsList ).map( ( option ) => ( {
 		key: option.key,
@@ -57,10 +80,20 @@ export const IntervalTypeDropdown: React.FunctionComponent< IntervalTypeProps > 
 				label=""
 				options={ selectOptionsList }
 				value={ selectOptionsList.find( ( { key } ) => key === supportedIntervalType ) }
-				onChange={ ( { selectedItem }: { selectedItem: { key: SupportedUrlFriendlyTermType } } ) =>
-					onPlanIntervalChange && onPlanIntervalChange( selectedItem )
-				}
+				onChange={ ( {
+					selectedItem,
+				}: {
+					selectedItem: { key: SupportedUrlFriendlyTermType };
+				} ) => {
+					onPlanIntervalChange && onPlanIntervalChange( selectedItem );
+					setSelectedItem( selectedItem );
+				} }
 			/>
+			{ hasOverlap && (
+				<div className="storage-add-on-dropdown__offset-price-container">
+					<span className="storage-add-on-dropdown__offset-price">Discount text placeholder</span>
+				</div>
+			) }
 		</div>
 	);
 };
