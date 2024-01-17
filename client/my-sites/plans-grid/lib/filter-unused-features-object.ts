@@ -1,5 +1,5 @@
+import type { GridPlan } from '../types';
 import type { FeatureObject } from '@automattic/calypso-products';
-import type { GridPlan } from 'calypso/my-sites/plans-grid/hooks/npm-ready/data-store/use-grid-plans';
 
 /**
  * Removes features that are not available in any of the visible grid plans.

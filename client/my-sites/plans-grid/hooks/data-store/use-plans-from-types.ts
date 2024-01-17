@@ -9,7 +9,7 @@ import {
 	GROUP_P2,
 } from '@automattic/calypso-products';
 import warn from '@wordpress/warning';
-import type { PlansIntent } from 'calypso/my-sites/plans-grid/hooks/npm-ready/data-store/use-grid-plans';
+import type { PlansIntent } from '../../types';
 
 interface Props {
 	planTypes: string[];

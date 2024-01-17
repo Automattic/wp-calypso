@@ -1,6 +1,6 @@
 import { TYPE_BUSINESS, PLAN_HOSTING_TRIAL_MONTHLY } from '@automattic/calypso-products';
 import { useMemo } from 'react';
-import type { UseFreeTrialPlanSlugs } from './data-store/use-grid-plans';
+import type { UseFreeTrialPlanSlugs } from 'calypso/my-sites/plans-grid/hooks/data-store/use-grid-plans';
 
 export const useFreeTrialPlanSlugs: UseFreeTrialPlanSlugs = ( {
 	intent,

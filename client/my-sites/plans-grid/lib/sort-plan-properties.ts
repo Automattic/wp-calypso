@@ -1,6 +1,6 @@
 import { isFreePlan } from '@automattic/calypso-products';
-import { isPopularPlan } from '../hooks/npm-ready/data-store/is-popular-plan';
-import type { GridPlan } from '../hooks/npm-ready/data-store/use-grid-plans';
+import { isPopularPlan } from '../hooks/data-store/is-popular-plan';
+import type { GridPlan } from '../hooks/data-store/use-grid-plans';
 
 export function sortPlans(
 	gridPlans: GridPlan[],

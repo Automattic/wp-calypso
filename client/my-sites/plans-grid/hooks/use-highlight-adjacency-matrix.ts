@@ -1,5 +1,5 @@
 import { useMemo } from '@wordpress/element';
-import type { GridPlan } from './data-store/use-grid-plans';
+import type { GridPlan } from '../types';
 import type { PlanSlug } from '@automattic/calypso-products';
 
 type HighlightAdjacencyMatrix = {

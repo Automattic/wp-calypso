@@ -24,7 +24,6 @@ import {
 import classNames from 'classnames';
 import { Component } from 'react';
 import { isStorageUpgradeableForPlan } from '../../lib/is-storage-upgradeable-for-plan';
-import { FeaturesGridProps } from '../../types';
 import { getStorageStringFromFeature } from '../../util';
 import PlanFeatures2023GridActions from '../actions';
 import PlanFeatures2023GridBillingTimeframe from '../billing-timeframe';
@@ -35,7 +34,7 @@ import PlanFeaturesContainer from '../plan-features-container';
 import PlanLogo from '../plan-logo';
 import { StickyContainer } from '../sticky-container';
 import StorageAddOnDropdown from '../storage-add-on-dropdown';
-import type { GridPlan } from '../../hooks/npm-ready/data-store/use-grid-plans';
+import type { FeaturesGridProps, GridPlan } from '../../types';
 
 type PlanRowOptions = {
 	isTableCell?: boolean;

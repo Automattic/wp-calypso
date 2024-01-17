@@ -19,33 +19,16 @@ import {
 	type FeatureList,
 	type PlanSlug,
 	type PlanType,
-	type FeatureObject,
-	type StorageOption,
 	isBusinessPlan,
 	isEcommercePlan,
 	TYPE_P2_PLUS,
 } from '@automattic/calypso-products';
 import { Plans, type AddOnMeta } from '@automattic/data-stores';
-import { isSamePlan } from '../../../lib/is-same-plan';
+import { isSamePlan } from '../../lib/is-same-plan';
 import useHighlightLabels from './use-highlight-labels';
 import usePlansFromTypes from './use-plans-from-types';
+import type { GridPlan, PlansIntent } from '../../types';
 import type { TranslateResult } from 'i18n-calypso';
-
-// TODO clk: move to plans data store
-export type TransformedFeatureObject = FeatureObject & {
-	availableForCurrentPlan: boolean;
-	availableOnlyForAnnualPlans: boolean;
-	isHighlighted?: boolean;
-};
-
-// TODO clk: move to plans data store
-export interface PlanFeaturesForGridPlan {
-	wpcomFeatures: TransformedFeatureObject[];
-	jetpackFeatures: TransformedFeatureObject[];
-	storageOptions: StorageOption[];
-	// used for comparison grid so far
-	conditionalFeatures?: FeatureObject[];
-}
 
 export type UseFreeTrialPlanSlugs = ( {
 	intent,
@@ -56,50 +39,6 @@ export type UseFreeTrialPlanSlugs = ( {
 } ) => {
 	[ Type in PlanType ]?: PlanSlug;
 };
-
-// TODO clk: move to types. will consume plan properties
-export type GridPlan = {
-	planSlug: PlanSlug;
-	freeTrialPlanSlug?: PlanSlug;
-	isVisible: boolean;
-	features: {
-		wpcomFeatures: TransformedFeatureObject[];
-		jetpackFeatures: TransformedFeatureObject[];
-		storageOptions: StorageOption[];
-		conditionalFeatures?: FeatureObject[];
-	};
-	tagline: TranslateResult;
-	planTitle: TranslateResult;
-	availableForPurchase: boolean;
-	pricing: Plans.PricingMetaForGridPlan;
-	storageAddOnsForPlan: ( AddOnMeta | null )[] | null;
-	productNameShort?: string | null;
-	billingTimeframe?: TranslateResult | null;
-	current?: boolean;
-	isMonthlyPlan?: boolean;
-	cartItemForPlan?: {
-		product_slug: string;
-	} | null;
-	highlightLabel?: React.ReactNode | null;
-};
-
-// TODO clk: move to plans data store
-export type PlansIntent =
-	| 'plans-blog-onboarding'
-	| 'plans-newsletter'
-	| 'plans-link-in-bio'
-	| 'plans-new-hosted-site'
-	| 'plans-plugins'
-	| 'plans-jetpack-app'
-	| 'plans-jetpack-app-site-creation'
-	| 'plans-import'
-	| 'plans-woocommerce'
-	| 'plans-paid-media'
-	| 'plans-p2'
-	| 'plans-default-wpcom'
-	| 'plans-business-trial'
-	| 'plans-videopress'
-	| 'default';
 
 interface Props {
 	// allFeaturesList temporary until feature definitions are ported to calypso-products package

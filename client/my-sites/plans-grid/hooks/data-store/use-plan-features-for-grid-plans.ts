@@ -4,15 +4,15 @@ import {
 	isMonthly,
 } from '@automattic/calypso-products';
 import { useMemo } from '@wordpress/element';
-import getPlanFeaturesObject from '../../../lib/get-plan-features-object';
+import getPlanFeaturesObject from '../../lib/get-plan-features-object';
 import useHighlightedFeatures from './use-highlighted-features';
-import type { FeatureObject, FeatureList } from '@automattic/calypso-products';
 import type {
 	TransformedFeatureObject,
 	PlanFeaturesForGridPlan,
 	PlansIntent,
 	GridPlan,
-} from 'calypso/my-sites/plans-grid/hooks/npm-ready/data-store/use-grid-plans';
+} from '../../types';
+import type { FeatureObject, FeatureList } from '@automattic/calypso-products';
 
 export type UsePlanFeaturesForGridPlans = ( {
 	gridPlans,

@@ -7,7 +7,7 @@ import {
 	FEATURE_PAYMENT_TRANSACTION_FEES_4,
 } from '@automattic/calypso-products';
 import { useMemo } from '@wordpress/element';
-import type { PlansIntent } from './use-grid-plans';
+import type { PlansIntent } from '../../types';
 
 export type UseHighlightedFeatures = ( {
 	intent,

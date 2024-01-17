@@ -1,7 +1,7 @@
 import styled from '@emotion/styled';
 import { CustomSelectControl } from '@wordpress/components';
 import useIntervalOptions from '../hooks/use-interval-options';
-import { IntervalTypeProps, SupportedUrlFriendlyTermType } from '../types';
+import type { IntervalTypeProps, SupportedUrlFriendlyTermType } from '../../../types';
 
 const IntervalTypeOption = styled.div`
 	& span.name,

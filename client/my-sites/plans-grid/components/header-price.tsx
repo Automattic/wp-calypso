@@ -3,7 +3,7 @@ import { PlanPrice } from '@automattic/components';
 import styled from '@emotion/styled';
 import { useTranslate } from 'i18n-calypso';
 import { usePlansGridContext } from '../grid-context';
-import type { GridPlan } from '../hooks/npm-ready/data-store/use-grid-plans';
+import type { GridPlan } from '../types';
 
 interface PlanFeatures2023GridHeaderPriceProps {
 	planSlug: PlanSlug;
