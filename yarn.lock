@@ -550,7 +550,6 @@ __metadata:
     "@automattic/calypso-typescript-config": "workspace:^"
     "@automattic/calypso-url": "workspace:^"
     "@automattic/format-currency": "workspace:^"
-    "@automattic/search": "workspace:^"
     "@automattic/typography": "workspace:^"
     "@automattic/viewport-react": "workspace:^"
     "@storybook/addon-actions": "npm:^7.6.7"
