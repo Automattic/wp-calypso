@@ -59,7 +59,7 @@ export function BoldTLD( { domain } ) {
 	);
 }
 
-class DomainsMiniCart extends Component {
+export class DomainsMiniCart extends Component {
 	domainNameAndCost = ( domain ) => {
 		const isRemoving = this.props.domainRemovalQueue.some( ( item ) => item.meta === domain.meta );
 		const formattedOriginalCost = domain.temporary
