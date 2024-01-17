@@ -181,7 +181,7 @@ const SubscribersPage = ( {
 				{ /* @ts-ignore */ }
 				<EmailVerificationGate
 					noticeText={ translate( 'You must verify your email to add subscribers.' ) }
-					noticeStatus="is-info"
+					noticeStatus="is-warning"
 				>
 					<SubscriberListContainer
 						siteId={ siteId }
