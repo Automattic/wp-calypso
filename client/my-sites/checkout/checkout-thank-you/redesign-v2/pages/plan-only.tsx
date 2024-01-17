@@ -14,7 +14,7 @@ interface PlanOnlyThankYouProps {
 	primaryPurchase: ReceiptPurchase;
 }
 
-const isMonthsOld = ( rawDate?: string, months: number ) => {
+const isMonthsOld = ( months: number, rawDate?: string ) => {
 	if ( ! rawDate ) {
 		return false;
 	}
@@ -45,7 +45,7 @@ export default function PlanOnlyThankYou( { primaryPurchase }: PlanOnlyThankYouP
 				recordTracksEvent( 'calypso_plan_thank_you_add_members_click' );
 			},
 		} );
-	} else if ( isMonthsOld( siteCreatedTimeStamp, 6 ) ) {
+	} else if ( isMonthsOld( 6, siteCreatedTimeStamp ) ) {
 		// Promote themes in the footer details for sites that are 6 months old or older.
 		footerDetails.push( {
 			key: 'footer-site-refresh',
