@@ -2,7 +2,7 @@ import { Page } from 'playwright';
 import { EditorComponent } from './editor-component';
 
 const selectors = {
-	acceptCookie: '.a8c-cookie-banner__ok-button, .a8c-cookie-banner__accept-all-button',
+	acceptCookie: '.a8c-cookie-banner__ok-button',
 };
 
 /**
@@ -32,11 +32,6 @@ export class CookieBannerComponent {
 
 		// Whether the cookie banner appears is not deterministic.
 		// If it is not present, exit early.
-		try {
-			await locator.waitFor( { timeout: 100 } );
-		} catch ( e ) {
-			// Probably doesn't exist. That's ok.
-		}
 		if ( ( await locator.count() ) === 0 ) {
 			return;
 		}

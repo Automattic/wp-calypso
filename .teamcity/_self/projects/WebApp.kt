@@ -564,9 +564,10 @@ object CheckCodeStyleBranch : BuildType({
 					# To avoid `ENAMETOOLONG` errors linting files, we have to lint them one by one,
 					# instead of passing the full list of files to eslint directly.
 					for file in ${'$'}(git diff --name-only --diff-filter=d refs/remotes/origin/trunk...HEAD | grep -E '(\.[jt]sx?)${'$'}' || true); do
-						echo "Linting ${'$'}file"
-						yarn run eslint --format checkstyle --output-file "./checkstyle_results/eslint/${'$'}{file//\//_}.xml" "${'$'}file"
+						( echo "Linting ${'$'}file"
+						yarn run eslint --format checkstyle --output-file "./checkstyle_results/eslint/${'$'}{file//\//_}.xml" "${'$'}file" ) &
 					done
+					wait
 				fi
 			"""
 		}
