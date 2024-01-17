@@ -39,7 +39,7 @@ describe( 'reducer', () => {
 	} );
 
 	describe( 'MEMBERSHIPS_COUPON_DELETE', () => {
-		test( 'should properly add coupons for site', () => {
+		test( 'should properly delete coupons for specified site', () => {
 			const existingCoupons = [ { ID: 1 }, { ID: 2 }, { ID: 3 } ];
 			const existingState = { 1: existingCoupons };
 			const couponToDelete = { ID: 3 };

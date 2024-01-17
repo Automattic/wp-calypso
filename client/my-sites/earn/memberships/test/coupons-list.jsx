@@ -124,9 +124,7 @@ const initialState = {
 	},
 };
 
-function WrappedCouponsList( props ) {
-	const testEnabled = props.testEnabled;
-	const testCoupons = props.testCoupons;
+function WrappedCouponsList( { testEnabled, testCoupons } ) {
 	const mockStore = configureStore();
 	const mockState = {
 		...initialState,
@@ -190,14 +188,14 @@ describe( 'CouponsList', () => {
 	} );
 
 	test( 'should render with an empty list when no coupons are provided', () => {
-		const { container } = render( <WrappedCouponsList testEnabled={ true } /> );
+		const { container } = render( <WrappedCouponsList testEnabled /> );
 		expect( container ).toMatchSnapshot();
 	} );
 
 	test( 'should render a list with coupons when present for site', () => {
 		const { container } = render(
 			<WrappedCouponsList
-				testEnabled={ true }
+				testEnabled
 				testCoupons={ [ testCoupon1, testCoupon2, testCoupon3 ] }
 			/>
 		);
@@ -208,7 +206,7 @@ describe( 'CouponsList', () => {
 		mockDate( '2023-06-23T14:23:44z' );
 		render(
 			<WrappedCouponsList
-				testEnabled={ true }
+				testEnabled
 				testCoupons={ [ testCoupon1, testCoupon2, testCoupon3 ] }
 			/>
 		);
