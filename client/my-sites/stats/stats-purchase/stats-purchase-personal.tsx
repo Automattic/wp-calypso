@@ -119,7 +119,7 @@ const PersonalPurchase = ( {
 	};
 
 	const handleCheckoutPostponed = () => {
-		console.log( 'later button clicked!' );
+		// TODO: Handle the postponed button action.
 	};
 
 	return (
