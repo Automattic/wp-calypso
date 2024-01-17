@@ -14,6 +14,7 @@ import {
 	MarketplaceReviewsQueryProps,
 	useDeleteMarketplaceReviewMutation,
 	useUpdateMarketplaceReviewMutation,
+	EMPTY_PLACEHOLDER,
 } from 'calypso/data/marketplace/use-marketplace-reviews';
 import { getAvatarURL } from 'calypso/data/marketplace/utils';
 import { sanitizeSectionContent } from 'calypso/lib/plugins/sanitize-section-content';
@@ -38,7 +39,7 @@ export const MarketplaceReviewItem = ( props: MarketplaceReviewItemProps ) => {
 
 	const setEditing = ( review: MarketplaceReviewResponse ) => {
 		setIsEditing( true );
-		setEditorContent( review.content.raw );
+		setEditorContent( review.content.raw.replace( new RegExp( `^${ EMPTY_PLACEHOLDER }$` ), '' ) );
 		setEditorRating( review.meta.wpcom_marketplace_rating );
 	};
 
