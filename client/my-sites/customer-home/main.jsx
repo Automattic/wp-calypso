@@ -92,9 +92,7 @@ const Home = ( {
 	const siteDomains = useSelector( ( state ) => getDomainsBySiteId( state, siteId ) );
 	const customDomains = siteDomains?.filter( ( domain ) => ! domain.isWPCOMDomain );
 	const customDomain = customDomains?.length ? customDomains[ 0 ] : undefined;
-	const primaryDomain = customDomains?.length
-		? customDomains.find( ( domain ) => domain.isPrimary )
-		: undefined;
+	const primaryDomain = customDomains?.find( ( domain ) => domain.isPrimary );
 
 	const {
 		data: domainDiagnosticData,
