@@ -10,7 +10,6 @@ import page from '@automattic/calypso-router';
 import { Gridicon, Button } from '@automattic/components';
 import classNames from 'classnames';
 import { translate } from 'i18n-calypso';
-import { isNumber } from 'lodash';
 import { useEffect, useMemo, useCallback } from 'react';
 import QueryIntroOffers from 'calypso/components/data/query-intro-offers';
 import QuerySiteProducts from 'calypso/components/data/query-site-products';
@@ -113,12 +112,8 @@ const JetpackUpsellPage: React.FC< Props > = ( {
 	const productPriceObj = useItemPrice( siteId, productItem );
 	const upsellPriceObj = useItemPrice( siteId, upsellItem );
 	const priceDelta =
-		( isNumber( upsellPriceObj?.discountedPrice )
-			? upsellPriceObj?.discountedPrice
-			: upsellPriceObj?.originalPrice ) -
-		( isNumber( productPriceObj?.discountedPrice )
-			? productPriceObj?.discountedPrice
-			: productPriceObj?.originalPrice );
+		( upsellPriceObj?.discountedPrice || upsellPriceObj?.originalPrice ) -
+		( productPriceObj?.discountedPrice || productPriceObj?.originalPrice );
 	const isLoadingPrice = productPriceObj?.isFetching || upsellPriceObj?.isFetching;
 	const showPrice = ! isLoadingPrice && priceDelta > 0;
 
