@@ -1,7 +1,9 @@
 import { Button } from '@automattic/components';
+import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
-import { useState } from 'react';
+import { useState, useCallback } from 'react';
 import QueryJetpackPartnerPortalStoredCards from 'calypso/components/data/query-jetpack-partner-portal-stored-cards';
+import Pagination from 'calypso/components/pagination';
 import Layout from 'calypso/jetpack-cloud/components/layout';
 import LayoutBody from 'calypso/jetpack-cloud/components/layout/body';
 import LayoutHeader, {
@@ -10,10 +12,13 @@ import LayoutHeader, {
 	LayoutHeaderTitle as Title,
 } from 'calypso/jetpack-cloud/components/layout/header';
 import LayoutTop from 'calypso/jetpack-cloud/components/layout/top';
+import { useCursorPagination } from 'calypso/jetpack-cloud/sections/partner-portal/hooks';
 import { useSelector } from 'calypso/state';
 import {
 	getAllStoredCards,
+	getStoredCardsPerPage,
 	isFetchingStoredCards,
+	hasMoreStoredCards,
 } from 'calypso/state/partner-portal/stored-cards/selectors';
 import PartnerPortalSidebarNavigation from '../sidebar-navigation';
 import StoredCreditCardV2 from '../stored-credit-card-v2';
@@ -22,18 +27,50 @@ import type { PaymentMethod } from 'calypso/jetpack-cloud/sections/partner-porta
 
 import './style.scss';
 
+const preparePagingCursor = (
+	direction: 'next' | 'prev',
+	items: PaymentMethod[],
+	isFirstPage: boolean
+) => {
+	if ( ! items.length || isFirstPage ) {
+		return {
+			startingAfter: '',
+			endingBefore: '',
+		};
+	}
+
+	return {
+		startingAfter: direction === 'next' ? items[ items.length - 1 ].id : '',
+		endingBefore: direction === 'prev' ? items[ 0 ].id : '',
+	};
+};
+
 export default function PaymentMethodListV2() {
 	const translate = useTranslate();
 
 	const storedCards = useSelector( getAllStoredCards );
 	const isFetching = useSelector( isFetchingStoredCards );
 
+	const perPage = useSelector( getStoredCardsPerPage );
+	const hasMore = useSelector( hasMoreStoredCards );
+	const [ paging, setPaging ] = useState( { startingAfter: '', endingBefore: '' } );
+	const onPageClickCallback = useCallback(
+		( page: number, direction: 'next' | 'prev' ) => {
+			// Set a cursor for use in pagination.
+			setPaging( preparePagingCursor( direction, storedCards, page === 1 ) );
+		},
+		[ storedCards, setPaging ]
+	);
+	const [ page, showPagination, onPageClick ] = useCursorPagination(
+		! isFetching,
+		hasMore,
+		onPageClickCallback
+	);
+
 	const title = translate( 'Payment Methods' );
 	const subtitle = translate(
 		"Add a payment method to issue licenses. It's auto-charged monthly."
 	);
-
-	const [ paging ] = useState( { startingAfter: '', endingBefore: '' } ); // TODO: Implement pagination.
 
 	const primaryCard = storedCards.find( ( card ) => card.is_default );
 	const secondaryCards = storedCards.filter( ( card ) => ! card.is_default );
@@ -66,7 +103,7 @@ export default function PaymentMethodListV2() {
 		);
 	};
 
-	const showAddCardButton = ! isFetching && storedCards.length > 0;
+	const hasCards = ! isFetching && storedCards.length > 0;
 
 	return (
 		<Layout
@@ -82,7 +119,7 @@ export default function PaymentMethodListV2() {
 					<Title>{ title } </Title>
 					<Subtitle>{ subtitle }</Subtitle>
 					<Actions>
-						{ showAddCardButton && (
+						{ hasCards && (
 							<Button href="/partner-portal/payment-methods/add" primary>
 								{ translate( 'Add new card' ) }
 							</Button>
@@ -91,7 +128,20 @@ export default function PaymentMethodListV2() {
 				</LayoutHeader>
 			</LayoutTop>
 
-			<LayoutBody>{ getBody() }</LayoutBody>
+			<LayoutBody>
+				{ getBody() }
+				{ hasCards && showPagination && (
+					<Pagination
+						className={ classNames( 'payment-method-list-v2__pagination', {
+							'payment-method-list-v2__pagination--has-prev': page > 1,
+							'payment-method-list-v2__pagination--has-next': isFetching || hasMore,
+						} ) }
+						pageClick={ onPageClick }
+						page={ page }
+						perPage={ perPage }
+					/>
+				) }
+			</LayoutBody>
 		</Layout>
 	);
 }
