@@ -6,8 +6,6 @@ import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { unmountComponentAtNode } from 'react-dom';
 import Modal from 'react-modal';
-import { Provider } from 'react-redux';
-import configureStore from 'redux-mock-store';
 import membershipsReducer from 'calypso/state/memberships/reducer';
 import siteSettingsReducer from 'calypso/state/site-settings/reducer';
 import uiReducer from 'calypso/state/ui/reducer';
@@ -106,43 +104,6 @@ const initialState = {
 		settings: {},
 	},
 };
-
-function WrappedCouponsList( props ) {
-	const testEnabled = props.testEnabled;
-	const testCoupons = props.testCoupons;
-	const mockStore = configureStore();
-	const mockState = {
-		...initialState,
-		memberships: {
-			settings: {
-				1: {
-					couponsAndGiftsEnabled: testEnabled,
-					connectedAccountId: 123,
-					connectedAccountMinimumCurrency: {
-						USD: 0.5,
-					},
-				},
-			},
-			couponList: {
-				items: {
-					1: testCoupons,
-				},
-			},
-			productList: {
-				items: {
-					1: [ testProduct1, testProduct2 ],
-				},
-			},
-		},
-	};
-	const store = mockStore( mockState );
-
-	return (
-		<Provider store={ store }>
-			<CouponsList />
-		</Provider>
-	);
-}
 
 describe( 'CouponsList', () => {
 	let modalRoot;
