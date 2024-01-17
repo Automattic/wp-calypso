@@ -300,6 +300,7 @@ User request: ${ prompt }
 			} );
 		} catch ( error ) {
 			setLogoUpdateError( error );
+			throw error;
 		} finally {
 			setIsApplyingLogo( false );
 		}
@@ -340,13 +341,17 @@ User request: ${ prompt }
 				description: prompt,
 			};
 
-			const savedLogo = await saveLogo( logo );
-
-			storeLogo( {
-				url: savedLogo.mediaURL,
-				description: prompt,
-				mediaId: savedLogo.mediaId,
-			} );
+			try {
+				const savedLogo = await saveLogo( logo );
+				storeLogo( {
+					url: savedLogo.mediaURL,
+					description: prompt,
+					mediaId: savedLogo.mediaId,
+				} );
+			} catch ( error ) {
+				storeLogo( logo );
+				throw error;
+			}
 		} finally {
 			setIsRequestingImage( false );
 		}

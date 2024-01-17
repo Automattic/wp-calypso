@@ -1,8 +1,14 @@
+.jetpack-ai-logo-generator-modal-presenter__wrapper {
+	display: flex;
+	flex-direction: column;
+	gap: 8px;
+}
+
 .jetpack-ai-logo-generator-modal-presenter {
 	display: flex;
 }
 
-.jetpack-ai-logo-generator-modal-presenter__container {
+.jetpack-ai-logo-generator-modal-presenter__content {
 	border-radius: 4px;
 	background: var(--studio-gray-0, #f6f7f7);
 	display: flex;

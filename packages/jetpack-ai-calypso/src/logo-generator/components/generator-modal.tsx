@@ -46,7 +46,7 @@ export const GeneratorModal: React.FC< GeneratorModalProps > = ( {
 	const [ upgradeURL, setUpgradeURL ] = useState( '' );
 	const { selectedLogo, getAiAssistantFeature, generateFirstPrompt, generateLogo } =
 		useLogoGenerator();
-	const { featureFetchError } = useRequestErrors();
+	const { featureFetchError, firstLogoPromptFetchError, clearErrors } = useRequestErrors();
 	const siteId = siteDetails?.ID;
 
 	const getFeature = useCallback( async () => {
@@ -120,6 +120,7 @@ export const GeneratorModal: React.FC< GeneratorModalProps > = ( {
 	const closeModal = () => {
 		setLoadingState( null );
 		setNeedsFeature( false );
+		clearErrors();
 		onClose();
 	};
 
@@ -163,7 +164,7 @@ export const GeneratorModal: React.FC< GeneratorModalProps > = ( {
 
 	if ( loadingState ) {
 		body = <FirstLoadScreen state={ loadingState } />;
-	} else if ( featureFetchError ) {
+	} else if ( featureFetchError || firstLogoPromptFetchError ) {
 		body = <FeatureFetchFailureScreen onCancel={ closeModal } onRetry={ initializeModal } />;
 	} else if ( needsFeature ) {
 		body = <UpgradeScreen onCancel={ closeModal } upgradeURL={ upgradeURL } />;
@@ -200,7 +201,7 @@ export const GeneratorModal: React.FC< GeneratorModalProps > = ( {
 				>
 					<div
 						className={ classNames( 'jetpack-ai-logo-generator-modal__body', {
-							'notice-modal': needsFeature || featureFetchError,
+							'notice-modal': needsFeature || featureFetchError || firstLogoPromptFetchError,
 						} ) }
 					>
 						{ body }
