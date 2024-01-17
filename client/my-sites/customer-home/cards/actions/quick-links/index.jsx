@@ -14,7 +14,6 @@ import {
 	usePromoteWidget,
 	PromoteWidgetStatus,
 } from 'calypso/lib/promote-post';
-import { useOdieAssistantContext } from 'calypso/odie/context';
 import { bumpStat, composeAnalytics, recordTracksEvent } from 'calypso/state/analytics/actions';
 import { savePreference } from 'calypso/state/preferences/actions';
 import { getPreference } from 'calypso/state/preferences/selectors';
@@ -73,7 +72,6 @@ export const QuickLinks = ( {
 	isAtomic,
 } ) => {
 	const translate = useTranslate();
-	const { sendNudge } = useOdieAssistantContext();
 	const [
 		debouncedUpdateHomeQuickLinksToggleStatus,
 		,
@@ -87,11 +85,6 @@ export const QuickLinks = ( {
 	const hasBoost = site?.options?.jetpack_connection_active_plugins?.includes( 'jetpack-boost' );
 
 	const addNewDomain = () => {
-		sendNudge( {
-			nudge: 'add-domain',
-			initialMessage:
-				'I see you want to add a domain. I can give you a few tips on how to do that.',
-		} );
 		trackAddDomainAction();
 	};
 

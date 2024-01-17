@@ -1,8 +1,7 @@
-import { Button, Card } from '@automattic/components';
+import { Button, Card, SegmentedControl } from '@automattic/components';
 import { FunctionComponent, useState } from 'react';
 import JetpackReviewPrompt from 'calypso/blocks/jetpack-review-prompt';
 import CardHeading from 'calypso/components/card-heading';
-import SegmentedControl from 'calypso/components/segmented-control';
 import { useSelector, useDispatch } from 'calypso/state';
 import { setValidFrom } from 'calypso/state/jetpack-review-prompt/actions';
 import { PREFERENCE_NAME } from 'calypso/state/jetpack-review-prompt/constants';

@@ -1,8 +1,8 @@
+import { PlanPrice } from '@automattic/components';
 import formatCurrency from '@automattic/format-currency';
 import { TranslateResult } from 'i18n-calypso';
 import { isNumber } from 'lodash';
 import InfoPopover from 'calypso/components/info-popover';
-import PlanPrice from 'calypso/my-sites/plan-price';
 import PriceAriaLabel from './price-aria-label';
 import TimeFrame from './time-frame';
 import type { Duration } from 'calypso/my-sites/plans/jetpack-plans/types';

@@ -1,7 +1,6 @@
 /* global wpcomGlobalStyles */
 import { recordTracksEvent } from '@automattic/calypso-analytics';
-import { Plans } from '@automattic/data-stores';
-import { PLAN_PREMIUM } from '@automattic/data-stores/src/plans/constants';
+import { getPlan, PLAN_PREMIUM } from '@automattic/calypso-products';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { ExternalLink, Notice } from '@wordpress/components';
 import { useDispatch, useSelect } from '@wordpress/data';
@@ -26,10 +25,12 @@ const trackEvent = ( eventName, isSiteEditor = true ) =>
 		blog_id: wpcomGlobalStyles.wpcomBlogId,
 	} );
 
-function GlobalStylesWarningNotice( { plans } ) {
+function GlobalStylesWarningNotice() {
 	useEffect( () => {
 		trackEvent( 'calypso_global_styles_gating_notice_view_canvas_show' );
 	}, [] );
+
+	const planName = getPlan( PLAN_PREMIUM ).getTitle();
 
 	const upgradeTranslation = sprintf(
 		/* translators: %s is the short-form Premium plan name */
@@ -37,7 +38,7 @@ function GlobalStylesWarningNotice( { plans } ) {
 			'Your site includes premium styles that are only visible to visitors after <a>upgrading to the %s plan or higher</a>.',
 			'full-site-editing'
 		),
-		plans.data?.[ PLAN_PREMIUM ]?.productNameShort || ''
+		planName
 	);
 	return (
 		<Notice status="warning" isDismissible={ false } className="wpcom-global-styles-notice">
@@ -60,16 +61,11 @@ function GlobalStylesViewNotice() {
 	const { canvas } = useCanvas();
 	const [ isRendered, setIsRendered ] = useState( false );
 	const { globalStylesInUse } = useGlobalStylesConfig();
-	const plans = Plans.usePlans( { coupon: undefined } );
 
 	useEffect( () => {
 		if ( ! globalStylesInUse ) {
 			document.querySelector( `.${ GLOBAL_STYLES_VIEW_NOTICE_SELECTOR }` )?.remove();
 			setIsRendered( false );
-			return;
-		}
-
-		if ( ! plans?.data ) {
 			return;
 		}
 
@@ -92,10 +88,10 @@ function GlobalStylesViewNotice() {
 		noticeContainer.classList.add( GLOBAL_STYLES_VIEW_NOTICE_SELECTOR );
 		container.insertBefore( noticeContainer, saveHub );
 
-		render( <GlobalStylesWarningNotice plans={ plans } />, noticeContainer );
+		render( <GlobalStylesWarningNotice />, noticeContainer );
 
 		setIsRendered( true );
-	}, [ isRendered, canvas, plans, globalStylesInUse ] );
+	}, [ isRendered, canvas, globalStylesInUse ] );
 
 	return null;
 }
@@ -112,7 +108,6 @@ function GlobalStylesEditNotice() {
 		[ canvas ]
 	);
 	const { previewPostWithoutCustomStyles, canPreviewPost } = usePreview();
-	const plans = Plans.usePlans( { coupon: undefined } );
 
 	const { createWarningNotice, removeNotice } = useDispatch( 'core/notices' );
 	const { editEntityRecord } = useDispatch( 'core' );
@@ -176,6 +171,7 @@ function GlobalStylesEditNotice() {
 				: 'wpcom-global-styles-action-has-icon wpcom-global-styles-action-is-external wpcom-global-styles-action-is-support',
 		} );
 
+		const planName = getPlan( PLAN_PREMIUM ).getTitle();
 		createWarningNotice(
 			sprintf(
 				/* translators: %s is the short-form Premium plan name */
@@ -183,7 +179,7 @@ function GlobalStylesEditNotice() {
 					'Your site includes premium styles that are only visible to visitors after upgrading to the %s plan or higher.',
 					'full-site-editing'
 				),
-				plans.data?.[ PLAN_PREMIUM ]?.productNameShort || ''
+				planName
 			),
 			{
 				id: NOTICE_ID,
@@ -198,7 +194,6 @@ function GlobalStylesEditNotice() {
 		isPostEditor,
 		isSiteEditor,
 		openResetGlobalStylesSupport,
-		plans.data,
 		previewPost,
 		resetGlobalStyles,
 		upgradePlan,

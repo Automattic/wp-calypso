@@ -1,5 +1,5 @@
 import config from '@automattic/calypso-config';
-import { PLAN_BUSINESS } from '@automattic/calypso-products';
+import { PLAN_BUSINESS, getPlan } from '@automattic/calypso-products';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect } from 'react';
 import ActionCard from 'calypso/components/action-card';
@@ -127,7 +127,11 @@ const Plans = ( { intervalType }: { intervalType: 'yearly' | 'monthly' } ) => {
 						},
 					}
 				) }
-				buttonText={ translate( 'Upgrade to Business' ) }
+				buttonText={
+					translate( 'Upgrade to %(planName)s', {
+						args: { planName: getPlan( PLAN_BUSINESS )?.getTitle() ?? '' },
+					} ) as string
+				}
 				buttonPrimary={ true }
 				buttonOnClick={ () => {
 					alert( 'Connect code after merging PR 68087' );

@@ -7,6 +7,7 @@ const DEFAULT_SERVER_NOTICES_VISIBILITY = {
 	traffic_page_settings: false,
 	do_you_love_jetpack_stats: false,
 	commercial_site_upgrade: false,
+	focus_jetpack_purchase: false,
 	// TODO: Check if the site needs to be upgraded to a higher tier on the back end.
 	tier_upgrade: true,
 };

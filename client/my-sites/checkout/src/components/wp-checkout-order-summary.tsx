@@ -44,7 +44,6 @@ import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
 import { getSignupCompleteFlowName } from 'calypso/signup/storageUtils';
 import { useSelector } from 'calypso/state';
 import { getCurrentPlan } from 'calypso/state/sites/plans/selectors';
-import { useHideCheckoutIncludedPurchases } from '../hooks/use-hide-checkout-included-purchases';
 import getAkismetProductFeatures from '../lib/get-akismet-product-features';
 import getFlowPlanFeatures from '../lib/get-flow-plan-features';
 import getJetpackProductFeatures from '../lib/get-jetpack-product-features';
@@ -86,14 +85,12 @@ export default function WPCheckoutOrderSummary( {
 	const plan = responseCart.products.find( ( product ) => isPlan( product ) );
 	const hasMonthlyPlanInCart = Boolean( plan && isMonthly( plan?.product_slug ) );
 
-	const shouldHideCheckoutIncludedPurchases = useHideCheckoutIncludedPurchases() === 'treatment';
-
 	return (
 		<CheckoutSummaryCard
 			className={ isCartUpdating ? 'is-loading' : '' }
 			data-e2e-cart-is-loading={ isCartUpdating }
 		>
-			{ ! hasCheckoutVersion( '2' ) && ! shouldHideCheckoutIncludedPurchases && (
+			{ ! hasCheckoutVersion( '2' ) && (
 				<CheckoutSummaryFeatures>
 					<CheckoutSummaryFeaturesTitle>
 						{ responseCart.is_gift_purchase
@@ -113,9 +110,6 @@ export default function WPCheckoutOrderSummary( {
 
 			{ ! isCartUpdating && ! hasRenewalInCart && ! isWcMobile && plan && hasMonthlyPlanInCart && (
 				<CheckoutSummaryAnnualUpsell plan={ plan } onChangeSelection={ onChangeSelection } />
-			) }
-			{ shouldHideCheckoutIncludedPurchases && (
-				<CheckoutSummaryPriceListTitle>{ translate( 'Your order' ) }</CheckoutSummaryPriceListTitle>
 			) }
 			<CheckoutSummaryPriceList />
 		</CheckoutSummaryCard>
@@ -859,14 +853,6 @@ const CheckoutSummaryFeaturesListItem = styled( 'li' )< { isSupported?: boolean 
 CheckoutSummaryFeaturesListItem.defaultProps = {
 	isSupported: true,
 };
-
-const CheckoutSummaryPriceListTitle = styled.div`
-	color: ${ ( props ) => props.theme.colors.textColorDark };
-	font-size: 16px;
-	font-weight: ${ ( props ) => props.theme.weights.bold };
-	line-height: 26px;
-	margin: 1em 0 0.5em;
-`;
 
 const CheckoutSummaryAmountWrapper = styled.div`
 	border-top: 1px solid ${ ( props ) => props.theme.colors.borderColorLight };

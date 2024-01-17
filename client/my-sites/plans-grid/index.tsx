@@ -5,7 +5,6 @@ import PlanTypeSelector from './components/plan-type-selector';
 import PlansGridContextProvider from './grid-context';
 import useIsLargeCurrency from './hooks/npm-ready/use-is-large-currency';
 import useUpgradeClickHandler from './hooks/npm-ready/use-upgrade-click-handler';
-import { useIsPlanUpgradeCreditVisible } from './hooks/use-is-plan-upgrade-credit-visible';
 import { usePlanPricingInfoFromGridPlans } from './hooks/use-plan-pricing-info-from-grid-plans';
 import './style.scss';
 import type { ComparisonGridExternalProps, FeaturesGridExternalProps } from './types';
@@ -14,8 +13,8 @@ const WrappedComparisonGrid = ( {
 	selectedSiteId,
 	intent,
 	gridPlans,
-	usePricingMetaForGridPlans,
 	useCheckPlanAvailabilityForPurchase,
+	recordTracksEvent,
 	allFeaturesList,
 	onUpgradeClick,
 	intervalType,
@@ -40,8 +39,8 @@ const WrappedComparisonGrid = ( {
 			intent={ intent }
 			selectedSiteId={ selectedSiteId }
 			gridPlans={ gridPlans }
-			usePricingMetaForGridPlans={ usePricingMetaForGridPlans }
 			useCheckPlanAvailabilityForPurchase={ useCheckPlanAvailabilityForPurchase }
+			recordTracksEvent={ recordTracksEvent }
 			allFeaturesList={ allFeaturesList }
 			coupon={ coupon }
 		>
@@ -68,17 +67,14 @@ const WrappedFeaturesGrid = ( props: FeaturesGridExternalProps ) => {
 		selectedSiteId,
 		intent,
 		gridPlans,
-		usePricingMetaForGridPlans,
 		useCheckPlanAvailabilityForPurchase,
+		recordTracksEvent,
 		allFeaturesList,
 		onUpgradeClick,
 		coupon,
 	} = props;
 	const translate = useTranslate();
-	const isPlanUpgradeCreditEligible = useIsPlanUpgradeCreditVisible(
-		selectedSiteId,
-		gridPlans.map( ( gridPlan ) => gridPlan.planSlug )
-	);
+
 	const { prices, currencyCode } = usePlanPricingInfoFromGridPlans( {
 		gridPlans,
 	} );
@@ -97,14 +93,13 @@ const WrappedFeaturesGrid = ( props: FeaturesGridExternalProps ) => {
 			intent={ intent }
 			selectedSiteId={ selectedSiteId }
 			gridPlans={ gridPlans }
-			usePricingMetaForGridPlans={ usePricingMetaForGridPlans }
 			coupon={ coupon }
 			useCheckPlanAvailabilityForPurchase={ useCheckPlanAvailabilityForPurchase }
+			recordTracksEvent={ recordTracksEvent }
 			allFeaturesList={ allFeaturesList }
 		>
 			<FeaturesGrid
 				{ ...props }
-				isPlanUpgradeCreditEligible={ isPlanUpgradeCreditEligible }
 				isLargeCurrency={ isLargeCurrency }
 				translate={ translate }
 				onUpgradeClick={ handleUpgradeClick }

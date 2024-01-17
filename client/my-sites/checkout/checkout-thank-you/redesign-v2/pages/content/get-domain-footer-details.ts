@@ -10,7 +10,7 @@ export default function getDomainFooterDetails( limit?: number ): ThankYouFooter
 			description: translate(
 				'Check out our support documentation for step-by-step instructions and expert guidance on your domain set up.'
 			),
-			buttonText: translate( 'Master the domain basics' ),
+			buttonText: translate( 'Learn the domain basics' ),
 			buttonHref: '/support/domains',
 			buttonOnClick: () => {
 				recordTracksEvent( 'calypso_thank_you_footer-domain-essentials' );

@@ -1,11 +1,11 @@
 import { JETPACK_SOCIAL_ADVANCED_PRODUCTS } from '@automattic/calypso-products';
+import { PlanPrice } from '@automattic/components';
 import formatCurrency from '@automattic/format-currency';
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import { isNumber } from 'lodash';
 import { useCallback } from 'react';
 import TimeFrame from 'calypso/components/jetpack/card/jetpack-product-card/display-price/time-frame';
-import PlanPrice from 'calypso/my-sites/plan-price';
 import { useSelector } from 'calypso/state';
 import { getCurrentUserCurrencyCode } from 'calypso/state/currency-code/selectors';
 import { useItemPriceCompact } from '../product-store/hooks/use-item-price-compact';

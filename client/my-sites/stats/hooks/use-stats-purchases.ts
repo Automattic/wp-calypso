@@ -11,15 +11,21 @@ import { useSelector } from 'calypso/state';
 import { isFetchingSitePurchases, getSitePurchases } from 'calypso/state/purchases/selectors';
 import type { Purchase } from 'calypso/lib/purchases/types';
 
-const isProductOwned = ( ownedPurchases: Purchase[], searchedProduct: string ) => {
-	if ( ! ownedPurchases.length ) {
-		return false;
+const JETPACK_STATS_TIERED_BILLING_LIVE_DATE_2024_01_04 = '2024-01-04T05:30:00+00:00';
+
+const filterPurchasesByProducts = ( ownedPurchases: Purchase[], productSlugs: string[] ) => {
+	if ( ! ownedPurchases?.length ) {
+		return [];
 	}
 
-	return ownedPurchases
-		.filter( ( purchase ) => purchase.expiryStatus !== 'expired' )
-		.map( ( purchase ) => purchase.productSlug )
-		.includes( searchedProduct );
+	return ownedPurchases.filter(
+		( purchase ) =>
+			purchase.expiryStatus !== 'expired' && productSlugs.includes( purchase.productSlug )
+	);
+};
+
+const isProductOwned = ( ownedPurchases: Purchase[], searchedProduct: string ) => {
+	return filterPurchasesByProducts( ownedPurchases, [ searchedProduct ] ).length > 0;
 };
 
 export default function useStatsPurchases( siteId: number | null ) {
@@ -51,11 +57,25 @@ export default function useStatsPurchases( siteId: number | null ) {
 		[ sitePurchases, isCommercialOwned ]
 	);
 
+	const isLegacyCommercialLicense = useMemo( () => {
+		const purchases = filterPurchasesByProducts( sitePurchases, [
+			PRODUCT_JETPACK_STATS_MONTHLY,
+			PRODUCT_JETPACK_STATS_YEARLY,
+			PRODUCT_JETPACK_STATS_BI_YEARLY,
+		] );
+
+		if ( purchases.length === 0 ) {
+			return false;
+		}
+		return purchases[ 0 ].subscribedDate < JETPACK_STATS_TIERED_BILLING_LIVE_DATE_2024_01_04;
+	}, [ sitePurchases ] );
+
 	return {
 		isRequestingSitePurchases,
 		isFreeOwned,
 		isPWYWOwned,
 		isCommercialOwned,
 		supportCommercialUse,
+		isLegacyCommercialLicense,
 	};
 }
