@@ -32,6 +32,24 @@ class StepUpgrade extends Component {
 		this.props.recordTracksEvent( 'calypso_site_migration_business_viewed' );
 	}
 
+	getHeadingText( isEcommerceTrial, upsellPlanName ) {
+		const { translate } = this.props;
+
+		if ( isEcommerceTrial ) {
+			// translators: %(essentialPlanName)s is the name of the Essential plan
+			return translate( 'An %(essentialPlanName)s Plan is required to import everything.', {
+				args: {
+					essentialPlanName: upsellPlanName,
+				},
+			} );
+		}
+
+		// translators: %(businessPlanName)s is the name of the Creator/Business plan
+		return translate( 'A %(businessPlanName)s Plan is required to import everything.', {
+			args: { businessPlanName: upsellPlanName },
+		} );
+	}
+
 	render() {
 		const {
 			billingTimeFrame,
@@ -60,14 +78,7 @@ class StepUpgrade extends Component {
 				<HeaderCake backHref={ backHref }>{ translate( 'Import Everything' ) }</HeaderCake>
 
 				<CompactCard>
-					<CardHeading>
-						{
-							// translators: %(upsellPlanName)s is the name of the Creator/Business/Essential plan
-							translate( 'A %(upsellPlanName)s Plan is required to import everything.', {
-								args: { upsellPlanName: upsellPlanName },
-							} )
-						}
-					</CardHeading>
+					<CardHeading>{ this.getHeadingText( isEcommerceTrial, upsellPlanName ) }</CardHeading>
 					<div>
 						{ translate(
 							'To import your themes, plugins, users, and settings from %(sourceSiteDomain)s we need to upgrade your WordPress.com site.',

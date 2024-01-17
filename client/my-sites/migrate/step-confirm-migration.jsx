@@ -70,14 +70,31 @@ class StepConfirmMigration extends Component {
 		return planSlug && planHasFeature( planSlug, FEATURE_UPLOAD_THEMES_PLUGINS );
 	}
 
-	renderCardFooter() {
+	getFooterText() {
 		const { translate, targetSite } = this.props;
 		const currentPlanSlug = get( targetSite, 'plan.product_slug' );
 		const isEcommerceTrial = currentPlanSlug === PLAN_ECOMMERCE_TRIAL_MONTHLY;
 		const upsellPlanName = isEcommerceTrial
 			? getPlan( PLAN_WOOEXPRESS_SMALL )?.getTitle()
 			: getPlan( PLAN_BUSINESS )?.getTitle();
+		if ( isEcommerceTrial ) {
+			// translators: %(essentialPlanName)s is the name of the Essential plan
+			return translate( 'An %(essentialPlanName)s Plan is required to import everything.', {
+				args: {
+					essentialPlanName: upsellPlanName,
+				},
+			} );
+		}
 
+		// translators: %(businessPlanName)s is the name of the Creator/Business plan
+		return translate( 'A %(businessPlanName)s Plan is required to import everything.', {
+			args: {
+				businessPlanName: upsellPlanName,
+			},
+		} );
+	}
+
+	renderCardFooter() {
 		// If the site is has an appropriate plan, no upgrade footer is required
 		if ( this.isTargetSitePlanCompatible() ) {
 			return null;
@@ -86,16 +103,7 @@ class StepConfirmMigration extends Component {
 		return (
 			<CompactCard className="migrate__card-footer">
 				<Gridicon className="migrate__card-footer-gridicon" icon="info-outline" size={ 12 } />
-				<span className="migrate__card-footer-text">
-					{
-						// translators: %(upsellPlanName)s is the name of the Creator/Business/Essential plan
-						translate( 'A %(upsellPlanName)s Plan is required to import everything.', {
-							args: {
-								upsellPlanName: upsellPlanName,
-							},
-						} )
-					}
-				</span>
+				<span className="migrate__card-footer-text">{ this.getFooterText() }</span>
 			</CompactCard>
 		);
 	}
