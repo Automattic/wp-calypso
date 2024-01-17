@@ -41,6 +41,15 @@ const useRequestErrors = () => {
 		};
 	}, [] );
 
+	const clearErrors = () => {
+		setFeatureFetchError( null );
+		setFirstLogoPromptFetchError( null );
+		setEnhancePromptFetchError( null );
+		setLogoFetchError( null );
+		setSaveToLibraryError( null );
+		setLogoUpdateError( null );
+	};
+
 	return {
 		setFeatureFetchError,
 		setFirstLogoPromptFetchError,
@@ -48,6 +57,7 @@ const useRequestErrors = () => {
 		setLogoFetchError,
 		setSaveToLibraryError,
 		setLogoUpdateError,
+		clearErrors,
 		featureFetchError,
 		firstLogoPromptFetchError,
 		enhancePromptFetchError,
