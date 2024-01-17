@@ -531,6 +531,10 @@ object CheckCodeStyleBranch : BuildType({
 		)
 	}
 
+	cleanup {
+		artifacts(days = 14)
+	}
+
 	artifactRules = """
 		checkstyle_results => checkstyle_results
 	""".trimIndent()
