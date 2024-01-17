@@ -16,7 +16,7 @@ import QueryJetpackPartnerPortalPartner from 'calypso/components/data/query-jetp
 import QueryJetpackPartnerKey from 'calypso/components/data/query-jetpack-partner-portal-partner-key';
 import DisplayPrice from 'calypso/components/jetpack/card/jetpack-product-card/display-price';
 import JetpackRnaActionCard from 'calypso/components/jetpack/card/jetpack-rna-action-card';
-import SingleSiteUpsellLightbox from 'calypso/jetpack-cloud/sections/partner-portal/license-lightbox/single-site-upsell-lightbox';
+import SingleSiteUpsellLightbox from 'calypso/jetpack-cloud/sections/partner-portal/single-site-upsell-lightbox';
 import { getPurchaseURLCallback } from 'calypso/my-sites/plans/jetpack-plans/get-purchase-url-callback';
 import productAboveButtonText from 'calypso/my-sites/plans/jetpack-plans/product-card/product-above-button-text';
 import productTooltip from 'calypso/my-sites/plans/jetpack-plans/product-card/product-tooltip';
@@ -32,6 +32,7 @@ import {
 import { APIProductFamilyProduct } from 'calypso/state/partner-portal/types';
 import { getSiteAvailableProduct } from 'calypso/state/sites/products/selectors';
 import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';
+import UnusedLicenseNotice from '../unassigned-license-notice';
 import type {
 	Duration,
 	SelectorProduct,
@@ -41,12 +42,14 @@ import type {
 import './style.scss';
 
 interface UpsellProductCardProps {
+	featureType: string;
 	nonManageProductSlug: string;
 	siteId: number | null;
 	onCtaButtonClick: () => void;
 }
 
 const UpsellProductCard: React.FC< UpsellProductCardProps > = ( {
+	featureType,
 	nonManageProductSlug,
 	siteId,
 	onCtaButtonClick,
@@ -70,6 +73,7 @@ const UpsellProductCard: React.FC< UpsellProductCardProps > = ( {
 	let discountText: TranslateResult | undefined;
 	let isFetchingPrices: boolean;
 	let manageProduct: APIProductFamilyProduct | undefined;
+	let nonManageProductPrice: number | null = null;
 	let onCtaButtonClickInternal = onCtaButtonClick;
 	let originalPrice: number;
 	let tooltipText: TranslateResult | ReactNode;
@@ -77,6 +81,7 @@ const UpsellProductCard: React.FC< UpsellProductCardProps > = ( {
 	// Calculate the product price.
 	const {
 		originalPrice: nonManageOriginalPrice,
+		originalPriceTotal: nonManageOriginalPriceTotal,
 		discountedPrice: nonManageDiscountedPrice,
 		discountedPriceTotal: nonManageDiscountedPriceTotal,
 		priceTierList: nonManagePriceTierList,
@@ -131,6 +136,14 @@ const UpsellProductCard: React.FC< UpsellProductCardProps > = ( {
 					comment: 'Should be as concise as possible.',
 				} );
 			}
+		}
+	}
+
+	if ( nonManageCurrencyCode === 'USD' ) {
+		if ( nonManageDiscountedPriceTotal ) {
+			nonManageProductPrice = nonManageDiscountedPriceTotal;
+		} else if ( nonManageOriginalPriceTotal ) {
+			nonManageProductPrice = nonManageOriginalPriceTotal;
 		}
 	}
 
@@ -202,9 +215,7 @@ const UpsellProductCard: React.FC< UpsellProductCardProps > = ( {
 						manageProduct={ manageProduct }
 						onClose={ () => setShowLightbox( false ) }
 						nonManageProductSlug={ nonManageProductSlug }
-						nonManageProductPrice={
-							nonManageCurrencyCode === 'USD' ? nonManageDiscountedPriceTotal : null
-						}
+						nonManageProductPrice={ nonManageProductPrice }
 						partnerCanIssueLicense={ true }
 						siteId={ siteId }
 					/>
@@ -214,19 +225,22 @@ const UpsellProductCard: React.FC< UpsellProductCardProps > = ( {
 	};
 
 	return (
-		<JetpackRnaActionCard
-			headerText={ displayName }
-			subHeaderText={ description }
-			onCtaButtonClick={ onCtaButtonClickInternal }
-			ctaButtonURL={ ctaButtonURL }
-			ctaButtonLabel={ ctaButtonLabel }
-			cardImage={ upsellImageUrl }
-			cardImageAlt={ upsellImageAlt }
-		>
-			{ hasJetpackPartnerAccess && ! partner && <QueryJetpackPartnerPortalPartner /> }
-			{ hasJetpackPartnerAccess && <QueryJetpackPartnerKey /> }
-			{ renderProductCardBody() }
-		</JetpackRnaActionCard>
+		<>
+			{ hasJetpackPartnerAccess && <UnusedLicenseNotice featureType={ featureType } /> }
+			<JetpackRnaActionCard
+				headerText={ displayName }
+				subHeaderText={ description }
+				onCtaButtonClick={ onCtaButtonClickInternal }
+				ctaButtonURL={ ctaButtonURL }
+				ctaButtonLabel={ ctaButtonLabel }
+				cardImage={ upsellImageUrl }
+				cardImageAlt={ upsellImageAlt }
+			>
+				{ hasJetpackPartnerAccess && ! partner && <QueryJetpackPartnerPortalPartner /> }
+				{ hasJetpackPartnerAccess && <QueryJetpackPartnerKey /> }
+				{ renderProductCardBody() }
+			</JetpackRnaActionCard>
+		</>
 	);
 };
 

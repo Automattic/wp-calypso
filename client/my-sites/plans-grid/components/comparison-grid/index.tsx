@@ -23,7 +23,6 @@ import {
 	forwardRef,
 } from 'react';
 import { useInView } from 'react-intersection-observer';
-import { useIsPlanUpgradeCreditVisible } from 'calypso/my-sites/plans-grid/hooks/use-is-plan-upgrade-credit-visible';
 import { useManageTooltipToggle } from 'calypso/my-sites/plans-grid/hooks/use-manage-tooltip-toggle';
 import getPlanFeaturesObject from 'calypso/my-sites/plans-grid/lib/get-plan-features-object';
 import { usePlansGridContext } from '../../grid-context';
@@ -337,13 +336,13 @@ type ComparisonGridHeaderProps = {
 	isStuck: boolean;
 	isHiddenInMobile?: boolean;
 	planTypeSelectorProps?: PlanTypeSelectorProps;
+	planUpgradeCreditsApplicable?: number | null;
 };
 
 type ComparisonGridHeaderCellProps = Omit< ComparisonGridHeaderProps, 'planTypeSelectorProps' > & {
 	allVisible: boolean;
 	isLastInRow: boolean;
 	isLargeCurrency: boolean;
-	isPlanUpgradeCreditEligible: boolean;
 	planSlug: PlanSlug;
 };
 
@@ -366,7 +365,7 @@ const ComparisonGridHeaderCell = ( {
 	isLargeCurrency,
 	onUpgradeClick,
 	planActionOverrides,
-	isPlanUpgradeCreditEligible,
+	planUpgradeCreditsApplicable,
 	showRefundPeriod,
 	isStuck,
 }: ComparisonGridHeaderCellProps ) => {
@@ -436,7 +435,7 @@ const ComparisonGridHeaderCell = ( {
 			</PlanSelector>
 			<PlanFeatures2023GridHeaderPrice
 				planSlug={ planSlug }
-				isPlanUpgradeCreditEligible={ isPlanUpgradeCreditEligible }
+				planUpgradeCreditsApplicable={ planUpgradeCreditsApplicable }
 				isLargeCurrency={ isLargeCurrency }
 				currentSitePlanSlug={ currentSitePlanSlug }
 				visibleGridPlans={ visibleGridPlans }
@@ -486,11 +485,11 @@ const ComparisonGridHeader = forwardRef< HTMLDivElement, ComparisonGridHeaderPro
 			showRefundPeriod,
 			isStuck,
 			planTypeSelectorProps,
+			planUpgradeCreditsApplicable,
 		},
 		ref
 	) => {
 		const translate = useTranslate();
-		const { selectedSiteId } = usePlansGridContext();
 		const allVisible = visibleGridPlans.length === displayedGridPlans.length;
 		const { prices, currencyCode } = usePlanPricingInfoFromGridPlans( {
 			gridPlans: visibleGridPlans,
@@ -501,10 +500,6 @@ const ComparisonGridHeader = forwardRef< HTMLDivElement, ComparisonGridHeaderPro
 			prices,
 			currencyCode: currencyCode || 'USD',
 		} );
-		const isPlanUpgradeCreditEligible = useIsPlanUpgradeCreditVisible(
-			selectedSiteId ?? 0,
-			displayedGridPlans.map( ( { planSlug } ) => planSlug )
-		);
 
 		return (
 			<PlanRow isHiddenInMobile={ isHiddenInMobile } ref={ ref }>
@@ -526,7 +521,7 @@ const ComparisonGridHeader = forwardRef< HTMLDivElement, ComparisonGridHeaderPro
 				{ visibleGridPlans.map( ( { planSlug }, index ) => (
 					<ComparisonGridHeaderCell
 						planSlug={ planSlug }
-						isPlanUpgradeCreditEligible={ isPlanUpgradeCreditEligible }
+						planUpgradeCreditsApplicable={ planUpgradeCreditsApplicable }
 						key={ planSlug }
 						isLastInRow={ index === visibleGridPlans.length - 1 }
 						isFooter={ isFooter }
@@ -963,6 +958,7 @@ const ComparisonGrid = ( {
 	onStorageAddOnClick,
 	showRefundPeriod,
 	planTypeSelectorProps,
+	planUpgradeCreditsApplicable,
 }: ComparisonGridProps ) => {
 	const { gridPlans } = usePlansGridContext();
 	const [ activeTooltipId, setActiveTooltipId ] = useManageTooltipToggle();
@@ -1109,6 +1105,7 @@ const ComparisonGrid = ( {
 							showRefundPeriod={ showRefundPeriod }
 							isStuck={ isStuck }
 							planTypeSelectorProps={ planTypeSelectorProps }
+							planUpgradeCreditsApplicable={ planUpgradeCreditsApplicable }
 						/>
 					) }
 				</StickyContainer>
@@ -1143,6 +1140,7 @@ const ComparisonGrid = ( {
 					isHiddenInMobile={ true }
 					ref={ bottomHeaderRef }
 					planTypeSelectorProps={ planTypeSelectorProps }
+					planUpgradeCreditsApplicable={ planUpgradeCreditsApplicable }
 				/>
 			</Grid>
 

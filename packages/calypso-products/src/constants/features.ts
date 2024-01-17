@@ -457,3 +457,13 @@ export const FEATURE_LIVE_SHIPPING_RATES = 'live-shipping-rates'; // Live shippi
 export const FEATURE_DISCOUNTED_SHIPPING = 'discounted-shipping'; // Discounted shipping
 export const FEATURE_PRINT_SHIPPING_LABELS = 'print-shipping-labels'; // Print shipping labels
 export const FEATURE_AI_ASSISTED_PRODUCT_DESCRIPTION = 'ai-assisted-product-descriptions'; // AI-assisted product descriptions
+
+// Feature types
+export const FEATURE_TYPE_JETPACK_ANTI_SPAM = 'jetpack_anti_spam';
+export const FEATURE_TYPE_JETPACK_ACTIVITY_LOG = 'jetpack_activity_log';
+export const FEATURE_TYPE_JETPACK_BACKUP = 'jetpack_backup';
+export const FEATURE_TYPE_JETPACK_BOOST = 'jetpack_boost';
+export const FEATURE_TYPE_JETPACK_SCAN = 'jetpack_scan';
+export const FEATURE_TYPE_JETPACK_SEARCH = 'jetpack_search';
+export const FEATURE_TYPE_JETPACK_STATS = 'jetpack_stats';
+export const FEATURE_TYPE_JETPACK_VIDEOPRESS = 'jetpack_videopress';

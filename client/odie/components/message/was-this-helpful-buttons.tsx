@@ -1,5 +1,6 @@
 import classnames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
+import { ODIE_THUMBS_DOWN_RATING_VALUE, ODIE_THUMBS_UP_RATING_VALUE } from '../../';
 import { noop, useOdieAssistantContext } from '../../context';
 import { useOdieSendMessageFeedback } from '../../query';
 import { ThumbsDownIcon, ThumbsUpIcon } from './thumbs-icons';
@@ -14,9 +15,6 @@ const WasThisHelpfulButtons = ( {
 	message: Message;
 	onDislike?: () => void;
 } ) => {
-	const THUMBS_DOWN_RATING_VALUE = 2;
-	const THUMBS_UP_RATING_VALUE = 4;
-
 	const translate = useTranslate();
 	const { setMessageLikedStatus, trackEvent } = useOdieAssistantContext();
 	const { mutateAsync: sendOdieMessageFeedback } = useOdieSendMessageFeedback();
@@ -28,7 +26,7 @@ const WasThisHelpfulButtons = ( {
 	const handleIsHelpful = ( isHelpful: boolean ) => {
 		sendOdieMessageFeedback( {
 			message,
-			rating_value: isHelpful ? THUMBS_UP_RATING_VALUE : THUMBS_DOWN_RATING_VALUE,
+			rating_value: isHelpful ? ODIE_THUMBS_UP_RATING_VALUE : ODIE_THUMBS_DOWN_RATING_VALUE,
 		} );
 
 		setMessageLikedStatus( message, isHelpful );
