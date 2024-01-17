@@ -249,7 +249,19 @@ const PersonalPurchase = ( {
 };
 
 function StatsPurchaseActions( props: any ) {
+	const allowPostponeAction = config.isEnabled( 'stats/checkout-flows-v2' );
+
+	return (
+		<div className={ `${ COMPONENT_CLASS_NAME }__actions` }>
+			<StatsPurchaseButton { ...props } />
+			{ allowPostponeAction && <StatsPurchasePostponeButton { ...props } /> }
+		</div>
+	);
+}
+
+function StatsPurchaseButton( props: any ) {
 	const ButtonComponent = props.isWPCOMSite ? CalypsoButton : Button;
+
 	return (
 		<ButtonComponent
 			variant="primary"
@@ -257,6 +269,16 @@ function StatsPurchaseActions( props: any ) {
 			onClick={ props.onCheckoutClick }
 		>
 			{ props.buttonText }
+		</ButtonComponent>
+	);
+}
+
+function StatsPurchasePostponeButton( props: any ) {
+	const ButtonComponent = props.isWPCOMSite ? CalypsoButton : Button;
+
+	return (
+		<ButtonComponent variant="secondary" onClick={ () => console.log( 'later button clicked!' ) }>
+			I will do it later
 		</ButtonComponent>
 	);
 }
