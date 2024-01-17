@@ -1,5 +1,6 @@
 @import "@wordpress/base-styles/breakpoints";
 @import "@wordpress/base-styles/mixins";
+@import "calypso/jetpack-cloud/sections/partner-portal/mixins.scss";
 
 
 .payment-method-list-v2-empty-state {
@@ -68,4 +69,9 @@
 	display: flex;
 	flex-wrap: wrap;
 	gap: 24px;
+}
+
+.payment-method-list-v2__pagination {
+	margin: 64px 0;
+	@include licensing-portal-cursor-pagination();
 }
