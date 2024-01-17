@@ -46,7 +46,7 @@ export const getTitleForRenamedCategories = ( category: Category = {} ) => {
 
 export const getPagePatternTitle = ( { categories }: Pattern ) => {
 	const category = ( Object.values( categories ) as Category[] ).find(
-		( { slug } ) => 'page' !== slug
+		( { slug } ) => 'page' !== slug && 'featured' !== slug
 	);
 	return getTitleForRenamedCategories( category );
 };

@@ -1,6 +1,7 @@
 import { useMutation, UseMutationResult, useQuery } from '@tanstack/react-query';
 import apiFetch from '@wordpress/api-fetch';
 import { canAccessWpcomApis } from 'wpcom-proxy-request';
+// eslint-disable-next-line no-restricted-imports
 import wpcom from 'calypso/lib/wp';
 import { WAPUU_ERROR_MESSAGE, ODIE_THUMBS_DOWN_RATING_VALUE } from '..';
 import { useOdieAssistantContext } from '../context';
