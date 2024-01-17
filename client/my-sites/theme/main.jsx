@@ -808,9 +808,6 @@ class ThemeSheet extends Component {
 	};
 
 	renderReviews = () => {
-		if ( ! config.isEnabled( 'marketplace-add-review' ) ) {
-			return null;
-		}
 		const { name, themeId } = this.props;
 
 		return (
