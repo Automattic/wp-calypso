@@ -1,4 +1,3 @@
-import config from '@automattic/calypso-config';
 import { useSelect } from '@wordpress/data';
 import { useEffect, useState, useMemo } from 'react';
 import wpcom from 'calypso/lib/wp';
@@ -27,26 +26,14 @@ const getThemeType = ( theme?: Theme ) => {
 		return PREMIUM_THEME;
 	}
 
-	// @TODO Replace all the logic above with the following code once Theme Tiers is live.
-	if ( config.isEnabled( 'themes/tiers' ) ) {
-		return theme?.theme_tier?.slug ?? undefined;
-	}
-
-	return undefined;
+	return theme?.theme_tier?.slug ?? undefined;
 };
 
 /**
  * Get the theme required feature.
  * This only support WooCommerce and Premium themes.
  */
-const getThemeFeature = ( theme?: Theme ) => {
-	// @TODO Once theme tiers is live we'll need to refactor use-can-preview-but-need-upgrade's checkNeedUpgrade function.
-	if ( config.isEnabled( 'themes/tiers' ) ) {
-		return theme?.theme_tier?.feature ?? undefined;
-	}
-
-	return undefined;
-};
+const getThemeFeature = ( theme?: Theme ) => theme?.theme_tier?.feature ?? undefined;
 
 export const usePreviewingThemeSlug = () => {
 	const location = useLocation();
