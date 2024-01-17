@@ -42,6 +42,7 @@ const EarningsMain = ( { section, query, path }: EarningsMainProps ) => {
 	const adsProgramName = isJetpack ? 'Ads' : 'WordAds';
 	const subscriberId = new URLSearchParams( window.location.search ).get( 'subscriber' );
 
+	// layout styles
 	const layoutTitles = {
 		'ads-earnings': translate( '%(wordads)s Earnings', { args: { wordads: adsProgramName } } ),
 		'ads-settings': translate( '%(wordads)s Settings', { args: { wordads: adsProgramName } } ),
