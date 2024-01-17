@@ -1,7 +1,7 @@
 @import "../../media-queries";
 
 .plan-type-selector {
-	width: 100%;
+	width: fit-content;
 }
 
 
@@ -71,7 +71,6 @@
 }
 
 .plan-type-selector .plan-type-selector__interval-type-dropdown-container {
-	width: 275px;
 	margin: 0 auto;
 	.is-sticky-plan-type-selector & {
 		width: 100%;
