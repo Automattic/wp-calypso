@@ -85,6 +85,8 @@ export type PostQueryResult = {
 	total_items: number;
 	total_pages: number;
 	page: number;
+	pages: [];
+	pageParams: [];
 };
 
 export type CampaignQueryResult = {

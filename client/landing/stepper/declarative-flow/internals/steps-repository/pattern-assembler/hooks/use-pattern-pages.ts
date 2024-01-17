@@ -1,10 +1,11 @@
 import { useSearchParams } from 'react-router-dom';
 import { INITIAL_PAGES, ORDERED_PATTERN_PAGES_CATEGORIES } from '../constants';
 import { useCategoriesOrder } from '../hooks';
+import { getPagePatternTitle, isPriorityPattern } from '../utils';
 import type { Pattern, Category, CustomPageTitle } from '../types';
 
 const usePatternPages = (
-	pagesMapByCategory: Record< string, Pattern[] >,
+	pageCategoryPatternsMap: Record< string, Pattern[] >,
 	categories: Category[],
 	dotcomPatterns: Pattern[]
 ): {
@@ -51,7 +52,6 @@ const usePatternPages = (
 			}
 			pagesToShow.push( {
 				name: pattern?.name || '',
-				hasPages: true,
 				title: title,
 				isSelected: !! selected,
 			} );
@@ -82,18 +82,36 @@ const usePatternPages = (
 		pageSlugs = INITIAL_PAGES;
 	}
 
-	pages = pageSlugs.map( ( slug ) => pagesMapByCategory[ slug ]?.[ 0 ] ).filter( Boolean );
+	const getFeaturedPageOrFirstInCategory = ( name: string ) =>
+		pageCategoryPatternsMap[ name ]?.find( isPriorityPattern ) ||
+		pageCategoryPatternsMap[ name ]?.[ 0 ];
 
-	pagesToShow = pageCategoriesInOrder.map( ( category: Category ) => {
-		const { name } = category;
-		const hasPages = name && pagesMapByCategory[ name ]?.length;
-		return {
-			name,
-			hasPages,
-			title: hasPages ? pagesMapByCategory[ name ][ 0 ].title : '',
-			isSelected: name ? pageSlugs.includes( name ) : false,
-		};
-	} );
+	pages = pageSlugs
+		.map( ( name ) => {
+			const page = getFeaturedPageOrFirstInCategory( name );
+			if ( page ) {
+				return {
+					...page,
+					title: getPagePatternTitle( page ),
+				};
+			}
+		} )
+		.filter( Boolean ) as Pattern[];
+
+	pagesToShow = pageCategoriesInOrder
+		.map( ( category: Category ) => {
+			const { name = '' } = category;
+			const page = getFeaturedPageOrFirstInCategory( name );
+			if ( page ) {
+				return {
+					name,
+					title: getPagePatternTitle( page ),
+					isSelected: pageSlugs.includes( name ),
+				};
+			}
+		} )
+		.filter( Boolean );
+
 	const setPageSlugs = ( slugs: string[] ) => {
 		setSearchParams(
 			( currentSearchParams ) => {

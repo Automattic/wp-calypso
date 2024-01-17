@@ -37,9 +37,9 @@
 	},
 	"devDependencies": {
 		"@automattic/calypso-typescript-config": "workspace:^",
-		"@testing-library/jest-dom": "^6.1.5",
+		"@testing-library/jest-dom": "^6.2.0",
 		"@testing-library/react": "^14.1.2",
-		"typescript": "^5.3.2"
+		"typescript": "^5.3.3"
 	},
 	"scripts": {
 		"clean": "tsc --build ./tsconfig.json ./tsconfig-cjs.json --clean && rm -rf dist",

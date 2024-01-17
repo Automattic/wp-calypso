@@ -1,6 +1,5 @@
 @import "@wordpress/base-styles/breakpoints";
 
-@import "./styles/theme.scss";
 @import "./styles/layout.scss";
 @import "./styles/wp-admin.scss";
 @import "./styles/promote-widget.scss";
@@ -178,6 +177,43 @@ $break-medium-expanded-menu: $break-medium + 272px;
 				font-weight: 600;
 				line-height: 16px;
 				padding: 12px;
+			}
+		}
+	}
+}
+
+
+.woo-blaze-dashboard {
+	.promote-post-i2 {
+		// Header
+		.promote-post-i2__top-bar {
+			height: 40px;
+			display: flex;
+			align-items: center;
+			margin-bottom: 16px;
+
+			.promote-post-i2__top-bar-buttons {
+				height: 100%;
+
+				.inline-support-link {
+					font-size: rem(14px);
+					font-weight: 400;
+
+					height: 36px;
+					line-height: 22px;
+					min-width: auto;
+					padding: 6px 12px;
+				}
+
+				button {
+					font-size: rem(13px);
+					font-weight: 400;
+					height: 36px;
+					justify-content: center;
+					line-height: 22px;
+					min-width: auto;
+					padding: 6px 12px;
+				}
 			}
 		}
 	}

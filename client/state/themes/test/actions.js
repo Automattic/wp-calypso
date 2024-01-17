@@ -61,7 +61,6 @@ import {
 	addExternalManagedThemeToCart,
 	livePreview,
 	redirectToLivePreview,
-	installAndLivePreview,
 	updateThemeTiers,
 } from '../actions';
 import { themesUpdated } from '../actions/theme-update';
@@ -1433,6 +1432,7 @@ describe( 'actions', () => {
 								site_id: 2211667,
 								source: 'detail',
 								theme: 'pendant',
+								theme_style: 'pendant',
 								theme_type: 'free',
 							},
 							service: 'tracks',
@@ -1465,17 +1465,15 @@ describe( 'actions', () => {
 			test( 'should redirect users to the Live Preview', () => {
 				return new Promise( ( done ) => {
 					livePreview(
-						'pendant',
 						2211667,
+						'pendant',
 						'detail'
 					)( dispatch, state ).then( () => {
 						expect( dispatch ).toHaveBeenCalledWith( livePreviewStartAction );
 						expect( dispatch ).toHaveBeenCalledWith(
 							expect.toMatchFunction( redirectToLivePreview( 'pendant', 2211667 ) )
 						);
-						expect( dispatch ).not.toHaveBeenCalledWith(
-							installAndLivePreview( 'pendant', 2211667 )
-						);
+						expect( dispatch ).not.toHaveBeenCalledWith( installTheme( 'pendant', 2211667 ) );
 						done();
 					} );
 				} );
@@ -1511,17 +1509,15 @@ describe( 'actions', () => {
 				test( 'should redirect users to the Live Preview', () => {
 					return new Promise( ( done ) => {
 						livePreview(
-							'pendant',
 							2211667,
+							'pendant',
 							'detail'
 						)( dispatch, state ).then( () => {
 							expect( dispatch ).toHaveBeenCalledWith( livePreviewStartAction );
 							expect( dispatch ).toHaveBeenCalledWith(
 								expect.toMatchFunction( redirectToLivePreview( 'pendant', 2211667 ) )
 							);
-							expect( dispatch ).not.toHaveBeenCalledWith(
-								installAndLivePreview( 'pendant', 2211667 )
-							);
+							expect( dispatch ).not.toHaveBeenCalledWith( installTheme( 'pendant', 2211667 ) );
 							done();
 						} );
 					} );
@@ -1538,13 +1534,16 @@ describe( 'actions', () => {
 				test( 'should install the theme and then redirect users to the Live Preview', () => {
 					return new Promise( ( done ) => {
 						livePreview(
-							'pendant',
 							2211667,
+							'pendant',
 							'detail'
 						)( dispatch, state ).then( () => {
 							expect( dispatch ).toHaveBeenCalledWith( livePreviewStartAction );
 							expect( dispatch ).toHaveBeenCalledWith(
-								expect.toMatchFunction( installAndLivePreview( 'pendant', 2211667 ) )
+								expect.toMatchFunction( installTheme( 'pendant', 2211667 ) )
+							);
+							expect( dispatch ).toHaveBeenCalledWith(
+								expect.toMatchFunction( redirectToLivePreview( 'pendant', 2211667 ) )
 							);
 							done();
 						} );

@@ -87,7 +87,7 @@ export const CredentialsForm: React.FunctionComponent< Props > = ( props ) => {
 		dispatch( updateCredentials( sourceSite.ID, credentials, true, false ) );
 	};
 
-	const { migrateProvision, isLoading, isError, error } =
+	const { migrateProvision, isPending, isError, error } =
 		useMigrateProvisionMutation( handleUpdateCredentials );
 
 	const submitCredentials = useCallback(
@@ -187,7 +187,7 @@ export const CredentialsForm: React.FunctionComponent< Props > = ( props ) => {
 			) }
 			<form onSubmit={ submitCredentials }>
 				<CredentialsFormAdvanced
-					disabled={ isFormSubmissionPending || isLoading }
+					disabled={ isFormSubmissionPending || isPending }
 					formErrors={ formErrors }
 					formMode={ formMode }
 					formState={ formState }
@@ -220,8 +220,8 @@ export const CredentialsForm: React.FunctionComponent< Props > = ( props ) => {
 				) }
 
 				<div className="pre-migration__content pre-migration__proceed import__footer-button-container">
-					<NextButton type="submit" isBusy={ isFormSubmissionPending || isLoading }>
-						{ isFormSubmissionPending || isLoading
+					<NextButton type="submit" isBusy={ isFormSubmissionPending || isPending }>
+						{ isFormSubmissionPending || isPending
 							? translate( 'Testing credentials' )
 							: translate( 'Start migration' ) }
 					</NextButton>

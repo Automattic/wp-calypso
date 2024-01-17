@@ -5,16 +5,16 @@ import PlanTypeSelector from './components/plan-type-selector';
 import PlansGridContextProvider from './grid-context';
 import useIsLargeCurrency from './hooks/npm-ready/use-is-large-currency';
 import useUpgradeClickHandler from './hooks/npm-ready/use-upgrade-click-handler';
-import { useIsPlanUpgradeCreditVisible } from './hooks/use-is-plan-upgrade-credit-visible';
 import { usePlanPricingInfoFromGridPlans } from './hooks/use-plan-pricing-info-from-grid-plans';
 import './style.scss';
 import type { ComparisonGridExternalProps, FeaturesGridExternalProps } from './types';
 
 const WrappedComparisonGrid = ( {
-	siteId,
+	selectedSiteId,
 	intent,
 	gridPlans,
-	usePricingMetaForGridPlans,
+	useCheckPlanAvailabilityForPurchase,
+	recordTracksEvent,
 	allFeaturesList,
 	onUpgradeClick,
 	intervalType,
@@ -26,6 +26,7 @@ const WrappedComparisonGrid = ( {
 	showUpgradeableStorage,
 	onStorageAddOnClick,
 	stickyRowOffset,
+	coupon,
 	...otherProps
 }: ComparisonGridExternalProps ) => {
 	const handleUpgradeClick = useUpgradeClickHandler( {
@@ -36,9 +37,12 @@ const WrappedComparisonGrid = ( {
 	return (
 		<PlansGridContextProvider
 			intent={ intent }
+			selectedSiteId={ selectedSiteId }
 			gridPlans={ gridPlans }
-			usePricingMetaForGridPlans={ usePricingMetaForGridPlans }
+			useCheckPlanAvailabilityForPurchase={ useCheckPlanAvailabilityForPurchase }
+			recordTracksEvent={ recordTracksEvent }
 			allFeaturesList={ allFeaturesList }
+			coupon={ coupon }
 		>
 			<ComparisonGrid
 				intervalType={ intervalType }
@@ -46,7 +50,7 @@ const WrappedComparisonGrid = ( {
 				isLaunchPage={ isLaunchPage }
 				currentSitePlanSlug={ currentSitePlanSlug }
 				onUpgradeClick={ handleUpgradeClick }
-				siteId={ siteId }
+				selectedSiteId={ selectedSiteId }
 				selectedPlan={ selectedPlan }
 				selectedFeature={ selectedFeature }
 				showUpgradeableStorage={ showUpgradeableStorage }
@@ -59,13 +63,18 @@ const WrappedComparisonGrid = ( {
 };
 
 const WrappedFeaturesGrid = ( props: FeaturesGridExternalProps ) => {
-	const { siteId, intent, gridPlans, usePricingMetaForGridPlans, allFeaturesList, onUpgradeClick } =
-		props;
+	const {
+		selectedSiteId,
+		intent,
+		gridPlans,
+		useCheckPlanAvailabilityForPurchase,
+		recordTracksEvent,
+		allFeaturesList,
+		onUpgradeClick,
+		coupon,
+	} = props;
 	const translate = useTranslate();
-	const isPlanUpgradeCreditEligible = useIsPlanUpgradeCreditVisible(
-		siteId,
-		gridPlans.map( ( gridPlan ) => gridPlan.planSlug )
-	);
+
 	const { prices, currencyCode } = usePlanPricingInfoFromGridPlans( {
 		gridPlans,
 	} );
@@ -82,13 +91,15 @@ const WrappedFeaturesGrid = ( props: FeaturesGridExternalProps ) => {
 	return (
 		<PlansGridContextProvider
 			intent={ intent }
+			selectedSiteId={ selectedSiteId }
 			gridPlans={ gridPlans }
-			usePricingMetaForGridPlans={ usePricingMetaForGridPlans }
+			coupon={ coupon }
+			useCheckPlanAvailabilityForPurchase={ useCheckPlanAvailabilityForPurchase }
+			recordTracksEvent={ recordTracksEvent }
 			allFeaturesList={ allFeaturesList }
 		>
 			<FeaturesGrid
 				{ ...props }
-				isPlanUpgradeCreditEligible={ isPlanUpgradeCreditEligible }
 				isLargeCurrency={ isLargeCurrency }
 				translate={ translate }
 				onUpgradeClick={ handleUpgradeClick }

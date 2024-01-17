@@ -30,7 +30,7 @@ describe( 'Onboarding: Site Assembler', () => {
 	} );
 
 	describe( 'Create site', function () {
-		it( 'Navigate to /new', async function () {
+		it( 'Navigate to /start', async function () {
 			await page.goto( DataHelper.getCalypsoURL( 'start' ) );
 		} );
 
@@ -78,6 +78,11 @@ describe( 'Onboarding: Site Assembler', () => {
 					console.warn( '"Skipping the goal screen" is flaky.' );
 				}
 			}
+		} );
+
+		it( 'Select "Choose a theme" and land on the Design Picker', async function () {
+			await startSiteFlow.clickButton( 'Choose a theme' );
+			await page.waitForURL( /setup\/site-setup\/designSetup/ );
 		} );
 
 		it( 'Select "Start designing" and land on the Site Assembler', async function () {

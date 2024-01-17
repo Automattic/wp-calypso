@@ -12,12 +12,6 @@ jest.mock( '../locale-context', () => {
 	} );
 } );
 
-jest.mock( '@automattic/calypso-config', () => ( {
-	// Useful because the getAvailableDesigns function uses feature flags for
-	// arguments default values
-	isEnabled: () => false,
-} ) );
-
 const { useLocale } = jest.requireMock( '../locale-context' );
 
 describe( '#localizeUrl', () => {

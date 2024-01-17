@@ -4,7 +4,7 @@ import { localizeUrl } from '@automattic/i18n-utils';
 import { useBreakpoint } from '@automattic/viewport-react';
 import classnames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import DocumentHead from 'calypso/components/data/document-head';
 import QueryEligibility from 'calypso/components/data/query-atat-eligibility';
@@ -13,7 +13,6 @@ import QueryProductsList from 'calypso/components/data/query-products-list';
 import QuerySiteFeatures from 'calypso/components/data/query-site-features';
 import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
 import QueryUserPurchases from 'calypso/components/data/query-user-purchases';
-import EmptyContent from 'calypso/components/empty-content';
 import MainComponent from 'calypso/components/main';
 import NavigationHeader from 'calypso/components/navigation-header';
 import Notice from 'calypso/components/notice';
@@ -30,6 +29,7 @@ import PluginDetailsHeader from 'calypso/my-sites/plugins/plugin-details-header'
 import PluginDetailsNotices from 'calypso/my-sites/plugins/plugin-details-notices';
 import PluginDetailsSidebar from 'calypso/my-sites/plugins/plugin-details-sidebar';
 import PluginDetailsV2 from 'calypso/my-sites/plugins/plugin-management-v2/plugin-details-v2';
+import PluginNotFound from 'calypso/my-sites/plugins/plugin-not-found';
 import PluginSections from 'calypso/my-sites/plugins/plugin-sections';
 import PluginSectionsCustom from 'calypso/my-sites/plugins/plugin-sections/custom';
 import { RelatedPlugins } from 'calypso/my-sites/plugins/related-plugins';
@@ -92,7 +92,6 @@ function PluginDetails( props ) {
 	const requestingPluginsForSites = useSelector( ( state ) => isRequestingForAllSites( state ) );
 	const analyticsPath = selectedSite ? '/plugins/:plugin/:site' : '/plugins/:plugin';
 	const isLoggedIn = useSelector( isUserLoggedIn );
-	const reviewsListRef = useRef();
 	const { localizePath } = useLocalizedPlugins();
 
 	// Plugin information.
@@ -285,7 +284,7 @@ function PluginDetails( props ) {
 	}
 
 	if ( existingPlugin === false ) {
-		return <PluginDoesNotExistView />;
+		return <PluginNotFound />;
 	}
 
 	const showPlaceholder = existingPlugin === 'unknown';
@@ -388,7 +387,7 @@ function PluginDetails( props ) {
 						<PluginDetailsHeader
 							plugin={ fullPlugin }
 							isPlaceholder={ showPlaceholder }
-							reviewsListRef={ reviewsListRef }
+							onReviewsClick={ () => setIsReviewsModalVisible( true ) }
 						/>
 					</div>
 					<div className="plugin-details__content">
@@ -475,30 +474,10 @@ function PluginDetails( props ) {
 						slug={ fullPlugin.slug }
 						productType="plugin"
 						showMarketplaceReviews={ () => setIsReviewsModalVisible( true ) }
-						ref={ reviewsListRef }
 					/>
 				</div>
 			) }
 			{ isMarketplaceProduct && ! showPlaceholder && <MarketplaceFooter /> }
-		</MainComponent>
-	);
-}
-
-function PluginDoesNotExistView() {
-	const translate = useTranslate();
-	const selectedSite = useSelector( getSelectedSite );
-	const actionUrl = '/plugins' + ( selectedSite ? '/' + selectedSite.slug : '' );
-	const action = translate( 'Browse all plugins' );
-
-	return (
-		<MainComponent wideLayout>
-			<EmptyContent
-				title={ translate( "Oops! We can't find this plugin!" ) }
-				line={ translate( "The plugin you are looking for doesn't exist." ) }
-				actionURL={ actionUrl }
-				action={ action }
-				illustration="/calypso/images/illustrations/illustration-404.svg"
-			/>
 		</MainComponent>
 	);
 }

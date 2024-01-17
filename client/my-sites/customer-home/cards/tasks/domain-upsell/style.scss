@@ -25,11 +25,16 @@
 			min-width: 360px;
 
 			@media (min-width: ( $break-wide + 1 ) ) {
-				max-width: calc(100% - 450px);
+				max-width: calc(100% - 200px);
+
+				.task__description,
+				.task__title {
+					max-width: 70%;
+				}
 			}
 
 			@media (max-width: $break-wide) {
-				max-width: calc(115% - 450px);
+				max-width: calc(115% - 200px);
 			}
 
 			@media ( max-width: $break-wide ) {

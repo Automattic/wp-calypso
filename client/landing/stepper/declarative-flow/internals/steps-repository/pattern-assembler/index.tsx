@@ -80,6 +80,7 @@ const PatternAssembler = ( props: StepProps & NoticesProps ) => {
 	const [ sectionPosition, setSectionPosition ] = useState< number | null >( null );
 	const wrapperRef = useRef< HTMLDivElement | null >( null );
 	const [ activePosition, setActivePosition ] = useState( -1 );
+	const [ surveyDismissed, setSurveyDismissed ] = useState( false );
 	const { goBack, goNext, submit } = navigation;
 	const { assembleSite, saveSiteSettings } = useDispatch( SITE_STORE );
 	const reduxDispatch = useReduxDispatch();
@@ -377,13 +378,12 @@ const PatternAssembler = ( props: StepProps & NoticesProps ) => {
 			Promise.resolve()
 				.then( () =>
 					reduxDispatch(
-						activateOrInstallThenActivate(
-							themeId,
-							site?.ID,
-							'assembler',
-							false,
-							false
-						) as ThunkAction< PromiseLike< string >, any, any, AnyAction >
+						activateOrInstallThenActivate( themeId, site?.ID, 'assembler', false ) as ThunkAction<
+							PromiseLike< string >,
+							any,
+							any,
+							AnyAction
+						>
 					)
 				)
 				.then( ( activeThemeStylesheet: string ) =>
@@ -683,6 +683,8 @@ const PatternAssembler = ( props: StepProps & NoticesProps ) => {
 						isNewSite={ isNewSite }
 						siteId={ site?.ID }
 						selectedDesign={ selectedDesign }
+						surveyDismissed={ surveyDismissed }
+						setSurveyDismissed={ setSurveyDismissed }
 						onConfirm={ onConfirm }
 					/>
 				</NavigatorScreen>

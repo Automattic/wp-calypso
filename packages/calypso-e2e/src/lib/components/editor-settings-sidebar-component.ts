@@ -6,16 +6,9 @@ import type { ArticlePublishSchedule, EditorSidebarTab, ArticlePrivacyOptions } 
 const panel = '[aria-label="Editor settings"]';
 
 const selectors = {
-	// Tab
-	tabButton: ( tabName: EditorSidebarTab ) =>
-		`${ panel } button[role="tab"]:has-text("${ tabName }")`,
-	activeTabButton: ( tabName: EditorSidebarTab ) =>
-		`${ panel } button[aria-selected="true"][role="tab"]:has-text("${ tabName }")`,
-
-	// General section-related
 	section: ( name: string ) =>
 		`${ panel } .components-panel__body-title button:has-text("${ name }")`,
-	showRevisionButton: '.edit-post-last-revision__panel', // Revision is a link, not a panel.
+	showRevisionButton: '.editor-post-last-revision__panel', // Revision is a link, not a panel.
 
 	// Status & Visibility
 	visibilityButton: '.edit-post-post-visibility__toggle',
@@ -106,18 +99,16 @@ export class EditorSettingsSidebarComponent {
 	}
 
 	/**
-	 * Clicks on one of the top tabs (e.g. 'Post' or 'Block') in the sidebar. Ensures that tab becomes active.
+	 * Clicks on one of the top tabs (e.g. 'Post' or 'Block') in the sidebar.
 	 *
 	 * @param {EditorSidebarTab} tabName Name of tab to click.
 	 * @returns {Promise<void>} No return value.
 	 */
 	async clickTab( tabName: EditorSidebarTab ): Promise< void > {
 		const editorParent = await this.editor.parent();
-		const locator = editorParent.locator( selectors.tabButton( tabName ) );
-		await locator.click();
+		const settingsPanel = editorParent.locator( panel );
 
-		const activeTabLocator = editorParent.locator( selectors.activeTabButton( tabName ) );
-		await activeTabLocator.waitFor();
+		await settingsPanel.getByRole( 'tab', { name: tabName } ).click();
 	}
 
 	/**

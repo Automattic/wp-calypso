@@ -60,11 +60,24 @@ export function BoldTLD( { domain } ) {
 class DomainsMiniCart extends Component {
 	domainNameAndCost = ( domain ) => {
 		const isRemoving = this.props.domainRemovalQueue.some( ( item ) => item.meta === domain.meta );
+		const formattedOriginalCost = domain.temporary
+			? '...'
+			: formatCurrency( domain.item_original_cost_integer ?? 0, domain.currency, {
+					isSmallestUnit: true,
+					stripZeros: true,
+			  } );
+		const formattedCost = domain.temporary
+			? '...'
+			: formatCurrency( domain.item_subtotal_integer ?? 0, domain.currency, {
+					isSmallestUnit: true,
+					stripZeros: true,
+			  } );
 		const priceText = translate( '%(cost)s/year', {
-			args: { cost: domain.item_original_cost_display },
+			args: { cost: formattedOriginalCost },
 		} );
-		const costDifference = domain.item_original_cost - domain.cost;
-		const hasPromotion = costDifference > 0;
+		const hasPromotion = domain.cost_overrides?.some(
+			( override ) => ! override.does_override_original_cost
+		);
 
 		return isRemoving ? null : (
 			<>
@@ -74,11 +87,11 @@ class DomainsMiniCart extends Component {
 					</div>
 					<div className="domain-product-price__price">
 						{ hasPromotion && <del>{ priceText }</del> }
-						<span className="domains__price">{ domain.item_subtotal_display }</span>
+						<span className="domains__price">{ domain.temporary ? '...' : formattedCost }</span>
 					</div>
 				</div>
 				<div>
-					{ hasPromotion && domain.item_subtotal === 0 && (
+					{ hasPromotion && domain.item_subtotal_integer === 0 && (
 						<span className="savings-message">
 							{ translate( 'Free for the first year with annual paid plans.' ) }
 						</span>
@@ -185,8 +198,8 @@ class DomainsMiniCart extends Component {
 				<div className="domains__domain-side-content domains__domain-cart">
 					<div className="domains__domain-cart-rows">
 						{ this.props.wpcomSubdomainSelected && this.freeDomain() }
-						{ this.props.domainsInCart.map( ( domain, i ) => (
-							<div key={ `row${ i }` } className="domains__domain-cart-row">
+						{ this.props.domainsInCart.map( ( domain ) => (
+							<div key={ `row-${ domain.meta }` } className="domains__domain-cart-row">
 								{ this.domainNameAndCost( domain ) }
 							</div>
 						) ) }
@@ -213,8 +226,8 @@ class DomainsMiniCart extends Component {
 				<div className="domains__domain-cart-title">{ translate( 'Your domains' ) }</div>
 				<div className="domains__domain-cart-rows">
 					{ this.props.wpcomSubdomainSelected && this.freeDomain() }
-					{ this.props.domainsInCart.map( ( domain, i ) => (
-						<div key={ `row${ i }` } className="domains__domain-cart-row">
+					{ this.props.domainsInCart.map( ( domain ) => (
+						<div key={ `row-${ domain.meta }` } className="domains__domain-cart-row">
 							{ this.domainNameAndCost( domain ) }
 						</div>
 					) ) }

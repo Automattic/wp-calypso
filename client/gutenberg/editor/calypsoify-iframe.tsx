@@ -61,6 +61,7 @@ interface Props {
 	postType: T.PostType;
 	editorType: 'site' | 'post'; // Note: a page or other CPT is a type of post.
 	pressThisData: any; // eslint-disable-line @typescript-eslint/no-explicit-any
+	bloggingPromptData: any; // eslint-disable-line @typescript-eslint/no-explicit-any
 	anchorFmData: {
 		anchor_podcast: string | undefined;
 		anchor_episode: string | undefined;
@@ -204,6 +205,7 @@ class CalypsoifyIframe extends Component< ComponentProps, State > {
 	 * this.
 	 *
 	 * Some historical work which has been combined into this timer:
+	 *
 	 * @see https://github.com/Automattic/wp-calypso/pull/43248
 	 * @see https://github.com/Automattic/wp-calypso/pull/36977
 	 * @see https://github.com/Automattic/wp-calypso/pull/41006
@@ -780,6 +782,7 @@ const mapStateToProps = (
 		anchorFmData,
 		showDraftPostModal,
 		pressThisData,
+		bloggingPromptData,
 		blockEditorSettings,
 	}: Props
 ) => {
@@ -806,7 +809,7 @@ const mapStateToProps = (
 		openSidebar: getQueryArg( window.location.href, 'openSidebar' ),
 		showDraftPostModal,
 		...pressThisData,
-		answer_prompt: getQueryArg( window.location.href, 'answer_prompt' ),
+		...bloggingPromptData,
 		assembler: getQueryArg( window.location.href, 'assembler' ), // Customize the first slide of Welcome Tour in the site editor
 		canvas: getQueryArg( window.location.href, 'canvas' ), // Site editor can initially load with or without nav sidebar (Gutenberg v15.0.0)
 	} );

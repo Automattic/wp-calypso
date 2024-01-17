@@ -3,7 +3,10 @@ import config from '@automattic/calypso-config';
 import {
 	WPCOM_DIFM_LITE,
 	planHasFeature,
+	FEATURE_50GB_STORAGE_ADD_ON,
+	FEATURE_100GB_STORAGE_ADD_ON,
 	FEATURE_UPLOAD_THEMES_PLUGINS,
+	PRODUCT_1GB_SPACE,
 	isEcommerce,
 	isDomainTransfer,
 } from '@automattic/calypso-products';
@@ -461,31 +464,6 @@ export function submitWebsiteContent( callback, { siteSlug }, step, reduxStore )
 		.catch( ( error ) => {
 			reduxStore.dispatch( errorNotice( error.message ) );
 			callback( [ error ] );
-		} );
-}
-
-export function setDesignOnSite( callback, { siteSlug, selectedDesign } ) {
-	if ( ! selectedDesign ) {
-		defer( callback );
-		return;
-	}
-
-	const { theme } = selectedDesign;
-
-	wpcom.req
-		.post( `/sites/${ siteSlug }/themes/mine`, { theme, dont_change_homepage: true } )
-		.then( () =>
-			wpcom.req.post( {
-				path: `/sites/${ siteSlug }/theme-setup`,
-				apiNamespace: 'wpcom/v2',
-				body: { trim_content: true },
-			} )
-		)
-		.then( () => {
-			callback();
-		} )
-		.catch( ( errors ) => {
-			callback( [ errors ] );
 		} );
 }
 
@@ -1269,6 +1247,48 @@ export function isAddOnsFulfilled( stepName, defaultDependencies, nextProps ) {
 	}
 }
 
+export function maybeAddStorageAddonToCart( stepName, defaultDependencies, nextProps ) {
+	const { submitSignupStep, sitePlanSlug, store } = nextProps;
+	const fulfilledDependencies = [];
+	const cartItem = [];
+
+	const state = store.getState();
+	const selectedStorage = get( getSignupDependencyStore( state ), 'storage', null );
+
+	switch ( selectedStorage ) {
+		case FEATURE_50GB_STORAGE_ADD_ON:
+			cartItem.push( {
+				product_slug: PRODUCT_1GB_SPACE,
+				quantity: 50,
+				volume: 1,
+				extra: { feature_slug: FEATURE_50GB_STORAGE_ADD_ON },
+			} );
+			recordTracksEvent( 'calypso_signup_storage_add_on_selected', {
+				add_on_slug: FEATURE_50GB_STORAGE_ADD_ON,
+			} );
+			break;
+		case FEATURE_100GB_STORAGE_ADD_ON:
+			cartItem.push( {
+				product_slug: PRODUCT_1GB_SPACE,
+				quantity: 100,
+				volume: 1,
+				extra: { feature_slug: FEATURE_100GB_STORAGE_ADD_ON },
+			} );
+			recordTracksEvent( 'calypso_signup_storage_add_on_selected', {
+				add_on_slug: FEATURE_100GB_STORAGE_ADD_ON,
+			} );
+			break;
+	}
+
+	submitSignupStep( { stepName, cartItem, wasSkipped: true }, { cartItem } );
+	fulfilledDependencies.push( 'cartItems' );
+
+	if ( shouldExcludeStep( stepName, fulfilledDependencies ) ) {
+		flows.excludeStep( stepName );
+		recordExcludeStepEvent( stepName, sitePlanSlug );
+	}
+}
+
 export function isPlanFulfilled( stepName, defaultDependencies, nextProps ) {
 	const { isPaidPlan, sitePlanSlug, submitSignupStep, flowName, signupDependencies } = nextProps;
 	const fulfilledDependencies = [];
@@ -1333,7 +1353,6 @@ export const buildUpgradeFunction = ( planProps, cartItems ) => {
 	if ( planCartItem ) {
 		planProps.recordTracksEvent( 'calypso_signup_plan_select', {
 			product_slug: planCartItem.product_slug,
-			free_trial: planCartItem.free_trial,
 			from_section: stepSectionName ? stepSectionName : 'default',
 		} );
 

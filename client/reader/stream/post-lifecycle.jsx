@@ -6,6 +6,7 @@ import PostBlocked from 'calypso/blocks/reader-post-card/blocked';
 import BloggingPromptCard from 'calypso/components/blogging-prompt-card';
 import QueryReaderPost from 'calypso/components/data/query-reader-post';
 import compareProps from 'calypso/lib/compare-props';
+import { IN_STREAM_RECOMMENDATION } from 'calypso/reader/follow-sources';
 import ListGap from 'calypso/reader/list-gap';
 import XPostHelper, { isXPost } from 'calypso/reader/xpost-helper';
 import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions';
@@ -14,6 +15,7 @@ import EmptySearchRecommendedPost from './empty-search-recommended-post';
 import Post from './post';
 import PostPlaceholder from './post-placeholder';
 import PostUnavailable from './post-unavailable';
+import RecommendedPosts from './recommended-posts';
 import CrossPost from './x-post';
 
 /**
@@ -80,12 +82,18 @@ class PostLifecycle extends Component {
 	};
 
 	render() {
-		const { post, postKey, isSelected, streamKey, siteId, isDiscoverStream } = this.props;
+		const { post, postKey, isSelected, recsStreamKey, streamKey, siteId, isDiscoverStream } =
+			this.props;
 
 		if ( postKey.isRecommendationBlock ) {
-			// We are temporarily disabling these from our feeds while investigating issues with
-			// irrelevant mature content. https://github.com/Automattic/wp-calypso/pull/85045
-			return null;
+			return (
+				<RecommendedPosts
+					recommendations={ postKey.recommendations }
+					index={ postKey.index }
+					streamKey={ recsStreamKey }
+					followSource={ IN_STREAM_RECOMMENDATION }
+				/>
+			);
 		} else if ( postKey.isPromptBlock ) {
 			return (
 				<div

@@ -13,9 +13,9 @@ import { getQueryArg } from '@wordpress/url';
 import { ShouldShowFirstPostPublishedModalProvider } from '../../dotcom-fse/lib/first-post-published-modal/should-show-first-post-published-modal-context';
 import { HasSeenSellerCelebrationModalProvider } from '../../dotcom-fse/lib/seller-celebration-modal/has-seen-seller-celebration-modal-context';
 import { HasSeenVideoCelebrationModalProvider } from '../../dotcom-fse/lib/video-celebration-modal/has-seen-video-celebration-modal-context';
+import { BloggingPromptsModal } from './blogging-prompts-modal';
 import DraftPostModal from './draft-post-modal';
 import FirstPostPublishedModal from './first-post-published-modal';
-import LivePreviewModal from './live-preview-modal';
 import PurchaseNotice from './purchase-notice';
 import SellerCelebrationModal from './seller-celebration-modal';
 import PostPublishedSharingModal from './sharing-modal';
@@ -27,6 +27,7 @@ import LaunchWpcomWelcomeTour from './welcome-tour/tour-launch';
 /**
  * Sometimes Gutenberg doesn't allow you to re-register the module and throws an error.
  * FIXME: The new version allow it by default, but we might need to ensure that all the site has the new version.
+ *
  * @see https://github.com/Automattic/wp-calypso/pull/79663
  */
 let unlock;
@@ -126,7 +127,7 @@ registerPlugin( 'wpcom-block-editor-nux', {
 					<SellerCelebrationModal />
 					<PurchaseNotice />
 					<VideoPressCelebrationModal />
-					<LivePreviewModal />
+					<BloggingPromptsModal />
 				</ShouldShowFirstPostPublishedModalProvider>
 			</HasSeenVideoCelebrationModalProvider>
 		</HasSeenSellerCelebrationModalProvider>

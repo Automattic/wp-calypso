@@ -10,8 +10,7 @@ const queueDebug = debug( 'calypso:analytics:queue' );
 // The supported modules for which queue triggers can be set up.
 // We use a layer of indirection to avoid loading the modules until they're needed.
 const modules = {
-	signup: () =>
-		import( /* webpackChunkName: "lib-analytics-signup" */ 'calypso/lib/analytics/signup' ),
+	signup: () => asyncRequire( 'calypso/lib/analytics/signup' ),
 };
 
 const lsKey = () => 'analyticsQueue';

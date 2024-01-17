@@ -32,9 +32,6 @@ export function register(): typeof STORE_KEY {
 		reducer,
 		selectors,
 		persist: [
-			'anchorPodcastId',
-			'anchorEpisodeId',
-			'anchorSpotifyUrl',
 			'domainTransferNames',
 			'shouldImportDomainTransferDnsRecords',
 			'domain',
@@ -50,7 +47,6 @@ export function register(): typeof STORE_KEY {
 			'randomizedDesigns',
 			'selectedDesign',
 			'selectedFeatures',
-			'selectedFonts',
 			'selectedSite',
 			'siteTitle',
 			'siteDescription',

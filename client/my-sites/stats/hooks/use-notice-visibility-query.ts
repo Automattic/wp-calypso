@@ -7,6 +7,7 @@ const DEFAULT_SERVER_NOTICES_VISIBILITY = {
 	traffic_page_settings: false,
 	do_you_love_jetpack_stats: false,
 	commercial_site_upgrade: false,
+	focus_jetpack_purchase: false,
 	// TODO: Check if the site needs to be upgraded to a higher tier on the back end.
 	tier_upgrade: true,
 };
@@ -14,7 +15,7 @@ const DEFAULT_CLIENT_NOTICES_VISIBILITY = {
 	client_paid_plan_purchase_success: true,
 	client_free_plan_purchase_success: true,
 };
-const DEFAULT_NOTICES_VISIBILITY = {
+export const DEFAULT_NOTICES_VISIBILITY = {
 	...DEFAULT_CLIENT_NOTICES_VISIBILITY,
 	...DEFAULT_SERVER_NOTICES_VISIBILITY,
 };

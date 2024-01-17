@@ -1,3 +1,4 @@
+import config from '@automattic/calypso-config';
 import { PRODUCT_1GB_SPACE } from '@automattic/calypso-products';
 import { Button } from '@automattic/components';
 import {
@@ -20,6 +21,7 @@ import classNames from 'classnames';
 import { localize, useTranslate } from 'i18n-calypso';
 import React, { useEffect } from 'react';
 import { connect } from 'react-redux';
+import { useNavigate } from 'react-router';
 import { useSite } from 'calypso/landing/stepper/hooks/use-site';
 import { getPlanCartItem } from 'calypso/lib/cart-values/cart-items';
 import PlansFeaturesMain from 'calypso/my-sites/plans-features-main';
@@ -89,6 +91,7 @@ const PlansWrapper: React.FC< Props > = ( props ) => {
 	const { __ } = useI18n();
 	const translate = useTranslate();
 	const isDesktop = useDesktopBreakpoint();
+	const navigate = useNavigate();
 	const stepName = 'plans';
 	const customerType = 'personal';
 	const headerText = __( 'Choose a plan' );
@@ -97,6 +100,10 @@ const PlansWrapper: React.FC< Props > = ( props ) => {
 	const hideFreePlan = plansIntent
 		? reduxHideFreePlan && 'plans-blog-onboarding' === plansIntent
 		: reduxHideFreePlan;
+
+	const onPlanIntervalChange = ( path: string ) => {
+		navigate( path );
+	};
 
 	const onUpgradeClick = ( cartItems?: MinimalRequestCartProduct[] | null ) => {
 		const planCartItem = getPlanCartItem( cartItems );
@@ -143,7 +150,7 @@ const PlansWrapper: React.FC< Props > = ( props ) => {
 				<PlansFeaturesMain
 					isPlansInsideStepper={ true }
 					siteId={ site?.ID }
-					showBiennialToggle={ false }
+					displayedIntervals={ [ 'yearly', '2yearly', '3yearly', 'monthly' ] }
 					hideFreePlan={ hideFreePlan }
 					isInSignup={ isInSignup }
 					isStepperUpgradeFlow={ true }
@@ -158,6 +165,14 @@ const PlansWrapper: React.FC< Props > = ( props ) => {
 					removePaidDomain={ removePaidDomain }
 					setSiteUrlAsFreeDomainSuggestion={ setSiteUrlAsFreeDomainSuggestion }
 					renderSiblingWhenLoaded={ () => props.shouldIncludeFAQ && <PlanFAQ /> }
+					showPlanTypeSelectorDropdown={
+						/**
+						 *	Override the default feature flag to prevent this feature from rendering in untested locations
+						 *  The hardcoded 'false' short curicuit should be removed once the feature is fully tested in the given context
+						 */
+						config.isEnabled( 'onboarding/interval-dropdown' ) && false
+					}
+					onPlanIntervalChange={ onPlanIntervalChange }
 				/>
 			</div>
 		);

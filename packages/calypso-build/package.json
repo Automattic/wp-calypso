@@ -35,11 +35,11 @@
 	"dependencies": {
 		"@automattic/calypso-babel-config": "workspace:^",
 		"@automattic/webpack-rtl-plugin": "workspace:^",
-		"@babel/compat-data": "^7.23.3",
-		"@babel/core": "^7.23.3",
+		"@babel/compat-data": "^7.23.5",
+		"@babel/core": "^7.23.7",
 		"@types/webpack-env": "^1.18.4",
 		"@wordpress/browserslist-config": "^5.31.0",
-		"@wordpress/dependency-extraction-webpack-plugin": "^4.30.0",
+		"@wordpress/dependency-extraction-webpack-plugin": "^4.31.0",
 		"autoprefixer": "^10.2.5",
 		"babel-loader": "^8.2.3",
 		"browserslist": "^4.8.2",
@@ -54,9 +54,9 @@
 		"sass-loader": "^12.1.0",
 		"semver": "^7.3.2",
 		"stream-browserify": "^3.0.0",
-		"terser-webpack-plugin": "^5.3.9",
+		"terser-webpack-plugin": "^5.3.10",
 		"thread-loader": "^3.0.4",
-		"typescript": "^5.3.2",
+		"typescript": "^5.3.3",
 		"webpack-cli": "^4.10.0"
 	},
 	"devDependencies": {

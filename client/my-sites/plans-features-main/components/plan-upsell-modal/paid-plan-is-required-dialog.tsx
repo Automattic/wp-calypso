@@ -20,10 +20,9 @@ import { DomainPlanDialogProps, MODAL_VIEW_EVENT_NAME } from '.';
 export default function PaidPlanIsRequiredDialog( {
 	paidDomainName,
 	generatedWPComSubdomain,
-	suggestedPlanSlug,
 	onFreePlanSelected,
 	onPlanSelected,
-}: DomainPlanDialogProps & { paidDomainName: string } ) {
+}: DomainPlanDialogProps ) {
 	const translate = useTranslate();
 	const [ isBusy, setIsBusy ] = useState( false );
 
@@ -32,11 +31,6 @@ export default function PaidPlanIsRequiredDialog( {
 			dialog_type: 'paid_plan_is_required',
 		} );
 	}, [] );
-
-	function handlePaidPlanClick() {
-		setIsBusy( true );
-		onPlanSelected();
-	}
 
 	function handleFreeDomainClick() {
 		setIsBusy( true );
@@ -66,9 +60,8 @@ export default function PaidPlanIsRequiredDialog( {
 				<RowWithBorder>
 					<SuggestedPlanSection
 						paidDomainName={ paidDomainName }
-						suggestedPlanSlug={ suggestedPlanSlug }
 						isBusy={ isBusy }
-						onButtonClick={ handlePaidPlanClick }
+						onPlanSelected={ onPlanSelected }
 					/>
 				</RowWithBorder>
 				<Row>

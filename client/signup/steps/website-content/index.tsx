@@ -113,7 +113,7 @@ function WebsiteContentStep( {
 		? BBE_STORE_WEBSITE_CONTENT_FILLING_STEP
 		: BBE_WEBSITE_CONTENT_FILLING_STEP;
 
-	const { isLoading: isSaving, mutateAsync } = useSaveWebsiteContentMutation(
+	const { isPending: isSaving, mutateAsync } = useSaveWebsiteContentMutation(
 		siteId,
 		websiteContent
 	);

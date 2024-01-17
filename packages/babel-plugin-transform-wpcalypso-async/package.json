@@ -1,6 +1,6 @@
 {
 	"name": "@automattic/babel-plugin-transform-wpcalypso-async",
-	"version": "1.0.1",
+	"version": "2.0.0",
 	"license": "GPL-2.0-or-later",
 	"author": "Automattic Inc.",
 	"description": "A Babel plugin to facilitate optional code-splitting by applying transformations to a `asyncRequire` global function or the `<AsyncLoad />` React component.",
@@ -16,7 +16,7 @@
 	},
 	"devDependencies": {
 		"@automattic/calypso-typescript-config": "workspace:^",
-		"@babel/core": "^7.23.3"
+		"@babel/core": "^7.23.7"
 	},
 	"publishConfig": {
 		"access": "public"

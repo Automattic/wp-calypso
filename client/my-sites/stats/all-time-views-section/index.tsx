@@ -1,9 +1,8 @@
-import { Card } from '@automattic/components';
+import { Card, SimplifiedSegmentedControl } from '@automattic/components';
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import { useMemo, useState } from 'react';
 import QuerySiteStats from 'calypso/components/data/query-site-stats';
-import SimplifiedSegmentedControl from 'calypso/components/segmented-control/simplified';
 import { useSelector } from 'calypso/state';
 import { getSiteStatsViewSummary } from 'calypso/state/stats/lists/selectors';
 import StatsHeatMapLegend from '../stats-heap-map/legend';

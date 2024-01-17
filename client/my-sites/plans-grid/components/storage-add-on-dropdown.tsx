@@ -52,9 +52,19 @@ const StorageAddOnOption = ( {
 				<div>
 					<span className="storage-add-on-dropdown-option__title">{ title }</span>
 					<div className="storage-add-on-dropdown-option__price-container">
-						<span className="storage-add-on-dropdown-option__price">+&nbsp;{ price }</span>
-						<span className="storage-add-on-dropdown-option__per-month">
-							{ `/${ translate( 'month' ) }` }
+						<span>
+							{ translate(
+								'{{priceSpan}}+{{nbsp/}}%(price)s{{/priceSpan}}{{perMonthSpan}}/month{{/perMonthSpan}}',
+								{
+									args: { price },
+									components: {
+										nbsp: <>&nbsp;</>,
+										priceSpan: <span className="storage-add-on-dropdown-option__price" />,
+										perMonthSpan: <span className="storage-add-on-dropdown-option__per-month" />,
+									},
+									comment: 'The cost of a storage add on per month. Example reads as "+ $50/month"',
+								}
+							) }
 						</span>
 					</div>
 				</div>
@@ -155,7 +165,9 @@ export const StorageAddOnDropdown = ( {
 			{ selectedOptionPrice && ( isLargeCurrency || priceOnSeparateLine ) && (
 				<div className="storage-add-on-dropdown__offset-price-container">
 					<span className="storage-add-on-dropdown__offset-price">
-						{ ` + ${ selectedOptionPrice }/${ translate( 'month' ) }` }
+						{ translate( '+ %(selectedOptionPrice)s/month', {
+							args: { selectedOptionPrice },
+						} ) }
 					</span>
 				</div>
 			) }

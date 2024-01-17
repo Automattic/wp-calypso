@@ -1,6 +1,7 @@
 import { isEnabled } from '@automattic/calypso-config';
 import { HOSTING_LP_FLOW } from '@automattic/onboarding';
 import { translate } from 'i18n-calypso';
+import { onEnterOnboarding } from '../flow-actions';
 
 const noop = () => {};
 
@@ -49,13 +50,13 @@ export function generateFlows( {
 		},
 		{
 			name: 'business',
-			steps: [ userSocialStep, 'domains', 'plans-business' ],
+			steps: [ userSocialStep, 'domains', 'plans-business', 'storage-addon' ],
 			destination: getSignupDestination,
 			description: 'Create an account and a blog and then add the business plan to the users cart.',
 			lastModified: '2023-10-11',
 			showRecaptcha: true,
-			providesDependenciesInQuery: [ 'coupon' ],
-			optionalDependenciesInQuery: [ 'coupon' ],
+			providesDependenciesInQuery: [ 'coupon', 'storage' ],
+			optionalDependenciesInQuery: [ 'coupon', 'storage' ],
 			hideProgressIndicator: true,
 		},
 		{
@@ -149,6 +150,7 @@ export function generateFlows( {
 			providesDependenciesInQuery: [ 'coupon' ],
 			optionalDependenciesInQuery: [ 'coupon' ],
 			hideProgressIndicator: true,
+			onEnterFlow: onEnterOnboarding,
 		},
 		{
 			name: 'onboarding-2023-pricing-grid',
@@ -186,7 +188,7 @@ export function generateFlows( {
 			optionalDependenciesInQuery: [ 'coupon' ],
 			props: {
 				plans: {
-					showBiennialToggle: true,
+					displayedIntervals: [ 'yearly', '2yearly', '3yearly' ],
 					/**
 					 * This intent is geared towards customizations related to the paid media flow
 					 * Current customizations are as follows
@@ -466,12 +468,11 @@ export function generateFlows( {
 				'courses',
 				'store-options',
 				'store-features',
-				'design-setup-site',
 			],
 			destination: getDestinationFromIntent,
 			description:
 				'Sets up a site that has already been created and paid for (if purchases were made)',
-			lastModified: '2021-10-14',
+			lastModified: '2024-01-08',
 			providesDependenciesInQuery: [ 'siteId', 'siteSlug' ],
 			optionalDependenciesInQuery: [ 'siteId' ],
 			get pageTitle() {

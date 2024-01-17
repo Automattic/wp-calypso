@@ -57,6 +57,7 @@ import PageViewTracker from './stats-page-view-tracker';
 import StatsPeriodHeader from './stats-period-header';
 import StatsPeriodNavigation from './stats-period-navigation';
 import StatsPlanUsage from './stats-plan-usage';
+import StatsRedirectFlow from './stats-reditect-flow';
 import statsStrings from './stats-strings';
 import StatsUpsellModal from './stats-upsell-modal';
 import { getPathWithUpdatedQueryString } from './utils';
@@ -306,6 +307,7 @@ class StatsSite extends Component {
 
 		return (
 			<div className="stats">
+				<StatsRedirectFlow />
 				{ ! isOdysseyStats && (
 					<div className="stats-banner-wrapper">
 						<JetpackBackupCredsBanner event="stats-backup-credentials" />
@@ -540,6 +542,7 @@ class StatsSite extends Component {
 		} else if ( this.props.showEnableStatsModule ) {
 			return this.renderEnableStatsModule();
 		}
+
 		return this.renderStats();
 	}
 

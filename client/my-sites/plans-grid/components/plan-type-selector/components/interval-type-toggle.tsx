@@ -1,5 +1,6 @@
 import { PLAN_ANNUAL_PERIOD } from '@automattic/calypso-products';
 import { SegmentedControl } from '@automattic/components';
+import { Plans } from '@automattic/data-stores';
 import { useState } from '@wordpress/element';
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
@@ -16,20 +17,30 @@ export const IntervalTypeToggle: React.FunctionComponent< IntervalTypeProps > = 
 		isInSignup,
 		eligibleForWpcomMonthlyPlans,
 		hideDiscountLabel,
-		showBiennialToggle,
 		currentSitePlanSlug,
-		usePricingMetaForGridPlans,
+		displayedIntervals,
+		useCheckPlanAvailabilityForPurchase,
 		title,
+		coupon,
+		selectedSiteId,
 	} = props;
+	const showBiennialToggle = displayedIntervals.includes( '2yearly' );
 	const [ spanRef, setSpanRef ] = useState< HTMLSpanElement >();
 	const segmentClasses = classNames( 'price-toggle', {
 		'is-signup': isInSignup,
 	} );
-	const popupIsVisible = Boolean( intervalType === 'monthly' && isInSignup && props.plans.length );
-	const maxDiscount = useMaxDiscount( props.plans, usePricingMetaForGridPlans );
-	const pricingMeta = usePricingMetaForGridPlans( {
+	const popupIsVisible = Boolean( intervalType === 'monthly' && props.plans.length );
+	const maxDiscount = useMaxDiscount(
+		props.plans,
+		useCheckPlanAvailabilityForPurchase,
+		selectedSiteId
+	);
+	const pricingMeta = Plans.usePricingMetaForGridPlans( {
 		planSlugs: currentSitePlanSlug ? [ currentSitePlanSlug ] : [],
-		withoutProRatedCredits: true,
+		withoutPlanUpgradeCredits: true,
+		coupon,
+		selectedSiteId,
+		useCheckPlanAvailabilityForPurchase,
 		storageAddOns: null,
 	} );
 	const currentPlanBillingPeriod = currentSitePlanSlug
@@ -68,7 +79,10 @@ export const IntervalTypeToggle: React.FunctionComponent< IntervalTypeProps > = 
 	return (
 		<>
 			{ title && <div className="plan-type-selector__title">{ title }</div> }
-			<div className="plan-type-selector__interval-type">
+			<div
+				className="plan-type-selector__interval-type"
+				ref={ intervalType === 'monthly' ? ( ref ) => ref && ! spanRef && setSpanRef( ref ) : null }
+			>
 				<SegmentedControl compact className={ segmentClasses } primary={ true }>
 					{ intervalTabs.map( ( interval ) => (
 						<SegmentedControl.Item
@@ -83,13 +97,7 @@ export const IntervalTypeToggle: React.FunctionComponent< IntervalTypeProps > = 
 							} ) }
 							isPlansInsideStepper={ props.isPlansInsideStepper }
 						>
-							<span
-								ref={
-									intervalType === 'monthly'
-										? ( ref ) => ref && ! spanRef && setSpanRef( ref )
-										: null
-								}
-							>
+							<span>
 								{ interval === 'monthly' ? translate( 'Pay monthly' ) : null }
 								{ interval === 'yearly' && ! showBiennialToggle
 									? translate( 'Pay annually' )
