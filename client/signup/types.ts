@@ -20,6 +20,7 @@ export interface Flow {
 	disallowResume?: boolean;
 	showRecaptcha?: boolean;
 	enableBranchSteps?: boolean;
+	onEnterFlow?: ( flowName: string ) => void;
 }
 
 export type GoToStep = ( stepName: string, stepSectionName?: string, flowName?: string ) => void;
