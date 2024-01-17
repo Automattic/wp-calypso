@@ -106,9 +106,6 @@ const PersonalPurchase = ( {
 	let continueButtonText = isStandalone
 		? translate( 'Get Stats' )
 		: translate( 'Get Jetpack Stats' );
-	if ( config.isEnabled( 'stats/checkout-flows-v2' ) ) {
-		continueButtonText = translate( 'Contribute and continue' );
-	}
 
 	const handleCheckoutRedirect = () => {
 		gotoCheckoutPage( {
@@ -261,6 +258,11 @@ function StatsPurchaseActions( props: any ) {
 
 function StatsPurchaseButton( props: any ) {
 	const ButtonComponent = props.isWPCOMSite ? CalypsoButton : Button;
+	const translate = useTranslate();
+	const newButtonText = translate( 'Contribute and continue' );
+	const buttonText = config.isEnabled( 'stats/checkout-flows-v2' )
+		? newButtonText
+		: props.buttonText;
 
 	return (
 		<ButtonComponent
@@ -268,7 +270,7 @@ function StatsPurchaseButton( props: any ) {
 			primary={ props.isWPCOMSite ? true : undefined }
 			onClick={ props.onCheckoutClick }
 		>
-			{ props.buttonText }
+			{ buttonText }
 		</ButtonComponent>
 	);
 }
