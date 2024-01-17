@@ -126,6 +126,9 @@ const withAIAssemblerFlow: Flow = {
 				siteSlug: selectedSiteSlug,
 				siteId: selectedSiteId,
 			} );
+			if ( config.isEnabled( 'pattern-assembler/v2' ) ) {
+				params.set( 'flags', 'pattern-assembler/v2' );
+			}
 
 			if ( isNewSite ) {
 				params.set( 'isNewSite', 'true' );
