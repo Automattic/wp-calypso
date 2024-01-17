@@ -1,6 +1,7 @@
 ## next
 
 - Update social-logos to ^2.5.2 (#72876)
+- Remove the `HappinessEngineersTray` component and the dependency on `@automattic/data-stores`
 
 ## 2.0.1
 

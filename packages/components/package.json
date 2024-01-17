@@ -29,7 +29,6 @@
 	"dependencies": {
 		"@automattic/calypso-analytics": "workspace:^",
 		"@automattic/calypso-url": "workspace:^",
-		"@automattic/data-stores": "workspace:^",
 		"@automattic/format-currency": "workspace:^",
 		"@automattic/search": "workspace:^",
 		"@automattic/typography": "workspace:^",

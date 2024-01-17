@@ -12,7 +12,6 @@
 	"references": [
 		{ "path": "../calypso-analytics" },
 		{ "path": "../calypso-url" },
-		{ "path": "../data-stores" },
 		{ "path": "../search" }
 	]
 }

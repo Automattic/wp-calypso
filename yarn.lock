@@ -549,7 +549,6 @@ __metadata:
     "@automattic/calypso-storybook": "workspace:^"
     "@automattic/calypso-typescript-config": "workspace:^"
     "@automattic/calypso-url": "workspace:^"
-    "@automattic/data-stores": "workspace:^"
     "@automattic/format-currency": "workspace:^"
     "@automattic/search": "workspace:^"
     "@automattic/typography": "workspace:^"

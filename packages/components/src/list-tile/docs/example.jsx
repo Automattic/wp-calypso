@@ -1,10 +1,13 @@
-import { useHappinessEngineersQuery } from '@automattic/data-stores';
 import { Gravatar } from '../../gravatar';
 import Gridicon from '../../gridicon';
 import { ListTile } from '../index';
 
+const genericUser = {
+	avatar_URL: 'https://0.gravatar.com/avatar/f9879d71855b5ff21e4963273a886bfc?s=96&d=mm',
+	display_name: 'Bob The Tester',
+};
+
 export default function ListTileExample() {
-	const { data } = useHappinessEngineersQuery();
 	return (
 		<div
 			style={ {
@@ -17,7 +20,7 @@ export default function ListTileExample() {
 			<ListTile
 				title="This is a title"
 				subtitle="This is a subtitle"
-				leading={ <Gravatar user={ data } size={ 42 } /> }
+				leading={ <Gravatar user={ genericUser } size={ 42 } /> }
 				trailing={
 					<div style={ { marginTop: '-20px', marginRight: '-20px' } }>
 						<Gridicon icon="info" size={ 24 } />{ ' ' }
