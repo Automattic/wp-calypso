@@ -523,6 +523,11 @@ $button-bar-wrap-width: 1346px;
 
 	.components-button + button.components-button {
 		margin-left: 12px;
+
+		@media ( max-width: $button-bar-wrap-width ) {
+			margin-left: 0;
+			margin-top: 12px;
+		}
 	}
 }
 
