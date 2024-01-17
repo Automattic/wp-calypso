@@ -1,4 +1,5 @@
 import { Card } from '@automattic/components';
+import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import Layout from 'calypso/jetpack-cloud/components/layout';
 import LayoutBody from 'calypso/jetpack-cloud/components/layout/body';
@@ -16,13 +17,33 @@ import { usePaymentMethodStepper } from './hooks/use-payment-method-stepper';
 
 import './style.scss';
 
-export default function PaymentMethodListV2() {
+export default function PaymentMethodAddV2( { isModal = false } ) {
 	const translate = useTranslate();
 
 	const title = translate( 'Add new card' );
 	const subtitle = translate( 'You will only be charged for paid licenses you issue.' );
 
 	const stepper = usePaymentMethodStepper();
+
+	const layoutBodyContent = (
+		<div
+			className={ classNames( 'payment-method-add__content', {
+				'payment-method-add__content--modal': isModal,
+			} ) }
+		>
+			<Card className="payment-method-add__card payment-form">
+				<PaymentMethodForm />
+			</Card>
+
+			<Card className="payment-method-add__card aside">
+				<PaymentMethodStripeInfo />
+			</Card>
+		</div>
+	);
+
+	if ( isModal ) {
+		return layoutBodyContent;
+	}
 
 	return (
 		<Layout
@@ -48,17 +69,7 @@ export default function PaymentMethodListV2() {
 				</LayoutHeader>
 			</LayoutTop>
 
-			<LayoutBody>
-				<div className="payment-method-add__content">
-					<Card className="payment-method-add__card payment-form">
-						<PaymentMethodForm />
-					</Card>
-
-					<Card className="payment-method-add__card aside">
-						<PaymentMethodStripeInfo />
-					</Card>
-				</div>
-			</LayoutBody>
+			<LayoutBody>{ layoutBodyContent }</LayoutBody>
 		</Layout>
 	);
 }

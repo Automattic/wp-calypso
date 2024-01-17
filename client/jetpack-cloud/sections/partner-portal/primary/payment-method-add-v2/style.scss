@@ -24,6 +24,10 @@
 	@include break-xlarge {
 		flex-direction: row;
 	}
+
+	&.payment-method-add__content--modal {
+		padding-block: 0;
+	}
 }
 
 .payment-method-add__card.aside {
