@@ -118,6 +118,10 @@ const PersonalPurchase = ( {
 		} );
 	};
 
+	const handleCheckoutPostponed = () => {
+		console.log( 'later button clicked!' );
+	};
+
 	return (
 		<div>
 			<StatsBenefitsListing
@@ -239,6 +243,7 @@ const PersonalPurchase = ( {
 					isWPCOMSite={ isWPCOMSite }
 					buttonText={ continueButtonText }
 					onCheckoutClick={ handleCheckoutRedirect }
+					onPostponeClick={ handleCheckoutPostponed }
 				/>
 			) }
 		</div>
@@ -281,7 +286,7 @@ function StatsPurchasePostponeButton( props: any ) {
 	const buttonText = translate( 'I will do it later' );
 
 	return (
-		<ButtonComponent variant="secondary" onClick={ () => console.log( 'later button clicked!' ) }>
+		<ButtonComponent variant="secondary" onClick={ props.onPostponeClick }>
 			{ buttonText }
 		</ButtonComponent>
 	);
