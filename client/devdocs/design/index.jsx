@@ -7,7 +7,6 @@ import Cards from '@automattic/components/src/card/docs/example';
 import Count from '@automattic/components/src/count/docs/example';
 import FoldableCard from '@automattic/components/src/foldable-card/docs/example';
 import Gridicon from '@automattic/components/src/gridicon/docs/example';
-import ListTile from '@automattic/components/src/list-tile/docs/example';
 import ProductLogoExample from '@automattic/components/src/logos/docs/example';
 import ProductIcon from '@automattic/components/src/product-icon/docs/example';
 import ProgressBar from '@automattic/components/src/progress-bar/docs/example';
@@ -234,7 +233,6 @@ export default class DesignAssets extends Component {
 					<LineChart readmeFilePath="line-chart" />
 					<LinkCard readmeFilePath="link-card" />
 					<ListEnd readmeFilePath="list-end" />
-					<ListTile readmeFilePath="/packages/components/src/list-tile" />
 					<ProductLogoExample />
 					<MarkedLinesExample readmeFilePath="marked-lines" />
 					<MultipleChoiceQuestionExample readmeFilePath="multiple-choice-question" />
