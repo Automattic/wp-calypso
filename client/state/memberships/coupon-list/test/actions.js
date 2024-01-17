@@ -1,4 +1,4 @@
-import wpcom from 'calypso/lib/wp';
+import nock from 'nock';
 import {
 	MEMBERSHIPS_COUPONS_LIST,
 	MEMBERSHIPS_COUPON_RECEIVE,
@@ -11,7 +11,6 @@ import {
 	MEMBERSHIPS_COUPON_DELETE_FAILURE,
 } from 'calypso/state/action-types';
 import {
-	COUPON_DISCOUNT_TYPE_AMOUNT,
 	COUPON_DISCOUNT_TYPE_PERCENTAGE,
 	COUPON_DURATION_FOREVER,
 } from '../../../../my-sites/earn/memberships/constants';
@@ -27,6 +26,21 @@ import {
 beforeEach( () => {
 	jest.resetAllMocks();
 } );
+
+const mockCoupon = {
+	coupon_code: 'COUPON4',
+	discount_type: COUPON_DISCOUNT_TYPE_PERCENTAGE,
+	discount_value: 50,
+	discount_percentage: 50,
+	start_date: '2023-12-20',
+	end_date: undefined,
+	plan_ids_allow_list: [],
+	cannot_be_combined: true,
+	can_be_combined: false, //TODO: remove when backend switches to cannot_be_combined
+	first_time_purchase_only: false,
+	duration: COUPON_DURATION_FOREVER,
+	email_allow_list: [],
+};
 
 describe( 'actions', () => {
 	describe( 'requestCoupons()', () => {
@@ -61,38 +75,16 @@ describe( 'actions', () => {
 	describe( 'requestAddCoupon()', () => {
 		test( 'should dispatch add coupon failure and error notice on failure', async () => {
 			const siteId = 1;
-			const coupon = {
-				coupon_code: 'COUPON4',
-				discount_type: COUPON_DISCOUNT_TYPE_PERCENTAGE,
-				discount_value: 50,
-				discount_percentage: 50,
-				start_date: '2023-12-20',
-				end_date: undefined,
-				plan_ids_allow_list: [],
-				cannot_be_combined: true,
-				can_be_combined: false, //TODO: remove when backend switches to cannot_be_combined
-				first_time_purchase_only: false,
-				duration: COUPON_DURATION_FOREVER,
-				email_allow_list: [],
-			};
-			const errorReason = 'coupon already exists';
-			const errorNoticeText = 'Error adding coupon: ' + errorReason;
+			const coupon = mockCoupon;
+			nock( 'https://public-api.wordpress.com' )
+				.post( '/wpcom/v2/sites/1/memberships/coupons' )
+				.replyWithError( { code: 'validation_error', message: 'Coupon code is already used' } );
+			const errorNoticeText = 'Coupon code is already used';
 			const noticeText = 'Added coupon';
 			const dispatchedActions = [];
 
 			const dispatch = ( obj ) => dispatchedActions.push( obj );
-			jest
-				.spyOn( wpcom.req, 'post' )
-				.mockImplementation( () => Promise.reject( { message: errorNoticeText } ) );
 			await requestAddCoupon( siteId, coupon, noticeText )( dispatch );
-			expect( wpcom.req.post ).toHaveBeenCalledWith(
-				{
-					method: 'POST',
-					path: '/sites/1/memberships/coupons',
-					apiNamespace: 'wpcom/v2',
-				},
-				coupon
-			);
 
 			// dispatchedActions will include a randomly-generated noticeId.
 			// We need to include that random id in our expectation.
@@ -106,7 +98,9 @@ describe( 'actions', () => {
 				},
 				{
 					error: {
-						message: errorNoticeText,
+						message: 'Coupon code is already used',
+						code: 'validation_error',
+						response: undefined,
 					},
 					siteId,
 					type: MEMBERSHIPS_COUPON_ADD_FAILURE,
@@ -122,50 +116,25 @@ describe( 'actions', () => {
 					},
 				},
 			];
-			// expect( dispatchedActionsWithUniqueIdsRemoved ).toEqual( expectedActions );
 			expect( dispatchedActions ).toEqual( expectedActions );
 		} );
 
 		test( 'should dispatch an http request to the add coupon endpoint and associated actions', async () => {
 			const siteId = 1;
 			const couponId = '123';
-			const coupon = {
-				coupon_code: 'COUPON4',
-				discount_type: COUPON_DISCOUNT_TYPE_PERCENTAGE,
-				discount_value: 50,
-				discount_percentage: 50,
-				start_date: '2023-12-20',
-				end_date: undefined,
-				plan_ids_allow_list: [],
-				cannot_be_combined: true,
-				can_be_combined: false, //TODO: remove when backend switches to cannot_be_combined
-				first_time_purchase_only: false,
-				duration: COUPON_DURATION_FOREVER,
-				email_allow_list: [],
-			};
-			const serverResponseWithCouponContainingId = { id: couponId, ...coupon };
-			const couponContainingId = { ID: parseInt( couponId ), ...coupon };
+			const coupon = mockCoupon;
+			nock( 'https://public-api.wordpress.com' )
+				.post( '/wpcom/v2/sites/1/memberships/coupons' )
+				.reply( 200, { id: couponId, ...coupon } );
 			const noticeText = 'Added coupon';
 			const dispatchedActions = [];
 			const dispatch = ( obj ) => dispatchedActions.push( obj );
-			jest
-				.spyOn( wpcom.req, 'post' )
-				.mockImplementation( () => Promise.resolve( serverResponseWithCouponContainingId ) );
+
+			// dispatchedActions will include a randomly-generated noticeId.
+			// We need to include that random id in our expectation.
 			await requestAddCoupon( siteId, coupon, noticeText )( dispatch );
-			expect( wpcom.req.post ).toHaveBeenCalledWith(
-				{
-					method: 'POST',
-					path: '/sites/1/memberships/coupons',
-					apiNamespace: 'wpcom/v2',
-				},
-				coupon
-			);
-			const dispatchedActionsWithUniqueIdsRemoved = dispatchedActions.map( ( action ) => {
-				if ( action.notice?.noticeId?.length > 0 ) {
-					action.notice.noticeId = 'UNIQUE-ID';
-				}
-				return action;
-			} );
+
+			const noticeId = dispatchedActions[ 2 ].notice.noticeId;
 			const expectedActions = [
 				{
 					coupon,
@@ -173,7 +142,7 @@ describe( 'actions', () => {
 					type: MEMBERSHIPS_COUPON_ADD,
 				},
 				{
-					coupon: couponContainingId,
+					coupon: { ID: parseInt( couponId ), ...coupon },
 					siteId,
 					type: MEMBERSHIPS_COUPON_RECEIVE,
 				},
@@ -182,13 +151,13 @@ describe( 'actions', () => {
 					notice: {
 						showDismiss: true,
 						duration: 5000,
-						noticeId: 'UNIQUE-ID',
+						noticeId,
 						status: 'is-success',
 						text: noticeText,
 					},
 				},
 			];
-			expect( dispatchedActionsWithUniqueIdsRemoved ).toEqual( expectedActions );
+			expect( dispatchedActions ).toEqual( expectedActions );
 		} );
 	} );
 
@@ -197,38 +166,26 @@ describe( 'actions', () => {
 			const siteId = 1;
 			const couponId = '123';
 			const coupon = {
-				coupon_code: 'COUPON4',
-				discount_type: COUPON_DISCOUNT_TYPE_AMOUNT,
+				...mockCoupon,
 				discount_value: 5,
 				discount_percentage: 0,
 				start_date: '2023-12-20',
 				end_date: '2024-04-12',
-				plan_ids_allow_list: [],
-				cannot_be_combined: true,
-				can_be_combined: false, //TODO: remove when backend switches to cannot_be_combined
 				first_time_purchase_only: true,
-				duration: COUPON_DURATION_FOREVER,
 				email_allow_list: [ '*@*.edu' ],
 			};
 			const couponContainingId = { ID: parseInt( couponId ), ...coupon };
-			const errorReason = 'Unknown';
-			const errorNoticeText = 'Error updating coupon: ' + errorReason;
+			nock( 'https://public-api.wordpress.com' )
+				.put( '/wpcom/v2/sites/1/memberships/coupon/123' )
+				.replyWithError( {
+					code: 'other_error',
+					message: 'Something went wrong updating this coupon.',
+				} );
 			const noticeText = 'Updated coupon';
 			const dispatchedActions = [];
 
 			const dispatch = ( obj ) => dispatchedActions.push( obj );
-			jest
-				.spyOn( wpcom.req, 'post' )
-				.mockImplementation( () => Promise.reject( { message: errorNoticeText } ) );
 			await requestUpdateCoupon( siteId, couponContainingId, noticeText )( dispatch );
-			expect( wpcom.req.post ).toHaveBeenCalledWith(
-				{
-					method: 'PUT',
-					path: '/sites/1/memberships/coupon/' + couponId,
-					apiNamespace: 'wpcom/v2',
-				},
-				couponContainingId
-			);
 			// dispatchedActions will include a randomly-generated noticeId.
 			// We need to include that random id in our expectation.
 			const noticeId = dispatchedActions[ 2 ].notice.noticeId;
@@ -240,7 +197,9 @@ describe( 'actions', () => {
 				},
 				{
 					error: {
-						message: errorNoticeText,
+						message: 'Something went wrong updating this coupon.',
+						code: 'other_error',
+						response: undefined,
 					},
 					siteId,
 					type: MEMBERSHIPS_COUPON_UPDATE_FAILURE,
@@ -252,7 +211,7 @@ describe( 'actions', () => {
 						duration: 10000,
 						noticeId,
 						status: 'is-error',
-						text: errorNoticeText,
+						text: 'Something went wrong updating this coupon.',
 					},
 				},
 			];
@@ -263,36 +222,22 @@ describe( 'actions', () => {
 			const siteId = 1;
 			const couponId = '123';
 			const coupon = {
-				coupon_code: 'COUPON4',
-				discount_type: COUPON_DISCOUNT_TYPE_AMOUNT,
+				...mockCoupon,
 				discount_value: 5,
 				discount_percentage: 0,
 				start_date: '2023-12-20',
 				end_date: '2024-04-12',
-				plan_ids_allow_list: [],
-				cannot_be_combined: true,
-				can_be_combined: false, //TODO: remove when backend switches to cannot_be_combined
 				first_time_purchase_only: true,
-				duration: COUPON_DURATION_FOREVER,
 				email_allow_list: [ '*@*.edu' ],
 			};
-			const serverResponseWithCouponContainingId = { id: couponId, ...coupon };
 			const couponContainingId = { ID: parseInt( couponId ), ...coupon };
+			nock( 'https://public-api.wordpress.com' )
+				.put( '/wpcom/v2/sites/1/memberships/coupon/123' )
+				.reply( 200, { id: couponId, ...coupon } );
 			const noticeText = 'Updated coupon';
 			const dispatchedActions = [];
 			const dispatch = ( obj ) => dispatchedActions.push( obj );
-			jest
-				.spyOn( wpcom.req, 'post' )
-				.mockImplementation( () => Promise.resolve( serverResponseWithCouponContainingId ) );
 			await requestUpdateCoupon( siteId, couponContainingId, noticeText )( dispatch );
-			expect( wpcom.req.post ).toHaveBeenCalledWith(
-				{
-					method: 'PUT',
-					path: '/sites/1/memberships/coupon/' + couponId,
-					apiNamespace: 'wpcom/v2',
-				},
-				couponContainingId
-			);
 			// dispatchedActions will include a randomly-generated noticeId.
 			// We need to include that random id in our expectation.
 			const noticeId = dispatchedActions[ 2 ].notice.noticeId;
@@ -327,35 +272,27 @@ describe( 'actions', () => {
 			const siteId = 1;
 			const couponId = '123';
 			const coupon = {
-				coupon_code: 'COUPON4',
-				discount_type: COUPON_DISCOUNT_TYPE_AMOUNT,
+				...mockCoupon,
 				discount_value: 5,
 				discount_percentage: 0,
 				start_date: '2023-12-20',
 				end_date: '2024-04-12',
-				plan_ids_allow_list: [],
-				cannot_be_combined: true,
-				can_be_combined: false, //TODO: remove when backend switches to cannot_be_combined
 				first_time_purchase_only: true,
-				duration: COUPON_DURATION_FOREVER,
 				email_allow_list: [ '*@*.edu' ],
 			};
 			const couponContainingId = { ID: parseInt( couponId ), ...coupon };
-			const errorReason = 'Unknown';
-			const errorNoticeText = 'Error updating coupon: ' + errorReason;
 			const noticeText = 'Coupon deleted';
 			const dispatchedActions = [];
 
+			nock( 'https://public-api.wordpress.com' )
+				.delete( '/wpcom/v2/sites/1/memberships/coupon/123' )
+				.replyWithError( {
+					code: 'other_error',
+					message: 'Something went wrong when deleting this coupon.',
+				} );
+
 			const dispatch = ( obj ) => dispatchedActions.push( obj );
-			jest
-				.spyOn( wpcom.req, 'post' )
-				.mockImplementation( () => Promise.reject( { message: errorNoticeText } ) );
 			await requestDeleteCoupon( siteId, couponContainingId, noticeText )( dispatch );
-			expect( wpcom.req.post ).toHaveBeenCalledWith( {
-				method: 'DELETE',
-				path: '/sites/1/memberships/coupon/' + couponId,
-				apiNamespace: 'wpcom/v2',
-			} );
 			// dispatchedActions will include a randomly-generated noticeId.
 			// We need to include that random id in our expectation.
 			const noticeId = dispatchedActions[ 2 ].notice.noticeId;
@@ -367,7 +304,9 @@ describe( 'actions', () => {
 				},
 				{
 					error: {
-						message: errorNoticeText,
+						message: 'Something went wrong when deleting this coupon.',
+						code: 'other_error',
+						response: undefined,
 					},
 					coupon: couponContainingId,
 					siteId,
@@ -380,7 +319,7 @@ describe( 'actions', () => {
 						duration: 10000,
 						noticeId,
 						status: 'is-error',
-						text: errorNoticeText,
+						text: 'Something went wrong when deleting this coupon.',
 					},
 				},
 			];
@@ -391,32 +330,24 @@ describe( 'actions', () => {
 			const siteId = 1;
 			const couponId = '123';
 			const coupon = {
-				coupon_code: 'COUPON4',
-				discount_type: COUPON_DISCOUNT_TYPE_AMOUNT,
+				...mockCoupon,
 				discount_value: 5,
 				discount_percentage: 0,
 				start_date: '2023-12-20',
 				end_date: '2024-04-12',
-				plan_ids_allow_list: [],
-				cannot_be_combined: true,
-				can_be_combined: false, //TODO: remove when backend switches to cannot_be_combined
 				first_time_purchase_only: true,
-				duration: COUPON_DURATION_FOREVER,
 				email_allow_list: [ '*@*.edu' ],
 			};
 			const couponContainingId = { ID: parseInt( couponId ), ...coupon };
 			const noticeText = 'Coupon deleted';
 			const dispatchedActions = [];
 			const dispatch = ( obj ) => dispatchedActions.push( obj );
-			jest
-				.spyOn( wpcom.req, 'post' )
-				.mockImplementation( () => Promise.resolve( { success: true } ) );
+			nock( 'https://public-api.wordpress.com' )
+				.delete( '/wpcom/v2/sites/1/memberships/coupon/123' )
+				.reply( 200 );
+
 			await requestDeleteCoupon( siteId, couponContainingId, noticeText )( dispatch );
-			expect( wpcom.req.post ).toHaveBeenCalledWith( {
-				method: 'DELETE',
-				path: '/sites/1/memberships/coupon/' + couponId,
-				apiNamespace: 'wpcom/v2',
-			} );
+
 			// dispatchedActions will include a randomly-generated noticeId.
 			// We need to include that random id in our expectation.
 			const noticeId = dispatchedActions[ 1 ].notice.noticeId;
