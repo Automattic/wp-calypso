@@ -325,6 +325,10 @@ export class ImportEverything extends SectionMigrate {
 	}
 
 	render() {
+		if ( this.props.forceErrorScreen ) {
+			return this.renderMigrationError();
+		}
+
 		switch ( this.state.migrationStatus ) {
 			case MigrationStatus.UNKNOWN:
 				return this.renderLoading();
@@ -357,6 +361,7 @@ export const connector = connect(
 			isTargetSitePlanCompatible: !! isTargetSitePlanCompatible( ownProps.targetSite ),
 			sourceSite: ownProps.sourceSiteId && getSite( state, ownProps.sourceSiteId ),
 			startMigration: !! get( getCurrentQueryArguments( state ), 'start', false ),
+			forceErrorScreen: !! get( getCurrentQueryArguments( state ), 'forceErrorScreen', false ),
 			sourceSiteHasJetpack: false,
 			targetSiteId: ownProps.targetSiteId,
 			targetSiteImportAdminUrl: getSiteAdminUrl(
