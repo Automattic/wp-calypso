@@ -1,8 +1,9 @@
 import { Button } from '@wordpress/components';
 import { translate } from 'i18n-calypso';
-import emailImage from 'calypso/assets/images/thank-you-upsell/email.svg';
+import emailImage from 'calypso/assets/images/thank-you-upsell/email.jpg';
 import Main from 'calypso/components/main';
 import ThankYouV2 from 'calypso/components/thank-you-v2';
+import { ThankYouUpsellProps } from 'calypso/components/thank-you-v2/upsell';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { getEmailManagementPath } from 'calypso/my-sites/email/paths';
 import MasterbarStyled from '../redesign-v2/masterbar-styled';
@@ -16,12 +17,12 @@ interface DomainTransferToAnyUserContainerProps {
 const DomainTransferToAnyUser: React.FC< DomainTransferToAnyUserContainerProps > = ( {
 	domain,
 } ) => {
-	const upsellProps = {
+	const upsellProps: ThankYouUpsellProps = {
 		title: translate( 'Professional email' ),
 		description: translate(
 			'85% of people trust an email address with a custom domain name over a generic one.'
 		),
-		icon: emailImage,
+		image: emailImage,
 		action: (
 			<Button
 				href={ getEmailManagementPath( domain, domain ) }
