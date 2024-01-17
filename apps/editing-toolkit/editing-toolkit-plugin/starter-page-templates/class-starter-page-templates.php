@@ -290,17 +290,18 @@ class Starter_Page_Templates {
 	public function get_page_templates( string $locale ) {
 		$page_template_data   = get_transient( $this->get_templates_cache_key( $locale ) );
 		$override_source_site = apply_filters( 'a8c_override_patterns_source_site', false );
-		$is_assembler_v2_site = is_automattician();
+		// Enable testing v2 page patterns for Automatticians
+		$enable_testing_v2_patterns = function_exists( 'is_automattician' ) ? is_automattician() : false;
 
 		// Load fresh data if we don't have any or vertical_id doesn't match.
-		if ( $is_assembler_v2_site || false === $page_template_data || ( defined( 'WP_DEBUG' ) && WP_DEBUG ) || false !== $override_source_site ) {
+		if ( $enable_testing_v2_patterns || false === $page_template_data || ( defined( 'WP_DEBUG' ) && WP_DEBUG ) || false !== $override_source_site ) {
 			$request_params = array(
 				'site'         => $override_source_site,
 				'tags'         => 'layout',
 				'pattern_meta' => 'is_web',
 			);
 
-			if ( $is_assembler_v2_site ) {
+			if ( $enable_testing_v2_patterns ) {
 				$request_params = array(
 					'site'       => 'assemblerv2patterns.wordpress.com',
 					'categories' => 'page',
@@ -330,7 +331,7 @@ class Starter_Page_Templates {
 			$page_template_data = json_decode( wp_remote_retrieve_body( $response ), true );
 
 			// Only save to cache if we have not overridden the source site.
-			if ( ! $is_assembler_v2_site && false === $override_source_site ) {
+			if ( ! $enable_testing_v2_patterns && false === $override_source_site ) {
 				set_transient( $this->get_templates_cache_key( $locale ), $page_template_data, DAY_IN_SECONDS );
 			}
 
