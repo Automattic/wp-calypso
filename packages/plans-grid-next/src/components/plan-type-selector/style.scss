@@ -2,8 +2,16 @@
 
 .plan-type-selector {
 	width: fit-content;
+	min-width: 275px;
 }
 
+.is-sticky-plan-type-selector {
+	.plan-type-selector {
+		@include plan-type-selector-custom-mobile-breakpoint {
+			width: 100%;
+		}
+	}
+}
 
 .plan-type-selector__title {
 	margin-bottom: 20px;
