@@ -281,7 +281,7 @@ export class Theme extends Component {
 	};
 
 	renderMoreButton = () => {
-		const { active, buttonContents, index, theme } = this.props;
+		const { active, buttonContents, index, theme, siteId } = this.props;
 
 		let moreOptions = buttonContents;
 		if ( isEnabled( 'themes/tiers' ) ) {
@@ -301,8 +301,10 @@ export class Theme extends Component {
 		return (
 			<ThemeMoreButton
 				index={ index }
+				siteId={ siteId }
 				themeId={ theme.id }
 				themeName={ theme.name }
+				hasStyleVariations={ !! theme?.style_variations?.length }
 				active={ active }
 				onMoreButtonClick={ this.props.onMoreButtonClick }
 				onMoreButtonItemClick={ this.props.onMoreButtonItemClick }

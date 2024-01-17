@@ -1,5 +1,5 @@
 import { getPlan, PLAN_BUSINESS } from '@automattic/calypso-products';
-import { CompactCard, ProductIcon, Gridicon } from '@automattic/components';
+import { CompactCard, ProductIcon, Gridicon, PlanPrice } from '@automattic/components';
 import { localize } from 'i18n-calypso';
 import { get } from 'lodash';
 import PropTypes from 'prop-types';
@@ -8,7 +8,6 @@ import { connect } from 'react-redux';
 import CardHeading from 'calypso/components/card-heading';
 import QueryPlans from 'calypso/components/data/query-plans';
 import HeaderCake from 'calypso/components/header-cake';
-import PlanPrice from 'calypso/my-sites/plan-price';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getCurrentUserCurrencyCode } from 'calypso/state/currency-code/selectors';
 import { getPlanRawPrice } from 'calypso/state/plans/selectors';

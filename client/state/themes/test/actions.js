@@ -1467,8 +1467,6 @@ describe( 'actions', () => {
 					livePreview(
 						2211667,
 						'pendant',
-						false,
-						undefined,
 						'detail'
 					)( dispatch, state ).then( () => {
 						expect( dispatch ).toHaveBeenCalledWith( livePreviewStartAction );
@@ -1513,8 +1511,6 @@ describe( 'actions', () => {
 						livePreview(
 							2211667,
 							'pendant',
-							false,
-							undefined,
 							'detail'
 						)( dispatch, state ).then( () => {
 							expect( dispatch ).toHaveBeenCalledWith( livePreviewStartAction );
@@ -1540,8 +1536,6 @@ describe( 'actions', () => {
 						livePreview(
 							2211667,
 							'pendant',
-							false,
-							undefined,
 							'detail'
 						)( dispatch, state ).then( () => {
 							expect( dispatch ).toHaveBeenCalledWith( livePreviewStartAction );

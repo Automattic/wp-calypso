@@ -36,8 +36,9 @@ import { ADD_TIER_PLAN_HASH } from 'calypso/my-sites/earn/memberships/constants'
 import { isVideoPressFlow } from 'calypso/signup/is-flow';
 import { ONBOARD_STORE, SITE_STORE } from '../../../../stores';
 import { goToCheckout } from '../../../../utils/checkout';
+import { getTaskDefinition } from './task-definitions';
 import { launchpadFlowTasks } from './tasks';
-import { LaunchpadChecklist, Task } from './types';
+import { LaunchpadChecklist, Task, TaskContext } from './types';
 
 interface GetEnhancedTasksProps {
 	tasks: Task[] | null | undefined;
@@ -273,9 +274,18 @@ export function getEnhancedTasks( {
 	tasks &&
 		tasks.map( ( task ) => {
 			let taskData = {};
+
+			const context: TaskContext = {
+				site,
+				tasks,
+				siteInfoQueryArgs,
+			};
+
 			switch ( task.id ) {
 				case 'setup_free':
-					taskData = {
+					// DEPRECATED: This task is deprecated and will be removed in the future
+					// eslint-disable-next-line no-case-declarations
+					const deprecatedData = {
 						actionDispatch: () => {
 							recordTaskClickTracksEvent( flow, task.completed, task.id );
 							window.location.assign(
@@ -283,6 +293,8 @@ export function getEnhancedTasks( {
 							);
 						},
 					};
+
+					taskData = getTaskDefinition( flow, task, context ) || deprecatedData;
 					break;
 				case 'setup_blog':
 					taskData = {

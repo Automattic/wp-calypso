@@ -12,6 +12,9 @@ export const WAPUU_ERROR_MESSAGE = i18n.translate(
 	{ comment: 'Error message when Wapuu fails to send a message', textOnly: true }
 );
 
+export const ODIE_THUMBS_DOWN_RATING_VALUE = 0;
+export const ODIE_THUMBS_UP_RATING_VALUE = 1;
+
 const ForwardedChatMessage = forwardRef( ChatMessage );
 
 const OdieAssistant = () => {

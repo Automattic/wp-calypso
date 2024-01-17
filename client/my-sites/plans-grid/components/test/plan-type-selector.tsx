@@ -1,4 +1,14 @@
 /** @jest-environment jsdom */
+
+/**
+ * Default mock implementations
+ */
+jest.mock( '@automattic/data-stores', () => ( {
+	Plans: {
+		usePricingMetaForGridPlans: jest.fn(),
+	},
+} ) );
+
 import { PLAN_FREE } from '@automattic/calypso-products';
 import { screen, render } from '@testing-library/react';
 import React from 'react';
@@ -18,7 +28,7 @@ describe( '<PlanTypeSelector />', () => {
 				kind="interval"
 				plans={ [] }
 				selectedPlan={ PLAN_FREE }
-				usePricingMetaForGridPlans={ () => null }
+				useCheckPlanAvailabilityForPurchase={ jest.fn() }
 			/>
 		);
 

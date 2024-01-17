@@ -1,11 +1,7 @@
+import { Plans } from '@automattic/data-stores';
 import { FeatureObject } from 'calypso/lib/plans/features-list';
 import { type PlanTypeSelectorProps } from './components/plan-type-selector';
-import type {
-	GridPlan,
-	PlansIntent,
-	UsePricingMetaForGridPlans,
-} from './hooks/npm-ready/data-store/use-grid-plans';
-import type { UseCheckPlanAvailabilityForPurchase } from '../plans-features-main/hooks/data-store/use-pricing-meta-for-grid-plans';
+import type { GridPlan, PlansIntent } from './hooks/npm-ready/data-store/use-grid-plans';
 import type { FeatureList, PlanSlug, WPComStorageAddOnSlug } from '@automattic/calypso-products';
 import type { MinimalRequestCartProduct } from '@automattic/shopping-cart';
 import type { LocalizeProps, TranslateResult } from 'i18n-calypso';
@@ -25,6 +21,9 @@ export interface PlanActionOverrides {
 	currentPlan?: {
 		text?: TranslateResult;
 		callback?: () => void;
+	};
+	trialAlreadyUsed?: {
+		postButtonText?: TranslateResult;
 	};
 }
 
@@ -58,6 +57,7 @@ export interface CommonGridProps {
 	// only used for comparison grid
 	planTypeSelectorProps?: PlanTypeSelectorProps;
 	onUpgradeClick: ( planSlug: PlanSlug ) => void;
+	planUpgradeCreditsApplicable?: number | null;
 }
 
 export interface FeaturesGridProps extends CommonGridProps {
@@ -65,7 +65,6 @@ export interface FeaturesGridProps extends CommonGridProps {
 	isLargeCurrency: boolean;
 	translate: LocalizeProps[ 'translate' ];
 	currentPlanManageHref?: string;
-	isPlanUpgradeCreditEligible: boolean;
 	generatedWPComSubdomain: DataResponse< { domain_name: string } >;
 	gridPlanForSpotlight?: GridPlan;
 	isCustomDomainAllowedOnFreePlan: boolean; // indicate when a custom domain is allowed to be used with the Free plan.
@@ -83,8 +82,8 @@ export type GridContextProps = {
 	allFeaturesList: FeatureList;
 	intent?: PlansIntent;
 	selectedSiteId?: number | null;
-	usePricingMetaForGridPlans: UsePricingMetaForGridPlans;
-	useCheckPlanAvailabilityForPurchase: UseCheckPlanAvailabilityForPurchase;
+	useCheckPlanAvailabilityForPurchase: Plans.UseCheckPlanAvailabilityForPurchase;
+	recordTracksEvent?: ( eventName: string, eventProperties: Record< string, unknown > ) => void;
 	children: React.ReactNode;
 	coupon?: string;
 };
@@ -98,10 +97,7 @@ export type ComparisonGridExternalProps = Omit< GridContextProps, 'children' > &
 	};
 
 export type FeaturesGridExternalProps = Omit< GridContextProps, 'children' > &
-	Omit<
-		FeaturesGridProps,
-		'onUpgradeClick' | 'isLargeCurrency' | 'translate' | 'isPlanUpgradeCreditEligible'
-	> & {
+	Omit< FeaturesGridProps, 'onUpgradeClick' | 'isLargeCurrency' | 'translate' > & {
 		onUpgradeClick?: (
 			cartItems?: MinimalRequestCartProduct[] | null,
 			clickedPlanSlug?: PlanSlug

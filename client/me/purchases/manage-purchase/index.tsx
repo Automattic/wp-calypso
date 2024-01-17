@@ -49,6 +49,7 @@ import {
 	CompactCard,
 	ProductIcon,
 	Gridicon,
+	PlanPrice,
 } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
 import classNames from 'classnames';
@@ -106,7 +107,6 @@ import ProductLink from 'calypso/me/purchases/product-link';
 import titles from 'calypso/me/purchases/titles';
 import TrackPurchasePageView from 'calypso/me/purchases/track-purchase-page-view';
 import WordAdsEligibilityWarningDialog from 'calypso/me/purchases/wordads-eligibility-warning-dialog';
-import PlanPrice from 'calypso/my-sites/plan-price';
 import PlanRenewalMessage from 'calypso/my-sites/plans/jetpack-plans/plan-renewal-message';
 import {
 	getCancelPurchaseUrlFor,

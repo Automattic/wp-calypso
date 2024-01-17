@@ -24,7 +24,9 @@ import type { PriceTierEntry } from '@automattic/calypso-products';
 interface ItemPrices {
 	isFetching: boolean | null;
 	originalPrice: number;
+	originalPriceTotal?: number;
 	discountedPrice?: number;
+	discountedPriceTotal?: number | null;
 	discountedPriceDuration?: number;
 	priceTierList: PriceTierEntry[];
 }
@@ -155,16 +157,20 @@ const useItemPrice = (
 	}
 
 	let originalPrice = 0;
-	let discountedPrice = undefined;
-	let discountedPriceDuration = undefined;
+	let originalPriceTotal;
+	let discountedPrice;
+	let discountedPriceDuration;
+	let discountedPriceTotal;
 
 	if ( item && itemCost ) {
 		originalPrice = itemCost;
 		if ( item.term !== TERM_MONTHLY ) {
 			originalPrice = getMonthlyPrice( itemCost ); // monthlyItemCost - See comment above.
+			originalPriceTotal = itemCost;
 			discountedPrice = introductoryOfferPrices.introOfferCost
 				? getMonthlyPrice( introductoryOfferPrices.introOfferCost )
 				: undefined;
+			discountedPriceTotal = introductoryOfferPrices.introOfferCost;
 
 			// Override Jetpack Social Advanced price by hard-coding it for now
 			if (
@@ -197,8 +203,10 @@ const useItemPrice = (
 	return {
 		isFetching,
 		originalPrice,
+		originalPriceTotal,
 		discountedPrice,
 		discountedPriceDuration,
+		discountedPriceTotal,
 		priceTierList,
 	};
 };

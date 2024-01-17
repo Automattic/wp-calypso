@@ -1,5 +1,6 @@
 import { PLAN_ANNUAL_PERIOD } from '@automattic/calypso-products';
 import { SegmentedControl } from '@automattic/components';
+import { Plans } from '@automattic/data-stores';
 import { useState } from '@wordpress/element';
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
@@ -17,7 +18,6 @@ export const IntervalTypeToggle: React.FunctionComponent< IntervalTypeProps > = 
 		eligibleForWpcomMonthlyPlans,
 		hideDiscountLabel,
 		currentSitePlanSlug,
-		usePricingMetaForGridPlans,
 		displayedIntervals,
 		useCheckPlanAvailabilityForPurchase,
 		title,
@@ -32,14 +32,12 @@ export const IntervalTypeToggle: React.FunctionComponent< IntervalTypeProps > = 
 	const popupIsVisible = Boolean( intervalType === 'monthly' && props.plans.length );
 	const maxDiscount = useMaxDiscount(
 		props.plans,
-		usePricingMetaForGridPlans,
 		useCheckPlanAvailabilityForPurchase,
 		selectedSiteId
 	);
-	// TODO clk pricing
-	const pricingMeta = usePricingMetaForGridPlans( {
+	const pricingMeta = Plans.usePricingMetaForGridPlans( {
 		planSlugs: currentSitePlanSlug ? [ currentSitePlanSlug ] : [],
-		withoutProRatedCredits: true,
+		withoutPlanUpgradeCredits: true,
 		coupon,
 		selectedSiteId,
 		useCheckPlanAvailabilityForPurchase,

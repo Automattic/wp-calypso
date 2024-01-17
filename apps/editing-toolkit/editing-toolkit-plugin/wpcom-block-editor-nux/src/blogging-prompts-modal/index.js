@@ -45,7 +45,9 @@ export const BloggingPromptsModalInner = () => {
 		dispatch( 'core/editor' ).resetEditorBlocks( [
 			createBlock( 'jetpack/blogging-prompt', { promptId } ),
 		] );
-		recordTracksEvent( 'calypso_editor_writing_prompts_modal_prompt_selected', { promptId } );
+		recordTracksEvent( 'calypso_editor_writing_prompts_modal_prompt_selected', {
+			prompt_id: promptId,
+		} );
 		setIsOpen( false );
 	}
 

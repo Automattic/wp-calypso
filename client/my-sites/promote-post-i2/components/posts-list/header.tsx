@@ -21,7 +21,7 @@ export default function PostsListHeader() {
 		},
 		{
 			id: 'views',
-			title: translate( 'Views' ),
+			title: translate( 'Visitors' ),
 		},
 		{
 			id: 'likes',
