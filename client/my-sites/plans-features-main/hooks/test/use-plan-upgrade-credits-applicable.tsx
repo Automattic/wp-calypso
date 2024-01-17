@@ -10,8 +10,8 @@ import {
 	PLAN_FREE,
 	PlanSlug,
 } from '@automattic/calypso-products';
-import { useCalculateMaxPlanUpgradeCredit } from 'calypso/my-sites/plans-grid/hooks/use-calculate-max-plan-upgrade-credit';
-import { useIsPlanUpgradeCreditVisible } from 'calypso/my-sites/plans-grid/hooks/use-is-plan-upgrade-credit-visible';
+import { useMaxPlanUpgradeCredits } from 'calypso/my-sites/plans-features-main/hooks/use-max-plan-upgrade-credits';
+import { usePlanUpgradeCreditsApplicable } from 'calypso/my-sites/plans-features-main/hooks/use-plan-upgrade-credits-applicable';
 import isAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
 import { getSitePlanSlug } from 'calypso/state/sites/plans/selectors';
 import { isCurrentPlanPaid, isJetpackSite } from 'calypso/state/sites/selectors';
@@ -24,8 +24,8 @@ jest.mock( 'calypso/state/sites/selectors', () => ( {
 jest.mock( 'calypso/state/sites/plans/selectors', () => ( {
 	getSitePlanSlug: jest.fn(),
 } ) );
-jest.mock( 'calypso/my-sites/plans-grid/hooks/use-calculate-max-plan-upgrade-credit', () => ( {
-	useCalculateMaxPlanUpgradeCredit: jest.fn(),
+jest.mock( 'calypso/my-sites/plans-features-main/hooks/use-max-plan-upgrade-credits', () => ( {
+	useMaxPlanUpgradeCredits: jest.fn(),
 } ) );
 jest.mock( 'calypso/state/selectors/is-site-automated-transfer', () => ( {
 	__esModule: true,
@@ -33,8 +33,8 @@ jest.mock( 'calypso/state/selectors/is-site-automated-transfer', () => ( {
 } ) );
 
 // Mocked types
-const mUsePlanUpgradeCredits = useCalculateMaxPlanUpgradeCredit as jest.MockedFunction<
-	typeof useCalculateMaxPlanUpgradeCredit
+const mUsePlanUpgradeCredits = useMaxPlanUpgradeCredits as jest.MockedFunction<
+	typeof useMaxPlanUpgradeCredits
 >;
 const mIsAutomatedTransfer = isAutomatedTransfer as jest.MockedFunction<
 	typeof isAutomatedTransfer
@@ -52,7 +52,7 @@ const plansList: PlanSlug[] = [
 	PLAN_ECOMMERCE,
 	PLAN_ENTERPRISE_GRID_WPCOM,
 ];
-describe( 'useIsPlanUpgradeCreditVisible hook', () => {
+describe( 'usePlanUpgradeCreditsApplicable hook', () => {
 	beforeEach( () => {
 		jest.resetAllMocks();
 
@@ -65,17 +65,17 @@ describe( 'useIsPlanUpgradeCreditVisible hook', () => {
 
 	test( 'Show a plans upgrade credit when the necessary conditions are met above', () => {
 		const { result } = renderHookWithProvider( () =>
-			useIsPlanUpgradeCreditVisible( siteId, plansList )
+			usePlanUpgradeCreditsApplicable( siteId, plansList )
 		);
-		expect( result.current ).toEqual( true );
+		expect( result.current ).toEqual( 100 );
 	} );
 
 	test( 'Plan upgrade credits should not be shown when a site is on the highest purchasable plan', () => {
 		mGetSitePlanSlug.mockImplementation( () => PLAN_ECOMMERCE );
 		const { result } = renderHookWithProvider( () =>
-			useIsPlanUpgradeCreditVisible( siteId, plansList )
+			usePlanUpgradeCreditsApplicable( siteId, plansList )
 		);
-		expect( result.current ).toEqual( false );
+		expect( result.current ).toEqual( null );
 	} );
 
 	test( 'A non atomic jetpack site is not shown the plan upgrade credit', () => {
@@ -83,26 +83,26 @@ describe( 'useIsPlanUpgradeCreditVisible hook', () => {
 		mIsJetpackSite.mockImplementation( () => true );
 
 		const { result } = renderHookWithProvider( () =>
-			useIsPlanUpgradeCreditVisible( siteId, plansList )
+			usePlanUpgradeCreditsApplicable( siteId, plansList )
 		);
-		expect( result.current ).toEqual( false );
+		expect( result.current ).toEqual( null );
 	} );
 
 	test( 'Plan upgrade credit should NOT be shown if there are no discounts provided by the pricing API', () => {
-		mUsePlanUpgradeCredits.mockImplementation( () => 0 );
+		mUsePlanUpgradeCredits.mockImplementation( () => null );
 
 		const { result } = renderHookWithProvider( () =>
-			useIsPlanUpgradeCreditVisible( siteId, plansList )
+			usePlanUpgradeCreditsApplicable( siteId, plansList )
 		);
-		expect( result.current ).toEqual( false );
+		expect( result.current ).toEqual( null );
 	} );
 
 	test( 'Site on a free plan should not show the plan upgrade credit', () => {
 		mIsCurrentPlanPaid.mockImplementation( () => false );
 
 		const { result } = renderHookWithProvider( () =>
-			useIsPlanUpgradeCreditVisible( siteId, plansList )
+			usePlanUpgradeCreditsApplicable( siteId, plansList )
 		);
-		expect( result.current ).toEqual( false );
+		expect( result.current ).toEqual( null );
 	} );
 } );

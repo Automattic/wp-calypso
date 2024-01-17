@@ -3,11 +3,11 @@ import { useTranslate } from 'i18n-calypso';
 import { useCallback, useEffect } from 'react';
 import useSubmitForm from 'calypso/jetpack-cloud/sections/partner-portal/issue-license-v2/hooks/use-submit-form';
 import LicenseLightbox from 'calypso/jetpack-cloud/sections/partner-portal/license-lightbox';
-import LicenseLightboxPurchaseViaJetpackcom from 'calypso/jetpack-cloud/sections/partner-portal/license-lightbox/license-lightbox-purchase-via-jetpackcom';
 import { useDispatch, useSelector } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { APIProductFamilyProduct } from 'calypso/state/partner-portal/types';
 import getSites from 'calypso/state/selectors/get-sites';
+import LicenseLightboxPurchaseViaJetpackcom from './license-lightbox-purchase-via-jetpackcom';
 
 interface Props {
 	manageProduct: APIProductFamilyProduct;
@@ -82,7 +82,7 @@ export default function SingleSiteUpsellLightbox( {
 			className="license-lightbox__single-site-upsell"
 			product={ manageProduct }
 			isDisabled={ ! partnerCanIssueLicense }
-			ctaLabel={ translate( 'Issue License' ) }
+			ctaLabel={ translate( 'Issue license' ) }
 			onActivate={ onIssueLicense }
 			fireCloseOnCTAClick={ false }
 			onClose={ onHideLicenseInfo }

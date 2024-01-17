@@ -10,81 +10,85 @@ import {
 	TRACKING_IDS,
 } from './constants';
 
-if ( typeof window !== 'undefined' ) {
-	if ( mayWeInitTracker( 'ga' ) ) {
-		setupGtag();
-	}
+export function setup() {
+	if ( typeof window !== 'undefined' ) {
+		if ( mayWeInitTracker( 'ga' ) ) {
+			setupGtag();
+		}
 
-	// Facebook
-	if ( mayWeInitTracker( 'facebook' ) ) {
-		setupFacebookGlobal();
-	}
+		// Facebook
+		if ( mayWeInitTracker( 'facebook' ) ) {
+			setupFacebookGlobal();
+		}
 
-	// Bing
-	if ( mayWeInitTracker( 'bing' ) && ! window.uetq ) {
-		window.uetq = [];
-	}
+		// Bing
+		if ( mayWeInitTracker( 'bing' ) && ! window.uetq ) {
+			window.uetq = [];
+		}
 
-	// Criteo
-	if ( mayWeInitTracker( 'criteo' ) && ! window.criteo_q ) {
-		window.criteo_q = [];
-	}
+		// Criteo
+		if ( mayWeInitTracker( 'criteo' ) && ! window.criteo_q ) {
+			window.criteo_q = [];
+		}
 
-	// Quantcast
-	if ( mayWeInitTracker( 'quantcast' ) && ! window._qevents ) {
-		window._qevents = [];
-	}
+		// Quantcast
+		if ( mayWeInitTracker( 'quantcast' ) && ! window._qevents ) {
+			window._qevents = [];
+		}
 
-	// Google Ads Gtag for wordpress.com
-	if ( mayWeInitTracker( 'googleAds' ) ) {
-		setupWpcomGoogleAdsGtag();
-	}
+		// Google Ads Gtag for wordpress.com
+		if ( mayWeInitTracker( 'googleAds' ) ) {
+			setupWpcomGoogleAdsGtag();
+		}
 
-	if ( mayWeInitTracker( 'floodlight' ) ) {
-		setupWpcomFloodlightGtag();
-	}
+		if ( mayWeInitTracker( 'floodlight' ) ) {
+			setupWpcomFloodlightGtag();
+		}
 
-	// Twitter
-	if ( mayWeInitTracker( 'twitter' ) ) {
-		setupTwitterGlobal();
-	}
+		// Twitter
+		if ( mayWeInitTracker( 'twitter' ) ) {
+			setupTwitterGlobal();
+		}
 
-	// Linkedin
-	if ( mayWeInitTracker( 'linkedin' ) ) {
-		setupLinkedinInsight(
-			isJetpackCloud() || isJetpackCheckout() ? TRACKING_IDS.jetpackLinkedinId : null
-		);
-	}
+		// Linkedin
+		if ( mayWeInitTracker( 'linkedin' ) ) {
+			setupLinkedinInsight(
+				isJetpackCloud() || isJetpackCheckout() ? TRACKING_IDS.jetpackLinkedinId : null
+			);
+		}
 
-	// Quora
-	if ( mayWeInitTracker( 'quora' ) ) {
-		setupQuoraGlobal();
-	}
+		// Quora
+		if ( mayWeInitTracker( 'quora' ) ) {
+			setupQuoraGlobal();
+		}
 
-	// Outbrain
-	if ( mayWeInitTracker( 'outbrain' ) ) {
-		setupOutbrainGlobal();
-	}
+		// Outbrain
+		if ( mayWeInitTracker( 'outbrain' ) ) {
+			setupOutbrainGlobal();
+		}
 
-	// Pinterest
-	if ( mayWeInitTracker( 'pinterest' ) ) {
-		setupPinterestGlobal();
-	}
+		// Pinterest
+		if ( mayWeInitTracker( 'pinterest' ) ) {
+			setupPinterestGlobal();
+		}
 
-	// AdRoll
-	if ( mayWeInitTracker( 'adroll' ) ) {
-		setupAdRollGlobal();
-	}
+		// AdRoll
+		if ( mayWeInitTracker( 'adroll' ) ) {
+			setupAdRollGlobal();
+		}
 
-	// GTM
-	if ( mayWeInitTracker( 'googleTagManager' ) ) {
-		setupGtmGtag();
-	}
+		// GTM
+		if ( mayWeInitTracker( 'googleTagManager' ) ) {
+			setupGtmGtag();
+		}
 
-	if ( mayWeInitTracker( 'clarity' ) ) {
-		setupClarityGlobal();
+		if ( mayWeInitTracker( 'clarity' ) ) {
+			setupClarityGlobal();
+		}
 	}
 }
+
+setup();
 
 /**
  * Initializes Linkedin tracking.
