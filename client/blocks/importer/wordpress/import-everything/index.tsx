@@ -21,7 +21,7 @@ import DomainInfo from '../../components/domain-info';
 import DoneButton from '../../components/done-button';
 import GettingStartedVideo from '../../components/getting-started-video';
 import NotAuthorized from '../../components/not-authorized';
-import { isTargetSitePlanCompatible } from '../../util';
+import { isTargetSitePlanCompatible, byteToMB } from '../../util';
 import { WPImportOption } from '../types';
 import { clearMigrateSource, retrieveMigrateSource } from '../utils';
 import MigrationError from './migration-error';
@@ -355,12 +355,6 @@ export class ImportEverything extends SectionMigrate {
 		}
 	}
 
-	byteToMB( bytes: number ) {
-		const megabytes = bytes / 1024 / 1024;
-
-		return megabytes.toFixed( 2 );
-	}
-
 	getTitle(): string {
 		const { translate } = this.props;
 
@@ -411,7 +405,7 @@ export class ImportEverything extends SectionMigrate {
 
 		return sprintf( translate( 'Backing up %(percentage)d%% of your %(size)f MB of data…' ), {
 			percentage: backupPercent,
-			size: this.byteToMB( this.state.siteSize ),
+			size: byteToMB( this.state.siteSize ),
 		} );
 	}
 

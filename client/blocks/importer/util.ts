@@ -33,3 +33,9 @@ export function buildCheckoutUrl( siteSlug: string | undefined | null, plan = 'b
 	}
 	return `/checkout/${ siteSlug }/${ plan }`;
 }
+
+export const byteToMB = ( bytes: number ) => {
+	const megabytes = bytes / 1024 / 1024;
+
+	return megabytes.toFixed( 2 );
+};
