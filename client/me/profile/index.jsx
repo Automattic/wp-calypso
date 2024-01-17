@@ -129,38 +129,45 @@ class Profile extends Component {
 							} ) }
 						>
 							<ToggleControl
-								disabled={ this.props.isFetchingUserSettings }
+								disabled={ this.props.isUpdatingUserSettings || this.props.isFetchingUserSettings }
 								checked={ this.props.getSetting( 'gravatar_profile_hidden' ) }
 								onChange={ this.toggleGravatarHidden }
 								label={ <UpdatedGravatarString gravatarProfileLink={ gravatarProfileLink } /> }
 							/>
 						</FormFieldset>
+					</form>
+				</Card>
 
+				<SectionHeader label={ this.props.translate( 'Developer Settings' ) } />
+				<Card className="developer__settings">
+					<form onSubmit={ this.props.submitForm } onChange={ this.props.markChanged }>
 						<FormFieldset
 							className={ classnames( {
 								'profile__is_dev_account-fieldset-is-loading': this.props.isFetchingUserSettings,
 							} ) }
 						>
 							<ToggleControl
-								disabled={ this.props.isFetchingUserSettings }
+								disabled={ this.props.isUpdatingUserSettings || this.props.isFetchingUserSettings }
 								checked={ this.props.getSetting( 'is_dev_account' ) }
 								onChange={ this.toggleIsDevAccount }
 								label={ getIAmDeveloperCopy( this.props.translate ) }
 							/>
 						</FormFieldset>
-
-						<p className="profile__submit-button-wrapper">
-							<FormButton
-								disabled={ ! this.props.hasUnsavedUserSettings || this.props.getDisabledState() }
-								onClick={ this.getClickHandler( 'Save Profile Details Button' ) }
-							>
-								{ this.props.getDisabledState()
-									? this.props.translate( 'Saving…' )
-									: this.props.translate( 'Save profile details' ) }
-							</FormButton>
-						</p>
 					</form>
 				</Card>
+
+				<form onSubmit={ this.props.submitForm } onChange={ this.props.markChanged }>
+					<p className="profile__submit-button-wrapper">
+						<FormButton
+							disabled={ ! this.props.hasUnsavedUserSettings || this.props.getDisabledState() }
+							onClick={ this.getClickHandler( 'Save Profile Details Button' ) }
+						>
+							{ this.props.isUpdatingUserSettings || this.props.getDisabledState()
+								? this.props.translate( 'Saving…' )
+								: this.props.translate( 'Save profile details' ) }
+						</FormButton>
+					</p>
+				</form>
 
 				<DomainUpsell context="profile" />
 
