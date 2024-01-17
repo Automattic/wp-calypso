@@ -238,17 +238,28 @@ const PersonalPurchase = ( {
 					{ translate( 'Continue with Jetpack Stats for free' ) }
 				</ButtonComponent>
 			) : (
-				<ButtonComponent
-					variant="primary"
-					primary={ isWPCOMSite ? true : undefined }
-					onClick={ handleCheckoutRedirect }
-				>
-					{ continueButtonText }
-				</ButtonComponent>
+				<StatsPurchaseActions
+					isWPCOMSite={ isWPCOMSite }
+					buttonText={ continueButtonText }
+					onCheckoutClick={ handleCheckoutRedirect }
+				/>
 			) }
 		</div>
 	);
 };
+
+function StatsPurchaseActions( props: any ) {
+	const ButtonComponent = props.isWPCOMSite ? CalypsoButton : Button;
+	return (
+		<ButtonComponent
+			variant="primary"
+			primary={ props.isWPCOMSite ? true : undefined }
+			onClick={ props.onCheckoutClick }
+		>
+			{ props.buttonText }
+		</ButtonComponent>
+	);
+}
 
 interface StatsBenefitsListingProps {
 	subscriptionValue: number;
