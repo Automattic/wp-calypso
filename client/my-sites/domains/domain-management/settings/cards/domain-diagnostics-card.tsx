@@ -8,6 +8,7 @@ import Notice from 'calypso/components/notice';
 import NoticeAction from 'calypso/components/notice/notice-action';
 import useDomainDiagnosticsQuery from 'calypso/data/domains/diagnostics/use-domain-diagnostics-query';
 import { setDomainNotice } from 'calypso/lib/domains/set-domain-notice';
+import { SET_UP_EMAIL_AUTHENTICATION_FOR_YOUR_DOMAIN } from 'calypso/lib/url/support';
 import wpcom from 'calypso/lib/wp';
 import { useDispatch } from 'calypso/state';
 import { fetchDns } from 'calypso/state/domains/dns/actions';
@@ -161,12 +162,11 @@ export default function DomainDiagnosticsCard( { domain }: { domain: ResponseDom
 		);
 	};
 
-	const supportLink = 'https://wordpress.com/support/set-up-email-authentication-for-your-domain/';
 	const noticeText = translate(
 		'If you use this domain name to send email from your WordPress.com website, the following email records are required. {{a}}Learn more{{/a}}.',
 		{
 			components: {
-				a: <a href={ localizeUrl( supportLink ) } />,
+				a: <a href={ localizeUrl( SET_UP_EMAIL_AUTHENTICATION_FOR_YOUR_DOMAIN ) } />,
 			},
 		}
 	);
