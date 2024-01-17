@@ -3,6 +3,7 @@ import {
 	JETPACK_SOCIAL_ADVANCED_PRODUCTS,
 	TERM_MONTHLY,
 } from '@automattic/calypso-products';
+import { isNumber } from 'lodash';
 import { useMemo } from 'react';
 import { useSelector } from 'calypso/state';
 import {
@@ -106,10 +107,14 @@ const useIntroductoryOfferPrices = (
 
 	const isFetching =
 		useSelector( ( state ) => !! isRequestingIntroOffers( state, siteId ?? undefined ) ) || null;
-	const introOfferCost =
-		useSelector(
-			( state ) => product && getIntroOfferPrice( state, product.product_id, siteId ?? 'none' )
-		) || null;
+	const introOfferCost = useSelector( ( state ) => {
+		if ( ! product ) {
+			return null;
+		}
+
+		const introOfferPrice = getIntroOfferPrice( state, product.product_id, siteId ?? 'none' );
+		return isNumber( introOfferPrice ) ? introOfferPrice : null;
+	} );
 
 	return {
 		isFetching,
@@ -167,7 +172,7 @@ const useItemPrice = (
 		if ( item.term !== TERM_MONTHLY ) {
 			originalPrice = getMonthlyPrice( itemCost ); // monthlyItemCost - See comment above.
 			originalPriceTotal = itemCost;
-			discountedPrice = introductoryOfferPrices.introOfferCost
+			discountedPrice = isNumber( introductoryOfferPrices.introOfferCost )
 				? getMonthlyPrice( introductoryOfferPrices.introOfferCost )
 				: undefined;
 			discountedPriceTotal = introductoryOfferPrices.introOfferCost;
@@ -178,9 +183,10 @@ const useItemPrice = (
 					item?.productSlug as ( typeof JETPACK_SOCIAL_ADVANCED_PRODUCTS )[ number ]
 				)
 			) {
-				discountedPrice = introductoryOfferPrices.introOfferCost || undefined;
-
-				if ( discountedPrice ) {
+				discountedPrice = isNumber( introductoryOfferPrices.introOfferCost )
+					? introductoryOfferPrices.introOfferCost
+					: undefined;
+				if ( isNumber( discountedPrice ) ) {
 					discountedPriceDuration = 1;
 				}
 			}
