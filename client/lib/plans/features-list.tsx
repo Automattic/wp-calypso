@@ -1958,8 +1958,8 @@ export const FEATURES_LIST: FeatureList = {
 	},
 	[ FEATURE_PREMIUM_THEMES_V2 ]: {
 		getSlug: () => FEATURE_PREMIUM_THEMES_V2,
-		getTitle: () => i18n.translate( 'Premium themes' ),
-		getIcon: () => <img src={ Theme2Image } alt={ i18n.translate( 'Premium themes' ) } />,
+		getTitle: () => i18n.translate( 'Explorer themes' ),
+		getIcon: () => <img src={ Theme2Image } alt={ i18n.translate( 'Explorer themes' ) } />,
 		getCompareTitle: () => i18n.translate( 'A collection of premium design templates' ),
 		getDescription: () => i18n.translate( 'Switch between a collection of premium design themes.' ),
 	},
