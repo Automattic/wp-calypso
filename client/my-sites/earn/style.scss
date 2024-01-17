@@ -3,7 +3,7 @@
 @import "@wordpress/base-styles/mixins";
 
 #earn-navigation {
-	margin-bottom: 40px;
+	margin-bottom: 30px;
 }
 
 // Small override for card component headers
@@ -144,5 +144,12 @@ h3.ads__table-header-title {
 	max-width: 98%;
 	h1 {
 		margin-bottom: 1em;
+	}
+}
+
+/* Media Queries */
+@media ( max-width: $break-large ) {
+	.earn.main {
+		padding: 20px;
 	}
 }
