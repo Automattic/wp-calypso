@@ -23,7 +23,6 @@ export { SiteThumbnail, DEFAULT_THUMBNAIL_SIZE } from './site-thumbnail';
 export { default as Suggestions } from './suggestions';
 export { default as PaginationControl } from './pagination-control';
 export { Gravatar } from './gravatar';
-export { HappinessEngineersTray } from './happiness-engineers-tray';
 export { Spinner } from './spinner';
 export { SpinnerExample } from './spinner/example';
 export { GMClosureNotice } from './gm-closure-notice/gm-closure-notice';

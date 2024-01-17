@@ -89,6 +89,7 @@ export type ResponseDomain = {
 	isEligibleForInboundTransfer: boolean;
 	isIcannVerificationSuspended: boolean;
 	isLocked: boolean;
+	isMappedToAtomicSite: boolean;
 	isMoveToNewSitePending: boolean;
 	isPendingIcannVerification: boolean;
 	isPendingRenewal: boolean;
@@ -184,5 +185,20 @@ export type SetDomainNoticeResponseDataSuccess = {
 		[ domainName: string ]: {
 			[ domainNotice: string ]: string;
 		};
+	};
+};
+
+export type DomainDiagnostics = {
+	email_dns_records: {
+		code?: string;
+		records: {
+			[ dnsRecordType: string ]: {
+				status: string;
+				correct_record: string;
+			};
+		};
+		is_using_wpcom_name_servers: boolean;
+		all_essential_email_dns_records_are_correct: boolean;
+		dismissed_email_dns_issues_notice: boolean;
 	};
 };
