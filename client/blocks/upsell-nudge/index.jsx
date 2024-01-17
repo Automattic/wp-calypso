@@ -34,6 +34,22 @@ import './style.scss';
 
 const debug = debugFactory( 'calypso:upsell-nudge' );
 
+function shouldShowOneClickCheckout( {
+	isOneClickCheckoutEnabled,
+	isEligibleForOneClickCheckout,
+	plan,
+	siteSlug,
+	canUserUpgrade,
+} ) {
+	return (
+		isOneClickCheckoutEnabled &&
+		isEligibleForOneClickCheckout?.result === true &&
+		plan &&
+		siteSlug &&
+		canUserUpgrade
+	);
+}
+
 /**
  * @param {any} props Props declared as `any` to prevent errors in TSX files that use this component.
  */
@@ -141,11 +157,13 @@ export const UpsellNudge = ( {
 
 	const handleClick = ( e ) => {
 		if (
-			isOneClickCheckoutEnabled &&
-			isEligibleForOneClickCheckout?.result === true &&
-			plan &&
-			siteSlug &&
-			canUserUpgrade
+			shouldShowOneClickCheckout( {
+				isOneClickCheckoutEnabled,
+				isEligibleForOneClickCheckout,
+				plan,
+				siteSlug,
+				canUserUpgrade,
+			} )
 		) {
 			e.preventDefault();
 			setShowPurchaseModal( true );
@@ -214,7 +232,7 @@ UpsellNudge.defaultProps = {
 	compactButton: true,
 };
 
-export const ConnectedUpsellNudge = connect( ( state, ownProps ) => {
+const ConnectedUpsellNudge = connect( ( state, ownProps ) => {
 	const siteId = getSelectedSiteId( state );
 
 	return {
@@ -234,7 +252,7 @@ export const ConnectedUpsellNudge = connect( ( state, ownProps ) => {
 } )( UpsellNudge );
 
 export default function Wrapper( props ) {
-	if ( props.isOneClickCheckoutEnabled ) {
+	if ( shouldShowOneClickCheckout( props ) ) {
 		return (
 			<AsyncLoad
 				require="../../my-sites/checkout/purchase-modal/is-eligible-for-one-click-checkout-wrapper"
