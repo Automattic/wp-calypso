@@ -9,6 +9,7 @@ import { Provider } from 'react-redux';
 import configureStore from 'redux-mock-store';
 import UpsellProductCard from 'calypso/components/jetpack/upsell-product-card';
 import SingleSiteUpsellLightbox from 'calypso/jetpack-cloud/sections/partner-portal/single-site-upsell-lightbox';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
 
 jest.mock( 'calypso/state/ui/selectors/get-selected-site-id', () => jest.fn() );
 
@@ -23,6 +24,12 @@ jest.mock( 'calypso/my-sites/plans/jetpack-plans/use-item-price', () =>
 		isFetching: false,
 	} )
 );
+
+jest.mock( 'calypso/state/analytics/actions', () => ( {
+	recordTracksEvent: jest.fn( () => ( {
+		type: 'ANALYTICS_EVENT_RECORD',
+	} ) ),
+} ) );
 
 describe( 'SingleSiteUpsellLightbox', () => {
 	test( 'button link for non manage users is to the WordPress.com purchase page', async () => {
@@ -198,16 +205,23 @@ describe( 'SingleSiteUpsellLightbox', () => {
 
 		const lightboxElement = document.querySelectorAll( '.jetpack-lightbox__content-wrapper' );
 		const issueLicenseButton = within( lightboxElement[ 0 ] ).getByText( 'Issue license' );
+		const closeIcon = screen.getByLabelText( 'Close' );
 
 		expect( screen.getByText( 'Purchase via Jetpack.com' ) ).toHaveAttribute(
 			'href',
 			'https://wordpress.com/checkout/jetpack/jetpack_scan?redirect_to=https%3A%2F%2Fexample.com%2F'
 		);
 
-		expect( issueLicenseButton ).toBeTruthy();
 		expect( issueLicenseButton ).toHaveClass( 'button license-lightbox__cta-button is-primary' );
 
-		const closeIcon = screen.getByLabelText( 'Close' );
+		fireEvent.click( issueLicenseButton );
+		expect( recordTracksEvent ).toHaveBeenCalledWith(
+			'calypso_jetpack_single_site_upsell_purchase_click',
+			expect.objectContaining( {
+				product: 'jetpack-scan',
+			} )
+		);
+
 		fireEvent.click( closeIcon );
 		expect( mockOnClose ).toHaveBeenCalledTimes( 1 );
 	} );
