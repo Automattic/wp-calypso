@@ -42,11 +42,15 @@
 }
 
 .profile__submit-button-wrapper {
-	margin-bottom: 0;
+	margin-bottom: 24px;
 }
 
 .profile-links__list {
 	.profile-link:last-of-type {
 		margin-bottom: 0;
 	}
+}
+
+.developer__settings .form-fieldset {
+	margin-bottom: 0;
 }
