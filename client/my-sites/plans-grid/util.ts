@@ -60,3 +60,18 @@ export const usePricingBreakpoint = ( targetBreakpoint: number ) => {
 
 	return breakpoint;
 };
+
+function getRect( element: HTMLElement ) {
+	return element.getBoundingClientRect();
+}
+
+export function detectElementOverlap( element1: HTMLElement, element2: HTMLElement ) {
+	const element1Rect = getRect( element1 );
+	const element2Rect = getRect( element2 );
+
+	const overlapX = element1Rect.left < element2Rect.right && element1Rect.right > element2Rect.left;
+	const overlapY = element1Rect.bottom < element2Rect.top && element1Rect.top > element2Rect.bottom;
+
+	// TODO: Double check logic
+	return overlapX || overlapY;
+}
