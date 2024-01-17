@@ -14,12 +14,11 @@ import {
 	BlazePagedItem,
 	Campaign,
 	CampaignQueryResult,
-	PostQueryResult,
 } from 'calypso/data/promote-post/types';
 import useCampaignsQueryPaged from 'calypso/data/promote-post/use-promote-post-campaigns-query-paged';
 import useCreditBalanceQuery from 'calypso/data/promote-post/use-promote-post-credit-balance-query';
 import usePostsQueryPaged, {
-	getSearchOptionsQueryParams,
+	usePostsQueryStats,
 } from 'calypso/data/promote-post/use-promote-post-posts-query-paged';
 import { addHotJarScript } from 'calypso/lib/analytics/hotjar';
 import CampaignsList from 'calypso/my-sites/promote-post-i2/components/campaigns-list';
@@ -122,6 +121,9 @@ export default function PromotedPosts( { tab }: Props ) {
 	);
 
 	/* query for posts */
+	const { data: postsStatsData } = usePostsQueryStats( selectedSiteId ?? 0 );
+	const { total_items: totalPostsUnfiltered } = postsStatsData || {};
+
 	const [ postsSearchOptions, setPostsSearchOptions ] = useState< SearchOptions >(
 		POST_DEFAULT_SEARCH_OPTIONS
 	);
@@ -138,19 +140,9 @@ export default function PromotedPosts( { tab }: Props ) {
 
 	const postsIsLoadingNewContent = postsIsLoading || postIsRefetching;
 
-	const initialPostQueryState = queryClient.getQueryState( [
-		'promote-post-posts',
-		selectedSiteId,
-		getSearchOptionsQueryParams( POST_DEFAULT_SEARCH_OPTIONS ),
-	] );
-
 	const { has_more_pages: postsHasMorePages, items: posts } = getPagedBlazeSearchData(
 		'posts',
 		postsData
-	);
-	const { total_items: totalPostsUnfiltered } = getPagedBlazeSearchData(
-		'posts',
-		initialPostQueryState?.data as InfiniteData< PostQueryResult >
 	);
 
 	const tabs: TabOption[] = [

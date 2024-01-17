@@ -34,10 +34,8 @@ const DomainTransferToAnyUser: React.FC< DomainTransferToAnyUserContainerProps >
 		),
 	};
 
-	const products = [ <ThankYouDomainProduct domainName={ domain } key="transferred-domain" /> ];
-
 	return (
-		<Main className="is-redesign-v2">
+		<Main className="checkout-thank-you is-redesign-v2">
 			<MasterbarStyled canGoBack={ false } />
 
 			<ThankYouV2
@@ -45,7 +43,7 @@ const DomainTransferToAnyUser: React.FC< DomainTransferToAnyUserContainerProps >
 				subtitle={ translate(
 					'Domain transfers can take a few minutes, we’ll email you once it’s set up.'
 				) }
-				products={ products }
+				products={ <ThankYouDomainProduct domainName={ domain } /> }
 				footerDetails={ getDomainFooterDetails() }
 				upsellProps={ upsellProps }
 			/>
