@@ -1,3 +1,4 @@
+/* eslint-disable no-restricted-imports */
 import { useTranslate } from 'i18n-calypso';
 import React, { useState, KeyboardEvent, FormEvent, useRef, useEffect } from 'react';
 import TextareaAutosize from 'calypso/components/textarea-autosize';

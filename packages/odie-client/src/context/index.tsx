@@ -3,7 +3,7 @@ import { clearOdieStorage, useOdieStorage } from '../data';
 import { getOdieInitialMessage } from './get-odie-initial-message';
 import { useLoadPreviousChat } from './use-load-previous-chat';
 import type { Chat, Context, Message, Nudge, OdieAllowedBots } from '../types';
-import type { ReactNode } from 'react';
+import type { ReactNode, FC, PropsWithChildren } from 'react';
 
 // eslint-disable-next-line @typescript-eslint/no-empty-function
 export const noop = () => {};
@@ -13,7 +13,7 @@ export const noop = () => {};
  * available to the components that are wrapped in the provider.
  *
  */
-interface OdieAssistantContextInterface {
+type OdieAssistantContextInterface = {
 	addMessage: ( message: Message | Message[] ) => void;
 	botName?: string;
 	botNameSlug: OdieAllowedBots;
@@ -37,7 +37,7 @@ interface OdieAssistantContextInterface {
 	setIsLoading: ( isLoading: boolean ) => void;
 	trackEvent: ( event: string, properties?: Record< string, unknown > ) => void;
 	updateMessage: ( message: Message ) => void;
-}
+};
 
 const defaultContextInterfaceValues = {
 	addMessage: noop,
@@ -72,18 +72,7 @@ const OdieAssistantContext = createContext< OdieAssistantContextInterface >(
 // Custom hook to access the OdieAssistantContext
 const useOdieAssistantContext = () => useContext( OdieAssistantContext );
 
-// Create a provider component for the context
-const OdieAssistantProvider = ( {
-	botName = 'Wapuu assistant',
-	botNameSlug = 'wpcom-support-chat',
-	initialUserMessage,
-	isMinimized = false,
-	extraContactOptions,
-	enabled = true,
-	logger,
-	loggerEventNamePrefix,
-	children,
-}: {
+type OdieAssistantProviderProps = {
 	botName?: string;
 	botNameSlug: OdieAllowedBots;
 	enabled?: boolean;
@@ -93,6 +82,18 @@ const OdieAssistantProvider = ( {
 	logger?: ( message: string, properties: Record< string, unknown > ) => void;
 	loggerEventNamePrefix?: string;
 	children?: ReactNode;
+} & PropsWithChildren;
+// Create a provider component for the context
+const OdieAssistantProvider: FC< OdieAssistantProviderProps > = ( {
+	botName = 'Wapuu assistant',
+	botNameSlug = 'wpcom-support-chat',
+	initialUserMessage,
+	isMinimized = false,
+	extraContactOptions,
+	enabled = true,
+	logger,
+	loggerEventNamePrefix,
+	children,
 } ) => {
 	const [ isVisible, setIsVisible ] = useState( false );
 	const [ isLoading, setIsLoading ] = useState( false );
@@ -236,4 +237,4 @@ const OdieAssistantProvider = ( {
 	);
 };
 
-export { OdieAssistantContext, OdieAssistantProvider, useOdieAssistantContext };
+export { OdieAssistantContext, useOdieAssistantContext, OdieAssistantProvider };
