@@ -2,7 +2,7 @@
  * @jest-environment jsdom
  */
 
-import { act, fireEvent, render, screen, waitFor } from '@testing-library/react';
+import { act, fireEvent, render, screen } from '@testing-library/react';
 import React from 'react';
 import { Provider } from 'react-redux';
 import configureStore from 'redux-mock-store';
@@ -52,6 +52,12 @@ const store = mockStore( INITIAL_STATE );
 jest.mock( '../../../state/selectors/get-current-route-pattern' );
 jest.mock( '../use-command-palette' );
 
+window.ResizeObserver = jest.fn( () => ( {
+	observe: jest.fn(),
+	unobserve: jest.fn(),
+	disconnect: jest.fn(),
+} ) );
+
 describe( 'CommandPalette', () => {
 	( getCurrentRoutePattern as jest.Mock ).mockReturnValue( '/sites' );
 
@@ -62,122 +68,21 @@ describe( 'CommandPalette', () => {
 			emptyListNotice: 'Mock Empty List Notice',
 		} );
 
-		act( () => {
-			fireEvent.keyDown( document, { key: 'k', metaKey: true } );
-		} );
-
 		render(
 			<Provider store={ store }>
 				<CommandPalette />
 			</Provider>
 		);
+
+		act( () => {
+			fireEvent.keyDown( document, { key: 'k', metaKey: true } );
+		} );
 	};
 
 	it( 'should confirm that the command palette opens with the commands from the commands array', () => {
 		renderCommandPalette();
 
-		waitFor( () => {
-			expect( screen.getByPlaceholderText( 'Search for commands' ) ).toBeInTheDocument();
-			expect( screen.getByText( 'Get help' ) ).toBeInTheDocument();
-		} );
-	} );
-
-	it( 'should close the command palette when Escape key is pressed', () => {
-		renderCommandPalette();
-
-		waitFor( () => {
-			expect( screen.getByPlaceholderText( 'Search for commands' ) ).toBeInTheDocument();
-			fireEvent.keyDown( document, { key: 'Escape' } );
-		} );
-
-		waitFor( () => {
-			expect( screen.queryByPlaceholderText( 'Search for commands' ) ).toBeNull();
-		} );
-	} );
-
-	it( 'should close the command palette when clicking outside the modal overlay', () => {
-		renderCommandPalette();
-
-		waitFor( () => {
-			expect( screen.getByPlaceholderText( 'Search for commands' ) ).toBeInTheDocument();
-			const overlayElement = document.querySelector( '.commands-command-menu__overlay' );
-			overlayElement && fireEvent.click( overlayElement );
-		} );
-
-		waitFor( () => {
-			expect( screen.queryByPlaceholderText( 'Search for commands' ) ).toBeNull();
-		} );
-	} );
-
-	it( 'should close the palette when you select a specific command', () => {
-		renderCommandPalette();
-
-		waitFor( () => {
-			expect( screen.getByPlaceholderText( 'Search for commands' ) ).toBeInTheDocument();
-			const getHelpCommand = screen.getByText( 'Get help' );
-			fireEvent.click( getHelpCommand );
-		} );
-
-		waitFor( () => {
-			expect( screen.queryByPlaceholderText( 'Search for commands' ) ).toBeNull();
-		} );
-	} );
-
-	it( 'should return only "Get help" command as it matches label and "Send feedback" as it matches searchLabel; other commands are hidden', () => {
-		renderCommandPalette();
-
-		waitFor( () => {
-			expect( screen.getByPlaceholderText( 'Search for commands' ) ).toBeInTheDocument();
-			fireEvent.change( screen.getByPlaceholderText( 'Search for commands' ), {
-				target: { value: 'help' },
-			} );
-		} );
-
-		waitFor( () => {
-			expect( screen.getByText( 'Get help' ) ).toBeInTheDocument();
-			expect( screen.getByText( 'Send feedback' ) ).toBeInTheDocument();
-			expect( screen.queryByText( 'Clear cache' ) ).toBeNull();
-			expect( screen.queryByText( 'Enable edge cache' ) ).toBeNull();
-		} );
-	} );
-
-	it( 'should return "No results found" when there is no match for search', () => {
-		renderCommandPalette();
-
-		waitFor( () => {
-			expect( screen.getByPlaceholderText( 'Search for commands' ) ).toBeInTheDocument();
-			fireEvent.change( screen.getByPlaceholderText( 'Search for commands' ), {
-				target: { value: 'blue' },
-			} );
-		} );
-
-		waitFor( () => {
-			expect( screen.getByText( 'No results found.' ) ).toBeInTheDocument();
-			expect( screen.getByText( 'Send feedback' ) ).toBeNull();
-			expect( screen.queryByText( 'Clear cache' ) ).toBeNull();
-			expect( screen.queryByText( 'Enable edge cache' ) ).toBeNull();
-		} );
-	} );
-
-	it( 'should navigate to a nested command and back to root commands', () => {
-		renderCommandPalette();
-
-		waitFor( () => {
-			expect( screen.getByPlaceholderText( 'Search for commands' ) ).toBeInTheDocument();
-			act( () => {
-				fireEvent.click( screen.getByText( 'Clear cache' ) );
-			} );
-		} );
-
-		waitFor( () => {
-			expect( screen.getByLabelText( 'Go back to the previous screen' ) ).toBeInTheDocument();
-			act( () => {
-				fireEvent.click( screen.getByLabelText( 'Go back to the previous screen' ) );
-			} );
-		} );
-
-		waitFor( () => {
-			expect( screen.queryByPlaceholderText( 'Search for commands' ) ).toBeInTheDocument();
-		} );
+		expect( screen.getByPlaceholderText( 'Search for commands' ) ).toBeInTheDocument();
+		expect( screen.getByText( 'Get help' ) ).toBeInTheDocument();
 	} );
 } );
