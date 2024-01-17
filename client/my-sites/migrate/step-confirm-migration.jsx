@@ -1,8 +1,10 @@
 import {
 	planHasFeature,
 	FEATURE_UPLOAD_THEMES_PLUGINS,
+	PLAN_ECOMMERCE_TRIAL_MONTHLY,
 	getPlan,
 	PLAN_BUSINESS,
+	PLAN_WOOEXPRESS_SMALL,
 } from '@automattic/calypso-products';
 import page from '@automattic/calypso-router';
 import { Button, CompactCard, Gridicon } from '@automattic/components';
@@ -68,8 +70,13 @@ class StepConfirmMigration extends Component {
 		return planSlug && planHasFeature( planSlug, FEATURE_UPLOAD_THEMES_PLUGINS );
 	}
 
-	renderCardBusinessFooter() {
-		const { translate } = this.props;
+	renderCardFooter() {
+		const { translate, targetSite } = this.props;
+		const currentPlanSlug = get( targetSite, 'plan.product_slug' );
+		const isEcommerceTrial = currentPlanSlug === PLAN_ECOMMERCE_TRIAL_MONTHLY;
+		const upsellPlanName = isEcommerceTrial
+			? getPlan( PLAN_WOOEXPRESS_SMALL )?.getTitle()
+			: getPlan( PLAN_BUSINESS )?.getTitle();
 
 		// If the site is has an appropriate plan, no upgrade footer is required
 		if ( this.isTargetSitePlanCompatible() ) {
@@ -80,11 +87,14 @@ class StepConfirmMigration extends Component {
 			<CompactCard className="migrate__card-footer">
 				<Gridicon className="migrate__card-footer-gridicon" icon="info-outline" size={ 12 } />
 				<span className="migrate__card-footer-text">
-					{ translate( 'A %(businessPlanName)s Plan is required to import everything.', {
-						args: {
-							businessPlanName: getPlan( PLAN_BUSINESS )?.getTitle(),
-						},
-					} ) }
+					{
+						// translators: %(upsellPlanName)s is the name of the Creator/Business/Essential plan
+						translate( 'A %(upsellPlanName)s Plan is required to import everything.', {
+							args: {
+								upsellPlanName: upsellPlanName,
+							},
+						} )
+					}
 				</span>
 			</CompactCard>
 		);
@@ -159,7 +169,7 @@ class StepConfirmMigration extends Component {
 					</div>
 					{ this.renderMigrationButton() }
 				</CompactCard>
-				{ this.renderCardBusinessFooter() }
+				{ this.renderCardFooter() }
 			</>
 		);
 	}

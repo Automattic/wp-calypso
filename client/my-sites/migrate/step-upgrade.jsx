@@ -1,4 +1,9 @@
-import { getPlan, PLAN_BUSINESS } from '@automattic/calypso-products';
+import {
+	getPlan,
+	PLAN_ECOMMERCE_TRIAL_MONTHLY,
+	PLAN_BUSINESS,
+	PLAN_WOOEXPRESS_SMALL,
+} from '@automattic/calypso-products';
 import { CompactCard, ProductIcon, Gridicon, PlanPrice } from '@automattic/components';
 import { localize } from 'i18n-calypso';
 import { get } from 'lodash';
@@ -43,6 +48,11 @@ class StepUpgrade extends Component {
 		const sourceSiteDomain = get( sourceSite, 'domain' );
 		const targetSiteDomain = get( targetSite, 'domain' );
 		const backHref = `/migrate/from/${ sourceSiteSlug }/to/${ targetSiteSlug }`;
+		const currentPlanSlug = get( targetSite, 'plan.product_slug' );
+		const isEcommerceTrial = currentPlanSlug === PLAN_ECOMMERCE_TRIAL_MONTHLY;
+		const upsellPlanName = isEcommerceTrial
+			? getPlan( PLAN_WOOEXPRESS_SMALL )?.getTitle()
+			: getPlan( PLAN_BUSINESS )?.getTitle();
 
 		return (
 			<>
@@ -51,9 +61,12 @@ class StepUpgrade extends Component {
 
 				<CompactCard>
 					<CardHeading>
-						{ translate( 'A %(businessPlanName)s Plan is required to import everything.', {
-							args: { businessPlanName: getPlan( PLAN_BUSINESS ).getTitle() },
-						} ) }
+						{
+							// translators: %(upsellPlanName)s is the name of the Creator/Business/Essential plan
+							translate( 'A %(upsellPlanName)s Plan is required to import everything.', {
+								args: { upsellPlanName: upsellPlanName },
+							} )
+						}
 					</CardHeading>
 					<div>
 						{ translate(
@@ -110,9 +123,9 @@ class StepUpgrade extends Component {
 							<div className="migrate__plan-upsell-info">
 								<div className="migrate__plan-name">
 									{
-										// translators: %(planName)s is the name of the Creator/Business plan
+										// translators: %(planName)s is the name of the Creator/Business/Essential plan
 										translate( 'WordPress.com %(planName)s', {
-											args: { planName: getPlan( PLAN_BUSINESS )?.getTitle() },
+											args: { planName: upsellPlanName },
 										} )
 									}
 								</div>
@@ -136,10 +149,12 @@ class StepUpgrade extends Component {
 }
 
 export default connect(
-	( state ) => {
-		const plan = getPlan( PLAN_BUSINESS );
+	( state, ownProps ) => {
+		const { targetSite } = ownProps;
+		const currentPlanSlug = get( targetSite, 'plan.product_slug' );
+		const isEcommerceTrial = currentPlanSlug === PLAN_ECOMMERCE_TRIAL_MONTHLY;
+		const plan = isEcommerceTrial ? getPlan( PLAN_WOOEXPRESS_SMALL ) : getPlan( PLAN_BUSINESS );
 		const planId = plan.getProductId();
-
 		return {
 			billingTimeFrame: plan.getBillingTimeFrame(),
 			currency: getCurrentUserCurrencyCode( state ),
