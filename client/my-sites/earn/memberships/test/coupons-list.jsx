@@ -2,33 +2,16 @@
  * @jest-environment jsdom
  */
 
-const mockUseTranslate = () => ( text ) => text;
-const mockTranslate = ( text ) => text;
-const RealDate = Date;
-const mockDate = ( isoDate ) =>
-	( global.Date = class extends RealDate {
-		constructor() {
-			return new RealDate( isoDate );
-		}
-	} );
-
-jest.mock( 'i18n-calypso', () => ( {
-	...jest.requireActual( 'i18n-calypso' ),
-	useTranslate: jest.fn(),
-	translate: jest.fn(),
-} ) );
-jest.mock( '@wordpress/i18n', () => ( {
-	...jest.requireActual( '@wordpress/i18n' ),
-	__: jest.fn(),
-} ) );
-
-import { act, render, screen } from '@testing-library/react';
-import { __ } from '@wordpress/i18n';
-import { translate, useTranslate } from 'i18n-calypso';
+import { screen } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import { unmountComponentAtNode } from 'react-dom';
 import Modal from 'react-modal';
 import { Provider } from 'react-redux';
 import configureStore from 'redux-mock-store';
+import membershipsReducer from 'calypso/state/memberships/reducer';
+import siteSettingsReducer from 'calypso/state/site-settings/reducer';
+import uiReducer from 'calypso/state/ui/reducer';
+import { renderWithProvider } from '../../../../test-helpers/testing-library';
 import {
 	COUPON_DISCOUNT_TYPE_AMOUNT,
 	COUPON_DISCOUNT_TYPE_PERCENTAGE,
@@ -124,7 +107,9 @@ const initialState = {
 	},
 };
 
-function WrappedCouponsList( { testEnabled, testCoupons } ) {
+function WrappedCouponsList( props ) {
+	const testEnabled = props.testEnabled;
+	const testCoupons = props.testCoupons;
 	const mockStore = configureStore();
 	const mockState = {
 		...initialState,
@@ -162,13 +147,26 @@ function WrappedCouponsList( { testEnabled, testCoupons } ) {
 describe( 'CouponsList', () => {
 	let modalRoot;
 
+	const getAddCouponButton = () => screen.getByRole( 'button', { name: 'Add a new coupon' } );
+	const queryAddCouponButton = () => screen.queryByRole( 'button', { name: 'Add a new coupon' } );
+	const queryAddEditCouponDialog = () => screen.queryByRole( 'dialog', { name: 'Add a coupon' } );
+	const getCodeTextbox = () =>
+		screen.getByRole( 'textbox', { name: 'Enter a custom coupon code' } );
+	const getDiscountTypeSelect = () => screen.getByRole( 'combobox', { name: 'Discount type' } );
+	const getDiscountPercentageInput = () =>
+		screen.getByRole( 'textbox', { name: 'Discount percentage' } );
+	const queryDiscountPercentageInput = () =>
+		screen.queryByRole( 'textbox', { name: 'Discount percentage' } );
+	const queryDiscountValueInput = () => screen.queryByRole( 'textbox', { name: 'Discount value' } );
+	const getLimitDurationToggle = () => screen.getByRole( 'checkbox', { name: 'Duration' } );
+	const getLimitDurationSelection = () =>
+		screen.getByRole( 'combobox', { name: 'Duration selection' } );
+	const getLimitCouponsToggle = () =>
+		screen.getByRole( 'checkbox', { name: 'Limit coupon to specific emails' } );
+	const getLimitCouponsTextInput = () =>
+		screen.getByRole( 'textbox', { name: 'Limit coupon to specific emails text input' } );
+
 	beforeEach( () => {
-		jest.clearAllMocks();
-
-		useTranslate.mockImplementation( mockUseTranslate );
-		translate.mockImplementation( mockTranslate );
-		__.mockImplementation( mockTranslate );
-
 		modalRoot = document.createElement( 'div' );
 		modalRoot.setAttribute( 'id', 'wpcom' );
 		document.body.appendChild( modalRoot );
@@ -179,40 +177,200 @@ describe( 'CouponsList', () => {
 		unmountComponentAtNode( modalRoot );
 		document.body.removeChild( modalRoot );
 		modalRoot = null;
-		global.Date = RealDate;
 	} );
 
 	test( 'should render nothing when feature is disabled', () => {
-		const { container } = render( <WrappedCouponsList /> );
-		expect( container ).toMatchSnapshot();
+		const render = ( el, options ) =>
+			renderWithProvider( el, {
+				...options,
+				initialState: {
+					...initialState,
+					memberships: {
+						settings: {
+							1: {
+								couponsAndGiftsEnabled: false,
+								connectedAccountId: 123,
+								connectedAccountMinimumCurrency: {
+									USD: 0.5,
+								},
+							},
+						},
+						couponList: {
+							items: {},
+						},
+						productList: {
+							items: {
+								1: [ testProduct1, testProduct2 ],
+							},
+						},
+					},
+				},
+				reducers: {
+					ui: uiReducer,
+					memberships: membershipsReducer,
+					siteSettings: siteSettingsReducer,
+				},
+			} );
+		render( <CouponsList /> );
+
+		const missingAddCouponButton = queryAddCouponButton();
+		const missingAddEditCouponDialog = queryAddEditCouponDialog();
+		const missingDiscountValueInput = queryDiscountValueInput();
+		const missingDiscountPercentageInput = queryDiscountPercentageInput();
+
+		expect( missingAddEditCouponDialog ).not.toBeInTheDocument();
+		expect( missingAddCouponButton ).not.toBeInTheDocument();
+		expect( missingDiscountPercentageInput ).not.toBeInTheDocument();
+		expect( missingDiscountValueInput ).not.toBeInTheDocument();
 	} );
 
 	test( 'should render with an empty list when no coupons are provided', () => {
-		const { container } = render( <WrappedCouponsList testEnabled /> );
-		expect( container ).toMatchSnapshot();
+		const render = ( el, options ) =>
+			renderWithProvider( el, {
+				...options,
+				initialState: {
+					...initialState,
+					memberships: {
+						settings: {
+							1: {
+								couponsAndGiftsEnabled: true,
+								connectedAccountId: 123,
+								connectedAccountMinimumCurrency: {
+									USD: 0.5,
+								},
+							},
+						},
+						couponList: {
+							items: {},
+						},
+						productList: {
+							items: {
+								1: [ testProduct1, testProduct2 ],
+							},
+						},
+					},
+				},
+				reducers: {
+					ui: uiReducer,
+					memberships: membershipsReducer,
+					siteSettings: siteSettingsReducer,
+				},
+			} );
+		render( <CouponsList /> );
+		const addCouponButton = getAddCouponButton();
+		const missingAddEditCouponDialog = queryAddEditCouponDialog();
+		const missingDiscountValueInput = queryDiscountValueInput();
+		const missingDiscountPercentageInput = queryDiscountPercentageInput();
+
+		expect( addCouponButton ).toBeInTheDocument();
+		expect( missingAddEditCouponDialog ).not.toBeInTheDocument();
+		expect( missingDiscountPercentageInput ).not.toBeInTheDocument();
+		expect( missingDiscountValueInput ).not.toBeInTheDocument();
 	} );
 
 	test( 'should render a list with coupons when present for site', () => {
-		const { container } = render(
-			<WrappedCouponsList
-				testEnabled
-				testCoupons={ [ testCoupon1, testCoupon2, testCoupon3 ] }
-			/>
-		);
-		expect( container ).toMatchSnapshot();
+		const render = ( el, options ) =>
+			renderWithProvider( el, {
+				...options,
+				initialState: {
+					...initialState,
+					memberships: {
+						settings: {
+							1: {
+								couponsAndGiftsEnabled: true,
+								connectedAccountId: 123,
+								connectedAccountMinimumCurrency: {
+									USD: 0.5,
+								},
+							},
+						},
+						couponList: {
+							items: {
+								1: [ testCoupon1, testCoupon2, testCoupon3 ],
+							},
+						},
+						productList: {
+							items: {
+								1: [ testProduct1, testProduct2 ],
+							},
+						},
+					},
+				},
+				reducers: {
+					ui: uiReducer,
+					memberships: membershipsReducer,
+					siteSettings: siteSettingsReducer,
+				},
+			} );
+		render( <CouponsList /> );
+		const addCouponButton = getAddCouponButton();
+		const missingAddEditCouponDialog = queryAddEditCouponDialog();
+		const missingDiscountValueInput = queryDiscountValueInput();
+		const missingDiscountPercentageInput = queryDiscountPercentageInput();
+
+		// TODO: improve a11y for coupon list to be able to access toggle menu and assert that each coupon has been rendered without snapshot
+
+		expect( addCouponButton ).toBeInTheDocument();
+		expect( missingAddEditCouponDialog ).not.toBeInTheDocument();
+		expect( missingDiscountPercentageInput ).not.toBeInTheDocument();
+		expect( missingDiscountValueInput ).not.toBeInTheDocument();
 	} );
 
-	test( 'should display new coupon modal when clicking add coupon', () => {
-		mockDate( '2023-06-23T14:23:44z' );
-		render(
-			<WrappedCouponsList
-				testEnabled
-				testCoupons={ [ testCoupon1, testCoupon2, testCoupon3 ] }
-			/>
-		);
-		act( () => {
-			screen.getByRole( 'button', { name: 'Add a new coupon' } ).click();
-		} );
-		expect( document.body ).toMatchSnapshot();
+	test( 'should display new coupon modal when clicking add coupon', async () => {
+		const user = userEvent.setup();
+		const render = ( el, options ) =>
+			renderWithProvider( el, {
+				...options,
+				initialState: {
+					...initialState,
+					memberships: {
+						settings: {
+							1: {
+								couponsAndGiftsEnabled: true,
+								connectedAccountId: 123,
+								connectedAccountMinimumCurrency: {
+									USD: 0.5,
+								},
+							},
+						},
+						couponList: {
+							items: {
+								1: [ testCoupon1, testCoupon2, testCoupon3 ],
+							},
+						},
+						productList: {
+							items: {
+								1: [ testProduct1, testProduct2 ],
+							},
+						},
+					},
+				},
+				reducers: {
+					ui: uiReducer,
+					memberships: membershipsReducer,
+					siteSettings: siteSettingsReducer,
+				},
+			} );
+		render( <CouponsList /> );
+
+		await user.click( screen.getByRole( 'button', { name: 'Add a new coupon' } ) );
+
+		const codeTextbox = getCodeTextbox();
+		const discountTypeSelect = getDiscountTypeSelect();
+		const discountPercentageInput = getDiscountPercentageInput();
+		const discountValueInput = queryDiscountValueInput();
+		const limitDurationToggle = getLimitDurationToggle();
+		const limitDurationSelection = getLimitDurationSelection();
+		const limitCouponsToggle = getLimitCouponsToggle();
+		const limitCouponsTextInput = getLimitCouponsTextInput();
+
+		expect( codeTextbox ).not.toHaveValue();
+		expect( discountTypeSelect ).toHaveValue( COUPON_DISCOUNT_TYPE_PERCENTAGE );
+		expect( discountPercentageInput ).toBeInTheDocument();
+		expect( discountValueInput ).not.toBeInTheDocument();
+		expect( limitDurationToggle ).not.toBeChecked();
+		expect( limitDurationSelection ).toBeDisabled();
+		expect( limitCouponsToggle ).not.toBeChecked();
+		expect( limitCouponsTextInput ).toBeDisabled();
 	} );
 } );
