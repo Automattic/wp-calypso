@@ -2,6 +2,7 @@
 @import "@automattic/components/src/styles/typography.scss";
 
 $button-padding: 8px 32px;
+$button-bar-wrap-width: 1346px;
 
 .stats-purchase-page {
 	--font-body: 16px;
@@ -575,5 +576,13 @@ $button-padding: 8px 32px;
 			line-height: 24px;
 			color: var(--jp-black);
 		}
+	}
+}
+
+.stats-purchase-wizard__actions {
+	display: flex;
+
+	@media ( max-width: $button-bar-wrap-width ) {
+		flex-wrap: wrap;
 	}
 }
