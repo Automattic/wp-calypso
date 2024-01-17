@@ -2,6 +2,7 @@
  * @jest-environment jsdom
  */
 
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { act, fireEvent, render, screen } from '@testing-library/react';
 import React from 'react';
 import { Provider } from 'react-redux';
@@ -48,6 +49,7 @@ const commands = [
 ];
 const mockStore = configureStore();
 const store = mockStore( INITIAL_STATE );
+const queryClient = new QueryClient();
 
 jest.mock( '../../../state/selectors/get-current-route-pattern' );
 jest.mock( '../use-command-palette' );
@@ -70,7 +72,9 @@ describe( 'CommandPalette', () => {
 
 		render(
 			<Provider store={ store }>
-				<CommandPalette />
+				<QueryClientProvider client={ queryClient }>
+					<CommandPalette />
+				</QueryClientProvider>
 			</Provider>
 		);
 
@@ -84,5 +88,20 @@ describe( 'CommandPalette', () => {
 
 		expect( screen.getByPlaceholderText( 'Search for commands' ) ).toBeInTheDocument();
 		expect( screen.getByText( 'Get help' ) ).toBeInTheDocument();
+	} );
+
+	it( 'should return only "Get help" command as it matches label and "Send feedback" as it matches searchLabel; other commands are hidden', () => {
+		renderCommandPalette();
+
+		expect( screen.getByPlaceholderText( 'Search for commands' ) ).toBeInTheDocument();
+		fireEvent.change( screen.getByPlaceholderText( 'Search for commands' ), {
+			target: { value: 'help' },
+		} );
+
+		expect( screen.getByText( 'Get' ) ).toBeInTheDocument();
+		expect( screen.getByText( 'help' ) ).toBeInTheDocument();
+		expect( screen.getByText( 'Send feedback' ) ).toBeInTheDocument();
+		expect( screen.queryByText( 'Clear cache' ) ).toBeNull();
+		expect( screen.queryByText( 'Enable edge cache' ) ).toBeNull();
 	} );
 } );
