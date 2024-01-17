@@ -17,7 +17,6 @@ import { connect } from 'react-redux';
 import AsyncLoad from 'calypso/components/async-load';
 import Banner from 'calypso/components/banner';
 import { addQueryArgs } from 'calypso/lib/url';
-import { withIsEligibleForOneClickCheckout } from 'calypso/my-sites/checkout/purchase-modal/with-is-eligible-for-one-click-checkout';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
 import isSiteWPForTeams from 'calypso/state/selectors/is-site-wpforteams';
@@ -143,7 +142,7 @@ export const UpsellNudge = ( {
 	const handleClick = ( e ) => {
 		if (
 			isOneClickCheckoutEnabled &&
-			isEligibleForOneClickCheckout.result === true &&
+			isEligibleForOneClickCheckout?.result === true &&
 			plan &&
 			siteSlug &&
 			canUserUpgrade
@@ -203,7 +202,7 @@ export const UpsellNudge = ( {
 				tracksImpressionProperties={ tracksImpressionProperties }
 				displayAsLink={ displayAsLink }
 				isBusy={
-					isBusy || ( isOneClickCheckoutEnabled && isEligibleForOneClickCheckout.isLoading )
+					isBusy || ( isOneClickCheckoutEnabled && isEligibleForOneClickCheckout?.isLoading )
 				}
 			/>
 		</>
@@ -215,7 +214,7 @@ UpsellNudge.defaultProps = {
 	compactButton: true,
 };
 
-export default connect( ( state, ownProps ) => {
+export const ConnectedUpsellNudge = connect( ( state, ownProps ) => {
 	const siteId = getSelectedSiteId( state );
 
 	return {
@@ -232,4 +231,17 @@ export default connect( ( state, ownProps ) => {
 		canUserUpgrade: canCurrentUser( state, getSelectedSiteId( state ), 'manage_options' ),
 		siteIsWPForTeams: isSiteWPForTeams( state, getSelectedSiteId( state ) ),
 	};
-} )( withIsEligibleForOneClickCheckout( UpsellNudge ) );
+} )( UpsellNudge );
+
+export default function Wrapper( props ) {
+	if ( props.isOneClickCheckoutEnabled ) {
+		return (
+			<AsyncLoad
+				require="../../my-sites/checkout/purchase-modal/is-eligible-for-one-click-checkout-wrapper"
+				component={ ConnectedUpsellNudge }
+				componentProps={ props }
+			/>
+		);
+	}
+	return <ConnectedUpsellNudge { ...props } />;
+}
