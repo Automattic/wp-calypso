@@ -3,6 +3,7 @@
 ## Unreleased
 
 - New `useAllDomainsQuery` which fetches all the current user's domains
+- Remove `useHappinessEngineersQuery`
 
 ### Breaking changes
 
