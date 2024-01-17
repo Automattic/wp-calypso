@@ -110,6 +110,17 @@ const PersonalPurchase = ( {
 		continueButtonText = translate( 'Contribute and continue' );
 	}
 
+	const handleCheckoutRedirect = () => {
+		gotoCheckoutPage( {
+			from,
+			type: 'pwyw',
+			siteSlug,
+			adminUrl,
+			redirectUri,
+			price: subscriptionValue / MIN_STEP_SPLITS,
+		} );
+	};
+
 	return (
 		<div>
 			<StatsBenefitsListing
@@ -230,16 +241,7 @@ const PersonalPurchase = ( {
 				<ButtonComponent
 					variant="primary"
 					primary={ isWPCOMSite ? true : undefined }
-					onClick={ () =>
-						gotoCheckoutPage( {
-							from,
-							type: 'pwyw',
-							siteSlug,
-							adminUrl,
-							redirectUri,
-							price: subscriptionValue / MIN_STEP_SPLITS,
-						} )
-					}
+					onClick={ handleCheckoutRedirect }
 				>
 					{ continueButtonText }
 				</ButtonComponent>
