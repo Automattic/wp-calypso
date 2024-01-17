@@ -82,7 +82,7 @@ describe( 'SingleSiteUpsellLightbox', () => {
 		);
 	} );
 
-	test( 'onClick to render lightbox is clicked', async () => {
+	test( 'button link for manage users does not open the WordPress.com checkout', async () => {
 		const secondState = {
 			partnerPortal: {
 				partner: {
@@ -137,7 +137,7 @@ describe( 'SingleSiteUpsellLightbox', () => {
 		expect( mockOnClick ).toHaveBeenCalledTimes( 1 );
 	} );
 
-	test( 'modal shows the children and a close button', () => {
+	test( 'lightbox buttons and close icon act as expected', () => {
 		const createFakeApiProduct = {
 			name: 'Jetpack Scan Daily',
 			slug: 'jetpack-scan',
