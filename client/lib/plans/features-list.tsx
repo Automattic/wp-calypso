@@ -1958,7 +1958,17 @@ export const FEATURES_LIST: FeatureList = {
 	},
 	[ FEATURE_PREMIUM_THEMES_V2 ]: {
 		getSlug: () => FEATURE_PREMIUM_THEMES_V2,
-		getTitle: () => i18n.translate( 'Explorer themes' ),
+		getTitle: () => {
+			const localeSlug = i18n.getLocaleSlug();
+			const shouldShowNewString =
+				isEnabled( 'themes/tiers' ) &&
+				( ( localeSlug && config< string >( 'english_locales' ).includes( localeSlug ) ) ||
+					i18n.hasTranslation( 'Explorer themes' ) );
+
+			return shouldShowNewString
+				? i18n.translate( 'Explorer themes' )
+				: i18n.translate( 'Premium themes' );
+		},
 		getIcon: () => <img src={ Theme2Image } alt={ i18n.translate( 'Explorer themes' ) } />,
 		getCompareTitle: () => i18n.translate( 'A collection of premium design templates' ),
 		getDescription: () => i18n.translate( 'Switch between a collection of premium design themes.' ),
