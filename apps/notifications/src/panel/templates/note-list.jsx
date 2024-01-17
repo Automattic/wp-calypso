@@ -340,10 +340,10 @@ export class NoteList extends Component {
 		} );
 
 		return (
-			<div className={ classes }>
+			<div className={ classes } id="wpnc__note-list">
 				<FilterBar controller={ this.props.filterController } />
 				<div ref={ this.storeScrollableContainer } className={ listViewClasses }>
-					<ol ref={ this.storeNoteList } className="wpnc__notes">
+					<ol ref={ this.storeNoteList } className="wpnc__notes" aria-live="polite">
 						<StatusBar
 							statusClasses={ this.state.statusClasses }
 							statusMessage={ this.state.statusMessage }
@@ -365,6 +365,11 @@ export class NoteList extends Component {
 
 const mapStateToProps = ( state ) => ( {
 	isLoading: getIsLoading( state ),
+	/**
+	 * @todo Fixing this rule requires a larger refactor that isn't worth the time right now.
+	 * @see https://github.com/Automattic/wp-calypso/issues/14024
+	 */
+	// eslint-disable-next-line wpcalypso/redux-no-bound-selectors
 	isNoteHidden: ( noteId ) => getIsNoteHidden( state, noteId ),
 	isPanelOpen: getIsPanelOpen( state ),
 	selectedNoteId: getSelectedNoteId( state ),
