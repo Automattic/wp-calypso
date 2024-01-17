@@ -17,7 +17,9 @@ const filterUnusedFeaturesObject = (
 		new Set(
 			visibleGridPlans
 				.map( ( gridPlan ) =>
-					gridPlan.features.wpcomFeatures.map( ( feature ) => feature.getSlug() )
+					[ ...gridPlan.features.wpcomFeatures, ...gridPlan.features.jetpackFeatures ].map(
+						( feature ) => feature.getSlug()
+					)
 				)
 				.flat()
 		)
