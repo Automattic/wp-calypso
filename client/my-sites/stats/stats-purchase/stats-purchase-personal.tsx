@@ -103,7 +103,7 @@ const PersonalPurchase = ( {
 	const showOldSlider = ! isTierUpgradeSliderEnabled;
 	// const showOldSlider = true;
 
-	let continueButtonText = isStandalone
+	const continueButtonText = isStandalone
 		? translate( 'Get Stats' )
 		: translate( 'Get Jetpack Stats' );
 
