@@ -3,11 +3,11 @@ import {
 	PLAN_ENTERPRISE_GRID_WPCOM,
 	PLAN_AGENCY_BLUE_HOST,
 } from '@automattic/calypso-products';
-import { useMaxPlanUpgradeCredits } from 'calypso/my-sites/plans-grid/hooks/use-calculate-max-plan-upgrade-credit';
 import { useSelector } from 'calypso/state';
 import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
 import { getSitePlanSlug } from 'calypso/state/sites/plans/selectors';
 import { isCurrentPlanPaid, isJetpackSite } from 'calypso/state/sites/selectors';
+import { useMaxPlanUpgradeCredits } from './use-max-plan-upgrade-credits';
 
 /**
  * This hook determines if the plan upgrade credit should be visible in the current plans display context

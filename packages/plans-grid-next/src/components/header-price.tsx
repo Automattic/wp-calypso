@@ -1,9 +1,9 @@
 import {
-	PlanPrice,
 	isAgencyBlueHostPlan,
 	isWpcomEnterpriseGridPlan,
 	type PlanSlug,
 } from '@automattic/calypso-products';
+import { PlanPrice } from '@automattic/components';
 import styled from '@emotion/styled';
 import { useTranslate } from 'i18n-calypso';
 import { usePlansGridContext } from '../grid-context';
@@ -46,10 +46,13 @@ const Badge = styled.div< { isForIntroOffer?: boolean; isHidden?: boolean } >`
 	visibility: ${ ( { isHidden } ) => ( isHidden ? 'hidden' : 'visible' ) };
 `;
 
-const HeaderPriceContainer = styled.div`
+const HeaderPriceContainer = styled.div< { discounted?: boolean } >`
 	padding: 0 20px;
 	margin: 0 0 4px 0;
-
+	min-height: ${ ( { discounted } ) => ( discounted ? '96.5px' : 'auto' ) };
+	display: flex;
+	flex-direction: column;
+	justify-content: flex-end;
 	.plan-comparison-grid & {
 		padding: 0;
 		display: flex;
@@ -160,7 +163,7 @@ const PlanFeatures2023GridHeaderPrice = ( {
 
 	if ( isAgencyBlueHostPlan( planSlug ) ) {
 		return (
-			<HeaderPriceContainer>
+			<HeaderPriceContainer discounted={ isAnyVisibleGridPlanDiscounted }>
 				<PlanPrice
 					currencyCode="USD"
 					rawPrice={ 6500 }
@@ -227,7 +230,10 @@ const PlanFeatures2023GridHeaderPrice = ( {
 
 	if ( isGridPlanDiscounted ) {
 		return (
-			<HeaderPriceContainer>
+			<HeaderPriceContainer
+				className="plan-features-2023-grid__discounted-header-price"
+				discounted={ isAnyVisibleGridPlanDiscounted }
+			>
 				<Badge className="plan-features-2023-grid__badge">
 					{ planUpgradeCreditsApplicable
 						? translate( 'Credit applied' )

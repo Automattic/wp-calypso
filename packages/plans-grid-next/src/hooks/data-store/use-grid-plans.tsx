@@ -144,8 +144,10 @@ const usePlanTypesWithIntent = ( {
 				TYPE_PREMIUM,
 				TYPE_BUSINESS,
 				...( isEnterpriseAvailable ? [ TYPE_ENTERPRISE_GRID_WPCOM ] : [] ),
-				TYPE_AGENCY_BLUE_HOST,
 			];
+			break;
+		case 'plans-default-wpcom-bluehost':
+			planTypes = [ TYPE_FREE, TYPE_PERSONAL, TYPE_PREMIUM, TYPE_BUSINESS, TYPE_AGENCY_BLUE_HOST ];
 			break;
 		case 'plans-business-trial':
 			planTypes = [ TYPE_BUSINESS, TYPE_ECOMMERCE ];
