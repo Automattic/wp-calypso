@@ -18,6 +18,7 @@ import {
 	getBillingMonthsForTerm,
 	URL_FRIENDLY_TERMS_MAPPING,
 	PLAN_AGENCY_BLUE_HOST,
+	isAgencyBlueHostPlan,
 } from '@automattic/calypso-products';
 import page from '@automattic/calypso-router';
 import { Button, Spinner } from '@automattic/components';
@@ -341,6 +342,11 @@ const PlansFeaturesMain = ( {
 			if ( isWpcomEnterpriseGridPlan( clickedPlanSlug ?? '' ) ) {
 				recordTracksEvent( 'calypso_plan_step_enterprise_click', { flow: flowName } );
 				window.open( 'https://wpvip.com/wordpress-vip-agile-content-platform', '_blank' );
+				return;
+			}
+			if ( isAgencyBlueHostPlan( clickedPlanSlug ?? '' ) ) {
+				recordTracksEvent( 'calypso_plan_step_bluehost_agency_click', { flow: flowName } );
+				window.open( 'https://www.bluehost.com/pricing', '_self' );
 				return;
 			}
 			const cartItemForPlan = getPlanCartItem( cartItems );

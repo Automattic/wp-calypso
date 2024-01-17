@@ -469,4 +469,4 @@ export const FEATURE_TYPE_JETPACK_STATS = 'jetpack_stats';
 export const FEATURE_TYPE_JETPACK_VIDEOPRESS = 'jetpack_videopress';
 
 // Bluehost features
-export const FEATURE_UNLIMITED_MANAGED_MIGRATIONS = 'unlimited-managed-migrations';
+export const FEATURE_SITE_BUNDLE = 'feature-site-bundle';

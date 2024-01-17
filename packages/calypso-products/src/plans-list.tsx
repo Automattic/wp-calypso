@@ -446,7 +446,7 @@ import {
 	PRODUCT_JETPACK_CREATOR_MONTHLY,
 	PLAN_AGENCY_BLUE_HOST,
 	TYPE_AGENCY_BLUE_HOST,
-	FEATURE_UNLIMITED_MANAGED_MIGRATIONS,
+	FEATURE_SITE_BUNDLE,
 } from './constants';
 import type {
 	BillingTerm,
@@ -1985,7 +1985,7 @@ const get2023AgencyPlanDetails = (): IncompleteWPcomPlan => ( {
 			"Manage multiple WordPress sites with WP Cloud's powerful infrastructure and Bluehost's platform experience."
 		),
 	getDescription: () => '',
-	get2023PricingGridSignupWpcomFeatures: () => [ FEATURE_UNLIMITED_MANAGED_MIGRATIONS ],
+	get2023PricingGridSignupWpcomFeatures: () => [ FEATURE_SITE_BUNDLE ],
 	get2023PricingGridSignupJetpackFeatures: () => [],
 	get2023PricingGridSignupStorageOptions: () => [],
 } );

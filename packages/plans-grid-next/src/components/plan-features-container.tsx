@@ -1,3 +1,5 @@
+import config from '@automattic/calypso-config';
+import { isAgencyBlueHostPlan } from '@automattic/calypso-products';
 import { JetpackLogo } from '@automattic/components';
 import { LocalizeProps } from 'i18n-calypso';
 import { useManageTooltipToggle } from '../hooks/use-manage-tooltip-toggle';
@@ -5,6 +7,69 @@ import { DataResponse, GridPlan } from '../types';
 import PlanFeatures2023GridFeatures from './features';
 import PlanDivOrTdContainer from './plan-div-td-container';
 import { Plans2023Tooltip } from './plans-2023-tooltip';
+
+const TemporaryHardcodedBluehostFeaturesUI = () => {
+	/* TODO: Replace WITH final feature list once finalized via proper feature data structure */
+
+	return (
+		<>
+			<div className="is-agency-blue-host-host">
+				<div className="plan-features-2023-grid__item plan-features-2023-grid__item-available">
+					<div className="plan-features-2023-grid__item-info-container">
+						<span className="plan-features-2023-grid__item-info is-available">
+							<span className="plan-features-2023-grid__item-title">
+								Unlimited managed migrations
+							</span>
+						</span>
+					</div>
+				</div>
+			</div>
+			<div className="is-agency-blue-host-host">
+				<div className="plan-features-2023-grid__item plan-features-2023-grid__item-available">
+					<div className="plan-features-2023-grid__item-info-container">
+						<span className="plan-features-2023-grid__item-info is-available">
+							<span className="plan-features-2023-grid__item-title">
+								24/7 support, 365 days a year
+							</span>
+						</span>
+					</div>
+				</div>
+			</div>
+			<div className="is-agency-blue-host-host">
+				<div className="plan-features-2023-grid__item plan-features-2023-grid__item-available">
+					<div className="plan-features-2023-grid__item-info-container">
+						<span className="plan-features-2023-grid__item-info is-available">
+							<span className="plan-features-2023-grid__item-title">Site management tools</span>
+						</span>
+					</div>
+				</div>
+			</div>
+			<div className="is-agency-blue-host-host">
+				<div className="plan-features-2023-grid__item plan-features-2023-grid__item-available">
+					<div className="plan-features-2023-grid__item-info-container">
+						<span className="plan-features-2023-grid__item-info is-available">
+							<span className="plan-features-2023-grid__item-title">
+								Detailed permission control
+							</span>
+						</span>
+					</div>
+				</div>
+			</div>
+
+			<div className="is-agency-blue-host-host">
+				<div className="plan-features-2023-grid__item plan-features-2023-grid__item-available">
+					<div className="plan-features-2023-grid__item-info-container">
+						<span className="plan-features-2023-grid__item-info is-available">
+							<span className="plan-features-2023-grid__item-title">
+								Site performance reporting
+							</span>
+						</span>
+					</div>
+				</div>
+			</div>
+		</>
+	);
+};
 
 const PlanFeaturesContainer: React.FC< {
 	plansWithFeatures: GridPlan[];
@@ -68,6 +133,9 @@ const PlanFeaturesContainer: React.FC< {
 						setActiveTooltipId={ setActiveTooltipId }
 						activeTooltipId={ activeTooltipId }
 					/>
+					{ config.isEnabled( 'bluehost-in-plans-grid' ) && isAgencyBlueHostPlan( planSlug ) && (
+						<TemporaryHardcodedBluehostFeaturesUI />
+					) }
 				</PlanDivOrTdContainer>
 			);
 		}

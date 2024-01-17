@@ -1,4 +1,9 @@
-import { getPlanClass, FEATURE_CUSTOM_DOMAIN, isFreePlan } from '@automattic/calypso-products';
+import {
+	getPlanClass,
+	FEATURE_CUSTOM_DOMAIN,
+	isFreePlan,
+	FEATURE_SITE_BUNDLE,
+} from '@automattic/calypso-products';
 import { LoadingPlaceholder } from '@automattic/components';
 import styled from '@emotion/styled';
 import classNames from 'classnames';
@@ -92,6 +97,7 @@ const PlanFeatures2023GridFeatures: React.FC< {
 					? currentFeature.getSlug() === selectedFeature
 					: currentFeature?.isHighlighted ||
 					  currentFeature.getSlug() === FEATURE_CUSTOM_DOMAIN ||
+					  currentFeature.getSlug() === FEATURE_SITE_BUNDLE ||
 					  ! currentFeature.availableForCurrentPlan;
 
 				const divClasses = classNames( '', getPlanClass( planSlug ), {
