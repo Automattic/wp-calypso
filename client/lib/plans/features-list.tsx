@@ -541,10 +541,10 @@ export const FEATURES_LIST: FeatureList = {
 
 	[ FEATURE_PERSONAL_THEMES ]: {
 		getSlug: () => FEATURE_PERSONAL_THEMES,
-		getTitle: () => i18n.translate( 'Unlimited personal themes' ),
+		getTitle: () => i18n.translate( 'Unlimited starter themes' ),
 		getDescription: () =>
 			i18n.translate(
-				'Unlimited access to all of our personal themes, including designs specifically tailored for businesses.'
+				'Unlimited access to all of our starter themes, including designs specifically tailored for businesses.'
 			),
 	},
 
