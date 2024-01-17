@@ -34,7 +34,7 @@ const IntervalTypeOption = styled.div`
 `;
 
 export const IntervalTypeDropdown: React.FunctionComponent< IntervalTypeProps > = ( props ) => {
-	const { intervalType, displayedIntervals, onPlanIntervalChange } = props;
+	const { hideDiscount, intervalType, displayedIntervals, onPlanIntervalChange } = props;
 	const supportedIntervalType = (
 		displayedIntervals.includes( intervalType ) ? intervalType : 'yearly'
 	) as SupportedUrlFriendlyTermType;
@@ -45,7 +45,9 @@ export const IntervalTypeDropdown: React.FunctionComponent< IntervalTypeProps > 
 		name: (
 			<IntervalTypeOption>
 				<span className="name"> { option.name } </span>
-				{ option.discountText ? <span className="discount"> { option.discountText } </span> : null }
+				{ option.discountText && ! hideDiscount ? (
+					<span className="discount"> { option.discountText } </span>
+				) : null }
 			</IntervalTypeOption>
 		),
 	} ) );
