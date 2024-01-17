@@ -247,7 +247,6 @@ export class UpsellNudge extends Component< UpsellNudgeProps, UpsellNudgeState >
 			case PROFESSIONAL_EMAIL_UPSELL:
 				return (
 					<ProfessionalEmailUpsell
-						currencyCode={ currencyCode ?? 'USD' }
 						domainName={ upgradeItem ?? '' }
 						handleClickAccept={ this.handleClickAccept }
 						handleClickDecline={ this.handleClickDecline }
