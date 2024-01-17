@@ -277,10 +277,12 @@ function StatsPurchaseButton( props: any ) {
 
 function StatsPurchasePostponeButton( props: any ) {
 	const ButtonComponent = props.isWPCOMSite ? CalypsoButton : Button;
+	const translate = useTranslate();
+	const buttonText = translate( 'I will do it later' );
 
 	return (
 		<ButtonComponent variant="secondary" onClick={ () => console.log( 'later button clicked!' ) }>
-			I will do it later
+			{ buttonText }
 		</ButtonComponent>
 	);
 }
