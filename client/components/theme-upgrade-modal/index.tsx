@@ -125,14 +125,12 @@ export const ThemeUpgradeModal = ( {
 
 		return {
 			header: (
-				<h1 className="theme-upgrade-modal__heading">
-					{ translate( 'Unlock this personal theme' ) }
-				</h1>
+				<h1 className="theme-upgrade-modal__heading">{ translate( 'Unlock this theme' ) }</h1>
 			),
 			text: (
 				<p>
 					{ translate(
-						'Get access to Personal themes, and a ton of other features, with a subscription to the %(plan)s plan. It’s {{strong}}%(planPrice)s{{/strong}} a year, risk-free with a 14-day money-back guarantee.',
+						'Get access to %(plan)s themes, and a ton of other features, with a subscription to the %(plan)s plan. It’s {{strong}}%(planPrice)s{{/strong}} a year, risk-free with a 14-day money-back guarantee.',
 						{
 							components: {
 								strong: <strong />,
@@ -171,14 +169,12 @@ export const ThemeUpgradeModal = ( {
 
 		return {
 			header: (
-				<h1 className="theme-upgrade-modal__heading">
-					{ translate( 'Unlock this premium theme' ) }
-				</h1>
+				<h1 className="theme-upgrade-modal__heading">{ translate( 'Unlock this theme' ) }</h1>
 			),
 			text: (
 				<p>
 					{ translate(
-						'Get access to our Premium themes, and a ton of other features, with a subscription to the %(premiumPlanName)s plan. It’s {{strong}}%(planPrice)s{{/strong}} a year, risk-free with a 14-day money-back guarantee.',
+						'Get access to our %(premiumPlanName)s themes, and a ton of other features, with a subscription to the %(premiumPlanName)s plan. It’s {{strong}}%(planPrice)s{{/strong}} a year, risk-free with a 14-day money-back guarantee.',
 						{
 							components: {
 								strong: <strong />,
