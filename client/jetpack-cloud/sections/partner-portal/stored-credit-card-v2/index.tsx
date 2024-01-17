@@ -2,7 +2,7 @@ import { PaymentLogo } from '@automattic/wpcom-checkout';
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import PaymentMethodDeleteDialog from 'calypso/jetpack-cloud/sections/partner-portal/payment-method-delete-dialog';
-import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import CreditCardActions from './credit-card-actions';
 import { useDeleteCard } from './hooks/use-delete-card';
 import { useSetAsPrimaryCard } from './hooks/use-set-as-primary-card';

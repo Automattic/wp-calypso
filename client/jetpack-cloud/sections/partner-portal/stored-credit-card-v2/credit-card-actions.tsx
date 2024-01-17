@@ -1,9 +1,9 @@
-import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { Gridicon, Button } from '@automattic/components';
 import classNames from 'classnames';
 import { useRef, useState } from 'react';
 import PopoverMenu from 'calypso/components/popover-menu';
 import PopoverMenuItem from 'calypso/components/popover-menu/item';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
 
 export default function CreditCardActions( {
 	cardActions,
