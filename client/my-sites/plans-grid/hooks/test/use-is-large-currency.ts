@@ -2,7 +2,7 @@
  * @jest-environment jsdom
  */
 
-import useIsLargeCurrency from '../npm-ready/use-is-large-currency';
+import useIsLargeCurrency from '../use-is-large-currency';
 
 jest.mock( '@wordpress/element', () => ( {
 	...jest.requireActual( '@wordpress/element' ),

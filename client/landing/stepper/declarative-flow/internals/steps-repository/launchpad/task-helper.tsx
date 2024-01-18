@@ -386,6 +386,7 @@ export function getEnhancedTasks( {
 					break;
 				case 'subscribers_added':
 					taskData = {
+						disabled: mustVerifyEmailBeforePosting || false,
 						actionDispatch: () => {
 							if ( goToStep ) {
 								recordTaskClickTracksEvent( flow, task.completed, task.id );

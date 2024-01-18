@@ -1,5 +1,5 @@
 import {
-	PlanSlug,
+	type PlanSlug,
 	TERM_ANNUALLY,
 	getPlanSlugForTermVariant,
 	isMonthly,

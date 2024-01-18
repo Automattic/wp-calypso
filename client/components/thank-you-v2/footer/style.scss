@@ -22,9 +22,11 @@
 		}
 	}
 
-	.thank-you__footer-detail {
-		@include break-medium {
-			width: 50%;
+	&.has-multiple-details {
+		.thank-you__footer-detail {
+			@include break-medium {
+				width: 50%;
+			}
 		}
 	}
 
