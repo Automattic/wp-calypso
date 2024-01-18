@@ -1,0 +1,34 @@
+@import "@wordpress/base-styles/breakpoints.scss";
+
+.developer__is_dev_account-fieldset-is-loading, {
+	.components-form-toggle {
+		> * {
+			visibility: hidden;
+		}
+
+		.components-form-toggle__track {
+			visibility: visible;
+			border: none;
+			@include placeholder( --color-neutral-10 );
+		}
+	}
+
+	.components-toggle-control__label {
+		@include placeholder();
+		a {
+			color: inherit;
+		}
+	}
+}
+
+.developer form {
+	padding: 0 16px;
+
+	@media (min-width: $break-small) {
+		padding: 0;
+	}
+}
+
+.developer__settings .form-fieldset {
+	margin-bottom: 0;
+}

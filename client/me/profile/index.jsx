@@ -24,7 +24,6 @@ import ProfileLinks from 'calypso/me/profile-links';
 import ReauthRequired from 'calypso/me/reauth-required';
 import { recordGoogleEvent } from 'calypso/state/analytics/actions';
 import { isFetchingUserSettings } from 'calypso/state/user-settings/selectors';
-import { getIAmDeveloperCopy } from './get-i-am-a-developer-copy';
 import UpdatedGravatarString from './updated-gravatar-string';
 
 import './style.scss';
@@ -135,39 +134,19 @@ class Profile extends Component {
 								label={ <UpdatedGravatarString gravatarProfileLink={ gravatarProfileLink } /> }
 							/>
 						</FormFieldset>
+
+						<p className="profile__submit-button-wrapper">
+							<FormButton
+								disabled={ ! this.props.hasUnsavedUserSettings || this.props.getDisabledState() }
+								onClick={ this.getClickHandler( 'Save Profile Details Button' ) }
+							>
+								{ this.props.isUpdatingUserSettings
+									? this.props.translate( 'Saving…' )
+									: this.props.translate( 'Save profile details' ) }
+							</FormButton>
+						</p>
 					</form>
 				</Card>
-
-				<SectionHeader label={ this.props.translate( 'Developer Settings' ) } />
-				<Card className="developer__settings">
-					<form onSubmit={ this.props.submitForm } onChange={ this.props.markChanged }>
-						<FormFieldset
-							className={ classnames( {
-								'profile__is_dev_account-fieldset-is-loading': this.props.isFetchingUserSettings,
-							} ) }
-						>
-							<ToggleControl
-								disabled={ this.props.isUpdatingUserSettings || this.props.isFetchingUserSettings }
-								checked={ this.props.getSetting( 'is_dev_account' ) }
-								onChange={ this.toggleIsDevAccount }
-								label={ getIAmDeveloperCopy( this.props.translate ) }
-							/>
-						</FormFieldset>
-					</form>
-				</Card>
-
-				<form onSubmit={ this.props.submitForm } onChange={ this.props.markChanged }>
-					<p className="profile__submit-button-wrapper">
-						<FormButton
-							disabled={ ! this.props.hasUnsavedUserSettings || this.props.getDisabledState() }
-							onClick={ this.getClickHandler( 'Save Profile Details Button' ) }
-						>
-							{ this.props.isUpdatingUserSettings || this.props.getDisabledState()
-								? this.props.translate( 'Saving…' )
-								: this.props.translate( 'Save profile details' ) }
-						</FormButton>
-					</p>
-				</form>
 
 				<DomainUpsell context="profile" />
 
