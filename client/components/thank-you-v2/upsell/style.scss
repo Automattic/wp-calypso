@@ -59,11 +59,12 @@
 
 .thank-you__upsell-actions {
 	display: flex;
-	gap: 8px;
+	gap: 12px;
 	margin-top: 20px;
 
 	@media (max-width: $break-small ) {
 		flex-direction: column;
+		gap: 16px;
 	}
 
 	a.components-button {
@@ -80,5 +81,18 @@
 			background: var(--black-white-black, #333);
 			color: var(--black-white-white, #fff);
 		}
+	}
+
+	.components-base-control__field {
+		margin-bottom: 0;
+	}
+	.components-select-control {
+		height: 36px;
+	}
+	.components-select-control__input {
+		font-size: $font-body-small !important;
+	}
+	.components-input-control__backdrop {
+		border-color: var(--color-border-subtle) !important;
 	}
 }
