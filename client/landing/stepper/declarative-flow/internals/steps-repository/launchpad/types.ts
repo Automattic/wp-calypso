@@ -27,6 +27,7 @@ export type TaskId =
 	| 'first_post_published'
 	| 'site_launched'
 	| 'plan_selected';
+	| 'site_launched';
 
 export interface TaskContext {
 	tasks: Task[];

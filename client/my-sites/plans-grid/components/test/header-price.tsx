@@ -4,9 +4,6 @@
 /**
  * Default mock implementations
  */
-jest.mock( 'calypso/state/currency-code/selectors', () => ( {
-	getCurrentUserCurrencyCode: jest.fn(),
-} ) );
 jest.mock( '@wordpress/element', () => ( {
 	...jest.requireActual( '@wordpress/element' ),
 	useCallback: jest.fn(),

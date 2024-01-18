@@ -1,4 +1,4 @@
-import { IntervalTypeProps } from '../types';
+import { IntervalTypeProps } from '../../../types';
 import { IntervalTypeDropdown } from './interval-type-dropdown';
 import { IntervalTypeToggle } from './interval-type-toggle';
 

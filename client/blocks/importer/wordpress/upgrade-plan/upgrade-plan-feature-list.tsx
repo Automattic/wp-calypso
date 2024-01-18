@@ -6,7 +6,7 @@ import classnames from 'classnames';
 import React, { useState } from 'react';
 import JetpackLogo from 'calypso/components/jetpack-logo';
 import { getFeatureByKey } from 'calypso/lib/plans/features-list';
-import { Plans2023Tooltip } from 'calypso/my-sites/plans-grid/components/plans-2023-tooltip';
+import { Plans2023Tooltip } from 'calypso/my-sites/plans-grid';
 
 interface Props {
 	plan: Plan | JetpackPlan | WPComPlan | undefined;

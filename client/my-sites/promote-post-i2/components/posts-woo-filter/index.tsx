@@ -34,12 +34,8 @@ export default function WooItemsFilter( props: Props ) {
 			label: translate( 'Products' ),
 		},
 		{
-			value: 'post',
-			label: translate( 'Posts' ),
-		},
-		{
-			value: 'page',
-			label: translate( 'Page' ),
+			value: 'post,page',
+			label: translate( 'Posts & Pages' ),
 		},
 	];
 

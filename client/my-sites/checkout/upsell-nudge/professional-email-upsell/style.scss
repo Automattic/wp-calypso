@@ -7,6 +7,7 @@
 
 .main.professional-email-upsell {
 	max-width: 1040px;
+	margin-top: 40px;
 
 	@include breakpoint-deprecated( "<660px" ) {
 		padding: 1em;
@@ -49,16 +50,29 @@
 }
 
 .professional-email-upsell__pricing {
-	display: flex;
-	flex-direction: column;
-	margin-bottom: 24px;
+	.professional-email-price__trial-badge {
+		background-color: var(--color-success);
+		color: var(--color-text-inverted);
+		margin-bottom: 4px;
+	}
 
-	@include break-mobile {
-		justify-content: center;
-		margin-bottom: 10px;
+	.price-with-interval__sale-price {
+		color: var(--studio-green-50);
+	}
 
-		span + span {
-			margin-left: 8px;
+	.price__cost > span {
+		font-size: $font-title-small;
+		font-weight: 600;
+	}
+
+	.price-information__free-trial {
+		display: block;
+		font-size: $font-body-small;
+		margin-bottom: 0;
+		margin-top: 4px;
+
+		@include break-medium {
+			margin-bottom: 12px;
 		}
 	}
 }
@@ -71,27 +85,14 @@
 }
 
 .professional-email-upsell__content {
-	display: flex;
-	flex-direction: column;
+	display: grid;
+	gap: 40px;
 	margin-top: 2.5em;
 
 	@include break-medium {
-		flex-direction: row;
+		grid-template-columns: 7fr 4fr;
+		gap: 50px;
 		margin-top: 3em;
-
-		> div {
-			padding: 1em;
-
-			&:first-of-type {
-				flex: 1;
-				max-width: 550px;
-				padding-right: 3em;
-			}
-
-			&:last-of-type {
-				padding-left: 3em;
-			}
-		}
 	}
 }
 
@@ -137,11 +138,7 @@
 .professional-email-upsell__features {
 	display: flex;
 	flex-direction: column;
-	margin-top: 2.5em;
-
-	@include break-medium {
-		margin-top: 0;
-	}
+	max-width: 380px;
 
 	h2 {
 		font-size: $font-body-small;

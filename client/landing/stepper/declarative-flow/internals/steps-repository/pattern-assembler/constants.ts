@@ -53,7 +53,7 @@ export const PATTERN_CATEGORIES = [
 	//'media', -- Not exist
 	'newsletter',
 	//'podcast', -- Hidden
-	'portfolio', // For page patterns only
+	'portfolio', // For page patterns only in v1
 	//'quotes', -- Not exist
 	'services',
 	'store',
@@ -79,7 +79,8 @@ export const INITIAL_PAGES = [ 'about' ];
 export const PATTERN_PAGES_CATEGORIES = [
 	'about',
 	'contact',
-	'portfolio',
+	'portfolio', // only in v1
+	'gallery', // only in v2
 	'posts',
 	'services',
 	'store',
@@ -88,7 +89,8 @@ export const PATTERN_PAGES_CATEGORIES = [
 export const ORDERED_PATTERN_PAGES_CATEGORIES = [
 	'about',
 	'services',
-	'portfolio',
+	'portfolio', // only in v1
+	'gallery', // only in v2
 	'store',
 	'posts',
 	'contact',

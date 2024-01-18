@@ -1,7 +1,9 @@
+import { JETPACK_SOCIAL_ADVANCED_PRODUCTS } from '@automattic/calypso-products';
 import { PlanPrice } from '@automattic/components';
 import formatCurrency from '@automattic/format-currency';
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
+import { isNumber } from 'lodash';
 import { useCallback } from 'react';
 import TimeFrame from 'calypso/components/jetpack/card/jetpack-product-card/display-price/time-frame';
 import { useSelector } from 'calypso/state';
@@ -10,6 +12,7 @@ import { useItemPriceCompact } from '../product-store/hooks/use-item-price-compa
 import ItemPriceMessage from '../product-store/item-price/item-price-message';
 import { SelectorProduct } from '../types';
 import useItemPrice from '../use-item-price';
+
 type PaymentPlanProps = {
 	isMultiSiteIncompatible?: boolean;
 	siteId: number | null;
@@ -33,7 +36,7 @@ const PaymentPlan: React.FC< PaymentPlanProps > = ( {
 		product?.monthlyProductSlug || ''
 	);
 
-	const currentPrice = discountedPrice ? discountedPrice : originalPrice;
+	const currentPrice = isNumber( discountedPrice ) ? discountedPrice : originalPrice;
 	const currencyCode = useSelector( getCurrentUserCurrencyCode ) || 'USD';
 
 	const labelClass = classNames(
@@ -44,9 +47,18 @@ const PaymentPlan: React.FC< PaymentPlanProps > = ( {
 	const billingTerm = product.displayTerm || product.term;
 
 	const getDiscountedLabel = useCallback( () => {
-		if ( ! discountedPrice ) {
+		if ( ! isNumber( discountedPrice ) ) {
 			return;
 		}
+
+		if (
+			JETPACK_SOCIAL_ADVANCED_PRODUCTS.includes(
+				product?.productSlug as ( typeof JETPACK_SOCIAL_ADVANCED_PRODUCTS )[ number ]
+			)
+		) {
+			return translate( '100% off the first month' );
+		}
+
 		const translateArgs = {
 			args: {
 				percentOff: Math.floor( ( ( originalPrice - discountedPrice ) / originalPrice ) * 100 ),
@@ -56,7 +68,7 @@ const PaymentPlan: React.FC< PaymentPlanProps > = ( {
 		return 1 === discountedPriceDuration
 			? translate( '%(percentOff)d%% off the first month', translateArgs )
 			: translate( '%(percentOff)d%% off the first year', translateArgs );
-	}, [ discountedPriceDuration, originalPrice, discountedPrice, translate ] );
+	}, [ discountedPrice, product?.productSlug, originalPrice, discountedPriceDuration, translate ] );
 
 	return (
 		<div className="product-lightbox__variants-plan">
@@ -89,11 +101,12 @@ const PaymentPlan: React.FC< PaymentPlanProps > = ( {
 									formattedOriginalPrice={ formatCurrency( originalPrice, currencyCode, {
 										stripZeros: true,
 									} ) }
-									isDiscounted={ !! discountedPrice }
+									isDiscounted={ isNumber( discountedPrice ) }
+									finalPrice={ currentPrice }
 								/>
 							</div>
 						</div>
-						{ discountedPrice && (
+						{ isNumber( discountedPrice ) && (
 							<div className={ labelClass }>
 								<span className="product-lightbox__variants-plan-card-old-price">
 									<PlanPrice original rawPrice={ originalPrice } currencyCode={ currencyCode } />

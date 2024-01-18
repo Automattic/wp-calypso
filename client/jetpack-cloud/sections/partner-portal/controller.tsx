@@ -17,7 +17,6 @@ import Licenses from 'calypso/jetpack-cloud/sections/partner-portal/primary/lice
 import PartnerAccess from 'calypso/jetpack-cloud/sections/partner-portal/primary/partner-access';
 import PaymentMethodAdd from 'calypso/jetpack-cloud/sections/partner-portal/primary/payment-method-add';
 import PaymentMethodList from 'calypso/jetpack-cloud/sections/partner-portal/primary/payment-method-list';
-import Prices from 'calypso/jetpack-cloud/sections/partner-portal/primary/prices';
 import TermsOfServiceConsent from 'calypso/jetpack-cloud/sections/partner-portal/primary/terms-of-service-consent';
 import {
 	LicenseFilter,
@@ -177,11 +176,8 @@ export const companyDetailsDashboardContext: Callback = ( context, next ) => {
 	next();
 };
 
-export const pricesContext: Callback = ( context, next ) => {
-	context.header = <Header />;
-	setSidebar( context );
-	context.primary = <Prices />;
-	next();
+export const pricesContext: Callback = () => {
+	page.redirect( '/partner-portal/issue-license' );
 };
 
 export const landingPageContext: Callback = () => {

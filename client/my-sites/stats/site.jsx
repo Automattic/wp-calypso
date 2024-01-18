@@ -38,11 +38,7 @@ import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import getCurrentRouteParameterized from 'calypso/state/selectors/get-current-route-parameterized';
 import isJetpackModuleActive from 'calypso/state/selectors/is-jetpack-module-active';
 import isPrivateSite from 'calypso/state/selectors/is-private-site';
-import {
-	getJetpackStatsAdminVersion,
-	isJetpackSite,
-	getSiteOptions,
-} from 'calypso/state/sites/selectors';
+import { getJetpackStatsAdminVersion, isJetpackSite } from 'calypso/state/sites/selectors';
 import { requestModuleSettings } from 'calypso/state/stats/module-settings/actions';
 import { getModuleSettings } from 'calypso/state/stats/module-settings/selectors';
 import { getModuleToggles } from 'calypso/state/stats/module-toggles/selectors';
@@ -61,6 +57,7 @@ import PageViewTracker from './stats-page-view-tracker';
 import StatsPeriodHeader from './stats-period-header';
 import StatsPeriodNavigation from './stats-period-navigation';
 import StatsPlanUsage from './stats-plan-usage';
+import StatsRedirectFlow from './stats-reditect-flow';
 import statsStrings from './stats-strings';
 import StatsUpsellModal from './stats-upsell-modal';
 import { getPathWithUpdatedQueryString } from './utils';
@@ -310,6 +307,7 @@ class StatsSite extends Component {
 
 		return (
 			<div className="stats">
+				<StatsRedirectFlow />
 				{ ! isOdysseyStats && (
 					<div className="stats-banner-wrapper">
 						<JetpackBackupCredsBanner event="stats-backup-credentials" />
@@ -545,13 +543,6 @@ class StatsSite extends Component {
 			return this.renderEnableStatsModule();
 		}
 
-		// render purchase flow for Jetpack sites created after February 2024
-		if ( this.props.redirectToPurchase && this.props.slug ) {
-			page.redirect( `/stats/purchase/${ this.props.slug }` );
-
-			return;
-		}
-
 		return this.renderStats();
 	}
 
@@ -605,9 +596,6 @@ export default connect(
 		const isJetpack = isJetpackSite( state, siteId );
 		const statsAdminVersion = getJetpackStatsAdminVersion( state, siteId );
 		const isOdysseyStats = config.isEnabled( 'is_running_in_jetpack_site' );
-		const isSiteJetpackNotAtomic = isJetpackSite( state, siteId, {
-			treatAtomicAsJetpackSite: false,
-		} );
 
 		// Odyssey Stats: This UX is not possible in Odyssey as this page would not be able to render in the first place.
 		const showEnableStatsModule =
@@ -628,15 +616,6 @@ export default connect(
 		const upsellModalView =
 			config.isEnabled( 'stats/paid-wpcom-v2' ) && getUpsellModalView( state, siteId );
 
-		const siteCreatedTimeStamp = getSiteOptions( state, siteId ?? 0 )?.created_at;
-
-		// TODO: update the date to the release date when the feature is ready.
-		const redirectToPurchase =
-			config.isEnabled( 'stats/checkout-flows-v2' ) &&
-			isSiteJetpackNotAtomic &&
-			siteCreatedTimeStamp &&
-			new Date( siteCreatedTimeStamp ) > new Date( '2024-01-01' );
-
 		return {
 			canUserViewStats,
 			isJetpack,
@@ -650,7 +629,6 @@ export default connect(
 			moduleToggles: getModuleToggles( state, siteId, 'traffic' ),
 			upsellModalView,
 			statsAdminVersion,
-			redirectToPurchase,
 		};
 	},
 	{
