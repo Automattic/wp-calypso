@@ -525,9 +525,6 @@ export interface ResponseCartProduct {
 	is_included_for_100yearplan: boolean;
 
 	product_variants: ResponseCartProductVariant[];
-
-	product_cost_display: string;
-	item_subtotal_display: string;
 }
 
 export interface ResponseCartProductVariant {

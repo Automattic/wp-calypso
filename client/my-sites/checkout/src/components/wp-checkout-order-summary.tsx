@@ -148,7 +148,9 @@ function CheckoutSummaryWooOfferDetails( props: {
 		return null;
 	}
 
-	const cost = plan.product_cost_display;
+	const cost = formatCurrency( plan.item_original_cost_integer, plan.currency, {
+		isSmallestUnit: true,
+	} );
 	const productName = plan.product_name;
 	const intervalPrice = wooExpressIntroOffer.formattedPrice;
 	const intervalCount = wooExpressIntroOffer.intervalCount;
