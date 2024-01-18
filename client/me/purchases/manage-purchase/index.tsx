@@ -855,7 +855,7 @@ class ManagePurchase extends Component<
 		}
 
 		if ( isMarketplaceTemporarySitePurchase( purchase ) ) {
-			return;
+			return null;
 		}
 
 		return (
