@@ -456,6 +456,7 @@ class Layout extends Component {
 						initialLoad={ this.props.notes === null }
 						notes={ filteredNotes }
 						selectedNote={ this.state.selectedNote }
+						closePanel={ this.props.closePanel }
 					/>
 				) }
 
