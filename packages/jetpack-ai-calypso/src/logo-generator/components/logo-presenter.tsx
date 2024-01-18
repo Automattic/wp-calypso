@@ -3,6 +3,7 @@
  */
 import { Button, Icon } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
+import debugFactory from 'debug';
 /**
  * Internal dependencies
  */
@@ -10,6 +11,7 @@ import CheckIcon from '../assets/icons/check';
 import LogoIcon from '../assets/icons/logo';
 import MediaIcon from '../assets/icons/media';
 import useLogoGenerator from '../hooks/use-logo-generator';
+import useRequestErrors from '../hooks/use-request-errors';
 import { ImageLoader } from './image-loader';
 import './logo-presenter.scss';
 /**
@@ -17,6 +19,8 @@ import './logo-presenter.scss';
  */
 import type { LogoPresenterProps } from '../../types';
 import type React from 'react';
+
+const debug = debugFactory( 'jetpack-ai-calypso:logo-presenter' );
 
 const SaveInLibraryButton: React.FC = () => {
 	const { saveLogo, selectedLogo, isSavingLogoToLibrary: saving } = useLogoGenerator();
@@ -27,7 +31,7 @@ const SaveInLibraryButton: React.FC = () => {
 			try {
 				await saveLogo( selectedLogo );
 			} catch ( error ) {
-				// TODO: Handle error
+				debug( 'Error saving logo', error );
 			}
 		}
 	};
@@ -48,7 +52,7 @@ const SaveInLibraryButton: React.FC = () => {
 };
 
 const UseOnSiteButton: React.FC< { onApplyLogo: () => void } > = ( { onApplyLogo } ) => {
-	const { applyLogo, isSavingLogoToLibrary, isApplyingLogo } = useLogoGenerator();
+	const { applyLogo, isSavingLogoToLibrary, isApplyingLogo, selectedLogo } = useLogoGenerator();
 
 	const handleClick = async () => {
 		if ( ! isApplyingLogo && ! isSavingLogoToLibrary ) {
@@ -56,7 +60,7 @@ const UseOnSiteButton: React.FC< { onApplyLogo: () => void } > = ( { onApplyLogo
 				await applyLogo();
 				onApplyLogo();
 			} catch ( error ) {
-				// TODO: Handle error
+				debug( 'Error enhancing prompt', error );
 			}
 		}
 	};
@@ -70,7 +74,7 @@ const UseOnSiteButton: React.FC< { onApplyLogo: () => void } > = ( { onApplyLogo
 		<Button
 			className="jetpack-ai-logo-generator-modal-presenter__action"
 			onClick={ handleClick }
-			disabled={ isSavingLogoToLibrary }
+			disabled={ isSavingLogoToLibrary || ! selectedLogo?.mediaId }
 		>
 			<Icon icon={ <LogoIcon /> } />
 			<span className="action-text">{ __( 'Use on Site', 'jetpack' ) }</span>
@@ -84,41 +88,54 @@ export const LogoPresenter: React.FC< LogoPresenterProps > = ( {
 	onApplyLogo,
 } ) => {
 	const { isRequestingImage } = useLogoGenerator();
+	const { saveToLibraryError, logoUpdateError } = useRequestErrors();
 
 	if ( ! logo ) {
 		return null;
 	}
 
 	return (
-		<div className="jetpack-ai-logo-generator-modal-presenter">
-			<div className="jetpack-ai-logo-generator-modal-presenter__container">
-				{ loading || isRequestingImage ? (
-					<>
-						<ImageLoader className="jetpack-ai-logo-generator-modal-presenter__logo" />
-						<span className="jetpack-ai-logo-generator-modal-presenter__loading-text">
-							{ __( 'Generating new logo…', 'jetpack' ) }
-						</span>
-					</>
-				) : (
-					<>
-						<img
-							src={ logo.url }
-							alt={ logo.description }
-							className="jetpack-ai-logo-generator-modal-presenter__logo"
-						/>
-						<div className="jetpack-ai-logo-generator-modal-presenter__action-wrapper">
-							<span className="jetpack-ai-logo-generator-modal-presenter__description">
-								{ logo.description }
+		<div className="jetpack-ai-logo-generator-modal-presenter__wrapper">
+			<div className="jetpack-ai-logo-generator-modal-presenter">
+				<div className="jetpack-ai-logo-generator-modal-presenter__content">
+					{ loading || isRequestingImage ? (
+						<>
+							<ImageLoader className="jetpack-ai-logo-generator-modal-presenter__logo" />
+							<span className="jetpack-ai-logo-generator-modal-presenter__loading-text">
+								{ __( 'Generating new logo…', 'jetpack' ) }
 							</span>
-							<div className="jetpack-ai-logo-generator-modal-presenter__actions">
-								<SaveInLibraryButton />
-								<UseOnSiteButton onApplyLogo={ onApplyLogo } />
+						</>
+					) : (
+						<>
+							<img
+								src={ logo.url }
+								alt={ logo.description }
+								className="jetpack-ai-logo-generator-modal-presenter__logo"
+							/>
+							<div className="jetpack-ai-logo-generator-modal-presenter__action-wrapper">
+								<span className="jetpack-ai-logo-generator-modal-presenter__description">
+									{ logo.description }
+								</span>
+								<div className="jetpack-ai-logo-generator-modal-presenter__actions">
+									<SaveInLibraryButton />
+									<UseOnSiteButton onApplyLogo={ onApplyLogo } />
+								</div>
 							</div>
-						</div>
-					</>
-				) }
+						</>
+					) }
+				</div>
+				<div className="jetpack-ai-logo-generator-modal-presenter__rectangle" />
 			</div>
-			<div className="jetpack-ai-logo-generator-modal-presenter__rectangle" />
+			{ saveToLibraryError && (
+				<div className="jetpack-ai-logo-generator__prompt-error">
+					{ __( 'Error saving the logo to your library. Please try again.', 'jetpack' ) }
+				</div>
+			) }
+			{ logoUpdateError && (
+				<div className="jetpack-ai-logo-generator__prompt-error">
+					{ __( 'Error applying the logo to your site. Please try again.', 'jetpack' ) }
+				</div>
+			) }
 		</div>
 	);
 };
