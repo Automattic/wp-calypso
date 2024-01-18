@@ -20,7 +20,16 @@ describe( 'FormTextInputWithValueGeneration', () => {
 		expect( generateButton ).not.toBeDisabled();
 	} );
 
-	test( 'should generate a value when the action button is clicked', async () => {
+	test( 'should disable button and textbox when disabled', () => {
+		render( <FormTextInputWithValueGeneration disabled /> );
+		const textboxInput = getTextboxInput();
+		const generateButton = getGenerateButton();
+
+		expect( textboxInput ).toBeDisabled();
+		expect( generateButton ).toBeDisabled();
+	} );
+
+	test( 'should execute the onAction callback function when the action button is clicked', async () => {
 		const user = userEvent.setup();
 		const generateValueCallback = jest.fn();
 		render( <FormTextInputWithValueGeneration onAction={ generateValueCallback } /> );
@@ -28,5 +37,35 @@ describe( 'FormTextInputWithValueGeneration', () => {
 
 		await user.click( generateButton );
 		expect( generateValueCallback ).toHaveBeenCalledTimes( 1 );
+	} );
+
+	test( 'should display the value in text area after clicking action button on rerender', async () => {
+		let generatedValue = '';
+		const user = userEvent.setup();
+		const generateValueCallback = jest
+			.fn()
+			.mockImplementation( () => ( generatedValue = 'value generated from callback function' ) );
+		const { rerender } = render(
+			<FormTextInputWithValueGeneration
+				value={ generatedValue }
+				onAction={ generateValueCallback }
+			/>
+		);
+		const textboxInput = getTextboxInput();
+		const generateButton = getGenerateButton();
+		expect( textboxInput ).not.toHaveValue();
+
+		await user.click( generateButton );
+
+		rerender(
+			<FormTextInputWithValueGeneration
+				value={ generatedValue }
+				onAction={ generateValueCallback }
+			/>
+		);
+		const textboxInput2 = getTextboxInput();
+
+		expect( generateValueCallback ).toHaveBeenCalledTimes( 1 );
+		expect( textboxInput2 ).toHaveValue( 'value generated from callback function' );
 	} );
 } );
