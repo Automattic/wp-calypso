@@ -1,11 +1,7 @@
 import { isEnabled } from '@automattic/calypso-config';
 import { WPCOM_FEATURES_PREMIUM_THEMES } from '@automattic/calypso-products';
 import { PremiumBadge, BundledBadge } from '@automattic/components';
-import {
-	isDefaultGlobalStylesVariationSlug,
-	type Design,
-	StyleVariation,
-} from '@automattic/design-picker';
+import { type Design, StyleVariation } from '@automattic/design-picker';
 import { useSelect } from '@wordpress/data';
 import ThemeTierBadge from 'calypso/components/theme-tier/theme-tier-badge';
 import { useBundleSettingsByTheme } from 'calypso/my-sites/theme/hooks/use-bundle-settings';
@@ -23,12 +19,7 @@ type Props = {
 	shouldLimitGlobalStyles: boolean;
 };
 
-const DesignPickerDesignTitle: FC< Props > = ( {
-	designTitle,
-	selectedDesign,
-	selectedStyleVariation,
-	shouldLimitGlobalStyles,
-} ) => {
+const DesignPickerDesignTitle: FC< Props > = ( { designTitle, selectedDesign } ) => {
 	const bundleSettings = useBundleSettingsByTheme( selectedDesign.slug );
 	const site = useSite();
 	// TODO: This does not check for individual theme purchases yet.
@@ -46,14 +37,10 @@ const DesignPickerDesignTitle: FC< Props > = ( {
 
 	let badge: React.ReactNode = null;
 	if ( isEnabled( 'themes/tiers' ) ) {
-		const isDefaultVariation = isDefaultGlobalStylesVariationSlug( selectedStyleVariation?.slug );
-		const isLockedStyleVariation =
-			( ! selectedDesign.is_premium && shouldLimitGlobalStyles && ! isDefaultVariation ) ?? false;
-
 		badge = (
 			<ThemeTierBadge
 				className="design-picker-design-title__theme-tier-badge"
-				isLockedStyleVariation={ isLockedStyleVariation }
+				isLockedStyleVariation={ false }
 				themeId={ selectedDesign.slug }
 			/>
 		);
