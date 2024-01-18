@@ -133,6 +133,18 @@ export default function () {
 		clientRender
 	);
 
+	// Pricing page
+	page(
+		`/partner-portal/prices`,
+		controller.requireAccessContext,
+		controller.requireTermsOfServiceConsentContext,
+		controller.requireSelectedPartnerKeyContext,
+		controller.pricesContext,
+		controller.allSitesContext,
+		makeLayout,
+		clientRender
+	);
+
 	// Billing dashboard
 	page(
 		`/partner-portal/billing`,

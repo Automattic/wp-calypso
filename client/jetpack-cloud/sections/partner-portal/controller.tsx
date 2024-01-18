@@ -176,6 +176,10 @@ export const companyDetailsDashboardContext: Callback = ( context, next ) => {
 	next();
 };
 
+export const pricesContext: Callback = () => {
+	page.redirect( '/partner-portal/issue-license' );
+};
+
 export const landingPageContext: Callback = () => {
 	page.redirect( '/partner-portal/billing' );
 };
