@@ -321,7 +321,7 @@ export function getEnhancedTasks( {
 					taskData = getTaskDefinition( flow, task, context ) || deprecatedData;
 					break;
 				case 'setup_newsletter':
-					taskData = {
+					deprecatedData = {
 						actionDispatch: () => {
 							recordTaskClickTracksEvent( flow, task.completed, task.id );
 							window.location.assign(
@@ -332,6 +332,7 @@ export function getEnhancedTasks( {
 							);
 						},
 					};
+					taskData = getTaskDefinition( flow, task, context ) || deprecatedData;
 					break;
 				case 'design_edited':
 					deprecatedData = {
@@ -436,7 +437,7 @@ export function getEnhancedTasks( {
 					taskData = getTaskDefinition( flow, task, context ) || deprecatedData;
 					break;
 				case 'first_post_published_newsletter':
-					taskData = {
+					deprecatedData = {
 						isLaunchTask: true,
 						disabled: mustVerifyEmailBeforePosting || false,
 						actionDispatch: () => {
@@ -444,6 +445,7 @@ export function getEnhancedTasks( {
 							window.location.assign( `/post/${ siteSlug }` );
 						},
 					};
+					taskData = getTaskDefinition( flow, task, context ) || deprecatedData;
 					break;
 				case 'design_selected':
 				case 'design_completed':
@@ -623,13 +625,14 @@ export function getEnhancedTasks( {
 					taskData = getTaskDefinition( flow, task, context ) || deprecatedData;
 					break;
 				case 'verify_email':
-					taskData = {
+					deprecatedData = {
 						completed: isEmailVerified,
 						actionDispatch: () => {
 							recordTaskClickTracksEvent( flow, task.completed, task.id );
 							window.location.replace( task.calypso_path || '/me/account' );
 						},
 					};
+					taskData = getTaskDefinition( flow, task, context ) || deprecatedData;
 					break;
 				case 'set_up_payments':
 					taskData = {
