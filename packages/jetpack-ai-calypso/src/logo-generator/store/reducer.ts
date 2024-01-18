@@ -27,7 +27,7 @@ import {
 	ACTION_SET_LOGO_UPDATE_ERROR,
 } from './constants';
 import INITIAL_STATE from './initial-state';
-import type { AiFeatureStateProps, TierLimitProp } from './types';
+import type { AiFeatureStateProps, RequestError, TierLimitProp } from './types';
 import type { SiteDetails } from '@automattic/data-stores';
 
 export default function reducer(
@@ -48,7 +48,7 @@ export default function reducer(
 		isRequestingImage?: boolean;
 		isEnhancingPrompt?: boolean;
 		history?: Array< { url: string; description: string; mediaId?: number } >;
-		error?: string | Error | null;
+		error?: RequestError;
 	}
 ) {
 	switch ( action.type ) {

@@ -123,18 +123,20 @@ export type Logo = {
 	mediaId?: number;
 };
 
+export type RequestError = string | Error | null;
+
 export type LogoGeneratorStateProp = {
 	_meta?: {
 		isSavingLogoToLibrary: boolean;
 		isApplyingLogo: boolean;
 		isRequestingImage: boolean;
 		isEnhancingPrompt: boolean;
-		featureFetchError?: string | Error | null;
-		firstLogoPromptFetchError?: string | Error | null;
-		enhancePromptFetchError?: string | Error | null;
-		logoFetchError?: string | Error | null;
-		saveToLibraryError?: string | Error | null;
-		logoUpdateError?: string | Error | null;
+		featureFetchError?: RequestError;
+		firstLogoPromptFetchError?: RequestError;
+		enhancePromptFetchError?: RequestError;
+		logoFetchError?: RequestError;
+		saveToLibraryError?: RequestError;
+		logoUpdateError?: RequestError;
 	};
 	siteDetails?: SiteDetails;
 	features: {
@@ -156,12 +158,12 @@ export type Selectors = {
 	getIsEnhancingPrompt(): boolean;
 	getIsBusy(): boolean;
 	getRequireUpgrade(): boolean;
-	getFeatureFetchError(): string | Error | null;
-	getFirstLogoPromptFetchError(): string | Error | null;
-	getEnhancePromptFetchError(): string | Error | null;
-	getLogoFetchError(): string | Error | null;
-	getSaveToLibraryError(): string | Error | null;
-	getLogoUpdateError(): string | Error | null;
+	getFeatureFetchError(): RequestError;
+	getFirstLogoPromptFetchError(): RequestError;
+	getEnhancePromptFetchError(): RequestError;
+	getLogoFetchError(): RequestError;
+	getSaveToLibraryError(): RequestError;
+	getLogoUpdateError(): RequestError;
 };
 
 /*

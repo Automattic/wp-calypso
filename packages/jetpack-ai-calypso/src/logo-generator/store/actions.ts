@@ -28,7 +28,12 @@ import {
 	ACTION_SET_LOGO_UPDATE_ERROR,
 	ACTION_SET_SAVE_TO_LIBRARY_ERROR,
 } from './constants';
-import type { AiFeatureProps, AiAssistantFeatureEndpointResponseProps, Logo } from './types';
+import type {
+	AiFeatureProps,
+	AiAssistantFeatureEndpointResponseProps,
+	Logo,
+	RequestError,
+} from './types';
 import type { SiteDetails } from '@automattic/data-stores';
 
 /**
@@ -190,41 +195,41 @@ const actions = {
 		};
 	},
 
-	setFeatureFetchError( error: string | Error | null ) {
+	setFeatureFetchError( error: RequestError ) {
 		return {
 			type: ACTION_SET_FEATURE_FETCH_ERROR,
 			error,
 		};
 	},
 
-	setFirstLogoPromptFetchError( error: string | Error | null ) {
+	setFirstLogoPromptFetchError( error: RequestError ) {
 		return {
 			type: ACTION_SET_FIRST_LOGO_PROMPT_FETCH_ERROR,
 			error,
 		};
 	},
 
-	setEnhancePromptFetchError( error: string | Error | null ) {
+	setEnhancePromptFetchError( error: RequestError ) {
 		return {
 			type: ACTION_SET_ENHANCE_PROMPT_FETCH_ERROR,
 			error,
 		};
 	},
 
-	setLogoFetchError( error: string | Error | null ) {
+	setLogoFetchError( error: RequestError ) {
 		return {
 			type: ACTION_SET_LOGO_FETCH_ERROR,
 			error,
 		};
 	},
 
-	setSaveToLibraryError( error: string | Error | null ) {
+	setSaveToLibraryError( error: RequestError ) {
 		return {
 			type: ACTION_SET_SAVE_TO_LIBRARY_ERROR,
 			error,
 		};
 	},
-	setLogoUpdateError( error: string | Error | null ) {
+	setLogoUpdateError( error: RequestError ) {
 		return {
 			type: ACTION_SET_LOGO_UPDATE_ERROR,
 			error,
