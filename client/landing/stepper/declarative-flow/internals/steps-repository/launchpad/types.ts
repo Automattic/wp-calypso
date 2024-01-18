@@ -26,7 +26,7 @@ export type TaskId =
 	| 'domain_upsell'
 	| 'first_post_published'
 	| 'site_launched'
-	| 'plan_selected';
+	| 'plan_selected'
 	| 'site_launched';
 
 export interface TaskContext {
