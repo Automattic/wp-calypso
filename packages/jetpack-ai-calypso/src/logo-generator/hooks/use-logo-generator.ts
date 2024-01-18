@@ -37,6 +37,7 @@ const useLogoGenerator = () => {
 
 	const {
 		logos,
+		selectedLogoIndex,
 		selectedLogo,
 		siteDetails,
 		isSavingLogoToLibrary,
@@ -51,6 +52,7 @@ const useLogoGenerator = () => {
 
 		return {
 			logos: selectors.getLogos(),
+			selectedLogoIndex: selectors.getSelectedLogoIndex(),
 			selectedLogo: selectors.getSelectedLogo(),
 			siteDetails: selectors.getSiteDetails(),
 			isSavingLogoToLibrary: selectors.getIsSavingLogoToLibrary(),
@@ -359,6 +361,7 @@ User request: ${ prompt }
 
 	return {
 		logos,
+		selectedLogoIndex,
 		selectedLogo,
 		setSelectedLogoIndex,
 		site: {
