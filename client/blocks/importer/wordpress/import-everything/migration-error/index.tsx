@@ -1,14 +1,11 @@
 import { MigrationStatusError } from '@automattic/data-stores';
+import { useChatWidget } from '@automattic/help-center/src/hooks';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { NextButton, SubTitle, Title } from '@automattic/onboarding';
 import { useTranslate } from 'i18n-calypso';
+import { useCallback } from 'react';
 import useErrorTitle from './use-error-title';
 import './style.scss';
-
-interface Props {
-	status: MigrationStatusError;
-	resetMigration: () => void;
-}
 
 export const MigrationErrorHint = () => {
 	const translate = useTranslate();
@@ -49,10 +46,23 @@ export const MigrationErrorHint = () => {
 	);
 };
 
+interface Props {
+	siteUrl: string;
+	status: MigrationStatusError;
+	resetMigration: () => void;
+}
 export const MigrationError = ( props: Props ) => {
+	const { siteUrl, status, resetMigration } = props;
 	const translate = useTranslate();
-	const { status, resetMigration } = props;
+	const { openChatWidget, isOpeningChatWidget } = useChatWidget();
 	const title = useErrorTitle( status );
+
+	const getHelp = useCallback( () => {
+		openChatWidget( {
+			siteUrl: siteUrl,
+			message: 'Import onboarding flow: migration failed',
+		} );
+	}, [ openChatWidget, siteUrl ] );
 
 	return (
 		<div className="import__heading import__heading-center">
@@ -64,6 +74,9 @@ export const MigrationError = ( props: Props ) => {
 			</SubTitle>
 			<div className="import__buttons-group">
 				<NextButton onClick={ resetMigration }>{ translate( 'Try again' ) }</NextButton>
+				<NextButton onClick={ getHelp } variant="secondary" isBusy={ isOpeningChatWidget }>
+					{ translate( 'Get help' ) }
+				</NextButton>
 			</div>
 		</div>
 	);

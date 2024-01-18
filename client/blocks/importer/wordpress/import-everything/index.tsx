@@ -266,6 +266,7 @@ export class ImportEverything extends SectionMigrate {
 				<div>
 					{ this.state.migrationErrorStatus && (
 						<MigrationError
+							siteUrl={ this.props.targetSite.slug }
 							status={ this.state.migrationErrorStatus }
 							resetMigration={ this.resetMigration }
 						/>
