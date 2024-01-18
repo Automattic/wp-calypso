@@ -6,7 +6,7 @@ import {
 	isPremiumPlan,
 } from '@automattic/calypso-products';
 import { useMemo } from '@wordpress/element';
-import type { GridPlan } from 'calypso/my-sites/plans-grid';
+import type { GridPlan } from '@automattic/plans-grid-next';
 
 interface Props {
 	plans: Omit< GridPlan, 'features' >[];

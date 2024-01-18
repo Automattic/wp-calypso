@@ -1443,6 +1443,48 @@ __metadata:
   languageName: unknown
   linkType: soft
 
+"@automattic/plans-grid-next@workspace:^, @automattic/plans-grid-next@workspace:packages/plans-grid-next":
+  version: 0.0.0-use.local
+  resolution: "@automattic/plans-grid-next@workspace:packages/plans-grid-next"
+  dependencies:
+    "@automattic/calypso-build": "workspace:^"
+    "@automattic/calypso-color-schemes": "workspace:^"
+    "@automattic/calypso-products": "workspace:^"
+    "@automattic/calypso-storybook": "workspace:^"
+    "@automattic/calypso-typescript-config": "workspace:^"
+    "@automattic/components": "workspace:^"
+    "@automattic/data-stores": "workspace:^"
+    "@automattic/format-currency": "workspace:^"
+    "@automattic/onboarding": "workspace:^"
+    "@automattic/shopping-cart": "workspace:^"
+    "@automattic/viewport": "workspace:^"
+    "@emotion/react": "npm:11.11.1"
+    "@emotion/styled": "npm:^11.11.0"
+    "@storybook/addon-actions": "npm:^7.6.7"
+    "@storybook/react": "npm:^7.6.7"
+    "@testing-library/dom": "npm:^9.3.3"
+    "@testing-library/jest-dom": "npm:^6.2.0"
+    "@testing-library/react": "npm:^14.1.2"
+    "@testing-library/user-event": "npm:^14.5.2"
+    "@wordpress/data": "npm:^9.18.0"
+    "@wordpress/element": "npm:^5.25.0"
+    "@wordpress/url": "npm:^3.49.0"
+    "@wordpress/warning": "npm:^2.48.0"
+    classnames: "npm:^2.3.2"
+    i18n-calypso: "workspace:^"
+    react-intersection-observer: "npm:^9.4.3"
+    react-transition-group: "npm:^4.3.0"
+    resize-observer-polyfill: "npm:^1.5.1"
+    typescript: "npm:^5.3.3"
+    webpack: "npm:^5.89.0"
+  peerDependencies:
+    "@wordpress/i18n": ^4.48.0
+    postcss: ^8.4.5
+    react: ^18.2.0
+    react-dom: ^18.2.0
+  languageName: unknown
+  linkType: soft
+
 "@automattic/plans-grid@workspace:^, @automattic/plans-grid@workspace:packages/plans-grid":
   version: 0.0.0-use.local
   resolution: "@automattic/plans-grid@workspace:packages/plans-grid"
@@ -3967,7 +4009,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@emotion/react@npm:^11.11.1, @emotion/react@npm:^11.7.1":
+"@emotion/react@npm:11.11.1, @emotion/react@npm:^11.11.1, @emotion/react@npm:^11.7.1":
   version: 11.11.1
   resolution: "@emotion/react@npm:11.11.1"
   dependencies:
@@ -12258,6 +12300,7 @@ __metadata:
     "@automattic/notifications": "workspace:^"
     "@automattic/onboarding": "workspace:^"
     "@automattic/plans-grid": "workspace:^"
+    "@automattic/plans-grid-next": "workspace:^"
     "@automattic/react-virtualized": "npm:^9.22.4"
     "@automattic/request-external-access": "workspace:^"
     "@automattic/search": "workspace:^"
@@ -32452,6 +32495,7 @@ __metadata:
     "@automattic/i18n-utils": "workspace:^"
     "@automattic/languages": "workspace:^"
     "@automattic/launchpad": "workspace:^"
+    "@automattic/plans-grid-next": "workspace:^"
     "@automattic/privacy-toolset": "workspace:^"
     "@automattic/typography": "workspace:^"
     "@automattic/verbum-block-editor": "workspace:^"
