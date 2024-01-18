@@ -599,12 +599,7 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 					fontVariation: selectedFontVariation,
 				} )
 			);
-
-			if ( isEnabled( 'themes/tiers' ) && selectedDesignTier === PERSONAL_THEME ) {
-				closePremiumGlobalStylesModal();
-			} else {
-				pickDesign();
-			}
+			pickDesign();
 		}
 	}
 
@@ -759,24 +754,26 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 		recordTracksEvent( eventName, tracksProps );
 	}
 
-	function getPrimaryActionButtonAction(): () => void {
-		const isPersonalDesign = isEnabled( 'themes/tiers' ) && selectedDesignTier === PERSONAL_THEME;
-
+	function getPrimaryActionButton() {
 		if ( isLockedTheme ) {
-			// For personal themes we favor the GS Upgrade Modal over the Plan Upgrade Modal.
-			return isPersonalDesign && shouldUnlockGlobalStyles ? unlockPremiumGlobalStyles : upgradePlan;
+			return (
+				<Button className="navigation-link" primary borderless={ false } onClick={ upgradePlan }>
+					{ translate( 'Unlock theme' ) }
+				</Button>
+			);
 		}
 
-		return shouldUnlockGlobalStyles ? unlockPremiumGlobalStyles : pickDesign;
-	}
-
-	function getPrimaryActionButton() {
-		const action = getPrimaryActionButtonAction();
-		const text = action === upgradePlan ? translate( 'Unlock theme' ) : translate( 'Continue' );
+		const selectStyle = () => {
+			if ( shouldUnlockGlobalStyles ) {
+				unlockPremiumGlobalStyles();
+			} else {
+				pickDesign();
+			}
+		};
 
 		return (
-			<Button className="navigation-link" primary borderless={ false } onClick={ action }>
-				{ text }
+			<Button className="navigation-link" primary borderless={ false } onClick={ selectStyle }>
+				{ translate( 'Continue' ) }
 			</Button>
 		);
 	}
