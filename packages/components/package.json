@@ -32,10 +32,10 @@
 		"@automattic/format-currency": "workspace:^",
 		"@automattic/typography": "workspace:^",
 		"@automattic/viewport-react": "workspace:^",
-		"@wordpress/base-styles": "^4.39.0",
-		"@wordpress/components": "^25.14.0",
-		"@wordpress/icons": "^9.39.0",
-		"@wordpress/react-i18n": "^3.46.0",
+		"@wordpress/base-styles": "^4.40.0",
+		"@wordpress/components": "^25.15.0",
+		"@wordpress/icons": "^9.40.0",
+		"@wordpress/react-i18n": "^3.47.0",
 		"canvas-confetti": "^1.6.0",
 		"classnames": "^2.3.2",
 		"gridicons": "^3.4.2",
@@ -49,7 +49,7 @@
 		"uuid": "^8.3.2"
 	},
 	"peerDependencies": {
-		"@wordpress/data": "^9.18.0",
+		"@wordpress/data": "^9.19.0",
 		"react": "^18.2.0",
 		"react-dom": "^18.2.0"
 	},
