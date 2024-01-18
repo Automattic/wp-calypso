@@ -6,9 +6,7 @@ export function developer( context, next ) {
 	const DeveloperTitle = () => {
 		const translate = useTranslate();
 
-		return (
-			<DocumentHead title={ translate( 'WordPress.com Developer Program', { textOnly: true } ) } />
-		);
+		return <DocumentHead title={ translate( 'Developer', { textOnly: true } ) } />;
 	};
 
 	context.primary = (
