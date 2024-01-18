@@ -444,7 +444,7 @@ export const ThemeUpgradeModal = ( {
 		modalData = getPersonalPlanModalData();
 		featureList = getPersonalPlanFeatureList();
 		featureListHeader = translate( 'Included with your %(plan)s plan', {
-			args: { plan: personalPlanName || '' },
+			args: { plan: personalPlanName },
 		} );
 	} else {
 		modalData = getStandardPurchaseModalData();
