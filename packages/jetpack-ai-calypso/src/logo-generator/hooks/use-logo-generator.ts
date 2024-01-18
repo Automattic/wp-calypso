@@ -9,7 +9,7 @@ import { useCallback } from 'react';
 /**
  * Internal dependencies
  */
-import { EVENT_PROMPT_SUBMIT } from '../../constants';
+import { EVENT_GENERATE } from '../../constants';
 import { stashLogo } from '../lib/logo-storage';
 import { requestJwt } from '../lib/request-token';
 import { saveToMediaLibrary } from '../lib/save-to-media-library';
@@ -319,7 +319,7 @@ User request: ${ prompt }
 
 		setIsRequestingImage( true );
 		increaseAiAssistantRequestsCount();
-		recordTracksEvent( EVENT_PROMPT_SUBMIT );
+		recordTracksEvent( EVENT_GENERATE );
 
 		try {
 			let image;
