@@ -70,6 +70,7 @@ export type PlansIntent =
 	| 'plans-paid-media'
 	| 'plans-p2'
 	| 'plans-default-wpcom'
+	| 'plans-default-wpcom-bluehost'
 	| 'plans-business-trial'
 	| 'plans-videopress'
 	| 'default';
