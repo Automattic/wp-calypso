@@ -38,6 +38,11 @@
 	@media (min-width: 700px) {
 		width: 700px;
 		min-height: 409px;
+
+		&.notice-modal {
+			width: 470px;
+			min-height: unset;
+		}
 	}
 }
 
@@ -54,4 +59,20 @@
 			color: var(--studio-gray-20);
 		}
 	}
+}
+
+.jetpack-ai-logo-generator-modal__notice-message-wrapper {
+	display: flex;
+	flex-direction: column;
+	gap: 24px;
+}
+
+.jetpack-ai-logo-generator-modal__notice-message {
+	font-size: $font-body-small;
+}
+
+.jetpack-ai-logo-generator-modal__notice-actions {
+	display: flex;
+	justify-content: flex-end;
+	gap: 12px;
 }

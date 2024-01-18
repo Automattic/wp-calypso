@@ -123,12 +123,20 @@ export type Logo = {
 	mediaId?: number;
 };
 
+export type RequestError = string | Error | null;
+
 export type LogoGeneratorStateProp = {
 	_meta?: {
 		isSavingLogoToLibrary: boolean;
 		isApplyingLogo: boolean;
 		isRequestingImage: boolean;
 		isEnhancingPrompt: boolean;
+		featureFetchError?: RequestError;
+		firstLogoPromptFetchError?: RequestError;
+		enhancePromptFetchError?: RequestError;
+		logoFetchError?: RequestError;
+		saveToLibraryError?: RequestError;
+		logoUpdateError?: RequestError;
 	};
 	siteDetails?: SiteDetails;
 	features: {
@@ -150,6 +158,12 @@ export type Selectors = {
 	getIsEnhancingPrompt(): boolean;
 	getIsBusy(): boolean;
 	getRequireUpgrade(): boolean;
+	getFeatureFetchError(): RequestError;
+	getFirstLogoPromptFetchError(): RequestError;
+	getEnhancePromptFetchError(): RequestError;
+	getLogoFetchError(): RequestError;
+	getSaveToLibraryError(): RequestError;
+	getLogoUpdateError(): RequestError;
 };
 
 /*

@@ -71,6 +71,12 @@
 }
 
 .jetpack-ai-logo-generator__prompt-footer {
+	display: flex;
+	flex-direction: column;
+	gap: 8px;
+}
+
+.jetpack-ai-logo-generator__prompt-requests {
 	color: var(--studio-gray-50, #646970);
 	font-size: $font-body-extra-small;
 	line-height: 21px;
@@ -84,4 +90,10 @@
 			fill: var(--studio-gray-20, #a7aaad);
 		}
 	}
+}
+
+.jetpack-ai-logo-generator__prompt-error {
+	color: var(--studio-red-50, #d63638);
+	font-size: $font-body-extra-small;
+	line-height: 21px;
 }
