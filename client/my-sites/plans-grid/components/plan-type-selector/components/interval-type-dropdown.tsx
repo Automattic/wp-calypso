@@ -1,9 +1,9 @@
 import styled from '@emotion/styled';
 import { CustomSelectControl } from '@wordpress/components';
 import useIntervalOptions from '../hooks/use-interval-options';
-import { IntervalTypeProps, SupportedUrlFriendlyTermType } from '../types';
+import type { IntervalTypeProps, SupportedUrlFriendlyTermType } from '../../../types';
 
-const AddOnOption = styled.a`
+const IntervalTypeOption = styled.div`
 	& span.name,
 	&:visited span.name,
 	&:hover span.name {
@@ -34,7 +34,7 @@ const AddOnOption = styled.a`
 `;
 
 export const IntervalTypeDropdown: React.FunctionComponent< IntervalTypeProps > = ( props ) => {
-	const { intervalType, displayedIntervals } = props;
+	const { intervalType, displayedIntervals, onPlanIntervalChange } = props;
 	const supportedIntervalType = (
 		displayedIntervals.includes( intervalType ) ? intervalType : 'yearly'
 	) as SupportedUrlFriendlyTermType;
@@ -43,10 +43,10 @@ export const IntervalTypeDropdown: React.FunctionComponent< IntervalTypeProps > 
 	const selectOptionsList = Object.values( optionsList ).map( ( option ) => ( {
 		key: option.key,
 		name: (
-			<AddOnOption href={ option.url }>
+			<IntervalTypeOption>
 				<span className="name"> { option.name } </span>
 				{ option.discountText ? <span className="discount"> { option.discountText } </span> : null }
-			</AddOnOption>
+			</IntervalTypeOption>
 		),
 	} ) );
 
@@ -57,6 +57,9 @@ export const IntervalTypeDropdown: React.FunctionComponent< IntervalTypeProps > 
 				label=""
 				options={ selectOptionsList }
 				value={ selectOptionsList.find( ( { key } ) => key === supportedIntervalType ) }
+				onChange={ ( { selectedItem }: { selectedItem: { key: SupportedUrlFriendlyTermType } } ) =>
+					onPlanIntervalChange && onPlanIntervalChange( selectedItem )
+				}
 			/>
 		</div>
 	);

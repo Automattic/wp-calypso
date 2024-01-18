@@ -33,6 +33,7 @@ import moment from 'moment';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { getRenewalItemFromProduct } from 'calypso/lib/cart-values/cart-items';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
+import { isMarketplaceTemporarySitePurchase } from 'calypso/me/purchases/utils';
 import { errorNotice } from 'calypso/state/notices/actions';
 import type { Purchase } from './types';
 import type { SiteDetails } from '@automattic/data-stores';
@@ -305,7 +306,14 @@ export function handleRenewNowClick(
 				throw new Error( 'Could not find product slug for renewal.' );
 			}
 			const { productSlugs, purchaseIds } = getProductSlugsAndPurchaseIds( [ renewItem ] );
-			const serviceSlug = isAkismetProduct( { product_slug: productSlugs[ 0 ] } ) ? 'akismet/' : '';
+
+			let serviceSlug = '';
+
+			if ( isAkismetProduct( { product_slug: productSlugs[ 0 ] } ) ) {
+				serviceSlug = 'akismet/';
+			} else if ( isMarketplaceTemporarySitePurchase( purchase ) ) {
+				serviceSlug = 'marketplace/';
+			}
 
 			let renewalUrl = `/checkout/${ serviceSlug }${ productSlugs[ 0 ] }/renew/${
 				purchaseIds[ 0 ]
@@ -851,6 +859,10 @@ export function purchaseType( purchase: Purchase ) {
 	}
 
 	if ( isAkismetProduct( purchase ) ) {
+		return null;
+	}
+
+	if ( isMarketplaceTemporarySitePurchase( purchase ) ) {
 		return null;
 	}
 

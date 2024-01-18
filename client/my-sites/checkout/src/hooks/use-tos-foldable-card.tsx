@@ -3,7 +3,7 @@ import isJetpackCheckout from 'calypso/lib/jetpack/is-jetpack-checkout';
 import { useSelector } from 'calypso/state';
 import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
-import { getSelectedSiteId, getSectionName } from 'calypso/state/ui/selectors';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 
 export function useToSFoldableCard(): boolean {
 	const siteId = useSelector( ( state ) => getSelectedSiteId( state ) );
@@ -11,15 +11,7 @@ export function useToSFoldableCard(): boolean {
 		( state ) => isJetpackSite( state, siteId ) && ! isSiteAutomatedTransfer( state, siteId )
 	);
 
-	const section = useSelector( getSectionName );
-	const enabledSections = [ 'business-plan-upgrade-upsell', 'checkout' ];
-
-	const isWPcomCheckout =
-		section &&
-		enabledSections.includes( section ) &&
-		! isJetpackCheckout() &&
-		! isAkismetCheckout() &&
-		! isJetpackNotAtomic;
+	const isWPcomCheckout = ! isJetpackCheckout() && ! isAkismetCheckout() && ! isJetpackNotAtomic;
 
 	/* Only show the foldable card on the checkout page for WPCOM,
 	 * further testing for Jetpack and Akismet is required before removing this hook

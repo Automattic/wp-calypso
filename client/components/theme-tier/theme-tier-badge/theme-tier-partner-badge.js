@@ -3,12 +3,12 @@ import { PremiumBadge } from '@automattic/components';
 import { createInterpolateElement } from '@wordpress/element';
 import { useTranslate } from 'i18n-calypso';
 import { useSelector } from 'calypso/state';
+import { useIsThemeAllowedOnSite } from 'calypso/state/themes/hooks/use-is-theme-allowed-on-site';
 import {
 	isMarketplaceThemeSubscribed,
 	getMarketplaceThemeSubscriptionPrices,
 } from 'calypso/state/themes/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
-import useThemeTier from '../use-theme-tier';
 import ThemeTierBadgeCheckoutLink from './theme-tier-badge-checkout-link';
 import { useThemeTierBadgeContext } from './theme-tier-badge-context';
 import ThemeTierBadgeTracker from './theme-tier-badge-tracker';
@@ -17,21 +17,21 @@ import ThemeTierTooltipTracker from './theme-tier-tooltip-tracker';
 export default function ThemeTierPartnerBadge() {
 	const translate = useTranslate();
 	const siteId = useSelector( getSelectedSiteId );
-	const { themeId } = useThemeTierBadgeContext();
+	const { showUpgradeBadge, themeId } = useThemeTierBadgeContext();
 	const isPartnerThemePurchased = useSelector( ( state ) =>
 		siteId ? isMarketplaceThemeSubscribed( state, themeId, siteId ) : false
 	);
 	const subscriptionPrices = useSelector( ( state ) =>
 		getMarketplaceThemeSubscriptionPrices( state, themeId )
 	);
-	const { isThemeAllowedOnSite } = useThemeTier( siteId, themeId );
+	const isThemeAllowed = useIsThemeAllowedOnSite( siteId, themeId );
 
-	const labelText = isThemeAllowedOnSite
+	const labelText = isThemeAllowed
 		? translate( 'Subscribe' )
 		: translate( 'Upgrade and Subscribe' );
 
 	const getTooltipMessage = () => {
-		if ( isPartnerThemePurchased && ! isThemeAllowedOnSite ) {
+		if ( isPartnerThemePurchased && ! isThemeAllowed ) {
 			return createInterpolateElement(
 				translate(
 					'You have a subscription for this theme, but it will only be usable if you have the <link>%(businessPlanName)s plan</link> on your site.',
@@ -42,7 +42,7 @@ export default function ThemeTierPartnerBadge() {
 				}
 			);
 		}
-		if ( ! isPartnerThemePurchased && isThemeAllowedOnSite ) {
+		if ( ! isPartnerThemePurchased && isThemeAllowed ) {
 			/* translators: annualPrice and monthlyPrice are prices for the theme, examples: US$50, US$7; */
 			return translate(
 				'This theme is only available while your current plan is active and costs %(annualPrice)s per year or %(monthlyPrice)s per month.',
@@ -54,7 +54,7 @@ export default function ThemeTierPartnerBadge() {
 				}
 			);
 		}
-		if ( ! isPartnerThemePurchased && ! isThemeAllowedOnSite ) {
+		if ( ! isPartnerThemePurchased && ! isThemeAllowed ) {
 			return createInterpolateElement(
 				/* translators: annualPrice and monthlyPrice are prices for the theme, examples: US$50, US$7; */
 				translate(
@@ -83,7 +83,7 @@ export default function ThemeTierPartnerBadge() {
 
 	return (
 		<>
-			{ ( ! isPartnerThemePurchased || ! isThemeAllowedOnSite ) && (
+			{ showUpgradeBadge && ( ! isPartnerThemePurchased || ! isThemeAllowed ) && (
 				<>
 					<ThemeTierBadgeTracker />
 					<PremiumBadge

@@ -2,11 +2,14 @@ import { Task } from '@automattic/launchpad';
 import { isBlogOnboardingFlow, isSiteAssemblerFlow } from '@automattic/onboarding';
 import { addQueryArgs } from '@wordpress/url';
 import { translate } from 'i18n-calypso';
+import { isDomainUpsellCompleted } from '../../task-helper';
 import { recordTaskClickTracksEvent } from '../../tracking';
-import { TaskAction, TaskActionTable } from '../../types';
+import { TaskAction } from '../../types';
 
-const getDomainUpSell: TaskAction = ( task, flow, context ): Task => {
-	const { siteInfoQueryArgs, domainUpsellCompleted, site } = context;
+const getDomainUpSellTask: TaskAction = ( task, flow, context ): Task => {
+	const { siteInfoQueryArgs, site, checklistStatuses } = context;
+
+	const domainUpsellCompleted = isDomainUpsellCompleted( site, checklistStatuses );
 
 	const getDestionationUrl = () => {
 		if ( isBlogOnboardingFlow( flow ) || isSiteAssemblerFlow( flow ) ) {
@@ -41,6 +44,6 @@ const getDomainUpSell: TaskAction = ( task, flow, context ): Task => {
 	};
 };
 
-export const actions: Partial< TaskActionTable > = {
-	domain_upsell: getDomainUpSell,
+export const actions = {
+	domain_upsell: getDomainUpSellTask,
 };

@@ -1,14 +1,14 @@
 import { isWpcomEnterpriseGridPlan, type PlanSlug } from '@automattic/calypso-products';
+import { PlanPrice } from '@automattic/components';
 import styled from '@emotion/styled';
 import { useTranslate } from 'i18n-calypso';
-import PlanPrice from 'calypso/my-sites/plan-price';
 import { usePlansGridContext } from '../grid-context';
-import type { GridPlan } from '../hooks/npm-ready/data-store/use-grid-plans';
+import type { GridPlan } from '../types';
 
 interface PlanFeatures2023GridHeaderPriceProps {
 	planSlug: PlanSlug;
 	isLargeCurrency: boolean;
-	isPlanUpgradeCreditEligible: boolean;
+	planUpgradeCreditsApplicable?: number | null;
 	currentSitePlanSlug?: string | null;
 	visibleGridPlans: GridPlan[];
 }
@@ -133,7 +133,7 @@ const HeaderPriceContainer = styled.div`
 const PlanFeatures2023GridHeaderPrice = ( {
 	planSlug,
 	isLargeCurrency,
-	isPlanUpgradeCreditEligible,
+	planUpgradeCreditsApplicable,
 	visibleGridPlans,
 }: PlanFeatures2023GridHeaderPriceProps ) => {
 	const translate = useTranslate();
@@ -210,7 +210,7 @@ const PlanFeatures2023GridHeaderPrice = ( {
 		return (
 			<HeaderPriceContainer>
 				<Badge className="plan-features-2023-grid__badge">
-					{ isPlanUpgradeCreditEligible
+					{ planUpgradeCreditsApplicable
 						? translate( 'Credit applied' )
 						: translate( 'One time discount' ) }
 				</Badge>

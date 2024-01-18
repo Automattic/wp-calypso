@@ -15,7 +15,7 @@ import { ONBOARD_STORE, SITE_STORE } from 'calypso/landing/stepper/stores';
 import { goToCheckout } from 'calypso/landing/stepper/utils/checkout';
 import { isDomainUpsellCompleted } from '../../task-helper';
 import { recordTaskClickTracksEvent } from '../../tracking';
-import { TaskAction, TaskActionTable, TaskContext } from '../../types';
+import { TaskAction, TaskContext } from '../../types';
 
 const getCompletedTasks = ( tasks: Task[] ): Record< string, boolean > =>
 	tasks.reduce(
@@ -125,7 +125,7 @@ const completeLaunchSiteTask = async ( task: Task, flow: string, context: TaskCo
 	submit?.();
 };
 
-const getSiteLaunched: TaskAction = ( task, flow, context ): Task => {
+const getSiteLaunchedTask: TaskAction = ( task, flow, context ): Task => {
 	return {
 		...task,
 		isLaunchTask: true,
@@ -136,6 +136,18 @@ const getSiteLaunched: TaskAction = ( task, flow, context ): Task => {
 	};
 };
 
-export const actions: Partial< TaskActionTable > = {
-	site_launched: getSiteLaunched,
+const getBlogLaunchedTask: TaskAction = ( task, flow, context ): Task => {
+	return {
+		...task,
+		isLaunchTask: true,
+		title: getLaunchSiteTaskTitle( task, flow, context ),
+		disabled: getIsLaunchSiteTaskDisabled( flow, context ),
+		actionDispatch: () => completeLaunchSiteTask( task, flow, context ),
+		useCalypsoPath: false,
+	};
+};
+
+export const actions = {
+	site_launched: getSiteLaunchedTask,
+	blog_launched: getBlogLaunchedTask,
 };

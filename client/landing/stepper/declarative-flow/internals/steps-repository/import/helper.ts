@@ -44,14 +44,19 @@ export function getFinalImporterUrl(
  * Stepper's redirection handlers
  */
 export function generateStepPath( stepName: string, stepSectionName?: string ) {
-	if ( stepName === 'intent' ) {
-		return 'goals';
-	} else if ( stepName === 'capture' ) {
-		return BASE_ROUTE;
+	switch ( stepName ) {
+		case 'intent':
+		case 'goals':
+			return 'goals';
+
+		case 'capture':
+			return BASE_ROUTE;
+
+		default: {
+			const routes = [ BASE_ROUTE, stepName, stepSectionName ];
+			const path = routes.join( '_' );
+
+			return camelCase( path ) as string;
+		}
 	}
-
-	const routes = [ BASE_ROUTE, stepName, stepSectionName ];
-	const path = routes.join( '_' );
-
-	return camelCase( path ) as string;
 }

@@ -1,5 +1,5 @@
 import { isEnabled } from '@automattic/calypso-config';
-import { Gridicon, Button, ConfettiAnimation } from '@automattic/components';
+import { Gridicon, Button } from '@automattic/components';
 import Card from '@automattic/components/src/card';
 import { CheckboxControl, TextareaControl } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
@@ -7,25 +7,23 @@ import moment from 'moment';
 import { useState } from 'react';
 import { useSelector } from 'react-redux';
 import ConfirmModal from 'calypso/components/confirm-modal';
-import Gravatar from 'calypso/components/gravatar';
 import Rating from 'calypso/components/rating';
 import ReviewsRatingsStars from 'calypso/components/reviews-rating-stars/reviews-ratings-stars';
 import {
 	MarketplaceReviewResponse,
 	MarketplaceReviewsQueryProps,
-	ProductDefinitionProps,
-	useCreateMarketplaceReviewMutation,
 	useDeleteMarketplaceReviewMutation,
-	useMarketplaceReviewsQuery,
 	useUpdateMarketplaceReviewMutation,
+	EMPTY_PLACEHOLDER,
 } from 'calypso/data/marketplace/use-marketplace-reviews';
 import { getAvatarURL } from 'calypso/data/marketplace/utils';
 import { sanitizeSectionContent } from 'calypso/lib/plugins/sanitize-section-content';
-import { getCurrentUser, getCurrentUserId } from 'calypso/state/current-user/selectors';
+import { getCurrentUserId } from 'calypso/state/current-user/selectors';
 import './style.scss';
 
 type MarketplaceReviewItemProps = {
 	review: MarketplaceReviewResponse;
+	onEditCompleted?: () => void;
 } & MarketplaceReviewsQueryProps;
 
 export const MarketplaceReviewItem = ( props: MarketplaceReviewItemProps ) => {
@@ -39,9 +37,11 @@ export const MarketplaceReviewItem = ( props: MarketplaceReviewItemProps ) => {
 	const [ editorContent, setEditorContent ] = useState< string >( '' );
 	const [ editorRating, setEditorRating ] = useState< number >( 0 );
 
+	const isEmptyContent = review.content.raw === EMPTY_PLACEHOLDER;
+
 	const setEditing = ( review: MarketplaceReviewResponse ) => {
 		setIsEditing( true );
-		setEditorContent( review.content.rendered );
+		setEditorContent( isEmptyContent ? '' : review.content.raw );
 		setEditorRating( review.meta.wpcom_marketplace_rating );
 	};
 
@@ -84,11 +84,29 @@ export const MarketplaceReviewItem = ( props: MarketplaceReviewItemProps ) => {
 					setErrorMessage( error.message );
 				},
 				onSuccess: () => {
+					props.onEditCompleted?.();
 					setErrorMessage( '' );
 				},
 			}
 		);
 		clearEditing();
+	};
+
+	const maybeRenderContent = () => {
+		if ( isEmptyContent ) {
+			return null;
+		}
+
+		return (
+			<div
+				// sanitized with sanitizeSectionContent
+				// eslint-disable-next-line react/no-danger
+				dangerouslySetInnerHTML={ {
+					__html: sanitizeSectionContent( review.content.rendered ),
+				} }
+				className="marketplace-review-item__content"
+			></div>
+		);
 	};
 
 	return (
@@ -148,211 +166,72 @@ export const MarketplaceReviewItem = ( props: MarketplaceReviewItemProps ) => {
 						rows={ 4 }
 						cols={ 40 }
 						name="content"
+						className="marketplace-review-item__editor"
 						value={ editorContent }
 						onChange={ setEditorContent }
 					/>
 				</>
 			) : (
-				<div
-					// sanitized with sanitizeSectionContent
-					// eslint-disable-next-line react/no-danger
-					dangerouslySetInnerHTML={ {
-						__html: sanitizeSectionContent( review.content.rendered ),
-					} }
-					className="marketplace-review-item__content"
-				></div>
+				maybeRenderContent()
 			) }
-			<div className="marketplace-review-item__review-actions">
-				{ isEditing && review.author === currentUserId && (
-					<>
-						<div>
-							{ isEnabled( 'marketplace-reviews-notification' ) && (
-								<CheckboxControl
-									className="marketplace-review-item__checkbox"
-									label={ translate( 'Notify me when my review is approved and published.' ) }
-									checked={ false }
-									onChange={ () => alert( 'Not implemented yet' ) }
-								/>
-							) }
-						</div>
-						<div className="marketplace-review-item__review-actions-editable">
-							<Button className="is-link" onClick={ clearEditing }>
-								{ translate( 'Cancel' ) }
-							</Button>
-							<Button
-								className="marketplace-review-item__review-submit"
-								primary
-								onClick={ () => updateReview( review.id ) }
-							>
-								{ translate( 'Save my review' ) }
-							</Button>
-						</div>
-					</>
-				) }
-				{ ! isEditing && review.author === currentUserId && (
-					<div className="marketplace-review-item__review-actions-editable">
-						<button
-							className="marketplace-review-item__review-actions-editable-button"
-							onClick={ () => setEditing( review ) }
-						>
-							<Gridicon icon="pencil" size={ 18 } />
-							{ translate( 'Edit my review' ) }
-						</button>
-						<button
-							className="marketplace-review-item__review-actions-editable-button"
-							onClick={ () => setIsConfirmModalVisible( true ) }
-						>
-							<Gridicon icon="trash" size={ 18 } />
-							{ translate( 'Delete my review' ) }
-						</button>
-						<div className="marketplace-review-item__review-actions-editable-confirm-modal">
-							<ConfirmModal
-								isVisible={ isConfirmModalVisible }
-								confirmButtonLabel={ translate( 'Yes' ) }
-								text={ translate( 'Do you really want to delete your review?' ) }
-								title={ translate( 'Delete my review' ) }
-								onCancel={ () => setIsConfirmModalVisible( false ) }
-								onConfirm={ () => deleteReview( review.id ) }
-							/>
-						</div>
-					</div>
-				) }
-			</div>
-		</div>
-	);
-};
-
-export function MarketplaceCreateReviewItem( props: ProductDefinitionProps ) {
-	const { productType, slug } = props;
-	const translate = useTranslate();
-	const currentUser = useSelector( getCurrentUser );
-	const [ content, setContent ] = useState< string >( '' );
-	const [ rating, setRating ] = useState< number >( 0 );
-	const [ errorMessage, setErrorMessage ] = useState( '' );
-	const [ showThankYouSection, setShowThankYouSection ] = useState( false );
-	const [ showContentArea, setShowContentArea ] = useState( false );
-
-	const { data: userReviews, isFetching: isFetchingUserReviews } = useMarketplaceReviewsQuery( {
-		productType,
-		slug,
-		perPage: 1,
-		author: currentUser?.ID ?? undefined,
-		status: 'all',
-	} );
-
-	const resetFields = () => {
-		setShowContentArea( false );
-		setErrorMessage( '' );
-		setContent( '' );
-		setRating( 0 );
-	};
-
-	const createReviewMutation = useCreateMarketplaceReviewMutation( { productType, slug } );
-	const createReview = () => {
-		createReviewMutation.mutate(
-			{ productType, slug, content, rating },
-			{
-				onError: ( error ) => {
-					setErrorMessage( error.message );
-				},
-				onSuccess: () => {
-					resetFields();
-					setShowThankYouSection( true );
-				},
-			}
-		);
-	};
-
-	const onSelectRating = ( value: number ) => {
-		setRating( value );
-		setShowContentArea( true );
-	};
-
-	// Hide the Thank You section if user removed their review
-	if ( ! userReviews?.length && ! isFetchingUserReviews && showThankYouSection ) {
-		setShowThankYouSection( false );
-	}
-
-	if ( !! userReviews?.length && ! showThankYouSection ) {
-		return null;
-	}
-
-	return (
-		<div className="marketplace-create-review-item__container">
-			{ ! showThankYouSection ? (
-				<>
-					{ errorMessage && (
-						<Card className="marketplace-review-item__error-message" highlight="error">
-							{ errorMessage }
-						</Card>
-					) }
-
-					<div className="marketplace-review-item__review-container-header">
-						<div className="marketplace-review-item__profile-picture">
-							<Gravatar user={ currentUser } size={ 36 } />
-						</div>
-
-						<div className="marketplace-review-item__rating-data">
-							<div className="marketplace-review-item__author">{ currentUser?.display_name }</div>
-						</div>
-						<div className="marketplace-review-item__date">{ moment().format( 'll' ) }</div>
-					</div>
-
-					<div className="marketplace-review-item__review-rating">
-						<h2>{ translate( 'How would you rate your overall experience?' ) }</h2>
-						<ReviewsRatingsStars
-							size="medium-large"
-							rating={ 0 }
-							onSelectRating={ onSelectRating }
-						/>
-					</div>
-					{ showContentArea && (
+			{ review.author === currentUserId && (
+				<div className="marketplace-review-item__review-actions">
+					{ isEditing && (
 						<>
-							<TextareaControl
-								rows={ 4 }
-								cols={ 40 }
-								name="content"
-								value={ content }
-								onChange={ setContent }
-							/>
-
-							<div className="marketplace-review-item__review-actions">
-								<div>
-									{ isEnabled( 'marketplace-reviews-notification' ) && (
-										<CheckboxControl
-											className="marketplace-review-item__checkbox"
-											label={ translate( 'Notify me when my review is approved and published.' ) }
-											checked={ false }
-											onChange={ () => alert( 'Not implemented yet' ) }
-										/>
-									) }
-								</div>
-								<div className="marketplace-review-item__review-actions-editable">
-									<Button
-										className="marketplace-review-item__review-submit"
-										primary
-										onClick={ createReview }
-									>
-										{ translate( 'Leave my review' ) }
-									</Button>
-								</div>
+							<div>
+								{ isEnabled( 'marketplace-reviews-notification' ) && (
+									<CheckboxControl
+										className="marketplace-review-item__checkbox"
+										label={ translate( 'Notify me when my review is approved and published.' ) }
+										checked={ false }
+										onChange={ () => alert( 'Not implemented yet' ) }
+									/>
+								) }
+							</div>
+							<div className="marketplace-review-item__review-actions-editable">
+								<Button className="is-link" onClick={ clearEditing }>
+									{ translate( 'Cancel' ) }
+								</Button>
+								<Button
+									className="marketplace-review-item__review-submit"
+									primary
+									onClick={ () => updateReview( review.id ) }
+								>
+									{ translate( 'Save my review' ) }
+								</Button>
 							</div>
 						</>
 					) }
-				</>
-			) : (
-				<>
-					<ConfettiAnimation delay={ 1000 } />
-					<div className="marketplace-create-review-item__thank-you">
-						<h2>{ translate( 'Thank you for your feedback!' ) }</h2>
-						<div className="marketplace-create-review-item__thank-you-subtitle">
-							{ translate(
-								'We appreciate you sharing your experience with this plugin! Your review will help to guide other users.'
-							) }
+					{ ! isEditing && (
+						<div className="marketplace-review-item__review-actions-editable">
+							<button
+								className="marketplace-review-item__review-actions-editable-button"
+								onClick={ () => setEditing( review ) }
+							>
+								<Gridicon icon="pencil" size={ 18 } />
+								{ translate( 'Edit my review' ) }
+							</button>
+							<button
+								className="marketplace-review-item__review-actions-editable-button"
+								onClick={ () => setIsConfirmModalVisible( true ) }
+							>
+								<Gridicon icon="trash" size={ 18 } />
+								{ translate( 'Delete my review' ) }
+							</button>
+							<div className="marketplace-review-item__review-actions-editable-confirm-modal">
+								<ConfirmModal
+									isVisible={ isConfirmModalVisible }
+									confirmButtonLabel={ translate( 'Yes' ) }
+									text={ translate( 'Do you really want to delete your review?' ) }
+									title={ translate( 'Delete my review' ) }
+									onCancel={ () => setIsConfirmModalVisible( false ) }
+									onConfirm={ () => deleteReview( review.id ) }
+								/>
+							</div>
 						</div>
-					</div>
-				</>
+					) }
+				</div>
 			) }
 		</div>
 	);
-}
+};

@@ -30,8 +30,8 @@ export const injectCategoryToPattern = (
 	return pattern;
 };
 
-export const isPriorityPattern = ( { tags: { assembler_priority } }: Pattern ) =>
-	isEnabled( 'pattern-assembler/v2' ) ? true : Boolean( assembler_priority );
+export const isPriorityPattern = ( { categories, tags: { assembler_priority } }: Pattern ) =>
+	isEnabled( 'pattern-assembler/v2' ) ? categories.featured : Boolean( assembler_priority );
 
 export const isPagePattern = ( { categories, tags: { assembler_page } }: Pattern ) =>
 	Boolean( isEnabled( 'pattern-assembler/v2' ) ? categories.page : assembler_page );
@@ -46,7 +46,7 @@ export const getTitleForRenamedCategories = ( category: Category = {} ) => {
 
 export const getPagePatternTitle = ( { categories }: Pattern ) => {
 	const category = ( Object.values( categories ) as Category[] ).find(
-		( { slug } ) => 'page' !== slug
+		( { slug } ) => 'page' !== slug && 'featured' !== slug
 	);
 	return getTitleForRenamedCategories( category );
 };

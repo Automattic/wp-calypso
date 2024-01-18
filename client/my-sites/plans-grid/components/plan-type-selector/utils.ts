@@ -1,6 +1,6 @@
 import { plansLink } from '@automattic/calypso-products';
 import { addQueryArgs } from '@wordpress/url';
-import { PlanTypeSelectorProps } from './types';
+import type { PlanTypeSelectorProps } from '../../types';
 interface PathArgs {
 	[ key: string ]: string | null;
 }

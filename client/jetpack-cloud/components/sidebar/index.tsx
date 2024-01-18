@@ -1,4 +1,3 @@
-import { isEnabled } from '@automattic/calypso-config';
 import { Icon, starEmpty } from '@wordpress/icons';
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
@@ -67,11 +66,8 @@ const JetpackCloudSidebar = ( {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 
-	const isUserFeedbackEnabled = isEnabled( 'jetpack/user-feedback-form' );
-
 	// Determine whether to initially show the user feedback form.
-	const shouldShowUserFeedbackForm =
-		isUserFeedbackEnabled && window.location.hash === USER_FEEDBACK_FORM_URL_HASH;
+	const shouldShowUserFeedbackForm = window.location.hash === USER_FEEDBACK_FORM_URL_HASH;
 
 	const [ showUserFeedbackForm, setShowUserFeedbackForm ] = useState( shouldShowUserFeedbackForm );
 
@@ -146,7 +142,7 @@ const JetpackCloudSidebar = ( {
 						} }
 					/>
 
-					{ isUserFeedbackEnabled && isAgency && (
+					{ isAgency && (
 						<SidebarNavigatorMenuItem
 							title={ translate( 'Share product feedback', {
 								comment: 'Jetpack Cloud sidebar navigation item',

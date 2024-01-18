@@ -31,7 +31,10 @@ import { IntervalLength } from 'calypso/my-sites/email/email-providers-compariso
 import EmailUpsellNavigation from 'calypso/my-sites/email/email-providers-comparison/stacked/provider-cards/email-upsell-navigation';
 import GoogleWorkspaceCard from 'calypso/my-sites/email/email-providers-comparison/stacked/provider-cards/google-workspace-card';
 import ProfessionalEmailCard from 'calypso/my-sites/email/email-providers-comparison/stacked/provider-cards/professional-email-card';
-import { emailManagement, emailManagementInDepthComparison } from 'calypso/my-sites/email/paths';
+import {
+	getEmailManagementPath,
+	getEmailInDepthComparisonPath,
+} from 'calypso/my-sites/email/paths';
 import { useDispatch, useSelector } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getProductBySlug } from 'calypso/state/products-list/selectors';
@@ -214,7 +217,7 @@ const EmailProvidersStackedComparison = ( {
 	const comparisonComponents = {
 		a: (
 			<a
-				href={ emailManagementInDepthComparison(
+				href={ getEmailInDepthComparisonPath(
 					selectedSite?.slug ?? '',
 					selectedDomainName,
 					currentRoute,
@@ -242,7 +245,7 @@ const EmailProvidersStackedComparison = ( {
 					backUrl={
 						isDomainInCart
 							? domainAddNew( selectedSite?.slug )
-							: emailManagement( selectedSite?.slug, null )
+							: getEmailManagementPath( selectedSite?.slug, null )
 					}
 					skipUrl={ isDomainInCart ? `/checkout/${ selectedSite?.slug }` : '' }
 				/>

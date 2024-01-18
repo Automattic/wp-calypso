@@ -1,6 +1,6 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { getPlan, PLAN_BUSINESS, PLAN_BUSINESS_MONTHLY } from '@automattic/calypso-products';
-import { CloudLogo, Button } from '@automattic/components';
+import { CloudLogo, Button, PlanPrice } from '@automattic/components';
 import { Title } from '@automattic/onboarding';
 import { useI18n } from '@wordpress/react-i18n';
 import classnames from 'classnames';
@@ -8,9 +8,7 @@ import React, { useState, useEffect } from 'react';
 import ButtonGroup from 'calypso/components/button-group';
 import QueryPlans from 'calypso/components/data/query-plans';
 import { useSelectedPlanUpgradeMutation } from 'calypso/data/import-flow/use-selected-plan-upgrade';
-import PlanPrice from 'calypso/my-sites/plan-price';
-import { Plans2023Tooltip } from 'calypso/my-sites/plans-grid/components/plans-2023-tooltip';
-import { useManageTooltipToggle } from 'calypso/my-sites/plans-grid/hooks/use-manage-tooltip-toggle';
+import { Plans2023Tooltip, useManageTooltipToggle } from 'calypso/my-sites/plans-grid';
 import { useSelector } from 'calypso/state';
 import { getCurrentUserCurrencyCode } from 'calypso/state/currency-code/selectors';
 import { getPlanRawPrice } from 'calypso/state/plans/selectors';

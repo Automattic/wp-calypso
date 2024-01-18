@@ -2,7 +2,6 @@ import config from '@automattic/calypso-config';
 import { FREE_THEME, BUNDLED_THEME, MARKETPLACE_THEME } from '@automattic/design-picker';
 import { DESIGN_FIRST_FLOW } from '@automattic/onboarding';
 import { addQueryArgs } from '@wordpress/url';
-import getThemeTier from 'calypso/components/theme-tier/get-theme-tier';
 import { getThemeType, isThemePremium } from 'calypso/state/themes/selectors';
 import 'calypso/state/themes/init';
 
@@ -23,7 +22,7 @@ export function getThemeSignupUrl( state, themeId, options = {} ) {
 
 	let themeTypeParam = themeType;
 	// Map theme tier values to the values expected by the signup flow.
-	const { themeTier } = getThemeTier( state, null, themeId );
+	const themeTier = options.themeTier;
 	// If there is no themeTier then there's nothing to map (dot-org themes don't have tiers)
 	if ( config.isEnabled( 'themes/tiers' ) && themeTier?.slug ) {
 		switch ( themeTier.slug ) {

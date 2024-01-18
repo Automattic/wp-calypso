@@ -14,7 +14,6 @@ import classnames from 'classnames';
 import { FC } from 'react';
 import { useSelector } from 'react-redux';
 import { Link, LinkProps } from 'react-router-dom';
-import { noop } from 'calypso/odie/context';
 import { getSectionName } from 'calypso/state/ui/selectors';
 /**
  * Internal Dependencies
@@ -37,6 +36,7 @@ const ConditionalLink: FC< { active: boolean } & LinkProps > = ( { active, ...pr
 	return <span { ...props }></span>;
 };
 
+const noop = () => {};
 type ContactOption = 'chat' | 'forum' | 'email';
 const generateContactOnClickEvent = (
 	contactOption: ContactOption,

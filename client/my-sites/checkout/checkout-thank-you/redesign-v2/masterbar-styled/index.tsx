@@ -24,8 +24,9 @@ const ItemStyled = styled( Item )`
 	font-size: 14px;
 	font-weight: 500;
 	padding: 0;
-	justify-content: left;
-	flex: 1;
+	flex: none;
+	margin-right: auto;
+	width: auto;
 
 	&:hover {
 		background: var( --studio-white );
@@ -53,8 +54,8 @@ const MasterbarStyled = ( {
 	contact = <DefaultMasterbarContact />,
 	showContact = true,
 }: {
-	onClick: () => void;
-	backText: string;
+	onClick?: () => void;
+	backText?: string;
 	canGoBack: boolean;
 	contact?: JSX.Element | null;
 	showContact?: boolean;
@@ -62,13 +63,13 @@ const MasterbarStyled = ( {
 	<MasterbarStyledBlock>
 		<Global
 			styles={ css`
-				body.is-section-checkout-thank-you {
+				body {
 					--masterbar-height: 72px;
 				}
 			` }
 		/>
 		<WordPressLogoStyled size={ 24 } />
-		{ canGoBack && (
+		{ canGoBack && backText && onClick && (
 			<ItemStyled icon="chevron-left" onClick={ onClick }>
 				{ backText }
 			</ItemStyled>

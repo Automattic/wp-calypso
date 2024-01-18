@@ -4,9 +4,6 @@
 /**
  * Default mock implementations
  */
-jest.mock( 'calypso/state/currency-code/selectors', () => ( {
-	getCurrentUserCurrencyCode: jest.fn(),
-} ) );
 jest.mock( '@wordpress/element', () => ( {
 	...jest.requireActual( '@wordpress/element' ),
 	useCallback: jest.fn(),
@@ -27,7 +24,7 @@ describe( 'PlanFeatures2023GridHeaderPrice', () => {
 	const defaultProps = {
 		isLargeCurrency: false,
 		planSlug: PLAN_PERSONAL as PlanSlug,
-		isPlanUpgradeCreditEligible: false,
+		planUpgradeCreditsApplicable: null,
 		visibleGridPlans: [],
 	};
 
@@ -52,9 +49,7 @@ describe( 'PlanFeatures2023GridHeaderPrice', () => {
 			},
 		} ) );
 
-		const { container } = render(
-			<PlanFeatures2023GridHeaderPrice isPlanUpgradeCreditEligible={ false } { ...defaultProps } />
-		);
+		const { container } = render( <PlanFeatures2023GridHeaderPrice { ...defaultProps } /> );
 		const rawPrice = container.querySelector( '.plan-price.is-original' );
 		const discountedPrice = container.querySelector( '.plan-price.is-discounted' );
 
@@ -79,9 +74,7 @@ describe( 'PlanFeatures2023GridHeaderPrice', () => {
 			},
 		} ) );
 
-		const { container } = render(
-			<PlanFeatures2023GridHeaderPrice isPlanUpgradeCreditEligible={ false } { ...defaultProps } />
-		);
+		const { container } = render( <PlanFeatures2023GridHeaderPrice { ...defaultProps } /> );
 		const rawPrice = container.querySelector( '.plan-price' );
 		const discountedPrice = container.querySelector( '.plan-price.is-discounted' );
 

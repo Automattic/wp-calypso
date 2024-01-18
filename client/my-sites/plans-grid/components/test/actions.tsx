@@ -4,12 +4,7 @@
 /**
  * Default mock implementations
  */
-jest.mock( 'calypso/state/selectors/get-domain-from-home-upsell-in-query', () => jest.fn() );
-jest.mock( 'calypso/components/external-link/with-tracking', () => jest.fn() );
 jest.mock( 'classnames', () => jest.fn() );
-jest.mock( 'calypso/lib/analytics/tracks', () => ( {
-	recordTracksEvent: jest.fn(),
-} ) );
 jest.mock( '@wordpress/data', () => ( {
 	useSelect: jest.fn(),
 	combineReducers: jest.fn(),
@@ -275,6 +270,37 @@ describe( 'PlanFeatures2023GridActions', () => {
 				const upgradeButton = screen.getByRole( 'button', { name: 'Upgrade – $20' } );
 
 				expect( upgradeButton ).toHaveTextContent( 'Upgrade – $20' );
+			} );
+
+			test( 'should render the post button text', () => {
+				const planActionOverrides = {
+					trialAlreadyUsed: {
+						postButtonText: "You've already used your free trial! Thanks!",
+					},
+				};
+
+				usePlansGridContext.mockImplementation( () => ( {
+					gridPlansIndex: {
+						[ PLAN_BUSINESS ]: {
+							pricing: {
+								...pricing,
+							},
+						},
+					},
+				} ) );
+				render(
+					<PlanFeatures2023GridActions
+						{ ...defaultProps }
+						planActionOverrides={ planActionOverrides }
+						isInSignup={ true }
+						planSlug={ PLAN_BUSINESS }
+						isStuck={ false }
+					/>
+				);
+
+				expect(
+					screen.getByText( planActionOverrides.trialAlreadyUsed.postButtonText )
+				).toBeInTheDocument();
 			} );
 		} );
 	} );

@@ -8,6 +8,7 @@ import {
 	isWooExpressSmallPlan,
 	isWpComFreePlan,
 	isWpcomEnterpriseGridPlan,
+	isFreePlan,
 } from '@automattic/calypso-products';
 import {
 	BloombergLogo,
@@ -23,7 +24,6 @@ import {
 import classNames from 'classnames';
 import { Component } from 'react';
 import { isStorageUpgradeableForPlan } from '../../lib/is-storage-upgradeable-for-plan';
-import { FeaturesGridProps } from '../../types';
 import { getStorageStringFromFeature } from '../../util';
 import PlanFeatures2023GridActions from '../actions';
 import PlanFeatures2023GridBillingTimeframe from '../billing-timeframe';
@@ -34,7 +34,7 @@ import PlanFeaturesContainer from '../plan-features-container';
 import PlanLogo from '../plan-logo';
 import { StickyContainer } from '../sticky-container';
 import StorageAddOnDropdown from '../storage-add-on-dropdown';
-import type { GridPlan } from '../../hooks/npm-ready/data-store/use-grid-plans';
+import type { FeaturesGridProps, GridPlan } from '../../types';
 
 type PlanRowOptions = {
 	isTableCell?: boolean;
@@ -130,13 +130,15 @@ class FeaturesGrid extends Component< FeaturesGridProps > {
 			getPlanClass( gridPlanForSpotlight.planSlug )
 		);
 
+		const isNotFreePlan = ! isFreePlan( gridPlanForSpotlight.planSlug );
+
 		return (
 			<div className={ spotlightPlanClasses }>
 				{ this.renderPlanLogos( [ gridPlanForSpotlight ] ) }
 				{ this.renderPlanHeaders( [ gridPlanForSpotlight ] ) }
-				{ this.renderPlanTagline( [ gridPlanForSpotlight ] ) }
-				{ this.renderPlanPrice( [ gridPlanForSpotlight ] ) }
-				{ this.renderBillingTimeframe( [ gridPlanForSpotlight ] ) }
+				{ isNotFreePlan && this.renderPlanTagline( [ gridPlanForSpotlight ] ) }
+				{ isNotFreePlan && this.renderPlanPrice( [ gridPlanForSpotlight ] ) }
+				{ isNotFreePlan && this.renderBillingTimeframe( [ gridPlanForSpotlight ] ) }
 				{ this.renderPlanStorageOptions( [ gridPlanForSpotlight ] ) }
 				{ this.renderTopButtons( [ gridPlanForSpotlight ] ) }
 			</div>
@@ -144,7 +146,7 @@ class FeaturesGrid extends Component< FeaturesGridProps > {
 	}
 
 	renderMobileView() {
-		const { translate, selectedFeature, gridPlans, gridPlanForSpotlight } = this.props;
+		const { translate, selectedFeature, gridPlans, gridPlanForSpotlight, isInSignup } = this.props;
 		const CardContainer = (
 			props: React.ComponentProps< typeof FoldableCard > & { planSlug: string }
 		) => {
@@ -171,13 +173,16 @@ class FeaturesGrid extends Component< FeaturesGridProps > {
 					'plan-features-2023-grid__mobile-plan-card',
 					getPlanClass( gridPlan.planSlug )
 				);
+
+				const isNotFreePlan = ! isFreePlan( gridPlan.planSlug );
+
 				const planCardJsx = (
 					<div className={ planCardClasses } key={ `${ gridPlan.planSlug }-${ index }` }>
 						{ this.renderPlanLogos( [ gridPlan ] ) }
 						{ this.renderPlanHeaders( [ gridPlan ] ) }
-						{ this.renderPlanTagline( [ gridPlan ] ) }
-						{ this.renderPlanPrice( [ gridPlan ] ) }
-						{ this.renderBillingTimeframe( [ gridPlan ] ) }
+						{ isNotFreePlan && isInSignup && this.renderPlanTagline( [ gridPlan ] ) }
+						{ isNotFreePlan && this.renderPlanPrice( [ gridPlan ] ) }
+						{ isNotFreePlan && this.renderBillingTimeframe( [ gridPlan ] ) }
 						{ this.renderMobileFreeDomain( gridPlan ) }
 						{ this.renderPlanStorageOptions( [ gridPlan ] ) }
 						{ this.renderTopButtons( [ gridPlan ] ) }
@@ -239,7 +244,7 @@ class FeaturesGrid extends Component< FeaturesGridProps > {
 	}
 
 	renderPlanPrice( renderedGridPlans: GridPlan[], options?: PlanRowOptions ) {
-		const { isLargeCurrency, isPlanUpgradeCreditEligible, currentSitePlanSlug } = this.props;
+		const { isLargeCurrency, planUpgradeCreditsApplicable, currentSitePlanSlug } = this.props;
 		return renderedGridPlans.map( ( { planSlug } ) => {
 			return (
 				<PlanDivOrTdContainer
@@ -250,7 +255,7 @@ class FeaturesGrid extends Component< FeaturesGridProps > {
 				>
 					<PlanFeatures2023GridHeaderPrice
 						planSlug={ planSlug }
-						isPlanUpgradeCreditEligible={ isPlanUpgradeCreditEligible }
+						planUpgradeCreditsApplicable={ planUpgradeCreditsApplicable }
 						isLargeCurrency={ isLargeCurrency }
 						currentSitePlanSlug={ currentSitePlanSlug }
 						visibleGridPlans={ renderedGridPlans }

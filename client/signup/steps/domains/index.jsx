@@ -1,4 +1,4 @@
-import { PLAN_PERSONAL, isFreeWordPressComDomain } from '@automattic/calypso-products';
+import { PLAN_PERSONAL } from '@automattic/calypso-products';
 import page from '@automattic/calypso-router';
 import { Spinner } from '@automattic/components';
 import { VIDEOPRESS_FLOW, isWithThemeFlow, isHostingSignupFlow } from '@automattic/onboarding';
@@ -36,11 +36,10 @@ import {
 	getFixedDomainSearch,
 } from 'calypso/lib/domains';
 import { getSuggestionsVendor } from 'calypso/lib/domains/suggestions';
-import { ProvideExperimentData, useExperiment } from 'calypso/lib/explat';
-import { logToLogstash } from 'calypso/lib/logstash';
+import { useExperiment } from 'calypso/lib/explat';
+import { triggerGuidesForStep } from 'calypso/lib/guides/trigger-guides-for-step';
 import { getSitePropertyDefaults } from 'calypso/lib/signup/site-properties';
 import { maybeExcludeEmailsStep } from 'calypso/lib/signup/step-actions';
-import wpcom from 'calypso/lib/wp';
 import CalypsoShoppingCartProvider from 'calypso/my-sites/checkout/calypso-shopping-cart-provider';
 import withCartKey from 'calypso/my-sites/checkout/with-cart-key';
 import { domainManagementRoot } from 'calypso/my-sites/domains/paths';
@@ -166,17 +165,7 @@ export class RenderDomainsStep extends Component {
 
 	componentDidMount() {
 		if ( isTailoredSignupFlow( this.props.flowName ) ) {
-			// trigger guides on this step, we don't care about failures or response
-			wpcom.req.post(
-				'guides/trigger',
-				{
-					apiNamespace: 'wpcom/v2/',
-				},
-				{
-					flow: this.props.flowName,
-					step: 'domains',
-				}
-			);
+			triggerGuidesForStep( this.props.flowName, 'domains' );
 		}
 
 		// We add a plan to cart on Multi Domains to show the proper discount on the mini-cart.
@@ -1000,90 +989,65 @@ export class RenderDomainsStep extends Component {
 		const promoTlds = this.props?.queryObject?.tld?.split( ',' ) ?? null;
 
 		return (
-			<ProvideExperimentData
-				name="calypso_gf_signup_onboardingpm_domains_hide_free_subdomain_v2"
-				options={ {
-					isEligible: this.props.flowName === 'onboarding-pm',
-				} }
-			>
-				{ ( isLoadingExperiment, experimentAssignment ) => (
-					<RegisterDomainStep
-						key="domainForm"
-						path={ this.props.path }
-						initialState={ initialState }
-						onAddDomain={ async ( suggestion, position, previousState ) => {
-							if (
-								experimentAssignment?.variationName === 'treatment' &&
-								isFreeWordPressComDomain( suggestion )
-							) {
-								logToLogstash( {
-									feature: 'calypso_client',
-									message:
-										'hide free subdomain test: treatment group has falsely picked a free dotcom subdomain',
-									severity: 'error',
-								} );
-							}
-							await this.handleAddDomain( suggestion, position, previousState );
-						} }
-						onMappingError={ this.handleDomainMappingError }
-						checkDomainAvailabilityPromises={ this.state.checkDomainAvailabilityPromises }
-						isCartPendingUpdate={ this.props.shoppingCartManager.isPendingUpdate }
-						isCartPendingUpdateDomain={ this.state.isCartPendingUpdateDomain }
-						products={ this.props.productsList }
-						basePath={ this.props.path }
-						promoTlds={ promoTlds }
-						mapDomainUrl={ this.getUseYourDomainUrl() }
-						otherManagedSubdomains={ this.props.otherManagedSubdomains }
-						otherManagedSubdomainsCountOverride={ this.props.otherManagedSubdomainsCountOverride }
-						transferDomainUrl={ this.getUseYourDomainUrl() }
-						useYourDomainUrl={ this.getUseYourDomainUrl() }
-						onAddMapping={ this.handleAddMapping.bind( this, { sectionName: 'domainForm' } ) }
-						onSave={ this.handleSave.bind( this, 'domainForm' ) }
-						offerUnavailableOption={ ! this.props.isDomainOnly }
-						isDomainOnly={ this.props.isDomainOnly }
-						analyticsSection={ this.getAnalyticsSection() }
-						domainsWithPlansOnly={ this.props.domainsWithPlansOnly }
-						includeWordPressDotCom={
-							experimentAssignment?.variationName === 'treatment' ? false : includeWordPressDotCom
-						}
-						includeOwnedDomainInSuggestions={ ! this.props.isDomainOnly }
-						includeDotBlogSubdomain={ this.shouldIncludeDotBlogSubdomain() }
-						isSignupStep
-						isPlanSelectionAvailableInFlow={ this.props.isPlanSelectionAvailableLaterInFlow }
-						showExampleSuggestions={ showExampleSuggestions }
-						suggestion={ initialQuery }
-						designType={ this.getDesignType() }
-						vendor={ getSuggestionsVendor( {
-							isSignup: true,
-							isDomainOnly: this.props.isDomainOnly,
-							flowName: this.props.flowName,
-						} ) }
-						deemphasiseTlds={ this.props.flowName === 'ecommerce' ? [ 'blog' ] : [] }
-						selectedSite={ this.props.selectedSite }
-						showSkipButton={ this.props.showSkipButton }
-						onSkip={ this.handleSkip }
-						hideFreePlan={ this.handleSkip }
-						forceHideFreeDomainExplainerAndStrikeoutUi={
-							this.props.forceHideFreeDomainExplainerAndStrikeoutUi
-						}
-						isReskinned={ this.props.isReskinned }
-						reskinSideContent={ this.getSideContent() }
-						isInLaunchFlow={ 'launch-site' === this.props.flowName }
-						promptText={
-							this.isHostingFlow()
-								? this.props.translate( 'Stand out with a short and memorable domain' )
-								: undefined
-						}
-						wpcomSubdomainSelected={ this.state.wpcomSubdomainSelected }
-						hasPendingRequests={ isLoadingExperiment }
-						temporaryCart={ this.state.temporaryCart }
-						domainRemovalQueue={ this.state.domainRemovalQueue }
-						forceExactSuggestion={ this.props?.queryObject?.source === 'general-settings' }
-						replaceDomainFailedMessage={ this.state.replaceDomainFailedMessage }
-						dismissReplaceDomainFailed={ this.dismissReplaceDomainFailed }
-					/>
-				) }
-			</ProvideExperimentData>
+			<RegisterDomainStep
+				key="domainForm"
+				path={ this.props.path }
+				initialState={ initialState }
+				onAddDomain={ this.handleAddDomain }
+				onMappingError={ this.handleDomainMappingError }
+				checkDomainAvailabilityPromises={ this.state.checkDomainAvailabilityPromises }
+				isCartPendingUpdate={ this.props.shoppingCartManager.isPendingUpdate }
+				isCartPendingUpdateDomain={ this.state.isCartPendingUpdateDomain }
+				products={ this.props.productsList }
+				basePath={ this.props.path }
+				promoTlds={ promoTlds }
+				mapDomainUrl={ this.getUseYourDomainUrl() }
+				otherManagedSubdomains={ this.props.otherManagedSubdomains }
+				otherManagedSubdomainsCountOverride={ this.props.otherManagedSubdomainsCountOverride }
+				transferDomainUrl={ this.getUseYourDomainUrl() }
+				useYourDomainUrl={ this.getUseYourDomainUrl() }
+				onAddMapping={ this.handleAddMapping.bind( this, { sectionName: 'domainForm' } ) }
+				onSave={ this.handleSave.bind( this, 'domainForm' ) }
+				offerUnavailableOption={ ! this.props.isDomainOnly }
+				isDomainOnly={ this.props.isDomainOnly }
+				analyticsSection={ this.getAnalyticsSection() }
+				domainsWithPlansOnly={ this.props.domainsWithPlansOnly }
+				includeWordPressDotCom={ includeWordPressDotCom }
+				includeOwnedDomainInSuggestions={ ! this.props.isDomainOnly }
+				includeDotBlogSubdomain={ this.shouldIncludeDotBlogSubdomain() }
+				isSignupStep
+				isPlanSelectionAvailableInFlow={ this.props.isPlanSelectionAvailableLaterInFlow }
+				showExampleSuggestions={ showExampleSuggestions }
+				suggestion={ initialQuery }
+				designType={ this.getDesignType() }
+				vendor={ getSuggestionsVendor( {
+					isSignup: true,
+					isDomainOnly: this.props.isDomainOnly,
+					flowName: this.props.flowName,
+				} ) }
+				deemphasiseTlds={ this.props.flowName === 'ecommerce' ? [ 'blog' ] : [] }
+				selectedSite={ this.props.selectedSite }
+				showSkipButton={ this.props.showSkipButton }
+				onSkip={ this.handleSkip }
+				hideFreePlan={ this.handleSkip }
+				forceHideFreeDomainExplainerAndStrikeoutUi={
+					this.props.forceHideFreeDomainExplainerAndStrikeoutUi
+				}
+				isReskinned={ this.props.isReskinned }
+				reskinSideContent={ this.getSideContent() }
+				isInLaunchFlow={ 'launch-site' === this.props.flowName }
+				promptText={
+					this.isHostingFlow()
+						? this.props.translate( 'Stand out with a short and memorable domain' )
+						: undefined
+				}
+				wpcomSubdomainSelected={ this.state.wpcomSubdomainSelected }
+				temporaryCart={ this.state.temporaryCart }
+				domainRemovalQueue={ this.state.domainRemovalQueue }
+				forceExactSuggestion={ this.props?.queryObject?.source === 'general-settings' }
+				replaceDomainFailedMessage={ this.state.replaceDomainFailedMessage }
+				dismissReplaceDomainFailed={ this.dismissReplaceDomainFailed }
+			/>
 		);
 	};
 

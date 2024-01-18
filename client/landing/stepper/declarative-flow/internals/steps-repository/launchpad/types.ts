@@ -1,8 +1,9 @@
-import { ChecklistStatuses, type SiteDetails } from '@automattic/data-stores';
-//TODO: Temporary export until we can replace all depencecies with ./types.ts Task;
+//TODO: Temporary export until we can replace all dependencies with ./types.ts Task;
 export type { Task } from '@automattic/launchpad';
+import { ChecklistStatuses, SiteDetails } from '@automattic/data-stores';
 import { Task } from '@automattic/launchpad';
 import { MinimalRequestCartProduct } from '@automattic/shopping-cart';
+import { ReactNode } from 'react';
 import { NavigationControls } from '../../types';
 
 export type LaunchpadChecklist = Task[];
@@ -20,48 +21,34 @@ export interface TranslatedLaunchpadStrings {
 
 export type TaskId =
 	| 'setup_free'
-	| 'design_edited'
-	| 'design_completed'
+	| 'setup_newsletter'
 	| 'design_selected'
+	| 'design_completed'
+	| 'verify_email'
+	| 'design_edited'
 	| 'domain_upsell'
 	| 'first_post_published'
 	| 'first_post_published_newsletter'
-	| 'setup_blog'
-	| 'setup_newsletter'
-	| 'verify_email'
 	| 'site_launched'
-	| 'plan_selected';
-//
-// TODO: Add the rest of the task ids
-// | 'plan_completed'
-// | 'subscribers_added'
-// | 'migrate_content'
-// | 'setup_general'
-// | 'setup_link_in_bio'
-// | 'links_added'
-// | 'link_in_bio_launched'
-// | 'blog_launched'
-// | 'videopress_upload'
-// | 'videopress_launched'
-// | 'set_up_payments'
-// | 'newsletter_plan_created';
+	| 'plan_selected'
+	| 'site_launched';
 
 export interface TaskContext {
-	siteInfoQueryArgs?: { siteId?: number; siteSlug?: string | null };
-	displayGlobalStylesWarning: boolean;
-	shouldDisplayWarning?: boolean;
-	globalStylesMinimumPlan?: string;
-	isVideoPressFlowWithUnsupportedPlan?: boolean;
-	site: SiteDetails | null;
-	domainUpsellCompleted: boolean;
-	isEmailVerified: boolean;
 	tasks: Task[];
+	site: SiteDetails | null;
+	siteInfoQueryArgs?: { siteId?: number; siteSlug?: string | null };
 	checklistStatuses?: ChecklistStatuses;
+	isEmailVerified: boolean;
 	planCartItem?: MinimalRequestCartProduct | null;
 	domainCartItem?: MinimalRequestCartProduct | null;
 	productCartItems?: MinimalRequestCartProduct[] | null;
 	siteSlug: string | null;
 	submit: NavigationControls[ 'submit' ];
+	displayGlobalStylesWarning: boolean;
+	shouldDisplayWarning: boolean;
+	globalStylesMinimumPlan: string;
+	isVideoPressFlowWithUnsupportedPlan: boolean;
+	translatedPlanName?: ReactNode | string;
 }
 
 export type TaskAction = ( task: Task, flow: string, context: TaskContext ) => Task;

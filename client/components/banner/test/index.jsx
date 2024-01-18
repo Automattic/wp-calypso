@@ -9,15 +9,6 @@ import preferencesReducer from 'calypso/state/preferences/reducer';
 import { renderWithProvider } from 'calypso/test-helpers/testing-library';
 import { Banner } from '../index';
 
-jest.mock( 'calypso/my-sites/plan-price', () => ( { rawPrice, original } ) => (
-	<div
-		data-testid="banner-price-plan-mock"
-		className={ original ? 'is-original' : 'is-discounted' }
-	>
-		{ rawPrice }
-	</div>
-) );
-
 jest.mock( 'calypso/state/analytics/actions', () => ( {
 	recordTracksEvent: jest.fn( () => ( {
 		type: 'ANALYTICS_EVENT_RECORD',
@@ -77,23 +68,24 @@ describe( 'Banner basic tests', () => {
 	} );
 
 	test( 'should render a <PlanPrice /> when price is specified', () => {
-		render( <Banner { ...props } price={ 100 } /> );
-		expect( screen.queryByTestId( 'banner-price-plan-mock' ) ).toHaveTextContent( '100' );
+		const { container } = render( <Banner { ...props } price={ 100 } /> );
+		expect( container.getElementsByClassName( 'plan-price' ) ).toHaveLength( 1 );
+		const [ price ] = container.getElementsByClassName( 'plan-price__integer' );
+		expect( price ).toHaveTextContent( '100' );
 	} );
 
 	test( 'should render two <PlanPrice /> components when there are two prices', () => {
-		render( <Banner { ...props } price={ [ 100, 80 ] } /> );
-		const planPriceMock = screen.queryAllByTestId( 'banner-price-plan-mock' );
-		expect( planPriceMock ).toHaveLength( 2 );
-		expect( planPriceMock[ 0 ] ).toHaveTextContent( 100 );
-		expect( planPriceMock[ 0 ] ).toHaveAttribute( 'class', 'is-original' );
-		expect( planPriceMock[ 1 ] ).toHaveTextContent( 80 );
-		expect( planPriceMock[ 1 ] ).toHaveAttribute( 'class', 'is-discounted' );
+		const { container } = render( <Banner { ...props } price={ [ 100, 80 ] } /> );
+		expect( container.getElementsByClassName( 'plan-price' ) ).toHaveLength( 2 );
+
+		const [ price1, price2 ] = container.getElementsByClassName( 'plan-price__integer' );
+		expect( price1 ).toHaveTextContent( 100 );
+		expect( price2 ).toHaveTextContent( 80 );
 	} );
 
 	test( 'should render no <PlanPrice /> components when there are no prices', () => {
 		render( <Banner { ...props } /> );
-		expect( screen.queryByTestId( 'banner-price-plan-mock' ) ).not.toBeInTheDocument();
+		expect( screen.queryByTestId( 'plan-price' ) ).not.toBeInTheDocument();
 	} );
 
 	test( 'should render a .banner__description when description is specified', () => {

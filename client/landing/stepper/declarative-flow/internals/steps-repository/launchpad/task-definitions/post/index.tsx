@@ -2,11 +2,12 @@ import { Task } from '@automattic/launchpad';
 import { isBlogOnboardingFlow, isNewsletterFlow } from '@automattic/onboarding';
 import { addQueryArgs } from '@wordpress/url';
 import { recordTaskClickTracksEvent } from '../../tracking';
-import { TaskAction, TaskActionTable } from '../../types';
+import { TaskAction } from '../../types';
 
 const getFirstPostPublished: TaskAction = ( task, flow, context ): Task => {
 	const { siteInfoQueryArgs, isEmailVerified } = context;
 	const mustVerifyEmailBeforePosting = isNewsletterFlow( flow || null ) && ! isEmailVerified;
+
 	return {
 		...task,
 		disabled:
@@ -23,6 +24,6 @@ const getFirstPostPublished: TaskAction = ( task, flow, context ): Task => {
 	};
 };
 
-export const actions: Partial< TaskActionTable > = {
+export const actions = {
 	first_post_published: getFirstPostPublished,
 };

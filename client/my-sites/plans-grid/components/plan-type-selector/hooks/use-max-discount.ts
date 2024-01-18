@@ -1,16 +1,16 @@
 import {
-	PlanSlug,
+	type PlanSlug,
 	TERM_ANNUALLY,
 	getPlanSlugForTermVariant,
 	isMonthly,
 	isWpComPlan,
 } from '@automattic/calypso-products';
+import { Plans } from '@automattic/data-stores';
 import { useState } from '@wordpress/element';
-import { UsePricingMetaForGridPlans } from 'calypso/my-sites/plans-grid/hooks/npm-ready/data-store/use-grid-plans';
 
 export default function useMaxDiscount(
 	plans: PlanSlug[],
-	usePricingMetaForGridPlans: UsePricingMetaForGridPlans,
+	useCheckPlanAvailabilityForPurchase: Plans.UseCheckPlanAvailabilityForPurchase,
 	selectedSiteId?: number | null
 ): number {
 	const [ maxDiscount, setMaxDiscount ] = useState( 0 );
@@ -18,22 +18,21 @@ export default function useMaxDiscount(
 	const yearlyVariantPlanSlugs = wpcomMonthlyPlans
 		.map( ( planSlug ) => getPlanSlugForTermVariant( planSlug, TERM_ANNUALLY ) )
 		.filter( Boolean ) as PlanSlug[];
-
-	// TODO clk pricing
-	const monthlyPlansPricing = usePricingMetaForGridPlans( {
+	const monthlyPlansPricing = Plans.usePricingMetaForGridPlans( {
 		planSlugs: wpcomMonthlyPlans,
-		withoutProRatedCredits: true,
-		storageAddOns: null,
+		withoutPlanUpgradeCredits: true,
 		selectedSiteId,
 		coupon: undefined,
+		useCheckPlanAvailabilityForPurchase,
+		storageAddOns: null,
 	} );
-	// TODO clk pricing
-	const yearlyPlansPricing = usePricingMetaForGridPlans( {
+	const yearlyPlansPricing = Plans.usePricingMetaForGridPlans( {
 		planSlugs: yearlyVariantPlanSlugs,
-		withoutProRatedCredits: true,
-		storageAddOns: null,
+		withoutPlanUpgradeCredits: true,
 		selectedSiteId,
 		coupon: undefined,
+		useCheckPlanAvailabilityForPurchase,
+		storageAddOns: null,
 	} );
 
 	const discounts = wpcomMonthlyPlans.map( ( planSlug ) => {

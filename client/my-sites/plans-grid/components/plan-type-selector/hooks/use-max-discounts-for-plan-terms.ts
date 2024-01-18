@@ -1,7 +1,7 @@
 import {
-	PlanSlug,
+	type PlanSlug,
 	URL_FRIENDLY_TERMS_MAPPING,
-	UrlFriendlyTermType,
+	type UrlFriendlyTermType,
 	getBillingMonthsForTerm,
 	getPlan,
 	getPlanMultipleTermsVariantSlugs,
@@ -9,19 +9,18 @@ import {
 	isWpComPlan,
 	isWpcomEnterpriseGridPlan,
 } from '@automattic/calypso-products';
-import { UsePricingMetaForGridPlans } from 'calypso/my-sites/plans-grid/hooks/npm-ready/data-store/use-grid-plans';
+import { Plans } from '@automattic/data-stores';
 
 /**
  * Calculate the maximum discount for each term for a given set of plans
  * @param plans plans considered
  * @param urlFriendlyTerms terms calculated for
- * @param usePricingMetaForGridPlans price calculation hook
  * @returns A map of term to maximum discount
  */
 export default function useMaxDiscountsForPlanTerms(
 	plans: PlanSlug[],
 	urlFriendlyTerms: UrlFriendlyTermType[] = [],
-	usePricingMetaForGridPlans: UsePricingMetaForGridPlans,
+	useCheckPlanAvailabilityForPurchase: Plans.UseCheckPlanAvailabilityForPurchase,
 	selectedSiteId?: number | null
 ): Record< UrlFriendlyTermType, number > {
 	const termDefinitionsMapping = urlFriendlyTerms.map( ( urlFriendlyTerm ) => ( {
@@ -48,13 +47,13 @@ export default function useMaxDiscountsForPlanTerms(
 		( planSlug ) => getPlan( planSlug )?.term === lowestTerm
 	);
 
-	// TODO clk pricing
-	const plansPricing = usePricingMetaForGridPlans( {
+	const plansPricing = Plans.usePricingMetaForGridPlans( {
 		planSlugs: allRelatedPlanSlugs,
-		withoutProRatedCredits: true,
-		storageAddOns: null,
+		withoutPlanUpgradeCredits: true,
 		selectedSiteId,
 		coupon: undefined,
+		useCheckPlanAvailabilityForPurchase,
+		storageAddOns: null,
 	} );
 
 	const termWiseMaxDiscount: Record< UrlFriendlyTermType, number > = {} as Record<

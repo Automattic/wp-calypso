@@ -1,7 +1,13 @@
 import { localizeUrl } from '@automattic/i18n-utils';
 import { useTranslate } from 'i18n-calypso';
-import { useSelector } from 'react-redux';
+import { useEffect } from 'react';
+import { useDispatch, useSelector } from 'calypso/state';
+import { requestJetpackConnectionHealthStatus } from 'calypso/state/jetpack-connection-health/actions';
+import getJetpackConnectionHealth from 'calypso/state/jetpack-connection-health/selectors/get-jetpack-connection-health';
+import getJetpackConnectionHealthRequestError from 'calypso/state/jetpack-connection-health/selectors/get-jetpack-connection-health-request-error';
+import { shouldRequestJetpackConnectionHealthStatus } from 'calypso/state/jetpack-connection-health/selectors/should-request-jetpack-connection-health-status';
 import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
+import { AppState } from 'calypso/types';
 import {
 	DATABASE_ERROR,
 	FATAL_ERROR,
@@ -17,7 +23,6 @@ import {
 	XMLRPC_ERROR,
 } from './constants';
 import { ErrorNotice } from './error-notice';
-import { useCheckJetpackConnectionHealth } from './use-check-jetpack-connection-health';
 
 interface Props {
 	siteId: number;
@@ -25,21 +30,31 @@ interface Props {
 
 export const JetpackConnectionHealthBanner = ( { siteId }: Props ) => {
 	const translate = useTranslate();
+	const dispatch = useDispatch();
 	const siteIsAutomatedTransfer = useSelector(
 		( state ) => !! isSiteAutomatedTransfer( state, siteId )
 	);
 
-	const {
-		data: jetpackConnectionHealth,
-		isLoading: isLoadingJetpackConnectionHealth,
-		isError: isErrorCheckJetpackConnectionHealth,
-	} = useCheckJetpackConnectionHealth( siteId );
+	const shouldRequestJetpackConnectionHealth = useSelector( ( state ) =>
+		shouldRequestJetpackConnectionHealthStatus( state, siteId )
+	);
 
-	if (
-		isLoadingJetpackConnectionHealth ||
-		isErrorCheckJetpackConnectionHealth ||
-		jetpackConnectionHealth?.is_healthy
-	) {
+	const isJetpackConnectionHealthAPIError = useSelector( ( state ) =>
+		getJetpackConnectionHealthRequestError( state as AppState, siteId )
+	);
+
+	const jetpackConnectionHealth = useSelector( ( state ) =>
+		getJetpackConnectionHealth( state as AppState, siteId )
+	);
+
+	useEffect( () => {
+		if ( ! shouldRequestJetpackConnectionHealth ) {
+			return;
+		}
+		dispatch( requestJetpackConnectionHealthStatus( siteId ) );
+	}, [ dispatch, shouldRequestJetpackConnectionHealth, siteId ] );
+
+	if ( isJetpackConnectionHealthAPIError || ! jetpackConnectionHealth?.error ) {
 		return;
 	}
 

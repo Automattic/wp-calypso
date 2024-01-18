@@ -1,4 +1,5 @@
-import { Task, TaskId, TaskContext } from '../types';
+import { isEnabled } from '@automattic/calypso-config';
+import { Task, TaskId, TaskContext, TaskActionTable } from '../types';
 import { actions as designActions } from './design';
 import { actions as domainActions } from './domain';
 import { actions as emailActions } from './email';
@@ -8,21 +9,33 @@ import { actions as postActions } from './post';
 import { actions as setupActions } from './setup';
 import { actions as siteActions } from './site';
 
-const ALL_ACTIONS = new Map(
-	Object.entries( {
-		...planActions,
-		...setupActions,
-		...designActions,
-		...domainActions,
-		...postActions,
-		...siteActions,
-		...newsLetterActions,
-		...emailActions,
-	} )
-);
+const DEFINITIONS = {
+	...setupActions,
+	...designActions,
+	...domainActions,
+	...postActions,
+	...siteActions,
+	...planActions,
+	...emailActions,
+	...newsLetterActions,
+} satisfies TaskActionTable;
+
+export const FLAG_NAME = 'launchpad/new-task-definition-parser';
+
+const isNewDefinitionAvailable = ( flow: string, taskId: string ) => {
+	const isTaskAvailable = taskId in DEFINITIONS;
+	const isFeatureEnabled = isEnabled( FLAG_NAME ) && isEnabled( `${ FLAG_NAME }/${ flow }` );
+
+	return isTaskAvailable && isFeatureEnabled;
+};
 
 export const getTaskDefinition = ( flow: string, task: Task, context: TaskContext ) => {
-	return ALL_ACTIONS.has( task.id as TaskId )
-		? ALL_ACTIONS.get( task.id as TaskId )?.( task, flow, context )
-		: null;
+	if ( ! isNewDefinitionAvailable( flow, task.id ) ) {
+		return null;
+	}
+
+	// eslint-disable-next-line no-console
+	console.log( 'Using new task definition parser', { taskId: task.id, flowId: flow } );
+
+	return DEFINITIONS[ task.id as TaskId ]( task, flow, context );
 };

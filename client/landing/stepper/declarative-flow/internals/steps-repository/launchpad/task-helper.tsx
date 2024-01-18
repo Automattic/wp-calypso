@@ -1,7 +1,7 @@
-import { isEnabled } from '@automattic/calypso-config';
 import {
 	FEATURE_VIDEO_UPLOADS,
 	planHasFeature,
+	FEATURE_STYLE_CUSTOMIZATION,
 	getPlans,
 	isFreePlanProduct,
 	PLAN_PREMIUM,
@@ -32,13 +32,13 @@ import { translate } from 'i18n-calypso';
 import { Dispatch, SetStateAction } from 'react';
 import { NavigationControls } from 'calypso/landing/stepper/declarative-flow/internals/types';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
+import { ADD_TIER_PLAN_HASH } from 'calypso/my-sites/earn/memberships/constants';
 import { isVideoPressFlow } from 'calypso/signup/is-flow';
 import { ONBOARD_STORE, SITE_STORE } from '../../../../stores';
 import { goToCheckout } from '../../../../utils/checkout';
-import { getDeprecatedTaskDefinition } from './get-deprecated-task-data';
 import { getTaskDefinition } from './task-definitions';
 import { launchpadFlowTasks } from './tasks';
-import { LaunchpadChecklist, Task } from './types';
+import { LaunchpadChecklist, Task, TaskContext } from './types';
 
 interface GetEnhancedTasksProps {
 	tasks: Task[] | null | undefined;
@@ -61,14 +61,6 @@ interface GetEnhancedTasksProps {
 
 const PLANS_LIST = getPlans();
 
-const MIGRATED_FLOWS = [ 'free', 'start-writing', 'design-first', 'newsletter' ];
-
-const shouldUseNewTaskDefinitions = ( flow: string ) => {
-	if ( isEnabled( 'launchpad/new-task-definition-parser' ) && MIGRATED_FLOWS.includes( flow ) ) {
-		return true;
-	}
-	return false;
-};
 /**
  * Some attributes of these enhanced tasks will soon be fetched through a WordPress REST
  * API, making said enhancements here unnecessary ( Ex. title, subtitle, completed,
@@ -99,6 +91,8 @@ export function getEnhancedTasks( {
 	if ( ! tasks ) {
 		return [];
 	}
+
+	const enhancedTaskList: Task[] = [];
 
 	const isCurrentPlanFree = site?.plan ? isFreePlanProduct( site?.plan ) : true;
 
@@ -277,71 +271,405 @@ export function getEnhancedTasks( {
 		submit?.();
 	};
 
-	return ( tasks || [] ).map( ( task ) => {
-		if ( shouldUseNewTaskDefinitions( flow ) ) {
-			const enhanced = getTaskDefinition( flow, task, {
-				checklistStatuses,
+	tasks &&
+		tasks.map( ( task ) => {
+			let taskData = {};
+			let deprecatedData = {};
+
+			const context: TaskContext = {
+				site,
 				tasks,
 				siteInfoQueryArgs,
-				displayGlobalStylesWarning,
-				globalStylesMinimumPlan,
-				domainUpsellCompleted,
-				site,
+				checklistStatuses,
 				isEmailVerified,
 				planCartItem,
-				siteSlug,
+				domainCartItem,
+				productCartItems,
 				submit,
-			} );
+				siteSlug,
+				displayGlobalStylesWarning,
+				shouldDisplayWarning,
+				globalStylesMinimumPlan,
+				isVideoPressFlowWithUnsupportedPlan,
+			};
 
-			if ( enhanced ) {
-				// eslint-disable-next-line no-console
-				console.log( 'using new task definitions', enhanced.id );
-				return enhanced;
+			switch ( task.id ) {
+				case 'setup_free':
+					// DEPRECATED: This task is deprecated and will be removed in the future
+					// eslint-disable-next-line no-case-declarations
+					deprecatedData = {
+						actionDispatch: () => {
+							recordTaskClickTracksEvent( flow, task.completed, task.id );
+							window.location.assign(
+								addQueryArgs( `/setup/${ flow }/freePostSetup`, siteInfoQueryArgs )
+							);
+						},
+					};
+
+					taskData = getTaskDefinition( flow, task, context ) || deprecatedData;
+					break;
+				case 'setup_blog':
+					deprecatedData = {
+						actionDispatch: () => {
+							recordTaskClickTracksEvent( flow, task.completed, task.id );
+							window.location.assign(
+								addQueryArgs( `/setup/${ flow }/setup-blog`, siteInfoQueryArgs )
+							);
+						},
+						disabled: task.completed && ! isBlogOnboardingFlow( flow ),
+					};
+					taskData = getTaskDefinition( flow, task, context ) || deprecatedData;
+					break;
+				case 'setup_newsletter':
+					taskData = {
+						actionDispatch: () => {
+							recordTaskClickTracksEvent( flow, task.completed, task.id );
+							window.location.assign(
+								addQueryArgs(
+									`/setup/newsletter-post-setup/newsletterPostSetup`,
+									siteInfoQueryArgs
+								)
+							);
+						},
+					};
+					break;
+				case 'design_edited':
+					deprecatedData = {
+						actionDispatch: () => {
+							recordTaskClickTracksEvent( flow, task.completed, task.id );
+							window.location.assign(
+								addQueryArgs( `/site-editor/${ siteSlug }`, {
+									canvas: 'edit',
+								} )
+							);
+						},
+					};
+					taskData = getTaskDefinition( flow, task, context ) || deprecatedData;
+					break;
+				case 'plan_selected':
+					/* eslint-disable no-case-declarations */
+					const openPlansPage = () => {
+						recordTaskClickTracksEvent( flow, task.completed, task.id );
+						if ( displayGlobalStylesWarning ) {
+							recordTracksEvent(
+								'calypso_launchpad_global_styles_gating_plan_selected_task_clicked',
+								{ flow }
+							);
+						}
+						const plansUrl = addQueryArgs( `/plans/${ siteSlug }`, {
+							...( shouldDisplayWarning && {
+								plan: globalStylesMinimumPlan,
+								feature: isVideoPressFlowWithUnsupportedPlan
+									? FEATURE_VIDEO_UPLOADS
+									: FEATURE_STYLE_CUSTOMIZATION,
+							} ),
+						} );
+						window.location.assign( plansUrl );
+					};
+
+					const completed = task.completed && ! isVideoPressFlowWithUnsupportedPlan;
+
+					deprecatedData = {
+						actionDispatch: openPlansPage,
+						completed,
+						subtitle: getPlanTaskSubtitle( task ),
+					};
+
+					taskData = getTaskDefinition( flow, task, context ) || deprecatedData;
+					break;
+				case 'plan_completed':
+					deprecatedData = {
+						actionDispatch: () => {
+							recordTaskClickTracksEvent( flow, task.completed, task.id );
+							const plansUrl = addQueryArgs( `/setup/${ flow }/plans`, siteInfoQueryArgs );
+
+							window.location.assign( plansUrl );
+						},
+						badge_text: task.completed ? translatedPlanName : task.badge_text,
+						subtitle: getPlanTaskSubtitle( task ),
+						disabled: task.completed && ! isCurrentPlanFree,
+					};
+					taskData = getTaskDefinition( flow, task, context ) || deprecatedData;
+					break;
+				case 'subscribers_added':
+					taskData = {
+						disabled: mustVerifyEmailBeforePosting || false,
+						actionDispatch: () => {
+							if ( goToStep ) {
+								recordTaskClickTracksEvent( flow, task.completed, task.id );
+								goToStep( 'subscribers' );
+							}
+						},
+					};
+					break;
+				case 'migrate_content':
+					taskData = {
+						disabled: mustVerifyEmailBeforePosting || false,
+						actionDispatch: () => {
+							recordTaskClickTracksEvent( flow, task.completed, task.id );
+
+							// Mark task done
+							completeMigrateContentTask();
+
+							// Go to importers
+							window.location.assign( `/import/${ siteSlug }` );
+						},
+					};
+					break;
+				case 'first_post_published':
+					deprecatedData = {
+						disabled:
+							mustVerifyEmailBeforePosting ||
+							( task.completed && isBlogOnboardingFlow( flow || null ) ) ||
+							false,
+						actionDispatch: () => {
+							recordTaskClickTracksEvent( flow, task.completed, task.id );
+							const newPostUrl = ! isBlogOnboardingFlow( flow || null )
+								? `/post/${ siteSlug }`
+								: addQueryArgs( `https://${ siteSlug }/wp-admin/post-new.php`, {
+										origin: window.location.origin,
+								  } );
+							window.location.assign( newPostUrl );
+						},
+					};
+
+					taskData = getTaskDefinition( flow, task, context ) || deprecatedData;
+					break;
+				case 'first_post_published_newsletter':
+					taskData = {
+						isLaunchTask: true,
+						disabled: mustVerifyEmailBeforePosting || false,
+						actionDispatch: () => {
+							recordTaskClickTracksEvent( flow, task.completed, task.id );
+							window.location.assign( `/post/${ siteSlug }` );
+						},
+					};
+					break;
+				case 'design_selected':
+				case 'design_completed':
+					deprecatedData = {
+						actionDispatch: () => {
+							recordTaskClickTracksEvent( flow, task.completed, task.id );
+							window.location.assign(
+								addQueryArgs( `/setup/update-design/designSetup`, {
+									...siteInfoQueryArgs,
+									flowToReturnTo: flow,
+								} )
+							);
+						},
+					};
+
+					taskData = getTaskDefinition( flow, task, context ) || deprecatedData;
+				case 'setup_general':
+					taskData = {
+						disabled: false,
+						actionDispatch: () => {
+							recordTaskClickTracksEvent( flow, task.completed, task.id );
+							window.location.assign(
+								addQueryArgs( `/setup/update-options/options`, {
+									...siteInfoQueryArgs,
+									flowToReturnTo: flow,
+								} )
+							);
+						},
+					};
+					break;
+				case 'setup_link_in_bio':
+					taskData = {
+						actionDispatch: () => {
+							recordTaskClickTracksEvent( flow, task.completed, task.id );
+							window.location.assign(
+								addQueryArgs(
+									`/setup/link-in-bio-post-setup/linkInBioPostSetup`,
+									siteInfoQueryArgs
+								)
+							);
+						},
+					};
+					break;
+				case 'links_added':
+					taskData = {
+						actionDispatch: () => {
+							recordTaskClickTracksEvent( flow, task.completed, task.id );
+							window.location.assign(
+								addQueryArgs( `/site-editor/${ siteSlug }`, {
+									canvas: 'edit',
+								} )
+							);
+						},
+					};
+					break;
+				case 'link_in_bio_launched':
+					taskData = {
+						isLaunchTask: true,
+						actionDispatch: () => {
+							if ( site?.ID ) {
+								const { setPendingAction, setProgressTitle } = dispatch(
+									ONBOARD_STORE
+								) as OnboardActions;
+								const { launchSite } = dispatch( SITE_STORE ) as SiteActions;
+
+								setPendingAction( async () => {
+									setProgressTitle( __( 'Launching Link in bio' ) );
+									await launchSite( site.ID );
+
+									// Waits for half a second so that the loading screen doesn't flash away too quickly
+									await new Promise( ( res ) => setTimeout( res, 500 ) );
+									recordTaskClickTracksEvent( flow, task.completed, task.id );
+									return { goToHome: true, siteSlug };
+								} );
+
+								submit?.();
+							}
+						},
+					};
+					break;
+				case 'site_launched':
+					deprecatedData = {
+						isLaunchTask: true,
+						title: getLaunchSiteTaskTitle( task ),
+						disabled: getIsLaunchSiteTaskDisabled(),
+						actionDispatch: () => {
+							completeLaunchSiteTask( task );
+						},
+					};
+					taskData = getTaskDefinition( flow, task, context ) || deprecatedData;
+					break;
+				case 'blog_launched': {
+					deprecatedData = {
+						isLaunchTask: true,
+						title: getLaunchSiteTaskTitle( task ),
+						disabled: getIsLaunchSiteTaskDisabled(),
+						actionDispatch: () => {
+							completeLaunchSiteTask( task );
+						},
+					};
+
+					taskData = getTaskDefinition( flow, task, context ) || deprecatedData;
+					break;
+				}
+				case 'videopress_upload':
+					taskData = {
+						actionUrl: launchpadUploadVideoLink,
+						disabled: isVideoPressFlowWithUnsupportedPlan || videoPressUploadCompleted,
+						actionDispatch: () => {
+							recordTaskClickTracksEvent( flow, task.completed, task.id );
+							window.location.replace( launchpadUploadVideoLink );
+						},
+					};
+					break;
+				case 'videopress_launched':
+					taskData = {
+						isLaunchTask: true,
+						actionDispatch: () => {
+							if ( site?.ID ) {
+								const { setPendingAction, setProgressTitle } = dispatch(
+									ONBOARD_STORE
+								) as OnboardActions;
+								const { launchSite } = dispatch( SITE_STORE ) as SiteActions;
+
+								setPendingAction( async () => {
+									setProgressTitle( __( 'Launching video site' ) );
+									await launchSite( site.ID );
+
+									// Waits for half a second so that the loading screen doesn't flash away too quickly
+									await new Promise( ( res ) => setTimeout( res, 500 ) );
+									window.location.replace(
+										addQueryArgs( `/home/${ siteSlug }`, {
+											forceLoadLaunchpadData: true,
+										} )
+									);
+								} );
+
+								submit?.();
+							}
+						},
+					};
+					break;
+				case 'domain_upsell':
+					deprecatedData = {
+						completed: domainUpsellCompleted,
+						actionDispatch: () => {
+							recordTaskClickTracksEvent( flow, domainUpsellCompleted, task.id );
+
+							if ( isBlogOnboardingFlow( flow ) || isSiteAssemblerFlow( flow ) ) {
+								window.location.assign(
+									addQueryArgs( `/setup/${ flow }/domains`, {
+										...siteInfoQueryArgs,
+										flowToReturnTo: flow,
+										new: site?.name,
+										domainAndPlanPackage: true,
+									} )
+								);
+
+								return;
+							}
+
+							const destinationUrl = domainUpsellCompleted
+								? `/domains/manage/${ siteSlug }`
+								: addQueryArgs( `/setup/domain-upsell/domains`, {
+										...siteInfoQueryArgs,
+										flowToReturnTo: flow,
+										new: site?.name,
+								  } );
+							window.location.assign( destinationUrl );
+						},
+						badge_text:
+							domainUpsellCompleted || isBlogOnboardingFlow( flow ) || isSiteAssemblerFlow( flow )
+								? ''
+								: translate( 'Upgrade plan' ),
+					};
+
+					taskData = getTaskDefinition( flow, task, context ) || deprecatedData;
+					break;
+				case 'verify_email':
+					taskData = {
+						completed: isEmailVerified,
+						actionDispatch: () => {
+							recordTaskClickTracksEvent( flow, task.completed, task.id );
+							window.location.replace( task.calypso_path || '/me/account' );
+						},
+					};
+					break;
+				case 'set_up_payments':
+					taskData = {
+						badge_text: task.completed ? translate( 'Connected' ) : null,
+						actionDispatch: () => {
+							recordTaskClickTracksEvent( flow, task.completed, task.id );
+							stripeConnectUrl
+								? window.location.assign( stripeConnectUrl )
+								: window.location.assign( `/earn/payments/${ siteSlug }#launchpad` );
+						},
+					};
+					break;
+				case 'newsletter_plan_created':
+					taskData = {
+						actionDispatch: () => {
+							recordTaskClickTracksEvent( flow, task.completed, task.id );
+							completePaidNewsletterTask();
+							site?.ID
+								? setShowPlansModal( true )
+								: window.location.assign(
+										`/earn/payments/${ siteSlug }?launchpad=add-product${ ADD_TIER_PLAN_HASH }`
+								  );
+						},
+					};
+					break;
 			}
-		}
-
-		return getDeprecatedTaskDefinition(
-			task,
-			flow,
-			siteInfoQueryArgs,
-			siteSlug,
-			displayGlobalStylesWarning,
-			shouldDisplayWarning,
-			globalStylesMinimumPlan,
-			isVideoPressFlowWithUnsupportedPlan,
-			getPlanTaskSubtitle,
-			translatedPlanName,
-			isCurrentPlanFree,
-			goToStep,
-			mustVerifyEmailBeforePosting,
-			completeMigrateContentTask,
-			site,
-			submit,
-			getLaunchSiteTaskTitle,
-			getIsLaunchSiteTaskDisabled,
-			completeLaunchSiteTask,
-			launchpadUploadVideoLink,
-			videoPressUploadCompleted,
-			domainUpsellCompleted,
-			isEmailVerified,
-			stripeConnectUrl,
-			completePaidNewsletterTask,
-			setShowPlansModal
-		);
-	} );
+			enhancedTaskList.push( { ...task, ...taskData } );
+		} );
+	return enhancedTaskList;
 }
 
 export function isDomainUpsellCompleted(
 	site: SiteDetails | null,
-	checklistStatuses: ChecklistStatuses
+	checklistStatuses?: ChecklistStatuses
 ): boolean {
 	return ! site?.plan?.is_free || checklistStatuses?.domain_upsell_deferred === true;
 }
 
-/**
- * @deprecated Please use recordTaskClickTracksEvent instead from tracking.ts
- */
-export function recordTaskClickTracksEvent(
+// Records a generic task click Tracks event
+function recordTaskClickTracksEvent(
 	flow: string | null | undefined,
 	is_completed: boolean,
 	task_id: string

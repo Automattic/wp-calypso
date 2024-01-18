@@ -33,6 +33,7 @@
 		"@automattic/components": "workspace:^",
 		"@automattic/data-stores": "workspace:^",
 		"@automattic/i18n-utils": "workspace:^",
+		"@automattic/search": "workspace:^",
 		"@automattic/typography": "workspace:^",
 		"@automattic/viewport": "workspace:^",
 		"@tanstack/react-query": "^5.15.5",
@@ -44,7 +45,7 @@
 	"devDependencies": {
 		"@automattic/calypso-build": "workspace:^",
 		"@automattic/calypso-typescript-config": "workspace:^",
-		"@testing-library/jest-dom": "^6.1.5",
+		"@testing-library/jest-dom": "^6.2.0",
 		"@testing-library/react": "^14.1.2",
 		"jest": "^29.7.0",
 		"postcss": "^8.4.5",

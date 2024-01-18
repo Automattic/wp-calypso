@@ -1,19 +1,78 @@
-import { FeatureObject } from 'calypso/lib/plans/features-list';
-import { type PlanTypeSelectorProps } from './components/plan-type-selector';
+import { Plans, type AddOnMeta } from '@automattic/data-stores';
 import type {
-	GridPlan,
-	PlansIntent,
-	UsePricingMetaForGridPlans,
-} from './hooks/npm-ready/data-store/use-grid-plans';
-import type { FeatureList, PlanSlug, WPComStorageAddOnSlug } from '@automattic/calypso-products';
+	UrlFriendlyTermType,
+	PlanSlug,
+	FeatureList,
+	WPComStorageAddOnSlug,
+	FeatureObject,
+	StorageOption,
+} from '@automattic/calypso-products';
 import type { MinimalRequestCartProduct } from '@automattic/shopping-cart';
 import type { LocalizeProps, TranslateResult } from 'i18n-calypso';
+
+/******************
+ * Grid Plan Types:
+ ******************/
 
 export type TransformedFeatureObject = FeatureObject & {
 	availableForCurrentPlan: boolean;
 	availableOnlyForAnnualPlans: boolean;
 	isHighlighted?: boolean;
 };
+
+export interface PlanFeaturesForGridPlan {
+	wpcomFeatures: TransformedFeatureObject[];
+	jetpackFeatures: TransformedFeatureObject[];
+	storageOptions: StorageOption[];
+	// used for comparison grid so far
+	conditionalFeatures?: FeatureObject[];
+}
+
+export interface GridPlan {
+	planSlug: PlanSlug;
+	freeTrialPlanSlug?: PlanSlug;
+	isVisible: boolean;
+	features: {
+		wpcomFeatures: TransformedFeatureObject[];
+		jetpackFeatures: TransformedFeatureObject[];
+		storageOptions: StorageOption[];
+		conditionalFeatures?: FeatureObject[];
+	};
+	tagline: TranslateResult;
+	planTitle: TranslateResult;
+	availableForPurchase: boolean;
+	pricing: Plans.PricingMetaForGridPlan;
+	storageAddOnsForPlan: ( AddOnMeta | null )[] | null;
+	productNameShort?: string | null;
+	billingTimeframe?: TranslateResult | null;
+	current?: boolean;
+	isMonthlyPlan?: boolean;
+	cartItemForPlan?: {
+		product_slug: string;
+	} | null;
+	highlightLabel?: React.ReactNode | null;
+}
+
+/***********************
+ * Grid Component Types:
+ ***********************/
+
+export type PlansIntent =
+	| 'plans-blog-onboarding'
+	| 'plans-newsletter'
+	| 'plans-link-in-bio'
+	| 'plans-new-hosted-site'
+	| 'plans-plugins'
+	| 'plans-jetpack-app'
+	| 'plans-jetpack-app-site-creation'
+	| 'plans-import'
+	| 'plans-woocommerce'
+	| 'plans-paid-media'
+	| 'plans-p2'
+	| 'plans-default-wpcom'
+	| 'plans-business-trial'
+	| 'plans-videopress'
+	| 'default';
 
 export interface PlanActionOverrides {
 	loggedInFreePlan?: {
@@ -24,6 +83,9 @@ export interface PlanActionOverrides {
 	currentPlan?: {
 		text?: TranslateResult;
 		callback?: () => void;
+	};
+	trialAlreadyUsed?: {
+		postButtonText?: TranslateResult;
 	};
 }
 
@@ -57,6 +119,7 @@ export interface CommonGridProps {
 	// only used for comparison grid
 	planTypeSelectorProps?: PlanTypeSelectorProps;
 	onUpgradeClick: ( planSlug: PlanSlug ) => void;
+	planUpgradeCreditsApplicable?: number | null;
 }
 
 export interface FeaturesGridProps extends CommonGridProps {
@@ -64,7 +127,6 @@ export interface FeaturesGridProps extends CommonGridProps {
 	isLargeCurrency: boolean;
 	translate: LocalizeProps[ 'translate' ];
 	currentPlanManageHref?: string;
-	isPlanUpgradeCreditEligible: boolean;
 	generatedWPComSubdomain: DataResponse< { domain_name: string } >;
 	gridPlanForSpotlight?: GridPlan;
 	isCustomDomainAllowedOnFreePlan: boolean; // indicate when a custom domain is allowed to be used with the Free plan.
@@ -82,7 +144,8 @@ export type GridContextProps = {
 	allFeaturesList: FeatureList;
 	intent?: PlansIntent;
 	selectedSiteId?: number | null;
-	usePricingMetaForGridPlans: UsePricingMetaForGridPlans;
+	useCheckPlanAvailabilityForPurchase: Plans.UseCheckPlanAvailabilityForPurchase;
+	recordTracksEvent?: ( eventName: string, eventProperties: Record< string, unknown > ) => void;
 	children: React.ReactNode;
 	coupon?: string;
 };
@@ -96,12 +159,75 @@ export type ComparisonGridExternalProps = Omit< GridContextProps, 'children' > &
 	};
 
 export type FeaturesGridExternalProps = Omit< GridContextProps, 'children' > &
-	Omit<
-		FeaturesGridProps,
-		'onUpgradeClick' | 'isLargeCurrency' | 'translate' | 'isPlanUpgradeCreditEligible'
-	> & {
+	Omit< FeaturesGridProps, 'onUpgradeClick' | 'isLargeCurrency' | 'translate' > & {
 		onUpgradeClick?: (
 			cartItems?: MinimalRequestCartProduct[] | null,
 			clickedPlanSlug?: PlanSlug
 		) => void;
 	};
+
+/************************
+ * PlanTypeSelector Types:
+ ************************/
+
+export type PlanTypeSelectorProps = {
+	kind: 'interval';
+	selectedSiteId?: number | null;
+	basePlansPath?: string | null;
+	intervalType: UrlFriendlyTermType;
+	customerType: string;
+	withDiscount?: string;
+	enableStickyBehavior?: boolean;
+	stickyPlanTypeSelectorOffset?: number;
+	onPlanIntervalChange: ( selectedItem: { key: SupportedUrlFriendlyTermType } ) => void;
+	layoutClassName?: string;
+	siteSlug?: string | null;
+	selectedPlan?: string;
+	selectedFeature?: string;
+	showPlanTypeSelectorDropdown?: boolean; // feature flag used for the plan selector dropdown
+	isInSignup: boolean;
+	plans: PlanSlug[];
+	eligibleForWpcomMonthlyPlans?: boolean;
+	isPlansInsideStepper: boolean;
+	hideDiscountLabel?: boolean;
+	redirectTo?: string | null;
+	isStepperUpgradeFlow: boolean;
+	currentSitePlanSlug?: PlanSlug | null;
+	useCheckPlanAvailabilityForPurchase: Plans.UseCheckPlanAvailabilityForPurchase;
+	recordTracksEvent?: ( eventName: string, eventProperties: Record< string, unknown > ) => void;
+	/**
+	 * Whether to render the selector along with a title if passed.
+	 */
+	title?: TranslateResult;
+	/**
+	 * Coupon code for use in pricing hook usage.
+	 */
+	coupon?: string;
+	displayedIntervals: UrlFriendlyTermType[];
+};
+
+export type IntervalTypeProps = Pick<
+	PlanTypeSelectorProps,
+	| 'intervalType'
+	| 'selectedSiteId'
+	| 'displayedIntervals'
+	| 'plans'
+	| 'isInSignup'
+	| 'eligibleForWpcomMonthlyPlans'
+	| 'isPlansInsideStepper'
+	| 'hideDiscountLabel'
+	| 'redirectTo'
+	| 'showPlanTypeSelectorDropdown'
+	| 'selectedPlan'
+	| 'selectedFeature'
+	| 'currentSitePlanSlug'
+	| 'useCheckPlanAvailabilityForPurchase'
+	| 'title'
+	| 'coupon'
+	| 'onPlanIntervalChange'
+>;
+
+export type SupportedUrlFriendlyTermType = Extract<
+	UrlFriendlyTermType,
+	'yearly' | '2yearly' | '3yearly' | 'monthly'
+>;

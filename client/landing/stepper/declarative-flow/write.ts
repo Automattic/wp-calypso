@@ -6,7 +6,7 @@ import { translate } from 'i18n-calypso';
 import { useEffect } from 'react';
 import { getLocaleFromQueryParam, getLocaleFromPathname } from 'calypso/boot/locale';
 import { skipLaunchpad } from 'calypso/landing/stepper/utils/skip-launchpad';
-import wpcom from 'calypso/lib/wp';
+import { triggerGuidesForStep } from 'calypso/lib/guides/trigger-guides-for-step';
 import { useSiteIdParam } from '../hooks/use-site-id-param';
 import { useSiteSlug } from '../hooks/use-site-slug';
 import { USER_STORE } from '../stores';
@@ -39,17 +39,7 @@ const write: Flow = {
 		const siteId = useSiteIdParam();
 		const siteSlug = useSiteSlug();
 
-		// trigger guides on step movement, we don't care about failures or response
-		wpcom.req.post(
-			'guides/trigger',
-			{
-				apiNamespace: 'wpcom/v2/',
-			},
-			{
-				flow: flowName,
-				step: _currentStep,
-			}
-		);
+		triggerGuidesForStep( flowName, _currentStep );
 
 		const submit = ( providedDependencies: ProvidedDependencies = {} ) => {
 			recordSubmitStep( providedDependencies, '', flowName, _currentStep );

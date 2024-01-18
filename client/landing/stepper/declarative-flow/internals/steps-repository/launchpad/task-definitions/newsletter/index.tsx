@@ -2,7 +2,7 @@ import { Task } from '@automattic/launchpad';
 import { isNewsletterFlow } from '@automattic/onboarding';
 import { addQueryArgs } from '@wordpress/url';
 import { recordTaskClickTracksEvent } from '../../tracking';
-import { TaskAction, TaskActionTable } from '../../types';
+import { TaskAction } from '../../types';
 
 const getFirstPostPublishedNewsletter: TaskAction = ( task, flow, context ): Task => {
 	const { isEmailVerified } = context;
@@ -29,7 +29,7 @@ const getSetupNewsletter: TaskAction = ( task, flow, context ): Task => {
 	};
 };
 
-export const actions: Partial< TaskActionTable > = {
+export const actions = {
 	first_post_published_newsletter: getFirstPostPublishedNewsletter,
 	setup_newsletter: getSetupNewsletter,
 };
