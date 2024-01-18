@@ -1959,11 +1959,8 @@ export const FEATURES_LIST: FeatureList = {
 	[ FEATURE_PREMIUM_THEMES_V2 ]: {
 		getSlug: () => FEATURE_PREMIUM_THEMES_V2,
 		getTitle: () => {
-			const localeSlug = i18n.getLocaleSlug();
 			const shouldShowNewString =
-				isEnabled( 'themes/tiers' ) &&
-				( ( localeSlug && config< string >( 'english_locales' ).includes( localeSlug ) ) ||
-					i18n.hasTranslation( 'Explorer themes' ) );
+				isEnabled( 'themes/tiers' ) && i18n.hasTranslation( 'Explorer themes' );
 
 			return shouldShowNewString
 				? i18n.translate( 'Explorer themes' )
