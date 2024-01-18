@@ -128,7 +128,7 @@ class Profile extends Component {
 							} ) }
 						>
 							<ToggleControl
-								disabled={ this.props.isUpdatingUserSettings || this.props.isFetchingUserSettings }
+								disabled={ this.props.getDisabledState() || this.props.isFetchingUserSettings }
 								checked={ this.props.getSetting( 'gravatar_profile_hidden' ) }
 								onChange={ this.toggleGravatarHidden }
 								label={ <UpdatedGravatarString gravatarProfileLink={ gravatarProfileLink } /> }
@@ -140,7 +140,7 @@ class Profile extends Component {
 								disabled={ ! this.props.hasUnsavedUserSettings || this.props.getDisabledState() }
 								onClick={ this.getClickHandler( 'Save Profile Details Button' ) }
 							>
-								{ this.props.isUpdatingUserSettings
+								{ this.props.getDisabledState()
 									? this.props.translate( 'Saving…' )
 									: this.props.translate( 'Save profile details' ) }
 							</FormButton>
