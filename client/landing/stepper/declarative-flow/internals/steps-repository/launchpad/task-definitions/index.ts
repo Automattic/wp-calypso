@@ -22,9 +22,6 @@ const isNewDefinitionAvailable = ( flow: string, taskId: string ) => {
 	const isTaskAvailable = taskId in DEFINITIONS;
 	const isFeatureEnabled = isEnabled( FLAG_NAME ) && isEnabled( `${ FLAG_NAME }/${ flow }` );
 
-	// eslint-disable-next-line no-console
-	console.log( 'Using new task', isEnabled( `${ FLAG_NAME }/${ flow }` ) );
-
 	return isTaskAvailable && isFeatureEnabled;
 };
 
