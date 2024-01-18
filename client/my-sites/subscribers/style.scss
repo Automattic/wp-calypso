@@ -60,7 +60,7 @@
 	background-color: $studio-white;
 }
 
-.is-section-subscribers .layout:not( .has-no-sidebar ) .layout__content {
+.is-section-subscribers .layout:not(.has-no-sidebar) .layout__content {
 	padding-left: var(--sidebar-width-max);
 	padding-right: 0;
 	padding-bottom: 0;
