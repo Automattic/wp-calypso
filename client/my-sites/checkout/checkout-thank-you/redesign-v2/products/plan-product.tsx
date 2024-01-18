@@ -67,7 +67,7 @@ export default function ThankYouPlanProduct( {
 		} else {
 			setRedirectTo( 'home' );
 		}
-	}, [ launchpad ] );
+	}, [ launchpad, hasRemainingTasks ] );
 
 	useEffect( () => {
 		setLetsWorkButtonBusy( isLoading );
@@ -95,7 +95,7 @@ export default function ThankYouPlanProduct( {
 				redirect();
 			}
 		},
-		[ launchpad, letsWorkHref, redirectTo ]
+		[ launchpad.launchpad_screen, letsWorkHref, redirectTo, saveSiteSettings, siteId ]
 	);
 
 	return (
