@@ -3,8 +3,10 @@ import { Button, CompactCard } from '@automattic/components';
 import { CheckoutProvider } from '@automattic/composite-checkout';
 import { localize, translate } from 'i18n-calypso';
 import { Component } from 'react';
+import Notice from 'calypso/components/notice';
 import SectionHeader from 'calypso/components/section-header';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
+import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import PaymentMethod from 'calypso/me/purchases/payment-methods/payment-method';
 import { withStoredPaymentMethods } from 'calypso/my-sites/checkout/src/hooks/use-stored-payment-methods';
 import type { StoredPaymentMethod } from 'calypso/lib/checkout/payment-methods';
@@ -69,13 +71,28 @@ class PaymentMethodList extends Component<
 		const paymentMethods = this.props.paymentMethodsState.paymentMethods;
 
 		return (
-			<div className="payment-method-list">
-				<SectionHeader label={ this.props.translate( 'Manage Your Payment Methods' ) }>
-					{ this.renderAddPaymentMethodButton() }
-				</SectionHeader>
+			<>
+				{ isJetpackCloud() && (
+					<Notice status="is-info" showDismiss={ false }>
+						{ this.props.translate(
+							'The cards stored here are used for purchases made via Jetpack.com. ' +
+								'If you intend to update your card to make purchases in Jetpack Manage, then do so {{a}}here{{/a}}.',
+							{
+								components: {
+									a: <a href="/partner-portal/payment-methods" />,
+								},
+							}
+						) }
+					</Notice>
+				) }
+				<div className="payment-method-list">
+					<SectionHeader label={ this.props.translate( 'Manage Your Payment Methods' ) }>
+						{ this.renderAddPaymentMethodButton() }
+					</SectionHeader>
 
-				{ this.renderPaymentMethods( paymentMethods ) }
-			</div>
+					{ this.renderPaymentMethods( paymentMethods ) }
+				</div>
+			</>
 		);
 	}
 }
