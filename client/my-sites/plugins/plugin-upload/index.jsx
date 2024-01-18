@@ -12,7 +12,6 @@ import HeaderCake from 'calypso/components/header-cake';
 import Main from 'calypso/components/main';
 import NavigationHeader from 'calypso/components/navigation-header';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
-import { TrialAcknowledgeModal } from 'calypso/my-sites/plans/trials/trial-acknowledge/acknowlege-modal';
 import { initiateAutomatedTransferWithPluginZip } from 'calypso/state/automated-transfer/actions';
 import {
 	getEligibility,
@@ -37,7 +36,6 @@ import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selecto
 class PluginUpload extends Component {
 	state = {
 		showEligibility: this.props.showEligibility,
-		showTrialAcknowledgeModal: false,
 	};
 
 	componentDidMount() {
@@ -68,10 +66,8 @@ class PluginUpload extends Component {
 	};
 
 	onProceedClick = () => {
-		const isFreeTrialEligible = this.props.isEligibleForHostingTrial;
 		this.setState( {
-			showEligibility: isFreeTrialEligible,
-			showTrialAcknowledgeModal: isFreeTrialEligible,
+			showEligibility: false,
 		} );
 	};
 
@@ -100,14 +96,10 @@ class PluginUpload extends Component {
 		);
 	}
 
-	setOpenModal = ( isOpen ) => {
-		this.setState( { showTrialAcknowledgeModal: isOpen } );
-	};
-
 	render() {
 		const { translate, isJetpackMultisite, siteId, siteSlug, isEligibleForHostingTrial } =
 			this.props;
-		const { showEligibility, showTrialAcknowledgeModal } = this.state;
+		const { showEligibility } = this.state;
 
 		return (
 			<Main>
@@ -124,9 +116,6 @@ class PluginUpload extends Component {
 					/>
 				) }
 				{ ! isJetpackMultisite && ! showEligibility && this.renderUploadCard() }
-				{ isEligibleForHostingTrial && showTrialAcknowledgeModal && (
-					<TrialAcknowledgeModal setOpenModal={ this.setOpenModal } />
-				) }
 			</Main>
 		);
 	}

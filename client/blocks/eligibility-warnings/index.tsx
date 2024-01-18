@@ -8,6 +8,7 @@ import {
 	WPCOM_FEATURES_INSTALL_PURCHASED_PLUGINS,
 	PLAN_BUSINESS_MONTHLY,
 	getPlan,
+	PLAN_HOSTING_TRIAL_MONTHLY,
 } from '@automattic/calypso-products';
 import page from '@automattic/calypso-router';
 import { Button, CompactCard, Gridicon } from '@automattic/components';
@@ -122,8 +123,10 @@ export const EligibilityWarnings = ( {
 				redirectUrl = `${ redirectUrl }?redirect_to=/plugins/upload/${ siteSlug }`;
 			}
 			if ( showFreeTrial ) {
-				onProceed( options );
-				return;
+				// this will be changed to initiate atomic transfer on the plugins page in another PR
+				if ( context === 'plugins-upload' ) {
+					redirectUrl = `/checkout/${ siteSlug }/${ PLAN_HOSTING_TRIAL_MONTHLY }`;
+				}
 			}
 			page.redirect( redirectUrl );
 			return;
