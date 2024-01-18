@@ -1,8 +1,6 @@
-import { ProgressBar } from '@automattic/components';
 import { MigrationStatus, MigrationStatusError, type SiteDetails } from '@automattic/data-stores';
-import { Hooray, Progress, SubTitle, Title } from '@automattic/onboarding';
+import { Hooray, SubTitle, Title } from '@automattic/onboarding';
 import { createElement, createInterpolateElement } from '@wordpress/element';
-import { sprintf } from '@wordpress/i18n';
 import { localize } from 'i18n-calypso';
 import { get } from 'lodash';
 import { connect } from 'react-redux';
@@ -19,12 +17,12 @@ import { getSite, getSiteAdminUrl, isJetpackSite } from 'calypso/state/sites/sel
 import { IAppState } from 'calypso/state/types';
 import DomainInfo from '../../components/domain-info';
 import DoneButton from '../../components/done-button';
-import GettingStartedVideo from '../../components/getting-started-video';
 import NotAuthorized from '../../components/not-authorized';
-import { isTargetSitePlanCompatible, byteToMB } from '../../util';
+import { isTargetSitePlanCompatible } from '../../util';
 import { WPImportOption } from '../types';
 import { clearMigrateSource, retrieveMigrateSource } from '../utils';
 import MigrationError from './migration-error';
+import MigrationProgress from './migration-progress';
 import type { UrlData } from 'calypso/blocks/import/types';
 import type { StepNavigator } from 'calypso/blocks/importer/types';
 
@@ -207,44 +205,19 @@ export class ImportEverything extends SectionMigrate {
 	}
 
 	renderMigrationProgress() {
-		const { translate } = this.props;
-
 		return (
 			<div className="import-layout__center">
-				<Progress>
-					<Interval onTick={ this.updateFromAPI } period={ EVERY_FIVE_SECONDS } />
-					<div className="import__heading import__heading-center">
-						<Title>{ this.getTitle() }</Title>
-						<ProgressBar compact={ true } value={ this.state.percent ? this.state.percent : 0 } />
-						<SubTitle>
-							{ translate(
-								"This may take a few minutes. We'll notify you by email when it's done."
-							) }
-						</SubTitle>
-					</div>
-				</Progress>
-				<GettingStartedVideo />
-			</div>
-		);
-	}
-
-	renderMigrationProgressSimple() {
-		const { translate } = this.props;
-
-		return (
-			<div className="import-layout__center">
-				<Progress className="onboarding-progress-simple">
-					<Interval onTick={ this.updateFromAPI } period={ EVERY_FIVE_SECONDS } />
-					<div className="import__heading import__heading-center">
-						<Title>{ this.getTitle() }</Title>
-						<ProgressBar compact={ true } value={ this.state.percent ? this.state.percent : 0 } />
-						<SubTitle tagName="h3">
-							{ translate(
-								'Feel free to close this window. We’ll email you when your new site is ready.'
-							) }
-						</SubTitle>
-					</div>
-				</Progress>
+				<MigrationProgress
+					status={ this.props.status }
+					fetchStatus={ this.updateFromAPI }
+					percent={ this.state.percent || 0 }
+					siteSize={ this.state.siteSize }
+					backupMedia={ this.state.backupMedia }
+					backupPosts={ this.state.backupPosts }
+					backupPercent={ this.state.backupPercent }
+					restorePercent={ this.state.restorePercent }
+					restoreMessage={ this.state.restoreMessage }
+				/>
 			</div>
 		);
 	}
@@ -343,7 +316,7 @@ export class ImportEverything extends SectionMigrate {
 			case MigrationStatus.BACKING_UP:
 			case MigrationStatus.BACKING_UP_QUEUED:
 			case MigrationStatus.RESTORING:
-				return this.renderMigrationProgressSimple();
+				return this.renderMigrationProgress();
 
 			case MigrationStatus.DONE:
 				return this.renderMigrationComplete();
@@ -354,90 +327,6 @@ export class ImportEverything extends SectionMigrate {
 			default:
 				return null;
 		}
-	}
-
-	getTitle(): string {
-		const { translate } = this.props;
-
-		switch ( this.state.migrationStatus ) {
-			case MigrationStatus.NEW:
-			case MigrationStatus.BACKING_UP_QUEUED:
-				return translate( 'Backing up your data…' );
-
-			case MigrationStatus.BACKING_UP:
-				return this.getBackupTitle();
-
-			case MigrationStatus.RESTORING:
-				return this.getRestoreTitle();
-
-			default:
-				return '';
-		}
-	}
-
-	getBackupTitle(): string {
-		const { translate } = this.props;
-
-		if ( this.state.backupPercent === 100 ) {
-			if ( this.state.backupMedia ) {
-				return sprintf( translate( 'Moving your %(count)d files…' ), {
-					count: this.state.backupMedia,
-				} );
-			} else if ( this.state.backupPosts ) {
-				return sprintf( translate( 'Moving your %(count)d posts…' ), {
-					count: this.state.backupPosts,
-				} );
-			}
-
-			return translate( 'Moving your files…' );
-		}
-
-		if ( typeof this.state.backupPercent === 'undefined' ) {
-			return translate( 'Backing up your data…' );
-		}
-
-		const backupPercent = Math.max( this.state.backupPercent, 1 );
-
-		if ( typeof this.state.siteSize === 'undefined' ) {
-			return sprintf( translate( 'Backing up %(percentage)d%% of your data…' ), {
-				percentage: backupPercent,
-			} );
-		}
-
-		return sprintf( translate( 'Backing up %(percentage)d%% of your %(size)f MB of data…' ), {
-			percentage: backupPercent,
-			size: byteToMB( this.state.siteSize ),
-		} );
-	}
-
-	getRestoreTitle(): string {
-		const { translate } = this.props;
-
-		const format = {
-			percentage: Math.max( this.state.restorePercent, 1 ),
-		};
-
-		if (
-			this.state.restoreMessage === 'Starting' ||
-			this.state.restoreMessage.startsWith( 'Checking remote files' ) ||
-			this.state.restoreMessage.startsWith( 'Parsing' )
-		) {
-			return sprintf(
-				translate( 'Restoring up %(percentage)d%%. Checking remote files…' ),
-				format
-			);
-		} else if ( this.state.restoreMessage.startsWith( 'Verifying' ) ) {
-			return sprintf(
-				translate( 'Restoring up %(percentage)d%%. Verifying configuration…' ),
-				format
-			);
-		} else if ( this.state.restoreMessage.startsWith( 'Uploading' ) ) {
-			return sprintf( translate( 'Restoring up %(percentage)d%%. Uploading files…' ), format );
-		} else if ( this.state.restoreMessage === 'Done' ) {
-			return sprintf( translate( 'Finalizing restore…' ), format );
-		}
-
-		return sprintf( translate( 'Restoring up %(percentage)d%%…' ), format );
 	}
 }
 
