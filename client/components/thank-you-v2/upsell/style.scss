@@ -24,7 +24,7 @@
 		max-height: 80px;
 	}
 
-	> img {
+	img {
 		object-fit: cover;
 	}
 }
@@ -62,6 +62,10 @@
 	gap: 8px;
 	margin-top: 20px;
 
+	@media (max-width: $break-small ) {
+		flex-direction: column;
+	}
+
 	a.components-button {
 		border-radius: 4px;
 		background: var(--black-white-black, #000);
@@ -69,7 +73,7 @@
 		color: var(--black-white-white, #fff);
 		font-size: $font-body-small;
 		font-weight: 500;
-		line-height: 20px;
+		justify-content: center;
 		padding: 10px 24px;
 
 		&:hover {
