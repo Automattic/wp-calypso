@@ -208,7 +208,7 @@ export class ImportEverything extends SectionMigrate {
 		return (
 			<div className="import-layout__center">
 				<MigrationProgress
-					status={ this.props.status }
+					status={ this.state.migrationStatus as MigrationStatus }
 					fetchStatus={ this.updateFromAPI }
 					percent={ this.state.percent || 0 }
 					siteSize={ this.state.siteSize }
