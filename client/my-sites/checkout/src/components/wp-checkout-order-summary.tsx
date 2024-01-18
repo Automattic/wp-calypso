@@ -129,7 +129,7 @@ function CheckoutSummaryPriceList() {
 	const totalLineItem = getTotalLineItemFromCart( responseCart );
 	const translate = useTranslate();
 	const subtotalWithCredits = getSubtotalWithCredits( responseCart );
-	const costOverridesList = filterAndGroupCostOverridesForDisplay( responseCart );
+	const costOverridesList = filterAndGroupCostOverridesForDisplay( responseCart, translate );
 	const isFullCredits = doesPurchaseHaveFullCredits( responseCart );
 	// Clamp the credits display value to the total
 	const creditsForDisplay = isFullCredits

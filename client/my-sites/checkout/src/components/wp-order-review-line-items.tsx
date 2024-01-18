@@ -20,6 +20,7 @@ import {
 	doesPurchaseHaveFullCredits,
 } from '@automattic/wpcom-checkout';
 import styled from '@emotion/styled';
+import { useTranslate } from 'i18n-calypso';
 import { useState, useCallback, useMemo } from 'react';
 import { has100YearPlan } from 'calypso/lib/cart-values/cart-items';
 import { isWcMobileApp } from 'calypso/lib/mobile-app';
@@ -92,6 +93,7 @@ export function WPOrderReviewLineItems( {
 	onRemoveProductCancel?: ( label: string ) => void;
 } ) {
 	const reduxDispatch = useDispatch();
+	const translate = useTranslate();
 	const creditsLineItem = getCreditsLineItemFromCart( responseCart );
 	const couponLineItem = getCouponLineItemFromCart( responseCart );
 	const { formStatus } = useFormStatus();
@@ -145,7 +147,7 @@ export function WPOrderReviewLineItems( {
 		[ akQuantityOpenId, variantOpenId ]
 	);
 
-	const costOverridesList = filterAndGroupCostOverridesForDisplay( responseCart );
+	const costOverridesList = filterAndGroupCostOverridesForDisplay( responseCart, translate );
 	const isFullCredits = doesPurchaseHaveFullCredits( responseCart );
 	// Clamp the credits display value to the total
 	const creditsForDisplay = isFullCredits

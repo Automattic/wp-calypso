@@ -62,7 +62,8 @@ export interface CostOverrideForDisplay {
 }
 
 export function filterAndGroupCostOverridesForDisplay(
-	responseCart: ResponseCart
+	responseCart: ResponseCart,
+	translate: ReturnType< typeof useTranslate >
 ): CostOverrideForDisplay[] {
 	// Collect cost overrides from each line item and group them by type so we
 	// can show them all together after the line item list.
@@ -90,8 +91,26 @@ export function filterAndGroupCostOverridesForDisplay(
 				discountAmount: discountAmount + newDiscountAmount,
 			};
 		} );
+
+		// Add a fake cost override for introductory offers until D134600-code
+		// is merged because they are otherwise discounts that are invisible to
+		// the list of cost overrides. Remove this once that diff is merged.
+		if (
+			product.introductory_offer_terms?.enabled &&
+			! costOverrides.some( ( override ) => override.override_code === 'introductory-offer' )
+		) {
+			const discountAmount = grouped[ 'introductory-offer' ]?.discountAmount ?? 0;
+			const newDiscountAmount =
+				product.item_original_subtotal_integer - product.item_subtotal_before_discounts_integer;
+			grouped[ 'introductory-offer' ] = {
+				humanReadableReason: translate( 'Introductory offer' ),
+				overrideCode: 'introductory-offer',
+				discountAmount: discountAmount + newDiscountAmount,
+			};
+		}
 		return grouped;
 	}, {} );
+
 	return Object.values( costOverridesGrouped );
 }
 
