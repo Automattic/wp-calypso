@@ -9,7 +9,6 @@ import { connect } from 'react-redux';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import Main from 'calypso/components/main';
 import NavigationHeader from 'calypso/components/navigation-header';
-import SectionHeader from 'calypso/components/section-header';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import twoStepAuthorization from 'calypso/lib/two-step-authorization';
 import withFormBase from 'calypso/me/form-base/with-form-base';
@@ -36,11 +35,12 @@ class Developer extends Component {
 				<ReauthRequired twoStepAuthorization={ twoStepAuthorization } />
 				<NavigationHeader
 					navigationItems={ [] }
-					title={ this.props.translate( 'Developer' ) }
-					subtitle={ this.props.translate( 'Manage your developer settings' ) }
+					title={ this.props.translate( 'Developer Settings' ) }
+					subtitle={ this.props.translate(
+						'Take WordPress.com further with early access to new developer features.'
+					) }
 				/>
 
-				<SectionHeader label={ this.props.translate( 'Developer settings' ) } />
 				<Card className="developer__settings">
 					<form onChange={ this.props.submitForm }>
 						<FormFieldset
