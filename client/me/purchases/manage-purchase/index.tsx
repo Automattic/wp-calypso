@@ -1124,6 +1124,10 @@ class ManagePurchase extends Component<
 			return null;
 		}
 
+		if ( isMarketplaceTemporarySitePurchase( purchase ) ) {
+			return null;
+		}
+
 		const registrationAgreementUrl = getDomainRegistrationAgreementUrl( purchase );
 		const domainRegistrationAgreementLinkText = translate( 'Domain Registration Agreement' );
 
