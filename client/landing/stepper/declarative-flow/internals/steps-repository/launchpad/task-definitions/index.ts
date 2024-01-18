@@ -16,14 +16,16 @@ const DEFINITIONS = {
 	...planActions,
 } satisfies TaskActionTable;
 
-const MIGRATED_FLOWS = [ 'free' ];
+export const FLAG_NAME = 'launchpad/new-task-definition-parser';
 
 const isNewDefinitionAvailable = ( flow: string, taskId: string ) => {
-	const isFlowEnabled = MIGRATED_FLOWS.includes( flow );
 	const isTaskAvailable = taskId in DEFINITIONS;
-	const isFeatureAvailable = isEnabled( 'launchpad/new-task-definition-parser' );
+	const isFeatureEnabled = isEnabled( FLAG_NAME ) && isEnabled( `${ FLAG_NAME }/${ flow }` );
 
-	return isFlowEnabled && isTaskAvailable && isFeatureAvailable;
+	// eslint-disable-next-line no-console
+	console.log( 'Using new task', isEnabled( `${ FLAG_NAME }/${ flow }` ) );
+
+	return isTaskAvailable && isFeatureEnabled;
 };
 
 export const getTaskDefinition = ( flow: string, task: Task, context: TaskContext ) => {
