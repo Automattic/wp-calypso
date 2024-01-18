@@ -14,6 +14,7 @@ import {
 	MarketplaceReviewsQueryProps,
 	useDeleteMarketplaceReviewMutation,
 	useUpdateMarketplaceReviewMutation,
+	EMPTY_PLACEHOLDER,
 } from 'calypso/data/marketplace/use-marketplace-reviews';
 import { getAvatarURL } from 'calypso/data/marketplace/utils';
 import { sanitizeSectionContent } from 'calypso/lib/plugins/sanitize-section-content';
@@ -36,9 +37,11 @@ export const MarketplaceReviewItem = ( props: MarketplaceReviewItemProps ) => {
 	const [ editorContent, setEditorContent ] = useState< string >( '' );
 	const [ editorRating, setEditorRating ] = useState< number >( 0 );
 
+	const isEmptyContent = review.content.raw === EMPTY_PLACEHOLDER;
+
 	const setEditing = ( review: MarketplaceReviewResponse ) => {
 		setIsEditing( true );
-		setEditorContent( review.content.raw );
+		setEditorContent( isEmptyContent ? '' : review.content.raw );
 		setEditorRating( review.meta.wpcom_marketplace_rating );
 	};
 
@@ -87,6 +90,23 @@ export const MarketplaceReviewItem = ( props: MarketplaceReviewItemProps ) => {
 			}
 		);
 		clearEditing();
+	};
+
+	const maybeRenderContent = () => {
+		if ( isEmptyContent ) {
+			return null;
+		}
+
+		return (
+			<div
+				// sanitized with sanitizeSectionContent
+				// eslint-disable-next-line react/no-danger
+				dangerouslySetInnerHTML={ {
+					__html: sanitizeSectionContent( review.content.rendered ),
+				} }
+				className="marketplace-review-item__content"
+			></div>
+		);
 	};
 
 	return (
@@ -152,14 +172,7 @@ export const MarketplaceReviewItem = ( props: MarketplaceReviewItemProps ) => {
 					/>
 				</>
 			) : (
-				<div
-					// sanitized with sanitizeSectionContent
-					// eslint-disable-next-line react/no-danger
-					dangerouslySetInnerHTML={ {
-						__html: sanitizeSectionContent( review.content.rendered ),
-					} }
-					className="marketplace-review-item__content"
-				></div>
+				maybeRenderContent()
 			) }
 			{ review.author === currentUserId && (
 				<div className="marketplace-review-item__review-actions">
