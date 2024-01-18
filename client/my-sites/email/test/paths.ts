@@ -17,6 +17,7 @@ import {
 	getForwardingPath,
 	getPurchaseNewEmailAccountPath,
 	getEmailInDepthComparisonPath,
+	getProfessionalEmailCheckoutUpsellPath,
 	getMailboxesPath,
 	isUnderEmailManagementAll,
 } from '../paths';
@@ -186,6 +187,15 @@ describe( 'path helper functions', () => {
 		expect( getMailboxesPath( siteName ) ).toEqual( `/mailboxes/${ siteName }` );
 		expect( getMailboxesPath( ':site' ) ).toEqual( '/mailboxes/:site' );
 		expect( getMailboxesPath() ).toEqual( '/mailboxes' );
+	} );
+
+	it( 'getProfessionalEmailCheckoutUpsellPath', () => {
+		expect( getProfessionalEmailCheckoutUpsellPath( siteName, domainName, 1234 ) ).toEqual(
+			`/checkout/offer-professional-email/${ domainName }/1234/${ siteName }`
+		);
+		expect( getProfessionalEmailCheckoutUpsellPath( undefined, domainName, 1234 ) ).toEqual(
+			`/checkout/offer-professional-email/${ domainName }/1234/no-site`
+		);
 	} );
 
 	it.each( [
