@@ -25,9 +25,10 @@ import {
 	PLAN_ECOMMERCE,
 	PLAN_PERSONAL,
 	PLAN_PREMIUM,
+	getPlan,
 } from '@automattic/calypso-products';
 import { Button, Dialog, ScreenReaderText } from '@automattic/components';
-import { Plans, ProductsList } from '@automattic/data-stores';
+import { ProductsList } from '@automattic/data-stores';
 import { useBreakpoint } from '@automattic/viewport-react';
 import { Tooltip } from '@wordpress/components';
 import { useSelect } from '@wordpress/data';
@@ -110,10 +111,14 @@ export const ThemeUpgradeModal = ( {
 		( select ) => select( ProductsList.store ).getProductBySlug( 'business-bundle-monthly' ),
 		[]
 	);
-	const plans = Plans.usePlans( { coupon: undefined } );
 
 	//Wait until we have theme and product data to show content
 	const isLoading = ! premiumPlanProduct || ! businessPlanProduct || ! theme.data;
+
+	const personalPlanName = getPlan( PLAN_PERSONAL )?.getTitle() || '';
+	const premiumPlanName = getPlan( PLAN_PREMIUM )?.getTitle() || '';
+	const businessPlanName = getPlan( PLAN_BUSINESS )?.getTitle() || '';
+	const ecommercePlanName = getPlan( PLAN_ECOMMERCE )?.getTitle() || '';
 
 	const getPersonalPlanModalData = (): UpgradeModalContent => {
 		const planPrice = personalPlanProduct?.combined_cost_display;
@@ -134,7 +139,7 @@ export const ThemeUpgradeModal = ( {
 							},
 							args: {
 								planPrice: planPrice || '',
-								plan: plans.data?.[ PLAN_PERSONAL ]?.productNameShort || '',
+								plan: personalPlanName,
 							},
 						}
 					) }
@@ -180,7 +185,7 @@ export const ThemeUpgradeModal = ( {
 							},
 							args: {
 								planPrice: planPrice || '',
-								premiumPlanName: plans.data?.[ PLAN_PREMIUM ]?.productNameShort || '',
+								premiumPlanName: premiumPlanName,
 							},
 						}
 					) }
@@ -247,7 +252,7 @@ export const ThemeUpgradeModal = ( {
 						{
 							args: {
 								businessPlanPrice: businessPlanPrice || '',
-								businessPlanName: plans.data?.[ PLAN_BUSINESS ]?.productNameShort || '',
+								businessPlanName: businessPlanName,
 							},
 						}
 					) }
@@ -303,8 +308,8 @@ export const ThemeUpgradeModal = ( {
 							'This partner theme is only available to buy on the %(businessPlanName)s or %(commercePlanName)s plans.',
 							{
 								args: {
-									businessPlanName: plans.data?.[ PLAN_BUSINESS ]?.productNameShort || '',
-									commercePlanName: plans.data?.[ PLAN_ECOMMERCE ]?.productNameShort || '',
+									businessPlanName: businessPlanName,
+									commercePlanName: ecommercePlanName,
 								},
 							}
 						) }
@@ -328,7 +333,7 @@ export const ThemeUpgradeModal = ( {
 									<label>
 										{ translate( '%(businessPlanName)s plan', {
 											args: {
-												businessPlanName: plans.data?.[ PLAN_BUSINESS ]?.productNameShort || '',
+												businessPlanName: businessPlanName,
 											},
 										} ) }
 									</label>
@@ -424,13 +429,13 @@ export const ThemeUpgradeModal = ( {
 		modalData = getBundledFirstPartyPurchaseModalData();
 		featureList = getBundledFirstPartyPurchaseFeatureList();
 		featureListHeader = translate( 'Included with your %(businessPlanName)s plan', {
-			args: { businessPlanName: plans.data?.[ PLAN_BUSINESS ]?.productNameShort || '' },
+			args: { businessPlanName: businessPlanName },
 		} );
 	} else if ( isExternallyManaged ) {
 		modalData = getExternallyManagedPurchaseModalData();
 		featureList = getExternallyManagedFeatureList();
 		featureListHeader = translate( 'Included with your %(businessPlanName)s plan', {
-			args: { businessPlanName: plans.data?.[ PLAN_BUSINESS ]?.productNameShort || '' },
+			args: { businessPlanName: businessPlanName },
 		} );
 	} else if (
 		config.isEnabled( 'themes/tiers' ) &&
@@ -439,13 +444,13 @@ export const ThemeUpgradeModal = ( {
 		modalData = getPersonalPlanModalData();
 		featureList = getPersonalPlanFeatureList();
 		featureListHeader = translate( 'Included with your %(plan)s plan', {
-			args: { plan: plans.data?.[ PLAN_PERSONAL ]?.productNameShort || '' },
+			args: { plan: personalPlanName },
 		} );
 	} else {
 		modalData = getStandardPurchaseModalData();
 		featureList = getStandardPurchaseFeatureList();
 		featureListHeader = translate( 'Included with your %(premiumPlanName)s plan', {
-			args: { premiumPlanName: plans.data?.[ PLAN_PREMIUM ]?.productNameShort || '' },
+			args: { premiumPlanName: premiumPlanName },
 		} );
 	}
 
