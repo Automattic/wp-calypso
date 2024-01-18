@@ -12,8 +12,13 @@ import HeaderCake from 'calypso/components/header-cake';
 import Main from 'calypso/components/main';
 import NavigationHeader from 'calypso/components/navigation-header';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
+import HostingActivateStatus from 'calypso/my-sites/hosting/hosting-activate-status';
 import { TrialAcknowledgeModal } from 'calypso/my-sites/plans/trials/trial-acknowledge/acknowlege-modal';
-import { initiateAutomatedTransferWithPluginZip } from 'calypso/state/automated-transfer/actions';
+import { WithAtomicTransferHOC } from 'calypso/sites-dashboard/components/with-atomic-transfer-hoc';
+import {
+	fetchAutomatedTransferStatus,
+	initiateAutomatedTransferWithPluginZip,
+} from 'calypso/state/automated-transfer/actions';
 import {
 	getEligibility,
 	isEligibleForAutomatedTransfer,
@@ -27,6 +32,7 @@ import getUploadedPluginId from 'calypso/state/selectors/get-uploaded-plugin-id'
 import isPluginUploadComplete from 'calypso/state/selectors/is-plugin-upload-complete';
 import isPluginUploadInProgress from 'calypso/state/selectors/is-plugin-upload-in-progress';
 import { isUserEligibleForFreeHostingTrial } from 'calypso/state/selectors/is-user-eligible-for-free-hosting-trial';
+import { requestSite } from 'calypso/state/sites/actions';
 import {
 	getSiteAdminUrl,
 	isJetpackSite,
@@ -38,6 +44,7 @@ class PluginUpload extends Component {
 	state = {
 		showEligibility: this.props.showEligibility,
 		showTrialAcknowledgeModal: false,
+		isTrialRequested: false,
 	};
 
 	componentDidMount() {
@@ -104,10 +111,17 @@ class PluginUpload extends Component {
 		this.setState( { showTrialAcknowledgeModal: isOpen } );
 	};
 
+	trialRequested = () => {
+		this.props.successNotice( this.props.translate( 'Your free trial has been requested.' ), {
+			duration: 5000,
+		} );
+		this.state.isTrialRequested = true;
+	};
+
 	render() {
 		const { translate, isJetpackMultisite, siteId, siteSlug, isEligibleForHostingTrial } =
 			this.props;
-		const { showEligibility, showTrialAcknowledgeModal } = this.state;
+		const { showEligibility, showTrialAcknowledgeModal, isTrialRequested } = this.state;
 
 		return (
 			<Main>
@@ -115,8 +129,9 @@ class PluginUpload extends Component {
 				<QueryEligibility siteId={ siteId } />
 				<NavigationHeader navigationItems={ [] } title={ translate( 'Plugins' ) } />
 				<HeaderCake onClick={ this.back }>{ translate( 'Install plugin' ) }</HeaderCake>
+				<HostingActivateStatus context="plugin" />
 				{ isJetpackMultisite && this.renderNotAvailableForMultisite() }
-				{ showEligibility && (
+				{ showEligibility && ! isTrialRequested && (
 					<EligibilityWarnings
 						backUrl={ `/plugins/${ siteSlug }` }
 						onProceed={ this.onProceedClick }
@@ -125,7 +140,10 @@ class PluginUpload extends Component {
 				) }
 				{ ! isJetpackMultisite && ! showEligibility && this.renderUploadCard() }
 				{ isEligibleForHostingTrial && showTrialAcknowledgeModal && (
-					<TrialAcknowledgeModal setOpenModal={ this.setOpenModal } />
+					<TrialAcknowledgeModal
+						setOpenModal={ this.setOpenModal }
+						trialRequested={ this.trialRequested }
+					/>
 				) }
 			</Main>
 		);
@@ -145,6 +163,7 @@ const mapStateToProps = ( state ) => {
 	const hasEligibilityMessages = ! (
 		isEmpty( eligibilityHolds ) && isEmpty( eligibilityWarnings )
 	);
+	const automatedTransferStatus = getAutomatedTransferStatus( state, siteId );
 
 	return {
 		siteId,
@@ -157,9 +176,14 @@ const mapStateToProps = ( state ) => {
 		error,
 		isJetpackMultisite,
 		siteAdminUrl: getSiteAdminUrl( state, siteId ),
-		showEligibility: ! isJetpack && ( hasEligibilityMessages || ! isEligible ),
-		automatedTransferStatus: getAutomatedTransferStatus( state, siteId ),
+		showEligibility:
+			! isJetpack &&
+			( hasEligibilityMessages || ! isEligible || automatedTransferStatus === 'complete' ),
+		automatedTransferStatus,
 		isEligibleForHostingTrial,
+		site: {
+			slug: getSelectedSiteSlug( state ),
+		},
 	};
 };
 
@@ -170,8 +194,10 @@ const flowRightArgs = [
 		initiateAutomatedTransferWithPluginZip,
 		successNotice,
 		productToBeInstalled,
+		fetchAutomatedTransferStatus,
+		requestSiteById: requestSite,
 	} ),
 	localize,
 ];
 
-export default flowRight( ...flowRightArgs )( PluginUpload );
+export default flowRight( ...flowRightArgs )( WithAtomicTransferHOC( PluginUpload ) );
