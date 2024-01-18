@@ -1,3 +1,4 @@
+import { ecommerceFlowRecurTypes } from '@automattic/onboarding';
 import { useDispatch } from '@wordpress/data';
 import { ONBOARD_STORE } from '../stores';
 import { useQuery } from './use-query';
@@ -10,7 +11,8 @@ import { useQuery } from './use-query';
  */
 export function useSaveQueryParams() {
 	const urlQueryParams = useQuery();
-	const { setCouponCode, setStorageAddonSlug } = useDispatch( ONBOARD_STORE );
+	const { setCouponCode, setStorageAddonSlug, setEcommerceFlowRecurType } =
+		useDispatch( ONBOARD_STORE );
 	urlQueryParams.forEach( ( value, key ) => {
 		switch ( key ) {
 			case 'coupon':
@@ -25,6 +27,15 @@ export function useSaveQueryParams() {
 				// This stores a storage addon, supplied as a query param by landing pages when
 				// an addon is selected in the pricing grid.
 				value && setStorageAddonSlug( value );
+				break;
+
+			case 'recur':
+				{
+					const isValidRecurType =
+						value && Object.values( ecommerceFlowRecurTypes ).includes( value );
+					const recurType = isValidRecurType ? value : ecommerceFlowRecurTypes.YEARLY;
+					setEcommerceFlowRecurType( recurType );
+				}
 				break;
 		}
 	} );

@@ -4,7 +4,6 @@ import { initializeAnalytics } from '@automattic/calypso-analytics';
 import { CurrentUser } from '@automattic/calypso-analytics/dist/types/utils/current-user';
 import config from '@automattic/calypso-config';
 import { User as UserStore } from '@automattic/data-stores';
-import { ECOMMERCE_FLOW, ecommerceFlowRecurTypes } from '@automattic/onboarding';
 import { QueryClientProvider } from '@tanstack/react-query';
 import { useDispatch } from '@wordpress/data';
 import defaultCalypsoI18n from 'i18n-calypso';
@@ -30,8 +29,7 @@ import { AsyncHelpCenter } from './declarative-flow/internals/components';
 import 'calypso/components/environment-badge/style.scss';
 import 'calypso/assets/stylesheets/style.scss';
 import availableFlows from './declarative-flow/registered-flows';
-import { useQuery } from './hooks/use-query';
-import { ONBOARD_STORE, USER_STORE } from './stores';
+import { USER_STORE } from './stores';
 import { setupWpDataDebug } from './utils/devtools';
 import { WindowLocaleEffectManager } from './utils/window-locale-effect-manager';
 import type { Flow } from './declarative-flow/internals/types';
@@ -57,20 +55,6 @@ const FlowSwitch: React.FC< { user: UserStore.CurrentUser | undefined; flow: Flo
 	flow,
 } ) => {
 	const { receiveCurrentUser } = useDispatch( USER_STORE );
-	const { setEcommerceFlowRecurType } = useDispatch( ONBOARD_STORE );
-
-	const recurType = useQuery().get( 'recur' );
-
-	if ( flow.name === ECOMMERCE_FLOW ) {
-		const isValidRecurType =
-			recurType && Object.values( ecommerceFlowRecurTypes ).includes( recurType );
-		if ( isValidRecurType ) {
-			setEcommerceFlowRecurType( recurType );
-		} else {
-			setEcommerceFlowRecurType( ecommerceFlowRecurTypes.YEARLY );
-		}
-	}
-
 	user && receiveCurrentUser( user as UserStore.CurrentUser );
 
 	return <FlowRenderer flow={ flow } />;
