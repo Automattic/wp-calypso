@@ -3,6 +3,7 @@ import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { HostingTrialAcknowledge } from './hosting-trial-acknowledge';
 import { MigrationTrialAcknowledge } from './migration-trial-acknowledge';
 import type { Step } from 'calypso/landing/stepper/declarative-flow/internals/types';
+import './style.scss';
 
 const TrialAcknowledge: Step = function TrialAcknowledge( { navigation, flow, stepName } ) {
 	const { goBack } = navigation;
