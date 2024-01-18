@@ -3,6 +3,7 @@ import {
 	InfiniteQueryObserverResult,
 	keepPreviousData,
 	useInfiniteQuery,
+	useQuery,
 } from '@tanstack/react-query';
 import wpcom from 'calypso/lib/wp';
 import { SearchOptions } from 'calypso/my-sites/promote-post-i2/components/search-bar';
@@ -42,6 +43,25 @@ async function queryPosts( siteId: number, queryparams: string ) {
 			: 'wpcom/v2',
 	} );
 }
+
+export const usePostsQueryStats = ( siteId: number, queryOptions = {} ) => {
+	return useQuery( {
+		queryKey: [ 'promote-post-posts-stats', siteId ],
+		queryFn: async () => {
+			const postsResponse = await queryPosts( siteId, `page=1&posts_per_page=1` );
+			return {
+				total_items: postsResponse?.total_items,
+			};
+		},
+		...queryOptions,
+		enabled: !! siteId,
+		retryDelay: 3000,
+		refetchOnWindowFocus: false,
+		meta: {
+			persist: false,
+		},
+	} );
+};
 
 const usePostsQueryPaged = (
 	siteId: number,

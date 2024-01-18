@@ -1,5 +1,6 @@
 import { Button } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
+import classNames from 'classnames';
 import { isOutsideCalypso } from 'calypso/lib/url';
 
 import './style.scss';
@@ -54,7 +55,11 @@ type ThankYouFooterProps = {
 
 export default function ThankYouFooter( { details }: ThankYouFooterProps ) {
 	return (
-		<div className="thank-you__footer">
+		<div
+			className={ classNames( 'thank-you__footer', {
+				'has-multiple-details': details && details.length > 1,
+			} ) }
+		>
 			<div className="thank-you__footer-inner">
 				{ details.map( ( detailsProps ) => (
 					<ThankYouFooterDetail { ...detailsProps } />

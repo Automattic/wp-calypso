@@ -146,3 +146,10 @@ h3.ads__table-header-title {
 		margin-bottom: 1em;
 	}
 }
+
+/* Media Queries */
+@media ( max-width: $break-large ) {
+	.earn.main {
+		padding: 20px;
+	}
+}

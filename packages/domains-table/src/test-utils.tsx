@@ -155,6 +155,7 @@ export function testDomain(
 		registry_expiry_date: '',
 		subdomain_part: '',
 		auth_code_required: true,
+		is_mapped_to_atomic_site: false,
 		...defaults,
 	};
 

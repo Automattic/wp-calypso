@@ -1,7 +1,7 @@
 import {
-	PlanSlug,
+	type PlanSlug,
 	URL_FRIENDLY_TERMS_MAPPING,
-	UrlFriendlyTermType,
+	type UrlFriendlyTermType,
 	getBillingMonthsForTerm,
 	getPlan,
 	getPlanMultipleTermsVariantSlugs,
