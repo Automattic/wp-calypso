@@ -578,6 +578,13 @@ $design-button-primary-color: rgb(17, 122, 201);
 					}
 				}
 			}
+
+		}
+
+		.design-picker-design-title__theme-tier-badge {
+			&:empty {
+				display: none;
+			}
 		}
 
 		.step-container__navigation {
