@@ -1,7 +1,7 @@
 import { plansLink } from '@automattic/calypso-products';
 import { useCallback } from '@wordpress/element';
 import { addQueryArgs } from '@wordpress/url';
-import { PlanTypeSelectorProps } from 'calypso/my-sites/plans-grid/components/plan-type-selector/types';
+import { PlanTypeSelectorProps } from 'calypso/my-sites/plans-grid';
 
 interface PathArgs {
 	[ key: string ]: string | null;

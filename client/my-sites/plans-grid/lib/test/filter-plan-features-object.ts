@@ -1,6 +1,6 @@
 import filterUnusedFeaturesObject from '../filter-unused-features-object';
+import type { GridPlan } from '../../types';
 import type { FeatureObject } from '@automattic/calypso-products';
-import type { GridPlan } from 'calypso/my-sites/plans-grid/hooks/npm-ready/data-store/use-grid-plans';
 
 // Mock data for GridPlan and FeatureObject
 const feature1 = { getSlug: () => 'feature1' } as FeatureObject;

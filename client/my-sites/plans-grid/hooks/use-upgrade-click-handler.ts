@@ -2,7 +2,7 @@ import { isFreeHostingTrial, type PlanSlug } from '@automattic/calypso-products'
 import { WpcomPlansUI } from '@automattic/data-stores';
 import { useSelect } from '@wordpress/data';
 import { useCallback } from '@wordpress/element';
-import type { GridPlan } from './data-store/use-grid-plans';
+import type { GridPlan } from '../types';
 import type { MinimalRequestCartProduct } from '@automattic/shopping-cart';
 
 interface Props {
