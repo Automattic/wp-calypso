@@ -3036,7 +3036,7 @@ export const PLANS_LIST: Record< string, Plan | JetpackPlan | WPComPlan > = {
 		getBillingTimeFrame: () => '',
 		getProductId: () => 0,
 		getStoreSlug: () => PLAN_AGENCY_BLUE_HOST,
-		getPathSlug: () => 'enterprise',
+		getPathSlug: () => 'bluehost',
 	},
 
 	[ PLAN_ECOMMERCE_3_YEARS ]: {
