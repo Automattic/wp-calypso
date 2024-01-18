@@ -3,7 +3,7 @@ import { addQueryArgs } from '@wordpress/url';
 import { recordTaskClickTracksEvent } from '../../tracking';
 import { TaskAction } from '../../types';
 
-export const getSetupFreeTask: TaskAction = ( task, flow, context ): Task => {
+const getSetupFreeTask: TaskAction = ( task, flow, context ): Task => {
 	const { siteInfoQueryArgs } = context;
 
 	return {
@@ -12,4 +12,8 @@ export const getSetupFreeTask: TaskAction = ( task, flow, context ): Task => {
 		calypso_path: addQueryArgs( `/setup/${ flow }/freePostSetup`, siteInfoQueryArgs ),
 		useCalypsoPath: true,
 	};
+};
+
+export const actions = {
+	setup_free: getSetupFreeTask,
 };

@@ -16,7 +16,7 @@ export interface TranslatedLaunchpadStrings {
 	subtitle: string;
 }
 
-export type TaskId = 'setup_free';
+export type TaskId = 'setup_free' | 'design_selected' | 'design_completed' | 'design_edited';
 
 export interface TaskContext {
 	tasks: Task[];

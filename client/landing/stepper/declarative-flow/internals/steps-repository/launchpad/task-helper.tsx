@@ -274,6 +274,7 @@ export function getEnhancedTasks( {
 	tasks &&
 		tasks.map( ( task ) => {
 			let taskData = {};
+			let deprecatedData = {};
 
 			const context: TaskContext = {
 				site,
@@ -285,7 +286,7 @@ export function getEnhancedTasks( {
 				case 'setup_free':
 					// DEPRECATED: This task is deprecated and will be removed in the future
 					// eslint-disable-next-line no-case-declarations
-					const deprecatedData = {
+					deprecatedData = {
 						actionDispatch: () => {
 							recordTaskClickTracksEvent( flow, task.completed, task.id );
 							window.location.assign(
@@ -321,7 +322,7 @@ export function getEnhancedTasks( {
 					};
 					break;
 				case 'design_edited':
-					taskData = {
+					deprecatedData = {
 						actionDispatch: () => {
 							recordTaskClickTracksEvent( flow, task.completed, task.id );
 							window.location.assign(
@@ -331,6 +332,7 @@ export function getEnhancedTasks( {
 							);
 						},
 					};
+					taskData = getTaskDefinition( flow, task, context ) || deprecatedData;
 					break;
 				case 'plan_selected':
 					/* eslint-disable no-case-declarations */
@@ -429,7 +431,7 @@ export function getEnhancedTasks( {
 					break;
 				case 'design_selected':
 				case 'design_completed':
-					taskData = {
+					deprecatedData = {
 						actionDispatch: () => {
 							recordTaskClickTracksEvent( flow, task.completed, task.id );
 							window.location.assign(
@@ -440,7 +442,8 @@ export function getEnhancedTasks( {
 							);
 						},
 					};
-					break;
+
+					taskData = getTaskDefinition( flow, task, context ) || deprecatedData;
 				case 'setup_general':
 					taskData = {
 						disabled: false,
