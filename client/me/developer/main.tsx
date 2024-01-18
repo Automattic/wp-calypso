@@ -35,9 +35,13 @@ class Developer extends Component {
 			<Main className="developer">
 				<PageViewTracker path="/me/developer" title="Me > Developer" />
 				<ReauthRequired twoStepAuthorization={ twoStepAuthorization } />
-				<NavigationHeader navigationItems={ [] } title={ this.props.translate( 'Developer' ) } />
+				<NavigationHeader
+					navigationItems={ [] }
+					title={ this.props.translate( 'Developer' ) }
+					subtitle={ this.props.translate( 'Manage your developer settings' ) }
+				/>
 
-				<SectionHeader label={ this.props.translate( 'Manage your developer settings' ) } />
+				<SectionHeader label={ this.props.translate( 'Developer settings' ) } />
 				<Card className="developer__settings">
 					<form onChange={ this.props.submitForm }>
 						<FormFieldset
