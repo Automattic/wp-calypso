@@ -59,6 +59,7 @@ export class Banner extends Component {
 		] ),
 		renderListItem: PropTypes.func,
 		onClick: PropTypes.func,
+		secondaryOnClick: PropTypes.func,
 		onDismiss: PropTypes.func,
 		plan: PropTypes.string,
 		price: PropTypes.oneOfType( [ PropTypes.number, PropTypes.arrayOf( PropTypes.number ) ] ),
@@ -92,6 +93,7 @@ export class Banner extends Component {
 		jetpack: false,
 		isAtomic: false,
 		onClick: noop,
+		secondaryOnClick: noop,
 		onDismiss: noop,
 		primaryButton: true,
 		showIcon: true,
@@ -139,8 +141,15 @@ export class Banner extends Component {
 		onClick( e );
 	};
 
-	handleSecondaryClick = () => {
-		const { secondaryEvent, feature, compact, tracksClickName, tracksClickProperties } = this.props;
+	handleSecondaryClick = ( e ) => {
+		const {
+			secondaryEvent,
+			secondaryOnClick,
+			feature,
+			compact,
+			tracksClickName,
+			tracksClickProperties,
+		} = this.props;
 
 		if ( secondaryEvent && tracksClickName ) {
 			this.props.recordTracksEvent?.( tracksClickName, {
@@ -150,6 +159,8 @@ export class Banner extends Component {
 				...tracksClickProperties,
 			} );
 		}
+
+		secondaryOnClick( e );
 	};
 
 	handleDismiss = ( e ) => {

@@ -64,6 +64,7 @@ export const UpsellNudge = ( {
 	list,
 	renderListItem,
 	onClick,
+	secondaryOnClick,
 	onDismissClick,
 	plan,
 	price,
@@ -156,6 +157,7 @@ export const UpsellNudge = ( {
 			list={ list }
 			renderListItem={ renderListItem }
 			onClick={ onClick }
+			secondaryOnClick={ secondaryOnClick }
 			onDismiss={ onDismissClick }
 			plan={ plan }
 			price={ price }
