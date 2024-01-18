@@ -183,8 +183,8 @@ function CheckoutSummaryWooOfferDetails( props: {
 				priceTextArgs
 			);
 			detailsText = translate(
-				"Once the offer period has expired, you'll be charged %(cost)s on an annual basis. You can cancel your plan at any point in the first %(intervalCount)d year.",
-				"Once the offer period has expired, you'll be charged %(cost)s on an annual basis. You can cancel your plan at any point in the first %(intervalCount)d years.",
+				"After the initial offer period, you'll be billed %(cost)s annually. You can cancel your plan at any point during the first %(intervalCount)d year.",
+				"After the initial offer period, you'll be billed %(cost)s annually. You can cancel your plan at any point during the first %(intervalCount)d years.",
 				detailsTextArgs
 			);
 			break;
@@ -195,8 +195,8 @@ function CheckoutSummaryWooOfferDetails( props: {
 				priceTextArgs
 			);
 			detailsText = translate(
-				"Once the offer period has expired, you'll be charged %(cost)s on an annual basis. You can cancel your plan at any point in the first %(intervalCount)d month.",
-				"Once the offer period has expired, you'll be charged %(cost)s on an annual basis. You can cancel your plan at any point in the first %(intervalCount)d months.",
+				"After the initial offer period, you'll be billed %(cost)s annually. You can cancel your plan at any point during the first %(intervalCount)d month.",
+				"After the initial offer period, you'll be billed %(cost)s annually. You can cancel your plan at any point during the first %(intervalCount)d months.",
 				detailsTextArgs
 			);
 			break;
@@ -207,8 +207,8 @@ function CheckoutSummaryWooOfferDetails( props: {
 				priceTextArgs
 			);
 			detailsText = translate(
-				"Once the offer period has expired, you'll be charged %(cost)s on an annual basis. You can cancel your plan at any point in the first %(intervalCount)d week.",
-				"Once the offer period has expired, you'll be charged %(cost)s on an annual basis. You can cancel your plan at any point in the first %(intervalCount)d weeks.",
+				"After the initial offer period, you'll be billed %(cost)s annually. You can cancel your plan at any point during the first %(intervalCount)d week.",
+				"After the initial offer period, you'll be billed %(cost)s annually. You can cancel your plan at any point during the first %(intervalCount)d weeks.",
 				detailsTextArgs
 			);
 			break;
@@ -219,8 +219,8 @@ function CheckoutSummaryWooOfferDetails( props: {
 				priceTextArgs
 			);
 			detailsText = translate(
-				"Once the offer period has expired, you'll be charged %(cost)s on an annual basis. You can cancel your plan at any point in the first %(intervalCount)d day.",
-				"Once the offer period has expired, you'll be charged %(cost)s on an annual basis. You can cancel your plan at any point in the first %(intervalCount)d days.",
+				"After the initial offer period, you'll be billed %(cost)s annually. You can cancel your plan at any point during the first %(intervalCount)d day.",
+				"After the initial offer period, you'll be billed %(cost)s annually. You can cancel your plan at any point during the first %(intervalCount)d days.",
 				detailsTextArgs
 			);
 			break;
