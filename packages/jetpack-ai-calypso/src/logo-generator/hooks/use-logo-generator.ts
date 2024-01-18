@@ -1,7 +1,6 @@
 /**
  * External dependencies
  */
-import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { __ } from '@wordpress/i18n';
 import debugFactory from 'debug';
@@ -9,7 +8,6 @@ import { useCallback } from 'react';
 /**
  * Internal dependencies
  */
-import { EVENT_GENERATE } from '../../constants';
 import { stashLogo } from '../lib/logo-storage';
 import { requestJwt } from '../lib/request-token';
 import { saveToMediaLibrary } from '../lib/save-to-media-library';
@@ -321,7 +319,6 @@ User request: ${ prompt }
 
 		setIsRequestingImage( true );
 		increaseAiAssistantRequestsCount();
-		recordTracksEvent( EVENT_GENERATE );
 
 		try {
 			let image;
