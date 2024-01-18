@@ -8,6 +8,7 @@ import {
 	PaymentProcessorManual,
 	PaymentProcessorError,
 	PaymentProcessorResponseType,
+	PaymentProcessorModal,
 } from '../types';
 
 export function usePaymentProcessor( key: string ): PaymentProcessorFunction {
@@ -39,4 +40,8 @@ export function makeRedirectResponse( url: string ): PaymentProcessorRedirect {
 
 export function makeManualResponse( payload: unknown ): PaymentProcessorManual {
 	return { type: PaymentProcessorResponseType.MANUAL, payload };
+}
+
+export function makeModalResponse( payload: unknown ): PaymentProcessorModal {
+	return { type: PaymentProcessorResponseType.MODAL, payload };
 }

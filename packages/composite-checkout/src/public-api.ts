@@ -30,6 +30,7 @@ import {
 	makeSuccessResponse,
 	makeRedirectResponse,
 	makeErrorResponse,
+	makeModalResponse,
 } from './lib/payment-processors';
 import checkoutTheme from './lib/theme';
 import { useTransactionStatus } from './lib/transaction-status';
@@ -55,6 +56,7 @@ export {
 	makeManualResponse,
 	makeRedirectResponse,
 	makeSuccessResponse,
+	makeModalResponse,
 	useAllPaymentMethods,
 	useAvailablePaymentMethodIds,
 	useFormStatus,

@@ -161,12 +161,17 @@ export type PaymentProcessorManual = {
 	type: PaymentProcessorResponseType.MANUAL;
 	payload: unknown;
 };
+export type PaymentProcessorModal = {
+	type: PaymentProcessorResponseType.MODAL;
+	payload: unknown;
+};
 
 export type PaymentProcessorResponse =
 	| PaymentProcessorError
 	| PaymentProcessorSuccess
 	| PaymentProcessorRedirect
-	| PaymentProcessorManual;
+	| PaymentProcessorManual
+	| PaymentProcessorModal;
 
 export type PaymentProcessorSubmitData = unknown;
 
@@ -179,6 +184,7 @@ export enum PaymentProcessorResponseType {
 	REDIRECT = 'REDIRECT',
 	MANUAL = 'MANUAL',
 	ERROR = 'ERROR',
+	MODAL = 'MODAL',
 }
 
 export enum TransactionStatus {

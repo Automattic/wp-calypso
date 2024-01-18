@@ -122,6 +122,9 @@ async function handlePaymentProcessorResponse(
 	if ( processorResponse.type === PaymentProcessorResponseType.MANUAL ) {
 		return processorResponse;
 	}
+	if ( processorResponse.type === PaymentProcessorResponseType.MODAL ) {
+		return processorResponse;
+	}
 	throw new InvalidPaymentProcessorResponseError( paymentProcessorId );
 }
 
