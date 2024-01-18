@@ -26,6 +26,13 @@
 		"src"
 	],
 	"types": "dist/types",
+	"scripts": {
+		"clean": "tsc --build ./tsconfig.json ./tsconfig-cjs.json --clean && rm -rf dist",
+		"build": "tsc --build ./tsconfig.json ./tsconfig-cjs.json && copy-assets",
+		"prepare": "yarn run clean && yarn run build",
+		"prepack": "yarn run clean && yarn run build",
+		"watch": "tsc --build ./tsconfig.json --watch"
+	},
 	"dependencies": {
 		"@automattic/calypso-products": "workspace:^",
 		"@automattic/components": "workspace:^",
@@ -65,11 +72,5 @@
 		"resize-observer-polyfill": "^1.5.1",
 		"typescript": "^5.3.3",
 		"webpack": "^5.89.0"
-	},
-	"scripts": {
-		"clean": "tsc --build ./tsconfig.json ./tsconfig-cjs.json --clean && rm -rf dist",
-		"build": "tsc --build ./tsconfig.json ./tsconfig-cjs.json && copy-assets",
-		"prepack": "yarn run clean && yarn run build",
-		"watch": "tsc --build ./tsconfig.json --watch"
 	}
 }
