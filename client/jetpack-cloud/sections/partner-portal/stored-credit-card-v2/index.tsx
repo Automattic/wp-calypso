@@ -2,6 +2,7 @@ import { PaymentLogo } from '@automattic/wpcom-checkout';
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import PaymentMethodDeleteDialog from 'calypso/jetpack-cloud/sections/partner-portal/payment-method-delete-dialog';
+import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import CreditCardActions from './credit-card-actions';
 import { useDeleteCard } from './hooks/use-delete-card';
@@ -41,6 +42,7 @@ export default function StoredCreditCardV2( {
 		isDeleteInProgress,
 	} = useDeleteCard( creditCard );
 
+	const dispatch = useDispatch();
 	const cardActions = [
 		{
 			name: translate( 'Set as primary card' ),
@@ -50,7 +52,9 @@ export default function StoredCreditCardV2( {
 					paymentMethodId: creditCard.id,
 					useAsPrimaryPaymentMethod: true,
 				} );
-				recordTracksEvent( 'calypso_partner_portal_payments_card_actions_set_as_primary_click' );
+				dispatch(
+					recordTracksEvent( 'calypso_partner_portal_payments_card_actions_set_as_primary_click' )
+				);
 			},
 		},
 		{
