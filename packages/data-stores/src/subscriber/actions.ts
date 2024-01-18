@@ -132,14 +132,18 @@ export function createActions() {
 	} );
 
 	function* getSubscribersImports( siteId: number, status?: ImportJobStatus ) {
-		const path = `/sites/${ encodeURIComponent( siteId ) }/subscribers/import`;
-		const data: GetSubscribersImportsResponse = yield wpcomRequest( {
-			path: ! status ? path : `${ path }?status=${ encodeURIComponent( status ) }`,
-			method: 'GET',
-			apiNamespace: 'wpcom/v2',
-		} );
+		try {
+			const path = `/sites/${ encodeURIComponent( siteId ) }/subscribers/import`;
+			const data: GetSubscribersImportsResponse = yield wpcomRequest( {
+				path: ! status ? path : `${ path }?status=${ encodeURIComponent( status ) }`,
+				method: 'GET',
+				apiNamespace: 'wpcom/v2',
+			} );
 
-		yield getSubscribersImportsSuccess( siteId, data );
+			yield getSubscribersImportsSuccess( siteId, data );
+		} catch ( error ) {
+			yield importCsvSubscribersStartFailed( siteId, error as ImportSubscribersError );
+		}
 	}
 
 	return {

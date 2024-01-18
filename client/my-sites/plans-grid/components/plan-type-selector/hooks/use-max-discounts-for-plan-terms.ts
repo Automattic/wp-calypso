@@ -1,7 +1,7 @@
 import {
-	PlanSlug,
+	type PlanSlug,
 	URL_FRIENDLY_TERMS_MAPPING,
-	UrlFriendlyTermType,
+	type UrlFriendlyTermType,
 	getBillingMonthsForTerm,
 	getPlan,
 	getPlanMultipleTermsVariantSlugs,
@@ -49,7 +49,7 @@ export default function useMaxDiscountsForPlanTerms(
 
 	const plansPricing = Plans.usePricingMetaForGridPlans( {
 		planSlugs: allRelatedPlanSlugs,
-		withoutProRatedCredits: true,
+		withoutPlanUpgradeCredits: true,
 		selectedSiteId,
 		coupon: undefined,
 		useCheckPlanAvailabilityForPurchase,

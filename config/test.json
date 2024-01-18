@@ -23,7 +23,6 @@
 	"facebook_api_key": "249643311490",
 	"features": {
 		"ad-tracking": false,
-		"akismet/siteless-checkout": true,
 		"akismet/checkout-quantity-dropdown": false,
 		"calypsoify/plugins": true,
 		"cancellation-offers": true,
@@ -62,6 +61,7 @@
 		"lasagna": false,
 		"launchpad-updates": false,
 		"launchpad/navigator": false,
+		"launchpad/new-task-definition-parser": false,
 		"layout/app-banner": true,
 		"layout/guided-tours": true,
 		"layout/query-selected-editor": true,
@@ -69,7 +69,6 @@
 		"legal-updates-banner": true,
 		"login/social-first": true,
 		"mailchimp": true,
-		"marketplace-add-review": true,
 		"marketplace-fetch-all-dynamic-products": true,
 		"marketplace-personal-premium": false,
 		"me/account-close": true,

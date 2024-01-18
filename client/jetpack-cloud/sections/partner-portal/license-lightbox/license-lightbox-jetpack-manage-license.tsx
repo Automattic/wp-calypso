@@ -17,7 +17,7 @@ const LicenseLightboxJetpackManageLicense: FunctionComponent< Props > = ( {
 	return (
 		<div className="license-lightbox__jetpack-manage-license">
 			<h3 className="license-lightbox__jetpack-manage-license-title">
-				{ translate( 'Jetpack Manage License:' ) }
+				{ translate( 'Jetpack Manage license:' ) }
 			</h3>
 
 			<div className="license-lightbox__pricing">

@@ -46,11 +46,11 @@ export const SubscribeModalSetting = ( {
 				checked={ !! value }
 				onChange={ handleToggle( SUBSCRIBE_MODAL_OPTION ) }
 				disabled={ disabled }
-				label={ translate( 'Enable subscriber pop-up' ) }
+				label={ translate( 'Enable subscription pop-up' ) }
 			/>
 			<FormSettingExplanation>
 				{ translate(
-					'Grow your subscriber list by enabling a pop-up modal with a subscribe form. This will show as readers scroll.'
+					'Grow your subscriber list by enabling a pop-up modal with a subscription form. This will show as readers scroll.'
 				) }
 				{ subscribeModalEditorUrl && (
 					<>

@@ -1,19 +1,27 @@
 import filterUnusedFeaturesObject from '../filter-unused-features-object';
+import type { GridPlan } from '../../types';
 import type { FeatureObject } from '@automattic/calypso-products';
-import type { GridPlan } from 'calypso/my-sites/plans-grid/hooks/npm-ready/data-store/use-grid-plans';
 
 // Mock data for GridPlan and FeatureObject
 const feature1 = { getSlug: () => 'feature1' } as FeatureObject;
 const feature2 = { getSlug: () => 'feature2' } as FeatureObject;
 const feature3 = { getSlug: () => 'feature3' } as FeatureObject;
 const feature4 = { getSlug: () => 'feature4' } as FeatureObject;
+const feature5 = { getSlug: () => 'feature5-jetpack' } as FeatureObject;
+const feature6 = { getSlug: () => 'feature6-jetpack' } as FeatureObject;
 
 const planA = {
-	features: { wpcomFeatures: [ feature1, feature2 ] },
+	features: {
+		wpcomFeatures: [ feature1, feature2 ],
+		jetpackFeatures: [ feature5, feature6 ],
+	},
 } as GridPlan;
 
 const planB = {
-	features: { wpcomFeatures: [ feature2, feature3 ] },
+	features: {
+		wpcomFeatures: [ feature2, feature3 ],
+		jetpackFeatures: [ feature5, feature6 ],
+	},
 } as GridPlan;
 
 describe( 'filterUnusedFeaturesObject', () => {
@@ -25,9 +33,9 @@ describe( 'filterUnusedFeaturesObject', () => {
 	it( 'should return only the features used in any plan', () => {
 		const filteredFeatures = filterUnusedFeaturesObject(
 			[ planA, planB ],
-			[ feature1, feature2, feature3, feature4 ]
+			[ feature1, feature2, feature3, feature4, feature5 ]
 		);
-		expect( filteredFeatures ).toEqual( [ feature1, feature2, feature3 ] );
+		expect( filteredFeatures ).toEqual( [ feature1, feature2, feature3, feature5 ] );
 	} );
 
 	it( 'should return an empty array when no features are used in plans', () => {
@@ -37,10 +45,16 @@ describe( 'filterUnusedFeaturesObject', () => {
 
 	it( 'should handle duplicate features across plans correctly', () => {
 		const planC = {
-			features: { wpcomFeatures: [ feature1, feature1 ] },
+			features: {
+				wpcomFeatures: [ feature1, feature1 ],
+				jetpackFeatures: [ feature5, feature6, feature6 ],
+			},
 		} as GridPlan;
-		const filteredFeatures = filterUnusedFeaturesObject( [ planC ], [ feature1, feature2 ] );
-		expect( filteredFeatures ).toEqual( [ feature1 ] );
+		const filteredFeatures = filterUnusedFeaturesObject(
+			[ planC ],
+			[ feature1, feature2, feature6 ]
+		);
+		expect( filteredFeatures ).toEqual( [ feature1, feature6 ] );
 	} );
 
 	it( 'should handle invalid input gracefully', () => {

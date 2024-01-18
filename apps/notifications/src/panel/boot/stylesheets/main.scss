@@ -190,7 +190,7 @@
 		border-left: 1px solid var(--color-neutral-0);
 	}
 
-	.wpnc__filter__segmented-control {
+	.wpnc__filter--segmented-control {
 		display: flex;
 		padding: 6px 8px;
 
@@ -199,7 +199,7 @@
 		}
 	}
 
-	.wpnc__filter__segmented-control-item {
+	.wpnc__filter--segmented-control-item {
 		background: var(--color-surface);
 		border: 1px solid var(--color-neutral-light);
 		border-right: none;
@@ -482,6 +482,11 @@
 			z-index: 100;
 			text-align: left;
 			position: sticky;
+
+			.wpnc__settings {
+				display: flex;
+				flex-grow: 1;
+			}
 		}
 	}
 

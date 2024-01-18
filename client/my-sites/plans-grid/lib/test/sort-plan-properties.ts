@@ -4,7 +4,7 @@
 /**
  * Default mock implementations
  */
-jest.mock( '../../hooks/npm-ready/data-store/is-popular-plan', () => ( {
+jest.mock( '../../hooks/data-store/is-popular-plan', () => ( {
 	isPopularPlan: ( planSlug ) => planSlug === 'value_bundle',
 } ) );
 jest.mock( '@automattic/calypso-products', () => ( {
@@ -12,7 +12,7 @@ jest.mock( '@automattic/calypso-products', () => ( {
 } ) );
 
 import { sortPlans } from '../sort-plan-properties';
-import type { GridPlan } from '../../hooks/npm-ready/data-store/use-grid-plans';
+import type { GridPlan } from '../../types';
 
 const planFree = {
 	pricing: { originalPrice: { full: 0, monthly: 0 } },

@@ -37,9 +37,9 @@ import {
 } from 'calypso/lib/domains';
 import { getSuggestionsVendor } from 'calypso/lib/domains/suggestions';
 import { useExperiment } from 'calypso/lib/explat';
+import { triggerGuidesForStep } from 'calypso/lib/guides/trigger-guides-for-step';
 import { getSitePropertyDefaults } from 'calypso/lib/signup/site-properties';
 import { maybeExcludeEmailsStep } from 'calypso/lib/signup/step-actions';
-import wpcom from 'calypso/lib/wp';
 import CalypsoShoppingCartProvider from 'calypso/my-sites/checkout/calypso-shopping-cart-provider';
 import withCartKey from 'calypso/my-sites/checkout/with-cart-key';
 import { domainManagementRoot } from 'calypso/my-sites/domains/paths';
@@ -165,17 +165,7 @@ export class RenderDomainsStep extends Component {
 
 	componentDidMount() {
 		if ( isTailoredSignupFlow( this.props.flowName ) ) {
-			// trigger guides on this step, we don't care about failures or response
-			wpcom.req.post(
-				'guides/trigger',
-				{
-					apiNamespace: 'wpcom/v2/',
-				},
-				{
-					flow: this.props.flowName,
-					step: 'domains',
-				}
-			);
+			triggerGuidesForStep( this.props.flowName, 'domains' );
 		}
 
 		// We add a plan to cart on Multi Domains to show the proper discount on the mini-cart.

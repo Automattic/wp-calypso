@@ -50,6 +50,7 @@ export const getGoals = ( state: State ) => state.goals;
 export const getStoreLocationCountryCode = ( state: State ) => state.storeLocationCountryCode;
 export const getEcommerceFlowRecurType = ( state: State ) => state.ecommerceFlowRecurType;
 export const getCouponCode = ( state: State ) => state.couponCode;
+export const getStorageAddonSlug = ( state: State ) => state.storageAddonSlug;
 export const getState = ( state: State ) => state;
 export const hasPaidDesign = ( state: State ): boolean => {
 	if ( ! state.selectedDesign ) {

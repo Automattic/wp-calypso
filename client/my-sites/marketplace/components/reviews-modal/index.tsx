@@ -139,6 +139,7 @@ export const ReviewsModal = ( props: Props ) => {
 					productType={ productType }
 					slug={ slug }
 					forceShowThankYou={ editCompletedTimes }
+					canPublishReview={ canPublishReview }
 				/>
 
 				<div className="marketplace-reviews-modal__reviews-list">
