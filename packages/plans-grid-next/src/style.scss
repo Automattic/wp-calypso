@@ -414,6 +414,11 @@ $mobile-card-max-width: 440px;
 }
 
 .components-custom-select-control {
+	.storage-add-on-dropdown-option__text-container {
+		padding: 6px 0;
+		line-height: 20px;
+	}
+
 	.storage-add-on-dropdown-option__price-container {
 		display: inline-block;
 	}
