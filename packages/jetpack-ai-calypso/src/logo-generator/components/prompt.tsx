@@ -13,6 +13,7 @@ import { useCallback, useEffect, useState, useRef } from 'react';
 import { EVENT_PROMPT_ENHANCE, MINIMUM_PROMPT_LENGTH } from '../../constants';
 import AiIcon from '../assets/icons/ai';
 import useLogoGenerator from '../hooks/use-logo-generator';
+import useRequestErrors from '../hooks/use-request-errors';
 import './prompt.scss';
 
 const debug = debugFactory( 'jetpack-ai-calypso:prompt-box' );
@@ -20,6 +21,7 @@ const debug = debugFactory( 'jetpack-ai-calypso:prompt-box' );
 export const Prompt: React.FC< { initialPrompt?: string } > = ( { initialPrompt = '' } ) => {
 	const [ prompt, setPrompt ] = useState( initialPrompt );
 	const [ requestsRemaining, setRequestsRemaining ] = useState( 0 );
+	const { enhancePromptFetchError, logoFetchError } = useRequestErrors();
 	const hasPrompt = prompt?.length >= MINIMUM_PROMPT_LENGTH;
 
 	const {
@@ -49,7 +51,6 @@ export const Prompt: React.FC< { initialPrompt?: string } > = ( { initialPrompt 
 			setPrompt( enhancedPrompt );
 			setIsEnhancingPrompt( false );
 		} catch ( error ) {
-			// TODO: handle error
 			debug( 'Error enhancing prompt', error );
 			setIsEnhancingPrompt( false );
 		}
@@ -121,7 +122,7 @@ export const Prompt: React.FC< { initialPrompt?: string } > = ( { initialPrompt 
 			</div>
 			<div className="jetpack-ai-logo-generator__prompt-footer">
 				{ ! isUnlimited && (
-					<>
+					<div className="jetpack-ai-logo-generator__prompt-requests">
 						<div>
 							{ sprintf(
 								// translators: %u is the number of requests
@@ -135,7 +136,17 @@ export const Prompt: React.FC< { initialPrompt?: string } > = ( { initialPrompt 
 						</Button>
 						&nbsp;
 						<Icon className="prompt-footer__icon" icon={ info } />
-					</>
+					</div>
+				) }
+				{ enhancePromptFetchError && (
+					<div className="jetpack-ai-logo-generator__prompt-error">
+						{ __( 'Error enhancing prompt. Please try again.', 'jetpack' ) }
+					</div>
+				) }
+				{ logoFetchError && (
+					<div className="jetpack-ai-logo-generator__prompt-error">
+						{ __( 'Error generating logo. Please try again.', 'jetpack' ) }
+					</div>
 				) }
 			</div>
 		</div>
