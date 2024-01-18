@@ -3,6 +3,7 @@ export type { Task } from '@automattic/launchpad';
 import { ChecklistStatuses, SiteDetails } from '@automattic/data-stores';
 import { Task } from '@automattic/launchpad';
 import { MinimalRequestCartProduct } from '@automattic/shopping-cart';
+import { ReactNode } from 'react';
 import { NavigationControls } from '../../types';
 
 export type LaunchpadChecklist = Task[];
@@ -44,6 +45,7 @@ export interface TaskContext {
 	shouldDisplayWarning: boolean;
 	globalStylesMinimumPlan: string;
 	isVideoPressFlowWithUnsupportedPlan: boolean;
+	translatedPlanName?: ReactNode | string;
 }
 
 export type TaskAction = ( task: Task, flow: string, context: TaskContext ) => Task;

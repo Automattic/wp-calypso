@@ -536,7 +536,7 @@ export function getEnhancedTasks( {
 					taskData = getTaskDefinition( flow, task, context ) || deprecatedData;
 					break;
 				case 'blog_launched': {
-					taskData = {
+					deprecatedData = {
 						isLaunchTask: true,
 						title: getLaunchSiteTaskTitle( task ),
 						disabled: getIsLaunchSiteTaskDisabled(),
@@ -544,6 +544,8 @@ export function getEnhancedTasks( {
 							completeLaunchSiteTask( task );
 						},
 					};
+
+					taskData = getTaskDefinition( flow, task, context ) || deprecatedData;
 					break;
 				}
 				case 'videopress_upload':
