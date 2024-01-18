@@ -16,7 +16,7 @@ const DEFINITIONS = {
 	...planActions,
 } satisfies TaskActionTable;
 
-const MIGRATED_FLOWS = [ 'free' ];
+const MIGRATED_FLOWS = [ 'free', 'start-writing' ];
 
 const isNewDefinitionAvailable = ( flow: string, taskId: string ) => {
 	const isFlowEnabled = MIGRATED_FLOWS.includes( flow );

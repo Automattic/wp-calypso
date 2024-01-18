@@ -309,7 +309,7 @@ export function getEnhancedTasks( {
 					taskData = getTaskDefinition( flow, task, context ) || deprecatedData;
 					break;
 				case 'setup_blog':
-					taskData = {
+					deprecatedData = {
 						actionDispatch: () => {
 							recordTaskClickTracksEvent( flow, task.completed, task.id );
 							window.location.assign(
@@ -318,6 +318,7 @@ export function getEnhancedTasks( {
 						},
 						disabled: task.completed && ! isBlogOnboardingFlow( flow ),
 					};
+					taskData = getTaskDefinition( flow, task, context ) || deprecatedData;
 					break;
 				case 'setup_newsletter':
 					taskData = {
