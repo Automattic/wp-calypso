@@ -21,8 +21,19 @@ import {
 	ACTION_SET_IS_APPLYING_LOGO,
 	ACTION_SET_IS_ENHANCING_PROMPT,
 	ACTION_SET_SITE_HISTORY,
+	ACTION_SET_FEATURE_FETCH_ERROR,
+	ACTION_SET_FIRST_LOGO_PROMPT_FETCH_ERROR,
+	ACTION_SET_ENHANCE_PROMPT_FETCH_ERROR,
+	ACTION_SET_LOGO_FETCH_ERROR,
+	ACTION_SET_LOGO_UPDATE_ERROR,
+	ACTION_SET_SAVE_TO_LIBRARY_ERROR,
 } from './constants';
-import type { AiFeatureProps, AiAssistantFeatureEndpointResponseProps, Logo } from './types';
+import type {
+	AiFeatureProps,
+	AiAssistantFeatureEndpointResponseProps,
+	Logo,
+	RequestError,
+} from './types';
 import type { SiteDetails } from '@automattic/data-stores';
 
 /**
@@ -84,8 +95,8 @@ const actions = {
 					actions.storeAiAssistantFeature( mapAiFeatureResponseToAiFeatureProps( response ) )
 				);
 			} catch ( err ) {
-				// @todo: Handle error.
-				console.error( err ); // eslint-disable-line no-console
+				// Mark the fetch as failed.
+				dispatch( { type: ACTION_SET_FEATURE_FETCH_ERROR, error: err } );
 			}
 		};
 	},
@@ -181,6 +192,47 @@ const actions = {
 		return {
 			type: ACTION_SET_SITE_HISTORY,
 			history,
+		};
+	},
+
+	setFeatureFetchError( error: RequestError ) {
+		return {
+			type: ACTION_SET_FEATURE_FETCH_ERROR,
+			error,
+		};
+	},
+
+	setFirstLogoPromptFetchError( error: RequestError ) {
+		return {
+			type: ACTION_SET_FIRST_LOGO_PROMPT_FETCH_ERROR,
+			error,
+		};
+	},
+
+	setEnhancePromptFetchError( error: RequestError ) {
+		return {
+			type: ACTION_SET_ENHANCE_PROMPT_FETCH_ERROR,
+			error,
+		};
+	},
+
+	setLogoFetchError( error: RequestError ) {
+		return {
+			type: ACTION_SET_LOGO_FETCH_ERROR,
+			error,
+		};
+	},
+
+	setSaveToLibraryError( error: RequestError ) {
+		return {
+			type: ACTION_SET_SAVE_TO_LIBRARY_ERROR,
+			error,
+		};
+	},
+	setLogoUpdateError( error: RequestError ) {
+		return {
+			type: ACTION_SET_LOGO_UPDATE_ERROR,
+			error,
 		};
 	},
 };

@@ -1,7 +1,7 @@
 /**
  * Types
  */
-import type { AiFeatureProps, LogoGeneratorStateProp, Logo } from './types';
+import type { AiFeatureProps, LogoGeneratorStateProp, Logo, RequestError } from './types';
 import type { SiteDetails } from '@automattic/data-stores';
 
 const selectors = {
@@ -111,6 +111,60 @@ const selectors = {
 	 */
 	getRequireUpgrade( state: LogoGeneratorStateProp ): boolean {
 		return state.features.aiAssistantFeature?.requireUpgrade ?? true;
+	},
+
+	/**
+	 * Get the featureFetchError value.
+	 * @param {LogoGeneratorStateProp} state - The app state tree.
+	 * @returns {RequestError}                 The featureFetchError value.
+	 */
+	getFeatureFetchError( state: LogoGeneratorStateProp ): RequestError {
+		return state._meta?.featureFetchError ?? null;
+	},
+
+	/**
+	 * Get the firstLogoPromptFetchError value.
+	 * @param {LogoGeneratorStateProp} state - The app state tree.
+	 * @returns {RequestError}                 The firstLogoPromptFetchError value.
+	 */
+	getFirstLogoPromptFetchError( state: LogoGeneratorStateProp ): RequestError {
+		return state._meta?.firstLogoPromptFetchError ?? null;
+	},
+
+	/**
+	 * Get the enhancePromptFetchError value.
+	 * @param {LogoGeneratorStateProp} state - The app state tree.
+	 * @returns {RequestError}                 The enhancePromptFetchError value.
+	 */
+	getEnhancePromptFetchError( state: LogoGeneratorStateProp ): RequestError {
+		return state._meta?.enhancePromptFetchError ?? null;
+	},
+
+	/**
+	 * Get the logoFetchError value.
+	 * @param {LogoGeneratorStateProp} state - The app state tree.
+	 * @returns {RequestError}                 The logoFetchError value.
+	 */
+	getLogoFetchError( state: LogoGeneratorStateProp ): RequestError {
+		return state._meta?.logoFetchError ?? null;
+	},
+
+	/**
+	 * Get the saveToLibraryError value.
+	 * @param {LogoGeneratorStateProp} state - The app state tree.
+	 * @returns {RequestError}                 The saveToLibraryError value.
+	 */
+	getSaveToLibraryError( state: LogoGeneratorStateProp ): RequestError {
+		return state._meta?.saveToLibraryError ?? null;
+	},
+
+	/**
+	 * Get the logoUpdateError value.
+	 * @param {LogoGeneratorStateProp} state - The app state tree.
+	 * @returns {RequestError}                 The logoUpdateError value.
+	 */
+	getLogoUpdateError( state: LogoGeneratorStateProp ): RequestError {
+		return state._meta?.logoUpdateError ?? null;
 	},
 };
 

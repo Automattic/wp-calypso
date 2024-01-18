@@ -4,10 +4,6 @@
 import { Button } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 /**
- * Internal dependencies
- */
-import './upgrade-screen.scss';
-/**
  * Types
  */
 import type React from 'react';
@@ -22,15 +18,15 @@ export const UpgradeScreen: React.FC< { onCancel: () => void; upgradeURL: string
 	);
 
 	return (
-		<div className="jetpack-ai-logo-generator-modal__upgrade-message-wrapper">
-			<div className="jetpack-ai-logo-generator-modal__upgrade-message">
+		<div className="jetpack-ai-logo-generator-modal__notice-message-wrapper">
+			<div className="jetpack-ai-logo-generator-modal__notice-message">
 				<span className="jetpack-ai-logo-generator-modal__loading-message">{ upgradeMessage }</span>
 				&nbsp;
 				<Button variant="link" href="https://jetpack.com/ai/" target="_blank">
 					{ __( 'Learn more', 'jetpack' ) }
 				</Button>
 			</div>
-			<div className="jetpack-ai-logo-generator-modal__upgrade-actions">
+			<div className="jetpack-ai-logo-generator-modal__notice-actions">
 				<Button variant="tertiary" onClick={ onCancel }>
 					{ __( 'Cancel', 'jetpack' ) }
 				</Button>
