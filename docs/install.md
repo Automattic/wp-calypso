@@ -2,7 +2,7 @@
 
 You can install Calypso directly on your machine by following the next steps, or use a [portable development environment](install.md#using-a-portable-development-environment):
 
-## Quick Summary of Steps
+## Quick Summary of Steps (Mac & Linux)
 
 1. Check that you have all prerequisites (Git, Node, NPM). See [below](install.md#prerequisites) for more details. Pay close attention to software versions.
 2. Clone this repository locally.
