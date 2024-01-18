@@ -7,7 +7,7 @@ import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import { useRef, useState } from 'react';
 import statsPurchaseBackgroundSVG from 'calypso/assets/images/stats/purchase-background.svg';
-import StatsPreviewSVG from './stats-preview-svg';
+import StatsPurchasePreviewImage from './stats-purchase-preview-image';
 import StatsPurchaseSVG from './stats-purchase-svg';
 import { COMPONENT_CLASS_NAME } from './stats-purchase-wizard';
 
@@ -175,7 +175,7 @@ const StatsSingleItemPagePurchaseFrame = ( {
 				<div className={ `${ COMPONENT_CLASS_NAME }__card` }>
 					<div className={ `${ COMPONENT_CLASS_NAME }__card-inner--left` }>{ children }</div>
 					<div className={ `${ COMPONENT_CLASS_NAME }__card-inner--right` }>
-						{ useNewPreviewImage && <StatsPreviewSVG useSvg={ true } /> }
+						{ useNewPreviewImage && <StatsPurchasePreviewImage /> }
 						{ ! useNewPreviewImage && (
 							<StatsPurchaseSVG isFree={ isFree } hasHighlight={ false } extraMessage={ false } />
 						) }
