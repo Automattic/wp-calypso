@@ -82,7 +82,7 @@ export default function PurchaseMeta( {
 			: translate( 'Price' );
 
 	// To-do: There isn't currently a way to get the taxName based on the country.
-	// The country is not includedin the purchase information envelope
+	// The country is not included in the purchase information envelope
 	// We should add this information so we can utilize useTaxName to retrieve the correct taxName
 	// For now, we are using a fallback tax name
 	const taxName =
@@ -91,13 +91,13 @@ export default function PurchaseMeta( {
 			: translate( 'tax (VAT/GST/CT)' );
 
 	/* translators: %s is the name of taxes in the country (eg: "VAT" or "GST"). */
-	const excludeTaxStringAbbrevation = translate( 'excludes %s', {
+	const excludeTaxStringAbbreviation = translate( 'excludes %s', {
 		textOnly: true,
 		args: [ taxName ],
 	} );
 
 	/* translators: %s is the name of taxes in the country (eg: "VAT" or "GST"). */
-	const excludeTaxStringTitle = translate( 'Renewal price exlcudes any applicable %s', {
+	const excludeTaxStringTitle = translate( 'Renewal price excludes any applicable %s', {
 		textOnly: true,
 		args: [ taxName ],
 	} );
@@ -113,7 +113,7 @@ export default function PurchaseMeta( {
 						<PurchaseMetaIntroductoryOfferDetail purchase={ purchase } />
 					</span>
 					<span>
-						<abbr title={ excludeTaxStringTitle }>{ excludeTaxStringAbbrevation }</abbr>
+						<abbr title={ excludeTaxStringTitle }>{ excludeTaxStringAbbreviation }</abbr>
 					</span>
 				</li>
 				<PurchaseMetaExpiration

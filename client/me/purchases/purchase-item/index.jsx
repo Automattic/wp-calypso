@@ -68,7 +68,7 @@ class PurchaseItem extends Component {
 		const { purchase, translate, locale, moment, name, isJetpack, isDisconnectedSite } = this.props;
 		const expiry = moment( purchase.expiryDate );
 		// To-do: There isn't currently a way to get the taxName based on the country.
-		// The country is not includedin the purchase information envelope
+		// The country is not included in the purchase information envelope
 		// We should add this information so we can utilize useTaxName to retrieve the correct taxName
 		// For now, we are using a fallback tax name
 		const taxName =
@@ -76,15 +76,14 @@ class PurchaseItem extends Component {
 				? translate( 'tax' )
 				: translate( 'tax (VAT/GST/CT)' );
 
-		/* translators: "excl."" is an abbrevation of the word "exclude" */
 		/* translators: %s is the name of taxes in the country (eg: "VAT" or "GST"). */
-		const excludeTaxStringAbbrevation = translate( '(excl. %s)', {
+		const excludeTaxStringAbbreviation = translate( '(excludes %s)', {
 			textOnly: true,
 			args: [ taxName ],
 		} );
 
 		/* translators: %s is the name of taxes in the country (eg: "VAT" or "GST"). */
-		const excludeTaxStringTitle = translate( 'Renewal price exlcudes any applicable %s', {
+		const excludeTaxStringTitle = translate( 'Renewal price excludes any applicable %s', {
 			textOnly: true,
 			args: [ taxName ],
 		} );
@@ -179,7 +178,7 @@ class PurchaseItem extends Component {
 					) )
 			) {
 				return translate(
-					'Free trial ends on {{span}}%(date)s{{/span}}, renews automatically at %(amount)s {{abbr}}%(excludeTaxStringAbbrevation)s{{/abbr}}',
+					'Free trial ends on {{span}}%(date)s{{/span}}, renews automatically at %(amount)s {{abbr}}%(excludeTaxStringAbbreviation)s{{/abbr}}',
 					{
 						args: {
 							date: expiry.format( 'LL' ),
@@ -187,7 +186,7 @@ class PurchaseItem extends Component {
 								isSmallestUnit: true,
 								stripZeros: true,
 							} ),
-							excludeTaxStringAbbrevation: excludeTaxStringAbbrevation,
+							excludeTaxStringAbbreviation: excludeTaxStringAbbreviation,
 						},
 						components: {
 							span: <span className="purchase-item__date" />,
@@ -260,7 +259,7 @@ class PurchaseItem extends Component {
 							isSmallestUnit: true,
 							stripZeros: true,
 						} ),
-						excludeTaxStringAbbrevation: excludeTaxStringAbbrevation,
+						excludeTaxStringAbbreviation: excludeTaxStringAbbreviation,
 						date: renewDate.format( 'LL' ),
 					},
 					components: {
@@ -275,7 +274,7 @@ class PurchaseItem extends Component {
 							i18n.hasTranslation( 'Renews monthly at %(amount)s on {{span}}%(date)s{{/span}}' )
 						) {
 							return translate(
-								'Renews monthly at %(amount)s {{abbr}}%(excludeTaxStringAbbrevation)s{{/abbr}} on {{span}}%(date)s{{/span}}',
+								'Renews monthly at %(amount)s {{abbr}}%(excludeTaxStringAbbreviation)s{{/abbr}} on {{span}}%(date)s{{/span}}',
 								translateOptions
 							);
 						}
@@ -285,7 +284,7 @@ class PurchaseItem extends Component {
 							i18n.hasTranslation( 'Renews yearly at %(amount)s on {{span}}%(date)s{{/span}}' )
 						) {
 							return translate(
-								'Renews yearly at %(amount)s {{abbr}}%(excludeTaxStringAbbrevation)s{{/abbr}} on {{span}}%(date)s{{/span}}',
+								'Renews yearly at %(amount)s {{abbr}}%(excludeTaxStringAbbreviation)s{{/abbr}} on {{span}}%(date)s{{/span}}',
 								translateOptions
 							);
 						}
@@ -293,11 +292,11 @@ class PurchaseItem extends Component {
 						if (
 							locale === 'en' ||
 							i18n.hasTranslation(
-								'Renews every two years at %(amount)s {{abbr}}%(excludeTaxStringAbbrevation)s{{/abbr}} on {{span}}%(date)s{{/span}}'
+								'Renews every two years at %(amount)s {{abbr}}%(excludeTaxStringAbbreviation)s{{/abbr}} on {{span}}%(date)s{{/span}}'
 							)
 						) {
 							return translate(
-								'Renews every two years at %(amount)s {{abbr}}%(excludeTaxStringAbbrevation)s{{/abbr}} on {{span}}%(date)s{{/span}}',
+								'Renews every two years at %(amount)s {{abbr}}%(excludeTaxStringAbbreviation)s{{/abbr}} on {{span}}%(date)s{{/span}}',
 								translateOptions
 							);
 						}
@@ -305,11 +304,11 @@ class PurchaseItem extends Component {
 						if (
 							locale === 'en' ||
 							i18n.hasTranslation(
-								'Renews every three years at %(amount)s {{abbr}}%(excludeTaxStringAbbrevation)s{{/abbr}} on {{span}}%(date)s{{/span}}'
+								'Renews every three years at %(amount)s {{abbr}}%(excludeTaxStringAbbreviation)s{{/abbr}} on {{span}}%(date)s{{/span}}'
 							)
 						) {
 							return translate(
-								'Renews every three years at %(amount)s {{abbr}}%(excludeTaxStringAbbrevation)s{{/abbr}} on {{span}}%(date)s{{/span}}',
+								'Renews every three years at %(amount)s {{abbr}}%(excludeTaxStringAbbreviation)s{{/abbr}} on {{span}}%(date)s{{/span}}',
 								translateOptions
 							);
 						}
@@ -317,14 +316,14 @@ class PurchaseItem extends Component {
 			}
 
 			return translate(
-				'Renews at %(amount)s {{abbr}}%(excludeTaxStringAbbrevation)s{{/abbr}} on {{span}}%(date)s{{/span}}',
+				'Renews at %(amount)s {{abbr}}%(excludeTaxStringAbbreviation)s{{/abbr}} on {{span}}%(date)s{{/span}}',
 				{
 					args: {
 						amount: formatCurrency( purchase.priceInteger, purchase.currencyCode, {
 							isSmallestUnit: true,
 							stripZeros: true,
 						} ),
-						excludeTaxStringAbbrevation: excludeTaxStringAbbrevation,
+						excludeTaxStringAbbreviation: excludeTaxStringAbbreviation,
 						date: renewDate.format( 'LL' ),
 					},
 					components: {
