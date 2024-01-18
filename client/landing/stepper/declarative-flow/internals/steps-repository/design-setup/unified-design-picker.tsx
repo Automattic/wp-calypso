@@ -791,6 +791,7 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 			<DesignPickerDesignTitle
 				designTitle={ designTitle }
 				selectedDesign={ selectedDesign }
+				selectedStyleVariation={ selectedStyleVariation }
 				shouldLimitGlobalStyles={ shouldLimitGlobalStyles }
 			/>
 		);
