@@ -20,6 +20,7 @@ import { connect } from 'react-redux';
 import DataCenterPicker from 'calypso/blocks/data-center-picker';
 import ActionPanelLink from 'calypso/components/action-panel/link';
 import QueryEligibility from 'calypso/components/data/query-atat-eligibility';
+import useAddHostingTrialMutation from 'calypso/data/hosting/use-add-hosting-trial-mutation';
 import TrackComponentView from 'calypso/lib/analytics/track-component-view';
 import { useSelector } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
@@ -92,6 +93,8 @@ export const EligibilityWarnings = ( {
 
 	const [ selectedGeoAffinity, setSelectedGeoAffinity ] = useState( '' );
 
+	const { mutateAsync: addHostingTrial } = useAddHostingTrialMutation();
+
 	const showWarnings = warnings.length > 0 && ! hasBlockingHold( listHolds );
 	const classes = classNames(
 		'eligibility-warnings',
@@ -123,9 +126,10 @@ export const EligibilityWarnings = ( {
 				redirectUrl = `${ redirectUrl }?redirect_to=/plugins/upload/${ siteSlug }`;
 			}
 			if ( showFreeTrial ) {
-				// this will be changed to initiate atomic transfer on the plugins page in another PR
 				if ( context === 'plugins-upload' ) {
-					redirectUrl = `/checkout/${ siteSlug }/${ PLAN_HOSTING_TRIAL_MONTHLY }`;
+					// TODO: Handle Trial acknowledge once it's isolated from the stepper
+					addHostingTrial( { siteId: siteId ?? 0, planSlug: PLAN_HOSTING_TRIAL_MONTHLY } );
+					window.location.href = '/setup/transferring-hosted-site/processing?siteId=' + siteId;
 				}
 			}
 			page.redirect( redirectUrl );
