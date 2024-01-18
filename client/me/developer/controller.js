@@ -1,6 +1,6 @@
 import { useTranslate } from 'i18n-calypso';
 import DocumentHead from 'calypso/components/data/document-head';
-import DeveloperComponent from 'calypso/me/developer/main';
+import { DeveloperComponent } from 'calypso/me/developer/main';
 
 export function developer( context, next ) {
 	const DeveloperTitle = () => {

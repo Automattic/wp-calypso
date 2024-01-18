@@ -2,12 +2,11 @@
 
 .developer__is_dev_account-fieldset-is-loading, {
 	.components-form-toggle {
-		> * {
+		.components-form-toggle__thumb {
 			visibility: hidden;
 		}
 
 		.components-form-toggle__track {
-			visibility: visible;
 			border: none;
 			@include placeholder( --color-neutral-10 );
 		}
