@@ -19,7 +19,7 @@
 	"features": {
 		"ad-tracking": false,
 		"akismet/checkout-quantity-dropdown": true,
-		"bluehost-in-plans-grid": true,
+		"bluehost-in-plans-grid": false,
 		"calypso/ai-blogging-prompts": false,
 		"calypso/ai-assembler": false,
 		"calypso/help-center": true,

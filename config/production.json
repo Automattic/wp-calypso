@@ -20,7 +20,7 @@
 	"zendesk_support_chat_key": "cec07bc9-4da6-4dd2-afa7-c7e01ae73584",
 	"features": {
 		"ad-tracking": true,
-		"bluehost-in-plans-grid": true,
+		"bluehost-in-plans-grid": false,
 		"akismet/checkout-quantity-dropdown": false,
 		"calypso/ai-blogging-prompts": false,
 		"calypso/ai-assembler": false,
