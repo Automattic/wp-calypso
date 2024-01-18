@@ -63,9 +63,9 @@ describe( 'FormTextInputWithValueGeneration', () => {
 				onAction={ generateValueCallback }
 			/>
 		);
-		const textboxInput2 = getTextboxInput();
+		const rerenderedTextboxInput = getTextboxInput();
 
 		expect( generateValueCallback ).toHaveBeenCalledTimes( 1 );
-		expect( textboxInput2 ).toHaveValue( 'value generated from callback function' );
+		expect( rerenderedTextboxInput ).toHaveValue( 'value generated from callback function' );
 	} );
 } );
