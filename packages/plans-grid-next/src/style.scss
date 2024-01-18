@@ -419,17 +419,19 @@ $mobile-card-max-width: 440px;
 	}
 
 	.storage-add-on-dropdown-option__title {
-		font-size: 0.75rem;
+		color: var(--color-text);
+		font-weight: 500;
 	}
 
 	.storage-add-on-dropdown-option__price,
 	.storage-add-on-dropdown-option__per-month {
-		color: var(--studio-green-40);
+		color: var(--studio-green-50);
 		display: inline-block;
 
-		// Non standard rem allows us to match font size of other storage labels
-		/* stylelint-disable-next-line scales/font-sizes */
-		font-size: 0.7rem;
+		// // Non standard rem allows us to match font size of other storage labels
+		// /* stylelint-disable-next-line scales/font-sizes */
+		// font-size: 0.7rem;
+		font-weight: 500;
 	}
 
 	.storage-add-on-dropdown-option__price {
@@ -443,11 +445,10 @@ $mobile-card-max-width: 440px;
 	text-align: left;
 
 	.storage-add-on-dropdown__offset-price {
-		color: var(--studio-green-40);
+		color: var(--studio-green-50);
 
-		// Non standard rem allows us to match font size of other storage labels
-		/* stylelint-disable-next-line scales/font-sizes */
-		font-size: 0.7rem;
+		font-size: 0.75rem;
+		font-weight: 500;
 	}
 }
 
