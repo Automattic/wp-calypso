@@ -1,7 +1,7 @@
 import { useSiteIntent } from '@automattic/data-stores';
 import { useSelector } from 'react-redux';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
-import type { PlansIntent } from 'calypso/my-sites/plans-grid';
+import type { PlansIntent } from '@automattic/plans-grid-next';
 
 interface IntentFromSiteMeta {
 	processing: boolean;

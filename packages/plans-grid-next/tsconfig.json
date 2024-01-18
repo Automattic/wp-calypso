@@ -1,0 +1,17 @@
+{
+	"extends": "@automattic/calypso-typescript-config/ts-package.json",
+	"compilerOptions": {
+		"allowJs": true,
+		"checkJs": false,
+		"outDir": "dist/esm",
+		"declarationDir": "dist/types",
+		"rootDir": "src"
+	},
+	"include": [ "src" ],
+	"exclude": [ "**/docs/*", "**/test/*" ],
+	"references": [
+		{ "path": "../calypso-analytics" },
+		{ "path": "../calypso-url" },
+		{ "path": "../search" }
+	]
+}

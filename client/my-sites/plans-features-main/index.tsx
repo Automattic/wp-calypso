@@ -22,6 +22,14 @@ import page from '@automattic/calypso-router';
 import { Button, Spinner } from '@automattic/components';
 import { WpcomPlansUI } from '@automattic/data-stores';
 import { isAnyHostingFlow } from '@automattic/onboarding';
+import {
+	FeaturesGrid,
+	ComparisonGrid,
+	PlanTypeSelector,
+	useGridPlans,
+	usePlanFeaturesForGridPlans,
+	useRestructuredPlanFeaturesForComparisonGrid,
+} from '@automattic/plans-grid-next';
 import { isMobile } from '@automattic/viewport';
 import styled from '@emotion/styled';
 import { useDispatch } from '@wordpress/data';
@@ -57,14 +65,6 @@ import useStorageAddOns from 'calypso/my-sites/add-ons/hooks/use-storage-add-ons
 import PlanNotice from 'calypso/my-sites/plans-features-main/components/plan-notice';
 import { useFreeTrialPlanSlugs } from 'calypso/my-sites/plans-features-main/hooks/use-free-trial-plan-slugs';
 import usePlanTypeDestinationCallback from 'calypso/my-sites/plans-features-main/hooks/use-plan-type-destination-callback';
-import {
-	FeaturesGrid,
-	ComparisonGrid,
-	PlanTypeSelector,
-	useGridPlans,
-	usePlanFeaturesForGridPlans,
-	useRestructuredPlanFeaturesForComparisonGrid,
-} from 'calypso/my-sites/plans-grid';
 import { getCurrentUserName } from 'calypso/state/current-user/selectors';
 import canUpgradeToPlan from 'calypso/state/selectors/can-upgrade-to-plan';
 import getDomainFromHomeUpsellInQuery from 'calypso/state/selectors/get-domain-from-home-upsell-in-query';
@@ -84,14 +84,14 @@ import usePlanFromUpsells from './hooks/use-plan-from-upsells';
 import usePlanIntentFromSiteMeta from './hooks/use-plan-intent-from-site-meta';
 import { usePlanUpgradeCreditsApplicable } from './hooks/use-plan-upgrade-credits-applicable';
 import useGetFreeSubdomainSuggestion from './hooks/use-suggested-free-domain-from-paid-domain';
-import type { MinimalRequestCartProduct } from '@automattic/shopping-cart';
 import type {
 	GridPlan,
 	PlansIntent,
 	DataResponse,
 	PlanActionOverrides,
 	SupportedUrlFriendlyTermType,
-} from 'calypso/my-sites/plans-grid';
+} from '@automattic/plans-grid-next';
+import type { MinimalRequestCartProduct } from '@automattic/shopping-cart';
 import type { IAppState } from 'calypso/state/types';
 
 import './style.scss';

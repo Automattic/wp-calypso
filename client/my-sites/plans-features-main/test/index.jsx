@@ -3,7 +3,7 @@
  */
 
 jest.mock( 'calypso/components/marketing-message', () => () => null );
-jest.mock( 'calypso/my-sites/plans-grid', () => ( {
+jest.mock( '@automattic/plans-grid-next', () => ( {
 	FeaturesGrid: ( { gridPlans } ) => (
 		<div data-testid="plan-features">
 			<div data-testid="visible-plans">
@@ -14,7 +14,7 @@ jest.mock( 'calypso/my-sites/plans-grid', () => ( {
 	PlanTypeSelector: () => <div>PlanTypeSelector</div>,
 	usePlanFeaturesForGridPlans: jest.fn(),
 	useRestructuredPlanFeaturesForComparisonGrid: jest.fn(),
-	useGridPlans: jest.requireActual( 'calypso/my-sites/plans-grid' ).useGridPlans,
+	useGridPlans: jest.requireActual( '@automattic/plans-grid-next' ).useGridPlans,
 } ) );
 jest.mock( '../hooks/use-plan-intent-from-site-meta', () => jest.fn() );
 jest.mock( '../hooks/use-suggested-free-domain-from-paid-domain', () => () => ( {
@@ -60,11 +60,11 @@ import {
 	PLAN_ENTERPRISE_GRID_WPCOM,
 } from '@automattic/calypso-products';
 import { Plans } from '@automattic/data-stores';
-import { screen } from '@testing-library/react';
 import {
 	usePlanFeaturesForGridPlans,
 	useRestructuredPlanFeaturesForComparisonGrid,
-} from 'calypso/my-sites/plans-grid';
+} from '@automattic/plans-grid-next';
+import { screen } from '@testing-library/react';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { renderWithProvider } from 'calypso/test-helpers/testing-library';
 import useIntentFromSiteMeta from '../hooks/use-plan-intent-from-site-meta';

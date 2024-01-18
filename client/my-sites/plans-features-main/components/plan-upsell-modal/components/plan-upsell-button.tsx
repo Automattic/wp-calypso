@@ -1,5 +1,5 @@
+import { PlanButton } from '@automattic/plans-grid-next';
 import { useTranslate } from 'i18n-calypso';
-import { PlanButton } from 'calypso/my-sites/plans-grid';
 import type { PlanUpsellInfo } from '../hooks/use-plan-upsell-info';
 import type { PlanSlug } from '@automattic/calypso-products';
 
