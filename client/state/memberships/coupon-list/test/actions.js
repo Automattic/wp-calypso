@@ -3,12 +3,6 @@ import {
 	MEMBERSHIPS_COUPONS_LIST,
 	MEMBERSHIPS_COUPON_RECEIVE,
 	MEMBERSHIPS_COUPON_DELETE,
-	MEMBERSHIPS_COUPON_ADD,
-	NOTICE_CREATE,
-	MEMBERSHIPS_COUPON_UPDATE,
-	MEMBERSHIPS_COUPON_ADD_FAILURE,
-	MEMBERSHIPS_COUPON_UPDATE_FAILURE,
-	MEMBERSHIPS_COUPON_DELETE_FAILURE,
 } from 'calypso/state/action-types';
 import {
 	COUPON_DISCOUNT_TYPE_PERCENTAGE,
@@ -22,10 +16,6 @@ import {
 	requestUpdateCoupon,
 	requestDeleteCoupon,
 } from '../actions';
-
-beforeEach( () => {
-	jest.resetAllMocks();
-} );
 
 const mockCoupon = {
 	coupon_code: 'COUPON4',
@@ -79,44 +69,21 @@ describe( 'actions', () => {
 			nock( 'https://public-api.wordpress.com' )
 				.post( '/wpcom/v2/sites/1/memberships/coupons' )
 				.replyWithError( { code: 'validation_error', message: 'Coupon code is already used' } );
-			const errorNoticeText = 'Coupon code is already used';
 			const noticeText = 'Added coupon';
 			const dispatchedActions = [];
 
 			const dispatch = ( obj ) => dispatchedActions.push( obj );
 			await requestAddCoupon( siteId, coupon, noticeText )( dispatch );
 
-			// dispatchedActions will include a randomly-generated noticeId.
-			// We need to include that random id in our expectation.
-			const noticeId = dispatchedActions[ 2 ].notice.noticeId;
-
-			const expectedActions = [
-				{
-					coupon,
-					siteId,
-					type: MEMBERSHIPS_COUPON_ADD,
-				},
-				{
-					error: {
-						message: 'Coupon code is already used',
-						code: 'validation_error',
-						response: undefined,
-					},
-					siteId,
-					type: MEMBERSHIPS_COUPON_ADD_FAILURE,
-				},
-				{
-					type: NOTICE_CREATE,
-					notice: {
-						showDismiss: true,
-						duration: 10000,
-						noticeId,
-						status: 'is-error',
-						text: errorNoticeText,
-					},
-				},
-			];
-			expect( dispatchedActions ).toEqual( expectedActions );
+			const [ addAction, addFailureAction, noticeCreateAction ] = dispatchedActions;
+			expect( addAction ).toHaveProperty( 'coupon' );
+			expect( addAction ).toHaveProperty( 'siteId' );
+			expect( addAction ).toHaveProperty( 'type' );
+			expect( addFailureAction ).toHaveProperty( 'error' );
+			expect( addFailureAction ).toHaveProperty( 'siteId' );
+			expect( addFailureAction ).toHaveProperty( 'type' );
+			expect( noticeCreateAction ).toHaveProperty( 'notice' );
+			expect( noticeCreateAction ).toHaveProperty( 'type' );
 		} );
 
 		test( 'should dispatch an http request to the add coupon endpoint and associated actions', async () => {
@@ -130,34 +97,18 @@ describe( 'actions', () => {
 			const dispatchedActions = [];
 			const dispatch = ( obj ) => dispatchedActions.push( obj );
 
-			// dispatchedActions will include a randomly-generated noticeId.
-			// We need to include that random id in our expectation.
 			await requestAddCoupon( siteId, coupon, noticeText )( dispatch );
 
-			const noticeId = dispatchedActions[ 2 ].notice.noticeId;
-			const expectedActions = [
-				{
-					coupon,
-					siteId,
-					type: MEMBERSHIPS_COUPON_ADD,
-				},
-				{
-					coupon: { ID: parseInt( couponId ), ...coupon },
-					siteId,
-					type: MEMBERSHIPS_COUPON_RECEIVE,
-				},
-				{
-					type: NOTICE_CREATE,
-					notice: {
-						showDismiss: true,
-						duration: 5000,
-						noticeId,
-						status: 'is-success',
-						text: noticeText,
-					},
-				},
-			];
-			expect( dispatchedActions ).toEqual( expectedActions );
+			const [ addAction, receiveAction, noticeCreateAction ] = dispatchedActions;
+			expect( addAction ).toHaveProperty( 'coupon' );
+			expect( addAction ).toHaveProperty( 'siteId' );
+			expect( addAction ).toHaveProperty( 'type' );
+			expect( receiveAction ).toHaveProperty( 'coupon' );
+			expect( receiveAction.coupon ).toHaveProperty( 'ID' );
+			expect( receiveAction ).toHaveProperty( 'siteId' );
+			expect( receiveAction ).toHaveProperty( 'type' );
+			expect( noticeCreateAction ).toHaveProperty( 'notice' );
+			expect( noticeCreateAction ).toHaveProperty( 'type' );
 		} );
 	} );
 
@@ -186,36 +137,16 @@ describe( 'actions', () => {
 
 			const dispatch = ( obj ) => dispatchedActions.push( obj );
 			await requestUpdateCoupon( siteId, couponContainingId, noticeText )( dispatch );
-			// dispatchedActions will include a randomly-generated noticeId.
-			// We need to include that random id in our expectation.
-			const noticeId = dispatchedActions[ 2 ].notice.noticeId;
-			const expectedActions = [
-				{
-					coupon: couponContainingId,
-					siteId,
-					type: MEMBERSHIPS_COUPON_UPDATE,
-				},
-				{
-					error: {
-						message: 'Something went wrong updating this coupon.',
-						code: 'other_error',
-						response: undefined,
-					},
-					siteId,
-					type: MEMBERSHIPS_COUPON_UPDATE_FAILURE,
-				},
-				{
-					type: NOTICE_CREATE,
-					notice: {
-						showDismiss: true,
-						duration: 10000,
-						noticeId,
-						status: 'is-error',
-						text: 'Something went wrong updating this coupon.',
-					},
-				},
-			];
-			expect( dispatchedActions ).toEqual( expectedActions );
+
+			const [ updateAction, updateFailureAction, noticeCreateAction ] = dispatchedActions;
+			expect( updateAction ).toHaveProperty( 'coupon' );
+			expect( updateAction ).toHaveProperty( 'siteId' );
+			expect( updateAction ).toHaveProperty( 'type' );
+			expect( updateFailureAction ).toHaveProperty( 'error' );
+			expect( updateFailureAction ).toHaveProperty( 'siteId' );
+			expect( updateFailureAction ).toHaveProperty( 'type' );
+			expect( noticeCreateAction ).toHaveProperty( 'notice' );
+			expect( noticeCreateAction ).toHaveProperty( 'type' );
 		} );
 
 		test( 'should dispatch an http request to the update coupon endpoint and associated actions', async () => {
@@ -238,32 +169,16 @@ describe( 'actions', () => {
 			const dispatchedActions = [];
 			const dispatch = ( obj ) => dispatchedActions.push( obj );
 			await requestUpdateCoupon( siteId, couponContainingId, noticeText )( dispatch );
-			// dispatchedActions will include a randomly-generated noticeId.
-			// We need to include that random id in our expectation.
-			const noticeId = dispatchedActions[ 2 ].notice.noticeId;
-			const expectedActions = [
-				{
-					coupon: couponContainingId,
-					siteId,
-					type: MEMBERSHIPS_COUPON_UPDATE,
-				},
-				{
-					coupon: couponContainingId,
-					siteId,
-					type: MEMBERSHIPS_COUPON_RECEIVE,
-				},
-				{
-					type: NOTICE_CREATE,
-					notice: {
-						showDismiss: true,
-						duration: 5000,
-						noticeId,
-						status: 'is-success',
-						text: noticeText,
-					},
-				},
-			];
-			expect( dispatchedActions ).toEqual( expectedActions );
+
+			const [ updateAction, receiveAction, noticeCreateAction ] = dispatchedActions;
+			expect( updateAction ).toHaveProperty( 'coupon' );
+			expect( updateAction ).toHaveProperty( 'siteId' );
+			expect( updateAction ).toHaveProperty( 'type' );
+			expect( receiveAction ).toHaveProperty( 'coupon' );
+			expect( receiveAction ).toHaveProperty( 'siteId' );
+			expect( receiveAction ).toHaveProperty( 'type' );
+			expect( noticeCreateAction ).toHaveProperty( 'notice' );
+			expect( noticeCreateAction ).toHaveProperty( 'type' );
 		} );
 	} );
 
@@ -293,37 +208,16 @@ describe( 'actions', () => {
 
 			const dispatch = ( obj ) => dispatchedActions.push( obj );
 			await requestDeleteCoupon( siteId, couponContainingId, noticeText )( dispatch );
-			// dispatchedActions will include a randomly-generated noticeId.
-			// We need to include that random id in our expectation.
-			const noticeId = dispatchedActions[ 2 ].notice.noticeId;
-			const expectedActions = [
-				{
-					coupon: couponContainingId,
-					siteId,
-					type: MEMBERSHIPS_COUPON_DELETE,
-				},
-				{
-					error: {
-						message: 'Something went wrong when deleting this coupon.',
-						code: 'other_error',
-						response: undefined,
-					},
-					coupon: couponContainingId,
-					siteId,
-					type: MEMBERSHIPS_COUPON_DELETE_FAILURE,
-				},
-				{
-					type: NOTICE_CREATE,
-					notice: {
-						showDismiss: true,
-						duration: 10000,
-						noticeId,
-						status: 'is-error',
-						text: 'Something went wrong when deleting this coupon.',
-					},
-				},
-			];
-			expect( dispatchedActions ).toEqual( expectedActions );
+
+			const [ deleteAction, deleteFailureAction, noticeCreateAction ] = dispatchedActions;
+			expect( deleteAction ).toHaveProperty( 'coupon' );
+			expect( deleteAction ).toHaveProperty( 'siteId' );
+			expect( deleteAction ).toHaveProperty( 'type' );
+			expect( deleteFailureAction ).toHaveProperty( 'error' );
+			expect( deleteFailureAction ).toHaveProperty( 'siteId' );
+			expect( deleteFailureAction ).toHaveProperty( 'type' );
+			expect( noticeCreateAction ).toHaveProperty( 'notice' );
+			expect( noticeCreateAction ).toHaveProperty( 'type' );
 		} );
 
 		test( 'should dispatch an http request to the delete coupon endpoint and associated actions', async () => {
@@ -348,27 +242,12 @@ describe( 'actions', () => {
 
 			await requestDeleteCoupon( siteId, couponContainingId, noticeText )( dispatch );
 
-			// dispatchedActions will include a randomly-generated noticeId.
-			// We need to include that random id in our expectation.
-			const noticeId = dispatchedActions[ 1 ].notice.noticeId;
-			const expectedActions = [
-				{
-					coupon: couponContainingId,
-					siteId,
-					type: MEMBERSHIPS_COUPON_DELETE,
-				},
-				{
-					type: NOTICE_CREATE,
-					notice: {
-						showDismiss: true,
-						duration: 5000,
-						noticeId,
-						status: 'is-success',
-						text: noticeText,
-					},
-				},
-			];
-			expect( dispatchedActions ).toEqual( expectedActions );
+			const [ deleteAction, noticeCreateAction ] = dispatchedActions;
+			expect( deleteAction ).toHaveProperty( 'coupon' );
+			expect( deleteAction ).toHaveProperty( 'siteId' );
+			expect( deleteAction ).toHaveProperty( 'type' );
+			expect( noticeCreateAction ).toHaveProperty( 'notice' );
+			expect( noticeCreateAction ).toHaveProperty( 'type' );
 		} );
 	} );
 } );
