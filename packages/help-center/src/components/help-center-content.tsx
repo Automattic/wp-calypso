@@ -3,14 +3,13 @@
  * External Dependencies
  */
 import { recordTracksEvent } from '@automattic/calypso-analytics';
+import OdieAssistantProvider, { clearOdieStorage } from '@automattic/odie-client';
 import { CardBody } from '@wordpress/components';
 import { useSelect } from '@wordpress/data';
 import { useEffect, useRef } from '@wordpress/element';
 import { useCallback, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { Route, Routes, useLocation, useNavigate } from 'react-router-dom';
-import { OdieAssistantProvider } from 'calypso/odie/context';
-import { clearOdieStorage } from 'calypso/odie/data';
 import { getSectionName } from 'calypso/state/ui/selectors';
 /**
  * Internal Dependencies

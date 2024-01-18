@@ -4,7 +4,7 @@ import { Global, css } from '@emotion/react';
 import { FreePlanFreeDomainDialog } from './free-plan-free-domain-dialog';
 import { FreePlanPaidDomainDialog } from './free-plan-paid-domain-dialog';
 import PaidPlanIsRequiredDialog from './paid-plan-is-required-dialog';
-import type { DataResponse } from 'calypso/my-sites/plans-grid/types';
+import type { DataResponse } from 'calypso/my-sites/plans-grid';
 
 export const PAID_PLAN_IS_REQUIRED_DIALOG = 'PAID_PLAN_IS_REQUIRED_DIALOG';
 export const FREE_PLAN_PAID_DOMAIN_DIALOG = 'FREE_PLAN_PAID_DOMAIN_DIALOG';

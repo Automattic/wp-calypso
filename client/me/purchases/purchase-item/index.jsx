@@ -47,6 +47,7 @@ import {
 	isTemporarySitePurchase,
 	isJetpackTemporarySitePurchase,
 	isAkismetTemporarySitePurchase,
+	isMarketplaceTemporarySitePurchase,
 } from '../utils';
 import OwnerInfo from './owner-info';
 import 'calypso/me/purchases/style.scss';
@@ -75,7 +76,11 @@ class PurchaseItem extends Component {
 			} );
 		}
 
-		if ( isDisconnectedSite && ! isAkismetTemporarySitePurchase( purchase ) ) {
+		if (
+			isDisconnectedSite &&
+			! isAkismetTemporarySitePurchase( purchase ) &&
+			! isMarketplaceTemporarySitePurchase( purchase )
+		) {
 			if ( isJetpackTemporarySitePurchase( purchase ) ) {
 				return (
 					<>
@@ -519,6 +524,10 @@ class PurchaseItem extends Component {
 					<img src={ akismetIcon } alt="Akismet icon" />
 				</div>
 			);
+		}
+
+		if ( isMarketplaceTemporarySitePurchase( purchase ) ) {
+			return <SiteIcon size={ 36 } />;
 		}
 
 		if ( isDisconnectedSite ) {

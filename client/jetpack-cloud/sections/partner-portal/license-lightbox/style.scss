@@ -6,7 +6,9 @@
 }
 
 .license-lightbox__jetpack-manage-license-title {
+	color: var(--studio-black);
 	font-size: 1rem;
+	font-weight: 700;
 	margin-block-end: 8px;
 }
 
@@ -16,6 +18,7 @@
 	display: block;
 	width: 100%;
 	padding: 10px 16px;
+	font-size: 1rem;
 
 	.license-lightbox__cta-button-external-link {
 		inset-inline-start: 4px;

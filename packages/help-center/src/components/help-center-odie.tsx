@@ -3,17 +3,15 @@
  * External Dependencies
  */
 import { Gridicon } from '@automattic/components';
+import { OdieAssistant, useOdieAssistantContext, EllipsisMenu } from '@automattic/odie-client';
 import { useI18n } from '@wordpress/react-i18n';
 import PopoverMenuItem from 'calypso/components/popover-menu/item';
-import OdieAssistant from 'calypso/odie';
-import EllipsisMenu from 'calypso/odie/components/ellipsis-menu';
-import { useOdieAssistantContext } from 'calypso/odie/context';
 /**
  * Internal Dependencies
  */
 import { BackButton } from './back-button';
 
-export const HelpCenterOdie = () => {
+export function HelpCenterOdie(): JSX.Element {
 	const { __ } = useI18n();
 	const { clearChat } = useOdieAssistantContext();
 
@@ -34,4 +32,4 @@ export const HelpCenterOdie = () => {
 			<OdieAssistant />
 		</div>
 	);
-};
+}

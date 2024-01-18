@@ -1,3 +1,4 @@
+import { TIMELESS_PLAN_BUSINESS, TIMELESS_PLAN_PREMIUM } from '@automattic/data-stores/src/plans';
 import { useLocale } from '@automattic/i18n-utils';
 import { VIDEOPRESS_TV_PURCHASE_FLOW } from '@automattic/onboarding';
 import { useSelect, useDispatch } from '@wordpress/data';
@@ -104,9 +105,13 @@ const videopressTvPurchase: Flow = {
 				setIntentOnSite( _siteSlug || '', VIDEOPRESS_TV_PURCHASE_FLOW );
 
 				// select the premium plan for now. This will be replaced with our video plan.
-				let planObject = supportedPlans.find( ( plan ) => 'premium' === plan.periodAgnosticSlug );
+				let planObject = supportedPlans.find(
+					( plan ) => TIMELESS_PLAN_PREMIUM === plan.periodAgnosticSlug
+				);
 				if ( ! planObject ) {
-					planObject = supportedPlans.find( ( plan ) => 'business' === plan.periodAgnosticSlug );
+					planObject = supportedPlans.find(
+						( plan ) => TIMELESS_PLAN_BUSINESS === plan.periodAgnosticSlug
+					);
 				}
 
 				const cartKey = _siteSlug

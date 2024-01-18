@@ -4,12 +4,7 @@
 /**
  * Default mock implementations
  */
-jest.mock( 'calypso/state/selectors/get-domain-from-home-upsell-in-query', () => jest.fn() );
-jest.mock( 'calypso/components/external-link/with-tracking', () => jest.fn() );
 jest.mock( 'classnames', () => jest.fn() );
-jest.mock( 'calypso/lib/analytics/tracks', () => ( {
-	recordTracksEvent: jest.fn(),
-} ) );
 jest.mock( '@wordpress/data', () => ( {
 	useSelect: jest.fn(),
 	combineReducers: jest.fn(),

@@ -4,7 +4,7 @@ import { useEffect, useState } from '@wordpress/element';
 import { hasTranslation } from '@wordpress/i18n';
 import { useTranslate } from 'i18n-calypso';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
-import PlanButton from 'calypso/my-sites/plans-grid/components/plan-button';
+import { PlanButton } from 'calypso/my-sites/plans-grid';
 import {
 	ButtonContainer,
 	DialogContainer,

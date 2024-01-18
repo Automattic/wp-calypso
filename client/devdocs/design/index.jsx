@@ -1,17 +1,12 @@
 import config from '@automattic/calypso-config';
 import page from '@automattic/calypso-router';
-import {
-	HappinessEngineersTray,
-	Gravatar,
-	SpinnerExample as Spinner,
-} from '@automattic/components';
+import { Gravatar, SpinnerExample as Spinner } from '@automattic/components';
 import Badge from '@automattic/components/src/badge/docs/example';
 import Buttons from '@automattic/components/src/button/docs/example';
 import Cards from '@automattic/components/src/card/docs/example';
 import Count from '@automattic/components/src/count/docs/example';
 import FoldableCard from '@automattic/components/src/foldable-card/docs/example';
 import Gridicon from '@automattic/components/src/gridicon/docs/example';
-import ListTile from '@automattic/components/src/list-tile/docs/example';
 import ProductLogoExample from '@automattic/components/src/logos/docs/example';
 import ProductIcon from '@automattic/components/src/product-icon/docs/example';
 import ProgressBar from '@automattic/components/src/progress-bar/docs/example';
@@ -63,6 +58,7 @@ import Ranges from 'calypso/components/forms/range/docs/example';
 import Gauge from 'calypso/components/gauge/docs/example';
 import GlobalNotices from 'calypso/components/global-notices/docs/example';
 import GravatarCaterpillar from 'calypso/components/gravatar-caterpillar/docs/example';
+import HappinessEngineersTray from 'calypso/components/happiness-engineers-tray/docs/example';
 import HeaderButton from 'calypso/components/header-button/docs/example';
 import HeaderCake from 'calypso/components/header-cake';
 import Headers from 'calypso/components/header-cake/docs/example';
@@ -237,7 +233,6 @@ export default class DesignAssets extends Component {
 					<LineChart readmeFilePath="line-chart" />
 					<LinkCard readmeFilePath="link-card" />
 					<ListEnd readmeFilePath="list-end" />
-					<ListTile readmeFilePath="/packages/components/src/list-tile" />
 					<ProductLogoExample />
 					<MarkedLinesExample readmeFilePath="marked-lines" />
 					<MultipleChoiceQuestionExample readmeFilePath="multiple-choice-question" />

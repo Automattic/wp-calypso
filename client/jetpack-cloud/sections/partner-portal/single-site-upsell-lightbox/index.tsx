@@ -82,7 +82,7 @@ export default function SingleSiteUpsellLightbox( {
 			className="license-lightbox__single-site-upsell"
 			product={ manageProduct }
 			isDisabled={ ! partnerCanIssueLicense }
-			ctaLabel={ translate( 'Issue License' ) }
+			ctaLabel={ translate( 'Issue license' ) }
 			onActivate={ onIssueLicense }
 			fireCloseOnCTAClick={ false }
 			onClose={ onHideLicenseInfo }
