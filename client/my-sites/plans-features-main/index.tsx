@@ -416,16 +416,14 @@ const PlansFeaturesMain = ( {
 		if ( 'plans-default-wpcom' !== intent && forceDefaultPlans ) {
 			setIntent( 'plans-default-wpcom' );
 		} else if ( ! intent ) {
-			/**
-			 * TODO: Be mindful to handle the logic below this line when shipping to production.
-			 */
-			if ( config.isEnabled( 'bluehost-in-plans-grid' ) ) {
-				return setIntent( 'plans-default-wpcom-bluehost' );
-			}
+			const defaultPlansIntent = config.isEnabled( 'bluehost-in-plans-grid' )
+				? 'plans-default-wpcom-bluehost'
+				: 'plans-default-wpcom';
+
 			setIntent(
 				planFromUpsells
-					? 'plans-default-wpcom'
-					: intentFromProps || intentFromSiteMeta.intent || 'plans-default-wpcom'
+					? defaultPlansIntent
+					: intentFromProps || intentFromSiteMeta.intent || defaultPlansIntent
 			);
 		}
 	}, [
