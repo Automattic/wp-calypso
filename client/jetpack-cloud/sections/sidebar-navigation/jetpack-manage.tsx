@@ -63,7 +63,7 @@ const JetpackManageSidebar = ( { path }: { path: string } ) => {
 			link: JETPACK_MANAGE_PRICING_LINK,
 			title: translate( 'Pricing' ),
 			trackEventProps: {
-				menu_item: 'Jetpack Cloud / Partner Portal / Issue License',
+				menu_item: 'Jetpack Cloud / Partner Portal / Pricing',
 			},
 		} ),
 		createItem( {
