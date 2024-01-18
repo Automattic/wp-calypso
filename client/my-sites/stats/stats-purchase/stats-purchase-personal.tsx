@@ -99,13 +99,17 @@ const PersonalPurchase = ( {
 		// Value is used below to determine tier price.
 		setSubscriptionValue( index );
 	};
+
 	// TODO: Remove old slider code paths.
 	const showOldSlider = ! isTierUpgradeSliderEnabled;
-	// const showOldSlider = true;
+	const isNewPurchaseFlowEnabled = config.isEnabled( 'stats/checkout-flows-v2' );
 
-	const continueButtonText = isStandalone
+	let continueButtonText = isStandalone
 		? translate( 'Get Stats' )
 		: translate( 'Get Jetpack Stats' );
+	if ( isNewPurchaseFlowEnabled ) {
+		continueButtonText = translate( 'Contribute and continue' );
+	}
 
 	const handleCheckoutRedirect = () => {
 		gotoCheckoutPage( {
@@ -239,58 +243,25 @@ const PersonalPurchase = ( {
 					{ translate( 'Continue with Jetpack Stats for free' ) }
 				</ButtonComponent>
 			) : (
-				<StatsPurchaseActions
-					isWPCOMSite={ isWPCOMSite }
-					buttonText={ continueButtonText }
-					onCheckoutClick={ handleCheckoutRedirect }
-					onPostponeClick={ handleCheckoutPostponed }
-				/>
+				<div className={ `${ COMPONENT_CLASS_NAME }__actions` }>
+					<ButtonComponent
+						variant="primary"
+						primary={ isWPCOMSite ? true : undefined }
+						onClick={ handleCheckoutRedirect }
+					>
+						{ continueButtonText }
+					</ButtonComponent>
+
+					{ isNewPurchaseFlowEnabled && (
+						<ButtonComponent variant="secondary" onClick={ handleCheckoutPostponed }>
+							{ translate( 'I will do it later' ) }
+						</ButtonComponent>
+					) }
+				</div>
 			) }
 		</div>
 	);
 };
-
-function StatsPurchaseActions( props: any ) {
-	const allowPostponeAction = config.isEnabled( 'stats/checkout-flows-v2' );
-
-	return (
-		<div className={ `${ COMPONENT_CLASS_NAME }__actions` }>
-			<StatsPurchaseButton { ...props } />
-			{ allowPostponeAction && <StatsPurchasePostponeButton { ...props } /> }
-		</div>
-	);
-}
-
-function StatsPurchaseButton( props: any ) {
-	const ButtonComponent = props.isWPCOMSite ? CalypsoButton : Button;
-	const translate = useTranslate();
-	const newButtonText = translate( 'Contribute and continue' );
-	const buttonText = config.isEnabled( 'stats/checkout-flows-v2' )
-		? newButtonText
-		: props.buttonText;
-
-	return (
-		<ButtonComponent
-			variant="primary"
-			primary={ props.isWPCOMSite ? true : undefined }
-			onClick={ props.onCheckoutClick }
-		>
-			{ buttonText }
-		</ButtonComponent>
-	);
-}
-
-function StatsPurchasePostponeButton( props: any ) {
-	const ButtonComponent = props.isWPCOMSite ? CalypsoButton : Button;
-	const translate = useTranslate();
-	const buttonText = translate( 'I will do it later' );
-
-	return (
-		<ButtonComponent variant="secondary" onClick={ props.onPostponeClick }>
-			{ buttonText }
-		</ButtonComponent>
-	);
-}
 
 interface StatsBenefitsListingProps {
 	subscriptionValue: number;
