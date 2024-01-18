@@ -3,13 +3,12 @@ import { connect } from 'react-redux';
 import Notice from 'calypso/components/notice';
 import { useAtomicTransferQuery } from 'calypso/state/atomic-transfer/use-atomic-transfer-query';
 import { transferStates } from 'calypso/state/automated-transfer/constants';
-import { initiateThemeTransfer } from 'calypso/state/themes/actions';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import type { AppState } from 'calypso/types';
 
 interface HostingActivateStatusProps {
 	context: 'themes' | 'plugins' | 'hosting';
-	siteId: number | null;
+	siteId: number;
 }
 
 const HostingActivateStatus = ( { context, siteId }: HostingActivateStatusProps ) => {
@@ -61,7 +60,7 @@ const HostingActivateStatus = ( { context, siteId }: HostingActivateStatusProps 
 };
 
 const mapStateToProps = ( state: AppState ) => {
-	const siteId = getSelectedSiteId( state );
+	const siteId = getSelectedSiteId( state ) || 0;
 	const siteSlug = getSelectedSiteSlug( state );
 
 	return {
@@ -70,8 +69,4 @@ const mapStateToProps = ( state: AppState ) => {
 	};
 };
 
-const mapDispatchToProps = {
-	initiateTransfer: initiateThemeTransfer,
-};
-
-export default connect( mapStateToProps, mapDispatchToProps )( HostingActivateStatus );
+export default connect( mapStateToProps )( HostingActivateStatus );
