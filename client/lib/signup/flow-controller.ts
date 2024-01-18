@@ -531,6 +531,10 @@ export default class SignupFlowController {
 
 		this._flowName = flowName;
 		this._flow = flows.getFlow( flowName, userLoggedIn );
+
+		if ( this._flow.onEnterFlow ) {
+			this._flow.onEnterFlow( flowName );
+		}
 	}
 
 	getDestination() {

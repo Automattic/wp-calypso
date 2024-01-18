@@ -37,7 +37,6 @@ import {
 	isSiteEligibleForManagedExternalThemes,
 	isWpcomTheme,
 	getIsLivePreviewSupported,
-	getThemeTierForTheme,
 } from 'calypso/state/themes/selectors';
 import { isMarketplaceThemeSubscribed } from 'calypso/state/themes/selectors/is-marketplace-theme-subscribed';
 
@@ -59,7 +58,8 @@ function getAllThemeOptions( { translate, isFSEActive } ) {
 				} )
 			);
 
-			const themeTier = getThemeTierForTheme( state, themeId );
+			const themeTier = options.themeTier;
+
 			const tierMinimumUpsellPlan = THEME_TIERS[ themeTier?.slug ]?.minimumUpsellPlan;
 			const mappedPlan = getPlan( tierMinimumUpsellPlan );
 			const planPathSlug = mappedPlan?.getPathSlug();

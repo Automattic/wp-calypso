@@ -49,7 +49,7 @@ const Secondary = ( { cards, siteId } ) => {
 	return (
 		<>
 			{ cards.map( ( card, index ) => {
-				if ( Array.isArray( card ) ) {
+				if ( Array.isArray( card ) && card.length > 0 ) {
 					return (
 						<DotPager
 							key={ 'my_home_secondary_pager_' + index }

@@ -42,10 +42,10 @@ export default function DescriptionSupportLink( {
 							support_link: url,
 						} );
 					} }
-					style={ { marginTop: 10 } }
+					style={ { marginTop: 10, height: 'unset' } }
 					ref={ ( reference ) => ref !== reference && setRef( reference ) }
 					className="fse-inline-support-link is-compact"
-					variant="primary"
+					variant="link"
 				>
 					{ __( 'Block guide', 'full-site-editing' ) }
 				</Button>

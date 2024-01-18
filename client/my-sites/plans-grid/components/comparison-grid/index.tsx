@@ -23,13 +23,13 @@ import {
 	forwardRef,
 } from 'react';
 import { useInView } from 'react-intersection-observer';
-import { useManageTooltipToggle } from 'calypso/my-sites/plans-grid/hooks/use-manage-tooltip-toggle';
-import getPlanFeaturesObject from 'calypso/my-sites/plans-grid/lib/get-plan-features-object';
 import { usePlansGridContext } from '../../grid-context';
-import useHighlightAdjacencyMatrix from '../../hooks/npm-ready/use-highlight-adjacency-matrix';
-import useIsLargeCurrency from '../../hooks/npm-ready/use-is-large-currency';
+import useHighlightAdjacencyMatrix from '../../hooks/use-highlight-adjacency-matrix';
+import useIsLargeCurrency from '../../hooks/use-is-large-currency';
+import { useManageTooltipToggle } from '../../hooks/use-manage-tooltip-toggle';
 import { usePlanPricingInfoFromGridPlans } from '../../hooks/use-plan-pricing-info-from-grid-plans';
 import filterUnusedFeaturesObject from '../../lib/filter-unused-features-object';
+import getPlanFeaturesObject from '../../lib/get-plan-features-object';
 import { isStorageUpgradeableForPlan } from '../../lib/is-storage-upgradeable-for-plan';
 import { sortPlans } from '../../lib/sort-plan-properties';
 import { plansBreakSmall } from '../../media-queries';
@@ -37,16 +37,18 @@ import { getStorageStringFromFeature, usePricingBreakpoint } from '../../util';
 import PlanFeatures2023GridActions from '../actions';
 import PlanFeatures2023GridBillingTimeframe from '../billing-timeframe';
 import PlanFeatures2023GridHeaderPrice from '../header-price';
-import PlanTypeSelector, { type PlanTypeSelectorProps } from '../plan-type-selector';
+import PlanTypeSelector from '../plan-type-selector';
 import { Plans2023Tooltip } from '../plans-2023-tooltip';
 import PopularBadge from '../popular-badge';
 import { StickyContainer } from '../sticky-container';
 import StorageAddOnDropdown from '../storage-add-on-dropdown';
 import type {
 	GridPlan,
+	ComparisonGridProps,
+	PlanActionOverrides,
 	TransformedFeatureObject,
-} from '../../hooks/npm-ready/data-store/use-grid-plans';
-import type { ComparisonGridProps, PlanActionOverrides } from '../../types';
+	PlanTypeSelectorProps,
+} from '../../types';
 import type {
 	FeatureObject,
 	Feature,

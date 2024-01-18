@@ -54,6 +54,7 @@ import { isValidFeatureKey } from 'calypso/lib/plans/features-list';
 import { getEligibleTitanDomain } from 'calypso/lib/titan';
 import { addQueryArgs, isExternal, resemblesUrl } from 'calypso/lib/url';
 import { managePurchase } from 'calypso/me/purchases/paths';
+import { getProfessionalEmailCheckoutUpsellPath } from 'calypso/my-sites/email/paths';
 import {
 	clearSignupCompleteFlowName,
 	getSignupCompleteFlowName,
@@ -773,7 +774,7 @@ function getProfessionalEmailUpsellUrl( {
 		return;
 	}
 
-	return `/checkout/offer-professional-email/${ domainName }/${ receiptId }/${ siteSlug }`;
+	return getProfessionalEmailCheckoutUpsellPath( siteSlug, domainName, receiptId );
 }
 
 function getNoticeType(

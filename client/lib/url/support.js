@@ -59,6 +59,7 @@ export const REFUNDS = `${ root }/refunds/`;
 export const REGISTER_DOMAIN = `${ root }/domains/register-domain/`;
 export const SETTING_PRIMARY_DOMAIN = `${ root }/domains/set-a-primary-address/`;
 export const SETTING_UP_PREMIUM_SERVICES = `${ root }/setting-up-premium-services/`;
+export const SET_UP_EMAIL_AUTHENTICATION_FOR_YOUR_DOMAIN = `${ root }/set-up-email-authentication-for-your-domain/`;
 export const SITE_REDIRECT = `${ root }/site-redirect/`;
 export const SUPPORT_ROOT = `${ root }/`;
 export const TRANSFER_DOMAIN_REGISTRATION = `${ root }/transfer-domain-registration/`;

@@ -3,8 +3,7 @@ import { PremiumBadge } from '@automattic/components';
 import { Plans } from '@automattic/data-stores';
 import { createInterpolateElement } from '@wordpress/element';
 import { useTranslate } from 'i18n-calypso';
-import { useSelector } from 'calypso/state';
-import { getThemeTierForTheme } from 'calypso/state/themes/selectors';
+import { useThemeTierForTheme } from 'calypso/state/themes/hooks/use-theme-tier-for-theme';
 import { THEME_TIERS } from '../constants';
 import ThemeTierBadgeCheckoutLink from './theme-tier-badge-checkout-link';
 import { useThemeTierBadgeContext } from './theme-tier-badge-context';
@@ -14,7 +13,7 @@ import ThemeTierTooltipTracker from './theme-tier-tooltip-tracker';
 export default function ThemeTierUpgradeBadge() {
 	const translate = useTranslate();
 	const { themeId } = useThemeTierBadgeContext();
-	const themeTier = useSelector( ( state ) => getThemeTierForTheme( state, themeId ) );
+	const themeTier = useThemeTierForTheme( themeId );
 
 	const tierMinimumUpsellPlan = THEME_TIERS[ themeTier?.slug ]?.minimumUpsellPlan;
 	const mappedPlan = getPlan( tierMinimumUpsellPlan );
