@@ -1,7 +1,7 @@
 import { isEnabled } from '@automattic/calypso-config';
 import { WPCOM_FEATURES_PREMIUM_THEMES } from '@automattic/calypso-products';
 import { PremiumBadge, BundledBadge } from '@automattic/components';
-import { type Design, StyleVariation } from '@automattic/design-picker';
+import { type Design } from '@automattic/design-picker';
 import { useSelect } from '@wordpress/data';
 import ThemeTierBadge from 'calypso/components/theme-tier/theme-tier-badge';
 import { useBundleSettingsByTheme } from 'calypso/my-sites/theme/hooks/use-bundle-settings';
@@ -15,8 +15,6 @@ import './design-picker-design-title.scss';
 type Props = {
 	designTitle: string;
 	selectedDesign: Design;
-	selectedStyleVariation?: StyleVariation;
-	shouldLimitGlobalStyles: boolean;
 };
 
 const DesignPickerDesignTitle: FC< Props > = ( { designTitle, selectedDesign } ) => {
