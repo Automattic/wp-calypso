@@ -282,6 +282,11 @@ export function getEnhancedTasks( {
 				siteInfoQueryArgs,
 				checklistStatuses,
 				isEmailVerified,
+				planCartItem,
+				domainCartItem,
+				productCartItems,
+				submit,
+				siteSlug,
 			};
 
 			switch ( task.id ) {
@@ -513,7 +518,7 @@ export function getEnhancedTasks( {
 					};
 					break;
 				case 'site_launched':
-					taskData = {
+					deprecatedData = {
 						isLaunchTask: true,
 						title: getLaunchSiteTaskTitle( task ),
 						disabled: getIsLaunchSiteTaskDisabled(),
@@ -521,6 +526,7 @@ export function getEnhancedTasks( {
 							completeLaunchSiteTask( task );
 						},
 					};
+					taskData = getTaskDefinition( flow, task, context ) || deprecatedData;
 					break;
 				case 'blog_launched': {
 					taskData = {
