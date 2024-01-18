@@ -58,8 +58,8 @@ import {
 	PLAN_PERSONAL,
 	PLAN_PERSONAL_2_YEARS,
 	PLAN_ENTERPRISE_GRID_WPCOM,
+	PLAN_AGENCY_BLUE_HOST,
 } from '@automattic/calypso-products';
-import { PLAN_AGENCY_BLUE_HOST } from '@automattic/calypso-products/src/constants/wpcom';
 import { Plans } from '@automattic/data-stores';
 import {
 	usePlanFeaturesForGridPlans,
