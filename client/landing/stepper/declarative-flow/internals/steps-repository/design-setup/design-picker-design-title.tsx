@@ -1,13 +1,14 @@
 import { isEnabled } from '@automattic/calypso-config';
 import { WPCOM_FEATURES_PREMIUM_THEMES } from '@automattic/calypso-products';
 import { PremiumBadge, BundledBadge } from '@automattic/components';
+import { isDefaultGlobalStylesVariationSlug, type Design } from '@automattic/design-picker';
 import { useSelect } from '@wordpress/data';
 import ThemeTierBadge from 'calypso/components/theme-tier/theme-tier-badge';
+import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
 import { useBundleSettingsByTheme } from 'calypso/my-sites/theme/hooks/use-bundle-settings';
 import { useSite } from '../../../../hooks/use-site';
 import { SITE_STORE } from '../../../../stores';
 import type { SiteSelect } from '@automattic/data-stores';
-import type { Design } from '@automattic/design-picker';
 import type { FC } from 'react';
 
 import './design-picker-design-title.scss';
@@ -15,10 +16,16 @@ import './design-picker-design-title.scss';
 type Props = {
 	designTitle: string;
 	selectedDesign: Design;
+	shouldLimitGlobalStyles: boolean;
 };
 
-const DesignPickerDesignTitle: FC< Props > = ( { designTitle, selectedDesign } ) => {
+const DesignPickerDesignTitle: FC< Props > = ( {
+	designTitle,
+	selectedDesign,
+	shouldLimitGlobalStyles,
+} ) => {
 	const bundleSettings = useBundleSettingsByTheme( selectedDesign.slug );
+	const queryParams = useQuery();
 	const site = useSite();
 	// TODO: This does not check for individual theme purchases yet.
 	const isPremiumThemeAvailable = Boolean(
@@ -35,10 +42,16 @@ const DesignPickerDesignTitle: FC< Props > = ( { designTitle, selectedDesign } )
 
 	let badge: React.ReactNode = null;
 	if ( isEnabled( 'themes/tiers' ) ) {
+		const isDefaultVariation = isDefaultGlobalStylesVariationSlug(
+			queryParams.get( 'style_variation' ) || ''
+		);
+		const isLockedStyleVariation =
+			( ! selectedDesign.is_premium && shouldLimitGlobalStyles && ! isDefaultVariation ) ?? false;
+
 		badge = (
 			<ThemeTierBadge
 				className="design-picker-design-title__theme-tier-badge"
-				isLockedStyleVariation={ false }
+				isLockedStyleVariation={ isLockedStyleVariation }
 				themeId={ selectedDesign.slug }
 			/>
 		);
