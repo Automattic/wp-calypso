@@ -77,6 +77,13 @@
 	&.is-hidden {
 		display: none;
 	}
+
+	.plans-features-main__plan-type-selector-layout {
+		@include plan-type-selector-custom-mobile-breakpoint {
+			// Overrides the plans-wrapper parent container margins
+			margin: 0 -20px;
+		}
+	}
 }
 
 // Content group
