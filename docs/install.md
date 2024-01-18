@@ -18,7 +18,31 @@ To be able to clone the repository and run the application you need:
 - Please note that in Debian/Ubuntu versions of Linux, `node` command is renamed to `nodejs`. This will cause Calypso to fail during installation. Follow the instructions [here](https://stackoverflow.com/a/18130296) to create a symlink to `node`.
 - [Git](http://git-scm.com/). Try the `git` command from your terminal, if it's not found then use this [installer](http://git-scm.com/download/).
 
-## Installing and Running
+## Windows Installing and Running 
+
+1. ##### Install WSL - 
+    - Execute `wsl --install -d Ubuntu` in powershell (Administrator mode) - [How to install Linux on Windows with WSL](https://learn.microsoft.com/en-us/windows/wsl/install)
+2. ##### Installing NVM on Ubuntu
+    - `sudo apt install curl`
+    - `curl https://raw.githubusercontent.com/creationix/nvm/master/install.sh | bash`
+    - `source ~/.bashrc`
+3. ##### Clone repository on Ubuntu
+    - `git clone https://github.com/Automattic/wp-calypso.git` 
+4. Execute `nvm install` from the root directory of the repository
+5. ##### Increase memory in terminal (needed "JavaScript heap out of memory" error occurs)
+    - `export NODE_OPTIONS="--max-old-space-size=8192"`
+6. Execute `yarn`
+7. Execute `yarn start`
+
+#### &nbsp;&nbsp;&nbsp;Accessing code
+###### &nbsp;&nbsp;&nbsp;&nbsp;Symbolic link - Option 1
+- Execute `mkdir /mnt/c/Users/<UserName>/Documents/dev` - "**/mnt/c** is mounted version of the local C drive
+- Execute`ls -s /home/<username>  /mnt/c/Users/<UserName>/Documents/dev`
+
+###### &nbsp;&nbsp;&nbsp;&nbsp; VsCode WSL Extention - Option 2
+- install WSL extention in Visual Studio Code by Microsoft
+
+## Mac Installing and Running
 
 Clone this git repository to your machine via the terminal using the `git clone` command and then run `yarn start` from the root Calypso directory:
 
