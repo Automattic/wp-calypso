@@ -24,6 +24,7 @@ import AdPreviewModal from 'calypso/my-sites/promote-post-i2/components/campaign
 import useOpenPromoteWidget from 'calypso/my-sites/promote-post-i2/hooks/use-open-promote-widget';
 import {
 	canCancelCampaign,
+	canPromoteCampaignAgain,
 	getAdvertisingDashboardPath,
 } from 'calypso/my-sites/promote-post-i2/utils';
 import { useSelector } from 'calypso/state';
@@ -154,7 +155,7 @@ export default function CampaignItemDetails( props: Props ) {
 
 	const navigationItems = [
 		{
-			label: translate( 'Advertising' ),
+			label: translate( 'Get Back' ),
 			href: getAdvertisingDashboardPath( `/campaigns/${ selectedSiteSlug }` ),
 		},
 		{
@@ -280,7 +281,11 @@ export default function CampaignItemDetails( props: Props ) {
 				<div>
 					<div className="campaign-item-breadcrumb">
 						{ ! isLoading ? (
-							<Breadcrumb items={ navigationItems as Item[] } compact={ isSmallScreen } />
+							<Breadcrumb
+								items={ navigationItems as Item[] }
+								compact={ isSmallScreen }
+								singleButton={ true }
+							/>
 						) : (
 							<FlexibleSkeleton />
 						) }
@@ -322,16 +327,35 @@ export default function CampaignItemDetails( props: Props ) {
 					</div>
 				</div>
 
-				<div>
-					{ ! isLoading && ! isSmallScreen && (
-						<Button
-							className="campaign-item-promote-again-button"
-							primary
-							onClick={ onClickPromote }
-						>
-							{ translate( 'Promote again' ) }
-						</Button>
-					) }
+				<div className="campaign-item-details__support-buttons-container">
+					<div className="campaign-item-details__support-buttons">
+						{ ! isLoading && status ? (
+							<>
+								<Button
+									className="contact-support-button"
+									href={ localizeUrl( 'https://wordpress.com/help/contact' ) }
+									target="_blank"
+								>
+									{ icon }
+									{ translate( 'Contact Support' ) }
+								</Button>
+
+								{ canPromoteCampaignAgain( status ) && (
+									<Button primary onClick={ onClickPromote }>
+										{ translate( 'Promote Again' ) }
+									</Button>
+								) }
+
+								{ canCancelCampaign( status ) && (
+									<Button scary onClick={ () => setShowDeleteDialog( true ) }>
+										{ cancelCampaignButtonText }
+									</Button>
+								) }
+							</>
+						) : (
+							<FlexibleSkeleton />
+						) }
+					</div>
 				</div>
 			</header>
 			<hr className="campaign-item-details-header-line" />
@@ -371,67 +395,71 @@ export default function CampaignItemDetails( props: Props ) {
 				<section className="campaign-item-details__wrapper">
 					<div className="campaign-item-details__main">
 						<div className="campaign-item-details__main-stats-container">
-							<div className="campaign-item-details__main-stats">
-								<div className="campaign-item-details__main-stats-row">
-									<div>
-										<span className="campaign-item-details__label">
-											{ translate( 'Impressions' ) }
-										</span>
-										<span className="campaign-item-details__text wp-brand-font">
-											{ ! isLoading ? impressionsTotal : <FlexibleSkeleton /> }
-										</span>
-									</div>
-									<div>
-										<span className="campaign-item-details__label">{ translate( 'Clicks' ) }</span>
-										<span className="campaign-item-details__text wp-brand-font">
-											{ ! isLoading ? clicks_total : <FlexibleSkeleton /> }
-										</span>
-									</div>
-									<div>
-										<span className="campaign-item-details__label">
-											{ translate( 'Click-through rate' ) }
-										</span>
-										<span className="campaign-item-details__text wp-brand-font">
-											{ ! isLoading ? ctrFormatted : <FlexibleSkeleton /> }
-										</span>
-									</div>
+							<div className="campaign-item-details__main-stats-row">
+								<div>
+									<span className="campaign-item-details__label">{ translate( 'Duration' ) }</span>
+									<span className="campaign-item-details__text wp-brand-font">
+										{ ! isLoading ? durationFormatted : <FlexibleSkeleton /> }
+									</span>
+									<span className="campaign-item-details__details">
+										{ ! isLoading ? (
+											`${ duration_days } ${ translate( 'days' ) }`
+										) : (
+											<FlexibleSkeleton />
+										) }
+									</span>
 								</div>
-								<div className="campaign-item-details__main-stats-row">
-									<div>
-										<span className="campaign-item-details__label">
-											{ translate( 'Duration' ) }
-										</span>
-										<span className="campaign-item-details__text wp-brand-font">
-											{ ! isLoading ? durationFormatted : <FlexibleSkeleton /> }
-										</span>
-										<span className="campaign-item-details__details">
-											{ ! isLoading ? (
-												`${ duration_days } ${ translate( 'days' ) }`
-											) : (
-												<FlexibleSkeleton />
-											) }
-										</span>
-									</div>
-									<div>
-										<span className="campaign-item-details__label">{ translate( 'Budget' ) }</span>
-										<span className="campaign-item-details__text wp-brand-font">
-											{ ! isLoading ? totalBudgetFormatted : <FlexibleSkeleton /> }
-										</span>
-										<span className="campaign-item-details__details">
-											{ ! isLoading ? totalBudgetLeftFormatted : <FlexibleSkeleton /> }
-										</span>
-									</div>
-									<div>
-										<span className="campaign-item-details__label">
-											{ translate( 'Overall spending ' ) }
-										</span>
-										<span className="campaign-item-details__text wp-brand-font">
-											{ ! isLoading ? overallSpendingFormatted : <FlexibleSkeleton /> }
-										</span>
-									</div>
+								<div>
+									<span className="campaign-item-details__label">{ translate( 'Budget' ) }</span>
+									<span className="campaign-item-details__text wp-brand-font">
+										{ ! isLoading ? totalBudgetFormatted : <FlexibleSkeleton /> }
+									</span>
+									<span className="campaign-item-details__details">
+										{ ! isLoading ? totalBudgetLeftFormatted : <FlexibleSkeleton /> }
+									</span>
+								</div>
+								<div>
+									<span className="campaign-item-details__label">
+										{ translate( 'Overall spending ' ) }
+									</span>
+									<span className="campaign-item-details__text wp-brand-font">
+										{ ! isLoading ? overallSpendingFormatted : <FlexibleSkeleton /> }
+									</span>
 								</div>
 							</div>
 						</div>
+						{ status !== 'created' && (
+							<div className="campaign-item-details__main-stats-container">
+								<div className="campaign-item-details__main-stats">
+									<div className="campaign-item-details__main-stats-row">
+										<div>
+											<span className="campaign-item-details__label">
+												{ translate( 'Impressions' ) }
+											</span>
+											<span className="campaign-item-details__text wp-brand-font">
+												{ ! isLoading ? impressionsTotal : <FlexibleSkeleton /> }
+											</span>
+										</div>
+										<div>
+											<span className="campaign-item-details__label">
+												{ translate( 'Clicks' ) }
+											</span>
+											<span className="campaign-item-details__text wp-brand-font">
+												{ ! isLoading ? clicks_total : <FlexibleSkeleton /> }
+											</span>
+										</div>
+										<div>
+											<span className="campaign-item-details__label">
+												{ translate( 'Click-through rate' ) }
+											</span>
+											<span className="campaign-item-details__text wp-brand-font">
+												{ ! isLoading ? ctrFormatted : <FlexibleSkeleton /> }
+											</span>
+										</div>
+									</div>
+								</div>
+							</div>
+						) }
 						<div className="campaign-item-details__main-stats-container">
 							<div className="campaign-item-details__secondary-stats">
 								<div className="campaign-item-details__secondary-stats-row">
@@ -646,27 +674,6 @@ export default function CampaignItemDetails( props: Props ) {
 						</div>
 
 						<div className="campaign-item-details__support-buttons-container">
-							<div className="campaign-item-details__support-buttons">
-								{ ! isLoading && status ? (
-									<>
-										{ canCancelCampaign( status ) && (
-											<Button scary onClick={ () => setShowDeleteDialog( true ) }>
-												{ cancelCampaignButtonText }
-											</Button>
-										) }
-										<Button
-											className="contact-support-button"
-											href={ localizeUrl( 'https://wordpress.com/help/contact' ) }
-											target="_blank"
-										>
-											{ icon }
-											{ translate( 'Contact Support' ) }
-										</Button>
-									</>
-								) : (
-									<FlexibleSkeleton />
-								) }
-							</div>
 							<div className="campaign-item-details__support-articles-wrapper">
 								<div className="campaign-item-details__support-heading">
 									{ translate( 'Support articles' ) }
