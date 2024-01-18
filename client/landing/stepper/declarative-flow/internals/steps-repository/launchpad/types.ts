@@ -1,4 +1,4 @@
-//TODO: Temporary export until we can replace all depencecies with ./types.ts Task;
+//TODO: Temporary export until we can replace all dependencies with ./types.ts Task;
 export type { Task } from '@automattic/launchpad';
 import { ChecklistStatuses, SiteDetails } from '@automattic/data-stores';
 import { Task } from '@automattic/launchpad';
@@ -25,6 +25,8 @@ export type TaskId =
 	| 'design_edited'
 	| 'domain_upsell'
 	| 'first_post_published'
+	| 'site_launched'
+	| 'plan_selected'
 	| 'site_launched';
 
 export interface TaskContext {
@@ -38,6 +40,10 @@ export interface TaskContext {
 	productCartItems?: MinimalRequestCartProduct[] | null;
 	siteSlug: string | null;
 	submit: NavigationControls[ 'submit' ];
+	displayGlobalStylesWarning: boolean;
+	shouldDisplayWarning: boolean;
+	globalStylesMinimumPlan: string;
+	isVideoPressFlowWithUnsupportedPlan: boolean;
 }
 
 export type TaskAction = ( task: Task, flow: string, context: TaskContext ) => Task;

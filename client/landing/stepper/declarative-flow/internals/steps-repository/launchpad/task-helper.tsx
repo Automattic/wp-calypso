@@ -287,6 +287,10 @@ export function getEnhancedTasks( {
 				productCartItems,
 				submit,
 				siteSlug,
+				displayGlobalStylesWarning,
+				shouldDisplayWarning,
+				globalStylesMinimumPlan,
+				isVideoPressFlowWithUnsupportedPlan,
 			};
 
 			switch ( task.id ) {
@@ -364,12 +368,13 @@ export function getEnhancedTasks( {
 
 					const completed = task.completed && ! isVideoPressFlowWithUnsupportedPlan;
 
-					taskData = {
+					deprecatedData = {
 						actionDispatch: openPlansPage,
 						completed,
 						subtitle: getPlanTaskSubtitle( task ),
 					};
-					/* eslint-enable no-case-declarations */
+
+					taskData = getTaskDefinition( flow, task, context ) || deprecatedData;
 					break;
 				case 'plan_completed':
 					taskData = {
