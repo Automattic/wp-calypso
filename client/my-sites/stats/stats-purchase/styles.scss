@@ -583,6 +583,8 @@ $button-padding: 8px 32px;
 	flex-wrap: wrap;
 	gap: 12px;
 
+	margin: 12px 0;
+
 	.components-button + button.components-button {
 		margin: 0;
 	}
