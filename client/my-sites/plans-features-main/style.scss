@@ -1,7 +1,7 @@
 @import "@wordpress/base-styles/breakpoints";
 @import "@wordpress/base-styles/mixins";
 @import "@wordpress/base-styles/variables";
-@import "calypso/my-sites/plans-grid/media-queries";
+@import "@automattic/plans-grid-next/src/media-queries";
 
 :root {
 	--scss-font-body-small: #{$font-body-small};

@@ -147,6 +147,7 @@ import {
 	getChangePaymentMethodPath,
 	isJetpackTemporarySitePurchase,
 	isAkismetTemporarySitePurchase,
+	isMarketplaceTemporarySitePurchase,
 } from '../utils';
 import PurchaseNotice from './notices';
 import PurchasePlanDetails from './plan-details';
@@ -282,7 +283,8 @@ class ManagePurchase extends Component<
 	handleRenew = () => {
 		const { purchase, siteSlug, redirectTo } = this.props;
 		const options = redirectTo ? { redirectTo } : undefined;
-		const isSitelessRenewal = isAkismetTemporarySitePurchase( purchase );
+		const isSitelessRenewal =
+			isAkismetTemporarySitePurchase( purchase ) || isMarketplaceTemporarySitePurchase( purchase );
 
 		if ( ! purchase ) {
 			return;
@@ -345,7 +347,9 @@ class ManagePurchase extends Component<
 		if (
 			isPartnerPurchase( purchase ) ||
 			! isRenewable( purchase ) ||
-			( ! this.props.site && ! isAkismetTemporarySitePurchase( purchase ) ) ||
+			( ! this.props.site &&
+				! isAkismetTemporarySitePurchase( purchase ) &&
+				! isMarketplaceTemporarySitePurchase( purchase ) ) ||
 			isAkismetFreeProduct( purchase ) ||
 			( is100Year( purchase ) && ! isCloseToExpiration( purchase ) )
 		) {
@@ -431,7 +435,9 @@ class ManagePurchase extends Component<
 		if (
 			isPartnerPurchase( purchase ) ||
 			! isRenewable( purchase ) ||
-			( ! this.props.site && ! isAkismetTemporarySitePurchase( purchase ) ) ||
+			( ! this.props.site &&
+				! isAkismetTemporarySitePurchase( purchase ) &&
+				! isMarketplaceTemporarySitePurchase( purchase ) ) ||
 			isAkismetFreeProduct( purchase )
 		) {
 			return null;
@@ -612,7 +618,11 @@ class ManagePurchase extends Component<
 			return null;
 		}
 
-		if ( ! this.props.site && ! isAkismetTemporarySitePurchase( purchase ) ) {
+		if (
+			! this.props.site &&
+			! isAkismetTemporarySitePurchase( purchase ) &&
+			! isMarketplaceTemporarySitePurchase( purchase )
+		) {
 			return null;
 		}
 
@@ -841,6 +851,10 @@ class ManagePurchase extends Component<
 		const { purchase, productsList, translate } = this.props;
 		const { isReinstalling } = this.state;
 		if ( ! ( purchase?.active && hasMarketplaceProduct( productsList, purchase.productSlug ) ) ) {
+			return null;
+		}
+
+		if ( isMarketplaceTemporarySitePurchase( purchase ) ) {
 			return null;
 		}
 
@@ -1110,6 +1124,10 @@ class ManagePurchase extends Component<
 			return null;
 		}
 
+		if ( isMarketplaceTemporarySitePurchase( purchase ) ) {
+			return null;
+		}
+
 		const registrationAgreementUrl = getDomainRegistrationAgreementUrl( purchase );
 		const domainRegistrationAgreementLinkText = translate( 'Domain Registration Agreement' );
 
@@ -1366,6 +1384,7 @@ class ManagePurchase extends Component<
 						isProductOwner={ isProductOwner }
 					/>
 				) }
+
 				{ isProductOwner && ! purchase.isLocked && (
 					<>
 						{ preventRenewal && this.renderSelectNewNavItem() }

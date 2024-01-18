@@ -531,6 +531,10 @@ object CheckCodeStyleBranch : BuildType({
 		)
 	}
 
+	cleanup {
+		artifacts(days = 14)
+	}
+
 	artifactRules = """
 		checkstyle_results => checkstyle_results
 	""".trimIndent()
@@ -553,6 +557,7 @@ object CheckCodeStyleBranch : BuildType({
 		bashNodeScript {
 			name = "Run eslint"
 			scriptContent = """
+				set -x
 				export NODE_ENV="test"
 
 				# Find files to lint
@@ -560,11 +565,13 @@ object CheckCodeStyleBranch : BuildType({
 					echo "Linting all files"
 					yarn run eslint --format checkstyle --output-file "./checkstyle_results/eslint/results.xml" .
 				else
-					# this is necessary for large diffs to avoid `ENAMETOOLONG` errors linting files
-					git diff --name-only --diff-filter=d refs/remotes/origin/trunk...HEAD | grep -E '(\.[jt]sx?)${'$'}' | while read -r file; do
-						echo "Linting ${'$'}file"
-						yarn run eslint --format checkstyle --output-file "./checkstyle_results/eslint/${'$'}{file//\//_}.xml" "${'$'}file"
+					# To avoid `ENAMETOOLONG` errors linting files, we have to lint them one by one,
+					# instead of passing the full list of files to eslint directly.
+					for file in ${'$'}(git diff --name-only --diff-filter=d refs/remotes/origin/trunk...HEAD | grep -E '(\.[jt]sx?)${'$'}' || true); do
+						( echo "Linting ${'$'}file"
+						yarn run eslint --format checkstyle --output-file "./checkstyle_results/eslint/${'$'}{file//\//_}.xml" "${'$'}file" ) &
 					done
+					wait
 				fi
 			"""
 		}

@@ -1,10 +1,10 @@
 import { LoadingPlaceholder } from '@automattic/components';
 import { useIsEnglishLocale } from '@automattic/i18n-utils';
+import { PlanButton } from '@automattic/plans-grid-next';
 import { useEffect, useState } from '@wordpress/element';
 import { hasTranslation } from '@wordpress/i18n';
 import { useTranslate } from 'i18n-calypso';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
-import PlanButton from 'calypso/my-sites/plans-grid/components/plan-button';
 import {
 	ButtonContainer,
 	DialogContainer,

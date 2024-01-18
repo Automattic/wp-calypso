@@ -57,6 +57,7 @@ export function register(): typeof STORE_KEY {
 			'storeLocationCountryCode',
 			'ecommerceFlowRecurType',
 			'couponCode',
+			'storageAddonSlug',
 			'domainCartItem',
 			'planCartItem',
 			'productCartItems',
