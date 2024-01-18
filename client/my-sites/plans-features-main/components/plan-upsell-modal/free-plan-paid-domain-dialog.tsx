@@ -3,7 +3,7 @@ import { localizeUrl } from '@automattic/i18n-utils';
 import { useEffect, useState } from '@wordpress/element';
 import { useTranslate } from 'i18n-calypso';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
-import PlanButton from 'calypso/my-sites/plans-grid/components/plan-button';
+import { PlanButton } from 'calypso/my-sites/plans-grid';
 import {
 	ButtonContainer,
 	DialogContainer,

@@ -211,8 +211,11 @@ function chooseAddHandler( {
 	isNoSiteCart?: boolean;
 	isGiftPurchase?: boolean;
 } ): AddHandler {
-	// Akismet products can be renewed in a "siteless" context
-	if ( sitelessCheckoutType === 'akismet' && originalPurchaseId ) {
+	// Akismet and some Marketplace products can be renewed in a "siteless" context
+	if (
+		( sitelessCheckoutType === 'akismet' || sitelessCheckoutType === 'marketplace' ) &&
+		originalPurchaseId
+	) {
 		return 'addRenewalItems';
 	}
 
@@ -622,6 +625,7 @@ function createRenewalItemToAddToCart( {
 	const renewalItemExtra: RequestCartProductExtra = {
 		purchaseId: String( purchaseId ),
 		isAkismetSitelessCheckout: sitelessCheckoutType === 'akismet',
+		isMarketplaceSitelessCheckout: sitelessCheckoutType === 'marketplace',
 		purchaseType: 'renewal',
 		isGiftPurchase,
 	};

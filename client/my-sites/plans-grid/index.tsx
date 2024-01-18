@@ -1,13 +1,19 @@
 import { useTranslate } from 'i18n-calypso';
 import ComparisonGrid from './components/comparison-grid';
 import FeaturesGrid from './components/features-grid';
+import PlanButton from './components/plan-button';
 import PlanTypeSelector from './components/plan-type-selector';
+import { Plans2023Tooltip } from './components/plans-2023-tooltip';
 import PlansGridContextProvider from './grid-context';
-import useIsLargeCurrency from './hooks/npm-ready/use-is-large-currency';
-import useUpgradeClickHandler from './hooks/npm-ready/use-upgrade-click-handler';
+import useGridPlans from './hooks/data-store/use-grid-plans';
+import usePlanFeaturesForGridPlans from './hooks/data-store/use-plan-features-for-grid-plans';
+import useRestructuredPlanFeaturesForComparisonGrid from './hooks/data-store/use-restructured-plan-features-for-comparison-grid';
+import useIsLargeCurrency from './hooks/use-is-large-currency';
+import { useManageTooltipToggle } from './hooks/use-manage-tooltip-toggle';
 import { usePlanPricingInfoFromGridPlans } from './hooks/use-plan-pricing-info-from-grid-plans';
-import './style.scss';
+import useUpgradeClickHandler from './hooks/use-upgrade-click-handler';
 import type { ComparisonGridExternalProps, FeaturesGridExternalProps } from './types';
+import './style.scss';
 
 const WrappedComparisonGrid = ( {
 	selectedSiteId,
@@ -108,8 +114,28 @@ const WrappedFeaturesGrid = ( props: FeaturesGridExternalProps ) => {
 	);
 };
 
+/**
+ * Types
+ */
+export type * from './types';
+
+/**
+ * Components
+ */
 export {
 	WrappedComparisonGrid as ComparisonGrid,
 	WrappedFeaturesGrid as FeaturesGrid,
 	PlanTypeSelector,
+	PlanButton,
+	Plans2023Tooltip,
+};
+
+/**
+ * Hooks/helpers
+ */
+export {
+	useManageTooltipToggle,
+	useGridPlans,
+	usePlanFeaturesForGridPlans,
+	useRestructuredPlanFeaturesForComparisonGrid,
 };

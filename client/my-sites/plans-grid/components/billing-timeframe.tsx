@@ -16,7 +16,7 @@ import { formatCurrency } from '@automattic/format-currency';
 import styled from '@emotion/styled';
 import { useTranslate } from 'i18n-calypso';
 import { usePlansGridContext } from '../grid-context';
-import { GridPlan } from '../hooks/npm-ready/data-store/use-grid-plans';
+import type { GridPlan } from '../types';
 
 function usePerMonthDescription( { planSlug }: { planSlug: PlanSlug } ) {
 	const translate = useTranslate();

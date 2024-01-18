@@ -1,5 +1,5 @@
 import { useMemo } from '@wordpress/element';
-import type { GridPlan } from 'calypso/my-sites/plans-grid/hooks/npm-ready/data-store/use-grid-plans';
+import type { GridPlan } from '../types';
 
 type PricingInfo = {
 	prices: number[];

@@ -12,6 +12,9 @@ jest.mock( 'calypso/my-sites/plans-grid', () => ( {
 		</div>
 	),
 	PlanTypeSelector: () => <div>PlanTypeSelector</div>,
+	usePlanFeaturesForGridPlans: jest.fn(),
+	useRestructuredPlanFeaturesForComparisonGrid: jest.fn(),
+	useGridPlans: jest.requireActual( 'calypso/my-sites/plans-grid' ).useGridPlans,
 } ) );
 jest.mock( '../hooks/use-plan-intent-from-site-meta', () => jest.fn() );
 jest.mock( '../hooks/use-suggested-free-domain-from-paid-domain', () => () => ( {
@@ -28,14 +31,6 @@ jest.mock( 'calypso/state/ui/selectors', () => ( {
 	getSelectedSiteId: jest.fn(),
 	getSelectedSite: jest.fn(),
 } ) );
-jest.mock(
-	'calypso/my-sites/plans-grid/hooks/npm-ready/data-store/use-plan-features-for-grid-plans',
-	() => jest.fn()
-);
-jest.mock(
-	'calypso/my-sites/plans-grid/hooks/npm-ready/data-store/use-restructured-plan-features-for-comparison-grid',
-	() => jest.fn()
-);
 jest.mock( '@automattic/data-stores', () => ( {
 	...jest.requireActual( '@automattic/data-stores' ),
 	Plans: {
@@ -66,8 +61,10 @@ import {
 } from '@automattic/calypso-products';
 import { Plans } from '@automattic/data-stores';
 import { screen } from '@testing-library/react';
-import usePlanFeaturesForGridPlans from 'calypso/my-sites/plans-grid/hooks/npm-ready/data-store/use-plan-features-for-grid-plans';
-import useRestructuredPlanFeaturesForComparisonGrid from 'calypso/my-sites/plans-grid/hooks/npm-ready/data-store/use-restructured-plan-features-for-comparison-grid';
+import {
+	usePlanFeaturesForGridPlans,
+	useRestructuredPlanFeaturesForComparisonGrid,
+} from 'calypso/my-sites/plans-grid';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { renderWithProvider } from 'calypso/test-helpers/testing-library';
 import useIntentFromSiteMeta from '../hooks/use-plan-intent-from-site-meta';

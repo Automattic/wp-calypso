@@ -6,14 +6,14 @@ import {
 	FEATURE_CUSTOM_DOMAIN,
 } from '@automattic/calypso-products';
 import { useMemo } from 'react';
-import usePlanFeaturesForGridPlans from 'calypso/my-sites/plans-grid/hooks/npm-ready/data-store/use-plan-features-for-grid-plans';
-import getPlanFeaturesObject from 'calypso/my-sites/plans-grid/lib/get-plan-features-object';
+import getPlanFeaturesObject from '../../lib/get-plan-features-object';
+import usePlanFeaturesForGridPlans from './use-plan-features-for-grid-plans';
 import type {
 	TransformedFeatureObject,
 	PlanFeaturesForGridPlan,
 	PlansIntent,
 	GridPlan,
-} from 'calypso/my-sites/plans-grid/hooks/npm-ready/data-store/use-grid-plans';
+} from '../../types';
 
 export type UseRestructuredPlanFeaturesForComparisonGrid = ( {
 	gridPlans,

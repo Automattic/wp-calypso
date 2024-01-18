@@ -6,8 +6,7 @@ import { useTranslate } from 'i18n-calypso';
 import { Dispatch, SetStateAction } from 'react';
 import { PlanFeaturesItem } from './item';
 import { Plans2023Tooltip } from './plans-2023-tooltip';
-import type { TransformedFeatureObject } from '../types';
-import type { DataResponse } from 'calypso/my-sites/plans-grid/types';
+import type { TransformedFeatureObject, DataResponse } from '../types';
 
 const SubdomainSuggestion = styled.div`
 	.is-domain-name {
