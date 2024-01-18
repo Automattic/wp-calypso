@@ -5,7 +5,7 @@ import { useEffect } from '@wordpress/element';
 import { useTranslate } from 'i18n-calypso';
 import QueryProductsList from 'calypso/components/data/query-products-list';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
-import PlanButton from 'calypso/my-sites/plans-grid/components/plan-button';
+import { PlanButton } from 'calypso/my-sites/plans-grid';
 import { useSelector } from 'calypso/state';
 import { getCurrentUserCurrencyCode } from 'calypso/state/currency-code/selectors';
 import { DialogContainer, Heading } from './components';

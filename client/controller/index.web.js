@@ -191,7 +191,7 @@ export function redirectIfCurrentUserCannot( capability ) {
 	return ( context, next ) => {
 		const state = context.store.getState();
 		const site = getSelectedSite( state );
-		const currentUserCan = canCurrentUser( state, site.ID, capability );
+		const currentUserCan = canCurrentUser( state, site?.ID, capability );
 
 		if ( site && ! currentUserCan ) {
 			return page.redirect( `/home/${ site.slug }` );

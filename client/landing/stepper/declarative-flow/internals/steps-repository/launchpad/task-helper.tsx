@@ -274,18 +274,30 @@ export function getEnhancedTasks( {
 	tasks &&
 		tasks.map( ( task ) => {
 			let taskData = {};
+			let deprecatedData = {};
 
 			const context: TaskContext = {
 				site,
 				tasks,
 				siteInfoQueryArgs,
+				checklistStatuses,
+				isEmailVerified,
+				planCartItem,
+				domainCartItem,
+				productCartItems,
+				submit,
+				siteSlug,
+				displayGlobalStylesWarning,
+				shouldDisplayWarning,
+				globalStylesMinimumPlan,
+				isVideoPressFlowWithUnsupportedPlan,
 			};
 
 			switch ( task.id ) {
 				case 'setup_free':
 					// DEPRECATED: This task is deprecated and will be removed in the future
 					// eslint-disable-next-line no-case-declarations
-					const deprecatedData = {
+					deprecatedData = {
 						actionDispatch: () => {
 							recordTaskClickTracksEvent( flow, task.completed, task.id );
 							window.location.assign(
@@ -321,7 +333,7 @@ export function getEnhancedTasks( {
 					};
 					break;
 				case 'design_edited':
-					taskData = {
+					deprecatedData = {
 						actionDispatch: () => {
 							recordTaskClickTracksEvent( flow, task.completed, task.id );
 							window.location.assign(
@@ -331,6 +343,7 @@ export function getEnhancedTasks( {
 							);
 						},
 					};
+					taskData = getTaskDefinition( flow, task, context ) || deprecatedData;
 					break;
 				case 'plan_selected':
 					/* eslint-disable no-case-declarations */
@@ -355,12 +368,13 @@ export function getEnhancedTasks( {
 
 					const completed = task.completed && ! isVideoPressFlowWithUnsupportedPlan;
 
-					taskData = {
+					deprecatedData = {
 						actionDispatch: openPlansPage,
 						completed,
 						subtitle: getPlanTaskSubtitle( task ),
 					};
-					/* eslint-enable no-case-declarations */
+
+					taskData = getTaskDefinition( flow, task, context ) || deprecatedData;
 					break;
 				case 'plan_completed':
 					taskData = {
@@ -377,6 +391,7 @@ export function getEnhancedTasks( {
 					break;
 				case 'subscribers_added':
 					taskData = {
+						disabled: mustVerifyEmailBeforePosting || false,
 						actionDispatch: () => {
 							if ( goToStep ) {
 								recordTaskClickTracksEvent( flow, task.completed, task.id );
@@ -400,7 +415,7 @@ export function getEnhancedTasks( {
 					};
 					break;
 				case 'first_post_published':
-					taskData = {
+					deprecatedData = {
 						disabled:
 							mustVerifyEmailBeforePosting ||
 							( task.completed && isBlogOnboardingFlow( flow || null ) ) ||
@@ -415,6 +430,8 @@ export function getEnhancedTasks( {
 							window.location.assign( newPostUrl );
 						},
 					};
+
+					taskData = getTaskDefinition( flow, task, context ) || deprecatedData;
 					break;
 				case 'first_post_published_newsletter':
 					taskData = {
@@ -428,7 +445,7 @@ export function getEnhancedTasks( {
 					break;
 				case 'design_selected':
 				case 'design_completed':
-					taskData = {
+					deprecatedData = {
 						actionDispatch: () => {
 							recordTaskClickTracksEvent( flow, task.completed, task.id );
 							window.location.assign(
@@ -439,7 +456,8 @@ export function getEnhancedTasks( {
 							);
 						},
 					};
-					break;
+
+					taskData = getTaskDefinition( flow, task, context ) || deprecatedData;
 				case 'setup_general':
 					taskData = {
 						disabled: false,
@@ -505,7 +523,7 @@ export function getEnhancedTasks( {
 					};
 					break;
 				case 'site_launched':
-					taskData = {
+					deprecatedData = {
 						isLaunchTask: true,
 						title: getLaunchSiteTaskTitle( task ),
 						disabled: getIsLaunchSiteTaskDisabled(),
@@ -513,6 +531,7 @@ export function getEnhancedTasks( {
 							completeLaunchSiteTask( task );
 						},
 					};
+					taskData = getTaskDefinition( flow, task, context ) || deprecatedData;
 					break;
 				case 'blog_launched': {
 					taskData = {
@@ -564,7 +583,7 @@ export function getEnhancedTasks( {
 					};
 					break;
 				case 'domain_upsell':
-					taskData = {
+					deprecatedData = {
 						completed: domainUpsellCompleted,
 						actionDispatch: () => {
 							recordTaskClickTracksEvent( flow, domainUpsellCompleted, task.id );
@@ -596,6 +615,8 @@ export function getEnhancedTasks( {
 								? ''
 								: translate( 'Upgrade plan' ),
 					};
+
+					taskData = getTaskDefinition( flow, task, context ) || deprecatedData;
 					break;
 				case 'verify_email':
 					taskData = {
@@ -636,9 +657,9 @@ export function getEnhancedTasks( {
 	return enhancedTaskList;
 }
 
-function isDomainUpsellCompleted(
+export function isDomainUpsellCompleted(
 	site: SiteDetails | null,
-	checklistStatuses: ChecklistStatuses
+	checklistStatuses?: ChecklistStatuses
 ): boolean {
 	return ! site?.plan?.is_free || checklistStatuses?.domain_upsell_deferred === true;
 }

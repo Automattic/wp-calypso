@@ -1,6 +1,6 @@
-import { LocalizeProps, TranslateResult, useTranslate } from 'i18n-calypso';
-import { IntervalTypeProps, SupportedUrlFriendlyTermType } from '../types';
+import { type LocalizeProps, type TranslateResult, useTranslate } from 'i18n-calypso';
 import useMaxDiscountsForPlanTerms from './use-max-discounts-for-plan-terms';
+import type { IntervalTypeProps, SupportedUrlFriendlyTermType } from '../../../types';
 
 const getDiscountText = ( discountPercentage: number, translate: LocalizeProps[ 'translate' ] ) => {
 	if ( ! discountPercentage ) {

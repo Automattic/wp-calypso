@@ -1,4 +1,10 @@
-import { planHasFeature, FEATURE_UPLOAD_THEMES_PLUGINS } from '@automattic/calypso-products';
+import {
+	planHasFeature,
+	FEATURE_UPLOAD_THEMES_PLUGINS,
+	PLAN_ECOMMERCE_TRIAL_MONTHLY,
+	PLAN_BUSINESS,
+	PLAN_WOOEXPRESS_SMALL,
+} from '@automattic/calypso-products';
 import page from '@automattic/calypso-router';
 import { Button, Card, CompactCard, ProgressBar, Gridicon, Spinner } from '@automattic/components';
 import { getLocaleSlug, localize } from 'i18n-calypso';
@@ -289,9 +295,11 @@ export class SectionMigrate extends Component {
 	};
 
 	goToCart = () => {
-		const { sourceSite, targetSiteSlug } = this.props;
+		const { sourceSite, targetSiteSlug, targetSite } = this.props;
 		const sourceSiteSlug = get( sourceSite, 'slug' );
-		const plan = 'business';
+		const currentPlanSlug = get( targetSite, 'plan.product_slug' );
+		const isEcommerceTrial = currentPlanSlug === PLAN_ECOMMERCE_TRIAL_MONTHLY;
+		const plan = isEcommerceTrial ? PLAN_WOOEXPRESS_SMALL : PLAN_BUSINESS;
 
 		page(
 			`/checkout/${ targetSiteSlug }/${ plan }?redirect_to=/migrate/from/${ sourceSiteSlug }/to/${ targetSiteSlug }%3Fstart%3Dtrue`
