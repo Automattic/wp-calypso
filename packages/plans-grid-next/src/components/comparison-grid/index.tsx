@@ -514,7 +514,7 @@ const ComparisonGridHeader = forwardRef< HTMLDivElement, ComparisonGridHeaderPro
 							<PlanTypeSelector
 								{ ...planTypeSelectorProps }
 								title={ translate( 'Billing Cycle' ) }
-								hideDiscountLabel={ true }
+								hideDiscount={ true }
 								coupon={ coupon }
 							/>
 						</PlanTypeSelectorWrapper>

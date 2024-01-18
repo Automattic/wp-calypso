@@ -77,6 +77,13 @@
 	&.is-hidden {
 		display: none;
 	}
+
+	.plans-features-main__plan-type-selector-layout {
+		@include plan-type-selector-custom-mobile-breakpoint {
+			// Overrides the plans-wrapper parent container margins
+			margin: 0 -20px;
+		}
+	}
 }
 
 // Content group
@@ -390,6 +397,9 @@ body.is-section-signup.is-white-signup {
 }
 
 .plans-features-main__plan-type-selector-layout {
+	display: flex;
+	justify-content: center;
+
 	.segmented-control.price-toggle {
 		.is-section-signup &,
 		.is-section-stepper & {
