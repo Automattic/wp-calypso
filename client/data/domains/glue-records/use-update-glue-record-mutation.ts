@@ -20,13 +20,14 @@ export default function useUpdateGlueRecordMutation(
 	const mutation = useMutation( {
 		mutationFn: ( glueRecord: GlueRecordObject ) =>
 			wp.req
-				.post(
+				.put(
 					{
 						path: `/domains/glue-records`,
 						apiNamespace: 'wpcom/v2',
+						method: 'PUT',
 					},
 					{
-						name_server: glueRecord.record.toLowerCase(),
+						name_server: glueRecord.nameserver.toLowerCase(),
 						ip_addresses: [ glueRecord.address ],
 					}
 				)
