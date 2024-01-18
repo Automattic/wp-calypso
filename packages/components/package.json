@@ -30,7 +30,6 @@
 		"@automattic/calypso-analytics": "workspace:^",
 		"@automattic/calypso-url": "workspace:^",
 		"@automattic/format-currency": "workspace:^",
-		"@automattic/search": "workspace:^",
 		"@automattic/typography": "workspace:^",
 		"@automattic/viewport-react": "workspace:^",
 		"@wordpress/base-styles": "^4.39.0",
