@@ -49,6 +49,10 @@
 	}
 }
 
+.people-list-item.is-not-linked-user {
+	background: var(--studio-gray-10);
+}
+
 .people-list-item__invite-status {
 	align-self: center;
 	flex-shrink: 0;

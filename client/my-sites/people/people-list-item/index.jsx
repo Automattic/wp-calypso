@@ -7,7 +7,7 @@ import { PureComponent } from 'react';
 import { connect } from 'react-redux';
 import PeopleProfile from 'calypso/my-sites/people/people-profile';
 import { recordGoogleEvent } from 'calypso/state/analytics/actions';
-import { resendInvite } from 'calypso/state/invites/actions';
+import { sendInvites, resendInvite } from 'calypso/state/invites/actions';
 import {
 	isRequestingInviteResend,
 	didInviteResendSucceed,
@@ -51,6 +51,20 @@ class PeopleListItem extends PureComponent {
 			site &&
 			site.slug &&
 			this.userHasPromoteCapability() &&
+			! this.props.isSelectable
+		);
+	};
+
+	canReceiveInvite = () => {
+		const site = this.props.site;
+		const user = this.props.user;
+		return (
+			user &&
+			user.roles &&
+			user.email &&
+			! user.linked_user_ID &&
+			site &&
+			site.slug &&
 			! this.props.isSelectable
 		);
 	};
@@ -106,6 +120,15 @@ class PeopleListItem extends PureComponent {
 		this.props.resendInvite( siteId, inviteKey );
 	};
 
+	onSendInvite = ( event ) => {
+		const { siteId, user } = this.props;
+		// Prevents navigation to invite-details screen and onClick event.
+		event.preventDefault();
+		event.stopPropagation();
+
+		this.props.sendInvites( siteId, [ user.email ], user.roles[ 0 ], '', false );
+	};
+
 	renderInviteStatus = () => {
 		const { type, invite, translate, requestingResend, resendSuccess, RevokeClearBtn } = this.props;
 		const { isPending } = invite;
@@ -135,6 +158,16 @@ class PeopleListItem extends PureComponent {
 		);
 	};
 
+	renderInviteButton = () => {
+		const { translate } = this.props;
+
+		return (
+			<div>
+				<Button onClick={ this.onSendInvite }>{ translate( 'Invite' ) }</Button>
+			</div>
+		);
+	};
+
 	render() {
 		const {
 			className,
@@ -149,6 +182,7 @@ class PeopleListItem extends PureComponent {
 		} = this.props;
 
 		const isInvite = invite && ( 'invite' === type || 'invite-details' === type );
+		const isLinkedUser = user && user.linked_user_ID;
 
 		if ( isInvite && inviteWasDeleted ) {
 			// After an invite is deleted and the user is returned to the
@@ -163,10 +197,12 @@ class PeopleListItem extends PureComponent {
 			{
 				'is-invite': isInvite,
 				'is-invite-details': type === 'invite-details',
+				'is-not-linked-user': ! isLinkedUser && ! isInvite,
 			},
 			className
 		);
 		const canLinkToProfile = this.canLinkToProfile();
+		const canReceiveInvite = this.canReceiveInvite();
 		const tagName = canLinkToProfile ? 'a' : 'span';
 
 		return (
@@ -187,6 +223,7 @@ class PeopleListItem extends PureComponent {
 					/>
 				</div>
 
+				{ canReceiveInvite && ! isInvite && this.renderInviteButton() }
 				{ isInvite && showStatus && this.renderInviteStatus() }
 
 				{ onRemove && (
@@ -225,5 +262,5 @@ export default connect(
 			inviteWasDeleted,
 		};
 	},
-	{ resendInvite, recordGoogleEvent }
+	{ sendInvites, resendInvite, recordGoogleEvent }
 )( localize( PeopleListItem ) );
