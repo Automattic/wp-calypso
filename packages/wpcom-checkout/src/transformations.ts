@@ -142,12 +142,6 @@ export function getSubtotalWithoutCoupon( responseCart: ResponseCart ): number {
 
 export function getSubtotalWithoutDiscounts( responseCart: ResponseCart ): number {
 	return responseCart.products.reduce( ( total, product ) => {
-		// We can't sum the original price for introductory offers because they
-		// are not cost overrides and their original price is actually a later
-		// price that will be charged after the offer ends.
-		if ( product.introductory_offer_terms?.enabled ) {
-			return product.item_subtotal_integer + total;
-		}
 		return product.item_original_subtotal_integer + total;
 	}, 0 );
 }
