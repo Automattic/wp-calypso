@@ -15,6 +15,7 @@ import isSiteWPForTeams from 'calypso/state/selectors/is-site-wpforteams';
 import { useSiteGlobalStylesStatus } from 'calypso/state/sites/hooks/use-site-global-styles-status';
 import { getSiteSlug, isJetpackSite } from 'calypso/state/sites/selectors';
 import { hideThemePreview } from 'calypso/state/themes/actions';
+import { useThemeTierForTheme } from 'calypso/state/themes/hooks/use-theme-tier-for-theme';
 import {
 	getThemeDemoUrl,
 	getThemePreviewThemeOptions,
@@ -42,6 +43,7 @@ class ThemePreview extends Component {
 		isJetpack: PropTypes.bool,
 		themeId: PropTypes.string,
 		themeOptions: PropTypes.object,
+		themeTier: PropTypes.object,
 	};
 
 	state = {
@@ -183,9 +185,9 @@ class ThemePreview extends Component {
 			return;
 		}
 
-		const { themeId } = this.props;
+		const { themeId, themeTier } = this.props;
 		const buttonHref = primaryOption.getUrl
-			? this.appendStyleVariationOptionToUrl( primaryOption.getUrl( themeId ) )
+			? this.appendStyleVariationOptionToUrl( primaryOption.getUrl( themeId, { themeTier } ) )
 			: null;
 
 		return (
@@ -201,9 +203,9 @@ class ThemePreview extends Component {
 			return;
 		}
 
-		const { themeId } = this.props;
+		const { themeId, themeTier } = this.props;
 		const buttonHref = secondaryButton.getUrl
-			? this.appendStyleVariationOptionToUrl( secondaryButton.getUrl( themeId ) )
+			? this.appendStyleVariationOptionToUrl( secondaryButton.getUrl( themeId, { themeTier } ) )
 			: null;
 
 		return (
@@ -278,10 +280,17 @@ class ThemePreview extends Component {
 
 const withSiteGlobalStylesStatus = createHigherOrderComponent(
 	( Wrapped ) => ( props ) => {
-		const { siteId } = props;
+		const { siteId, themeId } = props;
 		const { shouldLimitGlobalStyles } = useSiteGlobalStylesStatus( siteId );
 
-		return <Wrapped { ...props } shouldLimitGlobalStyles={ shouldLimitGlobalStyles } />;
+		const themeTier = useThemeTierForTheme( themeId );
+		return (
+			<Wrapped
+				{ ...props }
+				shouldLimitGlobalStyles={ shouldLimitGlobalStyles }
+				themeTier={ themeTier }
+			/>
+		);
 	},
 	'withSiteGlobalStylesStatus'
 );
