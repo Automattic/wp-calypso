@@ -85,10 +85,10 @@ export const usePreviewingTheme = () => {
 			previewingThemeTypeDisplay = 'WooCommerce';
 			break;
 		case PREMIUM_THEME:
-			previewingThemeTypeDisplay = 'Premium';
+			previewingThemeTypeDisplay = config.isEnabled( 'themes/tiers' ) ? 'Explorer' : 'Premium';
 			break;
 		case PERSONAL_THEME:
-			previewingThemeTypeDisplay = 'Personal';
+			previewingThemeTypeDisplay = 'Starter';
 			break;
 	}
 
