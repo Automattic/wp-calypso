@@ -1,7 +1,7 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { ToggleControl } from '@wordpress/components';
 import classnames from 'classnames';
-import { localize, I18N } from 'i18n-calypso';
+import { localize, LocalizeProps } from 'i18n-calypso';
 import { flowRight as compose } from 'lodash';
 import { connect } from 'react-redux';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
@@ -9,25 +9,21 @@ import InlineSupportLink from 'calypso/components/inline-support-link';
 import Main from 'calypso/components/main';
 import NavigationHeader from 'calypso/components/navigation-header';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
-import { protectForm } from 'calypso/lib/protect-form';
 import twoStepAuthorization from 'calypso/lib/two-step-authorization';
 import withFormBase from 'calypso/me/form-base/with-form-base';
 import ReauthRequired from 'calypso/me/reauth-required';
 import { recordGoogleEvent } from 'calypso/state/analytics/actions';
 import { isFetchingUserSettings } from 'calypso/state/user-settings/selectors';
 import { getIAmDeveloperCopy } from './get-i-am-a-developer-copy';
+import type { WithFormBaseProps } from 'calypso/me/form-base/with-form-base-props';
 import type { AppState } from 'calypso/types';
 
 import './style.scss';
 
 type DeveloperProps = {
-	translate: I18N[ 'translate' ];
 	isFetchingUserSettings: boolean;
-	isUpdatingUserSettings: boolean;
-	setUserSetting: ( settingName: string, value: boolean ) => void;
-	getSetting: ( settingName: string ) => boolean;
-	submitForm: () => void;
-};
+} & LocalizeProps &
+	WithFormBaseProps;
 
 const Developer = ( {
 	translate,
@@ -84,7 +80,6 @@ export const DeveloperComponent = compose(
 		} ),
 		{ recordGoogleEvent }
 	),
-	protectForm,
 	localize,
 	withFormBase
 )( Developer );
