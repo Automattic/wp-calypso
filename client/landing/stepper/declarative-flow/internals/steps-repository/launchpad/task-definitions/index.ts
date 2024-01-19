@@ -3,7 +3,6 @@ import { Task, TaskId, TaskContext, TaskActionTable } from '../types';
 import { actions as designActions } from './design';
 import { actions as domainActions } from './domain';
 import { actions as emailActions } from './email';
-import { actions as newsLetterActions } from './newsletter';
 import { actions as planActions } from './plan';
 import { actions as postActions } from './post';
 import { actions as setupActions } from './setup';
@@ -17,7 +16,6 @@ const DEFINITIONS = {
 	...siteActions,
 	...planActions,
 	...emailActions,
-	...newsLetterActions,
 } satisfies TaskActionTable;
 
 export const FLAG_NAME = 'launchpad/new-task-definition-parser';

@@ -7,10 +7,8 @@ const getVerifyEmail: TaskAction = ( task, flow, context ): Task => {
 
 	return {
 		...task,
-		completed: isEmailVerified,
-		actionDispatch: () => {
-			recordTaskClickTracksEvent( task, flow, context );
-		},
+		completed: isEmailVerified || false,
+		actionDispatch: () => recordTaskClickTracksEvent( task, flow, context ),
 		useCalypsoPath: true,
 	};
 };
