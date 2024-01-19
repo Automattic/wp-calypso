@@ -82,7 +82,7 @@ import JetpackAkismetCheckoutSidebarPlanUpsell from './jetpack-akismet-checkout-
 import BeforeSubmitCheckoutHeader from './payment-method-step';
 import SecondaryCartPromotions from './secondary-cart-promotions';
 import WPCheckoutOrderReview from './wp-checkout-order-review';
-import { CheckoutSummaryFeaturedList, WPCheckoutOrderSummary } from './wp-checkout-order-summary';
+import { WPCheckoutOrderSummary } from './wp-checkout-order-summary';
 import WPContactForm from './wp-contact-form';
 import WPContactFormSummary from './wp-contact-form-summary';
 import type { OnChangeItemVariant } from './item-variation-picker';
@@ -491,14 +491,6 @@ export default function WPCheckout( {
 										{ renderCheckoutSidebarNudge() }
 									</CheckoutSidebarNudgeWrapper>
 								) }
-								{ hasCheckoutVersion( '2' ) && (
-									<CheckoutSummaryFeaturedList
-										responseCart={ responseCart }
-										siteId={ siteId }
-										isCartUpdating={ FormStatus.VALIDATING === formStatus }
-										onChangeSelection={ changeSelection }
-									/>
-								) }
 								<SecondaryCartPromotions
 									responseCart={ responseCart }
 									addItemToCart={ addItemToCart }
@@ -814,6 +806,10 @@ const CheckoutSummaryBody = styled.div`
 const CheckoutSidebarNudgeWrapper = styled.div`
 	display: flex;
 	flex-direction: column;
+
+	& > * {
+		max-width: 288px;
+	}
 `;
 
 const CheckoutTermsAndCheckboxesWrapper = styled.div`
