@@ -26,6 +26,7 @@ import { DoNotSellSetting } from './do-not-sell';
 import DPA from './dpa';
 
 const TRACKS_OPT_OUT_USER_SETTINGS_KEY = 'tracks_opt_out';
+const DATA_SHARING_OPT_OUT_USER_SETTINGS_KEY = 'data_sharing_opt_out';
 
 class Privacy extends Component {
 	componentDidUpdate( oldProps ) {
@@ -36,6 +37,10 @@ class Privacy extends Component {
 
 	updateTracksOptOut = ( isSendingTracksEvents ) => {
 		this.props.setUserSetting( TRACKS_OPT_OUT_USER_SETTINGS_KEY, ! isSendingTracksEvents );
+	};
+
+	updateDataSharingOptOut = ( isSharingData ) => {
+		this.props.setUserSetting( DATA_SHARING_OPT_OUT_USER_SETTINGS_KEY, ! isSharingData );
 	};
 
 	submitForm = ( event ) => {
@@ -117,6 +122,21 @@ class Privacy extends Component {
 									}
 								) }
 							/>
+							<ToggleControl
+								id="data_sharing_opt_out"
+								checked={ ! this.props.dataSharingOptOut }
+								onChange={ this.updateDataSharingOptOut }
+								label={ translate(
+									'Some text here' +
+										'about opting out ' +
+										'{{cookiePolicyLink}}Learn more{{/cookiePolicyLink}}.',
+									{
+										components: {
+											cookiePolicyLink, // TODO - need a link?
+										},
+									}
+								) }
+							/>
 						</FormFieldset>
 
 						<FormButton isSubmitting={ isUpdatingUserSettings } disabled={ isSubmitButtonDisabled }>
@@ -140,6 +160,7 @@ export default compose(
 	connect(
 		( state ) => ( {
 			tracksOptOut: getUserSetting( state, TRACKS_OPT_OUT_USER_SETTINGS_KEY ) ?? true,
+			dataSharingOptOut: getUserSetting( state, DATA_SHARING_OPT_OUT_USER_SETTINGS_KEY ) ?? true,
 			hasUnsavedUserSettings: hasUnsavedUserSettings( state ),
 			isUpdatingUserSettings: isUpdatingUserSettings( state ),
 		} ),
