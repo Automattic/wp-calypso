@@ -37,7 +37,6 @@ type liveResizeModifierFactory = (
  *
  * The Popper modifier queues an asynchronous update on the Popper instance whenever either of the
  * Observers trigger its callback.
- *
  * @returns custom Popper modifier
  */
 export const liveResizeModifier: liveResizeModifierFactory = (

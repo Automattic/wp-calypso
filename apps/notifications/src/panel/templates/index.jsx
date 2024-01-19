@@ -39,7 +39,6 @@ const KEY_U = 85;
 /**
  * Returns the next index into a list of notes following
  * the index for the given sought-after notification id
- *
  * @param {!number} noteId id of note to search for
  * @param {!Array<Notification>} notes list of notes to search through
  * @returns {?number} index into note list of note following that given by noteId

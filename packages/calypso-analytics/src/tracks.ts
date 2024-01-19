@@ -126,7 +126,6 @@ export const analyticsEvents: EventEmitter = new EventEmitter();
 
 /**
  * Returns the anoymous id stored in the `tk_ai` cookie
- *
  * @returns The Tracks anonymous user id
  */
 export function getTracksAnonymousUserId(): string {
