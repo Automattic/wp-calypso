@@ -17,7 +17,7 @@ export const UpgradeNudge = () => {
 						You reached your plan request limit. <strong>Upgrade now to increase it.</strong>
 					</span>
 				</div>
-				<Button href={ checkoutUrl } target="_top" className="is-primary">
+				<Button href={ checkoutUrl } target="_blank" className="is-primary">
 					{ buttonText }
 				</Button>
 			</div>
