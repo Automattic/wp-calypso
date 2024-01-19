@@ -1,6 +1,7 @@
 /**
  * External dependencies
  */
+import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { Button } from '@wordpress/components';
 import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
@@ -10,6 +11,7 @@ import { Icon, warning } from '@wordpress/icons';
  */
 import './upgrade-nudge.scss';
 import { useCheckout } from '../hooks/use-checkout';
+import { EVENT_PLACEMENT_UPGRADE_PROMPT, EVENT_UPGRADE } from '../../constants';
 
 export const UpgradeNudge = () => {
 	const buttonText = __( 'Upgrade', 'jetpack' );
@@ -25,6 +27,10 @@ export const UpgradeNudge = () => {
 
 	const { nextTierCheckoutURL: checkoutUrl } = useCheckout();
 
+	const handleUpgradeClick = () => {
+		recordTracksEvent( EVENT_UPGRADE, { placement: EVENT_PLACEMENT_UPGRADE_PROMPT } );
+	};
+
 	return (
 		<div className="jetpack-upgrade-plan-banner">
 			<div className="jetpack-upgrade-plan-banner__wrapper">
@@ -34,7 +40,12 @@ export const UpgradeNudge = () => {
 						{ upgradeMessage }
 					</span>
 				</div>
-				<Button href={ checkoutUrl } target="_blank" className="is-primary">
+				<Button
+					href={ checkoutUrl }
+					target="_blank"
+					className="is-primary"
+					onClick={ handleUpgradeClick }
+				>
 					{ buttonText }
 				</Button>
 			</div>
