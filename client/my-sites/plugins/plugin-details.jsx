@@ -397,18 +397,22 @@ function PluginDetails( props ) {
 			/>
 			<PluginDetailsNotices selectedSite={ selectedSite } plugin={ fullPlugin } />
 
-			{ userReviews.length === 0 && canPublishReview && (
-				<Banner
-					className="plugin-details__reviews-banner"
-					title={ translate( 'Review this plugin!' ) }
-					description={ translate(
-						'Please help other users sharing your experience with this plugin.'
-					) }
-					onClick={ () => setIsReviewsModalVisible( true ) }
-					disableHref
-					event="calypso_marketplace_reviews_plugin_banner"
-				/>
-			) }
+			{ isEnabled( 'marketplace-reviews-show' ) &&
+				userReviews.length === 0 &&
+				canPublishReview &&
+				isMarketplaceProduct &&
+				! showPlaceholder && (
+					<Banner
+						className="plugin-details__reviews-banner"
+						title={ translate( 'Review this plugin!' ) }
+						description={ translate(
+							'Please help other users sharing your experience with this plugin.'
+						) }
+						onClick={ () => setIsReviewsModalVisible( true ) }
+						disableHref
+						event="calypso_marketplace_reviews_plugin_banner"
+					/>
+				) }
 			<div className="plugin-details__page">
 				<div className={ classnames( 'plugin-details__layout', { 'is-logged-in': isLoggedIn } ) }>
 					<div className="plugin-details__header">
