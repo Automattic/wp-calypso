@@ -79,6 +79,8 @@ const CommandBox = styled.div( {
 	letterSpacing: -0.15,
 	backgroundColor: 'var(--color-surface)',
 	boxShadow: '1px 1px 1px 0px #0000001F',
+	paddingRight: 10,
+	whiteSpace: 'nowrap',
 	'&.command-box__fadeIn': {
 		animation: `${ fadeIn } 1s ease-in-out`,
 		zIndex: 10,
@@ -171,7 +173,6 @@ const AnimatedCommand = () => {
 		if ( prefersReducedMotion ) {
 			return;
 		}
-
 		const interval = setInterval( () => {
 			setCurrentCommandIndex( ( prevIndex ) => ( prevIndex + 1 ) % commandNames.length );
 		}, 3000 );
