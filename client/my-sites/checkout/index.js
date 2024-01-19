@@ -276,7 +276,7 @@ export default function () {
 	);
 
 	page(
-		getProfessionalEmailCheckoutUpsellPath( ':site?', ':domain', ':receiptId' ),
+		getProfessionalEmailCheckoutUpsellPath( ':site', ':domain', ':receiptId' ),
 		redirectLoggedOut,
 		siteSelection,
 		upsellNudge,
