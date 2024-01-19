@@ -1,7 +1,12 @@
+/**
+ * External dependencies
+ */
 import { Button } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { Icon, warning } from '@wordpress/icons';
-
+/**
+ * Internal dependencies
+ */
 import './upgrade-nudge.scss';
 
 export const UpgradeNudge = () => {
