@@ -1,5 +1,4 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
-import { Card } from '@automattic/components';
 import { ToggleControl } from '@wordpress/components';
 import classnames from 'classnames';
 import { localize } from 'i18n-calypso';
@@ -15,6 +14,7 @@ import withFormBase from 'calypso/me/form-base/with-form-base';
 import ReauthRequired from 'calypso/me/reauth-required';
 import { recordGoogleEvent } from 'calypso/state/analytics/actions';
 import { isFetchingUserSettings } from 'calypso/state/user-settings/selectors';
+import { DeveloperFeatures } from './features/index';
 import { getIAmDeveloperCopy } from './get-i-am-a-developer-copy';
 
 import './style.scss';
@@ -41,22 +41,22 @@ class Developer extends Component {
 					) }
 				/>
 
-				<Card className="developer__settings">
-					<form onChange={ this.props.submitForm }>
-						<FormFieldset
-							className={ classnames( {
-								'developer__is_dev_account-fieldset-is-loading': this.props.isFetchingUserSettings,
-							} ) }
-						>
-							<ToggleControl
-								disabled={ this.props.isFetchingUserSettings || this.props.isUpdatingUserSettings }
-								checked={ this.props.getSetting( 'is_dev_account' ) }
-								onChange={ this.toggleIsDevAccount }
-								label={ getIAmDeveloperCopy( this.props.translate ) }
-							/>
-						</FormFieldset>
-					</form>
-				</Card>
+				<DeveloperFeatures />
+
+				<form onChange={ this.props.submitForm }>
+					<FormFieldset
+						className={ classnames( {
+							'developer__is_dev_account-fieldset-is-loading': this.props.isFetchingUserSettings,
+						} ) }
+					>
+						<ToggleControl
+							disabled={ this.props.isFetchingUserSettings || this.props.isUpdatingUserSettings }
+							checked={ this.props.getSetting( 'is_dev_account' ) }
+							onChange={ this.toggleIsDevAccount }
+							label={ getIAmDeveloperCopy( this.props.translate ) }
+						/>
+					</FormFieldset>
+				</form>
 			</Main>
 		);
 	}
