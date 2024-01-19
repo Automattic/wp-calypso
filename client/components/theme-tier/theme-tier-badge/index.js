@@ -53,6 +53,12 @@ export default function ThemeTierBadge( {
 		return <ThemeTierUpgradeBadge />;
 	};
 
+	const badge = getBadge();
+
+	if ( ! badge ) {
+		return null;
+	}
+
 	return (
 		<div className={ classNames( 'theme-tier-badge', className ) }>
 			<ThemeTierBadgeContextProvider
@@ -60,7 +66,7 @@ export default function ThemeTierBadge( {
 				showUpgradeBadge={ showUpgradeBadge }
 				themeId={ themeId }
 			>
-				{ getBadge() }
+				{ badge }
 			</ThemeTierBadgeContextProvider>
 		</div>
 	);
