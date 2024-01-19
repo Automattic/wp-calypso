@@ -37,6 +37,7 @@ export type TaskId =
 	| 'plan_selected'
 	| 'plan_completed'
 	| 'newsletter_plan_created'
+	| 'migrate_content'
 	| 'site_launched';
 
 export interface TaskContext {

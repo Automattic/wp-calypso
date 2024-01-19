@@ -1,5 +1,6 @@
 import { isEnabled } from '@automattic/calypso-config';
 import { Task, TaskId, TaskContext, TaskActionTable } from '../types';
+import { actions as contentActions } from './content';
 import { actions as designActions } from './design';
 import { actions as domainActions } from './domain';
 import { actions as emailActions } from './email';
@@ -18,6 +19,7 @@ const DEFINITIONS = {
 	...planActions,
 	...emailActions,
 	...subscribersActions,
+	...contentActions,
 } satisfies TaskActionTable;
 
 export const NEW_TASK_DEFINITION_PARSER_FEATURE_FLAG = 'launchpad/new-task-definition-parser';

@@ -409,7 +409,7 @@ export function getEnhancedTasks( {
 					taskData = getTaskDefinition( flow, task, context ) || deprecatedData;
 					break;
 				case 'migrate_content':
-					taskData = {
+					deprecatedData = {
 						disabled: mustVerifyEmailBeforePosting || false,
 						actionDispatch: () => {
 							recordTaskClickTracksEvent( flow, task.completed, task.id );
@@ -421,6 +421,7 @@ export function getEnhancedTasks( {
 							window.location.assign( `/import/${ siteSlug }` );
 						},
 					};
+					taskData = getTaskDefinition( flow, task, context ) || deprecatedData;
 					break;
 				case 'first_post_published':
 					deprecatedData = {
