@@ -37,7 +37,7 @@ export default localize( ( props ) => {
 					</Button>
 				) : (
 					<div className="help-courses__course-schedule-item-businessplan-button">
-						{ translate( 'Only on %(planName)s Plan', {
+						{ translate( 'Only on %(planName)s plan', {
 							args: { planName: getPlan( PLAN_BUSINESS )?.getTitle() },
 						} ) }
 					</div>
