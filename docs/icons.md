@@ -6,7 +6,7 @@ This document will cover how to use icons in Calypso, as well as how to create i
 
 As of January 2024, there has been a shift in the approach to icons within Calypso. While Gridicons have served us well in the past, the WordPress community is increasingly adopting [@wordpress/icons](https://www.npmjs.com/package/@wordpress/icons) for [a more standardized and cohesive experience across WordPress interfaces](https://github.com/WordPress/gutenberg/issues/20284).
 
-`@wordpress/icons` are designed to align with WordPress's overall design language and provide a consistent user experience. You can browse the icons docs and examples at https://wordpress.github.io/gutenberg/?path=/story/icons-icon--library.
+`@wordpress/icons` are designed to align with WordPress's overall design language and provide a consistent user experience. You can browse the icons docs and examples at <https://wordpress.github.io/gutenberg/?path=/story/icons-icon--library>.
 
 For existing implementations using Gridicons or Material Icons, plan for a gradual migration to `@wordpress/icons`. If you are an Automattician, please refer to p7H4VZ-4JT-p2.
 
