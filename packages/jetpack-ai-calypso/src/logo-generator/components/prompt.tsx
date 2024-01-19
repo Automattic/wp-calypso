@@ -10,7 +10,13 @@ import { useCallback, useEffect, useState, useRef } from 'react';
 /**
  * Internal dependencies
  */
-import { EVENT_PROMPT_ENHANCE, MINIMUM_PROMPT_LENGTH } from '../../constants';
+import {
+	EVENT_PROMPT_ENHANCE,
+	EVENT_GENERATE,
+	MINIMUM_PROMPT_LENGTH,
+	EVENT_UPGRADE,
+	EVENT_PLACEMENT_INPUT_FOOTER,
+} from '../../constants';
 import AiIcon from '../assets/icons/ai';
 import useLogoGenerator from '../hooks/use-logo-generator';
 import useRequestErrors from '../hooks/use-request-errors';
@@ -74,12 +80,17 @@ export const Prompt: React.FC< { initialPrompt?: string } > = ( { initialPrompt 
 	}, [ prompt ] );
 
 	const onGenerate = useCallback( async () => {
+		recordTracksEvent( EVENT_GENERATE );
 		generateLogo( { prompt } );
 	}, [ generateLogo, prompt ] );
 
 	const onPromptInput = useCallback( ( event: React.ChangeEvent< HTMLInputElement > ) => {
 		setPrompt( event.target.textContent || '' );
 	}, [] );
+
+	const onUpgradeClick = () => {
+		recordTracksEvent( EVENT_UPGRADE, { placement: EVENT_PLACEMENT_INPUT_FOOTER } );
+	};
 
 	return (
 		<div className="jetpack-ai-logo-generator__prompt">
@@ -131,7 +142,12 @@ export const Prompt: React.FC< { initialPrompt?: string } > = ( { initialPrompt 
 							) }
 						</div>
 						&nbsp;
-						<Button variant="link" href="https://automattic.com/ai-guidelines" target="_blank">
+						<Button
+							variant="link"
+							href="https://automattic.com/ai-guidelines"
+							target="_blank"
+							onClick={ onUpgradeClick }
+						>
 							{ __( 'Upgrade', 'jetpack' ) }
 						</Button>
 						&nbsp;

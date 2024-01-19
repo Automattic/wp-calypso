@@ -1,12 +1,14 @@
 /**
  * External dependencies
  */
+import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { Button, Icon } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import debugFactory from 'debug';
 /**
  * Internal dependencies
  */
+import { EVENT_SAVE_TO_LIBRARY, EVENT_USE_LOGO } from '../../constants';
 import CheckIcon from '../assets/icons/check';
 import LogoIcon from '../assets/icons/logo';
 import MediaIcon from '../assets/icons/media';
@@ -23,11 +25,22 @@ import type React from 'react';
 const debug = debugFactory( 'jetpack-ai-calypso:logo-presenter' );
 
 const SaveInLibraryButton: React.FC = () => {
-	const { saveLogo, selectedLogo, isSavingLogoToLibrary: saving } = useLogoGenerator();
+	const {
+		saveLogo,
+		selectedLogo,
+		isSavingLogoToLibrary: saving,
+		logos,
+		selectedLogoIndex,
+	} = useLogoGenerator();
 	const saved = !! selectedLogo?.mediaId;
 
 	const handleClick = async () => {
 		if ( ! saved && ! saving ) {
+			recordTracksEvent( EVENT_SAVE_TO_LIBRARY, {
+				logos_count: logos.length,
+				selected_logo: selectedLogoIndex ? selectedLogoIndex + 1 : 0,
+			} );
+
 			try {
 				await saveLogo( selectedLogo );
 			} catch ( error ) {
@@ -52,10 +65,22 @@ const SaveInLibraryButton: React.FC = () => {
 };
 
 const UseOnSiteButton: React.FC< { onApplyLogo: () => void } > = ( { onApplyLogo } ) => {
-	const { applyLogo, isSavingLogoToLibrary, isApplyingLogo, selectedLogo } = useLogoGenerator();
+	const {
+		applyLogo,
+		isSavingLogoToLibrary,
+		isApplyingLogo,
+		selectedLogo,
+		logos,
+		selectedLogoIndex,
+	} = useLogoGenerator();
 
 	const handleClick = async () => {
 		if ( ! isApplyingLogo && ! isSavingLogoToLibrary ) {
+			recordTracksEvent( EVENT_USE_LOGO, {
+				logos_count: logos.length,
+				selected_logo: selectedLogoIndex != null ? selectedLogoIndex + 1 : 0,
+			} );
+
 			try {
 				await applyLogo();
 				onApplyLogo();
