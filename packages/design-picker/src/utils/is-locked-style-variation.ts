@@ -7,8 +7,8 @@ export function isLockedStyleVariation( {
 	shouldLimitGlobalStyles,
 }: {
 	design: Design;
-	selectedStyleVariation: StyleVariation;
-	shouldLimitGlobalStyles: boolean;
+	selectedStyleVariation?: StyleVariation;
+	shouldLimitGlobalStyles?: boolean;
 } ) {
 	return (
 		( shouldLimitGlobalStyles &&
