@@ -150,6 +150,7 @@ export type Selectors = {
 	getAiAssistantFeature( siteId?: string ): Partial< AiFeatureProps >;
 	getIsRequestingAiAssistantFeature(): boolean;
 	getLogos(): Array< Logo >;
+	getSelectedLogoIndex(): number | null;
 	getSelectedLogo(): Logo;
 	getSiteDetails(): SiteDetails;
 	getIsSavingLogoToLibrary(): boolean;

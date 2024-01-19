@@ -1,7 +1,6 @@
 /**
  * External dependencies
  */
-import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { __ } from '@wordpress/i18n';
 import debugFactory from 'debug';
@@ -9,7 +8,6 @@ import { useCallback } from 'react';
 /**
  * Internal dependencies
  */
-import { EVENT_PROMPT_SUBMIT } from '../../constants';
 import { stashLogo } from '../lib/logo-storage';
 import { requestJwt } from '../lib/request-token';
 import { saveToMediaLibrary } from '../lib/save-to-media-library';
@@ -37,6 +35,7 @@ const useLogoGenerator = () => {
 
 	const {
 		logos,
+		selectedLogoIndex,
 		selectedLogo,
 		siteDetails,
 		isSavingLogoToLibrary,
@@ -51,6 +50,7 @@ const useLogoGenerator = () => {
 
 		return {
 			logos: selectors.getLogos(),
+			selectedLogoIndex: selectors.getSelectedLogoIndex(),
 			selectedLogo: selectors.getSelectedLogo(),
 			siteDetails: selectors.getSiteDetails(),
 			isSavingLogoToLibrary: selectors.getIsSavingLogoToLibrary(),
@@ -319,7 +319,6 @@ User request: ${ prompt }
 
 		setIsRequestingImage( true );
 		increaseAiAssistantRequestsCount();
-		recordTracksEvent( EVENT_PROMPT_SUBMIT );
 
 		try {
 			let image;
@@ -359,6 +358,7 @@ User request: ${ prompt }
 
 	return {
 		logos,
+		selectedLogoIndex,
 		selectedLogo,
 		setSelectedLogoIndex,
 		site: {
