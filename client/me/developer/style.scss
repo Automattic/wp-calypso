@@ -22,4 +22,12 @@
 
 .developer__settings {
 	padding-bottom: 0;
+
+	.components-base-control {
+		margin-bottom: 0;
+	}
+
+	.form-fieldset {
+		margin-bottom: 24px;
+	}
 }
