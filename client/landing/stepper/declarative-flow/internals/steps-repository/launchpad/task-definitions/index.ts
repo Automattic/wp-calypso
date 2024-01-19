@@ -7,6 +7,7 @@ import { actions as planActions } from './plan';
 import { actions as postActions } from './post';
 import { actions as setupActions } from './setup';
 import { actions as siteActions } from './site';
+import { actions as subscribersActions } from './subscribers';
 
 const DEFINITIONS = {
 	...setupActions,
@@ -16,6 +17,7 @@ const DEFINITIONS = {
 	...siteActions,
 	...planActions,
 	...emailActions,
+	...subscribersActions,
 } satisfies TaskActionTable;
 
 export const NEW_TASK_DEFINITION_PARSER_FEATURE_FLAG = 'launchpad/new-task-definition-parser';

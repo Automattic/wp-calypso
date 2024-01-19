@@ -31,6 +31,7 @@ export type TaskId =
 	| 'domain_upsell'
 	| 'first_post_published'
 	| 'first_post_published_newsletter'
+	| 'subscribers_added'
 	| 'site_launched'
 	| 'plan_selected'
 	| 'plan_completed'
@@ -52,6 +53,7 @@ export interface TaskContext {
 	globalStylesMinimumPlan: string;
 	isVideoPressFlowWithUnsupportedPlan: boolean;
 	translatedPlanName?: ReactNode | string;
+	goToStep?: NavigationControls[ 'goToStep' ];
 }
 
 export type TaskAction = ( task: Task, flow: string, context: TaskContext ) => Task;

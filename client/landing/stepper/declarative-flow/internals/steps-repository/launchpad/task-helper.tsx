@@ -291,6 +291,7 @@ export function getEnhancedTasks( {
 				shouldDisplayWarning,
 				globalStylesMinimumPlan,
 				isVideoPressFlowWithUnsupportedPlan,
+				goToStep,
 			};
 
 			switch ( task.id ) {
@@ -393,7 +394,7 @@ export function getEnhancedTasks( {
 					taskData = getTaskDefinition( flow, task, context ) || deprecatedData;
 					break;
 				case 'subscribers_added':
-					taskData = {
+					deprecatedData = {
 						disabled: mustVerifyEmailBeforePosting || false,
 						actionDispatch: () => {
 							if ( goToStep ) {
@@ -402,6 +403,7 @@ export function getEnhancedTasks( {
 							}
 						},
 					};
+					taskData = getTaskDefinition( flow, task, context ) || deprecatedData;
 					break;
 				case 'migrate_content':
 					taskData = {
