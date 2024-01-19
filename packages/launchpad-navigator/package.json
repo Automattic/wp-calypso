@@ -1,7 +1,7 @@
 {
 	"name": "@automattic/launchpad-navigator",
 	"version": "0.1.0",
-	"description": "Launchpad navigator components",
+	"description": "Launchpad navigator components.",
 	"homepage": "https://github.com/Automattic/wp-calypso",
 	"license": "GPL-2.0-or-later",
 	"author": "Automattic Inc.",
