@@ -14,6 +14,7 @@ export { recordTracksEventWithClientId, recordPageViewWithClientId } from './rec
 export { withAnalytics } from './with-analytics';
 export { enhanceWithSiteMainProduct } from './enhance-with-site-main-product';
 export { enhanceWithSiteType } from './enhance-with-site-type';
+export { enhanceWithUserType } from './enhance-with-user-type';
 export { composeAnalytics } from './compose-analytics';
 export { bumpStat } from './bump-stat';
 export { loadTrackingTool } from './load-tracking-tool';
