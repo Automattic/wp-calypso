@@ -68,6 +68,7 @@
 		"external-media/openverse": true,
 		"cookie-banner": false,
 		"github-integration-i1": false,
+		"github-deployments-i1": true,
 		"google-drive": true,
 		"google-my-business": true,
 		"help": true,

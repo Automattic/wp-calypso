@@ -25,6 +25,7 @@ import { ScrollToAnchorOnMount } from 'calypso/components/scroll-to-anchor-on-mo
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import TrackComponentView from 'calypso/lib/analytics/track-component-view';
 import { GitHubCard } from 'calypso/my-sites/hosting/github';
+import { GitHubAppCard } from 'calypso/my-sites/hosting/github-app';
 import TrialBanner from 'calypso/my-sites/plans/trials/trial-banner';
 import { isAutomatticTeamMember } from 'calypso/reader/lib/teams';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
@@ -84,6 +85,7 @@ const MainCards = ( {
 	hasStagingSitesFeature,
 	isAdvancedHostingDisabled,
 	isBasicHostingDisabled,
+	isGithubDeploymentsEnabled,
 	isGithubIntegrationEnabled,
 	isWpcomStagingSite,
 	isBusinessTrial,
@@ -120,6 +122,13 @@ const MainCards = ( {
 			? {
 					feature: 'github',
 					content: <GitHubCard />,
+					type: 'advanced',
+			  }
+			: null,
+		isGithubDeploymentsEnabled
+			? {
+					feature: 'github',
+					content: <GitHubAppCard />,
 					type: 'advanced',
 			  }
 			: null,
@@ -244,6 +253,8 @@ const Hosting = ( props ) => {
 	};
 
 	const getContent = () => {
+		const isGithubDeploymentsEnabled =
+			isEnabled( 'github-deployments-i1' ) && isAutomatticTeamMember( teams );
 		const isGithubIntegrationEnabled =
 			isEnabled( 'github-integration-i1' ) && isAutomatticTeamMember( teams );
 		const WrapperComponent = ! isSiteAtomic ? FeatureExample : Fragment;
@@ -265,6 +276,7 @@ const Hosting = ( props ) => {
 								isAdvancedHostingDisabled={ ! hasSftpFeature || ! isSiteAtomic }
 								isBasicHostingDisabled={ ! hasAtomicFeature || ! isSiteAtomic }
 								isGithubIntegrationEnabled={ isGithubIntegrationEnabled }
+								isGithubDeploymentsEnabled={ isGithubDeploymentsEnabled }
 								isWpcomStagingSite={ isWpcomStagingSite }
 								isBusinessTrial={ isBusinessTrial }
 								siteId={ siteId }
