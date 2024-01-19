@@ -6,7 +6,7 @@ export function developer( context, next ) {
 	const DeveloperTitle = () => {
 		const translate = useTranslate();
 
-		return <DocumentHead title={ translate( 'Developer', { textOnly: true } ) } />;
+		return <DocumentHead title={ translate( 'Developer Features', { textOnly: true } ) } />;
 	};
 
 	context.primary = (
