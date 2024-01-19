@@ -52,10 +52,6 @@ object WPComTests : Project({
 	// Gutenberg Atomic Nightly
 	buildType(gutenbergPlaywrightBuildType("desktop", "a3f58555-56bb-42c6-8543-ab27213d3085" , atomic=true, nightly=true));
 	buildType(gutenbergPlaywrightBuildType("mobile", "8191e677-0682-4709-9201-66a7788980f0", atomic=true, nightly=true));
-	// Editor Tracking
-	buildType(editorTrackingBuildType("desktop", "bd15ed14-e77d-11ec-8fea-0242ac120002", atomic=false, edge=false));
-	// Editor Tracking Edge
-	buildType(editorTrackingBuildType("desktop", "c752ca9a-e77d-11ec-8fea-0242ac120002", atomic=false, edge=true));
 
 	// E2E Tests for Jetpack Simple Deployment
 	buildType(jetpackSimpleDeploymentE2eBuildType("desktop", "3007d7a1-5642-4dbf-9935-d93f3cdb4dcc"));
@@ -172,52 +168,6 @@ fun gutenbergPlaywrightBuildType( targetDevice: String, buildUuid: String, atomi
 				""".trimIndent()
 				triggerBuild = always()
 				withPendingChangesOnly = false
-			}
-		}
-	)
-}
-
-fun editorTrackingBuildType( targetDevice: String, buildUuid: String, atomic: Boolean = false, edge: Boolean = false ): E2EBuildType {
-	var siteType = if (atomic) "atomic" else "simple";
-	var edgeType = if (edge) "edge" else "production";
-
-    return E2EBuildType (
-		buildId = "WPComTests_editor_tracking_${siteType}_${edgeType}_$targetDevice",
-		buildUuid = buildUuid,
-		buildName = "Editor tracking $siteType E2E tests $edgeType ($targetDevice)",
-		buildDescription = "Runs editor tracking $siteType E2E tests on $targetDevice size",
-		testGroup = "editor-tracking",
-		buildParams = {
-			text(
-				name = "env.CALYPSO_BASE_URL",
-				value = "https://wordpress.com",
-				label = "Test URL",
-				description = "URL to test against",
-				allowEmpty = false
-			)
-			param("env.AUTHENTICATE_ACCOUNTS", "gutenbergSimpleSiteEdgeUser,gutenbergSimpleSiteUser,siteEditorSimpleSiteEdgeUser,siteEditorSimpleSiteUser")
-			param("env.VIEWPORT_NAME", "$targetDevice")
-			if (atomic) {
-				param("env.TEST_ON_ATOMIC", "true")
-			}
-			if (edge) {
-				param("env.GUTENBERG_EDGE", "true")
-			}
-		},
-		buildFeatures = {
-			notifications {
-				notifierSettings = slackNotifier {
-					connection = "PROJECT_EXT_11"
-					sendTo = "#gutenberg-e2e"
-					messageFormat = verboseMessageFormat {
-						addBranch = true
-						addStatusText = true
-						maximumNumberOfChanges = 10
-					}
-				}
-				branchFilter = "+:<default>"
-				buildFailed = true
-				buildFinishedSuccessfully = true
 			}
 		}
 	)
