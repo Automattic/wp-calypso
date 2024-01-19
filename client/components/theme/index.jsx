@@ -1,9 +1,11 @@
 import { isEnabled } from '@automattic/calypso-config';
+import { PLAN_PREMIUM, getPlan } from '@automattic/calypso-products';
 import { Card, Button, Gridicon } from '@automattic/components';
 import {
 	DesignPreviewImage,
 	ThemeCard,
 	isDefaultGlobalStylesVariationSlug,
+	isLockedStyleVariation,
 } from '@automattic/design-picker';
 import { localize } from 'i18n-calypso';
 import { isEmpty, isEqual } from 'lodash';
@@ -314,23 +316,24 @@ export class Theme extends Component {
 	};
 
 	renderBadge = () => {
-		const isLockedStyleVariation =
-			this.props.shouldLimitGlobalStyles &&
-			! isDefaultGlobalStylesVariationSlug( this.props.selectedStyleVariation?.slug );
+		const { selectedStyleVariation, shouldLimitGlobalStyles, siteId, siteSlug, theme } = this.props;
+
+		const premiumPlanSlug = getPlan( PLAN_PREMIUM ).getPathSlug();
+		const isLocked = isLockedStyleVariation( {
+			design: theme.theme_tier?.slug === premiumPlanSlug,
+			selectedStyleVariationSlug: selectedStyleVariation?.slug,
+			shouldLimitGlobalStyles,
+		} );
+
 		if ( isEnabled( 'themes/tiers' ) ) {
-			return (
-				<ThemeTierBadge
-					themeId={ this.props.theme.id }
-					isLockedStyleVariation={ isLockedStyleVariation }
-				/>
-			);
+			return <ThemeTierBadge themeId={ theme.id } isLockedStyleVariation={ isLocked } />;
 		}
 		return (
 			<ThemeTypeBadge
-				siteId={ this.props.siteId }
-				siteSlug={ this.props.siteSlug }
-				themeId={ this.props.theme.id }
-				isLockedStyleVariation={ isLockedStyleVariation }
+				siteId={ siteId }
+				siteSlug={ siteSlug }
+				themeId={ theme.id }
+				isLockedStyleVariation={ isLocked }
 			/>
 		);
 	};
