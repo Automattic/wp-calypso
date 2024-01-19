@@ -10,11 +10,11 @@ import { Icon, warning } from '@wordpress/icons';
  * Internal dependencies
  */
 import './upgrade-nudge.scss';
+import { useCheckout } from '../hooks/use-checkout';
 import { EVENT_PLACEMENT_UPGRADE_PROMPT, EVENT_UPGRADE } from '../../constants';
 
 export const UpgradeNudge = () => {
 	const buttonText = __( 'Upgrade', 'jetpack' );
-	const checkoutUrl = 'https://wordpress.com/';
 	const upgradeMessage = createInterpolateElement(
 		__(
 			'You reached your plan request limit. <strong>Upgrade now to increase it.</strong>',
@@ -24,6 +24,8 @@ export const UpgradeNudge = () => {
 			strong: <strong />,
 		}
 	);
+
+	const { nextTierCheckoutURL: checkoutUrl } = useCheckout();
 
 	const handleUpgradeClick = () => {
 		recordTracksEvent( EVENT_UPGRADE, { placement: EVENT_PLACEMENT_UPGRADE_PROMPT } );
