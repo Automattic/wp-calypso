@@ -23,7 +23,7 @@ export const UpgradeNudge = () => {
 		}
 	);
 
-	const { upgradeURL: checkoutUrl } = useCheckout();
+	const { nextTierCheckoutURL: checkoutUrl } = useCheckout();
 
 	return (
 		<div className="jetpack-upgrade-plan-banner">

@@ -28,9 +28,9 @@ export const useCheckout = () => {
 	);
 	upgradeURL.searchParams.set( 'redirect_to', location.href );
 
-	debug( 'Upgrade URL: ', upgradeURL.toString() );
+	debug( 'Next tier checkout URL: ', upgradeURL.toString() );
 
 	return {
-		upgradeURL: upgradeURL.toString(),
+		nextTierCheckoutURL: upgradeURL.toString(),
 	};
 };
