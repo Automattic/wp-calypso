@@ -62,7 +62,9 @@ export default function StoredCreditCardV2( {
 			isEnabled: true,
 			onClick: () => {
 				setIsDeleteDialogVisible( true );
-				recordTracksEvent( 'calypso_partner_portal_payments_card_actions_delete_click' );
+				dispatch(
+					recordTracksEvent( 'calypso_partner_portal_payments_card_actions_delete_click' )
+				);
 			},
 			className: 'stored-credit-card-v2__card-footer-actions-delete',
 		},
