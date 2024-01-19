@@ -21,6 +21,8 @@ export interface TranslatedLaunchpadStrings {
 
 export type TaskId =
 	| 'setup_free'
+	| 'setup_blog'
+	| 'blog_launched'
 	| 'design_selected'
 	| 'design_completed'
 	| 'design_edited'
@@ -28,6 +30,7 @@ export type TaskId =
 	| 'first_post_published'
 	| 'site_launched'
 	| 'plan_selected'
+	| 'plan_completed'
 	| 'site_launched';
 
 export interface TaskContext {
