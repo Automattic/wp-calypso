@@ -10,14 +10,14 @@ import getUserSetting from 'calypso/state/selectors/get-user-setting';
  * @returns {import('redux').AnyAction} the new Redux action
  * @see client/state/utils/withEnhancers
  */
-export function enhanceWithUserType( action, getState ) {
+export function enhanceWithPersona( action, getState ) {
 	const isDevAccount = getUserSetting( getState(), 'is_dev_account' );
 	const userType = isDevAccount ? 'dev' : 'general';
 
 	if ( action.type === ANALYTICS_EVENT_RECORD ) {
-		set( action, 'meta.analytics[0].payload.properties.user_type', userType );
+		set( action, 'meta.analytics[0].payload.properties.persona', userType );
 	} else {
-		set( action, 'meta.analytics[0].payload.user_type', userType );
+		set( action, 'meta.analytics[0].payload.persona', userType );
 	}
 
 	return action;
