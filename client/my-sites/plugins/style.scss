@@ -560,7 +560,14 @@ body.is-section-plugins #primary {
 	}
 }
 
-.banner.card.plugin-details__reviews-banner:hover {
-	cursor: pointer;
-	box-shadow: 0 0 1px var(--color-neutral), 0 2px 4px var(--color-neutral-10);
+.banner.card.plugin-details__reviews-banner {
+
+	&:hover {
+		cursor: pointer;
+		box-shadow: 0 0 1px var(--color-neutral), 0 2px 4px var(--color-neutral-10);
+	}
+
+	~ .plugin-details__page .plugin-details__layout {
+		padding-top: calc($layout-padding-top - 40px);
+	}
 }
