@@ -80,7 +80,7 @@
 		"launchpad/navigator": false,
 		"launchpad/new-task-definition-parser": true,
 		"launchpad/new-task-definition-parser/free": true,
-		"launchpad/new-task-definition-parser/start-writing": false,
+		"launchpad/new-task-definition-parser/start-writing": true,
 		"layout/app-banner": true,
 		"layout/guided-tours": true,
 		"layout/query-selected-editor": true,
