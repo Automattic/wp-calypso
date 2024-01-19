@@ -3,8 +3,8 @@ import apiFetch from '@wordpress/api-fetch';
 import { createBlock } from '@wordpress/blocks';
 import { Button, Modal } from '@wordpress/components';
 import { dispatch, select } from '@wordpress/data';
+import { __ } from '@wordpress/i18n';
 import { addQueryArgs, getQueryArg } from '@wordpress/url';
-import { useTranslate } from 'i18n-calypso';
 import moment from 'moment';
 import { useEffect, useState } from 'react';
 import { ArrowLeftIcon, ArrowRightIcon } from './icons';
@@ -12,7 +12,6 @@ import { ArrowLeftIcon, ArrowRightIcon } from './icons';
 import './style.scss';
 
 export const BloggingPromptsModalInner = () => {
-	const translate = useTranslate();
 	const [ isOpen, setIsOpen ] = useState( true );
 	const [ prompts, setPrompts ] = useState( [] );
 	const [ promptIndex, setPromptIndex ] = useState( 0 );
@@ -60,7 +59,7 @@ export const BloggingPromptsModalInner = () => {
 		<Modal
 			onRequestClose={ closeModal }
 			className="blogging-prompts-modal"
-			title={ translate( 'Some ideas for writing topics' ) }
+			title={ __( 'Some ideas for writing topics', 'full-site-editing' ) }
 		>
 			<div className="blogging-prompts-modal__prompt">
 				<div className="blogging-prompts-modal__prompt-navigation">
@@ -71,7 +70,7 @@ export const BloggingPromptsModalInner = () => {
 							}
 							return setPromptIndex( promptIndex - 1 );
 						} }
-						aria-label={ translate( 'Show previous prompt' ) }
+						aria-label={ __( 'Show previous prompt', 'full-site-editing' ) }
 						variant="secondary"
 						className="blogging-prompts-modal__prompt-navigation-button"
 					>
@@ -80,7 +79,7 @@ export const BloggingPromptsModalInner = () => {
 					<h2 className="blogging-prompts-modal__prompt-text">{ prompts[ promptIndex ]?.text }</h2>
 					<Button
 						onClick={ () => setPromptIndex( ( promptIndex + 1 ) % prompts.length ) }
-						aria-label={ translate( 'Show next prompt' ) }
+						aria-label={ __( 'Show next prompt', 'full-site-editing' ) }
 						variant="secondary"
 						className="blogging-prompts-modal__prompt-navigation-button"
 					>
@@ -88,7 +87,7 @@ export const BloggingPromptsModalInner = () => {
 					</Button>
 				</div>
 				<Button onClick={ selectPrompt } variant="secondary">
-					{ translate( 'Post Answer' ) }
+					{ __( 'Post Answer', 'full-site-editing' ) }
 				</Button>
 			</div>
 		</Modal>

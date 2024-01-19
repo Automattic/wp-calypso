@@ -146,10 +146,7 @@ const usePlanTypesWithIntent = ( {
 			];
 			break;
 		case 'plans-business-trial':
-			planTypes = [
-				TYPE_BUSINESS,
-				...( isEnterpriseAvailable ? [ TYPE_ENTERPRISE_GRID_WPCOM ] : [] ),
-			];
+			planTypes = [ TYPE_BUSINESS, TYPE_ECOMMERCE ];
 			break;
 		case 'plans-videopress':
 			planTypes = [ TYPE_PREMIUM, TYPE_BUSINESS ];

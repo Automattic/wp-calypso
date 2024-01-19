@@ -3,6 +3,8 @@ import classNames from 'classnames';
 import { useRef, useState } from 'react';
 import PopoverMenu from 'calypso/components/popover-menu';
 import PopoverMenuItem from 'calypso/components/popover-menu/item';
+import { useDispatch } from 'calypso/state';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
 
 export default function CreditCardActions( {
 	cardActions,
@@ -18,9 +20,11 @@ export default function CreditCardActions( {
 } ) {
 	const buttonActionRef = useRef< HTMLButtonElement | null >( null );
 	const [ isOpen, setIsOpen ] = useState( false );
+	const dispatch = useDispatch();
 
 	const showActions = () => {
 		setIsOpen( true );
+		dispatch( recordTracksEvent( 'calypso_partner_portal_payments_card_actions_button_click' ) );
 	};
 
 	const closeDropdown = () => {
