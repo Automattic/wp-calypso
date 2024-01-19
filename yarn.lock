@@ -2001,6 +2001,7 @@ __metadata:
     redux: "npm:^4.2.1"
     tinymce: "npm:^5.0.0"
     webpack: "npm:^5.89.0"
+    webpack-bundle-analyzer: "npm:^4.10.1"
   languageName: unknown
   linkType: soft
 
