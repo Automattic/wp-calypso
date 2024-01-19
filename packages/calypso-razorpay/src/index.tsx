@@ -5,7 +5,23 @@ const debug = debugFactory( 'calypso-razorpay' );
 
 export interface RazorpayConfiguration {
 	js_url: string;
-	options: { key: string };
+	options: RazorpayOptions;
+}
+
+export interface RazorpayOptions {
+	key: string;
+	order_id?: string; // This is a razorpay order ID; the name is constrained by a 3rd party library.
+	handler?: ( response: {
+		razorpay_payment_id: string;
+		razorpay_order_id: string;
+		razorpay_signature: string;
+	} ) => void;
+}
+
+export interface RazorpayConfirmationRequestArgs {
+	razorpay_payment_id: string;
+	razorpay_signature: string;
+	order_id: string; // This is a BD order ID.
 }
 
 export declare class Razorpay {
