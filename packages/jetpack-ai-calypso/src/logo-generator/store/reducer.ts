@@ -82,9 +82,8 @@ export default function reducer(
 					aiAssistantFeature: {
 						...action.feature,
 						// re evaluate requireUpgrade as the logo generator does not allow free usage
-						requireUpgrade: action.feature?.currentTier
-							? action.feature.currentTier.value === 0
-							: action.feature?.requireUpgrade,
+						requireUpgrade:
+							action.feature?.requireUpgrade || action.feature?.currentTier?.value === 0,
 						_meta: {
 							...state?.features?.aiAssistantFeature?._meta,
 							isRequesting: false,

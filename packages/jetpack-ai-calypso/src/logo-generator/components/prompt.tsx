@@ -20,6 +20,7 @@ import {
 import AiIcon from '../assets/icons/ai';
 import useLogoGenerator from '../hooks/use-logo-generator';
 import useRequestErrors from '../hooks/use-request-errors';
+import { UpgradeNudge } from './upgrade-nudge';
 import './prompt.scss';
 
 const debug = debugFactory( 'jetpack-ai-calypso:prompt-box' );
@@ -132,7 +133,7 @@ export const Prompt: React.FC< { initialPrompt?: string } > = ( { initialPrompt 
 				</Button>
 			</div>
 			<div className="jetpack-ai-logo-generator__prompt-footer">
-				{ ! isUnlimited && (
+				{ ! isUnlimited && ! requireUpgrade && (
 					<div className="jetpack-ai-logo-generator__prompt-requests">
 						<div>
 							{ sprintf(
@@ -154,6 +155,7 @@ export const Prompt: React.FC< { initialPrompt?: string } > = ( { initialPrompt 
 						<Icon className="prompt-footer__icon" icon={ info } />
 					</div>
 				) }
+				{ ! isUnlimited && requireUpgrade && <UpgradeNudge /> }
 				{ enhancePromptFetchError && (
 					<div className="jetpack-ai-logo-generator__prompt-error">
 						{ __( 'Error enhancing prompt. Please try again.', 'jetpack' ) }
