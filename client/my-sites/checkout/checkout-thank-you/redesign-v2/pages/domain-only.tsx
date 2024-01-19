@@ -1,5 +1,6 @@
-import { Button } from '@wordpress/components';
+import { Button, SelectControl } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
+import { useState } from 'react';
 import emailImage from 'calypso/assets/images/thank-you-upsell/email.jpg';
 import ThankYouV2 from 'calypso/components/thank-you-v2';
 import { ThankYouUpsellProps } from 'calypso/components/thank-you-v2/upsell';
@@ -12,6 +13,38 @@ import ThankYouDomainProduct from '../products/domain-product';
 import getDomainFooterDetails from './content/get-domain-footer-details';
 import type { ReceiptPurchase } from 'calypso/state/receipts/types';
 
+function UpsellActions( { domainNames, receiptId }: { domainNames: string[]; receiptId: number } ) {
+	const translate = useTranslate();
+	const [ selectedDomainName, setSelectedDomainName ] = useState( domainNames[ 0 ] );
+	const siteSlug = useSelector( getSelectedSiteSlug );
+
+	const domainNameOptions = domainNames.map( ( domainName ) => ( {
+		label: domainName,
+		value: domainName,
+	} ) );
+
+	return (
+		<>
+			{ domainNames.length > 1 ? (
+				<SelectControl
+					value={ selectedDomainName }
+					options={ domainNameOptions }
+					onChange={ ( value ) => setSelectedDomainName( value ) }
+				/>
+			) : null }
+
+			<Button
+				href={ getProfessionalEmailCheckoutUpsellPath( siteSlug, selectedDomainName, receiptId ) }
+				onClick={ () =>
+					recordTracksEvent( 'calypso_domain_only_thank_you_professional_email_click' )
+				}
+			>
+				{ translate( 'Add email' ) }
+			</Button>
+		</>
+	);
+}
+
 interface DomainOnlyThankYouProps {
 	purchases: ReceiptPurchase[];
 	receiptId: number;
@@ -20,8 +53,7 @@ interface DomainOnlyThankYouProps {
 export default function DomainOnlyThankYou( { purchases, receiptId }: DomainOnlyThankYouProps ) {
 	const translate = useTranslate();
 	const [ , predicate ] = getDomainPurchaseTypeAndPredicate( purchases );
-	const domains = purchases.filter( predicate ).map( ( purchase ) => purchase?.meta );
-	const firstDomainName = domains[ 0 ];
+	const domainNames = purchases.filter( predicate ).map( ( purchase ) => purchase?.meta );
 	const siteSlug = useSelector( getSelectedSiteSlug );
 
 	const upsellProps: ThankYouUpsellProps = {
@@ -38,16 +70,7 @@ export default function DomainOnlyThankYou( { purchases, receiptId }: DomainOnly
 			</>
 		),
 		image: emailImage,
-		action: (
-			<Button
-				href={ getProfessionalEmailCheckoutUpsellPath( siteSlug, firstDomainName, receiptId ) }
-				onClick={ () =>
-					recordTracksEvent( 'calypso_domain_only_thank_you_professional_email_click' )
-				}
-			>
-				{ translate( 'Add email' ) }
-			</Button>
-		),
+		actions: <UpsellActions domainNames={ domainNames } receiptId={ receiptId } />,
 	};
 
 	const products = purchases.filter( predicate ).map( ( purchase ) => {
@@ -68,7 +91,7 @@ export default function DomainOnlyThankYou( { purchases, receiptId }: DomainOnly
 				'All set! We’re just setting up your new domain so you can start spreading the word.',
 				'All set! We’re just setting up your new domains so you can start spreading the word.',
 				{
-					count: domains.length,
+					count: domainNames.length,
 				}
 			) }
 			products={ products }
