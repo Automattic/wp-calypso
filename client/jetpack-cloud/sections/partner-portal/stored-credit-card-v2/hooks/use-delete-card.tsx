@@ -7,6 +7,8 @@ import { deleteStoredCard } from 'calypso/state/partner-portal/stored-cards/acti
 import { useRecentPaymentMethodsQuery } from '../../hooks';
 import type { PaymentMethod } from 'calypso/jetpack-cloud/sections/partner-portal/payment-methods';
 
+const NOTIFICATION_DURATION = 3000;
+
 export function useDeleteCard( card: PaymentMethod ) {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
@@ -30,12 +32,22 @@ export function useDeleteCard( card: PaymentMethod ) {
 		dispatch( deleteStoredCard( card, nextPrimaryPaymentMethod?.id ) )
 			.then( () => {
 				setIsDeleteInProgress( false );
-				dispatch( successNotice( translate( 'Payment method deleted successfully' ) ) );
+				dispatch(
+					successNotice( translate( 'Payment method deleted successfully' ), {
+						duration: NOTIFICATION_DURATION,
+						id: 'payment-method-deleted-successfully',
+					} )
+				);
 				dispatch( recordTracksEvent( 'calypso_partner_portal_delete_payment_method' ) );
 			} )
 			.catch( ( error: Error ) => {
 				setIsDeleteInProgress( false );
-				dispatch( errorNotice( error.message ) );
+				dispatch(
+					errorNotice( error.message, {
+						duration: NOTIFICATION_DURATION,
+						id: 'payment-method-deleted-error',
+					} )
+				);
 			} );
 	}, [ closeDialog, dispatch, card, nextPrimaryPaymentMethod?.id, translate ] );
 

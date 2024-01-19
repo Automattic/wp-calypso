@@ -4,6 +4,7 @@
 .task {
 	display: flex;
 	position: relative;
+	margin-top: 0;
 	margin-bottom: 30px;
 	border-radius: 3px;
 
@@ -29,6 +30,7 @@
 	.task__text {
 		display: flex;
 		flex-direction: column;
+		margin-top: 16px;
 		align-items: flex-start;
 	}
 
@@ -62,7 +64,7 @@
 		@extend .wp-brand-font;
 		font-size: $font-title-large;
 		line-height: 36px;
-		margin-bottom: 4px;
+		margin-bottom: 16px;
 
 		@include breakpoint-deprecated( ">800px" ) {
 			line-height: 40px;
@@ -71,7 +73,7 @@
 
 	.task__description {
 		margin-bottom: 24px;
-		font-size: $font-body;
+		font-size: $font-body-small;
 		line-height: 24px;
 		color: var(--color-text);
 

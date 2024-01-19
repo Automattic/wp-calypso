@@ -1,11 +1,11 @@
 import { PLAN_PERSONAL, PLAN_PREMIUM } from '@automattic/calypso-products';
 import { Gridicon, LoadingPlaceholder } from '@automattic/components';
+import { PlanButton } from '@automattic/plans-grid-next';
 import styled from '@emotion/styled';
 import { useEffect } from '@wordpress/element';
 import { useTranslate } from 'i18n-calypso';
 import QueryProductsList from 'calypso/components/data/query-products-list';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
-import PlanButton from 'calypso/my-sites/plans-grid/components/plan-button';
 import { useSelector } from 'calypso/state';
 import { getCurrentUserCurrencyCode } from 'calypso/state/currency-code/selectors';
 import { DialogContainer, Heading } from './components';
