@@ -481,8 +481,8 @@ export default function WPCheckout( {
 									<CheckoutSummaryFeaturedList
 										responseCart={ responseCart }
 										siteId={ siteId }
-										nextDomainIsFree={ responseCart?.next_domain_is_free }
 										isCartUpdating={ FormStatus.VALIDATING === formStatus }
+										onChangeSelection={ changeSelection }
 									/>
 								) }
 								<SecondaryCartPromotions

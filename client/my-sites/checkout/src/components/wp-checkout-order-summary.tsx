@@ -59,7 +59,6 @@ import type { TranslateResult } from 'i18n-calypso';
 export function WPCheckoutOrderSummary( {
 	siteId,
 	onChangeSelection,
-	nextDomainIsFree = false,
 }: {
 	siteId: number | undefined;
 	onChangeSelection: (
@@ -73,16 +72,7 @@ export function WPCheckoutOrderSummary( {
 	const { formStatus } = useFormStatus();
 	const cartKey = useCartKey();
 	const { responseCart } = useShoppingCart( cartKey );
-
-	const hasRenewalInCart = responseCart.products.some(
-		( product ) => product.extra.purchaseType === 'renewal'
-	);
-
 	const isCartUpdating = FormStatus.VALIDATING === formStatus;
-	const isWcMobile = isWcMobileApp();
-
-	const plan = responseCart.products.find( ( product ) => isPlan( product ) );
-	const hasMonthlyPlanInCart = Boolean( plan && isMonthly( plan?.product_slug ) );
 
 	return (
 		<CheckoutSummaryCard
@@ -93,14 +83,11 @@ export function WPCheckoutOrderSummary( {
 				<CheckoutSummaryFeaturedList
 					responseCart={ responseCart }
 					siteId={ siteId }
-					nextDomainIsFree={ nextDomainIsFree }
 					isCartUpdating={ isCartUpdating }
+					onChangeSelection={ onChangeSelection }
 				/>
 			) }
 
-			{ ! isCartUpdating && ! hasRenewalInCart && ! isWcMobile && plan && hasMonthlyPlanInCart && (
-				<CheckoutSummaryAnnualUpsell plan={ plan } onChangeSelection={ onChangeSelection } />
-			) }
 			<CheckoutSummaryPriceList />
 		</CheckoutSummaryCard>
 	);
@@ -108,29 +95,49 @@ export function WPCheckoutOrderSummary( {
 export function CheckoutSummaryFeaturedList( {
 	responseCart,
 	siteId,
-	nextDomainIsFree,
 	isCartUpdating,
+	onChangeSelection,
 }: {
 	responseCart: ResponseCart;
 	siteId: number | undefined;
-	nextDomainIsFree: boolean;
 	isCartUpdating: boolean;
+	onChangeSelection: (
+		uuid: string,
+		productSlug: string,
+		productId: number,
+		volume?: number
+	) => void;
 } ) {
 	const translate = useTranslate();
+	const hasRenewalInCart = responseCart.products.some(
+		( product ) => product.extra.purchaseType === 'renewal'
+	);
 
+	const isWcMobile = isWcMobileApp();
+
+	const plan = responseCart.products.find( ( product ) => isPlan( product ) );
+	const hasMonthlyPlanInCart = Boolean( plan && isMonthly( plan?.product_slug ) );
 	return (
-		<CheckoutSummaryFeatures>
-			<CheckoutSummaryFeaturesTitle>
-				{ responseCart.is_gift_purchase
-					? translate( 'WordPress.com Gift Subscription' )
-					: translate( 'Included with your purchase' ) }
-			</CheckoutSummaryFeaturesTitle>
-			{ isCartUpdating ? (
-				<LoadingCheckoutSummaryFeaturesList />
-			) : (
-				<CheckoutSummaryFeaturesWrapper siteId={ siteId } nextDomainIsFree={ nextDomainIsFree } />
+		<>
+			<CheckoutSummaryFeatures>
+				<CheckoutSummaryFeaturesTitle>
+					{ responseCart.is_gift_purchase
+						? translate( 'WordPress.com Gift Subscription' )
+						: translate( 'Included with your purchase' ) }
+				</CheckoutSummaryFeaturesTitle>
+				{ isCartUpdating ? (
+					<LoadingCheckoutSummaryFeaturesList />
+				) : (
+					<CheckoutSummaryFeaturesWrapper
+						siteId={ siteId }
+						nextDomainIsFree={ responseCart?.next_domain_is_free }
+					/>
+				) }
+			</CheckoutSummaryFeatures>
+			{ ! isCartUpdating && ! hasRenewalInCart && ! isWcMobile && plan && hasMonthlyPlanInCart && (
+				<CheckoutSummaryAnnualUpsell plan={ plan } onChangeSelection={ onChangeSelection } />
 			) }
-		</CheckoutSummaryFeatures>
+		</>
 	);
 }
 function CheckoutSummaryPriceList() {
@@ -789,7 +796,7 @@ const CheckoutSummaryFeatures = styled.div`
 	padding: 24px 0;
 
 	@media ( ${ ( props ) => props.theme.breakpoints.desktopUp } ) {
-		padding: 50px 0 24px;
+		padding: 24px 0;
 	}
 `;
 
@@ -806,13 +813,13 @@ const CheckoutSummaryFeaturesUpsell = styled( CheckoutSummaryFeatures )`
 `;
 
 const CheckoutSummaryFeaturesTitle = styled.h3`
-	font-size: 20px;
+	font-size: 16px;
 	font-weight: ${ ( props ) => props.theme.weights.bold };
 	line-height: 26px;
 	margin-bottom: 12px;
 
 	& button {
-		font-size: 20px;
+		font-size: 16px;
 		font-weight: ${ ( props ) => props.theme.weights.bold };
 		text-decoration: none;
 	}
