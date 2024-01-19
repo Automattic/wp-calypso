@@ -46,6 +46,15 @@ const selectors = {
 	},
 
 	/**
+	 * Get the selected logo index.
+	 * @param {LogoGeneratorStateProp} state - The app state tree.
+	 * @returns {number | null}                The selected logo index.
+	 */
+	getSelectedLogoIndex( state: LogoGeneratorStateProp ): number | null {
+		return state.selectedLogoIndex ?? null;
+	},
+
+	/**
 	 * Get the selected logo.
 	 * @param {LogoGeneratorStateProp} state - The app state tree.
 	 * @returns {Logo}                         The selected logo.
