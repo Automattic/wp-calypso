@@ -339,11 +339,21 @@ export class NoteList extends Component {
 			'is-empty-list': emptyNoteList,
 		} );
 
+		const notificationsListAriaProps = {
+			[ 'aria-live' ]: 'polite',
+			[ 'aria-description' ]: this.props.translate(
+				'Press the Escape key to close the notifications, or continue navigating to read them.'
+			),
+		};
+
 		return (
 			<div className={ classes } id="wpnc__note-list">
 				<FilterBar controller={ this.props.filterController } />
+				<button className="screen-reader-text" onClick={ this.props.closePanel }>
+					{ this.props.translate( 'Close notifications' ) }
+				</button>
 				<div ref={ this.storeScrollableContainer } className={ listViewClasses }>
-					<ol ref={ this.storeNoteList } className="wpnc__notes" aria-live="polite">
+					<ol ref={ this.storeNoteList } className="wpnc__notes" { ...notificationsListAriaProps }>
 						<StatusBar
 							statusClasses={ this.state.statusClasses }
 							statusMessage={ this.state.statusMessage }
