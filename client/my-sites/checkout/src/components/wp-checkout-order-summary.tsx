@@ -56,7 +56,7 @@ import type { TranslateResult } from 'i18n-calypso';
 // This will make converting to TS less noisy. The order of components can be reorganized later
 /* eslint-disable @typescript-eslint/no-use-before-define */
 
-export default function WPCheckoutOrderSummary( {
+export function WPCheckoutOrderSummary( {
 	siteId,
 	onChangeSelection,
 	nextDomainIsFree = false,
@@ -70,7 +70,6 @@ export default function WPCheckoutOrderSummary( {
 	) => void;
 	nextDomainIsFree?: boolean;
 } ) {
-	const translate = useTranslate();
 	const { formStatus } = useFormStatus();
 	const cartKey = useCartKey();
 	const { responseCart } = useShoppingCart( cartKey );
@@ -91,21 +90,12 @@ export default function WPCheckoutOrderSummary( {
 			data-e2e-cart-is-loading={ isCartUpdating }
 		>
 			{ ! hasCheckoutVersion( '2' ) && (
-				<CheckoutSummaryFeatures>
-					<CheckoutSummaryFeaturesTitle>
-						{ responseCart.is_gift_purchase
-							? translate( 'WordPress.com Gift Subscription' )
-							: translate( 'Included with your purchase' ) }
-					</CheckoutSummaryFeaturesTitle>
-					{ isCartUpdating ? (
-						<LoadingCheckoutSummaryFeaturesList />
-					) : (
-						<CheckoutSummaryFeaturesWrapper
-							siteId={ siteId }
-							nextDomainIsFree={ nextDomainIsFree }
-						/>
-					) }
-				</CheckoutSummaryFeatures>
+				<CheckoutSummaryFeaturedList
+					responseCart={ responseCart }
+					siteId={ siteId }
+					nextDomainIsFree={ nextDomainIsFree }
+					isCartUpdating={ isCartUpdating }
+				/>
 			) }
 
 			{ ! isCartUpdating && ! hasRenewalInCart && ! isWcMobile && plan && hasMonthlyPlanInCart && (
@@ -115,7 +105,34 @@ export default function WPCheckoutOrderSummary( {
 		</CheckoutSummaryCard>
 	);
 }
+export function CheckoutSummaryFeaturedList( {
+	responseCart,
+	siteId,
+	nextDomainIsFree,
+	isCartUpdating,
+}: {
+	responseCart: ResponseCart;
+	siteId: number | undefined;
+	nextDomainIsFree: boolean;
+	isCartUpdating: boolean;
+} ) {
+	const translate = useTranslate();
 
+	return (
+		<CheckoutSummaryFeatures>
+			<CheckoutSummaryFeaturesTitle>
+				{ responseCart.is_gift_purchase
+					? translate( 'WordPress.com Gift Subscription' )
+					: translate( 'Included with your purchase' ) }
+			</CheckoutSummaryFeaturesTitle>
+			{ isCartUpdating ? (
+				<LoadingCheckoutSummaryFeaturesList />
+			) : (
+				<CheckoutSummaryFeaturesWrapper siteId={ siteId } nextDomainIsFree={ nextDomainIsFree } />
+			) }
+		</CheckoutSummaryFeatures>
+	);
+}
 function CheckoutSummaryPriceList() {
 	const cartKey = useCartKey();
 	const { responseCart } = useShoppingCart( cartKey );
