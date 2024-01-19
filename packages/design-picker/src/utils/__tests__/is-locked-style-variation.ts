@@ -1,14 +1,14 @@
 import { isLockedStyleVariation } from '../is-locked-style-variation';
 
 describe( 'isLockedStyleVariation', () => {
-	it( 'should return true when shouldLimitGlobalStyles is true, theme is not premium, and selectedStyleVariationSlug is not default', () => {
-		const isPremium = false;
-		const selectedStyleVariationSlug = 'ember';
+	it( 'should return true when shouldLimitGlobalStyles is true, theme is not premium, and styleVariationSlug is not default', () => {
+		const isPremiumTheme = false;
+		const styleVariationSlug = 'ember';
 		const shouldLimitGlobalStyles = true;
 
 		const result = isLockedStyleVariation( {
-			isPremium,
-			selectedStyleVariationSlug,
+			isPremiumTheme,
+			styleVariationSlug,
 			shouldLimitGlobalStyles,
 		} );
 
@@ -16,13 +16,13 @@ describe( 'isLockedStyleVariation', () => {
 	} );
 
 	it( 'should return false when shouldLimitGlobalStyles is false', () => {
-		const isPremium = false;
-		const selectedStyleVariationSlug = 'ember';
+		const isPremiumTheme = false;
+		const styleVariationSlug = 'ember';
 		const shouldLimitGlobalStyles = false;
 
 		const result = isLockedStyleVariation( {
-			isPremium,
-			selectedStyleVariationSlug,
+			isPremiumTheme,
+			styleVariationSlug,
 			shouldLimitGlobalStyles,
 		} );
 
@@ -30,27 +30,27 @@ describe( 'isLockedStyleVariation', () => {
 	} );
 
 	it( 'should return false when theme is premium', () => {
-		const isPremium = true;
-		const selectedStyleVariationSlug = undefined;
+		const isPremiumTheme = true;
+		const styleVariationSlug = undefined;
 		const shouldLimitGlobalStyles = true;
 
 		const result = isLockedStyleVariation( {
-			isPremium,
-			selectedStyleVariationSlug,
+			isPremiumTheme,
+			styleVariationSlug,
 			shouldLimitGlobalStyles,
 		} );
 
 		expect( result ).toBe( false );
 	} );
 
-	it( 'should return false when selectedStyleVariationSlug is default', () => {
-		const isPremium = false;
-		const selectedStyleVariationSlug = 'default';
+	it( 'should return false when styleVariationSlug is default', () => {
+		const isPremiumTheme = false;
+		const styleVariationSlug = 'default';
 		const shouldLimitGlobalStyles = true;
 
 		const result = isLockedStyleVariation( {
-			isPremium,
-			selectedStyleVariationSlug,
+			isPremiumTheme,
+			styleVariationSlug,
 			shouldLimitGlobalStyles,
 		} );
 

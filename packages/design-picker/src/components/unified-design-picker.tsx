@@ -174,8 +174,8 @@ const DesignCard: React.FC< DesignCardProps > = ( {
 	const isDefaultVariation = isDefaultGlobalStylesVariationSlug( selectedStyleVariation?.slug );
 
 	const isLocked = isLockedStyleVariation( {
-		isPremium: design.is_premium,
-		selectedStyleVariationSlug: selectedStyleVariation?.slug,
+		isPremiumTheme: design.is_premium,
+		styleVariationSlug: selectedStyleVariation?.slug,
 		shouldLimitGlobalStyles,
 	} );
 

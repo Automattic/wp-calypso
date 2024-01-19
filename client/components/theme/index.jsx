@@ -320,8 +320,8 @@ export class Theme extends Component {
 
 		const premiumPlanSlug = getPlan( PLAN_PREMIUM ).getPathSlug();
 		const isLocked = isLockedStyleVariation( {
-			design: theme.theme_tier?.slug === premiumPlanSlug,
-			selectedStyleVariationSlug: selectedStyleVariation?.slug,
+			isPremiumTheme: theme.theme_tier?.slug === premiumPlanSlug,
+			styleVariationSlug: selectedStyleVariation?.slug,
 			shouldLimitGlobalStyles,
 		} );
 

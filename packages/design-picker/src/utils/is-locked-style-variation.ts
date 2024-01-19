@@ -1,19 +1,19 @@
-import { Design, StyleVariation } from '../types';
+import { StyleVariation } from '../types';
 import { isDefaultGlobalStylesVariationSlug } from './global-styles';
 
 export function isLockedStyleVariation( {
-	isPremium,
-	selectedStyleVariationSlug,
+	isPremiumTheme,
+	styleVariationSlug,
 	shouldLimitGlobalStyles,
 }: {
-	isPremium: Design[ 'is_premium' ];
-	selectedStyleVariationSlug?: StyleVariation[ 'slug' ];
+	isPremiumTheme: boolean;
+	styleVariationSlug?: StyleVariation[ 'slug' ];
 	shouldLimitGlobalStyles?: boolean;
 } ) {
 	return (
 		( shouldLimitGlobalStyles &&
-			! isPremium &&
-			! isDefaultGlobalStylesVariationSlug( selectedStyleVariationSlug ) ) ??
+			! isPremiumTheme &&
+			! isDefaultGlobalStylesVariationSlug( styleVariationSlug ) ) ??
 		false
 	);
 }
