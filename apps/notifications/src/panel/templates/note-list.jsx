@@ -342,7 +342,7 @@ export class NoteList extends Component {
 		const notificationsListAriaProps = {
 			[ 'aria-live' ]: 'polite',
 			[ 'aria-description' ]: this.props.translate(
-				'Filter notifications. Press the Escape key to close the notifications, or continue navigating to read them.'
+				'Press the Escape key to close the notifications, or continue navigating to read them.'
 			),
 		};
 
