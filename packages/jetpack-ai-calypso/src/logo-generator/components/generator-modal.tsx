@@ -1,6 +1,7 @@
 /**
  * External dependencies
  */
+import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { Icon, Modal, Button } from '@wordpress/components';
 import { useDispatch } from '@wordpress/data';
 import { __ } from '@wordpress/i18n';
@@ -11,6 +12,12 @@ import { useState, useEffect, useCallback } from 'react';
 /**
  * Internal dependencies
  */
+import {
+	EVENT_CALYPSO_LOGO_CALLED,
+	EVENT_FEEDBACK,
+	EVENT_MODAL_CLOSE,
+	EVENT_PLACEMENT_QUICK_LINKS,
+} from '../../constants';
 import useLogoGenerator from '../hooks/use-logo-generator';
 import useRequestErrors from '../hooks/use-request-errors';
 import { isLogoHistoryEmpty } from '../lib/logo-storage';
@@ -112,6 +119,7 @@ export const GeneratorModal: React.FC< GeneratorModalProps > = ( {
 	}, [ siteId, getFeature, siteDetails?.domain, generateFirstLogo ] );
 
 	const handleModalOpen = useCallback( async () => {
+		recordTracksEvent( EVENT_CALYPSO_LOGO_CALLED, { placement: EVENT_PLACEMENT_QUICK_LINKS } );
 		loadLogoHistory( siteId );
 
 		initializeModal();
@@ -121,6 +129,7 @@ export const GeneratorModal: React.FC< GeneratorModalProps > = ( {
 		setLoadingState( null );
 		setNeedsFeature( false );
 		clearErrors();
+		recordTracksEvent( EVENT_MODAL_CLOSE );
 		onClose();
 	};
 
@@ -131,6 +140,10 @@ export const GeneratorModal: React.FC< GeneratorModalProps > = ( {
 			// Reload the page to update the logo.
 			window.location.reload();
 		}, 1000 );
+	};
+
+	const handleFeedbackClick = () => {
+		recordTracksEvent( EVENT_FEEDBACK );
 	};
 
 	// Set site details when siteId changes
@@ -180,6 +193,7 @@ export const GeneratorModal: React.FC< GeneratorModalProps > = ( {
 						className="jetpack-ai-logo-generator__feedback-button"
 						href="https://jetpack.com/redirect/?source=jetpack-ai-feedback"
 						target="_blank"
+						onClick={ handleFeedbackClick }
 					>
 						<span>{ __( 'Provide feedback', 'jetpack' ) }</span>
 						<Icon icon={ external } className="icon" />
