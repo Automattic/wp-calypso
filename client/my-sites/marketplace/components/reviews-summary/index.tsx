@@ -1,12 +1,10 @@
-import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { isEnabled } from '@automattic/calypso-config';
 import { Button } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
-import { type ReactNode, useEffect, useState } from 'react';
+import { useState } from 'react';
 import Rating from 'calypso/components/rating';
 import {
 	useMarketplaceReviewsStatsQuery,
-	useIsUserAllowedToReview,
 	type ProductProps,
 } from 'calypso/data/marketplace/use-marketplace-reviews';
 import { ReviewModal } from 'calypso/my-sites/marketplace/components/review-modal';
@@ -15,17 +13,10 @@ import './styles.scss';
 
 type Props = ProductProps & {
 	productName: string;
+	onReviewsClick: () => void;
 };
 
-const TrackedButton = ( { onClick, children }: { onClick: () => void; children: ReactNode } ) => {
-	// useEffect used to avoid calling recordTracksEvent on every render
-	useEffect( () => {
-		recordTracksEvent( 'calypso_marketplace_reviews_add_button_displayed' );
-	}, [] );
-	return <Button onClick={ onClick }>{ children }</Button>;
-};
-
-export const ReviewsSummary = ( { slug, productName, productType }: Props ) => {
+export const ReviewsSummary = ( { slug, productName, productType, onReviewsClick }: Props ) => {
 	const translate = useTranslate();
 	const [ isVisible, setIsVisible ] = useState( false );
 
@@ -33,8 +24,6 @@ export const ReviewsSummary = ( { slug, productName, productType }: Props ) => {
 		productType,
 		slug,
 	} );
-
-	const { data: userCanPublishReviews } = useIsUserAllowedToReview( { productType, slug } );
 
 	let averageRating = null;
 	let numberOfReviews = null;
@@ -50,14 +39,6 @@ export const ReviewsSummary = ( { slug, productName, productType }: Props ) => {
 		averageRating = ( averageRating * 100 ) / 5;
 	}
 
-	const handleAddReviewClick = () => {
-		recordTracksEvent( 'calypso_marketplace_reviews_add_button_click', {
-			product_type: productType,
-			slug,
-		} );
-		setIsVisible( true );
-	};
-
 	return (
 		<>
 			<ReviewModal
@@ -71,7 +52,11 @@ export const ReviewsSummary = ( { slug, productName, productType }: Props ) => {
 				{ numberOfReviews !== null && (
 					<div>
 						{ averageRating !== null && <Rating rating={ averageRating } /> }
-						<Button borderless className="reviews-summary__number-reviews-link is-link">
+						<Button
+							borderless
+							className="reviews-summary__number-reviews-link is-link"
+							onClick={ onReviewsClick }
+						>
 							{ translate( '%(numberOfReviews)d review', '%(numberOfReviews)d reviews', {
 								count: numberOfReviews,
 								args: {
@@ -80,11 +65,6 @@ export const ReviewsSummary = ( { slug, productName, productType }: Props ) => {
 							} ) }
 						</Button>
 					</div>
-				) }
-				{ userCanPublishReviews && (
-					<TrackedButton onClick={ handleAddReviewClick }>
-						{ translate( 'Add Review' ) }
-					</TrackedButton>
 				) }
 			</div>
 		</>

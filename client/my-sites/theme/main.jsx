@@ -108,6 +108,7 @@ import {
 import { getIsLoadingCart } from 'calypso/state/themes/selectors/get-is-loading-cart';
 import { getBackPath } from 'calypso/state/themes/themes-ui/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import { ReviewsModal } from '../marketplace/components/reviews-modal';
 import EligibilityWarningModal from '../themes/atomic-transfer-dialog';
 import { LivePreviewButton } from './live-preview-button';
 import ThemeDownloadCard from './theme-download-card';
@@ -306,6 +307,7 @@ class ThemeSheet extends Component {
 		disabledButton: true,
 		showUnlockStyleUpgradeModal: false,
 		isAtomicTransferCompleted: false,
+		isReviewsModalVisible: false,
 	};
 
 	scrollToTop = () => {
@@ -809,10 +811,31 @@ class ThemeSheet extends Component {
 
 	renderReviews = () => {
 		const { name, themeId } = this.props;
+		const { isReviewsModalVisible } = this.state;
 
 		return (
 			<div className="theme__sheet-reviews-summary">
-				<ReviewsSummary slug={ themeId } productName={ name } productType="theme" />
+				<ReviewsModal
+					isVisible={ isReviewsModalVisible }
+					onClose={ () => {
+						this.setState( {
+							isReviewsModalVisible: false,
+						} );
+					} }
+					productName={ name }
+					slug={ themeId }
+					productType="theme"
+				/>
+				<ReviewsSummary
+					slug={ themeId }
+					productName={ name }
+					productType="theme"
+					onReviewsClick={ () => {
+						this.setState( {
+							isReviewsModalVisible: true,
+						} );
+					} }
+				/>
 			</div>
 		);
 	};
