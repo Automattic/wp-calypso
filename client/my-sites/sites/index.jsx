@@ -155,6 +155,23 @@ class Sites extends Component {
 				break;
 			case 'github-deployments':
 				path = translate( 'GitHub Deployments' );
+			case 'earn':
+				path = translate( 'Monetize' );
+				break;
+			case 'subscribers':
+				path = translate( 'Subscribers' );
+				break;
+			case 'themes':
+				path = translate( 'Themes' );
+				break;
+			case 'marketing':
+				path = translate( 'Marketing' );
+				break;
+			case 'import':
+				path = translate( 'Import' );
+				break;
+			case 'export':
+				path = translate( 'Export' );
 				break;
 		}
 
