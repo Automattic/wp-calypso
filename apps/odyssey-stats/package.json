@@ -1,7 +1,7 @@
 {
 	"name": "@automattic/odyssey-stats",
 	"version": "0.1.0",
-	"description": "Calypso Stats served within wp-admin via the Jetpack plugin",
+	"description": "Calypso Stats served within wp-admin via the Jetpack plugin.",
 	"main": "dist/build.min.js",
 	"sideEffects": true,
 	"repository": {
