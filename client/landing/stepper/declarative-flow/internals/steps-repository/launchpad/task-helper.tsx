@@ -293,6 +293,8 @@ export function getEnhancedTasks( {
 				isVideoPressFlowWithUnsupportedPlan,
 				goToStep,
 				stripeConnectUrl,
+				queryClient,
+				setShowPlansModal,
 			};
 
 			switch ( task.id ) {
@@ -650,7 +652,7 @@ export function getEnhancedTasks( {
 					taskData = getTaskDefinition( flow, task, context ) || deprecatedData;
 					break;
 				case 'newsletter_plan_created':
-					taskData = {
+					deprecatedData = {
 						actionDispatch: () => {
 							recordTaskClickTracksEvent( flow, task.completed, task.id );
 							completePaidNewsletterTask();
@@ -661,6 +663,7 @@ export function getEnhancedTasks( {
 								  );
 						},
 					};
+					taskData = getTaskDefinition( flow, task, context ) || deprecatedData;
 					break;
 			}
 			enhancedTaskList.push( { ...task, ...taskData } );

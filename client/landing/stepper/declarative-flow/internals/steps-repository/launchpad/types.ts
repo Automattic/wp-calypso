@@ -3,7 +3,8 @@ export type { Task } from '@automattic/launchpad';
 import { type ChecklistStatuses, type SiteDetails } from '@automattic/data-stores';
 import { type Task } from '@automattic/launchpad';
 import { type MinimalRequestCartProduct } from '@automattic/shopping-cart';
-import { type ReactNode } from 'react';
+import { QueryClient } from '@tanstack/react-query';
+import { Dispatch, SetStateAction, type ReactNode } from 'react';
 import { type NavigationControls } from '../../types';
 
 export type LaunchpadChecklist = Task[];
@@ -35,6 +36,7 @@ export type TaskId =
 	| 'site_launched'
 	| 'plan_selected'
 	| 'plan_completed'
+	| 'newsletter_plan_created'
 	| 'site_launched';
 
 export interface TaskContext {
@@ -55,6 +57,10 @@ export interface TaskContext {
 	translatedPlanName?: ReactNode | string;
 	goToStep?: NavigationControls[ 'goToStep' ];
 	stripeConnectUrl?: string;
+	//TODO: Remove it refactoring the task-definitions/plan completePaidNewsletterTask function
+	queryClient: QueryClient;
+	//TODO: Temporarially used as reference until future refactor
+	setShowPlansModal: Dispatch< SetStateAction< boolean > >;
 }
 
 export type TaskAction = ( task: Task, flow: string, context: TaskContext ) => Task;
