@@ -497,7 +497,7 @@ export function getEnhancedTasks( {
 					taskData = getTaskDefinition( flow, task, context ) || deprecatedData;
 					break;
 				case 'links_added':
-					taskData = {
+					deprecatedData = {
 						actionDispatch: () => {
 							recordTaskClickTracksEvent( flow, task.completed, task.id );
 							window.location.assign(
@@ -507,6 +507,7 @@ export function getEnhancedTasks( {
 							);
 						},
 					};
+					taskData = getTaskDefinition( flow, task, context ) || deprecatedData;
 					break;
 				case 'link_in_bio_launched':
 					deprecatedData = {

@@ -46,7 +46,17 @@ const getLinkInBioLaunchedTask: TaskAction = ( task, flow, context ) => {
 	};
 };
 
+const getLinksAddedTask: TaskAction = ( task, flow, context ) => {
+	return {
+		...task,
+		actionDispatch: () => recordTaskClickTracksEvent( task, flow, context ),
+		calyso_path: addQueryArgs( task.calypso_path, { canvas: 'edit' } ),
+		useCalypsoPath: true,
+	};
+};
+
 export const actions = {
 	setup_link_in_bio: getSetupLinkInBioTask,
 	link_in_bio_launched: getLinkInBioLaunchedTask,
+	links_added: getLinksAddedTask,
 };

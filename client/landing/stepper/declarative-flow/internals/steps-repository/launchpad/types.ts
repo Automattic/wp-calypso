@@ -40,6 +40,7 @@ export type TaskId =
 	| 'setup_link_in_bio'
 	| 'link_in_bio_launched'
 	| 'migrate_content'
+	| 'links_added'
 	| 'site_launched';
 
 export interface TaskContext {
