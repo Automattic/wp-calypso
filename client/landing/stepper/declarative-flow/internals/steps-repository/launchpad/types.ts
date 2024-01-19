@@ -38,6 +38,7 @@ export type TaskId =
 	| 'plan_completed'
 	| 'newsletter_plan_created'
 	| 'setup_link_in_bio'
+	| 'link_in_bio_launched'
 	| 'migrate_content'
 	| 'site_launched';
 

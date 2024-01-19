@@ -509,7 +509,7 @@ export function getEnhancedTasks( {
 					};
 					break;
 				case 'link_in_bio_launched':
-					taskData = {
+					deprecatedData = {
 						isLaunchTask: true,
 						actionDispatch: () => {
 							if ( site?.ID ) {
@@ -532,6 +532,7 @@ export function getEnhancedTasks( {
 							}
 						},
 					};
+					taskData = getTaskDefinition( flow, task, context ) || deprecatedData;
 					break;
 				case 'site_launched':
 					deprecatedData = {
