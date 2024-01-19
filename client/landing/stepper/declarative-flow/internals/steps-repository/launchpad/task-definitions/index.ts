@@ -18,11 +18,13 @@ const DEFINITIONS = {
 	...emailActions,
 } satisfies TaskActionTable;
 
-export const FLAG_NAME = 'launchpad/new-task-definition-parser';
+export const NEW_TASK_DEFINITION_PARSER_FEATURE_FLAG = 'launchpad/new-task-definition-parser';
 
 const isNewDefinitionAvailable = ( flow: string, taskId: string ) => {
 	const isTaskAvailable = taskId in DEFINITIONS;
-	const isFeatureEnabled = isEnabled( FLAG_NAME ) && isEnabled( `${ FLAG_NAME }/${ flow }` );
+	const isFeatureEnabled =
+		isEnabled( NEW_TASK_DEFINITION_PARSER_FEATURE_FLAG ) &&
+		isEnabled( `${ NEW_TASK_DEFINITION_PARSER_FEATURE_FLAG }/${ flow }` );
 
 	return isTaskAvailable && isFeatureEnabled;
 };
