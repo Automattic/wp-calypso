@@ -193,7 +193,7 @@ function CouponsList() {
 													currentCoupon?.duration || '',
 													currentCoupon?.discount_type,
 													currentCoupon?.discount_value || 0,
-													currentCoupon?.discount_currency
+													currentCoupon?.discount_currency || 'USD'
 												) }
 											</Badge>
 										</div>

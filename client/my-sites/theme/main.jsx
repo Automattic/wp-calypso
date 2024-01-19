@@ -79,6 +79,8 @@ import {
 	setThemePreviewOptions,
 	themeStartActivationSync as themeStartActivationSyncAction,
 } from 'calypso/state/themes/actions';
+import { useIsThemeAllowedOnSite } from 'calypso/state/themes/hooks/use-is-theme-allowed-on-site';
+import { useThemeTierForTheme } from 'calypso/state/themes/hooks/use-theme-tier-for-theme';
 import {
 	doesThemeBundleSoftwareSet,
 	isThemeActive,
@@ -102,8 +104,6 @@ import {
 	getIsLivePreviewSupported,
 	getThemeType,
 	isThemeWooCommerce,
-	getThemeTierForTheme,
-	isThemeAllowedOnSite,
 } from 'calypso/state/themes/selectors';
 import { getIsLoadingCart } from 'calypso/state/themes/selectors/get-is-loading-cart';
 import { getBackPath } from 'calypso/state/themes/themes-ui/selectors';
@@ -356,16 +356,18 @@ class ThemeSheet extends Component {
 	isRemoved = () =>
 		!! this.props.taxonomies?.theme_status?.find( ( status ) => status.slug === 'removed' );
 
-	onButtonClick = () => {
-		const { defaultOption, secondaryOption, themeId } = this.props;
-		const selectedStyleVariation = this.getSelectedStyleVariation();
-		if ( selectedStyleVariation ) {
-			this.props.setThemePreviewOptions( themeId, defaultOption, secondaryOption, {
-				styleVariation: selectedStyleVariation,
-			} );
-		}
+	onBeforeOptionAction = () => {
+		this.props.setThemePreviewOptions(
+			this.props.themeId,
+			this.props.defaultOption,
+			this.props.secondaryOption,
+			{ styleVariation: this.getSelectedStyleVariation() }
+		);
+	};
 
-		defaultOption.action && defaultOption.action( themeId );
+	onButtonClick = () => {
+		this.onBeforeOptionAction();
+		this.props.defaultOption.action?.( this.props.themeId );
 	};
 
 	onUnlockStyleButtonClick = () => {
@@ -500,12 +502,7 @@ class ThemeSheet extends Component {
 		// The embed live demo works only for WP.com themes
 		if ( isWpcomTheme && ! isExternallyManagedTheme ) {
 			const { preview } = this.props.options;
-			this.props.setThemePreviewOptions(
-				this.props.themeId,
-				this.props.defaultOption,
-				this.props.secondaryOption,
-				{ styleVariation: this.getSelectedStyleVariation() }
-			);
+			this.onBeforeOptionAction();
 			return preview.action( this.props.themeId );
 		}
 
@@ -759,7 +756,6 @@ class ThemeSheet extends Component {
 			softLaunched,
 			themeId,
 			translate,
-			styleVariations,
 		} = this.props;
 		const placeholder = <span className="theme__sheet-placeholder">loading.....</span>;
 		const title = name || placeholder;
@@ -791,8 +787,7 @@ class ThemeSheet extends Component {
 						<LivePreviewButton
 							siteId={ siteId }
 							themeId={ themeId }
-							hasStyleVariations={ styleVariations.length > 0 }
-							styleVariation={ this.getSelectedStyleVariation() }
+							onBeforeLivePreview={ this.onBeforeOptionAction }
 						/>
 						{ this.shouldRenderPreviewButton() && ! isLivePreviewSupported && (
 							<Button
@@ -813,9 +808,6 @@ class ThemeSheet extends Component {
 	};
 
 	renderReviews = () => {
-		if ( ! config.isEnabled( 'marketplace-add-review' ) ) {
-			return null;
-		}
 		const { name, themeId } = this.props;
 
 		return (
@@ -1162,6 +1154,7 @@ class ThemeSheet extends Component {
 			selectedStyleVariationSlug: styleVariationSlug,
 			themeType,
 			siteId,
+			themeTier,
 		} = this.props;
 
 		return (
@@ -1170,7 +1163,12 @@ class ThemeSheet extends Component {
 				href={
 					getUrl &&
 					( key === 'customize' || ! isExternallyManagedTheme || ! isLoggedIn || ! siteId )
-						? getUrl( this.props.themeId, { tabFilter, tierFilter: tier, styleVariationSlug } )
+						? getUrl( this.props.themeId, {
+								tabFilter,
+								tierFilter: tier,
+								styleVariationSlug,
+								themeTier,
+						  } )
 						: null
 				}
 				onClick={ () => {
@@ -1610,7 +1608,6 @@ const ThemeSheetWithOptions = ( props ) => {
 		isActive,
 		isLoggedIn,
 		isPremium,
-		isThemeAllowed,
 		isThemePurchased,
 		isStandaloneJetpack,
 		demoUrl,
@@ -1623,6 +1620,7 @@ const ThemeSheetWithOptions = ( props ) => {
 		isSiteWooExpressFreeTrial,
 		isThemeBundleWooCommerce,
 	} = props;
+	const isThemeAllowed = useIsThemeAllowedOnSite( siteId, props.themeId );
 
 	let defaultOption;
 	let secondaryOption = 'tryandcustomize';
@@ -1660,9 +1658,13 @@ const ThemeSheetWithOptions = ( props ) => {
 		defaultOption = 'activate';
 	}
 
+	const themeTier = useThemeTierForTheme( props.themeId );
+
 	return (
 		<ConnectedThemeSheet
 			{ ...props }
+			themeTier={ themeTier }
+			isThemeAllowed={ isThemeAllowed }
 			demo_uri={ demoUrl }
 			siteId={ siteId }
 			defaultOption={ defaultOption }
@@ -1693,8 +1695,6 @@ export default connect(
 		const productionSiteSlug = getSiteSlug( state, productionSite?.ID );
 		const isJetpack = isJetpackSite( state, siteId );
 		const isStandaloneJetpack = isJetpack && ! isAtomic;
-		const themeTier = getThemeTierForTheme( state, themeId );
-		const isThemeAllowed = isThemeAllowedOnSite( state, siteId, themeId );
 
 		const isExternallyManagedTheme = getIsExternallyManagedTheme( state, theme?.id );
 		const isLoading =
@@ -1710,8 +1710,6 @@ export default connect(
 
 		return {
 			...theme,
-			themeTier,
-			isThemeAllowed,
 			themeId,
 			price: getPremiumThemePrice( state, themeId, siteId ),
 			error,

@@ -1,5 +1,5 @@
 import page from '@automattic/calypso-router';
-import { CompactCard } from '@automattic/components';
+import { CompactCard, SegmentedControl } from '@automattic/components';
 import classnames from 'classnames';
 import { localize } from 'i18n-calypso';
 import { trim, flatMap } from 'lodash';
@@ -9,7 +9,6 @@ import { connect } from 'react-redux';
 import DocumentHead from 'calypso/components/data/document-head';
 import NavigationHeader from 'calypso/components/navigation-header';
 import SearchInput from 'calypso/components/search';
-import SegmentedControl from 'calypso/components/segmented-control';
 import { addQueryArgs } from 'calypso/lib/url';
 import withDimensions from 'calypso/lib/with-dimensions';
 import BlankSuggestions from 'calypso/reader/components/reader-blank-suggestions';

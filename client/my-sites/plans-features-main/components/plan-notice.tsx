@@ -7,8 +7,7 @@ import MarketingMessage from 'calypso/components/marketing-message';
 import Notice from 'calypso/components/notice';
 import { getDiscountByName } from 'calypso/lib/discounts';
 import { ActiveDiscount } from 'calypso/lib/discounts/active-discounts';
-import { useCalculateMaxPlanUpgradeCredit } from 'calypso/my-sites/plans-grid/hooks/use-calculate-max-plan-upgrade-credit';
-import { useIsPlanUpgradeCreditVisible } from 'calypso/my-sites/plans-grid/hooks/use-is-plan-upgrade-credit-visible';
+import { usePlanUpgradeCreditsApplicable } from 'calypso/my-sites/plans-features-main/hooks/use-plan-upgrade-credits-applicable';
 import { useSelector } from 'calypso/state';
 import { getCurrentUserCurrencyCode } from 'calypso/state/currency-code/selectors';
 import { getByPurchaseId } from 'calypso/state/purchases/selectors';
@@ -52,7 +51,7 @@ function useResolveNoticeType(
 	const activeDiscount =
 		discountInformation &&
 		getDiscountByName( discountInformation.withDiscount, discountInformation.discountEndDate );
-	const isPlanUpgradeCreditEligible = useIsPlanUpgradeCreditVisible( siteId, visiblePlans );
+	const planUpgradeCreditsApplicable = usePlanUpgradeCreditsApplicable( siteId, visiblePlans );
 	const sitePlan = useSelector( ( state ) => getSitePlan( state, siteId ) );
 	const sitePlanSlug = sitePlan?.product_slug ?? '';
 	const isCurrentPlanRetired = isProPlan( sitePlanSlug ) || isStarterPlan( sitePlanSlug );
@@ -71,7 +70,7 @@ function useResolveNoticeType(
 		return CURRENT_PLAN_IN_APP_PURCHASE_NOTICE;
 	} else if ( activeDiscount ) {
 		return ACTIVE_DISCOUNT_NOTICE;
-	} else if ( isPlanUpgradeCreditEligible ) {
+	} else if ( planUpgradeCreditsApplicable ) {
 		return PLAN_UPGRADE_CREDIT_NOTICE;
 	}
 	return MARKETING_NOTICE;
@@ -86,7 +85,7 @@ export default function PlanNotice( props: PlanNoticeProps ) {
 	let activeDiscount =
 		discountInformation &&
 		getDiscountByName( discountInformation.withDiscount, discountInformation.discountEndDate );
-	const creditsValue = useCalculateMaxPlanUpgradeCredit( { siteId, plans: visiblePlans } );
+	const planUpgradeCreditsApplicable = usePlanUpgradeCreditsApplicable( siteId, visiblePlans );
 	const currencyCode = useSelector( ( state ) => getCurrentUserCurrencyCode( state ) );
 
 	switch ( noticeType ) {
@@ -128,7 +127,7 @@ export default function PlanNotice( props: PlanNoticeProps ) {
 				</Notice>
 			);
 		case PLAN_UPGRADE_CREDIT_NOTICE:
-			return (
+			return planUpgradeCreditsApplicable ? (
 				<Notice
 					className="plan-features-main__notice"
 					showDismiss={ true }
@@ -141,7 +140,10 @@ export default function PlanNotice( props: PlanNoticeProps ) {
 						'We’ve applied the {{b}}%(amountInCurrency)s{{/b}} {{a}}upgrade credit{{/a}} from your current plan as a deduction to your new plan, below. This remaining credit will be applied at checkout if you upgrade today!',
 						{
 							args: {
-								amountInCurrency: formatCurrency( creditsValue, currencyCode ?? '' ),
+								amountInCurrency: formatCurrency(
+									planUpgradeCreditsApplicable,
+									currencyCode ?? ''
+								),
 							},
 							components: {
 								b: <strong />,
@@ -157,7 +159,7 @@ export default function PlanNotice( props: PlanNoticeProps ) {
 						}
 					) }
 				</Notice>
-			);
+			) : null;
 		case PLAN_RETIREMENT_NOTICE:
 			return (
 				<Notice

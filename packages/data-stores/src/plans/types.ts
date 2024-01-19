@@ -95,6 +95,30 @@ export interface PlanPricing {
 
 export interface SitePlanPricing extends Omit< PlanPricing, 'billPeriod' > {}
 
+/**
+ * `PricingMetaForGridPlan` should be adjusted to extend `PlanPricing`, or modify `PlanPricing` to have a single pricing interface.
+ * - optional/required properties should be the same
+ * - types should be the same
+ * - naming inconsistencies (billingPeriod -> billPeriod)
+ * - `expiry` missing in `PlanPricing`
+ */
+export interface PricingMetaForGridPlan {
+	billingPeriod?: PlanPricing[ 'billPeriod' ];
+	currencyCode?: PlanPricing[ 'currencyCode' ];
+	originalPrice: PlanPricing[ 'originalPrice' ];
+	/**
+	 * If discounted prices are provided (not null), they will take precedence over originalPrice.
+	 * UI will show original with a strikethrough or grayed out
+	 */
+	discountedPrice: PlanPricing[ 'discountedPrice' ];
+	/**
+	 * Intro offers override billing and pricing shown in the UI
+	 * they are currently defined off the site plans (so not defined when siteId is not available)
+	 */
+	introOffer?: PlanPricing[ 'introOffer' ];
+	expiry?: SitePlan[ 'expiry' ];
+}
+
 export interface SitePlan {
 	/* START: Same SitePlan/PlanNext props */
 	planSlug: PlanSlugFromProducts;

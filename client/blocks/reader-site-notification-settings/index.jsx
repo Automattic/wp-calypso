@@ -1,3 +1,4 @@
+import { SegmentedControl } from '@automattic/components';
 import { Button, ToggleControl } from '@wordpress/components';
 import { Icon, settings } from '@wordpress/icons';
 import { localize } from 'i18n-calypso';
@@ -7,7 +8,6 @@ import { createRef, Component } from 'react';
 import { connect } from 'react-redux';
 import Settings from 'calypso/assets/images/icons/settings.svg';
 import QueryUserSettings from 'calypso/components/data/query-user-settings';
-import SegmentedControl from 'calypso/components/segmented-control';
 import SVGIcon from 'calypso/components/svg-icon';
 import ReaderPopover from 'calypso/reader/components/reader-popover';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';

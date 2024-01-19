@@ -3,7 +3,7 @@ import { DomainSuggestions } from '@automattic/data-stores';
 import { useMemo } from '@wordpress/element';
 import { useEffect } from 'react';
 import { logToLogstash } from 'calypso/lib/logstash';
-import type { DataResponse } from 'calypso/my-sites/plans-grid/types';
+import type { DataResponse } from '@automattic/plans-grid-next';
 
 export function useGetFreeSubdomainSuggestion( query: string | null ): {
 	wpcomFreeDomainSuggestion: DataResponse< DomainSuggestions.DomainSuggestion >;

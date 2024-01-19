@@ -76,17 +76,17 @@ export const API_PLAN_DETAILS: MockDetailsAPIResponse = {
 					plan_id: 1013,
 				},
 			],
-			name: 'WordPress.com Premium',
-			short_name: 'Premium',
-			nonlocalized_short_name: 'Premium',
-			tagline: 'Mock premium plan',
+			name: 'WordPress.com Explorer',
+			short_name: 'Explorer',
+			nonlocalized_short_name: 'Explorer',
+			tagline: 'Mock explorer plan',
 			description:
 				'Build a unique website with advanced design tools, CSS editing, lots of space for audio and video, and the ability to monetize your site with ads.',
 			features: [ 'custom-domain', 'support-live', 'recurring-payments', 'wordads' ],
 			highlighted_features: [
 				MockData.API_FEATURE_CUSTOM_DOMAIN.name,
 				MockData.API_FEATURE_LIVE_SUPPORT.name,
-				'Premium plan highlighted feature',
+				'Explorer plan highlighted feature',
 			],
 			storage: '13 GB',
 			icon: 'https://s0.wordpress.com/i/store/mobile/plans-premium.png',
@@ -147,7 +147,7 @@ export const API_PLAN_PRICE_FREE: MockPricedAPIPlanFree = {
 
 export const API_PLAN_PRICE_PREMIUM_ANNUALLY: MockPricedAPIPlanPaidAnnually = {
 	product_id: 1003,
-	product_name: 'WordPress.com Premium',
+	product_name: 'WordPress.com Explorer',
 	meta: null,
 	cost: 96,
 	blog_id: null,
@@ -163,7 +163,7 @@ export const API_PLAN_PRICE_PREMIUM_ANNUALLY: MockPricedAPIPlanPaidAnnually = {
 	outer_slug: null,
 	extra: '',
 	capability: 'manage_options',
-	product_name_short: 'Premium',
+	product_name_short: 'Explorer',
 	icon: 'https://s0.wordpress.com/i/store/plan-premium.png',
 	icon_active: 'https://s0.wordpress.com/i/store/plan-premium-active.png',
 	bundle_product_ids: [
@@ -199,7 +199,7 @@ export const API_PLAN_PRICE_PREMIUM_ANNUALLY: MockPricedAPIPlanPaidAnnually = {
 
 export const API_PLAN_PRICE_PREMIUM_MONTHLY: MockPricedAPIPlanPaidMonthly = {
 	product_id: 1013,
-	product_name: 'WordPress.com Premium',
+	product_name: 'WordPress.com Explorer',
 	meta: null,
 	cost: 14,
 	blog_id: null,
@@ -214,7 +214,7 @@ export const API_PLAN_PRICE_PREMIUM_MONTHLY: MockPricedAPIPlanPaidMonthly = {
 	outer_slug: null,
 	extra: null,
 	capability: 'manage_options',
-	product_name_short: 'Premium',
+	product_name_short: 'Explorer',
 	bundle_product_ids: [ 9, 12, 45, 15, 6, 16, 49, 50 ],
 	bill_period_label: 'per month',
 	price: '€14',

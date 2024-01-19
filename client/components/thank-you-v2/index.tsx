@@ -10,7 +10,7 @@ interface ThankYouV2Props {
 	title: TranslateResult;
 	subtitle: TranslateResult;
 	headerButtons?: React.ReactNode;
-	products?: React.ReactNode;
+	products?: React.ReactElement | React.ReactElement[];
 	footerDetails?: ThankYouFooterDetailProps[];
 	upsellProps?: ThankYouUpsellProps;
 }

@@ -427,7 +427,13 @@ function returnModalCopyForProduct(
 		isPwpoUser
 	);
 	const isRenewal = isWpComProductRenewal( product );
-	return returnModalCopy( productType, translate, createUserAndSiteBeforeTransaction, isRenewal );
+	return returnModalCopy(
+		productType,
+		translate,
+		createUserAndSiteBeforeTransaction,
+		isRenewal,
+		product
+	);
 }
 
 function getProductTypeForModalCopy(
@@ -460,15 +466,18 @@ function returnModalCopy(
 	productType: string,
 	translate: ReturnType< typeof useTranslate >,
 	createUserAndSiteBeforeTransaction: boolean,
-	isRenewal = false
+	isRenewal = false,
+	product?: ResponseCartProduct
 ): ModalCopy {
+	const domainNameString = product ? product.meta : translate( 'your selected domain' );
+
 	switch ( productType ) {
 		case 'gift purchase':
 			return {
 				title: String( translate( 'You are about to remove your gift from the cart' ) ),
 				description: String(
 					translate(
-						"When you press Continue, we'll remove all gift products in the cart, and your gift will not be given."
+						'When you press Continue, all gift products in the cart will be removed, and your gift will not be given.'
 					)
 				),
 			};
@@ -478,7 +487,7 @@ function returnModalCopy(
 					title: String( translate( 'You are about to remove your plan renewal from the cart' ) ),
 					description: String(
 						translate(
-							"Since some of your other product(s) depend on your plan to be purchased, they will also be removed from the cart. When you press Continue, we'll remove them along with your plan in the cart, and your plan will keep its current expiry date."
+							'Since some of your other product(s) depend on your plan to be purchased, they will also be removed from the cart. When you press Continue, these product(s) along with your plan renewal will be removed from the cart, and your plan will keep its current expiry date.'
 						)
 					),
 				};
@@ -488,7 +497,7 @@ function returnModalCopy(
 				title: String( translate( 'You are about to remove your plan from the cart' ) ),
 				description: String(
 					translate(
-						"Since some of your other product(s) depend on your plan to be purchased, they will also be removed from the cart. When you press Continue, we'll remove them along with your new plan in the cart, and your site will continue to run its current plan."
+						'Since some of your other product(s) depend on your plan to be purchased, they will also be removed from the cart. When you press Continue, these product(s) along with your new plan will be removed from the cart, and your site will continue to run on its current plan.'
 					)
 				),
 			};
@@ -498,7 +507,7 @@ function returnModalCopy(
 					title: String( translate( 'You are about to remove your plan renewal from the cart' ) ),
 					description: String(
 						translate(
-							'When you press Continue, we will remove your plan renewal from the cart and your plan will keep its current expiry date.'
+							'When you press Continue, your plan renewal will be removed from the cart and your plan will keep its current expiry date.'
 						)
 					),
 				};
@@ -509,13 +518,13 @@ function returnModalCopy(
 			if ( createUserAndSiteBeforeTransaction ) {
 				description = String(
 					translate(
-						'When you press Continue, we will remove your plan from the cart. Your site will be created on the free plan when you complete payment for the other product(s) in your cart.'
+						'When you press Continue, your plan will be removed from the cart. Your site will be created with the free plan when you complete payment for the other product(s) in your cart.'
 					)
 				);
 			} else {
 				description = String(
 					translate(
-						"Since some of your other product(s) depend on your plan to be purchased, they will also be removed from the cart. When you press Continue, we'll remove them along with your new plan in the cart, and your site will continue to run its current plan."
+						'Since some of your other product(s) depend on your plan to be purchased, they will also be removed from the cart. When you press Continue, these product(s) will be removed along with your new plan in the cart, and your site will continue to run with its current plan.'
 					)
 				);
 			}
@@ -527,7 +536,7 @@ function returnModalCopy(
 					title: String( translate( 'You are about to remove your plan renewal from the cart' ) ),
 					description: String(
 						translate(
-							'When you press Continue, we will remove your plan renewal from the cart and your plan will keep its current expiry date.'
+							'When you press Continue, your plan renewal will be removed from the cart and your plan will keep its current expiry date.'
 						)
 					),
 				};
@@ -537,9 +546,9 @@ function returnModalCopy(
 				title: String( translate( 'You are about to remove your plan from the cart' ) ),
 				description: String(
 					createUserAndSiteBeforeTransaction
-						? translate( 'When you press Continue, we will remove your plan from the cart.' )
+						? translate( 'When you press Continue, your plan will be removed from the cart.' )
 						: translate(
-								'When you press Continue, we will remove your plan from the cart and your site will continue to run with its current plan.'
+								'When you press Continue, your plan will be removed from the cart and your site will continue to run with its current plan.'
 						  )
 				),
 			};
@@ -549,17 +558,24 @@ function returnModalCopy(
 					title: String( translate( 'You are about to remove your domain renewal from the cart' ) ),
 					description: String(
 						translate(
-							'When you press Continue, we will remove your domain renewal from the cart and your domain will keep its current expiry date.'
+							'When you press Continue, your domain renewal will be removed from the cart and your domain will keep its current expiry date.'
 						)
 					),
 				};
 			}
 
 			return {
-				title: String( translate( 'You are about to remove your domain from the cart' ) ),
+				title: String(
+					translate( 'You are about to remove %(domainName)s from the cart', {
+						args: { domainName: domainNameString },
+					} )
+				),
 				description: String(
 					translate(
-						'When you press Continue, we will remove your domain from the cart and you will have no claim for the domain name you picked.'
+						'When you press Continue, %(domainName)s will be removed from the cart and will become available for anyone to register.',
+						{
+							args: { domainName: domainNameString },
+						}
 					)
 				),
 			};
@@ -567,7 +583,7 @@ function returnModalCopy(
 			return {
 				title: String( translate( 'You are about to remove your coupon from the cart' ) ),
 				description: String(
-					translate( 'When you press Continue, we will need you to confirm your payment details.' )
+					translate( 'When you press Continue, you will need to confirm your payment details.' )
 				),
 			};
 		default:
@@ -576,7 +592,7 @@ function returnModalCopy(
 					title: String( translate( 'You are about to remove your renewal from the cart' ) ),
 					description: String(
 						translate(
-							'When you press Continue, we will remove your renewal from the cart and your product will keep its current expiry date.'
+							'When you press Continue, your renewal will be removed from the cart and your product will keep its current expiry date.'
 						)
 					),
 				};
@@ -586,9 +602,9 @@ function returnModalCopy(
 				title: String( translate( 'You are about to remove your product from the cart' ) ),
 				description: String(
 					createUserAndSiteBeforeTransaction
-						? translate( 'When you press Continue, we will remove your product from the cart.' )
+						? translate( 'When you press Continue, your product will be removed from the cart.' )
 						: translate(
-								'When you press Continue, we will remove your product from the cart and your site will continue to run without it.'
+								'When you press Continue, your product will be removed from the cart and your site will continue to run without it.'
 						  )
 				),
 			};
@@ -846,6 +862,14 @@ const UpgradeCreditHelpIconLink = () => {
 	);
 };
 
+function hasUpgradeCredit( product: ResponseCartProduct ): boolean {
+	return (
+		product.cost_overrides?.some(
+			( override ) => override.override_code === 'recent-plan-proration'
+		) ?? false
+	);
+}
+
 function UpgradeCreditInformation( { product }: { product: ResponseCartProduct } ) {
 	const translate = useTranslate();
 	const origCost = product.item_original_subtotal_integer;
@@ -864,7 +888,9 @@ function UpgradeCreditInformation( { product }: { product: ResponseCartProduct }
 		// Do not display discount reason if this is a renewal.
 		isRenewal ||
 		// Do not display discount reason if a coupon is applied.
-		isCouponApplied( product )
+		isCouponApplied( product ) ||
+		// Do not display upgrade credit if there is no upgrade credit.
+		! hasUpgradeCredit( product )
 	) {
 		return null;
 	}

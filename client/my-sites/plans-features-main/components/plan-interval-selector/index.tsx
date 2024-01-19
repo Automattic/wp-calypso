@@ -1,5 +1,5 @@
+import { SegmentedControl } from '@automattic/components';
 import classNames from 'classnames';
-import SegmentedControl from 'calypso/components/segmented-control';
 import type { ReactNode } from 'react';
 
 import './style.scss';

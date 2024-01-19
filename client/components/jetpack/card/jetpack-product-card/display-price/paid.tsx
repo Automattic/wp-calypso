@@ -1,7 +1,8 @@
+import { PlanPrice } from '@automattic/components';
 import formatCurrency from '@automattic/format-currency';
 import { TranslateResult } from 'i18n-calypso';
+import { isNumber } from 'lodash';
 import InfoPopover from 'calypso/components/info-popover';
-import PlanPrice from 'calypso/my-sites/plan-price';
 import PriceAriaLabel from './price-aria-label';
 import TimeFrame from './time-frame';
 import type { Duration } from 'calypso/my-sites/plans/jetpack-plans/types';
@@ -31,7 +32,9 @@ const Placeholder: React.FC< OwnProps > = ( { billingTerm, expiryDate, discounte
 				rawPrice={ 0.01 }
 				currencyCode="USD"
 			/>
-			{ discountedPrice && <PlanPrice discounted rawPrice={ 0.01 } currencyCode="USD" /> }
+			{ isNumber( discountedPrice ) && (
+				<PlanPrice discounted rawPrice={ 0.01 } currencyCode="USD" />
+			) }
 			<TimeFrame expiryDate={ expiryDate } billingTerm={ billingTerm } />
 		</>
 	);
@@ -98,8 +101,8 @@ const Paid: React.FC< OwnProps > = ( props ) => {
 		tooltipText,
 		displayPriceText,
 	} = props;
-	const finalPrice = ( discountedPrice ?? originalPrice ) as number;
-	const isDiscounted = !! ( finalPrice && originalPrice && finalPrice < originalPrice );
+	const finalPrice = ( isNumber( discountedPrice ) ? discountedPrice : originalPrice ) as number;
+	const isDiscounted = !! ( isNumber( finalPrice ) && originalPrice && finalPrice < originalPrice );
 
 	// Placeholder (while prices are loading)
 	if ( ! currencyCode || ! originalPrice || pricesAreFetching ) {
@@ -160,6 +163,7 @@ const Paid: React.FC< OwnProps > = ( props ) => {
 						discountedPriceDuration={ discountedPriceDuration }
 						formattedOriginalPrice={ formattedOriginalPrice }
 						isDiscounted={ isDiscounted }
+						finalPrice={ finalPrice }
 					/>
 				</span>
 			) }

@@ -1,8 +1,10 @@
 import { LoadingPlaceholder } from '@automattic/components';
+import { useIsEnglishLocale } from '@automattic/i18n-utils';
+import { PlanButton } from '@automattic/plans-grid-next';
 import { useEffect, useState } from '@wordpress/element';
+import { hasTranslation } from '@wordpress/i18n';
 import { useTranslate } from 'i18n-calypso';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
-import PlanButton from 'calypso/my-sites/plans-grid/components/plan-button';
 import {
 	ButtonContainer,
 	DialogContainer,
@@ -35,16 +37,25 @@ export default function PaidPlanIsRequiredDialog( {
 		onFreePlanSelected();
 	}
 
+	const isEnglish = useIsEnglishLocale();
+	const upsellDescription =
+		isEnglish ||
+		hasTranslation(
+			"Custom domains are only available with a paid plan. Choose annual billing and receive the domain's first year free."
+		)
+			? translate(
+					"Custom domains are only available with a paid plan. Choose annual billing and receive the domain's first year free."
+			  )
+			: translate(
+					'Custom domains are only available with a paid plan. And they are free for the first year with an annual paid plan.'
+			  );
+
 	return (
 		<DialogContainer>
 			<Heading id="plan-upsell-modal-title" shrinkMobileFont>
 				{ translate( 'A paid plan is required for your domain.' ) }
 			</Heading>
-			<SubHeading id="plan-upsell-modal-description">
-				{ translate(
-					'Custom domains are only available with a paid plan. And they are free for the first year with an annual paid plan.'
-				) }
-			</SubHeading>
+			<SubHeading id="plan-upsell-modal-description">{ upsellDescription }</SubHeading>
 			<ButtonContainer>
 				<RowWithBorder>
 					<SuggestedPlanSection

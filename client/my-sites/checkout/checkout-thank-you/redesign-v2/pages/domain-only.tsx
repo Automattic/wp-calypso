@@ -1,9 +1,11 @@
-import { Button } from '@wordpress/components';
-import { translate } from 'i18n-calypso';
-import emailImage from 'calypso/assets/images/thank-you-upsell/email.svg';
+import { Button, SelectControl } from '@wordpress/components';
+import { useTranslate } from 'i18n-calypso';
+import { useState } from 'react';
+import emailImage from 'calypso/assets/images/thank-you-upsell/email.jpg';
 import ThankYouV2 from 'calypso/components/thank-you-v2';
+import { ThankYouUpsellProps } from 'calypso/components/thank-you-v2/upsell';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
-import { getEmailManagementPath } from 'calypso/my-sites/email/paths';
+import { getProfessionalEmailCheckoutUpsellPath } from 'calypso/my-sites/email/paths';
 import { useSelector } from 'calypso/state';
 import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import { getDomainPurchaseTypeAndPredicate } from '../../utils';
@@ -11,32 +13,64 @@ import ThankYouDomainProduct from '../products/domain-product';
 import getDomainFooterDetails from './content/get-domain-footer-details';
 import type { ReceiptPurchase } from 'calypso/state/receipts/types';
 
-interface DomainOnlyThankYouProps {
-	purchases: ReceiptPurchase[];
-}
-
-export default function DomainOnlyThankYou( { purchases }: DomainOnlyThankYouProps ) {
-	const [ , predicate ] = getDomainPurchaseTypeAndPredicate( purchases );
-	const domains = purchases.filter( predicate ).map( ( purchase ) => purchase?.meta );
-	const firstDomain = domains[ 0 ];
+function UpsellActions( { domainNames, receiptId }: { domainNames: string[]; receiptId: number } ) {
+	const translate = useTranslate();
+	const [ selectedDomainName, setSelectedDomainName ] = useState( domainNames[ 0 ] );
 	const siteSlug = useSelector( getSelectedSiteSlug );
 
-	const upsellProps = {
-		title: translate( 'Professional email' ),
-		description: translate(
-			'85% of people trust an email address with a custom domain name over a generic one.'
-		),
-		icon: emailImage,
-		action: (
+	const domainNameOptions = domainNames.map( ( domainName ) => ( {
+		label: domainName,
+		value: domainName,
+	} ) );
+
+	return (
+		<>
+			{ domainNames.length > 1 ? (
+				<SelectControl
+					value={ selectedDomainName }
+					options={ domainNameOptions }
+					onChange={ ( value ) => setSelectedDomainName( value ) }
+				/>
+			) : null }
+
 			<Button
-				href={ getEmailManagementPath( siteSlug ?? firstDomain, firstDomain ) }
+				href={ getProfessionalEmailCheckoutUpsellPath( siteSlug, selectedDomainName, receiptId ) }
 				onClick={ () =>
 					recordTracksEvent( 'calypso_domain_only_thank_you_professional_email_click' )
 				}
 			>
 				{ translate( 'Add email' ) }
 			</Button>
+		</>
+	);
+}
+
+interface DomainOnlyThankYouProps {
+	purchases: ReceiptPurchase[];
+	receiptId: number;
+}
+
+export default function DomainOnlyThankYou( { purchases, receiptId }: DomainOnlyThankYouProps ) {
+	const translate = useTranslate();
+	const [ , predicate ] = getDomainPurchaseTypeAndPredicate( purchases );
+	const domainNames = purchases.filter( predicate ).map( ( purchase ) => purchase?.meta );
+	const siteSlug = useSelector( getSelectedSiteSlug );
+
+	const upsellProps: ThankYouUpsellProps = {
+		title: translate( 'Professional email' ),
+		description: (
+			<>
+				{ translate(
+					'Establish credibility and build trust by using a custom email address.{{br /}}Studies show that 85% of people trust custom domain email addresses more than generic ones.',
+					{
+						comment: 'Upsell for Professional Email on checkout thank you page',
+						components: { br: <br /> },
+					}
+				) }
+			</>
 		),
+		image: emailImage,
+		actions: <UpsellActions domainNames={ domainNames } receiptId={ receiptId } />,
 	};
 
 	const products = purchases.filter( predicate ).map( ( purchase ) => {
@@ -57,7 +91,7 @@ export default function DomainOnlyThankYou( { purchases }: DomainOnlyThankYouPro
 				'All set! We’re just setting up your new domain so you can start spreading the word.',
 				'All set! We’re just setting up your new domains so you can start spreading the word.',
 				{
-					count: domains.length,
+					count: domainNames.length,
 				}
 			) }
 			products={ products }

@@ -6,6 +6,7 @@ import classnames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect, useMemo, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
+import Banner from 'calypso/components/banner';
 import DocumentHead from 'calypso/components/data/document-head';
 import QueryEligibility from 'calypso/components/data/query-atat-eligibility';
 import QueryPlugins from 'calypso/components/data/query-plugins';
@@ -13,12 +14,12 @@ import QueryProductsList from 'calypso/components/data/query-products-list';
 import QuerySiteFeatures from 'calypso/components/data/query-site-features';
 import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
 import QueryUserPurchases from 'calypso/components/data/query-user-purchases';
-import EmptyContent from 'calypso/components/empty-content';
 import MainComponent from 'calypso/components/main';
 import NavigationHeader from 'calypso/components/navigation-header';
 import Notice from 'calypso/components/notice';
 import NoticeAction from 'calypso/components/notice/notice-action';
 import { useESPlugin } from 'calypso/data/marketplace/use-es-query';
+import { useMarketplaceReviewsQuery } from 'calypso/data/marketplace/use-marketplace-reviews';
 import { useWPCOMPlugin } from 'calypso/data/marketplace/use-wpcom-plugins-query';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { MarketplaceReviewsCards } from 'calypso/my-sites/marketplace/components/reviews-cards';
@@ -30,6 +31,7 @@ import PluginDetailsHeader from 'calypso/my-sites/plugins/plugin-details-header'
 import PluginDetailsNotices from 'calypso/my-sites/plugins/plugin-details-notices';
 import PluginDetailsSidebar from 'calypso/my-sites/plugins/plugin-details-sidebar';
 import PluginDetailsV2 from 'calypso/my-sites/plugins/plugin-management-v2/plugin-details-v2';
+import PluginNotFound from 'calypso/my-sites/plugins/plugin-not-found';
 import PluginSections from 'calypso/my-sites/plugins/plugin-sections';
 import PluginSectionsCustom from 'calypso/my-sites/plugins/plugin-sections/custom';
 import { RelatedPlugins } from 'calypso/my-sites/plugins/related-plugins';
@@ -45,7 +47,8 @@ import {
 } from 'calypso/state/analytics/actions';
 import { appendBreadcrumb } from 'calypso/state/breadcrumb/actions';
 import { getBreadcrumbs } from 'calypso/state/breadcrumb/selectors';
-import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
+import { getCurrentUserId, isUserLoggedIn } from 'calypso/state/current-user/selectors';
+import { canPublishProductReviews } from 'calypso/state/marketplace/selectors';
 import {
 	getPluginOnSites,
 	isRequestingForAllSites,
@@ -227,6 +230,18 @@ function PluginDetails( props ) {
 		requestingPluginsForSites,
 	] );
 
+	const canPublishReview = useSelector( ( state ) =>
+		canPublishProductReviews( state, 'plugin', fullPlugin.slug, fullPlugin.variations )
+	);
+	const currentUserId = useSelector( getCurrentUserId );
+	const { data: userReviews = [] } = useMarketplaceReviewsQuery( {
+		productType: 'plugin',
+		slug: fullPlugin.slug,
+		perPage: 1,
+		author: currentUserId ?? undefined,
+		status: 'all',
+	} );
+
 	const setBreadcrumbs = ( breadcrumbs = [] ) => {
 		if ( breadcrumbs?.length === 0 ) {
 			dispatch(
@@ -284,7 +299,7 @@ function PluginDetails( props ) {
 	}
 
 	if ( existingPlugin === false ) {
-		return <PluginDoesNotExistView />;
+		return <PluginNotFound />;
 	}
 
 	const showPlaceholder = existingPlugin === 'unknown';
@@ -381,6 +396,23 @@ function PluginDetails( props ) {
 				productType="plugin"
 			/>
 			<PluginDetailsNotices selectedSite={ selectedSite } plugin={ fullPlugin } />
+
+			{ isEnabled( 'marketplace-reviews-show' ) &&
+				userReviews.length === 0 &&
+				canPublishReview &&
+				isMarketplaceProduct &&
+				! showPlaceholder && (
+					<Banner
+						className="plugin-details__reviews-banner"
+						title={ translate( 'Review this plugin!' ) }
+						description={ translate(
+							'Please help other users sharing your experience with this plugin.'
+						) }
+						onClick={ () => setIsReviewsModalVisible( true ) }
+						disableHref
+						event="calypso_marketplace_reviews_plugin_banner"
+					/>
+				) }
 			<div className="plugin-details__page">
 				<div className={ classnames( 'plugin-details__layout', { 'is-logged-in': isLoggedIn } ) }>
 					<div className="plugin-details__header">
@@ -478,25 +510,6 @@ function PluginDetails( props ) {
 				</div>
 			) }
 			{ isMarketplaceProduct && ! showPlaceholder && <MarketplaceFooter /> }
-		</MainComponent>
-	);
-}
-
-function PluginDoesNotExistView() {
-	const translate = useTranslate();
-	const selectedSite = useSelector( getSelectedSite );
-	const actionUrl = '/plugins' + ( selectedSite ? '/' + selectedSite.slug : '' );
-	const action = translate( 'Browse all plugins' );
-
-	return (
-		<MainComponent wideLayout>
-			<EmptyContent
-				title={ translate( "Oops! We can't find this plugin!" ) }
-				line={ translate( "The plugin you are looking for doesn't exist." ) }
-				actionURL={ actionUrl }
-				action={ action }
-				illustration="/calypso/images/illustrations/illustration-404.svg"
-			/>
 		</MainComponent>
 	);
 }

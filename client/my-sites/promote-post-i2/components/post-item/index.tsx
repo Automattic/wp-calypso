@@ -96,6 +96,7 @@ export default function PostItem( { post }: { post: BlazablePost } ) {
 									formatNumber( viewCount, true )
 							  )
 							: post.price ?? '$0.00' }
+
 						{ mobileStatsSeparator }
 						{ post.type !== 'product' || ! isRunningInWooStore
 							? // translators: %s is number of post's likes

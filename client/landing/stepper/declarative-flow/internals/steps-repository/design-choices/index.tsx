@@ -5,6 +5,7 @@ import {
 } from '@automattic/design-picker';
 import { StepContainer } from '@automattic/onboarding';
 import { useDispatch, useSelect } from '@wordpress/data';
+import { Icon, info } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import DocumentHead from 'calypso/components/data/document-head';
 import FormattedHeader from 'calypso/components/formatted-header';
@@ -66,20 +67,15 @@ const DesignChoicesStep: Step = ( { navigation, flow, stepName } ) => {
 							<DesignChoice
 								className="design-choices__design-your-own"
 								title={ translate( 'Design your own' ) }
-								description={ translate(
-									'Design your own homepage with custom styles and pages.'
-								) }
+								description={ translate( 'Design your site with patterns, pages, styles.' ) }
 								imageSrc={ assemblerIllustrationImage }
 								destination="pattern-assembler"
 								onSelect={ handleSubmit }
 							/>
 						</div>
 						<div className="design-choices__footer">
-							<p>
-								{ translate( 'Explore our themes or design your own.' ) }
-								<br />
-								{ translate( 'You can return here if you change your mind.' ) }
-							</p>
+							<Icon icon={ info } size={ 20 } />
+							<span>{ translate( 'You can return here if you change your mind.' ) }</span>
 						</div>
 					</>
 				}
