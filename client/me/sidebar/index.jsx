@@ -126,7 +126,7 @@ class MeSidebar extends Component {
 						<SidebarItem
 							selected={ itemLinkMatches( '/developer', path ) }
 							link="/me/developer"
-							label={ translate( 'Developer' ) }
+							label={ translate( 'Developer Features' ) }
 							icon="code"
 							onNavigate={ this.onNavigate }
 							preloadSectionName="developer"
