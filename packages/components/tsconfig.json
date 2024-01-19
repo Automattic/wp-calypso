@@ -9,9 +9,5 @@
 	},
 	"include": [ "src" ],
 	"exclude": [ "**/docs/*", "**/test/*" ],
-	"references": [
-		{ "path": "../calypso-analytics" },
-		{ "path": "../calypso-url" },
-		{ "path": "../search" }
-	]
+	"references": [ { "path": "../calypso-analytics" }, { "path": "../calypso-url" } ]
 }

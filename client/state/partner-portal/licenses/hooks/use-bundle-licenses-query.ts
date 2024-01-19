@@ -72,9 +72,14 @@ export default function useBundleLicensesQuery(
 	useEffect( () => {
 		if ( data ) {
 			setTotal( data.total );
-			setLicenses( ( licenses ) => [ ...licenses, ...data.licenses ] );
+
+			if ( page === 1 ) {
+				setLicenses( data.licenses );
+			} else {
+				setLicenses( ( licenses ) => [ ...licenses, ...data.licenses ] );
+			}
 		}
-	}, [ data ] );
+	}, [ data, page ] );
 
 	return {
 		licenses,

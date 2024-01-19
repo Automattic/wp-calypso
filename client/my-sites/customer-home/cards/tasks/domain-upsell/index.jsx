@@ -191,16 +191,6 @@ export function RenderDomainUpsell( { isFreePlan, isMonthlyPlan, searchTerm, sit
 			  )
 			: cardSubtitleFreePlansCopy;
 
-	const domainNameSVG = (
-		<svg viewBox="0 0 40 18" id="map">
-			<text x="-115" y="15">
-				{ domainSuggestionName.length > 34
-					? `${ domainSuggestionName.slice( 0, 32 ) }...`
-					: domainSuggestionName }
-			</text>
-		</svg>
-	);
-
 	return (
 		<Task
 			customClass="task__domain-upsell"
@@ -213,8 +203,7 @@ export function RenderDomainUpsell( { isFreePlan, isMonthlyPlan, searchTerm, sit
 			secondaryActionText={ translate( 'Find other domains' ) }
 			secondaryActionUrl={ searchLink }
 			illustration={ domainUpsellMobileIllustration }
-			illustrationHeader={ domainSuggestionName ? domainNameSVG : null }
-			badgeText={ domainSuggestionName }
+			illustrationAlwaysShow={ true }
 			taskId={ TASK_DOMAIN_UPSELL }
 		/>
 	);

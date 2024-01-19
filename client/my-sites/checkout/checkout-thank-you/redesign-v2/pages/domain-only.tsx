@@ -1,9 +1,10 @@
 import { Button } from '@wordpress/components';
-import { translate } from 'i18n-calypso';
-import emailImage from 'calypso/assets/images/thank-you-upsell/email.svg';
+import { useTranslate } from 'i18n-calypso';
+import emailImage from 'calypso/assets/images/thank-you-upsell/email.jpg';
 import ThankYouV2 from 'calypso/components/thank-you-v2';
+import { ThankYouUpsellProps } from 'calypso/components/thank-you-v2/upsell';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
-import { getEmailManagementPath } from 'calypso/my-sites/email/paths';
+import { getProfessionalEmailCheckoutUpsellPath } from 'calypso/my-sites/email/paths';
 import { useSelector } from 'calypso/state';
 import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import { getDomainPurchaseTypeAndPredicate } from '../../utils';
@@ -13,23 +14,33 @@ import type { ReceiptPurchase } from 'calypso/state/receipts/types';
 
 interface DomainOnlyThankYouProps {
 	purchases: ReceiptPurchase[];
+	receiptId: number;
 }
 
-export default function DomainOnlyThankYou( { purchases }: DomainOnlyThankYouProps ) {
+export default function DomainOnlyThankYou( { purchases, receiptId }: DomainOnlyThankYouProps ) {
+	const translate = useTranslate();
 	const [ , predicate ] = getDomainPurchaseTypeAndPredicate( purchases );
 	const domains = purchases.filter( predicate ).map( ( purchase ) => purchase?.meta );
-	const firstDomain = domains[ 0 ];
+	const firstDomainName = domains[ 0 ];
 	const siteSlug = useSelector( getSelectedSiteSlug );
 
-	const upsellProps = {
+	const upsellProps: ThankYouUpsellProps = {
 		title: translate( 'Professional email' ),
-		description: translate(
-			'85% of people trust an email address with a custom domain name over a generic one.'
+		description: (
+			<>
+				{ translate(
+					'Establish credibility and build trust by using a custom email address.{{br /}}Studies show that 85% of people trust custom domain email addresses more than generic ones.',
+					{
+						comment: 'Upsell for Professional Email on checkout thank you page',
+						components: { br: <br /> },
+					}
+				) }
+			</>
 		),
-		icon: emailImage,
+		image: emailImage,
 		action: (
 			<Button
-				href={ getEmailManagementPath( siteSlug ?? firstDomain, firstDomain ) }
+				href={ getProfessionalEmailCheckoutUpsellPath( siteSlug, firstDomainName, receiptId ) }
 				onClick={ () =>
 					recordTracksEvent( 'calypso_domain_only_thank_you_professional_email_click' )
 				}
