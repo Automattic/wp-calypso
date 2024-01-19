@@ -12,7 +12,7 @@ import getUserSetting from 'calypso/state/selectors/get-user-setting';
  */
 export function enhanceWithUserType( action, getState ) {
 	const isDevAccount = getUserSetting( getState(), 'is_dev_account' );
-	const userType = isDevAccount ? 'dev' : 'non-dev';
+	const userType = isDevAccount ? 'dev' : 'general';
 
 	if ( action.type === ANALYTICS_EVENT_RECORD ) {
 		set( action, 'meta.analytics[0].payload.properties.user_type', userType );
