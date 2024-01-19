@@ -1,5 +1,6 @@
 {
 	"name": "happy-blocks",
+	"description": "Blocks used on WordPress.com sites such as Forums and Support.",
 	"version": "1.0.0",
 	"private": true,
 	"author": "Automattic Inc.",
