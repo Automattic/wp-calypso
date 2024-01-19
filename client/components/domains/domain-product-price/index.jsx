@@ -12,7 +12,7 @@ import { Component } from 'react';
 import { connect } from 'react-redux';
 import { DOMAINS_WITH_PLANS_ONLY } from 'calypso/state/current-user/constants';
 import { currentUserHasFlag, getCurrentUser } from 'calypso/state/current-user/selectors';
-import { getSitePlanSlug } from 'calypso/state/sites/plans/selectors';
+import { getSitePlanSlug, hasDomainCredit } from 'calypso/state/sites/plans/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 
 import './style.scss';
@@ -283,6 +283,7 @@ export default connect( ( state ) => {
 			: true,
 		isCurrentPlan100YearPlan: sitePlanSlug === PLAN_100_YEARS,
 		isBusinessOrEcommerceMonthlyPlan:
-			sitePlanSlug === PLAN_BUSINESS_MONTHLY || sitePlanSlug === PLAN_ECOMMERCE_MONTHLY,
+			( sitePlanSlug === PLAN_BUSINESS_MONTHLY || sitePlanSlug === PLAN_ECOMMERCE_MONTHLY ) &&
+			hasDomainCredit( state, getSelectedSiteId( state ) ),
 	};
 } )( localize( DomainProductPrice ) );
