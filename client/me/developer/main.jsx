@@ -35,7 +35,7 @@ class Developer extends Component {
 				<ReauthRequired twoStepAuthorization={ twoStepAuthorization } />
 				<NavigationHeader
 					navigationItems={ [] }
-					title={ this.props.translate( 'Developer Settings' ) }
+					title={ this.props.translate( 'Developer Features' ) }
 					subtitle={ this.props.translate(
 						'Take WordPress.com further with early access to new developer features.'
 					) }
