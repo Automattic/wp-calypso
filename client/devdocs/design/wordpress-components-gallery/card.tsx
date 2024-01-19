@@ -19,7 +19,9 @@ const CardExample = () => (
 		</CardHeader>
 
 		<CardBody>...</CardBody>
-		<CardDivider />
+
+		<CardDivider className="card-example" />
+
 		<CardBody>...</CardBody>
 
 		<CardFooter isShady={ false }>
