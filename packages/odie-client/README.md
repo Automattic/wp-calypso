@@ -71,7 +71,7 @@ _Note: Setting `chat_id` fetches a new chat from the server and also sets `last_
 
 ## Context API
 
-### Context properties:
+### Context properties
 
 ```tsx
 const defaultContextInterfaceValues = {
