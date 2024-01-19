@@ -173,6 +173,7 @@ const AnimatedCommand = () => {
 		if ( prefersReducedMotion ) {
 			return;
 		}
+
 		const interval = setInterval( () => {
 			setCurrentCommandIndex( ( prevIndex ) => ( prevIndex + 1 ) % commandNames.length );
 		}, 3000 );
