@@ -12,6 +12,7 @@ import {
 	isRequestingInviteResend,
 	didInviteResendSucceed,
 	didInviteDeletionSucceed,
+	getSendInviteState,
 } from 'calypso/state/invites/selectors';
 
 import './style.scss';
@@ -121,10 +122,14 @@ class PeopleListItem extends PureComponent {
 	};
 
 	onSendInvite = ( event ) => {
-		const { siteId, user } = this.props;
+		const { requestingSend, siteId, user } = this.props;
 		// Prevents navigation to invite-details screen and onClick event.
 		event.preventDefault();
 		event.stopPropagation();
+
+		if ( requestingSend?.progress ) {
+			return null;
+		}
 
 		this.props.sendInvites( siteId, [ user.email ], user.roles[ 0 ], '', false );
 	};
@@ -159,11 +164,17 @@ class PeopleListItem extends PureComponent {
 	};
 
 	renderInviteButton = () => {
-		const { translate } = this.props;
+		const { translate, requestingSend } = this.props;
 
 		return (
 			<div>
-				<Button onClick={ this.onSendInvite }>{ translate( 'Invite' ) }</Button>
+				<Button
+					busy={ requestingSend?.progress }
+					className="people-list-item__invite-send"
+					onClick={ this.onSendInvite }
+				>
+					{ translate( 'Invite' ) }
+				</Button>
 			</div>
 		);
 	};
@@ -257,6 +268,7 @@ export default connect(
 		return {
 			requestingResend: isRequestingInviteResend( state, siteId, inviteKey ),
 			resendSuccess: didInviteResendSucceed( state, siteId, inviteKey ),
+			requestingSend: getSendInviteState( state ),
 			siteId,
 			inviteKey,
 			inviteWasDeleted,
