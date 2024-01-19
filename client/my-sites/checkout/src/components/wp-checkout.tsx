@@ -429,6 +429,21 @@ export default function WPCheckout( {
 			? translate( 'Continue to payment', { textOnly: true } )
 			: translate( 'Continue', { textOnly: true } );
 
+	/* Include a condition for your use case here if you want to show a specific nudge in the checkout sidebar */
+	const renderCheckoutSidebarNudge = () => {
+		let upsellNudgeVariant = null;
+
+		if ( ! isWcMobile && ! isDIFMInCart && ! hasMonthlyProduct ) {
+			upsellNudgeVariant = (
+				<>
+					<CheckoutSidebarPlanUpsell />
+					<JetpackAkismetCheckoutSidebarPlanUpsell />
+				</>
+			);
+		}
+		return upsellNudgeVariant;
+	};
+
 	return (
 		<WPCheckoutWrapper>
 			<WPCheckoutSidebarContent>
@@ -466,12 +481,15 @@ export default function WPCheckout( {
 									/>
 								) }
 
-								<WPCheckoutOrderSummary siteId={ siteId } onChangeSelection={ changeSelection } />
-								{ ! isWcMobile && ! isDIFMInCart && ! hasMonthlyProduct && (
-									<>
-										<CheckoutSidebarPlanUpsell />
-										<JetpackAkismetCheckoutSidebarPlanUpsell />
-									</>
+								<WPCheckoutOrderSummary
+									siteId={ siteId }
+									onChangeSelection={ changeSelection }
+									nextDomainIsFree={ responseCart?.next_domain_is_free }
+								/>
+								{ hasCheckoutVersion( '2' ) && (
+									<CheckoutSidebarNudgeWrapper>
+										{ renderCheckoutSidebarNudge() }
+									</CheckoutSidebarNudgeWrapper>
 								) }
 								{ hasCheckoutVersion( '2' ) && (
 									<CheckoutSummaryFeaturedList
@@ -791,6 +809,11 @@ const CheckoutSummaryBody = styled.div`
 			box-shadow: none;
 		}
 	}
+`;
+
+const CheckoutSidebarNudgeWrapper = styled.div`
+	display: flex;
+	flex-direction: column;
 `;
 
 const CheckoutTermsAndCheckboxesWrapper = styled.div`
