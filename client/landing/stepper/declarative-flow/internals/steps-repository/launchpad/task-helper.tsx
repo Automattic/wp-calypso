@@ -292,6 +292,7 @@ export function getEnhancedTasks( {
 				globalStylesMinimumPlan,
 				isVideoPressFlowWithUnsupportedPlan,
 				goToStep,
+				stripeConnectUrl,
 			};
 
 			switch ( task.id ) {
@@ -637,7 +638,7 @@ export function getEnhancedTasks( {
 					taskData = getTaskDefinition( flow, task, context ) || deprecatedData;
 					break;
 				case 'set_up_payments':
-					taskData = {
+					deprecatedData = {
 						badge_text: task.completed ? translate( 'Connected' ) : null,
 						actionDispatch: () => {
 							recordTaskClickTracksEvent( flow, task.completed, task.id );
@@ -646,6 +647,7 @@ export function getEnhancedTasks( {
 								: window.location.assign( `/earn/payments/${ siteSlug }#launchpad` );
 						},
 					};
+					taskData = getTaskDefinition( flow, task, context ) || deprecatedData;
 					break;
 				case 'newsletter_plan_created':
 					taskData = {
