@@ -2,6 +2,7 @@
 	"name": "@automattic/calypso-router",
 	"version": "0.7.0",
 	"description": "Calypso router based on page.js.",
+	"author": "Automattic Inc.",
 	"main": "dist/cjs/index.js",
 	"module": "dist/esm/index.js",
 	"calypso:src": "src/index.js",
