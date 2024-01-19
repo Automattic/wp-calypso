@@ -142,12 +142,6 @@ class PagesMain extends Component {
 					treatmentExperience={ null }
 					loadingExperience={ null }
 				/>
-				<Experiment
-					name="explat_test_aaaaa_2021_08_26_18_59"
-					defaultExperience={ null }
-					treatmentExperience={ null }
-					loadingExperience={ null }
-				/>
 			</Main>
 		);
 	}
