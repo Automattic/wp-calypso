@@ -43,8 +43,9 @@ export class BlazeCampaignPage {
 	 * @param {TestFile} path TestFile object.
 	 */
 	async uploadImage( path: TestFile ) {
-		// Waiting for 15 seconds here because the normal Blaze flow fetches for AI suggestions that can take between 5 to 10 seconds.
-		const fileChooserPromiser = this.page.waitForEvent( 'filechooser', { timeout: 15000 } );
+		await this.page.getByRole( 'region', { name: 'Appearance' } ).waitFor( { timeout: 15 * 1000 } );
+
+		const fileChooserPromiser = this.page.waitForEvent( 'filechooser' );
 		await this.page
 			.getByRole( 'region', { name: 'Appearance' } )
 			.getByRole( 'button', { name: 'Upload' } )
