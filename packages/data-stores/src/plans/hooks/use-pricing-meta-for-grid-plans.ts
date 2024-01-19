@@ -40,7 +40,7 @@ interface Props {
 	 * `storageAddOmns` TODO: should become a required prop.
 	 */
 	storageAddOns: ( AddOnMeta | null )[] | null;
-	withoutProRatedCredits?: boolean;
+	withoutPlanUpgradeCredits?: boolean;
 }
 
 function getTotalPrice( planPrice: number | null | undefined, addOnPrice = 0 ): number | null {
@@ -62,7 +62,7 @@ const usePricingMetaForGridPlans = ( {
 	selectedSiteId,
 	coupon,
 	useCheckPlanAvailabilityForPurchase,
-	withoutProRatedCredits = false,
+	withoutPlanUpgradeCredits = false,
 	storageAddOns,
 }: Props ): { [ planSlug: string ]: Plans.PricingMetaForGridPlan } | null => {
 	const planAvailabilityForPurchase = useCheckPlanAvailabilityForPurchase( { planSlugs } );
@@ -186,14 +186,14 @@ const usePricingMetaForGridPlans = ( {
 					};
 					const discountedPrice = {
 						monthly:
-							sitePlan?.pricing && ! withoutProRatedCredits
+							sitePlan?.pricing && ! withoutPlanUpgradeCredits
 								? getTotalPrice(
 										sitePlan.pricing.discountedPrice.monthly,
 										storageAddOnPriceMonthly
 								  )
 								: getTotalPrice( plan.pricing.discountedPrice.monthly, storageAddOnPriceMonthly ),
 						full:
-							sitePlan?.pricing && ! withoutProRatedCredits
+							sitePlan?.pricing && ! withoutPlanUpgradeCredits
 								? getTotalPrice( sitePlan.pricing.discountedPrice.full, storageAddOnPriceYearly )
 								: getTotalPrice( plan.pricing.discountedPrice.full, storageAddOnPriceYearly ),
 					};

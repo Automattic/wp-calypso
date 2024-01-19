@@ -5,6 +5,7 @@ import { useAtomicTransferQuery } from 'calypso/state/atomic-transfer/use-atomic
 import { transferStates } from 'calypso/state/automated-transfer/constants';
 import { initiateThemeTransfer } from 'calypso/state/themes/actions';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
+import { AppState } from 'calypso/types';
 
 interface HostingActivateStatusProps {
 	context: 'theme' | 'plugin' | 'hosting';
@@ -12,7 +13,7 @@ interface HostingActivateStatusProps {
 }
 
 const HostingActivateStatus = ( { context, siteId }: HostingActivateStatusProps ) => {
-	const { isTransferring, transferStatus } = useAtomicTransferQuery( siteId, {
+	const { isTransferring, transferStatus } = useAtomicTransferQuery( siteId ?? 0, {
 		refetchInterval: 5000,
 	} );
 
@@ -51,7 +52,7 @@ const HostingActivateStatus = ( { context, siteId }: HostingActivateStatusProps 
 	}
 };
 
-const mapStateToProps = ( state ) => {
+const mapStateToProps = ( state: AppState ) => {
 	const siteId = getSelectedSiteId( state );
 	const siteSlug = getSelectedSiteSlug( state );
 

@@ -547,6 +547,7 @@ class ThemeShowcase extends Component {
 			filterString,
 			isMultisite,
 			premiumThemesEnabled,
+			isSiteECommerceFreeTrial,
 			isSiteWooExpressOrEcomFreeTrial,
 			isCollectionView,
 			isJetpackSite,
@@ -606,6 +607,7 @@ class ThemeShowcase extends Component {
 					noIndex={ isCollectionView }
 					onPatternAssemblerButtonClick={ this.onDesignYourOwnClick }
 					isSiteWooExpressOrEcomFreeTrial={ isSiteWooExpressOrEcomFreeTrial }
+					isSiteECommerceFreeTrial={ isSiteECommerceFreeTrial }
 				/>
 				{ isLoggedIn && (
 					<ThemeShowcaseSurvey

@@ -1,7 +1,7 @@
 @import "@wordpress/base-styles/breakpoints";
 @import "@wordpress/base-styles/mixins";
 @import "@wordpress/base-styles/variables";
-@import "calypso/my-sites/plans-grid/media-queries";
+@import "@automattic/plans-grid-next/src/media-queries";
 
 :root {
 	--scss-font-body-small: #{$font-body-small};
@@ -76,6 +76,13 @@
 .plans-features-main__comparison-grid-container {
 	&.is-hidden {
 		display: none;
+	}
+
+	.plans-features-main__plan-type-selector-layout {
+		@include plan-type-selector-custom-mobile-breakpoint {
+			// Overrides the plans-wrapper parent container margins
+			margin: 0 -20px;
+		}
 	}
 }
 
@@ -390,6 +397,9 @@ body.is-section-signup.is-white-signup {
 }
 
 .plans-features-main__plan-type-selector-layout {
+	display: flex;
+	justify-content: center;
+
 	.segmented-control.price-toggle {
 		.is-section-signup &,
 		.is-section-stepper & {

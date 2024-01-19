@@ -105,6 +105,7 @@ export const createSiteDomainObject = ( domain ) => {
 		isRenewable: Boolean( domain.is_renewable ),
 		isRedeemable: Boolean( domain.is_redeemable ),
 		isEligibleForInboundTransfer: Boolean( domain.is_eligible_for_inbound_transfer ),
+		isMappedToAtomicSite: Boolean( domain.is_mapped_to_atomic_site ),
 		isMoveToNewSitePending: Boolean( domain.move_to_new_site_pending ),
 		isAutoRenewing: Boolean( domain.auto_renewing ),
 		isIcannVerificationSuspended:

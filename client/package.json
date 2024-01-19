@@ -55,6 +55,7 @@
 		"@automattic/notifications": "workspace:^",
 		"@automattic/onboarding": "workspace:^",
 		"@automattic/plans-grid": "workspace:^",
+		"@automattic/plans-grid-next": "workspace:^",
 		"@automattic/react-virtualized": "^9.22.4",
 		"@automattic/request-external-access": "workspace:^",
 		"@automattic/search": "workspace:^",
@@ -219,7 +220,7 @@
 	"devDependencies": {
 		"@automattic/calypso-eslint-overrides": "workspace:^",
 		"@sentry/webpack-plugin": "^1.21.0",
-		"@storybook/addon-actions": "^7.6.3",
+		"@storybook/addon-actions": "^7.6.7",
 		"@tanstack/query-sync-storage-persister": "^5.15.5",
 		"@testing-library/dom": "^9.3.3",
 		"@testing-library/jest-dom": "^6.2.0",

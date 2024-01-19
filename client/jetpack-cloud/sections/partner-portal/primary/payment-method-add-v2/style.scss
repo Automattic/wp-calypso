@@ -17,6 +17,10 @@
 	flex-direction: column;
 	gap: 27px;
 
+	@include breakpoint-deprecated( "<660px" ) {
+		padding-block: 32px;
+	}
+
 	@include break-xlarge {
 		flex-direction: row;
 	}

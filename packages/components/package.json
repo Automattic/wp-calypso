@@ -29,9 +29,7 @@
 	"dependencies": {
 		"@automattic/calypso-analytics": "workspace:^",
 		"@automattic/calypso-url": "workspace:^",
-		"@automattic/data-stores": "workspace:^",
 		"@automattic/format-currency": "workspace:^",
-		"@automattic/search": "workspace:^",
 		"@automattic/typography": "workspace:^",
 		"@automattic/viewport-react": "workspace:^",
 		"@wordpress/base-styles": "^4.39.0",
@@ -48,8 +46,7 @@
 		"react-router-dom": "^6.10.0",
 		"react-slider": "^2.0.5",
 		"utility-types": "^3.10.0",
-		"uuid": "^8.3.2",
-		"wpcom-proxy-request": "workspace:^"
+		"uuid": "^8.3.2"
 	},
 	"peerDependencies": {
 		"@wordpress/data": "^9.18.0",
@@ -61,8 +58,8 @@
 		"@automattic/calypso-color-schemes": "workspace:^",
 		"@automattic/calypso-storybook": "workspace:^",
 		"@automattic/calypso-typescript-config": "workspace:^",
-		"@storybook/addon-actions": "^7.6.3",
-		"@storybook/react": "^7.6.3",
+		"@storybook/addon-actions": "^7.6.7",
+		"@storybook/react": "^7.6.7",
 		"@testing-library/dom": "^9.3.3",
 		"@testing-library/jest-dom": "^6.2.0",
 		"@testing-library/react": "^14.1.2",

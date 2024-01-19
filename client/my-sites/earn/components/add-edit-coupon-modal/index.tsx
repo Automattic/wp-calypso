@@ -91,12 +91,6 @@ const RecurringPaymentsCouponAddEditModal = ( {
 		}
 		return 'USD';
 	}, [ coupon, connectedAccountDefaultCurrency, currencyList ] );
-	const [ currentDiscountCurrency, setCurrentDiscountCurrency ] =
-		useState( defaultDiscountCurrency );
-	const onDiscountCurrencyChange = ( event: ChangeEvent< HTMLSelectElement > ) => {
-		const { value: currency } = event.currentTarget;
-		setCurrentDiscountCurrency( currency );
-	};
 
 	/** Other datasets */
 	const products: Product[] = useSelector( ( state ) =>
@@ -114,13 +108,16 @@ const RecurringPaymentsCouponAddEditModal = ( {
 	const [ editedDiscountPercentage, setEditedDiscountPercentage ] = useState(
 		coupon?.discount_percentage ?? 0
 	);
+	const [ editedDiscountCurrency, setEditedDiscountCurrency ] = useState(
+		coupon?.discount_currency ?? defaultDiscountCurrency
+	);
 	const [ editedDiscountValue, setEditedDiscountValue ] = useState( () => {
 		if ( COUPON_DISCOUNT_TYPE_AMOUNT === editedDiscountType ) {
 			return (
 				coupon?.discount_value ??
 				minimumCurrencyTransactionAmount(
 					connectedAccountMinimumCurrency,
-					currentDiscountCurrency,
+					editedDiscountCurrency,
 					connectedAccountDefaultCurrency
 				)
 			);
@@ -200,6 +197,10 @@ const RecurringPaymentsCouponAddEditModal = ( {
 	};
 	const onSelectDiscountType = ( event: ChangeEvent< HTMLSelectElement > ) =>
 		setEditedDiscountType( event.target.value );
+	const onDiscountCurrencyChange = ( event: ChangeEvent< HTMLSelectElement > ) => {
+		const { value: currency } = event.currentTarget;
+		setEditedDiscountCurrency( currency );
+	};
 	const onDiscountValueChange = ( event: ChangeEvent< HTMLInputElement > ) =>
 		setEditedDiscountValue( parseFloat( event.target.value ) );
 	const onDiscountPercentageChange = ( event: ChangeEvent< HTMLInputElement > ) =>
@@ -368,7 +369,7 @@ const RecurringPaymentsCouponAddEditModal = ( {
 			discount_type: editedDiscountType,
 			discount_value: editedDiscountValue,
 			discount_percentage: editedDiscountPercentage,
-			discount_currency: currentDiscountCurrency,
+			discount_currency: editedDiscountCurrency,
 			start_date: editedStartDate,
 			end_date: editedEndDate,
 			plan_ids_allow_list: editedPlanIdsAllowList,
@@ -486,7 +487,7 @@ const RecurringPaymentsCouponAddEditModal = ( {
 								onChange={ onDiscountValueChange }
 								onFocus={ onDiscountAmountFocus }
 								onBlur={ onDiscountValueBlur }
-								currencySymbolPrefix={ currentDiscountCurrency }
+								currencySymbolPrefix={ editedDiscountCurrency }
 								onCurrencyChange={ onDiscountCurrencyChange }
 								currencyList={ currencyList.map( ( code ) => ( { code } ) ) }
 								placeholder="0.00"

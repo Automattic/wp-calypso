@@ -15,7 +15,6 @@ describe( 'translateResponseCartToWPCOMCart', function () {
 					cost: 144,
 					currency: 'BRL',
 					volume: 1,
-					cost_before_coupon: 144,
 					extra: {
 						context: 'signup',
 						domain_to_bundle: 'foo.cash',
@@ -84,7 +83,6 @@ describe( 'translateResponseCartToWPCOMCart', function () {
 					cost: 144,
 					currency: 'BRL',
 					volume: 1,
-					cost_before_coupon: 144,
 					extra: {
 						context: 'signup',
 						domain_to_bundle: 'foo.cash',
@@ -111,7 +109,6 @@ describe( 'translateResponseCartToWPCOMCart', function () {
 					cost: 0,
 					currency: 'BRL',
 					volume: 1,
-					cost_before_coupon: 88,
 					extra: {
 						privacy: true,
 						context: 'signup',
@@ -183,7 +180,6 @@ describe( 'translateResponseCartToWPCOMCart', function () {
 					cost: 144,
 					currency: 'USD',
 					volume: 1,
-					cost_before_coupon: 144,
 					extra: {
 						context: 'signup',
 						domain_to_bundle: 'foo.cash',
@@ -210,7 +206,6 @@ describe( 'translateResponseCartToWPCOMCart', function () {
 					cost: 0,
 					currency: 'USD',
 					volume: 1,
-					cost_before_coupon: 88,
 					extra: {
 						privacy: true,
 						context: 'signup',
@@ -241,7 +236,6 @@ describe( 'translateResponseCartToWPCOMCart', function () {
 					cost: 72,
 					currency: 'USD',
 					volume: 2,
-					cost_before_coupon: null,
 					extra: {
 						context: 'signup',
 						google_apps_users: [
@@ -320,7 +314,6 @@ describe( 'translateResponseCartToWPCOMCart', function () {
 					cost: 127,
 					currency: 'USD',
 					volume: 1,
-					cost_before_coupon: 144,
 					extra: {
 						context: 'signup',
 						domain_to_bundle: 'foo.cash',

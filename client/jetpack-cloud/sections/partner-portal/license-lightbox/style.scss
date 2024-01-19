@@ -6,7 +6,9 @@
 }
 
 .license-lightbox__jetpack-manage-license-title {
+	color: var(--studio-black);
 	font-size: 1rem;
+	font-weight: 700;
 	margin-block-end: 8px;
 }
 
@@ -16,6 +18,7 @@
 	display: block;
 	width: 100%;
 	padding: 10px 16px;
+	font-size: 1rem;
 
 	.license-lightbox__cta-button-external-link {
 		inset-inline-start: 4px;
@@ -44,8 +47,7 @@
 	}
 }
 
-.review-licenses__notice,
-.license-lightbox__secondary-checkout-notice {
+.review-licenses__notice {
 	color: var(--studio-gray-50);
 	font-size: rem(12px);
 	margin-block-end: 16px;
@@ -55,18 +57,4 @@
 		text-decoration: underline;
 		color: var(--studio-black);
 	}
-}
-
-.license-lightbox__secondary-content-button {
-	border: 2px solid var(--color-accent);
-	font-weight: 700;
-	font-size: 1rem;
-	margin-block-start: 1rem;
-	margin-block-end: 0;
-	width: 100%;
-	padding: 10px 16px;
-}
-
-.license-lightbox__secondary-checkout-heading {
-	font-weight: 700;
 }
