@@ -88,6 +88,7 @@ const CommandBox = styled.div( {
 	'&.command-box__fadeOut': {
 		animation: `${ fadeOut } 1s ease-in-out`,
 		zIndex: 5,
+		opacity: 0,
 	},
 	svg: {
 		width: 24,
