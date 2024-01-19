@@ -614,7 +614,6 @@ const getPlanFreeDetails = (): IncompleteWPcomPlan => ( {
 		FEATURE_CONTACT_FORM_JP,
 		FEATURE_SITE_ACTIVITY_LOG_JP,
 		FEATURE_SHARES_SOCIAL_MEDIA_JP,
-		FEATURE_STATS_PAID,
 	],
 	get2023PricingGridSignupStorageOptions: () => {
 		return [
@@ -1518,7 +1517,11 @@ const getPlanPremiumDetails = (): IncompleteWPcomPlan => ( {
 		FEATURE_SHARES_SOCIAL_MEDIA_JP,
 		FEATURE_COMMISSION_FEE_STANDARD_FEATURES,
 	],
-	get2023PlanComparisonJetpackFeatureOverride: () => [ FEATURE_PAYPAL_JP, FEATURE_VIDEOPRESS_JP ],
+	get2023PlanComparisonJetpackFeatureOverride: () => [
+		FEATURE_PAYPAL_JP,
+		FEATURE_VIDEOPRESS_JP,
+		FEATURE_STATS_PAID,
+	],
 	// Features not displayed but used for checking plan abilities
 	getIncludedFeatures: () => [
 		FEATURE_AUDIO_UPLOADS,
