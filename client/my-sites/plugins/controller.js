@@ -11,23 +11,30 @@ import { fetchSitePlans } from 'calypso/state/sites/plans/actions';
 import { isSiteOnECommerceTrial, getCurrentPlan } from 'calypso/state/sites/plans/selectors';
 import { getSelectedSite, getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { ALLOWED_CATEGORIES } from './categories/use-categories';
+import { UNLISTED_PLUGINS } from './constants';
 import PlanSetup from './jetpack-plugins-setup';
 import { MailPoetUpgradePage } from './mailpoet-upgrade';
 import PluginListComponent from './main';
 import PluginDetails from './plugin-details';
 import PluginEligibility from './plugin-eligibility';
+import PluginNotFound from './plugin-not-found';
 import PluginBrowser from './plugins-browser';
 import { RelatedPluginsPage } from './related-plugins-page';
 
 function renderSinglePlugin( context, siteUrl ) {
 	const pluginSlug = decodeURIComponent( context.params.plugin );
 
-	// Render single plugin component
-	context.primary = createElement( PluginDetails, {
-		path: context.path,
-		pluginSlug,
-		siteUrl,
-	} );
+	if ( UNLISTED_PLUGINS.includes( pluginSlug ) ) {
+		// Render empty view
+		context.primary = createElement( PluginNotFound );
+	} else {
+		// Render single plugin component
+		context.primary = createElement( PluginDetails, {
+			path: context.path,
+			pluginSlug,
+			siteUrl,
+		} );
+	}
 }
 
 function renderPluginList( context, basePath ) {

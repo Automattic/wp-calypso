@@ -42,7 +42,7 @@ function SshKeys( { siteId, siteSlug, username, disabled }: SshKeysProps ) {
 		enabled: ! disabled,
 	} );
 	const { data: userKeys, isLoading: isLoadingUserKeys } = useSSHKeyQuery();
-	const { attachSshKey, isLoading: attachingKey } = useAttachSshKeyMutation( siteId, {
+	const { attachSshKey, isPending: attachingKey } = useAttachSshKeyMutation( siteId, {
 		onMutate: () => {
 			dispatch( removeNotice( sshKeyAttachFailureNoticeId ) );
 		},

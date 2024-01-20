@@ -2,11 +2,6 @@ import { translate } from 'i18n-calypso';
 import { CALYPSO_CONTACT } from 'calypso/lib/url/support';
 import wpcom from 'calypso/lib/wp';
 import {
-	getGlobalStylesId,
-	getGlobalStylesVariations,
-	updateGlobalStyles,
-} from 'calypso/state/global-styles/actions';
-import {
 	productsReinstall,
 	productsReinstallNotStarted,
 } from 'calypso/state/marketplace/products-reinstall/actions';
@@ -18,8 +13,8 @@ import {
 	getThemePreviewThemeOptions,
 	isMarketplaceThemeSubscribed,
 } from 'calypso/state/themes/selectors';
-
 import 'calypso/state/themes/init';
+import { activateStyleVariation } from './activate-style-variation';
 
 /**
  * Triggers a network request to activate a specific theme on a given site.
@@ -27,16 +22,9 @@ import 'calypso/state/themes/init';
  * @param {number}  siteId             Site ID
  * @param {string}  source             The source that is requesting theme activation, e.g. 'showcase'
  * @param {boolean} purchased          Whether the theme has been purchased prior to activation
- * @param {boolean} dontChangeHomepage Prevent theme from switching homepage content if this is what it'd normally do when activated
  * @returns {Function}                 Action thunk
  */
-export function activateTheme(
-	themeId,
-	siteId,
-	source = 'unknown',
-	purchased = false,
-	dontChangeHomepage = false
-) {
+export function activateTheme( themeId, siteId, source = 'unknown', purchased = false ) {
 	return ( dispatch, getState ) => {
 		const themeOptions = getThemePreviewThemeOptions( getState() );
 		const styleVariationSlug =
@@ -53,22 +41,10 @@ export function activateTheme(
 		return wpcom.req
 			.post( `/sites/${ siteId }/themes/mine?_locale=user`, {
 				theme: themeId,
-				...( dontChangeHomepage && { dont_change_homepage: true } ),
 			} )
 			.then( async ( theme ) => {
 				if ( styleVariationSlug ) {
-					const themeStylesheet = theme.stylesheet || themeId;
-					const variations = await dispatch( getGlobalStylesVariations( siteId, themeStylesheet ) );
-					const currentVariation = variations.find(
-						( variation ) =>
-							variation.title &&
-							variation.title.split( ' ' ).join( '-' ).toLowerCase() === styleVariationSlug
-					);
-
-					if ( currentVariation ) {
-						const globalStylesId = await dispatch( getGlobalStylesId( siteId, themeStylesheet ) );
-						await dispatch( updateGlobalStyles( siteId, globalStylesId, currentVariation ) );
-					}
+					await dispatch( activateStyleVariation( themeId, siteId, themeOptions.styleVariation ) );
 				}
 
 				return theme;

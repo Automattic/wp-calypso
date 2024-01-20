@@ -1413,6 +1413,7 @@ const getPlanPremiumDetails = (): IncompleteWPcomPlan => ( {
 		FEATURE_PREMIUM_THEMES_V2,
 		FEATURE_UNLTD_SOCIAL_MEDIA_JP,
 		FEATURE_VIDEOPRESS_JP,
+		FEATURE_STATS_PAID,
 		FEATURE_PAYMENT_TRANSACTION_FEES_4,
 	],
 	getNewsletterHighlightedFeatures: () => [
@@ -1437,6 +1438,7 @@ const getPlanPremiumDetails = (): IncompleteWPcomPlan => ( {
 		FEATURE_VIDEOPRESS_JP,
 		FEATURE_UNLTD_SOCIAL_MEDIA_JP,
 		FEATURE_WORDADS,
+		FEATURE_STATS_PAID,
 	],
 	getLinkInBioHighlightedFeatures: () => [ FEATURE_CUSTOM_DOMAIN ],
 	getBlogOnboardingSignupFeatures: () => [
@@ -1452,6 +1454,7 @@ const getPlanPremiumDetails = (): IncompleteWPcomPlan => ( {
 		FEATURE_VIDEOPRESS_JP,
 		FEATURE_UNLTD_SOCIAL_MEDIA_JP,
 		FEATURE_SITE_ACTIVITY_LOG_JP,
+		FEATURE_STATS_PAID,
 	],
 	getBlogSignupFeatures: () =>
 		[
@@ -1491,6 +1494,7 @@ const getPlanPremiumDetails = (): IncompleteWPcomPlan => ( {
 		FEATURE_PREMIUM_THEMES_V2,
 		FEATURE_WORDADS,
 		FEATURE_STYLE_CUSTOMIZATION,
+		FEATURE_STATS_PAID,
 		FEATURE_VIDEOPRESS_JP,
 		FEATURE_UNLTD_SOCIAL_MEDIA_JP,
 		FEATURE_SITE_ACTIVITY_LOG_JP,
@@ -1499,6 +1503,7 @@ const getPlanPremiumDetails = (): IncompleteWPcomPlan => ( {
 		FEATURE_VIDEOPRESS_JP,
 		FEATURE_UNLTD_SOCIAL_MEDIA_JP,
 		FEATURE_SITE_ACTIVITY_LOG_JP,
+		FEATURE_STATS_PAID,
 	],
 	get2023PricingGridSignupStorageOptions: () => {
 		return [
@@ -3677,8 +3682,8 @@ PLANS_LIST[ PLAN_ECOMMERCE_TRIAL_MONTHLY ] = {
 	term: TERM_MONTHLY,
 	getBillingTimeFrame: () => i18n.translate( 'free trial' ),
 	getStoreSlug: () => PLAN_ECOMMERCE_TRIAL_MONTHLY,
-	getTitle: () => i18n.translate( 'eCommerce free trial' ),
-	getDescription: () => i18n.translate( 'eCommerce free trial' ),
+	getTitle: () => i18n.translate( 'Entrepreneur free trial' ),
+	getDescription: () => i18n.translate( 'Entrepreneur free trial' ),
 	getTagline: () => i18n.translate( 'Get a taste of the world’s most popular eCommerce software.' ),
 };
 
@@ -3692,13 +3697,13 @@ if ( isEnabled( 'plans/migration-trial' ) ) {
 		term: TERM_MONTHLY,
 		getBillingTimeFrame: () => i18n.translate( 'free trial' ),
 		getStoreSlug: () => PLAN_MIGRATION_TRIAL_MONTHLY,
-		getTitle: () => i18n.translate( 'Business Trial' ),
+		getTitle: () => i18n.translate( 'Creator Trial' ),
 	};
 }
 
 PLANS_LIST[ PLAN_HOSTING_TRIAL_MONTHLY ] = {
 	...getPlanBusinessDetails(),
-	getPlanTagline: () => i18n.translate( 'Try all the features of our Business plan.' ),
+	getPlanTagline: () => i18n.translate( 'Try all the features of our Creator plan.' ),
 	type: TYPE_BUSINESS,
 	group: GROUP_WPCOM,
 	getProductId: () => 1058,
@@ -3706,7 +3711,7 @@ PLANS_LIST[ PLAN_HOSTING_TRIAL_MONTHLY ] = {
 	term: TERM_MONTHLY,
 	getBillingTimeFrame: () => i18n.translate( 'Try it for 3 days' ),
 	getStoreSlug: () => PLAN_HOSTING_TRIAL_MONTHLY,
-	getTitle: () => i18n.translate( 'Business trial' ),
+	getTitle: () => i18n.translate( 'Creator Trial' ),
 	getDescription: () => i18n.translate( 'Hosting free trial' ),
 	getTagline: () => i18n.translate( 'Get a taste of unlimited performance and unbeatable uptime' ),
 };

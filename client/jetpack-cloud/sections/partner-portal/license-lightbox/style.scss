@@ -5,8 +5,10 @@
 	padding: 1rem;
 }
 
-.license-lightbox__payment-plan-title {
+.license-lightbox__jetpack-manage-license-title {
+	color: var(--studio-black);
 	font-size: 1rem;
+	font-weight: 700;
 	margin-block-end: 8px;
 }
 
@@ -16,14 +18,43 @@
 	display: block;
 	width: 100%;
 	padding: 10px 16px;
+	font-size: 1rem;
 
 	.license-lightbox__cta-button-external-link {
 		inset-inline-start: 4px;
-		width: 20px;
-		height: 20px;
+		width: 18px;
+		height: 18px;
 	}
 
 	&.is-primary .license-lightbox__cta-button-external-link {
 		color: var(--studio-white);
+	}
+}
+
+.license-lightbox__separator {
+	font-size: 1rem;
+	font-weight: 600;
+	display: flex;
+	align-items: center;
+
+	&::before,
+	&::after {
+		flex: 1;
+		content: "";
+		padding: 0.5px;
+		background: var(--studio-gray-5);
+		margin: 2rem 15px;
+	}
+}
+
+.review-licenses__notice {
+	color: var(--studio-gray-50);
+	font-size: rem(12px);
+	margin-block-end: 16px;
+	padding-top: 1rem;
+
+	a {
+		text-decoration: underline;
+		color: var(--studio-black);
 	}
 }

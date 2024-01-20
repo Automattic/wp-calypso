@@ -8,21 +8,24 @@ interface IntroOffersIndex {
 }
 
 interface Props {
-	siteId?: string | number | null;
+	siteId: string | number | null | undefined;
+	coupon: string | undefined;
 }
 
 /**
  * Get introductory offers for Woo Express plans that have these defined
- *  - Currently retrieved off site-plans: https://public-api.wordpress.com/rest/v1.3/sites/[siteId]/plans
- *  - Can be extended to include /plans endpoint
- *
+ * - Currently retrieved off site-plans: https://public-api.wordpress.com/rest/v1.3/sites/[siteId]/plans
+ * - Can be extended to include /plans endpoint
  * @returns {IntroOffersIndex | undefined | null} -
  *     an object of planSlug->PlanIntroductoryOffer if WooExpress plan offers are found, or
  *     undefined if we haven't observed any metadata yet, or
  *     null if there are no WooExpress intro offers
  */
-const useIntroOffersForWooExpress = ( { siteId }: Props ): IntroOffersIndex | undefined | null => {
-	const introOffers = useIntroOffers( { siteId } );
+const useIntroOffersForWooExpress = ( {
+	siteId,
+	coupon,
+}: Props ): IntroOffersIndex | undefined | null => {
+	const introOffers = useIntroOffers( { siteId, coupon } );
 
 	return useMemo( () => {
 		if ( ! introOffers ) {

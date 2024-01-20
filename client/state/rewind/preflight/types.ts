@@ -14,8 +14,3 @@ export interface PreflightState {
 	overallStatus: PreflightTestStatus;
 	tests: PreflightTest[];
 }
-
-export interface APIPreflightStatusResponse {
-	ok: boolean;
-	status: PreflightTest[];
-}

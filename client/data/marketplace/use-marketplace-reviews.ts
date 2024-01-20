@@ -9,6 +9,8 @@ import {
 import wpcom from 'calypso/lib/wp';
 import { BASE_STALE_TIME } from 'calypso/state/constants';
 
+export const EMPTY_PLACEHOLDER = '&nbsp;';
+
 const apiBase = '/sites/marketplace.wordpress.com';
 const reviewsApiBase = `${ apiBase }/comments`;
 const reviewsApiNamespace = 'wp/v2';
@@ -62,6 +64,7 @@ export type MarketplaceReviewResponse = {
 	date_gmt: string;
 	content: {
 		rendered: string;
+		raw: string;
 	};
 	author_avatar_urls: { '24': string; '48': string; '96': string };
 	link: string;
@@ -140,6 +143,7 @@ const fetchMarketplaceReviews = (
 			{
 				product_type: productType,
 				product_slug: productSlug,
+				context: 'edit', // https://developer.wordpress.org/rest-api/reference/comments/#retrieve-a-comment
 				page,
 				per_page: perPage,
 				...( author ? { author } : {} ),
@@ -171,7 +175,7 @@ const createReview = ( {
 		{
 			product_type: productType,
 			product_slug: slug,
-			content,
+			content: content || EMPTY_PLACEHOLDER,
 			meta: { wpcom_marketplace_rating: rating },
 		}
 	);
@@ -192,7 +196,7 @@ const updateReview = ( {
 		{
 			product_type: productType,
 			product_slug: slug,
-			content,
+			content: content || EMPTY_PLACEHOLDER,
 			meta: { wpcom_marketplace_rating: rating },
 		}
 	);
@@ -280,18 +284,25 @@ export const useInfiniteMarketplaceReviewsQuery = (
 		perPage,
 		'infinite',
 	];
-	const queryFn = ( { pageParam = 1 } ) =>
-		fetchMarketplaceReviews( productType, slug, pageParam, perPage, author, author_exclude );
 
 	return useInfiniteQuery< MarketplaceReviewsQueryResponse >( {
 		queryKey,
-		queryFn,
+		queryFn: ( { pageParam } ) =>
+			fetchMarketplaceReviews(
+				productType,
+				slug,
+				pageParam as number,
+				perPage,
+				author,
+				author_exclude
+			),
 		getNextPageParam: ( lastPage, allPages ) => {
 			if ( lastPage.headers[ 'X-WP-TotalPages' ] <= allPages.length ) {
 				return;
 			}
 			return allPages.length + 1;
 		},
+		initialPageParam: 1,
 		enabled,
 		staleTime,
 	} );
@@ -304,7 +315,7 @@ export const useCreateMarketplaceReviewMutation = ( {
 	const queryClient = useQueryClient();
 	const queryKeyPrefix = [ queryKeyBase, productType, slug ];
 
-	return useMutation( {
+	return useMutation< MarketplaceReviewResponse, ErrorResponse, MarketplaceReviewBody >( {
 		mutationFn: createReview,
 		onSuccess: () => {
 			queryClient.invalidateQueries( { queryKey: queryKeyPrefix } );

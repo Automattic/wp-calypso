@@ -35,20 +35,18 @@ class TagStream extends Component {
 	_isMounted = false;
 
 	componentDidMount() {
-		const self = this;
 		this._isMounted = true;
-		// can't use arrows with asyncRequire
-		asyncRequire( 'emoji-text', function ( emojiText ) {
-			if ( self._isMounted ) {
-				self.setState( { emojiText } );
+		asyncRequire( 'emoji-text' ).then( ( emojiText ) => {
+			if ( this._isMounted ) {
+				this.setState( { emojiText: emojiText.default } );
 			}
 		} );
-		asyncRequire( 'twemoji', function ( twemoji ) {
-			if ( self._isMounted ) {
-				const title = self.props.decodedTagSlug;
-				self.setState( {
-					twemoji,
-					isEmojiTitle: title && twemoji.test( title ),
+		asyncRequire( 'twemoji' ).then( ( twemoji ) => {
+			if ( this._isMounted ) {
+				const title = this.props.decodedTagSlug;
+				this.setState( {
+					twemoji: twemoji.default,
+					isEmojiTitle: title && twemoji.default.test( title ),
 				} );
 			}
 		} );

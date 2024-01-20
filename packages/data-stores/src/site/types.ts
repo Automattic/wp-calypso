@@ -145,6 +145,30 @@ export interface SiteDetails {
 	isSecondaryNetworkSite?: boolean;
 }
 
+export enum SiteCapabilities {
+	ACTIVATE_PLUGINS = 'activate_plugins',
+	ACTIVATE_WORDADS = 'activate_wordads',
+	DELETE_OTHERS_POSTS = 'delete_others_posts',
+	DELETE_USERS = 'delete_users',
+	EDIT_OTHERS_PAGES = 'edit_others_pages',
+	EDIT_OTHERS_POSTS = 'edit_others_posts',
+	EDIT_PAGES = 'edit_pages',
+	EDIT_POSTS = 'edit_posts',
+	EDIT_THEME_OPTIONS = 'edit_theme_options',
+	EDIT_USERS = 'edit_users',
+	LIST_USERS = 'list_users',
+	MANAGE_CATEGORIES = 'manage_categories',
+	MANAGE_OPTIONS = 'manage_options',
+	MODERATE_COMMENTS = 'moderate_comments',
+	OWN_SITE = 'own_site',
+	PROMOTE_USERS = 'promote_users',
+	PUBLISH_POSTS = 'publish_posts',
+	REMOVE_USERS = 'remove_users',
+	UPLOAD_FILES = 'upload_files',
+	VIEW_HOSTING = 'view_hosting',
+	VIEW_STATS = 'view_stats',
+}
+
 export interface SiteDetailsCapabilities {
 	activate_plugins: boolean;
 	activate_wordads: boolean;
@@ -333,6 +357,7 @@ export interface Domain {
 	product_slug?: any;
 	owner: string;
 	is_pending_icann_verification?: boolean;
+	is_mapped_to_atomic_site: boolean;
 }
 
 export interface SiteSettings {
@@ -453,6 +478,7 @@ interface PaletteColor {
 }
 
 export interface GlobalStyles {
+	slug?: string;
 	title?: string;
 	settings: {
 		color: {

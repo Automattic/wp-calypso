@@ -21,13 +21,13 @@ const SiteSubscriptionSettings = ( {
 }: SiteSubscriptionSettingsProps ) => {
 	const translate = useTranslate();
 
-	const { mutate: updateNotifyMeOfNewPosts, isLoading: updatingNotifyMeOfNewPosts } =
+	const { mutate: updateNotifyMeOfNewPosts, isPending: updatingNotifyMeOfNewPosts } =
 		SubscriptionManager.useSiteNotifyMeOfNewPostsMutation();
-	const { mutate: updateEmailMeNewPosts, isLoading: updatingEmailMeNewPosts } =
+	const { mutate: updateEmailMeNewPosts, isPending: updatingEmailMeNewPosts } =
 		SubscriptionManager.useSiteEmailMeNewPostsMutation();
-	const { mutate: updateDeliveryFrequency, isLoading: updatingFrequency } =
+	const { mutate: updateDeliveryFrequency, isPending: updatingFrequency } =
 		SubscriptionManager.useSiteDeliveryFrequencyMutation();
-	const { mutate: updateEmailMeNewComments, isLoading: updatingEmailMeNewComments } =
+	const { mutate: updateEmailMeNewComments, isPending: updatingEmailMeNewComments } =
 		SubscriptionManager.useSiteEmailMeNewCommentsMutation();
 
 	return (

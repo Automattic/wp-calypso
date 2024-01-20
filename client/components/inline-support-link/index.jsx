@@ -49,7 +49,7 @@ class InlineSupportLink extends Component {
 	componentDidMount() {
 		if ( this.props.supportContext && ! this.props.supportPostId && ! this.props.supportLink ) {
 			// Lazy load the supportPostId and supportLink by key if not provided.
-			import( './context-links' ).then( ( module ) => {
+			asyncRequire( './context-links' ).then( ( module ) => {
 				const contextLinks = module.default;
 				const supportDataFromContext = contextLinks[ this.props.supportContext ];
 				if ( ! supportDataFromContext ) {

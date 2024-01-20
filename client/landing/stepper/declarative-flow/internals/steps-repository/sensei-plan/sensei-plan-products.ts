@@ -1,4 +1,5 @@
 import { ProductsList } from '@automattic/data-stores';
+import { TIMELESS_PLAN_BUSINESS } from '@automattic/data-stores/src/plans';
 import { useLocale } from '@automattic/i18n-utils';
 import { useSelect } from '@wordpress/data';
 import { useSupportedPlans } from 'calypso/../packages/plans-grid/src/hooks';
@@ -43,7 +44,7 @@ export function useBusinessPlanPricing( billingPeriod: PlanBillingPeriod ) {
 	const { supportedPlans } = useSupportedPlans( locale, billingPeriod );
 
 	const businessPlan = supportedPlans.find( ( plan ) => {
-		return plan && 'business' === plan.periodAgnosticSlug;
+		return plan && TIMELESS_PLAN_BUSINESS === plan.periodAgnosticSlug;
 	} );
 
 	const slug = businessPlan?.periodAgnosticSlug;

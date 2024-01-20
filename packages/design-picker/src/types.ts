@@ -1,14 +1,4 @@
-import type { FONT_PAIRINGS } from './constants';
 import type { GlobalStyles } from '@automattic/data-stores/src/site/types'; // Import from a specific file to avoid the circular dependencies
-import type { ValuesType } from 'utility-types';
-
-export type Font = ValuesType< ValuesType< typeof FONT_PAIRINGS > >;
-
-/** @deprecated used for Gutenboarding (/new flow) */
-export interface FontPair {
-	headings: Font;
-	base: Font;
-}
 
 export interface Category {
 	slug: string;
@@ -74,8 +64,6 @@ export interface SoftwareSet {
 	slug: string;
 }
 
-export type DesignFeatures = 'anchorfm'; // For additional features, = 'anchorfm' | 'feature2' | 'feature3'
-
 /**
  * For measuring what kind of the design user picked.
  */
@@ -102,7 +90,6 @@ export interface Design {
 	is_externally_managed?: boolean;
 	is_bundled_with_woo?: boolean;
 	categories: Category[];
-	features: DesignFeatures[];
 	is_featured_picks?: boolean; // Whether this design will be featured in the sidebar. Example: Blank Canvas
 	showFirst?: boolean; // Whether this design will appear at the top, regardless of category
 	preview?: 'static';
@@ -114,20 +101,9 @@ export interface Design {
 	preview_data?: PreviewData;
 	screenshot?: string;
 
-	/** @deprecated used for Gutenboarding (/new flow) */
+	/** @deprecated TODO: replace both with just stylesheet */
 	stylesheet?: string;
-	/** @deprecated used for Gutenboarding (/new flow) */
-	template: string;
-	/** @deprecated used for Gutenboarding (/new flow) */
 	theme: string;
-	/** @deprecated used for Gutenboarding (/new flow) */
-	fonts?: FontPair;
-	/** @deprecated used for Gutenboarding (/new flow) */
-	is_alpha?: boolean;
-	/** @deprecated used for Gutenboarding (/new flow) */
-	is_fse?: boolean;
-	/** @deprecated used for Gutenboarding (/new flow) */
-	hide?: boolean;
 }
 
 export interface DesignOptions {
@@ -145,10 +121,4 @@ export interface DesignPreviewOptions {
 	remove_assets?: boolean;
 	style_variation?: StyleVariation;
 	viewport_unit_to_px?: boolean;
-}
-
-/** @deprecated used for Gutenboarding (/new flow) */
-export interface DesignUrlOptions {
-	iframe?: boolean;
-	site_title?: string;
 }

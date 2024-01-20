@@ -1,11 +1,11 @@
 import config from '@automattic/calypso-config';
+import { SimplifiedSegmentedControl } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { localize } from 'i18n-calypso';
 import { flowRight, get } from 'lodash';
 import { Component } from 'react';
 import { connect } from 'react-redux';
 import QuerySiteStats from 'calypso/components/data/query-site-stats';
-import SimplifiedSegmentedControl from 'calypso/components/segmented-control/simplified';
 import { recordGoogleEvent } from 'calypso/state/analytics/actions';
 import { getSiteSlug } from 'calypso/state/sites/selectors';
 import {
@@ -14,7 +14,7 @@ import {
 	hasSiteStatsQueryFailed,
 } from 'calypso/state/stats/lists/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
-import { SUPPORT_URL } from '../const';
+import { SUBSCRIBERS_SUPPORT_URL } from '../const';
 import ErrorPanel from '../stats-error';
 import StatsListCard from '../stats-list/stats-list-card';
 import StatsModulePlaceholder from '../stats-module/placeholder';
@@ -155,7 +155,7 @@ class StatModuleFollowers extends Component {
 						{
 							comment: '{{link}} links to support documentation.',
 							components: {
-								link: <a href={ localizeUrl( `${ SUPPORT_URL }#subscribers` ) } />,
+								link: <a href={ localizeUrl( `${ SUBSCRIBERS_SUPPORT_URL }#subscriber-stats` ) } />,
 							},
 							context: 'Stats: Info box label when the Subscribers module is empty',
 						}

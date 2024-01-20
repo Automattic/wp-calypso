@@ -65,10 +65,6 @@ const PageList = ( { pagesToShow, onSelectPage }: PageListProps ) => {
 					<PageListItem label={ translate( 'Homepage' ) } isDisabled />
 				</CompositeItem>
 				{ pagesToShow.map( ( page ) => {
-					if ( ! page.hasPages ) {
-						return null;
-					}
-
 					return (
 						<CompositeItem
 							{ ...composite }

@@ -14,9 +14,9 @@ export default function PendingSiteRow( {
 }: Reader.PendingSiteSubscription ) {
 	const hostname = useMemo( () => new URL( site_url ).hostname, [ site_url ] );
 
-	const { mutate: confirmPendingSubscription, isLoading: confirmingPendingSubscription } =
+	const { mutate: confirmPendingSubscription, isPending: confirmingPendingSubscription } =
 		SubscriptionManager.usePendingSiteConfirmMutation();
-	const { mutate: deletePendingSubscription, isLoading: deletingPendingSubscription } =
+	const { mutate: deletePendingSubscription, isPending: deletingPendingSubscription } =
 		SubscriptionManager.usePendingSiteDeleteMutation();
 
 	return (

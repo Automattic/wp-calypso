@@ -7,6 +7,7 @@ import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormTextarea from 'calypso/components/forms/form-textarea';
 import ReviewsRatingsStars from 'calypso/components/reviews-rating-stars/reviews-ratings-stars';
 import { useDispatch } from 'calypso/state';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { successNotice } from 'calypso/state/notices/actions';
 import useSubmitProductFeedback from './use-submit-product-feedback';
 
@@ -34,7 +35,9 @@ export default function UserFeedbackModalForm( { show, onClose }: Props ) {
 		setFeedback( DEFAULT_FEEDBACK_VALUE );
 		setRating( DEFAULT_RATING_VALUE );
 		onClose?.();
-	}, [ onClose ] );
+
+		dispatch( recordTracksEvent( 'calypso_jetpack_user_feedback_form_close' ) );
+	}, [ dispatch, onClose ] );
 
 	useEffect( () => {
 		if ( isSubmissionSuccessful ) {
@@ -52,9 +55,13 @@ export default function UserFeedbackModalForm( { show, onClose }: Props ) {
 		setFeedback( event.currentTarget.value );
 	}, [] );
 
-	const onRatingChange = useCallback( ( rating: number ) => {
-		setRating( rating );
-	}, [] );
+	const onRatingChange = useCallback(
+		( rating: number ) => {
+			dispatch( recordTracksEvent( 'calypso_jetpack_user_feedback_form_rating_click' ) );
+			setRating( rating );
+		},
+		[ dispatch ]
+	);
 
 	const hasCompletedForm = !! feedback && !! rating;
 
@@ -62,9 +69,23 @@ export default function UserFeedbackModalForm( { show, onClose }: Props ) {
 		if ( ! hasCompletedForm ) {
 			return;
 		}
+
+		dispatch(
+			recordTracksEvent( 'calypso_jetpack_user_feedback_form_submit', {
+				rating,
+				feedback,
+			} )
+		);
+
 		const sourceUrl = `${ window.location.origin }${ window.location.pathname }`;
 		submitFeedback( { feedback, rating, source_url: sourceUrl } );
-	}, [ feedback, hasCompletedForm, rating, submitFeedback ] );
+	}, [ dispatch, feedback, hasCompletedForm, rating, submitFeedback ] );
+
+	useEffect( () => {
+		if ( show ) {
+			dispatch( recordTracksEvent( 'calypso_jetpack_user_feedback_form_open' ) );
+		}
+	}, [ dispatch, show ] );
 
 	if ( ! show ) {
 		return null;
@@ -106,12 +127,15 @@ export default function UserFeedbackModalForm( { show, onClose }: Props ) {
 						placeholder="Add your feedback here"
 						value={ feedback }
 						onChange={ onFeedbackChange }
+						onClick={ () =>
+							dispatch( recordTracksEvent( 'calypso_jetpack_user_feedback_form_textarea_click' ) )
+						}
 					/>
 				</FormFieldset>
 
 				<FormFieldset>
 					<FormLabel htmlFor="textarea">
-						{ translate( 'How satisfied with Jetpack Manage are you?' ) }
+						{ translate( 'How satisfied are you with Jetpack Manage?' ) }
 					</FormLabel>
 					<ReviewsRatingsStars rating={ rating } onSelectRating={ onRatingChange } />
 				</FormFieldset>

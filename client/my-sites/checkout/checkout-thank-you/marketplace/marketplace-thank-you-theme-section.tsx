@@ -160,9 +160,7 @@ export const ThankYouThemeSection = ( {
 			return;
 		}
 		sendTrackEvent( 'calypso_theme_thank_you_activate_theme_click' );
-		dispatch(
-			activate( theme.id, siteId, 'marketplace-thank-you', false, false, isOnboardingFlow )
-		);
+		dispatch( activate( theme.id, siteId, 'marketplace-thank-you', false, isOnboardingFlow ) );
 	}, [ theme.id, siteId, isOnboardingFlow, dispatch, isActive, sendTrackEvent ] );
 
 	useEffect( () => {

@@ -11,21 +11,14 @@ import 'calypso/state/themes/init';
  * @param {number} siteId    Site ID
  * @param {string} source    The source that is requesting theme activation, e.g. 'showcase'
  * @param {boolean} purchased Whether the theme has been purchased prior to activation
- * @param {boolean} keepCurrentHomepage Prevent theme from switching homepage content if this is what it'd normally do when activated
  * @returns {Function}           Action thunk
  */
-export function installAndActivateTheme(
-	themeId,
-	siteId,
-	source = 'unknown',
-	purchased = false,
-	keepCurrentHomepage = false
-) {
+export function installAndActivateTheme( themeId, siteId, source = 'unknown', purchased = false ) {
 	return ( dispatch ) => {
 		return dispatch( installTheme( themeId, siteId ) ).then( () =>
 			// This will be called even if `installTheme` silently fails. We rely on
 			// `activateTheme`'s own error handling here.
-			dispatch( activateTheme( themeId, siteId, source, purchased, keepCurrentHomepage ) )
+			dispatch( activateTheme( themeId, siteId, source, purchased ) )
 		);
 	};
 }

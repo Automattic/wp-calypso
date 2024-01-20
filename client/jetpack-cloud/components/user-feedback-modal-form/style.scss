@@ -21,6 +21,12 @@
 		outline: none;
 	}
 
+	.reviews-ratings-stars__star:focus-within {
+		border-color: var(--color-primary);
+		box-shadow: 0 0 0 2px var(--color-primary-10);
+		border-radius: 4px;
+	}
+
 	@include break-medium {
 		margin: auto;
 	}
@@ -64,8 +70,16 @@ p.user-feedback-modal-form__instruction {
 	inset-block-start: 1rem;
 	cursor: pointer;
 	transition: scale 0.2s ease-in;
+	max-height: 24px;
 
 	&:hover {
 		scale: 1.2;
+	}
+
+	&:focus-visible {
+		border-color: var(--color-primary);
+		outline: none;
+		box-shadow: 0 0 0 2px var(--color-primary-10);
+		border-radius: 4px;
 	}
 }

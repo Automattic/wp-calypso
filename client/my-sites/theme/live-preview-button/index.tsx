@@ -7,15 +7,16 @@ import { livePreview } from 'calypso/state/themes/actions';
 import { getIsLivePreviewSupported } from 'calypso/state/themes/selectors';
 
 interface Props {
-	themeId: string;
 	siteId: number;
+	themeId: string;
+	onBeforeLivePreview?: () => void;
 }
 
 /**
  * Live Preview leveraging Gutenberg's Block Theme Previews
  * @see pbxlJb-3Uv-p2
  */
-export const LivePreviewButton: FC< Props > = ( { themeId, siteId } ) => {
+export const LivePreviewButton: FC< Props > = ( { siteId, themeId, onBeforeLivePreview } ) => {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 
@@ -30,7 +31,8 @@ export const LivePreviewButton: FC< Props > = ( { themeId, siteId } ) => {
 
 	const handleClick = () => {
 		setIsLoading( true );
-		dispatch( livePreview( themeId, siteId, 'detail' ) );
+		onBeforeLivePreview?.();
+		dispatch( livePreview( siteId, themeId, 'detail' ) );
 	};
 
 	return (

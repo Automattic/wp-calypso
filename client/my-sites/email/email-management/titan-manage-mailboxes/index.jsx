@@ -30,8 +30,8 @@ import {
 	hasEmailSubscription,
 } from 'calypso/my-sites/email/email-management/home/utils';
 import {
-	emailManagement,
-	emailManagementTitanControlPanelRedirect,
+	getEmailManagementPath,
+	getTitanControlPanelRedirectPath,
 } from 'calypso/my-sites/email/paths';
 import {
 	hasLoadedSitePurchasesFromServer,
@@ -76,7 +76,7 @@ class TitanManageMailboxes extends Component {
 	handleBack = () => {
 		const { currentRoute, selectedDomainName, selectedSite } = this.props;
 
-		page( emailManagement( selectedSite.slug, selectedDomainName, currentRoute ) );
+		page( getEmailManagementPath( selectedSite.slug, selectedDomainName, currentRoute ) );
 	};
 
 	buildNavigationItem = ( { context, description, isDisabled = false, materialIcon, text } ) => ( {
@@ -147,7 +147,7 @@ class TitanManageMailboxes extends Component {
 			return '';
 		}
 
-		return emailManagementTitanControlPanelRedirect( selectedSite.slug, domain.name, currentRoute, {
+		return getTitanControlPanelRedirectPath( selectedSite.slug, domain.name, currentRoute, {
 			context,
 		} );
 	};

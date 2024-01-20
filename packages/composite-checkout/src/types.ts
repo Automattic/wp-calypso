@@ -140,7 +140,6 @@ export type StepChangedEventArguments = {
 };
 
 export type PaymentEventCallbackArguments = {
-	paymentMethodId: string | null;
 	transactionLastResponse: PaymentProcessorResponseData;
 };
 

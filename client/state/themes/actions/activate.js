@@ -1,4 +1,3 @@
-import { isEnabled } from '@automattic/calypso-config';
 import page from '@automattic/calypso-router';
 import { productToBeInstalled } from 'calypso/state/marketplace/purchase-flow/actions';
 import isSiteAtomic from 'calypso/state/selectors/is-site-wpcom-atomic';
@@ -24,7 +23,6 @@ import 'calypso/state/themes/init';
  * @param  {number}   siteId    Site ID
  * @param  {string}   source    The source that is requesting theme activation, e.g. 'showcase'
  * @param  {boolean}  purchased Whether the theme has been purchased prior to activation
- * @param  {boolean}  keepCurrentHomepage Prevent theme from switching homepage content if this is what it'd normally do when activated
  * @param  {boolean}  skipActivationModal Skip the Activation Modal to be shown even if needed on flows that don't require it
  * @returns {Function}          Action thunk
  */
@@ -33,15 +31,9 @@ export function activate(
 	siteId,
 	source = 'unknown',
 	purchased = false,
-	keepCurrentHomepage = false,
 	skipActivationModal = false
 ) {
 	return ( dispatch, getState ) => {
-		if ( ! isEnabled( 'themes/atomic-homepage-replace' ) ) {
-			// Keep default behaviour on Atomic. See https://github.com/Automattic/wp-calypso/pull/65846#issuecomment-1192650587
-			keepCurrentHomepage = isSiteAtomic( getState(), siteId ) ? true : keepCurrentHomepage;
-		}
-
 		const isWooTheme = doesThemeBundleSoftwareSet( getState(), themeId );
 
 		/**
@@ -74,8 +66,7 @@ export function activate(
 			themeId,
 			siteId,
 			source,
-			purchased,
-			keepCurrentHomepage
+			purchased
 		);
 
 		if ( isDotComTheme ) {
@@ -108,26 +99,22 @@ export function activate(
  * @param  {number}   siteId    Site ID
  * @param  {string}   source    The source that is requesting theme activation, e.g. 'showcase'
  * @param  {boolean}  purchased Whether the theme has been purchased prior to activation
- * @param  {boolean}  keepCurrentHomepage Prevent theme from switching homepage content if this is what it'd normally do when activated
  * @returns {Function}          Action thunk
  */
 export function activateOrInstallThenActivate(
 	themeId,
 	siteId,
 	source = 'unknown',
-	purchased = false,
-	keepCurrentHomepage = false
+	purchased = false
 ) {
 	return ( dispatch, getState ) => {
 		if ( isJetpackSite( getState(), siteId ) && ! getTheme( getState(), siteId, themeId ) ) {
 			const installId = suffixThemeIdForInstall( getState(), siteId, themeId );
 			// If theme is already installed, installation will silently fail,
 			// and it will just be activated.
-			return dispatch(
-				installAndActivateTheme( installId, siteId, source, purchased, keepCurrentHomepage )
-			);
+			return dispatch( installAndActivateTheme( installId, siteId, source, purchased ) );
 		}
 
-		return dispatch( activateTheme( themeId, siteId, source, purchased, keepCurrentHomepage ) );
+		return dispatch( activateTheme( themeId, siteId, source, purchased ) );
 	};
 }

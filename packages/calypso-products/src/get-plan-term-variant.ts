@@ -4,7 +4,6 @@ import type { PlanSlug } from './types';
 
 /**
  * Return a (monthly/yealry/2yearly/etc) variant of a plan
- *
  * @param {PlanSlug} slug Slug/name of the plan to get the yearly variant from
  * @param {typeof TERMS_LIST[ number ]} planTerm The term to find a variant for
  * @returns {PlanSlug} Slug of the term-variant plan

@@ -30,7 +30,7 @@ export const DeploymentCard = ( { repo, branch, connectionId }: DeploymentCardPr
 
 	const dispatch = useDispatch();
 
-	const { disconnectRepo, isLoading: isDisconnecting } = useGithubDisconnectRepoMutation(
+	const { disconnectRepo, isPending: isDisconnecting } = useGithubDisconnectRepoMutation(
 		siteId,
 		connectionId,
 		{

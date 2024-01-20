@@ -110,11 +110,17 @@ export interface DomainData {
 	registry_expiry_date: string;
 	subdomain_part: string;
 	auth_code_required: boolean;
+	is_mapped_to_atomic_site: boolean;
 }
 
 export interface SiteDomainsQueryFnData {
 	domains: DomainData[];
 }
+
+export const getSiteDomainsQueryKey = ( siteIdOrSlug: number | string | null | undefined ) => [
+	'site-domains',
+	siteIdOrSlug,
+];
 
 export function useSiteDomainsQuery< TError = unknown, TData = SiteDomainsQueryFnData >(
 	siteIdOrSlug: number | string | null | undefined,
@@ -128,7 +134,7 @@ export function getSiteDomainsQueryObject< TError = unknown, TData = SiteDomains
 	options: Omit< UseQueryOptions< SiteDomainsQueryFnData, TError, TData >, 'queryKey' > = {}
 ): UseQueryOptions< SiteDomainsQueryFnData, TError, TData > {
 	return {
-		queryKey: [ 'site-domains', siteIdOrSlug ],
+		queryKey: getSiteDomainsQueryKey( siteIdOrSlug ),
 		queryFn: () =>
 			wpcomRequest< SiteDomainsQueryFnData >( {
 				path: `/sites/${ siteIdOrSlug }/domains`,

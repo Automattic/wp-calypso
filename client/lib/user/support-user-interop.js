@@ -97,7 +97,7 @@ export async function supportUserBoot() {
 	wpcom.setSupportUserToken( user, token, onTokenError );
 
 	// This needs to be a dynamic import in order to avoid boot race conditions.
-	const { supportSessionActivate } = await import( 'calypso/state/support/actions' );
+	const { supportSessionActivate } = await asyncRequire( 'calypso/state/support/actions' );
 
 	// the boot is performed before the Redux store is created, so we need to wait for a promise
 	const reduxStore = await reduxStoreReady;
@@ -113,7 +113,7 @@ export async function supportNextBoot() {
 	localStorageBypass( { allowedKeys } );
 
 	// This needs to be a dynamic import in order to avoid boot race conditions.
-	const { supportSessionActivate } = await import( 'calypso/state/support/actions' );
+	const { supportSessionActivate } = await asyncRequire( 'calypso/state/support/actions' );
 
 	// the boot is performed before the Redux store is created, so we need to wait for a promise
 	const reduxStore = await reduxStoreReady;

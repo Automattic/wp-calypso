@@ -1,7 +1,7 @@
 {
 	"name": "@automattic/wpcom-template-parts",
 	"version": "1.0.0",
-	"description": "WordPress.com template parts to be used everywhere",
+	"description": "WordPress.com template parts to be used everywhere.",
 	"homepage": "https://github.com/Automattic/wp-calypso",
 	"license": "GPL-2.0-or-later",
 	"author": "Automattic Inc.",
@@ -32,17 +32,17 @@
 	"dependencies": {
 		"@automattic/components": "workspace:^",
 		"@automattic/i18n-utils": "workspace:^",
-		"@wordpress/url": "^3.49.0",
+		"@wordpress/url": "^3.50.0",
 		"i18n-calypso": "workspace:^",
 		"social-logos": "^2.5.2"
 	},
 	"devDependencies": {
 		"@automattic/calypso-typescript-config": "workspace:^",
 		"@types/social-logos": "^2.3.1",
-		"typescript": "^5.3.2"
+		"typescript": "^5.3.3"
 	},
 	"peerDependencies": {
-		"@wordpress/data": "^9.18.0",
+		"@wordpress/data": "^9.19.0",
 		"react": "^18.2.0",
 		"react-dom": "^18.2.0"
 	}

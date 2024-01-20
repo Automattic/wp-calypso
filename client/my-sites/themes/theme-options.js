@@ -5,7 +5,6 @@ import { mapValues, pickBy, flowRight as compose } from 'lodash';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { THEME_TIERS } from 'calypso/components/theme-tier/constants';
-import getThemeTier from 'calypso/components/theme-tier/get-theme-tier';
 import withIsFSEActive from 'calypso/data/themes/with-is-fse-active';
 import { localizeThemesPath } from 'calypso/my-sites/themes/helpers';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
@@ -59,7 +58,8 @@ function getAllThemeOptions( { translate, isFSEActive } ) {
 				} )
 			);
 
-			const { themeTier } = getThemeTier( state, siteId, themeId );
+			const themeTier = options.themeTier;
+
 			const tierMinimumUpsellPlan = THEME_TIERS[ themeTier?.slug ]?.minimumUpsellPlan;
 			const mappedPlan = getPlan( tierMinimumUpsellPlan );
 			const planPathSlug = mappedPlan?.getPathSlug();
@@ -262,7 +262,7 @@ function getAllThemeOptions( { translate, isFSEActive } ) {
 			comment: 'label for previewing a block theme',
 		} ),
 		action: ( themeId, siteId ) => {
-			return livePreviewAction( themeId, siteId, 'list' );
+			return livePreviewAction( siteId, themeId, 'list' );
 		},
 		hideForTheme: ( state, themeId, siteId ) =>
 			! getIsLivePreviewSupported( state, themeId, siteId ),
@@ -339,16 +339,16 @@ export const getWooMyCustomThemeOptions = ( { translate, siteAdminUrl, siteSlug,
 	return {
 		assembler: {
 			key: 'assembler',
-			label: translate( 'Quick editing in the Assembler' ),
-			extendedLabel: translate( 'Quick editing in the Assembler' ),
+			label: translate( 'Quick editing in the Store Designer' ),
+			extendedLabel: translate( 'Quick editing in the Store Designer' ),
 			getUrl: () => {
 				return `${ siteAdminUrl }admin.php?page=wc-admin&path=%2Fcustomize-store%2Fassembler-hub&customizing=true`;
 			},
 		},
 		customize: {
 			...options.customize,
-			label: translate( 'Advance customization in the Editor' ),
-			extendedLabel: translate( 'Advance customization in the Editor' ),
+			label: translate( 'Advanced customization in the Editor' ),
+			extendedLabel: translate( 'Advanced customization in the Editor' ),
 		},
 		preview: {
 			label: translate( 'Store preview' ),
