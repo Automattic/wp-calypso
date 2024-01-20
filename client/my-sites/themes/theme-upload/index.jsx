@@ -367,6 +367,7 @@ class Upload extends Component {
 				{ showEligibility && (
 					<EligibilityWarnings backUrl={ backPath } onProceed={ this.onProceedClick } />
 				) }
+
 				{ this.renderUploadCard() }
 			</Main>
 		);
