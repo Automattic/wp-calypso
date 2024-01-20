@@ -43,7 +43,6 @@ class PluginUpload extends Component {
 	state = {
 		showEligibility: this.props.showEligibility,
 		showTrialAcknowledgeModal: false,
-		isTrialRequested: false,
 	};
 
 	componentDidMount() {
