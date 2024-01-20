@@ -14,15 +14,14 @@ import NavigationHeader from 'calypso/components/navigation-header';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import HostingActivateStatus from 'calypso/my-sites/hosting/hosting-activate-status';
 import { TrialAcknowledgeModal } from 'calypso/my-sites/plans/trials/trial-acknowledge/acknowlege-modal';
-import { WithAtomicTransferHOC } from 'calypso/sites-dashboard/components/with-atomic-transfer-hoc';
 import {
 	fetchAutomatedTransferStatus,
 	initiateAutomatedTransferWithPluginZip,
+	requestEligibility,
 } from 'calypso/state/automated-transfer/actions';
 import {
 	getEligibility,
 	isEligibleForAutomatedTransfer,
-	getAutomatedTransferStatus,
 } from 'calypso/state/automated-transfer/selectors';
 import { productToBeInstalled } from 'calypso/state/marketplace/purchase-flow/actions';
 import { successNotice } from 'calypso/state/notices/actions';
@@ -115,13 +114,20 @@ class PluginUpload extends Component {
 		this.props.successNotice( this.props.translate( 'Your free trial has been requested.' ), {
 			duration: 5000,
 		} );
-		this.state.isTrialRequested = true;
+		this.props.requestSiteEligibility( this.props.siteId );
+	};
+
+	requestUpdatedEligibility = ( isTransferring, wasTransferring, isTransferCompleted ) => {
+		if ( isTransferring || ( wasTransferring && isTransferCompleted ) ) {
+			this.props.requestSiteById( this.props.siteId );
+			this.props.requestSiteEligibility( this.props.siteId );
+		}
 	};
 
 	render() {
 		const { translate, isJetpackMultisite, siteId, siteSlug, isEligibleForHostingTrial } =
 			this.props;
-		const { showEligibility, showTrialAcknowledgeModal, isTrialRequested } = this.state;
+		const { showEligibility, showTrialAcknowledgeModal } = this.state;
 
 		return (
 			<Main>
@@ -129,9 +135,9 @@ class PluginUpload extends Component {
 				<QueryEligibility siteId={ siteId } />
 				<NavigationHeader navigationItems={ [] } title={ translate( 'Plugins' ) } />
 				<HeaderCake onClick={ this.back }>{ translate( 'Install plugin' ) }</HeaderCake>
-				<HostingActivateStatus context="plugin" />
+				<HostingActivateStatus context="plugin" onTick={ this.requestUpdatedEligibility } />
 				{ isJetpackMultisite && this.renderNotAvailableForMultisite() }
-				{ showEligibility && ! isTrialRequested && (
+				{ showEligibility && (
 					<EligibilityWarnings
 						backUrl={ `/plugins/${ siteSlug }` }
 						onProceed={ this.onProceedClick }
@@ -163,7 +169,6 @@ const mapStateToProps = ( state ) => {
 	const hasEligibilityMessages = ! (
 		isEmpty( eligibilityHolds ) && isEmpty( eligibilityWarnings )
 	);
-	const automatedTransferStatus = getAutomatedTransferStatus( state, siteId );
 
 	return {
 		siteId,
@@ -176,10 +181,8 @@ const mapStateToProps = ( state ) => {
 		error,
 		isJetpackMultisite,
 		siteAdminUrl: getSiteAdminUrl( state, siteId ),
-		showEligibility:
-			! isJetpack &&
-			( hasEligibilityMessages || ! isEligible || automatedTransferStatus === 'complete' ),
-		automatedTransferStatus,
+		showEligibility: ! isJetpack && ( hasEligibilityMessages || ! isEligible ),
+
 		isEligibleForHostingTrial,
 		site: {
 			slug: getSelectedSiteSlug( state ),
@@ -196,8 +199,9 @@ const flowRightArgs = [
 		productToBeInstalled,
 		fetchAutomatedTransferStatus,
 		requestSiteById: requestSite,
+		requestSiteEligibility: requestEligibility,
 	} ),
 	localize,
 ];
 
-export default flowRight( ...flowRightArgs )( WithAtomicTransferHOC( PluginUpload ) );
+export default flowRight( ...flowRightArgs )( PluginUpload );

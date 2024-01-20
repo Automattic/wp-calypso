@@ -21,9 +21,9 @@ export const TrialAcknowledgeModal = ( {
 
 	const createTrialSite = async () => {
 		setOpenModal( false );
-		trialRequested();
 		await addHostingTrial( { siteId, planSlug: PLAN_HOSTING_TRIAL_MONTHLY } );
 		dispatch( initiateThemeTransfer( siteId, null, '', '', 'hosting' ) );
+		trialRequested();
 	};
 
 	return (
