@@ -28,7 +28,6 @@ import Main from 'calypso/components/main';
 import NavigationHeader from 'calypso/components/navigation-header';
 import WpAdminAutoLogin from 'calypso/components/wpadmin-auto-login';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
-import HostingActivateStatus from 'calypso/my-sites/hosting/hosting-activate-status';
 import ActivationModal from 'calypso/my-sites/themes/activation-modal';
 import ThanksModal from 'calypso/my-sites/themes/thanks-modal';
 // Necessary for ThanksModal
@@ -368,7 +367,6 @@ class Upload extends Component {
 				{ showEligibility && (
 					<EligibilityWarnings backUrl={ backPath } onProceed={ this.onProceedClick } />
 				) }
-				<HostingActivateStatus context="theme" />
 				{ this.renderUploadCard() }
 			</Main>
 		);
