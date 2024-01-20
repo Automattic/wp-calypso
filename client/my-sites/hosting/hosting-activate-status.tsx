@@ -1,4 +1,5 @@
 import { translate } from 'i18n-calypso';
+import { useEffect, useState } from 'react';
 import { connect } from 'react-redux';
 import Notice from 'calypso/components/notice';
 import { useAtomicTransferQuery } from 'calypso/state/atomic-transfer/use-atomic-transfer-query';
@@ -6,16 +7,35 @@ import { transferStates } from 'calypso/state/automated-transfer/constants';
 import { initiateThemeTransfer } from 'calypso/state/themes/actions';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import { AppState } from 'calypso/types';
+import './style.scss';
 
 interface HostingActivateStatusProps {
 	context: 'theme' | 'plugin' | 'hosting';
 	siteId: number | null;
+	onTick?: (
+		isTransferring?: boolean,
+		wasTransferring?: boolean,
+		isTransferCompleted?: boolean
+	) => void;
 }
 
-const HostingActivateStatus = ( { context, siteId }: HostingActivateStatusProps ) => {
+const HostingActivateStatus = ( { context, siteId, onTick }: HostingActivateStatusProps ) => {
 	const { isTransferring, transferStatus } = useAtomicTransferQuery( siteId ?? 0, {
 		refetchInterval: 5000,
 	} );
+	const isTransferCompleted = transferStatus === transferStates.COMPLETED;
+	const [ wasTransferring, setWasTransferring ] = useState( false );
+
+	useEffect( () => {
+		if ( isTransferring && ! wasTransferring ) {
+			setWasTransferring( true );
+		}
+		if ( ! isTransferring && wasTransferring && isTransferCompleted ) {
+			setWasTransferring( false );
+		}
+	}, [ isTransferCompleted, isTransferring, wasTransferring ] );
+
+	onTick?.( isTransferring, wasTransferring, isTransferCompleted );
 
 	const getLoadingText = () => {
 		switch ( context ) {
