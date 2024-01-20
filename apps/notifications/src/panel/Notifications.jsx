@@ -79,7 +79,6 @@ export class Notifications extends PureComponent {
 		/**
 		 * Initialize store with actions that need to occur on
 		 * transitions from open to close or close to open
-		 *
 		 * @todo Pass this information directly into the Redux initial state
 		 */
 		store.dispatch( { type: SET_IS_SHOWING, isShowing } );

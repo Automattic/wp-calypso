@@ -6,6 +6,7 @@ import classnames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect, useMemo, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
+import Banner from 'calypso/components/banner';
 import DocumentHead from 'calypso/components/data/document-head';
 import QueryEligibility from 'calypso/components/data/query-atat-eligibility';
 import QueryPlugins from 'calypso/components/data/query-plugins';
@@ -18,6 +19,7 @@ import NavigationHeader from 'calypso/components/navigation-header';
 import Notice from 'calypso/components/notice';
 import NoticeAction from 'calypso/components/notice/notice-action';
 import { useESPlugin } from 'calypso/data/marketplace/use-es-query';
+import { useMarketplaceReviewsQuery } from 'calypso/data/marketplace/use-marketplace-reviews';
 import { useWPCOMPlugin } from 'calypso/data/marketplace/use-wpcom-plugins-query';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { MarketplaceReviewsCards } from 'calypso/my-sites/marketplace/components/reviews-cards';
@@ -45,7 +47,8 @@ import {
 } from 'calypso/state/analytics/actions';
 import { appendBreadcrumb } from 'calypso/state/breadcrumb/actions';
 import { getBreadcrumbs } from 'calypso/state/breadcrumb/selectors';
-import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
+import { getCurrentUserId, isUserLoggedIn } from 'calypso/state/current-user/selectors';
+import { canPublishProductReviews } from 'calypso/state/marketplace/selectors';
 import {
 	getPluginOnSites,
 	isRequestingForAllSites,
@@ -227,6 +230,18 @@ function PluginDetails( props ) {
 		requestingPluginsForSites,
 	] );
 
+	const canPublishReview = useSelector( ( state ) =>
+		canPublishProductReviews( state, 'plugin', fullPlugin.slug, fullPlugin.variations )
+	);
+	const currentUserId = useSelector( getCurrentUserId );
+	const { data: userReviews = [] } = useMarketplaceReviewsQuery( {
+		productType: 'plugin',
+		slug: fullPlugin.slug,
+		perPage: 1,
+		author: currentUserId ?? undefined,
+		status: 'all',
+	} );
+
 	const setBreadcrumbs = ( breadcrumbs = [] ) => {
 		if ( breadcrumbs?.length === 0 ) {
 			dispatch(
@@ -381,6 +396,23 @@ function PluginDetails( props ) {
 				productType="plugin"
 			/>
 			<PluginDetailsNotices selectedSite={ selectedSite } plugin={ fullPlugin } />
+
+			{ isEnabled( 'marketplace-reviews-show' ) &&
+				userReviews.length === 0 &&
+				canPublishReview &&
+				isMarketplaceProduct &&
+				! showPlaceholder && (
+					<Banner
+						className="plugin-details__reviews-banner"
+						title={ translate( 'Review this plugin!' ) }
+						description={ translate(
+							'Please help other users sharing your experience with this plugin.'
+						) }
+						onClick={ () => setIsReviewsModalVisible( true ) }
+						disableHref
+						event="calypso_marketplace_reviews_plugin_banner"
+					/>
+				) }
 			<div className="plugin-details__page">
 				<div className={ classnames( 'plugin-details__layout', { 'is-logged-in': isLoggedIn } ) }>
 					<div className="plugin-details__header">

@@ -13,7 +13,8 @@ import LayoutHeader, {
 } from 'calypso/jetpack-cloud/components/layout/header';
 import LayoutTop from 'calypso/jetpack-cloud/components/layout/top';
 import { useCursorPagination } from 'calypso/jetpack-cloud/sections/partner-portal/hooks';
-import { useSelector } from 'calypso/state';
+import { useSelector, useDispatch } from 'calypso/state';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import {
 	getAllStoredCards,
 	getStoredCardsPerPage,
@@ -48,6 +49,7 @@ const preparePagingCursor = (
 
 export default function PaymentMethodListV2() {
 	const translate = useTranslate();
+	const dispatch = useDispatch();
 
 	const storedCards = useSelector( getAllStoredCards );
 	const isFetching = useSelector( isFetchingStoredCards );
@@ -75,6 +77,9 @@ export default function PaymentMethodListV2() {
 
 	const primaryCard = storedCards.find( ( card ) => card.is_default );
 	const secondaryCards = storedCards.filter( ( card ) => ! card.is_default );
+	const onAddNewCardClick = () => {
+		dispatch( recordTracksEvent( 'calypso_partner_portal_payments_add_new_card_button_click' ) );
+	};
 
 	const getBody = () => {
 		if ( isFetching ) {
@@ -121,7 +126,11 @@ export default function PaymentMethodListV2() {
 					<Subtitle>{ subtitle }</Subtitle>
 					<Actions>
 						{ hasCards && (
-							<Button href="/partner-portal/payment-methods/add" primary>
+							<Button
+								href="/partner-portal/payment-methods/add"
+								onClick={ onAddNewCardClick }
+								primary
+							>
 								{ translate( 'Add new card' ) }
 							</Button>
 						) }

@@ -7,7 +7,6 @@ import { isBulkDomainTransfer, isDomainOnly } from '../utils';
  * using the new component `<ThankYouV2>` instead of `<ThankYouLayout>`. The ultimate
  * goal is to refactor and migrate all thank you pages to use `<ThankYouV2>`, so that
  * consistent structure and styling are applied.
- *
  * @returns {boolean}
  */
 export const isRefactoredForThankYouV2 = ( props: CheckoutThankYouCombinedProps ) => {

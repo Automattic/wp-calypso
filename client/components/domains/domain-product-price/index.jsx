@@ -1,4 +1,10 @@
-import { PLAN_100_YEARS, PLAN_PERSONAL, getPlan } from '@automattic/calypso-products';
+import {
+	PLAN_100_YEARS,
+	PLAN_PERSONAL,
+	PLAN_BUSINESS_MONTHLY,
+	PLAN_ECOMMERCE_MONTHLY,
+	getPlan,
+} from '@automattic/calypso-products';
 import classnames from 'classnames';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
@@ -6,7 +12,7 @@ import { Component } from 'react';
 import { connect } from 'react-redux';
 import { DOMAINS_WITH_PLANS_ONLY } from 'calypso/state/current-user/constants';
 import { currentUserHasFlag, getCurrentUser } from 'calypso/state/current-user/selectors';
-import { getSitePlanSlug } from 'calypso/state/sites/plans/selectors';
+import { getSitePlanSlug, hasDomainCredit } from 'calypso/state/sites/plans/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 
 import './style.scss';
@@ -22,6 +28,7 @@ class DomainProductPrice extends Component {
 		isMappingProduct: PropTypes.bool,
 		salePrice: PropTypes.string,
 		isCurrentPlan100YearPlan: PropTypes.bool,
+		isBusinessOrEcommerceMonthlyPlan: PropTypes.bool,
 	};
 
 	static defaultProps = {
@@ -82,7 +89,12 @@ class DomainProductPrice extends Component {
 	}
 
 	renderReskinFreeWithPlanText() {
-		const { isMappingProduct, translate, isCurrentPlan100YearPlan } = this.props;
+		const {
+			isMappingProduct,
+			translate,
+			isCurrentPlan100YearPlan,
+			isBusinessOrEcommerceMonthlyPlan,
+		} = this.props;
 
 		const domainPriceElement = ( message ) => (
 			<div className="domain-product-price__free-text">{ message }</div>
@@ -94,6 +106,16 @@ class DomainProductPrice extends Component {
 
 		if ( isCurrentPlan100YearPlan ) {
 			return domainPriceElement( translate( 'Free with your plan' ) );
+		}
+
+		if ( isBusinessOrEcommerceMonthlyPlan ) {
+			return domainPriceElement(
+				<>
+					<span className="domain-product-price__free-price">
+						{ translate( 'Free domain for one year' ) }
+					</span>
+				</>
+			);
 		}
 
 		const message = translate( '{{span}}Free for the first year with annual paid plans{{/span}}', {
@@ -252,9 +274,16 @@ class DomainProductPrice extends Component {
 	}
 }
 
-export default connect( ( state ) => ( {
-	domainsWithPlansOnly: getCurrentUser( state )
-		? currentUserHasFlag( state, DOMAINS_WITH_PLANS_ONLY )
-		: true,
-	isCurrentPlan100YearPlan: getSitePlanSlug( state, getSelectedSiteId( state ) ) === PLAN_100_YEARS,
-} ) )( localize( DomainProductPrice ) );
+export default connect( ( state ) => {
+	const sitePlanSlug = getSitePlanSlug( state, getSelectedSiteId( state ) );
+
+	return {
+		domainsWithPlansOnly: getCurrentUser( state )
+			? currentUserHasFlag( state, DOMAINS_WITH_PLANS_ONLY )
+			: true,
+		isCurrentPlan100YearPlan: sitePlanSlug === PLAN_100_YEARS,
+		isBusinessOrEcommerceMonthlyPlan:
+			( sitePlanSlug === PLAN_BUSINESS_MONTHLY || sitePlanSlug === PLAN_ECOMMERCE_MONTHLY ) &&
+			hasDomainCredit( state, getSelectedSiteId( state ) ),
+	};
+} )( localize( DomainProductPrice ) );
