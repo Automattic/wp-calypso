@@ -1,4 +1,4 @@
-import { isJetpackLegacyItem } from '@automattic/calypso-products';
+import { isJetpackLegacyItem, isJetpackLegacyTermUpgrade } from '@automattic/calypso-products';
 import page from '@automattic/calypso-router';
 import debugFactory from 'debug';
 import { useTranslate } from 'i18n-calypso';
@@ -22,6 +22,7 @@ import {
 	getCurrentUserVisibleSiteCount,
 	isUserLoggedIn,
 } from 'calypso/state/current-user/selectors';
+import { getSitePurchases } from 'calypso/state/purchases/selectors';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import {
 	COMPARE_PLANS_QUERY_PARAM,
@@ -243,10 +244,11 @@ export function checkout( context, next ) {
 
 export function redirectJetpackLegacyPlans( context, next ) {
 	const product = getProductSlugFromContext( context );
+	const state = context.store.getState();
+	const selectedSite = getSelectedSite( state );
+	const sitePurchases = selectedSite ? getSitePurchases( state, selectedSite.id ) : [];
 
-	if ( isJetpackLegacyItem( product ) ) {
-		const state = context.store.getState();
-		const selectedSite = getSelectedSite( state );
+	if ( isJetpackLegacyItem( product ) && ! isJetpackLegacyTermUpgrade( product, sitePurchases ) ) {
 		const recommendedItems = LEGACY_TO_RECOMMENDED_MAP[ product ].join( ',' );
 
 		page(
