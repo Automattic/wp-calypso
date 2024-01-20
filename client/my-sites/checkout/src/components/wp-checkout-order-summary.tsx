@@ -67,7 +67,6 @@ export function WPCheckoutOrderSummary( {
 		productId: number,
 		volume?: number
 	) => void;
-	nextDomainIsFree?: boolean;
 } ) {
 	const { formStatus } = useFormStatus();
 	const cartKey = useCartKey();
@@ -130,7 +129,7 @@ export function CheckoutSummaryFeaturedList( {
 				) : (
 					<CheckoutSummaryFeaturesWrapper
 						siteId={ siteId }
-						nextDomainIsFree={ responseCart?.next_domain_is_free }
+						nextDomainIsFree={ responseCart.next_domain_is_free }
 					/>
 				) }
 			</CheckoutSummaryFeatures>

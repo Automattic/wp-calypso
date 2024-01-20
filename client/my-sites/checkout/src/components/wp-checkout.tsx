@@ -466,11 +466,7 @@ export default function WPCheckout( {
 									/>
 								) }
 
-								<WPCheckoutOrderSummary
-									siteId={ siteId }
-									onChangeSelection={ changeSelection }
-									nextDomainIsFree={ responseCart?.next_domain_is_free }
-								/>
+								<WPCheckoutOrderSummary siteId={ siteId } onChangeSelection={ changeSelection } />
 								{ ! isWcMobile && ! isDIFMInCart && ! hasMonthlyProduct && (
 									<>
 										<CheckoutSidebarPlanUpsell />
