@@ -26,7 +26,7 @@ import './prompt.scss';
 const debug = debugFactory( 'jetpack-ai-calypso:prompt-box' );
 
 export const Prompt: React.FC< { initialPrompt?: string } > = ( { initialPrompt = '' } ) => {
-	const [ prompt, setPrompt ] = useState( initialPrompt );
+	const [ prompt, setPrompt ] = useState< string >( initialPrompt );
 	const [ requestsRemaining, setRequestsRemaining ] = useState( 0 );
 	const { enhancePromptFetchError, logoFetchError } = useRequestErrors();
 	const hasPrompt = prompt?.length >= MINIMUM_PROMPT_LENGTH;
@@ -74,7 +74,7 @@ export const Prompt: React.FC< { initialPrompt?: string } > = ( { initialPrompt 
 	}, [ currentLimit, currentUsage ] );
 
 	useEffect( () => {
-		// Update prompt after enhancement
+		// Update prompt text node after enhancement
 		if ( inputRef.current && inputRef.current.textContent !== prompt ) {
 			inputRef.current.textContent = prompt;
 		}
@@ -85,9 +85,27 @@ export const Prompt: React.FC< { initialPrompt?: string } > = ( { initialPrompt 
 		generateLogo( { prompt } );
 	}, [ generateLogo, prompt ] );
 
-	const onPromptInput = useCallback( ( event: React.ChangeEvent< HTMLInputElement > ) => {
+	const onPromptInput = ( event: React.ChangeEvent< HTMLInputElement > ) => {
 		setPrompt( event.target.textContent || '' );
-	}, [] );
+	};
+
+	const onPromptPaste = ( event: React.ClipboardEvent< HTMLInputElement > ) => {
+		event.preventDefault();
+
+		// Paste plain text only
+		const text = event.clipboardData.getData( 'text/plain' );
+
+		const selection = window.getSelection();
+		if ( ! selection || ! selection.rangeCount ) {
+			return;
+		}
+		selection.deleteFromDocument();
+		const range = selection.getRangeAt( 0 );
+		range.insertNode( document.createTextNode( text ) );
+		selection.collapseToEnd();
+
+		setPrompt( inputRef.current?.textContent || '' );
+	};
 
 	const onUpgradeClick = () => {
 		recordTracksEvent( EVENT_UPGRADE, { placement: EVENT_PLACEMENT_INPUT_FOOTER } );
@@ -118,6 +136,7 @@ export const Prompt: React.FC< { initialPrompt?: string } > = ( { initialPrompt 
 					suppressContentEditableWarning={ true }
 					className="prompt-query__input"
 					onInput={ onPromptInput }
+					onPaste={ onPromptPaste }
 					placeholder={ __(
 						'Describe your site or simply ask for a logo specifying some details about it',
 						'jetpack'
