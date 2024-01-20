@@ -1,6 +1,5 @@
 export { getEmailAddress } from './get-email-address';
 export { getEmailForwardAddress } from './get-email-forward-address';
-export { getEmailForwardLimit } from './get-email-forward-limit';
 export { hasGoogleAccountTOSWarning } from './has-google-account-t-o-s-warning';
 export { hasIntroductoryOffer } from './has-introductory-offer';
 export { hasIntroductoryOfferFreeTrial } from './has-introductory-offer-free-trial';

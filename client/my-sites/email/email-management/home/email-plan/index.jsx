@@ -13,7 +13,7 @@ import VerticalNavItem from 'calypso/components/vertical-nav/item';
 import { useIsLoading as useAddEmailForwardMutationIsLoading } from 'calypso/data/emails/use-add-email-forward-mutation';
 import { useGetEmailAccountsQuery } from 'calypso/data/emails/use-get-email-accounts-query';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
-import { canAddMailboxesToEmailSubscription, getEmailForwardLimit } from 'calypso/lib/emails';
+import { canAddMailboxesToEmailSubscription } from 'calypso/lib/emails';
 import {
 	getGoogleAdminUrl,
 	getGoogleMailServiceFamily,
@@ -85,6 +85,10 @@ function getAccount( accounts ) {
 	return accounts?.[ 0 ];
 }
 
+function getEmailForwardLimit( data ) {
+	return data?.[ 0 ]?.maximum_mailboxes || 0;
+}
+
 function getMailboxes( data ) {
 	const account = getAccount( data );
 
@@ -102,9 +106,6 @@ function EmailPlan( { domain, hideHeaderCake = false, selectedSite, source } ) {
 	const currentRoute = useSelector( getCurrentRoute );
 	const canAddMailboxes = canAddMailboxesToEmailSubscription( domain );
 	const hasSubscription = hasEmailSubscription( domain );
-	const emailForwardsLimit = useSelector( ( state ) =>
-		getEmailForwardLimit( state, selectedSite.ID )
-	);
 
 	const handleBack = () => {
 		page( getEmailManagementPath( selectedSite.slug ) );
@@ -119,6 +120,19 @@ function EmailPlan( { domain, hideHeaderCake = false, selectedSite, source } ) {
 			} )
 		);
 	};
+
+	const addEmailForwardMutationActive = useAddEmailForwardMutationIsLoading();
+
+	const { data: emailAccounts = [], isLoading } = useGetEmailAccountsQuery(
+		selectedSite.ID,
+		domain.name,
+		{
+			refetchOnMount: ! addEmailForwardMutationActive,
+			retry: false,
+		}
+	);
+
+	const emailForwardsLimit = getEmailForwardLimit( emailAccounts );
 
 	function getAddMailboxProps() {
 		if ( hasGSuiteWithUs( domain ) ) {
@@ -275,17 +289,6 @@ function EmailPlan( { domain, hideHeaderCake = false, selectedSite, source } ) {
 			</VerticalNavItem>
 		);
 	}
-
-	const addEmailForwardMutationActive = useAddEmailForwardMutationIsLoading();
-
-	const { data: emailAccounts = [], isLoading } = useGetEmailAccountsQuery(
-		selectedSite.ID,
-		domain.name,
-		{
-			refetchOnMount: ! addEmailForwardMutationActive,
-			retry: false,
-		}
-	);
 
 	return (
 		<>
