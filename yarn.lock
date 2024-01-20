@@ -1466,10 +1466,10 @@ __metadata:
     "@testing-library/jest-dom": "npm:^6.2.0"
     "@testing-library/react": "npm:^14.1.2"
     "@testing-library/user-event": "npm:^14.5.2"
-    "@wordpress/data": "npm:^9.18.0"
-    "@wordpress/element": "npm:^5.25.0"
-    "@wordpress/url": "npm:^3.49.0"
-    "@wordpress/warning": "npm:^2.48.0"
+    "@wordpress/data": "npm:^9.19.0"
+    "@wordpress/element": "npm:^5.26.0"
+    "@wordpress/url": "npm:^3.50.0"
+    "@wordpress/warning": "npm:^2.49.0"
     classnames: "npm:^2.3.2"
     i18n-calypso: "workspace:^"
     react-intersection-observer: "npm:^9.4.3"
@@ -1478,7 +1478,7 @@ __metadata:
     typescript: "npm:^5.3.3"
     webpack: "npm:^5.89.0"
   peerDependencies:
-    "@wordpress/i18n": ^4.48.0
+    "@wordpress/i18n": ^4.49.0
     postcss: ^8.4.5
     react: ^18.2.0
     react-dom: ^18.2.0
