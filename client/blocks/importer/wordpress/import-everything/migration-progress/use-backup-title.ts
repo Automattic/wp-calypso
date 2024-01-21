@@ -2,37 +2,33 @@ import { sprintf } from '@wordpress/i18n';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback, useEffect, useState } from 'react';
 import { byteToMB } from 'calypso/blocks/importer/util';
+import type { MigrationState } from 'calypso/blocks/importer/wordpress/types';
 
-export default function useBackupTitle(
-	backupPercent?: number,
-	backupMedia?: number,
-	backupPosts?: number,
-	siteSize?: number
-) {
+export default function useBackupTitle( details: MigrationState ) {
 	const translate = useTranslate();
 
 	const generateTitle = useCallback( () => {
-		if ( backupPercent === 100 ) {
-			if ( backupMedia ) {
+		if ( details.backupPercent === 100 ) {
+			if ( details.backupMedia ) {
 				return sprintf( translate( 'Moving your %(count)d files…' ), {
-					count: backupMedia,
+					count: details.backupMedia,
 				} );
-			} else if ( backupPosts ) {
+			} else if ( details.backupPosts ) {
 				return sprintf( translate( 'Moving your %(count)d posts…' ), {
-					count: backupPosts,
+					count: details.backupPosts,
 				} );
 			}
 
 			return translate( 'Moving your files…' );
 		}
 
-		if ( typeof backupPercent === 'undefined' ) {
+		if ( typeof details.backupPercent === 'undefined' ) {
 			return translate( 'Backing up your data…' );
 		}
 
-		const percent = Math.max( backupPercent, 1 );
+		const percent = Math.max( details.backupPercent ?? 0, 1 );
 
-		if ( typeof siteSize === 'undefined' ) {
+		if ( typeof details.siteSize === 'undefined' ) {
 			return sprintf( translate( 'Backing up %(percentage)d%% of your data…' ), {
 				percentage: percent,
 			} );
@@ -40,9 +36,9 @@ export default function useBackupTitle(
 
 		return sprintf( translate( 'Backing up %(percentage)d%% of your %(size)f MB of data…' ), {
 			percentage: percent,
-			size: byteToMB( siteSize ),
+			size: byteToMB( details.siteSize ?? 0 ),
 		} );
-	}, [ backupPercent, backupMedia, backupPosts, siteSize ] );
+	}, [ details.backupPercent, details.backupMedia, details.backupPosts, details.siteSize ] );
 
 	const [ title, setTitle ] = useState( generateTitle() );
 

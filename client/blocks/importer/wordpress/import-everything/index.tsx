@@ -1,4 +1,4 @@
-import { MigrationStatus, MigrationStatusError, type SiteDetails } from '@automattic/data-stores';
+import { MigrationStatus, type SiteDetails } from '@automattic/data-stores';
 import { Hooray, SubTitle, Title } from '@automattic/onboarding';
 import { createElement, createInterpolateElement } from '@wordpress/element';
 import { localize } from 'i18n-calypso';
@@ -19,10 +19,10 @@ import DomainInfo from '../../components/domain-info';
 import DoneButton from '../../components/done-button';
 import NotAuthorized from '../../components/not-authorized';
 import { isTargetSitePlanCompatible } from '../../util';
-import { WPImportOption } from '../types';
 import { clearMigrateSource, retrieveMigrateSource } from '../utils';
 import MigrationError from './migration-error';
 import MigrationProgress from './migration-progress';
+import type { WPImportOption, MigrationState } from '../types';
 import type { UrlData } from 'calypso/blocks/import/types';
 import type { StepNavigator } from 'calypso/blocks/importer/types';
 
@@ -37,18 +37,12 @@ interface Props {
 	sourceUrlAnalyzedData?: UrlData | null;
 }
 
-interface State {
-	migrationStatus: MigrationStatus;
-	migrationErrorStatus: MigrationStatusError;
-	percent: number | null;
-}
-
 type ExtraParams = {
 	[ key: string ]: any;
 };
 
 export class ImportEverything extends SectionMigrate {
-	componentDidUpdate( prevProps: any, prevState: State ) {
+	componentDidUpdate( prevProps: any, prevState: MigrationState ) {
 		super.componentDidUpdate( prevProps, prevState );
 		this.recordMigrationStatusChange( prevState );
 	}
@@ -102,7 +96,7 @@ export class ImportEverything extends SectionMigrate {
 		}
 	};
 
-	recordMigrationStatusChange = ( prevState: State ) => {
+	recordMigrationStatusChange = ( prevState: MigrationState ) => {
 		const trackEventProps = {
 			source_site_id: this.props.sourceSiteId,
 			source_site_url: this.props.sourceUrlAnalyzedData?.url,
@@ -210,13 +204,8 @@ export class ImportEverything extends SectionMigrate {
 				<MigrationProgress
 					status={ this.state.migrationStatus as MigrationStatus }
 					fetchStatus={ this.updateFromAPI }
-					percent={ this.state.percent || 0 }
-					siteSize={ this.state.siteSize }
-					backupMedia={ this.state.backupMedia }
-					backupPosts={ this.state.backupPosts }
-					backupPercent={ this.state.backupPercent }
-					restorePercent={ this.state.restorePercent }
-					restoreMessage={ this.state.restoreMessage }
+					// cast to unknown to avoid type error caused by passing state as props from jsx
+					details={ this.state as unknown as MigrationState }
 				/>
 			</div>
 		);
