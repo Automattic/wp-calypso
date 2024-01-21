@@ -23,26 +23,20 @@ class PlansNavigation extends Component {
 		isTrial: PropTypes.bool,
 	};
 
-	static planPaths = [
-		'/plans',
-		'/plans/monthly',
-		'/plans/yearly',
-		'/plans/2yearly',
-		'/plans/3yearly',
-	];
-
 	getSectionTitle( path ) {
-		const { translate } = this.props;
+		switch ( path ) {
+			case '/plans/my-plan':
+				return 'My Plan';
 
-		if ( path === '/plans/my-plan' ) {
-			return translate( 'My Plan' );
+			case '/plans':
+			case '/plans/monthly':
+			case '/plans/yearly':
+			case '/plans/2yearly':
+				return 'Plans';
+
+			default:
+				return path.split( '?' )[ 0 ].replace( /\//g, ' ' );
 		}
-
-		if ( PlansNavigation.planPaths.includes( path ) ) {
-			return translate( 'Plans' );
-		}
-
-		return path.split( '?' )[ 0 ].replace( /\//g, ' ' );
 	}
 
 	isSiteOn100YearPlan() {
@@ -72,7 +66,12 @@ class PlansNavigation extends Component {
 							{ ! this.isSiteOn100YearPlan() && (
 								<NavItem
 									path={ `/plans/${ site.slug }` }
-									selected={ PlansNavigation.planPaths.includes( path ) }
+									selected={
+										path === '/plans' ||
+										path === '/plans/monthly' ||
+										path === '/plans/yearly' ||
+										path === '/plans/2yearly'
+									}
 								>
 									{ translate( 'Plans' ) }
 								</NavItem>
