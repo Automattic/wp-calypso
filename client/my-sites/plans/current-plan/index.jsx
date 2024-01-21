@@ -148,7 +148,7 @@ class CurrentPlan extends Component {
 		if ( JETPACK_COMPLETE_PLANS.includes( product ) ) {
 			return <JetpackCompleteThankYou />;
 		}
-
+		
 		if ( ! currentPlan || isFreePlanProduct( currentPlan ) || isFreeJetpackPlan( currentPlan ) ) {
 			return <FreePlanThankYou />;
 		}
