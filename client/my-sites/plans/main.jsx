@@ -56,7 +56,6 @@ import DomainAndPlanPackageNavigation from '../domains/components/domain-and-pla
 import DomainUpsellDialog from './components/domain-upsell-dialog';
 import PlansHeader from './components/plans-header';
 import ECommerceTrialPlansPage from './ecommerce-trial';
-import ModernizedLayout from './modernized-layout';
 import BusinessTrialPlansPage from './trials/business-trial-plans-page';
 import WooExpressPlansPage from './woo-express-plans-page';
 
@@ -359,7 +358,6 @@ class Plans extends Component {
 			currentPlan,
 			domainAndPlanPackage,
 			isDomainAndPlanPackageFlow,
-			isJetpackNotAtomic,
 			isDomainUpsell,
 			isDomainUpsellSuggested,
 			isFreePlan,
@@ -410,8 +408,7 @@ class Plans extends Component {
 		const showPlansNavigation = ! isWooExpressPlan;
 
 		return (
-			<div>
-				{ ! isJetpackNotAtomic && <ModernizedLayout /> }
+			<Main fullWidthLayout>
 				{ selectedSite.ID && <QuerySitePurchases siteId={ selectedSite.ID } /> }
 				<DocumentHead title={ translate( 'Plans', { textOnly: true } ) } />
 				<PageViewTracker path="/plans/:site" title="Plans" />
@@ -449,17 +446,16 @@ class Plans extends Component {
 						) }
 						<div id="plans" className="plans plans__has-sidebar">
 							{ showPlansNavigation && <PlansNavigation path={ this.props.context.path } /> }
-							<Main fullWidthLayout={ ! isEcommerceTrial } wideLayout={ isEcommerceTrial }>
-								{ ! isDomainAndPlanPackageFlow && domainAndPlanPackage && (
-									<DomainAndPlanUpsellNotice />
-								) }
-								{ this.renderMainContent( {
-									isEcommerceTrial,
-									isBusinessTrial,
-									isWooExpressPlan,
-								} ) }
-								<PerformanceTrackerStop />
-							</Main>
+
+							{ ! isDomainAndPlanPackageFlow && domainAndPlanPackage && (
+								<DomainAndPlanUpsellNotice />
+							) }
+							{ this.renderMainContent( {
+								isEcommerceTrial,
+								isBusinessTrial,
+								isWooExpressPlan,
+							} ) }
+							<PerformanceTrackerStop />
 						</div>
 					</div>
 				) }
@@ -469,7 +465,7 @@ class Plans extends Component {
 						title={ translate( 'You are not authorized to view this page' ) }
 					/>
 				) }
-			</div>
+			</Main>
 		);
 	}
 }

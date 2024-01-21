@@ -231,7 +231,6 @@ class PurchasesListing extends Component {
 				compact={ true }
 			>
 				{ label }
-				&nbsp;
 				<OwnerInfo purchase={ purchase } />
 			</Button>
 		);
