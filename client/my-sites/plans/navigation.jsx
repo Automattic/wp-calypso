@@ -64,7 +64,7 @@ class PlansNavigation extends Component {
 		return (
 			<div className="navigation">
 				<SectionNav hasPinnedItems={ hasPinnedItems } selectedText={ sectionTitle }>
-					<NavTabs label="gfssgfg" selectedText={ sectionTitle }>
+					<NavTabs label={ translate( 'Section' ) } selectedText={ sectionTitle }>
 						<NavItem
 							path={ `/plans/my-plan/${ site.slug }` }
 							selected={ path === '/plans/my-plan' }
