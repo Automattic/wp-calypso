@@ -34,14 +34,13 @@ export function DisconnectGitHubButton( { connection }: DisconnectGitHubButtonPr
 
 	return (
 		<Button
-			compact
-			className="disconnect-github"
-			borderless
+			scary
+			primary
 			onClick={ () => disconnect( connection ) }
 			busy={ isDisconnecting }
 			disabled={ isDisconnecting } // `busy` doesn't actually disable the button
 		>
-			{ __( '(disconnect)' ) }
+			{ __( 'Disconnect' ) }
 		</Button>
 	);
 }
