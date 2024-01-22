@@ -5,6 +5,7 @@ import styled from '@emotion/styled';
 import { useTranslate } from 'i18n-calypso';
 import type { Theme } from '@automattic/composite-checkout';
 import type { ResponseCart, RemoveCouponFromCart } from '@automattic/shopping-cart';
+import type { CostOverrideForDisplay } from '@automattic/wpcom-checkout';
 
 const CostOverridesListStyle = styled.div`
 	display: flex;
@@ -54,65 +55,6 @@ const DeleteButton = styled( Button )< { theme?: Theme } >`
 	font-size: ${ hasCheckoutVersion( '2' ) ? '14px' : 'inherit' };
 	color: ${ ( props ) => props.theme.colors.textColorLight };
 `;
-
-export interface CostOverrideForDisplay {
-	humanReadableReason: string;
-	overrideCode: string;
-	discountAmount: number;
-}
-
-export function filterAndGroupCostOverridesForDisplay(
-	responseCart: ResponseCart,
-	translate: ReturnType< typeof useTranslate >
-): CostOverrideForDisplay[] {
-	// Collect cost overrides from each line item and group them by type so we
-	// can show them all together after the line item list.
-	const costOverridesGrouped = responseCart.products.reduce<
-		Record< string, CostOverrideForDisplay >
-	>( ( grouped, product ) => {
-		const costOverrides = product?.cost_overrides;
-		if ( ! costOverrides ) {
-			return grouped;
-		}
-
-		costOverrides.forEach( ( costOverride ) => {
-			if ( costOverride.does_override_original_cost ) {
-				// We won't display original cost overrides since they are
-				// included in the original cost that's being displayed. They
-				// are not discounts.
-				return;
-			}
-			const discountAmount = grouped[ costOverride.override_code ]?.discountAmount ?? 0;
-			const newDiscountAmount =
-				costOverride.old_subtotal_integer - costOverride.new_subtotal_integer;
-			grouped[ costOverride.override_code ] = {
-				humanReadableReason: costOverride.human_readable_reason,
-				overrideCode: costOverride.override_code,
-				discountAmount: discountAmount + newDiscountAmount,
-			};
-		} );
-
-		// Add a fake cost override for introductory offers until D134600-code
-		// is merged because they are otherwise discounts that are invisible to
-		// the list of cost overrides. Remove this once that diff is merged.
-		if (
-			product.introductory_offer_terms?.enabled &&
-			! costOverrides.some( ( override ) => override.override_code === 'introductory-offer' )
-		) {
-			const discountAmount = grouped[ 'introductory-offer' ]?.discountAmount ?? 0;
-			const newDiscountAmount =
-				product.item_original_subtotal_integer - product.item_subtotal_before_discounts_integer;
-			grouped[ 'introductory-offer' ] = {
-				humanReadableReason: translate( 'Introductory offer' ),
-				overrideCode: 'introductory-offer',
-				discountAmount: discountAmount + newDiscountAmount,
-			};
-		}
-		return grouped;
-	}, {} );
-
-	return Object.values( costOverridesGrouped );
-}
 
 export function CostOverridesList( {
 	costOverridesList,

@@ -32,6 +32,7 @@ import {
 	getSubtotalWithCredits,
 	doesPurchaseHaveFullCredits,
 	getSubtotalWithoutDiscounts,
+	filterAndGroupCostOverridesForDisplay,
 } from '@automattic/wpcom-checkout';
 import { keyframes } from '@emotion/react';
 import styled from '@emotion/styled';
@@ -49,7 +50,7 @@ import getFlowPlanFeatures from '../lib/get-flow-plan-features';
 import getJetpackProductFeatures from '../lib/get-jetpack-product-features';
 import getPlanFeatures from '../lib/get-plan-features';
 import { CheckIcon } from './check-icon';
-import { CostOverridesList, filterAndGroupCostOverridesForDisplay } from './cost-overrides-list';
+import { CostOverridesList } from './cost-overrides-list';
 import { getRefundPolicies, getRefundWindows, RefundPolicy } from './refund-policies';
 import type { ResponseCart, ResponseCartProduct } from '@automattic/shopping-cart';
 import type { TranslateResult } from 'i18n-calypso';
