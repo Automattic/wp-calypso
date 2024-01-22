@@ -1,4 +1,5 @@
 import config from '@automattic/calypso-config';
+import page from '@automattic/calypso-router';
 import {
 	PricingSlider,
 	RenderThumbFunction,
@@ -8,6 +9,8 @@ import formatCurrency from '@automattic/format-currency';
 import { Button, CheckboxControl } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import React, { useState } from 'react';
+import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
+import useNoticeVisibilityMutation from 'calypso/my-sites/stats/hooks/use-notice-visibility-mutation';
 import { useSelector } from 'calypso/state';
 import getIsSiteWPCOM from 'calypso/state/selectors/is-site-wpcom';
 import gotoCheckoutPage from './stats-purchase-checkout-redirect';
@@ -56,6 +59,9 @@ const PersonalPurchase = ( {
 		uiEmojiHeartTier,
 		uiImageCelebrationTier,
 	} = sliderSettings;
+	const isOdysseyStats = config.isEnabled( 'is_running_in_jetpack_site' );
+	const isTierUpgradeSliderEnabled = config.isEnabled( 'stats/tier-upgrade-slider' );
+	const isNewPurchaseFlowEnabled = config.isEnabled( 'stats/checkout-flows-v2' );
 
 	const sliderLabel = ( ( props, state ) => {
 		let emoji;
@@ -84,32 +90,34 @@ const PersonalPurchase = ( {
 		);
 	} ) as RenderThumbFunction;
 
-	const handleClick = ( e: React.MouseEvent< HTMLAnchorElement, MouseEvent > ) =>
-		handlePlanSwap( e );
-
-	const isOdysseyStats = config.isEnabled( 'is_running_in_jetpack_site' );
 	const isWPCOMSite = useSelector( ( state ) => siteId && getIsSiteWPCOM( state, siteId ) );
 	// The button of @automattic/components has built-in color scheme support for Calypso.
 	const ButtonComponent = isWPCOMSite ? CalypsoButton : Button;
+	// TODO: Remove old slider code paths.
+	const showOldSlider = ! isTierUpgradeSliderEnabled;
 
-	const isTierUpgradeSliderEnabled = config.isEnabled( 'stats/tier-upgrade-slider' );
+	let continueButtonText = isStandalone
+		? translate( 'Get Stats' )
+		: translate( 'Get Jetpack Stats' );
+
+	if ( isNewPurchaseFlowEnabled ) {
+		continueButtonText = translate( 'Contribute and continue' );
+	}
+
+	const { mutateAsync: mutateNoticeVisbilityAsync } = useNoticeVisibilityMutation(
+		siteId,
+		'focus_jetpack_purchase'
+	);
+
+	const handleClick = ( e: React.MouseEvent< HTMLAnchorElement, MouseEvent > ) =>
+		handlePlanSwap( e );
+
 	const handleSliderChanged = ( index: number ) => {
 		// TODO: Remove state from caller.
 		// Caller expects an index but doesn't do anything with it.
 		// Value is used below to determine tier price.
 		setSubscriptionValue( index );
 	};
-
-	// TODO: Remove old slider code paths.
-	const showOldSlider = ! isTierUpgradeSliderEnabled;
-	const isNewPurchaseFlowEnabled = config.isEnabled( 'stats/checkout-flows-v2' );
-
-	let continueButtonText = isStandalone
-		? translate( 'Get Stats' )
-		: translate( 'Get Jetpack Stats' );
-	if ( isNewPurchaseFlowEnabled ) {
-		continueButtonText = translate( 'Contribute and continue' );
-	}
 
 	const handleCheckoutRedirect = () => {
 		gotoCheckoutPage( {
@@ -123,7 +131,14 @@ const PersonalPurchase = ( {
 	};
 
 	const handleCheckoutPostponed = () => {
-		// TODO: Handle the postponed button action.
+		mutateNoticeVisbilityAsync().finally( () => {
+			// publish event
+			const event_from = isOdysseyStats ? 'jetpack_odyssey' : 'calypso';
+			recordTracksEvent( `${ event_from }_stats_purchase_flow_skip_button_clicked` );
+
+			// redirect to the Traffic page
+			setTimeout( () => page( `/stats/day/${ siteSlug }` ), 250 );
+		} );
 	};
 
 	return (

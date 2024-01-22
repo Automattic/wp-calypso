@@ -1,8 +1,6 @@
 import { LoadingPlaceholder } from '@automattic/components';
-import { useIsEnglishLocale } from '@automattic/i18n-utils';
 import { PlanButton } from '@automattic/plans-grid-next';
 import { useEffect, useState } from '@wordpress/element';
-import { hasTranslation } from '@wordpress/i18n';
 import { useTranslate } from 'i18n-calypso';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import {
@@ -37,18 +35,9 @@ export default function PaidPlanIsRequiredDialog( {
 		onFreePlanSelected();
 	}
 
-	const isEnglish = useIsEnglishLocale();
-	const upsellDescription =
-		isEnglish ||
-		hasTranslation(
-			"Custom domains are only available with a paid plan. Choose annual billing and receive the domain's first year free."
-		)
-			? translate(
-					"Custom domains are only available with a paid plan. Choose annual billing and receive the domain's first year free."
-			  )
-			: translate(
-					'Custom domains are only available with a paid plan. And they are free for the first year with an annual paid plan.'
-			  );
+	const upsellDescription = translate(
+		"Custom domains are only available with a paid plan. Choose annual billing and receive the domain's first year free."
+	);
 
 	return (
 		<DialogContainer>

@@ -1,4 +1,8 @@
-import { FEATURE_VIDEO_UPLOADS, FEATURE_STYLE_CUSTOMIZATION } from '@automattic/calypso-products';
+import {
+	FEATURE_VIDEO_UPLOADS,
+	FEATURE_STYLE_CUSTOMIZATION,
+	isFreePlanProduct,
+} from '@automattic/calypso-products';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { Task } from '@automattic/launchpad';
 import { ExternalLink } from '@wordpress/components';
@@ -77,6 +81,23 @@ const getPlanSelectedTask: TaskAction = ( task, flow, context ): Task => {
 	};
 };
 
+const getPlanCompletedTask: TaskAction = ( task, flow, context ) => {
+	const { translatedPlanName, siteInfoQueryArgs, displayGlobalStylesWarning, site } = context;
+
+	const isCurrentPlanFree = site?.plan ? isFreePlanProduct( site?.plan ) : true;
+
+	return {
+		...task,
+		actionDispatch: () => recordTaskClickTracksEvent( task, flow, context ),
+		calypso_path: addQueryArgs( `/setup/${ flow }/plans`, siteInfoQueryArgs ),
+		badge_text: task.completed ? translatedPlanName : task.badge_text,
+		subtitle: getPlanTaskSubtitle( task, flow, context, displayGlobalStylesWarning ),
+		disabled: task.completed && ! isCurrentPlanFree,
+		useCalypsoPath: true,
+	};
+};
+
 export const actions = {
 	plan_selected: getPlanSelectedTask,
+	plan_completed: getPlanCompletedTask,
 };

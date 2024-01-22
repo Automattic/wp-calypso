@@ -7,14 +7,13 @@ import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
 import { isEmpty, omit, get } from 'lodash';
 import PropTypes from 'prop-types';
-import { Component, useEffect, useState } from 'react';
+import { Component } from 'react';
 import { connect } from 'react-redux';
 import SignupForm from 'calypso/blocks/signup-form';
 import JetpackLogo from 'calypso/components/jetpack-logo';
 import WooCommerceConnectCartHeader from 'calypso/components/woocommerce-connect-cart-header';
 import { initGoogleRecaptcha, recordGoogleRecaptchaAction } from 'calypso/lib/analytics/recaptcha';
 import detectHistoryNavigation from 'calypso/lib/detect-history-navigation';
-import { useExperiment } from 'calypso/lib/explat';
 import { getSocialServiceFromClientId } from 'calypso/lib/login';
 import {
 	isCrowdsignalOAuth2Client,
@@ -731,54 +730,4 @@ const ConnectedUser = connect(
 	}
 )( localize( UserStep ) );
 
-const ExperimentWrappedUser = ( props ) => {
-	const [ isLayoutSwitchComplete, setIsLayoutSwitchComplete ] = useState(
-		props.flowName !== 'onboarding-pm'
-	);
-	const [ isLoading, experimentAssignment ] = useExperiment(
-		'calypso_gf_signup_onboardingpm_passwordless_registration',
-		{
-			isEligible: props.flowName === 'onboarding-pm',
-		}
-	);
-	useEffect( () => {
-		if ( ! isLoading && props.flowName === 'onboarding-pm' ) {
-			const [ globalDiv ] = document.getElementsByClassName( 'signup__step is-user' );
-			const variationName = experimentAssignment?.variationName;
-			if ( typeof globalDiv === 'object' ) {
-				if ( variationName === 'treatment' ) {
-					globalDiv.classList.add( 'is-passwordless-experiment' );
-				} else if ( variationName === null || variationName === 'control' ) {
-					globalDiv.classList.remove( 'is-passwordless-experiment' );
-				}
-			}
-
-			setIsLayoutSwitchComplete( true );
-		}
-		return () => {
-			if ( props.flowName === 'onboarding-pm' ) {
-				const [ globalDiv ] = document.getElementsByClassName( 'signup__step is-user' );
-				if ( typeof globalDiv === 'object' ) {
-					globalDiv.classList.remove( 'is-passwordless-experiment' );
-				}
-			}
-		};
-	}, [
-		experimentAssignment?.variationName,
-		isLoading,
-		props.flowName,
-		setIsLayoutSwitchComplete,
-	] );
-
-	if ( ! isLayoutSwitchComplete ) {
-		return null;
-	}
-	return (
-		<ConnectedUser
-			{ ...props }
-			isSocialFirst={ experimentAssignment?.variationName === 'treatment' || props.isSocialFirst }
-		/>
-	);
-};
-
-export default ExperimentWrappedUser;
+export default ConnectedUser;

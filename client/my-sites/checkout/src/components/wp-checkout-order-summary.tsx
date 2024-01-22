@@ -26,13 +26,13 @@ import { formatCurrency } from '@automattic/format-currency';
 import { isNewsletterOrLinkInBioFlow, isAnyHostingFlow } from '@automattic/onboarding';
 import { useShoppingCart } from '@automattic/shopping-cart';
 import {
-	getCouponLineItemFromCart,
 	getTaxBreakdownLineItemsFromCart,
 	getTotalLineItemFromCart,
 	hasCheckoutVersion,
-	getCreditsLineItemFromCart,
-	getSubtotalWithoutCoupon,
 	getSubtotalWithCredits,
+	doesPurchaseHaveFullCredits,
+	getSubtotalWithoutDiscounts,
+	filterAndGroupCostOverridesForDisplay,
 } from '@automattic/wpcom-checkout';
 import { keyframes } from '@emotion/react';
 import styled from '@emotion/styled';
@@ -49,6 +49,7 @@ import getFlowPlanFeatures from '../lib/get-flow-plan-features';
 import getJetpackProductFeatures from '../lib/get-jetpack-product-features';
 import getPlanFeatures from '../lib/get-plan-features';
 import { CheckIcon } from './check-icon';
+import { CostOverridesList } from './cost-overrides-list';
 import { getRefundPolicies, getRefundWindows, RefundPolicy } from './refund-policies';
 import type { ResponseCart, ResponseCartProduct } from '@automattic/shopping-cart';
 import type { TranslateResult } from 'i18n-calypso';
@@ -119,49 +120,56 @@ export default function WPCheckoutOrderSummary( {
 function CheckoutSummaryPriceList() {
 	const cartKey = useCartKey();
 	const { responseCart } = useShoppingCart( cartKey );
-	const couponLineItem = getCouponLineItemFromCart( responseCart );
-	const creditsLineItem = getCreditsLineItemFromCart( responseCart );
 	const taxLineItems = getTaxBreakdownLineItemsFromCart( responseCart );
 	const totalLineItem = getTotalLineItemFromCart( responseCart );
 	const translate = useTranslate();
-	const subtotalWithoutCoupon = getSubtotalWithoutCoupon( responseCart );
 	const subtotalWithCredits = getSubtotalWithCredits( responseCart );
+	const costOverridesList = filterAndGroupCostOverridesForDisplay( responseCart, translate );
+	const isFullCredits = doesPurchaseHaveFullCredits( responseCart );
+	// Clamp the credits display value to the total
+	const creditsForDisplay = isFullCredits
+		? responseCart.sub_total_with_taxes_integer
+		: responseCart.credits_integer;
+
+	const subtotalBeforeDiscounts = getSubtotalWithoutDiscounts( responseCart );
 
 	return (
 		<>
+			{ ! hasCheckoutVersion( '2' ) && (
+				<CheckoutFirstSubtotalLineItem key="checkout-summary-line-item-subtotal-one">
+					<span>{ translate( 'Subtotal before discounts' ) }</span>
+					<span>
+						{ formatCurrency( subtotalBeforeDiscounts, responseCart.currency, {
+							isSmallestUnit: true,
+							stripZeros: true,
+						} ) }
+					</span>
+				</CheckoutFirstSubtotalLineItem>
+			) }
+			{ ! hasCheckoutVersion( '2' ) && costOverridesList.length > 0 && (
+				<CostOverridesList
+					costOverridesList={ costOverridesList }
+					currency={ responseCart.currency }
+					couponCode={ responseCart.coupon }
+					creditsInteger={ creditsForDisplay }
+				/>
+			) }
 			<CheckoutSummaryAmountWrapper>
 				<CheckoutSummaryLineItem key="checkout-summary-line-item-subtotal">
 					<span>{ translate( 'Subtotal' ) }</span>
 					<span>
-						{ formatCurrency(
-							hasCheckoutVersion( '2' ) ? subtotalWithCredits : subtotalWithoutCoupon,
-							responseCart.currency,
-							{
-								isSmallestUnit: true,
-								stripZeros: true,
-							}
-						) }
+						{ formatCurrency( subtotalWithCredits, responseCart.currency, {
+							isSmallestUnit: true,
+							stripZeros: true,
+						} ) }
 					</span>
 				</CheckoutSummaryLineItem>
-				{ ! hasCheckoutVersion( '2' ) && couponLineItem && (
-					<CheckoutSummaryLineItem key={ 'checkout-summary-line-item-' + couponLineItem.id }>
-						<span>{ couponLineItem.label }</span>
-						<span>{ couponLineItem.formattedAmount }</span>
-					</CheckoutSummaryLineItem>
-				) }
 				{ taxLineItems.map( ( taxLineItem ) => (
 					<CheckoutSummaryLineItem key={ 'checkout-summary-line-item-' + taxLineItem.id }>
 						<span>{ taxLineItem.label }</span>
 						<span>{ taxLineItem.formattedAmount }</span>
 					</CheckoutSummaryLineItem>
 				) ) }
-				{ ! hasCheckoutVersion( '2' ) && creditsLineItem && responseCart.sub_total_integer > 0 && (
-					<CheckoutSummaryLineItem key={ 'checkout-summary-line-item-' + creditsLineItem.id }>
-						<span>{ creditsLineItem.label }</span>
-						<span>{ creditsLineItem.formattedAmount }</span>
-					</CheckoutSummaryLineItem>
-				) }
-
 				<CheckoutSummaryTotal>
 					<span>{ translate( 'Total' ) }</span>
 					<span className="wp-checkout-order-summary__total-price">
@@ -859,12 +867,31 @@ const CheckoutSummaryAmountWrapper = styled.div`
 	padding: 20px 0;
 `;
 
+const CheckoutFirstSubtotalLineItem = styled.div`
+	display: flex;
+	flex-wrap: wrap;
+	font-size: 14px;
+	justify-content: space-between;
+	line-height: 20px;
+	margin-bottom: 16px;
+
+	&:nth-last-of-type( 2 ) {
+		border-bottom: 1px solid ${ ( props ) => props.theme.colors.borderColorLight };
+		margin-bottom: 20px;
+		padding-bottom: 20px;
+	}
+
+	.is-loading & {
+		animation: ${ pulse } 1.5s ease-in-out infinite;
+	}
+`;
+
 const CheckoutSummaryLineItem = styled.div`
 	display: flex;
 	flex-wrap: wrap;
 	font-size: 14px;
 	justify-content: space-between;
-	line-heigh: 20px;
+	line-height: 20px;
 	margin-bottom: 4px;
 
 	&:nth-last-of-type( 2 ) {
