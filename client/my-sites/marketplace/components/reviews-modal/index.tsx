@@ -1,7 +1,7 @@
 import page from '@automattic/calypso-router';
 import { Dialog, Button } from '@automattic/components';
 import { getLocaleSlug, useTranslate } from 'i18n-calypso';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import Rating from 'calypso/components/rating';
 import { PluginPeriodVariations } from 'calypso/data/marketplace/types';
@@ -10,6 +10,7 @@ import {
 	useMarketplaceReviewsQuery,
 	useMarketplaceReviewsStatsQuery,
 } from 'calypso/data/marketplace/use-marketplace-reviews';
+import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { getProductSlugByPeriodVariation } from 'calypso/lib/plugins/utils';
 import { MarketplaceReviewsList } from 'calypso/my-sites/marketplace/components/reviews-list';
 import './styles.scss';
@@ -39,6 +40,13 @@ export const ReviewsModal = ( props: Props ) => {
 		( state ) => productType === 'plugin' && isMarketplaceProduct( state, slug )
 	);
 	const [ editCompletedTimes, setEditCompletedTimes ] = useState( 0 );
+
+	useEffect( () => {
+		recordTracksEvent( 'calypso_marketplace_reviews_modal_open', {
+			product_type: productType,
+			slug: slug,
+		} );
+	}, [ productType, slug ] );
 
 	const { data: userReviews, isFetching: isFetchingUserReviews } = useMarketplaceReviewsQuery( {
 		productType,
