@@ -440,7 +440,7 @@ const RecurringPaymentsCouponAddEditModal = ( {
 						action="Random"
 						onChange={ onCouponCodeChange }
 						onAction={ onCouponCodeRandomize }
-						onCharacterLimitReached={ handleCharacterLimitReached }
+						onCharacterMinReached={ handleCharacterLimitReached }
 						isError={ ! isFormValid( 'coupon_code' ) }
 						isValid={ isFormValid( 'coupon_code' ) }
 						minLength="3"
@@ -448,7 +448,9 @@ const RecurringPaymentsCouponAddEditModal = ( {
 						onBlur={ () => setFocusedCouponCode( true ) }
 					/>
 					<FormSettingExplanation>
-						{ translate( 'Choose a unique coupon code for the discount. Not case-sensitive.' ) }
+						{ translate(
+							'Choose a unique coupon code between 3 and 20 characters for the discount. Not case-sensitive.'
+						) }
 					</FormSettingExplanation>
 					{ ! isFormValid( 'coupon_code' ) && ! isCharacterLimitExceeded && focusedCouponCode && (
 						<FormInputValidation isError text={ translate( 'Please input a coupon code.' ) } />
@@ -456,7 +458,7 @@ const RecurringPaymentsCouponAddEditModal = ( {
 					{ isCharacterLimitExceeded && (
 						<FormInputValidation
 							isError
-							text={ translate( 'Coupon codes must be between 3 and 20 characters' ) }
+							text={ translate( 'Coupon codes must be at least 3 characters' ) }
 						/>
 					) }
 				</FormFieldset>

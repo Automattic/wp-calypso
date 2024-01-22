@@ -15,7 +15,7 @@ type FormTextInputWithValueGenerationProps = {
 	onFocus?: ( event: FocusEvent< HTMLInputElement > ) => void;
 	onBlur?: ( event: FocusEvent< HTMLInputElement > ) => void;
 	onChange?: ( event: ChangeEvent< HTMLInputElement > ) => void;
-	onCharacterLimitReached?: () => void;
+	onCharacterMinReached?: () => void;
 	disabled?: boolean;
 	isError?: boolean;
 	isValid?: boolean;
@@ -28,7 +28,7 @@ const FormTextInputWithValueGeneration = ( {
 	value,
 	onAction = noop,
 	onChange = noop,
-	onCharacterLimitReached = noop,
+	onCharacterMinReached = noop,
 	onFocus = noop,
 	onBlur = noop,
 	disabled = false,
@@ -46,17 +46,12 @@ const FormTextInputWithValueGeneration = ( {
 			const valueLength = event.target.value.length;
 
 			if ( valueLength < parseInt( minLength, 10 ) ) {
-				onCharacterLimitReached( true );
-			} else if (
-				valueLength === parseInt( maxLength, 10 ) &&
-				event.nativeEvent.inputType === 'insertText'
-			) {
-				onCharacterLimitReached( true );
+				onCharacterMinReached( true );
 			} else {
-				onCharacterLimitReached( false );
+				onCharacterMinReached( false );
 			}
 		},
-		[ onChange, minLength, maxLength, onCharacterLimitReached ]
+		[ onChange, minLength, onCharacterMinReached ]
 	);
 
 	const handleFocus = useCallback(
