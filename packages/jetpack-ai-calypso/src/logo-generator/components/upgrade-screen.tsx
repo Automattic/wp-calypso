@@ -21,7 +21,7 @@ export const UpgradeScreen: React.FC< {
 	);
 
 	const upgradeMessageRequests = __(
-		'Upgrade your Jetpack AI to increase the amount of requests you can use in all AI-powered features.',
+		'Not enough requests left. Upgrade your Jetpack AI to increase the amount of requests you can use in all AI-powered features.',
 		'jetpack'
 	);
 
