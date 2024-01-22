@@ -37,6 +37,7 @@
 	"dependencies": {
 		"@automattic/calypso-config": "workspace:^",
 		"@automattic/calypso-products": "workspace:^",
+		"@automattic/calypso-razorpay": "^0.0.1",
 		"@automattic/calypso-stripe": "workspace:^",
 		"@automattic/components": "workspace:^",
 		"@automattic/composite-checkout": "workspace:^",

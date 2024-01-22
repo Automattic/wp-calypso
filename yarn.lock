@@ -447,7 +447,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@automattic/calypso-razorpay@workspace:^, @automattic/calypso-razorpay@workspace:packages/calypso-razorpay":
+"@automattic/calypso-razorpay@npm:^0.0.1, @automattic/calypso-razorpay@workspace:^, @automattic/calypso-razorpay@workspace:packages/calypso-razorpay":
   version: 0.0.0-use.local
   resolution: "@automattic/calypso-razorpay@workspace:packages/calypso-razorpay"
   dependencies:
@@ -2011,6 +2011,7 @@ __metadata:
   dependencies:
     "@automattic/calypso-config": "workspace:^"
     "@automattic/calypso-products": "workspace:^"
+    "@automattic/calypso-razorpay": "npm:^0.0.1"
     "@automattic/calypso-stripe": "workspace:^"
     "@automattic/calypso-typescript-config": "workspace:^"
     "@automattic/components": "workspace:^"
