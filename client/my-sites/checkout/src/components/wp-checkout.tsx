@@ -433,10 +433,10 @@ export default function WPCheckout( {
 	function CheckoutSidebarNudge() {
 		if ( ! isWcMobile && ! isDIFMInCart && ! hasMonthlyProduct ) {
 			return (
-				<>
+				<CheckoutSidebarNudgeWrapper>
 					<CheckoutSidebarPlanUpsell />
 					<JetpackAkismetCheckoutSidebarPlanUpsell />
-				</>
+				</CheckoutSidebarNudgeWrapper>
 			);
 		}
 		return null;
@@ -484,11 +484,7 @@ export default function WPCheckout( {
 									onChangeSelection={ changeSelection }
 									nextDomainIsFree={ responseCart?.next_domain_is_free }
 								/>
-								{ hasCheckoutVersion( '2' ) && (
-									<CheckoutSidebarNudgeWrapper>
-										<CheckoutSidebarNudge />
-									</CheckoutSidebarNudgeWrapper>
-								) }
+								{ hasCheckoutVersion( '2' ) && <CheckoutSidebarNudge /> }
 								<SecondaryCartPromotions
 									responseCart={ responseCart }
 									addItemToCart={ addItemToCart }
