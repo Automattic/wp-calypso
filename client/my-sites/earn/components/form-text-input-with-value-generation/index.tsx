@@ -1,13 +1,14 @@
 import { Button } from '@wordpress/components';
 import classNames from 'classnames';
+import { translate } from 'i18n-calypso';
 import { useState, useCallback, ChangeEvent, FocusEvent, MouseEvent } from 'react';
 import FormTextInput from 'calypso/components/forms/form-text-input';
-
 import './style.scss';
 
 const noop = () => {};
 
 type FormTextInputWithValueGenerationProps = {
+	id?: string;
 	className?: string;
 	action?: string;
 	value?: string;
@@ -18,6 +19,8 @@ type FormTextInputWithValueGenerationProps = {
 	disabled?: boolean;
 	isError?: boolean;
 	isValid?: boolean;
+	textInputAriaLabel?: string;
+	buttonAriaLabel?: string;
 	maxLength?: string;
 };
 
@@ -32,6 +35,8 @@ const FormTextInputWithValueGeneration = ( {
 	disabled = false,
 	isError = false,
 	isValid = false,
+	textInputAriaLabel = translate( 'Enter value' ),
+	buttonAriaLabel = translate( 'Generate value' ),
 	maxLength = '10',
 	...props
 }: FormTextInputWithValueGenerationProps ) => {
@@ -72,12 +77,14 @@ const FormTextInputWithValueGeneration = ( {
 				onChange={ onChange }
 				value={ value }
 				maxLength={ maxLength }
+				aria-label={ textInputAriaLabel }
 			/>
 			<Button
 				size="compact"
 				className="form-text-input-with-value-generation__button"
 				disabled={ disabled }
 				onClick={ onAction }
+				aria-label={ buttonAriaLabel }
 			>
 				{ action }
 			</Button>
