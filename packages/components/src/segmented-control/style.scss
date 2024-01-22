@@ -111,7 +111,7 @@
 
 .notouch .segmented-control.is-primary {
 	.segmented-control__link:hover {
-		background-color: #fff;
+		background-color: var(--color-neutral-0);
 	}
 	.segmented-control__item.is-selected .segmented-control__link:hover {
 		background-color: var(--color-primary-light);
