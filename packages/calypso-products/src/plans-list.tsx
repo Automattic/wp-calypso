@@ -1517,7 +1517,11 @@ const getPlanPremiumDetails = (): IncompleteWPcomPlan => ( {
 		FEATURE_SHARES_SOCIAL_MEDIA_JP,
 		FEATURE_COMMISSION_FEE_STANDARD_FEATURES,
 	],
-	get2023PlanComparisonJetpackFeatureOverride: () => [ FEATURE_PAYPAL_JP, FEATURE_VIDEOPRESS_JP ],
+	get2023PlanComparisonJetpackFeatureOverride: () => [
+		FEATURE_PAYPAL_JP,
+		FEATURE_VIDEOPRESS_JP,
+		FEATURE_STATS_PAID,
+	],
 	// Features not displayed but used for checking plan abilities
 	getIncludedFeatures: () => [
 		FEATURE_AUDIO_UPLOADS,

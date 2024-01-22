@@ -177,6 +177,16 @@ class ThemeShowcase extends Component {
 			return null;
 		}
 
+		if ( this.props.isSiteWooExpress ) {
+			return {
+				MYTHEMES: staticFilters.MYTHEMES,
+				RECOMMENDED: {
+					...staticFilters.RECOMMENDED,
+					text: translate( 'All Themes' ),
+				},
+			};
+		}
+
 		const shouldShowMyThemesFilter = !! this.props.siteId;
 
 		return {
@@ -547,6 +557,7 @@ class ThemeShowcase extends Component {
 			premiumThemesEnabled,
 			isSiteECommerceFreeTrial,
 			isSiteWooExpressOrEcomFreeTrial,
+			isSiteWooExpress,
 			isCollectionView,
 			lastNonEditorRoute,
 		} = this.props;
@@ -648,8 +659,12 @@ class ThemeShowcase extends Component {
 									</>
 								) }
 							</div>
-							<div className="themes__filters">
-								{ tabFilters && ! isSiteWooExpressOrEcomFreeTrial && (
+							<div
+								className={ classNames( 'themes__filters', {
+									'is-woo-express': isSiteWooExpress,
+								} ) }
+							>
+								{ tabFilters && ! isSiteECommerceFreeTrial && (
 									<ThemesToolbarGroup
 										items={ Object.values( tabFilters ) }
 										selectedKey={ this.getSelectedTabFilter().key }
