@@ -22,6 +22,7 @@ const ImportReadyPreview: Step = function ImportStep( props ) {
 		( select ) => ( select( ONBOARD_STORE ) as OnboardSelect ).getIsMigrateFromWp(),
 		[]
 	);
+	const skipPreview = isMigrateFromWp || urlData?.platform === 'wordpress';
 
 	/**
 	 ↓ Methods
@@ -49,7 +50,7 @@ const ImportReadyPreview: Step = function ImportStep( props ) {
 
 	// redirect directly to importer page
 	useEffect( () => {
-		( isMigrateFromWp || urlData?.platform === 'wordpress' ) && goToImporterPage();
+		skipPreview && goToImporterPage();
 	}, [ urlData, isMigrateFromWp ] );
 
 	/**
@@ -59,7 +60,7 @@ const ImportReadyPreview: Step = function ImportStep( props ) {
 		<ImportWrapper { ...props }>
 			{ isFetching && <ScanningStep /> }
 
-			{ ! isFetching && urlData && (
+			{ ! skipPreview && ! isFetching && urlData && (
 				<ReadyPreviewStep
 					urlData={ urlData }
 					siteSlug={ siteSlug as string }
