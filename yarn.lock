@@ -222,7 +222,7 @@ __metadata:
     hash.js: "npm:^1.1.7"
     tslib: "npm:^2.3.0"
     typescript: "npm:^5.3.3"
-    uuid: "npm:^8.3.2"
+    uuid: "npm:^9.0.1"
   languageName: unknown
   linkType: soft
 
@@ -578,7 +578,7 @@ __metadata:
     resize-observer-polyfill: "npm:^1.5.1"
     typescript: "npm:^5.3.3"
     utility-types: "npm:^3.10.0"
-    uuid: "npm:^8.3.2"
+    uuid: "npm:^9.0.1"
     webpack: "npm:^5.89.0"
   peerDependencies:
     "@wordpress/data": ^9.19.0
@@ -795,7 +795,7 @@ __metadata:
     tslib: "npm:^2.3.0"
     typescript: "npm:^5.3.3"
     use-debounce: "npm:^3.1.0"
-    uuid: "npm:^8.3.2"
+    uuid: "npm:^9.0.1"
   peerDependencies:
     "@wordpress/data": ^9.19.0
     "@wordpress/element": ^5.26.0
@@ -8156,14 +8156,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/uuid@npm:^8.3.4":
-  version: 8.3.4
-  resolution: "@types/uuid@npm:8.3.4"
-  checksum: b9ac98f82fcf35962317ef7dc44d9ac9e0f6fdb68121d384c88fe12ea318487d5585d3480fa003cf28be86a3bbe213ca688ba786601dce4a97724765eb5b1cf2
-  languageName: node
-  linkType: hard
-
-"@types/uuid@npm:^9.0.1":
+"@types/uuid@npm:^9.0.1, @types/uuid@npm:^9.0.7":
   version: 9.0.7
   resolution: "@types/uuid@npm:9.0.7"
   checksum: b329ebd4f9d1d8e08d4f2cc211be4922d70d1149f73d5772630e4a3acfb5170c6d37b3d7a39a0412f1a56e86e8a844c7f297c798b082f90380608bf766688787
@@ -12197,7 +12190,7 @@ __metadata:
     use-debounce: "npm:^3.1.0"
     util: "npm:^0.12.3"
     utility-types: "npm:^3.10.0"
-    uuid: "npm:^8.3.2"
+    uuid: "npm:^9.0.1"
     valid-url: "npm:^1.0.9"
     webpack: "npm:^5.89.0"
     webpack-bundle-analyzer: "npm:^4.10.1"
@@ -32224,7 +32217,7 @@ __metadata:
     "@types/react-transition-group": "npm:^4.4.4"
     "@types/store": "npm:^2.0.2"
     "@types/superagent": "npm:^4.1.15"
-    "@types/uuid": "npm:^8.3.4"
+    "@types/uuid": "npm:^9.0.7"
     "@types/validator": "npm:^13.7.1"
     "@types/webpack-env": "npm:^1.18.4"
     "@types/wordpress__block-editor": "npm:^11.5.8"
@@ -32407,7 +32400,7 @@ __metadata:
     "@automattic/calypso-typescript-config": "workspace:^"
     debug: "npm:^4.3.3"
     postcss: "npm:^8.4.5"
-    uuid: "npm:^8.3.2"
+    uuid: "npm:^9.0.1"
     webpack: "npm:^5.89.0"
     wp-error: "npm:^1.3.0"
   languageName: unknown
