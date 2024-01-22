@@ -1,10 +1,12 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
-import { HELP_CENTER_STORE } from '@automattic/help-center/src/stores';
+import { HelpCenter } from '@automattic/data-stores';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { Button, ExternalLink } from '@wordpress/components';
 import { useDispatch } from '@wordpress/data';
 import { __ } from '@wordpress/i18n';
 import { useState, JSXElementConstructor, ReactElement } from 'react';
+
+const HELP_CENTER_STORE = HelpCenter.register();
 
 interface Props {
 	children: string | ReactElement< string | JSXElementConstructor< any > >;
