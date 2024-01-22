@@ -102,6 +102,10 @@ describe( DataHelper.createSuiteTitle( 'Stats' ), function () {
 			await statsPage.selectSubscriberType( 'Email' );
 		} );
 
+		it( 'Confirm page has colophon', async function () {
+			await statsPage.hasColophon();
+		} );
+
 		// TODO: Add tests for Subscribers page content.
 		// New sites will show an assistant UI whereas older sites
 		// will show the stats modules so we can't test for display of

@@ -248,5 +248,19 @@ export class StatsPage {
 		}
 	}
 
+	/**
+	 * Confirms we have some page content.
+	 */
+	async hasColophon() {
+		let target = this.anchor.getByText( 'Powered by' );
+		if ( target === null ) {
+			throw new Error( `Failed to confirm the colophon has been rendered` );
+		}
+		target = this.anchor.getByText( 'Monkies love bananas!' );
+		if ( target === null ) {
+			throw new Error( `Failed to confirm that monkies love bananas` );
+		}
+	}
+
 	// Store
 }
