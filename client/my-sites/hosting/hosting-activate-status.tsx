@@ -33,9 +33,8 @@ const HostingActivateStatus = ( { context, siteId, onTick }: HostingActivateStat
 		if ( ! isTransferring && wasTransferring && isTransferCompleted ) {
 			setWasTransferring( false );
 		}
-	}, [ isTransferCompleted, isTransferring, wasTransferring ] );
-
-	onTick?.( isTransferring, wasTransferring, isTransferCompleted );
+		onTick?.( isTransferring, wasTransferring, isTransferCompleted );
+	}, [ isTransferCompleted, isTransferring, onTick, wasTransferring ] );
 
 	const getLoadingText = () => {
 		switch ( context ) {
