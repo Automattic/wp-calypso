@@ -1,7 +1,7 @@
 {
 	"name": "@automattic/blaze-dashboard",
 	"version": "0.1.0",
-	"description": "Blaze dashboard served within wp-admin via the Jetpack plugin",
+	"description": "Blaze dashboard served within wp-admin via the Jetpack plugin.",
 	"main": "dist/build.min.js",
 	"sideEffects": true,
 	"repository": {

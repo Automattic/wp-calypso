@@ -16,7 +16,7 @@ export const IntervalTypeToggle: React.FunctionComponent< IntervalTypeProps > = 
 		intervalType,
 		isInSignup,
 		eligibleForWpcomMonthlyPlans,
-		hideDiscountLabel,
+		hideDiscount,
 		currentSitePlanSlug,
 		displayedIntervals,
 		useCheckPlanAvailabilityForPurchase,
@@ -105,7 +105,7 @@ export const IntervalTypeToggle: React.FunctionComponent< IntervalTypeProps > = 
 								{ interval === 'yearly' && showBiennialToggle ? translate( 'Pay 1 year' ) : null }
 								{ interval === '2yearly' ? translate( 'Pay 2 years' ) : null }
 							</span>
-							{ ! showBiennialToggle && hideDiscountLabel ? null : (
+							{ ! showBiennialToggle && hideDiscount ? null : (
 								<PopupMessages context={ spanRef } isVisible={ popupIsVisible }>
 									{ translate(
 										'Save up to %(maxDiscount)d%% by paying annually and get a free domain for one year',

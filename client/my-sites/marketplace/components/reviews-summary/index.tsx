@@ -2,7 +2,7 @@ import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { isEnabled } from '@automattic/calypso-config';
 import { Button } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
-import { useState } from 'react';
+import { type ReactNode, useEffect, useState } from 'react';
 import Rating from 'calypso/components/rating';
 import {
 	useMarketplaceReviewsStatsQuery,
@@ -15,6 +15,14 @@ import './styles.scss';
 
 type Props = ProductProps & {
 	productName: string;
+};
+
+const TrackedButton = ( { onClick, children }: { onClick: () => void; children: ReactNode } ) => {
+	// useEffect used to avoid calling recordTracksEvent on every render
+	useEffect( () => {
+		recordTracksEvent( 'calypso_marketplace_reviews_add_button_displayed' );
+	}, [] );
+	return <Button onClick={ onClick }>{ children }</Button>;
 };
 
 export const ReviewsSummary = ( { slug, productName, productType }: Props ) => {
@@ -74,7 +82,9 @@ export const ReviewsSummary = ( { slug, productName, productType }: Props ) => {
 					</div>
 				) }
 				{ userCanPublishReviews && (
-					<Button onClick={ handleAddReviewClick }>{ translate( 'Add Review' ) }</Button>
+					<TrackedButton onClick={ handleAddReviewClick }>
+						{ translate( 'Add Review' ) }
+					</TrackedButton>
 				) }
 			</div>
 		</>

@@ -1,3 +1,4 @@
+import { PLAN_BUSINESS, getPlan } from '@automattic/calypso-products';
 import { Card } from '@automattic/components';
 import { localize } from 'i18n-calypso';
 import { Component } from 'react';
@@ -30,7 +31,10 @@ class Course extends Component {
 					{ ! isBusinessPlanUser && (
 						<HelpTeaserButton
 							href={ `/plans/${ this.props.primarySiteSlug }` }
-							title={ translate( 'Join this course with the Business Plan.' ) }
+							// translators: %(planName)s is the name of the Creator/Business plan.
+							title={ translate( 'Join this course with the %(planName)s plan.', {
+								args: { planName: getPlan( PLAN_BUSINESS )?.getTitle() },
+							} ) }
 							description={ translate(
 								'Upgrade to access webinars and courses to learn how to make the most of your site'
 							) }

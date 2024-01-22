@@ -14,9 +14,9 @@ import useCheckEligibilityMigrationTrialPlan from 'calypso/data/plans/use-check-
 import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
 import { useSite } from 'calypso/landing/stepper/hooks/use-site';
 import { useSiteSlug } from 'calypso/landing/stepper/hooks/use-site-slug';
+import { TrialPlan } from 'calypso/my-sites/plans/trials/trial-acknowledge/trial-plan';
 import { useSelector } from 'calypso/state';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
-import { TrialPlan } from './trial-plan';
 import type {
 	Step,
 	ProvidedDependencies,

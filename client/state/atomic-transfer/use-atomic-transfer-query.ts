@@ -1,15 +1,14 @@
 import { useQuery } from '@tanstack/react-query';
 import wpcom from 'calypso/lib/wp';
 import { transferStates, TransferStates } from 'calypso/state/automated-transfer/constants';
-import { SiteSlug } from 'calypso/types';
 
 interface SuccessResponse {
 	status: TransferStates;
 }
 
-const fetchLatestAtomicTransfer = ( siteSlug: SiteSlug ): Promise< SuccessResponse > =>
+const fetchLatestAtomicTransfer = ( siteId: number ): Promise< SuccessResponse > =>
 	wpcom.req.get( {
-		path: `/sites/${ siteSlug }/atomic/transfers/latest`,
+		path: `/sites/${ siteId }/atomic/transfers/latest`,
 		apiNamespace: 'wpcom/v2',
 	} );
 
@@ -26,17 +25,17 @@ const endStates: TransferStates[] = [
 	transferStates.REVERTED,
 ];
 
-export function useAtomicTransferQueryQueryKey( siteSlug: string ) {
-	return [ 'sites', siteSlug, 'atomic', 'transfers', 'latest' ];
+export function useAtomicTransferQueryQueryKey( siteId: number ) {
+	return [ 'sites', siteId, 'atomic', 'transfers', 'latest' ];
 }
 
 export const useAtomicTransferQuery = (
-	siteSlug: SiteSlug,
+	siteId: number,
 	{ refetchInterval }: UseAtomicTransferQueryOptions
 ) => {
 	const { data, failureReason } = useQuery( {
-		queryKey: useAtomicTransferQueryQueryKey( siteSlug ),
-		queryFn: () => fetchLatestAtomicTransfer( siteSlug ),
+		queryKey: useAtomicTransferQueryQueryKey( siteId ),
+		queryFn: () => fetchLatestAtomicTransfer( siteId ),
 		refetchInterval,
 	} );
 
