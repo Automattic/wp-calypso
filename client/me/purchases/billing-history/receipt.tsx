@@ -386,7 +386,7 @@ function ReceiptLineItems( { transaction }: { transaction: BillingTransaction } 
 							<em>{ renderTransactionQuantitySummary( item, translate ) }</em>
 						) }
 					</td>
-					<td className={ 'billing-history__receipt-amount ' + transaction.credit }>
+					<td className="billing-history__receipt-amount">
 						{ formatCurrency( getReceiptItemOriginalCost( item ), item.currency, {
 							stripZeros: true,
 						} ) }
