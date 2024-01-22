@@ -8,6 +8,7 @@ import formatCurrency from '@automattic/format-currency';
 import { Button, CheckboxControl } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import React, { useState } from 'react';
+import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { useSelector } from 'calypso/state';
 import getIsSiteWPCOM from 'calypso/state/selectors/is-site-wpcom';
 import gotoCheckoutPage from './stats-purchase-checkout-redirect';
@@ -124,6 +125,7 @@ const PersonalPurchase = ( {
 
 	const handleCheckoutPostponed = () => {
 		// TODO: Handle the postponed button action.
+		recordTracksEvent( `calypso_stats_purchase_flow_skip_button_clicked` );
 	};
 
 	return (
