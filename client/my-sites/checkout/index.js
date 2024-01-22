@@ -7,6 +7,7 @@ import {
 } from 'calypso/controller';
 import { recordSiftScienceUser } from 'calypso/lib/siftscience';
 import { loggedInSiteSelection, noSite, siteSelection } from 'calypso/my-sites/controller';
+import { testCongratsTranslations } from './checkout-thank-you/remove-after-traslated/new-congrats-translations';
 import {
 	checkout,
 	checkoutAkismetSiteless,
@@ -159,6 +160,8 @@ export default function () {
 	// The no-site post-checkout route is for purchases not tied to a site so do
 	// not include the `siteSelection` middleware.
 	page( '/checkout/gift/thank-you/:site', giftThankYou, makeLayout, clientRender );
+
+	page( '/checkout/thank-you/translations', testCongratsTranslations, makeLayout, clientRender );
 
 	page(
 		'/checkout/domain-transfer-to-any-user/thank-you/:domain',
