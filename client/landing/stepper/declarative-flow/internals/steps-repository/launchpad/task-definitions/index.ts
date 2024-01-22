@@ -16,14 +16,15 @@ const DEFINITIONS = {
 	...planActions,
 } satisfies TaskActionTable;
 
-const MIGRATED_FLOWS = [ 'free' ];
+export const NEW_TASK_DEFINITION_PARSER_FEATURE_FLAG = 'launchpad/new-task-definition-parser';
 
 const isNewDefinitionAvailable = ( flow: string, taskId: string ) => {
-	const isFlowEnabled = MIGRATED_FLOWS.includes( flow );
 	const isTaskAvailable = taskId in DEFINITIONS;
-	const isFeatureAvailable = isEnabled( 'launchpad/new-task-definition-parser' );
+	const isFeatureEnabled =
+		isEnabled( NEW_TASK_DEFINITION_PARSER_FEATURE_FLAG ) &&
+		isEnabled( `${ NEW_TASK_DEFINITION_PARSER_FEATURE_FLAG }/${ flow }` );
 
-	return isFlowEnabled && isTaskAvailable && isFeatureAvailable;
+	return isTaskAvailable && isFeatureEnabled;
 };
 
 export const getTaskDefinition = ( flow: string, task: Task, context: TaskContext ) => {

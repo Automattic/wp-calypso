@@ -136,6 +136,18 @@ const getSiteLaunchedTask: TaskAction = ( task, flow, context ): Task => {
 	};
 };
 
+const getBlogLaunchedTask: TaskAction = ( task, flow, context ): Task => {
+	return {
+		...task,
+		isLaunchTask: true,
+		title: getLaunchSiteTaskTitle( task, flow, context ),
+		disabled: getIsLaunchSiteTaskDisabled( flow, context ),
+		actionDispatch: () => completeLaunchSiteTask( task, flow, context ),
+		useCalypsoPath: false,
+	};
+};
+
 export const actions = {
 	site_launched: getSiteLaunchedTask,
+	blog_launched: getBlogLaunchedTask,
 };
