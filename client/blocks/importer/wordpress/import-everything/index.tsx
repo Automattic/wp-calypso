@@ -147,7 +147,11 @@ export class ImportEverything extends SectionMigrate {
 	};
 
 	renderLoading() {
-		return <LoadingEllipsis />;
+		return (
+			<div className="import-layout__center">
+				<LoadingEllipsis />;
+			</div>
+		);
 	}
 
 	renderMigrationConfirm() {
