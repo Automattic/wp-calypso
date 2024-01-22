@@ -17,7 +17,6 @@ export function monotonicNow(): number {
 
 /**
  * Timeouts a promise. Returns timeoutValue in event of timeout.
- *
  * @param promise The promise to timeout
  * @param timeoutMilliseconds The timeout time in milliseconds
  */
@@ -40,7 +39,6 @@ export function timeoutPromise< T >(
  * Wraps an async function so that if it is called multiple times it will just return the same promise - until the promise is fulfilled.
  *
  * Once the promise has been fulfilled it will reset.
- *
  * @param f The function to wrap
  */
 export function asyncOneAtATime< T >( f: () => Promise< T > ): () => Promise< T > {

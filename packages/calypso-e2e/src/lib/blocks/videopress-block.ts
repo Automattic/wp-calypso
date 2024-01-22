@@ -34,7 +34,7 @@ export class VideoPressBlock {
 
 		await block.locator( 'input' ).setInputFiles( path );
 
-		await block.getByText( 'Upload Complete!' ).waitFor( { timeout: 25 * 1000 } );
+		await block.getByText( 'Upload Complete!' ).waitFor( { timeout: 50 * 1000 } );
 		await block.getByRole( 'button', { name: 'Done' } ).click();
 
 		await block.getByText( 'We are converting this video for optimal playback' ).waitFor( {

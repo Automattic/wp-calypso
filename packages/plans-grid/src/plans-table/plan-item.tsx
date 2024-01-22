@@ -26,7 +26,6 @@ const SPACE_BAR_KEYCODE = 32;
  * There are 6 possible cases of the domain message (the combinations of [hasDomain, isFreeDomain, isFreePlan]
  * Ifs and elses grew unclear. This is a simple state machine that covers all the states. To maintain it,
  * please look for the state you need (e.g: free_domain => paid_plan) and edit that branch.
- *
  * @param isFreePlan boolean determining whether the plan is free
  * @param domain the domain (can be undefined => NO_DOMAIN)
  * @param __ translate function
