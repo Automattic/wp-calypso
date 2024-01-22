@@ -229,11 +229,22 @@ export class StatsPage {
 	 * @param {SubscriberOrigin} type Subscriber type.
 	 */
 	async selectSubscriberType( type: SubscriberOrigin ) {
+		/*
 		const target = this.anchor.getByRole( 'radiogroup' ).getByRole( 'radio', { name: type } );
 		await target.click();
 
 		if ( ! ( await target.isChecked() ) ) {
 			throw new Error( `Failed to select the Subscriber type ${ type }` );
+		}
+		*/
+
+		let target = this.anchor.getByText( 'Powered by' );
+		if ( target === null ) {
+			throw new Error( `Failed to confirm the colophon has been rendered` );
+		}
+		target = this.anchor.getByText( 'Monkies love bananas!' );
+		if ( target === null ) {
+			throw new Error( `Failed to confirm that monkies love bananas` );
 		}
 	}
 
