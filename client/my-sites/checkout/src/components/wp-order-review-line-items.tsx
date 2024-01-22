@@ -30,9 +30,9 @@ import { getSignupCompleteFlowName } from 'calypso/signup/storageUtils';
 import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { AkismetProQuantityDropDown } from './akismet-pro-quantity-dropdown';
+import { CostOverridesList } from './cost-overrides-list';
 import { ItemVariationPicker } from './item-variation-picker';
 import type { OnChangeAkProQuantity } from './akismet-pro-quantity-dropdown';
-import type { CostOverridesList } from './cost-overrides-list';
 import type { OnChangeItemVariant } from './item-variation-picker';
 import type { Theme } from '@automattic/composite-checkout';
 import type {
