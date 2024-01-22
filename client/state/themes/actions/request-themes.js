@@ -88,7 +88,7 @@ export function requestThemes( siteId, query = {}, locale ) {
 					themes = map( rawThemes, normalizeWpcomTheme );
 					dispatch( updateThemeTiers( tiers ) );
 				} else if ( isAtomic || isJetpack ) {
-					// Jetpack Site
+					// Jetpack or Atomic Site
 					themes = map( rawThemes, normalizeJetpackTheme );
 				} else {
 					// WPCOM Site
