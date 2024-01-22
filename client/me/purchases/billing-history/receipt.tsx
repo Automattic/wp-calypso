@@ -281,7 +281,26 @@ function VatDetails( { transaction }: { transaction: BillingTransaction } ) {
 	);
 }
 
-function ReceiptItemDiscounts( { item }: { item: BillingTransactionItem } ) {
+function areReceiptItemDiscountsAccurate( receiptDate: string ): boolean {
+	const date = new Date( receiptDate );
+	const receiptDateUnix = date.getTime() / 1000;
+	// D129863-code and D133350-code fixed volume discounts. Before that, cost
+	// override tags may be incomplete. The latter was merged on Jan 2, 2024,
+	// 17:54 UTC.
+	const receiptTagsAccurateAsOf = 1704218040;
+	return receiptDateUnix > receiptTagsAccurateAsOf;
+}
+
+function ReceiptItemDiscounts( {
+	item,
+	receiptDate,
+}: {
+	item: BillingTransactionItem;
+	receiptDate: string;
+} ) {
+	if ( ! areReceiptItemDiscountsAccurate( receiptDate ) ) {
+		return null;
+	}
 	return (
 		<ul className="billing-history__receipt-item-discounts-list">
 			{ item.cost_overrides
@@ -378,7 +397,7 @@ function ReceiptLineItems( { transaction }: { transaction: BillingTransaction } 
 				</tr>
 				<tr>
 					<td className="billing-history__receipt-item-discounts" colSpan={ 2 }>
-						<ReceiptItemDiscounts item={ item } />
+						<ReceiptItemDiscounts item={ item } receiptDate={ transaction.date } />
 					</td>
 				</tr>
 			</>
