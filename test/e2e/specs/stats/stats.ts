@@ -97,6 +97,11 @@ describe( DataHelper.createSuiteTitle( 'Stats' ), function () {
 		it( 'Click on Subscribers tab', async function () {
 			await statsPage.clickTab( 'Subscribers' );
 		} );
+
+		// TODO: Add tests for Subscribers page content.
+		// New sites will show an assistant UI whereas older sites
+		// will show the stats modules so we can't test for display of
+		// modules here.
 	} );
 
 	// The Store tab is not present unless Business or higher plan is on the site and the
