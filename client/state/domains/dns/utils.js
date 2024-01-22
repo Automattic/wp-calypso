@@ -89,8 +89,7 @@ function isValidData( data, type ) {
 
 function getNormalizedData( record, selectedDomainName ) {
 	const normalizedRecord = Object.assign( {}, record );
-	normalizedRecord.data = stripZeroWidthSpace( getFieldWithDot( record.data ) );
-
+	normalizedRecord.data = getFieldWithDot( record.data );
 	normalizedRecord.name = getNormalizedName( record.name, record.type, selectedDomainName );
 	if ( record.target ) {
 		normalizedRecord.target = getFieldWithDot( record.target );
@@ -111,10 +110,6 @@ function getNormalizedName( name, type, selectedDomainName ) {
 	}
 
 	return name;
-}
-
-function stripZeroWidthSpace( data ) {
-	return data.replace( /&#8203;/g, '' );
 }
 
 function isRootDomain( name, domainName ) {
