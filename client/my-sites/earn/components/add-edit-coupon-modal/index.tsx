@@ -191,14 +191,14 @@ const RecurringPaymentsCouponAddEditModal = ( {
 		/^[\w.\-+*]+@(?:(?:[\w\-*]+(?:\.[\w\-*]+)+)+|(?:[\w\-*]*\*[\w\-*]*)+)+$/.test( email );
 
 	/** Form event handlers */
-	const onCouponCodeChange = useCallback( ( event ) => {
+	const onCouponCodeChange = useCallback( ( event: ChangeEvent< HTMLInputElement > ) => {
 		const newValue = event.target.value;
 		setEditedCouponCode( newValue );
 	}, [] );
-	const handleCharacterMinLimitReached = useCallback( ( isMet ) => {
+	const handleCharacterMinLimitReached = useCallback( ( isMet: boolean ) => {
 		setisCharacterMinReached( isMet );
 	}, [] );
-	const handleCharacterMaxLimitReached = useCallback( ( isMet ) => {
+	const handleCharacterMaxLimitReached = useCallback( ( isMet: boolean ) => {
 		setisCharacterMaxReached( isMet );
 	}, [] );
 	const onCouponCodeRandomize = () => {
@@ -466,7 +466,7 @@ const RecurringPaymentsCouponAddEditModal = ( {
 					) }
 					{ isCharacterMaxReached && (
 						<FormInputValidation
-							isError
+							isValid
 							text={ translate(
 								'The coupon code maximum length of 20 characters has been reached'
 							) }

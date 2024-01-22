@@ -16,6 +16,7 @@ type FormTextInputWithValueGenerationProps = {
 	onBlur?: ( event: FocusEvent< HTMLInputElement > ) => void;
 	onChange?: ( event: ChangeEvent< HTMLInputElement > ) => void;
 	onCharacterMinReached?: () => void;
+	onCharacterMaxReached?: () => void;
 	disabled?: boolean;
 	isError?: boolean;
 	isValid?: boolean;
@@ -28,8 +29,8 @@ const FormTextInputWithValueGeneration = ( {
 	value,
 	onAction = noop,
 	onChange = noop,
-	onCharacterMinReached = noop,
-	onCharacterMaxReached = noop,
+	onCharacterMinReached = false,
+	onCharacterMaxReached = false,
 	onFocus = noop,
 	onBlur = noop,
 	disabled = false,
