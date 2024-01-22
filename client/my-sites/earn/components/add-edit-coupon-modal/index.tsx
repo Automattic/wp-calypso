@@ -430,8 +430,11 @@ const RecurringPaymentsCouponAddEditModal = ( {
 				<FormFieldset className="memberships__dialog-sections-coupon-code">
 					<FormLabel htmlFor="coupon_code">{ translate( 'Coupon code' ) }</FormLabel>
 					<FormTextInputWithRandomCodeGeneration
+						id="coupon_code"
 						value={ editedCouponCode }
-						action="Random"
+						action={ translate( 'Random' ) }
+						buttonAriaLabel={ translate( 'Generate random coupon code' ) }
+						textInputAriaLabel={ translate( 'Enter a custom coupon code' ) }
 						onChange={ onCouponCodeChange }
 						onAction={ onCouponCodeRandomize }
 						isError={ ! isFormValid( 'coupon_code' ) }
@@ -465,15 +468,18 @@ const RecurringPaymentsCouponAddEditModal = ( {
 						) }
 					</div>
 					<div className="memberships__dialog-sections-discount-info-field-container">
-						<FormLabel htmlFor="discount_amount">{ translate( 'Amount' ) }</FormLabel>
+						<FormLabel>{ translate( 'Amount' ) }</FormLabel>
 						{ COUPON_DISCOUNT_TYPE_PERCENTAGE === editedDiscountType && (
 							<FormTextInputWithAffixes
 								id="discount_amount"
+								name="discount_percentage"
 								value={ editedDiscountPercentage }
 								suffix="%"
 								onChange={ onDiscountPercentageChange }
 								onFocus={ onDiscountAmountFocus }
 								onBlur={ onDiscountPercentageBlur }
+								role="textbox"
+								aria-label={ translate( 'Discount percentage' ) }
 							/>
 						) }
 						{ ! isFormValid( 'discount_percentage' ) && focusedDiscountPercentage && (
@@ -493,6 +499,8 @@ const RecurringPaymentsCouponAddEditModal = ( {
 								placeholder="0.00"
 								className={ null }
 								currencySymbolSuffix={ null }
+								role="textbox"
+								aria-label={ translate( 'Discount value' ) }
 							/>
 						) }
 						{ ! isFormValid( 'discount_value' ) && focusedDiscountValue && (
@@ -581,6 +589,7 @@ const RecurringPaymentsCouponAddEditModal = ( {
 						value={ editedDuration }
 						onChange={ onSelectDuration }
 						disabled={ ! editedUseDuration }
+						aria-label={ translate( 'Duration selection' ) }
 					>
 						<option value={ COUPON_DURATION_FOREVER }>{ translate( 'Forever' ) }</option>
 						<option value={ COUPON_DURATION_1_MONTH }>{ translate( '1 Month' ) }</option>
@@ -604,6 +613,7 @@ const RecurringPaymentsCouponAddEditModal = ( {
 						onChange={ onEmailAllowListChange }
 						disabled={ ! editedUseEmailAllowList }
 						onBlur={ onEmailAllowListBlur }
+						aria-label={ translate( 'Limit coupon to specific emails text input' ) }
 					/>
 					<FormSettingExplanation>
 						{ translate(
