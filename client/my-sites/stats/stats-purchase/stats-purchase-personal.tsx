@@ -8,6 +8,7 @@ import formatCurrency from '@automattic/format-currency';
 import { Button, CheckboxControl } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import React, { useState } from 'react';
+import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { useSelector } from 'calypso/state';
 import getIsSiteWPCOM from 'calypso/state/selectors/is-site-wpcom';
 import gotoCheckoutPage from './stats-purchase-checkout-redirect';
@@ -99,16 +100,33 @@ const PersonalPurchase = ( {
 		// Value is used below to determine tier price.
 		setSubscriptionValue( index );
 	};
+
 	// TODO: Remove old slider code paths.
 	const showOldSlider = ! isTierUpgradeSliderEnabled;
-	// const showOldSlider = true;
+	const isNewPurchaseFlowEnabled = config.isEnabled( 'stats/checkout-flows-v2' );
 
 	let continueButtonText = isStandalone
 		? translate( 'Get Stats' )
 		: translate( 'Get Jetpack Stats' );
-	if ( config.isEnabled( 'stats/checkout-flows-v2' ) ) {
+	if ( isNewPurchaseFlowEnabled ) {
 		continueButtonText = translate( 'Contribute and continue' );
 	}
+
+	const handleCheckoutRedirect = () => {
+		gotoCheckoutPage( {
+			from,
+			type: 'pwyw',
+			siteSlug,
+			adminUrl,
+			redirectUri,
+			price: subscriptionValue / MIN_STEP_SPLITS,
+		} );
+	};
+
+	const handleCheckoutPostponed = () => {
+		// TODO: Handle the postponed button action.
+		recordTracksEvent( `calypso_stats_purchase_flow_skip_button_clicked` );
+	};
 
 	return (
 		<div>
@@ -227,22 +245,21 @@ const PersonalPurchase = ( {
 					{ translate( 'Continue with Jetpack Stats for free' ) }
 				</ButtonComponent>
 			) : (
-				<ButtonComponent
-					variant="primary"
-					primary={ isWPCOMSite ? true : undefined }
-					onClick={ () =>
-						gotoCheckoutPage( {
-							from,
-							type: 'pwyw',
-							siteSlug,
-							adminUrl,
-							redirectUri,
-							price: subscriptionValue / MIN_STEP_SPLITS,
-						} )
-					}
-				>
-					{ continueButtonText }
-				</ButtonComponent>
+				<div className={ `${ COMPONENT_CLASS_NAME }__actions` }>
+					<ButtonComponent
+						variant="primary"
+						primary={ isWPCOMSite ? true : undefined }
+						onClick={ handleCheckoutRedirect }
+					>
+						{ continueButtonText }
+					</ButtonComponent>
+
+					{ isNewPurchaseFlowEnabled && (
+						<ButtonComponent variant="secondary" onClick={ handleCheckoutPostponed }>
+							{ translate( 'I will do it later' ) }
+						</ButtonComponent>
+					) }
+				</div>
 			) }
 		</div>
 	);

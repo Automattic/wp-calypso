@@ -514,7 +514,7 @@ export class CheckoutThankYou extends Component<
 	};
 
 	render() {
-		const { translate, email, domainOnlySiteFlow, selectedFeature } = this.props;
+		const { translate, email, domainOnlySiteFlow, receiptId, selectedFeature } = this.props;
 		let purchases: ReceiptPurchase[] = [];
 		let failedPurchases = [];
 		let wasJetpackPlanPurchased = false;
@@ -565,7 +565,7 @@ export class CheckoutThankYou extends Component<
 			/* eslint-enable wpcalypso/jsx-classname-namespace */
 		}
 
-		/** REFACTORED REDESIGN **/
+		/** REFACTORED REDESIGN */
 
 		if ( isRefactoredForThankYouV2( this.props ) ) {
 			let pageContent = null;
@@ -578,7 +578,7 @@ export class CheckoutThankYou extends Component<
 					/>
 				);
 			} else if ( isDomainOnly( purchases ) ) {
-				pageContent = <DomainOnlyThankYou purchases={ purchases } />;
+				pageContent = <DomainOnlyThankYou purchases={ purchases } receiptId={ receiptId } />;
 			} else if ( purchases.length === 1 && isPlan( purchases[ 0 ] ) ) {
 				pageContent = <PlanOnlyThankYou primaryPurchase={ purchases[ 0 ] } />;
 			}
@@ -606,7 +606,7 @@ export class CheckoutThankYou extends Component<
 			}
 		}
 
-		/** LEGACY - The ultimate goal is to remove everything below **/
+		/** LEGACY - The ultimate goal is to remove everything below */
 
 		if ( wasEcommercePlanPurchased ) {
 			// Continue to show the TransferPending progress bar until both the Atomic transfer is complete _and_ we've verified WooCommerce is finished installed.

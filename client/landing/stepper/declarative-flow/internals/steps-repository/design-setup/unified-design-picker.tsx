@@ -378,18 +378,17 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 			( product ) => product.product_slug === marketplaceProductSlug
 		) || marketplaceThemeProducts[ 0 ];
 
-	const didPurchaseSelectedTheme = useSelector( ( state ) => {
-		if ( ! site || ! selectedDesignThemeId ) {
-			return false;
-		}
+	const didPurchaseSelectedTheme = useSelector( ( state ) =>
+		site && selectedDesignThemeId
+			? isThemePurchased( state, selectedDesignThemeId, site.ID )
+			: false
+	);
 
-		if ( isEnabled( 'themes/tiers' ) ) {
-			return isThemeAllowedOnSite( state, site.ID, selectedDesignThemeId );
-		}
-
-		// @TODO Remove this once we have the new theme tiers live.
-		return isThemePurchased( state, selectedDesignThemeId, site.ID );
-	} );
+	const canSiteActivateTheme = useSelector( ( state ) =>
+		site && selectedDesignThemeId
+			? isThemeAllowedOnSite( state, site.ID, selectedDesignThemeId )
+			: false
+	);
 
 	const isMarketplaceThemeSubscribed = useSelector(
 		( state ) =>
@@ -417,7 +416,7 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 	const isLockedTheme =
 		( isEnabled( 'themes/tiers' ) &&
 			selectedDesignTier === PERSONAL_THEME &&
-			! didPurchaseSelectedTheme ) ||
+			! canSiteActivateTheme ) ||
 		( selectedDesign?.is_premium && ! isPremiumThemeAvailable && ! didPurchaseSelectedTheme ) ||
 		( selectedDesign?.is_externally_managed &&
 			( ! isMarketplaceThemeSubscribed || ! isExternallyManagedThemeAvailable ) ) ||
