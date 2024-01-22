@@ -245,7 +245,6 @@ class DnsAddNew extends React.Component {
 
 	onChange = ( event ) => {
 		const { name, value } = event.target;
-
 		const skipNormalization = name === 'data' && this.state.type === 'TXT';
 		// Strip zero width spaces from the value
 		const filteredValue = value.replace( /\u200B/g, '' );
