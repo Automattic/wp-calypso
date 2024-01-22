@@ -87,8 +87,8 @@ const useLogoGenerator = () => {
 
 			debug( 'Generating first prompt for site', siteId );
 
-			const firstPromptGenerationPrompt = `Generate a simple and short prompt asking for a logo based on the site's name and description, without going into details.
-Example for a site named "The minimalist fashion blog", described as "Daily inspiration for all things fashion": A logo for a minimalist fashion site focused on daily sartorial inspiration.
+			const firstPromptGenerationPrompt = `Generate a simple and short prompt asking for a logo based on the site's name and description.
+Example for a site named "The minimalist fashion blog", described as "Daily inspiration for all things fashion": A logo for a minimalist fashion site focused on daily sartorial inspiration with a clean and modern aesthetic that is sleek and sophisticated.
 
 Site name: ${ name }
 Site description: ${ description }`;
@@ -132,6 +132,7 @@ Site description: ${ description }`;
 
 			const systemMessage = `Enhance the prompt you receive.
 The prompt is meant for generating a logo. Return the same prompt enhanced, and make each enhancement wrapped in brackets.
+Do not add any mention to text, letters, typography or the name of the site in the prompt.
 For example: user's prompt: A logo for an ice cream shop. Returned prompt: A logo for an ice cream shop [that is pink] [and vibrant].`;
 
 			const messages = [
@@ -187,13 +188,13 @@ For example: user's prompt: A logo for an ice cream shop. Returned prompt: A log
 			debug( 'Generating image with prompt', prompt );
 
 			const imageGenerationPrompt = `I NEED to test how the tool works with extremely simple prompts. DO NOT add any detail, just use it AS-IS:
-Create a text-free vector logo that symbolically represents the user request, using abstract or symbolic imagery.
-The design should be modern, with a either a vivid color scheme full of gradients or a color scheme that's monochromatic.
+Create a single text-free iconic vector logo that symbolically represents the user request, using abstract or symbolic imagery.
+The design should be modern, with either a vivid color scheme full of gradients or a color scheme that's monochromatic. Use any of those styles based on the user request mood.
 Ensure the logo is set against a clean solid background.
-The imagery in the logo should subtly hint at the user request... without using any text, or letters.
+Ensure the logo works in small sizes.
+The imagery in the logo should subtly hint at the mood of the user request but DO NOT use any text, letters, or the name of the site on the imagery.
 
-User request: ${ prompt }
-`;
+User request:${ prompt }`;
 
 			let data;
 			const body = {
