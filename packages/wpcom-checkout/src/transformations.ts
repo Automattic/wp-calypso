@@ -1,8 +1,16 @@
-import { isJetpackPlan, isJetpackProduct } from '@automattic/calypso-products';
+import {
+	isJetpackPlan,
+	isJetpackProduct,
+	isJetpackSocialAdvancedSlug,
+} from '@automattic/calypso-products';
 import { formatCurrency } from '@automattic/format-currency';
 import { translate } from 'i18n-calypso';
 import type { LineItemType } from './types';
-import type { ResponseCart, TaxBreakdownItem } from '@automattic/shopping-cart';
+import type {
+	ResponseCart,
+	ResponseCartProduct,
+	TaxBreakdownItem,
+} from '@automattic/shopping-cart';
 
 export function getTotalLineItemFromCart( cart: ResponseCart ): LineItemType {
 	return {
@@ -141,10 +149,43 @@ export function getSubtotalWithoutCoupon( responseCart: ResponseCart ): number {
 	return responseCart.sub_total_integer + responseCart.coupon_savings_total_integer;
 }
 
+function getYearlyVariantFromProduct( product: ResponseCartProduct ) {
+	return product.product_variants.find( ( variant ) => 12 === variant.bill_period_in_months );
+}
+
+function isBiYearlyProduct( product: ResponseCartProduct ) {
+	return 24 === product.months_per_bill_period;
+}
+
 export function getOriginalSubtotal( responseCart: ResponseCart ): number {
 	return responseCart.products.reduce( ( total, product ) => {
+		if ( isBiYearlyProduct( product ) ) {
+			const yearlyVariant = getYearlyVariantFromProduct( product );
+
+			if ( yearlyVariant ) {
+				// For 2-year plans, the original subtotal is the price of yearly variant * 2
+				return total + yearlyVariant.price_before_discounts_integer * 2;
+			}
+		}
+		// For all other products, we just simply return original subtotal (without coupon)
 		return total + product.item_original_subtotal_integer;
 	}, 0 );
+}
+
+export function getJetpackIntroductoryOfferName( responseCart: ResponseCart ): string {
+	const jetpackProduct = responseCart.products.find(
+		( product ) => isJetpackProduct( product ) || isJetpackPlan( product )
+	);
+
+	if ( ! jetpackProduct || ! jetpackProduct.introductory_offer_terms?.enabled ) {
+		return ''; // No Jetpack product found, or no introductory offer
+	}
+
+	if ( isJetpackSocialAdvancedSlug( jetpackProduct.product_slug ) ) {
+		return translate( 'Free Trial (Month)' );
+	}
+
+	return '';
 }
 
 export function getJetpackIntroductoryDiscount( responseCart: ResponseCart ): number {
@@ -156,17 +197,13 @@ export function getJetpackIntroductoryDiscount( responseCart: ResponseCart ): nu
 		return 0; // No Jetpack product found, or no introductory offer
 	}
 
-	if ( 24 === jetpackProduct.months_per_bill_period ) {
-		// If the plan is 2-year plan, we show introductory discount for yearly variant (and the price leftover is "multi-year discount")
-		const yearlyVariant = jetpackProduct.product_variants.find(
-			( variant ) => 12 === variant.bill_period_in_months
-		);
+	if ( isBiYearlyProduct( jetpackProduct ) ) {
+		const yearlyVariant = getYearlyVariantFromProduct( jetpackProduct );
 
-		if ( ! yearlyVariant ) {
-			return 0; // No yearly variant found
+		if ( yearlyVariant ) {
+			// If the plan is 2-year plan, we show introductory discount for yearly variant (and the price leftover is "multi-year discount")
+			return yearlyVariant.price_before_discounts_integer - yearlyVariant.price_integer;
 		}
-
-		return yearlyVariant.price_before_discounts_integer - yearlyVariant.price_integer;
 	}
 
 	// If the Jetpack is not a 2-year plan, we just simply return difference of original and current subtotal (without coupon)

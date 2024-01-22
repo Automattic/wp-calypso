@@ -36,6 +36,7 @@ import {
 	getOriginalSubtotal,
 	getJetpackIntroductoryDiscount,
 	getJetpackBiYearlyDiscount,
+	getJetpackIntroductoryOfferName,
 } from '@automattic/wpcom-checkout';
 import { keyframes } from '@emotion/react';
 import styled from '@emotion/styled';
@@ -128,27 +129,33 @@ export default function WPCheckoutOrderSummary( {
 
 function JetpackCheckoutSummaryPriceListPart( { responseCart }: { responseCart: ResponseCart } ) {
 	const translate = useTranslate();
+	const subtotalWithoutCoupon = getSubtotalWithoutCoupon( responseCart );
 	const originalSubtotal = getOriginalSubtotal( responseCart );
 	const jetpackIntroDiscount = getJetpackIntroductoryDiscount( responseCart );
 	const jetpackBiYearlyDiscount = getJetpackBiYearlyDiscount( responseCart );
 	return (
 		<>
-			<CheckoutSummaryLineItem key="checkout-summary-line-item-plan-subscription">
-				<span>{ translate( 'Plan subscription' ) }</span>
-				<span>
-					{ formatCurrency( originalSubtotal, responseCart.currency, {
-						isSmallestUnit: true,
-						stripZeros: true,
-					} ) }
-				</span>
-			</CheckoutSummaryLineItem>
+			{ subtotalWithoutCoupon !== originalSubtotal && (
+				<CheckoutSummaryLineItem key="checkout-summary-line-item-plan-subscription">
+					<span>{ translate( 'Plan subscription' ) }</span>
+					<span>
+						{ formatCurrency( originalSubtotal, responseCart.currency, {
+							isSmallestUnit: true,
+							stripZeros: true,
+						} ) }
+					</span>
+				</CheckoutSummaryLineItem>
+			) }
 			{ !! jetpackIntroDiscount && (
 				<CheckoutSummaryLineItem isDiscount key="checkout-summary-line-item-intro-offer">
-					<span>{ translate( 'Introductory offer' ) }</span>
+					<span>
+						{ getJetpackIntroductoryOfferName( responseCart ) || translate( 'Introductory offer' ) }
+					</span>
 					<span>
 						-&nbsp;
 						{ formatCurrency( jetpackIntroDiscount, responseCart.currency, {
 							isSmallestUnit: true,
+							stripZeros: true,
 						} ) }
 					</span>
 				</CheckoutSummaryLineItem>
@@ -160,6 +167,7 @@ function JetpackCheckoutSummaryPriceListPart( { responseCart }: { responseCart: 
 						-&nbsp;
 						{ formatCurrency( jetpackBiYearlyDiscount, responseCart.currency, {
 							isSmallestUnit: true,
+							stripZeros: true,
 						} ) }
 					</span>
 				</CheckoutSummaryLineItem>
