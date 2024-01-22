@@ -36,7 +36,7 @@ describe( 'UpgradeBadge', () => {
 			userEvent.hover( badgeWrapper );
 		} );
 		waitFor( () => {
-			expect( screen.getByText( 'Maximise uptime' ) ).toBeInTheDocument();
+			expect( screen.getByText( 'Maximize uptime' ) ).toBeInTheDocument();
 		} );
 	} );
 } );
