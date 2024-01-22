@@ -17,6 +17,30 @@
 	}
 }
 
+.components-notice:has(.wpcom-global-styles-action-is-upgrade):not(:has(.wpcom-global-styles-action-is-support)) {
+	.components-notice__content {
+		display: flex;
+		flex-wrap: wrap;
+		margin-right: 0;
+		line-height: 36px;
+
+		.components-notice__actions {
+			margin-left: auto;
+
+			.components-notice__action {
+				margin-top: 0;
+			}
+		}
+	}
+
+	// Hack: this notice is intentionally set to be dismissible (but we hide the close icon),
+	// so that it is guaranteed to be displayed after the non-dismissible notices,
+	// such as the Block Theme Preview notice.
+	.components-notice__dismiss {
+		display: none;
+	}
+}
+
 .components-notice-list .components-notice__action.components-button.wpcom-global-styles-action-has-icon {
 	display: flex;
 	&::after,

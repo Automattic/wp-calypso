@@ -147,7 +147,8 @@ function GlobalStylesEditNotice() {
 				onClick: upgradePlan,
 				variant: 'primary',
 				noDefaultClasses: true,
-				className: 'wpcom-global-styles-action-has-icon wpcom-global-styles-action-is-external',
+				className:
+					'wpcom-global-styles-action-is-upgrade wpcom-global-styles-action-has-icon wpcom-global-styles-action-is-external',
 			},
 		];
 
