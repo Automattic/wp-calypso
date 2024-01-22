@@ -19,10 +19,10 @@ import DomainInfo from '../../components/domain-info';
 import DoneButton from '../../components/done-button';
 import NotAuthorized from '../../components/not-authorized';
 import { isTargetSitePlanCompatible } from '../../util';
+import { WPImportOption, type MigrationState } from '../types';
 import { clearMigrateSource, retrieveMigrateSource } from '../utils';
 import MigrationError from './migration-error';
 import MigrationProgress from './migration-progress';
-import type { WPImportOption, MigrationState } from '../types';
 import type { UrlData } from 'calypso/blocks/import/types';
 import type { StepNavigator } from 'calypso/blocks/importer/types';
 
