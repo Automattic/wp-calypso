@@ -4,7 +4,6 @@ import type { TranslateResult } from 'i18n-calypso';
 
 /**
  * Get Jetpack product call-to-action based on the product purchase object.
- *
  * @param {Product} product Product purchase object
  * @returns {TranslateResult} Product display name
  */

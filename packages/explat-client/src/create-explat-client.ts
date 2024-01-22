@@ -24,7 +24,6 @@ export interface ExPlatClient {
 	 *
 	 * Will never throw in production, it will return the default assignment.
 	 * It should not be run on the server but it won't crash anything.
-	 *
 	 * @param experimentName The experiment's name
 	 */
 	loadExperimentAssignment: ( experimentName: string ) => Promise< ExperimentAssignment >;
@@ -58,7 +57,6 @@ export class MissingExperimentAssignmentError extends Error {
 
 /**
  * Create an ExPlat Client
- *
  * @param config Configuration object
  */
 export function createExPlatClient( config: Config ): ExPlatClient {
@@ -70,8 +68,6 @@ export function createExPlatClient( config: Config ): ExPlatClient {
 	 * This bit of code is the heavy lifting behind loadExperimentAssignment, allowing it to be used intuitively.
 	 *
 	 * Using asyncOneAtATime, is how we ensure for each experiment that there is only ever one fetch process occuring.
-	 *
-	 *
 	 * @param experimentName The experiment's name
 	 */
 	const createWrappedExperimentAssignmentFetchAndStore = ( experimentName: string ) =>
@@ -222,7 +218,6 @@ export function createExPlatClient( config: Config ): ExPlatClient {
 
 /**
  * A dummy ExPlat client to sub in under SSR contexts
- *
  * @param config The config
  */
 export function createSsrSafeDummyExPlatClient( config: Config ): ExPlatClient {

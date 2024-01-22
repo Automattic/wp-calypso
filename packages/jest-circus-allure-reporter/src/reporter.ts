@@ -27,7 +27,6 @@ export class AllureReporter {
 
 	/**
 	 * Construct an instance of the AllureReporter.
-	 *
 	 * @param options Key/pair parameters.
 	 * @param {AllureRuntime} options.allureRuntime Instance of Allure runtime exposed by allure-js-commons.
 	 * @param {Record<string, string>} [options.environmentInfo] Customized Jest environment variables.
@@ -77,7 +76,6 @@ export class AllureReporter {
 	 * A test file represents all top-level describe blocks in a spec file.
 	 *
 	 * This method calls the `startSuite` implementation.
-	 *
 	 * @param {string} fileName Name of the spec file.
 	 */
 	startTestFile( fileName?: string ): void {
@@ -96,7 +94,6 @@ export class AllureReporter {
 
 	/**
 	 * Starts a new suite in Allure.
-	 *
 	 * @param {string} [suiteName] Name of the suite.
 	 */
 	startSuite( suiteName?: string ): void {
@@ -108,7 +105,6 @@ export class AllureReporter {
 
 	/**
 	 * Ends the suite in Allure.
-	 *
 	 * @throws {Error} If this method is called without a running suite.
 	 */
 	endSuite(): void {
@@ -139,7 +135,6 @@ export class AllureReporter {
 	 * of the suite.
 	 *
 	 * If the hook is of the `afterXYZ` type, it is added at the end of the suite.
-	 *
 	 * @param {Circus.HookType} type Type of the hook being run.
 	 */
 	startHook( type: Circus.HookType ): void {
@@ -160,7 +155,6 @@ export class AllureReporter {
 	 * If this method is called outside of a hook, an error is thrown.
 	 *
 	 * Otherwise, the hook is marked as passed and finished.
-	 *
 	 * @param {Error} [error] Hook failures if any.
 	 * @throws {Error} If this method is called outside of a hook.
 	 */
@@ -185,7 +179,6 @@ export class AllureReporter {
 
 	/**
 	 * Starts the test case in Allure.
-	 *
 	 * @param {Circus.TestEntry} test Test step.
 	 * @param {Circus.State} state State of the test step.
 	 * @param {string} testPath Path to the test file.
@@ -239,7 +232,6 @@ export class AllureReporter {
 
 	/**
 	 * Mark the test case as pending/todo in Allure.
-	 *
 	 * @param {Circus.TestEntry} test Test step which is pending.
 	 * @throws {Error} If this method is called without a running suite.
 	 */
@@ -254,7 +246,6 @@ export class AllureReporter {
 
 	/**
 	 * Mark the test case as failed in Allure.
-	 *
 	 * @param {Error} error Error returned by Jest.
 	 * @throws {Error} If this method is called without a running suite.
 	 */
@@ -279,7 +270,6 @@ export class AllureReporter {
 
 	/**
 	 * Ends the test step in Allure.
-	 *
 	 * @throws {Error} If this method is called without a running suite.
 	 */
 	endTestStep() {
@@ -294,7 +284,6 @@ export class AllureReporter {
 
 	/**
 	 * Writes attachment in the specified file format.
-	 *
 	 * @param {Buffer|string} content Content of the attachement.
 	 * @param {ContentType|string|AttachmentOptions} type Type of attachment to write.
 	 * @returns {string}
@@ -316,7 +305,6 @@ export class AllureReporter {
 
 	/**
 	 * Push the test step onto the stack.
-	 *
 	 * @param {AllureStep} step Allure representation of the test step.
 	 */
 	pushStep( step: AllureStep ): void {
@@ -332,7 +320,6 @@ export class AllureReporter {
 
 	/**
 	 * Pushes the test onto the stack.
-	 *
 	 * @param {AllureTest} test Allure representation of the test.
 	 */
 	pushTest( test: AllureTest ): void {
@@ -348,7 +335,6 @@ export class AllureReporter {
 
 	/**
 	 * Pushes suite onto the stack.
-	 *
 	 * @param {AllureGroup} suite Group of tests representing a suite.
 	 */
 	pushSuite( suite: AllureGroup ): void {
@@ -364,7 +350,6 @@ export class AllureReporter {
 
 	/**
 	 * Adds the details of test failure into Allure.
-	 *
 	 * @param {Error} error Error returned by Jest.
 	 */
 	private handleError( error: Error | any ) {
@@ -411,7 +396,6 @@ export class AllureReporter {
 	}
 	/**
 	 * Extracts the test code.
-	 *
 	 * @param {string} serializedTestCode Test code.
 	 */
 	private extractCodeDetails( serializedTestCode: string ) {
@@ -425,7 +409,6 @@ export class AllureReporter {
 
 	/**
 	 * Extracts docblock from the test code.
-	 *
 	 * @param {string} contents Test code.
 	 */
 	private extractDocBlock( contents: string ): string {
