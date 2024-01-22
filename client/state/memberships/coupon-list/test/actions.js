@@ -1,3 +1,4 @@
+import nock from 'nock';
 import {
 	MEMBERSHIPS_COUPONS_LIST,
 	MEMBERSHIPS_COUPON_RECEIVE,
@@ -29,7 +30,7 @@ const mockCoupon = {
 	first_time_purchase_only: false,
 	duration: COUPON_DURATION_FOREVER,
 	email_allow_list: [],
-}
+};
 
 describe( 'actions', () => {
 	describe( 'requestCoupons()', () => {
