@@ -466,6 +466,7 @@ const RecurringPaymentsCouponAddEditModal = ( {
 					) }
 					{ isCharacterMaxReached && (
 						<FormInputValidation
+							isError={ false }
 							isWarning
 							text={ translate(
 								'The coupon code maximum length of 20 characters has been reached'
