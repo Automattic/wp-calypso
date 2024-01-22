@@ -251,7 +251,7 @@ export default function GlueRecordsCard( { domain }: { domain: ResponseDomain } 
 					<Button
 						scary
 						disabled={ isSaving || isRemoving }
-						className="edit-redirect-button"
+						className="edit-glue-record-button"
 						onClick={ () => handleEdit( child ) }
 					>
 						<Gridicon icon="pencil" />
@@ -260,7 +260,7 @@ export default function GlueRecordsCard( { domain }: { domain: ResponseDomain } 
 					<Button
 						scary
 						disabled={ isSaving || isRemoving }
-						className="edit-redirect-button"
+						className="delete-glue-record-button"
 						onClick={ () => handleDelete( child ) }
 					>
 						<Gridicon icon="trash" />
@@ -271,14 +271,20 @@ export default function GlueRecordsCard( { domain }: { domain: ResponseDomain } 
 		</FormFieldset>
 	);
 
-	const FormRowEditable = ( { child }: { child: GlueRecordObject } ) => (
+	const FormRowEditable = ( {
+		child,
+		isEditing = false,
+	}: {
+		child: GlueRecordObject;
+		isEditing: boolean;
+	} ) => (
 		<>
 			<FormFieldset key={ `edit-${ child.nameserver }` }>
 				<FormLabel>{ translate( 'Name server' ) }</FormLabel>
 				<div>
 					<FormTextInputWithAffixes
 						placeholder={ translate( 'Enter subdomain (e.g. ns1)' ) }
-						disabled={ isLoadingData || isSaving }
+						disabled={ isLoadingData || isSaving || isEditing }
 						name="nameserver"
 						onChange={ handleNameserverChange }
 						value={ nameserver }
@@ -370,6 +376,7 @@ export default function GlueRecordsCard( { domain }: { domain: ResponseDomain } 
 								nameserver: '',
 								address: '',
 							},
+							isEditing: false,
 						} ) }
 					{ isEditing &&
 						FormRowEditable( {
@@ -377,6 +384,7 @@ export default function GlueRecordsCard( { domain }: { domain: ResponseDomain } 
 								nameserver,
 								address: ipAddress,
 							},
+							isEditing: true,
 						} ) }
 				</form>
 
