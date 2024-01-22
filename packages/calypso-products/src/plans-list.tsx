@@ -593,7 +593,6 @@ const getPlanFreeDetails = (): IncompleteWPcomPlan => ( {
 		FEATURE_SECURITY_DDOS,
 		FEATURE_PAYMENT_TRANSACTION_FEES_10,
 		FEATURE_GROUP_PAYMENT_TRANSACTION_FEES,
-		FEATURE_COMMISSION_FEE_STANDARD_FEATURES,
 	],
 	get2023PricingGridSignupJetpackFeatures: () => [
 		FEATURE_PAID_SUBSCRIBERS_JP,
@@ -1115,7 +1114,6 @@ const getPlanEcommerceDetails = (): IncompleteWPcomPlan => ( {
 		FEATURE_COMMISSION_FEE_STANDARD_FEATURES,
 		FEATURE_COMMISSION_FEE_WOO_FEATURES,
 	],
-	get2023PlanComparisonFeatureOverride: () => [ FEATURE_COMMISSION_FEE_WOO_FEATURES ],
 	getHostingSignupFeatures: ( term ) => () =>
 		compact( [
 			term !== TERM_MONTHLY && FEATURE_CUSTOM_DOMAIN,
