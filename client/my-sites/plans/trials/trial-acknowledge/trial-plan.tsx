@@ -33,17 +33,19 @@ export const TrialPlan = ( {
 			<SubTitle>{ subtitle }</SubTitle>
 			<p>{ supportingCopy }</p>
 
-			<div className="trial-plan--details">
-				<div className="trial-plan--details-features">
-					<ul>
-						{ planFeatures.map( ( feature, i ) => (
-							<li key={ i }>
-								<Icon size={ 20 } icon={ check } /> { feature }
-							</li>
-						) ) }
-					</ul>
+			{ planFeatures?.length > 0 && (
+				<div className="trial-plan--details">
+					<div className="trial-plan--details-features">
+						<ul>
+							{ planFeatures.map( ( feature, i ) => (
+								<li key={ i }>
+									<Icon size={ 20 } icon={ check } /> { feature }
+								</li>
+							) ) }
+						</ul>
+					</div>
 				</div>
-			</div>
+			) }
 
 			<div className="trial-plan--details-limitation">
 				<img src={ clockIcon } alt={ __( 'Limit' ) } />
