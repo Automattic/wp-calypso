@@ -247,7 +247,7 @@
 		"chalk": "^4.1.2",
 		"check-node-version": "^4.0.2",
 		"chroma-js": "^2.1.2",
-		"css-loader": "^6.8.1",
+		"css-loader": "^6.9.0",
 		"doctrine": "^3.0.0",
 		"eslint": "^8.56.0",
 		"eslint-config-prettier": "^9.1.0",
