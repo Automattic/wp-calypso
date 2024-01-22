@@ -458,6 +458,16 @@ export const FEATURE_DISCOUNTED_SHIPPING = 'discounted-shipping'; // Discounted 
 export const FEATURE_PRINT_SHIPPING_LABELS = 'print-shipping-labels'; // Print shipping labels
 export const FEATURE_AI_ASSISTED_PRODUCT_DESCRIPTION = 'ai-assisted-product-descriptions'; // AI-assisted product descriptions
 
+// Sensei Features
+export const FEATURE_SENSEI_SUPPORT = 'sensei_support';
+export const FEATURE_SENSEI_UNLIMITED = 'sensei_unlimited';
+export const FEATURE_SENSEI_INTERACTIVE = 'sensei_interactive';
+export const FEATURE_SENSEI_QUIZZES = 'sensei_quizzes';
+export const FEATURE_SENSEI_SELL_COURSES = 'sensei_sell_courses';
+export const FEATURE_SENSEI_STORAGE = 'sensei_storage';
+export const FEATURE_SENSEI_HOSTING = 'sensei_hosting';
+export const FEATURE_SENSEI_JETPACK = 'sensei_jepack';
+
 // Feature types
 export const FEATURE_TYPE_JETPACK_ANTI_SPAM = 'jetpack_anti_spam';
 export const FEATURE_TYPE_JETPACK_ACTIVITY_LOG = 'jetpack_activity_log';
