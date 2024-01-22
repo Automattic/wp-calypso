@@ -90,7 +90,7 @@ export default function BeforeSubmitCheckoutHeader() {
 	const creditsLineItem = getCreditsLineItemFromCart( responseCart );
 	const translate = useTranslate();
 
-	const totalDiscount = getTotalDiscountsWithoutCredits( responseCart );
+	const totalDiscount = getTotalDiscountsWithoutCredits( responseCart, translate );
 	const discountLineItem: LineItemType = {
 		id: 'total-discount',
 		type: 'subtotal',

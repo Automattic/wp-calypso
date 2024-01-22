@@ -205,12 +205,13 @@ export function getSubtotalWithoutDiscounts( responseCart: ResponseCart ): numbe
 	}, 0 );
 }
 
-export function getTotalDiscountsWithoutCredits( responseCart: ResponseCart ): number {
-	return -responseCart.products.reduce( ( total, product ) => {
-		product.cost_overrides?.forEach( ( override ) => {
-			const discount = override.old_subtotal_integer - override.new_subtotal_integer;
-			total = total + discount;
-		} );
+export function getTotalDiscountsWithoutCredits(
+	responseCart: ResponseCart,
+	translate: ReturnType< typeof useTranslate >
+): number {
+	const filteredOverrides = filterAndGroupCostOverridesForDisplay( responseCart, translate );
+	return -filteredOverrides.reduce( ( total, override ) => {
+		total = total + override.discountAmount;
 		return total;
 	}, 0 );
 }
