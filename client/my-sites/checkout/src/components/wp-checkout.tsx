@@ -430,19 +430,17 @@ export default function WPCheckout( {
 			: translate( 'Continue', { textOnly: true } );
 
 	/* Include a condition for your use case here if you want to show a specific nudge in the checkout sidebar */
-	const renderCheckoutSidebarNudge = () => {
-		let upsellNudgeVariant = null;
-
+	function CheckoutSidebarNudge() {
 		if ( ! isWcMobile && ! isDIFMInCart && ! hasMonthlyProduct ) {
-			upsellNudgeVariant = (
+			return (
 				<>
 					<CheckoutSidebarPlanUpsell />
 					<JetpackAkismetCheckoutSidebarPlanUpsell />
 				</>
 			);
 		}
-		return upsellNudgeVariant;
-	};
+		return null;
+	}
 
 	return (
 		<WPCheckoutWrapper>
@@ -488,7 +486,7 @@ export default function WPCheckout( {
 								/>
 								{ hasCheckoutVersion( '2' ) && (
 									<CheckoutSidebarNudgeWrapper>
-										{ renderCheckoutSidebarNudge() }
+										<CheckoutSidebarNudge />
 									</CheckoutSidebarNudgeWrapper>
 								) }
 								<SecondaryCartPromotions
