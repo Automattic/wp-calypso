@@ -15,8 +15,8 @@ type FormTextInputWithValueGenerationProps = {
 	onFocus?: ( event: FocusEvent< HTMLInputElement > ) => void;
 	onBlur?: ( event: FocusEvent< HTMLInputElement > ) => void;
 	onChange?: ( event: ChangeEvent< HTMLInputElement > ) => void;
-	onCharacterMinLimitReached?: ( isMinReached: boolean ) => void;
-	onCharacterMaxLimitReached?: ( isMaxReached: boolean ) => void;
+	onCharacterMinReached?: ( isMinReached: boolean ) => void;
+	onCharacterMaxReached?: ( isMaxReached: boolean ) => void;
 	disabled?: boolean;
 	isError?: boolean;
 	isValid?: boolean;
