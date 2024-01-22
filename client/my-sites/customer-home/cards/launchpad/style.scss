@@ -17,7 +17,9 @@
 		align-items: center;
 
 		.customer-home-launchpad__progress-bar-container {
-			margin: 5px;
+			display: flex;
+			flex-direction: row;
+			gap: 20px;
 		}
 
 		.customer-home-launchpad__title {

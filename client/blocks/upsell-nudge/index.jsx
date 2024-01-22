@@ -12,7 +12,9 @@ import {
 } from '@automattic/calypso-products';
 import classnames from 'classnames';
 import debugFactory from 'debug';
+import { useState } from 'react';
 import { connect } from 'react-redux';
+import AsyncLoad from 'calypso/components/async-load';
 import Banner from 'calypso/components/banner';
 import { addQueryArgs } from 'calypso/lib/url';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
@@ -85,7 +87,11 @@ export const UpsellNudge = ( {
 	displayAsLink,
 	isSiteWooExpressOrEcomFreeTrial,
 	isBusy,
+	isEligibleForOneClickCheckout,
+	isOneClickCheckoutEnabled = false,
 } ) => {
+	const [ showPurchaseModal, setShowPurchaseModal ] = useState( false );
+
 	const shouldNotDisplay =
 		isVip ||
 		! canManageSite ||
@@ -133,47 +139,73 @@ export const UpsellNudge = ( {
 		);
 	}
 
+	const handleClick = ( e ) => {
+		if (
+			isOneClickCheckoutEnabled &&
+			isEligibleForOneClickCheckout?.result === true &&
+			plan &&
+			siteSlug &&
+			canUserUpgrade
+		) {
+			e.preventDefault();
+			setShowPurchaseModal( true );
+		}
+		onClick?.();
+	};
+
 	return (
-		<Banner
-			callToAction={ callToAction }
-			secondaryCallToAction={ secondaryCallToAction }
-			className={ classes }
-			compact={ compact }
-			compactButton={ compactButton }
-			description={ description }
-			disableHref={ disableHref }
-			dismissPreferenceName={ dismissPreferenceName }
-			dismissTemporary={ dismissTemporary }
-			event={ event }
-			secondaryEvent={ secondaryEvent }
-			feature={ feature }
-			forceHref={ forceHref }
-			horizontal={ horizontal }
-			href={ href }
-			secondaryHref={ secondaryHref }
-			icon={ icon }
-			jetpack={ isJetpack || isJetpackDevDocs } //Force show Jetpack example in Devdocs
-			isAtomic={ isAtomic }
-			list={ list }
-			renderListItem={ renderListItem }
-			onClick={ onClick }
-			secondaryOnClick={ secondaryOnClick }
-			onDismiss={ onDismissClick }
-			plan={ plan }
-			price={ price }
-			primaryButton={ primaryButton }
-			showIcon={ showIcon }
-			target={ target }
-			title={ title }
-			tracksClickName={ tracksClickName }
-			tracksClickProperties={ tracksClickProperties }
-			tracksDismissName={ tracksDismissName }
-			tracksDismissProperties={ tracksDismissProperties }
-			tracksImpressionName={ tracksImpressionName }
-			tracksImpressionProperties={ tracksImpressionProperties }
-			displayAsLink={ displayAsLink }
-			isBusy={ isBusy }
-		/>
+		<>
+			{ showPurchaseModal && (
+				<AsyncLoad
+					require="./purchase-modal-wrapper"
+					plan={ plan }
+					siteSlug={ siteSlug }
+					setShowPurchaseModal={ setShowPurchaseModal }
+				/>
+			) }
+			<Banner
+				callToAction={ callToAction }
+				secondaryCallToAction={ secondaryCallToAction }
+				className={ classes }
+				compact={ compact }
+				compactButton={ compactButton }
+				description={ description }
+				disableHref={ disableHref }
+				dismissPreferenceName={ dismissPreferenceName }
+				dismissTemporary={ dismissTemporary }
+				event={ event }
+				secondaryEvent={ secondaryEvent }
+				feature={ feature }
+				forceHref={ forceHref }
+				horizontal={ horizontal }
+				href={ href }
+				secondaryHref={ secondaryHref }
+				icon={ icon }
+				jetpack={ isJetpack || isJetpackDevDocs } //Force show Jetpack example in Devdocs
+				isAtomic={ isAtomic }
+				list={ list }
+				renderListItem={ renderListItem }
+				onClick={ handleClick }
+				secondaryOnClick={ secondaryOnClick }
+				onDismiss={ onDismissClick }
+				plan={ plan }
+				price={ price }
+				primaryButton={ primaryButton }
+				showIcon={ showIcon }
+				target={ target }
+				title={ title }
+				tracksClickName={ tracksClickName }
+				tracksClickProperties={ tracksClickProperties }
+				tracksDismissName={ tracksDismissName }
+				tracksDismissProperties={ tracksDismissProperties }
+				tracksImpressionName={ tracksImpressionName }
+				tracksImpressionProperties={ tracksImpressionProperties }
+				displayAsLink={ displayAsLink }
+				isBusy={
+					isBusy || ( isOneClickCheckoutEnabled && isEligibleForOneClickCheckout?.isLoading )
+				}
+			/>
+		</>
 	);
 };
 
@@ -182,7 +214,7 @@ UpsellNudge.defaultProps = {
 	compactButton: true,
 };
 
-export default connect( ( state, ownProps ) => {
+const ConnectedUpsellNudge = connect( ( state, ownProps ) => {
 	const siteId = getSelectedSiteId( state );
 
 	return {
@@ -200,3 +232,16 @@ export default connect( ( state, ownProps ) => {
 		siteIsWPForTeams: isSiteWPForTeams( state, getSelectedSiteId( state ) ),
 	};
 } )( UpsellNudge );
+
+export default function Wrapper( props ) {
+	if ( props.isOneClickCheckoutEnabled ) {
+		return (
+			<AsyncLoad
+				require="../../my-sites/checkout/purchase-modal/is-eligible-for-one-click-checkout-wrapper"
+				component={ ConnectedUpsellNudge }
+				componentProps={ props }
+			/>
+		);
+	}
+	return <ConnectedUpsellNudge { ...props } />;
+}

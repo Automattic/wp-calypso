@@ -49,7 +49,7 @@ const StorageAddOnOption = ( {
 	return (
 		<>
 			{ price && ! isLargeCurrency && ! priceOnSeparateLine ? (
-				<div>
+				<div className="storage-add-on-dropdown-option__text-container">
 					<span className="storage-add-on-dropdown-option__title">{ title }</span>
 					<div className="storage-add-on-dropdown-option__price-container">
 						<span>

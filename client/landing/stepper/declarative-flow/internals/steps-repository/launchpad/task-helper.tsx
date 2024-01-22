@@ -309,7 +309,7 @@ export function getEnhancedTasks( {
 					taskData = getTaskDefinition( flow, task, context ) || deprecatedData;
 					break;
 				case 'setup_blog':
-					taskData = {
+					deprecatedData = {
 						actionDispatch: () => {
 							recordTaskClickTracksEvent( flow, task.completed, task.id );
 							window.location.assign(
@@ -318,6 +318,7 @@ export function getEnhancedTasks( {
 						},
 						disabled: task.completed && ! isBlogOnboardingFlow( flow ),
 					};
+					taskData = getTaskDefinition( flow, task, context ) || deprecatedData;
 					break;
 				case 'setup_newsletter':
 					taskData = {
@@ -377,7 +378,7 @@ export function getEnhancedTasks( {
 					taskData = getTaskDefinition( flow, task, context ) || deprecatedData;
 					break;
 				case 'plan_completed':
-					taskData = {
+					deprecatedData = {
 						actionDispatch: () => {
 							recordTaskClickTracksEvent( flow, task.completed, task.id );
 							const plansUrl = addQueryArgs( `/setup/${ flow }/plans`, siteInfoQueryArgs );
@@ -388,6 +389,7 @@ export function getEnhancedTasks( {
 						subtitle: getPlanTaskSubtitle( task ),
 						disabled: task.completed && ! isCurrentPlanFree,
 					};
+					taskData = getTaskDefinition( flow, task, context ) || deprecatedData;
 					break;
 				case 'subscribers_added':
 					taskData = {
@@ -534,7 +536,7 @@ export function getEnhancedTasks( {
 					taskData = getTaskDefinition( flow, task, context ) || deprecatedData;
 					break;
 				case 'blog_launched': {
-					taskData = {
+					deprecatedData = {
 						isLaunchTask: true,
 						title: getLaunchSiteTaskTitle( task ),
 						disabled: getIsLaunchSiteTaskDisabled(),
@@ -542,6 +544,8 @@ export function getEnhancedTasks( {
 							completeLaunchSiteTask( task );
 						},
 					};
+
+					taskData = getTaskDefinition( flow, task, context ) || deprecatedData;
 					break;
 				}
 				case 'videopress_upload':

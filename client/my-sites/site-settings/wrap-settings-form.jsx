@@ -77,7 +77,7 @@ const wrapSettingsForm = ( getFormSettings ) => ( SettingsForm ) => {
 					( this.props.isJetpackSaveRequestSuccessful || ! this.props.siteIsJetpack )
 				) {
 					if ( ! this.state.isSiteTitleTaskCompleted && this.state.blogNameChanged ) {
-						noticeSettings.button = 'Next steps';
+						noticeSettings.button = this.props.translate( 'Next steps' );
 						noticeSettings.onClick = () => {
 							window.location.assign( `/home/${ this.props.siteSlug }` );
 						};
