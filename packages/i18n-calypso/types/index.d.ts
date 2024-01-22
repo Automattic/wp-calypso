@@ -80,7 +80,6 @@ export type EventListener = ( ...payload: any ) => any;
 export interface I18N {
 	/**
 	 * Translate a string.
-	 *
 	 * @example translate( "Hello, %(name)s", { args: { name: "World" } } );
 	 * @param original The original string to translate.
 	 * @param options Options for the translation. Note that substutions must exist.

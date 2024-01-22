@@ -2,7 +2,7 @@ import { translate } from 'i18n-calypso';
 import { recordTaskClickTracksEvent } from '../../tracking';
 import { type TaskAction } from '../../types';
 
-const getSubscribersTask: TaskAction = ( task, flow, context ) => {
+const getSetupPaymentsTask: TaskAction = ( task, flow, context ) => {
 	const { siteInfoQueryArgs, stripeConnectUrl } = context;
 
 	return {
@@ -16,5 +16,5 @@ const getSubscribersTask: TaskAction = ( task, flow, context ) => {
 };
 
 export const actions = {
-	set_up_payments: getSubscribersTask,
+	set_up_payments: getSetupPaymentsTask,
 };

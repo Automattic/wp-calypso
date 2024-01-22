@@ -41,7 +41,8 @@ export type TaskId =
 	| 'link_in_bio_launched'
 	| 'migrate_content'
 	| 'links_added'
-	| 'site_launched';
+	| 'site_launched'
+	| 'set_up_payments';
 
 export interface TaskContext {
 	tasks: Task[];
