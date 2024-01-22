@@ -87,6 +87,10 @@ export const ReviewsModal = ( props: Props ) => {
 			className="marketplace-reviews-modal"
 			isVisible={ isVisible }
 			onClose={ () => {
+				recordTracksEvent( 'calypso_marketplace_reviews_modal_close', {
+					product_type: productType,
+					slug: slug,
+				} );
 				onClose();
 				setEditCompletedTimes( 0 );
 			} }
