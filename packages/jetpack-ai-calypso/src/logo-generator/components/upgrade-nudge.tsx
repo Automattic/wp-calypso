@@ -9,9 +9,9 @@ import { Icon, warning } from '@wordpress/icons';
 /**
  * Internal dependencies
  */
-import './upgrade-nudge.scss';
-import { useCheckout } from '../hooks/use-checkout';
 import { EVENT_PLACEMENT_UPGRADE_PROMPT, EVENT_UPGRADE } from '../../constants';
+import { useCheckout } from '../hooks/use-checkout';
+import './upgrade-nudge.scss';
 
 export const UpgradeNudge = () => {
 	const buttonText = __( 'Upgrade', 'jetpack' );
