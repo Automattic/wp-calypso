@@ -50,6 +50,7 @@ export const GeneratorModal: React.FC< GeneratorModalProps > = ( {
 	const [ initialPrompt, setInitialPrompt ] = useState< string | undefined >();
 	const [ isFirstCallOnOpen, setIsFirstCallOnOpen ] = useState( true );
 	const [ needsFeature, setNeedsFeature ] = useState( false );
+	const [ needsMoreRequests, setNeedsMoreRequests ] = useState( false );
 	const [ upgradeURL, setUpgradeURL ] = useState( '' );
 	const { selectedLogo, getAiAssistantFeature, generateFirstPrompt, generateLogo } =
 		useLogoGenerator();
@@ -90,9 +91,22 @@ export const GeneratorModal: React.FC< GeneratorModalProps > = ( {
 		// First fetch the feature data so we have the most up-to-date info from the backend.
 		try {
 			const feature = await getFeature();
+			const hasHistory = ! isLogoHistoryEmpty( String( siteId ) );
+			const logoCost = feature?.costs?.[ 'jetpack-ai-logo-generator' ]?.logo as number;
+			const promptCreationCost = 1;
+			const currentLimit = feature?.currentTier?.value || 0;
+			const currentUsage = feature?.usagePeriod?.requestsCount || 0;
+			const isUnlimited = currentLimit === 1;
+
+			// The user needs an upgrade immediately if they have no logos and not enough requests remaining for one prompt and one logo generation.
+			const needsMoreRequests =
+				! isUnlimited &&
+				! hasHistory &&
+				currentLimit - currentUsage < logoCost + promptCreationCost;
 
 			// If the site requires an upgrade, set the upgrade URL and show the upgrade screen immediately.
 			setNeedsFeature( ! feature?.hasFeature ?? true );
+			setNeedsMoreRequests( needsMoreRequests );
 
 			if ( ! feature?.hasFeature ) {
 				const upgradeURL = new URL(
@@ -128,6 +142,7 @@ export const GeneratorModal: React.FC< GeneratorModalProps > = ( {
 	const closeModal = () => {
 		setLoadingState( null );
 		setNeedsFeature( false );
+		setNeedsMoreRequests( false );
 		clearErrors();
 		recordTracksEvent( EVENT_MODAL_CLOSE );
 		onClose();
@@ -179,8 +194,14 @@ export const GeneratorModal: React.FC< GeneratorModalProps > = ( {
 		body = <FirstLoadScreen state={ loadingState } />;
 	} else if ( featureFetchError || firstLogoPromptFetchError ) {
 		body = <FeatureFetchFailureScreen onCancel={ closeModal } onRetry={ initializeModal } />;
-	} else if ( needsFeature ) {
-		body = <UpgradeScreen onCancel={ closeModal } upgradeURL={ upgradeURL } />;
+	} else if ( needsFeature || needsMoreRequests ) {
+		body = (
+			<UpgradeScreen
+				onCancel={ closeModal }
+				upgradeURL={ upgradeURL }
+				reason={ needsFeature ? 'feature' : 'requests' }
+			/>
+		);
 	} else {
 		body = (
 			<>
@@ -215,7 +236,8 @@ export const GeneratorModal: React.FC< GeneratorModalProps > = ( {
 				>
 					<div
 						className={ classNames( 'jetpack-ai-logo-generator-modal__body', {
-							'notice-modal': needsFeature || featureFetchError || firstLogoPromptFetchError,
+							'notice-modal':
+								needsFeature || needsMoreRequests || featureFetchError || firstLogoPromptFetchError,
 						} ) }
 					>
 						{ body }
