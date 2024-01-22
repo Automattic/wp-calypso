@@ -30,7 +30,7 @@
 		"@storybook/addon-controls": "^7.6.7",
 		"@storybook/preset-scss": "^1.0.3",
 		"@storybook/react-webpack5": "^7.6.7",
-		"css-loader": "^6.8.1",
+		"css-loader": "^6.9.0",
 		"react": "^18.2.0",
 		"react-dom": "^18.2.0",
 		"sass-loader": "^12.1.0",

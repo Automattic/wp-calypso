@@ -222,7 +222,7 @@ __metadata:
     hash.js: "npm:^1.1.7"
     tslib: "npm:^2.3.0"
     typescript: "npm:^5.3.3"
-    uuid: "npm:^8.3.2"
+    uuid: "npm:^9.0.1"
   languageName: unknown
   linkType: soft
 
@@ -284,7 +284,7 @@ __metadata:
     autoprefixer: "npm:^10.2.5"
     babel-loader: "npm:^8.2.3"
     browserslist: "npm:^4.8.2"
-    css-loader: "npm:^6.8.1"
+    css-loader: "npm:^6.9.0"
     css-minimizer-webpack-plugin: "npm:^3.4.1"
     duplicate-package-checker-webpack-plugin: "npm:^3.0.0"
     mini-css-extract-plugin: "npm:^1.6.2"
@@ -447,7 +447,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@automattic/calypso-razorpay@workspace:^, @automattic/calypso-razorpay@workspace:packages/calypso-razorpay":
+"@automattic/calypso-razorpay@npm:^0.0.1, @automattic/calypso-razorpay@workspace:^, @automattic/calypso-razorpay@workspace:packages/calypso-razorpay":
   version: 0.0.0-use.local
   resolution: "@automattic/calypso-razorpay@workspace:packages/calypso-razorpay"
   dependencies:
@@ -491,7 +491,7 @@ __metadata:
     "@storybook/addon-viewport": "npm:^7.6.7"
     "@storybook/preset-scss": "npm:^1.0.3"
     "@storybook/react-webpack5": "npm:^7.6.7"
-    css-loader: "npm:^6.8.1"
+    css-loader: "npm:^6.9.0"
     react: "npm:^18.2.0"
     react-dom: "npm:^18.2.0"
     sass-loader: "npm:^12.1.0"
@@ -578,7 +578,7 @@ __metadata:
     resize-observer-polyfill: "npm:^1.5.1"
     typescript: "npm:^5.3.3"
     utility-types: "npm:^3.10.0"
-    uuid: "npm:^8.3.2"
+    uuid: "npm:^9.0.1"
     webpack: "npm:^5.89.0"
   peerDependencies:
     "@wordpress/data": ^9.19.0
@@ -795,7 +795,7 @@ __metadata:
     tslib: "npm:^2.3.0"
     typescript: "npm:^5.3.3"
     use-debounce: "npm:^3.1.0"
-    uuid: "npm:^8.3.2"
+    uuid: "npm:^9.0.1"
   peerDependencies:
     "@wordpress/data": ^9.19.0
     "@wordpress/element": ^5.26.0
@@ -1324,7 +1324,7 @@ __metadata:
     react-dom: "npm:^18.2.0"
     react-intersection-observer: "npm:^9.4.3"
     tslib: "npm:^2.3.0"
-    typescript: "npm:^4.7.4"
+    typescript: "npm:^5.3.3"
     wpcom-proxy-request: "npm:^7.0.5"
   languageName: unknown
   linkType: soft
@@ -1896,7 +1896,7 @@ __metadata:
   resolution: "@automattic/webpack-rtl-plugin@workspace:packages/webpack-rtl-plugin"
   dependencies:
     "@automattic/calypso-typescript-config": "workspace:^"
-    css-loader: "npm:^6.8.1"
+    css-loader: "npm:^6.9.0"
     mini-css-extract-plugin: "npm:^1.6.2"
     rtlcss: "npm:^3.1.2"
     webpack: "npm:^5.89.0"
@@ -2011,6 +2011,7 @@ __metadata:
   dependencies:
     "@automattic/calypso-config": "workspace:^"
     "@automattic/calypso-products": "workspace:^"
+    "@automattic/calypso-razorpay": "npm:^0.0.1"
     "@automattic/calypso-stripe": "workspace:^"
     "@automattic/calypso-typescript-config": "workspace:^"
     "@automattic/components": "workspace:^"
@@ -8156,14 +8157,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/uuid@npm:^8.3.4":
-  version: 8.3.4
-  resolution: "@types/uuid@npm:8.3.4"
-  checksum: b9ac98f82fcf35962317ef7dc44d9ac9e0f6fdb68121d384c88fe12ea318487d5585d3480fa003cf28be86a3bbe213ca688ba786601dce4a97724765eb5b1cf2
-  languageName: node
-  linkType: hard
-
-"@types/uuid@npm:^9.0.1":
+"@types/uuid@npm:^9.0.1, @types/uuid@npm:^9.0.7":
   version: 9.0.7
   resolution: "@types/uuid@npm:9.0.7"
   checksum: b329ebd4f9d1d8e08d4f2cc211be4922d70d1149f73d5772630e4a3acfb5170c6d37b3d7a39a0412f1a56e86e8a844c7f297c798b082f90380608bf766688787
@@ -12197,7 +12191,7 @@ __metadata:
     use-debounce: "npm:^3.1.0"
     util: "npm:^0.12.3"
     utility-types: "npm:^3.10.0"
-    uuid: "npm:^8.3.2"
+    uuid: "npm:^9.0.1"
     valid-url: "npm:^1.0.9"
     webpack: "npm:^5.89.0"
     webpack-bundle-analyzer: "npm:^4.10.1"
@@ -13774,21 +13768,21 @@ __metadata:
   languageName: node
   linkType: hard
 
-"css-loader@npm:^6.7.1, css-loader@npm:^6.8.1":
-  version: 6.8.1
-  resolution: "css-loader@npm:6.8.1"
+"css-loader@npm:^6.7.1, css-loader@npm:^6.9.0":
+  version: 6.9.1
+  resolution: "css-loader@npm:6.9.1"
   dependencies:
     icss-utils: "npm:^5.1.0"
-    postcss: "npm:^8.4.21"
+    postcss: "npm:^8.4.33"
     postcss-modules-extract-imports: "npm:^3.0.0"
-    postcss-modules-local-by-default: "npm:^4.0.3"
-    postcss-modules-scope: "npm:^3.0.0"
+    postcss-modules-local-by-default: "npm:^4.0.4"
+    postcss-modules-scope: "npm:^3.1.1"
     postcss-modules-values: "npm:^4.0.0"
     postcss-value-parser: "npm:^4.2.0"
-    semver: "npm:^7.3.8"
+    semver: "npm:^7.5.4"
   peerDependencies:
     webpack: ^5.0.0
-  checksum: a6e23de4ec1d2832f10b8ca3cfec6b6097a97ca3c73f64338ae5cd110ac270f1b218ff0273d39f677a7a561f1a9d9b0d332274664d0991bcfafaae162c2669c4
+  checksum: 3dfff7d4372a1d8f2b1606a8376f2f5e484e59d7ffdc373ea3b04aa2b54ecd052aaf72c090a97148b0eb8a164cdc1f9dcb7a68686b2d5d190d69367c30f76132
   languageName: node
   linkType: hard
 
@@ -17166,12 +17160,12 @@ __metadata:
   linkType: hard
 
 "follow-redirects@npm:^1.0.0":
-  version: 1.15.1
-  resolution: "follow-redirects@npm:1.15.1"
+  version: 1.15.4
+  resolution: "follow-redirects@npm:1.15.4"
   peerDependenciesMeta:
     debug:
       optional: true
-  checksum: ea21337fe38eac8d75f5af12c425cc40e0bb44dcc3091fd0bde1c828596251a7a9638b5720fee5a0a5c62524450cbe16c52aae1dce88c6aee68577e441842e7f
+  checksum: 5f37ed9170c9eb19448c5418fdb0f2b73f644b5364834e70791a76ecc7db215246f9773bbef4852cfae4067764ffc852e047f744b661b0211532155b73556a6a
   languageName: node
   linkType: hard
 
@@ -23069,7 +23063,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"nanoid@npm:^3.3.4, nanoid@npm:^3.3.6":
+"nanoid@npm:^3.3.4, nanoid@npm:^3.3.7":
   version: 3.3.7
   resolution: "nanoid@npm:3.3.7"
   bin:
@@ -24948,16 +24942,16 @@ __metadata:
   languageName: node
   linkType: hard
 
-"postcss-modules-local-by-default@npm:^4.0.3":
-  version: 4.0.3
-  resolution: "postcss-modules-local-by-default@npm:4.0.3"
+"postcss-modules-local-by-default@npm:^4.0.4":
+  version: 4.0.4
+  resolution: "postcss-modules-local-by-default@npm:4.0.4"
   dependencies:
     icss-utils: "npm:^5.0.0"
     postcss-selector-parser: "npm:^6.0.2"
     postcss-value-parser: "npm:^4.1.0"
   peerDependencies:
     postcss: ^8.1.0
-  checksum: be49b86efbfb921f42287e227584aac91af9826fc1083db04958ae283dfe215ca539421bfba71f9da0f0b10651f28e95a64b5faca7166f578a1933b8646051f7
+  checksum: 9ebf464867eb10b29b73501b1466dcac8352ed852ef68ec23571f515daa74401d7ace9a6c72f354542081fdbb47d098c9bc6b05373b553a6e35779d072f967bb
   languageName: node
   linkType: hard
 
@@ -24971,14 +24965,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"postcss-modules-scope@npm:^3.0.0":
-  version: 3.0.0
-  resolution: "postcss-modules-scope@npm:3.0.0"
+"postcss-modules-scope@npm:^3.1.1":
+  version: 3.1.1
+  resolution: "postcss-modules-scope@npm:3.1.1"
   dependencies:
     postcss-selector-parser: "npm:^6.0.4"
   peerDependencies:
     postcss: ^8.1.0
-  checksum: 60af503910363689568c2c3701cb019a61b58b3d739391145185eec211bea5d50ccb6ecbe6955b39d856088072fd50ea002e40a52b50e33b181ff5c41da0308a
+  checksum: 3ef6ac14fcda1581bc43e37622256bd87b99ea49c59b2aae648d057d57f5ecc634648cce9910166220a797567af674bc09246ccc010f1dd58d2863b805719109
   languageName: node
   linkType: hard
 
@@ -25278,14 +25272,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"postcss@npm:^8.2.4, postcss@npm:^8.3.11, postcss@npm:^8.3.5, postcss@npm:^8.4.19, postcss@npm:^8.4.21, postcss@npm:^8.4.5":
-  version: 8.4.31
-  resolution: "postcss@npm:8.4.31"
+"postcss@npm:^8.2.4, postcss@npm:^8.3.11, postcss@npm:^8.3.5, postcss@npm:^8.4.19, postcss@npm:^8.4.21, postcss@npm:^8.4.33, postcss@npm:^8.4.5":
+  version: 8.4.33
+  resolution: "postcss@npm:8.4.33"
   dependencies:
-    nanoid: "npm:^3.3.6"
+    nanoid: "npm:^3.3.7"
     picocolors: "npm:^1.0.0"
     source-map-js: "npm:^1.0.2"
-  checksum: 748b82e6e5fc34034dcf2ae88ea3d11fd09f69b6c50ecdd3b4a875cfc7cdca435c958b211e2cb52355422ab6fccb7d8f2f2923161d7a1b281029e4a913d59acf
+  checksum: 16eda83458fcd8a91bece287b5920c7f57164c3ea293e6c80d0ea71ce7843007bcd8592260a5160b9a7f02693e6ac93e2495b02d8c7596d3f3f72c1447e3ba79
   languageName: node
   linkType: hard
 
@@ -30659,16 +30653,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"typescript@npm:^4.7.4":
-  version: 4.9.5
-  resolution: "typescript@npm:4.9.5"
-  bin:
-    tsc: bin/tsc
-    tsserver: bin/tsserver
-  checksum: 5f6cad2e728a8a063521328e612d7876e12f0d8a8390d3b3aaa452a6a65e24e9ac8ea22beb72a924fd96ea0a49ea63bb4e251fb922b12eedfb7f7a26475e5c56
-  languageName: node
-  linkType: hard
-
 "typescript@npm:^5.3.3":
   version: 5.3.3
   resolution: "typescript@npm:5.3.3"
@@ -30676,16 +30660,6 @@ __metadata:
     tsc: bin/tsc
     tsserver: bin/tsserver
   checksum: e33cef99d82573624fc0f854a2980322714986bc35b9cb4d1ce736ed182aeab78e2cb32b385efa493b2a976ef52c53e20d6c6918312353a91850e2b76f1ea44f
-  languageName: node
-  linkType: hard
-
-"typescript@patch:typescript@npm%3A^4.7.4#optional!builtin<compat/typescript>":
-  version: 4.9.5
-  resolution: "typescript@patch:typescript@npm%3A4.9.5#optional!builtin<compat/typescript>::version=4.9.5&hash=289587"
-  bin:
-    tsc: bin/tsc
-    tsserver: bin/tsserver
-  checksum: e3333f887c6829dfe0ab6c1dbe0dd1e3e2aeb56c66460cb85c5440c566f900c833d370ca34eb47558c0c69e78ced4bfe09b8f4f98b6de7afed9b84b8d1dd06a1
   languageName: node
   linkType: hard
 
@@ -32244,7 +32218,7 @@ __metadata:
     "@types/react-transition-group": "npm:^4.4.4"
     "@types/store": "npm:^2.0.2"
     "@types/superagent": "npm:^4.1.15"
-    "@types/uuid": "npm:^8.3.4"
+    "@types/uuid": "npm:^9.0.7"
     "@types/validator": "npm:^13.7.1"
     "@types/webpack-env": "npm:^1.18.4"
     "@types/wordpress__block-editor": "npm:^11.5.8"
@@ -32279,7 +32253,7 @@ __metadata:
     chroma-js: "npm:^2.1.2"
     cmdk: "npm:^0.2.0"
     config: "npm:^3.3.6"
-    css-loader: "npm:^6.8.1"
+    css-loader: "npm:^6.9.0"
     debug: "npm:^4.3.3"
     doctrine: "npm:^3.0.0"
     enhanced-resolve: "npm:5.9.3"
@@ -32427,7 +32401,7 @@ __metadata:
     "@automattic/calypso-typescript-config": "workspace:^"
     debug: "npm:^4.3.3"
     postcss: "npm:^8.4.5"
-    uuid: "npm:^8.3.2"
+    uuid: "npm:^9.0.1"
     webpack: "npm:^5.89.0"
     wp-error: "npm:^1.3.0"
   languageName: unknown
