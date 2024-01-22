@@ -44,6 +44,8 @@ export function translateWpcomPaymentMethodToCheckoutPaymentMethod(
 			return 'web-pay';
 		case 'WPCOM_Billing_MoneyPress_Stored':
 			return 'existingCard';
+		case 'WPCOM_Billing_Razorpay':
+			return 'razorpay';
 	}
 	throw new Error( `Unknown payment method '${ paymentMethod }'` );
 }
@@ -92,6 +94,8 @@ export function translateCheckoutPaymentMethodToWpcomPaymentMethod(
 			return 'WPCOM_Billing_Web_Payment';
 		case 'free-purchase':
 			return 'WPCOM_Billing_WPCOM';
+		case 'razorpay':
+			return 'WPCOM_Billing_Razorpay';
 	}
 	return null;
 }
@@ -115,6 +119,7 @@ export function readWPCOMPaymentMethodClass( slug: string ): WPCOMPaymentMethod 
 		case 'WPCOM_Billing_Stripe_Source_Three_D_Secure':
 		case 'WPCOM_Billing_Stripe_Source_Wechat':
 		case 'WPCOM_Billing_Web_Payment':
+		case 'WPCOM_Billing_Razorpay':
 			return slug;
 	}
 	return null;
@@ -146,6 +151,7 @@ export function readCheckoutPaymentMethodSlug( slug: string ): CheckoutPaymentMe
 		case 'wechat':
 		case 'web-pay':
 		case 'free-purchase':
+		case 'razorpay':
 			return slug;
 		case 'apple-pay':
 		case 'google-pay':
