@@ -1,6 +1,7 @@
 /**
  * Types
  */
+import { DEFAULT_LOGO_COST } from '../../constants';
 import type { AiFeatureProps, LogoGeneratorStateProp, Logo, RequestError } from './types';
 import type { SiteDetails } from '@automattic/data-stores';
 
@@ -119,7 +120,17 @@ const selectors = {
 	 * @returns {boolean}                      The requireUpgrade flag.
 	 */
 	getRequireUpgrade( state: LogoGeneratorStateProp ): boolean {
-		return state.features.aiAssistantFeature?.requireUpgrade ?? true;
+		const feature = state.features.aiAssistantFeature;
+		const logoCost = feature?.costs?.[ 'jetpack-ai-logo-generator' ]?.logo ?? DEFAULT_LOGO_COST;
+		const currentLimit = feature?.currentTier?.value || 0;
+		const currentUsage = feature?.usagePeriod?.requestsCount || 0;
+		const isUnlimited = currentLimit === 1;
+
+		// Add a local check on top of the feature flag, based on the current usage and logo cost.
+		return (
+			state.features.aiAssistantFeature?.requireUpgrade ||
+			( ! isUnlimited && currentLimit - currentUsage < logoCost )
+		);
 	},
 
 	/**

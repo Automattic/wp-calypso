@@ -13,6 +13,7 @@ import { useState, useEffect, useCallback } from 'react';
  * Internal dependencies
  */
 import {
+	DEFAULT_LOGO_COST,
 	EVENT_CALYPSO_LOGO_CALLED,
 	EVENT_FEEDBACK,
 	EVENT_MODAL_CLOSE,
@@ -92,7 +93,7 @@ export const GeneratorModal: React.FC< GeneratorModalProps > = ( {
 		try {
 			const feature = await getFeature();
 			const hasHistory = ! isLogoHistoryEmpty( String( siteId ) );
-			const logoCost = feature?.costs?.[ 'jetpack-ai-logo-generator' ]?.logo as number;
+			const logoCost = feature?.costs?.[ 'jetpack-ai-logo-generator' ]?.logo ?? DEFAULT_LOGO_COST;
 			const promptCreationCost = 1;
 			const currentLimit = feature?.currentTier?.value || 0;
 			const currentUsage = feature?.usagePeriod?.requestsCount || 0;
