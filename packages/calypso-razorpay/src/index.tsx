@@ -21,7 +21,7 @@ export interface RazorpayOptions {
 export interface RazorpayConfirmationRequestArgs {
 	razorpay_payment_id: string;
 	razorpay_signature: string;
-	order_id: string; // This is a BD order ID.
+	bd_order_id: string;
 }
 
 export declare class Razorpay {
