@@ -29,6 +29,7 @@ const FormTextInputWithValueGeneration = ( {
 	onAction = noop,
 	onChange = noop,
 	onCharacterMinReached = noop,
+	onCharacterMaxReached = noop,
 	onFocus = noop,
 	onBlur = noop,
 	disabled = false,
@@ -50,8 +51,14 @@ const FormTextInputWithValueGeneration = ( {
 			} else {
 				onCharacterMinReached( false );
 			}
+
+			if ( valueLength >= parseInt( maxLength, 10 ) ) {
+				onCharacterMaxReached( true );
+			} else {
+				onCharacterMaxReached( false );
+			}
 		},
-		[ onChange, minLength, onCharacterMinReached ]
+		[ onChange, minLength, maxLength, onCharacterMinReached, onCharacterMaxReached ]
 	);
 
 	const handleFocus = useCallback(

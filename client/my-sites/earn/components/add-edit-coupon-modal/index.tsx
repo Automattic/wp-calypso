@@ -163,7 +163,8 @@ const RecurringPaymentsCouponAddEditModal = ( {
 	const [ focusedDiscountValue, setFocusedDiscountValue ] = useState( false );
 	const [ focusedLimitPerUser, setFocusedLimitPerUser ] = useState( false );
 	const [ focusedEmailAllowList, setFocusedEmailAllowList ] = useState( false );
-	const [ isCharacterLimitExceeded, setIsCharacterLimitExceeded ] = useState( false );
+	const [ isCharacterMinReached, setisCharacterMinReached ] = useState( false );
+	const [ isCharacterMaxReached, setisCharacterMaxReached ] = useState( false );
 
 	/** Coupon functions */
 	const generateRandomCouponCode = (): string => {
@@ -194,8 +195,11 @@ const RecurringPaymentsCouponAddEditModal = ( {
 		const newValue = event.target.value;
 		setEditedCouponCode( newValue );
 	}, [] );
-	const handleCharacterLimitReached = useCallback( ( isExceeded ) => {
-		setIsCharacterLimitExceeded( isExceeded );
+	const handleCharacterMinLimitReached = useCallback( ( isMet ) => {
+		setisCharacterMinReached( isMet );
+	}, [] );
+	const handleCharacterMaxLimitReached = useCallback( ( isMet ) => {
+		setisCharacterMaxReached( isMet );
 	}, [] );
 	const onCouponCodeRandomize = () => {
 		const code = generateRandomCouponCode();
@@ -265,7 +269,7 @@ const RecurringPaymentsCouponAddEditModal = ( {
 	/** Form validation */
 	const isFormValid = ( field?: string ) => {
 		if ( field === 'coupon_code' || ! field ) {
-			if ( isCharacterLimitExceeded ) {
+			if ( isCharacterMinReached ) {
 				return false;
 			}
 
@@ -440,7 +444,8 @@ const RecurringPaymentsCouponAddEditModal = ( {
 						action="Random"
 						onChange={ onCouponCodeChange }
 						onAction={ onCouponCodeRandomize }
-						onCharacterMinReached={ handleCharacterLimitReached }
+						onCharacterMinReached={ handleCharacterMinLimitReached }
+						onCharacterMaxReached={ handleCharacterMaxLimitReached }
 						isError={ ! isFormValid( 'coupon_code' ) }
 						isValid={ isFormValid( 'coupon_code' ) }
 						minLength="3"
@@ -448,17 +453,23 @@ const RecurringPaymentsCouponAddEditModal = ( {
 						onBlur={ () => setFocusedCouponCode( true ) }
 					/>
 					<FormSettingExplanation>
-						{ translate(
-							'Choose a unique coupon code between 3 and 20 characters for the discount. Not case-sensitive.'
-						) }
+						{ translate( 'Choose a unique coupon code for the discount. Not case-sensitive.' ) }
 					</FormSettingExplanation>
-					{ ! isFormValid( 'coupon_code' ) && ! isCharacterLimitExceeded && focusedCouponCode && (
+					{ ! isFormValid( 'coupon_code' ) && ! isCharacterMinReached && focusedCouponCode && (
 						<FormInputValidation isError text={ translate( 'Please input a coupon code.' ) } />
 					) }
-					{ isCharacterLimitExceeded && (
+					{ isCharacterMinReached && (
 						<FormInputValidation
 							isError
 							text={ translate( 'Coupon codes must be at least 3 characters' ) }
+						/>
+					) }
+					{ isCharacterMaxReached && (
+						<FormInputValidation
+							isError
+							text={ translate(
+								'The coupon code maximum length of 20 characters has been reached'
+							) }
 						/>
 					) }
 				</FormFieldset>
