@@ -1,8 +1,8 @@
-import { Task } from '@automattic/launchpad';
+import { type Task } from '@automattic/launchpad';
 import { isBlogOnboardingFlow } from '@automattic/onboarding';
 import { addQueryArgs } from '@wordpress/url';
 import { recordTaskClickTracksEvent } from '../../tracking';
-import { TaskAction } from '../../types';
+import { type TaskAction } from '../../types';
 
 const getSetupFreeTask: TaskAction = ( task, flow, context ): Task => {
 	const { siteInfoQueryArgs } = context;
