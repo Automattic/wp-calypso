@@ -1,3 +1,4 @@
+import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { isEnabled } from '@automattic/calypso-config';
 import { Button, ConfettiAnimation } from '@automattic/components';
 import Card from '@automattic/components/src/card';
@@ -48,6 +49,12 @@ export function MarketplaceCreateReviewItem( props: MarketplaceCreateReviewItemP
 
 	const createReviewMutation = useCreateMarketplaceReviewMutation( { productType, slug } );
 	const createReview = () => {
+		recordTracksEvent( 'calypso_marketplace_reviews_add_submit', {
+			product_type: productType,
+			slug: slug,
+			rating: Number( rating ),
+		} );
+
 		createReviewMutation.mutate(
 			{ productType, slug, content, rating },
 			{

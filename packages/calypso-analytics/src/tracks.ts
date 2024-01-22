@@ -42,7 +42,7 @@ let _superProps: any; // Added to all Tracks events.
 let _loadTracksResult = Promise.resolve(); // default value for non-BOM environments.
 
 if ( typeof document !== 'undefined' ) {
-	_loadTracksResult = loadScript( '//stats.wp.com/w.js?64' );
+	_loadTracksResult = loadScript( '//stats.wp.com/w.js?67' );
 }
 
 function createRandomId( randomBytesLength = 9 ): string {
@@ -126,7 +126,6 @@ export const analyticsEvents: EventEmitter = new EventEmitter();
 
 /**
  * Returns the anoymous id stored in the `tk_ai` cookie
- *
  * @returns The Tracks anonymous user id
  */
 export function getTracksAnonymousUserId(): string {

@@ -6,14 +6,14 @@ export type ThankYouUpsellProps = {
 	title: React.ReactNode;
 	description: React.ReactNode;
 	image: string;
-	action?: React.ReactNode;
+	actions?: React.ReactNode;
 };
 
 export default function ThankYouUpsell( {
 	title,
 	description,
 	image,
-	action,
+	actions,
 }: ThankYouUpsellProps ) {
 	const translate = useTranslate();
 
@@ -35,7 +35,7 @@ export default function ThankYouUpsell( {
 					<p className="thank-you__upsell-description">{ description }</p>
 				</div>
 
-				<div className="thank-you__upsell-actions">{ action }</div>
+				<div className="thank-you__upsell-actions">{ actions }</div>
 			</div>
 		</div>
 	);

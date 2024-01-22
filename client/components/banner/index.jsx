@@ -33,6 +33,7 @@ const noop = () => {};
 export class Banner extends Component {
 	static propTypes = {
 		callToAction: PropTypes.string,
+		secondaryCallToAction: PropTypes.string,
 		className: PropTypes.string,
 		compactButton: PropTypes.bool,
 		description: PropTypes.oneOfType( [ PropTypes.node, PropTypes.symbol ] ),
@@ -43,6 +44,7 @@ export class Banner extends Component {
 		dismissTemporary: PropTypes.bool,
 		dismissWithoutSavingPreference: PropTypes.bool,
 		event: PropTypes.string,
+		secondaryEvent: PropTypes.string,
 		feature: PropTypes.string,
 		horizontal: PropTypes.bool,
 		href: PropTypes.string,
@@ -57,6 +59,7 @@ export class Banner extends Component {
 		] ),
 		renderListItem: PropTypes.func,
 		onClick: PropTypes.func,
+		secondaryOnClick: PropTypes.func,
 		onDismiss: PropTypes.func,
 		plan: PropTypes.string,
 		price: PropTypes.oneOfType( [ PropTypes.number, PropTypes.arrayOf( PropTypes.number ) ] ),
@@ -90,6 +93,7 @@ export class Banner extends Component {
 		jetpack: false,
 		isAtomic: false,
 		onClick: noop,
+		secondaryOnClick: noop,
 		onDismiss: noop,
 		primaryButton: true,
 		showIcon: true,
@@ -135,6 +139,28 @@ export class Banner extends Component {
 		}
 
 		onClick( e );
+	};
+
+	handleSecondaryClick = ( e ) => {
+		const {
+			secondaryEvent,
+			secondaryOnClick,
+			feature,
+			compact,
+			tracksClickName,
+			tracksClickProperties,
+		} = this.props;
+
+		if ( secondaryEvent && tracksClickName ) {
+			this.props.recordTracksEvent?.( tracksClickName, {
+				cta_name: secondaryEvent,
+				cta_feature: feature,
+				cta_size: compact ? 'compact' : 'regular',
+				...tracksClickProperties,
+			} );
+		}
+
+		secondaryOnClick( e );
 	};
 
 	handleDismiss = ( e ) => {
@@ -210,7 +236,9 @@ export class Banner extends Component {
 	getContent() {
 		const {
 			callToAction,
+			secondaryCallToAction,
 			forceHref,
+			secondaryHref,
 			description,
 			event,
 			feature,
@@ -293,6 +321,17 @@ export class Banner extends Component {
 									{ preventWidows( callToAction ) }
 								</Button>
 							) ) }
+
+						{ secondaryCallToAction && (
+							<Button
+								compact={ compactButton }
+								href={ secondaryHref }
+								onClick={ this.handleSecondaryClick }
+								primary={ false }
+							>
+								{ preventWidows( secondaryCallToAction ) }
+							</Button>
+						) }
 					</div>
 				) }
 			</div>
