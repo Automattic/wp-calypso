@@ -125,11 +125,12 @@ const selectors = {
 		const currentLimit = feature?.currentTier?.value || 0;
 		const currentUsage = feature?.usagePeriod?.requestsCount || 0;
 		const isUnlimited = currentLimit === 1;
+		const hasNoNextTier = ! feature?.nextTier; // If there is no next tier, the user cannot upgrade.
 
 		// Add a local check on top of the feature flag, based on the current usage and logo cost.
 		return (
 			state.features.aiAssistantFeature?.requireUpgrade ||
-			( ! isUnlimited && currentLimit - currentUsage < logoCost )
+			( ! isUnlimited && ! hasNoNextTier && currentLimit - currentUsage < logoCost )
 		);
 	},
 

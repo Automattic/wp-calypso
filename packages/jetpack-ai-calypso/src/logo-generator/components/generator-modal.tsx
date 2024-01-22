@@ -98,10 +98,12 @@ export const GeneratorModal: React.FC< GeneratorModalProps > = ( {
 			const currentLimit = feature?.currentTier?.value || 0;
 			const currentUsage = feature?.usagePeriod?.requestsCount || 0;
 			const isUnlimited = currentLimit === 1;
+			const hasNoNextTier = ! feature?.nextTier; // If there is no next tier, the user cannot upgrade.
 
 			// The user needs an upgrade immediately if they have no logos and not enough requests remaining for one prompt and one logo generation.
 			const needsMoreRequests =
 				! isUnlimited &&
+				! hasNoNextTier &&
 				! hasHistory &&
 				currentLimit - currentUsage < logoCost + promptCreationCost;
 
