@@ -5,9 +5,7 @@ import { ASYNC_REQUEST_COUNTDOWN_INIT_VALUE, FREE_PLAN_REQUESTS_LIMIT } from './
 import { LogoGeneratorStateProp } from './types';
 
 const INITIAL_STATE: LogoGeneratorStateProp = {
-	// @ts-expect-error -- TSCONVERSION
 	siteDetails: {},
-	suggestions: [],
 	features: {
 		aiAssistantFeature: {
 			hasFeature: true,

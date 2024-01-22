@@ -143,7 +143,7 @@ export type LogoGeneratorStateProp = {
 		saveToLibraryError?: RequestError;
 		logoUpdateError?: RequestError;
 	};
-	siteDetails?: SiteDetails;
+	siteDetails?: SiteDetails | Record< string, never >;
 	features: {
 		aiAssistantFeature?: AiFeatureStateProps;
 	};
