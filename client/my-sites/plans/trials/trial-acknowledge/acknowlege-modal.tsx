@@ -27,8 +27,8 @@ export const TrialAcknowledgeModal = ( {
 			{
 				onSuccess: () => {
 					dispatch( initiateThemeTransfer( siteId, null, '', '', 'hosting' ) );
-					trialRequested();
 					setOpenModal( false );
+					trialRequested();
 				},
 				onError: () => {
 					dispatch( errorNotice( __( 'Error starting your free trial.' ) ) );

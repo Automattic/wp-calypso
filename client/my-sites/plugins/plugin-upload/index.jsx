@@ -77,6 +77,7 @@ class PluginUpload extends Component {
 		this.setState( {
 			showEligibility: isFreeTrialEligible,
 			showTrialAcknowledgeModal: isFreeTrialEligible,
+			isTransferring: false,
 		} );
 	};
 
@@ -110,23 +111,25 @@ class PluginUpload extends Component {
 	};
 
 	trialRequested = () => {
-		this.props.successNotice( this.props.translate( 'Your free trial has been requested.' ), {
-			duration: 5000,
-		} );
 		this.props.requestSiteEligibility( this.props.siteId );
 	};
 
 	requestUpdatedEligibility = ( isTransferring, wasTransferring, isTransferCompleted ) => {
-		if ( isTransferring || ( wasTransferring && isTransferCompleted ) ) {
+		if ( isTransferring ) {
+			this.props.requestSiteEligibility( this.props.siteId );
+			this.setState( { isTransferring: true } );
+		}
+		if ( wasTransferring && isTransferCompleted ) {
 			this.props.requestSiteById( this.props.siteId );
 			this.props.requestSiteEligibility( this.props.siteId );
+			this.setState( { isTransferring: false } );
 		}
 	};
 
 	render() {
 		const { translate, isJetpackMultisite, siteId, siteSlug, isEligibleForHostingTrial } =
 			this.props;
-		const { showEligibility, showTrialAcknowledgeModal } = this.state;
+		const { showEligibility, showTrialAcknowledgeModal, isTransferring } = this.state;
 
 		return (
 			<Main>
@@ -136,7 +139,7 @@ class PluginUpload extends Component {
 				<HeaderCake onClick={ this.back }>{ translate( 'Install plugin' ) }</HeaderCake>
 				<HostingActivateStatus context="plugin" onTick={ this.requestUpdatedEligibility } />
 				{ isJetpackMultisite && this.renderNotAvailableForMultisite() }
-				{ showEligibility && (
+				{ showEligibility && ! isTransferring && (
 					<EligibilityWarnings
 						backUrl={ `/plugins/${ siteSlug }` }
 						onProceed={ this.onProceedClick }
