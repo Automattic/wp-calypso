@@ -70,7 +70,11 @@ export const Prompt: React.FC< { initialPrompt?: string } > = ( { initialPrompt 
 	const isUnlimited = currentLimit === 1;
 
 	useEffect( () => {
-		setRequestsRemaining( currentLimit - currentUsage );
+		if ( currentLimit - currentUsage <= 0 ) {
+			setRequestsRemaining( 0 );
+		} else {
+			setRequestsRemaining( currentLimit - currentUsage );
+		}
 	}, [ currentLimit, currentUsage ] );
 
 	useEffect( () => {
