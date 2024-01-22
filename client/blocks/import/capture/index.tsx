@@ -69,7 +69,9 @@ export const CaptureStep: React.FunctionComponent< StepProps > = ( {
 		data: urlData,
 		isFetching: isAnalyzing,
 		error: analyzerError,
+		isFetchedAfterMount,
 	} = useAnalyzeUrlQuery( url );
+	const showCapture = ! isAnalyzing || ( initialUrl && isFetchedAfterMount );
 
 	const decideStepRedirect = () => {
 		if ( ! urlData ) {
@@ -145,7 +147,7 @@ export const CaptureStep: React.FunctionComponent< StepProps > = ( {
 
 	return (
 		<>
-			{ ! isAnalyzing && (
+			{ showCapture && (
 				<Capture
 					onInputEnter={ ( url ) => {
 						onValidFormSubmit ? onValidFormSubmit( { url } ) : setUrl( url );
