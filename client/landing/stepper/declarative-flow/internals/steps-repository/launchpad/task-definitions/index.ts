@@ -4,6 +4,7 @@ import { actions as contentActions } from './content';
 import { actions as designActions } from './design';
 import { actions as domainActions } from './domain';
 import { actions as emailActions } from './email';
+import { actions as paymentsActions } from './payments';
 import { actions as planActions } from './plan';
 import { actions as postActions } from './post';
 import { actions as setupActions } from './setup';
@@ -20,6 +21,7 @@ const DEFINITIONS = {
 	...emailActions,
 	...subscribersActions,
 	...contentActions,
+	...paymentsActions,
 } satisfies TaskActionTable;
 
 export const NEW_TASK_DEFINITION_PARSER_FEATURE_FLAG = 'launchpad/new-task-definition-parser';
