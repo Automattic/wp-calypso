@@ -20,7 +20,9 @@ export const DeveloperFeatures = () => {
 						<div className="developer-features-list__item-title">{ title }</div>
 						<div className="developer-features-list__item-description">{ description }</div>
 						<div className="developer-features-list__item-learn-more">
-							<a href={ linkLearnMore }>Learn more</a>
+							<a href={ linkLearnMore } target="_blank" rel="noopener noreferrer">
+								Learn more
+							</a>
 						</div>
 					</div>
 				) ) }
