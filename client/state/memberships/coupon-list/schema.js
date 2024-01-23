@@ -31,7 +31,7 @@ const couponSchema = {
 const couponListSchema = {
 	type: 'object',
 	patternProperties: {
-		'\\d+$': {
+		'^\\d+$': {
 			type: 'array',
 			items: couponSchema,
 		},

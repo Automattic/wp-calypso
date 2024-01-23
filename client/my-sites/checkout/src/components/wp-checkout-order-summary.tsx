@@ -29,10 +29,9 @@ import {
 	getTaxBreakdownLineItemsFromCart,
 	getTotalLineItemFromCart,
 	hasCheckoutVersion,
-	getSubtotalWithCredits,
-	doesPurchaseHaveFullCredits,
 	getSubtotalWithoutDiscounts,
 	filterAndGroupCostOverridesForDisplay,
+	getCreditsLineItemFromCart,
 } from '@automattic/wpcom-checkout';
 import { keyframes } from '@emotion/react';
 import styled from '@emotion/styled';
@@ -57,10 +56,9 @@ import type { TranslateResult } from 'i18n-calypso';
 // This will make converting to TS less noisy. The order of components can be reorganized later
 /* eslint-disable @typescript-eslint/no-use-before-define */
 
-export default function WPCheckoutOrderSummary( {
+export function WPCheckoutOrderSummary( {
 	siteId,
 	onChangeSelection,
-	nextDomainIsFree = false,
 }: {
 	siteId: number | undefined;
 	onChangeSelection: (
@@ -69,22 +67,11 @@ export default function WPCheckoutOrderSummary( {
 		productId: number,
 		volume?: number
 	) => void;
-	nextDomainIsFree?: boolean;
 } ) {
-	const translate = useTranslate();
 	const { formStatus } = useFormStatus();
 	const cartKey = useCartKey();
 	const { responseCart } = useShoppingCart( cartKey );
-
-	const hasRenewalInCart = responseCart.products.some(
-		( product ) => product.extra.purchaseType === 'renewal'
-	);
-
 	const isCartUpdating = FormStatus.VALIDATING === formStatus;
-	const isWcMobile = isWcMobileApp();
-
-	const plan = responseCart.products.find( ( product ) => isPlan( product ) );
-	const hasMonthlyPlanInCart = Boolean( plan && isMonthly( plan?.product_slug ) );
 
 	return (
 		<CheckoutSummaryCard
@@ -92,50 +79,80 @@ export default function WPCheckoutOrderSummary( {
 			data-e2e-cart-is-loading={ isCartUpdating }
 		>
 			{ ! hasCheckoutVersion( '2' ) && (
-				<CheckoutSummaryFeatures>
-					<CheckoutSummaryFeaturesTitle>
-						{ responseCart.is_gift_purchase
-							? translate( 'WordPress.com Gift Subscription' )
-							: translate( 'Included with your purchase' ) }
-					</CheckoutSummaryFeaturesTitle>
-					{ isCartUpdating ? (
-						<LoadingCheckoutSummaryFeaturesList />
-					) : (
-						<CheckoutSummaryFeaturesWrapper
-							siteId={ siteId }
-							nextDomainIsFree={ nextDomainIsFree }
-						/>
-					) }
-				</CheckoutSummaryFeatures>
+				<CheckoutSummaryFeaturedList
+					responseCart={ responseCart }
+					siteId={ siteId }
+					isCartUpdating={ isCartUpdating }
+					onChangeSelection={ onChangeSelection }
+				/>
 			) }
 
-			{ ! isCartUpdating && ! hasRenewalInCart && ! isWcMobile && plan && hasMonthlyPlanInCart && (
-				<CheckoutSummaryAnnualUpsell plan={ plan } onChangeSelection={ onChangeSelection } />
-			) }
 			<CheckoutSummaryPriceList />
 		</CheckoutSummaryCard>
 	);
 }
+export function CheckoutSummaryFeaturedList( {
+	responseCart,
+	siteId,
+	isCartUpdating,
+	onChangeSelection,
+}: {
+	responseCart: ResponseCart;
+	siteId: number | undefined;
+	isCartUpdating: boolean;
+	onChangeSelection: (
+		uuid: string,
+		productSlug: string,
+		productId: number,
+		volume?: number
+	) => void;
+} ) {
+	const translate = useTranslate();
+	const hasRenewalInCart = responseCart.products.some(
+		( product ) => product.extra.purchaseType === 'renewal'
+	);
 
+	const isWcMobile = isWcMobileApp();
+
+	const plan = responseCart.products.find( ( product ) => isPlan( product ) );
+	const hasMonthlyPlanInCart = Boolean( plan && isMonthly( plan?.product_slug ) );
+	return (
+		<>
+			<CheckoutSummaryFeatures>
+				<CheckoutSummaryFeaturesTitle>
+					{ responseCart.is_gift_purchase
+						? translate( 'WordPress.com Gift Subscription' )
+						: translate( 'Included with your purchase' ) }
+				</CheckoutSummaryFeaturesTitle>
+				{ isCartUpdating ? (
+					<LoadingCheckoutSummaryFeaturesList />
+				) : (
+					<CheckoutSummaryFeaturesWrapper
+						siteId={ siteId }
+						nextDomainIsFree={ responseCart.next_domain_is_free }
+					/>
+				) }
+			</CheckoutSummaryFeatures>
+			{ ! isCartUpdating && ! hasRenewalInCart && ! isWcMobile && plan && hasMonthlyPlanInCart && (
+				<CheckoutSummaryAnnualUpsell plan={ plan } onChangeSelection={ onChangeSelection } />
+			) }
+		</>
+	);
+}
 function CheckoutSummaryPriceList() {
 	const cartKey = useCartKey();
 	const { responseCart } = useShoppingCart( cartKey );
+	const creditsLineItem = getCreditsLineItemFromCart( responseCart );
 	const taxLineItems = getTaxBreakdownLineItemsFromCart( responseCart );
 	const totalLineItem = getTotalLineItemFromCart( responseCart );
 	const translate = useTranslate();
-	const subtotalWithCredits = getSubtotalWithCredits( responseCart );
 	const costOverridesList = filterAndGroupCostOverridesForDisplay( responseCart, translate );
-	const isFullCredits = doesPurchaseHaveFullCredits( responseCart );
-	// Clamp the credits display value to the total
-	const creditsForDisplay = isFullCredits
-		? responseCart.sub_total_with_taxes_integer
-		: responseCart.credits_integer;
 
 	const subtotalBeforeDiscounts = getSubtotalWithoutDiscounts( responseCart );
 
 	return (
 		<>
-			{ ! hasCheckoutVersion( '2' ) && (
+			{ ! hasCheckoutVersion( '2' ) && costOverridesList.length > 0 && (
 				<CheckoutFirstSubtotalLineItem key="checkout-summary-line-item-subtotal-one">
 					<span>{ translate( 'Subtotal before discounts' ) }</span>
 					<span>
@@ -151,14 +168,13 @@ function CheckoutSummaryPriceList() {
 					costOverridesList={ costOverridesList }
 					currency={ responseCart.currency }
 					couponCode={ responseCart.coupon }
-					creditsInteger={ creditsForDisplay }
 				/>
 			) }
 			<CheckoutSummaryAmountWrapper>
 				<CheckoutSummaryLineItem key="checkout-summary-line-item-subtotal">
 					<span>{ translate( 'Subtotal' ) }</span>
 					<span>
-						{ formatCurrency( subtotalWithCredits, responseCart.currency, {
+						{ formatCurrency( responseCart.sub_total_integer, responseCart.currency, {
 							isSmallestUnit: true,
 							stripZeros: true,
 						} ) }
@@ -170,6 +186,13 @@ function CheckoutSummaryPriceList() {
 						<span>{ taxLineItem.formattedAmount }</span>
 					</CheckoutSummaryLineItem>
 				) ) }
+				{ creditsLineItem && responseCart.sub_total_integer > 0 && (
+					<CheckoutSummaryLineItem key={ 'checkout-summary-line-item-' + creditsLineItem.id }>
+						<span>{ creditsLineItem.label }</span>
+						<span>{ creditsLineItem.formattedAmount }</span>
+					</CheckoutSummaryLineItem>
+				) }
+
 				<CheckoutSummaryTotal>
 					<span>{ translate( 'Total' ) }</span>
 					<span className="wp-checkout-order-summary__total-price">
@@ -780,7 +803,7 @@ const CheckoutSummaryFeatures = styled.div`
 	padding: 24px 0;
 
 	@media ( ${ ( props ) => props.theme.breakpoints.desktopUp } ) {
-		padding: 50px 0 24px;
+		padding: 24px 0;
 	}
 `;
 
@@ -797,13 +820,13 @@ const CheckoutSummaryFeaturesUpsell = styled( CheckoutSummaryFeatures )`
 `;
 
 const CheckoutSummaryFeaturesTitle = styled.h3`
-	font-size: 20px;
+	font-size: 16px;
 	font-weight: ${ ( props ) => props.theme.weights.bold };
 	line-height: 26px;
 	margin-bottom: 12px;
 
 	& button {
-		font-size: 20px;
+		font-size: 16px;
 		font-weight: ${ ( props ) => props.theme.weights.bold };
 		text-decoration: none;
 	}

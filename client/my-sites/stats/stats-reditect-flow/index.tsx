@@ -1,8 +1,15 @@
 import config from '@automattic/calypso-config';
 import page from '@automattic/calypso-router';
+import { useEffect } from 'react';
+import { useDispatch } from 'react-redux'; //useSelector
 import { useNoticeVisibilityQuery } from 'calypso/my-sites/stats/hooks/use-notice-visibility-query';
 import { useSelector } from 'calypso/state';
 import { isJetpackSite, getSiteOptions, getSiteSlug } from 'calypso/state/sites/selectors';
+import {
+	requestStatNoticeSettings,
+	receiveStatNoticeSettings,
+} from 'calypso/state/stats/notices/actions';
+import { isStatsNoticeSettingsFetching } from 'calypso/state/stats/notices/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 
 const StatsRedirectFlow = () => {
@@ -16,7 +23,10 @@ const StatsRedirectFlow = () => {
 		isJetpackSite( state, siteId, { treatAtomicAsJetpackSite: false } )
 	);
 
-	const { data: purchaseRedirect } = useNoticeVisibilityQuery( siteId, 'focus_jetpack_purchase' );
+	const { isFetching, data: purchaseRedirect } = useNoticeVisibilityQuery(
+		siteId,
+		'focus_jetpack_purchase'
+	);
 
 	// TODO: update the date to the release date when the feature is ready.
 	const redirectToPurchase =
@@ -26,9 +36,26 @@ const StatsRedirectFlow = () => {
 		siteCreatedTimeStamp &&
 		new Date( siteCreatedTimeStamp ) > new Date( '2024-01-01' );
 
+	const isRequesting = useSelector( ( state: object ) => isStatsNoticeSettingsFetching( state ) );
+	const dispatch = useDispatch();
+
+	// Only runs on mount.
+	useEffect( () => {
+		if ( isFetching ) {
+			// when react-query is fetching data
+			dispatch( requestStatNoticeSettings( siteId ) );
+		} else {
+			dispatch(
+				receiveStatNoticeSettings( siteId, {
+					focus_jetpack_purchase: purchaseRedirect,
+				} )
+			);
+		}
+	}, [ dispatch, redirectToPurchase, siteId, isFetching, purchaseRedirect ] );
+
 	// render purchase flow for Jetpack sites created after February 2024
-	if ( redirectToPurchase && siteSlug ) {
-		page.redirect( `/stats/purchase/${ siteSlug }` );
+	if ( ! isRequesting && redirectToPurchase && siteSlug ) {
+		page.redirect( `/stats/purchase/${ siteSlug }?productType=commercial` );
 
 		return;
 	}

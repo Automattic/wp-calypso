@@ -302,7 +302,6 @@ import {
 	FEATURE_GROUP_PAYMENT_TRANSACTION_FEES,
 	FEATURE_COMMISSION_FEE_STANDARD_FEATURES,
 	FEATURE_COMMISSION_FEE_WOO_FEATURES,
-	FEATURE_PERSONAL_THEMES,
 	FEATURE_STATS_PAID,
 } from '@automattic/calypso-products';
 import { localizeUrl } from '@automattic/i18n-utils';
@@ -537,15 +536,6 @@ export const FEATURES_LIST: FeatureList = {
 						'Access to all of our advanced premium theme templates, including templates specifically tailored for businesses.'
 				  );
 		},
-	},
-
-	[ FEATURE_PERSONAL_THEMES ]: {
-		getSlug: () => FEATURE_PERSONAL_THEMES,
-		getTitle: () => i18n.translate( 'Unlimited starter themes' ),
-		getDescription: () =>
-			i18n.translate(
-				'Unlimited access to all of our starter themes, including designs specifically tailored for businesses.'
-			),
 	},
 
 	[ FEATURE_MONETISE ]: {
@@ -1958,15 +1948,8 @@ export const FEATURES_LIST: FeatureList = {
 	},
 	[ FEATURE_PREMIUM_THEMES_V2 ]: {
 		getSlug: () => FEATURE_PREMIUM_THEMES_V2,
-		getTitle: () => {
-			const shouldShowNewString =
-				isEnabled( 'themes/tiers' ) && i18n.hasTranslation( 'Explorer themes' );
-
-			return shouldShowNewString
-				? i18n.translate( 'Explorer themes' )
-				: i18n.translate( 'Premium themes' );
-		},
-		getIcon: () => <img src={ Theme2Image } alt={ i18n.translate( 'Explorer themes' ) } />,
+		getTitle: () => i18n.translate( 'Premium themes' ),
+		getIcon: () => <img src={ Theme2Image } alt={ i18n.translate( 'Premium themes' ) } />,
 		getCompareTitle: () => i18n.translate( 'A collection of premium design templates' ),
 		getDescription: () => i18n.translate( 'Switch between a collection of premium design themes.' ),
 	},
