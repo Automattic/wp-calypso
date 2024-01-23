@@ -41,7 +41,7 @@ describe( DataHelper.createSuiteTitle( 'Verify Tracks events starting at LOHP' )
 		const didEventFirePromise = tracksEventManager.didEventFire( 'wpcom_link_click' );
 
 		// Click first signup link to go to signup page
-		await page.click( 'a[href*="https://wordpress.com/start"]' );
+		await page.locator( 'a[href^="https://wordpress.com/start"]' ).first().click();
 
 		// Expect the event to fire
 		expect( await didEventFirePromise ).toBe( true );
@@ -62,7 +62,7 @@ describe( DataHelper.createSuiteTitle( 'Verify Tracks events starting at LOHP' )
 		requestUrlPromise = tracksEventManager.getRequestUrlForEvent( 'calypso_page_view' );
 
 		// Click first signup link to go to signup page
-		await page.click( 'a[href*="https://wordpress.com/start"]' );
+		await page.locator( 'a[href^="https://wordpress.com/start"]' ).first().click();
 		requestUrl = await requestUrlPromise;
 
 		// Expect anon ids in wpcom and calypso page view events to match
@@ -71,20 +71,4 @@ describe( DataHelper.createSuiteTitle( 'Verify Tracks events starting at LOHP' )
 			anonIdFromWpcomPageView
 		);
 	} );
-
-	/**
-	 * Used to test the timeout
-	 * Leaving commented out for now to not slow down tests
-	 */
-	// eslint-disable-next-line jest/no-commented-out-tests
-	// it( 'Bad event does not fire when loading LOHP', async function () {
-	// 	// Set up listener for wpcom_page_view event
-	// 	const didEventFirePromise = tracksEventManager.didEventFire( 'bad_event_name_abcde12345' );
-
-	// 	// Navigate to LOHP
-	// 	await tracksEventManager.navigateToUrl( lohpUrl );
-
-	// 	// Expect the event to fire
-	// 	expect( await didEventFirePromise ).toBe( false );
-	// } );
 } );

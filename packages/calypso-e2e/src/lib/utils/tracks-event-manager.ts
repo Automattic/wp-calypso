@@ -47,54 +47,43 @@ export class TracksEventManager {
 	 * @param url
 	 */
 	async navigateToUrl( url: string ) {
-		try {
-			await this.page.goto( url, { timeout: this.timeout } );
-		} catch ( error ) {
-			console.error( error );
-		}
+		await this.page.goto( url, { timeout: this.timeout } );
 	}
 
 	/**
 	 * Check if a Tracks event fired
 	 * @param eventName
-	 * @returns
+	 * @returns {Promise<boolean>}
 	 */
-	async didEventFire( eventName: string ) {
+	async didEventFire( eventName: string ): Promise< boolean > {
 		return !! ( await this.getRequestUrlForEvent( eventName ) );
 	}
 
 	/**
 	 * Get the request URL of a Tracks event
 	 * @param eventName
-	 * @returns
+	 * @returns {Promise<string>}
 	 */
 	async getRequestUrlForEvent( eventName: string ): Promise< string > {
 		const pixelUrl: string = 'https://pixel.wp.com/t.gif';
-		return new Promise( ( resolve ) => {
-			const timeoutId = setTimeout( () => {
-				resolve( '' );
-			}, this.timeout );
-
-			const handler = ( request: Request ) => {
-				if (
+		const request = await this.page.waitForRequest(
+			( request: Request ) => {
+				return (
 					request.url().startsWith( pixelUrl ) &&
 					this.getParamFromUrl( '_en', request.url() ) === eventName
-				) {
-					this.page.removeListener( 'request', handler );
-					clearTimeout( timeoutId );
-					resolve( request.url() );
-				}
-			};
+				);
+			},
+			{ timeout: this.timeout }
+		);
 
-			this.page.on( 'request', handler );
-		} );
+		return request.url();
 	}
 
 	/**
 	 * Get a parameter value from a URL
 	 * @param param
 	 * @param url
-	 * @returns
+	 * @returns {string}
 	 */
 	getParamFromUrl( param: string, url: string ): string {
 		const urlObj = new URL( url );
