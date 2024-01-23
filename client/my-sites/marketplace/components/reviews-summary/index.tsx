@@ -1,10 +1,12 @@
+import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { isEnabled } from '@automattic/calypso-config';
 import { Button } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
-import { useState } from 'react';
+import { type ReactNode, useEffect, useState } from 'react';
 import Rating from 'calypso/components/rating';
 import {
 	useMarketplaceReviewsStatsQuery,
+	useIsUserAllowedToReview,
 	type ProductProps,
 } from 'calypso/data/marketplace/use-marketplace-reviews';
 import { ReviewModal } from 'calypso/my-sites/marketplace/components/review-modal';
@@ -16,6 +18,14 @@ type Props = ProductProps & {
 	onReviewsClick: () => void;
 };
 
+const TrackedButton = ( { onClick, children }: { onClick: () => void; children: ReactNode } ) => {
+	// useEffect used to avoid calling recordTracksEvent on every render
+	useEffect( () => {
+		recordTracksEvent( 'calypso_marketplace_reviews_add_button_displayed' );
+	}, [] );
+	return <Button onClick={ onClick }>{ children }</Button>;
+};
+
 export const ReviewsSummary = ( { slug, productName, productType, onReviewsClick }: Props ) => {
 	const translate = useTranslate();
 	const [ isVisible, setIsVisible ] = useState( false );
@@ -24,6 +34,8 @@ export const ReviewsSummary = ( { slug, productName, productType, onReviewsClick
 		productType,
 		slug,
 	} );
+
+	const { data: userCanPublishReviews } = useIsUserAllowedToReview( { productType, slug } );
 
 	let averageRating = null;
 	let numberOfReviews = null;
@@ -38,6 +50,14 @@ export const ReviewsSummary = ( { slug, productName, productType, onReviewsClick
 		// Normalize to 100
 		averageRating = ( averageRating * 100 ) / 5;
 	}
+
+	const handleAddReviewClick = () => {
+		recordTracksEvent( 'calypso_marketplace_reviews_add_button_click', {
+			product_type: productType,
+			slug,
+		} );
+		setIsVisible( true );
+	};
 
 	return (
 		<>
@@ -66,6 +86,11 @@ export const ReviewsSummary = ( { slug, productName, productType, onReviewsClick
 							} ) }
 						</Button>
 					</div>
+				) }
+				{ userCanPublishReviews && (
+					<TrackedButton onClick={ handleAddReviewClick }>
+						{ translate( 'Add Review' ) }
+					</TrackedButton>
 				) }
 			</div>
 		</>
