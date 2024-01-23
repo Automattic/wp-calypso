@@ -15,7 +15,7 @@ describe( DataHelper.createSuiteTitle( 'Verify Tracks events starting at LOHP' )
 	beforeEach( async () => {
 		page = await browser.newPage();
 		tracksEventManager = new TracksEventManager( page );
-		tracksEventManager.allowTestsToFireEvents();
+		tracksEventManager.init();
 	} );
 
 	afterEach( async () => {

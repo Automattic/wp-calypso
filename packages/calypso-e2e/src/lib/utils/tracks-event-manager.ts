@@ -22,7 +22,14 @@ export class TracksEventManager {
 	constructor( page: Page, timeout: number = 10000 ) {
 		this.page = page;
 		this.timeout = timeout;
-		this.blockUnnecessaryRequests();
+	}
+
+	/**
+	 * Initialize the Tracks event manager
+	 */
+	async init() {
+		this.maybeInterceptRequest();
+		this.allowTestsToFireEvents();
 	}
 
 	/**
@@ -95,9 +102,9 @@ export class TracksEventManager {
 	}
 
 	/**
-	 * Block unnecessary network requests
+	 * Intercept and modify some network requests
 	 */
-	blockUnnecessaryRequests() {
+	maybeInterceptRequest() {
 		// Only allow specific requests needed for tests
 		// We're explicitly not allowing t.gif requests. We only need the request URL.
 		const urlContainsAllowList = [
@@ -116,7 +123,14 @@ export class TracksEventManager {
 			if (
 				urlContainsAllowList.some( ( allowedString ) => request.url().includes( allowedString ) )
 			) {
-				route.continue();
+				if ( request.url().startsWith( 'https://stats.wp.com/w.js' ) ) {
+					// Always get a fresh copy of w.js
+					const wJsURL = new URL( request.url() );
+					wJsURL.searchParams.set( 'v', Date.now().toString() );
+					route.continue( { url: wJsURL.toString() } );
+				} else {
+					route.continue();
+				}
 			} else {
 				route.abort();
 			}
