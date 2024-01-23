@@ -10,7 +10,7 @@ import { HostingTrialAcknowledgement } from './hosting-acknowledge';
 
 type TrialAcknowledgeModalProps = {
 	setOpenModal: ( open: boolean ) => void;
-	trialRequested: () => void;
+	trialRequested?: () => void;
 };
 
 export const TrialAcknowledgeModal = ( {
@@ -26,9 +26,9 @@ export const TrialAcknowledgeModal = ( {
 			{ siteId, planSlug: PLAN_HOSTING_TRIAL_MONTHLY },
 			{
 				onSuccess: () => {
-					dispatch( initiateThemeTransfer( siteId, null, '', '', 'hosting' ) );
 					setOpenModal( false );
-					trialRequested();
+					dispatch( initiateThemeTransfer( siteId, null, '', '', 'hosting' ) );
+					trialRequested?.();
 				},
 				onError: () => {
 					dispatch( errorNotice( __( 'Error starting your free trial.' ) ) );

@@ -32,12 +32,18 @@ import isPluginUploadComplete from 'calypso/state/selectors/is-plugin-upload-com
 import isPluginUploadInProgress from 'calypso/state/selectors/is-plugin-upload-in-progress';
 import { isUserEligibleForFreeHostingTrial } from 'calypso/state/selectors/is-user-eligible-for-free-hosting-trial';
 import { requestSite } from 'calypso/state/sites/actions';
+import { fetchSiteFeatures } from 'calypso/state/sites/features/actions';
+import { fetchSitePlans } from 'calypso/state/sites/plans/actions';
 import {
 	getSiteAdminUrl,
 	isJetpackSite,
 	isJetpackSiteMultiSite,
 } from 'calypso/state/sites/selectors';
-import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
+import {
+	getSelectedSite,
+	getSelectedSiteId,
+	getSelectedSiteSlug,
+} from 'calypso/state/ui/selectors';
 
 class PluginUpload extends Component {
 	state = {
@@ -114,14 +120,15 @@ class PluginUpload extends Component {
 		this.props.requestSiteEligibility( this.props.siteId );
 	};
 
-	requestUpdatedEligibility = ( isTransferring, wasTransferring, isTransferCompleted ) => {
+	requestUpdatedSiteData = ( isTransferring, wasTransferring, isTransferCompleted ) => {
 		if ( isTransferring ) {
-			this.props.requestSiteEligibility( this.props.siteId );
 			this.setState( { isTransferring: true } );
 		}
 		if ( wasTransferring && isTransferCompleted ) {
 			this.props.requestSiteById( this.props.siteId );
 			this.props.requestSiteEligibility( this.props.siteId );
+			this.props.fetchSiteFeatures( this.props.siteId );
+			this.props.fetchSitePlans( this.props.siteId );
 			this.setState( { isTransferring: false } );
 		}
 	};
@@ -137,7 +144,7 @@ class PluginUpload extends Component {
 				<QueryEligibility siteId={ siteId } />
 				<NavigationHeader navigationItems={ [] } title={ translate( 'Plugins' ) } />
 				<HeaderCake onClick={ this.back }>{ translate( 'Install plugin' ) }</HeaderCake>
-				<HostingActivateStatus context="plugin" onTick={ this.requestUpdatedEligibility } />
+				<HostingActivateStatus context="plugin" onTick={ this.requestUpdatedSiteData } />
 				{ isJetpackMultisite && this.renderNotAvailableForMultisite() }
 				{ showEligibility && ! isTransferring && (
 					<EligibilityWarnings
@@ -160,6 +167,7 @@ class PluginUpload extends Component {
 
 const mapStateToProps = ( state ) => {
 	const siteId = getSelectedSiteId( state );
+	const site = getSelectedSite( state );
 	const error = getPluginUploadError( state, siteId );
 	const isJetpack = isJetpackSite( state, siteId );
 	const isJetpackMultisite = isJetpackSiteMultiSite( state, siteId );
@@ -167,7 +175,7 @@ const mapStateToProps = ( state ) => {
 	// Use this selector to take advantage of eligibility card placeholders
 	// before data has loaded.
 	const isEligible = isEligibleForAutomatedTransfer( state, siteId );
-	const isEligibleForHostingTrial = isUserEligibleForFreeHostingTrial( state );
+	const isEligibleForHostingTrial = isUserEligibleForFreeHostingTrial( state ) && site.plan.is_free;
 	const hasEligibilityMessages = ! (
 		isEmpty( eligibilityHolds ) && isEmpty( eligibilityWarnings )
 	);
@@ -184,11 +192,7 @@ const mapStateToProps = ( state ) => {
 		isJetpackMultisite,
 		siteAdminUrl: getSiteAdminUrl( state, siteId ),
 		showEligibility: ! isJetpack && ( hasEligibilityMessages || ! isEligible ),
-
 		isEligibleForHostingTrial,
-		site: {
-			slug: getSelectedSiteSlug( state ),
-		},
 	};
 };
 
@@ -202,6 +206,8 @@ const flowRightArgs = [
 		fetchAutomatedTransferStatus,
 		requestSiteById: requestSite,
 		requestSiteEligibility: requestEligibility,
+		fetchSiteFeatures,
+		fetchSitePlans,
 	} ),
 	localize,
 ];
