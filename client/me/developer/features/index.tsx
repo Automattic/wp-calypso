@@ -9,11 +9,7 @@ export const DeveloperFeatures = () => {
 
 	return (
 		<>
-			<div className="developer-features__title">
-				{ translate(
-					'Explore all the developer-oriented features of WordPress.com and get early access'
-				) }
-			</div>
+			<div className="developer-features__title"></div>
 			<div className="developer-features-list">
 				{ features.map( ( { title, description, linkLearnMore } ) => (
 					<div className="developer-features-list__item">
@@ -21,7 +17,7 @@ export const DeveloperFeatures = () => {
 						<div className="developer-features-list__item-description">{ description }</div>
 						<div className="developer-features-list__item-learn-more">
 							<a href={ linkLearnMore } target="_blank" rel="noopener noreferrer">
-								Learn more
+								{ translate( 'Learn more' ) }
 							</a>
 						</div>
 					</div>
