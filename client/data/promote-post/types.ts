@@ -77,7 +77,6 @@ export type BlazablePost = {
 	post_thumbnail?: string;
 	sku?: string;
 	price?: string;
-	visitors?: number;
 };
 
 export type BlazePagedItem = BlazablePost | Campaign;

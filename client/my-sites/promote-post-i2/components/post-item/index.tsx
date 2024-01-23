@@ -28,7 +28,6 @@ export default function PostItem( { post }: { post: BlazablePost } ) {
 	const viewCount = post?.monthly_view_count ?? 0;
 	const likeCount = post?.like_count ?? 0;
 	const commentCount = post?.comment_count ?? 0;
-	const visitorCount = post?.visitors ?? 0;
 
 	const mobileStatsSeparator = <span className="blazepress-mobile-stats-mid-dot">&#183;</span>;
 
@@ -91,11 +90,11 @@ export default function PostItem( { post }: { post: BlazablePost } ) {
 					<div className="post-item__stats-mobile">
 						{ post.type !== 'product' || ! isRunningInWooStore
 							? sprintf(
-									// translators: %s is number of post's views
-									_n( '%s view', '%s views', viewCount ),
+									// translators: %s is number of post's visitors
+									_n( '%s visitor', '%s visitors', viewCount ),
 									formatNumber( viewCount, true )
 							  )
-							: post.price ?? '$0.00' }
+							: post.price ?? '-' }
 
 						{ mobileStatsSeparator }
 						{ post.type !== 'product' || ! isRunningInWooStore
@@ -110,9 +109,9 @@ export default function PostItem( { post }: { post: BlazablePost } ) {
 									formatNumber( commentCount, true )
 							  )
 							: sprintf(
-									// translators: %s is number of post's views
+									// translators: %s is number of post's visitors
 									_n( '%s visitor', '%s visitors', viewCount ),
-									formatNumber( visitorCount, true )
+									formatNumber( viewCount, true )
 							  ) }
 					</div>
 					<div className="post-item__actions-mobile">
@@ -150,7 +149,7 @@ export default function PostItem( { post }: { post: BlazablePost } ) {
 					<td className="post-item__post-sku">{ post.sku ?? '-' }</td>
 					<td className="post-item__post-price">{ post.price ?? '-' }</td>
 					<td className="post-item__post-publish-date">{ postDate }</td>
-					<td className="post-item__post-visitors">{ post.visitors ?? '-' }</td>
+					<td className="post-item__post-views">{ formatNumber( viewCount, true ) }</td>
 				</>
 			) }
 
