@@ -57,10 +57,9 @@ import type { TranslateResult } from 'i18n-calypso';
 // This will make converting to TS less noisy. The order of components can be reorganized later
 /* eslint-disable @typescript-eslint/no-use-before-define */
 
-export default function WPCheckoutOrderSummary( {
+export function WPCheckoutOrderSummary( {
 	siteId,
 	onChangeSelection,
-	nextDomainIsFree = false,
 }: {
 	siteId: number | undefined;
 	onChangeSelection: (
@@ -69,22 +68,11 @@ export default function WPCheckoutOrderSummary( {
 		productId: number,
 		volume?: number
 	) => void;
-	nextDomainIsFree?: boolean;
 } ) {
-	const translate = useTranslate();
 	const { formStatus } = useFormStatus();
 	const cartKey = useCartKey();
 	const { responseCart } = useShoppingCart( cartKey );
-
-	const hasRenewalInCart = responseCart.products.some(
-		( product ) => product.extra.purchaseType === 'renewal'
-	);
-
 	const isCartUpdating = FormStatus.VALIDATING === formStatus;
-	const isWcMobile = isWcMobileApp();
-
-	const plan = responseCart.products.find( ( product ) => isPlan( product ) );
-	const hasMonthlyPlanInCart = Boolean( plan && isMonthly( plan?.product_slug ) );
 
 	return (
 		<CheckoutSummaryCard
@@ -92,31 +80,66 @@ export default function WPCheckoutOrderSummary( {
 			data-e2e-cart-is-loading={ isCartUpdating }
 		>
 			{ ! hasCheckoutVersion( '2' ) && (
-				<CheckoutSummaryFeatures>
-					<CheckoutSummaryFeaturesTitle>
-						{ responseCart.is_gift_purchase
-							? translate( 'WordPress.com Gift Subscription' )
-							: translate( 'Included with your purchase' ) }
-					</CheckoutSummaryFeaturesTitle>
-					{ isCartUpdating ? (
-						<LoadingCheckoutSummaryFeaturesList />
-					) : (
-						<CheckoutSummaryFeaturesWrapper
-							siteId={ siteId }
-							nextDomainIsFree={ nextDomainIsFree }
-						/>
-					) }
-				</CheckoutSummaryFeatures>
+				<CheckoutSummaryFeaturedList
+					responseCart={ responseCart }
+					siteId={ siteId }
+					isCartUpdating={ isCartUpdating }
+					onChangeSelection={ onChangeSelection }
+				/>
 			) }
 
-			{ ! isCartUpdating && ! hasRenewalInCart && ! isWcMobile && plan && hasMonthlyPlanInCart && (
-				<CheckoutSummaryAnnualUpsell plan={ plan } onChangeSelection={ onChangeSelection } />
-			) }
 			<CheckoutSummaryPriceList />
 		</CheckoutSummaryCard>
 	);
 }
+export function CheckoutSummaryFeaturedList( {
+	responseCart,
+	siteId,
+	isCartUpdating,
+	onChangeSelection,
+}: {
+	responseCart: ResponseCart;
+	siteId: number | undefined;
+	isCartUpdating: boolean;
+	onChangeSelection: (
+		uuid: string,
+		productSlug: string,
+		productId: number,
+		volume?: number
+	) => void;
+} ) {
+	const translate = useTranslate();
+	const hasRenewalInCart = responseCart.products.some(
+		( product ) => product.extra.purchaseType === 'renewal'
+	);
 
+	const isWcMobile = isWcMobileApp();
+
+	const plan = responseCart.products.find( ( product ) => isPlan( product ) );
+	const hasMonthlyPlanInCart = Boolean( plan && isMonthly( plan?.product_slug ) );
+	return (
+		<>
+			<CheckoutSummaryFeatures>
+				<CheckoutSummaryFeaturesTitle>
+					{ responseCart.is_gift_purchase
+						? translate( 'WordPress.com Gift Subscription' )
+						: translate( 'Included with your purchase' ) }
+				</CheckoutSummaryFeaturesTitle>
+				{ isCartUpdating ? (
+					<LoadingCheckoutSummaryFeaturesList />
+				) : (
+					<CheckoutSummaryFeaturesWrapper
+						siteId={ siteId }
+						nextDomainIsFree={ responseCart.next_domain_is_free }
+					/>
+				) }
+			</CheckoutSummaryFeatures>
+			{ ! isCartUpdating && ! hasRenewalInCart && ! isWcMobile && plan && hasMonthlyPlanInCart && (
+				<CheckoutSummaryAnnualUpsell plan={ plan } onChangeSelection={ onChangeSelection } />
+			) }
+		</>
+	);
+}
 function CheckoutSummaryPriceList() {
 	const cartKey = useCartKey();
 	const { responseCart } = useShoppingCart( cartKey );
@@ -780,7 +803,7 @@ const CheckoutSummaryFeatures = styled.div`
 	padding: 24px 0;
 
 	@media ( ${ ( props ) => props.theme.breakpoints.desktopUp } ) {
-		padding: 50px 0 24px;
+		padding: 24px 0;
 	}
 `;
 
@@ -797,13 +820,13 @@ const CheckoutSummaryFeaturesUpsell = styled( CheckoutSummaryFeatures )`
 `;
 
 const CheckoutSummaryFeaturesTitle = styled.h3`
-	font-size: 20px;
+	font-size: 16px;
 	font-weight: ${ ( props ) => props.theme.weights.bold };
 	line-height: 26px;
 	margin-bottom: 12px;
 
 	& button {
-		font-size: 20px;
+		font-size: 16px;
 		font-weight: ${ ( props ) => props.theme.weights.bold };
 		text-decoration: none;
 	}
