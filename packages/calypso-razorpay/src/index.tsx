@@ -5,7 +5,23 @@ const debug = debugFactory( 'calypso-razorpay' );
 
 export interface RazorpayConfiguration {
 	js_url: string;
-	options: { key: string };
+	options: RazorpayOptions;
+}
+
+export interface RazorpayOptions {
+	key: string;
+	order_id?: string; // This is a razorpay order ID; the name is constrained by a 3rd party library.
+	handler?: ( response: {
+		razorpay_payment_id: string;
+		razorpay_order_id: string;
+		razorpay_signature: string;
+	} ) => void;
+}
+
+export interface RazorpayConfirmationRequestArgs {
+	razorpay_payment_id: string;
+	razorpay_signature: string;
+	bd_order_id: string;
 }
 
 export declare class Razorpay {
@@ -22,7 +38,6 @@ declare global {
 export type RazorpayLoadingError = Error | null | undefined;
 
 export interface RazorpayData {
-	razorpay: Razorpay | null;
 	razorpayConfiguration: RazorpayConfiguration | null;
 	isRazorpayLoading: boolean;
 	razorpayLoadingError: RazorpayLoadingError;
@@ -31,7 +46,6 @@ export interface RazorpayData {
 const RazorpayContext = createContext< RazorpayData | undefined >( undefined );
 
 export interface UseRazorpayJs {
-	razorpay: Razorpay | null;
 	isRazorpayLoading: boolean;
 	razorpayLoadingError: RazorpayLoadingError;
 }
@@ -58,7 +72,6 @@ function useRazorpayJs(
 	razorpayConfigurationError: Error | undefined
 ): UseRazorpayJs {
 	const [ state, setState ] = useState< UseRazorpayJs >( {
-		razorpay: null,
 		isRazorpayLoading: true,
 		razorpayLoadingError: undefined,
 	} );
@@ -88,12 +101,8 @@ function useRazorpayJs(
 					);
 				}
 
-				// We've checked that it exists before getting here.
-				const razorpay = new window.Razorpay( razorpayConfiguration.options );
-
 				if ( isSubscribed ) {
 					setState( {
-						razorpay,
 						isRazorpayLoading: false,
 						razorpayLoadingError: undefined,
 					} );
@@ -106,7 +115,6 @@ function useRazorpayJs(
 			debug( 'Error while loading Razorpay!' );
 			if ( isSubscribed ) {
 				setState( {
-					razorpay: null,
 					isRazorpayLoading: false,
 					razorpayLoadingError: error,
 				} );
@@ -198,13 +206,12 @@ export function RazorpayHookProvider( {
 		configurationArgs
 	);
 
-	const { razorpay, isRazorpayLoading, razorpayLoadingError } = useRazorpayJs(
+	const { isRazorpayLoading, razorpayLoadingError } = useRazorpayJs(
 		razorpayConfiguration,
 		razorpayConfigurationError
 	);
 
 	const razorpayData = {
-		razorpay,
 		razorpayConfiguration,
 		isRazorpayLoading,
 		razorpayLoadingError,
@@ -222,7 +229,6 @@ export function RazorpayHookProvider( {
  *
  * This returns an object with the following properties:
  *
- * - razorpay: the instance of the razorpay library
  * - razorpayConfiguration: the object containing the data returned by the wpcom razorpay configuration endpoint
  * - isRazorpayLoading: a boolean that is true if razorpay is currently being loaded
  * - razorpayLoadingError: an optional object that will be set if there is an error loading razorpay

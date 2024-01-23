@@ -6,7 +6,7 @@ import type { UseLaunchpadOptions } from '@automattic/data-stores';
 
 export interface LaunchpadInternalProps {
 	siteSlug: string | null;
-	checklistSlug?: string | 0 | null | undefined;
+	checklistSlug?: string | null;
 	makeLastTaskPrimaryAction?: boolean;
 	taskFilter?: ( tasks: Task[] ) => Task[];
 	useLaunchpadOptions?: UseLaunchpadOptions;

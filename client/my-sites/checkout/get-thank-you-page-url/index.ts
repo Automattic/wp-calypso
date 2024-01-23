@@ -723,7 +723,6 @@ function getProfessionalEmailUpsellUrl( {
 	cart,
 	siteSlug,
 	domains,
-	isDomainOnly,
 }: {
 	receiptId: ReceiptId | ReceiptIdPlaceholder;
 	cart: ResponseCart | undefined;
@@ -744,7 +743,6 @@ function getProfessionalEmailUpsellUrl( {
 	}
 
 	if (
-		! isDomainOnly &&
 		! hasBloggerPlan( cart ) &&
 		! hasPersonalPlan( cart ) &&
 		! hasBusinessPlan( cart ) &&
@@ -774,7 +772,7 @@ function getProfessionalEmailUpsellUrl( {
 		return;
 	}
 
-	return getProfessionalEmailCheckoutUpsellPath( siteSlug, domainName, receiptId );
+	return getProfessionalEmailCheckoutUpsellPath( siteSlug ?? domainName, domainName, receiptId );
 }
 
 function getNoticeType(

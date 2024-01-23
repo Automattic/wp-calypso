@@ -20,6 +20,7 @@ import {
 	FIELD_PASSWORD_RESET_EMAIL,
 } from 'calypso/my-sites/email/form/mailboxes/constants';
 import { EmailProvider } from 'calypso/my-sites/email/form/mailboxes/types';
+import { getProfessionalEmailCheckoutUpsellPath } from 'calypso/my-sites/email/paths';
 import { useDispatch, useSelector } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
@@ -114,7 +115,7 @@ const ProfessionalEmailUpsell = ( {
 	return (
 		<>
 			<PageViewTracker
-				path="/checkout/offer-professional-email/:domain/:receiptId/:site"
+				path={ getProfessionalEmailCheckoutUpsellPath( ':site', ':domain', ':receiptId' ) }
 				title="Post Checkout - Professional Email Upsell"
 			/>
 
