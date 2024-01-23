@@ -10,85 +10,51 @@ type PostsListHeaderProps = {
 };
 
 export default function PostsListHeader( { postType: postType }: PostsListHeaderProps ) {
-	const postColumns: Array< PostsListHeaderColumn > = [
-		{
-			id: 'data',
-			title: translate( 'Post' ),
-		},
-		{
-			id: 'type',
-			title: translate( 'Type' ),
-		},
-		{
-			id: 'publish-date',
-			title: translate( 'Publish date' ),
-		},
-		{
-			id: 'views',
-			title: translate( 'Visitors' ),
-		},
-		{
-			id: 'likes',
-			title: translate( 'Likes' ),
-		},
-		{
-			id: 'comments',
-			title: translate( 'Comments' ),
-		},
-		{
-			id: 'view',
-			title: null,
-		},
-		{
-			id: 'promote',
-			title: null,
-		},
-	];
+	const getHeaderColumns = (): Array< PostsListHeaderColumn > => {
+		const columns = [
+			{
+				id: 'data',
+				title: translate( 'Post' ),
+			},
+			{
+				id: 'type',
+				title: translate( 'Type' ),
+			},
+		];
 
-	const productColumns: Array< PostsListHeaderColumn > = [
-		{
-			id: 'data',
-			title: translate( 'Post' ),
-		},
-		{
-			id: 'type',
-			title: translate( 'Type' ),
-		},
-		{
-			id: 'sku',
-			title: translate( 'SKU' ),
-		},
-		{
-			id: 'price',
-			title: translate( 'Price' ),
-		},
-		{
+		if ( postType === 'product' ) {
+			columns.push( {
+				id: 'sku',
+				title: translate( 'SKU' ),
+			} );
+			columns.push( {
+				id: 'price',
+				title: translate( 'Price' ),
+			} );
+		}
+
+		columns.push( {
 			id: 'publish-date',
 			title: translate( 'Publish date' ),
-		},
-		{
+		} );
+
+		if ( postType === 'post' || postType === 'page' ) {
+			columns.push( {
+				id: 'likes',
+				title: translate( 'Likes' ),
+			} );
+			columns.push( {
+				id: 'comments',
+				title: translate( 'Comments' ),
+			} );
+		}
+
+		columns.push( {
 			id: 'visitors',
 			title: translate( 'Visitors' ),
-		},
-		{
-			id: 'view',
-			title: null,
-		},
-		{
-			id: 'promote',
-			title: null,
-		},
-	];
+		} );
 
-	const getHeaderColumns = (): Array< PostsListHeaderColumn > => {
-		switch ( postType ) {
-			case 'product':
-				return productColumns;
-			case 'post':
-			case 'page':
-			default:
-				return postColumns;
-		}
+		return columns;
 	};
 
 	return (
