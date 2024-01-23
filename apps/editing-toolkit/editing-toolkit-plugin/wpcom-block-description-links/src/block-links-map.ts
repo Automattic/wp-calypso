@@ -76,10 +76,6 @@ const blockInfoMapping: { [ key: string ]: { link: string; postId: number } } = 
 		link: 'https://wordpress.com/support/wordpress-editor/blocks/preformatted-block/',
 		postId: 149339,
 	},
-	'core/paragraph': {
-		link: 'https://wordpress.com/support/wordpress-editor/blocks/paragraph-block/',
-		postId: 148375,
-	},
 	'core/more': {
 		link: 'https://wordpress.com/support/wordpress-editor/blocks/more-block/',
 		postId: 148614,

@@ -24,8 +24,9 @@ const ItemStyled = styled( Item )`
 	font-size: 14px;
 	font-weight: 500;
 	padding: 0;
-	justify-content: left;
-	flex: 1;
+	flex: none;
+	margin-right: auto;
+	width: auto;
 
 	&:hover {
 		background: var( --studio-white );
@@ -62,7 +63,7 @@ const MasterbarStyled = ( {
 	<MasterbarStyledBlock>
 		<Global
 			styles={ css`
-				body.is-section-checkout-thank-you {
+				body {
 					--masterbar-height: 72px;
 				}
 			` }

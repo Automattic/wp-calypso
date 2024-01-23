@@ -14,7 +14,6 @@ import type {
  * We are currently ignoring error messages and silently failing if we can't find a
  * site. This could be extended in the future by retrieving the `error` and
  * `message` strings returned by the API.
- *
  * @param siteId {number}	The site to look up
  */
 export const getSite =
@@ -35,7 +34,6 @@ export const getSite =
 
 /**
  * Get all site domains
- *
  * @param siteId {number} The site id
  */
 export const getSiteDomains =
@@ -50,7 +48,6 @@ export const getSiteDomains =
 
 /**
  * Get all site settings
- *
  * @param siteId {number} The site id
  */
 export const getSiteSettings =
@@ -66,7 +63,6 @@ export const getSiteSettings =
 
 /**
  * Get current site theme
- *
  * @param siteId {number} The site id
  */
 export const getSiteTheme =

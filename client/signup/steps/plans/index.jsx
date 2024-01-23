@@ -1,5 +1,4 @@
 import config from '@automattic/calypso-config';
-import { getPlan, PLAN_FREE } from '@automattic/calypso-products';
 import { Button } from '@automattic/components';
 import { isSiteAssemblerFlow, isTailoredSignupFlow } from '@automattic/onboarding';
 import { isDesktop, subscribeIsDesktop } from '@automattic/viewport';
@@ -9,7 +8,6 @@ import PropTypes from 'prop-types';
 import { parse as parseQs } from 'qs';
 import { Component } from 'react';
 import { connect } from 'react-redux';
-import QueryPlans from 'calypso/components/data/query-plans';
 import { LoadingEllipsis } from 'calypso/components/loading-ellipsis';
 import MarketingMessage from 'calypso/components/marketing-message';
 import Notice from 'calypso/components/notice';
@@ -21,7 +19,6 @@ import StepWrapper from 'calypso/signup/step-wrapper';
 import { getStepUrl } from 'calypso/signup/utils';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { errorNotice } from 'calypso/state/notices/actions';
-import { getPlanSlug } from 'calypso/state/plans/selectors';
 import hasInitializedSites from 'calypso/state/selectors/has-initialized-sites';
 import { saveSignupStep, submitSignupStep } from 'calypso/state/signup/progress/actions';
 import { getSiteBySlug } from 'calypso/state/sites/selectors';
@@ -110,10 +107,6 @@ export class PlansStep extends Component {
 					</Notice>
 				</div>
 			);
-		}
-
-		if ( ! this.props.plansLoaded ) {
-			return this.renderLoading();
 		}
 
 		const { signupDependencies } = this.props;
@@ -264,8 +257,6 @@ export class PlansStep extends Component {
 	}
 
 	render() {
-		const { signupDependencies } = this.props;
-		const { coupon } = signupDependencies;
 		const classes = classNames( 'plans plans-step', {
 			'has-no-sidebar': true,
 			'is-wide-layout': false,
@@ -274,7 +265,6 @@ export class PlansStep extends Component {
 
 		return (
 			<>
-				<QueryPlans coupon={ coupon } />
 				<MarketingMessage path="signup/plans" />
 				<div className={ classes }>{ this.plansFeaturesSelection() }</div>
 			</>
@@ -332,8 +322,6 @@ export default connect(
 		selectedSite: siteSlug ? getSiteBySlug( state, siteSlug ) : null,
 		customerType: parseQs( path.split( '?' ).pop() ).customerType,
 		hasInitializedSitesBackUrl: hasInitializedSites( state ) ? '/sites/' : false,
-		isLoadingExperiment: false,
-		plansLoaded: Boolean( getPlanSlug( state, getPlan( PLAN_FREE )?.getProductId() || 0 ) ),
 	} ),
 	{ recordTracksEvent, saveSignupStep, submitSignupStep, errorNotice }
 )( localize( PlansStep ) );

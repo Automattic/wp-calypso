@@ -53,7 +53,7 @@ import {
 } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
 import classNames from 'classnames';
-import { localize, LocalizeProps, numberFormat } from 'i18n-calypso';
+import { localize, LocalizeProps, numberFormat, useTranslate } from 'i18n-calypso';
 import { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
@@ -112,6 +112,7 @@ import {
 	getCancelPurchaseUrlFor,
 	getAddNewPaymentMethodUrlFor,
 } from 'calypso/my-sites/purchases/paths';
+import { useSelector } from 'calypso/state';
 import { NON_PRIMARY_DOMAINS_TO_FREE_USERS } from 'calypso/state/current-user/constants';
 import {
 	currentUserHasFlag,
@@ -131,9 +132,10 @@ import getCurrentRoute from 'calypso/state/selectors/get-current-route';
 import getPrimaryDomainBySiteId from 'calypso/state/selectors/get-primary-domain-by-site-id';
 import isDomainOnly from 'calypso/state/selectors/is-domain-only-site';
 import isSiteAtomic from 'calypso/state/selectors/is-site-automated-transfer';
+import { useGetWebsiteContentQuery } from 'calypso/state/signup/steps/website-content/hooks/use-get-website-content-query';
 import { hasLoadedSiteDomains, getAllDomains } from 'calypso/state/sites/domains/selectors';
 import { getSitePlanRawPrice } from 'calypso/state/sites/plans/selectors';
-import { getSite, isRequestingSites } from 'calypso/state/sites/selectors';
+import { getSite, getSiteSlug, isRequestingSites } from 'calypso/state/sites/selectors';
 import { getCanonicalTheme } from 'calypso/state/themes/selectors';
 import { CalypsoDispatch, IAppState } from 'calypso/state/types';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
@@ -147,6 +149,7 @@ import {
 	getChangePaymentMethodPath,
 	isJetpackTemporarySitePurchase,
 	isAkismetTemporarySitePurchase,
+	isMarketplaceTemporarySitePurchase,
 } from '../utils';
 import PurchaseNotice from './notices';
 import PurchasePlanDetails from './plan-details';
@@ -282,7 +285,8 @@ class ManagePurchase extends Component<
 	handleRenew = () => {
 		const { purchase, siteSlug, redirectTo } = this.props;
 		const options = redirectTo ? { redirectTo } : undefined;
-		const isSitelessRenewal = isAkismetTemporarySitePurchase( purchase );
+		const isSitelessRenewal =
+			isAkismetTemporarySitePurchase( purchase ) || isMarketplaceTemporarySitePurchase( purchase );
 
 		if ( ! purchase ) {
 			return;
@@ -345,7 +349,9 @@ class ManagePurchase extends Component<
 		if (
 			isPartnerPurchase( purchase ) ||
 			! isRenewable( purchase ) ||
-			( ! this.props.site && ! isAkismetTemporarySitePurchase( purchase ) ) ||
+			( ! this.props.site &&
+				! isAkismetTemporarySitePurchase( purchase ) &&
+				! isMarketplaceTemporarySitePurchase( purchase ) ) ||
 			isAkismetFreeProduct( purchase ) ||
 			( is100Year( purchase ) && ! isCloseToExpiration( purchase ) )
 		) {
@@ -431,7 +437,9 @@ class ManagePurchase extends Component<
 		if (
 			isPartnerPurchase( purchase ) ||
 			! isRenewable( purchase ) ||
-			( ! this.props.site && ! isAkismetTemporarySitePurchase( purchase ) ) ||
+			( ! this.props.site &&
+				! isAkismetTemporarySitePurchase( purchase ) &&
+				! isMarketplaceTemporarySitePurchase( purchase ) ) ||
 			isAkismetFreeProduct( purchase )
 		) {
 			return null;
@@ -612,7 +620,11 @@ class ManagePurchase extends Component<
 			return null;
 		}
 
-		if ( ! this.props.site && ! isAkismetTemporarySitePurchase( purchase ) ) {
+		if (
+			! this.props.site &&
+			! isAkismetTemporarySitePurchase( purchase ) &&
+			! isMarketplaceTemporarySitePurchase( purchase )
+		) {
 			return null;
 		}
 
@@ -844,6 +856,10 @@ class ManagePurchase extends Component<
 			return null;
 		}
 
+		if ( isMarketplaceTemporarySitePurchase( purchase ) ) {
+			return null;
+		}
+
 		return (
 			<CompactCard tagName="a" onClick={ isReinstalling ? null : this.handleReinstall }>
 				{ isReinstalling ? (
@@ -1065,39 +1081,7 @@ class ManagePurchase extends Component<
 		}
 
 		if ( isDIFMProduct( purchase ) ) {
-			const difmTieredPurchaseDetails = getDIFMTieredPurchaseDetails( purchase );
-			if ( difmTieredPurchaseDetails && ( difmTieredPurchaseDetails.extraPageCount ?? 0 ) > 0 ) {
-				// We know there are some pages due to the above check.
-				const extraPageCount = difmTieredPurchaseDetails.extraPageCount as number;
-				const numberOfIncludedPages = difmTieredPurchaseDetails.numberOfIncludedPages as number;
-
-				return (
-					<>
-						{ numberOfIncludedPages === 1
-							? translate(
-									'A professionally built single page website in 4 business days or less.'
-							  )
-							: translate(
-									'A professionally built %(numberOfIncludedPages)s-page website in 4 business days or less.',
-									{
-										args: {
-											numberOfIncludedPages,
-										},
-									}
-							  ) }{ ' ' }
-						{ translate(
-							'This purchase includes %(numberOfPages)d extra page.',
-							'This purchase includes %(numberOfPages)d extra pages.',
-							{
-								count: extraPageCount ?? 0,
-								args: {
-									numberOfPages: extraPageCount,
-								},
-							}
-						) }
-					</>
-				);
-			}
+			return <BBEPurchaseDescription purchase={ purchase } />;
 		}
 
 		return purchaseType( purchase );
@@ -1107,6 +1091,10 @@ class ManagePurchase extends Component<
 		const { purchase, site, translate } = this.props;
 
 		if ( ! purchase ) {
+			return null;
+		}
+
+		if ( isMarketplaceTemporarySitePurchase( purchase ) ) {
 			return null;
 		}
 
@@ -1366,6 +1354,7 @@ class ManagePurchase extends Component<
 						isProductOwner={ isProductOwner }
 					/>
 				) }
+
 				{ isProductOwner && ! purchase.isLocked && (
 					<>
 						{ preventRenewal && this.renderSelectNewNavItem() }
@@ -1510,6 +1499,90 @@ function addPaymentMethodLinkText( {
 		linkText = translate( 'Add payment method' );
 	}
 	return linkText;
+}
+
+function BBEPurchaseDescription( { purchase }: { purchase: Purchase } ) {
+	const translate = useTranslate();
+	const siteSlug = useSelector( ( state ) => getSiteSlug( state, purchase.siteId ) );
+	const { isLoading, data: websiteContentQueryResult } = useGetWebsiteContentQuery( siteSlug );
+	const difmTieredPurchaseDetails = getDIFMTieredPurchaseDetails( purchase );
+	if ( ! difmTieredPurchaseDetails ) {
+		return;
+	}
+
+	const extraPageCount = difmTieredPurchaseDetails.extraPageCount || 0;
+	const numberOfIncludedPages = difmTieredPurchaseDetails.numberOfIncludedPages as number;
+
+	const BBESupportLink = (
+		<a
+			href={ `mailto:builtby+express@wordpress.com?subject=${ encodeURIComponent(
+				`I have a question about my project: ${ siteSlug }`
+			) }` }
+		/>
+	);
+
+	return (
+		<div
+			className={ classNames( 'manage-purchase__description', {
+				'is-placeholder': isLoading,
+			} ) }
+		>
+			{ ! isLoading && (
+				<>
+					<div>
+						{ numberOfIncludedPages === 1
+							? translate(
+									'A professionally built single page website in 4 business days or less.'
+							  )
+							: translate(
+									'A professionally built %(numberOfIncludedPages)s-page website in 4 business days or less.',
+									{
+										args: {
+											numberOfIncludedPages,
+										},
+									}
+							  ) }{ ' ' }
+						{ extraPageCount > 0
+							? translate(
+									'This purchase includes %(numberOfPages)d extra page.',
+									'This purchase includes %(numberOfPages)d extra pages.',
+									{
+										count: extraPageCount ?? 0,
+										args: {
+											numberOfPages: extraPageCount,
+										},
+									}
+							  )
+							: null }
+					</div>
+					<div>
+						{ websiteContentQueryResult?.isWebsiteContentSubmitted
+							? translate(
+									'{{BBESupportLink}}Contact us{{/BBESupportLink}} with any questions or inquiries about your project.',
+									{
+										components: {
+											BBESupportLink,
+										},
+									}
+							  )
+							: translate(
+									'{{FormLink}}Submit content{{/FormLink}} for your website build or {{BBESupportLink}}contact us{{/BBESupportLink}} with any questions about your project.',
+									{
+										components: {
+											FormLink: (
+												<a
+													href={ `/start/site-content-collection/website-content?siteSlug=${ siteSlug }` }
+												/>
+											),
+											BBESupportLink,
+										},
+									}
+							  ) }
+					</div>
+				</>
+			) }
+		</div>
+	);
 }
 
 function PlanOverlapNotice( {

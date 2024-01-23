@@ -1,6 +1,7 @@
 import { isEnabled } from '@automattic/calypso-config';
 import { HOSTING_LP_FLOW } from '@automattic/onboarding';
 import { translate } from 'i18n-calypso';
+import { onEnterOnboarding } from '../flow-actions';
 
 const noop = () => {};
 
@@ -149,6 +150,7 @@ export function generateFlows( {
 			providesDependenciesInQuery: [ 'coupon' ],
 			optionalDependenciesInQuery: [ 'coupon' ],
 			hideProgressIndicator: true,
+			onEnterFlow: onEnterOnboarding,
 		},
 		{
 			name: 'onboarding-2023-pricing-grid',
@@ -175,7 +177,7 @@ export function generateFlows( {
 		},
 		{
 			name: 'onboarding-pm',
-			steps: [ 'user', 'domains', 'plans' ],
+			steps: [ userSocialStep, 'domains', 'plans' ],
 			destination: getSignupDestination,
 			description:
 				'Paid media version of the onboarding flow. Read more in https://wp.me/pau2Xa-4Kk.',

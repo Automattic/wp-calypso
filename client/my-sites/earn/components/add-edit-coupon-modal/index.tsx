@@ -1,7 +1,7 @@
 import { Dialog, FormInputValidation, FormLabel } from '@automattic/components';
 import { ToggleControl } from '@wordpress/components';
 import { translate } from 'i18n-calypso';
-import { ChangeEvent, useMemo, useState } from 'react';
+import { ChangeEvent, useMemo, useState, useCallback } from 'react';
 import FormCurrencyInput from 'calypso/components/forms/form-currency-input';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormSectionHeading from 'calypso/components/forms/form-section-heading';
@@ -91,12 +91,6 @@ const RecurringPaymentsCouponAddEditModal = ( {
 		}
 		return 'USD';
 	}, [ coupon, connectedAccountDefaultCurrency, currencyList ] );
-	const [ currentDiscountCurrency, setCurrentDiscountCurrency ] =
-		useState( defaultDiscountCurrency );
-	const onDiscountCurrencyChange = ( event: ChangeEvent< HTMLSelectElement > ) => {
-		const { value: currency } = event.currentTarget;
-		setCurrentDiscountCurrency( currency );
-	};
 
 	/** Other datasets */
 	const products: Product[] = useSelector( ( state ) =>
@@ -114,13 +108,16 @@ const RecurringPaymentsCouponAddEditModal = ( {
 	const [ editedDiscountPercentage, setEditedDiscountPercentage ] = useState(
 		coupon?.discount_percentage ?? 0
 	);
+	const [ editedDiscountCurrency, setEditedDiscountCurrency ] = useState(
+		coupon?.discount_currency ?? defaultDiscountCurrency
+	);
 	const [ editedDiscountValue, setEditedDiscountValue ] = useState( () => {
 		if ( COUPON_DISCOUNT_TYPE_AMOUNT === editedDiscountType ) {
 			return (
 				coupon?.discount_value ??
 				minimumCurrencyTransactionAmount(
 					connectedAccountMinimumCurrency,
-					currentDiscountCurrency,
+					editedDiscountCurrency,
 					connectedAccountDefaultCurrency
 				)
 			);
@@ -166,6 +163,8 @@ const RecurringPaymentsCouponAddEditModal = ( {
 	const [ focusedDiscountValue, setFocusedDiscountValue ] = useState( false );
 	const [ focusedLimitPerUser, setFocusedLimitPerUser ] = useState( false );
 	const [ focusedEmailAllowList, setFocusedEmailAllowList ] = useState( false );
+	const [ isCharacterMinReached, setisCharacterMinReached ] = useState( false );
+	const [ isCharacterMaxReached, setisCharacterMaxReached ] = useState( false );
 
 	/** Coupon functions */
 	const generateRandomCouponCode = (): string => {
@@ -192,14 +191,26 @@ const RecurringPaymentsCouponAddEditModal = ( {
 		/^[\w.\-+*]+@(?:(?:[\w\-*]+(?:\.[\w\-*]+)+)+|(?:[\w\-*]*\*[\w\-*]*)+)+$/.test( email );
 
 	/** Form event handlers */
-	const onCouponCodeChange = ( event: ChangeEvent< HTMLInputElement > ) =>
-		setEditedCouponCode( event.target.value );
+	const onCouponCodeChange = useCallback( ( event: ChangeEvent< HTMLInputElement > ) => {
+		const newValue = event.target.value;
+		setEditedCouponCode( newValue );
+	}, [] );
+	const handleCharacterMinLimitReached = useCallback( ( isMet: boolean ) => {
+		setisCharacterMinReached( isMet );
+	}, [] );
+	const handleCharacterMaxLimitReached = useCallback( ( isMet: boolean ) => {
+		setisCharacterMaxReached( isMet );
+	}, [] );
 	const onCouponCodeRandomize = () => {
 		const code = generateRandomCouponCode();
 		setEditedCouponCode( code );
 	};
 	const onSelectDiscountType = ( event: ChangeEvent< HTMLSelectElement > ) =>
 		setEditedDiscountType( event.target.value );
+	const onDiscountCurrencyChange = ( event: ChangeEvent< HTMLSelectElement > ) => {
+		const { value: currency } = event.currentTarget;
+		setEditedDiscountCurrency( currency );
+	};
 	const onDiscountValueChange = ( event: ChangeEvent< HTMLInputElement > ) =>
 		setEditedDiscountValue( parseFloat( event.target.value ) );
 	const onDiscountPercentageChange = ( event: ChangeEvent< HTMLInputElement > ) =>
@@ -258,7 +269,7 @@ const RecurringPaymentsCouponAddEditModal = ( {
 	/** Form validation */
 	const isFormValid = ( field?: string ) => {
 		if ( field === 'coupon_code' || ! field ) {
-			if ( editedCouponCode.length < 3 || editedCouponCode.length > 10 ) {
+			if ( isCharacterMinReached ) {
 				return false;
 			}
 
@@ -368,7 +379,7 @@ const RecurringPaymentsCouponAddEditModal = ( {
 			discount_type: editedDiscountType,
 			discount_value: editedDiscountValue,
 			discount_percentage: editedDiscountPercentage,
-			discount_currency: currentDiscountCurrency,
+			discount_currency: editedDiscountCurrency,
 			start_date: editedStartDate,
 			end_date: editedEndDate,
 			plan_ids_allow_list: editedPlanIdsAllowList,
@@ -433,18 +444,37 @@ const RecurringPaymentsCouponAddEditModal = ( {
 						action="Random"
 						onChange={ onCouponCodeChange }
 						onAction={ onCouponCodeRandomize }
+						onCharacterMinReached={ handleCharacterMinLimitReached }
+						onCharacterMaxReached={ handleCharacterMaxLimitReached }
 						isError={ ! isFormValid( 'coupon_code' ) }
 						isValid={ isFormValid( 'coupon_code' ) }
-						maxLength="10"
+						minLength="3"
+						maxLength="20"
 						onBlur={ () => setFocusedCouponCode( true ) }
 					/>
 					<FormSettingExplanation>
 						{ translate( 'Choose a unique coupon code for the discount. Not case-sensitive.' ) }
 					</FormSettingExplanation>
-					{ ! isFormValid( 'coupon_code' ) && focusedCouponCode && (
+					{ ! isFormValid( 'coupon_code' ) && ! isCharacterMinReached && focusedCouponCode && (
 						<FormInputValidation isError text={ translate( 'Please input a coupon code.' ) } />
 					) }
+					{ isCharacterMinReached && (
+						<FormInputValidation
+							isError
+							text={ translate( 'Coupon codes must be at least 3 characters' ) }
+						/>
+					) }
+					{ isCharacterMaxReached && (
+						<FormInputValidation
+							isError={ false }
+							isWarning
+							text={ translate(
+								'The coupon code maximum length of 20 characters has been reached'
+							) }
+						/>
+					) }
 				</FormFieldset>
+
 				<FormFieldset className="memberships__dialog-sections-discount-info">
 					<div className="memberships__dialog-sections-discount-info-field-container">
 						<FormLabel htmlFor="discount_type">{ translate( 'Discount type' ) }</FormLabel>
@@ -486,7 +516,7 @@ const RecurringPaymentsCouponAddEditModal = ( {
 								onChange={ onDiscountValueChange }
 								onFocus={ onDiscountAmountFocus }
 								onBlur={ onDiscountValueBlur }
-								currencySymbolPrefix={ currentDiscountCurrency }
+								currencySymbolPrefix={ editedDiscountCurrency }
 								onCurrencyChange={ onDiscountCurrencyChange }
 								currencyList={ currencyList.map( ( code ) => ( { code } ) ) }
 								placeholder="0.00"

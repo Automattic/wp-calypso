@@ -2,6 +2,7 @@
 @import "@wordpress/base-styles/mixins";
 @import "@wordpress/base-styles/variables";
 
+
 .layout__content {
 	overflow: visible;
 }
@@ -18,6 +19,20 @@
 
 	&.main {
 		max-width: 960px;
+	}
+
+	// Design i2 overrides
+	&.is-redesign-v2 {
+		--color-accent: var(--studio-blue-50);
+		--color-accent-60: var(--studio-blue-60);
+
+		&.main {
+			max-width: 750px;
+			padding: 0 24px 0;
+			display: flex;
+			flex-direction: column;
+			text-align: initial;
+		}
 	}
 }
 

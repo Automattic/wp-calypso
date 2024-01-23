@@ -79,6 +79,8 @@ const CommandBox = styled.div( {
 	letterSpacing: -0.15,
 	backgroundColor: 'var(--color-surface)',
 	boxShadow: '1px 1px 1px 0px #0000001F',
+	paddingRight: 10,
+	whiteSpace: 'nowrap',
 	'&.command-box__fadeIn': {
 		animation: `${ fadeIn } 1s ease-in-out`,
 		zIndex: 10,
@@ -86,6 +88,7 @@ const CommandBox = styled.div( {
 	'&.command-box__fadeOut': {
 		animation: `${ fadeOut } 1s ease-in-out`,
 		zIndex: 5,
+		opacity: 0,
 	},
 	svg: {
 		width: 24,
