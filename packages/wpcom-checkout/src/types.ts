@@ -35,6 +35,7 @@ export type WPCOMTransactionEndpointResponseRedirect = {
 	message: { payment_intent_client_secret: string } | '';
 	order_id: number | '';
 	redirect_url: string;
+	razorpay_order_id?: string;
 };
 
 export type WPCOMTransactionEndpointResponse =
@@ -297,7 +298,8 @@ export type CheckoutPaymentMethodSlug =
 	| `existingCard${ string }` // specific saved cards have unique slugs
 	| 'stripe' // a synonym for 'card'
 	| 'apple-pay' // a synonym for 'web-pay'
-	| 'google-pay'; // a synonym for 'web-pay'
+	| 'google-pay' // a synonym for 'web-pay'
+	| 'razorpay';
 
 /**
  * Payment method slugs as returned by the WPCOM backend.
@@ -321,7 +323,8 @@ export type WPCOMPaymentMethod =
 	| 'WPCOM_Billing_Stripe_Source_Sofort'
 	| 'WPCOM_Billing_Stripe_Source_Three_D_Secure'
 	| 'WPCOM_Billing_Stripe_Source_Wechat'
-	| 'WPCOM_Billing_Web_Payment';
+	| 'WPCOM_Billing_Web_Payment'
+	| 'WPCOM_Billing_Razorpay';
 
 export type ContactDetailsType = 'gsuite' | 'tax' | 'domain' | 'none';
 

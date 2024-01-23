@@ -4,7 +4,6 @@ import type { ProductSlug } from './types';
 
 /**
  * Return a list of products that are similar to the product passed as argument, but with different terms.
- *
  * @param {ProductSlug} productSlug Slug of the product to get the term variants from
  * @returns {string[]} Slugs of the product variants
  */

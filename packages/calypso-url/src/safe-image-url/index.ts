@@ -32,7 +32,6 @@ const SIZE_PARAMS = [ 'w', 'h', 'resize', 'fit', 's' ];
  *
  * NOTE: This function will return `null` for external URLs with query strings,
  * because Photon itself does not support this!
- *
  * @param  url The URL to secure
  * @returns The secured URL, or `null` if we couldn't make it safe
  */

@@ -378,18 +378,17 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 			( product ) => product.product_slug === marketplaceProductSlug
 		) || marketplaceThemeProducts[ 0 ];
 
-	const didPurchaseSelectedTheme = useSelector( ( state ) => {
-		if ( ! site || ! selectedDesignThemeId ) {
-			return false;
-		}
+	const didPurchaseSelectedTheme = useSelector( ( state ) =>
+		site && selectedDesignThemeId
+			? isThemePurchased( state, selectedDesignThemeId, site.ID )
+			: false
+	);
 
-		if ( isEnabled( 'themes/tiers' ) ) {
-			return isThemeAllowedOnSite( state, site.ID, selectedDesignThemeId );
-		}
-
-		// @TODO Remove this once we have the new theme tiers live.
-		return isThemePurchased( state, selectedDesignThemeId, site.ID );
-	} );
+	const canSiteActivateTheme = useSelector( ( state ) =>
+		site && selectedDesignThemeId
+			? isThemeAllowedOnSite( state, site.ID, selectedDesignThemeId )
+			: false
+	);
 
 	const isMarketplaceThemeSubscribed = useSelector(
 		( state ) =>
@@ -417,7 +416,7 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 	const isLockedTheme =
 		( isEnabled( 'themes/tiers' ) &&
 			selectedDesignTier === PERSONAL_THEME &&
-			! didPurchaseSelectedTheme ) ||
+			! canSiteActivateTheme ) ||
 		( selectedDesign?.is_premium && ! isPremiumThemeAvailable && ! didPurchaseSelectedTheme ) ||
 		( selectedDesign?.is_externally_managed &&
 			( ! isMarketplaceThemeSubscribed || ! isExternallyManagedThemeAvailable ) ) ||
@@ -599,7 +598,12 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 					fontVariation: selectedFontVariation,
 				} )
 			);
-			pickDesign();
+
+			if ( isEnabled( 'themes/tiers' ) && selectedDesignTier === PERSONAL_THEME ) {
+				closePremiumGlobalStylesModal();
+			} else {
+				pickDesign();
+			}
 		}
 	}
 
@@ -753,27 +757,23 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 
 		recordTracksEvent( eventName, tracksProps );
 	}
-
-	function getPrimaryActionButton() {
+	function getPrimaryActionButtonAction(): () => void {
+		const isPersonalDesign = isEnabled( 'themes/tiers' ) && selectedDesignTier === PERSONAL_THEME;
 		if ( isLockedTheme ) {
-			return (
-				<Button className="navigation-link" primary borderless={ false } onClick={ upgradePlan }>
-					{ translate( 'Unlock theme' ) }
-				</Button>
-			);
+			// For personal themes we favor the GS Upgrade Modal over the Plan Upgrade Modal.
+			return isPersonalDesign && shouldUnlockGlobalStyles ? unlockPremiumGlobalStyles : upgradePlan;
 		}
 
-		const selectStyle = () => {
-			if ( shouldUnlockGlobalStyles ) {
-				unlockPremiumGlobalStyles();
-			} else {
-				pickDesign();
-			}
-		};
+		return shouldUnlockGlobalStyles ? unlockPremiumGlobalStyles : () => pickDesign();
+	}
+
+	function getPrimaryActionButton() {
+		const action = getPrimaryActionButtonAction();
+		const text = action === upgradePlan ? translate( 'Unlock theme' ) : translate( 'Continue' );
 
 		return (
-			<Button className="navigation-link" primary borderless={ false } onClick={ selectStyle }>
-				{ translate( 'Continue' ) }
+			<Button className="navigation-link" primary borderless={ false } onClick={ action }>
+				{ text }
 			</Button>
 		);
 	}

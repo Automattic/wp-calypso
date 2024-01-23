@@ -1,19 +1,30 @@
 import { isEnabled } from '@automattic/calypso-config';
 import { Task, TaskId, TaskContext, TaskActionTable } from '../types';
-import * as setupActions from './setup';
+import { actions as designActions } from './design';
+import { actions as domainActions } from './domain';
+import { actions as planActions } from './plan';
+import { actions as postActions } from './post';
+import { actions as setupActions } from './setup';
+import { actions as siteActions } from './site';
 
-const DEFINITIONS: TaskActionTable = {
-	setup_free: setupActions.getSetupFreeTask,
-};
+const DEFINITIONS = {
+	...setupActions,
+	...designActions,
+	...domainActions,
+	...postActions,
+	...siteActions,
+	...planActions,
+} satisfies TaskActionTable;
 
-const MIGRATED_FLOWS = [ 'free' ];
+export const NEW_TASK_DEFINITION_PARSER_FEATURE_FLAG = 'launchpad/new-task-definition-parser';
 
 const isNewDefinitionAvailable = ( flow: string, taskId: string ) => {
-	const isFlowEnabled = MIGRATED_FLOWS.includes( flow );
 	const isTaskAvailable = taskId in DEFINITIONS;
-	const isFeatureAvailable = isEnabled( 'launchpad/new-task-definition-parser' );
+	const isFeatureEnabled =
+		isEnabled( NEW_TASK_DEFINITION_PARSER_FEATURE_FLAG ) &&
+		isEnabled( `${ NEW_TASK_DEFINITION_PARSER_FEATURE_FLAG }/${ flow }` );
 
-	return isFlowEnabled && isTaskAvailable && isFeatureAvailable;
+	return isTaskAvailable && isFeatureEnabled;
 };
 
 export const getTaskDefinition = ( flow: string, task: Task, context: TaskContext ) => {

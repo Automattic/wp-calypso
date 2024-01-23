@@ -73,6 +73,7 @@ const UpsellProductCard: React.FC< UpsellProductCardProps > = ( {
 	let discountText: TranslateResult | undefined;
 	let isFetchingPrices: boolean;
 	let manageProduct: APIProductFamilyProduct | undefined;
+	let nonManageProductPrice: number | null = null;
 	let onCtaButtonClickInternal = onCtaButtonClick;
 	let originalPrice: number;
 	let tooltipText: TranslateResult | ReactNode;
@@ -80,6 +81,7 @@ const UpsellProductCard: React.FC< UpsellProductCardProps > = ( {
 	// Calculate the product price.
 	const {
 		originalPrice: nonManageOriginalPrice,
+		originalPriceTotal: nonManageOriginalPriceTotal,
 		discountedPrice: nonManageDiscountedPrice,
 		discountedPriceTotal: nonManageDiscountedPriceTotal,
 		priceTierList: nonManagePriceTierList,
@@ -134,6 +136,14 @@ const UpsellProductCard: React.FC< UpsellProductCardProps > = ( {
 					comment: 'Should be as concise as possible.',
 				} );
 			}
+		}
+	}
+
+	if ( nonManageCurrencyCode === 'USD' ) {
+		if ( nonManageDiscountedPriceTotal ) {
+			nonManageProductPrice = nonManageDiscountedPriceTotal;
+		} else if ( nonManageOriginalPriceTotal ) {
+			nonManageProductPrice = nonManageOriginalPriceTotal;
 		}
 	}
 
@@ -205,9 +215,7 @@ const UpsellProductCard: React.FC< UpsellProductCardProps > = ( {
 						manageProduct={ manageProduct }
 						onClose={ () => setShowLightbox( false ) }
 						nonManageProductSlug={ nonManageProductSlug }
-						nonManageProductPrice={
-							nonManageCurrencyCode === 'USD' ? nonManageDiscountedPriceTotal : null
-						}
+						nonManageProductPrice={ nonManageProductPrice }
 						partnerCanIssueLicense={ true }
 						siteId={ siteId }
 					/>

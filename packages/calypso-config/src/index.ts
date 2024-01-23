@@ -12,7 +12,6 @@ declare global {
 
 /**
  * Manages config flags for various deployment builds
- *
  * @module config/index
  */
 if ( 'undefined' === typeof window ) {

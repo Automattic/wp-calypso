@@ -6,6 +6,7 @@ export const metadataSchema = {
 	discount_type: { type: 'string', metaKey: 'scoup_discount_type' },
 	discount_value: { type: 'number', metaKey: 'scoup_discount_value' },
 	discount_percentage: { type: 'number', metaKey: 'scoup_discount_percentage' },
+	discount_currency: { type: 'string', metaKey: 'scoup_discount_currency' },
 	start_date: { type: 'string', metaKey: 'scoup_start_date' },
 	end_date: { type: 'string', metaKey: 'scoup_end_date' },
 	plan_ids_allow_list: { type: 'array', metaKey: 'scoup_plan_ids_allow_list' },
@@ -30,7 +31,7 @@ const couponSchema = {
 const couponListSchema = {
 	type: 'object',
 	patternProperties: {
-		'\\d+$': {
+		'^\\d+$': {
 			type: 'array',
 			items: couponSchema,
 		},

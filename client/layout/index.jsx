@@ -29,7 +29,6 @@ import { isWpMobileApp, isWcMobileApp } from 'calypso/lib/mobile-app';
 import isReaderTagEmbedPage from 'calypso/lib/reader/is-reader-tag-embed-page';
 import { getMessagePathForJITM } from 'calypso/lib/route';
 import UserVerificationChecker from 'calypso/lib/user/verification-checker';
-import { OdieAssistantProvider } from 'calypso/odie/context';
 import { isOffline } from 'calypso/state/application/selectors';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { getCurrentOAuth2Client } from 'calypso/state/oauth2-clients/ui/selectors';
@@ -202,10 +201,6 @@ class Layout extends Component {
 		// intentionally don't remove these in unmount
 	}
 
-	shouldShowOdieAssistant() {
-		return false;
-	}
-
 	renderMasterbar( loadHelpCenterIcon ) {
 		if ( this.props.masterbarIsHidden ) {
 			return <EmptyMasterbar />;
@@ -319,13 +314,7 @@ class Layout extends Component {
 						{ this.props.secondary }
 					</div>
 					<div id="primary" className="layout__primary">
-						{ this.shouldShowOdieAssistant() ? (
-							<OdieAssistantProvider sectionName={ this.props.sectionName }>
-								{ this.props.primary }
-							</OdieAssistantProvider>
-						) : (
-							this.props.primary
-						) }
+						{ this.props.primary }
 					</div>
 				</div>
 				<AsyncLoad require="calypso/layout/community-translator" placeholder={ null } />

@@ -14,7 +14,6 @@ export const wpcomRequest = (
  * Action for performing a fetching using `window.fetch()` and parsing the response body.
  * It's different from `apiFetch()` from
  * `@wordpress/data-controls` in that it doesn't use any middleware to add extra parameters.
- *
  * @param resource the resource you wish to fetch
  * @param options request options
  */

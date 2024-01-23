@@ -1,5 +1,5 @@
 import { formatCurrency } from '@automattic/format-currency';
-import { translate } from 'i18n-calypso';
+import { translate, useTranslate } from 'i18n-calypso';
 import type { LineItemType } from './types';
 import type { ResponseCart, TaxBreakdownItem } from '@automattic/shopping-cart';
 
@@ -116,6 +116,65 @@ export function getCreditsLineItemFromCart( responseCart: ResponseCart ): LineIt
 	};
 }
 
+export interface CostOverrideForDisplay {
+	humanReadableReason: string;
+	overrideCode: string;
+	discountAmount: number;
+}
+
+export function filterAndGroupCostOverridesForDisplay(
+	responseCart: ResponseCart,
+	translate: ReturnType< typeof useTranslate >
+): CostOverrideForDisplay[] {
+	// Collect cost overrides from each line item and group them by type so we
+	// can show them all together after the line item list.
+	const costOverridesGrouped = responseCart.products.reduce<
+		Record< string, CostOverrideForDisplay >
+	>( ( grouped, product ) => {
+		const costOverrides = product?.cost_overrides;
+		if ( ! costOverrides ) {
+			return grouped;
+		}
+
+		costOverrides.forEach( ( costOverride ) => {
+			if ( costOverride.does_override_original_cost ) {
+				// We won't display original cost overrides since they are
+				// included in the original cost that's being displayed. They
+				// are not discounts.
+				return;
+			}
+			const discountAmount = grouped[ costOverride.override_code ]?.discountAmount ?? 0;
+			const newDiscountAmount =
+				costOverride.old_subtotal_integer - costOverride.new_subtotal_integer;
+			grouped[ costOverride.override_code ] = {
+				humanReadableReason: costOverride.human_readable_reason,
+				overrideCode: costOverride.override_code,
+				discountAmount: discountAmount + newDiscountAmount,
+			};
+		} );
+
+		// Add a fake cost override for introductory offers until D134600-code
+		// is merged because they are otherwise discounts that are invisible to
+		// the list of cost overrides. Remove this once that diff is merged.
+		if (
+			product.introductory_offer_terms?.enabled &&
+			! costOverrides.some( ( override ) => override.override_code === 'introductory-offer' )
+		) {
+			const discountAmount = grouped[ 'introductory-offer' ]?.discountAmount ?? 0;
+			const newDiscountAmount =
+				product.item_original_subtotal_integer - product.item_subtotal_before_discounts_integer;
+			grouped[ 'introductory-offer' ] = {
+				humanReadableReason: translate( 'Introductory offer' ),
+				overrideCode: 'introductory-offer',
+				discountAmount: discountAmount + newDiscountAmount,
+			};
+		}
+		return grouped;
+	}, {} );
+
+	return Object.values( costOverridesGrouped );
+}
+
 /**
  * Even though a user might have a number of credits available, that number may
  * be greater than the cart's total. This function returns the number of
@@ -129,27 +188,21 @@ function getCreditsUsedByCart( responseCart: ResponseCart ): number {
 	return isFullCredits ? responseCart.sub_total_with_taxes_integer : responseCart.credits_integer;
 }
 
-/*
- * Coupon discounts are applied (or not, as appropriate) to each line item's
- * total, so the cart's subtotal includes them. However, because it's nice to
- * be able to display the coupon discount as a discount separately from the
- * subtotal, this function returns the cart's subtotal with the coupon savings
- * removed.
- */
-export function getSubtotalWithoutCoupon( responseCart: ResponseCart ): number {
-	return responseCart.sub_total_integer + responseCart.coupon_savings_total_integer;
+export function getSubtotalWithoutDiscounts( responseCart: ResponseCart ): number {
+	return responseCart.products.reduce( ( total, product ) => {
+		return product.item_original_subtotal_integer + total;
+	}, 0 );
 }
 
-/**
- * Credits are the only type of cart discount that is applied to the cart as a
- * whole and not to individual line items. The subtotal is only a subtotal of
- * line items and does not have credits applied. Therefore, if we want to
- * display credits as a discount along with other discounts before the
- * subtotal, we probably want to display the subtotal as having credits already
- * applied, which this function returns.
- */
-export function getSubtotalWithCredits( responseCart: ResponseCart ): number {
-	return responseCart.sub_total_integer - getCreditsUsedByCart( responseCart );
+export function getTotalDiscountsWithoutCredits(
+	responseCart: ResponseCart,
+	translate: ReturnType< typeof useTranslate >
+): number {
+	const filteredOverrides = filterAndGroupCostOverridesForDisplay( responseCart, translate );
+	return -filteredOverrides.reduce( ( total, override ) => {
+		total = total + override.discountAmount;
+		return total;
+	}, 0 );
 }
 
 export function doesPurchaseHaveFullCredits( cart: ResponseCart ): boolean {

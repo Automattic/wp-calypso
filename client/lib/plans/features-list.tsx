@@ -302,7 +302,6 @@ import {
 	FEATURE_GROUP_PAYMENT_TRANSACTION_FEES,
 	FEATURE_COMMISSION_FEE_STANDARD_FEATURES,
 	FEATURE_COMMISSION_FEE_WOO_FEATURES,
-	FEATURE_PERSONAL_THEMES,
 	FEATURE_STATS_PAID,
 } from '@automattic/calypso-products';
 import { localizeUrl } from '@automattic/i18n-utils';
@@ -537,15 +536,6 @@ export const FEATURES_LIST: FeatureList = {
 						'Access to all of our advanced premium theme templates, including templates specifically tailored for businesses.'
 				  );
 		},
-	},
-
-	[ FEATURE_PERSONAL_THEMES ]: {
-		getSlug: () => FEATURE_PERSONAL_THEMES,
-		getTitle: () => i18n.translate( 'Unlimited personal themes' ),
-		getDescription: () =>
-			i18n.translate(
-				'Unlimited access to all of our personal themes, including designs specifically tailored for businesses.'
-			),
 	},
 
 	[ FEATURE_MONETISE ]: {
