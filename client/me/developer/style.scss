@@ -20,6 +20,14 @@
 		letter-spacing: -0.32px;
 		text-align: center;
 	}
+
+	@media ( max-width: $break-medium ) {
+		padding: 40px 32px 24px;
+
+		.formatted-header__subtitle {
+			display: block;
+		}
+	}
 }
 
 .form-fieldset.developer__is_dev_account-fieldset {
@@ -53,6 +61,16 @@
 				color: inherit;
 			}
 		}
+	}
+
+	@media ( max-width: $break-medium ) {
+		position: fixed;
+		left: 0;
+		bottom: 0;
+		width: 100%;
+		margin-bottom: 0;
+		text-align: left;
+		padding: 16px 32px;
 	}
 }
 

@@ -1,3 +1,4 @@
+@import "@wordpress/base-styles/breakpoints.scss";
 @import "@automattic/typography/styles/variables";
 
 .developer-features-list {
@@ -37,6 +38,18 @@
 				line-height: 13px;
 				font-size: rem(13px);
 				color: #c9356e;
+			}
+		}
+	}
+
+	@media ( max-width: $break-medium ) {
+		display: block;
+
+		.developer-features-list__item {
+			margin: 0 32px 24px 32px;
+
+			.developer-features-list__item-description {
+				padding-bottom: 30px;
 			}
 		}
 	}
