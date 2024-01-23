@@ -376,7 +376,6 @@ export const ThemeUpgradeModal = ( {
 
 	const getPersonalPlanFeatureList = () => {
 		return getPlanFeaturesObject( [
-			FEATURE_PERSONAL_THEMES,
 			FEATURE_CUSTOM_DOMAIN,
 			FEATURE_AD_FREE_EXPERIENCE,
 			FEATURE_FAST_DNS,
