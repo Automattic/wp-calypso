@@ -103,7 +103,7 @@ const WrappedFeaturesGrid = ( props: FeaturesGridExternalProps ) => {
 		'is-visible': gridSize,
 	} );
 
-	console.log( 123, gridSize );
+	console.log( 1234, gridSize, gridContainerRef );
 
 	return (
 		<div ref={ gridContainerRef } className={ classNames }>

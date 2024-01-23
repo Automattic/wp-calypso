@@ -64,7 +64,7 @@ const useGridSizex = ( {
  */
 const containerBreakpoints = new Map( [
 	[ 'small', 0 ],
-	[ 'medium', 725 ],
+	[ 'medium', 740 ],
 	[ 'large', 1320 ], // 1320 to fit enterpreneur plan, 1180 to work in admin
 ] );
 
