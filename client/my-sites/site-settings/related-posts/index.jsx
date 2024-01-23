@@ -35,7 +35,7 @@ export const RelatedPostsSetting = ( {
 				) }
 				link={
 					isJetpackSelfHosted
-						? 'https://jetpack.com/support/related-posts/'
+						? localizeUrl( 'https://jetpack.com/support/related-posts/' )
 						: localizeUrl(
 								'https://wordpress.com/support/related-posts/#related-posts-classic-themes'
 						  )
@@ -96,7 +96,7 @@ export const RelatedPostsSetting = ( {
 								<a
 									href={
 										isJetpackSelfHosted
-											? 'https://jetpack.com/support/related-posts/'
+											? localizeUrl( 'https://jetpack.com/support/related-posts/' )
 											: localizeUrl(
 													'https://wordpress.com/support/related-posts/#add-a-related-posts-block'
 											  )
