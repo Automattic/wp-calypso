@@ -145,6 +145,9 @@ export function filterAndGroupCostOverridesForDisplay(
 			return grouped;
 		}
 
+		const isJetpack = isJetpackProduct( product ) || isJetpackPlan( product );
+		let productDiscountAmountTotal = 0;
+
 		costOverrides.forEach( ( costOverride ) => {
 			if ( costOverride.does_override_original_cost ) {
 				// We won't display original cost overrides since they are
@@ -160,6 +163,7 @@ export function filterAndGroupCostOverridesForDisplay(
 				overrideCode: costOverride.override_code,
 				discountAmount: discountAmount + newDiscountAmount,
 			};
+			productDiscountAmountTotal += newDiscountAmount;
 		} );
 
 		// Add a fake cost override for introductory offers until D134600-code
@@ -170,11 +174,36 @@ export function filterAndGroupCostOverridesForDisplay(
 			! costOverrides.some( ( override ) => override.override_code === 'introductory-offer' )
 		) {
 			const discountAmount = grouped[ 'introductory-offer' ]?.discountAmount ?? 0;
-			const newDiscountAmount =
+			let newDiscountAmount =
 				product.item_original_subtotal_integer - product.item_subtotal_before_discounts_integer;
+			// Override for Jetpack Bi-Yearly products: we show introductory discount for yearly variant (the rest is considered multi-year discount)
+			if ( isJetpack && isBiYearlyProduct( product ) ) {
+				const yearlyVariant = getYearlyVariantFromProduct( product );
+				if ( yearlyVariant ) {
+					newDiscountAmount =
+						yearlyVariant.price_before_discounts_integer - yearlyVariant.price_integer;
+				}
+			}
+
 			grouped[ 'introductory-offer' ] = {
-				humanReadableReason: translate( 'Introductory offer' ),
+				humanReadableReason: isJetpackSocialAdvancedSlug( product.product_slug )
+					? translate( 'Free Trial (Month)' )
+					: translate( 'Introductory offer' ),
 				overrideCode: 'introductory-offer',
+				discountAmount: discountAmount + newDiscountAmount,
+			};
+			productDiscountAmountTotal += newDiscountAmount;
+		}
+
+		if ( isJetpack && isBiYearlyProduct( product ) ) {
+			const discountAmount = grouped[ 'multi-year-discount' ]?.discountAmount ?? 0;
+			const newDiscountAmount =
+				product.item_original_subtotal_integer -
+				product.item_subtotal_integer -
+				productDiscountAmountTotal;
+			grouped[ 'multi-year-discount' ] = {
+				humanReadableReason: translate( 'Multi-year discount' ),
+				overrideCode: 'multi-year-discount',
 				discountAmount: discountAmount + newDiscountAmount,
 			};
 		}
@@ -197,17 +226,6 @@ function getCreditsUsedByCart( responseCart: ResponseCart ): number {
 	return isFullCredits ? responseCart.sub_total_with_taxes_integer : responseCart.credits_integer;
 }
 
-/*
- * Coupon discounts are applied (or not, as appropriate) to each line item's
- * total, so the cart's subtotal includes them. However, because it's nice to
- * be able to display the coupon discount as a discount separately from the
- * subtotal, this function returns the cart's subtotal with the coupon savings
- * removed.
- */
-export function getSubtotalWithoutCoupon( responseCart: ResponseCart ): number {
-	return responseCart.sub_total_integer + responseCart.coupon_savings_total_integer;
-}
-
 function getYearlyVariantFromProduct( product: ResponseCartProduct ) {
 	return product.product_variants.find( ( variant ) => 12 === variant.bill_period_in_months );
 }
@@ -216,73 +234,10 @@ function isBiYearlyProduct( product: ResponseCartProduct ) {
 	return 24 === product.months_per_bill_period;
 }
 
-export function getSubtotalWithoutDiscounts(
-	responseCart: ResponseCart,
-	handleBiYearly?: boolean
-): number {
+export function getSubtotalWithoutDiscounts( responseCart: ResponseCart ): number {
 	return responseCart.products.reduce( ( total, product ) => {
-		if ( handleBiYearly && isBiYearlyProduct( product ) ) {
-			const yearlyVariant = getYearlyVariantFromProduct( product );
-
-			if ( yearlyVariant ) {
-				// For 2-year plans, the original subtotal is the price of yearly variant * 2
-				return total + yearlyVariant.price_before_discounts_integer * 2;
-			}
-		}
-		// For all other products, we just simply return original subtotal (without coupon)
 		return total + product.item_original_subtotal_integer;
 	}, 0 );
-}
-
-export function getJetpackIntroductoryOfferName( responseCart: ResponseCart ): string {
-	const jetpackProduct = responseCart.products.find(
-		( product ) => isJetpackProduct( product ) || isJetpackPlan( product )
-	);
-
-	if ( ! jetpackProduct || ! jetpackProduct.introductory_offer_terms?.enabled ) {
-		return ''; // No Jetpack product found, or no introductory offer
-	}
-
-	if ( isJetpackSocialAdvancedSlug( jetpackProduct.product_slug ) ) {
-		return translate( 'Free Trial (Month)' );
-	}
-
-	return '';
-}
-
-export function getJetpackIntroductoryDiscount( responseCart: ResponseCart ): number {
-	const jetpackProduct = responseCart.products.find(
-		( product ) => isJetpackProduct( product ) || isJetpackPlan( product )
-	);
-
-	if ( ! jetpackProduct || ! jetpackProduct.introductory_offer_terms?.enabled ) {
-		return 0; // No Jetpack product found, or no introductory offer
-	}
-
-	if ( isBiYearlyProduct( jetpackProduct ) ) {
-		const yearlyVariant = getYearlyVariantFromProduct( jetpackProduct );
-
-		if ( yearlyVariant ) {
-			// If the plan is 2-year plan, we show introductory discount for yearly variant (and the price leftover is "multi-year discount")
-			return yearlyVariant.price_before_discounts_integer - yearlyVariant.price_integer;
-		}
-	}
-
-	// If the Jetpack is not a 2-year plan, we just simply return difference of original and current subtotal (without coupon)
-	return (
-		jetpackProduct.item_original_cost_integer -
-		jetpackProduct.item_subtotal_integer +
-		( jetpackProduct.coupon_savings_integer ?? 0 )
-	);
-}
-
-export function getJetpackBiYearlyDiscount( responseCart: ResponseCart ): number {
-	const introDiscount = getJetpackIntroductoryDiscount( responseCart );
-	const originalSubtotal = getSubtotalWithoutDiscounts( responseCart, true );
-	const subtotal = getSubtotalWithoutCoupon( responseCart );
-
-	// Bi-yearly discount is calculated as a leftover from introductory discount
-	return originalSubtotal - introDiscount - subtotal;
 }
 
 export function getTotalDiscountsWithoutCredits(

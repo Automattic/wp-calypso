@@ -31,19 +31,14 @@ import {
 	hasCheckoutVersion,
 	getSubtotalWithCredits,
 	getSubtotalWithoutDiscounts,
-	getJetpackIntroductoryDiscount,
-	getJetpackBiYearlyDiscount,
-	getJetpackIntroductoryOfferName,
 	doesPurchaseHaveFullCredits,
 	filterAndGroupCostOverridesForDisplay,
-	getSubtotalWithoutCoupon,
 } from '@automattic/wpcom-checkout';
 import { keyframes } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useTranslate } from 'i18n-calypso';
 import * as React from 'react';
 import { hasFreeCouponTransfersOnly } from 'calypso/lib/cart-values/cart-items';
-import isJetpackCheckout from 'calypso/lib/jetpack/is-jetpack-checkout';
 import { isWcMobileApp } from 'calypso/lib/mobile-app';
 import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
 import { getSignupCompleteFlowName } from 'calypso/signup/storageUtils';
@@ -146,55 +141,6 @@ export function CheckoutSummaryFeaturedList( {
 	);
 }
 
-function JetpackCheckoutSummaryPriceListPart( { responseCart }: { responseCart: ResponseCart } ) {
-	const translate = useTranslate();
-	const subtotalWithoutCoupon = getSubtotalWithoutCoupon( responseCart );
-	const originalSubtotal = getSubtotalWithoutDiscounts( responseCart, true );
-	const jetpackIntroDiscount = getJetpackIntroductoryDiscount( responseCart );
-	const jetpackBiYearlyDiscount = getJetpackBiYearlyDiscount( responseCart );
-	return (
-		<>
-			{ subtotalWithoutCoupon !== originalSubtotal && (
-				<CheckoutSummaryLineItem key="checkout-summary-line-item-plan-subscription">
-					<span>{ translate( 'Plan subscription' ) }</span>
-					<span>
-						{ formatCurrency( originalSubtotal, responseCart.currency, {
-							isSmallestUnit: true,
-							stripZeros: true,
-						} ) }
-					</span>
-				</CheckoutSummaryLineItem>
-			) }
-			{ !! jetpackIntroDiscount && (
-				<CheckoutSummaryLineItem isDiscount key="checkout-summary-line-item-intro-offer">
-					<span>
-						{ getJetpackIntroductoryOfferName( responseCart ) || translate( 'Introductory offer' ) }
-					</span>
-					<span>
-						-&nbsp;
-						{ formatCurrency( jetpackIntroDiscount, responseCart.currency, {
-							isSmallestUnit: true,
-							stripZeros: true,
-						} ) }
-					</span>
-				</CheckoutSummaryLineItem>
-			) }
-			{ !! jetpackBiYearlyDiscount && (
-				<CheckoutSummaryLineItem isDiscount key="checkout-summary-line-item-bi-yearly-offer">
-					<span>{ translate( 'Multi-year discount' ) }</span>
-					<span>
-						-&nbsp;
-						{ formatCurrency( jetpackBiYearlyDiscount, responseCart.currency, {
-							isSmallestUnit: true,
-							stripZeros: true,
-						} ) }
-					</span>
-				</CheckoutSummaryLineItem>
-			) }
-		</>
-	);
-}
-
 function CheckoutSummaryPriceList() {
 	const cartKey = useCartKey();
 	const { responseCart } = useShoppingCart( cartKey );
@@ -233,9 +179,6 @@ function CheckoutSummaryPriceList() {
 				/>
 			) }
 			<CheckoutSummaryAmountWrapper>
-				{ isJetpackCheckout() && (
-					<JetpackCheckoutSummaryPriceListPart responseCart={ responseCart } />
-				) }
 				<CheckoutSummaryLineItem key="checkout-summary-line-item-subtotal">
 					<span>{ translate( 'Subtotal' ) }</span>
 					<span>
