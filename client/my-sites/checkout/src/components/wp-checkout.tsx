@@ -61,7 +61,6 @@ import { errorNotice, removeNotice } from 'calypso/state/notices/actions';
 import { isMarketplaceProduct } from 'calypso/state/products-list/selectors';
 import getPreviousRoute from 'calypso/state/selectors/get-previous-route';
 import useCouponFieldState from '../hooks/use-coupon-field-state';
-import { useHideCheckoutUpsellNudge } from '../hooks/use-hide-checkout-upsell-nudge';
 import { useToSFoldableCard } from '../hooks/use-tos-foldable-card';
 import { validateContactDetails } from '../lib/contact-validation';
 import getContactDetailsType from '../lib/get-contact-details-type';
@@ -83,7 +82,7 @@ import JetpackAkismetCheckoutSidebarPlanUpsell from './jetpack-akismet-checkout-
 import BeforeSubmitCheckoutHeader from './payment-method-step';
 import SecondaryCartPromotions from './secondary-cart-promotions';
 import WPCheckoutOrderReview from './wp-checkout-order-review';
-import WPCheckoutOrderSummary from './wp-checkout-order-summary';
+import { CheckoutSummaryFeaturedList, WPCheckoutOrderSummary } from './wp-checkout-order-summary';
 import WPContactForm from './wp-contact-form';
 import WPContactFormSummary from './wp-contact-form-summary';
 import type { OnChangeItemVariant } from './item-variation-picker';
@@ -336,7 +335,6 @@ export default function WPCheckout( {
 	const { transactionStatus } = useTransactionStatus();
 	const paymentMethod = usePaymentMethod();
 	const showToSFoldableCard = useToSFoldableCard();
-	const shouldHideCheckoutUpsellNudge = useHideCheckoutUpsellNudge() === 'treatment';
 
 	const hasMarketplaceProduct =
 		useDoesCartHaveMarketplaceProductRequiringConfirmation( responseCart );
@@ -468,16 +466,20 @@ export default function WPCheckout( {
 									/>
 								) }
 
-								<WPCheckoutOrderSummary
-									siteId={ siteId }
-									onChangeSelection={ changeSelection }
-									nextDomainIsFree={ responseCart?.next_domain_is_free }
-								/>
+								<WPCheckoutOrderSummary siteId={ siteId } onChangeSelection={ changeSelection } />
 								{ ! isWcMobile && ! isDIFMInCart && ! hasMonthlyProduct && (
 									<>
-										{ ! shouldHideCheckoutUpsellNudge && <CheckoutSidebarPlanUpsell /> }
+										<CheckoutSidebarPlanUpsell />
 										<JetpackAkismetCheckoutSidebarPlanUpsell />
 									</>
+								) }
+								{ hasCheckoutVersion( '2' ) && (
+									<CheckoutSummaryFeaturedList
+										responseCart={ responseCart }
+										siteId={ siteId }
+										isCartUpdating={ FormStatus.VALIDATING === formStatus }
+										onChangeSelection={ changeSelection }
+									/>
 								) }
 								<SecondaryCartPromotions
 									responseCart={ responseCart }
@@ -770,14 +772,14 @@ const CheckoutSummaryBody = styled.div`
 	margin: 0 auto;
 	max-width: 600px;
 	width: 100%;
-	padding: 0 24px 25px;
+	padding: 24px;
 
 	.is-visible & {
 		display: block;
 	}
 
 	@media ( ${ ( props ) => props.theme.breakpoints.tabletUp } ) {
-		padding: 0 0 25px;
+		padding: 24px;
 	}
 
 	@media ( ${ ( props ) => props.theme.breakpoints.desktopUp } ) {

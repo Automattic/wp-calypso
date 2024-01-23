@@ -1,4 +1,5 @@
 import config from '@automattic/calypso-config';
+import page from '@automattic/calypso-router';
 import {
 	PricingSlider,
 	RenderThumbFunction,
@@ -8,6 +9,8 @@ import formatCurrency from '@automattic/format-currency';
 import { Button, CheckboxControl } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import React, { useState } from 'react';
+import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
+import useNoticeVisibilityMutation from 'calypso/my-sites/stats/hooks/use-notice-visibility-mutation';
 import { useSelector } from 'calypso/state';
 import getIsSiteWPCOM from 'calypso/state/selectors/is-site-wpcom';
 import gotoCheckoutPage from './stats-purchase-checkout-redirect';
@@ -56,6 +59,9 @@ const PersonalPurchase = ( {
 		uiEmojiHeartTier,
 		uiImageCelebrationTier,
 	} = sliderSettings;
+	const isOdysseyStats = config.isEnabled( 'is_running_in_jetpack_site' );
+	const isTierUpgradeSliderEnabled = config.isEnabled( 'stats/tier-upgrade-slider' );
+	const isNewPurchaseFlowEnabled = config.isEnabled( 'stats/checkout-flows-v2' );
 
 	const sliderLabel = ( ( props, state ) => {
 		let emoji;
@@ -84,34 +90,64 @@ const PersonalPurchase = ( {
 		);
 	} ) as RenderThumbFunction;
 
-	const handleClick = ( e: React.MouseEvent< HTMLAnchorElement, MouseEvent > ) =>
-		handlePlanSwap( e );
-
-	const isOdysseyStats = config.isEnabled( 'is_running_in_jetpack_site' );
 	const isWPCOMSite = useSelector( ( state ) => siteId && getIsSiteWPCOM( state, siteId ) );
 	// The button of @automattic/components has built-in color scheme support for Calypso.
 	const ButtonComponent = isWPCOMSite ? CalypsoButton : Button;
+	// TODO: Remove old slider code paths.
+	const showOldSlider = ! isTierUpgradeSliderEnabled;
 
-	const isTierUpgradeSliderEnabled = config.isEnabled( 'stats/tier-upgrade-slider' );
+	let continueButtonText = isStandalone
+		? translate( 'Get Stats' )
+		: translate( 'Get Jetpack Stats' );
+
+	if ( isNewPurchaseFlowEnabled ) {
+		continueButtonText = translate( 'Contribute and continue' );
+	}
+
+	const { mutateAsync: mutateNoticeVisbilityAsync } = useNoticeVisibilityMutation(
+		siteId,
+		'focus_jetpack_purchase'
+	);
+
+	const handleClick = ( e: React.MouseEvent< HTMLAnchorElement, MouseEvent > ) =>
+		handlePlanSwap( e );
+
 	const handleSliderChanged = ( index: number ) => {
 		// TODO: Remove state from caller.
 		// Caller expects an index but doesn't do anything with it.
 		// Value is used below to determine tier price.
 		setSubscriptionValue( index );
 	};
-	// TODO: Remove old slider code paths.
-	const showOldSlider = ! isTierUpgradeSliderEnabled;
-	// const showOldSlider = true;
 
-	let continueButtonText = isStandalone
-		? translate( 'Get Stats' )
-		: translate( 'Get Jetpack Stats' );
-	if ( config.isEnabled( 'stats/checkout-flows-v2' ) ) {
-		continueButtonText = translate( 'Contribute and continue' );
-	}
+	const handleCheckoutRedirect = () => {
+		gotoCheckoutPage( {
+			from,
+			type: 'pwyw',
+			siteSlug,
+			adminUrl,
+			redirectUri,
+			price: subscriptionValue / MIN_STEP_SPLITS,
+		} );
+	};
+
+	const handleCheckoutPostponed = () => {
+		mutateNoticeVisbilityAsync().finally( () => {
+			// publish event
+			const event_from = isOdysseyStats ? 'jetpack_odyssey' : 'calypso';
+			recordTracksEvent( `${ event_from }_stats_purchase_flow_skip_button_clicked` );
+
+			// redirect to the Traffic page
+			setTimeout( () => page( `/stats/day/${ siteSlug }` ), 250 );
+		} );
+	};
 
 	return (
 		<div>
+			<StatsBenefitsListing
+				subscriptionValue={ subscriptionValue }
+				defaultStartingValue={ defaultStartingValue }
+			/>
+
 			<div className={ `${ COMPONENT_CLASS_NAME }__notice` }>
 				{ translate(
 					'This plan is for non-commercial sites only. Sites with any commercial activity {{Button}}require a commercial license{{/Button}}.',
@@ -155,29 +191,6 @@ const PersonalPurchase = ( {
 					onSliderChange={ handleSliderChanged }
 				/>
 			) }
-
-			<div className={ `${ COMPONENT_CLASS_NAME }__benefits` }>
-				<ul>
-					{ subscriptionValue > 0 ? (
-						<li className={ `${ COMPONENT_CLASS_NAME }__benefits-item--included` }>
-							{ translate( 'Instant access to upcoming features' ) }
-						</li>
-					) : (
-						<li className={ `${ COMPONENT_CLASS_NAME }__benefits-item--not-included` }>
-							{ translate( 'No access to upcoming features' ) }
-						</li>
-					) }
-					{ subscriptionValue >= defaultStartingValue ? (
-						<li className={ `${ COMPONENT_CLASS_NAME }__benefits-item--included` }>
-							{ translate( 'Priority support' ) }
-						</li>
-					) : (
-						<li className={ `${ COMPONENT_CLASS_NAME }__benefits-item--not-included` }>
-							{ translate( 'No priority support' ) }
-						</li>
-					) }
-				</ul>
-			</div>
 
 			{ subscriptionValue === 0 && (
 				<div className={ `${ COMPONENT_CLASS_NAME }__persnal-checklist` }>
@@ -245,25 +258,72 @@ const PersonalPurchase = ( {
 					{ translate( 'Continue with Jetpack Stats for free' ) }
 				</ButtonComponent>
 			) : (
-				<ButtonComponent
-					variant="primary"
-					primary={ isWPCOMSite ? true : undefined }
-					onClick={ () =>
-						gotoCheckoutPage( {
-							from,
-							type: 'pwyw',
-							siteSlug,
-							adminUrl,
-							redirectUri,
-							price: subscriptionValue / MIN_STEP_SPLITS,
-						} )
-					}
-				>
-					{ continueButtonText }
-				</ButtonComponent>
+				<div className={ `${ COMPONENT_CLASS_NAME }__actions` }>
+					<ButtonComponent
+						variant="primary"
+						primary={ isWPCOMSite ? true : undefined }
+						onClick={ handleCheckoutRedirect }
+					>
+						{ continueButtonText }
+					</ButtonComponent>
+
+					{ isNewPurchaseFlowEnabled && (
+						<ButtonComponent variant="secondary" onClick={ handleCheckoutPostponed }>
+							{ translate( 'I will do it later' ) }
+						</ButtonComponent>
+					) }
+				</div>
 			) }
 		</div>
 	);
 };
+
+interface StatsBenefitsListingProps {
+	subscriptionValue: number;
+	defaultStartingValue: number;
+}
+
+function StatsBenefitsListing( {
+	subscriptionValue,
+	defaultStartingValue,
+}: StatsBenefitsListingProps ) {
+	const translate = useTranslate();
+	return (
+		<div className={ `${ COMPONENT_CLASS_NAME }__benefits` }>
+			<ul>
+				<li className={ `${ COMPONENT_CLASS_NAME }__benefits-item--included` }>
+					{ translate( 'Real-time data on visitors' ) }
+				</li>
+				<li className={ `${ COMPONENT_CLASS_NAME }__benefits-item--included` }>
+					{ translate( 'Traffic stats and trends for posts and pages' ) }
+				</li>
+				<li className={ `${ COMPONENT_CLASS_NAME }__benefits-item--included` }>
+					{ translate( 'Detailed statistics about links leading to your site' ) }
+				</li>
+				<li className={ `${ COMPONENT_CLASS_NAME }__benefits-item--included` }>
+					{ translate( 'GDPR compliance' ) }
+				</li>
+				{ subscriptionValue > 0 ? (
+					<li className={ `${ COMPONENT_CLASS_NAME }__benefits-item--included` }>
+						{ translate( 'Access to upcoming advanced features' ) }
+					</li>
+				) : (
+					<li className={ `${ COMPONENT_CLASS_NAME }__benefits-item--not-included` }>
+						{ translate( 'No access to upcoming advanced features' ) }
+					</li>
+				) }
+				{ subscriptionValue >= defaultStartingValue ? (
+					<li className={ `${ COMPONENT_CLASS_NAME }__benefits-item--included` }>
+						{ translate( 'Priority support' ) }
+					</li>
+				) : (
+					<li className={ `${ COMPONENT_CLASS_NAME }__benefits-item--not-included` }>
+						{ translate( 'No priority support' ) }
+					</li>
+				) }
+			</ul>
+		</div>
+	);
+}
 
 export default PersonalPurchase;

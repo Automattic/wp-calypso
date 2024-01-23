@@ -13,9 +13,19 @@
 }
 
 .design-choices__footer {
-	margin-top: 52px;
-	text-align: center;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	gap: 4px;
+	margin-top: 38px;
+	font-size: $font-body-small;
+	font-weight: 400;
+	line-height: 20px;
 	color: var(--studio-gray-60);
+
+	svg {
+		fill: currentColor;
+	}
 }
 
 .design-choices__design-your-own {

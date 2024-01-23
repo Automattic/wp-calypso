@@ -61,7 +61,7 @@ export class PluginsPage {
 
 	static paidSection = 'Must-have premium plugins';
 	static featuredSection = 'Our developers’ favorites';
-	static freeSection = 'The free essentials';
+	static freeSection = 'Popular Plugins';
 
 	/**
 	 * Constructs an instance.

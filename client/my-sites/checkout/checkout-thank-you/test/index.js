@@ -29,7 +29,6 @@ jest.mock( 'calypso/lib/analytics/tracks', () => ( {
 jest.mock( '../domain-registration-details', () => () => 'component--domain-registration-details' );
 jest.mock( '../google-apps-details', () => () => 'component--google-apps-details' );
 jest.mock( '../jetpack-plan-details', () => () => 'component--jetpack-plan-details' );
-jest.mock( '../redesign-v2/sections/Footer', () => () => 'component--redesign-v2-footer' );
 jest.mock( '../atomic-store-thank-you-card', () => () => (
 	<div data-testid="atomic-store-thank-you-card" />
 ) );
@@ -44,6 +43,9 @@ jest.mock( 'calypso/components/wordpress-logo', () => () => <div data-testid="wo
 jest.mock( '../premium-plan-details', () => () => 'premium-plan-details' );
 jest.mock( '../business-plan-details', () => () => <div data-testid="business-plan-details" /> );
 jest.mock( '../transfer-pending/', () => () => 'transfer-pending' );
+jest.mock( '../redesign-v2/pages/plan-only', () => () => (
+	<div data-testid="component--plan-only-thank-you" />
+) );
 
 const translate = ( x ) => x;
 
@@ -285,7 +287,7 @@ describe( 'CheckoutThankYou', () => {
 		expect( await screen.findByText( 'component--jetpack-plan-details' ) ).toBeInTheDocument();
 	} );
 
-	it( 'renders the redesignV2 footer content if the purchases include a Personal plan', async () => {
+	it( 'renders the <PlanOnlyThankYou> component if the purchases include a Personal plan', async () => {
 		const props = {
 			...defaultProps,
 			receiptId: 12,
@@ -311,6 +313,6 @@ describe( 'CheckoutThankYou', () => {
 			</Provider>
 		);
 
-		expect( await screen.findByText( 'component--redesign-v2-footer' ) ).toBeInTheDocument();
+		expect( await screen.getByTestId( 'component--plan-only-thank-you' ) ).toBeInTheDocument();
 	} );
 } );

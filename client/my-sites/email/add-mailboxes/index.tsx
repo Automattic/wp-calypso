@@ -40,9 +40,9 @@ import {
 import { EmailProvider } from 'calypso/my-sites/email/form/mailboxes/types';
 import { MAILBOXES_SOURCE } from 'calypso/my-sites/email/mailboxes/constants';
 import {
-	emailManagement,
-	emailManagementMailboxes,
-	emailManagementTitanSetUpMailbox,
+	getEmailManagementPath,
+	getMailboxesPath,
+	getTitanSetUpMailboxPath,
 } from 'calypso/my-sites/email/paths';
 import { useSelector } from 'calypso/state';
 import { getCurrentUserEmail } from 'calypso/state/current-user/selectors';
@@ -199,7 +199,7 @@ const MailboxNotices = ( {
 			throw new Error( 'Cannot finish unused mailbox setup without selected site' );
 		}
 
-		page( emailManagementTitanSetUpMailbox( selectedSite.slug, selectedDomainName, currentRoute ) );
+		page( getTitanSetUpMailboxPath( selectedSite.slug, selectedDomainName, currentRoute ) );
 	};
 
 	return (
@@ -369,7 +369,7 @@ const AddMailboxes = ( props: AddMailboxesProps ): JSX.Element | null => {
 		: getGoogleMailServiceFamily( emailProduct?.product_slug );
 
 	const goToEmail = (): void => {
-		let url = emailManagement(
+		let url = getEmailManagementPath(
 			selectedSite?.slug,
 			isSelectedDomainNameValid ? selectedDomainName : null,
 			currentRoute,
@@ -377,7 +377,7 @@ const AddMailboxes = ( props: AddMailboxesProps ): JSX.Element | null => {
 		);
 
 		if ( source === MAILBOXES_SOURCE ) {
-			url = emailManagementMailboxes( selectedSite?.slug );
+			url = getMailboxesPath( selectedSite?.slug );
 		}
 
 		page( url );

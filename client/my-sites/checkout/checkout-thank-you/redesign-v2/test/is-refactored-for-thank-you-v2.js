@@ -1,3 +1,5 @@
+import { findPlansKeys, GROUP_WPCOM, TYPE_P2_PLUS } from '@automattic/calypso-products';
+import { domainProductSlugs } from 'calypso/lib/domains/constants';
 import { isRefactoredForThankYouV2 } from '../utils';
 
 describe( 'isRefactoredForThankYouV2', () => {
@@ -31,6 +33,18 @@ describe( 'isRefactoredForThankYouV2', () => {
 		expect( isRefactoredForThankYouV2( props ) ).toBe( true );
 	} );
 
+	it( 'should return true if the purchases contain only domain transfers', () => {
+		const props = {
+			receipt: {
+				data: {
+					purchases: [ { productSlug: domainProductSlugs.TRANSFER_IN } ],
+					failedPurchases: [],
+				},
+			},
+		};
+		expect( isRefactoredForThankYouV2( props ) ).toBe( true );
+	} );
+
 	it( 'should return false if the purchase is not supported', () => {
 		const props = {
 			receipt: {
@@ -41,5 +55,37 @@ describe( 'isRefactoredForThankYouV2', () => {
 			},
 		};
 		expect( isRefactoredForThankYouV2( props ) ).toBe( false );
+	} );
+
+	it( 'should return true for wpcom plans', () => {
+		const wpcomPlans = findPlansKeys( { group: GROUP_WPCOM } );
+		const supportedPlans = [ ...wpcomPlans ];
+		for ( const plan of supportedPlans ) {
+			const props = {
+				receipt: {
+					data: {
+						purchases: [ { productSlug: plan } ],
+						failedPurchases: [],
+					},
+				},
+			};
+			expect( isRefactoredForThankYouV2( props ) ).toBe( true );
+		}
+	} );
+
+	it( 'should return true for p2 plsu plans', () => {
+		const p2PlusPlan = findPlansKeys( { type: TYPE_P2_PLUS } );
+		const supportedPlans = [ ...p2PlusPlan ];
+		for ( const plan of supportedPlans ) {
+			const props = {
+				receipt: {
+					data: {
+						purchases: [ { productSlug: plan } ],
+						failedPurchases: [],
+					},
+				},
+			};
+			expect( isRefactoredForThankYouV2( props ) ).toBe( true );
+		}
 	} );
 } );

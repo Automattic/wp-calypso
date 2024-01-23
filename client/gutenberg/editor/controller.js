@@ -107,7 +107,6 @@ function waitForPreferredEditorView( context ) {
  * auth cookies from being stored while embedding WP Admin in Calypso (i.e. if the browser is preventing cross-site
  * tracking), so we redirect the user to the WP Admin login page in order to store the auth cookie. Users will be
  * redirected back to Calypso when they are authenticated in WP Admin.
- *
  * @param {Object} context Shared context in the route.
  * @param {Function} next  Next registered callback for the route.
  * @returns {*}            Whatever the next callback returns.
@@ -301,7 +300,6 @@ export const exitPost = ( context, next ) => {
 
 /**
  * Redirects to the un-iframed Site Editor if the config is enabled.
- *
  * @param {Object} context Shared context in the route.
  * @returns {*}            Whatever the next callback returns.
  */
@@ -314,7 +312,6 @@ export const redirectSiteEditor = async ( context ) => {
 };
 /**
  * Redirect the logged user to the permalink of the post, page, custom post type if the post is published.
- *
  * @param {Object} context Shared context in the route.
  * @param {Function} next  Next registered callback for the route.
  * @returns undefined      Whatever the next callback returns.

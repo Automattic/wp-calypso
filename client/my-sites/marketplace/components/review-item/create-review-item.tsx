@@ -1,3 +1,4 @@
+import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { isEnabled } from '@automattic/calypso-config';
 import { Button, ConfettiAnimation } from '@automattic/components';
 import Card from '@automattic/components/src/card';
@@ -18,10 +19,11 @@ import './style.scss';
 
 type MarketplaceCreateReviewItemProps = {
 	forceShowThankYou?: number;
+	canPublishReview: boolean;
 } & ProductDefinitionProps;
 
 export function MarketplaceCreateReviewItem( props: MarketplaceCreateReviewItemProps ) {
-	const { productType, slug, forceShowThankYou = 0 } = props;
+	const { productType, slug, forceShowThankYou = 0, canPublishReview } = props;
 	const translate = useTranslate();
 	const currentUser = useSelector( getCurrentUser );
 	const [ content, setContent ] = useState< string >( '' );
@@ -47,6 +49,12 @@ export function MarketplaceCreateReviewItem( props: MarketplaceCreateReviewItemP
 
 	const createReviewMutation = useCreateMarketplaceReviewMutation( { productType, slug } );
 	const createReview = () => {
+		recordTracksEvent( 'calypso_marketplace_reviews_add_submit', {
+			product_type: productType,
+			slug: slug,
+			rating: Number( rating ),
+		} );
+
 		createReviewMutation.mutate(
 			{ productType, slug, content, rating },
 			{
@@ -104,7 +112,14 @@ export function MarketplaceCreateReviewItem( props: MarketplaceCreateReviewItemP
 							onSelectRating={ onSelectRating }
 						/>
 					</div>
-					{ showContentArea && (
+					{ showContentArea && ! canPublishReview && (
+						<Card className="marketplace-review-item__error-message" highlight="error">
+							{ translate(
+								'Only active users can leave a review. Please purchase a new subscription of the product to leave a review.'
+							) }
+						</Card>
+					) }
+					{ showContentArea && canPublishReview && (
 						<>
 							<TextareaControl
 								rows={ 4 }

@@ -177,6 +177,16 @@ class ThemeShowcase extends Component {
 			return null;
 		}
 
+		if ( this.props.isSiteWooExpress ) {
+			return {
+				MYTHEMES: staticFilters.MYTHEMES,
+				RECOMMENDED: {
+					...staticFilters.RECOMMENDED,
+					text: translate( 'All Themes' ),
+				},
+			};
+		}
+
 		const shouldShowMyThemesFilter =
 			( this.props.isJetpackSite && ! this.props.isAtomicSite ) ||
 			( this.props.isAtomicSite && this.props.siteCanInstallThemes );
@@ -547,7 +557,9 @@ class ThemeShowcase extends Component {
 			filterString,
 			isMultisite,
 			premiumThemesEnabled,
+			isSiteECommerceFreeTrial,
 			isSiteWooExpressOrEcomFreeTrial,
+			isSiteWooExpress,
 			isCollectionView,
 			isJetpackSite,
 			lastNonEditorRoute,
@@ -606,6 +618,7 @@ class ThemeShowcase extends Component {
 					noIndex={ isCollectionView }
 					onPatternAssemblerButtonClick={ this.onDesignYourOwnClick }
 					isSiteWooExpressOrEcomFreeTrial={ isSiteWooExpressOrEcomFreeTrial }
+					isSiteECommerceFreeTrial={ isSiteECommerceFreeTrial }
 				/>
 				{ isLoggedIn && (
 					<ThemeShowcaseSurvey
@@ -649,8 +662,12 @@ class ThemeShowcase extends Component {
 									</>
 								) }
 							</div>
-							<div className="themes__filters">
-								{ tabFilters && ! isSiteWooExpressOrEcomFreeTrial && (
+							<div
+								className={ classNames( 'themes__filters', {
+									'is-woo-express': isSiteWooExpress,
+								} ) }
+							>
+								{ tabFilters && ! isSiteECommerceFreeTrial && (
 									<ThemesToolbarGroup
 										items={ Object.values( tabFilters ) }
 										selectedKey={ this.getSelectedTabFilter().key }

@@ -30,14 +30,14 @@
 	"dependencies": {
 		"@automattic/calypso-url": "workspace:^",
 		"@automattic/languages": "workspace:^",
-		"@wordpress/compose": "^6.25.0",
-		"@wordpress/i18n": "^4.48.0",
+		"@wordpress/compose": "^6.26.0",
+		"@wordpress/i18n": "^4.49.0",
 		"react": "^18.2.0",
 		"tslib": "^2.3.0"
 	},
 	"devDependencies": {
 		"@automattic/calypso-typescript-config": "workspace:^",
-		"@testing-library/jest-dom": "^6.1.5",
+		"@testing-library/jest-dom": "^6.2.0",
 		"@testing-library/react": "^14.1.2",
 		"@types/react": "^18.2.6",
 		"react-dom": "^18.2.0",

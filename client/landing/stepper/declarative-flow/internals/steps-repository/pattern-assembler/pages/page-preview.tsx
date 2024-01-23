@@ -54,6 +54,7 @@ const Page = ( { className, style, patterns, transformPatternHtml }: PageProps )
 			{ patterns.map( ( pattern ) => (
 				<PatternRenderer
 					key={ pattern.ID }
+					maxHeight="none"
 					patternId={ encodePatternId( pattern.ID ) }
 					viewportWidth={ PATTERN_PAGE_PREVIEW_ITEM_VIEWPORT_WIDTH }
 					viewportHeight={ PATTERN_PAGE_PREVIEW_ITEM_VIEWPORT_HEIGHT }

@@ -113,6 +113,7 @@ export const createSiteDomainObject = ( domain: DomainData ) => {
 			typeof domain.is_icann_verification_suspended === 'boolean'
 				? Boolean( domain.is_icann_verification_suspended )
 				: null,
+		isMappedToAtomicSite: Boolean( domain.is_mapped_to_atomic_site ),
 		isPendingIcannVerification: Boolean( domain.is_pending_icann_verification ),
 		isPendingRenewal: Boolean( domain.pending_renewal ),
 		isPremium: Boolean( domain.is_premium ),

@@ -2,10 +2,15 @@ import PropTypes from 'prop-types';
 import { useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 import { testCredentials } from 'calypso/state/jetpack/credentials/actions';
-import { isRequestingJetpackCredentialsTest } from 'calypso/state/jetpack/credentials/selectors';
+import {
+	hasJetpackCredentials,
+	isRequestingJetpackCredentialsTest,
+} from 'calypso/state/jetpack/credentials/selectors';
 
 const request = ( siteId, role ) => ( dispatch, getState ) => {
-	if ( ! isRequestingJetpackCredentialsTest( getState(), siteId, role ) ) {
+	const hasCredentials = hasJetpackCredentials( getState(), siteId, role );
+
+	if ( hasCredentials && ! isRequestingJetpackCredentialsTest( getState(), siteId, role ) ) {
 		dispatch( testCredentials( siteId, role ) );
 	}
 };

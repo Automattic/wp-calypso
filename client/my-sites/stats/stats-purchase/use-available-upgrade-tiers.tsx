@@ -137,12 +137,11 @@ function useAvailableUpgradeTiers(
 	// TODO: Add the loading state of the plan usage query to avoid redundant re-rendering.
 	const { data: usageData } = usePlanUsageQuery( siteId );
 
-	if ( ! commercialProduct?.price_tier_list || ! usageData ) {
+	if ( ! commercialProduct?.price_tier_list ) {
 		return MOCK_PLAN_DATA;
 	}
 
-	const currentTierPrice = usageData.current_tier.minimum_price;
-
+	const currentTierPrice = usageData?.current_tier?.minimum_price;
 	let tiersForUi = commercialProduct.price_tier_list.map(
 		( tier: PriceTierListItemProps ): StatsPlanTierUI => {
 			// TODO: Some description of transform logic here.
@@ -177,7 +176,10 @@ function useAvailableUpgradeTiers(
 		}
 	);
 
-	tiersForUi = tiersForUi.length > 0 ? tiersForUi : MOCK_PLAN_DATA;
+	// If usage is not available then we return early, as without usage we can't filter / extend tiers.
+	if ( ! usageData ) {
+		return tiersForUi;
+	}
 
 	// 2. Filter based on current plan.
 	if ( shouldFilterPurchasedTiers ) {

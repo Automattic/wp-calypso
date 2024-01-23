@@ -541,10 +541,10 @@ export const FEATURES_LIST: FeatureList = {
 
 	[ FEATURE_PERSONAL_THEMES ]: {
 		getSlug: () => FEATURE_PERSONAL_THEMES,
-		getTitle: () => i18n.translate( 'Unlimited personal themes' ),
+		getTitle: () => i18n.translate( 'Unlimited starter themes' ),
 		getDescription: () =>
 			i18n.translate(
-				'Unlimited access to all of our personal themes, including designs specifically tailored for businesses.'
+				'Unlimited access to all of our starter themes, including designs specifically tailored for businesses.'
 			),
 	},
 
@@ -1958,8 +1958,15 @@ export const FEATURES_LIST: FeatureList = {
 	},
 	[ FEATURE_PREMIUM_THEMES_V2 ]: {
 		getSlug: () => FEATURE_PREMIUM_THEMES_V2,
-		getTitle: () => i18n.translate( 'Premium themes' ),
-		getIcon: () => <img src={ Theme2Image } alt={ i18n.translate( 'Premium themes' ) } />,
+		getTitle: () => {
+			const shouldShowNewString =
+				isEnabled( 'themes/tiers' ) && i18n.hasTranslation( 'Explorer themes' );
+
+			return shouldShowNewString
+				? i18n.translate( 'Explorer themes' )
+				: i18n.translate( 'Premium themes' );
+		},
+		getIcon: () => <img src={ Theme2Image } alt={ i18n.translate( 'Explorer themes' ) } />,
 		getCompareTitle: () => i18n.translate( 'A collection of premium design templates' ),
 		getDescription: () => i18n.translate( 'Switch between a collection of premium design themes.' ),
 	},
@@ -1979,7 +1986,9 @@ export const FEATURES_LIST: FeatureList = {
 		getSlug: () => FEATURE_STATS_PAID,
 		getTitle: () => i18n.translate( 'Advanced stats' ),
 		getDescription: () =>
-			i18n.translate( 'Finesse your scaling up strategy with detailed insights and data.' ),
+			i18n.translate(
+				'Deep-dive analytics and conversion data to help you make decisions to grow your site.'
+			),
 	},
 	[ FEATURE_BANDWIDTH ]: {
 		getSlug: () => FEATURE_BANDWIDTH,
@@ -2241,7 +2250,7 @@ export const FEATURES_LIST: FeatureList = {
 		getSlug: () => FEATURE_STATS_JP,
 		getTitle: () => i18n.translate( 'Visitor stats' ),
 		getDescription: () =>
-			i18n.translate( 'At-a-glance and deep-dive data to measure your site’s success.' ),
+			i18n.translate( 'Basic integrated analytics to measure your site’s performance.' ),
 	},
 	[ FEATURE_SPAM_JP ]: {
 		getSlug: () => FEATURE_SPAM_JP,

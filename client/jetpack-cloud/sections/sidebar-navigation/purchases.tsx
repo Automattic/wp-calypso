@@ -1,5 +1,5 @@
 import page from '@automattic/calypso-router';
-import { chevronLeft, formatListBulletsRTL, payment, receipt, store, tag } from '@wordpress/icons';
+import { chevronLeft, formatListBulletsRTL, payment, receipt, store } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import NewSidebar from 'calypso/jetpack-cloud/components/sidebar';
 import { itemLinkMatches } from 'calypso/my-sites/sidebar/utils';
@@ -12,7 +12,6 @@ import {
 	JETPACK_MANAGE_INVOICES_LINK,
 	JETPACK_MANAGE_PARTNER_PORTAL_LINK,
 	JETPACK_MANAGE_PAYMENT_METHODS_LINK,
-	JETPACK_MANAGE_PRICES_LINK,
 } from './lib/constants';
 import { MenuItemProps } from './types';
 
@@ -50,14 +49,6 @@ const PurchasesSidebar = ( { path }: { path: string } ) => {
 			title: translate( 'Invoices' ),
 			trackEventProps: {
 				menu_item: 'Jetpack Cloud / Partner Portal / Invoices',
-			},
-		} ),
-		createItem( {
-			icon: tag,
-			link: JETPACK_MANAGE_PRICES_LINK,
-			title: translate( 'Prices' ),
-			trackEventProps: {
-				menu_item: 'Jetpack Cloud / Partner Portal / Prices',
 			},
 		} ),
 		createItem( {

@@ -8,7 +8,7 @@ import {
 	GROUP_JETPACK,
 	GROUP_WPCOM,
 } from '@automattic/calypso-products';
-import { Button, Card, Gridicon } from '@automattic/components';
+import { Button, Card, Gridicon, PlanPrice } from '@automattic/components';
 import { isMobile } from '@automattic/viewport';
 import classNames from 'classnames';
 import DOMPurify from 'dompurify';
@@ -21,7 +21,6 @@ import JetpackLogo from 'calypso/components/jetpack-logo';
 import TrackComponentView from 'calypso/lib/analytics/track-component-view';
 import { preventWidows } from 'calypso/lib/formatting';
 import { addQueryArgs } from 'calypso/lib/url';
-import PlanPrice from 'calypso/my-sites/plan-price';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import isSiteWPForTeams from 'calypso/state/selectors/is-site-wpforteams';
@@ -34,6 +33,7 @@ const noop = () => {};
 export class Banner extends Component {
 	static propTypes = {
 		callToAction: PropTypes.string,
+		secondaryCallToAction: PropTypes.string,
 		className: PropTypes.string,
 		compactButton: PropTypes.bool,
 		description: PropTypes.oneOfType( [ PropTypes.node, PropTypes.symbol ] ),
@@ -44,6 +44,7 @@ export class Banner extends Component {
 		dismissTemporary: PropTypes.bool,
 		dismissWithoutSavingPreference: PropTypes.bool,
 		event: PropTypes.string,
+		secondaryEvent: PropTypes.string,
 		feature: PropTypes.string,
 		horizontal: PropTypes.bool,
 		href: PropTypes.string,
@@ -58,6 +59,7 @@ export class Banner extends Component {
 		] ),
 		renderListItem: PropTypes.func,
 		onClick: PropTypes.func,
+		secondaryOnClick: PropTypes.func,
 		onDismiss: PropTypes.func,
 		plan: PropTypes.string,
 		price: PropTypes.oneOfType( [ PropTypes.number, PropTypes.arrayOf( PropTypes.number ) ] ),
@@ -91,6 +93,7 @@ export class Banner extends Component {
 		jetpack: false,
 		isAtomic: false,
 		onClick: noop,
+		secondaryOnClick: noop,
 		onDismiss: noop,
 		primaryButton: true,
 		showIcon: true,
@@ -136,6 +139,28 @@ export class Banner extends Component {
 		}
 
 		onClick( e );
+	};
+
+	handleSecondaryClick = ( e ) => {
+		const {
+			secondaryEvent,
+			secondaryOnClick,
+			feature,
+			compact,
+			tracksClickName,
+			tracksClickProperties,
+		} = this.props;
+
+		if ( secondaryEvent && tracksClickName ) {
+			this.props.recordTracksEvent?.( tracksClickName, {
+				cta_name: secondaryEvent,
+				cta_feature: feature,
+				cta_size: compact ? 'compact' : 'regular',
+				...tracksClickProperties,
+			} );
+		}
+
+		secondaryOnClick( e );
 	};
 
 	handleDismiss = ( e ) => {
@@ -211,7 +236,9 @@ export class Banner extends Component {
 	getContent() {
 		const {
 			callToAction,
+			secondaryCallToAction,
 			forceHref,
+			secondaryHref,
 			description,
 			event,
 			feature,
@@ -294,6 +321,17 @@ export class Banner extends Component {
 									{ preventWidows( callToAction ) }
 								</Button>
 							) ) }
+
+						{ secondaryCallToAction && (
+							<Button
+								compact={ compactButton }
+								href={ secondaryHref }
+								onClick={ this.handleSecondaryClick }
+								primary={ false }
+							>
+								{ preventWidows( secondaryCallToAction ) }
+							</Button>
+						) }
 					</div>
 				) }
 			</div>

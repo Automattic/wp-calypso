@@ -1517,7 +1517,11 @@ const getPlanPremiumDetails = (): IncompleteWPcomPlan => ( {
 		FEATURE_SHARES_SOCIAL_MEDIA_JP,
 		FEATURE_COMMISSION_FEE_STANDARD_FEATURES,
 	],
-	get2023PlanComparisonJetpackFeatureOverride: () => [ FEATURE_PAYPAL_JP, FEATURE_VIDEOPRESS_JP ],
+	get2023PlanComparisonJetpackFeatureOverride: () => [
+		FEATURE_PAYPAL_JP,
+		FEATURE_VIDEOPRESS_JP,
+		FEATURE_STATS_PAID,
+	],
 	// Features not displayed but used for checking plan abilities
 	getIncludedFeatures: () => [
 		FEATURE_AUDIO_UPLOADS,
@@ -3682,8 +3686,8 @@ PLANS_LIST[ PLAN_ECOMMERCE_TRIAL_MONTHLY ] = {
 	term: TERM_MONTHLY,
 	getBillingTimeFrame: () => i18n.translate( 'free trial' ),
 	getStoreSlug: () => PLAN_ECOMMERCE_TRIAL_MONTHLY,
-	getTitle: () => i18n.translate( 'eCommerce free trial' ),
-	getDescription: () => i18n.translate( 'eCommerce free trial' ),
+	getTitle: () => i18n.translate( 'Entrepreneur free trial' ),
+	getDescription: () => i18n.translate( 'Entrepreneur free trial' ),
 	getTagline: () => i18n.translate( 'Get a taste of the world’s most popular eCommerce software.' ),
 };
 
@@ -3697,13 +3701,13 @@ if ( isEnabled( 'plans/migration-trial' ) ) {
 		term: TERM_MONTHLY,
 		getBillingTimeFrame: () => i18n.translate( 'free trial' ),
 		getStoreSlug: () => PLAN_MIGRATION_TRIAL_MONTHLY,
-		getTitle: () => i18n.translate( 'Business Trial' ),
+		getTitle: () => i18n.translate( 'Creator Trial' ),
 	};
 }
 
 PLANS_LIST[ PLAN_HOSTING_TRIAL_MONTHLY ] = {
 	...getPlanBusinessDetails(),
-	getPlanTagline: () => i18n.translate( 'Try all the features of our Business plan.' ),
+	getPlanTagline: () => i18n.translate( 'Try all the features of our Creator plan.' ),
 	type: TYPE_BUSINESS,
 	group: GROUP_WPCOM,
 	getProductId: () => 1058,
@@ -3711,7 +3715,7 @@ PLANS_LIST[ PLAN_HOSTING_TRIAL_MONTHLY ] = {
 	term: TERM_MONTHLY,
 	getBillingTimeFrame: () => i18n.translate( 'Try it for 3 days' ),
 	getStoreSlug: () => PLAN_HOSTING_TRIAL_MONTHLY,
-	getTitle: () => i18n.translate( 'Business trial' ),
+	getTitle: () => i18n.translate( 'Creator Trial' ),
 	getDescription: () => i18n.translate( 'Hosting free trial' ),
 	getTagline: () => i18n.translate( 'Get a taste of unlimited performance and unbeatable uptime' ),
 };

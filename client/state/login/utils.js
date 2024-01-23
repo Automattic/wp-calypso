@@ -190,18 +190,27 @@ export function isPartnerSignupQuery( currentQuery ) {
 		return true;
 	}
 
-	// Handles login through /log-in/?redirect_to=...
-	if ( typeof currentQuery?.redirect_to === 'string' ) {
-		return /woocommerce\.(?:com|test)\/partner-signup/.test(
-			decodeURIComponent( currentQuery.redirect_to )
-		);
-	}
+	try {
+		// Handles login through /log-in/?redirect_to=...
+		if ( typeof currentQuery?.redirect_to === 'string' ) {
+			return /woocommerce\.(?:com|test)\/partner-signup/.test(
+				decodeURIComponent( currentQuery.redirect_to )
+			);
+		}
 
-	// Handles user creation through /start/wpcc?oauth2_redirect=...
-	if ( typeof currentQuery?.oauth2_redirect === 'string' ) {
-		return /woocommerce\.(?:com|test)\/partner-signup/.test(
-			decodeURIComponent( currentQuery.oauth2_redirect )
-		);
+		// Handles user creation through /start/wpcc?oauth2_redirect=...
+		if ( typeof currentQuery?.oauth2_redirect === 'string' ) {
+			return /woocommerce\.(?:com|test)\/partner-signup/.test(
+				decodeURIComponent( currentQuery.oauth2_redirect )
+			);
+		}
+	} catch ( e ) {
+		if ( e instanceof URIError ) {
+			// Ignore the URIError
+			return false;
+		}
+		// Should not happen, re-throw the error
+		throw e;
 	}
 
 	return false;

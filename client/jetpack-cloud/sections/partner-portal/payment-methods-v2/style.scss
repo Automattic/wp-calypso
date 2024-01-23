@@ -1,6 +1,18 @@
 @import "@wordpress/base-styles/breakpoints";
 @import "@wordpress/base-styles/mixins";
+@import "calypso/jetpack-cloud/sections/partner-portal/mixins.scss";
 
+.payment-method-list-v2 {
+	@include breakpoint-deprecated( "<660px" ) {
+		.jetpack-cloud-layout__header-main {
+			margin-block-end: 16px;
+		}
+
+		.jetpack-cloud-layout__header-actions .button {
+			width: 100%;
+		}
+	}
+}
 
 .payment-method-list-v2-empty-state {
 	margin-block-start: 60px;
@@ -61,4 +73,20 @@
 			flex-basis: unset;
 		}
 	}
+}
+
+.payment-method-list-v2__stored-cards {
+	margin-block-start: 50px;
+	display: flex;
+	flex-wrap: wrap;
+	gap: 24px;
+
+	@include breakpoint-deprecated( "<660px" ) {
+		margin-block-start: 32px;
+	}
+}
+
+.payment-method-list-v2__pagination {
+	margin: 64px 0;
+	@include licensing-portal-cursor-pagination();
 }
