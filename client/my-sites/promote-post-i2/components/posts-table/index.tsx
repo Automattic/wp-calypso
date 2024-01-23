@@ -30,7 +30,7 @@ export default function PostsTable( props: Props ) {
 				) : (
 					<>
 						{ posts.map( ( post: BlazablePost ) => {
-							return <PostItem key={ `post-id${ post.ID }` } post={ post } />;
+							return <PostItem key={ `post-id${ post.ID }` } post={ post } filterType={ type } />;
 						} ) }
 						{ isFetchingPageResults && <SingleItemLoading /> }
 					</>
