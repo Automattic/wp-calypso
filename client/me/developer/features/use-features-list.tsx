@@ -6,7 +6,7 @@ export const useFeaturesList = () => {
 
 	return [
 		{
-			title: translate( 'SSH, WP-CLI, and GIT' ),
+			title: translate( 'SFTP, SSH, and WP-CLI' ),
 			description: translate(
 				'Run WP-CLI commands, automate repetitive tasks, and troubleshoot your custom code with the tools you already use.'
 			),
@@ -22,7 +22,7 @@ export const useFeaturesList = () => {
 		{
 			title: translate( 'Custom code' ),
 			description: translate(
-				'Build anything with support and automatic updates for 50,000+ plugins and themes. Or start from scratch with your own custom code.'
+				'Build anything with full support and automatic updates for 50,000+ plugins and themes. Or start from scratch with your own custom code.'
 			),
 			linkLearnMore: localizeUrl( '/support/code' ),
 		},
@@ -36,7 +36,7 @@ export const useFeaturesList = () => {
 		{
 			title: translate( '24/7 expert support' ),
 			description: translate(
-				'Whenever you’re stuck, whatever you’re trying to make happen—our Happiness Engineers have the answers.'
+				"Whenever you're stuck, whatever you're trying to make happen—our Happiness Engineers have the answers."
 			),
 			linkLearnMore: localizeUrl( '/support/help-support-options' ),
 		},
