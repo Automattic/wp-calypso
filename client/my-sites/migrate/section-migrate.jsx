@@ -60,6 +60,8 @@ export class SectionMigrate extends Component {
 		sourceSiteThemes: [],
 		startTime: '',
 		url: '',
+		stage: 0,
+		stageTotal: 0,
 	};
 
 	componentDidMount() {
@@ -337,6 +339,9 @@ export class SectionMigrate extends Component {
 					created: startTime,
 					last_modified: lastModified,
 					is_atomic: isBackendAtomic,
+					step,
+					step_name: stepName,
+					total_steps: stepTotal,
 				} = response;
 
 				if ( String( sourceSiteId ) !== String( this.props.sourceSiteId ) ) {
@@ -355,6 +360,9 @@ export class SectionMigrate extends Component {
 						backupPosts,
 						backupMedia,
 						lastModified,
+						step,
+						stepName,
+						stepTotal,
 					};
 
 					if ( startTime && isEmpty( this.state.startTime ) ) {

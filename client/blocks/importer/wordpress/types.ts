@@ -23,6 +23,18 @@ export interface MigrationState {
 	backupPosts: number | null;
 	restorePercent: number | null;
 	restoreMessage: string | null;
-	stage: number | null;
-	stageTotal: number | null;
+	step: number | null;
+	stepTotal: number | null;
+	stepName: string | RestoreStepName | null;
 }
+
+export type RestoreStepName =
+	| 'restore_start'
+	| 'checking_remote_files'
+	| 'verifying_backup_configurations'
+	| 'streaming_files'
+	| 'preparing_database'
+	| 'checking_symlinks'
+	| 'parsing_manifest'
+	| 'restoring_database'
+	| 'done';

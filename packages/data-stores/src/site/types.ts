@@ -610,6 +610,10 @@ export interface SourceSiteMigrationDetails extends SourceSiteMigrationBase {
 	is_target_blog_admin?: boolean;
 	is_target_blog_upgraded?: boolean;
 	target_blog_slug?: string;
+	// Steps details
+	step?: number;
+	step_name?: string;
+	total_steps?: number;
 }
 
 export interface Page {
