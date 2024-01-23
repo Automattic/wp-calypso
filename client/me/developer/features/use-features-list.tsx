@@ -34,7 +34,7 @@ export const useFeaturesList = () => {
 				comment: 'Feature title for developers on WordPress.com',
 			} ),
 			description: translate(
-				'Build anything with full support and automatic updates for 50,000+ plugins and themes. Or start from scratch with your own custom code.',
+				'Build anything with support and automatic updates for 50,000+ plugins and themes. Or start from scratch with your own custom code.',
 				{
 					comment: 'Description of feature "Custom code" for developers on WordPress.com',
 				}
