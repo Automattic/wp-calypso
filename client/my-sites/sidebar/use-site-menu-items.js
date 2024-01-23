@@ -102,6 +102,7 @@ const useSiteMenuItems = () => {
 	 * When no site domain is provided, lets show only menu items that support all sites screens.
 	 */
 	if ( ! siteDomain || isAllDomainsView ) {
+		//TODO: might need to change condition here
 		return allSitesMenu( { showManagePlugins: hasSiteWithPlugins } );
 	}
 

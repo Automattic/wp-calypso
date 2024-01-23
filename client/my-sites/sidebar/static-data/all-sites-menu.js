@@ -8,12 +8,20 @@ import { translate } from 'i18n-calypso';
 export default function allSitesMenu( { showManagePlugins = false } = {} ) {
 	return [
 		{
-			icon: 'dashicons-chart-bar',
-			slug: 'stats',
-			title: translate( 'Stats' ),
-			navigationLabel: translate( 'View stats for all sites' ),
+			icon: 'dashicons-admin-home',
+			slug: 'sites',
+			title: translate( 'My Sites' ),
+			navigationLabel: translate( 'Manage all my sites' ),
 			type: 'menu-item',
-			url: '/stats/day',
+			url: '/sites',
+		},
+		{
+			icon: 'gridicons-reader',
+			slug: 'reader',
+			title: translate( 'Reader' ),
+			navigationLabel: translate( 'Reader' ),
+			type: 'menu-item',
+			url: '/read',
 		},
 		{
 			icon: 'dashicons-admin-site-alt3',
@@ -22,22 +30,6 @@ export default function allSitesMenu( { showManagePlugins = false } = {} ) {
 			navigationLabel: translate( 'Manage all domains' ),
 			type: 'menu-item',
 			url: '/domains/manage',
-		},
-		{
-			icon: 'dashicons-admin-post',
-			slug: 'edit-php',
-			title: translate( 'Posts' ),
-			navigationLabel: translate( 'View posts for all sites' ),
-			type: 'menu-item',
-			url: '/posts',
-		},
-		{
-			icon: 'dashicons-admin-page',
-			slug: 'edit-phppost_typepage',
-			title: translate( 'Pages' ),
-			navigationLabel: translate( 'View pages for all sites' ),
-			type: 'menu-item',
-			url: '/pages',
 		},
 		{
 			icon: 'dashicons-admin-plugins',

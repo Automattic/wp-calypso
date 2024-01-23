@@ -19,7 +19,7 @@ class MySitesNavigation extends Component {
 		};
 
 		let asyncSidebar = null;
-		let renderSitePicker = true;
+		let renderSitePicker = false;
 		let sitePickerProps = {};
 
 		if ( config.isEnabled( 'jetpack-cloud' ) ) {

@@ -1,3 +1,4 @@
+import { Gridicon } from '@automattic/components';
 /**
  * SidebarCustomIcon -
  *   Handles Dashicons, SVGs, or image URLs and passes on the supplied props.
@@ -11,6 +12,11 @@
 const SidebarCustomIcon = ( { icon, ...rest } ) => {
 	if ( ! icon ) {
 		return null;
+	}
+
+	// if icon is gridicons-reader - use Gridicon component
+	if ( icon === 'gridicons-reader' ) {
+		return <Gridicon key="reader" icon="reader" size="18" className="sidebar__menu-icon" />;
 	}
 
 	if ( icon.indexOf( 'data:image' ) === 0 || icon.indexOf( 'http' ) === 0 ) {
