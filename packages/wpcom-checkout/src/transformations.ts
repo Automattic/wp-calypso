@@ -251,18 +251,6 @@ export function getTotalDiscountsWithoutCredits(
 	}, 0 );
 }
 
-/**
- * Credits are the only type of cart discount that is applied to the cart as a
- * whole and not to individual line items. The subtotal is only a subtotal of
- * line items and does not have credits applied. Therefore, if we want to
- * display credits as a discount along with other discounts before the
- * subtotal, we probably want to display the subtotal as having credits already
- * applied, which this function returns.
- */
-export function getSubtotalWithCredits( responseCart: ResponseCart ): number {
-	return responseCart.sub_total_integer - getCreditsUsedByCart( responseCart );
-}
-
 export function doesPurchaseHaveFullCredits( cart: ResponseCart ): boolean {
 	const credits = cart.credits_integer;
 	const subtotal = cart.sub_total_integer;

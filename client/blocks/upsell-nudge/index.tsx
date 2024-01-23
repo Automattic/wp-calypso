@@ -29,10 +29,69 @@ import {
 } from 'calypso/state/sites/plans/selectors';
 import { getSite, isJetpackSite } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
+import type { SiteDetails } from '@automattic/data-stores';
+import type { IsEligibleForOneClickCheckoutReturnValue } from 'calypso/my-sites/checkout/purchase-modal/use-is-eligible-for-one-click-checkout';
+import type { IAppState } from 'calypso/state/types';
+import type { SiteSlug } from 'calypso/types';
+import type { TranslateResult } from 'i18n-calypso';
 
 import './style.scss';
 
 const debug = debugFactory( 'calypso:upsell-nudge' );
+
+type Props = Partial< {
+	callToAction: TranslateResult;
+	secondaryCallToAction: TranslateResult;
+	canManageSite: boolean;
+	canUserUpgrade: boolean;
+	className?: string;
+	compact: boolean;
+	compactButton: boolean;
+	customerType: string;
+	description: TranslateResult;
+	disableHref: boolean;
+	dismissPreferenceName: string;
+	dismissTemporary: boolean;
+	event: string;
+	secondaryEvent: string;
+	feature: string;
+	forceDisplay: boolean;
+	forceHref: boolean;
+	horizontal: boolean;
+	href: string;
+	secondaryHref: string;
+	isJetpackDevDocs: boolean;
+	isJetpack: boolean;
+	isAtomic: boolean;
+	isVip: boolean;
+	siteIsWPForTeams: boolean;
+	list: TranslateResult[] | unknown[];
+	renderListItem: ( arg: any ) => void;
+	onClick: () => void;
+	secondaryOnClick: () => void;
+	onDismissClick: () => void;
+	plan: string;
+	price: number[];
+	primaryButton: boolean;
+	selectedSiteHasFeature: boolean;
+	showIcon: boolean;
+	icon: string;
+	site: SiteDetails | null | undefined;
+	siteSlug: SiteSlug | null;
+	target: string;
+	title: TranslateResult;
+	tracksClickName: string;
+	tracksClickProperties: Record< string, unknown >;
+	tracksDismissName: string;
+	tracksDismissProperties: Record< string, unknown >;
+	tracksImpressionName: string;
+	tracksImpressionProperties: Record< string, unknown >;
+	displayAsLink: boolean;
+	isSiteWooExpressOrEcomFreeTrial: boolean;
+	isBusy: boolean;
+	isEligibleForOneClickCheckout: IsEligibleForOneClickCheckoutReturnValue;
+	isOneClickCheckoutEnabled: boolean;
+} >;
 
 /**
  * @param {any} props Props declared as `any` to prevent errors in TSX files that use this component.
@@ -44,7 +103,7 @@ export const UpsellNudge = ( {
 	canUserUpgrade,
 	className,
 	compact,
-	compactButton,
+	compactButton = true,
 	customerType,
 	description,
 	disableHref,
@@ -70,7 +129,7 @@ export const UpsellNudge = ( {
 	onDismissClick,
 	plan,
 	price,
-	primaryButton,
+	primaryButton = true,
 	selectedSiteHasFeature,
 	showIcon = false,
 	icon = 'star',
@@ -88,10 +147,9 @@ export const UpsellNudge = ( {
 	isSiteWooExpressOrEcomFreeTrial,
 	isBusy,
 	isEligibleForOneClickCheckout,
-	isOneClickCheckoutEnabled = false,
-} ) => {
+	isOneClickCheckoutEnabled,
+}: Props ) => {
 	const [ showPurchaseModal, setShowPurchaseModal ] = useState( false );
-
 	const shouldNotDisplay =
 		isVip ||
 		! canManageSite ||
@@ -99,8 +157,8 @@ export const UpsellNudge = ( {
 		typeof site !== 'object' ||
 		typeof site.jetpack !== 'boolean' ||
 		( feature && selectedSiteHasFeature ) ||
-		( ! feature && ! isFreePlanProduct( site.plan ) ) ||
-		( feature === WPCOM_FEATURES_NO_ADVERTS && site.options.wordads ) ||
+		( ! feature && ! ( site.plan && isFreePlanProduct( site.plan ) ) ) ||
+		( feature === WPCOM_FEATURES_NO_ADVERTS && site?.options?.wordads ) ||
 		( ! isJetpack && site.jetpack ) ||
 		( isJetpack && ! site.jetpack );
 
@@ -139,7 +197,7 @@ export const UpsellNudge = ( {
 		);
 	}
 
-	const handleClick = ( e ) => {
+	const handleClick = ( e: MouseEvent ) => {
 		if (
 			isOneClickCheckoutEnabled &&
 			isEligibleForOneClickCheckout?.result === true &&
@@ -209,31 +267,27 @@ export const UpsellNudge = ( {
 	);
 };
 
-UpsellNudge.defaultProps = {
-	primaryButton: true,
-	compactButton: true,
-};
-
-const ConnectedUpsellNudge = connect( ( state, ownProps ) => {
+const ConnectedUpsellNudge = connect( ( state: IAppState, ownProps: Props ) => {
 	const siteId = getSelectedSiteId( state );
 
 	return {
-		site: getSite( state, siteId ),
-		selectedSiteHasFeature: siteHasFeature( state, siteId, ownProps.feature ),
+		site: getSite( state, siteId || undefined ),
+		selectedSiteHasFeature: siteHasFeature( state, siteId, ownProps.feature || '' ) || false,
 		canManageSite: canCurrentUser( state, siteId, 'manage_options' ),
-		isJetpack: isJetpackSite( state, siteId ),
-		isAtomic: isSiteAutomatedTransfer( state, siteId ),
-		isVip: isVipSite( state, siteId ),
-		isSiteWooExpressOrEcomFreeTrial:
-			isSiteOnECommerceTrial( state, siteId ) || isSiteOnWooExpress( state, siteId ),
+		isJetpack: isJetpackSite( state, siteId ) || false,
+		isAtomic: isSiteAutomatedTransfer( state, siteId ) || false,
+		isVip: ( siteId && isVipSite( state, siteId ) ) || false,
+		isSiteWooExpressOrEcomFreeTrial: siteId
+			? isSiteOnECommerceTrial( state, siteId ) || isSiteOnWooExpress( state, siteId )
+			: false,
 		currentPlan: getCurrentPlan( state, siteId ),
 		siteSlug: ownProps.disableHref ? null : getSelectedSiteSlug( state ),
 		canUserUpgrade: canCurrentUser( state, getSelectedSiteId( state ), 'manage_options' ),
-		siteIsWPForTeams: isSiteWPForTeams( state, getSelectedSiteId( state ) ),
+		siteIsWPForTeams: isSiteWPForTeams( state, getSelectedSiteId( state ) ) || false,
 	};
 } )( UpsellNudge );
 
-export default function Wrapper( props ) {
+export default function Wrapper( props: Props ) {
 	if ( props.isOneClickCheckoutEnabled ) {
 		return (
 			<AsyncLoad
