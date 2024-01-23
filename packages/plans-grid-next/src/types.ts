@@ -231,3 +231,131 @@ export type SupportedUrlFriendlyTermType = Extract<
 	UrlFriendlyTermType,
 	'yearly' | '2yearly' | '3yearly' | 'monthly'
 >;
+
+type PlanRowOptions = {
+	isTableCell?: boolean;
+	isStuck?: boolean;
+};
+
+type PlanRow = {
+	options?: PlanRowOptions;
+};
+
+export type PlanPriceProps = Pick<
+	FeaturesGridProps,
+	'gridPlans' | 'isLargeCurrency' | 'planUpgradeCreditsApplicable' | 'currentSitePlanSlug'
+> &
+	PlanRow;
+
+export type PlanTaglineProps = Pick< FeaturesGridProps, 'gridPlans' > & PlanRow;
+
+export type PlanHeadersProps = Pick< FeaturesGridProps, 'gridPlans' > & PlanRow;
+
+export type PreviousFeaturesIncludedTitleProps = Pick<
+	FeaturesGridProps,
+	'gridPlans' | 'translate'
+> &
+	PlanRow;
+
+export type PlanLogosProps = Pick< FeaturesGridProps, 'gridPlans' | 'isInSignup' > & PlanRow;
+
+export type BillingTimeframesProps = Pick< FeaturesGridProps, 'gridPlans' | 'showRefundPeriod' > &
+	PlanRow;
+
+export type PlanStorageOptionsProps = Pick<
+	FeaturesGridProps,
+	'gridPlans' | 'translate' | 'intervalType' | 'onStorageAddOnClick' | 'showUpgradeableStorage'
+> &
+	PlanRow;
+
+export type TopButtonsProps = Pick<
+	FeaturesGridProps,
+	| 'currentSitePlanSlug'
+	| 'gridPlans'
+	| 'isInSignup'
+	| 'isLargeCurrency'
+	| 'isLaunchPage'
+	| 'onUpgradeClick'
+	| 'planActionOverrides'
+	| 'translate'
+> &
+	PlanRow;
+
+export type PlanFeaturesListProps = Pick<
+	FeaturesGridProps,
+	| 'generatedWPComSubdomain'
+	| 'gridPlans'
+	| 'hideUnavailableFeatures'
+	| 'isCustomDomainAllowedOnFreePlan'
+	| 'paidDomainName'
+	| 'selectedFeature'
+	| 'translate'
+> &
+	PlanRow;
+
+export type TableProps = Pick<
+	FeaturesGridProps,
+	| 'currentSitePlanSlug'
+	| 'generatedWPComSubdomain'
+	| 'gridPlanForSpotlight'
+	| 'gridPlans'
+	| 'hideUnavailableFeatures'
+	| 'intervalType'
+	| 'isCustomDomainAllowedOnFreePlan'
+	| 'isInSignup'
+	| 'isLargeCurrency'
+	| 'isLaunchPage'
+	| 'onStorageAddOnClick'
+	| 'onUpgradeClick'
+	| 'paidDomainName'
+	| 'planActionOverrides'
+	| 'planUpgradeCreditsApplicable'
+	| 'selectedFeature'
+	| 'showUpgradeableStorage'
+	| 'stickyRowOffset'
+	| 'translate'
+>;
+
+export type SpotlightPlanProps = Pick<
+	FeaturesGridProps,
+	| 'currentSitePlanSlug'
+	| 'gridPlanForSpotlight'
+	| 'intervalType'
+	| 'isInSignup'
+	| 'isLargeCurrency'
+	| 'isLaunchPage'
+	| 'onStorageAddOnClick'
+	| 'onUpgradeClick'
+	| 'planActionOverrides'
+	| 'planUpgradeCreditsApplicable'
+	| 'showUpgradeableStorage'
+	| 'translate'
+>;
+
+export type MobileFreeDomainProps = Pick< FeaturesGridProps, 'translate' | 'paidDomainName' > & {
+	gridPlan: GridPlan;
+};
+
+export type MobileViewProps = Pick<
+	FeaturesGridProps,
+	| 'currentSitePlanSlug'
+	| 'generatedWPComSubdomain'
+	| 'gridPlanForSpotlight'
+	| 'gridPlans'
+	| 'hideUnavailableFeatures'
+	| 'intervalType'
+	| 'isCustomDomainAllowedOnFreePlan'
+	| 'isInSignup'
+	| 'isLargeCurrency'
+	| 'isLaunchPage'
+	| 'onStorageAddOnClick'
+	| 'onUpgradeClick'
+	| 'paidDomainName'
+	| 'planActionOverrides'
+	| 'planUpgradeCreditsApplicable'
+	| 'selectedFeature'
+	| 'showUpgradeableStorage'
+	| 'translate'
+>;
+
+export type TabletViewProps = MobileViewProps & { stickyRowOffset: number };
