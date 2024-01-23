@@ -74,6 +74,14 @@
 	}
 }
 
+.comment-navigation__unreplied-comments.form-fieldset {
+	margin: 12px;
+
+	.form-label {
+		margin: 0;
+	}
+}
+
 .button.comment-navigation__button-empty {
 	margin-left: 8px;
 }
