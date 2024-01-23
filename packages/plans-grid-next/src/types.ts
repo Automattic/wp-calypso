@@ -32,12 +32,7 @@ export interface GridPlan {
 	planSlug: PlanSlug;
 	freeTrialPlanSlug?: PlanSlug;
 	isVisible: boolean;
-	features: {
-		wpcomFeatures: TransformedFeatureObject[];
-		jetpackFeatures: TransformedFeatureObject[];
-		storageOptions: StorageOption[];
-		conditionalFeatures?: FeatureObject[];
-	};
+	features: PlanFeaturesForGridPlan;
 	tagline: TranslateResult;
 	planTitle: TranslateResult;
 	availableForPurchase: boolean;
