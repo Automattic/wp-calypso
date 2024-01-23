@@ -1,12 +1,12 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useCallback } from 'react';
 import { domainGlueRecordQueryKey } from 'calypso/data/domains/glue-records/domain-glue-record-query-key';
-import {
+import wp from 'calypso/lib/wp';
+import type {
 	GlueRecordObject,
 	GlueRecordQueryData,
 } from 'calypso/data/domains/glue-records/use-domain-glue-records-query';
-import { DomainsApiError } from 'calypso/lib/domains/types';
-import wp from 'calypso/lib/wp';
+import type { DomainsApiError } from 'calypso/lib/domains/types';
 
 export default function useDeleteGlueRecordMutation(
 	domainName: string,
