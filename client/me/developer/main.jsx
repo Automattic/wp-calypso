@@ -30,7 +30,7 @@ class Developer extends Component {
 
 	render() {
 		return (
-			<Main className="developer">
+			<Main className="developer" wideLayout>
 				<PageViewTracker path="/me/developer" title="Me > Developer" />
 				<ReauthRequired twoStepAuthorization={ twoStepAuthorization } />
 				<NavigationHeader
@@ -39,14 +39,15 @@ class Developer extends Component {
 					subtitle={ this.props.translate(
 						'Take WordPress.com further with early access to new developer features.'
 					) }
+					className="developer__header"
 				/>
 
 				<DeveloperFeatures />
 
 				<form onChange={ this.props.submitForm }>
 					<FormFieldset
-						className={ classnames( {
-							'developer__is_dev_account-fieldset-is-loading': this.props.isFetchingUserSettings,
+						className={ classnames( 'developer__is_dev_account-fieldset', {
+							'is-loading': this.props.isFetchingUserSettings,
 						} ) }
 					>
 						<ToggleControl

@@ -9,7 +9,6 @@ export const DeveloperFeatures = () => {
 
 	return (
 		<>
-			<div className="developer-features__title"></div>
 			<div className="developer-features-list">
 				{ features.map( ( { title, description, linkLearnMore } ) => (
 					<div className="developer-features-list__item">

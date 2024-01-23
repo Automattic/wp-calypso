@@ -1,41 +1,42 @@
 @import "@automattic/typography/styles/variables";
 
-.developer-features__title {
-	font-size: $font-body-large;
-	text-align: center;
-	padding-bottom: 24px;
-}
-
 .developer-features-list {
 	display: grid;
 	grid-template-columns: repeat(3, 1fr);
-	grid-gap: 16px;
+	grid-gap: 24px;
 	padding-bottom: 24px;
+	font-family: "SF Pro Text", $sans;
 
 	.developer-features-list__item {
 		display: flex;
 		flex-direction: column;
-		padding: 14px 14px 0 14px;
-		border: 2px solid #aaa;
-		border-radius: 4px;
+		border-radius: 2px;
+		border: 1px solid #dcdcde;
 		background: #fff;
-		color: #111;
+		padding: 23px 23px 0 23px;
 
 		.developer-features-list__item-title {
-			font-size: $font-body;
-			padding-bottom: 10px;
+			padding-bottom: 8px;
+			font-weight: 500;
+			font-size: rem(16px);
+			letter-spacing: -0.32px;
+			line-height: 24px;
 		}
 		.developer-features-list__item-description {
-			font-size: $font-body-small;
-			opacity: 0.5;
+			padding-bottom: 8px;
+			font-size: rem(14px);
+			color: #757575;
+			line-height: 20px;
+			letter-spacing: -0.15px;
 		}
 		.developer-features-list__item-learn-more {
-			padding-bottom: 9px;
+			padding-bottom: 23px;
 			margin-top: auto;
 
 			a {
-				font-size: $font-body-small;
-				color: #3858e9;
+				line-height: 13px;
+				font-size: rem(13px);
+				color: #c9356e;
 			}
 		}
 	}
