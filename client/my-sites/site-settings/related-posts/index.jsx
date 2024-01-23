@@ -95,7 +95,7 @@ export const RelatedPostsSetting = ( {
 								<a
 									href={
 										isJetpack && ! isAtomic
-											? 'https://jetpack.com/support/jetpack-blocks/related-posts-block/'
+											? 'https://jetpack.com/support/related-posts/'
 											: localizeUrl(
 													'https://wordpress.com/support/related-posts/#add-a-related-posts-block'
 											  )
