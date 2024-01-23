@@ -1,5 +1,6 @@
 import { TranslateResult, useTranslate } from 'i18n-calypso';
 import type { PlanSlug, StorageOption } from '@automattic/calypso-products';
+import type { PlanActionGetter, GridPlan } from '@automattic/plans-grid-next';
 
 type UsePlanActionsParams = {
 	availableForPurchase: boolean;
@@ -17,82 +18,34 @@ type UsePlanActionsParams = {
 	storageOptions?: StorageOption[];
 };
 
-type InnerParams = Omit< UsePlanActionsParams, 'isInSignup' | 'isLaunchPage' >;
-
-type PlanActions = {
-	[ planSlug in PlanSlug ]: {
-		text: TranslateResult;
-		onClick: () => void;
-		busy?: boolean;
-	};
-};
-
 type TranslateFunc = ReturnType< typeof useTranslate >;
 
 function getLaunchPagePlanActions(
-	{
-		availableForPurchase,
-		currentSitePlanSlug,
-		isPopular,
-		isMonthlyPlan,
-		onUpgradeClick,
-		planSlug,
-		buttonText,
-		showMonthlyPrice,
-		isStuck,
-		isLargeCurrency,
-		storageOptions,
-	}: InnerParams,
 	translate: TranslateFunc
-): PlanActions {}
+): PlanActionGetter {}
 
 function getSignupPlanActions(
-	{
-		availableForPurchase,
-		currentSitePlanSlug,
-		isPopular,
-		isMonthlyPlan,
-		onUpgradeClick,
-		planSlug,
-		buttonText,
-		showMonthlyPrice,
-		isStuck,
-		isLargeCurrency,
-		storageOptions,
-	}: InnerParams,
 	translate: TranslateFunc
-): PlanActions {}
+): PlanActionGetter {
+
+}
 
 function getLoggedInPlanActions(
-	{
-		availableForPurchase,
-		currentSitePlanSlug,
-		isPopular,
-		isMonthlyPlan,
-		onUpgradeClick,
-		planSlug,
-		buttonText,
-		showMonthlyPrice,
-		isStuck,
-		isLargeCurrency,
-		storageOptions,
-	}: InnerParams,
-	translate: TranslateFunc
-): PlanActions {}
+	translate: TranslateFunc,
+): PlanActionGetter {}
 
-function usePlanActions( params: UsePlanActionsParams ): PlanActions {
+function usePlanActions( isLaunchPage: boolean, isInSignup: boolean ): GetPlanActionFunc {
 	const translate = useTranslate();
-	const { isLaunchPage, isInSignup } = params;
 
 	if ( isLaunchPage ) {
-		return getLaunchPagePlanActions( params, translate );
+		return getLaunchPagePlanActions( translate );
 	}
 
 	if ( isInSignup ) {
-		return getSignupPlanActions( params, translate );
+		return getSignupPlanActions( translate );
 	}
 
-	return getLoggedInPlanActions( params, translate );
+	return getLoggedInPlanActions( translate );
 }
 
 export default usePlanActions;

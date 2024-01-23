@@ -89,6 +89,14 @@ export interface PlanActionOverrides {
 	};
 }
 
+export type PlanAction = {
+	text: TranslateResult;
+	onClick: () => void;
+	busy?: boolean;
+};
+
+export type PlanActionGetter = ( gridPlan: GridPlan ) => PlanAction;
+
 // A generic type representing the response of an async request.
 // It's probably generic enough to be put outside of the pricing grid package,
 // but at the moment it's located here to reduce its scope of influence.
