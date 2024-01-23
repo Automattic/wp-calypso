@@ -156,7 +156,7 @@ export const GitHubAppCard = () => {
 									busy={ isCreatingDeployment }
 									disabled={ ! selectedRepo }
 								>
-									<span>{ __( 'Create deploymnt' ) }</span>
+									<span>{ __( 'Create deployment' ) }</span>
 								</Button>
 							</div>
 						) }
