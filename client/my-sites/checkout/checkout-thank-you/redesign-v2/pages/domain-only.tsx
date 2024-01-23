@@ -34,7 +34,11 @@ function UpsellActions( { domainNames, receiptId }: { domainNames: string[]; rec
 			) : null }
 
 			<Button
-				href={ getProfessionalEmailCheckoutUpsellPath( siteSlug, selectedDomainName, receiptId ) }
+				href={ getProfessionalEmailCheckoutUpsellPath(
+					siteSlug ?? selectedDomainName,
+					selectedDomainName,
+					receiptId
+				) }
 				onClick={ () =>
 					recordTracksEvent( 'calypso_domain_only_thank_you_professional_email_click' )
 				}

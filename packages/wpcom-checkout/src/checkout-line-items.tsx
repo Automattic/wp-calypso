@@ -1031,16 +1031,6 @@ function DomainDiscountCallout( { product }: { product: ResponseCartProduct } ) 
 	return null;
 }
 
-function CouponDiscountCallout( { product }: { product: ResponseCartProduct } ) {
-	const translate = useTranslate();
-
-	if ( isCouponApplied( product ) ) {
-		return <DiscountCallout>{ translate( 'Discounts applied' ) }</DiscountCallout>;
-	}
-
-	return null;
-}
-
 function GSuiteDiscountCallout( { product }: { product: ResponseCartProduct } ) {
 	const translate = useTranslate();
 
@@ -1235,7 +1225,6 @@ function CheckoutLineItem( {
 					<LineItemMeta>
 						<LineItemSublabelAndPrice product={ product } />
 						<DomainDiscountCallout product={ product } />
-						<CouponDiscountCallout product={ product } />
 						<IntroductoryOfferCallout product={ product } />
 						<JetpackAkismetSaleCouponCallout product={ product } />
 					</LineItemMeta>
@@ -1245,7 +1234,6 @@ function CheckoutLineItem( {
 			{ product && containsPartnerCoupon && (
 				<LineItemMeta>
 					<LineItemSublabelAndPrice product={ product } />
-					<CouponDiscountCallout product={ product } />
 				</LineItemMeta>
 			) }
 

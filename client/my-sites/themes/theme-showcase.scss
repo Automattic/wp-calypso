@@ -470,6 +470,12 @@
 	height: 40px;
 	justify-content: space-between;
 	margin: 8px 0;
+
+	&.is-woo-express {
+		.responsive-toolbar-group__grouped-list {
+			justify-content: flex-start;
+		}
+	}
 }
 
 .theme-showcase__all-themes-title {

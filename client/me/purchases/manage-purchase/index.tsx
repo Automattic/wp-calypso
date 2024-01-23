@@ -1,5 +1,4 @@
 /* eslint-disable wpcalypso/jsx-classname-namespace */
-import config from '@automattic/calypso-config';
 import {
 	isPersonal,
 	isPremium,
@@ -14,7 +13,6 @@ import {
 	isGoogleWorkspace,
 	isGSuiteOrGoogleWorkspace,
 	isThemePurchase,
-	isJetpackPlan,
 	isJetpackProduct,
 	isConciergeSession,
 	isTitanMail,
@@ -88,7 +86,6 @@ import {
 	isExpired,
 	isOneTimePurchase,
 	isPartnerPurchase,
-	isRefundable,
 	isRenewable,
 	isSubscription,
 	isCloseToExpiration,
@@ -102,7 +99,6 @@ import { hasCustomDomain } from 'calypso/lib/site/utils';
 import { addQueryArgs } from 'calypso/lib/url';
 import { DOMAIN_CANCEL, SUPPORT_ROOT } from 'calypso/lib/url/support';
 import NonPrimaryDomainDialog from 'calypso/me/purchases/non-primary-domain-dialog';
-import { PreCancellationDialog } from 'calypso/me/purchases/pre-cancellation-dialog';
 import ProductLink from 'calypso/me/purchases/product-link';
 import titles from 'calypso/me/purchases/titles';
 import TrackPurchasePageView from 'calypso/me/purchases/track-purchase-page-view';
@@ -232,7 +228,6 @@ export interface ManagePurchaseConnectedProps {
 
 interface ManagePurchaseState {
 	showNonPrimaryDomainWarningDialog: boolean;
-	showRemoveSubscriptionWarningDialog: boolean;
 	showWordAdsEligibilityWarningDialog: boolean;
 	cancelLink: string | null;
 	isRemoving: boolean;
@@ -246,7 +241,6 @@ class ManagePurchase extends Component<
 > {
 	state = {
 		showNonPrimaryDomainWarningDialog: false,
-		showRemoveSubscriptionWarningDialog: false,
 		showWordAdsEligibilityWarningDialog: false,
 		cancelLink: null,
 		isRemoving: false,
@@ -693,18 +687,6 @@ class ManagePurchase extends Component<
 	showNonPrimaryDomainWarningDialog( cancelLink: string ) {
 		this.setState( {
 			showNonPrimaryDomainWarningDialog: true,
-			showRemoveSubscriptionWarningDialog: false,
-			showWordAdsEligibilityWarningDialog: false,
-			isRemoving: false,
-			isCancelSurveyVisible: false,
-			cancelLink,
-		} );
-	}
-
-	showRemoveSubscriptionWarningDialog( cancelLink: string ) {
-		this.setState( {
-			showNonPrimaryDomainWarningDialog: false,
-			showRemoveSubscriptionWarningDialog: true,
 			showWordAdsEligibilityWarningDialog: false,
 			isRemoving: false,
 			isCancelSurveyVisible: false,
@@ -715,7 +697,6 @@ class ManagePurchase extends Component<
 	showWordAdsEligibilityWarningDialog( cancelLink: string ) {
 		this.setState( {
 			showNonPrimaryDomainWarningDialog: false,
-			showRemoveSubscriptionWarningDialog: false,
 			showWordAdsEligibilityWarningDialog: true,
 			isRemoving: false,
 			isCancelSurveyVisible: false,
@@ -726,7 +707,6 @@ class ManagePurchase extends Component<
 	showPreCancellationModalDialog = () => {
 		this.setState( {
 			showNonPrimaryDomainWarningDialog: false,
-			showRemoveSubscriptionWarningDialog: false,
 			showWordAdsEligibilityWarningDialog: false,
 			isRemoving: false,
 			isCancelSurveyVisible: true,
@@ -737,7 +717,6 @@ class ManagePurchase extends Component<
 	closeDialog = () => {
 		this.setState( {
 			showNonPrimaryDomainWarningDialog: false,
-			showRemoveSubscriptionWarningDialog: false,
 			showWordAdsEligibilityWarningDialog: false,
 			isRemoving: false,
 			isCancelSurveyVisible: false,
@@ -785,32 +764,6 @@ class ManagePurchase extends Component<
 		}
 
 		return null;
-	}
-
-	renderRemoveSubscriptionWarningDialog( site: SiteDetails, purchase: Purchase ) {
-		if ( this.state.showRemoveSubscriptionWarningDialog ) {
-			const { hasCustomPrimaryDomain, primaryDomain } = this.props;
-			const customDomain = hasCustomPrimaryDomain && primaryDomain?.name;
-			const primaryDomainName = customDomain ? primaryDomain?.name : '';
-			const isPlanRefundable = isRefundable( purchase );
-			const actionFunction =
-				isPlanRefundable && customDomain
-					? this.goToCancelLink
-					: this.showPreCancellationModalDialog;
-
-			return (
-				<PreCancellationDialog
-					isDialogVisible={ this.state.showRemoveSubscriptionWarningDialog }
-					closeDialog={ this.closeDialog }
-					removePlan={ actionFunction }
-					site={ site }
-					purchase={ purchase }
-					hasDomain={ Boolean( customDomain ) }
-					primaryDomain={ primaryDomainName ?? '' }
-					wpcomURL={ site.wpcom_url ?? '' }
-				/>
-			);
-		}
 	}
 
 	renderCancelSurvey() {
@@ -919,19 +872,6 @@ class ManagePurchase extends Component<
 			if ( this.shouldShowNonPrimaryDomainWarning() ) {
 				event.preventDefault();
 				this.showNonPrimaryDomainWarningDialog( link );
-			}
-
-			if ( isSubscription( purchase ) ) {
-				if (
-					config.isEnabled( 'pre-cancellation-modal' ) &&
-					isPlan( purchase ) &&
-					! isJetpackPlan( purchase ) &&
-					! isJetpackProduct( purchase ) &&
-					! isGSuiteOrGoogleWorkspace( purchase )
-				) {
-					event.preventDefault();
-					this.showRemoveSubscriptionWarningDialog( link );
-				}
 			}
 		};
 
@@ -1478,7 +1418,6 @@ class ManagePurchase extends Component<
 				{ this.renderPurchaseDetail( preventRenewal ) }
 				{ this.renderWordAdsEligibilityWarningDialog( purchase ) }
 				{ site && this.renderNonPrimaryDomainWarningDialog( site, purchase ) }
-				{ site && this.renderRemoveSubscriptionWarningDialog( site, purchase ) }
 			</Fragment>
 		);
 	}
