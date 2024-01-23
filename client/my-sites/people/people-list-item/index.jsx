@@ -167,7 +167,7 @@ class PeopleListItem extends PureComponent {
 		const { translate, requestingSend } = this.props;
 
 		return (
-			<div>
+			<div className="people-list-item__invite-status">
 				<Button
 					busy={ requestingSend?.progress }
 					className="people-list-item__invite-send"
