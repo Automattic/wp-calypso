@@ -26,32 +26,29 @@ export default function useBackupTitle( details: MigrationState ) {
 
 			case 'backing_up':
 				if ( locArgs.percent < 20 ) {
-					return translate( 'Backing up: preparing - %(percent)d% (%(step)d/%(stepTotal)d)', {
+					return translate( 'Backing up: preparing (%(step)d/%(stepTotal)d)', {
 						args: locArgs,
 					} );
 				} else if ( locArgs.percent < 40 ) {
-					return translate(
-						'Backing up: moving media files - %(percent)d% (%(step)d/%(stepTotal)d)',
-						{
-							args: locArgs,
-						}
-					);
+					return translate( 'Backing up: moving media files (%(step)d/%(stepTotal)d)', {
+						args: locArgs,
+					} );
 				} else if ( locArgs.percent < 60 ) {
-					return translate( 'Backing up: moving posts - %(percent)d% (%(step)d/%(stepTotal)d)', {
+					return translate( 'Backing up: moving posts (%(step)d/%(stepTotal)d)', {
 						args: locArgs,
 					} );
 				} else if ( locArgs.percent < 80 ) {
-					return translate( 'Backing up: database - %(percent)d% (%(step)d/%(stepTotal)d)', {
+					return translate( 'Backing up: database (%(step)d/%(stepTotal)d)', {
 						args: locArgs,
 					} );
 				} else if ( locArgs.percent <= 100 ) {
-					return translate( 'Backing up: finalize - %(percent)d% (%(step)d/%(stepTotal)d)', {
+					return translate( 'Backing up: finalize (%(step)d/%(stepTotal)d)', {
 						args: locArgs,
 					} );
 				}
 
 			default:
-				return translate( 'Backing up %(percent)d%', {
+				return translate( 'Backing up', {
 					args: locArgs,
 				} );
 		}
