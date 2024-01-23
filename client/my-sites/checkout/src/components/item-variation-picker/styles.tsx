@@ -28,33 +28,33 @@ export const CurrentOption = styled.button< CurrentOptionProps >`
 `;
 
 export const Option = styled.li< OptionProps >`
-	align-items: center;
 	background: white;
 	border: 1px solid ${ ( props ) => props.theme.colors.borderColor };
-	color: var( --studio-gray-50 );
+	color: #646970;
 	display: flex;
-	flex-direction: row;
 	font-size: ${ ( props ) => props.theme.fontSize.small };
 	font-weight: ${ ( props ) => props.theme.weights.normal };
-	justify-content: space-between;
-	/* the calc aligns the price with the price in CurrentOption */
-	padding: 10px calc( 14px + 24px + 16px ) 10px 16px;
 	cursor: pointer;
-	${ hasCheckoutVersion( '2' ) ? `height: 40px` : null };
-	&:hover {
-		background: var( --studio-blue-0 );
 
-		.is-jetpack & {
-			background: var( --studio-gray-0 );
-		}
+	${
+		hasCheckoutVersion( '2' )
+			? `flex-direction: column;
+		align-items: flex-start;
+		padding: 10px; height: 40px;`
+			: `flex-direction: row;
+		justify-content: space-between; align-items: center;
+		/* the calc aligns the price with the price in CurrentOption */
+		padding: 10px calc( 14px + 24px + 16px ) 10px 16px; height: null;`
+	}
+
+
+	&:hover {
+		var( --studio-blue-0 );
 	}
 
 	&.item-variant-option--selected {
-		background: var( --studio-blue-60 );
-
-		.is-jetpack & {
-			background: var( --studio-gray-80 );
-		}
+		background: #055d9c;
+		color: #fff;
 	}
 `;
 
