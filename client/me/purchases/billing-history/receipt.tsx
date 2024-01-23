@@ -298,18 +298,18 @@ function ReceiptItemDiscounts( {
 	item: BillingTransactionItem;
 	receiptDate: string;
 } ) {
-	if ( ! areReceiptItemDiscountsAccurate( receiptDate ) ) {
-		return null;
-	}
+	const shouldShowDiscount = areReceiptItemDiscountsAccurate( receiptDate );
 	return (
 		<ul className="billing-history__receipt-item-discounts-list">
 			{ item.cost_overrides
 				.filter( ( discount ) => ! discount.does_override_original_cost )
 				.map( ( discount ) => {
 					const discountAmount = discount.old_price - discount.new_price;
-					const formattedDiscountAmount = formatCurrency( -discountAmount, item.currency, {
-						stripZeros: true,
-					} );
+					const formattedDiscountAmount = shouldShowDiscount
+						? formatCurrency( -discountAmount, item.currency, {
+								stripZeros: true,
+						  } )
+						: '';
 					return (
 						<li key={ discount.id }>
 							<span>{ discount.human_readable_reason }</span>
@@ -371,6 +371,7 @@ function ReceiptItemTaxes( { transaction }: { transaction: BillingTransaction } 
 function ReceiptLineItems( { transaction }: { transaction: BillingTransaction } ) {
 	const translate = useTranslate();
 	const groupedTransactionItems = groupDomainProducts( transaction.items, translate );
+	const shouldShowDiscount = areReceiptItemDiscountsAccurate( transaction.date );
 
 	const items = groupedTransactionItems.map( ( item ) => {
 		const termLabel = getTransactionTermLabel( item, translate );
@@ -387,9 +388,13 @@ function ReceiptLineItems( { transaction }: { transaction: BillingTransaction } 
 						) }
 					</td>
 					<td className="billing-history__receipt-amount">
-						{ formatCurrency( getReceiptItemOriginalCost( item ), item.currency, {
-							stripZeros: true,
-						} ) }
+						{ formatCurrency(
+							shouldShowDiscount ? getReceiptItemOriginalCost( item ) : item.raw_subtotal,
+							item.currency,
+							{
+								stripZeros: true,
+							}
+						) }
 						{ transaction.credit && (
 							<span className="billing-history__credit-badge">{ translate( 'Refund' ) }</span>
 						) }
