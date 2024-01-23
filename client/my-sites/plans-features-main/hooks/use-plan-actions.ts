@@ -23,6 +23,14 @@ function getSignupPlanActions(
 		pricing: { currencyCode, originalPrice, discountedPrice },
 	}: GridPlan ): PlanAction => {
 		const planTitle = getPlan( planSlug )?.getTitle() || '';
+		const priceString = formatCurrency(
+			( discountedPrice.monthly || originalPrice.monthly ) ?? 0,
+			currencyCode || 'USD',
+			{
+				stripZeros: true,
+				isSmallestUnit: true,
+			}
+		);
 
 		// const postButtonText = isBusinessPlan( planSlug ); // && planActionOverrides?.trialAlreadyUsed?.postButtonText;
 
@@ -33,14 +41,6 @@ function getSignupPlanActions(
 		} );
 
 		const onClick = () => handleUpgradeButtonClick( hasFreeTrialPlan );
-		const priceString = formatCurrency(
-			( discountedPrice.monthly || originalPrice.monthly ) ?? 0,
-			currencyCode || 'USD',
-			{
-				stripZeros: true,
-				isSmallestUnit: true,
-			}
-		);
 
 		if ( isFreePlan( planSlug ) ) {
 			btnText = translate( 'Start with Free' );
@@ -114,11 +114,61 @@ function getSignupPlanActions(
 	};
 }
 
-function getLaunchPagePlanActions( translate: TranslateFunc ): PlanActionGetter {}
+function getLaunchPagePlanActions(
+	translate: TranslateFunc,
+	handleUpgradeButtonClick: ( isFreeTrialPlan?: boolean ) => void,
+	isStuck: boolean,
+	isLargeCurrency?: boolean
+): PlanActionGetter {
+	return ( {
+		planSlug,
+		pricing: { currencyCode, originalPrice, discountedPrice },
+	}: GridPlan ): PlanAction => {
+		const planTitle = getPlan( planSlug )?.getTitle() || '';
+		const priceString = formatCurrency(
+			( discountedPrice.monthly || originalPrice.monthly ) ?? 0,
+			currencyCode || 'USD',
+			{
+				stripZeros: true,
+				isSmallestUnit: true,
+			}
+		);
+
+		let buttonText = translate( 'Select %(plan)s', {
+			args: {
+				plan: planTitle,
+			},
+			context: 'Button to select a paid plan by plan name, e.g., "Select Personal"',
+			comment:
+				'A button to select a new paid plan. Check screenshot - https://cloudup.com/cb_9FMG_R01',
+		} );
+
+		if ( isFreePlan( planSlug ) ) {
+			buttonText = translate( 'Keep this plan', {
+				comment:
+					'A selection to keep the current plan. Check screenshot - https://cloudup.com/cb_9FMG_R01',
+			} );
+		} else if ( isStuck && ! isLargeCurrency ) {
+			buttonText = translate( 'Select %(plan)s – %(priceString)s', {
+				args: {
+					plan: planTitle,
+					priceString: priceString ?? '',
+				},
+				comment:
+					'%(plan)s is the name of the plan and %(priceString)s is the full price including the currency. Eg: Select Premium - $10',
+			} );
+		}
+
+		return {
+			text: buttonText,
+			onClick: handleUpgradeButtonClick,
+		};
+	};
+}
 
 function getLoggedInPlanActions( translate: TranslateFunc ): PlanActionGetter {}
 
-function usePlanActions( isLaunchPage: boolean, isInSignup: boolean ): GetPlanActionFunc {
+function usePlanActions( isLaunchPage: boolean, isInSignup: boolean ): PlanActionGetter {
 	const translate = useTranslate();
 
 	if ( isLaunchPage ) {
