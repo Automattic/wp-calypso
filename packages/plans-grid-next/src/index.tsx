@@ -1,3 +1,5 @@
+import { useRef } from '@wordpress/element';
+import classnames from 'classnames';
 import ComparisonGrid from './components/comparison-grid';
 import FeaturesGrid from './components/features-grid';
 import PlanButton from './components/plan-button';
@@ -7,6 +9,7 @@ import PlansGridContextProvider from './grid-context';
 import useGridPlans from './hooks/data-store/use-grid-plans';
 import usePlanFeaturesForGridPlans from './hooks/data-store/use-plan-features-for-grid-plans';
 import useRestructuredPlanFeaturesForComparisonGrid from './hooks/data-store/use-restructured-plan-features-for-comparison-grid';
+import useGridSize from './hooks/use-grid-size';
 import { useManageTooltipToggle } from './hooks/use-manage-tooltip-toggle';
 import useUpgradeClickHandler from './hooks/use-upgrade-click-handler';
 import type { ComparisonGridExternalProps, FeaturesGridExternalProps } from './types';
@@ -82,18 +85,44 @@ const WrappedFeaturesGrid = ( props: FeaturesGridExternalProps ) => {
 		onUpgradeClick,
 	} );
 
+	const gridPlansWithoutSpotlight = ! props.gridPlanForSpotlight
+		? gridPlans
+		: gridPlans.filter( ( { planSlug } ) => props.gridPlanForSpotlight?.planSlug !== planSlug );
+	const columnsInRowForMedium = 4 === gridPlansWithoutSpotlight.length ? 2 : 3;
+	const gridContainerRef = useRef< HTMLDivElement | null >( null );
+	const gridSize = useGridSize( {
+		containerRef: gridContainerRef,
+		averageColumnMinWidth: 222,
+		columnsInRow: { medium: columnsInRowForMedium, large: gridPlansWithoutSpotlight.length },
+	} );
+
+	const classNames = classnames( 'plans-grid-next__features-grid', {
+		'is-small': 'small' === gridSize,
+		'is-medium': 'medium' === gridSize,
+		'is-large': 'large' === gridSize,
+		'is-visible': gridSize,
+	} );
+
+	console.log( 123, gridSize );
+
 	return (
-		<PlansGridContextProvider
-			intent={ intent }
-			selectedSiteId={ selectedSiteId }
-			gridPlans={ gridPlans }
-			coupon={ coupon }
-			useCheckPlanAvailabilityForPurchase={ useCheckPlanAvailabilityForPurchase }
-			recordTracksEvent={ recordTracksEvent }
-			allFeaturesList={ allFeaturesList }
-		>
-			<FeaturesGrid { ...props } onUpgradeClick={ handleUpgradeClick } />
-		</PlansGridContextProvider>
+		<div ref={ gridContainerRef } className={ classNames }>
+			<PlansGridContextProvider
+				intent={ intent }
+				selectedSiteId={ selectedSiteId }
+				gridPlans={ gridPlans }
+				coupon={ coupon }
+				useCheckPlanAvailabilityForPurchase={ useCheckPlanAvailabilityForPurchase }
+				recordTracksEvent={ recordTracksEvent }
+				allFeaturesList={ allFeaturesList }
+			>
+				<FeaturesGrid
+					{ ...props }
+					onUpgradeClick={ handleUpgradeClick }
+					gridSize={ gridSize ?? undefined }
+				/>
+			</PlansGridContextProvider>
+		</div>
 	);
 };
 

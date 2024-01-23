@@ -10,7 +10,7 @@ import {
 import { Gridicon, JetpackLogo } from '@automattic/components';
 import { css } from '@emotion/react';
 import styled from '@emotion/styled';
-import { useMemo } from '@wordpress/element';
+import { useRef, useMemo } from '@wordpress/element';
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import {
@@ -24,6 +24,7 @@ import {
 } from 'react';
 import { useInView } from 'react-intersection-observer';
 import { usePlansGridContext } from '../../grid-context';
+import useGridSize from '../../hooks/use-grid-size';
 import useHighlightAdjacencyMatrix from '../../hooks/use-highlight-adjacency-matrix';
 import { useManageTooltipToggle } from '../../hooks/use-manage-tooltip-toggle';
 import filterUnusedFeaturesObject from '../../lib/filter-unused-features-object';

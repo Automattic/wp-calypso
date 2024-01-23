@@ -57,6 +57,8 @@ export interface GridPlan {
  * Grid Component Types:
  ***********************/
 
+export type GridSize = 'small' | 'medium' | 'large';
+
 export type PlansIntent =
 	| 'plans-blog-onboarding'
 	| 'plans-newsletter'
@@ -120,6 +122,8 @@ export interface CommonGridProps {
 	planTypeSelectorProps?: PlanTypeSelectorProps;
 	onUpgradeClick: ( planSlug: PlanSlug ) => void;
 	planUpgradeCreditsApplicable?: number | null;
+	gridContainerRef?: React.MutableRefObject< HTMLDivElement | null >;
+	gridSize?: string;
 }
 
 export interface FeaturesGridProps extends CommonGridProps {

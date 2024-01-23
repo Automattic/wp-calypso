@@ -8,6 +8,14 @@ $mobile-card-max-width: 440px;
 	margin-top: 300px;
 }
 
+.plans-grid-next__features-grid {
+	display: none;
+
+	&.is-visible {
+		display: block;
+	}
+}
+
 .plan-features-2023-grid__header {
 	position: relative;
 	display: flex;
