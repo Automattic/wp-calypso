@@ -8,6 +8,7 @@ import AddNewSiteButton from 'calypso/components/jetpack/add-new-site-button';
 import { useDispatch, useSelector } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getCurrentPartner } from 'calypso/state/partner-portal/partner/selectors';
+import AddSiteFromCSV from './add-site-from-csv';
 import WPCOMHostingPopover from './wpcom-hosting-popover';
 
 export default function SiteTopHeaderButtons() {
@@ -35,6 +36,7 @@ export default function SiteTopHeaderButtons() {
 				'is-with-split-button': isWPCOMAtomicSiteCreationEnabled,
 			} ) }
 		>
+			<AddSiteFromCSV />
 			<Button
 				href={ partnerCanIssueLicense ? '/partner-portal/issue-license' : undefined }
 				className="sites-overview__issue-license-button"
