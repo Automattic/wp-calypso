@@ -7,5 +7,5 @@
 		"rootDir": "src"
 	},
 	"files": [ "./global.d.ts" ],
-	"references": [ { "path": "../data-stores" } ]
+	"references": [ { "path": "../data-stores" }, { "path": "../calypso-analytics" } ]
 }
