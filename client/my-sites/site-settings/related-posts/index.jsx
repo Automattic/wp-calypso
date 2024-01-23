@@ -25,6 +25,7 @@ export const RelatedPostsSetting = ( {
 	const siteId = useSelector( ( state ) => getSelectedSiteId( state ) ) || 0;
 	const isJetpack = useSelector( ( state ) => isJetpackSiteSelector( state, siteId ) );
 	const isAtomic = useSelector( ( state ) => isAtomicSite( state, siteId ) );
+	const isJetpackSelfHosted = isJetpack && ! isAtomic;
 
 	return (
 		<FormFieldset>
@@ -33,14 +34,14 @@ export const RelatedPostsSetting = ( {
 					'The feature helps visitors find more of your content by displaying related posts at the bottom of each post.'
 				) }
 				link={
-					isJetpack && ! isAtomic
+					isJetpackSelfHosted
 						? 'https://jetpack.com/support/related-posts/'
 						: localizeUrl(
 								'https://wordpress.com/support/related-posts/#related-posts-classic-themes'
 						  )
 				}
 				privacyLink={
-					isJetpack && ! isAtomic ? true : localizeUrl( 'https://automattic.com/privacy/' )
+					isJetpackSelfHosted ? true : localizeUrl( 'https://automattic.com/privacy/' )
 				}
 			/>
 
@@ -94,7 +95,7 @@ export const RelatedPostsSetting = ( {
 							a: (
 								<a
 									href={
-										isJetpack && ! isAtomic
+										isJetpackSelfHosted
 											? 'https://jetpack.com/support/related-posts/'
 											: localizeUrl(
 													'https://wordpress.com/support/related-posts/#add-a-related-posts-block'
