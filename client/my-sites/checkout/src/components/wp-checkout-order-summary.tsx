@@ -129,7 +129,7 @@ function CheckoutSummaryPriceList() {
 
 	return (
 		<>
-			{ ! hasCheckoutVersion( '2' ) && (
+			{ ! hasCheckoutVersion( '2' ) && costOverridesList.length > 0 && (
 				<CheckoutFirstSubtotalLineItem key="checkout-summary-line-item-subtotal-one">
 					<span>{ translate( 'Subtotal before discounts' ) }</span>
 					<span>
