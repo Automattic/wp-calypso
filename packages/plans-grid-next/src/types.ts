@@ -92,12 +92,17 @@ export interface PlanActionOverrides {
 // TODO: consolidate it with the props of PlanButton
 export type PlanAction = {
 	text: TranslateResult;
-	onClick: () => void;
+	onClick?: () => void;
 	busy?: boolean;
 	borderless?: boolean;
+	current?: boolean;
+	disabled?: boolean;
+	classes?: string;
+	href?: string;
+	tooltip?: TranslateResult;
 };
 
-export type PlanActionGetter = ( gridPlan: GridPlan ) => PlanAction;
+export type PlanActionGetter = ( gridPlan: GridPlan ) => PlanAction | null;
 
 // A generic type representing the response of an async request.
 // It's probably generic enough to be put outside of the pricing grid package,
