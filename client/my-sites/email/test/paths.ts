@@ -193,8 +193,8 @@ describe( 'path helper functions', () => {
 		expect( getProfessionalEmailCheckoutUpsellPath( siteName, domainName, 1234 ) ).toEqual(
 			`/checkout/offer-professional-email/${ domainName }/1234/${ siteName }`
 		);
-		expect( getProfessionalEmailCheckoutUpsellPath( undefined, domainName, 1234 ) ).toEqual(
-			`/checkout/offer-professional-email/${ domainName }/1234/no-site`
+		expect( getProfessionalEmailCheckoutUpsellPath( ':site', ':domain', ':receiptId' ) ).toEqual(
+			'/checkout/offer-professional-email/:domain/:receiptId/:site'
 		);
 	} );
 
