@@ -17,8 +17,7 @@ import { Category, Pattern, PatternType } from './types';
 
 interface Props {
 	onMainItemSelect: ( name: string ) => void;
-	onSetHeader: ( pattern: Pattern | null ) => void;
-	onSetFooter: ( pattern: Pattern | null ) => void;
+	onPreselectPattern: ( type: PatternType, selectedPattern: Pattern ) => void;
 	hasHeader: boolean;
 	hasFooter: boolean;
 	sections: Pattern[];
@@ -30,8 +29,7 @@ interface Props {
 
 const ScreenMain = ( {
 	onMainItemSelect,
-	onSetHeader,
-	onSetFooter,
+	onPreselectPattern,
 	hasHeader,
 	hasFooter,
 	sections,
@@ -47,6 +45,10 @@ const ScreenMain = ( {
 	const selectedCategory = params.categorySlug as string;
 	const totalPatternCount = Number( hasHeader ) + sections.length + Number( hasFooter );
 	const isButtonDisabled = totalPatternCount === 0;
+
+	const handlePreselectCategory = ( category: string ) => {
+		goTo( `${ NAVIGATOR_PATHS.MAIN }/${ category }`, { replace: true } );
+	};
 
 	const handleSelectCategory = ( category: string, type: PatternType = 'section' ) => {
 		const basePath = NAVIGATOR_PATHS.MAIN;
@@ -73,13 +75,13 @@ const ScreenMain = ( {
 	useEffect( () => {
 		if ( ! selectedCategory ) {
 			if ( ! hasHeader && patternsMapByCategory.header?.length > 0 ) {
-				onSetHeader( patternsMapByCategory.header[ 0 ] );
+				onPreselectPattern( 'header', patternsMapByCategory.header[ 0 ] );
 			}
 			if ( ! hasFooter && patternsMapByCategory.footer?.length > 0 ) {
-				onSetFooter( patternsMapByCategory.footer[ 0 ] );
+				onPreselectPattern( 'footer', patternsMapByCategory.footer[ 0 ] );
 			}
 			if ( hasHeader && hasFooter ) {
-				handleSelectCategory( INITIAL_CATEGORY );
+				handlePreselectCategory( INITIAL_CATEGORY );
 			}
 		}
 	}, [

@@ -365,6 +365,17 @@ const PatternAssembler = ( props: StepProps & NoticesProps ) => {
 		}
 	};
 
+	const onPreselectPattern = ( type: PatternType, selectedPattern: Pattern ) => {
+		injectCategoryToPattern( selectedPattern, categories, type );
+
+		if ( 'header' === type ) {
+			setHeader( selectedPattern );
+		}
+		if ( 'footer' === type ) {
+			setFooter( selectedPattern );
+		}
+	};
+
 	const onSubmit = () => {
 		const design = getDesign() as Design;
 		const stylesheet = design.recipe?.stylesheet ?? '';
@@ -649,8 +660,7 @@ const PatternAssembler = ( props: StepProps & NoticesProps ) => {
 				<NavigatorScreen path={ NAVIGATOR_PATHS.MAIN } partialMatch>
 					<ScreenMain
 						onMainItemSelect={ onMainItemSelect }
-						onSetHeader={ setHeader }
-						onSetFooter={ setFooter }
+						onPreselectPattern={ onPreselectPattern }
 						hasHeader={ !! header }
 						hasFooter={ !! footer }
 						sections={ sections }
