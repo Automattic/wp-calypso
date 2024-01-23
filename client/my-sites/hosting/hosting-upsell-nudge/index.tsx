@@ -59,9 +59,7 @@ export function HostingUpsellNudge( { siteId, targetPlan }: HostingUpsellNudgePr
 	const title = targetPlan ? targetPlan.title : titleText;
 	const isEligibleForTrial = useSelector( isUserEligibleForFreeHostingTrial );
 	const secondaryCallToAction =
-		config.isEnabled( 'hosting-trial' ) && isEligibleForTrial
-			? translate( 'Start for free' )
-			: null;
+		config.isEnabled( 'hosting-trial' ) && isEligibleForTrial ? translate( 'Start for free' ) : '';
 	const { mutateAsync: addHostingTrial } = useAddHostingTrialMutation();
 
 	const secondaryOnClick = async () => {
@@ -81,7 +79,7 @@ export function HostingUpsellNudge( { siteId, targetPlan }: HostingUpsellNudgePr
 			callToAction={ callToAction }
 			secondaryCallToAction={ secondaryCallToAction }
 			secondaryOnClick={ secondaryOnClick }
-			plan={ plan }
+			plan={ plan as string }
 			feature={ feature }
 			showIcon={ true }
 			list={ features }

@@ -1307,9 +1307,7 @@ describe( 'getThankYouPageUrl', () => {
 				receiptId: samplePurchaseId,
 			} );
 
-			expect( url ).toBe(
-				`/checkout/offer-professional-email/foo.bar/${ samplePurchaseId }/no-site`
-			);
+			expect( url ).toBe( `/checkout/thank-you/no-site/${ samplePurchaseId }` );
 		} );
 
 		it( 'Is not displayed if cart is missing', () => {

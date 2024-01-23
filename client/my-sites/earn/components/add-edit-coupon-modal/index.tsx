@@ -1,7 +1,7 @@
 import { Dialog, FormInputValidation, FormLabel } from '@automattic/components';
 import { ToggleControl } from '@wordpress/components';
 import { translate } from 'i18n-calypso';
-import { ChangeEvent, useMemo, useState } from 'react';
+import { ChangeEvent, useMemo, useState, useCallback } from 'react';
 import FormCurrencyInput from 'calypso/components/forms/form-currency-input';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormSectionHeading from 'calypso/components/forms/form-section-heading';
@@ -163,6 +163,8 @@ const RecurringPaymentsCouponAddEditModal = ( {
 	const [ focusedDiscountValue, setFocusedDiscountValue ] = useState( false );
 	const [ focusedLimitPerUser, setFocusedLimitPerUser ] = useState( false );
 	const [ focusedEmailAllowList, setFocusedEmailAllowList ] = useState( false );
+	const [ isCharacterMinReached, setisCharacterMinReached ] = useState( false );
+	const [ isCharacterMaxReached, setisCharacterMaxReached ] = useState( false );
 
 	/** Coupon functions */
 	const generateRandomCouponCode = (): string => {
@@ -189,8 +191,16 @@ const RecurringPaymentsCouponAddEditModal = ( {
 		/^[\w.\-+*]+@(?:(?:[\w\-*]+(?:\.[\w\-*]+)+)+|(?:[\w\-*]*\*[\w\-*]*)+)+$/.test( email );
 
 	/** Form event handlers */
-	const onCouponCodeChange = ( event: ChangeEvent< HTMLInputElement > ) =>
-		setEditedCouponCode( event.target.value );
+	const onCouponCodeChange = useCallback( ( event: ChangeEvent< HTMLInputElement > ) => {
+		const newValue = event.target.value;
+		setEditedCouponCode( newValue );
+	}, [] );
+	const handleCharacterMinLimitReached = useCallback( ( isMet: boolean ) => {
+		setisCharacterMinReached( isMet );
+	}, [] );
+	const handleCharacterMaxLimitReached = useCallback( ( isMet: boolean ) => {
+		setisCharacterMaxReached( isMet );
+	}, [] );
 	const onCouponCodeRandomize = () => {
 		const code = generateRandomCouponCode();
 		setEditedCouponCode( code );
@@ -259,7 +269,7 @@ const RecurringPaymentsCouponAddEditModal = ( {
 	/** Form validation */
 	const isFormValid = ( field?: string ) => {
 		if ( field === 'coupon_code' || ! field ) {
-			if ( editedCouponCode.length < 3 || editedCouponCode.length > 10 ) {
+			if ( isCharacterMinReached ) {
 				return false;
 			}
 
@@ -434,18 +444,37 @@ const RecurringPaymentsCouponAddEditModal = ( {
 						action="Random"
 						onChange={ onCouponCodeChange }
 						onAction={ onCouponCodeRandomize }
+						onCharacterMinReached={ handleCharacterMinLimitReached }
+						onCharacterMaxReached={ handleCharacterMaxLimitReached }
 						isError={ ! isFormValid( 'coupon_code' ) }
 						isValid={ isFormValid( 'coupon_code' ) }
-						maxLength="10"
+						minLength="3"
+						maxLength="20"
 						onBlur={ () => setFocusedCouponCode( true ) }
 					/>
 					<FormSettingExplanation>
 						{ translate( 'Choose a unique coupon code for the discount. Not case-sensitive.' ) }
 					</FormSettingExplanation>
-					{ ! isFormValid( 'coupon_code' ) && focusedCouponCode && (
+					{ ! isFormValid( 'coupon_code' ) && ! isCharacterMinReached && focusedCouponCode && (
 						<FormInputValidation isError text={ translate( 'Please input a coupon code.' ) } />
 					) }
+					{ isCharacterMinReached && (
+						<FormInputValidation
+							isError
+							text={ translate( 'Coupon codes must be at least 3 characters' ) }
+						/>
+					) }
+					{ isCharacterMaxReached && (
+						<FormInputValidation
+							isError={ false }
+							isWarning
+							text={ translate(
+								'The coupon code maximum length of 20 characters has been reached'
+							) }
+						/>
+					) }
 				</FormFieldset>
+
 				<FormFieldset className="memberships__dialog-sections-discount-info">
 					<div className="memberships__dialog-sections-discount-info-field-container">
 						<FormLabel htmlFor="discount_type">{ translate( 'Discount type' ) }</FormLabel>

@@ -5,20 +5,19 @@ import { STORE_KEY } from './constants';
 import reducer, { State } from './reducer';
 import { createResolvers } from './resolvers';
 import * as selectors from './selectors';
-import type { WpcomClientCredentials } from '../shared-types';
 
 export * from './types';
 export type { State };
 
 let isRegistered = false;
-export function register( clientCreds: WpcomClientCredentials ): typeof STORE_KEY {
+export function register(): typeof STORE_KEY {
 	if ( ! isRegistered ) {
 		isRegistered = true;
 		registerStore( STORE_KEY, {
-			actions: createActions( clientCreds ),
+			actions: createActions(),
 			controls,
 			reducer,
-			resolvers: createResolvers( clientCreds ),
+			resolvers: createResolvers(),
 			selectors,
 		} );
 	}
