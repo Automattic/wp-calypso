@@ -18,7 +18,7 @@ import {
 	isSimpleSite,
 } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
-import useSubscribersTotalsQueries from '../hooks/use-subscribers-totals-query';
+import { useSubscribersTotalsWithoutAdminQueries } from '../hooks/use-subscribers-totals-query';
 import Followers from '../stats-followers';
 import StatsModuleEmails from '../stats-module-emails';
 import PageViewTracker from '../stats-page-view-tracker';
@@ -65,7 +65,7 @@ const StatsSubscribersPage = ( { period }: StatsSubscribersPageProps ) => {
 		'subscribers-page'
 	);
 
-	const { data: subscribersTotals, isLoading } = useSubscribersTotalsQueries( siteId );
+	const { data: subscribersTotals, isLoading } = useSubscribersTotalsWithoutAdminQueries( siteId );
 	const isSimple = useSelector( isSimpleSite );
 	const isAtomic = useSelector( ( state ) => isAtomicSite( state, siteId ) );
 	const showLaunchpad = ! isLoading && ( isSimple || isAtomic ) && ! subscribersTotals?.total;
