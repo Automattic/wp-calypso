@@ -68,6 +68,7 @@ export const ReviewsSummary = ( { slug, productName, productType }: Props ) => {
 				productType={ productType }
 			/>
 			<div className="reviews-summary__container">
+				{ /* Only show stats if we have a minimum sample size to reduce outliers unfairly impacting the score */ }
 				{ numberOfReviews !== null && numberOfReviews >= 3 && (
 					<div>
 						{ averageRating !== null && <Rating rating={ averageRating } /> }
