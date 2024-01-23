@@ -39,11 +39,8 @@ const ConnectedDomainDetails = ( {
 	};
 
 	const renderMappingInstructionsButton = () => {
-		const registrationDatePlus3Days = moment.utc( domain.registrationDate ).add( 3, 'days' );
 		const shouldRenderMappingInstructions =
-			domain.type === domainTypes.MAPPED &&
-			! domain.pointsToWpcom &&
-			moment.utc().isAfter( registrationDatePlus3Days );
+			domain.type === domainTypes.MAPPED && ! domain.pointsToWpcom;
 
 		if ( ! shouldRenderMappingInstructions ) {
 			return null;
