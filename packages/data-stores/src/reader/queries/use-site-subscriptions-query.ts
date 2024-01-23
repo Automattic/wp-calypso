@@ -120,8 +120,8 @@ const useSiteSubscriptionsQuery = ( {
 			}
 
 			return (
-				item.name.toLowerCase().includes( searchTermLowerCase ) ||
-				item.URL.toLowerCase().includes( searchTermLowerCase )
+				item?.name?.toLowerCase().includes( searchTermLowerCase ) ||
+				item?.URL?.toLowerCase().includes( searchTermLowerCase )
 			);
 		};
 		const sort = getSortFunction( sortTerm );
