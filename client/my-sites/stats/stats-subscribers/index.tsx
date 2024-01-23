@@ -20,6 +20,7 @@ import {
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { useSubscribersTotalsWithoutAdminQueries } from '../hooks/use-subscribers-totals-query';
 import Followers from '../stats-followers';
+import StatsModulePlaceholder from '../stats-module/placeholder';
 import StatsModuleEmails from '../stats-module-emails';
 import PageViewTracker from '../stats-page-view-tracker';
 import Reach from '../stats-reach';
@@ -87,30 +88,32 @@ const StatsSubscribersPage = ( { period }: StatsSubscribersPageProps ) => {
 					navigationItems={ [] }
 				></NavigationHeader>
 				<StatsNavigation selectedItem="subscribers" siteId={ siteId } slug={ siteSlug } />
-				{ showLaunchpad ? (
-					<SubscriberLaunchpad launchpadContext="subscriber-stats" />
-				) : (
-					<>
-						<SubscribersHighlightSection siteId={ siteId } />
-						{ isChartVisible && (
-							<>
-								<SubscribersChartSection
-									siteId={ siteId }
-									slug={ siteSlug }
-									period={ period.period }
-								/>
-								<SubscribersOverview siteId={ siteId } />
-							</>
-						) }
-						<div className={ statsModuleListClass }>
-							<Followers path="followers" />
-							<Reach />
-							{ ! isOdysseyStats && period && (
-								<StatsModuleEmails period={ period } query={ { period, date: today } } />
+				{ isLoading && <StatsModulePlaceholder className="is-subscriber-page" isLoading /> }
+				{ ! isLoading &&
+					( showLaunchpad ? (
+						<SubscriberLaunchpad launchpadContext="subscriber-stats" />
+					) : (
+						<>
+							<SubscribersHighlightSection siteId={ siteId } />
+							{ isChartVisible && (
+								<>
+									<SubscribersChartSection
+										siteId={ siteId }
+										slug={ siteSlug }
+										period={ period.period }
+									/>
+									<SubscribersOverview siteId={ siteId } />
+								</>
 							) }
-						</div>
-					</>
-				) }
+							<div className={ statsModuleListClass }>
+								<Followers path="followers" />
+								<Reach />
+								{ ! isOdysseyStats && period && (
+									<StatsModuleEmails period={ period } query={ { period, date: today } } />
+								) }
+							</div>
+						</>
+					) ) }
 				<JetpackColophon />
 			</div>
 		</Main>
