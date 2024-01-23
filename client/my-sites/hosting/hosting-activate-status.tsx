@@ -47,15 +47,19 @@ const HostingActivateStatus = ( { context, siteId, onTick }: HostingActivateStat
 		}
 	};
 
+	const getErrorText = () => {
+		switch ( context ) {
+			case 'theme':
+				return translate( 'There was an error activating theme features.' );
+			case 'plugin':
+				return translate( 'There was an error activating plugin features.' );
+			default:
+				return translate( 'There was an error activating hosting features.' );
+		}
+	};
+
 	if ( transferStatus === transferStates.ERROR ) {
-		return (
-			<Notice
-				status="is-error"
-				showDismiss={ false }
-				text={ translate( 'There was an error activating hosting features.' ) }
-				icon="bug"
-			/>
-		);
+		return <Notice status="is-error" showDismiss={ false } text={ getErrorText() } icon="bug" />;
 	}
 
 	if ( isTransferring ) {
