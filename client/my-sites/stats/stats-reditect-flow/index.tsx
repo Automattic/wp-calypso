@@ -4,7 +4,7 @@ import { useEffect } from 'react';
 import { useDispatch } from 'react-redux'; //useSelector
 import { useNoticeVisibilityQuery } from 'calypso/my-sites/stats/hooks/use-notice-visibility-query';
 import { useSelector } from 'calypso/state';
-import { isJetpackSite, getSiteOptions, getSiteSlug } from 'calypso/state/sites/selectors';
+import { isJetpackSite, getSiteOption, getSiteSlug } from 'calypso/state/sites/selectors';
 import {
 	requestStatNoticeSettings,
 	receiveStatNoticeSettings,
@@ -15,9 +15,11 @@ import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 const StatsRedirectFlow = () => {
 	const siteId = useSelector( ( state ) => getSelectedSiteId( state ) );
 	const siteSlug = useSelector( ( state ) => getSiteSlug( state, siteId ) );
-	const siteCreatedTimeStamp = useSelector(
-		( state ) => getSiteOptions( state, siteId ?? 0 )?.created_at
-	);
+	const siteCreatedTimeStamp = useSelector( ( state ) =>
+		getSiteOption( state, siteId, 'created_at' )
+	) as string;
+
+	const isCommercial = useSelector( ( state ) => getSiteOption( state, siteId, 'is_commercial' ) );
 
 	const isSiteJetpackNotAtomic = useSelector( ( state ) =>
 		isJetpackSite( state, siteId, { treatAtomicAsJetpackSite: false } )
@@ -34,7 +36,7 @@ const StatsRedirectFlow = () => {
 		isSiteJetpackNotAtomic &&
 		purchaseRedirect &&
 		siteCreatedTimeStamp &&
-		new Date( siteCreatedTimeStamp ) > new Date( '2024-01-01' );
+		new Date( siteCreatedTimeStamp ) > new Date( '2024-01-15' );
 
 	const isRequesting = useSelector( ( state: object ) => isStatsNoticeSettingsFetching( state ) );
 	const dispatch = useDispatch();
@@ -55,7 +57,9 @@ const StatsRedirectFlow = () => {
 
 	// render purchase flow for Jetpack sites created after February 2024
 	if ( ! isRequesting && redirectToPurchase && siteSlug ) {
-		page.redirect( `/stats/purchase/${ siteSlug }?productType=commercial` );
+		page.redirect(
+			`/stats/purchase/${ siteSlug }?productType=${ isCommercial ? 'commercial' : 'personal' }`
+		);
 
 		return;
 	}
