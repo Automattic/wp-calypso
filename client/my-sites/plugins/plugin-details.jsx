@@ -406,7 +406,7 @@ function PluginDetails( props ) {
 						className="plugin-details__reviews-banner"
 						title={ translate( 'Review this plugin!' ) }
 						description={ translate(
-							'Please help other users sharing your experience with this plugin.'
+							'Please help other users by sharing your experience with this plugin.'
 						) }
 						onClick={ () => setIsReviewsModalVisible( true ) }
 						disableHref
