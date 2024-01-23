@@ -29,6 +29,11 @@
 	overflow: auto;
 	background: var(--pattern-large-preview-background);
 
+	&--has-placeholder {
+		display: flex;
+		flex-direction: column;
+	}
+
 	/**
 	 * Hides the scrollbar to avoid the layout keeps changes forever
 	 * See https://github.com/Automattic/wp-calypso/issues/78357.
@@ -77,9 +82,11 @@
 .pattern-large-preview__placeholder {
 	display: flex;
 	flex-direction: column;
+	flex-grow: 1;
 	align-items: center;
 	justify-content: center;
 	width: 100%;
+	padding: 20px;
 	color: var(--studio-gray-60);
 	background: #f8f8f8;
 

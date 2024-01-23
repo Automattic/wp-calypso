@@ -649,6 +649,8 @@ const PatternAssembler = ( props: StepProps & NoticesProps ) => {
 				<NavigatorScreen path={ NAVIGATOR_PATHS.MAIN } partialMatch>
 					<ScreenMain
 						onMainItemSelect={ onMainItemSelect }
+						onSetHeader={ setHeader }
+						onSetFooter={ setFooter }
 						hasHeader={ !! header }
 						hasFooter={ !! footer }
 						sections={ sections }

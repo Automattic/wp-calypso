@@ -6,7 +6,8 @@ import {
 } from '@wordpress/components';
 import { header, footer } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
-import { NAVIGATOR_PATHS } from './constants';
+import { useEffect } from 'react';
+import { INITIAL_CATEGORY, NAVIGATOR_PATHS } from './constants';
 import { PATTERN_ASSEMBLER_EVENTS } from './events';
 import { useScreen, usePatternCountMapByCategory } from './hooks';
 import NavigatorTitle from './navigator-title';
@@ -16,6 +17,8 @@ import { Category, Pattern, PatternType } from './types';
 
 interface Props {
 	onMainItemSelect: ( name: string ) => void;
+	onSetHeader: ( pattern: Pattern | null ) => void;
+	onSetFooter: ( pattern: Pattern | null ) => void;
 	hasHeader: boolean;
 	hasFooter: boolean;
 	sections: Pattern[];
@@ -27,6 +30,8 @@ interface Props {
 
 const ScreenMain = ( {
 	onMainItemSelect,
+	onSetHeader,
+	onSetFooter,
 	hasHeader,
 	hasFooter,
 	sections,
@@ -59,6 +64,30 @@ const ScreenMain = ( {
 			}
 		}
 	};
+
+	// On the first Assembler flow load, instead of starting with a blank page,
+	// we insert a default header pattern and footer pattern, and then pre-select the first pattern category.
+	//
+	// This is done by doing all the above in a React effect when there is no selected pattern category,
+	// which happens on the first load of the Assembler flow.
+	useEffect( () => {
+		if ( ! selectedCategory ) {
+			if ( ! hasHeader && patternsMapByCategory.header?.length > 0 ) {
+				onSetHeader( patternsMapByCategory.header[ 0 ] );
+			}
+			if ( ! hasFooter && patternsMapByCategory.footer?.length > 0 ) {
+				onSetFooter( patternsMapByCategory.footer[ 0 ] );
+			}
+			if ( hasHeader && hasFooter ) {
+				handleSelectCategory( INITIAL_CATEGORY );
+			}
+		}
+	}, [
+		hasHeader,
+		hasFooter,
+		patternsMapByCategory.header?.length,
+		patternsMapByCategory.footer?.length,
+	] );
 
 	return (
 		<>
