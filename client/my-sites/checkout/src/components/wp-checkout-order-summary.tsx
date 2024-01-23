@@ -19,6 +19,7 @@ import {
 	planHasFeature,
 	WPCOM_FEATURES_ATOMIC,
 	isWooExpressPlan,
+	isSenseiProduct,
 } from '@automattic/calypso-products';
 import { Gridicon } from '@automattic/components';
 import { FormStatus, useFormStatus } from '@automattic/composite-checkout';
@@ -224,9 +225,12 @@ function CheckoutSummaryFeaturesWrapper( props: {
 	const planHasHostingFeature = responseCart.products.some( ( product ) =>
 		planHasFeature( product.product_slug, WPCOM_FEATURES_ATOMIC )
 	);
+	const hasSenseiProductInCart = responseCart.products.some( ( product ) =>
+		isSenseiProduct( product )
+	);
 	const shouldUseFlowFeatureList =
 		isNewsletterOrLinkInBioFlow( signupFlowName ) ||
-		isSenseiFlow( signupFlowName ) ||
+		( isSenseiFlow( signupFlowName ) && hasSenseiProductInCart ) ||
 		( isAnyHostingFlow( signupFlowName ) && planHasHostingFeature );
 	const giftSiteSlug = responseCart.gift_details?.receiver_blog_slug;
 
