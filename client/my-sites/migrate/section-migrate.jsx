@@ -300,6 +300,7 @@ export class SectionMigrate extends Component {
 
 				this.setMigrationState( {
 					migrationStatus: 'error',
+					migrationErrorStatus: code,
 					errorMessage: message,
 				} );
 			} );

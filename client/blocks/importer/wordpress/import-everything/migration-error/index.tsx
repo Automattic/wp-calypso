@@ -4,7 +4,7 @@ import { localizeUrl } from '@automattic/i18n-utils';
 import { NextButton, SubTitle, Title } from '@automattic/onboarding';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback } from 'react';
-import useErrorTitle from './use-error-title';
+import useErrorDetails from './use-error-details';
 import './style.scss';
 
 export const MigrationErrorHint = () => {
@@ -48,14 +48,14 @@ export const MigrationErrorHint = () => {
 
 interface Props {
 	siteUrl: string;
-	status: MigrationStatusError;
+	status: MigrationStatusError | null;
 	resetMigration: () => void;
 }
 export const MigrationError = ( props: Props ) => {
 	const { siteUrl, status, resetMigration } = props;
 	const translate = useTranslate();
 	const { openChatWidget, isOpeningChatWidget } = useChatWidget();
-	const title = useErrorTitle( status );
+	const { title, getHelpCta, tryAgainCta } = useErrorDetails( status );
 
 	const getHelp = useCallback( () => {
 		openChatWidget( {
@@ -67,16 +67,16 @@ export const MigrationError = ( props: Props ) => {
 	return (
 		<div className="import__heading import__heading-center">
 			<Title>{ translate( "We couldn't complete your migration" ) }</Title>
-			<SubTitle>
-				{ title }
-				<br />
-				{ translate( 'Please try again soon or contact support for help.' ) }
-			</SubTitle>
+			<SubTitle>{ title }</SubTitle>
 			<div className="import__buttons-group">
-				<NextButton onClick={ resetMigration }>{ translate( 'Try again' ) }</NextButton>
-				<NextButton onClick={ getHelp } variant="secondary" isBusy={ isOpeningChatWidget }>
-					{ translate( 'Get help' ) }
-				</NextButton>
+				{ tryAgainCta && (
+					<NextButton onClick={ resetMigration }>{ translate( 'Try again' ) }</NextButton>
+				) }
+				{ getHelpCta && (
+					<NextButton onClick={ getHelp } variant="secondary" isBusy={ isOpeningChatWidget }>
+						{ translate( 'Get help' ) }
+					</NextButton>
+				) }
 			</div>
 		</div>
 	);

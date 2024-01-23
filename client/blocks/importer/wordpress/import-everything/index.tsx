@@ -226,13 +226,11 @@ export class ImportEverything extends SectionMigrate {
 		return (
 			<div className="import-layout__center">
 				<div>
-					{ this.state.migrationErrorStatus && (
-						<MigrationError
-							siteUrl={ this.props.targetSite.slug }
-							status={ this.state.migrationErrorStatus }
-							resetMigration={ this.resetMigration }
-						/>
-					) }
+					<MigrationError
+						siteUrl={ this.props.targetSite.slug }
+						status={ this.state.migrationErrorStatus }
+						resetMigration={ this.resetMigration }
+					/>
 				</div>
 			</div>
 		);
