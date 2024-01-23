@@ -1,44 +1,61 @@
-import { sprintf } from '@wordpress/i18n';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback, useEffect, useState } from 'react';
-import { byteToMB } from 'calypso/blocks/importer/util';
 import type { MigrationState } from 'calypso/blocks/importer/wordpress/types';
 
 export default function useBackupTitle( details: MigrationState ) {
 	const translate = useTranslate();
+	const { step, stepTotal, stepName, backupPercent } = details;
 
 	const generateTitle = useCallback( () => {
-		if ( details.backupPercent === 100 ) {
-			if ( details.backupMedia ) {
-				return sprintf( translate( 'Moving your %(count)d files…' ), {
-					count: details.backupMedia,
+		const locArgs = {
+			percent: Math.max( backupPercent || 0, 1 ),
+			step: ( step ?? 0 ) + 1, // step starts at 0
+			stepTotal: stepTotal ?? 0,
+		};
+
+		switch ( stepName ) {
+			case 'backup_start':
+				return translate( 'Backing up starting (%(step)d/%(stepTotal)d)', {
+					args: locArgs,
 				} );
-			} else if ( details.backupPosts ) {
-				return sprintf( translate( 'Moving your %(count)d posts…' ), {
-					count: details.backupPosts,
+
+			case 'backing_up_queued':
+				return translate( 'Backing up: queued for processing (%(step)d/%(stepTotal)d)', {
+					args: locArgs,
 				} );
-			}
 
-			return translate( 'Moving your files…' );
+			case 'backing_up':
+				if ( locArgs.percent < 20 ) {
+					return translate( 'Backing up: preparing - %(percent)d% (%(step)d/%(stepTotal)d)', {
+						args: locArgs,
+					} );
+				} else if ( locArgs.percent < 40 ) {
+					return translate(
+						'Backing up: moving media files - %(percent)d% (%(step)d/%(stepTotal)d)',
+						{
+							args: locArgs,
+						}
+					);
+				} else if ( locArgs.percent < 60 ) {
+					return translate( 'Backing up: moving posts - %(percent)d% (%(step)d/%(stepTotal)d)', {
+						args: locArgs,
+					} );
+				} else if ( locArgs.percent < 80 ) {
+					return translate( 'Backing up: database - %(percent)d% (%(step)d/%(stepTotal)d)', {
+						args: locArgs,
+					} );
+				} else if ( locArgs.percent <= 100 ) {
+					return translate( 'Backing up: finalize - %(percent)d% (%(step)d/%(stepTotal)d)', {
+						args: locArgs,
+					} );
+				}
+
+			default:
+				return translate( 'Backing up %(percent)d%', {
+					args: locArgs,
+				} );
 		}
-
-		if ( typeof details.backupPercent === 'undefined' ) {
-			return translate( 'Backing up your data…' );
-		}
-
-		const percent = Math.max( details.backupPercent ?? 0, 1 );
-
-		if ( typeof details.siteSize === 'undefined' ) {
-			return sprintf( translate( 'Backing up %(percentage)d%% of your data…' ), {
-				percentage: percent,
-			} );
-		}
-
-		return sprintf( translate( 'Backing up %(percentage)d%% of your %(size)f MB of data…' ), {
-			percentage: percent,
-			size: byteToMB( details.siteSize ?? 0 ),
-		} );
-	}, [ details.backupPercent, details.backupMedia, details.backupPosts, details.siteSize ] );
+	}, [ step, stepTotal, stepName, backupPercent ] );
 
 	const [ title, setTitle ] = useState( generateTitle() );
 

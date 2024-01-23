@@ -66,7 +66,7 @@ export default function useBackupTitle( details: MigrationState ) {
 					args: locArgs,
 				} );
 		}
-	}, [ step, stepTotal, stepName ] );
+	}, [ step, stepTotal, stepName, restorePercent ] );
 
 	const [ title, setTitle ] = useState( generateTitle() );
 

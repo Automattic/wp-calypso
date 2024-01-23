@@ -25,8 +25,10 @@ export interface MigrationState {
 	restoreMessage: string | null;
 	step: number | null;
 	stepTotal: number | null;
-	stepName: string | RestoreStepName | null;
+	stepName: BackupStepName | RestoreStepName | string | null;
 }
+
+export type BackupStepName = 'backup_start' | 'backing_up_queued' | 'backing_up';
 
 export type RestoreStepName =
 	| 'restore_start'
