@@ -68,7 +68,7 @@ export const ReviewsSummary = ( { slug, productName, productType }: Props ) => {
 				productType={ productType }
 			/>
 			<div className="reviews-summary__container">
-				{ numberOfReviews !== null && (
+				{ numberOfReviews !== null && numberOfReviews >= 3 && (
 					<div>
 						{ averageRating !== null && <Rating rating={ averageRating } /> }
 						<Button borderless className="reviews-summary__number-reviews-link is-link">
