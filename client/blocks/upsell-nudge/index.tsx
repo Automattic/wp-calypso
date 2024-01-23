@@ -10,7 +10,6 @@ import {
 	WPCOM_FEATURES_NO_ADVERTS,
 	isFreePlanProduct,
 } from '@automattic/calypso-products';
-import { SiteDetails } from '@automattic/data-stores';
 import classnames from 'classnames';
 import debugFactory from 'debug';
 import { useState } from 'react';
@@ -30,6 +29,7 @@ import {
 } from 'calypso/state/sites/plans/selectors';
 import { getSite, isJetpackSite } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
+import type { SiteDetails } from '@automattic/data-stores';
 import type { IsEligibleForOneClickCheckoutReturnValue } from 'calypso/my-sites/checkout/purchase-modal/use-is-eligible-for-one-click-checkout';
 import type { IAppState } from 'calypso/state/types';
 import type { SiteSlug } from 'calypso/types';
