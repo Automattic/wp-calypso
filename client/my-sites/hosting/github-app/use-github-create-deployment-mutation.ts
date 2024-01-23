@@ -2,7 +2,6 @@ import { useMutation, UseMutationOptions, useQueryClient } from '@tanstack/react
 import { useCallback } from 'react';
 import wp from 'calypso/lib/wp';
 import { GITHUB_INTEGRATION_QUERY_KEY } from './constants';
-import { GITHUB_CONNECTION_QUERY_KEY } from './use-github-connection-query';
 
 interface MutationVariables {
 	repoName: string | undefined;
@@ -19,7 +18,7 @@ interface MutationError {
 	message: string;
 }
 
-export const useGithubConnectRepoBranchMutation = (
+export const useGithubCreateDeploymentMutation = (
 	siteId: number | null,
 	options: UseMutationOptions< MutationResponse, MutationError, MutationVariables > = {}
 ) => {
@@ -29,7 +28,7 @@ export const useGithubConnectRepoBranchMutation = (
 		mutationFn: async ( { repoName, branchName, basePath }: MutationVariables ) =>
 			wp.req.post(
 				{
-					path: `/sites/${ siteId }/hosting/github-app/connect`,
+					path: `/sites/${ siteId }/hosting/github-app/deployment`,
 					apiNamespace: 'wpcom/v2',
 				},
 				{ repo: repoName, branch: branchName, base_path: basePath }
@@ -37,7 +36,7 @@ export const useGithubConnectRepoBranchMutation = (
 		...options,
 		onSuccess: async ( ...args ) => {
 			await queryClient.invalidateQueries( {
-				queryKey: [ GITHUB_INTEGRATION_QUERY_KEY, siteId, GITHUB_CONNECTION_QUERY_KEY ],
+				queryKey: [ GITHUB_INTEGRATION_QUERY_KEY, siteId, 'repos' ],
 			} );
 			options.onSuccess?.( ...args );
 		},
@@ -45,7 +44,7 @@ export const useGithubConnectRepoBranchMutation = (
 
 	const { mutate, isPending } = mutation;
 
-	const connectBranch = useCallback( ( args: MutationVariables ) => mutate( args ), [ mutate ] );
+	const createDeployment = useCallback( ( args: MutationVariables ) => mutate( args ), [ mutate ] );
 
-	return { connectBranch, isPending };
+	return { createDeployment, isPending };
 };
