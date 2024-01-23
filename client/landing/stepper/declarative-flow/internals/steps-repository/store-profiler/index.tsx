@@ -28,10 +28,6 @@ const StoreProfiler: Step = function StoreProfiler( { navigation, flow } ) {
 		( select ) => ( select( USER_STORE ) as UserSelect ).getCurrentUser(),
 		[]
 	);
-	const newUser = useSelect(
-		( select ) => ( select( USER_STORE ) as UserSelect ).getNewUser(),
-		[]
-	);
 	const {
 		setSiteTitle: saveSiteTitleToStore,
 		setVerticalId: saveVerticalIdToStore,
@@ -79,7 +75,7 @@ const StoreProfiler: Step = function StoreProfiler( { navigation, flow } ) {
 
 	const handleSubmit = async ( event: React.FormEvent ) => {
 		event.preventDefault();
-		if ( currentUser || newUser ) {
+		if ( currentUser ) {
 			saveSiteTitleToStore( siteTitle );
 			saveVerticalIdToStore( verticalId );
 			saveCountryCodeToStore( storeCountryCode );
@@ -97,7 +93,7 @@ const StoreProfiler: Step = function StoreProfiler( { navigation, flow } ) {
 		}
 	};
 	const onChange = ( event: React.FormEvent< HTMLInputElement | HTMLSelectElement > ) => {
-		if ( currentUser || newUser ) {
+		if ( currentUser ) {
 			switch ( event.currentTarget.name ) {
 				case 'siteTitle':
 					return setSiteTitle( event.currentTarget.value );
