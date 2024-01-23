@@ -1,4 +1,3 @@
-import { isEnabled } from '@automattic/calypso-config';
 import { Badge, Button } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import { useSelector } from 'react-redux';
@@ -80,7 +79,7 @@ const PluginDetailsHeader = ( {
 						<div className="plugin-details-header__info-title">{ translate( 'Ratings' ) }</div>
 						<div className="plugin-details-header__info-value">
 							<PluginRatings rating={ plugin.rating } />
-							{ isEnabled( 'marketplace-reviews-show' ) && numberOfReviews > 0 && (
+							{ numberOfReviews > 0 && (
 								<Button
 									borderless
 									className="plugin-details-header__number-reviews-link is-link"
