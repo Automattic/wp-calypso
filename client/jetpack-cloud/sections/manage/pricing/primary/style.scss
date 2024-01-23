@@ -1,0 +1,16 @@
+.is-group-jetpack-cloud.is-section-jetpack-cloud-manage-pricing .jpcom-masterbar {
+	.header {
+		width: 100%;
+		color: #101517;
+		font-size: 1.125rem; /* stylelint-disable-line scales/font-sizes */
+		transition: background 0.1s;
+	}
+
+	.header__nav-wrapper {
+		padding: 0;
+	}
+}
+
+.jetpack-product-store .header {
+	margin-top: 4em;
+}
