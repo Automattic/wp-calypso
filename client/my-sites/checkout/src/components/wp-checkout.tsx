@@ -224,6 +224,22 @@ const getPresalesChatKey = ( responseCart: ObjectWithProducts ) => {
 	return 'wpcom';
 };
 
+/* Include a condition for your use case here if you want to show a specific nudge in the checkout sidebar */
+function CheckoutSidebarNudge( { responseCart }: { responseCart: ResponseCart } ) {
+	const isWcMobile = isWcMobileApp();
+	const isDIFMInCart = hasDIFMProduct( responseCart );
+	const hasMonthlyProduct = responseCart?.products?.some( isMonthlyProduct );
+
+	if ( ! isWcMobile && ! isDIFMInCart && ! hasMonthlyProduct ) {
+		return (
+			<CheckoutSidebarNudgeWrapper>
+				<CheckoutSidebarPlanUpsell />
+				<JetpackAkismetCheckoutSidebarPlanUpsell />
+			</CheckoutSidebarNudgeWrapper>
+		);
+	}
+	return null;
+}
 export default function WPCheckout( {
 	addItemToCart,
 	changeSelection,
@@ -369,8 +385,6 @@ export default function WPCheckout( {
 		clearDomainContactErrorMessages,
 	} = checkoutActions;
 
-	const isWcMobile = isWcMobileApp();
-
 	if ( transactionStatus === TransactionStatus.COMPLETE ) {
 		debug( 'rendering post-checkout redirecting page' );
 		return (
@@ -421,26 +435,10 @@ export default function WPCheckout( {
 		);
 	}
 
-	const isDIFMInCart = hasDIFMProduct( responseCart );
-	const hasMonthlyProduct = responseCart?.products?.some( isMonthlyProduct );
-
 	const nextStepButtonText =
 		locale.startsWith( 'en' ) || i18n.hasTranslation( 'Continue to payment' )
 			? translate( 'Continue to payment', { textOnly: true } )
 			: translate( 'Continue', { textOnly: true } );
-
-	/* Include a condition for your use case here if you want to show a specific nudge in the checkout sidebar */
-	function CheckoutSidebarNudge() {
-		if ( ! isWcMobile && ! isDIFMInCart && ! hasMonthlyProduct ) {
-			return (
-				<CheckoutSidebarNudgeWrapper>
-					<CheckoutSidebarPlanUpsell />
-					<JetpackAkismetCheckoutSidebarPlanUpsell />
-				</CheckoutSidebarNudgeWrapper>
-			);
-		}
-		return null;
-	}
 
 	return (
 		<WPCheckoutWrapper>
@@ -484,7 +482,9 @@ export default function WPCheckout( {
 									onChangeSelection={ changeSelection }
 									nextDomainIsFree={ responseCart?.next_domain_is_free }
 								/>
-								{ hasCheckoutVersion( '2' ) && <CheckoutSidebarNudge /> }
+								{ hasCheckoutVersion( '2' ) && (
+									<CheckoutSidebarNudge responseCart={ responseCart } />
+								) }
 								<SecondaryCartPromotions
 									responseCart={ responseCart }
 									addItemToCart={ addItemToCart }
