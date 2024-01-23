@@ -1,7 +1,7 @@
 import { useCallback, useEffect } from '@wordpress/element';
 import { domainRegistration } from 'calypso/lib/cart-values/cart-items';
 import { cartManagerClient } from 'calypso/my-sites/checkout/cart-manager-client';
-import { setSignupCompleteFlowName, setSignupCompleteSlug } from 'calypso/signup/storageUtils';
+import { setSignupCompleteFlowName } from 'calypso/signup/storageUtils';
 import { Status } from './constants';
 import { useCreateSenseiSite } from './create-sensei-site';
 import type { NewSiteBlogDetails, DomainSuggestion } from '@automattic/data-stores';
@@ -69,7 +69,6 @@ export const usePlanSelection = ( {
 				productsToAdd.push( registration );
 			}
 
-			setSignupCompleteSlug( site?.site_slug );
 			setSignupCompleteFlowName( flow );
 
 			await cartManagerClient.forCartKey( cartKey ).actions.addProductsToCart( productsToAdd );
