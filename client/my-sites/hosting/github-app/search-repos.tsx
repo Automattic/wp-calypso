@@ -8,10 +8,9 @@ interface SearchReposProps {
 	siteId: number | null;
 	connectionId: number;
 	onSelect( repo: string, branch ): void;
-	onChange?( query: string ): void;
 }
 
-export const SearchRepos = ( { siteId, connectionId, onSelect, onChange }: SearchReposProps ) => {
+export const SearchRepos = ( { siteId, connectionId, onSelect }: SearchReposProps ) => {
 	const { __ } = useI18n();
 	const [ query, setQuery ] = useState( '' );
 	const [ debouncedQuery ] = useDebounce( query, 500 );
@@ -29,7 +28,6 @@ export const SearchRepos = ( { siteId, connectionId, onSelect, onChange }: Searc
 			onSelect={ ( value ) => onSelect( value, repos[ value ] ) }
 			onChange={ ( query ) => {
 				setQuery( query.trim() );
-				onChange?.( query.trim() );
 			} }
 		/>
 	);
