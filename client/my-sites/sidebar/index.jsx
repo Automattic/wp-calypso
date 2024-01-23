@@ -56,9 +56,6 @@ export const MySitesSidebarUnified = ( { path } ) => {
 	return (
 		<Fragment>
 			<Sidebar>
-				<SidebarRegion>
-					<CurrentSite forceAllSitesView={ isAllDomainsView } />
-				</SidebarRegion>
 				{ menuItems.map( ( item, i ) => {
 					const isSelected = item?.url && itemLinkMatches( item.url, path );
 
@@ -89,12 +86,6 @@ export const MySitesSidebarUnified = ( { path } ) => {
 						/>
 					);
 				} ) }
-				<CollapseSidebar
-					key="collapse"
-					title={ translate( 'Collapse menu' ) }
-					icon="dashicons-admin-collapse"
-				/>
-				<AddNewSite key="add-new-site" title={ translate( 'Add new site' ) } />
 			</Sidebar>
 		</Fragment>
 	);

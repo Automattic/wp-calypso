@@ -13,6 +13,7 @@ import { HostingFlowForkingPage } from './components/hosting-flow-forking-page';
 import { SitesDashboard } from './components/sites-dashboard';
 import { MEDIA_QUERIES } from './utils';
 import type { Context as PageJSContext } from '@automattic/calypso-router';
+import MySitesSidebarUnified from 'calypso/my-sites/sidebar';
 
 const getStatusFilterValue = ( status?: string ) => {
 	return siteLaunchStatusGroupValues.find( ( value ) => value === status );
@@ -112,6 +113,7 @@ function sitesDashboard( context: PageJSContext, next: () => void ) {
 	const sitesDashboardGlobalStyles = css`
 		body.is-group-sites-dashboard {
 			background: #fdfdfd;
+			margin-left: var( --sidebar-width-max );
 
 			.layout__content {
 				// The page header background extends all the way to the edge of the screen
@@ -145,6 +147,11 @@ function sitesDashboard( context: PageJSContext, next: () => void ) {
 					newSiteID: parseInt( context.query[ 'new-site' ] ) || undefined,
 				} }
 			/>
+		</>
+	);
+	context.secondary = (
+		<>
+			<MySitesSidebarUnified path="/sites" />
 		</>
 	);
 	next();
