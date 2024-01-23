@@ -89,10 +89,12 @@ export interface PlanActionOverrides {
 	};
 }
 
+// TODO: consolidate it with the props of PlanButton
 export type PlanAction = {
 	text: TranslateResult;
 	onClick: () => void;
 	busy?: boolean;
+	borderless?: boolean;
 };
 
 export type PlanActionGetter = ( gridPlan: GridPlan ) => PlanAction;
