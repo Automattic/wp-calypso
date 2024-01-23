@@ -9,7 +9,7 @@ import getProductShortTitle from 'calypso/jetpack-cloud/sections/partner-portal/
 import { useDispatch, useSelector } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import useProductsQuery from 'calypso/state/partner-portal/licenses/hooks/use-products-query';
-import { getProductsList } from 'calypso/state/products-list/selectors';
+import { getProductsList, isProductsListFetching } from 'calypso/state/products-list/selectors';
 
 import './style.scss';
 
@@ -18,6 +18,7 @@ export default function OverviewProducts() {
 	const dispatch = useDispatch();
 
 	const userProducts = useSelector( ( state ) => getProductsList( state ) );
+	const isFetchingUserProducts = useSelector( ( state ) => isProductsListFetching( state ) );
 	const { data: agencyProducts, isLoading: isLoadingProducts } = useProductsQuery();
 
 	// Track the View All click
@@ -46,7 +47,7 @@ export default function OverviewProducts() {
 		} );
 
 		return Object.values( jetpackProductsToShow );
-	}, [ agencyProducts ] );
+	}, [ agencyProducts, userProducts ] );
 
 	return (
 		<div className="overview-products">
@@ -69,7 +70,7 @@ export default function OverviewProducts() {
 				</Button>
 			</div>
 			<div className="overview-products__grid">
-				{ isLoadingProducts || userProducts === undefined ? (
+				{ isLoadingProducts || isFetchingUserProducts || userProducts === undefined ? (
 					<div className="overview-products__is-loading"></div>
 				) : (
 					<ProductGrid products={ products } />
