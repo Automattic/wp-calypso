@@ -1,4 +1,8 @@
-import { MigrationStatus, type SiteDetails } from '@automattic/data-stores';
+import {
+	MigrationStatus,
+	type MigrationStatusError,
+	type SiteDetails,
+} from '@automattic/data-stores';
 import { Hooray, SubTitle, Title } from '@automattic/onboarding';
 import { createElement, createInterpolateElement } from '@wordpress/element';
 import { localize } from 'i18n-calypso';
@@ -222,13 +226,13 @@ export class ImportEverything extends SectionMigrate {
 		);
 	}
 
-	renderMigrationError() {
+	renderMigrationError( status: MigrationStatusError | null = null ) {
 		return (
 			<div className="import-layout__center">
 				<div>
 					<MigrationError
 						siteUrl={ this.props.targetSite.slug }
-						status={ this.state.migrationErrorStatus }
+						status={ status || this.state.migrationErrorStatus }
 						resetMigration={ this.resetMigration }
 					/>
 				</div>
@@ -292,6 +296,10 @@ export class ImportEverything extends SectionMigrate {
 	}
 
 	render() {
+		if ( this.props.forceError ) {
+			return this.renderMigrationError( this.props.forceError );
+		}
+
 		switch ( this.state.migrationStatus ) {
 			case MigrationStatus.UNKNOWN:
 				return this.renderLoading();
@@ -320,6 +328,8 @@ export class ImportEverything extends SectionMigrate {
 export const connector = connect(
 	( state: IAppState, ownProps: Partial< Props > ) => {
 		return {
+			// to test different error states, we can pass in a migrationStatus and force an error
+			forceError: get( getCurrentQueryArguments( state ), 'forceError', '' ),
 			isTargetSiteAtomic: !! isSiteAutomatedTransfer( state, ownProps.targetSiteId as number ),
 			isTargetSiteJetpack: !! isJetpackSite( state, ownProps.targetSiteId as number ),
 			isTargetSitePlanCompatible: !! isTargetSitePlanCompatible( ownProps.targetSite ),
