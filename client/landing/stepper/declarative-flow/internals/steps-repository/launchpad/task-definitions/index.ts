@@ -1,5 +1,5 @@
 import { isEnabled } from '@automattic/calypso-config';
-import { Task, TaskId, TaskContext, TaskAction } from '../types';
+import { Task, TaskId, TaskContext, TaskActionTable } from '../types';
 import { actions as designActions } from './design';
 import { actions as domainActions } from './domain';
 import { actions as planActions } from './plan';
@@ -8,7 +8,7 @@ import { actions as setupActions } from './setup';
 import { actions as siteActions } from './site';
 import { actions as videoPressActions } from './videopress';
 
-const DEFINITIONS: TaskAction = {
+const DEFINITIONS: TaskActionTable = {
 	...setupActions,
 	...designActions,
 	...domainActions,
