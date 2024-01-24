@@ -47,6 +47,12 @@ export default function useErrorDetails( status: MigrationStatusError | null ) {
 				showGoBackCta( true );
 				break;
 
+			case MigrationStatusError.SOURCE_SITE_IS_ATOMIC:
+				setTitle( titleB );
+				setSubTitle( translate( 'Your source site is already on WordPress.com.' ) );
+				showGoBackCta( true );
+				break;
+
 			case MigrationStatusError.BACKUP_QUEUEING:
 				setTitle( titleA );
 				setSubTitle(

@@ -538,6 +538,7 @@ export enum MigrationStatusError {
 	FORBIDDEN = 'forbidden',
 	GENERIC = 'error',
 	SOURCE_SITE_MULTISITE = 'source_site_multisite',
+	SOURCE_SITE_IS_ATOMIC = 'source_site_is_atomic',
 
 	// Start of migration #1
 	ACTIVATE_REWIND = 'error-rewind-activate',
