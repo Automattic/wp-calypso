@@ -99,7 +99,7 @@ const usePatternPages = (
 		.filter( Boolean ) as Pattern[];
 
 	pagesToShow = pageCategoriesInOrder
-		.map( ( category: Category ) => {
+		?.map( ( category: Category ) => {
 			const { name = '' } = category;
 			const page = getFeaturedPageOrFirstInCategory( name );
 			if ( page ) {
