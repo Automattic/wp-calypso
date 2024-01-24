@@ -482,9 +482,7 @@ export default function WPCheckout( {
 									onChangeSelection={ changeSelection }
 									nextDomainIsFree={ responseCart?.next_domain_is_free }
 								/>
-								{ hasCheckoutVersion( '2' ) && (
-									<CheckoutSidebarNudge responseCart={ responseCart } />
-								) }
+								<CheckoutSidebarNudge responseCart={ responseCart } />
 								<SecondaryCartPromotions
 									responseCart={ responseCart }
 									addItemToCart={ addItemToCart }
