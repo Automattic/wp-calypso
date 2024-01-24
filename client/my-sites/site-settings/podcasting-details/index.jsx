@@ -317,10 +317,6 @@ class PodcastingDetails extends Component {
 						key: 'podcasting_title',
 						label: translate( 'Title' ),
 					} ) }
-					{ this.renderTextField( {
-						key: 'podcasting_subtitle',
-						label: translate( 'Subtitle' ),
-					} ) }
 				</div>
 				{ this.renderTopics() }
 				{ this.renderExplicitContent() }
@@ -331,7 +327,7 @@ class PodcastingDetails extends Component {
 				{ this.renderTextField( {
 					FormComponent: FormTextarea,
 					key: 'podcasting_summary',
-					label: translate( 'Summary' ),
+					label: translate( 'Summary/Description' ),
 				} ) }
 				{ this.renderTextField( {
 					key: 'podcasting_email',
@@ -388,11 +384,6 @@ class PodcastingDetails extends Component {
 			if ( ! fields.podcasting_title ) {
 				fieldsToUpdate.podcasting_title = settings.blogname;
 			}
-			// If we are newly enabling podcasting, and no podcast subtitle is set,
-			// use the site description.
-			if ( ! fields.podcasting_subtitle ) {
-				fieldsToUpdate.podcasting_subtitle = settings.blogdescription;
-			}
 		}
 
 		this.props.updateFields( fieldsToUpdate );
@@ -432,7 +423,6 @@ const getFormSettings = ( settings ) => {
 	return pick( settings, [
 		'podcasting_category_id',
 		'podcasting_title',
-		'podcasting_subtitle',
 		'podcasting_talent_name',
 		'podcasting_summary',
 		'podcasting_copyright',
