@@ -18,7 +18,7 @@ import {
 	isSimpleSite,
 } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
-import { useSubscribersTotalsWithoutAdminQueries } from '../hooks/use-subscribers-totals-query';
+import useSubscribersTotalsQueries from '../hooks/use-subscribers-totals-query';
 import Followers from '../stats-followers';
 import StatsModulePlaceholder from '../stats-module/placeholder';
 import StatsModuleEmails from '../stats-module-emails';
@@ -66,10 +66,13 @@ const StatsSubscribersPage = ( { period }: StatsSubscribersPageProps ) => {
 		'subscribers-page'
 	);
 
-	const { data: subscribersTotals, isLoading } = useSubscribersTotalsWithoutAdminQueries( siteId );
+	const { data: subscribersTotals, isLoading } = useSubscribersTotalsQueries( siteId );
 	const isSimple = useSelector( isSimpleSite );
 	const isAtomic = useSelector( ( state ) => isAtomicSite( state, siteId ) );
-	const showLaunchpad = ! isLoading && ( isSimple || isAtomic ) && ! subscribersTotals?.total;
+	const hasNoSubscriberOtherThanAdmin =
+		! subscribersTotals?.total ||
+		( subscribersTotals?.total === 1 && subscribersTotals?.is_owner_subscribing );
+	const showLaunchpad = ! isLoading && ( isSimple || isAtomic ) && hasNoSubscriberOtherThanAdmin;
 
 	// Track the last viewed tab.
 	// Necessary to properly configure the fixed navigation headers.
