@@ -8,6 +8,8 @@ import {
 	WPCOM_FEATURES_INSTALL_PURCHASED_PLUGINS,
 	PLAN_BUSINESS_MONTHLY,
 	getPlan,
+	TYPE_BUSINESS,
+	findFirstSimilarPlanKey,
 } from '@automattic/calypso-products';
 import page from '@automattic/calypso-router';
 import { Button, CompactCard, Gridicon } from '@automattic/components';
@@ -18,8 +20,13 @@ import { useState } from 'react';
 import { connect } from 'react-redux';
 import DataCenterPicker from 'calypso/blocks/data-center-picker';
 import ActionPanelLink from 'calypso/components/action-panel/link';
+import AsyncLoad from 'calypso/components/async-load';
 import QueryEligibility from 'calypso/components/data/query-atat-eligibility';
 import TrackComponentView from 'calypso/lib/analytics/track-component-view';
+import {
+	type WithIsEligibleForOneClickCheckoutProps,
+	withIsEligibleForOneClickCheckout,
+} from 'calypso/my-sites/checkout/purchase-modal/with-is-eligible-for-one-click-checkout';
 import { useSelector } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import {
@@ -32,6 +39,7 @@ import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import { saveSiteSettings } from 'calypso/state/site-settings/actions';
 import { isSavingSiteSettings } from 'calypso/state/site-settings/selectors';
 import { launchSite } from 'calypso/state/sites/launch/actions';
+import { getCurrentPlan } from 'calypso/state/sites/plans/selectors';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import HoldList, { hasBlockingHold, HardBlockingNotice, getBlockingMessages } from './hold-list';
 import { isAtomicSiteWithoutBusinessPlan } from './utils';
@@ -57,7 +65,10 @@ interface ExternalProps {
 	disableContinueButton?: boolean;
 }
 
-type Props = ExternalProps & ReturnType< typeof mergeProps > & LocalizeProps;
+type Props = ExternalProps &
+	ReturnType< typeof mergeProps > &
+	LocalizeProps &
+	WithIsEligibleForOneClickCheckoutProps;
 
 export const EligibilityWarnings = ( {
 	className,
@@ -83,6 +94,8 @@ export const EligibilityWarnings = ( {
 	makeSitePublic,
 	translate,
 	disableContinueButton,
+	currentPlan,
+	isEligibleForOneClickCheckout,
 }: Props ) => {
 	const warnings = eligibilityData.eligibilityWarnings || [];
 	const listHolds = eligibilityData.eligibilityHolds || [];
@@ -104,6 +117,11 @@ export const EligibilityWarnings = ( {
 	const launchCurrentSite = () => launch( siteId );
 	const makeCurrentSitePublic = () => makeSitePublic( siteId );
 
+	const [ showPurchaseModal, setShowPurchaseModal ] = useState( false );
+	const planSlugForUpgrade = findFirstSimilarPlanKey( currentPlan?.productSlug, {
+		type: TYPE_BUSINESS,
+	} );
+
 	const logEventAndProceed = () => {
 		const options = {
 			geo_affinity: selectedGeoAffinity,
@@ -114,8 +132,12 @@ export const EligibilityWarnings = ( {
 		}
 		if ( siteRequiresUpgrade( listHolds ) ) {
 			recordUpgradeClick( ctaName, feature );
-			const planSlug = PLAN_BUSINESS;
-			let redirectUrl = `/checkout/${ siteSlug }/${ planSlug }`;
+
+			if ( isEligibleForOneClickCheckout?.result ) {
+				setShowPurchaseModal( true );
+				return;
+			}
+			let redirectUrl = `/checkout/${ siteSlug }/${ planSlugForUpgrade }`;
 			if ( context === 'plugins-upload' ) {
 				redirectUrl = `${ redirectUrl }?redirect_to=/plugins/upload/${ siteSlug }`;
 			}
@@ -229,7 +251,14 @@ export const EligibilityWarnings = ( {
 					/>
 				</CompactCard>
 			) }
-
+			{ showPurchaseModal && (
+				<AsyncLoad
+					require="../upsell-nudge/purchase-modal-wrapper"
+					plan={ planSlugForUpgrade }
+					siteSlug={ siteSlug }
+					setShowPurchaseModal={ setShowPurchaseModal }
+				/>
+			) }
 			<CompactCard>
 				<div className="eligibility-warnings__confirm-buttons">
 					<div className="support-block">
@@ -248,7 +277,12 @@ export const EligibilityWarnings = ( {
 							siteIsLaunching ||
 							disableContinueButton
 						}
-						busy={ siteIsLaunching || siteIsSavingSettings || disableContinueButton }
+						busy={
+							siteIsLaunching ||
+							siteIsSavingSettings ||
+							disableContinueButton ||
+							isEligibleForOneClickCheckout?.isLoading
+						}
 						onClick={ logEventAndProceed }
 					>
 						{ getProceedButtonText( listHolds, translate, context ) }
@@ -372,6 +406,7 @@ const mapStateToProps = ( state: Record< string, unknown >, ownProps: ExternalPr
 	let eligibilityData = ownProps.eligibilityData || getEligibility( state, siteId );
 	let isEligible = ownProps.isEligible || isEligibleForAutomatedTransfer( state, siteId );
 	const dataLoaded = ownProps.eligibilityData || !! eligibilityData.lastUpdate;
+	const currentPlan = getCurrentPlan( state, siteId );
 
 	if ( ownProps.isMarketplace ) {
 		( { eligibilityData, isEligible } = processMarketplaceExceptions(
@@ -390,6 +425,7 @@ const mapStateToProps = ( state: Record< string, unknown >, ownProps: ExternalPr
 		siteSlug,
 		siteIsLaunching: getRequest( state, launchSite( siteId ) )?.isLoading ?? false,
 		siteIsSavingSettings: isSavingSiteSettings( state, siteId ?? 0 ),
+		currentPlan,
 	};
 };
 
@@ -468,4 +504,4 @@ export default connect(
 	mapStateToProps,
 	mapDispatchToProps,
 	mergeProps
-)( localize( EligibilityWarnings ) );
+)( localize( withIsEligibleForOneClickCheckout( EligibilityWarnings ) ) );
