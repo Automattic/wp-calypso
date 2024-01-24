@@ -96,7 +96,7 @@ type OwnProps = {
 
 type Props = OwnProps & ConnectedProps;
 
-const UpsellNudge = ( {
+export const UpsellNudge = ( {
 	callToAction,
 	secondaryCallToAction,
 	canManageSite,
