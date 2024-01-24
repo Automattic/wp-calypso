@@ -7,7 +7,7 @@ export default function useErrorDetails( status: MigrationStatusError | null ) {
 
 	const [ title, setTitle ] = useState( '' );
 	const [ subTitle, setSubTitle ] = useState( '' );
-	const [ hintId, setHintId ] = useState();
+	const [ hintId, setHintId ] = useState( '' );
 	const [ goBackCta, showGoBackCta ] = useState( false );
 	const [ getHelpCta, showGetHelpCta ] = useState( false );
 	const [ tryAgainCta, showTryAgainCta ] = useState( false );
@@ -21,6 +21,14 @@ export default function useErrorDetails( status: MigrationStatusError | null ) {
 			case MigrationStatusError.OLD_JETPACK:
 				setTitle( titleA );
 				setHintId( 'jetpack-update' );
+				showTryAgainCta( true );
+				showGetHelpCta( true );
+				break;
+
+			case MigrationStatusError.FORBIDDEN:
+			case MigrationStatusError.GENERIC:
+				setTitle( titleA );
+				setHintId( 'incompatible-plugins' );
 				showTryAgainCta( true );
 				showGetHelpCta( true );
 				break;

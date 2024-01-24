@@ -3,6 +3,7 @@ import { useChatWidget } from '@automattic/help-center/src/hooks';
 import { NextButton, SubTitle, Title } from '@automattic/onboarding';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback } from 'react';
+import { HintIncompatiblePlugins } from './hint-incompatible-plugins';
 import { HintJetpackUpdate } from './hint-jetpack-update';
 import useErrorDetails from './use-error-details';
 import './style.scss';
@@ -37,6 +38,7 @@ export const MigrationError = ( props: Props ) => {
 			{ !! subTitle && <SubTitle>{ subTitle }</SubTitle> }
 
 			{ hintId === 'jetpack-update' && <HintJetpackUpdate sourceSiteSlug={ sourceSiteUrl } /> }
+			{ hintId === 'incompatible-plugins' && <HintIncompatiblePlugins /> }
 
 			{ ( goBackCta || tryAgainCta || getHelpCta ) && (
 				<div className="import__buttons-group">
