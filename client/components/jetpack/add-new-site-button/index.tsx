@@ -14,7 +14,7 @@ type Props = {
 	onClickAddNewSite?: () => void;
 	onClickWpcomMenuItem?: () => void;
 	onClickJetpackMenuItem?: () => void;
-	onClickUrlkMenuItem?: () => void;
+	onClickUrlMenuItem?: () => void;
 };
 
 const AddNewSiteButton = ( {
