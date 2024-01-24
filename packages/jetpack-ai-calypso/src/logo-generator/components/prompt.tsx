@@ -180,7 +180,7 @@ export const Prompt: React.FC< { initialPrompt?: string } > = ( { initialPrompt 
 								'Logo generation costs 10 requests; prompt enhancement costs 1 request each',
 								'jetpack'
 							) }
-							placement="top"
+							placement="bottom"
 						>
 							<Icon className="prompt-footer__icon" icon={ info } />
 						</Tooltip>
