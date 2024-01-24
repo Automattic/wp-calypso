@@ -799,29 +799,6 @@ body.is-section-signup.is-white-signup .layout:not(.dops):not(.is-wccom-oauth-fl
 		}
 	}
 
-	/* TODO: Remove the following when the 2023 pricig grid is live to all users */
-	.signup:not(.is-onboarding-2023-pricing-grid) .signup__step .plans.plans-step {
-		.formatted-header {
-			.formatted-header__title {
-				font-size: 2.25rem;
-				/* stylelint-disable-next-line declaration-property-unit-allowed-list */
-				line-height: 2.5rem;
-				font-weight: 500;
-
-				@include break-mobile {
-					font-size: 2.75rem;
-					/* stylelint-disable-next-line declaration-property-unit-allowed-list */
-					line-height: 3rem;
-				}
-			}
-
-			.formatted-header__subtitle button.is-borderless {
-				font-weight: 500;
-				color: var(--studio-gray-90);
-			}
-		}
-	}
-
 	.signup__step.is-mailbox-domain,
 	.signup__step.is-emails,
 	.signup__step.is-mailbox,

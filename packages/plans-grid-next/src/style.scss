@@ -501,43 +501,27 @@ $mobile-card-max-width: 440px;
 	.plan-features-2023-grid__common-title {
 		.plans-grid-next__features-grid.is-medium &,
 		.plans-grid-next__features-grid.is-large & {
-			.is-section-stepper &,
-			body.is-section-signup.is-white-signup &,
-			.is-2023-pricing-grid & {
-				margin-top: 20px;
-				font-size: $font-body-extra-small;
-			}
+			margin-top: 20px;
+			font-size: $font-body-extra-small;
 		}
 	}
 
 	&.plan-features-2023-grid__header-billing-info {
 		.plans-grid-next__features-grid.is-medium &,
 		.plans-grid-next__features-grid.is-large & {
-			.is-section-stepper &,
-			body.is-section-signup.is-white-signup &,
-			.is-2023-pricing-grid & {
-				padding-bottom: 0;
-			}
+			padding-bottom: 0;
 		}
 
 		.plans-grid-next__billing-timeframe-vip-price {
 			.plans-grid-next__features-grid.is-medium &,
 			.plans-grid-next__features-grid.is-large & {
-				.is-section-stepper &,
-				body.is-section-signup.is-white-signup &,
-				.is-2023-pricing-grid & {
-					font-size: $font-body-small;
-					line-height: 20px;
-				}
+				font-size: $font-body-small;
+				line-height: 20px;
 			}
 
 			.plans-grid-next__features-grid.is-large & {
-				.is-section-stepper &,
-				body.is-section-signup.is-white-signup &,
-				.is-2023-pricing-grid & {
-					font-size: $font-body-extra-small;
-					line-height: 16px;
-				}
+				font-size: $font-body-extra-small;
+				line-height: 16px;
 			}
 		}
 	}
@@ -546,44 +530,29 @@ $mobile-card-max-width: 440px;
 		.plan-features-2023-grid__popular-badge {
 			.plans-grid-next__features-grid.is-medium &,
 			.plans-grid-next__features-grid.is-large & {
-				.is-section-stepper &,
-				body.is-section-signup.is-white-signup &,
-				.is-2023-pricing-grid & {
-					position: absolute;
-					top: -35px; // at -35px this covers the top border of the table, including its top-right radius, as intended
-					right: -1px;
-					border-color: #e0e0e0;
-					border-width: 1px 1px 0 1px;
-					/* stylelint-disable-next-line scales/radii */
-					border-radius: 5px 5px 0 0;
-					border-style: solid;
-					padding-top: 20px;
-					margin-bottom: 0;
+				position: absolute;
+				top: -35px; // at -35px this covers the top border of the table, including its top-right radius, as intended
+				right: -1px;
+				border-color: #e0e0e0;
+				border-width: 1px 1px 0 1px;
+				/* stylelint-disable-next-line scales/radii */
+				border-radius: 5px 5px 0 0;
+				border-style: solid;
+				padding-top: 20px;
+				margin-bottom: 0;
 
-					.plans-grid__plan-pill {
-						transform: translate(20px, 0);
-					}
+				.plans-grid__plan-pill {
+					transform: translate(20px, 0);
 				}
 			}
 		}
 	}
 }
 
-.step-wrapper__header {
-	.plans-grid-next__features-grid.is-medium &,
-	.plans-grid-next__features-grid.is-large & {
-		.is-section-stepper &,
-		body.is-section-signup.is-white-signup &,
-		.is-2023-pricing-grid & {
-			margin: 24px 20px;
-		}
-	}
-}
-
-body.is-section-stepper,
-body.is-section-signup.is-white-signup,
-.is-2023-pricing-grid {
-
+/**
+ * TODO clk consolidate with the rest above
+ */
+.plans-grid-next {
 	.plan-features-2023-grid__table-item {
 		border-right: none;
 		background-color: transparent;
@@ -749,10 +718,26 @@ body.is-section-signup.is-white-signup,
 			color: var(--studio-orange-40);
 		}
 	}
+}
 
+/**
+ * TODO clk migrate out of plans-grid-next
+ */
+body.is-section-stepper,
+body.is-section-signup.is-white-signup {
 	.step-wrapper__header {
 		margin: 24px 20px 38px;
+		@include plans-2023-break-small {
+			margin: 24px 20px;
+		}
 	}
+}
+
+/**
+ * TODO clk migrate out of plans-grid-next
+ */
+.formatted-header {
+	margin-bottom: 0;
 }
 
 .plans-features-main__comparison-grid-container {
@@ -1066,10 +1051,6 @@ body.is-section-signup.is-white-signup,
 			}
 		}
 	}
-}
-
-.formatted-header {
-	margin-bottom: 0;
 }
 
 

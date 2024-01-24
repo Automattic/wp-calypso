@@ -40,31 +40,35 @@ const WrappedComparisonGrid = ( {
 		onUpgradeClick,
 	} );
 
+	const classNames = classnames( 'plans-grid-next', 'plans-grid-next__comparison-grid' );
+
 	return (
-		<PlansGridContextProvider
-			intent={ intent }
-			selectedSiteId={ selectedSiteId }
-			gridPlans={ gridPlans }
-			useCheckPlanAvailabilityForPurchase={ useCheckPlanAvailabilityForPurchase }
-			recordTracksEvent={ recordTracksEvent }
-			allFeaturesList={ allFeaturesList }
-			coupon={ coupon }
-		>
-			<ComparisonGrid
-				intervalType={ intervalType }
-				isInSignup={ isInSignup }
-				isLaunchPage={ isLaunchPage }
-				currentSitePlanSlug={ currentSitePlanSlug }
-				onUpgradeClick={ handleUpgradeClick }
+		<div className={ classNames }>
+			<PlansGridContextProvider
+				intent={ intent }
 				selectedSiteId={ selectedSiteId }
-				selectedPlan={ selectedPlan }
-				selectedFeature={ selectedFeature }
-				showUpgradeableStorage={ showUpgradeableStorage }
-				stickyRowOffset={ stickyRowOffset }
-				onStorageAddOnClick={ onStorageAddOnClick }
-				{ ...otherProps }
-			/>
-		</PlansGridContextProvider>
+				gridPlans={ gridPlans }
+				useCheckPlanAvailabilityForPurchase={ useCheckPlanAvailabilityForPurchase }
+				recordTracksEvent={ recordTracksEvent }
+				allFeaturesList={ allFeaturesList }
+				coupon={ coupon }
+			>
+				<ComparisonGrid
+					intervalType={ intervalType }
+					isInSignup={ isInSignup }
+					isLaunchPage={ isLaunchPage }
+					currentSitePlanSlug={ currentSitePlanSlug }
+					onUpgradeClick={ handleUpgradeClick }
+					selectedSiteId={ selectedSiteId }
+					selectedPlan={ selectedPlan }
+					selectedFeature={ selectedFeature }
+					showUpgradeableStorage={ showUpgradeableStorage }
+					stickyRowOffset={ stickyRowOffset }
+					onStorageAddOnClick={ onStorageAddOnClick }
+					{ ...otherProps }
+				/>
+			</PlansGridContextProvider>
+		</div>
 	);
 };
 
@@ -95,7 +99,7 @@ const WrappedFeaturesGrid = ( props: FeaturesGridExternalProps ) => {
 		] ),
 	} );
 
-	const classNames = classnames( 'plans-grid-next__features-grid', {
+	const classNames = classnames( 'plans-grid-next', 'plans-grid-next__features-grid', {
 		'is-small': 'small' === gridSize,
 		'is-medium': 'medium' === gridSize,
 		'is-large': 'large' === gridSize,
