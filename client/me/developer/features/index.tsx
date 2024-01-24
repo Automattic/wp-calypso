@@ -12,7 +12,7 @@ export const DeveloperFeatures = () => {
 	return (
 		<>
 			<div className="developer-features-list">
-				{ features.map( ( { title, description, linkLearnMore, trackFeatureName } ) => (
+				{ features.map( ( { title, description, linkLearnMore } ) => (
 					<Card className="developer-features-list__item">
 						<div className="developer-features-list__item-title">{ title }</div>
 						<div className="developer-features-list__item-description">{ description }</div>
@@ -22,7 +22,7 @@ export const DeveloperFeatures = () => {
 									href={ linkLearnMore }
 									target="_blank"
 									rel="noopener noreferrer"
-									onClick={ () => handleClickLink( trackFeatureName ) }
+									onClick={ handleClickLink }
 								>
 									{ translate( 'Learn more' ) }
 								</a>
