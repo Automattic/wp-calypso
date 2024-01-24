@@ -46,6 +46,7 @@ type Settings = {
 	custom_adstxt_enabled?: boolean;
 	custom_adstxt?: string;
 	jetpack_module_enabled?: boolean;
+	cmp_enabled?: boolean;
 };
 
 const AdsFormSettings = () => {
@@ -135,6 +136,7 @@ const AdsFormSettings = () => {
 			custom_adstxt_enabled: false,
 			custom_adstxt: '',
 			jetpack_module_enabled: false,
+			cmp_enabled: false,
 		};
 	}
 
@@ -150,6 +152,7 @@ const AdsFormSettings = () => {
 			custom_adstxt_enabled: settings.custom_adstxt_enabled,
 			custom_adstxt: settings.custom_adstxt,
 			jetpack_module_enabled: settings.jetpack_module_enabled,
+			cmp_enabled: settings.cmp_enabled,
 		};
 	}
 
@@ -407,6 +410,30 @@ const AdsFormSettings = () => {
 						</FormFieldset>
 					</div>
 				) }
+				<FormFieldset>
+					{ /* <SupportInfo
+						text={ translate(
+							'Activates GDPR Consent Banner for EU Compliance. Let site visitors easily provide consent for personalized ads.'
+						) }
+						link={ localizeUrl(
+							'https://wordpress.com/support/us-privacy-laws-and-your-wordpress-com-site/'
+						) }
+					/> */ }
+					<ToggleControl
+						checked={ !! settings.cmp_enabled }
+						disabled={ isDisabled }
+						onChange={ () => handleCompactToggle( 'cmp_enabled' ) }
+						label={ translate( 'Enable GDPR Consent banner for EU visitors' ) }
+					/>
+
+					<div className="ads__child-settings">
+						<FormSettingExplanation>
+							{ translate(
+								'Activates GDPR Consent Banner for EU Compliance. Let site visitors easily provide consent for personalized ads.'
+							) }
+						</FormSettingExplanation>
+					</div>
+				</FormFieldset>
 			</div>
 		);
 	}
