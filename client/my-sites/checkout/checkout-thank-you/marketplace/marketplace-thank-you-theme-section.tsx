@@ -130,7 +130,7 @@ export const ThankYouThemeSection = ( {
 		getCustomizeUrl( state, theme.id, siteId, isFSEActive )
 	);
 	const siteUrl = useSelector( ( state ) => getSiteUrl( state, siteId ) ) ?? undefined;
-	const themeOptions = useSelector( ( state ) => getThemePreviewThemeOptions( state ) );
+	const themeOptions = useSelector( getThemePreviewThemeOptions );
 
 	const siteSlug = useSelector( ( state ) => getSiteSlug( state, siteId ) );
 

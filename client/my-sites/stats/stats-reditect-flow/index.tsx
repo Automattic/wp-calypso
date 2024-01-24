@@ -13,7 +13,7 @@ import { isStatsNoticeSettingsFetching } from 'calypso/state/stats/notices/selec
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 
 const StatsRedirectFlow = () => {
-	const siteId = useSelector( ( state ) => getSelectedSiteId( state ) );
+	const siteId = useSelector( getSelectedSiteId );
 	const siteSlug = useSelector( ( state ) => getSiteSlug( state, siteId ) );
 	const siteCreatedTimeStamp = useSelector( ( state ) =>
 		getSiteOption( state, siteId, 'created_at' )

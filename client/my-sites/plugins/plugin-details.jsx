@@ -92,7 +92,7 @@ function PluginDetails( props ) {
 	const siteIds = [ ...new Set( siteObjectsToSiteIds( sites ) ) ];
 	const selectedOrAllSites = useSelector( getSelectedOrAllSites );
 	const isRequestingSites = useSelector( checkRequestingSites );
-	const requestingPluginsForSites = useSelector( ( state ) => isRequestingForAllSites( state ) );
+	const requestingPluginsForSites = useSelector( isRequestingForAllSites );
 	const analyticsPath = selectedSite ? '/plugins/:plugin/:site' : '/plugins/:plugin';
 	const isLoggedIn = useSelector( isUserLoggedIn );
 	const { localizePath } = useLocalizedPlugins();
@@ -139,7 +139,7 @@ function PluginDetails( props ) {
 	const isWide = useBreakpoint( '>960px' );
 
 	// Determine if the plugin is WPcom or WPorg hosted
-	const productsList = useSelector( ( state ) => getProductsList( state ) );
+	const productsList = useSelector( getProductsList );
 	const isProductListFetched = Object.values( productsList ).length > 0;
 
 	const isMarketplaceProduct = useSelector( ( state ) =>

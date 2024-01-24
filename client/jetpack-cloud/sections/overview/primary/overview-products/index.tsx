@@ -17,8 +17,8 @@ export default function OverviewProducts() {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 
-	const userProducts = useSelector( ( state ) => getProductsList( state ) );
-	const isFetchingUserProducts = useSelector( ( state ) => isProductsListFetching( state ) );
+	const userProducts = useSelector( getProductsList );
+	const isFetchingUserProducts = useSelector( isProductsListFetching );
 	const { data: agencyProducts, isLoading: isLoadingProducts } = useProductsQuery();
 
 	// Track the View All click

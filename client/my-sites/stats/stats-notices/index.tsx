@@ -110,7 +110,7 @@ const NewStatsNotices = ( { siteId, isOdysseyStats, statsPurchaseSuccess }: Stat
 	const { isLoading, isError, data: serverNoticesVisibility } = useNoticesVisibilityQuery( siteId );
 
 	// TODO: Integrate checking purchases and plans loaded state into `hasSiteProductJetpackStatsPaid`.
-	const hasLoadedPurchases = useSelector( ( state ) => hasLoadedSitePurchasesFromServer( state ) );
+	const hasLoadedPurchases = useSelector( hasLoadedSitePurchasesFromServer );
 	// Only check plans loaded state for supporting Stats on WPCOM.
 	const hasLoadedPlans =
 		useSelector( ( state ) => hasLoadedSitePlansFromServer( state, siteId ) ) || isOdysseyStats;

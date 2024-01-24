@@ -41,7 +41,7 @@ function MembershipsSection( { query }: MembershipsSectionProps ) {
 	const source = getSource();
 	const [ disconnectedConnectedAccountId, setDisconnectedConnectedAccountId ] = useState( null );
 
-	const site = useSelector( ( state ) => getSelectedSite( state ) );
+	const site = useSelector( getSelectedSite );
 
 	const connectedAccountId = useSelector( ( state ) =>
 		getConnectedAccountIdForSiteId( state, site?.ID )

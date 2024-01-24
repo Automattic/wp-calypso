@@ -19,7 +19,7 @@ interface Props {
 function TeamMembers( props: Props ) {
 	const translate = useTranslate();
 	const { search, usersQuery, showAddTeamMembersBtn = true } = props;
-	const site = useSelector( ( state ) => getSelectedSite( state ) );
+	const site = useSelector( getSelectedSite );
 
 	const listKey = [ 'team-members', site?.ID, search ].join( '-' );
 	const { data, fetchNextPage, isLoading, isFetchingNextPage, hasNextPage } = usersQuery;
