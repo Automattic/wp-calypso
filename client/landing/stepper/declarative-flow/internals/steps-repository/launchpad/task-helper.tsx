@@ -561,7 +561,7 @@ export function getEnhancedTasks( {
 					taskData = getTaskDefinition( flow, task, context ) || deprecatedData;
 					break;
 				case 'videopress_launched':
-					taskData = {
+					deprecatedData = {
 						isLaunchTask: true,
 						actionDispatch: () => {
 							if ( site?.ID ) {
@@ -587,6 +587,7 @@ export function getEnhancedTasks( {
 							}
 						},
 					};
+					taskData = getTaskDefinition( flow, task, context ) || deprecatedData;
 					break;
 				case 'domain_upsell':
 					deprecatedData = {
