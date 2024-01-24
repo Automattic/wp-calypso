@@ -2,12 +2,13 @@ import page from '@automattic/calypso-router';
 import { Card } from '@automattic/components';
 import { localize } from 'i18n-calypso';
 import { isEmpty, flowRight } from 'lodash';
-import { Component } from 'react';
+import { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
 import EligibilityWarnings from 'calypso/blocks/eligibility-warnings';
 import UploadDropZone from 'calypso/blocks/upload-drop-zone';
 import QueryEligibility from 'calypso/components/data/query-atat-eligibility';
 import EmptyContent from 'calypso/components/empty-content';
+import FeatureExample from 'calypso/components/feature-example';
 import HeaderCake from 'calypso/components/header-cake';
 import Main from 'calypso/components/main';
 import NavigationHeader from 'calypso/components/navigation-header';
@@ -88,14 +89,18 @@ class PluginUpload extends Component {
 	};
 
 	renderUploadCard() {
-		const { inProgress, complete, isJetpack } = this.props;
+		const { inProgress, complete, isJetpack, isAtomic } = this.props;
 
 		const uploadAction = isJetpack
 			? this.props.uploadPlugin
 			: this.props.initiateAutomatedTransferWithPluginZip;
 
+		const WrapperComponent = ! isAtomic ? FeatureExample : Fragment;
+
 		return (
-			<Card>{ ! inProgress && ! complete && <UploadDropZone doUpload={ uploadAction } /> }</Card>
+			<WrapperComponent>
+				<Card>{ ! inProgress && ! complete && <UploadDropZone doUpload={ uploadAction } /> }</Card>
+			</WrapperComponent>
 		);
 	}
 
@@ -117,7 +122,7 @@ class PluginUpload extends Component {
 	};
 
 	trialRequested = () => {
-		this.setState( { hasRequestedTrial: true } );
+		this.setState( { hasRequestedTrial: true, showEligibility: false } );
 	};
 
 	requestUpdatedSiteData = ( isTransferring, wasTransferring, isTransferCompleted ) => {
@@ -168,7 +173,8 @@ class PluginUpload extends Component {
 						showFreeTrial={ isEligibleForHostingTrial }
 					/>
 				) }
-				{ ( ( ! isJetpackMultisite && ! showEligibility ) || isAtomic ) && this.renderUploadCard() }
+				{ ( ( ! isJetpackMultisite && ! showEligibility ) || isAtomic || isTrialSite ) &&
+					this.renderUploadCard() }
 				{ isEligibleForHostingTrial && showTrialAcknowledgeModal && (
 					<TrialAcknowledgeModal
 						setOpenModal={ this.setOpenModal }

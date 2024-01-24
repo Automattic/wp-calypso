@@ -1,4 +1,5 @@
 import { createHigherOrderComponent } from '@wordpress/compose';
+import { waitFor } from 'calypso/my-sites/marketplace/util';
 import { useDispatch, useSelector } from 'calypso/state';
 import { requestEligibility } from 'calypso/state/automated-transfer/actions';
 import { getCurrentUserLocale } from 'calypso/state/current-user/selectors';
@@ -14,7 +15,8 @@ export const WithOnclickTrialRequest = createHigherOrderComponent(
 		const siteId = useSelector( getSelectedSiteId ) as number;
 		const locale = useSelector( getCurrentUserLocale );
 		const fetchUpdatedData = () => {
-			dispatch( requestSite( siteId ) );
+			//after transfer is complete we wait to fetch update site with `is_wpcom_atomic`
+			waitFor( 2 ).then( () => dispatch( requestSite( siteId ) ) );
 			dispatch( fetchSitePlans( siteId ) );
 			dispatch( fetchSiteFeatures( siteId ) );
 			dispatch( requestEligibility( siteId ) );
