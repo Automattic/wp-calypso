@@ -99,6 +99,13 @@ export default function useErrorDetails( status: MigrationStatusError | null ) {
 				showGetHelpCta( true );
 				break;
 
+			case MigrationStatusError.MISSING_SOURCE_MASTER_USER:
+				setTitle( titleC );
+				setHintId( 'jetpack-connection' );
+				showTryAgainCta( true );
+				showGetHelpCta( true );
+				break;
+
 			// Miscellaneous
 			case MigrationStatusError.GENERAL:
 			case MigrationStatusError.UNKNOWN:
