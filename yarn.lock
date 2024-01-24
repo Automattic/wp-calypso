@@ -211,7 +211,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@automattic/calypso-analytics@workspace:^, @automattic/calypso-analytics@workspace:packages/calypso-analytics":
+"@automattic/calypso-analytics@npm:1.1.1, @automattic/calypso-analytics@workspace:^, @automattic/calypso-analytics@workspace:packages/calypso-analytics":
   version: 0.0.0-use.local
   resolution: "@automattic/calypso-analytics@workspace:packages/calypso-analytics"
   dependencies:
@@ -626,7 +626,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@automattic/data-stores@workspace:^, @automattic/data-stores@workspace:packages/data-stores":
+"@automattic/data-stores@npm:3.0.1, @automattic/data-stores@workspace:^, @automattic/data-stores@workspace:packages/data-stores":
   version: 0.0.0-use.local
   resolution: "@automattic/data-stores@workspace:packages/data-stores"
   dependencies:
@@ -1041,10 +1041,10 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@automattic/jetpack-ai-calypso@workspace:packages/jetpack-ai-calypso"
   dependencies:
-    "@automattic/calypso-analytics": "workspace:^"
+    "@automattic/calypso-analytics": "npm:1.1.1"
     "@automattic/calypso-build": "workspace:^"
     "@automattic/calypso-typescript-config": "workspace:^"
-    "@automattic/data-stores": "workspace:^"
+    "@automattic/data-stores": "npm:3.0.1"
     "@testing-library/jest-dom": "npm:^6.2.0"
     "@testing-library/react": "npm:^14.1.2"
     "@wordpress/data": "npm:^9.19.0"
