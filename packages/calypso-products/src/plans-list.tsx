@@ -1982,7 +1982,7 @@ const get2023AgencyPlanDetails = (): IncompleteWPcomPlan => ( {
 	getAudience: () => i18n.translate( 'Best for agencies' ),
 	getPlanTagline: () =>
 		i18n.translate(
-			"Manage multiple WordPress sites with WP Cloud's powerful infrastructure and Bluehost's platform experience."
+			"Manage multiple WordPress sites with WP Cloud’s powerful infrastructure and Bluehost’s platform experience."
 		),
 	getDescription: () => '',
 	get2023PricingGridSignupWpcomFeatures: () => [ FEATURE_SITE_BUNDLE ],
