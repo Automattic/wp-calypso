@@ -429,7 +429,7 @@ const AdsFormSettings = () => {
 					<div className="ads__child-settings">
 						<FormSettingExplanation>
 							{ translate(
-								'Enables the CMP Banner to ensure GDPR compliance for EU visitors. Lets EU site visitors provide consent for personalized ads.'
+								'Enable the GDPR Banner to ensure compliance with EU laws by allowing EU site visitors provide consent for personalized ads.'
 							) }
 						</FormSettingExplanation>
 					</div>
