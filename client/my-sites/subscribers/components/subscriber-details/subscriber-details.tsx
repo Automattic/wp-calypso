@@ -130,9 +130,7 @@ const SubscriberDetails = ( {
 					) }
 					{ url && (
 						<div className="subscriber-details__content-column">
-							<div className="subscriber-details__content-label">
-								{ translate( 'Primary site' ) }
-							</div>
+							<div className="subscriber-details__content-label">{ translate( 'Site' ) }</div>
 							<div className="subscriber-details__content-value">
 								<ExternalLink href={ url }>{ url }</ExternalLink>
 							</div>
