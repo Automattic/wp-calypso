@@ -14,18 +14,16 @@ import NavigationHeader from 'calypso/components/navigation-header';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import HostingActivateStatus from 'calypso/my-sites/hosting/hosting-activate-status';
 import { TrialAcknowledgeModal } from 'calypso/my-sites/plans/trials/trial-acknowledge/acknowlege-modal';
+import { WithOnclickTrialRequest } from 'calypso/my-sites/plans/trials/trial-acknowledge/with-onclick-trial-request';
 import { isHostingTrialSite } from 'calypso/sites-dashboard/utils';
 import {
 	fetchAutomatedTransferStatus,
 	initiateAutomatedTransferWithPluginZip,
-	requestEligibility,
 } from 'calypso/state/automated-transfer/actions';
 import {
 	getEligibility,
 	isEligibleForAutomatedTransfer,
 } from 'calypso/state/automated-transfer/selectors';
-import { getCurrentUserLocale } from 'calypso/state/current-user/selectors';
-import { fetchJITM } from 'calypso/state/jitm/actions';
 import { productToBeInstalled } from 'calypso/state/marketplace/purchase-flow/actions';
 import { successNotice } from 'calypso/state/notices/actions';
 import { uploadPlugin, clearPluginUpload } from 'calypso/state/plugins/upload/actions';
@@ -35,9 +33,6 @@ import isPluginUploadComplete from 'calypso/state/selectors/is-plugin-upload-com
 import isPluginUploadInProgress from 'calypso/state/selectors/is-plugin-upload-in-progress';
 import isSiteWpcomAtomic from 'calypso/state/selectors/is-site-wpcom-atomic';
 import { isUserEligibleForFreeHostingTrial } from 'calypso/state/selectors/is-user-eligible-for-free-hosting-trial';
-import { requestSite } from 'calypso/state/sites/actions';
-import { fetchSiteFeatures } from 'calypso/state/sites/features/actions';
-import { fetchSitePlans } from 'calypso/state/sites/plans/actions';
 import {
 	getSiteAdminUrl,
 	isJetpackSite,
@@ -122,7 +117,6 @@ class PluginUpload extends Component {
 	};
 
 	trialRequested = () => {
-		this.props.requestSiteEligibility( this.props.siteId );
 		this.setState( { hasRequestedTrial: true } );
 	};
 
@@ -131,16 +125,7 @@ class PluginUpload extends Component {
 			this.setState( { isTransferring: true } );
 		}
 		if ( wasTransferring && isTransferCompleted ) {
-			this.props.fetchSitePlans( this.props.siteId );
-			this.props.fetchSiteFeatures( this.props.siteId );
-			this.props.requestSiteById( this.props.siteId );
-			this.props.requestSiteEligibility( this.props.siteId );
-			this.props.fetchJITM(
-				this.props.siteId,
-				'calypso:sites:sidebar_notice',
-				null,
-				this.props.locale
-			);
+			this.props.fetchUpdatedData();
 			this.setState( { isTransferring: false } );
 		}
 	};
@@ -226,7 +211,6 @@ const mapStateToProps = ( state ) => {
 		showEligibility: ! isJetpack && ( hasEligibilityMessages || ! isEligible ),
 		isEligibleForHostingTrial,
 		isTrialSite: isHostingTrialSite( site ),
-		locale: getCurrentUserLocale( state ),
 	};
 };
 
@@ -238,13 +222,8 @@ const flowRightArgs = [
 		successNotice,
 		productToBeInstalled,
 		fetchAutomatedTransferStatus,
-		requestSiteById: requestSite,
-		requestSiteEligibility: requestEligibility,
-		fetchSiteFeatures,
-		fetchSitePlans,
-		fetchJITM,
 	} ),
 	localize,
 ];
 
-export default flowRight( ...flowRightArgs )( PluginUpload );
+export default flowRight( ...flowRightArgs )( WithOnclickTrialRequest( PluginUpload ) );
