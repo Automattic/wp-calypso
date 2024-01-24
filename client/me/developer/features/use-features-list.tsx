@@ -1,11 +1,13 @@
 import { localizeUrl } from '@automattic/i18n-utils';
 import { useTranslate } from 'i18n-calypso';
+import { handleClickLink } from './handle-click-link';
 
 export const useFeaturesList = () => {
 	const translate = useTranslate();
 
 	return [
 		{
+			trackFeatureName: 'SFTP, SSH, and WP-CLI',
 			title: translate( 'SFTP, SSH, and WP-CLI', {
 				comment: 'Feature title',
 			} ),
@@ -18,6 +20,7 @@ export const useFeaturesList = () => {
 			linkLearnMore: localizeUrl( '/support/connect-to-ssh-on-wordpress-com' ),
 		},
 		{
+			trackFeatureName: 'Staging sites',
 			title: translate( 'Staging sites', {
 				comment: 'Feature title',
 			} ),
@@ -30,6 +33,7 @@ export const useFeaturesList = () => {
 			linkLearnMore: localizeUrl( '/support/how-to-create-a-staging-site/' ),
 		},
 		{
+			trackFeatureName: 'Custom code',
 			title: translate( 'Custom code', {
 				comment: 'Feature title',
 			} ),
@@ -42,6 +46,7 @@ export const useFeaturesList = () => {
 			linkLearnMore: localizeUrl( '/support/code' ),
 		},
 		{
+			trackFeatureName: 'Free SSL certificates',
 			title: translate( 'Free SSL certificates', {
 				comment: 'Feature title',
 			} ),
@@ -54,11 +59,12 @@ export const useFeaturesList = () => {
 			linkLearnMore: localizeUrl( '/support/domains/https-ssl' ),
 		},
 		{
+			trackFeatureName: '24/7 expert support',
 			title: translate( '24/7 expert support', {
 				comment: 'Feature title',
 			} ),
 			description: translate(
-				"Whenever you're stuck, whatever you're trying to make happen—our Happiness Engineers have the answers.",
+				"Whenever you're stuck, whatever you're trying to make happen — our Happiness Engineers have the answers.",
 				{
 					comment: 'Feature description',
 				}
@@ -66,11 +72,12 @@ export const useFeaturesList = () => {
 			linkLearnMore: localizeUrl( '/support/help-support-options' ),
 		},
 		{
+			trackFeatureName: 'Malware scanning and removal',
 			title: translate( 'Malware scanning and removal', {
 				comment: 'Feature title',
 			} ),
 			description: translate(
-				'Secure and maintain your site effortlessly with {{backupsLink}}real-time backups{{/backupsLink}}, advanced {{malwareScanningLink}}malware scanning and removal{{/malwareScanningLink}}, and continuous {{siteMonitoringLink}}site monitoring{{/siteMonitoringLink}}—ensuring peak performance and security at all times.',
+				'Secure and maintain your site effortlessly with {{backupsLink}}real-time backups{{/backupsLink}}, advanced {{malwareScanningLink}}malware scanning and removal{{/malwareScanningLink}}, and continuous {{siteMonitoringLink}}site monitoring{{/siteMonitoringLink}} — ensuring peak performance and security at all times.',
 				{
 					comment: 'Feature description',
 					components: {
@@ -79,6 +86,7 @@ export const useFeaturesList = () => {
 								href={ localizeUrl( '/support/restore' ) }
 								target="_blank"
 								rel="noopener noreferrer"
+								onClick={ () => handleClickLink( 'Malware scanning and removal' ) }
 							/>
 						),
 						malwareScanningLink: (
@@ -86,6 +94,7 @@ export const useFeaturesList = () => {
 								href={ localizeUrl( '/support/malware-and-site-security' ) }
 								target="_blank"
 								rel="noopener noreferrer"
+								onClick={ () => handleClickLink( 'Malware scanning and removal' ) }
 							/>
 						),
 						siteMonitoringLink: (
@@ -93,12 +102,12 @@ export const useFeaturesList = () => {
 								href={ localizeUrl( '/support/site-monitoring' ) }
 								target="_blank"
 								rel="noopener noreferrer"
+								onClick={ () => handleClickLink( 'Malware scanning and removal' ) }
 							/>
 						),
 					},
 				}
 			),
-			linkLearnMore: '#',
 		},
 	];
 };

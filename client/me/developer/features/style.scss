@@ -11,10 +11,12 @@
 	.developer-features-list__item {
 		display: flex;
 		flex-direction: column;
-		border-radius: 2px;
-		border: 1px solid #dcdcde;
-		background: #fff;
-		padding: 23px 23px 0 23px;
+		margin-bottom: 0;
+
+		a {
+			font-size: rem(13px);
+			color: #c9356e;
+		}
 
 		.developer-features-list__item-title {
 			padding-bottom: 8px;
@@ -31,18 +33,11 @@
 			letter-spacing: -0.15px;
 		}
 		.developer-features-list__item-learn-more {
-			padding-bottom: 23px;
 			margin-top: auto;
-
-			a {
-				line-height: 13px;
-				font-size: rem(13px);
-				color: #c9356e;
-			}
 		}
 	}
 
-	@media ( max-width: $break-medium ) {
+	@media ( max-width: $break-large ) {
 		display: block;
 
 		.developer-features-list__item {
