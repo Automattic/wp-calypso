@@ -23,6 +23,7 @@ import {
 import { useGithubCreateDeploymentMutation } from './use-github-create-deployment-mutation';
 import { useGithubDeleteDeploymentMutation } from './use-github-delete-deployment-mutation';
 import { useGithubDeploymentsQuery } from './use-github-deployments-query';
+import './style.scss';
 
 type Service = {
 	connect_URL: string;
@@ -34,6 +35,7 @@ const noticeOptions = {
 
 export const GitHubAppCard = () => {
 	const queryClient = useQueryClient();
+	const [ newRepoName, setNewRepoName ] = useState();
 	const [ selectedRepo, setSetSelectedRepo ] = useState<
 		{ repoName: string; branchName: string } | undefined
 	>( undefined );
@@ -137,7 +139,12 @@ export const GitHubAppCard = () => {
 					>
 						{ connection?.ID && (
 							<div
-								style={ { display: 'flex', alignItems: 'center', justifyContent: 'space-between' } }
+								style={ {
+									display: 'flex',
+									alignItems: 'center',
+									justifyContent: 'space-between',
+									width: '100%',
+								} }
 							>
 								<SearchRepos
 									siteId={ siteId }
@@ -150,6 +157,7 @@ export const GitHubAppCard = () => {
 								/>
 								<Button
 									primary
+									style={ { minWidth: 200 } }
 									onClick={ () => {
 										createDeployment( selectedRepo );
 									} }
@@ -160,6 +168,57 @@ export const GitHubAppCard = () => {
 								</Button>
 							</div>
 						) }
+						<div
+							style={ {
+								borderTop: '1px solid rgba(0,0,0, .1)',
+								height: 1,
+								width: '100%',
+								margin: '16px 0',
+							} }
+						/>
+						<div style={ { width: '100%' } }>
+							{ connection?.ID && (
+								<div
+									style={ {
+										display: 'flex',
+										alignItems: 'center',
+										justifyContent: 'space-between',
+										width: '100%',
+									} }
+								>
+									<input
+										className="form-text-input"
+										type="text"
+										value={ newRepoName }
+										onChange={ ( event ) => setNewRepoName( event.target.value ) }
+									/>
+									<Button
+										primary
+										style={ { minWidth: 200 } }
+										onClick={ () => {
+											createDeployment( {
+												repoName: newRepoName,
+												template: 'sage',
+											} );
+										} }
+										busy={ isCreatingDeployment }
+										disabled={ ! newRepoName }
+									>
+										<span>{ __( 'Create Sage repo' ) }</span>
+									</Button>
+								</div>
+							) }
+						</div>
+
+						<div
+							style={ {
+								borderTop: '1px solid rgba(0,0,0, .1)',
+								height: 1,
+								width: '100%',
+								margin: '16px 0',
+							} }
+						/>
+
 						<div style={ { display: 'flex', flexDirection: 'column', gap: 8, width: '100%' } }>
 							<strong>Connected branches</strong>
 							{ Object.entries( connectedRepositories ).map( ( entry ) => (

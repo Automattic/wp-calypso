@@ -5,8 +5,8 @@ import { GITHUB_INTEGRATION_QUERY_KEY } from './constants';
 
 interface MutationVariables {
 	repoName: string | undefined;
-	branchName: string | undefined;
-	basePath?: string;
+	branchName?: string | undefined;
+	template?: string;
 }
 
 interface MutationResponse {
@@ -25,13 +25,13 @@ export const useGithubCreateDeploymentMutation = (
 	const queryClient = useQueryClient();
 	const mutation = useMutation( {
 		//todo sent basePath
-		mutationFn: async ( { repoName, branchName, basePath }: MutationVariables ) =>
+		mutationFn: async ( { repoName, branchName, template }: MutationVariables ) =>
 			wp.req.post(
 				{
 					path: `/sites/${ siteId }/hosting/github-app/deployment`,
 					apiNamespace: 'wpcom/v2',
 				},
-				{ repo: repoName, branch: branchName, base_path: basePath }
+				{ repo: repoName, branch: branchName, template }
 			),
 		...options,
 		onSuccess: async ( ...args ) => {
