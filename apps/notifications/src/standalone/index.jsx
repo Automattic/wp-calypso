@@ -1,5 +1,5 @@
 import '@automattic/calypso-polyfills';
-import { createElement } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import ReactDOM from 'react-dom';
 import Notifications, { refreshNotes } from '../panel/Notifications';
 import { createClient } from './client';
@@ -18,7 +18,6 @@ const customEnhancer = ( next ) => ( reducer, initialState ) =>
 	( store = next( reducer, initialState ) );
 
 const customMiddleware = {
-	APP_IS_READY: [ () => sendMessage( { action: 'iFrameReady' } ) ],
 	APP_RENDER_NOTES: [
 		( st, { latestType, newNoteCount } ) =>
 			newNoteCount > 0
@@ -71,26 +70,32 @@ const customMiddleware = {
 	],
 };
 
-const render = ( wpcom ) => {
-	document.body.classList.add( 'font-smoothing-antialiased' );
+function useStorageAccess() {
+	const [ hasAccess, setAccess ] = useState( null );
 
-	ReactDOM.render(
-		createElement( Notifications, {
-			customEnhancer,
-			customMiddleware,
-			isShowing,
-			isVisible,
-			locale,
-			receiveMessage: sendMessage,
-			redirectPath: '/',
-			wpcom,
-		} ),
-		document.getElementsByClassName( 'wpnc__main' )[ 0 ]
-	);
-};
+	useEffect( () => {
+		document.hasStorageAccess().then( ( value ) => setAccess( value ) );
+	}, [] );
+
+	const requestAccess = useCallback( () => {
+		document
+			.requestStorageAccess()
+			.then( () => setAccess( true ) )
+			.catch( ( error ) => {
+				// eslint-disable-next-line no-console
+				console.error( 'requestStorageAccess failed:', error );
+				setAccess( false );
+			} );
+	}, [] );
+
+	return {
+		hasAccess,
+		requestAccess,
+	};
+}
 
 const setTracksUser = ( wpcom ) => {
-	wpcom
+	return wpcom
 		.me()
 		.get( { fields: 'ID,username' } )
 		.then( ( { ID, username } ) => {
@@ -100,9 +105,69 @@ const setTracksUser = ( wpcom ) => {
 		.catch( () => {} );
 };
 
-const init = ( wpcom ) => {
-	setTracksUser( wpcom );
-	render( wpcom );
+async function createAndSetupClient() {
+	const wpcom = await createClient();
+	await setTracksUser( wpcom );
+	return wpcom;
+}
+
+function NotificationsApp() {
+	const { hasAccess, requestAccess } = useStorageAccess();
+	const [ wpcom, setWpcom ] = useState( null );
+
+	useEffect( () => {
+		sendMessage( { action: 'iFrameReady' } );
+	}, [] );
+
+	useEffect( () => {
+		if ( ! wpcom && hasAccess ) {
+			createAndSetupClient().then( ( c ) => setWpcom( c ) );
+		}
+	}, [ wpcom, hasAccess ] );
+
+	if ( hasAccess === null ) {
+		return null;
+	}
+	if ( hasAccess === false ) {
+		return (
+			<div style={ { background: '#f6f7f7', padding: '10px' } }>
+				<button
+					className="wpnc__button"
+					style={ { margin: '0px auto' } }
+					onClick={ () => requestAccess() }
+				>
+					Request Access
+				</button>
+			</div>
+		);
+	}
+
+	if ( ! wpcom ) {
+		return null;
+	}
+
+	return (
+		<Notifications
+			customEnhancer={ customEnhancer }
+			customMiddleware={ customMiddleware }
+			isShowing={ isShowing }
+			isVisible={ isVisible }
+			locale={ locale }
+			receiveMessage={ sendMessage }
+			redirectPath="/"
+			wpcom={ wpcom }
+		/>
+	);
+}
+
+const render = () => {
+	document.body.classList.add( 'font-smoothing-antialiased' );
+
+	ReactDOM.render( <NotificationsApp />, document.getElementsByClassName( 'wpnc__main' )[ 0 ] );
+};
+
+const init = () => {
+	render();
 
 	const refresh = () => store.dispatch( { type: 'APP_REFRESH_NOTES', isVisible } );
 	const reset = () => store.dispatch( { type: 'SELECT_NOTE', noteId: null } );
@@ -138,4 +203,4 @@ const init = ( wpcom ) => {
 	);
 };
 
-createClient().then( init );
+init();

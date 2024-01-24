@@ -86,10 +86,6 @@ export class Notifications extends PureComponent {
 		client.setVisibility( { isShowing, isVisible } );
 	}
 
-	componentDidMount() {
-		store.dispatch( { type: 'APP_IS_READY' } );
-	}
-
 	// @TODO: Please update https://github.com/Automattic/wp-calypso/issues/58453 if you are refactoring away from UNSAFE_* lifecycle methods!
 	UNSAFE_componentWillReceiveProps( { isShowing, isVisible, wpcom } ) {
 		if ( wpcom !== this.props.wpcom ) {
