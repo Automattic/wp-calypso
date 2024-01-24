@@ -224,10 +224,10 @@ class NotificationSubscriptions extends Component {
 								<span>
 									{ locale === 'en' ||
 									i18n.hasTranslation(
-										'Pause all email updates from blogs you’re following on WordPress.com'
+										'Pause all email updates from sites you’re following on WordPress.com'
 									)
 										? this.props.translate(
-												'Pause all email updates from blogs you’re following on WordPress.com'
+												'Pause all email updates from sites you’re following on WordPress.com'
 										  )
 										: this.props.translate(
 												'Block all email updates from blogs you’re following on WordPress.com'
