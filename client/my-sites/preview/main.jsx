@@ -197,7 +197,7 @@ class PreviewMain extends Component {
 
 const ConnectedPreviewMain = ( props ) => {
 	const dispatch = useDispatch();
-	const selectedSiteId = useSelector( ( state ) => getSelectedSiteId( state ) );
+	const selectedSiteId = useSelector( getSelectedSiteId );
 	const stateToProps = useSelector( ( state ) => {
 		const site = getSelectedSite( state );
 		const homePagePostId = get( site, [ 'options', 'page_on_front' ] );

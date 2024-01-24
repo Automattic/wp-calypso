@@ -85,8 +85,8 @@ const HelpCenter: React.FC< Container > = ( {
 	}, [] );
 	const { setSite } = useDispatch( HELP_CENTER_STORE );
 
-	const siteId = useSelector( ( state ) => getSelectedSiteId( state ) );
-	const primarySiteId = useSelector( ( state ) => getPrimarySiteId( state ) );
+	const siteId = useSelector( getSelectedSiteId );
+	const primarySiteId = useSelector( getPrimarySiteId );
 
 	useSelect( ( select ) => ( select( USER_STORE ) as UserSelect ).getCurrentUser(), [] );
 

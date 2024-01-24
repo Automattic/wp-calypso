@@ -27,7 +27,7 @@ interface Props {
 function SubscribersTeam( props: Props ) {
 	const translate = useTranslate();
 	const { filter, search } = props;
-	const site = useSelector( ( state ) => getSelectedSite( state ) );
+	const site = useSelector( getSelectedSite );
 	const isJetpack = useSelector( ( state ) => isJetpackSite( state, site?.ID ) );
 	const isPossibleJetpackConnectionProblem = useIsJetpackConnectionProblem( site?.ID as number );
 	const pendingInvites = useSelector( ( state ) =>

@@ -8,7 +8,7 @@ import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 export default function StagingSiteNotice( { plugin } ) {
 	const translate = useTranslate();
 
-	const siteId = useSelector( ( state ) => getSelectedSiteId( state ) );
+	const siteId = useSelector( getSelectedSiteId );
 	const productionSite = useSelector( ( state ) =>
 		getProductionSiteForWpcomStaging( state, siteId )
 	);

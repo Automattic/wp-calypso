@@ -41,7 +41,7 @@ interface StatsSubscribersPageProps {
 const StatsSubscribersPage = ( { period }: StatsSubscribersPageProps ) => {
 	const translate = useTranslate();
 	// Use hooks for Redux pulls.
-	const siteId = useSelector( ( state ) => getSelectedSiteId( state ) );
+	const siteId = useSelector( getSelectedSiteId );
 	const siteSlug = useSelector( ( state ) => getSiteSlug( state, siteId ) );
 	const isJetpack = useSelector( ( state ) => isJetpackSite( state, siteId ) );
 	// Run-time configuration.
