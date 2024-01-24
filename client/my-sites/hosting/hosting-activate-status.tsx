@@ -12,6 +12,7 @@ import './style.scss';
 interface HostingActivateStatusProps {
 	context: 'theme' | 'plugin' | 'hosting';
 	siteId: number | null;
+	keepAlive?: boolean;
 	onTick?: (
 		isTransferring?: boolean,
 		wasTransferring?: boolean,
@@ -19,7 +20,12 @@ interface HostingActivateStatusProps {
 	) => void;
 }
 
-const HostingActivateStatus = ( { context, siteId, onTick }: HostingActivateStatusProps ) => {
+const HostingActivateStatus = ( {
+	context,
+	siteId,
+	onTick,
+	keepAlive,
+}: HostingActivateStatusProps ) => {
 	const { isTransferring, transferStatus } = useAtomicTransferQuery( siteId ?? 0, {
 		refetchInterval: 5000,
 	} );
@@ -62,7 +68,7 @@ const HostingActivateStatus = ( { context, siteId, onTick }: HostingActivateStat
 		return <Notice status="is-error" showDismiss={ false } text={ getErrorText() } icon="bug" />;
 	}
 
-	if ( isTransferring ) {
+	if ( isTransferring || keepAlive ) {
 		return (
 			<Notice
 				className="hosting__activating-notice"

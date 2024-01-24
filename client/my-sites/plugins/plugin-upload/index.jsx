@@ -14,6 +14,7 @@ import NavigationHeader from 'calypso/components/navigation-header';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import HostingActivateStatus from 'calypso/my-sites/hosting/hosting-activate-status';
 import { TrialAcknowledgeModal } from 'calypso/my-sites/plans/trials/trial-acknowledge/acknowlege-modal';
+import { isHostingTrialSite } from 'calypso/sites-dashboard/utils';
 import {
 	fetchAutomatedTransferStatus,
 	initiateAutomatedTransferWithPluginZip,
@@ -49,6 +50,7 @@ class PluginUpload extends Component {
 	state = {
 		showEligibility: this.props.showEligibility,
 		showTrialAcknowledgeModal: false,
+		hasRequestedTrial: false,
 	};
 
 	componentDidMount() {
@@ -118,6 +120,7 @@ class PluginUpload extends Component {
 
 	trialRequested = () => {
 		this.props.requestSiteEligibility( this.props.siteId );
+		this.setState( { hasRequestedTrial: true } );
 	};
 
 	requestUpdatedSiteData = ( isTransferring, wasTransferring, isTransferCompleted ) => {
@@ -125,18 +128,29 @@ class PluginUpload extends Component {
 			this.setState( { isTransferring: true } );
 		}
 		if ( wasTransferring && isTransferCompleted ) {
+			this.props.fetchSitePlans( this.props.siteId );
+			this.props.fetchSiteFeatures( this.props.siteId );
 			this.props.requestSiteById( this.props.siteId );
 			this.props.requestSiteEligibility( this.props.siteId );
-			this.props.fetchSiteFeatures( this.props.siteId );
-			this.props.fetchSitePlans( this.props.siteId );
 			this.setState( { isTransferring: false } );
 		}
 	};
 
 	render() {
-		const { translate, isJetpackMultisite, siteId, siteSlug, isEligibleForHostingTrial } =
-			this.props;
-		const { showEligibility, showTrialAcknowledgeModal, isTransferring } = this.state;
+		const {
+			translate,
+			isJetpackMultisite,
+			siteId,
+			siteSlug,
+			isEligibleForHostingTrial,
+			isJetpack,
+			isTrialSite,
+		} = this.props;
+		const { showEligibility, showTrialAcknowledgeModal, isTransferring, hasRequestedTrial } =
+			this.state;
+
+		const showEligibilityWarnings =
+			showEligibility && ! isTransferring && ! isTrialSite && ! hasRequestedTrial;
 
 		return (
 			<Main>
@@ -144,9 +158,15 @@ class PluginUpload extends Component {
 				<QueryEligibility siteId={ siteId } />
 				<NavigationHeader navigationItems={ [] } title={ translate( 'Plugins' ) } />
 				<HeaderCake onClick={ this.back }>{ translate( 'Install plugin' ) }</HeaderCake>
-				<HostingActivateStatus context="plugin" onTick={ this.requestUpdatedSiteData } />
+				{ ! showTrialAcknowledgeModal && ! isJetpack && (
+					<HostingActivateStatus
+						context="plugin"
+						onTick={ this.requestUpdatedSiteData }
+						keepAlive={ hasRequestedTrial && ! isJetpack }
+					/>
+				) }
 				{ isJetpackMultisite && this.renderNotAvailableForMultisite() }
-				{ showEligibility && ! isTransferring && (
+				{ showEligibilityWarnings && (
 					<EligibilityWarnings
 						backUrl={ `/plugins/${ siteSlug }` }
 						onProceed={ this.onProceedClick }
@@ -193,6 +213,7 @@ const mapStateToProps = ( state ) => {
 		siteAdminUrl: getSiteAdminUrl( state, siteId ),
 		showEligibility: ! isJetpack && ( hasEligibilityMessages || ! isEligible ),
 		isEligibleForHostingTrial,
+		isTrialSite: isHostingTrialSite( site ),
 	};
 };
 
