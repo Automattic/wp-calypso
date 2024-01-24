@@ -1,5 +1,5 @@
 import { Card } from '@automattic/components';
-import { localize } from 'i18n-calypso';
+import i18n, { localize } from 'i18n-calypso';
 import { flowRight as compose } from 'lodash';
 import { Component } from 'react';
 import { connect } from 'react-redux';
@@ -56,6 +56,8 @@ class NotificationSubscriptions extends Component {
 	}
 
 	render() {
+		const { locale } = this.props;
+
 		return (
 			<Main wideLayout className="reader-subscriptions__notifications-settings">
 				<PageViewTracker
@@ -205,7 +207,11 @@ class NotificationSubscriptions extends Component {
 						</FormFieldset>
 
 						<FormFieldset>
-							<FormLegend>{ this.props.translate( 'Block emails' ) }</FormLegend>
+							<FormLegend>
+								{ locale === 'en' || i18n.hasTranslation( 'Pause emails' )
+									? this.props.translate( 'Pause emails' )
+									: this.props.translate( 'Block emails' ) }
+							</FormLegend>
 							<FormLabel>
 								<FormCheckbox
 									checked={ this.props.getSetting( 'subscription_delivery_email_blocked' ) }
@@ -216,9 +222,16 @@ class NotificationSubscriptions extends Component {
 									onClick={ this.handleCheckboxEvent( 'Block All Notification Emails' ) }
 								/>
 								<span>
-									{ this.props.translate(
-										'Block all email updates from blogs you’re following on WordPress.com'
-									) }
+									{ locale === 'en' ||
+									i18n.hasTranslation(
+										'Pause all email updates from blogs you’re following on WordPress.com'
+									)
+										? this.props.translate(
+												'Pause all email updates from blogs you’re following on WordPress.com'
+										  )
+										: this.props.translate(
+												'Block all email updates from blogs you’re following on WordPress.com'
+										  ) }
 								</span>
 							</FormLabel>
 						</FormFieldset>
