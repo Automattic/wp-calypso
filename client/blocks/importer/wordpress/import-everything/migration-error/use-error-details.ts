@@ -73,6 +73,17 @@ export default function useErrorDetails( status: MigrationStatusError | null ) {
 				showGetHelpCta( true );
 				break;
 
+			case MigrationStatusError.NO_START_SOURCE_IN_PROGRESS:
+			case MigrationStatusError.NO_START_TARGET_IN_PROGRESS:
+				setTitle( titleA );
+				setSubTitle(
+					translate(
+						'A migration from the source or destination site is still in progress and we can’t start a new one. Please, wait until the migration is finished and try again.'
+					)
+				);
+				showTryAgainCta( true );
+				break;
+
 			case MigrationStatusError.BACKUP_QUEUEING:
 				setTitle( titleA );
 				setSubTitle(
