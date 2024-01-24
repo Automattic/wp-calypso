@@ -3,7 +3,6 @@ import {
 	makeErrorResponse,
 	makeSuccessResponse,
 } from '@automattic/composite-checkout';
-import { useTranslate } from 'i18n-calypso';
 import { createElement } from 'react';
 import { Root, createRoot } from 'react-dom/client';
 import userAgent from 'calypso/lib/user-agent';
@@ -20,6 +19,7 @@ import type {
 	WPCOMTransactionEndpointResponse,
 	WPCOMTransactionEndpointResponseSuccess,
 } from '@automattic/wpcom-checkout';
+import type { LocalizeProps } from 'i18n-calypso';
 
 type WeChatTransactionRequest = {
 	name: string | undefined;
@@ -29,7 +29,7 @@ type WeChatTransactionRequest = {
 export default async function weChatProcessor(
 	submitData: unknown,
 	options: PaymentProcessorOptions,
-	translate: ReturnType< typeof useTranslate >
+	translate: LocalizeProps[ 'translate' ]
 ): Promise< PaymentProcessorResponse > {
 	if ( ! isValidTransactionData( submitData ) ) {
 		throw new Error( 'Required purchase data is missing' );
