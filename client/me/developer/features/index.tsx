@@ -12,8 +12,8 @@ export const DeveloperFeatures = () => {
 	return (
 		<>
 			<div className="developer-features-list">
-				{ features.map( ( { title, description, linkLearnMore } ) => (
-					<Card className="developer-features-list__item">
+				{ features.map( ( { title, description, linkLearnMore }, index ) => (
+					<Card className="developer-features-list__item" key={ index }>
 						<div className="developer-features-list__item-title">{ title }</div>
 						<div className="developer-features-list__item-description">{ description }</div>
 						{ linkLearnMore && (
