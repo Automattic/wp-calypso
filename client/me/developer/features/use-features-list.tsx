@@ -64,7 +64,7 @@ export const useFeaturesList = () => {
 				comment: 'Feature title',
 			} ),
 			description: translate(
-				"Whenever you're stuck, whatever you're trying to make happen — our Happiness Engineers have the answers.",
+				"Whenever you're stuck, whatever you're trying to make happen—our Happiness Engineers have the answers.",
 				{
 					comment: 'Feature description',
 				}
@@ -77,7 +77,7 @@ export const useFeaturesList = () => {
 				comment: 'Feature title',
 			} ),
 			description: translate(
-				'Secure and maintain your site effortlessly with {{backupsLink}}real-time backups{{/backupsLink}}, advanced {{malwareScanningLink}}malware scanning and removal{{/malwareScanningLink}}, and continuous {{siteMonitoringLink}}site monitoring{{/siteMonitoringLink}} — ensuring peak performance and security at all times.',
+				'Secure and maintain your site effortlessly with {{backupsLink}}real-time backups{{/backupsLink}}, advanced {{malwareScanningLink}}malware scanning and removal{{/malwareScanningLink}}, and continuous {{siteMonitoringLink}}site monitoring{{/siteMonitoringLink}}—ensuring peak performance and security at all times.',
 				{
 					comment: 'Feature description',
 					components: {
