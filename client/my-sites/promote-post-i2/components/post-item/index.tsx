@@ -113,7 +113,7 @@ export default function PostItem( { post }: { post: BlazablePost } ) {
 							{ __( 'View' ) }
 						</a>
 						<Button
-							variant="primary"
+							variant="secondary"
 							isBusy={ false }
 							disabled={ false }
 							onClick={ onClickPromote }
@@ -137,7 +137,7 @@ export default function PostItem( { post }: { post: BlazablePost } ) {
 			</td>
 			<td className="post-item__post-promote">
 				<Button
-					variant="primary"
+					variant="secondary"
 					isBusy={ false }
 					disabled={ false }
 					onClick={ onClickPromote }

@@ -113,6 +113,9 @@ body.is-section-promote-post-i2 {
 
 		&__post-promote-button {
 			border-radius: 4px;
+			border: 1.5px solid var(--color-accent);
+			color: var(--color-accent);
+			background-color: var(--color-surface);
 		}
 	}
 
