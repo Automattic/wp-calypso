@@ -62,8 +62,20 @@ export const FlowRenderer: React.FC< { flow: Flow } > = ( { flow } ) => {
 		[ flowSteps ]
 	);
 
+	/**
+	 * This can be used when renaming a step. Simply add a map entry with the new step slug and the old step slug and Stepper will fire `calypso_signup_step_start` events for both slugs. This ensures that funnels with the old slug will still work.
+	 */
+	const getStepOldSlug = ( stepSlug: string ): string | undefined => {
+		const stepSlugMap: Record< string, string > = {
+			'create-site': 'site-creation-step',
+		};
+
+		return stepSlugMap[ stepSlug ];
+	};
+
 	const location = useLocation();
 	const currentStepRoute = location.pathname.split( '/' )[ 2 ]?.replace( /\/+$/, '' );
+	const stepOldSlug = getStepOldSlug( currentStepRoute );
 	const { __ } = useI18n();
 	const navigate = useNavigate();
 	const { setStepData } = useDispatch( STEPPER_INTERNAL_STORE );
@@ -168,6 +180,14 @@ export const FlowRenderer: React.FC< { flow: Flow } > = ( { flow } ) => {
 				is_in_hosting_flow: isAnyHostingFlow( flow.name ),
 				...( design && { assembler_source: getAssemblerSource( design ) } ),
 			} );
+
+			if ( stepOldSlug ) {
+				recordStepStart( flow.name, kebabCase( stepOldSlug ), {
+					intent,
+					is_in_hosting_flow: isAnyHostingFlow( flow.name ),
+					...( design && { assembler_source: getAssemblerSource( design ) } ),
+				} );
+			}
 		}
 
 		// Also record page view for data and analytics
