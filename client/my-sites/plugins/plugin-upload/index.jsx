@@ -24,6 +24,8 @@ import {
 	getEligibility,
 	isEligibleForAutomatedTransfer,
 } from 'calypso/state/automated-transfer/selectors';
+import { getCurrentUserLocale } from 'calypso/state/current-user/selectors';
+import { fetchJITM } from 'calypso/state/jitm/actions';
 import { productToBeInstalled } from 'calypso/state/marketplace/purchase-flow/actions';
 import { successNotice } from 'calypso/state/notices/actions';
 import { uploadPlugin, clearPluginUpload } from 'calypso/state/plugins/upload/actions';
@@ -31,6 +33,7 @@ import getPluginUploadError from 'calypso/state/selectors/get-plugin-upload-erro
 import getUploadedPluginId from 'calypso/state/selectors/get-uploaded-plugin-id';
 import isPluginUploadComplete from 'calypso/state/selectors/is-plugin-upload-complete';
 import isPluginUploadInProgress from 'calypso/state/selectors/is-plugin-upload-in-progress';
+import isSiteWpcomAtomic from 'calypso/state/selectors/is-site-wpcom-atomic';
 import { isUserEligibleForFreeHostingTrial } from 'calypso/state/selectors/is-user-eligible-for-free-hosting-trial';
 import { requestSite } from 'calypso/state/sites/actions';
 import { fetchSiteFeatures } from 'calypso/state/sites/features/actions';
@@ -132,6 +135,12 @@ class PluginUpload extends Component {
 			this.props.fetchSiteFeatures( this.props.siteId );
 			this.props.requestSiteById( this.props.siteId );
 			this.props.requestSiteEligibility( this.props.siteId );
+			this.props.fetchJITM(
+				this.props.siteId,
+				'calypso:sites:sidebar_notice',
+				null,
+				this.props.locale
+			);
 			this.setState( { isTransferring: false } );
 		}
 	};
@@ -145,6 +154,7 @@ class PluginUpload extends Component {
 			isEligibleForHostingTrial,
 			isJetpack,
 			isTrialSite,
+			isAtomic,
 		} = this.props;
 		const { showEligibility, showTrialAcknowledgeModal, isTransferring, hasRequestedTrial } =
 			this.state;
@@ -162,7 +172,7 @@ class PluginUpload extends Component {
 					<HostingActivateStatus
 						context="plugin"
 						onTick={ this.requestUpdatedSiteData }
-						keepAlive={ hasRequestedTrial && ! isJetpack }
+						keepAlive={ hasRequestedTrial && ! isJetpack && ! isAtomic }
 					/>
 				) }
 				{ isJetpackMultisite && this.renderNotAvailableForMultisite() }
@@ -173,7 +183,7 @@ class PluginUpload extends Component {
 						showFreeTrial={ isEligibleForHostingTrial }
 					/>
 				) }
-				{ ! isJetpackMultisite && ! showEligibility && this.renderUploadCard() }
+				{ ( ( ! isJetpackMultisite && ! showEligibility ) || isAtomic ) && this.renderUploadCard() }
 				{ isEligibleForHostingTrial && showTrialAcknowledgeModal && (
 					<TrialAcknowledgeModal
 						setOpenModal={ this.setOpenModal }
@@ -190,6 +200,7 @@ const mapStateToProps = ( state ) => {
 	const site = getSelectedSite( state );
 	const error = getPluginUploadError( state, siteId );
 	const isJetpack = isJetpackSite( state, siteId );
+	const isAtomic = isSiteWpcomAtomic( state, siteId );
 	const isJetpackMultisite = isJetpackSiteMultiSite( state, siteId );
 	const { eligibilityHolds, eligibilityWarnings } = getEligibility( state, siteId );
 	// Use this selector to take advantage of eligibility card placeholders
@@ -204,6 +215,7 @@ const mapStateToProps = ( state ) => {
 		siteId,
 		siteSlug: getSelectedSiteSlug( state ),
 		isJetpack,
+		isAtomic,
 		inProgress: isPluginUploadInProgress( state, siteId ),
 		complete: isPluginUploadComplete( state, siteId ),
 		failed: !! error,
@@ -214,6 +226,7 @@ const mapStateToProps = ( state ) => {
 		showEligibility: ! isJetpack && ( hasEligibilityMessages || ! isEligible ),
 		isEligibleForHostingTrial,
 		isTrialSite: isHostingTrialSite( site ),
+		locale: getCurrentUserLocale( state ),
 	};
 };
 
@@ -229,6 +242,7 @@ const flowRightArgs = [
 		requestSiteEligibility: requestEligibility,
 		fetchSiteFeatures,
 		fetchSitePlans,
+		fetchJITM,
 	} ),
 	localize,
 ];
