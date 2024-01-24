@@ -93,6 +93,7 @@ export class Theme extends Component {
 		softLaunched: PropTypes.bool,
 		selectedStyleVariation: PropTypes.object,
 		shouldLimitGlobalStyles: PropTypes.bool,
+		themeType: PropTypes.string,
 	};
 
 	static defaultProps = {
