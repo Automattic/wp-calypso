@@ -30,6 +30,7 @@ export type TaskId =
 	| 'first_post_published'
 	| 'site_launched'
 	| 'plan_selected'
+	| 'videopress_upload'
 	| 'plan_completed'
 	| 'site_launched';
 

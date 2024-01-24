@@ -549,7 +549,7 @@ export function getEnhancedTasks( {
 					break;
 				}
 				case 'videopress_upload':
-					taskData = {
+					deprecatedData = {
 						actionUrl: launchpadUploadVideoLink,
 						disabled: isVideoPressFlowWithUnsupportedPlan || videoPressUploadCompleted,
 						actionDispatch: () => {
@@ -557,6 +557,8 @@ export function getEnhancedTasks( {
 							window.location.replace( launchpadUploadVideoLink );
 						},
 					};
+
+					taskData = getTaskDefinition( flow, task, context ) || deprecatedData;
 					break;
 				case 'videopress_launched':
 					taskData = {
