@@ -1,17 +1,24 @@
 import {
 	makeRedirectResponse,
-	makeManualResponse,
 	makeErrorResponse,
+	makeSuccessResponse,
 } from '@automattic/composite-checkout';
+import { createElement } from 'react';
+import { render } from 'react-dom';
 import userAgent from 'calypso/lib/user-agent';
+import { PurchaseOrderStatus, fetchPurchaseOrder } from '../hooks/use-purchase-order';
 import { recordTransactionBeginAnalytics } from '../lib/analytics';
 import getDomainDetails from '../lib/get-domain-details';
 import getPostalCode from '../lib/get-postal-code';
 import prepareRedirectTransaction from '../lib/prepare-redirect-transaction';
 import submitWpcomTransaction from './submit-wpcom-transaction';
+import { WeChatConfirmation } from './we-chat-confirmation';
 import type { PaymentProcessorOptions } from '../types/payment-processors';
 import type { PaymentProcessorResponse } from '@automattic/composite-checkout';
-import type { WPCOMTransactionEndpointResponse } from '@automattic/wpcom-checkout';
+import type {
+	WPCOMTransactionEndpointResponse,
+	WPCOMTransactionEndpointResponseSuccess,
+} from '@automattic/wpcom-checkout';
 
 type WeChatTransactionRequest = {
 	name: string | undefined;
@@ -76,15 +83,83 @@ export default async function weChatProcessor(
 	);
 
 	return submitWpcomTransaction( formattedTransactionData, options )
-		.then( ( response?: WPCOMTransactionEndpointResponse ) => {
+		.then( async ( response?: WPCOMTransactionEndpointResponse ) => {
+			if ( ! response?.redirect_url ) {
+				throw new Error( "Sorry, we couldn't process your payment. Please try again later." );
+			}
+
 			// The WeChat payment type should only redirect when on mobile as redirect urls
 			// are mobile app urls: e.g. weixin://wxpay/bizpayurl?pr=RaXzhu4
-			if ( userAgent.isMobile && response?.redirect_url ) {
+			if ( userAgent.isMobile && response.redirect_url ) {
 				return makeRedirectResponse( response?.redirect_url );
 			}
-			return makeManualResponse( response );
+
+			if ( ! response.order_id ) {
+				throw new Error( "Sorry, we couldn't process your payment. Please try again later." );
+			}
+
+			displayWeChatModal(
+				response.redirect_url,
+				responseCart.total_cost_integer,
+				responseCart.currency
+			);
+
+			let orderStatus = 'processing';
+			while ( orderStatus === 'processing' || orderStatus === 'async-pending' ) {
+				orderStatus = await pollForOrderStatus( response.order_id, 2000 );
+			}
+			if ( orderStatus !== 'success' ) {
+				throw new Error( 'Payment failed. Please check your account and try again.' );
+			}
+
+			const responseData: Partial< WPCOMTransactionEndpointResponseSuccess > = {
+				success: true,
+				order_id: response.order_id,
+			};
+			return makeSuccessResponse( responseData );
 		} )
-		.catch( ( error ) => makeErrorResponse( error.message ) );
+		.catch( ( error ) => {
+			hideWeChatModal();
+			return makeErrorResponse( error.message );
+		} );
+}
+
+async function pollForOrderStatus(
+	orderId: number,
+	pollInterval: number
+): Promise< PurchaseOrderStatus > {
+	const orderData = await fetchPurchaseOrder( orderId );
+	if ( ! orderData ) {
+		throw new Error( "Sorry, we couldn't process your payment. Please try again later." );
+	}
+	if ( orderData.processing_status === 'success' ) {
+		return orderData.processing_status;
+	}
+	await new Promise( ( resolve ) => setTimeout( resolve, pollInterval ) );
+	return orderData.processing_status;
+}
+
+function hideWeChatModal(): void {
+	const weChatTarget = document.querySelector( '.we-chat-modal-target' );
+	if ( ! weChatTarget ) {
+		return;
+	}
+	weChatTarget.replaceChildren();
+}
+
+function displayWeChatModal( redirectUrl: string, priceInteger: number, priceCurrency: string ) {
+	const weChatTarget = document.querySelector( '.we-chat-modal-target' );
+	if ( ! weChatTarget ) {
+		throw new Error( "Sorry, we couldn't process your payment. Please try again later." );
+	}
+	render(
+		createElement( WeChatConfirmation, {
+			redirectUrl,
+			priceInteger,
+			priceCurrency,
+		} ),
+		weChatTarget
+	);
 }
 
 function isValidTransactionData( submitData: unknown ): submitData is WeChatTransactionRequest {
