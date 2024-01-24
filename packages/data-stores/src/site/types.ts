@@ -541,6 +541,8 @@ export enum MigrationStatusError {
 	SOURCE_SITE_IS_ATOMIC = 'source_site_is_atomic',
 	SOURCE_SITE_IS_PROTECTED = 'source_site_is_protected',
 	TARGET_SITE_IS_PROTECTED = 'target_site_is_protected',
+	NO_START_USER_ADMIN_ON_SOURCE = 'no_start_user_admin_on_source',
+	NO_START_USER_ADMIN_ON_TARGET = 'no_start_user_admin_on_target',
 
 	// Start of migration #1
 	ACTIVATE_REWIND = 'error-rewind-activate',

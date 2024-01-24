@@ -65,6 +65,14 @@ export default function useErrorDetails( status: MigrationStatusError | null ) {
 				showGoBackCta( true );
 				break;
 
+			case MigrationStatusError.NO_START_USER_ADMIN_ON_SOURCE:
+			case MigrationStatusError.NO_START_USER_ADMIN_ON_TARGET:
+				setTitle( titleA );
+				setHintId( 'administrator-role' );
+				showTryAgainCta( true );
+				showGetHelpCta( true );
+				break;
+
 			case MigrationStatusError.BACKUP_QUEUEING:
 				setTitle( titleA );
 				setSubTitle(
