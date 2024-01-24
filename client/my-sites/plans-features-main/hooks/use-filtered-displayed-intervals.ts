@@ -39,8 +39,12 @@ const useFilteredDisplayedIntervals = ( {
 			} );
 		}
 
-		if ( intent === 'plans-paid-media' && ! paidDomainName ) {
-			filteredIntervals = [ ...filteredIntervals, 'monthly' ];
+		if ( intent === 'plans-paid-media' ) {
+			filteredIntervals = [ 'yearly', '2yearly', '3yearly' ];
+
+			if ( ! paidDomainName ) {
+				filteredIntervals = [ 'yearly', '2yearly', '3yearly', 'monthly' ];
+			}
 		}
 
 		return filteredIntervals;
