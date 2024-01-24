@@ -1,9 +1,12 @@
 import { isEnabled } from '@automattic/calypso-config';
 import { Button, Card } from '@automattic/components';
+import classnames from 'classnames';
 import { localize, withRtl } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
+import AllSites from 'calypso/blocks/all-sites';
+import Site from 'calypso/blocks/site';
 import AsyncLoad from 'calypso/components/async-load';
 import CalypsoShoppingCartProvider from 'calypso/my-sites/checkout/calypso-shopping-cart-provider';
 import { recordGoogleEvent, recordTracksEvent } from 'calypso/state/analytics/actions';
@@ -35,13 +38,64 @@ class CurrentSite extends Component {
 		this.props.recordGoogleEvent( 'Sidebar', 'Clicked Switch Site' );
 	};
 
+	onAllSitesClick = () => {
+		this.props.recordTracksEvent( 'calypso_sidebar_all_sites_click' );
+	};
+
 	render() {
-		const { selectedSite, translate } = this.props;
+		const { selectedSite, translate, anySiteSelected } = this.props;
+
+		if ( ! anySiteSelected.length || ( ! selectedSite && ! this.props.hasAllSitesList ) ) {
+			const hasNoSites = this.props.hasAllSitesList && ! anySiteSelected.length;
+			/* eslint-disable wpcalypso/jsx-classname-namespace, jsx-a11y/anchor-is-valid */
+			return (
+				<Card
+					className={ classnames( 'current-site', {
+						'is-no-sites': hasNoSites,
+						'is-loading': ! this.props.hasAllSitesList,
+					} ) }
+				>
+					<div className="site">
+						<a className="site__content">
+							<div className="site-icon" />
+							<div className="site__info">
+								<span className="site__title">
+									{ hasNoSites ? translate( 'No Sites' ) : translate( 'Loading My Sites…' ) }
+								</span>
+							</div>
+						</a>
+					</div>
+				</Card>
+			);
+			/* eslint-enable wpcalypso/jsx-classname-namespace, jsx-a11y/anchor-is-valid */
+		}
+
 		const arrowDirection = this.props.isRtl ? 'right' : 'left';
 
 		return (
 			<Card className="current-site">
 				<div role="button" tabIndex="0" aria-hidden="true" onClick={ this.expandUnifiedNavSidebar }>
+					{ this.props.siteCount > 1 && (
+						<span className="current-site__switch-sites">
+							<Button borderless onClick={ this.switchSites }>
+								<span
+									// eslint-disable-next-line wpcalypso/jsx-classname-namespace
+									className={ `gridicon dashicons-before dashicons-arrow-${ arrowDirection }-alt2` }
+								></span>
+								<span className="current-site__switch-sites-label">
+									{ translate( 'Switch site' ) }
+								</span>
+							</Button>
+						</span>
+					) }
+
+					{ selectedSite ? (
+						<div>
+							<Site site={ selectedSite } homeLink={ true } />
+						</div>
+					) : (
+						<AllSites href="/sites" onSelect={ this.onAllSitesClick } />
+					) }
 					{ selectedSite && isEnabled( 'current-site/domain-warning' ) && (
 						<AsyncLoad
 							require="calypso/my-sites/current-site/domain-warnings"
