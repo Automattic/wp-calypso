@@ -195,7 +195,7 @@ export const EligibilityWarnings = ( {
 				</CompactCard>
 			) }
 
-			{ ( isPlaceholder || filteredHolds.length > 0 ) && (
+			{ ( isPlaceholder || filteredHolds.length > 0 ) && ! showFreeTrial && (
 				<CompactCard>
 					<HoldList
 						context={ context }
