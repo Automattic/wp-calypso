@@ -19,6 +19,7 @@ import {
 	createAlipayPaymentMethodStore,
 	createRazorpayMethod,
 	isValueTruthy,
+	createPixPaymentMethod,
 } from '@automattic/wpcom-checkout';
 import debugFactory from 'debug';
 import { useMemo } from 'react';
@@ -112,6 +113,16 @@ export function useCreateCreditCard( {
 		]
 	);
 	return stripeMethod;
+}
+
+function useCreatePix(): PaymentMethod | null {
+	return useMemo(
+		() =>
+			createPixPaymentMethod( {
+				submitButtonContent: <CheckoutSubmitButtonContent />,
+			} ),
+		[]
+	);
 }
 
 function useCreateAlipay( {
@@ -412,6 +423,8 @@ export default function useCreatePaymentMethods( {
 		stripeLoadingError,
 	} );
 
+	const pixMethod = useCreatePix();
+
 	const alipayMethod = useCreateAlipay( {
 		isStripeLoading,
 		stripeLoadingError,
@@ -510,6 +523,7 @@ export default function useCreatePaymentMethods( {
 		giropayMethod,
 		sofortMethod,
 		netbankingMethod,
+		pixMethod,
 		alipayMethod,
 		p24Method,
 		epsMethod,

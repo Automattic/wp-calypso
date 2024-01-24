@@ -11,6 +11,7 @@ export * from './postal-code';
 export { default as Field } from './field';
 export { default as styled } from '@emotion/styled';
 export * from './payment-methods/bancontact';
+export * from './payment-methods/pix';
 export * from './payment-methods/giropay';
 export * from './payment-methods/ideal';
 export * from './payment-methods/sofort';
