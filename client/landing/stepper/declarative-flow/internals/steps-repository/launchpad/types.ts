@@ -19,20 +19,23 @@ export interface TranslatedLaunchpadStrings {
 	subtitle: string;
 }
 
+// TODO: Convert this type to enum, because union string doesnt protect from duplicates or typos;
+//
 export type TaskId =
 	| 'setup_free'
 	| 'setup_blog'
+	| 'videopress_setup'
 	| 'blog_launched'
+	| 'site_launched'
+	| 'videopress_launched'
 	| 'design_selected'
 	| 'design_completed'
 	| 'design_edited'
 	| 'domain_upsell'
 	| 'first_post_published'
 	| 'plan_selected'
-	| 'videopress_upload'
-	| 'videopress_setup'
 	| 'plan_completed'
-	| 'site_launched';
+	| 'videopress_upload';
 
 export interface TaskContext {
 	tasks: Task[];
