@@ -50,7 +50,9 @@ export function getTaxLineItemFromCart( responseCart: ResponseCart ): LineItemTy
 		id: 'tax-line-item',
 		// translators: The label of the taxes line item in checkout
 		label: String(
-			translate( 'Tax', { context: "Shortened form of 'Sales Tax', not 'Business Tax'" } )
+			translate( 'Tax', {
+				context: "Shortened form of 'Sales Tax', not a country-specific tax name",
+			} )
 		),
 		type: 'tax',
 		formattedAmount: formatCurrency( responseCart.total_tax_integer, responseCart.currency, {
@@ -77,7 +79,9 @@ export function getTaxBreakdownLineItemsFromCart( responseCart: ResponseCart ): 
 			const label = taxBreakdownItem.label
 				? `${ taxBreakdownItem.label } (${ taxBreakdownItem.rate_display })`
 				: String(
-						translate( 'Tax', { context: "Shortened form of 'Sales Tax', not 'Business Tax'" } )
+						translate( 'Tax', {
+							context: "Shortened form of 'Sales Tax', not a country-specific tax name",
+						} )
 				  );
 			return {
 				id,
