@@ -63,7 +63,7 @@ describe( 'Domain: Upsell (Home)', function () {
 		await myHomePage.clickButton( 'Get this domain' );
 
 		// The test user does not have a plan so the Plans upsell page will load.
-		await page.waitForURL( /plans\/yearly/ );
+		await page.waitForURL( /plans\/yearly\/.*/ );
 	} );
 
 	it( 'Choose the Free plan', async function () {
