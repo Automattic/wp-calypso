@@ -62,5 +62,12 @@
 		"@babel/runtime": {
 			"optional": true
 		}
+	},
+	"dependencies": {
+		"@automattic/calypso-analytics": "workspace:^",
+		"@automattic/data-stores": "workspace:^",
+		"@wordpress/data": "^9.19.0",
+		"classnames": "^2.3.2",
+		"debug": "^4.3.4"
 	}
 }
