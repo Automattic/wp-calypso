@@ -173,6 +173,12 @@ class Sites extends Component {
 			case 'export':
 				path = translate( 'Export' );
 				break;
+			case 'email':
+				path = translate( 'Emails' );
+				break;
+			case 'purchases':
+				path = translate( 'Purchases' );
+				break;
 		}
 
 		return translate( 'Select a site to open {{strong}}%(path)s{{/strong}}', {
