@@ -369,7 +369,6 @@ export default function CheckoutMain( {
 		stripeConfiguration,
 		stripe,
 		storedCards,
-		siteSlug: updatedSiteSlug,
 	} );
 	debug( 'created payment method objects', paymentMethodObjects );
 
