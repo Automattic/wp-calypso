@@ -1,4 +1,5 @@
-import { WordPressLogo } from '@automattic/components';
+import { isEnabled } from '@automattic/calypso-config';
+import { Gridicon, WordPressLogo } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import JetpackLogo from 'calypso/components/jetpack-logo';
 import PopoverMenuItem from 'calypso/components/popover-menu/item';
@@ -13,6 +14,7 @@ type Props = {
 	onClickAddNewSite?: () => void;
 	onClickWpcomMenuItem?: () => void;
 	onClickJetpackMenuItem?: () => void;
+	onClickUrlkMenuItem?: () => void;
 };
 
 const AddNewSiteButton = ( {
@@ -23,6 +25,7 @@ const AddNewSiteButton = ( {
 	onClickAddNewSite,
 	onClickWpcomMenuItem,
 	onClickJetpackMenuItem,
+	onClickUrlMenuItem,
 }: Props ): JSX.Element => {
 	const translate = useTranslate();
 
@@ -49,6 +52,13 @@ const AddNewSiteButton = ( {
 				<JetpackLogo className="gridicon" size={ 18 } />
 				<span>{ translate( 'Connect a site to Jetpack' ) }</span>
 			</PopoverMenuItem>
+
+			{ isEnabled( 'jetpack/url-only-connection' ) && (
+				<PopoverMenuItem onClick={ onClickUrlMenuItem } href="/manage/connect-url">
+					<Gridicon icon="domains" size={ 18 } />
+					<span>{ translate( 'Add sites by URL' ) }</span>
+				</PopoverMenuItem>
+			) }
 		</SplitButton>
 	);
 };
