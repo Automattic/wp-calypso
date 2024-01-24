@@ -40,6 +40,9 @@ const useFilteredDisplayedIntervals = ( {
 		}
 
 		if ( intent === 'plans-paid-media' ) {
+			// Monetizing free domain users is hard. From experience, users who choose a free domain
+			// have very low intent to purchase something during signup. We show a cheaper and flexible
+			// monthly option for this specific segment, but hide it if a custom domain is selected.
 			if ( paidDomainName ) {
 				filteredIntervals = [ 'yearly', '2yearly', '3yearly' ];
 			}
