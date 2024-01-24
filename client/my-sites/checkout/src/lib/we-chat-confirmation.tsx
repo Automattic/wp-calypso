@@ -41,15 +41,17 @@ export function WeChatConfirmation( {
 	redirectUrl,
 	priceInteger,
 	priceCurrency,
+	cancel,
 }: {
 	redirectUrl: string;
 	priceInteger: number;
 	priceCurrency: string;
+	cancel: () => void;
 } ) {
 	const translate = useTranslate();
 
 	return (
-		<WeChatConfirmationModalArea>
+		<WeChatConfirmationModalArea onClick={ cancel }>
 			<WeChatConfirmationDiv>
 				<p>
 					{ translate(

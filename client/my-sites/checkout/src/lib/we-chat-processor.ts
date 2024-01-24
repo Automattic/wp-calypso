@@ -100,15 +100,20 @@ export default async function weChatProcessor(
 				throw new Error( "Sorry, we couldn't process your payment. Please try again later." );
 			}
 
+			let isModalActive = true;
 			displayWeChatModal(
 				root,
 				response.redirect_url,
 				responseCart.total_cost_integer,
-				responseCart.currency
+				responseCart.currency,
+				() => {
+					hideWeChatModal( root );
+					isModalActive = false;
+				}
 			);
 
 			let orderStatus = 'processing';
-			while ( orderStatus === 'processing' || orderStatus === 'async-pending' ) {
+			while ( isModalActive && [ 'processing', 'async-pending' ].includes( orderStatus ) ) {
 				orderStatus = await pollForOrderStatus( response.order_id, 2000 );
 			}
 			if ( orderStatus !== 'success' ) {
@@ -158,13 +163,15 @@ function displayWeChatModal(
 	root: Root,
 	redirectUrl: string,
 	priceInteger: number,
-	priceCurrency: string
+	priceCurrency: string,
+	cancel: () => void
 ) {
 	root.render(
 		createElement( WeChatConfirmation, {
 			redirectUrl,
 			priceInteger,
 			priceCurrency,
+			cancel,
 		} )
 	);
 	return root;
