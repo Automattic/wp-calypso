@@ -5,6 +5,5 @@
 		"outDir": "dist/esm",
 		"declarationDir": "dist/types",
 		"rootDir": "src"
-	},
-	"references": [ { "path": "../calypso-analytics" }, { "path": "../data-stores" } ]
+	}
 }
