@@ -1,7 +1,7 @@
 import { SiteDetails } from '@automattic/data-stores';
 import { useI18n } from '@wordpress/react-i18n';
 import builtByLogo from 'calypso/assets/images/illustrations/built-by-wp-vert-blue.png';
-import UpsellNudge from 'calypso/blocks/upsell-nudge';
+import { Banner } from 'calypso/components/banner';
 import { addQueryArgs } from 'calypso/lib/url';
 
 type Props = {
@@ -35,7 +35,7 @@ export function BuiltByUpsell( { site, isUnlaunchedSite, urlRef }: Props ) {
 		'https://wordpress.com/website-design-service/'
 	);
 	return (
-		<UpsellNudge
+		<Banner
 			className="site-settings__built-by-upsell"
 			title={ __( 'We’ll build your site for you' ) }
 			description={ __(
@@ -46,7 +46,6 @@ export function BuiltByUpsell( { site, isUnlaunchedSite, urlRef }: Props ) {
 			target="_blank"
 			iconPath={ builtByLogo }
 			disableCircle={ true }
-			showIcon={ true }
 			event="settings_bb_upsell"
 			tracksImpressionName="calypso_settings_bb_upsell_impression"
 			tracksClickName="calypso_settings_bb_upsell_cta_click"

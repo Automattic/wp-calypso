@@ -55,7 +55,6 @@ type OwnProps = {
 	compactButton?: boolean;
 	customerType?: string;
 	description?: TranslateResult;
-	disableCircle?: boolean;
 	disableHref?: boolean;
 	dismissPreferenceName?: string;
 	dismissTemporary?: boolean;
@@ -67,7 +66,6 @@ type OwnProps = {
 	horizontal?: boolean;
 	href?: string;
 	icon?: string;
-	iconPath?: string;
 	isBusy?: boolean;
 	isEligibleForOneClickCheckout?: IsEligibleForOneClickCheckoutReturnValue;
 	isJetpackDevDocs?: boolean;
@@ -132,8 +130,6 @@ export const UpsellNudge = ( {
 	selectedSiteHasFeature,
 	showIcon = false,
 	icon = 'star',
-	iconPath,
-	disableCircle,
 	site,
 	siteSlug,
 	target,
@@ -250,8 +246,6 @@ export const UpsellNudge = ( {
 				href={ href }
 				secondaryHref={ secondaryHref }
 				icon={ icon }
-				iconPath={ iconPath }
-				disableCircle={ disableCircle }
 				jetpack={ isJetpack || isJetpackDevDocs } //Force show Jetpack example in Devdocs
 				isAtomic={ isAtomic }
 				list={ list }
