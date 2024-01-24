@@ -55,7 +55,13 @@ export default function useErrorDetails( status: MigrationStatusError | null ) {
 
 			case MigrationStatusError.SOURCE_SITE_IS_PROTECTED:
 				setTitle( titleB );
-				setSubTitle( translate( 'Your source site is protected.' ) );
+				setSubTitle( translate( 'Your source site is a protected site.' ) );
+				showGoBackCta( true );
+				break;
+
+			case MigrationStatusError.TARGET_SITE_IS_PROTECTED:
+				setTitle( titleB );
+				setSubTitle( translate( 'Your destination site is a protected site.' ) );
 				showGoBackCta( true );
 				break;
 

@@ -540,6 +540,7 @@ export enum MigrationStatusError {
 	SOURCE_SITE_MULTISITE = 'source_site_multisite',
 	SOURCE_SITE_IS_ATOMIC = 'source_site_is_atomic',
 	SOURCE_SITE_IS_PROTECTED = 'source_site_is_protected',
+	TARGET_SITE_IS_PROTECTED = 'target_site_is_protected',
 
 	// Start of migration #1
 	ACTIVATE_REWIND = 'error-rewind-activate',
