@@ -279,6 +279,7 @@ export interface WPCOMCart {
 // translateCheckoutPaymentMethodToWpcomPaymentMethod and
 // translateWpcomPaymentMethodToCheckoutPaymentMethod.
 export type CheckoutPaymentMethodSlug =
+	| 'pix'
 	| 'alipay'
 	| 'web-pay'
 	| 'bancontact'
@@ -325,6 +326,7 @@ export type WPCOMPaymentMethod =
 	| 'WPCOM_Billing_Stripe_Source_Three_D_Secure'
 	| 'WPCOM_Billing_Stripe_Source_Wechat'
 	| 'WPCOM_Billing_Web_Payment'
+	| 'WPCOM_Billing_Ebanx_Redirect_Brazil_Pix'
 	| 'WPCOM_Billing_Razorpay';
 
 export type ContactDetailsType = 'gsuite' | 'tax' | 'domain' | 'none';
