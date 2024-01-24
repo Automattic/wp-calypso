@@ -56,6 +56,9 @@ $section-max-width: 1224px;
 		font-family: $sans;
 		font-size: $font-body-large;
 	}
+	.site-monitoring__chart-subtitle {
+		margin-bottom: 0;
+	}
 
 	&.is-section-site-monitoring .focus-content:not(.has-no-sidebar) .layout__content {
 		padding-top: 40px;
@@ -64,10 +67,15 @@ $section-max-width: 1224px;
 	.site-monitoring__chart {
 		border: 0;
 		padding: 0;
-		margin: 0 -24px;
+		margin: 0 -24px 24px -50px;
+
 		.site-monitoring__chart-header {
-			padding: 0 24px;
+			padding: 0 24px 0 50px;
 		}
+	}
+
+	.u-legend {
+		padding: 0 24px 0 50px;
 	}
 
 	.site-monitoring-http-verbs-pie-chart .pie-chart__legend {
@@ -80,6 +88,11 @@ $section-max-width: 1224px;
 			align-items: center;
 		}
 	}
+
+	.site-monitoring__chart-header {
+		margin-bottom: 12px;
+	}
+
 }
 
 .site-monitoring {
