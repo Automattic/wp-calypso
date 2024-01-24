@@ -1,12 +1,13 @@
 import { MigrationStatusError } from '@automattic/data-stores';
+import { createElement } from '@wordpress/element';
 import { useTranslate } from 'i18n-calypso';
-import { useCallback, useEffect, useState } from 'react';
+import { ReactNode, useCallback, useEffect, useState } from 'react';
 
 export default function useErrorDetails( status: MigrationStatusError | null ) {
 	const translate = useTranslate();
 
 	const [ title, setTitle ] = useState( '' );
-	const [ subTitle, setSubTitle ] = useState( '' );
+	const [ subTitle, setSubTitle ] = useState< string | ReactNode >( '' );
 	const [ hintId, setHintId ] = useState( '' );
 	const [ goBackCta, showGoBackCta ] = useState( false );
 	const [ getHelpCta, showGetHelpCta ] = useState( false );
@@ -31,6 +32,19 @@ export default function useErrorDetails( status: MigrationStatusError | null ) {
 				setHintId( 'incompatible-plugins' );
 				showTryAgainCta( true );
 				showGetHelpCta( true );
+				break;
+
+			case MigrationStatusError.SOURCE_SITE_MULTISITE:
+				setTitle( titleA );
+				setSubTitle(
+					translate(
+						'Currently, our migration process doesn\'t support multisite WordPress installations.{{br}}{{/br}} As an alternative, please consider using the "Content only" import option.',
+						{
+							components: { br: createElement( 'br' ) },
+						}
+					)
+				);
+				showGoBackCta( true );
 				break;
 
 			case MigrationStatusError.BACKUP_QUEUEING:

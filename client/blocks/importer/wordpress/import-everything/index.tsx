@@ -227,6 +227,7 @@ export class ImportEverything extends SectionMigrate {
 	}
 
 	renderMigrationError( status: MigrationStatusError | null = null ) {
+		const { stepNavigator } = this.props;
 		return (
 			<div className="import-layout__center">
 				<div>
@@ -235,6 +236,7 @@ export class ImportEverything extends SectionMigrate {
 						targetSiteUrl={ this.props.targetSite.URL }
 						status={ status || this.state.migrationErrorStatus }
 						resetMigration={ this.resetMigration }
+						goToImportCapturePage={ () => stepNavigator?.goToImportCapturePage?.() }
 					/>
 				</div>
 			</div>

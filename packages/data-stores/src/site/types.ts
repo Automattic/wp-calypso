@@ -537,6 +537,7 @@ export enum MigrationStatusError {
 	OLD_JETPACK = 'old_jetpack',
 	FORBIDDEN = 'forbidden',
 	GENERIC = 'error',
+	SOURCE_SITE_MULTISITE = 'source_site_multisite',
 
 	// Start of migration #1
 	ACTIVATE_REWIND = 'error-rewind-activate',

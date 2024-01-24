@@ -13,9 +13,10 @@ interface Props {
 	targetSiteUrl: string;
 	status: MigrationStatusError | null;
 	resetMigration: () => void;
+	goToImportCapturePage: () => void;
 }
 export const MigrationError = ( props: Props ) => {
-	const { sourceSiteUrl, targetSiteUrl, status, resetMigration } = props;
+	const { sourceSiteUrl, targetSiteUrl, status, resetMigration, goToImportCapturePage } = props;
 	const translate = useTranslate();
 	const { openChatWidget, isOpeningChatWidget } = useChatWidget();
 	const { title, subTitle, hintId, goBackCta, getHelpCta, tryAgainCta } = useErrorDetails( status );
@@ -27,22 +28,20 @@ export const MigrationError = ( props: Props ) => {
 		} );
 	}, [ openChatWidget, targetSiteUrl ] );
 
-	const goBack = useCallback( () => {
-		// go back the capture screen
-	}, [] );
-
 	return (
 		<div className="import__heading import__heading-center">
 			<Title className="migration-error--title">{ title }</Title>
 
-			{ !! subTitle && <SubTitle>{ subTitle }</SubTitle> }
+			{ !! subTitle && <SubTitle className="migration-error--subtitle">{ subTitle }</SubTitle> }
 
 			{ hintId === 'jetpack-update' && <HintJetpackUpdate sourceSiteSlug={ sourceSiteUrl } /> }
 			{ hintId === 'incompatible-plugins' && <HintIncompatiblePlugins /> }
 
 			{ ( goBackCta || tryAgainCta || getHelpCta ) && (
 				<div className="import__buttons-group">
-					{ goBackCta && <NextButton onClick={ goBack }>{ translate( 'Go back' ) }</NextButton> }
+					{ goBackCta && (
+						<NextButton onClick={ goToImportCapturePage }>{ translate( 'Go back' ) }</NextButton>
+					) }
 					{ tryAgainCta && (
 						<NextButton onClick={ resetMigration }>{ translate( 'Try again' ) }</NextButton>
 					) }
