@@ -44,7 +44,7 @@ const SiteTransferComplete = () => {
 
 const SiteOwnerTransfer = () => {
 	useQueryUserPurchases();
-	const selectedSite = useSelector( ( state ) => getSelectedSite( state ) );
+	const selectedSite = useSelector( getSelectedSite );
 	const [ newSiteOwner, setNewSiteOwner ] = useState< User | null >( null );
 	const [ transferSiteSuccess, setSiteTransferSuccess ] = useState( false );
 

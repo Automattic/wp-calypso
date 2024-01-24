@@ -21,9 +21,7 @@ const JetpackReviewPrompt: FunctionComponent< Props > = ( { align = 'center', ty
 	const dispatch = useDispatch();
 
 	// dismiss count is stored in a preference, make sure we have that before rendering
-	const hasReceivedRemotePreferences = useSelector( ( state ) =>
-		getHasReceivedRemotePreferences( state )
-	);
+	const hasReceivedRemotePreferences = useSelector( getHasReceivedRemotePreferences );
 
 	const isDismissed = useSelector( ( state ) => getIsDismissed( state, type ) );
 	const validFrom = useSelector( ( state ) => getValidFromDate( state, type ) );

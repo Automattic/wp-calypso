@@ -17,7 +17,7 @@ type EarnLaunchpadProps = {
 const EarnLaunchpad = ( { launchpad }: EarnLaunchpadProps ) => {
 	const { checklistSlug, taskFilter, numberOfSteps, completedSteps } = launchpad;
 	const translate = useTranslate();
-	const site = useSelector( ( state ) => getSelectedSite( state ) );
+	const site = useSelector( getSelectedSite );
 	const isNewsletter = 'newsletter' === site?.options?.site_intent;
 
 	return (

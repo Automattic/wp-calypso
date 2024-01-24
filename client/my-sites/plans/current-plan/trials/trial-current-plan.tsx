@@ -23,7 +23,7 @@ import EcommerceTrialNotIncluded from './ecommerce-trial-not-included';
 import './trial-current-plan.scss';
 
 const TrialCurrentPlan = () => {
-	const selectedSite = useSelector( ( state ) => getSelectedSite( state ) );
+	const selectedSite = useSelector( getSelectedSite );
 
 	const translate = useTranslate();
 
