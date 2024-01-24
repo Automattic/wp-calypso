@@ -71,6 +71,13 @@ export default function SiteTopHeaderButtons() {
 								)
 							)
 						}
+						onClickUrlMenuItem={ () =>
+							dispatch(
+								recordTracksEvent(
+									'calypso_jetpack_agency_dashboard_sites_overview_connect_url_site_click'
+								)
+							)
+						}
 					/>
 					<WPCOMHostingPopover
 						context={ buttonRef.current }
