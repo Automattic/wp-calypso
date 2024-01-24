@@ -141,7 +141,7 @@ function PaymentMethodForm() {
 	const handleChangeError = useCallback(
 		( { transactionError }: { transactionError: string | null } ) => {
 			if ( !! transactionError && transactionError.includes( 'CVC' ) ) {
-				( 'Your CVC code or card expiration is invalid.' );
+				transactionError = translate( 'Your CVC code or card expiration is invalid.' );
 			}
 			reduxDispatch(
 				errorNotice(
