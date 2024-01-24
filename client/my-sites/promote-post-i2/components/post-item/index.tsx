@@ -35,7 +35,7 @@ export default function PostItem( {
 	const likeCount = post?.like_count ?? 0;
 	const commentCount = post?.comment_count ?? 0;
 	const productPrice = post.price ?? '-';
-	const productSku = post.sku ?? '-';
+	const productSku = post.sku && post.sku.length > 0 ? post.sku : '-';
 	const isWooProduct = isRunningInWooStore && filterType === 'product';
 
 	const mobileStatsSeparator = <span className="blazepress-mobile-stats-mid-dot">&#183;</span>;
@@ -158,7 +158,7 @@ export default function PostItem( {
 			<td className="post-item__post-type">{ getPostType( post.type ) }</td>
 			{ isWooProduct && (
 				<>
-					<td className="post-item__post-sku">{ post.sku ?? '-' }</td>
+					<td className="post-item__post-sku">{ productSku }</td>
 					<td className="post-item__post-price">{ post.price ?? '-' }</td>
 				</>
 			) }
