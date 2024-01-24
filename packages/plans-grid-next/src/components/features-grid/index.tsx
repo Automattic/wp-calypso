@@ -495,7 +495,7 @@ class FeaturesGrid extends Component< FeaturesGridProps > {
 
 			const shouldRenderStorageTitle =
 				storageOptions.length > 0 &&
-				( storageOptions.length === 1 || intervalType !== 'yearly' || ! showUpgradeableStorage );
+				( storageOptions.length === 1 || intervalType === 'monthly' || ! showUpgradeableStorage );
 			const canUpgradeStorageForPlan = isStorageUpgradeableForPlan( {
 				intervalType,
 				showUpgradeableStorage,
