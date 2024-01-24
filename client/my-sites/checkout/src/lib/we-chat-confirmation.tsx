@@ -4,20 +4,7 @@ import styled from '@emotion/styled';
 import { useTranslate } from 'i18n-calypso';
 import { QRCodeSVG } from 'qrcode.react';
 
-const WeChatConfirmationModalArea = styled.div`
-	position: fixed;
-	left: 0;
-	top: 0;
-	background: rgb( 125 125 125 / 90% );
-	height: 100%;
-	width: 100%;
-	z-index: 100001;
-	margin: 0;
-	text-align: center;
-	display: flex;
-`;
-
-const WeChatConfirmationDiv = styled.div`
+const WeChatConfirmationDiv = styled.dialog`
 	width: 300px;
 	margin: auto;
 	background: white;
@@ -41,50 +28,46 @@ export function WeChatConfirmation( {
 	redirectUrl,
 	priceInteger,
 	priceCurrency,
-	cancel,
 }: {
 	redirectUrl: string;
 	priceInteger: number;
 	priceCurrency: string;
-	cancel: () => void;
 } ) {
 	const translate = useTranslate();
 
 	return (
-		<WeChatConfirmationModalArea onClick={ cancel }>
-			<WeChatConfirmationDiv>
-				<p>
-					{ translate(
-						'Please scan the barcode using the WeChat Pay application to confirm your %(price)s payment.',
-						{
-							args: {
-								price: formatCurrency( priceInteger, priceCurrency, {
-									isSmallestUnit: true,
-									stripZeros: true,
-								} ),
-							},
-							comment: 'Instruction to scan a QR barcode and finalize payment with WeChat Pay.',
-						}
-					) }
-				</p>
+		<WeChatConfirmationDiv className="we-chat-confirmation">
+			<p>
+				{ translate(
+					'Please scan the barcode using the WeChat Pay application to confirm your %(price)s payment.',
+					{
+						args: {
+							price: formatCurrency( priceInteger, priceCurrency, {
+								isSmallestUnit: true,
+								stripZeros: true,
+							} ),
+						},
+						comment: 'Instruction to scan a QR barcode and finalize payment with WeChat Pay.',
+					}
+				) }
+			</p>
 
-				<div className="we-chat-confirmation__qrcode">
-					<QRCodeSVG value={ redirectUrl } />
-				</div>
+			<div className="we-chat-confirmation__qrcode">
+				<QRCodeSVG value={ redirectUrl } />
+			</div>
 
-				<Spinner size={ 30 } />
+			<Spinner size={ 30 } />
 
-				<p className="we-chat-confirmation__qrcode-redirect">
-					{ translate(
-						'On mobile? To open and pay with the WeChat Pay app directly, {{a}}click here{{/a}}.',
-						{
-							components: { a: <a href={ redirectUrl } /> },
-							comment:
-								'Asking if mobile detection has failed and they would like to open and be redirected directly into the WeChat app in order to pay.',
-						}
-					) }
-				</p>
-			</WeChatConfirmationDiv>
-		</WeChatConfirmationModalArea>
+			<p className="we-chat-confirmation__qrcode-redirect">
+				{ translate(
+					'On mobile? To open and pay with the WeChat Pay app directly, {{a}}click here{{/a}}.',
+					{
+						components: { a: <a href={ redirectUrl } /> },
+						comment:
+							'Asking if mobile detection has failed and they would like to open and be redirected directly into the WeChat app in order to pay.',
+					}
+				) }
+			</p>
+		</WeChatConfirmationDiv>
 	);
 }

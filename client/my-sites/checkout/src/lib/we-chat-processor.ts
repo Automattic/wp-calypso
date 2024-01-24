@@ -171,9 +171,27 @@ function displayWeChatModal(
 			redirectUrl,
 			priceInteger,
 			priceCurrency,
-			cancel,
 		} )
 	);
+
+	// We have to activate the `<dialog>` element after a moment because we
+	// need to give React a chance to render it.
+	setTimeout( () => {
+		const dialogElement = document.querySelector( 'dialog.we-chat-confirmation' );
+		if ( dialogElement && 'showModal' in dialogElement ) {
+			// dialog elements are a new addition to HTML but should be
+			// supported by all the browsers that calypso supports.
+			// Nevertheless, TypeScript does not know about it.
+			( dialogElement.showModal as () => void )();
+			dialogElement.addEventListener( 'close', () => cancel() );
+			// Hide the dialog if you click outside it.
+			dialogElement.addEventListener( 'click', ( event ) => {
+				if ( event.target === event.currentTarget ) {
+					cancel();
+				}
+			} );
+		}
+	} );
 	return root;
 }
 
