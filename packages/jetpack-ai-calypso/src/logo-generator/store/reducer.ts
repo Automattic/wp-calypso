@@ -1,6 +1,7 @@
 /**
  * Types & Constants
  */
+import { DEFAULT_LOGO_COST } from '../../constants';
 import {
 	ACTION_INCREASE_AI_ASSISTANT_REQUESTS_COUNT,
 	ACTION_REQUEST_AI_ASSISTANT_FEATURE,
@@ -75,11 +76,18 @@ export default function reducer(
 			};
 
 		case ACTION_STORE_AI_ASSISTANT_FEATURE: {
+			const defaultCosts = {
+				'jetpack-ai-logo-generator': {
+					logo: DEFAULT_LOGO_COST,
+				},
+			};
+
 			return {
 				...state,
 				features: {
 					...state.features,
 					aiAssistantFeature: {
+						costs: defaultCosts,
 						...action.feature,
 						// re evaluate requireUpgrade as the logo generator does not allow free usage
 						requireUpgrade:
