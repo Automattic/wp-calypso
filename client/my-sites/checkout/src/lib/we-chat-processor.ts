@@ -96,6 +96,8 @@ export default async function weChatProcessor(
 	return submitWpcomTransaction( formattedTransactionData, options )
 		.then( async ( response?: WPCOMTransactionEndpointResponse ) => {
 			if ( ! response?.redirect_url ) {
+				// eslint-disable-next-line no-console
+				console.error( 'Transaction response was missing required redirect url' );
 				throw new Error( genericErrorMessage );
 			}
 
@@ -106,6 +108,8 @@ export default async function weChatProcessor(
 			}
 
 			if ( ! response.order_id ) {
+				// eslint-disable-next-line no-console
+				console.error( 'Transaction response was missing required order ID' );
 				throw new Error( genericErrorMessage );
 			}
 
@@ -150,6 +154,8 @@ async function pollForOrderStatus(
 ): Promise< PurchaseOrderStatus > {
 	const orderData = await fetchPurchaseOrder( orderId );
 	if ( ! orderData ) {
+		// eslint-disable-next-line no-console
+		console.error( 'Order was not found.' );
 		throw new Error( genericErrorMessage );
 	}
 	if ( orderData.processing_status === 'success' ) {
@@ -162,6 +168,8 @@ async function pollForOrderStatus(
 function getRenderRoot( genericErrorMessage: string ) {
 	const weChatTarget = document.querySelector( '.we-chat-modal-target' );
 	if ( ! weChatTarget ) {
+		// eslint-disable-next-line no-console
+		console.error( 'Dialog target was not found.' );
 		throw new Error( genericErrorMessage );
 	}
 	return createRoot( weChatTarget );
@@ -191,6 +199,8 @@ function displayWeChatModal(
 	setTimeout( () => {
 		const dialogElement = document.querySelector( 'dialog.we-chat-confirmation' );
 		if ( ! dialogElement || ! ( 'showModal' in dialogElement ) ) {
+			// eslint-disable-next-line no-console
+			console.error( 'Dialog was not found or browser does not support dialogs.' );
 			cancel();
 			return;
 		}
