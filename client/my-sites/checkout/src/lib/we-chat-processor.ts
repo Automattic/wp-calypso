@@ -124,6 +124,11 @@ export default async function weChatProcessor(
 					hideWeChatModal( root );
 					isModalActive = false;
 					explicitClosureMessage = translate( 'Payment cancelled.' );
+				},
+				() => {
+					hideWeChatModal( root );
+					isModalActive = false;
+					explicitClosureMessage = genericErrorMessage;
 				}
 			);
 
@@ -184,7 +189,8 @@ function displayWeChatModal(
 	redirectUrl: string,
 	priceInteger: number,
 	priceCurrency: string,
-	cancel: () => void
+	cancel: () => void,
+	error: () => void
 ) {
 	root.render(
 		createElement( WeChatConfirmation, {
@@ -201,7 +207,7 @@ function displayWeChatModal(
 		if ( ! dialogElement || ! ( 'showModal' in dialogElement ) ) {
 			// eslint-disable-next-line no-console
 			console.error( 'Dialog was not found or browser does not support dialogs.' );
-			cancel();
+			error();
 			return;
 		}
 
