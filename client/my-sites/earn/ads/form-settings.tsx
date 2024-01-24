@@ -413,7 +413,7 @@ const AdsFormSettings = () => {
 				<FormFieldset>
 					{ /* <SupportInfo
 						text={ translate(
-							'Activates GDPR Consent Banner for EU Compliance. Let site visitors easily provide consent for personalized ads.'
+							'Enables the CMP Banner to ensure GDPR compliance for EU visitors. Let site visitors easily provide consent for personalized ads.'
 						) }
 						link={ localizeUrl(
 							'https://wordpress.com/support/us-privacy-laws-and-your-wordpress-com-site/'
@@ -423,13 +423,13 @@ const AdsFormSettings = () => {
 						checked={ !! settings.cmp_enabled }
 						disabled={ isDisabled }
 						onChange={ () => handleCompactToggle( 'cmp_enabled' ) }
-						label={ translate( 'Enable GDPR Consent banner for EU visitors' ) }
+						label={ translate( 'Enable GDPR Consent banner' ) }
 					/>
 
 					<div className="ads__child-settings">
 						<FormSettingExplanation>
 							{ translate(
-								'Activates GDPR Consent Banner for EU Compliance. Let site visitors easily provide consent for personalized ads.'
+								'Enables the CMP Banner to ensure GDPR compliance for EU visitors. Lets EU site visitors provide consent for personalized ads.'
 							) }
 						</FormSettingExplanation>
 					</div>
