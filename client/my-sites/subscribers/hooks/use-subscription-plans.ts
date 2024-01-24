@@ -7,10 +7,11 @@ import {
 } from 'calypso/my-sites/earn/memberships/constants';
 import { Subscriber, SubscriptionPlan } from '../types';
 
-type SubscriptionPlanData = {
+export type SubscriptionPlanData = {
 	plan: ReactNode;
 	startDate?: string;
 	title?: string;
+	is_gift: boolean;
 };
 
 type PlanData = {
@@ -90,6 +91,7 @@ const useSubscriptionPlans = ( subscriber: Subscriber ): SubscriptionPlanData[] 
 				plan: getPlanDisplay( plan ),
 				startDate: plan.start_date,
 				title: plan.title,
+				is_gift: plan.is_gift,
 			} ) );
 		}
 		return [];
