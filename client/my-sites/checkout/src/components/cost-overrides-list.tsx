@@ -61,13 +61,11 @@ export function CostOverridesList( {
 	currency,
 	removeCoupon,
 	couponCode,
-	creditsInteger,
 }: {
 	costOverridesList: Array< CostOverrideForDisplay >;
 	currency: string;
 	removeCoupon?: RemoveCouponFromCart;
 	couponCode: ResponseCart[ 'coupon' ];
-	creditsInteger: number;
 } ) {
 	const translate = useTranslate();
 	// Let's put the coupon code last because it will have its own "Remove" button.
@@ -93,14 +91,6 @@ export function CostOverridesList( {
 					</div>
 				);
 			} ) }
-			{ creditsInteger > 0 && (
-				<div className="cost-overrides-list-item" key="credits-override">
-					<span className="cost-overrides-list-item__reason">{ translate( 'Credits' ) }</span>
-					<span className="cost-overrides-list-item__discount">
-						{ formatCurrency( -creditsInteger, currency, { isSmallestUnit: true } ) }
-					</span>
-				</div>
-			) }
 			{ ! removeCoupon &&
 				couponOverrides.map( ( costOverride ) => {
 					return (
