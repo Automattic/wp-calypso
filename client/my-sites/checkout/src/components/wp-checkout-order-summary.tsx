@@ -19,20 +19,24 @@ import {
 	planHasFeature,
 	WPCOM_FEATURES_ATOMIC,
 	isWooExpressPlan,
+	isSenseiProduct,
 } from '@automattic/calypso-products';
 import { Gridicon } from '@automattic/components';
 import { FormStatus, useFormStatus } from '@automattic/composite-checkout';
 import { formatCurrency } from '@automattic/format-currency';
-import { isNewsletterOrLinkInBioFlow, isAnyHostingFlow } from '@automattic/onboarding';
+import {
+	isNewsletterOrLinkInBioFlow,
+	isAnyHostingFlow,
+	isSenseiFlow,
+} from '@automattic/onboarding';
 import { useShoppingCart } from '@automattic/shopping-cart';
 import {
 	getTaxBreakdownLineItemsFromCart,
 	getTotalLineItemFromCart,
 	hasCheckoutVersion,
-	getSubtotalWithCredits,
-	doesPurchaseHaveFullCredits,
 	getSubtotalWithoutDiscounts,
 	filterAndGroupCostOverridesForDisplay,
+	getCreditsLineItemFromCart,
 } from '@automattic/wpcom-checkout';
 import { keyframes } from '@emotion/react';
 import styled from '@emotion/styled';
@@ -143,22 +147,17 @@ export function CheckoutSummaryFeaturedList( {
 function CheckoutSummaryPriceList() {
 	const cartKey = useCartKey();
 	const { responseCart } = useShoppingCart( cartKey );
+	const creditsLineItem = getCreditsLineItemFromCart( responseCart );
 	const taxLineItems = getTaxBreakdownLineItemsFromCart( responseCart );
 	const totalLineItem = getTotalLineItemFromCart( responseCart );
 	const translate = useTranslate();
-	const subtotalWithCredits = getSubtotalWithCredits( responseCart );
 	const costOverridesList = filterAndGroupCostOverridesForDisplay( responseCart, translate );
-	const isFullCredits = doesPurchaseHaveFullCredits( responseCart );
-	// Clamp the credits display value to the total
-	const creditsForDisplay = isFullCredits
-		? responseCart.sub_total_with_taxes_integer
-		: responseCart.credits_integer;
 
 	const subtotalBeforeDiscounts = getSubtotalWithoutDiscounts( responseCart );
 
 	return (
 		<>
-			{ ! hasCheckoutVersion( '2' ) && (
+			{ ! hasCheckoutVersion( '2' ) && costOverridesList.length > 0 && (
 				<CheckoutFirstSubtotalLineItem key="checkout-summary-line-item-subtotal-one">
 					<span>{ translate( 'Subtotal before discounts' ) }</span>
 					<span>
@@ -174,14 +173,13 @@ function CheckoutSummaryPriceList() {
 					costOverridesList={ costOverridesList }
 					currency={ responseCart.currency }
 					couponCode={ responseCart.coupon }
-					creditsInteger={ creditsForDisplay }
 				/>
 			) }
 			<CheckoutSummaryAmountWrapper>
 				<CheckoutSummaryLineItem key="checkout-summary-line-item-subtotal">
 					<span>{ translate( 'Subtotal' ) }</span>
 					<span>
-						{ formatCurrency( subtotalWithCredits, responseCart.currency, {
+						{ formatCurrency( responseCart.sub_total_integer, responseCart.currency, {
 							isSmallestUnit: true,
 							stripZeros: true,
 						} ) }
@@ -193,6 +191,13 @@ function CheckoutSummaryPriceList() {
 						<span>{ taxLineItem.formattedAmount }</span>
 					</CheckoutSummaryLineItem>
 				) ) }
+				{ creditsLineItem && responseCart.sub_total_integer > 0 && (
+					<CheckoutSummaryLineItem key={ 'checkout-summary-line-item-' + creditsLineItem.id }>
+						<span>{ creditsLineItem.label }</span>
+						<span>{ creditsLineItem.formattedAmount }</span>
+					</CheckoutSummaryLineItem>
+				) }
+
 				<CheckoutSummaryTotal>
 					<span>{ translate( 'Total' ) }</span>
 					<span className="wp-checkout-order-summary__total-price">
@@ -251,8 +256,12 @@ function CheckoutSummaryFeaturesWrapper( props: {
 	const planHasHostingFeature = responseCart.products.some( ( product ) =>
 		planHasFeature( product.product_slug, WPCOM_FEATURES_ATOMIC )
 	);
+	const hasSenseiProductInCart = responseCart.products.some( ( product ) =>
+		isSenseiProduct( product )
+	);
 	const shouldUseFlowFeatureList =
 		isNewsletterOrLinkInBioFlow( signupFlowName ) ||
+		( isSenseiFlow( signupFlowName ) && hasSenseiProductInCart ) ||
 		( isAnyHostingFlow( signupFlowName ) && planHasHostingFeature );
 	const giftSiteSlug = responseCart.gift_details?.receiver_blog_slug;
 

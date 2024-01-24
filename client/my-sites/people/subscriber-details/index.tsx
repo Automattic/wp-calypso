@@ -29,7 +29,7 @@ export default function SubscriberDetails( props: Props ) {
 	const dispatch = useDispatch();
 	const { removeFollower, isSuccess: isRemoveFollowerSuccess } = useRemoveFollowerMutation();
 
-	const site = useSelector( ( state ) => getSelectedSite( state ) );
+	const site = useSelector( getSelectedSite );
 	const { subscriberId, subscriberType } = props;
 	const [ templateState, setTemplateState ] = useState( 'loading' );
 	const { data: subscriber, isLoading } = useFollowerQuery(

@@ -7,7 +7,7 @@ import { getSelectedSite } from 'calypso/state/ui/selectors';
 
 export const useEarnLaunchpadTasks = () => {
 	const checklistSlug = 'earn';
-	const site = useSelector( ( state ) => getSelectedSite( state ) );
+	const site = useSelector( getSelectedSite );
 	const products = useSelector( ( state ) => getProductsForSiteId( state, site?.ID ) );
 	const connectedAccountId = useSelector( ( state ) =>
 		getConnectedAccountIdForSiteId( state, site?.ID )

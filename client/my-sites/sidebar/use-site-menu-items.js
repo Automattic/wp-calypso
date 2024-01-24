@@ -28,7 +28,7 @@ const useSiteMenuItems = () => {
 	const isJetpack = useSelector( ( state ) => isJetpackSite( state, selectedSiteId ) );
 	const isAtomic = useSelector( ( state ) => isAtomicSite( state, selectedSiteId ) );
 	const locale = useLocale();
-	const currentRoute = useSelector( ( state ) => getCurrentRoute( state ) );
+	const currentRoute = useSelector( getCurrentRoute );
 	const isAllDomainsView = '/domains/manage' === currentRoute;
 
 	useEffect( () => {
