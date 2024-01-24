@@ -1,4 +1,5 @@
 import {
+	isBiennially,
 	isJetpackPlan,
 	isJetpackProduct,
 	isJetpackSocialAdvancedSlug,
@@ -176,8 +177,8 @@ export function filterAndGroupCostOverridesForDisplay(
 			const discountAmount = grouped[ 'introductory-offer' ]?.discountAmount ?? 0;
 			let newDiscountAmount =
 				product.item_original_subtotal_integer - product.item_subtotal_before_discounts_integer;
-			// Override for Jetpack Bi-Yearly products: we show introductory discount for yearly variant (the rest is considered multi-year discount)
-			if ( isJetpack && isBiYearlyProduct( product ) ) {
+			// Override for Jetpack two-year products: we show introductory discount for yearly variant (the rest is considered multi-year discount)
+			if ( isJetpack && isBiennially( product ) ) {
 				const yearlyVariant = getYearlyVariantFromProduct( product );
 				if ( yearlyVariant ) {
 					newDiscountAmount =
@@ -195,17 +196,20 @@ export function filterAndGroupCostOverridesForDisplay(
 			productDiscountAmountTotal += newDiscountAmount;
 		}
 
-		if ( isJetpack && isBiYearlyProduct( product ) ) {
+		if ( isJetpack && isBiennially( product ) ) {
 			const discountAmount = grouped[ 'multi-year-discount' ]?.discountAmount ?? 0;
 			const newDiscountAmount =
 				product.item_original_subtotal_integer -
 				product.item_subtotal_integer -
 				productDiscountAmountTotal;
-			grouped[ 'multi-year-discount' ] = {
-				humanReadableReason: translate( 'Multi-year discount' ),
-				overrideCode: 'multi-year-discount',
-				discountAmount: discountAmount + newDiscountAmount,
-			};
+
+			if ( newDiscountAmount > 0 ) {
+				grouped[ 'multi-year-discount' ] = {
+					humanReadableReason: translate( 'Multi-year discount' ),
+					overrideCode: 'multi-year-discount',
+					discountAmount: discountAmount + newDiscountAmount,
+				};
+			}
 		}
 		return grouped;
 	}, {} );
@@ -228,10 +232,6 @@ function getCreditsUsedByCart( responseCart: ResponseCart ): number {
 
 function getYearlyVariantFromProduct( product: ResponseCartProduct ) {
 	return product.product_variants.find( ( variant ) => 12 === variant.bill_period_in_months );
-}
-
-function isBiYearlyProduct( product: ResponseCartProduct ) {
-	return 24 === product.months_per_bill_period;
 }
 
 export function getSubtotalWithoutDiscounts( responseCart: ResponseCart ): number {
