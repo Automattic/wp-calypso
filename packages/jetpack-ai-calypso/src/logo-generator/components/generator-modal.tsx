@@ -111,7 +111,7 @@ export const GeneratorModal: React.FC< GeneratorModalProps > = ( {
 			setNeedsFeature( ! feature?.hasFeature ?? true );
 			setNeedsMoreRequests( needsMoreRequests );
 
-			if ( ! feature?.hasFeature ) {
+			if ( ! feature?.hasFeature || needsMoreRequests ) {
 				const upgradeURL = new URL(
 					`${ location.origin }/checkout/${ siteDetails?.domain }/${ feature?.nextTier?.slug }`
 				);
