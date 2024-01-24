@@ -1,5 +1,4 @@
 import { isEnabled } from '@automattic/calypso-config';
-import { PLAN_PREMIUM, getPlan } from '@automattic/calypso-products';
 import { Card, Button, Gridicon } from '@automattic/components';
 import {
 	DesignPreviewImage,
@@ -325,7 +324,7 @@ export class Theme extends Component {
 			this.props;
 
 		const isPremiumTheme = isEnabled( 'themes/tiers' )
-			? theme.theme_tier?.slug === getPlan( PLAN_PREMIUM ).getPathSlug()
+			? theme.theme_tier?.slug === PREMIUM_THEME
 			: themeType === PREMIUM_THEME;
 
 		const isLocked = isLockedStyleVariation( {
