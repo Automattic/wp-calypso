@@ -33,6 +33,14 @@ export default function useErrorDetails( status: MigrationStatusError | null ) {
 				showGetHelpCta( true );
 				break;
 
+			case MigrationStatusError.BACKUP_QUEUEING:
+				setTitle( titleA );
+				setSubTitle(
+					translate( 'Please reach out to our support team by clicking the "Get help" button.' )
+				);
+				showGetHelpCta( true );
+				break;
+
 			// Miscellaneous
 			case MigrationStatusError.GENERAL:
 			case MigrationStatusError.UNKNOWN:
