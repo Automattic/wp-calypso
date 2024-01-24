@@ -2,7 +2,7 @@
  * External dependencies
  */
 import { recordTracksEvent } from '@automattic/calypso-analytics';
-import { Button } from '@wordpress/components';
+import { Button, Tooltip } from '@wordpress/components';
 import { __, sprintf } from '@wordpress/i18n';
 import { Icon, info } from '@wordpress/icons';
 import debugFactory from 'debug';
@@ -175,7 +175,15 @@ export const Prompt: React.FC< { initialPrompt?: string } > = ( { initialPrompt 
 							{ __( 'Upgrade', 'jetpack' ) }
 						</Button>
 						&nbsp;
-						<Icon className="prompt-footer__icon" icon={ info } />
+						<Tooltip
+							text={ __(
+								'Logo generation costs 10 requests; prompt enhancement costs 1 request each',
+								'jetpack'
+							) }
+							placement="top"
+						>
+							<Icon className="prompt-footer__icon" icon={ info } />
+						</Tooltip>
 					</div>
 				) }
 				{ ! isUnlimited && requireUpgrade && <UpgradeNudge /> }
