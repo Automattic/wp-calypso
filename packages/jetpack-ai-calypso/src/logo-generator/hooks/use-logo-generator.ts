@@ -319,9 +319,21 @@ User request:${ prompt }`;
 		debug( 'Generating logo for site', siteId );
 
 		setIsRequestingImage( true );
-		increaseAiAssistantRequestsCount();
 
 		try {
+			if ( ! siteId ) {
+				throw new Error( 'Missing siteId or logo' );
+			}
+
+			const feature = getAiAssistantFeature( siteId );
+			const cost = feature.costs?.[ 'jetpack-ai-logo-generator' ]?.logo;
+
+			if ( cost == null ) {
+				throw new Error( 'Missing cost information' );
+			}
+
+			increaseAiAssistantRequestsCount( cost );
+
 			let image;
 
 			try {
@@ -331,7 +343,7 @@ User request:${ prompt }`;
 					throw new Error( 'No image returned' );
 				}
 			} catch ( error ) {
-				increaseAiAssistantRequestsCount( -1 );
+				increaseAiAssistantRequestsCount( -cost );
 				throw error;
 			}
 
