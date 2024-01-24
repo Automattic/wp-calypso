@@ -470,16 +470,6 @@ body.is-section-signup.is-white-signup .layout:not(.dops):not(.is-wccom-oauth-fl
 		}
 	}
 
-	.signup.is-onboarding-2023-pricing-grid .step-wrapper:not(.is-horizontal-layout) {
-		.step-wrapper__header {
-			margin: 24px 20px 38px;
-
-			@media (min-width: 880px) {
-				margin: 24px 20px;
-			}
-		}
-	}
-
 	.step-wrapper__header-button {
 		@include breakpoint-deprecated("<660px") {
 			margin-top: 16px;
@@ -828,23 +818,6 @@ body.is-section-signup.is-white-signup .layout:not(.dops):not(.is-wccom-oauth-fl
 			.formatted-header__subtitle button.is-borderless {
 				font-weight: 500;
 				color: var(--studio-gray-90);
-			}
-		}
-	}
-
-	.signup.is-onboarding-2023-pricing-grid .signup__step .plans.plans-step {
-		.formatted-header {
-			.formatted-header__title {
-				font-size: 2.25rem;
-				/* stylelint-disable-next-line declaration-property-unit-allowed-list */
-				line-height: 2.5rem;
-				font-weight: 400;
-
-				@media (min-width: 880px) {
-					font-size: 2.75rem;
-					/* stylelint-disable-next-line declaration-property-unit-allowed-list */
-					line-height: 3rem;
-				}
 			}
 		}
 	}
