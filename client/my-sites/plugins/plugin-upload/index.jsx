@@ -99,7 +99,11 @@ class PluginUpload extends Component {
 
 		return (
 			<WrapperComponent>
-				<Card>{ ! inProgress && ! complete && <UploadDropZone doUpload={ uploadAction } /> }</Card>
+				<Card>
+					{ ! inProgress && ! complete && (
+						<UploadDropZone doUpload={ uploadAction } disabled={ ! isAtomic } />
+					) }
+				</Card>
 			</WrapperComponent>
 		);
 	}
