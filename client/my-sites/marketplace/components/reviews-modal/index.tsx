@@ -42,11 +42,12 @@ export const ReviewsModal = ( props: Props ) => {
 	const [ editCompletedTimes, setEditCompletedTimes ] = useState( 0 );
 
 	useEffect( () => {
-		recordTracksEvent( 'calypso_marketplace_reviews_modal_open', {
-			product_type: productType,
-			slug: slug,
-		} );
-	}, [ productType, slug ] );
+		isVisible &&
+			recordTracksEvent( 'calypso_marketplace_reviews_modal_open', {
+				product_type: productType,
+				slug: slug,
+			} );
+	}, [ isVisible, productType, slug ] );
 
 	const { data: userReviews, isFetching: isFetchingUserReviews } = useMarketplaceReviewsQuery( {
 		productType,

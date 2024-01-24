@@ -7,6 +7,7 @@ import {
 } from 'calypso/controller';
 import { recordSiftScienceUser } from 'calypso/lib/siftscience';
 import { loggedInSiteSelection, noSite, siteSelection } from 'calypso/my-sites/controller';
+import { getProfessionalEmailCheckoutUpsellPath } from 'calypso/my-sites/email/paths';
 import {
 	checkout,
 	checkoutAkismetSiteless,
@@ -274,18 +275,8 @@ export default function () {
 		clientRender
 	);
 
-	// Use `noSite` instead of the `siteSelection` middleware for the no-site route.
 	page(
-		'/checkout/offer-professional-email/:domain/:receiptId/no-site',
-		redirectLoggedOut,
-		noSite,
-		checkoutThankYou,
-		makeLayout,
-		clientRender
-	);
-
-	page(
-		'/checkout/offer-professional-email/:domain/:receiptId/:site?',
+		getProfessionalEmailCheckoutUpsellPath( ':site', ':domain', ':receiptId' ),
 		redirectLoggedOut,
 		siteSelection,
 		upsellNudge,

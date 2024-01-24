@@ -188,17 +188,6 @@ function getCreditsUsedByCart( responseCart: ResponseCart ): number {
 	return isFullCredits ? responseCart.sub_total_with_taxes_integer : responseCart.credits_integer;
 }
 
-/*
- * Coupon discounts are applied (or not, as appropriate) to each line item's
- * total, so the cart's subtotal includes them. However, because it's nice to
- * be able to display the coupon discount as a discount separately from the
- * subtotal, this function returns the cart's subtotal with the coupon savings
- * removed.
- */
-export function getSubtotalWithoutCoupon( responseCart: ResponseCart ): number {
-	return responseCart.sub_total_integer + responseCart.coupon_savings_total_integer;
-}
-
 export function getSubtotalWithoutDiscounts( responseCart: ResponseCart ): number {
 	return responseCart.products.reduce( ( total, product ) => {
 		return product.item_original_subtotal_integer + total;
@@ -214,18 +203,6 @@ export function getTotalDiscountsWithoutCredits(
 		total = total + override.discountAmount;
 		return total;
 	}, 0 );
-}
-
-/**
- * Credits are the only type of cart discount that is applied to the cart as a
- * whole and not to individual line items. The subtotal is only a subtotal of
- * line items and does not have credits applied. Therefore, if we want to
- * display credits as a discount along with other discounts before the
- * subtotal, we probably want to display the subtotal as having credits already
- * applied, which this function returns.
- */
-export function getSubtotalWithCredits( responseCart: ResponseCart ): number {
-	return responseCart.sub_total_integer - getCreditsUsedByCart( responseCart );
 }
 
 export function doesPurchaseHaveFullCredits( cart: ResponseCart ): boolean {

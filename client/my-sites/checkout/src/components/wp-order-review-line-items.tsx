@@ -17,7 +17,6 @@ import {
 	LineItem,
 	getPartnerCoupon,
 	hasCheckoutVersion,
-	doesPurchaseHaveFullCredits,
 	filterAndGroupCostOverridesForDisplay,
 } from '@automattic/wpcom-checkout';
 import styled from '@emotion/styled';
@@ -149,11 +148,6 @@ export function WPOrderReviewLineItems( {
 	);
 
 	const costOverridesList = filterAndGroupCostOverridesForDisplay( responseCart, translate );
-	const isFullCredits = doesPurchaseHaveFullCredits( responseCart );
-	// Clamp the credits display value to the total
-	const creditsForDisplay = isFullCredits
-		? responseCart.sub_total_with_taxes_integer
-		: responseCart.credits_integer;
 
 	const changeAkismetPro500CartQuantity = useCallback< OnChangeAkProQuantity >(
 		( uuid, productSlug, productId, prevQuantity, newQuantity ) => {
@@ -236,7 +230,6 @@ export function WPOrderReviewLineItems( {
 					currency={ responseCart.currency }
 					removeCoupon={ removeCoupon }
 					couponCode={ responseCart.coupon }
-					creditsInteger={ creditsForDisplay }
 				/>
 			) }
 		</WPOrderReviewList>
