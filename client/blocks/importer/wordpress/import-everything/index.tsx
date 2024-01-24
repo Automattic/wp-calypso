@@ -231,7 +231,8 @@ export class ImportEverything extends SectionMigrate {
 			<div className="import-layout__center">
 				<div>
 					<MigrationError
-						siteUrl={ this.props.targetSite.slug }
+						sourceSiteUrl={ this.props.sourceSite.URL }
+						targetSiteUrl={ this.props.targetSite.URL }
 						status={ status || this.state.migrationErrorStatus }
 						resetMigration={ this.resetMigration }
 					/>

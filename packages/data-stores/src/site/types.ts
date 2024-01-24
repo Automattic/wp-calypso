@@ -534,6 +534,8 @@ export enum MigrationStatus {
 }
 
 export enum MigrationStatusError {
+	OLD_JETPACK = 'old_jetpack',
+
 	// Start of migration #1
 	ACTIVATE_REWIND = 'error-rewind-activate',
 	BACKUP_QUEUEING = 'error-backup-queue',
