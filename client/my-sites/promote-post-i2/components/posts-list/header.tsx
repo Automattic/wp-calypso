@@ -41,7 +41,7 @@ export default function PostsListHeader( { type }: PostsListHeaderProps ) {
 		} );
 
 		columns.push( {
-			id: 'visitors',
+			id: 'views',
 			title: translate( 'Visitors' ),
 		} );
 

@@ -163,13 +163,13 @@ export default function PostItem( {
 				</>
 			) }
 			<td className="post-item__post-publish-date">{ postDate }</td>
+			<td className="post-item__post-views">{ formatNumber( viewCount, true ) }</td>
 			{ ! isWooProduct && (
 				<>
 					<td className="post-item__post-likes">{ formatNumber( likeCount, true ) }</td>
 					<td className="post-item__post-comments">{ formatNumber( commentCount, true ) }</td>
 				</>
 			) }
-			<td className="post-item__post-views">{ formatNumber( viewCount, true ) }</td>
 			<td className="post-item__post-view">
 				<a href={ post.post_url } className="post-item__view-link" target="_blank" rel="noreferrer">
 					{ __( 'View' ) }
