@@ -157,8 +157,22 @@ export function filterAndGroupCostOverridesForDisplay(
 				return;
 			}
 			const discountAmount = grouped[ costOverride.override_code ]?.discountAmount ?? 0;
-			const newDiscountAmount =
-				costOverride.old_subtotal_integer - costOverride.new_subtotal_integer;
+			let newDiscountAmount = costOverride.old_subtotal_integer - costOverride.new_subtotal_integer;
+
+			// Overrides for Jetpack biennial intro offers
+			if ( 'introductory-offer' === costOverride.override_code ) {
+				if ( isJetpackSocialAdvancedSlug( product.product_slug ) ) {
+					// Social Advanced has free trial that we don't consider "introduction offer"
+					return;
+				} else if ( isJetpack && isBiennially( product ) ) {
+					// For all other products, we show introductory discount for yearly variant (the rest is considered multi-year discount)
+					const yearlyVariant = getYearlyVariantFromProduct( product );
+					if ( yearlyVariant ) {
+						newDiscountAmount =
+							yearlyVariant.price_before_discounts_integer - yearlyVariant.price_integer;
+					}
+				}
+			}
 			grouped[ costOverride.override_code ] = {
 				humanReadableReason: costOverride.human_readable_reason,
 				overrideCode: costOverride.override_code,
@@ -178,37 +192,48 @@ export function filterAndGroupCostOverridesForDisplay(
 			let newDiscountAmount =
 				product.item_original_subtotal_integer - product.item_subtotal_before_discounts_integer;
 			// Override for Jetpack two-year products: we show introductory discount for yearly variant (the rest is considered multi-year discount)
-			if ( isJetpack && isBiennially( product ) ) {
+			if ( isJetpackSocialAdvancedSlug( product.product_slug ) ) {
+				// Social Advanced has free trial that we don't consider "introduction offer"
+				newDiscountAmount = 0;
+			} else if ( isJetpack && isBiennially( product ) ) {
+				// For all other products, we show introductory discount for yearly variant (the rest is considered multi-year discount)
 				const yearlyVariant = getYearlyVariantFromProduct( product );
 				if ( yearlyVariant ) {
 					newDiscountAmount =
 						yearlyVariant.price_before_discounts_integer - yearlyVariant.price_integer;
 				}
 			}
-
-			grouped[ 'introductory-offer' ] = {
-				humanReadableReason: isJetpackSocialAdvancedSlug( product.product_slug )
-					? translate( 'Free Trial (Month)' )
-					: translate( 'Introductory offer' ),
-				overrideCode: 'introductory-offer',
-				discountAmount: discountAmount + newDiscountAmount,
-			};
-			productDiscountAmountTotal += newDiscountAmount;
+			if ( newDiscountAmount > 0 ) {
+				grouped[ 'introductory-offer' ] = {
+					humanReadableReason: translate( 'Introductory offer' ),
+					overrideCode: 'introductory-offer',
+					discountAmount: discountAmount + newDiscountAmount,
+				};
+				productDiscountAmountTotal += newDiscountAmount;
+			}
 		}
 
 		if ( isJetpack && isBiennially( product ) ) {
 			const discountAmount = grouped[ 'multi-year-discount' ]?.discountAmount ?? 0;
-			const newDiscountAmount =
-				product.item_original_subtotal_integer -
-				product.item_subtotal_integer -
-				productDiscountAmountTotal;
+			const yearlyVariant = getYearlyVariantFromProduct( product );
+			const biennialVariant = getBiennialVariantFromProduct( product );
 
-			if ( newDiscountAmount > 0 ) {
-				grouped[ 'multi-year-discount' ] = {
-					humanReadableReason: translate( 'Multi-year discount' ),
-					overrideCode: 'multi-year-discount',
-					discountAmount: discountAmount + newDiscountAmount,
-				};
+			if ( yearlyVariant && biennialVariant ) {
+				// Coupon is added on top of multi-year discount, so we don't include it in the calculation
+				const discountWithoutCoupon =
+					productDiscountAmountTotal - ( product.coupon_savings_integer ?? 0 );
+				const newDiscountAmount =
+					2 * yearlyVariant.price_before_discounts_integer -
+					discountWithoutCoupon -
+					biennialVariant.price_integer;
+
+				if ( newDiscountAmount > 0 ) {
+					grouped[ 'multi-year-discount' ] = {
+						humanReadableReason: translate( 'Multi-year discount' ),
+						overrideCode: 'multi-year-discount',
+						discountAmount: discountAmount + newDiscountAmount,
+					};
+				}
 			}
 		}
 		return grouped;
@@ -228,6 +253,10 @@ function getCreditsUsedByCart( responseCart: ResponseCart ): number {
 	}
 	const isFullCredits = doesPurchaseHaveFullCredits( responseCart );
 	return isFullCredits ? responseCart.sub_total_with_taxes_integer : responseCart.credits_integer;
+}
+
+function getBiennialVariantFromProduct( product: ResponseCartProduct ) {
+	return product.product_variants.find( ( variant ) => 24 === variant.bill_period_in_months );
 }
 
 function getYearlyVariantFromProduct( product: ResponseCartProduct ) {
