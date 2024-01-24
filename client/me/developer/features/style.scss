@@ -27,13 +27,13 @@
 			line-height: 24px;
 		}
 		.developer-features-list__item-description {
-			padding-bottom: 8px;
 			font-size: rem(14px);
 			color: var(--color-text-subtle);
 			line-height: 20px;
 			letter-spacing: -0.15px;
 		}
 		.developer-features-list__item-learn-more {
+			padding-top: 8px;
 			margin-top: auto;
 		}
 	}
@@ -44,8 +44,8 @@
 		.developer-features-list__item {
 			margin: 0 32px 24px 32px;
 
-			.developer-features-list__item-description {
-				padding-bottom: 30px;
+			.developer-features-list__item-learn-more {
+				padding-top: 30px;
 			}
 		}
 	}
