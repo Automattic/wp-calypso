@@ -39,7 +39,7 @@ export default function ManagePricingPage() {
 				/>
 				<div className="jetpack-product-store">
 					<Header />
-					<Recommendations />;
+					<Recommendations />
 					<StoreFooter />
 				</div>
 			</Main>
