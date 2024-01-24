@@ -32,5 +32,6 @@ export const useCheckout = () => {
 
 	return {
 		nextTierCheckoutURL: upgradeURL.toString(),
+		hasNextTier: !! nextTier,
 	};
 };
