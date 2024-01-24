@@ -8,22 +8,16 @@
  */
 
 import { Spinner } from '@automattic/components';
-import { translate } from 'i18n-calypso';
 import { Fragment } from 'react';
 import { useSelector } from 'react-redux';
 import Sidebar from 'calypso/layout/sidebar';
-import CollapseSidebar from 'calypso/layout/sidebar/collapse-sidebar';
-import SidebarRegion from 'calypso/layout/sidebar/region';
 import SidebarSeparator from 'calypso/layout/sidebar/separator';
-import CurrentSite from 'calypso/my-sites/current-site';
 import { getIsRequestingAdminMenu } from 'calypso/state/admin-menu/selectors';
 import isSiteWpcomAtomic from 'calypso/state/selectors/is-site-wpcom-atomic';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
 import { getSidebarIsCollapsed, getSelectedSiteId } from 'calypso/state/ui/selectors';
-import AddNewSite from './add-new-site';
 import MySitesSidebarUnifiedItem from './item';
 import MySitesSidebarUnifiedMenu from './menu';
-import useDomainsViewStatus from './use-domains-view-status';
 import useSiteMenuItems from './use-site-menu-items';
 import { itemLinkMatches } from './utils';
 import 'calypso/state/admin-menu/init';
@@ -32,7 +26,6 @@ import './style.scss';
 
 export const MySitesSidebarUnified = ( { path } ) => {
 	const menuItems = useSiteMenuItems();
-	const isAllDomainsView = useDomainsViewStatus();
 	const isRequestingMenu = useSelector( getIsRequestingAdminMenu );
 	const sidebarIsCollapsed = useSelector( getSidebarIsCollapsed );
 	const siteId = useSelector( getSelectedSiteId );

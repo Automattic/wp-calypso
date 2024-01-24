@@ -22,20 +22,21 @@ import jetpackMenu from './static-data/jetpack-fallback-menu';
 const useSiteMenuItems = () => {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
+	const currentRoute = useSelector( ( state ) => getCurrentRoute( state ) );
 	const selectedSiteId = useSelector( getSelectedSiteId );
 	const siteDomain = useSelector( ( state ) => getSiteDomain( state, selectedSiteId ) );
 	const menuItems = useSelector( ( state ) => getAdminMenu( state, selectedSiteId ) );
 	const isJetpack = useSelector( ( state ) => isJetpackSite( state, selectedSiteId ) );
 	const isAtomic = useSelector( ( state ) => isAtomicSite( state, selectedSiteId ) );
 	const locale = useLocale();
-	const currentRoute = useSelector( getCurrentRoute );
 	const isAllDomainsView = '/domains/manage' === currentRoute;
+	const isSitesView = '/sites' === currentRoute;
 
 	useEffect( () => {
-		if ( selectedSiteId && siteDomain ) {
+		if ( ! isSitesView && selectedSiteId && siteDomain ) {
 			dispatch( requestAdminMenu( selectedSiteId ) );
 		}
-	}, [ dispatch, selectedSiteId, siteDomain, locale ] );
+	}, [ dispatch, selectedSiteId, siteDomain, isSitesView, locale ] );
 
 	/**
 	 * As a general rule we allow fallback data to remain as static as possible.
@@ -101,8 +102,7 @@ const useSiteMenuItems = () => {
 	/**
 	 * When no site domain is provided, lets show only menu items that support all sites screens.
 	 */
-	if ( ! siteDomain || isAllDomainsView ) {
-		//TODO: might need to change condition here
+	if ( ! siteDomain || isAllDomainsView || isSitesView ) {
 		return allSitesMenu( { showManagePlugins: hasSiteWithPlugins } );
 	}
 
