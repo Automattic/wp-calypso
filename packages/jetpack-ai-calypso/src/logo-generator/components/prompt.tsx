@@ -18,6 +18,7 @@ import {
 	EVENT_PLACEMENT_INPUT_FOOTER,
 } from '../../constants';
 import AiIcon from '../assets/icons/ai';
+import { useCheckout } from '../hooks/use-checkout';
 import useLogoGenerator from '../hooks/use-logo-generator';
 import useRequestErrors from '../hooks/use-request-errors';
 import { UpgradeNudge } from './upgrade-nudge';
@@ -29,6 +30,7 @@ export const Prompt: React.FC< { initialPrompt?: string } > = ( { initialPrompt 
 	const [ prompt, setPrompt ] = useState< string >( initialPrompt );
 	const [ requestsRemaining, setRequestsRemaining ] = useState( 0 );
 	const { enhancePromptFetchError, logoFetchError } = useRequestErrors();
+	const { nextTierCheckoutURL: checkoutUrl, hasNextTier } = useCheckout();
 	const hasPrompt = prompt?.length >= MINIMUM_PROMPT_LENGTH;
 
 	const {
@@ -165,15 +167,19 @@ export const Prompt: React.FC< { initialPrompt?: string } > = ( { initialPrompt 
 								requestsRemaining
 							) }
 						</div>
-						&nbsp;
-						<Button
-							variant="link"
-							href="https://automattic.com/ai-guidelines"
-							target="_blank"
-							onClick={ onUpgradeClick }
-						>
-							{ __( 'Upgrade', 'jetpack' ) }
-						</Button>
+						{ hasNextTier && (
+							<>
+								&nbsp;
+								<Button
+									variant="link"
+									href={ checkoutUrl }
+									target="_blank"
+									onClick={ onUpgradeClick }
+								>
+									{ __( 'Upgrade', 'jetpack' ) }
+								</Button>
+							</>
+						) }
 						&nbsp;
 						<Tooltip
 							text={ __(
