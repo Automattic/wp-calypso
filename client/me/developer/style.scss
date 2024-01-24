@@ -23,8 +23,13 @@
 	@media ( max-width: $break-medium ) {
 		padding: 40px 32px 24px;
 
+		.formatted-header__title {
+			font-size: rem(32px);
+		}
+
 		.formatted-header__subtitle {
 			display: block;
+			font-size: rem(14px);
 		}
 	}
 }

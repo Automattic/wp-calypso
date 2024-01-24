@@ -15,7 +15,7 @@
 
 		a {
 			font-size: rem(13px);
-			color: #c9356e;
+			color: var(--color-accent);
 		}
 
 		.developer-features-list__item-title {
@@ -28,7 +28,7 @@
 		.developer-features-list__item-description {
 			padding-bottom: 8px;
 			font-size: rem(14px);
-			color: #757575;
+			color: var(--color-text-subtle);
 			line-height: 20px;
 			letter-spacing: -0.15px;
 		}
