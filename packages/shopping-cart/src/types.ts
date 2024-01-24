@@ -480,6 +480,7 @@ export interface ResponseCartProduct {
 	current_quantity: number | null;
 	extra: ResponseCartProductExtra;
 	item_tax: number;
+	item_tax_rate: number;
 	product_type: string;
 	included_domain_purchase_amount: number;
 
