@@ -26,13 +26,13 @@ const ReaderTagSidebar = ( {
 	showFollow,
 	registerLastActionRequiresLogin: registerLastActionRequiresLoginProp,
 } ) => {
-	const primarySiteId = useSelector( ( state ) => getPrimarySiteId( state ) );
+	const primarySiteId = useSelector( getPrimarySiteId );
 	const translate = useTranslate();
 	const relatedMetaByTag = useRelatedMetaByTag( tag );
 	const tagStats = useTagStats( tag );
 	const dispatch = useDispatch();
 	const isFollowing = useSelector( ( state ) => getReaderTagBySlug( state, tag )?.isFollowing );
-	const isLoggedIn = useSelector( ( state ) => isUserLoggedIn( state ) );
+	const isLoggedIn = useSelector( isUserLoggedIn );
 
 	const today = moment().subtract( 10, 'd' ).format( '--MM-DD' );
 	const { data: prompts } = useBloggingPrompts( primarySiteId, today, 10 );

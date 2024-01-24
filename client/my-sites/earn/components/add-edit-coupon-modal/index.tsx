@@ -73,7 +73,7 @@ const RecurringPaymentsCouponAddEditModal = ( {
 	const dispatch = useDispatch();
 
 	/** Currency */
-	const selectedSiteId = useSelector( ( state ) => getSelectedSiteId( state ) );
+	const selectedSiteId = useSelector( getSelectedSiteId );
 	const connectedAccountDefaultCurrency = useSelector( ( state ) =>
 		getconnectedAccountDefaultCurrencyForSiteId( state, selectedSiteId )
 	);

@@ -461,7 +461,7 @@ export function getEnhancedTasks( {
 
 					taskData = getTaskDefinition( flow, task, context ) || deprecatedData;
 				case 'setup_general':
-					taskData = {
+					deprecatedData = {
 						disabled: false,
 						actionDispatch: () => {
 							recordTaskClickTracksEvent( flow, task.completed, task.id );
@@ -473,6 +473,7 @@ export function getEnhancedTasks( {
 							);
 						},
 					};
+					taskData = getTaskDefinition( flow, task, context ) || deprecatedData;
 					break;
 				case 'setup_link_in_bio':
 					taskData = {

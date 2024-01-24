@@ -22,9 +22,11 @@ export const NAVIGATOR_PATHS = {
 	PAGES: '/pages',
 };
 
-export const INITIAL_PATH = NAVIGATOR_PATHS.MAIN_HEADER;
+export const INITIAL_PATH = NAVIGATOR_PATHS.MAIN;
 
 export const INITIAL_SCREEN = 'main';
+
+export const INITIAL_CATEGORY = 'intro';
 
 /* Category list of the patterns fetched via PTK API from Dotcompatterns
  *

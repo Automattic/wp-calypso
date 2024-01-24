@@ -29,18 +29,10 @@ const LoginButtons = ( {
 	usernameOrEmail,
 }: LoginButtonsProps ) => {
 	const translate = useTranslate();
-
-	const { query, isJetpackWooCommerceFlow, currentRoute, isDisabled } = useSelector( ( state ) => {
-		const query = getCurrentQueryArguments( state );
-
-		return {
-			query,
-			wccomFrom: query?.[ 'wccom-from' ],
-			isJetpackWooCommerceFlow: 'woocommerce-onboarding' === query?.from,
-			currentRoute: getCurrentRoute( state ),
-			isDisabled: isFormDisabled( state ),
-		};
-	} );
+	const query = useSelector( getCurrentQueryArguments );
+	const isJetpackWooCommerceFlow = 'woocommerce-onboarding' === query?.from;
+	const currentRoute = useSelector( getCurrentRoute );
+	const isDisabled = useSelector( isFormDisabled );
 	const dispatch = useDispatch();
 
 	const getMagicLoginPageLink = () => {

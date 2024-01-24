@@ -23,7 +23,7 @@ export default function ProductPriceWithDiscount( {
 }: Props ) {
 	const translate = useTranslate();
 
-	const userProducts = useSelector( ( state ) => getProductsList( state ) );
+	const userProducts = useSelector( getProductsList );
 	const isDailyPricing = product.price_interval === 'day';
 
 	const isBundle = quantity > 1;
