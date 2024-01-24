@@ -28,9 +28,9 @@ export type TaskId =
 	| 'design_edited'
 	| 'domain_upsell'
 	| 'first_post_published'
-	| 'site_launched'
 	| 'plan_selected'
 	| 'videopress_upload'
+	| 'videopress_setup'
 	| 'plan_completed'
 	| 'site_launched';
 

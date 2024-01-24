@@ -658,6 +658,9 @@ export function getEnhancedTasks( {
 						},
 					};
 					break;
+				case 'videopress_setup':
+					taskData = getTaskDefinition( flow, task, context ) || task;
+					break;
 			}
 			enhancedTaskList.push( { ...task, ...taskData } );
 		} );
