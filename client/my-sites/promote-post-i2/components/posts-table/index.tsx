@@ -18,12 +18,7 @@ export default function PostsTable( props: Props ) {
 
 	return (
 		<table className="promote-post-i2__table">
-			{ isRunningInWooStore && type === 'product' ? (
-				<PostsListHeader postType={ type } />
-			) : (
-				<PostsListHeader postType="post" />
-			) }
-
+			<PostsListHeader type={ isRunningInWooStore && type === 'product' ? type : 'post' } />
 			<tbody>
 				{ isLoading && ! isFetchingPageResults ? (
 					<ItemsLoading />

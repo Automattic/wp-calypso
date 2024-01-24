@@ -6,12 +6,12 @@ type PostsListHeaderColumn = {
 };
 
 type PostsListHeaderProps = {
-	postType: 'product' | 'post' | 'page';
+	type: 'product' | 'post' | 'page';
 };
 
-export default function PostsListHeader( { postType: postType }: PostsListHeaderProps ) {
+export default function PostsListHeader( { type }: PostsListHeaderProps ) {
 	const getHeaderColumns = (): Array< PostsListHeaderColumn > => {
-		const columns = [
+		const columns: Array< PostsListHeaderColumn > = [
 			{
 				id: 'data',
 				title: translate( 'Post' ),
@@ -22,15 +22,17 @@ export default function PostsListHeader( { postType: postType }: PostsListHeader
 			},
 		];
 
-		if ( postType === 'product' ) {
-			columns.push( {
-				id: 'sku',
-				title: translate( 'SKU' ),
-			} );
-			columns.push( {
-				id: 'price',
-				title: translate( 'Price' ),
-			} );
+		if ( type === 'product' ) {
+			columns.push(
+				{
+					id: 'sku',
+					title: translate( 'SKU' ),
+				},
+				{
+					id: 'price',
+					title: translate( 'Price' ),
+				}
+			);
 		}
 
 		columns.push( {
@@ -38,21 +40,34 @@ export default function PostsListHeader( { postType: postType }: PostsListHeader
 			title: translate( 'Publish date' ),
 		} );
 
-		if ( postType === 'post' || postType === 'page' ) {
-			columns.push( {
-				id: 'likes',
-				title: translate( 'Likes' ),
-			} );
-			columns.push( {
-				id: 'comments',
-				title: translate( 'Comments' ),
-			} );
-		}
-
 		columns.push( {
 			id: 'visitors',
 			title: translate( 'Visitors' ),
 		} );
+
+		if ( type === 'post' || type === 'page' ) {
+			columns.push(
+				{
+					id: 'likes',
+					title: translate( 'Likes' ),
+				},
+				{
+					id: 'comments',
+					title: translate( 'Comments' ),
+				}
+			);
+		}
+
+		columns.push(
+			{
+				id: 'view',
+				title: null,
+			},
+			{
+				id: 'promote',
+				title: null,
+			}
+		);
 
 		return columns;
 	};
