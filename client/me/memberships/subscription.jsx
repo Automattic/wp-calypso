@@ -52,33 +52,49 @@ function Subscription( { translate, subscription, moment, stoppingStatus, updati
 	useEffect( () => {
 		if ( stoppingStatus === 'fail' || updatingStatus === 'fail' ) {
 			// run is-error notice to contact support
-			isProduct
-				? dispatch(
-						errorNotice(
-							translate(
-								'There was a problem while removing your product, please {{a}}{{strong}}contact support{{/strong}}{{/a}}.',
-								{
-									components: {
-										a: <a href={ CALYPSO_CONTACT } />,
-										strong: <strong />,
-									},
-								}
-							)
+			if ( isProduct ) {
+				dispatch(
+					errorNotice(
+						translate(
+							'There was a problem while removing your product, please {{a}}{{strong}}contact support{{/strong}}{{/a}}.',
+							{
+								components: {
+									a: <a href={ CALYPSO_CONTACT } />,
+									strong: <strong />,
+								},
+							}
 						)
-				  )
-				: dispatch(
-						errorNotice(
-							translate(
-								'There was a problem while stopping your subscription, please {{a}}{{strong}}contact support{{/strong}}{{/a}}.',
-								{
-									components: {
-										a: <a href={ CALYPSO_CONTACT } />,
-										strong: <strong />,
-									},
-								}
-							)
+					)
+				);
+			} else if ( stoppingStatus === 'fail' ) {
+				dispatch(
+					errorNotice(
+						translate(
+							'There was a problem while stopping your subscription, please {{a}}{{strong}}contact support{{/strong}}{{/a}}.',
+							{
+								components: {
+									a: <a href={ CALYPSO_CONTACT } />,
+									strong: <strong />,
+								},
+							}
 						)
-				  );
+					)
+				);
+			} else if ( updatingStatus === 'fail' ) {
+				dispatch(
+					errorNotice(
+						translate(
+							'There was a problem while updating your subscription, please {{a}}{{strong}}contact support{{/strong}}{{/a}}.',
+							{
+								components: {
+									a: <a href={ CALYPSO_CONTACT } />,
+									strong: <strong />,
+								},
+							}
+						)
+					)
+				);
+			}
 		} else if ( stoppingStatus === 'success' ) {
 			// redirect back to Purchases list
 			dispatch(
