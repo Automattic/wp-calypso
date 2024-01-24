@@ -78,22 +78,21 @@ const WrappedFeaturesGrid = ( props: FeaturesGridExternalProps ) => {
 		allFeaturesList,
 		onUpgradeClick,
 		coupon,
+		isInAdmin,
 	} = props;
-
 	const handleUpgradeClick = useUpgradeClickHandler( {
 		gridPlans,
 		onUpgradeClick,
 	} );
 
-	const gridPlansWithoutSpotlight = ! props.gridPlanForSpotlight
-		? gridPlans
-		: gridPlans.filter( ( { planSlug } ) => props.gridPlanForSpotlight?.planSlug !== planSlug );
-	const columnsInRowForMedium = 4 === gridPlansWithoutSpotlight.length ? 2 : 3;
 	const gridContainerRef = useRef< HTMLDivElement | null >( null );
 	const gridSize = useGridSize( {
 		containerRef: gridContainerRef,
-		averageColumnMinWidth: 222,
-		columnsInRow: { medium: columnsInRowForMedium, large: gridPlansWithoutSpotlight.length },
+		containerBreakpoints: new Map( [
+			[ 'small', 0 ],
+			[ 'medium', 740 ],
+			[ 'large', isInAdmin ? 1180 : 1320 ], // 1320 to fit Enterpreneur plan, 1180 to work in admin
+		] ),
 	} );
 
 	const classNames = classnames( 'plans-grid-next__features-grid', {
@@ -102,8 +101,6 @@ const WrappedFeaturesGrid = ( props: FeaturesGridExternalProps ) => {
 		'is-large': 'large' === gridSize,
 		'is-visible': gridSize,
 	} );
-
-	console.log( 1234, gridSize, gridContainerRef );
 
 	return (
 		<div ref={ gridContainerRef } className={ classNames }>
