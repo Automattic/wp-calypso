@@ -3,6 +3,7 @@ import { PLAN_PREMIUM, getPlan } from '@automattic/calypso-products';
 import { Card, Button, Gridicon } from '@automattic/components';
 import {
 	DesignPreviewImage,
+	PREMIUM_THEME,
 	ThemeCard,
 	isDefaultGlobalStylesVariationSlug,
 	isLockedStyleVariation,
@@ -20,7 +21,10 @@ import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { useSiteGlobalStylesStatus } from 'calypso/state/sites/hooks/use-site-global-styles-status';
 import { getSiteSlug } from 'calypso/state/sites/selectors';
 import { updateThemes } from 'calypso/state/themes/actions/theme-update';
-import { isExternallyManagedTheme as getIsExternallyManagedTheme } from 'calypso/state/themes/selectors';
+import {
+	isExternallyManagedTheme as getIsExternallyManagedTheme,
+	getThemeType,
+} from 'calypso/state/themes/selectors';
 import { setThemesBookmark } from 'calypso/state/themes/themes-ui/actions';
 import ThemeMoreButton from './more-button';
 
@@ -316,11 +320,15 @@ export class Theme extends Component {
 	};
 
 	renderBadge = () => {
-		const { selectedStyleVariation, shouldLimitGlobalStyles, siteId, siteSlug, theme } = this.props;
+		const { selectedStyleVariation, shouldLimitGlobalStyles, siteId, siteSlug, theme, themeType } =
+			this.props;
 
-		const premiumPlanSlug = getPlan( PLAN_PREMIUM ).getPathSlug();
+		const isPremiumTheme = isEnabled( 'themes/tiers' )
+			? theme.theme_tier?.slug === getPlan( PLAN_PREMIUM ).getPathSlug()
+			: themeType === PREMIUM_THEME;
+
 		const isLocked = isLockedStyleVariation( {
-			isPremiumTheme: theme.theme_tier?.slug === premiumPlanSlug,
+			isPremiumTheme,
 			styleVariationSlug: selectedStyleVariation?.slug,
 			shouldLimitGlobalStyles,
 		} );
@@ -387,6 +395,7 @@ const ConnectedTheme = connect(
 			isUpdated: themesUpdated && themesUpdated.indexOf( theme.id ) > -1,
 			isExternallyManagedTheme,
 			siteSlug: getSiteSlug( state, siteId ),
+			themeType: getThemeType( state, theme.id ),
 		};
 	},
 	{ recordTracksEvent, setThemesBookmark, updateThemes }
