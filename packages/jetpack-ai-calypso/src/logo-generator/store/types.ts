@@ -105,6 +105,11 @@ export type AiFeatureProps = {
 	};
 	nextTier?: TierProp | null;
 	tierPlansEnabled?: boolean;
+	costs?: {
+		'jetpack-ai-logo-generator': {
+			logo: number;
+		};
+	};
 };
 
 // Type used in the `wordpress-com/plans` store.
@@ -138,7 +143,7 @@ export type LogoGeneratorStateProp = {
 		saveToLibraryError?: RequestError;
 		logoUpdateError?: RequestError;
 	};
-	siteDetails?: SiteDetails;
+	siteDetails?: SiteDetails | Record< string, never >;
 	features: {
 		aiAssistantFeature?: AiFeatureStateProps;
 	};
@@ -190,4 +195,9 @@ export type AiAssistantFeatureEndpointResponseProps = {
 	'tier-plans': Array< TierProp >;
 	'next-tier'?: TierProp | null;
 	'tier-plans-enabled': boolean;
+	costs: {
+		'jetpack-ai-logo-generator': {
+			logo: number;
+		};
+	};
 };

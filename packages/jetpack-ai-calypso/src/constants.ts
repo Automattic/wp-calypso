@@ -21,3 +21,4 @@ export const EVENT_PLACEMENT_UPGRADE_PROMPT = 'upgrade_prompt';
 
 // Feature constants
 export const MINIMUM_PROMPT_LENGTH = 10;
+export const DEFAULT_LOGO_COST = 10;
