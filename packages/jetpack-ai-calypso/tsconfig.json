@@ -6,6 +6,5 @@
 		"declarationDir": "dist/types",
 		"rootDir": "src"
 	},
-	"files": [ "./global.d.ts" ],
-	"references": [ { "path": "../data-stores" }, { "path": "../calypso-analytics" } ]
+	"files": [ "./global.d.ts" ]
 }
