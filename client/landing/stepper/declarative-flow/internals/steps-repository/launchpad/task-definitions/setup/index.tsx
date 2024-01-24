@@ -36,6 +36,7 @@ const getSetupNewsletterTask: TaskAction = ( task, flow, context ): Task => {
 			...siteInfoQueryArgs,
 			flowToReturnTo: flow,
 		} ),
+		useCalypsoPath: true,
 	};
 };
 
