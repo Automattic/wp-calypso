@@ -21,7 +21,7 @@ const noop = () => undefined;
 const CookieBannerInner = ( { onClose }: { onClose: () => void } ) => {
 	const content = useCookieBannerContent();
 	const dispatch = useDispatch();
-	const isLoggedIn = useSelector( ( state ) => isUserLoggedIn( state ) );
+	const isLoggedIn = useSelector( isUserLoggedIn );
 	const { setUserAdvertisingOptOut } = useDoNotSell();
 
 	const handleAccept = useCallback< CookieBannerProps[ 'onAccept' ] >(

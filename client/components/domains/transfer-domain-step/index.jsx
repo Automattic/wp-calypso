@@ -427,6 +427,7 @@ class TransferDomainStep extends Component {
 							} )
 						}
 						showIcon={ true }
+						event="domains_transfer_plan_required"
 					/>
 					{ content }
 				</div>

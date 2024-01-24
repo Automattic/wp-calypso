@@ -20,7 +20,7 @@ interface TrialBannerProps {
 
 const TrialBanner = ( props: TrialBannerProps ) => {
 	const { callToAction, isEcommerceTrial } = props;
-	const selectedSiteId = useSelector( ( state ) => getSelectedSiteId( state ) ) || -1;
+	const selectedSiteId = useSelector( getSelectedSiteId ) || -1;
 
 	const currentPlan = useSelector( ( state ) => getCurrentPlan( state, selectedSiteId ) );
 	const trialDaysLeft = useSelector( ( state ) =>
