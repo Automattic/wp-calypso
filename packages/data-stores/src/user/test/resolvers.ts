@@ -8,7 +8,7 @@
 
 import { createResolvers } from '../resolvers';
 
-const { getCurrentUser } = createResolvers( { client_id: '', client_secret: '' } );
+const { getCurrentUser } = createResolvers();
 
 describe( 'getCurrentUser', () => {
 	it( 'should return a receiveCurrentUser action object on success', async () => {

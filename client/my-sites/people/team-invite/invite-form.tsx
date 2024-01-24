@@ -41,7 +41,7 @@ function InviteForm( props: Props ) {
 	];
 	const defaultEmailControlPlaceholder = translate( 'Add another email or username' );
 
-	const site = useSelector( ( state ) => getSelectedSite( state ) );
+	const site = useSelector( getSelectedSite );
 	const siteId = site?.ID as number;
 	const defaultUserRole = useInitialRole( siteId );
 	const isAtomic = useSelector( ( state ) => isSiteAutomatedTransfer( state, siteId ) );

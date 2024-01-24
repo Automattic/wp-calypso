@@ -60,7 +60,7 @@ interface useCommandsArrayWpcomOptions {
 
 function useCommandNavigation() {
 	const dispatch = useDispatch();
-	const currentRoute = useSelector( ( state ) => getCurrentRoutePattern( state ) );
+	const currentRoute = useSelector( getCurrentRoutePattern );
 	// Callback to navigate to a command's destination
 	// used on command callback or siteFunctions onClick
 	const commandNavigation = useCallback(

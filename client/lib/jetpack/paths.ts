@@ -43,6 +43,8 @@ export const agencySignupLegacyPath = () => '/agency/signup';
 
 export const overviewPath = () => '/overview';
 
+export const jetpackManagePricingPath = () => '/manage/pricing';
+
 const pluginsBasePath = '/plugins/manage';
 
 export const pluginsPath = ( siteSlug?: string | null, query = {} ): string => {

@@ -103,6 +103,10 @@ $font-sf-pro-display: "SF Pro Display", $sans;
 			.segmented-control__item.is-selected + .segmented-control__item .segmented-control__link {
 				border-left: none;
 			}
+
+			.segmented-control__item:not(.is-selected) .segmented-control__link:hover {
+				background-color: transparent;
+			}
 		}
 	}
 

@@ -61,6 +61,11 @@
 .jetpack-product-store
 .header
 .header__main-title
+.formatted-header__title,
+.is-group-jetpack-cloud.is-section-jetpack-cloud-manage-pricing
+.jetpack-product-store
+.header
+.header__main-title
 .formatted-header__title {
 	margin: 0 auto;
 	font-size: $font-title-large;
@@ -166,6 +171,9 @@
 			text-decoration: none;
 
 			.is-group-jetpack-cloud.is-section-jetpack-cloud-pricing & {
+				background: var(--studio-gray-5);
+			}
+			.is-group-jetpack-cloud.is-section-jetpack-cloud-manage-pricing & {
 				background: var(--studio-gray-5);
 			}
 		}

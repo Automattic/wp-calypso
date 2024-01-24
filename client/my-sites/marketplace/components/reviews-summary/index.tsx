@@ -15,6 +15,7 @@ import './styles.scss';
 
 type Props = ProductProps & {
 	productName: string;
+	onReviewsClick: () => void;
 };
 
 const TrackedButton = ( { onClick, children }: { onClick: () => void; children: ReactNode } ) => {
@@ -25,7 +26,7 @@ const TrackedButton = ( { onClick, children }: { onClick: () => void; children: 
 	return <Button onClick={ onClick }>{ children }</Button>;
 };
 
-export const ReviewsSummary = ( { slug, productName, productType }: Props ) => {
+export const ReviewsSummary = ( { slug, productName, productType, onReviewsClick }: Props ) => {
 	const translate = useTranslate();
 	const [ isVisible, setIsVisible ] = useState( false );
 
@@ -68,10 +69,15 @@ export const ReviewsSummary = ( { slug, productName, productType }: Props ) => {
 				productType={ productType }
 			/>
 			<div className="reviews-summary__container">
-				{ numberOfReviews !== null && (
+				{ /* Only show stats if we have a minimum sample size to reduce outliers unfairly impacting the score */ }
+				{ numberOfReviews !== null && numberOfReviews >= 3 && (
 					<div>
 						{ averageRating !== null && <Rating rating={ averageRating } /> }
-						<Button borderless className="reviews-summary__number-reviews-link is-link">
+						<Button
+							borderless
+							className="reviews-summary__number-reviews-link is-link"
+							onClick={ onReviewsClick }
+						>
 							{ translate( '%(numberOfReviews)d review', '%(numberOfReviews)d reviews', {
 								count: numberOfReviews,
 								args: {

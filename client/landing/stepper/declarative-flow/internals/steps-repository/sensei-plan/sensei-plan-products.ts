@@ -1,3 +1,7 @@
+import {
+	PRODUCT_SENSEI_PRO_MONTHLY,
+	PRODUCT_SENSEI_PRO_YEARLY,
+} from '@automattic/calypso-products/src/constants/sensei';
 import { ProductsList } from '@automattic/data-stores';
 import { TIMELESS_PLAN_BUSINESS } from '@automattic/data-stores/src/plans';
 import { useLocale } from '@automattic/i18n-utils';
@@ -6,16 +10,13 @@ import { useSupportedPlans } from 'calypso/../packages/plans-grid/src/hooks';
 import { PLANS_STORE } from 'calypso/landing/stepper/stores';
 import type { PlanBillingPeriod, PlansSelect } from '@automattic/data-stores';
 
-const SENSEI_PRO_PRODUCT_YEARLY = 'sensei_pro_yearly';
-const SENSEI_PRO_PRODUCT_MONTHLY = 'sensei_pro_monthly';
-
 export function useSenseiProPricing( billingPeriod: PlanBillingPeriod ) {
 	return useSelect(
 		( select ) => {
 			const isYearly = billingPeriod === 'ANNUALLY';
 			const { getProductBySlug } = select( ProductsList.store );
-			const yearly = getProductBySlug( SENSEI_PRO_PRODUCT_YEARLY );
-			const monthly = getProductBySlug( SENSEI_PRO_PRODUCT_MONTHLY );
+			const yearly = getProductBySlug( PRODUCT_SENSEI_PRO_YEARLY );
+			const monthly = getProductBySlug( PRODUCT_SENSEI_PRO_MONTHLY );
 
 			if ( ! yearly || ! monthly ) {
 				return {
