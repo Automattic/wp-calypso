@@ -293,11 +293,15 @@ const ConnectedUpsellNudge = connect( ( state: IAppState, ownProps: OwnProps ) =
 } )( UpsellNudge );
 
 export default function Wrapper( props: OwnProps ) {
-	return (
-		<AsyncLoad
-			require="../../my-sites/checkout/purchase-modal/is-eligible-for-one-click-checkout-wrapper"
-			component={ ConnectedUpsellNudge }
-			componentProps={ props }
-		/>
-	);
+	const { isOneClickCheckoutEnabled = true, plan } = props;
+	if ( isOneClickCheckoutEnabled && plan ) {
+		return (
+			<AsyncLoad
+				require="../../my-sites/checkout/purchase-modal/is-eligible-for-one-click-checkout-wrapper"
+				component={ ConnectedUpsellNudge }
+				componentProps={ props }
+			/>
+		);
+	}
+	return <ConnectedUpsellNudge { ...props } />;
 }
