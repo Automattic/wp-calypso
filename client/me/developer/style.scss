@@ -1,5 +1,6 @@
 @import "@wordpress/base-styles/breakpoints.scss";
 @import "@automattic/typography/styles/variables";
+@import "@automattic/components/src/styles/typography";
 
 .navigation-header.developer__header {
 	.formatted-header__title {
@@ -13,7 +14,7 @@
 	}
 
 	.formatted-header__subtitle {
-		font-family: "SF Pro Text", $sans;
+		font-family: $font-sf-pro-text;
 		font-size: rem(16px);
 		line-height: 24px;
 		letter-spacing: -0.32px;
@@ -41,7 +42,7 @@
 	text-align: center;
 
 	.components-toggle-control {
-		font-family: "SF Pro Text", $sans;
+		font-family: $font-sf-pro-text;
 		font-size: rem(14px);
 		display: inline-block;
 		margin-bottom: 0;

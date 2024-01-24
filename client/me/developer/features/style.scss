@@ -1,12 +1,13 @@
 @import "@wordpress/base-styles/breakpoints.scss";
 @import "@automattic/typography/styles/variables";
+@import "@automattic/components/src/styles/typography";
 
 .developer-features-list {
 	display: grid;
 	grid-template-columns: repeat(3, 1fr);
 	grid-gap: 24px;
 	padding-bottom: 24px;
-	font-family: "SF Pro Text", $sans;
+	font-family: $font-sf-pro-text;
 
 	.developer-features-list__item {
 		display: flex;
