@@ -6,5 +6,6 @@
 		"declarationDir": "dist/types",
 		"rootDir": "src"
 	},
-	"files": [ "./global.d.ts" ]
+	"files": [ "./global.d.ts" ],
+	"references": [ { "path": "../data-stores" } ]
 }
