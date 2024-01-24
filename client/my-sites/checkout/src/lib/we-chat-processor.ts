@@ -4,7 +4,7 @@ import {
 	makeSuccessResponse,
 } from '@automattic/composite-checkout';
 import { createElement } from 'react';
-import { render } from 'react-dom';
+import { Root, createRoot } from 'react-dom/client';
 import userAgent from 'calypso/lib/user-agent';
 import { PurchaseOrderStatus, fetchPurchaseOrder } from '../hooks/use-purchase-order';
 import { recordTransactionBeginAnalytics } from '../lib/analytics';
@@ -82,6 +82,8 @@ export default async function weChatProcessor(
 		options
 	);
 
+	const root = getRenderRoot();
+
 	return submitWpcomTransaction( formattedTransactionData, options )
 		.then( async ( response?: WPCOMTransactionEndpointResponse ) => {
 			if ( ! response?.redirect_url ) {
@@ -99,6 +101,7 @@ export default async function weChatProcessor(
 			}
 
 			displayWeChatModal(
+				root,
 				response.redirect_url,
 				responseCart.total_cost_integer,
 				responseCart.currency
@@ -119,7 +122,7 @@ export default async function weChatProcessor(
 			return makeSuccessResponse( responseData );
 		} )
 		.catch( ( error ) => {
-			hideWeChatModal();
+			hideWeChatModal( root );
 			return makeErrorResponse( error.message );
 		} );
 }
@@ -139,27 +142,32 @@ async function pollForOrderStatus(
 	return orderData.processing_status;
 }
 
-function hideWeChatModal(): void {
-	const weChatTarget = document.querySelector( '.we-chat-modal-target' );
-	if ( ! weChatTarget ) {
-		return;
-	}
-	weChatTarget.replaceChildren();
-}
-
-function displayWeChatModal( redirectUrl: string, priceInteger: number, priceCurrency: string ) {
+function getRenderRoot() {
 	const weChatTarget = document.querySelector( '.we-chat-modal-target' );
 	if ( ! weChatTarget ) {
 		throw new Error( "Sorry, we couldn't process your payment. Please try again later." );
 	}
-	render(
+	return createRoot( weChatTarget );
+}
+
+function hideWeChatModal( root: Root ): void {
+	root.unmount();
+}
+
+function displayWeChatModal(
+	root: Root,
+	redirectUrl: string,
+	priceInteger: number,
+	priceCurrency: string
+) {
+	root.render(
 		createElement( WeChatConfirmation, {
 			redirectUrl,
 			priceInteger,
 			priceCurrency,
-		} ),
-		weChatTarget
+		} )
 	);
+	return root;
 }
 
 function isValidTransactionData( submitData: unknown ): submitData is WeChatTransactionRequest {
