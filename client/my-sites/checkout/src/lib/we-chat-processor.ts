@@ -3,6 +3,7 @@ import {
 	makeErrorResponse,
 	makeSuccessResponse,
 } from '@automattic/composite-checkout';
+import { useTranslate } from 'i18n-calypso';
 import { createElement } from 'react';
 import { Root, createRoot } from 'react-dom/client';
 import userAgent from 'calypso/lib/user-agent';
@@ -27,7 +28,8 @@ type WeChatTransactionRequest = {
 
 export default async function weChatProcessor(
 	submitData: unknown,
-	options: PaymentProcessorOptions
+	options: PaymentProcessorOptions,
+	translate: ReturnType< typeof useTranslate >
 ): Promise< PaymentProcessorResponse > {
 	if ( ! isValidTransactionData( submitData ) ) {
 		throw new Error( 'Required purchase data is missing' );
@@ -82,12 +84,19 @@ export default async function weChatProcessor(
 		options
 	);
 
-	const root = getRenderRoot();
+	const genericErrorMessage = translate(
+		"Sorry, we couldn't process your payment. Please try again later."
+	);
+	const genericFailureMessage = translate(
+		'Payment failed. Please check your account and try again.'
+	);
+
+	const root = getRenderRoot( genericErrorMessage );
 
 	return submitWpcomTransaction( formattedTransactionData, options )
 		.then( async ( response?: WPCOMTransactionEndpointResponse ) => {
 			if ( ! response?.redirect_url ) {
-				throw new Error( "Sorry, we couldn't process your payment. Please try again later." );
+				throw new Error( genericErrorMessage );
 			}
 
 			// The WeChat payment type should only redirect when on mobile as redirect urls
@@ -97,7 +106,7 @@ export default async function weChatProcessor(
 			}
 
 			if ( ! response.order_id ) {
-				throw new Error( "Sorry, we couldn't process your payment. Please try again later." );
+				throw new Error( genericErrorMessage );
 			}
 
 			let isModalActive = true;
@@ -107,21 +116,19 @@ export default async function weChatProcessor(
 				response.redirect_url,
 				responseCart.total_cost_integer,
 				responseCart.currency,
-				( closeMessage?: string ) => {
+				() => {
 					hideWeChatModal( root );
 					isModalActive = false;
-					explicitClosureMessage = closeMessage;
+					explicitClosureMessage = translate( 'Payment cancelled.' );
 				}
 			);
 
 			let orderStatus = 'processing';
 			while ( isModalActive && [ 'processing', 'async-pending' ].includes( orderStatus ) ) {
-				orderStatus = await pollForOrderStatus( response.order_id, 2000 );
+				orderStatus = await pollForOrderStatus( response.order_id, 2000, genericErrorMessage );
 			}
 			if ( orderStatus !== 'success' ) {
-				throw new Error(
-					explicitClosureMessage ?? 'Payment failed. Please check your account and try again.'
-				);
+				throw new Error( explicitClosureMessage ?? genericFailureMessage );
 			}
 
 			const responseData: Partial< WPCOMTransactionEndpointResponseSuccess > = {
@@ -138,11 +145,12 @@ export default async function weChatProcessor(
 
 async function pollForOrderStatus(
 	orderId: number,
-	pollInterval: number
+	pollInterval: number,
+	genericErrorMessage: string
 ): Promise< PurchaseOrderStatus > {
 	const orderData = await fetchPurchaseOrder( orderId );
 	if ( ! orderData ) {
-		throw new Error( "Sorry, we couldn't process your payment. Please try again later." );
+		throw new Error( genericErrorMessage );
 	}
 	if ( orderData.processing_status === 'success' ) {
 		return orderData.processing_status;
@@ -151,10 +159,10 @@ async function pollForOrderStatus(
 	return orderData.processing_status;
 }
 
-function getRenderRoot() {
+function getRenderRoot( genericErrorMessage: string ) {
 	const weChatTarget = document.querySelector( '.we-chat-modal-target' );
 	if ( ! weChatTarget ) {
-		throw new Error( "Sorry, we couldn't process your payment. Please try again later." );
+		throw new Error( genericErrorMessage );
 	}
 	return createRoot( weChatTarget );
 }
@@ -168,7 +176,7 @@ function displayWeChatModal(
 	redirectUrl: string,
 	priceInteger: number,
 	priceCurrency: string,
-	cancel: ( message: string ) => void
+	cancel: () => void
 ) {
 	root.render(
 		createElement( WeChatConfirmation, {
@@ -183,7 +191,7 @@ function displayWeChatModal(
 	setTimeout( () => {
 		const dialogElement = document.querySelector( 'dialog.we-chat-confirmation' );
 		if ( ! dialogElement || ! ( 'showModal' in dialogElement ) ) {
-			cancel( 'Payment cancelled.' );
+			cancel();
 			return;
 		}
 
@@ -191,11 +199,11 @@ function displayWeChatModal(
 		// supported by all the browsers that calypso supports.
 		// Nevertheless, TypeScript does not know about it.
 		( dialogElement.showModal as () => void )();
-		dialogElement.addEventListener( 'close', () => cancel( 'Payment cancelled.' ) );
+		dialogElement.addEventListener( 'close', () => cancel() );
 		// Hide the dialog if you click outside it.
 		dialogElement.addEventListener( 'click', ( event ) => {
 			if ( event.target === event.currentTarget ) {
-				cancel( 'Payment cancelled.' );
+				cancel();
 			}
 		} );
 	} );
