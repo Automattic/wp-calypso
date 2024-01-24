@@ -411,14 +411,6 @@ const AdsFormSettings = () => {
 					</div>
 				) }
 				<FormFieldset>
-					{ /* <SupportInfo
-						text={ translate(
-							'Enables the CMP Banner to ensure GDPR compliance for EU visitors. Let site visitors easily provide consent for personalized ads.'
-						) }
-						link={ localizeUrl(
-							'https://wordpress.com/support/us-privacy-laws-and-your-wordpress-com-site/'
-						) }
-					/> */ }
 					<ToggleControl
 						checked={ !! settings.cmp_enabled }
 						disabled={ isDisabled }
