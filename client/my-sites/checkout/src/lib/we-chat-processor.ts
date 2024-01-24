@@ -101,14 +101,16 @@ export default async function weChatProcessor(
 			}
 
 			let isModalActive = true;
+			let explicitClosureMessage: string | undefined;
 			displayWeChatModal(
 				root,
 				response.redirect_url,
 				responseCart.total_cost_integer,
 				responseCart.currency,
-				() => {
+				( closeMessage?: string ) => {
 					hideWeChatModal( root );
 					isModalActive = false;
+					explicitClosureMessage = closeMessage;
 				}
 			);
 
@@ -117,7 +119,9 @@ export default async function weChatProcessor(
 				orderStatus = await pollForOrderStatus( response.order_id, 2000 );
 			}
 			if ( orderStatus !== 'success' ) {
-				throw new Error( 'Payment failed. Please check your account and try again.' );
+				throw new Error(
+					explicitClosureMessage ?? 'Payment failed. Please check your account and try again.'
+				);
 			}
 
 			const responseData: Partial< WPCOMTransactionEndpointResponseSuccess > = {
@@ -164,7 +168,7 @@ function displayWeChatModal(
 	redirectUrl: string,
 	priceInteger: number,
 	priceCurrency: string,
-	cancel: () => void
+	cancel: ( message: string ) => void
 ) {
 	root.render(
 		createElement( WeChatConfirmation, {
@@ -179,7 +183,7 @@ function displayWeChatModal(
 	setTimeout( () => {
 		const dialogElement = document.querySelector( 'dialog.we-chat-confirmation' );
 		if ( ! dialogElement || ! ( 'showModal' in dialogElement ) ) {
-			cancel();
+			cancel( 'Payment cancelled.' );
 			return;
 		}
 
@@ -187,11 +191,11 @@ function displayWeChatModal(
 		// supported by all the browsers that calypso supports.
 		// Nevertheless, TypeScript does not know about it.
 		( dialogElement.showModal as () => void )();
-		dialogElement.addEventListener( 'close', () => cancel() );
+		dialogElement.addEventListener( 'close', () => cancel( 'Payment cancelled.' ) );
 		// Hide the dialog if you click outside it.
 		dialogElement.addEventListener( 'click', ( event ) => {
 			if ( event.target === event.currentTarget ) {
-				cancel();
+				cancel( 'Payment cancelled.' );
 			}
 		} );
 	} );
