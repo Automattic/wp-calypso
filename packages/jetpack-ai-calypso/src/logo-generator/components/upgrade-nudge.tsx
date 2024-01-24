@@ -17,7 +17,7 @@ export const UpgradeNudge = () => {
 	const buttonText = __( 'Upgrade', 'jetpack' );
 	const upgradeMessage = createInterpolateElement(
 		__(
-			'You reached your plan request limit. <strong>Upgrade now to increase it.</strong>',
+			'Not enough requests left to generate a logo. <strong>Upgrade now to increase it.</strong>',
 			'jetpack'
 		),
 		{
