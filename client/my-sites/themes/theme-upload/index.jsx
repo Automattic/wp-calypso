@@ -28,6 +28,8 @@ import Main from 'calypso/components/main';
 import NavigationHeader from 'calypso/components/navigation-header';
 import WpAdminAutoLogin from 'calypso/components/wpadmin-auto-login';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
+import HostingActivateStatus from 'calypso/my-sites/hosting/hosting-activate-status';
+import { TrialAcknowledgeModal } from 'calypso/my-sites/plans/trials/trial-acknowledge/acknowlege-modal';
 import ActivationModal from 'calypso/my-sites/themes/activation-modal';
 import ThanksModal from 'calypso/my-sites/themes/thanks-modal';
 // Necessary for ThanksModal
@@ -41,14 +43,20 @@ import {
 	isFetchingSitePurchases,
 	hasLoadedSitePurchasesFromServer,
 } from 'calypso/state/purchases/selectors';
+import getIsRequestingSiteFeatures from 'calypso/state/selectors/is-requesting-site-features';
 import isSiteWpcomAtomic from 'calypso/state/selectors/is-site-wpcom-atomic';
+import { isUserEligibleForFreeHostingTrial } from 'calypso/state/selectors/is-user-eligible-for-free-hosting-trial';
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
-import { isSiteOnECommerceTrial } from 'calypso/state/sites/plans/selectors';
+import { requestSite } from 'calypso/state/sites/actions';
+import { fetchSiteFeatures } from 'calypso/state/sites/features/actions';
+import { fetchSitePlans } from 'calypso/state/sites/plans/actions';
+import { isSiteOnECommerceTrial, isRequestingSitePlans } from 'calypso/state/sites/plans/selectors';
 import {
 	getSiteAdminUrl,
 	getSiteThemeInstallUrl,
 	isJetpackSite,
 	isJetpackSiteMultiSite,
+	isRequestingSite,
 } from 'calypso/state/sites/selectors';
 import { uploadTheme, clearThemeUpload, initiateThemeTransfer } from 'calypso/state/themes/actions';
 import { getCanonicalTheme } from 'calypso/state/themes/selectors';
@@ -93,6 +101,9 @@ class Upload extends Component {
 
 	state = {
 		showEligibility: this.props.showEligibility,
+		showTrialAcknowledgeModal: false,
+		isTransferring: false,
+		hasRequestedTrial: false,
 	};
 
 	componentDidMount() {
@@ -117,6 +128,27 @@ class Upload extends Component {
 
 	onProceedClick = () => {
 		this.setState( { showEligibility: false } );
+	};
+
+	setOpenTrialAcknowledgeModal = ( isOpen ) => {
+		this.setState( { showTrialAcknowledgeModal: isOpen } );
+	};
+
+	trialRequested = () => {
+		this.props.showUpgradeBanner = false;
+		this.setState( { hasRequestedTrial: true, isTransferring: true } );
+	};
+
+	requestUpdatedSiteData = ( isTransferring, wasTransferring, isTransferCompleted ) => {
+		if ( isTransferring ) {
+			this.setState( { isTransferring: true, hasRequestedTrial: true } );
+		}
+		if ( wasTransferring && isTransferCompleted ) {
+			this.props.requestSiteById( this.props.siteId );
+			this.props.fetchSiteFeatures( this.props.siteId );
+			this.props.fetchSitePlans( this.props.siteId );
+			this.setState( { isTransferring: false } );
+		}
 	};
 
 	componentDidUpdate( prevProps ) {
@@ -205,8 +237,16 @@ class Upload extends Component {
 		tryandcustomize.action( this.props.themeId );
 	};
 
+	onUpsellNudgeClick = () => {
+		const isEligibleForHostingTrial = this.props.isEligibleForHostingTrial;
+		if ( ! isEligibleForHostingTrial ) {
+			return;
+		}
+		this.setState( { showTrialAcknowledgeModal: true, isTransferring: false } );
+	};
+
 	renderUpgradeBanner() {
-		const { siteSlug, isCommerceTrial, translate } = this.props;
+		const { siteSlug, isCommerceTrial, translate, isEligibleForHostingTrial } = this.props;
 		const redirectTo = encodeURIComponent( `/themes/upload/${ siteSlug }` );
 
 		let upsellPlan = PLAN_BUSINESS;
@@ -223,6 +263,17 @@ class Upload extends Component {
 			upgradeUrl = `/plans/${ siteSlug }`;
 		}
 
+		if ( isEligibleForHostingTrial ) {
+			/* translators: %(planName)s the short-hand version of the Business plan name */
+			title = translate(
+				'Start your free %(planName)s plan trial to access the theme install features',
+				{
+					args: { planName: getPlan( PLAN_BUSINESS )?.getTitle() ?? '' },
+				}
+			);
+			upgradeUrl = '#';
+		}
+
 		return (
 			<UpsellNudge
 				title={ title }
@@ -231,6 +282,7 @@ class Upload extends Component {
 				plan={ upsellPlan }
 				feature={ FEATURE_UPLOAD_THEMES }
 				showIcon={ true }
+				onClick={ this.onUpsellNudgeClick }
 			/>
 		);
 	}
@@ -324,11 +376,14 @@ class Upload extends Component {
 			siteId,
 			themeId,
 			translate,
+			isEligibleForHostingTrial,
 		} = this.props;
 
 		const showUpgradeBanner =
-			! isFetchingPurchases && ! canUploadThemesOrPlugins && ! isStandaloneJetpack;
-		const { showEligibility } = this.state;
+			( ! isFetchingPurchases && ! canUploadThemesOrPlugins && ! isStandaloneJetpack ) ||
+			isEligibleForHostingTrial;
+		const { showEligibility, showTrialAcknowledgeModal, isTransferring, hasRequestedTrial } =
+			this.state;
 
 		if ( isMultisite ) {
 			return this.renderNotAvailableForMultisite();
@@ -361,14 +416,20 @@ class Upload extends Component {
 				></NavigationHeader>
 
 				<HeaderCake backHref={ backPath }>{ translate( 'Install theme' ) }</HeaderCake>
+				<HostingActivateStatus context="theme" onTick={ this.requestUpdatedSiteData } />
+				{ showUpgradeBanner && ! isTransferring && this.renderUpgradeBanner() }
 
-				{ showUpgradeBanner && this.renderUpgradeBanner() }
-
-				{ showEligibility && (
+				{ showEligibility && ! hasRequestedTrial && (
 					<EligibilityWarnings backUrl={ backPath } onProceed={ this.onProceedClick } />
 				) }
 
-				{ this.renderUploadCard() }
+				{ ! isTransferring && this.renderUploadCard() }
+				{ isEligibleForHostingTrial && showTrialAcknowledgeModal && (
+					<TrialAcknowledgeModal
+						setOpenModal={ this.setOpenTrialAcknowledgeModal }
+						trialRequested={ this.trialRequested }
+					/>
+				) }
 			</Main>
 		);
 	}
@@ -383,6 +444,7 @@ const UploadWithOptions = ( props ) => {
 
 const mapStateToProps = ( state ) => {
 	const siteId = getSelectedSiteId( state );
+	const site = getSelectedSite( state );
 	const themeId = getUploadedThemeId( state, siteId );
 	const isJetpack = isJetpackSite( state, siteId );
 	const isAtomic = isSiteWpcomAtomic( state, siteId );
@@ -399,8 +461,17 @@ const mapStateToProps = ( state ) => {
 		siteHasFeature( state, siteId, FEATURE_UPLOAD_THEMES ) ||
 		siteHasFeature( state, siteId, FEATURE_UPLOAD_PLUGINS );
 
+	const isEligibleForHostingTrial = isUserEligibleForFreeHostingTrial( state ) && site.plan.is_free;
+
 	const showEligibility =
 		canUploadThemesOrPlugins && ! isAtomic && ( hasEligibilityMessages || ! isEligible );
+
+	// const isFetchingSiteData =
+	// 	isRequestingSite( state, siteId ) ||
+	// 	isRequestingSitePlans( state, siteId ) ||
+	// 	getIsRequestingSiteFeatures( state, siteId );
+
+	// console.log( 'isFetchingTrialSiteData', isFetchingSiteData );
 
 	return {
 		siteId,
@@ -427,6 +498,7 @@ const mapStateToProps = ( state ) => {
 		canUploadThemesOrPlugins,
 		isFetchingPurchases:
 			isFetchingSitePurchases( state ) || ! hasLoadedSitePurchasesFromServer( state ),
+		isEligibleForHostingTrial,
 	};
 };
 
@@ -437,6 +509,9 @@ const flowRightArgs = [
 		uploadTheme,
 		clearThemeUpload,
 		initiateThemeTransfer,
+		requestSiteById: requestSite,
+		fetchSiteFeatures,
+		fetchSitePlans,
 	} ),
 	localize,
 ];
