@@ -398,34 +398,30 @@ Thanks\n\n`;
 						/>
 					</li>
 				</ul>
-				{ isAdsChecked &&
-					isSellingChecked &&
-					isBusinessChecked &&
-					isDonationChecked &&
-					( isCommercial ? (
-						<Button
-							variant="secondary"
-							disabled={
-								! isAdsChecked || ! isSellingChecked || ! isBusinessChecked || ! isDonationChecked
-							}
-							onClick={ ( e: React.MouseEvent ) => handleRequestUpdateClick( e, isOdysseyStats ) }
-						>
-							{ translate( 'Request update' ) }
-						</Button>
-					) : (
-						// Otherwise if the site is personal or not identified yet, we should allow products switch.
-						<Button
-							variant="secondary"
-							disabled={
-								! isAdsChecked || ! isSellingChecked || ! isBusinessChecked || ! isDonationChecked
-							}
-							onClick={ ( e: React.MouseEvent ) =>
-								handleSwitchToPersonalClick( e, isOdysseyStats )
-							}
-						>
-							{ translate( 'Choose a non-commercial license' ) }
-						</Button>
-					) ) }
+			</div>
+			<div className={ `${ COMPONENT_CLASS_NAME }__personal-checklist-button` }>
+				{ isCommercial ? (
+					<Button
+						variant="secondary"
+						disabled={
+							! isAdsChecked || ! isSellingChecked || ! isBusinessChecked || ! isDonationChecked
+						}
+						onClick={ ( e: React.MouseEvent ) => handleRequestUpdateClick( e, isOdysseyStats ) }
+					>
+						{ translate( 'Request update' ) }
+					</Button>
+				) : (
+					// Otherwise if the site is personal or not identified yet, we should allow products switch.
+					<Button
+						variant="secondary"
+						disabled={
+							! isAdsChecked || ! isSellingChecked || ! isBusinessChecked || ! isDonationChecked
+						}
+						onClick={ ( e: React.MouseEvent ) => handleSwitchToPersonalClick( e, isOdysseyStats ) }
+					>
+						{ translate( 'Choose a non-commercial license' ) }
+					</Button>
+				) }
 			</div>
 		</>
 	);
