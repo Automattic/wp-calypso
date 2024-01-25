@@ -1,6 +1,7 @@
-import { MigrationStatusError } from '@automattic/data-stores';
-import { useChatWidget } from '@automattic/help-center/src/hooks';
+import { HelpCenter, MigrationStatusError } from '@automattic/data-stores';
+import { useChatStatus, useChatWidget } from '@automattic/help-center/src/hooks';
 import { NextButton, SubTitle, Title } from '@automattic/onboarding';
+import { useDispatch as useDataStoreDispatch } from '@wordpress/data';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback } from 'react';
 import { HintBackupFail } from 'calypso/blocks/importer/wordpress/import-everything/migration-error/hint-backup-fail';
@@ -11,6 +12,8 @@ import { HintJetpackUpdate } from './hint-jetpack-update';
 import useErrorDetails from './use-error-details';
 import './style.scss';
 
+const HELP_CENTER_STORE = HelpCenter.register();
+
 interface Props {
 	sourceSiteUrl: string;
 	targetSiteUrl: string;
@@ -19,16 +22,26 @@ interface Props {
 	goToImportCapturePage: () => void;
 }
 export const MigrationError = ( props: Props ) => {
+	const { setShowHelpCenter, setInitialRoute } = useDataStoreDispatch( HELP_CENTER_STORE );
 	const { sourceSiteUrl, targetSiteUrl, status, resetMigration, goToImportCapturePage } = props;
 	const translate = useTranslate();
-	const { openChatWidget, isOpeningChatWidget } = useChatWidget();
+	const { isChatAvailable, isEligibleForChat } = useChatStatus();
+	const { openChatWidget, isOpeningChatWidget } = useChatWidget(
+		'zendesk_support_chat_key',
+		isEligibleForChat
+	);
 	const { title, subTitle, hintId, goBackCta, getHelpCta, tryAgainCta } = useErrorDetails( status );
 
 	const getHelp = useCallback( () => {
-		openChatWidget( {
-			siteUrl: targetSiteUrl,
-			message: 'Import onboarding flow: migration failed',
-		} );
+		if ( isChatAvailable ) {
+			openChatWidget( {
+				siteUrl: targetSiteUrl,
+				message: 'Import onboarding flow: migration failed',
+			} );
+		} else {
+			setInitialRoute( '/contact-form?mode=CHAT' );
+			setShowHelpCenter( true );
+		}
 	}, [ openChatWidget, targetSiteUrl ] );
 
 	return (
