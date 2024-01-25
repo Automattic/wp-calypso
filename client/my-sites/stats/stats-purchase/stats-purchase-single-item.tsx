@@ -301,29 +301,16 @@ const StatsSingleItemPagePurchase = ( {
 			{ ! isCommercialOwned && (
 				<StatsSingleItemCard>
 					<h1>Hello from the new card</h1>
-					<StatsCommercialFlowCardInsert
-						isCommercial={ isCommercial }
-						isOdysseyStats={ false }
-						siteSlug={ siteSlug }
-					/>
+					<StatsCommercialFlowOptOutForm isCommercial={ isCommercial } siteSlug={ siteSlug } />
 				</StatsSingleItemCard>
 			) }
 		</>
 	);
 };
 
-function StatsCommercialFlowCardInsert( { isCommercial, isOdysseyStats, siteSlug } ) {
-	return (
-		<StatsCommercialFlowOptOutForm
-			isCommercial={ isCommercial }
-			isOdysseyStats={ isOdysseyStats }
-			siteSlug={ siteSlug }
-		/>
-	);
-}
-
-function StatsCommercialFlowOptOutForm( { isCommercial, isOdysseyStats, siteSlug } ) {
+function StatsCommercialFlowOptOutForm( { isCommercial, siteSlug } ) {
 	const translate = useTranslate();
+	const isOdysseyStats = config.isEnabled( 'is_running_in_jetpack_site' );
 	// Checkbox state
 	const [ isAdsChecked, setAdsChecked ] = useState( false );
 	const [ isSellingChecked, setSellingChecked ] = useState( false );
