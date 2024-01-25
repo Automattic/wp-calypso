@@ -354,7 +354,7 @@ Thanks\n\n`;
 					'If you think we misidentified your site as commercial, confirm the information below, and we’ll take a look.'
 				) }
 			</p>
-			<div className={ `${ COMPONENT_CLASS_NAME }__persnal-checklist` }>
+			<div className={ `${ COMPONENT_CLASS_NAME }__personal-checklist` }>
 				<ul>
 					<li>
 						<CheckboxControl

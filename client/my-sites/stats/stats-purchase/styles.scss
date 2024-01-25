@@ -15,7 +15,7 @@ $button-padding: 8px 32px;
 
 	// Apply Jetpack dedicated styling upon the Calypso theme base.
 	&:not(.stats-purchase-page--is-wpcom) {
-		.stats-purchase-wizard__persnal-checklist {
+		.stats-purchase-wizard__personal-checklist {
 			.components-checkbox-control__input[type="checkbox"] {
 				&:checked {
 					background-color: var(--studio-jetpack-green-50);
@@ -28,7 +28,7 @@ $button-padding: 8px 32px;
 			}
 		}
 
-		.stats-purchase-single__persnal-checklist {
+		.stats-purchase-single__personal-checklist {
 			.components-checkbox-control__input[type="checkbox"] {
 				&:checked {
 					background-color: var(--studio-jetpack-green-50);
@@ -250,7 +250,7 @@ $button-padding: 8px 32px;
 		background-image: url(data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgZmlsbD0ibm9uZSI+PG1hc2sgaWQ9ImEiIHdpZHRoPSIxNSIgaGVpZ2h0PSIxNCIgeD0iNCIgeT0iNSIgbWFza1VuaXRzPSJ1c2VyU3BhY2VPblVzZSIgc3R5bGU9Im1hc2stdHlwZTpsdW1pbmFuY2UiPjxwYXRoIGZpbGw9IiNmZmYiIGQ9Ik0xOC45MDcgNi40MSAxNy41MDQgNWwtNS41NjMgNS41OUw2LjM4IDUgNC45NzUgNi40MSAxMC41MzggMTJsLTUuNTYzIDUuNTlMNi4zOCAxOWw1LjU2Mi01LjU5TDE3LjUwNCAxOWwxLjQwMy0xLjQxTDEzLjM0NCAxMmw1LjU2My01LjU5WiIvPjwvbWFzaz48ZyBtYXNrPSJ1cmwoI2EpIj48cGF0aCBmaWxsPSIjRDYzNjM4IiBkPSJNMCAwaDIzLjg4MnYyNEgweiIvPjwvZz48L3N2Zz4=);
 	}
 
-	.stats-purchase-wizard__persnal-checklist {
+	.stats-purchase-wizard__personal-checklist {
 		margin-bottom: 24px;
 	}
 
