@@ -8,7 +8,7 @@ import { AllItemsProps } from '../types';
 import getProductIcon from '../utils/get-product-icon';
 
 import './style.scss';
-//
+
 export const AllItems: React.FC< AllItemsProps > = ( {
 	className,
 	heading,
