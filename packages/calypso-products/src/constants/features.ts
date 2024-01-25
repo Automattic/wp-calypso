@@ -357,7 +357,6 @@ export const FEATURE_FAST_DNS = 'fast-dns';
 export const FEATURE_STYLE_CUSTOMIZATION = 'style-customization';
 export const FEATURE_SUPPORT_EMAIL = 'support-email-v1';
 export const FEATURE_DESIGN_TOOLS = 'design-tools';
-export const FEATURE_PREMIUM_THEMES_V2 = 'premium-themes-v2';
 export const FEATURE_WORDADS = 'wordads-v2';
 export const FEATURE_PLUGINS_THEMES = 'plugins-themes-v1';
 export const FEATURE_BANDWIDTH = 'bandwidth-v1';
