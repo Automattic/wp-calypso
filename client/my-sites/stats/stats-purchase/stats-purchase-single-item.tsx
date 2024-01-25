@@ -310,20 +310,20 @@ const StatsSingleItemPagePurchase = ( {
 function StatsCommercialFlowOptOutForm( { isCommercial, siteSlug } ) {
 	const translate = useTranslate();
 	const isOdysseyStats = config.isEnabled( 'is_running_in_jetpack_site' );
+
 	// Checkbox state
 	const [ isAdsChecked, setAdsChecked ] = useState( false );
 	const [ isSellingChecked, setSellingChecked ] = useState( false );
 	const [ isBusinessChecked, setBusinessChecked ] = useState( false );
 	const [ isDonationChecked, setDonationChecked ] = useState( false );
-	// Form handlers
+
 	const handleSwitchToPersonalClick = ( event: React.MouseEvent, isOdysseyStats: boolean ) => {
-		// event.preventDefault(); // Not necessary?
 		const event_from = isOdysseyStats ? 'jetpack_odyssey' : 'calypso';
 		recordTracksEvent( `${ event_from }_stats_purchase_commercial_switch_to_personal_clicked` );
 		setTimeout( () => page( `/stats/purchase/${ siteSlug }?productType=personal` ), 250 );
 	};
+
 	const handleRequestUpdateClick = ( event: React.MouseEvent, isOdysseyStats: boolean ) => {
-		// event.preventDefault(); // Not a real form so probably not necessary?
 		const event_from = isOdysseyStats ? 'jetpack_odyssey' : 'calypso';
 		recordTracksEvent( `${ event_from }_stats_purchase_commercial_update_classification_clicked` );
 
@@ -350,7 +350,7 @@ Thanks\n\n`;
 				'If you think we misidentified your site as commercial, confirm the information below and we’ll take a look.'
 		  )
 		: translate( 'To use a non-commercial license you must agree to the following:' );
-	// Form output
+
 	return (
 		<>
 			<h1>{ translate( 'Continue with a non-commercial license' ) }</h1>
