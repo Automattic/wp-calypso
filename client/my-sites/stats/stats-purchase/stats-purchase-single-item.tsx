@@ -114,45 +114,10 @@ const StatsCommercialPurchase = ( {
 
 	// The button of @automattic/components has built-in color scheme support for Calypso.
 	const ButtonComponent = isWPCOMSite ? CalypsoButton : Button;
-	const [ isAdsChecked, setAdsChecked ] = useState( false );
-	const [ isSellingChecked, setSellingChecked ] = useState( false );
-	const [ isBusinessChecked, setBusinessChecked ] = useState( false );
-	const [ isDonationChecked, setDonationChecked ] = useState( false );
 	const startingTierQuantity = getTierQuentity( tiers[ 0 ], isTierUpgradeSliderEnabled );
 	const [ purchaseTierQuantity, setPurchaseTierQuantity ] = useState( startingTierQuantity ?? 0 );
 
 	const isOdysseyStats = config.isEnabled( 'is_running_in_jetpack_site' );
-
-	const handleRequestUpdateClick = ( event: React.MouseEvent, isOdysseyStats: boolean ) => {
-		event.preventDefault();
-
-		const event_from = isOdysseyStats ? 'jetpack_odyssey' : 'calypso';
-		recordTracksEvent( `${ event_from }_stats_purchase_commercial_update_classification_clicked` );
-
-		const mailTo = isOdysseyStats ? 'support@jetpack.com' : 'help@wordpress.com';
-		const emailSubject = translate( 'Jetpack Stats Commercial Classification Dispute' );
-		const emailBody = `Hi Jetpack Team,\n
-I'm writing to dispute the classification of my site '${ siteSlug }' as commercial.\n
-I can confirm that,
-- I don't have ads on my site.
-- I don't sell products/services on my site.
-- I don't promote a business on my site.
-- I don't solicit donations or sponsorships on my site.\n
-Could you please take a look at my site and update the classification if necessary?\n
-Thanks\n\n`;
-		const emailHref = `mailto:${ mailTo }?subject=${ encodeURIComponent(
-			emailSubject
-		) }&body=${ encodeURIComponent( emailBody ) }`;
-
-		setTimeout( () => ( window.location.href = emailHref ), 250 );
-	};
-
-	const handleSwitchToPersonalClick = ( event: React.MouseEvent, isOdysseyStats: boolean ) => {
-		event.preventDefault();
-		const event_from = isOdysseyStats ? 'jetpack_odyssey' : 'calypso';
-		recordTracksEvent( `${ event_from }_stats_purchase_commercial_switch_to_personal_clicked` );
-		setTimeout( () => page( `/stats/purchase/${ siteSlug }?productType=personal` ), 250 );
-	};
 
 	const handleSliderChanged = useCallback( ( value: number ) => {
 		setPurchaseTierQuantity( value );
@@ -220,97 +185,11 @@ Thanks\n\n`;
 			) }
 			{ /** Hide the section for upgrades */ }
 			{ ! isCommercialOwned && (
-				<div className={ `${ COMPONENT_CLASS_NAME }__additional-card-panel` }>
-					<Panel className={ `${ COMPONENT_CLASS_NAME }__card-panel` }>
-						<PanelBody title={ translate( 'This is not a commercial site' ) } initialOpen={ false }>
-							<p>
-								{ translate(
-									'If you think we misidentified your site as commercial, confirm the information below, and we’ll take a look.'
-								) }
-							</p>
-							<div className={ `${ COMPONENT_CLASS_NAME }__persnal-checklist` }>
-								<ul>
-									<li>
-										<CheckboxControl
-											className={ `${ COMPONENT_CLASS_NAME }__control--checkbox` }
-											checked={ isAdsChecked }
-											label={ translate( `I don't have ads on my site` ) }
-											onChange={ ( value: boolean ) => {
-												setAdsChecked( value );
-											} }
-										/>
-									</li>
-									<li>
-										<CheckboxControl
-											className={ `${ COMPONENT_CLASS_NAME }__control--checkbox` }
-											checked={ isSellingChecked }
-											label={ translate( `I don't sell products/services on my site` ) }
-											onChange={ ( value: boolean ) => {
-												setSellingChecked( value );
-											} }
-										/>
-									</li>
-									<li>
-										<CheckboxControl
-											className={ `${ COMPONENT_CLASS_NAME }__control--checkbox` }
-											checked={ isBusinessChecked }
-											label={ translate( `I don't promote a business on my site` ) }
-											onChange={ ( value: boolean ) => {
-												setBusinessChecked( value );
-											} }
-										/>
-									</li>
-									<li>
-										<CheckboxControl
-											className={ `${ COMPONENT_CLASS_NAME }__control--checkbox` }
-											checked={ isDonationChecked }
-											label={ translate( `I don't solicit donations or sponsorships on my site` ) }
-											onChange={ ( value ) => {
-												setDonationChecked( value );
-											} }
-										/>
-									</li>
-								</ul>
-								{ isAdsChecked &&
-									isSellingChecked &&
-									isBusinessChecked &&
-									isDonationChecked &&
-									( isCommercial ? (
-										<Button
-											variant="secondary"
-											disabled={
-												! isAdsChecked ||
-												! isSellingChecked ||
-												! isBusinessChecked ||
-												! isDonationChecked
-											}
-											onClick={ ( e: React.MouseEvent ) =>
-												handleRequestUpdateClick( e, isOdysseyStats )
-											}
-										>
-											{ translate( 'Request update' ) }
-										</Button>
-									) : (
-										// Otherwise if the site is personal or not identified yet, we should allow products switch.
-										<Button
-											variant="secondary"
-											disabled={
-												! isAdsChecked ||
-												! isSellingChecked ||
-												! isBusinessChecked ||
-												! isDonationChecked
-											}
-											onClick={ ( e: React.MouseEvent ) =>
-												handleSwitchToPersonalClick( e, isOdysseyStats )
-											}
-										>
-											{ translate( 'Choose a non-commercial license' ) }
-										</Button>
-									) ) }
-							</div>
-						</PanelBody>
-					</Panel>
-				</div>
+				<StatsCommercialFlowOptOutForm
+					isCommercial={ isCommercial }
+					isOdysseyStats={ isOdysseyStats }
+					siteSlug={ siteSlug }
+				/>
 			) }
 		</>
 	);
@@ -435,5 +314,138 @@ const StatsSingleItemPagePurchase = ( {
 		</>
 	);
 };
+
+function StatsCommercialFlowOptOutForm( { isCommercial, isOdysseyStats, siteSlug } ) {
+	const translate = useTranslate();
+	// Checkbox state
+	const [ isAdsChecked, setAdsChecked ] = useState( false );
+	const [ isSellingChecked, setSellingChecked ] = useState( false );
+	const [ isBusinessChecked, setBusinessChecked ] = useState( false );
+	const [ isDonationChecked, setDonationChecked ] = useState( false );
+	// Form handlers
+	const handleSwitchToPersonalClick = ( event: React.MouseEvent, isOdysseyStats: boolean ) => {
+		// event.preventDefault(); // Not necessary?
+		const event_from = isOdysseyStats ? 'jetpack_odyssey' : 'calypso';
+		recordTracksEvent( `${ event_from }_stats_purchase_commercial_switch_to_personal_clicked` );
+		setTimeout( () => page( `/stats/purchase/${ siteSlug }?productType=personal` ), 250 );
+	};
+	const handleRequestUpdateClick = ( event: React.MouseEvent, isOdysseyStats: boolean ) => {
+		// event.preventDefault(); // Not a real form so probably not necessary?
+		const event_from = isOdysseyStats ? 'jetpack_odyssey' : 'calypso';
+		recordTracksEvent( `${ event_from }_stats_purchase_commercial_update_classification_clicked` );
+
+		const mailTo = isOdysseyStats ? 'support@jetpack.com' : 'help@wordpress.com';
+		const emailSubject = translate( 'Jetpack Stats Commercial Classification Dispute' );
+		const emailBody = `Hi Jetpack Team,\n
+I'm writing to dispute the classification of my site '${ siteSlug }' as commercial.\n
+I can confirm that,
+- I don't have ads on my site.
+- I don't sell products/services on my site.
+- I don't promote a business on my site.
+- I don't solicit donations or sponsorships on my site.\n
+Could you please take a look at my site and update the classification if necessary?\n
+Thanks\n\n`;
+		const emailHref = `mailto:${ mailTo }?subject=${ encodeURIComponent(
+			emailSubject
+		) }&body=${ encodeURIComponent( emailBody ) }`;
+
+		setTimeout( () => ( window.location.href = emailHref ), 250 );
+	};
+
+	// Form output
+	return (
+		<div className={ `${ COMPONENT_CLASS_NAME }__additional-card-panel` }>
+			<Panel className={ `${ COMPONENT_CLASS_NAME }__card-panel` }>
+				<PanelBody title={ translate( 'This is not a commercial site' ) } initialOpen={ false }>
+					<p>
+						{ translate(
+							'If you think we misidentified your site as commercial, confirm the information below, and we’ll take a look.'
+						) }
+					</p>
+					<div className={ `${ COMPONENT_CLASS_NAME }__persnal-checklist` }>
+						<ul>
+							<li>
+								<CheckboxControl
+									className={ `${ COMPONENT_CLASS_NAME }__control--checkbox` }
+									checked={ isAdsChecked }
+									label={ translate( `I don't have ads on my site` ) }
+									onChange={ ( value: boolean ) => {
+										setAdsChecked( value );
+									} }
+								/>
+							</li>
+							<li>
+								<CheckboxControl
+									className={ `${ COMPONENT_CLASS_NAME }__control--checkbox` }
+									checked={ isSellingChecked }
+									label={ translate( `I don't sell products/services on my site` ) }
+									onChange={ ( value: boolean ) => {
+										setSellingChecked( value );
+									} }
+								/>
+							</li>
+							<li>
+								<CheckboxControl
+									className={ `${ COMPONENT_CLASS_NAME }__control--checkbox` }
+									checked={ isBusinessChecked }
+									label={ translate( `I don't promote a business on my site` ) }
+									onChange={ ( value: boolean ) => {
+										setBusinessChecked( value );
+									} }
+								/>
+							</li>
+							<li>
+								<CheckboxControl
+									className={ `${ COMPONENT_CLASS_NAME }__control--checkbox` }
+									checked={ isDonationChecked }
+									label={ translate( `I don't solicit donations or sponsorships on my site` ) }
+									onChange={ ( value ) => {
+										setDonationChecked( value );
+									} }
+								/>
+							</li>
+						</ul>
+						{ isAdsChecked &&
+							isSellingChecked &&
+							isBusinessChecked &&
+							isDonationChecked &&
+							( isCommercial ? (
+								<Button
+									variant="secondary"
+									disabled={
+										! isAdsChecked ||
+										! isSellingChecked ||
+										! isBusinessChecked ||
+										! isDonationChecked
+									}
+									onClick={ ( e: React.MouseEvent ) =>
+										handleRequestUpdateClick( e, isOdysseyStats )
+									}
+								>
+									{ translate( 'Request update' ) }
+								</Button>
+							) : (
+								// Otherwise if the site is personal or not identified yet, we should allow products switch.
+								<Button
+									variant="secondary"
+									disabled={
+										! isAdsChecked ||
+										! isSellingChecked ||
+										! isBusinessChecked ||
+										! isDonationChecked
+									}
+									onClick={ ( e: React.MouseEvent ) =>
+										handleSwitchToPersonalClick( e, isOdysseyStats )
+									}
+								>
+									{ translate( 'Choose a non-commercial license' ) }
+								</Button>
+							) ) }
+					</div>
+				</PanelBody>
+			</Panel>
+		</div>
+	);
+}
 
 export { StatsSingleItemPagePurchase, StatsSingleItemPersonalPurchasePage };
