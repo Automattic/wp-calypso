@@ -6,10 +6,6 @@ import PropTypes from 'prop-types';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
 import SettingsSectionHeader from 'calypso/my-sites/site-settings/settings-section-header';
-import { useSelector } from 'calypso/state';
-import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
-import { isJetpackSite as isJetpackSiteSelector } from 'calypso/state/sites/selectors';
-import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import RelatedContentPreview from './related-content-preview';
 
 import './style.scss';
@@ -19,12 +15,9 @@ export const RelatedPostsSetting = ( {
 	handleToggle,
 	isRequestingSettings,
 	isSavingSettings,
+	isJetpackSelfHosted,
 } ) => {
 	const translate = useTranslate();
-	const siteId = useSelector( ( state ) => getSelectedSiteId( state ) ) || 0;
-	const isJetpack = useSelector( ( state ) => isJetpackSiteSelector( state, siteId ) );
-	const isAtomic = useSelector( ( state ) => isAtomicSite( state, siteId ) );
-	const isJetpackSelfHosted = isJetpack && ! isAtomic;
 
 	return (
 		<FormFieldset>

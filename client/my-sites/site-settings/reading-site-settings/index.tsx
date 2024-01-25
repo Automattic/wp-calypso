@@ -98,6 +98,7 @@ export const SiteSettingsSection = ( {
 					handleToggle={ handleToggle }
 					isRequestingSettings={ isRequestingSettings }
 					isSavingSettings={ isSavingSettings }
+					isJetpackSelfHosted={ isJetpackSelfHosted }
 				/>
 			</Card>
 		</>

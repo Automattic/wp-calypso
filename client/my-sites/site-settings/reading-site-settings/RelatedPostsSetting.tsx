@@ -15,6 +15,7 @@ type RelatedPostsSettingProps = {
 	handleToggle?: ( field: string ) => ( ( isChecked: boolean ) => void ) | undefined;
 	isRequestingSettings?: boolean;
 	isSavingSettings?: boolean;
+	isJetpackSelfHosted?: boolean | null;
 };
 
 export const RelatedPostsSetting = ( {
@@ -22,6 +23,7 @@ export const RelatedPostsSetting = ( {
 	handleToggle,
 	isRequestingSettings,
 	isSavingSettings,
+	isJetpackSelfHosted,
 }: RelatedPostsSettingProps ) => {
 	const translate = useTranslate();
 	return (
@@ -32,6 +34,7 @@ export const RelatedPostsSetting = ( {
 				handleToggle={ handleToggle }
 				isRequestingSettings={ isRequestingSettings }
 				isSavingSettings={ isSavingSettings }
+				isJetpackSelfHosted={ isJetpackSelfHosted }
 			/>
 		</>
 	);
