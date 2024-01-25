@@ -1,7 +1,9 @@
 import { Card } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { useTranslate } from 'i18n-calypso';
+import { useEffect } from 'react';
 import SupportInfo from 'calypso/components/support-info';
+import scrollToAnchor from 'calypso/lib/scroll-to-anchor';
 import SettingsSectionHeader from 'calypso/my-sites/site-settings/settings-section-header';
 import { useSelector } from 'calypso/state';
 import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
@@ -51,6 +53,10 @@ export const SiteSettingsSection = ( {
 	const isAtomic = useSelector( ( state ) => isAtomicSite( state, siteId ) );
 	const isJetpackSelfHosted = isJetpack && ! isAtomic;
 
+	useEffect( () => {
+		setTimeout( () => scrollToAnchor( { offset: 15 } ) );
+	}, [] );
+
 	return (
 		<>
 			{ /* @ts-expect-error SettingsSectionHeader is not typed and is causing errors */ }
@@ -77,7 +83,7 @@ export const SiteSettingsSection = ( {
 					disabled={ disabled }
 				/>
 			</Card>
-			<Card className="site-settings__card" id="related-posts-settings">
+			<Card className="site-settings__card">
 				<SupportInfo
 					text={ translate(
 						'The feature helps visitors find more of your content by displaying related posts at the bottom of each post.'
