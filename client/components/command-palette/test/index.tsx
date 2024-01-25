@@ -31,6 +31,9 @@ const commands = [
 	{
 		name: 'getHelp',
 		label: 'Get help',
+		callback: ( { close }: { close: () => void } ) => {
+			close();
+		},
 	},
 	{
 		name: 'sendFeedback',
@@ -117,5 +120,15 @@ describe( 'CommandPalette', () => {
 		expect( screen.queryByText( 'Send feedback' ) ).toBeNull();
 		expect( screen.queryByText( 'Clear cache' ) ).toBeNull();
 		expect( screen.queryByText( 'Enable edge cache' ) ).toBeNull();
+	} );
+
+	it( 'should close the palette when you select a specific command with no nested commands', () => {
+		renderCommandPalette();
+
+		expect( screen.getByPlaceholderText( 'Search for commands' ) ).toBeInTheDocument();
+		const getHelpCommand = screen.getByText( 'Get help' );
+		fireEvent.click( getHelpCommand );
+
+		expect( screen.queryByPlaceholderText( 'Search for commands' ) ).toBeNull();
 	} );
 } );
