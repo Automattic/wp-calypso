@@ -82,13 +82,15 @@ const SiteSettingsTraffic = ( {
 					placeholder={ null }
 				/>
 			) }
-			<Banner
-				showIcon={ false }
-				href={ `/settings/reading/${ siteSlug }` }
-				title={ translate(
-					'Looking for the Related Posts settings? We have moved them to the Reading settings section'
-				) }
-			/>
+			{ isAdmin && (
+				<Banner
+					showIcon={ false }
+					href={ `/settings/reading/${ siteSlug }` }
+					title={ translate(
+						'Looking for the Related Posts settings? We have moved them to the Reading settings section'
+					) }
+				/>
+			) }
 			{ ! isJetpack && isAdmin && config.isEnabled( 'cloudflare' ) && (
 				<CloudflareAnalyticsSettings />
 			) }
