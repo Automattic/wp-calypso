@@ -144,6 +144,7 @@ export function CheckoutSummaryFeaturedList( {
 		</>
 	);
 }
+
 function CheckoutSummaryPriceList() {
 	const cartKey = useCartKey();
 	const { responseCart } = useShoppingCart( cartKey );
@@ -918,13 +919,15 @@ const CheckoutFirstSubtotalLineItem = styled.div`
 	}
 `;
 
-const CheckoutSummaryLineItem = styled.div`
+const CheckoutSummaryLineItem = styled.div< { isDiscount?: boolean } >`
 	display: flex;
 	flex-wrap: wrap;
 	font-size: 14px;
 	justify-content: space-between;
 	line-height: 20px;
 	margin-bottom: 4px;
+
+	color: ${ ( props ) => ( props.isDiscount ? props.theme.colors.discount : 'inherit' ) };
 
 	&:nth-last-of-type( 2 ) {
 		border-bottom: 1px solid ${ ( props ) => props.theme.colors.borderColorLight };

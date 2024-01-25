@@ -1,5 +1,5 @@
 import { APIProductFamilyProduct } from 'calypso/state/partner-portal/types';
-import getProductInfo from '../../lib/get-product-info';
+import getProductInfo from '../../../lib/get-product-info';
 
 /* Helper function to transform a Partner product slug to match User product slug for backward compatibility checking.
  * Tiered products information such as t1 and t2 are removed while some are replaced with higher tier.

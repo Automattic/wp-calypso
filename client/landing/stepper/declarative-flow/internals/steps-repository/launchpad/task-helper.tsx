@@ -558,7 +558,7 @@ export function getEnhancedTasks( {
 					break;
 				}
 				case 'videopress_upload':
-					taskData = {
+					deprecatedData = {
 						actionUrl: launchpadUploadVideoLink,
 						disabled: isVideoPressFlowWithUnsupportedPlan || videoPressUploadCompleted,
 						actionDispatch: () => {
@@ -566,9 +566,11 @@ export function getEnhancedTasks( {
 							window.location.replace( launchpadUploadVideoLink );
 						},
 					};
+
+					taskData = getTaskDefinition( flow, task, context ) || deprecatedData;
 					break;
 				case 'videopress_launched':
-					taskData = {
+					deprecatedData = {
 						isLaunchTask: true,
 						actionDispatch: () => {
 							if ( site?.ID ) {
@@ -594,6 +596,7 @@ export function getEnhancedTasks( {
 							}
 						},
 					};
+					taskData = getTaskDefinition( flow, task, context ) || deprecatedData;
 					break;
 				case 'domain_upsell':
 					deprecatedData = {
@@ -666,6 +669,9 @@ export function getEnhancedTasks( {
 						},
 					};
 					taskData = getTaskDefinition( flow, task, context ) || deprecatedData;
+					break;
+				case 'videopress_setup':
+					taskData = getTaskDefinition( flow, task, context ) || task;
 					break;
 			}
 			enhancedTaskList.push( { ...task, ...taskData } );

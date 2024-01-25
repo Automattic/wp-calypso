@@ -39,6 +39,7 @@ exports[`Theme rendering with default display buttonContents should match snapsh
         </span>
       </h2>
       <components--theme-type-badge
+        islockedstylevariation="false"
         themeid="twentyseventeen"
       />
       <div

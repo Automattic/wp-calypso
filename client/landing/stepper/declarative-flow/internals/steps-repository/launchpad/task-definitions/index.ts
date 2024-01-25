@@ -10,8 +10,9 @@ import { actions as postActions } from './post';
 import { actions as setupActions } from './setup';
 import { actions as siteActions } from './site';
 import { actions as subscribersActions } from './subscribers';
+import { actions as videoPressActions } from './videopress';
 
-const DEFINITIONS = {
+const DEFINITIONS: TaskActionTable = {
 	...setupActions,
 	...designActions,
 	...domainActions,
@@ -22,7 +23,8 @@ const DEFINITIONS = {
 	...subscribersActions,
 	...contentActions,
 	...paymentsActions,
-} satisfies TaskActionTable;
+	...videoPressActions,
+};
 
 export const NEW_TASK_DEFINITION_PARSER_FEATURE_FLAG = 'launchpad/new-task-definition-parser';
 

@@ -420,6 +420,7 @@ function PluginDetails( props ) {
 							plugin={ fullPlugin }
 							isPlaceholder={ showPlaceholder }
 							onReviewsClick={ () => setIsReviewsModalVisible( true ) }
+							isMarketplaceProduct={ isMarketplaceProduct }
 						/>
 					</div>
 					<div className="plugin-details__content">

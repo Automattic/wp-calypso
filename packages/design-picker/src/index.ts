@@ -22,6 +22,7 @@ export {
 	isDefaultGlobalStylesVariationSlug,
 	getMShotOptions,
 	isAssemblerSupported,
+	isLockedStyleVariation,
 } from './utils';
 export {
 	DEFAULT_GLOBAL_STYLES_VARIATION_SLUG,
