@@ -85,7 +85,7 @@ const SiteSettingsTraffic = ( {
 			{ isAdmin && (
 				<Banner
 					showIcon={ false }
-					href={ `/settings/reading/${ siteSlug }` }
+					href={ `/settings/reading/${ siteSlug }#related-posts-settings` }
 					title={ translate(
 						'Looking for the Related Posts settings? We have moved them to the Reading settings section'
 					) }

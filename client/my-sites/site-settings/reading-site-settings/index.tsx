@@ -77,7 +77,7 @@ export const SiteSettingsSection = ( {
 					disabled={ disabled }
 				/>
 			</Card>
-			<Card className="site-settings__card">
+			<Card className="site-settings__card" id="related-posts-settings">
 				<SupportInfo
 					text={ translate(
 						'The feature helps visitors find more of your content by displaying related posts at the bottom of each post.'
