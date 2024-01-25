@@ -3,6 +3,7 @@ import 'calypso/my-sites/plans/jetpack-plans/product-store/featured-item-card/st
 import { useTranslate } from 'i18n-calypso';
 import { useProductDescription } from 'calypso/jetpack-cloud/sections/partner-portal/hooks';
 import getProductShortTitle from 'calypso/jetpack-cloud/sections/partner-portal/lib/get-product-short-title';
+import { HeroImageAPIFamily } from 'calypso/my-sites/plans/jetpack-plans/product-store/hero-image';
 import { APIProductFamilyProduct } from 'calypso/state/partner-portal/types';
 import { ItemPrice } from './item-price';
 
@@ -46,10 +47,11 @@ export const FeaturedLicenseItemCard = ( {
 
 	const price = <ItemPrice bundleSize={ bundleSize } item={ item } />;
 	const { description: productDescription } = useProductDescription( item.slug );
+	const hero = <HeroImageAPIFamily item={ item } />;
 
 	return (
 		<div className="featured-item-card">
-			<div className="featured-item-card--hero"></div>
+			<div className="featured-item-card--hero">{ hero }</div>
 
 			<div className="featured-item-card--body">
 				<div>

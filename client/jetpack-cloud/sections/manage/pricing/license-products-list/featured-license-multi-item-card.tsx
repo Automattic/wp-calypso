@@ -7,6 +7,7 @@ import MultipleChoiceQuestion from 'calypso/components/multiple-choice-question'
 import { useProductDescription } from 'calypso/jetpack-cloud/sections/partner-portal/hooks';
 import getProductShortTitle from 'calypso/jetpack-cloud/sections/partner-portal/lib/get-product-short-title';
 import getProductVariantShortTitle from 'calypso/jetpack-cloud/sections/partner-portal/lib/get-product-variant-short-title';
+import { HeroImageAPIFamily } from 'calypso/my-sites/plans/jetpack-plans/product-store/hero-image';
 import { useDispatch } from 'calypso/state';
 import { APIProductFamilyProduct } from 'calypso/state/partner-portal/types';
 import { ItemPrice } from './item-price';
@@ -47,6 +48,7 @@ export const FeaturedLicenseMultiItemCard = ( {
 
 	const price = <ItemPrice bundleSize={ bundleSize } item={ item } />;
 	const { description: productDescription } = useProductDescription( item.slug );
+	const hero = <HeroImageAPIFamily item={ item } />;
 
 	const onChangeOption = useCallback(
 		( selectedProductSlug: string ) => {
@@ -70,7 +72,7 @@ export const FeaturedLicenseMultiItemCard = ( {
 
 	return (
 		<div className="featured-item-card">
-			<div className="featured-item-card--hero"></div>
+			<div className="featured-item-card--hero">{ hero }</div>
 
 			<div className="featured-item-card--body">
 				<div>
