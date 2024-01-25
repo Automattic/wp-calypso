@@ -1,13 +1,22 @@
 import { Button, FormStatus, useFormStatus } from '@automattic/composite-checkout';
+import { Field } from '@automattic/wpcom-checkout';
 import styled from '@emotion/styled';
 import { useTranslate } from 'i18n-calypso';
-import { useEffect, Fragment, ReactNode, useState } from 'react';
-import Field from '../field';
+import { useEffect, Fragment, ReactNode, useState, ChangeEvent } from 'react';
+import {
+	getStateLabelText,
+	STATE_SELECT_TEXT,
+} from 'calypso/components/domains/contact-details-form-fields/custom-form-fieldsets/utils';
+import { StateSelect } from 'calypso/my-sites/domains/components/form';
 import type { PaymentMethod, ProcessPayment } from '@automattic/composite-checkout';
+
+// We currently only show Pix for Brazil so we hard-code the country to avoid
+// asking the user twice or having to grab it from the billing information
+// state.
+const countryCode = 'BR';
 
 interface PixPaymentMethodStateShape {
 	cardholderName: string;
-	countryCode: string;
 	state: string;
 	city: string;
 	postalCode: string;
@@ -24,7 +33,6 @@ type StateSubscriber = () => void;
 class PixPaymentMethodState {
 	data: PixPaymentMethodStateShape = {
 		cardholderName: '',
-		countryCode: '',
 		state: '',
 		city: '',
 		postalCode: '',
@@ -80,6 +88,7 @@ function useSubscribeToEventEmitter( state: PixPaymentMethodState ) {
 }
 
 const PixFormWrapper = styled.div`
+	position: relative;
 	padding: 0 24px 24px 24px;
 	display: flex;
 	flex-direction: column;
@@ -90,7 +99,6 @@ function PixForm( { state }: { state: PixPaymentMethodState } ) {
 	useSubscribeToEventEmitter( state );
 	const { formStatus } = useFormStatus();
 	const translate = useTranslate();
-	// TODO: make State field a dropdown
 
 	return (
 		<PixFormWrapper>
@@ -154,15 +162,14 @@ function PixForm( { state }: { state: PixPaymentMethodState } ) {
 				value={ state.data.city }
 				disabled={ formStatus !== FormStatus.READY }
 			/>
-			<Field
-				type="text"
-				id="state"
-				onChange={ ( value: string ) => {
-					state.change( 'state', value );
-				} }
-				label={ translate( 'State' ) }
+			<StateSelect
+				label={ getStateLabelText( countryCode ) }
+				countryCode={ countryCode }
+				selectText={ STATE_SELECT_TEXT[ countryCode ] }
 				value={ state.data.state }
-				disabled={ formStatus !== FormStatus.READY }
+				onChange={ ( event: ChangeEvent< HTMLSelectElement > ) => {
+					state.change( 'state', event.target.value );
+				} }
 			/>
 			<Field
 				type="text"
@@ -206,7 +213,7 @@ function PixPayButton( {
 			onClick={ () => {
 				onClick( {
 					name: state.data.cardholderName,
-					countryCode: state.data.countryCode,
+					countryCode: countryCode,
 					state: state.data.state,
 					city: state.data.city,
 					postalCode: state.data.postalCode,

@@ -19,7 +19,6 @@ import {
 	createAlipayPaymentMethodStore,
 	createRazorpayMethod,
 	isValueTruthy,
-	createPixPaymentMethod,
 } from '@automattic/wpcom-checkout';
 import debugFactory from 'debug';
 import { useMemo } from 'react';
@@ -37,6 +36,7 @@ import {
 	createNetBankingMethod,
 } from '../../payment-methods/netbanking';
 import { createPayPalMethod, createPayPalStore } from '../../payment-methods/paypal';
+import { createPixPaymentMethod } from '../../payment-methods/pix';
 import { createWeChatMethod, createWeChatPaymentMethodStore } from '../../payment-methods/wechat';
 import useCreateExistingCards from './use-create-existing-cards';
 import type { RazorpayConfiguration, RazorpayLoadingError } from '@automattic/calypso-razorpay';
