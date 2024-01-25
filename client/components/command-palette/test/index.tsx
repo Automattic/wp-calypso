@@ -67,7 +67,7 @@ describe( 'CommandPalette', () => {
 		( useCommandPalette as jest.Mock ).mockReturnValue( {
 			commands: commands,
 			filterNotice: 'Mock Filter Notice',
-			emptyListNotice: 'Mock Empty List Notice',
+			emptyListNotice: 'No results found',
 		} );
 
 		render(
@@ -101,6 +101,20 @@ describe( 'CommandPalette', () => {
 		expect( screen.getByText( 'Get' ) ).toBeInTheDocument();
 		expect( screen.getByText( 'help' ) ).toBeInTheDocument();
 		expect( screen.getByText( 'Send feedback' ) ).toBeInTheDocument();
+		expect( screen.queryByText( 'Clear cache' ) ).toBeNull();
+		expect( screen.queryByText( 'Enable edge cache' ) ).toBeNull();
+	} );
+
+	it( 'should return "No results found" when there is no match for search', () => {
+		renderCommandPalette();
+
+		expect( screen.getByPlaceholderText( 'Search for commands' ) ).toBeInTheDocument();
+		fireEvent.change( screen.getByPlaceholderText( 'Search for commands' ), {
+			target: { value: 'blue' },
+		} );
+
+		expect( screen.getByText( 'No results found' ) ).toBeInTheDocument();
+		expect( screen.queryByText( 'Send feedback' ) ).toBeNull();
 		expect( screen.queryByText( 'Clear cache' ) ).toBeNull();
 		expect( screen.queryByText( 'Enable edge cache' ) ).toBeNull();
 	} );
