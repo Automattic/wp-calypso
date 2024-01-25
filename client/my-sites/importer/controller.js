@@ -85,6 +85,9 @@ export function importerList( context, next ) {
 							? page( `${ onboardingFlowRoute }/${ url }&flow=onboarding` )
 							: page( url );
 					} }
+					onNavBack={ () => {
+						page( `/import/${ siteSlug }?flow=onboarding` );
+					} }
 				/>
 			</div>
 		</BrowserRouter>
