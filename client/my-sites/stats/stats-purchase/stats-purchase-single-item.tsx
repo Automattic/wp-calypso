@@ -300,7 +300,6 @@ const StatsSingleItemPagePurchase = ( {
 			</StatsSingleItemPagePurchaseFrame>
 			{ ! isCommercialOwned && (
 				<StatsSingleItemCard>
-					<h1>Hello from the new card</h1>
 					<StatsCommercialFlowOptOutForm isCommercial={ isCommercial } siteSlug={ siteSlug } />
 				</StatsSingleItemCard>
 			) }
@@ -349,6 +348,7 @@ Thanks\n\n`;
 	// Form output
 	return (
 		<>
+			<h1>Hello from the new card</h1>
 			<p>
 				{ translate(
 					'If you think we misidentified your site as commercial, confirm the information below, and we’ll take a look.'
