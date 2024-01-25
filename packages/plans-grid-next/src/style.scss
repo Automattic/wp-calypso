@@ -36,13 +36,9 @@ $mobile-card-max-width: 440px;
 	}
 
 	.plan-features-2023-grid__table-top & {
-		@include plans-grid-medium {
+		@include plans-grid-large {
 			margin-top: 62px;
 		}
-	}
-
-	@include plans-grid-medium-large {
-		margin-top: 36px;
 	}
 }
 

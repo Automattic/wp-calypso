@@ -1,4 +1,5 @@
 import { useLayoutEffect, useState } from '@wordpress/element';
+import ResizeObserver from 'resize-observer-polyfill';
 
 interface Props {
 	containerRef: React.MutableRefObject< HTMLDivElement | null >;
@@ -19,30 +20,31 @@ const useGridSize = ( { containerRef, containerBreakpoints }: Props ) => {
 	const [ gridSize, setGridSize ] = useState< string | null >( null );
 
 	useLayoutEffect( () => {
-		const handleResize = () => {
-			const offsetWidth = containerRef.current?.getBoundingClientRect().width;
+		if ( ! containerRef?.current ) {
+			return;
+		}
 
-			if ( offsetWidth ) {
-				const width = offsetWidth;
+		const observer = new ResizeObserver(
+			( [ entry ]: Parameters< ResizeObserverCallback >[ 0 ] ) => {
+				const width = entry.contentRect.width;
 
-				for ( const [ key, value ] of [ ...containerBreakpoints ].reverse() ) {
-					if ( width >= value ) {
-						if ( gridSize !== key ) {
-							setGridSize( key );
+				if ( width ) {
+					for ( const [ key, value ] of [ ...containerBreakpoints ].reverse() ) {
+						if ( width >= value ) {
+							if ( gridSize !== key ) {
+								setGridSize( key );
+							}
+							break;
 						}
-						break;
 					}
 				}
 			}
-		};
+		);
 
-		window.addEventListener( 'resize', handleResize );
-		handleResize();
+		observer.observe( containerRef.current );
 
-		return () => {
-			window.removeEventListener( 'resize', handleResize );
-		};
-	}, [ containerBreakpoints, containerRef, gridSize, setGridSize ] );
+		return () => observer.disconnect();
+	}, [ containerBreakpoints, containerRef, gridSize ] );
 
 	return gridSize;
 };

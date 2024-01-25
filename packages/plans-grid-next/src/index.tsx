@@ -103,7 +103,7 @@ const WrappedFeaturesGrid = ( props: FeaturesGridExternalProps ) => {
 		'is-small': 'small' === gridSize,
 		'is-medium': 'medium' === gridSize,
 		'is-large': 'large' === gridSize,
-		'is-visible': gridSize,
+		'is-visible': true,
 	} );
 
 	return (
