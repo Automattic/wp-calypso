@@ -32,6 +32,7 @@
 		{ "path": "./help-center" },
 		{ "path": "./i18n-utils" },
 		{ "path": "./jest-circus-allure-reporter" },
+		{ "path": "./jetpack-ai-calypso" },
 		{ "path": "./js-utils" },
 		{ "path": "./language-picker" },
 		{ "path": "./languages" },
