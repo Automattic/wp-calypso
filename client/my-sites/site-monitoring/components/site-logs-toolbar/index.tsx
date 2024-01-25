@@ -153,6 +153,8 @@ export const SiteLogsToolbar = ( {
 								<SelectDropdown.Item
 									key={ option.value }
 									onClick={ () => onSeverityChange( option.value ) }
+									value={ option.label }
+									ariaLabel={ option.label }
 								>
 									<span>
 										<strong>{ option.label }</strong>
@@ -176,6 +178,8 @@ export const SiteLogsToolbar = ( {
 									<SelectDropdown.Item
 										key={ option.value }
 										onClick={ () => onRequestTypeChange( option.value ) }
+										value={ option.label }
+										ariaLabel={ option.label }
 									>
 										<span>
 											<strong>{ option.label }</strong>
@@ -196,6 +200,8 @@ export const SiteLogsToolbar = ( {
 									<SelectDropdown.Item
 										key={ option.value }
 										onClick={ () => onRequestStatusChange( option.value ) }
+										value={ option.label }
+										ariaLabel={ option.label }
 									>
 										<span>
 											<strong>{ option.label }</strong>
