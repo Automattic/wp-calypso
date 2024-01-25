@@ -47,6 +47,7 @@ function PixPayButton( {
 			fullWidth
 		>
 			{ submitButtonContent }
+			<div className="pix-modal-target" />
 		</Button>
 	);
 }
