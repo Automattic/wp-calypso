@@ -141,7 +141,7 @@ function PaymentMethodForm() {
 	const handleChangeError = useCallback(
 		( { transactionError }: { transactionError: string | null } ) => {
 			if (
-				!! transactionError &&
+				transactionError &&
 				( transactionError.toLowerCase().includes( 'cvc' ) ||
 					transactionError.toLowerCase().includes( 'code' ) )
 			) {
