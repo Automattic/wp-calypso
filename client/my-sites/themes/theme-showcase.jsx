@@ -1,6 +1,6 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import config from '@automattic/calypso-config';
-import { FEATURE_INSTALL_THEMES } from '@automattic/calypso-products';
+import { FEATURE_INSTALL_THEMES, getPlan } from '@automattic/calypso-products';
 import page from '@automattic/calypso-router';
 import { isAssemblerSupported } from '@automattic/design-picker';
 import classNames from 'classnames';
@@ -16,7 +16,6 @@ import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
 import QueryThemeFilters from 'calypso/components/data/query-theme-filters';
 import { SearchThemes, SearchThemesV2 } from 'calypso/components/search-themes';
 import SelectDropdown from 'calypso/components/select-dropdown';
-import { THEME_TIERS } from 'calypso/components/theme-tier/constants';
 import getSiteAssemblerUrl from 'calypso/components/themes-list/get-site-assembler-url';
 import { getOptionLabel } from 'calypso/landing/subscriptions/helpers';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
@@ -99,7 +98,7 @@ class ThemeShowcase extends Component {
 
 	static propTypes = {
 		tier: config.isEnabled( 'themes/tiers' )
-			? PropTypes.oneOf( [ '', ...Object.keys( THEME_TIERS ) ] )
+			? PropTypes.string
 			: PropTypes.oneOf( [ '', 'free', 'premium', 'marketplace' ] ),
 		search: PropTypes.string,
 		isCollectionView: PropTypes.bool,
@@ -205,7 +204,7 @@ class ThemeShowcase extends Component {
 				{ value: 'all', label: translate( 'All' ) },
 				...Object.keys( themeTiers ).map( ( tier ) => ( {
 					value: tier,
-					label: THEME_TIERS[ tier ]?.label || tier,
+					label: tier?.minimumUpsellPlan ? getPlan( tier.minimumUpsellPlan )?.getTitle() : tier,
 				} ) ),
 			];
 		}

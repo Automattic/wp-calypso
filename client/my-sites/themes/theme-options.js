@@ -4,7 +4,6 @@ import { localize } from 'i18n-calypso';
 import { mapValues, pickBy, flowRight as compose } from 'lodash';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import { THEME_TIERS } from 'calypso/components/theme-tier/constants';
 import withIsFSEActive from 'calypso/data/themes/with-is-fse-active';
 import { localizeThemesPath } from 'calypso/my-sites/themes/helpers';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
@@ -60,7 +59,7 @@ function getAllThemeOptions( { translate, isFSEActive } ) {
 
 			const themeTier = options.themeTier;
 
-			const tierMinimumUpsellPlan = THEME_TIERS[ themeTier?.slug ]?.minimumUpsellPlan;
+			const tierMinimumUpsellPlan = themeTier?.minimumUpsellPlan;
 			const mappedPlan = getPlan( tierMinimumUpsellPlan );
 			const planPathSlug = mappedPlan?.getPathSlug();
 

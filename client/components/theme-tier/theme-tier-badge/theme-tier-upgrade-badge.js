@@ -4,7 +4,6 @@ import { Plans } from '@automattic/data-stores';
 import { createInterpolateElement } from '@wordpress/element';
 import { useTranslate } from 'i18n-calypso';
 import { useThemeTierForTheme } from 'calypso/state/themes/hooks/use-theme-tier-for-theme';
-import { THEME_TIERS } from '../constants';
 import ThemeTierBadgeCheckoutLink from './theme-tier-badge-checkout-link';
 import { useThemeTierBadgeContext } from './theme-tier-badge-context';
 import ThemeTierBadgeTracker from './theme-tier-badge-tracker';
@@ -15,7 +14,7 @@ export default function ThemeTierUpgradeBadge() {
 	const { themeId } = useThemeTierBadgeContext();
 	const themeTier = useThemeTierForTheme( themeId );
 
-	const tierMinimumUpsellPlan = THEME_TIERS[ themeTier?.slug ]?.minimumUpsellPlan;
+	const tierMinimumUpsellPlan = themeTier?.minimumUpsellPlan;
 	const mappedPlan = getPlan( tierMinimumUpsellPlan );
 	const planPathSlug = mappedPlan?.getPathSlug();
 
