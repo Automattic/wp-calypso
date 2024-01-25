@@ -158,7 +158,7 @@ async function pollForOrderStatus(
 }
 
 function getRenderRoot( genericErrorMessage: string ) {
-	const dialogTarget = document.querySelector( '.we-chat-modal-target' );
+	const dialogTarget = document.querySelector( '.pix-modal-target' );
 	if ( ! dialogTarget ) {
 		// eslint-disable-next-line no-console
 		console.error( 'Dialog target was not found.' );
@@ -190,7 +190,7 @@ function displayModal(
 	// We have to activate the `<dialog>` element after a moment because we
 	// need to give React a chance to render it.
 	setTimeout( () => {
-		const dialogElement = document.querySelector( 'dialog.we-chat-confirmation' );
+		const dialogElement = document.querySelector( 'dialog.pix-confirmation' );
 		if ( ! dialogElement || ! ( 'showModal' in dialogElement ) ) {
 			// eslint-disable-next-line no-console
 			console.error( 'Dialog was not found or browser does not support dialogs.' );
