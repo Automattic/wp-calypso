@@ -1,4 +1,5 @@
 @import "@automattic/onboarding/styles/mixins";
+@import "./mixins";
 @import "./media-queries";
 
 $table-cell-max-width: 344px;
@@ -30,18 +31,17 @@ $mobile-card-max-width: 440px;
 .plan-features-2023-grid__header-logo {
 	padding-left: 20px;
 
-	.plans-grid-next__features-grid.is-medium &,
-	.plans-grid-next__features-grid.is-large & {
+	@include plans-grid-medium-large {
 		margin-top: 36px;
 	}
 
 	.plan-features-2023-grid__table-top & {
-		.plans-grid-next__features-grid.is-medium & {
+		@include plans-grid-medium {
 			margin-top: 62px;
 		}
 	}
 
-	.plans-grid-next__features-grid.is-large & {
+	@include plans-grid-medium-large {
 		margin-top: 36px;
 	}
 }
@@ -83,8 +83,7 @@ $mobile-card-max-width: 440px;
 		 * TODO: Remove/refactor this once we have a better way to handle.
 		 * .is-section-plans refers to external context.
 		 */
-		.plans-grid-next__features-grid.is-medium &,
-		.plans-grid-next__features-grid.is-large & {
+		@include plans-grid-medium-large {
 			.is-section-plans & {
 				margin-left: 0;
 				margin-right: 0;
@@ -236,13 +235,12 @@ $mobile-card-max-width: 440px;
 	font-weight: 400;
 	padding: 0 20px 24px 20px;
 
-	.plans-grid-next__features-grid.is-medium &,
-	.plans-grid-next__features-grid.is-large & {
+	@include plans-grid-medium-large {
 		font-size: $font-body-small;
 		line-height: 20px;
 	}
 
-	.plans-grid-next__features-grid.is-large & {
+	@include plans-grid-large {
 		font-size: 0.813rem; /* stylelint-disable-line */
 		line-height: 16px;
 		padding-bottom: 8px;
@@ -271,15 +269,13 @@ $mobile-card-max-width: 440px;
 
 	&.is-top-buttons {
 		padding: 0 20px;
-		.plans-grid-next__features-grid.is-medium &,
-		.plans-grid-next__features-grid.is-large & {
+		@include plans-grid-medium-large {
 			padding-top: 16px;
 			padding-bottom: 16px;
 		}
 	}
 
-	.plans-grid-next__features-grid.is-medium &,
-	.plans-grid-next__features-grid.is-large & {
+	@include plans-grid-medium-large {
 		// The .plan-features-2023-grid__table-item is used to render the plan spotlight which doesn't
 		// use a table layout, but borders are only appropriate in table layout.
 		&:is(td) {
@@ -315,8 +311,7 @@ $mobile-card-max-width: 440px;
 		&.plan-features-2023-grid__header-billing-info {
 			padding-bottom: 16px;
 
-			.plans-grid-next__features-grid.is-medium &,
-			.plans-grid-next__features-grid.is-large & {
+			@include plans-grid-medium-large {
 				padding-bottom: 16px;
 			}
 		}
@@ -377,8 +372,7 @@ $mobile-card-max-width: 440px;
 			font-weight: 600;
 		}
 
-		.plans-grid-next__features-grid.is-medium &,
-		.plans-grid-next__features-grid.is-large & {
+		@include plans-grid-medium-large {
 			font-size: $font-body-extra-small;
 			line-height: 16px;
 		}
@@ -431,8 +425,7 @@ $mobile-card-max-width: 440px;
 		position: relative;
 		margin: 32px 0 0;
 
-		.plans-grid-next__features-grid.is-medium &,
-		.plans-grid-next__features-grid.is-large & {
+		@include plans-grid-medium-large {
 			margin: 0;
 			top: 14px;
 		}
@@ -499,27 +492,24 @@ $mobile-card-max-width: 440px;
 /* stylelint-disable-next-line no-duplicate-selectors */
 .plan-features-2023-grid__table-item {
 	.plan-features-2023-grid__common-title {
-		.plans-grid-next__features-grid.is-medium &,
-		.plans-grid-next__features-grid.is-large & {
+		@include plans-grid-medium-large {
 			margin-top: 20px;
 			font-size: $font-body-extra-small;
 		}
 	}
 
 	&.plan-features-2023-grid__header-billing-info {
-		.plans-grid-next__features-grid.is-medium &,
-		.plans-grid-next__features-grid.is-large & {
+		@include plans-grid-medium-large {
 			padding-bottom: 0;
 		}
 
 		.plans-grid-next__billing-timeframe-vip-price {
-			.plans-grid-next__features-grid.is-medium &,
-			.plans-grid-next__features-grid.is-large & {
+			@include plans-grid-medium-large {
 				font-size: $font-body-small;
 				line-height: 20px;
 			}
 
-			.plans-grid-next__features-grid.is-large & {
+			@include plans-grid-large {
 				font-size: $font-body-extra-small;
 				line-height: 16px;
 			}
@@ -528,8 +518,7 @@ $mobile-card-max-width: 440px;
 
 	&.popular-plan-parent-class {
 		.plan-features-2023-grid__popular-badge {
-			.plans-grid-next__features-grid.is-medium &,
-			.plans-grid-next__features-grid.is-large & {
+			@include plans-grid-medium-large {
 				position: absolute;
 				top: -35px; // at -35px this covers the top border of the table, including its top-right radius, as intended
 				right: -1px;

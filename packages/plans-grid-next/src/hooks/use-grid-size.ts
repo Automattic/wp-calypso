@@ -42,7 +42,7 @@ const useGridSize = ( { containerRef, containerBreakpoints }: Props ) => {
 		return () => {
 			window.removeEventListener( 'resize', handleResize );
 		};
-	}, [ containerRef, gridSize, setGridSize ] );
+	}, [ containerBreakpoints, containerRef, gridSize, setGridSize ] );
 
 	return gridSize;
 };
