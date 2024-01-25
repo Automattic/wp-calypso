@@ -345,15 +345,16 @@ Thanks\n\n`;
 		setTimeout( () => ( window.location.href = emailHref ), 250 );
 	};
 
+	const formMessage = isCommercial
+		? translate(
+				'If you think we misidentified your site as commercial, confirm the information below and we’ll take a look.'
+		  )
+		: translate( 'To use a non-commercial license you must agree to the following:' );
 	// Form output
 	return (
 		<>
-			<h1>Hello from the new card</h1>
-			<p>
-				{ translate(
-					'If you think we misidentified your site as commercial, confirm the information below, and we’ll take a look.'
-				) }
-			</p>
+			<h1>{ translate( 'Continue with a non-commercial license' ) }</h1>
+			<p>{ formMessage }</p>
 			<div className={ `${ COMPONENT_CLASS_NAME }__personal-checklist` }>
 				<ul>
 					<li>
