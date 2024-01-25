@@ -41,7 +41,7 @@ const selectors = {
 	countryCode: `select[aria-labelledby="country-selector-label"]`,
 	postalCode: `input[id="contact-postal-code"]`,
 	submitBillingInformationButton:
-		'[data-testid="contact-form--visible"] .checkout-submit-button button.is-status-primary',
+		'[data-testid="contact-form--visible"] button.checkout-button.is-status-primary',
 
 	// Payment method cards
 	existingCreditCard: ( cardHolderName: string ) =>
