@@ -1,93 +1,11 @@
 import { isMultiYearDomainProduct } from '@automattic/calypso-products';
 import { Gridicon } from '@automattic/components';
-import { hasCheckoutVersion } from '@automattic/wpcom-checkout';
-import { css } from '@emotion/react';
-import styled from '@emotion/styled';
 import { useTranslate } from 'i18n-calypso';
 import { FunctionComponent, useCallback, useEffect, useState } from 'react';
+import { CurrentOption, Dropdown, OptionList, Option } from './styles';
 import { ItemVariantDropDownPrice } from './variant-dropdown-price';
 import type { ItemVariationPickerProps, WPCOMProductVariant } from './types';
 import type { ResponseCartProduct } from '@automattic/shopping-cart';
-
-interface CurrentOptionProps {
-	open: boolean;
-}
-
-const CurrentOption = styled.button< CurrentOptionProps >`
-	align-items: center;
-	background: white;
-	border: 1px solid ${ ( props ) => props.theme.colors.borderColor };
-	border-radius: 3px;
-	display: flex;
-	flex-direction: row;
-	justify-content: space-between;
-	padding: ${ hasCheckoutVersion( '2' ) ? '4px 16px' : '14px 16px' };
-	width: 100%;
-	cursor: pointer;
-
-	.gridicon {
-		fill: #a7aaad;
-		margin-left: 14px;
-	}
-
-	${ ( props ) =>
-		props.open &&
-		css`
-			border-radius: 3px 3px 0 0;
-		` }
-`;
-
-interface OptionProps {
-	selected: boolean;
-}
-
-const Option = styled.li< OptionProps >`
-	align-items: center;
-	background: white;
-	border: 1px solid ${ ( props ) => props.theme.colors.borderColor };
-	color: #646970;
-	display: flex;
-	flex-direction: row;
-	font-size: ${ ( props ) => props.theme.fontSize.small };
-	font-weight: ${ ( props ) => props.theme.weights.normal };
-	justify-content: space-between;
-	/* the calc aligns the price with the price in CurrentOption */
-	padding: 10px calc( 14px + 24px + 16px ) 10px 16px;
-	cursor: pointer;
-
-	&:hover {
-		background: #e9f0f5;
-	}
-
-	&.item-variant-option--selected {
-		background: #055d9c;
-	}
-`;
-
-const Dropdown = styled.div`
-	position: relative;
-	width: 100%;
-	margin: ${ hasCheckoutVersion( '2' ) ? '6px 0' : '16px 0' };
-	> ${ Option } {
-		border-radius: 3px;
-	}
-`;
-
-const OptionList = styled.ul`
-	position: absolute;
-	width: 100%;
-	z-index: 1;
-	margin: 0;
-
-	${ Option } {
-		margin-top: -1px;
-
-		&:last-child {
-			border-bottom-left-radius: 3px;
-			border-bottom-right-radius: 3px;
-		}
-	}
-`;
 
 export const ItemVariationDropDown: FunctionComponent< ItemVariationPickerProps > = ( {
 	id,
