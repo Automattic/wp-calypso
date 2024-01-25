@@ -30,7 +30,7 @@ import type { AssignLicenceProps } from '../../types';
 
 import './style.scss';
 
-export default function IssueLicenseV2( { selectedSite, suggestedProduct }: AssignLicenceProps ) {
+export default function IssueLicense( { selectedSite, suggestedProduct }: AssignLicenceProps ) {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 

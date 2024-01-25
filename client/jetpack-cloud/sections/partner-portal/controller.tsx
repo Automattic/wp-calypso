@@ -12,7 +12,7 @@ import BillingDashboard from 'calypso/jetpack-cloud/sections/partner-portal/prim
 import CompanyDetailsDashboard from 'calypso/jetpack-cloud/sections/partner-portal/primary/company-details-dashboard';
 import DownloadProducts from 'calypso/jetpack-cloud/sections/partner-portal/primary/download-products';
 import InvoicesDashboard from 'calypso/jetpack-cloud/sections/partner-portal/primary/invoices-dashboard';
-import IssueLicenseV2 from 'calypso/jetpack-cloud/sections/partner-portal/primary/issue-license';
+import IssueLicense from 'calypso/jetpack-cloud/sections/partner-portal/primary/issue-license';
 import Licenses from 'calypso/jetpack-cloud/sections/partner-portal/primary/licenses';
 import PartnerAccess from 'calypso/jetpack-cloud/sections/partner-portal/primary/partner-access';
 import PaymentMethodAdd from 'calypso/jetpack-cloud/sections/partner-portal/primary/payment-method-add';
@@ -113,7 +113,7 @@ export const issueLicenseContext: Callback = ( context, next ) => {
 	context.header = <Header />;
 	setSidebar( context, true );
 	context.primary = (
-		<IssueLicenseV2 selectedSite={ selectedSite } suggestedProduct={ suggestedProduct } />
+		<IssueLicense selectedSite={ selectedSite } suggestedProduct={ suggestedProduct } />
 	);
 	next();
 };
