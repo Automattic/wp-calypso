@@ -8,7 +8,7 @@ import './style.scss';
 export default function ConnectUrl() {
 	const translate = useTranslate();
 
-	const [ detectedSites, setDetectedSites ] = useState( [] );
+	const [ detectedSites, setDetectedSites ] = useState( [] as string[] );
 	const [ detectedFilename, setDetectedFilename ] = useState( '' );
 	const [ validating, setValidating ] = useState( false );
 
