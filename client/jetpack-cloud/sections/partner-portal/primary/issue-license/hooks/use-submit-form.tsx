@@ -10,8 +10,8 @@ import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { errorNotice } from 'calypso/state/notices/actions';
 import { doesPartnerRequireAPaymentMethod } from 'calypso/state/partner-portal/partner/selectors';
 import { APIError } from 'calypso/state/partner-portal/types';
-import { IssueLicenseRequest } from '../../hooks/use-issue-licenses';
-import { serializeQueryStringProducts } from '../../lib/querystring-products';
+import { IssueLicenseRequest } from '../../../hooks/use-issue-licenses';
+import { serializeQueryStringProducts } from '../../../lib/querystring-products';
 import type { SiteDetails } from '@automattic/data-stores';
 
 const containEquivalentItems = (

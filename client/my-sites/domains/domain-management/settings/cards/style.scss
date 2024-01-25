@@ -439,6 +439,10 @@
 		height: 100px;
 		@include placeholder();
 	}
+
+	.edit-glue-record-button {
+		margin-right: 8px;
+	}
 }
 
 .domain-glue-records-card__accordion {

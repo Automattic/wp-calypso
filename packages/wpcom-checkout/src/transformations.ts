@@ -1,7 +1,17 @@
+import {
+	isBiennially,
+	isJetpackPlan,
+	isJetpackProduct,
+	isJetpackSocialAdvancedSlug,
+} from '@automattic/calypso-products';
 import { formatCurrency } from '@automattic/format-currency';
 import { translate, useTranslate } from 'i18n-calypso';
 import type { LineItemType } from './types';
-import type { ResponseCart, TaxBreakdownItem } from '@automattic/shopping-cart';
+import type {
+	ResponseCart,
+	ResponseCartProduct,
+	TaxBreakdownItem,
+} from '@automattic/shopping-cart';
 
 export function getTotalLineItemFromCart( cart: ResponseCart ): LineItemType {
 	return {
@@ -136,6 +146,9 @@ export function filterAndGroupCostOverridesForDisplay(
 			return grouped;
 		}
 
+		const isJetpack = isJetpackProduct( product ) || isJetpackPlan( product );
+		let productDiscountAmountTotal = 0;
+
 		costOverrides.forEach( ( costOverride ) => {
 			if ( costOverride.does_override_original_cost ) {
 				// We won't display original cost overrides since they are
@@ -144,13 +157,28 @@ export function filterAndGroupCostOverridesForDisplay(
 				return;
 			}
 			const discountAmount = grouped[ costOverride.override_code ]?.discountAmount ?? 0;
-			const newDiscountAmount =
-				costOverride.old_subtotal_integer - costOverride.new_subtotal_integer;
+			let newDiscountAmount = costOverride.old_subtotal_integer - costOverride.new_subtotal_integer;
+
+			// Overrides for Jetpack biennial intro offers
+			if ( 'introductory-offer' === costOverride.override_code ) {
+				if ( isJetpackSocialAdvancedSlug( product.product_slug ) ) {
+					// Social Advanced has free trial that we don't consider "introduction offer"
+					return;
+				} else if ( isJetpack && isBiennially( product ) ) {
+					// For all other products, we show introductory discount for yearly variant (the rest is considered multi-year discount)
+					const yearlyVariant = getYearlyVariantFromProduct( product );
+					if ( yearlyVariant ) {
+						newDiscountAmount =
+							yearlyVariant.price_before_discounts_integer - yearlyVariant.price_integer;
+					}
+				}
+			}
 			grouped[ costOverride.override_code ] = {
 				humanReadableReason: costOverride.human_readable_reason,
 				overrideCode: costOverride.override_code,
 				discountAmount: discountAmount + newDiscountAmount,
 			};
+			productDiscountAmountTotal += newDiscountAmount;
 		} );
 
 		// Add a fake cost override for introductory offers until D134600-code
@@ -161,13 +189,52 @@ export function filterAndGroupCostOverridesForDisplay(
 			! costOverrides.some( ( override ) => override.override_code === 'introductory-offer' )
 		) {
 			const discountAmount = grouped[ 'introductory-offer' ]?.discountAmount ?? 0;
-			const newDiscountAmount =
+			let newDiscountAmount =
 				product.item_original_subtotal_integer - product.item_subtotal_before_discounts_integer;
-			grouped[ 'introductory-offer' ] = {
-				humanReadableReason: translate( 'Introductory offer' ),
-				overrideCode: 'introductory-offer',
-				discountAmount: discountAmount + newDiscountAmount,
-			};
+			// Override for Jetpack two-year products: we show introductory discount for yearly variant (the rest is considered multi-year discount)
+			if ( isJetpackSocialAdvancedSlug( product.product_slug ) ) {
+				// Social Advanced has free trial that we don't consider "introduction offer"
+				newDiscountAmount = 0;
+			} else if ( isJetpack && isBiennially( product ) ) {
+				// For all other products, we show introductory discount for yearly variant (the rest is considered multi-year discount)
+				const yearlyVariant = getYearlyVariantFromProduct( product );
+				if ( yearlyVariant ) {
+					newDiscountAmount =
+						yearlyVariant.price_before_discounts_integer - yearlyVariant.price_integer;
+				}
+			}
+			if ( newDiscountAmount > 0 ) {
+				grouped[ 'introductory-offer' ] = {
+					humanReadableReason: translate( 'Introductory offer' ),
+					overrideCode: 'introductory-offer',
+					discountAmount: discountAmount + newDiscountAmount,
+				};
+				productDiscountAmountTotal += newDiscountAmount;
+			}
+		}
+
+		if ( isJetpack && isBiennially( product ) ) {
+			const discountAmount = grouped[ 'multi-year-discount' ]?.discountAmount ?? 0;
+			const yearlyVariant = getYearlyVariantFromProduct( product );
+			const biennialVariant = getBiennialVariantFromProduct( product );
+
+			if ( yearlyVariant && biennialVariant ) {
+				// Coupon is added on top of multi-year discount, so we don't include it in the calculation
+				const discountWithoutCoupon =
+					productDiscountAmountTotal - ( product.coupon_savings_integer ?? 0 );
+				const newDiscountAmount =
+					2 * yearlyVariant.price_before_discounts_integer -
+					discountWithoutCoupon -
+					biennialVariant.price_integer;
+
+				if ( newDiscountAmount > 0 ) {
+					grouped[ 'multi-year-discount' ] = {
+						humanReadableReason: translate( 'Multi-year discount' ),
+						overrideCode: 'multi-year-discount',
+						discountAmount: discountAmount + newDiscountAmount,
+					};
+				}
+			}
 		}
 		return grouped;
 	}, {} );
@@ -188,20 +255,17 @@ function getCreditsUsedByCart( responseCart: ResponseCart ): number {
 	return isFullCredits ? responseCart.sub_total_with_taxes_integer : responseCart.credits_integer;
 }
 
-/*
- * Coupon discounts are applied (or not, as appropriate) to each line item's
- * total, so the cart's subtotal includes them. However, because it's nice to
- * be able to display the coupon discount as a discount separately from the
- * subtotal, this function returns the cart's subtotal with the coupon savings
- * removed.
- */
-export function getSubtotalWithoutCoupon( responseCart: ResponseCart ): number {
-	return responseCart.sub_total_integer + responseCart.coupon_savings_total_integer;
+function getBiennialVariantFromProduct( product: ResponseCartProduct ) {
+	return product.product_variants.find( ( variant ) => 24 === variant.bill_period_in_months );
+}
+
+function getYearlyVariantFromProduct( product: ResponseCartProduct ) {
+	return product.product_variants.find( ( variant ) => 12 === variant.bill_period_in_months );
 }
 
 export function getSubtotalWithoutDiscounts( responseCart: ResponseCart ): number {
 	return responseCart.products.reduce( ( total, product ) => {
-		return product.item_original_subtotal_integer + total;
+		return total + product.item_original_subtotal_integer;
 	}, 0 );
 }
 
@@ -214,18 +278,6 @@ export function getTotalDiscountsWithoutCredits(
 		total = total + override.discountAmount;
 		return total;
 	}, 0 );
-}
-
-/**
- * Credits are the only type of cart discount that is applied to the cart as a
- * whole and not to individual line items. The subtotal is only a subtotal of
- * line items and does not have credits applied. Therefore, if we want to
- * display credits as a discount along with other discounts before the
- * subtotal, we probably want to display the subtotal as having credits already
- * applied, which this function returns.
- */
-export function getSubtotalWithCredits( responseCart: ResponseCart ): number {
-	return responseCart.sub_total_integer - getCreditsUsedByCart( responseCart );
 }
 
 export function doesPurchaseHaveFullCredits( cart: ResponseCart ): boolean {

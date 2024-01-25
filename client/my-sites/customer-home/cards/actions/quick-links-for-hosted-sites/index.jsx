@@ -20,7 +20,7 @@ import '../quick-links/style.scss';
 const QuickLinksForHostedSites = ( props ) => {
 	const translate = useTranslate();
 	const siteId = useSelector( getSelectedSiteId );
-	const siteSlug = useSelector( ( state ) => getSelectedSiteSlug( state ) );
+	const siteSlug = useSelector( getSelectedSiteSlug );
 	const isAtomic = useSelector( ( state ) => isSiteAtomic( state, siteId ) );
 	const siteAdminUrl = useSelector( ( state ) => getSiteAdminUrl( state, siteId ) );
 	const canManageSite = useSelector( ( state ) =>

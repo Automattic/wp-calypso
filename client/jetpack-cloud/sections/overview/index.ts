@@ -5,5 +5,12 @@ import { navigation } from 'calypso/my-sites/controller';
 import * as controller from './controller';
 
 export default function () {
-	page( overviewPath(), navigation, controller.overviewContext, makeLayout, clientRender );
+	page(
+		overviewPath(),
+		navigation,
+		controller.requireAccessContext,
+		controller.overviewContext,
+		makeLayout,
+		clientRender
+	);
 }

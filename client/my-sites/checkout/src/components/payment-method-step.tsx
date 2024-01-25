@@ -9,6 +9,7 @@ import {
 	LineItemType,
 	getSubtotalWithoutDiscounts,
 	getTotalDiscountsWithoutCredits,
+	filterAndGroupCostOverridesForDisplay,
 } from '@automattic/wpcom-checkout';
 import styled from '@emotion/styled';
 import { useTranslate } from 'i18n-calypso';
@@ -52,14 +53,13 @@ const CheckoutTermsWrapper = styled.div< {
 	& .checkout__terms-foldable-card {
 		box-shadow: none;
 		padding: 0;
-		& .foldable-card__header {
+		&.is-compact .foldable-card__header {
 			font-size: 12px;
 			font-weight: 500;
 			line-height: 1.5;
 			padding: 0;
 		}
-		& .foldable-card.is-expanded,
-		.foldable-card__content {
+		&.is-expanded .foldable-card__content {
 			display: block;
 			padding: 0;
 			border-top: none;
@@ -90,6 +90,7 @@ export default function BeforeSubmitCheckoutHeader() {
 	const creditsLineItem = getCreditsLineItemFromCart( responseCart );
 	const translate = useTranslate();
 
+	const costOverridesList = filterAndGroupCostOverridesForDisplay( responseCart, translate );
 	const totalDiscount = getTotalDiscountsWithoutCredits( responseCart, translate );
 	const discountLineItem: LineItemType = {
 		id: 'total-discount',
@@ -105,7 +106,10 @@ export default function BeforeSubmitCheckoutHeader() {
 	const subTotalLineItemWithoutCoupon: LineItemType = {
 		id: 'subtotal-without-coupon',
 		type: 'subtotal',
-		label: translate( 'Subtotal before discounts' ),
+		label:
+			costOverridesList.length > 0
+				? translate( 'Subtotal before discounts' )
+				: translate( 'Subtotal' ),
 		formattedAmount: formatCurrency( subtotalBeforeDiscounts, responseCart.currency, {
 			isSmallestUnit: true,
 			stripZeros: true,
@@ -124,7 +128,9 @@ export default function BeforeSubmitCheckoutHeader() {
 				<WPOrderReviewSection>
 					<NonTotalPrices>
 						<NonProductLineItem subtotal lineItem={ subTotalLineItemWithoutCoupon } />
-						<NonProductLineItem subtotal lineItem={ discountLineItem } />
+						{ costOverridesList.length > 0 && (
+							<NonProductLineItem subtotal lineItem={ discountLineItem } />
+						) }
 						{ taxLineItems.map( ( taxLineItem ) => (
 							<NonProductLineItem key={ taxLineItem.id } tax lineItem={ taxLineItem } />
 						) ) }

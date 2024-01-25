@@ -6,7 +6,7 @@ import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 export function useThemeTierForTheme( themeId: string ) {
 	const themeTier = useSelector( ( state ) => getThemeTierForTheme( state, themeId ) );
 
-	const siteId = useSelector( ( state ) => getSelectedSiteId( state ) );
+	const siteId = useSelector( getSelectedSiteId );
 	const retainedBenefits = useTierRetainedBenefitsQuery( siteId as number, themeId );
 	return retainedBenefits?.is_eligible ? retainedBenefits.tier : themeTier;
 }

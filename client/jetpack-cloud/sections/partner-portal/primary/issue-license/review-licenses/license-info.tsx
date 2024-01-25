@@ -1,6 +1,6 @@
 import { useTranslate } from 'i18n-calypso';
 import getProductIcon from 'calypso/my-sites/plans/jetpack-plans/product-store/utils/get-product-icon';
-import { useLicenseLightboxData } from '../../license-lightbox/hooks/use-license-lightbox-data';
+import { useLicenseLightboxData } from '../../../license-lightbox/hooks/use-license-lightbox-data';
 import type { SelectedLicenseProp } from '../types';
 import type { SiteDetails } from '@automattic/data-stores';
 

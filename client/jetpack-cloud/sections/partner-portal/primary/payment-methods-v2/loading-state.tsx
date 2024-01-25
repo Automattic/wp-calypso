@@ -1,4 +1,4 @@
-import StoreCreditPlaceholderCard from '../stored-credit-placeholder-card';
+import StoreCreditPlaceholderCard from '../../stored-credit-placeholder-card';
 
 export default function LoadingState() {
 	return (

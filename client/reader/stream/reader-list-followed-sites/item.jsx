@@ -19,7 +19,7 @@ const ReaderListFollowingItem = ( props ) => {
 	const { site, path, isUnseen, feed, follow, siteId } = props;
 	const moment = useLocalizedMoment();
 	const dispatch = useDispatch();
-	const isLoggedIn = useSelector( ( state ) => isUserLoggedIn( state ) );
+	const isLoggedIn = useSelector( isUserLoggedIn );
 	const siteIcon = site ? site.site_icon ?? get( site, 'icon.img' ) : null;
 	let feedIcon = get( follow, 'site_icon' );
 

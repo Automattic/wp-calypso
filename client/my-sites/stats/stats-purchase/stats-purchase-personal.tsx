@@ -106,7 +106,9 @@ const PersonalPurchase = ( {
 
 	const { mutateAsync: mutateNoticeVisbilityAsync } = useNoticeVisibilityMutation(
 		siteId,
-		'focus_jetpack_purchase'
+		'focus_jetpack_purchase',
+		'postponed',
+		4 * 7 * 24 * 3600 // four weeks
 	);
 
 	const handleClick = ( e: React.MouseEvent< HTMLAnchorElement, MouseEvent > ) =>
