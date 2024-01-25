@@ -551,6 +551,7 @@ $button-padding: 8px 32px;
 
 .stats-purchase-single__personal-checklist-button {
 	.components-button {
+		box-shadow: inset 0 0 0 1px #1a1a1a;
 		&.is-secondary {
 			&[disabled],
 			&:disabled,
