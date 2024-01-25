@@ -121,6 +121,7 @@ const useTrackDesignView = ( {
 				recordTracksEvent( 'calypso_design_picker_design_display', {
 					category: trackingCategory,
 					design_type: design.design_type,
+					...( design?.design_tier && { design_tier: design.design_tier } ),
 					is_premium: design.is_premium,
 					is_premium_available: isPremiumThemeAvailable,
 					slug: design.slug,
