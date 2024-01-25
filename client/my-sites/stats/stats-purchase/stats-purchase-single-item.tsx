@@ -293,6 +293,7 @@ const StatsSingleItemPagePurchase = ( {
 	isCommercial,
 }: StatsSingleItemPagePurchaseProps ) => {
 	const adminUrl = useSelector( ( state ) => getSiteAdminUrl( state, siteId ) );
+	const { isCommercialOwned } = useStatsPurchases( siteId );
 
 	return (
 		<>
@@ -308,14 +309,16 @@ const StatsSingleItemPagePurchase = ( {
 					isCommercial={ isCommercial }
 				/>
 			</StatsSingleItemPagePurchaseFrame>
-			<StatsSingleItemCard>
-				<h1>Hello from the new card</h1>
-				<StatsCommercialFlowCardInsert
-					isCommercial={ isCommercial }
-					isOdysseyStats={ false }
-					siteSlug={ siteSlug }
-				/>
-			</StatsSingleItemCard>
+			{ ! isCommercialOwned && (
+				<StatsSingleItemCard>
+					<h1>Hello from the new card</h1>
+					<StatsCommercialFlowCardInsert
+						isCommercial={ isCommercial }
+						isOdysseyStats={ false }
+						siteSlug={ siteSlug }
+					/>
+				</StatsSingleItemCard>
+			) }
 		</>
 	);
 };
