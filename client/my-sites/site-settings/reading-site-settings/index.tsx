@@ -1,6 +1,12 @@
 import { Card } from '@automattic/components';
+import { localizeUrl } from '@automattic/i18n-utils';
 import { useTranslate } from 'i18n-calypso';
+import SupportInfo from 'calypso/components/support-info';
 import SettingsSectionHeader from 'calypso/my-sites/site-settings/settings-section-header';
+import { useSelector } from 'calypso/state';
+import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
+import { isJetpackSite as isJetpackSiteSelector } from 'calypso/state/sites/selectors';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { BlogPagesSetting, BLOG_PAGES_OPTION } from './BlogPagesSetting';
 import { RelatedPostsSetting } from './RelatedPostsSetting';
 import YourHomepageDisplaysSetting from './YourHomepageDisplaysSetting';
@@ -40,6 +46,10 @@ export const SiteSettingsSection = ( {
 }: SiteSettingsSectionProps ) => {
 	const translate = useTranslate();
 	const { page_for_posts, page_on_front, posts_per_page, show_on_front } = fields;
+	const siteId = useSelector( ( state ) => getSelectedSiteId( state ) ) || 0;
+	const isJetpack = useSelector( ( state ) => isJetpackSiteSelector( state, siteId ) );
+	const isAtomic = useSelector( ( state ) => isAtomicSite( state, siteId ) );
+	const isJetpackSelfHosted = isJetpack && ! isAtomic;
 
 	return (
 		<>
@@ -68,6 +78,21 @@ export const SiteSettingsSection = ( {
 				/>
 			</Card>
 			<Card className="site-settings__card">
+				<SupportInfo
+					text={ translate(
+						'The feature helps visitors find more of your content by displaying related posts at the bottom of each post.'
+					) }
+					link={
+						isJetpackSelfHosted
+							? localizeUrl( 'https://jetpack.com/support/related-posts/' )
+							: localizeUrl(
+									'https://wordpress.com/support/related-posts/#related-posts-classic-themes'
+							  )
+					}
+					privacyLink={
+						isJetpackSelfHosted ? true : localizeUrl( 'https://automattic.com/privacy/' )
+					}
+				/>
 				<RelatedPostsSetting
 					fields={ fields }
 					handleToggle={ handleToggle }
