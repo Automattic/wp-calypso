@@ -66,6 +66,7 @@ const StatsSubscribersPage = ( { period }: StatsSubscribersPageProps ) => {
 		'subscribers-page'
 	);
 
+	// TODO: Pass subscribersTotals as props to SubscribersHighlightSection to avoid duplicate queries.
 	const { data: subscribersTotals, isLoading } = useSubscribersTotalsQueries( siteId );
 	const isSimple = useSelector( isSimpleSite );
 	const isAtomic = useSelector( ( state ) => isAtomicSite( state, siteId ) );
