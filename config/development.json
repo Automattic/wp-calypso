@@ -129,6 +129,7 @@
 		"logmein": true,
 		"mailchimp": true,
 		"manage/import/site-importer-endpoints": true,
+
 		"marketplace-domain-bundle": true,
 		"marketplace-fetch-all-dynamic-products": true,
 		"marketplace-personal-premium": false,
@@ -165,7 +166,6 @@
 		"plugins/ssr-landing": true,
 		"post-editor/checkout-overlay": true,
 		"post-list/qr-code-link": true,
-		"pre-cancellation-modal": false,
 		"press-this": true,
 		"promote-post/widget-i2": true,
 		"publicize-preview": true,
@@ -177,7 +177,6 @@
 		"reader/full-errors": true,
 		"reader/list-management": true,
 		"reader/public-tag-pages": true,
-		"recommend-plugins": true,
 		"redirect-fallback-browsers": false,
 		"rum-tracking/logstash": true,
 		"safari-idb-mitigation": true,
