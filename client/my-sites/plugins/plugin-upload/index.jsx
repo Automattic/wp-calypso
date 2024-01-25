@@ -203,9 +203,8 @@ const mapStateToProps = ( state ) => {
 	// before data has loaded.
 	const isEligible = isEligibleForAutomatedTransfer( state, siteId );
 	const isEligibleForHostingTrial =
-		isUserEligibleForFreeHostingTrial( state ) &&
-		site.plan.is_free &&
-		config.isEnabled( 'hosting-trial' );
+		isUserEligibleForFreeHostingTrial( state ) && site && site.plan?.is_free;
+	config.isEnabled( 'hosting-trial' );
 	const hasEligibilityMessages = ! (
 		isEmpty( eligibilityHolds ) && isEmpty( eligibilityWarnings )
 	);

@@ -484,7 +484,8 @@ const mapStateToProps = ( state ) => {
 		siteHasFeature( state, siteId, FEATURE_UPLOAD_THEMES ) ||
 		siteHasFeature( state, siteId, FEATURE_UPLOAD_PLUGINS );
 
-	const isEligibleForHostingTrial = isUserEligibleForFreeHostingTrial( state ) && site.plan.is_free;
+	const isEligibleForHostingTrial =
+		isUserEligibleForFreeHostingTrial( state ) && site && site.plan?.is_free;
 
 	const showEligibility =
 		canUploadThemesOrPlugins && ! isAtomic && ( hasEligibilityMessages || ! isEligible );
