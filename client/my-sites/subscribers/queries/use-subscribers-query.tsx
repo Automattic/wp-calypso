@@ -26,15 +26,7 @@ const useSubscribersQuery = ( {
 	const shouldFetch = ! isLoading;
 
 	return useQuery< SubscriberEndpointResponse >( {
-		queryKey: getSubscribersCacheKey(
-			siteId,
-			page,
-			perPage,
-			search,
-			sortTerm,
-			filterOption,
-			hasManySubscribers
-		),
+		queryKey: getSubscribersCacheKey( siteId, page, perPage, search, sortTerm, filterOption ),
 		queryFn: () => {
 			// This is a temporary solution until we have a better way to handle this.
 			const pathRoute = hasManySubscribers ? 'subscribers_by_user_type' : 'subscribers';

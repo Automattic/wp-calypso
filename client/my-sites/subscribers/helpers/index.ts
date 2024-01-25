@@ -6,8 +6,7 @@ const getSubscribersCacheKey = (
 	perPage?: number,
 	search?: string,
 	sortTerm?: string,
-	filterOption?: string,
-	hasManySubscribers?: boolean
+	filterOption?: string
 ) => {
 	const cacheKey = [ 'subscribers', siteId ];
 	if ( currentPage ) {
@@ -24,9 +23,6 @@ const getSubscribersCacheKey = (
 	}
 	if ( filterOption ) {
 		cacheKey.push( 'filter-option', filterOption );
-	}
-	if ( hasManySubscribers ) {
-		cacheKey.push( 'many-subscribers' );
 	}
 	return cacheKey;
 };
