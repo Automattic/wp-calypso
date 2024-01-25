@@ -41,7 +41,7 @@ const selectors = {
 	countryCode: `select[aria-labelledby="country-selector-label"]`,
 	postalCode: `input[id="contact-postal-code"]`,
 	submitBillingInformationButton:
-		'[data-testid="contact-form--visible"] .checkout-submit-button button.is-status-primary',
+		'[data-testid="contact-form--visible"] button.checkout-button.is-status-primary',
 
 	// Payment method cards
 	existingCreditCard: ( cardHolderName: string ) =>
@@ -61,12 +61,12 @@ const selectors = {
 	couponCodeInput: `input[id="order-review-coupon"]`,
 	couponCodeApplyButton: `button:text("Apply")`,
 	disabledButton: 'button[disabled]:has-text("Processing")',
-	paymentButton: `.checkout-submit-button button`,
+	paymentButton: `button.checkout-button`,
 	totalAmount:
 		envVariables.VIEWPORT_NAME === 'mobile'
 			? '.wp-checkout__total-price'
 			: '.wp-checkout-order-summary__total-price',
-	purchaseButton: `.checkout-submit-button button:has-text("Pay")`,
+	purchaseButton: `button.checkout-button:has-text("Pay")`,
 	thirdPartyDeveloperCheckboxLabel:
 		'You agree that an account may be created on a third party developer’s site related to the products you have purchased.',
 
