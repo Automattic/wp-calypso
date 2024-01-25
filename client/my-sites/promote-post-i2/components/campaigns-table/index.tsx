@@ -53,10 +53,6 @@ export default function CampaignsTable( props: Props ) {
 			title: translate( 'Campaign' ),
 		},
 		{
-			key: 'user',
-			title: translate( 'User' ),
-		},
-		{
 			key: 'status',
 			title: translate( 'Status' ),
 		},
@@ -66,7 +62,7 @@ export default function CampaignsTable( props: Props ) {
 		},
 		{
 			key: 'budget',
-			title: translate( 'Budget' ),
+			title: translate( 'Budget left' ),
 		},
 		{
 			key: 'impressions',
@@ -75,6 +71,10 @@ export default function CampaignsTable( props: Props ) {
 		{
 			key: 'clicks',
 			title: translate( 'Clicks' ),
+		},
+		{
+			key: 'conversion',
+			title: translate( 'Conversion rate' ),
 		},
 		{
 			key: 'action',
