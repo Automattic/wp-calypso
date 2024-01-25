@@ -16,6 +16,7 @@ import {
 	StatsCommercialPriceDisplay,
 	StatsBenefitsCommercial,
 	StatsSingleItemPagePurchaseFrame,
+	StatsSingleItemCard,
 } from './stats-purchase-shared';
 import {
 	MIN_STEP_SPLITS,
@@ -415,18 +416,23 @@ const StatsSingleItemPagePurchase = ( {
 	const adminUrl = useSelector( ( state ) => getSiteAdminUrl( state, siteId ) );
 
 	return (
-		<StatsSingleItemPagePurchaseFrame>
-			<StatsCommercialPurchase
-				siteId={ siteId }
-				siteSlug={ siteSlug }
-				planValue={ planValue }
-				currencyCode={ currencyCode }
-				adminUrl={ adminUrl || '' }
-				redirectUri={ redirectUri }
-				from={ from }
-				isCommercial={ isCommercial }
-			/>
-		</StatsSingleItemPagePurchaseFrame>
+		<>
+			<StatsSingleItemPagePurchaseFrame>
+				<StatsCommercialPurchase
+					siteId={ siteId }
+					siteSlug={ siteSlug }
+					planValue={ planValue }
+					currencyCode={ currencyCode }
+					adminUrl={ adminUrl || '' }
+					redirectUri={ redirectUri }
+					from={ from }
+					isCommercial={ isCommercial }
+				/>
+			</StatsSingleItemPagePurchaseFrame>
+			<StatsSingleItemCard>
+				<h1>Hello from the new card</h1>
+			</StatsSingleItemCard>
+		</>
 	);
 };
 
