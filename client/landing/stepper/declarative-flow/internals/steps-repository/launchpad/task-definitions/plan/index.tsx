@@ -2,15 +2,18 @@ import {
 	FEATURE_VIDEO_UPLOADS,
 	FEATURE_STYLE_CUSTOMIZATION,
 	isFreePlanProduct,
+	planHasFeature,
 } from '@automattic/calypso-products';
 import { updateLaunchpadSettings } from '@automattic/data-stores/src/queries/use-launchpad';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { Task } from '@automattic/launchpad';
+import { isVideoPressFlow } from '@automattic/onboarding';
 import { QueryClient } from '@tanstack/react-query';
 import { ExternalLink } from '@wordpress/components';
 import { addQueryArgs } from '@wordpress/url';
 import { translate } from 'i18n-calypso';
 import { ADD_TIER_PLAN_HASH } from 'calypso/my-sites/earn/memberships/constants';
+import { getSiteInfoQueryArgs } from '../../task-helper';
 import {
 	recordGlobalStylesGattingPlanSelectedResetStylesEvent,
 	recordTaskClickTracksEvent,
@@ -52,14 +55,16 @@ const getPlanTaskSubtitle = (
 };
 
 const getPlanSelectedTask: TaskAction = ( task, flow, context ): Task => {
-	const {
-		siteInfoQueryArgs,
-		displayGlobalStylesWarning,
-		globalStylesMinimumPlan,
-		isVideoPressFlowWithUnsupportedPlan,
-	} = context;
+	const { displayGlobalStylesWarning, globalStylesMinimumPlan, planCartItem, site, siteSlug } =
+		context;
+
+	const siteInfoQueryArgs = getSiteInfoQueryArgs( flow, site, siteSlug );
+	const productSlug = planCartItem?.product_slug ?? site?.plan?.product_slug;
+	const isVideoPressFlowWithUnsupportedPlan =
+		isVideoPressFlow( flow ) && ! planHasFeature( productSlug as string, FEATURE_VIDEO_UPLOADS );
 
 	const shouldDisplayWarning = displayGlobalStylesWarning || isVideoPressFlowWithUnsupportedPlan;
+
 	return {
 		...task,
 		actionDispatch: () => {
@@ -85,9 +90,10 @@ const getPlanSelectedTask: TaskAction = ( task, flow, context ): Task => {
 };
 
 const getPlanCompletedTask: TaskAction = ( task, flow, context ) => {
-	const { translatedPlanName, siteInfoQueryArgs, displayGlobalStylesWarning, site } = context;
-
+	const { translatedPlanName, siteSlug, displayGlobalStylesWarning, site } = context;
 	const isCurrentPlanFree = site?.plan ? isFreePlanProduct( site?.plan ) : true;
+
+	const siteInfoQueryArgs = getSiteInfoQueryArgs( flow, site, siteSlug );
 
 	return {
 		...task,

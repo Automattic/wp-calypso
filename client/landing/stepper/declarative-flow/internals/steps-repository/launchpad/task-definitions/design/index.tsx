@@ -1,10 +1,13 @@
 import { Task } from '@automattic/launchpad';
 import { addQueryArgs } from '@wordpress/url';
+import { getSiteInfoQueryArgs } from '../../task-helper';
 import { recordTaskClickTracksEvent } from '../../tracking';
 import { TaskAction } from '../../types';
 
 const getDesignSelectedTask: TaskAction = ( task, flow, context ): Task => {
-	const { siteInfoQueryArgs } = context;
+	const { site, siteSlug } = context;
+
+	const siteInfoQueryArgs = getSiteInfoQueryArgs( flow, site, siteSlug );
 
 	return {
 		...task,
@@ -20,7 +23,9 @@ const getDesignSelectedTask: TaskAction = ( task, flow, context ): Task => {
 const getDesignCompletedTask = getDesignSelectedTask;
 
 const getDesignEdited: TaskAction = ( task, flow, context ) => {
-	const { siteInfoQueryArgs } = context;
+	const { site, siteSlug } = context;
+
+	const siteInfoQueryArgs = getSiteInfoQueryArgs( flow, site, siteSlug );
 
 	return {
 		...task,

@@ -48,7 +48,6 @@ export type TaskId =
 export interface TaskContext {
 	tasks: Task[];
 	site: SiteDetails | null;
-	siteInfoQueryArgs?: { siteId?: number; siteSlug?: string | null };
 	checklistStatuses?: ChecklistStatuses;
 	isEmailVerified: boolean;
 	planCartItem?: MinimalRequestCartProduct | null;
@@ -58,7 +57,6 @@ export interface TaskContext {
 	submit: NavigationControls[ 'submit' ];
 	displayGlobalStylesWarning: boolean;
 	globalStylesMinimumPlan: string;
-	isVideoPressFlowWithUnsupportedPlan: boolean;
 	translatedPlanName?: ReactNode | string;
 	goToStep?: NavigationControls[ 'goToStep' ];
 	stripeConnectUrl?: string;

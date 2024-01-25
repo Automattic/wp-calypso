@@ -1,9 +1,12 @@
 import { translate } from 'i18n-calypso';
+import { getSiteInfoQueryArgs } from '../../task-helper';
 import { recordTaskClickTracksEvent } from '../../tracking';
-import { type TaskAction } from '../../types';
+import { TaskAction } from '../../types';
 
 const getSetupPaymentsTask: TaskAction = ( task, flow, context ) => {
-	const { siteInfoQueryArgs, stripeConnectUrl } = context;
+	const { stripeConnectUrl, site, siteSlug } = context;
+
+	const siteInfoQueryArgs = getSiteInfoQueryArgs( flow, site, siteSlug );
 
 	return {
 		...task,

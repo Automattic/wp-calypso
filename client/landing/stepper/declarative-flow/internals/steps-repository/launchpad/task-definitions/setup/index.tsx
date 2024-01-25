@@ -1,11 +1,13 @@
 import { type Task } from '@automattic/launchpad';
 import { isBlogOnboardingFlow } from '@automattic/onboarding';
 import { addQueryArgs } from '@wordpress/url';
+import { getSiteInfoQueryArgs } from '../../task-helper';
 import { recordTaskClickTracksEvent } from '../../tracking';
 import { type TaskAction } from '../../types';
 
 const getSetupFreeTask: TaskAction = ( task, flow, context ): Task => {
-	const { siteInfoQueryArgs } = context;
+	const { site, siteSlug } = context;
+	const siteInfoQueryArgs = getSiteInfoQueryArgs( flow, site, siteSlug );
 
 	return {
 		...task,
@@ -16,7 +18,8 @@ const getSetupFreeTask: TaskAction = ( task, flow, context ): Task => {
 };
 
 const getSetupBlog: TaskAction = ( task, flow, context ): Task => {
-	const { siteInfoQueryArgs } = context;
+	const { site, siteSlug } = context;
+	const siteInfoQueryArgs = getSiteInfoQueryArgs( flow, site, siteSlug );
 
 	return {
 		...task,
@@ -28,7 +31,9 @@ const getSetupBlog: TaskAction = ( task, flow, context ): Task => {
 };
 
 const getSetupNewsletterTask: TaskAction = ( task, flow, context ): Task => {
-	const { siteInfoQueryArgs } = context;
+	const { site, siteSlug } = context;
+
+	const siteInfoQueryArgs = getSiteInfoQueryArgs( flow, site, siteSlug );
 
 	return {
 		...task,
@@ -41,7 +46,9 @@ const getSetupNewsletterTask: TaskAction = ( task, flow, context ): Task => {
 };
 
 const getSetupVideoPressTask: TaskAction = ( task, flow, context ): Task => {
-	const { siteInfoQueryArgs } = context;
+	const { site, siteSlug } = context;
+
+	const siteInfoQueryArgs = getSiteInfoQueryArgs( flow, site, siteSlug );
 
 	return {
 		...task,
@@ -52,7 +59,9 @@ const getSetupVideoPressTask: TaskAction = ( task, flow, context ): Task => {
 };
 
 const getSetupGeneralTask: TaskAction = ( task, flow, context ): Task => {
-	const { siteInfoQueryArgs } = context;
+	const { site, siteSlug } = context;
+
+	const siteInfoQueryArgs = getSiteInfoQueryArgs( flow, site, siteSlug );
 
 	return {
 		...task,

@@ -1,12 +1,14 @@
 import { Task } from '@automattic/launchpad';
 import { isBlogOnboardingFlow, isNewsletterFlow } from '@automattic/onboarding';
 import { addQueryArgs } from '@wordpress/url';
+import { getSiteInfoQueryArgs } from '../../task-helper';
 import { recordTaskClickTracksEvent } from '../../tracking';
 import { TaskAction } from '../../types';
 
 const getFirstPostPublished: TaskAction = ( task, flow, context ): Task => {
-	const { siteInfoQueryArgs, isEmailVerified } = context;
+	const { site, siteSlug, isEmailVerified } = context;
 	const mustVerifyEmailBeforePosting = isNewsletterFlow( flow || null ) && ! isEmailVerified;
+	const siteInfoQueryArgs = getSiteInfoQueryArgs( flow, site, siteSlug );
 
 	return {
 		...task,

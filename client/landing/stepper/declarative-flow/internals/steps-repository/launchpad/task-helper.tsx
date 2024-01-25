@@ -1,11 +1,10 @@
-import { FEATURE_VIDEO_UPLOADS, planHasFeature, PLAN_PREMIUM } from '@automattic/calypso-products';
+import { PLAN_PREMIUM } from '@automattic/calypso-products';
 import { type SiteDetails, type ChecklistStatuses } from '@automattic/data-stores';
 import { isBlogOnboardingFlow, isSiteAssemblerFlow } from '@automattic/onboarding';
 import { MinimalRequestCartProduct } from '@automattic/shopping-cart';
 import { QueryClient } from '@tanstack/react-query';
 import { Dispatch, SetStateAction } from 'react';
 import { NavigationControls } from 'calypso/landing/stepper/declarative-flow/internals/types';
-import { isVideoPressFlow } from 'calypso/signup/is-flow';
 import { getTaskDefinition } from './task-definitions';
 import { launchpadFlowTasks } from './tasks';
 import { LaunchpadChecklist, Task, TaskContext } from './types';
@@ -60,23 +59,10 @@ export function getEnhancedTasks( {
 		return [];
 	}
 
-	const productSlug = planCartItem?.product_slug ?? site?.plan?.product_slug;
-	const isVideoPressFlowWithUnsupportedPlan =
-		isVideoPressFlow( flow ) && ! planHasFeature( productSlug as string, FEATURE_VIDEO_UPLOADS );
-
-	// We have to use the site id if the flow allows the user to change the site address
-	// as the domain name of the site may be changed.
-	// See https://github.com/Automattic/wp-calypso/pull/84532.
-	const siteInfoQueryArgs =
-		isBlogOnboardingFlow( flow ) || isSiteAssemblerFlow( flow )
-			? { siteId: site?.ID }
-			: { siteSlug };
-
 	return tasks.map( ( task ) => {
 		const context: TaskContext = {
 			site,
 			tasks,
-			siteInfoQueryArgs,
 			checklistStatuses,
 			isEmailVerified,
 			planCartItem,
@@ -86,7 +72,6 @@ export function getEnhancedTasks( {
 			siteSlug,
 			displayGlobalStylesWarning,
 			globalStylesMinimumPlan,
-			isVideoPressFlowWithUnsupportedPlan,
 			goToStep,
 			stripeConnectUrl,
 			queryClient,
@@ -95,6 +80,15 @@ export function getEnhancedTasks( {
 
 		return getTaskDefinition( flow, task, context ) || task;
 	} );
+}
+export function getSiteInfoQueryArgs(
+	flow: string,
+	site: SiteDetails | null,
+	siteSlug?: string | null
+) {
+	return isBlogOnboardingFlow( flow ) || isSiteAssemblerFlow( flow )
+		? { siteId: site?.ID }
+		: { siteSlug };
 }
 
 export function isDomainUpsellCompleted(
