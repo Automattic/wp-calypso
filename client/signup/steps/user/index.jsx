@@ -471,7 +471,7 @@ export class UserStep extends Component {
 
 		if ( userLoggedIn ) {
 			if ( englishLocales.includes( locale ) ) {
-				return translate( 'Is that you?' );
+				return translate( 'Is this you?' );
 			}
 		}
 
