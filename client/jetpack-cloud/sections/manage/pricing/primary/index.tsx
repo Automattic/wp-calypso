@@ -12,6 +12,7 @@ import { Recommendations } from 'calypso/my-sites/plans/jetpack-plans/product-st
 import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import Header from '../header';
+import { LicenseProductsList } from '../license-products-list';
 import 'calypso/my-sites/plans/jetpack-plans/product-store/style.scss';
 import 'calypso/jetpack-cloud/sections/pricing/style.scss';
 import './style.scss';
@@ -39,6 +40,7 @@ export default function ManagePricingPage() {
 				/>
 				<div className="jetpack-product-store">
 					<Header />
+					<LicenseProductsList bundleSize={ 1 } />
 					<Recommendations />
 					<StoreFooter />
 				</div>

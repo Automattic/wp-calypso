@@ -1,0 +1,45 @@
+@import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/mixins";
+
+.product-license-price-with-discount__price-discount {
+	margin-inline-start: 8px;
+	font-size: 1rem;
+	font-weight: 500;
+	color: var(--studio-jetpack-green-50);
+	text-wrap: nowrap;
+}
+.featured-item-card .multiple-choice-question {
+	margin-block-start: 16px;
+	margin-block-end: 0;
+
+	.form-legend {
+		display: none;
+	}
+
+	.multiple-choice-question__answers {
+		display: flex;
+		gap: 36px;
+	}
+
+	.multiple-choice-question__answer-item-content {
+		margin: 0;
+	}
+
+	.form-label {
+		font-size: 1rem;
+		line-height: 1.2;
+		margin: 0;
+	}
+
+	.form-radio:checked::before {
+		background: var(--studio-green-50);
+	}
+}
+
+.display-price__details {
+	color: var(--studio-gray-50);
+	font-size: 0.75rem;
+}
+.item-price .display-price .display-price__details {
+	padding-top: 0.1rem;
+}
