@@ -317,13 +317,13 @@ function StatsCommercialFlowOptOutForm( { isCommercial, siteSlug } ) {
 	const [ isBusinessChecked, setBusinessChecked ] = useState( false );
 	const [ isDonationChecked, setDonationChecked ] = useState( false );
 
-	const handleSwitchToPersonalClick = ( event: React.MouseEvent, isOdysseyStats: boolean ) => {
+	const handleSwitchToPersonalClick = () => {
 		const event_from = isOdysseyStats ? 'jetpack_odyssey' : 'calypso';
 		recordTracksEvent( `${ event_from }_stats_purchase_commercial_switch_to_personal_clicked` );
 		setTimeout( () => page( `/stats/purchase/${ siteSlug }?productType=personal` ), 250 );
 	};
 
-	const handleRequestUpdateClick = ( event: React.MouseEvent, isOdysseyStats: boolean ) => {
+	const handleRequestUpdateClick = () => {
 		const event_from = isOdysseyStats ? 'jetpack_odyssey' : 'calypso';
 		recordTracksEvent( `${ event_from }_stats_purchase_commercial_update_classification_clicked` );
 
@@ -345,11 +345,17 @@ Thanks\n\n`;
 		setTimeout( () => ( window.location.href = emailHref ), 250 );
 	};
 
+	const isFormSubmissionDisabled = () => {
+		return ! isAdsChecked || ! isSellingChecked || ! isBusinessChecked || ! isDonationChecked;
+	};
+
 	const formMessage = isCommercial
 		? translate(
 				'If you think we misidentified your site as commercial, confirm the information below and we’ll take a look.'
 		  )
 		: translate( 'To use a non-commercial license you must agree to the following:' );
+	const formButton = isCommercial ? translate( 'Request update' ) : translate( 'Continue' );
+	const formHandler = isCommercial ? handleRequestUpdateClick : handleSwitchToPersonalClick;
 
 	return (
 		<>
@@ -400,28 +406,9 @@ Thanks\n\n`;
 				</ul>
 			</div>
 			<div className={ `${ COMPONENT_CLASS_NAME }__personal-checklist-button` }>
-				{ isCommercial ? (
-					<Button
-						variant="secondary"
-						disabled={
-							! isAdsChecked || ! isSellingChecked || ! isBusinessChecked || ! isDonationChecked
-						}
-						onClick={ ( e: React.MouseEvent ) => handleRequestUpdateClick( e, isOdysseyStats ) }
-					>
-						{ translate( 'Request update' ) }
-					</Button>
-				) : (
-					// Otherwise if the site is personal or not identified yet, we should allow products switch.
-					<Button
-						variant="secondary"
-						disabled={
-							! isAdsChecked || ! isSellingChecked || ! isBusinessChecked || ! isDonationChecked
-						}
-						onClick={ ( e: React.MouseEvent ) => handleSwitchToPersonalClick( e, isOdysseyStats ) }
-					>
-						{ translate( 'Choose a non-commercial license' ) }
-					</Button>
-				) }
+				<Button variant="secondary" disabled={ isFormSubmissionDisabled() } onClick={ formHandler }>
+					{ formButton }
+				</Button>
 			</div>
 		</>
 	);
