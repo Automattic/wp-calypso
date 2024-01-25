@@ -70,8 +70,10 @@
 			padding: 0;
 		}
 
-		.checkout-submit-button button {
-			border-radius: var(--jetpack-corners-soft);
+		button {
+			&.checkout-button {
+				border-radius: var(--jetpack-corners-soft);
+			}
 		}
 	}
 

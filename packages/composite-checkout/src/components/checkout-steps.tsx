@@ -551,7 +551,15 @@ export const SubmitButtonWrapper = styled.div`
 		left: auto;
 	}
 
+	.checkout-button {
+		margin: 0 auto;
+	}
+
 	@media ( ${ ( props ) => props.theme.breakpoints.tabletUp } ) {
+		.checkout-button {
+			width: 100%;
+		}
+
 		.checkout__step-wrapper--last-step & {
 			position: relative;
 			box-shadow: none;

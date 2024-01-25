@@ -72,6 +72,7 @@ const Button: React.FC< ButtonProps & React.ButtonHTMLAttributes< HTMLButtonElem
 	...props
 } ) => {
 	const classNames = joinClasses( [
+		'checkout-button',
 		...( buttonType ? [ 'is-status-' + buttonType ] : [] ),
 		...( isBusy ? [ 'is-busy' ] : [] ),
 		...( className ? [ className ] : [] ),
