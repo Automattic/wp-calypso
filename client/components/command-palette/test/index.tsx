@@ -39,15 +39,23 @@ const commands = [
 		name: 'sendFeedback',
 		label: 'Send feedback',
 		searchLabel: 'find help',
+		callback: ( { close }: { close: () => void } ) => {
+			close();
+		},
 	},
 	{
 		name: 'clearCache',
 		label: 'Clear cache',
-		callback: jest.fn(),
+		callback: ( { close }: { close: () => void } ) => {
+			close();
+		},
 	},
 	{
 		name: 'enableEdgeCache',
 		label: 'Enable edge cache',
+		callback: ( { close }: { close: () => void } ) => {
+			close();
+		},
 	},
 ];
 const mockStore = configureStore();
