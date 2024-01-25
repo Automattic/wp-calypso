@@ -6,6 +6,7 @@ import { connect } from 'react-redux';
 import blazeIllustration from 'calypso/assets/images/customer-home/illustration--blaze.svg';
 import PromoCardBlock from 'calypso/blocks/promo-card-block';
 import AsyncLoad from 'calypso/components/async-load';
+import Banner from 'calypso/components/banner';
 import EmptyContent from 'calypso/components/empty-content';
 import Main from 'calypso/components/main';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
@@ -81,6 +82,13 @@ const SiteSettingsTraffic = ( {
 					placeholder={ null }
 				/>
 			) }
+			<Banner
+				showIcon={ false }
+				href={ `/settings/reading/${ siteSlug }` }
+				title={ translate(
+					'Looking for the Related Posts settings? We have moved them to the Reading settings section'
+				) }
+			/>
 			{ ! isJetpack && isAdmin && config.isEnabled( 'cloudflare' ) && (
 				<CloudflareAnalyticsSettings />
 			) }
