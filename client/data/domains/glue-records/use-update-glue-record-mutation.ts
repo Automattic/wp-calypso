@@ -1,13 +1,10 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useCallback } from 'react';
 import { domainGlueRecordQueryKey } from 'calypso/data/domains/glue-records/domain-glue-record-query-key';
-import { DomainsApiError } from 'calypso/lib/domains/types';
 import wp from 'calypso/lib/wp';
-import {
-	GlueRecordObject,
-	GlueRecordQueryData,
-	mapGlueRecordObjectToApiObject,
-} from './use-domain-glue-records-query';
+import { mapGlueRecordObjectToApiObject } from './use-domain-glue-records-query';
+import type { GlueRecordObject, GlueRecordQueryData } from './use-domain-glue-records-query';
+import type { DomainsApiError } from 'calypso/lib/domains/types';
 
 export default function useUpdateGlueRecordMutation(
 	domainName: string,
@@ -20,13 +17,14 @@ export default function useUpdateGlueRecordMutation(
 	const mutation = useMutation( {
 		mutationFn: ( glueRecord: GlueRecordObject ) =>
 			wp.req
-				.post(
+				.put(
 					{
 						path: `/domains/glue-records`,
 						apiNamespace: 'wpcom/v2',
+						method: 'PUT',
 					},
 					{
-						name_server: glueRecord.record.toLowerCase(),
+						name_server: glueRecord.nameserver.toLowerCase(),
 						ip_addresses: [ glueRecord.address ],
 					}
 				)

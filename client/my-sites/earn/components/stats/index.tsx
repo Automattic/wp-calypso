@@ -12,7 +12,7 @@ import CommissionFees from '../commission-fees';
 function StatsSection() {
 	const translate = useTranslate();
 
-	const site = useSelector( ( state ) => getSelectedSite( state ) );
+	const site = useSelector( getSelectedSite );
 
 	const {
 		commission,

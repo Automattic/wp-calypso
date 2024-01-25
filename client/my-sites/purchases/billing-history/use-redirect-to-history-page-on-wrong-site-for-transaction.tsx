@@ -10,7 +10,7 @@ export default function useRedirectToHistoryPageOnWrongSiteForTransaction(
 	receiptId: number,
 	transaction: BillingTransaction | undefined | null
 ): boolean {
-	const selectedSiteId = useSelector( ( state ) => getSelectedSiteId( state ) );
+	const selectedSiteId = useSelector( getSelectedSiteId );
 	const reduxDispatch = useDispatch();
 	const didRedirect = useRef( false );
 	const doesTransactionExist = !! transaction;

@@ -106,7 +106,7 @@ class SharingConnection extends Component {
 			const isNowSitewide = event.target.checked ? 1 : 0;
 
 			this.setState( { isSavingSitewide: true } );
-			this.props.onToggleSitewideConnection( this.props.connection, isNowSitewide );
+			this.props.onToggleSitewideConnection( this.props.connection, !! isNowSitewide );
 			this.props.recordTracksEvent( 'calypso_connections_connection_sitewide_checkbox_clicked', {
 				is_now_sitewide: isNowSitewide,
 				path,

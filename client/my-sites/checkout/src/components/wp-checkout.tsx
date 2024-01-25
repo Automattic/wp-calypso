@@ -82,7 +82,7 @@ import JetpackAkismetCheckoutSidebarPlanUpsell from './jetpack-akismet-checkout-
 import BeforeSubmitCheckoutHeader from './payment-method-step';
 import SecondaryCartPromotions from './secondary-cart-promotions';
 import WPCheckoutOrderReview from './wp-checkout-order-review';
-import WPCheckoutOrderSummary from './wp-checkout-order-summary';
+import { CheckoutSummaryFeaturedList, WPCheckoutOrderSummary } from './wp-checkout-order-summary';
 import WPContactForm from './wp-contact-form';
 import WPContactFormSummary from './wp-contact-form-summary';
 import type { OnChangeItemVariant } from './item-variation-picker';
@@ -466,16 +466,20 @@ export default function WPCheckout( {
 									/>
 								) }
 
-								<WPCheckoutOrderSummary
-									siteId={ siteId }
-									onChangeSelection={ changeSelection }
-									nextDomainIsFree={ responseCart?.next_domain_is_free }
-								/>
+								<WPCheckoutOrderSummary siteId={ siteId } onChangeSelection={ changeSelection } />
 								{ ! isWcMobile && ! isDIFMInCart && ! hasMonthlyProduct && (
 									<>
 										<CheckoutSidebarPlanUpsell />
 										<JetpackAkismetCheckoutSidebarPlanUpsell />
 									</>
+								) }
+								{ hasCheckoutVersion( '2' ) && (
+									<CheckoutSummaryFeaturedList
+										responseCart={ responseCart }
+										siteId={ siteId }
+										isCartUpdating={ FormStatus.VALIDATING === formStatus }
+										onChangeSelection={ changeSelection }
+									/>
 								) }
 								<SecondaryCartPromotions
 									responseCart={ responseCart }
@@ -768,14 +772,14 @@ const CheckoutSummaryBody = styled.div`
 	margin: 0 auto;
 	max-width: 600px;
 	width: 100%;
-	padding: 0 24px 25px;
+	padding: 24px;
 
 	.is-visible & {
 		display: block;
 	}
 
 	@media ( ${ ( props ) => props.theme.breakpoints.tabletUp } ) {
-		padding: 0 0 25px;
+		padding: 24px;
 	}
 
 	@media ( ${ ( props ) => props.theme.breakpoints.desktopUp } ) {

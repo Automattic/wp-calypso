@@ -59,7 +59,7 @@ export const useSiteCopy = (
 	site: Pick< SiteExcerptData, 'ID' | 'site_owner' | 'plan' > | undefined,
 	options: SiteCopyOptions = { enabled: true }
 ) => {
-	const userId = useSelector( ( state ) => getCurrentUserId( state ) );
+	const userId = useSelector( getCurrentUserId );
 	const hasCopySiteFeature = useSafeSiteHasFeature(
 		site?.ID,
 		WPCOM_FEATURES_COPY_SITE,
@@ -82,7 +82,7 @@ export const useSiteCopy = (
 		( state ) => isFetchingUserPurchases( state ) || ! hasLoadedUserPurchasesFromServer( state )
 	);
 
-	const purchases = useSelector( ( state ) => getUserPurchases( state ) );
+	const purchases = useSelector( getUserPurchases );
 
 	const { setPlanCartItem, setProductCartItems, resetOnboardStore } = useDispatch( ONBOARD_STORE );
 

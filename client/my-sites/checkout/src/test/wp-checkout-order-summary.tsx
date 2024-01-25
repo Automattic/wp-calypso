@@ -88,7 +88,7 @@ import { render, screen, waitFor } from '@testing-library/react';
 import { useTranslate } from 'i18n-calypso';
 import React from 'react';
 import { Provider as ReduxProvider } from 'react-redux';
-import WPCheckoutOrderSummary from '../components/wp-checkout-order-summary';
+import { WPCheckoutOrderSummary } from '../components/wp-checkout-order-summary';
 import getAkismetProductFeatures from '../lib/get-akismet-product-features';
 import getJetpackProductFeatures from '../lib/get-jetpack-product-features';
 import {

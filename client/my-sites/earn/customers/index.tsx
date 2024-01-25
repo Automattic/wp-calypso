@@ -37,7 +37,7 @@ function CustomerSection() {
 	const moment = useLocalizedMoment();
 	const subscriberId = new URLSearchParams( window.location.search ).get( 'subscriber' );
 	const [ subscriberToCancel, setSubscriberToCancel ] = useState< Subscriber | null >( null );
-	const site = useSelector( ( state ) => getSelectedSite( state ) );
+	const site = useSelector( getSelectedSite );
 
 	const subscribers = useSelector(
 		( state ) => getOwnershipsForSiteId( state, site?.ID ),

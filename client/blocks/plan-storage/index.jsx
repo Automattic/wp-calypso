@@ -3,6 +3,7 @@ import {
 	planHasFeature,
 	isBusinessPlan,
 	isEcommercePlan,
+	isWooExpressMediumPlan,
 	PLAN_FREE,
 	PLAN_WPCOM_PRO,
 	PLAN_WPCOM_FLEXIBLE,
@@ -74,7 +75,10 @@ export function PlanStorage( { children, className, siteId } ) {
 	}
 
 	const planHasTopStorageSpace =
-		isBusinessPlan( sitePlanSlug ) || isEcommercePlan( sitePlanSlug ) || isProPlan( sitePlanSlug );
+		isBusinessPlan( sitePlanSlug ) ||
+		isEcommercePlan( sitePlanSlug ) ||
+		isProPlan( sitePlanSlug ) ||
+		isWooExpressMediumPlan( sitePlanSlug );
 
 	const displayUpgradeLink = canUserUpgrade && ! planHasTopStorageSpace && ! isStagingSite;
 	const isSharedQuota = isStagingSite || hasStagingSite;

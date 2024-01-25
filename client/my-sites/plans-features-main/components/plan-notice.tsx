@@ -86,7 +86,7 @@ export default function PlanNotice( props: PlanNoticeProps ) {
 		discountInformation &&
 		getDiscountByName( discountInformation.withDiscount, discountInformation.discountEndDate );
 	const planUpgradeCreditsApplicable = usePlanUpgradeCreditsApplicable( siteId, visiblePlans );
-	const currencyCode = useSelector( ( state ) => getCurrentUserCurrencyCode( state ) );
+	const currencyCode = useSelector( getCurrentUserCurrencyCode );
 
 	switch ( noticeType ) {
 		case NO_NOTICE:

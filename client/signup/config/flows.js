@@ -112,7 +112,7 @@ function getDomainSignupFlowDestination( { domainItem, cartItem, siteId, designT
 		return `/checkout/thank-you/${ siteSlug }`;
 	}
 
-	return getThankYouNoSiteDestination();
+	return '/checkout/thank-you/no-site/:receiptId';
 }
 
 function getEmailSignupFlowDestination( { siteId, siteSlug } ) {
@@ -120,10 +120,6 @@ function getEmailSignupFlowDestination( { siteId, siteSlug } ) {
 		{ siteId },
 		`/checkout/thank-you/features/email-license/${ siteSlug }/:receiptId`
 	);
-}
-
-function getThankYouNoSiteDestination() {
-	return `/checkout/thank-you/no-site`;
 }
 
 function getChecklistThemeDestination( {

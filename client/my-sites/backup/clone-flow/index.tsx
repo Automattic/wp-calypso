@@ -65,7 +65,7 @@ const BackupCloneFlow: FunctionComponent< Props > = ( { siteId } ) => {
 	const gmtOffset = useSelector( ( state ) => getSiteGmtOffset( state, siteId ) );
 	const timezone = useSelector( ( state ) => getSiteTimezoneValue( state, siteId ) );
 	const siteUrl = useSelector( ( state ) => ( siteId && getSiteUrl( state, siteId ) ) || '' );
-	const previousPath = useSelector( ( state ) => getPreviousRoute( state ) );
+	const previousPath = useSelector( getPreviousRoute );
 	const siteSlug = useSelector( ( state ) => getSiteSlug( state, siteId ) );
 
 	const [ rewindConfig, setRewindConfig ] = useState< RewindConfig >( defaultRewindConfig );

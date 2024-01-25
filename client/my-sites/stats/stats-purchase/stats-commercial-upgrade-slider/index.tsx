@@ -100,7 +100,7 @@ function StatsCommercialUpgradeSlider( {
 	// 5. Nofiying the parent component when the slider changes.
 
 	const translate = useTranslate();
-	const siteId = useSelector( ( state ) => getSelectedSiteId( state ) );
+	const siteId = useSelector( getSelectedSiteId );
 	const tiers = useAvailableUpgradeTiers( siteId );
 	const uiStrings = useTranslatedStrings();
 

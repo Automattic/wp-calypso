@@ -1,46 +1,55 @@
 import { Button, CircularProgressBar, Gridicon } from '@automattic/components';
-import { updateLaunchpadSettings, useSortedLaunchpadTasks } from '@automattic/data-stores';
+import {
+	TemporaryDismiss,
+	useLaunchpadDismisser,
+	useSortedLaunchpadTasks,
+} from '@automattic/data-stores';
 import { Launchpad, type Task } from '@automattic/launchpad';
 import { useTranslate } from 'i18n-calypso';
-import { useEffect, useState } from 'react';
-import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
+import { FC } from 'react';
+import EllipsisMenu from 'calypso/components/ellipsis-menu';
+import PopoverMenuItem from 'calypso/components/popover-menu/item';
 import { useSelector } from 'calypso/state';
 import { getSiteSlug } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import type { AppState } from 'calypso/types';
 
 import './style.scss';
-
 interface CustomerHomeLaunchpadProps {
 	checklistSlug: string;
 	onSiteLaunched?: () => void;
 }
 
-const CustomerHomeLaunchpad = ( {
+const CustomerHomeLaunchpad: FC< CustomerHomeLaunchpadProps > = ( {
 	checklistSlug,
 	onSiteLaunched,
-}: CustomerHomeLaunchpadProps ): JSX.Element => {
+}: CustomerHomeLaunchpadProps ) => {
 	const launchpadContext = 'customer-home';
 	const siteId = useSelector( getSelectedSiteId );
-	const siteSlug = useSelector( ( state: AppState ) => getSiteSlug( state, siteId ) );
-
 	const translate = useTranslate();
-	const [ isDismissed, setIsDismissed ] = useState( false );
-	const {
-		data: { checklist, is_dismissed: initialIsChecklistDismissed, title },
-	} = useSortedLaunchpadTasks( siteSlug, checklistSlug, launchpadContext );
+	const siteSlug = useSelector( ( state: AppState ) => getSiteSlug( state, siteId ) || '' );
 
-	useEffect( () => {
-		setIsDismissed( initialIsChecklistDismissed );
-	}, [ initialIsChecklistDismissed ] );
+	const { mutate: dismiss } = useLaunchpadDismisser( siteSlug, checklistSlug );
+
+	const {
+		data: { checklist, is_dismissed: isDismissed, is_dismissible: isDismissible, title },
+	} = useSortedLaunchpadTasks( siteSlug, checklistSlug, launchpadContext );
 
 	const numberOfSteps = checklist?.length || 0;
 	const completedSteps = ( checklist?.filter( ( task: Task ) => task.completed ) || [] ).length;
 
 	// return nothing if the launchpad is dismissed
 	if ( isDismissed ) {
-		return <></>;
+		return null;
 	}
+
+	const temporaryDismiss = ( { dismissBy }: Pick< TemporaryDismiss, 'dismissBy' > ) => {
+		dismiss( {
+			dismissBy,
+		} );
+	};
+
+	const permanentDismiss = () => dismiss( { isDismissed: true } );
 
 	return (
 		<div className="customer-home-launchpad">
@@ -56,30 +65,26 @@ const CustomerHomeLaunchpad = ( {
 							numberOfSteps={ numberOfSteps }
 							currentStep={ completedSteps }
 						/>
+						{ isDismissible && (
+							<EllipsisMenu position="bottom" toggleTitle={ translate( 'Dismiss settings' ) }>
+								<PopoverMenuItem onClick={ () => temporaryDismiss( { dismissBy: '+ 1 day' } ) }>
+									{ translate( 'Hide for a day' ) }
+								</PopoverMenuItem>
+								<PopoverMenuItem onClick={ () => temporaryDismiss( { dismissBy: '+ 1 week' } ) }>
+									{ translate( 'Hide for a week' ) }
+								</PopoverMenuItem>
+								<PopoverMenuItem onClick={ permanentDismiss }>
+									{ translate( 'Hide forever' ) }
+								</PopoverMenuItem>
+							</EllipsisMenu>
+						) }
 					</div>
 				) : (
 					<div className="customer-home-launchpad__dismiss-button">
 						<Button
 							className="themes__activation-modal-close-icon"
 							borderless
-							onClick={ () => {
-								if ( ! siteSlug ) {
-									return;
-								}
-
-								updateLaunchpadSettings( siteSlug, {
-									is_checklist_dismissed: {
-										slug: checklistSlug,
-										is_dismissed: true,
-									},
-								} );
-								setIsDismissed( true );
-
-								recordTracksEvent( 'calypso_launchpad_dismiss_guide', {
-									checklist_slug: checklistSlug,
-									context: 'customer-home',
-								} );
-							} }
+							onClick={ permanentDismiss }
 						>
 							<div> { translate( 'Dismiss guide' ) } </div>
 							<Gridicon icon="cross" size={ 12 } />

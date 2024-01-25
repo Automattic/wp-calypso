@@ -1,4 +1,3 @@
-import { isEnabled } from '@automattic/calypso-config';
 import { useTranslate } from 'i18n-calypso';
 import { useSelector } from 'react-redux';
 import InfiniteScroll from 'calypso/components/infinite-scroll';
@@ -29,10 +28,6 @@ export const MarketplaceReviewsList = (
 		author: currentUserId ?? undefined,
 		status: 'all',
 	} );
-
-	if ( ! isEnabled( 'marketplace-reviews-show' ) ) {
-		return null;
-	}
 
 	// TODO: In the future there should a form of catching and displaying an error
 	// But as currently we returns errors for products without reviews,

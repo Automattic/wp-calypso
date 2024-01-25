@@ -26,7 +26,7 @@ const ProductsSelector = ( {
 }: ProductsSelectorProps ) => {
 	const [ selectedPlanIds, setSelectedPlanIds ] = useState( initialSelectedList ?? [] );
 
-	const selectedSiteId = useSelector( ( state ) => getSelectedSiteId( state ) );
+	const selectedSiteId = useSelector( getSelectedSiteId );
 
 	const products: Product[] = useSelector( ( state ) =>
 		getProductsForSiteId( state, selectedSiteId )
