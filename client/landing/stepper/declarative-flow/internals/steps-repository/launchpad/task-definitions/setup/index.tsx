@@ -3,7 +3,7 @@ import { isBlogOnboardingFlow } from '@automattic/onboarding';
 import { addQueryArgs } from '@wordpress/url';
 import { getSiteInfoQueryArgs } from '../../task-helper';
 import { recordTaskClickTracksEvent } from '../../tracking';
-import { type TaskAction } from '../../types';
+import { type TaskAction } from '../types';
 
 const getSetupFreeTask: TaskAction = ( task, flow, context ): Task => {
 	const { site, siteSlug } = context;

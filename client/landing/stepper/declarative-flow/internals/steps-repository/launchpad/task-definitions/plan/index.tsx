@@ -18,7 +18,7 @@ import {
 	recordGlobalStylesGattingPlanSelectedResetStylesEvent,
 	recordTaskClickTracksEvent,
 } from '../../tracking';
-import { TaskAction, TaskContext } from '../../types';
+import { TaskAction, TaskContext } from '../types';
 
 const getPlanTaskSubtitle = (
 	task: Task,

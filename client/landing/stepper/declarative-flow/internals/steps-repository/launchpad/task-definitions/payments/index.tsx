@@ -1,7 +1,7 @@
 import { translate } from 'i18n-calypso';
 import { getSiteInfoQueryArgs } from '../../task-helper';
 import { recordTaskClickTracksEvent } from '../../tracking';
-import { TaskAction } from '../../types';
+import { TaskAction } from '../types';
 
 const getSetupPaymentsTask: TaskAction = ( task, flow, context ) => {
 	const { stripeConnectUrl, site, siteSlug } = context;

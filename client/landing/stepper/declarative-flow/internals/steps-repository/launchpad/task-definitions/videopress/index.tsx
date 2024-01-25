@@ -2,7 +2,7 @@ import { FEATURE_VIDEO_UPLOADS, planHasFeature } from '@automattic/calypso-produ
 import { isVideoPressFlow } from '@automattic/onboarding';
 import { addQueryArgs } from '@wordpress/url';
 import { recordTaskClickTracksEvent } from '../../tracking';
-import { TaskAction } from '../../types';
+import { TaskAction } from '../types';
 
 const getVideoPressUploadTask: TaskAction = ( task, flow, context ) => {
 	const { site, siteSlug, tasks, planCartItem } = context;

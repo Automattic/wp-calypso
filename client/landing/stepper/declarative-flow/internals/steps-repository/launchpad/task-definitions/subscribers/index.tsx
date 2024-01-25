@@ -1,6 +1,6 @@
 import { isNewsletterFlow } from '@automattic/onboarding';
 import { recordTaskClickTracksEvent } from '../../tracking';
-import { type TaskAction } from '../../types';
+import { type TaskAction } from '../types';
 
 const getSubscribersTask: TaskAction = ( task, flow, context ) => {
 	const { goToStep, isEmailVerified } = context;

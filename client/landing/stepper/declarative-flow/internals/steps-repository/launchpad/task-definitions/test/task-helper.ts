@@ -2,8 +2,8 @@
  * @jest-environment jsdom
  */
 import { QueryClient } from '@tanstack/react-query';
-import { getEnhancedTasks } from '../task-helper';
-import { buildTask } from './lib/fixtures';
+import { getEnhancedTasks } from '../';
+import { buildTask } from '../../test/lib/fixtures';
 
 // eslint-disable-next-line @typescript-eslint/no-empty-function
 const noop = () => {};

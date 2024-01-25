@@ -16,7 +16,7 @@ import { ONBOARD_STORE, SITE_STORE } from 'calypso/landing/stepper/stores';
 import { goToCheckout } from 'calypso/landing/stepper/utils/checkout';
 import { isDomainUpsellCompleted } from '../../task-helper';
 import { recordTaskClickTracksEvent } from '../../tracking';
-import { TaskAction, TaskContext } from '../../types';
+import { TaskAction, TaskContext } from '../types';
 
 const getCompletedTasks = ( tasks: Task[] ): Record< string, boolean > =>
 	tasks.reduce(

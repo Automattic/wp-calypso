@@ -1,7 +1,7 @@
 import { updateLaunchpadSettings } from '@automattic/data-stores/src/queries/use-launchpad';
 import { isNewsletterFlow } from '@automattic/onboarding';
 import { recordTaskClickTracksEvent } from '../../tracking';
-import { TaskAction } from '../../types';
+import { TaskAction } from '../types';
 
 const completeMigrateContentTask = async ( siteSlug: string | null ) => {
 	if ( siteSlug ) {

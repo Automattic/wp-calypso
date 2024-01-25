@@ -2,7 +2,7 @@ import { Task } from '@automattic/launchpad';
 import { addQueryArgs } from '@wordpress/url';
 import { getSiteInfoQueryArgs } from '../../task-helper';
 import { recordTaskClickTracksEvent } from '../../tracking';
-import { TaskAction } from '../../types';
+import { TaskAction } from '../types';
 
 const getDesignSelectedTask: TaskAction = ( task, flow, context ): Task => {
 	const { site, siteSlug } = context;

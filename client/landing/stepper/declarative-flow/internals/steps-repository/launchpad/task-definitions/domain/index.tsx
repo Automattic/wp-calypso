@@ -4,7 +4,7 @@ import { addQueryArgs } from '@wordpress/url';
 import { translate } from 'i18n-calypso';
 import { getSiteInfoQueryArgs, isDomainUpsellCompleted } from '../../task-helper';
 import { recordTaskClickTracksEvent } from '../../tracking';
-import { TaskAction } from '../../types';
+import { TaskAction } from '../types';
 
 const getDomainUpSellTask: TaskAction = ( task, flow, context ): Task => {
 	const { site, siteSlug, checklistStatuses } = context;
