@@ -104,9 +104,8 @@ const isTrackerIntialized = ( tracker: AdTracker ): boolean => {
 	return guardFunction ? guardFunction() : true;
 };
 
-export const mayWeTrackGeneral = () => {
-	return ! isE2ETest() && ! getDoNotTrack() && ! isPiiUrl() && config.isEnabled( 'ad-tracking' );
-};
+export const mayWeTrackGeneral = () =>
+	! isE2ETest() && ! getDoNotTrack() && ! isPiiUrl() && config.isEnabled( 'ad-tracking' );
 
 export const mayWeTrackByBucket = ( bucket: Bucket ) => {
 	if ( ! mayWeTrackGeneral() ) {
