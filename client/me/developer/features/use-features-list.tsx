@@ -7,6 +7,7 @@ export const useFeaturesList = () => {
 
 	return [
 		{
+			key: 'sftp-ssh-wp-cli',
 			title: translate( 'SFTP, SSH, and WP-CLI', {
 				comment: 'Feature title',
 			} ),
@@ -19,6 +20,7 @@ export const useFeaturesList = () => {
 			linkLearnMore: localizeUrl( '/support/connect-to-ssh-on-wordpress-com' ),
 		},
 		{
+			key: 'staging-sites',
 			title: translate( 'Staging sites', {
 				comment: 'Feature title',
 			} ),
@@ -31,6 +33,7 @@ export const useFeaturesList = () => {
 			linkLearnMore: localizeUrl( '/support/how-to-create-a-staging-site/' ),
 		},
 		{
+			key: 'custom-code',
 			title: translate( 'Custom code', {
 				comment: 'Feature title',
 			} ),
@@ -43,6 +46,7 @@ export const useFeaturesList = () => {
 			linkLearnMore: localizeUrl( '/support/code' ),
 		},
 		{
+			key: 'free-ssl-certificates',
 			title: translate( 'Free SSL certificates', {
 				comment: 'Feature title',
 			} ),
@@ -55,6 +59,7 @@ export const useFeaturesList = () => {
 			linkLearnMore: localizeUrl( '/support/domains/https-ssl' ),
 		},
 		{
+			key: 'expert-support',
 			title: translate( '24/7 expert support', {
 				comment: 'Feature title',
 			} ),
@@ -67,6 +72,7 @@ export const useFeaturesList = () => {
 			linkLearnMore: localizeUrl( '/support/help-support-options' ),
 		},
 		{
+			key: 'malware-scanning-removal',
 			title: translate( 'Malware scanning and removal', {
 				comment: 'Feature title',
 			} ),
