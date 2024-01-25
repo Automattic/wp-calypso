@@ -50,15 +50,15 @@ export const MigrationError = ( props: Props ) => {
 
 			{ !! subTitle && <SubTitle className="migration-error--subtitle">{ subTitle }</SubTitle> }
 
+			{ hintId === 'backup-fail' && <HintBackupFail sourceSiteUrl={ sourceSiteUrl } /> }
+			{ hintId === 'incompatible-plugins' && <HintIncompatiblePlugins /> }
 			{ hintId === 'jetpack-update' && <HintJetpackUpdate sourceSiteSlug={ sourceSiteUrl } /> }
 			{ hintId === 'jetpack-connection' && (
 				<HintJetpackConnection sourceSiteUrl={ sourceSiteUrl } />
 			) }
-			{ hintId === 'incompatible-plugins' && <HintIncompatiblePlugins /> }
 			{ hintId === 'administrator-role' && (
 				<HintAdministratorRole sourceSiteUrl={ sourceSiteUrl } targetSiteUrl={ targetSiteUrl } />
 			) }
-			{ hintId === 'backup-fail' && <HintBackupFail sourceSiteUrl={ sourceSiteUrl } /> }
 
 			{ ( goBackCta || tryAgainCta || getHelpCta ) && (
 				<div className="import__buttons-group">
