@@ -39,6 +39,14 @@ $button-padding: 8px 32px;
 					box-shadow: 0 0 0 var(--wp-admin-border-width-focus) #fff, 0 0 0 calc(2 * var(--wp-admin-border-width-focus)) var(--studio-jetpack-green-50);
 				}
 			}
+
+			.stats-purchase-single__control--checkbox {
+				.components-checkbox-control__label {
+					font-size: var(--font-body);
+					line-height: 24px;
+					color: var(--jp-black);
+				}
+			}
 		}
 	}
 }

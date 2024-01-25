@@ -310,7 +310,7 @@ const StatsSingleItemPagePurchase = ( {
 			</StatsSingleItemPagePurchaseFrame>
 			<StatsSingleItemCard>
 				<h1>Hello from the new card</h1>
-				<StatsCommercialFlowPanel
+				<StatsCommercialFlowCardInsert
 					isCommercial={ isCommercial }
 					isOdysseyStats={ false }
 					siteSlug={ siteSlug }
@@ -334,6 +334,16 @@ function StatsCommercialFlowPanel( { isCommercial, isOdysseyStats, siteSlug } ) 
 				</PanelBody>
 			</Panel>
 		</div>
+	);
+}
+
+function StatsCommercialFlowCardInsert( { isCommercial, isOdysseyStats, siteSlug } ) {
+	return (
+		<StatsCommercialFlowOptOutForm
+			isCommercial={ isCommercial }
+			isOdysseyStats={ isOdysseyStats }
+			siteSlug={ siteSlug }
+		/>
 	);
 }
 
