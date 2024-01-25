@@ -11,7 +11,7 @@ import { successNotice, errorNotice } from 'calypso/state/notices/actions';
 import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import { SubscribersFilterBy, SubscribersSortBy } from '../../constants';
 import useManySubsSite from '../../hooks/use-many-subs-site';
-import { useSubscriberCountQuery, useSubscribersQuery } from '../../queries';
+import { useSubscribersQuery } from '../../queries';
 import { migrateSubscribers } from './migrate-subscribers-query';
 
 type SubscribersPageProviderProps = {
@@ -112,13 +112,8 @@ export const SubscribersPageProvider = ( {
 		sortTerm,
 		filterOption: subscriberType,
 	} );
+	const grandTotal = subscribersQueryResult.data?.total || 0;
 	const pages = subscribersQueryResult.data?.pages || 0;
-
-	const { data: subscribersTotals } = useSubscriberCountQuery( siteId );
-	const grandTotal = subscribersTotals?.email_subscribers
-		? // Remove the site owner from the count
-		  subscribersTotals.email_subscribers - 1
-		: 0;
 
 	const { pageChangeCallback } = usePagination(
 		pageNumber,

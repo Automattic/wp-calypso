@@ -8,7 +8,7 @@ import { useRecordRemoveModal } from '../tracks';
 import { Subscriber, SubscriberListArgs } from '../types';
 
 const useUnsubscribeModal = (
-	siteId: number | null,
+	siteId: number | undefined | null,
 	args: SubscriberListArgs,
 	detailsView = false,
 	onSuccess?: () => void
