@@ -27,11 +27,8 @@ export const ItemPrice = ( { item, bundleSize }: ItemPriceProps ) => {
 	);
 
 	bundleSize = bundleSize ? bundleSize : 1;
-
 	const nonDiscountedCost = originalPrice * bundleSize;
-
 	const discountPercent = Math.round( 100 - ( discountedCost / nonDiscountedCost ) * 100 );
-
 	const currencyCode = useSelector( getCurrentUserCurrencyCode );
 	const translate = useTranslate();
 	const { containerRef, isCompact } = useItemPriceCompact();

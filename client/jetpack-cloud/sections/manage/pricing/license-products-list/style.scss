@@ -16,9 +16,10 @@
 .jetpack-product-store__most-popular--subheading {
 	color: var(--studio-gray-50);
 }
-.featured-item-card .multiple-choice-question {
-	margin-block-start: 16px;
-	margin-block-end: 0;
+.featured-item-card .multiple-choice-question,
+.simple-item-card .multiple-choice-question {
+	margin-block-start: 10px;
+	margin-block-end: 10px;
 
 	.form-legend {
 		display: none;
@@ -34,7 +35,7 @@
 	}
 
 	.form-label {
-		font-size: 1rem;
+		font-size: 0.75rem;
 		line-height: 1.2;
 		margin: 0;
 	}
@@ -44,6 +45,18 @@
 	}
 }
 
+.simple-item-card .multiple-choice-question {
+	margin-block-start: 0;
+	margin-block-end: 0;
+
+	.form-label {
+		line-height: 1.5;
+	}
+
+	.multiple-choice-question__answers {
+		gap: 20px;
+	}
+}
 .display-price__details {
 	color: var(--studio-gray-50);
 	font-size: 0.75rem;

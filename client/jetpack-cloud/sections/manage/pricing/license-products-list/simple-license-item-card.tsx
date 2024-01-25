@@ -3,11 +3,10 @@ import 'calypso/my-sites/plans/jetpack-plans/product-store/featured-item-card/st
 import { useTranslate } from 'i18n-calypso';
 import { useProductDescription } from 'calypso/jetpack-cloud/sections/partner-portal/hooks';
 import getProductShortTitle from 'calypso/jetpack-cloud/sections/partner-portal/lib/get-product-short-title';
-import { HeroImageAPIFamily } from 'calypso/my-sites/plans/jetpack-plans/product-store/hero-image';
 import { APIProductFamilyProduct } from 'calypso/state/partner-portal/types';
 import { ItemPrice } from './item-price';
 
-type FeaturedLicenseItemCardProps = {
+type SimpleLicenseItemCardProps = {
 	item: APIProductFamilyProduct;
 	bundleSize?: number;
 	ctaAsPrimary?: boolean;
@@ -19,7 +18,7 @@ type FeaturedLicenseItemCardProps = {
 	onClickCta?: VoidFunction;
 };
 
-export const FeaturedLicenseItemCard = ( {
+export const SimpleLicenseItemCard = ( {
 	item,
 	bundleSize,
 	ctaAsPrimary,
@@ -28,7 +27,7 @@ export const FeaturedLicenseItemCard = ( {
 	isCtaDisabled,
 	isCtaExternal,
 	onClickCta,
-}: FeaturedLicenseItemCardProps ) => {
+}: SimpleLicenseItemCardProps ) => {
 	const translate = useTranslate();
 
 	const title = getProductShortTitle( item, false );
@@ -36,33 +35,39 @@ export const FeaturedLicenseItemCard = ( {
 	const ctaLabel = translate( 'Get' );
 	const ctaAriaLabel = ctaLabel + ' ' + item.name;
 
-	const price = <ItemPrice bundleSize={ bundleSize } item={ item } />;
+	let price = <ItemPrice bundleSize={ bundleSize } item={ item } />;
+	if (
+		item.name.startsWith( 'Jetpack VaultPress Backup Add-on' ) ||
+		item.name.startsWith( 'WooCommerce' )
+	) {
+		price = <ItemPrice bundleSize={ 1 } item={ item } />;
+	}
 	const { description: productDescription } = useProductDescription( item.slug );
-	const hero = <HeroImageAPIFamily item={ item } />;
-
+	const icon = null;
 	return (
-		<div className="featured-item-card">
-			<div className="featured-item-card--hero">{ hero }</div>
-
-			<div className="featured-item-card--body">
-				<div>
-					<h3 className="featured-item-card--title">{ title }</h3>
-					<div className="featured-item-card--price">{ price }</div>
-					<div className="featured-item-card--desc">{ productDescription }</div>
-				</div>
-				<div className="featured-item-card--footer">
-					{ moreInfoLink }
+		<div className="simple-item-card">
+			{ icon ? <div className="simple-item-card__icon">{ icon }</div> : null }
+			<div className="simple-item-card__body">
+				<div className="simple-item-card__header">
+					<div>
+						<h3 className="simple-item-card__title">{ title }</h3>
+						<div className="simple-item-card__price">{ price }</div>
+					</div>
 					<Button
-						className="featured-item-card--cta"
-						primary={ ctaAsPrimary }
+						className="simple-item-card__cta"
 						onClick={ onClickCta }
 						disabled={ isCtaDisabled }
-						target={ isCtaExternal ? '_blank' : undefined }
 						href={ isCtaDisabled ? '#' : ctaHref }
+						target={ isCtaExternal ? '_blank' : undefined }
+						primary={ ctaAsPrimary }
 						aria-label={ ctaAriaLabel }
 					>
 						{ ctaLabel }
 					</Button>
+				</div>
+				<div className="simple-item-card__footer">
+					{ productDescription }
+					{ moreInfoLink }
 				</div>
 			</div>
 		</div>

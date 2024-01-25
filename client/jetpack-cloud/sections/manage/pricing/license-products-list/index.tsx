@@ -1,5 +1,6 @@
 import { useTranslate } from 'i18n-calypso';
 import useProductAndPlans from 'calypso/jetpack-cloud/sections/partner-portal/issue-license-v2/licenses-form/hooks/use-product-and-plans';
+import { AllLicenseItems } from './all-license-items';
 import { MostPopularPlans } from './most-popular-plans';
 
 type ProductsListProps = {
@@ -12,7 +13,7 @@ export const LicenseProductsList = ( { bundleSize }: ProductsListProps ) => {
 	const selectedProductFilter = '';
 	const selectedSite = null;
 
-	const { plans } = useProductAndPlans( {
+	const { plans, backupAddons, products, wooExtensions } = useProductAndPlans( {
 		selectedSite,
 		selectedProductFilter,
 		selectedBundleSize: bundleSize,
@@ -27,6 +28,27 @@ export const LicenseProductsList = ( { bundleSize }: ProductsListProps ) => {
 					'Save big with comprehensive bundles of Jetpack security, performance, and growth tools.'
 				) }
 				items={ plans }
+			/>
+			<AllLicenseItems
+				heading={ translate( 'Products' ) }
+				subHeading={ translate(
+					'Mix and match powerful security, performance, and growth tools for your site.'
+				) }
+				items={ products }
+			/>
+			<AllLicenseItems
+				heading={ translate( 'VaultPress Backup Add-ons' ) }
+				subHeading={ translate(
+					'Add additional storage to your current VaultPress Backup plans.'
+				) }
+				items={ backupAddons }
+			/>
+			<AllLicenseItems
+				heading={ translate( 'WooCommerce Extensions' ) }
+				subHeading={ translate(
+					'You must have WooCommerce installed to utilize these paid extensions.'
+				) }
+				items={ wooExtensions }
 			/>
 		</div>
 	);

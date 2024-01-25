@@ -1,19 +1,18 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { Button } from '@automattic/components';
-import 'calypso/my-sites/plans/jetpack-plans/product-store/featured-item-card/style.scss';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback, useState } from 'react';
 import MultipleChoiceQuestion from 'calypso/components/multiple-choice-question';
 import { useProductDescription } from 'calypso/jetpack-cloud/sections/partner-portal/hooks';
 import getProductShortTitle from 'calypso/jetpack-cloud/sections/partner-portal/lib/get-product-short-title';
 import getProductVariantShortTitle from 'calypso/jetpack-cloud/sections/partner-portal/lib/get-product-variant-short-title';
-import { HeroImageAPIFamily } from 'calypso/my-sites/plans/jetpack-plans/product-store/hero-image';
 import { useDispatch } from 'calypso/state';
 import { APIProductFamilyProduct } from 'calypso/state/partner-portal/types';
 import { ItemPrice } from './item-price';
+import 'calypso/my-sites/plans/jetpack-plans/product-store/simple-item-card/style.scss';
 import './style.scss';
 
-type FeaturedLicenseMultiItemCardProps = {
+type SimpleLicenseMultiItemCardProps = {
 	items: APIProductFamilyProduct[];
 	bundleSize?: number;
 	ctaAsPrimary?: boolean;
@@ -25,7 +24,7 @@ type FeaturedLicenseMultiItemCardProps = {
 	onClickCta?: VoidFunction;
 };
 
-export const FeaturedLicenseMultiItemCard = ( {
+export const SimpleLicenseMultiItemCard = ( {
 	items,
 	bundleSize,
 	ctaAsPrimary,
@@ -34,7 +33,7 @@ export const FeaturedLicenseMultiItemCard = ( {
 	isCtaDisabled,
 	isCtaExternal,
 	onClickCta,
-}: FeaturedLicenseMultiItemCardProps ) => {
+}: SimpleLicenseMultiItemCardProps ) => {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 
@@ -45,7 +44,7 @@ export const FeaturedLicenseMultiItemCard = ( {
 		title.replace( 'Jetpack Security', 'Security' );
 	}
 	if ( title.startsWith( 'Jetpack VaultPress' ) ) {
-		title.replace( 'Jetpack VaultPress', 'VaultPress Backup' );
+		title = 'VaultPress Backup';
 	} else {
 		title = getProductShortTitle( item, true );
 	}
@@ -54,8 +53,7 @@ export const FeaturedLicenseMultiItemCard = ( {
 
 	const price = <ItemPrice bundleSize={ bundleSize } item={ item } />;
 	const { description: productDescription } = useProductDescription( item.slug );
-	const hero = <HeroImageAPIFamily item={ item } />;
-
+	const icon = null;
 	const onChangeOption = useCallback(
 		( selectedProductSlug: string ) => {
 			const selectedProduct =
@@ -77,36 +75,37 @@ export const FeaturedLicenseMultiItemCard = ( {
 	} ) );
 
 	return (
-		<div className="featured-item-card">
-			<div className="featured-item-card--hero">{ hero }</div>
-
-			<div className="featured-item-card--body">
-				<div>
-					<h3 className="featured-item-card--title">{ title }</h3>
-					<MultipleChoiceQuestion
-						name="product-variants"
-						question={ translate( 'Select variant:' ) }
-						answers={ variantOptions }
-						selectedAnswerId={ item?.slug }
-						onAnswerChange={ onChangeOption }
-						shouldShuffleAnswers={ false }
-					/>
-					<div className="featured-item-card--price">{ price }</div>
-					<div className="featured-item-card--desc">{ productDescription }</div>
-				</div>
-				<div className="featured-item-card--footer">
-					{ moreInfoLink }
+		<div className="simple-item-card">
+			{ icon ? <div className="simple-item-card__icon">{ icon }</div> : null }
+			<div className="simple-item-card__body">
+				<div className="simple-item-card__header">
+					<div>
+						<h3 className="simple-item-card__title">{ title }</h3>
+						<div className="simple-item-card__price">{ price }</div>
+					</div>
 					<Button
-						className="featured-item-card--cta"
-						primary={ ctaAsPrimary }
+						className="simple-item-card__cta"
 						onClick={ onClickCta }
 						disabled={ isCtaDisabled }
-						target={ isCtaExternal ? '_blank' : undefined }
 						href={ isCtaDisabled ? '#' : ctaHref }
+						target={ isCtaExternal ? '_blank' : undefined }
+						primary={ ctaAsPrimary }
 						aria-label={ ctaAriaLabel }
 					>
 						{ ctaLabel }
 					</Button>
+				</div>
+				<MultipleChoiceQuestion
+					name="product-variants"
+					question={ translate( 'Select variant:' ) }
+					answers={ variantOptions }
+					selectedAnswerId={ item?.slug }
+					onAnswerChange={ onChangeOption }
+					shouldShuffleAnswers={ false }
+				/>
+				<div className="simple-item-card__footer">
+					{ productDescription }
+					{ moreInfoLink }
 				</div>
 			</div>
 		</div>
