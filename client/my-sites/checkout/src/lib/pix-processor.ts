@@ -10,10 +10,13 @@ import { PurchaseOrderStatus, fetchPurchaseOrder } from '../hooks/use-purchase-o
 import { recordTransactionBeginAnalytics } from '../lib/analytics';
 import getDomainDetails from '../lib/get-domain-details';
 import getPostalCode from '../lib/get-postal-code';
-import prepareRedirectTransaction from '../lib/prepare-redirect-transaction';
 import { addUrlToPendingPageRedirect } from './pending-page';
 import { PixConfirmation } from './pix-confirmation';
 import submitWpcomTransaction from './submit-wpcom-transaction';
+import {
+	createTransactionEndpointCartFromResponseCart,
+	createTransactionEndpointRequestPayload,
+} from './translate-cart';
 import type { PaymentProcessorOptions } from '../types/payment-processors';
 import type { PaymentProcessorResponse } from '@automattic/composite-checkout';
 import type {
@@ -54,24 +57,26 @@ export async function pixProcessor(
 	const cancelUrl = new URL( baseURL );
 	cancelUrl.search = '';
 
-	const formattedTransactionData = prepareRedirectTransaction(
-		paymentMethodId,
-		{
-			name: '',
-			successUrl: successUrl.toString(),
-			cancelUrl: cancelUrl.toString(),
-			couponId: responseCart.coupon,
-			country: contactDetails?.countryCode?.value ?? '',
-			postalCode: getPostalCode( contactDetails ),
-			subdivisionCode: contactDetails?.state?.value,
-			siteId: siteId ? String( siteId ) : '',
-			domainDetails: getDomainDetails( contactDetails, {
-				includeDomainDetails,
-				includeGSuiteDetails,
-			} ),
-		},
-		options
-	);
+	const formattedTransactionData = createTransactionEndpointRequestPayload( {
+		name: '',
+		successUrl: successUrl.toString(),
+		cancelUrl: cancelUrl.toString(),
+		postalCode: getPostalCode( contactDetails ),
+		couponId: responseCart.coupon,
+		country: contactDetails?.countryCode?.value ?? '',
+		subdivisionCode: contactDetails?.state?.value,
+		domainDetails: getDomainDetails( contactDetails, {
+			includeDomainDetails,
+			includeGSuiteDetails,
+		} ),
+		cart: createTransactionEndpointCartFromResponseCart( {
+			siteId,
+			contactDetails:
+				getDomainDetails( contactDetails, { includeDomainDetails, includeGSuiteDetails } ) ?? null,
+			responseCart,
+		} ),
+		paymentMethodType: 'WPCOM_Billing_Ebanx_Redirect_Brazil_Pix',
+	} );
 
 	const genericErrorMessage = translate(
 		"Sorry, we couldn't process your payment. Please try again later."
