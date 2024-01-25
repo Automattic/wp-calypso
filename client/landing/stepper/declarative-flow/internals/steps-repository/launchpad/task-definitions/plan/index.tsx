@@ -55,11 +55,11 @@ const getPlanSelectedTask: TaskAction = ( task, flow, context ): Task => {
 	const {
 		siteInfoQueryArgs,
 		displayGlobalStylesWarning,
-		shouldDisplayWarning,
 		globalStylesMinimumPlan,
 		isVideoPressFlowWithUnsupportedPlan,
 	} = context;
 
+	const shouldDisplayWarning = displayGlobalStylesWarning || isVideoPressFlowWithUnsupportedPlan;
 	return {
 		...task,
 		actionDispatch: () => {

@@ -64,8 +64,6 @@ export function getEnhancedTasks( {
 	const isVideoPressFlowWithUnsupportedPlan =
 		isVideoPressFlow( flow ) && ! planHasFeature( productSlug as string, FEATURE_VIDEO_UPLOADS );
 
-	const shouldDisplayWarning = displayGlobalStylesWarning || isVideoPressFlowWithUnsupportedPlan;
-
 	// We have to use the site id if the flow allows the user to change the site address
 	// as the domain name of the site may be changed.
 	// See https://github.com/Automattic/wp-calypso/pull/84532.
@@ -87,7 +85,6 @@ export function getEnhancedTasks( {
 			submit,
 			siteSlug,
 			displayGlobalStylesWarning,
-			shouldDisplayWarning,
 			globalStylesMinimumPlan,
 			isVideoPressFlowWithUnsupportedPlan,
 			goToStep,
