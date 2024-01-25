@@ -16,13 +16,17 @@ import { usePaymentMethodStepper } from './hooks/use-payment-method-stepper';
 
 import './style.scss';
 
-export default function PaymentMethodListV2() {
+export default function PaymentMethodListV2( {
+	withAssignLicense,
+}: {
+	withAssignLicense: boolean;
+} ) {
 	const translate = useTranslate();
 
 	const title = translate( 'Add new card' );
 	const subtitle = translate( 'You will only be charged for paid licenses you issue.' );
 
-	const stepper = usePaymentMethodStepper();
+	const stepper = usePaymentMethodStepper( { withAssignLicense } );
 
 	return (
 		<Layout
