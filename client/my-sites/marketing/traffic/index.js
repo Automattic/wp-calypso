@@ -13,7 +13,6 @@ import CloudflareAnalyticsSettings from 'calypso/my-sites/site-settings/analytic
 import AnalyticsSettings from 'calypso/my-sites/site-settings/analytics/form-google-analytics';
 import JetpackDevModeNotice from 'calypso/my-sites/site-settings/jetpack-dev-mode-notice';
 import JetpackSiteStats from 'calypso/my-sites/site-settings/jetpack-site-stats';
-import RelatedPosts from 'calypso/my-sites/site-settings/related-posts';
 import SeoSettingsHelpCard from 'calypso/my-sites/site-settings/seo-settings/help';
 import SiteVerification from 'calypso/my-sites/site-settings/seo-settings/site-verification';
 import Shortlinks from 'calypso/my-sites/site-settings/shortlinks';
@@ -82,15 +81,6 @@ const SiteSettingsTraffic = ( {
 					placeholder={ null }
 				/>
 			) }
-			{ isAdmin && (
-				<RelatedPosts
-					onSubmitForm={ handleSubmitForm }
-					handleToggle={ handleAutosavingToggle }
-					isSavingSettings={ isSavingSettings }
-					isRequestingSettings={ isRequestingSettings }
-					fields={ fields }
-				/>
-			) }
 			{ ! isJetpack && isAdmin && config.isEnabled( 'cloudflare' ) && (
 				<CloudflareAnalyticsSettings />
 			) }
@@ -146,20 +136,7 @@ const connectComponent = connect( ( state ) => {
 } );
 
 const getFormSettings = ( settings ) =>
-	pick( settings, [
-		'stats',
-		'admin_bar',
-		'hide_smile',
-		'count_roles',
-		'roles',
-		'jetpack_relatedposts_allowed',
-		'jetpack_relatedposts_enabled',
-		'jetpack_relatedposts_show_context',
-		'jetpack_relatedposts_show_date',
-		'jetpack_relatedposts_show_headline',
-		'jetpack_relatedposts_show_thumbnails',
-		'blog_public',
-	] );
+	pick( settings, [ 'stats', 'admin_bar', 'hide_smile', 'count_roles', 'roles', 'blog_public' ] );
 
 export default connectComponent(
 	localize( wrapSettingsForm( getFormSettings )( SiteSettingsTraffic ) )
