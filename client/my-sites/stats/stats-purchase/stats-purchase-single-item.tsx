@@ -1,7 +1,7 @@
 import config from '@automattic/calypso-config';
 import page from '@automattic/calypso-router';
 import { Button as CalypsoButton } from '@automattic/components';
-import { Button, Panel, PanelBody, CheckboxControl } from '@wordpress/components';
+import { Button, CheckboxControl } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import React, { useState, useCallback } from 'react';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
@@ -35,7 +35,6 @@ interface StatsCommercialPurchaseProps {
 	adminUrl: string;
 	redirectUri: string;
 	from: string;
-	isCommercial?: boolean | null;
 }
 
 interface StatsSingleItemPagePurchaseProps {
@@ -104,7 +103,6 @@ const StatsCommercialPurchase = ( {
 	from,
 	adminUrl,
 	redirectUri,
-	isCommercial = true,
 }: StatsCommercialPurchaseProps ) => {
 	const translate = useTranslate();
 	const isWPCOMSite = useSelector( ( state ) => siteId && getIsSiteWPCOM( state, siteId ) );
@@ -182,14 +180,6 @@ const StatsCommercialPurchase = ( {
 						{ continueButtonText }
 					</ButtonComponent>
 				</>
-			) }
-			{ /** Hide the section for upgrades */ }
-			{ ! isCommercialOwned && (
-				<StatsCommercialFlowPanel
-					isCommercial={ isCommercial }
-					isOdysseyStats={ isOdysseyStats }
-					siteSlug={ siteSlug }
-				/>
 			) }
 		</>
 	);
@@ -306,7 +296,6 @@ const StatsSingleItemPagePurchase = ( {
 					adminUrl={ adminUrl || '' }
 					redirectUri={ redirectUri }
 					from={ from }
-					isCommercial={ isCommercial }
 				/>
 			</StatsSingleItemPagePurchaseFrame>
 			{ ! isCommercialOwned && (
@@ -322,23 +311,6 @@ const StatsSingleItemPagePurchase = ( {
 		</>
 	);
 };
-
-function StatsCommercialFlowPanel( { isCommercial, isOdysseyStats, siteSlug } ) {
-	const translate = useTranslate();
-	return (
-		<div className={ `${ COMPONENT_CLASS_NAME }__additional-card-panel` }>
-			<Panel className={ `${ COMPONENT_CLASS_NAME }__card-panel` }>
-				<PanelBody title={ translate( 'This is not a commercial site' ) } initialOpen={ false }>
-					<StatsCommercialFlowOptOutForm
-						isCommercial={ isCommercial }
-						isOdysseyStats={ isOdysseyStats }
-						siteSlug={ siteSlug }
-					/>
-				</PanelBody>
-			</Panel>
-		</div>
-	);
-}
 
 function StatsCommercialFlowCardInsert( { isCommercial, isOdysseyStats, siteSlug } ) {
 	return (
