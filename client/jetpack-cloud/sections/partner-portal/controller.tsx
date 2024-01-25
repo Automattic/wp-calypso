@@ -35,8 +35,8 @@ import { ToSConsent } from 'calypso/state/partner-portal/types';
 import getSites from 'calypso/state/selectors/get-sites';
 import { setAllSitesSelected } from 'calypso/state/ui/actions/set-sites';
 import Header from './header';
-import PaymentMethodListV2 from './payment-methods-v2';
 import PaymentMethodAddV2 from './primary/payment-method-add-v2';
+import PaymentMethodListV2 from './primary/payment-methods-v2';
 import WPCOMAtomicHosting from './primary/wpcom-atomic-hosting';
 
 const isNewCardAdditionEnabled = isEnabled( 'jetpack/card-addition-improvements' );
