@@ -310,6 +310,11 @@ const StatsSingleItemPagePurchase = ( {
 			</StatsSingleItemPagePurchaseFrame>
 			<StatsSingleItemCard>
 				<h1>Hello from the new card</h1>
+				<StatsCommercialFlowOptOutForm
+					isCommercial={ isCommercial }
+					isOdysseyStats={ false }
+					siteSlug={ siteSlug }
+				/>
 			</StatsSingleItemCard>
 		</>
 	);
