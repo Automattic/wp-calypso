@@ -1,6 +1,6 @@
 import {
 	FEATURE_INSTALL_THEMES,
-	WPCOM_FEATURES_PREMIUM_THEMES,
+	WPCOM_FEATURES_PREMIUM_THEMES_UNLIMITED,
 } from '@automattic/calypso-products';
 import pageRouter from '@automattic/calypso-router';
 import { compact } from 'lodash';
@@ -308,7 +308,7 @@ export const ConnectedThemesSelection = connect(
 		const hasUnlimitedPremiumThemes = siteHasFeature(
 			state,
 			siteId,
-			WPCOM_FEATURES_PREMIUM_THEMES
+			WPCOM_FEATURES_PREMIUM_THEMES_UNLIMITED
 		);
 		const canInstallThemes = siteHasFeature( state, siteId, FEATURE_INSTALL_THEMES );
 

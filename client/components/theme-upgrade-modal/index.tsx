@@ -14,9 +14,9 @@ import {
 	FEATURE_MANAGED_HOSTING,
 	FEATURE_MULTI_SITE,
 	FEATURE_NO_ADS,
-	FEATURE_PERSONAL_THEMES,
+	WPCOM_FEATURES_PREMIUM_THEMES_LIMITED,
 	FEATURE_PLUGINS_THEMES,
-	FEATURE_PREMIUM_THEMES_V2,
+	WPCOM_FEATURES_PREMIUM_THEMES_UNLIMITED,
 	FEATURE_STYLE_CUSTOMIZATION,
 	FEATURE_VIDEOPRESS_JP,
 	FEATURE_WAF_V2,
@@ -366,7 +366,7 @@ export const ThemeUpgradeModal = ( {
 	const getStandardPurchaseFeatureList = () => {
 		return getPlanFeaturesObject( [
 			FEATURE_CUSTOM_DOMAIN,
-			FEATURE_PREMIUM_THEMES_V2,
+			WPCOM_FEATURES_PREMIUM_THEMES_UNLIMITED,
 			FEATURE_STYLE_CUSTOMIZATION,
 			FEATURE_LIVE_CHAT_SUPPORT,
 			FEATURE_AD_FREE_EXPERIENCE,
@@ -385,7 +385,7 @@ export const ThemeUpgradeModal = ( {
 	const getBundledFirstPartyPurchaseFeatureList = () => {
 		return getPlanFeaturesObject( [
 			FEATURE_CUSTOM_DOMAIN,
-			FEATURE_PREMIUM_THEMES_V2,
+			WPCOM_FEATURES_PREMIUM_THEMES_UNLIMITED,
 			FEATURE_STYLE_CUSTOMIZATION,
 			FEATURE_LIVE_CHAT_SUPPORT,
 			FEATURE_AD_FREE_EXPERIENCE,
@@ -434,7 +434,7 @@ export const ThemeUpgradeModal = ( {
 		} );
 	} else if (
 		config.isEnabled( 'themes/tiers' ) &&
-		theme?.data?.theme_tier?.feature === FEATURE_PERSONAL_THEMES
+		theme?.data?.theme_tier?.feature === WPCOM_FEATURES_PREMIUM_THEMES_LIMITED
 	) {
 		modalData = getPersonalPlanModalData();
 		featureList = getPersonalPlanFeatureList();

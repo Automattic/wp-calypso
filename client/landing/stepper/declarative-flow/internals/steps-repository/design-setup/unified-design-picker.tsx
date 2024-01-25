@@ -2,7 +2,7 @@ import { isEnabled } from '@automattic/calypso-config';
 import {
 	PLAN_BUSINESS_MONTHLY,
 	PLAN_PERSONAL,
-	WPCOM_FEATURES_PREMIUM_THEMES,
+	WPCOM_FEATURES_PREMIUM_THEMES_UNLIMITED,
 } from '@automattic/calypso-products';
 import { Button } from '@automattic/components';
 import {
@@ -150,7 +150,7 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 				site &&
 				( select( SITE_STORE ) as SiteSelect ).siteHasFeature(
 					site.ID,
-					WPCOM_FEATURES_PREMIUM_THEMES
+					WPCOM_FEATURES_PREMIUM_THEMES_UNLIMITED
 				),
 			[ site ]
 		)

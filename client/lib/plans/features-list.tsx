@@ -101,7 +101,6 @@ import {
 	FEATURE_PREMIUM_CONTENT_BLOCK,
 	FEATURE_PREMIUM_CUSTOMIZABE_THEMES,
 	FEATURE_PREMIUM_SUPPORT,
-	FEATURE_PREMIUM_THEMES,
 	FEATURE_PRODUCT_BACKUP_DAILY_V2,
 	FEATURE_PRODUCT_BACKUP_REALTIME_V2,
 	FEATURE_PRODUCT_SCAN_DAILY_V2,
@@ -183,7 +182,7 @@ import {
 	FEATURE_STYLE_CUSTOMIZATION,
 	FEATURE_SUPPORT_EMAIL,
 	FEATURE_DESIGN_TOOLS,
-	FEATURE_PREMIUM_THEMES_V2,
+	FEATURE_PREMIUM_THEMES,
 	FEATURE_WORDADS,
 	FEATURE_PLUGINS_THEMES,
 	FEATURE_BANDWIDTH,
@@ -311,6 +310,8 @@ import {
 	FEATURE_SENSEI_STORAGE,
 	FEATURE_SENSEI_HOSTING,
 	FEATURE_SENSEI_JETPACK,
+	WPCOM_FEATURES_PREMIUM_THEMES_LIMITED,
+	WPCOM_FEATURES_PREMIUM_THEMES_UNLIMITED,
 } from '@automattic/calypso-products';
 import { localizeUrl } from '@automattic/i18n-utils';
 import i18n from 'i18n-calypso';
@@ -518,32 +519,50 @@ export const FEATURES_LIST: FeatureList = {
 
 	[ FEATURE_PREMIUM_THEMES ]: {
 		getSlug: () => FEATURE_PREMIUM_THEMES,
-		getTitle: () => {
+		getTitle: () => i18n.translate( 'Premium themes' ),
+		getIcon: () => <img src={ Theme2Image } alt={ i18n.translate( 'Premium themes' ) } />,
+		getDescription: () => i18n.translate( 'Switch between a collection of premium design themes.' ),
+		getConditionalTitle: ( planSlug ) => {
+			if ( ! planSlug ) {
+				return '';
+			}
 			const localeSlug = i18n.getLocaleSlug();
-			const shouldShowNewString =
-				( localeSlug && config< string >( 'english_locales' ).includes( localeSlug ) ) ||
-				i18n.hasTranslation( 'Unlimited premium themes' );
-
-			return shouldShowNewString
-				? i18n.translate( 'Unlimited premium themes' )
-				: i18n.translate( 'Premium themes' );
+			const shouldShowInPersonalPlan =
+				config.isEnabled( 'themes/tiers' ) &&
+				( ( localeSlug && config< string >( 'english_locales' ).includes( localeSlug ) ) ||
+					i18n.hasTranslation( 'Dozens of premium themes' ) );
+			if ( shouldShowInPersonalPlan && isPersonalPlan( planSlug ) ) {
+				return i18n.translate( 'Dozens of premium themes' );
+			}
+			if (
+				isPremiumPlan( planSlug ) ||
+				isBusinessPlan( planSlug ) ||
+				isEcommercePlan( planSlug )
+			) {
+				return i18n.translate( 'Unlimited premium themes' );
+			}
+			return '—';
 		},
+	},
+
+	[ WPCOM_FEATURES_PREMIUM_THEMES_UNLIMITED ]: {
+		getSlug: () => WPCOM_FEATURES_PREMIUM_THEMES_UNLIMITED,
+		getTitle: () => i18n.translate( 'Unlimited premium themes' ),
 		getDescription: () => {
 			const localeSlug = i18n.getLocaleSlug();
 			const shouldShowNewString =
 				( localeSlug && config< string >( 'english_locales' ).includes( localeSlug ) ) ||
-				i18n.hasTranslation(
-					'Unlimited access to all of our advanced premium themes, including designs specifically tailored for businesses.'
-				);
-
+				i18n.hasTranslation( 'Switch between all of our premium design themes.' );
 			return shouldShowNewString
-				? i18n.translate(
-						'Unlimited access to all of our advanced premium themes, including designs specifically tailored for businesses.'
-				  )
-				: i18n.translate(
-						'Access to all of our advanced premium theme templates, including templates specifically tailored for businesses.'
-				  );
+				? i18n.translate( 'Switch between all of our premium design themes.' )
+				: i18n.translate( 'Switch between a collection of premium design themes.' );
 		},
+	},
+
+	[ WPCOM_FEATURES_PREMIUM_THEMES_LIMITED ]: {
+		getSlug: () => WPCOM_FEATURES_PREMIUM_THEMES_LIMITED,
+		getTitle: () => i18n.translate( 'Dozens of premium themes' ),
+		getDescription: () => i18n.translate( 'Switch between a collection of premium design themes.' ),
 	},
 
 	[ FEATURE_MONETISE ]: {
@@ -1953,13 +1972,6 @@ export const FEATURES_LIST: FeatureList = {
 			i18n.translate(
 				'Drag and drop your content and layouts with intuitive blocks and patterns.'
 			),
-	},
-	[ FEATURE_PREMIUM_THEMES_V2 ]: {
-		getSlug: () => FEATURE_PREMIUM_THEMES_V2,
-		getTitle: () => i18n.translate( 'Premium themes' ),
-		getIcon: () => <img src={ Theme2Image } alt={ i18n.translate( 'Premium themes' ) } />,
-		getCompareTitle: () => i18n.translate( 'A collection of premium design templates' ),
-		getDescription: () => i18n.translate( 'Switch between a collection of premium design themes.' ),
 	},
 	[ FEATURE_WORDADS ]: {
 		getSlug: () => FEATURE_WORDADS,
