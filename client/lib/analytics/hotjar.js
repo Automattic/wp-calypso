@@ -2,13 +2,14 @@ import config from '@automattic/calypso-config';
 import debug from 'debug';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import { mayWeTrackByTracker } from './tracker-buckets';
+import { mayWeSessionTrack } from './utils/may-we-session-track';
 
 const hotjarDebug = debug( 'calypso:analytics:hotjar' );
 
 let hotJarScriptLoaded = false;
 
 export function mayWeLoadHotJarScript() {
-	return config( 'hotjar_enabled' ) && mayWeTrackByTracker( 'hotjar' );
+	return config( 'hotjar_enabled' ) && mayWeTrackByTracker( 'hotjar' ) && mayWeSessionTrack();
 }
 
 export function getHotjarSiteSettings() {
