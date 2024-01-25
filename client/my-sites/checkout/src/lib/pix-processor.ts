@@ -25,10 +25,26 @@ import type {
 } from '@automattic/wpcom-checkout';
 import type { LocalizeProps } from 'i18n-calypso';
 
+type EbanxCardTransactionRequest = {
+	name: string;
+	countryCode: string;
+	state: string;
+	city: string;
+	postalCode: string;
+	address: string;
+	streetNumber: string;
+	phoneNumber: string;
+	document: string;
+};
+
 export async function pixProcessor(
+	submitData: unknown,
 	options: PaymentProcessorOptions,
 	translate: LocalizeProps[ 'translate' ]
 ): Promise< PaymentProcessorResponse > {
+	if ( ! isValidEbanxCardTransactionData( submitData ) ) {
+		throw new Error( 'Required purchase data is missing' );
+	}
 	const {
 		getThankYouUrl,
 		siteSlug,
@@ -58,7 +74,7 @@ export async function pixProcessor(
 	cancelUrl.search = '';
 
 	const formattedTransactionData = createTransactionEndpointRequestPayload( {
-		name: '',
+		...submitData,
 		successUrl: successUrl.toString(),
 		cancelUrl: cancelUrl.toString(),
 		postalCode: getPostalCode( contactDetails ),
@@ -216,4 +232,14 @@ function displayModal(
 		} );
 	} );
 	return root;
+}
+
+function isValidEbanxCardTransactionData(
+	submitData: unknown
+): submitData is EbanxCardTransactionRequest {
+	const data = submitData as EbanxCardTransactionRequest;
+	if ( ! data ) {
+		throw new Error( 'Transaction requires data and none was provided' );
+	}
+	return true;
 }

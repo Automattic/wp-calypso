@@ -496,7 +496,8 @@ export default function CheckoutMain( {
 				multiPartnerCardProcessor( transactionData, dataForProcessor, {
 					translate,
 				} ),
-			pix: () => pixProcessor( dataForProcessor, translate ),
+			pix: ( transactionData: unknown ) =>
+				pixProcessor( transactionData, dataForProcessor, translate ),
 			alipay: ( transactionData: unknown ) =>
 				genericRedirectProcessor( 'alipay', transactionData, dataForProcessor ),
 			p24: ( transactionData: unknown ) =>
