@@ -185,7 +185,7 @@ const StatsCommercialPurchase = ( {
 			) }
 			{ /** Hide the section for upgrades */ }
 			{ ! isCommercialOwned && (
-				<StatsCommercialFlowOptOutForm
+				<StatsCommercialFlowPanel
 					isCommercial={ isCommercial }
 					isOdysseyStats={ isOdysseyStats }
 					siteSlug={ siteSlug }
@@ -310,7 +310,7 @@ const StatsSingleItemPagePurchase = ( {
 			</StatsSingleItemPagePurchaseFrame>
 			<StatsSingleItemCard>
 				<h1>Hello from the new card</h1>
-				<StatsCommercialFlowOptOutForm
+				<StatsCommercialFlowPanel
 					isCommercial={ isCommercial }
 					isOdysseyStats={ false }
 					siteSlug={ siteSlug }
@@ -319,6 +319,23 @@ const StatsSingleItemPagePurchase = ( {
 		</>
 	);
 };
+
+function StatsCommercialFlowPanel( { isCommercial, isOdysseyStats, siteSlug } ) {
+	const translate = useTranslate();
+	return (
+		<div className={ `${ COMPONENT_CLASS_NAME }__additional-card-panel` }>
+			<Panel className={ `${ COMPONENT_CLASS_NAME }__card-panel` }>
+				<PanelBody title={ translate( 'This is not a commercial site' ) } initialOpen={ false }>
+					<StatsCommercialFlowOptOutForm
+						isCommercial={ isCommercial }
+						isOdysseyStats={ isOdysseyStats }
+						siteSlug={ siteSlug }
+					/>
+				</PanelBody>
+			</Panel>
+		</div>
+	);
+}
 
 function StatsCommercialFlowOptOutForm( { isCommercial, isOdysseyStats, siteSlug } ) {
 	const translate = useTranslate();
@@ -359,97 +376,85 @@ Thanks\n\n`;
 
 	// Form output
 	return (
-		<div className={ `${ COMPONENT_CLASS_NAME }__additional-card-panel` }>
-			<Panel className={ `${ COMPONENT_CLASS_NAME }__card-panel` }>
-				<PanelBody title={ translate( 'This is not a commercial site' ) } initialOpen={ false }>
-					<p>
-						{ translate(
-							'If you think we misidentified your site as commercial, confirm the information below, and we’ll take a look.'
-						) }
-					</p>
-					<div className={ `${ COMPONENT_CLASS_NAME }__persnal-checklist` }>
-						<ul>
-							<li>
-								<CheckboxControl
-									className={ `${ COMPONENT_CLASS_NAME }__control--checkbox` }
-									checked={ isAdsChecked }
-									label={ translate( `I don't have ads on my site` ) }
-									onChange={ ( value: boolean ) => {
-										setAdsChecked( value );
-									} }
-								/>
-							</li>
-							<li>
-								<CheckboxControl
-									className={ `${ COMPONENT_CLASS_NAME }__control--checkbox` }
-									checked={ isSellingChecked }
-									label={ translate( `I don't sell products/services on my site` ) }
-									onChange={ ( value: boolean ) => {
-										setSellingChecked( value );
-									} }
-								/>
-							</li>
-							<li>
-								<CheckboxControl
-									className={ `${ COMPONENT_CLASS_NAME }__control--checkbox` }
-									checked={ isBusinessChecked }
-									label={ translate( `I don't promote a business on my site` ) }
-									onChange={ ( value: boolean ) => {
-										setBusinessChecked( value );
-									} }
-								/>
-							</li>
-							<li>
-								<CheckboxControl
-									className={ `${ COMPONENT_CLASS_NAME }__control--checkbox` }
-									checked={ isDonationChecked }
-									label={ translate( `I don't solicit donations or sponsorships on my site` ) }
-									onChange={ ( value ) => {
-										setDonationChecked( value );
-									} }
-								/>
-							</li>
-						</ul>
-						{ isAdsChecked &&
-							isSellingChecked &&
-							isBusinessChecked &&
-							isDonationChecked &&
-							( isCommercial ? (
-								<Button
-									variant="secondary"
-									disabled={
-										! isAdsChecked ||
-										! isSellingChecked ||
-										! isBusinessChecked ||
-										! isDonationChecked
-									}
-									onClick={ ( e: React.MouseEvent ) =>
-										handleRequestUpdateClick( e, isOdysseyStats )
-									}
-								>
-									{ translate( 'Request update' ) }
-								</Button>
-							) : (
-								// Otherwise if the site is personal or not identified yet, we should allow products switch.
-								<Button
-									variant="secondary"
-									disabled={
-										! isAdsChecked ||
-										! isSellingChecked ||
-										! isBusinessChecked ||
-										! isDonationChecked
-									}
-									onClick={ ( e: React.MouseEvent ) =>
-										handleSwitchToPersonalClick( e, isOdysseyStats )
-									}
-								>
-									{ translate( 'Choose a non-commercial license' ) }
-								</Button>
-							) ) }
-					</div>
-				</PanelBody>
-			</Panel>
-		</div>
+		<>
+			<p>
+				{ translate(
+					'If you think we misidentified your site as commercial, confirm the information below, and we’ll take a look.'
+				) }
+			</p>
+			<div className={ `${ COMPONENT_CLASS_NAME }__persnal-checklist` }>
+				<ul>
+					<li>
+						<CheckboxControl
+							className={ `${ COMPONENT_CLASS_NAME }__control--checkbox` }
+							checked={ isAdsChecked }
+							label={ translate( `I don't have ads on my site` ) }
+							onChange={ ( value: boolean ) => {
+								setAdsChecked( value );
+							} }
+						/>
+					</li>
+					<li>
+						<CheckboxControl
+							className={ `${ COMPONENT_CLASS_NAME }__control--checkbox` }
+							checked={ isSellingChecked }
+							label={ translate( `I don't sell products/services on my site` ) }
+							onChange={ ( value: boolean ) => {
+								setSellingChecked( value );
+							} }
+						/>
+					</li>
+					<li>
+						<CheckboxControl
+							className={ `${ COMPONENT_CLASS_NAME }__control--checkbox` }
+							checked={ isBusinessChecked }
+							label={ translate( `I don't promote a business on my site` ) }
+							onChange={ ( value: boolean ) => {
+								setBusinessChecked( value );
+							} }
+						/>
+					</li>
+					<li>
+						<CheckboxControl
+							className={ `${ COMPONENT_CLASS_NAME }__control--checkbox` }
+							checked={ isDonationChecked }
+							label={ translate( `I don't solicit donations or sponsorships on my site` ) }
+							onChange={ ( value ) => {
+								setDonationChecked( value );
+							} }
+						/>
+					</li>
+				</ul>
+				{ isAdsChecked &&
+					isSellingChecked &&
+					isBusinessChecked &&
+					isDonationChecked &&
+					( isCommercial ? (
+						<Button
+							variant="secondary"
+							disabled={
+								! isAdsChecked || ! isSellingChecked || ! isBusinessChecked || ! isDonationChecked
+							}
+							onClick={ ( e: React.MouseEvent ) => handleRequestUpdateClick( e, isOdysseyStats ) }
+						>
+							{ translate( 'Request update' ) }
+						</Button>
+					) : (
+						// Otherwise if the site is personal or not identified yet, we should allow products switch.
+						<Button
+							variant="secondary"
+							disabled={
+								! isAdsChecked || ! isSellingChecked || ! isBusinessChecked || ! isDonationChecked
+							}
+							onClick={ ( e: React.MouseEvent ) =>
+								handleSwitchToPersonalClick( e, isOdysseyStats )
+							}
+						>
+							{ translate( 'Choose a non-commercial license' ) }
+						</Button>
+					) ) }
+			</div>
+		</>
 	);
 }
 
