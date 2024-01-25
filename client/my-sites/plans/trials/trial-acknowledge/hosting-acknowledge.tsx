@@ -23,9 +23,13 @@ const FEATURES_NOT_INCLUDED_IN_FREE_TRIAL = [
 type TrialAcknowledgeProps = {
 	onStartTrialClick(): void;
 	showFeatureList?: boolean;
+	CTAButtonState?: {
+		isBusy: boolean;
+		disabled: boolean;
+	};
 };
 
-const CallToAction = ( { onStartTrialClick }: TrialAcknowledgeProps ) => {
+const CallToAction = ( { onStartTrialClick, CTAButtonState }: TrialAcknowledgeProps ) => {
 	const { __ } = useI18n();
 	const plan = getPlan( PLAN_BUSINESS );
 	const { isVerified, hasUser, isSending, email, resendEmail } = useVerifyEmail();
@@ -41,7 +45,11 @@ const CallToAction = ( { onStartTrialClick }: TrialAcknowledgeProps ) => {
 			{ ! isVerified && hasUser && (
 				<EmailVerification isSending={ isSending } email={ email } resendEmail={ resendEmail } />
 			) }
-			<NextButton isBusy={ false } onClick={ startTrial } disabled={ ! isVerified }>
+			<NextButton
+				isBusy={ CTAButtonState?.isBusy ?? false }
+				onClick={ startTrial }
+				disabled={ ( ! isVerified || CTAButtonState?.disabled ) ?? false }
+			>
 				{ sprintf(
 					/* translators: the name of the plan that the user will try */
 					__( 'Start the %(planName)s trial' ),
@@ -57,6 +65,7 @@ const CallToAction = ( { onStartTrialClick }: TrialAcknowledgeProps ) => {
 export const HostingTrialAcknowledgement = ( {
 	onStartTrialClick,
 	showFeatureList = true,
+	CTAButtonState,
 }: TrialAcknowledgeProps ) => {
 	const { __ } = useI18n();
 	const plan = getPlan( PLAN_BUSINESS );
@@ -87,7 +96,9 @@ export const HostingTrialAcknowledgement = ( {
 				),
 				{ planName: plan?.getTitle() }
 			) }
-			callToAction={ <CallToAction onStartTrialClick={ onStartTrialClick } /> }
+			callToAction={
+				<CallToAction onStartTrialClick={ onStartTrialClick } CTAButtonState={ CTAButtonState } />
+			}
 			trialLimitations={ [ __( 'Lower priority email sending' ), __( '3GB of storage' ) ] }
 		/>
 	);
