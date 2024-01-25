@@ -19,12 +19,12 @@ import './style.scss';
 
 const DomainUpsellCallout = ( { trackEvent } ) => {
 	const dispatch = useDispatch();
-	const site = useSelector( ( state ) => getSelectedSite( state ) );
+	const site = useSelector( getSelectedSite );
 	const trackEventView = `calypso_${ trackEvent }_view`;
 	const trackEventClick = `calypso_${ trackEvent }_click`;
 	const trackEventDismiss = `calypso_${ trackEvent }_dismiss`;
 	const dismissPreference = `${ trackEvent }-${ site?.ID }`;
-	const isEmailVerified = useSelector( ( state ) => isCurrentUserEmailVerified( state ) );
+	const isEmailVerified = useSelector( isCurrentUserEmailVerified );
 	const siteDomains = useSelector( ( state ) => getDomainsBySiteId( state, site?.ID ) );
 	const siteDomainsLength = useMemo(
 		() => siteDomains.filter( ( domain ) => ! domain.isWPCOMDomain ).length,

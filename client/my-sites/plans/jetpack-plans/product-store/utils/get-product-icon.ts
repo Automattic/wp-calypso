@@ -121,8 +121,7 @@ const PRODUCT_ICON_MAP: Record< string, IconResource > = {
 
 const getProductIcon = ( { productSlug, light }: productIconProps ): string => {
 	const iconResource = PRODUCT_ICON_MAP[ productSlug ];
-
-	return light ? iconResource.light : iconResource.regular;
+	return light ? iconResource?.light : iconResource?.regular;
 };
 
 export default getProductIcon;

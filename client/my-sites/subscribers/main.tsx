@@ -1,15 +1,16 @@
 import page from '@automattic/calypso-router';
 import { Button, Gridicon } from '@automattic/components';
-import { HelpCenter } from '@automattic/data-stores';
+import { HelpCenter, Subscriber as SubscriberDataStore } from '@automattic/data-stores';
 import { useIsEnglishLocale, useLocalizeUrl } from '@automattic/i18n-utils';
-import { useDispatch as useDataStoreDispatch } from '@wordpress/data';
+import { useDispatch as useDataStoreDispatch, useSelect } from '@wordpress/data';
 import { useI18n } from '@wordpress/react-i18n';
 import { translate } from 'i18n-calypso';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { navItems } from 'calypso/blocks/stats-navigation/constants';
 import DocumentHead from 'calypso/components/data/document-head';
 import QueryMembershipsSettings from 'calypso/components/data/query-memberships-settings';
+import EmailVerificationGate from 'calypso/components/email-verification/email-verification-gate';
 import Main from 'calypso/components/main';
 import NavigationHeader from 'calypso/components/navigation-header';
 import GiftSubscriptionModal from 'calypso/my-sites/subscribers/components/gift-modal/gift-modal';
@@ -31,11 +32,12 @@ import './style.scss';
 
 type SubscribersHeaderProps = {
 	selectedSiteId: number | undefined;
+	isUnverified: boolean;
 };
 
 const HELP_CENTER_STORE = HelpCenter.register();
 
-const SubscribersHeader = ( { selectedSiteId }: SubscribersHeaderProps ) => {
+const SubscribersHeader = ( { selectedSiteId, isUnverified }: SubscribersHeaderProps ) => {
 	const { setShowAddSubscribersModal } = useSubscribersPage();
 	const localizeUrl = useLocalizeUrl();
 	const { setShowHelpCenter, setShowSupportDoc } = useDataStoreDispatch( HELP_CENTER_STORE );
@@ -87,6 +89,7 @@ const SubscribersHeader = ( { selectedSiteId }: SubscribersHeaderProps ) => {
 			<Button
 				className="add-subscribers-button"
 				primary
+				disabled={ isUnverified }
 				onClick={ () => setShowAddSubscribersModal( true ) }
 			>
 				<Gridicon icon="plus" size={ 24 } />
@@ -132,8 +135,23 @@ const SubscribersPage = ( {
 		sortTerm,
 	};
 
+	const importSelector = useSelect(
+		( select ) => select( SubscriberDataStore.store ).getImportSubscribersSelector(),
+		[]
+	);
+
+	const isUnverified = importSelector?.error?.code === 'unverified_email';
+
+	const { getSubscribersImports } = useDataStoreDispatch( SubscriberDataStore.store );
+
+	useEffect( () => {
+		if ( siteId ) {
+			getSubscribersImports( siteId );
+		}
+	}, [ siteId ] );
+
 	const { currentSubscriber, onClickUnsubscribe, onConfirmModal, resetSubscriber } =
-		useUnsubscribeModal( selectedSite?.ID, pageArgs );
+		useUnsubscribeModal( selectedSite?.ID ?? null, pageArgs );
 	const onClickView = ( { subscription_id, user_id }: Subscriber ) => {
 		page.show( getSubscriberDetailsUrl( selectedSite?.slug, subscription_id, user_id, pageArgs ) );
 	};
@@ -142,7 +160,6 @@ const SubscribersPage = ( {
 		setGiftUserId( user_id );
 		setGiftUsername( display_name );
 	};
-
 	return (
 		<SubscribersPageProvider
 			siteId={ siteId }
@@ -159,32 +176,38 @@ const SubscribersPage = ( {
 			<Main wideLayout className="subscribers">
 				<DocumentHead title={ translate( 'Subscribers' ) } />
 
-				<SubscribersHeader selectedSiteId={ selectedSite?.ID } />
-
-				<SubscriberListContainer
-					siteId={ siteId }
-					onClickView={ onClickView }
-					onGiftSubscription={ onGiftSubscription }
-					onClickUnsubscribe={ onClickUnsubscribe }
-				/>
-
-				<UnsubscribeModal
-					subscriber={ currentSubscriber }
-					onCancel={ resetSubscriber }
-					onConfirm={ onConfirmModal }
-				/>
-
-				{ giftUserId !== 0 && (
-					<GiftSubscriptionModal
-						siteId={ selectedSite?.ID ?? 0 }
-						userId={ giftUserId }
-						username={ giftUsername }
-						onCancel={ () => setGiftUserId( 0 ) }
-						onConfirm={ () => setGiftUserId( 0 ) }
+				<SubscribersHeader selectedSiteId={ selectedSite?.ID } isUnverified={ isUnverified } />
+				{ /* eslint-disable-next-line @typescript-eslint/ban-ts-comment */ }
+				{ /* @ts-ignore */ }
+				<EmailVerificationGate
+					noticeText={ translate( 'You must verify your email to add subscribers.' ) }
+					noticeStatus="is-warning"
+				>
+					<SubscriberListContainer
+						siteId={ siteId }
+						onClickView={ onClickView }
+						onGiftSubscription={ onGiftSubscription }
+						onClickUnsubscribe={ onClickUnsubscribe }
 					/>
-				) }
-				{ selectedSite && <AddSubscribersModal site={ selectedSite } /> }
-				{ selectedSite && <MigrateSubscribersModal /> }
+
+					<UnsubscribeModal
+						subscriber={ currentSubscriber }
+						onCancel={ resetSubscriber }
+						onConfirm={ onConfirmModal }
+					/>
+
+					{ giftUserId !== 0 && (
+						<GiftSubscriptionModal
+							siteId={ selectedSite?.ID ?? 0 }
+							userId={ giftUserId }
+							username={ giftUsername }
+							onCancel={ () => setGiftUserId( 0 ) }
+							onConfirm={ () => setGiftUserId( 0 ) }
+						/>
+					) }
+					{ selectedSite && <AddSubscribersModal site={ selectedSite } /> }
+					{ selectedSite && <MigrateSubscribersModal /> }
+				</EmailVerificationGate>
 			</Main>
 		</SubscribersPageProvider>
 	);

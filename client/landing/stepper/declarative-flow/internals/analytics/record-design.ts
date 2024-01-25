@@ -112,6 +112,7 @@ export function getDesignEventProps( {
 		theme: design.recipe?.stylesheet,
 		theme_style: design.recipe?.stylesheet + variationSlugSuffix,
 		design_type: design.design_type,
+		...( design?.design_tier && { design_tier: design.design_tier } ),
 		is_premium: design.is_premium,
 		is_externally_managed: design?.is_externally_managed,
 		is_bundled_with_woo: design?.is_bundled_with_woo,

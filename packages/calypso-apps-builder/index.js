@@ -42,11 +42,14 @@ const VERBOSE = argv.verbose;
 try {
 	await runBuilder( argv );
 } catch ( e ) {
-	const { pid } = process;
-	if ( VERBOSE ) {
-		console.log( `Removing children of PID: ${ pid }` );
+	// treeKill doesn't really work in CI and also isn't necessary.
+	if ( process.env.IS_CI !== 'true' ) {
+		const { pid } = process;
+		if ( VERBOSE ) {
+			console.log( `Removing children of PID: ${ pid }` );
+		}
+		treeKill( pid );
 	}
-	treeKill( pid );
 	showTips( e.tasks );
 	console.error( e.message );
 }

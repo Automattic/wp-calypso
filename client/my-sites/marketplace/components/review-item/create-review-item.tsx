@@ -1,10 +1,11 @@
+import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { isEnabled } from '@automattic/calypso-config';
 import { Button, ConfettiAnimation } from '@automattic/components';
 import Card from '@automattic/components/src/card';
 import { CheckboxControl, TextareaControl } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import moment from 'moment';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import Gravatar from 'calypso/components/gravatar';
 import ReviewsRatingsStars from 'calypso/components/reviews-rating-stars/reviews-ratings-stars';
@@ -18,10 +19,11 @@ import './style.scss';
 
 type MarketplaceCreateReviewItemProps = {
 	forceShowThankYou?: number;
+	canPublishReview: boolean;
 } & ProductDefinitionProps;
 
 export function MarketplaceCreateReviewItem( props: MarketplaceCreateReviewItemProps ) {
-	const { productType, slug, forceShowThankYou = 0 } = props;
+	const { productType, slug, forceShowThankYou = 0, canPublishReview } = props;
 	const translate = useTranslate();
 	const currentUser = useSelector( getCurrentUser );
 	const [ content, setContent ] = useState< string >( '' );
@@ -29,6 +31,7 @@ export function MarketplaceCreateReviewItem( props: MarketplaceCreateReviewItemP
 	const [ errorMessage, setErrorMessage ] = useState( '' );
 	const [ showThankYouSection, setShowThankYouSection ] = useState( false );
 	const [ showContentArea, setShowContentArea ] = useState( false );
+	const [ contentPlaceholder, setContentPlaceholder ] = useState( '' );
 
 	const { data: userReviews, isFetching: isFetchingUserReviews } = useMarketplaceReviewsQuery( {
 		productType,
@@ -47,6 +50,12 @@ export function MarketplaceCreateReviewItem( props: MarketplaceCreateReviewItemP
 
 	const createReviewMutation = useCreateMarketplaceReviewMutation( { productType, slug } );
 	const createReview = () => {
+		recordTracksEvent( 'calypso_marketplace_reviews_add_submit', {
+			product_type: productType,
+			slug: slug,
+			rating: Number( rating ),
+		} );
+
 		createReviewMutation.mutate(
 			{ productType, slug, content, rating },
 			{
@@ -65,6 +74,45 @@ export function MarketplaceCreateReviewItem( props: MarketplaceCreateReviewItemP
 		setRating( value );
 		setShowContentArea( true );
 	};
+
+	useEffect( () => {
+		switch ( rating ) {
+			case 1:
+				return setContentPlaceholder(
+					translate(
+						"We're sorry to hear about your experience. Could you share what went wrong or how we can improve?"
+					)
+				);
+			case 2:
+				return setContentPlaceholder(
+					translate(
+						"It looks like things didn't go as expected. Can you tell us what could have been better?"
+					)
+				);
+			case 3:
+				return setContentPlaceholder(
+					translate(
+						'Thanks for your feedback! What did you like, and how can we make your experience even better?'
+					)
+				);
+			case 4:
+				return setContentPlaceholder(
+					translate(
+						'Great to know you had a good experience! What did you enjoy, and how can we make it excellent?'
+					)
+				);
+			case 5:
+				return setContentPlaceholder(
+					translate( 'Thrilled to see you had a fantastic experience! What did you love the most?' )
+				);
+			// Fallback that shouldn't really be seen
+			// as the field is only shown once a rating is selected
+			default:
+				return setContentPlaceholder(
+					translate( 'Please write your review to help other users.' )
+				);
+		}
+	}, [ rating, translate ] );
 
 	// Hide the Thank You section if user removed their review
 	if ( ! userReviews?.length && ! isFetchingUserReviews && showThankYouSection ) {
@@ -104,12 +152,20 @@ export function MarketplaceCreateReviewItem( props: MarketplaceCreateReviewItemP
 							onSelectRating={ onSelectRating }
 						/>
 					</div>
-					{ showContentArea && (
+					{ showContentArea && ! canPublishReview && (
+						<Card className="marketplace-review-item__error-message" highlight="error">
+							{ translate(
+								'Only active users can leave a review. Please purchase a new subscription of the product to leave a review.'
+							) }
+						</Card>
+					) }
+					{ showContentArea && canPublishReview && (
 						<>
 							<TextareaControl
 								rows={ 4 }
 								cols={ 40 }
 								className="marketplace-review-item__editor"
+								placeholder={ contentPlaceholder }
 								name="content"
 								value={ content }
 								onChange={ setContent }

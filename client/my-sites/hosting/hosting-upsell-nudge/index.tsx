@@ -1,7 +1,17 @@
-import { FEATURE_SFTP, PLAN_BUSINESS, WPCOM_PLANS, getPlan } from '@automattic/calypso-products';
+import config from '@automattic/calypso-config';
+import {
+	FEATURE_SFTP,
+	PLAN_BUSINESS,
+	PLAN_HOSTING_TRIAL_MONTHLY,
+	WPCOM_PLANS,
+	getPlan,
+} from '@automattic/calypso-products';
 import { useTranslate } from 'i18n-calypso';
 import UpsellNudge from 'calypso/blocks/upsell-nudge';
+import useAddHostingTrialMutation from 'calypso/data/hosting/use-add-hosting-trial-mutation';
 import { preventWidows } from 'calypso/lib/formatting';
+import { useSelector } from 'calypso/state';
+import { isUserEligibleForFreeHostingTrial } from 'calypso/state/selectors/is-user-eligible-for-free-hosting-trial';
 import iconCloud from './icons/icon-cloud.svg';
 import iconComments from './icons/icon-comments.svg';
 import iconDatabase from './icons/icon-database.svg';
@@ -26,7 +36,7 @@ interface HostingUpsellNudgeTargetPlan {
 }
 
 interface HostingUpsellNudgeProps {
-	siteId: number | null;
+	siteId: number;
 	targetPlan?: HostingUpsellNudgeTargetPlan;
 }
 
@@ -47,6 +57,16 @@ export function HostingUpsellNudge( { siteId, targetPlan }: HostingUpsellNudgePr
 	const href = targetPlan ? targetPlan.href : `/checkout/${ siteId }/business`;
 	const plan = targetPlan ? targetPlan.plan : PLAN_BUSINESS;
 	const title = targetPlan ? targetPlan.title : titleText;
+	const isEligibleForTrial = useSelector( isUserEligibleForFreeHostingTrial );
+	const secondaryCallToAction =
+		config.isEnabled( 'hosting-trial' ) && isEligibleForTrial ? translate( 'Start for free' ) : '';
+	const { mutateAsync: addHostingTrial } = useAddHostingTrialMutation();
+
+	const secondaryOnClick = async () => {
+		// TODO: Handle Trial acknowledge once it's isolated from the stepper
+		addHostingTrial( { siteId, planSlug: PLAN_HOSTING_TRIAL_MONTHLY } );
+		window.location.href = '/setup/transferring-hosted-site/processing?siteId=' + siteId;
+	};
 
 	return (
 		<UpsellNudge
@@ -54,9 +74,12 @@ export function HostingUpsellNudge( { siteId, targetPlan }: HostingUpsellNudgePr
 			compactButton={ false }
 			title={ title }
 			event="calypso_hosting_configuration_upgrade_click"
+			secondaryEvent="calypso_hosting_configuration_upgrade_free_trial_click"
 			href={ href }
 			callToAction={ callToAction }
-			plan={ plan }
+			secondaryCallToAction={ secondaryCallToAction }
+			secondaryOnClick={ secondaryOnClick }
+			plan={ plan as string }
 			feature={ feature }
 			showIcon={ true }
 			list={ features }

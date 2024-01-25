@@ -50,11 +50,11 @@ const SubscriberListContainer = ( {
 		if ( ! isLoading && subscribers.length === 0 && page > 1 ) {
 			pageChangeCallback( pages ?? 0 );
 		}
-	}, [ isLoading, subscribers, page, pageChangeCallback ] );
+	}, [ isLoading, subscribers, page, pageChangeCallback, pages ] );
 
 	return (
 		<section className="subscriber-list-container">
-			{ ! isLoading && ( Boolean( grandTotal ) || searchTerm ) && (
+			{ grandTotal && (
 				<>
 					<div className="subscriber-list-container__header">
 						<span className="subscriber-list-container__title">
@@ -83,9 +83,9 @@ const SubscriberListContainer = ( {
 						<div className="loading-placeholder small hidden"></div>
 					</div>
 				) ) }
-			{ ! isLoading && Boolean( grandTotal ) && (
+			{ ! isLoading && grandTotal && (
 				<>
-					{ Boolean( total ) && (
+					{ total && (
 						<SubscriberList
 							onView={ onClickView }
 							onGiftSubscription={ onGiftSubscription }

@@ -94,6 +94,7 @@ export interface Design {
 	showFirst?: boolean; // Whether this design will appear at the top, regardless of category
 	preview?: 'static';
 	design_type?: DesignType;
+	design_tier: string | null;
 	style_variations?: StyleVariation[];
 	price?: string;
 	software_sets?: SoftwareSet[];

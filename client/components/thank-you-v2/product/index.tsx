@@ -1,13 +1,13 @@
 import { Spinner } from '@automattic/components';
 import classNames from 'classnames';
-import { translate } from 'i18n-calypso';
+import { translate, TranslateResult } from 'i18n-calypso';
 import { useEffect, useState } from 'react';
 
 import './style.scss';
 
 export type ThankYouProductProps = {
-	name: string;
-	details?: string;
+	name: TranslateResult;
+	details?: TranslateResult;
 	icon?: string;
 	actions?: React.ReactNode;
 	isFree?: boolean;

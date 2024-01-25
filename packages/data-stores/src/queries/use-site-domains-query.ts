@@ -110,6 +110,7 @@ export interface DomainData {
 	registry_expiry_date: string;
 	subdomain_part: string;
 	auth_code_required: boolean;
+	is_mapped_to_atomic_site: boolean;
 }
 
 export interface SiteDomainsQueryFnData {

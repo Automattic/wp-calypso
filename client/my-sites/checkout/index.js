@@ -1,4 +1,3 @@
-import { isEnabled } from '@automattic/calypso-config';
 import page from '@automattic/calypso-router';
 import {
 	makeLayout,
@@ -8,6 +7,7 @@ import {
 } from 'calypso/controller';
 import { recordSiftScienceUser } from 'calypso/lib/siftscience';
 import { loggedInSiteSelection, noSite, siteSelection } from 'calypso/my-sites/controller';
+import { getProfessionalEmailCheckoutUpsellPath } from 'calypso/my-sites/email/paths';
 import {
 	checkout,
 	checkoutAkismetSiteless,
@@ -109,7 +109,7 @@ export default function () {
 	);
 
 	page(
-		`/checkout/marketplace/:productSlug`, // It should be intentId but sitelessCheckout expect param to be productSlug.
+		`/checkout/marketplace/:productSlug`,
 		setLocaleMiddleware(),
 		noSite,
 		checkoutMarketplaceSiteless,
@@ -117,37 +117,45 @@ export default function () {
 		clientRender
 	);
 
+	page(
+		`/checkout/marketplace/:productSlug/renew/:purchaseId`,
+		setLocaleMiddleware(),
+		redirectLoggedOut,
+		noSite,
+		checkoutMarketplaceSiteless,
+		makeLayout,
+		clientRender
+	);
+
 	// Akismet siteless checkout works logged-out, so do not include redirectLoggedOut or siteSelection.
-	if ( isEnabled( 'akismet/siteless-checkout' ) ) {
-		page(
-			`/checkout/akismet/:productSlug`,
-			setLocaleMiddleware(),
-			noSite,
-			checkoutAkismetSiteless,
-			makeLayout,
-			clientRender
-		);
+	page(
+		`/checkout/akismet/:productSlug`,
+		setLocaleMiddleware(),
+		noSite,
+		checkoutAkismetSiteless,
+		makeLayout,
+		clientRender
+	);
 
-		page(
-			`/checkout/akismet/:productSlug/renew/:purchaseId`,
-			setLocaleMiddleware(),
-			redirectLoggedOut,
-			noSite,
-			checkoutAkismetSiteless,
-			makeLayout,
-			clientRender
-		);
+	page(
+		`/checkout/akismet/:productSlug/renew/:purchaseId`,
+		setLocaleMiddleware(),
+		redirectLoggedOut,
+		noSite,
+		checkoutAkismetSiteless,
+		makeLayout,
+		clientRender
+	);
 
-		page(
-			'/checkout/akismet/thank-you/:productSlug',
-			setLocaleMiddleware(),
-			redirectLoggedOut,
-			noSite,
-			akismetCheckoutThankYou,
-			makeLayout,
-			clientRender
-		);
-	}
+	page(
+		'/checkout/akismet/thank-you/:productSlug',
+		setLocaleMiddleware(),
+		redirectLoggedOut,
+		noSite,
+		akismetCheckoutThankYou,
+		makeLayout,
+		clientRender
+	);
 
 	// The no-site post-checkout route is for purchases not tied to a site so do
 	// not include the `siteSelection` middleware.
@@ -229,58 +237,46 @@ export default function () {
 		clientRender
 	);
 
-	if ( isEnabled( 'upsell/concierge-session' ) ) {
-		// For backwards compatibility, retaining the old URL structure.
-		page( '/checkout/:site/add-support-session/:receiptId?', redirectToSupportSession );
+	// For backwards compatibility, retaining the old URL structure.
+	page( '/checkout/:site/add-support-session/:receiptId?', redirectToSupportSession );
 
-		page(
-			'/checkout/offer-support-session/:site?',
-			redirectLoggedOut,
-			siteSelection,
-			upsellNudge,
-			makeLayout,
-			clientRender
-		);
-
-		page(
-			'/checkout/offer-support-session/:receiptId/:site',
-			redirectLoggedOut,
-			siteSelection,
-			upsellNudge,
-			makeLayout,
-			clientRender
-		);
-
-		page(
-			'/checkout/offer-quickstart-session/:site?',
-			loggedInSiteSelection,
-			upsellNudge,
-			makeLayout,
-			clientRender
-		);
-
-		page(
-			'/checkout/offer-quickstart-session/:receiptId/:site',
-			redirectLoggedOut,
-			siteSelection,
-			upsellNudge,
-			makeLayout,
-			clientRender
-		);
-	}
-
-	// Use `noSite` instead of the `siteSelection` middleware for the no-site route.
 	page(
-		'/checkout/offer-professional-email/:domain/:receiptId/no-site',
+		'/checkout/offer-support-session/:site?',
 		redirectLoggedOut,
-		noSite,
-		checkoutThankYou,
+		siteSelection,
+		upsellNudge,
 		makeLayout,
 		clientRender
 	);
 
 	page(
-		'/checkout/offer-professional-email/:domain/:receiptId/:site?',
+		'/checkout/offer-support-session/:receiptId/:site',
+		redirectLoggedOut,
+		siteSelection,
+		upsellNudge,
+		makeLayout,
+		clientRender
+	);
+
+	page(
+		'/checkout/offer-quickstart-session/:site?',
+		loggedInSiteSelection,
+		upsellNudge,
+		makeLayout,
+		clientRender
+	);
+
+	page(
+		'/checkout/offer-quickstart-session/:receiptId/:site',
+		redirectLoggedOut,
+		siteSelection,
+		upsellNudge,
+		makeLayout,
+		clientRender
+	);
+
+	page(
+		getProfessionalEmailCheckoutUpsellPath( ':site', ':domain', ':receiptId' ),
 		redirectLoggedOut,
 		siteSelection,
 		upsellNudge,

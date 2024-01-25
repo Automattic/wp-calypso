@@ -47,6 +47,7 @@ export const UpgradeToPremiumNudgePure = ( props ) => {
 					args: { planName: getPlan( PLAN_PREMIUM )?.getTitle() ?? '' },
 				} )
 			}
+			event="post_share_plan_upgrade_nudge"
 		/>
 	);
 };

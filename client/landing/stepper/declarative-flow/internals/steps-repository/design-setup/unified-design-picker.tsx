@@ -1,5 +1,9 @@
 import { isEnabled } from '@automattic/calypso-config';
-import { PLAN_BUSINESS_MONTHLY, WPCOM_FEATURES_PREMIUM_THEMES } from '@automattic/calypso-products';
+import {
+	PLAN_BUSINESS_MONTHLY,
+	PLAN_PERSONAL,
+	WPCOM_FEATURES_PREMIUM_THEMES,
+} from '@automattic/calypso-products';
 import { Button } from '@automattic/components';
 import {
 	Onboard,
@@ -14,6 +18,8 @@ import {
 	getDesignPreviewUrl,
 	isAssemblerDesign,
 	isAssemblerSupported,
+	FREE_THEME,
+	PERSONAL_THEME,
 } from '@automattic/design-picker';
 import { useLocale } from '@automattic/i18n-utils';
 import { StepContainer, DESIGN_FIRST_FLOW } from '@automattic/onboarding';
@@ -48,6 +54,8 @@ import {
 	isMarketplaceThemeSubscribed as getIsMarketplaceThemeSubscribed,
 	getTheme,
 	isSiteEligibleForManagedExternalThemes,
+	getThemeTierForTheme,
+	isThemeAllowedOnSite,
 } from 'calypso/state/themes/selectors';
 import { isThemePurchased } from 'calypso/state/themes/selectors/is-theme-purchased';
 import { getPreferredBillingCycleProductSlug } from 'calypso/state/themes/theme-utils';
@@ -375,6 +383,13 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 			? isThemePurchased( state, selectedDesignThemeId, site.ID )
 			: false
 	);
+
+	const canSiteActivateTheme = useSelector( ( state ) =>
+		site && selectedDesignThemeId
+			? isThemeAllowedOnSite( state, site.ID, selectedDesignThemeId )
+			: false
+	);
+
 	const isMarketplaceThemeSubscribed = useSelector(
 		( state ) =>
 			site &&
@@ -392,7 +407,16 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 	const isPluginBundleEligible = useIsPluginBundleEligible();
 	const isBundled = selectedDesign?.software_sets && selectedDesign.software_sets.length > 0;
 
+	const selectedDesignTier =
+		useSelector(
+			( state ) =>
+				selectedDesignThemeId && getThemeTierForTheme( state, selectedDesignThemeId )?.slug
+		) ?? FREE_THEME;
+
 	const isLockedTheme =
+		( isEnabled( 'themes/tiers' ) &&
+			selectedDesignTier === PERSONAL_THEME &&
+			! canSiteActivateTheme ) ||
 		( selectedDesign?.is_premium && ! isPremiumThemeAvailable && ! didPurchaseSelectedTheme ) ||
 		( selectedDesign?.is_externally_managed &&
 			( ! isMarketplaceThemeSubscribed || ! isExternallyManagedThemeAvailable ) ) ||
@@ -456,6 +480,8 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 			plan = 'business-bundle';
 		} else if ( selectedDesign?.is_externally_managed ) {
 			plan = ! isExternallyManagedThemeAvailable ? PLAN_BUSINESS_MONTHLY : '';
+		} else if ( isEnabled( 'themes/tiers' ) && selectedDesignTier === PERSONAL_THEME ) {
+			plan = PLAN_PERSONAL;
 		} else {
 			plan = 'premium';
 		}
@@ -572,7 +598,12 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 					fontVariation: selectedFontVariation,
 				} )
 			);
-			pickDesign();
+
+			if ( isEnabled( 'themes/tiers' ) && selectedDesignTier === PERSONAL_THEME ) {
+				closePremiumGlobalStylesModal();
+			} else {
+				pickDesign();
+			}
 		}
 	}
 
@@ -726,27 +757,23 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 
 		recordTracksEvent( eventName, tracksProps );
 	}
-
-	function getPrimaryActionButton() {
+	function getPrimaryActionButtonAction(): () => void {
+		const isPersonalDesign = isEnabled( 'themes/tiers' ) && selectedDesignTier === PERSONAL_THEME;
 		if ( isLockedTheme ) {
-			return (
-				<Button className="navigation-link" primary borderless={ false } onClick={ upgradePlan }>
-					{ translate( 'Unlock theme' ) }
-				</Button>
-			);
+			// For personal themes we favor the GS Upgrade Modal over the Plan Upgrade Modal.
+			return isPersonalDesign && shouldUnlockGlobalStyles ? unlockPremiumGlobalStyles : upgradePlan;
 		}
 
-		const selectStyle = () => {
-			if ( shouldUnlockGlobalStyles ) {
-				unlockPremiumGlobalStyles();
-			} else {
-				pickDesign();
-			}
-		};
+		return shouldUnlockGlobalStyles ? unlockPremiumGlobalStyles : () => pickDesign();
+	}
+
+	function getPrimaryActionButton() {
+		const action = getPrimaryActionButtonAction();
+		const text = action === upgradePlan ? translate( 'Unlock theme' ) : translate( 'Continue' );
 
 		return (
-			<Button className="navigation-link" primary borderless={ false } onClick={ selectStyle }>
-				{ translate( 'Continue' ) }
+			<Button className="navigation-link" primary borderless={ false } onClick={ action }>
+				{ text }
 			</Button>
 		);
 	}

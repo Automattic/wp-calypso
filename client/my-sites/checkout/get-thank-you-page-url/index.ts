@@ -54,6 +54,7 @@ import { isValidFeatureKey } from 'calypso/lib/plans/features-list';
 import { getEligibleTitanDomain } from 'calypso/lib/titan';
 import { addQueryArgs, isExternal, resemblesUrl } from 'calypso/lib/url';
 import { managePurchase } from 'calypso/me/purchases/paths';
+import { getProfessionalEmailCheckoutUpsellPath } from 'calypso/my-sites/email/paths';
 import {
 	clearSignupCompleteFlowName,
 	getSignupCompleteFlowName,
@@ -722,7 +723,6 @@ function getProfessionalEmailUpsellUrl( {
 	cart,
 	siteSlug,
 	domains,
-	isDomainOnly,
 }: {
 	receiptId: ReceiptId | ReceiptIdPlaceholder;
 	cart: ResponseCart | undefined;
@@ -743,7 +743,6 @@ function getProfessionalEmailUpsellUrl( {
 	}
 
 	if (
-		! isDomainOnly &&
 		! hasBloggerPlan( cart ) &&
 		! hasPersonalPlan( cart ) &&
 		! hasBusinessPlan( cart ) &&
@@ -773,7 +772,7 @@ function getProfessionalEmailUpsellUrl( {
 		return;
 	}
 
-	return `/checkout/offer-professional-email/${ domainName }/${ receiptId }/${ siteSlug }`;
+	return getProfessionalEmailCheckoutUpsellPath( siteSlug ?? domainName, domainName, receiptId );
 }
 
 function getNoticeType(

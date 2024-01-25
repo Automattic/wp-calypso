@@ -2,11 +2,11 @@ import config from '@automattic/calypso-config';
 import Search, { SearchIcon } from '@automattic/search';
 import { useMediaQuery } from '@wordpress/compose';
 import { translate } from 'i18n-calypso';
-import React, { useEffect } from 'react';
+import React, { useEffect, useRef } from 'react';
 import './style.scss';
+import SegmentedControl from 'calypso/components/segmented-control';
 import SelectDropdown from 'calypso/components/select-dropdown';
 import CampaignsFilter, { CampaignsFilterType } from '../campaigns-filter';
-import WooItemsFilter from '../posts-woo-filter';
 
 export type SearchOptions = {
 	search?: string;
@@ -104,15 +104,14 @@ export default function SearchBar( props: Props ) {
 			label: translate( 'Products' ),
 		},
 		{
-			value: 'post',
-			label: translate( 'Posts' ),
-		},
-		{
-			value: 'page',
-			label: translate( 'Page' ),
+			value: 'post,page',
+			label: translate( 'Posts & Pages' ),
 		},
 	];
 
+	const options = isWooStore ? wooPostTypeOptions : postTypeOptions;
+	// Smooth horizontal scrolling on mobile views
+	const tabsRef = useRef< { [ key: string ]: HTMLSpanElement | null } >( {} );
 	const [ searchInput, setSearchInput ] = React.useState< string | undefined >( '' );
 	const [ sortOption, setSortOption ] = React.useState( SORT_OPTIONS_DEFAULT );
 	const [ filterOption, setFilterOption ] = React.useState( FILTER_OPTIONS_DEFAULT );
@@ -226,14 +225,22 @@ export default function SearchBar( props: Props ) {
 			<div className="promote-post-i2__search-bar-options">
 				{ mode === 'posts' && (
 					<>
-						{ isWooStore && isDesktop && (
-							<WooItemsFilter
-								handleChangeFilter={ onChangePostTypeFilter }
-								postType={ postType || '' }
-							/>
-						) }
-
-						{ ( ! isWooStore || ! isDesktop ) && (
+						{ isDesktop ? (
+							<SegmentedControl primary compact>
+								{ options.map( ( option ) => (
+									<SegmentedControl.Item
+										key={ option.value }
+										selected={ postType === option.value }
+										onClick={ () => onChangePostTypeFilter( option.value ) }
+									>
+										<span ref={ ( el ) => ( tabsRef.current[ option.value ] = el ) }>
+											{ ' ' }
+											{ option.label }{ ' ' }
+										</span>
+									</SegmentedControl.Item>
+								) ) }
+							</SegmentedControl>
+						) : (
 							<SelectDropdown
 								className="promote-post-i2__search-bar-dropdown post-type"
 								onSelect={ ( option: DropdownOption ) => onChangePostTypeFilter( option.value ) }
@@ -242,6 +249,7 @@ export default function SearchBar( props: Props ) {
 								selectedText={ getPostTypeFilterLabel() }
 							/>
 						) }
+
 						<SelectDropdown
 							className="promote-post-i2__search-bar-dropdown order-by"
 							onSelect={ onChangeOrderOption }

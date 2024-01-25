@@ -9,14 +9,8 @@ import { useSiteSlugParam } from '../hooks/use-site-slug-param';
 import { USER_STORE, ONBOARD_STORE, SITE_STORE } from '../stores';
 import { getLoginUrl } from '../utils/path';
 import { recordSubmitStep } from './internals/analytics/record-submit-step';
-import AssignTrialPlanStep from './internals/steps-repository/assign-trial-plan';
 import { AssignTrialResult } from './internals/steps-repository/assign-trial-plan/constants';
-import ErrorStep from './internals/steps-repository/error-step';
-import ProcessingStep from './internals/steps-repository/processing-step';
 import { ProcessingResult } from './internals/steps-repository/processing-step/constants';
-import SiteCreationStep from './internals/steps-repository/site-creation-step';
-import WaitForAtomic from './internals/steps-repository/wait-for-atomic';
-import WaitForPluginInstall from './internals/steps-repository/wait-for-plugin-install';
 import { AssertConditionState } from './internals/types';
 import type { AssertConditionResult, Flow, ProvidedDependencies } from './internals/types';
 import type { OnboardSelect, SiteSelect, UserSelect } from '@automattic/data-stores';
@@ -26,12 +20,27 @@ const wooexpress: Flow = {
 
 	useSteps() {
 		return [
-			{ slug: 'siteCreationStep', component: SiteCreationStep },
-			{ slug: 'processing', component: ProcessingStep },
-			{ slug: 'assignTrialPlan', component: AssignTrialPlanStep },
-			{ slug: 'waitForAtomic', component: WaitForAtomic },
-			{ slug: 'waitForPluginInstall', component: WaitForPluginInstall },
-			{ slug: 'error', component: ErrorStep },
+			{
+				slug: 'siteCreationStep',
+				asyncComponent: () => import( './internals/steps-repository/site-creation-step' ),
+			},
+			{
+				slug: 'processing',
+				asyncComponent: () => import( './internals/steps-repository/processing-step' ),
+			},
+			{
+				slug: 'assignTrialPlan',
+				asyncComponent: () => import( './internals/steps-repository/assign-trial-plan' ),
+			},
+			{
+				slug: 'waitForAtomic',
+				asyncComponent: () => import( './internals/steps-repository/wait-for-atomic' ),
+			},
+			{
+				slug: 'waitForPluginInstall',
+				asyncComponent: () => import( './internals/steps-repository/wait-for-plugin-install' ),
+			},
+			{ slug: 'error', asyncComponent: () => import( './internals/steps-repository/error-step' ) },
 		];
 	},
 	useAssertConditions(): AssertConditionResult {

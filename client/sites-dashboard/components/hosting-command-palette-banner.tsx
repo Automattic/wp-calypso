@@ -35,6 +35,7 @@ const fadeIn = keyframes`
 	opacity: 1;
   }
   100% {
+	opacity: 1,
     transform: translateX(0);
   }
 `;
@@ -46,9 +47,9 @@ const fadeOut = keyframes`
   }
   50% {
     opacity: 0;
-	transform: translateX(-15%);
   }
   100% {
+    opacity: 0;
 	transform: translateX(-50%);
   }
 `;
@@ -71,8 +72,6 @@ const CommandBox = styled.div( {
 	display: 'flex',
 	justifyContent: 'flex-start',
 	alignItems: 'center',
-	opacity: 0,
-	transition: 'opacity 1s ease-in-out',
 	marginLeft: 'auto',
 	minWidth: 253,
 	fontSize: 13,
@@ -80,12 +79,16 @@ const CommandBox = styled.div( {
 	letterSpacing: -0.15,
 	backgroundColor: 'var(--color-surface)',
 	boxShadow: '1px 1px 1px 0px #0000001F',
+	paddingRight: 10,
+	whiteSpace: 'nowrap',
 	'&.command-box__fadeIn': {
 		animation: `${ fadeIn } 1s ease-in-out`,
-		opacity: 1,
+		zIndex: 10,
 	},
 	'&.command-box__fadeOut': {
 		animation: `${ fadeOut } 1s ease-in-out`,
+		zIndex: 5,
+		opacity: 0,
 	},
 	svg: {
 		width: 24,

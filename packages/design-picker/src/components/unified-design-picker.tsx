@@ -78,7 +78,6 @@ interface TrackDesignViewProps {
  * that MUST be used as the `ref` prop on a `div` element.
  * The hook ensures that we generate theme display Tracks events when the user views
  * the underlying `div` element.
- *
  * @param { TrackDesignViewProps } designDetails Details around the design and current context.
  * @returns { Function } A callback ref that MUST be used on a div element for tracking.
  */
@@ -122,6 +121,7 @@ const useTrackDesignView = ( {
 				recordTracksEvent( 'calypso_design_picker_design_display', {
 					category: trackingCategory,
 					design_type: design.design_type,
+					...( design?.design_tier && { design_tier: design.design_tier } ),
 					is_premium: design.is_premium,
 					is_premium_available: isPremiumThemeAvailable,
 					slug: design.slug,

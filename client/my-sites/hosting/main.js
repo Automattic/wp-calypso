@@ -41,6 +41,7 @@ import isJetpackSite from 'calypso/state/sites/selectors/is-jetpack-site';
 import { getReaderTeams } from 'calypso/state/teams/selectors';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import CacheCard from './cache-card';
+import HostingActivateStatus from './hosting-activate-status';
 import { HostingUpsellNudge } from './hosting-upsell-nudge';
 import PhpMyAdminCard from './phpmyadmin-card';
 import RestorePlanSoftwareCard from './restore-plan-software-card';
@@ -137,9 +138,9 @@ const MainCards = ( {
 			content: <CacheCard disabled={ isBasicHostingDisabled } />,
 			type: 'basic',
 		},
-		{
+		siteId && {
 			feature: 'wp-admin',
-			content: <SiteAdminInterfaceCard />,
+			content: <SiteAdminInterfaceCard siteId={ siteId } />,
 			type: 'basic',
 		},
 	].filter( ( card ) => card !== null );
@@ -224,51 +225,20 @@ const Hosting = ( props ) => {
 	};
 
 	const getAtomicActivationNotice = () => {
-		// Transfer in progress
-		if ( isTransferring ) {
+		if ( showHostingActivationBanner && ! isTransferring ) {
 			return (
-				<>
-					<Notice
-						className="hosting__activating-notice"
-						status="is-info"
-						showDismiss={ false }
-						text={ translate( 'Please wait while we activate the hosting features.' ) }
-						icon="sync"
-					/>
-				</>
-			);
-		}
-
-		const failureNotice = transferStatus === transferStates.ERROR && (
-			<Notice
-				status="is-error"
-				showDismiss={ false }
-				text={ translate( 'There was an error activating hosting features.' ) }
-				icon="bug"
-			/>
-		);
-		if ( showHostingActivationBanner ) {
-			return (
-				<>
-					{ failureNotice }
-					<Notice
-						className="hosting__activating-notice"
-						status="is-info"
-						showDismiss={ false }
-						text={ translate(
-							'Please activate the hosting access to begin using these features.'
-						) }
-						icon="globe"
-					>
-						<TrackComponentView eventName="calypso_hosting_configuration_activate_impression" />
-						<NoticeAction
-							onClick={ clickActivate }
-							href={ `/hosting-config/activate/${ siteSlug }` }
-						>
-							{ translate( 'Activate' ) }
-						</NoticeAction>
-					</Notice>
-				</>
+				<Notice
+					className="hosting__activating-notice"
+					status="is-info"
+					showDismiss={ false }
+					text={ translate( 'Please activate the hosting access to begin using these features.' ) }
+					icon="globe"
+				>
+					<TrackComponentView eventName="calypso_hosting_configuration_activate_impression" />
+					<NoticeAction onClick={ clickActivate } href={ `/hosting-config/activate/${ siteSlug }` }>
+						{ translate( 'Activate' ) }
+					</NoticeAction>
+				</Notice>
 			);
 		}
 	};
@@ -328,6 +298,7 @@ const Hosting = ( props ) => {
 				title={ translate( 'Hosting Configuration' ) }
 				subtitle={ translate( 'Access your website’s database and more advanced settings.' ) }
 			/>
+			<HostingActivateStatus context="hosting" />
 			{ ! isBusinessTrial && banner }
 			{ isBusinessTrial && (
 				<TrialBanner

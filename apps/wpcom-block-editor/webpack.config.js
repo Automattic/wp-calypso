@@ -6,11 +6,13 @@ const path = require( 'path' );
 const getBaseWebpackConfig = require( '@automattic/calypso-build/webpack.config.js' );
 const DependencyExtractionWebpackPlugin = require( '@wordpress/dependency-extraction-webpack-plugin' );
 const webpack = require( 'webpack' );
+const { BundleAnalyzerPlugin } = require( 'webpack-bundle-analyzer' );
 
 /**
  * Internal variables
  */
 const isDevelopment = process.env.NODE_ENV !== 'production';
+const shouldEmitStats = process.env.EMIT_STATS && process.env.EMIT_STATS !== 'false';
 
 /**
  * Return a webpack config object
@@ -25,6 +27,7 @@ const isDevelopment = process.env.NODE_ENV !== 'production';
  * @param   {Object}  argv.entry                    Entry point(s)
  * @param   {string}  argv.outputPath               Output path
  * @param   {string}  argv.outputFilename           Output filename pattern
+ * @param   {string}  argv.outputChunkFilename      Output chunk filename pattern
  * @returns {Object}                                webpack config
  */
 function getWebpackConfig(
@@ -39,10 +42,12 @@ function getWebpackConfig(
 		},
 		outputPath = path.join( __dirname, 'dist' ),
 		outputFilename = isDevelopment ? '[name].js' : '[name].min.js',
+		outputChunkFilename = isDevelopment ? '[name]-[contenthash].js' : '[name]-[contenthash].min.js',
 	}
 ) {
 	const webpackConfig = getBaseWebpackConfig( env, {
 		entry,
+		'output-chunk-filename': outputChunkFilename,
 		'output-filename': outputFilename,
 		'output-path': outputPath,
 	} );
@@ -78,6 +83,17 @@ function getWebpackConfig(
 					}
 				},
 			} ),
+			shouldEmitStats &&
+				new BundleAnalyzerPlugin( {
+					analyzerMode: 'server',
+					statsOptions: {
+						source: false,
+						reasons: false,
+						optimizationBailout: false,
+						chunkOrigins: false,
+						chunkGroups: true,
+					},
+				} ),
 		],
 	};
 }
