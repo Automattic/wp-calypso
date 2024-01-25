@@ -1,9 +1,19 @@
 import { createHigherOrderComponent } from '@wordpress/compose';
+import { useEffect } from 'react';
 import { waitFor } from 'calypso/my-sites/marketplace/util';
 import { useDispatch, useSelector } from 'calypso/state';
-import { requestEligibility } from 'calypso/state/automated-transfer/actions';
+import {
+	fetchAutomatedTransferStatus,
+	requestEligibility,
+} from 'calypso/state/automated-transfer/actions';
+import { transferStates } from 'calypso/state/automated-transfer/constants';
+import {
+	getAutomatedTransferStatus,
+	isFetchingAutomatedTransferStatus,
+} from 'calypso/state/automated-transfer/selectors';
 import { getCurrentUserLocale } from 'calypso/state/current-user/selectors';
 import { fetchJITM } from 'calypso/state/jitm/actions';
+import isSiteWpcomAtomic from 'calypso/state/selectors/is-site-wpcom-atomic';
 import { requestSite } from 'calypso/state/sites/actions';
 import { fetchSiteFeatures } from 'calypso/state/sites/features/actions';
 import { fetchSitePlans } from 'calypso/state/sites/plans/actions';
@@ -14,9 +24,30 @@ export const WithOnclickTrialRequest = createHigherOrderComponent(
 		const dispatch = useDispatch();
 		const siteId = useSelector( getSelectedSiteId ) as number;
 		const locale = useSelector( getCurrentUserLocale );
+		const transferStatus = useSelector( ( state ) => getAutomatedTransferStatus( state, siteId ) );
+		const isSiteAtomic = useSelector( ( state ) => isSiteWpcomAtomic( state, siteId as number ) );
+		const isFetchingTransferStatus = useSelector( ( state ) =>
+			isFetchingAutomatedTransferStatus( state, siteId )
+		);
+
+		useEffect( () => {
+			if ( siteId && isSiteAtomic ) {
+				return;
+			}
+			if ( ! isFetchingTransferStatus && transferStatus !== transferStates.COMPLETE ) {
+				waitFor( 2 ).then( () => dispatch( fetchAutomatedTransferStatus( siteId ) ) );
+			}
+			// Once the transferStatus is reported complete, query the sites endpoint
+			// until the `is_wpcom_atomic` = true is returned
+			if ( transferStatus === transferStates.COMPLETE && ! isSiteAtomic ) {
+				waitFor( 2 ).then( () => dispatch( requestSite( siteId ) ) );
+			}
+		}, [ transferStatus ] );
+
 		const fetchUpdatedData = () => {
 			//after transfer is complete we wait to fetch update site with `is_wpcom_atomic`
 			waitFor( 2 ).then( () => dispatch( requestSite( siteId ) ) );
+
 			dispatch( fetchSitePlans( siteId ) );
 			dispatch( fetchSiteFeatures( siteId ) );
 			dispatch( requestEligibility( siteId ) );
