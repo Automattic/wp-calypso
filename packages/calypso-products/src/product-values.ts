@@ -144,3 +144,4 @@ export * from './products-list';
 export * from './translations';
 export { findProductKeys } from './find-product-keys';
 export { isRenewable } from './is-renewable';
+export { isSenseiProduct } from './is-sensei-product';

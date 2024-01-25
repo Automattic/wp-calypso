@@ -302,8 +302,15 @@ import {
 	FEATURE_GROUP_PAYMENT_TRANSACTION_FEES,
 	FEATURE_COMMISSION_FEE_STANDARD_FEATURES,
 	FEATURE_COMMISSION_FEE_WOO_FEATURES,
-	FEATURE_PERSONAL_THEMES,
 	FEATURE_STATS_PAID,
+	FEATURE_SENSEI_SUPPORT,
+	FEATURE_SENSEI_UNLIMITED,
+	FEATURE_SENSEI_INTERACTIVE,
+	FEATURE_SENSEI_QUIZZES,
+	FEATURE_SENSEI_SELL_COURSES,
+	FEATURE_SENSEI_STORAGE,
+	FEATURE_SENSEI_HOSTING,
+	FEATURE_SENSEI_JETPACK,
 } from '@automattic/calypso-products';
 import { localizeUrl } from '@automattic/i18n-utils';
 import i18n from 'i18n-calypso';
@@ -537,15 +544,6 @@ export const FEATURES_LIST: FeatureList = {
 						'Access to all of our advanced premium theme templates, including templates specifically tailored for businesses.'
 				  );
 		},
-	},
-
-	[ FEATURE_PERSONAL_THEMES ]: {
-		getSlug: () => FEATURE_PERSONAL_THEMES,
-		getTitle: () => i18n.translate( 'Unlimited starter themes' ),
-		getDescription: () =>
-			i18n.translate(
-				'Unlimited access to all of our starter themes, including designs specifically tailored for businesses.'
-			),
 	},
 
 	[ FEATURE_MONETISE ]: {
@@ -1958,15 +1956,8 @@ export const FEATURES_LIST: FeatureList = {
 	},
 	[ FEATURE_PREMIUM_THEMES_V2 ]: {
 		getSlug: () => FEATURE_PREMIUM_THEMES_V2,
-		getTitle: () => {
-			const shouldShowNewString =
-				isEnabled( 'themes/tiers' ) && i18n.hasTranslation( 'Explorer themes' );
-
-			return shouldShowNewString
-				? i18n.translate( 'Explorer themes' )
-				: i18n.translate( 'Premium themes' );
-		},
-		getIcon: () => <img src={ Theme2Image } alt={ i18n.translate( 'Explorer themes' ) } />,
+		getTitle: () => i18n.translate( 'Premium themes' ),
+		getIcon: () => <img src={ Theme2Image } alt={ i18n.translate( 'Premium themes' ) } />,
 		getCompareTitle: () => i18n.translate( 'A collection of premium design templates' ),
 		getDescription: () => i18n.translate( 'Switch between a collection of premium design themes.' ),
 	},
@@ -2698,6 +2689,47 @@ export const FEATURES_LIST: FeatureList = {
 		getDescription: () => '',
 	},
 	/* END: Woo Express Features */
+
+	/* START: Sensei Features */
+	[ FEATURE_SENSEI_SUPPORT ]: {
+		getSlug: () => FEATURE_SENSEI_SUPPORT,
+		getTitle: () => i18n.translate( 'Priority live chat support' ),
+	},
+	[ FEATURE_SENSEI_UNLIMITED ]: {
+		getSlug: () => FEATURE_SENSEI_UNLIMITED,
+		getTitle: () => i18n.translate( 'Unlimited courses and students' ),
+	},
+	[ FEATURE_SENSEI_INTERACTIVE ]: {
+		getSlug: () => FEATURE_SENSEI_INTERACTIVE,
+		getTitle: () => i18n.translate( 'Interactive videos and lessons' ),
+	},
+	[ FEATURE_SENSEI_QUIZZES ]: {
+		getSlug: () => FEATURE_SENSEI_QUIZZES,
+		getTitle: () => i18n.translate( 'Quizzes and certificates' ),
+	},
+	[ FEATURE_SENSEI_SELL_COURSES ]: {
+		getSlug: () => FEATURE_SENSEI_SELL_COURSES,
+		getTitle: () => i18n.translate( 'Sell courses and subscriptions' ),
+	},
+	[ FEATURE_SENSEI_STORAGE ]: {
+		getSlug: () => FEATURE_SENSEI_STORAGE,
+		getTitle: () => {
+			// If we have the new CTA translated or the locale is EN, return the new string, otherwise use the simpler already translated one.
+			return i18n.hasTranslation( '50GB file and video storage' ) ||
+				[ 'en', 'en-gb' ].includes( i18n.getLocaleSlug() || '' )
+				? i18n.translate( '50 GB file and video storage' )
+				: i18n.translate( '50 GB Storage' );
+		},
+	},
+	[ FEATURE_SENSEI_HOSTING ]: {
+		getSlug: () => FEATURE_SENSEI_HOSTING,
+		getTitle: () => i18n.translate( 'Best-in-class hosting' ),
+	},
+	[ FEATURE_SENSEI_JETPACK ]: {
+		getSlug: () => FEATURE_SENSEI_JETPACK,
+		getTitle: () => i18n.translate( 'Advanced Jetpack features' ),
+	},
+	/* END: Sensei Features */
 };
 
 export const getPlanFeaturesObject = ( planFeaturesList?: Array< string > ) => {

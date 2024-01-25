@@ -1,4 +1,3 @@
-import { isEnabled } from '@automattic/calypso-config';
 import { Button } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { useBreakpoint } from '@automattic/viewport-react';
@@ -92,7 +91,7 @@ function PluginDetails( props ) {
 	const siteIds = [ ...new Set( siteObjectsToSiteIds( sites ) ) ];
 	const selectedOrAllSites = useSelector( getSelectedOrAllSites );
 	const isRequestingSites = useSelector( checkRequestingSites );
-	const requestingPluginsForSites = useSelector( ( state ) => isRequestingForAllSites( state ) );
+	const requestingPluginsForSites = useSelector( isRequestingForAllSites );
 	const analyticsPath = selectedSite ? '/plugins/:plugin/:site' : '/plugins/:plugin';
 	const isLoggedIn = useSelector( isUserLoggedIn );
 	const { localizePath } = useLocalizedPlugins();
@@ -139,7 +138,7 @@ function PluginDetails( props ) {
 	const isWide = useBreakpoint( '>960px' );
 
 	// Determine if the plugin is WPcom or WPorg hosted
-	const productsList = useSelector( ( state ) => getProductsList( state ) );
+	const productsList = useSelector( getProductsList );
 	const isProductListFetched = Object.values( productsList ).length > 0;
 
 	const isMarketplaceProduct = useSelector( ( state ) =>
@@ -397,8 +396,7 @@ function PluginDetails( props ) {
 			/>
 			<PluginDetailsNotices selectedSite={ selectedSite } plugin={ fullPlugin } />
 
-			{ isEnabled( 'marketplace-reviews-show' ) &&
-				userReviews.length === 0 &&
+			{ userReviews.length === 0 &&
 				canPublishReview &&
 				isMarketplaceProduct &&
 				! showPlaceholder && (
@@ -406,7 +404,7 @@ function PluginDetails( props ) {
 						className="plugin-details__reviews-banner"
 						title={ translate( 'Review this plugin!' ) }
 						description={ translate(
-							'Please help other users sharing your experience with this plugin.'
+							'Please help other users by sharing your experience with this plugin.'
 						) }
 						onClick={ () => setIsReviewsModalVisible( true ) }
 						disableHref
@@ -420,6 +418,7 @@ function PluginDetails( props ) {
 							plugin={ fullPlugin }
 							isPlaceholder={ showPlaceholder }
 							onReviewsClick={ () => setIsReviewsModalVisible( true ) }
+							isMarketplaceProduct={ isMarketplaceProduct }
 						/>
 					</div>
 					<div className="plugin-details__content">
@@ -500,7 +499,7 @@ function PluginDetails( props ) {
 					</div>
 				</div>
 			</div>
-			{ isEnabled( 'marketplace-reviews-show' ) && ! showPlaceholder && (
+			{ ! showPlaceholder && (
 				<div className="plugin-details__reviews">
 					<MarketplaceReviewsCards
 						slug={ fullPlugin.slug }

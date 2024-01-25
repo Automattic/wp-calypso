@@ -34,11 +34,11 @@ const DateControlPickerDate = ( {
 			</h2>
 			<div className={ `${ BASE_CLASS_NAME }s__inputs` }>
 				<div className={ `${ BASE_CLASS_NAME }s__inputs-input-group` }>
-					<label htmlFor="startDate">From</label>
+					<label htmlFor="startDate">{ translate( 'From', { context: 'from date' } ) }</label>
 					<DateInput id="startDate" value={ startDate } onChange={ onStartChange } />
 				</div>
 				<div className={ `${ BASE_CLASS_NAME }s__inputs-input-group` }>
-					<label htmlFor="endDate">To</label>
+					<label htmlFor="endDate">{ translate( 'To', { context: 'to date' } ) }</label>
 					<DateInput id="endDate" value={ endDate } onChange={ onEndChange } />
 				</div>
 			</div>

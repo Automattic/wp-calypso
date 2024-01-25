@@ -30,7 +30,7 @@ export default function ViewerDetails( props: Props ) {
 	const dispatch = useDispatch();
 
 	const { userId } = props;
-	const site = useSelector( ( state ) => getSelectedSite( state ) );
+	const site = useSelector( getSelectedSite );
 	const acceptedInvites = useSelector( ( state ) =>
 		getAcceptedInvitesForSite( state, site?.ID as number )
 	);

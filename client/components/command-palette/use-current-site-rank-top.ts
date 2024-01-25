@@ -5,7 +5,7 @@ import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 
 export function useCurrentSiteRankTop() {
 	let currentSiteId = useSelector( getSelectedSiteId );
-	const currentPath = useSelector( ( state ) => getCurrentRoute( state ) );
+	const currentPath = useSelector( getCurrentRoute );
 	const siteFragment = getSiteFragment( currentPath );
 	if ( ! siteFragment ) {
 		currentSiteId = null;

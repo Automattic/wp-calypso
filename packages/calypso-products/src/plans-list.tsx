@@ -444,6 +444,14 @@ import {
 	PRODUCT_JETPACK_CREATOR_BI_YEARLY,
 	PRODUCT_JETPACK_CREATOR_YEARLY,
 	PRODUCT_JETPACK_CREATOR_MONTHLY,
+	FEATURE_SENSEI_SUPPORT,
+	FEATURE_SENSEI_UNLIMITED,
+	FEATURE_SENSEI_INTERACTIVE,
+	FEATURE_SENSEI_QUIZZES,
+	FEATURE_SENSEI_SELL_COURSES,
+	FEATURE_SENSEI_STORAGE,
+	FEATURE_SENSEI_HOSTING,
+	FEATURE_SENSEI_JETPACK,
 } from './constants';
 import type {
 	BillingTerm,
@@ -1517,7 +1525,11 @@ const getPlanPremiumDetails = (): IncompleteWPcomPlan => ( {
 		FEATURE_SHARES_SOCIAL_MEDIA_JP,
 		FEATURE_COMMISSION_FEE_STANDARD_FEATURES,
 	],
-	get2023PlanComparisonJetpackFeatureOverride: () => [ FEATURE_PAYPAL_JP, FEATURE_VIDEOPRESS_JP ],
+	get2023PlanComparisonJetpackFeatureOverride: () => [
+		FEATURE_PAYPAL_JP,
+		FEATURE_VIDEOPRESS_JP,
+		FEATURE_STATS_PAID,
+	],
 	// Features not displayed but used for checking plan abilities
 	getIncludedFeatures: () => [
 		FEATURE_AUDIO_UPLOADS,
@@ -1825,6 +1837,19 @@ const getPlanBusinessDetails = (): IncompleteWPcomPlan => ( {
 			andMore: true,
 		},
 	} ),
+	getSenseiFeatures: ( term ) => () =>
+		compact( [
+			term !== TERM_MONTHLY && FEATURE_CUSTOM_DOMAIN,
+			term !== TERM_MONTHLY && FEATURE_SENSEI_SUPPORT,
+			FEATURE_SENSEI_UNLIMITED,
+			FEATURE_SENSEI_INTERACTIVE,
+			FEATURE_SENSEI_QUIZZES,
+			FEATURE_SENSEI_SELL_COURSES,
+			FEATURE_SENSEI_STORAGE,
+			FEATURE_SENSEI_HOSTING,
+			FEATURE_SENSEI_JETPACK,
+		] ),
+	getSenseiHighlightedFeatures: () => [ FEATURE_CUSTOM_DOMAIN, FEATURE_SENSEI_SUPPORT ],
 } );
 
 const getPlanProDetails = (): IncompleteWPcomPlan => ( {

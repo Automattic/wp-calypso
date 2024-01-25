@@ -61,7 +61,7 @@ export const WordpressImporter: React.FunctionComponent< Props > = ( props ) => 
 	);
 	const isSiteAtomic = useSelector( ( state ) => isSiteAutomatedTransfer( state, siteId ) );
 	const isSiteJetpack = useSelector( ( state ) => isJetpackSite( state, siteId ) );
-	const hasAllSitesFetched = useSelector( ( state ) => hasAllSitesList( state ) );
+	const hasAllSitesFetched = useSelector( hasAllSitesList );
 	const fromSiteAnalyzedData = useSelector( getUrlData );
 	const { setIsMigrateFromWp } = useDispatch( ONBOARD_STORE );
 	const isMigrateFromWp = useSelect(

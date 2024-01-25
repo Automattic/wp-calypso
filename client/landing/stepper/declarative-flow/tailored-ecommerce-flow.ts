@@ -22,14 +22,6 @@ import { USER_STORE, ONBOARD_STORE, SITE_STORE } from '../stores';
 import getQuantityFromStorageType from '../utils/get-quantity-from-storage-slug';
 import { getLoginUrl } from '../utils/path';
 import { recordSubmitStep } from './internals/analytics/record-submit-step';
-import CheckPlan from './internals/steps-repository/check-plan';
-import DesignCarousel from './internals/steps-repository/design-carousel';
-import DomainsStep from './internals/steps-repository/domains';
-import ProcessingStep from './internals/steps-repository/processing-step';
-import SiteCreationStep from './internals/steps-repository/site-creation-step';
-import StoreProfiler from './internals/steps-repository/store-profiler';
-import WaitForAtomic from './internals/steps-repository/wait-for-atomic';
-import WaitForPluginInstall from './internals/steps-repository/wait-for-plugin-install';
 import { AssertConditionState } from './internals/types';
 import type { Flow, ProvidedDependencies, AssertConditionResult } from './internals/types';
 import type {
@@ -67,14 +59,35 @@ const ecommerceFlow: Flow = {
 		}, [] );
 
 		return [
-			{ slug: 'storeProfiler', component: StoreProfiler },
-			{ slug: 'domains', component: DomainsStep },
-			{ slug: 'designCarousel', component: DesignCarousel },
-			{ slug: 'siteCreationStep', component: SiteCreationStep },
-			{ slug: 'processing', component: ProcessingStep },
-			{ slug: 'waitForPluginInstall', component: WaitForPluginInstall },
-			{ slug: 'waitForAtomic', component: WaitForAtomic },
-			{ slug: 'checkPlan', component: CheckPlan },
+			{
+				slug: 'storeProfiler',
+				asyncComponent: () => import( './internals/steps-repository/store-profiler' ),
+			},
+			{ slug: 'domains', asyncComponent: () => import( './internals/steps-repository/domains' ) },
+			{
+				slug: 'designCarousel',
+				asyncComponent: () => import( './internals/steps-repository/design-carousel' ),
+			},
+			{
+				slug: 'siteCreationStep',
+				asyncComponent: () => import( './internals/steps-repository/site-creation-step' ),
+			},
+			{
+				slug: 'processing',
+				asyncComponent: () => import( './internals/steps-repository/processing-step' ),
+			},
+			{
+				slug: 'waitForPluginInstall',
+				asyncComponent: () => import( './internals/steps-repository/wait-for-plugin-install' ),
+			},
+			{
+				slug: 'waitForAtomic',
+				asyncComponent: () => import( './internals/steps-repository/wait-for-atomic' ),
+			},
+			{
+				slug: 'checkPlan',
+				asyncComponent: () => import( './internals/steps-repository/check-plan' ),
+			},
 		];
 	},
 

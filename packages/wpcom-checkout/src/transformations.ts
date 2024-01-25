@@ -1,7 +1,17 @@
+import {
+	isBiennially,
+	isJetpackPlan,
+	isJetpackProduct,
+	isJetpackSocialAdvancedSlug,
+} from '@automattic/calypso-products';
 import { formatCurrency } from '@automattic/format-currency';
-import { translate } from 'i18n-calypso';
+import { translate, useTranslate } from 'i18n-calypso';
 import type { LineItemType } from './types';
-import type { ResponseCart, TaxBreakdownItem } from '@automattic/shopping-cart';
+import type {
+	ResponseCart,
+	ResponseCartProduct,
+	TaxBreakdownItem,
+} from '@automattic/shopping-cart';
 
 export function getTotalLineItemFromCart( cart: ResponseCart ): LineItemType {
 	return {
@@ -116,6 +126,139 @@ export function getCreditsLineItemFromCart( responseCart: ResponseCart ): LineIt
 	};
 }
 
+export interface CostOverrideForDisplay {
+	humanReadableReason: string;
+	overrideCode: string;
+	discountAmount: number;
+}
+
+export function filterAndGroupCostOverridesForDisplay(
+	responseCart: ResponseCart,
+	translate: ReturnType< typeof useTranslate >
+): CostOverrideForDisplay[] {
+	// Collect cost overrides from each line item and group them by type so we
+	// can show them all together after the line item list.
+	const costOverridesGrouped = responseCart.products.reduce<
+		Record< string, CostOverrideForDisplay >
+	>( ( grouped, product ) => {
+		const costOverrides = product?.cost_overrides;
+		if ( ! costOverrides ) {
+			return grouped;
+		}
+
+		const isJetpack = isJetpackProduct( product ) || isJetpackPlan( product );
+		let productDiscountAmountTotal = 0;
+
+		costOverrides.forEach( ( costOverride ) => {
+			if ( costOverride.does_override_original_cost ) {
+				// We won't display original cost overrides since they are
+				// included in the original cost that's being displayed. They
+				// are not discounts.
+				return;
+			}
+
+			// Do not group Sale Coupons because we want to show the name of each item on sale.
+			if ( costOverride.override_code === 'sale-coupon-discount-1' ) {
+				const newDiscountAmount =
+					costOverride.old_subtotal_integer - costOverride.new_subtotal_integer;
+
+				grouped[ costOverride.override_code + '__' + product.uuid ] = {
+					humanReadableReason: translate( 'Sale: %(productName)s', {
+						textOnly: true,
+						args: { productName: product.product_name },
+					} ),
+					overrideCode: costOverride.override_code,
+					discountAmount: newDiscountAmount,
+				};
+				return;
+			}
+
+			const discountAmount = grouped[ costOverride.override_code ]?.discountAmount ?? 0;
+			let newDiscountAmount = costOverride.old_subtotal_integer - costOverride.new_subtotal_integer;
+
+			// Overrides for Jetpack biennial intro offers
+			if ( 'introductory-offer' === costOverride.override_code ) {
+				if ( isJetpackSocialAdvancedSlug( product.product_slug ) ) {
+					// Social Advanced has free trial that we don't consider "introduction offer"
+					return;
+				} else if ( isJetpack && isBiennially( product ) ) {
+					// For all other products, we show introductory discount for yearly variant (the rest is considered multi-year discount)
+					const yearlyVariant = getYearlyVariantFromProduct( product );
+					if ( yearlyVariant ) {
+						newDiscountAmount =
+							yearlyVariant.price_before_discounts_integer - yearlyVariant.price_integer;
+					}
+				}
+			}
+			grouped[ costOverride.override_code ] = {
+				humanReadableReason: costOverride.human_readable_reason,
+				overrideCode: costOverride.override_code,
+				discountAmount: discountAmount + newDiscountAmount,
+			};
+			productDiscountAmountTotal += newDiscountAmount;
+		} );
+
+		// Add a fake cost override for introductory offers until D134600-code
+		// is merged because they are otherwise discounts that are invisible to
+		// the list of cost overrides. Remove this once that diff is merged.
+		if (
+			product.introductory_offer_terms?.enabled &&
+			! costOverrides.some( ( override ) => override.override_code === 'introductory-offer' )
+		) {
+			const discountAmount = grouped[ 'introductory-offer' ]?.discountAmount ?? 0;
+			let newDiscountAmount =
+				product.item_original_subtotal_integer - product.item_subtotal_before_discounts_integer;
+			// Override for Jetpack two-year products: we show introductory discount for yearly variant (the rest is considered multi-year discount)
+			if ( isJetpackSocialAdvancedSlug( product.product_slug ) ) {
+				// Social Advanced has free trial that we don't consider "introduction offer"
+				newDiscountAmount = 0;
+			} else if ( isJetpack && isBiennially( product ) ) {
+				// For all other products, we show introductory discount for yearly variant (the rest is considered multi-year discount)
+				const yearlyVariant = getYearlyVariantFromProduct( product );
+				if ( yearlyVariant ) {
+					newDiscountAmount =
+						yearlyVariant.price_before_discounts_integer - yearlyVariant.price_integer;
+				}
+			}
+			if ( newDiscountAmount > 0 ) {
+				grouped[ 'introductory-offer' ] = {
+					humanReadableReason: translate( 'Introductory offer' ),
+					overrideCode: 'introductory-offer',
+					discountAmount: discountAmount + newDiscountAmount,
+				};
+				productDiscountAmountTotal += newDiscountAmount;
+			}
+		}
+
+		if ( isJetpack && isBiennially( product ) ) {
+			const discountAmount = grouped[ 'multi-year-discount' ]?.discountAmount ?? 0;
+			const yearlyVariant = getYearlyVariantFromProduct( product );
+			const biennialVariant = getBiennialVariantFromProduct( product );
+
+			if ( yearlyVariant && biennialVariant ) {
+				// Coupon is added on top of multi-year discount, so we don't include it in the calculation
+				const discountWithoutCoupon =
+					productDiscountAmountTotal - ( product.coupon_savings_integer ?? 0 );
+				const newDiscountAmount =
+					2 * yearlyVariant.price_before_discounts_integer -
+					discountWithoutCoupon -
+					biennialVariant.price_integer;
+
+				if ( newDiscountAmount > 0 ) {
+					grouped[ 'multi-year-discount' ] = {
+						humanReadableReason: translate( 'Multi-year discount' ),
+						overrideCode: 'multi-year-discount',
+						discountAmount: discountAmount + newDiscountAmount,
+					};
+				}
+			}
+		}
+		return grouped;
+	}, {} );
+
+	return Object.values( costOverridesGrouped );
+}
+
 /**
  * Even though a user might have a number of credits available, that number may
  * be greater than the cart's total. This function returns the number of
@@ -129,27 +272,29 @@ function getCreditsUsedByCart( responseCart: ResponseCart ): number {
 	return isFullCredits ? responseCart.sub_total_with_taxes_integer : responseCart.credits_integer;
 }
 
-/*
- * Coupon discounts are applied (or not, as appropriate) to each line item's
- * total, so the cart's subtotal includes them. However, because it's nice to
- * be able to display the coupon discount as a discount separately from the
- * subtotal, this function returns the cart's subtotal with the coupon savings
- * removed.
- */
-export function getSubtotalWithoutCoupon( responseCart: ResponseCart ): number {
-	return responseCart.sub_total_integer + responseCart.coupon_savings_total_integer;
+function getBiennialVariantFromProduct( product: ResponseCartProduct ) {
+	return product.product_variants.find( ( variant ) => 24 === variant.bill_period_in_months );
 }
 
-/**
- * Credits are the only type of cart discount that is applied to the cart as a
- * whole and not to individual line items. The subtotal is only a subtotal of
- * line items and does not have credits applied. Therefore, if we want to
- * display credits as a discount along with other discounts before the
- * subtotal, we probably want to display the subtotal as having credits already
- * applied, which this function returns.
- */
-export function getSubtotalWithCredits( responseCart: ResponseCart ): number {
-	return responseCart.sub_total_integer - getCreditsUsedByCart( responseCart );
+function getYearlyVariantFromProduct( product: ResponseCartProduct ) {
+	return product.product_variants.find( ( variant ) => 12 === variant.bill_period_in_months );
+}
+
+export function getSubtotalWithoutDiscounts( responseCart: ResponseCart ): number {
+	return responseCart.products.reduce( ( total, product ) => {
+		return total + product.item_original_subtotal_integer;
+	}, 0 );
+}
+
+export function getTotalDiscountsWithoutCredits(
+	responseCart: ResponseCart,
+	translate: ReturnType< typeof useTranslate >
+): number {
+	const filteredOverrides = filterAndGroupCostOverridesForDisplay( responseCart, translate );
+	return -filteredOverrides.reduce( ( total, override ) => {
+		total = total + override.discountAmount;
+		return total;
+	}, 0 );
 }
 
 export function doesPurchaseHaveFullCredits( cart: ResponseCart ): boolean {

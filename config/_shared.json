@@ -163,6 +163,7 @@
 		"jetpack-cloud-auth": false,
 		"jetpack-cloud-partner-portal": false,
 		"jetpack-cloud-pricing": false,
+		"jetpack-cloud-manage-pricing": false,
 		"jetpack-cloud-settings": false,
 		"jetpack-cloud-golden-token": false,
 		"jetpack-social": false

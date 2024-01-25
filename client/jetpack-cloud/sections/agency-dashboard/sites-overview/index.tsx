@@ -1,3 +1,4 @@
+import { isEnabled } from '@automattic/calypso-config';
 import page from '@automattic/calypso-router';
 import { Button, Count } from '@automattic/components';
 import { isWithinBreakpoint } from '@automattic/viewport';
@@ -60,6 +61,8 @@ export default function SitesOverview() {
 
 	const selectedLicenses = useSelector( getSelectedLicenses );
 	const selectedLicensesSiteId = useSelector( getSelectedLicensesSiteId );
+
+	const isStreamlinedPurchasesEnabled = isEnabled( 'jetpack/streamline-license-purchases' );
 
 	const selectedLicensesCount = selectedLicenses?.length;
 
@@ -241,13 +244,21 @@ export default function SitesOverview() {
 						)
 					}
 				>
-					{ translate( 'Issue %(numLicenses)d license', 'Issue %(numLicenses)d licenses', {
-						context: 'button label',
-						count: selectedLicensesCount,
-						args: {
-							numLicenses: selectedLicensesCount,
-						},
-					} ) }
+					{ isStreamlinedPurchasesEnabled
+						? translate( 'Review %(numLicenses)d license', 'Review %(numLicenses)d licenses', {
+								context: 'button label',
+								count: selectedLicensesCount,
+								args: {
+									numLicenses: selectedLicensesCount,
+								},
+						  } )
+						: translate( 'Issue %(numLicenses)d license', 'Issue %(numLicenses)d licenses', {
+								context: 'button label',
+								count: selectedLicensesCount,
+								args: {
+									numLicenses: selectedLicensesCount,
+								},
+						  } ) }
 				</Button>
 			</div>
 		);

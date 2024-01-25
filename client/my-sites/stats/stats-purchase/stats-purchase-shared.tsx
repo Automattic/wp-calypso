@@ -177,11 +177,13 @@ const StatsSingleItemPagePurchaseFrame = ( {
 					<div className={ `${ COMPONENT_CLASS_NAME }__card-inner--right` }>
 						{ useNewPreviewImage && <StatsPurchasePreviewImage /> }
 						{ ! useNewPreviewImage && (
-							<StatsPurchaseSVG isFree={ isFree } hasHighlight={ false } extraMessage={ false } />
+							<>
+								<StatsPurchaseSVG isFree={ isFree } hasHighlight={ false } extraMessage={ false } />
+								<div className={ `${ COMPONENT_CLASS_NAME }__card-inner--right-background` }>
+									<img src={ statsPurchaseBackgroundSVG } alt="Blurred background" />
+								</div>
+							</>
 						) }
-						<div className={ `${ COMPONENT_CLASS_NAME }__card-inner--right-background` }>
-							<img src={ statsPurchaseBackgroundSVG } alt="Blurred background" />
-						</div>
 					</div>
 				</div>
 			</Card>

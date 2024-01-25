@@ -52,7 +52,7 @@ const JetpackUpsellPage: React.FC< Props > = ( {
 		'calypso_jetpack_upsell_page_2022_06'
 	);
 
-	const siteId = useSelector( ( state ) => getSelectedSiteId( state ) );
+	const siteId = useSelector( getSelectedSiteId );
 	const currencyCode = useSelector( getCurrentUserCurrencyCode );
 	const isFetchingPurchases = useSelector( isFetchingSitePurchases );
 	const purchases = useSelector( ( state ) => getSitePurchases( state, siteId ) );

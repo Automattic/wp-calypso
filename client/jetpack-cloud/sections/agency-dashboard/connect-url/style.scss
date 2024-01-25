@@ -1,0 +1,62 @@
+.connect-url__page-title {
+	margin-bottom: 0.5rem;
+}
+
+.connect-url__page-subtitle {
+	margin-bottom: 2rem;
+}
+
+.connect-url__file-picker {
+	display: block;
+	width: 100%;
+	border: 1px dashed #ccc;
+	padding: 2rem 0;
+	margin-bottom: 1rem;
+}
+
+.connect-url__file-picker-text {
+	display: block;
+	width: 100%;
+	text-align: center;
+}
+
+.connect-url__form-instruction {
+	font-size: 0.875rem;
+	color: var(--color-accent-40);
+	margin-bottom: 1.5rem;
+	font-style: italic;
+}
+
+.connect-url__file-picker .form-label,
+.connect-url__file-picker-url-count {
+	text-align: center;
+	margin-bottom: 0;
+}
+
+.connect-url__file-picker-url-count {
+	font-size: 0.75rem;
+}
+
+.connect-url__validate-sites-spinner {
+	margin-right: 1rem;
+	margin-bottom: 1rem;
+}
+
+.connect-url__validate-sites-spinner-animation {
+	transform-origin: center;
+	animation: spinner 0.6s linear infinite;
+}
+
+@keyframes spinner {
+	100% {
+		transform: rotate(360deg);
+	}
+}
+
+.connect-url__validate-sites-quantity {
+	margin-bottom: 1rem;
+}
+
+.connect-url__validate-sites-row {
+	display: flex;
+}

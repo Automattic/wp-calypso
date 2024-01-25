@@ -33,7 +33,7 @@ function TeamInvite( props: Props ) {
 	const siteId = site.ID;
 	const [ hasPermission, setHasPermission ] = useState( false );
 	const isJetpack = useSelector( ( state ) => isJetpackSite( state, siteId ) );
-	const needsVerification = useSelector( ( state ) => isCurrentUserEmailVerified( state ) );
+	const needsVerification = useSelector( isCurrentUserEmailVerified );
 	const isSiteForTeams = useSelector( ( state ) => isSiteWPForTeams( state, siteId ) );
 	const showSSONotice = useSsoNotice( siteId );
 

@@ -66,7 +66,7 @@ const LicensingActivationThankYou: FC< Props > = ( {
 		hasProductInfo ? getProductName( state, productSlug ) : null
 	);
 	const productsList: ProductsList = useSelector( getProductsList );
-	const isProductListFetching = useSelector( ( state ) => getIsProductListFetching( state ) );
+	const isProductListFetching = useSelector( getIsProductListFetching );
 	const userName = useSelector( getCurrentUserName );
 	const jetpackSites = useSelector( getJetpackSites ) as JetpackSite[];
 

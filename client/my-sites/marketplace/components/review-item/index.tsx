@@ -17,6 +17,7 @@ import {
 	EMPTY_PLACEHOLDER,
 } from 'calypso/data/marketplace/use-marketplace-reviews';
 import { getAvatarURL } from 'calypso/data/marketplace/utils';
+import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { sanitizeSectionContent } from 'calypso/lib/plugins/sanitize-section-content';
 import { getCurrentUserId } from 'calypso/state/current-user/selectors';
 import './style.scss';
@@ -71,6 +72,12 @@ export const MarketplaceReviewItem = ( props: MarketplaceReviewItemProps ) => {
 
 	const updateReviewMutation = useUpdateMarketplaceReviewMutation( { ...props } );
 	const updateReview = ( reviewId: number ) => {
+		recordTracksEvent( 'calypso_marketplace_reviews_update_submit', {
+			product_type: props.productType,
+			slug: props.slug,
+			rating: Number( editorRating ),
+		} );
+
 		updateReviewMutation.mutate(
 			{
 				reviewId: reviewId,
