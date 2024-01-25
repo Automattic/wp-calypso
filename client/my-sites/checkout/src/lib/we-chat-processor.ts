@@ -11,6 +11,7 @@ import { recordTransactionBeginAnalytics } from '../lib/analytics';
 import getDomainDetails from '../lib/get-domain-details';
 import getPostalCode from '../lib/get-postal-code';
 import prepareRedirectTransaction from '../lib/prepare-redirect-transaction';
+import { addUrlToPendingPageRedirect } from './pending-page';
 import submitWpcomTransaction from './submit-wpcom-transaction';
 import { WeChatConfirmation } from './we-chat-confirmation';
 import type { PaymentProcessorOptions } from '../types/payment-processors';
@@ -53,12 +54,11 @@ export default async function weChatProcessor(
 		typeof window !== 'undefined' ? window.location.href : 'https://wordpress.com'
 	);
 
-	const redirectToSuccessUrl = new URL( baseURL );
-	redirectToSuccessUrl.pathname = getThankYouUrl();
-
-	const successUrl = new URL( baseURL );
-	successUrl.pathname = `/checkout/thank-you/${ siteSlug || 'no-site' }/pending`;
-	successUrl.searchParams.set( 'redirectTo', redirectToSuccessUrl.toString() );
+	const thankYouUrl = getThankYouUrl() || 'https://wordpress.com';
+	const successUrl = addUrlToPendingPageRedirect( thankYouUrl, {
+		siteSlug,
+		urlType: 'absolute',
+	} );
 
 	// Clear all query params from the base URL:
 	const cancelUrl = new URL( baseURL );
