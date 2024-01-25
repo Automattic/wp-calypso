@@ -198,6 +198,7 @@ export class CommentList extends Component {
 							<Comment
 								commentId={ commentId }
 								commentsListQuery={ commentsListQuery }
+								filterUnreplied={ filterUnreplied }
 								isBulkMode={ isBulkMode }
 								isPostView={ isPostView }
 								isSelected={ this.isCommentSelected( commentId ) }

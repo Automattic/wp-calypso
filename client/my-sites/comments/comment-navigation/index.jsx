@@ -380,7 +380,7 @@ export class CommentNavigation extends Component {
 											checked={ filterUnreplied }
 											onChange={ setFilterUnreplied( ! filterUnreplied ) }
 										/>
-										<span>{ translate( 'Only display unreplied comments' ) }</span>
+										<span>{ translate( 'Collapse replied comments' ) }</span>
 									</FormLabel>
 								</FormFieldset>
 							</Popover>
