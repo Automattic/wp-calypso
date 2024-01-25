@@ -21,8 +21,8 @@ import {
 	isFetchingStoredCards,
 	hasMoreStoredCards,
 } from 'calypso/state/partner-portal/stored-cards/selectors';
-import PartnerPortalSidebarNavigation from '../sidebar-navigation';
-import StoredCreditCardV2 from '../stored-credit-card-v2';
+import PartnerPortalSidebarNavigation from '../../sidebar-navigation';
+import StoredCreditCardV2 from '../../stored-credit-card-v2';
 import EmptyState from './empty-state';
 import LoadingState from './loading-state';
 import type { PaymentMethod } from 'calypso/jetpack-cloud/sections/partner-portal/payment-methods';
