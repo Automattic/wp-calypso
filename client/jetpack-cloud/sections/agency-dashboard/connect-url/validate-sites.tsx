@@ -6,7 +6,7 @@ export default function ValidateSites( { detectedSites }: { detectedSites: strin
 	const translate = useTranslate();
 
 	const domainList = detectedSites.map( ( site: string ) => (
-		<div className="connect-url__validate-sites-row">
+		<div className="connect-url__validate-sites-row" key={ site }>
 			<Spinner />
 			<div>{ site }</div>
 		</div>
