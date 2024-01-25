@@ -29,6 +29,8 @@ $button-padding: 8px 32px;
 		}
 
 		.stats-purchase-single__personal-checklist {
+			margin-bottom: 24px;
+
 			.components-checkbox-control__input[type="checkbox"] {
 				&:checked {
 					background-color: var(--studio-jetpack-green-50);
