@@ -20,11 +20,32 @@ import {
 	PurchasesPage,
 	ThemesDetailPage,
 	ThemesPage,
+	envVariables,
 } from '@automattic/calypso-e2e';
 import { Page, Browser } from 'playwright';
 import { apiCloseAccount, getNewPlanName } from '../shared';
 
 declare const browser: Browser;
+
+/**
+ * Returns the Calypso URL for the given route and query strings.
+ *
+ * Workaround. This should be removed once we remove the workaround for theme tiers.
+ *
+ * @param route
+ * @param queryStrings
+ */
+function getCalypsoURL( route = '', queryStrings: { [ key: string ]: string } = {} ): string {
+	const base = envVariables.CALYPSO_BASE_URL;
+
+	const url = new URL( route, base );
+
+	Object.entries( queryStrings ).forEach( ( [ key, value ] ) =>
+		url.searchParams.append( key, value )
+	);
+
+	return url.toString();
+}
 
 /**
  * Checks the entire with theme user lifecycle, from signup, onboarding, launch and plan cancellation.
@@ -34,6 +55,7 @@ declare const browser: Browser;
 describe( 'Lifecyle: Premium theme signup, onboard, launch and cancel subscription', function () {
 	const planName = 'Premium';
 	const newPlanName = getNewPlanName( planName );
+	const configuredThemeSlug = 'annalee';
 	let themeSlug: string | null = null;
 
 	const testUser = DataHelper.getNewTestUser( {
@@ -62,12 +84,20 @@ describe( 'Lifecyle: Premium theme signup, onboard, launch and cancel subscripti
 		} );
 
 		it( 'Selects a Premium theme', async function () {
-			await page
-				.locator(
-					'div.theme-card:has(div.premium-badge):not(div.theme-card:has(div.is-marketplace))'
-				)
-				.first()
-				.click();
+			const targetUrl = `theme/${ configuredThemeSlug }`;
+
+			/**
+			 * Interim solution for the theme tiers implementation.
+			 *
+			 * This is a workaround for the fact that the theme tiers implementation changes the theme badge UI.
+			 */
+			await page.route( '**/cspreport', ( route ) => {
+				route.fulfill( {
+					status: 200,
+				} );
+			} );
+
+			await page.goto( getCalypsoURL( targetUrl ) );
 		} );
 
 		it( 'Navigate to Signup page', async function () {
