@@ -3,6 +3,7 @@
  */
 
 import page from '@automattic/calypso-router';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { render } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { ReactElement } from 'react';
@@ -14,10 +15,18 @@ jest.mock( '@automattic/calypso-router', () => ( {
 	redirect: jest.fn(),
 } ) );
 
-function renderWithStore( element: ReactElement, initialState: Record< string, unknown > ) {
+function renderWithStoreAndQueryClient(
+	element: ReactElement,
+	initialState: Record< string, unknown >
+) {
 	const store = createStore( ( state ) => state, initialState );
+	const queryClient = new QueryClient();
 	return {
-		...render( <Provider store={ store }>{ element }</Provider> ),
+		...render(
+			<Provider store={ store }>
+				<QueryClientProvider client={ queryClient }>{ element }</QueryClientProvider>
+			</Provider>
+		),
 		store,
 	};
 }
@@ -41,7 +50,17 @@ function createState( {
 				},
 			},
 		},
-		sites: { items: { [ siteId ]: { URL: siteUrl } } },
+		sites: {
+			items: {
+				[ siteId ]: {
+					URL: siteUrl,
+					plan: {
+						product_slug: 'free_plan',
+					},
+				},
+			},
+			plans: { [ siteId ]: { data: {} } },
+		},
 		ui: { selectedSiteId: siteId },
 		siteSettings: {
 			saveRequests: {},
@@ -60,7 +79,7 @@ describe( '<EligibilityWarnings>', () => {
 			holds: [ 'BLOCKED_ATOMIC_TRANSFER' ],
 		} );
 
-		const { container } = renderWithStore(
+		const { container } = renderWithStoreAndQueryClient(
 			<EligibilityWarnings backUrl="" onProceed={ noop } />,
 			state
 		);
@@ -76,7 +95,7 @@ describe( '<EligibilityWarnings>', () => {
 			holds: [ 'BLOCKED_ATOMIC_TRANSFER', 'SITE_GRAYLISTED' ],
 		} );
 
-		const { container } = renderWithStore(
+		const { container } = renderWithStoreAndQueryClient(
 			<EligibilityWarnings backUrl="" onProceed={ noop } />,
 			state
 		);
@@ -89,7 +108,7 @@ describe( '<EligibilityWarnings>', () => {
 			holds: [ 'BLOCKED_ATOMIC_TRANSFER', 'SITE_PRIVATE' ],
 		} );
 
-		const { getByTestId, getByText } = renderWithStore(
+		const { getByTestId, getByText } = renderWithStoreAndQueryClient(
 			<EligibilityWarnings backUrl="" onProceed={ noop } />,
 			state
 		);
@@ -111,7 +130,7 @@ describe( '<EligibilityWarnings>', () => {
 			],
 		} );
 
-		const { getByText } = renderWithStore(
+		const { getByText } = renderWithStoreAndQueryClient(
 			<EligibilityWarnings backUrl="" onProceed={ noop } />,
 			state
 		);
@@ -135,7 +154,7 @@ describe( '<EligibilityWarnings>', () => {
 			],
 		} );
 
-		const { container } = renderWithStore(
+		const { container } = renderWithStoreAndQueryClient(
 			<EligibilityWarnings backUrl="" onProceed={ noop } />,
 			state
 		);
@@ -151,7 +170,7 @@ describe( '<EligibilityWarnings>', () => {
 
 		const handleProceed = jest.fn();
 
-		const { getByText } = renderWithStore(
+		const { getByText } = renderWithStoreAndQueryClient(
 			<EligibilityWarnings backUrl="" onProceed={ handleProceed } />,
 			state
 		);
@@ -176,7 +195,7 @@ describe( '<EligibilityWarnings>', () => {
 
 		const handleProceed = jest.fn();
 
-		const { getByText } = renderWithStore(
+		const { getByText } = renderWithStoreAndQueryClient(
 			<EligibilityWarnings backUrl="" onProceed={ handleProceed } />,
 			state
 		);
