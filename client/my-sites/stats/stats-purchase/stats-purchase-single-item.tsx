@@ -129,6 +129,8 @@ const StatsCommercialPurchase = ( {
 		? translate( 'Upgrade and continue' )
 		: translate( 'Purchase' );
 
+	// TODO: Remove isTierUpgradeSliderEnabled code paths.
+
 	return (
 		<>
 			<h1>{ pageTitle }</h1>
@@ -349,6 +351,7 @@ Thanks\n\n`;
 		return ! isAdsChecked || ! isSellingChecked || ! isBusinessChecked || ! isDonationChecked;
 	};
 
+	// Message, button text, and handler differ based on isCommercial flag.
 	const formMessage = isCommercial
 		? translate(
 				'If you think we misidentified your site as commercial, confirm the information below and we’ll take a look.'
