@@ -74,6 +74,11 @@ interface StatsPersonalPurchaseProps {
 	disableFreeProduct: boolean;
 }
 
+interface StatsCommercialFlowOptOutFormProps {
+	siteSlug: string;
+	isCommercial: boolean | null;
+}
+
 const COMPONENT_CLASS_NAME = 'stats-purchase-single';
 const FLAGS_CHECKOUT_FLOWS_V2 = 'stats/checkout-flows-v2';
 
@@ -309,7 +314,10 @@ const StatsSingleItemPagePurchase = ( {
 	);
 };
 
-function StatsCommercialFlowOptOutForm( { isCommercial, siteSlug } ) {
+function StatsCommercialFlowOptOutForm( {
+	isCommercial,
+	siteSlug,
+}: StatsCommercialFlowOptOutFormProps ) {
 	const translate = useTranslate();
 	const isOdysseyStats = config.isEnabled( 'is_running_in_jetpack_site' );
 
