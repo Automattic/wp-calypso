@@ -8,6 +8,14 @@
 	color: var(--studio-jetpack-green-50);
 	text-wrap: nowrap;
 }
+
+.jetpack-product-store__most-popular--heading {
+	margin-bottom: 0.5rem !important;
+}
+
+.jetpack-product-store__most-popular--subheading {
+	color: var(--studio-gray-50);
+}
 .featured-item-card .multiple-choice-question {
 	margin-block-start: 16px;
 	margin-block-end: 0;

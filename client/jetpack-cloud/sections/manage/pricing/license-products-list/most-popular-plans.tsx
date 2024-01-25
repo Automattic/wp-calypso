@@ -7,6 +7,7 @@ import 'calypso/my-sites/plans/jetpack-plans/product-store/items-list/style-most
 type MostPopularPlansProps = {
 	className?: string;
 	heading: string;
+	subHeading?: string;
 	items: APIProductFamilyProduct[];
 	bundleSize?: number;
 };
@@ -14,6 +15,7 @@ type MostPopularPlansProps = {
 export const MostPopularPlans = ( {
 	className,
 	heading,
+	subHeading,
 	items,
 	bundleSize,
 }: MostPopularPlansProps ) => {
@@ -22,6 +24,7 @@ export const MostPopularPlans = ( {
 	return (
 		<div className={ wrapperClassName }>
 			<h2 className="jetpack-product-store__most-popular--heading">{ heading }</h2>
+			<div className="jetpack-product-store__most-popular--subheading">{ subHeading }</div>
 			<ul className="jetpack-product-store__most-popular--items">
 				{ items.map( ( item, idx ) => {
 					let isMultiChoiceItem = false;
