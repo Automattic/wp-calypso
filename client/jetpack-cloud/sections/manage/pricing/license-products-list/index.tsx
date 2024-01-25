@@ -1,5 +1,5 @@
 import { useTranslate } from 'i18n-calypso';
-import useProductAndPlans from 'calypso/jetpack-cloud/sections/partner-portal/issue-license-v2/licenses-form/hooks/use-product-and-plans';
+import useProductAndPlans from 'calypso/jetpack-cloud/sections/partner-portal/primary/issue-license/licenses-form/hooks/use-product-and-plans';
 import { AllLicenseItems } from './all-license-items';
 import { MostPopularPlans } from './most-popular-plans';
 
