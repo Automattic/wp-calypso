@@ -143,7 +143,7 @@ function PaymentMethodForm() {
 			if (
 				transactionError &&
 				( transactionError.toLowerCase().includes( 'cvc' ) ||
-					transactionError.toLowerCase().includes( 'code' ) )
+					transactionError.toLowerCase().includes( 'security code' ) )
 			) {
 				transactionError = translate(
 					'Your payment method cvc code or expiration date is invalid.'
