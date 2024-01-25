@@ -1,4 +1,3 @@
-import { isEnabled } from '@automattic/calypso-config';
 import { Button, Card, Dialog, FormInputValidation } from '@automattic/components';
 import { supported } from '@github/webauthn-json';
 import debugFactory from 'debug';
@@ -263,9 +262,7 @@ class ReauthRequired extends Component {
 	}
 
 	renderDialog() {
-		const enhancedSecurity =
-			this.props.twoStepAuthorization.data?.two_step_enhanced_security &&
-			isEnabled( 'two-factor/enhanced-security' );
+		const enhancedSecurity = this.props.twoStepAuthorization.data?.two_step_enhanced_security;
 		const method = this.props.twoStepAuthorization.isTwoStepSMSEnabled() ? 'sms' : 'authenticator';
 		const isSecurityKeySupported =
 			this.props.twoStepAuthorization.isSecurityKeyEnabled() && supported();
