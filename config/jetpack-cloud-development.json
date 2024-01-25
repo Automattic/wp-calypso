@@ -62,6 +62,7 @@
 		"jetpack/simplify-pricing-structure": false,
 		"jetpack/standalone-plugin-onboarding-update-v1": true,
 		"jetpack/url-only-connection": true,
+		"jetpack/streamline-license-purchases": false,
 		"layout/app-banner": false,
 		"layout/guided-tours": false,
 		"layout/query-selected-editor": false,
