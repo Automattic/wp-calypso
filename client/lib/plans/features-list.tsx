@@ -313,7 +313,7 @@ import {
 	WPCOM_FEATURES_PREMIUM_THEMES_LIMITED,
 	WPCOM_FEATURES_PREMIUM_THEMES_UNLIMITED,
 } from '@automattic/calypso-products';
-import { localizeUrl } from '@automattic/i18n-utils';
+import { englishLocales, localizeUrl } from '@automattic/i18n-utils';
 import i18n from 'i18n-calypso';
 import SupportIcon from 'calypso/assets/images/onboarding/support.svg';
 import Theme2Image from 'calypso/assets/images/onboarding/theme-2.jpg';
@@ -529,7 +529,7 @@ export const FEATURES_LIST: FeatureList = {
 			const localeSlug = i18n.getLocaleSlug();
 			const shouldShowInPersonalPlan =
 				config.isEnabled( 'themes/tiers' ) &&
-				( ( localeSlug && config< string >( 'english_locales' ).includes( localeSlug ) ) ||
+				( ( localeSlug && englishLocales.includes( localeSlug ) ) ||
 					i18n.hasTranslation( 'Dozens of premium themes' ) );
 			if ( shouldShowInPersonalPlan && isPersonalPlan( planSlug ) ) {
 				return i18n.translate( 'Dozens of premium themes' );
@@ -551,7 +551,7 @@ export const FEATURES_LIST: FeatureList = {
 		getDescription: () => {
 			const localeSlug = i18n.getLocaleSlug();
 			const shouldShowNewString =
-				( localeSlug && config< string >( 'english_locales' ).includes( localeSlug ) ) ||
+				( localeSlug && englishLocales.includes( localeSlug ) ) ||
 				i18n.hasTranslation( 'Switch between all of our premium design themes.' );
 			return shouldShowNewString
 				? i18n.translate( 'Switch between all of our premium design themes.' )
@@ -1569,7 +1569,7 @@ export const FEATURES_LIST: FeatureList = {
 		getDescription: () => {
 			const localeSlug = i18n.getLocaleSlug();
 			const hasTranslation =
-				( localeSlug && config< string >( 'english_locales' ).includes( localeSlug ) ) ||
+				( localeSlug && englishLocales.includes( localeSlug ) ) ||
 				i18n.hasTranslation(
 					'A set of developer tools that give you more control over your site, simplify debugging, and make it easier to integrate with each step of your workflow.'
 				);
@@ -2308,7 +2308,7 @@ export const FEATURES_LIST: FeatureList = {
 		getTitle: () => {
 			const localeSlug = i18n.getLocaleSlug();
 			const shouldShowNewString =
-				( localeSlug && config< string >( 'english_locales' ).includes( localeSlug ) ) ||
+				( localeSlug && englishLocales.includes( localeSlug ) ) ||
 				i18n.hasTranslation( 'Paid content gating' );
 
 			return shouldShowNewString
