@@ -9,7 +9,7 @@ export const HintIncompatiblePlugins = () => {
 			<ol>
 				<li>
 					{ translate(
-						'Please ensure that you have deactivated all incompatible plugins on the source site. ',
+						'Please ensure that you have deactivated all {{a}}incompatible plugins{{/a}} on the source site. ',
 						{
 							components: {
 								a: (
