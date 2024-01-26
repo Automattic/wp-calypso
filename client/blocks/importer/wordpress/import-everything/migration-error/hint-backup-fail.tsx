@@ -10,10 +10,14 @@ export const HintBackupFail = ( props: Props ) => {
 
 	return (
 		<div className="migration-error--hint">
-			<p>{ translate( 'Your source site is inaccessible:' ) }</p>
+			<p>
+				{ translate(
+					'Looks like your source site is currently inaccessible. Here are a few things you can try to make sure it’s ready for the migration:'
+				) }
+			</p>
 			<ol>
 				<li>
-					{ translate( 'Visit your {{a}}source site{{/a}} and make sure you can access it.', {
+					{ translate( 'Visit your {{a}}source site{{/a}} to make sure it’s up and running.', {
 						components: {
 							a: <a href={ `${ sourceSiteUrl }/wp-admin` } target="_blank" rel="noreferrer" />,
 						},
@@ -21,7 +25,7 @@ export const HintBackupFail = ( props: Props ) => {
 				</li>
 				<li>
 					{ translate(
-						"Ensure that your Jetpack connection is functioning properly. To verify this, go to {{a}}My Jetpack{{/a}} and inspect the 'Connection' area. Confirm that both site and user show a “connected” status. Note that the user account should be the same on both the source and destination sites.",
+						"Check that your Jetpack connection is working properly by heading to the 'Connection' options in your {{a}}My Jetpack{{/a}} menu. You’ll want to make sure that both site and user show a ‘connected’ status and that the user account is the same for both the source and destination sites.",
 						{
 							components: {
 								a: (
@@ -37,7 +41,7 @@ export const HintBackupFail = ( props: Props ) => {
 				</li>
 				<li>
 					{ translate(
-						"If you still can't establish a Jetpack connection, please follow the {{a}}instructions{{/a}} to fix this issue and try again.",
+						'If you still can’t establish a Jetpack connection, please follow {{a}}these instructions{{/a}}.',
 						{
 							components: {
 								a: (
@@ -55,7 +59,7 @@ export const HintBackupFail = ( props: Props ) => {
 				</li>
 				<li>
 					{ translate(
-						'Once you can access the source site, check the {{a}}plugin page{{/a}} for any CDN-related plugins.',
+						"Once you can access the source site, check the {{a}}plugins admin page{{/a}} for any CDN-related plugins. If you have any active, deactivate them in your WordPress dashboard, or disable the CDN from the service provider’s control panel. Then, click 'Try again' to restart the migration.",
 						{
 							components: {
 								a: (
@@ -70,14 +74,7 @@ export const HintBackupFail = ( props: Props ) => {
 					) }
 				</li>
 				<li>
-					{ translate(
-						"Deactivate the CDN-related plugins in your WordPress dashboard, or disable the CDN from the service provider's control panel."
-					) }
-				</li>
-				<li>
-					{ translate(
-						'Click "Try again" to restart the migration. If the problem persists, please reach out to our support team.'
-					) }
+					{ translate( 'If the problem persists, feel free to reach out to our support team.' ) }
 				</li>
 			</ol>
 		</div>
