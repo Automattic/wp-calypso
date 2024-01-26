@@ -108,10 +108,26 @@ export default function useErrorDetails(
 				setTitle( titleA );
 				setSubTitle(
 					translate(
-						'A migration from the source or destination site is still in progress and we can’t start a new one. Please, wait until the migration is finished and try again.'
+						'Looks like there’s already an active migration happening with either the {{linkA}}source{{/linkA}} or {{linkB}}destination{{/linkB}} site.{{br}}{{/br}}You’ll be able to try again once the process is completed. You can always reach out to support if you have questions.',
+						{
+							components: {
+								br: createElement( 'br' ),
+								linkA: createElement( 'a', {
+									href: `${ sourceSiteUrl }/wp-admin/users.php`,
+									target: '_blank',
+									rel: 'noreferrer',
+								} ),
+								linkB: createElement( 'a', {
+									href: `${ targetSiteUrl }/wp-admin/users.php`,
+									target: '_blank',
+									rel: 'noreferrer',
+								} ),
+							},
+						}
 					)
 				);
 				showTryAgainCta( true );
+				showGetHelpCta( true );
 				break;
 
 			case MigrationStatusError.BACKUP_QUEUEING:
