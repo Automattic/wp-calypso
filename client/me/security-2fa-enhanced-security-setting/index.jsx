@@ -8,7 +8,7 @@ import SectionHeader from 'calypso/components/section-header';
 import getUserSettings from 'calypso/state/selectors/get-user-settings';
 import { saveUserSettings, setUserSetting } from 'calypso/state/user-settings/actions';
 import { isFetchingUserSettings } from 'calypso/state/user-settings/selectors';
-import { recordGoogleEvent } from '../../state/analytics/actions';
+import { recordGoogleEvent } from 'calypso/state/analytics/actions';
 
 const Security2faEnhancedSecuritySetting = ( {
 	userSettings,
@@ -20,9 +20,6 @@ const Security2faEnhancedSecuritySetting = ( {
 	const toggleSetting = ( settingValue ) => {
 		setSetting( 'two_step_enhanced_security', settingValue );
 	};
-	const onFormChange = () => {
-		saveSettings();
-	};
 
 	if ( ! userSettings.two_step_security_key_enabled ) {
 		return null;
@@ -31,7 +28,7 @@ const Security2faEnhancedSecuritySetting = ( {
 		<div className="security-2fa-enhanced-security-setting">
 			<SectionHeader label={ translate( 'Settings' ) }></SectionHeader>
 			<Card>
-				<form onChange={ onFormChange }>
+				<form onChange={ saveSettings }>
 					<FormFieldset>
 						<FormLabel>{ translate( 'Enhanced account security' ) }</FormLabel>
 						<ToggleControl
