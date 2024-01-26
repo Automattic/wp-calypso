@@ -22,6 +22,7 @@ exports[`Theme rendering with default display buttonContents should match snapsh
           Info
         </div>
         <img
+          alt=""
           class="theme__img"
           src="https://i0.wp.com/s0.wp.com/wp-content/themes/pub/twentyseventeen/screenshot.png?fit=479%2C360"
           srcset="https://i0.wp.com/s0.wp.com/wp-content/themes/pub/twentyseventeen/screenshot.png?fit=479%2C360&zoom=2 2x"
@@ -39,6 +40,7 @@ exports[`Theme rendering with default display buttonContents should match snapsh
         </span>
       </h2>
       <components--theme-type-badge
+        islockedstylevariation="false"
         themeid="twentyseventeen"
       />
       <div

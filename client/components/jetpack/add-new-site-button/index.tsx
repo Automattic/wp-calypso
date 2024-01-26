@@ -54,7 +54,7 @@ const AddNewSiteButton = ( {
 			</PopoverMenuItem>
 
 			{ isEnabled( 'jetpack/url-only-connection' ) && (
-				<PopoverMenuItem onClick={ onClickUrlMenuItem } href="/manage/connect-url">
+				<PopoverMenuItem onClick={ onClickUrlMenuItem } href="/dashboard/connect-url">
 					<Gridicon icon="domains" size={ 18 } />
 					<span>{ translate( 'Add sites by URL' ) }</span>
 				</PopoverMenuItem>

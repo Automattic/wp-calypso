@@ -369,7 +369,6 @@ export default function CheckoutMain( {
 		stripeConfiguration,
 		stripe,
 		storedCards,
-		siteSlug: updatedSiteSlug,
 	} );
 	debug( 'created payment method objects', paymentMethodObjects );
 
@@ -496,7 +495,8 @@ export default function CheckoutMain( {
 				genericRedirectProcessor( 'bancontact', transactionData, dataForProcessor ),
 			giropay: ( transactionData: unknown ) =>
 				genericRedirectProcessor( 'giropay', transactionData, dataForProcessor ),
-			wechat: ( transactionData: unknown ) => weChatProcessor( transactionData, dataForProcessor ),
+			wechat: ( transactionData: unknown ) =>
+				weChatProcessor( transactionData, dataForProcessor, translate ),
 			netbanking: ( transactionData: unknown ) =>
 				genericRedirectProcessor( 'netbanking', transactionData, dataForProcessor ),
 			ideal: ( transactionData: unknown ) =>
