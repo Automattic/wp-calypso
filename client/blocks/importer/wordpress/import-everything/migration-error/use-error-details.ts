@@ -16,6 +16,7 @@ export default function useErrorDetails(
 	const [ goBackCta, showGoBackCta ] = useState( false );
 	const [ getHelpCta, showGetHelpCta ] = useState( false );
 	const [ tryAgainCta, showTryAgainCta ] = useState( false );
+	const [ importContentCta, showImportContentCta ] = useState( false );
 
 	const titleA = translate( 'We ran into a problem migrating your site' );
 	const titleB = translate( "You're one step ahead" );
@@ -42,13 +43,11 @@ export default function useErrorDetails(
 				setTitle( titleA );
 				setSubTitle(
 					translate(
-						'Currently, our migration process doesn\'t support multisite WordPress installations.{{br}}{{/br}} As an alternative, please consider using the "Content only" import option.',
-						{
-							components: { br: createElement( 'br' ) },
-						}
+						"Looks like you might have tried to import a multisite WordPress installation, which isn’t currently supported. You could try using the 'Content only' import option instead or reach out for assistance."
 					)
 				);
-				showGoBackCta( true );
+				showImportContentCta( true );
+				showGetHelpCta( true );
 				break;
 
 			case MigrationStatusError.SOURCE_SITE_IS_ATOMIC:
@@ -147,5 +146,5 @@ export default function useErrorDetails(
 		handleDetails();
 	}, [ handleDetails ] );
 
-	return { title, subTitle, hintId, goBackCta, getHelpCta, tryAgainCta };
+	return { title, subTitle, hintId, goBackCta, getHelpCta, tryAgainCta, importContentCta };
 }

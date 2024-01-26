@@ -232,11 +232,12 @@ export class ImportEverything extends SectionMigrate {
 			<div className="import-layout__center">
 				<div>
 					<MigrationError
-						sourceSiteUrl={ this.props.sourceSite.URL }
+						sourceSiteUrl={ this.props.sourceSite?.URL }
 						targetSiteUrl={ this.props.targetSite.URL }
 						status={ status || this.state.migrationErrorStatus }
 						resetMigration={ this.resetMigration }
 						goToImportCapturePage={ () => stepNavigator?.goToImportCapturePage?.() }
+						goToImportContentOnlyPage={ () => stepNavigator?.goToImportContentOnlyPage?.() }
 					/>
 				</div>
 			</div>

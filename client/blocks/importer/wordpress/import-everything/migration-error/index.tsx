@@ -20,21 +20,26 @@ interface Props {
 	status: MigrationStatusError | null;
 	resetMigration: () => void;
 	goToImportCapturePage: () => void;
+	goToImportContentOnlyPage: () => void;
 }
 export const MigrationError = ( props: Props ) => {
 	const { setShowHelpCenter, setInitialRoute } = useDataStoreDispatch( HELP_CENTER_STORE );
-	const { sourceSiteUrl, targetSiteUrl, status, resetMigration, goToImportCapturePage } = props;
+	const {
+		sourceSiteUrl,
+		targetSiteUrl,
+		status,
+		resetMigration,
+		goToImportCapturePage,
+		goToImportContentOnlyPage,
+	} = props;
 	const translate = useTranslate();
 	const { isChatAvailable, isEligibleForChat, canConnectToZendesk } = useChatStatus();
 	const { openChatWidget, isOpeningChatWidget } = useChatWidget(
 		'zendesk_support_chat_key',
 		isEligibleForChat
 	);
-	const { title, subTitle, hintId, goBackCta, getHelpCta, tryAgainCta } = useErrorDetails(
-		status,
-		sourceSiteUrl,
-		targetSiteUrl
-	);
+	const { title, subTitle, hintId, goBackCta, getHelpCta, tryAgainCta, importContentCta } =
+		useErrorDetails( status, sourceSiteUrl, targetSiteUrl );
 
 	const getHelp = useCallback( () => {
 		if ( isChatAvailable && canConnectToZendesk ) {
@@ -72,8 +77,13 @@ export const MigrationError = ( props: Props ) => {
 				<HintAdministratorRole sourceSiteUrl={ sourceSiteUrl } targetSiteUrl={ targetSiteUrl } />
 			) }
 
-			{ ( goBackCta || tryAgainCta || getHelpCta ) && (
+			{ ( goBackCta || tryAgainCta || getHelpCta || importContentCta ) && (
 				<div className="import__buttons-group">
+					{ importContentCta && (
+						<NextButton onClick={ goToImportContentOnlyPage }>
+							{ translate( 'Start a ‘Content only’ import' ) }
+						</NextButton>
+					) }
 					{ goBackCta && (
 						<NextButton onClick={ goToImportCapturePage }>{ translate( 'Go back' ) }</NextButton>
 					) }
@@ -83,7 +93,7 @@ export const MigrationError = ( props: Props ) => {
 					{ getHelpCta && (
 						<NextButton
 							onClick={ getHelp }
-							variant={ goBackCta || tryAgainCta ? 'secondary' : 'primary' }
+							variant={ goBackCta || tryAgainCta || importContentCta ? 'secondary' : 'primary' }
 							isBusy={ isOpeningChatWidget }
 						>
 							{ translate( 'Contact support' ) }
