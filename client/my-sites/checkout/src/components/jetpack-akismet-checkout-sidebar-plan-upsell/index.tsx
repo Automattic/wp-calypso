@@ -1,9 +1,4 @@
-import {
-	isAkismetProduct,
-	isJetpackPlan,
-	isJetpackProduct,
-	isJetpackSocialAdvancedSlug,
-} from '@automattic/calypso-products';
+import { isAkismetProduct, isJetpackPlan, isJetpackProduct } from '@automattic/calypso-products';
 import { FormStatus, useFormStatus } from '@automattic/composite-checkout';
 import { formatCurrency } from '@automattic/format-currency';
 import { ResponseCartProduct, useShoppingCart } from '@automattic/shopping-cart';
@@ -103,15 +98,25 @@ const useCalculatedDiscounts = () => {
 	} );
 
 	// Introductory discount (optional)
-	if (
-		product.introductory_offer_terms?.enabled &&
-		! isJetpackSocialAdvancedSlug( product.product_slug )
-	) {
-		priceBreakdown.push( {
-			label: __( 'Introductory offer*' ),
-			priceInteger: current.priceBeforeDiscounts - current.priceInteger,
-			isDiscount: true,
-		} );
+	if ( product.introductory_offer_terms?.enabled ) {
+		if (
+			12 === product.months_per_bill_period &&
+			'month' === product.introductory_offer_terms.interval_unit &&
+			1 === product.introductory_offer_terms.interval_count
+		) {
+			// For free monthly trials (for yearly plans), display the monthly price as the discount.
+			priceBreakdown.push( {
+				label: __( 'Free trial*' ),
+				priceInteger: product.item_original_monthly_cost_integer,
+				isDiscount: true,
+			} );
+		} else {
+			priceBreakdown.push( {
+				label: __( 'Introductory offer*' ),
+				priceInteger: current.priceBeforeDiscounts - current.priceInteger,
+				isDiscount: true,
+			} );
+		}
 	}
 
 	// Multi-year discount
@@ -143,7 +148,8 @@ const useCalculatedDiscounts = () => {
 		.reduce( ( sum, discount ) => sum + discount.priceInteger, 0 );
 
 	const subtotalPrice = originalPrice - allAppliedDiscounts;
-	const vatPrice = ( biennial.priceBeforeDiscounts - allAppliedDiscounts ) * product.item_tax_rate;
+	const vatPrice =
+		( biennial.priceBeforeDiscounts - allAppliedDiscounts ) * ( product.item_tax_rate ?? 0 );
 
 	priceBreakdown.push( { label: __( 'Tax' ), priceInteger: vatPrice } );
 
