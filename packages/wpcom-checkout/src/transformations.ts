@@ -292,13 +292,11 @@ export function getSubtotalWithoutDiscounts( responseCart: ResponseCart ): numbe
 	}, 0 );
 }
 
-export function hasFirstYearIntroductoryDiscount( responseCart: ResponseCart ): boolean {
+export function hasIntroductoryDiscount( responseCart: ResponseCart ): boolean {
 	return responseCart.products.some(
 		( product ) =>
 			( isJetpackPlan( product ) || isJetpackProduct( product ) ) &&
-			!! product.introductory_offer_terms?.enabled &&
-			product.introductory_offer_terms.interval_count === 1 &&
-			product.introductory_offer_terms.interval_unit === 'year'
+			!! product.introductory_offer_terms?.enabled
 	);
 }
 

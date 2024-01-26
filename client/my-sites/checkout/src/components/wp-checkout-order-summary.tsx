@@ -37,7 +37,7 @@ import {
 	getSubtotalWithoutDiscounts,
 	filterAndGroupCostOverridesForDisplay,
 	getCreditsLineItemFromCart,
-	hasFirstYearIntroductoryDiscount,
+	hasIntroductoryDiscount,
 } from '@automattic/wpcom-checkout';
 import { keyframes } from '@emotion/react';
 import styled from '@emotion/styled';
@@ -207,10 +207,10 @@ function CheckoutSummaryPriceList() {
 						{ totalLineItem.formattedAmount }
 					</span>
 				</CheckoutSummaryTotal>
-				{ hasFirstYearIntroductoryDiscount( responseCart ) && (
+				{ hasIntroductoryDiscount( responseCart ) && (
 					<CheckoutSummaryExplanation>
 						{ preventWidows(
-							translate( '*Introductory offer first year only, renews at regular rate.' )
+							translate( '*Introductory offer first term only, renews at regular rate.' )
 						) }
 					</CheckoutSummaryExplanation>
 				) }
