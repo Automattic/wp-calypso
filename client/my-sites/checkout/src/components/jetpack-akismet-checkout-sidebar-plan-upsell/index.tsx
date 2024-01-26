@@ -99,14 +99,19 @@ const useCalculatedDiscounts = () => {
 
 	// Introductory discount (optional)
 	if ( product.introductory_offer_terms?.enabled ) {
+		const isProductFreeTrial =
+			product.bill_period === '365' &&
+			product.introductory_offer_terms?.interval_unit === 'month' &&
+			product.introductory_offer_terms?.interval_count === 1;
 		if ( 'month' === biennial.introductoryTerm && 1 === biennial.introductoryInterval ) {
-			// For free monthly trials, display the monthly price as the discount.
+			// For free monthly trials (biennial), display the monthly price as the discount.
 			priceBreakdown.push( {
 				label: __( 'Free trial*' ),
 				priceInteger: product.item_original_monthly_cost_integer,
 				isDiscount: true,
 			} );
-		} else {
+		} else if ( ! isProductFreeTrial ) {
+			// We don't show the discount for free trials (annual) in upsell if biennial plan doesn't have free trial.
 			priceBreakdown.push( {
 				label: __( 'Introductory offer*' ),
 				priceInteger: current.priceBeforeDiscounts - current.priceInteger,
