@@ -53,13 +53,16 @@ export default function useErrorDetails(
 			case MigrationStatusError.SOURCE_SITE_IS_ATOMIC:
 				setTitle( titleB );
 				setSubTitle(
-					translate( 'Your {{a}}source site{{/a}} is already on WordPress.com.', {
-						components: {
-							a: createElement( 'a', { href: `${ sourceSiteUrl }/wp-admin`, target: '_blank' } ),
-						},
-					} )
+					translate(
+						'It looks like your {{a}}source site{{/a}}’s already hosted on WordPress.com! You can always reach out to support if you have any questions.',
+						{
+							components: {
+								a: createElement( 'a', { href: `${ sourceSiteUrl }/wp-admin`, target: '_blank' } ),
+							},
+						}
+					)
 				);
-				showGoBackCta( true );
+				showGetHelpCta( true );
 				break;
 
 			case MigrationStatusError.SOURCE_SITE_IS_PROTECTED:
