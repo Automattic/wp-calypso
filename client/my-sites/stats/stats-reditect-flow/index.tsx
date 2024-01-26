@@ -63,7 +63,16 @@ const StatsRedirectFlow = () => {
 
 	// render purchase flow for Jetpack sites created after February 2024
 	if ( ! isFetching && ! isRequesting && redirectToPurchase && siteSlug ) {
-		page.redirect( `/stats/purchase/${ siteSlug }?productType=commercial` );
+		// We need to ensure we pass the irclick id for impact affiliate tracking if its set.
+		const currentParams = new URLSearchParams( window.location.search );
+		const queryParams = new URLSearchParams();
+
+		queryParams.set( 'productType', 'commercial' );
+		if ( currentParams.has( 'irclickid' ) ) {
+			queryParams.set( 'irclickid', currentParams.get( 'irclickid' ) || '' );
+		}
+
+		page.redirect( `/stats/purchase/${ siteSlug }?${ queryParams.toString() }` );
 
 		return;
 	}
