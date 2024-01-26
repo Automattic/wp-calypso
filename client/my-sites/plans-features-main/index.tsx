@@ -3,16 +3,13 @@ import {
 	chooseDefaultCustomerType,
 	getPlan,
 	getPlanClass,
-	getPlanPath,
 	isFreePlan,
 	isPersonalPlan,
 	PLAN_PERSONAL,
-	PRODUCT_1GB_SPACE,
 	WPComStorageAddOnSlug,
 	PLAN_HOSTING_TRIAL_MONTHLY,
 	PLAN_ENTERPRISE_GRID_WPCOM,
 	PLAN_FREE,
-	isWpcomEnterpriseGridPlan,
 	type PlanSlug,
 	UrlFriendlyTermType,
 } from '@automattic/calypso-products';
@@ -52,13 +49,9 @@ import QuerySites from 'calypso/components/data/query-sites';
 import FormattedHeader from 'calypso/components/formatted-header';
 import { retargetViewPlans } from 'calypso/lib/analytics/ad-tracking';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
-import {
-	planItem as getCartItemForPlan,
-	getPlanCartItem,
-} from 'calypso/lib/cart-values/cart-items';
+import { planItem as getCartItemForPlan } from 'calypso/lib/cart-values/cart-items';
 import { isValidFeatureKey, FEATURES_LIST } from 'calypso/lib/plans/features-list';
 import scrollIntoViewport from 'calypso/lib/scroll-into-viewport';
-import { addQueryArgs } from 'calypso/lib/url';
 import useStorageAddOns from 'calypso/my-sites/add-ons/hooks/use-storage-add-ons';
 import PlanNotice from 'calypso/my-sites/plans-features-main/components/plan-notice';
 import { useFreeTrialPlanSlugs } from 'calypso/my-sites/plans-features-main/hooks/use-free-trial-plan-slugs';
@@ -335,59 +328,6 @@ const PlansFeaturesMain = ( {
 		return false;
 	};
 
-	const handleUpgradeClick = useCallback(
-		( cartItems?: MinimalRequestCartProduct[] | null, clickedPlanSlug?: PlanSlug ) => {
-			if ( isWpcomEnterpriseGridPlan( clickedPlanSlug ?? '' ) ) {
-				recordTracksEvent( 'calypso_plan_step_enterprise_click', { flow: flowName } );
-				window.open( 'https://wpvip.com/wordpress-vip-agile-content-platform', '_blank' );
-				return;
-			}
-			const cartItemForPlan = getPlanCartItem( cartItems );
-			const planSlug = clickedPlanSlug ?? PLAN_FREE;
-			setLastClickedPlan( planSlug );
-			if ( isFreePlan( planSlug ) ) {
-				recordTracksEvent( 'calypso_signup_free_plan_click' );
-			}
-
-			const displayedModal = resolveModal( planSlug );
-			if ( displayedModal ) {
-				setIsModalOpen( true );
-				return;
-			}
-
-			const cartItemForStorageAddOn = cartItems?.find(
-				( items ) => items.product_slug === PRODUCT_1GB_SPACE
-			);
-
-			if ( cartItemForStorageAddOn?.extra ) {
-				recordTracksEvent( 'calypso_signup_storage_add_on_upgrade_click', {
-					add_on_slug: cartItemForStorageAddOn.extra.feature_slug,
-				} );
-			}
-
-			if ( onUpgradeClick ) {
-				onUpgradeClick( cartItems );
-				return;
-			}
-
-			const planPath = cartItemForPlan?.product_slug
-				? getPlanPath( cartItemForPlan.product_slug )
-				: '';
-
-			const checkoutUrl = cartItemForStorageAddOn
-				? `/checkout/${ siteSlug }/${ planPath },${ cartItemForStorageAddOn.product_slug }:-q-${ cartItemForStorageAddOn.quantity }`
-				: `/checkout/${ siteSlug }/${ planPath }`;
-
-			const checkoutUrlWithArgs = addQueryArgs(
-				{ ...( withDiscount && { coupon: withDiscount } ) },
-				checkoutUrl
-			);
-
-			page( checkoutUrlWithArgs );
-		},
-		[ flowName, onUpgradeClick, resolveModal, siteSlug, withDiscount ]
-	);
-
 	const term = usePlanBillingPeriod( {
 		intervalType,
 		...( selectedPlan ? { defaultValue: getPlan( selectedPlan )?.term } : {} ),
@@ -495,7 +435,26 @@ const PlansFeaturesMain = ( {
 		}, [] as GridPlan[] );
 	}, [ filteredPlansForPlanFeatures, planFeaturesForComparisonGrid ] );
 
-	const comparisonGridPlanActions = usePlanActions( gridPlansForComparisonGrid );
+	const planActionCallback = ( planSlug: PlanSlug ): boolean => {
+		setLastClickedPlan( planSlug );
+
+		const displayedModal = resolveModal( planSlug );
+		if ( displayedModal ) {
+			setIsModalOpen( true );
+			return true;
+		}
+
+		return false;
+	};
+
+	const comparisonGridPlanActions = usePlanActions(
+		gridPlansForComparisonGrid,
+		flowName,
+		siteSlug,
+		withDiscount,
+		planActionCallback,
+		onUpgradeClick
+	);
 
 	// we neeed only the visible ones for features grid (these should extend into plans-ui data store selectors)
 	const gridPlansForFeaturesGrid = useMemo( () => {
@@ -513,7 +472,14 @@ const PlansFeaturesMain = ( {
 		}, [] as GridPlan[] );
 	}, [ filteredPlansForPlanFeatures, planFeaturesForFeaturesGrid ] );
 
-	const featuresGridPlanActions = usePlanActions( gridPlansForFeaturesGrid );
+	const featuresGridPlanActions = usePlanActions(
+		gridPlansForFeaturesGrid,
+		flowName,
+		siteSlug,
+		withDiscount,
+		planActionCallback,
+		onUpgradeClick
+	);
 
 	let hidePlanSelector = false;
 	// In the "purchase a plan and free domain" flow we do not want to show
@@ -855,7 +821,9 @@ const PlansFeaturesMain = ( {
 							`Unlock a powerful bundle of features. Or {{link}}start with a free plan{{/link}}.`,
 							{
 								components: {
-									link: <Button onClick={ () => handleUpgradeClick() } borderless />,
+									link: (
+										<Button onClick={ () => featuresGridPlanActions[ PLAN_FREE ]?.() } borderless />
+									),
 								},
 							}
 						) }
@@ -896,7 +864,7 @@ const PlansFeaturesMain = ( {
 									isCustomDomainAllowedOnFreePlan={ isCustomDomainAllowedOnFreePlan }
 									isInSignup={ isInSignup }
 									isLaunchPage={ isLaunchPage }
-									onUpgradeClick={ handleUpgradeClick }
+									onUpgradeClick={ () => {} }
 									selectedFeature={ selectedFeature }
 									selectedSiteId={ siteId }
 									intervalType={ intervalType }
@@ -958,7 +926,7 @@ const PlansFeaturesMain = ( {
 												gridPlans={ gridPlansForComparisonGrid }
 												isInSignup={ isInSignup }
 												isLaunchPage={ isLaunchPage }
-												onUpgradeClick={ handleUpgradeClick }
+												onUpgradeClick={ () => {} }
 												selectedFeature={ selectedFeature }
 												selectedPlan={ selectedPlan }
 												selectedSiteId={ siteId }
