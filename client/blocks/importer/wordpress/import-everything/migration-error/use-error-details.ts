@@ -13,14 +13,13 @@ export default function useErrorDetails(
 	const [ title, setTitle ] = useState( '' );
 	const [ subTitle, setSubTitle ] = useState< string | ReactNode >( '' );
 	const [ hintId, setHintId ] = useState( '' );
-	const [ goBackCta, showGoBackCta ] = useState( false );
+	const [ goBackCta ] = useState( false );
 	const [ getHelpCta, showGetHelpCta ] = useState( false );
 	const [ tryAgainCta, showTryAgainCta ] = useState( false );
 	const [ importContentCta, showImportContentCta ] = useState( false );
 
 	const titleA = translate( 'We ran into a problem migrating your site' );
 	const titleB = translate( "You're one step ahead" );
-	const titleC = translate( "We couldn't complete the migration" );
 
 	const handleDetails = useCallback( () => {
 		switch ( status ) {
