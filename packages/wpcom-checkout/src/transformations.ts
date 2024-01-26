@@ -156,6 +156,23 @@ export function filterAndGroupCostOverridesForDisplay(
 				// are not discounts.
 				return;
 			}
+
+			// Do not group Sale Coupons because we want to show the name of each item on sale.
+			if ( costOverride.override_code === 'sale-coupon-discount-1' ) {
+				const newDiscountAmount =
+					costOverride.old_subtotal_integer - costOverride.new_subtotal_integer;
+
+				grouped[ costOverride.override_code + '__' + product.uuid ] = {
+					humanReadableReason: translate( 'Sale: %(productName)s', {
+						textOnly: true,
+						args: { productName: product.product_name },
+					} ),
+					overrideCode: costOverride.override_code,
+					discountAmount: newDiscountAmount,
+				};
+				return;
+			}
+
 			const discountAmount = grouped[ costOverride.override_code ]?.discountAmount ?? 0;
 			let newDiscountAmount = costOverride.old_subtotal_integer - costOverride.new_subtotal_integer;
 

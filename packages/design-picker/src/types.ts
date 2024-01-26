@@ -16,7 +16,7 @@ export interface StyleVariation {
 			};
 		};
 	};
-	styles: {
+	styles?: {
 		color: StyleVariationStylesColor;
 	};
 	inline_css?: string;

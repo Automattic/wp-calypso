@@ -35,11 +35,11 @@ import { sortPlans } from '../../lib/sort-plan-properties';
 import { plansBreakSmall } from '../../media-queries';
 import { getStorageStringFromFeature, usePricingBreakpoint } from '../../util';
 import PlanFeatures2023GridActions from '../actions';
-import PlanFeatures2023GridBillingTimeframe from '../billing-timeframe';
 import PlanFeatures2023GridHeaderPrice from '../header-price';
 import PlanTypeSelector from '../plan-type-selector';
 import { Plans2023Tooltip } from '../plans-2023-tooltip';
 import PopularBadge from '../popular-badge';
+import BillingTimeframe from '../shared/billing-timeframe';
 import { StickyContainer } from '../sticky-container';
 import StorageAddOnDropdown from '../storage-add-on-dropdown';
 import type {
@@ -443,10 +443,7 @@ const ComparisonGridHeaderCell = ( {
 				visibleGridPlans={ visibleGridPlans }
 			/>
 			<div className="plan-comparison-grid__billing-info">
-				<PlanFeatures2023GridBillingTimeframe
-					planSlug={ planSlug }
-					showRefundPeriod={ showRefundPeriod }
-				/>
+				<BillingTimeframe planSlug={ planSlug } showRefundPeriod={ showRefundPeriod } />
 			</div>
 			<PlanFeatures2023GridActions
 				currentSitePlanSlug={ currentSitePlanSlug }

@@ -1,4 +1,3 @@
-import { isEnabled } from '@automattic/calypso-config';
 import { Button } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import { useSelector } from 'react-redux';
@@ -26,10 +25,6 @@ export const MarketplaceReviewsCards = ( props: MarketplaceReviewsCardsProps ) =
 		perPage: 2,
 		page: 1,
 	} );
-
-	if ( ! isEnabled( 'marketplace-reviews-show' ) ) {
-		return null;
-	}
 
 	if ( ! Array.isArray( reviews ) || error ) {
 		return null;

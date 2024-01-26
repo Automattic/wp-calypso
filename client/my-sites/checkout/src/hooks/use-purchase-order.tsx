@@ -11,7 +11,9 @@ import {
 } from 'calypso/state/order-transactions/constants';
 import type { OrderTransaction } from 'calypso/state/selectors/get-order-transaction';
 
-async function fetchPurchaseOrder( orderId: number | undefined ): Promise< RawOrder | undefined > {
+export async function fetchPurchaseOrder(
+	orderId: number | undefined
+): Promise< RawOrder | undefined > {
 	if ( ! orderId ) {
 		return undefined;
 	}
@@ -20,7 +22,12 @@ async function fetchPurchaseOrder( orderId: number | undefined ): Promise< RawOr
 	} );
 }
 
-type PurchaseOrderStatus = 'error' | 'processing' | 'async-pending' | 'payment-failure' | 'success';
+export type PurchaseOrderStatus =
+	| 'error'
+	| 'processing'
+	| 'async-pending'
+	| 'payment-failure'
+	| 'success';
 type OrderTransactionStatus =
 	| typeof ERROR
 	| typeof PROCESSING
@@ -29,7 +36,7 @@ type OrderTransactionStatus =
 	| typeof SUCCESS
 	| typeof UNKNOWN;
 
-interface RawOrder {
+export interface RawOrder {
 	order_id: number;
 	user_id: number;
 	receipt_id: number | undefined;

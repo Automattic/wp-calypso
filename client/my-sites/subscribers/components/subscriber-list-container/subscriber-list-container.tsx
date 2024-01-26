@@ -54,7 +54,7 @@ const SubscriberListContainer = ( {
 
 	return (
 		<section className="subscriber-list-container">
-			{ grandTotal && (
+			{ Boolean( grandTotal ) && (
 				<>
 					<div className="subscriber-list-container__header">
 						<span className="subscriber-list-container__title">
@@ -83,9 +83,9 @@ const SubscriberListContainer = ( {
 						<div className="loading-placeholder small hidden"></div>
 					</div>
 				) ) }
-			{ ! isLoading && grandTotal && (
+			{ ! isLoading && Boolean( grandTotal ) && (
 				<>
-					{ total && (
+					{ Boolean( total ) && (
 						<SubscriberList
 							onView={ onClickView }
 							onGiftSubscription={ onGiftSubscription }

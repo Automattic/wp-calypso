@@ -148,7 +148,9 @@
 					border: 1.5px solid var(--color-accent);
 					font-weight: 600;
 					font-size: 0.75rem;
-					line-height: 20px;
+					display: inline-flex;
+					align-items: center;
+					line-height: unset;
 				}
 
 				.campaign-item-details__support-articles-wrapper {

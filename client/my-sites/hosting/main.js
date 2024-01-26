@@ -225,7 +225,7 @@ const Hosting = ( props ) => {
 	};
 
 	const getAtomicActivationNotice = () => {
-		if ( showHostingActivationBanner && ! isTransferring ) {
+		if ( showHostingActivationBanner ) {
 			return (
 				<Notice
 					className="hosting__activating-notice"
