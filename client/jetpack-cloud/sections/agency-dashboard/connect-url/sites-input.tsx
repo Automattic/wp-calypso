@@ -1,6 +1,6 @@
 import { Button, FormLabel } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
-import { Dispatch, SetStateAction, useState } from 'react';
+import { Dispatch, SetStateAction } from 'react';
 import FilePicker from 'calypso/components/file-picker';
 import FormTextarea from 'calypso/components/forms/form-textarea';
 
@@ -9,16 +9,17 @@ export default function SitesInput( {
 	setDetectedSites,
 	detectedFilename,
 	setDetectedFilename,
-	setCSVColumns,
+	onCSVLoad,
+	onCSVLoadConfirmation,
 }: {
 	detectedSites: string[];
 	setDetectedSites: Dispatch< SetStateAction< string[] > >;
 	detectedFilename: string;
 	setDetectedFilename: Dispatch< SetStateAction< string > >;
-	setCSVColumns: ( columns: string[] ) => void;
+	onCSVLoad: ( lines: string[] ) => void;
+	onCSVLoadConfirmation: () => void;
 } ) {
 	const translate = useTranslate();
-	const [ columns, setColumns ] = useState( [] as string[] );
 
 	let fileReader: any;
 
@@ -26,8 +27,7 @@ export default function SitesInput( {
 		const content = fileReader.result;
 		const lines = content.split( /\r\n|\n/ );
 
-		setColumns( lines.shift().split( ',' ) ); // CSV columns' names
-		setDetectedSites( lines );
+		onCSVLoad( lines );
 	};
 
 	const onFilePick = ( files: File[] ) => {
@@ -85,11 +85,7 @@ export default function SitesInput( {
 				</FilePicker>
 			</div>
 
-			<Button
-				primary
-				disabled={ 0 === detectedSites.length }
-				onClick={ () => setCSVColumns( columns ) }
-			>
+			<Button primary disabled={ 0 === detectedSites.length } onClick={ onCSVLoadConfirmation }>
 				{ 0 === detectedSites.length
 					? translate( 'Add sites' )
 					: translate( 'Add %(num)d sites', { args: { num: detectedSites.length } } ) }
