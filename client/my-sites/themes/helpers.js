@@ -171,7 +171,9 @@ export function interlaceThemes( wpComThemes, wpOrgThemes, searchTerm, isLastPag
 
 export function getTierRouteParam() {
 	return isEnabled( 'themes/tiers' )
-		? `:tier(${ Object.keys( THEME_TIERS ).join( '|' ) })?`
+		? // We need to come up with some way to handle dynamic tiers. We could either change the route to tier/:tier or
+		  // fetch the tiers from the server and use them to build the route.
+		  `:tier(${ Object.keys( THEME_TIERS ).join( '|' ) })?`
 		: ':tier(free|premium|marketplace)?';
 }
 

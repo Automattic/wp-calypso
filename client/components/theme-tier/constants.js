@@ -17,6 +17,7 @@ import { translate } from 'i18n-calypso';
  * @property {string} label The translated label of the theme tier.
  * @property {string} minimumUpsellPlan The minimum plan required to activate a theme belonging to the tier. Used for upselling purposes.
  */
+// Once if the tier URL path thingy is resolved we could remove this file.
 export const THEME_TIERS = {
 	free: {
 		label: translate( 'Free' ),

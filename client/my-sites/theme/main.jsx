@@ -46,7 +46,6 @@ import InlineSupportLink from 'calypso/components/inline-support-link';
 import Main from 'calypso/components/main';
 import PremiumGlobalStylesUpgradeModal from 'calypso/components/premium-global-styles-upgrade-modal';
 import SectionHeader from 'calypso/components/section-header';
-import { THEME_TIERS } from 'calypso/components/theme-tier/constants';
 import ThemeTierBadge from 'calypso/components/theme-tier/theme-tier-badge';
 import ThemeTypeBadge from 'calypso/components/theme-type-badge';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
@@ -204,7 +203,7 @@ const BannerUpsellTitle = ( {
 		);
 
 	if ( ! isThemeAllowed ) {
-		switch ( THEME_TIERS[ themeTier.slug ].minimumUpsellPlan ) {
+		switch ( themeTier.minimumUpsellPlan ) {
 			case PLAN_PERSONAL:
 				return translate(
 					'Access this theme for FREE with a %(personalPlanName)s, %(premiumPlanName)s, or %(businessPlanName)s plan!',
@@ -1371,7 +1370,7 @@ class ThemeSheet extends Component {
 			const redirectTo = `/theme/${ themeId }${ section ? '/' + section : '' }/${ siteSlug }`;
 			let plan;
 			if ( ! isThemeAllowed ) {
-				plan = THEME_TIERS[ themeTier.slug ].minimumUpsellPlan;
+				plan = themeTier.minimumUpsellPlan;
 			} else {
 				plan = isExternallyManagedTheme || isBundledSoftwareSet ? PLAN_BUSINESS : PLAN_PREMIUM;
 			}
@@ -1458,7 +1457,7 @@ class ThemeSheet extends Component {
 
 			let upsellNudgePlan;
 			if ( ! isThemeAllowed ) {
-				upsellNudgePlan = THEME_TIERS[ themeTier.slug ].minimumUpsellPlan;
+				upsellNudgePlan = themeTier.minimumUpsellPlan;
 			} else {
 				upsellNudgePlan =
 					isExternallyManagedTheme || isBundledSoftwareSet ? PLAN_BUSINESS : PLAN_PREMIUM;
