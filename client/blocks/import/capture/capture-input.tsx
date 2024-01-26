@@ -1,3 +1,4 @@
+import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { Button } from '@automattic/components';
 import { NextButton } from '@automattic/onboarding';
 import { createElement, createInterpolateElement } from '@wordpress/element';
@@ -61,6 +62,12 @@ const CaptureInput: FunctionComponent< Props > = ( props ) => {
 		e.preventDefault();
 		isValid && onInputEnter( urlValue );
 		setSubmitted( true );
+
+		if ( ! isValid ) {
+			recordTracksEvent( 'calypso_importer_capture_input_invalid', {
+				url: urlValue,
+			} );
+		}
 	}
 
 	return (
