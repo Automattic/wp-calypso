@@ -3,14 +3,14 @@ import { useLocale, useLocalizeUrl } from '@automattic/i18n-utils';
 import { useI18n } from '@wordpress/react-i18n';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback } from 'react';
-import PurchaseDetail from 'calypso/components/purchase-detail';
 import { useSelector } from 'calypso/state';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import type { ThankYouFooterDetailProps } from 'calypso/components/thank-you-v2/footer';
 
 export function useThankYouFoooter(
 	pluginSlugs: Array< string >,
 	themeSlugs: Array< string >
-): PurchaseDetail.propTypes[] {
+): ThankYouFooterDetailProps[] {
 	const [ hasPlugins, hasThemes ] = [ pluginSlugs, themeSlugs ].map(
 		( slugs ) => slugs.length !== 0
 	);
@@ -114,7 +114,7 @@ function useNextSteps(
 	footerSteps: FooterStep[],
 	pluginSlugs: Array< string >,
 	themeSlugs: Array< string >
-): PurchaseDetail.propTypes[] {
+): ThankYouFooterDetailProps[] {
 	const siteId = useSelector( getSelectedSiteId );
 
 	const sendTrackEvent = useCallback(
