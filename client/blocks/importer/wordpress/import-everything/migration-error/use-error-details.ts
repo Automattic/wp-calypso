@@ -109,7 +109,9 @@ export default function useErrorDetails(
 			case MigrationStatusError.BACKUP_QUEUEING:
 				setTitle( titleA );
 				setSubTitle(
-					translate( 'Please reach out to our support team by clicking the "Get help" button.' )
+					translate(
+						'Looks like something went wrong. Please reach out to our support team and we’ll get you back up and running.'
+					)
 				);
 				showGetHelpCta( true );
 				break;
