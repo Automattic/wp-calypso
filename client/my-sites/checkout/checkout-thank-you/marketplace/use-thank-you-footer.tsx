@@ -21,7 +21,7 @@ export function useThankYouFoooter(
 	/**
 	 * Base case: multiple product types
 	 */
-	let footerSteps: FooterStep[] = [ pluginExploreStep, pluginSupportStep, WordPressForumStep ];
+	let footerSteps: FooterStep[] = [ pluginExploreStep, themeSupportStep ];
 
 	/**
 	 * If only plugins are present
@@ -37,9 +37,7 @@ export function useThankYouFoooter(
 		footerSteps = [ themeSupportStep, WordPressForumStep ];
 	}
 
-	const steps = useNextSteps( footerSteps, pluginSlugs, themeSlugs );
-
-	return steps.slice( 0, 2 );
+	return useNextSteps( footerSteps, pluginSlugs, themeSlugs );
 }
 
 function usePluginSteps(): FooterStep[] {
