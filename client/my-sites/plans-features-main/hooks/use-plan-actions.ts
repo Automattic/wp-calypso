@@ -7,22 +7,21 @@ import {
 	getPlanPath,
 } from '@automattic/calypso-products';
 import page from '@automattic/calypso-router';
-import { useMemo } from '@wordpress/element';
+import { useMemo, useCallback } from '@wordpress/element';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks'; //TODO: move this out
 import { getPlanCartItem } from 'calypso/lib/cart-values/cart-items';
 import { addQueryArgs } from 'calypso/lib/url';
 import type { GridPlan, PlanActions } from '@automattic/plans-grid-next';
 import type { MinimalRequestCartProduct } from '@automattic/shopping-cart';
 
-function usePlanActions(
-	gridPlans: GridPlan[],
+function useUpgradeHandler(
 	flowName?: string | null,
 	siteSlug?: string | null,
 	withDiscount?: string,
 	planActionCallback?: ( planSlug: PlanSlug ) => void,
 	cartHandler?: ( cartItems?: MinimalRequestCartProduct[] | null ) => void
-): PlanActions {
-	const handleUpgradeClick = useCallback(
+) {
+	return useCallback(
 		( cartItems?: MinimalRequestCartProduct[] | null, clickedPlanSlug?: PlanSlug ) => {
 			if ( isWpcomEnterpriseGridPlan( clickedPlanSlug ?? '' ) ) {
 				recordTracksEvent( 'calypso_plan_step_enterprise_click', { flow: flowName } );
@@ -74,6 +73,24 @@ function usePlanActions(
 		},
 		[ flowName, siteSlug, withDiscount, planActionCallback, cartHandler ]
 	);
+}
+
+function usePlanActions(
+	gridPlans: GridPlan[],
+	flowName?: string | null,
+	siteSlug?: string | null,
+	withDiscount?: string,
+	planActionCallback?: ( planSlug: PlanSlug ) => void,
+	cartHandler?: ( cartItems?: MinimalRequestCartProduct[] | null ) => void
+): PlanActions {
+	const handleUpgrade = useUpgradeHandler(
+		flowName,
+		siteSlug,
+		withDiscount,
+		planActionCallback,
+		cartHandler
+	);
+
 	return useMemo( () => {
 		return gridPlans.reduce( ( acc, gridPlan ) => {
 			return {
