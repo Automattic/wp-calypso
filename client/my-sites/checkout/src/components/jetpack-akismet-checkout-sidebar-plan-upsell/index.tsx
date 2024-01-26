@@ -99,12 +99,8 @@ const useCalculatedDiscounts = () => {
 
 	// Introductory discount (optional)
 	if ( product.introductory_offer_terms?.enabled ) {
-		if (
-			12 === product.months_per_bill_period &&
-			'month' === product.introductory_offer_terms.interval_unit &&
-			1 === product.introductory_offer_terms.interval_count
-		) {
-			// For free monthly trials (for yearly plans), display the monthly price as the discount.
+		if ( 'month' === biennial.introductoryTerm && 1 === biennial.introductoryInterval ) {
+			// For free monthly trials, display the monthly price as the discount.
 			priceBreakdown.push( {
 				label: __( 'Free trial*' ),
 				priceInteger: product.item_original_monthly_cost_integer,
