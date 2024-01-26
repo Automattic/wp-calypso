@@ -4,7 +4,7 @@ import { addQueryArgs } from '@wordpress/url';
 import { recordTaskClickTracksEvent } from '../../tracking';
 import { type TaskAction } from '../../types';
 
-const getSetupFreeTask: TaskAction = ( task, flow, context ): Task => {
+export const getSetupFreeTask: TaskAction = ( task, flow, context ): Task => {
 	const { siteInfoQueryArgs } = context;
 
 	return {
@@ -15,7 +15,7 @@ const getSetupFreeTask: TaskAction = ( task, flow, context ): Task => {
 	};
 };
 
-const getSetupBlog: TaskAction = ( task, flow, context ): Task => {
+export const getSetupBlogTask: TaskAction = ( task, flow, context ): Task => {
 	const { siteInfoQueryArgs } = context;
 
 	return {
@@ -27,7 +27,7 @@ const getSetupBlog: TaskAction = ( task, flow, context ): Task => {
 	};
 };
 
-const getSetupVideoPressTask: TaskAction = ( task, flow, context ): Task => {
+export const getSetupVideoPressTask: TaskAction = ( task, flow, context ): Task => {
 	const { siteInfoQueryArgs } = context;
 
 	return {
@@ -38,7 +38,7 @@ const getSetupVideoPressTask: TaskAction = ( task, flow, context ): Task => {
 	};
 };
 
-const getSetupGeneralTask: TaskAction = ( task, flow, context ): Task => {
+export const getSetupGeneralTask: TaskAction = ( task, flow, context ): Task => {
 	const { siteInfoQueryArgs } = context;
 
 	return {
@@ -55,7 +55,7 @@ const getSetupGeneralTask: TaskAction = ( task, flow, context ): Task => {
 
 export const actions = {
 	setup_free: getSetupFreeTask,
-	setup_blog: getSetupBlog,
+	setup_blog: getSetupBlogTask,
 	videopress_setup: getSetupVideoPressTask,
 	setup_general: getSetupGeneralTask,
 };
