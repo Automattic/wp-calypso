@@ -93,7 +93,7 @@ const useCalculatedDiscounts = () => {
 		return null;
 	}
 
-	const originalPrice = biennial.priceBeforeDiscounts;
+	const originalPrice = current.priceBeforeDiscounts * 2;
 
 	const priceBreakdown: PriceBreakdown[] = [];
 
