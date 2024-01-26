@@ -1,8 +1,8 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import page from '@automattic/calypso-router';
+import { Button } from '@automattic/components';
 import { DesignPreviewImage, isDefaultGlobalStylesVariationSlug } from '@automattic/design-picker';
 import styled from '@emotion/styled';
-import { Button } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback, useEffect } from 'react';
 import QueryActiveTheme from 'calypso/components/data/query-active-theme';
@@ -111,7 +111,6 @@ export const ThankYouThemeSection = ( {
 			<QueryActiveTheme siteId={ siteId } />
 			<ActivationModal source="details" />
 			<ThankYouProduct
-				key={ `theme_information_${ theme.id }` }
 				name={ theme.name }
 				details={
 					theme.author ? translate( 'by %(author)s', { args: { author: theme.author } } ) : null
@@ -119,7 +118,7 @@ export const ThankYouThemeSection = ( {
 				actions={
 					<>
 						<Button
-							variant="primary"
+							primary
 							busy={ ( isActivating && ! hasActivated ) || isLoading }
 							onClick={ handleActivateTheme }
 							href={ isActive ? customizeUrl : undefined }
@@ -131,11 +130,7 @@ export const ThankYouThemeSection = ( {
 						</Button>
 
 						{ isActive ? (
-							<Button
-								variant="secondary"
-								href={ siteUrl }
-								disabled={ ! isValidThankyouSectionTheme }
-							>
+							<Button href={ siteUrl } disabled={ ! isValidThankyouSectionTheme }>
 								{ translate( 'View site' ) }
 							</Button>
 						) : null }

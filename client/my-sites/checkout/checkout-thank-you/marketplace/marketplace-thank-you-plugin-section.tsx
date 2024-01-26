@@ -72,7 +72,6 @@ export const ThankYouPluginSection = ( { plugin }: { plugin: any } ) => {
 		<>
 			<QuerySitePurchases siteId={ siteId } />
 			<ThankYouProduct
-				key={ `plugin_information_${ plugin.slug }` }
 				name={ plugin.name }
 				details={ expirationDate }
 				icon={ plugin.icon }

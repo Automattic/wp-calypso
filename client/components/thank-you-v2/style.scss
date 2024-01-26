@@ -1,5 +1,6 @@
 @import "@wordpress/base-styles/breakpoints";
 @import "@wordpress/base-styles/mixins";
+@import "@automattic/typography/styles/variables";
 
 .thank-you {
 	--color-accent: var(--studio-blue-50);
@@ -13,10 +14,5 @@
 		margin: 0 auto;
 		max-width: 650px;
 		width: 100%;
-	}
-
-	.components-button {
-		border-radius: 4px;
-		padding: 10px 24px;
 	}
 }

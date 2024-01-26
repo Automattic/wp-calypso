@@ -134,8 +134,8 @@ function useNextSteps(
 			title: step.title,
 			description: step.description,
 			buttonText: step.linkText,
-			href: step.link,
-			onClick: () => sendTrackEvent( step.eventKey ),
+			buttonHref: step.link,
+			buttonOnClick: () => sendTrackEvent( step.eventKey ),
 		};
 	} );
 }

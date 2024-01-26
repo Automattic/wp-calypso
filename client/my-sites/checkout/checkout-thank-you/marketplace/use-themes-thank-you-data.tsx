@@ -64,6 +64,7 @@ export function useThemesThankYouData(
 		.map( ( theme: any ) => {
 			return (
 				<ThankYouThemeSection
+					key={ `theme_${ theme.id }` }
 					theme={ theme }
 					isOnboardingFlow={ isOnboardingFlow }
 					continueWithPluginBundle={ continueWithPluginBundle }

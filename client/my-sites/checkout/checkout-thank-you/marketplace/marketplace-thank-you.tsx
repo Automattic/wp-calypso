@@ -134,8 +134,8 @@ const MarketplaceThankYou = ( {
 	} );
 
 	const products = [
-		...( hasThemes ? [ themesSection ] : [] ),
 		...( hasPlugins ? [ pluginsSection ] : [] ),
+		...( hasThemes ? [ themesSection ] : [] ),
 	];
 
 	const footerDetails = useThankYouFoooter( pluginSlugs, themeSlugs );

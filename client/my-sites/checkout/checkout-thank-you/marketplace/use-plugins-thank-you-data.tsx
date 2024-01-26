@@ -167,7 +167,7 @@ export default function usePluginsThankYouData( pluginSlugs: string[] ): ThankYo
 	] );
 
 	const pluginsSection: ThankYouPluginSection[] = pluginsInformationList.map( ( plugin: any ) => {
-		return <ThankYouPluginSection plugin={ plugin } />;
+		return <ThankYouPluginSection plugin={ plugin } key={ `plugin_${ plugin.slug }` } />;
 	} );
 
 	const goBackSection = (
