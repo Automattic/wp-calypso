@@ -495,9 +495,18 @@ body.is-section-promote-post-i2 .layout__content .campaign-item-details.main {
 		}
 
 		.campaign-item-details__support-buttons {
-			button:not(:first-child),
-			a:not(:first-child) {
-				margin-left: 8px;
+
+
+			button,
+			a {
+				align-items: center;
+				display: inline-flex;
+				line-height: unset;
+			}
+
+			button:not(:last-child),
+			a:not(:last-child) {
+				margin-right: 8px;
 			}
 
 			.campaign-item-details__support-buttons-icon {

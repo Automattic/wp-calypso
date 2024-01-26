@@ -62,20 +62,20 @@ describe( 'index', () => {
 
 		render(
 			<Provider store={ store }>
-				<HostingActivateStatus context="plugins" />
+				<HostingActivateStatus context="plugin" />
 			</Provider>
 		);
 		expect(
-			screen.getByText( 'Please wait while we activate the plugins features.' )
+			screen.getByText( 'Please wait while we activate the plugin features.' )
 		).toBeInTheDocument();
 
 		render(
 			<Provider store={ store }>
-				<HostingActivateStatus context="themes" />
+				<HostingActivateStatus context="theme" />
 			</Provider>
 		);
 		expect(
-			screen.getByText( 'Please wait while we activate the themes features.' )
+			screen.getByText( 'Please wait while we activate the theme features.' )
 		).toBeInTheDocument();
 	} );
 
@@ -102,20 +102,20 @@ describe( 'index', () => {
 
 		render(
 			<Provider store={ store }>
-				<HostingActivateStatus context="plugins" />
+				<HostingActivateStatus context="plugin" />
 			</Provider>
 		);
 		expect(
-			screen.getByText( 'There was an error activating plugins features.' )
+			screen.getByText( 'There was an error activating plugin features.' )
 		).toBeInTheDocument();
 
 		render(
 			<Provider store={ store }>
-				<HostingActivateStatus context="themes" />
+				<HostingActivateStatus context="theme" />
 			</Provider>
 		);
 		expect(
-			screen.getByText( 'There was an error activating themes features.' )
+			screen.getByText( 'There was an error activating theme features.' )
 		).toBeInTheDocument();
 	} );
 } );

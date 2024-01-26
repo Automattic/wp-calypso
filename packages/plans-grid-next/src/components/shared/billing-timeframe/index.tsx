@@ -15,8 +15,8 @@ import { Plans } from '@automattic/data-stores';
 import { formatCurrency } from '@automattic/format-currency';
 import styled from '@emotion/styled';
 import { useTranslate } from 'i18n-calypso';
-import { usePlansGridContext } from '../grid-context';
-import type { GridPlan } from '../types';
+import { usePlansGridContext } from '../../../grid-context';
+import type { GridPlan } from '../../../types';
 
 function usePerMonthDescription( { planSlug }: { planSlug: PlanSlug } ) {
 	const translate = useTranslate();
@@ -292,7 +292,7 @@ interface Props {
 	showRefundPeriod?: boolean;
 }
 
-const PlanFeatures2023GridBillingTimeframe = ( { showRefundPeriod, planSlug }: Props ) => {
+const BillingTimeframe = ( { showRefundPeriod, planSlug }: Props ) => {
 	const translate = useTranslate();
 	const { gridPlansIndex } = usePlansGridContext();
 	const {
@@ -320,7 +320,7 @@ const PlanFeatures2023GridBillingTimeframe = ( { showRefundPeriod, planSlug }: P
 		const price = formatCurrency( 25000, 'USD' );
 
 		return (
-			<div className="plan-features-2023-grid__vip-price">
+			<div className="plans-grid-next__billing-timeframe-vip-price">
 				{ translate( 'Starts at {{b}}%(price)s{{/b}} yearly', {
 					args: { price },
 					components: { b: <b /> },
@@ -342,4 +342,4 @@ const PlanFeatures2023GridBillingTimeframe = ( { showRefundPeriod, planSlug }: P
 	);
 };
 
-export default PlanFeatures2023GridBillingTimeframe;
+export default BillingTimeframe;

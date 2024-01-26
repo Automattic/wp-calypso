@@ -1,5 +1,4 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
-import { isEnabled } from '@automattic/calypso-config';
 import { Button } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import { type ReactNode, useEffect, useState } from 'react';
@@ -41,7 +40,6 @@ export const ReviewsSummary = ( { slug, productName, productType, onReviewsClick
 	let numberOfReviews = null;
 
 	if (
-		isEnabled( 'marketplace-reviews-show' ) &&
 		marketplaceReviewsStats?.ratings_count !== undefined &&
 		marketplaceReviewsStats?.ratings_average !== undefined
 	) {

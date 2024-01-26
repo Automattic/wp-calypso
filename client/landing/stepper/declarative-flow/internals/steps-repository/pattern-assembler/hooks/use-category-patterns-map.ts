@@ -35,7 +35,7 @@ const useCategoryPatternsMap = ( patterns: Pattern[] ) => {
 			}
 		};
 
-		patterns.reverse().forEach( ( pattern ) => {
+		[ ...patterns ].reverse().forEach( ( pattern ) => {
 			Object.keys( pattern.categories ).forEach( ( category ) => {
 				const isPage = isPagePattern( pattern );
 
