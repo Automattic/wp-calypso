@@ -436,6 +436,16 @@ const PlansFeaturesMain = ( {
 	}, [ filteredPlansForPlanFeatures, planFeaturesForComparisonGrid ] );
 
 	const planActionCallback = ( planSlug: PlanSlug ): boolean => {
+		if (
+			sitePlanSlug &&
+			isFreePlan( sitePlanSlug ) &&
+			domainFromHomeUpsellFlow &&
+			intentFromProps !== 'plans-p2'
+		) {
+			showDomainUpsellDialog();
+			return true;
+		}
+
 		setLastClickedPlan( planSlug );
 
 		const displayedModal = resolveModal( planSlug );
@@ -619,7 +629,6 @@ const PlansFeaturesMain = ( {
 				actionOverrides = {
 					loggedInFreePlan: {
 						status: 'enabled',
-						callback: () => {},
 						text: translate( 'Manage add-ons', { context: 'verb' } ),
 					},
 				};
@@ -627,7 +636,6 @@ const PlansFeaturesMain = ( {
 				if ( domainFromHomeUpsellFlow ) {
 					actionOverrides.loggedInFreePlan = {
 						...actionOverrides.loggedInFreePlan,
-						callback: showDomainUpsellDialog,
 						text: translate( 'Keep my plan', { context: 'verb' } ),
 					};
 				}

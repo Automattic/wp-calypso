@@ -77,7 +77,6 @@ export interface PlanActionOverrides {
 	loggedInFreePlan?: {
 		text?: TranslateResult;
 		status?: 'blocked' | 'enabled';
-		callback?: () => void;
 	};
 	currentPlan?: {
 		text?: TranslateResult;

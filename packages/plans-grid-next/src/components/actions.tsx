@@ -283,11 +283,11 @@ const LoggedInPlansFeatureActionButton = ( {
 				</PlanButton>
 			);
 		} else if ( planActionOverrides?.currentPlan ) {
-			const { callback, text } = planActionOverrides.currentPlan;
+			const { text } = planActionOverrides.currentPlan;
 			return (
 				<PlanButton
 					planSlug={ planSlug }
-					disabled={ ! callback }
+					disabled={ ! onPlanCtaClick }
 					onClick={ onPlanCtaClick }
 					current={ current }
 				>

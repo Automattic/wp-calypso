@@ -160,12 +160,29 @@ function usePlanActions(
 
 	const currentPlanManageHref = useCurrentPlanManageHref();
 
-	const managePlan = () => page( currentPlanManageHref );
-	const manageAddon = () => page.redirect( `/add-ons/${ siteSlug }` );
-	const gotoVip = () => {
-		recordTracksEvent( 'calypso_plan_step_enterprise_click', { flow: flowName } );
-		window.open( 'https://wpvip.com/wordpress-vip-agile-content-platform', '_blank' );
-	};
+	const [ managePlan, manageAddon, gotoVip ] = useMemo( () => {
+		const composePlanActionCallback = ( callback: () => void ) => {
+			return ( gridPlan: GridPlan ) => {
+				const earlyReturn = planActionCallback?.( gridPlan.planSlug );
+
+				if ( earlyReturn ) {
+					return;
+				}
+
+				callback();
+			};
+		};
+		const managePlan = composePlanActionCallback( () => page( currentPlanManageHref ) );
+		const manageAddon = composePlanActionCallback( () =>
+			page.redirect( `/add-ons/${ siteSlug }` )
+		);
+		const gotoVip = composePlanActionCallback( () => {
+			recordTracksEvent( 'calypso_plan_step_enterprise_click', { flow: flowName } );
+			window.open( 'https://wpvip.com/wordpress-vip-agile-content-platform', '_blank' );
+		} );
+
+		return [ managePlan, manageAddon, gotoVip ];
+	}, [] );
 
 	return useMemo( () => {
 		return gridPlans.reduce( ( acc, gridPlan ) => {
