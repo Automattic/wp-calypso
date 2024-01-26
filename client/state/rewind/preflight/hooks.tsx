@@ -4,6 +4,7 @@ import wp from 'calypso/lib/wp';
 import { useDispatch, useSelector } from 'calypso/state';
 import { updatePreflightTests } from './actions';
 import { getPreflightStatus } from './selectors';
+import { PreflightTestStatus } from './types';
 
 /**
  * Custom hook to query the status of a preflight check for a specific site.
@@ -18,7 +19,10 @@ export const usePreflightStatusQuery = ( siteId: number ): UseQueryResult => {
 	const preflightStatus = useSelector( ( state ) => getPreflightStatus( state, siteId ) );
 
 	const shouldFetch = () => {
-		return preflightStatus !== 'success' && preflightStatus !== 'failed';
+		return (
+			preflightStatus !== PreflightTestStatus.SUCCESS &&
+			preflightStatus !== PreflightTestStatus.FAILED
+		);
 	};
 
 	const query = useQuery( {
@@ -30,7 +34,7 @@ export const usePreflightStatusQuery = ( siteId: number ): UseQueryResult => {
 			} );
 		},
 		enabled: shouldFetch(),
-		refetchInterval: 5000,
+		refetchInterval: 3000,
 	} );
 
 	useEffect( () => {
