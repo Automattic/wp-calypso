@@ -66,15 +66,18 @@ export default function useErrorDetails(
 				break;
 
 			case MigrationStatusError.SOURCE_SITE_IS_PROTECTED:
-				setTitle( titleB );
+				setTitle( titleA );
 				setSubTitle(
-					translate( 'Your {{a}}source site{{/a}} is a protected site.', {
-						components: {
-							a: createElement( 'a', { href: `${ sourceSiteUrl }/wp-admin`, target: '_blank' } ),
-						},
-					} )
+					translate(
+						'Your {{a}}source site{{/a}} is protected. You can always reach out to support if you have any questions.',
+						{
+							components: {
+								a: createElement( 'a', { href: `${ sourceSiteUrl }/wp-admin`, target: '_blank' } ),
+							},
+						}
+					)
 				);
-				showGoBackCta( true );
+				showGetHelpCta( true );
 				break;
 
 			case MigrationStatusError.TARGET_SITE_IS_PROTECTED:
