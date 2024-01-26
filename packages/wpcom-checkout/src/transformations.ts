@@ -175,9 +175,13 @@ export function filterAndGroupCostOverridesForDisplay(
 
 			const discountAmount = grouped[ costOverride.override_code ]?.discountAmount ?? 0;
 			let newDiscountAmount = costOverride.old_subtotal_integer - costOverride.new_subtotal_integer;
+			let overrideReason = '';
 
 			// Overrides for Jetpack biennial intro offers
 			if ( 'introductory-offer' === costOverride.override_code ) {
+				if ( isJetpack ) {
+					overrideReason = translate( 'Introductory offer*' );
+				}
 				if ( isJetpackSocialAdvancedSlug( product.product_slug ) ) {
 					// Social Advanced has free trial that we don't consider "introduction offer"
 					return;
@@ -191,7 +195,7 @@ export function filterAndGroupCostOverridesForDisplay(
 				}
 			}
 			grouped[ costOverride.override_code ] = {
-				humanReadableReason: costOverride.human_readable_reason,
+				humanReadableReason: overrideReason || costOverride.human_readable_reason,
 				overrideCode: costOverride.override_code,
 				discountAmount: discountAmount + newDiscountAmount,
 			};
@@ -222,7 +226,9 @@ export function filterAndGroupCostOverridesForDisplay(
 			}
 			if ( newDiscountAmount > 0 ) {
 				grouped[ 'introductory-offer' ] = {
-					humanReadableReason: translate( 'Introductory offer' ),
+					humanReadableReason: isJetpack
+						? translate( 'Introductory offer*' )
+						: translate( 'Introductory offer' ),
 					overrideCode: 'introductory-offer',
 					discountAmount: discountAmount + newDiscountAmount,
 				};
@@ -293,6 +299,14 @@ export function getSubtotalWithoutDiscounts( responseCart: ResponseCart ): numbe
 		}
 		return total + product.item_original_subtotal_integer;
 	}, 0 );
+}
+
+export function hasIntroductoryDiscount( responseCart: ResponseCart ): boolean {
+	return responseCart.products.some(
+		( product ) =>
+			( isJetpackPlan( product ) || isJetpackProduct( product ) ) &&
+			!! product.introductory_offer_terms?.enabled
+	);
 }
 
 export function getTotalDiscountsWithoutCredits(
