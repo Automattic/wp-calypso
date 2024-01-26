@@ -29,11 +29,6 @@ function useUpgradeHandler(
 	// - those `recordTracksEvent` should be moved out
 	const processCartItems = useCallback(
 		( cartItems?: MinimalRequestCartProduct[] | null, clickedPlanSlug?: PlanSlug ) => {
-			if ( isWpcomEnterpriseGridPlan( clickedPlanSlug ?? '' ) ) {
-				recordTracksEvent( 'calypso_plan_step_enterprise_click', { flow: flowName } );
-				window.open( 'https://wpvip.com/wordpress-vip-agile-content-platform', '_blank' );
-				return;
-			}
 			const cartItemForPlan = getPlanCartItem( cartItems );
 			const planSlug = clickedPlanSlug ?? PLAN_FREE;
 
@@ -163,9 +158,22 @@ function usePlanActions(
 
 	return useMemo( () => {
 		return gridPlans.reduce( ( acc, gridPlan ) => {
+			const { planSlug } = gridPlan;
+
+			let handler;
+
+			if ( isWpcomEnterpriseGridPlan( planSlug ) ) {
+				handler = () => {
+					recordTracksEvent( 'calypso_plan_step_enterprise_click', { flow: flowName } );
+					window.open( 'https://wpvip.com/wordpress-vip-agile-content-platform', '_blank' );
+				};
+			} else {
+				handler = upgradeHandler( gridPlan );
+			}
+
 			return {
 				...acc,
-				[ gridPlan.planSlug ]: upgradeHandler( gridPlan ),
+				[ planSlug ]: handler,
 			};
 		}, {} );
 	}, [ gridPlans ] );
