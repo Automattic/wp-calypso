@@ -37,6 +37,7 @@ import {
 	getSubtotalWithoutDiscounts,
 	filterAndGroupCostOverridesForDisplay,
 	getCreditsLineItemFromCart,
+	getSubtotalWithDiscounts,
 } from '@automattic/wpcom-checkout';
 import { keyframes } from '@emotion/react';
 import styled from '@emotion/styled';
@@ -180,7 +181,7 @@ function CheckoutSummaryPriceList() {
 				<CheckoutSummaryLineItem key="checkout-summary-line-item-subtotal">
 					<span>{ translate( 'Subtotal' ) }</span>
 					<span>
-						{ formatCurrency( responseCart.sub_total_integer, responseCart.currency, {
+						{ formatCurrency( getSubtotalWithDiscounts( responseCart ), responseCart.currency, {
 							isSmallestUnit: true,
 							stripZeros: true,
 						} ) }

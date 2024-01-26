@@ -42,6 +42,7 @@ export function getEmptyResponseCartProduct(): ResponseCartProduct {
 		current_quantity: null,
 		item_original_cost_integer: 0,
 		item_original_cost_for_quantity_one_integer: 0,
+		item_original_monthly_cost_integer: 0,
 		item_subtotal_integer: 0,
 		item_subtotal_before_discounts_integer: 0,
 		product_cost_integer: 0,

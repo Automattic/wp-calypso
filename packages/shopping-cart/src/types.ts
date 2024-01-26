@@ -372,6 +372,11 @@ export interface ResponseCartProduct {
 	item_original_cost_integer: number;
 
 	/**
+	 * The monthly term original amount of a cart item in the currency's smallest unit.
+	 */
+	item_original_monthly_cost_integer: number;
+
+	/**
 	 * The cart item's price before discounts with volume in the currency's
 	 * smallest unit. This is similar to `item_original_subtotal_integer`
 	 * except when it comes to introductory offers. Introductory offer
