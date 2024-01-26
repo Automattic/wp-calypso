@@ -416,11 +416,12 @@ function recordOrderInBing(
 	if ( wpcomJetpackCartInfo.containsWpcomProducts ) {
 		if ( null !== wpcomJetpackCartInfo.wpcomCostUSD ) {
 			const params = {
-				ec: 'purchase',
-				gv: wpcomJetpackCartInfo.wpcomCostUSD,
+				event_cateogry: 'purchase',
+				revenue_value: wpcomJetpackCartInfo.wpcomCostUSD,
+				currency: 'USD',
 			};
 			debug( 'recordOrderInBing: record WPCom purchase', params );
-			window.uetq.push( params );
+			window.uetq.push( 'event', '', params );
 		} else {
 			debug( `recordOrderInBing: currency ${ cart.currency } not supported, dropping WPCom pixel` );
 		}
