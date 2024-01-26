@@ -27,20 +27,13 @@ export const AllLicenseItems = ( {
 			<div className="jetpack-product-store__most-popular--subheading">{ subHeading }</div>
 			<ul className="jetpack-product-store__most-popular--items">
 				{ items.map( ( item, idx ) => {
-					let isMultiChoiceItem = false;
-
-					if ( Array.isArray( item ) ) {
-						isMultiChoiceItem = true;
-
-						if ( bundleSize && bundleSize > 1 ) {
-							item = item[ 0 ];
-							isMultiChoiceItem = false;
-						}
+					if ( Array.isArray( item ) && bundleSize && bundleSize > 1 ) {
+						item = item[ 0 ];
 					}
 
 					return (
 						<li key={ idx } className="jetpack-product-store__most-popular--item">
-							{ isMultiChoiceItem ? (
+							{ Array.isArray( item ) ? (
 								<SimpleLicenseMultiItemCard
 									items={ item }
 									bundleSize={ bundleSize }
