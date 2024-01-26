@@ -1,3 +1,4 @@
+import config from '@automattic/calypso-config';
 import { Button, Card, Gridicon } from '@automattic/components';
 import { useEffect } from '@wordpress/element';
 import { useTranslate } from 'i18n-calypso';
@@ -22,7 +23,9 @@ import {
 	useEnqueuePreflightCheck,
 } from 'calypso/state/rewind/preflight/hooks';
 import { getPreflightStatus } from 'calypso/state/rewind/preflight/selectors';
+import { PreflightTestStatus } from 'calypso/state/rewind/preflight/types';
 import { getInProgressBackupForSite } from 'calypso/state/rewind/selectors';
+import getDoesRewindNeedCredentials from 'calypso/state/selectors/get-does-rewind-need-credentials';
 import getInProgressRewindStatus from 'calypso/state/selectors/get-in-progress-rewind-status';
 import getIsRestoreInProgress from 'calypso/state/selectors/get-is-restore-in-progress';
 import getRestoreProgress from 'calypso/state/selectors/get-restore-progress';
@@ -87,15 +90,21 @@ const BackupRestoreFlow: FunctionComponent< Props > = ( {
 		[ dispatch, rewindConfig, rewindId, siteId ]
 	);
 
-	usePreflightStatusQuery( siteId );
+	const { refetch: refetchPreflightStatus } = usePreflightStatusQuery( siteId );
 	const preflightCheck = useEnqueuePreflightCheck( siteId );
 	const preflightStatus = useSelector( ( state ) => getPreflightStatus( state, siteId ) );
 	const hasCredentials = useSelector( ( state ) => hasJetpackCredentials( state, siteId ) );
 	const isRestoreInProgress = useSelector( ( state ) => getIsRestoreInProgress( state, siteId ) );
+	const needCredentials = useSelector( ( state ) => getDoesRewindNeedCredentials( state, siteId ) );
 
 	useEffect( () => {
+		const credentialsAreValid = hasCredentials && ! areCredentialsInvalid;
+		const preflightPassed =
+			config.isEnabled( 'jetpack/backup-restore-preflight-checks' ) &&
+			preflightStatus === PreflightTestStatus.SUCCESS;
+
 		if ( userHasRequestedRestore && ! isRestoreInProgress ) {
-			if ( ( hasCredentials && ! areCredentialsInvalid ) || preflightStatus === 'success' ) {
+			if ( credentialsAreValid || preflightPassed ) {
 				dispatch( setValidFrom( 'restore', Date.now() ) );
 				requestRestore();
 			}
@@ -111,14 +120,21 @@ const BackupRestoreFlow: FunctionComponent< Props > = ( {
 	] );
 	const onConfirm = useCallback( () => {
 		// Queue preflight
-		preflightCheck.mutate( { siteId } );
+		preflightCheck.mutate(
+			{ siteId },
+			{
+				onSuccess: () => {
+					refetchPreflightStatus();
+				},
+			}
+		);
 
-		dispatch( setValidFrom( 'restore', Date.now() ) );
+		// Mark that the user has requested a restore
 		setUserHasRequestedRestore( true );
 
 		// Track the restore confirmation event.
 		dispatch( recordTracksEvent( 'calypso_jetpack_backup_restore_confirm' ) );
-	}, [ preflightCheck, siteId, dispatch ] );
+	}, [ preflightCheck, siteId, dispatch, refetchPreflightStatus ] );
 
 	const siteSlug = useSelector( ( state ) => getSiteSlug( state, siteId ) );
 
@@ -269,6 +285,45 @@ const BackupRestoreFlow: FunctionComponent< Props > = ( {
 		</Error>
 	);
 
+	const renderMissingCredentials = () => (
+		<>
+			<div className="rewind-flow__header">
+				<Gridicon icon="history" size={ 48 } />
+			</div>
+			<h3 className="rewind-flow__title">{ translate( 'Missing server credentials' ) }</h3>
+			<p className="rewind-flow__info">
+				{ translate(
+					'Enter your server credentials to enable one-click restores from your backups.'
+				) }
+			</p>
+			<div className="rewind-flow__btn-group rewind-flow__btn-group--centered">
+				<Button
+					href={ backupMainPath( siteSlug ) }
+					className="rewind-flow__back-button"
+					onClick={ () => {
+						dispatch(
+							recordTracksEvent( 'calypso_jetpack_backup_restore_missing_credentials_back' )
+						);
+					} }
+				>
+					{ translate( 'Go back' ) }
+				</Button>
+				<Button
+					primary
+					href={ siteUrl }
+					className="rewind-flow__primary-button"
+					onClick={ () => {
+						dispatch(
+							recordTracksEvent( 'calypso_jetpack_backup_restore_missing_credentials_cta' )
+						);
+					} }
+				>
+					{ translate( 'Enter credentials' ) }
+				</Button>
+			</div>
+		</>
+	);
+
 	const isInProgress =
 		( ! inProgressRewindStatus && userHasRequestedRestore ) ||
 		( inProgressRewindStatus && [ 'queued', 'running' ].includes( inProgressRewindStatus ) );
@@ -279,6 +334,8 @@ const BackupRestoreFlow: FunctionComponent< Props > = ( {
 			return <Loading />;
 		} else if ( ! inProgressRewindStatus && ! userHasRequestedRestore ) {
 			return renderConfirm();
+		} else if ( ! inProgressRewindStatus && needCredentials ) {
+			return renderMissingCredentials();
 		} else if ( isInProgress ) {
 			return renderInProgress();
 		} else if ( isFinished ) {
