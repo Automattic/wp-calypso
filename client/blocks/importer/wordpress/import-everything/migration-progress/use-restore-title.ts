@@ -2,7 +2,7 @@ import { useTranslate } from 'i18n-calypso';
 import { useCallback, useEffect, useState } from 'react';
 import type { MigrationState } from 'calypso/blocks/importer/wordpress/types';
 
-export default function useBackupTitle( details: MigrationState ) {
+export default function useRestoreTitle( details: MigrationState ) {
 	const translate = useTranslate();
 	const { step, stepTotal, stepName } = details;
 
