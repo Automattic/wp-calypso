@@ -10,11 +10,15 @@ export const HintAdministratorRole = ( props: Props ) => {
 
 	return (
 		<div className="migration-error--hint">
-			<p>{ translate( "You don't have the administrator role in both sites:" ) }</p>
+			<p>
+				{ translate(
+					'Looks like you don’t currently have the administrator role on both the source and destination sites. To fix that, you’ll just need to:'
+				) }
+			</p>
 			<ol>
 				<li>
 					{ translate(
-						"Please ensure that your user's role is set as 'administrator' on both the {{linkA}}source{{/linkA}} and {{linkB}}destination{{/linkB}} sites, then retry the migration.",
+						"Check that your user’s role is set as 'administrator' on both the {{linkA}}source{{/linkA}} and {{linkB}}destination{{/linkB}} sites.",
 						{
 							components: {
 								linkA: (
@@ -35,9 +39,10 @@ export const HintAdministratorRole = ( props: Props ) => {
 						}
 					) }
 				</li>
+				<li>{ translate( "Click the 'Try again' button to restart the migration." ) }</li>
 				<li>
 					{ translate(
-						"If you have trouble setting a user's role, please reach out to our support team for help."
+						'If you have any trouble changing a user’s role, feel free to reach out to our support team for help.'
 					) }
 				</li>
 			</ol>
