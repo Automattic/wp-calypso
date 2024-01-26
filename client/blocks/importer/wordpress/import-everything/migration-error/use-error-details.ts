@@ -81,15 +81,18 @@ export default function useErrorDetails(
 				break;
 
 			case MigrationStatusError.TARGET_SITE_IS_PROTECTED:
-				setTitle( titleB );
+				setTitle( titleA );
 				setSubTitle(
-					translate( 'Your {{a}}destination site{{/a}} is a protected site.', {
-						components: {
-							a: createElement( 'a', { href: `${ targetSiteUrl }/wp-admin`, target: '_blank' } ),
-						},
-					} )
+					translate(
+						'Your {{a}}destination site{{/a}} is protected. You can always reach out to support if you have any questions.',
+						{
+							components: {
+								a: createElement( 'a', { href: `${ targetSiteUrl }/wp-admin`, target: '_blank' } ),
+							},
+						}
+					)
 				);
-				showGoBackCta( true );
+				showGetHelpCta( true );
 				break;
 
 			case MigrationStatusError.NO_START_USER_ADMIN_ON_SOURCE:
