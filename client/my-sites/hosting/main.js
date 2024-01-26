@@ -14,7 +14,6 @@ import QueryJetpackModules from 'calypso/components/data/query-jetpack-modules';
 import QueryKeyringConnections from 'calypso/components/data/query-keyring-connections';
 import QueryKeyringServices from 'calypso/components/data/query-keyring-services';
 import QueryReaderTeams from 'calypso/components/data/query-reader-teams';
-import QuerySites from 'calypso/components/data/query-sites';
 import FeatureExample from 'calypso/components/feature-example';
 import Layout from 'calypso/components/layout';
 import Column from 'calypso/components/layout/column';
@@ -251,7 +250,6 @@ const Hosting = ( props ) => {
 
 		return (
 			<>
-				{ isSiteAtomic && <QuerySites siteId={ siteId } /> }
 				{ isJetpack && <QueryJetpackModules siteId={ siteId } /> }
 				{ isGithubIntegrationEnabled && (
 					<>
