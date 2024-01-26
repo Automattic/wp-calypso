@@ -48,7 +48,7 @@ const getPlanTaskSubtitle = (
 	);
 };
 
-const getPlanSelectedTask: TaskAction = ( task, flow, context ): Task => {
+export const getPlanSelectedTask: TaskAction = ( task, flow, context ): Task => {
 	const {
 		siteInfoQueryArgs,
 		displayGlobalStylesWarning,
