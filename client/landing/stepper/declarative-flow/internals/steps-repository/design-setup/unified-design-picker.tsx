@@ -18,7 +18,6 @@ import {
 	getDesignPreviewUrl,
 	isAssemblerDesign,
 	isAssemblerSupported,
-	FREE_THEME,
 	PERSONAL_THEME,
 } from '@automattic/design-picker';
 import { useLocale } from '@automattic/i18n-utils';
@@ -54,7 +53,6 @@ import {
 	isMarketplaceThemeSubscribed as getIsMarketplaceThemeSubscribed,
 	getTheme,
 	isSiteEligibleForManagedExternalThemes,
-	getThemeTierForTheme,
 	isThemeAllowedOnSite,
 } from 'calypso/state/themes/selectors';
 import { isThemePurchased } from 'calypso/state/themes/selectors/is-theme-purchased';
@@ -407,15 +405,9 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 	const isPluginBundleEligible = useIsPluginBundleEligible();
 	const isBundled = selectedDesign?.software_sets && selectedDesign.software_sets.length > 0;
 
-	const selectedDesignTier =
-		useSelector(
-			( state ) =>
-				selectedDesignThemeId && getThemeTierForTheme( state, selectedDesignThemeId )?.slug
-		) ?? FREE_THEME;
-
 	const isLockedTheme =
 		( isEnabled( 'themes/tiers' ) &&
-			selectedDesignTier === PERSONAL_THEME &&
+			selectedDesign?.design_tier === PERSONAL_THEME &&
 			! canSiteActivateTheme ) ||
 		( selectedDesign?.is_premium && ! isPremiumThemeAvailable && ! didPurchaseSelectedTheme ) ||
 		( selectedDesign?.is_externally_managed &&
@@ -480,7 +472,7 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 			plan = 'business-bundle';
 		} else if ( selectedDesign?.is_externally_managed ) {
 			plan = ! isExternallyManagedThemeAvailable ? PLAN_BUSINESS_MONTHLY : '';
-		} else if ( isEnabled( 'themes/tiers' ) && selectedDesignTier === PERSONAL_THEME ) {
+		} else if ( isEnabled( 'themes/tiers' ) && selectedDesign?.design_tier === PERSONAL_THEME ) {
 			plan = PLAN_PERSONAL;
 		} else {
 			plan = 'premium';
@@ -599,7 +591,7 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 				} )
 			);
 
-			if ( isEnabled( 'themes/tiers' ) && selectedDesignTier === PERSONAL_THEME ) {
+			if ( isEnabled( 'themes/tiers' ) && selectedDesign?.design_tier === PERSONAL_THEME ) {
 				closePremiumGlobalStylesModal();
 			} else {
 				pickDesign();
@@ -758,7 +750,8 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 		recordTracksEvent( eventName, tracksProps );
 	}
 	function getPrimaryActionButtonAction(): () => void {
-		const isPersonalDesign = isEnabled( 'themes/tiers' ) && selectedDesignTier === PERSONAL_THEME;
+		const isPersonalDesign =
+			isEnabled( 'themes/tiers' ) && selectedDesign?.design_tier === PERSONAL_THEME;
 		if ( isLockedTheme ) {
 			// For personal themes we favor the GS Upgrade Modal over the Plan Upgrade Modal.
 			return isPersonalDesign && shouldUnlockGlobalStyles ? unlockPremiumGlobalStyles : upgradePlan;
