@@ -109,6 +109,29 @@ export default function SearchBar( props: Props ) {
 		},
 	];
 
+	const campaignFilterOptions = [
+		{
+			value: '',
+			label: translate( 'All' ),
+		},
+		{
+			value: 'active',
+			label: translate( 'Active', { context: 'comment status' } ),
+		},
+		{
+			value: 'created',
+			label: translate( 'In moderation', { context: 'comment status' } ),
+		},
+		{
+			value: 'finished',
+			label: translate( 'Completed', { context: 'comment status' } ),
+		},
+		{
+			value: 'rejected',
+			label: translate( 'Rejected', { context: 'comment status' } ),
+		},
+	];
+
 	const options = isWooStore ? wooPostTypeOptions : postTypeOptions;
 	// Smooth horizontal scrolling on mobile views
 	const tabsRef = useRef< { [ key: string ]: HTMLSpanElement | null } >( {} );
@@ -203,6 +226,19 @@ export default function SearchBar( props: Props ) {
 			: undefined;
 	};
 
+	const getCampaignFilterLabel = () => {
+		const selectedOption = campaignFilterOptions.find(
+			( item ) => item.value === filterOption.status
+		)?.label;
+
+		return selectedOption
+			? // translators: filterOption is something like All, Active, In Moderation, Completed or Rejected.
+			  translate( '%(filterOption)s campaigns', {
+					args: { filterOption: selectedOption },
+			  } )
+			: undefined;
+	};
+
 	return (
 		<div className="promote-post-i2__search-bar-wrapper">
 			<Search
@@ -261,10 +297,24 @@ export default function SearchBar( props: Props ) {
 				) }
 
 				{ mode === 'campaigns' && (
-					<CampaignsFilter
-						handleChangeFilter={ onChangeStatus }
-						campaignsFilter={ filterOption.status as CampaignsFilterType }
-					/>
+					<>
+						{ isDesktop && (
+							<CampaignsFilter
+								handleChangeFilter={ onChangeStatus }
+								campaignsFilter={ filterOption.status as CampaignsFilterType }
+							/>
+						) }
+
+						{ ! isDesktop && (
+							<SelectDropdown
+								className="promote-post-i2__search-bar-dropdown campaigns-filter"
+								onSelect={ ( option: DropdownOption ) => onChangeStatus( option.value ) }
+								options={ campaignFilterOptions }
+								initialSelected={ filterOption.status }
+								selectedText={ getCampaignFilterLabel() }
+							/>
+						) }
+					</>
 				) }
 			</div>
 		</div>
