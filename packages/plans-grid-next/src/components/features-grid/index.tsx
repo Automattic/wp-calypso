@@ -348,6 +348,7 @@ class FeaturesGrid extends Component< FeaturesGridProps > {
 			planActionOverrides,
 			isLargeCurrency,
 			onUpgradeClick,
+			planActions,
 		} = this.props;
 
 		return renderedGridPlans.map(
@@ -376,6 +377,8 @@ class FeaturesGrid extends Component< FeaturesGridProps > {
 					} );
 				}
 
+				const onPlanCtaClick = planActions?.[ planSlug ] || ( () => {} );
+
 				return (
 					<PlanDivOrTdContainer
 						key={ planSlug }
@@ -390,6 +393,7 @@ class FeaturesGrid extends Component< FeaturesGridProps > {
 							onUpgradeClick={ ( overridePlanSlug ) =>
 								onUpgradeClick( overridePlanSlug ?? planSlug )
 							}
+							onPlanCtaClick={ onPlanCtaClick }
 							planSlug={ planSlug }
 							currentSitePlanSlug={ currentSitePlanSlug }
 							buttonText={ buttonText }

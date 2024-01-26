@@ -37,6 +37,7 @@ type PlanFeaturesActionsButtonProps = {
 	isLaunchPage?: boolean | null;
 	isMonthlyPlan?: boolean;
 	onUpgradeClick: ( overridePlanSlug?: PlanSlug ) => void;
+	onPlanCtaClick: ( isFreeTrialPlan?: boolean ) => void;
 	planSlug: PlanSlug;
 	buttonText?: string;
 	planActionOverrides?: PlanActionOverrides;
@@ -66,6 +67,7 @@ const SignupFlowPlanFeatureActionButton = ( {
 	isLargeCurrency,
 	hasFreeTrialPlan,
 	handleUpgradeButtonClick,
+	onPlanCtaClick,
 	planActionOverrides,
 }: {
 	planSlug: PlanSlug;
@@ -75,6 +77,7 @@ const SignupFlowPlanFeatureActionButton = ( {
 	isLargeCurrency: boolean;
 	hasFreeTrialPlan: boolean;
 	handleUpgradeButtonClick: ( isFreeTrialPlan?: boolean ) => void;
+	onPlanCtaClick: ( isFreeTrialPlan?: boolean ) => void;
 	planActionOverrides?: PlanActionOverrides;
 } ) => {
 	const translate = useTranslate();
@@ -89,7 +92,7 @@ const SignupFlowPlanFeatureActionButton = ( {
 		},
 	} );
 
-	const onClick = () => handleUpgradeButtonClick( hasFreeTrialPlan );
+	const onClick = () => onPlanCtaClick( hasFreeTrialPlan );
 
 	if ( isFreePlan( planSlug ) ) {
 		btnText = translate( 'Start with Free' );
@@ -123,11 +126,7 @@ const SignupFlowPlanFeatureActionButton = ( {
 					{ translate( 'Try for free' ) }
 				</PlanButton>
 				{ ! isStuck && ( // along side with the free trial CTA, we also provide an option for purchasing the plan directly here
-					<PlanButton
-						planSlug={ planSlug }
-						onClick={ () => handleUpgradeButtonClick( false ) }
-						borderless
-					>
+					<PlanButton planSlug={ planSlug } onClick={ () => onPlanCtaClick( false ) } borderless>
 						{ btnText }
 					</PlanButton>
 				) }
@@ -156,6 +155,7 @@ const LaunchPagePlanFeatureActionButton = ( {
 	isStuck,
 	isLargeCurrency,
 	handleUpgradeButtonClick,
+	onPlanCtaClick,
 }: {
 	planSlug: PlanSlug;
 	planTitle: TranslateResult;
@@ -163,6 +163,7 @@ const LaunchPagePlanFeatureActionButton = ( {
 	isStuck: boolean;
 	isLargeCurrency: boolean;
 	handleUpgradeButtonClick: () => void;
+	onPlanCtaClick: ( isFreeTrialPlan?: boolean ) => void;
 } ) => {
 	const translate = useTranslate();
 
@@ -192,7 +193,7 @@ const LaunchPagePlanFeatureActionButton = ( {
 	}
 
 	return (
-		<PlanButton planSlug={ planSlug } onClick={ handleUpgradeButtonClick }>
+		<PlanButton planSlug={ planSlug } onClick={ onPlanCtaClick }>
 			{ buttonText }
 		</PlanButton>
 	);
@@ -206,6 +207,7 @@ const LoggedInPlansFeatureActionButton = ( {
 	isMonthlyPlan,
 	planTitle,
 	handleUpgradeButtonClick,
+	onPlanCtaClick,
 	planSlug,
 	currentSitePlanSlug,
 	buttonText,
@@ -219,6 +221,7 @@ const LoggedInPlansFeatureActionButton = ( {
 	isMonthlyPlan?: boolean;
 	planTitle: TranslateResult;
 	handleUpgradeButtonClick: () => void;
+	onPlanCtaClick: ( isFreeTrialPlan?: boolean ) => void;
 	planSlug: PlanSlug;
 	currentSitePlanSlug?: string | null;
 	buttonText?: string;
@@ -259,11 +262,7 @@ const LoggedInPlansFeatureActionButton = ( {
 	) {
 		if ( planActionOverrides?.loggedInFreePlan ) {
 			return (
-				<PlanButton
-					planSlug={ planSlug }
-					onClick={ planActionOverrides.loggedInFreePlan.callback }
-					current={ current }
-				>
+				<PlanButton planSlug={ planSlug } onClick={ onPlanCtaClick } current={ current }>
 					{ planActionOverrides.loggedInFreePlan.text }
 				</PlanButton>
 			);
@@ -297,7 +296,7 @@ const LoggedInPlansFeatureActionButton = ( {
 				<PlanButton
 					planSlug={ planSlug }
 					disabled={ ! callback }
-					onClick={ callback }
+					onClick={ onPlanCtaClick }
 					current={ current }
 				>
 					{ text }
@@ -343,7 +342,7 @@ const LoggedInPlansFeatureActionButton = ( {
 	) {
 		if ( planMatches( planSlug, { term: TERM_TRIENNIALLY } ) ) {
 			return (
-				<PlanButton planSlug={ planSlug } onClick={ handleUpgradeButtonClick } current={ current }>
+				<PlanButton planSlug={ planSlug } onClick={ onPlanCtaClick } current={ current }>
 					{ buttonText || translate( 'Upgrade to Triennial' ) }
 				</PlanButton>
 			);
@@ -351,7 +350,7 @@ const LoggedInPlansFeatureActionButton = ( {
 
 		if ( planMatches( planSlug, { term: TERM_BIENNIALLY } ) ) {
 			return (
-				<PlanButton planSlug={ planSlug } onClick={ handleUpgradeButtonClick } current={ current }>
+				<PlanButton planSlug={ planSlug } onClick={ onPlanCtaClick } current={ current }>
 					{ buttonText || translate( 'Upgrade to Biennial' ) }
 				</PlanButton>
 			);
@@ -359,7 +358,7 @@ const LoggedInPlansFeatureActionButton = ( {
 
 		if ( planMatches( planSlug, { term: TERM_ANNUALLY } ) ) {
 			return (
-				<PlanButton planSlug={ planSlug } onClick={ handleUpgradeButtonClick } current={ current }>
+				<PlanButton planSlug={ planSlug } onClick={ onPlanCtaClick } current={ current }>
 					{ buttonText || translate( 'Upgrade to Yearly' ) }
 				</PlanButton>
 			);
@@ -394,7 +393,7 @@ const LoggedInPlansFeatureActionButton = ( {
 
 	if ( availableForPurchase ) {
 		return (
-			<PlanButton planSlug={ planSlug } onClick={ handleUpgradeButtonClick } current={ current }>
+			<PlanButton planSlug={ planSlug } onClick={ onPlanCtaClick } current={ current }>
 				{ buttonTextFallback }
 			</PlanButton>
 		);
@@ -428,6 +427,7 @@ const PlanFeaturesActionsButton: React.FC< PlanFeaturesActionsButtonProps > = ( 
 	isInSignup,
 	isLaunchPage,
 	onUpgradeClick,
+	onPlanCtaClick,
 	planSlug,
 	buttonText,
 	planActionOverrides,
@@ -446,6 +446,9 @@ const PlanFeaturesActionsButton: React.FC< PlanFeaturesActionsButtonProps > = ( 
 
 	const handleUpgradeButtonClick = useCallback(
 		( isFreeTrialPlan?: boolean ) => {
+			console.log( '-----------whaaatttwaaaaaa?' );
+			return;
+
 			const upgradePlan = isFreeTrialPlan && freeTrialPlanSlug ? freeTrialPlanSlug : planSlug;
 
 			if ( ! isFreePlan( planSlug ) ) {
@@ -462,7 +465,7 @@ const PlanFeaturesActionsButton: React.FC< PlanFeaturesActionsButtonProps > = ( 
 
 	if ( isWpcomEnterpriseGridPlan( planSlug ) ) {
 		return (
-			<PlanButton planSlug={ planSlug } onClick={ () => handleUpgradeButtonClick() }>
+			<PlanButton planSlug={ planSlug } onClick={ () => onPlanCtaClick() }>
 				{ translate( 'Learn more' ) }
 			</PlanButton>
 		);
@@ -486,6 +489,7 @@ const PlanFeaturesActionsButton: React.FC< PlanFeaturesActionsButtonProps > = ( 
 				isStuck={ isStuck }
 				isLargeCurrency={ !! isLargeCurrency }
 				handleUpgradeButtonClick={ handleUpgradeButtonClick }
+				onPlanCtaClick={ onPlanCtaClick }
 			/>
 		);
 	}
@@ -500,6 +504,7 @@ const PlanFeaturesActionsButton: React.FC< PlanFeaturesActionsButtonProps > = ( 
 				hasFreeTrialPlan={ !! freeTrialPlanSlug }
 				handleUpgradeButtonClick={ handleUpgradeButtonClick }
 				planActionOverrides={ planActionOverrides }
+				onPlanCtaClick={ onPlanCtaClick }
 			/>
 		);
 	}
@@ -518,6 +523,7 @@ const PlanFeaturesActionsButton: React.FC< PlanFeaturesActionsButtonProps > = ( 
 			isMonthlyPlan={ isMonthlyPlan }
 			planTitle={ planTitle }
 			storageOptions={ storageOptions }
+			onPlanCtaClick={ onPlanCtaClick }
 		/>
 	);
 };

@@ -78,6 +78,7 @@ import useCheckPlanAvailabilityForPurchase from './hooks/use-check-plan-availabi
 import useCurrentPlanManageHref from './hooks/use-current-plan-manage-href';
 import useFilterPlansForPlanFeatures from './hooks/use-filter-plans-for-plan-features';
 import useFilteredDisplayedIntervals from './hooks/use-filtered-displayed-intervals';
+import usePlanActions from './hooks/use-plan-actions';
 import usePlanBillingPeriod from './hooks/use-plan-billing-period';
 import usePlanFromUpsells from './hooks/use-plan-from-upsells';
 import usePlanIntentFromSiteMeta from './hooks/use-plan-intent-from-site-meta';
@@ -494,6 +495,8 @@ const PlansFeaturesMain = ( {
 		}, [] as GridPlan[] );
 	}, [ filteredPlansForPlanFeatures, planFeaturesForComparisonGrid ] );
 
+	const comparisonGridPlanActions = usePlanActions( gridPlansForComparisonGrid );
+
 	// we neeed only the visible ones for features grid (these should extend into plans-ui data store selectors)
 	const gridPlansForFeaturesGrid = useMemo( () => {
 		return filteredPlansForPlanFeatures.reduce( ( acc, gridPlan ) => {
@@ -509,6 +512,8 @@ const PlansFeaturesMain = ( {
 			return acc;
 		}, [] as GridPlan[] );
 	}, [ filteredPlansForPlanFeatures, planFeaturesForFeaturesGrid ] );
+
+	const featuresGridPlanActions = usePlanActions( gridPlansForFeaturesGrid );
 
 	let hidePlanSelector = false;
 	// In the "purchase a plan and free domain" flow we do not want to show
@@ -898,6 +903,7 @@ const PlansFeaturesMain = ( {
 									hideUnavailableFeatures={ hideUnavailableFeatures }
 									currentSitePlanSlug={ sitePlanSlug }
 									planActionOverrides={ planActionOverrides }
+									planActions={ featuresGridPlanActions }
 									intent={ intent }
 									showLegacyStorageFeature={ showLegacyStorageFeature }
 									showUpgradeableStorage={ showUpgradeableStorage }
@@ -960,6 +966,7 @@ const PlansFeaturesMain = ( {
 												hideUnavailableFeatures={ hideUnavailableFeatures }
 												currentSitePlanSlug={ sitePlanSlug }
 												planActionOverrides={ planActionOverrides }
+												planActions={ comparisonGridPlanActions }
 												intent={ intent }
 												showUpgradeableStorage={ showUpgradeableStorage }
 												stickyRowOffset={ comparisonGridStickyRowOffset }

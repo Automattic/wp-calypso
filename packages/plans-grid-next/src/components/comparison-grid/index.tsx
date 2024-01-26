@@ -46,6 +46,7 @@ import type {
 	GridPlan,
 	ComparisonGridProps,
 	PlanActionOverrides,
+	PlanActions,
 	TransformedFeatureObject,
 	PlanTypeSelectorProps,
 } from '../../types';
@@ -333,6 +334,7 @@ type ComparisonGridHeaderProps = {
 	currentSitePlanSlug?: string | null;
 	onUpgradeClick: ( planSlug: PlanSlug ) => void;
 	planActionOverrides?: PlanActionOverrides;
+	planActions?: PlanActions;
 	selectedPlan?: string;
 	showRefundPeriod?: boolean;
 	isStuck: boolean;
@@ -367,6 +369,7 @@ const ComparisonGridHeaderCell = ( {
 	isLargeCurrency,
 	onUpgradeClick,
 	planActionOverrides,
+	planActions,
 	planUpgradeCreditsApplicable,
 	showRefundPeriod,
 	isStuck,
@@ -396,6 +399,8 @@ const ComparisonGridHeaderCell = ( {
 		'popular-badge-is-stuck': isStuck,
 	} );
 	const showPlanSelect = ! allVisible && ! gridPlan.current;
+
+	const onPlanCtaClick = planActions?.[ planSlug ] || ( () => {} );
 
 	return (
 		<Cell className={ headerClasses } textAlign="start">
@@ -456,6 +461,7 @@ const ComparisonGridHeaderCell = ( {
 				planSlug={ planSlug }
 				onUpgradeClick={ ( overridePlanSlug ) => onUpgradeClick( overridePlanSlug ?? planSlug ) }
 				planActionOverrides={ planActionOverrides }
+				onPlanCtaClick={ onPlanCtaClick }
 				showMonthlyPrice={ false }
 				isStuck={ false }
 			/>

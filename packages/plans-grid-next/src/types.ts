@@ -89,6 +89,10 @@ export interface PlanActionOverrides {
 	};
 }
 
+export type PlanActions = {
+	[ planSlug in PlanSlug ]?: ( isFreeTrialPlan?: boolean ) => void;
+};
+
 // A generic type representing the response of an async request.
 // It's probably generic enough to be put outside of the pricing grid package,
 // but at the moment it's located here to reduce its scope of influence.
@@ -110,6 +114,7 @@ export interface CommonGridProps {
 	currentSitePlanSlug?: string | null;
 	hideUnavailableFeatures?: boolean; // used to hide features that are not available, instead of strike-through as explained in #76206
 	planActionOverrides?: PlanActionOverrides;
+	planActions?: PlanActions;
 
 	// Value of the `?feature=` query param, so we can highlight a given feature and hide plans without it.
 	selectedFeature?: string;
