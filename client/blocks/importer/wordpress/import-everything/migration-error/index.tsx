@@ -86,7 +86,7 @@ export const MigrationError = ( props: Props ) => {
 							variant={ goBackCta || tryAgainCta ? 'secondary' : 'primary' }
 							isBusy={ isOpeningChatWidget }
 						>
-							{ translate( 'Get help' ) }
+							{ translate( 'Contact support' ) }
 						</NextButton>
 					) }
 				</div>

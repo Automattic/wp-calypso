@@ -10,27 +10,26 @@ export const HintJetpackUpdate = ( props: Props ) => {
 
 	return (
 		<div className="migration-error--hint">
-			<p>{ translate( 'The installed version of Jetpack on the source site is outdated:' ) }</p>
+			<p>
+				{ translate(
+					'Looks like the installed version of Jetpack on your {{a}}source site{{/a}} is outdated. To fix that, you’ll just need to:',
+					{
+						components: {
+							a: (
+								<a
+									href={ `${ sourceSiteSlug }/wp-admin/plugins.php` }
+									target="_blank"
+									rel="noreferrer"
+								/>
+							),
+						},
+					}
+				) }
+			</p>
 			<ol>
 				<li>
 					{ translate(
-						'Please check the current version of Jetpack installed on {{a}}the source site{{/a}} and ensure it’s active.',
-						{
-							components: {
-								a: (
-									<a
-										href={ `${ sourceSiteSlug }/wp-admin/plugins.php` }
-										target="_blank"
-										rel="noreferrer"
-									/>
-								),
-							},
-						}
-					) }
-				</li>
-				<li>
-					{ translate(
-						'Visit our {{linkA}}documentation page{{/linkA}} and verify that the Jetpack version is equal or higher than the one required. Otherwise update it to the latest version. If you are unfamiliar with how to update a plugin, please follow {{linkB}}these instructions{{/linkB}}.',
+						'Head to our {{linkA}}documentation page{{/linkA}} and check that your source site’s Jetpack version is equal or higher than the one required. If not, you’ll need to update to the latest version. If you need some help with that, take a look at {{linkB}}these instructions{{/linkB}}.',
 						{
 							components: {
 								linkA: (
@@ -55,11 +54,7 @@ export const HintJetpackUpdate = ( props: Props ) => {
 						}
 					) }
 				</li>
-				<li>
-					{ translate(
-						'Retry the migration by clicking the "Try again" button and check if the issue is resolved.'
-					) }
-				</li>
+				<li>{ translate( "Click the 'Try again' button to restart the migration." ) }</li>
 			</ol>
 		</div>
 	);

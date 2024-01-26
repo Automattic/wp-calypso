@@ -17,8 +17,8 @@ export default function useErrorDetails(
 	const [ getHelpCta, showGetHelpCta ] = useState( false );
 	const [ tryAgainCta, showTryAgainCta ] = useState( false );
 
-	const titleA = translate( "We couldn't start the migration" );
-	const titleB = translate( "We couldn't migrate your site" );
+	const titleA = translate( 'We ran into a problem migrating your site' );
+	const titleB = translate( "You're one step ahead" );
 	const titleC = translate( "We couldn't complete the migration" );
 
 	const handleDetails = useCallback( () => {
