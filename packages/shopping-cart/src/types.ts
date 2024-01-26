@@ -359,12 +359,6 @@ export interface ResponseCartProduct {
 	product_name_en: string;
 
 	/**
-	 * The cart item's original price in the currency's smallest unit.
-	 * @deprecated Use item_original_cost_integer or item_original_subtotal_integer.
-	 */
-	product_cost_integer: number;
-
-	/**
 	 * The cart item's original price without volume in the currency's smallest unit.
 	 *
 	 * Discounts and volume are not included, but quantity is included.
