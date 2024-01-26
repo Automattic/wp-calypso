@@ -171,7 +171,8 @@ class ReauthRequired extends Component {
 		);
 	}
 
-	renderVerificationForm( enhancedSecurity ) {
+	renderVerificationForm() {
+		const enhancedSecurity = this.props.twoStepAuthorization.data?.two_step_enhanced_security;
 		if ( enhancedSecurity ) {
 			return this.renderSecurityKeyUnsupported();
 		}
@@ -290,7 +291,7 @@ class ReauthRequired extends Component {
 						onComplete={ this.refreshNonceOnFailure }
 					/>
 				) : (
-					this.renderVerificationForm( enhancedSecurity )
+					this.renderVerificationForm()
 				) }
 				<TwoFactorActions
 					twoFactorAuthType={ currentAuthType }
