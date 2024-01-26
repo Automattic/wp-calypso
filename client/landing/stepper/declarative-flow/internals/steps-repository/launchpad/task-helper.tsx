@@ -461,7 +461,7 @@ export function getEnhancedTasks( {
 
 					taskData = getTaskDefinition( flow, task, context ) || deprecatedData;
 				case 'setup_general':
-					taskData = {
+					deprecatedData = {
 						disabled: false,
 						actionDispatch: () => {
 							recordTaskClickTracksEvent( flow, task.completed, task.id );
@@ -473,6 +473,7 @@ export function getEnhancedTasks( {
 							);
 						},
 					};
+					taskData = getTaskDefinition( flow, task, context ) || deprecatedData;
 					break;
 				case 'setup_link_in_bio':
 					taskData = {
@@ -549,7 +550,7 @@ export function getEnhancedTasks( {
 					break;
 				}
 				case 'videopress_upload':
-					taskData = {
+					deprecatedData = {
 						actionUrl: launchpadUploadVideoLink,
 						disabled: isVideoPressFlowWithUnsupportedPlan || videoPressUploadCompleted,
 						actionDispatch: () => {
@@ -557,9 +558,11 @@ export function getEnhancedTasks( {
 							window.location.replace( launchpadUploadVideoLink );
 						},
 					};
+
+					taskData = getTaskDefinition( flow, task, context ) || deprecatedData;
 					break;
 				case 'videopress_launched':
-					taskData = {
+					deprecatedData = {
 						isLaunchTask: true,
 						actionDispatch: () => {
 							if ( site?.ID ) {
@@ -585,6 +588,7 @@ export function getEnhancedTasks( {
 							}
 						},
 					};
+					taskData = getTaskDefinition( flow, task, context ) || deprecatedData;
 					break;
 				case 'domain_upsell':
 					deprecatedData = {
@@ -654,6 +658,9 @@ export function getEnhancedTasks( {
 								  );
 						},
 					};
+					break;
+				case 'videopress_setup':
+					taskData = getTaskDefinition( flow, task, context ) || task;
 					break;
 			}
 			enhancedTaskList.push( { ...task, ...taskData } );

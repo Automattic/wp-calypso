@@ -23,7 +23,7 @@ const StatsPurchaseSVG = ( {
 	const message = translate( 'Thanks for being one of our biggest supporters!' );
 	const isOdyssey = configApi.isEnabled( 'is_running_in_jetpack_site' );
 
-	const siteId = useSelector( ( state ) => getSelectedSiteId( state ) );
+	const siteId = useSelector( getSelectedSiteId );
 	const isWPCOMSite = useSelector( ( state ) => siteId && getIsSiteWPCOM( state, siteId ) );
 	// For Odyssey Stats, the SVG is loaded separately from the sprite located in `widgets.wp.com/odyssey-stats/common/` for CORS reasons.
 	let purchaseGraphSVG = isWPCOMSite ? calypsoStatsPurchaseGraphSVG : statsPurchaseGraphSVG;

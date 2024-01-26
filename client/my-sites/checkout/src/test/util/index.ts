@@ -1789,6 +1789,18 @@ export function mockCreateAccountEndpoint( endpointResponse ) {
 	return endpoint;
 }
 
+export function mockOrderEndpoint( orderId: number, endpointResponse ) {
+	const endpoint = jest.fn();
+	endpoint.mockReturnValue( true );
+
+	nock( 'https://public-api.wordpress.com' )
+		.get( '/rest/v1.1/me/transactions/order/' + orderId, ( body ) => {
+			return endpoint( body );
+		} )
+		.reply( endpointResponse );
+	return endpoint;
+}
+
 export function mockTransactionsEndpoint( transactionsEndpointResponse ) {
 	const transactionsEndpoint = jest.fn();
 	transactionsEndpoint.mockReturnValue( true );
@@ -1819,9 +1831,9 @@ export const mockCreateAccountSiteCreatedResponse = () => [
 	},
 ];
 
-export const mockTransactionsRedirectResponse = () => [
+export const mockTransactionsRedirectResponse = ( orderId?: number ) => [
 	200,
-	{ redirect_url: 'https://test-redirect-url' },
+	{ redirect_url: 'https://test-redirect-url', order_id: orderId },
 ];
 
 export const mockTransactionsSuccessResponse = () => [ 200, { success: 'true' } ];

@@ -4,7 +4,7 @@ import { useTranslate } from 'i18n-calypso';
 import { useSelector } from 'calypso/state';
 import { APIProductFamilyProduct } from 'calypso/state/partner-portal/types';
 import { getProductsList } from 'calypso/state/products-list/selectors';
-import { getProductPricingInfo } from '../../issue-license-v2/lib/pricing';
+import { getProductPricingInfo } from '../issue-license/lib/pricing';
 
 import './style.scss';
 
@@ -23,7 +23,7 @@ export default function ProductPriceWithDiscount( {
 }: Props ) {
 	const translate = useTranslate();
 
-	const userProducts = useSelector( ( state ) => getProductsList( state ) );
+	const userProducts = useSelector( getProductsList );
 	const isDailyPricing = product.price_interval === 'day';
 
 	const isBundle = quantity > 1;

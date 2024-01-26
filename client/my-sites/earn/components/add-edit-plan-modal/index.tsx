@@ -81,7 +81,7 @@ const RecurringPaymentsPlanAddEditModal = ( {
 }: RecurringPaymentsPlanAddEditModalProps ) => {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
-	const selectedSiteId = useSelector( ( state ) => getSelectedSiteId( state ) );
+	const selectedSiteId = useSelector( getSelectedSiteId );
 	const connectedAccountDefaultCurrency = useSelector( ( state ) =>
 		getconnectedAccountDefaultCurrencyForSiteId( state, siteId ?? selectedSiteId )
 	);

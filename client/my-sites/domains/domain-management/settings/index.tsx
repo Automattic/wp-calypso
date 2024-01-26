@@ -103,7 +103,7 @@ const Settings = ( {
 		}
 	}, [ contactInformation, requestWhois, selectedDomainName ] );
 
-	const hasConnectableSites = useSelector( ( state ) => canAnySiteConnectDomains( state ) );
+	const hasConnectableSites = useSelector( canAnySiteConnectDomains );
 
 	const renderHeader = () => {
 		const previousPath = domainManagementList(

@@ -138,9 +138,9 @@ const MainCards = ( {
 			content: <CacheCard disabled={ isBasicHostingDisabled } />,
 			type: 'basic',
 		},
-		{
+		siteId && {
 			feature: 'wp-admin',
-			content: <SiteAdminInterfaceCard />,
+			content: <SiteAdminInterfaceCard siteId={ siteId } />,
 			type: 'basic',
 		},
 	].filter( ( card ) => card !== null );
@@ -225,7 +225,7 @@ const Hosting = ( props ) => {
 	};
 
 	const getAtomicActivationNotice = () => {
-		if ( showHostingActivationBanner && ! isTransferring ) {
+		if ( showHostingActivationBanner ) {
 			return (
 				<Notice
 					className="hosting__activating-notice"

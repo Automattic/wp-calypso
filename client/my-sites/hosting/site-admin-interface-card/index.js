@@ -3,7 +3,7 @@ import { Card } from '@automattic/components';
 import styled from '@emotion/styled';
 import { useTranslate, localize } from 'i18n-calypso';
 import { useState, useEffect } from 'react';
-import { connect, useDispatch } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import CardHeading from 'calypso/components/card-heading';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormLabel from 'calypso/components/forms/form-label';
@@ -11,6 +11,7 @@ import FormRadio from 'calypso/components/forms/form-radio';
 import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
 import InlineSupportLink from 'calypso/components/inline-support-link';
 import MaterialIcon from 'calypso/components/material-icon';
+import { useSelector } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import {
 	errorNotice,
@@ -19,8 +20,8 @@ import {
 	successNotice,
 } from 'calypso/state/notices/actions';
 import { getSiteOption } from 'calypso/state/sites/selectors';
-import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { useSiteInterfaceMutation } from './use-select-interface-mutation';
+
 const changeLoadingNoticeId = 'admin-interface-change-loading';
 const successNoticeId = 'admin-interface-change-success';
 const failureNoticeId = 'admin-interface-change-failure';
@@ -32,7 +33,7 @@ const FormRadioStyled = styled( FormRadio )( {
 	},
 } );
 
-const SiteAdminInterfaceCard = ( { siteId, adminInterface } ) => {
+const SiteAdminInterfaceCard = ( { siteId } ) => {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 	const removeAllNotices = () => {
@@ -40,6 +41,9 @@ const SiteAdminInterfaceCard = ( { siteId, adminInterface } ) => {
 		dispatch( removeNotice( failureNoticeId ) );
 		dispatch( removeNotice( changeLoadingNoticeId ) );
 	};
+	const adminInterface = useSelector( ( state ) =>
+		getSiteOption( state, siteId, 'wpcom_admin_interface' )
+	);
 
 	const { setSiteInterface, isLoading: isUpdating } = useSiteInterfaceMutation( siteId, {
 		onMutate: () => {
@@ -141,9 +145,4 @@ const SiteAdminInterfaceCard = ( { siteId, adminInterface } ) => {
 	);
 };
 
-export default connect( ( state ) => {
-	const siteId = getSelectedSiteId( state );
-	const adminInterface = getSiteOption( state, siteId, 'wpcom_admin_interface' ) || 'calypso';
-
-	return { siteId, adminInterface };
-} )( localize( SiteAdminInterfaceCard ) );
+export default localize( SiteAdminInterfaceCard );
