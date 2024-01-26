@@ -282,6 +282,15 @@ function getYearlyVariantFromProduct( product: ResponseCartProduct ) {
 
 export function getSubtotalWithoutDiscounts( responseCart: ResponseCart ): number {
 	return responseCart.products.reduce( ( total, product ) => {
+		const isJetpack = isJetpackProduct( product ) || isJetpackPlan( product );
+
+		if ( isJetpack && isBiennially( product ) ) {
+			const yearlyVariant = getYearlyVariantFromProduct( product );
+
+			if ( yearlyVariant ) {
+				return total + yearlyVariant.price_before_discounts_integer * 2;
+			}
+		}
 		return total + product.item_original_subtotal_integer;
 	}, 0 );
 }
