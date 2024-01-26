@@ -7,7 +7,6 @@ import type {
 	FeatureObject,
 	StorageOption,
 } from '@automattic/calypso-products';
-import type { MinimalRequestCartProduct } from '@automattic/shopping-cart';
 import type { LocalizeProps, TranslateResult } from 'i18n-calypso';
 
 /******************
@@ -123,7 +122,6 @@ export interface CommonGridProps {
 	showRefundPeriod?: boolean;
 	// only used for comparison grid
 	planTypeSelectorProps?: PlanTypeSelectorProps;
-	onUpgradeClick: ( planSlug: PlanSlug ) => void;
 	planUpgradeCreditsApplicable?: number | null;
 }
 
@@ -156,20 +154,10 @@ export type GridContextProps = {
 };
 
 export type ComparisonGridExternalProps = Omit< GridContextProps, 'children' > &
-	Omit< ComparisonGridProps, 'onUpgradeClick' > & {
-		onUpgradeClick?: (
-			cartItems?: MinimalRequestCartProduct[] | null,
-			clickedPlanSlug?: PlanSlug
-		) => void;
-	};
+	ComparisonGridProps;
 
 export type FeaturesGridExternalProps = Omit< GridContextProps, 'children' > &
-	Omit< FeaturesGridProps, 'onUpgradeClick' | 'isLargeCurrency' | 'translate' > & {
-		onUpgradeClick?: (
-			cartItems?: MinimalRequestCartProduct[] | null,
-			clickedPlanSlug?: PlanSlug
-		) => void;
-	};
+	Omit< FeaturesGridProps, 'isLargeCurrency' | 'translate' >;
 
 /************************
  * PlanTypeSelector Types:

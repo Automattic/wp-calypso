@@ -347,7 +347,6 @@ class FeaturesGrid extends Component< FeaturesGridProps > {
 			translate,
 			planActionOverrides,
 			isLargeCurrency,
-			onUpgradeClick,
 			planActions,
 		} = this.props;
 
@@ -390,9 +389,6 @@ class FeaturesGrid extends Component< FeaturesGridProps > {
 							isInSignup={ isInSignup }
 							isLaunchPage={ isLaunchPage }
 							isMonthlyPlan={ isMonthlyPlan }
-							onUpgradeClick={ ( overridePlanSlug ) =>
-								onUpgradeClick( overridePlanSlug ?? planSlug )
-							}
 							onPlanCtaClick={ onPlanCtaClick }
 							planSlug={ planSlug }
 							currentSitePlanSlug={ currentSitePlanSlug }

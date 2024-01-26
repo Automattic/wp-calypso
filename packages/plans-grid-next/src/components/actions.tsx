@@ -20,7 +20,6 @@ import { formatCurrency } from '@automattic/format-currency';
 import { isMobile } from '@automattic/viewport';
 import styled from '@emotion/styled';
 import { useSelect } from '@wordpress/data';
-import { useCallback } from '@wordpress/element';
 import { localize, TranslateResult, useTranslate } from 'i18n-calypso';
 import { usePlansGridContext } from '../grid-context';
 import useDefaultStorageOption from '../hooks/data-store/use-default-storage-option';
@@ -36,7 +35,6 @@ type PlanFeaturesActionsButtonProps = {
 	isInSignup?: boolean;
 	isLaunchPage?: boolean | null;
 	isMonthlyPlan?: boolean;
-	onUpgradeClick: ( overridePlanSlug?: PlanSlug ) => void;
 	onPlanCtaClick: ( isFreeTrialPlan?: boolean ) => void;
 	planSlug: PlanSlug;
 	buttonText?: string;
@@ -66,7 +64,6 @@ const SignupFlowPlanFeatureActionButton = ( {
 	isStuck,
 	isLargeCurrency,
 	hasFreeTrialPlan,
-	handleUpgradeButtonClick,
 	onPlanCtaClick,
 	planActionOverrides,
 }: {
@@ -76,7 +73,6 @@ const SignupFlowPlanFeatureActionButton = ( {
 	isStuck: boolean;
 	isLargeCurrency: boolean;
 	hasFreeTrialPlan: boolean;
-	handleUpgradeButtonClick: ( isFreeTrialPlan?: boolean ) => void;
 	onPlanCtaClick: ( isFreeTrialPlan?: boolean ) => void;
 	planActionOverrides?: PlanActionOverrides;
 } ) => {
@@ -154,7 +150,6 @@ const LaunchPagePlanFeatureActionButton = ( {
 	priceString,
 	isStuck,
 	isLargeCurrency,
-	handleUpgradeButtonClick,
 	onPlanCtaClick,
 }: {
 	planSlug: PlanSlug;
@@ -162,7 +157,6 @@ const LaunchPagePlanFeatureActionButton = ( {
 	priceString: string | null;
 	isStuck: boolean;
 	isLargeCurrency: boolean;
-	handleUpgradeButtonClick: () => void;
 	onPlanCtaClick: ( isFreeTrialPlan?: boolean ) => void;
 } ) => {
 	const translate = useTranslate();
@@ -206,7 +200,6 @@ const LoggedInPlansFeatureActionButton = ( {
 	isLargeCurrency,
 	isMonthlyPlan,
 	planTitle,
-	handleUpgradeButtonClick,
 	onPlanCtaClick,
 	planSlug,
 	currentSitePlanSlug,
@@ -220,7 +213,6 @@ const LoggedInPlansFeatureActionButton = ( {
 	isLargeCurrency: boolean;
 	isMonthlyPlan?: boolean;
 	planTitle: TranslateResult;
-	handleUpgradeButtonClick: () => void;
 	onPlanCtaClick: ( isFreeTrialPlan?: boolean ) => void;
 	planSlug: PlanSlug;
 	currentSitePlanSlug?: string | null;
@@ -426,7 +418,6 @@ const PlanFeaturesActionsButton: React.FC< PlanFeaturesActionsButtonProps > = ( 
 	currentSitePlanSlug,
 	isInSignup,
 	isLaunchPage,
-	onUpgradeClick,
 	onPlanCtaClick,
 	planSlug,
 	buttonText,
@@ -437,28 +428,12 @@ const PlanFeaturesActionsButton: React.FC< PlanFeaturesActionsButtonProps > = ( 
 	storageOptions,
 } ) => {
 	const translate = useTranslate();
-	const { gridPlansIndex, helpers } = usePlansGridContext();
+	const { gridPlansIndex } = usePlansGridContext();
 	const {
 		planTitle,
 		pricing: { currencyCode, originalPrice, discountedPrice },
 		freeTrialPlanSlug,
 	} = gridPlansIndex[ planSlug ];
-
-	const handleUpgradeButtonClick = useCallback(
-		( isFreeTrialPlan?: boolean ) => {
-			const upgradePlan = isFreeTrialPlan && freeTrialPlanSlug ? freeTrialPlanSlug : planSlug;
-
-			if ( ! isFreePlan( planSlug ) ) {
-				helpers.recordTracksEvent?.( 'calypso_plan_features_upgrade_click', {
-					current_plan: currentSitePlanSlug,
-					upgrading_to: upgradePlan,
-					saw_free_trial_offer: !! freeTrialPlanSlug,
-				} );
-			}
-			onUpgradeClick?.( upgradePlan );
-		},
-		[ currentSitePlanSlug, freeTrialPlanSlug, helpers, onUpgradeClick, planSlug ]
-	);
 
 	if ( isWpcomEnterpriseGridPlan( planSlug ) ) {
 		return (
@@ -485,7 +460,6 @@ const PlanFeaturesActionsButton: React.FC< PlanFeaturesActionsButtonProps > = ( 
 				priceString={ priceString }
 				isStuck={ isStuck }
 				isLargeCurrency={ !! isLargeCurrency }
-				handleUpgradeButtonClick={ handleUpgradeButtonClick }
 				onPlanCtaClick={ onPlanCtaClick }
 			/>
 		);
@@ -499,7 +473,6 @@ const PlanFeaturesActionsButton: React.FC< PlanFeaturesActionsButtonProps > = ( 
 				isStuck={ isStuck }
 				isLargeCurrency={ !! isLargeCurrency }
 				hasFreeTrialPlan={ !! freeTrialPlanSlug }
-				handleUpgradeButtonClick={ handleUpgradeButtonClick }
 				planActionOverrides={ planActionOverrides }
 				onPlanCtaClick={ onPlanCtaClick }
 			/>
@@ -510,7 +483,6 @@ const PlanFeaturesActionsButton: React.FC< PlanFeaturesActionsButtonProps > = ( 
 		<LoggedInPlansFeatureActionButton
 			planSlug={ planSlug }
 			availableForPurchase={ availableForPurchase }
-			handleUpgradeButtonClick={ handleUpgradeButtonClick }
 			currentSitePlanSlug={ currentSitePlanSlug }
 			buttonText={ buttonText }
 			planActionOverrides={ planActionOverrides }

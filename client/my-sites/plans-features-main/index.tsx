@@ -866,7 +866,6 @@ const PlansFeaturesMain = ( {
 									isCustomDomainAllowedOnFreePlan={ isCustomDomainAllowedOnFreePlan }
 									isInSignup={ isInSignup }
 									isLaunchPage={ isLaunchPage }
-									onUpgradeClick={ () => {} }
 									selectedFeature={ selectedFeature }
 									selectedSiteId={ siteId }
 									intervalType={ intervalType }
@@ -928,7 +927,6 @@ const PlansFeaturesMain = ( {
 												gridPlans={ gridPlansForComparisonGrid }
 												isInSignup={ isInSignup }
 												isLaunchPage={ isLaunchPage }
-												onUpgradeClick={ () => {} }
 												selectedFeature={ selectedFeature }
 												selectedPlan={ selectedPlan }
 												selectedSiteId={ siteId }
