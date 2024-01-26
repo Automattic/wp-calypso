@@ -195,7 +195,7 @@ const PersonalPurchase = ( {
 			) }
 
 			{ subscriptionValue === 0 && (
-				<div className={ `${ COMPONENT_CLASS_NAME }__persnal-checklist` }>
+				<div className={ `${ COMPONENT_CLASS_NAME }__personal-checklist` }>
 					<p>
 						<strong>
 							{ translate( 'Please confirm non-commercial usage by checking each box:' ) }
