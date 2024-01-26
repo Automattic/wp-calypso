@@ -20,7 +20,8 @@ const StatsRedirectFlow = () => {
 		getSiteOption( state, siteId, 'created_at' )
 	) as string;
 
-	const { isFreeOwned, isPWYWOwned, isCommercialOwned } = useStatsPurchases( siteId );
+	const { isFreeOwned, isPWYWOwned, isCommercialOwned, supportCommercialUse } =
+		useStatsPurchases( siteId );
 
 	const isSiteJetpackNotAtomic = useSelector( ( state ) =>
 		isJetpackSite( state, siteId, { treatAtomicAsJetpackSite: false } )
@@ -31,7 +32,7 @@ const StatsRedirectFlow = () => {
 		'focus_jetpack_purchase'
 	);
 
-	const hasPlan = isFreeOwned || isPWYWOwned || isCommercialOwned;
+	const hasPlan = isFreeOwned || isPWYWOwned || isCommercialOwned || supportCommercialUse;
 	// TODO: update the date to the release date when the feature is ready.
 	const qualifiedUser =
 		siteCreatedTimeStamp && new Date( siteCreatedTimeStamp ) > new Date( '2024-01-15' );
