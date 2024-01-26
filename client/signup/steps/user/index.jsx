@@ -1,5 +1,5 @@
 import config from '@automattic/calypso-config';
-import { localizeUrl } from '@automattic/i18n-utils';
+import { localizeUrl, englishLocales } from '@automattic/i18n-utils';
 import { isNewsletterFlow, isHostingSignupFlow } from '@automattic/onboarding';
 import { isMobile } from '@automattic/viewport';
 import { Button } from '@wordpress/components';
@@ -458,7 +458,22 @@ export class UserStep extends Component {
 	}
 
 	getHeaderText() {
-		const { flowName, oauth2Client, translate, headerText, wccomFrom, isSocialFirst } = this.props;
+		const {
+			flowName,
+			oauth2Client,
+			translate,
+			headerText,
+			wccomFrom,
+			isSocialFirst,
+			userLoggedIn,
+			locale,
+		} = this.props;
+
+		if ( userLoggedIn ) {
+			if ( englishLocales.includes( locale ) ) {
+				return translate( 'Is this you?' );
+			}
+		}
 
 		if ( isCrowdsignalOAuth2Client( oauth2Client ) ) {
 			return translate( 'Sign up for Crowdsignal' );
