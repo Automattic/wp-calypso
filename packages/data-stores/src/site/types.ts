@@ -545,6 +545,7 @@ export enum MigrationStatusError {
 	NO_START_USER_ADMIN_ON_TARGET = 'no_start_user_admin_on_target',
 	NO_START_SOURCE_IN_PROGRESS = 'no_start_source_in_progress',
 	NO_START_TARGET_IN_PROGRESS = 'no_start_target_in_progress',
+	WPCOM_MIGRATION_PLUGIN_INCOMPATIBLE = 'wpcom_migration_plugin_incompatible',
 
 	// Start of migration #1
 	ACTIVATE_REWIND = 'error-rewind-activate',

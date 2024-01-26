@@ -4,11 +4,12 @@ import { NextButton, SubTitle, Title } from '@automattic/onboarding';
 import { useDispatch as useDataStoreDispatch } from '@wordpress/data';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback } from 'react';
-import { HintBackupFail } from 'calypso/blocks/importer/wordpress/import-everything/migration-error/hint-backup-fail';
-import { HintJetpackConnection } from 'calypso/blocks/importer/wordpress/import-everything/migration-error/hint-jetpack-connection';
 import { HintAdministratorRole } from './hint-administrator-role';
+import { HintBackupFail } from './hint-backup-fail';
 import { HintIncompatiblePlugins } from './hint-incompatible-plugins';
+import { HintJetpackConnection } from './hint-jetpack-connection';
 import { HintJetpackUpdate } from './hint-jetpack-update';
+import { HintMigrationPluginUpdate } from './hint-migration-plugin-update';
 import useErrorDetails from './use-error-details';
 import './style.scss';
 
@@ -75,6 +76,9 @@ export const MigrationError = ( props: Props ) => {
 			) }
 			{ hintId === 'administrator-role' && (
 				<HintAdministratorRole sourceSiteUrl={ sourceSiteUrl } targetSiteUrl={ targetSiteUrl } />
+			) }
+			{ hintId === 'migration-plugin-update' && (
+				<HintMigrationPluginUpdate sourceSiteSlug={ sourceSiteUrl } />
 			) }
 
 			{ ( goBackCta || tryAgainCta || getHelpCta || importContentCta ) && (

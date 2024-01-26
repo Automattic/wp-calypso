@@ -153,6 +153,13 @@ export default function useErrorDetails(
 				showGetHelpCta( true );
 				break;
 
+			case MigrationStatusError.WPCOM_MIGRATION_PLUGIN_INCOMPATIBLE:
+				setTitle( titleA );
+				setHintId( 'migration-plugin-update' );
+				showTryAgainCta( true );
+				showGetHelpCta( true );
+				break;
+
 			// Miscellaneous
 			case MigrationStatusError.GENERAL:
 			case MigrationStatusError.UNKNOWN:
