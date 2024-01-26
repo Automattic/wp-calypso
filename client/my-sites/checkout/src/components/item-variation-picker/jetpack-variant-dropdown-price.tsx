@@ -15,9 +15,9 @@ const JetpackDiscountDisplay: FunctionComponent< {
 	finalPriceInteger: number;
 	isFirstMonthTrial?: boolean;
 	showIntroOffer?: boolean;
-	priceInteger: number;
+	discountInteger: number;
 	currency: string;
-} > = ( { finalPriceInteger, isFirstMonthTrial, showIntroOffer, priceInteger, currency } ) => {
+} > = ( { finalPriceInteger, isFirstMonthTrial, showIntroOffer, discountInteger, currency } ) => {
 	const translate = useTranslate();
 
 	if ( isFirstMonthTrial && 0 === finalPriceInteger ) {
@@ -29,7 +29,7 @@ const JetpackDiscountDisplay: FunctionComponent< {
 			{ showIntroOffer && translate( 'Introductory offer: ' ) }
 			{ translate( 'Save %(price)s', {
 				args: {
-					price: formatCurrency( priceInteger, currency, {
+					price: formatCurrency( discountInteger, currency, {
 						stripZeros: true,
 						isSmallestUnit: true,
 					} ),
