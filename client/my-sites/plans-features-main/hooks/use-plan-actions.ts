@@ -13,7 +13,8 @@ import { useMemo, useCallback } from '@wordpress/element';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks'; //TODO: move this out
 import { getPlanCartItem } from 'calypso/lib/cart-values/cart-items';
 import { addQueryArgs } from 'calypso/lib/url';
-import type { GridPlan, PlanActions } from '@automattic/plans-grid-next';
+import useCurrentPlanManageHref from './use-current-plan-manage-href';
+import type { GridPlan, PlanActions, PlansIntent } from '@automattic/plans-grid-next';
 import type { MinimalRequestCartProduct } from '@automattic/shopping-cart';
 
 function useUpgradeHandler(
@@ -140,8 +141,9 @@ function useUpgradeHandler(
 
 function usePlanActions(
 	gridPlans: GridPlan[],
-	sitePlanSlug?: PlanSlug | null,
+	intent?: PlansIntent | null,
 	flowName?: string | null,
+	sitePlanSlug?: PlanSlug | null,
 	siteSlug?: string | null,
 	withDiscount?: string,
 	planActionCallback?: ( planSlug: PlanSlug ) => void,
@@ -156,6 +158,15 @@ function usePlanActions(
 		cartHandler
 	);
 
+	const currentPlanManageHref = useCurrentPlanManageHref();
+
+	const managePlan = () => page( currentPlanManageHref );
+	const manageAddon = () => page.redirect( `/add-ons/${ siteSlug }` );
+	const gotoVip = () => {
+		recordTracksEvent( 'calypso_plan_step_enterprise_click', { flow: flowName } );
+		window.open( 'https://wpvip.com/wordpress-vip-agile-content-platform', '_blank' );
+	};
+
 	return useMemo( () => {
 		return gridPlans.reduce( ( acc, gridPlan ) => {
 			const { planSlug } = gridPlan;
@@ -163,10 +174,14 @@ function usePlanActions(
 			let handler;
 
 			if ( isWpcomEnterpriseGridPlan( planSlug ) ) {
-				handler = () => {
-					recordTracksEvent( 'calypso_plan_step_enterprise_click', { flow: flowName } );
-					window.open( 'https://wpvip.com/wordpress-vip-agile-content-platform', '_blank' );
-				};
+				handler = gotoVip;
+			}
+			if ( sitePlanSlug && intent !== 'plans-p2' ) {
+				if ( isFreePlan( sitePlanSlug ) ) {
+					handler = manageAddon;
+				} else {
+					handler = managePlan;
+				}
 			} else {
 				handler = upgradeHandler( gridPlan );
 			}

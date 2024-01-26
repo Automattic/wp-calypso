@@ -449,8 +449,9 @@ const PlansFeaturesMain = ( {
 
 	const comparisonGridPlanActions = usePlanActions(
 		gridPlansForComparisonGrid,
-		sitePlanSlug,
+		intent,
 		flowName,
+		sitePlanSlug,
 		siteSlug,
 		withDiscount,
 		planActionCallback,
@@ -475,8 +476,9 @@ const PlansFeaturesMain = ( {
 
 	const featuresGridPlanActions = usePlanActions(
 		gridPlansForFeaturesGrid,
-		sitePlanSlug,
+		intent,
 		flowName,
+		sitePlanSlug,
 		siteSlug,
 		withDiscount,
 		planActionCallback,
@@ -617,9 +619,7 @@ const PlansFeaturesMain = ( {
 				actionOverrides = {
 					loggedInFreePlan: {
 						status: 'enabled',
-						callback: () => {
-							page.redirect( `/add-ons/${ siteSlug }` );
-						},
+						callback: () => {},
 						text: translate( 'Manage add-ons', { context: 'verb' } ),
 					},
 				};
@@ -635,7 +635,7 @@ const PlansFeaturesMain = ( {
 				actionOverrides = {
 					currentPlan: {
 						text: canUserManageCurrentPlan ? translate( 'Manage plan' ) : translate( 'View plan' ),
-						callback: () => page( currentPlanManageHref ),
+						callback: () => {},
 					},
 				};
 			}
