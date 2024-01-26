@@ -242,7 +242,9 @@ class ReauthRequired extends Component {
 
 		return (
 			<Card compact>
-				<CardHeading tagName="h2">{ translate( 'Two Factor Auth Required' ) }</CardHeading>
+				<CardHeading tagName="h2">
+					{ translate( 'Two Factor Authentication Required' ) }
+				</CardHeading>
 				<WarningCard
 					message={ translate(
 						'Your WordPress.com account requires the use of security keys, but the current device does not seem to support them.'
