@@ -9,6 +9,7 @@ import QueryRewindBackups from 'calypso/components/data/query-rewind-backups';
 import QueryRewindRestoreStatus from 'calypso/components/data/query-rewind-restore-status';
 import QueryRewindState from 'calypso/components/data/query-rewind-state';
 import { Interval, EVERY_FIVE_SECONDS } from 'calypso/lib/interval';
+import { settingsPath } from 'calypso/lib/jetpack/paths';
 import { useDispatch, useSelector } from 'calypso/state';
 import { rewindRestore } from 'calypso/state/activity-log/actions';
 import { recordTracksEvent } from 'calypso/state/analytics/actions/record';
@@ -310,7 +311,7 @@ const BackupRestoreFlow: FunctionComponent< Props > = ( {
 				</Button>
 				<Button
 					primary
-					href={ siteUrl }
+					href={ settingsPath( siteSlug ) }
 					className="rewind-flow__primary-button"
 					onClick={ () => {
 						dispatch(
