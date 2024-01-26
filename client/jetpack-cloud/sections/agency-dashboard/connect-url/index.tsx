@@ -50,7 +50,7 @@ export default function ConnectUrl() {
 			} else {
 				dispatch(
 					errorNotice(
-						translate( '"%(site)s" does not exists', {
+						translate( '"%(site)s" does not exist', {
 							args: { site: currentValidatingSite },
 						} )
 					)
