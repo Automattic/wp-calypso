@@ -1,7 +1,8 @@
 .checkout-sidebar-plan-upsell.jetpack {
-	background-color: var(--studio-jetpack-green-0);
-	border: solid 1px var(--studio-jetpack-green);
+	background-color: #fafff5; // custom color for accessibility reasons
+	border: solid 1px var(--studio-jetpack-green-40);
 	border-radius: 2px;
+	color: var(--studio-gray-80);
 
 	.action-panel__title,
 	div {
@@ -28,7 +29,7 @@
 				font-weight: 600;
 			}
 			&.section-discount {
-				color: var(--studio-jetpack-green);
+				color: var(--studio-jetpack-green-50);
 			}
 		}
 	}

@@ -95,9 +95,9 @@ const useCalculatedDiscounts = () => {
 
 	const originalPrice = biennial.priceBeforeDiscounts;
 
-	const discountBreakdown: PriceBreakdown[] = [];
+	const priceBreakdown: PriceBreakdown[] = [];
 
-	discountBreakdown.push( {
+	priceBreakdown.push( {
 		label: __( 'Plan subscription' ),
 		priceInteger: originalPrice,
 	} );
@@ -107,8 +107,8 @@ const useCalculatedDiscounts = () => {
 		product.introductory_offer_terms?.enabled &&
 		! isJetpackSocialAdvancedSlug( product.product_slug )
 	) {
-		discountBreakdown.push( {
-			label: __( 'Introductory offer' ),
+		priceBreakdown.push( {
+			label: __( 'Introductory offer*' ),
 			priceInteger: current.priceBeforeDiscounts - current.priceInteger,
 			isDiscount: true,
 		} );
@@ -117,11 +117,11 @@ const useCalculatedDiscounts = () => {
 	// Multi-year discount
 	const oneYearForTwoYearsPrice =
 		current.priceBeforeDiscounts * 2 -
-		discountBreakdown
+		priceBreakdown
 			.filter( ( { isDiscount } ) => isDiscount )
 			.reduce( ( sum, discount ) => sum + discount.priceInteger, 0 );
 
-	discountBreakdown.push( {
+	priceBreakdown.push( {
 		label: __( 'Multi-year discount' ),
 		priceInteger: oneYearForTwoYearsPrice - biennial.priceInteger,
 		isDiscount: true,
@@ -131,55 +131,50 @@ const useCalculatedDiscounts = () => {
 	if ( product.coupon_savings_integer ) {
 		const couponRate =
 			product.coupon_savings_integer / product.item_subtotal_before_discounts_integer;
-		discountBreakdown.push( {
+		priceBreakdown.push( {
 			label: __( 'Coupon' ),
 			priceInteger: biennial.priceInteger * couponRate,
 			isDiscount: true,
 		} );
 	}
 
-	const allAppliedDiscounts = discountBreakdown
+	const allAppliedDiscounts = priceBreakdown
 		.filter( ( { isDiscount } ) => isDiscount )
 		.reduce( ( sum, discount ) => sum + discount.priceInteger, 0 );
 
 	const subtotalPrice = originalPrice - allAppliedDiscounts;
 	const vatPrice = ( biennial.priceBeforeDiscounts - allAppliedDiscounts ) * product.item_tax_rate;
 
-	const finalBreakdown: PriceBreakdown[] = [
-		{ label: __( 'Subtotal' ), priceInteger: subtotalPrice },
-		{ label: __( 'VAT' ), priceInteger: vatPrice },
-	];
+	priceBreakdown.push( { label: __( 'Tax' ), priceInteger: vatPrice } );
+
+	const finalBreakdown: PriceBreakdown[] = [];
 
 	if ( credits >= subtotalPrice + vatPrice ) {
-		finalBreakdown.push(
-			{
-				label: __( 'Credits' ),
-				priceInteger: -( subtotalPrice + vatPrice ),
-			},
-			{
-				label: __( 'Total' ),
-				priceInteger: 0,
-				isBold: true,
-				forceDisplay: true,
-			}
-		);
+		priceBreakdown.push( {
+			label: __( 'Credits' ),
+			priceInteger: -( subtotalPrice + vatPrice ),
+		} );
+		finalBreakdown.push( {
+			label: __( 'Total' ),
+			priceInteger: 0,
+			isBold: true,
+			forceDisplay: true,
+		} );
 	} else {
-		finalBreakdown.push(
-			{
-				label: __( 'Credits' ),
-				priceInteger: -credits,
-			},
-			{
-				label: __( 'Total' ),
-				priceInteger: subtotalPrice + vatPrice - credits,
-				isBold: true,
-			}
-		);
+		priceBreakdown.push( {
+			label: __( 'Credits' ),
+			priceInteger: -credits,
+		} );
+		finalBreakdown.push( {
+			label: __( 'Total' ),
+			priceInteger: subtotalPrice + vatPrice - credits,
+			isBold: true,
+		} );
 	}
 
 	return {
 		percentSavings: getItemVariantDiscountPercentage( biennial, current ),
-		discountBreakdown,
+		priceBreakdown,
 		finalBreakdown,
 	};
 };
@@ -225,7 +220,7 @@ const JetpackAkismetCheckoutSidebarPlanUpsell: FC = () => {
 		return null;
 	}
 
-	const { percentSavings, discountBreakdown, finalBreakdown } = calculatedDiscounts;
+	const { percentSavings, priceBreakdown, finalBreakdown } = calculatedDiscounts;
 
 	const isLoading = FormStatus.READY !== formStatus;
 	const cardTitle = sprintf(
@@ -241,7 +236,7 @@ const JetpackAkismetCheckoutSidebarPlanUpsell: FC = () => {
 			</div>
 			<hr className="checkout-sidebar-plan-upsell__separator" />
 			<div className="checkout-sidebar-plan-upsell__plan-grid">
-				{ discountBreakdown.map( ( props ) => (
+				{ priceBreakdown.map( ( props ) => (
 					<UpsellEntry key={ props.label } { ...props } />
 				) ) }
 			</div>
