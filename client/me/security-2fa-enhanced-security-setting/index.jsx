@@ -8,11 +8,9 @@ import SectionHeader from 'calypso/components/section-header';
 import { useSelector } from 'calypso/state';
 import getUserSettings from 'calypso/state/selectors/get-user-settings';
 import { saveUserSettings, setUserSetting } from 'calypso/state/user-settings/actions';
-import { isFetchingUserSettings } from 'calypso/state/user-settings/selectors';
 
 const Security2faEnhancedSecuritySetting = () => {
 	const userSettings = useSelector( getUserSettings );
-	const isFetchingSettings = useSelector( isFetchingUserSettings );
 	const dispatch = useDispatch();
 	const translate = useTranslate();
 	const toggleSetting = ( settingValue ) => {
@@ -33,7 +31,6 @@ const Security2faEnhancedSecuritySetting = () => {
 							label={ translate(
 								'Secure your account by requiring the use of security keys (passkeys) as second factor.'
 							) }
-							disabled={ isFetchingSettings }
 							checked={ userSettings.two_step_enhanced_security }
 							onChange={ toggleSetting }
 						/>
