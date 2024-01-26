@@ -62,7 +62,6 @@ const useCurrentProductWithVariants = () => {
 
 	return {
 		product,
-		credits: responseCart.credits_integer,
 		variants: { current, biennial },
 		replaceWithBiennial,
 	};
@@ -72,7 +71,6 @@ const useCalculatedDiscounts = () => {
 	const { __ } = useI18n();
 	const {
 		product,
-		credits,
 		variants: { current, biennial },
 	} = useCurrentProductWithVariants();
 
@@ -154,30 +152,13 @@ const useCalculatedDiscounts = () => {
 
 	priceBreakdown.push( { label: __( 'Tax' ), priceInteger: vatPrice } );
 
-	const finalBreakdown: PriceBreakdown[] = [];
-
-	if ( credits >= subtotalPrice + vatPrice ) {
-		priceBreakdown.push( {
-			label: __( 'Credits' ),
-			priceInteger: -( subtotalPrice + vatPrice ),
-		} );
-		finalBreakdown.push( {
+	const finalBreakdown: PriceBreakdown[] = [
+		{
 			label: __( 'Total' ),
-			priceInteger: 0,
+			priceInteger: subtotalPrice + vatPrice,
 			isBold: true,
-			forceDisplay: true,
-		} );
-	} else {
-		priceBreakdown.push( {
-			label: __( 'Credits' ),
-			priceInteger: -credits,
-		} );
-		finalBreakdown.push( {
-			label: __( 'Total' ),
-			priceInteger: subtotalPrice + vatPrice - credits,
-			isBold: true,
-		} );
-	}
+		},
+	];
 
 	return {
 		percentSavings: getItemVariantDiscountPercentage( biennial, current ),
