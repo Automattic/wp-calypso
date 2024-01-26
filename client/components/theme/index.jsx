@@ -104,6 +104,14 @@ export class Theme extends Component {
 		active: false,
 	};
 
+	constructor( props ) {
+		super( props );
+
+		this.state = {
+			isScreenshotLoaded: false,
+		};
+	}
+
 	prevThemeThumbnailRef = createRef( null );
 	themeThumbnailRef = createRef( null );
 
@@ -154,6 +162,7 @@ export class Theme extends Component {
 	renderScreenshot() {
 		const { isExternallyManagedTheme, selectedStyleVariation, theme, siteSlug, translate } =
 			this.props;
+		const { isScreenshotLoaded } = this.state;
 		const { description, screenshot } = theme;
 
 		if ( theme.isCustomGeneratedTheme ) {
@@ -201,10 +210,13 @@ export class Theme extends Component {
 
 		return (
 			<img
-				alt={ decodeEntities( description ) }
+				alt={ isScreenshotLoaded ? decodeEntities( description ) : '' }
 				className="theme__img"
 				src={ themeImgSrc }
 				srcSet={ `${ themeImgSrcDoubleDpi } 2x` }
+				onLoad={ () => {
+					this.setState( { isScreenshotLoaded: true } );
+				} }
 			/>
 		);
 	}
