@@ -6,20 +6,21 @@ import { Discount, Label, Price, PriceTextContainer, Variant } from './styles';
 import type { WPCOMProductVariant } from './types';
 import type { FunctionComponent } from 'react';
 
-const isFreeMonthTrial = ( variant: WPCOMProductVariant ) =>
+const isFirstMonthTrial = ( variant: WPCOMProductVariant ) =>
 	variant.termIntervalInMonths === 12 &&
 	variant.introductoryTerm === 'month' &&
 	variant.introductoryInterval === 1;
 
 const JetpackDiscountDisplay: FunctionComponent< {
-	isFreeMonthTrial?: boolean;
+	finalPriceInteger: number;
+	isFirstMonthTrial?: boolean;
 	showIntroOffer?: boolean;
 	priceInteger: number;
 	currency: string;
-} > = ( { isFreeMonthTrial, showIntroOffer, priceInteger, currency } ) => {
+} > = ( { finalPriceInteger, isFirstMonthTrial, showIntroOffer, priceInteger, currency } ) => {
 	const translate = useTranslate();
 
-	if ( isFreeMonthTrial ) {
+	if ( isFirstMonthTrial && 0 === finalPriceInteger ) {
 		return <Discount>{ translate( 'One month free trial' ) }</Discount>;
 	}
 
@@ -46,34 +47,38 @@ export const JetpackItemVariantDropDownPrice: FunctionComponent< {
 
 	// We offer a free month trial for selected yearly plans (for now, only Social Advanced)
 
-	const calculateSavings = () => {
+	const calculateDiscount = () => {
 		const oneYearVariant = allVariants.find( ( v ) => 12 === v.termIntervalInMonths );
 		if ( 24 === variant.termIntervalInMonths && oneYearVariant ) {
 			return oneYearVariant.priceBeforeDiscounts * 2 - variant.priceInteger;
 		}
-
 		// For all plans except 2 years, the savings is the difference between the price before discounts and the price integer
 		return variant.priceBeforeDiscounts - variant.priceInteger;
 	};
 
-	const savingsInteger = calculateSavings();
+	const discountInteger = calculateDiscount();
 	const showIntroOffer = variant.introductoryInterval > 0 && variant.termIntervalInMonths === 12;
 
 	return (
 		<Variant>
 			<Label>
 				{ variant.variantLabel }
-				{ isMobile && savingsInteger > 0 && (
-					<JetpackDiscountDisplay priceInteger={ savingsInteger } currency={ variant.currency } />
+				{ isMobile && discountInteger > 0 && (
+					<JetpackDiscountDisplay
+						finalPriceInteger={ variant.priceInteger }
+						discountInteger={ discountInteger }
+						currency={ variant.currency }
+					/>
 				) }
 			</Label>
 			<PriceTextContainer>
-				{ ! isMobile && savingsInteger > 0 && (
+				{ ! isMobile && discountInteger > 0 && (
 					<JetpackDiscountDisplay
-						priceInteger={ savingsInteger }
+						finalPriceInteger={ variant.priceInteger }
+						discountInteger={ discountInteger }
 						currency={ variant.currency }
 						showIntroOffer={ showIntroOffer }
-						isFreeMonthTrial={ isFreeMonthTrial( variant ) }
+						isFirstMonthTrial={ isFirstMonthTrial( variant ) }
 					/>
 				) }
 				{ ! hasCheckoutVersion( '2' ) && (

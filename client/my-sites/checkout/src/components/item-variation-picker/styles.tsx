@@ -31,7 +31,7 @@ export const Option = styled.li< OptionProps >`
 	align-items: center;
 	background: white;
 	border: 1px solid ${ ( props ) => props.theme.colors.borderColor };
-	color: #646970;
+	color: var( --studio-gray-50 );
 	display: flex;
 	flex-direction: row;
 	font-size: ${ ( props ) => props.theme.fontSize.small };
@@ -42,7 +42,7 @@ export const Option = styled.li< OptionProps >`
 	cursor: pointer;
 
 	&:hover {
-		background: #e9f0f5;
+		background: var( --studio-blue-0 );
 
 		.is-jetpack & {
 			background: var( --studio-gray-0 );
@@ -50,7 +50,7 @@ export const Option = styled.li< OptionProps >`
 	}
 
 	&.item-variant-option--selected {
-		background: #055d9c;
+		background: var( --studio-blue-60 );
 
 		.is-jetpack & {
 			background: var( --studio-gray-80 );
@@ -93,10 +93,10 @@ export const Discount = styled.span`
 	}
 
 	.item-variant-option--selected & {
-		color: #b8e6bf;
+		color: var( --studio-green-5 );
 
 		.is-jetpack & {
-			color: #fff;
+			color: var( --studio-white );
 		}
 	}
 
@@ -108,7 +108,7 @@ export const Discount = styled.span`
 export const DoNotPayThis = styled.del`
 	text-decoration: line-through;
 	margin-right: 8px;
-	color: #646970;
+	color: var( --studio-gray-50 );
 
 	.rtl & {
 		margin-right: 0;
@@ -116,16 +116,16 @@ export const DoNotPayThis = styled.del`
 	}
 
 	.item-variant-option--selected & {
-		color: #fff;
+		color: var( --studio-white );
 	}
 `;
 
 export const Price = styled.span`
 	display: inline-flex;
 	justify-content: right;
-	color: #646970;
+	color: var( --studio-gray-50 );
 	.item-variant-option--selected & {
-		color: #fff;
+		color: var( --studio-white );
 	}
 `;
 
@@ -140,7 +140,7 @@ export const Variant = styled.div`
 	column-gap: 20px;
 
 	.item-variant-option--selected & {
-		color: #fff;
+		color: var( --studio-white );
 	}
 `;
 
