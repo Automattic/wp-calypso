@@ -122,7 +122,7 @@ const SignupFlowPlanFeatureActionButton = ( {
 	if ( hasFreeTrialPlan ) {
 		return (
 			<div className="plan-features-2023-grid__multiple-actions-container">
-				<PlanButton planSlug={ planSlug } onClick={ onClick } busy={ busy }>
+				<PlanButton planSlug={ planSlug } onClick={ () => onPlanCtaClick( true ) } busy={ busy }>
 					{ translate( 'Try for free' ) }
 				</PlanButton>
 				{ ! isStuck && ( // along side with the free trial CTA, we also provide an option for purchasing the plan directly here
@@ -446,9 +446,6 @@ const PlanFeaturesActionsButton: React.FC< PlanFeaturesActionsButtonProps > = ( 
 
 	const handleUpgradeButtonClick = useCallback(
 		( isFreeTrialPlan?: boolean ) => {
-			console.log( '-----------whaaatttwaaaaaa?' );
-			return;
-
 			const upgradePlan = isFreeTrialPlan && freeTrialPlanSlug ? freeTrialPlanSlug : planSlug;
 
 			if ( ! isFreePlan( planSlug ) ) {

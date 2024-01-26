@@ -449,6 +449,7 @@ const PlansFeaturesMain = ( {
 
 	const comparisonGridPlanActions = usePlanActions(
 		gridPlansForComparisonGrid,
+		sitePlanSlug,
 		flowName,
 		siteSlug,
 		withDiscount,
@@ -474,6 +475,7 @@ const PlansFeaturesMain = ( {
 
 	const featuresGridPlanActions = usePlanActions(
 		gridPlansForFeaturesGrid,
+		sitePlanSlug,
 		flowName,
 		siteSlug,
 		withDiscount,

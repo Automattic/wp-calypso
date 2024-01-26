@@ -4,9 +4,12 @@ import {
 	type PlanSlug,
 	isWpcomEnterpriseGridPlan,
 	isFreePlan,
+	isFreeHostingTrial,
 	getPlanPath,
 } from '@automattic/calypso-products';
 import page from '@automattic/calypso-router';
+import { WpcomPlansUI } from '@automattic/data-stores';
+import { useSelect } from '@wordpress/data';
 import { useMemo, useCallback } from '@wordpress/element';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks'; //TODO: move this out
 import { getPlanCartItem } from 'calypso/lib/cart-values/cart-items';
@@ -15,13 +18,18 @@ import type { GridPlan, PlanActions } from '@automattic/plans-grid-next';
 import type { MinimalRequestCartProduct } from '@automattic/shopping-cart';
 
 function useUpgradeHandler(
+	gridPlans: GridPlan[],
+	sitePlanSlug?: PlanSlug | null,
 	flowName?: string | null,
 	siteSlug?: string | null,
 	withDiscount?: string,
 	planActionCallback?: ( planSlug: PlanSlug ) => void,
 	cartHandler?: ( cartItems?: MinimalRequestCartProduct[] | null ) => void
 ) {
-	return useCallback(
+	// TODO:
+	// - clickedPlanSlug can likely be removed
+	// - those `recordTracksEvent` should be moved out
+	const processCartItems = useCallback(
 		( cartItems?: MinimalRequestCartProduct[] | null, clickedPlanSlug?: PlanSlug ) => {
 			if ( isWpcomEnterpriseGridPlan( clickedPlanSlug ?? '' ) ) {
 				recordTracksEvent( 'calypso_plan_step_enterprise_click', { flow: flowName } );
@@ -73,17 +81,82 @@ function useUpgradeHandler(
 		},
 		[ flowName, siteSlug, withDiscount, planActionCallback, cartHandler ]
 	);
+
+	const selectedStorageOptions = useSelect( ( select ) => {
+		return select( WpcomPlansUI.store ).getSelectedStorageOptions();
+	}, [] );
+
+	// TODO:
+	// `gridPlans` can likely be decoupled from here
+	const addSelectedPlanAndStorageAddon = useCallback(
+		( planSlug: PlanSlug ) => {
+			const selectedStorageOption = selectedStorageOptions?.[ planSlug ];
+			const { cartItemForPlan, storageAddOnsForPlan } =
+				gridPlans.find( ( gridPlan ) => gridPlan.planSlug === planSlug ) ?? {};
+			const storageAddOn = storageAddOnsForPlan?.find( ( addOn ) => {
+				return selectedStorageOption && addOn
+					? addOn.featureSlugs?.includes( selectedStorageOption )
+					: false;
+			} );
+			const storageAddOnCartItem = storageAddOn &&
+				! storageAddOn.purchased && {
+					product_slug: storageAddOn.productSlug,
+					quantity: storageAddOn.quantity,
+					volume: 1,
+					extra: { feature_slug: selectedStorageOption },
+				};
+
+			if ( cartItemForPlan ) {
+				processCartItems?.(
+					[ cartItemForPlan, ...( storageAddOnCartItem ? [ storageAddOnCartItem ] : [] ) ],
+					planSlug
+				);
+				return;
+			}
+
+			if ( isFreeHostingTrial( planSlug ) ) {
+				const cartItemForPlan = { product_slug: planSlug };
+				processCartItems?.( [ cartItemForPlan ], planSlug );
+				return;
+			}
+			processCartItems?.( null, planSlug );
+		},
+		[ gridPlans, processCartItems, selectedStorageOptions ]
+	);
+
+	return useCallback(
+		( gridPlan: GridPlan ) => {
+			const { planSlug, freeTrialPlanSlug } = gridPlan;
+
+			return ( isFreeTrialPlan?: boolean ) => {
+				const upgradePlan = isFreeTrialPlan && freeTrialPlanSlug ? freeTrialPlanSlug : planSlug;
+
+				if ( ! isFreePlan( planSlug ) ) {
+					recordTracksEvent?.( 'calypso_plan_features_upgrade_click', {
+						current_plan: sitePlanSlug,
+						upgrading_to: upgradePlan,
+						saw_free_trial_offer: !! freeTrialPlanSlug,
+					} );
+				}
+				addSelectedPlanAndStorageAddon?.( upgradePlan );
+			};
+		},
+		[ sitePlanSlug, addSelectedPlanAndStorageAddon ]
+	);
 }
 
 function usePlanActions(
 	gridPlans: GridPlan[],
+	sitePlanSlug?: PlanSlug | null,
 	flowName?: string | null,
 	siteSlug?: string | null,
 	withDiscount?: string,
 	planActionCallback?: ( planSlug: PlanSlug ) => void,
 	cartHandler?: ( cartItems?: MinimalRequestCartProduct[] | null ) => void
 ): PlanActions {
-	const handleUpgrade = useUpgradeHandler(
+	const upgradeHandler = useUpgradeHandler(
+		gridPlans,
+		sitePlanSlug,
 		flowName,
 		siteSlug,
 		withDiscount,
@@ -95,9 +168,7 @@ function usePlanActions(
 		return gridPlans.reduce( ( acc, gridPlan ) => {
 			return {
 				...acc,
-				[ gridPlan.planSlug ]: ( isFreeTrialPlan?: boolean ) => {
-					console.log( '----aaaaaa', isFreeTrialPlan );
-				},
+				[ gridPlan.planSlug ]: upgradeHandler( gridPlan ),
 			};
 		}, {} );
 	}, [ gridPlans ] );
