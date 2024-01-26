@@ -25,7 +25,7 @@ export const MigrationError = ( props: Props ) => {
 	const { setShowHelpCenter, setInitialRoute } = useDataStoreDispatch( HELP_CENTER_STORE );
 	const { sourceSiteUrl, targetSiteUrl, status, resetMigration, goToImportCapturePage } = props;
 	const translate = useTranslate();
-	const { isChatAvailable, isEligibleForChat } = useChatStatus();
+	const { isChatAvailable, isEligibleForChat, canConnectToZendesk } = useChatStatus();
 	const { openChatWidget, isOpeningChatWidget } = useChatWidget(
 		'zendesk_support_chat_key',
 		isEligibleForChat
@@ -33,7 +33,7 @@ export const MigrationError = ( props: Props ) => {
 	const { title, subTitle, hintId, goBackCta, getHelpCta, tryAgainCta } = useErrorDetails( status );
 
 	const getHelp = useCallback( () => {
-		if ( isChatAvailable ) {
+		if ( isChatAvailable && canConnectToZendesk ) {
 			openChatWidget( {
 				siteUrl: targetSiteUrl,
 				message: `${ status }: Import onboarding flow; migration failed`,
