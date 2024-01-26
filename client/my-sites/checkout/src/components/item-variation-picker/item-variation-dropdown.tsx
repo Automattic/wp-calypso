@@ -1,11 +1,19 @@
-import { isMultiYearDomainProduct } from '@automattic/calypso-products';
+import {
+	isJetpackPlan,
+	isJetpackProduct,
+	isMultiYearDomainProduct,
+} from '@automattic/calypso-products';
 import { Gridicon } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import { FunctionComponent, useCallback, useEffect, useState } from 'react';
+import { JetpackItemVariantDropDownPrice } from './jetpack-variant-dropdown-price';
 import { CurrentOption, Dropdown, OptionList, Option } from './styles';
 import { ItemVariantDropDownPrice } from './variant-dropdown-price';
 import type { ItemVariationPickerProps, WPCOMProductVariant } from './types';
 import type { ResponseCartProduct } from '@automattic/shopping-cart';
+
+const isJetpack = ( variant: WPCOMProductVariant ) =>
+	isJetpackProduct( variant ) || isJetpackPlan( variant );
 
 export const ItemVariationDropDown: FunctionComponent< ItemVariationPickerProps > = ( {
 	id,
@@ -113,6 +121,15 @@ export const ItemVariationDropDown: FunctionComponent< ItemVariationPickerProps 
 		return null;
 	}
 
+	const ItemVariantDropDownPriceWrapper: FunctionComponent< { variant: WPCOMProductVariant } > = (
+		props
+	) =>
+		isJetpack( props.variant ) ? (
+			<JetpackItemVariantDropDownPrice { ...props } allVariants={ variants } />
+		) : (
+			<ItemVariantDropDownPrice { ...props } />
+		);
+
 	return (
 		<Dropdown aria-expanded={ isOpen } aria-haspopup="listbox" onKeyDown={ handleKeyDown }>
 			<CurrentOption
@@ -123,7 +140,7 @@ export const ItemVariationDropDown: FunctionComponent< ItemVariationPickerProps 
 				role="button"
 			>
 				{ selectedVariantIndex !== null ? (
-					<ItemVariantDropDownPrice variant={ variants[ selectedVariantIndex ] } />
+					<ItemVariantDropDownPriceWrapper variant={ variants[ selectedVariantIndex ] } />
 				) : (
 					<span>{ translate( 'Pick a product term' ) }</span>
 				) }
@@ -169,6 +186,7 @@ function ItemVariantOptionList( {
 					}
 					compareTo={ compareTo }
 					variant={ variant }
+					allVariants={ variants }
 				/>
 			) ) }
 		</OptionList>
@@ -180,11 +198,13 @@ function ItemVariantOption( {
 	onSelect,
 	compareTo,
 	variant,
+	allVariants,
 }: {
 	isSelected: boolean;
 	onSelect: () => void;
 	compareTo?: WPCOMProductVariant;
 	variant: WPCOMProductVariant;
+	allVariants: WPCOMProductVariant[];
 } ) {
 	const { variantLabel, productId, productSlug } = variant;
 	return (
@@ -197,7 +217,11 @@ function ItemVariantOption( {
 			onClick={ onSelect }
 			selected={ isSelected }
 		>
-			<ItemVariantDropDownPrice variant={ variant } compareTo={ compareTo } />
+			{ isJetpack( variant ) ? (
+				<JetpackItemVariantDropDownPrice variant={ variant } allVariants={ allVariants } />
+			) : (
+				<ItemVariantDropDownPrice variant={ variant } compareTo={ compareTo } />
+			) }
 		</Option>
 	);
 }
