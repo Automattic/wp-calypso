@@ -139,4 +139,15 @@ describe( 'CommandPalette', () => {
 
 		expect( screen.queryByPlaceholderText( 'Search for commands' ) ).toBeNull();
 	} );
+
+	it( 'should close the command palette when cmd + k is pressed', () => {
+		renderCommandPalette();
+
+		const searchInput = screen.queryByPlaceholderText( 'Search for commands' );
+		expect( searchInput ).toBeInTheDocument();
+
+		fireEvent.keyDown( document, { key: 'k', metaKey: true } );
+
+		expect( screen.queryByText( 'Get help' ) ).toBeNull();
+	} );
 } );
