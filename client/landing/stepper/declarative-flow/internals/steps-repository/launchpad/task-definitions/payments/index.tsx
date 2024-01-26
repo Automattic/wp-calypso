@@ -12,6 +12,7 @@ export const getSetupPaymentsTask: TaskAction = ( task, flow, context ) => {
 		calypso_path: stripeConnectUrl
 			? stripeConnectUrl
 			: `/earn/payments/${ siteInfoQueryArgs?.siteSlug }#launchpad`,
+		useCalypsoPath: true,
 	};
 };
 
