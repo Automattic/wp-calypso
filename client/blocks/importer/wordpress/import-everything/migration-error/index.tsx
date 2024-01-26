@@ -42,7 +42,15 @@ export const MigrationError = ( props: Props ) => {
 			setInitialRoute( '/contact-form?mode=CHAT' );
 			setShowHelpCenter( true );
 		}
-	}, [ openChatWidget, targetSiteUrl ] );
+	}, [
+		openChatWidget,
+		targetSiteUrl,
+		status,
+		isChatAvailable,
+		canConnectToZendesk,
+		setInitialRoute,
+		setShowHelpCenter,
+	] );
 
 	return (
 		<div className="import__heading import__heading-center">
