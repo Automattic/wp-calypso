@@ -2,13 +2,19 @@ import { Button } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import Spinner from './spinner';
 
-export default function ValidateSites( { detectedSites }: { detectedSites: string[] } ) {
+export default function ValidateSites( {
+	detectedSites,
+	urlColumnIndex,
+}: {
+	detectedSites: string[];
+	urColumnIndex: number;
+} ) {
 	const translate = useTranslate();
 
 	const domainList = detectedSites.map( ( site: string ) => (
 		<div className="connect-url__validate-sites-row" key={ site }>
 			<Spinner />
-			<div>{ site }</div>
+			<div>{ site.split( ',' )[ urlColumnIndex ] }</div>
 		</div>
 	) );
 

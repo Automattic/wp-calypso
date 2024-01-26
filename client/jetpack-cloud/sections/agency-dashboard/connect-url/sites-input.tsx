@@ -25,7 +25,7 @@ export default function SitesInput( {
 
 	const handleFileRead = () => {
 		const content = fileReader.result;
-		const lines = content.split( /\r\n|\n/ );
+		const lines = content.split( /\r\n|\n/ ).filter( ( line: string ) => line !== '' );
 
 		onCSVLoad( lines );
 	};

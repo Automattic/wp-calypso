@@ -21,13 +21,13 @@ export default function QueryJetpackManageAddSiteUrl( { url, onSuccess }: Props 
 	const dispatch = useDispatch();
 	const connectingSite = useSelector( getConnectingSite );
 
-	if ( url && ! connectingSite.isFetching ) {
-		dispatch( checkUrl( url ) );
+	if ( connectingSite.isFetched ) {
+		onSuccess( connectingSite.data as SuccessData );
 		return null;
 	}
 
-	if ( connectingSite.isFetched ) {
-		onSuccess( connectingSite.data as SuccessData );
+	if ( url && ! connectingSite.isFetching ) {
+		dispatch( checkUrl( url ) );
 		return null;
 	}
 

@@ -5,6 +5,7 @@ import QueryJetpackManageAddSiteUrl, {
 	SuccessData,
 } from 'calypso/components/data/query-jetpack-manage-add-site-url';
 import { useDispatch } from 'calypso/state';
+import { JETPACK_CONNECT_COMPLETE_FLOW } from 'calypso/state/jetpack-connect/action-types';
 import { errorNotice, plainNotice, successNotice } from 'calypso/state/notices/actions';
 import CSVColumnConfirmation from './csv-column-confirmation';
 import SitesInput from './sites-input';
@@ -22,6 +23,7 @@ export default function ConnectUrl() {
 	const [ csvColumns, setCSVColumns ] = useState( [] as string[] );
 	const [ URLColumn, setURLColumn ] = useState( '' );
 	const [ currentValidatingSiteIndex, setCurrentValidatingSiteIndex ] = useState( 0 );
+	const [ csvConfirmed, setCSVConfirmed ] = useState( false );
 
 	const handleValidationSuccess = useCallback(
 		( data: SuccessData ) => {
@@ -38,9 +40,11 @@ export default function ConnectUrl() {
 
 				if ( ! data.isWordPress ) {
 					dispatch(
-						successNotice( '"%(site)s" is not a WordPress site, adding as monitoring only.', {
-							args: { site: currentValidatingSite },
-						} )
+						successNotice(
+							translate( '"%(site)s" is not a WordPress site, adding as monitoring only.', {
+								args: { site: currentValidatingSite },
+							} )
+						)
 					);
 				}
 			} else {
@@ -53,11 +57,15 @@ export default function ConnectUrl() {
 				);
 			}
 
+			/* Checks if there is another site to validate */
 			if ( currentValidatingSiteIndex + 1 <= detectedSites.length ) {
-				const columnIndex = csvColumns.indexOf( URLColumn );
-				const siteData = detectedSites[ currentValidatingSiteIndex + 1 ].split( ',' );
-				setCurrentValidatingSite( siteData[ columnIndex ] );
-				setCurrentValidatingSiteIndex( ( prevState ) => prevState + 1 );
+				const siteData = detectedSites[ currentValidatingSiteIndex + 1 ];
+				if ( siteData ) {
+					const columnIndex = csvColumns.indexOf( URLColumn );
+					dispatch( { type: JETPACK_CONNECT_COMPLETE_FLOW } );
+					setCurrentValidatingSite( siteData.split( ',' )[ columnIndex ] );
+					setCurrentValidatingSiteIndex( currentValidatingSiteIndex + 1 );
+				}
 			} else {
 				setValidating( false );
 				setCurrentValidatingSite( '' );
@@ -66,11 +74,13 @@ export default function ConnectUrl() {
 		},
 		[
 			currentValidatingSite,
+			URLColumn,
+			csvColumns,
+			currentValidatingSiteIndex,
 			translate,
 			detectedSites,
 			dispatch,
 			setCurrentValidatingSite,
-			setDetectedSites,
 		]
 	);
 
@@ -79,10 +89,25 @@ export default function ConnectUrl() {
 			const siteData = detectedSites[ 0 ].split( ',' );
 			const columnIndex = csvColumns.indexOf( option );
 			setCurrentValidatingSite( siteData[ columnIndex ] );
+			setCurrentValidatingSiteIndex( 0 );
 			setURLColumn( option );
 			setValidating( true );
 		},
 		[ detectedSites, csvColumns ]
+	);
+
+	const handleCSVLoadConfirmation = () => {
+		setCSVConfirmed( true );
+	};
+
+	const onCSVLoad = useCallback(
+		( fileContents: string[] ) => {
+			const columns: string[] = fileContents[ 0 ].split( ',' );
+			const sitesData: string[] = fileContents.slice( 1 );
+			setCSVColumns( columns );
+			setDetectedSites( sitesData );
+		},
+		[ setCSVColumns, setDetectedSites ]
 	);
 
 	const pageTitle = validating ? translate( 'Adding sites' ) : translate( 'Add sites by URL' );
@@ -100,25 +125,31 @@ export default function ConnectUrl() {
 			<div className="connect-url__page-subtitle">{ pageSubtitle }</div>
 
 			<Card>
-				{ ! csvColumns.length ? (
+				{ ! csvConfirmed ? (
 					<SitesInput
 						{ ...{
 							detectedSites,
 							setDetectedSites,
 							detectedFilename,
 							setDetectedFilename,
-							setCSVColumns,
+
+							onCSVLoad,
 						} }
+						onCSVLoadConfirmation={ handleCSVLoadConfirmation }
 					/>
-				) : (
-					! validating && (
-						<CSVColumnConfirmation
-							csvColumns={ csvColumns }
-							setURLColumn={ handleColumnConfirmation }
-						/>
-					)
-				) }
-				{ validating ? <ValidateSites { ...{ detectedSites } } /> : null }
+				) : null }
+				{ csvConfirmed && ! validating ? (
+					<CSVColumnConfirmation
+						csvColumns={ csvColumns }
+						setURLColumn={ handleColumnConfirmation }
+					/>
+				) : null }
+				{ validating ? (
+					<ValidateSites
+						{ ...{ detectedSites } }
+						urlColumnIndex={ csvColumns.indexOf( URLColumn ) }
+					/>
+				) : null }
 			</Card>
 		</div>
 	);
