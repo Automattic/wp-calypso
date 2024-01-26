@@ -381,11 +381,6 @@ export interface ResponseCartProduct {
 	item_subtotal_before_discounts_integer: number;
 
 	/**
-	 * The monthly term subtotal of a cart item in the currency's smallest unit.
-	 */
-	item_subtotal_monthly_cost_integer: number;
-
-	/**
 	 * The cart item's original price with volume in the currency's smallest unit.
 	 *
 	 * Discounts are not included, but volume and quantity are included.

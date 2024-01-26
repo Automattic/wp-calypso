@@ -20,7 +20,6 @@ describe( 'freePurchaseProcessor', () => {
 		item_original_cost_integer: 100,
 		item_original_cost_for_quantity_one_integer: 100,
 		item_subtotal_integer: 100,
-		item_subtotal_monthly_cost_integer: 100,
 		item_original_subtotal_integer: 100,
 		uuid: 'product002',
 		cost: 100,

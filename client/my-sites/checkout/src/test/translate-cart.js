@@ -310,7 +310,6 @@ describe( 'translateResponseCartToWPCOMCart', function () {
 					time_added_to_cart: 1572551402,
 					is_bundled: false,
 					item_original_cost_integer: 14400,
-					item_subtotal_monthly_cost_integer: 1200,
 					months_per_bill_period: 12,
 					item_subtotal: 127,
 					item_subtotal_integer: 12700,
