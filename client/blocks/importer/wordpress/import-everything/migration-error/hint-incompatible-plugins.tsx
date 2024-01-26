@@ -9,7 +9,7 @@ export const HintIncompatiblePlugins = () => {
 			<ol>
 				<li>
 					{ translate(
-						'Please ensure that you have deactivated all {{a}}incompatible plugins{{/a}} on the source site. ',
+						'Please double-check that you’ve deactivated any {{a}}incompatible plugins{{/a}} on the source site.',
 						{
 							components: {
 								a: (
@@ -25,11 +25,7 @@ export const HintIncompatiblePlugins = () => {
 						}
 					) }
 				</li>
-				<li>
-					{ translate(
-						'Retry the migration by clicking the "Try again" button and check if the issue is resolved.'
-					) }
-				</li>
+				<li>{ translate( "Click the 'Try again' button to restart the migration." ) }</li>
 			</ol>
 		</div>
 	);
