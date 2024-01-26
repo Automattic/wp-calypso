@@ -1,7 +1,7 @@
 import { isRegionInStsZone } from '@automattic/calypso-analytics';
 import cookie from 'cookie';
 
-export const mayWeSessionTrack = (): boolean => {
+const mayWeSessionTrack = (): boolean => {
 	const cookies = cookie.parse( document.cookie );
 
 	if ( isRegionInStsZone( cookies.country_code, cookies.region ) ) {
@@ -10,3 +10,5 @@ export const mayWeSessionTrack = (): boolean => {
 
 	return ! isRegionInStsZone( cookies.country_code, cookies.region );
 };
+
+export default mayWeSessionTrack;
