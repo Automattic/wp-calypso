@@ -6,8 +6,8 @@ import LicenseProductCard from 'calypso/jetpack-cloud/sections/partner-portal/li
 import { JETPACK_CONTACT_SUPPORT_NO_ASSISTANT } from 'calypso/lib/url/support';
 import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
-import { parseQueryStringProducts } from '../../lib/querystring-products';
-import LicenseMultiProductCard from '../../license-multi-product-card';
+import { parseQueryStringProducts } from '../../../lib/querystring-products';
+import LicenseMultiProductCard from '../../../license-multi-product-card';
 import { PRODUCT_FILTER_ALL } from '../constants';
 import IssueLicenseContext from '../context';
 import { getSupportedBundleSizes } from '../hooks/use-product-bundle-size';
@@ -17,7 +17,7 @@ import useProductAndPlans from './hooks/use-product-and-plans';
 import ProductFilterSearch from './product-filter-search';
 import ProductFilterSelect from './product-filter-select';
 import LicensesFormSection from './sections';
-import type { AssignLicenceProps } from '../../types';
+import type { AssignLicenceProps } from '../../../types';
 import type { SelectedLicenseProp } from '../types';
 import type { APIProductFamilyProduct } from 'calypso/state/partner-portal/types';
 

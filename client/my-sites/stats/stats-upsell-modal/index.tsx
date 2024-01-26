@@ -23,7 +23,7 @@ export default function StatsUpsellModal( { siteId }: { siteId: number } ) {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 	const plan = useSelector( ( state ) => getPlanBySlug( state, PLAN_PREMIUM ) );
-	const selectedSiteId = useSelector( ( state ) => getSelectedSiteId( state ) );
+	const selectedSiteId = useSelector( getSelectedSiteId );
 	const planMonthly = Plans.usePricingMetaForGridPlans( {
 		planSlugs: [ PLAN_PREMIUM ],
 		selectedSiteId,

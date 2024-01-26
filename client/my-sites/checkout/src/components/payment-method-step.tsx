@@ -53,14 +53,13 @@ const CheckoutTermsWrapper = styled.div< {
 	& .checkout__terms-foldable-card {
 		box-shadow: none;
 		padding: 0;
-		& .foldable-card__header {
+		&.is-compact .foldable-card__header {
 			font-size: 12px;
 			font-weight: 500;
 			line-height: 1.5;
 			padding: 0;
 		}
-		& .foldable-card.is-expanded,
-		.foldable-card__content {
+		&.is-expanded .foldable-card__content {
 			display: block;
 			padding: 0;
 			border-top: none;

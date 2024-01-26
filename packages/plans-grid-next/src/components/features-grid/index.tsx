@@ -26,12 +26,12 @@ import { Component } from 'react';
 import { isStorageUpgradeableForPlan } from '../../lib/is-storage-upgradeable-for-plan';
 import { getStorageStringFromFeature } from '../../util';
 import PlanFeatures2023GridActions from '../actions';
-import PlanFeatures2023GridBillingTimeframe from '../billing-timeframe';
 import PlanFeatures2023GridHeaderPrice from '../header-price';
 import { PlanFeaturesItem } from '../item';
 import PlanDivOrTdContainer from '../plan-div-td-container';
 import PlanFeaturesContainer from '../plan-features-container';
 import PlanLogo from '../plan-logo';
+import BillingTimeframe from '../shared/billing-timeframe';
 import { StickyContainer } from '../sticky-container';
 import StorageAddOnDropdown from '../storage-add-on-dropdown';
 import type { FeaturesGridProps, GridPlan } from '../../types';
@@ -278,7 +278,7 @@ class FeaturesGrid extends Component< FeaturesGridProps > {
 					isTableCell={ options?.isTableCell }
 					key={ planSlug }
 				>
-					<PlanFeatures2023GridBillingTimeframe
+					<BillingTimeframe
 						planSlug={ planSlug }
 						showRefundPeriod={ this.props.showRefundPeriod }
 					/>

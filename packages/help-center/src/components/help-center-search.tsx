@@ -46,7 +46,7 @@ export const HelpCenterSearch = ( { onSearchChange, currentRoute }: HelpCenterSe
 		[ setSubject, setMessage, onSearchChange ]
 	);
 
-	const siteId = useSelector( ( state ) => getSelectedSiteId( state ) );
+	const siteId = useSelector( getSelectedSiteId );
 	const site = useSelect(
 		( select ) => siteId && ( select( SITE_STORE ) as SiteSelect ).getSite( siteId ),
 		[ siteId ]

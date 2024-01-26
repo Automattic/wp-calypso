@@ -18,8 +18,8 @@ import './styles.scss';
 const SitesChecker: Step = function SitePicker( { navigation, flow } ) {
 	const { __ } = useI18n();
 	const { submit } = navigation;
-	const hasAllSitesFetched = useSelector( ( state ) => hasAllSitesList( state ) );
-	const allSites = useSelector( ( state ) => getSites( state ) );
+	const hasAllSitesFetched = useSelector( hasAllSitesList );
+	const allSites = useSelector( getSites );
 	const { resetOnboardStore } = useDispatch( ONBOARD_STORE );
 
 	useEffect( () => {

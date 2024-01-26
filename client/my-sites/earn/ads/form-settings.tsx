@@ -55,8 +55,8 @@ const AdsFormSettings = () => {
 	const [ settings, setSettings ] = useState< Settings >( {} );
 	const [ isChanged, setIsChanged ] = useState( false );
 
-	const site = useSelector( ( state ) => getSelectedSite( state ) );
-	const siteId = useSelector( ( state ) => getSelectedSiteId( state ) );
+	const site = useSelector( getSelectedSite );
+	const siteId = useSelector( getSelectedSiteId );
 	const siteUrl = useSelector( ( state ) => getSiteUrl( state, siteId ?? 0 ) );
 	const siteIsJetpack = useSelector( ( state ) => isJetpackSite( state, siteId ?? 0 ) );
 	const isSavingSettings = useSelector( ( state ) =>

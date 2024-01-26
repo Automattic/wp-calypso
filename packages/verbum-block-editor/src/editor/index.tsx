@@ -7,7 +7,7 @@ import {
 	store as blockEditorStore,
 	// @ts-expect-error - Typings missing
 } from '@wordpress/block-editor';
-import { useCompatibilityStyles } from '@wordpress/block-editor/build-module/components/iframe/use-compatibility-styles';
+import { getCompatibilityStyles } from '@wordpress/block-editor/build-module/components/iframe/get-compatibility-styles';
 import { createBlock, serialize, type BlockInstance } from '@wordpress/blocks';
 import { Popover, SlotFillProvider, KeyboardShortcuts } from '@wordpress/components';
 import { useStateWithHistory, useResizeObserver } from '@wordpress/compose';
@@ -45,7 +45,7 @@ export const Editor: FC< EditorProps > = ( { initialContent = '', onChange, isRT
 	 * This prevents the editor from copying the theme styles inside the iframe. We don't want to copy the styles inside.
 	 * See: https://github.com/WordPress/gutenberg/blob/4c319590947b5f7853411e3c076861193942c6d2/packages/block-editor/src/components/iframe/index.js#L160
 	 */
-	const compatStylesIds = useCompatibilityStyles().map(
+	const compatStylesIds = getCompatibilityStyles().map(
 		( el ) => el.getAttribute( 'id' ) as string
 	);
 

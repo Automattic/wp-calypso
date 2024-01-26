@@ -58,7 +58,7 @@ const JetpackCloudSidebar = ( {
 	backButtonProps,
 }: Props ) => {
 	const isAgency = useSelector( isAgencyUser );
-	const siteId = useSelector( ( state ) => getSelectedSiteId( state ) );
+	const siteId = useSelector( getSelectedSiteId );
 	const jetpackAdminUrl = useSelector( ( state ) =>
 		siteId ? getJetpackAdminUrl( state, siteId ) : null
 	);

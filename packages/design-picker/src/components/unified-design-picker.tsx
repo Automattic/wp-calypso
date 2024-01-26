@@ -15,6 +15,7 @@ import {
 	isDefaultGlobalStylesVariationSlug,
 	filterDesignsByCategory,
 } from '../utils';
+import { isLockedStyleVariation } from '../utils/is-locked-style-variation';
 import { UnifiedDesignPickerCategoryFilter } from './design-picker-category-filter/unified-design-picker-category-filter';
 import PatternAssemblerCta, { usePatternAssemblerCtaData } from './pattern-assembler-cta';
 import ThemeCard from './theme-card';
@@ -121,6 +122,7 @@ const useTrackDesignView = ( {
 				recordTracksEvent( 'calypso_design_picker_design_display', {
 					category: trackingCategory,
 					design_type: design.design_type,
+					...( design?.design_tier && { design_tier: design.design_tier } ),
 					is_premium: design.is_premium,
 					is_premium_available: isPremiumThemeAvailable,
 					slug: design.slug,
@@ -172,8 +174,11 @@ const DesignCard: React.FC< DesignCardProps > = ( {
 	const trackingDivRef = useTrackDesignView( { category, design, isPremiumThemeAvailable } );
 	const isDefaultVariation = isDefaultGlobalStylesVariationSlug( selectedStyleVariation?.slug );
 
-	const isLockedStyleVariation =
-		( ! design.is_premium && shouldLimitGlobalStyles && ! isDefaultVariation ) ?? false;
+	const isLocked = isLockedStyleVariation( {
+		isPremiumTheme: design.is_premium,
+		styleVariationSlug: selectedStyleVariation?.slug,
+		shouldLimitGlobalStyles,
+	} );
 
 	return (
 		<ThemeCard
@@ -189,7 +194,7 @@ const DesignCard: React.FC< DesignCardProps > = ( {
 					styleVariation={ selectedStyleVariation }
 				/>
 			}
-			badge={ getBadge( design.slug, isLockedStyleVariation ) }
+			badge={ getBadge( design.slug, isLocked ) }
 			styleVariations={ style_variations }
 			selectedStyleVariation={ selectedStyleVariation }
 			onImageClick={ () => onPreview( design, selectedStyleVariation ) }

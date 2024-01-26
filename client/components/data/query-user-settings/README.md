@@ -12,7 +12,7 @@ import { useSelector } from 'calypso/state';
 import { default as getUserSettings } from 'calypso/state/selectors/get-user-settings';
 
 export default function CurrentUser() {
-	const userSettings = useSelector( ( state ) => getUserSettings( state ) );
+	const userSettings = useSelector( getUserSettings );
 	const loginName = userSettings?.login_name;
 
 	return (

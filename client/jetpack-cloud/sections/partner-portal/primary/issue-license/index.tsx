@@ -18,7 +18,7 @@ import LayoutTop from 'calypso/jetpack-cloud/components/layout/top';
 import PartnerPortalSidebarNavigation from 'calypso/jetpack-cloud/sections/partner-portal/sidebar-navigation';
 import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
-import AssignLicenseStepProgress from '../assign-license-step-progress';
+import AssignLicenseStepProgress from '../../assign-license-step-progress';
 import IssueLicenseContext from './context';
 import { useProductBundleSize } from './hooks/use-product-bundle-size';
 import useSubmitForm from './hooks/use-submit-form';
@@ -26,11 +26,11 @@ import LicensesForm from './licenses-form';
 import ReviewLicenses from './review-licenses';
 import TotalCost from './total-cost';
 import type { SelectedLicenseProp } from './types';
-import type { AssignLicenceProps } from '../types';
+import type { AssignLicenceProps } from '../../types';
 
 import './style.scss';
 
-export default function IssueLicenseV2( { selectedSite, suggestedProduct }: AssignLicenceProps ) {
+export default function IssueLicense( { selectedSite, suggestedProduct }: AssignLicenceProps ) {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 

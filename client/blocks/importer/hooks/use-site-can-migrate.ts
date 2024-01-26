@@ -17,7 +17,7 @@ export function useSiteMigrateInfo(
 		status,
 	} = useMigrationEnabledInfoQuery( targetSiteId, sourceSiteSlug, fetchMigrationEnabledOnMount );
 
-	const isRequestingAllSites = useSelector( ( state ) => isRequestingSites( state ) );
+	const isRequestingAllSites = useSelector( isRequestingSites );
 	const sourceSite = useSelector( ( state ) => getSite( state, data?.source_blog_id ) );
 	const dispatch = useDispatch();
 	const [ isInitFetchingDone, setIsInitFetchingDone ] = useState( false );

@@ -1,5 +1,5 @@
 import { APIProductFamilyProduct } from 'calypso/state/partner-portal/types';
-import getProductInfo from '../../lib/get-product-info';
+import getProductInfo from '../../../lib/get-product-info';
 
 // Helper function to get the product name from the product slug. Only applicable for this filter logic.
 function getProductNameBySlug( slug: string ) {

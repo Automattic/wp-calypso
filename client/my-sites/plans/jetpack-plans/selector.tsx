@@ -49,8 +49,8 @@ const SelectorPage: React.FC< SelectorPageProps > = ( {
 }: SelectorPageProps ) => {
 	const dispatch = useDispatch();
 
-	const siteId = useSelector( ( state ) => getSelectedSiteId( state ) );
-	const siteSlugState = useSelector( ( state ) => getSelectedSiteSlug( state ) ) || '';
+	const siteId = useSelector( getSelectedSiteId );
+	const siteSlugState = useSelector( getSelectedSiteSlug ) || '';
 	const siteSlug = siteSlugProp || siteSlugState;
 	const [ currentDuration, setDuration ] = useState< Duration >( defaultDuration );
 	const viewTrackerPath = getViewTrackerPath( rootUrl, siteSlugProp );

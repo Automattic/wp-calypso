@@ -52,7 +52,7 @@ function useLogBillingHistoryError( message: string ) {
 }
 
 export function BillingHistory( { siteSlug }: { siteSlug: string } ) {
-	const selectedSiteId = useSelector( ( state ) => getSelectedSiteId( state ) );
+	const selectedSiteId = useSelector( getSelectedSiteId );
 	const translate = useTranslate();
 	const logBillingHistoryError = useLogBillingHistoryError(
 		'site level billing history load error'
