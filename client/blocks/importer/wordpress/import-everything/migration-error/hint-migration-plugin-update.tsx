@@ -11,7 +11,7 @@ export const HintMigrationPluginUpdate = ( props: Props ) => {
 		<div className="migration-error--hint">
 			<p>
 				{ translate(
-					'Looks like the the ‘Move to WordPress.com’ plugin is not updated and active. To fix that, you’ll just need to:',
+					"Looks like the the 'Move to WordPress.com' plugin is not updated and active. To fix that, you’ll just need to:",
 					{
 						components: {
 							a: (
@@ -28,7 +28,7 @@ export const HintMigrationPluginUpdate = ( props: Props ) => {
 			<ol>
 				<li>
 					{ translate(
-						"Check the current version of the 'Move to WordPress.com’ plugin installed on your {{a}}source site{{/a}} and make sure it’s active.",
+						"Check the current version of the 'Move to WordPress.com' plugin installed on your {{a}}source site{{/a}} and make sure it’s active.",
 						{
 							components: {
 								a: (
