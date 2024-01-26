@@ -127,7 +127,7 @@ export const SubscribersPageProvider = ( {
 	const grandTotal =
 		isCurrentUserSubscribed && subscribersTotals?.email_subscribers
 			? subscribersTotals.email_subscribers - 1
-			: 0;
+			: subscribersTotals?.email_subscribers;
 
 	const { pageChangeCallback } = usePagination(
 		pageNumber,
