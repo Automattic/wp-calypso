@@ -1,7 +1,7 @@
 import { START_WRITING_FLOW } from '@automattic/onboarding';
 import { getBlogLaunchedTask, getSiteLaunchedTask, getVideopressLaunchedTask } from '../';
 import { buildTask } from '../../../test/lib/fixtures';
-import { TaskContext } from '../../../types';
+import { type TaskContext } from '../../../types';
 
 const buildContext = ( options?: Partial< TaskContext > ) => {
 	return {

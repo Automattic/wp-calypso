@@ -5,7 +5,7 @@ import {
 	getSetupVideoPressTask,
 } from '../';
 import { buildTask } from '../../../test/lib/fixtures';
-import { TaskContext } from '../../../types';
+import { type TaskContext } from '../../../types';
 
 const buildContext = ( options?: Partial< TaskContext > ) => {
 	return {
