@@ -13,7 +13,7 @@ import 'calypso/my-sites/plans/jetpack-plans/product-store/simple-item-card/styl
 import './style.scss';
 
 type SimpleLicenseMultiItemCardProps = {
-	items: APIProductFamilyProduct;
+	items: APIProductFamilyProduct[];
 	bundleSize?: number;
 	ctaAsPrimary?: boolean;
 	ctaHref?: string;
