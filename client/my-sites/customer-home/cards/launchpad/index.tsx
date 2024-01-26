@@ -5,8 +5,9 @@ import {
 	useSortedLaunchpadTasks,
 } from '@automattic/data-stores';
 import { Launchpad, type Task } from '@automattic/launchpad';
+import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
-import { FC } from 'react';
+import { type FC } from 'react';
 import EllipsisMenu from 'calypso/components/ellipsis-menu';
 import PopoverMenuItem from 'calypso/components/popover-menu/item';
 import { useSelector } from 'calypso/state';
@@ -43,6 +44,12 @@ const CustomerHomeLaunchpad: FC< CustomerHomeLaunchpadProps > = ( {
 		return null;
 	}
 
+	const hasChecklist = checklist !== undefined && checklist !== null;
+	const launchpadTitle = hasChecklist ? title ?? translate( 'Next steps for your site' ) : ' ';
+	const headerClasses = classNames( 'customer-home-launchpad__header', {
+		'is-placeholder': ! hasChecklist,
+	} );
+
 	const temporaryDismiss = ( { dismissBy }: Pick< TemporaryDismiss, 'dismissBy' > ) => {
 		dismiss( {
 			dismissBy,
@@ -53,10 +60,8 @@ const CustomerHomeLaunchpad: FC< CustomerHomeLaunchpadProps > = ( {
 
 	return (
 		<div className="customer-home-launchpad">
-			<div className="customer-home-launchpad__header">
-				<h2 className="customer-home-launchpad__title">
-					{ title ?? translate( 'Next steps for your site' ) }
-				</h2>
+			<div className={ headerClasses }>
+				<h2 className="customer-home-launchpad__title">{ launchpadTitle }</h2>
 				{ numberOfSteps > completedSteps ? (
 					<div className="customer-home-launchpad__progress-bar-container">
 						<CircularProgressBar
@@ -80,16 +85,18 @@ const CustomerHomeLaunchpad: FC< CustomerHomeLaunchpadProps > = ( {
 						) }
 					</div>
 				) : (
-					<div className="customer-home-launchpad__dismiss-button">
-						<Button
-							className="themes__activation-modal-close-icon"
-							borderless
-							onClick={ permanentDismiss }
-						>
-							<div> { translate( 'Dismiss guide' ) } </div>
-							<Gridicon icon="cross" size={ 12 } />
-						</Button>
-					</div>
+					hasChecklist && (
+						<div className="customer-home-launchpad__dismiss-button">
+							<Button
+								className="themes__activation-modal-close-icon"
+								borderless
+								onClick={ permanentDismiss }
+							>
+								<div> { translate( 'Dismiss guide' ) } </div>
+								<Gridicon icon="cross" size={ 12 } />
+							</Button>
+						</div>
+					)
 				) }
 			</div>
 			<Launchpad
