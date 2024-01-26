@@ -28,8 +28,7 @@ const StatsRedirectFlow = () => {
 
 	const { isFetching, data: purchaseNotPosponed } = useNoticeVisibilityQuery(
 		siteId,
-		'focus_jetpack_purchase',
-		0
+		'focus_jetpack_purchase'
 	);
 
 	const hasPlan = isFreeOwned || isPWYWOwned || isCommercialOwned;

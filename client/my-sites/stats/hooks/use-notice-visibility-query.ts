@@ -66,33 +66,23 @@ const queryNotices = async function ( siteId: number | null ): Promise< Notices 
 
 const useNoticesVisibilityQueryRaw = function < T >(
 	siteId: number | null,
-	select?: ( payload: Notices ) => T,
-	staleTime?: number
+	select?: ( payload: Notices ) => T
 ) {
 	return useQuery( {
 		queryKey: [ 'stats', 'notices-visibility', 'raw', siteId ],
 		queryFn: () => queryNotices( siteId ),
 		select,
-		staleTime: staleTime !== undefined ? staleTime : 1000 * 30, // custom or 30 seconds
 		retry: 1,
 		retryDelay: 3 * 1000, // 3 seconds,
 	} );
 };
 
-export function useNoticeVisibilityQuery(
-	siteId: number | null,
-	noticeId: NoticeIdType,
-	staleTime?: number
-) {
+export function useNoticeVisibilityQuery( siteId: number | null, noticeId: NoticeIdType ) {
 	const selectVisibilityForSingleNotice = ( payload: Notices ) => {
 		payload = processConflictNotices( payload );
 		return !! payload?.[ noticeId ];
 	};
-	return useNoticesVisibilityQueryRaw< boolean >(
-		siteId,
-		selectVisibilityForSingleNotice,
-		staleTime
-	);
+	return useNoticesVisibilityQueryRaw< boolean >( siteId, selectVisibilityForSingleNotice );
 }
 
 export function useNoticesVisibilityQuery( siteId: number | null ) {
