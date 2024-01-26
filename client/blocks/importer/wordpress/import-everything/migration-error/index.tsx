@@ -30,7 +30,11 @@ export const MigrationError = ( props: Props ) => {
 		'zendesk_support_chat_key',
 		isEligibleForChat
 	);
-	const { title, subTitle, hintId, goBackCta, getHelpCta, tryAgainCta } = useErrorDetails( status );
+	const { title, subTitle, hintId, goBackCta, getHelpCta, tryAgainCta } = useErrorDetails(
+		status,
+		sourceSiteUrl,
+		targetSiteUrl
+	);
 
 	const getHelp = useCallback( () => {
 		if ( isChatAvailable && canConnectToZendesk ) {

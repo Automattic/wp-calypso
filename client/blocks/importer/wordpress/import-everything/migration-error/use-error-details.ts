@@ -3,7 +3,11 @@ import { createElement } from '@wordpress/element';
 import { useTranslate } from 'i18n-calypso';
 import { ReactNode, useCallback, useEffect, useState } from 'react';
 
-export default function useErrorDetails( status: MigrationStatusError | null ) {
+export default function useErrorDetails(
+	status: MigrationStatusError | null,
+	sourceSiteUrl: string,
+	targetSiteUrl: string
+) {
 	const translate = useTranslate();
 
 	const [ title, setTitle ] = useState( '' );
@@ -49,19 +53,37 @@ export default function useErrorDetails( status: MigrationStatusError | null ) {
 
 			case MigrationStatusError.SOURCE_SITE_IS_ATOMIC:
 				setTitle( titleB );
-				setSubTitle( translate( 'Your source site is already on WordPress.com.' ) );
+				setSubTitle(
+					translate( 'Your {{a}}source site{{/a}} is already on WordPress.com.', {
+						components: {
+							a: createElement( 'a', { href: `${ sourceSiteUrl }/wp-admin`, target: '_blank' } ),
+						},
+					} )
+				);
 				showGoBackCta( true );
 				break;
 
 			case MigrationStatusError.SOURCE_SITE_IS_PROTECTED:
 				setTitle( titleB );
-				setSubTitle( translate( 'Your source site is a protected site.' ) );
+				setSubTitle(
+					translate( 'Your {{a}}source site{{/a}} is a protected site.', {
+						components: {
+							a: createElement( 'a', { href: `${ sourceSiteUrl }/wp-admin`, target: '_blank' } ),
+						},
+					} )
+				);
 				showGoBackCta( true );
 				break;
 
 			case MigrationStatusError.TARGET_SITE_IS_PROTECTED:
 				setTitle( titleB );
-				setSubTitle( translate( 'Your destination site is a protected site.' ) );
+				setSubTitle(
+					translate( 'Your {{a}}destination site{{/a}} is a protected site.', {
+						components: {
+							a: createElement( 'a', { href: `${ targetSiteUrl }/wp-admin`, target: '_blank' } ),
+						},
+					} )
+				);
 				showGoBackCta( true );
 				break;
 

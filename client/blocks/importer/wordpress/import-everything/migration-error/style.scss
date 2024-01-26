@@ -12,6 +12,17 @@
 	margin-left: auto;
 	margin-right: auto;
 
+	p {
+		margin-bottom: 1rem;
+	}
+
+	ol {
+		margin-left: 1.5em;
+	}
+}
+
+.migration-error--subtitle,
+.migration-error--hint {
 	a,
 	a:visited {
 		color: inherit;
@@ -20,13 +31,5 @@
 		&:hover {
 			text-decoration: none;
 		}
-	}
-
-	p {
-		margin-bottom: 1rem;
-	}
-
-	ol {
-		margin-left: 1.5em;
 	}
 }
