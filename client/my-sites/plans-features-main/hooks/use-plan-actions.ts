@@ -4,7 +4,6 @@ import {
 	type PlanSlug,
 	isWpcomEnterpriseGridPlan,
 	isFreePlan,
-	isFreeHostingTrial,
 	getPlanPath,
 } from '@automattic/calypso-products';
 import page from '@automattic/calypso-router';
@@ -18,7 +17,6 @@ import type { GridPlan, PlanActions } from '@automattic/plans-grid-next';
 import type { MinimalRequestCartProduct } from '@automattic/shopping-cart';
 
 function useUpgradeHandler(
-	gridPlans: GridPlan[],
 	sitePlanSlug?: PlanSlug | null,
 	flowName?: string | null,
 	siteSlug?: string | null,
@@ -86,13 +84,18 @@ function useUpgradeHandler(
 		return select( WpcomPlansUI.store ).getSelectedStorageOptions();
 	}, [] );
 
-	// TODO:
-	// `gridPlans` can likely be decoupled from here
 	const addSelectedPlanAndStorageAddon = useCallback(
-		( planSlug: PlanSlug ) => {
+		( gridPlan: GridPlan, isFreeTrialPlan?: boolean ) => {
+			const { planSlug, freeTrialPlanSlug } = gridPlan;
+
+			if ( isFreeTrialPlan && freeTrialPlanSlug ) {
+				const freeTrialCartItem = { product_slug: freeTrialPlanSlug };
+				processCartItems?.( [ freeTrialCartItem ], freeTrialPlanSlug );
+				return;
+			}
+
 			const selectedStorageOption = selectedStorageOptions?.[ planSlug ];
-			const { cartItemForPlan, storageAddOnsForPlan } =
-				gridPlans.find( ( gridPlan ) => gridPlan.planSlug === planSlug ) ?? {};
+			const { cartItemForPlan, storageAddOnsForPlan } = gridPlan;
 			const storageAddOn = storageAddOnsForPlan?.find( ( addOn ) => {
 				return selectedStorageOption && addOn
 					? addOn.featureSlugs?.includes( selectedStorageOption )
@@ -114,14 +117,9 @@ function useUpgradeHandler(
 				return;
 			}
 
-			if ( isFreeHostingTrial( planSlug ) ) {
-				const cartItemForPlan = { product_slug: planSlug };
-				processCartItems?.( [ cartItemForPlan ], planSlug );
-				return;
-			}
 			processCartItems?.( null, planSlug );
 		},
-		[ gridPlans, processCartItems, selectedStorageOptions ]
+		[ processCartItems, selectedStorageOptions ]
 	);
 
 	return useCallback(
@@ -138,7 +136,7 @@ function useUpgradeHandler(
 						saw_free_trial_offer: !! freeTrialPlanSlug,
 					} );
 				}
-				addSelectedPlanAndStorageAddon?.( upgradePlan );
+				addSelectedPlanAndStorageAddon?.( gridPlan, isFreeTrialPlan );
 			};
 		},
 		[ sitePlanSlug, addSelectedPlanAndStorageAddon ]
@@ -155,7 +153,6 @@ function usePlanActions(
 	cartHandler?: ( cartItems?: MinimalRequestCartProduct[] | null ) => void
 ): PlanActions {
 	const upgradeHandler = useUpgradeHandler(
-		gridPlans,
 		sitePlanSlug,
 		flowName,
 		siteSlug,
