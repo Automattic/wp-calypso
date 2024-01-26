@@ -478,6 +478,7 @@ export default function WPCheckout( {
 								) }
 
 								<WPCheckoutOrderSummary siteId={ siteId } onChangeSelection={ changeSelection } />
+								<CheckoutSidebarNudge responseCart={ responseCart } />
 								{ hasCheckoutVersion( '2' ) && (
 									<CheckoutSummaryFeaturedList
 										responseCart={ responseCart }
@@ -486,7 +487,6 @@ export default function WPCheckout( {
 										onChangeSelection={ changeSelection }
 									/>
 								) }
-								<CheckoutSidebarNudge responseCart={ responseCart } />
 								<SecondaryCartPromotions
 									responseCart={ responseCart }
 									addItemToCart={ addItemToCart }
