@@ -53,7 +53,7 @@ export const Option = styled.li< OptionProps >`
 		background: #055d9c;
 
 		.is-jetpack & {
-			background: var( --studio-gray-90 );
+			background: var( --studio-gray-80 );
 		}
 	}
 `;
@@ -151,6 +151,7 @@ export const Label = styled.span`
 	// MOBILE_BREAKPOINT is <480px, used in useMobileBreakpoint
 	@media ( max-width: 480px ) {
 		flex-direction: column;
+		text-align: left;
 	}
 `;
 
