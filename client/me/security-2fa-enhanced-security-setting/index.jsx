@@ -1,24 +1,22 @@
 import { Card, FormLabel } from '@automattic/components';
 import { ToggleControl } from '@wordpress/components';
-import { localize } from 'i18n-calypso';
-import { connect } from 'react-redux';
+import { useTranslate } from 'i18n-calypso';
+import { useDispatch } from 'react-redux';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
 import SectionHeader from 'calypso/components/section-header';
+import { useSelector } from 'calypso/state';
 import getUserSettings from 'calypso/state/selectors/get-user-settings';
 import { saveUserSettings, setUserSetting } from 'calypso/state/user-settings/actions';
 import { isFetchingUserSettings } from 'calypso/state/user-settings/selectors';
-import { recordGoogleEvent } from 'calypso/state/analytics/actions';
 
-const Security2faEnhancedSecuritySetting = ( {
-	userSettings,
-	isFetchingSettings,
-	translate,
-	saveUserSettings: saveSettings,
-	setUserSetting: setSetting,
-} ) => {
+const Security2faEnhancedSecuritySetting = () => {
+	const userSettings = useSelector( getUserSettings );
+	const isFetchingSettings = useSelector( isFetchingUserSettings );
+	const dispatch = useDispatch();
+	const translate = useTranslate();
 	const toggleSetting = ( settingValue ) => {
-		setSetting( 'two_step_enhanced_security', settingValue );
+		dispatch( setUserSetting( 'two_step_enhanced_security', settingValue ) );
 	};
 
 	if ( ! userSettings.two_step_security_key_enabled ) {
@@ -26,9 +24,9 @@ const Security2faEnhancedSecuritySetting = ( {
 	}
 	return (
 		<div className="security-2fa-enhanced-security-setting">
-			<SectionHeader label={ translate( 'Settings' ) }></SectionHeader>
+			<SectionHeader label={ translate( 'Two Factor Settings' ) }></SectionHeader>
 			<Card>
-				<form onChange={ saveSettings }>
+				<form onChange={ () => dispatch( saveUserSettings() ) }>
 					<FormFieldset>
 						<FormLabel>{ translate( 'Enhanced account security' ) }</FormLabel>
 						<ToggleControl
@@ -51,14 +49,4 @@ const Security2faEnhancedSecuritySetting = ( {
 	);
 };
 
-export default connect(
-	( state ) => ( {
-		userSettings: getUserSettings( state ),
-		isFetchingSettings: isFetchingUserSettings( state ),
-	} ),
-	{
-		recordGoogleEvent,
-		setUserSetting,
-		saveUserSettings,
-	}
-)( localize( Security2faEnhancedSecuritySetting ) );
+export default Security2faEnhancedSecuritySetting;
