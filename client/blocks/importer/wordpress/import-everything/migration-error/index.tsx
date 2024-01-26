@@ -36,7 +36,7 @@ export const MigrationError = ( props: Props ) => {
 		if ( isChatAvailable ) {
 			openChatWidget( {
 				siteUrl: targetSiteUrl,
-				message: 'Import onboarding flow: migration failed',
+				message: `${ status }: Import onboarding flow; migration failed`,
 			} );
 		} else {
 			setInitialRoute( '/contact-form?mode=CHAT' );
