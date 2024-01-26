@@ -33,7 +33,6 @@ const CONFLICT_NOTICE_ID_GROUPS: Record< string, Array< NoticeIdType > > = {
 		'commercial_site_upgrade',
 		'tier_upgrade',
 	],
-	excluded: [ 'focus_jetpack_purchase' ],
 };
 
 /**
