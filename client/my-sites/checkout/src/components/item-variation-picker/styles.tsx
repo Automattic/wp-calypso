@@ -43,10 +43,18 @@ export const Option = styled.li< OptionProps >`
 
 	&:hover {
 		background: #e9f0f5;
+
+		.is-jetpack & {
+			background: var( --studio-gray-0 );
+		}
 	}
 
 	&.item-variant-option--selected {
 		background: #055d9c;
+
+		.is-jetpack & {
+			background: var( --studio-gray-90 );
+		}
 	}
 `;
 
@@ -86,6 +94,10 @@ export const Discount = styled.span`
 
 	.item-variant-option--selected & {
 		color: #b8e6bf;
+
+		.is-jetpack & {
+			color: #fff;
+		}
 	}
 
 	@media ( max-width: 660px ) {

@@ -6,6 +6,7 @@ import {
 import { Gridicon } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import { FunctionComponent, useCallback, useEffect, useState } from 'react';
+import isJetpackCheckout from 'calypso/lib/jetpack/is-jetpack-checkout';
 import { JetpackItemVariantDropDownPrice } from './jetpack-variant-dropdown-price';
 import { CurrentOption, Dropdown, OptionList, Option } from './styles';
 import { ItemVariantDropDownPrice } from './variant-dropdown-price';
@@ -131,7 +132,12 @@ export const ItemVariationDropDown: FunctionComponent< ItemVariationPickerProps 
 		);
 
 	return (
-		<Dropdown aria-expanded={ isOpen } aria-haspopup="listbox" onKeyDown={ handleKeyDown }>
+		<Dropdown
+			className={ isJetpackCheckout() ? 'is-jetpack' : '' }
+			aria-expanded={ isOpen }
+			aria-haspopup="listbox"
+			onKeyDown={ handleKeyDown }
+		>
 			<CurrentOption
 				aria-label={ translate( 'Pick a product term' ) }
 				disabled={ isDisabled }
