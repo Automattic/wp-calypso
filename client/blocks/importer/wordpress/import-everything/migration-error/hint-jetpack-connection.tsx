@@ -3,29 +3,47 @@ import { useTranslate } from 'i18n-calypso';
 
 interface Props {
 	sourceSiteUrl: string;
+	targetSiteUrl: string;
 }
 export const HintJetpackConnection = ( props: Props ) => {
 	const translate = useTranslate();
-	const { sourceSiteUrl } = props;
+	const { sourceSiteUrl, targetSiteUrl } = props;
 
 	return (
 		<div className="migration-error--hint">
 			<p>
-				{ translate( 'Jetpack connection is broken on the {{a}}source site{{/a}}:', {
-					components: {
-						a: <a href={ `${ sourceSiteUrl }/wp-admin` } target="_blank" rel="noreferrer" />,
-					},
-				} ) }
+				{ translate(
+					'Looks like the Jetpack connection is broken on your {{a}}source site{{/a}}. To fix that, you’ll just need to:',
+					{
+						components: {
+							a: <a href={ `${ sourceSiteUrl }/wp-admin` } target="_blank" rel="noreferrer" />,
+						},
+					}
+				) }
 			</p>
 			<ol>
 				<li>
 					{ translate(
-						"Ensure that your Jetpack connection is functioning properly: go to {{a}}My Jetpack{{/a}} and inspect the 'Connection' area. Confirm that both the site and the user show a “connected” status. The user account should be the same in both the source and destination sites.",
+						"Check that your Jetpack connection is working properly by heading to the 'Connection' options in your {{linkA}}My Jetpack menu{{/linkA}}. You’ll want to make sure that both site and user show a 'connected' status and that the user account is the same for both the {{linkB}}source{{/linkB}} and {{linkC}}destination{{/linkC}} sites.",
 						{
 							components: {
-								a: (
+								linkA: (
 									<a
 										href={ `${ sourceSiteUrl }/wp-admin/admin.php?page=my-jetpack` }
+										target="_blank"
+										rel="noreferrer"
+									/>
+								),
+								linkB: (
+									<a
+										href={ `${ sourceSiteUrl }/wp-admin/users.php` }
+										target="_blank"
+										rel="noreferrer"
+									/>
+								),
+								linkC: (
+									<a
+										href={ `${ targetSiteUrl }/wp-admin/users.php` }
 										target="_blank"
 										rel="noreferrer"
 									/>
@@ -36,7 +54,7 @@ export const HintJetpackConnection = ( props: Props ) => {
 				</li>
 				<li>
 					{ translate(
-						'If you can’t still establish a Jetpack connection, please follow {{a}}these instructions{{/a}} and retry the migration.',
+						'If you still can’t establish a Jetpack connection, please follow {{a}}these instructions{{/a}}.',
 						{
 							components: {
 								a: (
@@ -52,7 +70,6 @@ export const HintJetpackConnection = ( props: Props ) => {
 						}
 					) }
 				</li>
-				<li>{ translate( 'If the problem persists, please reach out to our support team.' ) }</li>
 			</ol>
 		</div>
 	);

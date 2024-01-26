@@ -141,14 +141,14 @@ export default function useErrorDetails(
 				break;
 
 			case MigrationStatusError.BACKUP_SITE_NOT_ACCESSIBLE:
-				setTitle( titleC );
+				setTitle( titleA );
 				setHintId( 'backup-fail' );
 				showTryAgainCta( true );
 				showGetHelpCta( true );
 				break;
 
 			case MigrationStatusError.MISSING_SOURCE_MASTER_USER:
-				setTitle( titleC );
+				setTitle( titleA );
 				setHintId( 'jetpack-connection' );
 				showTryAgainCta( true );
 				showGetHelpCta( true );

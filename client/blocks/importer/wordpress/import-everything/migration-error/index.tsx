@@ -71,7 +71,7 @@ export const MigrationError = ( props: Props ) => {
 			{ hintId === 'incompatible-plugins' && <HintIncompatiblePlugins /> }
 			{ hintId === 'jetpack-update' && <HintJetpackUpdate sourceSiteSlug={ sourceSiteUrl } /> }
 			{ hintId === 'jetpack-connection' && (
-				<HintJetpackConnection sourceSiteUrl={ sourceSiteUrl } />
+				<HintJetpackConnection sourceSiteUrl={ sourceSiteUrl } targetSiteUrl={ targetSiteUrl } />
 			) }
 			{ hintId === 'administrator-role' && (
 				<HintAdministratorRole sourceSiteUrl={ sourceSiteUrl } targetSiteUrl={ targetSiteUrl } />
