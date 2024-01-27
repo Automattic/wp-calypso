@@ -53,6 +53,7 @@
 	align-self: center;
 	flex-shrink: 0;
 	margin-left: 12px;
+	position: relative;
 
 	&:not(.is-invite-details) {
 		// Get out of the way of the link to the invite details page
@@ -67,7 +68,6 @@
 	&.is-invite-details {
 		// Show below the name and role on small screens
 		@include breakpoint-deprecated( "<480px" ) {
-			position: absolute;
 			bottom: 4px;
 			margin-left: 80px;
 		}
@@ -77,6 +77,7 @@
 
 	&.is-pending {
 		color: var(--color-text-subtle);
+		margin-left: 0;
 	}
 
 	.gridicon {
@@ -88,7 +89,6 @@
 .people-list-item__invite-resend.button,
 .people-list-item__invite-revoke.button {
 	vertical-align: baseline;
-	margin-left: 0.75rem;
 
 	&.is-success {
 		background-color: var(--color-neutral-0);
@@ -96,4 +96,8 @@
 		color: var(--color-neutral-70);
 		cursor: default;
 	}
+}
+
+.people-list-item__invite-revoke.button {
+	margin-left: 0.75rem;
 }
