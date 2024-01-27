@@ -101,8 +101,6 @@ export class PeopleInviteDetails extends PureComponent {
 						site={ site }
 						type="invite-details"
 						isSelectable={ false }
-						showStatus={ true }
-						RevokeClearBtn={ this.renderClearOrRevoke }
 					/>
 					{ this.renderInviteDetails() }
 					<InviteStatus type="invite-details" invite={ invite } site={ site } />
