@@ -76,7 +76,7 @@ export function useThemesThankYouData(
 	const goBackSection = (
 		<MasterbarStyled
 			onClick={ () => page( `/themes/${ siteSlug }` ) }
-			backText={ translate( 'Back to the dashboard' ) }
+			backText={ translate( 'Back to dashboard' ) }
 			canGoBack={ allThemesFetched }
 			showContact={ allThemesFetched }
 		/>

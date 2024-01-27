@@ -42,7 +42,7 @@ function DefaultGoBackSection( { areAllProductsFetched }: { areAllProductsFetche
 	return (
 		<MasterbarStyled
 			onClick={ () => page( `/home/${ siteSlug }` ) }
-			backText={ translate( 'Back to home' ) }
+			backText={ translate( 'Back to dashboard' ) }
 			canGoBack={ areAllProductsFetched }
 			showContact={ areAllProductsFetched }
 		/>
