@@ -145,7 +145,7 @@ class Upload extends Component {
 	};
 
 	requestUpdatedSiteData = ( isTransferring, wasTransferring, isTransferCompleted ) => {
-		if ( isTransferring ) {
+		if ( isTransferring && ! this.state.isTransferring ) {
 			this.setState( {
 				isTransferring: true,
 				showEligibility: false,
@@ -160,7 +160,11 @@ class Upload extends Component {
 	};
 
 	componentDidUpdate( prevProps ) {
-		if ( this.props.isAtomic && this.props.canUploadThemesOrPlugins ) {
+		if (
+			this.props.isAtomic &&
+			this.props.canUploadThemesOrPlugins &&
+			! this.state.hasRequestedTrial
+		) {
 			this.redirectToWpAdmin();
 		}
 		if ( this.props.complete && ! prevProps.complete ) {
