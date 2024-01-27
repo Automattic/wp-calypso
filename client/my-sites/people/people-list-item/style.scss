@@ -52,7 +52,6 @@
 .people-list-item__invite-status {
 	align-self: center;
 	flex-shrink: 0;
-	margin-left: 12px;
 	position: relative;
 
 	&:not(.is-invite-details) {
@@ -98,6 +97,6 @@
 	}
 }
 
-.people-list-item__invite-revoke.button {
-	margin-left: 0.75rem;
+.people-list-item__invite-resend.button {
+	margin-right: 0.75rem;
 }
