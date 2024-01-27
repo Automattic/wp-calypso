@@ -111,7 +111,7 @@ const PluginsDiscoveryPage = ( props ) => {
 		setIsTrialAcknowledgeModalOpen( true );
 	};
 
-	const secondaryCallToAction = isEligibleForHostingTrial ? __( 'Start for free' ) : null;
+	const secondaryCallToAction = isEligibleForHostingTrial ? __( 'Try for free' ) : null;
 
 	return (
 		<>
