@@ -206,7 +206,7 @@ describe( 'Hosting Configuration', () => {
 			await waitFor( () => expect( wpcomGetStub ).toHaveBeenCalled() );
 
 			expect(
-				screen.getByText( 'Upgrade to the Creator plan to access all hosting features:' )
+				await screen.findByText( 'Upgrade to the Creator plan to access all hosting features:' )
 			).toBeVisible();
 			expect( screen.getByText( 'Upgrade to Creator Plan' ) ).toBeVisible();
 
@@ -227,7 +227,7 @@ describe( 'Hosting Configuration', () => {
 			await waitFor( () => expect( wpcomGetStub ).toHaveBeenCalled() );
 
 			expect(
-				screen.getByText( 'Upgrade to the Creator plan to access all hosting features:' )
+				await screen.findByText( 'Upgrade to the Creator plan to access all hosting features:' )
 			).toBeVisible();
 
 			expect( screen.getByText( 'Upgrade to Creator Plan' ) ).toBeVisible();
