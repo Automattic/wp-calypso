@@ -214,6 +214,7 @@ const Hosting = ( props ) => {
 				transferStates.INQUIRING,
 				transferStates.ERROR,
 				transferStates.COMPLETED,
+				transferStates.COMPLETE,
 			].includes( transferState )
 	);
 
