@@ -55,8 +55,8 @@
 		"@automattic/calypso-color-schemes": "workspace:^",
 		"@automattic/calypso-typescript-config": "workspace:^",
 		"@types/wordpress__blocks": "^12.5.13",
-		"@typescript-eslint/eslint-plugin": "^6.18.1",
-		"@typescript-eslint/parser": "^6.18.1",
+		"@typescript-eslint/eslint-plugin": "^6.19.0",
+		"@typescript-eslint/parser": "^6.19.0",
 		"@wordpress/eslint-plugin": "^17.7.0",
 		"@wordpress/stylelint-config": "^21.33.0",
 		"typescript": "^5.3.3"
