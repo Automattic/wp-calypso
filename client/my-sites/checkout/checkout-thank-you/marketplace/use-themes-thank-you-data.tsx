@@ -8,12 +8,13 @@ import { clearActivated } from 'calypso/state/themes/actions';
 import { getThemes } from 'calypso/state/themes/selectors';
 import { hasExternallyManagedThemes as getHasExternallyManagedThemes } from 'calypso/state/themes/selectors/is-externally-managed-theme';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
+import { Theme } from 'calypso/types';
 import MasterbarStyled from '../redesign-v2/masterbar-styled';
 import { ThankYouThemeSection } from './marketplace-thank-you-theme-section';
 
 type ThankYouThemeData = [
 	Theme,
-	ThankYouThemeSection[],
+	React.ReactElement[],
 	boolean,
 	JSX.Element,
 	string,
@@ -59,7 +60,7 @@ export function useThemesThankYouData(
 		};
 	}, [ dispatch, siteId ] );
 
-	const themesSection: ThankYouThemeSection[] = themesList
+	const themesSection: React.ReactElement[] = themesList
 		.filter( ( theme ) => theme )
 		.map( ( theme: any ) => {
 			return (

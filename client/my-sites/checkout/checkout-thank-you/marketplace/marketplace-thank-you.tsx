@@ -78,9 +78,7 @@ const MarketplaceThankYou = ( {
 		}
 	}, [ dispatch, firstTheme, styleVariationSlug ] );
 
-	const [ hasPlugins, hasThemes ] = [ pluginSlugs, themeSlugs ].map(
-		( slugs ) => slugs.length !== 0
-	);
+	const [ hasThemes ] = [ themeSlugs ].map( ( slugs ) => slugs.length !== 0 );
 
 	const [ title, subtitle ] = usePageTexts( {
 		pluginSlugs,
@@ -133,10 +131,11 @@ const MarketplaceThankYou = ( {
 		themesProgressbarSteps,
 	} );
 
-	const products = [
-		...( hasPlugins ? [ pluginsSection ] : [] ),
-		...( hasThemes ? [ themesSection ] : [] ),
-	];
+	let products = pluginsSection ?? [];
+
+	if ( hasThemes ) {
+		products = products.concat( themesSection );
+	}
 
 	const footerDetails = useThankYouFoooter( pluginSlugs, themeSlugs );
 

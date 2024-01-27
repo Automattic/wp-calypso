@@ -25,7 +25,7 @@ import MasterbarStyled from '../redesign-v2/masterbar-styled';
 import { ThankYouPluginSection } from './marketplace-thank-you-plugin-section';
 
 type ThankYouData = [
-	ThankYouPluginSection[],
+	React.ReactElement[],
 	boolean,
 	JSX.Element,
 	string,
@@ -166,7 +166,7 @@ export default function usePluginsThankYouData( pluginSlugs: string[] ): ThankYo
 		pluginSlugs,
 	] );
 
-	const pluginsSection: ThankYouPluginSection[] = pluginsInformationList.map( ( plugin: any ) => {
+	const pluginsSection: React.ReactElement[] = pluginsInformationList.map( ( plugin: any ) => {
 		return <ThankYouPluginSection plugin={ plugin } key={ `plugin_${ plugin.slug }` } />;
 	} );
 
@@ -207,7 +207,7 @@ export default function usePluginsThankYouData( pluginSlugs: string[] ): ThankYo
 	const thankYouHeaderAction =
 		pluginsInformationList.length > 1 ? (
 			<Button
-				variant="primary"
+				primary
 				href={ `https://${ siteSlug }/wp-admin/plugins.php` }
 				onClick={ () => {
 					sendTrackEvent( 'calypso_plugin_thank_you_setup_plugins_click' );

@@ -42,20 +42,18 @@
 }
 
 .thank-you__header-buttons {
-	margin-top: 32px;
-
+	.button,
 	.components-button {
 		border-radius: 4px;
 		font-weight: 500;
 		font-size: $font-body-small;
-		height: 48px;
 		justify-content: center;
 		padding: 10px 24px;
 		width: 100%;
 		margin-bottom: 20px;
 
 		@include break-small {
-			width: 240px;
+			width: auto;
 
 			&:not(:first-child) {
 				margin-left: 20px;
