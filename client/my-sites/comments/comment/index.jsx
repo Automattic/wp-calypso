@@ -192,6 +192,7 @@ export class Comment extends Component {
 
 	render() {
 		const {
+			commentHasNoReply,
 			commentId,
 			commentIsPending,
 			isAtMaxDepth,
@@ -200,7 +201,6 @@ export class Comment extends Component {
 			isSingularEditMode,
 			isOwnComment,
 			filterUnreplied,
-			hasRepliedToComment,
 			translate,
 		} = this.props;
 
@@ -217,7 +217,7 @@ export class Comment extends Component {
 			'is-reply-visible': isReplyVisible,
 		} );
 
-		if ( filterUnreplied && ! isBulkMode && ( ! hasRepliedToComment || isOwnComment ) ) {
+		if ( filterUnreplied && ! isBulkMode && ( ! commentHasNoReply || isOwnComment ) ) {
 			return (
 				<FoldableCard
 					className={ classes }
@@ -260,7 +260,7 @@ const mapStateToProps = ( state, { commentId } ) => {
 		siteId,
 		postId: get( comment, 'post.ID' ),
 		commentIsPending: 'unapproved' === commentStatus,
-		hasRepliedToComment: ! get( comment, 'i_replied' ),
+		commentHasNoReply: ! get( comment, 'i_replied' ),
 		isLoading: typeof comment === 'undefined',
 		isOwnComment: get( comment, 'author.ID' ) === currentUserId,
 		minimumComment: getMinimumComment( comment ),
