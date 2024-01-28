@@ -1085,6 +1085,11 @@ class RegisterDomainStep extends Component {
 
 					const availableDomainStatuses = [ AVAILABLE, UNKNOWN ];
 
+					if ( error ) {
+						resolve( null );
+						return;
+					}
+
 					if ( this.props.includeOwnedDomainInSuggestions ) {
 						availableDomainStatuses.push( REGISTERED_OTHER_SITE_SAME_USER );
 					}
