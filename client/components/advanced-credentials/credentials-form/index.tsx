@@ -397,31 +397,35 @@ const ServerCredentialsForm: FunctionComponent< Props > = ( {
 			{ ! isAlternate && withHeader && <h3>{ getFormHeaderText() }</h3> }
 			{ withHeader && <p className="credentials-form__intro-text">{ getSubHeaderText() }</p> }
 			{ withHeader && renderCredentialLinks() }
-			<FormFieldset className="credentials-form__protocol-type">
-				<div className="credentials-form__support-info">
-					<FormLabel htmlFor="protocol-type">{ translate( 'Credential type' ) }</FormLabel>
-					{ hostInfo?.inline?.protocol && (
-						<InfoPopover>
-							<InlineInfo
-								field="protocol"
-								host={ host }
-								info={ hostInfo.inline.protocol }
-								protocol={ formState.protocol }
-							/>
-						</InfoPopover>
-					) }
-				</div>
-				<FormSelect
-					name="protocol"
-					id="protocol-type"
-					value={ formState.protocol }
-					onChange={ handleFormChange }
-					disabled={ disabled }
-				>
-					{ allowFtp && <option value="ftp">{ translate( 'FTP' ) }</option> }
-					<option value="ssh">{ translate( 'SSH/SFTP' ) }</option>
-				</FormSelect>
-			</FormFieldset>
+
+			{ ! allowFtp && <input type="hidden" name="protocol" value="ssh" /> }
+			{ allowFtp && (
+				<FormFieldset className="credentials-form__protocol-type">
+					<div className="credentials-form__support-info">
+						<FormLabel htmlFor="protocol-type">{ translate( 'Credential type' ) }</FormLabel>
+						{ hostInfo?.inline?.protocol && (
+							<InfoPopover>
+								<InlineInfo
+									field="protocol"
+									host={ host }
+									info={ hostInfo.inline.protocol }
+									protocol={ formState.protocol }
+								/>
+							</InfoPopover>
+						) }
+					</div>
+					<FormSelect
+						name="protocol"
+						id="protocol-type"
+						value={ formState.protocol }
+						onChange={ handleFormChange }
+						disabled={ disabled }
+					>
+						<option value="ftp">{ translate( 'FTP' ) }</option>
+						<option value="ssh">{ translate( 'SSH/SFTP' ) }</option>
+					</FormSelect>
+				</FormFieldset>
+			) }
 
 			<div className="credentials-form__row">
 				<FormFieldset className="credentials-form__server-address">
