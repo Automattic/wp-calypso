@@ -39,15 +39,7 @@ export const SimpleLicenseMultiItemCard = ( {
 
 	const [ item, setItem ] = useState( items[ 0 ] );
 
-	let title = item.name;
-	if ( title.startsWith( 'Jetpack Security' ) ) {
-		title.replace( 'Jetpack Security', 'Security' );
-	}
-	if ( title.startsWith( 'Jetpack VaultPress' ) ) {
-		title = 'VaultPress Backup';
-	} else {
-		title = getProductShortTitle( item, true );
-	}
+	const title = getProductShortTitle( item, true );
 	const ctaLabel = translate( 'Get' );
 	const ctaAriaLabel = ctaLabel + ' ' + item.name;
 
@@ -62,11 +54,11 @@ export const SimpleLicenseMultiItemCard = ( {
 			setItem( selectedProduct );
 			dispatch(
 				recordTracksEvent( 'calypso_jp_manage_pricing_page_variant_option_click', {
-					product: item.slug,
+					product: selectedProductSlug,
 				} )
 			);
 		},
-		[ dispatch, item.slug, items ]
+		[ dispatch, items ]
 	);
 
 	const variantOptions = items.map( ( option ) => ( {
