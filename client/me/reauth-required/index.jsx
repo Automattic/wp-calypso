@@ -269,7 +269,7 @@ class ReauthRequired extends Component {
 		const method = this.props.twoStepAuthorization.isTwoStepSMSEnabled() ? 'sms' : 'authenticator';
 		const isSecurityKeySupported =
 			this.props.twoStepAuthorization.isSecurityKeyEnabled() && supported();
-		const { twoFactorAuthType } = this.state;
+		const twoFactorAuthType = enhancedSecurity ? 'webauthn' : this.state.twoFactorAuthType;
 		// This enables the SMS button on the security key form regardless if we can send SMS or not.
 		// Otherwise, there's no way to go back to the verification form if smsRequestsAllowed is false.
 		const shouldEnableSmsButton =
@@ -278,8 +278,6 @@ class ReauthRequired extends Component {
 		const hasSmsRecoveryNumber =
 			!! this.props?.twoStepAuthorization?.data?.two_step_sms_last_four?.length;
 
-		const currentAuthType = enhancedSecurity ? 'webauthn' : twoFactorAuthType;
-
 		return (
 			<Dialog
 				autoFocus={ false }
@@ -287,7 +285,7 @@ class ReauthRequired extends Component {
 				isFullScreen={ false }
 				isVisible={ this.props?.twoStepAuthorization.isReauthRequired() }
 			>
-				{ isSecurityKeySupported && currentAuthType === 'webauthn' ? (
+				{ isSecurityKeySupported && twoFactorAuthType === 'webauthn' ? (
 					<SecurityKeyForm
 						loginUserWithSecurityKey={ this.loginUserWithSecurityKey }
 						onComplete={ this.refreshNonceOnFailure }
@@ -296,15 +294,15 @@ class ReauthRequired extends Component {
 					this.renderVerificationForm()
 				) }
 				<TwoFactorActions
-					twoFactorAuthType={ currentAuthType }
+					twoFactorAuthType={ twoFactorAuthType }
 					onChange={ this.handleAuthSwitch }
 					isSmsSupported={
-						method === 'sms' || ( method === 'authenticator' && hasSmsRecoveryNumber )
+						! enhancedSecurity &&
+						( method === 'sms' || ( method === 'authenticator' && hasSmsRecoveryNumber ) )
 					}
-					isAuthenticatorSupported={ method !== 'sms' }
+					isAuthenticatorSupported={ ! enhancedSecurity && method !== 'sms' }
 					isSmsAllowed={ shouldEnableSmsButton }
 					isSecurityKeySupported={ isSecurityKeySupported }
-					requireSecurityKeyOnly={ enhancedSecurity }
 				/>
 			</Dialog>
 		);

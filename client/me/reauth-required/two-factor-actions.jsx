@@ -13,7 +13,6 @@ class TwoFactorActions extends Component {
 		isSecurityKeySupported: PropTypes.bool.isRequired,
 		isSmsSupported: PropTypes.bool.isRequired,
 		isSmsAllowed: PropTypes.bool.isRequired,
-		requireSecurityKeyOnly: PropTypes.bool.isRequired,
 		onChange: PropTypes.func.isRequired,
 		twoFactorAuthType: PropTypes.string.isRequired,
 
@@ -52,16 +51,12 @@ class TwoFactorActions extends Component {
 			isSmsSupported,
 			translate,
 			twoFactorAuthType,
-			requireSecurityKeyOnly,
 		} = this.props;
 
 		const isSecurityKeyAvailable = isSecurityKeySupported && twoFactorAuthType !== 'webauthn';
-		const isSmsAvailable = isSmsSupported && ! requireSecurityKeyOnly;
+		const isSmsAvailable = isSmsSupported;
 		const isAuthenticatorAvailable =
-			! requireSecurityKeyOnly &&
-			isSecurityKeySupported &&
-			isAuthenticatorSupported &&
-			twoFactorAuthType !== 'authenticator';
+			isSecurityKeySupported && isAuthenticatorSupported && twoFactorAuthType !== 'authenticator';
 
 		if ( ! isSmsAvailable && ! isAuthenticatorAvailable && ! isSecurityKeyAvailable ) {
 			return null;
