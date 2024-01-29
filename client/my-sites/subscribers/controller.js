@@ -32,6 +32,7 @@ export function subscribers( context, next ) {
 	const pageNumber = sanitizeInt( query[ PAGE_KEY ] ) ?? 1;
 	const searchTerm = query[ SEARCH_KEY ];
 	const sortTerm = query[ SORT_KEY ];
+	const timestamp = query[ TIME_KEY ];
 
 	context.primary = (
 		<SubscribersPage
@@ -39,6 +40,7 @@ export function subscribers( context, next ) {
 			pageNumber={ pageNumber }
 			searchTerm={ searchTerm }
 			sortTerm={ sortTerm }
+			timestamp={ timestamp }
 			filterOptionChanged={ queryStringChanged( FILTER_KEY ) }
 			pageChanged={ queryStringChanged( PAGE_KEY ) }
 			searchTermChanged={ queryStringChanged( SEARCH_KEY ) }

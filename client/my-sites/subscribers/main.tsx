@@ -103,6 +103,7 @@ const SubscribersHeader = ( { selectedSiteId, isUnverified }: SubscribersHeaderP
 type SubscribersProps = {
 	filterOption: SubscribersFilterBy;
 	pageNumber: number;
+	timestamp: number;
 	searchTerm: string;
 	sortTerm: SubscribersSortBy;
 	filterOptionChanged: ( option: SubscribersFilterBy ) => void;
@@ -117,6 +118,7 @@ const SubscribersPage = ( {
 	pageNumber,
 	searchTerm,
 	sortTerm,
+	timestamp,
 	filterOptionChanged,
 	pageChanged,
 	searchTermChanged,
@@ -163,10 +165,6 @@ const SubscribersPage = ( {
 		setGiftUsername( display_name );
 	};
 
-	const reloadPage = () => {
-		reloadData();
-	};
-
 	return (
 		<SubscribersPageProvider
 			siteId={ siteId }
@@ -174,6 +172,7 @@ const SubscribersPage = ( {
 			pageNumber={ pageNumber }
 			searchTerm={ searchTerm }
 			sortTerm={ sortTerm }
+			timestamp={ timestamp }
 			filterOptionChanged={ filterOptionChanged }
 			pageChanged={ pageChanged }
 			searchTermChanged={ searchTermChanged }
@@ -211,7 +210,7 @@ const SubscribersPage = ( {
 							onCancel={ () => setGiftUserId( 0 ) }
 							onConfirm={ function () {
 								setGiftUserId( 0 );
-								reloadPage();
+								reloadData();
 							} }
 						/>
 					) }
