@@ -210,6 +210,35 @@ class MasterbarLoggedIn extends Component {
 		return 'my-sites';
 	};
 
+	renderGlobalMySites() {
+		const { siteSlug, translate, section } = this.props;
+		const { isMenuOpen, isResponsiveMenu } = this.state;
+
+		let mySitesUrl = '/sites';
+
+		const icon =
+			this.state.isMobile && this.props.isInEditor ? 'chevron-left' : this.wordpressIcon();
+
+		if ( 'sites' === section && isResponsiveMenu ) {
+			mySitesUrl = '';
+		}
+		if ( ! siteSlug && section === 'sites-dashboard' ) {
+			// we are the /sites page but there is no site. Disable the home link
+			return <Item icon={ icon } disabled />;
+		}
+
+		return (
+			<Item
+				url={ mySitesUrl }
+				tipTarget="my-sites"
+				icon={ icon }
+				onClick={ this.clickMySites }
+				isActive={ this.isActive( 'sites' ) && ! isMenuOpen }
+				tooltip={ translate( 'Manage your sites' ) }
+			/>
+		);
+	}
+
 	// will render as back button on mobile and in editor
 	renderMySites() {
 		const {
@@ -257,11 +286,7 @@ class MasterbarLoggedIn extends Component {
 				isActive={ this.isActive( 'sites' ) && ! isMenuOpen }
 				tooltip={ translate( 'Manage your sites' ) }
 				preloadSection={ this.preloadMySites }
-			>
-				{ hasNoSites || hasMoreThanOneSite
-					? translate( 'My Sites', { comment: 'Toolbar, must be shorter than ~12 chars' } )
-					: translate( 'My Site', { comment: 'Toolbar, must be shorter than ~12 chars' } ) }
-			</Item>
+			/>
 		);
 	}
 
@@ -517,12 +542,30 @@ class MasterbarLoggedIn extends Component {
 	}
 
 	render() {
-		const { isInEditor, isCheckout, isCheckoutPending, isCheckoutFailed, loadHelpCenterIcon } =
-			this.props;
+		const {
+			isInEditor,
+			isCheckout,
+			isCheckoutPending,
+			isCheckoutFailed,
+			loadHelpCenterIcon,
+			siteSlug,
+		} = this.props;
 		const { isMobile } = this.state;
 
 		if ( isCheckout || isCheckoutPending || isCheckoutFailed ) {
 			return this.renderCheckout();
+		}
+
+		if ( this.isActive( 'sites' ) && siteSlug ) {
+			return (
+				<>
+					<Masterbar>
+						<div className="masterbar__section masterbar__section--left">
+							{ this.renderGlobalMySites() }
+						</div>
+					</Masterbar>
+				</>
+			);
 		}
 
 		if ( isMobile ) {
