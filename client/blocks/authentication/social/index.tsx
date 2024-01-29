@@ -105,15 +105,16 @@ const SocialAuthenticationForm = ( {
 							socialServiceResponse={ socialService === 'google' ? socialServiceResponse : null }
 							startingPoint={ isLogin ? 'login' : 'signup' }
 						/>
+
 						<AppleLoginButton
 							clientId={ config( 'apple_oauth_client_id' ) }
 							responseHandler={ handleAppleResponse }
 							uxMode={ uxModeApple }
 							redirectUri={ getRedirectUri( 'apple' ) }
-							socialServiceResponse={ socialService === 'apple' ? socialServiceResponse : null }
 							onClick={ () => {
 								trackLoginAndRememberRedirect( 'apple' );
 							} }
+							socialServiceResponse={ socialService === 'apple' ? socialServiceResponse : null }
 							originalUrlPath={
 								// Since the signup form is only ever called from the user step, currently, we can rely on window.location.pathname
 								// to return back to the user step, which then allows us to continue on with the flow once the submitSignupStep action is called within the user step.
@@ -125,7 +126,9 @@ const SocialAuthenticationForm = ( {
 								isWpccFlow( flowName ) && ! isLogin ? window?.location?.search?.slice( 1 ) : null
 							}
 						/>
+
 						{ config.isEnabled( 'login/github' ) ? <div>GitHub login will come here</div> : null }
+
 						{ children }
 					</div>
 					{ ! isWoo && ! disableTosText && <SocialToS /> }
