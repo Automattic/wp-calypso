@@ -62,9 +62,7 @@ export interface TaskContext {
 	siteSlug: string | null;
 	submit: NavigationControls[ 'submit' ];
 	displayGlobalStylesWarning: boolean;
-	shouldDisplayWarning: boolean;
 	globalStylesMinimumPlan: string;
-	isVideoPressFlowWithUnsupportedPlan: boolean;
 	translatedPlanName?: ReactNode | string;
 	goToStep?: NavigationControls[ 'goToStep' ];
 	stripeConnectUrl?: string;

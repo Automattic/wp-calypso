@@ -2,10 +2,12 @@ import {
 	FEATURE_VIDEO_UPLOADS,
 	FEATURE_STYLE_CUSTOMIZATION,
 	isFreePlanProduct,
+	planHasFeature,
 } from '@automattic/calypso-products';
 import { updateLaunchpadSettings } from '@automattic/data-stores/src/queries/use-launchpad';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { Task } from '@automattic/launchpad';
+import { isVideoPressFlow } from '@automattic/onboarding';
 import { QueryClient } from '@tanstack/react-query';
 import { ExternalLink } from '@wordpress/components';
 import { addQueryArgs } from '@wordpress/url';
@@ -55,10 +57,17 @@ const getPlanSelectedTask: TaskAction = ( task, flow, context ): Task => {
 	const {
 		siteInfoQueryArgs,
 		displayGlobalStylesWarning,
-		shouldDisplayWarning,
 		globalStylesMinimumPlan,
-		isVideoPressFlowWithUnsupportedPlan,
+		planCartItem,
+		site,
 	} = context;
+
+	const productSlug = planCartItem?.product_slug ?? site?.plan?.product_slug;
+
+	const isVideoPressFlowWithUnsupportedPlan =
+		isVideoPressFlow( flow ) && ! planHasFeature( productSlug as string, FEATURE_VIDEO_UPLOADS );
+
+	const shouldDisplayWarning = displayGlobalStylesWarning || isVideoPressFlowWithUnsupportedPlan;
 
 	return {
 		...task,
