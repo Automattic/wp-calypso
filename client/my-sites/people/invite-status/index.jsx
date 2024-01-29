@@ -33,12 +33,14 @@ const InviteStatus = ( {
 					} ) }
 					onClick={ onResend }
 					busy={ requestingResend }
+					disabled={ deletingInvite }
 				>
 					{ resendSuccess ? translate( 'Invite Sent!' ) : translate( 'Resend Invite' ) }
 				</Button>
 			) }
 			<Button
 				className="people-list-item__invite-revoke"
+				disabled={ requestingResend }
 				busy={ deletingInvite }
 				onClick={ handleDelete }
 			>
