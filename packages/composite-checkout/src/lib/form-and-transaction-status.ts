@@ -147,14 +147,8 @@ function formAndTransactionStatusReducer(
 			} = action.payload as TransactionStatusPayloads;
 
 			const newFormStatus = ( () => {
-				if ( newTransactionStatus === TransactionStatus.PENDING ) {
+				if ( newTransactionStatus !== TransactionStatus.NOT_STARTED ) {
 					return FormStatus.SUBMITTING;
-				}
-				if ( newTransactionStatus === TransactionStatus.COMPLETE ) {
-					return FormStatus.COMPLETE;
-				}
-				if ( newTransactionStatus === TransactionStatus.NOT_STARTED ) {
-					return FormStatus.READY;
 				}
 				return state.formStatus;
 			} )();
