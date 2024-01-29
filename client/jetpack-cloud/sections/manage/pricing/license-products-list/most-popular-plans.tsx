@@ -1,4 +1,7 @@
 import classNames from 'classnames';
+import { useSelector } from 'react-redux';
+import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
+import { isAgencyUser } from 'calypso/state/partner-portal/partner/selectors';
 import { APIProductFamilyProduct } from 'calypso/state/partner-portal/types';
 import { FeaturedLicenseItemCard } from './featured-license-item-card';
 import { FeaturedLicenseMultiItemCard } from './featured-license-multi-item-card';
@@ -20,8 +23,18 @@ export const MostPopularPlans = ( {
 	bundleSize,
 }: MostPopularPlansProps ) => {
 	const wrapperClassName = classNames( 'jetpack-product-store__most-popular', className );
+	const isLoggedIn = useSelector( isUserLoggedIn );
+	const isAgency = useSelector( isAgencyUser );
 
-	bundleSize = 1;
+	const getIssueLicenseURL = ( item: APIProductFamilyProduct, bundleSize: number | undefined ) => {
+		if ( isLoggedIn ) {
+			if ( isAgency ) {
+				return `https://cloud.jetpack.com/partner-portal/issue-license?product_slug=${ item.slug }&bundle_size=${ bundleSize }`;
+			}
+			return `https://cloud.jetpack.com/manage/signup?issue-license=yes&product_slug=${ item.slug }&bundle_size=${ bundleSize }`;
+		}
+		return '#';
+	};
 
 	return (
 		<div className={ wrapperClassName }>
@@ -40,7 +53,7 @@ export const MostPopularPlans = ( {
 									variants={ item }
 									bundleSize={ bundleSize }
 									ctaAsPrimary={ true }
-									ctaHref="#"
+									ctaHref={ getIssueLicenseURL( item, bundleSize ) }
 									isCtaDisabled={ false }
 									isCtaExternal={ true }
 								/>
@@ -49,7 +62,7 @@ export const MostPopularPlans = ( {
 									item={ item }
 									bundleSize={ bundleSize }
 									ctaAsPrimary={ true }
-									ctaHref="#"
+									ctaHref={ getIssueLicenseURL( item, bundleSize ) }
 									isCtaDisabled={ false }
 									isCtaExternal={ true }
 								/>
