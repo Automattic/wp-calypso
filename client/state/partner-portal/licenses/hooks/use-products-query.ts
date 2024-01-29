@@ -62,7 +62,7 @@ export default function useProductsQuery(
 		queryKey: [ 'partner-portal', 'licenses', 'products', isPublicFacing ],
 		queryFn: () => queryProducts( isPublicFacing ),
 		select: selectAlphabeticallySortedProductOptions,
-		enabled: isPartnerOAuthTokenLoaded,
+		enabled: isPublicFacing || isPartnerOAuthTokenLoaded,
 		refetchOnWindowFocus: false,
 	} );
 
