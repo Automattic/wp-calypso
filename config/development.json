@@ -123,6 +123,7 @@
 		"login/magic-login": true,
 		"login/react-lost-password-screen": true,
 		"login/social-first": true,
+		"login/github": true,
 		"logmein": true,
 		"mailchimp": true,
 		"manage/import/site-importer-endpoints": true,
