@@ -27,6 +27,19 @@ const getSetupBlog: TaskAction = ( task, flow, context ): Task => {
 	};
 };
 
+const getSetupNewsletterTask: TaskAction = ( task, flow, context ): Task => {
+	const { siteInfoQueryArgs } = context;
+
+	return {
+		...task,
+		calypso_path: addQueryArgs( task.calypso_path, {
+			...siteInfoQueryArgs,
+			flowToReturnTo: flow,
+		} ),
+		useCalypsoPath: true,
+	};
+};
+
 const getSetupVideoPressTask: TaskAction = ( task, flow, context ): Task => {
 	const { siteInfoQueryArgs } = context;
 
@@ -56,6 +69,7 @@ const getSetupGeneralTask: TaskAction = ( task, flow, context ): Task => {
 export const actions = {
 	setup_free: getSetupFreeTask,
 	setup_blog: getSetupBlog,
+	setup_newsletter: getSetupNewsletterTask,
 	videopress_setup: getSetupVideoPressTask,
 	setup_general: getSetupGeneralTask,
 };
