@@ -46,6 +46,7 @@ export const SimpleLicenseMultiItemCard = ( {
 	const price = <ItemPrice bundleSize={ bundleSize } item={ variant } />;
 	const { description: productDescription } = useProductDescription( variant.slug );
 	const icon = null;
+
 	const onChangeOption = useCallback(
 		( selectedProductSlug: string ) => {
 			const selectedProduct =
@@ -88,10 +89,10 @@ export const SimpleLicenseMultiItemCard = ( {
 					</Button>
 				</div>
 				<MultipleChoiceQuestion
-					name="product-variants"
+					name={ `${ variant.family_slug }-variant-options` }
 					question={ translate( 'Select variant:' ) }
 					answers={ variantOptions }
-					selectedAnswerId={ variant?.slug }
+					selectedAnswerId={ variant.slug }
 					onAnswerChange={ onChangeOption }
 					shouldShuffleAnswers={ false }
 				/>

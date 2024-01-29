@@ -20,6 +20,7 @@ export const MostPopularPlans = ( {
 	bundleSize,
 }: MostPopularPlansProps ) => {
 	const wrapperClassName = classNames( 'jetpack-product-store__most-popular', className );
+
 	bundleSize = 1;
 
 	return (

@@ -38,7 +38,7 @@ export const FeaturedLicenseMultiItemCard = ( {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 
-	const [ variant, setItem ] = useState( variants[ 0 ] );
+	const [ variant, setVariant ] = useState( variants[ 0 ] );
 
 	const title = getProductShortTitle( variant, true );
 	const ctaLabel = translate( 'Get' );
@@ -53,7 +53,7 @@ export const FeaturedLicenseMultiItemCard = ( {
 			const selectedProduct =
 				variants.find( ( { slug } ) => slug === selectedProductSlug ) ?? variants[ 0 ];
 
-			setItem( selectedProduct );
+			setVariant( selectedProduct );
 			dispatch(
 				recordTracksEvent( 'calypso_jp_manage_pricing_page_variant_option_click', {
 					product: selectedProductSlug,
@@ -76,10 +76,10 @@ export const FeaturedLicenseMultiItemCard = ( {
 				<div>
 					<h3 className="featured-item-card--title">{ title }</h3>
 					<MultipleChoiceQuestion
-						name="product-variants"
+						name={ `${ variant.family_slug }-variant-options` }
 						question={ translate( 'Select variant:' ) }
 						answers={ variantOptions }
-						selectedAnswerId={ variant?.slug }
+						selectedAnswerId={ variant.slug }
 						onAnswerChange={ onChangeOption }
 						shouldShuffleAnswers={ false }
 					/>

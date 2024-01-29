@@ -21,6 +21,7 @@ export const AllLicenseItems = ( {
 }: AllLicenseItemsProps ) => {
 	const wrapperClassName = classNames( 'jetpack-product-store__most-popular', className );
 	bundleSize = 1;
+
 	return (
 		<div className={ wrapperClassName }>
 			<h2 className="jetpack-product-store__most-popular--heading">{ heading }</h2>
