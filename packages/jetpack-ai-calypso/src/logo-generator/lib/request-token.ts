@@ -24,8 +24,6 @@ export async function requestJwt( {
 	const siteId = String( siteDetails?.ID || window.JP_CONNECTION_INITIAL_STATE.siteSuffix );
 	expirationTime = expirationTime || JWT_TOKEN_EXPIRATION_TIME;
 
-	const isSimple = ! siteDetails?.is_wpcom_atomic;
-
 	// Trying to pick the token from localStorage
 	const token = localStorage.getItem( JWT_TOKEN_ID );
 	let tokenData: TokenDataProps | null = null;
@@ -43,27 +41,16 @@ export async function requestJwt( {
 		return tokenData;
 	}
 
-	let data: TokenDataEndpointResponseProps;
-
-	if ( ! isSimple ) {
-		data = await wpcomLimitedRequest( {
-			path: '/jetpack/v4/jetpack-ai-jwt?_cacheBuster=' + Date.now(),
-			method: 'POST',
-		} );
-	} else {
-		data = await wpcomLimitedRequest( {
-			apiNamespace: 'wpcom/v2',
-			path: '/sites/' + siteId + '/jetpack-openai-query/jwt',
-			method: 'POST',
-		} );
-	}
+	const data: TokenDataEndpointResponseProps = await wpcomLimitedRequest( {
+		apiNamespace: 'wpcom/v2',
+		path: '/sites/' + siteId + '/jetpack-openai-query/jwt',
+		method: 'POST',
+	} );
 
 	const newTokenData = {
 		token: data.token,
-		/**
-		 * TODO: make sure we return id from the .com token acquisition endpoint too
-		 */
-		blogId: ! isSimple ? data.blog_id : siteId,
+
+		blogId: data.blog_id ?? siteId,
 
 		/**
 		 * Let's expire the token in 2 minutes

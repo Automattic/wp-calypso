@@ -180,7 +180,6 @@ For example: user's prompt: A logo for an ice cream shop. Returned prompt: A log
 
 		try {
 			const tokenData = await requestJwt( { siteDetails } );
-			const isSimple = ! siteDetails.is_wpcom_atomic;
 
 			if ( ! tokenData || ! tokenData.token ) {
 				throw new Error( 'No token provided' );
@@ -198,29 +197,19 @@ The image should contain a single icon, without variations, color palettes or di
 
 User request:${ prompt }`;
 
-			let data;
 			const body = {
 				prompt: imageGenerationPrompt,
 				feature: 'jetpack-ai-logo-generator',
 				response_format: 'url',
 			};
-			if ( ! isSimple ) {
-				// TODO: unsure how to handle this
-				// data = await proxy( {
-				// 	path: '/jetpack/v4/jetpack-ai-jwt?_cacheBuster=' + Date.now(),
-				// 	method: 'GET',
-				// 	query: `prompt=${ prompt }&token=${ tokenData.token }&response_format=url`,
-				// } );
-				throw new Error( 'Site type not implemented' );
-			} else {
-				data = await wpcomLimitedRequest( {
-					apiNamespace: 'wpcom/v2',
-					path: '/jetpack-ai-image',
-					method: 'POST',
-					token: tokenData.token,
-					body,
-				} );
-			}
+
+			const data = await wpcomLimitedRequest( {
+				apiNamespace: 'wpcom/v2',
+				path: '/jetpack-ai-image',
+				method: 'POST',
+				token: tokenData.token,
+				body,
+			} );
 
 			return data as { data: { url: string }[] };
 		} catch ( error ) {
