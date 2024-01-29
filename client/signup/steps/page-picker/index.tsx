@@ -1,4 +1,5 @@
 import { getDIFMTieredPriceDetails, WPCOM_DIFM_LITE } from '@automattic/calypso-products';
+import { RazorpayHookProvider } from '@automattic/calypso-razorpay';
 import { StripeHookProvider } from '@automattic/calypso-stripe';
 import { Button } from '@automattic/components';
 import formatCurrency from '@automattic/format-currency';
@@ -8,7 +9,7 @@ import styled from '@emotion/styled';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect, useMemo, useState } from 'react';
 import InfoPopover from 'calypso/components/info-popover';
-import { getStripeConfiguration } from 'calypso/lib/store-transactions';
+import { getRazorpayConfiguration, getStripeConfiguration } from 'calypso/lib/store-transactions';
 import CalypsoShoppingCartProvider from 'calypso/my-sites/checkout/calypso-shopping-cart-provider';
 import PurchaseModal from 'calypso/my-sites/checkout/purchase-modal';
 import { useIsEligibleForOneClickCheckout } from 'calypso/my-sites/checkout/purchase-modal/use-is-eligible-for-one-click-checkout';
@@ -402,12 +403,14 @@ function OneClickPurchaseModal( {
 				fetchStripeConfiguration={ getStripeConfiguration }
 				locale={ translate.localeSlug }
 			>
-				<PurchaseModal
-					productToAdd={ product }
-					onClose={ onClose }
-					showFeatureList={ false }
-					siteSlug={ siteSlug }
-				/>
+				<RazorpayHookProvider fetchRazorpayConfiguration={ getRazorpayConfiguration }>
+					<PurchaseModal
+						productToAdd={ product }
+						onClose={ onClose }
+						showFeatureList={ false }
+						siteSlug={ siteSlug }
+					/>
+				</RazorpayHookProvider>
 			</StripeHookProvider>
 		</CalypsoShoppingCartProvider>
 	);
