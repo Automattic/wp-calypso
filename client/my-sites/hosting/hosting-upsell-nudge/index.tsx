@@ -1,18 +1,8 @@
-import config from '@automattic/calypso-config';
-import {
-	FEATURE_SFTP,
-	PLAN_BUSINESS,
-	PLAN_HOSTING_TRIAL_MONTHLY,
-	WPCOM_PLANS,
-	getPlan,
-} from '@automattic/calypso-products';
+import { FEATURE_SFTP, PLAN_BUSINESS, WPCOM_PLANS, getPlan } from '@automattic/calypso-products';
 import { addQueryArgs } from '@wordpress/url';
 import { useTranslate } from 'i18n-calypso';
 import UpsellNudge from 'calypso/blocks/upsell-nudge';
-import useAddHostingTrialMutation from 'calypso/data/hosting/use-add-hosting-trial-mutation';
 import { preventWidows } from 'calypso/lib/formatting';
-import { useSelector } from 'calypso/state';
-import { isUserEligibleForFreeHostingTrial } from 'calypso/state/selectors/is-user-eligible-for-free-hosting-trial';
 import iconCloud from './icons/icon-cloud.svg';
 import iconComments from './icons/icon-comments.svg';
 import iconDatabase from './icons/icon-database.svg';
@@ -39,9 +29,16 @@ interface HostingUpsellNudgeTargetPlan {
 interface HostingUpsellNudgeProps {
 	siteId: number;
 	targetPlan?: HostingUpsellNudgeTargetPlan;
+	secondaryCallToAction?: string;
+	secondaryOnClick?: () => void;
 }
 
-export function HostingUpsellNudge( { siteId, targetPlan }: HostingUpsellNudgeProps ) {
+export function HostingUpsellNudge( {
+	siteId,
+	targetPlan,
+	secondaryCallToAction,
+	secondaryOnClick,
+}: HostingUpsellNudgeProps ) {
 	const translate = useTranslate();
 	const features = useFeatureList();
 	const callToActionText = translate( 'Upgrade to %(businessPlanName)s Plan', {
@@ -62,16 +59,6 @@ export function HostingUpsellNudge( { siteId, targetPlan }: HostingUpsellNudgePr
 		  } );
 	const plan = targetPlan ? targetPlan.plan : PLAN_BUSINESS;
 	const title = targetPlan ? targetPlan.title : titleText;
-	const isEligibleForTrial = useSelector( isUserEligibleForFreeHostingTrial );
-	const secondaryCallToAction =
-		config.isEnabled( 'hosting-trial' ) && isEligibleForTrial ? translate( 'Start for free' ) : '';
-	const { mutateAsync: addHostingTrial } = useAddHostingTrialMutation();
-
-	const secondaryOnClick = async () => {
-		// TODO: Handle Trial acknowledge once it's isolated from the stepper
-		addHostingTrial( { siteId, planSlug: PLAN_HOSTING_TRIAL_MONTHLY } );
-		window.location.href = '/setup/transferring-hosted-site/processing?siteId=' + siteId;
-	};
 
 	return (
 		<UpsellNudge
