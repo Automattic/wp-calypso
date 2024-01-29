@@ -10,11 +10,14 @@ const FILTER_KEY = 'f';
 const PAGE_KEY = 'page';
 const SEARCH_KEY = 's';
 const SORT_KEY = 'sort';
+const TIME_KEY = '_';
 
 const queryStringChanged = ( key ) => ( value ) => {
 	const path = window.location.pathname + window.location.search;
 
-	scrollToTop();
+	if ( key !== TIME_KEY ) {
+		scrollToTop();
+	}
 
 	if ( ! value ) {
 		return page.show( removeQueryArgs( path, key ) );
@@ -40,6 +43,7 @@ export function subscribers( context, next ) {
 			pageChanged={ queryStringChanged( PAGE_KEY ) }
 			searchTermChanged={ queryStringChanged( SEARCH_KEY ) }
 			sortTermChanged={ queryStringChanged( SORT_KEY ) }
+			reloadData={ () => queryStringChanged( TIME_KEY )( Date.now() ) }
 		/>
 	);
 

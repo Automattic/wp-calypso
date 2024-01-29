@@ -109,6 +109,7 @@ type SubscribersProps = {
 	pageChanged: ( page: number ) => void;
 	searchTermChanged: ( term: string ) => void;
 	sortTermChanged: ( term: SubscribersSortBy ) => void;
+	reloadData: () => void;
 };
 
 const SubscribersPage = ( {
@@ -120,6 +121,7 @@ const SubscribersPage = ( {
 	pageChanged,
 	searchTermChanged,
 	sortTermChanged,
+	reloadData,
 }: SubscribersProps ) => {
 	const selectedSite = useSelector( getSelectedSite );
 
@@ -160,6 +162,11 @@ const SubscribersPage = ( {
 		setGiftUserId( user_id );
 		setGiftUsername( display_name );
 	};
+
+	const reloadPage = () => {
+		reloadData();
+	};
+
 	return (
 		<SubscribersPageProvider
 			siteId={ siteId }
@@ -202,7 +209,10 @@ const SubscribersPage = ( {
 							userId={ giftUserId }
 							username={ giftUsername }
 							onCancel={ () => setGiftUserId( 0 ) }
-							onConfirm={ () => setGiftUserId( 0 ) }
+							onConfirm={ function () {
+								setGiftUserId( 0 );
+								reloadPage();
+							} }
 						/>
 					) }
 					{ selectedSite && <AddSubscribersModal site={ selectedSite } /> }
