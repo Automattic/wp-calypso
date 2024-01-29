@@ -41,6 +41,10 @@
 			font-size: inherit;
 			text-decoration: underline;
 		}
+
+		&.onboarding-subtitle--full-width {
+			max-width: 100%;
+		}
 	}
 
 	.import__header {
