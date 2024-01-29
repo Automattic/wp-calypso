@@ -40,6 +40,7 @@ class ThemesSelection extends Component {
 		getOptions: PropTypes.func,
 		getActionLabel: PropTypes.func,
 		incrementPage: PropTypes.func,
+		resetPage: PropTypes.func,
 		listLabel: PropTypes.string,
 		onScreenshotClick: PropTypes.func,
 		query: PropTypes.object.isRequired,
@@ -78,6 +79,12 @@ class ThemesSelection extends Component {
 		const { query } = this.props;
 		if ( ! query.search && ! query.filter && ! query.tier ) {
 			this.props.incrementPage();
+		}
+	}
+
+	componentDidUpdate( nextProps ) {
+		if ( nextProps.query.number !== this.props.query.number ) {
+			this.props.resetPage();
 		}
 	}
 
@@ -445,6 +452,7 @@ class ThemesSelectionWithPage extends React.Component {
 				{ ...this.props }
 				page={ this.state.page }
 				incrementPage={ this.incrementPage }
+				resetPage={ this.resetPage }
 			>
 				{ this.props.children }
 			</ConnectedThemesSelection>
