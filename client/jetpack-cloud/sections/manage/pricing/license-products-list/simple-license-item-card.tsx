@@ -1,6 +1,8 @@
 import { Button } from '@automattic/components';
 import 'calypso/my-sites/plans/jetpack-plans/product-store/featured-item-card/style.scss';
+import { Icon, plugins, cloud } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
+import getAPIFamilyProductIcon from 'calypso/jetpack-cloud/sections/manage/pricing/utils/get-api-family-product-icon';
 import { useProductDescription } from 'calypso/jetpack-cloud/sections/partner-portal/hooks';
 import getProductShortTitle from 'calypso/jetpack-cloud/sections/partner-portal/lib/get-product-short-title';
 import { APIProductFamilyProduct } from 'calypso/state/partner-portal/types';
@@ -34,6 +36,7 @@ export const SimpleLicenseItemCard = ( {
 
 	const ctaLabel = translate( 'Get' );
 	const ctaAriaLabel = ctaLabel + ' ' + item.name;
+	const productSlug = item.slug;
 
 	let price = <ItemPrice bundleSize={ bundleSize } item={ item } />;
 	if (
@@ -42,8 +45,31 @@ export const SimpleLicenseItemCard = ( {
 	) {
 		price = <ItemPrice bundleSize={ 1 } item={ item } />;
 	}
-	const { description: productDescription } = useProductDescription( item.slug );
-	const icon = null;
+	const { description: productDescription } = useProductDescription( productSlug );
+
+	let icon = null;
+
+	if ( productSlug.startsWith( 'woocommerce' ) ) {
+		icon = (
+			<Icon
+				className="woocommerce-extension-plugin-icon"
+				icon={ plugins }
+				width={ 24 }
+				height={ 24 }
+			/>
+		);
+	} else if ( productSlug.startsWith( 'jetpack-backup' ) ) {
+		icon = (
+			<Icon className="jetpack-backup-plugin-icon" icon={ cloud } width={ 28 } height={ 28 } />
+		);
+	} else {
+		icon = (
+			<img
+				alt={ item.name + ' icon' }
+				src={ getAPIFamilyProductIcon( { productSlug: item.slug } ) }
+			/>
+		);
+	}
 	return (
 		<div className="simple-item-card">
 			{ icon ? <div className="simple-item-card__icon">{ icon }</div> : null }

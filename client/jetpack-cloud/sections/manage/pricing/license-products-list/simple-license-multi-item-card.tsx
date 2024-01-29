@@ -1,5 +1,6 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { Button } from '@automattic/components';
+import { Icon, cloud } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback, useState } from 'react';
 import MultipleChoiceQuestion from 'calypso/components/multiple-choice-question';
@@ -42,10 +43,10 @@ export const SimpleLicenseMultiItemCard = ( {
 	const title = getProductShortTitle( variant, true );
 	const ctaLabel = translate( 'Get' );
 	const ctaAriaLabel = ctaLabel + ' ' + variant.name;
+	const variantSlug = variant.slug;
 
 	const price = <ItemPrice bundleSize={ bundleSize } item={ variant } />;
-	const { description: productDescription } = useProductDescription( variant.slug );
-	const icon = null;
+	const { description: productDescription } = useProductDescription( variantSlug );
 
 	const onChangeOption = useCallback(
 		( selectedProductSlug: string ) => {
@@ -66,6 +67,14 @@ export const SimpleLicenseMultiItemCard = ( {
 		id: option.slug,
 		answerText: getProductVariantShortTitle( option.name ),
 	} ) );
+
+	let icon = null;
+
+	if ( variantSlug.startsWith( 'jetpack-backup' ) ) {
+		icon = (
+			<Icon className="jetpack-backup-plugin-icon" icon={ cloud } width={ 28 } height={ 28 } />
+		);
+	}
 
 	return (
 		<div className="simple-item-card">

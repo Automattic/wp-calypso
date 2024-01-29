@@ -3,6 +3,7 @@ import { APIProductFamilyProduct } from 'calypso/state/partner-portal/types';
 import { SimpleLicenseItemCard } from './simple-license-item-card';
 import { SimpleLicenseMultiItemCard } from './simple-license-multi-item-card';
 import 'calypso/my-sites/plans/jetpack-plans/product-store/items-list/style-most-popular.scss';
+import 'calypso/my-sites/plans/jetpack-plans/product-store/items-list/style.scss';
 
 type AllLicenseItemsProps = {
 	className?: string;
@@ -19,14 +20,14 @@ export const AllLicenseItems = ( {
 	items,
 	bundleSize,
 }: AllLicenseItemsProps ) => {
-	const wrapperClassName = classNames( 'jetpack-product-store__most-popular', className );
-	bundleSize = 1;
+	const wrapperClassName = classNames( 'jetpack-product-store__all-items', className );
+	bundleSize = 5;
 
 	return (
 		<div className={ wrapperClassName }>
-			<h2 className="jetpack-product-store__most-popular--heading">{ heading }</h2>
-			<div className="jetpack-product-store__most-popular--subheading">{ subHeading }</div>
-			<ul className="jetpack-product-store__most-popular--items">
+			<h2 className="jetpack-product-store__all-items--header">{ heading }</h2>
+			<div className="jetpack-product-store__all-items--subheader">{ subHeading }</div>
+			<ul className="jetpack-product-store__all-items--grid">
 				{ items.map( ( item, idx ) => {
 					if ( Array.isArray( item ) && bundleSize && bundleSize > 1 ) {
 						item = item[ 0 ];

@@ -9,13 +9,30 @@
 	text-wrap: nowrap;
 }
 
-.jetpack-product-store__most-popular--heading {
+.jetpack-product-store__most-popular--heading,
+.jetpack-product-store__all-items--header {
 	margin-bottom: 0.5rem !important;
 }
 
-.jetpack-product-store__most-popular--subheading {
+.jetpack-product-store__most-popular--subheading,
+.jetpack-product-store__all-items--subheader {
 	color: var(--studio-gray-50);
 }
+
+.jetpack-product-store__all-items--grid {
+	padding-top: 2.5rem;
+}
+
+.main.is-wide-layout.jetpack-manage-pricing-page {
+	max-width: 1192px;
+	padding: 0 1rem; // this is for plans page on WPCOM
+
+	@include break-wide {
+		padding: 0;
+	}
+}
+
+
 .featured-item-card .multiple-choice-question,
 .simple-item-card .multiple-choice-question {
 	margin-block-start: 10px;
@@ -63,4 +80,8 @@
 }
 .item-price .display-price .display-price__details {
 	padding-top: 0.1rem;
+}
+
+.simple-item-card div:has(.woocommerce-extension-plugin-icon) {
+	background: linear-gradient(160deg, #f5f5ff 7.24%, #f2edff 64.73%, #d8d6ff 116.53%);
 }
