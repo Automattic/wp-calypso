@@ -74,9 +74,13 @@ class ThemesSelection extends Component {
 	};
 
 	componentDidMount() {
+		if ( this.props.isRequesting || this.props.isLastPage ) {
+			return;
+		}
+
 		// Create "buffer zone" to prevent overscrolling too early bugging pagination requests.
 		const { query } = this.props;
-		if ( query.number <= 20 && ! query.search && ! query.filter && ! query.tier ) {
+		if ( ! query.search && ! query.filter && ! query.tier ) {
 			this.props.incrementPage();
 		}
 	}
