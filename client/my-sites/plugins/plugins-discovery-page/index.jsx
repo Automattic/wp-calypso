@@ -1,4 +1,8 @@
+import { useI18n } from '@wordpress/react-i18n';
 import { useSelector } from 'react-redux';
+import HostingActivateStatus from 'calypso/my-sites/hosting/hosting-activate-status';
+import { TrialAcknowledgeModal } from 'calypso/my-sites/plans/trials/trial-acknowledge/acknowlege-modal';
+import { WithOnclickTrialRequest } from 'calypso/my-sites/plans/trials/trial-acknowledge/with-onclick-trial-request';
 import { isCompatiblePlugin } from 'calypso/my-sites/plugins/plugin-compatibility';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import EducationFooter from '../education-footer';
@@ -6,9 +10,9 @@ import CollectionListView from '../plugins-browser/collection-list-view';
 import SingleListView, { SHORT_LIST_LENGTH } from '../plugins-browser/single-list-view';
 import usePlugins from '../use-plugins';
 import InPageCTASection from './in-page-cta-section';
-import './style.scss';
 import UpgradeNudge from './upgrade-nudge';
-
+import { useTrialHelpers } from './use-trial-helpers';
+import './style.scss';
 /**
  * Module variables
  */
@@ -86,10 +90,47 @@ const PluginsDiscoveryPage = ( props ) => {
 	} );
 
 	const isLoggedIn = useSelector( isUserLoggedIn );
+	const { __ } = useI18n();
+
+	const {
+		isTrialAcknowledgeModalOpen,
+		setIsTrialAcknowledgeModalOpen,
+		isTransferring,
+		hasRequestedTrial,
+		trialRequested,
+		requestUpdatedSiteData,
+		setOpenModal,
+		isEligibleForHostingTrial,
+		isAtomic,
+	} = useTrialHelpers( props );
+
+	const onStartTrialUpsellClick = () => {
+		if ( ! isEligibleForHostingTrial ) {
+			return;
+		}
+		setIsTrialAcknowledgeModalOpen( true );
+	};
+
+	const secondaryCallToAction = isEligibleForHostingTrial ? __( 'Try for free' ) : null;
 
 	return (
 		<>
-			<UpgradeNudge { ...props } paidPlugins={ true } />
+			{ ! isTransferring && ! hasRequestedTrial && (
+				<UpgradeNudge
+					{ ...props }
+					secondaryCallToAction={ secondaryCallToAction }
+					secondaryOnClick={ onStartTrialUpsellClick }
+					paidPlugins={ true }
+				/>
+			) }
+			{ ! isTrialAcknowledgeModalOpen && ! isAtomic && (
+				<HostingActivateStatus
+					context="plugin"
+					onTick={ requestUpdatedSiteData }
+					keepAlive={ hasRequestedTrial && ! isAtomic }
+				/>
+			) }
+
 			<PaidPluginsSection { ...props } />
 			<CollectionListView category="monetization" { ...props } />
 			<EducationFooter />
@@ -102,8 +143,11 @@ const PluginsDiscoveryPage = ( props ) => {
 			<CollectionListView category="business" { ...props } />
 			<PopularPluginsSection { ...props } pluginsByCategoryFeatured={ pluginsByCategoryFeatured } />
 			<CollectionListView category="ecommerce" { ...props } />
+			{ isEligibleForHostingTrial && isTrialAcknowledgeModalOpen && (
+				<TrialAcknowledgeModal setOpenModal={ setOpenModal } trialRequested={ trialRequested } />
+			) }
 		</>
 	);
 };
 
-export default PluginsDiscoveryPage;
+export default WithOnclickTrialRequest( PluginsDiscoveryPage );
