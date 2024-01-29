@@ -75,7 +75,6 @@ import badgeSecurity from './assets/icons/security.svg';
 import { CheckoutCompleteRedirecting } from './checkout-complete-redirecting';
 import CheckoutNextSteps from './checkout-next-steps';
 import { CheckoutSidebarPlanUpsell } from './checkout-sidebar-plan-upsell';
-import { CheckoutSlowProcessingNotice } from './checkout-slow-processing-notice';
 import { EmptyCart, shouldShowEmptyCartPage } from './empty-cart';
 import { GoogleDomainsCopy } from './google-transfers-copy';
 import JetpackAkismetCheckoutSidebarPlanUpsell from './jetpack-akismet-checkout-sidebar-plan-upsell';
@@ -444,7 +443,6 @@ export default function WPCheckout( {
 		<WPCheckoutWrapper>
 			<WPCheckoutSidebarContent>
 				{ isLoading && <LoadingSidebarContent /> }
-				{ formStatus === FormStatus.SUBMITTING && <CheckoutSlowProcessingNotice /> }
 				{ ! isLoading && (
 					<CheckoutSummaryArea className={ isSummaryVisible ? 'is-visible' : '' }>
 						<CheckoutErrorBoundary
