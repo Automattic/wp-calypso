@@ -1,7 +1,4 @@
 import classNames from 'classnames';
-import { useSelector } from 'react-redux';
-import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
-import { isAgencyUser } from 'calypso/state/partner-portal/partner/selectors';
 import { APIProductFamilyProduct } from 'calypso/state/partner-portal/types';
 import { SimpleLicenseItemCard } from './simple-license-item-card';
 import { SimpleLicenseMultiItemCard } from './simple-license-multi-item-card';
@@ -24,18 +21,6 @@ export const AllLicenseItems = ( {
 	bundleSize,
 }: AllLicenseItemsProps ) => {
 	const wrapperClassName = classNames( 'jetpack-product-store__all-items', className );
-	const isLoggedIn = useSelector( isUserLoggedIn );
-	const isAgency = useSelector( isAgencyUser );
-
-	const getIssueLicenseURL = ( item: APIProductFamilyProduct, bundleSize: number | undefined ) => {
-		if ( isLoggedIn ) {
-			if ( isAgency ) {
-				return `https://cloud.jetpack.com/partner-portal/issue-license?product_slug=${ item.slug }&bundle_size=${ bundleSize }`;
-			}
-			return `https://cloud.jetpack.com/manage/signup?issue-license=yes&product_slug=${ item.slug }&bundle_size=${ bundleSize }`;
-		}
-		return '#';
-	};
 
 	return (
 		<div className={ wrapperClassName }>
@@ -54,7 +39,6 @@ export const AllLicenseItems = ( {
 									variants={ item }
 									bundleSize={ bundleSize }
 									ctaAsPrimary={ true }
-									ctaHref={ getIssueLicenseURL( item, bundleSize ) }
 									isCtaDisabled={ false }
 									isCtaExternal={ true }
 								/>
@@ -63,7 +47,6 @@ export const AllLicenseItems = ( {
 									item={ item }
 									bundleSize={ bundleSize }
 									ctaAsPrimary={ true }
-									ctaHref={ getIssueLicenseURL( item, bundleSize ) }
 									isCtaDisabled={ false }
 									isCtaExternal={ true }
 								/>

@@ -85,6 +85,20 @@ export default function IssueLicense( { selectedSite, suggestedProduct }: Assign
 			.flat();
 	}, [ selectedLicenses ] );
 
+	// If URL params are present, use them to open the review licenses modal directly.
+	useEffect( () => {
+		if ( getQueryArg( window.location.href, 'source' ) === 'manage-pricing-page' ) {
+			getGroupedLicenses();
+			setShowReviewLicenses( true );
+			dispatch(
+				recordTracksEvent( 'calypso_jetpack_manage_pricing_issue_license_review_licenses_show', {
+					total_licenses: getQueryArg( window.location.href, 'bundle_size' ),
+					product: getQueryArg( window.location.href, 'product_slug' ),
+				} )
+			);
+		}
+	}, [ dispatch, getGroupedLicenses ] );
+
 	const currentStep = showReviewLicenses ? 'reviewLicense' : 'issueLicense';
 
 	const selectedText =
