@@ -251,11 +251,7 @@ export type PlanTaglineProps = Pick< FeaturesGridProps, 'gridPlans' > & PlanRow;
 
 export type PlanHeadersProps = Pick< FeaturesGridProps, 'gridPlans' > & PlanRow;
 
-export type PreviousFeaturesIncludedTitleProps = Pick<
-	FeaturesGridProps,
-	'gridPlans' | 'translate'
-> &
-	PlanRow;
+export type PreviousFeaturesIncludedTitleProps = Pick< FeaturesGridProps, 'gridPlans' > & PlanRow;
 
 export type PlanLogosProps = Pick< FeaturesGridProps, 'gridPlans' | 'isInSignup' > & PlanRow;
 
@@ -264,7 +260,7 @@ export type BillingTimeframesProps = Pick< FeaturesGridProps, 'gridPlans' | 'sho
 
 export type PlanStorageOptionsProps = Pick<
 	FeaturesGridProps,
-	'gridPlans' | 'translate' | 'intervalType' | 'onStorageAddOnClick' | 'showUpgradeableStorage'
+	'gridPlans' | 'intervalType' | 'onStorageAddOnClick' | 'showUpgradeableStorage'
 > &
 	PlanRow;
 
@@ -277,7 +273,6 @@ export type TopButtonsProps = Pick<
 	| 'isLaunchPage'
 	| 'onUpgradeClick'
 	| 'planActionOverrides'
-	| 'translate'
 > &
 	PlanRow;
 
@@ -289,7 +284,6 @@ export type PlanFeaturesListProps = Pick<
 	| 'isCustomDomainAllowedOnFreePlan'
 	| 'paidDomainName'
 	| 'selectedFeature'
-	| 'translate'
 > &
 	PlanRow;
 
@@ -313,7 +307,6 @@ export type TableProps = Pick<
 	| 'selectedFeature'
 	| 'showUpgradeableStorage'
 	| 'stickyRowOffset'
-	| 'translate'
 >;
 
 export type SpotlightPlanProps = Pick<
@@ -329,10 +322,9 @@ export type SpotlightPlanProps = Pick<
 	| 'planActionOverrides'
 	| 'planUpgradeCreditsApplicable'
 	| 'showUpgradeableStorage'
-	| 'translate'
 >;
 
-export type MobileFreeDomainProps = Pick< FeaturesGridProps, 'translate' | 'paidDomainName' > & {
+export type MobileFreeDomainProps = Pick< FeaturesGridProps, 'paidDomainName' > & {
 	gridPlan: GridPlan;
 };
 
@@ -355,7 +347,6 @@ export type MobileViewProps = Pick<
 	| 'planUpgradeCreditsApplicable'
 	| 'selectedFeature'
 	| 'showUpgradeableStorage'
-	| 'translate'
 >;
 
 export type TabletViewProps = MobileViewProps & { stickyRowOffset: number };

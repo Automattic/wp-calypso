@@ -22,6 +22,7 @@ import {
 	TimeLogo,
 } from '@automattic/components';
 import classNames from 'classnames';
+import { useTranslate } from 'i18n-calypso';
 import { isStorageUpgradeableForPlan } from '../../lib/is-storage-upgradeable-for-plan';
 import { getStorageStringFromFeature } from '../../util';
 import PlanFeatures2023GridActions from '../actions';
@@ -148,11 +149,12 @@ const BillingTimeframes = ( { gridPlans, options, showRefundPeriod }: BillingTim
 const PlanStorageOptions = ( {
 	gridPlans,
 	options,
-	translate,
 	intervalType,
 	onStorageAddOnClick,
 	showUpgradeableStorage,
 }: PlanStorageOptionsProps ) => {
+	const translate = useTranslate();
+
 	return gridPlans.map( ( { planSlug, features: { storageOptions } } ) => {
 		if ( ! options?.isTableCell && isWpcomEnterpriseGridPlan( planSlug ) ) {
 			return null;
@@ -206,11 +208,12 @@ const TopButtons = ( {
 	isInSignup,
 	isLaunchPage,
 	currentSitePlanSlug,
-	translate,
 	planActionOverrides,
 	isLargeCurrency,
 	onUpgradeClick,
 }: TopButtonsProps ) => {
+	const translate = useTranslate();
+
 	return gridPlans.map(
 		( { planSlug, availableForPurchase, isMonthlyPlan, features: { storageOptions } } ) => {
 			const classes = classNames( 'plan-features-2023-grid__table-item', 'is-top-buttons' );
@@ -269,8 +272,9 @@ const TopButtons = ( {
 const PreviousFeaturesIncludedTitle = ( {
 	gridPlans,
 	options,
-	translate,
 }: PreviousFeaturesIncludedTitleProps ) => {
+	const translate = useTranslate();
+
 	return gridPlans.map( ( { planSlug } ) => {
 		const shouldRenderEnterpriseLogos = isWpcomEnterpriseGridPlan( planSlug );
 		const shouldShowFeatureTitle = ! isWpComFreePlan( planSlug ) && ! shouldRenderEnterpriseLogos;
@@ -317,12 +321,12 @@ const PlanFeaturesList = ( {
 	gridPlans,
 	options,
 	paidDomainName,
-	translate,
 	hideUnavailableFeatures,
 	selectedFeature,
 	generatedWPComSubdomain,
 	isCustomDomainAllowedOnFreePlan,
 }: PlanFeaturesListProps ) => {
+	const translate = useTranslate();
 	const plansWithFeatures = gridPlans.filter(
 		( gridPlan ) => ! isWpcomEnterpriseGridPlan( gridPlan.planSlug )
 	);
@@ -343,7 +347,6 @@ const PlanFeaturesList = ( {
 
 const Table = ( {
 	gridPlans,
-	translate,
 	gridPlanForSpotlight,
 	stickyRowOffset,
 	planUpgradeCreditsApplicable,
@@ -370,6 +373,7 @@ const Table = ( {
 		'plan-features-2023-grid__table',
 		`has-${ gridPlansWithoutSpotlight.length }-cols`
 	);
+	const translate = useTranslate();
 
 	return (
 		<table className={ tableClasses }>
@@ -418,7 +422,6 @@ const Table = ( {
 							isInSignup={ isInSignup }
 							isLaunchPage={ isLaunchPage }
 							currentSitePlanSlug={ currentSitePlanSlug }
-							translate={ translate }
 							planActionOverrides={ planActionOverrides }
 							isLargeCurrency={ isLargeCurrency }
 							onUpgradeClick={ onUpgradeClick }
@@ -429,7 +432,6 @@ const Table = ( {
 					<PreviousFeaturesIncludedTitle
 						gridPlans={ gridPlansWithoutSpotlight }
 						options={ { isTableCell: true } }
-						translate={ translate }
 					/>
 				</tr>
 				<tr>
@@ -437,7 +439,6 @@ const Table = ( {
 						gridPlans={ gridPlansWithoutSpotlight }
 						options={ { isTableCell: true } }
 						paidDomainName={ paidDomainName }
-						translate={ translate }
 						hideUnavailableFeatures={ hideUnavailableFeatures }
 						selectedFeature={ selectedFeature }
 						generatedWPComSubdomain={ generatedWPComSubdomain }
@@ -448,7 +449,6 @@ const Table = ( {
 					<PlanStorageOptions
 						gridPlans={ gridPlansWithoutSpotlight }
 						options={ { isTableCell: true } }
-						translate={ translate }
 						intervalType={ intervalType }
 						onStorageAddOnClick={ onStorageAddOnClick }
 						showUpgradeableStorage={ showUpgradeableStorage }
@@ -464,7 +464,6 @@ const SpotlightPlan = ( {
 	isLargeCurrency,
 	planUpgradeCreditsApplicable,
 	currentSitePlanSlug,
-	translate,
 	intervalType,
 	onStorageAddOnClick,
 	showUpgradeableStorage,
@@ -500,7 +499,6 @@ const SpotlightPlan = ( {
 			{ isNotFreePlan && <BillingTimeframes gridPlans={ [ gridPlanForSpotlight ] } /> }
 			<PlanStorageOptions
 				gridPlans={ [ gridPlanForSpotlight ] }
-				translate={ translate }
 				intervalType={ intervalType }
 				onStorageAddOnClick={ onStorageAddOnClick }
 				showUpgradeableStorage={ showUpgradeableStorage }
@@ -510,7 +508,6 @@ const SpotlightPlan = ( {
 				isInSignup={ isInSignup }
 				isLaunchPage={ isLaunchPage }
 				currentSitePlanSlug={ currentSitePlanSlug }
-				translate={ translate }
 				planActionOverrides={ planActionOverrides }
 				isLargeCurrency={ isLargeCurrency }
 				onUpgradeClick={ onUpgradeClick }
@@ -519,8 +516,9 @@ const SpotlightPlan = ( {
 	);
 };
 
-const MobileFreeDomain = ( { gridPlan, translate, paidDomainName }: MobileFreeDomainProps ) => {
+const MobileFreeDomain = ( { gridPlan, paidDomainName }: MobileFreeDomainProps ) => {
 	const { planSlug, isMonthlyPlan } = gridPlan;
+	const translate = useTranslate();
 
 	if ( isMonthlyPlan || isWpComFreePlan( planSlug ) || isWpcomEnterpriseGridPlan( planSlug ) ) {
 		return null;
@@ -571,7 +569,6 @@ const MobileView = ( {
 	planUpgradeCreditsApplicable,
 	selectedFeature,
 	showUpgradeableStorage,
-	translate,
 }: MobileViewProps ) => {
 	const CardContainer = (
 		props: React.ComponentProps< typeof FoldableCard > & { planSlug: string }
@@ -585,6 +582,7 @@ const MobileView = ( {
 			</FoldableCard>
 		);
 	};
+	const translate = useTranslate();
 
 	return gridPlans
 		.reduce( ( acc, griPlan ) => {
@@ -616,14 +614,9 @@ const MobileView = ( {
 						/>
 					) }
 					{ isNotFreePlan && <BillingTimeframes gridPlans={ [ gridPlan ] } /> }
-					<MobileFreeDomain
-						gridPlan={ gridPlan }
-						paidDomainName={ paidDomainName }
-						translate={ translate }
-					/>
+					<MobileFreeDomain gridPlan={ gridPlan } paidDomainName={ paidDomainName } />
 					<PlanStorageOptions
 						gridPlans={ [ gridPlan ] }
-						translate={ translate }
 						intervalType={ intervalType }
 						onStorageAddOnClick={ onStorageAddOnClick }
 						showUpgradeableStorage={ showUpgradeableStorage }
@@ -633,7 +626,6 @@ const MobileView = ( {
 						isInSignup={ isInSignup }
 						isLaunchPage={ isLaunchPage }
 						currentSitePlanSlug={ currentSitePlanSlug }
-						translate={ translate }
 						planActionOverrides={ planActionOverrides }
 						isLargeCurrency={ isLargeCurrency }
 						onUpgradeClick={ onUpgradeClick }
@@ -649,10 +641,9 @@ const MobileView = ( {
 							)
 						}
 					>
-						<PreviousFeaturesIncludedTitle gridPlans={ [ gridPlan ] } translate={ translate } />
+						<PreviousFeaturesIncludedTitle gridPlans={ [ gridPlan ] } />
 						<PlanFeaturesList
 							gridPlans={ [ gridPlan ] }
-							translate={ translate }
 							selectedFeature={ selectedFeature }
 							paidDomainName={ paidDomainName }
 							hideUnavailableFeatures={ hideUnavailableFeatures }
@@ -685,7 +676,6 @@ const TabletView = ( {
 	selectedFeature,
 	showUpgradeableStorage,
 	stickyRowOffset,
-	translate,
 }: TabletViewProps ) => {
 	const gridPlansWithoutSpotlight = ! gridPlanForSpotlight
 		? gridPlans
@@ -711,7 +701,6 @@ const TabletView = ( {
 		selectedFeature,
 		showUpgradeableStorage,
 		stickyRowOffset,
-		translate,
 	};
 
 	return (
@@ -730,7 +719,6 @@ const TabletView = ( {
 
 const FeaturesGrid = ( {
 	gridPlans,
-	translate,
 	gridPlanForSpotlight,
 	stickyRowOffset,
 	isInSignup,
@@ -762,7 +750,6 @@ const FeaturesGrid = ( {
 		planUpgradeCreditsApplicable,
 		selectedFeature,
 		showUpgradeableStorage,
-		translate,
 	};
 
 	const planFeaturesProps = {
