@@ -60,7 +60,7 @@ export function useThemesThankYouData(
 		};
 	}, [ dispatch, siteId ] );
 
-	const themesSection: React.ReactElement[] = themesList
+	const themesSection = themesList
 		.filter( ( theme ) => theme )
 		.map( ( theme: any ) => {
 			return (

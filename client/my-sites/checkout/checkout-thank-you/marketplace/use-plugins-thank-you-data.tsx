@@ -166,7 +166,7 @@ export default function usePluginsThankYouData( pluginSlugs: string[] ): ThankYo
 		pluginSlugs,
 	] );
 
-	const pluginsSection: React.ReactElement[] = pluginsInformationList.map( ( plugin: any ) => {
+	const pluginsSection = pluginsInformationList.map( ( plugin: any ) => {
 		return <ThankYouPluginSection plugin={ plugin } key={ `plugin_${ plugin.slug }` } />;
 	} );
 
