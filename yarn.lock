@@ -366,7 +366,7 @@ __metadata:
     form-data: "npm:^4.0.0"
     jest-docblock: "npm:^29.7.0"
     mailosaur: "npm:^8.4.0"
-    nock: "npm:^13.4.0"
+    nock: "npm:^13.5.0"
     node-fetch: "npm:^2.6.7"
     playwright: "npm:^1.37"
     totp-generator: "npm:^0.0.12"
@@ -647,7 +647,7 @@ __metadata:
     fast-json-stable-stringify: "npm:^2.1.0"
     i18n-calypso: "workspace:^"
     jest-fetch-mock: "npm:^3.0.3"
-    nock: "npm:^13.4.0"
+    nock: "npm:^13.5.0"
     node-fetch: "npm:^2.6.6"
     qs: "npm:^6.9.1"
     redux: "npm:^4.2.1"
@@ -12157,7 +12157,7 @@ __metadata:
     moment: "npm:^2.26.0"
     moment-timezone: "npm:^0.5.40"
     moment-timezone-data-webpack-plugin: "npm:^1.5.1"
-    nock: "npm:^13.4.0"
+    nock: "npm:^13.5.0"
     path-browserify: "npm:^1.0.1"
     percentage-regex: "npm:^3.0.0"
     phone: "npm:^3.1.17"
@@ -12195,7 +12195,7 @@ __metadata:
     stream-browserify: "npm:^3.0.0"
     striptags: "npm:^3.1.1"
     superagent: "npm:^3.8.3"
-    supertest: "npm:^6.3.3"
+    supertest: "npm:^6.3.4"
     textarea-caret: "npm:^3.1.0"
     to-title-case: "npm:^1.0.0"
     tracekit: "npm:^0.4.5"
@@ -23204,14 +23204,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"nock@npm:^13.4.0":
-  version: 13.4.0
-  resolution: "nock@npm:13.4.0"
+"nock@npm:^13.5.0":
+  version: 13.5.0
+  resolution: "nock@npm:13.5.0"
   dependencies:
     debug: "npm:^4.1.0"
     json-stringify-safe: "npm:^5.0.1"
     propagate: "npm:^2.0.0"
-  checksum: b2e4407e71b6e9c42bc74bf631c008b79fa06b17e885d270b8f3ac7081d029dd966cd09024acb96ae5dd77a4737cc86951340715ffabece6893a62dc71ce5b08
+  checksum: ba98390042a61b8687da9174fa07282d14f8b0cb5ac50c310eba9bb70a0beb5ea8257ba1f2a3e324db5570111689485a1f16746c2527f3050357e6917666bdef
   languageName: node
   linkType: hard
 
@@ -29568,9 +29568,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"superagent@npm:^8.0.5":
-  version: 8.0.9
-  resolution: "superagent@npm:8.0.9"
+"superagent@npm:^8.1.2":
+  version: 8.1.2
+  resolution: "superagent@npm:8.1.2"
   dependencies:
     component-emitter: "npm:^1.3.0"
     cookiejar: "npm:^2.1.4"
@@ -29582,17 +29582,17 @@ __metadata:
     mime: "npm:2.6.0"
     qs: "npm:^6.11.0"
     semver: "npm:^7.3.8"
-  checksum: 74a5d2a155b8673f1c862033a326fdad492ace870f4a41ec6f1aa5642752dd66d011190e32c0ccd1e385e886aa33d9250aea945e234d7cfec8bb40e850cd4e81
+  checksum: 016416fc9c3d3a04fb648bc0efb3d3d5c9d96da00de47e4a625d9976d28c6c37ab0a7f185f2c3ec6d653ee8bb522f70fba0c1072aea7774341a6c0269a9fa77f
   languageName: node
   linkType: hard
 
-"supertest@npm:^6.3.3":
-  version: 6.3.3
-  resolution: "supertest@npm:6.3.3"
+"supertest@npm:^6.3.4":
+  version: 6.3.4
+  resolution: "supertest@npm:6.3.4"
   dependencies:
     methods: "npm:^1.1.2"
-    superagent: "npm:^8.0.5"
-  checksum: 178ca0d2f3919ec01e1e22240df237793d80eb36f249f57c9bba34ce6ad002b4918db6a4fdf31ba8d15746451c9164305c60a490f4fcb43b5761a8f582def183
+    superagent: "npm:^8.1.2"
+  checksum: f8c0b6c73b5e87da31feee6ccb36e7af766a438513cad89d6907f22c97edd83b1e765b4c8de955d5f7af4bca5fd0aaf9149ff48e21567dd290b326a8633af2a7
   languageName: node
   linkType: hard
 
@@ -32308,7 +32308,7 @@ __metadata:
     mkdirp: "npm:^1.0.4"
     moment: "npm:^2.26.0"
     ncp: "npm:^2.0.0"
-    nock: "npm:^13.4.0"
+    nock: "npm:^13.5.0"
     node-fetch: "npm:^2.6.6"
     npm-run-all: "npm:^4.1.5"
     photon: "workspace:^"
