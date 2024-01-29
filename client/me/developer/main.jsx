@@ -29,12 +29,13 @@ class Developer extends Component {
 		} );
 	};
 
-	shouldShowDevSurveyNotice = () => {
+	shouldShowDevSurveyNotice = ( isDevAccount ) => {
 		const cookies = cookie.parse( document.cookie );
 
+		const isDevAccountEnabled = isDevAccount ?? this.props.getSetting( 'is_dev_account' );
+
 		return (
-			this.props.getSetting( 'is_dev_account' ) &&
-			! [ 'completed', 'dismissed' ].includes( cookies.developer_survey )
+			isDevAccountEnabled && ! [ 'completed', 'dismissed' ].includes( cookies.developer_survey )
 		);
 	};
 
@@ -84,9 +85,11 @@ class Developer extends Component {
 			enabled: isDevAccount ? 1 : 0,
 		} );
 
-		if ( this.shouldShowDevSurveyNotice() ) {
+		if ( this.shouldShowDevSurveyNotice( isDevAccount ) ) {
 			this.showDevSurveyNotice();
 		}
+
+		setTimeout( () => this.props.removeNotice( 'save-user-settings' ), 5000 );
 	};
 
 	componentDidMount() {
@@ -124,8 +127,6 @@ class Developer extends Component {
 					className="developer__header"
 				/>
 
-				<DeveloperFeatures />
-
 				<form onChange={ this.props.submitForm }>
 					<FormFieldset
 						className={ classnames( 'developer__is_dev_account-fieldset', {
@@ -135,11 +136,13 @@ class Developer extends Component {
 						<ToggleControl
 							disabled={ this.props.isFetchingUserSettings || this.props.isUpdatingUserSettings }
 							checked={ this.props.getSetting( 'is_dev_account' ) }
-							onChange={ () => this.handleToggleIsDevAccount() }
+							onChange={ this.handleToggleIsDevAccount }
 							label={ getIAmDeveloperCopy( this.props.translate ) }
 						/>
 					</FormFieldset>
 				</form>
+
+				<DeveloperFeatures />
 			</Main>
 		);
 	}
