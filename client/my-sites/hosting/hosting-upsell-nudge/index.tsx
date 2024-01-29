@@ -6,6 +6,7 @@ import {
 	WPCOM_PLANS,
 	getPlan,
 } from '@automattic/calypso-products';
+import { addQueryArgs } from '@wordpress/url';
 import { useTranslate } from 'i18n-calypso';
 import UpsellNudge from 'calypso/blocks/upsell-nudge';
 import useAddHostingTrialMutation from 'calypso/data/hosting/use-add-hosting-trial-mutation';
@@ -54,7 +55,11 @@ export function HostingUpsellNudge( { siteId, targetPlan }: HostingUpsellNudgePr
 	);
 	const callToAction = targetPlan ? targetPlan.callToAction : callToActionText;
 	const feature = targetPlan ? targetPlan.feature : FEATURE_SFTP;
-	const href = targetPlan ? targetPlan.href : `/checkout/${ siteId }/business`;
+	const href = targetPlan
+		? targetPlan.href
+		: addQueryArgs( `/checkout/${ siteId }/business`, {
+				redirect_to: `/hosting-config/${ siteId }`,
+		  } );
 	const plan = targetPlan ? targetPlan.plan : PLAN_BUSINESS;
 	const title = targetPlan ? targetPlan.title : titleText;
 	const isEligibleForTrial = useSelector( isUserEligibleForFreeHostingTrial );

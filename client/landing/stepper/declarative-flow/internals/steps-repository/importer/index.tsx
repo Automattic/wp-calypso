@@ -155,7 +155,11 @@ export function withImporterWrapper( Importer: ImporterCompType ) {
 		 */
 		const renderStepContent = () => {
 			if ( isLoading() ) {
-				return <LoadingEllipsis />;
+				return (
+					<div className="import-layout__center">
+						<LoadingEllipsis />
+					</div>
+				);
 			} else if ( ! siteSlug || ! site || ! siteId ) {
 				return <NotFound />;
 			} else if ( ! hasPermission() ) {
