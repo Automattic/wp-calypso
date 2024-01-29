@@ -23,6 +23,7 @@ const fetchArticlesAPI = ( search: string, locale: string, sectionName: string )
 	const queryString = buildQueryString( {
 		query: search,
 		locale,
+		_locale: locale,
 		section: sectionName,
 	} );
 
