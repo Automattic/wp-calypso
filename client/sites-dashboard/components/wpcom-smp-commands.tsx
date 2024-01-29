@@ -13,6 +13,7 @@ import {
 	download as downloadIcon,
 	edit as editIcon,
 	globe as domainsIcon,
+	seen as seenIcon,
 	home as dashboardIcon,
 	key as keyIcon,
 	media as mediaIcon,
@@ -45,6 +46,7 @@ import {
 import { SiteExcerptData } from 'calypso/data/sites/site-excerpt-types';
 import { navigate } from 'calypso/lib/navigate';
 import { useAddNewSiteUrl } from 'calypso/lib/paths/use-add-new-site-url';
+import { getSiteFragment } from 'calypso/lib/route';
 import wpcom from 'calypso/lib/wp';
 import { useOpenPhpMyAdmin } from 'calypso/my-sites/hosting/phpmyadmin-card';
 import { useDispatch, useSelector } from 'calypso/state';
@@ -53,6 +55,8 @@ import { clearWordPressCache } from 'calypso/state/hosting/actions';
 import { createNotice, removeNotice } from 'calypso/state/notices/actions';
 import { NoticeStatus } from 'calypso/state/notices/types';
 import getCurrentRoutePattern from 'calypso/state/selectors/get-current-route-pattern';
+import { getSite } from 'calypso/state/sites/selectors';
+import getCurrentRoute from '../../state/selectors/get-current-route';
 import { generateSiteInterfaceLink, isCustomDomain, isNotAtomicJetpack, isP2Site } from '../utils';
 
 interface useCommandsArrayWpcomOptions {
@@ -115,6 +119,12 @@ export const useCommandsArrayWpcom = ( {
 	const createSiteUrl = useAddNewSiteUrl( {
 		ref: 'command-palette',
 	} );
+
+	const currentPath = useSelector( getCurrentRoute );
+	const activeSiteId = getSiteFragment( currentPath );
+	const activeSite = useSelector( ( state ) =>
+		activeSiteId ? getSite( state, activeSiteId ) : null
+	);
 
 	const siteFilters = {
 		hostingEnabled: {
@@ -361,6 +371,24 @@ export const useCommandsArrayWpcom = ( {
 				...siteFilters.hostingEnabled,
 			},
 			icon: cacheIcon,
+		},
+		{
+			name: 'visitSite',
+			label: __( 'Visit site' ),
+			searchLabel: [
+				_x( 'visit site', 'Keyword for the Visit site dashboard command' ),
+				_x( 'see site', 'Keyword for the Visit site dashboard command' ),
+				_x( 'browse site', 'Keyword for the Visit site dashboard command' ),
+			].join( ' ' ),
+			callback: activeSite
+				? commandNavigation( activeSite.URL )
+				: setStateCallback( 'visitSite', __( 'Select site to visit' ) ),
+			siteFunctions: activeSite
+				? undefined
+				: {
+						onClick: ( param ) => commandNavigation( param.site.URL )( param ),
+				  },
+			icon: seenIcon,
 		},
 		{
 			name: 'openSiteDashboard',
