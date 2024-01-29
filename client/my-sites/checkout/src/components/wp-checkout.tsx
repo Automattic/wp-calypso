@@ -75,7 +75,6 @@ import badgeSecurity from './assets/icons/security.svg';
 import { CheckoutCompleteRedirecting } from './checkout-complete-redirecting';
 import CheckoutNextSteps from './checkout-next-steps';
 import { CheckoutSidebarPlanUpsell } from './checkout-sidebar-plan-upsell';
-import { CheckoutSlowProcessingNotice } from './checkout-slow-processing-notice';
 import { EmptyCart, shouldShowEmptyCartPage } from './empty-cart';
 import { GoogleDomainsCopy } from './google-transfers-copy';
 import JetpackAkismetCheckoutSidebarPlanUpsell from './jetpack-akismet-checkout-sidebar-plan-upsell';
@@ -224,6 +223,22 @@ const getPresalesChatKey = ( responseCart: ObjectWithProducts ) => {
 	return 'wpcom';
 };
 
+/* Include a condition for your use case here if you want to show a specific nudge in the checkout sidebar */
+function CheckoutSidebarNudge( { responseCart }: { responseCart: ResponseCart } ) {
+	const isWcMobile = isWcMobileApp();
+	const isDIFMInCart = hasDIFMProduct( responseCart );
+	const hasMonthlyProduct = responseCart?.products?.some( isMonthlyProduct );
+
+	if ( ! isWcMobile && ! isDIFMInCart && ! hasMonthlyProduct ) {
+		return (
+			<CheckoutSidebarNudgeWrapper>
+				<CheckoutSidebarPlanUpsell />
+				<JetpackAkismetCheckoutSidebarPlanUpsell />
+			</CheckoutSidebarNudgeWrapper>
+		);
+	}
+	return null;
+}
 export default function WPCheckout( {
 	addItemToCart,
 	changeSelection,
@@ -369,8 +384,6 @@ export default function WPCheckout( {
 		clearDomainContactErrorMessages,
 	} = checkoutActions;
 
-	const isWcMobile = isWcMobileApp();
-
 	if ( transactionStatus === TransactionStatus.COMPLETE ) {
 		debug( 'rendering post-checkout redirecting page' );
 		return (
@@ -421,9 +434,6 @@ export default function WPCheckout( {
 		);
 	}
 
-	const isDIFMInCart = hasDIFMProduct( responseCart );
-	const hasMonthlyProduct = responseCart?.products?.some( isMonthlyProduct );
-
 	const nextStepButtonText =
 		locale.startsWith( 'en' ) || i18n.hasTranslation( 'Continue to payment' )
 			? translate( 'Continue to payment', { textOnly: true } )
@@ -433,7 +443,6 @@ export default function WPCheckout( {
 		<WPCheckoutWrapper>
 			<WPCheckoutSidebarContent>
 				{ isLoading && <LoadingSidebarContent /> }
-				{ formStatus === FormStatus.SUBMITTING && <CheckoutSlowProcessingNotice /> }
 				{ ! isLoading && (
 					<CheckoutSummaryArea className={ isSummaryVisible ? 'is-visible' : '' }>
 						<CheckoutErrorBoundary
@@ -467,12 +476,7 @@ export default function WPCheckout( {
 								) }
 
 								<WPCheckoutOrderSummary siteId={ siteId } onChangeSelection={ changeSelection } />
-								{ ! isWcMobile && ! isDIFMInCart && ! hasMonthlyProduct && (
-									<>
-										<CheckoutSidebarPlanUpsell />
-										<JetpackAkismetCheckoutSidebarPlanUpsell />
-									</>
-								) }
+								<CheckoutSidebarNudge responseCart={ responseCart } />
 								{ hasCheckoutVersion( '2' ) && (
 									<CheckoutSummaryFeaturedList
 										responseCart={ responseCart }
@@ -790,6 +794,15 @@ const CheckoutSummaryBody = styled.div`
 		& .card {
 			box-shadow: none;
 		}
+	}
+`;
+
+const CheckoutSidebarNudgeWrapper = styled.div`
+	display: flex;
+	flex-direction: column;
+
+	& > * {
+		max-width: 288px;
 	}
 `;
 

@@ -156,7 +156,11 @@ export const WordpressImporter: React.FunctionComponent< Props > = ( props ) => 
 					! hasAllSitesFetched ||
 					( WPImportOption.EVERYTHING === option && ! siteItem )
 				) {
-					return <LoadingEllipsis />;
+					return (
+						<div className="import-layout__center">
+							<LoadingEllipsis />;
+						</div>
+					);
 				} else if ( undefined === option && fromSite ) {
 					return (
 						<ContentChooser

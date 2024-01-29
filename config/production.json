@@ -20,7 +20,7 @@
 	"zendesk_support_chat_key": "cec07bc9-4da6-4dd2-afa7-c7e01ae73584",
 	"features": {
 		"ad-tracking": true,
-		"akismet/checkout-quantity-dropdown": false,
+		"akismet/checkout-quantity-dropdown": true,
 		"calypso/ai-blogging-prompts": false,
 		"calypso/ai-assembler": false,
 		"bilmur-script": true,
@@ -90,6 +90,8 @@
 		"launchpad/new-task-definition-parser/design-first": true,
 		"launchpad/new-task-definition-parser/videopress": false,
 		"launchpad/new-task-definition-parser/build": false,
+		"launchpad/new-task-definition-parser/newsletter": false,
+		"launchpad/new-task-definition-parser/link-in-bio": false,
 		"layout/app-banner": true,
 		"layout/guided-tours": true,
 		"layout/query-selected-editor": true,

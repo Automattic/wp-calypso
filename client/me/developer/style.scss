@@ -1,0 +1,84 @@
+@import "@wordpress/base-styles/breakpoints.scss";
+@import "@automattic/typography/styles/variables";
+@import "@automattic/components/src/styles/typography";
+
+.navigation-header.developer__header {
+	.formatted-header__title {
+		font-family: $brand-serif;
+		font-size: rem(44px);
+		line-height: 52px;
+		letter-spacing: 0.2px;
+		text-align: center;
+		padding-bottom: 8px;
+		word-break: break-word;
+	}
+
+	.formatted-header__subtitle {
+		font-family: $font-sf-pro-text;
+		font-size: rem(16px);
+		line-height: 24px;
+		letter-spacing: -0.32px;
+		text-align: center;
+	}
+
+	@media ( max-width: $break-medium ) {
+		padding: 40px 32px 24px;
+
+		.formatted-header__title {
+			font-size: rem(32px);
+		}
+
+		.formatted-header__subtitle {
+			display: block;
+			font-size: rem(14px);
+		}
+	}
+}
+
+.form-fieldset.developer__is_dev_account-fieldset {
+	border-radius: 2px;
+	background: var(--color-link-0);
+	padding: 16px;
+	text-align: center;
+	max-width: 750px;
+	margin: 0 auto 30px;
+
+	.components-toggle-control {
+		font-family: $font-sf-pro-text;
+		font-size: rem(14px);
+		display: inline-block;
+		margin-bottom: 0;
+	}
+
+	&.is-loading {
+		.components-form-toggle {
+			.components-form-toggle__thumb {
+				visibility: hidden;
+			}
+
+			.components-form-toggle__track {
+				border: none;
+				@include placeholder( --color-neutral-10 );
+			}
+		}
+
+		.components-toggle-control__label {
+			@include placeholder();
+			a {
+				color: inherit;
+			}
+		}
+	}
+
+	@media ( max-width: $break-medium ) {
+		position: fixed;
+		left: 0;
+		bottom: 0;
+		width: 100%;
+		margin-bottom: 0;
+		text-align: left;
+		padding: 16px 32px;
+		z-index: 2;
+	}
+}
+

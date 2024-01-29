@@ -24,7 +24,6 @@ import ProfileLinks from 'calypso/me/profile-links';
 import ReauthRequired from 'calypso/me/reauth-required';
 import { recordGoogleEvent } from 'calypso/state/analytics/actions';
 import { isFetchingUserSettings } from 'calypso/state/user-settings/selectors';
-import { getIAmDeveloperCopy } from './get-i-am-a-developer-copy';
 import UpdatedGravatarString from './updated-gravatar-string';
 
 import './style.scss';
@@ -129,23 +128,10 @@ class Profile extends Component {
 							} ) }
 						>
 							<ToggleControl
-								disabled={ this.props.isFetchingUserSettings }
+								disabled={ this.props.getDisabledState() || this.props.isFetchingUserSettings }
 								checked={ this.props.getSetting( 'gravatar_profile_hidden' ) }
 								onChange={ this.toggleGravatarHidden }
 								label={ <UpdatedGravatarString gravatarProfileLink={ gravatarProfileLink } /> }
-							/>
-						</FormFieldset>
-
-						<FormFieldset
-							className={ classnames( {
-								'profile__is_dev_account-fieldset-is-loading': this.props.isFetchingUserSettings,
-							} ) }
-						>
-							<ToggleControl
-								disabled={ this.props.isFetchingUserSettings }
-								checked={ this.props.getSetting( 'is_dev_account' ) }
-								onChange={ this.toggleIsDevAccount }
-								label={ getIAmDeveloperCopy( this.props.translate ) }
 							/>
 						</FormFieldset>
 
