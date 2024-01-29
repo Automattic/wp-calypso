@@ -14,9 +14,7 @@ import {
 	FEATURE_MANAGED_HOSTING,
 	FEATURE_MULTI_SITE,
 	FEATURE_NO_ADS,
-	FEATURE_PERSONAL_THEMES,
 	FEATURE_PLUGINS_THEMES,
-	FEATURE_PREMIUM_THEMES_V2,
 	FEATURE_STYLE_CUSTOMIZATION,
 	FEATURE_VIDEOPRESS_JP,
 	FEATURE_WAF_V2,
@@ -25,6 +23,8 @@ import {
 	PLAN_ECOMMERCE,
 	PLAN_PERSONAL,
 	PLAN_PREMIUM,
+	WPCOM_FEATURES_PREMIUM_THEMES_LIMITED,
+	WPCOM_FEATURES_PREMIUM_THEMES_UNLIMITED,
 	getPlan,
 } from '@automattic/calypso-products';
 import { Button, Dialog, ScreenReaderText } from '@automattic/components';
@@ -366,7 +366,7 @@ export const ThemeUpgradeModal = ( {
 	const getStandardPurchaseFeatureList = () => {
 		return getPlanFeaturesObject( [
 			FEATURE_CUSTOM_DOMAIN,
-			FEATURE_PREMIUM_THEMES_V2,
+			WPCOM_FEATURES_PREMIUM_THEMES_UNLIMITED,
 			FEATURE_STYLE_CUSTOMIZATION,
 			FEATURE_LIVE_CHAT_SUPPORT,
 			FEATURE_AD_FREE_EXPERIENCE,
@@ -385,7 +385,7 @@ export const ThemeUpgradeModal = ( {
 	const getBundledFirstPartyPurchaseFeatureList = () => {
 		return getPlanFeaturesObject( [
 			FEATURE_CUSTOM_DOMAIN,
-			FEATURE_PREMIUM_THEMES_V2,
+			WPCOM_FEATURES_PREMIUM_THEMES_UNLIMITED,
 			FEATURE_STYLE_CUSTOMIZATION,
 			FEATURE_LIVE_CHAT_SUPPORT,
 			FEATURE_AD_FREE_EXPERIENCE,
@@ -434,7 +434,7 @@ export const ThemeUpgradeModal = ( {
 		} );
 	} else if (
 		config.isEnabled( 'themes/tiers' ) &&
-		theme?.data?.theme_tier?.feature === FEATURE_PERSONAL_THEMES
+		theme?.data?.theme_tier?.feature === WPCOM_FEATURES_PREMIUM_THEMES_LIMITED
 	) {
 		modalData = getPersonalPlanModalData();
 		featureList = getPersonalPlanFeatureList();

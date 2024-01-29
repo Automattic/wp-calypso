@@ -1,4 +1,4 @@
-import { WPCOM_FEATURES_PREMIUM_THEMES } from '@automattic/calypso-products';
+import { WPCOM_FEATURES_PREMIUM_THEMES_UNLIMITED } from '@automattic/calypso-products';
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import { doesThemeBundleSoftwareSet } from 'calypso/state/themes/selectors/does-theme-bundle-software-set';
 import { isExternallyManagedTheme } from 'calypso/state/themes/selectors/is-externally-managed-theme';
@@ -29,7 +29,11 @@ export function isPremiumThemeAvailable( state, themeId, siteId ) {
 		return false;
 	}
 
-	const hasPremiumThemesFeature = siteHasFeature( state, siteId, WPCOM_FEATURES_PREMIUM_THEMES );
+	const hasPremiumThemesFeature = siteHasFeature(
+		state,
+		siteId,
+		WPCOM_FEATURES_PREMIUM_THEMES_UNLIMITED
+	);
 
 	/**
 	 * Bundled Themes are themes that contain software, like woo-on-plans. In
