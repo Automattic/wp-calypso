@@ -20,7 +20,7 @@ export const AllLicenseItems = ( {
 	bundleSize,
 }: AllLicenseItemsProps ) => {
 	const wrapperClassName = classNames( 'jetpack-product-store__most-popular', className );
-
+	bundleSize = 1;
 	return (
 		<div className={ wrapperClassName }>
 			<h2 className="jetpack-product-store__most-popular--heading">{ heading }</h2>
@@ -35,7 +35,7 @@ export const AllLicenseItems = ( {
 						<li key={ idx } className="jetpack-product-store__most-popular--item">
 							{ Array.isArray( item ) ? (
 								<SimpleLicenseMultiItemCard
-									items={ item }
+									variants={ item }
 									bundleSize={ bundleSize }
 									ctaAsPrimary={ true }
 									ctaHref="#"

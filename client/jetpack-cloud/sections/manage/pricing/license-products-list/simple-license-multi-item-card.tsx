@@ -13,7 +13,7 @@ import 'calypso/my-sites/plans/jetpack-plans/product-store/simple-item-card/styl
 import './style.scss';
 
 type SimpleLicenseMultiItemCardProps = {
-	items: APIProductFamilyProduct[];
+	variants: APIProductFamilyProduct[];
 	bundleSize?: number;
 	ctaAsPrimary?: boolean;
 	ctaHref?: string;
@@ -25,7 +25,7 @@ type SimpleLicenseMultiItemCardProps = {
 };
 
 export const SimpleLicenseMultiItemCard = ( {
-	items,
+	variants,
 	bundleSize,
 	ctaAsPrimary,
 	ctaHref,
@@ -37,31 +37,31 @@ export const SimpleLicenseMultiItemCard = ( {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 
-	const [ item, setItem ] = useState( items[ 0 ] );
+	const [ variant, setVariant ] = useState( variants[ 0 ] );
 
-	const title = getProductShortTitle( item, true );
+	const title = getProductShortTitle( variant, true );
 	const ctaLabel = translate( 'Get' );
-	const ctaAriaLabel = ctaLabel + ' ' + item.name;
+	const ctaAriaLabel = ctaLabel + ' ' + variant.name;
 
-	const price = <ItemPrice bundleSize={ bundleSize } item={ item } />;
-	const { description: productDescription } = useProductDescription( item.slug );
+	const price = <ItemPrice bundleSize={ bundleSize } item={ variant } />;
+	const { description: productDescription } = useProductDescription( variant.slug );
 	const icon = null;
 	const onChangeOption = useCallback(
 		( selectedProductSlug: string ) => {
 			const selectedProduct =
-				items.find( ( { slug } ) => slug === selectedProductSlug ) ?? items[ 0 ];
+				variants.find( ( { slug } ) => slug === selectedProductSlug ) ?? variants[ 0 ];
 
-			setItem( selectedProduct );
+			setVariant( selectedProduct );
 			dispatch(
 				recordTracksEvent( 'calypso_jp_manage_pricing_page_variant_option_click', {
 					product: selectedProductSlug,
 				} )
 			);
 		},
-		[ dispatch, items ]
+		[ dispatch, variants ]
 	);
 
-	const variantOptions = items.map( ( option ) => ( {
+	const variantOptions = variants.map( ( option ) => ( {
 		id: option.slug,
 		answerText: getProductVariantShortTitle( option.name ),
 	} ) );
@@ -91,7 +91,7 @@ export const SimpleLicenseMultiItemCard = ( {
 					name="product-variants"
 					question={ translate( 'Select variant:' ) }
 					answers={ variantOptions }
-					selectedAnswerId={ item?.slug }
+					selectedAnswerId={ variant?.slug }
 					onAnswerChange={ onChangeOption }
 					shouldShuffleAnswers={ false }
 				/>

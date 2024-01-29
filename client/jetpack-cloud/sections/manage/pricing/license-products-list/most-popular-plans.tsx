@@ -20,6 +20,7 @@ export const MostPopularPlans = ( {
 	bundleSize,
 }: MostPopularPlansProps ) => {
 	const wrapperClassName = classNames( 'jetpack-product-store__most-popular', className );
+	bundleSize = 1;
 
 	return (
 		<div className={ wrapperClassName }>
@@ -35,7 +36,7 @@ export const MostPopularPlans = ( {
 						<li key={ idx } className="jetpack-product-store__most-popular--item">
 							{ Array.isArray( item ) ? (
 								<FeaturedLicenseMultiItemCard
-									items={ item }
+									variants={ item }
 									bundleSize={ bundleSize }
 									ctaAsPrimary={ true }
 									ctaHref="#"
