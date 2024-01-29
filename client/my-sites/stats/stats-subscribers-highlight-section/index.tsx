@@ -79,7 +79,6 @@ function SubscriberHighlightsListing( { siteId }: { siteId: number | null } ) {
 					count={ isPaidSubscriptionProductsLoading ? null : highlight.count }
 					showValueTooltip
 					note={ highlight.note }
-					icon={ false }
 				/>
 			) ) }
 		</div>
