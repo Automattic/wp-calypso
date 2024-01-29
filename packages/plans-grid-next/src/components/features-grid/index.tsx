@@ -749,7 +749,7 @@ const FeaturesGrid = ( {
 	generatedWPComSubdomain,
 	isCustomDomainAllowedOnFreePlan,
 }: FeaturesGridProps ) => {
-	const sharedProps = {
+	const spotlightPlanProps = {
 		currentSitePlanSlug,
 		gridPlanForSpotlight,
 		intervalType,
@@ -765,7 +765,8 @@ const FeaturesGrid = ( {
 		translate,
 	};
 
-	const additionalProps = {
+	const planFeaturesProps = {
+		...spotlightPlanProps,
 		generatedWPComSubdomain,
 		gridPlans,
 		hideUnavailableFeatures,
@@ -775,26 +776,18 @@ const FeaturesGrid = ( {
 
 	return (
 		<>
-			<SpotlightPlan { ...sharedProps } />
+			<SpotlightPlan { ...spotlightPlanProps } />
 			<div className="plan-features">
 				<div className="plan-features-2023-grid__content">
 					<div>
 						<div className="plan-features-2023-grid__desktop-view">
-							<Table
-								{ ...sharedProps }
-								{ ...additionalProps }
-								stickyRowOffset={ stickyRowOffset }
-							/>
+							<Table { ...planFeaturesProps } stickyRowOffset={ stickyRowOffset } />
 						</div>
 						<div className="plan-features-2023-grid__tablet-view">
-							<TabletView
-								{ ...sharedProps }
-								{ ...additionalProps }
-								stickyRowOffset={ stickyRowOffset }
-							/>
+							<TabletView { ...planFeaturesProps } stickyRowOffset={ stickyRowOffset } />
 						</div>
 						<div className="plan-features-2023-grid__mobile-view">
-							<MobileView { ...sharedProps } { ...additionalProps } />
+							<MobileView { ...planFeaturesProps } />
 						</div>
 					</div>
 				</div>
