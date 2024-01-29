@@ -91,6 +91,7 @@
 		"launchpad/new-task-definition-parser/videopress": false,
 		"launchpad/new-task-definition-parser/build": false,
 		"launchpad/new-task-definition-parser/newsletter": false,
+		"launchpad/new-task-definition-parser/link-in-bio": false,
 		"layout/app-banner": true,
 		"layout/guided-tours": true,
 		"layout/query-selected-editor": true,
