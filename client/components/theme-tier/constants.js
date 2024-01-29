@@ -19,7 +19,7 @@ const getIncludedWithLabel = ( planSlug ) => {
 		? translate( 'Included with %(planName)s', {
 				args: { planName: getPlan( planSlug )?.getTitle() },
 		  } )
-		: getPlan( PLAN_PERSONAL )?.getTitle();
+		: getPlan( planSlug )?.getTitle();
 };
 
 /**
