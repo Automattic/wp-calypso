@@ -49,6 +49,7 @@ project {
 	vcsRoot(WpCalypso)
 	subProject(_self.projects.WPComPlugins)
 	subProject(_self.projects.WPComTests)
+	subProject(_self.projects.GutenbergCoreE2E)
 	subProject(_self.projects.WebApp)
 	subProject(_self.projects.MarTech)
 	buildType(YarnInstall)
@@ -393,4 +394,3 @@ object WpCalypso : GitVcsRoot({
 		uploadedKey = "matticbot"
 	}
 })
-
