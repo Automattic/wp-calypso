@@ -10,7 +10,6 @@ export function useFormStatus(): FormStatusController {
 			setFormReady: () => setFormStatus( FormStatus.READY ),
 			setFormSubmitting: () => setFormStatus( FormStatus.SUBMITTING ),
 			setFormValidating: () => setFormStatus( FormStatus.VALIDATING ),
-			setFormComplete: () => setFormStatus( FormStatus.COMPLETE ),
 		} ),
 		[ setFormStatus ]
 	);

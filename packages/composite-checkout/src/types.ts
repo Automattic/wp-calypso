@@ -58,7 +58,6 @@ export enum FormStatus {
 	READY = 'ready',
 	SUBMITTING = 'submitting',
 	VALIDATING = 'validating',
-	COMPLETE = 'complete',
 }
 
 export interface FormStatusState {
@@ -74,7 +73,6 @@ export interface FormStatusController extends FormStatusState {
 	setFormLoading: () => void;
 	setFormValidating: () => void;
 	setFormSubmitting: () => void;
-	setFormComplete: () => void;
 }
 
 export type FormStatusSetter = ( newStatus: FormStatus ) => void;

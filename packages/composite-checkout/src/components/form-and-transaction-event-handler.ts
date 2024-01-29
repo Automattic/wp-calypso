@@ -1,10 +1,9 @@
 import { useI18n } from '@wordpress/react-i18n';
 import debugFactory from 'debug';
 import { useEffect, useRef, useCallback } from 'react';
-import { useFormStatus } from '../lib/form-status';
 import { useTransactionStatus } from '../lib/transaction-status';
 import { usePaymentMethodId } from '../public-api';
-import { FormStatus, TransactionStatus } from '../types';
+import { TransactionStatus } from '../types';
 import type {
 	PaymentEventCallback,
 	PaymentErrorCallback,
@@ -58,7 +57,6 @@ export function useTransactionStatusHandler( {
 
 	const { __ } = useI18n();
 	const [ paymentMethodId ] = usePaymentMethodId();
-	const { formStatus } = useFormStatus();
 	const {
 		previousTransactionStatus,
 		transactionLastResponse,
@@ -74,7 +72,6 @@ export function useTransactionStatusHandler( {
 		onPaymentComplete,
 		onPaymentRedirect,
 		onPaymentError,
-		formStatus,
 		transactionError,
 		transactionStatus,
 		paymentMethodId,
@@ -112,7 +109,6 @@ function useCallStatusChangeCallbacks( {
 	onPaymentComplete,
 	onPaymentRedirect,
 	onPaymentError,
-	formStatus,
 	transactionError,
 	transactionStatus,
 	paymentMethodId,
@@ -121,7 +117,6 @@ function useCallStatusChangeCallbacks( {
 	onPaymentComplete?: PaymentEventCallback;
 	onPaymentRedirect?: PaymentEventCallback;
 	onPaymentError?: PaymentErrorCallback;
-	formStatus: FormStatus;
 	transactionError: string | null;
 	transactionStatus: TransactionStatus;
 	paymentMethodId: string | null;
@@ -129,7 +124,7 @@ function useCallStatusChangeCallbacks( {
 } ): void {
 	// Store the callbacks as refs so we do not call them more than once if they
 	// are anonymous functions. This way they are only called when the
-	// transactionStatus/formStatus changes, which is what we really want.
+	// transactionStatus changes, which is what we really want.
 	const paymentCompleteRef = useRef( onPaymentComplete );
 	paymentCompleteRef.current = onPaymentComplete;
 	const paymentRedirectRef = useRef( onPaymentRedirect );
@@ -137,35 +132,21 @@ function useCallStatusChangeCallbacks( {
 	const paymentErrorRef = useRef( onPaymentError );
 	paymentErrorRef.current = onPaymentError;
 
-	const prevFormStatus = useRef< FormStatus >();
 	const prevTransactionStatus = useRef< TransactionStatus >();
 
 	useEffect( () => {
-		if (
-			paymentCompleteRef.current &&
-			formStatus === FormStatus.COMPLETE &&
-			formStatus !== prevFormStatus.current
-		) {
-			debug( "form status changed to complete so I'm calling onPaymentComplete" );
+		if ( transactionStatus === prevTransactionStatus.current ) {
+			return;
+		}
+		if ( paymentCompleteRef.current && transactionStatus === TransactionStatus.COMPLETE ) {
+			debug( "transactionStatus status changed to complete so I'm calling onPaymentComplete" );
 			paymentCompleteRef.current( { transactionLastResponse } );
 		}
-		prevFormStatus.current = formStatus;
-	}, [ formStatus, transactionLastResponse, paymentMethodId ] );
-
-	useEffect( () => {
-		if (
-			paymentRedirectRef.current &&
-			transactionStatus === TransactionStatus.REDIRECTING &&
-			transactionStatus !== prevTransactionStatus.current
-		) {
+		if ( paymentRedirectRef.current && transactionStatus === TransactionStatus.REDIRECTING ) {
 			debug( "transaction status changed to redirecting so I'm calling onPaymentRedirect" );
 			paymentRedirectRef.current( { transactionLastResponse } );
 		}
-		if (
-			paymentErrorRef.current &&
-			transactionStatus === TransactionStatus.ERROR &&
-			transactionStatus !== prevTransactionStatus.current
-		) {
+		if ( paymentErrorRef.current && transactionStatus === TransactionStatus.ERROR ) {
 			debug( "transaction status changed to error so I'm calling onPaymentError" );
 			paymentErrorRef.current( { paymentMethodId, transactionError } );
 		}
