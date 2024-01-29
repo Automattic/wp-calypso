@@ -42,8 +42,6 @@ class Developer extends Component {
 					className="developer__header"
 				/>
 
-				<DeveloperFeatures />
-
 				<form onChange={ this.props.submitForm }>
 					<FormFieldset
 						className={ classnames( 'developer__is_dev_account-fieldset', {
@@ -58,6 +56,8 @@ class Developer extends Component {
 						/>
 					</FormFieldset>
 				</form>
+
+				<DeveloperFeatures />
 			</Main>
 		);
 	}
