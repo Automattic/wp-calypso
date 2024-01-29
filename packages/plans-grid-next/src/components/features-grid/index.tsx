@@ -23,6 +23,8 @@ import {
 } from '@automattic/components';
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
+import useIsLargeCurrency from '../../hooks/use-is-large-currency';
+import { usePlanPricingInfoFromGridPlans } from '../../hooks/use-plan-pricing-info-from-grid-plans';
 import { isStorageUpgradeableForPlan } from '../../lib/is-storage-upgradeable-for-plan';
 import { getStorageStringFromFeature } from '../../util';
 import PlanFeatures2023GridActions from '../actions';
@@ -103,10 +105,12 @@ const PlanTagline = ( { gridPlans, options }: PlanTaglineProps ) => {
 const PlanPrice = ( {
 	gridPlans,
 	options,
-	isLargeCurrency,
 	planUpgradeCreditsApplicable,
 	currentSitePlanSlug,
 }: PlanPriceProps ) => {
+	const { prices, currencyCode } = usePlanPricingInfoFromGridPlans( { gridPlans } );
+	const isLargeCurrency = useIsLargeCurrency( { prices, currencyCode: currencyCode || 'USD' } );
+
 	return gridPlans.map( ( { planSlug } ) => {
 		return (
 			<PlanDivOrTdContainer
@@ -209,10 +213,11 @@ const TopButtons = ( {
 	isLaunchPage,
 	currentSitePlanSlug,
 	planActionOverrides,
-	isLargeCurrency,
 	onUpgradeClick,
 }: TopButtonsProps ) => {
 	const translate = useTranslate();
+	const { prices, currencyCode } = usePlanPricingInfoFromGridPlans( { gridPlans } );
+	const isLargeCurrency = useIsLargeCurrency( { prices, currencyCode: currencyCode || 'USD' } );
 
 	return gridPlans.map(
 		( { planSlug, availableForPurchase, isMonthlyPlan, features: { storageOptions } } ) => {
@@ -352,7 +357,6 @@ const Table = ( {
 	planUpgradeCreditsApplicable,
 	currentSitePlanSlug,
 	isInSignup,
-	isLargeCurrency,
 	isLaunchPage,
 	planActionOverrides,
 	onUpgradeClick,
@@ -398,7 +402,6 @@ const Table = ( {
 					<PlanPrice
 						gridPlans={ gridPlansWithoutSpotlight }
 						options={ { isTableCell: true } }
-						isLargeCurrency={ isLargeCurrency }
 						planUpgradeCreditsApplicable={ planUpgradeCreditsApplicable }
 						currentSitePlanSlug={ currentSitePlanSlug }
 					/>
@@ -423,7 +426,6 @@ const Table = ( {
 							isLaunchPage={ isLaunchPage }
 							currentSitePlanSlug={ currentSitePlanSlug }
 							planActionOverrides={ planActionOverrides }
-							isLargeCurrency={ isLargeCurrency }
 							onUpgradeClick={ onUpgradeClick }
 						/>
 					) }
@@ -461,7 +463,6 @@ const Table = ( {
 
 const SpotlightPlan = ( {
 	gridPlanForSpotlight,
-	isLargeCurrency,
 	planUpgradeCreditsApplicable,
 	currentSitePlanSlug,
 	intervalType,
@@ -491,7 +492,6 @@ const SpotlightPlan = ( {
 			{ isNotFreePlan && (
 				<PlanPrice
 					gridPlans={ [ gridPlanForSpotlight ] }
-					isLargeCurrency={ isLargeCurrency }
 					planUpgradeCreditsApplicable={ planUpgradeCreditsApplicable }
 					currentSitePlanSlug={ currentSitePlanSlug }
 				/>
@@ -509,7 +509,6 @@ const SpotlightPlan = ( {
 				isLaunchPage={ isLaunchPage }
 				currentSitePlanSlug={ currentSitePlanSlug }
 				planActionOverrides={ planActionOverrides }
-				isLargeCurrency={ isLargeCurrency }
 				onUpgradeClick={ onUpgradeClick }
 			/>
 		</div>
@@ -560,7 +559,6 @@ const MobileView = ( {
 	intervalType,
 	isCustomDomainAllowedOnFreePlan,
 	isInSignup,
-	isLargeCurrency,
 	isLaunchPage,
 	onStorageAddOnClick,
 	onUpgradeClick,
@@ -608,7 +606,6 @@ const MobileView = ( {
 					{ isNotFreePlan && (
 						<PlanPrice
 							gridPlans={ [ gridPlan ] }
-							isLargeCurrency={ isLargeCurrency }
 							planUpgradeCreditsApplicable={ planUpgradeCreditsApplicable }
 							currentSitePlanSlug={ currentSitePlanSlug }
 						/>
@@ -627,7 +624,6 @@ const MobileView = ( {
 						isLaunchPage={ isLaunchPage }
 						currentSitePlanSlug={ currentSitePlanSlug }
 						planActionOverrides={ planActionOverrides }
-						isLargeCurrency={ isLargeCurrency }
 						onUpgradeClick={ onUpgradeClick }
 					/>
 					<CardContainer
@@ -666,7 +662,6 @@ const TabletView = ( {
 	intervalType,
 	isCustomDomainAllowedOnFreePlan,
 	isInSignup,
-	isLargeCurrency,
 	isLaunchPage,
 	onStorageAddOnClick,
 	onUpgradeClick,
@@ -691,7 +686,6 @@ const TabletView = ( {
 		intervalType,
 		isCustomDomainAllowedOnFreePlan,
 		isInSignup,
-		isLargeCurrency,
 		isLaunchPage,
 		onStorageAddOnClick,
 		onUpgradeClick,
@@ -722,7 +716,6 @@ const FeaturesGrid = ( {
 	gridPlanForSpotlight,
 	stickyRowOffset,
 	isInSignup,
-	isLargeCurrency,
 	planUpgradeCreditsApplicable,
 	currentSitePlanSlug,
 	isLaunchPage,
@@ -742,7 +735,6 @@ const FeaturesGrid = ( {
 		gridPlanForSpotlight,
 		intervalType,
 		isInSignup,
-		isLargeCurrency,
 		isLaunchPage,
 		onStorageAddOnClick,
 		onUpgradeClick,

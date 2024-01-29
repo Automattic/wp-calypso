@@ -243,7 +243,7 @@ type PlanRow = {
 
 export type PlanPriceProps = Pick<
 	FeaturesGridProps,
-	'gridPlans' | 'isLargeCurrency' | 'planUpgradeCreditsApplicable' | 'currentSitePlanSlug'
+	'gridPlans' | 'planUpgradeCreditsApplicable' | 'currentSitePlanSlug'
 > &
 	PlanRow;
 
@@ -269,7 +269,6 @@ export type TopButtonsProps = Pick<
 	| 'currentSitePlanSlug'
 	| 'gridPlans'
 	| 'isInSignup'
-	| 'isLargeCurrency'
 	| 'isLaunchPage'
 	| 'onUpgradeClick'
 	| 'planActionOverrides'
@@ -297,7 +296,6 @@ export type TableProps = Pick<
 	| 'intervalType'
 	| 'isCustomDomainAllowedOnFreePlan'
 	| 'isInSignup'
-	| 'isLargeCurrency'
 	| 'isLaunchPage'
 	| 'onStorageAddOnClick'
 	| 'onUpgradeClick'
@@ -315,7 +313,6 @@ export type SpotlightPlanProps = Pick<
 	| 'gridPlanForSpotlight'
 	| 'intervalType'
 	| 'isInSignup'
-	| 'isLargeCurrency'
 	| 'isLaunchPage'
 	| 'onStorageAddOnClick'
 	| 'onUpgradeClick'
@@ -338,7 +335,6 @@ export type MobileViewProps = Pick<
 	| 'intervalType'
 	| 'isCustomDomainAllowedOnFreePlan'
 	| 'isInSignup'
-	| 'isLargeCurrency'
 	| 'isLaunchPage'
 	| 'onStorageAddOnClick'
 	| 'onUpgradeClick'
