@@ -1,4 +1,7 @@
-import { PLAN_PREMIUM, WPCOM_FEATURES_PREMIUM_THEMES } from '@automattic/calypso-products';
+import {
+	PLAN_PREMIUM,
+	WPCOM_FEATURES_PREMIUM_THEMES_UNLIMITED,
+} from '@automattic/calypso-products';
 import { PremiumBadge } from '@automattic/components';
 import DesignPicker, {
 	isBlankCanvasDesign,
@@ -39,7 +42,7 @@ export default function DesignPickerStep( props ) {
 
 	const siteId = useSelector( ( state ) => getSiteId( state, dependencies.siteSlug ) );
 	const isPremiumThemeAvailable = useSelector( ( state ) =>
-		siteHasFeature( state, siteId, WPCOM_FEATURES_PREMIUM_THEMES )
+		siteHasFeature( state, siteId, WPCOM_FEATURES_PREMIUM_THEMES_UNLIMITED )
 	);
 
 	const dispatch = useDispatch();

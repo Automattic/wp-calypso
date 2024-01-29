@@ -126,6 +126,9 @@ const SocialAuthenticationForm = ( {
 								isWpccFlow( flowName ) && ! isLogin ? window?.location?.search?.slice( 1 ) : null
 							}
 						/>
+
+						{ config.isEnabled( 'login/github' ) ? <div>GitHub login will come here</div> : null }
+
 						{ children }
 					</div>
 					{ ! isWoo && ! disableTosText && <SocialToS /> }
