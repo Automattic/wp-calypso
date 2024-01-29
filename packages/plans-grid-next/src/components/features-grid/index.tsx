@@ -106,18 +106,18 @@ const PlanTagline = ( { options, renderedGridPlans }: PlanTaglineProps ) => {
 	} );
 };
 
-type PlanPriceProps = {
+type FeaturesGridPlanPriceProps = {
 	currentSitePlanSlug?: string | null;
 	planUpgradeCreditsApplicable?: number | null;
 	renderedGridPlans: GridPlan[];
 } & PlanRow;
 
-const PlanPrice = ( {
+const FeaturesGridPlanPrice = ( {
 	currentSitePlanSlug,
 	options,
 	planUpgradeCreditsApplicable,
 	renderedGridPlans,
-}: PlanPriceProps ) => {
+}: FeaturesGridPlanPriceProps ) => {
 	const { prices, currencyCode } = usePlanPricingInfoFromGridPlans( {
 		gridPlans: renderedGridPlans,
 	} );
@@ -477,7 +477,7 @@ const Table = ( {
 					/>
 				</tr>
 				<tr>
-					<PlanPrice
+					<FeaturesGridPlanPrice
 						renderedGridPlans={ gridPlansWithoutSpotlight }
 						options={ { isTableCell: true } }
 						planUpgradeCreditsApplicable={ planUpgradeCreditsApplicable }
@@ -581,7 +581,7 @@ const SpotlightPlan = ( {
 			<PlanHeaders renderedGridPlans={ [ gridPlanForSpotlight ] } />
 			{ isNotFreePlan && <PlanTagline renderedGridPlans={ [ gridPlanForSpotlight ] } /> }
 			{ isNotFreePlan && (
-				<PlanPrice
+				<FeaturesGridPlanPrice
 					renderedGridPlans={ [ gridPlanForSpotlight ] }
 					planUpgradeCreditsApplicable={ planUpgradeCreditsApplicable }
 					currentSitePlanSlug={ currentSitePlanSlug }
@@ -719,7 +719,7 @@ const MobileView = ( {
 					<PlanHeaders renderedGridPlans={ [ gridPlan ] } />
 					{ isNotFreePlan && isInSignup && <PlanTagline renderedGridPlans={ [ gridPlan ] } /> }
 					{ isNotFreePlan && (
-						<PlanPrice
+						<FeaturesGridPlanPrice
 							renderedGridPlans={ [ gridPlan ] }
 							planUpgradeCreditsApplicable={ planUpgradeCreditsApplicable }
 							currentSitePlanSlug={ currentSitePlanSlug }
