@@ -39,10 +39,10 @@ export default function useSubscribersOverview( siteId: number | null ) {
 	);
 	const overviewData = subscribersData.map( ( data, index ) => {
 		const count = data?.data?.[ 0 ]?.subscribers || null;
-		const label = getLabels( DATES_TO_QUERY[ index ] );
+		const heading = getLabels( DATES_TO_QUERY[ index ] );
 		return {
 			count,
-			label,
+			heading,
 		};
 	} );
 	return { isLoading, isError, overviewData };
