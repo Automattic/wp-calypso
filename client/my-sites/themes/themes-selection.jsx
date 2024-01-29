@@ -76,7 +76,7 @@ class ThemesSelection extends Component {
 	componentDidMount() {
 		// Create "buffer zone" to prevent overscrolling too early bugging pagination requests.
 		const { query } = this.props;
-		if ( ! query.search && ! query.filter && ! query.tier ) {
+		if ( query.number <= 20 && ! query.search && ! query.filter && ! query.tier ) {
 			this.props.incrementPage();
 		}
 	}
@@ -304,7 +304,7 @@ export const ConnectedThemesSelection = connect(
 	) => {
 		const isAtomic = isSiteAutomatedTransfer( state, siteId );
 		const premiumThemesEnabled = arePremiumThemesEnabled( state, siteId );
-		const hiddenFilters = getThemeHiddenFilters( state, siteId );
+		const hiddenFilters = getThemeHiddenFilters( state, siteId, tabFilter );
 		const hasUnlimitedPremiumThemes = siteHasFeature(
 			state,
 			siteId,
@@ -337,9 +337,7 @@ export const ConnectedThemesSelection = connect(
 			...( tabFilter === 'recommended' && { collection: 'recommended' } ),
 			...( tabFilter === 'all' && { sort: 'date' } ),
 		};
-
 		const themes = getThemesForQueryIgnoringPage( state, sourceSiteId, query );
-
 		const shouldFetchWpOrgThemes =
 			forceWpOrgSearch &&
 			sourceSiteId !== 'wporg' &&
