@@ -227,7 +227,7 @@
 		"@babel/core": "^7.23.7",
 		"@babel/eslint-parser": "^7.23.3",
 		"@babel/register": "^7.23.7",
-		"@babel/runtime": "^7.23.7",
+		"@babel/runtime": "^7.23.8",
 		"@bartekbp/typescript-checkstyle": "^5.0.0",
 		"@pmmmwh/react-refresh-webpack-plugin": "^0.5.11",
 		"@signal-noise/stylelint-scales": "^2.0.3",
