@@ -7,6 +7,7 @@ import { useSelector } from 'react-redux';
 /**
  * External Dependencies
  */
+import getUserSetting from 'calypso/state/selectors/get-user-setting'; /* eslint-disable-line no-restricted-imports */
 import { getSectionName } from 'calypso/state/ui/selectors'; /* eslint-disable-line no-restricted-imports */
 import { useUpdateZendeskUserFieldsMutation } from '../data/use-update-zendesk-user-fields';
 import { HELP_CENTER_STORE } from '../stores';
@@ -31,6 +32,8 @@ export default function useChatWidget(
 
 	const { isMessagingScriptLoaded } = useZendeskMessaging( configName, enabled, enabled );
 
+	const isDevAccount = useSelector( ( state ) => getUserSetting( state, 'is_dev_account' ) );
+
 	const openChatWidget = ( {
 		aiChatId,
 		message = 'No message from user',
@@ -52,6 +55,10 @@ export default function useChatWidget(
 				if ( typeof window.zE === 'function' ) {
 					window.zE( 'messenger', 'open' );
 					window.zE( 'messenger', 'show' );
+
+					if ( isDevAccount ) {
+						window.zE( 'messenger:set', 'conversationTags', [ 'wpcom_dev_account' ] );
+					}
 				}
 			} )
 			.catch( () => {
