@@ -1,5 +1,5 @@
 import { isEnabled } from '@automattic/calypso-config';
-import { WPCOM_FEATURES_PREMIUM_THEMES } from '@automattic/calypso-products';
+import { WPCOM_FEATURES_PREMIUM_THEMES_UNLIMITED } from '@automattic/calypso-products';
 import { PremiumBadge, BundledBadge } from '@automattic/components';
 import { type Design } from '@automattic/design-picker';
 import { useSelect } from '@wordpress/data';
@@ -27,7 +27,7 @@ const DesignPickerDesignTitle: FC< Props > = ( { designTitle, selectedDesign } )
 				site &&
 				( select( SITE_STORE ) as SiteSelect ).siteHasFeature(
 					site.ID,
-					WPCOM_FEATURES_PREMIUM_THEMES
+					WPCOM_FEATURES_PREMIUM_THEMES_UNLIMITED
 				),
 			[ site ]
 		)

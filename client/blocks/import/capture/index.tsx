@@ -42,8 +42,11 @@ export const Capture: FunctionComponent< Props > = ( props ) => {
 };
 
 type StepProps = {
-	goToStep: GoToStep;
+	initialUrl?: string;
 	disableImportListStep?: boolean;
+	goToStep: GoToStep;
+	onValidFormSubmit?: ( dependencies: Record< string, unknown > ) => void;
+	onImportListClick?: () => void;
 };
 
 const trackEventName = 'calypso_signup_step_start';
@@ -53,17 +56,22 @@ const trackEventParams = {
 };
 
 export const CaptureStep: React.FunctionComponent< StepProps > = ( {
-	goToStep,
+	initialUrl = '',
 	disableImportListStep,
+	goToStep,
+	onValidFormSubmit,
+	onImportListClick,
 } ) => {
 	const currentUser = useSelector( getCurrentUser );
 	const isStartingPointEventTriggeredRef = useRef( false );
-	const [ url, setUrl ] = useState( '' );
+	const [ url, setUrl ] = useState( initialUrl );
 	const {
 		data: urlData,
 		isFetching: isAnalyzing,
 		error: analyzerError,
+		isFetchedAfterMount,
 	} = useAnalyzeUrlQuery( url );
+	const showCapture = ! isAnalyzing || ( initialUrl && isFetchedAfterMount );
 
 	const decideStepRedirect = () => {
 		if ( ! urlData ) {
@@ -124,7 +132,9 @@ export const CaptureStep: React.FunctionComponent< StepProps > = ( {
 		}
 	};
 
-	const onDontHaveSiteAddressClick = disableImportListStep ? undefined : () => goToStep( 'list' );
+	const onDontHaveSiteAddressClick = () => {
+		onImportListClick ? onImportListClick() : goToStep( 'list' );
+	};
 
 	/**
 	 ↓ Effects
@@ -137,10 +147,14 @@ export const CaptureStep: React.FunctionComponent< StepProps > = ( {
 
 	return (
 		<>
-			{ ! isAnalyzing && (
+			{ showCapture && (
 				<Capture
-					onInputEnter={ setUrl }
-					onDontHaveSiteAddressClick={ onDontHaveSiteAddressClick }
+					onInputEnter={ ( url ) => {
+						onValidFormSubmit ? onValidFormSubmit( { url } ) : setUrl( url );
+					} }
+					onDontHaveSiteAddressClick={
+						disableImportListStep ? undefined : onDontHaveSiteAddressClick
+					}
 					hasError={ !! analyzerError }
 					onInputChange={ () => {
 						// resets the error when the user starts typing again

@@ -1,7 +1,7 @@
 import config from '@automattic/calypso-config';
 import page from '@automattic/calypso-router';
 import { useEffect } from 'react';
-import { useDispatch } from 'react-redux'; //useSelector
+import { useDispatch } from 'react-redux';
 import { useNoticeVisibilityQuery } from 'calypso/my-sites/stats/hooks/use-notice-visibility-query';
 import { useSelector } from 'calypso/state';
 import { isJetpackSite, getSiteOption, getSiteSlug } from 'calypso/state/sites/selectors';
@@ -11,6 +11,7 @@ import {
 } from 'calypso/state/stats/notices/actions';
 import { isStatsNoticeSettingsFetching } from 'calypso/state/stats/notices/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import useStatsPurchases from '../hooks/use-stats-purchases';
 
 const StatsRedirectFlow = () => {
 	const siteId = useSelector( getSelectedSiteId );
@@ -19,29 +20,34 @@ const StatsRedirectFlow = () => {
 		getSiteOption( state, siteId, 'created_at' )
 	) as string;
 
-	const isCommercial = useSelector( ( state ) => getSiteOption( state, siteId, 'is_commercial' ) );
+	const { isFreeOwned, isPWYWOwned, isCommercialOwned, supportCommercialUse } =
+		useStatsPurchases( siteId );
 
 	const isSiteJetpackNotAtomic = useSelector( ( state ) =>
 		isJetpackSite( state, siteId, { treatAtomicAsJetpackSite: false } )
 	);
 
-	const { isFetching, data: purchaseRedirect } = useNoticeVisibilityQuery(
+	const { isFetching, data: purchaseNotPosponed } = useNoticeVisibilityQuery(
 		siteId,
 		'focus_jetpack_purchase'
 	);
 
+	const hasPlan = isFreeOwned || isPWYWOwned || isCommercialOwned || supportCommercialUse;
 	// TODO: update the date to the release date when the feature is ready.
+	const qualifiedUser =
+		siteCreatedTimeStamp && new Date( siteCreatedTimeStamp ) > new Date( '2024-01-15' );
+
+	// to redirect the user can't have a plan purached and can't have the flag true, if either is true the user either has a plan or is postponing
 	const redirectToPurchase =
 		config.isEnabled( 'stats/checkout-flows-v2' ) &&
 		isSiteJetpackNotAtomic &&
-		purchaseRedirect &&
-		siteCreatedTimeStamp &&
-		new Date( siteCreatedTimeStamp ) > new Date( '2024-01-15' );
+		! hasPlan &&
+		purchaseNotPosponed &&
+		qualifiedUser;
 
 	const isRequesting = useSelector( ( state: object ) => isStatsNoticeSettingsFetching( state ) );
 	const dispatch = useDispatch();
 
-	// Only runs on mount.
 	useEffect( () => {
 		if ( isFetching ) {
 			// when react-query is fetching data
@@ -49,17 +55,24 @@ const StatsRedirectFlow = () => {
 		} else {
 			dispatch(
 				receiveStatNoticeSettings( siteId, {
-					focus_jetpack_purchase: purchaseRedirect,
+					focus_jetpack_purchase: purchaseNotPosponed,
 				} )
 			);
 		}
-	}, [ dispatch, redirectToPurchase, siteId, isFetching, purchaseRedirect ] );
+	}, [ dispatch, redirectToPurchase, siteId, isFetching, purchaseNotPosponed ] );
 
 	// render purchase flow for Jetpack sites created after February 2024
-	if ( ! isRequesting && redirectToPurchase && siteSlug ) {
-		page.redirect(
-			`/stats/purchase/${ siteSlug }?productType=${ isCommercial ? 'commercial' : 'personal' }`
-		);
+	if ( ! isFetching && ! isRequesting && redirectToPurchase && siteSlug ) {
+		// We need to ensure we pass the irclick id for impact affiliate tracking if its set.
+		const currentParams = new URLSearchParams( window.location.search );
+		const queryParams = new URLSearchParams();
+
+		queryParams.set( 'productType', 'commercial' );
+		if ( currentParams.has( 'irclickid' ) ) {
+			queryParams.set( 'irclickid', currentParams.get( 'irclickid' ) || '' );
+		}
+
+		page.redirect( `/stats/purchase/${ siteSlug }?${ queryParams.toString() }` );
 
 		return;
 	}

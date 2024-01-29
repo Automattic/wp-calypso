@@ -1,7 +1,7 @@
 import {
 	FEATURE_WOOP,
 	WPCOM_FEATURES_ATOMIC,
-	WPCOM_FEATURES_PREMIUM_THEMES,
+	WPCOM_FEATURES_PREMIUM_THEMES_UNLIMITED,
 	FEATURE_INSTALL_THEMES,
 } from '@automattic/calypso-products';
 import {
@@ -35,7 +35,7 @@ export function canUseTheme( state, siteId, themeId ) {
 	}
 
 	if ( type === PREMIUM_THEME ) {
-		return siteHasFeature( state, siteId, WPCOM_FEATURES_PREMIUM_THEMES );
+		return siteHasFeature( state, siteId, WPCOM_FEATURES_PREMIUM_THEMES_UNLIMITED );
 	}
 
 	if ( type === DOT_ORG_THEME ) {
@@ -47,7 +47,7 @@ export function canUseTheme( state, siteId, themeId ) {
 		const themeSoftware = themeSoftwareSet[ 0 ];
 
 		const featureChecks = [
-			WPCOM_FEATURES_PREMIUM_THEMES,
+			WPCOM_FEATURES_PREMIUM_THEMES_UNLIMITED,
 			WPCOM_FEATURES_ATOMIC,
 			...( extraFeatureChecks[ themeSoftware ] || [] ),
 		];

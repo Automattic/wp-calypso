@@ -75,14 +75,13 @@ import badgeSecurity from './assets/icons/security.svg';
 import { CheckoutCompleteRedirecting } from './checkout-complete-redirecting';
 import CheckoutNextSteps from './checkout-next-steps';
 import { CheckoutSidebarPlanUpsell } from './checkout-sidebar-plan-upsell';
-import { CheckoutSlowProcessingNotice } from './checkout-slow-processing-notice';
 import { EmptyCart, shouldShowEmptyCartPage } from './empty-cart';
 import { GoogleDomainsCopy } from './google-transfers-copy';
 import JetpackAkismetCheckoutSidebarPlanUpsell from './jetpack-akismet-checkout-sidebar-plan-upsell';
 import BeforeSubmitCheckoutHeader from './payment-method-step';
 import SecondaryCartPromotions from './secondary-cart-promotions';
 import WPCheckoutOrderReview from './wp-checkout-order-review';
-import { WPCheckoutOrderSummary } from './wp-checkout-order-summary';
+import { CheckoutSummaryFeaturedList, WPCheckoutOrderSummary } from './wp-checkout-order-summary';
 import WPContactForm from './wp-contact-form';
 import WPContactFormSummary from './wp-contact-form-summary';
 import type { OnChangeItemVariant } from './item-variation-picker';
@@ -444,7 +443,6 @@ export default function WPCheckout( {
 		<WPCheckoutWrapper>
 			<WPCheckoutSidebarContent>
 				{ isLoading && <LoadingSidebarContent /> }
-				{ formStatus === FormStatus.SUBMITTING && <CheckoutSlowProcessingNotice /> }
 				{ ! isLoading && (
 					<CheckoutSummaryArea className={ isSummaryVisible ? 'is-visible' : '' }>
 						<CheckoutErrorBoundary
@@ -479,6 +477,14 @@ export default function WPCheckout( {
 
 								<WPCheckoutOrderSummary siteId={ siteId } onChangeSelection={ changeSelection } />
 								<CheckoutSidebarNudge responseCart={ responseCart } />
+								{ hasCheckoutVersion( '2' ) && (
+									<CheckoutSummaryFeaturedList
+										responseCart={ responseCart }
+										siteId={ siteId }
+										isCartUpdating={ FormStatus.VALIDATING === formStatus }
+										onChangeSelection={ changeSelection }
+									/>
+								) }
 								<SecondaryCartPromotions
 									responseCart={ responseCart }
 									addItemToCart={ addItemToCart }
