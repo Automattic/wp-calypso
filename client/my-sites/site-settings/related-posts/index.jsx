@@ -5,12 +5,7 @@ import { useTranslate } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
-import SupportInfo from 'calypso/components/support-info';
 import SettingsSectionHeader from 'calypso/my-sites/site-settings/settings-section-header';
-import { useSelector } from 'calypso/state';
-import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
-import { isJetpackSite as isJetpackSiteSelector } from 'calypso/state/sites/selectors';
-import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import RelatedContentPreview from './related-content-preview';
 
 import './style.scss';
@@ -20,31 +15,12 @@ export const RelatedPostsSetting = ( {
 	handleToggle,
 	isRequestingSettings,
 	isSavingSettings,
+	isJetpackSelfHosted,
 } ) => {
 	const translate = useTranslate();
-	const siteId = useSelector( ( state ) => getSelectedSiteId( state ) ) || 0;
-	const isJetpack = useSelector( ( state ) => isJetpackSiteSelector( state, siteId ) );
-	const isAtomic = useSelector( ( state ) => isAtomicSite( state, siteId ) );
-	const isJetpackSelfHosted = isJetpack && ! isAtomic;
 
 	return (
 		<FormFieldset>
-			<SupportInfo
-				text={ translate(
-					'The feature helps visitors find more of your content by displaying related posts at the bottom of each post.'
-				) }
-				link={
-					isJetpackSelfHosted
-						? localizeUrl( 'https://jetpack.com/support/related-posts/' )
-						: localizeUrl(
-								'https://wordpress.com/support/related-posts/#related-posts-classic-themes'
-						  )
-				}
-				privacyLink={
-					isJetpackSelfHosted ? true : localizeUrl( 'https://automattic.com/privacy/' )
-				}
-			/>
-
 			<ToggleControl
 				checked={ !! fields.jetpack_relatedposts_enabled }
 				disabled={ isRequestingSettings || isSavingSettings }
