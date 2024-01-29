@@ -16,7 +16,7 @@ const buildContext = ( options?: Partial< TaskContext > ) => {
 describe( 'getSetupFreeTask', () => {
 	const task = buildTask( { id: 'task', calypso_path: 'some-path' } );
 
-	it( 'returns the free post setup page', () => {
+	it( 'returns the link', () => {
 		const siteSlug = 'site.wordpress.com';
 		const context = buildContext( { siteInfoQueryArgs: { siteSlug } } );
 
@@ -31,7 +31,7 @@ describe( 'getSetupBlogTask', () => {
 	const calypso_path = 'some-path';
 	const task = buildTask( { id: 'task', calypso_path } );
 
-	it( 'returns the free post setup page', () => {
+	it( 'returns the link', () => {
 		const siteSlug = 'site.wordpress.com';
 		const context = buildContext( { siteInfoQueryArgs: { siteSlug } } );
 
@@ -46,7 +46,7 @@ describe( 'getSetupVideoPressTask', () => {
 	const calypso_path = 'some-path';
 	const task = buildTask( { id: 'task', calypso_path } );
 
-	it( 'returns the free post setup page', () => {
+	it( 'returns the link', () => {
 		const siteSlug = 'site.wordpress.com';
 		const context = buildContext( { siteInfoQueryArgs: { siteSlug } } );
 
@@ -61,7 +61,7 @@ describe( 'getSetupGeneralTask', () => {
 	const calypso_path = 'some-path';
 	const task = buildTask( { id: 'task', calypso_path } );
 
-	it( 'returns the free post setup page', () => {
+	it( 'returns the link', () => {
 		const siteSlug = 'site.wordpress.com';
 		const context = buildContext( { siteInfoQueryArgs: { siteSlug } } );
 
