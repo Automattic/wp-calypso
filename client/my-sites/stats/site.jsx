@@ -306,7 +306,7 @@ class StatsSite extends Component {
 					className="stats__section-header modernized-header"
 					title={ translate( 'Jetpack Stats' ) }
 					subtitle={ translate(
-						"Gain insights about the activity and behavior of your site's visitors. {{learnMoreLink}}Learn more{{/learnMoreLink}}.",
+						"Gain insights into the activity and behavior of your site's visitors. {{learnMoreLink}}Learn more{{/learnMoreLink}}",
 						{
 							components: {
 								learnMoreLink: <InlineSupportLink supportContext="stats" showIcon={ false } />,
