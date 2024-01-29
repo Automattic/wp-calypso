@@ -7,7 +7,7 @@ export default function ValidateSites( {
 	urlColumnIndex,
 }: {
 	detectedSites: string[];
-	urColumnIndex: number;
+	urlColumnIndex: number;
 } ) {
 	const translate = useTranslate();
 

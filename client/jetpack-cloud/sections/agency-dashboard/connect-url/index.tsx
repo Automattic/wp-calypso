@@ -121,36 +121,40 @@ export default function ConnectUrl() {
 				url={ currentValidatingSite }
 				onSuccess={ handleValidationSuccess }
 			/>
-			<h2 className="connect-url__page-title">{ pageTitle }</h2>
-			<div className="connect-url__page-subtitle">{ pageSubtitle }</div>
 
-			<Card>
-				{ ! csvConfirmed ? (
-					<SitesInput
-						{ ...{
-							detectedSites,
-							setDetectedSites,
-							detectedFilename,
-							setDetectedFilename,
+			{ ! csvConfirmed ? (
+				<>
+					<h2 className="connect-url__page-title">{ pageTitle }</h2>
+					<div className="connect-url__page-subtitle">{ pageSubtitle }</div>
+					<Card>
+						<SitesInput
+							{ ...{
+								detectedSites,
+								setDetectedSites,
+								detectedFilename,
+								setDetectedFilename,
 
-							onCSVLoad,
-						} }
-						onCSVLoadConfirmation={ handleCSVLoadConfirmation }
-					/>
-				) : null }
-				{ csvConfirmed && ! validating ? (
-					<CSVColumnConfirmation
-						csvColumns={ csvColumns }
-						setURLColumn={ handleColumnConfirmation }
-					/>
-				) : null }
-				{ validating ? (
+								onCSVLoad,
+							} }
+							onCSVLoadConfirmation={ handleCSVLoadConfirmation }
+						/>
+					</Card>
+				</>
+			) : null }
+			{ csvConfirmed && ! validating ? (
+				<CSVColumnConfirmation
+					csvColumns={ csvColumns }
+					setURLColumn={ handleColumnConfirmation }
+				/>
+			) : null }
+			{ validating ? (
+				<Card>
 					<ValidateSites
 						{ ...{ detectedSites } }
 						urlColumnIndex={ csvColumns.indexOf( URLColumn ) }
 					/>
-				) : null }
-			</Card>
+				</Card>
+			) : null }
 		</div>
 	);
 }

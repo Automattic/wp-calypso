@@ -60,3 +60,21 @@
 .connect-url__validate-sites-row {
 	display: flex;
 }
+
+.connect-url-csv-column-confirmation {
+	.card {
+		margin-bottom: 1px;
+	}
+
+	&__page-title {
+		margin-bottom: 0.5rem;
+	}
+
+	&__page-subtitle {
+		margin-bottom: 2rem;
+	}
+}
+
+.connect-url-csv-column-confirmation__column-card {
+	margin-bottom: 1px;
+}
