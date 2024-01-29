@@ -9,14 +9,14 @@ import { APIProductFamily, APIProductFamilyProduct } from 'calypso/state/partner
 import { errorNotice } from '../../../notices/actions';
 
 function queryProducts( isPublicFacing: boolean ): Promise< APIProductFamily[] > {
-	const productsPath = isPublicFacing
+	const productsAPIPath = isPublicFacing
 		? '/jetpack-licensing/public/manage-pricing'
 		: '/jetpack-licensing/partner/product-families';
 	const requestObject = isPublicFacing ? wpcom.req : wpcomJpl.req;
 	return requestObject
 		.get( {
 			apiNamespace: 'wpcom/v2',
-			path: productsPath,
+			path: productsAPIPath,
 		} )
 		.then( ( data: APIProductFamily[] ) => {
 			const exclude = [
