@@ -5,7 +5,22 @@ import {
 	PLAN_PREMIUM,
 	getPlan,
 } from '@automattic/calypso-products';
-import { translate } from 'i18n-calypso';
+import { englishLocales } from '@automattic/i18n-utils';
+import i18n, { translate } from 'i18n-calypso';
+
+const getIncludedWithLabel = ( planSlug ) => {
+	const localeSlug = i18n.getLocaleSlug();
+
+	const shouldShowNewString =
+		( localeSlug && englishLocales.includes( i18n.getLocaleSlug() ) ) ||
+		i18n.hasTranslation( 'Included with %(planName)s' );
+
+	return shouldShowNewString
+		? translate( 'Included with %(planName)s', {
+				args: { planName: getPlan( planSlug )?.getTitle() },
+		  } )
+		: getPlan( PLAN_PERSONAL )?.getTitle();
+};
 
 /**
  * @typedef {Object} THEME_TIERS
@@ -23,11 +38,11 @@ export const THEME_TIERS = {
 		minimumUpsellPlan: PLAN_FREE,
 	},
 	personal: {
-		label: getPlan( PLAN_PERSONAL )?.getTitle(),
+		label: getIncludedWithLabel( PLAN_PERSONAL ),
 		minimumUpsellPlan: PLAN_PERSONAL,
 	},
 	premium: {
-		label: getPlan( PLAN_PREMIUM )?.getTitle(),
+		label: getIncludedWithLabel( PLAN_PREMIUM ),
 		minimumUpsellPlan: PLAN_PREMIUM,
 	},
 	partner: {
