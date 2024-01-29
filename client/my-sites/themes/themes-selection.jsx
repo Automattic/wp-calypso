@@ -337,7 +337,9 @@ export const ConnectedThemesSelection = connect(
 			...( tabFilter === 'recommended' && { collection: 'recommended' } ),
 			...( tabFilter === 'all' && { sort: 'date' } ),
 		};
+
 		const themes = getThemesForQueryIgnoringPage( state, sourceSiteId, query );
+
 		const shouldFetchWpOrgThemes =
 			forceWpOrgSearch &&
 			sourceSiteId !== 'wporg' &&
