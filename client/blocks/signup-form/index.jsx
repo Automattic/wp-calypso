@@ -894,9 +894,8 @@ class SignupForm extends Component {
 			return this.globalNotice(
 				{
 					message: this.props.translate(
-						'We found a WordPress.com account with the email address "%(email)s". ' +
-							'{{a}}Log in to this account{{/a}} to connect it to your profile, ' +
-							'or sign up with a different email address.',
+						'We found a WordPress.com account with the email "%(email)s". ' +
+							'{{a}}Log in to connect it{{/a}}, or use a different email to sign up.',
 						{
 							args: { email: userExistsError.email },
 							components: {
