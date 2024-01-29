@@ -12,12 +12,14 @@ export const LicenseProductsList = ( { bundleSize }: ProductsListProps ) => {
 	const productSearchQuery = '';
 	const selectedProductFilter = '';
 	const selectedSite = null;
+	const usePublicQuery = true;
 
 	const { plans, backupAddons, products, wooExtensions } = useProductAndPlans( {
 		selectedSite,
 		selectedProductFilter,
 		selectedBundleSize: bundleSize,
 		productSearchQuery,
+		usePublicQuery,
 	} );
 
 	return (
