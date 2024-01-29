@@ -1,3 +1,4 @@
+import config from '@automattic/calypso-config';
 import page from '@automattic/calypso-router';
 import { Card } from '@automattic/components';
 import { localize } from 'i18n-calypso';
@@ -202,8 +203,9 @@ const mapStateToProps = ( state ) => {
 	// before data has loaded.
 	const isEligible = isEligibleForAutomatedTransfer( state, siteId );
 	const isEligibleForHostingTrial =
-		isUserEligibleForFreeHostingTrial( state ) && site && site.plan?.is_free;
-
+		isUserEligibleForFreeHostingTrial( state ) &&
+		site.plan.is_free &&
+		config.isEnabled( 'hosting-trial' );
 	const hasEligibilityMessages = ! (
 		isEmpty( eligibilityHolds ) && isEmpty( eligibilityWarnings )
 	);
