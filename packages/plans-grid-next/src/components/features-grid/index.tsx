@@ -9,6 +9,8 @@ import {
 	isWpComFreePlan,
 	isWpcomEnterpriseGridPlan,
 	isFreePlan,
+	WPComStorageAddOnSlug,
+	PlanSlug,
 } from '@automattic/calypso-products';
 import {
 	BloombergLogo,
@@ -37,32 +39,26 @@ import BillingTimeframe from '../shared/billing-timeframe';
 import { StickyContainer } from '../sticky-container';
 import StorageAddOnDropdown from '../storage-add-on-dropdown';
 import type {
-	BillingTimeframesProps,
+	DataResponse,
 	FeaturesGridProps,
 	GridPlan,
-	MobileFreeDomainProps,
-	MobileViewProps,
-	PlanFeaturesListProps,
-	PlanHeadersProps,
-	PlanLogosProps,
-	PlanPriceProps,
-	PlanStorageOptionsProps,
-	PlanTaglineProps,
-	PreviousFeaturesIncludedTitleProps,
-	SpotlightPlanProps,
-	TableProps,
-	TabletViewProps,
-	TopButtonsProps,
+	PlanActionOverrides,
+	PlanRow,
 } from '../../types';
 
-const PlanLogos = ( { gridPlans, isInSignup, options }: PlanLogosProps ) => {
-	return gridPlans.map( ( { planSlug }, index ) => {
+type PlanLogosProps = {
+	isInSignup: boolean;
+	renderedGridPlans: GridPlan[];
+} & PlanRow;
+
+const PlanLogos = ( { isInSignup, options, renderedGridPlans }: PlanLogosProps ) => {
+	return renderedGridPlans.map( ( { planSlug }, index ) => {
 		return (
 			<PlanLogo
 				key={ planSlug }
 				planSlug={ planSlug }
 				planIndex={ index }
-				renderedGridPlans={ gridPlans }
+				renderedGridPlans={ renderedGridPlans }
 				isInSignup={ isInSignup }
 				isTableCell={ options?.isTableCell }
 			/>
@@ -70,8 +66,12 @@ const PlanLogos = ( { gridPlans, isInSignup, options }: PlanLogosProps ) => {
 	} );
 };
 
-const PlanHeaders = ( { gridPlans, options }: PlanHeadersProps ) => {
-	return gridPlans.map( ( { planSlug, planTitle } ) => {
+type PlanHeadersProps = {
+	renderedGridPlans: GridPlan[];
+} & PlanRow;
+
+const PlanHeaders = ( { options, renderedGridPlans }: PlanHeadersProps ) => {
+	return renderedGridPlans.map( ( { planSlug, planTitle } ) => {
 		const headerClasses = classNames( 'plan-features-2023-grid__header', getPlanClass( planSlug ) );
 
 		return (
@@ -88,8 +88,12 @@ const PlanHeaders = ( { gridPlans, options }: PlanHeadersProps ) => {
 	} );
 };
 
-const PlanTagline = ( { gridPlans, options }: PlanTaglineProps ) => {
-	return gridPlans.map( ( { planSlug, tagline } ) => {
+type PlanTaglineProps = {
+	renderedGridPlans: GridPlan[];
+} & PlanRow;
+
+const PlanTagline = ( { options, renderedGridPlans }: PlanTaglineProps ) => {
+	return renderedGridPlans.map( ( { planSlug, tagline } ) => {
 		return (
 			<PlanDivOrTdContainer
 				key={ planSlug }
@@ -102,16 +106,24 @@ const PlanTagline = ( { gridPlans, options }: PlanTaglineProps ) => {
 	} );
 };
 
+type PlanPriceProps = {
+	currentSitePlanSlug?: string | null;
+	planUpgradeCreditsApplicable?: number | null;
+	renderedGridPlans: GridPlan[];
+} & PlanRow;
+
 const PlanPrice = ( {
-	gridPlans,
+	currentSitePlanSlug,
 	options,
 	planUpgradeCreditsApplicable,
-	currentSitePlanSlug,
+	renderedGridPlans,
 }: PlanPriceProps ) => {
-	const { prices, currencyCode } = usePlanPricingInfoFromGridPlans( { gridPlans } );
+	const { prices, currencyCode } = usePlanPricingInfoFromGridPlans( {
+		gridPlans: renderedGridPlans,
+	} );
 	const isLargeCurrency = useIsLargeCurrency( { prices, currencyCode: currencyCode || 'USD' } );
 
-	return gridPlans.map( ( { planSlug } ) => {
+	return renderedGridPlans.map( ( { planSlug } ) => {
 		return (
 			<PlanDivOrTdContainer
 				scope="col"
@@ -124,15 +136,24 @@ const PlanPrice = ( {
 					planUpgradeCreditsApplicable={ planUpgradeCreditsApplicable }
 					isLargeCurrency={ isLargeCurrency }
 					currentSitePlanSlug={ currentSitePlanSlug }
-					visibleGridPlans={ gridPlans }
+					visibleGridPlans={ renderedGridPlans }
 				/>
 			</PlanDivOrTdContainer>
 		);
 	} );
 };
 
-const BillingTimeframes = ( { gridPlans, options, showRefundPeriod }: BillingTimeframesProps ) => {
-	return gridPlans.map( ( { planSlug } ) => {
+type BillingTimeframesProps = {
+	renderedGridPlans: GridPlan[];
+	showRefundPeriod?: boolean;
+} & PlanRow;
+
+const BillingTimeframes = ( {
+	options,
+	renderedGridPlans,
+	showRefundPeriod,
+}: BillingTimeframesProps ) => {
+	return renderedGridPlans.map( ( { planSlug } ) => {
 		const classes = classNames(
 			'plan-features-2023-grid__table-item',
 			'plan-features-2023-grid__header-billing-info'
@@ -150,16 +171,23 @@ const BillingTimeframes = ( { gridPlans, options, showRefundPeriod }: BillingTim
 	} );
 };
 
+type PlanStorageOptionsProps = {
+	intervalType: string;
+	onStorageAddOnClick?: ( addOnSlug: WPComStorageAddOnSlug ) => void;
+	renderedGridPlans: GridPlan[];
+	showUpgradeableStorage: boolean;
+} & PlanRow;
+
 const PlanStorageOptions = ( {
-	gridPlans,
-	options,
 	intervalType,
 	onStorageAddOnClick,
+	options,
+	renderedGridPlans,
 	showUpgradeableStorage,
 }: PlanStorageOptionsProps ) => {
 	const translate = useTranslate();
 
-	return gridPlans.map( ( { planSlug, features: { storageOptions } } ) => {
+	return renderedGridPlans.map( ( { planSlug, features: { storageOptions } } ) => {
 		if ( ! options?.isTableCell && isWpcomEnterpriseGridPlan( planSlug ) ) {
 			return null;
 		}
@@ -206,20 +234,31 @@ const PlanStorageOptions = ( {
 	} );
 };
 
+type TopButtonsProps = {
+	currentSitePlanSlug?: string | null;
+	isInSignup: boolean;
+	isLaunchPage?: boolean | null;
+	onUpgradeClick: ( planSlug: PlanSlug ) => void;
+	planActionOverrides?: PlanActionOverrides;
+	renderedGridPlans: GridPlan[];
+} & PlanRow;
+
 const TopButtons = ( {
-	gridPlans,
-	options,
+	currentSitePlanSlug,
 	isInSignup,
 	isLaunchPage,
-	currentSitePlanSlug,
-	planActionOverrides,
 	onUpgradeClick,
+	options,
+	planActionOverrides,
+	renderedGridPlans,
 }: TopButtonsProps ) => {
 	const translate = useTranslate();
-	const { prices, currencyCode } = usePlanPricingInfoFromGridPlans( { gridPlans } );
+	const { prices, currencyCode } = usePlanPricingInfoFromGridPlans( {
+		gridPlans: renderedGridPlans,
+	} );
 	const isLargeCurrency = useIsLargeCurrency( { prices, currencyCode: currencyCode || 'USD' } );
 
-	return gridPlans.map(
+	return renderedGridPlans.map(
 		( { planSlug, availableForPurchase, isMonthlyPlan, features: { storageOptions } } ) => {
 			const classes = classNames( 'plan-features-2023-grid__table-item', 'is-top-buttons' );
 
@@ -274,21 +313,25 @@ const TopButtons = ( {
 	);
 };
 
+type PreviousFeaturesIncludedTitleProps = {
+	renderedGridPlans: GridPlan[];
+} & PlanRow;
+
 const PreviousFeaturesIncludedTitle = ( {
-	gridPlans,
+	renderedGridPlans,
 	options,
 }: PreviousFeaturesIncludedTitleProps ) => {
 	const translate = useTranslate();
 
-	return gridPlans.map( ( { planSlug } ) => {
+	return renderedGridPlans.map( ( { planSlug } ) => {
 		const shouldRenderEnterpriseLogos = isWpcomEnterpriseGridPlan( planSlug );
 		const shouldShowFeatureTitle = ! isWpComFreePlan( planSlug ) && ! shouldRenderEnterpriseLogos;
-		const indexInGridPlansForFeaturesGrid = gridPlans.findIndex(
+		const indexInGridPlansForFeaturesGrid = renderedGridPlans.findIndex(
 			( { planSlug: slug } ) => slug === planSlug
 		);
 		const previousProductName =
 			indexInGridPlansForFeaturesGrid > 0
-				? gridPlans[ indexInGridPlansForFeaturesGrid - 1 ].productNameShort
+				? renderedGridPlans[ indexInGridPlansForFeaturesGrid - 1 ].productNameShort
 				: null;
 		const title =
 			previousProductName &&
@@ -322,17 +365,26 @@ const PreviousFeaturesIncludedTitle = ( {
 	} );
 };
 
+type PlanFeaturesListProps = {
+	generatedWPComSubdomain: DataResponse< { domain_name: string } >;
+	hideUnavailableFeatures?: boolean;
+	isCustomDomainAllowedOnFreePlan: boolean;
+	paidDomainName?: string;
+	renderedGridPlans: GridPlan[];
+	selectedFeature?: string;
+} & PlanRow;
+
 const PlanFeaturesList = ( {
-	gridPlans,
+	generatedWPComSubdomain,
+	hideUnavailableFeatures,
+	isCustomDomainAllowedOnFreePlan,
 	options,
 	paidDomainName,
-	hideUnavailableFeatures,
+	renderedGridPlans,
 	selectedFeature,
-	generatedWPComSubdomain,
-	isCustomDomainAllowedOnFreePlan,
 }: PlanFeaturesListProps ) => {
 	const translate = useTranslate();
-	const plansWithFeatures = gridPlans.filter(
+	const plansWithFeatures = renderedGridPlans.filter(
 		( gridPlan ) => ! isWpcomEnterpriseGridPlan( gridPlan.planSlug )
 	);
 
@@ -350,29 +402,49 @@ const PlanFeaturesList = ( {
 	);
 };
 
+type TableProps = {
+	currentSitePlanSlug?: string | null;
+	generatedWPComSubdomain: DataResponse< { domain_name: string } >;
+	gridPlanForSpotlight?: GridPlan;
+	hideUnavailableFeatures?: boolean;
+	intervalType: string;
+	isCustomDomainAllowedOnFreePlan: boolean;
+	isInSignup: boolean;
+	isLaunchPage?: boolean | null;
+	onStorageAddOnClick?: ( addOnSlug: WPComStorageAddOnSlug ) => void;
+	onUpgradeClick: ( planSlug: PlanSlug ) => void;
+	paidDomainName?: string;
+	planActionOverrides?: PlanActionOverrides;
+	planUpgradeCreditsApplicable?: number | null;
+	renderedGridPlans: GridPlan[];
+	selectedFeature?: string;
+	showUpgradeableStorage: boolean;
+	stickyRowOffset: number;
+} & PlanRow;
+
 const Table = ( {
-	gridPlans,
-	gridPlanForSpotlight,
-	stickyRowOffset,
-	planUpgradeCreditsApplicable,
 	currentSitePlanSlug,
+	generatedWPComSubdomain,
+	gridPlanForSpotlight,
+	hideUnavailableFeatures,
+	intervalType,
+	isCustomDomainAllowedOnFreePlan,
 	isInSignup,
 	isLaunchPage,
-	planActionOverrides,
-	onUpgradeClick,
-	intervalType,
 	onStorageAddOnClick,
-	showUpgradeableStorage,
+	onUpgradeClick,
 	paidDomainName,
-	hideUnavailableFeatures,
+	planActionOverrides,
+	planUpgradeCreditsApplicable,
+	renderedGridPlans,
 	selectedFeature,
-	generatedWPComSubdomain,
-	isCustomDomainAllowedOnFreePlan,
+	showUpgradeableStorage,
+	stickyRowOffset,
 }: TableProps ) => {
 	// Do not render the spotlight plan if it exists
 	const gridPlansWithoutSpotlight = ! gridPlanForSpotlight
-		? gridPlans
-		: gridPlans.filter( ( { planSlug } ) => gridPlanForSpotlight.planSlug !== planSlug );
+		? renderedGridPlans
+		: renderedGridPlans.filter( ( { planSlug } ) => gridPlanForSpotlight.planSlug !== planSlug );
 	const tableClasses = classNames(
 		'plan-features-2023-grid__table',
 		`has-${ gridPlansWithoutSpotlight.length }-cols`
@@ -387,20 +459,26 @@ const Table = ( {
 			<tbody>
 				<tr>
 					<PlanLogos
-						gridPlans={ gridPlansWithoutSpotlight }
+						renderedGridPlans={ gridPlansWithoutSpotlight }
 						isInSignup={ isInSignup }
 						options={ { isTableCell: true } }
 					/>
 				</tr>
 				<tr>
-					<PlanHeaders gridPlans={ gridPlansWithoutSpotlight } options={ { isTableCell: true } } />
+					<PlanHeaders
+						renderedGridPlans={ gridPlansWithoutSpotlight }
+						options={ { isTableCell: true } }
+					/>
 				</tr>
 				<tr>
-					<PlanTagline gridPlans={ gridPlansWithoutSpotlight } options={ { isTableCell: true } } />
+					<PlanTagline
+						renderedGridPlans={ gridPlansWithoutSpotlight }
+						options={ { isTableCell: true } }
+					/>
 				</tr>
 				<tr>
 					<PlanPrice
-						gridPlans={ gridPlansWithoutSpotlight }
+						renderedGridPlans={ gridPlansWithoutSpotlight }
 						options={ { isTableCell: true } }
 						planUpgradeCreditsApplicable={ planUpgradeCreditsApplicable }
 						currentSitePlanSlug={ currentSitePlanSlug }
@@ -408,7 +486,7 @@ const Table = ( {
 				</tr>
 				<tr>
 					<BillingTimeframes
-						gridPlans={ gridPlansWithoutSpotlight }
+						renderedGridPlans={ gridPlansWithoutSpotlight }
 						options={ { isTableCell: true } }
 					/>
 				</tr>
@@ -420,7 +498,7 @@ const Table = ( {
 				>
 					{ ( isStuck: boolean ) => (
 						<TopButtons
-							gridPlans={ gridPlansWithoutSpotlight }
+							renderedGridPlans={ gridPlansWithoutSpotlight }
 							options={ { isTableCell: true, isStuck } }
 							isInSignup={ isInSignup }
 							isLaunchPage={ isLaunchPage }
@@ -432,13 +510,13 @@ const Table = ( {
 				</StickyContainer>
 				<tr>
 					<PreviousFeaturesIncludedTitle
-						gridPlans={ gridPlansWithoutSpotlight }
+						renderedGridPlans={ gridPlansWithoutSpotlight }
 						options={ { isTableCell: true } }
 					/>
 				</tr>
 				<tr>
 					<PlanFeaturesList
-						gridPlans={ gridPlansWithoutSpotlight }
+						renderedGridPlans={ gridPlansWithoutSpotlight }
 						options={ { isTableCell: true } }
 						paidDomainName={ paidDomainName }
 						hideUnavailableFeatures={ hideUnavailableFeatures }
@@ -449,7 +527,7 @@ const Table = ( {
 				</tr>
 				<tr>
 					<PlanStorageOptions
-						gridPlans={ gridPlansWithoutSpotlight }
+						renderedGridPlans={ gridPlansWithoutSpotlight }
 						options={ { isTableCell: true } }
 						intervalType={ intervalType }
 						onStorageAddOnClick={ onStorageAddOnClick }
@@ -461,17 +539,30 @@ const Table = ( {
 	);
 };
 
+type SpotlightPlanProps = {
+	currentSitePlanSlug?: string | null;
+	gridPlanForSpotlight?: GridPlan;
+	intervalType: string;
+	isInSignup: boolean;
+	isLaunchPage?: boolean | null;
+	onStorageAddOnClick?: ( addOnSlug: WPComStorageAddOnSlug ) => void;
+	onUpgradeClick: ( planSlug: PlanSlug ) => void;
+	planActionOverrides?: PlanActionOverrides;
+	planUpgradeCreditsApplicable?: number | null;
+	showUpgradeableStorage: boolean;
+} & PlanRow;
+
 const SpotlightPlan = ( {
-	gridPlanForSpotlight,
-	planUpgradeCreditsApplicable,
 	currentSitePlanSlug,
+	gridPlanForSpotlight,
 	intervalType,
-	onStorageAddOnClick,
-	showUpgradeableStorage,
 	isInSignup,
 	isLaunchPage,
-	planActionOverrides,
+	onStorageAddOnClick,
 	onUpgradeClick,
+	planActionOverrides,
+	planUpgradeCreditsApplicable,
+	showUpgradeableStorage,
 }: SpotlightPlanProps ) => {
 	if ( ! gridPlanForSpotlight ) {
 		return null;
@@ -486,25 +577,25 @@ const SpotlightPlan = ( {
 
 	return (
 		<div className={ spotlightPlanClasses }>
-			<PlanLogos gridPlans={ [ gridPlanForSpotlight ] } isInSignup={ false } />
-			<PlanHeaders gridPlans={ [ gridPlanForSpotlight ] } />
-			{ isNotFreePlan && <PlanTagline gridPlans={ [ gridPlanForSpotlight ] } /> }
+			<PlanLogos renderedGridPlans={ [ gridPlanForSpotlight ] } isInSignup={ false } />
+			<PlanHeaders renderedGridPlans={ [ gridPlanForSpotlight ] } />
+			{ isNotFreePlan && <PlanTagline renderedGridPlans={ [ gridPlanForSpotlight ] } /> }
 			{ isNotFreePlan && (
 				<PlanPrice
-					gridPlans={ [ gridPlanForSpotlight ] }
+					renderedGridPlans={ [ gridPlanForSpotlight ] }
 					planUpgradeCreditsApplicable={ planUpgradeCreditsApplicable }
 					currentSitePlanSlug={ currentSitePlanSlug }
 				/>
 			) }
-			{ isNotFreePlan && <BillingTimeframes gridPlans={ [ gridPlanForSpotlight ] } /> }
+			{ isNotFreePlan && <BillingTimeframes renderedGridPlans={ [ gridPlanForSpotlight ] } /> }
 			<PlanStorageOptions
-				gridPlans={ [ gridPlanForSpotlight ] }
+				renderedGridPlans={ [ gridPlanForSpotlight ] }
 				intervalType={ intervalType }
 				onStorageAddOnClick={ onStorageAddOnClick }
 				showUpgradeableStorage={ showUpgradeableStorage }
 			/>
 			<TopButtons
-				gridPlans={ [ gridPlanForSpotlight ] }
+				renderedGridPlans={ [ gridPlanForSpotlight ] }
 				isInSignup={ isInSignup }
 				isLaunchPage={ isLaunchPage }
 				currentSitePlanSlug={ currentSitePlanSlug }
@@ -513,6 +604,11 @@ const SpotlightPlan = ( {
 			/>
 		</div>
 	);
+};
+
+type MobileFreeDomainProps = {
+	gridPlan: GridPlan;
+	paidDomainName?: string;
 };
 
 const MobileFreeDomain = ( { gridPlan, paidDomainName }: MobileFreeDomainProps ) => {
@@ -550,11 +646,30 @@ const MobileFreeDomain = ( { gridPlan, paidDomainName }: MobileFreeDomainProps )
 	);
 };
 
+type MobileViewProps = {
+	currentSitePlanSlug?: string | null;
+	generatedWPComSubdomain: DataResponse< { domain_name: string } >;
+	gridPlanForSpotlight?: GridPlan;
+	hideUnavailableFeatures?: boolean;
+	intervalType: string;
+	isCustomDomainAllowedOnFreePlan: boolean;
+	isInSignup: boolean;
+	isLaunchPage?: boolean | null;
+	onStorageAddOnClick?: ( addOnSlug: WPComStorageAddOnSlug ) => void;
+	onUpgradeClick: ( planSlug: PlanSlug ) => void;
+	paidDomainName?: string;
+	planActionOverrides?: PlanActionOverrides;
+	planUpgradeCreditsApplicable?: number | null;
+	renderedGridPlans: GridPlan[];
+	selectedFeature?: string;
+	showUpgradeableStorage: boolean;
+};
+
 const MobileView = ( {
 	currentSitePlanSlug,
 	generatedWPComSubdomain,
 	gridPlanForSpotlight,
-	gridPlans,
+	renderedGridPlans,
 	hideUnavailableFeatures,
 	intervalType,
 	isCustomDomainAllowedOnFreePlan,
@@ -582,13 +697,13 @@ const MobileView = ( {
 	};
 	const translate = useTranslate();
 
-	return gridPlans
-		.reduce( ( acc, griPlan ) => {
+	return renderedGridPlans
+		.reduce( ( acc, gridPlan ) => {
 			// Bring the spotlight plan to the top
-			if ( gridPlanForSpotlight?.planSlug === griPlan.planSlug ) {
-				return [ griPlan ].concat( acc );
+			if ( gridPlanForSpotlight?.planSlug === gridPlan.planSlug ) {
+				return [ gridPlan ].concat( acc );
 			}
-			return acc.concat( griPlan );
+			return acc.concat( gridPlan );
 		}, [] as GridPlan[] )
 		.map( ( gridPlan, index ) => {
 			const planCardClasses = classNames(
@@ -600,26 +715,26 @@ const MobileView = ( {
 
 			const planCardJsx = (
 				<div className={ planCardClasses } key={ `${ gridPlan.planSlug }-${ index }` }>
-					<PlanLogos gridPlans={ [ gridPlan ] } isInSignup={ false } />
-					<PlanHeaders gridPlans={ [ gridPlan ] } />
-					{ isNotFreePlan && isInSignup && <PlanTagline gridPlans={ [ gridPlan ] } /> }
+					<PlanLogos renderedGridPlans={ [ gridPlan ] } isInSignup={ false } />
+					<PlanHeaders renderedGridPlans={ [ gridPlan ] } />
+					{ isNotFreePlan && isInSignup && <PlanTagline renderedGridPlans={ [ gridPlan ] } /> }
 					{ isNotFreePlan && (
 						<PlanPrice
-							gridPlans={ [ gridPlan ] }
+							renderedGridPlans={ [ gridPlan ] }
 							planUpgradeCreditsApplicable={ planUpgradeCreditsApplicable }
 							currentSitePlanSlug={ currentSitePlanSlug }
 						/>
 					) }
-					{ isNotFreePlan && <BillingTimeframes gridPlans={ [ gridPlan ] } /> }
+					{ isNotFreePlan && <BillingTimeframes renderedGridPlans={ [ gridPlan ] } /> }
 					<MobileFreeDomain gridPlan={ gridPlan } paidDomainName={ paidDomainName } />
 					<PlanStorageOptions
-						gridPlans={ [ gridPlan ] }
+						renderedGridPlans={ [ gridPlan ] }
 						intervalType={ intervalType }
 						onStorageAddOnClick={ onStorageAddOnClick }
 						showUpgradeableStorage={ showUpgradeableStorage }
 					/>
 					<TopButtons
-						gridPlans={ [ gridPlan ] }
+						renderedGridPlans={ [ gridPlan ] }
 						isInSignup={ isInSignup }
 						isLaunchPage={ isLaunchPage }
 						currentSitePlanSlug={ currentSitePlanSlug }
@@ -637,9 +752,9 @@ const MobileView = ( {
 							)
 						}
 					>
-						<PreviousFeaturesIncludedTitle gridPlans={ [ gridPlan ] } />
+						<PreviousFeaturesIncludedTitle renderedGridPlans={ [ gridPlan ] } />
 						<PlanFeaturesList
-							gridPlans={ [ gridPlan ] }
+							renderedGridPlans={ [ gridPlan ] }
 							selectedFeature={ selectedFeature }
 							paidDomainName={ paidDomainName }
 							hideUnavailableFeatures={ hideUnavailableFeatures }
@@ -653,11 +768,31 @@ const MobileView = ( {
 		} );
 };
 
+type TabletViewProps = {
+	currentSitePlanSlug?: string | null;
+	generatedWPComSubdomain: DataResponse< { domain_name: string } >;
+	gridPlanForSpotlight?: GridPlan;
+	hideUnavailableFeatures?: boolean;
+	intervalType: string;
+	isCustomDomainAllowedOnFreePlan: boolean;
+	isInSignup: boolean;
+	isLaunchPage?: boolean | null;
+	onStorageAddOnClick?: ( addOnSlug: WPComStorageAddOnSlug ) => void;
+	onUpgradeClick: ( planSlug: PlanSlug ) => void;
+	paidDomainName?: string;
+	planActionOverrides?: PlanActionOverrides;
+	planUpgradeCreditsApplicable?: number | null;
+	renderedGridPlans: GridPlan[];
+	selectedFeature?: string;
+	showUpgradeableStorage: boolean;
+	stickyRowOffset: number;
+};
+
 const TabletView = ( {
 	currentSitePlanSlug,
 	generatedWPComSubdomain,
 	gridPlanForSpotlight,
-	gridPlans,
+	renderedGridPlans,
 	hideUnavailableFeatures,
 	intervalType,
 	isCustomDomainAllowedOnFreePlan,
@@ -673,8 +808,8 @@ const TabletView = ( {
 	stickyRowOffset,
 }: TabletViewProps ) => {
 	const gridPlansWithoutSpotlight = ! gridPlanForSpotlight
-		? gridPlans
-		: gridPlans.filter( ( { planSlug } ) => gridPlanForSpotlight.planSlug !== planSlug );
+		? renderedGridPlans
+		: renderedGridPlans.filter( ( { planSlug } ) => gridPlanForSpotlight.planSlug !== planSlug );
 	const numberOfPlansToShowOnTop = 4 === gridPlansWithoutSpotlight.length ? 2 : 3;
 	const plansForTopRow = gridPlansWithoutSpotlight.slice( 0, numberOfPlansToShowOnTop );
 	const plansForBottomRow = gridPlansWithoutSpotlight.slice( numberOfPlansToShowOnTop );
@@ -700,11 +835,11 @@ const TabletView = ( {
 	return (
 		<>
 			<div className="plan-features-2023-grid__table-top">
-				<Table gridPlans={ plansForTopRow } { ...tableProps } />
+				<Table renderedGridPlans={ plansForTopRow } { ...tableProps } />
 			</div>
 			{ plansForBottomRow.length > 0 && (
 				<div className="plan-features-2023-grid__table-bottom">
-					<Table gridPlans={ plansForBottomRow } { ...tableProps } />
+					<Table renderedGridPlans={ plansForBottomRow } { ...tableProps } />
 				</div>
 			) }
 		</>
@@ -747,7 +882,7 @@ const FeaturesGrid = ( {
 	const planFeaturesProps = {
 		...spotlightPlanProps,
 		generatedWPComSubdomain,
-		gridPlans,
+		renderedGridPlans: gridPlans,
 		hideUnavailableFeatures,
 		isCustomDomainAllowedOnFreePlan,
 		paidDomainName,
