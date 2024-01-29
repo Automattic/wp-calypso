@@ -13,6 +13,7 @@ import { ExternalLink } from '@wordpress/components';
 import { addQueryArgs } from '@wordpress/url';
 import { translate } from 'i18n-calypso';
 import { ADD_TIER_PLAN_HASH } from 'calypso/my-sites/earn/memberships/constants';
+import { getSiteIdOrSlug } from '../../task-helper';
 import {
 	recordGlobalStylesGattingPlanSelectedResetStylesEvent,
 	recordTaskClickTracksEvent,
@@ -54,13 +55,8 @@ const getPlanTaskSubtitle = (
 };
 
 const getPlanSelectedTask: TaskAction = ( task, flow, context ): Task => {
-	const {
-		siteInfoQueryArgs,
-		displayGlobalStylesWarning,
-		globalStylesMinimumPlan,
-		planCartItem,
-		site,
-	} = context;
+	const { siteSlug, displayGlobalStylesWarning, globalStylesMinimumPlan, planCartItem, site } =
+		context;
 
 	const productSlug = planCartItem?.product_slug ?? site?.plan?.product_slug;
 
@@ -79,7 +75,7 @@ const getPlanSelectedTask: TaskAction = ( task, flow, context ): Task => {
 				} );
 			}
 		},
-		calypso_path: addQueryArgs( `/plans/${ siteInfoQueryArgs?.siteSlug }`, {
+		calypso_path: addQueryArgs( `/plans/${ siteSlug }`, {
 			...( shouldDisplayWarning && {
 				plan: globalStylesMinimumPlan,
 				feature: isVideoPressFlowWithUnsupportedPlan
@@ -94,14 +90,14 @@ const getPlanSelectedTask: TaskAction = ( task, flow, context ): Task => {
 };
 
 const getPlanCompletedTask: TaskAction = ( task, flow, context ) => {
-	const { translatedPlanName, siteInfoQueryArgs, displayGlobalStylesWarning, site } = context;
+	const { translatedPlanName, displayGlobalStylesWarning, site, siteSlug } = context;
 
 	const isCurrentPlanFree = site?.plan ? isFreePlanProduct( site?.plan ) : true;
 
 	return {
 		...task,
 		actionDispatch: () => recordTaskClickTracksEvent( task, flow, context ),
-		calypso_path: addQueryArgs( `/setup/${ flow }/plans`, siteInfoQueryArgs ),
+		calypso_path: addQueryArgs( `/setup/${ flow }/plans`, getSiteIdOrSlug( flow, site, siteSlug ) ),
 		badge_text: task.completed ? translatedPlanName : task.badge_text,
 		subtitle: getPlanTaskSubtitle( task, flow, context, displayGlobalStylesWarning ),
 		disabled: task.completed && ! isCurrentPlanFree,

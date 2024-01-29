@@ -4,19 +4,19 @@ import { dispatch } from '@wordpress/data';
 import { __ } from '@wordpress/i18n';
 import { addQueryArgs } from '@wordpress/url';
 import { ONBOARD_STORE } from 'calypso/landing/stepper/stores';
+import { getSiteIdOrSlug } from '../../task-helper';
 import { recordTaskClickTracksEvent } from '../../tracking';
 import { type TaskAction } from '../../types';
 
 const getSetupLinkInBioTask: TaskAction = ( task, flow, context ) => {
-	const { siteInfoQueryArgs } = context;
+	const { site, siteSlug } = context;
 
 	return {
 		...task,
 		actionDispatch: () => recordTaskClickTracksEvent( task, flow, context ),
-		calypso_path: addQueryArgs(
-			`/setup/link-in-bio-post-setup/linkInBioPostSetup`,
-			siteInfoQueryArgs
-		),
+		calypso_path: addQueryArgs( `/setup/link-in-bio-post-setup/linkInBioPostSetup`, {
+			...getSiteIdOrSlug( flow, site, siteSlug ),
+		} ),
 		useCalypsoPath: true,
 	};
 };

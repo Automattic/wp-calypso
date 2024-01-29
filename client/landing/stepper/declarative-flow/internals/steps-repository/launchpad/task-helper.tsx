@@ -62,15 +62,10 @@ export function getEnhancedTasks( {
 	// We have to use the site id if the flow allows the user to change the site address
 	// as the domain name of the site may be changed.
 	// See https://github.com/Automattic/wp-calypso/pull/84532.
-	const siteInfoQueryArgs =
-		isBlogOnboardingFlow( flow ) || isSiteAssemblerFlow( flow )
-			? { siteId: site?.ID }
-			: { siteSlug };
 
 	const context: TaskContext = {
 		site,
 		tasks,
-		siteInfoQueryArgs,
 		checklistStatuses,
 		isEmailVerified,
 		planCartItem,
@@ -98,6 +93,15 @@ export function isDomainUpsellCompleted(
 	return ! site?.plan?.is_free || checklistStatuses?.domain_upsell_deferred === true;
 }
 
+export const getSiteIdOrSlug = (
+	flow: string,
+	site: SiteDetails | null,
+	siteSlug?: string | null
+) => {
+	return isBlogOnboardingFlow( flow ) || isSiteAssemblerFlow( flow )
+		? { siteId: site?.ID }
+		: { siteSlug };
+};
 // Returns list of tasks/checklist items for a specific flow
 export function getArrayOfFilteredTasks(
 	tasks: Task[],

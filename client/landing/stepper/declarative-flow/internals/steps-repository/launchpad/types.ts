@@ -53,7 +53,6 @@ export type TaskId =
 export interface TaskContext {
 	tasks: Task[];
 	site: SiteDetails | null;
-	siteInfoQueryArgs?: { siteId?: number; siteSlug?: string | null };
 	checklistStatuses?: ChecklistStatuses;
 	isEmailVerified: boolean;
 	planCartItem?: MinimalRequestCartProduct | null;
