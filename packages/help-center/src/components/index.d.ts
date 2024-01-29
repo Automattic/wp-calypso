@@ -94,6 +94,11 @@ declare module 'calypso/state/selectors/get-primary-site-id' {
 	export default getPrimarySiteId;
 }
 
+declare module 'calypso/state/selectors/get-user-setting' {
+	const getUserSetting: ( state: unknown, setting: string ) => boolean | number | string;
+	export default getUserSetting;
+}
+
 declare module 'calypso/state/selectors/has-cancelable-user-purchases' {
 	const hasCancelableUserPurchases: ( state: unknown ) => boolean;
 	export default hasCancelableUserPurchases;
