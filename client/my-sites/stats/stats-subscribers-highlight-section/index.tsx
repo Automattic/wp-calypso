@@ -2,47 +2,35 @@ import config from '@automattic/calypso-config';
 import { CountComparisonCard } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import QueryMembershipProducts from 'calypso/components/data/query-memberships';
+import useSubscribersOverview from 'calypso/my-sites/stats/hooks/use-subscribers-overview';
 import { useSelector } from 'calypso/state';
 import './style.scss';
 import useSubscribersTotalsQueries from '../hooks/use-subscribers-totals-query';
 
-function useSubscriberHighlights(
-	siteId: number | null,
-	hasAddedPaidSubscriptionProduct: boolean
-) {
+function useSubscriberHighlights( siteId: number | null ) {
 	const translate = useTranslate();
 
-	const { data: subscribersTotals, isLoading, isError } = useSubscribersTotalsQueries( siteId );
+	const {
+		data: subscribersTotals,
+		isLoading: isSubscribersTotalLoading,
+		isError: isSubscribersTotalError,
+	} = useSubscribersTotalsQueries( siteId );
+	const {
+		overviewData,
+		isLoading: isOverviewDataLoading,
+		isError: isOverviewDataError,
+	} = useSubscribersOverview( siteId );
+
+	const isLoading = isSubscribersTotalLoading || isOverviewDataLoading;
+	const isError = isSubscribersTotalError || isOverviewDataError;
 
 	const highlights = [
 		{
 			heading: translate( 'Total subscribers' ),
 			count: subscribersTotals?.total,
-			show: true, // Always show total subscribers.
 			note: 'WordPress.com and Email subscribers excluding subscribers from social media',
 		},
-		{
-			heading: translate( 'Paid subscribers' ),
-			count: subscribersTotals?.paid_subscribers,
-			show: hasAddedPaidSubscriptionProduct,
-			note: 'Paid WordPress.com subscribers',
-		},
-		{
-			heading: translate( 'Free subscribers' ),
-			count: subscribersTotals?.free_subscribers,
-			show: hasAddedPaidSubscriptionProduct,
-			note: 'Email subscribers and free WordPress.com subscribers',
-		},
-		{
-			heading: translate( 'WordPress.com subscribers' ),
-			count: subscribersTotals?.total_wpcom,
-			show: ! hasAddedPaidSubscriptionProduct,
-		},
-		{
-			heading: translate( 'Email subscribers' ),
-			count: subscribersTotals?.total_email,
-			show: ! hasAddedPaidSubscriptionProduct,
-		},
+		...overviewData,
 	] as { heading: string; count: number | null; show: boolean; note?: string }[];
 
 	if ( isLoading || isError ) {
@@ -77,27 +65,23 @@ function SubscriberHighlightsListing( { siteId }: { siteId: number | null } ) {
 
 	// Odyssey Stats doesn't support the membership API endpoint yet.
 	// Products with an `undefined` value rather than an empty array means the API call has not been completed yet.
-	const hasAddedPaidSubscriptionProduct = ! isOdysseyStats && products && products.length > 0;
 	const isPaidSubscriptionProductsLoading = ! isOdysseyStats && ! products;
 
-	const highlights = useSubscriberHighlights( siteId, hasAddedPaidSubscriptionProduct );
+	const highlights = useSubscriberHighlights( siteId );
 
 	return (
 		<div className="highlight-cards-list">
 			{ siteId && ! isOdysseyStats && <QueryMembershipProducts siteId={ siteId } /> }
-			{ highlights.map(
-				( highlight ) =>
-					highlight.show && (
-						<CountComparisonCard
-							compact={ true }
-							key={ highlight.heading }
-							heading={ isPaidSubscriptionProductsLoading ? '-' : highlight.heading }
-							count={ isPaidSubscriptionProductsLoading ? null : highlight.count }
-							showValueTooltip
-							note={ highlight.note }
-						/>
-					)
-			) }
+			{ highlights.map( ( highlight ) => (
+				<CountComparisonCard
+					key={ highlight.heading }
+					heading={ isPaidSubscriptionProductsLoading ? '-' : highlight.heading }
+					count={ isPaidSubscriptionProductsLoading ? null : highlight.count }
+					showValueTooltip
+					note={ highlight.note }
+					icon={ false }
+				/>
+			) ) }
 		</div>
 	);
 }

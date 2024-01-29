@@ -2,7 +2,7 @@ import { translate } from 'i18n-calypso';
 import { useSubscribersQueries } from './use-subscribers-query';
 
 // array of indices to use to calculate the dates to query for
-const DATES_TO_QUERY = [ 0, 30, 60, 90 ];
+const DATES_TO_QUERY = [ 30, 60, 90 ];
 
 function getLabels( dateToQuery: number ) {
 	switch ( dateToQuery ) {
