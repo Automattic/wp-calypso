@@ -192,7 +192,11 @@ export const PreMigrationScreen: React.FunctionComponent< PreMigrationProps > = 
 
 	switch ( renderState ) {
 		case 'loading':
-			return <LoadingEllipsis />;
+			return (
+				<div className="import-layout__center">
+					<LoadingEllipsis />
+				</div>
+			);
 
 		case 'not-authorized':
 			return (

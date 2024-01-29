@@ -155,7 +155,7 @@ const SubscribersPage = ( {
 	}, [ siteId ] );
 
 	const { currentSubscriber, onClickUnsubscribe, onConfirmModal, resetSubscriber } =
-		useUnsubscribeModal( selectedSite?.ID, pageArgs );
+		useUnsubscribeModal( selectedSite?.ID ?? null, pageArgs );
 	const onClickView = ( { subscription_id, user_id }: Subscriber ) => {
 		page.show( getSubscriberDetailsUrl( selectedSite?.slug, subscription_id, user_id, pageArgs ) );
 	};

@@ -35,7 +35,8 @@ const useSubscribersQuery = ( {
 			search,
 			sortTerm,
 			filterOption,
-			timestamp
+			timestamp,
+			hasManySubscribers
 		),
 		queryFn: () => {
 			// This is a temporary solution until we have a better way to handle this.

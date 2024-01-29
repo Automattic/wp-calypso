@@ -37,12 +37,14 @@ import {
 	getSubtotalWithoutDiscounts,
 	filterAndGroupCostOverridesForDisplay,
 	getCreditsLineItemFromCart,
+	hasIntroductoryDiscount,
 } from '@automattic/wpcom-checkout';
 import { keyframes } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useTranslate } from 'i18n-calypso';
 import * as React from 'react';
 import { hasFreeCouponTransfersOnly } from 'calypso/lib/cart-values/cart-items';
+import { preventWidows } from 'calypso/lib/formatting';
 import { isWcMobileApp } from 'calypso/lib/mobile-app';
 import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
 import { getSignupCompleteFlowName } from 'calypso/signup/storageUtils';
@@ -144,6 +146,7 @@ export function CheckoutSummaryFeaturedList( {
 		</>
 	);
 }
+
 function CheckoutSummaryPriceList() {
 	const cartKey = useCartKey();
 	const { responseCart } = useShoppingCart( cartKey );
@@ -204,6 +207,13 @@ function CheckoutSummaryPriceList() {
 						{ totalLineItem.formattedAmount }
 					</span>
 				</CheckoutSummaryTotal>
+				{ hasIntroductoryDiscount( responseCart ) && (
+					<CheckoutSummaryExplanation>
+						{ preventWidows(
+							translate( '*Introductory offer first term only, renews at regular rate.' )
+						) }
+					</CheckoutSummaryExplanation>
+				) }
 			</CheckoutSummaryAmountWrapper>
 		</>
 	);
@@ -918,7 +928,7 @@ const CheckoutFirstSubtotalLineItem = styled.div`
 	}
 `;
 
-const CheckoutSummaryLineItem = styled.div`
+const CheckoutSummaryLineItem = styled.div< { isDiscount?: boolean } >`
 	display: flex;
 	flex-wrap: wrap;
 	font-size: 14px;
@@ -926,7 +936,9 @@ const CheckoutSummaryLineItem = styled.div`
 	line-height: 20px;
 	margin-bottom: 4px;
 
-	&:nth-last-of-type( 2 ) {
+	color: ${ ( props ) => ( props.isDiscount ? props.theme.colors.discount : 'inherit' ) };
+
+	&:nth-last-of-type( 3 ) {
 		border-bottom: 1px solid ${ ( props ) => props.theme.colors.borderColorLight };
 		margin-bottom: 20px;
 		padding-bottom: 20px;
@@ -942,6 +954,15 @@ const CheckoutSummaryTotal = styled( CheckoutSummaryLineItem )`
 	font-size: 20px;
 	font-weight: ${ ( props ) => props.theme.weights.bold };
 	line-height: 26px;
+	margin-bottom: 16px;
+`;
+
+const CheckoutSummaryExplanation = styled( CheckoutSummaryLineItem )`
+	color: ${ ( props ) => props.theme.colors.textColorLight };
+	font-size: 12px;
+	font-weight: ${ ( props ) => props.theme.weights.normal };
+	font-style: italic;
+	line-height: 16px;
 `;
 
 const LoadingCopy = styled.p`

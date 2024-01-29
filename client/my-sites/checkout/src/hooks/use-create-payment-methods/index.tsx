@@ -196,11 +196,9 @@ function useCreateGiropay( {
 function useCreateWeChat( {
 	isStripeLoading,
 	stripeLoadingError,
-	siteSlug,
 }: {
 	isStripeLoading: boolean;
 	stripeLoadingError: StripeLoadingError;
-	siteSlug?: string | undefined;
 } ): PaymentMethod | null {
 	const shouldLoad = ! isStripeLoading && ! stripeLoadingError;
 	const paymentMethodStore = useMemo( () => createWeChatPaymentMethodStore(), [] );
@@ -209,10 +207,9 @@ function useCreateWeChat( {
 			shouldLoad
 				? createWeChatMethod( {
 						store: paymentMethodStore,
-						siteSlug,
 				  } )
 				: null,
-		[ shouldLoad, paymentMethodStore, siteSlug ]
+		[ shouldLoad, paymentMethodStore ]
 	);
 }
 
@@ -354,7 +351,6 @@ export default function useCreatePaymentMethods( {
 	stripeConfiguration,
 	stripe,
 	storedCards,
-	siteSlug,
 }: {
 	contactDetailsType: ContactDetailsType;
 	isStripeLoading: boolean;
@@ -362,7 +358,6 @@ export default function useCreatePaymentMethods( {
 	stripeConfiguration: StripeConfiguration | null;
 	stripe: Stripe | null;
 	storedCards: StoredPaymentMethod[];
-	siteSlug: string | undefined;
 } ): PaymentMethod[] {
 	const cartKey = useCartKey();
 	const { responseCart } = useShoppingCart( cartKey );
@@ -409,7 +404,6 @@ export default function useCreatePaymentMethods( {
 	const wechatMethod = useCreateWeChat( {
 		isStripeLoading,
 		stripeLoadingError,
-		siteSlug,
 	} );
 
 	const shouldUseEbanx = responseCart.allowed_payment_methods.includes(

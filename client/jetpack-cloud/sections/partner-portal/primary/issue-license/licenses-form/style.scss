@@ -1,0 +1,148 @@
+@import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/mixins";
+@import "../../../mixins.scss";
+
+.licenses-form__placeholder {
+	@include placeholder( --color-neutral-10 );
+	height: 43px;
+}
+
+.licenses-form__section {
+	margin-block-end: 32px;
+}
+
+h2.licenses-form__section-title {
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+	gap: 18px;
+	margin-block-end: 10px;
+	font-size: rem(20px);
+	font-weight: 600;
+	line-height: 1.2;
+
+	hr {
+		color: var(--color-gray-5);
+		width: 1px;
+		flex-grow: 1;
+		margin: 0;
+	}
+}
+
+p.licenses-form__section-description {
+	font-size: rem(14px);
+	font-weight: 400;
+	line-height: 1.2;
+	margin-block-end: 32px;
+}
+
+.licenses-form__section-content {
+	display: grid;
+	gap: 16px;
+	grid-template-columns: 1fr;
+
+	@include break-xlarge {
+		grid-template-columns: repeat(2, 1fr);
+	}
+
+	@include break-wide {
+		grid-template-columns: repeat(3, 1fr);
+	}
+}
+
+.licenses-form__section.is-two-columns .licenses-form__section-content {
+	@include break-wide {
+		grid-template-columns: repeat(2, 1fr);
+	}
+}
+
+p.licenses-form__description {
+	flex: 1 1 auto;
+	align-self: flex-end;
+	margin: 1rem 0;
+	font-size: 0.875rem;
+	color: #333;
+
+	@include breakpoint-deprecated( ">660px" ) {
+		margin-right: 1rem;
+	}
+}
+
+.licenses-form__select-license {
+	// :active introduces a 1px border but :focus introduces a 1.5px border which causes the button to move around.
+	border-width: 1.5px !important;
+	border-color: transparent;
+}
+
+.licenses-form__actions {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 16px;
+	margin: 16px 0 32px;
+}
+
+.select-dropdown.is-compact.licenses-form__product-filter-select {
+	flex-basis: 100%;
+	height: 46px;
+
+	@include break-xlarge {
+		flex-basis: auto;
+	}
+
+	.select-dropdown__header {
+		height: 46px;
+	}
+
+	@include breakpoint-deprecated( ">660px" ) {
+		height: 35px;
+
+		.select-dropdown__header {
+			height: 35px;
+		}
+	}
+
+	.select-dropdown__header-text {
+		font-size: rem(13px);
+		font-weight: 400;
+		color: var(--studio-grey-5);
+		padding-inline-end: 8px;
+	}
+
+	.select-dropdown__header-text b {
+		color: var(--studio-black);
+	}
+
+	.select-dropdown__container {
+		width: 100%;
+
+		@include break-xlarge {
+			width: auto;
+		}
+	}
+}
+
+.licenses-form__product-filter-search {
+	flex-basis: 100%;
+
+	@include break-xlarge {
+		flex-basis: 360px;
+	}
+
+	.search {
+		&.is-open {
+			height: 46px;
+
+			@include breakpoint-deprecated( ">660px" ) {
+				height: 33px;
+			}
+		}
+		margin-bottom: 0;
+		border: 1px solid var(--color-neutral-10);
+	}
+
+	.search__input.form-text-input[type="search"] {
+		font-size: rem(13px);
+		font-weight: 400;
+		color: var(--studio-grey-5);
+	}
+}

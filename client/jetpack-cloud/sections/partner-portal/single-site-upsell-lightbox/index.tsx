@@ -1,8 +1,8 @@
 import { localizeUrl } from '@automattic/i18n-utils';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback, useEffect } from 'react';
-import useSubmitForm from 'calypso/jetpack-cloud/sections/partner-portal/issue-license-v2/hooks/use-submit-form';
 import LicenseLightbox from 'calypso/jetpack-cloud/sections/partner-portal/license-lightbox';
+import useSubmitForm from 'calypso/jetpack-cloud/sections/partner-portal/primary/issue-license/hooks/use-submit-form';
 import { useDispatch, useSelector } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { APIProductFamilyProduct } from 'calypso/state/partner-portal/types';

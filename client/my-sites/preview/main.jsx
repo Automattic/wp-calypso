@@ -198,19 +198,26 @@ class PreviewMain extends Component {
 const ConnectedPreviewMain = ( props ) => {
 	const dispatch = useDispatch();
 	const selectedSiteId = useSelector( getSelectedSiteId );
-	const stateToProps = useSelector( ( state ) => {
-		const site = getSelectedSite( state );
-		const homePagePostId = get( site, [ 'options', 'page_on_front' ] );
+	const site = useSelector( getSelectedSite );
+	const homePagePostId = get( site, [ 'options', 'page_on_front' ] );
+	const isPreviewable = useSelector( ( state ) => isSitePreviewable( state, selectedSiteId ) );
+	const selectedSiteNonce =
+		useSelector( ( state ) => getSiteOption( state, selectedSiteId, 'frame_nonce' ) ) || '';
+	const canEditPages = useSelector( ( state ) =>
+		canCurrentUser( state, selectedSiteId, 'edit_pages' )
+	);
+	const editorURL = useSelector( ( state ) =>
+		getEditorUrl( state, selectedSiteId, homePagePostId, 'page' )
+	);
 
-		return {
-			isPreviewable: isSitePreviewable( state, selectedSiteId ),
-			selectedSiteNonce: getSiteOption( state, selectedSiteId, 'frame_nonce' ) || '',
-			site: site,
-			siteId: selectedSiteId,
-			canEditPages: canCurrentUser( state, selectedSiteId, 'edit_pages' ),
-			editorURL: getEditorUrl( state, selectedSiteId, homePagePostId, 'page' ),
-		};
-	} );
+	const stateToProps = {
+		isPreviewable,
+		selectedSiteNonce,
+		site,
+		siteId: selectedSiteId,
+		canEditPages,
+		editorURL,
+	};
 
 	const dispatchToProps = bindActionCreators(
 		{

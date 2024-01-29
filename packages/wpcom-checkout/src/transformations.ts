@@ -1,7 +1,17 @@
+import {
+	isBiennially,
+	isJetpackPlan,
+	isJetpackProduct,
+	isJetpackSocialAdvancedSlug,
+} from '@automattic/calypso-products';
 import { formatCurrency } from '@automattic/format-currency';
 import { translate, useTranslate } from 'i18n-calypso';
 import type { LineItemType } from './types';
-import type { ResponseCart, TaxBreakdownItem } from '@automattic/shopping-cart';
+import type {
+	ResponseCart,
+	ResponseCartProduct,
+	TaxBreakdownItem,
+} from '@automattic/shopping-cart';
 
 export function getTotalLineItemFromCart( cart: ResponseCart ): LineItemType {
 	return {
@@ -136,6 +146,9 @@ export function filterAndGroupCostOverridesForDisplay(
 			return grouped;
 		}
 
+		const isJetpack = isJetpackProduct( product ) || isJetpackPlan( product );
+		let productDiscountAmountTotal = 0;
+
 		costOverrides.forEach( ( costOverride ) => {
 			if ( costOverride.does_override_original_cost ) {
 				// We won't display original cost overrides since they are
@@ -143,14 +156,50 @@ export function filterAndGroupCostOverridesForDisplay(
 				// are not discounts.
 				return;
 			}
+
+			// Do not group Sale Coupons because we want to show the name of each item on sale.
+			if ( costOverride.override_code === 'sale-coupon-discount-1' ) {
+				const newDiscountAmount =
+					costOverride.old_subtotal_integer - costOverride.new_subtotal_integer;
+
+				grouped[ costOverride.override_code + '__' + product.uuid ] = {
+					humanReadableReason: translate( 'Sale: %(productName)s', {
+						textOnly: true,
+						args: { productName: product.product_name },
+					} ),
+					overrideCode: costOverride.override_code,
+					discountAmount: newDiscountAmount,
+				};
+				return;
+			}
+
 			const discountAmount = grouped[ costOverride.override_code ]?.discountAmount ?? 0;
-			const newDiscountAmount =
-				costOverride.old_subtotal_integer - costOverride.new_subtotal_integer;
+			let newDiscountAmount = costOverride.old_subtotal_integer - costOverride.new_subtotal_integer;
+			let overrideReason = '';
+
+			// Overrides for Jetpack biennial intro offers
+			if ( 'introductory-offer' === costOverride.override_code ) {
+				if ( isJetpack ) {
+					overrideReason = translate( 'Introductory offer*' );
+				}
+				if ( isJetpackSocialAdvancedSlug( product.product_slug ) ) {
+					// Social Advanced has free trial that we don't consider "introduction offer"
+					return;
+				} else if ( isJetpack && isBiennially( product ) ) {
+					// For all other products, we show introductory discount for yearly variant (the rest is considered multi-year discount)
+					const yearlyVariant = getYearlyVariantFromProduct( product );
+					if ( yearlyVariant ) {
+						newDiscountAmount =
+							yearlyVariant.price_before_discounts_integer - yearlyVariant.price_integer;
+					}
+				}
+			}
 			grouped[ costOverride.override_code ] = {
-				humanReadableReason: costOverride.human_readable_reason,
+				humanReadableReason: overrideReason || costOverride.human_readable_reason,
 				overrideCode: costOverride.override_code,
 				discountAmount: discountAmount + newDiscountAmount,
 			};
+			productDiscountAmountTotal += newDiscountAmount;
 		} );
 
 		// Add a fake cost override for introductory offers until D134600-code
@@ -161,13 +210,54 @@ export function filterAndGroupCostOverridesForDisplay(
 			! costOverrides.some( ( override ) => override.override_code === 'introductory-offer' )
 		) {
 			const discountAmount = grouped[ 'introductory-offer' ]?.discountAmount ?? 0;
-			const newDiscountAmount =
+			let newDiscountAmount =
 				product.item_original_subtotal_integer - product.item_subtotal_before_discounts_integer;
-			grouped[ 'introductory-offer' ] = {
-				humanReadableReason: translate( 'Introductory offer' ),
-				overrideCode: 'introductory-offer',
-				discountAmount: discountAmount + newDiscountAmount,
-			};
+			// Override for Jetpack two-year products: we show introductory discount for yearly variant (the rest is considered multi-year discount)
+			if ( isJetpackSocialAdvancedSlug( product.product_slug ) ) {
+				// Social Advanced has free trial that we don't consider "introduction offer"
+				newDiscountAmount = 0;
+			} else if ( isJetpack && isBiennially( product ) ) {
+				// For all other products, we show introductory discount for yearly variant (the rest is considered multi-year discount)
+				const yearlyVariant = getYearlyVariantFromProduct( product );
+				if ( yearlyVariant ) {
+					newDiscountAmount =
+						yearlyVariant.price_before_discounts_integer - yearlyVariant.price_integer;
+				}
+			}
+			if ( newDiscountAmount > 0 ) {
+				grouped[ 'introductory-offer' ] = {
+					humanReadableReason: isJetpack
+						? translate( 'Introductory offer*' )
+						: translate( 'Introductory offer' ),
+					overrideCode: 'introductory-offer',
+					discountAmount: discountAmount + newDiscountAmount,
+				};
+				productDiscountAmountTotal += newDiscountAmount;
+			}
+		}
+
+		if ( isJetpack && isBiennially( product ) ) {
+			const discountAmount = grouped[ 'multi-year-discount' ]?.discountAmount ?? 0;
+			const yearlyVariant = getYearlyVariantFromProduct( product );
+			const biennialVariant = getBiennialVariantFromProduct( product );
+
+			if ( yearlyVariant && biennialVariant ) {
+				// Coupon is added on top of multi-year discount, so we don't include it in the calculation
+				const discountWithoutCoupon =
+					productDiscountAmountTotal - ( product.coupon_savings_integer ?? 0 );
+				const newDiscountAmount =
+					2 * yearlyVariant.price_before_discounts_integer -
+					discountWithoutCoupon -
+					biennialVariant.price_integer;
+
+				if ( newDiscountAmount > 0 ) {
+					grouped[ 'multi-year-discount' ] = {
+						humanReadableReason: translate( 'Multi-year discount' ),
+						overrideCode: 'multi-year-discount',
+						discountAmount: discountAmount + newDiscountAmount,
+					};
+				}
+			}
 		}
 		return grouped;
 	}, {} );
@@ -188,10 +278,35 @@ function getCreditsUsedByCart( responseCart: ResponseCart ): number {
 	return isFullCredits ? responseCart.sub_total_with_taxes_integer : responseCart.credits_integer;
 }
 
+function getBiennialVariantFromProduct( product: ResponseCartProduct ) {
+	return product.product_variants.find( ( variant ) => 24 === variant.bill_period_in_months );
+}
+
+function getYearlyVariantFromProduct( product: ResponseCartProduct ) {
+	return product.product_variants.find( ( variant ) => 12 === variant.bill_period_in_months );
+}
+
 export function getSubtotalWithoutDiscounts( responseCart: ResponseCart ): number {
 	return responseCart.products.reduce( ( total, product ) => {
-		return product.item_original_subtotal_integer + total;
+		const isJetpack = isJetpackProduct( product ) || isJetpackPlan( product );
+
+		if ( isJetpack && isBiennially( product ) ) {
+			const yearlyVariant = getYearlyVariantFromProduct( product );
+
+			if ( yearlyVariant ) {
+				return total + yearlyVariant.price_before_discounts_integer * 2;
+			}
+		}
+		return total + product.item_original_subtotal_integer;
 	}, 0 );
+}
+
+export function hasIntroductoryDiscount( responseCart: ResponseCart ): boolean {
+	return responseCart.products.some(
+		( product ) =>
+			( isJetpackPlan( product ) || isJetpackProduct( product ) ) &&
+			!! product.introductory_offer_terms?.enabled
+	);
 }
 
 export function getTotalDiscountsWithoutCredits(
