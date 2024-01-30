@@ -7,7 +7,10 @@ import { useSelector } from 'calypso/state';
 import './style.scss';
 import useSubscribersTotalsQueries from '../hooks/use-subscribers-totals-query';
 
-function useSubscriberHighlights( siteId: number | null ) {
+function useSubscriberHighlights(
+	siteId: number | null,
+	hasAddedPaidSubscriptionProduct: boolean
+) {
 	const translate = useTranslate();
 
 	const {
@@ -15,23 +18,40 @@ function useSubscriberHighlights( siteId: number | null ) {
 		isLoading: isSubscribersTotalLoading,
 		isError: isSubscribersTotalError,
 	} = useSubscribersTotalsQueries( siteId );
+
 	const {
 		overviewData,
 		isLoading: isOverviewDataLoading,
 		isError: isOverviewDataError,
-	} = useSubscribersOverview( siteId );
+	} = useSubscribersOverview( siteId, ! hasAddedPaidSubscriptionProduct );
 
 	const isLoading = isSubscribersTotalLoading || isOverviewDataLoading;
 	const isError = isSubscribersTotalError || isOverviewDataError;
 
-	const highlights = [
+	let highlights = [
 		{
 			heading: translate( 'Total subscribers' ),
 			count: subscribersTotals?.total,
 			note: 'WordPress.com and Email subscribers excluding subscribers from social media',
 		},
-		...overviewData,
-	] as { heading: string; count: number | null; show: boolean; note?: string }[];
+	] as { heading: string; count: number | null; note?: string }[];
+
+	if ( hasAddedPaidSubscriptionProduct ) {
+		highlights = highlights.concat( [
+			{
+				heading: translate( 'Paid subscribers' ),
+				count: subscribersTotals?.paid_subscribers || 0,
+				note: 'Paid WordPress.com subscribers',
+			},
+			{
+				heading: translate( 'Free subscribers' ),
+				count: subscribersTotals?.free_subscribers,
+				note: 'Email subscribers and free WordPress.com subscribers',
+			},
+		] );
+	} else {
+		highlights = highlights.concat( overviewData );
+	}
 
 	if ( isLoading || isError ) {
 		// Nulling the count values makes the count comparison card render a '-' instead of a '0'.
@@ -41,6 +61,7 @@ function useSubscriberHighlights( siteId: number | null ) {
 			}
 		} );
 	}
+
 	return highlights;
 }
 
@@ -66,8 +87,9 @@ function SubscriberHighlightsListing( { siteId }: { siteId: number | null } ) {
 	// Odyssey Stats doesn't support the membership API endpoint yet.
 	// Products with an `undefined` value rather than an empty array means the API call has not been completed yet.
 	const isPaidSubscriptionProductsLoading = ! isOdysseyStats && ! products;
+	const hasAddedPaidSubscriptionProduct = ! isOdysseyStats && products && products.length > 0;
 
-	const highlights = useSubscriberHighlights( siteId );
+	const highlights = useSubscriberHighlights( siteId, hasAddedPaidSubscriptionProduct );
 
 	return (
 		<div className="highlight-cards-list">
