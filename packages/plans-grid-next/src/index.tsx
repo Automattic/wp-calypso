@@ -1,4 +1,3 @@
-import { useTranslate } from 'i18n-calypso';
 import ComparisonGrid from './components/comparison-grid';
 import FeaturesGrid from './components/features-grid';
 import PlanButton from './components/plan-button';
@@ -79,8 +78,6 @@ const WrappedFeaturesGrid = ( props: FeaturesGridExternalProps ) => {
 		onUpgradeClick,
 		coupon,
 	} = props;
-	const translate = useTranslate();
-
 	const { prices, currencyCode } = usePlanPricingInfoFromGridPlans( {
 		gridPlans,
 	} );
@@ -107,7 +104,6 @@ const WrappedFeaturesGrid = ( props: FeaturesGridExternalProps ) => {
 			<FeaturesGrid
 				{ ...props }
 				isLargeCurrency={ isLargeCurrency }
-				translate={ translate }
 				onUpgradeClick={ handleUpgradeClick }
 			/>
 		</PlansGridContextProvider>
