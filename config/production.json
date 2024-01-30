@@ -185,7 +185,7 @@
 		"themes/subscription-purchases": false,
 		"themes/text-search-lots": true,
 		"themes/assembler-first": true,
-		"themes/tiers": false,
+		"themes/tiers": true,
 		"upgrades/redirect-payments": true,
 		"upgrades/upcoming-renewals-notices": true,
 		"upgrades/wpcom-monthly-plans": true,
