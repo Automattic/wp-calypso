@@ -1,7 +1,7 @@
 {
 	"name": "@automattic/design-carousel",
 	"version": "1.0.0",
-	"description": "Theme/variation picker",
+	"description": "Theme/variation picker.",
 	"homepage": "https://github.com/Automattic/wp-calypso",
 	"license": "GPL-2.0-or-later",
 	"author": "Automattic Inc.",
@@ -50,9 +50,9 @@
 		"webpack": "^5.89.0"
 	},
 	"peerDependencies": {
-		"@wordpress/data": "^9.18.0",
-		"@wordpress/element": "^5.25.0",
-		"@wordpress/i18n": "^4.48.0",
+		"@wordpress/data": "^9.20.0",
+		"@wordpress/element": "^5.27.0",
+		"@wordpress/i18n": "^4.50.0",
 		"debug": "^4.3.3",
 		"react": "^18.2.0",
 		"react-dom": "^18.2.0",

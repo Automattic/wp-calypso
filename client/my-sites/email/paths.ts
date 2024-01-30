@@ -185,5 +185,11 @@ export const getEmailInDepthComparisonPath = (
 		source,
 	} );
 
+export const getProfessionalEmailCheckoutUpsellPath = (
+	siteName: string,
+	domainName: string,
+	receiptId: number | string
+) => `/checkout/offer-professional-email/${ domainName }/${ receiptId }/${ siteName }`;
+
 export const getMailboxesPath = ( siteName?: string | null ) =>
 	siteName ? `/mailboxes/${ siteName }` : `/mailboxes`;

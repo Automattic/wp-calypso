@@ -7,6 +7,7 @@ import {
 	backup as backupIcon,
 	brush as brushIcon,
 	chartBar as statsIcon,
+	code as codeIcon,
 	commentAuthorAvatar as profileIcon,
 	commentAuthorName as subscriberIcon,
 	download as downloadIcon,
@@ -60,7 +61,7 @@ interface useCommandsArrayWpcomOptions {
 
 function useCommandNavigation() {
 	const dispatch = useDispatch();
-	const currentRoute = useSelector( ( state ) => getCurrentRoutePattern( state ) );
+	const currentRoute = useSelector( getCurrentRoutePattern );
 	// Callback to navigate to a command's destination
 	// used on command callback or siteFunctions onClick
 	const commandNavigation = useCallback(
@@ -437,6 +438,16 @@ export const useCommandsArrayWpcom = ( {
 			context: [ '/sites' ],
 			callback: commandNavigation( `/me` ),
 			icon: profileIcon,
+		},
+		{
+			name: 'viewDeveloperFeatures',
+			label: __( 'View developer features' ),
+			searchLabel: [
+				_x( 'view developer features', 'Keyword for the View developer features command' ),
+				_x( 'profile', 'Keyword for the View developer features command' ),
+			].join( ' ' ),
+			callback: commandNavigation( `/me/developer` ),
+			icon: codeIcon,
 		},
 		{
 			name: 'openReader',

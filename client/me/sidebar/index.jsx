@@ -124,6 +124,15 @@ class MeSidebar extends Component {
 						/>
 
 						<SidebarItem
+							selected={ itemLinkMatches( '/developer', path ) }
+							link="/me/developer"
+							label={ translate( 'Developer Features' ) }
+							icon="code"
+							onNavigate={ this.onNavigate }
+							preloadSectionName="developer"
+						/>
+
+						<SidebarItem
 							link="https://dashboard.wordpress.com/wp-admin/index.php?page=my-blogs"
 							label={ translate( 'Manage Blogs' ) }
 							materialIcon="apps"

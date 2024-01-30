@@ -141,6 +141,7 @@ object CalypsoApps: BuildType({
 			name = "Build artifacts"
 			scriptContent = """
 				set -x
+				export IS_CI=true
 				apps=""
 				for dir in ./apps/*/; do
 					# Only include apps which define the "teamcity:build-app" script.

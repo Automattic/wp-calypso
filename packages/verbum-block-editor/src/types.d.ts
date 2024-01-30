@@ -26,3 +26,6 @@ declare module '@wordpress/block-library/build-module/*' {
 
 	export = block;
 }
+declare module '@wordpress/block-editor/build-module/components/iframe/get-compatibility-styles' {
+	export const getCompatibilityStyles: () => Array< HTMLStyleElement >;
+}

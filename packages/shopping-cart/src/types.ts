@@ -255,8 +255,8 @@ export interface ResponseCart< P = ResponseCartProduct > {
 	total_cost_integer: number;
 
 	/**
-	 * The difference between `cost_before_coupon` and the actual price for all
-	 * products in the currency's smallest unit.
+	 * The difference between the cost before any coupon and the actual price
+	 * for all products in the currency's smallest unit.
 	 *
 	 * Note that the difference may be caused by many factors, not just coupons.
 	 * It's best not to rely on it.
@@ -359,12 +359,6 @@ export interface ResponseCartProduct {
 	product_name_en: string;
 
 	/**
-	 * The cart item's original price in the currency's smallest unit.
-	 * @deprecated Use item_original_cost_integer or item_original_subtotal_integer.
-	 */
-	product_cost_integer: number;
-
-	/**
 	 * The cart item's original price without volume in the currency's smallest unit.
 	 *
 	 * Discounts and volume are not included, but quantity is included.
@@ -372,9 +366,24 @@ export interface ResponseCartProduct {
 	item_original_cost_integer: number;
 
 	/**
-	 * The monthly term subtotal of a cart item in the currency's smallest unit.
+	 * The monthly term original price of a cart item in the currency's smallest unit.
 	 */
-	item_subtotal_monthly_cost_integer: number;
+	item_original_monthly_cost_integer: number;
+
+	/**
+	 * The cart item's price before discounts with volume in the currency's
+	 * smallest unit. This is similar to `item_original_subtotal_integer`
+	 * except when it comes to introductory offers. Introductory offer
+	 * discounts are not cost overrides; they actually reassign the base cost
+	 * of the product. However, the shopping-cart endpoint then returns the
+	 * "original" cost of the cart item as the product without the introductory
+	 * offer. This is confusing because the introductory offer isn't really a
+	 * savings of any kind in terms of the way we track discounts. The savings
+	 * is only other kinds of discounts (eg: a coupon). In order to calculate
+	 * the actual savings, we need therefore to know the actual subtotal before
+	 * (non-introductory-offer) discounts. That's what this value is.
+	 */
+	item_subtotal_before_discounts_integer: number;
 
 	/**
 	 * The cart item's original price with volume in the currency's smallest unit.
@@ -403,28 +412,6 @@ export interface ResponseCartProduct {
 	 * @deprecated This is a float and is unreliable. Use item_subtotal_integer
 	 */
 	cost: number;
-
-	/**
-	 * The cart item's price before a coupon (if any) was applied.
-	 *
-	 * This is slightly misleading because although this is the product's cost
-	 * before a coupon was applied, it already includes sale coupons (which are
-	 * actually discounts), and other discounts and does not include certain
-	 * other price changes (eg: domain discounts). It's best not to rely on it.
-	 * @deprecated This is a float and is unreliable. Use
-	 * item_original_subtotal_integer if you
-	 * can, although those have slightly different meanings.
-	 */
-	cost_before_coupon?: number;
-
-	/**
-	 * The difference between `cost_before_coupon` and the actual price.
-	 *
-	 * Note that the difference may be caused by many factors, not just coupons.
-	 * It's best not to rely on it.
-	 * @deprecated This is a float and is unreliable. Use coupon_savings_integer
-	 */
-	coupon_savings?: number;
 
 	/**
 	 * The amount of the local currency deducted by an applied coupon, if any.
@@ -487,6 +474,7 @@ export interface ResponseCartProduct {
 	current_quantity: number | null;
 	extra: ResponseCartProductExtra;
 	item_tax: number;
+	item_tax_rate?: number;
 	product_type: string;
 	included_domain_purchase_amount: number;
 

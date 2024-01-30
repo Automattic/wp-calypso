@@ -17,6 +17,33 @@
 	}
 }
 
+// Inline the action buttons when there is another pinned notice,
+// such as the Live Preview notice.
+.components-notice-list:has(.components-notice) ~ .components-notice-list {
+	.components-notice:has(.wpcom-global-styles-action-is-upgrade) {
+		.components-notice__content {
+			display: flex;
+			flex-wrap: wrap;
+			margin-right: 0;
+			align-items: center;
+
+			.components-notice__actions {
+				margin-left: auto;
+
+				.components-notice__action {
+					margin-top: 0;
+				}
+			}
+		}
+
+		// Hack: this notice is intentionally set to be dismissible (but we hide the close icon),
+		// so that it is guaranteed to be displayed after the pinned notices.
+		.components-notice__dismiss {
+			display: none;
+		}
+	}
+}
+
 .components-notice-list .components-notice__action.components-button.wpcom-global-styles-action-has-icon {
 	display: flex;
 	&::after,

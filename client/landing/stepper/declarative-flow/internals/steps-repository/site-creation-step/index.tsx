@@ -79,7 +79,7 @@ const SiteCreationStep: Step = function SiteCreationStep( { navigation, flow, da
 			[]
 		);
 
-	const username = useSelector( ( state ) => getCurrentUserName( state ) );
+	const username = useSelector( getCurrentUserName );
 
 	const { setPendingAction } = useDispatch( ONBOARD_STORE );
 

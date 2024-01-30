@@ -1,7 +1,7 @@
 {
 	"name": "@automattic/global-styles",
 	"version": "1.0.0",
-	"description": "Wrap global-styles related components from Gutenberg",
+	"description": "Wrap global-styles related components from Gutenberg.",
 	"homepage": "https://github.com/Automattic/wp-calypso",
 	"license": "GPL-2.0-or-later",
 	"author": "Automattic Inc.",
@@ -33,13 +33,14 @@
 		"@automattic/components": "workspace:^",
 		"@automattic/data-stores": "workspace:^",
 		"@automattic/i18n-utils": "workspace:^",
+		"@automattic/typography": "workspace:^",
 		"@tanstack/react-query": "^5.15.5",
-		"@wordpress/block-editor": "^12.16.0",
-		"@wordpress/block-library": "^8.25.0",
-		"@wordpress/components": "^25.14.0",
-		"@wordpress/compose": "^6.25.0",
-		"@wordpress/keycodes": "^3.48.0",
-		"@wordpress/private-apis": "^0.30.0",
+		"@wordpress/block-editor": "^12.18.1",
+		"@wordpress/block-library": "^8.27.1",
+		"@wordpress/components": "^25.16.0",
+		"@wordpress/compose": "^6.27.0",
+		"@wordpress/keycodes": "^3.50.0",
+		"@wordpress/private-apis": "^0.32.0",
 		"classnames": "^2.3.2",
 		"deepmerge": "^4.3.0",
 		"i18n-calypso": "workspace:^",
@@ -51,9 +52,9 @@
 		"wpcom-proxy-request": "workspace:^"
 	},
 	"peerDependencies": {
-		"@wordpress/data": "^9.18.0",
-		"@wordpress/element": "^5.25.0",
-		"@wordpress/i18n": "^4.48.0",
+		"@wordpress/data": "^9.20.0",
+		"@wordpress/element": "^5.27.0",
+		"@wordpress/i18n": "^4.50.0",
 		"debug": "^4.3.3"
 	},
 	"devDependencies": {

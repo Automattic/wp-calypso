@@ -85,6 +85,10 @@ function getAccount( accounts ) {
 	return accounts?.[ 0 ];
 }
 
+function getEmailForwardLimit( data ) {
+	return data?.[ 0 ]?.maximum_mailboxes || 0;
+}
+
 function getMailboxes( data ) {
 	const account = getAccount( data );
 
@@ -116,6 +120,19 @@ function EmailPlan( { domain, hideHeaderCake = false, selectedSite, source } ) {
 			} )
 		);
 	};
+
+	const addEmailForwardMutationActive = useAddEmailForwardMutationIsLoading();
+
+	const { data: emailAccounts = [], isLoading } = useGetEmailAccountsQuery(
+		selectedSite.ID,
+		domain.name,
+		{
+			refetchOnMount: ! addEmailForwardMutationActive,
+			retry: false,
+		}
+	);
+
+	const emailForwardsLimit = getEmailForwardLimit( emailAccounts );
 
 	function getAddMailboxProps() {
 		if ( hasGSuiteWithUs( domain ) ) {
@@ -260,7 +277,6 @@ function EmailPlan( { domain, hideHeaderCake = false, selectedSite, source } ) {
 			);
 		}
 
-		const emailForwardsLimit = 25;
 		const isAtEmailForwardsLimit = mailboxes.length >= emailForwardsLimit;
 
 		return (
@@ -273,17 +289,6 @@ function EmailPlan( { domain, hideHeaderCake = false, selectedSite, source } ) {
 			</VerticalNavItem>
 		);
 	}
-
-	const addEmailForwardMutationActive = useAddEmailForwardMutationIsLoading();
-
-	const { data: emailAccounts = [], isLoading } = useGetEmailAccountsQuery(
-		selectedSite.ID,
-		domain.name,
-		{
-			refetchOnMount: ! addEmailForwardMutationActive,
-			retry: false,
-		}
-	);
 
 	return (
 		<>

@@ -5,7 +5,6 @@ const BASE_URL = 'http://__domain__.invalid/';
 /**
  * Format a URL as a particular type.
  * Does not support formatting invalid or path-relative URLs.
- *
  * @param url The URL to format.
  * @param urlType The URL type into which to format. If not provided, defaults to the same type as `url`, which effectively results in the URL being normalized.
  * @returns The formatted URL.

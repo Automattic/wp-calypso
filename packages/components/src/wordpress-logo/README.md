@@ -1,20 +1,20 @@
-# WordpressLogo
+# WordPressLogo
 
-WordpressLogo is a React component to display wordpress logo.
+WordPressLogo is a React component to display wordpress logo.
 
 ## Usage
 
 ```jsx
-import { WordpressLogo } from '@automattic/components';
+import { WordPressLogo } from '@automattic/components';
 
 export default function MyComponent() {
-	return <WordpressLogo />;
+	return <WordPressLogo />;
 }
 ```
 
 ## Props
 
-The following props can be passed to the WordpressLogo component:
+The following props can be passed to the WordPressLogo component:
 
 | PROPERTY | TYPE     | REQUIRED | DEFAULT | DESCRIPTION                                     |
 | -------- | -------- | -------- | ------- | ----------------------------------------------- |

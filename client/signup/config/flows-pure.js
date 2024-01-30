@@ -1,6 +1,7 @@
 import { isEnabled } from '@automattic/calypso-config';
 import { HOSTING_LP_FLOW } from '@automattic/onboarding';
 import { translate } from 'i18n-calypso';
+import { onEnterOnboarding } from '../flow-actions';
 
 const noop = () => {};
 
@@ -49,13 +50,13 @@ export function generateFlows( {
 		},
 		{
 			name: 'business',
-			steps: [ userSocialStep, 'domains', 'plans-business' ],
+			steps: [ userSocialStep, 'domains', 'plans-business', 'storage-addon' ],
 			destination: getSignupDestination,
 			description: 'Create an account and a blog and then add the business plan to the users cart.',
 			lastModified: '2023-10-11',
 			showRecaptcha: true,
-			providesDependenciesInQuery: [ 'coupon' ],
-			optionalDependenciesInQuery: [ 'coupon' ],
+			providesDependenciesInQuery: [ 'coupon', 'storage' ],
+			optionalDependenciesInQuery: [ 'coupon', 'storage' ],
 			hideProgressIndicator: true,
 		},
 		{
@@ -149,6 +150,7 @@ export function generateFlows( {
 			providesDependenciesInQuery: [ 'coupon' ],
 			optionalDependenciesInQuery: [ 'coupon' ],
 			hideProgressIndicator: true,
+			onEnterFlow: onEnterOnboarding,
 		},
 		{
 			name: 'onboarding-2023-pricing-grid',
@@ -175,7 +177,7 @@ export function generateFlows( {
 		},
 		{
 			name: 'onboarding-pm',
-			steps: [ 'user', 'domains', 'plans' ],
+			steps: [ userSocialStep, 'domains', 'plans' ],
 			destination: getSignupDestination,
 			description:
 				'Paid media version of the onboarding flow. Read more in https://wp.me/pau2Xa-4Kk.',
@@ -186,7 +188,6 @@ export function generateFlows( {
 			optionalDependenciesInQuery: [ 'coupon' ],
 			props: {
 				plans: {
-					displayedIntervals: [ 'yearly', '2yearly', '3yearly' ],
 					/**
 					 * This intent is geared towards customizations related to the paid media flow
 					 * Current customizations are as follows

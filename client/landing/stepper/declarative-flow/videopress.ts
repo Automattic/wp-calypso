@@ -1,5 +1,6 @@
 import config from '@automattic/calypso-config';
 import { PlansSelect, SiteSelect } from '@automattic/data-stores';
+import { TIMELESS_PLAN_BUSINESS, TIMELESS_PLAN_PREMIUM } from '@automattic/data-stores/src/plans';
 import { StyleVariation } from '@automattic/design-picker';
 import { useLocale } from '@automattic/i18n-utils';
 import { VIDEOPRESS_FLOW } from '@automattic/onboarding';
@@ -238,9 +239,13 @@ const videopress: Flow = {
 					blogdescription: siteDescription,
 				} );
 
-				let planObject = supportedPlans.find( ( plan ) => 'premium' === plan.periodAgnosticSlug );
+				let planObject = supportedPlans.find(
+					( plan ) => TIMELESS_PLAN_PREMIUM === plan.periodAgnosticSlug
+				);
 				if ( ! planObject ) {
-					planObject = supportedPlans.find( ( plan ) => 'business' === plan.periodAgnosticSlug );
+					planObject = supportedPlans.find(
+						( plan ) => TIMELESS_PLAN_BUSINESS === plan.periodAgnosticSlug
+					);
 				}
 
 				const planProductObject = getPlanProduct( planObject?.periodAgnosticSlug, 'MONTHLY' );

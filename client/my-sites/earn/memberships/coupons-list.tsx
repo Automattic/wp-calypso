@@ -42,7 +42,7 @@ function CouponsList() {
 	const [ showAddEditDialog, setShowAddEditDialog ] = useState( false );
 	const [ showDeleteDialog, setShowDeleteDialog ] = useState( false );
 	const [ coupon, setCoupon ] = useState< Product | null >( null );
-	const site = useSelector( ( state ) => getSelectedSite( state ) );
+	const site = useSelector( getSelectedSite );
 	const features = useSelector( ( state ) => getFeaturesBySiteId( state, site?.ID ) );
 	const hasLoadedFeatures = features?.active.length > 0;
 	const coupons: Coupon[] = useSelector( ( state ) => getCouponsForSiteId( state, site?.ID ) );
@@ -193,7 +193,7 @@ function CouponsList() {
 													currentCoupon?.duration || '',
 													currentCoupon?.discount_type,
 													currentCoupon?.discount_value || 0,
-													currentCoupon?.discount_currency
+													currentCoupon?.discount_currency || 'USD'
 												) }
 											</Badge>
 										</div>

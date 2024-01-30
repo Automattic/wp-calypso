@@ -8,7 +8,7 @@ import { setPreference } from 'calypso/state/preferences/actions';
 
 const AnnouncementModalExample = () => {
 	const dispatch = useDispatch();
-	const userId = useSelector( ( state ) => getCurrentUserId( state ) );
+	const userId = useSelector( getCurrentUserId );
 	const announcementId = 'example';
 	const dismissPreference = `announcement-modal-${ announcementId }-${ userId }`;
 

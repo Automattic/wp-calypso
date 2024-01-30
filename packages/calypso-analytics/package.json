@@ -1,6 +1,6 @@
 {
 	"name": "@automattic/calypso-analytics",
-	"version": "1.1.1",
+	"version": "1.1.2",
 	"description": "Automattic Analytics.",
 	"homepage": "https://github.com/Automattic/wp-calypso",
 	"license": "GPL-2.0-or-later",
@@ -35,7 +35,7 @@
 		"debug": "^4.3.3",
 		"hash.js": "^1.1.7",
 		"tslib": "^2.3.0",
-		"uuid": "^8.3.2"
+		"uuid": "^9.0.1"
 	},
 	"devDependencies": {
 		"@automattic/calypso-typescript-config": "workspace:^",

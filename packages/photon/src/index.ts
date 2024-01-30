@@ -38,7 +38,6 @@ type PhotonOpts = {
  * Pass `secure: false` to get `http:`.
  *
  * Photon documentation: http://developer.wordpress.com/docs/photon/
- *
  * @param imageUrl - the URL of the image to run through Photon
  * @param [opts]   - optional options object with Photon options
  * @returns The generated Photon URL string
@@ -111,7 +110,6 @@ function isAlreadyPhotoned( host: string ) {
  * Statically hash the subdomain based on the URL, to optimize browser caches.
  * Only use i0 when using photon over https, based on the assumption that https
  * maps to http/2 (or later)
- *
  * @param  {string} pathname The pathname to use
  * @param  {boolean} isSecure Whether we're constructing a HTTPS URL or a HTTP one
  * @returns {string}          The hostname for the pathname

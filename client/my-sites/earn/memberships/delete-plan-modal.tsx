@@ -17,7 +17,7 @@ const RecurringPaymentsPlanDeleteModal = ( {
 	annualProduct,
 }: RecurringPaymentsPlanDeleteModalProps ) => {
 	const translate = useTranslate();
-	const siteId = useSelector( ( state ) => getSelectedSiteId( state ) );
+	const siteId = useSelector( getSelectedSiteId );
 	const dispatch = useDispatch();
 
 	const onClose = ( action?: string ) => {

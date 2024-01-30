@@ -31,6 +31,7 @@ import {
 	domainManagementList,
 	domainManagementTransferIn,
 	domainManagementManageConsent,
+	domainMappingSetup,
 } from 'calypso/my-sites/domains/paths';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import PendingGSuiteTosNotice from './pending-gsuite-tos-notice';
@@ -219,7 +220,13 @@ export class DomainWarnings extends PureComponent {
 		if ( this.props.isCompact ) {
 			noticeProps.text = translate( 'Complete domain setup' );
 			children = (
-				<NoticeAction href={ domainManagementList( this.props.selectedSite.slug ) }>
+				<NoticeAction
+					href={
+						wrongMappedDomains.length === 1
+							? domainMappingSetup( this.props.selectedSite.slug, wrongMappedDomains[ 0 ].name )
+							: domainManagementList( this.props.selectedSite.slug )
+					}
+				>
 					{ translate( 'Go' ) }
 				</NoticeAction>
 			);

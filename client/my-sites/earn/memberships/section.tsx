@@ -40,7 +40,7 @@ function MembershipsSection( { query }: MembershipsSectionProps ) {
 	const dispatch = useDispatch();
 	const source = getSource();
 
-	const site = useSelector( ( state ) => getSelectedSite( state ) );
+	const site = useSelector( getSelectedSite );
 
 	const hasConnectedAccount = useSelector( ( state ) =>
 		getIsConnectedForSiteId( state, site?.ID )

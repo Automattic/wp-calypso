@@ -194,6 +194,23 @@ describe( 'actions', () => {
 	} );
 
 	describe( '#requestThemes()', () => {
+		const getState = () => ( {
+			themes: {
+				queries: {
+					wpcom: new ThemeQueryManager(),
+				},
+			},
+			sites: {
+				items: {},
+			},
+			productsList: {
+				items: {},
+			},
+			purchases: {
+				data: {},
+			},
+		} );
+
 		describe( 'with a wpcom site', () => {
 			let nockScope;
 			useNock( ( nock ) => {
@@ -210,7 +227,7 @@ describe( 'actions', () => {
 			} );
 
 			test( 'should dispatch fetch action when thunk triggered', async () => {
-				await requestThemes( 'wpcom' )( spy );
+				await requestThemes( 'wpcom' )( spy, getState );
 
 				expect( spy ).toHaveBeenCalledWith( {
 					type: THEMES_REQUEST,
@@ -240,7 +257,7 @@ describe( 'actions', () => {
 			} );
 
 			test( 'should dispatch fetch action when thunk triggered', () => {
-				requestThemes( 77203074 )( spy );
+				requestThemes( 77203074 )( spy, getState );
 
 				expect( spy ).toHaveBeenCalledWith( {
 					type: THEMES_REQUEST,
@@ -250,7 +267,28 @@ describe( 'actions', () => {
 			} );
 
 			test( 'should dispatch fail action when request fails', () => {
-				return requestThemes( 1916284 )( spy ).then( () => {
+				const jetpackGetState = () => ( {
+					themes: {
+						queries: {
+							wpcom: new ThemeQueryManager(),
+						},
+					},
+					sites: {
+						items: {
+							1916284: {
+								options: { is_wpcom_atomic: false, jetpack_connection_active_plugins: [ 'foo' ] },
+							},
+						},
+					},
+					productsList: {
+						items: {},
+					},
+					purchases: {
+						data: {},
+					},
+				} );
+
+				return requestThemes( 1916284 )( spy, jetpackGetState ).then( () => {
 					expect( spy ).toHaveBeenCalledWith( {
 						type: THEMES_REQUEST_FAILURE,
 						siteId: 1916284,
@@ -283,7 +321,7 @@ describe( 'actions', () => {
 			} );
 
 			test( 'should dispatch fetch action when thunk triggered', () => {
-				requestThemes( 'wporg' )( spy );
+				requestThemes( 'wporg' )( spy, getState );
 
 				expect( spy ).toHaveBeenCalledWith( {
 					type: THEMES_REQUEST,
@@ -706,6 +744,23 @@ describe( 'actions', () => {
 			},
 		];
 
+		const getState = () => ( {
+			themes: {
+				queries: {
+					wpcom: new ThemeQueryManager(),
+				},
+			},
+			sites: {
+				items: {},
+			},
+			productsList: {
+				items: {},
+			},
+			purchases: {
+				data: {},
+			},
+		} );
+
 		const successfulParameters = {
 			themes: [ 'storefront', 'twentysixteen' ],
 			action: 'update',
@@ -774,7 +829,7 @@ describe( 'actions', () => {
 				siteId: 2211667,
 			} );
 
-			spy.mock.calls[ 2 ][ 0 ]( spy );
+			spy.mock.calls[ 2 ][ 0 ]( spy, getState );
 
 			expect( spy.mock.calls[ 3 ][ 0 ].type ).toEqual( THEMES_REQUEST );
 		} );
@@ -1467,8 +1522,6 @@ describe( 'actions', () => {
 					livePreview(
 						2211667,
 						'pendant',
-						false,
-						undefined,
 						'detail'
 					)( dispatch, state ).then( () => {
 						expect( dispatch ).toHaveBeenCalledWith( livePreviewStartAction );
@@ -1513,8 +1566,6 @@ describe( 'actions', () => {
 						livePreview(
 							2211667,
 							'pendant',
-							false,
-							undefined,
 							'detail'
 						)( dispatch, state ).then( () => {
 							expect( dispatch ).toHaveBeenCalledWith( livePreviewStartAction );
@@ -1540,8 +1591,6 @@ describe( 'actions', () => {
 						livePreview(
 							2211667,
 							'pendant',
-							false,
-							undefined,
 							'detail'
 						)( dispatch, state ).then( () => {
 							expect( dispatch ).toHaveBeenCalledWith( livePreviewStartAction );

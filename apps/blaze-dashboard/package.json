@@ -1,7 +1,7 @@
 {
 	"name": "@automattic/blaze-dashboard",
 	"version": "0.1.0",
-	"description": "Blaze dashboard served within wp-admin via the Jetpack plugin",
+	"description": "Blaze dashboard served within wp-admin via the Jetpack plugin.",
 	"main": "dist/build.min.js",
 	"sideEffects": true,
 	"repository": {
@@ -54,7 +54,7 @@
 		"@automattic/webpack-extensive-lodash-replacement-plugin": "workspace:^",
 		"@automattic/webpack-inline-constant-exports-plugin": "workspace:^",
 		"@automattic/wp-babel-makepot": "workspace:^",
-		"@wordpress/dependency-extraction-webpack-plugin": "^4.31.0",
+		"@wordpress/dependency-extraction-webpack-plugin": "^5.1.0",
 		"autoprefixer": "^10.2.5",
 		"gettext-parser": "^6.0.0",
 		"html-webpack-plugin": "^5.6.0",
