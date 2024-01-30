@@ -87,15 +87,15 @@ fun gutenbergCoreE2eBuildType(): BuildType {
 		}
 
 		params {
-			# WP.com URL of the site to test against.
+			// WP.com URL of the site to test against.
 			password("WP_BASE_URL", "credentialsJSON:5cc9ce44-c31a-4591-9f02-cda749351bff");
-			# WP.com username and password to use for logging in.
+			// WP.com username and password to use for logging in.
 			password("WP_USERNAME", "credentialsJSON:ab140672-6955-4206-9ae4-df940896992d");
 			password("WP_PASSWORD", "credentialsJSON:1b787674-1c6f-41c5-9b39-41768fa1aa0c");
-			# Calypso client ID and secret for remote login.
+			// Calypso client ID and secret for remote logging in.
 			password("WP_CLIENT_ID", "credentialsJSON:7bcd18c5-7ebe-42ab-9f85-45abcea3f21b");
 			password("WP_CLIENT_SECRET", "credentialsJSON:87a99f9c-2bf6-43c2-bd43-903f28bec4fb");
-			# Application password created for authenticating REST API requests.
+			// Application password for authenticating REST API requests.
 			password("WP_APP_PASSWORD", "credentialsJSON:2f191dbd-7341-4ff9-acab-f5dd0111e364");
 		}
 
