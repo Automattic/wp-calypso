@@ -8,14 +8,18 @@
  */
 
 import { Spinner } from '@automattic/components';
+import { useTranslate } from 'i18n-calypso';
 import { Fragment } from 'react';
 import { useSelector } from 'react-redux';
 import Sidebar from 'calypso/layout/sidebar';
 import SidebarSeparator from 'calypso/layout/sidebar/separator';
 import { getIsRequestingAdminMenu } from 'calypso/state/admin-menu/selectors';
+import { getCurrentUser } from 'calypso/state/current-user/selectors';
 import isSiteWpcomAtomic from 'calypso/state/selectors/is-site-wpcom-atomic';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
 import { getSidebarIsCollapsed, getSelectedSiteId } from 'calypso/state/ui/selectors';
+import MySitesSidebarUnifiedFooter from './footer';
+import MySitesSidebarUnifiedHeader from './header';
 import MySitesSidebarUnifiedItem from './item';
 import MySitesSidebarUnifiedMenu from './menu';
 import useSiteMenuItems from './use-site-menu-items';
@@ -29,8 +33,10 @@ export const MySitesSidebarUnified = ( { path } ) => {
 	const isRequestingMenu = useSelector( getIsRequestingAdminMenu );
 	const sidebarIsCollapsed = useSelector( getSidebarIsCollapsed );
 	const siteId = useSelector( getSelectedSiteId );
+	const currentUser = useSelector( getCurrentUser );
 	const isJetpack = useSelector( ( state ) => isJetpackSite( state, siteId ) );
 	const isSiteAtomic = useSelector( ( state ) => isSiteWpcomAtomic( state, siteId ) );
+	const translate = useTranslate();
 
 	/**
 	 * If there are no menu items and we are currently requesting some,
@@ -48,37 +54,41 @@ export const MySitesSidebarUnified = ( { path } ) => {
 
 	return (
 		<Fragment>
-			<Sidebar>
-				{ menuItems.map( ( item, i ) => {
-					const isSelected = item?.url && itemLinkMatches( item.url, path );
+			<Sidebar className="global-sidebar">
+				<MySitesSidebarUnifiedHeader />
+				<div className="sidebar__body">
+					{ menuItems.map( ( item, i ) => {
+						const isSelected = item?.url && itemLinkMatches( item.url, path );
 
-					if ( 'separator' === item?.type ) {
-						return <SidebarSeparator key={ i } />;
-					}
+						if ( 'separator' === item?.type ) {
+							return <SidebarSeparator key={ i } />;
+						}
 
-					if ( item?.children?.length ) {
+						if ( item?.children?.length ) {
+							return (
+								<MySitesSidebarUnifiedMenu
+									key={ item.slug }
+									path={ path }
+									link={ item.url }
+									selected={ isSelected }
+									sidebarCollapsed={ sidebarIsCollapsed }
+									shouldOpenExternalLinksInCurrentTab={ shouldOpenExternalLinksInCurrentTab }
+									{ ...item }
+								/>
+							);
+						}
+
 						return (
-							<MySitesSidebarUnifiedMenu
+							<MySitesSidebarUnifiedItem
 								key={ item.slug }
-								path={ path }
-								link={ item.url }
 								selected={ isSelected }
-								sidebarCollapsed={ sidebarIsCollapsed }
 								shouldOpenExternalLinksInCurrentTab={ shouldOpenExternalLinksInCurrentTab }
 								{ ...item }
 							/>
 						);
-					}
-
-					return (
-						<MySitesSidebarUnifiedItem
-							key={ item.slug }
-							selected={ isSelected }
-							shouldOpenExternalLinksInCurrentTab={ shouldOpenExternalLinksInCurrentTab }
-							{ ...item }
-						/>
-					);
-				} ) }
+					} ) }
+				</div>
+				<MySitesSidebarUnifiedFooter user={ currentUser } translate={ translate } />
 			</Sidebar>
 		</Fragment>
 	);

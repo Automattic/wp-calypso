@@ -16,14 +16,6 @@ export default function allSitesMenu( { showManagePlugins = false } = {} ) {
 			url: '/sites',
 		},
 		{
-			icon: 'gridicons-reader',
-			slug: 'reader',
-			title: translate( 'Reader' ),
-			navigationLabel: translate( 'Reader' ),
-			type: 'menu-item',
-			url: '/read',
-		},
-		{
 			icon: 'dashicons-admin-site-alt3',
 			slug: 'domains',
 			title: translate( 'Domains' ),
