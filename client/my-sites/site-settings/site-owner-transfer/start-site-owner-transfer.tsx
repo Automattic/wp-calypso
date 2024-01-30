@@ -20,7 +20,7 @@ import type { Purchase } from 'calypso/lib/purchases/types';
 type Props = {
 	selectedSiteId: number | null;
 	selectedSiteSlug: string | null;
-	siteOwner: User;
+	siteOwner: string;
 	customDomains: ResponseDomain[];
 	isAtomicSite: boolean | null;
 	onSiteTransferSuccess: () => void;
@@ -280,10 +280,10 @@ const StartSiteOwnerTransfer = ( {
 
 	const handleFormSubmit = ( event: FormEvent< HTMLFormElement > ) => {
 		event.preventDefault();
-		if ( ! siteOwner?.email ) {
+		if ( ! siteOwner ) {
 			return;
 		}
-		startSiteOwnerTransfer( { newSiteOwner: siteOwner.email } );
+		startSiteOwnerTransfer( { newSiteOwner: siteOwner } );
 	};
 
 	const startSiteTransferForm = (
