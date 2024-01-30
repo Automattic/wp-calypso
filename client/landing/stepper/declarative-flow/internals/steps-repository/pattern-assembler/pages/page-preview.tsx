@@ -5,6 +5,7 @@ import classnames from 'classnames';
 import { CSSProperties, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import useOutsideClickCallback from 'calypso/lib/use-outside-click-callback';
+import { DEFAULT_VIEWPORT_WIDTH, DEFAULT_VIEWPORT_HEIGHT } from '../constants';
 import { PATTERN_ASSEMBLER_EVENTS } from '../events';
 import prependTitleBlockToPagePattern from '../html-transformers/prepend-title-block-to-page-pattern';
 import PatternTooltipDeadClick from '../pattern-tooltip-dead-click';
@@ -30,9 +31,6 @@ interface PagePreviewProps extends BasePageProps {
 	onFullscreenLeave: () => void;
 }
 
-const PATTERN_PAGE_PREVIEW_ITEM_VIEWPORT_HEIGHT = 500;
-const PATTERN_PAGE_PREVIEW_ITEM_VIEWPORT_WIDTH = 1080;
-
 const Page = ( { className, style, patterns, transformPatternHtml }: PageProps ) => {
 	const pageTitle = useMemo( () => {
 		return patterns.find( isPagePattern )?.title ?? '';
@@ -56,8 +54,8 @@ const Page = ( { className, style, patterns, transformPatternHtml }: PageProps )
 					key={ pattern.ID }
 					maxHeight="none"
 					patternId={ encodePatternId( pattern.ID ) }
-					viewportWidth={ PATTERN_PAGE_PREVIEW_ITEM_VIEWPORT_WIDTH }
-					viewportHeight={ PATTERN_PAGE_PREVIEW_ITEM_VIEWPORT_HEIGHT }
+					viewportWidth={ DEFAULT_VIEWPORT_WIDTH }
+					viewportHeight={ DEFAULT_VIEWPORT_HEIGHT }
 					transformHtml={
 						isPagePattern( pattern ) ? transformPagePatternHtml : transformPatternHtml
 					}
