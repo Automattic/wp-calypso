@@ -1,6 +1,6 @@
 import config from '@automattic/calypso-config';
 import page from '@automattic/calypso-router';
-import { useEffect } from 'react';
+import { useEffect, ReactNode } from 'react';
 import { useDispatch } from 'react-redux';
 import { useNoticeVisibilityQuery } from 'calypso/my-sites/stats/hooks/use-notice-visibility-query';
 import { useSelector } from 'calypso/state';
@@ -12,8 +12,11 @@ import {
 import { isStatsNoticeSettingsFetching } from 'calypso/state/stats/notices/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import useStatsPurchases from '../hooks/use-stats-purchases';
+interface StatsRedirectFlowProps {
+	children: ReactNode;
+}
 
-const StatsRedirectFlow = () => {
+const StatsRedirectFlow: React.FC< StatsRedirectFlowProps > = ( { children } ) => {
 	const siteId = useSelector( getSelectedSiteId );
 	const siteSlug = useSelector( ( state ) => getSiteSlug( state, siteId ) );
 	const siteCreatedTimeStamp = useSelector( ( state ) =>
@@ -74,8 +77,12 @@ const StatsRedirectFlow = () => {
 
 		page.redirect( `/stats/purchase/${ siteSlug }?${ queryParams.toString() }` );
 
-		return;
+		return <></>;
+	} else if ( ! isFetching ) {
+		return <>{ children }</>;
 	}
+
+	return <></>;
 };
 
 export default StatsRedirectFlow;
