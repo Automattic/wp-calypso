@@ -14,6 +14,7 @@ import twoStepAuthorization from 'calypso/lib/two-step-authorization';
 import withFormBase from 'calypso/me/form-base/with-form-base';
 import ReauthRequired from 'calypso/me/reauth-required';
 import { recordGoogleEvent } from 'calypso/state/analytics/actions';
+import { getCurrentUser } from 'calypso/state/current-user/selectors';
 import { successNotice, removeNotice } from 'calypso/state/notices/actions';
 import { isFetchingUserSettings } from 'calypso/state/user-settings/selectors';
 import { DeveloperFeatures } from './features/index';
@@ -22,6 +23,10 @@ import { getIAmDeveloperCopy } from './get-i-am-a-developer-copy';
 import './style.scss';
 
 class Developer extends Component {
+	getSurveyHref = () => {
+		return 'handle_me';
+	};
+
 	setDeveloperSurveyCookie = ( value, maxAge ) => {
 		document.cookie = cookie.serialize( 'developer_survey', value, {
 			path: '/',
@@ -33,9 +38,12 @@ class Developer extends Component {
 		const cookies = cookie.parse( document.cookie );
 
 		const isDevAccountEnabled = isDevAccount ?? this.props.getSetting( 'is_dev_account' );
+		const isEN = this.props.currentUser.localeSlug === 'en';
 
 		return (
-			isDevAccountEnabled && ! [ 'completed', 'dismissed' ].includes( cookies.developer_survey )
+			isEN &&
+			isDevAccountEnabled &&
+			! [ 'completed', 'dismissed' ].includes( cookies.developer_survey )
 		);
 	};
 
@@ -49,7 +57,7 @@ class Developer extends Component {
 					i: <i />,
 					surveyLink: (
 						<a
-							href="handle_me"
+							href={ this.getSurveyHref() }
 							target="_blank"
 							rel="noopener noreferrer"
 							onClick={ () => {
@@ -152,6 +160,7 @@ export default compose(
 	connect(
 		( state ) => ( {
 			isFetchingUserSettings: isFetchingUserSettings( state ),
+			currentUser: getCurrentUser( state ),
 		} ),
 		{
 			recordGoogleEvent,
