@@ -25,8 +25,6 @@ import {
 } from '@automattic/components';
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
-import useIsLargeCurrency from '../../hooks/use-is-large-currency';
-import { usePlanPricingInfoFromGridPlans } from '../../hooks/use-plan-pricing-info-from-grid-plans';
 import { isStorageUpgradeableForPlan } from '../../lib/is-storage-upgradeable-for-plan';
 import { getStorageStringFromFeature } from '../../util';
 import PlanFeatures2023GridActions from '../actions';
@@ -124,11 +122,6 @@ const FeaturesGridPlanPrice = ( {
 	planUpgradeCreditsApplicable,
 	renderedGridPlans,
 }: FeaturesGridPlanPriceProps ) => {
-	const { prices, currencyCode } = usePlanPricingInfoFromGridPlans( {
-		gridPlans: renderedGridPlans,
-	} );
-	const isLargeCurrency = useIsLargeCurrency( { prices, currencyCode: currencyCode || 'USD' } );
-
 	return renderedGridPlans.map( ( { planSlug } ) => {
 		return (
 			<PlanDivOrTdContainer
@@ -140,7 +133,6 @@ const FeaturesGridPlanPrice = ( {
 				<PlanFeatures2023GridHeaderPrice
 					planSlug={ planSlug }
 					planUpgradeCreditsApplicable={ planUpgradeCreditsApplicable }
-					isLargeCurrency={ isLargeCurrency }
 					currentSitePlanSlug={ currentSitePlanSlug }
 					visibleGridPlans={ renderedGridPlans }
 				/>
@@ -269,10 +261,6 @@ const TopButtons = ( {
 	renderedGridPlans,
 }: TopButtonsProps ) => {
 	const translate = useTranslate();
-	const { prices, currencyCode } = usePlanPricingInfoFromGridPlans( {
-		gridPlans: renderedGridPlans,
-	} );
-	const isLargeCurrency = useIsLargeCurrency( { prices, currencyCode: currencyCode || 'USD' } );
 
 	return renderedGridPlans.map(
 		( { planSlug, availableForPurchase, isMonthlyPlan, features: { storageOptions } } ) => {
@@ -320,8 +308,8 @@ const TopButtons = ( {
 						planActionOverrides={ planActionOverrides }
 						showMonthlyPrice={ true }
 						isStuck={ options?.isStuck || false }
-						isLargeCurrency={ isLargeCurrency }
 						storageOptions={ storageOptions }
+						visibleGridPlans={ renderedGridPlans }
 					/>
 				</PlanDivOrTdContainer>
 			);

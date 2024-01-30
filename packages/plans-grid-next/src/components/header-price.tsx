@@ -3,11 +3,12 @@ import { PlanPrice } from '@automattic/components';
 import styled from '@emotion/styled';
 import { useTranslate } from 'i18n-calypso';
 import { usePlansGridContext } from '../grid-context';
+import useIsLargeCurrency from '../hooks/use-is-large-currency';
+import { usePlanPricingInfoFromGridPlans } from '../hooks/use-plan-pricing-info-from-grid-plans';
 import type { GridPlan } from '../types';
 
 interface PlanFeatures2023GridHeaderPriceProps {
 	planSlug: PlanSlug;
-	isLargeCurrency: boolean;
 	planUpgradeCreditsApplicable?: number | null;
 	currentSitePlanSlug?: string | null;
 	visibleGridPlans: GridPlan[];
@@ -132,7 +133,6 @@ const HeaderPriceContainer = styled.div`
 
 const PlanFeatures2023GridHeaderPrice = ( {
 	planSlug,
-	isLargeCurrency,
 	planUpgradeCreditsApplicable,
 	visibleGridPlans,
 }: PlanFeatures2023GridHeaderPriceProps ) => {
@@ -153,6 +153,9 @@ const PlanFeatures2023GridHeaderPrice = ( {
 	const isAnyVisibleGridPlanOnIntroOffer = visibleGridPlans.some(
 		( { pricing } ) => pricing.introOffer && ! pricing.introOffer.isOfferComplete
 	);
+
+	const { prices } = usePlanPricingInfoFromGridPlans( { gridPlans: visibleGridPlans } );
+	const isLargeCurrency = useIsLargeCurrency( { prices, currencyCode: currencyCode || 'USD' } );
 
 	if ( isWpcomEnterpriseGridPlan( planSlug ) || ! isPricedPlan ) {
 		return null;
