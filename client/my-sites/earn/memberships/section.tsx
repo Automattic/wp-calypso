@@ -17,6 +17,7 @@ import {
 	getConnectedAccountIdForSiteId,
 	getConnectedAccountDescriptionForSiteId,
 	getConnectUrlForSiteId,
+	getCouponsAndGiftsEnabledForSiteId,
 } from 'calypso/state/memberships/settings/selectors';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import CommissionFees from '../components/commission-fees';
@@ -26,6 +27,7 @@ import {
 	OLD_ADD_NEWSLETTER_PAYMENT_PLAN_HASH,
 	LAUNCHPAD_HASH,
 } from './constants';
+import CouponList from './coupons-list';
 import ProductList from './products-list';
 import './style.scss';
 
@@ -39,7 +41,7 @@ function MembershipsSection( { query }: MembershipsSectionProps ) {
 	const source = getSource();
 	const [ disconnectedConnectedAccountId, setDisconnectedConnectedAccountId ] = useState( null );
 
-	const site = useSelector( ( state ) => getSelectedSite( state ) );
+	const site = useSelector( getSelectedSite );
 
 	const connectedAccountId = useSelector( ( state ) =>
 		getConnectedAccountIdForSiteId( state, site?.ID )
@@ -54,6 +56,10 @@ function MembershipsSection( { query }: MembershipsSectionProps ) {
 
 	const { commission } = useSelector( ( state ) =>
 		getEarningsWithDefaultsForSiteId( state, site?.ID )
+	);
+
+	const couponsAndGiftsEnabled = useSelector( ( state ) =>
+		getCouponsAndGiftsEnabledForSiteId( state, site?.ID )
 	);
 
 	const navigateToLaunchpad = useCallback( () => {
@@ -262,6 +268,7 @@ function MembershipsSection( { query }: MembershipsSectionProps ) {
 			<div>
 				{ renderNotices() }
 				<ProductList />
+				{ couponsAndGiftsEnabled && <CouponList /> }
 				{ renderSettings() }
 			</div>
 		</div>

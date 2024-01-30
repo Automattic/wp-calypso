@@ -2,6 +2,7 @@ import { getTrackingPrefs, setTrackingPrefs } from '@automattic/calypso-analytic
 import { CookieBanner } from '@automattic/privacy-toolset';
 import cookie from 'cookie';
 import { useCallback, useEffect, useState } from 'react';
+import { loadTrackingScripts } from 'calypso/lib/analytics/ad-tracking/load-tracking-scripts';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import {
 	refreshCountryCodeCookieGdpr,
@@ -20,7 +21,7 @@ const noop = () => undefined;
 const CookieBannerInner = ( { onClose }: { onClose: () => void } ) => {
 	const content = useCookieBannerContent();
 	const dispatch = useDispatch();
-	const isLoggedIn = useSelector( ( state ) => isUserLoggedIn( state ) );
+	const isLoggedIn = useSelector( isUserLoggedIn );
 	const { setUserAdvertisingOptOut } = useDoNotSell();
 
 	const handleAccept = useCallback< CookieBannerProps[ 'onAccept' ] >(
@@ -38,6 +39,10 @@ const CookieBannerInner = ( { onClose }: { onClose: () => void } ) => {
 			if ( isLoggedIn ) {
 				setUserAdvertisingOptOut( ! buckets.advertising );
 			}
+
+			// Reload tracking scripts once the user consent changed
+			loadTrackingScripts( true );
+
 			onClose();
 		},
 		[ onClose ]

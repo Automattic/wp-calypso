@@ -22,36 +22,43 @@ export default function QuickLinksNav() {
 		{
 			icon: category,
 			link: JETPACK_MANAGE_DASHBOARD_LINK,
+			slug: 'manage_sites',
 			title: translate( 'Manage all sites' ),
 		},
 		{
 			icon: plus,
 			link: localizeUrl( 'https://wordpress.com/jetpack/connect' ),
+			slug: 'add_sites',
 			title: translate( 'Add sites to Jetpack Manage' ),
 		},
 		{
 			icon: plugins,
 			link: JETPACK_MANAGE_PLUGINS_LINK,
+			slug: 'manage_plugins',
 			title: translate( 'Manage plugins' ),
 		},
 		{
 			icon: key,
 			link: JETPACK_MANAGE_LICENCES_LINK,
+			slug: 'view_licenses',
 			title: translate( 'View all licenses' ),
 		},
 		{
 			icon: store,
 			link: JETPACK_MANAGE_BILLING_LINK,
+			slug: 'view_billing',
 			title: translate( 'View billing' ),
 		},
 		{
 			icon: receipt,
 			link: JETPACK_MANAGE_INVOICES_LINK,
+			slug: 'view_invoices',
 			title: translate( 'View invoices' ),
 		},
 		{
 			icon: tag,
 			link: '/partner-portal/issue-license',
+			slug: 'view_prices',
 			title: translate( 'View prices' ),
 		},
 	].map( ( props ) => ( {

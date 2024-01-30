@@ -12,3 +12,7 @@ export const getMinimumComment = ( comment ) => ( {
 	status: get( comment, 'status' ),
 	can_moderate: get( comment, 'can_moderate' ),
 } );
+
+export function hasBlocks( comment = '' ) {
+	return comment.includes( '<!-- wp:' );
+}

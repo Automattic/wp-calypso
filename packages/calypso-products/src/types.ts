@@ -87,6 +87,8 @@ export interface WPComPlan extends Plan {
 	getBlogOnboardingSignupFeatures?: () => Feature[];
 	getBlogOnboardingHighlightedFeatures?: () => Feature[];
 	getBlogOnboardingSignupJetpackFeatures?: () => Feature[];
+	getSenseiFeatures?: ( term?: Product[ 'term' ] ) => () => Feature[];
+	getSenseiHighlightedFeatures?: () => Feature[];
 	getPromotedFeatures?: () => Feature[];
 	getPathSlug: () => string;
 	getAnnualPlansOnlyFeatures?: () => string[];

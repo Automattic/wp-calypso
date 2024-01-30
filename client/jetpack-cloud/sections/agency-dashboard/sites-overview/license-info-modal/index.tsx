@@ -20,6 +20,9 @@ interface Props {
 	extraAsideContent?: JSX.Element;
 	isDisabled?: boolean;
 	onCtaClick?: () => void;
+	isCTAExternalLink?: boolean;
+	ctaHref?: string;
+	showPaymentPlan?: boolean;
 }
 
 export default function LicenseInfoModal( {
@@ -31,6 +34,9 @@ export default function LicenseInfoModal( {
 	extraAsideContent,
 	isDisabled,
 	onCtaClick,
+	isCTAExternalLink,
+	ctaHref,
+	showPaymentPlan,
 }: Props ) {
 	const isMobile = useMobileBreakpoint();
 	const translate = useTranslate();
@@ -84,10 +90,13 @@ export default function LicenseInfoModal( {
 				className={ className }
 				product={ currentLicenseProduct }
 				ctaLabel={ label ?? translate( 'Issue License' ) }
+				isCTAExternalLink={ isCTAExternalLink }
+				ctaHref={ ctaHref }
 				isDisabled={ ! partnerCanIssueLicense || isDisabled }
 				onActivate={ onIssueLicense }
 				onClose={ onHideLicenseInfo }
 				extraAsideContent={ extraAsideContent }
+				showPaymentPlan={ showPaymentPlan }
 			/>
 		)
 	);

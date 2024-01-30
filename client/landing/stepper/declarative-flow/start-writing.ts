@@ -3,6 +3,7 @@ import { useLocale } from '@automattic/i18n-utils';
 import { START_WRITING_FLOW } from '@automattic/onboarding';
 import { useDispatch } from '@wordpress/data';
 import { useEffect } from '@wordpress/element';
+import { translate } from 'i18n-calypso';
 import { getLocaleFromQueryParam, getLocaleFromPathname } from 'calypso/boot/locale';
 import { recordSubmitStep } from 'calypso/landing/stepper/declarative-flow/internals/analytics/record-submit-step';
 import { redirect } from 'calypso/landing/stepper/declarative-flow/internals/steps-repository/import/util';
@@ -21,7 +22,9 @@ import { useLoginUrl } from '../utils/path';
 
 const startWriting: Flow = {
 	name: START_WRITING_FLOW,
-	title: 'Blog',
+	get title() {
+		return translate( 'Blog' );
+	},
 	useSteps() {
 		return [
 			{
@@ -118,7 +121,7 @@ const startWriting: Flow = {
 						const siteOrigin = window.location.origin;
 
 						return redirect(
-							`https://${ providedDependencies?.siteSlug }/wp-admin/post-new.php?${ START_WRITING_FLOW }=true&origin=${ siteOrigin }`
+							`https://${ providedDependencies?.siteSlug }/wp-admin/post-new.php?${ START_WRITING_FLOW }=true&origin=${ siteOrigin }&new_prompt=true`
 						);
 					}
 				}
@@ -138,7 +141,7 @@ const startWriting: Flow = {
 						const siteOrigin = window.location.origin;
 
 						return redirect(
-							`https://${ providedDependencies?.siteSlug }/wp-admin/post-new.php?${ START_WRITING_FLOW }=true&origin=${ siteOrigin }`
+							`https://${ providedDependencies?.siteSlug }/wp-admin/post-new.php?${ START_WRITING_FLOW }=true&origin=${ siteOrigin }&new_prompt=true`
 						);
 					}
 
@@ -243,7 +246,7 @@ const startWriting: Flow = {
 		const logInUrl = useLoginUrl( {
 			variationName: flowName,
 			redirectTo: `/setup/${ flowName }`,
-			pageTitle: 'Start writing',
+			pageTitle: translate( 'Start writing' ),
 			locale,
 		} );
 		// Despite sending a CHECKING state, this function gets called again with the

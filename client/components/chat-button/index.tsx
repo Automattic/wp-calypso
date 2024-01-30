@@ -20,6 +20,7 @@ type Props = {
 	primary?: boolean;
 	siteUrl?: string;
 	children?: React.ReactNode;
+	withHelpCenter?: boolean;
 };
 
 const HELP_CENTER_STORE = HelpCenter.register();
@@ -58,6 +59,7 @@ const ChatButton: FC< Props > = ( {
 	onError,
 	primary = false,
 	siteUrl,
+	withHelpCenter = true,
 } ) => {
 	const { __ } = useI18n();
 
@@ -93,7 +95,7 @@ const ChatButton: FC< Props > = ( {
 				break;
 		}
 
-		if ( isEligibleForChat && isChatAvailable ) {
+		if ( isEligibleForChat && isChatAvailable && ( canConnectToZendesk || withHelpCenter ) ) {
 			return true;
 		}
 

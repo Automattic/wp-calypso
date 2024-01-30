@@ -37,6 +37,7 @@
 	"dependencies": {
 		"@automattic/calypso-config": "workspace:^",
 		"@automattic/calypso-products": "workspace:^",
+		"@automattic/calypso-razorpay": "^0.0.1",
 		"@automattic/calypso-stripe": "workspace:^",
 		"@automattic/components": "workspace:^",
 		"@automattic/composite-checkout": "workspace:^",
@@ -44,20 +45,20 @@
 		"@automattic/shopping-cart": "workspace:^",
 		"@emotion/styled": "^11.11.0",
 		"@stripe/stripe-js": "^1.53.0",
-		"@wordpress/data": "^9.18.0",
-		"@wordpress/i18n": "^4.48.0",
-		"@wordpress/react-i18n": "^3.46.0",
+		"@wordpress/data": "^9.20.0",
+		"@wordpress/i18n": "^4.50.0",
+		"@wordpress/react-i18n": "^3.48.0",
 		"debug": "^4.3.3",
 		"i18n-calypso": "workspace:^",
 		"prop-types": "^15.7.2"
 	},
 	"devDependencies": {
 		"@automattic/calypso-typescript-config": "workspace:^",
-		"@testing-library/jest-dom": "^6.1.5",
+		"@testing-library/jest-dom": "^6.2.0",
 		"@testing-library/react": "^14.1.2",
 		"react": "^18.2.0",
 		"react-dom": "^18.2.0",
-		"typescript": "^5.3.2"
+		"typescript": "^5.3.3"
 	},
 	"peerDependencies": {
 		"@emotion/react": "^11.4.1",

@@ -105,16 +105,10 @@ const GlobalStylesVariations = ( {
 }: GlobalStylesVariationsProps ) => {
 	const hasEnTranslation = useHasEnTranslation();
 	const isRegisteredCoreBlocks = useRegisterCoreBlocks();
-	const premiumStylesDescription = hasEnTranslation(
-		'Unlock style variations and tons of other features with the %(planName)s plan, or try them out now for free.'
-	)
-		? translate(
-				'Unlock style variations and tons of other features with the %(planName)s plan, or try them out now for free.',
-				{ args: { planName: getPlan( PLAN_PREMIUM )?.getTitle() ?? '' } }
-		  )
-		: translate(
-				'Unlock premium styles and tons of other features with the Premium plan, or try them out now for free.'
-		  );
+	const premiumStylesDescription = translate(
+		'Unlock style variations and tons of other features with the %(planName)s plan, or try them out now for free.',
+		{ args: { planName: getPlan( PLAN_PREMIUM )?.getTitle() ?? '' } }
+	);
 
 	const baseGlobalStyles = useMemo(
 		() =>

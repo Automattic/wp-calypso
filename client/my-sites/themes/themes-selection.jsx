@@ -1,6 +1,6 @@
 import {
 	FEATURE_INSTALL_THEMES,
-	WPCOM_FEATURES_PREMIUM_THEMES,
+	WPCOM_FEATURES_PREMIUM_THEMES_UNLIMITED,
 } from '@automattic/calypso-products';
 import pageRouter from '@automattic/calypso-router';
 import { compact } from 'lodash';
@@ -15,7 +15,7 @@ import { recordGoogleEvent, recordTracksEvent } from 'calypso/state/analytics/ac
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
-import { getSiteSlug, isJetpackSite } from 'calypso/state/sites/selectors';
+import { getSiteSlug } from 'calypso/state/sites/selectors';
 import { setThemePreviewOptions } from 'calypso/state/themes/actions';
 import {
 	arePremiumThemesEnabled,
@@ -40,6 +40,7 @@ class ThemesSelection extends Component {
 		getOptions: PropTypes.func,
 		getActionLabel: PropTypes.func,
 		incrementPage: PropTypes.func,
+		resetPage: PropTypes.func,
 		listLabel: PropTypes.string,
 		onScreenshotClick: PropTypes.func,
 		query: PropTypes.object.isRequired,
@@ -78,6 +79,12 @@ class ThemesSelection extends Component {
 		const { query } = this.props;
 		if ( ! query.search && ! query.filter && ! query.tier ) {
 			this.props.incrementPage();
+		}
+	}
+
+	componentDidUpdate( nextProps ) {
+		if ( nextProps.query.number !== this.props.query.number ) {
+			this.props.resetPage();
 		}
 	}
 
@@ -137,10 +144,14 @@ class ThemesSelection extends Component {
 	getOptions = ( themeId, styleVariation, context ) => {
 		let options = this.props.getOptions( themeId, styleVariation );
 
-		const { tabFilter } = this.props;
-		const wrappedActivateAction = ( action ) => {
+		const { tabFilter, tier } = this.props;
+		const wrappedActivateOrLivePreviewAction = ( action ) => {
 			return ( t ) => {
-				this.props.setThemePreviewOptions( themeId, null, null, { styleVariation, tabFilter } );
+				this.props.setThemePreviewOptions( themeId, null, null, {
+					styleVariation,
+					tabFilter,
+					tierFilter: tier,
+				} );
 				return action( t, context );
 			};
 		};
@@ -184,10 +195,17 @@ class ThemesSelection extends Component {
 		if ( options ) {
 			options = addOptionsToGetUrl( options, {
 				tabFilter,
+				tierFilter: tier,
 				styleVariationSlug: styleVariation?.slug,
 			} );
 			if ( options.activate ) {
-				options.activate.action = wrappedActivateAction( options.activate.action );
+				options.activate.action = wrappedActivateOrLivePreviewAction( options.activate.action );
+			}
+
+			if ( options.livePreview ) {
+				options.livePreview.action = wrappedActivateOrLivePreviewAction(
+					options.livePreview.action
+				);
 			}
 
 			if ( options.preview ) {
@@ -291,14 +309,13 @@ export const ConnectedThemesSelection = connect(
 		state,
 		{ filter, page, search, tier, vertical, siteId, source, forceWpOrgSearch, tabFilter }
 	) => {
-		const isJetpack = isJetpackSite( state, siteId );
 		const isAtomic = isSiteAutomatedTransfer( state, siteId );
 		const premiumThemesEnabled = arePremiumThemesEnabled( state, siteId );
 		const hiddenFilters = getThemeHiddenFilters( state, siteId );
 		const hasUnlimitedPremiumThemes = siteHasFeature(
 			state,
 			siteId,
-			WPCOM_FEATURES_PREMIUM_THEMES
+			WPCOM_FEATURES_PREMIUM_THEMES_UNLIMITED
 		);
 		const canInstallThemes = siteHasFeature( state, siteId, FEATURE_INSTALL_THEMES );
 
@@ -306,7 +323,7 @@ export const ConnectedThemesSelection = connect(
 		if ( source === 'wpcom' || source === 'wporg' ) {
 			sourceSiteId = source;
 		} else {
-			sourceSiteId = siteId && isJetpack ? siteId : 'wpcom';
+			sourceSiteId = siteId ? siteId : 'wpcom';
 		}
 
 		if ( isAtomic && ! hasUnlimitedPremiumThemes ) {
@@ -435,6 +452,7 @@ class ThemesSelectionWithPage extends React.Component {
 				{ ...this.props }
 				page={ this.state.page }
 				incrementPage={ this.incrementPage }
+				resetPage={ this.resetPage }
 			>
 				{ this.props.children }
 			</ConnectedThemesSelection>

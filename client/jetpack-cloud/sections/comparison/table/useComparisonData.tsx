@@ -312,7 +312,7 @@ export const useComparisonData = () => {
 			},
 			{
 				sectionId: 'earn',
-				sectionName: translate( 'Earn' ),
+				sectionName: translate( 'Monetize' ),
 				icon: EarnIcon,
 				features: [
 					{

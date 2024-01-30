@@ -1,4 +1,3 @@
-import config from '@automattic/calypso-config';
 import { translate } from 'i18n-calypso';
 import { filter, find, includes, isEmpty, pick, sortBy } from 'lodash';
 import { addQueryArgs } from 'calypso/lib/url';
@@ -179,26 +178,6 @@ export function canResumeFlow( flowName, progress, isUserLoggedIn ) {
 export const shouldForceLogin = ( flowName, userLoggedIn ) => {
 	const flow = flows.getFlow( flowName, userLoggedIn );
 	return !! flow && flow.forceLogin;
-};
-
-export const isReskinnedFlow = ( flowName ) => {
-	return config( 'reskinned_flows' ).includes( flowName );
-};
-
-export const isP2Flow = ( flowName ) => {
-	return flowName === 'p2' || flowName === 'p2v1';
-};
-
-export const isVideoPressFlow = ( flowName ) => {
-	return flowName === 'videopress' || flowName === 'videopress-account';
-};
-
-export const isVideoPressTVFlow = ( flowName ) => {
-	return flowName === 'videopress-tv' || flowName === 'videopress-tv-purchase';
-};
-
-export const isWpccFlow = ( flowName ) => {
-	return flowName === 'wpcc';
 };
 
 /**

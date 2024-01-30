@@ -41,7 +41,6 @@ const ConnectedSingleSiteJetpack = connectOptions( ( props ) => {
 					className="themes__showcase-banner"
 					event="calypso_themes_list_install_themes"
 					feature={ FEATURE_UPLOAD_THEMES }
-					plan={ PLAN_ECOMMERCE }
 					title={ translate( 'Upgrade to a plan to upload your own themes!' ) }
 					callToAction={ translate( 'Upgrade now' ) }
 					showIcon={ true }

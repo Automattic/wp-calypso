@@ -1,9 +1,9 @@
 import { LoadingPlaceholder } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
+import { PlanButton } from '@automattic/plans-grid-next';
 import { useEffect, useState } from '@wordpress/element';
 import { useTranslate } from 'i18n-calypso';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
-import PlanButton from 'calypso/my-sites/plans-grid/components/plan-button';
 import {
 	ButtonContainer,
 	DialogContainer,
@@ -19,12 +19,9 @@ import { DomainPlanDialogProps, MODAL_VIEW_EVENT_NAME } from '.';
 export function FreePlanPaidDomainDialog( {
 	paidDomainName,
 	generatedWPComSubdomain,
-	suggestedPlanSlug,
 	onFreePlanSelected,
 	onPlanSelected,
-}: DomainPlanDialogProps & {
-	paidDomainName: string;
-} ) {
+}: DomainPlanDialogProps ) {
 	const translate = useTranslate();
 	const [ isBusy, setIsBusy ] = useState( false );
 
@@ -33,11 +30,6 @@ export function FreePlanPaidDomainDialog( {
 			dialog_type: 'custom_domain_and_free_plan',
 		} );
 	}, [] );
-
-	function handlePaidPlanClick() {
-		setIsBusy( true );
-		onPlanSelected();
-	}
 
 	function handleFreePlanClick() {
 		setIsBusy( true );
@@ -71,15 +63,15 @@ export function FreePlanPaidDomainDialog( {
 				<RowWithBorder>
 					<SuggestedPlanSection
 						paidDomainName={ paidDomainName }
-						suggestedPlanSlug={ suggestedPlanSlug }
 						isBusy={ isBusy }
-						onButtonClick={ handlePaidPlanClick }
+						onPlanSelected={ onPlanSelected }
 					/>
 				</RowWithBorder>
 				<Row>
 					<DomainName>
 						{ generatedWPComSubdomain.isLoading && <LoadingPlaceholder /> }
 						{ generatedWPComSubdomain.result &&
+							paidDomainName &&
 							translate( '%(paidDomainName)s redirects to %(wpcomFreeDomain)s', {
 								args: {
 									paidDomainName,

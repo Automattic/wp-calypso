@@ -1,4 +1,3 @@
-import { withScope, captureMessage } from '@automattic/calypso-sentry';
 import { getSiteFragment } from 'calypso/lib/route';
 
 const SITE_FRAGMENT_REGEX = /\/(:site|:site_id|:siteid|:blogid|:blog_id|:siteslug)(\/|$|\?)/i;
@@ -12,19 +11,13 @@ const SITE_FRAGMENT_REGEX = /\/(:site|:site_id|:siteid|:blogid|:blog_id|:siteslu
  * @returns {boolean} If the report should null `blog_id`.
  */
 export default ( path ) => {
-	if ( ! path ) {
+	// Path could be a number but it should not. See Sentry issue with ID 4645035069
+	if ( typeof path !== 'string' ) {
 		return true;
 	}
 
 	if ( SITE_FRAGMENT_REGEX.test( path ) ) {
 		return false;
-	}
-
-	if ( typeof path !== 'string' ) {
-		withScope( ( scope ) => {
-			scope.setTag( 'path', path );
-			captureMessage( 'Path is not a string' );
-		} );
 	}
 
 	// Stepper routes start with /setup/, and might contain site slug or ID via URL parameters.

@@ -4,18 +4,37 @@ import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-t
 import { AppState } from 'calypso/types';
 import { getTheme } from '.';
 
-const QUERY_NAME = 'wp_theme_preview';
+type LivePreviewUrlOptions = {
+	wpcomBackUrl?: string;
+};
 
-export const getLivePreviewUrl = ( state: AppState, themeId: string, siteId: number ) => {
-	const siteEditorUrl = getSiteEditorUrl( state, siteId );
+const WP_THEME_PREVIEW_QUERY_NAME = 'wp_theme_preview';
+const WPCOM_BACK_URL_QUERY_NAME = 'wpcom_dashboard_link';
 
-	if ( isSiteAutomatedTransfer( state, siteId ) ) {
-		return addQueryArgs( { [ QUERY_NAME ]: themeId }, `${ siteEditorUrl }` );
-	}
-
+export const getLivePreviewUrl = (
+	state: AppState,
+	themeId: string,
+	siteId: number,
+	options: LivePreviewUrlOptions = {}
+) => {
 	const theme = getTheme( state, 'wpcom', themeId );
-	if ( ! theme ) {
-		return siteEditorUrl;
+	let url = getSiteEditorUrl( state, siteId );
+	let previewingTheme = '';
+	if ( isSiteAutomatedTransfer( state, siteId ) ) {
+		previewingTheme = themeId;
+	} else if ( theme ) {
+		previewingTheme = theme.stylesheet;
 	}
-	return addQueryArgs( { [ QUERY_NAME ]: theme.stylesheet }, `${ siteEditorUrl }` );
+
+	if ( previewingTheme ) {
+		url = addQueryArgs( { [ WP_THEME_PREVIEW_QUERY_NAME ]: previewingTheme }, url );
+	}
+
+	const wpcomBackUrl =
+		options.wpcomBackUrl && options.wpcomBackUrl.replace( window.location.origin, '' );
+	if ( wpcomBackUrl ) {
+		url = addQueryArgs( { [ WPCOM_BACK_URL_QUERY_NAME ]: wpcomBackUrl }, url );
+	}
+
+	return url;
 };

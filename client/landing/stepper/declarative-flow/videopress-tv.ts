@@ -1,6 +1,6 @@
 import { SiteSelect } from '@automattic/data-stores';
 import { useLocale } from '@automattic/i18n-utils';
-import { useFlowProgress, VIDEOPRESS_TV_FLOW } from '@automattic/onboarding';
+import { VIDEOPRESS_TV_FLOW } from '@automattic/onboarding';
 import { useSelect, useDispatch } from '@wordpress/data';
 import { translate } from 'i18n-calypso';
 import { useEffect, useState } from 'react';
@@ -38,9 +38,7 @@ const videopressTv: Flow = {
 		}
 
 		const name = this.name;
-		const { createVideoPressTvSite, setPendingAction, setProgress, setStepProgress } =
-			useDispatch( ONBOARD_STORE );
-		const flowProgress = useFlowProgress( { stepName: _currentStep, flowName: name } );
+		const { createVideoPressTvSite, setPendingAction, setProgress } = useDispatch( ONBOARD_STORE );
 		const locale = useLocale();
 		const userIsLoggedIn = useSelect(
 			( select ) => ( select( USER_STORE ) as UserSelect ).isCurrentUserLoggedIn(),
@@ -53,8 +51,6 @@ const videopressTv: Flow = {
 			[]
 		);
 		const visibility = useNewSiteVisibility();
-
-		setStepProgress( flowProgress );
 
 		const stepValidateUserIsLoggedIn = () => {
 			if ( ! userIsLoggedIn ) {

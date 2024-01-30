@@ -1,0 +1,148 @@
+@import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/mixins";
+@import "@automattic/components/src/styles/typography.scss";
+
+.memberships__dialog-sections {
+	display: grid;
+	grid-template: "item" 1fr / 1fr;
+
+	* {
+		font-size: $font-body-small;
+	}
+
+	@include break-medium {
+		min-width: 533px;
+	}
+	.memberships__dialog-advanced-options {
+		width: 100%;
+		box-shadow: none;
+		.foldable-card__header {
+			padding: 0;
+		}
+		&.foldable-card.is-expanded {
+			margin: 0;
+			.foldable-card__content {
+				border-top: none;
+				padding: 0;
+			}
+		}
+		.foldable-card__main {
+			display: block;
+			font-weight: 600;
+			.foldable-card__action {
+				right: unset;
+			}
+		}
+		fieldset {
+			margin-bottom: 0;
+		}
+
+		.foldable-card__expand .gridicon {
+			fill: var(--color-text);
+		}
+	}
+
+	.notice__content {
+		max-width: 500px;
+	}
+}
+
+.memberships__dialog-sections-date {
+	margin: 16px;
+	display: flex;
+	width: 200px;
+	input[type="date"] {
+		line-height: 20px;
+		letter-spacing: -0.15px;
+		border: 1px solid var(--gray-gray-10, #c3c4c7);
+		background: var(--black-white-white, #fff);
+		padding: 10px 16px;
+		width: auto;
+		box-sizing: content-box; // this ensures padding isn't included in the total width
+	}
+}
+
+.memberships__dialog-sections-products {
+	.components-dropdown-menu__toggle {
+		display: flex;
+		width: 400px !important;
+		justify-content: space-between;
+		align-items: center;
+		border: 1px solid var(--gray-gray-10, #c3c4c7);
+		background: var(--black-white-white, #fff);
+		padding: 0 16px;
+		box-sizing: content-box; // this ensures padding isn't included in the total width
+		svg {
+			order: 1;
+		}
+	}
+}
+
+.memberships__dialog-sections-coupon-boolean {
+	.components-base-control {
+		margin-bottom: 0 !important;
+	}
+	margin-bottom: 16px;
+	label {
+		padding: 3px;
+	}
+}
+
+.memberships__dialog-sections-coupon-code {
+	width: 533px;
+}
+
+.memberships__dialog-sections-usage-limit {
+	width: 432px;
+}
+
+.memberships__dialog-sections-specific-emails,
+.memberships__dialog-sections-duration {
+	margin-bottom: 16px;
+	input[type="text"],
+	select,
+	p,
+	.form-input-validation {
+		margin-left: 48px !important;
+		width: 384px !important;
+	}
+}
+
+.memberships__dialog-sections-amount,
+.memberships__dialog-sections-date,
+.memberships__dialog-sections-discount-info {
+	display: flex;
+	justify-content: flex-start;
+	flex-direction: column;
+
+	@include break-medium {
+		flex-direction: row;
+	}
+}
+
+.memberships__dialog-sections-amount-field-container,
+.memberships__dialog-sections-date-field-container,
+.memberships__dialog-sections-discount-info-field-container {
+	display: flex;
+	flex-direction: column;
+	margin-bottom: 25px;
+	width: 200px;
+
+	@include break-medium {
+		margin-bottom: 0;
+		margin-right: 35px;
+		max-width: 200px;
+	}
+}
+
+.memberships__dialog-sections-coupon-code,
+.memberships__dialog-sections-discount-info,
+.memberships__dialog-sections-date,
+.memberships__dialog-sections-products,
+.memberships__dialog-sections-usage-limit {
+	margin: 16px 0;
+}
+
+.dialog__action-buttons {
+	border: 0;
+}

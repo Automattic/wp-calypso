@@ -1,9 +1,9 @@
 import { PLAN_PERSONAL } from '@automattic/calypso-products';
-import { useFlowProgress, LINK_IN_BIO_FLOW, LINK_IN_BIO_DOMAIN_FLOW } from '@automattic/onboarding';
+import { LINK_IN_BIO_FLOW, LINK_IN_BIO_DOMAIN_FLOW } from '@automattic/onboarding';
 import { useSelect, useDispatch } from '@wordpress/data';
 import { translate } from 'i18n-calypso';
 import { domainMapping } from 'calypso/lib/cart-values/cart-items';
-import wpcom from 'calypso/lib/wp';
+import { triggerGuidesForStep } from 'calypso/lib/guides/trigger-guides-for-step';
 import {
 	clearSignupDestinationCookie,
 	setSignupCompleteSlug,
@@ -66,28 +66,14 @@ const linkInBioDomain: Flow = {
 	useStepNavigation( _currentStepSlug, navigate ) {
 		const flowName = this.name;
 		const variantSlug = this.variantSlug;
-		const { setStepProgress, setHideFreePlan, setDomainCartItem, setPlanCartItem } =
-			useDispatch( ONBOARD_STORE );
-		const flowProgress = useFlowProgress( { stepName: _currentStepSlug, flowName, variantSlug } );
+		const { setHideFreePlan, setDomainCartItem, setPlanCartItem } = useDispatch( ONBOARD_STORE );
 		const { domain, provider } = useDomainParams();
 		const userIsLoggedIn = useSelect(
 			( select ) => ( select( USER_STORE ) as UserSelect ).isCurrentUserLoggedIn(),
 			[]
 		);
 
-		setStepProgress( flowProgress );
-
-		// trigger guides on step movement, we don't care about failures or response
-		wpcom.req.post(
-			'guides/trigger',
-			{
-				apiNamespace: 'wpcom/v2/',
-			},
-			{
-				flow: flowName,
-				step: _currentStepSlug,
-			}
-		);
+		triggerGuidesForStep( flowName, _currentStepSlug );
 
 		const redirectTo = encodeURIComponent(
 			`/setup/${ variantSlug }/patterns?domain=${ domain }&provider=${ provider }`
@@ -95,7 +81,7 @@ const linkInBioDomain: Flow = {
 		const logInUrl = useLoginUrl( {
 			variationName: variantSlug,
 			redirectTo: redirectTo,
-			pageTitle: 'Link in Bio',
+			pageTitle: translate( 'Link in Bio' ),
 		} );
 
 		const submit = ( providedDependencies: ProvidedDependencies = {} ) => {

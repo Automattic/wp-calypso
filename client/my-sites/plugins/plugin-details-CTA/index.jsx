@@ -409,6 +409,10 @@ function PrimaryButton( {
 	);
 	const isDisabledForWpcomStaging = isWpcomStaging && isMarketplaceProduct;
 
+	//only show free trial button for free plugins to logged out users
+	const { monthly, yearly } = plugin?.variations ?? {};
+	const shouldStartFreeTrial = ! monthly?.product_id && ! yearly?.product_id;
+
 	const onClick = useCallback( () => {
 		dispatch(
 			recordTracksEvent( 'calypso_plugin_details_get_started_click', {
@@ -429,6 +433,7 @@ function PrimaryButton( {
 		return (
 			<GetStartedButton
 				onClick={ onClick }
+				startFreeTrial={ shouldStartFreeTrial }
 				plugin={ plugin }
 				isMarketplaceProduct={ isMarketplaceProduct }
 			/>
@@ -457,18 +462,20 @@ function PrimaryButton( {
 	);
 }
 
-function GetStartedButton( { onClick, plugin, isMarketplaceProduct } ) {
+function GetStartedButton( { onClick, plugin, isMarketplaceProduct, startFreeTrial = false } ) {
 	const translate = useTranslate();
 	const sectionName = useSelector( getSectionName );
 	const billingPeriod = useSelector( getBillingInterval );
-
+	const buttonText = startFreeTrial
+		? translate( 'Start your free trial' )
+		: translate( 'Get started' );
 	const startUrl = addQueryArgs(
 		{
 			ref: sectionName + '-lp',
 			plugin: plugin.slug,
 			billing_period: isMarketplaceProduct ? billingPeriod : '',
 		},
-		'/start/with-plugin'
+		startFreeTrial ? 'start/hosting' : '/start/with-plugin'
 	);
 	return (
 		<Button
@@ -478,7 +485,7 @@ function GetStartedButton( { onClick, plugin, isMarketplaceProduct } ) {
 			onClick={ onClick }
 			href={ startUrl }
 		>
-			{ translate( 'Get started' ) }
+			{ buttonText }
 		</Button>
 	);
 }

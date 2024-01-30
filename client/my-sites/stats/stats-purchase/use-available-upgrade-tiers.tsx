@@ -56,28 +56,6 @@ const MOCK_PLAN_DATA = [
 	},
 ];
 
-function transformTier( tier: PriceTierListItemProps ): StatsPlanTierUI {
-	// TODO: Some description of transform logic here.
-	// So as to clarify what we should expect from the API.
-	if ( tier?.maximum_units === null ) {
-		// Special transformation for highest tier extension.
-		return {
-			minimum_price: tier?.minimum_price,
-			price: tier?.minimum_price_monthly_display,
-			views: EXTENSION_THRESHOLD_IN_MILLION * ( tier?.transform_quantity_divide_by || 1 ),
-			extension: true,
-			transform_quantity_divide_by: tier?.transform_quantity_divide_by,
-			per_unit_fee: tier?.per_unit_fee,
-		};
-	}
-
-	return {
-		minimum_price: tier?.minimum_price,
-		price: tier?.maximum_price_monthly_display,
-		views: tier?.maximum_units,
-	};
-}
-
 function filterPurchasedTiers(
 	availableTiers: StatsPlanTierUI[],
 	usageData: PlanUsage | undefined
@@ -129,13 +107,15 @@ function extendTiersBeyondHighestTier(
 				( highestTier?.views ?? 0 ) +
 				( highestTier.transform_quantity_divide_by ?? 0 ) * extendedTierCount;
 
+			const extendedTierAmount = extendedTierCount - purchasedExtendedTierCount;
+
 			availableTiers.push( {
 				minimum_price: totalPrice,
+				// Upgrade price for every 1M views.
+				upgrade_price: ( highestTier.per_unit_fee || 0 ) * extendedTierAmount,
 				price: monthlyPriceDisplay,
 				views: views,
 				extension: true,
-				transform_quantity_divide_by: highestTier.transform_quantity_divide_by,
-				per_unit_fee: highestTier?.per_unit_fee,
 			} );
 		}
 
@@ -157,20 +137,56 @@ function useAvailableUpgradeTiers(
 	// TODO: Add the loading state of the plan usage query to avoid redundant re-rendering.
 	const { data: usageData } = usePlanUsageQuery( siteId );
 
-	if ( ! commercialProduct || ! usageData ) {
+	if ( ! commercialProduct?.price_tier_list ) {
 		return MOCK_PLAN_DATA;
 	}
 
-	let tiersForUi = commercialProduct.price_tier_list.map( transformTier );
-	const currencyCode = commercialProduct.currency_code || 'USD';
+	const currentTierPrice = usageData?.current_tier?.minimum_price;
+	let tiersForUi = commercialProduct.price_tier_list.map(
+		( tier: PriceTierListItemProps ): StatsPlanTierUI => {
+			// TODO: Some description of transform logic here.
+			// So as to clarify what we should expect from the API.
+			let tierUpgradePrice = 0;
 
-	tiersForUi = tiersForUi.length > 0 ? tiersForUi : MOCK_PLAN_DATA;
+			// If there is a purchased paid tier,
+			// the upgrade price is the difference between the current tier and the target tier.
+			if ( currentTierPrice && tier.minimum_price > currentTierPrice ) {
+				tierUpgradePrice = tier.minimum_price - currentTierPrice;
+			}
+
+			if ( tier?.maximum_units === null ) {
+				// Special transformation for highest tier extension.
+				return {
+					minimum_price: tier.minimum_price,
+					upgrade_price: tierUpgradePrice,
+					price: tier.minimum_price_monthly_display,
+					views: EXTENSION_THRESHOLD_IN_MILLION * ( tier.transform_quantity_divide_by || 1 ),
+					extension: true,
+					transform_quantity_divide_by: tier.transform_quantity_divide_by,
+					per_unit_fee: tier.per_unit_fee,
+				};
+			}
+
+			return {
+				minimum_price: tier.minimum_price,
+				upgrade_price: tierUpgradePrice,
+				price: tier.minimum_price_monthly_display,
+				views: tier.maximum_units,
+			};
+		}
+	);
+
+	// If usage is not available then we return early, as without usage we can't filter / extend tiers.
+	if ( ! usageData ) {
+		return tiersForUi;
+	}
 
 	// 2. Filter based on current plan.
 	if ( shouldFilterPurchasedTiers ) {
 		tiersForUi = filterPurchasedTiers( tiersForUi, usageData );
 	}
 
+	const currencyCode = commercialProduct.currency_code;
 	tiersForUi = extendTiersBeyondHighestTier( tiersForUi, currencyCode, usageData );
 
 	// 3. Return the relevant upgrade options as a list.

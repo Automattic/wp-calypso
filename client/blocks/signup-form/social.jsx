@@ -5,7 +5,7 @@ import { connect } from 'react-redux';
 import { SocialAuthenticationForm } from 'calypso/blocks/authentication';
 import { isWooOAuth2Client } from 'calypso/lib/oauth2-clients';
 import { login } from 'calypso/lib/paths';
-import { isWpccFlow } from 'calypso/signup/utils';
+import { isWpccFlow } from 'calypso/signup/is-flow';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getCurrentOAuth2Client } from 'calypso/state/oauth2-clients/ui/selectors';
 import getCurrentRoute from 'calypso/state/selectors/get-current-route';

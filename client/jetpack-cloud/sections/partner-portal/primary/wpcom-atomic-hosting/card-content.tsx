@@ -1,4 +1,4 @@
-import { getPlan, PLAN_BUSINESS, PLAN_ECOMMERCE } from '@automattic/calypso-products';
+import { getPlan, PLAN_BUSINESS, PLAN_ECOMMERCE, PLAN_PREMIUM } from '@automattic/calypso-products';
 import page from '@automattic/calypso-router';
 import { Button, JetpackLogo, WooLogo, CloudLogo, Tooltip } from '@automattic/components';
 import { formatCurrency } from '@automattic/format-currency';
@@ -68,7 +68,8 @@ export default function CardContent( {
 	const getFeaturesHeading = ( planSlug: string ) => {
 		switch ( planSlug ) {
 			case PLAN_BUSINESS:
-				return translate( 'Everything in {{a}}Premium{{/a}}, plus:', {
+				return translate( 'Everything in {{a}}%(planName)s{{/a}}, plus:', {
+					args: { planName: getPlan( PLAN_PREMIUM )?.getTitle() ?? '' },
 					components: {
 						a: (
 							// For Business plan, we want to redirect user to find out more about features included in the  Premium plan.
@@ -81,7 +82,9 @@ export default function CardContent( {
 					},
 				} );
 			case PLAN_ECOMMERCE:
-				return translate( 'Everything in Business, plus:' );
+				return translate( 'Everything in %(planName)s, plus:', {
+					args: { planName: getPlan( PLAN_BUSINESS )?.getTitle() ?? '' },
+				} );
 			default:
 				return '';
 		}

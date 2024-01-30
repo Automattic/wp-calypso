@@ -20,6 +20,7 @@ export interface NavigatorLocation {
 
 export type Category = {
 	name?: string;
+	title?: string;
 	slug?: string;
 	label?: string;
 	description?: string;
@@ -40,4 +41,10 @@ export type Tag = {
 	slug: string;
 	title: string;
 	description: string;
+};
+
+export type CustomPageTitle = {
+	title: string;
+	ID: number;
+	selected: boolean;
 };

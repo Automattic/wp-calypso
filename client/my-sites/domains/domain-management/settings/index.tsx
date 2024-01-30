@@ -61,6 +61,7 @@ import { IAppState } from 'calypso/state/types';
 import ConnectedDomainDetails from './cards/connected-domain-details';
 import ContactsPrivacyInfo from './cards/contact-information/contacts-privacy-info';
 import ContactVerificationCard from './cards/contact-verification-card';
+import DomainDiagnosticsCard from './cards/domain-diagnostics-card';
 import DomainForwardingCard from './cards/domain-forwarding-card';
 import DomainOnlyConnectCard from './cards/domain-only-connect';
 import DomainSecurityDetails from './cards/domain-security-details';
@@ -102,7 +103,7 @@ const Settings = ( {
 		}
 	}, [ contactInformation, requestWhois, selectedDomainName ] );
 
-	const hasConnectableSites = useSelector( ( state ) => canAnySiteConnectDomains( state ) );
+	const hasConnectableSites = useSelector( canAnySiteConnectDomains );
 
 	const renderHeader = () => {
 		const previousPath = domainManagementList(
@@ -588,6 +589,13 @@ const Settings = ( {
 		);
 	};
 
+	const renderDiagnosticsSection = () => {
+		if ( ! domain ) {
+			return null;
+		}
+		return <DomainDiagnosticsCard domain={ domain } />;
+	};
+
 	const renderContactVerificationSection = () => {
 		if ( ! domain || ! domain.currentUserCanManage ) {
 			return null;
@@ -651,12 +659,11 @@ const Settings = ( {
 				showDismiss={ false }
 				status="is-warning"
 			>
-				{ /*
-					TO DO: Enable the link when the support page is ready
-					<NoticeAction href={ domain.pendingRegistrationAtRegistryUrl }>
+				{ domain?.pendingRegistrationAtRegistryUrl && (
+					<NoticeAction external href={ domain?.pendingRegistrationAtRegistryUrl }>
 						{ translate( 'More info' ) }
 					</NoticeAction>
-				*/ }
+				) }
 			</Notice>
 		);
 	};
@@ -694,6 +701,7 @@ const Settings = ( {
 				{ renderStatusSection() }
 				{ renderDetailsSection() }
 				{ renderTranferInMappedDomainSection() }
+				{ renderDiagnosticsSection() }
 				{ renderSetAsPrimaryDomainSection() }
 				{ renderNameServersSection() }
 				{ renderDnsRecords() }
@@ -728,9 +736,12 @@ const Settings = ( {
 	return (
 		// eslint-disable-next-line wpcalypso/jsx-classname-namespace
 		<Main wideLayout className="domain-settings-page">
-			{ selectedSite?.ID && ! purchase && <QuerySitePurchases siteId={ selectedSite?.ID } /> }
+			{ selectedSite?.ID && <QuerySitePurchases siteId={ selectedSite?.ID } /> }
+
 			<BodySectionCssClass bodyClass={ [ 'edit__body-white' ] } />
+
 			{ renderHeader() }
+
 			<TwoColumnsLayout content={ renderMainContent() } sidebar={ renderSettingsCards() } />
 		</Main>
 	);

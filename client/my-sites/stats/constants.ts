@@ -60,3 +60,6 @@ export const STATS_FEATURE_SUMMARY_LINKS_30_DAYS = 'StatsModuleSummaryLinks/30_d
 export const STATS_FEATURE_SUMMARY_LINKS_QUARTER = 'StatsModuleSummaryLinks/quarter';
 export const STATS_FEATURE_SUMMARY_LINKS_YEAR = 'StatsModuleSummaryLinks/year';
 export const STATS_FEATURE_SUMMARY_LINKS_ALL = 'StatsModuleSummaryLinks/all';
+
+// other
+export const STATS_DO_YOU_LOVE_JETPACK_STATS_NOTICE = 'DoYouLoveJetpackStatsNotice';

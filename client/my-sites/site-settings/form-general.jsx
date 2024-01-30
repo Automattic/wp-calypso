@@ -30,6 +30,7 @@ import FormLabel from 'calypso/components/forms/form-label';
 import FormRadio from 'calypso/components/forms/form-radio';
 import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
 import FormInput from 'calypso/components/forms/form-text-input';
+import InfoPopover from 'calypso/components/info-popover';
 import InlineSupportLink from 'calypso/components/inline-support-link';
 import SiteLanguagePicker from 'calypso/components/language-picker/site-language-picker';
 import Notice from 'calypso/components/notice';
@@ -375,6 +376,10 @@ export class SiteSettingsFormGeneral extends Component {
 		const isAnyComingSoonEnabled =
 			( 0 === blogPublic && wpcomPublicComingSoon ) || isPrivateAndUnlaunched || wpcomComingSoon;
 		const isComingSoonDisabled = isRequestingSettings || isAtomicAndEditingToolkitDeactivated;
+		const isPublicChecked =
+			( wpcomPublicComingSoon && blogPublic === 0 && isComingSoonDisabled ) ||
+			( blogPublic === 0 && ! wpcomPublicComingSoon ) ||
+			blogPublic === 1;
 		const comingSoonFormLabelClasses = classNames(
 			'site-settings__visibility-label is-coming-soon',
 			{
@@ -382,31 +387,6 @@ export class SiteSettingsFormGeneral extends Component {
 			}
 		);
 		const showPreviewLink = isComingSoon && hasSitePreviewLink;
-
-		const PublicFormRadio = () => (
-			<FormLabel className="site-settings__visibility-label is-public">
-				<FormRadio
-					name="blog_public"
-					value="1"
-					checked={
-						( wpcomPublicComingSoon && blogPublic === 0 && isComingSoonDisabled ) ||
-						( blogPublic === 0 && ! wpcomPublicComingSoon ) ||
-						blogPublic === 1
-					}
-					onChange={ () =>
-						this.handleVisibilityOptionChange( {
-							blog_public: isWpcomStagingSite ? 0 : 1,
-							wpcom_coming_soon: 0,
-							wpcom_public_coming_soon: 0,
-						} )
-					}
-					disabled={ isRequestingSettings }
-					onClick={ eventTracker( 'Clicked Site Visibility Radio Button' ) }
-					label={ translate( 'Public' ) }
-				/>
-			</FormLabel>
-		);
-
 		return (
 			<FormFieldset>
 				{ ! isNonAtomicJetpackSite &&
@@ -449,22 +429,37 @@ export class SiteSettingsFormGeneral extends Component {
 							) }
 						</>
 					) }
-				{ isWpcomStagingSite && (
+				{ ! isNonAtomicJetpackSite && (
 					<>
-						<PublicFormRadio />
+						<FormLabel className="site-settings__visibility-label is-public">
+							<FormRadio
+								name="blog_public"
+								value="1"
+								checked={ isPublicChecked }
+								onChange={ () =>
+									this.handleVisibilityOptionChange( {
+										blog_public: isWpcomStagingSite ? 0 : 1,
+										wpcom_coming_soon: 0,
+										wpcom_public_coming_soon: 0,
+									} )
+								}
+								disabled={ isRequestingSettings }
+								onClick={ eventTracker( 'Clicked Site Visibility Radio Button' ) }
+								label={ translate( 'Public' ) }
+							/>
+						</FormLabel>
 						<FormSettingExplanation>
-							{ translate(
-								'Your site is visible to everyone, but search engines are discouraged from indexing staging sites.'
-							) }
+							{ isWpcomStagingSite
+								? translate(
+										'Your site is visible to everyone, but search engines are discouraged from indexing staging sites.'
+								  )
+								: translate( 'Your site is visible to everyone.' ) }
 						</FormSettingExplanation>
 					</>
 				) }
-				{ ! isNonAtomicJetpackSite && ! isWpcomStagingSite && <PublicFormRadio /> }
+
 				{ ! isWpcomStagingSite && (
 					<>
-						<FormSettingExplanation>
-							{ translate( 'Your site is visible to everyone.' ) }
-						</FormSettingExplanation>
 						<FormLabel className="site-settings__visibility-label is-checkbox is-hidden">
 							<FormInputCheckbox
 								name="blog_public"
@@ -723,12 +718,16 @@ export class SiteSettingsFormGeneral extends Component {
 					isSaving={ isSavingSettings }
 					onButtonClick={ handleSubmitForm }
 					showButton
-					title={ translate( 'Privacy {{learnMoreLink/}}', {
-						components: {
-							learnMoreLink: <InlineSupportLink supportContext="privacy" showText={ false } />,
-						},
-						comment: 'Privacy Settings header',
-					} ) }
+					title={ translate(
+						'Privacy {{infoPopover}} Control who can view your site. {{a}}Learn more{{/a}}. {{/infoPopover}}',
+						{
+							components: {
+								a: <InlineSupportLink showIcon={ false } supportContext="privacy" />,
+								infoPopover: <InfoPopover position="bottom right" />,
+							},
+							comment: 'Privacy Settings header',
+						}
+					) }
 				/>
 				<Card>
 					<form> { this.visibilityOptionsComingSoon() }</form>

@@ -34,6 +34,10 @@ export default function useCheckoutFlowTrackKey( {
 			return 'akismet_siteless_checkout';
 		}
 
+		if ( sitelessCheckoutType === 'marketplace' ) {
+			return 'marketplace_siteless_checkout';
+		}
+
 		if ( isLoggedOutCart ) {
 			return 'wpcom_registrationless';
 		}

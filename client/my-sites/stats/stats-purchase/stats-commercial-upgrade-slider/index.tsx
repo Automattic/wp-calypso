@@ -32,7 +32,7 @@ function useTranslatedStrings() {
 	};
 }
 
-function getStepsForTiers( tiers: StatsPlanTierUI[] ) {
+function getStepsForTiers( tiers: StatsPlanTierUI[], currencyCode: string ) {
 	// TODO: Review tier values from API.
 	// Should consider validating the inputs before displaying them.
 	return tiers.map( ( tier ) => {
@@ -52,10 +52,19 @@ function getStepsForTiers( tiers: StatsPlanTierUI[] ) {
 			views = formatNumber( tier.views );
 		}
 
+		const tierUpgradePricePerMonth = ( tier.upgrade_price || 0 ) / 12;
+
 		// Return the new step with string values.
 		return {
 			lhValue: views,
 			rhValue: price,
+			originalPrice: tier.price,
+			upgradePrice: tierUpgradePricePerMonth
+				? formatCurrency( tierUpgradePricePerMonth, currencyCode, {
+						isSmallestUnit: true,
+						stripZeros: true,
+				  } )
+				: '',
 			tierViews: tier.views === null ? EXTENSION_THRESHOLD_IN_MILLION * 1000000 : tier.views,
 		};
 	} );
@@ -91,7 +100,7 @@ function StatsCommercialUpgradeSlider( {
 	// 5. Nofiying the parent component when the slider changes.
 
 	const translate = useTranslate();
-	const siteId = useSelector( ( state ) => getSelectedSiteId( state ) );
+	const siteId = useSelector( getSelectedSiteId );
 	const tiers = useAvailableUpgradeTiers( siteId );
 	const uiStrings = useTranslatedStrings();
 
@@ -106,10 +115,9 @@ function StatsCommercialUpgradeSlider( {
 		const perUnitFee = Number( lastTier?.per_unit_fee ) / 12;
 
 		perUnitFeeMessaging = translate(
-			'This is the base price for %(views_extension_limit)s million monthly views; beyond that, you will be charged additional +%(extension_value)s per million views.',
+			"Beyond 1 million, we'll charge an extra %(extension_value)s per million views per month.", // TODO: we'll need a 'learn more' here.
 			{
 				args: {
-					views_extension_limit: EXTENSION_THRESHOLD_IN_MILLION,
 					extension_value: formatCurrency( perUnitFee, currencyCode, {
 						isSmallestUnit: true,
 						stripZeros: true,
@@ -120,7 +128,7 @@ function StatsCommercialUpgradeSlider( {
 	}
 
 	// Transform the tiers into a format that the slider can use.
-	const steps = getStepsForTiers( tiers );
+	const steps = getStepsForTiers( tiers, currencyCode );
 
 	const handleSliderChanged = ( index: number ) => {
 		const quantity = getTierQuentity( tiers[ index ], true );

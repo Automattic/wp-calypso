@@ -62,6 +62,8 @@ export default function SitesOverview() {
 	const selectedLicenses = useSelector( getSelectedLicenses );
 	const selectedLicensesSiteId = useSelector( getSelectedLicensesSiteId );
 
+	const isStreamlinedPurchasesEnabled = isEnabled( 'jetpack/streamline-license-purchases' );
+
 	const selectedLicensesCount = selectedLicenses?.length;
 
 	const highlightFavoriteTab = getQueryArg( window.location.href, 'highlight' ) === 'favorite-tab';
@@ -204,31 +206,20 @@ export default function SitesOverview() {
 
 	const isFavoritesTab = selectedTab.key === 'favorites';
 
-	const isBundleUIEnabled = isEnabled( 'jetpack/bundle-licensing' );
+	const selectedProducts = selectedLicenses?.map( ( type: string ) => ( {
+		slug: DASHBOARD_PRODUCT_SLUGS_BY_TYPE[ type ],
+		quantity: 1,
+	} ) );
 
-	let serializedLicenses = selectedLicenses
-		?.map( ( type: string ) => DASHBOARD_PRODUCT_SLUGS_BY_TYPE[ type ] )
-		// If multiple products are selected, pass them as a comma-separated list.
-		.join( ',' );
-
-	if ( isBundleUIEnabled ) {
-		const selectedProducts = selectedLicenses?.map( ( type: string ) => ( {
-			slug: DASHBOARD_PRODUCT_SLUGS_BY_TYPE[ type ],
-			quantity: 1,
-		} ) );
-
-		serializedLicenses = serializeQueryStringProducts( selectedProducts );
-	}
+	const serializedLicenses = serializeQueryStringProducts( selectedProducts );
 
 	const issueLicenseRedirectUrl = useMemo( () => {
 		return addQueryArgs( `/partner-portal/issue-license/`, {
 			site_id: selectedLicensesSiteId,
-			...( isBundleUIEnabled
-				? { products: serializedLicenses }
-				: { product_slug: serializedLicenses } ),
+			products: serializedLicenses,
 			source: 'dashboard',
 		} );
-	}, [ isBundleUIEnabled, selectedLicensesSiteId, serializedLicenses ] );
+	}, [ selectedLicensesSiteId, serializedLicenses ] );
 
 	const renderIssueLicenseButton = () => {
 		return (
@@ -253,13 +244,21 @@ export default function SitesOverview() {
 						)
 					}
 				>
-					{ translate( 'Issue %(numLicenses)d license', 'Issue %(numLicenses)d licenses', {
-						context: 'button label',
-						count: selectedLicensesCount,
-						args: {
-							numLicenses: selectedLicensesCount,
-						},
-					} ) }
+					{ isStreamlinedPurchasesEnabled
+						? translate( 'Review %(numLicenses)d license', 'Review %(numLicenses)d licenses', {
+								context: 'button label',
+								count: selectedLicensesCount,
+								args: {
+									numLicenses: selectedLicensesCount,
+								},
+						  } )
+						: translate( 'Issue %(numLicenses)d license', 'Issue %(numLicenses)d licenses', {
+								context: 'button label',
+								count: selectedLicensesCount,
+								args: {
+									numLicenses: selectedLicensesCount,
+								},
+						  } ) }
 				</Button>
 			</div>
 		);

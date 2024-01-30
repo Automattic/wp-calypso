@@ -135,9 +135,8 @@
 	}
 }
 
-// Domain upsell flow
-
-.domain-upsell.plans {
+.domain-upsell.plans,
+.new-hosted-site.plans {
 	.signup-header h1 {
 		display: none;
 	}

@@ -45,6 +45,8 @@ const translation = i18n.translate( 'Some content to translate' );
 
 Translation strings are extracted from our codebase through a process of [static analysis](http://en.wikipedia.org/wiki/Static_program_analysis) and imported into GlotPress where they are translated ([more on that process here](./cli)). So you must avoid passing a variable, ternary expression, function call, or other form of logic in place of a string value to the `translate` method. The _one_ exception is that you can split a long string into multiple substrings concatenated with the `+` operator.
 
+GlotPress also support emoji being part of the translatable string, as it allows flexibility with positioning when being translated.
+
 ```js
 /*----------------- Bad Examples -----------------*/
 
@@ -69,6 +71,8 @@ const translation4 = i18n.translate(
 		'I know the kings of England, and I quote the fights historical ' +
 		'from Marathon to Waterloo, in order categorical.'
 );
+
+const emoji = i18n.translate( 'Let us celebrate 🎉');
 ```
 
 ### String Substitution

@@ -4,14 +4,12 @@ import { localize } from 'i18n-calypso';
 import { flowRight } from 'lodash';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import DomainTip from 'calypso/blocks/domain-tip';
 import StatsNavigation from 'calypso/blocks/stats-navigation';
 import { navItems } from 'calypso/blocks/stats-navigation/constants';
 import DocumentHead from 'calypso/components/data/document-head';
 import JetpackColophon from 'calypso/components/jetpack-colophon';
 import Main from 'calypso/components/main';
 import NavigationHeader from 'calypso/components/navigation-header';
-import { getSuggestionsVendor } from 'calypso/lib/domains/suggestions';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import AllTimeHighlightsSection from '../all-time-highlights-section';
@@ -55,15 +53,6 @@ const StatsInsights = ( props ) => {
 					screenReader={ navItems.insights?.label }
 					navigationItems={ [] }
 				></NavigationHeader>
-				{ siteId && (
-					<div>
-						<DomainTip
-							siteId={ siteId }
-							event="stats_insights_domain"
-							vendor={ getSuggestionsVendor() }
-						/>
-					</div>
-				) }
 				<StatsNavigation selectedItem="insights" siteId={ siteId } slug={ siteSlug } />
 				<AnnualHighlightsSection siteId={ siteId } />
 				<AllTimeHighlightsSection siteId={ siteId } siteSlug={ siteSlug } />

@@ -38,8 +38,6 @@ import useCreatePaymentCompleteCallback from '../hooks/use-create-payment-comple
 import useCreatePaymentMethods from '../hooks/use-create-payment-methods';
 import useDetectedCountryCode from '../hooks/use-detected-country-code';
 import useGetThankYouUrl from '../hooks/use-get-thank-you-url';
-import { useHideCheckoutIncludedPurchases } from '../hooks/use-hide-checkout-included-purchases';
-import { useHideCheckoutUpsellNudge } from '../hooks/use-hide-checkout-upsell-nudge';
 import usePrepareProductsForCart from '../hooks/use-prepare-products-for-cart';
 import useRecordCartLoaded from '../hooks/use-record-cart-loaded';
 import useRecordCheckoutLoaded from '../hooks/use-record-checkout-loaded';
@@ -100,6 +98,7 @@ export interface CheckoutMainProps {
 	disabledThankYouPage?: boolean;
 	sitelessCheckoutType?: SitelessCheckoutType;
 	akismetSiteSlug?: string;
+	marketplaceSiteSlug?: string;
 	jetpackSiteSlug?: string;
 	jetpackPurchaseToken?: string;
 	isUserComingFromLoginForm?: boolean;
@@ -137,6 +136,7 @@ export default function CheckoutMain( {
 	disabledThankYouPage,
 	sitelessCheckoutType,
 	akismetSiteSlug,
+	marketplaceSiteSlug,
 	jetpackSiteSlug,
 	jetpackPurchaseToken,
 	isUserComingFromLoginForm,
@@ -170,8 +170,12 @@ export default function CheckoutMain( {
 			return akismetSiteSlug;
 		}
 
+		if ( sitelessCheckoutType === 'marketplace' ) {
+			return marketplaceSiteSlug;
+		}
+
 		return siteSlug;
-	}, [ akismetSiteSlug, jetpackSiteSlug, sitelessCheckoutType, siteSlug ] );
+	}, [ akismetSiteSlug, jetpackSiteSlug, marketplaceSiteSlug, sitelessCheckoutType, siteSlug ] );
 
 	const showErrorMessageBriefly = useCallback(
 		( error: string ) => {
@@ -365,7 +369,6 @@ export default function CheckoutMain( {
 		stripeConfiguration,
 		stripe,
 		storedCards,
-		siteSlug: updatedSiteSlug,
 	} );
 	debug( 'created payment method objects', paymentMethodObjects );
 
@@ -492,7 +495,8 @@ export default function CheckoutMain( {
 				genericRedirectProcessor( 'bancontact', transactionData, dataForProcessor ),
 			giropay: ( transactionData: unknown ) =>
 				genericRedirectProcessor( 'giropay', transactionData, dataForProcessor ),
-			wechat: ( transactionData: unknown ) => weChatProcessor( transactionData, dataForProcessor ),
+			wechat: ( transactionData: unknown ) =>
+				weChatProcessor( transactionData, dataForProcessor, translate ),
 			netbanking: ( transactionData: unknown ) =>
 				genericRedirectProcessor( 'netbanking', transactionData, dataForProcessor ),
 			ideal: ( transactionData: unknown ) =>
@@ -524,11 +528,6 @@ export default function CheckoutMain( {
 		: {};
 	const theme = { ...checkoutTheme, colors: { ...checkoutTheme.colors, ...jetpackColors } };
 
-	const isHideUpsellNudgeExperimentLoading = useHideCheckoutUpsellNudge() === 'loading';
-
-	const isCheckoutIncludedPurchasesExperimentLoading =
-		useHideCheckoutIncludedPurchases() === 'loading';
-
 	// This variable determines if we see the loading page or if checkout can
 	// render its steps.
 	//
@@ -552,8 +551,6 @@ export default function CheckoutMain( {
 			isLoading: responseCart.products.length < 1,
 		},
 		{ name: translate( 'Loading countries list' ), isLoading: countriesList.length < 1 },
-		{ name: translate( 'Loading Site' ), isLoading: isHideUpsellNudgeExperimentLoading },
-		{ name: translate( 'Loading Site' ), isLoading: isCheckoutIncludedPurchasesExperimentLoading },
 	];
 	const isCheckoutPageLoading: boolean = checkoutLoadingConditions.some(
 		( condition ) => condition.isLoading
@@ -616,7 +613,6 @@ export default function CheckoutMain( {
 		disabledThankYouPage,
 		siteSlug: updatedSiteSlug,
 		sitelessCheckoutType,
-		checkoutFlow,
 		connectAfterCheckout,
 		adminUrl,
 		fromSiteSlug,

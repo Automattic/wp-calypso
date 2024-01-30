@@ -45,7 +45,7 @@ const StatsPurchasePage = ( {
 	const isTypeDetectionEnabled = config.isEnabled( 'stats/type-detection' );
 	const isTierUpgradeSliderEnabled = config.isEnabled( 'stats/tier-upgrade-slider' );
 
-	const siteId = useSelector( ( state ) => getSelectedSiteId( state ) );
+	const siteId = useSelector( getSelectedSiteId );
 	const siteSlug = useSelector( ( state ) => getSiteSlug( state, siteId ) );
 	const isSiteJetpackNotAtomic = useSelector( ( state ) =>
 		isJetpackSite( state, siteId, { treatAtomicAsJetpackSite: false } )
@@ -62,6 +62,7 @@ const StatsPurchasePage = ( {
 		isPWYWOwned,
 		isCommercialOwned,
 		supportCommercialUse,
+		isLegacyCommercialLicense,
 	} = useStatsPurchases( siteId );
 
 	useEffect( () => {
@@ -147,7 +148,8 @@ const StatsPurchasePage = ( {
 	// Whether it's forced to redirect to a product
 	const isForceProductRedirect = redirectToPersonal || redirectToCommercial;
 	const noPlanOwned = ! supportCommercialUse && ! isFreeOwned && ! isPWYWOwned;
-	const allowCommercialTierUpgrade = isTierUpgradeSliderEnabled && isCommercialOwned;
+	const allowCommercialTierUpgrade =
+		isTierUpgradeSliderEnabled && isCommercialOwned && ! isLegacyCommercialLicense;
 	// We show purchase page if there is no plan owned or if we are forcing a product redirect
 	const showPurchasePage = noPlanOwned || isForceProductRedirect || allowCommercialTierUpgrade;
 
@@ -226,25 +228,11 @@ const StatsPurchasePage = ( {
 					! isLoading && isTypeDetectionEnabled && showPurchasePage && (
 						<>
 							{
-								// blog doesn't have any plan but is not categorised as either personal or commectial - show old purchase wizard
-								! isForceProductRedirect && isCommercial === null && (
-									<StatsPurchaseWizard
-										siteSlug={ siteSlug }
-										commercialProduct={ commercialProduct }
-										maxSliderPrice={ maxSliderPrice ?? 10 }
-										pwywProduct={ pwywProduct }
-										siteId={ siteId }
-										redirectUri={ query.redirect_uri ?? '' }
-										from={ query.from ?? '' }
-										disableFreeProduct={ ! noPlanOwned }
-										initialStep={ initialStep }
-										initialSiteType={ initialSiteType }
-									/>
-								)
-							}
-							{
-								// blog is commercial or we are forcing a product - show the commercial purchase page
-								( ( ! isForceProductRedirect && isCommercial ) || redirectToCommercial ) && (
+								// blog is commercial, we are forcing a product or the site is not identified yet - show the commercial purchase page
+								// TODO: remove StatsPurchaseWizard component as it's not in use anymore.
+								( ( ! isForceProductRedirect &&
+									( isCommercial || isCommercial === null || isCommercialOwned ) ) ||
+									redirectToCommercial ) && (
 									<div className="stats-purchase-page__notice">
 										<StatsSingleItemPagePurchase
 											siteSlug={ siteSlug ?? '' }
@@ -260,7 +248,8 @@ const StatsPurchasePage = ( {
 							}
 							{
 								// blog is personal or we are forcing a product - show the personal purchase page
-								( ( ! isForceProductRedirect && isCommercial === false ) ||
+								// If user has already got a commercial license, we should not show the PWYW plan.
+								( ( ! isForceProductRedirect && isCommercial === false && ! isCommercialOwned ) ||
 									redirectToPersonal ) && (
 									<StatsSingleItemPersonalPurchasePage
 										siteSlug={ siteSlug || '' }

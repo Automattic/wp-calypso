@@ -95,9 +95,9 @@ export default function MarketplaceTest() {
 		slug: 'woocommerce-bookings',
 	} );
 
-	const createReview = useCreateMarketplaceReviewMutation();
-	const updateReview = useUpdateMarketplaceReviewMutation();
-	const deleteReview = useDeleteMarketplaceReviewMutation();
+	const createReview = useCreateMarketplaceReviewMutation( {} );
+	const updateReview = useUpdateMarketplaceReviewMutation( {} );
+	const deleteReview = useDeleteMarketplaceReviewMutation( {} );
 
 	const dispatch = useDispatch();
 	const transferDetails = useSelector( ( state ) => getAutomatedTransfer( state, selectedSiteId ) );
@@ -170,22 +170,22 @@ export default function MarketplaceTest() {
 					>
 						<label>
 							Product type
-							<input type="text" value="plugin" />
+							<input type="text" defaultValue="plugin" />
 						</label>
 						<br />
 						<label>
 							Product slug
-							<input type="text" value="woocommerce-bookings" />
+							<input type="text" defaultValue="woocommerce-bookings" />
 						</label>
 						<br />
 						<label>
 							Comment
-							<input type="text" value="I like it" />
+							<input type="text" defaultValue="I like it" />
 						</label>
 						<br />
 						<label>
 							Rating
-							<input type="text" value="5" />
+							<input type="text" defaultValue="5" />
 						</label>
 						<br />
 						<Button type="submit">Add new review</Button>
@@ -214,22 +214,22 @@ export default function MarketplaceTest() {
 						<br />
 						<label>
 							Product type
-							<input type="text" value="plugin" />
+							<input type="text" defaultValue="plugin" />
 						</label>
 						<br />
 						<label>
 							Product slug
-							<input type="text" value="woocommerce-bookings" />
+							<input type="text" defaultValue="woocommerce-bookings" />
 						</label>
 						<br />
 						<label>
 							Comment
-							<input type="text" value="Updated review" />
+							<input type="text" defaultValue="Updated review" />
 						</label>
 						<br />
 						<label>
 							Rating
-							<input type="text" value="3" />
+							<input type="text" defaultValue="3" />
 						</label>
 						<br />
 						<Button type="submit">Update review</Button>

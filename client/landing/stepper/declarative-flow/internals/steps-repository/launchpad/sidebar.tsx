@@ -5,7 +5,7 @@ import {
 	sortLaunchpadTasksByCompletionStatus,
 	useLaunchpad,
 } from '@automattic/data-stores';
-import { LaunchpadInternal } from '@automattic/launchpad';
+import { LaunchpadInternal, type Task } from '@automattic/launchpad';
 import { isBlogOnboardingFlow } from '@automattic/onboarding';
 import { useQueryClient } from '@tanstack/react-query';
 import { useSelect } from '@wordpress/data';
@@ -27,7 +27,6 @@ import { getConnectUrlForSiteId } from 'calypso/state/memberships/settings/selec
 import { useSiteGlobalStylesStatus } from 'calypso/state/sites/hooks/use-site-global-styles-status';
 import { getEnhancedTasks } from './task-helper';
 import { getLaunchpadTranslations } from './translations';
-import { type Task } from './types';
 
 type SidebarProps = {
 	sidebarDomain: ResponseDomain;
@@ -36,7 +35,7 @@ type SidebarProps = {
 	submit: NavigationControls[ 'submit' ];
 	goNext: NavigationControls[ 'goNext' ];
 	goToStep?: NavigationControls[ 'goToStep' ];
-	flow: string | null;
+	flow: string;
 };
 
 function getUrlInfo( url: string ) {

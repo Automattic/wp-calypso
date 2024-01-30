@@ -9,7 +9,6 @@ export const DOMAIN_QUERY_MINIMUM_LENGTH = 2;
  *
  * Rapidly changing input generates excessive HTTP requests.
  * It also leads to jarring UI changes.
- *
  * @see https://stackoverflow.com/a/44755058/1432801
  */
 export const DOMAIN_SEARCH_DEBOUNCE_INTERVAL = 300;

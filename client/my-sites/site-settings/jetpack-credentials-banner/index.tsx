@@ -16,7 +16,7 @@ interface Props {
 const JetpackCredentialsBanner = ( { siteSlug }: Props ) => {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
-	const preference: Preference[] = useSelector( ( state ) => getPreference( state ) );
+	const preference: Preference[] = useSelector( getPreference );
 
 	const savePreferenceType = useCallback(
 		( type: PreferenceType ) => {

@@ -10,5 +10,8 @@ export function isThemeWooCommerce( state: IAppState, themeId: string ) {
 	const theme = getTheme( state, 'wpcom', themeId );
 	const themeSoftwareSetTaxonomy: ThemeSoftwareSet[] | undefined =
 		theme?.taxonomies?.theme_software_set;
-	return themeSoftwareSetTaxonomy?.some( ( { slug } ) => slug === 'woo-on-plan' );
+	return (
+		themeSoftwareSetTaxonomy?.some( ( softwareSet ) => softwareSet?.slug === 'woo-on-plans' ) ||
+		false
+	);
 }

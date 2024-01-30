@@ -32,7 +32,7 @@
 		width: 100%;
 
 		.blogging-prompt__prompt-navigation {
-			align-items: flex-start;
+			align-items: center;
 			display: flex;
 			gap: 20px;
 		}
@@ -41,6 +41,7 @@
 			font-size: $font-title-small;
 			font-weight: 500;
 			line-height: 26px;
+			text-wrap: pretty;
 		}
 		button.navigation-link {
 			border-radius: 50%;

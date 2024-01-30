@@ -1,10 +1,10 @@
 import { type UserSelect } from '@automattic/data-stores';
-import { useFlowProgress, LINK_IN_BIO_TLD_FLOW } from '@automattic/onboarding';
-import { useSelect, useDispatch } from '@wordpress/data';
+import { LINK_IN_BIO_TLD_FLOW } from '@automattic/onboarding';
+import { useSelect } from '@wordpress/data';
 import { addQueryArgs } from '@wordpress/url';
 import { translate } from 'i18n-calypso';
 import { skipLaunchpad } from 'calypso/landing/stepper/utils/skip-launchpad';
-import wpcom from 'calypso/lib/wp';
+import { triggerGuidesForStep } from 'calypso/lib/guides/trigger-guides-for-step';
 import {
 	clearSignupDestinationCookie,
 	setSignupCompleteSlug,
@@ -13,7 +13,7 @@ import {
 } from 'calypso/signup/storageUtils';
 import { useSiteIdParam } from '../hooks/use-site-id-param';
 import { useSiteSlug } from '../hooks/use-site-slug';
-import { USER_STORE, ONBOARD_STORE } from '../stores';
+import { USER_STORE } from '../stores';
 import { useLoginUrl } from '../utils/path';
 import { recordSubmitStep } from './internals/analytics/record-submit-step';
 import DesignCarousel from './internals/steps-repository/design-carousel';
@@ -44,8 +44,6 @@ const linkInBio: Flow = {
 
 	useStepNavigation( _currentStepSlug, navigate ) {
 		const flowName = this.name;
-		const { setStepProgress } = useDispatch( ONBOARD_STORE );
-		const flowProgress = useFlowProgress( { stepName: _currentStepSlug, flowName } );
 		const siteId = useSiteIdParam();
 		const siteSlug = useSiteSlug();
 		const userIsLoggedIn = useSelect(
@@ -53,24 +51,12 @@ const linkInBio: Flow = {
 			[]
 		);
 
-		setStepProgress( flowProgress );
-
-		// trigger guides on step movement, we don't care about failures or response
-		wpcom.req.post(
-			'guides/trigger',
-			{
-				apiNamespace: 'wpcom/v2/',
-			},
-			{
-				flow: flowName,
-				step: _currentStepSlug,
-			}
-		);
+		triggerGuidesForStep( flowName, _currentStepSlug );
 
 		const logInUrl = useLoginUrl( {
 			variationName: flowName,
 			redirectTo: `/setup/${ flowName }/patterns`,
-			pageTitle: 'Link in Bio',
+			pageTitle: translate( 'Link in Bio' ),
 		} );
 
 		const submit = ( providedDependencies: ProvidedDependencies = {} ) => {

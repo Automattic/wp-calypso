@@ -157,7 +157,7 @@ function useCallStatusChangeCallbacks( {
 			formStatus !== prevFormStatus.current
 		) {
 			debug( "form status changed to complete so I'm calling onPaymentComplete" );
-			paymentCompleteRef.current( { paymentMethodId, transactionLastResponse } );
+			paymentCompleteRef.current( { transactionLastResponse } );
 		}
 		prevFormStatus.current = formStatus;
 	}, [ formStatus, transactionLastResponse, paymentMethodId ] );
@@ -169,7 +169,7 @@ function useCallStatusChangeCallbacks( {
 			transactionStatus !== prevTransactionStatus.current
 		) {
 			debug( "transaction status changed to redirecting so I'm calling onPaymentRedirect" );
-			paymentRedirectRef.current( { paymentMethodId, transactionLastResponse } );
+			paymentRedirectRef.current( { transactionLastResponse } );
 		}
 		if (
 			paymentErrorRef.current &&

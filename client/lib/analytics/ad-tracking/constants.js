@@ -61,6 +61,7 @@ export const TRACKING_IDS = {
 	wpcomGoogleAdsGtagPurchase: 'AW-946162814/taG8CPW8spQBEP6YlcMD', // "WordPress.com Purchase Gtag"
 	wpcomGoogleAdsGtagDomainTransferPurchase: 'AW-946162814/8T2PCL3d7rsYEP6YlcMD',
 	wpcomGoogleGA4Gtag: 'G-1H4VG5F5JF',
+	jetpackGoogleTagManagerId: 'GTM-MWWK6WM',
 	jetpackGoogleAnalyticsGtag: 'UA-52447-43', // Jetpack Gtag (Analytics) for use in Jetpack x WordPress.com Flows
 	jetpackGoogleGA4Gtag: 'G-K8CRH0LL00',
 	jetpackGoogleAdsGtagPurchase: 'AW-946162814/kIF1CL3ApfsBEP6YlcMD',

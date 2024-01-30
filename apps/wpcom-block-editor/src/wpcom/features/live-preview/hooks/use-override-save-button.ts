@@ -40,11 +40,22 @@ export const useOverrideSaveButton = ( {
 				theme: previewingTheme.id,
 			} );
 		};
+		const saveButtonOriginalText: Record< string, string > = {};
 		const overrideSaveButtonClick = ( selector: string ) => {
 			const button = document.querySelector( selector );
 			if ( button ) {
+				saveButtonOriginalText[ selector ] = button.textContent || '';
 				button.textContent = __( 'Upgrade now', 'wpcom-live-preview' );
 				button.addEventListener( 'click', saveButtonClickHandler );
+			}
+		};
+		const resetSaveButton = () => {
+			for ( const [ key, value ] of Object.entries( saveButtonOriginalText ) ) {
+				const button = document.querySelector( key );
+				if ( button && button.textContent !== '' ) {
+					button.textContent = value;
+					button.removeEventListener( 'click', saveButtonClickHandler );
+				}
 			}
 		};
 
@@ -80,37 +91,27 @@ export const useOverrideSaveButton = ( {
 				button.addEventListener( 'mouseout', stopObserver );
 			}
 		};
+		const resetSaveButtonHover = () => {
+			[ SAVE_HUB_SAVE_BUTTON_SELECTOR, HEADER_SAVE_BUTTON_SELECTOR ].forEach( ( selector ) => {
+				const button = document.querySelector( selector );
+				if ( button ) {
+					button.removeEventListener( 'mouseover', startObserver );
+					button.removeEventListener( 'mouseout', stopObserver );
+				}
+			} );
+		};
 
 		if ( canvasMode === 'view' ) {
 			overrideSaveButtonClick( SAVE_HUB_SAVE_BUTTON_SELECTOR );
 			overrideSaveButtonHover( SAVE_HUB_SAVE_BUTTON_SELECTOR );
-			return;
-		}
-		if ( canvasMode === 'edit' ) {
+		} else if ( canvasMode === 'edit' ) {
 			overrideSaveButtonClick( HEADER_SAVE_BUTTON_SELECTOR );
 			overrideSaveButtonHover( HEADER_SAVE_BUTTON_SELECTOR );
-			return;
 		}
 
 		return () => {
-			document
-				.querySelector( SAVE_HUB_SAVE_BUTTON_SELECTOR )
-				?.removeEventListener( 'click', saveButtonClickHandler );
-			document
-				.querySelector( HEADER_SAVE_BUTTON_SELECTOR )
-				?.removeEventListener( 'click', saveButtonClickHandler );
-			document
-				.querySelector( SAVE_HUB_SAVE_BUTTON_SELECTOR )
-				?.removeEventListener( 'mouseover', startObserver );
-			document
-				.querySelector( HEADER_SAVE_BUTTON_SELECTOR )
-				?.removeEventListener( 'mouseover', startObserver );
-			document
-				.querySelector( SAVE_HUB_SAVE_BUTTON_SELECTOR )
-				?.removeEventListener( 'mouseout', stopObserver );
-			document
-				.querySelector( HEADER_SAVE_BUTTON_SELECTOR )
-				?.removeEventListener( 'mouseout', stopObserver );
+			resetSaveButton();
+			resetSaveButtonHover();
 		};
 	}, [ canvasMode, previewingTheme.id, previewingTheme.type, setIsThemeUpgradeModalOpen ] );
 
@@ -129,9 +130,11 @@ export const useOverrideSaveButton = ( {
 				} );
 			}
 		};
-		document.addEventListener( 'keydown', overrideSaveButtonKeyboardShortcut, true );
+		document.addEventListener( 'keydown', overrideSaveButtonKeyboardShortcut, { capture: true } );
 		return () => {
-			document.removeEventListener( 'keydown', overrideSaveButtonKeyboardShortcut, true );
+			document.removeEventListener( 'keydown', overrideSaveButtonKeyboardShortcut, {
+				capture: true,
+			} );
 		};
 	}, [ canvasMode, previewingTheme.id, previewingTheme.type, setIsThemeUpgradeModalOpen ] );
 };

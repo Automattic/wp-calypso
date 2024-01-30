@@ -61,7 +61,7 @@ export function withImporterWrapper( Importer: ImporterCompType ) {
 		const runImportInitially = useInitialQueryRun( siteId );
 		const canImport = useSelector( ( state ) => canCurrentUser( state, siteId, 'manage_options' ) );
 		const siteImports = useSelector( ( state ) => getImporterStatusForSiteId( state, siteId ) );
-		const hasAllSitesFetched = useSelector( ( state ) => hasAllSitesList( state ) );
+		const hasAllSitesFetched = useSelector( hasAllSitesList );
 		const isImporterStatusHydrated = useSelector( isImporterStatusHydratedSelector );
 		const isMigrateFromWp = useSelect(
 			( select ) => ( select( ONBOARD_STORE ) as OnboardSelect ).getIsMigrateFromWp(),
@@ -155,7 +155,11 @@ export function withImporterWrapper( Importer: ImporterCompType ) {
 		 */
 		const renderStepContent = () => {
 			if ( isLoading() ) {
-				return <LoadingEllipsis />;
+				return (
+					<div className="import-layout__center">
+						<LoadingEllipsis />
+					</div>
+				);
 			} else if ( ! siteSlug || ! site || ! siteId ) {
 				return <NotFound />;
 			} else if ( ! hasPermission() ) {

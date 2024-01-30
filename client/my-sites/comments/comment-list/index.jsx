@@ -40,6 +40,7 @@ export class CommentList extends Component {
 	state = {
 		isBulkMode: false,
 		selectedComments: [],
+		editingCommentId: null,
 	};
 
 	componentDidUpdate() {
@@ -50,6 +51,15 @@ export class CommentList extends Component {
 			return changePage( totalPages );
 		}
 	}
+
+	toggleEditMode = ( commentId ) => {
+		this.setState( ( { editingCommentId } ) => {
+			if ( commentId === editingCommentId ) {
+				return { editingCommentId: null };
+			}
+			return { editingCommentId: commentId };
+		} );
+	};
 
 	shouldComponentUpdate = ( nextProps, nextState ) =>
 		! isEqual( this.props, nextProps ) || ! isEqual( this.state, nextState );
@@ -186,6 +196,8 @@ export class CommentList extends Component {
 								isPostView={ isPostView }
 								isSelected={ this.isCommentSelected( commentId ) }
 								toggleSelected={ this.toggleCommentSelected }
+								onToggleEditMode={ this.toggleEditMode }
+								isSingularEditMode={ this.state.editingCommentId === commentId }
 							/>
 						</CommentTransition>
 					) ) }

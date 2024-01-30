@@ -530,7 +530,6 @@ $colophon-height: 50px; // wpcomColophon element at the bottom
 
 .jetpack-connect__site.card,
 .jetpack-connect__logged-in-card.card {
-	max-width: 360px;
 	margin: 0 auto 16px;
 }
 
@@ -586,6 +585,21 @@ $colophon-height: 50px; // wpcomColophon element at the bottom
 
 .jetpack-connect__sso-placeholder a {
 	color: transparent;
+}
+
+.jetpack-connect__sso {
+
+	.formatted-header__title {
+		margin-bottom: 5px;
+	}
+
+	.card.jetpack-connect__site {
+		max-width: 100%;
+	}
+
+	.logged-out-form__link-item {
+		font-size: unset !important;
+	}
 }
 
 .jetpack-connect__sso .email-verification-gate .notice {

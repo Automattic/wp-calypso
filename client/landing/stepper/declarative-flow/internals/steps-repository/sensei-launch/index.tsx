@@ -1,3 +1,4 @@
+import { setThemeOnSite } from '@automattic/onboarding';
 import { __ } from '@wordpress/i18n';
 import { useMemo } from 'react';
 import DocumentHead from 'calypso/components/data/document-head';
@@ -62,6 +63,12 @@ const SenseiLaunch: Step = ( { navigation: { submit } } ) => {
 			},
 			async function switchToDefaultAdminPanelView() {
 				await setAdminInterfaceStyle( siteId, 'wp-admin' );
+				return true;
+			},
+			async function refreshThemeOnAtomic() {
+				await wait( 1200 );
+				await setThemeOnSite( siteId.toString(), 'pub/twentytwentytwo' );
+				await setThemeOnSite( siteId.toString(), 'pub/course' );
 				return true;
 			},
 			async function done() {

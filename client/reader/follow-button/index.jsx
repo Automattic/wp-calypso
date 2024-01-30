@@ -17,7 +17,7 @@ function ReaderFollowButton( props ) {
 	const { onFollowToggle, railcar, followSource, hasButtonStyle, isButtonOnly, siteUrl, iconSize } =
 		props;
 
-	const isLoggedIn = useSelector( ( state ) => isUserLoggedIn( state ) );
+	const isLoggedIn = useSelector( isUserLoggedIn );
 
 	function recordFollowToggle( isFollowing ) {
 		if ( isLoggedIn ) {

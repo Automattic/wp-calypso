@@ -281,7 +281,7 @@
 	}
 
 	.themes__content .upsell-nudge {
-		background-color: #f0f7fc;
+		background-color: rgba(var(--color-primary-30-rgb), 0.1);
 		border: none;
 		box-shadow: none;
 		margin-top: 32px;
@@ -325,16 +325,16 @@
 		}
 
 		.banner__icon {
-			background-color: var(--studio-blue-50);
+			background-color: var(--color-primary);
 			display: none;
 		}
 
 		.banner__icon-circle {
-			background-color: var(--studio-blue-50);
+			background-color: var(--color-primary);
 		}
 
 		.banner__action .button {
-			background-color: var(--studio-blue-50);
+			background-color: var(--color-primary);
 			border: none;
 			font-size: $font-body-small;
 			font-weight: 400;
@@ -343,7 +343,7 @@
 			white-space: nowrap;
 
 			&:hover {
-				background-color: var(--studio-blue-60);
+				background-color: var(--color-primary-60);
 			}
 
 			.accessible-focus &:focus {
@@ -470,6 +470,12 @@
 	height: 40px;
 	justify-content: space-between;
 	margin: 8px 0;
+
+	&.is-woo-express {
+		.responsive-toolbar-group__grouped-list {
+			justify-content: flex-start;
+		}
+	}
 }
 
 .theme-showcase__all-themes-title {

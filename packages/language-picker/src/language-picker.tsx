@@ -43,7 +43,6 @@ type Props< TLanguage extends Language > = {
  * Pick the first language group that includes the currently selected language.
  * If no language is currently selected then just use the default. Similarly,
  * if no language group can be found with the current language in it, use the default.
- *
  * @param selectedLanguage The currently selected language, if one exists.
  * @param languageGroups The language groups to choose from.
  * @param defaultLananguageGroupId The default language group to use when a language isn't picked or when the selected language isn't found in any of the groups.

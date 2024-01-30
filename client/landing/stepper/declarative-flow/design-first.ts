@@ -261,7 +261,7 @@ const designFirst: Flow = {
 		const logInUrl = useLoginUrl( {
 			variationName: flowName,
 			redirectTo: window.location.href.replace( window.location.origin, '' ),
-			pageTitle: 'Pick a design',
+			pageTitle: translate( 'Pick a design' ),
 			locale,
 		} );
 

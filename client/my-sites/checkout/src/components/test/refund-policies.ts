@@ -31,7 +31,6 @@ function getPlanAndDomainBundle( planSlug: string ) {
 	cart.products.push( {
 		...getEmptyResponseCartProduct(),
 		extra: { domain_to_bundle: 'test.live' },
-		item_subtotal_display: '$10',
 		item_subtotal_integer: 10,
 		product_slug: planSlug,
 	} );
@@ -130,6 +129,21 @@ describe( 'getRefundPolicies', () => {
 		const refundPolicies = getRefundPolicies( cart );
 
 		expect( refundPolicies ).toEqual( [ RefundPolicy.DomainNameRegistration ] );
+	} );
+
+	test( 'transfer domain', () => {
+		const cart = getEmptyResponseCart();
+		cart.products.push( {
+			...getEmptyResponseCartProduct(),
+			item_subtotal_integer: 10,
+			is_domain_registration: false,
+			meta: 'test.live',
+			product_slug: 'domain_transfer',
+		} );
+
+		const refundPolicies = getRefundPolicies( cart );
+
+		expect( refundPolicies ).toEqual( [ RefundPolicy.DomainNameTransfer ] );
 	} );
 
 	test( 'free domain', () => {

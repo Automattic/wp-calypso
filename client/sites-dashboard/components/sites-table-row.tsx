@@ -147,7 +147,7 @@ export default memo( function SitesTableRow( { site }: SiteTableRowProps ) {
 	const { __ } = useI18n();
 	const translatedStatus = useSiteLaunchStatusLabel( site );
 	const { ref, inView } = useInView( { triggerOnce: true } );
-	const userId = useSelector( ( state ) => getCurrentUserId( state ) );
+	const userId = useSelector( getCurrentUserId );
 
 	const isP2Site = site.options?.is_wpforteams_site;
 	const isWpcomStagingSite = isStagingSite( site );

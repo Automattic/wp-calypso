@@ -14,7 +14,6 @@ const KEY_DOWN = 40;
  * This pattern looks for a any non-space-character
  * string prefixed with an `@` which either starts
  * at the beginning of a line or after a space
- *
  * @type {RegExp} matches @mentions
  */
 const suggestionMatcher = /(?:^|\s)@([^\s]*)$/i;
@@ -28,7 +27,6 @@ const reHasRegExpChars = RegExp( reRegExpChars.source );
 
 /**
  * This pattern looks for a query
- *
  * @type {RegExp} matches @query
  */
 const queryMatcher = ( query ) => new RegExp( `^${ query }| ${ query }`, 'i' ); // start of string, or preceded by a space

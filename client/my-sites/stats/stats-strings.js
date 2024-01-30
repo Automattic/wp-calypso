@@ -1,6 +1,6 @@
 import { localizeUrl } from '@automattic/i18n-utils';
 import { translate } from 'i18n-calypso';
-import { SUPPORT_URL, UNDERSTAND_YOUR_TRAFFIC_SUPPORT_URL } from './const';
+import { SUPPORT_URL, INSIGHTS_SUPPORT_URL } from './const';
 
 export default function () {
 	const statsStrings = {};
@@ -10,7 +10,7 @@ export default function () {
 		item: translate( 'Title', { context: 'Stats: module row header for post title.' } ),
 		value: translate( 'Views', { context: 'Stats: module row header for number of post views.' } ),
 		empty: translate(
-			'Your most popular {{link}}posts and pages{{/link}} will display here once you begin to get some visitors.',
+			'Your most popular {{link}}posts and pages{{/link}} will display here once readers visit your site.',
 			{
 				comment: '{{link}} links to support documentation.',
 				components: {
@@ -48,7 +48,7 @@ export default function () {
 		empty: translate( 'Your most {{link}}clicked external links{{/link}} will display here.', {
 			comment: '{{link}} links to support documentation.',
 			components: {
-				link: <a href={ localizeUrl( `${ UNDERSTAND_YOUR_TRAFFIC_SUPPORT_URL }#clicks` ) } />,
+				link: <a href={ localizeUrl( `${ SUPPORT_URL }#clicks` ) } />,
 			},
 			context: 'Stats: Info box label when the Clicks module is empty',
 		} ),
@@ -61,7 +61,7 @@ export default function () {
 			context: 'Stats: module row header for number of views from a country.',
 		} ),
 		empty: translate(
-			'Stats on visitors and {{link}}their viewing location{{/link}} will make its way here.',
+			'Stats on visitors and {{link}}their viewing location{{/link}} will appear here.',
 			{
 				comment: '{{link}} links to support documentation.',
 				components: {
@@ -83,7 +83,7 @@ export default function () {
 		empty: translate( 'See {{link}}terms that visitors search{{/link}} to find your site, here. ', {
 			comment: '{{link}} links to support documentation.',
 			components: {
-				link: <a href={ localizeUrl( `${ UNDERSTAND_YOUR_TRAFFIC_SUPPORT_URL }#search-terms` ) } />,
+				link: <a href={ localizeUrl( `${ SUPPORT_URL }#search-terms` ) } />,
 			},
 			context: 'Stats: Info box label when the Search Terms module is empty',
 		} ),
@@ -113,7 +113,7 @@ export default function () {
 		empty: translate( 'Your most viewed {{link}}video stats{{/link}} will show up here.', {
 			comment: '{{link}} links to support documentation.',
 			components: {
-				link: <a href={ localizeUrl( `${ UNDERSTAND_YOUR_TRAFFIC_SUPPORT_URL }#videos` ) } />,
+				link: <a href={ localizeUrl( `${ SUPPORT_URL }#videos` ) } />,
 			},
 			context: 'Stats: Info box label when the Videos module is empty',
 		} ),
@@ -143,7 +143,9 @@ export default function () {
 		empty: translate( 'Most viewed {{link}}tags & categories{{/link}} will be listed here.', {
 			comment: '{{link}} links to support documentation.',
 			components: {
-				link: <a href={ localizeUrl( `${ SUPPORT_URL }#:~:text=Tags%20,%20Categories` ) } />,
+				link: (
+					<a href={ localizeUrl( `${ INSIGHTS_SUPPORT_URL }#:~:text=Tags%20,%20Categories` ) } />
+				),
 			},
 			context: 'Stats: Info box label when the Tags module is empty',
 		} ),

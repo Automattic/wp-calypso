@@ -227,7 +227,13 @@ export const redirect = async ( context, next ) => {
 
 function getPressThisData( query ) {
 	const { url, text, title, comment_content, comment_author } = query;
+
 	return url ? { url, text, title, comment_content, comment_author } : null;
+}
+
+function getBloggingPromptData( query ) {
+	const { answer_prompt, new_prompt } = query;
+	return answer_prompt || new_prompt ? { answer_prompt, new_prompt } : null;
 }
 
 function getAnchorFmData( query ) {
@@ -252,6 +258,7 @@ export const post = ( context, next ) => {
 	const state = context.store.getState();
 	const siteId = getSelectedSiteId( state );
 	const pressThisData = getPressThisData( context.query );
+	const bloggingPromptData = getBloggingPromptData( context.query );
 	const anchorFmData = getAnchorFmData( context.query );
 	const parentPostId = parseInt( context.query.parent_post, 10 ) || null;
 
@@ -268,6 +275,7 @@ export const post = ( context, next ) => {
 			postType={ postType }
 			duplicatePostId={ duplicatePostId }
 			pressThisData={ pressThisData }
+			bloggingPromptData={ bloggingPromptData }
 			anchorFmData={ anchorFmData }
 			parentPostId={ parentPostId }
 			creatingNewHomepage={ postType === 'page' && context.query.hasOwnProperty( 'new-homepage' ) }

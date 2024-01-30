@@ -27,6 +27,12 @@ interface StarterDesignsResponse {
 	static: { designs: StarterDesign[] };
 }
 
+export type ThemeTier = {
+	slug: string;
+	feature: string;
+	platform: string;
+};
+
 interface StarterDesign {
 	slug: string;
 	title: string;
@@ -41,6 +47,7 @@ interface StarterDesign {
 	design_type?: DesignType;
 	theme_type?: string;
 	screenshot?: string;
+	theme_tier: ThemeTier;
 }
 
 export function useStarterDesignsQuery(
@@ -89,6 +96,7 @@ function apiStarterDesignsToDesign( design: StarterDesign ): Design {
 		preview_data,
 		design_type,
 		screenshot,
+		theme_tier,
 	} = design;
 	const is_premium =
 		( design.recipe.stylesheet && design.recipe.stylesheet.startsWith( 'premium/' ) ) || false;
@@ -113,10 +121,8 @@ function apiStarterDesignsToDesign( design: StarterDesign ): Design {
 		style_variations,
 		is_virtual: design.is_virtual && !! design.recipe?.pattern_ids?.length,
 		...( preview_data && { preview_data } ),
-		// Deprecated; used for /start flow
-		features: [],
-		template: '',
 		theme: '',
 		screenshot,
+		design_tier: theme_tier?.slug,
 	};
 }

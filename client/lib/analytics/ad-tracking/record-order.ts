@@ -79,10 +79,11 @@ export async function recordOrder(
 	recordOrderInGAEnhancedEcommerce( cart, orderId, wpcomJetpackCartInfo );
 	recordOrderInJetpackGA( cart, orderId, wpcomJetpackCartInfo );
 	recordOrderInWPcomGA4( cart, orderId, wpcomJetpackCartInfo );
+	recordOrderInParsely( wpcomJetpackCartInfo );
 	recordOrderInAkismetGA( cart, orderId, wpcomJetpackCartInfo );
 	recordOrderInWooGTM( cart, orderId, sitePlanSlug );
 	recordOrderInAkismetGTM( cart, orderId, wpcomJetpackCartInfo );
-	recordOrderInParsely( cart, orderId );
+	recordOrderInJetpackGTM( cart, orderId, wpcomJetpackCartInfo );
 
 	// Fire a single tracking event without any details about what was purchased
 
@@ -415,11 +416,14 @@ function recordOrderInBing(
 	if ( wpcomJetpackCartInfo.containsWpcomProducts ) {
 		if ( null !== wpcomJetpackCartInfo.wpcomCostUSD ) {
 			const params = {
-				ec: 'purchase',
-				gv: wpcomJetpackCartInfo.wpcomCostUSD,
+				event_category: 'purchase',
+				event_label: 'purchase',
+				revenue_value: wpcomJetpackCartInfo.wpcomCostUSD,
+				currency: 'USD',
 			};
+
 			debug( 'recordOrderInBing: record WPCom purchase', params );
-			window.uetq.push( params );
+			window.uetq.push( 'event', 'purchase', params );
 		} else {
 			debug( `recordOrderInBing: currency ${ cart.currency } not supported, dropping WPCom pixel` );
 		}
@@ -720,22 +724,67 @@ function recordOrderInAkismetGTM(
 }
 
 /**
+ * Sends a purchase event to Google Tag Manager for Jetpack purchases.
+ */
+function recordOrderInJetpackGTM(
+	cart: ResponseCart,
+	orderId: number | null | undefined,
+	wpcomJetpackCartInfo: WpcomJetpackCartInfo
+): void {
+	if ( wpcomJetpackCartInfo.containsJetpackProducts ) {
+		// We ensure that we can track with GTM
+		if ( ! mayWeTrackByTracker( 'googleTagManager' ) ) {
+			return;
+		}
+
+		const purchaseEventMeta = {
+			event: 'purchase',
+			ecommerce: {
+				coupon: cart.coupon?.toString() ?? '',
+				transaction_id: orderId,
+				currency: 'USD',
+				items: wpcomJetpackCartInfo.jetpackProducts.map(
+					( { product_id, product_name, cost, volume, bill_period } ) => ( {
+						id: product_id.toString(),
+						name: product_name.toString(),
+						quantity: parseInt( String( volume ) ),
+						price: costToUSD( cost, cart.currency ) ?? 0,
+						billing_term: bill_period === '365' ? 'yearly' : 'monthly',
+					} )
+				),
+				value: wpcomJetpackCartInfo.jetpackCostUSD,
+			},
+		};
+
+		window.dataLayer.push( purchaseEventMeta );
+
+		debug( `recordOrderInJetpackGTM: Record Jetpack GTM purchase`, purchaseEventMeta );
+	}
+}
+
+/**
  * Sends a purchase conversion event to Prasely.
  */
-function recordOrderInParsely( cart: ResponseCart, orderId: number | null | undefined ): void {
+function recordOrderInParsely( wpcomJetpackCartInfo: WpcomJetpackCartInfo ): void {
+	if ( ! mayWeTrackByTracker( 'parsely' ) ) {
+		return;
+	}
+
+	if ( ! wpcomJetpackCartInfo.containsWpcomProducts ) {
+		return;
+	}
+
+	const cartContents = wpcomJetpackCartInfo.wpcomProducts
+		.map( ( product ) => product.product_slug )
+		.join( ', ' );
+
 	loadParselyTracker()
 		.then( () => {
 			debug( `loadParselyTracker: Loaded Parsely tracker ${ TRACKING_IDS.parselyTracker }` );
-
-			// We ensure that we can track with Parsely
-			if ( ! mayWeTrackByTracker( 'parsely' ) ) {
-				return;
-			}
-
-			// Record Parsely purchase
-			window.PARSELY.conversions.trackPurchase( `Order Id ${ orderId }` );
-
-			debug( `recordOrderInParsely: Record Parsely purchase`, orderId );
+			window.PARSELY && window.PARSELY.conversions.trackPurchase( cartContents );
+		} )
+		.then( () => {
+			debug( `recordOrderInParsely: Record Parsely purchase`, cartContents );
 		} )
 		.catch( ( error ) => {
 			debug( 'recordOrderInParsely: Error loading Parsely', error );

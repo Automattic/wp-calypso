@@ -22,6 +22,8 @@ import {
 	getImmediateLoginEmail,
 	getImmediateLoginLocale,
 } from 'calypso/state/immediate-login/selectors';
+import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
+import { getSelectedSite } from 'calypso/state/ui/selectors';
 import { makeLayoutMiddleware } from './shared.js';
 import { render, hydrate } from './web-util.js';
 
@@ -178,6 +180,25 @@ export function redirectLoggedOutToSignup( context, next ) {
 	}
 
 	return page.redirect( createAccountUrl( { redirectTo: context.path, ref: 'reader-lp' } ) );
+}
+
+/**
+ * Middleware to redirect a user if they don't have the appropriate capability.
+ * @param   {string}   capability Capability to check
+ * @returns {Function}            Middleware function
+ */
+export function redirectIfCurrentUserCannot( capability ) {
+	return ( context, next ) => {
+		const state = context.store.getState();
+		const site = getSelectedSite( state );
+		const currentUserCan = canCurrentUser( state, site?.ID, capability );
+
+		if ( site && ! currentUserCan ) {
+			return page.redirect( `/home/${ site.slug }` );
+		}
+
+		next();
+	};
 }
 
 /**

@@ -57,7 +57,7 @@ class SecurityKeyForm extends Component {
 							</p>
 							<p>
 								{ translate(
-									'Insert your security key into your USB port. Then tap the button or gold disc.'
+									'Insert your hardware security key, or follow the instructions in your browser or phone to log in.'
 								) }
 							</p>
 						</div>
@@ -67,7 +67,11 @@ class SecurityKeyForm extends Component {
 							<p className="security-key-form__add-wait-for-key-heading">
 								{ translate( 'Waiting for security key' ) }
 							</p>
-							<p>{ translate( 'Connect and touch your security key to log in.' ) }</p>
+							<p>
+								{ translate(
+									'Connect and touch your security key to log in, or follow the directions in your browser or pop-up.'
+								) }
+							</p>
 						</div>
 					) }
 					{ this.state.showError && (

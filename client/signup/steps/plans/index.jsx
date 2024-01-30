@@ -1,4 +1,4 @@
-import { getPlan, PLAN_FREE } from '@automattic/calypso-products';
+import config from '@automattic/calypso-config';
 import { Button } from '@automattic/components';
 import { isSiteAssemblerFlow, isTailoredSignupFlow } from '@automattic/onboarding';
 import { isDesktop, subscribeIsDesktop } from '@automattic/viewport';
@@ -8,19 +8,17 @@ import PropTypes from 'prop-types';
 import { parse as parseQs } from 'qs';
 import { Component } from 'react';
 import { connect } from 'react-redux';
-import QueryPlans from 'calypso/components/data/query-plans';
 import { LoadingEllipsis } from 'calypso/components/loading-ellipsis';
 import MarketingMessage from 'calypso/components/marketing-message';
 import Notice from 'calypso/components/notice';
 import { getTld, isSubdomain } from 'calypso/lib/domains';
+import { triggerGuidesForStep } from 'calypso/lib/guides/trigger-guides-for-step';
 import { buildUpgradeFunction } from 'calypso/lib/signup/step-actions';
-import wp from 'calypso/lib/wp';
 import PlansFeaturesMain from 'calypso/my-sites/plans-features-main';
 import StepWrapper from 'calypso/signup/step-wrapper';
 import { getStepUrl } from 'calypso/signup/utils';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { errorNotice } from 'calypso/state/notices/actions';
-import { getPlanSlug } from 'calypso/state/plans/selectors';
 import hasInitializedSites from 'calypso/state/selectors/has-initialized-sites';
 import { saveSignupStep, submitSignupStep } from 'calypso/state/signup/progress/actions';
 import { getSiteBySlug } from 'calypso/state/sites/selectors';
@@ -39,17 +37,7 @@ export class PlansStep extends Component {
 		this.props.saveSignupStep( { stepName: this.props.stepName } );
 
 		if ( isTailoredSignupFlow( this.props.flowName ) ) {
-			// trigger guides on this step, we don't care about failures or response
-			wp.req.post(
-				'guides/trigger',
-				{
-					apiNamespace: 'wpcom/v2/',
-				},
-				{
-					flow: this.props.flowName,
-					step: 'plans',
-				}
-			);
+			triggerGuidesForStep( this.props.flowName, 'plans' );
 		}
 	}
 
@@ -121,10 +109,6 @@ export class PlansStep extends Component {
 			);
 		}
 
-		if ( ! this.props.plansLoaded ) {
-			return this.renderLoading();
-		}
-
 		const { signupDependencies } = this.props;
 		const { siteUrl, domainItem, siteTitle, username, coupon } = signupDependencies;
 		const paidDomainName = domainItem?.meta;
@@ -145,6 +129,7 @@ export class PlansStep extends Component {
 					isInSignup={ true }
 					isLaunchPage={ isLaunchPage }
 					intervalType={ intervalType }
+					displayedIntervals={ this.props.displayedIntervals }
 					onUpgradeClick={ ( cartItems ) => this.onSelectPlan( cartItems ) }
 					customerType={ this.getCustomerType() }
 					disableBloggerPlanWithNonBlogDomain={ disableBloggerPlanWithNonBlogDomain } // TODO clk investigate
@@ -156,10 +141,10 @@ export class PlansStep extends Component {
 					hidePremiumPlan={ this.props.hidePremiumPlan }
 					hideEcommercePlan={ this.shouldHideEcommercePlan() }
 					hideEnterprisePlan={ this.props.hideEnterprisePlan }
-					showBiennialToggle={ this.props.showBiennialToggle }
 					removePaidDomain={ this.removePaidDomain }
 					setSiteUrlAsFreeDomainSuggestion={ this.setSiteUrlAsFreeDomainSuggestion }
 					coupon={ coupon }
+					showPlanTypeSelectorDropdown={ config.isEnabled( 'onboarding/interval-dropdown' ) }
 				/>
 			</div>
 		);
@@ -272,8 +257,6 @@ export class PlansStep extends Component {
 	}
 
 	render() {
-		const { signupDependencies } = this.props;
-		const { coupon } = signupDependencies;
 		const classes = classNames( 'plans plans-step', {
 			'has-no-sidebar': true,
 			'is-wide-layout': false,
@@ -282,7 +265,6 @@ export class PlansStep extends Component {
 
 		return (
 			<>
-				<QueryPlans coupon={ coupon } />
 				<MarketingMessage path="signup/plans" />
 				<div className={ classes }>{ this.plansFeaturesSelection() }</div>
 			</>
@@ -340,8 +322,6 @@ export default connect(
 		selectedSite: siteSlug ? getSiteBySlug( state, siteSlug ) : null,
 		customerType: parseQs( path.split( '?' ).pop() ).customerType,
 		hasInitializedSitesBackUrl: hasInitializedSites( state ) ? '/sites/' : false,
-		isLoadingExperiment: false,
-		plansLoaded: Boolean( getPlanSlug( state, getPlan( PLAN_FREE )?.getProductId() || 0 ) ),
 	} ),
 	{ recordTracksEvent, saveSignupStep, submitSignupStep, errorNotice }
 )( localize( PlansStep ) );

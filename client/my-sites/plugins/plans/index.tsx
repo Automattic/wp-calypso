@@ -1,4 +1,5 @@
-import { PLAN_BUSINESS } from '@automattic/calypso-products';
+import config from '@automattic/calypso-config';
+import { PLAN_BUSINESS, getPlan } from '@automattic/calypso-products';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect } from 'react';
 import ActionCard from 'calypso/components/action-card';
@@ -103,6 +104,13 @@ const Plans = ( { intervalType }: { intervalType: 'yearly' | 'monthly' } ) => {
 					intervalType={ intervalType }
 					selectedPlan={ PLAN_BUSINESS }
 					intent="plans-plugins"
+					showPlanTypeSelectorDropdown={
+						/**
+						 *	Override the default feature flag to prevent this feature from rendering in untested locations
+						 *  The hardcoded 'false' short curicuit should be removed once the feature is fully tested in the given context
+						 */
+						config.isEnabled( 'onboarding/interval-dropdown' ) && false
+					}
 				/>
 			</div>
 
@@ -119,7 +127,11 @@ const Plans = ( { intervalType }: { intervalType: 'yearly' | 'monthly' } ) => {
 						},
 					}
 				) }
-				buttonText={ translate( 'Upgrade to Business' ) }
+				buttonText={
+					translate( 'Upgrade to %(planName)s', {
+						args: { planName: getPlan( PLAN_BUSINESS )?.getTitle() ?? '' },
+					} ) as string
+				}
 				buttonPrimary={ true }
 				buttonOnClick={ () => {
 					alert( 'Connect code after merging PR 68087' );

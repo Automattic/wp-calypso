@@ -7,7 +7,7 @@ import QueryJetpackPartnerPortalPartner from 'calypso/components/data/query-jetp
 import CompanyDetailsForm from 'calypso/jetpack-cloud/sections/partner-portal/company-details-form';
 import formatApiPartner from 'calypso/jetpack-cloud/sections/partner-portal/lib/format-api-partner';
 import TextPlaceholder from 'calypso/jetpack-cloud/sections/partner-portal/text-placeholder';
-import { dashboardPath } from 'calypso/lib/jetpack/paths';
+import { dashboardPath, overviewPath } from 'calypso/lib/jetpack/paths';
 import { useDispatch, useSelector } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { errorNotice, removeNotice } from 'calypso/state/notices/actions';
@@ -80,8 +80,7 @@ export default function AgencySignupForm() {
 	useEffect( () => {
 		if ( createPartner.isSuccess ) {
 			// Redirect to dashboard until Overview page is built.
-			// page.redirect( overviewPath() );
-			page.redirect( dashboardPath() );
+			page.redirect( overviewPath() );
 		} else if ( partner ) {
 			page.redirect( dashboardPath() );
 		}
@@ -127,7 +126,7 @@ export default function AgencySignupForm() {
 			{ hasFetched && ! partner && (
 				<CompanyDetailsForm
 					includeTermsOfService={ true }
-					isLoading={ createPartner.isLoading }
+					isLoading={ createPartner.isPending }
 					onSubmit={ onSubmit }
 					submitLabel={ translate( 'Continue' ) }
 					showSignupFields={ true }

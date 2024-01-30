@@ -102,13 +102,21 @@ export const SiteOptions = ( { navigation }: Pick< StepProps, 'navigation' > ) =
 					taglineExplanation: translate( 'In a few words, explain what your store is about.' ),
 				};
 			case 'write':
-			default:
 				return {
 					headerText: translate( "First, let's give your blog a name" ),
 					headerImage: siteOptionsUrl,
 					siteTitleLabel: translate( 'Blog name' ),
 					taglineLabel: translate( 'Tagline' ),
 					taglineExplanation: translate( 'In a few words, explain what your blog is about.' ),
+				};
+			case 'build':
+			default:
+				return {
+					headerText: translate( "Let's give your site a name" ),
+					headerImage: siteOptionsUrl,
+					siteTitleLabel: translate( 'Site name' ),
+					taglineLabel: translate( 'Tagline' ),
+					taglineExplanation: translate( 'In a few words, explain what your site is about.' ),
 				};
 		}
 	};

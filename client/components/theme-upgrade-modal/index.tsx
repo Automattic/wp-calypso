@@ -1,3 +1,4 @@
+import config from '@automattic/calypso-config';
 import {
 	FEATURE_ACCEPT_PAYMENTS,
 	FEATURE_AD_FREE_EXPERIENCE,
@@ -6,6 +7,7 @@ import {
 	FEATURE_CDN,
 	FEATURE_CPUS,
 	FEATURE_CUSTOM_DOMAIN,
+	FEATURE_FAST_DNS,
 	FEATURE_GLOBAL_EDGE_CACHING,
 	FEATURE_ISOLATED_INFRA,
 	FEATURE_LIVE_CHAT_SUPPORT,
@@ -13,24 +15,27 @@ import {
 	FEATURE_MULTI_SITE,
 	FEATURE_NO_ADS,
 	FEATURE_PLUGINS_THEMES,
-	FEATURE_PREMIUM_THEMES_V2,
 	FEATURE_STYLE_CUSTOMIZATION,
 	FEATURE_VIDEOPRESS_JP,
 	FEATURE_WAF_V2,
 	FEATURE_WORDADS,
 	PLAN_BUSINESS,
 	PLAN_ECOMMERCE,
+	PLAN_PERSONAL,
 	PLAN_PREMIUM,
+	WPCOM_FEATURES_PREMIUM_THEMES_LIMITED,
+	WPCOM_FEATURES_PREMIUM_THEMES_UNLIMITED,
+	getPlan,
 } from '@automattic/calypso-products';
 import { Button, Dialog, ScreenReaderText } from '@automattic/components';
 import { ProductsList } from '@automattic/data-stores';
-import { usePlans } from '@automattic/data-stores/src/plans';
+import { englishLocales } from '@automattic/i18n-utils';
 import { useBreakpoint } from '@automattic/viewport-react';
 import { Tooltip } from '@wordpress/components';
 import { useSelect } from '@wordpress/data';
 import { Icon as WpIcon, check, close } from '@wordpress/icons';
 import classNames from 'classnames';
-import { useTranslate } from 'i18n-calypso';
+import i18n, { useTranslate } from 'i18n-calypso';
 import { LoadingEllipsis } from 'calypso/components/loading-ellipsis';
 import { getPlanFeaturesObject } from 'calypso/lib/plans/features-list';
 import { useBundleSettings } from 'calypso/my-sites/theme/hooks/use-bundle-settings';
@@ -91,6 +96,10 @@ export const ThemeUpgradeModal = ( {
 	const firstThemeSoftwareSet = themeSoftwareSet?.[ 0 ];
 	const bundleSettings = useBundleSettings( firstThemeSoftwareSet?.slug );
 
+	const personalPlanProduct = useSelect(
+		( select ) => select( ProductsList.store ).getProductBySlug( PLAN_PERSONAL ),
+		[]
+	);
 	const premiumPlanProduct = useSelect(
 		( select ) => select( ProductsList.store ).getProductBySlug( 'value_bundle' ),
 		[]
@@ -103,31 +112,77 @@ export const ThemeUpgradeModal = ( {
 		( select ) => select( ProductsList.store ).getProductBySlug( 'business-bundle-monthly' ),
 		[]
 	);
-	const plans = usePlans();
 
 	//Wait until we have theme and product data to show content
 	const isLoading = ! premiumPlanProduct || ! businessPlanProduct || ! theme.data;
 
-	const getStandardPurchaseModalData = (): UpgradeModalContent => {
-		const planPrice = premiumPlanProduct?.combined_cost_display;
+	const personalPlanName = getPlan( PLAN_PERSONAL )?.getTitle() || '';
+	const premiumPlanName = getPlan( PLAN_PREMIUM )?.getTitle() || '';
+	const businessPlanName = getPlan( PLAN_BUSINESS )?.getTitle() || '';
+	const ecommercePlanName = getPlan( PLAN_ECOMMERCE )?.getTitle() || '';
+
+	const getPersonalPlanModalData = (): UpgradeModalContent => {
+		const planPrice = personalPlanProduct?.combined_cost_display;
 
 		return {
 			header: (
-				<h1 className="theme-upgrade-modal__heading">
-					{ translate( 'Unlock this premium theme' ) }
-				</h1>
+				<h1 className="theme-upgrade-modal__heading">{ translate( 'Unlock this theme' ) }</h1>
 			),
 			text: (
 				<p>
 					{ translate(
-						'Get access to our Premium themes, and a ton of other features, with a subscription to the %(premiumPlanName)s plan. It’s {{strong}}%(planPrice)s{{/strong}} a year, risk-free with a 14-day money-back guarantee.',
+						'Get access to this theme, and a ton of other features, with a subscription to the %(plan)s plan. It’s {{strong}}%(planPrice)s{{/strong}} a year, risk-free with a 14-day money-back guarantee.',
 						{
 							components: {
 								strong: <strong />,
 							},
 							args: {
 								planPrice: planPrice || '',
-								premiumPlanName: plans.data?.[ PLAN_PREMIUM ]?.productNameShort || '',
+								plan: personalPlanName,
+							},
+						}
+					) }
+				</p>
+			),
+			price: null,
+			action: (
+				<div className="theme-upgrade-modal__actions bundle">
+					<Button
+						className="theme-upgrade-modal__cancel"
+						onClick={ () => closeModal( 'cancel_button' ) }
+					>
+						{ translate( 'Cancel' ) }
+					</Button>
+					<Button
+						className="theme-upgrade-modal__upgrade-plan"
+						primary
+						onClick={ () => checkout() }
+					>
+						{ translate( 'Upgrade to activate' ) }
+					</Button>
+				</div>
+			),
+		};
+	};
+
+	const getStandardPurchaseModalData = (): UpgradeModalContent => {
+		const planPrice = premiumPlanProduct?.combined_cost_display;
+
+		return {
+			header: (
+				<h1 className="theme-upgrade-modal__heading">{ translate( 'Unlock this theme' ) }</h1>
+			),
+			text: (
+				<p>
+					{ translate(
+						'Get access to this theme, and a ton of other features, with a subscription to the %(premiumPlanName)s plan. It’s {{strong}}%(planPrice)s{{/strong}} a year, risk-free with a 14-day money-back guarantee.',
+						{
+							components: {
+								strong: <strong />,
+							},
+							args: {
+								planPrice: planPrice || '',
+								premiumPlanName: premiumPlanName,
 							},
 						}
 					) }
@@ -194,7 +249,7 @@ export const ThemeUpgradeModal = ( {
 						{
 							args: {
 								businessPlanPrice: businessPlanPrice || '',
-								businessPlanName: plans.data?.[ PLAN_BUSINESS ]?.productNameShort || '',
+								businessPlanName: businessPlanName,
 							},
 						}
 					) }
@@ -250,8 +305,8 @@ export const ThemeUpgradeModal = ( {
 							'This partner theme is only available to buy on the %(businessPlanName)s or %(commercePlanName)s plans.',
 							{
 								args: {
-									businessPlanName: plans.data?.[ PLAN_BUSINESS ]?.productNameShort || '',
-									commercePlanName: plans.data?.[ PLAN_ECOMMERCE ]?.productNameShort || '',
+									businessPlanName: businessPlanName,
+									commercePlanName: ecommercePlanName,
 								},
 							}
 						) }
@@ -275,7 +330,7 @@ export const ThemeUpgradeModal = ( {
 									<label>
 										{ translate( '%(businessPlanName)s plan', {
 											args: {
-												businessPlanName: plans.data?.[ PLAN_BUSINESS ]?.productNameShort || '',
+												businessPlanName: businessPlanName,
 											},
 										} ) }
 									</label>
@@ -312,7 +367,7 @@ export const ThemeUpgradeModal = ( {
 	const getStandardPurchaseFeatureList = () => {
 		return getPlanFeaturesObject( [
 			FEATURE_CUSTOM_DOMAIN,
-			FEATURE_PREMIUM_THEMES_V2,
+			WPCOM_FEATURES_PREMIUM_THEMES_UNLIMITED,
 			FEATURE_STYLE_CUSTOMIZATION,
 			FEATURE_LIVE_CHAT_SUPPORT,
 			FEATURE_AD_FREE_EXPERIENCE,
@@ -320,10 +375,24 @@ export const ThemeUpgradeModal = ( {
 		] );
 	};
 
+	const getPersonalPlanFeatureList = () => {
+		const localeSlug = i18n.getLocaleSlug();
+		const shouldShowThemesFeature =
+			config.isEnabled( 'themes/tiers' ) &&
+			( ( localeSlug && englishLocales.includes( localeSlug ) ) ||
+				i18n.hasTranslation( 'Dozens of premium themes' ) );
+		return getPlanFeaturesObject( [
+			...( shouldShowThemesFeature ? [ WPCOM_FEATURES_PREMIUM_THEMES_LIMITED ] : [] ),
+			FEATURE_CUSTOM_DOMAIN,
+			FEATURE_AD_FREE_EXPERIENCE,
+			FEATURE_FAST_DNS,
+		] );
+	};
+
 	const getBundledFirstPartyPurchaseFeatureList = () => {
 		return getPlanFeaturesObject( [
 			FEATURE_CUSTOM_DOMAIN,
-			FEATURE_PREMIUM_THEMES_V2,
+			WPCOM_FEATURES_PREMIUM_THEMES_UNLIMITED,
 			FEATURE_STYLE_CUSTOMIZATION,
 			FEATURE_LIVE_CHAT_SUPPORT,
 			FEATURE_AD_FREE_EXPERIENCE,
@@ -362,19 +431,28 @@ export const ThemeUpgradeModal = ( {
 		modalData = getBundledFirstPartyPurchaseModalData();
 		featureList = getBundledFirstPartyPurchaseFeatureList();
 		featureListHeader = translate( 'Included with your %(businessPlanName)s plan', {
-			args: { businessPlanName: plans.data?.[ PLAN_BUSINESS ]?.productNameShort || '' },
+			args: { businessPlanName: businessPlanName },
 		} );
 	} else if ( isExternallyManaged ) {
 		modalData = getExternallyManagedPurchaseModalData();
 		featureList = getExternallyManagedFeatureList();
 		featureListHeader = translate( 'Included with your %(businessPlanName)s plan', {
-			args: { businessPlanName: plans.data?.[ PLAN_BUSINESS ]?.productNameShort || '' },
+			args: { businessPlanName: businessPlanName },
+		} );
+	} else if (
+		config.isEnabled( 'themes/tiers' ) &&
+		theme?.data?.theme_tier?.feature === WPCOM_FEATURES_PREMIUM_THEMES_LIMITED
+	) {
+		modalData = getPersonalPlanModalData();
+		featureList = getPersonalPlanFeatureList();
+		featureListHeader = translate( 'Included with your %(plan)s plan', {
+			args: { plan: personalPlanName },
 		} );
 	} else {
 		modalData = getStandardPurchaseModalData();
 		featureList = getStandardPurchaseFeatureList();
 		featureListHeader = translate( 'Included with your %(premiumPlanName)s plan', {
-			args: { premiumPlanName: plans.data?.[ PLAN_PREMIUM ]?.productNameShort || '' },
+			args: { premiumPlanName: premiumPlanName },
 		} );
 	}
 

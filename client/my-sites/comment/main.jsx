@@ -31,6 +31,14 @@ export class CommentView extends Component {
 		translate: PropTypes.func.isRequired,
 	};
 
+	state = {
+		isEditMode: this.props.action === 'edit',
+	};
+
+	toggleEditMode = () => {
+		this.setState( ( { isEditMode } ) => ( { isEditMode: ! isEditMode } ) );
+	};
+
 	render() {
 		const {
 			siteId,
@@ -42,6 +50,8 @@ export class CommentView extends Component {
 			redirectToPostView,
 			translate,
 		} = this.props;
+
+		const { isEditMode } = this.state;
 
 		return (
 			// eslint-disable-next-line wpcalypso/jsx-classname-namespace
@@ -74,7 +84,8 @@ export class CommentView extends Component {
 						refreshCommentData={ true }
 						redirect={ redirectToPostView }
 						isPostView={ true }
-						isEditMode={ canModerateComments && 'edit' === action }
+						isSingularEditMode={ canModerateComments && isEditMode }
+						onToggleEditMode={ this.toggleEditMode }
 					/>
 				) }
 				{ canModerateComments && hasPermalink && <CommentPermalink { ...{ siteId, commentId } } /> }

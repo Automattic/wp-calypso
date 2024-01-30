@@ -3,9 +3,13 @@ import { useTranslate } from 'i18n-calypso';
 import React, { useState, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { StartImportTrackingProps } from 'calypso/blocks/importer/wordpress/import-everything/pre-migration/types';
+import QueryUserSettings from 'calypso/components/data/query-user-settings';
+import { LoadingEllipsis } from 'calypso/components/loading-ellipsis';
 import useMigrationConfirmation from 'calypso/landing/stepper/hooks/use-migration-confirmation';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import getUserSetting from 'calypso/state/selectors/get-user-setting';
 import { isNewSite } from 'calypso/state/sites/selectors';
+import { isFetchingUserSettings } from 'calypso/state/user-settings/selectors';
 import ConfirmModal from './confirm-modal';
 import { CredentialsCta } from './credentials-cta';
 import type { SiteId, SiteSlug } from 'calypso/types';
@@ -35,6 +39,10 @@ export function MigrationReady( props: Props ) {
 	} = props;
 
 	const isNewlyCreatedSite = useSelector( ( state: object ) => isNewSite( state, targetSiteId ) );
+	const isDevAccount = useSelector( ( state ) => getUserSetting( state, 'is_dev_account' ) );
+	const isFetchingUserSettingsSelector = useSelector( ( state: object ) =>
+		isFetchingUserSettings( state )
+	);
 
 	const [ showConfirmModal, setShowConfirmModal ] = useState( false );
 	const [ migrationConfirmed, setMigrationConfirmed ] = useMigrationConfirmation();
@@ -54,6 +62,12 @@ export function MigrationReady( props: Props ) {
 		}
 	}, [ isNewlyCreatedSite, setMigrationConfirmed ] );
 
+	useEffect( () => {
+		if ( isDevAccount ) {
+			onProvideCredentialsClick();
+		}
+	}, [ isDevAccount, onProvideCredentialsClick ] );
+
 	function displayConfirmModal() {
 		dispatch(
 			recordTracksEvent( 'calypso_site_migration_confirm_modal_display', migrationTrackingProps )
@@ -70,6 +84,7 @@ export function MigrationReady( props: Props ) {
 
 	return (
 		<>
+			<QueryUserSettings />
 			{ showConfirmModal && (
 				<ConfirmModal
 					sourceSiteSlug={ sourceSiteSlug }
@@ -82,26 +97,32 @@ export function MigrationReady( props: Props ) {
 					} }
 				/>
 			) }
-			<div className="import__pre-migration import__import-everything import__import-everything--redesign">
-				<div className="import__heading import__heading-center">
-					<Title>{ translate( 'You are ready to migrate' ) }</Title>
+			{ isFetchingUserSettingsSelector ? (
+				<div className="import-layout__center">
+					<LoadingEllipsis />
 				</div>
-				{ ! sourceSiteHasCredentials && (
-					<CredentialsCta onButtonClick={ onProvideCredentialsClick } />
-				) }
-				<div className="import__footer-button-container pre-migration__proceed">
-					<NextButton
-						type="button"
-						onClick={ () => {
-							migrationConfirmed
-								? startImport( { type: 'without-credentials', ...migrationTrackingProps } )
-								: displayConfirmModal();
-						} }
-					>
-						{ translate( 'Start migration' ) }
-					</NextButton>
+			) : (
+				<div className="import__pre-migration import__import-everything import__import-everything--redesign">
+					<div className="import__heading import__heading-center">
+						<Title>{ translate( 'You are ready to migrate' ) }</Title>
+					</div>
+					{ ! sourceSiteHasCredentials && (
+						<CredentialsCta onButtonClick={ onProvideCredentialsClick } />
+					) }
+					<div className="import__footer-button-container pre-migration__proceed">
+						<NextButton
+							type="button"
+							onClick={ () => {
+								migrationConfirmed
+									? startImport( { type: 'without-credentials', ...migrationTrackingProps } )
+									: displayConfirmModal();
+							} }
+						>
+							{ translate( 'Start migration' ) }
+						</NextButton>
+					</div>
 				</div>
-			</div>
+			) }
 		</>
 	);
 }

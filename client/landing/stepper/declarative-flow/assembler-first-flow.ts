@@ -1,5 +1,5 @@
 import { Onboard, updateLaunchpadSettings } from '@automattic/data-stores';
-import { DEFAULT_ASSEMBLER_DESIGN, isAssemblerSupported } from '@automattic/design-picker';
+import { getAssemblerDesign, isAssemblerSupported } from '@automattic/design-picker';
 import { useLocale } from '@automattic/i18n-utils';
 import { ASSEMBLER_FIRST_FLOW } from '@automattic/onboarding';
 import { useDispatch, useSelect } from '@wordpress/data';
@@ -34,7 +34,7 @@ const assemblerFirstFlow: Flow = {
 			[]
 		);
 		const { setSelectedDesign, setIntent } = useDispatch( ONBOARD_STORE );
-		const selectedTheme = DEFAULT_ASSEMBLER_DESIGN.slug;
+		const selectedTheme = getAssemblerDesign().slug;
 		const theme = useSelector( ( state ) => getTheme( state, 'wpcom', selectedTheme ) );
 
 		// We have to query theme for the Jetpack site.
@@ -127,7 +127,7 @@ const assemblerFirstFlow: Flow = {
 				params.set( 'isNewSite', 'true' );
 			}
 
-			return navigate( `patternAssembler?${ params }` );
+			return navigate( `pattern-assembler?${ params }` );
 		};
 
 		const submit = async (
@@ -200,7 +200,7 @@ const assemblerFirstFlow: Flow = {
 					return exitFlow( `/site-editor/${ siteSlug }?${ params }` );
 				}
 
-				case 'patternAssembler': {
+				case 'pattern-assembler': {
 					return navigate( 'processing' );
 				}
 
@@ -248,7 +248,7 @@ const assemblerFirstFlow: Flow = {
 					return navigate( 'launchpad' );
 				}
 
-				case 'patternAssembler': {
+				case 'pattern-assembler': {
 					const params = new URLSearchParams( window.location.search );
 					params.delete( 'siteSlug' );
 					params.delete( 'siteId' );

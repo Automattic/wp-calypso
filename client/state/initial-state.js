@@ -3,25 +3,19 @@ import debugModule from 'debug';
 import { map, pick, throttle } from 'lodash';
 import { setStoredItem } from 'calypso/lib/browser-storage';
 import { isSupportSession } from 'calypso/lib/user/support-user-interop';
-import { APPLY_STORED_STATE } from 'calypso/state/action-types';
-import { serialize, deserialize } from 'calypso/state/utils';
+import { APPLY_STORED_STATE } from './action-types';
+import { MAX_AGE, SERIALIZE_THROTTLE, WAS_STATE_RANDOMLY_CLEARED_KEY } from './constants';
 import {
 	clearPersistedState,
 	getPersistedStateItem,
 	storePersistedStateItem,
 } from './persisted-state';
+import { serialize, deserialize } from './utils';
 
 /**
  * Module variables
  */
 const debug = debugModule( 'calypso:state' );
-
-const DAY_IN_HOURS = 24;
-const HOUR_IN_MS = 3600000;
-export const SERIALIZE_THROTTLE = 5000;
-export const MAX_AGE = 7 * DAY_IN_HOURS * HOUR_IN_MS;
-export const BASE_STALE_TIME = 2 * HOUR_IN_MS;
-export const WAS_STATE_RANDOMLY_CLEARED_KEY = 'was-state-randomly-cleared';
 
 // Store the timestamp at which the module loads as a proxy for the timestamp
 // when the server data (if any) was generated.

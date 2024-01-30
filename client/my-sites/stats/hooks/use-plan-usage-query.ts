@@ -1,5 +1,6 @@
 import { useQuery, UseQueryResult } from '@tanstack/react-query';
 import wpcom from 'calypso/lib/wp';
+import { PriceTierListItemProps } from '../stats-purchase/types';
 
 interface PeriodUsage {
 	current_start: string | null;
@@ -13,6 +14,7 @@ export interface PlanUsage {
 	recent_usages: Array< PeriodUsage >;
 	views_limit: number;
 	over_limit_months: number;
+	current_tier: PriceTierListItemProps;
 }
 
 function selectPlanUsage( payload: PlanUsage ): PlanUsage {

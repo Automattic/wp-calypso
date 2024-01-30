@@ -1,8 +1,6 @@
-module.exports = ( { isBrowser = true, outputPOT = 'build' } = {} ) => ( {
-	presets: [ [ require.resolve( './presets/default' ), { bugfixes: true } ] ],
-	plugins: [
-		[ '@automattic/babel-plugin-transform-wpcalypso-async', { async: true, ignore: ! isBrowser } ],
-	],
+module.exports = ( { isBrowser = true, outputPOT = 'build', importSource } = {} ) => ( {
+	presets: [ [ require.resolve( './presets/default' ), { bugfixes: true, importSource } ] ],
+	plugins: [ [ '@automattic/babel-plugin-transform-wpcalypso-async', { ignore: ! isBrowser } ] ],
 	env: {
 		production: {
 			plugins: [ 'babel-plugin-transform-react-remove-prop-types' ],

@@ -8,6 +8,7 @@ import {
 	useSelect as useDataStoreSelect,
 } from '@wordpress/data';
 import { useTranslate } from 'i18n-calypso';
+import { useEffect } from 'react';
 
 const HELP_CENTER_STORE = HelpCenter.register();
 
@@ -63,6 +64,12 @@ export function DefaultMasterbarContact() {
 
 		setShowHelpCenter( ! isShowingHelpCenter );
 	};
+
+	useEffect( () => {
+		return () => {
+			setShowHelpCenter( false );
+		};
+	}, [] );
 
 	return (
 		<ContactContainer>

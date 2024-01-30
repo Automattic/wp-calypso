@@ -7,6 +7,7 @@ import config from '@automattic/calypso-config';
 import { getPlan, getPlanTermLabel, isFreePlanProduct } from '@automattic/calypso-products';
 import { FormInputValidation, Popover, Spinner } from '@automattic/components';
 import { useLocale } from '@automattic/i18n-utils';
+import { getOdieStorage } from '@automattic/odie-client';
 import { useQueryClient } from '@tanstack/react-query';
 import { Button, TextControl, CheckboxControl, Tip } from '@wordpress/components';
 import { useDispatch, useSelect } from '@wordpress/data';
@@ -19,7 +20,6 @@ import { useDebounce } from 'use-debounce';
 import { decodeEntities, preventWidows } from 'calypso/lib/formatting';
 import { isWcMobileApp } from 'calypso/lib/mobile-app';
 import { getQueryArgs } from 'calypso/lib/query-args';
-import { getOdieStorage } from 'calypso/odie/data';
 import { getCurrentUserEmail, getCurrentUserId } from 'calypso/state/current-user/selectors';
 import { getSectionName } from 'calypso/state/ui/selectors';
 /**
@@ -94,8 +94,8 @@ export const HelpCenterContactForm = () => {
 	const [ hideSiteInfo, setHideSiteInfo ] = useState( false );
 	const [ hasSubmittingError, setHasSubmittingError ] = useState< boolean >( false );
 	const locale = useLocale();
-	const { isLoading: submittingTicket, mutateAsync: submitTicket } = useSubmitTicketMutation();
-	const { isLoading: submittingTopic, mutateAsync: submitTopic } = useSubmitForumsMutation();
+	const { isPending: submittingTicket, mutateAsync: submitTicket } = useSubmitTicketMutation();
+	const { isPending: submittingTopic, mutateAsync: submitTopic } = useSubmitForumsMutation();
 	const userId = useSelector( getCurrentUserId );
 	const { data: userSites } = useUserSites( userId );
 	const userWithNoSites = userSites?.sites.length === 0;
@@ -115,7 +115,7 @@ export const HelpCenterContactForm = () => {
 		};
 	}, [] );
 
-	const { setSite, resetStore, setUserDeclaredSite, setShowMessagingChat, setSubject, setMessage } =
+	const { resetStore, setUserDeclaredSite, setShowMessagingChat, setSubject, setMessage } =
 		useDispatch( HELP_CENTER_STORE );
 
 	const {
@@ -238,9 +238,7 @@ export const HelpCenterContactForm = () => {
 			section: sectionName,
 		} );
 
-		const savedCurrentSite = currentSite;
 		resetStore();
-		setSite( savedCurrentSite );
 
 		navigate( '/' );
 	}
@@ -350,6 +348,12 @@ export const HelpCenterContactForm = () => {
 							`Created during store setup on ${
 								isWcMobileApp() ? 'Woo mobile app' : 'Woo browser'
 							}`
+						);
+					}
+
+					if ( params.get( 'source-command-palette' ) === 'true' ) {
+						ticketMeta.push(
+							`From Hosting Command Palette: Please post this user feedback to #dotcom-yolo on Slack.`
 						);
 					}
 					const kayakoMessage = [ ...ticketMeta, '\n', message ].join( '\n' );

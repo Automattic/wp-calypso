@@ -1,3 +1,4 @@
+import { translate } from 'i18n-calypso';
 import { useSiteIdParam } from '../hooks/use-site-id-param';
 import { useSiteSlug } from '../hooks/use-site-slug';
 import ChooseADomain from './internals/steps-repository/choose-a-domain';
@@ -6,6 +7,9 @@ import type { Flow, ProvidedDependencies } from './internals/types';
 
 const podcasts: Flow = {
 	name: 'podcasts',
+	get title() {
+		return translate( 'Podcasting' );
+	},
 	useSteps() {
 		return [
 			{ slug: 'letsGetStarted', component: LetsGetStarted },

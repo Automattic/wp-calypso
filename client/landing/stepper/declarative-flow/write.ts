@@ -1,15 +1,15 @@
 import { useLocale } from '@automattic/i18n-utils';
-import { useFlowProgress, WRITE_FLOW } from '@automattic/onboarding';
-import { useSelect, useDispatch } from '@wordpress/data';
+import { WRITE_FLOW } from '@automattic/onboarding';
+import { useSelect } from '@wordpress/data';
 import { addQueryArgs } from '@wordpress/url';
 import { translate } from 'i18n-calypso';
 import { useEffect } from 'react';
 import { getLocaleFromQueryParam, getLocaleFromPathname } from 'calypso/boot/locale';
 import { skipLaunchpad } from 'calypso/landing/stepper/utils/skip-launchpad';
-import wpcom from 'calypso/lib/wp';
+import { triggerGuidesForStep } from 'calypso/lib/guides/trigger-guides-for-step';
 import { useSiteIdParam } from '../hooks/use-site-id-param';
 import { useSiteSlug } from '../hooks/use-site-slug';
-import { USER_STORE, ONBOARD_STORE } from '../stores';
+import { USER_STORE } from '../stores';
 import { getLoginUrl } from '../utils/path';
 import { recordSubmitStep } from './internals/analytics/record-submit-step';
 import LaunchPad from './internals/steps-repository/launchpad';
@@ -36,23 +36,10 @@ const write: Flow = {
 
 	useStepNavigation( _currentStep, navigate ) {
 		const flowName = this.name;
-		const { setStepProgress } = useDispatch( ONBOARD_STORE );
-		const flowProgress = useFlowProgress( { stepName: _currentStep, flowName } );
-		setStepProgress( flowProgress );
 		const siteId = useSiteIdParam();
 		const siteSlug = useSiteSlug();
 
-		// trigger guides on step movement, we don't care about failures or response
-		wpcom.req.post(
-			'guides/trigger',
-			{
-				apiNamespace: 'wpcom/v2/',
-			},
-			{
-				flow: flowName,
-				step: _currentStep,
-			}
-		);
+		triggerGuidesForStep( flowName, _currentStep );
 
 		const submit = ( providedDependencies: ProvidedDependencies = {} ) => {
 			recordSubmitStep( providedDependencies, '', flowName, _currentStep );

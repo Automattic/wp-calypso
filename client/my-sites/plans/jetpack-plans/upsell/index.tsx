@@ -7,7 +7,7 @@ import {
 	getJetpackProductsDisplayNames,
 } from '@automattic/calypso-products';
 import page from '@automattic/calypso-router';
-import { Gridicon, Button } from '@automattic/components';
+import { Gridicon, Button, PlanPrice } from '@automattic/components';
 import classNames from 'classnames';
 import { translate } from 'i18n-calypso';
 import { useEffect, useMemo, useCallback } from 'react';
@@ -16,7 +16,6 @@ import QuerySiteProducts from 'calypso/components/data/query-site-products';
 import { useExperiment } from 'calypso/lib/explat';
 import { preventWidows } from 'calypso/lib/formatting';
 import badge14Src from 'calypso/my-sites/checkout/src/components/assets/icons/badge-14.svg';
-import PlanPrice from 'calypso/my-sites/plan-price';
 import { GUARANTEE_DAYS } from 'calypso/my-sites/plans/jetpack-plans/constants';
 import { buildCheckoutURL } from 'calypso/my-sites/plans/jetpack-plans/get-purchase-url-callback';
 import useItemPrice from 'calypso/my-sites/plans/jetpack-plans/use-item-price';
@@ -53,7 +52,7 @@ const JetpackUpsellPage: React.FC< Props > = ( {
 		'calypso_jetpack_upsell_page_2022_06'
 	);
 
-	const siteId = useSelector( ( state ) => getSelectedSiteId( state ) );
+	const siteId = useSelector( getSelectedSiteId );
 	const currencyCode = useSelector( getCurrentUserCurrencyCode );
 	const isFetchingPurchases = useSelector( isFetchingSitePurchases );
 	const purchases = useSelector( ( state ) => getSitePurchases( state, siteId ) );

@@ -21,6 +21,11 @@ export const STEPS = {
 
 	COURSES: { slug: 'courses', asyncComponent: () => import( './steps-repository/courses' ) },
 
+	DESIGN_CHOICES: {
+		slug: 'design-choices',
+		asyncComponent: () => import( './steps-repository/design-choices' ),
+	},
+
 	DESIGN_SETUP: {
 		slug: 'designSetup',
 		asyncComponent: () => import( './steps-repository/design-setup' ),
@@ -125,7 +130,7 @@ export const STEPS = {
 	},
 
 	PATTERN_ASSEMBLER: {
-		slug: 'patternAssembler',
+		slug: 'pattern-assembler',
 		asyncComponent: () => import( './steps-repository/pattern-assembler' ),
 	},
 

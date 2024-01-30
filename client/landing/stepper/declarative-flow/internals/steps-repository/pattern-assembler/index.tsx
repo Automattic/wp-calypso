@@ -80,6 +80,7 @@ const PatternAssembler = ( props: StepProps & NoticesProps ) => {
 	const [ sectionPosition, setSectionPosition ] = useState< number | null >( null );
 	const wrapperRef = useRef< HTMLDivElement | null >( null );
 	const [ activePosition, setActivePosition ] = useState( -1 );
+	const [ surveyDismissed, setSurveyDismissed ] = useState( false );
 	const { goBack, goNext, submit } = navigation;
 	const { assembleSite, saveSiteSettings } = useDispatch( SITE_STORE );
 	const reduxDispatch = useReduxDispatch();
@@ -127,7 +128,11 @@ const PatternAssembler = ( props: StepProps & NoticesProps ) => {
 		hasFont: !! fontVariation,
 	} );
 
-	const { pages, pageSlugs, setPageSlugs } = usePatternPages( pageCategoryPatternsMap );
+	const { pages, pageSlugs, setPageSlugs, pagesToShow } = usePatternPages(
+		pageCategoryPatternsMap,
+		categories,
+		dotcomPatterns
+	);
 
 	const currentScreen = useCurrentScreen( { shouldUnlockGlobalStyles } );
 
@@ -232,11 +237,11 @@ const PatternAssembler = ( props: StepProps & NoticesProps ) => {
 			} );
 		} );
 
-		pages.forEach( ( { ID, name, categories = {} } ) => {
-			const category_slug = Object.keys( categories )[ 0 ];
+		pages.forEach( ( pattern: Pattern ) => {
+			const category_slug = Object.keys( pattern.categories )[ 0 ];
 			recordTracksEvent( PATTERN_ASSEMBLER_EVENTS.PAGE_FINAL_SELECT, {
-				pattern_id: ID,
-				pattern_name: name,
+				pattern_id: pattern.ID,
+				pattern_name: pattern.name,
 				...( category_slug && { pattern_category: category_slug } ),
 			} );
 		} );
@@ -360,6 +365,17 @@ const PatternAssembler = ( props: StepProps & NoticesProps ) => {
 		}
 	};
 
+	const onPreselectPattern = ( type: PatternType, selectedPattern: Pattern ) => {
+		injectCategoryToPattern( selectedPattern, categories, type );
+
+		if ( 'header' === type ) {
+			setHeader( selectedPattern );
+		}
+		if ( 'footer' === type ) {
+			setFooter( selectedPattern );
+		}
+	};
+
 	const onSubmit = () => {
 		const design = getDesign() as Design;
 		const stylesheet = design.recipe?.stylesheet ?? '';
@@ -373,13 +389,12 @@ const PatternAssembler = ( props: StepProps & NoticesProps ) => {
 			Promise.resolve()
 				.then( () =>
 					reduxDispatch(
-						activateOrInstallThenActivate(
-							themeId,
-							site?.ID,
-							'assembler',
-							false,
-							false
-						) as ThunkAction< PromiseLike< string >, any, any, AnyAction >
+						activateOrInstallThenActivate( themeId, site?.ID, 'assembler', false ) as ThunkAction<
+							PromiseLike< string >,
+							any,
+							any,
+							AnyAction
+						>
 					)
 				)
 				.then( ( activeThemeStylesheet: string ) =>
@@ -387,7 +402,7 @@ const PatternAssembler = ( props: StepProps & NoticesProps ) => {
 						homeHtml: sections.map( ( pattern ) => pattern.html ).join( '' ),
 						headerHtml: header?.html,
 						footerHtml: footer?.html,
-						pages: pages.map( ( page ) => ( {
+						pages: pages.map( ( page: Pattern ) => ( {
 							title: page.title,
 							content: page.html,
 						} ) ),
@@ -624,7 +639,7 @@ const PatternAssembler = ( props: StepProps & NoticesProps ) => {
 
 	const onScreenPagesSelect = ( pageSlug: string ) => {
 		if ( pageSlugs.includes( pageSlug ) ) {
-			setPageSlugs( pageSlugs.filter( ( item ) => item !== pageSlug ) );
+			setPageSlugs( pageSlugs.filter( ( item: string ) => item !== pageSlug ) );
 			recordTracksEvent( PATTERN_ASSEMBLER_EVENTS.SCREEN_PAGES_PAGE_REMOVE, { page: pageSlug } );
 		} else {
 			setPageSlugs( [ ...pageSlugs, pageSlug ] );
@@ -645,6 +660,7 @@ const PatternAssembler = ( props: StepProps & NoticesProps ) => {
 				<NavigatorScreen path={ NAVIGATOR_PATHS.MAIN } partialMatch>
 					<ScreenMain
 						onMainItemSelect={ onMainItemSelect }
+						onPreselectPattern={ onPreselectPattern }
 						hasHeader={ !! header }
 						hasFooter={ !! footer }
 						sections={ sections }
@@ -667,9 +683,7 @@ const PatternAssembler = ( props: StepProps & NoticesProps ) => {
 
 				<NavigatorScreen path={ NAVIGATOR_PATHS.PAGES } partialMatch>
 					<ScreenPages
-						categories={ categories }
-						pagesMapByCategory={ pageCategoryPatternsMap }
-						selectedPageSlugs={ pageSlugs }
+						pagesToShow={ pagesToShow }
 						onSelect={ onScreenPagesSelect }
 						onContinueClick={ onContinue }
 						recordTracksEvent={ recordTracksEvent }
@@ -681,6 +695,8 @@ const PatternAssembler = ( props: StepProps & NoticesProps ) => {
 						isNewSite={ isNewSite }
 						siteId={ site?.ID }
 						selectedDesign={ selectedDesign }
+						surveyDismissed={ surveyDismissed }
+						setSurveyDismissed={ setSurveyDismissed }
 						onConfirm={ onConfirm }
 					/>
 				</NavigatorScreen>

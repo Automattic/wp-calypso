@@ -13,3 +13,11 @@ export const DEFAULT_THEME_QUERY = {
 // instead of querying them one by one when showing the search result.
 // See https://github.com/Automattic/wp-calypso/issues/77991
 export const RETIRED_THEME_SLUGS_SET = new Set( [ 'blank-canvas' ] );
+
+export const STATIC_FILTERS = {
+	MYTHEMES: 'my-themes',
+	RECOMMENDED: 'recommended',
+	ALL: 'all',
+};
+
+export const DEFAULT_STATIC_FILTER = STATIC_FILTERS.RECOMMENDED;

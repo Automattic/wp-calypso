@@ -38,7 +38,7 @@ export const useSiteInterfaceMutation = (
 ) => {
 	const dispatch = useDispatch();
 	const site = useSelector( ( state ) => getRawSite( state, siteId ) );
-	const isRequestingMenu = useSelector( ( state ) => getIsRequestingAdminMenu( state ) );
+	const isRequestingMenu = useSelector( getIsRequestingAdminMenu );
 	const [ hasSuccessfullyFinished, setHasSuccessfullyFinished ] = useState( false );
 	useEffect( () => {
 		if ( hasSuccessfullyFinished && ! isRequestingMenu ) {
@@ -92,6 +92,6 @@ export const useSiteInterfaceMutation = (
 	return {
 		...mutation,
 		setSiteInterface: mutate,
-		isLoading: mutation.isLoading || isRequestingMenu,
+		isLoading: mutation.isPending || isRequestingMenu,
 	};
 };

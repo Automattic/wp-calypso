@@ -7,19 +7,18 @@ import {
 	NonProductLineItem,
 	hasCheckoutVersion,
 	LineItemType,
-	getCouponLineItemFromCart,
-	getSubtotalWithoutCoupon,
+	getSubtotalWithoutDiscounts,
+	getTotalDiscountsWithoutCredits,
+	filterAndGroupCostOverridesForDisplay,
 } from '@automattic/wpcom-checkout';
 import styled from '@emotion/styled';
 import { useTranslate } from 'i18n-calypso';
 import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
 import CheckoutTerms from '../components/checkout-terms';
-import { useShouldCollapseLastStep } from '../hooks/use-should-collapse-last-step';
 import { useToSFoldableCard } from '../hooks/use-tos-foldable-card';
 import { WPOrderReviewSection } from './wp-order-review-line-items';
 
 const CheckoutTermsWrapper = styled.div< {
-	shouldCollapseLastStep: boolean;
 	showToSFoldableCard: boolean;
 } >`
 	& > * {
@@ -40,7 +39,7 @@ const CheckoutTermsWrapper = styled.div< {
 		padding-left: 0;
 		margin-right: 0;
 		margin-left: 0;
-		margin-top: ${ ( { shouldCollapseLastStep } ) => ( shouldCollapseLastStep ? '0' : '32px' ) };
+		margin-top: 0;
 	}
 
 	a {
@@ -53,14 +52,14 @@ const CheckoutTermsWrapper = styled.div< {
 
 	& .checkout__terms-foldable-card {
 		box-shadow: none;
-		& .foldable-card__header {
+		padding: 0;
+		&.is-compact .foldable-card__header {
 			font-size: 12px;
 			font-weight: 500;
 			line-height: 1.5;
 			padding: 0;
 		}
-		& .foldable-card.is-expanded,
-		.foldable-card__content {
+		&.is-expanded .foldable-card__content {
 			display: block;
 			padding: 0;
 			border-top: none;
@@ -89,15 +88,29 @@ export default function BeforeSubmitCheckoutHeader() {
 	const { responseCart } = useShoppingCart( cartKey );
 	const taxLineItems = getTaxBreakdownLineItemsFromCart( responseCart );
 	const creditsLineItem = getCreditsLineItemFromCart( responseCart );
-	const couponLineItem = getCouponLineItemFromCart( responseCart );
-	const shouldCollapseLastStep = useShouldCollapseLastStep();
 	const translate = useTranslate();
-	const subtotalWithoutCoupon = getSubtotalWithoutCoupon( responseCart );
+
+	const costOverridesList = filterAndGroupCostOverridesForDisplay( responseCart, translate );
+	const totalDiscount = getTotalDiscountsWithoutCredits( responseCart, translate );
+	const discountLineItem: LineItemType = {
+		id: 'total-discount',
+		type: 'subtotal',
+		label: translate( 'Discounts' ),
+		formattedAmount: formatCurrency( totalDiscount, responseCart.currency, {
+			isSmallestUnit: true,
+			stripZeros: true,
+		} ),
+	};
+
+	const subtotalBeforeDiscounts = getSubtotalWithoutDiscounts( responseCart );
 	const subTotalLineItemWithoutCoupon: LineItemType = {
 		id: 'subtotal-without-coupon',
 		type: 'subtotal',
-		label: translate( 'Subtotal' ),
-		formattedAmount: formatCurrency( subtotalWithoutCoupon, responseCart.currency, {
+		label:
+			costOverridesList.length > 0
+				? translate( 'Subtotal before discounts' )
+				: translate( 'Subtotal' ),
+		formattedAmount: formatCurrency( subtotalBeforeDiscounts, responseCart.currency, {
 			isSmallestUnit: true,
 			stripZeros: true,
 		} ),
@@ -107,27 +120,17 @@ export default function BeforeSubmitCheckoutHeader() {
 
 	return (
 		<>
-			{ ! showToSFoldableCard ? (
-				<CheckoutTermsWrapper
-					shouldCollapseLastStep={ shouldCollapseLastStep }
-					showToSFoldableCard={ showToSFoldableCard }
-				>
-					<CheckoutTerms cart={ responseCart } />
-				</CheckoutTermsWrapper>
-			) : (
-				<CheckoutTermsWrapper
-					shouldCollapseLastStep={ shouldCollapseLastStep }
-					showToSFoldableCard={ showToSFoldableCard }
-				>
-					<CheckoutTerms cart={ responseCart } />
-				</CheckoutTermsWrapper>
-			) }
+			<CheckoutTermsWrapper showToSFoldableCard={ showToSFoldableCard }>
+				<CheckoutTerms cart={ responseCart } />
+			</CheckoutTermsWrapper>
 
 			{ ! hasCheckoutVersion( '2' ) && (
 				<WPOrderReviewSection>
 					<NonTotalPrices>
 						<NonProductLineItem subtotal lineItem={ subTotalLineItemWithoutCoupon } />
-						{ couponLineItem && <NonProductLineItem subtotal lineItem={ couponLineItem } /> }
+						{ costOverridesList.length > 0 && (
+							<NonProductLineItem subtotal lineItem={ discountLineItem } />
+						) }
 						{ taxLineItems.map( ( taxLineItem ) => (
 							<NonProductLineItem key={ taxLineItem.id } tax lineItem={ taxLineItem } />
 						) ) }

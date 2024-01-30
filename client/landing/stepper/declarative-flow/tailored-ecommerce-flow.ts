@@ -3,9 +3,10 @@ import {
 	PLAN_ECOMMERCE_MONTHLY,
 	PLAN_ECOMMERCE_2_YEARS,
 	PLAN_ECOMMERCE_3_YEARS,
+	PRODUCT_1GB_SPACE,
 } from '@automattic/calypso-products';
 import { useLocale } from '@automattic/i18n-utils';
-import { useFlowProgress, ECOMMERCE_FLOW, ecommerceFlowRecurTypes } from '@automattic/onboarding';
+import { ECOMMERCE_FLOW, ecommerceFlowRecurTypes } from '@automattic/onboarding';
 import { useSelect, useDispatch } from '@wordpress/data';
 import { useEffect } from 'react';
 import { getLocaleFromQueryParam, getLocaleFromPathname } from 'calypso/boot/locale';
@@ -18,16 +19,9 @@ import {
 import { useSite } from '../hooks/use-site';
 import { useSiteSlugParam } from '../hooks/use-site-slug-param';
 import { USER_STORE, ONBOARD_STORE, SITE_STORE } from '../stores';
+import getQuantityFromStorageType from '../utils/get-quantity-from-storage-slug';
 import { getLoginUrl } from '../utils/path';
 import { recordSubmitStep } from './internals/analytics/record-submit-step';
-import CheckPlan from './internals/steps-repository/check-plan';
-import DesignCarousel from './internals/steps-repository/design-carousel';
-import DomainsStep from './internals/steps-repository/domains';
-import ProcessingStep from './internals/steps-repository/processing-step';
-import SiteCreationStep from './internals/steps-repository/site-creation-step';
-import StoreProfiler from './internals/steps-repository/store-profiler';
-import WaitForAtomic from './internals/steps-repository/wait-for-atomic';
-import WaitForPluginInstall from './internals/steps-repository/wait-for-plugin-install';
 import { AssertConditionState } from './internals/types';
 import type { Flow, ProvidedDependencies, AssertConditionResult } from './internals/types';
 import type {
@@ -48,7 +42,7 @@ function getPlanFromRecurType( recurType: string ) {
 		case ecommerceFlowRecurTypes[ '3Y' ]:
 			return PLAN_ECOMMERCE_3_YEARS;
 		default:
-			return PLAN_ECOMMERCE_MONTHLY;
+			return PLAN_ECOMMERCE;
 	}
 }
 
@@ -65,14 +59,35 @@ const ecommerceFlow: Flow = {
 		}, [] );
 
 		return [
-			{ slug: 'storeProfiler', component: StoreProfiler },
-			{ slug: 'domains', component: DomainsStep },
-			{ slug: 'designCarousel', component: DesignCarousel },
-			{ slug: 'siteCreationStep', component: SiteCreationStep },
-			{ slug: 'processing', component: ProcessingStep },
-			{ slug: 'waitForPluginInstall', component: WaitForPluginInstall },
-			{ slug: 'waitForAtomic', component: WaitForAtomic },
-			{ slug: 'checkPlan', component: CheckPlan },
+			{
+				slug: 'storeProfiler',
+				asyncComponent: () => import( './internals/steps-repository/store-profiler' ),
+			},
+			{ slug: 'domains', asyncComponent: () => import( './internals/steps-repository/domains' ) },
+			{
+				slug: 'designCarousel',
+				asyncComponent: () => import( './internals/steps-repository/design-carousel' ),
+			},
+			{
+				slug: 'siteCreationStep',
+				asyncComponent: () => import( './internals/steps-repository/site-creation-step' ),
+			},
+			{
+				slug: 'processing',
+				asyncComponent: () => import( './internals/steps-repository/processing-step' ),
+			},
+			{
+				slug: 'waitForPluginInstall',
+				asyncComponent: () => import( './internals/steps-repository/wait-for-plugin-install' ),
+			},
+			{
+				slug: 'waitForAtomic',
+				asyncComponent: () => import( './internals/steps-repository/wait-for-atomic' ),
+			},
+			{
+				slug: 'checkPlan',
+				asyncComponent: () => import( './internals/steps-repository/check-plan' ),
+			},
 		];
 	},
 
@@ -96,9 +111,11 @@ const ecommerceFlow: Flow = {
 		const pathLocaleSlug = getLocaleFromPathname();
 		const locale = queryLocaleSlug || pathLocaleSlug || useLocaleSlug;
 
-		const { recurType } = useSelect(
+		const { recurType, couponCode, storageAddonSlug } = useSelect(
 			( select ) => ( {
 				recurType: ( select( ONBOARD_STORE ) as OnboardSelect ).getEcommerceFlowRecurType(),
+				couponCode: ( select( ONBOARD_STORE ) as OnboardSelect ).getCouponCode(),
+				storageAddonSlug: ( select( ONBOARD_STORE ) as OnboardSelect ).getStorageAddonSlug(),
 			} ),
 			[]
 		);
@@ -114,6 +131,12 @@ const ecommerceFlow: Flow = {
 			if ( locale && locale !== 'en' ) {
 				flowParams.set( 'locale', locale );
 				hasFlowParams = true;
+			}
+
+			if ( couponCode || storageAddonSlug ) {
+				hasFlowParams = true;
+				flowParams.set( 'storage', storageAddonSlug );
+				flowParams.set( 'coupon', couponCode );
 			}
 
 			const redirectTarget =
@@ -152,14 +175,20 @@ const ecommerceFlow: Flow = {
 
 	useStepNavigation( _currentStepName, navigate ) {
 		const flowName = this.name;
-		const { setStepProgress, setPlanCartItem, setPluginsToVerify } = useDispatch( ONBOARD_STORE );
+		const {
+			setPlanCartItem,
+			setProductCartItems,
+			setPluginsToVerify,
+			resetCouponCode,
+			resetStorageAddonSlug,
+		} = useDispatch( ONBOARD_STORE );
 		setPluginsToVerify( [ 'woocommerce' ] );
-		const flowProgress = useFlowProgress( { stepName: _currentStepName, flowName } );
-		setStepProgress( flowProgress );
-		const { selectedDesign, recurType } = useSelect(
+		const { selectedDesign, recurType, couponCode, storageAddonSlug } = useSelect(
 			( select ) => ( {
 				selectedDesign: ( select( ONBOARD_STORE ) as OnboardSelect ).getSelectedDesign(),
 				recurType: ( select( ONBOARD_STORE ) as OnboardSelect ).getEcommerceFlowRecurType(),
+				couponCode: ( select( ONBOARD_STORE ) as OnboardSelect ).getCouponCode(),
+				storageAddonSlug: ( select( ONBOARD_STORE ) as OnboardSelect ).getStorageAddonSlug(),
 			} ),
 			[]
 		);
@@ -185,6 +214,18 @@ const ecommerceFlow: Flow = {
 						product_slug: selectedPlan,
 						extra: { headstart_theme: selectedDesign?.recipe?.stylesheet },
 					} );
+
+					if ( storageAddonSlug && recurType !== ecommerceFlowRecurTypes.MONTHLY ) {
+						setProductCartItems( [
+							{
+								product_slug: PRODUCT_1GB_SPACE,
+								quantity: getQuantityFromStorageType( storageAddonSlug ),
+								volume: 1,
+								extra: { feature_slug: storageAddonSlug },
+							},
+						] );
+						resetStorageAddonSlug();
+					}
 					return navigate( 'siteCreationStep' );
 
 				case 'siteCreationStep':
@@ -213,11 +254,13 @@ const ecommerceFlow: Flow = {
 						} );
 
 						const returnUrl = encodeURIComponent( `/setup/${ flowName }/checkPlan?${ urlParams }` );
+						const couponCodeParam = couponCode ? `coupon=${ couponCode }` : '';
+						resetCouponCode();
 
 						return window.location.assign(
 							`/checkout/${ encodeURIComponent(
 								( siteSlug as string ) ?? ''
-							) }?redirect_to=${ returnUrl }&signup=1`
+							) }?redirect_to=${ returnUrl }&signup=1&${ couponCodeParam }`
 						);
 					}
 					return navigate( `checkPlan?siteSlug=${ siteSlug }` );

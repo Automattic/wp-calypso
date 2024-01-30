@@ -246,6 +246,11 @@ export class Notifications extends Component {
 					window.open( href, '_blank' );
 				},
 			],
+			CLOSE_PANEL: [
+				() => {
+					this.props.checkToggle();
+				},
+			],
 		};
 
 		return (

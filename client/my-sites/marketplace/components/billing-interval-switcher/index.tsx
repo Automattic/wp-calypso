@@ -31,7 +31,7 @@ const RadioButton = styled( FormRadio )`
 const RadioButtonLabel = styled( FormLabel )`
 	color: var( --studio-gray-60 );
 
-	&:first-child {
+	&:first-of-type {
 		margin-right: 15px;
 	}
 `;

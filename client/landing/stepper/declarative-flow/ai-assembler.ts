@@ -1,6 +1,6 @@
 import config from '@automattic/calypso-config';
 import { Onboard, updateLaunchpadSettings } from '@automattic/data-stores';
-import { DEFAULT_ASSEMBLER_DESIGN, isAssemblerSupported } from '@automattic/design-picker';
+import { isAssemblerSupported, getAssemblerDesign } from '@automattic/design-picker';
 import { useLocale } from '@automattic/i18n-utils';
 import { AI_ASSEMBLER_FLOW } from '@automattic/onboarding';
 import { useDispatch, useSelect } from '@wordpress/data';
@@ -35,7 +35,7 @@ const withAIAssemblerFlow: Flow = {
 			[]
 		);
 		const { setSelectedDesign, setIntent } = useDispatch( ONBOARD_STORE );
-		const selectedTheme = DEFAULT_ASSEMBLER_DESIGN.slug;
+		const selectedTheme = getAssemblerDesign().slug;
 		const theme = useSelector( ( state ) => getTheme( state, 'wpcom', selectedTheme ) );
 
 		// We have to query theme for the Jetpack site.
@@ -126,6 +126,9 @@ const withAIAssemblerFlow: Flow = {
 				siteSlug: selectedSiteSlug,
 				siteId: selectedSiteId,
 			} );
+			if ( config.isEnabled( 'pattern-assembler/v2' ) ) {
+				params.set( 'flags', 'pattern-assembler/v2' );
+			}
 
 			if ( isNewSite ) {
 				params.set( 'isNewSite', 'true' );
@@ -177,7 +180,7 @@ const withAIAssemblerFlow: Flow = {
 						} );
 					}
 
-					return navigate( 'patternAssembler' );
+					return navigate( 'pattern-assembler' );
 				}
 
 				case 'processing': {
@@ -214,7 +217,7 @@ const withAIAssemblerFlow: Flow = {
 					return exitFlow( `/site-editor/${ siteSlug }?${ params }` );
 				}
 
-				case 'patternAssembler': {
+				case 'pattern-assembler': {
 					return navigate( 'processing' );
 				}
 
@@ -263,7 +266,7 @@ const withAIAssemblerFlow: Flow = {
 					return navigate( 'launchpad' );
 				}
 
-				case 'patternAssembler': {
+				case 'pattern-assembler': {
 					return navigate( 'site-prompt' );
 				}
 			}
@@ -272,7 +275,7 @@ const withAIAssemblerFlow: Flow = {
 		const goNext = () => {
 			switch ( _currentStep ) {
 				case 'site-prompt': {
-					return navigate( 'patternAssembler' );
+					return navigate( 'pattern-assembler' );
 				}
 
 				case 'launchpad':

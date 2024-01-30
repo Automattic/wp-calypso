@@ -39,17 +39,17 @@ import {
 	domainUseMyDomain,
 } from 'calypso/my-sites/domains/paths';
 import {
-	emailManagement,
-	emailManagementAddEmailForwards,
-	emailManagementAddGSuiteUsers,
-	emailManagementForwarding,
-	emailManagementMailboxes,
-	emailManagementInDepthComparison,
-	emailManagementManageTitanAccount,
-	emailManagementManageTitanMailboxes,
-	emailManagementNewTitanAccount,
-	emailManagementPurchaseNewEmailAccount,
-	emailManagementTitanControlPanelRedirect,
+	getEmailManagementPath,
+	getAddEmailForwardsPath,
+	getAddGSuiteUsersPath,
+	getForwardingPath,
+	getMailboxesPath,
+	getEmailInDepthComparisonPath,
+	getManageTitanAccountPath,
+	getManageTitanMailboxesPath,
+	getNewTitanAccountPath,
+	getPurchaseNewEmailAccountPath,
+	getTitanControlPanelRedirectPath,
 } from 'calypso/my-sites/email/paths';
 import DIFMLiteInProgress from 'calypso/my-sites/marketing/do-it-for-me/difm-lite-in-progress';
 import NavigationComponent from 'calypso/my-sites/navigation';
@@ -131,6 +131,34 @@ export function createNavigation( context ) {
 	);
 }
 
+export function renderRebloggingEmptySites( context ) {
+	setSectionMiddleware( { group: 'sites' } )( context );
+	recordTracksEvent( 'calypso_post_share_no_sites' );
+
+	const actionURL = addQueryArgs(
+		{
+			blog_post: context.query?.url,
+		},
+		'/setup/reblogging'
+	);
+
+	context.primary = createElement( () =>
+		NoSitesMessage( {
+			title: i18n.translate( 'Create a site to reblog' ),
+			line: i18n.translate(
+				"Create your first website to reblog content from other sites you're following."
+			),
+			actionURL,
+			actionCallback: () => {
+				recordTracksEvent( 'calypso_post_share_no_sites_create_site_click' );
+			},
+		} )
+	);
+
+	makeLayout( context, noop );
+	clientRender( context );
+}
+
 export function renderEmptySites( context ) {
 	setSectionMiddleware( { group: 'sites' } )( context );
 
@@ -198,23 +226,23 @@ function isPathAllowedForDomainOnlySite( path, slug, primaryDomain, contextParam
 		domainManagementTransfer,
 		domainManagementTransferOut,
 		domainManagementTransferToOtherSite,
-		emailManagement,
-		emailManagementAddEmailForwards,
-		emailManagementAddGSuiteUsers,
-		emailManagementForwarding,
-		emailManagementMailboxes,
-		emailManagementInDepthComparison,
-		emailManagementManageTitanAccount,
-		emailManagementManageTitanMailboxes,
-		emailManagementNewTitanAccount,
-		emailManagementPurchaseNewEmailAccount,
-		emailManagementTitanControlPanelRedirect,
+		getEmailManagementPath,
+		getAddEmailForwardsPath,
+		getAddGSuiteUsersPath,
+		getForwardingPath,
+		getMailboxesPath,
+		getEmailInDepthComparisonPath,
+		getManageTitanAccountPath,
+		getManageTitanMailboxesPath,
+		getNewTitanAccountPath,
+		getPurchaseNewEmailAccountPath,
+		getTitanControlPanelRedirectPath,
 	];
 
 	// Builds a list of paths using a site slug plus any additional parameter that may be required
 	let domainManagementPaths = allPaths.map( ( pathFactory ) => {
-		if ( pathFactory === emailManagementAddGSuiteUsers ) {
-			return emailManagementAddGSuiteUsers( slug, slug, contextParams.productType );
+		if ( pathFactory === getAddGSuiteUsersPath ) {
+			return getAddGSuiteUsersPath( slug, slug, contextParams.productType );
 		}
 
 		return pathFactory( slug, slug );
@@ -278,7 +306,7 @@ function isPathAllowedForDomainOnlySite( path, slug, primaryDomain, contextParam
  * @returns {boolean} true if the path is allowed, false otherwise
  */
 function isPathAllowedForDIFMInProgressSite( path, slug, domains, contextParams ) {
-	const DIFMLiteInProgressAllowedPaths = [ domainAddNew(), emailManagement( slug ) ];
+	const DIFMLiteInProgressAllowedPaths = [ domainAddNew(), getEmailManagementPath( slug ) ];
 
 	const isAllowedForDomainOnlySites = domains.some( ( domain ) =>
 		isPathAllowedForDomainOnlySite( path, slug, domain, contextParams )
@@ -416,6 +444,7 @@ function createSitesComponent( context ) {
 			getSiteSelectionHeaderText={ context.getSiteSelectionHeaderText }
 			fromSite={ context.query.site }
 			clearPageTitle={ context.clearPageTitle }
+			isPostShare={ context.query?.is_post_share }
 		/>
 	);
 }
@@ -463,6 +492,7 @@ export function noSite( context, next ) {
 	const isDomainOnlyFlow = context.query?.isDomainOnly === '1' || ! siteFragment;
 	const isJetpackCheckoutFlow = context.pathname.includes( '/checkout/jetpack' );
 	const isAkismetCheckoutFlow = context.pathname.includes( '/checkout/akismet' );
+	const isMarketplaceSitelessCheckoutFlow = context.pathname.includes( '/checkout/marketplace' );
 	const isDomainsManage = context.pathname === '/domains/manage/';
 	const isGiftCheckoutFlow = context.pathname.includes( '/gift/' );
 	const isRenewal = context.pathname.includes( '/renew/' );
@@ -471,6 +501,7 @@ export function noSite( context, next ) {
 		! isDomainOnlyFlow &&
 		! isJetpackCheckoutFlow &&
 		! isAkismetCheckoutFlow &&
+		! isMarketplaceSitelessCheckoutFlow &&
 		! isGiftCheckoutFlow &&
 		! isDomainsManage &&
 		// We allow renewals without a site through because we want to show these
@@ -509,7 +540,11 @@ export function siteSelection( context, next ) {
 
 	// The user doesn't have any sites: render `NoSitesMessage`
 	if ( currentUser && currentUser.site_count === 0 && shouldRenderNoSites ) {
-		renderEmptySites( context );
+		if ( context.query?.is_post_share ) {
+			renderRebloggingEmptySites( context );
+		} else {
+			renderEmptySites( context );
+		}
 		recordNoSitesPageView( context, siteFragment );
 		return;
 	}
@@ -611,10 +646,9 @@ export function siteSelection( context, next ) {
 				let freshSiteId = getSiteId( getState(), siteFragment );
 
 				if ( ! freshSiteId ) {
-					const wpcomStagingFragment = siteFragment.replace(
-						/\b.wordpress.com/,
-						'.wpcomstaging.com'
-					);
+					const wpcomStagingFragment = siteFragment
+						.toString()
+						.replace( /\b.wordpress.com/, '.wpcomstaging.com' );
 					freshSiteId = getSiteId( getState(), wpcomStagingFragment );
 				}
 

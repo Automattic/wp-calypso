@@ -1,3 +1,4 @@
+import { isEnabled } from '@automattic/calypso-config';
 import { useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import wpcomRequest from 'wpcom-proxy-request';
@@ -20,6 +21,7 @@ export default function useAIAssembler(): [ Function, Function, string, boolean 
 			apiNamespace: 'wpcom/v2',
 			body: {
 				description: prompt,
+				patterns_version: isEnabled( 'pattern-assembler/v2' ) ? '2' : '1',
 			},
 		} )
 			.catch( ( err ) => {
@@ -45,10 +47,17 @@ export default function useAIAssembler(): [ Function, Function, string, boolean 
 							currentSearchParams.set( 'site_tagline', response.site.site_tagline );
 						}
 
-						// This was introduced in the V5 of the AI endpoint.
+						// In case we are sending the list of slugs to the assembler
 						const pageSlugs = response.pages.map( ( page: any ) => page?.slug ).filter( Boolean );
 						if ( pageSlugs.length ) {
 							currentSearchParams.set( 'page_slugs', pageSlugs.join( ',' ) );
+						}
+
+						// In case we are sending the list of title / pattern pairs to the assembler
+						// This will also filter out the "home" since it has a different format.
+						const pageTitles = response.pages.filter( ( page: any ) => page?.title && page?.ID );
+						if ( pageTitles.length ) {
+							currentSearchParams.set( 'custom_pages', JSON.stringify( pageTitles ) );
 						}
 
 						if ( response.style ) {

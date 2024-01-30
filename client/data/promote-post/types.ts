@@ -75,6 +75,8 @@ export type BlazablePost = {
 	post_url: string;
 	featured_image: string | false;
 	post_thumbnail?: string;
+	sku?: string;
+	price?: string;
 };
 
 export type BlazePagedItem = BlazablePost | Campaign;
@@ -85,6 +87,8 @@ export type PostQueryResult = {
 	total_items: number;
 	total_pages: number;
 	page: number;
+	pages: [];
+	pageParams: [];
 };
 
 export type CampaignQueryResult = {

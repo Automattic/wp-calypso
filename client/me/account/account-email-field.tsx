@@ -232,7 +232,7 @@ const AccountEmailField = ( {
 				/>
 
 				<FormSettingExplanation>
-					{ translate( 'Will not be publicly displayed' ) }
+					{ translate( 'Not publicly displayed, except to owners of sites you subscribe to.' ) }
 				</FormSettingExplanation>
 
 				<EmailNotVerifiedNotice />

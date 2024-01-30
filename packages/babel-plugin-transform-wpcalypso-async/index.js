@@ -1,4 +1,25 @@
-const kebabCase = require( 'lodash' ).kebabCase;
+const { kebabCase } = require( 'lodash' );
+
+function importChunk( t, name ) {
+	const chunkName = 'async-load-' + kebabCase( name );
+
+	const argumentWithMagicComments = t.addComment(
+		t.stringLiteral( name ),
+		'leading',
+		`webpackChunkName: "${ chunkName }"`,
+		false
+	);
+
+	return t.callExpression( t.import(), [ argumentWithMagicComments ] );
+}
+
+function importError( t, name ) {
+	const chunkName = 'async-load-' + kebabCase( name );
+
+	return t.newExpression( t.identifier( 'Error' ), [
+		t.stringLiteral( 'ignoring load of: ' + chunkName ),
+	] );
+}
 
 module.exports = ( { types: t } ) => {
 	/**
@@ -8,7 +29,7 @@ module.exports = ( { types: t } ) => {
 	 * @type {Object}
 	 */
 	const asyncAttributeVisitor = {
-		FunctionExpression( path ) {
+		ArrowFunctionExpression( path ) {
 			// Hoist using the parent JSXAttribute's scope, since the scopes
 			// from AST parse stage are not valid for replacement expression
 			path.hoist( this.scope );
@@ -17,7 +38,7 @@ module.exports = ( { types: t } ) => {
 
 	return {
 		visitor: {
-			JSXAttribute( path ) {
+			JSXAttribute( path, state ) {
 				// We only transform the require prop on AsyncLoad components.
 				// The component could have been imported under a different
 				// name, but tracking the identifier to the import would add
@@ -37,27 +58,12 @@ module.exports = ( { types: t } ) => {
 					return;
 				}
 
-				// Replace prop string with function which, when invoked, calls
-				// asyncRequire. The asyncRequire call is transformed by the
-				// CallExpression visitor in this plugin
+				const body = state.opts.ignore
+					? t.blockStatement( [ t.throwStatement( importError( t, value.value ) ) ] )
+					: importChunk( t, value.value );
+
 				path.replaceWith(
-					t.jSXAttribute(
-						name,
-						t.jSXExpressionContainer(
-							t.functionExpression(
-								null,
-								[ t.identifier( 'callback' ) ],
-								t.blockStatement( [
-									t.expressionStatement(
-										t.callExpression( t.identifier( 'asyncRequire' ), [
-											value,
-											t.identifier( 'callback' ),
-										] )
-									),
-								] )
-							)
-						)
-					)
+					t.jSXAttribute( name, t.jSXExpressionContainer( t.arrowFunctionExpression( [], body ) ) )
 				);
 
 				// Traverse replacement attribute to hoist function expression
@@ -70,77 +76,17 @@ module.exports = ( { types: t } ) => {
 
 				const argument = path.node.arguments[ 0 ];
 				if ( ! argument || 'StringLiteral' !== argument.type ) {
-					return path.remove();
+					return;
 				}
 
-				// Determine mode from Babel plugin options
-				const isIgnore = state.opts.ignore;
-				const isAsync = state.opts.async;
+				const expr = state.opts.ignore
+					? t.callExpression(
+							t.memberExpression( t.identifier( 'Promise' ), t.identifier( 'reject' ) ),
+							[ importError( t, argument.value ) ]
+					  )
+					: importChunk( t, argument.value );
 
-				// In both asynchronous and synchronous case, we'll finish by
-				// calling require on the loaded module. If the module is an
-				// ES2015 module, use its default export.
-
-				// If a callback was passed as an argument, wrap it as part of
-				// the transformation
-				const callback = path.node.arguments[ 1 ];
-
-				if ( isIgnore ) {
-					path.remove();
-				} else if ( isAsync ) {
-					// Generate a chunk name based on the module path
-					const chunkName = 'async-load-' + kebabCase( argument.value );
-
-					// Transform to dynamic import
-					const argumentWithMagicComments = t.addComment(
-						argument,
-						'leading',
-						`webpackChunkName: "${ chunkName }"`,
-						false
-					);
-					const importCall = t.callExpression( t.import(), [ argumentWithMagicComments ] );
-
-					let statement;
-					if ( callback ) {
-						statement = t.callExpression(
-							t.memberExpression( importCall, t.identifier( 'then' ) ),
-							[
-								t.functionExpression(
-									t.identifier( 'load' ),
-									[ t.identifier( 'mod' ) ],
-									t.blockStatement( [
-										t.expressionStatement(
-											t.callExpression( callback, [
-												t.memberExpression( t.identifier( 'mod' ), t.identifier( 'default' ) ),
-											] )
-										),
-									] )
-								),
-							]
-						);
-					} else {
-						statement = importCall;
-					}
-
-					path.replaceWith( statement );
-				} else {
-					// Transform to synchronous require
-					let requireCall = t.conditionalExpression(
-						t.memberExpression(
-							t.callExpression( t.identifier( 'require' ), [ argument ] ),
-							t.identifier( '__esModule' )
-						),
-						t.memberExpression(
-							t.callExpression( t.identifier( 'require' ), [ argument ] ),
-							t.identifier( 'default' )
-						),
-						t.callExpression( t.identifier( 'require' ), [ argument ] )
-					);
-					if ( callback ) {
-						requireCall = t.callExpression( callback, [ requireCall ] );
-					}
-					path.replaceWith( requireCall );
-				}
+				path.replaceWith( expr );
 			},
 		},
 	};
