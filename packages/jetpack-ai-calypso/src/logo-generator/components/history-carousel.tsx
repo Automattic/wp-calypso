@@ -3,30 +3,24 @@
  */
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { Button } from '@wordpress/components';
-import { useSelect, useDispatch } from '@wordpress/data';
 import classnames from 'classnames';
 /**
  * Internal dependencies
  */
-import { EVENT_NAVIGATE_LOGOS } from '../../constants';
-import { STORE_NAME } from '../store';
+import { EVENT_NAVIGATE } from '../../constants';
+import useLogoGenerator from '../hooks/use-logo-generator';
 import './history-carousel.scss';
 /**
  * Types
  */
-import type { Selectors } from '../store/types';
 import type React from 'react';
 
 export const HistoryCarousel: React.FC = () => {
-	const { setSelectedLogoIndex } = useDispatch( STORE_NAME );
-
-	const { logos, selectedLogo } = useSelect( ( select ) => {
-		const selectors: Selectors = select( STORE_NAME );
-		return { logos: selectors.getLogos(), selectedLogo: selectors.getSelectedLogo() };
-	}, [] );
+	const { logos, selectedLogo, setSelectedLogoIndex, context } = useLogoGenerator();
 
 	const handleClick = ( index: number ) => {
-		recordTracksEvent( EVENT_NAVIGATE_LOGOS, {
+		recordTracksEvent( EVENT_NAVIGATE, {
+			context,
 			logos_count: logos.length,
 			selected_logo: index + 1,
 		} );

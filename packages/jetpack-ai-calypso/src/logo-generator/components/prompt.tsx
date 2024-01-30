@@ -11,7 +11,6 @@ import { useCallback, useEffect, useState, useRef } from 'react';
  * Internal dependencies
  */
 import {
-	EVENT_PROMPT_ENHANCE,
 	EVENT_GENERATE,
 	MINIMUM_PROMPT_LENGTH,
 	EVENT_UPGRADE,
@@ -42,6 +41,7 @@ export const Prompt: React.FC< { initialPrompt?: string } > = ( { initialPrompt 
 		site,
 		getAiAssistantFeature,
 		requireUpgrade,
+		context,
 	} = useLogoGenerator();
 
 	const enhancingLabel = __( 'Enhancing…', 'jetpack' );
@@ -53,7 +53,7 @@ export const Prompt: React.FC< { initialPrompt?: string } > = ( { initialPrompt 
 	const onEnhance = useCallback( async () => {
 		debug( 'Enhancing prompt', prompt );
 		setIsEnhancingPrompt( true );
-		recordTracksEvent( EVENT_PROMPT_ENHANCE );
+		recordTracksEvent( EVENT_GENERATE, { context, tool: 'enhance-prompt' } );
 
 		try {
 			const enhancedPrompt = await enhancePrompt( { prompt } );
@@ -63,7 +63,7 @@ export const Prompt: React.FC< { initialPrompt?: string } > = ( { initialPrompt 
 			debug( 'Error enhancing prompt', error );
 			setIsEnhancingPrompt( false );
 		}
-	}, [ enhancePrompt, prompt, setIsEnhancingPrompt ] );
+	}, [ context, enhancePrompt, prompt, setIsEnhancingPrompt ] );
 
 	const featureData = getAiAssistantFeature( String( site?.id || '' ) );
 
@@ -87,9 +87,9 @@ export const Prompt: React.FC< { initialPrompt?: string } > = ( { initialPrompt 
 	}, [ prompt ] );
 
 	const onGenerate = useCallback( async () => {
-		recordTracksEvent( EVENT_GENERATE );
+		recordTracksEvent( EVENT_GENERATE, { context, tool: 'image' } );
 		generateLogo( { prompt } );
-	}, [ generateLogo, prompt ] );
+	}, [ context, generateLogo, prompt ] );
 
 	const onPromptInput = ( event: React.ChangeEvent< HTMLInputElement > ) => {
 		setPrompt( event.target.textContent || '' );
@@ -114,7 +114,7 @@ export const Prompt: React.FC< { initialPrompt?: string } > = ( { initialPrompt 
 	};
 
 	const onUpgradeClick = () => {
-		recordTracksEvent( EVENT_UPGRADE, { placement: EVENT_PLACEMENT_INPUT_FOOTER } );
+		recordTracksEvent( EVENT_UPGRADE, { context, placement: EVENT_PLACEMENT_INPUT_FOOTER } );
 	};
 
 	return (

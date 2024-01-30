@@ -11,6 +11,7 @@ import { Icon, warning } from '@wordpress/icons';
  */
 import { EVENT_PLACEMENT_UPGRADE_PROMPT, EVENT_UPGRADE } from '../../constants';
 import { useCheckout } from '../hooks/use-checkout';
+import useLogoGenerator from '../hooks/use-logo-generator';
 import './upgrade-nudge.scss';
 
 export const UpgradeNudge = () => {
@@ -26,9 +27,10 @@ export const UpgradeNudge = () => {
 	);
 
 	const { nextTierCheckoutURL: checkoutUrl } = useCheckout();
+	const { context } = useLogoGenerator();
 
 	const handleUpgradeClick = () => {
-		recordTracksEvent( EVENT_UPGRADE, { placement: EVENT_PLACEMENT_UPGRADE_PROMPT } );
+		recordTracksEvent( EVENT_UPGRADE, { context, placement: EVENT_PLACEMENT_UPGRADE_PROMPT } );
 	};
 
 	return (

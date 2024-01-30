@@ -8,7 +8,7 @@ import debugFactory from 'debug';
 /**
  * Internal dependencies
  */
-import { EVENT_SAVE_TO_LIBRARY, EVENT_USE_LOGO } from '../../constants';
+import { EVENT_SAVE, EVENT_USE } from '../../constants';
 import CheckIcon from '../assets/icons/check';
 import LogoIcon from '../assets/icons/logo';
 import MediaIcon from '../assets/icons/media';
@@ -31,12 +31,14 @@ const SaveInLibraryButton: React.FC = () => {
 		isSavingLogoToLibrary: saving,
 		logos,
 		selectedLogoIndex,
+		context,
 	} = useLogoGenerator();
 	const saved = !! selectedLogo?.mediaId;
 
 	const handleClick = async () => {
 		if ( ! saved && ! saving ) {
-			recordTracksEvent( EVENT_SAVE_TO_LIBRARY, {
+			recordTracksEvent( EVENT_SAVE, {
+				context,
 				logos_count: logos.length,
 				selected_logo: selectedLogoIndex ? selectedLogoIndex + 1 : 0,
 			} );
@@ -72,11 +74,13 @@ const UseOnSiteButton: React.FC< { onApplyLogo: () => void } > = ( { onApplyLogo
 		selectedLogo,
 		logos,
 		selectedLogoIndex,
+		context,
 	} = useLogoGenerator();
 
 	const handleClick = async () => {
 		if ( ! isApplyingLogo && ! isSavingLogoToLibrary ) {
-			recordTracksEvent( EVENT_USE_LOGO, {
+			recordTracksEvent( EVENT_USE, {
+				context,
 				logos_count: logos.length,
 				selected_logo: selectedLogoIndex != null ? selectedLogoIndex + 1 : 0,
 			} );

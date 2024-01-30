@@ -5,9 +5,13 @@ import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { Button } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 /**
- * Types
+ * Internal dependencies
  */
 import { EVENT_PLACEMENT_FREE_USER_SCREEN, EVENT_UPGRADE } from '../../constants';
+import useLogoGenerator from '../hooks/use-logo-generator';
+/**
+ * Types
+ */
 import type React from 'react';
 
 export const UpgradeScreen: React.FC< {
@@ -25,8 +29,10 @@ export const UpgradeScreen: React.FC< {
 		'jetpack'
 	);
 
+	const { context } = useLogoGenerator();
+
 	const handleUpgradeClick = () => {
-		recordTracksEvent( EVENT_UPGRADE, { placement: EVENT_PLACEMENT_FREE_USER_SCREEN } );
+		recordTracksEvent( EVENT_UPGRADE, { context, placement: EVENT_PLACEMENT_FREE_USER_SCREEN } );
 		onCancel();
 	};
 
