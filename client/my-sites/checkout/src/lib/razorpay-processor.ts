@@ -97,7 +97,7 @@ export default async function razorpayProcessor(
 					response as WPCOMTransactionEndpointResponseRedirect,
 					( result ) => resolve( { bd_order_id: response.order_id.toString(), ...result } )
 				);
-				debug( 'Opening Razorpay modal' );
+				debug( 'Opening Razorpay modal with options', razorpayOptions );
 				const razorpay = new window.Razorpay( razorpayOptions );
 				razorpay.open();
 			} );
@@ -171,6 +171,7 @@ function combineRazorpayOptions(
 
 	const options = razorpayConfiguration.options;
 	options.order_id = txnResponse.razorpay_order_id;
+	options.customer_id = txnResponse.razorpay_customer_id;
 	options.handler = handler;
 
 	const modal = options.modal ?? {};
@@ -182,7 +183,6 @@ function combineRazorpayOptions(
 	prefill.contact =
 		prefill.contact ?? ( contactDetails ? contactDetails.phone?.value.replace( '.', '' ) : '' );
 	prefill.email = prefill.email ?? ( contactDetails ? contactDetails.email?.value : '' );
-	debug( 'Razorpay prefill', prefill );
 	options.prefill = prefill;
 
 	return options;
