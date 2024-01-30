@@ -1,4 +1,4 @@
-import type { Member, UseQuery } from '../types';
+import type { Member, UseQuery } from '@automattic/data-stores';
 
 export type FollowersQueryData = {
 	followers: Member[];

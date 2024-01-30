@@ -1,38 +1,35 @@
 import InfiniteList from 'calypso/components/infinite-list';
 import useUsersQuery from 'calypso/data/users/use-users-query';
-import UserListItem from './user-list-item';
+import ImportedUserItem from './imported-user-item';
+import type { UsersQuery, Member } from '@automattic/data-stores';
 
 const ImportUsers = ( { site } ) => {
 	const defaultTeamFetchOptions = { include_viewers: true };
 	const usersQuery = useUsersQuery( site?.ID, defaultTeamFetchOptions ) as unknown as UsersQuery;
 	const { data, fetchNextPage, isLoading, isFetchingNextPage, hasNextPage } = usersQuery;
 
-	console.log( 'data', data );
 	const members = data?.users || [];
 
-	const getUserRef = ( user ) => {
+	const getUserRef = ( user: Member ) => {
 		return 'user-' + user?.ID;
 	};
 
-	const renderUser = ( user ) => {
+	const renderUser = ( user: Member ) => {
 		const type = user.roles ? 'email' : 'viewer';
 
-		return <UserListItem key={ user?.ID } user={ user } site={ site } type={ type } />;
+		return <ImportedUserItem key={ user?.ID } user={ user } site={ site } type={ type } />;
 	};
 
 	return (
-		<div>
-			<InfiniteList
-				items={ members }
-				fetchNextPage={ fetchNextPage }
-				fetchingNextPage={ isFetchingNextPage }
-				lastPage={ ! hasNextPage }
-				renderItem={ renderUser }
-				getItemRef={ getUserRef }
-				guessedItemHeight={ 126 }
-
-			/>
-		</div>
+		<InfiniteList
+			items={ members }
+			fetchNextPage={ fetchNextPage }
+			fetchingNextPage={ isFetchingNextPage }
+			lastPage={ ! hasNextPage }
+			renderItem={ renderUser }
+			getItemRef={ getUserRef }
+			guessedItemHeight={ 126 }
+		/>
 	);
 };
 

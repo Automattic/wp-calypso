@@ -1,0 +1,20 @@
+
+
+.imported-user-item {
+    display: flex;
+    align-items: center;
+
+    .imported-user-item__avatar {
+        flex-shrink: 0;
+        margin-right: 1rem;
+    }
+    
+    .imported-user-item__email {
+        flex-grow: 1;
+    }
+
+    .imported-user-item__linked {
+        flex-shrink: 0;
+        margin-left: 1rem;
+    }
+}
