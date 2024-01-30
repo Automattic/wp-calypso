@@ -86,7 +86,7 @@ const flows: Record< string, { [ step: string ]: number } > = {
 		storeProfiler: 1,
 		designCarousel: 2,
 		domains: 3,
-		createSiteStep: 4,
+		createSite: 4,
 		processing: 4,
 		waitForAtomic: 4,
 		checkPlan: 4,

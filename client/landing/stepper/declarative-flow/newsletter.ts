@@ -56,7 +56,7 @@ const newsletter: Flow = {
 				asyncComponent: () => import( './internals/steps-repository/subscribers' ),
 			},
 			{
-				slug: 'createSiteStep',
+				slug: 'createSite',
 				asyncComponent: () => import( './internals/steps-repository/create-site' ),
 			},
 			{
@@ -127,9 +127,9 @@ const newsletter: Flow = {
 					return navigate( 'plans' );
 
 				case 'plans':
-					return navigate( 'createSiteStep' );
+					return navigate( 'createSite' );
 
-				case 'createSiteStep':
+				case 'createSite':
 					return navigate( 'processing' );
 
 				case 'processing':

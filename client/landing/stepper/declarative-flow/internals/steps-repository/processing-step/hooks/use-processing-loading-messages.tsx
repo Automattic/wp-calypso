@@ -51,7 +51,7 @@ export function useProcessingLoadingMessages( flow?: string | null ): LoadingMes
 
 	if ( isWooExpressFlow( flow || null ) ) {
 		switch ( stepData?.currentStep ) {
-			case 'createSiteStep':
+			case 'createSite':
 				return [
 					{
 						title: __( "Woo! We're creating your store" ),

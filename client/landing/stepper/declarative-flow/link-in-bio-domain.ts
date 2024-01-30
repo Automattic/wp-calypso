@@ -54,7 +54,7 @@ const linkInBioDomain: Flow = {
 				asyncComponent: () => import( './internals/steps-repository/design-carousel' ),
 			},
 			{
-				slug: 'createSiteStep',
+				slug: 'createSite',
 				asyncComponent: () => import( './internals/steps-repository/create-site' ),
 			},
 			{
@@ -111,10 +111,10 @@ const linkInBioDomain: Flow = {
 							product_slug: PLAN_PERSONAL,
 						} );
 					}
-					return navigate( 'createSiteStep' );
+					return navigate( 'createSite' );
 				}
 
-				case 'createSiteStep':
+				case 'createSite':
 					return navigate( 'processing' );
 
 				case 'processing': {
