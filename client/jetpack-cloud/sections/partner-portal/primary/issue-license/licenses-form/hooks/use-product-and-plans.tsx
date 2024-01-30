@@ -81,10 +81,7 @@ const getDisplayablePlans = ( filteredProductsAndBundles: APIProductFamilyProduc
 		return ! MERGABLE_PLANS.some( ( filter ) => slug.startsWith( filter ) );
 	} );
 
-	return [ ...filteredPlans, ...restOfPlans ] as (
-		| APIProductFamilyProduct[]
-		| APIProductFamilyProduct
-	)[];
+	return [ ...filteredPlans, ...restOfPlans ] as APIProductFamilyProduct[];
 };
 
 // This function gets the displayable Products based on how it should be arranged in the listing.
