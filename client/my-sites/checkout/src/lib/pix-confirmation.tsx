@@ -86,8 +86,11 @@ export function PixConfirmation( {
 			<div className="pix-confirmation__content">
 				<p className="pix-confirmation__instructions">
 					{ translate(
-						'Please scan the barcode using the Pix application to confirm your %(price)s payment.',
+						'Please scan the QR code using the Pix application to confirm your {{strong}}%(price)s payment{{/strong}}.',
 						{
+							components: {
+								strong: <strong />,
+							},
 							args: {
 								price: formatCurrency( priceInteger, priceCurrency, {
 									isSmallestUnit: true,
