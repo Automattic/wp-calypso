@@ -1,4 +1,3 @@
-import config from '@automattic/calypso-config';
 import { localize } from 'i18n-calypso';
 import { Component } from 'react';
 import { connect } from 'react-redux';
@@ -23,13 +22,6 @@ export class P2PlansMain extends Component {
 					hidePlanTypeSelector={ true }
 					intent="plans-p2"
 					isInSignup={ false }
-					showPlanTypeSelectorDropdown={
-						/**
-						 *	Override the default feature flag to prevent this feature from rendering in untested locations
-						 *  The hardcoded 'false' short curicuit should be removed once the feature is fully tested in the given context
-						 */
-						config.isEnabled( 'onboarding/interval-dropdown' ) && false
-					}
 				/>
 			</>
 		);

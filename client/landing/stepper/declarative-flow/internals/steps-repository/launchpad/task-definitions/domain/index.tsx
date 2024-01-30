@@ -6,9 +6,9 @@ import { getSiteIdOrSlug, isDomainUpsellCompleted } from '../../task-helper';
 import { recordTaskClickTracksEvent } from '../../tracking';
 import { TaskAction } from '../../types';
 
-const getDomainUpSellTask: TaskAction = ( task, flow, context ): Task => {
-	const { site, checklistStatuses, siteSlug } = context;
 
+export const getDomainUpSellTask: TaskAction = ( task, flow, context ): Task => {
+	const { site, checklistStatuses, siteSlug } = context;
 	const domainUpsellCompleted = isDomainUpsellCompleted( site, checklistStatuses );
 
 	const getDestionationUrl = () => {

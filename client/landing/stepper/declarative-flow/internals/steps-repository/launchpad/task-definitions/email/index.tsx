@@ -2,7 +2,7 @@ import { Task } from '@automattic/launchpad';
 import { recordTaskClickTracksEvent } from '../../tracking';
 import { TaskAction } from '../../types';
 
-const getVerifyEmail: TaskAction = ( task, flow, context ): Task => {
+export const getVerifyEmail: TaskAction = ( task, flow, context ): Task => {
 	const { isEmailVerified } = context;
 
 	return {

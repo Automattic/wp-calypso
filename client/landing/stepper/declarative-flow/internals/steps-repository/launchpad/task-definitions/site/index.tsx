@@ -126,7 +126,7 @@ const completeLaunchSiteTask = async ( task: Task, flow: string, context: TaskCo
 	submit?.();
 };
 
-const getSiteLaunchedTask: TaskAction = ( task, flow, context ): Task => {
+export const getSiteLaunchedTask: TaskAction = ( task, flow, context ): Task => {
 	return {
 		...task,
 		isLaunchTask: true,
@@ -137,7 +137,7 @@ const getSiteLaunchedTask: TaskAction = ( task, flow, context ): Task => {
 	};
 };
 
-const getBlogLaunchedTask: TaskAction = ( task, flow, context ): Task => {
+export const getBlogLaunchedTask: TaskAction = ( task, flow, context ): Task => {
 	return {
 		...task,
 		isLaunchTask: true,
@@ -147,12 +147,14 @@ const getBlogLaunchedTask: TaskAction = ( task, flow, context ): Task => {
 		useCalypsoPath: false,
 	};
 };
-const getVideopressLaunchedTask: TaskAction = ( task, flow, context ): Task => {
+
+export const getVideopressLaunchedTask: TaskAction = ( task, flow, context ): Task => {
 	const { site, submit, siteSlug } = context;
 
 	return {
 		...task,
 		isLaunchTask: true,
+		useCalypsoPath: false,
 		actionDispatch: () => {
 			if ( site?.ID ) {
 				const { setPendingAction, setProgressTitle } = dispatch( ONBOARD_STORE ) as OnboardActions;

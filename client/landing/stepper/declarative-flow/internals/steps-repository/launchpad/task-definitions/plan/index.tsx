@@ -54,7 +54,7 @@ const getPlanTaskSubtitle = (
 	);
 };
 
-const getPlanSelectedTask: TaskAction = ( task, flow, context ): Task => {
+export const getPlanSelectedTask: TaskAction = ( task, flow, context ): Task => {
 	const { siteSlug, displayGlobalStylesWarning, globalStylesMinimumPlan, planCartItem, site } =
 		context;
 

@@ -2,7 +2,9 @@ import { translate } from 'i18n-calypso';
 import { useEffect, useState } from 'react';
 import { connect } from 'react-redux';
 import Notice from 'calypso/components/notice';
+import { useDispatch } from 'calypso/state';
 import { useAtomicTransferQuery } from 'calypso/state/atomic-transfer/use-atomic-transfer-query';
+import { fetchAutomatedTransferStatus } from 'calypso/state/automated-transfer/actions';
 import { transferStates } from 'calypso/state/automated-transfer/constants';
 import { initiateThemeTransfer } from 'calypso/state/themes/actions';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
@@ -29,6 +31,7 @@ const HostingActivateStatus = ( {
 	const { isTransferring, transferStatus } = useAtomicTransferQuery( siteId ?? 0, {
 		refetchInterval: 5000,
 	} );
+	const dispatch = useDispatch();
 	const isTransferCompleted = transferStatus === transferStates.COMPLETED;
 	const [ wasTransferring, setWasTransferring ] = useState( false );
 
@@ -38,6 +41,9 @@ const HostingActivateStatus = ( {
 		}
 		if ( ! isTransferring && wasTransferring && isTransferCompleted ) {
 			setWasTransferring( false );
+		}
+		if ( ! isTransferCompleted ) {
+			dispatch( fetchAutomatedTransferStatus( siteId ?? 0 ) );
 		}
 		onTick?.( isTransferring, wasTransferring, isTransferCompleted );
 	}, [ isTransferCompleted, isTransferring, onTick, wasTransferring ] );
@@ -93,6 +99,7 @@ const mapStateToProps = ( state: AppState ) => {
 
 const mapDispatchToProps = {
 	initiateTransfer: initiateThemeTransfer,
+	fetchAutomatedTransferStatus,
 };
 
 export default connect( mapStateToProps, mapDispatchToProps )( HostingActivateStatus );

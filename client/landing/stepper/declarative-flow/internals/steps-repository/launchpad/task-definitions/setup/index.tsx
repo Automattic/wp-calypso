@@ -5,7 +5,7 @@ import { getSiteIdOrSlug } from '../../task-helper';
 import { recordTaskClickTracksEvent } from '../../tracking';
 import { type TaskAction } from '../../types';
 
-const getSetupFreeTask: TaskAction = ( task, flow, context ): Task => {
+export const getSetupFreeTask: TaskAction = ( task, flow, context ): Task => {
 	const { site, siteSlug } = context;
 
 	return {
@@ -19,7 +19,7 @@ const getSetupFreeTask: TaskAction = ( task, flow, context ): Task => {
 	};
 };
 
-const getSetupBlog: TaskAction = ( task, flow, context ): Task => {
+export const getSetupBlogTask: TaskAction = ( task, flow, context ): Task => {
 	const { site, siteSlug } = context;
 
 	return {
@@ -31,11 +31,12 @@ const getSetupBlog: TaskAction = ( task, flow, context ): Task => {
 	};
 };
 
-const getSetupNewsletterTask: TaskAction = ( task, flow, context ): Task => {
+export const getSetupNewsletterTask: TaskAction = ( task, flow, context ): Task => {
 	const { site, siteSlug } = context;
 
 	return {
 		...task,
+		actionDispatch: () => recordTaskClickTracksEvent( task, flow, context ),
 		calypso_path: addQueryArgs( task.calypso_path, {
 			...getSiteIdOrSlug( flow, site, siteSlug ),
 			flowToReturnTo: flow,
@@ -44,7 +45,7 @@ const getSetupNewsletterTask: TaskAction = ( task, flow, context ): Task => {
 	};
 };
 
-const getSetupVideoPressTask: TaskAction = ( task, flow, context ): Task => {
+export const getSetupVideoPressTask: TaskAction = ( task, flow, context ): Task => {
 	const { site, siteSlug } = context;
 
 	return {
@@ -55,7 +56,7 @@ const getSetupVideoPressTask: TaskAction = ( task, flow, context ): Task => {
 	};
 };
 
-const getSetupGeneralTask: TaskAction = ( task, flow, context ): Task => {
+export const getSetupGeneralTask: TaskAction = ( task, flow, context ): Task => {
 	const { site, siteSlug } = context;
 
 	return {
@@ -72,7 +73,7 @@ const getSetupGeneralTask: TaskAction = ( task, flow, context ): Task => {
 
 export const actions = {
 	setup_free: getSetupFreeTask,
-	setup_blog: getSetupBlog,
+	setup_blog: getSetupBlogTask,
 	setup_newsletter: getSetupNewsletterTask,
 	videopress_setup: getSetupVideoPressTask,
 	setup_general: getSetupGeneralTask,
