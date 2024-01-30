@@ -12,7 +12,7 @@ export {
 } from './record';
 export { recordTracksEventWithClientId, recordPageViewWithClientId } from './record-with-client-id';
 export { withAnalytics } from './with-analytics';
-export { enhanceWithPersona } from './enhance-with-persona';
+export { enhanceWithIsDevAccount } from './enhance-with-is-dev-account';
 export { enhanceWithSiteMainProduct } from './enhance-with-site-main-product';
 export { enhanceWithSiteType } from './enhance-with-site-type';
 export { composeAnalytics } from './compose-analytics';
