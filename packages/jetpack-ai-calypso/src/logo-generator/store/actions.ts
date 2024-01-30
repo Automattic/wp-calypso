@@ -27,6 +27,7 @@ import {
 	ACTION_SET_LOGO_FETCH_ERROR,
 	ACTION_SET_LOGO_UPDATE_ERROR,
 	ACTION_SET_SAVE_TO_LIBRARY_ERROR,
+	ACTION_SET_CONTEXT,
 } from './constants';
 import type {
 	AiFeatureProps,
@@ -230,10 +231,18 @@ const actions = {
 			error,
 		};
 	},
+
 	setLogoUpdateError( error: RequestError ) {
 		return {
 			type: ACTION_SET_LOGO_UPDATE_ERROR,
 			error,
+		};
+	},
+
+	setContext( context: string ) {
+		return {
+			type: ACTION_SET_CONTEXT,
+			context,
 		};
 	},
 };

@@ -187,6 +187,15 @@ const selectors = {
 	getLogoUpdateError( state: LogoGeneratorStateProp ): RequestError {
 		return state._meta?.logoUpdateError ?? null;
 	},
+
+	/**
+	 * Get the context value.
+	 * @param {LogoGeneratorStateProp} state - The app state tree.
+	 * @returns {string}                       The context value.
+	 */
+	getContext( state: LogoGeneratorStateProp ): string {
+		return state._meta?.context ?? '';
+	},
 };
 
 export default selectors;

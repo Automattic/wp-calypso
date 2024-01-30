@@ -26,6 +26,7 @@ import {
 	ACTION_SET_LOGO_FETCH_ERROR,
 	ACTION_SET_SAVE_TO_LIBRARY_ERROR,
 	ACTION_SET_LOGO_UPDATE_ERROR,
+	ACTION_SET_CONTEXT,
 } from './constants';
 import INITIAL_STATE from './initial-state';
 import type { AiFeatureStateProps, RequestError, TierLimitProp } from './types';
@@ -50,6 +51,7 @@ export default function reducer(
 		isEnhancingPrompt?: boolean;
 		history?: Array< { url: string; description: string; mediaId?: number } >;
 		error?: RequestError;
+		context?: string;
 	}
 ) {
 	switch ( action.type ) {
@@ -337,6 +339,15 @@ export default function reducer(
 				_meta: {
 					...( state._meta ?? {} ),
 					logoUpdateError: action.error,
+				},
+			};
+
+		case ACTION_SET_CONTEXT:
+			return {
+				...state,
+				_meta: {
+					...( state._meta ?? {} ),
+					context: action.context,
 				},
 			};
 	}
