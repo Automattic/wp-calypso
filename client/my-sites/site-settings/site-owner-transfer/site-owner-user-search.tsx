@@ -89,7 +89,7 @@ const SiteOwnerTransferEligibility = ( {
 		<form onSubmit={ handleFormSubmit }>
 			<FormText>
 				{ translate(
-					'Email or WordPress.com Username of the person you want to transfer ownership of {{strong}}%(siteSlug)s{{/strong}} to:',
+					'Transfer the ownership of {{strong}}%(siteSlug)s{{/strong}} and related purchases to another user by adding their Email or their WordPress.com Usernamei in the following form.',
 					{
 						args: { siteSlug },
 						components: { strong: <Strong /> },
@@ -98,7 +98,7 @@ const SiteOwnerTransferEligibility = ( {
 			</FormText>
 
 			<FormFieldset>
-				<FormLabel>{ translate( 'Email or WordPress.com username.' ) }</FormLabel>
+				<FormLabel>{ translate( 'Email or WordPress.com username' ) }</FormLabel>
 				<FormTextInput
 					id="recipient"
 					name="recipient"
@@ -122,7 +122,7 @@ const SiteOwnerTransferEligibility = ( {
 				) }
 				<NonWPUserExplanation>
 					{ translate(
-						"If the person you want to transfer ownership doesn't have a WordPress.com account yet they will be invited to add create one."
+						"If the person you want to transfer ownership doesn't have a WordPress.com account yet they will be invited to create one."
 					) }
 				</NonWPUserExplanation>
 			</FormFieldset>
