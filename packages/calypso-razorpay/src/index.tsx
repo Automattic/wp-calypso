@@ -11,6 +11,7 @@ export interface RazorpayConfiguration {
 export interface RazorpayOptions {
 	key: string;
 	order_id?: string; // This is a razorpay order ID; the name is constrained by a 3rd party library.
+	customer_id?: string; // This is a razorpay customer ID; the name is constrained by a 3rd party library.
 	handler?: ( response: RazorpayModalResponse ) => void;
 	prefill?: {
 		contact?: string;
@@ -19,6 +20,7 @@ export interface RazorpayOptions {
 	modal?: {
 		ondismiss?: ( response: RazorpayModalResponse ) => void;
 	};
+	recurring?: string;
 }
 
 export interface RazorpayModalResponse {
