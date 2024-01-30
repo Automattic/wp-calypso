@@ -1,11 +1,11 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { Button } from '@automattic/components';
-import { Icon, cloud } from '@wordpress/icons';
 import { addQueryArgs } from '@wordpress/url';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback, useState } from 'react';
 import { useSelector } from 'react-redux';
 import MultipleChoiceQuestion from 'calypso/components/multiple-choice-question';
+import getAPIFamilyProductIcon from 'calypso/jetpack-cloud/sections/manage/pricing/utils/get-api-family-product-icon';
 import { useProductDescription } from 'calypso/jetpack-cloud/sections/partner-portal/hooks';
 import getProductShortTitle from 'calypso/jetpack-cloud/sections/partner-portal/lib/get-product-short-title';
 import getProductVariantShortTitle from 'calypso/jetpack-cloud/sections/partner-portal/lib/get-product-variant-short-title';
@@ -97,7 +97,10 @@ export const SimpleLicenseMultiItemCard = ( {
 
 	if ( variantSlug.startsWith( 'jetpack-backup' ) ) {
 		icon = (
-			<Icon className="jetpack-backup-plugin-icon" icon={ cloud } width={ 28 } height={ 28 } />
+			<img
+				alt={ variant.name + ' icon' }
+				src={ getAPIFamilyProductIcon( { productSlug: 'jetpack-backup' } ) }
+			/>
 		);
 	}
 

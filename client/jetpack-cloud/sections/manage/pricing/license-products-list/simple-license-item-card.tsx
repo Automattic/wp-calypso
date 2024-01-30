@@ -1,5 +1,5 @@
 import { Button } from '@automattic/components';
-import { Icon, plugins, cloud } from '@wordpress/icons';
+import { Icon, plugins } from '@wordpress/icons';
 import { addQueryArgs } from '@wordpress/url';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback } from 'react';
@@ -86,7 +86,10 @@ export const SimpleLicenseItemCard = ( {
 		);
 	} else if ( productSlug.startsWith( 'jetpack-backup' ) ) {
 		icon = (
-			<Icon className="jetpack-backup-plugin-icon" icon={ cloud } width={ 28 } height={ 28 } />
+			<img
+				alt={ item.name + ' icon' }
+				src={ getAPIFamilyProductIcon( { productSlug: 'jetpack-backup' } ) }
+			/>
 		);
 	} else {
 		icon = (
