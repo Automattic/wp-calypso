@@ -249,6 +249,7 @@ export const QuickLinks = ( {
 								siteDetails={ site }
 								isOpen={ isAILogoGeneratorOpen }
 								onClose={ () => setIsAILogoGeneratorOpen( false ) }
+								context="calypso"
 							/>
 						</>
 					) }

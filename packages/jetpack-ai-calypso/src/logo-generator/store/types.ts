@@ -142,6 +142,7 @@ export type LogoGeneratorStateProp = {
 		logoFetchError?: RequestError;
 		saveToLibraryError?: RequestError;
 		logoUpdateError?: RequestError;
+		context: string;
 	};
 	siteDetails?: SiteDetails | Record< string, never >;
 	features: {
@@ -170,6 +171,7 @@ export type Selectors = {
 	getLogoFetchError(): RequestError;
 	getSaveToLibraryError(): RequestError;
 	getLogoUpdateError(): RequestError;
+	getContext(): string;
 };
 
 /*

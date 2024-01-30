@@ -31,6 +31,7 @@ const useLogoGenerator = () => {
 		setIsEnhancingPrompt,
 		increaseAiAssistantRequestsCount,
 		addLogoToHistory,
+		setContext,
 	} = useDispatch( STORE_NAME );
 
 	const {
@@ -45,6 +46,7 @@ const useLogoGenerator = () => {
 		isRequestingImage,
 		getAiAssistantFeature,
 		requireUpgrade,
+		context,
 	} = useSelect( ( select ) => {
 		const selectors: Selectors = select( STORE_NAME );
 
@@ -60,6 +62,7 @@ const useLogoGenerator = () => {
 			isBusy: selectors.getIsBusy(),
 			getAiAssistantFeature: selectors.getAiAssistantFeature,
 			requireUpgrade: selectors.getRequireUpgrade(),
+			context: selectors.getContext(),
 		};
 	}, [] );
 
@@ -381,6 +384,7 @@ User request:${ prompt }`;
 		setIsRequestingImage,
 		setIsSavingLogoToLibrary,
 		setIsApplyingLogo,
+		setContext,
 		isEnhancingPrompt,
 		isRequestingImage,
 		isSavingLogoToLibrary,
@@ -388,6 +392,7 @@ User request:${ prompt }`;
 		isBusy,
 		getAiAssistantFeature,
 		requireUpgrade,
+		context,
 	};
 };
 

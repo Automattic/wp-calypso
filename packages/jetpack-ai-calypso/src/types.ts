@@ -8,6 +8,7 @@ export interface GeneratorModalProps {
 	siteDetails?: SiteDetails;
 	isOpen: boolean;
 	onClose: () => void;
+	context: string;
 }
 
 export interface LogoPresenterProps {

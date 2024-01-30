@@ -14,10 +14,11 @@ import { useState, useEffect, useCallback } from 'react';
  */
 import {
 	DEFAULT_LOGO_COST,
-	EVENT_CALYPSO_LOGO_CALLED,
+	EVENT_MODAL_OPEN,
 	EVENT_FEEDBACK,
 	EVENT_MODAL_CLOSE,
 	EVENT_PLACEMENT_QUICK_LINKS,
+	EVENT_GENERATE,
 } from '../../constants';
 import useLogoGenerator from '../hooks/use-logo-generator';
 import useRequestErrors from '../hooks/use-request-errors';
@@ -43,6 +44,7 @@ export const GeneratorModal: React.FC< GeneratorModalProps > = ( {
 	isOpen,
 	onClose,
 	siteDetails,
+	context,
 } ) => {
 	const { setSiteDetails, fetchAiAssistantFeature, loadLogoHistory } = useDispatch( STORE_NAME );
 	const [ loadingState, setLoadingState ] = useState<
@@ -53,7 +55,7 @@ export const GeneratorModal: React.FC< GeneratorModalProps > = ( {
 	const [ needsFeature, setNeedsFeature ] = useState( false );
 	const [ needsMoreRequests, setNeedsMoreRequests ] = useState( false );
 	const [ upgradeURL, setUpgradeURL ] = useState( '' );
-	const { selectedLogo, getAiAssistantFeature, generateFirstPrompt, generateLogo } =
+	const { selectedLogo, getAiAssistantFeature, generateFirstPrompt, generateLogo, setContext } =
 		useLogoGenerator();
 	const { featureFetchError, firstLogoPromptFetchError, clearErrors } = useRequestErrors();
 	const siteId = siteDetails?.ID;
@@ -75,6 +77,7 @@ export const GeneratorModal: React.FC< GeneratorModalProps > = ( {
 		try {
 			// First generate the prompt based on the site's data.
 			setLoadingState( 'analyzing' );
+			recordTracksEvent( EVENT_GENERATE, { context, tool: 'first-prompt' } );
 			const prompt = await generateFirstPrompt();
 			setInitialPrompt( prompt );
 
@@ -86,7 +89,7 @@ export const GeneratorModal: React.FC< GeneratorModalProps > = ( {
 			debug( 'Error generating first logo', error );
 			setLoadingState( null );
 		}
-	}, [ generateFirstPrompt, generateLogo ] );
+	}, [ context, generateFirstPrompt, generateLogo ] );
 
 	const initializeModal = useCallback( async () => {
 		// First fetch the feature data so we have the most up-to-date info from the backend.
@@ -136,18 +139,19 @@ export const GeneratorModal: React.FC< GeneratorModalProps > = ( {
 	}, [ siteId, getFeature, siteDetails?.domain, generateFirstLogo ] );
 
 	const handleModalOpen = useCallback( async () => {
-		recordTracksEvent( EVENT_CALYPSO_LOGO_CALLED, { placement: EVENT_PLACEMENT_QUICK_LINKS } );
+		setContext( context );
+		recordTracksEvent( EVENT_MODAL_OPEN, { context, placement: EVENT_PLACEMENT_QUICK_LINKS } );
 		loadLogoHistory( siteId );
 
 		initializeModal();
-	}, [ loadLogoHistory, siteId, initializeModal ] );
+	}, [ setContext, context, loadLogoHistory, siteId, initializeModal ] );
 
 	const closeModal = () => {
 		setLoadingState( null );
 		setNeedsFeature( false );
 		setNeedsMoreRequests( false );
 		clearErrors();
-		recordTracksEvent( EVENT_MODAL_CLOSE );
+		recordTracksEvent( EVENT_MODAL_CLOSE, { context, placement: EVENT_PLACEMENT_QUICK_LINKS } );
 		onClose();
 	};
 
@@ -161,7 +165,7 @@ export const GeneratorModal: React.FC< GeneratorModalProps > = ( {
 	};
 
 	const handleFeedbackClick = () => {
-		recordTracksEvent( EVENT_FEEDBACK );
+		recordTracksEvent( EVENT_FEEDBACK, { context } );
 	};
 
 	// Set site details when siteId changes
