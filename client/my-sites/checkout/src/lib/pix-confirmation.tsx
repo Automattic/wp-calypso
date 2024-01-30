@@ -34,7 +34,7 @@ const ConfirmationDiv = styled.dialog`
 	}
 
 	.pix-confirmation__content {
-		width: 400px;
+		width: 330px;
 	}
 
 	.pix-confirmation__title {
@@ -46,6 +46,7 @@ const ConfirmationDiv = styled.dialog`
 	.pix-confirmation__instructions {
 		font-size: 16px;
 		font-weight: 400;
+		line-height: 24px;
 	}
 
 	.pix-confirmation__qrcode {
@@ -56,13 +57,20 @@ const ConfirmationDiv = styled.dialog`
 		margin: auto;
 	}
 
-	.pix-confirmation__qrcode-redirect {
-		color: var( --color-text-subtle );
-		border-top: 1px solid var( --color-neutral-10 );
-		border-bottom: 1px solid var( --color-neutral-10 );
-		font-size: small;
-		margin: 12px;
-		padding: 15px 0;
+	.pix-confirmation__manual-instructions {
+		margin-top: 28px;
+		font-weight: 400px;
+		font-size: 16px;
+		line-height: 24px;
+	}
+
+	.pix-confirmation__manual-instructions a {
+		text-decoration: underline;
+	}
+
+	.pix-confirmation__manual-instructions-title {
+		font-weight: 500px;
+		margin: 6px;
 	}
 `;
 
@@ -109,16 +117,18 @@ export function PixConfirmation( {
 					<QRCodeSVG value={ redirectUrl } />
 				</div>
 
-				<p className="pix-confirmation__qrcode-redirect">
-					{ translate(
-						'On mobile? To open and pay with the Pix app directly, {{a}}click here{{/a}}.',
-						{
+				<div className="pix-confirmation__manual-instructions">
+					<h3 className="pix-confirmation__manual-instructions-title">
+						{ translate( 'On mobile?' ) }
+					</h3>
+					<p>
+						{ translate( 'To open and pay with the Pix app directly, {{a}}click here{{/a}}.', {
 							components: { a: <a href={ redirectUrl } /> },
 							comment:
 								'Asking if mobile detection has failed and they would like to open and be redirected directly into the Pix app in order to pay.',
-						}
-					) }
-				</p>
+						} ) }
+					</p>
+				</div>
 			</div>
 		</ConfirmationDiv>
 	);
