@@ -27,7 +27,6 @@ const shouldEmitStats = process.env.EMIT_STATS && process.env.EMIT_STATS !== 'fa
  * @param   {Object}  argv.entry                    Entry point(s)
  * @param   {string}  argv.outputPath               Output path
  * @param   {string}  argv.outputFilename           Output filename pattern
- * @param   {string}  argv.outputChunkFilename      Output chunk filename pattern
  * @returns {Object}                                webpack config
  */
 function getWebpackConfig(
@@ -42,12 +41,10 @@ function getWebpackConfig(
 		},
 		outputPath = path.join( __dirname, 'dist' ),
 		outputFilename = isDevelopment ? '[name].js' : '[name].min.js',
-		outputChunkFilename = isDevelopment ? '[name]-[contenthash].js' : '[name]-[contenthash].min.js',
 	}
 ) {
 	const webpackConfig = getBaseWebpackConfig( env, {
 		entry,
-		'output-chunk-filename': outputChunkFilename,
 		'output-filename': outputFilename,
 		'output-path': outputPath,
 	} );
