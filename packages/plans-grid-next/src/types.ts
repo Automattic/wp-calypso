@@ -124,7 +124,6 @@ export interface CommonGridProps {
 
 export interface FeaturesGridProps extends CommonGridProps {
 	gridPlans: GridPlan[];
-	isLargeCurrency: boolean;
 	currentPlanManageHref?: string;
 	generatedWPComSubdomain: DataResponse< { domain_name: string } >;
 	gridPlanForSpotlight?: GridPlan;
