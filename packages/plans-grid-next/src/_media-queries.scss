@@ -13,41 +13,11 @@ $minWidthToGridWidthMap: (
 	1200px: "100%",
 );
 
-// Plan Comparison Grid Breakpoints
-$plans-comparison-small-breakpoint: 880px;
-$plans-comparison-medium-breakpoint: 1024px;
-$plans-comparison-large-breakpoint: 1281px;
-
-$planComparisonMinWidthToGridWidthMap: (
-	780px: "686px",
-	880px: "870px",
-	1024px: "1024px",
-	1281px: "1238px",
-);
-
-// TODO: Replace with use of $plan-features-sidebar-width
-$planComparisonMinWidthToGridWidthWithSidebarMap: (
-	1052px: "686px",
-	1152px: "870px",
-	1296px: "1024px",
-	1553px: "1238px",
-);
-
 
 @mixin pricing-grid-breakpoints {
 	width: 100%;
 
 	@each $screenMinWidth, $gridWidth in $minWidthToGridWidthMap {
-		@media ( min-width: #{$screenMinWidth} ) {
-			width: #{$gridWidth};
-		}
-	}
-}
-
-@mixin plan-comparison-grid-breakpoints {
-	width: 100%;
-
-	@each $screenMinWidth, $gridWidth in $planComparisonMinWidthToGridWidthMap {
 		@media ( min-width: #{$screenMinWidth} ) {
 			width: #{$gridWidth};
 		}
@@ -62,19 +32,9 @@ $planComparisonMinWidthToGridWidthWithSidebarMap: (
 	width: 100%;
 }
 
-@mixin plan-comparison-grid-breakpoints-with-sidebar {
-	width: 100%;
-
-	@each $screenMinWidth, $gridWidth in $planComparisonMinWidthToGridWidthWithSidebarMap {
-		@media ( min-width: #{$screenMinWidth} ) {
-			width: #{$gridWidth};
-		}
-	}
-}
-
 /**
  * @deprecated
- * TODO clk Used in comparison grid
+ * TODO clk used in plans-features-main / should migrate there
  */
 @mixin plans-2023-break-small() {
 	body.is-section-stepper &,
@@ -92,31 +52,6 @@ $planComparisonMinWidthToGridWidthWithSidebarMap: (
 
 	.is-section-plans.is-sidebar-collapsed & {
 		@media ( min-width: $plans-2023-small-breakpoint ) {
-			@content;
-		}
-	}
-}
-
-/**
- * @deprecated
- * TODO clk Used in comparison grid
- */
-@mixin plans-2023-break-medium() {
-	body.is-section-stepper &,
-	body.is-section-signup.is-white-signup & {
-		@media ( min-width: $plans-2023-medium-breakpoint ) {
-			@content;
-		}
-	}
-
-	.is-section-plans:not(.is-sidebar-collapsed) & {
-		@media ( min-width: $plans-2023-medium-breakpoint + $plan-features-sidebar-width ) {
-			@content;
-		}
-	}
-
-	.is-section-plans.is-sidebar-collapsed & {
-		@media ( min-width: $plans-2023-medium-breakpoint ) {
 			@content;
 		}
 	}

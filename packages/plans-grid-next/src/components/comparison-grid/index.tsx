@@ -31,7 +31,7 @@ import getPlanFeaturesObject from '../../lib/get-plan-features-object';
 import { isStorageUpgradeableForPlan } from '../../lib/is-storage-upgradeable-for-plan';
 import { sortPlans } from '../../lib/sort-plan-properties';
 import { plansBreakSmall } from '../../media-queries';
-import { getStorageStringFromFeature, usePricingBreakpoint } from '../../util';
+import { getStorageStringFromFeature } from '../../util';
 import PlanFeatures2023GridActions from '../actions';
 import PlanFeatures2023GridHeaderPrice from '../header-price';
 import PlanTypeSelector from '../plan-type-selector';
@@ -945,6 +945,7 @@ const ComparisonGrid = ( {
 	showRefundPeriod,
 	planTypeSelectorProps,
 	planUpgradeCreditsApplicable,
+	gridSize,
 }: ComparisonGridProps ) => {
 	const { gridPlans } = usePlansGridContext();
 	const [ activeTooltipId, setActiveTooltipId ] = useManageTooltipToggle();
@@ -963,46 +964,27 @@ const ComparisonGrid = ( {
 		? getWooExpressFeaturesGrouped()
 		: getPlanFeaturesGrouped();
 
-	let largeBreakpoint;
-	let mediumBreakpoint;
-	let smallBreakpoint;
-
-	if ( isInSignup ) {
-		// Breakpoints without admin sidebar
-		largeBreakpoint = 1281;
-		mediumBreakpoint = 1024;
-		smallBreakpoint = 880;
-	} else {
-		// Breakpoints with admin sidebar
-		largeBreakpoint = 1553; // 1500px + 272px (sidebar)
-		mediumBreakpoint = 1296; // 1340px + 272px (sidebar)
-		smallBreakpoint = 1152; // keeping original breakpoint to match Plan Grid
-	}
-
-	const isLargeBreakpoint = usePricingBreakpoint( largeBreakpoint );
-	const isMediumBreakpoint = usePricingBreakpoint( mediumBreakpoint );
-	const isSmallBreakpoint = usePricingBreakpoint( smallBreakpoint );
-
 	const [ visiblePlans, setVisiblePlans ] = useState< PlanSlug[] >( [] );
 
 	const displayedGridPlans = useMemo( () => {
-		return sortPlans( gridPlans, currentSitePlanSlug, isMediumBreakpoint );
-	}, [ gridPlans, currentSitePlanSlug, isMediumBreakpoint ] );
+		return sortPlans( gridPlans, currentSitePlanSlug, 'small' === gridSize );
+	}, [ gridPlans, currentSitePlanSlug, gridSize ] );
 
 	useEffect( () => {
 		let newVisiblePlans = displayedGridPlans.map( ( { planSlug } ) => planSlug );
 		let visibleLength = newVisiblePlans.length;
 
-		visibleLength = isLargeBreakpoint ? 4 : visibleLength;
-		visibleLength = isMediumBreakpoint ? 3 : visibleLength;
-		visibleLength = isSmallBreakpoint ? 2 : visibleLength;
+		visibleLength = 'large' === gridSize ? 4 : visibleLength;
+		visibleLength = 'medium' === gridSize ? 3 : visibleLength;
+		visibleLength = 'smedium' === gridSize ? 2 : visibleLength;
+		visibleLength = 'small' === gridSize ? 2 : visibleLength;
 
 		if ( newVisiblePlans.length !== visibleLength ) {
 			newVisiblePlans = newVisiblePlans.slice( 0, visibleLength );
 		}
 
 		setVisiblePlans( newVisiblePlans );
-	}, [ isLargeBreakpoint, isMediumBreakpoint, isSmallBreakpoint, displayedGridPlans, isInSignup ] );
+	}, [ gridSize, displayedGridPlans, isInSignup ] );
 
 	const visibleGridPlans = useMemo(
 		() =>
