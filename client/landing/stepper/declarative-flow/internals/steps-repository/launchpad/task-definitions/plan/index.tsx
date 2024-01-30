@@ -97,7 +97,9 @@ const getPlanCompletedTask: TaskAction = ( task, flow, context ) => {
 	return {
 		...task,
 		actionDispatch: () => recordTaskClickTracksEvent( task, flow, context ),
-		calypso_path: addQueryArgs( `/setup/${ flow }/plans`, getSiteIdOrSlug( flow, site, siteSlug ) ),
+		calypso_path: addQueryArgs( `/setup/${ flow }/plans`, {
+			...getSiteIdOrSlug( flow, site, siteSlug ),
+		} ),
 		badge_text: task.completed ? translatedPlanName : task.badge_text,
 		subtitle: getPlanTaskSubtitle( task, flow, context, displayGlobalStylesWarning ),
 		disabled: task.completed && ! isCurrentPlanFree,

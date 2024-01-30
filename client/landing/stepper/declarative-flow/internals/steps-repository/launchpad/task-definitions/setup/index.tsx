@@ -11,10 +11,9 @@ export const getSetupFreeTask: TaskAction = ( task, flow, context ): Task => {
 	return {
 		...task,
 		actionDispatch: () => recordTaskClickTracksEvent( task, flow, context ),
-		calypso_path: addQueryArgs(
-			`/setup/${ flow }/freePostSetup`,
-			getSiteIdOrSlug( flow, site, siteSlug )
-		),
+		calypso_path: addQueryArgs( `/setup/${ flow }/freePostSetup`, {
+			...getSiteIdOrSlug( flow, site, siteSlug ),
+		} ),
 		useCalypsoPath: true,
 	};
 };
@@ -25,7 +24,7 @@ export const getSetupBlogTask: TaskAction = ( task, flow, context ): Task => {
 	return {
 		...task,
 		actionDispatch: () => recordTaskClickTracksEvent( task, flow, context ),
-		calypso_path: addQueryArgs( task.calypso_path, getSiteIdOrSlug( flow, site, siteSlug ) ),
+		calypso_path: addQueryArgs( task.calypso_path, { ...getSiteIdOrSlug( flow, site, siteSlug ) } ),
 		disabled: task.completed && ! isBlogOnboardingFlow( flow ),
 		useCalypsoPath: true,
 	};
@@ -51,7 +50,7 @@ export const getSetupVideoPressTask: TaskAction = ( task, flow, context ): Task 
 	return {
 		...task,
 		actionDispatch: () => recordTaskClickTracksEvent( task, flow, context ),
-		calypso_path: addQueryArgs( task.calypso_path, getSiteIdOrSlug( flow, site, siteSlug ) ),
+		calypso_path: addQueryArgs( task.calypso_path, { ...getSiteIdOrSlug( flow, site, siteSlug ) } ),
 		useCalypsoPath: true,
 	};
 };
