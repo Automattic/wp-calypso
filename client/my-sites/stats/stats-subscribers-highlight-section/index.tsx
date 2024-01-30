@@ -32,7 +32,7 @@ function useSubscriberHighlights(
 		{
 			heading: translate( 'Total subscribers' ),
 			count: subscribersTotals?.total,
-			note: 'WordPress.com and Email subscribers excluding subscribers from social media',
+			note: translate( 'Total subscribers excluding social media subscribers' ),
 		},
 	] as { heading: string; count: number | null; note?: string }[];
 
@@ -41,12 +41,12 @@ function useSubscriberHighlights(
 			{
 				heading: translate( 'Paid subscribers' ),
 				count: subscribersTotals?.paid_subscribers || 0,
-				note: 'Paid WordPress.com subscribers',
+				note: translate( 'Paid WordPress.com subscribers' ),
 			},
 			{
 				heading: translate( 'Free subscribers' ),
 				count: subscribersTotals?.free_subscribers,
-				note: 'Email subscribers and free WordPress.com subscribers',
+				note: translate( 'Email subscribers and free WordPress.com subscribers' ),
 			},
 		] );
 	} else {
