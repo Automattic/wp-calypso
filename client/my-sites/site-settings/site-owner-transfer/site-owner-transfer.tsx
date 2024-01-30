@@ -15,7 +15,6 @@ import PendingDomainTransfer from './pending-domain-transfer';
 import SiteOwnerTransferEligibility from './site-owner-user-search';
 import { SiteTransferCard } from './site-transfer-card';
 import StartSiteOwnerTransfer from './start-site-owner-transfer';
-import { User } from './use-administrators';
 import { useConfirmationTransferHash } from './use-confirmation-transfer-hash';
 
 const Strong = styled( 'strong' )( {
@@ -46,7 +45,7 @@ const SiteTransferComplete = () => {
 const SiteOwnerTransfer = () => {
 	useQueryUserPurchases();
 	const selectedSite = useSelector( getSelectedSite );
-	const [ newSiteOwner, setNewSiteOwner ] = useState< User | null >( null );
+	const [ newSiteOwner, setNewSiteOwner ] = useState< string | null >( null );
 	const [ transferSiteSuccess, setSiteTransferSuccess ] = useState( false );
 
 	const translate = useTranslate();

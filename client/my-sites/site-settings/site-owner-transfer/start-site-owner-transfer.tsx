@@ -13,7 +13,6 @@ import { getSitePurchases } from 'calypso/state/purchases/selectors';
 import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
 import { IAppState } from 'calypso/state/types';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
-import { User } from './use-administrators';
 import { useStartSiteOwnerTransfer } from './use-start-site-owner-transfer';
 import type { Purchase } from 'calypso/lib/purchases/types';
 
@@ -90,7 +89,7 @@ const DomainsCard = ( {
 }: {
 	domains: ResponseDomain[];
 	siteSlug: string | null;
-	siteOwner: User;
+	siteOwner: string;
 } ) => {
 	const translate = useTranslate();
 	return (
@@ -104,9 +103,9 @@ const DomainsCard = ( {
 								// translators: siteSlug is the current site slug, username is the user that the site is going to
 								// transer to
 								translate(
-									'The domain name <strong>%(siteSlug)s</strong> will be transferred to <strong>%(username)s</strong> and will remain working on the site.'
+									'The domain name <strong>%(siteSlug)s</strong> will be transferred to <strong>%(siteOwner)s</strong> and will remain working on the site.'
 								),
-								{ siteSlug, username: siteOwner.login }
+								{ siteSlug, siteOwner }
 							),
 							{ strong: <Strong /> }
 						) }
@@ -119,9 +118,9 @@ const DomainsCard = ( {
 							sprintf(
 								// translators: username is the user that the site is going to transfer to
 								translate(
-									'The following domains will be transferred to <strong>%(username)s</strong> and will remain working on the site:'
+									'The following domains will be transferred to <strong>%(siteOwner)s</strong> and will remain working on the site:'
 								),
-								{ username: siteOwner.login }
+								{ siteOwner }
 							),
 							{ strong: <Strong /> }
 						) }
@@ -139,6 +138,7 @@ const DomainsCard = ( {
 		</>
 	);
 };
+
 const UpgradesCard = ( {
 	purchases,
 	siteSlug,
@@ -146,7 +146,7 @@ const UpgradesCard = ( {
 }: {
 	purchases: Purchase[];
 	siteSlug: string | null;
-	siteOwner: User;
+	siteOwner: string;
 } ) => {
 	const translate = useTranslate();
 	if ( purchases.length === 0 ) {
@@ -161,9 +161,9 @@ const UpgradesCard = ( {
 						// translators: siteSlug is the current site slug, username is the user that the site is going to
 						// transer to
 						translate(
-							'Your paid upgrades on <strong>%(siteSlug)s</strong> will be transferred to <strong>%(username)s</strong> and will remain with the site.'
+							'Your paid upgrades on <strong>%(siteSlug)s</strong> will be transferred to <strong>%(siteOwner)s</strong> and will remain with the site.'
 						),
-						{ siteSlug, username: siteOwner.login }
+						{ siteSlug, siteOwner }
 					),
 					{ strong: <Strong /> }
 				) }
@@ -178,7 +178,7 @@ const ContentAndOwnershipCard = ( {
 	isAtomicSite,
 }: {
 	siteSlug: string | null;
-	siteOwner: User;
+	siteOwner: string;
 	isAtomicSite: any;
 } ) => {
 	const translate = useTranslate();
@@ -192,9 +192,9 @@ const ContentAndOwnershipCard = ( {
 							// translators: siteSlug is the current site slug, userInfo is the user that the site is going to
 							// transer to
 							translate(
-								'You’ll be removed as owner of <strong>%(siteSlug)s</strong> and <strong>%(userInfo)s</strong> will be the new owner from now on.'
+								'You’ll be removed as owner of <strong>%(siteSlug)s</strong> and <strong>%(siteOwner)s</strong> will be the new owner from now on.'
 							),
-							{ siteSlug, userInfo: `${ siteOwner.login } (${ siteOwner.email })` }
+							{ siteSlug, siteOwner }
 						),
 						{ strong: <Strong /> }
 					) }
@@ -204,9 +204,9 @@ const ContentAndOwnershipCard = ( {
 						sprintf(
 							// translators: username is the user that the site is going to transer to
 							translate(
-								'You will keep your admin access unless <strong>%(username)s</strong> removes you.'
+								'You will keep your admin access unless <strong>%(siteOwner)s</strong> removes you.'
 							),
-							{ username: siteOwner.login }
+							{ siteOwner }
 						),
 						{ strong: <Strong /> }
 					) }
@@ -229,9 +229,9 @@ const ContentAndOwnershipCard = ( {
 							sprintf(
 								// translators: siteSlug is the current site slug, username is the user that the site will be transerred to
 								translate(
-									'If your site <strong>%(siteSlug)s</strong> has a staging site, it will be transferred to <strong>%(username)s</strong>.'
+									'If your site <strong>%(siteSlug)s</strong> has a staging site, it will be transferred to <strong>%(siteOwner)s</strong>.'
 								),
-								{ siteSlug, username: siteOwner.login }
+								{ siteSlug, siteOwner }
 							),
 							{ strong: <Strong /> }
 						) }
