@@ -25,7 +25,7 @@ class Developer extends Component {
 	developerSurveyNoticeId = 'developer-survey';
 
 	getSurveyHref = () => {
-		return 'handle_me';
+		return 'https://wordpressdotcom.survey.fm/developer-survey';
 	};
 
 	setDeveloperSurveyCookie = ( value, maxAge ) => {
