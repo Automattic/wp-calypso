@@ -11,11 +11,20 @@ export interface RazorpayConfiguration {
 export interface RazorpayOptions {
 	key: string;
 	order_id?: string; // This is a razorpay order ID; the name is constrained by a 3rd party library.
-	handler?: ( response: {
-		razorpay_payment_id: string;
-		razorpay_order_id: string;
-		razorpay_signature: string;
-	} ) => void;
+	handler?: ( response: RazorpayModalResponse ) => void;
+	prefill?: {
+		contact?: string;
+		email?: string;
+	};
+	modal?: {
+		ondismiss?: ( response: RazorpayModalResponse ) => void;
+	};
+}
+
+export interface RazorpayModalResponse {
+	razorpay_payment_id: string;
+	razorpay_order_id: string;
+	razorpay_signature: string;
 }
 
 export interface RazorpayConfirmationRequestArgs {
@@ -156,14 +165,12 @@ function useRazorpayConfiguration(
 					return;
 				}
 				if ( ! configuration.js_url ) {
-					debug( 'Invalid razorpay configuration; js_url missing' );
-					debug( configuration );
+					debug( 'Invalid razorpay configuration; js_url missing', configuration );
 					throw new RazorpayConfigurationError(
 						'Error loading payment method configuration. Received invalid data from the server.'
 					);
 				}
-				debug( 'Razorpay configuration received' );
-				debug( configuration );
+				debug( 'Razorpay configuration received', configuration );
 				setRazorpayConfiguration( configuration ?? null );
 			} )
 			.catch( ( error ) => {

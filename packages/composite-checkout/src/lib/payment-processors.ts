@@ -27,6 +27,16 @@ export function makeErrorResponse( errorMessage: string ): PaymentProcessorError
 	return { type: PaymentProcessorResponseType.ERROR, payload: errorMessage };
 }
 
+export function isErrorResponse( value: unknown ): boolean {
+	return (
+		!! value &&
+		typeof value === 'object' &&
+		'type' in value &&
+		value.type === PaymentProcessorResponseType.ERROR &&
+		'payload' in value
+	);
+}
+
 export function makeSuccessResponse(
 	transaction: PaymentProcessorResponseData
 ): PaymentProcessorSuccess {

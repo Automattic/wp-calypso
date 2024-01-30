@@ -165,13 +165,7 @@ const PlansWrapper: React.FC< Props > = ( props ) => {
 					removePaidDomain={ removePaidDomain }
 					setSiteUrlAsFreeDomainSuggestion={ setSiteUrlAsFreeDomainSuggestion }
 					renderSiblingWhenLoaded={ () => props.shouldIncludeFAQ && <PlanFAQ /> }
-					showPlanTypeSelectorDropdown={
-						/**
-						 *	Override the default feature flag to prevent this feature from rendering in untested locations
-						 *  The hardcoded 'false' short curicuit should be removed once the feature is fully tested in the given context
-						 */
-						config.isEnabled( 'onboarding/interval-dropdown' ) && false
-					}
+					showPlanTypeSelectorDropdown={ config.isEnabled( 'onboarding/interval-dropdown' ) }
 					onPlanIntervalChange={ onPlanIntervalChange }
 				/>
 			</div>
