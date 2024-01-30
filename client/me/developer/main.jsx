@@ -23,6 +23,8 @@ import { getIAmDeveloperCopy } from './get-i-am-a-developer-copy';
 import './style.scss';
 
 class Developer extends Component {
+	developerSurveyNoticeId = 'developer-survey';
+
 	getSurveyHref = () => {
 		return 'handle_me';
 	};
@@ -48,8 +50,6 @@ class Developer extends Component {
 	};
 
 	showDevSurveyNotice = () => {
-		const noticeId = 'developer-survey';
-
 		const noticeMessage = this.props.translate(
 			"Hey developer! How do {{i}}you{{/i}} use WordPress.com? Spare a moment? We'd love to hear what you think in a {{surveyLink}}quick survey{{/surveyLink}}.",
 			{
@@ -63,7 +63,7 @@ class Developer extends Component {
 							onClick={ () => {
 								recordTracksEvent( 'calypso_me_developer_survey_clicked' );
 
-								this.props.removeNotice( noticeId );
+								this.props.removeNotice( this.developerSurveyNoticeId );
 							} }
 						/>
 					),
@@ -72,18 +72,19 @@ class Developer extends Component {
 		);
 
 		const noticeProps = {
-			id: noticeId,
+			id: this.developerSurveyNoticeId,
 			isPersistent: true,
 			onDismissClick: () => {
 				recordTracksEvent( 'calypso_me_developer_survey_dismissed' );
 
 				this.setDeveloperSurveyCookie( 'dismissed', 24 * 60 * 60 ); // 1 day
 
-				this.props.removeNotice( noticeId );
+				this.props.removeNotice( this.developerSurveyNoticeId );
 			},
 		};
 
 		this.props.successNotice( noticeMessage, noticeProps );
+		recordTracksEvent( 'calypso_me_developer_survey_impression' );
 	};
 
 	handleToggleIsDevAccount = ( isDevAccount ) => {
@@ -95,6 +96,8 @@ class Developer extends Component {
 
 		if ( this.shouldShowDevSurveyNotice( isDevAccount ) ) {
 			this.showDevSurveyNotice();
+		} else {
+			this.props.removeNotice( this.developerSurveyNoticeId );
 		}
 
 		setTimeout( () => this.props.removeNotice( 'save-user-settings' ), 5000 );
