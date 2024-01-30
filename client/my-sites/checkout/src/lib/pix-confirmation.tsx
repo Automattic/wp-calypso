@@ -78,13 +78,13 @@ export function PixConfirmation( {
 
 	return (
 		<ConfirmationDiv className="pix-confirmation">
-			<WordPressLogo className="we-chat-confirmation__logo" />
-			<button className="we-chat-confirmation__cancel" onClick={ () => cancel() }>
+			<WordPressLogo className="pix-confirmation__logo" />
+			<button className="pix-confirmation__cancel" onClick={ () => cancel() }>
 				{ translate( 'Cancel' ) }
 			</button>
-			<h2 className="we-chat-confirmation__title">{ translate( 'Confirm your payment' ) }</h2>
-			<div className="we-chat-confirmation__content">
-				<p className="we-chat-confirmation__instructions">
+			<h2 className="pix-confirmation__title">{ translate( 'Confirm your payment' ) }</h2>
+			<div className="pix-confirmation__content">
+				<p className="pix-confirmation__instructions">
 					{ translate(
 						'Please scan the barcode using the Pix application to confirm your %(price)s payment.',
 						{
