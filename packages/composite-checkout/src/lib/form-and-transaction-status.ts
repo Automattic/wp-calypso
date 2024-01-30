@@ -96,9 +96,13 @@ export function useFormAndTransactionStatusManager(): FormAndTransactionStatusMa
 		transactionRedirectUrl,
 	}: TransactionStatusState = formAndTransactionStatus.transactionStatus;
 
+	const finalFormStatus = shouldTransactionStatusOverrideFormStatus( transactionStatus )
+		? FormStatus.SUBMITTING
+		: formAndTransactionStatus.formStatus;
+
 	return useMemo(
 		() => ( {
-			formStatus: formAndTransactionStatus.formStatus,
+			formStatus: finalFormStatus,
 			setFormStatus,
 			transactionStatus,
 			previousTransactionStatus,
@@ -112,7 +116,7 @@ export function useFormAndTransactionStatusManager(): FormAndTransactionStatusMa
 			setTransactionRedirecting,
 		} ),
 		[
-			formAndTransactionStatus.formStatus,
+			finalFormStatus,
 			setFormStatus,
 			transactionStatus,
 			previousTransactionStatus,
@@ -126,6 +130,22 @@ export function useFormAndTransactionStatusManager(): FormAndTransactionStatusMa
 			setTransactionRedirecting,
 		]
 	);
+}
+
+/**
+ * If the transaction has started and hasn't failed, then the form status
+ * should always be SUBMITTING. This function makes that decision.
+ */
+function shouldTransactionStatusOverrideFormStatus(
+	transactionStatus: TransactionStatus
+): boolean {
+	if (
+		transactionStatus !== TransactionStatus.NOT_STARTED &&
+		transactionStatus !== TransactionStatus.ERROR
+	) {
+		return true;
+	}
+	return false;
 }
 
 function formAndTransactionStatusReducer(
@@ -146,19 +166,8 @@ function formAndTransactionStatusReducer(
 				url = null,
 			} = action.payload as TransactionStatusPayloads;
 
-			const newFormStatus = ( () => {
-				if (
-					newTransactionStatus !== TransactionStatus.NOT_STARTED &&
-					newTransactionStatus !== TransactionStatus.ERROR
-				) {
-					return FormStatus.SUBMITTING;
-				}
-				return state.formStatus;
-			} )();
-
 			return {
 				...state,
-				formStatus: newFormStatus,
 				transactionStatus: {
 					...state.transactionStatus,
 					previousTransactionStatus: state.transactionStatus.transactionStatus,
