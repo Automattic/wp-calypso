@@ -46,7 +46,6 @@ import {
 import { SiteExcerptData } from 'calypso/data/sites/site-excerpt-types';
 import { navigate } from 'calypso/lib/navigate';
 import { useAddNewSiteUrl } from 'calypso/lib/paths/use-add-new-site-url';
-import { getSiteFragment } from 'calypso/lib/route';
 import wpcom from 'calypso/lib/wp';
 import { useOpenPhpMyAdmin } from 'calypso/my-sites/hosting/phpmyadmin-card';
 import { useDispatch, useSelector } from 'calypso/state';
@@ -55,8 +54,7 @@ import { clearWordPressCache } from 'calypso/state/hosting/actions';
 import { createNotice, removeNotice } from 'calypso/state/notices/actions';
 import { NoticeStatus } from 'calypso/state/notices/types';
 import getCurrentRoutePattern from 'calypso/state/selectors/get-current-route-pattern';
-import { getSite } from 'calypso/state/sites/selectors';
-import getCurrentRoute from '../../state/selectors/get-current-route';
+import getCurrentSite from 'calypso/state/selectors/get-current-site';
 import { generateSiteInterfaceLink, isCustomDomain, isNotAtomicJetpack, isP2Site } from '../utils';
 
 interface useCommandsArrayWpcomOptions {
@@ -120,11 +118,7 @@ export const useCommandsArrayWpcom = ( {
 		ref: 'command-palette',
 	} );
 
-	const currentPath = useSelector( getCurrentRoute );
-	const activeSiteId = getSiteFragment( currentPath );
-	const activeSite = useSelector( ( state ) =>
-		activeSiteId ? getSite( state, activeSiteId ) : null
-	);
+	const currentSite = useSelector( getCurrentSite );
 
 	const siteFilters = {
 		hostingEnabled: {
@@ -380,10 +374,10 @@ export const useCommandsArrayWpcom = ( {
 				_x( 'see site', 'Keyword for the Visit site dashboard command' ),
 				_x( 'browse site', 'Keyword for the Visit site dashboard command' ),
 			].join( ' ' ),
-			callback: activeSite
-				? commandNavigation( activeSite.URL )
+			callback: currentSite
+				? commandNavigation( currentSite.URL )
 				: setStateCallback( 'visitSite', __( 'Select site to visit' ) ),
-			siteFunctions: activeSite
+			siteFunctions: currentSite
 				? undefined
 				: {
 						onClick: ( param ) => commandNavigation( param.site.URL )( param ),
