@@ -380,6 +380,7 @@ export const useCommandsArrayWpcom = ( {
 				_x( 'see site', 'Keyword for the Visit site dashboard command' ),
 				_x( 'browse site', 'Keyword for the Visit site dashboard command' ),
 			].join( ' ' ),
+			context: [ '/:site' ],
 			callback: currentSite
 				? commandNavigation( currentSite.URL, { openInNewTab: true } )
 				: setStateCallback( 'visitSite', __( 'Select site to visit' ) ),
