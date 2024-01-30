@@ -5,7 +5,6 @@ $plan-features-header-banner-height: 20px;
 
 // Plan Features Grid Breakpoints
 $plans-2023-small-breakpoint: 780px;
-$plans-2023-medium-breakpoint: 1350px;
 
 $minWidthToGridWidthMap: (
 	780px: "668px",
@@ -13,7 +12,12 @@ $minWidthToGridWidthMap: (
 	1200px: "100%",
 );
 
-
+/**
+ * @deprecated
+ * TODO clk used in plans-features-main / should migrate there
+ *   - creates a bit of snapping effect on the various breakpoints
+ *   - if it's not really necessary, we should remove it
+ */
 @mixin pricing-grid-breakpoints {
 	width: 100%;
 
@@ -27,6 +31,9 @@ $minWidthToGridWidthMap: (
 /**
  * Media queries for the plans grid on the /plans page.
  * This should stretch to fill it's container.
+ *
+ * @deprecated
+ * TODO clk this should just be set as the default behavior for the grid
  */
 @mixin pricing-grid-breakpoints-with-sidebar {
 	width: 100%;
