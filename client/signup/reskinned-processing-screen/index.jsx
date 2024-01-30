@@ -33,6 +33,7 @@ const useSteps = ( { flowName, hasPaidDomain, isDestinationSetupSiteFlow } ) => 
 				{ title: __( 'Planning the next chess move' ) },
 			];
 			break;
+		case 'account':
 		case HOSTING_LP_FLOW:
 			steps = [ { title: __( 'Creating your account' ) } ];
 			break;
