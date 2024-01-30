@@ -67,7 +67,7 @@ function useCommandNavigation() {
 	// Callback to navigate to a command's destination
 	// used on command callback or siteFunctions onClick
 	const commandNavigation = useCallback(
-		( url: string ) =>
+		( url: string, { openInNewTab = false } = {} ) =>
 			( { close, command }: Pick< CommandCallBackParams, 'close' | 'command' > ) => {
 				dispatch(
 					recordTracksEvent( 'calypso_hosting_command_palette_navigate', {
@@ -76,8 +76,14 @@ function useCommandNavigation() {
 						is_wp_admin: url.includes( '/wp-admin' ),
 					} )
 				);
+
 				close();
-				navigate( url );
+
+				if ( openInNewTab ) {
+					window.open( url, '_blank' );
+				} else {
+					navigate( url );
+				}
 			},
 		[ currentRoute, dispatch ]
 	);
@@ -375,12 +381,13 @@ export const useCommandsArrayWpcom = ( {
 				_x( 'browse site', 'Keyword for the Visit site dashboard command' ),
 			].join( ' ' ),
 			callback: currentSite
-				? commandNavigation( currentSite.URL )
+				? commandNavigation( currentSite.URL, { openInNewTab: true } )
 				: setStateCallback( 'visitSite', __( 'Select site to visit' ) ),
 			siteFunctions: currentSite
 				? undefined
 				: {
-						onClick: ( param ) => commandNavigation( param.site.URL )( param ),
+						onClick: ( param ) =>
+							commandNavigation( param.site.URL, { openInNewTab: true } )( param ),
 				  },
 			icon: seenIcon,
 		},
