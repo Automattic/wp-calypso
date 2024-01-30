@@ -16,7 +16,11 @@ import type { ReceiptPurchase } from 'calypso/state/receipts/types';
 function UpsellActions( { domainNames, receiptId }: { domainNames: string[]; receiptId: number } ) {
 	const translate = useTranslate();
 	const [ selectedDomainName, setSelectedDomainName ] = useState( domainNames[ 0 ] );
+
 	const siteSlug = useSelector( getSelectedSiteSlug );
+	// For domain-only checkouts, `siteSlug` is null. However, this is in fact an illusion. A new
+	// site is actually created, using the first domain name in the cart for the site slug.
+	const siteSlugForUpsellPath = siteSlug ?? domainNames[ 0 ];
 
 	const domainNameOptions = domainNames.map( ( domainName ) => ( {
 		label: domainName,
@@ -35,7 +39,7 @@ function UpsellActions( { domainNames, receiptId }: { domainNames: string[]; rec
 
 			<Button
 				href={ getProfessionalEmailCheckoutUpsellPath(
-					siteSlug ?? selectedDomainName,
+					siteSlugForUpsellPath,
 					selectedDomainName,
 					receiptId
 				) }
