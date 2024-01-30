@@ -57,6 +57,118 @@ $font-size: rem(14px);
 	display: none;
 }
 
+.global-sidebar {
+	bottom: 0;
+	display: flex;
+	flex-direction: column;
+	left: 0;
+	height: 100%;
+	position: relative;
+	top: 0;
+	transition: all 220ms ease-out;
+
+	.sidebar__header {
+		display: flex;
+		gap: 8px;
+		padding: 30px 24px 12px;
+		transition: all 150ms ease-out;
+		height: 32px;
+
+		a {
+			color: var(--nav-link);
+			text-decoration: none;
+		}
+
+		a.link-logo {
+			align-items: center;
+			background: var(--studio-white);
+			border-radius: 18px; /* stylelint-disable-line scales/radii */
+			display: flex;
+			gap: 4px;
+			padding: 6px 8px;
+			transition: all 150ms ease-out;
+
+			.dotcom {
+				position: relative;
+				top: 2px;
+			}
+		}
+
+		span {
+			display: flex;
+			background-position: center;
+			background-repeat: no-repeat;
+			width: 28px;
+			height: 28px;
+		}
+
+		span.gap {
+			flex: 1;
+		}
+
+		span.logo {
+			background-image: url(calypso/assets/images/global-sidebar/logo.svg);
+			width: 18px;
+			height: 18px;
+		}
+
+		span.dotcom {
+			background-image: url(calypso/assets/images/global-sidebar/dotcom.svg);
+			width: 55px;
+		}
+
+		span.help {
+			background-image: url(calypso/assets/images/global-sidebar/help.svg);
+		}
+
+		span.search {
+			background-image: url(calypso/assets/images/global-sidebar/search.svg);
+		}
+
+		span.bell {
+			background-image: url(calypso/assets/images/global-sidebar/notifications.svg);
+
+		}
+	}
+
+	.sidebar__footer {
+		align-items: center;
+		display: flex;
+		gap: 8px;
+		justify-content: flex-end;
+		padding: 12px 24px 30px;
+		position: relative;
+		z-index: 6;
+
+		a {
+			color: var(--nav-link);
+			text-decoration: none;
+			border-radius: 50px; /* stylelint-disable-line scales/radii */
+		}
+
+		span {
+			display: flex;
+			background-position: center;
+			background-repeat: no-repeat;
+		}
+
+		span.gap {
+			flex: 1;
+		}
+
+		span.reader {
+			background-image: url(calypso/assets/images/global-sidebar/reader.svg);
+			width: 32px;
+			height: 32px;
+		}
+	}
+
+	.sidebar__body {
+		flex: 1;
+		overflow-y: auto;
+	}
+}
+
 /* stylelint-disable-next-line no-duplicate-selectors */
 .theme-default {
 	// client/layout/style.scss

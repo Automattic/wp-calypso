@@ -61,7 +61,7 @@ const useSiteMenuItems = () => {
 
 	const shouldShowAddOnsInFallbackMenu = isEnabled( 'my-sites/add-ons' ) && ! isAtomic;
 
-	const hasSiteWithPlugins = useSelector( canAnySiteHavePlugins );
+	const hasSiteWithPlugins = false; //useSelector( canAnySiteHavePlugins );
 
 	const hasUnifiedImporter = isEnabled( 'importer/unified' );
 
