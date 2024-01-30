@@ -85,19 +85,27 @@ describe( 'CheckoutProvider', () => {
 	const mockMethod = createMockMethod();
 
 	beforeEach( () => {
-		MyCheckout = ( { onPaymentComplete, isLoading, onPaymentError, onPaymentRedirect } ) => (
-			<CheckoutProvider
-				isLoading={ isLoading || null }
-				onPaymentComplete={ onPaymentComplete }
-				onPaymentError={ onPaymentError }
-				onPaymentRedirect={ onPaymentRedirect }
-				paymentMethods={ [ mockMethod ] }
-				paymentProcessors={ {} }
-				initiallySelectedPaymentMethodId={ mockMethod.id }
-			>
-				<CustomFormWithTransactionStatus />
-			</CheckoutProvider>
-		);
+		MyCheckout = ( { onPaymentComplete, isLoading, onPaymentError, onPaymentRedirect } ) => {
+			const [ isValidating, setValidating ] = useState( false );
+			return (
+				<div>
+					<button onClick={ () => setValidating( true ) }>Set isValidating true</button>
+					<button onClick={ () => setValidating( false ) }>Set isValidating false</button>
+					<CheckoutProvider
+						isLoading={ isLoading || null }
+						isValidating={ isValidating || null }
+						onPaymentComplete={ onPaymentComplete }
+						onPaymentError={ onPaymentError }
+						onPaymentRedirect={ onPaymentRedirect }
+						paymentMethods={ [ mockMethod ] }
+						paymentProcessors={ {} }
+						initiallySelectedPaymentMethodId={ mockMethod.id }
+					>
+						<CustomFormWithTransactionStatus />
+					</CheckoutProvider>
+				</div>
+			);
+		};
 	} );
 
 	it( 'sets form status to loading when isLoading is true', () => {
@@ -248,6 +256,16 @@ describe( 'CheckoutProvider', () => {
 		user.click( screen.getByText( 'Cause Error' ) );
 		expect( await screen.findByText( 'Showing Error' ) ).toBeInTheDocument();
 		expect( onPaymentError ).toHaveBeenCalled();
+	} );
+
+	it( 'renders form as submitting when isValidating changed from true to false and transaction is submitting', async () => {
+		const onPaymentError = jest.fn();
+		const user = userEvent.setup();
+		render( <MyCheckout onPaymentError={ onPaymentError } /> );
+		user.click( screen.getByText( 'Submit' ) );
+		user.click( screen.getByText( 'Set isValidating true' ) );
+		user.click( screen.getByText( 'Set isValidating false' ) );
+		expect( await screen.findByText( 'Submitting' ) ).toBeInTheDocument();
 	} );
 
 	it( 'does not call onPaymentError twice when transaction status is error even if callback changes', () => {
