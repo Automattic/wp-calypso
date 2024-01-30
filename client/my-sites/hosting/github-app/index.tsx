@@ -78,8 +78,18 @@ export const GitHubAppCard = () => {
 					{ ( connections || [] ).map( ( connection, key ) => (
 						<div key={ key } style={ { display: 'flex', alignItems: 'center', width: '100%' } }>
 							<span style={ { marginRight: 'auto' } }>{ connection.external_name }</span>
-							<span style={ { marginRight: 'auto' } }>
-								Repos: { connection?.installation.selection }
+							<span
+								style={ {
+									marginRight: 'auto',
+									maxWidth: 150,
+									fontSize: 'small',
+									overflow: 'hidden',
+									whiteSpace: 'nowrap',
+									textOverflow: 'ellipsis',
+								} }
+								title={ Object.keys( connection.installation.repositories ).join( ', ' ) }
+							>
+								Repos: { Object.keys( connection.installation.repositories ).join( ', ' ) }
 							</span>
 							<div style={ { display: 'flex', alignItems: 'center', gap: 24 } }>
 								<Button
