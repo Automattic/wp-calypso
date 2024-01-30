@@ -50,7 +50,10 @@ const ConfirmationDiv = styled.dialog`
 
 	.pix-confirmation__qrcode {
 		text-align: center;
-		margin-bottom: 12px;
+		border: 1px solid #dcdcde;
+		padding: 25px;
+		width: 150px;
+		margin: auto;
 	}
 
 	.pix-confirmation__qrcode-redirect {
