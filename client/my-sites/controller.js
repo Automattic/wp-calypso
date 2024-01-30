@@ -889,6 +889,36 @@ export function selectSiteIfLoggedInWithSites( context, next ) {
 	siteSelection( context, next );
 }
 
+/**
+ * If the section has an "all sites" view to delay the site selection,
+ * only handle the site selection with 0 or 1 sites.
+ */
+export function selectSiteIfLoggedInWithOneSite( context, next ) {
+	const state = context.store.getState();
+	const isLoggedIn = isUserLoggedIn( state );
+	const siteCount = getCurrentUserSiteCount( state );
+	const siteFragment =
+		context.params.site || context.params.site_id || getSiteFragment( context.path );
+
+	// If the user is logged out, has 0 sites, or the path contains a site fragment,
+	// proceed with the regular site selection.
+	if ( ! isLoggedIn || ! siteCount || !! siteFragment ) {
+		siteSelection( context, next );
+		return;
+	}
+
+	// If the user only has 1 site and the path doesn't contain a site fragment,
+	// select the site automatically and move on.
+	if ( siteCount === 1 ) {
+		selectSite( context );
+		return;
+	}
+
+	// If the user has multiple sites and the path doesn't contain a site fragment,
+	// proceed with rendering the page, delaying the site selection.
+	next();
+}
+
 export function hideNavigationIfLoggedInWithNoSites( context, next ) {
 	const state = context.store.getState();
 	if ( isUserLoggedIn( state ) && getCurrentUserSiteCount( state ) === 0 ) {

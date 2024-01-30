@@ -8,7 +8,7 @@ import {
 } from 'calypso/controller';
 import {
 	navigation,
-	selectSiteIfLoggedInWithSites,
+	selectSiteIfLoggedInWithOneSite,
 	siteSelection,
 	sites,
 	hideNavigationIfLoggedInWithNoSites,
@@ -73,7 +73,7 @@ export default function ( router ) {
 		routesWithoutSites,
 		redirectWithoutLocaleParamIfLoggedIn,
 		fetchAndValidateVerticalsAndFilters,
-		selectSiteIfLoggedInWithSites,
+		selectSiteIfLoggedInWithOneSite,
 		renderThemes,
 		hideNavigationIfLoggedInWithNoSites,
 		addNavigationIfLoggedIn,
