@@ -8,7 +8,6 @@ const getSubscribersCacheKey = (
 	sortTerm?: string,
 	filterOption?: string,
 	timestamp?: number,
-	filterOption?: string,
 	hasManySubscribers?: boolean
 ) => {
 	const cacheKey = [ 'subscribers', siteId ];
