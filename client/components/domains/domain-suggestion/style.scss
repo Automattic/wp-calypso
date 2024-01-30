@@ -381,11 +381,6 @@ body.is-section-signup.is-white-signup {
 			justify-content: space-between;
 		}
 
-		.domain-product-price {
-			max-width: 180px;
-			width: unset;
-		}
-
 		.domain-product-price__free-text {
 			color: var(--color-neutral-60);
 			font-size: $font-body;
@@ -455,6 +450,11 @@ body.is-section-signup.is-white-signup {
 				.domain-registration-suggestion__domain-title-tld {
 					font-weight: 500;
 				}
+			}
+
+			.domain-product-price {
+				max-width: 180px;
+				width: unset;
 			}
 
 			.domain-product-price__free-text {
