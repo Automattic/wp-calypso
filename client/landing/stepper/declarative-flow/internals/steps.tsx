@@ -43,6 +43,11 @@ export const STEPS = {
 
 	ERROR: { slug: 'error', asyncComponent: () => import( './steps-repository/error-step' ) },
 
+	MIGRATION_ERROR: {
+		slug: 'error',
+		asyncComponent: () => import( './steps-repository/migration-error' ),
+	},
+
 	FREE_POST_SETUP: {
 		slug: 'freePostSetup',
 		asyncComponent: () => import( './steps-repository/free-post-setup' ),

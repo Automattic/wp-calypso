@@ -3,22 +3,11 @@ import { useDispatch, useSelect } from '@wordpress/data';
 import { useEffect, useLayoutEffect } from 'react';
 import { ImporterMainPlatform } from 'calypso/blocks/import/types';
 import { SiteExcerptData } from 'calypso/data/sites/site-excerpt-types';
-import CreateSite from 'calypso/landing/stepper/declarative-flow/internals/steps-repository/create-site';
-import MigrationError from 'calypso/landing/stepper/declarative-flow/internals/steps-repository/migration-error';
 import { ProcessingResult } from 'calypso/landing/stepper/declarative-flow/internals/steps-repository/processing-step/constants';
 import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
 import { useSiteSlugParam } from 'calypso/landing/stepper/hooks/use-site-slug-param';
 import { ONBOARD_STORE, USER_STORE } from 'calypso/landing/stepper/stores';
-import Import from './internals/steps-repository/import';
-import ImportReady from './internals/steps-repository/import-ready';
-import ImportReadyNot from './internals/steps-repository/import-ready-not';
-import ImportReadyPreview from './internals/steps-repository/import-ready-preview';
-import ImportReadyWpcom from './internals/steps-repository/import-ready-wpcom';
-import ImportVerifyEmail from './internals/steps-repository/import-verify-email';
-import ImporterWordpress from './internals/steps-repository/importer-wordpress';
-import ProcessingStep from './internals/steps-repository/processing-step';
-import SitePickerStep from './internals/steps-repository/site-picker';
-import TrialAcknowledge from './internals/steps-repository/trial-acknowledge';
+import { STEPS } from './internals/steps';
 import { Flow, ProvidedDependencies } from './internals/types';
 import type { UserSelect } from '@automattic/data-stores';
 
@@ -33,18 +22,17 @@ const importHostedSiteFlow: Flow = {
 		}, [] );
 
 		return [
-			{ slug: 'import', component: Import },
-			{ slug: 'importReady', component: ImportReady },
-			{ slug: 'importReadyNot', component: ImportReadyNot },
-			{ slug: 'importReadyWpcom', component: ImportReadyWpcom },
-			{ slug: 'importReadyPreview', component: ImportReadyPreview },
-			{ slug: 'sitePicker', component: SitePickerStep },
-			{ slug: 'createSite', component: CreateSite },
-			{ slug: 'importerWordpress', component: ImporterWordpress },
-			{ slug: 'trialAcknowledge', component: TrialAcknowledge },
-			{ slug: 'verifyEmail', component: ImportVerifyEmail },
-			{ slug: 'processing', component: ProcessingStep },
-			{ slug: 'error', component: MigrationError },
+			STEPS.IMPORT_READY,
+			STEPS.IMPORT_READY_NOT,
+			STEPS.IMPORT_READY_WPCOM,
+			STEPS.IMPORT_READY_PREVIEW,
+			STEPS.SITE_PICKER,
+			STEPS.SITE_CREATION_STEP,
+			STEPS.IMPORTER_WORDPRESS,
+			STEPS.TRIAL_ACKNOWLEDGE,
+			STEPS.VERIFY_EMAIL,
+			STEPS.PROCESSING,
+			STEPS.MIGRATION_ERROR,
 		];
 	},
 

@@ -381,6 +381,7 @@ export default class InfiniteList extends Component {
 			context,
 			...propsToTransfer
 		} = this.props;
+
 		const spacerClassName = 'infinite-list__spacer';
 		let i;
 		let lastRenderedIndex = this.state.lastRenderedIndex;

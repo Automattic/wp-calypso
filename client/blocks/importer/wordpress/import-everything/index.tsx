@@ -23,6 +23,7 @@ import DomainInfo from '../../components/domain-info';
 import DoneButton from '../../components/done-button';
 import NotAuthorized from '../../components/not-authorized';
 import { isTargetSitePlanCompatible } from '../../util';
+import ImportUsers from '../import-users';
 import { WPImportOption, type MigrationState } from '../types';
 import { clearMigrateSource, retrieveMigrateSource } from '../utils';
 import MigrationError from './migration-error';
@@ -137,6 +138,13 @@ export class ImportEverything extends SectionMigrate {
 		}
 
 		if (
+			prevState.migrationStatus !== MigrationStatus.DONE_USER &&
+			this.state.migrationStatus === MigrationStatus.DONE_USER
+		) {
+			this.props.recordTracksEvent( 'calypso_site_importer_import_users', trackEventProps );
+		}
+
+		if (
 			prevState.migrationStatus !== MigrationStatus.DONE &&
 			this.state.migrationStatus === MigrationStatus.DONE
 		) {
@@ -217,6 +225,7 @@ export class ImportEverything extends SectionMigrate {
 				{ ! isMigrateFromWp
 					? this.renderDefaultHoorayScreen()
 					: this.renderHoorayScreenWithDomainInfo() }
+				{ this.renderMigratingUsers() }
 			</Hooray>
 		);
 	}
@@ -294,6 +303,20 @@ export class ImportEverything extends SectionMigrate {
 		);
 	}
 
+	renderMigratingUsers() {
+		const { targetSite } = this.props;
+		return (
+			<ImportUsers
+				site={ targetSite }
+				onSubmit={ () =>
+					this.setState( {
+						migrationStatus: 'done-user',
+					} )
+				}
+			/>
+		);
+	}
+
 	render() {
 		if ( this.props.forceError ) {
 			return this.renderMigrationError( this.props.forceError );
@@ -304,7 +327,9 @@ export class ImportEverything extends SectionMigrate {
 				return this.renderLoading();
 
 			case MigrationStatus.INACTIVE:
-				return this.renderMigrationConfirm();
+				//ONLY FOR TESTING
+				return this.renderMigratingUsers();
+			// return this.renderMigrationConfirm();
 
 			case MigrationStatus.NEW:
 			case MigrationStatus.BACKING_UP:
@@ -313,6 +338,9 @@ export class ImportEverything extends SectionMigrate {
 				return this.renderMigrationProgress();
 
 			case MigrationStatus.DONE:
+				return this.renderMigratingUsers();
+
+			case MigrationStatus.DONE_USER:
 				return this.renderMigrationComplete();
 
 			case MigrationStatus.ERROR:
