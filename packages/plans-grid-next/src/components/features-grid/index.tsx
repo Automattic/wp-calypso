@@ -38,18 +38,15 @@ import PlanLogo from '../plan-logo';
 import BillingTimeframe from '../shared/billing-timeframe';
 import { StickyContainer } from '../sticky-container';
 import StorageAddOnDropdown from '../storage-add-on-dropdown';
-import type {
-	DataResponse,
-	FeaturesGridProps,
-	GridPlan,
-	PlanActionOverrides,
-	PlanRow,
-} from '../../types';
+import type { DataResponse, FeaturesGridProps, GridPlan, PlanActionOverrides } from '../../types';
 
 type PlanLogosProps = {
 	isInSignup: boolean;
 	renderedGridPlans: GridPlan[];
-} & PlanRow;
+	options?: {
+		isTableCell?: boolean;
+	};
+};
 
 const PlanLogos = ( { isInSignup, options, renderedGridPlans }: PlanLogosProps ) => {
 	return renderedGridPlans.map( ( { planSlug }, index ) => {
@@ -68,7 +65,10 @@ const PlanLogos = ( { isInSignup, options, renderedGridPlans }: PlanLogosProps )
 
 type PlanHeadersProps = {
 	renderedGridPlans: GridPlan[];
-} & PlanRow;
+	options?: {
+		isTableCell?: boolean;
+	};
+};
 
 const PlanHeaders = ( { options, renderedGridPlans }: PlanHeadersProps ) => {
 	return renderedGridPlans.map( ( { planSlug, planTitle } ) => {
@@ -90,7 +90,10 @@ const PlanHeaders = ( { options, renderedGridPlans }: PlanHeadersProps ) => {
 
 type PlanTaglineProps = {
 	renderedGridPlans: GridPlan[];
-} & PlanRow;
+	options?: {
+		isTableCell?: boolean;
+	};
+};
 
 const PlanTagline = ( { options, renderedGridPlans }: PlanTaglineProps ) => {
 	return renderedGridPlans.map( ( { planSlug, tagline } ) => {
@@ -110,7 +113,10 @@ type FeaturesGridPlanPriceProps = {
 	currentSitePlanSlug?: string | null;
 	planUpgradeCreditsApplicable?: number | null;
 	renderedGridPlans: GridPlan[];
-} & PlanRow;
+	options?: {
+		isTableCell?: boolean;
+	};
+};
 
 const FeaturesGridPlanPrice = ( {
 	currentSitePlanSlug,
@@ -146,7 +152,10 @@ const FeaturesGridPlanPrice = ( {
 type BillingTimeframesProps = {
 	renderedGridPlans: GridPlan[];
 	showRefundPeriod?: boolean;
-} & PlanRow;
+	options?: {
+		isTableCell?: boolean;
+	};
+};
 
 const BillingTimeframes = ( {
 	options,
@@ -176,7 +185,10 @@ type PlanStorageOptionsProps = {
 	onStorageAddOnClick?: ( addOnSlug: WPComStorageAddOnSlug ) => void;
 	renderedGridPlans: GridPlan[];
 	showUpgradeableStorage: boolean;
-} & PlanRow;
+	options?: {
+		isTableCell?: boolean;
+	};
+};
 
 const PlanStorageOptions = ( {
 	intervalType,
@@ -241,7 +253,11 @@ type TopButtonsProps = {
 	onUpgradeClick: ( planSlug: PlanSlug ) => void;
 	planActionOverrides?: PlanActionOverrides;
 	renderedGridPlans: GridPlan[];
-} & PlanRow;
+	options?: {
+		isTableCell?: boolean;
+		isStuck?: boolean;
+	};
+};
 
 const TopButtons = ( {
 	currentSitePlanSlug,
@@ -315,7 +331,10 @@ const TopButtons = ( {
 
 type PreviousFeaturesIncludedTitleProps = {
 	renderedGridPlans: GridPlan[];
-} & PlanRow;
+	options?: {
+		isTableCell?: boolean;
+	};
+};
 
 const PreviousFeaturesIncludedTitle = ( {
 	renderedGridPlans,
@@ -372,7 +391,10 @@ type PlanFeaturesListProps = {
 	paidDomainName?: string;
 	renderedGridPlans: GridPlan[];
 	selectedFeature?: string;
-} & PlanRow;
+	options?: {
+		isTableCell?: boolean;
+	};
+};
 
 const PlanFeaturesList = ( {
 	generatedWPComSubdomain,
@@ -420,7 +442,10 @@ type TableProps = {
 	selectedFeature?: string;
 	showUpgradeableStorage: boolean;
 	stickyRowOffset: number;
-} & PlanRow;
+	options?: {
+		isTableCell?: boolean;
+	};
+};
 
 const Table = ( {
 	currentSitePlanSlug,
@@ -550,7 +575,10 @@ type SpotlightPlanProps = {
 	planActionOverrides?: PlanActionOverrides;
 	planUpgradeCreditsApplicable?: number | null;
 	showUpgradeableStorage: boolean;
-} & PlanRow;
+	options?: {
+		isTableCell?: boolean;
+	};
+};
 
 const SpotlightPlan = ( {
 	currentSitePlanSlug,

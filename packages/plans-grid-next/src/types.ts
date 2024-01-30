@@ -231,10 +231,3 @@ export type SupportedUrlFriendlyTermType = Extract<
 	UrlFriendlyTermType,
 	'yearly' | '2yearly' | '3yearly' | 'monthly'
 >;
-
-export type PlanRow = {
-	options?: {
-		isTableCell?: boolean;
-		isStuck?: boolean;
-	};
-};
