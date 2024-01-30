@@ -1,11 +1,7 @@
 import { useSelect } from '@wordpress/data';
 import domReady from '@wordpress/dom-ready';
 import { registerPlugin } from '@wordpress/plugins';
-import { Suspense, lazy } from 'react';
-
-const LivePreviewNoticePlugin = lazy(
-	() => import( /* webpackChunkName: "wpcom-live-preview-notice" */ './live-preview-notice-plugin' )
-);
+import LivePreviewNoticePlugin from './live-preview-notice-plugin';
 
 const LivePreviewPlugin = () => {
 	const siteEditorStore = useSelect( ( select ) => select( 'core/edit-site' ), [] );
@@ -15,11 +11,7 @@ const LivePreviewPlugin = () => {
 		return null;
 	}
 
-	return (
-		<Suspense fallback={ null }>
-			<LivePreviewNoticePlugin />
-		</Suspense>
-	);
+	return <LivePreviewNoticePlugin />;
 };
 
 const registerLivePreviewPlugin = () => {
