@@ -11,7 +11,6 @@ import useRestructuredPlanFeaturesForComparisonGrid from './hooks/data-store/use
 import useIsLargeCurrency from './hooks/use-is-large-currency';
 import { useManageTooltipToggle } from './hooks/use-manage-tooltip-toggle';
 import { usePlanPricingInfoFromGridPlans } from './hooks/use-plan-pricing-info-from-grid-plans';
-import useUpgradeClickHandler from './hooks/use-upgrade-click-handler';
 import type { ComparisonGridExternalProps, FeaturesGridExternalProps } from './types';
 import './style.scss';
 
@@ -22,7 +21,6 @@ const WrappedComparisonGrid = ( {
 	useCheckPlanAvailabilityForPurchase,
 	recordTracksEvent,
 	allFeaturesList,
-	onUpgradeClick,
 	intervalType,
 	isInSignup,
 	isLaunchPage,
@@ -35,11 +33,6 @@ const WrappedComparisonGrid = ( {
 	coupon,
 	...otherProps
 }: ComparisonGridExternalProps ) => {
-	const handleUpgradeClick = useUpgradeClickHandler( {
-		gridPlans,
-		onUpgradeClick,
-	} );
-
 	return (
 		<PlansGridContextProvider
 			intent={ intent }
@@ -55,7 +48,6 @@ const WrappedComparisonGrid = ( {
 				isInSignup={ isInSignup }
 				isLaunchPage={ isLaunchPage }
 				currentSitePlanSlug={ currentSitePlanSlug }
-				onUpgradeClick={ handleUpgradeClick }
 				selectedSiteId={ selectedSiteId }
 				selectedPlan={ selectedPlan }
 				selectedFeature={ selectedFeature }
@@ -76,7 +68,6 @@ const WrappedFeaturesGrid = ( props: FeaturesGridExternalProps ) => {
 		useCheckPlanAvailabilityForPurchase,
 		recordTracksEvent,
 		allFeaturesList,
-		onUpgradeClick,
 		coupon,
 	} = props;
 	const translate = useTranslate();
@@ -89,11 +80,6 @@ const WrappedFeaturesGrid = ( props: FeaturesGridExternalProps ) => {
 		currencyCode: currencyCode || 'USD',
 	} );
 
-	const handleUpgradeClick = useUpgradeClickHandler( {
-		gridPlans,
-		onUpgradeClick,
-	} );
-
 	return (
 		<PlansGridContextProvider
 			intent={ intent }
@@ -104,12 +90,7 @@ const WrappedFeaturesGrid = ( props: FeaturesGridExternalProps ) => {
 			recordTracksEvent={ recordTracksEvent }
 			allFeaturesList={ allFeaturesList }
 		>
-			<FeaturesGrid
-				{ ...props }
-				isLargeCurrency={ isLargeCurrency }
-				translate={ translate }
-				onUpgradeClick={ handleUpgradeClick }
-			/>
+			<FeaturesGrid { ...props } isLargeCurrency={ isLargeCurrency } translate={ translate } />
 		</PlansGridContextProvider>
 	);
 };

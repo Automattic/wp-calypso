@@ -7,7 +7,6 @@ import type {
 	FeatureObject,
 	StorageOption,
 } from '@automattic/calypso-products';
-import type { MinimalRequestCartProduct } from '@automattic/shopping-cart';
 import type { LocalizeProps, TranslateResult } from 'i18n-calypso';
 
 /******************
@@ -78,7 +77,6 @@ export interface PlanActionOverrides {
 	loggedInFreePlan?: {
 		text?: TranslateResult;
 		status?: 'blocked' | 'enabled';
-		callback?: () => void;
 	};
 	currentPlan?: {
 		text?: TranslateResult;
@@ -88,6 +86,10 @@ export interface PlanActionOverrides {
 		postButtonText?: TranslateResult;
 	};
 }
+
+export type PlanActions = {
+	[ planSlug in PlanSlug ]?: ( isFreeTrialPlan?: boolean ) => void;
+};
 
 // A generic type representing the response of an async request.
 // It's probably generic enough to be put outside of the pricing grid package,
@@ -110,6 +112,7 @@ export interface CommonGridProps {
 	currentSitePlanSlug?: string | null;
 	hideUnavailableFeatures?: boolean; // used to hide features that are not available, instead of strike-through as explained in #76206
 	planActionOverrides?: PlanActionOverrides;
+	planActions?: PlanActions;
 
 	// Value of the `?feature=` query param, so we can highlight a given feature and hide plans without it.
 	selectedFeature?: string;
@@ -118,7 +121,6 @@ export interface CommonGridProps {
 	showRefundPeriod?: boolean;
 	// only used for comparison grid
 	planTypeSelectorProps?: PlanTypeSelectorProps;
-	onUpgradeClick: ( planSlug: PlanSlug ) => void;
 	planUpgradeCreditsApplicable?: number | null;
 }
 
@@ -151,20 +153,10 @@ export type GridContextProps = {
 };
 
 export type ComparisonGridExternalProps = Omit< GridContextProps, 'children' > &
-	Omit< ComparisonGridProps, 'onUpgradeClick' > & {
-		onUpgradeClick?: (
-			cartItems?: MinimalRequestCartProduct[] | null,
-			clickedPlanSlug?: PlanSlug
-		) => void;
-	};
+	ComparisonGridProps;
 
 export type FeaturesGridExternalProps = Omit< GridContextProps, 'children' > &
-	Omit< FeaturesGridProps, 'onUpgradeClick' | 'isLargeCurrency' | 'translate' > & {
-		onUpgradeClick?: (
-			cartItems?: MinimalRequestCartProduct[] | null,
-			clickedPlanSlug?: PlanSlug
-		) => void;
-	};
+	Omit< FeaturesGridProps, 'isLargeCurrency' | 'translate' >;
 
 /************************
  * PlanTypeSelector Types:

@@ -46,6 +46,7 @@ import type {
 	GridPlan,
 	ComparisonGridProps,
 	PlanActionOverrides,
+	PlanActions,
 	TransformedFeatureObject,
 	PlanTypeSelectorProps,
 } from '../../types';
@@ -331,8 +332,8 @@ type ComparisonGridHeaderProps = {
 	isFooter?: boolean;
 	onPlanChange: ( currentPlan: PlanSlug, event: ChangeEvent< HTMLSelectElement > ) => void;
 	currentSitePlanSlug?: string | null;
-	onUpgradeClick: ( planSlug: PlanSlug ) => void;
 	planActionOverrides?: PlanActionOverrides;
+	planActions?: PlanActions;
 	selectedPlan?: string;
 	showRefundPeriod?: boolean;
 	isStuck: boolean;
@@ -365,8 +366,8 @@ const ComparisonGridHeaderCell = ( {
 	currentSitePlanSlug,
 	isLaunchPage,
 	isLargeCurrency,
-	onUpgradeClick,
 	planActionOverrides,
+	planActions,
 	planUpgradeCreditsApplicable,
 	showRefundPeriod,
 	isStuck,
@@ -396,6 +397,8 @@ const ComparisonGridHeaderCell = ( {
 		'popular-badge-is-stuck': isStuck,
 	} );
 	const showPlanSelect = ! allVisible && ! gridPlan.current;
+
+	const onPlanCtaClick = planActions?.[ planSlug ] || ( () => {} );
 
 	return (
 		<Cell className={ headerClasses } textAlign="start">
@@ -451,8 +454,8 @@ const ComparisonGridHeaderCell = ( {
 				isInSignup={ isInSignup }
 				isLaunchPage={ isLaunchPage }
 				planSlug={ planSlug }
-				onUpgradeClick={ ( overridePlanSlug ) => onUpgradeClick( overridePlanSlug ?? planSlug ) }
 				planActionOverrides={ planActionOverrides }
+				onPlanCtaClick={ onPlanCtaClick }
 				showMonthlyPrice={ false }
 				isStuck={ false }
 			/>
@@ -477,8 +480,8 @@ const ComparisonGridHeader = forwardRef< HTMLDivElement, ComparisonGridHeaderPro
 			isFooter,
 			onPlanChange,
 			currentSitePlanSlug,
-			onUpgradeClick,
 			planActionOverrides,
+			planActions,
 			selectedPlan,
 			isHiddenInMobile,
 			showRefundPeriod,
@@ -530,10 +533,10 @@ const ComparisonGridHeader = forwardRef< HTMLDivElement, ComparisonGridHeaderPro
 						onPlanChange={ onPlanChange }
 						displayedGridPlans={ displayedGridPlans }
 						currentSitePlanSlug={ currentSitePlanSlug }
-						onUpgradeClick={ onUpgradeClick }
 						isLaunchPage={ isLaunchPage }
 						isLargeCurrency={ isLargeCurrency }
 						planActionOverrides={ planActionOverrides }
+						planActions={ planActions }
 						selectedPlan={ selectedPlan }
 						showRefundPeriod={ showRefundPeriod }
 						isStuck={ isStuck }
@@ -948,8 +951,8 @@ const ComparisonGrid = ( {
 	isInSignup,
 	isLaunchPage,
 	currentSitePlanSlug,
-	onUpgradeClick,
 	planActionOverrides,
+	planActions,
 	selectedPlan,
 	selectedFeature,
 	showUpgradeableStorage,
@@ -1098,8 +1101,8 @@ const ComparisonGrid = ( {
 							isLaunchPage={ isLaunchPage }
 							onPlanChange={ onPlanChange }
 							currentSitePlanSlug={ currentSitePlanSlug }
-							onUpgradeClick={ onUpgradeClick }
 							planActionOverrides={ planActionOverrides }
+							planActions={ planActions }
 							selectedPlan={ selectedPlan }
 							showRefundPeriod={ showRefundPeriod }
 							isStuck={ isStuck }
@@ -1131,8 +1134,8 @@ const ComparisonGrid = ( {
 					isFooter={ true }
 					onPlanChange={ onPlanChange }
 					currentSitePlanSlug={ currentSitePlanSlug }
-					onUpgradeClick={ onUpgradeClick }
 					planActionOverrides={ planActionOverrides }
+					planActions={ planActions }
 					selectedPlan={ selectedPlan }
 					showRefundPeriod={ showRefundPeriod }
 					isStuck={ false }
