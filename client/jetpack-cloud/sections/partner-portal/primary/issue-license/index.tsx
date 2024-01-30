@@ -87,7 +87,11 @@ export default function IssueLicense( { selectedSite, suggestedProduct }: Assign
 
 	// If URL params are present, use them to open the review licenses modal directly.
 	useEffect( () => {
-		if ( getQueryArg( window.location.href, 'source' ) === 'manage-pricing-page' ) {
+		if (
+			getQueryArg( window.location.href, 'source' ) === 'manage-pricing-page' &&
+			getQueryArg( window.location.href, 'product_slug' ) !== 'jetpack-backup-t2' &&
+			getQueryArg( window.location.href, 'product_slug' ) !== 'jetpack-security-t2'
+		) {
 			getGroupedLicenses();
 			setShowReviewLicenses( true );
 			dispatch(
