@@ -15,6 +15,11 @@
 		justify-content: center;
 		width: 100%;
 
+		p {
+			font-size: 0.875rem;
+			color: var(--color-text-subtle);
+		}
+
 		.pre-migration__form {
 			width: 100%;
 			order: 2;
@@ -30,7 +35,47 @@
 
 			.credentials-form {
 				margin-top: 0;
-				margin-bottom: rem(20px);
+				margin-bottom: 3rem;
+			}
+
+			.form-setting-explanation {
+				font-style: normal;
+			}
+
+			.button-plain {
+				text-decoration: underline;
+				cursor: pointer;
+			}
+
+			.credentials-form__kpri {
+				margin-bottom: 0;
+			}
+
+			.credentials-form__username {
+				max-width: 320px;
+				//margin: 0;
+			}
+
+			.credentials-form__server-address {
+				margin: 0;
+				margin-inline-end: 1rem;
+			}
+
+			.credentials-form__user-pass {
+				flex-direction: column;
+
+				& > fieldset {
+					flex: 0;
+					margin-inline-end: 0;
+
+					&.credentials-form__username {
+						margin-right: 0;
+					}
+
+					&:last-child {
+						margin-bottom: 0.5rem;
+					}
+				}
 			}
 		}
 
@@ -50,6 +95,7 @@
 			h3 {
 				font-weight: 500;
 				font-size: 1rem;
+				margin-bottom: 1rem;
 			}
 
 			p {
@@ -157,15 +203,6 @@
 
 		.credentials-form__support-info {
 			margin-bottom: rem(8px);
-		}
-
-		/** Adjust margins to also work well with RTL languages **/
-		.credentials-form__server-address.form-fieldset,
-		.credentials-form__username.form-fieldset {
-			@include break-large {
-				margin: 0;
-				margin-inline-end: rem(16px);
-			}
 		}
 	}
 }

@@ -20,6 +20,7 @@ import './style.scss';
 interface Props {
 	formErrors: FormErrors;
 	formMode: FormMode;
+	formModeSwitcher?: 'segmented' | 'simple';
 	disabled?: boolean;
 	formState: FormState;
 	onFormStateChange: ( newFormState: FormState ) => void;
@@ -37,6 +38,7 @@ const ServerCredentialsForm: FunctionComponent< Props > = ( {
 	formState,
 	formErrors,
 	formMode,
+	formModeSwitcher = 'segmented',
 	onFormStateChange,
 	onModeChange,
 	host,
@@ -117,7 +119,7 @@ const ServerCredentialsForm: FunctionComponent< Props > = ( {
 	const renderServerUsernameForm = () => (
 		<FormFieldset className="credentials-form__username">
 			<div className="credentials-form__support-info">
-				<FormLabel htmlFor="server-username">{ translate( 'Server username' ) }</FormLabel>
+				<FormLabel htmlFor="server-username">{ translate( 'Username' ) }</FormLabel>
 				{ hostInfo?.inline?.user && (
 					<InfoPopover>
 						<InlineInfo
@@ -151,7 +153,7 @@ const ServerCredentialsForm: FunctionComponent< Props > = ( {
 			{ renderServerUsernameForm() }
 			<FormFieldset className="credentials-form__password">
 				<div className="credentials-form__support-info">
-					<FormLabel htmlFor="server-password">{ translate( 'Server password' ) }</FormLabel>
+					<FormLabel htmlFor="server-password">{ translate( 'Password' ) }</FormLabel>
 					{ hostInfo?.inline?.pass && (
 						<InfoPopover>
 							<InlineInfo
@@ -211,9 +213,11 @@ const ServerCredentialsForm: FunctionComponent< Props > = ( {
 						formErrors.kpri && ( interactions.kpri || ! formErrors.kpri.waitForInteraction )
 					}
 				/>
-				<FormSettingExplanation>
-					{ translate( 'Only non-encrypted private keys are supported.' ) }
-				</FormSettingExplanation>
+				{ formModeSwitcher === 'segmented' && (
+					<FormSettingExplanation>
+						{ translate( 'Only non-encrypted private keys are supported.' ) }
+					</FormSettingExplanation>
+				) }
 				{ formErrors.kpri && ( interactions.kpri || ! formErrors.kpri.waitForInteraction ) && (
 					<FormInputValidation isError={ true } text={ formErrors.kpri.message } />
 				) }
@@ -397,7 +401,6 @@ const ServerCredentialsForm: FunctionComponent< Props > = ( {
 			{ ! isAlternate && withHeader && <h3>{ getFormHeaderText() }</h3> }
 			{ withHeader && <p className="credentials-form__intro-text">{ getSubHeaderText() }</p> }
 			{ withHeader && renderCredentialLinks() }
-
 			{ ! allowFtp && <input type="hidden" name="protocol" value="ssh" /> }
 			{ allowFtp && (
 				<FormFieldset className="credentials-form__protocol-type">
@@ -426,7 +429,6 @@ const ServerCredentialsForm: FunctionComponent< Props > = ( {
 					</FormSelect>
 				</FormFieldset>
 			) }
-
 			<div className="credentials-form__row">
 				<FormFieldset className="credentials-form__server-address">
 					<div className="credentials-form__support-info">
@@ -488,7 +490,6 @@ const ServerCredentialsForm: FunctionComponent< Props > = ( {
 					) }
 				</FormFieldset>
 			</div>
-
 			<FormFieldset className="credentials-form__path">
 				<div className="credentials-form__support-info">
 					<FormLabel htmlFor="wordpress-path">
@@ -516,13 +517,11 @@ const ServerCredentialsForm: FunctionComponent< Props > = ( {
 						formErrors.path && ( interactions.path || ! formErrors.path.waitForInteraction )
 					}
 				/>
-
 				{ formErrors.path && ( interactions.path || ! formErrors.path.waitForInteraction ) && (
 					<FormInputValidation isError={ true } text={ formErrors.path.message } />
 				) }
 			</FormFieldset>
-
-			{ 'ftp' !== formState.protocol && (
+			{ formModeSwitcher === 'segmented' && 'ftp' !== formState.protocol && (
 				<div className="credentials-form__mode-control">
 					<div className="credentials-form__support-info">
 						<SegmentedControl disabled={ disabled }>
@@ -552,9 +551,36 @@ const ServerCredentialsForm: FunctionComponent< Props > = ( {
 					</div>
 				</div>
 			) }
-
+			{ formModeSwitcher === 'simple' && (
+				<FormFieldset>
+					<FormLabel>{ translate( 'SSH credentials' ) }</FormLabel>
+					<FormSettingExplanation>
+						{ translate(
+							'Your credentials will be used only to migrate the site and won’t be stored anywhere.'
+						) }
+					</FormSettingExplanation>
+				</FormFieldset>
+			) }
 			{ formMode === FormMode.Password ? renderPasswordForm() : renderPrivateKeyForm() }
-
+			{ formModeSwitcher === 'simple' && (
+				<>
+					{ formMode === FormMode.Password && (
+						<p>
+							<Button plain onClick={ () => onModeChange( FormMode.PrivateKey ) }>
+								{ translate( 'Use private key instead' ) }
+							</Button>
+						</p>
+					) }
+					{ formMode === FormMode.PrivateKey && (
+						<p>
+							<span>{ translate( 'Only non-encrypted private keys are supported.' ) }</span>{ ' ' }
+							<Button plain onClick={ () => onModeChange( FormMode.Password ) }>
+								{ translate( 'Use a password instead' ) }
+							</Button>
+						</p>
+					) }
+				</>
+			) }
 			{ isAlternate && (
 				<FormFieldset className="credentials-form__save-for-later">
 					<FormLabel htmlFor="save-for-later">

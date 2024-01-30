@@ -190,6 +190,7 @@ export const CredentialsForm: React.FunctionComponent< Props > = ( props ) => {
 					disabled={ isFormSubmissionPending || isPending }
 					formErrors={ formErrors }
 					formMode={ formMode }
+					formModeSwitcher="simple"
 					formState={ formState }
 					host={ props.selectedHost }
 					role="main"
