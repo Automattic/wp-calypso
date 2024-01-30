@@ -14,21 +14,6 @@ const exported = {
 		return url.replace( /^https?:\/\/(www\.)?/, '' ).replace( /\/$/, '' );
 	},
 
-	// Use either the site name, feed name or display URL for the feed name
-	getFeedTitle: function ( siteData, feedData, displayUrl ) {
-		let feedTitle;
-
-		if ( siteData && siteData.name ) {
-			feedTitle = siteData.name;
-		} else if ( feedData && feedData.name ) {
-			feedTitle = feedData.name;
-		} else {
-			feedTitle = displayUrl;
-		}
-
-		return feedTitle;
-	},
-
 	getFeedStreamUrl: function ( siteData, feedData ) {
 		if ( ! siteData && ! feedData ) {
 			return null;
@@ -58,4 +43,4 @@ const exported = {
 
 export default exported;
 
-export const { formatUrlForDisplay, getFeedTitle, getFeedStreamUrl, getSiteUrl } = exported;
+export const { formatUrlForDisplay, getFeedStreamUrl, getSiteUrl } = exported;
