@@ -1,4 +1,4 @@
-import { Spinner, WordPressLogo } from '@automattic/components';
+import { WordPressLogo } from '@automattic/components';
 import formatCurrency from '@automattic/format-currency';
 import styled from '@emotion/styled';
 import { useTranslate } from 'i18n-calypso';
@@ -108,8 +108,6 @@ export function PixConfirmation( {
 				<div className="pix-confirmation__qrcode">
 					<QRCodeSVG value={ redirectUrl } />
 				</div>
-
-				<Spinner size={ 30 } />
 
 				<p className="pix-confirmation__qrcode-redirect">
 					{ translate(
