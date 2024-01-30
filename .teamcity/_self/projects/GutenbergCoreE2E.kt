@@ -1,5 +1,6 @@
 package _self.projects
 
+import Settings
 import _self.bashNodeScript
 import jetbrains.buildServer.configs.kotlin.v2019_2.BuildType
 import jetbrains.buildServer.configs.kotlin.v2019_2.Project
