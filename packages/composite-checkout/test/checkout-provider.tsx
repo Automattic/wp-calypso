@@ -123,12 +123,12 @@ describe( 'CheckoutProvider', () => {
 		expect( getByText( 'Submit' ) ).not.toBeDisabled();
 	} );
 
-	it( 'sets form status to submitting when setFormSubmitting is called', () => {
+	it( 'sets form status to submitting when setFormSubmitting is called', async () => {
 		const user = userEvent.setup();
-		const { getByText, queryByText } = render( <MyCheckout /> );
-		expect( queryByText( 'Submitting' ) ).not.toBeInTheDocument();
-		user.click( getByText( 'Submit' ) );
-		expect( getByText( 'Submitting' ) ).toBeInTheDocument();
+		render( <MyCheckout /> );
+		expect( screen.queryByText( 'Submitting' ) ).not.toBeInTheDocument();
+		user.click( screen.getByText( 'Submit' ) );
+		expect( await screen.findByText( 'Submitting' ) ).toBeInTheDocument();
 	} );
 
 	it( 'sets form status to loading when setFormLoading is called', async () => {
@@ -139,23 +139,23 @@ describe( 'CheckoutProvider', () => {
 		expect( await screen.findByText( 'Loading' ) ).toBeInTheDocument();
 	} );
 
-	it( 'does not call onPaymentComplete when transaction status is not complete', () => {
+	it( 'does not call onPaymentComplete when transaction status is not complete', async () => {
 		const onPaymentComplete = jest.fn();
-		const { getByText } = render( <MyCheckout onPaymentComplete={ onPaymentComplete } /> );
-		expect( getByText( 'Submit' ) ).not.toBeDisabled();
+		render( <MyCheckout onPaymentComplete={ onPaymentComplete } /> );
+		expect( screen.getByText( 'Submit' ) ).not.toBeDisabled();
 		expect( onPaymentComplete ).not.toHaveBeenCalled();
 	} );
 
-	it( 'calls onPaymentComplete when transaction status is complete', () => {
+	it( 'calls onPaymentComplete when transaction status is complete', async () => {
 		const user = userEvent.setup();
 		const onPaymentComplete = jest.fn();
-		const { getByText } = render( <MyCheckout onPaymentComplete={ onPaymentComplete } /> );
-		user.click( getByText( 'Complete' ) );
-		expect( getByText( 'Form Complete' ) ).toBeInTheDocument();
+		render( <MyCheckout onPaymentComplete={ onPaymentComplete } /> );
+		user.click( screen.getByText( 'Complete' ) );
+		expect( await screen.findByText( 'Form Complete' ) ).toBeInTheDocument();
 		expect( onPaymentComplete ).toHaveBeenCalled();
 	} );
 
-	it( 'does not call onPaymentComplete twice when transaction status is complete even if callback changes', () => {
+	it( 'does not call onPaymentComplete twice when transaction status is complete even if callback changes', async () => {
 		const user = userEvent.setup();
 		const onPaymentComplete = jest.fn();
 		const { getByText, rerender } = render(
@@ -163,57 +163,58 @@ describe( 'CheckoutProvider', () => {
 		);
 		user.click( getByText( 'Complete' ) );
 		rerender( <MyCheckout onPaymentComplete={ () => onPaymentComplete() } /> );
+		expect( await screen.findByText( 'Form Complete' ) ).toBeInTheDocument();
 		expect( onPaymentComplete.mock.calls.length ).toBe( 1 );
 	} );
 
-	it( 'sets form status to submitting when setTransactionPending is called', () => {
+	it( 'sets form status to submitting when setTransactionPending is called', async () => {
 		const user = userEvent.setup();
-		const { getByText, queryByText } = render( <MyCheckout /> );
-		expect( queryByText( 'Submitting' ) ).not.toBeInTheDocument();
-		user.click( getByText( 'Submit' ) );
-		expect( getByText( 'Submitting' ) ).toBeInTheDocument();
+		render( <MyCheckout /> );
+		expect( screen.queryByText( 'Submitting' ) ).not.toBeInTheDocument();
+		user.click( screen.getByText( 'Submit' ) );
+		expect( await screen.findByText( 'Submitting' ) ).toBeInTheDocument();
 	} );
 
-	it( 'sets transaction status to complete when setTransactionComplete is called', () => {
+	it( 'sets transaction status to complete when setTransactionComplete is called', async () => {
 		const user = userEvent.setup();
-		const { getByText, queryByText } = render( <MyCheckout /> );
-		expect( queryByText( 'Form Complete' ) ).not.toBeInTheDocument();
-		user.click( getByText( 'Complete' ) );
-		expect( getByText( 'Form Complete' ) ).toBeInTheDocument();
+		render( <MyCheckout /> );
+		expect( screen.queryByText( 'Form Complete' ) ).not.toBeInTheDocument();
+		user.click( screen.getByText( 'Complete' ) );
+		expect( await screen.findByText( 'Form Complete' ) ).toBeInTheDocument();
 	} );
 
-	it( 'sets form status to ready when setTransactionError is called', () => {
+	it( 'sets form status to ready when setTransactionError is called', async () => {
 		const user = userEvent.setup();
-		const { getByText, queryByText } = render( <MyCheckout /> );
-		expect( queryByText( 'Showing Error' ) ).not.toBeInTheDocument();
-		user.click( getByText( 'Cause Error' ) );
-		expect( getByText( 'Showing Error' ) ).toBeInTheDocument();
+		render( <MyCheckout /> );
+		expect( screen.queryByText( 'Showing Error' ) ).not.toBeInTheDocument();
+		user.click( screen.getByText( 'Cause Error' ) );
+		expect( await screen.findByText( 'Showing Error' ) ).toBeInTheDocument();
 	} );
 
-	it( 'does not call onPaymentComplete when form loads', () => {
+	it( 'does not call onPaymentComplete when form loads', async () => {
 		const onPaymentComplete = jest.fn();
-		const { getByText } = render( <MyCheckout onPaymentComplete={ onPaymentComplete } /> );
-		expect( getByText( 'Submit' ) ).not.toBeDisabled();
+		render( <MyCheckout onPaymentComplete={ onPaymentComplete } /> );
+		expect( screen.getByText( 'Submit' ) ).not.toBeDisabled();
 		expect( onPaymentComplete ).not.toHaveBeenCalled();
 	} );
 
-	it( 'does not call onPaymentRedirect when form loads', () => {
+	it( 'does not call onPaymentRedirect when form loads', async () => {
 		const onPaymentRedirect = jest.fn();
-		const { getByText } = render( <MyCheckout onPaymentRedirect={ onPaymentRedirect } /> );
-		expect( getByText( 'Submit' ) ).not.toBeDisabled();
+		render( <MyCheckout onPaymentRedirect={ onPaymentRedirect } /> );
+		expect( screen.getByText( 'Submit' ) ).not.toBeDisabled();
 		expect( onPaymentRedirect ).not.toHaveBeenCalled();
 	} );
 
-	it( 'does not call onPaymentRedirect when transaction status is complete', () => {
+	it( 'does not call onPaymentRedirect when transaction status is complete', async () => {
 		const user = userEvent.setup();
 		const onPaymentRedirect = jest.fn();
-		const { getByText } = render( <MyCheckout onPaymentRedirect={ onPaymentRedirect } /> );
-		user.click( getByText( 'Complete' ) );
-		expect( getByText( 'Form Complete' ) ).toBeInTheDocument();
+		render( <MyCheckout onPaymentRedirect={ onPaymentRedirect } /> );
+		user.click( screen.getByText( 'Complete' ) );
+		expect( await screen.findByText( 'Form Complete' ) ).toBeInTheDocument();
 		expect( onPaymentRedirect ).not.toHaveBeenCalled();
 	} );
 
-	it( 'does not call onPaymentRedirect twice when transaction status is redirecting even if callback changes', () => {
+	it( 'does not call onPaymentRedirect twice when transaction status is redirecting even if callback changes', async () => {
 		const user = userEvent.setup();
 		const onPaymentRedirect = jest.fn();
 		const { getByText, rerender } = render(
@@ -221,15 +222,16 @@ describe( 'CheckoutProvider', () => {
 		);
 		user.click( getByText( 'Redirect' ) );
 		rerender( <MyCheckout onPaymentRedirect={ () => onPaymentRedirect() } /> );
+		expect( await screen.findByText( 'Redirecting' ) ).toBeInTheDocument();
 		expect( onPaymentRedirect.mock.calls.length ).toBe( 1 );
 	} );
 
-	it( 'calls onPaymentRedirect when transaction status is redirecting', () => {
+	it( 'calls onPaymentRedirect when transaction status is redirecting', async () => {
 		const user = userEvent.setup();
 		const onPaymentRedirect = jest.fn();
-		const { getByText } = render( <MyCheckout onPaymentRedirect={ onPaymentRedirect } /> );
-		user.click( getByText( 'Redirect' ) );
-		expect( getByText( 'Redirecting' ) ).toBeInTheDocument();
+		render( <MyCheckout onPaymentRedirect={ onPaymentRedirect } /> );
+		user.click( screen.getByText( 'Redirect' ) );
+		expect( await screen.findByText( 'Redirecting' ) ).toBeInTheDocument();
 		expect( onPaymentRedirect ).toHaveBeenCalled();
 	} );
 
@@ -268,7 +270,7 @@ describe( 'CheckoutProvider', () => {
 		expect( await screen.findByText( 'Submitting' ) ).toBeInTheDocument();
 	} );
 
-	it( 'does not call onPaymentError twice when transaction status is error even if callback changes', () => {
+	it( 'does not call onPaymentError twice when transaction status is error even if callback changes', async () => {
 		const user = userEvent.setup();
 		const onPaymentError = jest.fn();
 		const { getByText, rerender } = render(
@@ -276,6 +278,7 @@ describe( 'CheckoutProvider', () => {
 		);
 		user.click( getByText( 'Cause Error' ) );
 		rerender( <MyCheckout onPaymentError={ () => onPaymentError() } /> );
+		expect( await screen.findByText( 'Showing Error' ) ).toBeInTheDocument();
 		expect( onPaymentError.mock.calls.length ).toBe( 1 );
 	} );
 } );
