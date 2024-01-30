@@ -35,19 +35,16 @@
 		}
 
 		.pre-migration__credentials-help {
-			text-align: left;
-			width: 100%;
+			display: none;
 			order: 1;
+			width: 240px;
+			text-align: left;
+			margin-inline-start: rem(40px);
+			margin-top: 200px;
 			margin-bottom: 1rem;
 
-			@include break-medium {
-				margin-inline-start: rem(40px);
-				width: 220px;
-				order: 2;
-			}
-
 			@include break-large {
-				width: 240px;
+				display: block;
 			}
 
 			h3 {
