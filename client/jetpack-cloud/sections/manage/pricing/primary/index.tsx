@@ -16,6 +16,7 @@ import { LicenseProductsList } from '../license-products-list';
 import 'calypso/my-sites/plans/jetpack-plans/product-store/style.scss';
 import 'calypso/jetpack-cloud/sections/pricing/style.scss';
 import './style.scss';
+import PricingNeedMoreInfo from '../pricing-need-more-info';
 
 export default function ManagePricingPage() {
 	const translate = useTranslate();
@@ -41,6 +42,7 @@ export default function ManagePricingPage() {
 				<div className="jetpack-product-store">
 					<Header />
 					<LicenseProductsList bundleSize={ 1 } />
+					<PricingNeedMoreInfo />
 					<Recommendations />
 					<StoreFooter />
 				</div>

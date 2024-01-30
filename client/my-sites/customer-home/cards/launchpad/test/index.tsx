@@ -173,7 +173,9 @@ describe( 'CustomerHomeLaunchPad', () => {
 		it( 'hides the card when the user clicks on the dismiss guide button', async () => {
 			render( <CustomerHomeLaunchPad checklistSlug="some-check-list" /> );
 
-			userEvent.click( await screen.findByText( /Dismiss guide/ ) );
+			// Wait for the click event to be fully resolved.
+			await userEvent.click( await screen.findByText( /Dismiss guide/ ) );
+
 			expect( screen.queryByText( 'Some cool title for you task list' ) ).not.toBeInTheDocument();
 		} );
 	} );
