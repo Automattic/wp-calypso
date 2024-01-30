@@ -13,7 +13,6 @@ import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import twoStepAuthorization from 'calypso/lib/two-step-authorization';
 import withFormBase from 'calypso/me/form-base/with-form-base';
 import ReauthRequired from 'calypso/me/reauth-required';
-import { recordGoogleEvent } from 'calypso/state/analytics/actions';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
 import { successNotice, removeNotice } from 'calypso/state/notices/actions';
 import { isFetchingUserSettings } from 'calypso/state/user-settings/selectors';
@@ -100,7 +99,7 @@ class Developer extends Component {
 			this.props.removeNotice( this.developerSurveyNoticeId );
 		}
 
-		setTimeout( () => this.props.removeNotice( 'save-user-settings' ), 5000 );
+		setTimeout( () => this.props.removeNotice( 'save-user-settings' ), 3000 );
 	};
 
 	componentDidMount() {
@@ -166,7 +165,6 @@ export default compose(
 			currentUser: getCurrentUser( state ),
 		} ),
 		{
-			recordGoogleEvent,
 			successNotice,
 			removeNotice,
 		}
