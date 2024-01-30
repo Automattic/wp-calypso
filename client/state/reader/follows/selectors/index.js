@@ -5,5 +5,4 @@ export { default as getReaderFollowsCount } from './get-reader-follows-count';
 export { default as getReaderFollowsLastSyncTime } from './get-reader-follows-last-sync-time';
 export { default as getReaderFollows } from './get-reader-follows';
 export { default as isFollowing } from './is-following';
-export { default as isReaderFollowsLoading } from './is-reader-follows-loading';
 export { default as hasReaderFollowOrganization } from './has-reader-follows-organization';
