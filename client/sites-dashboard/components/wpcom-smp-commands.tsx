@@ -77,12 +77,7 @@ function useCommandNavigation() {
 				);
 
 				close();
-
-				if ( openInNewTab ) {
-					window.open( url, '_blank' );
-				} else {
-					navigate( url );
-				}
+				navigate( url, openInNewTab );
 			},
 		[ currentRoute, dispatch ]
 	);
