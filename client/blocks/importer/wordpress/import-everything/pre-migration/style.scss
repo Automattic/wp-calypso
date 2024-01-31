@@ -31,6 +31,10 @@
 
 			@include break-large {
 				width: 550px;
+
+				.credentials-form__username {
+					max-width: 320px;
+				}
 			}
 
 			.credentials-form {
@@ -49,16 +53,6 @@
 
 			.credentials-form__kpri {
 				margin-bottom: 0;
-			}
-
-			.credentials-form__username {
-				max-width: 320px;
-				//margin: 0;
-			}
-
-			.credentials-form__server-address {
-				margin: 0;
-				margin-inline-end: 1rem;
 			}
 
 			.credentials-form__user-pass {
