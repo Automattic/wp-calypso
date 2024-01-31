@@ -220,7 +220,7 @@ const DeleteButtonWrapper = styled.div`
 		? `
 	grid-area: remove;
 	display: grid;
-	align-items: center;
+	align-items: flex-start;
 	justify-content: end;
 	`
 		: `display: inherit };
