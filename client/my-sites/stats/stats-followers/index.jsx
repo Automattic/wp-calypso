@@ -19,6 +19,8 @@ import StatsListCard from '../stats-list/stats-list-card';
 import StatsModulePlaceholder from '../stats-module/placeholder';
 import './style.scss';
 
+const MAX_FOLLOWERS_TO_SHOW = 10;
+
 class StatModuleFollowers extends Component {
 	state = {
 		activeFilter: 'wpcom-followers',
@@ -80,7 +82,10 @@ class StatModuleFollowers extends Component {
 			? summaryPageLink
 			: 'https://wordpress.com' + summaryPageLink;
 
-		const data = [ ...( wpcomData?.subscribers ?? [] ), ...( emailData?.subscribers ?? [] ) ];
+		const data = [ ...( wpcomData?.subscribers ?? [] ), ...( emailData?.subscribers ?? [] ) ].slice(
+			0,
+			MAX_FOLLOWERS_TO_SHOW
+		);
 
 		return (
 			<>
