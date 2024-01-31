@@ -1,3 +1,4 @@
+export const ACCOUNT_FLOW = 'account';
 export const AI_ASSEMBLER_FLOW = 'ai-assembler';
 export const NEWSLETTER_FLOW = 'newsletter';
 export const NEWSLETTER_POST_SETUP_FLOW = 'newsletter-post-setup';
