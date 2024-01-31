@@ -17,10 +17,6 @@ const selectors = {
 	showAllThemesButton: 'text=Show all themes',
 	searchToolbar: '.themes-magic-search',
 	searchInput: '.themes__content input.search__input',
-
-	// Theme card
-	popoverButton: '.theme__more-button',
-	popoverMenuItem: '.popover__menu-item',
 };
 
 /**
@@ -93,22 +89,6 @@ export class ThemesPage {
 
 		// Select the first available theme as the target.
 		return await this.page.waitForSelector( `:nth-match(${ selector }, 1)` );
-	}
-
-	/**
-	 * Given a target theme and action, click on the popover item of the action on the theme.
-	 *
-	 * @param {ElementHandle} selectedTheme Reference to the target theme.
-	 * @param {string} action Action to be called from the popover.
-	 * @returns {Promise<void>} No return value.
-	 */
-	async clickPopoverItem(
-		selectedTheme: ElementHandle,
-		action: 'Demo site' | 'Activate' | 'Info' | 'Support'
-	): Promise< void > {
-		const popoverButton = await selectedTheme.waitForSelector( selectors.popoverButton );
-		await popoverButton.click();
-		await this.page.click( `${ selectors.popoverMenuItem }:text("${ action }")` );
 	}
 
 	/**
