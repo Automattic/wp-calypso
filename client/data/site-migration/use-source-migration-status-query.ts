@@ -8,11 +8,20 @@ export const useSourceMigrationStatusQuery = (
 ) => {
 	return useQuery( {
 		queryKey: [ 'source-migration-status', sourceIdOrSlug ],
-		queryFn: (): Promise< SourceSiteMigrationDetails > =>
-			wp.req.get( {
+		queryFn: (): Promise< SourceSiteMigrationDetails > => {
+			if ( ! parseInt( sourceIdOrSlug as string ) ) {
+				const url = decodeURIComponent( sourceIdOrSlug as string );
+				const parsed = new URL( url );
+
+				// Need to force the URL to origin URL.
+				sourceIdOrSlug = parsed.origin;
+			}
+
+			return wp.req.get( {
 				path: '/migrations/from-source/' + encodeURIComponent( sourceIdOrSlug as string ),
 				apiNamespace: 'wpcom/v2',
-			} ),
+			} );
+		},
 		meta: {
 			persist: false,
 		},
