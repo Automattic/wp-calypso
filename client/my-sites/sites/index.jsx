@@ -153,6 +153,9 @@ class Sites extends Component {
 			case 'site-monitoring':
 				path = translate( 'Site Monitoring' );
 				break;
+			case 'github-deployments':
+				path = translate( 'GitHub Deployments' );
+				break;
 		}
 
 		return translate( 'Select a site to open {{strong}}%(path)s{{/strong}}', {
