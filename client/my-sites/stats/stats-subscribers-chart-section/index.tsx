@@ -48,6 +48,20 @@ function transformData( data: SubscribersData[] ): uPlot.AlignedData {
 	return [ x, y ];
 }
 
+// Hide fractional values on the y-axis.
+const hideFractionNumber = ( self: uPlot, splits: number[] ) => {
+	splits = splits.map( ( split ) => Math.floor( split ) );
+	const newSplits = [ splits[ 0 ] ];
+	for ( let i = 1; i < splits.length; i++ ) {
+		if ( splits[ i ] === splits[ i - 1 ] ) {
+			newSplits.push( null as unknown as number );
+		} else {
+			newSplits.push( splits[ i ] );
+		}
+	}
+	return newSplits;
+};
+
 export default function SubscribersChartSection( {
 	siteId,
 	slug,
@@ -154,6 +168,7 @@ export default function SubscribersChartSection( {
 					mainColor={ isOdysseyStats ? '#069e08' : undefined }
 					fillColorFrom={ isOdysseyStats ? 'rgba(6, 158, 8, 0.4)' : undefined }
 					fillColorTo={ isOdysseyStats ? 'rgba(6, 158, 8, 0)' : undefined }
+					yAxisFilter={ hideFractionNumber }
 				/>
 			) }
 		</div>
