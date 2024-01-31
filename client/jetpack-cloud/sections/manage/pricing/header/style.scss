@@ -26,7 +26,7 @@
 .header__main-title
 .formatted-header__title {
 	max-width: 280px;
-	margin-bottom: 32px;
+	margin-bottom: 0;
 	margin-right: auto;
 	margin-left: auto;
 
@@ -42,4 +42,12 @@
 		line-height: 1.2;
 	}
 
+}
+
+.theme-jetpack-cloud .layout.is-section-jetpack-cloud-manage-pricing.has-no-masterbar {
+	padding-top: 0;
+}
+
+.is-group-jetpack-cloud.is-section-jetpack-cloud-manage-pricing div.jpcom-masterbar header.header {
+	margin-bottom: 0;
 }
