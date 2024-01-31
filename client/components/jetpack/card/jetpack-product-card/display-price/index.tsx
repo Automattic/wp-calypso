@@ -32,6 +32,7 @@ type OwnProps = {
 	productName: TranslateResult;
 	tooltipText?: TranslateResult | ReactNode;
 	displayPriceText?: TranslateResult | null;
+	customTimeFrame?: ReactNode | null;
 };
 
 const DisplayPrice: React.FC< OwnProps > = ( {
@@ -54,6 +55,7 @@ const DisplayPrice: React.FC< OwnProps > = ( {
 	productName,
 	tooltipText,
 	displayPriceText,
+	customTimeFrame,
 } ) => {
 	if ( isDeprecated ) {
 		return <Deprecated productName={ productName } />;
@@ -90,6 +92,7 @@ const DisplayPrice: React.FC< OwnProps > = ( {
 			tooltipText={ tooltipText }
 			expiryDate={ expiryDate }
 			displayPriceText={ displayPriceText }
+			customTimeFrame={ customTimeFrame }
 		/>
 	);
 };
