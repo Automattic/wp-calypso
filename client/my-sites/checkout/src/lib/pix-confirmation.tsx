@@ -25,7 +25,6 @@ const ConfirmationDiv = styled.dialog`
 		position: absolute;
 		top: 20px;
 		left: 20px;
-		width: 1em;
 		height: 1em;
 	}
 
