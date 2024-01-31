@@ -160,7 +160,11 @@ export default function IssueLicense( { selectedSite, suggestedProduct }: Assign
 				sidebarNavigation={ <PartnerPortalSidebarNavigation /> }
 			>
 				<LayoutTop>
-					<AssignLicenseStepProgress currentStep={ currentStep } isBundleLicensing />
+					<AssignLicenseStepProgress
+						currentStep={ currentStep }
+						selectedSite={ selectedSite }
+						isBundleLicensing
+					/>
 
 					<LayoutHeader showStickyContent={ showStickyContent }>
 						<Title>{ translate( 'Issue product licenses' ) } </Title>
