@@ -44,7 +44,7 @@ function Subscription( { translate, subscription, moment, stoppingStatus, updati
 	const enableAutoRenew = () =>
 		dispatch( ! isProcessing && requestAutoRenewResume( subscription.ID ) );
 	const isSubscription =
-		subscription && ( subscription.renew_interval || subscription.is_subscription ); // can remove renew_interval once backend is deployed
+		subscription && ( subscription.renew_interval || subscription.is_renewable ); // can remove renew_interval once backend is deployed
 	const isAutoRenewing = isSubscription && subscription.renew_interval;
 	const isProduct = subscription && ! isSubscription;
 	const isDisabledAutorenewing = isSubscription && ! subscription.renew_interval;
