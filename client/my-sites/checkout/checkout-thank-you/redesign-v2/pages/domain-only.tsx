@@ -2,30 +2,40 @@ import { Button, SelectControl } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import { useState } from 'react';
 import emailImage from 'calypso/assets/images/thank-you-upsell/email.jpg';
+import QuerySites from 'calypso/components/data/query-sites';
 import ThankYouV2 from 'calypso/components/thank-you-v2';
 import { ThankYouUpsellProps } from 'calypso/components/thank-you-v2/upsell';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { getProfessionalEmailCheckoutUpsellPath } from 'calypso/my-sites/email/paths';
 import { useSelector } from 'calypso/state';
-import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';
+import { getSite } from 'calypso/state/sites/selectors';
 import { getDomainPurchaseTypeAndPredicate } from '../../utils';
 import ThankYouDomainProduct from '../products/domain-product';
 import getDomainFooterDetails from './content/get-domain-footer-details';
 import type { ReceiptPurchase } from 'calypso/state/receipts/types';
 
-function UpsellActions( { domainNames, receiptId }: { domainNames: string[]; receiptId: number } ) {
+function UpsellActions( {
+	domainNames,
+	receiptId,
+	siteSlug,
+}: {
+	domainNames: string[];
+	receiptId: number;
+	siteSlug?: string;
+} ) {
 	const translate = useTranslate();
 	const [ selectedDomainName, setSelectedDomainName ] = useState( domainNames[ 0 ] );
-
-	const siteSlug = useSelector( getSelectedSiteSlug );
-	// For domain-only checkouts, `siteSlug` is null. However, this is in fact an illusion. A new
-	// site is actually created, using the first domain name in the cart for the site slug.
-	const siteSlugForUpsellPath = siteSlug ?? domainNames[ 0 ];
 
 	const domainNameOptions = domainNames.map( ( domainName ) => ( {
 		label: domainName,
 		value: domainName,
 	} ) );
+
+	const addEmailButtonHref =
+		siteSlug && getProfessionalEmailCheckoutUpsellPath( siteSlug, selectedDomainName, receiptId );
+	const addEmailButtonProps = addEmailButtonHref
+		? { href: addEmailButtonHref }
+		: { disabled: true };
 
 	return (
 		<>
@@ -38,14 +48,10 @@ function UpsellActions( { domainNames, receiptId }: { domainNames: string[]; rec
 			) : null }
 
 			<Button
-				href={ getProfessionalEmailCheckoutUpsellPath(
-					siteSlugForUpsellPath,
-					selectedDomainName,
-					receiptId
-				) }
 				onClick={ () =>
 					recordTracksEvent( 'calypso_domain_only_thank_you_professional_email_click' )
 				}
+				{ ...addEmailButtonProps }
 			>
 				{ translate( 'Add email' ) }
 			</Button>
@@ -61,8 +67,9 @@ interface DomainOnlyThankYouProps {
 export default function DomainOnlyThankYou( { purchases, receiptId }: DomainOnlyThankYouProps ) {
 	const translate = useTranslate();
 	const [ , predicate ] = getDomainPurchaseTypeAndPredicate( purchases );
-	const domainNames = purchases.filter( predicate ).map( ( purchase ) => purchase?.meta );
-	const siteSlug = useSelector( getSelectedSiteSlug );
+	const domainPurchases = purchases.filter( predicate );
+	const domainNames = domainPurchases.map( ( purchase ) => purchase?.meta );
+	const domainOnlySite = useSelector( ( state ) => getSite( state, domainPurchases[ 0 ]?.blogId ) );
 
 	const upsellProps: ThankYouUpsellProps = {
 		title: translate( 'Professional email' ),
@@ -78,33 +85,43 @@ export default function DomainOnlyThankYou( { purchases, receiptId }: DomainOnly
 			</>
 		),
 		image: emailImage,
-		actions: <UpsellActions domainNames={ domainNames } receiptId={ receiptId } />,
+		actions: (
+			<UpsellActions
+				domainNames={ domainNames }
+				receiptId={ receiptId }
+				siteSlug={ domainOnlySite?.slug }
+			/>
+		),
 	};
 
-	const products = purchases.filter( predicate ).map( ( purchase ) => {
+	const products = domainPurchases.map( ( purchase ) => {
 		return (
 			<ThankYouDomainProduct
 				purchase={ purchase }
 				key={ `domain-${ purchase.meta }` }
-				siteSlug={ siteSlug }
+				siteSlug={ domainOnlySite?.slug }
 				shareSite
 			/>
 		);
 	} );
 
 	return (
-		<ThankYouV2
-			title={ translate( 'Your own corner of the web' ) }
-			subtitle={ translate(
-				'All set! We’re just setting up your new domain so you can start spreading the word.',
-				'All set! We’re just setting up your new domains so you can start spreading the word.',
-				{
-					count: domainNames.length,
-				}
-			) }
-			products={ products }
-			footerDetails={ getDomainFooterDetails() }
-			upsellProps={ upsellProps }
-		/>
+		<>
+			<QuerySites siteId={ domainPurchases[ 0 ]?.blogId } />
+
+			<ThankYouV2
+				title={ translate( 'Your own corner of the web' ) }
+				subtitle={ translate(
+					'All set! We’re just setting up your new domain so you can start spreading the word.',
+					'All set! We’re just setting up your new domains so you can start spreading the word.',
+					{
+						count: domainNames.length,
+					}
+				) }
+				products={ products }
+				footerDetails={ getDomainFooterDetails() }
+				upsellProps={ upsellProps }
+			/>
+		</>
 	);
 }
