@@ -19,9 +19,9 @@ import { useSelect, useDispatch } from '@wordpress/data';
 import { useI18n } from '@wordpress/react-i18n';
 import classNames from 'classnames';
 import { localize, useTranslate } from 'i18n-calypso';
-import React, { useEffect } from 'react';
+import React, { useEffect, useLayoutEffect } from 'react';
 import { connect } from 'react-redux';
-import { useNavigate } from 'react-router';
+import { useNavigate, useLocation } from 'react-router';
 import { useSite } from 'calypso/landing/stepper/hooks/use-site';
 import { getPlanCartItem } from 'calypso/lib/cart-values/cart-items';
 import PlansFeaturesMain from 'calypso/my-sites/plans-features-main';
@@ -92,6 +92,7 @@ const PlansWrapper: React.FC< Props > = ( props ) => {
 	const translate = useTranslate();
 	const isDesktop = useDesktopBreakpoint();
 	const navigate = useNavigate();
+	const location = useLocation();
 	const stepName = 'plans';
 	const customerType = 'personal';
 	const headerText = __( 'Choose a plan' );
@@ -101,8 +102,16 @@ const PlansWrapper: React.FC< Props > = ( props ) => {
 		? reduxHideFreePlan && 'plans-blog-onboarding' === plansIntent
 		: reduxHideFreePlan;
 
+	useLayoutEffect( () => {
+		document.documentElement.scrollTop = location.state?.scrollTop || 0;
+	} );
+
 	const onPlanIntervalChange = ( path: string ) => {
-		navigate( path );
+		navigate( path, {
+			preventScrollReset: true,
+			replace: true,
+			state: { scrollTop: document.documentElement?.scrollTop },
+		} );
 	};
 
 	const onUpgradeClick = ( cartItems?: MinimalRequestCartProduct[] | null ) => {
