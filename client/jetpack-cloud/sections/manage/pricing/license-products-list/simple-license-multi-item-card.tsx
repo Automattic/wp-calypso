@@ -1,10 +1,8 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import page from '@automattic/calypso-router';
 import { Button } from '@automattic/components';
-import { addQueryArgs } from '@wordpress/url';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback, useState } from 'react';
-import { useSelector } from 'react-redux';
 import MultipleChoiceQuestion from 'calypso/components/multiple-choice-question';
 import getAPIFamilyProductIcon from 'calypso/jetpack-cloud/sections/manage/pricing/utils/get-api-family-product-icon';
 import { useProductDescription } from 'calypso/jetpack-cloud/sections/partner-portal/hooks';
@@ -15,9 +13,8 @@ import getProductVariantShortTitle from 'calypso/jetpack-cloud/sections/partner-
 import LicenseLightbox from 'calypso/jetpack-cloud/sections/partner-portal/license-lightbox/index';
 import LicenseLightboxLink from 'calypso/jetpack-cloud/sections/partner-portal/license-lightbox-link/index';
 import { useDispatch } from 'calypso/state';
-import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
-import { isAgencyUser } from 'calypso/state/partner-portal/partner/selectors';
 import { APIProductFamilyProduct } from 'calypso/state/partner-portal/types';
+import GetIssueLicenseURL from './get-issue-license-url';
 import { ItemPrice } from './item-price';
 import 'calypso/my-sites/plans/jetpack-plans/product-store/simple-item-card/style.scss';
 import './style.scss';
@@ -50,31 +47,8 @@ export const SimpleLicenseMultiItemCard = ( {
 	const [ showLightbox, setShowLightbox ] = useState( modalParamValue === variantSlug );
 
 	const title = getProductShortTitle( variant, true );
-	const isLoggedIn = useSelector( isUserLoggedIn );
-	const isAgency = useSelector( isAgencyUser );
 	const ctaLabel = translate( 'Get' );
 	const ctaAriaLabel = ctaLabel + ' ' + variant.name;
-
-	const getIssueLicenseURL = useCallback(
-		( variant: APIProductFamilyProduct, bundleSize: number | undefined ) => {
-			if ( isLoggedIn ) {
-				if ( isAgency ) {
-					return addQueryArgs( `/partner-portal/issue-license/`, {
-						product_slug: variant.slug,
-						source: 'manage-pricing-page',
-						bundle_size: bundleSize,
-					} );
-				}
-				return addQueryArgs( `/manage/signup/`, {
-					product_slug: variant.slug,
-					source: 'manage-pricing-page',
-					bundle_size: bundleSize,
-				} );
-			}
-			return '#';
-		},
-		[ isLoggedIn, isAgency ]
-	);
 
 	const price = <ItemPrice bundleSize={ bundleSize } item={ variant } />;
 	const { description: productDescription } = useProductDescription( variantSlug );
@@ -131,8 +105,8 @@ export const SimpleLicenseMultiItemCard = ( {
 	);
 
 	const onSelectProduct = useCallback( () => {
-		page( getIssueLicenseURL( variant, bundleSize ) );
-	}, [ bundleSize, getIssueLicenseURL, variant ] );
+		page( GetIssueLicenseURL( variantSlug, bundleSize ) );
+	}, [ bundleSize, variantSlug ] );
 
 	const onHideLightbox = useCallback( () => {
 		resetParams( [ LICENSE_INFO_MODAL_ID ] );
@@ -155,7 +129,7 @@ export const SimpleLicenseMultiItemCard = ( {
 							className="simple-item-card__cta"
 							onClick={ onClickCta }
 							disabled={ isCtaDisabled }
-							href={ isCtaDisabled ? '#' : getIssueLicenseURL( variant, bundleSize ) }
+							href={ isCtaDisabled ? '#' : GetIssueLicenseURL( variantSlug, bundleSize ) }
 							target={ isCtaExternal ? '_blank' : undefined }
 							primary={ ctaAsPrimary }
 							aria-label={ ctaAriaLabel }
