@@ -64,6 +64,7 @@ const Sidebar = ( {
 	const translate = useTranslate();
 	const site = useSite();
 	const siteIntentOption = site?.options?.site_intent ?? null;
+	const checklistSlug = siteIntentOption;
 	const clipboardButtonEl = useRef< HTMLButtonElement >( null );
 	const [ clipboardCopied, setClipboardCopied ] = useState( false );
 	const [ showPlansModal, setShowPlansModal ] = useState( false );
@@ -274,6 +275,7 @@ const Sidebar = ( {
 					) }
 					<LaunchpadInternal
 						siteSlug={ launchpadKey }
+						checklistSlug={ checklistSlug }
 						taskFilter={ () => enhancedTasks || [] }
 						makeLastTaskPrimaryAction={ true }
 					/>
