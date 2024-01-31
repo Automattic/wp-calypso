@@ -123,22 +123,24 @@ export async function pixProcessor(
 
 			let isModalActive = true;
 			let explicitClosureMessage: string | undefined;
-			displayModal(
+			displayModal( {
 				root,
-				response.redirect_url,
-				responseCart.total_cost_integer,
-				responseCart.currency,
-				() => {
+				redirectUrl: response.redirect_url,
+				priceInteger: responseCart.total_cost_integer,
+				priceCurrency: responseCart.currency,
+				cancel: () => {
 					hideModal( root );
 					isModalActive = false;
 					explicitClosureMessage = translate( 'Payment cancelled.' );
 				},
-				() => {
+				error: () => {
 					hideModal( root );
 					isModalActive = false;
 					explicitClosureMessage = genericErrorMessage;
-				}
-			);
+				},
+				isAkismet: options.isAkismetSitelessCheckout,
+				isJetpackNotAtomic: options.isJetpackNotAtomic,
+			} );
 
 			let orderStatus = 'processing';
 			while ( isModalActive && [ 'processing', 'async-pending' ].includes( orderStatus ) ) {
@@ -192,20 +194,33 @@ function hideModal( root: Root ): void {
 	root.unmount();
 }
 
-function displayModal(
-	root: Root,
-	redirectUrl: string,
-	priceInteger: number,
-	priceCurrency: string,
-	cancel: () => void,
-	error: () => void
-) {
+function displayModal( {
+	root,
+	redirectUrl,
+	priceInteger,
+	priceCurrency,
+	cancel,
+	error,
+	isAkismet,
+	isJetpackNotAtomic,
+}: {
+	root: Root;
+	redirectUrl: string;
+	priceInteger: number;
+	priceCurrency: string;
+	cancel: () => void;
+	error: () => void;
+	isAkismet: boolean;
+	isJetpackNotAtomic: boolean;
+} ) {
 	root.render(
 		createElement( PixConfirmation, {
 			redirectUrl,
 			priceInteger,
 			priceCurrency,
 			cancel,
+			isAkismet,
+			isJetpackNotAtomic,
 		} )
 	);
 

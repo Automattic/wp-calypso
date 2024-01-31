@@ -3,6 +3,8 @@ import formatCurrency from '@automattic/format-currency';
 import styled from '@emotion/styled';
 import { useTranslate } from 'i18n-calypso';
 import { QRCodeSVG } from 'qrcode.react';
+import AkismetLogo from 'calypso/components/akismet-logo';
+import JetpackLogo from 'calypso/components/jetpack-logo';
 
 const ConfirmationDiv = styled.dialog`
 	background: white;
@@ -74,22 +76,42 @@ const ConfirmationDiv = styled.dialog`
 	}
 `;
 
+function CheckoutLogo( {
+	isAkismet,
+	isJetpackNotAtomic,
+}: {
+	isAkismet: boolean;
+	isJetpackNotAtomic: boolean;
+} ) {
+	if ( isAkismet ) {
+		return <AkismetLogo className="pix-confirmation__logo" />;
+	}
+	if ( isJetpackNotAtomic ) {
+		return <JetpackLogo className="pix-confirmation__logo" />;
+	}
+	return <WordPressLogo className="pix-confirmation__logo" />;
+}
+
 export function PixConfirmation( {
 	redirectUrl,
 	priceInteger,
 	priceCurrency,
 	cancel,
+	isAkismet,
+	isJetpackNotAtomic,
 }: {
 	redirectUrl: string;
 	priceInteger: number;
 	priceCurrency: string;
 	cancel: () => void;
+	isAkismet: boolean;
+	isJetpackNotAtomic: boolean;
 } ) {
 	const translate = useTranslate();
 
 	return (
 		<ConfirmationDiv className="pix-confirmation">
-			<WordPressLogo className="pix-confirmation__logo" />
+			<CheckoutLogo isAkismet={ isAkismet } isJetpackNotAtomic={ isJetpackNotAtomic } />
 			<button className="pix-confirmation__cancel" onClick={ () => cancel() }>
 				{ translate( 'Cancel' ) }
 			</button>

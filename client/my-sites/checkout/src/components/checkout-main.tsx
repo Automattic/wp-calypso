@@ -448,6 +448,9 @@ export default function CheckoutMain( {
 		[ addProductsToCart ]
 	);
 
+	const isAkismetSitelessCheckout = responseCart.products.some(
+		( product ) => product.extra.isAkismetSitelessCheckout
+	);
 	const includeDomainDetails = contactDetailsType === 'domain';
 	const includeGSuiteDetails = contactDetailsType === 'gsuite';
 	const dataForProcessor: PaymentProcessorOptions = useMemo(
@@ -466,6 +469,8 @@ export default function CheckoutMain( {
 			razorpayConfiguration,
 			recaptchaClientId,
 			fromSiteSlug,
+			isJetpackNotAtomic,
+			isAkismetSitelessCheckout,
 		} ),
 		[
 			contactDetails,
@@ -482,6 +487,8 @@ export default function CheckoutMain( {
 			updatedSiteSlug,
 			recaptchaClientId,
 			fromSiteSlug,
+			isJetpackNotAtomic,
+			isAkismetSitelessCheckout,
 		]
 	);
 
