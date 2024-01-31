@@ -2,11 +2,17 @@ import { Badge, Gridicon } from '@automattic/components';
 import { Button } from '@wordpress/components';
 import classnames from 'classnames';
 import { translate, useRtl } from 'i18n-calypso';
+import { FC } from 'react';
 import { Task } from '../types';
 
 import './style.scss';
 
-const ChecklistItem = ( { task, isPrimaryAction }: { task: Task; isPrimaryAction?: boolean } ) => {
+interface Props {
+	task: Task;
+	isPrimaryAction?: boolean;
+}
+
+const ChecklistItem: FC< Props > = ( { task, isPrimaryAction } ) => {
 	const isRtl = useRtl();
 	const { id, completed, disabled, title, subtitle, actionDispatch } = task;
 
@@ -89,7 +95,7 @@ const ChecklistItem = ( { task, isPrimaryAction }: { task: Task; isPrimaryAction
 	);
 };
 
-ChecklistItem.Placeholder = () => {
+export const Placeholder: FC = () => {
 	return (
 		<div className="checklist-item__task-content is-placeholder">
 			<div className="checklist-item__content">

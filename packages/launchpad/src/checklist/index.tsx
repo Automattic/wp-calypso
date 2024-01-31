@@ -1,7 +1,7 @@
 import classNames from 'classnames';
-import ChecklistItem from '../checklist-item';
-import { Task } from '../types';
-
+import ChecklistItem, { Placeholder as CheckListPlacehoder } from '../checklist-item';
+import type { Task } from '../types';
+import type { FC } from 'react';
 import './style.scss';
 
 interface ChecklistProps {
@@ -9,7 +9,10 @@ interface ChecklistProps {
 	makeLastTaskPrimaryAction?: boolean;
 }
 
-const Checklist = ( { tasks, makeLastTaskPrimaryAction }: ChecklistProps ) => {
+const Checklist: FC< ChecklistProps > = ( {
+	tasks,
+	makeLastTaskPrimaryAction,
+}: ChecklistProps ) => {
 	return (
 		<ul
 			className={ classNames( 'checklist__tasks', {
@@ -29,13 +32,13 @@ const Checklist = ( { tasks, makeLastTaskPrimaryAction }: ChecklistProps ) => {
 	);
 };
 
-Checklist.Placeholder = () => {
+export const Placeholder = () => {
 	return (
 		<ul className="checklist__tasks" aria-label="Launchpad Checklist">
-			<ChecklistItem.Placeholder />
-			<ChecklistItem.Placeholder />
-			<ChecklistItem.Placeholder />
-			<ChecklistItem.Placeholder />
+			<CheckListPlacehoder />
+			<CheckListPlacehoder />
+			<CheckListPlacehoder />
+			<CheckListPlacehoder />
 		</ul>
 	);
 };

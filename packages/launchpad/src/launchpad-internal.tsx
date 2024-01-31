@@ -1,6 +1,6 @@
 import { useLaunchpad } from '@automattic/data-stores';
 import { useRef, useMemo } from 'react';
-import Checklist from './checklist';
+import Checklist, { Placeholder as ChecklistPlaceHolder } from './checklist';
 import type { Task } from './types';
 import type { UseLaunchpadOptions } from '@automattic/data-stores';
 
@@ -47,7 +47,7 @@ const LaunchpadInternal = ( {
 					makeLastTaskPrimaryAction={ makeLastTaskPrimaryAction }
 				/>
 			) : (
-				<Checklist.Placeholder />
+				<ChecklistPlaceHolder />
 			) }
 		</div>
 	);
