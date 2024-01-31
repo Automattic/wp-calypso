@@ -96,6 +96,10 @@
 
 .is-reader-page .main .tag-stream__empty-content {
 	margin-top: 15px;
+
+	div {
+		margin: 16px 0 24px;
+	}
 }
 
 // Tag page only shows site titles in the sidebar, so spacing needs to be tighter
