@@ -16,6 +16,7 @@ import {
 import { MinimalRequestCartProduct } from '@automattic/shopping-cart';
 import { useDesktopBreakpoint } from '@automattic/viewport-react';
 import { useSelect, useDispatch } from '@wordpress/data';
+import { useState } from '@wordpress/element';
 import { useI18n } from '@wordpress/react-i18n';
 import classNames from 'classnames';
 import { localize, useTranslate } from 'i18n-calypso';
@@ -35,6 +36,7 @@ import { ONBOARD_STORE } from '../../../../stores';
 import type { OnboardSelect } from '@automattic/data-stores';
 import type { PlansIntent } from '@automattic/plans-grid-next';
 import './style.scss';
+import consoleDispatcher from 'calypso/state/console-dispatch';
 
 interface Props {
 	shouldIncludeFAQ?: boolean;
@@ -88,6 +90,7 @@ const PlansWrapper: React.FC< Props > = ( props ) => {
 		}
 	}, [ selectedSiteId, siteId, setSelectedSiteId ] );
 
+	const [ planIntervalPath, setPlanIntervalPath ] = useState< string >( '' );
 	const { __ } = useI18n();
 	const translate = useTranslate();
 	const isDesktop = useDesktopBreakpoint();
@@ -103,14 +106,22 @@ const PlansWrapper: React.FC< Props > = ( props ) => {
 		: reduxHideFreePlan;
 
 	useLayoutEffect( () => {
+		// Plan intervals are changed by parsing query params. Updating query params
+		// with react-router, however, rerenders the whole page. The effect is that,
+		// whenever a new plan interval is selected, the viewport is reset to the top
+		// of the page. Because of this, we manually restore scroll position here.
+		// Ideally we'd switch to using react-router <ScrollRestoration> whenever stepper
+		// flows are refactored to use a data router
 		document.documentElement.scrollTop = location.state?.scrollTop || 0;
-	} );
+	}, [ location.state?.scrollTop, planIntervalPath ] );
 
 	const onPlanIntervalChange = ( path: string ) => {
+		setPlanIntervalPath( path );
+
 		navigate( path, {
 			preventScrollReset: true,
 			replace: true,
-			state: { scrollTop: document.documentElement?.scrollTop },
+			state: { scrollTop: document.documentElement.scrollTop },
 		} );
 	};
 
