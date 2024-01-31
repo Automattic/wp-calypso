@@ -3,14 +3,14 @@ import { PageViewTracker } from 'calypso/lib/analytics/page-view-tracker';
 import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
-import { GithubDeployments } from './main';
+import { GitHubDeployments } from './main';
 import type { Callback } from '@automattic/calypso-router';
 
 export const githubDeployments: Callback = ( context, next ) => {
 	context.primary = (
 		<>
 			<PageViewTracker path="/github-deployments/:site" title="Github Deployments" delay={ 500 } />
-			<GithubDeployments />
+			<GitHubDeployments />
 		</>
 	);
 	next();
