@@ -6,6 +6,7 @@ import { Global, css } from '@emotion/react';
 import { removeQueryArgs } from '@wordpress/url';
 import AsyncLoad from 'calypso/components/async-load';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
+import MySitesNavigation from 'calypso/my-sites/navigation';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
 import { removeNotice } from 'calypso/state/notices/actions';
 import { hideMasterbar } from 'calypso/state/ui/actions';
@@ -13,7 +14,6 @@ import { HostingFlowForkingPage } from './components/hosting-flow-forking-page';
 import { SitesDashboard } from './components/sites-dashboard';
 import { MEDIA_QUERIES } from './utils';
 import type { Context as PageJSContext } from '@automattic/calypso-router';
-import MySitesSidebarUnified from 'calypso/my-sites/sidebar';
 
 const getStatusFilterValue = ( status?: string ) => {
 	return siteLaunchStatusGroupValues.find( ( value ) => value === status );
@@ -149,11 +149,7 @@ function sitesDashboard( context: PageJSContext, next: () => void ) {
 			/>
 		</>
 	);
-	context.secondary = (
-		<>
-			<MySitesSidebarUnified path="/sites" />
-		</>
-	);
+	context.secondary = <MySitesNavigation path="/sites" />;
 	next();
 }
 
