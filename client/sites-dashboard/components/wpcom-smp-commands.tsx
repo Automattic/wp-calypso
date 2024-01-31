@@ -54,7 +54,6 @@ import { clearWordPressCache } from 'calypso/state/hosting/actions';
 import { createNotice, removeNotice } from 'calypso/state/notices/actions';
 import { NoticeStatus } from 'calypso/state/notices/types';
 import getCurrentRoutePattern from 'calypso/state/selectors/get-current-route-pattern';
-import getCurrentSite from 'calypso/state/selectors/get-current-site';
 import { generateSiteInterfaceLink, isCustomDomain, isNotAtomicJetpack, isP2Site } from '../utils';
 
 interface useCommandsArrayWpcomOptions {
@@ -123,8 +122,6 @@ export const useCommandsArrayWpcom = ( {
 	const createSiteUrl = useAddNewSiteUrl( {
 		ref: 'command-palette',
 	} );
-
-	const currentSite = useSelector( getCurrentSite );
 
 	const siteFilters = {
 		hostingEnabled: {
@@ -382,15 +379,10 @@ export const useCommandsArrayWpcom = ( {
 				_x( 'browse site', 'Keyword for the Visit site dashboard command' ),
 			].join( ' ' ),
 			context: [ '/:site' ],
-			callback: currentSite
-				? commandNavigation( currentSite.URL, { openInNewTab: true } )
-				: setStateCallback( 'visitSite', __( 'Select site to visit' ) ),
-			siteFunctions: currentSite
-				? undefined
-				: {
-						onClick: ( param ) =>
-							commandNavigation( param.site.URL, { openInNewTab: true } )( param ),
-				  },
+			callback: setStateCallback( 'visitSite', __( 'Select site to visit the homepage' ) ),
+			siteFunctions: {
+				onClick: ( param ) => commandNavigation( param.site.URL, { openInNewTab: true } )( param ),
+			},
 			icon: seenIcon,
 		},
 		{
