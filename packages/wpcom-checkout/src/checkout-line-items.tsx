@@ -1461,7 +1461,7 @@ function CheckoutLineItem( {
 
 			{ product && containsPartnerCoupon && (
 				<LineItemMeta>
-					<LineItemSublabelAndPrice product={ product } />
+					<LineItemBillingInterval product={ product } />
 				</LineItemMeta>
 			) }
 
