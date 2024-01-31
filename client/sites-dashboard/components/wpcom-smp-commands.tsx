@@ -374,8 +374,9 @@ export const useCommandsArrayWpcom = ( {
 		},
 		{
 			name: 'visitSite',
-			label: __( 'Visit site' ),
+			label: __( 'Visit site homepage' ),
 			searchLabel: [
+				_x( 'visit site homepage', 'Keyword for the Visit site dashboard command' ),
 				_x( 'visit site', 'Keyword for the Visit site dashboard command' ),
 				_x( 'see site', 'Keyword for the Visit site dashboard command' ),
 				_x( 'browse site', 'Keyword for the Visit site dashboard command' ),
