@@ -11,7 +11,15 @@ export const MySitesSidebarUnifiedHeader = () => {
 				<span className="dotcom"></span>
 			</a>
 			<span className="gap"></span>
-			<button className="search" />
+			<AsyncLoad
+				require="./menu-items/search/search"
+				tooltip={ translate( 'Search' ) }
+				placeholder={
+					<div className="link-search">
+						<span className="search"></span>
+					</div>
+				}
+			/>
 			<AsyncLoad
 				require="./menu-items/help-center/help-center"
 				tooltip={ translate( 'Help' ) }

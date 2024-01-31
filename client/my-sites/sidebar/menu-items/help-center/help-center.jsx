@@ -5,7 +5,7 @@ import {
 	useSelect as useDateStoreSelect,
 } from '@wordpress/data';
 import classnames from 'classnames';
-import { useRef } from 'react';
+//import { useRef } from 'react';
 //import { useSelector } from 'react-redux';
 //import { getSectionName } from 'calypso/state/ui/selectors';
 import SidebarMenuItem from '../menu-item';
@@ -14,7 +14,7 @@ import { HelpIcon } from './help-icon';
 const HELP_CENTER_STORE = HelpCenter.register();
 
 const SidebarHelpCenter = ( { tooltip } ) => {
-	const helpIconRef = useRef();
+	//const helpIconRef = useRef();
 	//const sectionName = useSelector( getSectionName );
 
 	const helpCenterVisible = useDateStoreSelect( ( select ) =>
@@ -41,7 +41,7 @@ const SidebarHelpCenter = ( { tooltip } ) => {
 					'is-active': helpCenterVisible,
 				} ) }
 				tooltip={ tooltip }
-				icon={ <HelpIcon ref={ helpIconRef } /> }
+				icon={ <HelpIcon /> }
 			/>
 		</>
 	);
