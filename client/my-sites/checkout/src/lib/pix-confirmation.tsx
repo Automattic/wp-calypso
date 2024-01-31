@@ -118,18 +118,19 @@ export function PixConfirmation( {
 			<div className="pix-confirmation__content">
 				<p className="pix-confirmation__instructions">
 					{ translate(
-						'Please scan the QR code using the Pix application to confirm your {{strong}}%(price)s payment{{/strong}}.',
+						'Please scan the QR code using the %(paymentMethod)s app to confirm your {{strong}}%(price)s payment{{/strong}}.',
 						{
 							components: {
 								strong: <strong />,
 							},
 							args: {
+								paymentMethod: 'Pix',
 								price: formatCurrency( priceInteger, priceCurrency, {
 									isSmallestUnit: true,
 									stripZeros: true,
 								} ),
 							},
-							comment: 'Instruction to scan a QR barcode and finalize payment with Pix.',
+							comment: 'Instruction to scan a QR barcode and finalize payment with an app.',
 						}
 					) }
 				</p>
@@ -143,10 +144,8 @@ export function PixConfirmation( {
 						{ translate( 'On mobile?' ) }
 					</h3>
 					<p>
-						{ translate( 'To open and pay with the Pix app directly, {{a}}click here{{/a}}.', {
+						{ translate( 'To open and pay with the app directly, {{a}}click here{{/a}}.', {
 							components: { a: <a href={ redirectUrl } /> },
-							comment:
-								'Asking if mobile detection has failed and they would like to open and be redirected directly into the Pix app in order to pay.',
 						} ) }
 					</p>
 				</div>
