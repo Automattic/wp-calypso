@@ -1147,6 +1147,7 @@ function CheckoutLineItem( {
 	onRemoveProductClick,
 	onRemoveProductCancel,
 	isAkPro500Cart,
+	areThereVariants,
 }: PropsWithChildren< {
 	product: ResponseCartProduct;
 	className?: string;
@@ -1160,6 +1161,7 @@ function CheckoutLineItem( {
 	onRemoveProductClick?: ( label: string ) => void;
 	onRemoveProductCancel?: ( label: string ) => void;
 	isAkPro500Cart?: boolean;
+	areThereVariants?: boolean;
 } > ) {
 	const id = product.uuid;
 	const translate = useTranslate();
@@ -1270,11 +1272,14 @@ function CheckoutLineItem( {
 					{ hasCheckoutVersion2 ? (
 						<LineItemMetaWrapper>
 							<LineItemMeta>
-								<LineItemSublabelAndPrice product={ product } />
+								{ areThereVariants ? (
+									<DropdownWrapper>{ children }</DropdownWrapper>
+								) : (
+									<LineItemBillingInterval product={ product } />
+								) }
 							</LineItemMeta>
 							{ isJetpackSearch( product ) && <JetpackSearchMeta product={ product } /> }
 							{ isEmail && <EmailMeta product={ product } isRenewal={ isRenewal } /> }
-							<DropdownWrapper>{ children }</DropdownWrapper>
 						</LineItemMetaWrapper>
 					) : (
 						<>
