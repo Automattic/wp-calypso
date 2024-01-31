@@ -36,6 +36,7 @@ export type WPCOMTransactionEndpointResponseRedirect = {
 	order_id: number | '';
 	redirect_url: string;
 	razorpay_order_id?: string;
+	razorpay_customer_id?: string;
 };
 
 export type WPCOMTransactionEndpointResponse =

@@ -155,7 +155,7 @@ export const paymentMethodAddContext: Callback = ( context, next ) => {
 	const sites = getSites( state );
 	const selectedSite = siteId ? sites?.find( ( site ) => site?.ID === parseInt( siteId ) ) : null;
 	context.primary = isNewCardAdditionEnabled ? (
-		<PaymentMethodAddV2 />
+		<PaymentMethodAddV2 withAssignLicense={ ! selectedSite } />
 	) : (
 		<PaymentMethodAdd selectedSite={ selectedSite } />
 	);

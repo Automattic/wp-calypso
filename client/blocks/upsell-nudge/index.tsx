@@ -144,7 +144,7 @@ export const UpsellNudge = ( {
 	isSiteWooExpressOrEcomFreeTrial,
 	isBusy,
 	isEligibleForOneClickCheckout,
-	isOneClickCheckoutEnabled,
+	isOneClickCheckoutEnabled = true,
 }: Props ) => {
 	const [ showPurchaseModal, setShowPurchaseModal ] = useState( false );
 	const shouldNotDisplay =

@@ -8,7 +8,7 @@ import type {
 	StorageOption,
 } from '@automattic/calypso-products';
 import type { MinimalRequestCartProduct } from '@automattic/shopping-cart';
-import type { LocalizeProps, TranslateResult } from 'i18n-calypso';
+import type { TranslateResult } from 'i18n-calypso';
 
 /******************
  * Grid Plan Types:
@@ -124,8 +124,6 @@ export interface CommonGridProps {
 
 export interface FeaturesGridProps extends CommonGridProps {
 	gridPlans: GridPlan[];
-	isLargeCurrency: boolean;
-	translate: LocalizeProps[ 'translate' ];
 	currentPlanManageHref?: string;
 	generatedWPComSubdomain: DataResponse< { domain_name: string } >;
 	gridPlanForSpotlight?: GridPlan;
