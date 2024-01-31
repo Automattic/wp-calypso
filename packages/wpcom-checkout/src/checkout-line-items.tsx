@@ -90,7 +90,7 @@ export const LineItem = styled( CheckoutLineItem )< {
 	grid-template-areas:
 		'label price'
 		'meta remove';
-	gap: 2px;
+	gap: 6px 2px;
 	margin-bottom: 8px;
 	padding: 10px 0;`
 		: `display: flex;
@@ -142,9 +142,8 @@ const LineItemMeta = styled.div< { theme?: Theme } >`
 	justify-content: space-between;
 	flex-wrap: wrap;
 	overflow-wrap: anywhere;
-	gap: 2px 10px;
 
-	${ hasCheckoutVersion2 ? `grid-area: meta` : null }
+	${ hasCheckoutVersion2 ? `grid-area: meta; row-gap: 6px` : `gap: 2px 10px;` }
 `;
 
 const UpgradeCreditInformationLineItem = styled( LineItemMeta )< { theme?: Theme } >`
@@ -210,7 +209,7 @@ const LineItemPriceWrapper = styled.span< { theme?: Theme; isSummary?: boolean }
 `;
 
 const DropdownWrapper = styled.span`
-	${ hasCheckoutVersion2 ? `grid-area: meta; margin-top: 6px;` : null }
+	${ hasCheckoutVersion2 ? `grid-area: meta; width: 100%;` : null }
 `;
 
 const DeleteButtonWrapper = styled.div`
