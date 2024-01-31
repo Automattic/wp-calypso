@@ -61,7 +61,7 @@ export const Option = styled.li< OptionProps >`
 export const Dropdown = styled.div`
 	position: relative;
 	width: 100%;
-	margin: ${ hasCheckoutVersion( '2' ) ? '6px 0' : '16px 0' };
+	margin: ${ hasCheckoutVersion( '2' ) ? null : '16px 0' };
 	> ${ Option } {
 		border-radius: 3px;
 	}
