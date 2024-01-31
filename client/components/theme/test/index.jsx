@@ -2,7 +2,6 @@
  * @jest-environment jsdom
  */
 import { parse } from 'url';
-import { isEnabled } from '@automattic/calypso-config';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { Theme } from '../';
@@ -64,12 +63,10 @@ describe( 'Theme', () => {
 			expect( container.getElementsByClassName( 'price' ) ).toHaveLength( 0 );
 		} );
 
-		if ( isEnabled( 'themes/tiers' ) ) {
-			test( 'should match snapshot', () => {
-				const { container } = render( <Theme { ...props } /> );
-				expect( container.firstChild ).toMatchSnapshot();
-			} );
-		}
+		test( 'should match snapshot', () => {
+			const { container } = render( <Theme { ...props } /> );
+			expect( container.firstChild ).toMatchSnapshot();
+		} );
 	} );
 
 	describe( 'when isPlaceholder is set to true', () => {
