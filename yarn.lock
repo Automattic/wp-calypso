@@ -1037,14 +1037,18 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@automattic/jetpack-ai-calypso@workspace:packages/jetpack-ai-calypso":
+"@automattic/jetpack-ai-calypso@workspace:^, @automattic/jetpack-ai-calypso@workspace:packages/jetpack-ai-calypso":
   version: 0.0.0-use.local
   resolution: "@automattic/jetpack-ai-calypso@workspace:packages/jetpack-ai-calypso"
   dependencies:
+    "@automattic/calypso-analytics": "workspace:^"
     "@automattic/calypso-build": "workspace:^"
     "@automattic/calypso-typescript-config": "workspace:^"
+    "@automattic/data-stores": "workspace:^"
     "@testing-library/jest-dom": "npm:^6.2.0"
     "@testing-library/react": "npm:^14.1.2"
+    classnames: "npm:^2.3.2"
+    debug: "npm:^4.3.4"
     postcss: "npm:^8.4.5"
     react: "npm:^18.2.0"
     react-dom: "npm:^18.2.0"
@@ -1052,6 +1056,7 @@ __metadata:
     webpack: "npm:^5.89.0"
   peerDependencies:
     "@babel/runtime": ^7.23.8
+    "@wordpress/data": ^9.19.0
     react: ^18.2.0
     react-dom: ^18.2.0
   peerDependenciesMeta:
@@ -12051,6 +12056,7 @@ __metadata:
     "@automattic/global-styles": "workspace:^"
     "@automattic/help-center": "workspace:^"
     "@automattic/i18n-utils": "workspace:^"
+    "@automattic/jetpack-ai-calypso": "workspace:^"
     "@automattic/js-utils": "workspace:^"
     "@automattic/language-picker": "workspace:^"
     "@automattic/languages": "workspace:^"

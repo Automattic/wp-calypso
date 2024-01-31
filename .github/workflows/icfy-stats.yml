@@ -17,7 +17,7 @@ jobs:
       - name: Fetch git history
         run: git fetch --prune --unshallow
       - name: Install dependencies
-        run: yarn install --inline-builds
+        run: SKIP_TSC=true yarn install --inline-builds
       - name: Build ICFY stats
         env:
           NODE_ENV: production
