@@ -98,7 +98,8 @@ $font-size: rem(14px);
 			}
 		}
 
-		span {
+		span,
+		button.search {
 			display: flex;
 			background-position: center;
 			background-repeat: no-repeat;
@@ -121,17 +122,8 @@ $font-size: rem(14px);
 			width: 55px;
 		}
 
-		span.help {
-			background-image: url(calypso/assets/images/global-sidebar/help.svg);
-		}
-
-		span.search {
+		button.search {
 			background-image: url(calypso/assets/images/global-sidebar/search.svg);
-		}
-
-		span.bell {
-			background-image: url(calypso/assets/images/global-sidebar/notifications.svg);
-
 		}
 	}
 
