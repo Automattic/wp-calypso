@@ -54,7 +54,7 @@ class InviteAcceptLoggedOut extends Component {
 		const { invite } = this.props;
 		recordTracksEvent( 'calypso_invite_accept_logged_out_submit', {
 			role: invite?.role,
-			siteID: invite?.site?.ID,
+			site_id: invite?.site?.ID,
 		} );
 
 		this.setState( { submitting: true } );
