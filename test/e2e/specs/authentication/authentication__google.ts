@@ -35,6 +35,11 @@ describe( 'Authentication: Google', function () {
 			await loginPage.visit();
 
 			await page.waitForURL( /log-in/ );
+
+			// Differently from the "WooCommerce" scenario below (see the comment below),
+			// this doesn't seem to affect the click of the button, but I added it here for
+			// consistency purposes.
+			await page.waitForLoadState( 'networkidle' );
 		} );
 
 		it( 'Click on "Continue with Google" button', async function () {
@@ -123,6 +128,9 @@ describe( 'Authentication: Google', function () {
 
 			await googleLoginPage.enter2FACode( totpClient.getToken() );
 			await googleLoginPage.clickButton( 'Next' );
+
+			// The next screen has a prompt that asks the user to confirm the login by clicking 'Continue'.
+			await googleLoginPage.clickButton( 'Continue' );
 
 			// The popup should close after the second TOTP challenge.
 			// If it does not, something has gone wrong.
@@ -150,6 +158,9 @@ describe( 'Authentication: Google', function () {
 			} );
 
 			await page.waitForURL( /log-in/ );
+
+			// This is needed or PW won't click the "Continue with Google" 99% of the time.
+			await page.waitForLoadState( 'networkidle' );
 		} );
 
 		it( 'Click on "Continue with Google" button', async function () {
@@ -238,6 +249,9 @@ describe( 'Authentication: Google', function () {
 
 			await googleLoginPage.enter2FACode( totpClient.getToken() );
 			await googleLoginPage.clickButton( 'Next' );
+
+			// The next screen has a prompt that asks the user to confirm the login by clicking 'Continue'.
+			await googleLoginPage.clickButton( 'Continue' );
 
 			// The popup should close after the second TOTP challenge.
 			// If it does not, something has gone wrong.
