@@ -75,6 +75,10 @@ class ThemesSelection extends Component {
 	};
 
 	componentDidMount() {
+		if ( this.props.isRequesting || this.props.isLastPage ) {
+			return;
+		}
+
 		// Create "buffer zone" to prevent overscrolling too early bugging pagination requests.
 		const { query } = this.props;
 		if ( ! query.search && ! query.filter && ! query.tier ) {
@@ -311,7 +315,7 @@ export const ConnectedThemesSelection = connect(
 	) => {
 		const isAtomic = isSiteAutomatedTransfer( state, siteId );
 		const premiumThemesEnabled = arePremiumThemesEnabled( state, siteId );
-		const hiddenFilters = getThemeHiddenFilters( state, siteId );
+		const hiddenFilters = getThemeHiddenFilters( state, siteId, tabFilter );
 		const hasUnlimitedPremiumThemes = siteHasFeature(
 			state,
 			siteId,
