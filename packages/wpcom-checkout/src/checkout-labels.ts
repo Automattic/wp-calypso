@@ -17,6 +17,7 @@ import {
 	isJetpackStatsPaidTieredProductSlug,
 } from '@automattic/calypso-products';
 import { translate, numberFormat } from 'i18n-calypso';
+import { hasCheckoutVersion } from './checkout-version-checker';
 import { isWpComProductRenewal as isRenewal } from './is-wpcom-product-renewal';
 import type { ResponseCartProduct } from '@automattic/shopping-cart';
 
@@ -73,11 +74,15 @@ export function DefaultLineItemSublabel( { product }: { product: ResponseCartPro
 	}
 
 	if ( isMonthlyProduct( product ) ) {
-		return translate( 'Billed monthly' );
+		return hasCheckoutVersion( '2' )
+			? translate( 'Billed every month' )
+			: translate( 'Billed monthly' );
 	}
 
 	if ( isYearly( product ) ) {
-		return translate( 'Billed annually' );
+		return hasCheckoutVersion( '2' )
+			? translate( 'Billed every year' )
+			: translate( 'Billed annually' );
 	}
 
 	if ( isBiennially( product ) ) {

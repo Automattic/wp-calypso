@@ -873,6 +873,169 @@ export function LineItemSublabelAndPrice( { product }: { product: ResponseCartPr
 	return <DefaultLineItemSublabel product={ product } />;
 }
 
+export function LineItemBillingInterval( { product }: { product: ResponseCartProduct } ) {
+	const translate = useTranslate();
+	const productSlug = product.product_slug;
+	const price = formatCurrency( product.item_original_subtotal_integer, product.currency, {
+		isSmallestUnit: true,
+		stripZeros: true,
+	} );
+
+	if ( isP2Plus( product ) ) {
+		// This is the price for one item for products with a quantity (eg. seats in a license).
+		const itemPrice = formatCurrency(
+			product.item_original_cost_for_quantity_one_integer,
+			product.currency,
+			{ isSmallestUnit: true, stripZeros: true }
+		);
+		const members = product?.current_quantity || 1;
+		const p2Options = {
+			args: {
+				itemPrice,
+				members,
+			},
+			count: members,
+		};
+
+		return (
+			<>
+				{ translate(
+					'Monthly subscription: %(itemPrice)s x %(members)s member',
+					'Monthly subscription: %(itemPrice)s x %(members)s members',
+					p2Options
+				) }
+			</>
+		);
+	}
+
+	if ( isTieredVolumeSpaceAddon( product ) ) {
+		const productQuantity = product?.quantity ?? 1;
+		const currentQuantity = product?.current_quantity ?? 1;
+		const spaceQuantity = productQuantity > 1 ? productQuantity : currentQuantity;
+
+		return (
+			<>
+				{ translate( '%(quantity)s GB extra space, %(price)s per year', {
+					args: { quantity: spaceQuantity, price },
+				} ) }
+			</>
+		);
+	}
+
+	if (
+		isGoogleWorkspaceProductSlug( productSlug ) ||
+		isGSuiteOrExtraLicenseProductSlug( productSlug ) ||
+		isTitanMail( product )
+	) {
+		if ( product.months_per_bill_period === 12 || product.months_per_bill_period === null ) {
+			const billingInterval = translate( 'Billed every year' );
+			return <>{ billingInterval }</>;
+		}
+
+		if ( product.months_per_bill_period === 1 ) {
+			const billingInterval = translate( 'Billed every month' );
+			return <>{ billingInterval }</>;
+		}
+
+		// TODO - add support for default billing interval
+		return <DefaultLineItemSublabel product={ product } />;
+	}
+
+	if ( isDIFMProduct( product ) ) {
+		const numberOfExtraPages =
+			product.quantity && product.price_tier_maximum_units
+				? product.quantity - product.price_tier_maximum_units
+				: 0;
+
+		if ( numberOfExtraPages > 0 ) {
+			const costOfExtraPages = formatCurrency(
+				product.item_original_cost_integer - product.item_original_cost_for_quantity_one_integer,
+				product.currency,
+				{
+					stripZeros: true,
+					isSmallestUnit: true,
+				}
+			);
+
+			return (
+				<>
+					{ translate( 'Service: %(productCost)s one-time fee', {
+						args: {
+							productCost: formatCurrency(
+								product.item_original_cost_for_quantity_one_integer,
+								product.currency,
+								{ isSmallestUnit: true, stripZeros: true }
+							),
+						},
+					} ) }
+					<br></br>
+					{ translate(
+						'%(numberOfExtraPages)d Extra Page: %(costOfExtraPages)s one-time fee',
+						'%(numberOfExtraPages)d Extra Pages: %(costOfExtraPages)s one-time fee',
+						{
+							args: {
+								numberOfExtraPages,
+								costOfExtraPages,
+							},
+							count: numberOfExtraPages,
+						}
+					) }
+				</>
+			);
+		}
+	}
+
+	const isDomainRegistration = product.is_domain_registration;
+	const isDomainMapping = productSlug === 'domain_map';
+	const isDomainTransfer = productSlug === 'domain_transfer';
+
+	if ( ( isDomainRegistration || isDomainMapping ) && product.months_per_bill_period === 12 ) {
+		const premiumLabel = product.extra?.premium ? translate( 'Premium' ) : '';
+
+		if ( hasCheckoutVersion2 ) {
+			return <>{ translate( 'Billed every year' ) }</>;
+		}
+
+		return (
+			<>
+				{ premiumLabel } <DefaultLineItemSublabel product={ product } />
+				{ ! product.is_included_for_100yearplan && <>: { translate( 'Billed every year' ) }</> }
+			</>
+		);
+	}
+
+	if ( isDomainTransfer ) {
+		const premiumLabel = product.extra?.premium ? translate( 'Premium' ) : '';
+
+		return (
+			<>
+				{ premiumLabel } <DefaultLineItemSublabel product={ product } />:{ ' ' }
+				{ translate( 'Billed every year' ) } { price }
+			</>
+		);
+	}
+
+	const shouldRenderBasicTermSublabel =
+		isPlan( product ) || isAddOn( product ) || isJetpackProductSlug( productSlug );
+	if ( shouldRenderBasicTermSublabel && isMonthlyProduct( product ) ) {
+		return <>{ translate( 'Billed every month' ) }</>;
+	}
+
+	if ( shouldRenderBasicTermSublabel && isYearly( product ) ) {
+		return <>{ translate( 'Billed every year' ) }</>;
+	}
+
+	if ( shouldRenderBasicTermSublabel && isBiennially( product ) ) {
+		return <>{ translate( 'Billed every two years' ) }</>;
+	}
+
+	if ( shouldRenderBasicTermSublabel && isTriennially( product ) ) {
+		return <>{ translate( 'Billed every three years' ) }</>;
+	}
+	// TODO - add support for default billing interval
+	return <DefaultLineItemSublabel product={ product } />;
+}
+
 function isCouponApplied( { coupon_savings_integer = 0 }: ResponseCartProduct ) {
 	return coupon_savings_integer > 0;
 }
