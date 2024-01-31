@@ -1,6 +1,5 @@
 //import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { HelpCenter } from '@automattic/data-stores';
-import { HelpIcon } from '@automattic/help-center';
 import {
 	useDispatch as useDataStoreDispatch,
 	useSelect as useDateStoreSelect,
@@ -9,7 +8,8 @@ import classnames from 'classnames';
 import { useRef } from 'react';
 //import { useSelector } from 'react-redux';
 //import { getSectionName } from 'calypso/state/ui/selectors';
-import SidebarMenuItem from './menu-item';
+import SidebarMenuItem from '../menu-item';
+import { HelpIcon } from './help-icon';
 
 const HELP_CENTER_STORE = HelpCenter.register();
 
