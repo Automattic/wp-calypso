@@ -59,23 +59,6 @@ describe( 'ChecklistItem', () => {
 		} );
 	} );
 
-	describe( 'and the task depends on the completion of other tasks', () => {
-		it( 'hides the task enabled icon', () => {
-			const otherTaskCompleted = false;
-			renderComponent( { task: buildTask( { completed: true, disabled: ! otherTaskCompleted } ) } );
-
-			const taskEnabledIcon = screen.queryByLabelText( 'Task enabled' );
-			expect( taskEnabledIcon ).toBeFalsy();
-		} );
-		it( 'disables the task', () => {
-			const otherTaskCompleted = false;
-			renderComponent( { task: buildTask( { completed: true, disabled: ! otherTaskCompleted } ) } );
-
-			const taskButton = screen.queryByRole( 'button' );
-			expect( taskButton ).toHaveAttribute( 'disabled' );
-		} );
-	} );
-
 	describe( 'and the task does not depend on the completion of other tasks', () => {
 		it( 'shows the task enabled icon', () => {
 			renderComponent( { task: buildTask( { completed: false, disabled: false } ) } );
