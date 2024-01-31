@@ -1,7 +1,7 @@
 import { render, screen } from '@testing-library/react';
 import React from 'react';
-import Checklist from '../checklist';
-import { buildTask } from './lib/fixtures';
+import Checklist from '../';
+import { buildTask } from '../../test/lib/fixtures';
 import '@testing-library/jest-dom';
 
 describe( 'Checklist', () => {
