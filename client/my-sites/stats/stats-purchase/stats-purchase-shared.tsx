@@ -16,6 +16,11 @@ interface StatsCommercialPriceDisplayProps {
 	currencyCode: string;
 }
 
+interface StatsSingleItemPagePurchaseFrameProps {
+	children: React.ReactNode;
+	isFree?: boolean;
+}
+
 const StatsCommercialPriceDisplay = ( {
 	planValue,
 	currencyCode,
@@ -158,11 +163,6 @@ const StatsBenefitsFree = () => {
 		</div>
 	);
 };
-
-interface StatsSingleItemPagePurchaseFrameProps {
-	children: React.ReactNode;
-	isFree?: boolean;
-}
 
 const StatsSingleItemPagePurchaseFrame = ( {
 	children,
