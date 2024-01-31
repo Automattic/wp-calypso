@@ -127,8 +127,7 @@ class Privacy extends Component {
 								checked={ ! this.props.dataSharingOptOut }
 								onChange={ this.updateDataSharingOptOut }
 								label={ translate(
-									'Some text here' +
-										'about opting out ' +
+									'Share my public content with third-party partners ' +
 										'{{cookiePolicyLink}}Learn more{{/cookiePolicyLink}}.',
 									{
 										components: {
