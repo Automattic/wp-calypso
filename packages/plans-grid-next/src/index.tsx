@@ -1,4 +1,3 @@
-import { useTranslate } from 'i18n-calypso';
 import ComparisonGrid from './components/comparison-grid';
 import FeaturesGrid from './components/features-grid';
 import PlanButton from './components/plan-button';
@@ -8,9 +7,7 @@ import PlansGridContextProvider from './grid-context';
 import useGridPlans from './hooks/data-store/use-grid-plans';
 import usePlanFeaturesForGridPlans from './hooks/data-store/use-plan-features-for-grid-plans';
 import useRestructuredPlanFeaturesForComparisonGrid from './hooks/data-store/use-restructured-plan-features-for-comparison-grid';
-import useIsLargeCurrency from './hooks/use-is-large-currency';
 import { useManageTooltipToggle } from './hooks/use-manage-tooltip-toggle';
-import { usePlanPricingInfoFromGridPlans } from './hooks/use-plan-pricing-info-from-grid-plans';
 import useUpgradeClickHandler from './hooks/use-upgrade-click-handler';
 import type { ComparisonGridExternalProps, FeaturesGridExternalProps } from './types';
 import './style.scss';
@@ -79,15 +76,6 @@ const WrappedFeaturesGrid = ( props: FeaturesGridExternalProps ) => {
 		onUpgradeClick,
 		coupon,
 	} = props;
-	const translate = useTranslate();
-
-	const { prices, currencyCode } = usePlanPricingInfoFromGridPlans( {
-		gridPlans,
-	} );
-	const isLargeCurrency = useIsLargeCurrency( {
-		prices,
-		currencyCode: currencyCode || 'USD',
-	} );
 
 	const handleUpgradeClick = useUpgradeClickHandler( {
 		gridPlans,
@@ -104,12 +92,7 @@ const WrappedFeaturesGrid = ( props: FeaturesGridExternalProps ) => {
 			recordTracksEvent={ recordTracksEvent }
 			allFeaturesList={ allFeaturesList }
 		>
-			<FeaturesGrid
-				{ ...props }
-				isLargeCurrency={ isLargeCurrency }
-				translate={ translate }
-				onUpgradeClick={ handleUpgradeClick }
-			/>
+			<FeaturesGrid { ...props } onUpgradeClick={ handleUpgradeClick } />
 		</PlansGridContextProvider>
 	);
 };

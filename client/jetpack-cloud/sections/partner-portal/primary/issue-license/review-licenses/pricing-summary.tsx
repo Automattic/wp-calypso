@@ -2,6 +2,7 @@ import { Button } from '@automattic/components';
 import formatCurrency from '@automattic/format-currency';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback } from 'react';
+import TextPlaceholder from 'calypso/jetpack-cloud/sections/partner-portal/text-placeholder';
 import { useDispatch, useSelector } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getProductsList } from 'calypso/state/products-list/selectors';
@@ -49,13 +50,18 @@ export default function PricingSummary( {
 	const learnMoreLink =
 		'https://jetpack.com/support/jetpack-manage-instructions/jetpack-manage-billing-payment-faqs';
 
-	const currency = selectedLicenses[ 0 ].currency; // FIXME: Fix if multiple currencies are supported
-
 	const onClickLearnMore = useCallback( () => {
 		dispatch(
 			recordTracksEvent( 'calypso_jetpack_agency_issue_license_review_licenses_learn_more_click' )
 		);
 	}, [ dispatch ] );
+
+	// Make sure we have a/any selected licenses available to prevent fatal errors in the console.
+	if ( selectedLicenses.length === 0 ) {
+		return <TextPlaceholder />;
+	}
+
+	const currency = selectedLicenses[ 0 ].currency; // FIXME: Fix if multiple currencies are supported
 
 	return (
 		<>

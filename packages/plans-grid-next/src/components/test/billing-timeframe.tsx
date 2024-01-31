@@ -35,9 +35,9 @@ import { formatCurrency } from '@automattic/format-currency';
 import { render } from '@testing-library/react';
 import React from 'react';
 import { usePlansGridContext } from '../../grid-context';
-import PlanFeatures2023GridBillingTimeframe from '../billing-timeframe';
+import BillingTimeframe from '../shared/billing-timeframe';
 
-describe( 'PlanFeatures2023GridBillingTimeframe', () => {
+describe( 'BillingTimeframe', () => {
 	const defaultProps = {
 		billingTimeframe: 'per month, billed annually',
 	};
@@ -74,10 +74,7 @@ describe( 'PlanFeatures2023GridBillingTimeframe', () => {
 		} ) );
 
 		const { container } = render(
-			<PlanFeatures2023GridBillingTimeframe
-				{ ...defaultProps }
-				planSlug={ PLAN_BUSINESS_MONTHLY }
-			/>
+			<BillingTimeframe { ...defaultProps } planSlug={ PLAN_BUSINESS_MONTHLY } />
 		);
 		const savings =
 			( 100 *
@@ -105,7 +102,7 @@ describe( 'PlanFeatures2023GridBillingTimeframe', () => {
 		} ) );
 
 		const { container } = render(
-			<PlanFeatures2023GridBillingTimeframe { ...defaultProps } planSlug={ PLAN_BUSINESS } />
+			<BillingTimeframe { ...defaultProps } planSlug={ PLAN_BUSINESS } />
 		);
 
 		const discountedPrice = formatCurrency( pricing.discountedPrice.full, 'USD', {
@@ -133,10 +130,7 @@ describe( 'PlanFeatures2023GridBillingTimeframe', () => {
 		} ) );
 
 		const { container } = render(
-			<PlanFeatures2023GridBillingTimeframe
-				{ ...defaultProps }
-				planSlug={ PLAN_BUSINESS_2_YEARS }
-			/>
+			<BillingTimeframe { ...defaultProps } planSlug={ PLAN_BUSINESS_2_YEARS } />
 		);
 		const discountedPrice = formatCurrency( pricing.discountedPrice.full, 'USD', {
 			stripZeros: true,
@@ -165,10 +159,7 @@ describe( 'PlanFeatures2023GridBillingTimeframe', () => {
 		} ) );
 
 		const { container } = render(
-			<PlanFeatures2023GridBillingTimeframe
-				{ ...defaultProps }
-				planSlug={ PLAN_BUSINESS_3_YEARS }
-			/>
+			<BillingTimeframe { ...defaultProps } planSlug={ PLAN_BUSINESS_3_YEARS } />
 		);
 		const discountedPrice = formatCurrency( pricing.discountedPrice.full, 'USD', {
 			stripZeros: true,
@@ -197,7 +188,7 @@ describe( 'PlanFeatures2023GridBillingTimeframe', () => {
 		} ) );
 
 		const { container } = render(
-			<PlanFeatures2023GridBillingTimeframe { ...defaultProps } planSlug={ PLAN_BUSINESS } />
+			<BillingTimeframe { ...defaultProps } planSlug={ PLAN_BUSINESS } />
 		);
 
 		const originalPrice = formatCurrency( pricing.originalPrice.full, 'USD', {
@@ -227,10 +218,7 @@ describe( 'PlanFeatures2023GridBillingTimeframe', () => {
 		} ) );
 
 		const { container } = render(
-			<PlanFeatures2023GridBillingTimeframe
-				{ ...defaultProps }
-				planSlug={ PLAN_BUSINESS_2_YEARS }
-			/>
+			<BillingTimeframe { ...defaultProps } planSlug={ PLAN_BUSINESS_2_YEARS } />
 		);
 		const originalPrice = formatCurrency( pricing.originalPrice.full, 'USD', {
 			stripZeros: true,
@@ -259,10 +247,7 @@ describe( 'PlanFeatures2023GridBillingTimeframe', () => {
 		} ) );
 
 		const { container } = render(
-			<PlanFeatures2023GridBillingTimeframe
-				{ ...defaultProps }
-				planSlug={ PLAN_BUSINESS_3_YEARS }
-			/>
+			<BillingTimeframe { ...defaultProps } planSlug={ PLAN_BUSINESS_3_YEARS } />
 		);
 		const originalPrice = formatCurrency( pricing.originalPrice.full, 'USD', {
 			stripZeros: true,
@@ -291,11 +276,7 @@ describe( 'PlanFeatures2023GridBillingTimeframe', () => {
 		} ) );
 
 		const { getByText } = render(
-			<PlanFeatures2023GridBillingTimeframe
-				{ ...defaultProps }
-				planSlug={ PLAN_BUSINESS }
-				showRefundPeriod
-			/>
+			<BillingTimeframe { ...defaultProps } planSlug={ PLAN_BUSINESS } showRefundPeriod />
 		);
 
 		expect( getByText( /Refundable within 14 days. No questions asked./ ) ).toBeInTheDocument();
@@ -319,11 +300,7 @@ describe( 'PlanFeatures2023GridBillingTimeframe', () => {
 		} ) );
 
 		const { getByText } = render(
-			<PlanFeatures2023GridBillingTimeframe
-				{ ...defaultProps }
-				planSlug={ PLAN_BUSINESS_MONTHLY }
-				showRefundPeriod
-			/>
+			<BillingTimeframe { ...defaultProps } planSlug={ PLAN_BUSINESS_MONTHLY } showRefundPeriod />
 		);
 
 		expect( getByText( /Refundable within 7 days. No questions asked./ ) ).toBeInTheDocument();
@@ -347,7 +324,7 @@ describe( 'PlanFeatures2023GridBillingTimeframe', () => {
 		} ) );
 
 		const { queryByText } = render(
-			<PlanFeatures2023GridBillingTimeframe
+			<BillingTimeframe
 				{ ...defaultProps }
 				planSlug={ PLAN_FREE }
 				showRefundPeriod // refund period won't be shown even though we set the prop to true

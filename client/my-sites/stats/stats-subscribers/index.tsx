@@ -23,7 +23,6 @@ import Followers from '../stats-followers';
 import StatsModulePlaceholder from '../stats-module/placeholder';
 import StatsModuleEmails from '../stats-module-emails';
 import PageViewTracker from '../stats-page-view-tracker';
-import Reach from '../stats-reach';
 import SubscribersChartSection, { PeriodType } from '../stats-subscribers-chart-section';
 import SubscribersHighlightSection from '../stats-subscribers-highlight-section';
 import SubscribersOverview from '../stats-subscribers-overview';
@@ -79,6 +78,12 @@ const StatsSubscribersPage = ( { period }: StatsSubscribersPageProps ) => {
 	// Necessary to properly configure the fixed navigation headers.
 	// sessionStorage.setItem( 'jp-stats-last-tab', 'subscribers' );
 
+	// Check if the site has any paid subscription products added.
+	const products = useSelector( ( state ) => state.memberships?.productList?.items[ siteId ?? 0 ] );
+	// Odyssey Stats doesn't support the membership API endpoint yet.
+	// Products with an `undefined` value rather than an empty array means the API call has not been completed yet.
+	const hasAddedPaidSubscriptionProduct = ! isOdysseyStats && products && products.length > 0;
+
 	return (
 		<Main fullWidthLayout>
 			<DocumentHead title={ translate( 'Jetpack Stats' ) } />
@@ -106,12 +111,11 @@ const StatsSubscribersPage = ( { period }: StatsSubscribersPageProps ) => {
 										slug={ siteSlug }
 										period={ period.period }
 									/>
-									<SubscribersOverview siteId={ siteId } />
+									{ hasAddedPaidSubscriptionProduct && <SubscribersOverview siteId={ siteId } /> }
 								</>
 							) }
 							<div className={ statsModuleListClass }>
 								<Followers path="followers" />
-								<Reach />
 								{ ! isOdysseyStats && period && (
 									<StatsModuleEmails period={ period } query={ { period, date: today } } />
 								) }

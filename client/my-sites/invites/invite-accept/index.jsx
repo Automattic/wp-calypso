@@ -39,6 +39,10 @@ class InviteAccept extends Component {
 	componentDidMount() {
 		this.mounted = true;
 
+		recordTracksEvent( 'calypso_invite_accept_load_page', {
+			logged_in: !! this.props.user,
+		} );
+
 		// The site ID and invite key are required, so only fetch if set
 		if ( this.props.siteId && this.props.inviteKey ) {
 			this.fetchInvite();

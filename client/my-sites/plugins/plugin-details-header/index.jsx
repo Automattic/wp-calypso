@@ -94,7 +94,7 @@ const PluginDetailsHeader = ( {
 						<div className="plugin-details-header__info-title">{ translate( 'Ratings' ) }</div>
 						<div className="plugin-details-header__info-value">
 							<PluginRatings rating={ rating } />
-							{ numberOfReviews > 0 && (
+							{ ( numberOfReviews > 0 || isMarketplaceProduct ) && (
 								<Button
 									borderless
 									className="plugin-details-header__number-reviews-link is-link"

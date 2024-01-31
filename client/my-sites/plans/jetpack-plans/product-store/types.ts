@@ -1,4 +1,5 @@
 import React from 'react';
+import { APIProductFamilyProduct } from 'calypso/state/partner-portal/types';
 import {
 	QueryArgs,
 	SelectorProduct,
@@ -65,6 +66,10 @@ export type AllItemsProps = MostPopularProps;
 
 export type HeroImageProps = {
 	item: SelectorProduct;
+};
+
+export type HeroImageAPIFamilyProps = {
+	item: APIProductFamilyProduct;
 };
 
 export type FeaturesListProps = HeroImageProps;

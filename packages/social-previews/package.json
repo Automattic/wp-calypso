@@ -35,7 +35,7 @@
 	"scripts": {
 		"clean": "tsc --build ./tsconfig.json ./tsconfig-cjs.json --clean && rm -rf dist",
 		"build": "tsc --build ./tsconfig.json ./tsconfig-cjs.json && copy-assets",
-		"prepare": "yarn run clean && yarn run build",
+		"prepare": "yarn run build",
 		"prepack": "yarn run clean && yarn run build",
 		"watch": "tsc --build ./tsconfig.json --watch"
 	},
@@ -60,7 +60,7 @@
 		"webpack": "^5.89.0"
 	},
 	"peerDependencies": {
-		"@babel/runtime": "^7.23.7",
+		"@babel/runtime": "^7.23.8",
 		"react": "^18.2.0",
 		"react-dom": "^18.2.0"
 	},

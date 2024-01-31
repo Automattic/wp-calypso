@@ -4,7 +4,7 @@ import {
 	PLAN_PREMIUM,
 	PLAN_BUSINESS,
 	PLAN_ECOMMERCE,
-	WPCOM_FEATURES_PREMIUM_THEMES,
+	WPCOM_FEATURES_PREMIUM_THEMES_UNLIMITED,
 	WPCOM_FEATURES_ATOMIC,
 } from '@automattic/calypso-products';
 import { getQueryArgs } from '@wordpress/url';
@@ -2531,7 +2531,7 @@ describe( 'themes selectors', () => {
 		} );
 
 		test( 'given a premium squared theme and a site with the premium upgrade, should return true', () => {
-			const active = [ WPCOM_FEATURES_PREMIUM_THEMES ];
+			const active = [ WPCOM_FEATURES_PREMIUM_THEMES_UNLIMITED ];
 			const isAvailable = isPremiumThemeAvailable(
 				{
 					sites: {
@@ -2575,7 +2575,7 @@ describe( 'themes selectors', () => {
 		} );
 
 		test( 'given a site with the unlimited premium themes bundle, should return true', () => {
-			const active = [ WPCOM_FEATURES_PREMIUM_THEMES ];
+			const active = [ WPCOM_FEATURES_PREMIUM_THEMES_UNLIMITED ];
 			[ PLAN_BUSINESS, PLAN_ECOMMERCE ].forEach( ( plan ) => {
 				const isAvailable = isPremiumThemeAvailable(
 					{
@@ -2621,7 +2621,7 @@ describe( 'themes selectors', () => {
 		} );
 
 		test( "Should return false when the customer has a premium plan but didn't purchase a externally managed theme", () => {
-			const active = [ WPCOM_FEATURES_PREMIUM_THEMES ];
+			const active = [ WPCOM_FEATURES_PREMIUM_THEMES_UNLIMITED ];
 			const isAvailable = isPremiumThemeAvailable(
 				{
 					sites: {

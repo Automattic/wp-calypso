@@ -1,12 +1,11 @@
 import { getTracksAnonymousUserId } from '@automattic/calypso-analytics';
 import config from '@automattic/calypso-config';
 import {
-	FEATURE_PREMIUM_THEMES_V2,
 	FEATURE_UPLOAD_THEMES_PLUGINS,
 	FEATURE_UPLOAD_THEMES,
 	PLAN_BUSINESS,
 	PLAN_PREMIUM,
-	WPCOM_FEATURES_PREMIUM_THEMES,
+	WPCOM_FEATURES_PREMIUM_THEMES_UNLIMITED,
 	WPCOM_FEATURES_INSTALL_PLUGINS,
 	getPlan,
 	PLAN_PERSONAL,
@@ -1378,7 +1377,9 @@ class ThemeSheet extends Component {
 
 			// @TODO we should add a new feature for personal plan themes or what we agree on.
 			const feature =
-				PLAN_PREMIUM === plan ? FEATURE_PREMIUM_THEMES_V2 : FEATURE_UPLOAD_THEMES_PLUGINS;
+				PLAN_PREMIUM === plan
+					? WPCOM_FEATURES_PREMIUM_THEMES_UNLIMITED
+					: FEATURE_UPLOAD_THEMES_PLUGINS;
 
 			plansUrl = `/plans/${ siteSlug }/?plan=${ plan }&feature=${ feature }&redirect_to=${ redirectTo }`;
 		} else {
@@ -1471,7 +1472,7 @@ class ThemeSheet extends Component {
 					title={ this.getBannerUpsellTitle() }
 					description={ preventWidows( this.getBannerUpsellDescription() ) }
 					event="themes_plan_particular_free_with_plan"
-					feature={ WPCOM_FEATURES_PREMIUM_THEMES }
+					feature={ WPCOM_FEATURES_PREMIUM_THEMES_UNLIMITED }
 					forceHref={ onClick === null }
 					disableHref={ onClick !== null }
 					onClick={ null === onClick ? noop : onClick }
@@ -1759,7 +1760,11 @@ export default connect(
 			isSiteWooExpressFreeTrial: isSiteOnECommerceTrial( state, siteId ),
 			isSiteBundleEligible: isSiteEligibleForBundledSoftware( state, siteId ),
 			forumUrl: getThemeForumUrl( state, themeId, siteId ),
-			hasUnlimitedPremiumThemes: siteHasFeature( state, siteId, WPCOM_FEATURES_PREMIUM_THEMES ),
+			hasUnlimitedPremiumThemes: siteHasFeature(
+				state,
+				siteId,
+				WPCOM_FEATURES_PREMIUM_THEMES_UNLIMITED
+			),
 			showTryAndCustomize: shouldShowTryAndCustomize( state, themeId, siteId ),
 			canInstallPlugins: siteHasFeature( state, siteId, WPCOM_FEATURES_INSTALL_PLUGINS ),
 			canUserUploadThemes: siteHasFeature( state, siteId, FEATURE_UPLOAD_THEMES ),

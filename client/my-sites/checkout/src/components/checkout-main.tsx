@@ -1,4 +1,5 @@
 import { JETPACK_SEARCH_PRODUCTS } from '@automattic/calypso-products';
+import { useRazorpay } from '@automattic/calypso-razorpay';
 import { useStripe } from '@automattic/calypso-stripe';
 import colorStudio from '@automattic/color-studio';
 import { CheckoutProvider, checkoutTheme } from '@automattic/composite-checkout';
@@ -51,6 +52,7 @@ import genericRedirectProcessor from '../lib/generic-redirect-processor';
 import getContactDetailsType from '../lib/get-contact-details-type';
 import multiPartnerCardProcessor from '../lib/multi-partner-card-processor';
 import payPalProcessor from '../lib/paypal-express-processor';
+import razorpayProcessor from '../lib/razorpay-processor';
 import { translateResponseCartToWPCOMCart } from '../lib/translate-cart';
 import weChatProcessor from '../lib/we-chat-processor';
 import webPayProcessor from '../lib/web-pay-processor';
@@ -154,6 +156,7 @@ export default function CheckoutMain( {
 	const isPrivate = useSelector( ( state ) => siteId && isPrivateSite( state, siteId ) ) || false;
 	const isSiteless = sitelessCheckoutType === 'jetpack' || sitelessCheckoutType === 'akismet';
 	const { stripe, stripeConfiguration, isStripeLoading, stripeLoadingError } = useStripe();
+	const { razorpayConfiguration, isRazorpayLoading, razorpayLoadingError } = useRazorpay();
 	const createUserAndSiteBeforeTransaction =
 		Boolean( isLoggedOutCart || isNoSiteCart ) && ! isSiteless;
 	const reduxDispatch = useDispatch();
@@ -368,6 +371,9 @@ export default function CheckoutMain( {
 		stripeLoadingError,
 		stripeConfiguration,
 		stripe,
+		isRazorpayLoading,
+		razorpayLoadingError,
+		razorpayConfiguration,
 		storedCards,
 	} );
 	debug( 'created payment method objects', paymentMethodObjects );
@@ -456,6 +462,7 @@ export default function CheckoutMain( {
 			siteSlug: updatedSiteSlug,
 			stripeConfiguration,
 			stripe,
+			razorpayConfiguration,
 			recaptchaClientId,
 			fromSiteSlug,
 		} ),
@@ -470,6 +477,7 @@ export default function CheckoutMain( {
 			updatedSiteId,
 			stripe,
 			stripeConfiguration,
+			razorpayConfiguration,
 			updatedSiteSlug,
 			recaptchaClientId,
 			fromSiteSlug,
@@ -510,6 +518,8 @@ export default function CheckoutMain( {
 			'existing-card-ebanx': ( transactionData: unknown ) =>
 				existingCardProcessor( transactionData, dataForProcessor ),
 			paypal: () => payPalProcessor( dataForProcessor ),
+			razorpay: ( transactionData: unknown ) =>
+				razorpayProcessor( transactionData, dataForProcessor, translate ),
 		} ),
 		[ dataForProcessor, translate ]
 	);

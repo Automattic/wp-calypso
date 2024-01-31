@@ -34,6 +34,10 @@ export function useStepNavigator(
 		navigation.goToStep?.( 'import' );
 	}
 
+	function goToImportContentOnlyPage() {
+		navigator( getWordpressImportContentOnlyUrl() );
+	}
+
 	function goToSiteViewPage() {
 		navigation.submit?.( {
 			type: 'redirect',
@@ -140,6 +144,7 @@ export function useStepNavigator(
 		goToIntentPage,
 		goToGoalsPage,
 		goToImportCapturePage,
+		goToImportContentOnlyPage,
 		goToSiteViewPage,
 		goToDashboardPage,
 		goToCheckoutPage,
