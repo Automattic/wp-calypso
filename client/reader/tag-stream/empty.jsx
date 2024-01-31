@@ -54,7 +54,7 @@ class TagEmptyContent extends Component {
 			'{{wrapper}}No posts have recently been tagged with {{tagName /}} for your language.{{/wrapper}}',
 			{
 				components: {
-					wrapper: <div />,
+					wrapper: <div className="tag-stream__empty-content-message" />,
 					tagName: <em>{ this.props.decodedTagSlug }</em>,
 				},
 			}
