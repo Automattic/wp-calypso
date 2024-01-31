@@ -5,17 +5,37 @@ import { buildTask } from '../../test/lib/fixtures';
 import '@testing-library/jest-dom';
 
 describe( 'ChecklistItem', () => {
-	const defaultProps = { task: buildTask( {} ), onClick: jest.fn() };
+	const defaultProps = {
+		task: buildTask( { completed: false, disabled: false } ),
+		onClick: jest.fn(),
+	};
 
 	const renderComponent = ( props: Partial< Props > ) => {
 		render( <ChecklistItem { ...defaultProps } { ...props } /> );
 	};
+	it( 'displays a badge', () => {
+		const badge_text = 'Badge Text';
+		renderComponent( { task: buildTask( { badge_text } ) } );
+		expect( screen.getByText( badge_text ) ).toBeVisible();
+	} );
 
-	describe( 'when the task requires a badge', () => {
-		it( 'displays a badge', () => {
-			const badge_text = 'Badge Text';
-			renderComponent( { task: buildTask( { badge_text } ) } );
-			expect( screen.getByText( badge_text ) ).toBeVisible();
+	it( 'hides the task complete icon when the task is not completed', () => {
+		renderComponent( { task: buildTask( { completed: false } ) } );
+		const taskCompleteIcon = screen.queryByLabelText( 'Task complete' );
+		expect( taskCompleteIcon ).not.toBeInTheDocument();
+	} );
+
+	describe( 'when the task is disabled', () => {
+		it( 'disables the button', () => {
+			renderComponent( { task: buildTask( { disabled: true } ) } );
+			const taskButton = screen.queryByRole( 'button' );
+			expect( taskButton ).toBeDisabled();
+		} );
+
+		it( 'hides the task enabled icon', () => {
+			renderComponent( { task: buildTask( { disabled: true } ) } );
+			const taskEnabledIcon = screen.queryByLabelText( 'Task enabled' );
+			expect( taskEnabledIcon ).not.toBeInTheDocument();
 		} );
 	} );
 
@@ -23,52 +43,33 @@ describe( 'ChecklistItem', () => {
 		it( 'shows the task completed icon', () => {
 			renderComponent( { task: buildTask( { completed: true } ) } );
 			const taskCompleteIcon = screen.queryByLabelText( 'Task complete' );
-			expect( taskCompleteIcon ).toBeTruthy();
+			expect( taskCompleteIcon ).toBeVisible();
 		} );
+
 		it( 'hides the task enabled icon', () => {
 			renderComponent( { task: buildTask( { completed: true } ) } );
 			const taskEnabledIcon = screen.queryByLabelText( 'Task enabled' );
-			expect( taskEnabledIcon ).toBeFalsy();
+			expect( taskEnabledIcon ).not.toBeInTheDocument();
 		} );
 
 		it( 'disables the task', () => {
 			renderComponent( { task: buildTask( { completed: true } ) } );
 			const taskButton = screen.queryByRole( 'button' );
-			expect( taskButton ).toHaveAttribute( 'disabled' );
+			expect( taskButton ).toBeDisabled();
 		} );
 
 		describe( 'and the task is kept enabled', () => {
 			it( 'hides the task enabled icon', () => {
 				renderComponent( { task: buildTask( { completed: true, disabled: false } ) } );
 				const taskEnabledIcon = screen.queryByLabelText( 'Task enabled' );
-				expect( taskEnabledIcon ).toBeFalsy();
+				expect( taskEnabledIcon ).not.toBeInTheDocument();
 			} );
+
 			it( 'enables the task', () => {
 				renderComponent( { task: buildTask( { completed: true, disabled: false } ) } );
 				const taskButton = screen.queryByRole( 'button' );
-				expect( taskButton ).not.toHaveAttribute( 'disabled' );
+				expect( taskButton ).toBeEnabled();
 			} );
-		} );
-	} );
-
-	describe( 'when a task is incomplete', () => {
-		it( 'hides the task complete icon', () => {
-			renderComponent( { task: buildTask( { completed: false } ) } );
-			const taskCompleteIcon = screen.queryByLabelText( 'Task complete' );
-			expect( taskCompleteIcon ).toBeFalsy();
-		} );
-	} );
-
-	describe( 'and the task does not depend on the completion of other tasks', () => {
-		it( 'shows the task enabled icon', () => {
-			renderComponent( { task: buildTask( { completed: false, disabled: false } ) } );
-			const taskEnabledIcon = screen.queryByLabelText( 'Task enabled' );
-			expect( taskEnabledIcon ).toBeTruthy();
-		} );
-		it( 'enables the task', () => {
-			renderComponent( { task: buildTask( { completed: false, disabled: false } ) } );
-			const taskButton = screen.queryByRole( 'button' );
-			expect( taskButton ).not.toHaveAttribute( 'disabled' );
 		} );
 	} );
 
