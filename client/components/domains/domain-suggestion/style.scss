@@ -386,6 +386,14 @@ body.is-section-signup.is-white-signup {
 			color: var(--studio-green-60);
 		}
 
+		.domain-product-price__free-price {
+			font-weight: initial;
+
+			@include break-mobile {
+				font-weight: 500;
+			}
+		}
+
 		.domain-product-price__price {
 			font-size: $font-body-small;
 			font-weight: initial;
