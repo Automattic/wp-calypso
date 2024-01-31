@@ -49,7 +49,7 @@ function transformData( data: SubscribersData[] ): uPlot.AlignedData {
 }
 
 // Hide fractional values on the y-axis.
-const hideFractionNumber = ( self: uPlot, splits: number[] ) => {
+export const hideFractionNumber = ( self: uPlot, splits: number[] ) => {
 	splits = splits.map( ( split ) => Math.floor( split ) );
 	const newSplits = [ splits[ 0 ] ];
 	for ( let i = 1; i < splits.length; i++ ) {
