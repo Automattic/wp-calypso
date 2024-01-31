@@ -1,7 +1,8 @@
-import { Card } from '@automattic/components';
+import { Button } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
-import { useState } from 'react';
-import FormRadio from 'calypso/components/forms/form-radio';
+import { useRef, useState } from 'react';
+import PopoverMenu from 'calypso/components/popover-menu';
+import PopoverMenuItem from 'calypso/components/popover-menu/item';
 
 export default function CSVColumnConfirmation( {
 	csvColumns,
@@ -11,39 +12,38 @@ export default function CSVColumnConfirmation( {
 	setURLColumn: ( option: string ) => void;
 } ) {
 	const translate = useTranslate();
-	const [ selectedColumn, setSelectedColumn ] = useState( '' );
-	const columnCard = ( option: string ) => (
-		<Card
-			key={ option }
-			className="connect-url-csv-column-confirmation__column-card"
-			onClick={ () => {
-				setSelectedColumn( option );
-				setURLColumn( option );
-			} }
-		>
-			<FormRadio
-				className="connect-url-csv-column-confirmation__column-card-radio"
-				label={ option }
-				name="url-column"
-				value={ option }
-				checked={ option === selectedColumn }
-			/>
-		</Card>
-	);
+	const [ isColumnsMenuOpen, setIsColumnsMenuOpen ] = useState( false );
+	const buttonActionRef = useRef< HTMLButtonElement | null >( null );
 
-	const columnCards = csvColumns.map( columnCard );
+	const columnItems = csvColumns.map( ( column, index ) => {
+		return (
+			<PopoverMenuItem key={ index } onClick={ setURLColumn }>
+				{ column }
+			</PopoverMenuItem>
+		);
+	} );
+
+	const showColumns = () => {
+		setIsColumnsMenuOpen( true );
+	};
+
+	const closeDropdown = () => {
+		setIsColumnsMenuOpen( false );
+	};
 
 	return (
 		<div className="connect-url-csv-column-confirmation">
-			<h2 className="connect-url-csv-column-confirmation__page-title">
-				{ translate( 'Columns from your CSV file' ) }
-			</h2>
-			<div className="connect-url-csv-column-confirmation__page-subtitle">
-				{ translate(
-					'Choose which column from the CSV file represents the site URL for each site.'
-				) }
-			</div>
-			{ columnCards }
+			<Button ref={ buttonActionRef } onClick={ showColumns }>
+				{ translate( 'Choose column' ) }
+			</Button>
+			<PopoverMenu
+				context={ buttonActionRef.current }
+				isVisible={ isColumnsMenuOpen }
+				onClose={ closeDropdown }
+				position="bottom"
+			>
+				{ columnItems }
+			</PopoverMenu>
 		</div>
 	);
 }
