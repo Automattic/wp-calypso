@@ -36,7 +36,6 @@ import { ONBOARD_STORE } from '../../../../stores';
 import type { OnboardSelect } from '@automattic/data-stores';
 import type { PlansIntent } from '@automattic/plans-grid-next';
 import './style.scss';
-import consoleDispatcher from 'calypso/state/console-dispatch';
 
 interface Props {
 	shouldIncludeFAQ?: boolean;
