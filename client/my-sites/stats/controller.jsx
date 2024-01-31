@@ -14,7 +14,7 @@ import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import StatsSite from './site';
 import StatsEmailDetail from './stats-email-detail';
 import StatsEmailSummary from './stats-email-summary';
-import LoadStatsPage from './stats-redirect/async-load-stats-page';
+import LoadStatsPage from './stats-redirect/load-stats-page';
 
 const isOdysseyStats = config.isEnabled( 'is_running_in_jetpack_site' );
 const isPurchaseFlowEnabled = config.isEnabled( 'stats/checkout-flows-v2' );
