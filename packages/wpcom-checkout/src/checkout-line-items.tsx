@@ -1302,7 +1302,9 @@ function CheckoutLineItem( {
 				<JetpackSearchMeta product={ product } />
 			) }
 
-			{ isEmail && <EmailMeta product={ product } isRenewal={ isRenewal } /> }
+			{ ! hasCheckoutVersion2 && isEmail && (
+				<EmailMeta product={ product } isRenewal={ isRenewal } />
+			) }
 
 			{ ! hasCheckoutVersion2 && ! isEmail && <>{ children }</> }
 			{ hasDeleteButton && removeProductFromCart && (
