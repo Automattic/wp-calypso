@@ -7,7 +7,7 @@ import { ONBOARD_STORE } from 'calypso/landing/stepper/stores';
 import { recordTaskClickTracksEvent } from '../../tracking';
 import { type TaskAction } from '../../types';
 
-const getSetupLinkInBioTask: TaskAction = ( task, flow, context ) => {
+export const getSetupLinkInBioTask: TaskAction = ( task, flow, context ) => {
 	const { siteInfoQueryArgs } = context;
 
 	return {
@@ -20,7 +20,8 @@ const getSetupLinkInBioTask: TaskAction = ( task, flow, context ) => {
 		useCalypsoPath: true,
 	};
 };
-const getLinkInBioLaunchedTask: TaskAction = ( task, flow, context ) => {
+
+export const getLinkInBioLaunchedTask: TaskAction = ( task, flow, context ) => {
 	const { siteSlug, site, submit } = context;
 	return {
 		...task,
@@ -46,7 +47,7 @@ const getLinkInBioLaunchedTask: TaskAction = ( task, flow, context ) => {
 	};
 };
 
-const getLinksAddedTask: TaskAction = ( task, flow, context ) => {
+export const getLinksAddedTask: TaskAction = ( task, flow, context ) => {
 	return {
 		...task,
 		actionDispatch: () => recordTaskClickTracksEvent( task, flow, context ),

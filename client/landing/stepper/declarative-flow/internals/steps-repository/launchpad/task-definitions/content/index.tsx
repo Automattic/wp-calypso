@@ -11,7 +11,7 @@ const completeMigrateContentTask = async ( siteSlug: string | null ) => {
 	}
 };
 
-const getMigrateContentTask: TaskAction = ( task, flow, context ) => {
+export const getMigrateContentTask: TaskAction = ( task, flow, context ) => {
 	const { isEmailVerified, siteSlug } = context;
 	const mustVerifyEmailBeforePosting = isNewsletterFlow( flow ) && ! isEmailVerified;
 	return {

@@ -4,6 +4,7 @@ import {
 	isPiiUrl,
 	isUrlExcludedForPerformance,
 	mayWeTrackUserGpcInCcpaRegion,
+	mayWeSessionTrack,
 } from 'calypso/lib/analytics/utils';
 import { isE2ETest } from 'calypso/lib/e2e';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
@@ -33,6 +34,8 @@ const allAdTrackers = [
 	'parsely',
 	'clarity',
 ] as const;
+
+const sessionAdTrackers = [ 'hotjar' ];
 
 type AdTracker = ( typeof allAdTrackers )[ number ];
 
@@ -132,5 +135,12 @@ export const mayWeInitTracker = ( tracker: AdTracker ) => {
 	return null !== bucket && mayWeTrackByBucket( bucket );
 };
 
-export const mayWeTrackByTracker = ( tracker: AdTracker ) =>
-	mayWeInitTracker( tracker ) && isTrackerIntialized( tracker );
+export const mayWeTrackByTracker = ( tracker: AdTracker ) => {
+	const mayTrackerInit = mayWeInitTracker( tracker ) && isTrackerIntialized( tracker );
+
+	if ( sessionAdTrackers.includes( tracker ) ) {
+		return mayWeSessionTrack() && mayTrackerInit;
+	}
+
+	return mayTrackerInit;
+};
