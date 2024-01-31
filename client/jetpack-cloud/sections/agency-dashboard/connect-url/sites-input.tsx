@@ -3,6 +3,7 @@ import { useTranslate } from 'i18n-calypso';
 import { Dispatch, SetStateAction } from 'react';
 import FilePicker from 'calypso/components/file-picker';
 import FormTextarea from 'calypso/components/forms/form-textarea';
+import CSVColumnConfirmation from './csv-column-confirmation';
 
 export default function SitesInput( {
 	detectedSites,
@@ -83,6 +84,10 @@ export default function SitesInput( {
 				<FilePicker accept=".csv,.txt" onPick={ onFilePick }>
 					{ '' === detectedFilename ? filePicker : uploadResults }
 				</FilePicker>
+				<CSVColumnConfirmation
+					csvColumns={ [ 'id', 'domain', 'site title' ] }
+					setURLColumn={ onCSVLoadConfirmation }
+				/>
 			</div>
 
 			<Button primary disabled={ 0 === detectedSites.length } onClick={ onCSVLoadConfirmation }>
