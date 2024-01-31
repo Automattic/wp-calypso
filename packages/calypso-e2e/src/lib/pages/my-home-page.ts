@@ -5,8 +5,7 @@ const selectors = {
 	visitSiteButton: '.button >> text=Visit site',
 
 	// Task card (topmost card)
-	taskHeadingMessage: ( message: string ) =>
-		`.primary__customer-home-location-content :text("${ message }")`,
+	taskHeadingMessage: ( message: string ) => `h3:text("${ message }")`,
 
 	domainUpsellCard: `.domain-upsell__card`,
 	domainUpsellSuggestedDomain: `.domain-upsell__card .domain-upsell-illustration`,
