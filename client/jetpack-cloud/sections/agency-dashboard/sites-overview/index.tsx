@@ -35,6 +35,7 @@ import DashboardBanners from './dashboard-banners';
 import DashboardDataContext from './dashboard-data-context';
 import useQueryProvisioningBlogIds from './hooks/use-query-provisioning-blog-ids';
 import { DASHBOARD_PRODUCT_SLUGS_BY_TYPE } from './lib/constants';
+import ReviewSelectedSiteLicenses from './review-selected-site-licenses';
 import SiteAddLicenseNotification from './site-add-license-notification';
 import SiteContent from './site-content';
 import useDashboardShowLargeScreen from './site-content/hooks/use-dashboard-show-large-screen';
@@ -73,6 +74,7 @@ export default function SitesOverview() {
 	const highlightFavoriteTab = getQueryArg( window.location.href, 'highlight' ) === 'favorite-tab';
 
 	const [ highlightTab, setHighlightTab ] = useState( false );
+	const [ showReviewLicenses, setShowReviewLicenses ] = useState( false );
 
 	const {
 		search,
@@ -235,7 +237,7 @@ export default function SitesOverview() {
 
 	const handleIssueLicenses = () => {
 		if ( isStreamlinedPurchasesEnabled ) {
-			// TODO: Show a modal with the selected licenses and a button to issue them.
+			setShowReviewLicenses( true );
 			return;
 		}
 		dispatch(
@@ -411,6 +413,13 @@ export default function SitesOverview() {
 				<div className="sites-overview__issue-licenses-button-small-screen">
 					{ renderIssueLicenseButton() }
 				</div>
+			) }
+			{ showReviewLicenses && (
+				<ReviewSelectedSiteLicenses
+					onClose={ () => setShowReviewLicenses( false ) }
+					selectedLicenses={ selectedSiteLicenses }
+					sites={ data?.sites ?? [] }
+				/>
 			) }
 		</div>
 	);
