@@ -1,3 +1,4 @@
+import { useRazorpay } from '@automattic/calypso-razorpay';
 import { useStripe } from '@automattic/calypso-stripe';
 import { Dialog } from '@automattic/components';
 import {
@@ -127,6 +128,7 @@ function PurchaseModalWrapper( props: PurchaseModalProps ) {
 	};
 
 	const { stripe, stripeConfiguration } = useStripe();
+	const { razorpayConfiguration } = useRazorpay();
 	const reduxDispatch = useDispatch();
 	const cartKey = useCartKey();
 	const { responseCart, updateLocation, replaceProductsInCart, isPendingUpdate } =
@@ -154,6 +156,7 @@ function PurchaseModalWrapper( props: PurchaseModalProps ) {
 			siteId: selectedSite?.ID,
 			stripe,
 			stripeConfiguration,
+			razorpayConfiguration,
 			contactDetails: {
 				countryCode: wrapValueInManagedValue( storedCard?.tax_location?.country_code ),
 				postalCode: wrapValueInManagedValue( storedCard?.tax_location?.postal_code ),
@@ -165,6 +168,7 @@ function PurchaseModalWrapper( props: PurchaseModalProps ) {
 			includeGSuiteDetails,
 			stripe,
 			stripeConfiguration,
+			razorpayConfiguration,
 			reduxDispatch,
 			selectedSite,
 			responseCart,
