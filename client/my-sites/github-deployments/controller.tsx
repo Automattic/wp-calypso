@@ -9,7 +9,7 @@ import type { Callback } from '@automattic/calypso-router';
 export const githubDeployments: Callback = ( context, next ) => {
 	context.primary = (
 		<>
-			<PageViewTracker path="/github-deployments/:site" title="Github Deployments" delay={ 500 } />
+			<PageViewTracker path="/github-deployments/:site" title="GitHub Deployments" delay={ 500 } />
 			<GitHubDeployments />
 		</>
 	);

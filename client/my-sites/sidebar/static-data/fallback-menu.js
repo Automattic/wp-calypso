@@ -523,7 +523,7 @@ export default function buildFallbackResponse( {
 							{
 								parent: 'tools.php',
 								slug: 'tools-github-deployments',
-								title: translate( 'Github Deployments' ),
+								title: translate( 'GitHub Deployments' ),
 								type: 'submenu-item',
 								url: `/github-deployments/${ siteDomain }`,
 							},
