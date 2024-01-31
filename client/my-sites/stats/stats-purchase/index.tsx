@@ -13,7 +13,6 @@ import DocumentHead from 'calypso/components/data/document-head';
 import QueryProductsList from 'calypso/components/data/query-products-list';
 import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
 import JetpackColophon from 'calypso/components/jetpack-colophon';
-import { LoadingEllipsis } from 'calypso/components/loading-ellipsis';
 import Main from 'calypso/components/main';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { useSelector } from 'calypso/state';
@@ -24,6 +23,7 @@ import isJetpackSite from 'calypso/state/sites/selectors/is-jetpack-site';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import useStatsPurchases from '../hooks/use-stats-purchases';
 import PageViewTracker from '../stats-page-view-tracker';
+import StatsLoader from '../stats-redirect/stats-loader';
 import { StatsPurchaseNoticePage, StatsPurchaseNotice } from './stats-purchase-notice';
 import {
 	StatsSingleItemPagePurchase,
@@ -182,7 +182,7 @@ const StatsPurchasePage = ( {
 				<QueryProductsList type="jetpack" />
 				{ isLoading && (
 					<div className="stats-purchase-page__loader">
-						<LoadingEllipsis />
+						<StatsLoader />
 					</div>
 				) }
 				{

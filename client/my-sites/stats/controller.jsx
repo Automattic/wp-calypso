@@ -14,7 +14,7 @@ import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import StatsSite from './site';
 import StatsEmailDetail from './stats-email-detail';
 import StatsEmailSummary from './stats-email-summary';
-import LoadStatsPage from './stats-reditect-flow/async-load-stats-page';
+import LoadStatsPage from './stats-redirect/async-load-stats-page';
 
 const isOdysseyStats = config.isEnabled( 'is_running_in_jetpack_site' );
 
@@ -250,7 +250,7 @@ export function redirectToDefaultModulePage( context ) {
 
 export function insights( context, next ) {
 	context.primary = (
-		<LoadStatsPage placeholder={ PageLoading }>
+		<LoadStatsPage>
 			<AsyncLoad require="calypso/my-sites/stats/stats-insights" placeholder={ PageLoading } />
 		</LoadStatsPage>
 	);
@@ -271,7 +271,7 @@ export function subscribers( context, next ) {
 	const date = moment().locale( 'en' );
 
 	context.primary = (
-		<LoadStatsPage placeholder={ PageLoading }>
+		<LoadStatsPage>
 			<AsyncLoad
 				require="calypso/my-sites/stats/stats-subscribers"
 				placeholder={ PageLoading }
@@ -316,7 +316,7 @@ export function overview( context, next ) {
 	bumpStat( 'calypso_stats_overview_period', activeFilter.period );
 
 	context.primary = (
-		<LoadStatsPage placeholder={ PageLoading }>
+		<LoadStatsPage>
 			<AsyncLoad
 				require="calypso/my-sites/stats/overview"
 				placeholder={ PageLoading }
@@ -370,7 +370,7 @@ export function site( context, next ) {
 	const chartTab = validTabs.includes( queryOptions.tab ) ? queryOptions.tab : 'views';
 
 	context.primary = (
-		<LoadStatsPage placeholder={ PageLoading }>
+		<LoadStatsPage>
 			<StatsSite
 				path={ context.pathname }
 				date={ date }
@@ -452,7 +452,7 @@ export function summary( context, next ) {
 	}
 
 	context.primary = (
-		<LoadStatsPage placeholder={ PageLoading }>
+		<LoadStatsPage>
 			<AsyncLoad
 				require="calypso/my-sites/stats/summary"
 				placeholder={ PageLoading }
@@ -481,7 +481,7 @@ export function post( context, next ) {
 	}
 
 	context.primary = (
-		<LoadStatsPage placeholder={ PageLoading }>
+		<LoadStatsPage>
 			<AsyncLoad
 				require="calypso/my-sites/stats/stats-post-detail"
 				placeholder={ PageLoading }
@@ -519,7 +519,7 @@ export function follows( context, next ) {
 	}
 
 	context.primary = (
-		<LoadStatsPage placeholder={ PageLoading }>
+		<LoadStatsPage>
 			<AsyncLoad
 				require="calypso/my-sites/stats/comment-follows"
 				placeholder={ PageLoading }
@@ -566,7 +566,7 @@ export function wordAds( context, next ) {
 	bumpStat( 'calypso_wordads_stats_site_period', activeFilter.period + numPeriodAgo );
 
 	context.primary = (
-		<LoadStatsPage placeholder={ PageLoading }>
+		<LoadStatsPage>
 			<AsyncLoad
 				require="calypso/my-sites/stats/wordads"
 				placeholder={ PageLoading }
@@ -615,7 +615,7 @@ export function emailStats( context, next ) {
 	const chartTab = validTabs.includes( queryOptions.tab ) ? queryOptions.tab : validTabs[ 0 ];
 
 	context.primary = (
-		<LoadStatsPage placeholder={ PageLoading }>
+		<LoadStatsPage>
 			<StatsEmailDetail
 				path={ context.path }
 				postId={ postId }
@@ -655,7 +655,7 @@ export function emailSummary( context, next ) {
 	const date = moment().locale( 'en' );
 
 	context.primary = (
-		<LoadStatsPage placeholder={ PageLoading }>
+		<LoadStatsPage>
 			<StatsEmailSummary period={ rangeOfPeriod( activeFilter.period, date ) } />
 		</LoadStatsPage>
 	);
