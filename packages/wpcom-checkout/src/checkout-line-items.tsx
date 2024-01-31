@@ -85,12 +85,11 @@ export const LineItem = styled( CheckoutLineItem )< {
 } >`
 	${ hasCheckoutVersion2
 		? `display: grid;
-	grid-template-columns: 3fr 1fr;
+	grid-template-columns: minmax(0, 3fr) 1fr;
 	grid-template-rows: auto;
 	grid-template-areas:
 		'label price'
-		'meta .     '
-		'term remove';
+		'meta remove';
 	gap: 2px;
 	margin-bottom: 8px;
 	padding: 10px 0;`
@@ -129,6 +128,8 @@ const GiftBadge = styled.span`
 
 const LineItemMetaWrapper = styled.div< { theme?: Theme } >`
 	grid-area: meta;
+	display: flex;
+	flex-direction: column;
 `;
 
 const LineItemMeta = styled.div< { theme?: Theme } >`
@@ -143,7 +144,7 @@ const LineItemMeta = styled.div< { theme?: Theme } >`
 	overflow-wrap: anywhere;
 	gap: 2px 10px;
 
-	${ hasCheckoutVersion2 ? `grid-area: term` : null }
+	${ hasCheckoutVersion2 ? `grid-area: meta` : null }
 `;
 
 const UpgradeCreditInformationLineItem = styled( LineItemMeta )< { theme?: Theme } >`
@@ -209,7 +210,7 @@ const LineItemPriceWrapper = styled.span< { theme?: Theme; isSummary?: boolean }
 `;
 
 const DropdownWrapper = styled.span`
-	${ hasCheckoutVersion2 ? `grid-area: term; margin-top: 6px;` : null }
+	${ hasCheckoutVersion2 ? `grid-area: meta; margin-top: 6px;` : null }
 `;
 
 const DeleteButtonWrapper = styled.div`
@@ -691,14 +692,6 @@ export function LineItemSublabelAndPrice( { product }: { product: ResponseCartPr
 		stripZeros: true,
 	} );
 
-	if ( hasCheckoutVersion2 ) {
-		return (
-			<>
-				<DefaultLineItemSublabel product={ product } />
-			</>
-		);
-	}
-
 	if ( isP2Plus( product ) ) {
 		// This is the price for one item for products with a quantity (eg. seats in a license).
 		const itemPrice = formatCurrency(
@@ -820,7 +813,9 @@ export function LineItemSublabelAndPrice( { product }: { product: ResponseCartPr
 		return (
 			<>
 				{ premiumLabel } <DefaultLineItemSublabel product={ product } />
-				{ ! product.is_included_for_100yearplan && <>: { translate( 'billed annually' ) }</> }
+				{ ! hasCheckoutVersion2 && ! product.is_included_for_100yearplan && (
+					<>: { translate( 'billed annually' ) }</>
+				) }
 			</>
 		);
 	}
@@ -837,7 +832,8 @@ export function LineItemSublabelAndPrice( { product }: { product: ResponseCartPr
 	}
 
 	const shouldRenderBasicTermSublabel =
-		isPlan( product ) || isAddOn( product ) || isJetpackProductSlug( productSlug );
+		! hasCheckoutVersion2 &&
+		( isPlan( product ) || isAddOn( product ) || isJetpackProductSlug( productSlug ) );
 	if ( shouldRenderBasicTermSublabel && isMonthlyProduct( product ) ) {
 		return (
 			<>
@@ -1276,6 +1272,9 @@ function CheckoutLineItem( {
 							<LineItemMeta>
 								<LineItemSublabelAndPrice product={ product } />
 							</LineItemMeta>
+							{ isJetpackSearch( product ) && <JetpackSearchMeta product={ product } /> }
+							{ isEmail && <EmailMeta product={ product } isRenewal={ isRenewal } /> }
+							<DropdownWrapper>{ children }</DropdownWrapper>
 						</LineItemMetaWrapper>
 					) : (
 						<>
@@ -1299,15 +1298,13 @@ function CheckoutLineItem( {
 				</LineItemMeta>
 			) }
 
-			{ isJetpackSearch( product ) && <JetpackSearchMeta product={ product } /> }
+			{ ! hasCheckoutVersion2 && isJetpackSearch( product ) && (
+				<JetpackSearchMeta product={ product } />
+			) }
 
 			{ isEmail && <EmailMeta product={ product } isRenewal={ isRenewal } /> }
 
-			{ hasCheckoutVersion2 && ! isEmail ? (
-				<DropdownWrapper>{ children }</DropdownWrapper>
-			) : (
-				<>{ children }</>
-			) }
+			{ ! hasCheckoutVersion2 && ! isEmail && <>{ children }</> }
 			{ hasDeleteButton && removeProductFromCart && (
 				<>
 					<DeleteButtonWrapper>
