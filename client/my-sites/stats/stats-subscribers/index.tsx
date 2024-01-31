@@ -23,7 +23,6 @@ import Followers from '../stats-followers';
 import StatsModulePlaceholder from '../stats-module/placeholder';
 import StatsModuleEmails from '../stats-module-emails';
 import PageViewTracker from '../stats-page-view-tracker';
-import Reach from '../stats-reach';
 import SubscribersChartSection, { PeriodType } from '../stats-subscribers-chart-section';
 import SubscribersHighlightSection from '../stats-subscribers-highlight-section';
 import SubscribersOverview from '../stats-subscribers-overview';
@@ -111,7 +110,6 @@ const StatsSubscribersPage = ( { period }: StatsSubscribersPageProps ) => {
 							) }
 							<div className={ statsModuleListClass }>
 								<Followers path="followers" />
-								<Reach />
 								{ ! isOdysseyStats && period && (
 									<StatsModuleEmails period={ period } query={ { period, date: today } } />
 								) }
