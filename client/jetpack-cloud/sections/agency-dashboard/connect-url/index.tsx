@@ -6,7 +6,6 @@ import QueryJetpackManageAddSiteUrl, {
 } from 'calypso/components/data/query-jetpack-manage-add-site-url';
 import { useDispatch } from 'calypso/state';
 import { JETPACK_CONNECT_COMPLETE_FLOW } from 'calypso/state/jetpack-connect/action-types';
-import CSVColumnConfirmation from './csv-column-confirmation';
 import SitesInput from './sites-input';
 import ValidateSites from './validate-sites';
 import './style.scss';
@@ -32,7 +31,7 @@ export default function ConnectUrl() {
 	const [ validating, setValidating ] = useState( false );
 	const [ currentValidatingSite, setCurrentValidatingSite ] = useState( '' );
 	const [ csvColumns, setCSVColumns ] = useState( [] as string[] );
-	const [ URLColumn, setURLColumn ] = useState( '' );
+	const [ URLColumn /* setURLColumn */ ] = useState( '' );
 	const [ currentValidatingSiteIndex, setCurrentValidatingSiteIndex ] = useState( 0 );
 	const [ csvConfirmed, setCSVConfirmed ] = useState( false );
 	const [ validatedSites, setValidatedSites ] = useState( {} as { [ site: string ]: SiteData } );
@@ -93,6 +92,7 @@ export default function ConnectUrl() {
 		]
 	);
 
+	/*
 	const handleColumnConfirmation = useCallback(
 		( option: string ) => {
 			const siteData = detectedSites[ 0 ].split( ',' );
@@ -108,6 +108,7 @@ export default function ConnectUrl() {
 		},
 		[ detectedSites, csvColumns, validatedSites ]
 	);
+  */
 
 	const handleCSVLoadConfirmation = () => {
 		setCSVConfirmed( true );
@@ -135,10 +136,10 @@ export default function ConnectUrl() {
 				onSuccess={ handleValidationSuccess }
 			/>
 
+			<h2 className="connect-url__page-title">{ pageTitle }</h2>
+			<div className="connect-url__page-subtitle">{ pageSubtitle }</div>
 			{ ! csvConfirmed ? (
 				<>
-					<h2 className="connect-url__page-title">{ pageTitle }</h2>
-					<div className="connect-url__page-subtitle">{ pageSubtitle }</div>
 					<Card>
 						<SitesInput
 							{ ...{
@@ -153,14 +154,7 @@ export default function ConnectUrl() {
 						/>
 					</Card>
 				</>
-			) : null }
-			{ csvConfirmed && ! validating ? (
-				<CSVColumnConfirmation
-					csvColumns={ csvColumns }
-					setURLColumn={ handleColumnConfirmation }
-				/>
-			) : null }
-			{ validating ? (
+			) : (
 				<Card>
 					<ValidateSites
 						{ ...{ detectedSites } }
@@ -168,7 +162,7 @@ export default function ConnectUrl() {
 						validatedSites={ validatedSites }
 					/>
 				</Card>
-			) : null }
+			) }
 		</div>
 	);
 }
