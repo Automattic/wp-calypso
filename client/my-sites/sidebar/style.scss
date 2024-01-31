@@ -57,7 +57,7 @@ $font-size: rem(14px);
 	display: none;
 }
 
-.global-sidebar {
+.my-sites__navigation {
 	bottom: 0;
 	display: flex;
 	flex-direction: column;
@@ -66,6 +66,10 @@ $font-size: rem(14px);
 	position: relative;
 	top: 0;
 	transition: all 220ms ease-out;
+
+	.global-sidebar {
+		height: 100%;
+	}
 
 	.sidebar__header {
 		display: flex;
@@ -144,6 +148,11 @@ $font-size: rem(14px);
 			color: var(--nav-link);
 			text-decoration: none;
 			border-radius: 50px; /* stylelint-disable-line scales/radii */
+
+			&.link-profile {
+				position: relative;
+				top: 2px;
+			}
 		}
 
 		span {

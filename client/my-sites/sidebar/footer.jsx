@@ -12,7 +12,7 @@ export const MySitesSidebarUnifiedFooter = ( { translate, user } ) => {
 					className="masterbar__item-me-gravatar"
 					user={ user }
 					alt={ translate( 'My Profile' ) }
-					size={ 18 }
+					size={ 28 }
 				/>
 			</a>
 		</div>
