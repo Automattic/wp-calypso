@@ -321,8 +321,13 @@ class ReauthRequired extends Component {
 
 	refreshNonceOnFailure = ( error ) => {
 		const errors = [].slice.call( error?.data?.errors ?? [] );
+		const onErrorCallback = error?.onErrorCallback ?? ( () => {} );
 		if ( errors.some( ( e ) => e.code === 'invalid_two_step_nonce' ) ) {
-			this.props.twoStepAuthorization.fetch();
+			this.props.twoStepAuthorization.fetch( () => {
+				this.loginUserWithSecurityKey().catch( () => onErrorCallback() );
+			} );
+		} else if ( error ) {
+			onErrorCallback();
 		}
 	};
 

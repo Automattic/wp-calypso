@@ -28,8 +28,13 @@ class SecurityKeyForm extends Component {
 			.loginUserWithSecurityKey()
 			.then( ( response ) => this.onComplete( null, response ) )
 			.catch( ( error ) => {
-				this.setState( { isAuthenticating: false, showError: true } );
-				this.onComplete( error, null );
+				this.onComplete(
+					{
+						onErrorCallback: () => this.setState( { isAuthenticating: false, showError: true } ),
+						...error,
+					},
+					null
+				);
 			} );
 	};
 
