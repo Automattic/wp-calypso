@@ -22,7 +22,7 @@ export default function CSVColumnConfirmation( {
 			} }
 		>
 			<FormRadio
-				claasName="connect-url-csv-column-confirmation__column-card-radio"
+				className="connect-url-csv-column-confirmation__column-card-radio"
 				label={ option }
 				name="url-column"
 				value={ option }

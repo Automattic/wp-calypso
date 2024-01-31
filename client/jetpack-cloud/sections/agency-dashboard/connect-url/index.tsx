@@ -6,11 +6,22 @@ import QueryJetpackManageAddSiteUrl, {
 } from 'calypso/components/data/query-jetpack-manage-add-site-url';
 import { useDispatch } from 'calypso/state';
 import { JETPACK_CONNECT_COMPLETE_FLOW } from 'calypso/state/jetpack-connect/action-types';
-import { errorNotice, plainNotice, successNotice } from 'calypso/state/notices/actions';
 import CSVColumnConfirmation from './csv-column-confirmation';
 import SitesInput from './sites-input';
 import ValidateSites from './validate-sites';
 import './style.scss';
+
+type ValidationStatus =
+	| 'validating'
+	| 'jetpack-connected'
+	| 'wordpress-site'
+	| 'non-wordpress-site'
+	| 'not-exists'
+	| 'error';
+
+export interface SiteData {
+	validationStatus: ValidationStatus;
+}
 
 export default function ConnectUrl() {
 	const dispatch = useDispatch();
@@ -24,40 +35,37 @@ export default function ConnectUrl() {
 	const [ URLColumn, setURLColumn ] = useState( '' );
 	const [ currentValidatingSiteIndex, setCurrentValidatingSiteIndex ] = useState( 0 );
 	const [ csvConfirmed, setCSVConfirmed ] = useState( false );
+	const [ validatedSites, setValidatedSites ] = useState( {} as { [ site: string ]: SiteData } );
 
 	const handleValidationSuccess = useCallback(
 		( data: SuccessData ) => {
 			if ( data.exists ) {
 				if ( data.isJetpackConnected ) {
-					dispatch(
-						plainNotice(
-							translate( '"%(site)s" is already connected to Jetpack.', {
-								args: { site: currentValidatingSite },
-							} )
-						)
-					);
+					setValidatedSites( {
+						...validatedSites,
+						[ currentValidatingSite ]: { validationStatus: 'jetpack-connected' },
+					} );
 				}
 
 				if ( ! data.isWordPress ) {
-					dispatch(
-						successNotice(
-							translate( '"%(site)s" is not a WordPress site, adding as monitoring only.', {
-								args: { site: currentValidatingSite },
-							} )
-						)
-					);
+					setValidatedSites( {
+						...validatedSites,
+						[ currentValidatingSite ]: { validationStatus: 'non-wordpress-site' },
+					} );
+				} else {
+					setValidatedSites( {
+						...validatedSites,
+						[ currentValidatingSite ]: { validationStatus: 'wordpress-site' },
+					} );
 				}
 			} else {
-				dispatch(
-					errorNotice(
-						translate( '"%(site)s" does not exist', {
-							args: { site: currentValidatingSite },
-						} )
-					)
-				);
+				setValidatedSites( {
+					...validatedSites,
+					[ currentValidatingSite ]: { validationStatus: 'not-exists' },
+				} );
 			}
 
-			/* Checks if there is another site to validate */
+			/* Checks if there is another site to validate and moves the cursor forward */
 			if ( currentValidatingSiteIndex + 1 <= detectedSites.length ) {
 				const siteData = detectedSites[ currentValidatingSiteIndex + 1 ];
 				if ( siteData ) {
@@ -77,10 +85,11 @@ export default function ConnectUrl() {
 			URLColumn,
 			csvColumns,
 			currentValidatingSiteIndex,
-			translate,
 			detectedSites,
-			dispatch,
 			setCurrentValidatingSite,
+			validatedSites,
+			setValidatedSites,
+			dispatch,
 		]
 	);
 
@@ -91,9 +100,13 @@ export default function ConnectUrl() {
 			setCurrentValidatingSite( siteData[ columnIndex ] );
 			setCurrentValidatingSiteIndex( 0 );
 			setURLColumn( option );
+			setValidatedSites( {
+				...validatedSites,
+				[ siteData[ columnIndex ] ]: { validationStatus: 'validating' },
+			} );
 			setValidating( true );
 		},
-		[ detectedSites, csvColumns ]
+		[ detectedSites, csvColumns, validatedSites ]
 	);
 
 	const handleCSVLoadConfirmation = () => {
@@ -152,6 +165,7 @@ export default function ConnectUrl() {
 					<ValidateSites
 						{ ...{ detectedSites } }
 						urlColumnIndex={ csvColumns.indexOf( URLColumn ) }
+						validatedSites={ validatedSites }
 					/>
 				</Card>
 			) : null }
