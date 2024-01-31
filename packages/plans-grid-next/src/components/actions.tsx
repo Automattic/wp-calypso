@@ -528,7 +528,7 @@ const PlanFeaturesActionsButton: React.FC< PlanFeaturesActionsButtonProps > = ( 
 	);
 };
 
-const PlanFeatures2023GridActions = ( props: PlanFeaturesActionsButtonProps ) => {
+const PlanFeatures2023GridActions = localize( ( props: PlanFeaturesActionsButtonProps ) => {
 	return (
 		<div className="plan-features-2023-gridrison__actions">
 			<div className="plan-features-2023-gridrison__actions-buttons">
@@ -536,6 +536,6 @@ const PlanFeatures2023GridActions = ( props: PlanFeaturesActionsButtonProps ) =>
 			</div>
 		</div>
 	);
-};
+} );
 
-export default localize( PlanFeatures2023GridActions );
+export default PlanFeatures2023GridActions;
