@@ -1,3 +1,4 @@
+import { isEnabled } from '@automattic/calypso-config';
 import page from '@automattic/calypso-router';
 import { AnyAction } from 'redux';
 import {
@@ -13,7 +14,12 @@ import {
 	JETPACK_AGENCY_DASHBOARD_UNSELECT_LICENSE,
 	JETPACK_AGENCY_DASHBOARD_RESET_SITE,
 	JETPACK_AGENCY_DASHBOARD_SITE_MONITOR_STATUS_CHANGE,
+	JETPACK_AGENCY_DASHBOARD_SELECT_SITE_LICENSE,
+	JETPACK_AGENCY_DASHBOARD_UNSELECT_SITE_LICENSE,
+	JETPACK_AGENCY_DASHBOARD_RESET_SITE_LICENSES,
 } from './action-types';
+
+const isStreamlinedPurchasesEnabled = isEnabled( 'jetpack/streamline-license-purchases' );
 
 const filterStateToQuery = ( filterOptions: AgencyDashboardFilterOption[] ) => {
 	if ( ! filterOptions.length ) {
@@ -70,15 +76,31 @@ export function setPurchasedLicense( productsInfo?: PurchasedProductsInfo ): Any
 }
 
 export function selectLicense( siteId: number, license: string ): AnyAction {
-	return { type: JETPACK_AGENCY_DASHBOARD_SELECT_LICENSE, siteId: siteId, license: license };
+	return {
+		type: isStreamlinedPurchasesEnabled
+			? JETPACK_AGENCY_DASHBOARD_SELECT_SITE_LICENSE
+			: JETPACK_AGENCY_DASHBOARD_SELECT_LICENSE,
+		siteId: siteId,
+		license: license,
+	};
 }
 
 export function unselectLicense( siteId: number, license: string ): AnyAction {
-	return { type: JETPACK_AGENCY_DASHBOARD_UNSELECT_LICENSE, siteId: siteId, license: license };
+	return {
+		type: isStreamlinedPurchasesEnabled
+			? JETPACK_AGENCY_DASHBOARD_UNSELECT_SITE_LICENSE
+			: JETPACK_AGENCY_DASHBOARD_UNSELECT_LICENSE,
+		siteId: siteId,
+		license: license,
+	};
 }
 
 export function resetSite(): AnyAction {
-	return { type: JETPACK_AGENCY_DASHBOARD_RESET_SITE };
+	return {
+		type: isStreamlinedPurchasesEnabled
+			? JETPACK_AGENCY_DASHBOARD_RESET_SITE_LICENSES
+			: JETPACK_AGENCY_DASHBOARD_RESET_SITE,
+	};
 }
 
 export function setSiteMonitorStatus( siteId: number, status: 'loading' | 'completed' ): AnyAction {
