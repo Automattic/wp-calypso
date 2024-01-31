@@ -31,12 +31,12 @@ export const FeaturedLicenseItemCard = ( {
 	const translate = useTranslate();
 
 	const title = getProductShortTitle( item, false );
-
+	const productSlug = item.slug;
 	const ctaLabel = translate( 'Get' );
 	const ctaAriaLabel = ctaLabel + ' ' + item.name;
 
 	const price = <ItemPrice bundleSize={ bundleSize } item={ item } />;
-	const { description: productDescription } = useProductDescription( item.slug );
+	const { description: productDescription } = useProductDescription( productSlug );
 	const hero = <HeroImageAPIFamily item={ item } />;
 
 	return (
@@ -57,7 +57,7 @@ export const FeaturedLicenseItemCard = ( {
 						onClick={ onClickCta }
 						disabled={ isCtaDisabled }
 						target={ isCtaExternal ? '_blank' : undefined }
-						href={ isCtaDisabled ? '#' : GetIssueLicenseURL( item, bundleSize ) }
+						href={ isCtaDisabled ? '#' : GetIssueLicenseURL( productSlug, bundleSize ) }
 						aria-label={ ctaAriaLabel }
 					>
 						{ ctaLabel }

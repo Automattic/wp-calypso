@@ -38,7 +38,7 @@ export const FeaturedLicenseMultiItemCard = ( {
 	const dispatch = useDispatch();
 
 	const [ variant, setVariant ] = useState( variants[ 0 ] );
-
+	const variantSlug = variant.slug;
 	const title = getProductShortTitle( variant, true );
 	const ctaLabel = translate( 'Get' );
 	const ctaAriaLabel = ctaLabel + ' ' + variant.name;
@@ -78,7 +78,7 @@ export const FeaturedLicenseMultiItemCard = ( {
 						name={ `${ variant.family_slug }-variant-options` }
 						question={ translate( 'Select variant:' ) }
 						answers={ variantOptions }
-						selectedAnswerId={ variant.slug }
+						selectedAnswerId={ variantSlug }
 						onAnswerChange={ onChangeOption }
 						shouldShuffleAnswers={ false }
 					/>
@@ -93,7 +93,7 @@ export const FeaturedLicenseMultiItemCard = ( {
 						onClick={ onClickCta }
 						disabled={ isCtaDisabled }
 						target={ isCtaExternal ? '_blank' : undefined }
-						href={ isCtaDisabled ? '#' : GetIssueLicenseURL( variant, bundleSize ) }
+						href={ isCtaDisabled ? '#' : GetIssueLicenseURL( variantSlug, bundleSize ) }
 						aria-label={ ctaAriaLabel }
 					>
 						{ ctaLabel }
