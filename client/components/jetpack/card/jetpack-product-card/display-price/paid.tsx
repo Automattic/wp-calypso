@@ -21,7 +21,8 @@ type OwnProps = {
 	tooltipText?: TranslateResult | ReactNode;
 	expiryDate?: Moment;
 	displayPriceText?: TranslateResult | null;
-	customTimeFrame?: ReactNode;
+	customTimeFrameSavings?: ReactNode;
+	customTimeFrameBillingTerms?: ReactNode;
 };
 
 const Placeholder: React.FC< OwnProps > = ( { billingTerm, expiryDate, discountedPrice } ) => {
@@ -101,7 +102,8 @@ const Paid: React.FC< OwnProps > = ( props ) => {
 		displayFrom,
 		tooltipText,
 		displayPriceText,
-		customTimeFrame,
+		customTimeFrameSavings,
+		customTimeFrameBillingTerms,
 	} = props;
 	const finalPrice = ( isNumber( discountedPrice ) ? discountedPrice : originalPrice ) as number;
 	const isDiscounted = !! ( isNumber( finalPrice ) && originalPrice && finalPrice < originalPrice );
@@ -159,18 +161,21 @@ const Paid: React.FC< OwnProps > = ( props ) => {
 				</InfoPopover>
 			) }
 			{ ! displayPriceText && (
-				<span className="display-price__details" aria-hidden="true">
-					{ ! customTimeFrame && (
-						<TimeFrame
-							billingTerm={ billingTerm }
-							discountedPriceDuration={ discountedPriceDuration }
-							formattedOriginalPrice={ formattedOriginalPrice }
-							isDiscounted={ isDiscounted }
-							finalPrice={ finalPrice }
-						/>
-					) }
-					{ customTimeFrame && customTimeFrame }
-				</span>
+				<>
+					<span className="display-price__details" aria-hidden="true">
+						{ ! customTimeFrameSavings && (
+							<TimeFrame
+								billingTerm={ billingTerm }
+								discountedPriceDuration={ discountedPriceDuration }
+								formattedOriginalPrice={ formattedOriginalPrice }
+								isDiscounted={ isDiscounted }
+								finalPrice={ finalPrice }
+							/>
+						) }
+						{ customTimeFrameSavings && customTimeFrameSavings }
+					</span>
+					{ customTimeFrameBillingTerms && customTimeFrameBillingTerms }
+				</>
 			) }
 		</>
 	);
