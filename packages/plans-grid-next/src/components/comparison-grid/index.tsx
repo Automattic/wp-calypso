@@ -1003,15 +1003,13 @@ const ComparisonGrid = ( {
 		( currentPlan: PlanSlug, event: ChangeEvent< HTMLSelectElement > ) => {
 			const newPlanSlug = event.currentTarget.value;
 			setVisibleGridPlans( ( visibleGridPlans ) => {
-				const newPlan = displayedGridPlans.find(
-					( plan ) => getPlanClass( plan.planSlug ) === getPlanClass( newPlanSlug )
-				) as GridPlan;
+				const newPlan = gridPlans.find( ( plan ) => plan.planSlug === newPlanSlug ) as GridPlan;
 				return visibleGridPlans.map( ( plan ) =>
 					plan.planSlug === currentPlan ? newPlan : plan
 				);
 			} );
 		},
-		[ displayedGridPlans ]
+		[ gridPlans ]
 	);
 
 	const planFeatureFootnotes = useMemo( () => {
