@@ -1,4 +1,6 @@
+import config from '@automattic/calypso-config';
 import { Button, Card, Gridicon } from '@automattic/components';
+import { useEffect } from '@wordpress/element';
 import { useTranslate } from 'i18n-calypso';
 import { FunctionComponent, useCallback, useState } from 'react';
 import JetpackReviewPrompt from 'calypso/blocks/jetpack-review-prompt';
@@ -10,11 +12,22 @@ import { Interval, EVERY_FIVE_SECONDS } from 'calypso/lib/interval';
 import { useDispatch, useSelector } from 'calypso/state';
 import { rewindRestore } from 'calypso/state/activity-log/actions';
 import { recordTracksEvent } from 'calypso/state/analytics/actions/record';
-import { areJetpackCredentialsInvalid } from 'calypso/state/jetpack/credentials/selectors';
+import {
+	areJetpackCredentialsInvalid,
+	hasJetpackCredentials,
+} from 'calypso/state/jetpack/credentials/selectors';
 import { setValidFrom } from 'calypso/state/jetpack-review-prompt/actions';
 import { requestRewindBackups } from 'calypso/state/rewind/backups/actions';
+import {
+	usePreflightStatusQuery,
+	useEnqueuePreflightCheck,
+} from 'calypso/state/rewind/preflight/hooks';
+import { getPreflightStatus } from 'calypso/state/rewind/preflight/selectors';
+import { PreflightTestStatus } from 'calypso/state/rewind/preflight/types';
 import { getInProgressBackupForSite } from 'calypso/state/rewind/selectors';
+import getDoesRewindNeedCredentials from 'calypso/state/selectors/get-does-rewind-need-credentials';
 import getInProgressRewindStatus from 'calypso/state/selectors/get-in-progress-rewind-status';
+import getIsRestoreInProgress from 'calypso/state/selectors/get-is-restore-in-progress';
 import getRestoreProgress from 'calypso/state/selectors/get-restore-progress';
 import getRewindState from 'calypso/state/selectors/get-rewind-state';
 import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
@@ -26,6 +39,7 @@ import ProgressBar from './progress-bar';
 import RewindConfigEditor from './rewind-config-editor';
 import RewindFlowNotice, { RewindFlowNoticeLevel } from './rewind-flow-notice';
 import CheckYourEmail from './rewind-flow-notice/check-your-email';
+import MissingCredentials from './steps/missing-credentials';
 import { defaultRewindConfig, RewindConfig } from './types';
 import type { RestoreProgress } from 'calypso/state/data-layer/wpcom/activity-log/rewind/restore-status/type';
 import type { RewindState } from 'calypso/state/data-layer/wpcom/sites/rewind/type';
@@ -63,6 +77,7 @@ const BackupRestoreFlow: FunctionComponent< Props > = ( {
 	);
 
 	const [ userHasRequestedRestore, setUserHasRequestedRestore ] = useState< boolean >( false );
+	const [ restoreInitiated, setRestoreInitiated ] = useState( false );
 
 	const rewindState = useSelector( ( state ) => getRewindState( state, siteId ) ) as RewindState;
 	const inProgressRewindStatus = useSelector( ( state ) =>
@@ -76,14 +91,66 @@ const BackupRestoreFlow: FunctionComponent< Props > = ( {
 		() => dispatch( rewindRestore( siteId, rewindId, rewindConfig ) ),
 		[ dispatch, rewindConfig, rewindId, siteId ]
 	);
+
+	const preflightStatus = useSelector( ( state ) => getPreflightStatus( state, siteId ) );
+	const hasCredentials = useSelector( ( state ) => hasJetpackCredentials( state, siteId ) );
+	const credentialsAreValid = hasCredentials && ! areCredentialsInvalid;
+	const isRestoreInProgress = useSelector( ( state ) => getIsRestoreInProgress( state, siteId ) );
+	const needCredentials = useSelector( ( state ) => getDoesRewindNeedCredentials( state, siteId ) );
+	const isPreflightEnabled = config.isEnabled( 'jetpack/backup-restore-preflight-checks' );
+	const { refetch: refetchPreflightStatus } = usePreflightStatusQuery(
+		siteId,
+		// Only enable the preflight check if the user has requested a restore and we don't need credentials.
+		userHasRequestedRestore && ! needCredentials
+	);
+	const preflightCheck = useEnqueuePreflightCheck( siteId );
+
+	useEffect( () => {
+		const preflightPassed = isPreflightEnabled && preflightStatus === PreflightTestStatus.SUCCESS;
+
+		if ( userHasRequestedRestore && ! isRestoreInProgress && ! restoreInitiated ) {
+			if ( credentialsAreValid || preflightPassed ) {
+				dispatch( setValidFrom( 'restore', Date.now() ) );
+				requestRestore();
+				setRestoreInitiated( true );
+			}
+		}
+	}, [
+		credentialsAreValid,
+		dispatch,
+		isPreflightEnabled,
+		isRestoreInProgress,
+		preflightStatus,
+		requestRestore,
+		restoreInitiated,
+		userHasRequestedRestore,
+	] );
 	const onConfirm = useCallback( () => {
-		dispatch( setValidFrom( 'restore', Date.now() ) );
+		// Queue preflight
+		if ( isPreflightEnabled && ! credentialsAreValid ) {
+			preflightCheck.mutate(
+				{ siteId },
+				{
+					onSuccess: () => {
+						refetchPreflightStatus();
+					},
+				}
+			);
+		}
+
+		// Mark that the user has requested a restore
 		setUserHasRequestedRestore( true );
-		requestRestore();
 
 		// Track the restore confirmation event.
 		dispatch( recordTracksEvent( 'calypso_jetpack_backup_restore_confirm' ) );
-	}, [ dispatch, setUserHasRequestedRestore, requestRestore ] );
+	}, [
+		isPreflightEnabled,
+		credentialsAreValid,
+		dispatch,
+		preflightCheck,
+		siteId,
+		refetchPreflightStatus,
+	] );
 
 	const siteSlug = useSelector( ( state ) => getSiteSlug( state, siteId ) );
 
@@ -239,11 +306,26 @@ const BackupRestoreFlow: FunctionComponent< Props > = ( {
 		( inProgressRewindStatus && [ 'queued', 'running' ].includes( inProgressRewindStatus ) );
 	const isFinished = inProgressRewindStatus !== null && inProgressRewindStatus === 'finished';
 
+	useEffect( () => {
+		if ( isFinished ) {
+			setRestoreInitiated( false );
+			setUserHasRequestedRestore( false );
+		}
+	}, [ isFinished ] );
+
 	const render = () => {
 		if ( loading ) {
 			return <Loading />;
 		} else if ( ! inProgressRewindStatus && ! userHasRequestedRestore ) {
 			return renderConfirm();
+		} else if ( ! inProgressRewindStatus && needCredentials ) {
+			return (
+				<MissingCredentials
+					siteSlug={ siteSlug }
+					enterCredentialsEventName="calypso_jetpack_backup_restore_missing_credentials_cta"
+					goBackEventName="calypso_jetpack_backup_restore_missing_credentials_back"
+				/>
+			);
 		} else if ( isInProgress ) {
 			return renderInProgress();
 		} else if ( isFinished ) {
