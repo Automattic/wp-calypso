@@ -97,6 +97,10 @@
 		color: #fff;
 		width: 100%;
 
+		&.is-busy {
+			background-image: none;
+		}
+
 		&:hover {
 			background-color: $woo-purple-40;
 		}
