@@ -39,7 +39,7 @@ import ProgressBar from './progress-bar';
 import RewindConfigEditor from './rewind-config-editor';
 import RewindFlowNotice, { RewindFlowNoticeLevel } from './rewind-flow-notice';
 import CheckYourEmail from './rewind-flow-notice/check-your-email';
-import MissingCredentials from './steps/missing-credenitals';
+import MissingCredentials from './steps/missing-credentials';
 import { defaultRewindConfig, RewindConfig } from './types';
 import type { RestoreProgress } from 'calypso/state/data-layer/wpcom/activity-log/rewind/restore-status/type';
 import type { RewindState } from 'calypso/state/data-layer/wpcom/sites/rewind/type';
