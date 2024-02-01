@@ -9,7 +9,6 @@ import QueryRewindBackups from 'calypso/components/data/query-rewind-backups';
 import QueryRewindRestoreStatus from 'calypso/components/data/query-rewind-restore-status';
 import QueryRewindState from 'calypso/components/data/query-rewind-state';
 import { Interval, EVERY_FIVE_SECONDS } from 'calypso/lib/interval';
-import { settingsPath } from 'calypso/lib/jetpack/paths';
 import { useDispatch, useSelector } from 'calypso/state';
 import { rewindRestore } from 'calypso/state/activity-log/actions';
 import { recordTracksEvent } from 'calypso/state/analytics/actions/record';
@@ -40,6 +39,7 @@ import ProgressBar from './progress-bar';
 import RewindConfigEditor from './rewind-config-editor';
 import RewindFlowNotice, { RewindFlowNoticeLevel } from './rewind-flow-notice';
 import CheckYourEmail from './rewind-flow-notice/check-your-email';
+import MissingCredentials from './steps/missing-credenitals';
 import { defaultRewindConfig, RewindConfig } from './types';
 import type { RestoreProgress } from 'calypso/state/data-layer/wpcom/activity-log/rewind/restore-status/type';
 import type { RewindState } from 'calypso/state/data-layer/wpcom/sites/rewind/type';
@@ -301,45 +301,6 @@ const BackupRestoreFlow: FunctionComponent< Props > = ( {
 		</Error>
 	);
 
-	const renderMissingCredentials = () => (
-		<>
-			<div className="rewind-flow__header">
-				<Gridicon icon="history" size={ 48 } />
-			</div>
-			<h3 className="rewind-flow__title">{ translate( 'Missing server credentials' ) }</h3>
-			<p className="rewind-flow__info">
-				{ translate(
-					'Enter your server credentials to enable one-click restores from your backups.'
-				) }
-			</p>
-			<div className="rewind-flow__btn-group rewind-flow__btn-group--centered">
-				<Button
-					href={ backupMainPath( siteSlug ) }
-					className="rewind-flow__back-button"
-					onClick={ () => {
-						dispatch(
-							recordTracksEvent( 'calypso_jetpack_backup_restore_missing_credentials_back' )
-						);
-					} }
-				>
-					{ translate( 'Go back' ) }
-				</Button>
-				<Button
-					primary
-					href={ settingsPath( siteSlug ) }
-					className="rewind-flow__primary-button"
-					onClick={ () => {
-						dispatch(
-							recordTracksEvent( 'calypso_jetpack_backup_restore_missing_credentials_cta' )
-						);
-					} }
-				>
-					{ translate( 'Enter credentials' ) }
-				</Button>
-			</div>
-		</>
-	);
-
 	const isInProgress =
 		( ! inProgressRewindStatus && userHasRequestedRestore ) ||
 		( inProgressRewindStatus && [ 'queued', 'running' ].includes( inProgressRewindStatus ) );
@@ -358,7 +319,13 @@ const BackupRestoreFlow: FunctionComponent< Props > = ( {
 		} else if ( ! inProgressRewindStatus && ! userHasRequestedRestore ) {
 			return renderConfirm();
 		} else if ( ! inProgressRewindStatus && needCredentials ) {
-			return renderMissingCredentials();
+			return (
+				<MissingCredentials
+					siteSlug={ siteSlug }
+					enterCredentialsEventName="calypso_jetpack_backup_restore_missing_credentials_cta"
+					goBackEventName="calypso_jetpack_backup_restore_missing_credentials_back"
+				/>
+			);
 		} else if ( isInProgress ) {
 			return renderInProgress();
 		} else if ( isFinished ) {
