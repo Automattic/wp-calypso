@@ -1,6 +1,8 @@
 import { set } from 'lodash';
 import { ANALYTICS_EVENT_RECORD } from 'calypso/state/action-types';
 import getUserSetting from 'calypso/state/selectors/get-user-setting';
+import type { AppState } from 'calypso/types';
+import type { AnyAction } from 'redux';
 
 /**
  * Enhances any Redux action that denotes the recording of an analytics event with
@@ -12,7 +14,7 @@ import getUserSetting from 'calypso/state/selectors/get-user-setting';
  * @returns {import('redux').AnyAction} the new Redux action
  * @see client/state/utils/withEnhancers
  */
-export function enhanceWithUserIsDevAccount( action, getState ) {
+export function enhanceWithUserIsDevAccount( action: AnyAction, getState: () => AppState ) {
 	const isDevAccount = getUserSetting( getState(), 'is_dev_account' );
 
 	if ( isDevAccount === null ) {
