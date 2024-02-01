@@ -1,6 +1,5 @@
 import { Card } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
-import { useDispatch } from 'react-redux';
 import { handleClickLink } from './handle-click-link';
 import { useFeaturesList } from './use-features-list';
 
@@ -9,7 +8,6 @@ import './style.scss';
 export const DeveloperFeatures = () => {
 	const translate = useTranslate();
 	const features = useFeaturesList();
-	const dispatch = useDispatch();
 
 	return (
 		<>
@@ -24,7 +22,7 @@ export const DeveloperFeatures = () => {
 									href={ linkLearnMore }
 									target="_blank"
 									rel="noopener noreferrer"
-									onClick={ ( event ) => handleClickLink( dispatch, event ) }
+									onClick={ handleClickLink }
 								>
 									{ translate( 'Learn more' ) }
 								</a>
