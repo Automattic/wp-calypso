@@ -808,6 +808,7 @@ export class LoginForm extends Component {
 
 						{ isWoo && linkingSocialUser && (
 							<Notice
+								className="login__form-user-exists-notice"
 								status="is-warning"
 								icon={ <Icon icon={ alert } size={ 20 } fill="#d67709" /> }
 								showDismiss
