@@ -92,7 +92,7 @@
 		"@wordpress/compose": "^6.27.0",
 		"@wordpress/data": "^9.20.0",
 		"@wordpress/dom": "^3.50.0",
-		"@wordpress/edit-post": "^7.27.1",
+		"@wordpress/edit-post": "^7.27.2",
 		"@wordpress/element": "^5.27.0",
 		"@wordpress/html-entities": "^3.50.0",
 		"@wordpress/i18n": "^4.50.0",
