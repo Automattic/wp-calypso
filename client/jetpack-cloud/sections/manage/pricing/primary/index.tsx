@@ -19,10 +19,12 @@ import './style.scss';
 import PricingLicenseSelector from '../pricing-license-selector';
 import PricingNeedMoreInfo from '../pricing-need-more-info';
 
+const DEFAULT_SELECTED_BUNDLE_SIZE = 5;
+
 export default function ManagePricingPage() {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
-	const [ selectedSize, setSelectedSize ] = useState< number >( 1 );
+	const [ selectedSize, setSelectedSize ] = useState< number >( DEFAULT_SELECTED_BUNDLE_SIZE );
 
 	useEffect( () => {
 		dispatch( recordTracksEvent( 'calypso_jetpack_manage_pricing_visit' ) );
