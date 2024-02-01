@@ -75,14 +75,13 @@ import badgeSecurity from './assets/icons/security.svg';
 import { CheckoutCompleteRedirecting } from './checkout-complete-redirecting';
 import CheckoutNextSteps from './checkout-next-steps';
 import { CheckoutSidebarPlanUpsell } from './checkout-sidebar-plan-upsell';
-import { CheckoutSlowProcessingNotice } from './checkout-slow-processing-notice';
 import { EmptyCart, shouldShowEmptyCartPage } from './empty-cart';
 import { GoogleDomainsCopy } from './google-transfers-copy';
 import JetpackAkismetCheckoutSidebarPlanUpsell from './jetpack-akismet-checkout-sidebar-plan-upsell';
 import BeforeSubmitCheckoutHeader from './payment-method-step';
 import SecondaryCartPromotions from './secondary-cart-promotions';
 import WPCheckoutOrderReview from './wp-checkout-order-review';
-import WPCheckoutOrderSummary from './wp-checkout-order-summary';
+import { CheckoutSummaryFeaturedList, WPCheckoutOrderSummary } from './wp-checkout-order-summary';
 import WPContactForm from './wp-contact-form';
 import WPContactFormSummary from './wp-contact-form-summary';
 import type { OnChangeItemVariant } from './item-variation-picker';
@@ -224,6 +223,22 @@ const getPresalesChatKey = ( responseCart: ObjectWithProducts ) => {
 	return 'wpcom';
 };
 
+/* Include a condition for your use case here if you want to show a specific nudge in the checkout sidebar */
+function CheckoutSidebarNudge( { responseCart }: { responseCart: ResponseCart } ) {
+	const isWcMobile = isWcMobileApp();
+	const isDIFMInCart = hasDIFMProduct( responseCart );
+	const hasMonthlyProduct = responseCart?.products?.some( isMonthlyProduct );
+
+	if ( ! isWcMobile && ! isDIFMInCart && ! hasMonthlyProduct ) {
+		return (
+			<CheckoutSidebarNudgeWrapper>
+				<CheckoutSidebarPlanUpsell />
+				<JetpackAkismetCheckoutSidebarPlanUpsell />
+			</CheckoutSidebarNudgeWrapper>
+		);
+	}
+	return null;
+}
 export default function WPCheckout( {
 	addItemToCart,
 	changeSelection,
@@ -369,8 +384,6 @@ export default function WPCheckout( {
 		clearDomainContactErrorMessages,
 	} = checkoutActions;
 
-	const isWcMobile = isWcMobileApp();
-
 	if ( transactionStatus === TransactionStatus.COMPLETE ) {
 		debug( 'rendering post-checkout redirecting page' );
 		return (
@@ -421,9 +434,6 @@ export default function WPCheckout( {
 		);
 	}
 
-	const isDIFMInCart = hasDIFMProduct( responseCart );
-	const hasMonthlyProduct = responseCart?.products?.some( isMonthlyProduct );
-
 	const nextStepButtonText =
 		locale.startsWith( 'en' ) || i18n.hasTranslation( 'Continue to payment' )
 			? translate( 'Continue to payment', { textOnly: true } )
@@ -433,7 +443,6 @@ export default function WPCheckout( {
 		<WPCheckoutWrapper>
 			<WPCheckoutSidebarContent>
 				{ isLoading && <LoadingSidebarContent /> }
-				{ formStatus === FormStatus.SUBMITTING && <CheckoutSlowProcessingNotice /> }
 				{ ! isLoading && (
 					<CheckoutSummaryArea className={ isSummaryVisible ? 'is-visible' : '' }>
 						<CheckoutErrorBoundary
@@ -466,16 +475,15 @@ export default function WPCheckout( {
 									/>
 								) }
 
-								<WPCheckoutOrderSummary
-									siteId={ siteId }
-									onChangeSelection={ changeSelection }
-									nextDomainIsFree={ responseCart?.next_domain_is_free }
-								/>
-								{ ! isWcMobile && ! isDIFMInCart && ! hasMonthlyProduct && (
-									<>
-										<CheckoutSidebarPlanUpsell />
-										<JetpackAkismetCheckoutSidebarPlanUpsell />
-									</>
+								<WPCheckoutOrderSummary siteId={ siteId } onChangeSelection={ changeSelection } />
+								<CheckoutSidebarNudge responseCart={ responseCart } />
+								{ hasCheckoutVersion( '2' ) && (
+									<CheckoutSummaryFeaturedList
+										responseCart={ responseCart }
+										siteId={ siteId }
+										isCartUpdating={ FormStatus.VALIDATING === formStatus }
+										onChangeSelection={ changeSelection }
+									/>
 								) }
 								<SecondaryCartPromotions
 									responseCart={ responseCart }
@@ -768,14 +776,14 @@ const CheckoutSummaryBody = styled.div`
 	margin: 0 auto;
 	max-width: 600px;
 	width: 100%;
-	padding: 0 24px 25px;
+	padding: 24px;
 
 	.is-visible & {
 		display: block;
 	}
 
 	@media ( ${ ( props ) => props.theme.breakpoints.tabletUp } ) {
-		padding: 0 0 25px;
+		padding: 24px;
 	}
 
 	@media ( ${ ( props ) => props.theme.breakpoints.desktopUp } ) {
@@ -786,6 +794,15 @@ const CheckoutSummaryBody = styled.div`
 		& .card {
 			box-shadow: none;
 		}
+	}
+`;
+
+const CheckoutSidebarNudgeWrapper = styled.div`
+	display: flex;
+	flex-direction: column;
+
+	& > * {
+		max-width: 288px;
 	}
 `;
 

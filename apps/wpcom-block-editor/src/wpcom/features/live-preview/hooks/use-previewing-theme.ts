@@ -1,3 +1,4 @@
+import { getPlan, PLAN_PERSONAL, PLAN_PREMIUM, PLAN_BUSINESS } from '@automattic/calypso-products';
 import { useSelect } from '@wordpress/data';
 import { useEffect, useState, useMemo } from 'react';
 import wpcom from 'calypso/lib/wp';
@@ -65,17 +66,16 @@ export const usePreviewingTheme = () => {
 	const [ previewingThemeType, setPreviewingThemeType ] =
 		useState< ReturnType< typeof getThemeType > >( undefined );
 
-	// @TODO Find a better solution once we have Theme Tiers live. we could use the theme_tier slug or feature slug instead for simplicity.
-	let previewingThemeTypeDisplay;
+	let previewingThemePlan;
 	switch ( previewingThemeType ) {
 		case WOOCOMMERCE_THEME:
-			previewingThemeTypeDisplay = 'WooCommerce';
+			previewingThemePlan = getPlan( PLAN_BUSINESS )?.getTitle();
 			break;
 		case PREMIUM_THEME:
-			previewingThemeTypeDisplay = 'Premium';
+			previewingThemePlan = getPlan( PLAN_PREMIUM )?.getTitle();
 			break;
 		case PERSONAL_THEME:
-			previewingThemeTypeDisplay = 'Personal';
+			previewingThemePlan = getPlan( PLAN_PERSONAL )?.getTitle();
 			break;
 	}
 
@@ -104,6 +104,6 @@ export const usePreviewingTheme = () => {
 		name: previewingThemeName,
 		type: previewingThemeType,
 		requiredFeature: previewingThemeFeature,
-		typeDisplay: previewingThemeTypeDisplay,
+		plan: previewingThemePlan,
 	};
 };

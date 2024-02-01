@@ -15,13 +15,19 @@ import {
 	isWpcomEnterpriseGridPlan,
 	type PlanSlug,
 	UrlFriendlyTermType,
-	getBillingMonthsForTerm,
-	URL_FRIENDLY_TERMS_MAPPING,
 } from '@automattic/calypso-products';
 import page from '@automattic/calypso-router';
 import { Button, Spinner } from '@automattic/components';
 import { WpcomPlansUI } from '@automattic/data-stores';
 import { isAnyHostingFlow } from '@automattic/onboarding';
+import {
+	FeaturesGrid,
+	ComparisonGrid,
+	PlanTypeSelector,
+	useGridPlans,
+	usePlanFeaturesForGridPlans,
+	useRestructuredPlanFeaturesForComparisonGrid,
+} from '@automattic/plans-grid-next';
 import { isMobile } from '@automattic/viewport';
 import styled from '@emotion/styled';
 import { useDispatch } from '@wordpress/data';
@@ -55,13 +61,8 @@ import scrollIntoViewport from 'calypso/lib/scroll-into-viewport';
 import { addQueryArgs } from 'calypso/lib/url';
 import useStorageAddOns from 'calypso/my-sites/add-ons/hooks/use-storage-add-ons';
 import PlanNotice from 'calypso/my-sites/plans-features-main/components/plan-notice';
+import { useFreeTrialPlanSlugs } from 'calypso/my-sites/plans-features-main/hooks/use-free-trial-plan-slugs';
 import usePlanTypeDestinationCallback from 'calypso/my-sites/plans-features-main/hooks/use-plan-type-destination-callback';
-import { FeaturesGrid, ComparisonGrid, PlanTypeSelector } from 'calypso/my-sites/plans-grid';
-import { SupportedUrlFriendlyTermType } from 'calypso/my-sites/plans-grid/components/plan-type-selector/types';
-import useGridPlans from 'calypso/my-sites/plans-grid/hooks/npm-ready/data-store/use-grid-plans';
-import usePlanFeaturesForGridPlans from 'calypso/my-sites/plans-grid/hooks/npm-ready/data-store/use-plan-features-for-grid-plans';
-import useRestructuredPlanFeaturesForComparisonGrid from 'calypso/my-sites/plans-grid/hooks/npm-ready/data-store/use-restructured-plan-features-for-comparison-grid';
-import { useFreeTrialPlanSlugs } from 'calypso/my-sites/plans-grid/hooks/npm-ready/use-free-trial-plan-slugs';
 import { getCurrentUserName } from 'calypso/state/current-user/selectors';
 import canUpgradeToPlan from 'calypso/state/selectors/can-upgrade-to-plan';
 import getDomainFromHomeUpsellInQuery from 'calypso/state/selectors/get-domain-from-home-upsell-in-query';
@@ -76,17 +77,20 @@ import { useModalResolutionCallback } from './components/plan-upsell-modal/hooks
 import useCheckPlanAvailabilityForPurchase from './hooks/use-check-plan-availability-for-purchase';
 import useCurrentPlanManageHref from './hooks/use-current-plan-manage-href';
 import useFilterPlansForPlanFeatures from './hooks/use-filter-plans-for-plan-features';
+import useFilteredDisplayedIntervals from './hooks/use-filtered-displayed-intervals';
 import usePlanBillingPeriod from './hooks/use-plan-billing-period';
 import usePlanFromUpsells from './hooks/use-plan-from-upsells';
 import usePlanIntentFromSiteMeta from './hooks/use-plan-intent-from-site-meta';
 import { usePlanUpgradeCreditsApplicable } from './hooks/use-plan-upgrade-credits-applicable';
 import useGetFreeSubdomainSuggestion from './hooks/use-suggested-free-domain-from-paid-domain';
-import type { MinimalRequestCartProduct } from '@automattic/shopping-cart';
 import type {
 	GridPlan,
 	PlansIntent,
-} from 'calypso/my-sites/plans-grid/hooks/npm-ready/data-store/use-grid-plans';
-import type { DataResponse, PlanActionOverrides } from 'calypso/my-sites/plans-grid/types';
+	DataResponse,
+	PlanActionOverrides,
+	SupportedUrlFriendlyTermType,
+} from '@automattic/plans-grid-next';
+import type { MinimalRequestCartProduct } from '@automattic/shopping-cart';
 import type { IAppState } from 'calypso/state/types';
 
 import './style.scss';
@@ -523,19 +527,12 @@ const PlansFeaturesMain = ( {
 		_customerType = 'business';
 	}
 
-	let filteredDisplayedIntervals = displayedIntervals;
-	// Hide interval terms that are less than the current plan's term in months
-	if ( currentPlan?.productSlug && ! isFreePlan( currentPlan.productSlug ) ) {
-		const currentPlanIntervalTypeBillingMonths = getBillingMonthsForTerm(
-			getPlan( currentPlan.productSlug )?.term || ''
-		);
-		filteredDisplayedIntervals = displayedIntervals.filter( ( intervalType ) => {
-			const intervalTypeInMonths = getBillingMonthsForTerm(
-				URL_FRIENDLY_TERMS_MAPPING[ intervalType ] || ''
-			);
-			return intervalTypeInMonths >= currentPlanIntervalTypeBillingMonths;
-		} );
-	}
+	const filteredDisplayedIntervals = useFilteredDisplayedIntervals( {
+		productSlug: currentPlan?.productSlug,
+		displayedIntervals,
+		intent,
+		paidDomainName,
+	} );
 
 	const planTypeSelectorProps = useMemo( () => {
 		const props = {
@@ -893,6 +890,7 @@ const PlansFeaturesMain = ( {
 									generatedWPComSubdomain={ resolvedSubdomainName }
 									isCustomDomainAllowedOnFreePlan={ isCustomDomainAllowedOnFreePlan }
 									isInSignup={ isInSignup }
+									isInAdmin={ ! isInSignup }
 									isLaunchPage={ isLaunchPage }
 									onUpgradeClick={ handleUpgradeClick }
 									selectedFeature={ selectedFeature }
@@ -954,6 +952,7 @@ const PlansFeaturesMain = ( {
 											<ComparisonGrid
 												gridPlans={ gridPlansForComparisonGrid }
 												isInSignup={ isInSignup }
+												isInAdmin={ ! isInSignup }
 												isLaunchPage={ isLaunchPage }
 												onUpgradeClick={ handleUpgradeClick }
 												selectedFeature={ selectedFeature }

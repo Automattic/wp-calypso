@@ -69,7 +69,7 @@ export default function CTAButton( { plugin, hasEligibilityMessages, disabled } 
 		! isJetpackSelfHosted;
 
 	// Keep me updated
-	const userId = useSelector( ( state ) => getCurrentUserId( state ) );
+	const userId = useSelector( getCurrentUserId );
 	const keepMeUpdatedPreferenceId = `jetpack-self-hosted-keep-updated-${ userId }`;
 	const keepMeUpdatedPreference = useSelector( ( state ) =>
 		getPreference( state, keepMeUpdatedPreferenceId )

@@ -2,7 +2,7 @@ import { isEnabled } from '@automattic/calypso-config';
 import {
 	PLAN_BUSINESS_MONTHLY,
 	PLAN_PERSONAL,
-	WPCOM_FEATURES_PREMIUM_THEMES,
+	WPCOM_FEATURES_PREMIUM_THEMES_UNLIMITED,
 } from '@automattic/calypso-products';
 import { Button } from '@automattic/components';
 import {
@@ -18,7 +18,6 @@ import {
 	getDesignPreviewUrl,
 	isAssemblerDesign,
 	isAssemblerSupported,
-	FREE_THEME,
 	PERSONAL_THEME,
 } from '@automattic/design-picker';
 import { useLocale } from '@automattic/i18n-utils';
@@ -54,7 +53,6 @@ import {
 	isMarketplaceThemeSubscribed as getIsMarketplaceThemeSubscribed,
 	getTheme,
 	isSiteEligibleForManagedExternalThemes,
-	getThemeTierForTheme,
 	isThemeAllowedOnSite,
 } from 'calypso/state/themes/selectors';
 import { isThemePurchased } from 'calypso/state/themes/selectors/is-theme-purchased';
@@ -150,7 +148,7 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 				site &&
 				( select( SITE_STORE ) as SiteSelect ).siteHasFeature(
 					site.ID,
-					WPCOM_FEATURES_PREMIUM_THEMES
+					WPCOM_FEATURES_PREMIUM_THEMES_UNLIMITED
 				),
 			[ site ]
 		)
@@ -378,18 +376,17 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 			( product ) => product.product_slug === marketplaceProductSlug
 		) || marketplaceThemeProducts[ 0 ];
 
-	const didPurchaseSelectedTheme = useSelector( ( state ) => {
-		if ( ! site || ! selectedDesignThemeId ) {
-			return false;
-		}
+	const didPurchaseSelectedTheme = useSelector( ( state ) =>
+		site && selectedDesignThemeId
+			? isThemePurchased( state, selectedDesignThemeId, site.ID )
+			: false
+	);
 
-		if ( isEnabled( 'themes/tiers' ) ) {
-			return isThemeAllowedOnSite( state, site.ID, selectedDesignThemeId );
-		}
-
-		// @TODO Remove this once we have the new theme tiers live.
-		return isThemePurchased( state, selectedDesignThemeId, site.ID );
-	} );
+	const canSiteActivateTheme = useSelector( ( state ) =>
+		site && selectedDesignThemeId
+			? isThemeAllowedOnSite( state, site.ID, selectedDesignThemeId )
+			: false
+	);
 
 	const isMarketplaceThemeSubscribed = useSelector(
 		( state ) =>
@@ -408,16 +405,10 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 	const isPluginBundleEligible = useIsPluginBundleEligible();
 	const isBundled = selectedDesign?.software_sets && selectedDesign.software_sets.length > 0;
 
-	const selectedDesignTier =
-		useSelector(
-			( state ) =>
-				selectedDesignThemeId && getThemeTierForTheme( state, selectedDesignThemeId )?.slug
-		) ?? FREE_THEME;
-
 	const isLockedTheme =
 		( isEnabled( 'themes/tiers' ) &&
-			selectedDesignTier === PERSONAL_THEME &&
-			! didPurchaseSelectedTheme ) ||
+			selectedDesign?.design_tier === PERSONAL_THEME &&
+			! canSiteActivateTheme ) ||
 		( selectedDesign?.is_premium && ! isPremiumThemeAvailable && ! didPurchaseSelectedTheme ) ||
 		( selectedDesign?.is_externally_managed &&
 			( ! isMarketplaceThemeSubscribed || ! isExternallyManagedThemeAvailable ) ) ||
@@ -481,7 +472,7 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 			plan = 'business-bundle';
 		} else if ( selectedDesign?.is_externally_managed ) {
 			plan = ! isExternallyManagedThemeAvailable ? PLAN_BUSINESS_MONTHLY : '';
-		} else if ( isEnabled( 'themes/tiers' ) && selectedDesignTier === PERSONAL_THEME ) {
+		} else if ( isEnabled( 'themes/tiers' ) && selectedDesign?.design_tier === PERSONAL_THEME ) {
 			plan = PLAN_PERSONAL;
 		} else {
 			plan = 'premium';
@@ -599,7 +590,12 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 					fontVariation: selectedFontVariation,
 				} )
 			);
-			pickDesign();
+
+			if ( isEnabled( 'themes/tiers' ) && selectedDesign?.design_tier === PERSONAL_THEME ) {
+				closePremiumGlobalStylesModal();
+			} else {
+				pickDesign();
+			}
 		}
 	}
 
@@ -753,27 +749,24 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 
 		recordTracksEvent( eventName, tracksProps );
 	}
-
-	function getPrimaryActionButton() {
+	function getPrimaryActionButtonAction(): () => void {
+		const isPersonalDesign =
+			isEnabled( 'themes/tiers' ) && selectedDesign?.design_tier === PERSONAL_THEME;
 		if ( isLockedTheme ) {
-			return (
-				<Button className="navigation-link" primary borderless={ false } onClick={ upgradePlan }>
-					{ translate( 'Unlock theme' ) }
-				</Button>
-			);
+			// For personal themes we favor the GS Upgrade Modal over the Plan Upgrade Modal.
+			return isPersonalDesign && shouldUnlockGlobalStyles ? unlockPremiumGlobalStyles : upgradePlan;
 		}
 
-		const selectStyle = () => {
-			if ( shouldUnlockGlobalStyles ) {
-				unlockPremiumGlobalStyles();
-			} else {
-				pickDesign();
-			}
-		};
+		return shouldUnlockGlobalStyles ? unlockPremiumGlobalStyles : () => pickDesign();
+	}
+
+	function getPrimaryActionButton() {
+		const action = getPrimaryActionButtonAction();
+		const text = action === upgradePlan ? translate( 'Unlock theme' ) : translate( 'Continue' );
 
 		return (
-			<Button className="navigation-link" primary borderless={ false } onClick={ selectStyle }>
-				{ translate( 'Continue' ) }
+			<Button className="navigation-link" primary borderless={ false } onClick={ action }>
+				{ text }
 			</Button>
 		);
 	}

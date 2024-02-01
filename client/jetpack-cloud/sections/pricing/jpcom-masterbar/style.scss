@@ -21,6 +21,16 @@
 		font-size: 1.125rem; /* stylelint-disable-line scales/font-sizes */
 		transition: background 0.1s;
 	}
+
+}
+
+.is-group-jetpack-cloud.is-section-jetpack-cloud-pricing .jpcom-masterbar,
+.is-group-jetpack-cloud.is-section-jetpack-cloud-features-comparison .jpcom-masterbar,
+.is-group-jetpack-cloud.is-section-jetpack-cloud-manage-pricing .jpcom-masterbar {
+	// ============================================================================
+	// Overwrites
+	// ============================================================================
+
 	.header__nav-wrapper {
 		text-align: left;
 		display: flex;

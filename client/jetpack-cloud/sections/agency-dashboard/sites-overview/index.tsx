@@ -1,3 +1,4 @@
+import { isEnabled } from '@automattic/calypso-config';
 import page from '@automattic/calypso-router';
 import { Button, Count } from '@automattic/components';
 import { isWithinBreakpoint } from '@automattic/viewport';
@@ -22,6 +23,7 @@ import {
 	checkIfJetpackSiteGotDisconnected,
 	getSelectedLicenses,
 	getSelectedLicensesSiteId,
+	getSelectedSiteLicenses,
 } from 'calypso/state/jetpack-agency-dashboard/selectors';
 import { errorNotice } from 'calypso/state/notices/actions';
 import useProductsQuery from 'calypso/state/partner-portal/licenses/hooks/use-products-query';
@@ -59,9 +61,14 @@ export default function SitesOverview() {
 	const showLargeScreen = useDashboardShowLargeScreen( siteTableRef, containerRef );
 
 	const selectedLicenses = useSelector( getSelectedLicenses );
+	const selectedSiteLicenses = useSelector( getSelectedSiteLicenses );
 	const selectedLicensesSiteId = useSelector( getSelectedLicensesSiteId );
 
-	const selectedLicensesCount = selectedLicenses?.length;
+	const isStreamlinedPurchasesEnabled = isEnabled( 'jetpack/streamline-license-purchases' );
+
+	const selectedLicensesCount = isStreamlinedPurchasesEnabled
+		? selectedSiteLicenses.reduce( ( acc, { products } ) => acc + products.length, 0 )
+		: selectedLicenses?.length;
 
 	const highlightFavoriteTab = getQueryArg( window.location.href, 'highlight' ) === 'favorite-tab';
 
@@ -141,6 +148,14 @@ export default function SitesOverview() {
 		}
 	}, [ isError, translate, dispatch ] );
 
+	useEffect( () => {
+		if ( isStreamlinedPurchasesEnabled ) {
+			return () => {
+				dispatch( resetSite() );
+			};
+		}
+	}, [ isStreamlinedPurchasesEnabled, dispatch ] );
+
 	const pageTitle = translate( 'Sites' );
 
 	const basePath = '/dashboard';
@@ -218,6 +233,19 @@ export default function SitesOverview() {
 		} );
 	}, [ selectedLicensesSiteId, serializedLicenses ] );
 
+	const handleIssueLicenses = () => {
+		if ( isStreamlinedPurchasesEnabled ) {
+			// TODO: Show a modal with the selected licenses and a button to issue them.
+			return;
+		}
+		dispatch(
+			recordTracksEvent( 'calypso_jetpack_agency_dashboard_licenses_select', {
+				site_id: selectedLicensesSiteId,
+				products: serializedLicenses,
+			} )
+		);
+	};
+
 	const renderIssueLicenseButton = () => {
 		return (
 			<div className="sites-overview__licenses-buttons">
@@ -231,23 +259,24 @@ export default function SitesOverview() {
 				<Button
 					primary
 					className="sites-overview__licenses-buttons-issue-license"
-					href={ issueLicenseRedirectUrl }
-					onClick={ () =>
-						dispatch(
-							recordTracksEvent( 'calypso_jetpack_agency_dashboard_licenses_select', {
-								site_id: selectedLicensesSiteId,
-								products: serializedLicenses,
-							} )
-						)
-					}
+					href={ isStreamlinedPurchasesEnabled ? undefined : issueLicenseRedirectUrl }
+					onClick={ handleIssueLicenses }
 				>
-					{ translate( 'Issue %(numLicenses)d license', 'Issue %(numLicenses)d licenses', {
-						context: 'button label',
-						count: selectedLicensesCount,
-						args: {
-							numLicenses: selectedLicensesCount,
-						},
-					} ) }
+					{ isStreamlinedPurchasesEnabled
+						? translate( 'Review %(numLicenses)d license', 'Review %(numLicenses)d licenses', {
+								context: 'button label',
+								count: selectedLicensesCount,
+								args: {
+									numLicenses: selectedLicensesCount,
+								},
+						  } )
+						: translate( 'Issue %(numLicenses)d license', 'Issue %(numLicenses)d licenses', {
+								context: 'button label',
+								count: selectedLicensesCount,
+								args: {
+									numLicenses: selectedLicensesCount,
+								},
+						  } ) }
 				</Button>
 			</div>
 		);

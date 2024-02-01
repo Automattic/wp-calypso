@@ -1,5 +1,6 @@
 @import "@wordpress/base-styles/breakpoints";
 @import "@wordpress/base-styles/mixins";
+@import "@automattic/typography/styles/variables";
 
 .thank-you {
 	--color-accent: var(--studio-blue-50);
@@ -13,5 +14,23 @@
 		margin: 0 auto;
 		max-width: 650px;
 		width: 100%;
+	}
+
+	.thank-you__header-buttons,
+	.thank-you__products {
+		.button,
+		.components-button {
+			border-radius: 4px;
+			font-size: $font-body-small;
+			height: unset;
+			line-height: 20px;
+			padding: 10px 24px;
+
+			&[disabled] {
+				background-color: var(--color-surface);
+				border: 1px solid var(--color-neutral-5);
+				color: var(--color-neutral-20);
+			}
+		}
 	}
 }

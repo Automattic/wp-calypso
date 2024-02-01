@@ -1,4 +1,10 @@
-import { WPCOM_FEATURES_INSTALL_PLUGINS, getPlan } from '@automattic/calypso-products';
+import {
+	WPCOM_FEATURES_INSTALL_PLUGINS,
+	PLAN_PERSONAL,
+	PLAN_PREMIUM,
+	getPlan,
+} from '@automattic/calypso-products';
+import { isDefaultGlobalStylesVariationSlug } from '@automattic/design-picker';
 import { addQueryArgs } from '@wordpress/url';
 import { localize } from 'i18n-calypso';
 import { mapValues, pickBy, flowRight as compose } from 'lodash';
@@ -37,7 +43,6 @@ import {
 	isSiteEligibleForManagedExternalThemes,
 	isWpcomTheme,
 	getIsLivePreviewSupported,
-	getThemeTierForTheme,
 } from 'calypso/state/themes/selectors';
 import { isMarketplaceThemeSubscribed } from 'calypso/state/themes/selectors/is-marketplace-theme-subscribed';
 
@@ -59,9 +64,19 @@ function getAllThemeOptions( { translate, isFSEActive } ) {
 				} )
 			);
 
-			const themeTier = getThemeTierForTheme( state, themeId );
+			const themeTier = options.themeTier;
+
 			const tierMinimumUpsellPlan = THEME_TIERS[ themeTier?.slug ]?.minimumUpsellPlan;
-			const mappedPlan = getPlan( tierMinimumUpsellPlan );
+			const isLockedStyleVariation =
+				options?.styleVariationSlug &&
+				! isDefaultGlobalStylesVariationSlug( options.styleVariationSlug );
+
+			const minimumPlan =
+				tierMinimumUpsellPlan === PLAN_PERSONAL && isLockedStyleVariation
+					? PLAN_PREMIUM
+					: tierMinimumUpsellPlan;
+
+			const mappedPlan = getPlan( minimumPlan );
 			const planPathSlug = mappedPlan?.getPathSlug();
 
 			return `/checkout/${ slug }/${ planPathSlug }?redirect_to=${ redirectTo }`;

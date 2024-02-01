@@ -1,9 +1,9 @@
 import { Button } from '@automattic/components';
+import { plansBreakSmall } from '@automattic/plans-grid-next/src/media-queries';
 import { css } from '@emotion/react';
 import styled from '@emotion/styled';
 import { type TranslateResult } from 'i18n-calypso';
 import { forwardRef } from 'react';
-import { plansBreakSmall } from 'calypso/my-sites/plans-grid/media-queries';
 import '../style.scss';
 
 const ComparisonGridToggle = forwardRef<

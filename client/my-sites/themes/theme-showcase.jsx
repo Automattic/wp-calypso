@@ -24,7 +24,7 @@ import ActivationModal from 'calypso/my-sites/themes/activation-modal';
 import { THEME_COLLECTIONS } from 'calypso/my-sites/themes/collections/collection-definitions';
 import ShowcaseThemeCollection from 'calypso/my-sites/themes/collections/showcase-theme-collection';
 import ThemeCollectionViewHeader from 'calypso/my-sites/themes/collections/theme-collection-view-header';
-import ThemeShowcaseSurvey from 'calypso/my-sites/themes/survey';
+import ThemeShowcaseSurvey, { SurveyType } from 'calypso/my-sites/themes/survey';
 import ThanksModal from 'calypso/my-sites/themes/thanks-modal';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import getLastNonEditorRoute from 'calypso/state/selectors/get-last-non-editor-route';
@@ -177,9 +177,17 @@ class ThemeShowcase extends Component {
 			return null;
 		}
 
-		const shouldShowMyThemesFilter =
-			( this.props.isJetpackSite && ! this.props.isAtomicSite ) ||
-			( this.props.isAtomicSite && this.props.siteCanInstallThemes );
+		if ( this.props.isSiteWooExpress ) {
+			return {
+				MYTHEMES: staticFilters.MYTHEMES,
+				RECOMMENDED: {
+					...staticFilters.RECOMMENDED,
+					text: translate( 'All Themes' ),
+				},
+			};
+		}
+
+		const shouldShowMyThemesFilter = !! this.props.siteId;
 
 		return {
 			...( shouldShowMyThemesFilter && { MYTHEMES: staticFilters.MYTHEMES } ),
@@ -549,8 +557,8 @@ class ThemeShowcase extends Component {
 			premiumThemesEnabled,
 			isSiteECommerceFreeTrial,
 			isSiteWooExpressOrEcomFreeTrial,
+			isSiteWooExpress,
 			isCollectionView,
-			isJetpackSite,
 			lastNonEditorRoute,
 		} = this.props;
 		const tier = this.props.tier || 'all';
@@ -581,7 +589,7 @@ class ThemeShowcase extends Component {
 			trackScrollPage: this.props.trackScrollPage,
 			scrollToSearchInput: this.scrollToSearchInput,
 			getOptions: this.getThemeOptions,
-			source: isJetpackSite && this.props.category !== staticFilters.MYTHEMES.key ? 'wpcom' : null,
+			source: this.props.category !== staticFilters.MYTHEMES.key ? 'wpcom' : null,
 		};
 
 		const tabFilters = this.getTabFilters();
@@ -611,7 +619,7 @@ class ThemeShowcase extends Component {
 				/>
 				{ isLoggedIn && (
 					<ThemeShowcaseSurvey
-						survey={ null }
+						survey={ SurveyType.FEBRUARY_2024 }
 						condition={ () => lastNonEditorRoute.includes( 'theme/' ) }
 					/>
 				) }
@@ -651,8 +659,12 @@ class ThemeShowcase extends Component {
 									</>
 								) }
 							</div>
-							<div className="themes__filters">
-								{ tabFilters && ! isSiteWooExpressOrEcomFreeTrial && (
+							<div
+								className={ classNames( 'themes__filters', {
+									'is-woo-express': isSiteWooExpress,
+								} ) }
+							>
+								{ tabFilters && ! isSiteECommerceFreeTrial && (
 									<ThemesToolbarGroup
 										items={ Object.values( tabFilters ) }
 										selectedKey={ this.getSelectedTabFilter().key }

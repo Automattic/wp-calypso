@@ -20,9 +20,9 @@ import {
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import useSubscribersTotalsQueries from '../hooks/use-subscribers-totals-query';
 import Followers from '../stats-followers';
+import StatsModulePlaceholder from '../stats-module/placeholder';
 import StatsModuleEmails from '../stats-module-emails';
 import PageViewTracker from '../stats-page-view-tracker';
-import Reach from '../stats-reach';
 import SubscribersChartSection, { PeriodType } from '../stats-subscribers-chart-section';
 import SubscribersHighlightSection from '../stats-subscribers-highlight-section';
 import SubscribersOverview from '../stats-subscribers-overview';
@@ -41,7 +41,7 @@ interface StatsSubscribersPageProps {
 const StatsSubscribersPage = ( { period }: StatsSubscribersPageProps ) => {
 	const translate = useTranslate();
 	// Use hooks for Redux pulls.
-	const siteId = useSelector( ( state ) => getSelectedSiteId( state ) );
+	const siteId = useSelector( getSelectedSiteId );
 	const siteSlug = useSelector( ( state ) => getSiteSlug( state, siteId ) );
 	const isJetpack = useSelector( ( state ) => isJetpackSite( state, siteId ) );
 	// Run-time configuration.
@@ -65,14 +65,24 @@ const StatsSubscribersPage = ( { period }: StatsSubscribersPageProps ) => {
 		'subscribers-page'
 	);
 
+	// TODO: Pass subscribersTotals as props to SubscribersHighlightSection to avoid duplicate queries.
 	const { data: subscribersTotals, isLoading } = useSubscribersTotalsQueries( siteId );
 	const isSimple = useSelector( isSimpleSite );
 	const isAtomic = useSelector( ( state ) => isAtomicSite( state, siteId ) );
-	const showLaunchpad = ! isLoading && ( isSimple || isAtomic ) && ! subscribersTotals?.total;
+	const hasNoSubscriberOtherThanAdmin =
+		! subscribersTotals?.total ||
+		( subscribersTotals?.total === 1 && subscribersTotals?.is_owner_subscribing );
+	const showLaunchpad = ! isLoading && ( isSimple || isAtomic ) && hasNoSubscriberOtherThanAdmin;
 
 	// Track the last viewed tab.
 	// Necessary to properly configure the fixed navigation headers.
 	// sessionStorage.setItem( 'jp-stats-last-tab', 'subscribers' );
+
+	// Check if the site has any paid subscription products added.
+	const products = useSelector( ( state ) => state.memberships?.productList?.items[ siteId ?? 0 ] );
+	// Odyssey Stats doesn't support the membership API endpoint yet.
+	// Products with an `undefined` value rather than an empty array means the API call has not been completed yet.
+	const hasAddedPaidSubscriptionProduct = ! isOdysseyStats && products && products.length > 0;
 
 	return (
 		<Main fullWidthLayout>
@@ -87,30 +97,31 @@ const StatsSubscribersPage = ( { period }: StatsSubscribersPageProps ) => {
 					navigationItems={ [] }
 				></NavigationHeader>
 				<StatsNavigation selectedItem="subscribers" siteId={ siteId } slug={ siteSlug } />
-				{ showLaunchpad ? (
-					<SubscriberLaunchpad launchpadContext="subscriber-stats" />
-				) : (
-					<>
-						<SubscribersHighlightSection siteId={ siteId } />
-						{ isChartVisible && (
-							<>
-								<SubscribersChartSection
-									siteId={ siteId }
-									slug={ siteSlug }
-									period={ period.period }
-								/>
-								<SubscribersOverview siteId={ siteId } />
-							</>
-						) }
-						<div className={ statsModuleListClass }>
-							<Followers path="followers" />
-							<Reach />
-							{ ! isOdysseyStats && period && (
-								<StatsModuleEmails period={ period } query={ { period, date: today } } />
+				{ isLoading && <StatsModulePlaceholder className="is-subscriber-page" isLoading /> }
+				{ ! isLoading &&
+					( showLaunchpad ? (
+						<SubscriberLaunchpad launchpadContext="subscriber-stats" />
+					) : (
+						<>
+							<SubscribersHighlightSection siteId={ siteId } />
+							{ isChartVisible && (
+								<>
+									<SubscribersChartSection
+										siteId={ siteId }
+										slug={ siteSlug }
+										period={ period.period }
+									/>
+									{ hasAddedPaidSubscriptionProduct && <SubscribersOverview siteId={ siteId } /> }
+								</>
 							) }
-						</div>
-					</>
-				) }
+							<div className={ statsModuleListClass }>
+								<Followers path="followers" />
+								{ ! isOdysseyStats && period && (
+									<StatsModuleEmails period={ period } query={ { period, date: today } } />
+								) }
+							</div>
+						</>
+					) ) }
 				<JetpackColophon />
 			</div>
 		</Main>

@@ -22,6 +22,7 @@
 	"homepage": "https://github.com/Automattic/wp-calypso/tree/HEAD/packages/viewport#readme",
 	"scripts": {
 		"clean": "tsc --build ./tsconfig.json ./tsconfig-cjs.json --clean && rm -rf dist",
+		"prepare": " yarn run build",
 		"build": "tsc --build ./tsconfig.json ./tsconfig-cjs.json",
 		"prepack": "yarn run clean && yarn run build"
 	},

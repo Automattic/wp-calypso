@@ -28,7 +28,7 @@ export default function PromoCards( { isOdysseyStats, slug, pageSlug } ) {
 	// TODO: Figure out an approach that doesn't require replicating state value from DotPager.
 	const [ dotPagerIndex, setDotPagerIndex ] = useState( 0 );
 
-	const selectedSiteId = useSelector( ( state ) => getSelectedSiteId( state ) );
+	const selectedSiteId = useSelector( getSelectedSiteId );
 	const jetpackNonAtomic = useSelector(
 		( state ) => isJetpackSite( state, selectedSiteId ) && ! isAtomicSite( state, selectedSiteId )
 	);

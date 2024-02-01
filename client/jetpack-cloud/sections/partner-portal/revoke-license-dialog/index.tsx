@@ -69,7 +69,6 @@ export default function RevokeLicenseDialog( {
 
 		<Button primary scary busy={ mutation.isPending } onClick={ revoke }>
 			{ isParentLicense ? translate( 'Revoke bundle' ) : translate( 'Revoke License' ) }
-			{ translate( 'Revoke License' ) }
 		</Button>,
 	];
 

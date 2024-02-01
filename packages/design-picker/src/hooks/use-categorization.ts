@@ -89,7 +89,6 @@ export function useCategorizationFromApi(
 /**
  *	Check that the current selection still matches one of the category slugs,
  *	and if it doesn't reset the current selection to the default selection.
- *
  *	@param categories the list of available categories
  *	@param currentSelection the slug of the current selected category
  *	@returns whether the current selection should be set to the default selection
@@ -109,7 +108,6 @@ function shouldSetToDefaultSelection(
  * Chooses which category is the one that should be used by default.
  * If `defaultSelection` is a valid category slug then it'll be used, otherwise it'll be whichever
  * category appears first in the list.
- *
  * @param categories the categories from which the default will be selected
  * @param defaultSelection use this category as the default selection if possible
  * @returns the default category or null if none is available

@@ -195,6 +195,7 @@ export type DomainDiagnostics = {
 			[ dnsRecordType: string ]: {
 				status: string;
 				correct_record: string;
+				error_message?: string;
 			};
 		};
 		is_using_wpcom_name_servers: boolean;

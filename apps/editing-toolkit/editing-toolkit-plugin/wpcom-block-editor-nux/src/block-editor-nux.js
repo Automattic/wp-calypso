@@ -27,7 +27,6 @@ import LaunchWpcomWelcomeTour from './welcome-tour/tour-launch';
 /**
  * Sometimes Gutenberg doesn't allow you to re-register the module and throws an error.
  * FIXME: The new version allow it by default, but we might need to ensure that all the site has the new version.
- *
  * @see https://github.com/Automattic/wp-calypso/pull/79663
  */
 let unlock;

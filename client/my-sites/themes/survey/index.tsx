@@ -5,6 +5,7 @@ import './survey.scss';
 
 export enum SurveyType {
 	DECEMBER_2023 = 'DECEMBER_2023',
+	FEBRUARY_2024 = 'FEBRUARY_2024',
 }
 
 const surveys = new Map< SurveyType, { eventName: string; eventUrl: string } >( [
@@ -13,6 +14,13 @@ const surveys = new Map< SurveyType, { eventName: string; eventUrl: string } >( 
 		{
 			eventName: 'theme-showcase-december-2023',
 			eventUrl: 'https://automattic.survey.fm/lits-survey-v1',
+		},
+	],
+	[
+		SurveyType.FEBRUARY_2024,
+		{
+			eventName: 'theme-showcase-february-2024',
+			eventUrl: 'https://automattic.survey.fm/lits-survey-v2',
 		},
 	],
 ] );

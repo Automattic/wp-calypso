@@ -1,6 +1,5 @@
 import { isEnabled } from '@automattic/calypso-config';
 import page, { type Callback, type Context } from '@automattic/calypso-router';
-import IssueLicenseV2 from 'calypso/jetpack-cloud/sections/partner-portal/issue-license-v2';
 import {
 	publicToInternalLicenseFilter,
 	publicToInternalLicenseSortField,
@@ -13,11 +12,11 @@ import BillingDashboard from 'calypso/jetpack-cloud/sections/partner-portal/prim
 import CompanyDetailsDashboard from 'calypso/jetpack-cloud/sections/partner-portal/primary/company-details-dashboard';
 import DownloadProducts from 'calypso/jetpack-cloud/sections/partner-portal/primary/download-products';
 import InvoicesDashboard from 'calypso/jetpack-cloud/sections/partner-portal/primary/invoices-dashboard';
+import IssueLicense from 'calypso/jetpack-cloud/sections/partner-portal/primary/issue-license';
 import Licenses from 'calypso/jetpack-cloud/sections/partner-portal/primary/licenses';
 import PartnerAccess from 'calypso/jetpack-cloud/sections/partner-portal/primary/partner-access';
 import PaymentMethodAdd from 'calypso/jetpack-cloud/sections/partner-portal/primary/payment-method-add';
 import PaymentMethodList from 'calypso/jetpack-cloud/sections/partner-portal/primary/payment-method-list';
-import Prices from 'calypso/jetpack-cloud/sections/partner-portal/primary/prices';
 import TermsOfServiceConsent from 'calypso/jetpack-cloud/sections/partner-portal/primary/terms-of-service-consent';
 import {
 	LicenseFilter,
@@ -36,8 +35,8 @@ import { ToSConsent } from 'calypso/state/partner-portal/types';
 import getSites from 'calypso/state/selectors/get-sites';
 import { setAllSitesSelected } from 'calypso/state/ui/actions/set-sites';
 import Header from './header';
-import PaymentMethodListV2 from './payment-methods-v2';
 import PaymentMethodAddV2 from './primary/payment-method-add-v2';
+import PaymentMethodListV2 from './primary/payment-methods-v2';
 import WPCOMAtomicHosting from './primary/wpcom-atomic-hosting';
 
 const isNewCardAdditionEnabled = isEnabled( 'jetpack/card-addition-improvements' );
@@ -114,7 +113,7 @@ export const issueLicenseContext: Callback = ( context, next ) => {
 	context.header = <Header />;
 	setSidebar( context, true );
 	context.primary = (
-		<IssueLicenseV2 selectedSite={ selectedSite } suggestedProduct={ suggestedProduct } />
+		<IssueLicense selectedSite={ selectedSite } suggestedProduct={ suggestedProduct } />
 	);
 	next();
 };
@@ -156,7 +155,7 @@ export const paymentMethodAddContext: Callback = ( context, next ) => {
 	const sites = getSites( state );
 	const selectedSite = siteId ? sites?.find( ( site ) => site?.ID === parseInt( siteId ) ) : null;
 	context.primary = isNewCardAdditionEnabled ? (
-		<PaymentMethodAddV2 />
+		<PaymentMethodAddV2 withAssignLicense={ ! selectedSite } />
 	) : (
 		<PaymentMethodAdd selectedSite={ selectedSite } />
 	);
@@ -177,11 +176,8 @@ export const companyDetailsDashboardContext: Callback = ( context, next ) => {
 	next();
 };
 
-export const pricesContext: Callback = ( context, next ) => {
-	context.header = <Header />;
-	setSidebar( context );
-	context.primary = <Prices />;
-	next();
+export const pricesContext: Callback = () => {
+	page.redirect( '/partner-portal/issue-license' );
 };
 
 export const landingPageContext: Callback = () => {

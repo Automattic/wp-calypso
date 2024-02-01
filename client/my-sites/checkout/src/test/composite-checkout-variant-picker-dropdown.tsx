@@ -1,6 +1,7 @@
 /**
  * @jest-environment jsdom
  */
+import { formatCurrency } from '@automattic/format-currency';
 import { render, screen, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { dispatch } from '@wordpress/data';
@@ -179,38 +180,29 @@ describe( 'CheckoutMain with a variant picker', () => {
 			const openVariantPicker = await screen.findByLabelText( 'Pick a product term' );
 			await user.click( openVariantPicker );
 
-			const currentVariantItem = await screen.findByRole( 'option', {
-				name: getVariantItemTextForInterval( cartPlan ),
-			} );
 			const variantItem = await screen.findByRole( 'option', {
 				name: getVariantItemTextForInterval( expectedVariant ),
 			} );
 
-			const currentVariantSlug = currentVariantItem.dataset.productSlug;
 			const variantSlug = variantItem.dataset.productSlug;
 
 			const variantData = getPlansItemsState().find(
 				( plan ) => plan.product_slug === variantSlug
 			);
 
-			const finalPrice = variantData.raw_price;
-			const variantInterval = parseInt( String( variantData.bill_period ), 10 );
-			const currentVariantData = getPlansItemsState().find(
-				( plan ) => plan.product_slug === currentVariantSlug
-			);
-			const currentVariantPrice = currentVariantData.raw_price;
-			const currentVariantInterval = parseInt( String( currentVariantData.bill_period ), 10 );
-			const intervalsInVariant = Math.round( variantInterval / currentVariantInterval );
-			const priceBeforeDiscount = currentVariantPrice * intervalsInVariant;
+			const discountAmount = variantData.orig_cost_integer / 2; // hardcoded: 50%
+			const formattedDiscountAmount = formatCurrency( discountAmount, variantData.currency_code, {
+				stripZeros: true,
+				isSmallestUnit: true,
+			} );
 
-			const discountPercentage = Math.round( 100 - ( finalPrice / priceBeforeDiscount ) * 100 );
-			if ( discountPercentage > 0 ) {
+			if ( discountAmount > 0 ) {
 				expect(
-					within( variantItem ).getByText( `Save ${ discountPercentage }%` )
+					within( variantItem ).getByText( `Save ${ formattedDiscountAmount }` )
 				).toBeInTheDocument();
 			} else {
 				expect(
-					within( variantItem ).queryByText( `Save ${ discountPercentage }%` )
+					within( variantItem ).queryByText( `Save ${ formattedDiscountAmount }` )
 				).not.toBeInTheDocument();
 			}
 		}

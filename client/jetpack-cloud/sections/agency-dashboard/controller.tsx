@@ -4,6 +4,7 @@ import page, { type Callback } from '@automattic/calypso-router';
 import JetpackManageSidebar from 'calypso/jetpack-cloud/sections/sidebar-navigation/jetpack-manage';
 import { isAgencyUser } from 'calypso/state/partner-portal/partner/selectors';
 import { setAllSitesSelected } from 'calypso/state/ui/actions';
+import ConnectUrl from './connect-url';
 import DashboardOverview from './dashboard-overview';
 import Header from './header';
 
@@ -52,5 +53,12 @@ export const agencyDashboardContext: Callback = ( context, next ) => {
 	// By definition, Sites Management does not select any one specific site
 	context.store.dispatch( setAllSitesSelected() );
 
+	next();
+};
+
+export const connectUrlContext: Callback = ( context, next ) => {
+	context.header = <Header />;
+	context.secondary = <JetpackManageSidebar path={ context.path } />;
+	context.primary = <ConnectUrl />;
 	next();
 };

@@ -8,7 +8,7 @@ import { requestTags } from 'calypso/state/reader/tags/items/actions';
  *  users tags to the state tree.
  */
 const QueryReaderFollowedTags = () => {
-	const locale = useSelector( ( state ) => getCurrentUserLocale( state ) );
+	const locale = useSelector( getCurrentUserLocale );
 	const dispatch = useDispatch();
 
 	useEffect( () => {

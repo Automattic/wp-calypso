@@ -1,12 +1,11 @@
 import { getTracksAnonymousUserId } from '@automattic/calypso-analytics';
 import config from '@automattic/calypso-config';
 import {
-	FEATURE_PREMIUM_THEMES_V2,
 	FEATURE_UPLOAD_THEMES_PLUGINS,
 	FEATURE_UPLOAD_THEMES,
 	PLAN_BUSINESS,
 	PLAN_PREMIUM,
-	WPCOM_FEATURES_PREMIUM_THEMES,
+	WPCOM_FEATURES_PREMIUM_THEMES_UNLIMITED,
 	WPCOM_FEATURES_INSTALL_PLUGINS,
 	getPlan,
 	PLAN_PERSONAL,
@@ -79,6 +78,8 @@ import {
 	setThemePreviewOptions,
 	themeStartActivationSync as themeStartActivationSyncAction,
 } from 'calypso/state/themes/actions';
+import { useIsThemeAllowedOnSite } from 'calypso/state/themes/hooks/use-is-theme-allowed-on-site';
+import { useThemeTierForTheme } from 'calypso/state/themes/hooks/use-theme-tier-for-theme';
 import {
 	doesThemeBundleSoftwareSet,
 	isThemeActive,
@@ -102,12 +103,11 @@ import {
 	getIsLivePreviewSupported,
 	getThemeType,
 	isThemeWooCommerce,
-	getThemeTierForTheme,
-	isThemeAllowedOnSite,
 } from 'calypso/state/themes/selectors';
 import { getIsLoadingCart } from 'calypso/state/themes/selectors/get-is-loading-cart';
 import { getBackPath } from 'calypso/state/themes/themes-ui/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import { ReviewsModal } from '../marketplace/components/reviews-modal';
 import EligibilityWarningModal from '../themes/atomic-transfer-dialog';
 import { LivePreviewButton } from './live-preview-button';
 import ThemeDownloadCard from './theme-download-card';
@@ -306,6 +306,7 @@ class ThemeSheet extends Component {
 		disabledButton: true,
 		showUnlockStyleUpgradeModal: false,
 		isAtomicTransferCompleted: false,
+		isReviewsModalVisible: false,
 	};
 
 	scrollToTop = () => {
@@ -808,14 +809,32 @@ class ThemeSheet extends Component {
 	};
 
 	renderReviews = () => {
-		if ( ! config.isEnabled( 'marketplace-add-review' ) ) {
-			return null;
-		}
 		const { name, themeId } = this.props;
+		const { isReviewsModalVisible } = this.state;
 
 		return (
 			<div className="theme__sheet-reviews-summary">
-				<ReviewsSummary slug={ themeId } productName={ name } productType="theme" />
+				<ReviewsModal
+					isVisible={ isReviewsModalVisible }
+					onClose={ () => {
+						this.setState( {
+							isReviewsModalVisible: false,
+						} );
+					} }
+					productName={ name }
+					slug={ themeId }
+					productType="theme"
+				/>
+				<ReviewsSummary
+					slug={ themeId }
+					productName={ name }
+					productType="theme"
+					onReviewsClick={ () => {
+						this.setState( {
+							isReviewsModalVisible: true,
+						} );
+					} }
+				/>
 			</div>
 		);
 	};
@@ -1157,6 +1176,7 @@ class ThemeSheet extends Component {
 			selectedStyleVariationSlug: styleVariationSlug,
 			themeType,
 			siteId,
+			themeTier,
 		} = this.props;
 
 		return (
@@ -1165,7 +1185,12 @@ class ThemeSheet extends Component {
 				href={
 					getUrl &&
 					( key === 'customize' || ! isExternallyManagedTheme || ! isLoggedIn || ! siteId )
-						? getUrl( this.props.themeId, { tabFilter, tierFilter: tier, styleVariationSlug } )
+						? getUrl( this.props.themeId, {
+								tabFilter,
+								tierFilter: tier,
+								styleVariationSlug,
+								themeTier,
+						  } )
 						: null
 				}
 				onClick={ () => {
@@ -1352,7 +1377,9 @@ class ThemeSheet extends Component {
 
 			// @TODO we should add a new feature for personal plan themes or what we agree on.
 			const feature =
-				PLAN_PREMIUM === plan ? FEATURE_PREMIUM_THEMES_V2 : FEATURE_UPLOAD_THEMES_PLUGINS;
+				PLAN_PREMIUM === plan
+					? WPCOM_FEATURES_PREMIUM_THEMES_UNLIMITED
+					: FEATURE_UPLOAD_THEMES_PLUGINS;
 
 			plansUrl = `/plans/${ siteSlug }/?plan=${ plan }&feature=${ feature }&redirect_to=${ redirectTo }`;
 		} else {
@@ -1445,7 +1472,7 @@ class ThemeSheet extends Component {
 					title={ this.getBannerUpsellTitle() }
 					description={ preventWidows( this.getBannerUpsellDescription() ) }
 					event="themes_plan_particular_free_with_plan"
-					feature={ WPCOM_FEATURES_PREMIUM_THEMES }
+					feature={ WPCOM_FEATURES_PREMIUM_THEMES_UNLIMITED }
 					forceHref={ onClick === null }
 					disableHref={ onClick !== null }
 					onClick={ null === onClick ? noop : onClick }
@@ -1605,7 +1632,6 @@ const ThemeSheetWithOptions = ( props ) => {
 		isActive,
 		isLoggedIn,
 		isPremium,
-		isThemeAllowed,
 		isThemePurchased,
 		isStandaloneJetpack,
 		demoUrl,
@@ -1618,6 +1644,7 @@ const ThemeSheetWithOptions = ( props ) => {
 		isSiteWooExpressFreeTrial,
 		isThemeBundleWooCommerce,
 	} = props;
+	const isThemeAllowed = useIsThemeAllowedOnSite( siteId, props.themeId );
 
 	let defaultOption;
 	let secondaryOption = 'tryandcustomize';
@@ -1655,9 +1682,13 @@ const ThemeSheetWithOptions = ( props ) => {
 		defaultOption = 'activate';
 	}
 
+	const themeTier = useThemeTierForTheme( props.themeId );
+
 	return (
 		<ConnectedThemeSheet
 			{ ...props }
+			themeTier={ themeTier }
+			isThemeAllowed={ isThemeAllowed }
 			demo_uri={ demoUrl }
 			siteId={ siteId }
 			defaultOption={ defaultOption }
@@ -1688,8 +1719,6 @@ export default connect(
 		const productionSiteSlug = getSiteSlug( state, productionSite?.ID );
 		const isJetpack = isJetpackSite( state, siteId );
 		const isStandaloneJetpack = isJetpack && ! isAtomic;
-		const themeTier = getThemeTierForTheme( state, themeId );
-		const isThemeAllowed = isThemeAllowedOnSite( state, siteId, themeId );
 
 		const isExternallyManagedTheme = getIsExternallyManagedTheme( state, theme?.id );
 		const isLoading =
@@ -1705,8 +1734,6 @@ export default connect(
 
 		return {
 			...theme,
-			themeTier,
-			isThemeAllowed,
 			themeId,
 			price: getPremiumThemePrice( state, themeId, siteId ),
 			error,
@@ -1733,7 +1760,11 @@ export default connect(
 			isSiteWooExpressFreeTrial: isSiteOnECommerceTrial( state, siteId ),
 			isSiteBundleEligible: isSiteEligibleForBundledSoftware( state, siteId ),
 			forumUrl: getThemeForumUrl( state, themeId, siteId ),
-			hasUnlimitedPremiumThemes: siteHasFeature( state, siteId, WPCOM_FEATURES_PREMIUM_THEMES ),
+			hasUnlimitedPremiumThemes: siteHasFeature(
+				state,
+				siteId,
+				WPCOM_FEATURES_PREMIUM_THEMES_UNLIMITED
+			),
 			showTryAndCustomize: shouldShowTryAndCustomize( state, themeId, siteId ),
 			canInstallPlugins: siteHasFeature( state, siteId, WPCOM_FEATURES_INSTALL_PLUGINS ),
 			canUserUploadThemes: siteHasFeature( state, siteId, FEATURE_UPLOAD_THEMES ),

@@ -113,8 +113,12 @@ export const FEATURE_SFTP_DATABASE = 'sftp-and-database-access';
 export const FEATURE_SITE_BACKUPS_AND_RESTORE = 'site-backups-and-restore';
 export const FEATURE_SECURITY_SETTINGS = 'security-settings';
 export const FEATURE_WOOP = 'woop';
-export const FEATURE_PREMIUM_THEMES = 'unlimited-premium-themes';
-export const FEATURE_PERSONAL_THEMES = 'personal-themes';
+/*
+ * TODO: To avoid confusion, this constant value should be renamed to `premium-themes` after
+ * `WPCOM_FEATURES_PREMIUM_THEMES_UNLIMITED` has been renamed to `premium-themes-unlimited`
+ * (see comment below).
+ */
+export const FEATURE_PREMIUM_THEMES = 'premium-themes-v3';
 export const FEATURE_STATS_PAID = 'stats-paid';
 export const FEATURE_STATS_FREE = 'stats-free';
 
@@ -283,7 +287,16 @@ export const WPCOM_FEATURES_LIVE_SUPPORT = 'live_support';
 export const WPCOM_FEATURES_MANAGE_PLUGINS = 'manage-plugins';
 export const WPCOM_FEATURES_NO_ADVERTS = 'no-adverts/no-adverts.php';
 export const WPCOM_FEATURES_NO_WPCOM_BRANDING = 'no-wpcom-branding';
-export const WPCOM_FEATURES_PREMIUM_THEMES = 'premium-themes';
+/*
+ * TODO: This constant value should be renamed (here and in `class-wpcom-features.php` in
+ * WPCOM) to `premium-themes-unlimited` so it's not confused with `FEATURE_PREMIUM_THEMES`.
+ */
+export const WPCOM_FEATURES_PREMIUM_THEMES_UNLIMITED = 'premium-themes';
+/*
+ * TODO: This constant value should be renamed (here and in `class-wpcom-features.php` in
+ * WPCOM) to `premium-themes-limited` so it better reflects the actual feature.
+ */
+export const WPCOM_FEATURES_PREMIUM_THEMES_LIMITED = 'personal-themes';
 export const WPCOM_FEATURES_PRIORITY_SUPPORT = 'priority_support';
 export const WPCOM_FEATURES_REAL_TIME_BACKUPS = 'real-time-backups';
 export const WPCOM_FEATURES_SCAN = 'scan';
@@ -344,7 +357,6 @@ export const FEATURE_FAST_DNS = 'fast-dns';
 export const FEATURE_STYLE_CUSTOMIZATION = 'style-customization';
 export const FEATURE_SUPPORT_EMAIL = 'support-email-v1';
 export const FEATURE_DESIGN_TOOLS = 'design-tools';
-export const FEATURE_PREMIUM_THEMES_V2 = 'premium-themes-v2';
 export const FEATURE_WORDADS = 'wordads-v2';
 export const FEATURE_PLUGINS_THEMES = 'plugins-themes-v1';
 export const FEATURE_BANDWIDTH = 'bandwidth-v1';
@@ -457,6 +469,16 @@ export const FEATURE_LIVE_SHIPPING_RATES = 'live-shipping-rates'; // Live shippi
 export const FEATURE_DISCOUNTED_SHIPPING = 'discounted-shipping'; // Discounted shipping
 export const FEATURE_PRINT_SHIPPING_LABELS = 'print-shipping-labels'; // Print shipping labels
 export const FEATURE_AI_ASSISTED_PRODUCT_DESCRIPTION = 'ai-assisted-product-descriptions'; // AI-assisted product descriptions
+
+// Sensei Features
+export const FEATURE_SENSEI_SUPPORT = 'sensei-support';
+export const FEATURE_SENSEI_UNLIMITED = 'sensei-unlimited';
+export const FEATURE_SENSEI_INTERACTIVE = 'sensei-interactive';
+export const FEATURE_SENSEI_QUIZZES = 'sensei-quizzes';
+export const FEATURE_SENSEI_SELL_COURSES = 'sensei-sell-courses';
+export const FEATURE_SENSEI_STORAGE = 'sensei-storage';
+export const FEATURE_SENSEI_HOSTING = 'sensei-hosting';
+export const FEATURE_SENSEI_JETPACK = 'sensei-jetpack';
 
 // Feature types
 export const FEATURE_TYPE_JETPACK_ANTI_SPAM = 'jetpack_anti_spam';

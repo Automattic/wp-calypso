@@ -95,7 +95,7 @@ const EmailHome = ( props: EmailManagementHomeProps ) => {
 		}
 		return canCurrentUser( state, selectedSite.ID, 'manage_options' );
 	} );
-	const hasSitesLoaded = useSelector( ( state ) => hasLoadedSites( state ) );
+	const hasSitesLoaded = useSelector( hasLoadedSites );
 
 	const addEmailForwardMutationActive = useAddEmailForwardMutationIsLoading();
 

@@ -9,6 +9,8 @@ import {
 import wpcom from 'calypso/lib/wp';
 import { BASE_STALE_TIME } from 'calypso/state/constants';
 
+export const EMPTY_PLACEHOLDER = '&nbsp;';
+
 const apiBase = '/sites/marketplace.wordpress.com';
 const reviewsApiBase = `${ apiBase }/comments`;
 const reviewsApiNamespace = 'wp/v2';
@@ -173,7 +175,7 @@ const createReview = ( {
 		{
 			product_type: productType,
 			product_slug: slug,
-			content,
+			content: content || EMPTY_PLACEHOLDER,
 			meta: { wpcom_marketplace_rating: rating },
 		}
 	);
@@ -194,7 +196,7 @@ const updateReview = ( {
 		{
 			product_type: productType,
 			product_slug: slug,
-			content,
+			content: content || EMPTY_PLACEHOLDER,
 			meta: { wpcom_marketplace_rating: rating },
 		}
 	);

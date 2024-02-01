@@ -1,4 +1,4 @@
-@import "calypso/my-sites/plans-grid/media-queries";
+@import "@automattic/plans-grid-next/src/media-queries";
 
 .is-section-stepper .plans-features-main__group.is-2023-pricing-grid,
 .is-section-signup .is-2023-pricing-grid .plan-features-2023-grid__content {
@@ -39,10 +39,6 @@
 		max-width: 1480px;
 	}
 
-	.is-onboarding-2023-pricing-grid &.is-wide-layout {
-		@include pricing-grid-breakpoints;
-	}
-
 	.formatted-header.is-without-subhead {
 		margin-bottom: 15px;
 	}
@@ -50,10 +46,6 @@
 	.step-wrapper {
 		&.is-wide-layout {
 			max-width: 1200px;
-		}
-
-		.is-onboarding-2023-pricing-grid .signup__step &.is-wide-layout {
-			@include pricing-grid-breakpoints;
 		}
 	}
 }

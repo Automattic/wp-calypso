@@ -16,7 +16,7 @@ import type { RawPurchase } from 'calypso/lib/purchases/types';
  * Update site products in the Redux store by fetching purchases via API for Odyssey Stats.
  */
 const useOdysseyQuerySitePurchases = ( siteId: number | null ) => {
-	const isRequesting = useSelector( ( state ) => isFetchingSitePurchases( state ) );
+	const isRequesting = useSelector( isFetchingSitePurchases );
 	const reduxDispatch = useDispatch();
 
 	useEffect( () => {

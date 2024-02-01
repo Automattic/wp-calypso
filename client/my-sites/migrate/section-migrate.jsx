@@ -1,4 +1,10 @@
-import { planHasFeature, FEATURE_UPLOAD_THEMES_PLUGINS } from '@automattic/calypso-products';
+import {
+	planHasFeature,
+	FEATURE_UPLOAD_THEMES_PLUGINS,
+	PLAN_ECOMMERCE_TRIAL_MONTHLY,
+	PLAN_BUSINESS,
+	PLAN_WOOEXPRESS_SMALL,
+} from '@automattic/calypso-products';
 import page from '@automattic/calypso-router';
 import { Button, Card, CompactCard, ProgressBar, Gridicon, Spinner } from '@automattic/components';
 import { getLocaleSlug, localize } from 'i18n-calypso';
@@ -40,13 +46,22 @@ export class SectionMigrate extends Component {
 		errorMessage: '',
 		isJetpackConnected: false,
 		migrationStatus: 'unknown',
+		migrationErrorStatus: null,
 		percent: 0,
+		backupPercent: 0,
+		restorePercent: 0,
+		restoreMessage: '',
+		backupPosts: 0,
+		backupMedia: 0,
+		siteSize: 0,
 		siteInfo: null,
 		selectedSiteSlug: null,
 		sourceSitePlugins: [],
 		sourceSiteThemes: [],
 		startTime: '',
 		url: '',
+		stage: 0,
+		stageTotal: 0,
 	};
 
 	componentDidMount() {
@@ -196,9 +211,11 @@ export class SectionMigrate extends Component {
 			this.props.updateSiteMigrationMeta(
 				this.props.targetSiteId,
 				state.migrationStatus,
+				state.migrationErrorStatus,
 				state.lastModified
 			);
 		}
+
 		this.setState( state );
 	};
 
@@ -283,15 +300,18 @@ export class SectionMigrate extends Component {
 
 				this.setMigrationState( {
 					migrationStatus: 'error',
+					migrationErrorStatus: code,
 					errorMessage: message,
 				} );
 			} );
 	};
 
 	goToCart = () => {
-		const { sourceSite, targetSiteSlug } = this.props;
+		const { sourceSite, targetSiteSlug, targetSite } = this.props;
 		const sourceSiteSlug = get( sourceSite, 'slug' );
-		const plan = 'business';
+		const currentPlanSlug = get( targetSite, 'plan.product_slug' );
+		const isEcommerceTrial = currentPlanSlug === PLAN_ECOMMERCE_TRIAL_MONTHLY;
+		const plan = isEcommerceTrial ? PLAN_WOOEXPRESS_SMALL : PLAN_BUSINESS;
 
 		page(
 			`/checkout/${ targetSiteSlug }/${ plan }?redirect_to=/migrate/from/${ sourceSiteSlug }/to/${ targetSiteSlug }%3Fstart%3Dtrue`
@@ -308,11 +328,21 @@ export class SectionMigrate extends Component {
 			.then( ( response ) => {
 				const {
 					status: migrationStatus,
+					error_status: migrationErrorStatus,
 					percent,
+					backup_percent: backupPercent,
+					restore_percent: restorePercent,
+					restore_message: restoreMessage,
+					site_size: siteSize,
+					posts_count: backupPosts,
+					uploads_count: backupMedia,
 					source_blog_id: sourceSiteId,
 					created: startTime,
 					last_modified: lastModified,
 					is_atomic: isBackendAtomic,
+					step,
+					step_name: stepName,
+					total_steps: stepTotal,
 				} = response;
 
 				if ( String( sourceSiteId ) !== String( this.props.sourceSiteId ) ) {
@@ -320,15 +350,28 @@ export class SectionMigrate extends Component {
 				}
 
 				if ( migrationStatus ) {
+					const newState = {
+						migrationStatus,
+						migrationErrorStatus,
+						percent,
+						backupPercent,
+						restorePercent,
+						restoreMessage,
+						siteSize,
+						backupPosts,
+						backupMedia,
+						lastModified,
+						step,
+						stepName,
+						stepTotal,
+					};
+
 					if ( startTime && isEmpty( this.state.startTime ) ) {
 						const startMoment = moment.utc( startTime, 'YYYY-MM-DD HH:mm:ss' );
 
 						if ( ! startMoment.isValid() ) {
-							this.setMigrationState( {
-								migrationStatus,
-								percent,
-								lastModified,
-							} );
+							this.setMigrationState( newState );
+
 							return;
 						}
 
@@ -337,12 +380,9 @@ export class SectionMigrate extends Component {
 							.locale( getLocaleSlug() )
 							.format( 'lll' );
 
-						this.setMigrationState( {
-							migrationStatus,
-							percent,
-							startTime: localizedStartTime,
-							lastModified,
-						} );
+						newState.startTime = localizedStartTime;
+						this.setMigrationState( newState );
+
 						return;
 					}
 
@@ -353,11 +393,7 @@ export class SectionMigrate extends Component {
 						this.props.requestSite( targetSiteId );
 					}
 
-					this.setMigrationState( {
-						migrationStatus,
-						percent,
-						lastModified,
-					} );
+					this.setMigrationState( newState );
 				}
 			} )
 			.catch( ( error ) => {

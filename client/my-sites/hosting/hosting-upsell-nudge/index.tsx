@@ -1,4 +1,5 @@
 import { FEATURE_SFTP, PLAN_BUSINESS, WPCOM_PLANS, getPlan } from '@automattic/calypso-products';
+import { addQueryArgs } from '@wordpress/url';
 import { useTranslate } from 'i18n-calypso';
 import UpsellNudge from 'calypso/blocks/upsell-nudge';
 import { preventWidows } from 'calypso/lib/formatting';
@@ -26,11 +27,18 @@ interface HostingUpsellNudgeTargetPlan {
 }
 
 interface HostingUpsellNudgeProps {
-	siteId: number | null;
+	siteId: number;
 	targetPlan?: HostingUpsellNudgeTargetPlan;
+	secondaryCallToAction?: string;
+	secondaryOnClick?: () => void;
 }
 
-export function HostingUpsellNudge( { siteId, targetPlan }: HostingUpsellNudgeProps ) {
+export function HostingUpsellNudge( {
+	siteId,
+	targetPlan,
+	secondaryCallToAction,
+	secondaryOnClick,
+}: HostingUpsellNudgeProps ) {
 	const translate = useTranslate();
 	const features = useFeatureList();
 	const callToActionText = translate( 'Upgrade to %(businessPlanName)s Plan', {
@@ -44,7 +52,11 @@ export function HostingUpsellNudge( { siteId, targetPlan }: HostingUpsellNudgePr
 	);
 	const callToAction = targetPlan ? targetPlan.callToAction : callToActionText;
 	const feature = targetPlan ? targetPlan.feature : FEATURE_SFTP;
-	const href = targetPlan ? targetPlan.href : `/checkout/${ siteId }/business`;
+	const href = targetPlan
+		? targetPlan.href
+		: addQueryArgs( `/checkout/${ siteId }/business`, {
+				redirect_to: `/hosting-config/${ siteId }`,
+		  } );
 	const plan = targetPlan ? targetPlan.plan : PLAN_BUSINESS;
 	const title = targetPlan ? targetPlan.title : titleText;
 
@@ -54,9 +66,12 @@ export function HostingUpsellNudge( { siteId, targetPlan }: HostingUpsellNudgePr
 			compactButton={ false }
 			title={ title }
 			event="calypso_hosting_configuration_upgrade_click"
+			secondaryEvent="calypso_hosting_configuration_upgrade_free_trial_click"
 			href={ href }
 			callToAction={ callToAction }
-			plan={ plan }
+			secondaryCallToAction={ secondaryCallToAction }
+			secondaryOnClick={ secondaryOnClick }
+			plan={ plan as string }
 			feature={ feature }
 			showIcon={ true }
 			list={ features }

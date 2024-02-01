@@ -66,11 +66,32 @@ const CouponEnableButton = styled.button`
 `;
 
 const SitePreviewWrapper = styled.div`
-	& .home-site-preview {
-		padding-bottom: 1.5em;
-	}
-	& .home-site-preview .home-site-preview__remove-pointer {
-		aspect-ratio: 16 / 9;
+	.home-site-preview {
+		margin-bottom: 1.5em;
+		padding: 0.5em;
+		box-shadow:
+			0 0 0 1px var( --color-border-subtle ),
+			rgba( 0, 0, 0, 0.2 ) 0 7px 30px -10px;
+		border-radius: 6px;
+
+		& .home-site-preview__thumbnail-wrapper {
+			aspect-ratio: 16 / 9;
+			border-radius: 6px;
+			box-shadow: none;
+			min-width: 100%;
+
+			&:hover {
+				box-shadow: unset;
+
+				& .home-site-preview__thumbnail {
+					opacity: unset;
+				}
+			}
+		}
+
+		& home-site-preview__thumbnail {
+			opacity: 1;
+		}
 	}
 `;
 

@@ -98,7 +98,9 @@ export function MigrationReady( props: Props ) {
 				/>
 			) }
 			{ isFetchingUserSettingsSelector ? (
-				<LoadingEllipsis />
+				<div className="import-layout__center">
+					<LoadingEllipsis />
+				</div>
 			) : (
 				<div className="import__pre-migration import__import-everything import__import-everything--redesign">
 					<div className="import__heading import__heading-center">

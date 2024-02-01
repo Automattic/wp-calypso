@@ -118,6 +118,10 @@
 	}
 }
 
+.manage-purchase__description.is-placeholder {
+	@include placeholder( --color-neutral-10 );
+}
+
 .manage-purchase__header,
 .manage-purchase__content {
 	padding: 16px 24px;
