@@ -1,5 +1,5 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
-import { Button } from '@automattic/components';
+import { Button, FormLabel } from '@automattic/components';
 import { NextButton } from '@automattic/onboarding';
 import { createElement, createInterpolateElement } from '@wordpress/element';
 import { Icon, info } from '@wordpress/icons';
@@ -9,7 +9,6 @@ import React, { ChangeEvent, FormEvent, useState, useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
 import { CAPTURE_URL_RGX } from 'calypso/blocks/import/util';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
-import FormLabel from 'calypso/components/forms/form-label';
 import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
 import FormTextInput from 'calypso/components/forms/form-text-input';
 import type { OnInputChange, OnInputEnter } from './types';

@@ -1,7 +1,7 @@
 import { getTracksAnonymousUserId } from '@automattic/calypso-analytics';
 import config from '@automattic/calypso-config';
 import page from '@automattic/calypso-router';
-import { Button } from '@automattic/components';
+import { Button, FormLabel } from '@automattic/components';
 import { suggestEmailCorrection } from '@automattic/onboarding';
 import emailValidator from 'email-validator';
 import { localize } from 'i18n-calypso';
@@ -9,7 +9,6 @@ import { debounce } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
-import FormLabel from 'calypso/components/forms/form-label';
 import FormTextInput from 'calypso/components/forms/form-text-input';
 import LoggedOutForm from 'calypso/components/logged-out-form';
 import LoggedOutFormFooter from 'calypso/components/logged-out-form/footer';
