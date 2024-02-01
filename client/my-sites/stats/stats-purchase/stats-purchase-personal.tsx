@@ -53,7 +53,7 @@ const PersonalPurchase = ( {
 	const [ isSellingChecked, setSellingChecked ] = useState( false );
 	const [ isBusinessChecked, setBusinessChecked ] = useState( false );
 	const [ isDonationChecked, setDonationChecked ] = useState( false );
-	const [ isPosponeBusy, setPosponeBusy ] = useState( false );
+	const [ isPostponeBusy, setPostponeBusy ] = useState( false );
 	const {
 		sliderStepPrice,
 		minSliderPrice,
@@ -135,7 +135,7 @@ const PersonalPurchase = ( {
 	};
 
 	const handleCheckoutPostponed = () => {
-		setPosponeBusy( true );
+		setPostponeBusy( true );
 
 		mutateNoticeVisbilityAsync()
 			.then( refetchNotices )
@@ -146,7 +146,7 @@ const PersonalPurchase = ( {
 
 				// redirect to the Traffic page
 				setTimeout( () => {
-					setPosponeBusy( false );
+					setPostponeBusy( false );
 					page( `/stats/day/${ siteSlug }` );
 				}, 250 );
 			} );
@@ -281,8 +281,8 @@ const PersonalPurchase = ( {
 					{ isNewPurchaseFlowEnabled && (
 						<ButtonComponent
 							variant="secondary"
-							isBusy={ isWPCOMSite ? undefined : isPosponeBusy } // for <Button />
-							busy={ isWPCOMSite ? isPosponeBusy : undefined } // for <CalypsoButton />
+							isBusy={ isWPCOMSite ? undefined : isPostponeBusy } // for <Button />
+							busy={ isWPCOMSite ? isPostponeBusy : undefined } // for <CalypsoButton />
 							onClick={ handleCheckoutPostponed }
 						>
 							{ translate( 'I will do it later' ) }
