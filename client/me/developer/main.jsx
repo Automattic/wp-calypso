@@ -25,6 +25,12 @@ class Developer extends Component {
 	developerSurveyNoticeId = 'developer-survey';
 
 	getSurveyHref = () => {
+		const isES = this.props.currentUser.localeSlug === 'es';
+
+		if ( isES ) {
+			return 'https://wordpressdotcom.survey.fm/developer-survey-es';
+		}
+
 		return 'https://wordpressdotcom.survey.fm/developer-survey';
 	};
 
@@ -39,12 +45,9 @@ class Developer extends Component {
 		const cookies = cookie.parse( document.cookie );
 
 		const isDevAccountEnabled = isDevAccount ?? this.props.getSetting( 'is_dev_account' );
-		const isEN = this.props.currentUser.localeSlug === 'en';
 
 		return (
-			isEN &&
-			isDevAccountEnabled &&
-			! [ 'completed', 'dismissed' ].includes( cookies.developer_survey )
+			isDevAccountEnabled && ! [ 'completed', 'dismissed' ].includes( cookies.developer_survey )
 		);
 	};
 
