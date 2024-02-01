@@ -59,9 +59,9 @@ import {
 } from 'calypso/state/user-settings/actions';
 import { isFetchingUserSettings } from 'calypso/state/user-settings/selectors';
 import { saveUnsavedUserSettings } from 'calypso/state/user-settings/thunks';
+import { GitHubAuthorization } from '../github-authorization/github-authorization';
 import AccountSettingsCloseLink from './close-link';
 import ToggleSitesAsLandingPage from './toggle-sites-as-landing-page';
-
 import './style.scss';
 
 export const noticeId = 'me-settings-notice';
@@ -921,6 +921,15 @@ class Account extends Component {
 						</TransitionGroup>
 					</form>
 				</Card>
+
+				{ config.isEnabled( 'github-integration-i1' ) && (
+					<>
+						<SectionHeader label={ translate( 'GitHub connection' ) } />
+						<Card className="account__settings">
+							<GitHubAuthorization />
+						</Card>
+					</>
+				) }
 
 				<SectionHeader label={ translate( 'Interface settings' ) } />
 				<Card className="account__settings">

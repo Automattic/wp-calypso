@@ -23,8 +23,10 @@ export function requestKeyringServices() {
 
 		return wpcom.req
 			.get( {
-				path: `/sites/${ siteId }/external-services`,
-				apiNamespace: 'wpcom/v2',
+				path: siteId
+					? `/sites/${ siteId }/external-services`
+					: '/meta/external-services?http_envelope=1',
+				apiNamespace: siteId ? 'wpcom/v2' : 'rest/v1.1',
 			} )
 			.then( ( response ) => {
 				dispatch( {
