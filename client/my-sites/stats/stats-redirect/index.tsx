@@ -2,6 +2,7 @@ import config from '@automattic/calypso-config';
 import page from '@automattic/calypso-router';
 import { useEffect, ReactNode } from 'react';
 import { useDispatch } from 'react-redux';
+import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { useNoticeVisibilityQuery } from 'calypso/my-sites/stats/hooks/use-notice-visibility-query';
 import { useSelector } from 'calypso/state';
 import { isJetpackSite, getSiteOption, getSiteSlug } from 'calypso/state/sites/selectors';
@@ -12,6 +13,8 @@ import {
 import { isStatsNoticeSettingsFetching } from 'calypso/state/stats/notices/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import useStatsPurchases from '../hooks/use-stats-purchases';
+import StatsLoader from './stats-loader';
+
 interface StatsRedirectFlowProps {
 	children: ReactNode;
 }
@@ -22,6 +25,7 @@ const StatsRedirectFlow: React.FC< StatsRedirectFlowProps > = ( { children } ) =
 	const siteCreatedTimeStamp = useSelector( ( state ) =>
 		getSiteOption( state, siteId, 'created_at' )
 	) as string;
+	const isOdysseyStats = config.isEnabled( 'is_running_in_jetpack_site' );
 
 	const { isFreeOwned, isPWYWOwned, isCommercialOwned, supportCommercialUse } =
 		useStatsPurchases( siteId );
@@ -36,9 +40,8 @@ const StatsRedirectFlow: React.FC< StatsRedirectFlowProps > = ( { children } ) =
 	);
 
 	const hasPlan = isFreeOwned || isPWYWOwned || isCommercialOwned || supportCommercialUse;
-	// TODO: update the date to the release date when the feature is ready.
 	const qualifiedUser =
-		siteCreatedTimeStamp && new Date( siteCreatedTimeStamp ) > new Date( '2024-01-15' );
+		siteCreatedTimeStamp && new Date( siteCreatedTimeStamp ) > new Date( '2024-01-30' );
 
 	// to redirect the user can't have a plan purached and can't have the flag true, if either is true the user either has a plan or is postponing
 	const redirectToPurchase =
@@ -75,11 +78,21 @@ const StatsRedirectFlow: React.FC< StatsRedirectFlowProps > = ( { children } ) =
 			queryParams.set( 'irclickid', currentParams.get( 'irclickid' ) || '' );
 		}
 
-		page.redirect( `/stats/purchase/${ siteSlug }?${ queryParams.toString() }` );
+		// publish an event
+		const event_from = isOdysseyStats ? 'jetpack_odyssey' : 'calypso';
+		recordTracksEvent( `${ event_from }_stats_purchase_flow_redirected` );
+
+		// redirect to the Traffic page
+		setTimeout(
+			() => page.redirect( `/stats/purchase/${ siteSlug }?${ queryParams.toString() }` ),
+			250
+		);
 
 		return <></>;
 	} else if ( ! isFetching ) {
 		return <>{ children }</>;
+	} else if ( isFetching ) {
+		return <StatsLoader />;
 	}
 
 	return <></>;
