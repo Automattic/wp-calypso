@@ -120,26 +120,32 @@ class Sites extends Component {
 			case 'activity-log':
 				path = translate( 'Activity' );
 				break;
-			case 'stats':
-				path = translate( 'Stats' );
+			case 'add-ons':
+				path = translate( 'Add-ons' );
 				break;
-			case 'plans':
-				path = translate( 'Plans' );
+			case 'comments':
+				path = translate( 'Comments' );
 				break;
-			case 'media':
-				path = translate( 'Media' );
-				break;
-			case 'sharing':
-				path = translate( 'Sharing' );
-				break;
-			case 'people':
-				path = translate( 'Users' );
+			case 'customize':
+				path = translate( 'Customizer' );
 				break;
 			case 'domains':
 				path = translate( 'Domains' );
 				break;
-			case 'settings':
-				path = translate( 'Settings' );
+			case 'earn':
+				path = translate( 'Monetize' );
+				break;
+			case 'email':
+				path = translate( 'Emails' );
+				break;
+			case 'export':
+				path = translate( 'Export' );
+				break;
+			case 'github-deployments':
+				path = translate( 'GitHub Deployments' );
+				break;
+			case 'google-my-business':
+				path = translate( 'Google Business Profile' );
 				break;
 			case 'home':
 				path = translate( 'My Home' );
@@ -147,16 +153,41 @@ class Sites extends Component {
 			case 'hosting-config':
 				path = translate( 'Hosting Configuration' );
 				break;
+			case 'import':
+				path = translate( 'Import' );
+				break;
 			case 'jetpack-search':
 				path = 'Jetpack Search';
+				break;
+			case 'marketing':
+				path = translate( 'Marketing' );
+				break;
+			case 'media':
+				path = translate( 'Media' );
+				break;
+			case 'people':
+				path = translate( 'Users' );
+				break;
+			case 'purchases':
+				path = translate( 'Purchases' );
+				break;
+			case 'plans':
+				path = translate( 'Plans' );
+				break;
+			case 'settings':
+				path = translate( 'Settings' );
+				break;
+			case 'sharing':
+				path = translate( 'Sharing' );
 				break;
 			case 'site-monitoring':
 				path = translate( 'Site Monitoring' );
 				break;
-			case 'github-deployments':
-				path = translate( 'GitHub Deployments' );
-			case 'earn':
-				path = translate( 'Monetize' );
+			case 'stats':
+				path = translate( 'Stats' );
+				break;
+			case 'store':
+				path = translate( 'Store' );
 				break;
 			case 'subscribers':
 				path = translate( 'Subscribers' );
@@ -164,38 +195,11 @@ class Sites extends Component {
 			case 'themes':
 				path = translate( 'Themes' );
 				break;
-			case 'marketing':
-				path = translate( 'Marketing' );
-				break;
-			case 'import':
-				path = translate( 'Import' );
-				break;
-			case 'export':
-				path = translate( 'Export' );
-				break;
-			case 'email':
-				path = translate( 'Emails' );
-				break;
-			case 'purchases':
-				path = translate( 'Purchases' );
-				break;
-			case 'customize':
-				path = translate( 'Customizer' );
-				break;
-			case 'google-my-business':
-				path = translate( 'Google Business Profile' );
-				break;
 			case 'view':
 				path = translate( 'Preview' );
 				break;
 			case 'woocommerce-installation':
 				path = 'WooCommerce';
-				break;
-			case 'store':
-				path = translate( 'Store' );
-				break;
-			case 'add-ons':
-				path = translate( 'Add-ons' );
 				break;
 		}
 
