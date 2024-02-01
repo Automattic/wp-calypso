@@ -177,13 +177,10 @@ class InviteAcceptLoggedOut extends Component {
 				loginUser: this.loginUser,
 			} );
 		}
-		const userInvitePasswordless = this.props.userInvitePasswordless;
 		return (
 			<div>
 				<SignupForm
-					displayNameInput={ ! userInvitePasswordless }
-					displayUsernameInput={ ! userInvitePasswordless }
-					displayPasswordInput={ ! userInvitePasswordless }
+					isPasswordless={ this.props.userInvitePasswordless }
 					disabled={ this.state.submitting }
 					formHeader={ this.renderFormHeader() }
 					submitting={ this.state.submitting }
