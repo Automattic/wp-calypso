@@ -233,7 +233,7 @@ class SignupForm extends Component {
 
 			this.props.createSocialUserFailed( socialInfo, userExistsError, 'signup' );
 
-			// Reset the signup step so that we don't re trigger this logic when the user goes back from login screen,
+			// Reset the signup step so that we don't re trigger this logic when the user goes back from login screen.
 			this.props.resetSignup();
 
 			const loginLink = this.getLoginLink( { emailAddress: userExistsError.email } );
