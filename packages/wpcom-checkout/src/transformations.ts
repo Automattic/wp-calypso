@@ -9,6 +9,7 @@ import { translate, useTranslate } from 'i18n-calypso';
 import type { LineItemType } from './types';
 import type {
 	IntroductoryOfferTerms,
+	IntroductoryOfferUnit,
 	ResponseCart,
 	ResponseCartProduct,
 	TaxBreakdownItem,
@@ -127,80 +128,94 @@ export function getCreditsLineItemFromCart( responseCart: ResponseCart ): LineIt
 	};
 }
 
-function getDiscountUnitForIntroductoryOffer(
-	terms: IntroductoryOfferTerms,
+function getDiscountTimePeriodForIntroductoryOfferByCount(
+	unit: IntroductoryOfferUnit,
+	count: number,
 	translate: ReturnType< typeof useTranslate >
 ): string | undefined {
-	switch ( terms.interval_unit ) {
+	switch ( unit ) {
 		case 'day':
-			if ( terms.interval_count === 1 ) {
-				return translate( 'day', {
+			if ( count === 1 ) {
+				return translate( 'Discount for first day', {
 					textOnly: true,
 				} );
 			}
-			return translate( '%(unitCount)d days', {
+			return translate( 'Discount for first %(unitCount)d days', {
 				textOnly: true,
 				args: {
-					unitCount: terms.interval_count,
+					unitCount: count,
 				},
 			} );
 		case 'week':
-			if ( terms.interval_count === 1 ) {
-				return translate( 'week', {
+			if ( count === 1 ) {
+				return translate( 'Discount for first week', {
 					textOnly: true,
 				} );
 			}
-			return translate( '%(unitCount)d weeks', {
+			return translate( 'Discount for first %(unitCount)d weeks', {
 				textOnly: true,
 				args: {
-					unitCount: terms.interval_count,
+					unitCount: count,
 				},
 			} );
 		case 'month':
-			if ( terms.interval_count === 1 ) {
-				return translate( 'month', {
+			if ( count === 1 ) {
+				return translate( 'Discount for first month', {
 					textOnly: true,
 				} );
 			}
-			return translate( '%(unitCount)d months', {
+			return translate( 'Discount for first %(unitCount)d months', {
 				textOnly: true,
 				args: {
-					unitCount: terms.interval_count,
+					unitCount: count,
 				},
 			} );
 		case 'year':
-			if ( terms.interval_count === 1 ) {
-				return translate( 'year', {
+			if ( count === 1 ) {
+				return translate( 'Discount for first year', {
 					textOnly: true,
 				} );
 			}
-			return translate( '%(unitCount)d years', {
+			return translate( 'Discount for first %(unitCount)d years', {
 				textOnly: true,
 				args: {
-					unitCount: terms.interval_count,
+					unitCount: count,
 				},
 			} );
 	}
 	return undefined;
 }
 
+function getDiscountTimePeriodForIntroductoryOffer(
+	terms: IntroductoryOfferTerms,
+	translate: ReturnType< typeof useTranslate >
+): string | undefined {
+	if ( terms.transition_after_renewal_count ) {
+		if ( terms.transition_after_renewal_count === 1 ) {
+			return translate( 'Discount for first renewal', {
+				textOnly: true,
+			} );
+		}
+		return translate( 'Discount for first %(unitCount)d renewals', {
+			textOnly: true,
+			args: {
+				unitCount: terms.transition_after_renewal_count,
+			},
+		} );
+	}
+	return getDiscountTimePeriodForIntroductoryOfferByCount(
+		terms.interval_unit,
+		terms.interval_count,
+		translate
+	);
+}
+
 function getDiscountReasonForIntroductoryOffer(
 	terms: IntroductoryOfferTerms,
 	translate: ReturnType< typeof useTranslate >
 ): string {
-	if ( ! terms.transition_after_renewal_count ) {
-		const discountUnit = getDiscountUnitForIntroductoryOffer( terms, translate );
-		if ( discountUnit ) {
-			return translate( 'Discount for first %(discountUnit)s', {
-				textOnly: true,
-				args: {
-					discountUnit,
-				},
-			} );
-		}
-	}
-	// FIXME: handle transition_after_renewal_count
-	return translate( 'Introductory offer' );
+	const timePeriod = getDiscountTimePeriodForIntroductoryOffer( terms, translate );
+	return timePeriod ?? translate( 'Introductory offer' );
 }
 
 export interface CostOverrideForDisplay {
