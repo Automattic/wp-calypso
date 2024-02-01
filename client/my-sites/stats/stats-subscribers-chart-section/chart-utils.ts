@@ -1,6 +1,7 @@
 import type uPlot from 'uplot';
 
 // Hide fractional values on the y-axis.
+// The function assumes the splits are sorted and the last number is an integer and the biggest number.
 export const hideFractionNumber = ( self: uPlot, splits: number[] ) => {
 	splits = splits.map( ( split ) => Math.floor( split ) );
 	const newSplits = [ splits[ 0 ] ];
