@@ -7,7 +7,7 @@ import {
 	useSortedLaunchpadTasks,
 } from '@automattic/data-stores';
 import { useDispatch, useSelect } from '@wordpress/data';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { ShareSiteModal } from './action-components';
 import LaunchpadInternal from './launchpad-internal';
 import { setUpActionsForTasks } from './setup-actions';
@@ -41,9 +41,6 @@ const Launchpad = ( {
 
 	const tracksData = { recordTracksEvent, checklistSlug, tasklistCompleted, launchpadContext };
 
-	const numberOfSteps = checklist?.length || 0;
-	const completedSteps = ( checklist?.filter( ( task: Task ) => task.completed ) || [] ).length;
-
 	const site = useSelect(
 		( select ) => {
 			return siteSlug && ( select( SITE_STORE ) as SiteSelect ).getSite( siteSlug );
@@ -51,36 +48,6 @@ const Launchpad = ( {
 		[ siteSlug ]
 	);
 	const [ shareSiteModalIsOpen, setShareSiteModalIsOpen ] = useState( false );
-
-	useEffect( () => {
-		// Record task list view as a whole.
-		recordTracksEvent( 'calypso_launchpad_tasklist_viewed', {
-			checklist_slug: checklistSlug,
-			tasks: `,${ checklist?.map( ( task: Task ) => task.id ).join( ',' ) },`,
-			is_completed: tasklistCompleted,
-			number_of_steps: numberOfSteps,
-			number_of_completed_steps: completedSteps,
-			context: launchpadContext,
-		} );
-
-		// Record views for each task.
-		checklist?.map( ( task: Task ) => {
-			recordTracksEvent( 'calypso_launchpad_task_view', {
-				checklist_slug: checklistSlug,
-				task_id: task.id,
-				is_completed: task.completed,
-				context: launchpadContext,
-				order: task.order,
-			} );
-		} );
-	}, [
-		checklist,
-		checklistSlug,
-		completedSteps,
-		numberOfSteps,
-		tasklistCompleted,
-		launchpadContext,
-	] );
 
 	const taskFilter = ( tasks: Task[] ) => {
 		const baseTasks = setUpActionsForTasks( {
