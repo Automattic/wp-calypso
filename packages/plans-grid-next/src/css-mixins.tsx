@@ -1,7 +1,7 @@
 import { css } from '@emotion/react';
 import type { SerializedStyles } from '@emotion/react';
 
-export const plansBreakSmall = ( styles: SerializedStyles ) => css`
+export const plansGridMediumLarge = ( styles: SerializedStyles ) => css`
 	.plans-grid-next.is-smedium &,
 	.plans-grid-next.is-medium &,
 	.plans-grid-next.is-large &,

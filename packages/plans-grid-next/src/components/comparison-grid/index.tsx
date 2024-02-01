@@ -23,6 +23,7 @@ import {
 	forwardRef,
 } from 'react';
 import { useInView } from 'react-intersection-observer';
+import { plansGridMediumLarge } from '../../css-mixins';
 import { usePlansGridContext } from '../../grid-context';
 import useHighlightAdjacencyMatrix from '../../hooks/use-highlight-adjacency-matrix';
 import { useManageTooltipToggle } from '../../hooks/use-manage-tooltip-toggle';
@@ -30,7 +31,6 @@ import filterUnusedFeaturesObject from '../../lib/filter-unused-features-object'
 import getPlanFeaturesObject from '../../lib/get-plan-features-object';
 import { isStorageUpgradeableForPlan } from '../../lib/is-storage-upgradeable-for-plan';
 import { sortPlans } from '../../lib/sort-plan-properties';
-import { plansBreakSmall } from '../../media-queries';
 import { getStorageStringFromFeature } from '../../util';
 import PlanFeatures2023GridActions from '../actions';
 import PlanFeatures2023GridHeaderPrice from '../header-price';
@@ -94,7 +94,7 @@ const Title = styled.div< { isHiddenInMobile?: boolean } >`
 		flex-shrink: 0;
 	}
 
-	${ plansBreakSmall( css`
+	${ plansGridMediumLarge( css`
 		padding-inline-start: 0;
 		border: none;
 		padding: 0;
@@ -112,7 +112,7 @@ const Grid = styled.div< { isInSignup?: boolean } >`
 	background: #fff;
 	border: solid 1px #e0e0e0;
 
-	${ plansBreakSmall( css`
+	${ plansGridMediumLarge( css`
 		border-radius: 5px;
 	` ) }
 
@@ -132,7 +132,7 @@ const Row = styled.div< {
 	align-items: stretch;
 	display: ${ ( props ) => ( props.isHiddenInMobile ? 'none' : 'flex' ) };
 
-	${ plansBreakSmall( css`
+	${ plansGridMediumLarge( css`
 		display: flex;
 		align-items: center;
 		margin: 0 20px;
@@ -143,7 +143,7 @@ const Row = styled.div< {
 	${ ( props ) =>
 		props.isHighlighted &&
 		css`
-			${ plansBreakSmall( css`
+			${ plansGridMediumLarge( css`
 				background-color: #fafafa;
 				border-top: 1px solid #eee;
 				font-weight: bold;
@@ -159,7 +159,7 @@ const PlanRow = styled( Row )`
 		display: ${ ( props ) => ( props.isHiddenInMobile ? 'none' : 'flex' ) };
 	}
 
-	${ plansBreakSmall( css`
+	${ plansGridMediumLarge( css`
 		border-bottom: none;
 		align-items: stretch;
 
@@ -175,7 +175,7 @@ const TitleRow = styled( Row )`
 	cursor: pointer;
 	display: flex;
 
-	${ plansBreakSmall( css`
+	${ plansGridMediumLarge( css`
 		cursor: default;
 		border-bottom: none;
 		padding: 20px 0 10px;
@@ -212,12 +212,12 @@ const Cell = styled.div< { textAlign?: 'start' | 'center' | 'end' } >`
 	${ Row }:last-of-type & {
 		padding-bottom: 24px;
 
-		${ plansBreakSmall( css`
+		${ plansGridMediumLarge( css`
 			padding-bottom: 0px;
 		` ) }
 	}
 
-	${ plansBreakSmall( css`
+	${ plansGridMediumLarge( css`
 		padding: 0 14px;
 		border-right: none;
 		justify-content: center;
@@ -240,7 +240,7 @@ const RowTitleCell = styled.div`
 	display: none;
 	font-size: 14px;
 	padding-right: 10px;
-	${ plansBreakSmall( css`
+	${ plansGridMediumLarge( css`
 		display: block;
 		flex: 1;
 		min-width: 290px;
@@ -293,7 +293,7 @@ const StorageButton = styled.div`
 	min-width: 64px;
 	margin-top: 10px;
 
-	${ plansBreakSmall( css`
+	${ plansGridMediumLarge( css`
 		margin-top: 0;
 	` ) }
 `;
@@ -458,7 +458,7 @@ const ComparisonGridHeaderCell = ( {
 
 const PlanTypeSelectorWrapper = styled.div`
 	display: none;
-	${ plansBreakSmall( css`
+	${ plansGridMediumLarge( css`
 		display: block;
 	` ) }
 `;
