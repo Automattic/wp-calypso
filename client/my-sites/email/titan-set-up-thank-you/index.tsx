@@ -14,9 +14,8 @@ import { getSelectedSite } from 'calypso/state/ui/selectors';
 import './style.scss';
 
 type TitanSetUpThankYouProps = {
-	emailNeedsSetup?: boolean;
 	domainName: string;
-	emailAddress?: string;
+	emailAddress: string;
 	isDomainOnlySite?: boolean;
 };
 
@@ -76,7 +75,7 @@ const TitanSetUpThankYou = ( {
 					<ThankYouEmailProduct
 						domainName={ domainName }
 						siteSlug={ selectedSiteSlug }
-						emailAddress={ emailAddress || '' }
+						emailAddress={ emailAddress }
 					/>
 				}
 				footerDetails={ footerDetails }

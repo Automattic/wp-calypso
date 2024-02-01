@@ -5,9 +5,7 @@ import { getTitanEmailUrl, useTitanAppsUrlPrefix } from 'calypso/lib/titan';
 import { recordEmailAppLaunchEvent } from 'calypso/my-sites/email/email-management/home/utils';
 import { getEmailManagementPath, getMailboxesPath } from 'calypso/my-sites/email/paths';
 import { useSelector } from 'calypso/state';
-import { getCurrentUser } from 'calypso/state/current-user/selectors';
 import getCurrentRoute from 'calypso/state/selectors/get-current-route';
-import type { UserData } from 'calypso/lib/user/user';
 
 export type ThankYouEmailProductProps = {
 	domainName: string;
@@ -34,13 +32,11 @@ export function ThankYouEmailProduct( {
 		`${ window.location.protocol }//${ window.location.host }${ mailboxesPath }`
 	);
 
-	const user = useSelector( getCurrentUser ) as UserData;
-
 	return (
 		<ThankYouProduct
-			name={ emailAddress }
+			name={ translate( 'Professional email' ) }
 			key={ emailAddress }
-			details={ translate( 'User: %(username)s', { args: { username: user.display_name || '' } } ) }
+			details={ emailAddress }
 			actions={
 				<>
 					<Button

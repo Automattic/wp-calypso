@@ -581,6 +581,14 @@ export class CheckoutThankYou extends Component<
 				pageContent = <DomainOnlyThankYou purchases={ purchases } receiptId={ receiptId } />;
 			} else if ( purchases.length === 1 && isPlan( purchases[ 0 ] ) ) {
 				pageContent = <PlanOnlyThankYou primaryPurchase={ purchases[ 0 ] } />;
+			} else if ( wasTitanEmailOnlyProduct ) {
+				pageContent = (
+					<TitanSetUpThankYou
+						domainName={ purchases[ 0 ].meta }
+						emailAddress={ email }
+						isDomainOnlySite={ this.props.domainOnlySiteFlow }
+					/>
+				);
 			}
 
 			if ( pageContent ) {
@@ -660,7 +668,6 @@ export class CheckoutThankYou extends Component<
 						<div>1111</div>
 						<TitanSetUpThankYou
 							domainName={ domainName }
-							emailNeedsSetup
 							isDomainOnlySite={ this.props.domainOnlySiteFlow }
 						/>
 					</>
@@ -688,17 +695,6 @@ export class CheckoutThankYou extends Component<
 					selectedSiteId={ this.props.domainOnlySiteFlow ? domainPurchase?.blogId : undefined }
 					type={ purchaseType as DomainThankYouType }
 				/>
-			);
-		} else if ( wasTitanEmailOnlyProduct ) {
-			return (
-				<>
-					<div>2222</div>
-					<TitanSetUpThankYou
-						domainName={ purchases[ 0 ].meta }
-						emailAddress={ email }
-						isDomainOnlySite={ this.props.domainOnlySiteFlow }
-					/>
-				</>
 			);
 		}
 
