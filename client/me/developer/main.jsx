@@ -126,9 +126,7 @@ class Developer extends Component {
 	render() {
 		return (
 			<Main className="developer" wideLayout>
-				{ ! this.props.isFetchingUserSettings && (
-					<PageViewTracker path="/me/developer" title="Me > Developer" />
-				) }
+				<PageViewTracker path="/me/developer" title="Me > Developer" />
 				<ReauthRequired twoStepAuthorization={ twoStepAuthorization } />
 				<NavigationHeader
 					navigationItems={ [] }
