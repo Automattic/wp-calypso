@@ -1,6 +1,6 @@
 import { Button, FormLabel } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
-import { Dispatch, SetStateAction } from 'react';
+import { Dispatch, SetStateAction, useState } from 'react';
 import FilePicker from 'calypso/components/file-picker';
 import FormTextarea from 'calypso/components/forms/form-textarea';
 import CSVColumnConfirmation from './csv-column-confirmation';
@@ -21,6 +21,7 @@ export default function SitesInput( {
 	onCSVLoadConfirmation: () => void;
 } ) {
 	const translate = useTranslate();
+	const [ column, setColumn ] = useState( [] as string[] );
 
 	let fileReader: any;
 
@@ -84,10 +85,13 @@ export default function SitesInput( {
 				<FilePicker accept=".csv,.txt" onPick={ onFilePick }>
 					{ '' === detectedFilename ? filePicker : uploadResults }
 				</FilePicker>
-				<CSVColumnConfirmation
-					csvColumns={ [ 'id', 'domain', 'site title' ] }
-					setURLColumn={ onCSVLoadConfirmation }
-				/>
+				{ detectedFilename && (
+					<CSVColumnConfirmation
+						columns={ [ 'id', 'domain', 'site title' ] }
+						onColumnSelect={ ( c ) => setColumn( c ) }
+						column={ column }
+					/>
+				) }
 			</div>
 
 			<Button primary disabled={ 0 === detectedSites.length } onClick={ onCSVLoadConfirmation }>

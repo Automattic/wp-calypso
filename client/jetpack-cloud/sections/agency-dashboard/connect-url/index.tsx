@@ -31,7 +31,6 @@ export default function ConnectUrl() {
 	const [ validating, setValidating ] = useState( false );
 	const [ currentValidatingSite, setCurrentValidatingSite ] = useState( '' );
 	const [ csvColumns, setCSVColumns ] = useState( [] as string[] );
-	const [ URLColumn /* setURLColumn */ ] = useState( '' );
 	const [ currentValidatingSiteIndex, setCurrentValidatingSiteIndex ] = useState( 0 );
 	const [ csvConfirmed, setCSVConfirmed ] = useState( false );
 	const [ validatedSites, setValidatedSites ] = useState( {} as { [ site: string ]: SiteData } );
@@ -81,7 +80,6 @@ export default function ConnectUrl() {
 		},
 		[
 			currentValidatingSite,
-			URLColumn,
 			csvColumns,
 			currentValidatingSiteIndex,
 			detectedSites,

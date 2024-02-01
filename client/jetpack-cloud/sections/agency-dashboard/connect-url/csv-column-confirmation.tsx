@@ -5,20 +5,22 @@ import PopoverMenu from 'calypso/components/popover-menu';
 import PopoverMenuItem from 'calypso/components/popover-menu/item';
 
 export default function CSVColumnConfirmation( {
-	csvColumns,
-	setURLColumn,
+	columns,
+	onColumnSelect,
+	column,
 }: {
-	csvColumns: string[];
-	setURLColumn: ( option: string ) => void;
+	columns: string[];
+	onColumnSelect: ( option: string ) => void;
+	column: string;
 } ) {
 	const translate = useTranslate();
 	const [ isColumnsMenuOpen, setIsColumnsMenuOpen ] = useState( false );
 	const buttonActionRef = useRef< HTMLButtonElement | null >( null );
 
-	const columnItems = csvColumns.map( ( column, index ) => {
+	const columnItems = columns.map( ( c, index ) => {
 		return (
-			<PopoverMenuItem key={ index } onClick={ setURLColumn }>
-				{ column }
+			<PopoverMenuItem key={ index } onClick={ onColumnSelect }>
+				{ c } - { column }
 			</PopoverMenuItem>
 		);
 	} );
