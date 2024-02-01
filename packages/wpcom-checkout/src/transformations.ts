@@ -8,6 +8,7 @@ import { formatCurrency } from '@automattic/format-currency';
 import { translate, useTranslate } from 'i18n-calypso';
 import type { LineItemType } from './types';
 import type {
+	IntroductoryOfferTerms,
 	ResponseCart,
 	ResponseCartProduct,
 	TaxBreakdownItem,
@@ -126,6 +127,82 @@ export function getCreditsLineItemFromCart( responseCart: ResponseCart ): LineIt
 	};
 }
 
+function getDiscountUnitForIntroductoryOffer(
+	terms: IntroductoryOfferTerms,
+	translate: ReturnType< typeof useTranslate >
+): string | undefined {
+	switch ( terms.interval_unit ) {
+		case 'day':
+			if ( terms.interval_count === 1 ) {
+				return translate( 'day', {
+					textOnly: true,
+				} );
+			}
+			return translate( '%(unitCount)d days', {
+				textOnly: true,
+				args: {
+					unitCount: terms.interval_count,
+				},
+			} );
+		case 'week':
+			if ( terms.interval_count === 1 ) {
+				return translate( 'week', {
+					textOnly: true,
+				} );
+			}
+			return translate( '%(unitCount)d weeks', {
+				textOnly: true,
+				args: {
+					unitCount: terms.interval_count,
+				},
+			} );
+		case 'month':
+			if ( terms.interval_count === 1 ) {
+				return translate( 'month', {
+					textOnly: true,
+				} );
+			}
+			return translate( '%(unitCount)d months', {
+				textOnly: true,
+				args: {
+					unitCount: terms.interval_count,
+				},
+			} );
+		case 'year':
+			if ( terms.interval_count === 1 ) {
+				return translate( 'year', {
+					textOnly: true,
+				} );
+			}
+			return translate( '%(unitCount)d years', {
+				textOnly: true,
+				args: {
+					unitCount: terms.interval_count,
+				},
+			} );
+	}
+	return undefined;
+}
+
+function getDiscountReasonForIntroductoryOffer(
+	terms: IntroductoryOfferTerms,
+	translate: ReturnType< typeof useTranslate >
+): string {
+	if ( ! terms.transition_after_renewal_count ) {
+		const discountUnit = getDiscountUnitForIntroductoryOffer( terms, translate );
+		if ( discountUnit ) {
+			return translate( 'Discount for first %(discountUnit)s', {
+				textOnly: true,
+				args: {
+					discountUnit,
+				},
+			} );
+		}
+	}
+	// FIXME: handle transition_after_renewal_count
+	return translate( 'Introductory offer' );
+}
+
 export interface CostOverrideForDisplay {
 	humanReadableReason: string;
 	overrideCode: string;
@@ -176,6 +253,27 @@ export function filterAndGroupCostOverridesForDisplay(
 			const discountAmount = grouped[ costOverride.override_code ]?.discountAmount ?? 0;
 			let newDiscountAmount = costOverride.old_subtotal_integer - costOverride.new_subtotal_integer;
 			let overrideReason = '';
+
+			// Do not group introductory offers and replace their text with
+			// wording specific to that offer.
+			if (
+				'introductory-offer' === costOverride.override_code &&
+				product.introductory_offer_terms?.enabled
+			) {
+				const newDiscountAmount =
+					costOverride.old_subtotal_integer - costOverride.new_subtotal_integer;
+				grouped[ 'introductory-offer__' + product.uuid ] = {
+					overrideCode: costOverride.override_code,
+					discountAmount: newDiscountAmount,
+					humanReadableReason: getDiscountReasonForIntroductoryOffer(
+						product.introductory_offer_terms,
+						translate
+					),
+				};
+				return;
+			}
+
+			// FIXME: deal with Jetpack biennial stuff
 
 			// Overrides for Jetpack biennial intro offers
 			if ( 'introductory-offer' === costOverride.override_code ) {
