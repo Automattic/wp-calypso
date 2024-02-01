@@ -1004,7 +1004,7 @@ const ComparisonGrid = ( {
 			const newPlanSlug = event.currentTarget.value;
 			setVisibleGridPlans( ( visibleGridPlans ) => {
 				const newPlan = displayedGridPlans.find(
-					( plan ) => plan.planSlug === newPlanSlug
+					( plan ) => getPlanClass( plan.planSlug ) === getPlanClass( newPlanSlug )
 				) as GridPlan;
 				return visibleGridPlans.map( ( plan ) =>
 					plan.planSlug === currentPlan ? newPlan : plan
