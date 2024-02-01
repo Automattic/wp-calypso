@@ -1,0 +1,57 @@
+import { useTranslate } from 'i18n-calypso';
+import useProductAndPlans from 'calypso/jetpack-cloud/sections/partner-portal/primary/issue-license/licenses-form/hooks/use-product-and-plans';
+import { AllLicenseItems } from './all-license-items';
+import { MostPopularPlans } from './most-popular-plans';
+
+type ProductsListProps = {
+	bundleSize: number;
+};
+
+export const LicenseProductsList = ( { bundleSize }: ProductsListProps ) => {
+	const translate = useTranslate();
+	const productSearchQuery = '';
+	const selectedProductFilter = '';
+	const selectedSite = null;
+	const usePublicQuery = true;
+
+	const { plans, backupAddons, products, wooExtensions } = useProductAndPlans( {
+		selectedSite,
+		selectedProductFilter,
+		selectedBundleSize: bundleSize,
+		productSearchQuery,
+		usePublicQuery,
+	} );
+
+	return (
+		<div className="jetpack-product-store__products-list">
+			<MostPopularPlans
+				heading={ translate( 'Plans' ) }
+				subHeading={ translate(
+					'Save big with comprehensive bundles of Jetpack security, performance, and growth tools.'
+				) }
+				items={ plans }
+			/>
+			<AllLicenseItems
+				heading={ translate( 'Products' ) }
+				subHeading={ translate(
+					'Mix and match powerful security, performance, and growth tools for your site.'
+				) }
+				items={ products }
+			/>
+			<AllLicenseItems
+				heading={ translate( 'VaultPress Backup Add-ons' ) }
+				subHeading={ translate(
+					'Add additional storage to your current VaultPress Backup plans.'
+				) }
+				items={ backupAddons }
+			/>
+			<AllLicenseItems
+				heading={ translate( 'WooCommerce Extensions' ) }
+				subHeading={ translate(
+					'You must have WooCommerce installed to utilize these paid extensions.'
+				) }
+				items={ wooExtensions }
+			/>
+		</div>
+	);
+};

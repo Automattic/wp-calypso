@@ -1,4 +1,5 @@
 import type { GetThankYouUrl } from '../hooks/use-get-thank-you-url';
+import type { RazorpayConfiguration } from '@automattic/calypso-razorpay';
 import type { StripeConfiguration } from '@automattic/calypso-stripe';
 import type { ResponseCart } from '@automattic/shopping-cart';
 import type { ManagedContactDetails } from '@automattic/wpcom-checkout';
@@ -11,6 +12,7 @@ export interface PaymentProcessorOptions {
 	createUserAndSiteBeforeTransaction: boolean;
 	stripe: Stripe | null;
 	stripeConfiguration: StripeConfiguration | null;
+	razorpayConfiguration: RazorpayConfiguration | null;
 	reduxDispatch: CalypsoDispatch;
 	responseCart: ResponseCart;
 	getThankYouUrl: GetThankYouUrl;

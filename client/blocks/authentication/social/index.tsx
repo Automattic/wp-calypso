@@ -4,6 +4,7 @@ import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import { useSelector } from 'react-redux';
 import AppleLoginButton from 'calypso/components/social-buttons/apple';
+import GithubSocialButton from 'calypso/components/social-buttons/github';
 import GoogleSocialButton from 'calypso/components/social-buttons/google';
 import { preventWidows } from 'calypso/lib/formatting';
 import { isWooOAuth2Client } from 'calypso/lib/oauth2-clients';
@@ -127,7 +128,7 @@ const SocialAuthenticationForm = ( {
 							}
 						/>
 
-						{ config.isEnabled( 'login/github' ) ? <div>GitHub login will come here</div> : null }
+						{ config.isEnabled( 'login/github' ) ? <GithubSocialButton /> : null }
 
 						{ children }
 					</div>
