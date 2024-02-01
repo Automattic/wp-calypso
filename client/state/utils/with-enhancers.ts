@@ -3,7 +3,7 @@ import type { ThunkAction } from 'redux-thunk';
 
 type AnyThunkAction = ThunkAction< any, any, any, AnyAction >;
 
-type Enhancer = ( action: AnyAction, getState: () => any ) => AnyAction;
+export type Enhancer = ( action: AnyAction, getState: () => any ) => AnyAction;
 
 /**
  * Dispatches the specified Redux action creator once enhancers have been applied to the result of its call. Enhancers

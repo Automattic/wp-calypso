@@ -8,7 +8,7 @@ import {
 	recordPageViewWithClientId as recordPageView,
 	enhanceWithSiteMainProduct,
 	enhanceWithSiteType,
-	enhanceWithIsDevAccount,
+	enhanceWithUserIsDevAccount,
 } from 'calypso/state/analytics/actions';
 import { getCurrentUserId } from 'calypso/state/current-user/selectors';
 import { getSiteSlug } from 'calypso/state/sites/selectors';
@@ -118,7 +118,7 @@ const mapDispatchToProps = {
 	recorder: withEnhancers( recordPageView, [
 		enhanceWithSiteType,
 		enhanceWithSiteMainProduct,
-		enhanceWithIsDevAccount,
+		enhanceWithUserIsDevAccount,
 	] ),
 };
 
