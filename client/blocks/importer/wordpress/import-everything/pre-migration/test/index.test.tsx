@@ -228,7 +228,7 @@ describe( 'PreMigration', () => {
 		fireEvent.click( provideCredentialsBtn );
 		expect( screen.getByText( 'Do you need help locating your credentials?' ) ).toBeInTheDocument();
 		expect( screen.getByText( 'Start migration' ) ).toBeInTheDocument();
-		expect( screen.getByText( 'Skip credentials (slower setup)' ) ).toBeInTheDocument();
+		expect( screen.getByText( 'Skip credentials' ) ).toBeInTheDocument();
 
 		const hostAddressInput = document.getElementById( 'host-address' ) as HTMLInputElement;
 		expect( hostAddressInput.value ).toBe( sourceSite.slug );
@@ -284,7 +284,7 @@ describe( 'PreMigration', () => {
 				screen.getByText( 'Do you need help locating your credentials?' )
 			).toBeInTheDocument();
 			expect( screen.getByText( 'Start migration' ) ).toBeInTheDocument();
-			expect( screen.getByText( 'Skip credentials (slower setup)' ) ).toBeInTheDocument();
+			expect( screen.getByText( 'Skip credentials' ) ).toBeInTheDocument();
 		} );
 	} );
 } );
