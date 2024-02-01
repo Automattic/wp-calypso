@@ -1,7 +1,5 @@
-import { recordTracksEvent } from '@automattic/calypso-analytics';
 import page from '@automattic/calypso-router';
 import { Button } from '@automattic/components';
-import 'calypso/my-sites/plans/jetpack-plans/product-store/featured-item-card/style.scss';
 import { addQueryArgs } from '@wordpress/url';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback, useState } from 'react';
@@ -16,11 +14,14 @@ import LicenseLightbox from 'calypso/jetpack-cloud/sections/partner-portal/licen
 import LicenseLightboxLink from 'calypso/jetpack-cloud/sections/partner-portal/license-lightbox-link/index';
 import { HeroImageAPIFamily } from 'calypso/my-sites/plans/jetpack-plans/product-store/hero-image';
 import { useDispatch } from 'calypso/state';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { isAgencyUser } from 'calypso/state/partner-portal/partner/selectors';
 import { APIProductFamilyProduct } from 'calypso/state/partner-portal/types';
 import { ItemPrice } from './item-price';
+
 import './style.scss';
+import 'calypso/my-sites/plans/jetpack-plans/product-store/featured-item-card/style.scss';
 
 type FeaturedLicenseMultiItemCardProps = {
 	variants: APIProductFamilyProduct[];
