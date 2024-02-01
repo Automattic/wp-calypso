@@ -341,11 +341,11 @@ const Hosting = ( props ) => {
 	return (
 		<Main wideLayout className="hosting">
 			{ ! isLoadingSftpData && <ScrollToAnchorOnMount offset={ HEADING_OFFSET } /> }
-			<PageViewTracker path="/hosting-config/:site" title="Hosting Configuration" />
-			<DocumentHead title={ translate( 'Hosting Configuration' ) } />
+			<PageViewTracker path="/hosting-config/:site" title="Hosting" />
+			<DocumentHead title={ translate( 'Hosting' ) } />
 			<NavigationHeader
 				navigationItems={ [] }
-				title={ translate( 'Hosting Configuration' ) }
+				title={ translate( 'Hosting' ) }
 				subtitle={ translate( 'Access your website’s database and more advanced settings.' ) }
 			/>
 			{ ! showHostingActivationBanner && ! isTrialAcknowledgeModalOpen && (
