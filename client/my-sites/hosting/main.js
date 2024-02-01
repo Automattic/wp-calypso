@@ -39,7 +39,7 @@ import { isUserEligibleForFreeHostingTrial } from 'calypso/state/selectors/is-us
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import { requestSite } from 'calypso/state/sites/actions';
 import { isSiteOnBusinessTrial, isSiteOnECommerceTrial } from 'calypso/state/sites/plans/selectors';
-import { getSiteOption, isJetpackSite } from 'calypso/state/sites/selectors';
+import isJetpackSite from 'calypso/state/sites/selectors/is-jetpack-site';
 import { getReaderTeams } from 'calypso/state/teams/selectors';
 import {
 	getSelectedSite,
@@ -204,7 +204,6 @@ const Hosting = ( props ) => {
 		fetchUpdatedData,
 		isSiteAtomic,
 		transferState,
-		isAdminInterfaceWPAdmin,
 	} = props;
 
 	const [ isTrialAcknowledgeModalOpen, setIsTrialAcknowledgeModalOpen ] = useState( false );
@@ -339,18 +338,14 @@ const Hosting = ( props ) => {
 		! hasAtomicFeature || ( ! hasTransfer && ! hasSftpFeature && ! isWpcomStagingSite );
 	const banner = shouldShowUpgradeBanner ? getUpgradeBanner() : getAtomicActivationNotice();
 
-	const pageTitle = isAdminInterfaceWPAdmin
-		? translate( 'Hosting' )
-		: translate( 'Hosting Configuration' );
-
 	return (
 		<Main wideLayout className="hosting">
 			{ ! isLoadingSftpData && <ScrollToAnchorOnMount offset={ HEADING_OFFSET } /> }
 			<PageViewTracker path="/hosting-config/:site" title="Hosting" />
-			<DocumentHead title={ pageTitle } />
+			<DocumentHead title={ translate( 'Hosting' ) } />
 			<NavigationHeader
 				navigationItems={ [] }
-				title={ pageTitle }
+				title={ translate( 'Hosting' ) }
 				subtitle={ translate( 'Access your website’s database and more advanced settings.' ) }
 			/>
 			{ ! showHostingActivationBanner && ! isTrialAcknowledgeModalOpen && (
@@ -392,7 +387,6 @@ export default connect(
 		const isEligibleForHostingTrial =
 			isUserEligibleForFreeHostingTrial( state ) && site && site.plan?.is_free;
 		const isSiteAtomic = isSiteWpcomAtomic( state, siteId );
-		const adminInterface = getSiteOption( state, siteId, 'wpcom_admin_interface' );
 
 		return {
 			teams: getReaderTeams( state ),
@@ -409,7 +403,6 @@ export default connect(
 			hasStagingSitesFeature,
 			isEligibleForHostingTrial,
 			isSiteAtomic,
-			isAdminInterfaceWPAdmin: adminInterface === 'wp-admin',
 		};
 	},
 	{
