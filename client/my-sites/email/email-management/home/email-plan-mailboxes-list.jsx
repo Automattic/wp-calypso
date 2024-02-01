@@ -100,7 +100,7 @@ function MailboxLink( { account, mailbox } ) {
 				} );
 			} }
 			target="_blank"
-			rel="noreferrer"
+			rel="noopener noreferrer"
 		>
 			<span>{ emailAddress }</span>
 			<Gridicon icon="external" size={ 18 } />

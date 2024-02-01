@@ -83,7 +83,6 @@ const getTitanMenuItems = ( {
 			href: getTitanEmailUrl( titanAppsUrlPrefix, email, false, window.location.href ),
 			image: titanMailIcon,
 			imageAltText: translate( 'Titan Mail icon' ),
-			isInternalLink: true,
 			title: translate( 'View Mail', {
 				comment: 'View the Email application (i.e. the webmail) for Titan',
 			} ),
