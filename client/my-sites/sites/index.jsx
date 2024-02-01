@@ -179,6 +179,24 @@ class Sites extends Component {
 			case 'purchases':
 				path = translate( 'Purchases' );
 				break;
+			case 'customize':
+				path = translate( 'Customizer' );
+				break;
+			case 'google-my-business':
+				path = translate( 'Google Business Profile' );
+				break;
+			case 'view':
+				path = translate( 'Preview' );
+				break;
+			case 'woocommerce-installation':
+				path = 'WooCommerce';
+				break;
+			case 'store':
+				path = translate( 'Store' );
+				break;
+			case 'add-ons':
+				path = translate( 'Add-ons' );
+				break;
 		}
 
 		return translate( 'Select a site to open {{strong}}%(path)s{{/strong}}', {
