@@ -21,8 +21,7 @@ class SecurityKeyForm extends Component {
 		showError: false,
 	};
 
-	initiateSecurityKeyAuthentication = ( event, retry ) => {
-		const retryRequest = retry ?? true;
+	initiateSecurityKeyAuthentication = ( event, retryRequest = true ) => {
 
 		event.preventDefault();
 		this.setState( { isAuthenticating: true, showError: false } );
@@ -31,7 +30,7 @@ class SecurityKeyForm extends Component {
 			.loginUserWithSecurityKey( { user_id: this.props.currentUserId } )
 			.then( ( response ) => this.onComplete( null, response ) )
 			.catch( ( error ) => {
-				const errors = [].slice.call( error?.data?.errors ?? [] );
+				const errors = error?.data?.errors ?? [];
 				if ( errors.some( ( e ) => e.code === 'invalid_two_step_nonce' ) ) {
 					this.props.twoStepAuthorization.fetch( () => {
 						if ( retryRequest ) {
@@ -113,6 +112,5 @@ class SecurityKeyForm extends Component {
 export default connect(
 	( state ) => ( {
 		currentUserId: getCurrentUserId( state ),
-	} ),
-	null
+	} )
 )( localize( SecurityKeyForm ) );
