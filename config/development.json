@@ -218,7 +218,7 @@
 		"themes/subscription-purchases": true,
 		"themes/text-search-lots": true,
 		"themes/assembler-first": true,
-		"themes/tiers": true,
+		"themes/tiers": false,
 		"titan/iframe-control-panel": false,
 		"two-factor/enhanced-security": true,
 		"upgrades/redirect-payments": true,

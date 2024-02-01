@@ -123,7 +123,7 @@
 		"stepper-woocommerce-poc": true,
 		"storage-addon": true,
 		"themes/premium": true,
-		"themes/tiers": true,
+		"themes/tiers": false,
 		"upgrades/redirect-payments": true,
 		"upgrades/upcoming-renewals-notices": true,
 		"upgrades/wpcom-monthly-plans": true,
