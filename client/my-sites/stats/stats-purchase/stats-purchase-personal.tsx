@@ -280,7 +280,6 @@ const PersonalPurchase = ( {
 
 					{ isNewPurchaseFlowEnabled && (
 						<ButtonComponent
-							className="jetpack-connect__connect-button"
 							variant="secondary"
 							isBusy={ isPosponeBusy } // for <Button />
 							busy={ isPosponeBusy } // for <CalypsoButton />
