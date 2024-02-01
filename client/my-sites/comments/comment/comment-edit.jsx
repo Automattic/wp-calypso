@@ -1,4 +1,4 @@
-import { Button, Popover, Gridicon } from '@automattic/components';
+import { Button, Popover, FormLabel, Gridicon } from '@automattic/components';
 import { Spinner } from '@wordpress/components';
 import { localize } from 'i18n-calypso';
 import { get, pick } from 'lodash';
@@ -9,7 +9,6 @@ import AsyncLoad from 'calypso/components/async-load';
 import QuerySiteSettings from 'calypso/components/data/query-site-settings';
 import FormButton from 'calypso/components/forms/form-button';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
-import FormLabel from 'calypso/components/forms/form-label';
 import FormTextInput from 'calypso/components/forms/form-text-input';
 import InfoPopover from 'calypso/components/info-popover';
 import { withLocalizedMoment } from 'calypso/components/localized-moment';

@@ -1,6 +1,6 @@
 import { isEnabled } from '@automattic/calypso-config';
 import page from '@automattic/calypso-router';
-import { Card, Button } from '@automattic/components';
+import { Card, Button, FormLabel } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
 import debugModule from 'debug';
 import { localize } from 'i18n-calypso';
@@ -16,7 +16,6 @@ import ClipboardButton from 'calypso/components/forms/clipboard-button';
 import CountedTextarea from 'calypso/components/forms/counted-textarea';
 import FormButton from 'calypso/components/forms/form-button';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
-import FormLabel from 'calypso/components/forms/form-label';
 import FormSelect from 'calypso/components/forms/form-select';
 import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
 import FormTextInput from 'calypso/components/forms/form-text-input';
