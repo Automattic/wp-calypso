@@ -113,6 +113,7 @@ class SignupForm extends Component {
 		translate: PropTypes.func.isRequired,
 		horizontal: PropTypes.bool,
 		shouldDisplayUserExistsError: PropTypes.bool,
+		submitForm: PropTypes.func,
 
 		// Connected props
 		oauth2Client: PropTypes.object,
@@ -1224,6 +1225,7 @@ class SignupForm extends Component {
 						step={ this.props.step }
 						stepName={ this.props.stepName }
 						flowName={ this.props.flowName }
+						submitForm={ this.props.submitForm }
 						goToNextStep={ this.props.goToNextStep }
 						renderTerms={ this.termsOfServiceLink }
 						logInUrl={ logInUrl }

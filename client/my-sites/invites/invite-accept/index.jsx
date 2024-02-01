@@ -157,6 +157,7 @@ class InviteAccept extends Component {
 			decline: this.decline,
 			signInLink: this.signInLink(),
 			forceMatchingEmail: this.isMatchEmailError(),
+			userInvitePasswordless: this.props.userInvitePasswordless,
 		};
 
 		return this.props.user ? (

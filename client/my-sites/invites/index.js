@@ -9,6 +9,7 @@ export default () => {
 	page(
 		[
 			`/accept-invite/:site_id/:invitation_key/${ locale }`,
+			`/accept-invite/:site_id/:invitation_key/:passwordless/${ locale }`,
 			`/accept-invite/:site_id/:invitation_key/:activation_key/${ locale }`,
 			`/accept-invite/:site_id/:invitation_key/:activation_key/:auth_key/${ locale }`,
 		],
