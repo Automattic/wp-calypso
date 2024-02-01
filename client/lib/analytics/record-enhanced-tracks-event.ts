@@ -1,6 +1,6 @@
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { withEnhancers } from 'calypso/state/utils';
-import type { Enhancer } from 'calypso/state/utils';
+import type { Enhancer } from 'calypso/state/utils/with-enhancers';
 
 /**
  * Record a tracks event with additional common properties using enhancers.
