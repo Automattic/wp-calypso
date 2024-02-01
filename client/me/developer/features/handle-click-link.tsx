@@ -1,7 +1,11 @@
-import recordEnhancedTracksEvent from 'calypso/lib/analytics/record-enhanced-tracks-event';
-import { enhanceWithUserIsDevAccount } from 'calypso/state/analytics/actions';
+import { enhanceWithUserIsDevAccount, recordTracksEvent } from 'calypso/state/analytics/actions';
+import { withEnhancers } from 'calypso/state/utils';
+import type { Dispatch } from 'redux';
 
-export const handleClickLink = ( event: React.MouseEvent< HTMLAnchorElement > ) => {
+export const handleClickLink = (
+	dispatch: Dispatch,
+	event: React.MouseEvent< HTMLAnchorElement >
+) => {
 	const prefixToRemove = '/support/';
 	const pathIndex = event.currentTarget.href.indexOf( prefixToRemove );
 
@@ -10,9 +14,7 @@ export const handleClickLink = ( event: React.MouseEvent< HTMLAnchorElement > ) 
 		featureSlug = featureSlug.substring( pathIndex + prefixToRemove.length );
 	}
 
-	recordEnhancedTracksEvent(
-		'calypso_me_developer_learn_more',
-		{ feature: featureSlug },
-		enhanceWithUserIsDevAccount
-	);
+	const recordEvent = withEnhancers( recordTracksEvent, enhanceWithUserIsDevAccount );
+
+	dispatch( recordEvent( 'calypso_me_developer_learn_more', { feature: featureSlug } ) );
 };
