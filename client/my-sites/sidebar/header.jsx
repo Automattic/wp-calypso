@@ -1,6 +1,7 @@
 import { useTranslate } from 'i18n-calypso';
 import AsyncLoad from 'calypso/components/async-load';
 import SidebarNotifications from 'calypso/my-sites/sidebar/menu-items/notifications/notifications';
+import SidebarSearch from 'calypso/my-sites/sidebar/menu-items/search/search';
 
 export const MySitesSidebarUnifiedHeader = () => {
 	const translate = useTranslate();
@@ -11,15 +12,7 @@ export const MySitesSidebarUnifiedHeader = () => {
 				<span className="dotcom"></span>
 			</a>
 			<span className="gap"></span>
-			<AsyncLoad
-				require="./menu-items/search/search"
-				tooltip={ translate( 'Search' ) }
-				placeholder={
-					<div className="link-search">
-						<span className="search"></span>
-					</div>
-				}
-			/>
+			<SidebarSearch tooltip={ translate( 'Search' ) } />
 			<AsyncLoad
 				require="./menu-items/help-center/help-center"
 				tooltip={ translate( 'Help' ) }

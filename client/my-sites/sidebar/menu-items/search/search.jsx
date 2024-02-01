@@ -1,16 +1,19 @@
 import classnames from 'classnames';
+import { connect } from 'react-redux';
+import { useDispatch } from 'calypso/state';
+import { openCommandPalette } from 'calypso/state/command-palette/actions';
 import SidebarMenuItem from '../menu-item';
 import { SearchIcon } from './search-icon';
 
 const SidebarSearch = ( { tooltip } ) => {
-	const handleToggleSearch = () => {
-		console.debug( 'command k' );
+	const dispatch = useDispatch();
+	const showCommandPalette = () => {
+		dispatch( openCommandPalette() );
 	};
-
 	return (
 		<>
 			<SidebarMenuItem
-				onClick={ handleToggleSearch }
+				onClick={ showCommandPalette }
 				className={ classnames( 'sidebar__item-search', {
 					'is-active': false,
 				} ) }
@@ -20,5 +23,4 @@ const SidebarSearch = ( { tooltip } ) => {
 		</>
 	);
 };
-
-export default SidebarSearch;
+export default connect( null, { openCommandPalette } )( SidebarSearch );
