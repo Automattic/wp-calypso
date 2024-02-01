@@ -32,7 +32,7 @@ export const usePreflightStatusQuery = ( siteId: number, enabled = false ): UseQ
 			} );
 		},
 		enabled: shouldFetch,
-		refetchInterval: 3000,
+		refetchInterval: 5000,
 	} );
 
 	useEffect( () => {
