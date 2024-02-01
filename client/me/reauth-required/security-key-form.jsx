@@ -4,12 +4,13 @@ import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
 import FormButton from 'calypso/components/forms/form-button';
+import { getCurrentUserId } from 'calypso/state/current-user/selectors';
 
 import './security-key-form.scss';
 
 class SecurityKeyForm extends Component {
 	static propTypes = {
-		loginUserWithSecurityKey: PropTypes.func.isRequired,
+		twoStepAuthorization: PropTypes.object.isRequired,
 		onComplete: PropTypes.func,
 
 		translate: PropTypes.func.isRequired,
@@ -20,21 +21,30 @@ class SecurityKeyForm extends Component {
 		showError: false,
 	};
 
-	initiateSecurityKeyAuthentication = ( event ) => {
-		event.preventDefault();
+	initiateSecurityKeyAuthentication = ( event, retry ) => {
+		const retryRequest = retry ?? true;
 
+		event.preventDefault();
 		this.setState( { isAuthenticating: true, showError: false } );
-		this.props
-			.loginUserWithSecurityKey()
+
+		this.props.twoStepAuthorization
+			.loginUserWithSecurityKey( { user_id: this.props.currentUserId } )
 			.then( ( response ) => this.onComplete( null, response ) )
 			.catch( ( error ) => {
-				this.onComplete(
-					{
-						onErrorCallback: () => this.setState( { isAuthenticating: false, showError: true } ),
-						...error,
-					},
-					null
-				);
+				const errors = [].slice.call( error?.data?.errors ?? [] );
+				if ( errors.some( ( e ) => e.code === 'invalid_two_step_nonce' ) ) {
+					this.props.twoStepAuthorization.fetch( () => {
+						if ( retryRequest ) {
+							this.initiateSecurityKeyAuthentication( event, false );
+						} else {
+							// We only retry once, so let's show the original error.
+							this.setState( { isAuthenticating: false, showError: true } );
+						}
+					} );
+					return;
+				}
+				this.setState( { isAuthenticating: false, showError: true } );
+				this.onComplete( error, null );
 			} );
 	};
 
@@ -100,4 +110,9 @@ class SecurityKeyForm extends Component {
 	}
 }
 
-export default connect( null, null )( localize( SecurityKeyForm ) );
+export default connect(
+	( state ) => ( {
+		currentUserId: getCurrentUserId( state ),
+	} ),
+	null
+)( localize( SecurityKeyForm ) );
