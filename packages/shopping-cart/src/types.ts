@@ -371,21 +371,6 @@ export interface ResponseCartProduct {
 	item_original_monthly_cost_integer: number;
 
 	/**
-	 * The cart item's price before discounts with volume in the currency's
-	 * smallest unit. This is similar to `item_original_subtotal_integer`
-	 * except when it comes to introductory offers. Introductory offer
-	 * discounts are not cost overrides; they actually reassign the base cost
-	 * of the product. However, the shopping-cart endpoint then returns the
-	 * "original" cost of the cart item as the product without the introductory
-	 * offer. This is confusing because the introductory offer isn't really a
-	 * savings of any kind in terms of the way we track discounts. The savings
-	 * is only other kinds of discounts (eg: a coupon). In order to calculate
-	 * the actual savings, we need therefore to know the actual subtotal before
-	 * (non-introductory-offer) discounts. That's what this value is.
-	 */
-	item_subtotal_before_discounts_integer: number;
-
-	/**
 	 * The cart item's original price with volume in the currency's smallest unit.
 	 *
 	 * Discounts are not included, but volume and quantity are included.
