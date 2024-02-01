@@ -1,3 +1,4 @@
+import config from '@automattic/calypso-config';
 import {
 	FEATURE_WOOP,
 	WPCOM_FEATURES_ATOMIC,
@@ -138,7 +139,12 @@ export const useCanPreviewButNeedUpgrade = (
 
 	const handleCanPreviewButNeedUpgrade = useCallback(
 		( previewingTheme: ReturnType< typeof usePreviewingTheme > ) => {
-			const livePreviewUpgradeTypes = [ WOOCOMMERCE_THEME, PREMIUM_THEME, PERSONAL_THEME ];
+			const livePreviewUpgradeTypes = [ WOOCOMMERCE_THEME, PREMIUM_THEME ];
+
+			// @TODO Remove this check once Theme Tiers is live. This feature check can't be enabled.
+			if ( config.isEnabled( 'themes/tiers' ) ) {
+				livePreviewUpgradeTypes.push( PERSONAL_THEME );
+			}
 
 			/**
 			 * Currently, Live Preview only supports upgrades for WooCommerce and Premium themes.

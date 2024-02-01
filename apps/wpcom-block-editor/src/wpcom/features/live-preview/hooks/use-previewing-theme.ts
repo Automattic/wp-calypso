@@ -1,3 +1,4 @@
+import config from '@automattic/calypso-config';
 import { getPlan, PLAN_PERSONAL, PLAN_PREMIUM, PLAN_BUSINESS } from '@automattic/calypso-products';
 import { useSelect } from '@wordpress/data';
 import { useEffect, useState, useMemo } from 'react';
@@ -27,14 +28,26 @@ const getThemeType = ( theme?: Theme ) => {
 		return PREMIUM_THEME;
 	}
 
-	return theme?.theme_tier?.slug ?? undefined;
+	// @TODO Replace all the logic above with the following code once Theme Tiers is live.
+	if ( config.isEnabled( 'themes/tiers' ) ) {
+		return theme?.theme_tier?.slug ?? undefined;
+	}
+
+	return undefined;
 };
 
 /**
  * Get the theme required feature.
  * This only support WooCommerce and Premium themes.
  */
-const getThemeFeature = ( theme?: Theme ) => theme?.theme_tier?.feature ?? undefined;
+const getThemeFeature = ( theme?: Theme ) => {
+	// @TODO Once theme tiers is live we'll need to refactor use-can-preview-but-need-upgrade's checkNeedUpgrade function.
+	if ( config.isEnabled( 'themes/tiers' ) ) {
+		return theme?.theme_tier?.feature ?? undefined;
+	}
+
+	return undefined;
+};
 
 export const usePreviewingThemeSlug = () => {
 	const location = useLocation();
@@ -69,13 +82,13 @@ export const usePreviewingTheme = () => {
 	let previewingThemePlan;
 	switch ( previewingThemeType ) {
 		case WOOCOMMERCE_THEME:
-			previewingThemePlan = getPlan( PLAN_BUSINESS )?.getTitle();
+			previewingThemePlan = getPlan( PLAN_BUSINESS ).getTitle();
 			break;
 		case PREMIUM_THEME:
-			previewingThemePlan = getPlan( PLAN_PREMIUM )?.getTitle();
+			previewingThemePlan = getPlan( PLAN_PREMIUM ).getTitle();
 			break;
 		case PERSONAL_THEME:
-			previewingThemePlan = getPlan( PLAN_PERSONAL )?.getTitle();
+			previewingThemePlan = getPlan( PLAN_PERSONAL ).getTitle();
 			break;
 	}
 
