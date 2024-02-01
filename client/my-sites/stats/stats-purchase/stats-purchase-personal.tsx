@@ -281,8 +281,8 @@ const PersonalPurchase = ( {
 					{ isNewPurchaseFlowEnabled && (
 						<ButtonComponent
 							variant="secondary"
-							isBusy={ isPosponeBusy } // for <Button />
-							busy={ isPosponeBusy } // for <CalypsoButton />
+							isBusy={ isWPCOMSite ? undefined : isPosponeBusy } // for <Button />
+							busy={ isWPCOMSite ? isPosponeBusy : undefined } // for <CalypsoButton />
 							onClick={ handleCheckoutPostponed }
 						>
 							{ translate( 'I will do it later' ) }
