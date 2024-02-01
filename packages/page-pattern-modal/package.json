@@ -29,7 +29,7 @@
 	"dependencies": {
 		"@automattic/onboarding": "workspace:^",
 		"@automattic/typography": "workspace:^",
-		"@wordpress/block-editor": "^12.18.1",
+		"@wordpress/block-editor": "^12.18.2",
 		"@wordpress/blocks": "^12.27.1",
 		"@wordpress/components": "^25.16.0",
 		"@wordpress/compose": "^6.27.0",
