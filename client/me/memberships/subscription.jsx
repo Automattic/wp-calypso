@@ -43,11 +43,10 @@ function Subscription( { translate, subscription, moment, stoppingStatus, updati
 		dispatch( ! isProcessing && requestAutoRenewDisable( subscription.ID ) );
 	const enableAutoRenew = () =>
 		dispatch( ! isProcessing && requestAutoRenewResume( subscription.ID ) );
-	const isSubscription =
-		subscription && ( subscription.renew_interval || subscription.is_renewable ); // can remove renew_interval once backend is deployed
-	const isAutoRenewing = isSubscription && subscription.renew_interval;
-	const isProduct = subscription && ! isSubscription;
-	const isDisabledAutorenewing = isSubscription && ! subscription.renew_interval;
+	const isRenewable = subscription && ( subscription.renew_interval || subscription.is_renewable ); // can remove renew_interval once backend is deployed
+	const isAutoRenewing = isRenewable && subscription.renew_interval;
+	const isProduct = subscription && ! isRenewable;
+	const isDisabledAutorenewing = isRenewable && ! subscription.renew_interval;
 
 	useEffect( () => {
 		if ( stoppingStatus === 'fail' || updatingStatus === 'fail' ) {
@@ -179,7 +178,7 @@ function Subscription( { translate, subscription, moment, stoppingStatus, updati
 							</li>
 						</ul>
 					</Card>
-					{ isSubscription && (
+					{ isRenewable && (
 						<CompactCard
 							tagName="button"
 							className="auto-renew-toggle__card"
