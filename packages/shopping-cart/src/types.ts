@@ -521,12 +521,53 @@ export interface ResponseCartCostOverride {
 	does_override_original_cost: boolean;
 }
 
+export type IntroductoryOfferUnit = 'day' | 'week' | 'month' | 'year' | 'indefinite';
+
 export interface IntroductoryOfferTerms {
+	/**
+	 * True if the introductory offer is active on this product.
+	 */
 	enabled: boolean;
-	interval_unit: string;
+
+	/**
+	 * The unit that, when combined with `interval_count`, determines how long
+	 * the introductory offer lasts. eg: if `interval_count` is 3 and
+	 * `interval_unit` is 'month', the discount lasts for 3 months.
+	 */
+	interval_unit: IntroductoryOfferUnit;
+
+	/**
+	 * The count that, when combined with `interval_unit`, determines how long
+	 * the introductory offer lasts. eg: if `interval_count` is 3 and
+	 * `interval_unit` is 'month', the discount lasts for 3 months.
+	 */
 	interval_count: number;
+
+	/**
+	 * If the introductory offer is not active (if `enabled` is false), the
+	 * reason will probably be a human-readable reason why (although it may not
+	 * exist even then).
+	 */
 	reason?: string;
+
+	/**
+	 * The number of times the introductory offer cost and period will be used
+	 * during renewals before using the regular cost and period. This can be
+	 * used in place of `interval_unit` and `interval_count` to determine when
+	 * the introductory offer will end.
+	 *
+	 * This will be 0 if it is not used and we should rely on `interval_count`.
+	 */
 	transition_after_renewal_count: number;
+
+	/**
+	 * True if the first renewal will subtract the introductory offer period
+	 * from the full period when calculating the price. For example: if you
+	 * provide a 3 month free trial on a yearly plan, the first renewal would
+	 * only cover 9 months (12 – 3 months). This reduced period is also
+	 * reflected in the renewal price, as the user will only pay for the 9
+	 * months instead of the full year.
+	 */
 	should_prorate_when_offer_ends: boolean;
 }
 
