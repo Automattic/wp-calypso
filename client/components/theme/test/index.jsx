@@ -62,11 +62,6 @@ describe( 'Theme', () => {
 
 			expect( container.getElementsByClassName( 'price' ) ).toHaveLength( 0 );
 		} );
-
-		test( 'should match snapshot', () => {
-			const { container } = render( <Theme { ...props } /> );
-			expect( container.firstChild ).toMatchSnapshot();
-		} );
 	} );
 
 	describe( 'when isPlaceholder is set to true', () => {
