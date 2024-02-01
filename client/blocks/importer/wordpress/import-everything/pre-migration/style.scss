@@ -8,15 +8,6 @@
 	padding: 0 rem(20px);
 	max-width: 100%;
 
-	.import__heading {
-		margin-bottom: 0;
-		.onboarding-title {
-			line-height: 57.6px;
-			letter-spacing: -0.32px;
-			font-size: 3rem;
-			margin-bottom: 8px;
-		}
-	}
 
 	.pre-migration__form-container {
 		display: flex;
@@ -161,6 +152,7 @@
 
 	.pre-migration__main-content {
 		text-align: center;
+		margin-top: rem(-44px);
 		margin-bottom: rem(40px);
 		line-height: 24px;
 		color: var(--gray-gray-50, #646970);
@@ -236,7 +228,7 @@
 	}
 
 	.pre-migration__footer-jetpack-powered {
-		margin-top: rem(376px);
+		margin-top: rem(420px);
 		margin-bottom: rem(40px);
 		display: flex;
 		font-size: 0.75rem;
