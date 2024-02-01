@@ -1,0 +1,35 @@
+.import__user-migration {
+	.import__user-migration-list {
+		margin: 0 auto;
+		width: 385px;
+	}
+
+	.import__user-migration-button-container {
+		display: flex;
+        flex-direction: row;
+		justify-content: center;
+	}
+}
+
+.imported-user-item {
+	display: flex;
+	align-items: center;
+
+	.imported-user-item__display-name {
+		font-size: 1rem;
+		font-weight: 500;
+	}
+
+	.imported-user-item__email {
+		flex-grow: 1;
+	}
+
+	.imported-user-item__linked {
+		flex-shrink: 0;
+		margin-left: 1rem;
+	}
+
+	.imported-user-item__roles {
+		margin-left: auto;
+	}
+}

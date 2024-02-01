@@ -8,6 +8,7 @@ import { createElement, createInterpolateElement } from '@wordpress/element';
 import { localize } from 'i18n-calypso';
 import { get } from 'lodash';
 import { connect } from 'react-redux';
+import ImportUsers from 'calypso/blocks/importer/wordpress/import-everything//import-users';
 import PreMigrationScreen from 'calypso/blocks/importer/wordpress/import-everything/pre-migration';
 import { LoadingEllipsis } from 'calypso/components/loading-ellipsis';
 import { EVERY_FIVE_SECONDS, Interval } from 'calypso/lib/interval';
@@ -225,7 +226,6 @@ export class ImportEverything extends SectionMigrate {
 				{ ! isMigrateFromWp
 					? this.renderDefaultHoorayScreen()
 					: this.renderHoorayScreenWithDomainInfo() }
-				{ this.renderMigratingUsers() }
 			</Hooray>
 		);
 	}

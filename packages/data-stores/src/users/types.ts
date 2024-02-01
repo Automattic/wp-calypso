@@ -16,6 +16,11 @@ export type Member = {
 	site_ID: number;
 	site_visible: boolean;
 	linked_user_ID?: boolean;
+	linked_user_info?: {
+		avatar_URL: string;
+		name: string;
+	};
+	date_subscribed?: string;
 };
 
 export type UseQuery = {
