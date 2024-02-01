@@ -23,6 +23,7 @@ export default function PricingLicenseSelector( {
 
 	const navItems = supportedBundleSizes.map( ( size ) => {
 		return {
+			key: size,
 			label:
 				size === 1
 					? translate( 'Single license' )
@@ -45,7 +46,7 @@ export default function PricingLicenseSelector( {
 		<div className="pricing-license-selector-wrapper">
 			<div className="pricing-license-selector">
 				{ navItems.map( ( item, index ) => (
-					<div className="pricing-license-option-outer">
+					<div key={ item.key } className="pricing-license-option-outer">
 						<button
 							key={ index }
 							onClick={ item.onClick }
