@@ -512,11 +512,7 @@ const PatternAssembler = ( props: StepProps & NoticesProps ) => {
 			return false;
 		}
 
-		if ( currentScreen.name === 'confirmation' ) {
-			return false;
-		}
-
-		return true;
+		return ! [ 'confirmation', 'upsell' ].includes( currentScreen.name );
 	};
 
 	const customActionButtons = () => {
