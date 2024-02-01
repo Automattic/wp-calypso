@@ -1,9 +1,10 @@
 import { localizeUrl } from '@automattic/i18n-utils';
 import { useTranslate } from 'i18n-calypso';
-import { handleClickLink } from './handle-click-link';
+import { useHandleClickLink } from './use-handle-click-link';
 
 export const useFeaturesList = () => {
 	const translate = useTranslate();
+	const handleClickLink = useHandleClickLink();
 
 	return [
 		{
