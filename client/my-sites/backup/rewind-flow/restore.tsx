@@ -77,6 +77,7 @@ const BackupRestoreFlow: FunctionComponent< Props > = ( {
 	);
 
 	const [ userHasRequestedRestore, setUserHasRequestedRestore ] = useState< boolean >( false );
+	const [ restoreInitiated, setRestoreInitiated ] = useState( false );
 
 	const rewindState = useSelector( ( state ) => getRewindState( state, siteId ) ) as RewindState;
 	const inProgressRewindStatus = useSelector( ( state ) =>
@@ -91,51 +92,65 @@ const BackupRestoreFlow: FunctionComponent< Props > = ( {
 		[ dispatch, rewindConfig, rewindId, siteId ]
 	);
 
-	const { refetch: refetchPreflightStatus } = usePreflightStatusQuery( siteId );
-	const preflightCheck = useEnqueuePreflightCheck( siteId );
 	const preflightStatus = useSelector( ( state ) => getPreflightStatus( state, siteId ) );
 	const hasCredentials = useSelector( ( state ) => hasJetpackCredentials( state, siteId ) );
+	const credentialsAreValid = hasCredentials && ! areCredentialsInvalid;
 	const isRestoreInProgress = useSelector( ( state ) => getIsRestoreInProgress( state, siteId ) );
 	const needCredentials = useSelector( ( state ) => getDoesRewindNeedCredentials( state, siteId ) );
+	const isPreflightEnabled = config.isEnabled( 'jetpack/backup-restore-preflight-checks' );
+	const { refetch: refetchPreflightStatus } = usePreflightStatusQuery(
+		siteId,
+		// Only enable the preflight check if the user has requested a restore and we don't need credentials.
+		userHasRequestedRestore && ! needCredentials
+	);
+	const preflightCheck = useEnqueuePreflightCheck( siteId );
 
 	useEffect( () => {
-		const credentialsAreValid = hasCredentials && ! areCredentialsInvalid;
-		const preflightPassed =
-			config.isEnabled( 'jetpack/backup-restore-preflight-checks' ) &&
-			preflightStatus === PreflightTestStatus.SUCCESS;
+		const preflightPassed = isPreflightEnabled && preflightStatus === PreflightTestStatus.SUCCESS;
 
-		if ( userHasRequestedRestore && ! isRestoreInProgress ) {
+		if ( userHasRequestedRestore && ! isRestoreInProgress && ! restoreInitiated ) {
 			if ( credentialsAreValid || preflightPassed ) {
 				dispatch( setValidFrom( 'restore', Date.now() ) );
 				requestRestore();
+				setRestoreInitiated( true );
 			}
 		}
 	}, [
-		areCredentialsInvalid,
+		credentialsAreValid,
 		dispatch,
-		hasCredentials,
+		isPreflightEnabled,
 		isRestoreInProgress,
 		preflightStatus,
 		requestRestore,
+		restoreInitiated,
 		userHasRequestedRestore,
 	] );
 	const onConfirm = useCallback( () => {
 		// Queue preflight
-		preflightCheck.mutate(
-			{ siteId },
-			{
-				onSuccess: () => {
-					refetchPreflightStatus();
-				},
-			}
-		);
+		if ( isPreflightEnabled && ! credentialsAreValid ) {
+			preflightCheck.mutate(
+				{ siteId },
+				{
+					onSuccess: () => {
+						refetchPreflightStatus();
+					},
+				}
+			);
+		}
 
 		// Mark that the user has requested a restore
 		setUserHasRequestedRestore( true );
 
 		// Track the restore confirmation event.
 		dispatch( recordTracksEvent( 'calypso_jetpack_backup_restore_confirm' ) );
-	}, [ preflightCheck, siteId, dispatch, refetchPreflightStatus ] );
+	}, [
+		isPreflightEnabled,
+		credentialsAreValid,
+		dispatch,
+		preflightCheck,
+		siteId,
+		refetchPreflightStatus,
+	] );
 
 	const siteSlug = useSelector( ( state ) => getSiteSlug( state, siteId ) );
 
@@ -329,6 +344,13 @@ const BackupRestoreFlow: FunctionComponent< Props > = ( {
 		( ! inProgressRewindStatus && userHasRequestedRestore ) ||
 		( inProgressRewindStatus && [ 'queued', 'running' ].includes( inProgressRewindStatus ) );
 	const isFinished = inProgressRewindStatus !== null && inProgressRewindStatus === 'finished';
+
+	useEffect( () => {
+		if ( isFinished ) {
+			setRestoreInitiated( false );
+			setUserHasRequestedRestore( false );
+		}
+	}, [ isFinished ] );
 
 	const render = () => {
 		if ( loading ) {
