@@ -61,7 +61,10 @@ class InviteAcceptLoggedOut extends Component {
 		debug( 'Storing invite_accepted: ' + JSON.stringify( invite ) );
 		store.set( 'invite_accepted', invite );
 
-		const enhancedUserData = { ...userData };
+		const enhancedUserData = {
+			...userData,
+			is_passwordless: this.props.userInvitePasswordless,
+		};
 
 		if ( get( invite, 'site.is_wpforteams_site', false ) ) {
 			enhancedUserData.signup_flow_name = 'p2';
@@ -174,13 +177,13 @@ class InviteAcceptLoggedOut extends Component {
 				loginUser: this.loginUser,
 			} );
 		}
-
+		const userInvitePasswordless = this.props.userInvitePasswordless;
 		return (
 			<div>
 				<SignupForm
-					isPasswordless={ this.props.userInvitePasswordless }
-					displayNameInput={ ! this.props.userInvitePasswordless }
-					displayUsernameInput={ ! this.props.userInvitePasswordless }
+					displayNameInput={ ! userInvitePasswordless }
+					displayUsernameInput={ ! userInvitePasswordless }
+					displayPasswordInput={ ! userInvitePasswordless }
 					disabled={ this.state.submitting }
 					formHeader={ this.renderFormHeader() }
 					submitting={ this.state.submitting }

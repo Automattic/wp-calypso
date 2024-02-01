@@ -91,6 +91,7 @@ class SignupForm extends Component {
 		disabled: PropTypes.bool,
 		displayNameInput: PropTypes.bool,
 		displayUsernameInput: PropTypes.bool,
+		displayPasswordInput: PropTypes.bool,
 		email: PropTypes.string,
 		flowName: PropTypes.string,
 		footerLink: PropTypes.node,
@@ -270,7 +271,7 @@ class SignupForm extends Component {
 	validate = ( fields, onComplete ) => {
 		const fieldsForValidation = filter( [
 			'email',
-			'password',
+			this.props.displayPasswordInput && 'password',
 			this.props.displayUsernameInput && 'username',
 			this.props.displayNameInput && 'firstName',
 			this.props.displayNameInput && 'lastName',
@@ -698,21 +699,26 @@ class SignupForm extends Component {
 						) }
 					</>
 				) }
-
-				<FormLabel htmlFor="password">{ this.props.translate( 'Choose a password' ) }</FormLabel>
-				<FormPasswordInput
-					className="signup-form__input"
-					disabled={ this.state.submitting || this.props.disabled }
-					id="password"
-					name="password"
-					value={ formState.getFieldValue( this.state.form, 'password' ) }
-					isError={ formState.isFieldInvalid( this.state.form, 'password' ) }
-					isValid={ formState.isFieldValid( this.state.form, 'password' ) }
-					onBlur={ this.handleBlur }
-					onChange={ this.handleChangeEvent }
-					submitting={ this.state.submitting || this.props.submitting }
-				/>
-				{ this.passwordValidationExplanation() }
+				{ this.props.displayPasswordInput && (
+					<>
+						<FormLabel htmlFor="password">
+							{ this.props.translate( 'Choose a password' ) }
+						</FormLabel>
+						<FormPasswordInput
+							className="signup-form__input"
+							disabled={ this.state.submitting || this.props.disabled }
+							id="password"
+							name="password"
+							value={ formState.getFieldValue( this.state.form, 'password' ) }
+							isError={ formState.isFieldInvalid( this.state.form, 'password' ) }
+							isValid={ formState.isFieldValid( this.state.form, 'password' ) }
+							onBlur={ this.handleBlur }
+							onChange={ this.handleChangeEvent }
+							submitting={ this.state.submitting || this.props.submitting }
+						/>
+						{ this.passwordValidationExplanation() }
+					</>
+				) }
 			</div>
 		);
 	}
