@@ -1,4 +1,3 @@
-import { recordTracksEvent } from '@automattic/calypso-analytics';
 import page from '@automattic/calypso-router';
 import { Button } from '@automattic/components';
 import { addQueryArgs } from '@wordpress/url';
@@ -15,10 +14,12 @@ import getProductVariantShortTitle from 'calypso/jetpack-cloud/sections/partner-
 import LicenseLightbox from 'calypso/jetpack-cloud/sections/partner-portal/license-lightbox/index';
 import LicenseLightboxLink from 'calypso/jetpack-cloud/sections/partner-portal/license-lightbox-link/index';
 import { useDispatch } from 'calypso/state';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { isAgencyUser } from 'calypso/state/partner-portal/partner/selectors';
 import { APIProductFamilyProduct } from 'calypso/state/partner-portal/types';
 import { ItemPrice } from './item-price';
+
 import 'calypso/my-sites/plans/jetpack-plans/product-store/simple-item-card/style.scss';
 import './style.scss';
 
