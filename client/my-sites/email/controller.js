@@ -197,9 +197,8 @@ export default {
 					path={ paths.getTitanSetUpThankYouPath( ':site', ':domain' ) }
 					title="Checkout > Purchased Titan mailbox"
 				/>
-
+				12312
 				<TitanSetUpThankYou
-					containerClassName="titan-set-up-thank-you__container_wrapped"
 					domainName={ pageContext.params.domain }
 					emailAddress={ pageContext.query.email }
 				/>

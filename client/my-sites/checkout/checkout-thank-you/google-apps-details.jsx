@@ -60,7 +60,7 @@ const GoogleAppsDetails = ( { purchases } ) => {
 		<PurchaseDetail
 			icon="mail"
 			title={ i18n.translate(
-				'Keep an eye on your email to finish setting up your %(productName)s account',
+				'123Keep an eye on your email to finish setting up your %(productName)s account',
 				{
 					args: {
 						productName,

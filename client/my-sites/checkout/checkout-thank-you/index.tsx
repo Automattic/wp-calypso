@@ -656,13 +656,14 @@ export class CheckoutThankYou extends Component<
 
 			if ( selectedFeature === 'email-license' && domainName ) {
 				return (
-					<TitanSetUpThankYou
-						domainName={ domainName }
-						emailNeedsSetup
-						isDomainOnlySite={ this.props.domainOnlySiteFlow }
-						subtitle={ translate( 'You will receive an email confirmation shortly.' ) }
-						title={ translate( 'Congratulations on your purchase!' ) }
-					/>
+					<>
+						<div>1111</div>
+						<TitanSetUpThankYou
+							domainName={ domainName }
+							emailNeedsSetup
+							isDomainOnlySite={ this.props.domainOnlySiteFlow }
+						/>
+					</>
 				);
 			}
 
@@ -690,13 +691,14 @@ export class CheckoutThankYou extends Component<
 			);
 		} else if ( wasTitanEmailOnlyProduct ) {
 			return (
-				<TitanSetUpThankYou
-					domainName={ purchases[ 0 ].meta }
-					emailAddress={ email }
-					isDomainOnlySite={ this.props.domainOnlySiteFlow }
-					subtitle={ translate( 'You will receive an email confirmation shortly.' ) }
-					title={ translate( 'Congratulations on your purchase!' ) }
-				/>
+				<>
+					<div>2222</div>
+					<TitanSetUpThankYou
+						domainName={ purchases[ 0 ].meta }
+						emailAddress={ email }
+						isDomainOnlySite={ this.props.domainOnlySiteFlow }
+					/>
+				</>
 			);
 		}
 
