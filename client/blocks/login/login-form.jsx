@@ -3,6 +3,7 @@ import page from '@automattic/calypso-router';
 import { Button, Card, FormInputValidation, FormLabel, Gridicon } from '@automattic/components';
 import { alert } from '@automattic/components/src/icons';
 import { localizeUrl } from '@automattic/i18n-utils';
+import { Spinner } from '@wordpress/components';
 import { Icon } from '@wordpress/icons';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
@@ -859,8 +860,12 @@ export class LoginForm extends Component {
 					<p className="login__form-terms">{ socialToS }</p>
 					{ isWoo && ! isPartnerSignup && this.renderLostPasswordLink() }
 					<div className="login__form-action">
-						<FormsButton primary busy={ isSendingEmail } disabled={ isSubmitButtonDisabled }>
-							{ this.getLoginButtonText() }
+						<FormsButton
+							primary
+							busy={ ! isWoo && isSendingEmail }
+							disabled={ isSubmitButtonDisabled }
+						>
+							{ isWoo && isSendingEmail ? <Spinner /> : this.getLoginButtonText() }
 						</FormsButton>
 					</div>
 
