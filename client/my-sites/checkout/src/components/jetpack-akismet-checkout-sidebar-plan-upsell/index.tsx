@@ -133,8 +133,7 @@ const useCalculatedDiscounts = () => {
 
 	// Coupon discount is added on top of other discounts
 	if ( product.coupon_savings_integer ) {
-		const couponRate =
-			product.coupon_savings_integer / product.item_subtotal_before_discounts_integer;
+		const couponRate = product.coupon_savings_integer / product.item_original_subtotal_integer;
 		priceBreakdown.push( {
 			label: __( 'Coupon' ),
 			priceInteger: biennial.priceInteger * couponRate,

@@ -202,40 +202,6 @@ export function filterAndGroupCostOverridesForDisplay(
 			productDiscountAmountTotal += newDiscountAmount;
 		} );
 
-		// Add a fake cost override for introductory offers until D134600-code
-		// is merged because they are otherwise discounts that are invisible to
-		// the list of cost overrides. Remove this once that diff is merged.
-		if (
-			product.introductory_offer_terms?.enabled &&
-			! costOverrides.some( ( override ) => override.override_code === 'introductory-offer' )
-		) {
-			const discountAmount = grouped[ 'introductory-offer' ]?.discountAmount ?? 0;
-			let newDiscountAmount =
-				product.item_original_subtotal_integer - product.item_subtotal_before_discounts_integer;
-			// Override for Jetpack two-year products: we show introductory discount for yearly variant (the rest is considered multi-year discount)
-			if ( isJetpackSocialAdvancedSlug( product.product_slug ) ) {
-				// Social Advanced has free trial that we don't consider "introduction offer"
-				newDiscountAmount = 0;
-			} else if ( isJetpack && isBiennially( product ) ) {
-				// For all other products, we show introductory discount for yearly variant (the rest is considered multi-year discount)
-				const yearlyVariant = getYearlyVariantFromProduct( product );
-				if ( yearlyVariant ) {
-					newDiscountAmount =
-						yearlyVariant.price_before_discounts_integer - yearlyVariant.price_integer;
-				}
-			}
-			if ( newDiscountAmount > 0 ) {
-				grouped[ 'introductory-offer' ] = {
-					humanReadableReason: isJetpack
-						? translate( 'Introductory offer*' )
-						: translate( 'Introductory offer' ),
-					overrideCode: 'introductory-offer',
-					discountAmount: discountAmount + newDiscountAmount,
-				};
-				productDiscountAmountTotal += newDiscountAmount;
-			}
-		}
-
 		if ( isJetpack && isBiennially( product ) ) {
 			const discountAmount = grouped[ 'multi-year-discount' ]?.discountAmount ?? 0;
 			const yearlyVariant = getYearlyVariantFromProduct( product );
