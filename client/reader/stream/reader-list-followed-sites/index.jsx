@@ -5,9 +5,9 @@ import { map } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
+import SearchCard from 'calypso/components/search-card';
 import UrlSearch from 'calypso/lib/url-search';
 import { filterFollowsByIsFollowed, filterFollowsByQuery } from 'calypso/reader/follow-helpers';
-import FollowingManageSearchFollowed from 'calypso/reader/following-manage/search-followed';
 import { isEligibleForUnseen } from 'calypso/reader/get-helpers';
 import { hasReaderFollowOrganization } from 'calypso/state/reader/follows/selectors';
 import getReaderFollowedSites from 'calypso/state/reader/follows/selectors/get-reader-followed-sites';
@@ -102,7 +102,19 @@ export class ReaderListFollowedSites extends Component {
 					</h2>
 				) : null }
 				{ sites.length >= searchThreshold && (
-					<FollowingManageSearchFollowed onSearch={ this.searchEvent } initialValue={ query } />
+					<SearchCard
+						compact
+						pinned={ false }
+						className="following-manage__search-followed"
+						additionalClasses="following-manage__search-followed-input"
+						placeholder={ translate( 'Search…' ) }
+						onSearch={ this.searchEvent }
+						initialValue={ query }
+						delaySearch
+						delayTimeout={ 100 }
+						hideOpenIcon
+						disableAutocorrect
+					/>
 				) }
 
 				{ isMobile() ? (

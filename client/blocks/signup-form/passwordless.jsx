@@ -81,7 +81,7 @@ class PasswordlessSignupForm extends Component {
 		} );
 
 		const { flowName, queryArgs = {} } = this.props;
-		const { oauth2_client_id, oauth2_redirect } = queryArgs;
+		const { oauth2_client_id, oauth2_redirect, ref } = queryArgs;
 
 		try {
 			const response = await wpcom.req.post( '/users/new', {
@@ -97,10 +97,12 @@ class PasswordlessSignupForm extends Component {
 					oauth2_redirect: oauth2_redirect && `0@${ oauth2_redirect }`,
 				} ),
 				anon_id: getTracksAnonymousUserId(),
+				is_dev_account: ref === 'developer-lp',
 			} );
+
 			this.createAccountCallback( response );
-		} catch ( err ) {
-			this.createAccountError( err );
+		} catch ( error ) {
+			this.createAccountError( error );
 		}
 	};
 

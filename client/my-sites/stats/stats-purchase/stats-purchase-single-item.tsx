@@ -216,7 +216,9 @@ const StatsPersonalPurchase = ( {
 	// change the plan to commercial on the personal plan confirmation
 	const handlePlanSwap = ( e: React.MouseEvent ) => {
 		e.preventDefault();
-		recordTracksEvent( `calypso_stats_plan_switched_from_personal_to_commercial` );
+		const isOdysseyStats = config.isEnabled( 'is_running_in_jetpack_site' );
+		const event_from = isOdysseyStats ? 'jetpack_odyssey' : 'calypso';
+		recordTracksEvent( `${ event_from }_stats_plan_switched_from_personal_to_commercial` );
 
 		page( `/stats/purchase/${ siteSlug }?productType=commercial&flags=stats/type-detection` );
 	};

@@ -76,9 +76,17 @@ export default function AgencySignupForm() {
 	);
 
 	// Redirect the user to the dashboard if they are already a partner,
-	// or the overview page if the form was submitted successfully.
+	// or the overview page if the form was submitted successfully,
+	// or the issue licenses page if coming via the /manage/pricing page.
 	useEffect( () => {
 		if ( createPartner.isSuccess ) {
+			if ( queryParams.get( 'source' ) === 'manage-pricing-page' ) {
+				const bundleSize = queryParams.get( 'bundle_size' ) || '1';
+				const path = `/partner-portal/issue-license?product_slug=${ queryParams.get(
+					'product_slug'
+				) }&bundle_size=${ bundleSize }&source=manage-pricing-page`;
+				page.redirect( path );
+			}
 			// Redirect to dashboard until Overview page is built.
 			page.redirect( overviewPath() );
 		} else if ( partner ) {

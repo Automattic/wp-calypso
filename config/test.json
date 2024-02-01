@@ -113,6 +113,7 @@
 		"site-indicator": true,
 		"site-profiler": true,
 		"ssr/prefetch-timebox": true,
+		"stats/checkout-flows-v2": true,
 		"stats/date-control": true,
 		"stats/new-video-summary": false,
 		"stats/paid-wpcom-stats": true,
