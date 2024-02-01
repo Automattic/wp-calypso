@@ -40,7 +40,7 @@ export const AllLicenseItems = ( {
 									bundleSize={ bundleSize }
 									ctaAsPrimary={ true }
 									isCtaDisabled={ false }
-									isCtaExternal={ true }
+									isCtaExternal={ false }
 								/>
 							) : (
 								<SimpleLicenseItemCard
@@ -48,7 +48,7 @@ export const AllLicenseItems = ( {
 									bundleSize={ bundleSize }
 									ctaAsPrimary={ true }
 									isCtaDisabled={ false }
-									isCtaExternal={ true }
+									isCtaExternal={ false }
 								/>
 							) }
 						</li>

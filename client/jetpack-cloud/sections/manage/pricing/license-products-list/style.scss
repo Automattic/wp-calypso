@@ -85,3 +85,15 @@
 .simple-item-card div:has(.woocommerce-extension-plugin-icon) {
 	background: linear-gradient(160deg, #f5f5ff 7.24%, #f2edff 64.73%, #d8d6ff 116.53%);
 }
+
+.featured-item-card--body .license-lightbox-link {
+	padding-top: 0.5rem;
+}
+
+.simple-item-card .license-lightbox-link {
+	display: block;
+}
+
+.license-lightbox-link-icon {
+	display: none;
+}

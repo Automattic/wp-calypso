@@ -83,30 +83,26 @@ const getTitanMenuItems = ( {
 			href: getTitanEmailUrl( titanAppsUrlPrefix, email, false, window.location.href ),
 			image: titanMailIcon,
 			imageAltText: translate( 'Titan Mail icon' ),
-			isInternalLink: true,
 			title: translate( 'View Mail', {
 				comment: 'View the Email application (i.e. the webmail) for Titan',
 			} ),
 			onClick: getTitanClickHandler( 'webmail' ),
 		},
-		...( canCurrentUserAddEmail( domain )
-			? [
-					{
-						isInternalLink: true,
-						materialIcon: 'delete',
-						onClick: () => {
-							showRemoveMailboxDialog?.();
+		{
+			isInternalLink: true,
+			materialIcon: 'delete',
+			disabled: ! canCurrentUserAddEmail( domain ),
+			onClick: () => {
+				showRemoveMailboxDialog?.();
 
-							recordTracksEvent( 'calypso_email_management_titan_remove_mailbox_click', {
-								domain_name: mailbox.domain,
-								mailbox: mailbox.mailbox,
-							} );
-						},
-						key: `remove_mailbox:${ mailbox.mailbox }`,
-						title: translate( 'Remove mailbox' ),
-					},
-			  ]
-			: [] ),
+				recordTracksEvent( 'calypso_email_management_titan_remove_mailbox_click', {
+					domain_name: mailbox.domain,
+					mailbox: mailbox.mailbox,
+				} );
+			},
+			key: `remove_mailbox:${ mailbox.mailbox }`,
+			title: translate( 'Remove mailbox' ),
+		},
 	];
 };
 
@@ -367,11 +363,13 @@ const EmailMailboxActionMenu = ( { account, domain, mailbox } ) => {
 						materialIcon,
 						onClick,
 						title,
+						disabled,
 					} ) => (
 						<PopoverMenuItem
 							key={ href || key }
 							className="email-mailbox-action-menu__menu-item"
 							isExternalLink={ ! isInternalLink }
+							disabled={ disabled }
 							href={ href }
 							onClick={ onClick }
 						>

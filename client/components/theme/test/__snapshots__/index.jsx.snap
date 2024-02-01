@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`Theme rendering with default display buttonContents should match snapshot 1`] = `
+exports[`Theme rendering should match snapshot 1`] = `
 <div
   class="card theme-card theme-card--is-actionable is-clickable"
   data-e2e-theme="twenty-seventeen"
@@ -16,11 +16,6 @@ exports[`Theme rendering with default display buttonContents should match snapsh
         class="theme-card__image"
         href="#"
       >
-        <div
-          class="theme-card__image-label"
-        >
-          Info
-        </div>
         <img
           alt=""
           class="theme__img"
@@ -43,29 +38,6 @@ exports[`Theme rendering with default display buttonContents should match snapsh
         islockedstylevariation="false"
         themeid="twentyseventeen"
       />
-      <div
-        class="theme-card__info-options"
-      >
-        <span
-          class="theme__more-button"
-        >
-          <button
-            aria-label="More options for theme Twenty Seventeen"
-          >
-            <svg
-              class="gridicon gridicons-ellipsis"
-              height="24"
-              viewBox="0 0 24 24"
-              width="24"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <use
-                xlink:href="gridicons.svg#gridicons-ellipsis"
-              />
-            </svg>
-          </button>
-        </span>
-      </div>
     </div>
   </div>
 </div>
