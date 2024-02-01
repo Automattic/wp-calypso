@@ -312,6 +312,7 @@ import {
 	FEATURE_SENSEI_JETPACK,
 	WPCOM_FEATURES_PREMIUM_THEMES_LIMITED,
 	WPCOM_FEATURES_PREMIUM_THEMES_UNLIMITED,
+	isWooExpressPlan,
 } from '@automattic/calypso-products';
 import { englishLocales, localizeUrl } from '@automattic/i18n-utils';
 import i18n from 'i18n-calypso';
@@ -542,8 +543,18 @@ export const FEATURES_LIST: FeatureList = {
 
 	[ WPCOM_FEATURES_PREMIUM_THEMES_UNLIMITED ]: {
 		getSlug: () => WPCOM_FEATURES_PREMIUM_THEMES_UNLIMITED,
-		getTitle: () => i18n.translate( 'Unlimited premium themes' ),
-		getDescription: () => i18n.translate( 'Switch between all of our premium design themes.' ),
+		getTitle: ( { planSlug = undefined } = { planSlug: undefined } ) => {
+			if ( planSlug && isWooExpressPlan( planSlug ) ) {
+				return i18n.translate( 'Beautiful themes' );
+			}
+			return i18n.translate( 'Unlimited premium themes' );
+		},
+		getDescription: () => {
+			if ( planSlug && isWooExpressPlan( planSlug ) ) {
+				return i18n.translate( 'Switch between a collection of beautiful themes.' );
+			}
+        }
+		return i18n.translate( 'Switch between all of our premium design themes.' );
 	},
 
 	[ WPCOM_FEATURES_PREMIUM_THEMES_LIMITED ]: {
@@ -665,7 +676,7 @@ export const FEATURES_LIST: FeatureList = {
 			i18n.translate( 'Free .blog Domain for one year', {
 				context: 'title',
 			} ),
-		getDescription: ( domainName?: string ) => {
+		getDescription: ( { domainName = undefined } = { domainName: undefined } ) => {
 			if ( domainName ) {
 				return i18n.translate( 'Your domain (%s) is included with this plan.', {
 					args: domainName,
@@ -680,7 +691,7 @@ export const FEATURES_LIST: FeatureList = {
 
 	[ FEATURE_CUSTOM_DOMAIN ]: {
 		getSlug: () => FEATURE_CUSTOM_DOMAIN,
-		getTitle: ( domainName?: string ) => {
+		getTitle: ( { domainName = undefined } = { domainName: undefined } ) => {
 			if ( domainName ) {
 				return i18n.translate( '%(domainName)s is included', {
 					args: { domainName },
@@ -692,7 +703,7 @@ export const FEATURES_LIST: FeatureList = {
 			} );
 		},
 		getAlternativeTitle: () => i18n.translate( 'Free custom domain' ),
-		getDescription: ( domainName?: string ) => {
+		getDescription: ( { domainName = undefined } = { domainName: undefined } ) => {
 			if ( domainName ) {
 				return i18n.translate( 'Your domain (%s) is included with this plan.', {
 					args: domainName,
