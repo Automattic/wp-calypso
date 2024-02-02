@@ -18,7 +18,7 @@ export default function SitesInput( {
 	detectedFilename: string;
 	setDetectedFilename: Dispatch< SetStateAction< string > >;
 	onCSVLoad: ( lines: string[] ) => void;
-	onCSVLoadConfirmation: () => void;
+	onCSVLoadConfirmation: ( column: string ) => void;
 } ) {
 	const translate = useTranslate();
 	const [ column, setColumn ] = useState( '' );
@@ -98,8 +98,12 @@ export default function SitesInput( {
 				) }
 			</div>
 
-			<Button primary disabled={ 0 === detectedSites.length } onClick={ onCSVLoadConfirmation }>
-				{ 0 === detectedSites.length
+			<Button
+				primary
+				disabled={ 0 === detectedSites.length }
+				onClick={ () => onCSVLoadConfirmation( column ) }
+			>
+				{ 0 === detectedSites.length && column
 					? translate( 'Add sites' )
 					: translate( 'Add %(num)d sites', { args: { num: detectedSites.length } } ) }
 			</Button>
