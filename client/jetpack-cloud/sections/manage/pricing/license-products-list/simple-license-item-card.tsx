@@ -110,13 +110,13 @@ export const SimpleLicenseItemCard = ( {
 		( productSlug: string, bundleSize: number | undefined ) => {
 			if ( isLoggedIn && ! isAgency ) {
 				return addQueryArgs( `/manage/signup/`, {
-					product_slug: productSlug,
+					products: productSlug,
 					source: 'manage-pricing-page',
 					bundle_size: bundleSize,
 				} );
 			}
 			return addQueryArgs( `/partner-portal/issue-license/`, {
-				product_slug: productSlug,
+				products: productSlug,
 				source: 'manage-pricing-page',
 				bundle_size: bundleSize,
 			} );

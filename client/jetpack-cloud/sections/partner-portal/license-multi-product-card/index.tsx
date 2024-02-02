@@ -1,5 +1,4 @@
 import { Gridicon } from '@automattic/components';
-import { getQueryArg } from '@wordpress/url';
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback, useEffect, useState } from 'react';
@@ -143,44 +142,6 @@ export default function LicenseMultiProductCard( props: Props ) {
 			setProduct( selectedOption );
 		}
 	}, [ selectedOption ] );
-
-	const getItem = ( slug: string ) => {
-		const itemType = products;
-		let item = itemType.find(
-			( item ) => ( Array.isArray( item ) ? item[ item.length - 1 ]?.slug : item.slug ) === slug
-		);
-		if ( Array.isArray( item ) ) {
-			item = item[ 1 ];
-		}
-
-		if ( item ) {
-			const itemBundle = {
-				...( item as APIProductFamilyProduct ),
-				quantity,
-			};
-			return itemBundle;
-		}
-	};
-
-	useEffect( () => {
-		const source = getQueryArg( window.location.href, 'source' );
-		const itemSlug = getQueryArg( window.location.href, 'product_slug' );
-
-		if (
-			source === 'manage-pricing-page' &&
-			( itemSlug === 'jetpack-security-t2' || itemSlug === 'jetpack-backup-t2' )
-		) {
-			let item;
-			itemSlug === 'jetpack-security-t2'
-				? ( item = getItem( 'jetpack-security-t2' ) )
-				: ( item = getItem( 'jetpack-backup-t2' ) );
-			if ( item ) {
-				setProduct( item );
-				setShowLightbox( true );
-			}
-		}
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [] );
 
 	return (
 		<>
