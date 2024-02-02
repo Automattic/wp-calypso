@@ -7,14 +7,16 @@ import { Task } from '../types';
 
 import './style.scss';
 
-interface Props {
+export interface Props {
+	key?: React.Key;
 	task: Task;
 	isPrimaryAction?: boolean;
+	onClick?: () => void;
 }
 
-const ChecklistItem: FC< Props > = ( { task, isPrimaryAction } ) => {
+const ChecklistItem: FC< Props > = ( { task, isPrimaryAction, onClick } ) => {
 	const isRtl = useRtl();
-	const { id, completed, disabled, title, subtitle, actionDispatch } = task;
+	const { id, completed, disabled, title, subtitle } = task;
 
 	// Display chevron if task is incomplete. Don't display chevron and badge at the same time.
 	const shouldDisplayChevron = ! completed && ! disabled && ! task.badge_text;
@@ -50,7 +52,7 @@ const ChecklistItem: FC< Props > = ( { task, isPrimaryAction } ) => {
 				<Button
 					className="checklist-item__checklist-primary-button"
 					data-task={ id }
-					onClick={ actionDispatch }
+					onClick={ onClick }
 					{ ...buttonProps }
 				>
 					{ title }
@@ -59,7 +61,7 @@ const ChecklistItem: FC< Props > = ( { task, isPrimaryAction } ) => {
 				<Button
 					className="checklist-item__task-content"
 					data-task={ id }
-					onClick={ actionDispatch }
+					onClick={ onClick }
 					{ ...buttonProps }
 				>
 					{ completed && (

@@ -1,4 +1,5 @@
 import { render, screen } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import React from 'react';
 import ChecklistItem, { type Props } from '..';
 import { buildTask } from '../../test/lib/fixtures';
@@ -16,25 +17,39 @@ describe( 'ChecklistItem', () => {
 	it( 'displays a badge', () => {
 		const badge_text = 'Badge Text';
 		renderComponent( { task: buildTask( { badge_text } ) } );
+
 		expect( screen.getByText( badge_text ) ).toBeVisible();
 	} );
 
 	it( 'hides the task complete icon when the task is not completed', () => {
 		renderComponent( { task: buildTask( { completed: false } ) } );
 		const taskCompleteIcon = screen.queryByLabelText( 'Task complete' );
+
 		expect( taskCompleteIcon ).not.toBeInTheDocument();
+	} );
+
+	it( 'calls onClick when the task is clicked', async () => {
+		const onClick = jest.fn();
+		renderComponent( { onClick } );
+
+		const taskButton = screen.getByRole( 'button' );
+		await userEvent.click( taskButton );
+
+		expect( onClick ).toHaveBeenCalledTimes( 1 );
 	} );
 
 	describe( 'when the task is disabled', () => {
 		it( 'disables the button', () => {
 			renderComponent( { task: buildTask( { disabled: true } ) } );
 			const taskButton = screen.queryByRole( 'button' );
+
 			expect( taskButton ).toBeDisabled();
 		} );
 
 		it( 'hides the task enabled icon', () => {
 			renderComponent( { task: buildTask( { disabled: true } ) } );
 			const taskEnabledIcon = screen.queryByLabelText( 'Task enabled' );
+
 			expect( taskEnabledIcon ).not.toBeInTheDocument();
 		} );
 	} );
@@ -43,6 +58,7 @@ describe( 'ChecklistItem', () => {
 		it( 'shows the task completed icon', () => {
 			renderComponent( { task: buildTask( { completed: true } ) } );
 			const taskCompleteIcon = screen.queryByLabelText( 'Task complete' );
+
 			expect( taskCompleteIcon ).toBeVisible();
 		} );
 
@@ -55,6 +71,7 @@ describe( 'ChecklistItem', () => {
 		it( 'disables the task', () => {
 			renderComponent( { task: buildTask( { completed: true } ) } );
 			const taskButton = screen.queryByRole( 'button' );
+
 			expect( taskButton ).toBeDisabled();
 		} );
 
@@ -62,12 +79,14 @@ describe( 'ChecklistItem', () => {
 			it( 'hides the task enabled icon', () => {
 				renderComponent( { task: buildTask( { completed: true, disabled: false } ) } );
 				const taskEnabledIcon = screen.queryByLabelText( 'Task enabled' );
+
 				expect( taskEnabledIcon ).not.toBeInTheDocument();
 			} );
 
 			it( 'enables the task', () => {
 				renderComponent( { task: buildTask( { completed: true, disabled: false } ) } );
 				const taskButton = screen.queryByRole( 'button' );
+
 				expect( taskButton ).toBeEnabled();
 			} );
 		} );
@@ -77,6 +96,7 @@ describe( 'ChecklistItem', () => {
 		it( 'displays a primary button', () => {
 			renderComponent( { isPrimaryAction: true } );
 			const taskButton = screen.queryByRole( 'button' );
+
 			expect( taskButton?.className ).toContain( 'checklist-item__checklist-primary-button' );
 		} );
 	} );
