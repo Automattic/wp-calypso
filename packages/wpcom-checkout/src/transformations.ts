@@ -1,4 +1,9 @@
-import { isJetpackPlan, isJetpackProduct } from '@automattic/calypso-products';
+import {
+	isBiennially,
+	isJetpackPlan,
+	isJetpackProduct,
+	isJetpackSocialAdvancedSlug,
+} from '@automattic/calypso-products';
 import { formatCurrency } from '@automattic/format-currency';
 import { translate, useTranslate } from 'i18n-calypso';
 import type { LineItemType } from './types';
@@ -286,6 +291,27 @@ function getYearlyVariantFromProduct( product: ResponseCartProduct ) {
 }
 
 /**
+ * The idea of a multi-year discount is conceptual; it is not a true discount
+ * in terms of our billing system. Purchases of different product renewal
+ * intervals have different prices set and the amount they save depends on what
+ * you compare them to.
+ *
+ * This function allows us to control which store product IDs will be
+ * considered for a multi-year discount by `getMultiYearDiscountForProduct()`.
+ */
+function canDisplayMultiYearDiscountForProduct( product: ResponseCartProduct ): boolean {
+	const isJetpack = isJetpackProduct( product ) || isJetpackPlan( product );
+	if (
+		isJetpack &&
+		isBiennially( product ) &&
+		! isJetpackSocialAdvancedSlug( product.product_slug )
+	) {
+		return true;
+	}
+	return false;
+}
+
+/**
  * We want to be able to display a discount for a multi-year purchase, although
  * this is not a true discount; purchases of different product renewal
  * intervals have different prices set and the amount they save depends on what
@@ -299,6 +325,9 @@ function getYearlyVariantFromProduct( product: ResponseCartProduct ) {
  * amount. That's what this function does.
  */
 function getMultiYearDiscountForProduct( product: ResponseCartProduct ): number {
+	if ( ! canDisplayMultiYearDiscountForProduct( product ) ) {
+		return 0;
+	}
 	const oneYearVariant = getYearlyVariantFromProduct( product );
 	if ( oneYearVariant ) {
 		const multiYearDiscount =
@@ -311,6 +340,10 @@ function getMultiYearDiscountForProduct( product: ResponseCartProduct ): number 
 }
 
 function getSubtotalWithoutDiscountsForProduct( product: ResponseCartProduct ): number {
+	// Increase the undiscounted subtotal (which does not include a multi-year
+	// discount, since that is not a real discount) by the cost of each
+	// product's multi-year discount so that we can display that savings as a
+	// discount.
 	const multiYearDiscount = getMultiYearDiscountForProduct( product );
 	if ( multiYearDiscount ) {
 		return product.item_original_subtotal_integer + multiYearDiscount;
