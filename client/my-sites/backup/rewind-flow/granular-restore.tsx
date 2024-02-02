@@ -575,6 +575,7 @@ const BackupGranularRestoreFlow: FunctionComponent< Props > = ( {
 					siteSlug={ siteSlug }
 					enterCredentialsEventName="calypso_jetpack_backup_granular_restore_missing_credentials_cta"
 					goBackEventName="calypso_jetpack_backup_granular_restore_missing_credentials_back"
+					goBackUrl={ goBackUrl }
 				/>
 			);
 		} else if ( isInProgress ) {
