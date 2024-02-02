@@ -25,21 +25,9 @@ export const setUpActionsForTasks = ( {
 	eventHandlers,
 	uiContext = 'calypso',
 }: LaunchpadTaskActionsProps ): Task[] => {
-	const { recordTracksEvent, checklistSlug, tasklistCompleted, launchpadContext } = tracksData;
+	const { recordTracksEvent, checklistSlug, launchpadContext } = tracksData;
 	const { setShareSiteModalIsOpen, setActiveChecklist } = extraActions;
 	const { onSiteLaunched, onTaskClick } = eventHandlers || {};
-
-	//Record click events for tasks
-	const recordTaskClickTracksEvent = ( task: Task ) => {
-		recordTracksEvent( 'calypso_launchpad_task_clicked', {
-			checklist_slug: checklistSlug,
-			checklist_completed: tasklistCompleted,
-			task_id: task.id,
-			is_completed: task.completed,
-			context: launchpadContext,
-			order: task.order,
-		} );
-	};
 
 	// Add actions to the tasks.
 	return tasks.map( ( task: Task ) => {
@@ -152,7 +140,6 @@ export const setUpActionsForTasks = ( {
 		}
 
 		const actionDispatch = () => {
-			recordTaskClickTracksEvent( task );
 			if ( siteSlug && setActiveChecklist && config.isEnabled( 'launchpad/navigator' ) ) {
 				setActiveChecklist( siteSlug, checklistSlug );
 			}
