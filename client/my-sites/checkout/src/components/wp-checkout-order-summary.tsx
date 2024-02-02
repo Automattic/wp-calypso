@@ -204,11 +204,13 @@ function CheckoutSummaryPriceList() {
 				</CheckoutSubtotalSection>
 
 				<CheckoutSummaryTotal>
-					<span>{ translate( 'Total' ) }</span>
+					<span>{ translate( 'Total due today' ) }</span>
 					<span className="wp-checkout-order-summary__total-price">
 						{ totalLineItem.formattedAmount }
 					</span>
 				</CheckoutSummaryTotal>
+				<IntroductoryOfferFutureTotal responseCart={ responseCart } />
+
 				{ hasIntroductoryDiscount( responseCart ) && (
 					<CheckoutSummaryExplanation>
 						{ preventWidows(
@@ -218,6 +220,45 @@ function CheckoutSummaryPriceList() {
 				) }
 			</CheckoutSummaryAmountWrapper>
 		</>
+	);
+}
+
+function getRenewalDateAfterIntroductoryOffer( product: ResponseCartProduct ): Date {
+	// FIXME: this has to come from the backend
+	return new Date();
+}
+
+function IntroductoryOfferFutureTotal( { responseCart }: { responseCart: ResponseCart } ) {
+	const translate = useTranslate();
+	// FIXME: do this for every offer, not just the first
+	const firstProductWithOffer = responseCart.products.find(
+		( product ) => product.introductory_offer_terms?.enabled
+	);
+	if ( ! firstProductWithOffer ) {
+		return null;
+	}
+
+	const endOfIntroductoryOfferDate = getRenewalDateAfterIntroductoryOffer( firstProductWithOffer );
+	const totalDue = formatCurrency(
+		firstProductWithOffer.item_original_subtotal_integer,
+		responseCart.currency,
+		{
+			isSmallestUnit: true,
+			stripZeros: true,
+		}
+	);
+
+	return (
+		<CheckoutSummaryTotal>
+			<span>
+				{ translate( 'Due %(endOfIntroductoryOfferDate)s', {
+					args: {
+						endOfIntroductoryOfferDate: endOfIntroductoryOfferDate.toDateString(),
+					},
+				} ) }
+			</span>
+			<span className="wp-checkout-order-summary__total-price">{ totalDue }</span>
+		</CheckoutSummaryTotal>
 	);
 }
 
