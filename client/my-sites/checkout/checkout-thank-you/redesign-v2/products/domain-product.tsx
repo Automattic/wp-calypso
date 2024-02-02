@@ -2,7 +2,6 @@ import { isDomainTransfer } from '@automattic/calypso-products';
 import formatCurrency from '@automattic/format-currency';
 import { Button } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
-import QuerySites from 'calypso/components/data/query-sites';
 import ThankYouProduct from 'calypso/components/thank-you-v2/product';
 import {
 	createSiteFromDomainOnly,
@@ -10,14 +9,6 @@ import {
 	domainManagementRoot,
 } from 'calypso/my-sites/domains/paths';
 import type { ReceiptPurchase } from 'calypso/state/receipts/types';
-
-type ThankYouDomainProductProps = {
-	purchase?: ReceiptPurchase;
-	domainName?: string;
-	isDomainOnly?: boolean;
-	siteSlug?: string | null;
-	currency?: string;
-};
 
 type DomainTransferSectionProps = {
 	purchase: ReceiptPurchase;
@@ -41,6 +32,14 @@ const DomainTransferSection = ( { purchase, currency }: DomainTransferSectionPro
 	};
 
 	return <p>{ purchaseLabel( purchase.priceInteger ) }</p>;
+};
+
+type ThankYouDomainProductProps = {
+	purchase?: ReceiptPurchase;
+	domainName?: string;
+	isDomainOnly?: boolean;
+	siteSlug?: string | null;
+	currency?: string;
 };
 
 export default function ThankYouDomainProduct( {
@@ -72,8 +71,6 @@ export default function ThankYouDomainProduct( {
 
 		actions = (
 			<>
-				<QuerySites siteId={ purchase.blogId } />
-
 				{ isDomainOnly && (
 					<Button className="is-primary" { ...createSiteProps }>
 						{ translate( 'Create site' ) }
@@ -98,7 +95,6 @@ export default function ThankYouDomainProduct( {
 			name={ domainName }
 			isFree={ purchase?.priceInteger === 0 }
 			actions={ actions }
-			key={ 'domain-' + domainName }
 		/>
 	);
 }
