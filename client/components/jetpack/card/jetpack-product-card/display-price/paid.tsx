@@ -117,6 +117,8 @@ const Paid: React.FC< OwnProps > = ( props ) => {
 		stripZeros: true,
 	} );
 
+	//const customBillingDetails = customTimeFrameBillingTerms ?
+
 	let priceComponent = isDiscounted ? (
 		<DiscountedPrice { ...props } finalPrice={ finalPrice } />
 	) : (
@@ -163,7 +165,7 @@ const Paid: React.FC< OwnProps > = ( props ) => {
 			{ ! displayPriceText && (
 				<>
 					<span className="display-price__details" aria-hidden="true">
-						{ ! customTimeFrameSavings && (
+						{ ! customTimeFrameBillingTerms && (
 							<TimeFrame
 								billingTerm={ billingTerm }
 								discountedPriceDuration={ discountedPriceDuration }

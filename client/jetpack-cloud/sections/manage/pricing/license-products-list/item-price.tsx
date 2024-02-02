@@ -43,7 +43,7 @@ export const ItemPrice = ( { item, bundleSize }: ItemPriceProps ) => {
 		</span>
 	);
 
-	const customTimeFrameBillingTerms = bundleSize > 1 && (
+	const customTimeFrameBillingTerms = (
 		<span className="product-license-price-with-discount__price-interval">
 			{ bundleSize > 1
 				? translate( ' per bundle per month' )
