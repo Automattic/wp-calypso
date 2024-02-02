@@ -9,6 +9,7 @@ import QueryRewindBackups from 'calypso/components/data/query-rewind-backups';
 import QueryRewindRestoreStatus from 'calypso/components/data/query-rewind-restore-status';
 import QueryRewindState from 'calypso/components/data/query-rewind-state';
 import { Interval, EVERY_FIVE_SECONDS } from 'calypso/lib/interval';
+import { backupPath } from 'calypso/lib/jetpack/paths';
 import { useDispatch, useSelector } from 'calypso/state';
 import { rewindRestore } from 'calypso/state/activity-log/actions';
 import { recordTracksEvent } from 'calypso/state/analytics/actions/record';
@@ -324,6 +325,7 @@ const BackupRestoreFlow: FunctionComponent< Props > = ( {
 					siteSlug={ siteSlug }
 					enterCredentialsEventName="calypso_jetpack_backup_restore_missing_credentials_cta"
 					goBackEventName="calypso_jetpack_backup_restore_missing_credentials_back"
+					goBackUrl={ backupPath( siteSlug ) }
 				/>
 			);
 		} else if ( isInProgress ) {
