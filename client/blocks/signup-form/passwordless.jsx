@@ -53,6 +53,17 @@ class PasswordlessSignupForm extends Component {
 	onFormSubmit = async ( event ) => {
 		event.preventDefault();
 
+		if ( ! this.props.submitForm && this.props.flowName === '' ) {
+			this.setState( {
+				errorMessages: [ this.props.translate( 'User cannot be created, try again later.' ) ],
+				isSubmitting: false,
+			} );
+			this.submitTracksEvent( false, {
+				action_message: 'User cannot be created, try again later.',
+			} );
+			return;
+		}
+
 		if ( ! this.state.email || ! emailValidator.validate( this.state.email ) ) {
 			this.setState( {
 				errorMessages: [ this.props.translate( 'Please provide a valid email address.' ) ],
