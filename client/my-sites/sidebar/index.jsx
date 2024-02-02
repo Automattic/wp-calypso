@@ -28,7 +28,7 @@ import 'calypso/state/admin-menu/init';
 
 import './style.scss';
 
-export const MySitesSidebarUnified = ( { path } ) => {
+export const MySitesSidebarUnified = ( { path, shouldShowGlobalSidebar } ) => {
 	const menuItems = useSiteMenuItems();
 	const isRequestingMenu = useSelector( getIsRequestingAdminMenu );
 	const sidebarIsCollapsed = useSelector( getSidebarIsCollapsed );
@@ -54,8 +54,8 @@ export const MySitesSidebarUnified = ( { path } ) => {
 
 	return (
 		<Fragment>
-			<Sidebar className="global-sidebar">
-				<MySitesSidebarUnifiedHeader />
+			<Sidebar>
+				{ shouldShowGlobalSidebar && <MySitesSidebarUnifiedHeader /> }
 				<div className="sidebar__body">
 					{ menuItems.map( ( item, i ) => {
 						const isSelected = item?.url && itemLinkMatches( item.url, path );
@@ -88,7 +88,9 @@ export const MySitesSidebarUnified = ( { path } ) => {
 						);
 					} ) }
 				</div>
-				<MySitesSidebarUnifiedFooter user={ currentUser } translate={ translate } />
+				{ shouldShowGlobalSidebar && (
+					<MySitesSidebarUnifiedFooter user={ currentUser } translate={ translate } />
+				) }
 			</Sidebar>
 		</Fragment>
 	);
