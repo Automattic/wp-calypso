@@ -93,7 +93,7 @@ export default function IssueLicense( { selectedSite, suggestedProduct }: Assign
 			dispatch(
 				recordTracksEvent( 'calypso_jetpack_manage_pricing_issue_license_review_licenses_show', {
 					total_licenses: getQueryArg( window.location.href, 'bundle_size' ),
-					product: getQueryArg( window.location.href, 'product_slug' ),
+					product: getQueryArg( window.location.href, 'products' ),
 				} )
 			);
 		}
