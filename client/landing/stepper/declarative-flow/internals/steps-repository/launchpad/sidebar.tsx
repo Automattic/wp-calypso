@@ -281,6 +281,8 @@ const Sidebar = ( {
 						taskFilter={ () => enhancedTasks || [] }
 						launchpadContext="onboarding"
 						makeLastTaskPrimaryAction={ true }
+						//Disable the centralized click event tracking until we remove the tracking from all task definitions
+						disableAutoTrackClickEvents={ true }
 					/>
 					{ showPlansModal && site?.ID && (
 						<RecurringPaymentsPlanAddEditModal
