@@ -61,10 +61,7 @@ class InviteAcceptLoggedOut extends Component {
 		debug( 'Storing invite_accepted: ' + JSON.stringify( invite ) );
 		store.set( 'invite_accepted', invite );
 
-		const enhancedUserData = {
-			...userData,
-			is_passwordless: this.props.userInvitePasswordless,
-		};
+		const enhancedUserData = { ...userData };
 
 		if ( get( invite, 'site.is_wpforteams_site', false ) ) {
 			enhancedUserData.signup_flow_name = 'p2';

@@ -62,18 +62,6 @@ class PasswordlessSignupForm extends Component {
 			return;
 		}
 
-		// If not in a flow, submit the form as a standard signup form.
-		// Since it is a passwordless form, we don't need to submit a password.
-		if ( this.props.flowName === '' ) {
-			this.props.submitForm( '', {
-				email: this.state.email,
-			} );
-			return;
-		}
-		this.setState( {
-			isSubmitting: true,
-		} );
-
 		// Save form state in a format that is compatible with the standard SignupForm used in the user step.
 		const form = {
 			firstName: '',
@@ -82,6 +70,19 @@ class PasswordlessSignupForm extends Component {
 			username: '',
 			password: '',
 		};
+
+		// If not in a flow, submit the form as a standard signup form.
+		// Since it is a passwordless form, we don't need to submit a password.
+		if ( this.props.flowName === '' ) {
+			this.props.submitForm( form, {
+				email: this.state.email,
+				is_passwordless: true,
+			} );
+			return;
+		}
+		this.setState( {
+			isSubmitting: true,
+		} );
 
 		this.props.saveSignupStep( {
 			stepName: this.props.stepName,
