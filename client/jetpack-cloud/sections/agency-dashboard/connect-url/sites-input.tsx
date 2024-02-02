@@ -21,7 +21,7 @@ export default function SitesInput( {
 	onCSVLoadConfirmation: () => void;
 } ) {
 	const translate = useTranslate();
-	const [ column, setColumn ] = useState( [] as string[] );
+	const [ column, setColumn ] = useState( '' );
 
 	let fileReader: any;
 
@@ -68,6 +68,10 @@ export default function SitesInput( {
 		</>
 	);
 
+	const handleColumnSelect = ( c: string ) => {
+		setColumn( c );
+	};
+
 	return (
 		<>
 			<FormLabel>{ translate( 'Enter site URLs:' ) }</FormLabel>
@@ -88,7 +92,7 @@ export default function SitesInput( {
 				{ detectedFilename && (
 					<CSVColumnConfirmation
 						columns={ [ 'id', 'domain', 'site title' ] }
-						onColumnSelect={ ( c ) => setColumn( c ) }
+						onColumnSelect={ handleColumnSelect }
 						column={ column }
 					/>
 				) }

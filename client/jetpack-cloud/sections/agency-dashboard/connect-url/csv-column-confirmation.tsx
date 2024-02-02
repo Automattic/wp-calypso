@@ -1,4 +1,4 @@
-import { Button } from '@automattic/components';
+import { Button, Gridicon } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import { useRef, useState } from 'react';
 import PopoverMenu from 'calypso/components/popover-menu';
@@ -19,8 +19,9 @@ export default function CSVColumnConfirmation( {
 
 	const columnItems = columns.map( ( c, index ) => {
 		return (
-			<PopoverMenuItem key={ index } onClick={ onColumnSelect }>
-				{ c } - { column }
+			<PopoverMenuItem key={ index } onClick={ () => onColumnSelect( c ) }>
+				<Gridicon icon={ c === column ? 'checkmark' : 'none' } size={ 12 } />
+				{ c }
 			</PopoverMenuItem>
 		);
 	} );
