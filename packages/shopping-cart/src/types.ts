@@ -725,8 +725,10 @@ export interface TermsOfServiceRecordArgsBase {
 	product_meta: string;
 	product_name: string;
 	renewal_price: string;
+	renewal_price_integer: number;
 	is_renewal_price_prorated: boolean;
 	regular_renewal_price: string;
+	regular_renewal_price_integer: number;
 	email?: string;
 	card_type?: string;
 	card_last_4?: string;

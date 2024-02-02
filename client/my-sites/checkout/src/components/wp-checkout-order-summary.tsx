@@ -223,14 +223,26 @@ function CheckoutSummaryPriceList() {
 	);
 }
 
+function getIntroductoryOfferTermsForProduct(
+	responseCart: ResponseCart,
+	product: ResponseCartProduct
+) {
+	return responseCart.terms_of_service?.find( ( tos ) => {
+		if ( ! tos.key.includes( `product_id:${ product.product_id }` ) ) {
+			return false;
+		}
+		if ( product.meta && ! tos.key.includes( `meta:${ product.meta }` ) ) {
+			return false;
+		}
+		return true;
+	} );
+}
+
 function getRenewalDateAfterIntroductoryOffer(
 	responseCart: ResponseCart,
 	product: ResponseCartProduct
 ): Date | undefined {
-	// FIXME: do this for every offer, not just the first
-	const firstTOS = responseCart.terms_of_service?.find( ( tos ) =>
-		tos.key.includes( `product_id:${ product.product_id }` )
-	);
+	const firstTOS = getIntroductoryOfferTermsForProduct( responseCart, product );
 	if ( ! firstTOS ) {
 		return undefined;
 	}
@@ -244,52 +256,75 @@ function getRenewalDateAfterIntroductoryOffer(
 function getRenewalPriceAfterIntroductoryOffer(
 	responseCart: ResponseCart,
 	product: ResponseCartProduct
-): string | undefined {
-	// FIXME: do this for every offer, not just the first
-	const firstTOS = responseCart.terms_of_service?.find( ( tos ) =>
-		tos.key.includes( `product_id:${ product.product_id }` )
-	);
+): number | undefined {
+	const firstTOS = getIntroductoryOfferTermsForProduct( responseCart, product );
 	if ( ! firstTOS ) {
 		return undefined;
 	}
-	return firstTOS.args?.renewal_price;
+	return firstTOS.args?.renewal_price_integer;
+}
+
+interface IntroductoryOfferRenewalInfo {
+	date: Date;
+	totalInteger: number;
+}
+
+function filterAndGroupIntroductoryOfferRenewalInfoForDisplay(
+	responseCart: ResponseCart
+): IntroductoryOfferRenewalInfo[] {
+	const productsWithOffers = responseCart.products.filter(
+		( product ) => product.introductory_offer_terms?.enabled
+	);
+	return Object.values(
+		productsWithOffers.reduce(
+			( grouped: Record< number, IntroductoryOfferRenewalInfo >, product ) => {
+				const endOfIntroductoryOfferDate = getRenewalDateAfterIntroductoryOffer(
+					responseCart,
+					product
+				);
+				const totalInteger = getRenewalPriceAfterIntroductoryOffer( responseCart, product );
+				if ( endOfIntroductoryOfferDate && totalInteger ) {
+					const previousTotalInteger =
+						grouped[ endOfIntroductoryOfferDate.getTime() ]?.totalInteger ?? 0;
+					grouped[ endOfIntroductoryOfferDate.getTime() ] = {
+						date: endOfIntroductoryOfferDate,
+						totalInteger: previousTotalInteger + totalInteger,
+					};
+				}
+				return grouped;
+			},
+			{}
+		)
+	);
 }
 
 function IntroductoryOfferFutureTotal( { responseCart }: { responseCart: ResponseCart } ) {
 	const translate = useTranslate();
-	// FIXME: do this for every offer, not just the first
-	const firstProductWithOffer = responseCart.products.find(
-		( product ) => product.introductory_offer_terms?.enabled
-	);
-	if ( ! firstProductWithOffer ) {
-		return null;
-	}
+	const renewalInfo = filterAndGroupIntroductoryOfferRenewalInfoForDisplay( responseCart );
 
-	const endOfIntroductoryOfferDate = getRenewalDateAfterIntroductoryOffer(
-		responseCart,
-		firstProductWithOffer
-	);
-	if ( ! endOfIntroductoryOfferDate ) {
-		return null;
-	}
-	const totalDue = getRenewalPriceAfterIntroductoryOffer( responseCart, firstProductWithOffer );
-
-	return (
-		<CheckoutSummaryTotalAfterIntroductoryOffer>
-			<span>
-				{ translate( 'Due %(endOfIntroductoryOfferDate)s', {
-					args: {
-						endOfIntroductoryOfferDate: endOfIntroductoryOfferDate.toLocaleDateString( undefined, {
-							month: 'short',
-							day: 'numeric',
-							year: 'numeric',
-						} ),
-					},
-				} ) }
-			</span>
-			<span className="wp-checkout-order-summary__total-price">{ totalDue }</span>
-		</CheckoutSummaryTotalAfterIntroductoryOffer>
-	);
+	return renewalInfo.map( ( info ) => {
+		return (
+			<CheckoutSummaryTotalAfterIntroductoryOffer key={ info.date.getTime() }>
+				<span>
+					{ translate( 'Due %(endOfIntroductoryOfferDate)s', {
+						args: {
+							endOfIntroductoryOfferDate: info.date.toLocaleDateString( undefined, {
+								month: 'short',
+								day: 'numeric',
+								year: 'numeric',
+							} ),
+						},
+					} ) }
+				</span>
+				<span className="wp-checkout-order-summary__total-price">
+					{ formatCurrency( info.totalInteger, responseCart.currency, {
+						isSmallestUnit: true,
+						stripZeros: true,
+					} ) }
+				</span>
+			</CheckoutSummaryTotalAfterIntroductoryOffer>
+		);
+	} );
 }
 
 export function LoadingCheckoutSummaryFeaturesList() {
