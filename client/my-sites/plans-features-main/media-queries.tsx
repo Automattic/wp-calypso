@@ -6,8 +6,11 @@ const plansPageSmallBreakpoint = '780px';
 const plansPageSmallWithSidebarBreakpoint = `${ 780 + sidebarWidth }px`;
 
 /**
- * Use this sparingly for plans page/section layout purposes.
- * IMPORTANT: The plans grids do not rely on the same media queries and breakpoints for their rendering.
+ * Use this sparingly and primarily for general plans page (section) layout purposes.
+ * IMPORTANT: The grid components (features-grid, comparison-grid, etc.) from `plans-grid-next` package
+ * do not rely on screen media queries and breakpoints for their rendering. They are responsive
+ * based on the container width and the number of columns. For grid-related changes across different
+ * screen sizes, it might be best to use the mixins defined in `plans-grid-next`.
  */
 export const plansPageBreakSmall = ( styles: SerializedStyles ) => css`
 	body.is-section-signup.is-white-signup &,
