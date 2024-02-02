@@ -324,23 +324,26 @@ export function overview( context, next ) {
 
 	bumpStat( 'calypso_stats_overview_period', activeFilter.period );
 
-	context.primary = isPurchaseFlowEnabled ? (
-		<LoadStatsPage>
+	const siteId = getSelectedSiteId( context.store.getState() );
+
+	context.primary =
+		isPurchaseFlowEnabled && siteId !== null ? (
+			<LoadStatsPage>
+				<AsyncLoad
+					require="calypso/my-sites/stats/overview"
+					placeholder={ PageLoading }
+					period={ activeFilter.period }
+					path={ context.pathname }
+				/>
+			</LoadStatsPage>
+		) : (
 			<AsyncLoad
 				require="calypso/my-sites/stats/overview"
 				placeholder={ PageLoading }
 				period={ activeFilter.period }
 				path={ context.pathname }
 			/>
-		</LoadStatsPage>
-	) : (
-		<AsyncLoad
-			require="calypso/my-sites/stats/overview"
-			placeholder={ PageLoading }
-			period={ activeFilter.period }
-			path={ context.pathname }
-		/>
-	);
+		);
 	next();
 }
 
