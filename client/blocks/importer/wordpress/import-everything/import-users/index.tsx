@@ -1,7 +1,8 @@
 import { NextButton, Title, SubTitle } from '@automattic/onboarding';
-import { createInterpolateElement } from '@wordpress/element';
+import { useState } from '@wordpress/element';
 import { sprintf } from '@wordpress/i18n';
-import { useI18n } from '@wordpress/react-i18n';
+import { useTranslate } from 'i18n-calypso';
+import ExternalLink from 'calypso/components/external-link';
 import InfiniteList from 'calypso/components/infinite-list';
 import useExternalContributorsQuery from 'calypso/data/external-contributors/use-external-contributors';
 import useP2GuestsQuery from 'calypso/data/p2/use-p2-guests-query';
@@ -13,21 +14,34 @@ import './style.scss';
 
 const ImportUsers = ( { site } ) => {
 	const defaultTeamFetchOptions = { include_viewers: true };
-	const { __ } = useI18n();
+	const translate = useTranslate();
 	const usersQuery = useUsersQuery( site?.ID, defaultTeamFetchOptions ) as unknown as UsersQuery;
 	const { data: externalContributors } = useExternalContributorsQuery( site?.ID );
 	const { data: p2Guests } = useP2GuestsQuery( site?.ID );
 	const { data, fetchNextPage, isLoading, isFetchingNextPage, hasNextPage } = usersQuery;
 
-	const members = data?.users || [];
+	const users = data?.users?.map( ( user ) => ( { user, checked: true } ) ) || [];
+	const [ usersList, setUsersList ] = useState( users );
+	const [ checkedUsersNumber, setCheckedUsersNumber ] = useState( usersList?.length || 0 );
 
 	const getUserRef = ( user: Member ) => {
 		return 'user-' + user?.ID;
 	};
 
-	const renderUser = ( user: Member ) => {
-		const type = user.roles ? 'email' : 'viewer';
+	const onChangeChecked = ( index: number ) => ( checked: boolean ) => {
+		usersList[ index ].checked = checked;
+		setUsersList( usersList );
+		setCheckedUsersNumber( usersList.filter( ( x ) => x.checked )?.length );
+	};
 
+	const renderUser = (
+		listUser: {
+			user: Member;
+			checked: boolean;
+		},
+		index: number
+	) => {
+		const { user, checked } = listUser;
 		const isExternalContributor =
 			externalContributors && externalContributors.includes( user?.linked_user_ID ?? user?.ID );
 
@@ -38,6 +52,8 @@ const ImportUsers = ( { site } ) => {
 			<ImportedUserItem
 				key={ user?.ID }
 				user={ user }
+				isChecked={ checked }
+				onChangeChecked={ onChangeChecked( index ) }
 				isExternalContributor={ isExternalContributor }
 				isP2Guest={ isP2Guest }
 			/>
@@ -47,28 +63,29 @@ const ImportUsers = ( { site } ) => {
 	return (
 		<div className="import__user-migration">
 			<div className="import__heading import__heading-center">
-				<Title>{ __( 'Transfer your users to WordPress.com' ) }</Title>
+				<Title>
+					{ translate( 'Transfer your users{{br/}}to WordPress.com', {
+						components: {
+							br: <br />,
+						},
+					} ) }
+				</Title>
 				<SubTitle>
-					{ createInterpolateElement(
-						__(
-							'Invite the users below to unlock WordPress.com’s power. With <a>Secure Sign On</a>, 2FA, Google & Apple logins, robust support, and seamless account recovery' +
-								', they’ll improve their experience with ease.'
-						),
+					{ translate(
+						'Invite the users below to unlock WordPress.com’s power. With {{secureSignOnLink}}Secure Sign On{{/secureSignOnLink}}, 2FA, Google & Apple logins, robust support, and seamless account recovery' +
+							', they’ll improve their experience with ease.',
 						{
-							a: (
-								<a
-									className="hb-pricing-plans-embed__header-learn-more"
-									target="_blank"
-									href="https://jetpack.com/support/sso/"
-									rel="noopener noreferrer"
-								/>
-							),
+							components: {
+								secureSignOnLink: (
+									<ExternalLink target="_blank" href="https://jetpack.com/support/sso/" />
+								),
+							},
 						}
 					) }
 				</SubTitle>
 			</div>
 			<InfiniteList
-				items={ members }
+				items={ usersList }
 				fetchNextPage={ fetchNextPage }
 				fetchingNextPage={ isFetchingNextPage }
 				lastPage={ ! hasNextPage }
@@ -86,10 +103,20 @@ const ImportUsers = ( { site } ) => {
 				>
 					{ sprintf(
 						// translators: %s: Number of users that will get invited.
-						__( 'Invite %s users' ),
-						members?.length
+						translate( 'Invite %s users' ),
+						checkedUsersNumber
 					) }
 				</NextButton>
+			</div>
+			<div className="import__user-migration-footer">
+				{ translate(
+					'After clicking the button to invite, the selected users {{strong}}will receive invitation emails{{/strong}} to join your site, ensuring a smooth transition.',
+					{
+						components: {
+							strong: <strong />,
+						},
+					}
+				) }
 			</div>
 		</div>
 	);

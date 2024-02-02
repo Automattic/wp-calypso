@@ -1,5 +1,6 @@
 import { CompactCard } from '@automattic/components';
 import { CheckboxControl } from '@wordpress/components';
+import { useState } from '@wordpress/element';
 import classNames from 'classnames';
 import { translate } from 'i18n-calypso';
 import { getRole, getRoleBadgeText, renderNameOrEmail } from './utils';
@@ -7,14 +8,29 @@ import type { Member } from '@automattic/data-stores';
 
 interface UserListItemProps {
 	user: Member;
+	isChecked: boolean;
 	isExternalContributor: boolean;
 	isP2Guest: boolean;
+	onChangeChecked: ( isChecked: boolean ) => void;
 }
 
-const UserListItem = ( { user, isExternalContributor, isP2Guest }: UserListItemProps ) => {
+const UserListItem = ( {
+	user,
+	isChecked,
+	isExternalContributor,
+	isP2Guest,
+	onChangeChecked,
+}: UserListItemProps ) => {
+	const [ isCheckedState, setIsCheckedState ] = useState( isChecked );
+
 	if ( ! user ) {
 		return null;
 	}
+
+	const handleOnCheckChange = ( checked: boolean ) => {
+		setIsCheckedState( checked );
+		onChangeChecked( checked );
+	};
 
 	const renderRole = ( user: Member ) => {
 		let contractorBadge;
@@ -75,10 +91,7 @@ const UserListItem = ( { user, isExternalContributor, isP2Guest }: UserListItemP
 
 	return (
 		<CompactCard className="imported-user-item">
-			<CheckboxControl
-				checked={ true }
-				onChange={ ( isChecked ) => console.log( 'ischecked', isChecked ) }
-			/>
+			<CheckboxControl checked={ isCheckedState } onChange={ handleOnCheckChange } />
 			<div className="imported-user-item__user-info">
 				<div className="imported-user-item__display-name">{ renderNameOrEmail( user ) }</div>
 				<div className="imported-user-item__email">{ user.email }</div>
