@@ -223,9 +223,36 @@ function CheckoutSummaryPriceList() {
 	);
 }
 
-function getRenewalDateAfterIntroductoryOffer( product: ResponseCartProduct ): Date {
-	// FIXME: this has to come from the backend
-	return new Date();
+function getRenewalDateAfterIntroductoryOffer(
+	responseCart: ResponseCart,
+	product: ResponseCartProduct
+): Date | undefined {
+	// FIXME: do this for every offer, not just the first
+	const firstTOS = responseCart.terms_of_service?.find( ( tos ) =>
+		tos.key.includes( `product_id:${ product.product_id }` )
+	);
+	if ( ! firstTOS ) {
+		return undefined;
+	}
+	const renewalDate = firstTOS.args?.subscription_auto_renew_date;
+	if ( ! renewalDate ) {
+		return undefined;
+	}
+	return new Date( renewalDate );
+}
+
+function getRenewalPriceAfterIntroductoryOffer(
+	responseCart: ResponseCart,
+	product: ResponseCartProduct
+): string | undefined {
+	// FIXME: do this for every offer, not just the first
+	const firstTOS = responseCart.terms_of_service?.find( ( tos ) =>
+		tos.key.includes( `product_id:${ product.product_id }` )
+	);
+	if ( ! firstTOS ) {
+		return undefined;
+	}
+	return firstTOS.args?.renewal_price;
 }
 
 function IntroductoryOfferFutureTotal( { responseCart }: { responseCart: ResponseCart } ) {
@@ -238,15 +265,14 @@ function IntroductoryOfferFutureTotal( { responseCart }: { responseCart: Respons
 		return null;
 	}
 
-	const endOfIntroductoryOfferDate = getRenewalDateAfterIntroductoryOffer( firstProductWithOffer );
-	const totalDue = formatCurrency(
-		firstProductWithOffer.item_original_subtotal_integer,
-		responseCart.currency,
-		{
-			isSmallestUnit: true,
-			stripZeros: true,
-		}
+	const endOfIntroductoryOfferDate = getRenewalDateAfterIntroductoryOffer(
+		responseCart,
+		firstProductWithOffer
 	);
+	if ( ! endOfIntroductoryOfferDate ) {
+		return null;
+	}
+	const totalDue = getRenewalPriceAfterIntroductoryOffer( responseCart, firstProductWithOffer );
 
 	return (
 		<CheckoutSummaryTotalAfterIntroductoryOffer>
