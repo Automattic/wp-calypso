@@ -176,7 +176,6 @@ export default function LicenseMultiProductCard( props: Props ) {
 				: ( item = getItem( 'jetpack-backup-t2' ) );
 			if ( item ) {
 				setProduct( item );
-				setShowLightbox( true );
 			}
 		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
