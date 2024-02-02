@@ -31,6 +31,7 @@ export default function ConnectUrl() {
 	const [ validating, setValidating ] = useState( false );
 	const [ currentValidatingSite, setCurrentValidatingSite ] = useState( '' );
 	const [ csvColumns, setCSVColumns ] = useState( [] as string[] );
+	const [ selectedColumn, setSelectedColumn ] = useState( '' );
 	const [ currentValidatingSiteIndex, setCurrentValidatingSiteIndex ] = useState( 0 );
 	const [ csvConfirmed, setCSVConfirmed ] = useState( false );
 	const [ validatedSites, setValidatedSites ] = useState( {} as { [ site: string ]: SiteData } );
@@ -67,7 +68,7 @@ export default function ConnectUrl() {
 			if ( currentValidatingSiteIndex + 1 <= detectedSites.length ) {
 				const siteData = detectedSites[ currentValidatingSiteIndex + 1 ];
 				if ( siteData ) {
-					const columnIndex = csvColumns.indexOf( URLColumn );
+					const columnIndex = csvColumns.indexOf( selectedColumn );
 					dispatch( { type: JETPACK_CONNECT_COMPLETE_FLOW } );
 					setCurrentValidatingSite( siteData.split( ',' )[ columnIndex ] );
 					setCurrentValidatingSiteIndex( currentValidatingSiteIndex + 1 );
@@ -90,27 +91,26 @@ export default function ConnectUrl() {
 		]
 	);
 
-	/*
-	const handleColumnConfirmation = useCallback(
-		( option: string ) => {
+	const handleCSVLoadConfirmation = useCallback(
+		( column: string ) => {
+			// Get the data from the first site on the list
 			const siteData = detectedSites[ 0 ].split( ',' );
-			const columnIndex = csvColumns.indexOf( option );
+			// Get the index of the selected column from the columns list
+			const columnIndex = csvColumns.indexOf( column );
+			// Set the pointer to the first site to start the queue
 			setCurrentValidatingSite( siteData[ columnIndex ] );
 			setCurrentValidatingSiteIndex( 0 );
-			setURLColumn( option );
+			// Define the selected column
+			setSelectedColumn( column );
+			// Initialize the map that stores the validation results
 			setValidatedSites( {
 				...validatedSites,
 				[ siteData[ columnIndex ] ]: { validationStatus: 'validating' },
 			} );
-			setValidating( true );
+			setCSVConfirmed( true );
 		},
 		[ detectedSites, csvColumns, validatedSites ]
 	);
-  */
-
-	const handleCSVLoadConfirmation = () => {
-		setCSVConfirmed( true );
-	};
 
 	const onCSVLoad = useCallback(
 		( fileContents: string[] ) => {
@@ -145,7 +145,6 @@ export default function ConnectUrl() {
 								setDetectedSites,
 								detectedFilename,
 								setDetectedFilename,
-
 								onCSVLoad,
 							} }
 							onCSVLoadConfirmation={ handleCSVLoadConfirmation }
@@ -156,7 +155,7 @@ export default function ConnectUrl() {
 				<Card>
 					<ValidateSites
 						{ ...{ detectedSites } }
-						urlColumnIndex={ csvColumns.indexOf( URLColumn ) }
+						urlColumnIndex={ csvColumns.indexOf( selectedColumn ) }
 						validatedSites={ validatedSites }
 					/>
 				</Card>
