@@ -134,40 +134,16 @@ function getDiscountTimePeriodForIntroductoryOfferByCount(
 	translate: ReturnType< typeof useTranslate >
 ): string | undefined {
 	switch ( unit ) {
-		case 'day':
-			if ( count === 1 ) {
-				return translate( 'Discount for first day', {
-					textOnly: true,
-				} );
-			}
-			return translate( 'Discount for first %(unitCount)d days', {
-				textOnly: true,
-				args: {
-					unitCount: count,
-				},
-			} );
-		case 'week':
-			if ( count === 1 ) {
-				return translate( 'Discount for first week', {
-					textOnly: true,
-				} );
-			}
-			return translate( 'Discount for first %(unitCount)d weeks', {
-				textOnly: true,
-				args: {
-					unitCount: count,
-				},
-			} );
 		case 'month':
 			if ( count === 1 ) {
 				return translate( 'Discount for first month', {
 					textOnly: true,
 				} );
 			}
-			return translate( 'Discount for first %(unitCount)d months', {
+			return translate( 'Discount for first %(numberOfMonths)d months', {
 				textOnly: true,
 				args: {
-					unitCount: count,
+					numberOfMonths: count,
 				},
 			} );
 		case 'year':
@@ -176,10 +152,10 @@ function getDiscountTimePeriodForIntroductoryOfferByCount(
 					textOnly: true,
 				} );
 			}
-			return translate( 'Discount for first %(unitCount)d years', {
+			return translate( 'Discount for first %(numberOfYears)d years', {
 				textOnly: true,
 				args: {
-					unitCount: count,
+					numberOfYears: count,
 				},
 			} );
 	}
