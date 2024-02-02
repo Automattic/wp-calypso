@@ -259,6 +259,16 @@ export function filterAndGroupCostOverridesForDisplay(
 				};
 				return;
 			}
+
+			// Most cost overrides go here.
+			const discountAmount = grouped[ costOverride.override_code ]?.discountAmount ?? 0;
+			const newDiscountAmount =
+				costOverride.old_subtotal_integer - costOverride.new_subtotal_integer;
+			grouped[ costOverride.override_code ] = {
+				humanReadableReason: costOverride.human_readable_reason,
+				overrideCode: costOverride.override_code,
+				discountAmount: discountAmount + newDiscountAmount,
+			};
 		} );
 
 		// Add a fake "multi-year" discount if applicable. These are not real
