@@ -1,8 +1,7 @@
-import { FormInputValidation } from '@automattic/components';
+import { FormInputValidation, FormLabel } from '@automattic/components';
 import { TranslateResult } from 'i18n-calypso';
 import { InvalidEvent, useState } from 'react';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
-import FormLabel from 'calypso/components/forms/form-label';
 import FormPasswordInput from 'calypso/components/forms/form-password-input';
 import FormTextInput from 'calypso/components/forms/form-text-input';
 import FormTextInputWithAffixes from 'calypso/components/forms/form-text-input-with-affixes';

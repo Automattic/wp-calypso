@@ -1,11 +1,11 @@
 import page from '@automattic/calypso-router';
+import { SelectDropdown } from '@automattic/components';
 import classnames from 'classnames';
 import { keys } from 'lodash';
 import { Component } from 'react';
 import { LiveProvider, LiveEditor, LiveError, LivePreview } from 'react-live';
 import DocumentHead from 'calypso/components/data/document-head';
 import Main from 'calypso/components/main';
-import SelectDropdown from 'calypso/components/select-dropdown';
 import * as componentExamples from 'calypso/devdocs/design/component-examples';
 import * as playgroundScope from 'calypso/devdocs/design/playground-scope';
 import { getExampleCodeFromComponent } from './playground-utils';

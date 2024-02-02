@@ -1,9 +1,8 @@
-import { Button, Gridicon } from '@automattic/components';
+import { Button, FormLabel, Gridicon } from '@automattic/components';
 import styled from '@emotion/styled';
 import { useTranslate } from 'i18n-calypso';
 import { useState, FormEvent } from 'react';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
-import FormLabel from 'calypso/components/forms/form-label';
 import FormSelect from 'calypso/components/forms/form-select';
 import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
 import { useSelector } from 'calypso/state';

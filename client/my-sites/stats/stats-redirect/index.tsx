@@ -41,7 +41,7 @@ const StatsRedirectFlow: React.FC< StatsRedirectFlowProps > = ( { children } ) =
 
 	const hasPlan = isFreeOwned || isPWYWOwned || isCommercialOwned || supportCommercialUse;
 	const qualifiedUser =
-		siteCreatedTimeStamp && new Date( siteCreatedTimeStamp ) > new Date( '2024-01-30' );
+		siteCreatedTimeStamp && new Date( siteCreatedTimeStamp ) > new Date( '2024-01-31' );
 
 	// to redirect the user can't have a plan purached and can't have the flag true, if either is true the user either has a plan or is postponing
 	const redirectToPurchase =
