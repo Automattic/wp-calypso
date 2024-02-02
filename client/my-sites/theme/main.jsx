@@ -1197,6 +1197,7 @@ class ThemeSheet extends Component {
 					this.props.recordTracksEvent( 'calypso_theme_sheet_primary_button_click', {
 						theme: this.props.themeId,
 						theme_type: themeType,
+						theme_tier: themeTier?.slug,
 						...( key && { action: key } ),
 					} );
 
@@ -1464,6 +1465,9 @@ class ThemeSheet extends Component {
 				upsellNudgePlan =
 					isExternallyManagedTheme || isBundledSoftwareSet ? PLAN_BUSINESS : PLAN_PREMIUM;
 			}
+			const upsellNudgeFeature = config.isEnabled( 'themes/tiers' )
+				? `${ themeTier?.slug }-themes`
+				: WPCOM_FEATURES_PREMIUM_THEMES_UNLIMITED;
 
 			pageUpsellBanner = (
 				<UpsellNudge
@@ -1472,7 +1476,7 @@ class ThemeSheet extends Component {
 					title={ this.getBannerUpsellTitle() }
 					description={ preventWidows( this.getBannerUpsellDescription() ) }
 					event="themes_plan_particular_free_with_plan"
-					feature={ WPCOM_FEATURES_PREMIUM_THEMES_UNLIMITED }
+					feature={ upsellNudgeFeature }
 					forceHref={ onClick === null }
 					disableHref={ onClick !== null }
 					onClick={ null === onClick ? noop : onClick }

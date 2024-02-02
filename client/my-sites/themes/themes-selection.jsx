@@ -29,6 +29,7 @@ import {
 	prependThemeFilterKeys,
 	getIsLivePreviewStarted,
 	getThemeType,
+	getThemeTierForTheme,
 } from 'calypso/state/themes/selectors';
 import { getThemeHiddenFilters } from 'calypso/state/themes/selectors/get-theme-hidden-filters';
 import { addOptionsToGetUrl, trackClick, interlaceThemes } from './helpers';
@@ -306,6 +307,10 @@ function bindGetThemeType( state ) {
 	return ( themeId ) => getThemeType( state, themeId );
 }
 
+function bindGetThemeTierForTheme( state ) {
+	return ( themeId ) => getThemeTierForTheme( state, themeId );
+}
+
 // Exporting this for use in customized themes lists (recommended-themes.jsx, etc.)
 // We do not want pagination triggered in that use of the component.
 export const ConnectedThemesSelection = connect(
@@ -377,12 +382,14 @@ export const ConnectedThemesSelection = connect(
 
 		const boundIsThemeActive = bindIsThemeActive( state, siteId );
 		const boundGetThemeType = bindGetThemeType( state );
+		const boundGetThemeTierForTheme = bindGetThemeTierForTheme( state );
 		const filterString = prependThemeFilterKeys( state, query.filter );
 		const themeShowcaseEventRecorder = getThemeShowcaseEventRecorder(
 			query,
 			themes,
 			filterString,
 			boundGetThemeType,
+			boundGetThemeTierForTheme,
 			boundIsThemeActive
 		);
 
