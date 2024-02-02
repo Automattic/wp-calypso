@@ -258,20 +258,14 @@ export function filterAndGroupCostOverridesForDisplay(
 			product.product_variants.length > 1 &&
 			product.product_variants[ 0 ].bill_period_in_months < product.months_per_bill_period
 		) {
-			const discountAmount = grouped[ 'multi-year-discount' ]?.discountAmount ?? 0;
-
-			const oneYearVariant = getYearlyVariantFromProduct( product );
-			if ( oneYearVariant ) {
-				const newDiscountAmount =
-					product.item_original_cost_integer - oneYearVariant.price_before_discounts_integer;
-
-				if ( newDiscountAmount > 0 ) {
-					grouped[ 'multi-year-discount' ] = {
-						humanReadableReason: translate( 'Multi-year discount' ),
-						overrideCode: 'multi-year-discount',
-						discountAmount: discountAmount + newDiscountAmount,
-					};
-				}
+			const newDiscountAmount = getMultiYearDiscountForProduct( product );
+			if ( newDiscountAmount > 0 ) {
+				const discountAmount = grouped[ 'multi-year-discount' ]?.discountAmount ?? 0;
+				grouped[ 'multi-year-discount' ] = {
+					humanReadableReason: translate( 'Multi-year discount' ),
+					overrideCode: 'multi-year-discount',
+					discountAmount: discountAmount + newDiscountAmount,
+				};
 			}
 		}
 		return grouped;
