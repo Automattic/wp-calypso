@@ -14,7 +14,9 @@ import 'calypso/state/themes/init';
 export function isThemePremium( state, themeId ) {
 	if ( isEnabled( 'themes/tiers' ) ) {
 		const themeTier = getThemeTierForTheme( state, themeId );
-		return 'premium' === themeTier?.slug;
+		if ( themeTier?.slug ) {
+			return 'premium' === themeTier?.slug;
+		}
 	}
 	return isPremium( getTheme( state, 'wpcom', themeId ) );
 }
