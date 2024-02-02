@@ -3,5 +3,5 @@ import type { AppState } from 'calypso/types';
 
 export function getThemeTierForTheme( state: AppState, themeId: string ) {
 	const theme = getTheme( state, 'wpcom', themeId );
-	return theme?.theme_tier;
+	return theme?.theme_tier || {};
 }
