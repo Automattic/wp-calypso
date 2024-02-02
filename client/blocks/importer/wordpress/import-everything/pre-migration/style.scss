@@ -159,12 +159,10 @@
 
 		&-primary-text {
 			margin-bottom: rem(24px);
-			& span::before {
-				content: "";
-				white-space: normal;
+			& br {
+				display: none;
 				@include break-medium {
-					content: "\a";
-					white-space: pre;
+					display: inline;
 				}
 			}
 		}

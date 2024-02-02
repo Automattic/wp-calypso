@@ -106,7 +106,7 @@ export function MigrationReady( props: Props ) {
 				<div className="import__pre-migration import__import-everything import__import-everything--redesign">
 					<div className="import__heading import__heading-center">
 						<Title>
-							{ translate( 'Your site is ready {{br/}} for its brand new home', {
+							{ translate( 'Your site is ready {{br/}}for its brand new home', {
 								components: {
 									br: <br />,
 								},
@@ -116,10 +116,9 @@ export function MigrationReady( props: Props ) {
 					<div className="pre-migration__main-content">
 						<div className="pre-migration__main-content-primary-text">
 							{ translate(
-								"Enjoy a hassle-free migration process where we smoothly move your {{span}} website's content, media files, themes, plugins, and settings. {{/span}}",
+								"Enjoy a hassle-free migration process where we smoothly move your {{br/}}website's content, media files, themes, plugins, and settings.",
 								{
 									components: {
-										span: <span />,
 										br: <br />,
 									},
 								}
