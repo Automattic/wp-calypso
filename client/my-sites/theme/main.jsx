@@ -1466,7 +1466,7 @@ class ThemeSheet extends Component {
 					isExternallyManagedTheme || isBundledSoftwareSet ? PLAN_BUSINESS : PLAN_PREMIUM;
 			}
 			const upsellNudgeFeature = config.isEnabled( 'themes/tiers' )
-				? `${ themeTier?.slug }-themes`
+				? themeTier?.feature
 				: WPCOM_FEATURES_PREMIUM_THEMES_UNLIMITED;
 
 			pageUpsellBanner = (
@@ -1484,6 +1484,7 @@ class ThemeSheet extends Component {
 					showIcon={ true }
 					forceDisplay={ forceDisplay }
 					displayAsLink={ onClick !== null }
+					tracksClickProperties={ { theme_tier: themeTier?.slug } }
 				/>
 			);
 		}
@@ -1515,7 +1516,11 @@ class ThemeSheet extends Component {
 					showIcon
 					event="theme_upsell_plan_click"
 					tracksClickName="calypso_theme_upsell_plan_click"
-					tracksClickProperties={ { theme_id: themeId, theme_name: themeName } }
+					tracksClickProperties={ {
+						theme_id: themeId,
+						theme_name: themeName,
+						theme_tier: themeTier?.slug,
+					} }
 				/>
 			);
 		}
