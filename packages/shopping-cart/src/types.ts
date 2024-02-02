@@ -531,15 +531,22 @@ export interface IntroductoryOfferTerms {
 
 	/**
 	 * The unit that, when combined with `interval_count`, determines how long
-	 * the introductory offer lasts. eg: if `interval_count` is 3 and
-	 * `interval_unit` is 'month', the discount lasts for 3 months.
+	 * the introductory offer disount should be applied.
 	 */
 	interval_unit: IntroductoryOfferUnit;
 
 	/**
 	 * The count that, when combined with `interval_unit`, determines how long
 	 * the introductory offer lasts. eg: if `interval_count` is 3 and
-	 * `interval_unit` is 'month', the discount lasts for 3 months.
+	 * `interval_unit` is 'month', the discount lasts for 3 months (but always
+	 * ends before the next renewal unless `transition_after_renewal_count` is
+	 * set). If the `interval_unit` is 'month' and the product normally renews
+	 * yearly, then the first renewal will be based on `interval_count` (eg:
+	 * after 3 months) instead.
+	 *
+	 * Note that we sometimes renew products a 30 days before their expiry
+	 * date, so in the above example, we would likely renew at the 2 month mark
+	 * instead.
 	 */
 	interval_count: number;
 
@@ -552,19 +559,17 @@ export interface IntroductoryOfferTerms {
 
 	/**
 	 * The number of times the introductory offer cost and period will be used
-	 * during renewals before using the regular cost and period. This can be
-	 * used in place of `interval_unit` and `interval_count` to determine when
-	 * the introductory offer will end.
-	 *
-	 * This will be 0 if it is not used and we should rely on `interval_count`.
+	 * during renewals before using the regular cost and period. If this is 0,
+	 * the discount will last just for the initial purchase; otherwise it will
+	 * last for additional renewals also.
 	 */
 	transition_after_renewal_count: number;
 
 	/**
-	 * True if the first renewal will subtract the introductory offer period
-	 * from the full period when calculating the price. For example: if you
-	 * provide a 3 month free trial on a yearly plan, the first renewal would
-	 * only cover 9 months (12 – 3 months). This reduced period is also
+	 * True if the last discounted renewal will subtract the introductory offer
+	 * period from the full period when calculating the price. For example: if
+	 * you provide a 3 month free trial on a yearly plan, the first renewal
+	 * would only cover 9 months (12 – 3 months). This reduced period is also
 	 * reflected in the renewal price, as the user will only pay for the 9
 	 * months instead of the full year.
 	 */
