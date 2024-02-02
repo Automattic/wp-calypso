@@ -74,10 +74,7 @@ class PasswordlessSignupForm extends Component {
 		// If not in a flow, submit the form as a standard signup form.
 		// Since it is a passwordless form, we don't need to submit a password.
 		if ( this.props.flowName === '' ) {
-			this.props.submitForm( form, {
-				email: this.state.email,
-				is_passwordless: true,
-			} );
+			this.props.submitForm( { ...form, is_passwordless: true } );
 			return;
 		}
 		this.setState( {
