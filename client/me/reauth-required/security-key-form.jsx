@@ -21,8 +21,12 @@ class SecurityKeyForm extends Component {
 		showError: false,
 	};
 
+	componentDidMount() {
+		setTimeout( () => this.initiateSecurityKeyAuthentication(), 100 );
+	}
+
 	initiateSecurityKeyAuthentication = ( event, retryRequest = true ) => {
-		event.preventDefault();
+		event?.preventDefault();
 		this.setState( { isAuthenticating: true, showError: false } );
 
 		this.props.twoStepAuthorization
