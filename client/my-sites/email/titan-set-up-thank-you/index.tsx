@@ -15,7 +15,7 @@ import './style.scss';
 
 type TitanSetUpThankYouProps = {
 	domainName: string;
-	emailAddress: string;
+	emailAddress?: string;
 	isDomainOnlySite?: boolean;
 };
 
@@ -66,18 +66,20 @@ const TitanSetUpThankYou = ( {
 		},
 	];
 
+	const products = ! emailAddress ? undefined : (
+		<ThankYouEmailProduct
+			domainName={ domainName }
+			siteSlug={ selectedSiteSlug }
+			emailAddress={ emailAddress }
+		/>
+	);
+
 	return (
 		<>
 			<ThankYouV2
 				title={ translate( 'Say hello to your new email address' ) }
 				subtitle={ translate( "All set! Now it's time to update your contact details." ) }
-				products={
-					<ThankYouEmailProduct
-						domainName={ domainName }
-						siteSlug={ selectedSiteSlug }
-						emailAddress={ emailAddress }
-					/>
-				}
+				products={ products }
 				footerDetails={ footerDetails }
 			/>
 		</>
