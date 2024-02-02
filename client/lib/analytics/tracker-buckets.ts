@@ -33,6 +33,7 @@ const allAdTrackers = [
 	'adroll',
 	'parsely',
 	'clarity',
+	'reddit',
 ] as const;
 
 const sessionAdTrackers = [ 'hotjar' ];
@@ -61,6 +62,7 @@ export const AdTrackersBuckets: { [ key in AdTracker ]: Bucket | null } = {
 	pinterest: Bucket.ADVERTISING,
 	twitter: Bucket.ADVERTISING,
 	facebook: Bucket.ADVERTISING,
+	reddit: Bucket.ADVERTISING,
 
 	// Advertising trackers (only Jetpack Cloud or on Jetpack Checkout):
 	linkedin: isJetpackCloud() || isJetpackCheckout() ? Bucket.ADVERTISING : null,
