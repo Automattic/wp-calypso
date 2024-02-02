@@ -7,7 +7,7 @@ import { preventWidows } from 'calypso/lib/formatting';
 import { useSelector } from 'calypso/state';
 import { getSiteOptions } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
-import { ThankYouPlanProduct } from '../products/plan-product';
+import ThankYouPlanProduct from '../products/plan-product';
 import type { ReceiptPurchase } from 'calypso/state/receipts/types';
 
 interface PlanOnlyThankYouProps {
