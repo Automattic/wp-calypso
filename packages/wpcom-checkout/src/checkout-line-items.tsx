@@ -1390,6 +1390,9 @@ function CheckoutLineItem( {
 
 							{ isJetpackSearch( product ) && <JetpackSearchMeta product={ product } /> }
 							{ isEmail && <EmailMeta product={ product } isRenewal={ isRenewal } /> }
+							<DomainDiscountCallout product={ product } />
+							<IntroductoryOfferCallout product={ product } />
+							<JetpackAkismetSaleCouponCallout product={ product } />
 						</LineItemMeta>
 					) : (
 						<>
