@@ -17,6 +17,7 @@ import {
 	isDIFMProduct,
 	isTieredVolumeSpaceAddon,
 	isAkismetProduct,
+	isGoogleWorkspace,
 } from '@automattic/calypso-products';
 import { Gridicon, Popover } from '@automattic/components';
 import {
@@ -107,6 +108,13 @@ export const LineItem = styled( CheckoutLineItem )< {
 		position: relative;
 	}
 `;
+const LineItemBillingIntervalWrapper = styled( LineItemBillingInterval )< { theme?: Theme } >`
+	display: block;
+`;
+
+const LineItemMetaInfoWrapper = styled( LineItemMetaInfo )< { theme?: Theme } >`
+	display: block;
+`;
 
 export const CouponLineItem = styled( WPCouponLineItem )< {
 	theme?: Theme;
@@ -126,24 +134,18 @@ const GiftBadge = styled.span`
 	font-size: small;
 `;
 
-const LineItemMetaWrapper = styled.div< { theme?: Theme } >`
-	grid-area: meta;
-	display: flex;
-	flex-direction: column;
-`;
-
 const LineItemMeta = styled.div< { theme?: Theme } >`
 	color: ${ ( props ) => props.theme.colors.textColorLight };
 	font-size: 14px;
 	width: 100%;
 	display: flex;
-	flex-direction: row;
-	align-content: center;
 	justify-content: space-between;
 	flex-wrap: wrap;
 	overflow-wrap: anywhere;
 
-	${ hasCheckoutVersion2 ? `grid-area: meta; row-gap: 6px` : `gap: 2px 10px;` }
+	${ hasCheckoutVersion2
+		? `grid-area: meta; flex-direction: column; align-content: flex-start; `
+		: 'flex-direction: row; align-content: center; gap: 2px 10px;' }
 `;
 
 const UpgradeCreditInformationLineItem = styled( LineItemMeta )< { theme?: Theme } >`
@@ -209,7 +211,7 @@ const LineItemPriceWrapper = styled.span< { theme?: Theme; isSummary?: boolean }
 `;
 
 const DropdownWrapper = styled.span`
-	${ hasCheckoutVersion2 ? `grid-area: meta; width: 100%;` : null }
+	${ hasCheckoutVersion2 ? `grid-area: meta; width: 100%; margin-bottom: 6px;` : null }
 `;
 
 const DeleteButtonWrapper = styled.div`
@@ -874,71 +876,35 @@ export function LineItemSublabelAndPrice( { product }: { product: ResponseCartPr
 
 export function LineItemBillingInterval( { product }: { product: ResponseCartProduct } ) {
 	const translate = useTranslate();
+
+	if ( isDIFMProduct( product ) ) {
+		return <span>{ translate( 'One-time fee' ) }</span>;
+	}
+
+	if ( product.is_included_for_100yearplan ) {
+		return null;
+	}
+
+	if ( isMonthlyProduct( product ) ) {
+		return <span>{ translate( 'Billed every month' ) }</span>;
+	}
+
+	if ( isYearly( product ) ) {
+		return <span>{ translate( 'Billed every year' ) }</span>;
+	}
+
+	if ( isBiennially( product ) ) {
+		return <>{ translate( 'Billed every two years' ) }</>;
+	}
+
+	if ( isTriennially( product ) ) {
+		return <>{ translate( 'Billed every three years' ) }</>;
+	}
+}
+
+function LineItemMetaInfo( { product }: { product: ResponseCartProduct } ) {
+	const translate = useTranslate();
 	const productSlug = product.product_slug;
-	const price = formatCurrency( product.item_original_subtotal_integer, product.currency, {
-		isSmallestUnit: true,
-		stripZeros: true,
-	} );
-
-	if ( isP2Plus( product ) ) {
-		// This is the price for one item for products with a quantity (eg. seats in a license).
-		const itemPrice = formatCurrency(
-			product.item_original_cost_for_quantity_one_integer,
-			product.currency,
-			{ isSmallestUnit: true, stripZeros: true }
-		);
-		const members = product?.current_quantity || 1;
-		const p2Options = {
-			args: {
-				itemPrice,
-				members,
-			},
-			count: members,
-		};
-
-		return (
-			<>
-				{ translate(
-					'Monthly subscription: %(itemPrice)s x %(members)s member',
-					'Monthly subscription: %(itemPrice)s x %(members)s members',
-					p2Options
-				) }
-			</>
-		);
-	}
-
-	if ( isTieredVolumeSpaceAddon( product ) ) {
-		const productQuantity = product?.quantity ?? 1;
-		const currentQuantity = product?.current_quantity ?? 1;
-		const spaceQuantity = productQuantity > 1 ? productQuantity : currentQuantity;
-
-		return (
-			<>
-				{ translate( '%(quantity)s GB extra space, %(price)s per year', {
-					args: { quantity: spaceQuantity, price },
-				} ) }
-			</>
-		);
-	}
-
-	if (
-		isGoogleWorkspaceProductSlug( productSlug ) ||
-		isGSuiteOrExtraLicenseProductSlug( productSlug ) ||
-		isTitanMail( product )
-	) {
-		if ( product.months_per_bill_period === 12 || product.months_per_bill_period === null ) {
-			const billingInterval = translate( 'Billed every year' );
-			return <>{ billingInterval }</>;
-		}
-
-		if ( product.months_per_bill_period === 1 ) {
-			const billingInterval = translate( 'Billed every month' );
-			return <>{ billingInterval }</>;
-		}
-
-		// TODO - add support for default billing interval
-		return <DefaultLineItemSublabel product={ product } />;
-	}
 
 	if ( isDIFMProduct( product ) ) {
 		const numberOfExtraPages =
@@ -956,83 +922,68 @@ export function LineItemBillingInterval( { product }: { product: ResponseCartPro
 				}
 			);
 
-			return (
-				<>
-					{ translate( 'Service: %(productCost)s one-time fee', {
-						args: {
-							productCost: formatCurrency(
-								product.item_original_cost_for_quantity_one_integer,
-								product.currency,
-								{ isSmallestUnit: true, stripZeros: true }
-							),
-						},
-					} ) }
-					<br></br>
-					{ translate(
-						'%(numberOfExtraPages)d Extra Page: %(costOfExtraPages)s one-time fee',
-						'%(numberOfExtraPages)d Extra Pages: %(costOfExtraPages)s one-time fee',
-						{
-							args: {
-								numberOfExtraPages,
-								costOfExtraPages,
-							},
-							count: numberOfExtraPages,
-						}
-					) }
-				</>
+			return translate(
+				'%(numberOfExtraPages)d Extra Page: %(costOfExtraPages)s one-time fee',
+				'%(numberOfExtraPages)d Extra Pages: %(costOfExtraPages)s one-time fee',
+				{
+					args: {
+						numberOfExtraPages,
+						costOfExtraPages,
+					},
+					count: numberOfExtraPages,
+				}
 			);
 		}
+	}
+
+	if ( isP2Plus( product ) ) {
+		// This is the price for one item for products with a quantity (eg. seats in a license).
+		const itemPrice = formatCurrency(
+			product.item_original_cost_for_quantity_one_integer,
+			product.currency,
+			{ isSmallestUnit: true, stripZeros: true }
+		);
+		const members = product?.current_quantity || 1;
+		const p2Options = {
+			args: {
+				itemPrice,
+				members,
+			},
+			count: members,
+		};
+
+		return translate(
+			'%(itemPrice)s x %(members)s member',
+			'%(itemPrice)s x %(members)s members',
+			p2Options
+		);
 	}
 
 	const isDomainRegistration = product.is_domain_registration;
 	const isDomainMapping = productSlug === 'domain_map';
 	const isDomainTransfer = productSlug === 'domain_transfer';
 
-	if ( ( isDomainRegistration || isDomainMapping ) && product.months_per_bill_period === 12 ) {
-		const premiumLabel = product.extra?.premium ? translate( 'Premium' ) : '';
-
-		if ( hasCheckoutVersion2 ) {
-			return <>{ translate( 'Billed every year' ) }</>;
-		}
-
-		return (
-			<>
-				{ premiumLabel } <DefaultLineItemSublabel product={ product } />
-				{ ! product.is_included_for_100yearplan && <>: { translate( 'Billed every year' ) }</> }
-			</>
-		);
+	if ( ( isDomainRegistration || isDomainMapping || isDomainTransfer ) && product.extra?.premium ) {
+		return translate( 'Premium Domain' );
 	}
 
-	if ( isDomainTransfer ) {
-		const premiumLabel = product.extra?.premium ? translate( 'Premium' ) : '';
+	if ( isTieredVolumeSpaceAddon( product ) ) {
+		const productQuantity = product?.quantity ?? 1;
+		const currentQuantity = product?.current_quantity ?? 1;
+		const spaceQuantity = productQuantity > 1 ? productQuantity : currentQuantity;
 
-		return (
-			<>
-				{ premiumLabel } <DefaultLineItemSublabel product={ product } />:{ ' ' }
-				{ translate( 'Billed every year' ) } { price }
-			</>
-		);
+		return translate( '%(quantity)s GB extra space', {
+			args: { quantity: spaceQuantity },
+		} );
 	}
 
-	const shouldRenderBasicTermSublabel =
-		isPlan( product ) || isAddOn( product ) || isJetpackProductSlug( productSlug );
-	if ( shouldRenderBasicTermSublabel && isMonthlyProduct( product ) ) {
-		return <>{ translate( 'Billed every month' ) }</>;
+	if ( isGoogleWorkspace( product ) || isGSuiteOrExtraLicenseProductSlug( productSlug ) ) {
+		return translate( 'Mailboxes and Productivity Tools' );
 	}
 
-	if ( shouldRenderBasicTermSublabel && isYearly( product ) ) {
-		return <>{ translate( 'Billed every year' ) }</>;
+	if ( isTitanMail( product ) ) {
+		return translate( 'Mailboxes' );
 	}
-
-	if ( shouldRenderBasicTermSublabel && isBiennially( product ) ) {
-		return <>{ translate( 'Billed every two years' ) }</>;
-	}
-
-	if ( shouldRenderBasicTermSublabel && isTriennially( product ) ) {
-		return <>{ translate( 'Billed every three years' ) }</>;
-	}
-	// TODO - add support for default billing interval
-	return <DefaultLineItemSublabel product={ product } />;
 }
 
 function isCouponApplied( { coupon_savings_integer = 0 }: ResponseCartProduct ) {
@@ -1403,7 +1354,7 @@ function CheckoutLineItem( {
 				</MobileGiftWrapper>
 			) }
 			<LineItemTitle id={ itemSpanId } isSummary={ isSummary }>
-				{ label }
+				{ hasCheckoutVersion2 && isRenewal ? `${ label } Renewal` : label }
 				{ responseCart.is_gift_purchase && (
 					<DesktopGiftWrapper>
 						<GiftBadgeWithText />
@@ -1432,17 +1383,17 @@ function CheckoutLineItem( {
 			{ product && ! containsPartnerCoupon && (
 				<>
 					{ hasCheckoutVersion2 ? (
-						<LineItemMetaWrapper>
-							<LineItemMeta>
-								{ areThereVariants ? (
-									<DropdownWrapper>{ children }</DropdownWrapper>
-								) : (
-									<LineItemBillingInterval product={ product } />
-								) }
-							</LineItemMeta>
+						<LineItemMeta>
+							{ areThereVariants ? (
+								<DropdownWrapper>{ children }</DropdownWrapper>
+							) : (
+								<LineItemBillingIntervalWrapper product={ product } />
+							) }
+							<LineItemMetaInfoWrapper product={ product } />
+
 							{ isJetpackSearch( product ) && <JetpackSearchMeta product={ product } /> }
 							{ isEmail && <EmailMeta product={ product } isRenewal={ isRenewal } /> }
-						</LineItemMetaWrapper>
+						</LineItemMeta>
 					) : (
 						<>
 							<UpgradeCreditInformationLineItem>
