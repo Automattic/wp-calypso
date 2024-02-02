@@ -1,17 +1,11 @@
 import { useCallback } from 'react';
-import { useDispatch } from 'react-redux';
-import { recordTracksEvent, enhanceWithUserIsDevAccount } from 'calypso/state/analytics/actions';
-import { withEnhancers } from 'calypso/state/utils';
-import type { AnyAction, Store } from 'redux';
-import type { ThunkDispatch } from 'redux-thunk';
+import { useRecordTracksEventWithUserIsDevAccount } from './use-record-tracks-event-with-user-is-dev-account';
 
 export const useHandleClickLink = () => {
-	const dispatch = useDispatch() as ThunkDispatch< Store, void, AnyAction >;
+	const recordTracksEventWithUserIsDevAccount = useRecordTracksEventWithUserIsDevAccount();
 
 	return useCallback(
 		( event: React.MouseEvent< HTMLAnchorElement > ) => {
-			const recordEvent = withEnhancers( recordTracksEvent, [ enhanceWithUserIsDevAccount ] );
-
 			const prefixToRemove = '/support/';
 			const pathIndex = event.currentTarget.href.indexOf( prefixToRemove );
 
@@ -20,8 +14,10 @@ export const useHandleClickLink = () => {
 				featureSlug = featureSlug.substring( pathIndex + prefixToRemove.length );
 			}
 
-			dispatch( recordEvent( 'calypso_me_developer_learn_more', { feature: featureSlug } ) );
+			recordTracksEventWithUserIsDevAccount( 'calypso_me_developer_learn_more', {
+				feature: featureSlug,
+			} );
 		},
-		[ dispatch ]
+		[ recordTracksEventWithUserIsDevAccount ]
 	);
 };
