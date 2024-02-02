@@ -3,6 +3,7 @@ import { useDispatch, useSelect } from '@wordpress/data';
 import { useI18n } from '@wordpress/react-i18n';
 import { useEffect, useState } from 'react';
 import NotAuthorized from 'calypso/blocks/importer/components/not-authorized';
+import { addProtocolToUrl } from 'calypso/blocks/importer/util';
 import DocumentHead from 'calypso/components/data/document-head';
 import { LoadingEllipsis } from 'calypso/components/loading-ellipsis';
 import { useSourceMigrationStatusQuery } from 'calypso/data/site-migration/use-source-migration-status-query';
@@ -69,7 +70,7 @@ const MigrationHandler: Step = function MigrationHandler( { navigation } ) {
 			return (
 				<NotAuthorized
 					type="source-site-not-connected-move-plugin"
-					sourceSiteUrl={ sourceSiteSlug }
+					sourceSiteUrl={ addProtocolToUrl( sourceSiteSlug ) }
 					startImport={ () => window.location.reload() }
 				/>
 			);
