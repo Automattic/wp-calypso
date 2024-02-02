@@ -32,7 +32,7 @@ export const GitHubAccounts = () => {
 				<SearchAccounts value={ query } onChange={ setQuery } />
 				<GitHubAuthorizeButton buttonText={ __( 'Connect GitHub Account' ) } />
 			</div>
-			<GitHubAccountList connections={ filter( connections ) } />
+			<GitHubAccountList connections={ filter( connections || [] ) } />
 		</div>
 	);
 };
