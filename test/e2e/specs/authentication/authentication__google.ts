@@ -140,10 +140,6 @@ describe( 'Authentication: Google', function () {
 		it( 'Redirected to /home upon successful login', async function () {
 			await page.waitForURL( /.*\/home\/.*/ );
 		} );
-
-		afterAll( async () => {
-			await page.close();
-		} );
 	} );
 
 	describe( 'WooCommerce', function () {
