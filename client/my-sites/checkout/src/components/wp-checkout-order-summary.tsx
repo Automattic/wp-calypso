@@ -157,6 +157,7 @@ function CheckoutSummaryPriceList() {
 	const costOverridesList = filterAndGroupCostOverridesForDisplay( responseCart, translate );
 
 	const subtotalBeforeDiscounts = getSubtotalWithoutDiscounts( responseCart );
+	const renewalInfo = filterAndGroupIntroductoryOfferRenewalInfoForDisplay( responseCart );
 
 	return (
 		<>
@@ -204,12 +205,16 @@ function CheckoutSummaryPriceList() {
 				</CheckoutSubtotalSection>
 
 				<CheckoutSummaryTotal>
-					<span>{ translate( 'Total due today' ) }</span>
+					<span>
+						{ renewalInfo.length > 0 ? translate( 'Total due today' ) : translate( 'Total' ) }
+					</span>
 					<span className="wp-checkout-order-summary__total-price">
 						{ totalLineItem.formattedAmount }
 					</span>
 				</CheckoutSummaryTotal>
-				<IntroductoryOfferFutureTotal responseCart={ responseCart } />
+				{ renewalInfo.length > 0 && (
+					<IntroductoryOfferFutureTotal responseCart={ responseCart } renewalInfo={ renewalInfo } />
+				) }
 
 				{ hasIntroductoryDiscount( responseCart ) && (
 					<CheckoutSummaryExplanation>
@@ -298,9 +303,14 @@ function filterAndGroupIntroductoryOfferRenewalInfoForDisplay(
 	);
 }
 
-function IntroductoryOfferFutureTotal( { responseCart }: { responseCart: ResponseCart } ) {
+function IntroductoryOfferFutureTotal( {
+	responseCart,
+	renewalInfo,
+}: {
+	responseCart: ResponseCart;
+	renewalInfo: IntroductoryOfferRenewalInfo[];
+} ) {
 	const translate = useTranslate();
-	const renewalInfo = filterAndGroupIntroductoryOfferRenewalInfoForDisplay( responseCart );
 
 	return renewalInfo.map( ( info ) => {
 		return (
