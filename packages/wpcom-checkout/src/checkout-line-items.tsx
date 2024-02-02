@@ -814,9 +814,7 @@ export function LineItemSublabelAndPrice( { product }: { product: ResponseCartPr
 		return (
 			<>
 				{ premiumLabel } <DefaultLineItemSublabel product={ product } />
-				{ ! hasCheckoutVersion2 && ! product.is_included_for_100yearplan && (
-					<>: { translate( 'billed annually' ) }</>
-				) }
+				{ ! product.is_included_for_100yearplan && <>: { translate( 'billed annually' ) }</> }
 			</>
 		);
 	}
@@ -833,8 +831,7 @@ export function LineItemSublabelAndPrice( { product }: { product: ResponseCartPr
 	}
 
 	const shouldRenderBasicTermSublabel =
-		! hasCheckoutVersion2 &&
-		( isPlan( product ) || isAddOn( product ) || isJetpackProductSlug( productSlug ) );
+		isPlan( product ) || isAddOn( product ) || isJetpackProductSlug( productSlug );
 	if ( shouldRenderBasicTermSublabel && isMonthlyProduct( product ) ) {
 		return (
 			<>
@@ -1412,7 +1409,11 @@ function CheckoutLineItem( {
 
 			{ product && containsPartnerCoupon && (
 				<LineItemMeta>
-					<LineItemBillingInterval product={ product } />
+					{ hasCheckoutVersion2 ? (
+						<LineItemBillingInterval product={ product } />
+					) : (
+						<LineItemSublabelAndPrice product={ product } />
+					) }
 				</LineItemMeta>
 			) }
 
