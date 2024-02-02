@@ -253,20 +253,14 @@ export function filterAndGroupCostOverridesForDisplay(
 			}
 		} );
 
-		if (
-			product.months_per_bill_period &&
-			product.product_variants.length > 1 &&
-			product.product_variants[ 0 ].bill_period_in_months < product.months_per_bill_period
-		) {
-			const newDiscountAmount = getMultiYearDiscountForProduct( product );
-			if ( newDiscountAmount > 0 ) {
-				const discountAmount = grouped[ 'multi-year-discount' ]?.discountAmount ?? 0;
-				grouped[ 'multi-year-discount' ] = {
-					humanReadableReason: translate( 'Multi-year discount' ),
-					overrideCode: 'multi-year-discount',
-					discountAmount: discountAmount + newDiscountAmount,
-				};
-			}
+		const multiYearDiscount = getMultiYearDiscountForProduct( product );
+		if ( multiYearDiscount > 0 ) {
+			const discountAmount = grouped[ 'multi-year-discount' ]?.discountAmount ?? 0;
+			grouped[ 'multi-year-discount' ] = {
+				humanReadableReason: translate( 'Multi-year discount' ),
+				overrideCode: 'multi-year-discount',
+				discountAmount: discountAmount + multiYearDiscount,
+			};
 		}
 		return grouped;
 	}, {} );
