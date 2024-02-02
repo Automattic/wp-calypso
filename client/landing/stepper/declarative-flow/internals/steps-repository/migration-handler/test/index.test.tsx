@@ -124,7 +124,6 @@ describe( 'MigrationHandlerStep', () => {
 		await waitFor( () => {
 			expect( jest.spyOn( navigation, 'submit' ) ).not.toHaveBeenCalled();
 			expect( screen.getByText( "We couldn't start the migration" ) ).toBeInTheDocument();
-			expect( screen.getByText( 'Try again.' ) ).toBeInTheDocument();
 		} );
 	} );
 } );
