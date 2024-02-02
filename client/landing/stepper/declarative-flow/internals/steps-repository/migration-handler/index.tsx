@@ -69,6 +69,7 @@ const MigrationHandler: Step = function MigrationHandler( { navigation } ) {
 			return (
 				<NotAuthorized
 					type="source-site-not-connected-move-plugin"
+					sourceSiteUrl={ sourceSiteSlug }
 					startImport={ () => window.location.reload() }
 				/>
 			);
