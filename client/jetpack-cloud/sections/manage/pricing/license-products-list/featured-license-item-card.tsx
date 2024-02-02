@@ -132,7 +132,7 @@ export const FeaturedLicenseItemCard = ( {
 				<LicenseLightbox
 					product={ item }
 					quantity={ bundleSize }
-					ctaLabel={ translate( 'Select License' ) }
+					ctaLabel={ translate( 'Select license' ) }
 					isCTAPrimary={ true }
 					isCTAExternalLink={ false }
 					isDisabled={ false }
