@@ -1,6 +1,7 @@
 import page from '@automattic/calypso-router';
 import { billingHistory } from 'calypso/me/purchases/paths';
 import SiteSettingsMain from 'calypso/my-sites/site-settings/main';
+import WpcomSiteTools from 'calypso/my-sites/site-settings/wpcom-site-tools';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import canCurrentUserStartSiteOwnerTransfer from 'calypso/state/selectors/can-current-user-start-site-owner-transfer';
@@ -63,6 +64,11 @@ export function redirectIfCantStartSiteOwnerTransfer( context, next ) {
 
 export function general( context, next ) {
 	context.primary = <SiteSettingsMain />;
+	next();
+}
+
+export function wpcomSiteTools( context, next ) {
+	context.primary = <WpcomSiteTools />;
 	next();
 }
 

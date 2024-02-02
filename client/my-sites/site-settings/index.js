@@ -15,6 +15,7 @@ import {
 	redirectToTraffic,
 	startOver,
 	startSiteOwnerTransfer,
+	wpcomSiteTools,
 } from 'calypso/my-sites/site-settings/controller';
 import { setScroll, siteSettings } from 'calypso/my-sites/site-settings/settings-controller';
 
@@ -115,6 +116,19 @@ export default function () {
 	page( '/settings/analytics/:site_id?', redirectToTraffic );
 	page( '/settings/seo/:site_id?', redirectToTraffic );
 	page( '/settings/theme-setup/:site_id?', redirectToGeneral );
+
+	// Site tools for the WordPress.com > Site Tools menu
+	// from the untangle Calypso project.
+	page(
+		'/settings/site-tools/:site_id',
+		siteSelection,
+		navigation,
+		setScroll,
+		siteSettings,
+		wpcomSiteTools,
+		makeLayout,
+		clientRender
+	);
 
 	page( '/settings/:section', legacyRedirects, siteSelection, sites, makeLayout, clientRender );
 }
