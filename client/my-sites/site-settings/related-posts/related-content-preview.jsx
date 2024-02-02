@@ -1,5 +1,5 @@
+import { FormLabel } from '@automattic/components';
 import { localize } from 'i18n-calypso';
-import FormLabel from 'calypso/components/forms/form-label';
 import {
 	getLocalizedDate,
 	phpToMomentDatetimeFormat,

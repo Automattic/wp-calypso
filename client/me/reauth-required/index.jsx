@@ -1,4 +1,4 @@
-import { Button, Card, Dialog, FormInputValidation } from '@automattic/components';
+import { Button, Card, Dialog, FormInputValidation, FormLabel } from '@automattic/components';
 import { supported } from '@github/webauthn-json';
 import debugFactory from 'debug';
 import { localize } from 'i18n-calypso';
@@ -9,7 +9,6 @@ import CardHeading from 'calypso/components/card-heading';
 import FormButton from 'calypso/components/forms/form-button';
 import FormCheckbox from 'calypso/components/forms/form-checkbox';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
-import FormLabel from 'calypso/components/forms/form-label';
 import FormVerificationCodeInput from 'calypso/components/forms/form-verification-code-input';
 import Notice from 'calypso/components/notice';
 import WarningCard from 'calypso/components/warning-card';

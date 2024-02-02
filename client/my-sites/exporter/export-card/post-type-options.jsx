@@ -1,9 +1,8 @@
-import { Tooltip } from '@automattic/components';
+import { FormLabel as Label, Tooltip } from '@automattic/components';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { PureComponent } from 'react';
 import { connect } from 'react-redux';
-import Label from 'calypso/components/forms/form-label';
 import FormRadio from 'calypso/components/forms/form-radio';
 import { setPostType } from 'calypso/state/exporter/actions';
 import {

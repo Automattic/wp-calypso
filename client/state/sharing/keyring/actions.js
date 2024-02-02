@@ -84,8 +84,6 @@ function deleteKeyringConnectionSuccess( connection ) {
  * @param  {Object} connection         Connection to be deleted.
  * @param  {number} connection.ID      ID of the connection to be deleted.
  * @param  {string} connection.label   Name of the service that was connected.
- * @param  {string} connection.external_name Name of the authorized resource.
- * @param  {string} connection.external_profile_picture The link to the resource's profile picture.
  * @returns {Function}                  Action thunk
  */
 export function deleteStoredKeyringConnection( connection ) {
