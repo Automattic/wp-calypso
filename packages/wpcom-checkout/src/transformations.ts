@@ -6,10 +6,10 @@ import {
 } from '@automattic/calypso-products';
 import { formatCurrency } from '@automattic/format-currency';
 import { translate, useTranslate } from 'i18n-calypso';
+import { getIntroductoryOfferIntervalDisplay } from './introductory-offer';
 import type { LineItemType } from './types';
 import type {
 	IntroductoryOfferTerms,
-	IntroductoryOfferUnit,
 	ResponseCart,
 	ResponseCartProduct,
 	TaxBreakdownItem,
@@ -128,70 +128,18 @@ export function getCreditsLineItemFromCart( responseCart: ResponseCart ): LineIt
 	};
 }
 
-function getDiscountTimePeriodForIntroductoryOfferByCount(
-	unit: IntroductoryOfferUnit,
-	count: number,
-	translate: ReturnType< typeof useTranslate >
-): string | undefined {
-	switch ( unit ) {
-		case 'month':
-			if ( count === 1 ) {
-				return translate( 'Discount for first month', {
-					textOnly: true,
-				} );
-			}
-			return translate( 'Discount for first %(numberOfMonths)d months', {
-				textOnly: true,
-				args: {
-					numberOfMonths: count,
-				},
-			} );
-		case 'year':
-			if ( count === 1 ) {
-				return translate( 'Discount for first year', {
-					textOnly: true,
-				} );
-			}
-			return translate( 'Discount for first %(numberOfYears)d years', {
-				textOnly: true,
-				args: {
-					numberOfYears: count,
-				},
-			} );
-	}
-	return undefined;
-}
-
-function getDiscountTimePeriodForIntroductoryOffer(
-	terms: IntroductoryOfferTerms,
-	translate: ReturnType< typeof useTranslate >
-): string | undefined {
-	if ( terms.transition_after_renewal_count ) {
-		if ( terms.transition_after_renewal_count === 1 ) {
-			return translate( 'Discount for first renewal', {
-				textOnly: true,
-			} );
-		}
-		return translate( 'Discount for first %(unitCount)d renewals', {
-			textOnly: true,
-			args: {
-				unitCount: terms.transition_after_renewal_count,
-			},
-		} );
-	}
-	return getDiscountTimePeriodForIntroductoryOfferByCount(
-		terms.interval_unit,
-		terms.interval_count,
-		translate
-	);
-}
-
 function getDiscountReasonForIntroductoryOffer(
 	terms: IntroductoryOfferTerms,
 	translate: ReturnType< typeof useTranslate >
 ): string {
-	const timePeriod = getDiscountTimePeriodForIntroductoryOffer( terms, translate );
-	return timePeriod ?? translate( 'Introductory offer' );
+	return getIntroductoryOfferIntervalDisplay(
+		translate,
+		terms.interval_unit,
+		terms.interval_count,
+		false,
+		'checkout',
+		terms.transition_after_renewal_count
+	);
 }
 
 export interface CostOverrideForDisplay {
