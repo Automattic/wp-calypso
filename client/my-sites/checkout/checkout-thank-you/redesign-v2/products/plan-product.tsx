@@ -21,11 +21,7 @@ export type ThankYouPlanProductProps = {
 	siteId: number | null;
 };
 
-export default function ThankYouPlanProduct( {
-	purchase,
-	siteSlug,
-	siteId,
-}: ThankYouPlanProductProps ) {
+export const ThankYouPlanProduct = ( { purchase, siteSlug, siteId }: ThankYouPlanProductProps ) => {
 	const isLoadingPurchases = useSelector(
 		( state ) => isFetchingSitePurchases( state ) || ! hasLoadedSitePurchasesFromServer( state )
 	);
@@ -125,4 +121,4 @@ export default function ThankYouPlanProduct( {
 			isLoading={ isLoadingPurchases }
 		/>
 	);
-}
+};
