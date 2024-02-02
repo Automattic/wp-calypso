@@ -53,17 +53,6 @@ class PasswordlessSignupForm extends Component {
 	onFormSubmit = async ( event ) => {
 		event.preventDefault();
 
-		if ( ! this.props.submitForm && this.props.flowName === '' ) {
-			this.setState( {
-				errorMessages: [ this.props.translate( 'User cannot be created, try again later.' ) ],
-				isSubmitting: false,
-			} );
-			this.submitTracksEvent( false, {
-				action_message: 'User cannot be created, try again later.',
-			} );
-			return;
-		}
-
 		if ( ! this.state.email || ! emailValidator.validate( this.state.email ) ) {
 			this.setState( {
 				errorMessages: [ this.props.translate( 'Please provide a valid email address.' ) ],
@@ -85,7 +74,7 @@ class PasswordlessSignupForm extends Component {
 
 		// If not in a flow, submit the form as a standard signup form.
 		// Since it is a passwordless form, we don't need to submit a password.
-		if ( flowName === '' ) {
+		if ( flowName === '' && this.props.submitForm ) {
 			this.props.submitForm( form, {
 				email: this.state.email,
 				is_passwordless: true,
