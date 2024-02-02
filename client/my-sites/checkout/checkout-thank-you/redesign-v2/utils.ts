@@ -1,6 +1,11 @@
 import { isWpComPlan, isP2Plus, isTitanMail } from '@automattic/calypso-products';
 import { CheckoutThankYouCombinedProps, getFailedPurchases, getPurchases } from '..';
-import { isBulkDomainTransfer, isDomainOnly } from '../utils';
+import {
+	isBulkDomainTransfer,
+	isDomainOnly,
+	isPurchaseTitanWithoutMailboxes,
+	getDomainPurchase,
+} from '../utils';
 
 /**
  * Determines whether the current checkout flow renders a redesigned congrats page
@@ -23,6 +28,13 @@ export const isRefactoredForThankYouV2 = ( props: CheckoutThankYouCombinedProps 
 	}
 
 	if ( isDomainOnly( purchases ) ) {
+		return true;
+	}
+
+	if (
+		isPurchaseTitanWithoutMailboxes( props.selectedFeature ) &&
+		getDomainPurchase( purchases )
+	) {
 		return true;
 	}
 

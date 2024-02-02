@@ -102,7 +102,13 @@ import SiteRedirectDetails from './site-redirect-details';
 import StarterPlanDetails from './starter-plan-details';
 import TransferPending from './transfer-pending';
 import './style.scss';
-import { getDomainPurchaseTypeAndPredicate, isBulkDomainTransfer, isDomainOnly } from './utils';
+import {
+	getDomainPurchaseTypeAndPredicate,
+	isBulkDomainTransfer,
+	isDomainOnly,
+	getDomainPurchase,
+	isPurchaseTitanWithoutMailboxes,
+} from './utils';
 import type { FindPredicate } from './utils';
 import type { SitesPlansResult } from '../src/hooks/product-variants';
 import type { OnboardActions, SiteDetails } from '@automattic/data-stores';
@@ -569,6 +575,7 @@ export class CheckoutThankYou extends Component<
 
 		if ( isRefactoredForThankYouV2( this.props ) ) {
 			let pageContent = null;
+			const domainPurchase = getDomainPurchase( purchases );
 
 			if ( wasBulkDomainTransfer ) {
 				pageContent = (
@@ -586,6 +593,14 @@ export class CheckoutThankYou extends Component<
 					<TitanSetUpThankYou
 						domainName={ purchases[ 0 ].meta }
 						emailAddress={ email }
+						isDomainOnlySite={ this.props.domainOnlySiteFlow }
+					/>
+				);
+			} else if ( isPurchaseTitanWithoutMailboxes( selectedFeature ) && domainPurchase ) {
+				// To reproduce it: https://github.com/Automattic/wp-calypso/pull/87098#titan-wo-mailboxes
+				pageContent = (
+					<TitanSetUpThankYou
+						domainName={ domainPurchase.meta }
 						isDomainOnlySite={ this.props.domainOnlySiteFlow }
 					/>
 				);
@@ -615,7 +630,6 @@ export class CheckoutThankYou extends Component<
 		}
 
 		/** LEGACY - The ultimate goal is to remove everything below */
-
 		if ( wasEcommercePlanPurchased ) {
 			// Continue to show the TransferPending progress bar until both the Atomic transfer is complete _and_ we've verified WooCommerce is finished installed.
 			if ( ! this.props.transferComplete || ! this.props.isWooCommerceInstalled ) {
@@ -661,18 +675,6 @@ export class CheckoutThankYou extends Component<
 		} else if ( wasDomainProduct && ! wasBulkDomainTransfer ) {
 			const [ purchaseType, predicate ] = getDomainPurchaseTypeAndPredicate( purchases );
 			const [ domainPurchase, domainName ] = findPurchaseAndDomain( purchases, predicate );
-
-			if ( selectedFeature === 'email-license' && domainName ) {
-				return (
-					<>
-						<div>1111</div>
-						<TitanSetUpThankYou
-							domainName={ domainName }
-							isDomainOnlySite={ this.props.domainOnlySiteFlow }
-						/>
-					</>
-				);
-			}
 
 			const professionalEmailPurchase = this.getProfessionalEmailPurchaseFromPurchases(
 				predicate,
