@@ -249,16 +249,20 @@ function IntroductoryOfferFutureTotal( { responseCart }: { responseCart: Respons
 	);
 
 	return (
-		<CheckoutSummaryTotal>
+		<CheckoutSummaryTotalAfterIntroductoryOffer>
 			<span>
 				{ translate( 'Due %(endOfIntroductoryOfferDate)s', {
 					args: {
-						endOfIntroductoryOfferDate: endOfIntroductoryOfferDate.toDateString(),
+						endOfIntroductoryOfferDate: endOfIntroductoryOfferDate.toLocaleDateString( undefined, {
+							month: 'short',
+							day: 'numeric',
+							year: 'numeric',
+						} ),
 					},
 				} ) }
 			</span>
 			<span className="wp-checkout-order-summary__total-price">{ totalDue }</span>
-		</CheckoutSummaryTotal>
+		</CheckoutSummaryTotalAfterIntroductoryOffer>
 	);
 }
 
@@ -989,6 +993,14 @@ const CheckoutSummaryLineItem = styled.div< { isDiscount?: boolean } >`
 const CheckoutSummaryTotal = styled( CheckoutSummaryLineItem )`
 	color: ${ ( props ) => props.theme.colors.textColorDark };
 	font-size: 20px;
+	font-weight: ${ ( props ) => props.theme.weights.bold };
+	line-height: 26px;
+	margin-bottom: 16px;
+`;
+
+const CheckoutSummaryTotalAfterIntroductoryOffer = styled( CheckoutSummaryLineItem )`
+	color: ${ ( props ) => props.theme.colors.textColorDark };
+	font-size: 14px;
 	font-weight: ${ ( props ) => props.theme.weights.bold };
 	line-height: 26px;
 	margin-bottom: 16px;
