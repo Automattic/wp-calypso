@@ -545,25 +545,24 @@ const BackupGranularRestoreFlow: FunctionComponent< Props > = ( {
 		</Error>
 	);
 
+	const isFinished = inProgressRewindStatus !== null && inProgressRewindStatus === 'finished';
 	const isInProgress =
 		( ! inProgressRewindStatus && userHasRequestedRestore ) ||
-		( inProgressRewindStatus && [ 'queued', 'running' ].includes( inProgressRewindStatus ) );
-	const isFinished = inProgressRewindStatus !== null && inProgressRewindStatus === 'finished';
+		( inProgressRewindStatus && [ 'queued', 'running' ].includes( inProgressRewindStatus ) ) ||
+		( restoreInitiated && userHasRequestedRestore );
 
-	const shouldRenderConfirmation = ( ! isInProgress || ! isFinished ) && ! userHasRequestedRestore;
+	const shouldRenderConfirmation = ( ! isInProgress || ! isFinished ) && ! restoreInitiated;
 
 	useEffect( () => {
 		if ( isInProgress && ! userHasRequestedRestore ) {
 			setUserHasRequestedRestore( true );
 		}
-	}, [ inProgressRewindStatus, isInProgress, userHasRequestedRestore ] );
 
-	useEffect( () => {
 		if ( isFinished ) {
-			setRestoreInitiated( false );
 			setUserHasRequestedRestore( false );
 		}
-	}, [ isFinished ] );
+	}, [ inProgressRewindStatus, isFinished, isInProgress, userHasRequestedRestore ] );
+
 	const render = () => {
 		if ( loading ) {
 			return <GranularRestoreLoading />;
