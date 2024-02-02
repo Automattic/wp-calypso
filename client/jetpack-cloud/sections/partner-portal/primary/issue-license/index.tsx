@@ -97,7 +97,8 @@ export default function IssueLicense( { selectedSite, suggestedProduct }: Assign
 				} )
 			);
 		}
-	}, [ dispatch, getGroupedLicenses ] );
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [] ); // Intentionally leaving the array empty and disabling the eslint warning, as we want this to run only once.
 
 	const currentStep = showReviewLicenses ? 'reviewLicense' : 'issueLicense';
 
