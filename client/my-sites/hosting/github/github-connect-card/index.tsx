@@ -2,7 +2,7 @@ import { Button, Card, FormLabel } from '@automattic/components';
 import { ExternalLink } from '@wordpress/components';
 import { sprintf, __ } from '@wordpress/i18n';
 import classNames from 'classnames';
-import { ComponentProps, useState } from 'react';
+import { useState } from 'react';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
 import Image from 'calypso/components/image';
@@ -19,7 +19,12 @@ import { useGithubConnectMutation } from './use-github-connect-mutation';
 import './style.scss';
 
 interface GithubConnectCardProps {
-	connection: ComponentProps< typeof DisconnectGitHubButton >[ 'connection' ];
+	connection: {
+		ID: number;
+		label: string;
+		external_profile_picture: string;
+		external_name: string;
+	};
 }
 const noticeOptions = {
 	duration: 3000,
