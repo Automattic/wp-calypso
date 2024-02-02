@@ -100,7 +100,7 @@ export default function DomainOnlyThankYou( { purchases, receiptId }: DomainOnly
 				purchase={ purchase }
 				key={ `domain-${ purchase.meta }` }
 				siteSlug={ domainOnlySite?.slug }
-				shareSite
+				isDomainOnly
 			/>
 		);
 	} );
