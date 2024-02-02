@@ -469,7 +469,7 @@ class SignupForm extends Component {
 				times_email_validation_failed: timesEmailValidationFailed,
 			};
 
-			this.props.submitForm( this.getUserData(), analyticsData, () => {
+			this.props.submitForm( this.state.form, this.getUserData(), analyticsData, () => {
 				this.setState( { submitting: false } );
 			} );
 

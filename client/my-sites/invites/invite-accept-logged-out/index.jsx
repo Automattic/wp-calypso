@@ -50,7 +50,7 @@ class InviteAcceptLoggedOut extends Component {
 		window.location = signInLink;
 	};
 
-	submitForm = ( userData, _, afterSubmitCallback = noop ) => {
+	submitForm = ( form, userData, _, afterSubmitCallback = noop ) => {
 		const { invite } = this.props;
 		recordTracksEvent( 'calypso_invite_accept_logged_out_submit', {
 			role: invite?.role,
@@ -174,6 +174,7 @@ class InviteAcceptLoggedOut extends Component {
 				loginUser: this.loginUser,
 			} );
 		}
+
 		return (
 			<div>
 				<SignupForm
