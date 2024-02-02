@@ -60,7 +60,13 @@ export default function ThemeTierBadge( {
 	}
 
 	return (
-		<div className={ classNames( 'theme-tier-badge', className ) }>
+		<div
+			className={ classNames(
+				'theme-tier-badge',
+				`theme-tier-badge--${ themeTier.slug }`,
+				className
+			) }
+		>
 			<ThemeTierBadgeContextProvider
 				canGoToCheckout={ canGoToCheckout }
 				showUpgradeBadge={ showUpgradeBadge }
