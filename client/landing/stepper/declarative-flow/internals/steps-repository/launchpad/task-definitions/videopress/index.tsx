@@ -1,6 +1,7 @@
 import { FEATURE_VIDEO_UPLOADS, planHasFeature } from '@automattic/calypso-products';
 import { isVideoPressFlow } from '@automattic/onboarding';
 import { addQueryArgs } from '@wordpress/url';
+import { recordTaskClickTracksEvent } from '../../tracking';
 import { TaskAction } from '../../types';
 
 export const getVideoPressUploadTask: TaskAction = ( task, flow, context ) => {
@@ -31,6 +32,9 @@ export const getVideoPressUploadTask: TaskAction = ( task, flow, context ) => {
 		...task,
 		actionUrl: launchpadUploadVideoLink,
 		disabled: isVideoPressFlowWithUnsupportedPlan || videoPressUploadCompleted,
+		actionDispatch: () => {
+			recordTaskClickTracksEvent( task, flow, context );
+		},
 		calypso_path: launchpadUploadVideoLink,
 		useCalypsoPath: true,
 	};
