@@ -1,4 +1,5 @@
 import page from '@automattic/calypso-router';
+import Main from 'calypso/components/main';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import CalypsoShoppingCartProvider from 'calypso/my-sites/checkout/calypso-shopping-cart-provider';
 import AddMailboxes from 'calypso/my-sites/email/add-mailboxes';
@@ -190,19 +191,19 @@ export default {
 		next();
 	},
 
+	// Steps to reproduce it: https://github.com/Automattic/wp-calypso/pull/87098#email-management-titan-set-up-thank-you
 	emailManagementTitanSetUpThankYou( pageContext, next ) {
 		pageContext.primary = (
-			<>
+			<Main className="checkout-thank-you is-redesign-v2">
 				<PageViewTracker
 					path={ paths.getTitanSetUpThankYouPath( ':site', ':domain' ) }
 					title="Checkout > Purchased Titan mailbox"
 				/>
-				12312
 				<TitanSetUpThankYou
 					domainName={ pageContext.params.domain }
 					emailAddress={ pageContext.query.email }
 				/>
-			</>
+			</Main>
 		);
 
 		next();
