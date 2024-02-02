@@ -258,6 +258,10 @@ export function filterAndGroupCostOverridesForDisplay(
 			}
 		} );
 
+		// Add a fake "multi-year" discount if applicable. These are not real
+		// discounts in terms of our billing system; they are just the
+		// difference in cost between a multi-year version of a product and
+		// that product's yearly version multiplied by the number of years.
 		const multiYearDiscount = getMultiYearDiscountForProduct( product );
 		if ( multiYearDiscount > 0 ) {
 			const discountAmount = grouped[ 'multi-year-discount' ]?.discountAmount ?? 0;
@@ -317,21 +321,26 @@ function canDisplayMultiYearDiscountForProduct( product: ResponseCartProduct ): 
  * intervals have different prices set and the amount they save depends on what
  * you compare them to.
  *
- * In this case we will ignore monthly intervals and only
- * concern ourselves with the discount of the currently selected product
- * compared to the yearly version of that product, if one exists. In order to
- * display the difference in the multi-year price versus the yearly price as a
- * discount, we need to INCREASE the subtotal of the product by the same
- * amount. That's what this function does.
+ * In this case we will ignore monthly intervals and only concern ourselves
+ * with the discount of the currently selected product compared to the yearly
+ * version of that product multiplied by the number of years, if such a product
+ * exists. In order to display the difference in the multi-year price versus
+ * the yearly price as a discount, we need to INCREASE the subtotal of the
+ * product by the same amount.
+ *
+ * This function returns the amount by which we'd need to increase that price,
+ * which is also the amount of the pseudo-discount.
  */
 function getMultiYearDiscountForProduct( product: ResponseCartProduct ): number {
-	if ( ! canDisplayMultiYearDiscountForProduct( product ) ) {
+	if ( ! product.months_per_bill_period || ! canDisplayMultiYearDiscountForProduct( product ) ) {
 		return 0;
 	}
 	const oneYearVariant = getYearlyVariantFromProduct( product );
 	if ( oneYearVariant ) {
+		const numberOfYears = product.months_per_bill_period / 12;
 		const multiYearDiscount =
-			product.item_original_cost_integer - oneYearVariant.price_before_discounts_integer;
+			oneYearVariant.price_before_discounts_integer * numberOfYears -
+			product.item_original_cost_integer;
 		if ( multiYearDiscount > 0 ) {
 			return multiYearDiscount;
 		}
