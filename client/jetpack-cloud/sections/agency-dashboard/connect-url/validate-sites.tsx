@@ -16,7 +16,7 @@ export default function ValidateSites( {
 
 	const domainList = detectedSites.map( ( site: string ) => (
 		<div className="connect-url__validate-sites-row" key={ site }>
-			{ validatedSites[ site ].validationStatus === 'validating' ? (
+			{ validatedSites[ site ]?.validationStatus === 'validating' ? (
 				<Spinner />
 			) : (
 				<Gridicon icon="gridicons-checkmark-circle" />
