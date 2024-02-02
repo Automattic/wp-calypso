@@ -1,4 +1,6 @@
+import { isEnabled } from '@automattic/calypso-config';
 import { getTheme } from 'calypso/state/themes/selectors/get-theme';
+import { getThemeTierForTheme } from 'calypso/state/themes/selectors/get-theme-tier-for-theme';
 import { isPremium } from 'calypso/state/themes/utils';
 
 import 'calypso/state/themes/init';
@@ -10,5 +12,9 @@ import 'calypso/state/themes/init';
  * @returns {boolean}        True if the theme is premium
  */
 export function isThemePremium( state, themeId ) {
+	if ( isEnabled( 'themes/tiers' ) ) {
+		const themeTier = getThemeTierForTheme( state, themeId );
+		return 'premium' === themeTier?.slug;
+	}
 	return isPremium( getTheme( state, 'wpcom', themeId ) );
 }
