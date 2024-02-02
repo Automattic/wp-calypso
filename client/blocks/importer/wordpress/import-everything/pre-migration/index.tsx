@@ -202,7 +202,8 @@ export const PreMigrationScreen: React.FunctionComponent< PreMigrationProps > = 
 					type="source-site-not-connected"
 					sourceSiteUrl={ sourceSiteUrl }
 					targetSiteUrl={ targetSite.URL }
-					startImport={ startImport }
+					// After resolving the issue, we need to reload the page to re-fetch initial data
+					startImport={ () => window.location.reload() }
 				/>
 			);
 
