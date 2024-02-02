@@ -18,11 +18,15 @@ import {
 	JETPACK_SEARCH_PRODUCTS,
 	JETPACK_VIDEOPRESS_PRODUCTS,
 	JETPACK_SOCIAL_PRODUCTS,
+	isJetpackLegacyItem,
+	isJetpackSecurityT1Slug,
+	isJetpackCompleteSlug,
 } from '@automattic/calypso-products';
 import { useShoppingCart } from '@automattic/shopping-cart';
 import { useCallback, useMemo } from 'react';
 import { useSelector } from 'react-redux';
 import Notice from 'calypso/components/notice';
+import CartItemIsLegacyBundleUpgrade from 'calypso/my-sites/checkout/src/components/prepurchase-notices/cart-item-is-legacy-bundle-upgrade';
 import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
 import { getSitePlan, isJetpackMinimumVersion, getSiteOption } from 'calypso/state/sites/selectors';
 import getSelectedSite from 'calypso/state/ui/selectors/get-selected-site';
@@ -105,6 +109,28 @@ const PrePurchaseNotices = () => {
 		return matchingProducts?.[ 0 ];
 	}, [ currentSitePlan?.product_slug, getMatchingProducts, responseCart.products ] );
 
+	const cartProductThatIsUpgradeForExistingLegacyBundle = useMemo( () => {
+		const planSlugOnSite = currentSitePlan?.product_slug;
+
+		// Bypass the notice if the site doesn't have a plan or the plan is not a legacy Jetpack plan
+		if ( ! planSlugOnSite || ! isJetpackLegacyItem( planSlugOnSite ) ) {
+			return null;
+		}
+
+		const newBundles = responseCart.products.filter( ( product ) => {
+			const productSlug = product.product_slug;
+			return isJetpackSecurityT1Slug( productSlug ) || isJetpackCompleteSlug( productSlug );
+		} );
+
+		// If the site has a legacy plan and has a new bundle in the cart
+		// Note that we are not checking if the upgrade is valid here - we leave that to the validation
+		if ( isJetpackLegacyItem( planSlugOnSite ) && newBundles.length > 0 ) {
+			return newBundles[ 0 ];
+		}
+
+		return null;
+	}, [ currentSitePlan?.product_slug, responseCart.products ] );
+
 	const BACKUP_MINIMUM_JETPACK_VERSION = '8.5';
 	const siteHasBackupMinimumPluginVersion = useSelector( ( state: AppState ) => {
 		const activeConnectedPlugins = getSiteOption(
@@ -136,6 +162,15 @@ const PrePurchaseNotices = () => {
 				plan={ currentSitePlan }
 				product={ cartProductThatOverlapsSitePlan }
 				selectedSite={ selectedSite }
+			/>
+		);
+	}
+
+	if ( currentSitePlan && cartProductThatIsUpgradeForExistingLegacyBundle ) {
+		return (
+			<CartItemIsLegacyBundleUpgrade
+				sitePlan={ currentSitePlan }
+				cartProduct={ cartProductThatIsUpgradeForExistingLegacyBundle }
 			/>
 		);
 	}
