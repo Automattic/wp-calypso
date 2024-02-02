@@ -59,7 +59,6 @@ export function acceptInvite( context, next ) {
 		<>
 			<AcceptInviteTitle />
 			<InviteAccept
-				userInvitePasswordless={ true }
 				siteId={ context.params.site_id }
 				inviteKey={ context.params.invitation_key }
 				activationKey={ context.params.activation_key }
