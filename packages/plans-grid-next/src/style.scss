@@ -714,9 +714,6 @@ body.is-section-stepper,
 body.is-section-signup.is-white-signup {
 	.step-wrapper__header {
 		margin: 24px 20px 38px;
-		@include plans-2023-break-small {
-			margin: 24px 20px;
-		}
 	}
 }
 

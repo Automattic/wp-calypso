@@ -36,10 +36,7 @@
 		margin: 0 20px;
 		padding: 0 0 10px;
 		overflow-x: visible;
-
-		@include plans-2023-break-small {
-			padding-top: 35px; // enough to cover `plans-grid__popular-badge` repositioning (top: -35px)
-		}
+		padding-top: 35px; // enough to cover `plans-grid__popular-badge` repositioning (top: -35px)
 	}
 }
 
@@ -137,39 +134,11 @@
 .is-2023-pricing-grid .plan-features-2023-grid__content {
 	position: relative;
 	margin: auto;
-
-	.is-section-stepper &,
-	.is-section-signup & {
-		@include pricing-grid-breakpoints;
-	}
-
-	.is-section-plans:not(.is-sidebar-collapsed) & {
-		@include pricing-grid-breakpoints-with-sidebar;
-
-	}
-
-	.is-section-plans.is-sidebar-collapsed.is-domain-plan-package-flow & {
-		@include pricing-grid-breakpoints-with-sidebar;
-
-	}
-
-	.is-section-plans.is-sidebar-collapsed:not(.is-domain-plan-package-flow) & {
-		@include pricing-grid-breakpoints;
-	}
-
 }
 
 .plans-features-main__group.is-wpcom.is-2023-pricing-grid {
-	padding-top: 19px;
+	// padding-top: 19px;
 	margin-top: 24px;
-}
-
-.plans-features-main__group.is-wpcom:not(.is-2023-pricing-grid) {
-	padding-top: 26px;
-
-	@media ( min-width: 880px ) {
-		padding-top: 19px;
-	}
 }
 
 // Required additional specificity
