@@ -1,17 +1,20 @@
-import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { useLaunchpad } from '@automattic/data-stores';
-import { useRef, useMemo } from 'react';
+import { useMemo } from 'react';
 import Checklist, { Placeholder as ChecklistPlaceHolder } from './checklist';
+import ChecklistItem from './checklist-item';
+import { useTracking } from './use-tracking';
 import type { Task } from './types';
-import type { UseLaunchpadOptions } from '@automattic/data-stores';
+import type { SiteDetails, UseLaunchpadOptions } from '@automattic/data-stores';
 
 export interface LaunchpadInternalProps {
+	site?: SiteDetails | null;
+	flow?: string;
 	siteSlug: string | null;
-	checklistSlug?: string | null;
+	checklistSlug: string | null;
 	makeLastTaskPrimaryAction?: boolean;
 	taskFilter?: ( tasks: Task[] ) => Task[];
 	useLaunchpadOptions?: UseLaunchpadOptions;
-	launchpadContext?: string | undefined;
+	launchpadContext: string;
 }
 
 /**
@@ -19,6 +22,8 @@ export interface LaunchpadInternalProps {
  * Please use the main Launchpad component whenever possible.
  */
 const LaunchpadInternal = ( {
+	flow,
+	site,
 	siteSlug,
 	checklistSlug,
 	taskFilter,
@@ -32,56 +37,40 @@ const LaunchpadInternal = ( {
 		useLaunchpadOptions,
 		launchpadContext
 	);
+
 	const { isFetchedAfterMount, data } = launchpadData;
 	const { checklist } = data;
-	const tasks = useRef< Task[] >( [] );
-	const tasklistCompleted = checklist?.every( ( task: Task ) => task.completed ) || false;
 
-	const numberOfSteps = checklist?.length || 0;
-	const completedSteps = ( checklist?.filter( ( task: Task ) => task.completed ) || [] ).length;
+	const tasks = useMemo( () => {
+		if ( ! checklist ) {
+			return [];
+		}
+		return taskFilter ? taskFilter( checklist ) : checklist;
+		// Array of tasks requires deep comparison
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [ JSON.stringify( checklist ), taskFilter ] );
 
-	useMemo( () => {
-		const originalTasks = data.checklist || [];
-		tasks.current = taskFilter ? taskFilter( originalTasks ) : originalTasks;
-	}, [ data, taskFilter ] );
-
-	useEffect( () => {
-		// Record task list view as a whole.
-		recordTracksEvent( 'calypso_launchpad_tasklist_viewed', {
-			checklist_slug: checklistSlug,
-			tasks: `,${ checklist?.map( ( task: Task ) => task.id ).join( ',' ) },`,
-			is_completed: tasklistCompleted,
-			number_of_steps: numberOfSteps,
-			number_of_completed_steps: completedSteps,
-			context: launchpadContext,
-		} );
-
-		// Record views for each task.
-		checklist?.map( ( task: Task ) => {
-			recordTracksEvent( 'calypso_launchpad_task_view', {
-				checklist_slug: checklistSlug,
-				task_id: task.id,
-				is_completed: task.completed,
-				context: launchpadContext,
-				order: task.order,
-			} );
-		} );
-	}, [
-		checklist,
+	const { trackClick } = useTracking( {
+		tasks,
 		checklistSlug,
-		completedSteps,
-		numberOfSteps,
-		tasklistCompleted,
-		launchpadContext,
-	] );
+		siteIntent: site?.options?.site_intent,
+		flow,
+		context: launchpadContext,
+	} );
+
+	const itemClickHandler = ( task: Task ) => {
+		trackClick( task );
+		task?.actionDispatch?.();
+	};
+
+	const items = tasks.map( ( task ) => (
+		<ChecklistItem task={ task } key={ task.id } onClick={ () => itemClickHandler( task ) } />
+	) );
 
 	return (
 		<div className="launchpad__checklist-wrapper">
 			{ isFetchedAfterMount ? (
-				<Checklist
-					tasks={ tasks.current }
-					makeLastTaskPrimaryAction={ makeLastTaskPrimaryAction }
-				/>
+				<Checklist items={ items } makeLastTaskPrimaryAction={ makeLastTaskPrimaryAction } />
 			) : (
 				<ChecklistPlaceHolder />
 			) }
