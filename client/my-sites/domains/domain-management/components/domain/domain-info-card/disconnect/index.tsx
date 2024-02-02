@@ -118,10 +118,10 @@ const DisconnectDomainCard = ( { domain, selectedSite }: DomainInfoCardProps ) =
 		<>
 			<DomainInfoCard
 				type="click"
-				title="Disconnect"
-				description="Disconnect this domain from the site"
+				title={ translate( 'Detach' ) }
+				description={ translate( 'Detach this domain from the site' ) }
 				onClick={ () => setDialogVisible( true ) }
-				ctaText="Disconnect"
+				ctaText={ translate( 'Detach' ) }
 			/>
 			{ renderDialog() }
 		</>
