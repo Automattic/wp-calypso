@@ -6,7 +6,6 @@ import { Global, css } from '@emotion/react';
 import { removeQueryArgs } from '@wordpress/url';
 import AsyncLoad from 'calypso/components/async-load';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
-import MySitesNavigation from 'calypso/my-sites/navigation';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
 import { removeNotice } from 'calypso/state/notices/actions';
 import { hideMasterbar } from 'calypso/state/ui/actions';
@@ -149,7 +148,7 @@ function sitesDashboard( context: PageJSContext, next: () => void ) {
 			/>
 		</>
 	);
-	context.secondary = <MySitesNavigation path="/sites" />;
+	context.secondary = <AsyncLoad require="calypso/my-sites/navigation" path="/sites" />;
 	next();
 }
 

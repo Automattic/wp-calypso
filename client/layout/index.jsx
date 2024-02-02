@@ -29,6 +29,7 @@ import { isWpMobileApp, isWcMobileApp } from 'calypso/lib/mobile-app';
 import isReaderTagEmbedPage from 'calypso/lib/reader/is-reader-tag-embed-page';
 import { getMessagePathForJITM } from 'calypso/lib/route';
 import UserVerificationChecker from 'calypso/lib/user/verification-checker';
+import { useGlobalSidebar } from 'calypso/my-sites/sidebar/hooks/use-global-sidebar';
 import { isOffline } from 'calypso/state/application/selectors';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { getCurrentOAuth2Client } from 'calypso/state/oauth2-clients/ui/selectors';
@@ -358,6 +359,7 @@ export default withCurrentRoute(
 		const isWooCoreProfilerFlow =
 			[ 'jetpack-connect', 'login' ].includes( sectionName ) &&
 			isWooCommerceCoreProfilerFlow( state );
+		const { shouldShowGlobalSidebar } = useGlobalSidebar( siteId, sectionGroup );
 		const noMasterbarForRoute =
 			isJetpackLogin ||
 			currentRoute === '/me/account/closed' ||
@@ -366,15 +368,14 @@ export default withCurrentRoute(
 		const noMasterbarForSection =
 			// hide the masterBar until the section is loaded. To flicker the masterBar in, is better than to flicker it out.
 			! sectionName ||
-			( ! isWooCoreProfilerFlow && [ 'signup', 'jetpack-connect' ].includes( sectionName ) ) ||
-			sectionGroup === 'sites-dashboard' ||
-			( sectionGroup === 'sites' && ! siteId );
+			( ! isWooCoreProfilerFlow && [ 'signup', 'jetpack-connect' ].includes( sectionName ) );
 		const masterbarIsHidden =
 			! masterbarIsVisible( state ) ||
 			noMasterbarForSection ||
 			noMasterbarForRoute ||
 			isWpMobileApp() ||
 			isWcMobileApp() ||
+			shouldShowGlobalSidebar ||
 			isJetpackCloud();
 		const isJetpackMobileFlow = 'jetpack-connect' === sectionName && !! retrieveMobileRedirect();
 		const isJetpackWooCommerceFlow =
@@ -427,6 +428,7 @@ export default withCurrentRoute(
 			sidebarIsCollapsed: sectionName !== 'reader' && getSidebarIsCollapsed( state ),
 			userAllowedToHelpCenter,
 			currentRoute,
+			shouldShowGlobalSidebar,
 		};
 	} )( Layout )
 );
