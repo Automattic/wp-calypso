@@ -1,9 +1,4 @@
-import {
-	isBiennially,
-	isJetpackPlan,
-	isJetpackProduct,
-	isJetpackSocialAdvancedSlug,
-} from '@automattic/calypso-products';
+import { isJetpackPlan, isJetpackProduct } from '@automattic/calypso-products';
 import { formatCurrency } from '@automattic/format-currency';
 import { translate, useTranslate } from 'i18n-calypso';
 import type { LineItemType } from './types';
@@ -208,14 +203,11 @@ export function filterAndGroupCostOverridesForDisplay(
 	// can show them all together after the line item list.
 	const costOverridesGrouped = responseCart.products.reduce<
 		Record< string, CostOverrideForDisplay >
-	>( ( grouped, product ) => {
+	>( ( grouped: Record< string, CostOverrideForDisplay >, product ) => {
 		const costOverrides = product?.cost_overrides;
 		if ( ! costOverrides ) {
 			return grouped;
 		}
-
-		const isJetpack = isJetpackProduct( product ) || isJetpackPlan( product );
-		let productDiscountAmountTotal = 0;
 
 		costOverrides.forEach( ( costOverride ) => {
 			if ( costOverride.does_override_original_cost ) {
@@ -241,10 +233,6 @@ export function filterAndGroupCostOverridesForDisplay(
 				return;
 			}
 
-			const discountAmount = grouped[ costOverride.override_code ]?.discountAmount ?? 0;
-			let newDiscountAmount = costOverride.old_subtotal_integer - costOverride.new_subtotal_integer;
-			let overrideReason = '';
-
 			// Do not group introductory offers and replace their text with
 			// wording specific to that offer.
 			if (
@@ -263,47 +251,19 @@ export function filterAndGroupCostOverridesForDisplay(
 				};
 				return;
 			}
-
-			// FIXME: deal with Jetpack biennial stuff
-
-			// Overrides for Jetpack biennial intro offers
-			if ( 'introductory-offer' === costOverride.override_code ) {
-				if ( isJetpack ) {
-					overrideReason = translate( 'Introductory offer*' );
-				}
-				if ( isJetpackSocialAdvancedSlug( product.product_slug ) ) {
-					// Social Advanced has free trial that we don't consider "introduction offer"
-					return;
-				} else if ( isJetpack && isBiennially( product ) ) {
-					// For all other products, we show introductory discount for yearly variant (the rest is considered multi-year discount)
-					const yearlyVariant = getYearlyVariantFromProduct( product );
-					if ( yearlyVariant ) {
-						newDiscountAmount =
-							yearlyVariant.price_before_discounts_integer - yearlyVariant.price_integer;
-					}
-				}
-			}
-			grouped[ costOverride.override_code ] = {
-				humanReadableReason: overrideReason || costOverride.human_readable_reason,
-				overrideCode: costOverride.override_code,
-				discountAmount: discountAmount + newDiscountAmount,
-			};
-			productDiscountAmountTotal += newDiscountAmount;
 		} );
 
-		if ( isJetpack && isBiennially( product ) ) {
+		if (
+			product.months_per_bill_period &&
+			product.product_variants.length > 1 &&
+			product.product_variants[ 0 ].bill_period_in_months < product.months_per_bill_period
+		) {
 			const discountAmount = grouped[ 'multi-year-discount' ]?.discountAmount ?? 0;
-			const yearlyVariant = getYearlyVariantFromProduct( product );
-			const biennialVariant = getBiennialVariantFromProduct( product );
 
-			if ( yearlyVariant && biennialVariant ) {
-				// Coupon is added on top of multi-year discount, so we don't include it in the calculation
-				const discountWithoutCoupon =
-					productDiscountAmountTotal - ( product.coupon_savings_integer ?? 0 );
+			const oneYearVariant = getYearlyVariantFromProduct( product );
+			if ( oneYearVariant ) {
 				const newDiscountAmount =
-					2 * yearlyVariant.price_before_discounts_integer -
-					discountWithoutCoupon -
-					biennialVariant.price_integer;
+					product.item_original_cost_integer - oneYearVariant.price_before_discounts_integer;
 
 				if ( newDiscountAmount > 0 ) {
 					grouped[ 'multi-year-discount' ] = {
@@ -333,26 +293,47 @@ function getCreditsUsedByCart( responseCart: ResponseCart ): number {
 	return isFullCredits ? responseCart.sub_total_with_taxes_integer : responseCart.credits_integer;
 }
 
-function getBiennialVariantFromProduct( product: ResponseCartProduct ) {
-	return product.product_variants.find( ( variant ) => 24 === variant.bill_period_in_months );
-}
-
 function getYearlyVariantFromProduct( product: ResponseCartProduct ) {
 	return product.product_variants.find( ( variant ) => 12 === variant.bill_period_in_months );
 }
 
+/**
+ * We want to be able to display a discount for a multi-year purchase, although
+ * this is not a true discount; purchases of different product renewal
+ * intervals have different prices set and the amount they save depends on what
+ * you compare them to.
+ *
+ * In this case we will ignore monthly intervals and only
+ * concern ourselves with the discount of the currently selected product
+ * compared to the yearly version of that product, if one exists. In order to
+ * display the difference in the multi-year price versus the yearly price as a
+ * discount, we need to INCREASE the subtotal of the product by the same
+ * amount. That's what this function does.
+ */
+function getMultiYearDiscountForProduct( product: ResponseCartProduct ): number {
+	const oneYearVariant = getYearlyVariantFromProduct( product );
+	if ( oneYearVariant ) {
+		const multiYearDiscount =
+			product.item_original_cost_integer - oneYearVariant.price_before_discounts_integer;
+		if ( multiYearDiscount > 0 ) {
+			return multiYearDiscount;
+		}
+	}
+	return 0;
+}
+
+function getSubtotalWithoutDiscountsForProduct( product: ResponseCartProduct ): number {
+	const multiYearDiscount = getMultiYearDiscountForProduct( product );
+	if ( multiYearDiscount ) {
+		return product.item_original_subtotal_integer + multiYearDiscount;
+	}
+
+	return product.item_original_subtotal_integer;
+}
+
 export function getSubtotalWithoutDiscounts( responseCart: ResponseCart ): number {
 	return responseCart.products.reduce( ( total, product ) => {
-		const isJetpack = isJetpackProduct( product ) || isJetpackPlan( product );
-
-		if ( isJetpack && isBiennially( product ) ) {
-			const yearlyVariant = getYearlyVariantFromProduct( product );
-
-			if ( yearlyVariant ) {
-				return total + yearlyVariant.price_before_discounts_integer * 2;
-			}
-		}
-		return total + product.item_original_subtotal_integer;
+		return total + getSubtotalWithoutDiscountsForProduct( product );
 	}, 0 );
 }
 
