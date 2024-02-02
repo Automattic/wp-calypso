@@ -179,27 +179,29 @@ function CheckoutSummaryPriceList() {
 				/>
 			) }
 			<CheckoutSummaryAmountWrapper>
-				<CheckoutSummaryLineItem key="checkout-summary-line-item-subtotal">
-					<span>{ translate( 'Subtotal' ) }</span>
-					<span>
-						{ formatCurrency( responseCart.sub_total_integer, responseCart.currency, {
-							isSmallestUnit: true,
-							stripZeros: true,
-						} ) }
-					</span>
-				</CheckoutSummaryLineItem>
-				{ taxLineItems.map( ( taxLineItem ) => (
-					<CheckoutSummaryLineItem key={ 'checkout-summary-line-item-' + taxLineItem.id }>
-						<span>{ taxLineItem.label }</span>
-						<span>{ taxLineItem.formattedAmount }</span>
+				<CheckoutSubtotalSection>
+					<CheckoutSummaryLineItem key="checkout-summary-line-item-subtotal">
+						<span>{ translate( 'Subtotal' ) }</span>
+						<span>
+							{ formatCurrency( responseCart.sub_total_integer, responseCart.currency, {
+								isSmallestUnit: true,
+								stripZeros: true,
+							} ) }
+						</span>
 					</CheckoutSummaryLineItem>
-				) ) }
-				{ creditsLineItem && responseCart.sub_total_integer > 0 && (
-					<CheckoutSummaryLineItem key={ 'checkout-summary-line-item-' + creditsLineItem.id }>
-						<span>{ creditsLineItem.label }</span>
-						<span>{ creditsLineItem.formattedAmount }</span>
-					</CheckoutSummaryLineItem>
-				) }
+					{ taxLineItems.map( ( taxLineItem ) => (
+						<CheckoutSummaryLineItem key={ 'checkout-summary-line-item-' + taxLineItem.id }>
+							<span>{ taxLineItem.label }</span>
+							<span>{ taxLineItem.formattedAmount }</span>
+						</CheckoutSummaryLineItem>
+					) ) }
+					{ creditsLineItem && responseCart.sub_total_integer > 0 && (
+						<CheckoutSummaryLineItem key={ 'checkout-summary-line-item-' + creditsLineItem.id }>
+							<span>{ creditsLineItem.label }</span>
+							<span>{ creditsLineItem.formattedAmount }</span>
+						</CheckoutSummaryLineItem>
+					) }
+				</CheckoutSubtotalSection>
 
 				<CheckoutSummaryTotal>
 					<span>{ translate( 'Total' ) }</span>
@@ -904,6 +906,12 @@ CheckoutSummaryFeaturesListItem.defaultProps = {
 	isSupported: true,
 };
 
+const CheckoutSubtotalSection = styled.div`
+	border-bottom: 1px solid ${ ( props ) => props.theme.colors.borderColorLight };
+	margin-bottom: 20px;
+	padding-bottom: 20px;
+`;
+
 const CheckoutSummaryAmountWrapper = styled.div`
 	border-top: 1px solid ${ ( props ) => props.theme.colors.borderColorLight };
 	padding: 20px 0;
@@ -916,12 +924,6 @@ const CheckoutFirstSubtotalLineItem = styled.div`
 	justify-content: space-between;
 	line-height: 20px;
 	margin-bottom: 16px;
-
-	&:nth-last-of-type( 2 ) {
-		border-bottom: 1px solid ${ ( props ) => props.theme.colors.borderColorLight };
-		margin-bottom: 20px;
-		padding-bottom: 20px;
-	}
 
 	.is-loading & {
 		animation: ${ pulse } 1.5s ease-in-out infinite;
@@ -937,12 +939,6 @@ const CheckoutSummaryLineItem = styled.div< { isDiscount?: boolean } >`
 	margin-bottom: 4px;
 
 	color: ${ ( props ) => ( props.isDiscount ? props.theme.colors.discount : 'inherit' ) };
-
-	&:nth-last-of-type( 3 ) {
-		border-bottom: 1px solid ${ ( props ) => props.theme.colors.borderColorLight };
-		margin-bottom: 20px;
-		padding-bottom: 20px;
-	}
 
 	.is-loading & {
 		animation: ${ pulse } 1.5s ease-in-out infinite;
