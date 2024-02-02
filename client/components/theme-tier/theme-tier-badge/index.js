@@ -42,11 +42,11 @@ export default function ThemeTierBadge( {
 			return <ThemeTierCommunityBadge />;
 		}
 
-		if ( 'partner' === themeTier.slug || MARKETPLACE_THEME === themeType ) {
+		if ( 'partner' === themeTier?.slug || MARKETPLACE_THEME === themeType ) {
 			return <ThemeTierPartnerBadge />;
 		}
 
-		if ( isThemeAllowed || ( 'premium' === themeTier.slug && isLegacyPremiumPurchased ) ) {
+		if ( isThemeAllowed || ( 'premium' === themeTier?.slug && isLegacyPremiumPurchased ) ) {
 			return null;
 		}
 
