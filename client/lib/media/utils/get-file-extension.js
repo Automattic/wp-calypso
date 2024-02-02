@@ -1,4 +1,5 @@
-import path from 'path';
+// causing command palette build errors for some reason, just commenting out for now
+//import path from 'path';
 import { getUrlParts } from '@automattic/calypso-url';
 import { isUri } from 'valid-url';
 

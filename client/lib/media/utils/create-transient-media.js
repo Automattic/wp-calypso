@@ -1,4 +1,5 @@
-import path from 'path';
+// causing command palette build errors for some reason, just commenting out for now
+//import path from 'path';
 import { createTransientMediaId } from 'calypso/lib/media/utils';
 import { getFileExtension } from 'calypso/lib/media/utils/get-file-extension';
 import { getMimeType } from 'calypso/lib/media/utils/get-mime-type';

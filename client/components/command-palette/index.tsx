@@ -13,7 +13,8 @@ import { getCurrentRoutePattern } from 'calypso/state/selectors/get-current-rout
 import { COMMAND_SEPARATOR, useCommandFilter } from './use-command-filter';
 import { CommandCallBackParams, useCommandPalette } from './use-command-palette';
 
-import '@wordpress/commands/build-style/style.css';
+// Temporary workaround, styles is a problem for later.
+//import '@wordpress/commands/build-style/style.css';
 
 interface CommandMenuGroupProps
 	extends Pick< CommandCallBackParams, 'close' | 'setSearch' | 'setPlaceholderOverride' > {

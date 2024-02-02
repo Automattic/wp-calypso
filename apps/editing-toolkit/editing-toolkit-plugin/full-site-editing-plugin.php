@@ -355,3 +355,8 @@ function load_wpcom_domain_upsell_callout() {
 	require_once __DIR__ . '/wpcom-domain-upsell-callout/class-wpcom-domain-upsell-callout.php';
 }
 add_action( 'plugins_loaded', __NAMESPACE__ . '\load_wpcom_domain_upsell_callout' );
+
+function load_wpcom_command_palette() {
+	require_once __DIR__ . '/wpcom-command-palette/index.php';
+}
+add_action( 'plugins_loaded', __NAMESPACE__ . '\load_wpcom_command_palette' );

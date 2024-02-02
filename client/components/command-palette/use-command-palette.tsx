@@ -1,12 +1,16 @@
 import { useSitesListSorting } from '@automattic/sites';
 import styled from '@emotion/styled';
 import { __ } from '@wordpress/i18n';
+// Avoiding wpcom-smp-commands for now, so loading this here for the one hard-coded command
+import { wordpress as wordpressIcon } from '@wordpress/icons';
 import { useCommandState } from 'cmdk';
 import { useCallback } from 'react';
 import SiteIcon from 'calypso/blocks/site-icon';
 import { SiteExcerptData } from 'calypso/data/sites/site-excerpt-types';
 import { useSiteExcerptsQuery } from 'calypso/data/sites/use-site-excerpts-query';
-import { useCommandsArrayWpcom } from 'calypso/sites-dashboard/components/wpcom-smp-commands';
+// Avoiding wpcom-smp-commands for now, so loading navigate here for the one hard-coded command
+//import { useCommandsArrayWpcom } from 'calypso/sites-dashboard/components/wpcom-smp-commands';
+import { navigate } from 'calypso/lib/navigate';
 import { isCustomDomain } from 'calypso/sites-dashboard/utils';
 import { useDispatch, useSelector } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
@@ -148,9 +152,22 @@ export const useCommandPalette = ( {
 	const { currentSiteId } = useCurrentSiteRankTop();
 
 	// Call the generateCommandsArray function to get the commands array
+	// Or not, because we're avoiding wpcom-smp-commands for now so we can just prove the concept
+	// with a single hard-coded light command.
+	/*
 	const commands = useCommandsArrayWpcom( {
 		setSelectedCommandName,
 	} ) as Command[];
+	*/
+	const commands = [
+		{
+			name: 'viewMySites',
+			label: __( 'View my sites' ),
+			searchLabel: [ 'view my sites', 'manage sites', 'sites dashboard' ].join( ' ' ),
+			callback: () => navigate( `/sites` ),
+			icon: wordpressIcon,
+		},
+	] as Command[];
 
 	const currentRoute = useSelector( ( state: object ) => getCurrentRoutePattern( state ) );
 
