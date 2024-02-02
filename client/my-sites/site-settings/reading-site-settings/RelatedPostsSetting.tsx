@@ -1,5 +1,5 @@
+import { FormLabel } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
-import FormLabel from 'calypso/components/forms/form-label';
 import { RelatedPostsSetting as RelatedPostsFormFieldset } from 'calypso/my-sites/site-settings/related-posts';
 
 type RelatedPostsFields = {

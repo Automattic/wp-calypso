@@ -1,6 +1,6 @@
+import { FormLabel } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
-import FormLabel from 'calypso/components/forms/form-label';
 import FormLegend from 'calypso/components/forms/form-legend';
 import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
 import FormTextarea from 'calypso/components/forms/form-textarea';

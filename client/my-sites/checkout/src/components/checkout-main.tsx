@@ -52,6 +52,7 @@ import genericRedirectProcessor from '../lib/generic-redirect-processor';
 import getContactDetailsType from '../lib/get-contact-details-type';
 import multiPartnerCardProcessor from '../lib/multi-partner-card-processor';
 import payPalProcessor from '../lib/paypal-express-processor';
+import { pixProcessor } from '../lib/pix-processor';
 import razorpayProcessor from '../lib/razorpay-processor';
 import { translateResponseCartToWPCOMCart } from '../lib/translate-cart';
 import weChatProcessor from '../lib/we-chat-processor';
@@ -447,6 +448,9 @@ export default function CheckoutMain( {
 		[ addProductsToCart ]
 	);
 
+	const isAkismetSitelessCheckout = responseCart.products.some(
+		( product ) => product.extra.isAkismetSitelessCheckout
+	);
 	const includeDomainDetails = contactDetailsType === 'domain';
 	const includeGSuiteDetails = contactDetailsType === 'gsuite';
 	const dataForProcessor: PaymentProcessorOptions = useMemo(
@@ -465,6 +469,8 @@ export default function CheckoutMain( {
 			razorpayConfiguration,
 			recaptchaClientId,
 			fromSiteSlug,
+			isJetpackNotAtomic,
+			isAkismetSitelessCheckout,
 		} ),
 		[
 			contactDetails,
@@ -481,6 +487,8 @@ export default function CheckoutMain( {
 			updatedSiteSlug,
 			recaptchaClientId,
 			fromSiteSlug,
+			isJetpackNotAtomic,
+			isAkismetSitelessCheckout,
 		]
 	);
 
@@ -495,6 +503,8 @@ export default function CheckoutMain( {
 				multiPartnerCardProcessor( transactionData, dataForProcessor, {
 					translate,
 				} ),
+			pix: ( transactionData: unknown ) =>
+				pixProcessor( transactionData, dataForProcessor, translate ),
 			alipay: ( transactionData: unknown ) =>
 				genericRedirectProcessor( 'alipay', transactionData, dataForProcessor ),
 			p24: ( transactionData: unknown ) =>

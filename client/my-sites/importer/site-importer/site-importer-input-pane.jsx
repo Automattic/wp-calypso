@@ -1,11 +1,11 @@
 import config from '@automattic/calypso-config';
+import { FormLabel } from '@automattic/components';
 import { localize } from 'i18n-calypso';
 import { isEmpty, flowRight, trim, sortBy } from 'lodash';
 import moment from 'moment';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
-import FormLabel from 'calypso/components/forms/form-label';
 import FormSelect from 'calypso/components/forms/form-select';
 import TextInput from 'calypso/components/forms/form-text-input';
 import { validateImportUrl } from 'calypso/lib/importer/url-validation';

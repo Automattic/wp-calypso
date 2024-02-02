@@ -1,12 +1,11 @@
 /* eslint-disable wpcalypso/jsx-gridicon-size */
-import { Card } from '@automattic/components';
+import { Card, FormLabel } from '@automattic/components';
 import styled from '@emotion/styled';
 import { useTranslate, localize } from 'i18n-calypso';
 import { useState, useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 import CardHeading from 'calypso/components/card-heading';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
-import FormLabel from 'calypso/components/forms/form-label';
 import FormRadio from 'calypso/components/forms/form-radio';
 import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
 import InlineSupportLink from 'calypso/components/inline-support-link';

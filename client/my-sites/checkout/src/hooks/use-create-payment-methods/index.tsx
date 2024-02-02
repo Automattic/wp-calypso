@@ -36,6 +36,7 @@ import {
 	createNetBankingMethod,
 } from '../../payment-methods/netbanking';
 import { createPayPalMethod, createPayPalStore } from '../../payment-methods/paypal';
+import { createPixPaymentMethod } from '../../payment-methods/pix';
 import { createWeChatMethod, createWeChatPaymentMethodStore } from '../../payment-methods/wechat';
 import useCreateExistingCards from './use-create-existing-cards';
 import type { RazorpayConfiguration, RazorpayLoadingError } from '@automattic/calypso-razorpay';
@@ -112,6 +113,16 @@ export function useCreateCreditCard( {
 		]
 	);
 	return stripeMethod;
+}
+
+function useCreatePix(): PaymentMethod | null {
+	return useMemo(
+		() =>
+			createPixPaymentMethod( {
+				submitButtonContent: <CheckoutSubmitButtonContent />,
+			} ),
+		[]
+	);
 }
 
 function useCreateAlipay( {
@@ -412,6 +423,8 @@ export default function useCreatePaymentMethods( {
 		stripeLoadingError,
 	} );
 
+	const pixMethod = useCreatePix();
+
 	const alipayMethod = useCreateAlipay( {
 		isStripeLoading,
 		stripeLoadingError,
@@ -510,6 +523,7 @@ export default function useCreatePaymentMethods( {
 		giropayMethod,
 		sofortMethod,
 		netbankingMethod,
+		pixMethod,
 		alipayMethod,
 		p24Method,
 		epsMethod,

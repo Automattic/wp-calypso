@@ -1,4 +1,4 @@
-import { Card } from '@automattic/components';
+import { Card, FormLabel } from '@automattic/components';
 import { ToggleControl } from '@wordpress/components';
 import { useEffect, useState } from '@wordpress/element';
 import classNames from 'classnames';
@@ -6,7 +6,6 @@ import { includes, pickBy, filter } from 'lodash';
 import { useSelector } from 'react-redux';
 import QuerySiteSettings from 'calypso/components/data/query-site-settings';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
-import FormLabel from 'calypso/components/forms/form-label';
 import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
 import TokenField from 'calypso/components/token-field';
 import wpcom from 'calypso/lib/wp';
