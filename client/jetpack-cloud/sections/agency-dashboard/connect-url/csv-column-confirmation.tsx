@@ -1,4 +1,5 @@
-import { Button, Gridicon } from '@automattic/components';
+import { Button } from '@automattic/components';
+import { Icon, chevronDown } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { useRef, useState } from 'react';
 import PopoverMenu from 'calypso/components/popover-menu';
@@ -20,7 +21,6 @@ export default function CSVColumnConfirmation( {
 	const columnItems = columns.map( ( c, index ) => {
 		return (
 			<PopoverMenuItem key={ index } onClick={ () => onColumnSelect( c ) }>
-				<Gridicon icon={ c === column ? 'checkmark' : 'none' } size={ 12 } />
 				{ c }
 			</PopoverMenuItem>
 		);
@@ -36,8 +36,19 @@ export default function CSVColumnConfirmation( {
 
 	return (
 		<div className="connect-url-csv-column-confirmation">
-			<Button ref={ buttonActionRef } onClick={ showColumns }>
-				{ translate( 'Choose column' ) }
+			<Button
+				ref={ buttonActionRef }
+				onClick={ showColumns }
+				className="connect-url-csv-column-confirmation__column-picker"
+			>
+				{ column ? (
+					translate( 'Column: %(column)s', { args: { column } } )
+				) : (
+					<>
+						{ translate( 'Choose site column' ) }
+						<Icon icon={ chevronDown } />
+					</>
+				) }
 			</Button>
 			<PopoverMenu
 				context={ buttonActionRef.current }
