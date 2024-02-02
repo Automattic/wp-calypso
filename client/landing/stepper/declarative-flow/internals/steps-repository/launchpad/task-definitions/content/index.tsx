@@ -1,6 +1,5 @@
 import { updateLaunchpadSettings } from '@automattic/data-stores/src/queries/use-launchpad';
 import { isNewsletterFlow } from '@automattic/onboarding';
-import { recordTaskClickTracksEvent } from '../../tracking';
 import { TaskAction } from '../../types';
 
 const completeMigrateContentTask = async ( siteSlug: string | null ) => {
@@ -17,10 +16,7 @@ export const getMigrateContentTask: TaskAction = ( task, flow, context ) => {
 	return {
 		...task,
 		disabled: mustVerifyEmailBeforePosting || false,
-		actionDispatch: () => {
-			recordTaskClickTracksEvent( task, flow, context );
-			completeMigrateContentTask( siteSlug );
-		},
+		actionDispatch: () => completeMigrateContentTask( siteSlug ),
 		useCalypsoPath: true,
 	};
 };

@@ -3,7 +3,6 @@ import { isBlogOnboardingFlow, isSiteAssemblerFlow } from '@automattic/onboardin
 import { addQueryArgs } from '@wordpress/url';
 import { translate } from 'i18n-calypso';
 import { isDomainUpsellCompleted } from '../../task-helper';
-import { recordTaskClickTracksEvent } from '../../tracking';
 import { TaskAction } from '../../types';
 
 export const getDomainUpSellTask: TaskAction = ( task, flow, context ): Task => {
@@ -33,8 +32,6 @@ export const getDomainUpSellTask: TaskAction = ( task, flow, context ): Task => 
 	return {
 		...task,
 		completed: domainUpsellCompleted,
-		actionDispatch: () =>
-			recordTaskClickTracksEvent( { ...task, completed: domainUpsellCompleted }, flow, context ),
 		calypso_path: getDestionationUrl(),
 		badge_text:
 			domainUpsellCompleted || isBlogOnboardingFlow( flow ) || isSiteAssemblerFlow( flow )

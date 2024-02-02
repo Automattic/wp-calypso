@@ -1,7 +1,6 @@
 import { Task } from '@automattic/launchpad';
 import { isBlogOnboardingFlow, isNewsletterFlow } from '@automattic/onboarding';
 import { addQueryArgs } from '@wordpress/url';
-import { recordTaskClickTracksEvent } from '../../tracking';
 import { TaskAction } from '../../types';
 
 export const getFirstPostPublished: TaskAction = ( task, flow, context ): Task => {
@@ -17,7 +16,6 @@ export const getFirstPostPublished: TaskAction = ( task, flow, context ): Task =
 			: addQueryArgs( `https://${ siteInfoQueryArgs?.siteSlug }/wp-admin/post-new.php`, {
 					origin: window.location.origin,
 			  } ),
-		actionDispatch: () => recordTaskClickTracksEvent( task, flow, context ),
 		useCalypsoPath: true,
 	};
 };
@@ -30,7 +28,6 @@ const getFirstPostPublishedNewsletterTask: TaskAction = ( task, flow, context ):
 		...task,
 		isLaunchTask: true,
 		disabled: mustVerifyEmailBeforePosting || false,
-		actionDispatch: () => recordTaskClickTracksEvent( task, flow, context ),
 		useCalypsoPath: true,
 	};
 };
