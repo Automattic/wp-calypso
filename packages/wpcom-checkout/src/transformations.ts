@@ -244,6 +244,9 @@ export function filterAndGroupCostOverridesForDisplay(
 				'introductory-offer' === costOverride.override_code &&
 				product.introductory_offer_terms?.enabled
 			) {
+				if ( ! canDisplayIntroductoryOfferDiscountForProduct( product ) ) {
+					return;
+				}
 				const newDiscountAmount =
 					costOverride.old_subtotal_integer - costOverride.new_subtotal_integer;
 				grouped[ 'introductory-offer__' + product.uuid ] = {
@@ -292,6 +295,18 @@ function getCreditsUsedByCart( responseCart: ResponseCart ): number {
 
 function getYearlyVariantFromProduct( product: ResponseCartProduct ) {
 	return product.product_variants.find( ( variant ) => 12 === variant.bill_period_in_months );
+}
+
+/**
+ * Introductory offer discounts can sometimes be misleading. If we want to hide
+ * them for a product in checkout, we can do so in this function.
+ */
+function canDisplayIntroductoryOfferDiscountForProduct( product: ResponseCartProduct ): boolean {
+	// Social Advanced has free trial that we don't consider "introduction offer"
+	if ( isJetpackSocialAdvancedSlug( product.product_slug ) ) {
+		return false;
+	}
+	return true;
 }
 
 /**
