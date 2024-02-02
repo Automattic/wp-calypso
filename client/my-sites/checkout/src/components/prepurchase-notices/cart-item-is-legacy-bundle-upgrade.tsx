@@ -1,4 +1,3 @@
-import { getJetpackProductDisplayName } from '@automattic/calypso-products';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { useTranslate } from 'i18n-calypso';
 import { FunctionComponent } from 'react';
@@ -15,13 +14,11 @@ const SitePlanIsLegacyBundleUpgrade: FunctionComponent< Props > = ( { sitePlan, 
 	const translate = useTranslate();
 	const supportUrl = localizeUrl( 'https://jetpack.com/contact-support/' );
 	const message = translate(
-		'The {{product /}} plan you are purchasing will replace your existing %(existingPlan)s plan. The new {{product /}} plan has a lower storage limit and shorter retention policy - some of your older backups maybe deleted after the upgrade. Please contact support about a free storage upgrade for one year.',
+		'The %(product)s plan you are purchasing will replace your existing %(existingPlan)s plan. The new %(product)s plan has a lower storage limit and shorter retention policy - some of your older backups maybe deleted after the upgrade. Please contact support about a free storage upgrade for one year.',
 		{
 			args: {
 				existingPlan: sitePlan.product_name_short,
-			},
-			components: {
-				product: <>{ getJetpackProductDisplayName( cartProduct ) }</>,
+				product: cartProduct.product_name,
 			},
 			comment:
 				'The `plan` variable refers to the short name of the plan the customer owns already. `product` refers to the product in the cart that is an upgrade.',
