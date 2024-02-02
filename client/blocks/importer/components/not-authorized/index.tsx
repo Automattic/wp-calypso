@@ -3,10 +3,15 @@ import { BackButton, NextButton, SubTitle, Title } from '@automattic/onboarding'
 import { useI18n } from '@wordpress/react-i18n';
 import React, { useEffect } from 'react';
 import { HintJetpackConnection } from '../../wordpress/import-everything/migration-error/hint-jetpack-connection';
+import { HintJetpackConnectionMovePlugin } from '../../wordpress/import-everything/migration-error/hint-jetpack-connection-move-plugin';
 
 import './style.scss';
 
-export type NotAuthorizedType = 'generic' | 'target-site-staging' | 'source-site-not-connected';
+export type NotAuthorizedType =
+	| 'generic'
+	| 'target-site-staging'
+	| 'source-site-not-connected'
+	| 'source-site-not-connected-move-plugin';
 
 interface Props {
 	type?: NotAuthorizedType;
@@ -82,7 +87,23 @@ const NotAuthorized: React.FunctionComponent< Props > = ( props ) => {
 							/>
 
 							<div className="import__buttons-group">
-								{ startImport && <NextButton onClick={ startImport }>Try Again</NextButton> }
+								{ startImport && (
+									<NextButton onClick={ startImport }>{ __( 'Try again' ) }</NextButton>
+								) }
+							</div>
+						</>
+					) }
+
+					{ type === 'source-site-not-connected-move-plugin' && (
+						<>
+							<Title>{ __( "We couldn't start the migration" ) }</Title>
+
+							<HintJetpackConnectionMovePlugin sourceSiteUrl={ sourceSiteUrl || '' } />
+
+							<div className="import__buttons-group">
+								{ startImport && (
+									<NextButton onClick={ startImport }>{ __( 'Try again' ) }</NextButton>
+								) }
 							</div>
 						</>
 					) }
