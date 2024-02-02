@@ -22,7 +22,6 @@ class SecurityKeyForm extends Component {
 	};
 
 	initiateSecurityKeyAuthentication = ( event, retryRequest = true ) => {
-
 		event.preventDefault();
 		this.setState( { isAuthenticating: true, showError: false } );
 
@@ -38,6 +37,7 @@ class SecurityKeyForm extends Component {
 						} else {
 							// We only retry once, so let's show the original error.
 							this.setState( { isAuthenticating: false, showError: true } );
+							this.onComplete( error, null );
 						}
 					} );
 					return;
@@ -109,8 +109,6 @@ class SecurityKeyForm extends Component {
 	}
 }
 
-export default connect(
-	( state ) => ( {
-		currentUserId: getCurrentUserId( state ),
-	} )
-)( localize( SecurityKeyForm ) );
+export default connect( ( state ) => ( {
+	currentUserId: getCurrentUserId( state ),
+} ) )( localize( SecurityKeyForm ) );
