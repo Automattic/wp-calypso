@@ -197,8 +197,12 @@ export function filterAndGroupCostOverridesForDisplay(
 				if ( ! canDisplayIntroductoryOfferDiscountForProduct( product ) ) {
 					return;
 				}
+				const oneYearVariant = getYearlyVariantFromProduct( product );
 				const newDiscountAmount =
-					costOverride.old_subtotal_integer - costOverride.new_subtotal_integer;
+					shouldConsiderIntroOfferAsMultiYearDiscount( product ) && oneYearVariant
+						? oneYearVariant.introductory_offer_discount_integer
+						: costOverride.old_subtotal_integer - costOverride.new_subtotal_integer;
+
 				grouped[ 'introductory-offer__' + product.uuid ] = {
 					overrideCode: costOverride.override_code,
 					uniqueId: costOverride.override_code + '__' + product.uuid,
@@ -265,7 +269,8 @@ function getYearlyVariantFromProduct( product: ResponseCartProduct ) {
  * them for a product in checkout, we can do so in this function.
  */
 function canDisplayIntroductoryOfferDiscountForProduct( product: ResponseCartProduct ): boolean {
-	// Social Advanced has free trial that we don't consider "introduction offer"
+	// Social Advanced has free trial that we don't consider an introductory
+	// offer. See https://github.com/Automattic/wp-calypso/pull/86353
 	if ( isJetpackSocialAdvancedSlug( product.product_slug ) ) {
 		return false;
 	}
@@ -282,6 +287,28 @@ function canDisplayIntroductoryOfferDiscountForProduct( product: ResponseCartPro
  * considered for a multi-year discount by `getMultiYearDiscountForProduct()`.
  */
 function canDisplayMultiYearDiscountForProduct( product: ResponseCartProduct ): boolean {
+	const isJetpack = isJetpackProduct( product ) || isJetpackPlan( product );
+	if (
+		isJetpack &&
+		isBiennially( product ) &&
+		! isJetpackSocialAdvancedSlug( product.product_slug )
+	) {
+		return true;
+	}
+	return false;
+}
+
+/**
+ * The idea of a multi-year discount is conceptual; it is not a true discount
+ * in terms of our billing system. Purchases of different product renewal
+ * intervals have different prices set and the amount they save depends on what
+ * you compare them to.
+ *
+ * Some products do not have a multi-year discount for their base prices but we
+ * want to consider part of their introductory offers as a multi-year discount
+ * instead. This function returns true if this is one of those products.
+ */
+function shouldConsiderIntroOfferAsMultiYearDiscount( product: ResponseCartProduct ): boolean {
 	const isJetpack = isJetpackProduct( product ) || isJetpackPlan( product );
 	if (
 		isJetpack &&
@@ -313,6 +340,29 @@ function getMultiYearDiscountForProduct( product: ResponseCartProduct ): number 
 	if ( ! product.months_per_bill_period || ! canDisplayMultiYearDiscountForProduct( product ) ) {
 		return 0;
 	}
+
+	if ( shouldConsiderIntroOfferAsMultiYearDiscount( product ) ) {
+		// Pretend that the introductory offer discount is only what it would
+		// be for the one year variant. Then consider the remaining
+		// introductory offer discount as the multi-year discount.
+		const oneYearVariant = getYearlyVariantFromProduct( product );
+		if ( oneYearVariant ) {
+			const oneYearVariantIntroOfferDiscount = oneYearVariant.introductory_offer_discount_integer;
+			const productIntroOffer = product.cost_overrides?.find(
+				( override ) => override.override_code === 'introductory-offer'
+			);
+			const productIntroOfferDiscount = productIntroOffer
+				? productIntroOffer.old_subtotal_integer - productIntroOffer.new_subtotal_integer
+				: 0;
+			const multiYearDiscount = productIntroOfferDiscount - oneYearVariantIntroOfferDiscount;
+
+			if ( multiYearDiscount > 0 ) {
+				return multiYearDiscount;
+			}
+		}
+		return 0;
+	}
+
 	const oneYearVariant = getYearlyVariantFromProduct( product );
 	if ( oneYearVariant ) {
 		const numberOfYears = product.months_per_bill_period / 12;
@@ -323,6 +373,7 @@ function getMultiYearDiscountForProduct( product: ResponseCartProduct ): number 
 			return multiYearDiscount;
 		}
 	}
+
 	return 0;
 }
 

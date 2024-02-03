@@ -507,9 +507,8 @@ export interface ResponseCartProductVariant {
 	currency: string;
 	price_integer: number;
 	price_before_discounts_integer: number;
-	introductory_offer_terms:
-		| Record< string, never >
-		| Pick< IntroductoryOfferTerms, 'interval_unit' | 'interval_count' >;
+	introductory_offer_discount_integer: number;
+	introductory_offer_terms: Record< string, never > | IntroductoryOfferTerms;
 	volume?: number;
 }
 
