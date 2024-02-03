@@ -1395,20 +1395,20 @@ function CheckoutLineItem( {
 			{ product && ! containsPartnerCoupon && (
 				<>
 					{ hasCheckoutVersion2 ? (
-						<LineItemMeta>
-							{ areThereVariants ? (
-								<DropdownWrapper>{ children }</DropdownWrapper>
-							) : (
-								<LineItemBillingIntervalWrapper product={ product } />
-							) }
-							<LineItemMetaInfoWrapper product={ product } />
-
-							{ isJetpackSearch( product ) && <JetpackSearchMeta product={ product } /> }
-							{ isEmail && <EmailMeta product={ product } isRenewal={ isRenewal } /> }
-							<DomainDiscountCallout product={ product } />
-							<IntroductoryOfferCallout product={ product } />
-							<JetpackAkismetSaleCouponCallout product={ product } />
-						</LineItemMeta>
+						<>
+							<BillingInterval>
+								{ areThereVariants && shouldShowVariantSelector ? (
+									<DropdownWrapper>{ children }</DropdownWrapper>
+								) : (
+									<LineItemBillingIntervalWrapper product={ product } />
+								) }
+							</BillingInterval>
+							<LineItemMeta>
+								<LineItemMetaInfoWrapper product={ product } />
+								{ isJetpackSearch( product ) && <JetpackSearchMeta product={ product } /> }
+								{ isEmail && <EmailMeta product={ product } isRenewal={ isRenewal } /> }
+							</LineItemMeta>
+						</>
 					) : (
 						<>
 							<UpgradeCreditInformationLineItem>
