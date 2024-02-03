@@ -316,9 +316,9 @@ function getMultiYearDiscountForProduct( product: ResponseCartProduct ): number 
 	const oneYearVariant = getYearlyVariantFromProduct( product );
 	if ( oneYearVariant ) {
 		const numberOfYears = product.months_per_bill_period / 12;
-		const multiYearDiscount =
-			oneYearVariant.price_before_discounts_integer * numberOfYears -
-			product.item_original_cost_integer;
+		const expectedMultiYearPrice = oneYearVariant.price_before_discounts_integer * numberOfYears;
+		const actualMultiYearPrice = product.item_original_cost_integer;
+		const multiYearDiscount = expectedMultiYearPrice - actualMultiYearPrice;
 		if ( multiYearDiscount > 0 ) {
 			return multiYearDiscount;
 		}
