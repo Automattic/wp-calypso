@@ -47,7 +47,7 @@
 		"@storybook/addon-actions": "^7.6.10",
 		"@storybook/cli": "^7.6.10",
 		"@storybook/react": "^7.6.10",
-		"@testing-library/jest-dom": "^6.2.0",
+		"@testing-library/jest-dom": "^6.3.0",
 		"@testing-library/react": "^14.1.2",
 		"@types/classnames": "^2.3.1",
 		"postcss": "^8.4.5",
