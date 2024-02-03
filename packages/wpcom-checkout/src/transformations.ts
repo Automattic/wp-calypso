@@ -382,9 +382,11 @@ function getSubtotalWithoutDiscountsForProduct( product: ResponseCartProduct ): 
 	// discount, since that is not a real discount) by the cost of each
 	// product's multi-year discount so that we can display that savings as a
 	// discount.
-	const multiYearDiscount = getMultiYearDiscountForProduct( product );
-	if ( multiYearDiscount ) {
-		return product.item_original_subtotal_integer + multiYearDiscount;
+	if ( ! shouldConsiderIntroOfferAsMultiYearDiscount( product ) ) {
+		const multiYearDiscount = getMultiYearDiscountForProduct( product );
+		if ( multiYearDiscount ) {
+			return product.item_original_subtotal_integer + multiYearDiscount;
+		}
 	}
 
 	return product.item_original_subtotal_integer;
