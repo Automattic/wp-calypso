@@ -46,7 +46,7 @@
 		"react-dom": "^18.2.0",
 		"redux": "^4.2.1",
 		"typescript": "^5.3.3",
-		"webpack": "^5.89.0"
+		"webpack": "^5.90.0"
 	},
 	"peerDependencies": {
 		"@wordpress/data": "^9.20.0",
