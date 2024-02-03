@@ -14,7 +14,7 @@ const SitePlanIsLegacyBundleUpgrade: FunctionComponent< Props > = ( { sitePlan, 
 	const translate = useTranslate();
 	const supportUrl = localizeUrl( 'https://jetpack.com/contact-support/' );
 	const message = translate(
-		'The %(product)s plan you are purchasing will replace your existing %(existingPlan)s plan. The new %(product)s plan has a lower storage limit and shorter retention policy - some of your older backups maybe deleted after the upgrade. Please contact support about a free storage upgrade for one year.',
+		'The %(product)s plan will replace your %(existingPlan)s plan. %(product)s is packed with additional features, but does have a lower backup storage capacity. Please contact support for a free storage upgrade for one year.',
 		{
 			args: {
 				existingPlan: sitePlan.product_name_short,

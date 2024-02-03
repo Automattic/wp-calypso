@@ -6,8 +6,9 @@
 		margin: 0;
 	}
 
+	.notice.is-info .notice__icon-wrapper,
 	.notice.is-info .notice__icon-wrapper-drop {
-		background-color: var(--color-accent-40);
+		background-color: var(--studio-blue-60);
 	}
 }
 
