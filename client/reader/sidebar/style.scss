@@ -32,10 +32,18 @@
 				color: rgba(var(--color-sidebar-text-rgb), 0.4);
 			}
 		}
+
+		.form-text-input-with-action__button {
+			color: rgba(var(--color-sidebar-text-rgb), 0.7);
+
+			&:disabled {
+				color: rgba(var(--color-sidebar-text-rgb), 0.4);
+				opacity: 1;
+			}
+		}
 	}
 
 	.reader-sidebar-tags__all-tags-link {
-		color: var(--studio-white);
 		font-weight: bold;
 		margin-bottom: 2px;
 	}
