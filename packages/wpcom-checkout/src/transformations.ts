@@ -11,6 +11,7 @@ import type { LineItemType } from './types';
 import type {
 	IntroductoryOfferTerms,
 	ResponseCart,
+	ResponseCartCostOverride,
 	ResponseCartProduct,
 	TaxBreakdownItem,
 } from '@automattic/shopping-cart';
@@ -149,6 +150,64 @@ export interface CostOverrideForDisplay {
 	discountAmount: number;
 }
 
+function isUserVisibleCostOverride(
+	costOverride: ResponseCartCostOverride,
+	product: ResponseCartProduct
+): boolean {
+	if ( costOverride.does_override_original_cost ) {
+		// We won't display original cost overrides since they are
+		// included in the original cost that's being displayed. They
+		// are not discounts.
+		return false;
+	}
+
+	if (
+		'introductory-offer' === costOverride.override_code &&
+		! canDisplayIntroductoryOfferDiscountForProduct( product )
+	) {
+		return false;
+	}
+	return true;
+}
+
+function makeSaleCostOverrideUnique(
+	costOverride: ResponseCartCostOverride,
+	product: ResponseCartProduct,
+	translate: ReturnType< typeof useTranslate >
+): ResponseCartCostOverride {
+	// Separate out Sale Coupons because we want to show the name
+	// of each item on sale.
+	if ( costOverride.override_code === 'sale-coupon-discount-1' ) {
+		return {
+			...costOverride,
+			human_readable_reason: translate( 'Sale: %(productName)s', {
+				textOnly: true,
+				args: { productName: product.product_name },
+			} ),
+		};
+	}
+	return costOverride;
+}
+
+function makeIntroductoryOfferCostOverrideUnique(
+	costOverride: ResponseCartCostOverride,
+	product: ResponseCartProduct,
+	translate: ReturnType< typeof useTranslate >
+): ResponseCartCostOverride {
+	// Replace introductory offer cost override text with wording specific to
+	// that offer.
+	if ( 'introductory-offer' === costOverride.override_code && product.introductory_offer_terms ) {
+		return {
+			...costOverride,
+			human_readable_reason: getDiscountReasonForIntroductoryOffer(
+				product.introductory_offer_terms,
+				translate
+			),
+		};
+	}
+	return costOverride;
+}
+
 export function filterAndGroupCostOverridesForDisplay(
 	responseCart: ResponseCart,
 	translate: ReturnType< typeof useTranslate >
@@ -158,74 +217,45 @@ export function filterAndGroupCostOverridesForDisplay(
 	const costOverridesGrouped = responseCart.products.reduce<
 		Record< string, CostOverrideForDisplay >
 	>( ( grouped: Record< string, CostOverrideForDisplay >, product ) => {
-		const costOverrides = product?.cost_overrides;
-		if ( ! costOverrides ) {
-			return grouped;
-		}
+		const costOverrides = product?.cost_overrides ?? [];
 
-		costOverrides.forEach( ( costOverride ) => {
-			if ( costOverride.does_override_original_cost ) {
-				// We won't display original cost overrides since they are
-				// included in the original cost that's being displayed. They
-				// are not discounts.
-				return;
-			}
+		costOverrides
+			.filter( ( costOverride ) => isUserVisibleCostOverride( costOverride, product ) )
+			.map( ( costOverride ) => makeSaleCostOverrideUnique( costOverride, product, translate ) )
+			.map( ( costOverride ) =>
+				makeIntroductoryOfferCostOverrideUnique( costOverride, product, translate )
+			)
+			.forEach( ( costOverride ) => {
+				// Subtract fake "multi-year" discount from some introductory
+				// cost overrides so we can display it separately below.
+				if ( 'introductory-offer' === costOverride.override_code ) {
+					const discountAmount = grouped[ costOverride.human_readable_reason ]?.discountAmount ?? 0;
+					const oneYearVariant = getYearlyVariantFromProduct( product );
+					const newDiscountAmount =
+						shouldConsiderIntroOfferAsMultiYearDiscount( product ) && oneYearVariant
+							? oneYearVariant.introductory_offer_discount_integer
+							: costOverride.old_subtotal_integer - costOverride.new_subtotal_integer;
 
-			// Do not group Sale Coupons because we want to show the name of each item on sale.
-			if ( costOverride.override_code === 'sale-coupon-discount-1' ) {
-				const newDiscountAmount =
-					costOverride.old_subtotal_integer - costOverride.new_subtotal_integer;
-
-				grouped[ costOverride.override_code + '__' + product.uuid ] = {
-					humanReadableReason: translate( 'Sale: %(productName)s', {
-						textOnly: true,
-						args: { productName: product.product_name },
-					} ),
-					overrideCode: costOverride.override_code,
-					uniqueId: costOverride.override_code + '__' + product.uuid,
-					discountAmount: newDiscountAmount,
-				};
-				return;
-			}
-
-			// Do not group introductory offers and replace their text with
-			// wording specific to that offer.
-			if (
-				'introductory-offer' === costOverride.override_code &&
-				product.introductory_offer_terms?.enabled
-			) {
-				if ( ! canDisplayIntroductoryOfferDiscountForProduct( product ) ) {
+					grouped[ costOverride.human_readable_reason ] = {
+						overrideCode: costOverride.override_code,
+						uniqueId: costOverride.override_code + '__' + product.uuid,
+						discountAmount: discountAmount + newDiscountAmount,
+						humanReadableReason: costOverride.human_readable_reason,
+					};
 					return;
 				}
-				const oneYearVariant = getYearlyVariantFromProduct( product );
+
+				// Most cost overrides go here.
+				const discountAmount = grouped[ costOverride.human_readable_reason ]?.discountAmount ?? 0;
 				const newDiscountAmount =
-					shouldConsiderIntroOfferAsMultiYearDiscount( product ) && oneYearVariant
-						? oneYearVariant.introductory_offer_discount_integer
-						: costOverride.old_subtotal_integer - costOverride.new_subtotal_integer;
-
-				grouped[ 'introductory-offer__' + product.uuid ] = {
+					costOverride.old_subtotal_integer - costOverride.new_subtotal_integer;
+				grouped[ costOverride.human_readable_reason ] = {
+					humanReadableReason: costOverride.human_readable_reason,
 					overrideCode: costOverride.override_code,
-					uniqueId: costOverride.override_code + '__' + product.uuid,
-					discountAmount: newDiscountAmount,
-					humanReadableReason: getDiscountReasonForIntroductoryOffer(
-						product.introductory_offer_terms,
-						translate
-					),
+					uniqueId: costOverride.override_code,
+					discountAmount: discountAmount + newDiscountAmount,
 				};
-				return;
-			}
-
-			// Most cost overrides go here.
-			const discountAmount = grouped[ costOverride.override_code ]?.discountAmount ?? 0;
-			const newDiscountAmount =
-				costOverride.old_subtotal_integer - costOverride.new_subtotal_integer;
-			grouped[ costOverride.override_code ] = {
-				humanReadableReason: costOverride.human_readable_reason,
-				overrideCode: costOverride.override_code,
-				uniqueId: costOverride.override_code,
-				discountAmount: discountAmount + newDiscountAmount,
-			};
-		} );
+			} );
 
 		// Add a fake "multi-year" discount if applicable. These are not real
 		// discounts in terms of our billing system; they are just the
