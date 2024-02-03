@@ -11,7 +11,7 @@ export const CurrentOption = styled.button< CurrentOptionProps >`
 	display: flex;
 	flex-direction: row;
 	justify-content: space-between;
-	padding: ${ hasCheckoutVersion( '2' ) ? '4px 16px' : '14px 16px' };
+	${ hasCheckoutVersion( '2' ) ? `padding:4px 16px; height: 40px` : `padding:14px 16px` };
 	width: 100%;
 	cursor: pointer;
 
@@ -40,7 +40,7 @@ export const Option = styled.li< OptionProps >`
 	/* the calc aligns the price with the price in CurrentOption */
 	padding: 10px calc( 14px + 24px + 16px ) 10px 16px;
 	cursor: pointer;
-
+	${ hasCheckoutVersion( '2' ) ? `height: 40px` : null };
 	&:hover {
 		background: var( --studio-blue-0 );
 

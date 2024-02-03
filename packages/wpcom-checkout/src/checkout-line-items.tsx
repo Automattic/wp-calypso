@@ -86,12 +86,13 @@ export const LineItem = styled( CheckoutLineItem )< {
 } >`
 	${ hasCheckoutVersion2
 		? `display: grid;
-	grid-template-columns: minmax(0, 3fr) 1fr;
+	grid-template-columns: 1fr min-content;
 	grid-template-rows: auto;
 	grid-template-areas:
 		'label price'
-		'meta remove';
-	gap: 6px 2px;
+		'term remove'
+		'meta   meta';
+	gap: 6px 4px;
 	margin-bottom: 8px;
 	padding: 10px 0;`
 		: `display: flex;
@@ -210,8 +211,20 @@ const LineItemPriceWrapper = styled.span< { theme?: Theme; isSummary?: boolean }
 	}
 `;
 
+const BillingInterval = styled.div< { theme?: Theme } >`
+	grid-area: term;
+	color: ${ ( props ) => props.theme.colors.textColorLight };
+	font-size: 14px;
+	width: 100%;
+	display: flex;
+	justify-content: space-between;
+	flex-wrap: wrap;
+	overflow-wrap: anywhere;
+	flex-direction: column;
+	align-content: flex-start;
+`;
 const DropdownWrapper = styled.span`
-	${ hasCheckoutVersion2 ? `grid-area: meta; width: 100%; margin-bottom: 6px;` : null }
+	${ hasCheckoutVersion2 ? `width: 100%; max-width: 200px` : null }
 `;
 
 const DeleteButtonWrapper = styled.div`
@@ -221,7 +234,7 @@ const DeleteButtonWrapper = styled.div`
 		? `
 	grid-area: remove;
 	display: grid;
-	align-items: flex-start;
+	align-items: center;
 	justify-content: end;
 	`
 		: `display: inherit };
@@ -1258,6 +1271,7 @@ function CheckoutLineItem( {
 	onRemoveProductCancel,
 	isAkPro500Cart,
 	areThereVariants,
+	shouldShowVariantSelector,
 }: PropsWithChildren< {
 	product: ResponseCartProduct;
 	className?: string;
@@ -1272,6 +1286,7 @@ function CheckoutLineItem( {
 	onRemoveProductCancel?: ( label: string ) => void;
 	isAkPro500Cart?: boolean;
 	areThereVariants?: boolean;
+	shouldShowVariantSelector?: boolean;
 } > ) {
 	const id = product.uuid;
 	const translate = useTranslate();
