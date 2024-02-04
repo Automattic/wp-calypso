@@ -208,6 +208,18 @@ function makeIntroductoryOfferCostOverrideUnique(
 	return costOverride;
 }
 
+function getDiscountForCostOverrideForDisplay(
+	costOverride: ResponseCartCostOverride,
+	product: ResponseCartProduct
+): number {
+	// Subtract fake "multi-year" discount from some introductory
+	// cost overrides so we can display it separately below.
+	const oneYearVariant = getYearlyVariantFromProduct( product );
+	return shouldConsiderIntroOfferAsMultiYearDiscount( product ) && oneYearVariant
+		? oneYearVariant.introductory_offer_discount_integer
+		: costOverride.old_subtotal_integer - costOverride.new_subtotal_integer;
+}
+
 export function filterAndGroupCostOverridesForDisplay(
 	responseCart: ResponseCart,
 	translate: ReturnType< typeof useTranslate >
@@ -226,34 +238,14 @@ export function filterAndGroupCostOverridesForDisplay(
 				makeIntroductoryOfferCostOverrideUnique( costOverride, product, translate )
 			)
 			.forEach( ( costOverride ) => {
-				// Subtract fake "multi-year" discount from some introductory
-				// cost overrides so we can display it separately below.
-				if ( 'introductory-offer' === costOverride.override_code ) {
-					const discountAmount = grouped[ costOverride.human_readable_reason ]?.discountAmount ?? 0;
-					const oneYearVariant = getYearlyVariantFromProduct( product );
-					const newDiscountAmount =
-						shouldConsiderIntroOfferAsMultiYearDiscount( product ) && oneYearVariant
-							? oneYearVariant.introductory_offer_discount_integer
-							: costOverride.old_subtotal_integer - costOverride.new_subtotal_integer;
-
-					grouped[ costOverride.human_readable_reason ] = {
-						overrideCode: costOverride.override_code,
-						uniqueId: costOverride.override_code + '__' + product.uuid,
-						discountAmount: discountAmount + newDiscountAmount,
-						humanReadableReason: costOverride.human_readable_reason,
-					};
-					return;
-				}
-
-				// Most cost overrides go here.
+				// Group discounts by human_readable_reason.
 				const discountAmount = grouped[ costOverride.human_readable_reason ]?.discountAmount ?? 0;
-				const newDiscountAmount =
-					costOverride.old_subtotal_integer - costOverride.new_subtotal_integer;
 				grouped[ costOverride.human_readable_reason ] = {
 					humanReadableReason: costOverride.human_readable_reason,
 					overrideCode: costOverride.override_code,
-					uniqueId: costOverride.override_code,
-					discountAmount: discountAmount + newDiscountAmount,
+					uniqueId: costOverride.human_readable_reason,
+					discountAmount:
+						discountAmount + getDiscountForCostOverrideForDisplay( costOverride, product ),
 				};
 			} );
 
@@ -339,6 +331,14 @@ function canDisplayMultiYearDiscountForProduct( product: ResponseCartProduct ): 
  * instead. This function returns true if this is one of those products.
  */
 function shouldConsiderIntroOfferAsMultiYearDiscount( product: ResponseCartProduct ): boolean {
+	if (
+		! product.cost_overrides?.some(
+			( costOverride ) => costOverride.override_code === 'introductory-offer'
+		)
+	) {
+		return false;
+	}
+
 	const isJetpack = isJetpackProduct( product ) || isJetpackPlan( product );
 	if (
 		isJetpack &&
