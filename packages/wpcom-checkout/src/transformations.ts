@@ -146,7 +146,6 @@ function getDiscountReasonForIntroductoryOffer(
 export interface CostOverrideForDisplay {
 	humanReadableReason: string;
 	overrideCode: string;
-	uniqueId: string;
 	discountAmount: number;
 }
 
@@ -243,7 +242,6 @@ export function filterAndGroupCostOverridesForDisplay(
 				grouped[ costOverride.human_readable_reason ] = {
 					humanReadableReason: costOverride.human_readable_reason,
 					overrideCode: costOverride.override_code,
-					uniqueId: costOverride.human_readable_reason,
 					discountAmount:
 						discountAmount + getDiscountForCostOverrideForDisplay( costOverride, product ),
 				};
@@ -259,7 +257,6 @@ export function filterAndGroupCostOverridesForDisplay(
 			grouped[ 'multi-year-discount' ] = {
 				humanReadableReason: translate( 'Multi-year discount' ),
 				overrideCode: 'multi-year-discount',
-				uniqueId: 'multi-year-discount',
 				discountAmount: discountAmount + multiYearDiscount,
 			};
 		}

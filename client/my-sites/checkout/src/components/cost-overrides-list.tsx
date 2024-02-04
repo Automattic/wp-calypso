@@ -82,7 +82,7 @@ export function CostOverridesList( {
 		<CostOverridesListStyle>
 			{ nonCouponOverrides.map( ( costOverride ) => {
 				return (
-					<div className="cost-overrides-list-item" key={ costOverride.uniqueId }>
+					<div className="cost-overrides-list-item" key={ costOverride.humanReadableReason }>
 						<span className="cost-overrides-list-item__reason">
 							{ costOverride.humanReadableReason }
 						</span>
@@ -95,7 +95,7 @@ export function CostOverridesList( {
 			{ ! removeCoupon &&
 				couponOverrides.map( ( costOverride ) => {
 					return (
-						<div className="cost-overrides-list-item" key={ costOverride.uniqueId }>
+						<div className="cost-overrides-list-item" key={ costOverride.humanReadableReason }>
 							<span className="cost-overrides-list-item__reason">
 								{ couponCode.length > 0
 									? translate( 'Coupon: %(couponCode)s', { args: { couponCode } } )
@@ -114,7 +114,7 @@ export function CostOverridesList( {
 					return (
 						<div
 							className="cost-overrides-list-item cost-overrides-list-item--coupon"
-							key={ costOverride.uniqueId }
+							key={ costOverride.humanReadableReason }
 						>
 							<span className="cost-overrides-list-item__reason">
 								{ couponCode.length > 0
