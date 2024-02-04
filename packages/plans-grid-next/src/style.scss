@@ -477,10 +477,6 @@ $mobile-card-max-width: 440px;
 }
 
 .plan-features-2023-grid__content {
-	.plans-features-main__group.is-scrollable & {
-		padding-top: $plan-features-header-banner-height;
-	}
-
 	.plan-features-2023-grid__table-bottom {
 		margin-top: 54px;
 	}
