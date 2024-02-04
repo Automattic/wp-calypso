@@ -1,5 +1,5 @@
 export const SESSION_STORAGE_IS_MIGRATE_FROM_WP = 'is_migrate_from_wp';
-export const SESSION_STORAGE_MIGRATION_STATUS = 'migration_in_progress';
+export const SESSION_STORAGE_MIGRATION_STATUS = 'migration_status';
 
 export const storeMigrateSource = () => {
 	window.sessionStorage.setItem( SESSION_STORAGE_IS_MIGRATE_FROM_WP, 'true' );
