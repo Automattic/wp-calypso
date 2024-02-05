@@ -57,6 +57,7 @@ import { createSocialUserFailed } from 'calypso/state/login/actions';
 import { getCurrentOAuth2Client } from 'calypso/state/oauth2-clients/ui/selectors';
 import getCurrentQueryArguments from 'calypso/state/selectors/get-current-query-arguments';
 import isWooCommerceCoreProfilerFlow from 'calypso/state/selectors/is-woocommerce-core-profiler-flow';
+import { resetSignup } from 'calypso/state/signup/actions';
 import { getSectionName } from 'calypso/state/ui/selectors';
 import CrowdsignalSignupForm from './crowdsignal';
 import P2SignupForm from './p2';
@@ -232,7 +233,20 @@ class SignupForm extends Component {
 
 			this.props.createSocialUserFailed( socialInfo, userExistsError, 'signup' );
 
-			page( login( { redirectTo: this.props.redirectToAfterLoginUrl } ) );
+			// Reset the signup step so that we don't re trigger this logic when the user goes back from login screen.
+			this.props.resetSignup();
+
+			const loginLink = this.getLoginLink( { emailAddress: userExistsError.email } );
+			page(
+				addQueryArgs(
+					{
+						service: this.props.step?.service,
+						access_token: this.props.step?.access_token,
+						id_token: this.props.step?.id_token,
+					},
+					loginLink
+				)
+			);
 		}
 	}
 
@@ -1327,5 +1341,6 @@ export default connect(
 		trackLoginMidFlow: () => recordTracksEventWithClientId( 'calypso_signup_login_midflow' ),
 		createSocialUserFailed,
 		redirectToLogout,
+		resetSignup,
 	}
 )( localize( SignupForm ) );
