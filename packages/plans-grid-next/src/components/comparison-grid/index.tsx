@@ -974,10 +974,18 @@ const ComparisonGrid = ( {
 		let newVisiblePlans = displayedGridPlans.map( ( { planSlug } ) => planSlug );
 		let visibleLength = newVisiblePlans.length;
 
-		visibleLength = 'large' === gridSize ? 4 : visibleLength;
-		visibleLength = 'medium' === gridSize ? 3 : visibleLength;
-		visibleLength = 'smedium' === gridSize ? 2 : visibleLength;
-		visibleLength = 'small' === gridSize ? 2 : visibleLength;
+		switch ( gridSize ) {
+			case 'large':
+				visibleLength = 4;
+				break;
+			case 'medium':
+				visibleLength = 3;
+				break;
+			case 'smedium':
+			case 'small':
+				visibleLength = 2;
+				break;
+		}
 
 		if ( newVisiblePlans.length !== visibleLength ) {
 			newVisiblePlans = newVisiblePlans.slice( 0, visibleLength );

@@ -48,19 +48,9 @@ const WrappedComparisonGrid = ( {
 			[ 'smedium', 686 ],
 			[ 'medium', 835 ], // enough to fit Enterpreneur plan. was 686
 			[ 'large', 1005 ], // enough to fit Enterpreneur plan. was 870
-			[ 'xlarge', 1238 ],
+			[ 'xlarge', 1180 ],
 		] ),
 	} );
-
-	// const gridSize = useGridSize( {
-	// 	containerRef: gridContainerRef,
-	// 	containerBreakpoints: new Map( [
-	// 		[ 'small', 0 ],
-	// 		[ 'smedium', 835 ], // enough to fit Enterpreneur plan. was 686
-	// 		[ 'medium', 1005 ], // enough to fit Enterpreneur plan. was 870
-	// 		[ 'large', 1238 ],
-	// 	] ),
-	// } );
 
 	const classNames = classnames( 'plans-grid-next', 'plans-grid-next__comparison-grid', {
 		'is-small': 'small' === gridSize,
