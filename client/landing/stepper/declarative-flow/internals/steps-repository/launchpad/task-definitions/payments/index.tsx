@@ -3,15 +3,13 @@ import { recordTaskClickTracksEvent } from '../../tracking';
 import { type TaskAction } from '../../types';
 
 export const getSetupPaymentsTask: TaskAction = ( task, flow, context ) => {
-	const { siteInfoQueryArgs, stripeConnectUrl } = context;
+	const { siteSlug, stripeConnectUrl } = context;
 
 	return {
 		...task,
 		badge_text: task.completed ? translate( 'Connected' ) : null,
 		actionDispatch: () => recordTaskClickTracksEvent( task, flow, context ),
-		calypso_path: stripeConnectUrl
-			? stripeConnectUrl
-			: `/earn/payments/${ siteInfoQueryArgs?.siteSlug }#launchpad`,
+		calypso_path: stripeConnectUrl ? stripeConnectUrl : `/earn/payments/${ siteSlug }#launchpad`,
 		useCalypsoPath: true,
 	};
 };
