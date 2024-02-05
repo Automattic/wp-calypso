@@ -19,7 +19,9 @@ export const ExcerptSetting = ( {
 	const translate = useTranslate();
 	return (
 		<FormFieldset>
-			<FormLabel>{ translate( 'For each new post email, include' ) }</FormLabel>
+			<FormLabel className="increase-margin-bottom-fix">
+				{ translate( 'For each new post email, include' ) }
+			</FormLabel>
 			<FormLabel>
 				{ /* @ts-expect-error FormRadio is not typed and is causing errors */ }
 				<FormRadio
