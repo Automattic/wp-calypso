@@ -90,16 +90,6 @@ describe( DataHelper.createSuiteTitle( 'Blocks: Media (Upload)' ), function () {
 			await imageBlock.upload( testFiles.imageReservedName.fullpath );
 		} );
 
-		it( `${ ImageBlock.blockName } block: upload image file using Calypso media modal `, async function () {
-			const blockHandle = await editorPage.addBlockFromSidebar(
-				ImageBlock.blockName,
-				ImageBlock.blockEditorSelector,
-				{ noSearch: true }
-			);
-			const imageBlock = new ImageBlock( page, blockHandle );
-			await imageBlock.uploadThroughMediaLibrary( testFiles.image.fullpath );
-		} );
-
 		it( `${ AudioBlock.blockName } block: upload audio file`, async function () {
 			const blockHandle = await editorPage.addBlockFromSidebar(
 				AudioBlock.blockName,
@@ -143,10 +133,6 @@ describe( DataHelper.createSuiteTitle( 'Blocks: Media (Upload)' ), function () {
 			await ImageBlock.validatePublishedContent( page, [
 				testFiles.imageReservedName.filename.replace( /[^a-zA-Z ]/g, '' ),
 			] );
-		} );
-
-		it( 'Image added via Calypso modal is visible', async function () {
-			await ImageBlock.validatePublishedContent( page, [ testFiles.image.filename ] );
 		} );
 
 		it( `Audio block is visible`, async function () {

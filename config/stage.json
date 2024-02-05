@@ -19,6 +19,7 @@
 	"features": {
 		"ad-tracking": false,
 		"akismet/checkout-quantity-dropdown": true,
+		"block-editor/iframe": true,
 		"calypso/ai-blogging-prompts": false,
 		"calypso/ai-assembler": false,
 		"calypso/help-center": true,
