@@ -117,8 +117,6 @@ const Paid: React.FC< OwnProps > = ( props ) => {
 		stripZeros: true,
 	} );
 
-	//const customBillingDetails = customTimeFrameBillingTerms ?
-
 	let priceComponent = isDiscounted ? (
 		<DiscountedPrice { ...props } finalPrice={ finalPrice } />
 	) : (
