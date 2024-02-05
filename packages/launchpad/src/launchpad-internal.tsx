@@ -62,7 +62,7 @@ const LaunchpadInternal = ( {
 	} );
 
 	const itemClickHandler = ( task: Task ) => {
-		if ( ! enableAutoTracking ) {
+		if ( enableAutoTracking ) {
 			trackClick( task );
 		}
 		task?.actionDispatch?.();

@@ -42,8 +42,8 @@ describe( 'LaunchpadInternal', () => {
 		expect( checklistItems.length ).toBe( 3 );
 	} );
 
-	it( 'records the checklist item click', async () => {
-		renderComponent();
+	it( 'records the checklist item click when autoTracking is enabled', async () => {
+		renderComponent( { enableAutoTracking: true } );
 
 		jest.clearAllMocks();
 		await userEvent.click( screen.getByRole( 'button', { name: /Task 1/ } ) );
