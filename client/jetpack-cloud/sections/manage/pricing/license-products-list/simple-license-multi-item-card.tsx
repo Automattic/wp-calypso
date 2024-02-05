@@ -147,6 +147,14 @@ export const SimpleLicenseMultiItemCard = ( {
 					<div className="simple-item-card__header">
 						<div>
 							<h3 className="simple-item-card__title">{ title }</h3>
+							<MultipleChoiceQuestion
+								name={ `${ variant.family_slug }-variant-options` }
+								question={ translate( 'Select variant:' ) }
+								answers={ variantOptions }
+								selectedAnswerId={ variant.slug }
+								onAnswerChange={ onChangeOption }
+								shouldShuffleAnswers={ false }
+							/>
 							<div className="simple-item-card__price">{ price }</div>
 						</div>
 						<Button
@@ -161,14 +169,6 @@ export const SimpleLicenseMultiItemCard = ( {
 							{ ctaLabel }
 						</Button>
 					</div>
-					<MultipleChoiceQuestion
-						name={ `${ variant.family_slug }-variant-options` }
-						question={ translate( 'Select variant:' ) }
-						answers={ variantOptions }
-						selectedAnswerId={ variant.slug }
-						onAnswerChange={ onChangeOption }
-						shouldShuffleAnswers={ false }
-					/>
 					<div className="simple-item-card__footer">
 						{ productDescription }
 						{ moreInfoLink }
@@ -179,7 +179,7 @@ export const SimpleLicenseMultiItemCard = ( {
 				<LicenseLightbox
 					product={ variant }
 					quantity={ bundleSize }
-					ctaLabel={ translate( 'Select License' ) }
+					ctaLabel={ translate( 'Select license' ) }
 					isCTAExternalLink={ false }
 					isCTAPrimary={ true }
 					isDisabled={ false }
