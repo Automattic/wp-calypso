@@ -1,4 +1,4 @@
-import { Card, FormInputValidation } from '@automattic/components';
+import { Card, FormInputValidation, FormLabel } from '@automattic/components';
 import { localize } from 'i18n-calypso';
 import { defer } from 'lodash';
 import PropTypes from 'prop-types';
@@ -6,7 +6,6 @@ import { Component } from 'react';
 import { connect } from 'react-redux';
 import FormButton from 'calypso/components/forms/form-button';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
-import FormLabel from 'calypso/components/forms/form-label';
 import FormVerificationCodeInput from 'calypso/components/forms/form-verification-code-input';
 import { recordTracksEventWithClientId as recordTracksEvent } from 'calypso/state/analytics/actions';
 import {

@@ -1,4 +1,4 @@
-import { Button, Card, Dialog, FormInputValidation } from '@automattic/components';
+import { Button, Card, Dialog, FormInputValidation, FormLabel } from '@automattic/components';
 import { supported } from '@github/webauthn-json';
 import debugFactory from 'debug';
 import { localize } from 'i18n-calypso';
@@ -9,13 +9,11 @@ import CardHeading from 'calypso/components/card-heading';
 import FormButton from 'calypso/components/forms/form-button';
 import FormCheckbox from 'calypso/components/forms/form-checkbox';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
-import FormLabel from 'calypso/components/forms/form-label';
 import FormVerificationCodeInput from 'calypso/components/forms/form-verification-code-input';
 import Notice from 'calypso/components/notice';
 import WarningCard from 'calypso/components/warning-card';
 import { recordGoogleEvent } from 'calypso/state/analytics/actions';
 import { redirectToLogout } from 'calypso/state/current-user/actions';
-import { getCurrentUserId } from 'calypso/state/current-user/selectors';
 import SecurityKeyForm from './security-key-form';
 import TwoFactorActions from './two-factor-actions';
 import './style.scss';
@@ -134,12 +132,6 @@ class ReauthRequired extends Component {
 	preValidateAuthCode() {
 		return this.state.code.length && this.state.code.length > 5;
 	}
-
-	loginUserWithSecurityKey = () => {
-		return this.props.twoStepAuthorization.loginUserWithSecurityKey( {
-			user_id: this.props.currentUserId,
-		} );
-	};
 
 	renderFailedValidationMsg() {
 		if ( ! this.props.twoStepAuthorization.codeValidationFailed() ) {
@@ -286,10 +278,7 @@ class ReauthRequired extends Component {
 				isVisible={ this.props?.twoStepAuthorization.isReauthRequired() }
 			>
 				{ isSecurityKeySupported && twoFactorAuthType === 'webauthn' ? (
-					<SecurityKeyForm
-						loginUserWithSecurityKey={ this.loginUserWithSecurityKey }
-						onComplete={ this.refreshNonceOnFailure }
-					/>
+					<SecurityKeyForm twoStepAuthorization={ this.props.twoStepAuthorization } />
 				) : (
 					this.renderVerificationForm()
 				) }
@@ -319,13 +308,6 @@ class ReauthRequired extends Component {
 		);
 	}
 
-	refreshNonceOnFailure = ( error ) => {
-		const errors = [].slice.call( error?.data?.errors ?? [] );
-		if ( errors.some( ( e ) => e.code === 'invalid_two_step_nonce' ) ) {
-			this.props.twoStepAuthorization.fetch();
-		}
-	};
-
 	handleAuthSwitch = ( authType ) => {
 		this.setState( { twoFactorAuthType: authType } );
 		if ( authType === 'sms' ) {
@@ -345,17 +327,12 @@ class ReauthRequired extends Component {
 }
 
 ReauthRequired.propTypes = {
-	currentUserId: PropTypes.number.isRequired,
+	twoStepAuthorization: PropTypes.object.isRequired,
 };
 
 /* eslint-enable jsx-a11y/no-autofocus, jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions, jsx-a11y/anchor-is-valid */
 
-export default connect(
-	( state ) => ( {
-		currentUserId: getCurrentUserId( state ),
-	} ),
-	{
-		redirectToLogout,
-		recordGoogleEvent,
-	}
-)( localize( ReauthRequired ) );
+export default connect( null, {
+	redirectToLogout,
+	recordGoogleEvent,
+} )( localize( ReauthRequired ) );

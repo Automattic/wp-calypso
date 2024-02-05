@@ -12,6 +12,10 @@ import { get, isEmpty, omit } from 'lodash';
 import moment from 'moment';
 import { Component } from 'react';
 import { connect } from 'react-redux';
+import {
+	storeMigrationStatus,
+	clearMigrationStatus,
+} from 'calypso/blocks/importer/wordpress/utils';
 import DocumentHead from 'calypso/components/data/document-head';
 import FormattedHeader from 'calypso/components/formatted-header';
 import Main from 'calypso/components/main';
@@ -67,6 +71,7 @@ export class SectionMigrate extends Component {
 	componentDidMount() {
 		const { targetSite, targetSiteId, targetSiteSlug, sourceSite, sourceSiteId } = this.props;
 		const sourceSiteUrl = get( sourceSite, 'URL', sourceSiteId );
+		clearMigrationStatus();
 
 		if ( this.isNonAtomicJetpack() ) {
 			return page( `/import/${ this.props.targetSiteSlug }` );
@@ -185,6 +190,7 @@ export class SectionMigrate extends Component {
 	};
 
 	setMigrationState = ( state ) => {
+		storeMigrationStatus( state.migrationStatus );
 		// A response from the status endpoint may come in after the
 		// migrate/from endpoint has returned an error. This avoids that
 		// response accidentally clearing the error state.

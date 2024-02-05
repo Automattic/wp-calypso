@@ -32,23 +32,26 @@ export const AllLicenseItems = ( {
 						item = item[ 0 ];
 					}
 
+					// If the product doesn't support bundles, force a bundle size of 1.
+					const supportedBundleSize = item?.supported_bundles?.length > 0 ? bundleSize : 1;
+
 					return (
 						<li key={ idx } className="jetpack-product-store__most-popular--item">
 							{ Array.isArray( item ) ? (
 								<SimpleLicenseMultiItemCard
 									variants={ item }
-									bundleSize={ bundleSize }
+									bundleSize={ supportedBundleSize }
 									ctaAsPrimary={ true }
 									isCtaDisabled={ false }
-									isCtaExternal={ true }
+									isCtaExternal={ false }
 								/>
 							) : (
 								<SimpleLicenseItemCard
 									item={ item }
-									bundleSize={ bundleSize }
+									bundleSize={ supportedBundleSize }
 									ctaAsPrimary={ true }
 									isCtaDisabled={ false }
-									isCtaExternal={ true }
+									isCtaExternal={ false }
 								/>
 							) }
 						</li>

@@ -890,6 +890,7 @@ const PlansFeaturesMain = ( {
 									generatedWPComSubdomain={ resolvedSubdomainName }
 									isCustomDomainAllowedOnFreePlan={ isCustomDomainAllowedOnFreePlan }
 									isInSignup={ isInSignup }
+									isInAdmin={ ! isInSignup }
 									isLaunchPage={ isLaunchPage }
 									onUpgradeClick={ handleUpgradeClick }
 									selectedFeature={ selectedFeature }
@@ -951,6 +952,7 @@ const PlansFeaturesMain = ( {
 											<ComparisonGrid
 												gridPlans={ gridPlansForComparisonGrid }
 												isInSignup={ isInSignup }
+												isInAdmin={ ! isInSignup }
 												isLaunchPage={ isLaunchPage }
 												onUpgradeClick={ handleUpgradeClick }
 												selectedFeature={ selectedFeature }

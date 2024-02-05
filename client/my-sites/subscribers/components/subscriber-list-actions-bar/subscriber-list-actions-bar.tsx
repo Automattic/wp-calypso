@@ -1,7 +1,7 @@
+import { SelectDropdown } from '@automattic/components';
 import SearchInput from '@automattic/search';
 import { useTranslate } from 'i18n-calypso';
 import { useMemo } from 'react';
-import SelectDropdown from 'calypso/components/select-dropdown';
 import { SearchIcon } from 'calypso/landing/subscriptions/components/icons';
 import { Option, SortControls } from 'calypso/landing/subscriptions/components/sort-controls';
 import { getOptionLabel } from 'calypso/landing/subscriptions/helpers';

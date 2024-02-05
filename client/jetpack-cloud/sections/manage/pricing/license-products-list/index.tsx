@@ -14,10 +14,9 @@ export const LicenseProductsList = ( { bundleSize }: ProductsListProps ) => {
 	const selectedSite = null;
 	const usePublicQuery = true;
 
-	const { plans, backupAddons, products, wooExtensions } = useProductAndPlans( {
+	const { plans, products, backupAddons, wooExtensions } = useProductAndPlans( {
 		selectedSite,
 		selectedProductFilter,
-		selectedBundleSize: bundleSize,
 		productSearchQuery,
 		usePublicQuery,
 	} );
@@ -30,6 +29,7 @@ export const LicenseProductsList = ( { bundleSize }: ProductsListProps ) => {
 					'Save big with comprehensive bundles of Jetpack security, performance, and growth tools.'
 				) }
 				items={ plans }
+				bundleSize={ bundleSize }
 			/>
 			<AllLicenseItems
 				heading={ translate( 'Products' ) }
@@ -37,6 +37,7 @@ export const LicenseProductsList = ( { bundleSize }: ProductsListProps ) => {
 					'Mix and match powerful security, performance, and growth tools for your site.'
 				) }
 				items={ products }
+				bundleSize={ bundleSize }
 			/>
 			<AllLicenseItems
 				heading={ translate( 'VaultPress Backup Add-ons' ) }
@@ -44,6 +45,7 @@ export const LicenseProductsList = ( { bundleSize }: ProductsListProps ) => {
 					'Add additional storage to your current VaultPress Backup plans.'
 				) }
 				items={ backupAddons }
+				bundleSize={ bundleSize }
 			/>
 			<AllLicenseItems
 				heading={ translate( 'WooCommerce Extensions' ) }
@@ -51,6 +53,7 @@ export const LicenseProductsList = ( { bundleSize }: ProductsListProps ) => {
 					'You must have WooCommerce installed to utilize these paid extensions.'
 				) }
 				items={ wooExtensions }
+				bundleSize={ bundleSize }
 			/>
 		</div>
 	);

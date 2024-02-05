@@ -83,7 +83,7 @@ export default function AgencySignupForm() {
 			if ( queryParams.get( 'source' ) === 'manage-pricing-page' ) {
 				const bundleSize = queryParams.get( 'bundle_size' ) || '1';
 				const path = `/partner-portal/issue-license?product_slug=${ queryParams.get(
-					'product_slug'
+					'products'
 				) }&bundle_size=${ bundleSize }&source=manage-pricing-page`;
 				page.redirect( path );
 			}

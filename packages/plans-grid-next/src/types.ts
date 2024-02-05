@@ -57,6 +57,8 @@ export interface GridPlan {
  * Grid Component Types:
  ***********************/
 
+export type GridSize = 'small' | 'medium' | 'large';
+
 export type PlansIntent =
 	| 'plans-blog-onboarding'
 	| 'plans-newsletter'
@@ -103,6 +105,7 @@ export interface CommonGridProps {
 	 */
 	selectedSiteId?: number | null;
 	isInSignup: boolean;
+	isInAdmin: boolean;
 	isLaunchPage?: boolean | null;
 	isReskinned?: boolean;
 	onStorageAddOnClick?: ( addOnSlug: WPComStorageAddOnSlug ) => void;
@@ -120,6 +123,8 @@ export interface CommonGridProps {
 	planTypeSelectorProps?: PlanTypeSelectorProps;
 	onUpgradeClick: ( planSlug: PlanSlug ) => void;
 	planUpgradeCreditsApplicable?: number | null;
+	gridContainerRef?: React.MutableRefObject< HTMLDivElement | null >;
+	gridSize?: string;
 }
 
 export interface FeaturesGridProps extends CommonGridProps {
@@ -149,7 +154,7 @@ export type GridContextProps = {
 };
 
 export type ComparisonGridExternalProps = Omit< GridContextProps, 'children' > &
-	Omit< ComparisonGridProps, 'onUpgradeClick' > & {
+	Omit< ComparisonGridProps, 'onUpgradeClick' | 'gridContainerRef' | 'gridSize' > & {
 		onUpgradeClick?: (
 			cartItems?: MinimalRequestCartProduct[] | null,
 			clickedPlanSlug?: PlanSlug
@@ -157,7 +162,10 @@ export type ComparisonGridExternalProps = Omit< GridContextProps, 'children' > &
 	};
 
 export type FeaturesGridExternalProps = Omit< GridContextProps, 'children' > &
-	Omit< FeaturesGridProps, 'onUpgradeClick' | 'isLargeCurrency' | 'translate' > & {
+	Omit<
+		FeaturesGridProps,
+		'onUpgradeClick' | 'isLargeCurrency' | 'translate' | 'gridContainerRef' | 'gridSize'
+	> & {
 		onUpgradeClick?: (
 			cartItems?: MinimalRequestCartProduct[] | null,
 			clickedPlanSlug?: PlanSlug
