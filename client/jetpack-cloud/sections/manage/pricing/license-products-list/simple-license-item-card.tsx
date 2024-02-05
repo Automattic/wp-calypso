@@ -4,7 +4,7 @@ import { addQueryArgs } from '@wordpress/url';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback, useState } from 'react';
 import { useSelector } from 'react-redux';
-import 'calypso/my-sites/plans/jetpack-plans/product-store/featured-item-card/style.scss';
+import 'calypso/my-sites/plans/jetpack-plans/product-store/simple-item-card/style.scss';
 import getAPIFamilyProductIcon from 'calypso/jetpack-cloud/sections/manage/pricing/utils/get-api-family-product-icon';
 import { useProductDescription } from 'calypso/jetpack-cloud/sections/partner-portal/hooks';
 import { useURLQueryParams } from 'calypso/jetpack-cloud/sections/partner-portal/hooks/index';
