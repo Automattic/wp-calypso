@@ -7,7 +7,6 @@ import JetpackComFooter from 'calypso/jetpack-cloud/sections/pricing/jpcom-foote
 import JetpackComMasterbar, {
 	MAIN_CONTENT_ID,
 } from 'calypso/jetpack-cloud/sections/pricing/jpcom-masterbar';
-import StoreFooter from 'calypso/jetpack-connect/store-footer';
 import { Recommendations } from 'calypso/my-sites/plans/jetpack-plans/product-store/recommendations';
 import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
@@ -52,7 +51,6 @@ export default function ManagePricingPage() {
 					<LicenseProductsList bundleSize={ selectedSize } />
 					<PricingNeedMoreInfo />
 					<Recommendations />
-					<StoreFooter />
 				</div>
 			</Main>
 			<JetpackComFooter />

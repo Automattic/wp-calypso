@@ -2,22 +2,22 @@
 @import "@wordpress/base-styles/mixins";
 @import "@wordpress/base-styles/colors";
 
-.header {
+.jetpack-product-store .header {
 	text-align: center;
-}
 
-.header__sub-title {
-	padding-top: 2em;
-	color: var(--studio-black);
-}
+	.header__sub-title {
+		padding-top: 2em;
+		color: var(--studio-black);
+	}
 
-.header__main-title {
-	h1 {
-		/* stylelint-disable-next-line declaration-property-unit-allowed-list */
-		font-size: 2.5em;
-		font-weight: 600;
+	.header__main-title {
+		h1 {
+			/* stylelint-disable-next-line declaration-property-unit-allowed-list */
+			font-size: 2.5em;
+			font-weight: 600;
 
-		margin: 1.5em auto 0.25em;
+			margin: 1.5em auto 0.25em;
+		}
 	}
 }
 
