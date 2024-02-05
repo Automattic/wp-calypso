@@ -425,14 +425,6 @@ export function getSubtotalWithoutDiscounts( responseCart: ResponseCart ): numbe
 	}, 0 );
 }
 
-export function hasIntroductoryDiscount( responseCart: ResponseCart ): boolean {
-	return responseCart.products.some(
-		( product ) =>
-			( isJetpackPlan( product ) || isJetpackProduct( product ) ) &&
-			!! product.introductory_offer_terms?.enabled
-	);
-}
-
 export function getTotalDiscountsWithoutCredits(
 	responseCart: ResponseCart,
 	translate: ReturnType< typeof useTranslate >

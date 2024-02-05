@@ -37,7 +37,6 @@ import {
 	getSubtotalWithoutDiscounts,
 	filterAndGroupCostOverridesForDisplay,
 	getCreditsLineItemFromCart,
-	hasIntroductoryDiscount,
 } from '@automattic/wpcom-checkout';
 import { keyframes } from '@emotion/react';
 import styled from '@emotion/styled';
@@ -147,6 +146,14 @@ export function CheckoutSummaryFeaturedList( {
 	);
 }
 
+function hasIntroductoryOfferForInitialPurchaseOnly( responseCart: ResponseCart ): boolean {
+	return responseCart.products.some(
+		( product ) =>
+			!! product.introductory_offer_terms?.enabled &&
+			product.introductory_offer_terms.transition_after_renewal_count === 0
+	);
+}
+
 function CheckoutSummaryPriceList() {
 	const cartKey = useCartKey();
 	const { responseCart } = useShoppingCart( cartKey );
@@ -210,7 +217,7 @@ function CheckoutSummaryPriceList() {
 					</span>
 				</CheckoutSummaryTotal>
 
-				{ hasIntroductoryDiscount( responseCart ) && (
+				{ hasIntroductoryOfferForInitialPurchaseOnly( responseCart ) && (
 					<CheckoutSummaryExplanation>
 						{ preventWidows(
 							translate( '*Introductory offer first term only, renews at regular rate.' )
