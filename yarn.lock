@@ -926,7 +926,7 @@ __metadata:
     "@automattic/i18n-utils": "workspace:^"
     "@automattic/typography": "workspace:^"
     "@tanstack/react-query": "npm:^5.15.5"
-    "@types/wordpress__block-library": "npm:^2.6.1"
+    "@types/wordpress__block-library": "npm:^2.6.3"
     "@wordpress/block-editor": "npm:^12.18.2"
     "@wordpress/block-library": "npm:^8.27.2"
     "@wordpress/components": "npm:^25.16.0"
@@ -8215,10 +8215,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/wordpress__block-library@npm:^2.6.1":
-  version: 2.6.1
-  resolution: "@types/wordpress__block-library@npm:2.6.1"
-  checksum: bd007e3e36990e45111a0cbbf79eec9120cef69525773247d0c72db81a3870362fadb5224372410766a14902f1453119a0d8702e09aa3b5f6028d210d949dc90
+"@types/wordpress__block-library@npm:^2.6.3":
+  version: 2.6.3
+  resolution: "@types/wordpress__block-library@npm:2.6.3"
+  checksum: 456203a40a1a9833f43a00be5cc3debb96a95414d9301b918de78e351122218e3ac80d724eff83be55015f178c2de799aef47448d3b60bf6e67d39ff01d8776b
   languageName: node
   linkType: hard
 
