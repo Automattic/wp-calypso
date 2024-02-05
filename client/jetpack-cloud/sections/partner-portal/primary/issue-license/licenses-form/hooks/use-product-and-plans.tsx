@@ -27,6 +27,7 @@ type Props = {
 	selectedSite?: SiteDetails | null;
 	selectedProductFilter?: string | null;
 	productSearchQuery?: string;
+	usePublicQuery?: boolean;
 };
 
 const getProductsAndPlansByFilter = (
@@ -113,8 +114,9 @@ export default function useProductAndPlans( {
 	selectedSite,
 	selectedProductFilter = PRODUCT_FILTER_ALL,
 	productSearchQuery,
+	usePublicQuery = false,
 }: Props ) {
-	const { data, isLoading: isLoadingProducts } = useProductsQuery();
+	const { data, isLoading: isLoadingProducts } = useProductsQuery( usePublicQuery );
 
 	const addedPlanAndProducts = useSelector( ( state ) =>
 		selectedSite ? getAssignedPlanAndProductIDsForSite( state, selectedSite.ID ) : null

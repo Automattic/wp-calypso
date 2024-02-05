@@ -253,7 +253,7 @@ export const useComparisonData = () => {
 							},
 							COMPLETE: {
 								highlight: true,
-								content: translate( 'Social Basic' ),
+								content: translate( 'Social Advanced' ),
 							},
 						},
 					},

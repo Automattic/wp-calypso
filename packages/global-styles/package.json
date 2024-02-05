@@ -35,8 +35,8 @@
 		"@automattic/i18n-utils": "workspace:^",
 		"@automattic/typography": "workspace:^",
 		"@tanstack/react-query": "^5.15.5",
-		"@wordpress/block-editor": "^12.18.1",
-		"@wordpress/block-library": "^8.27.1",
+		"@wordpress/block-editor": "^12.18.2",
+		"@wordpress/block-library": "^8.27.2",
 		"@wordpress/components": "^25.16.0",
 		"@wordpress/compose": "^6.27.0",
 		"@wordpress/keycodes": "^3.50.0",
@@ -59,7 +59,7 @@
 	},
 	"devDependencies": {
 		"@automattic/calypso-typescript-config": "workspace:^",
-		"@types/wordpress__block-library": "^2.6.1",
+		"@types/wordpress__block-library": "^2.6.3",
 		"typescript": "^5.3.3"
 	},
 	"private": true

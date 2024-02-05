@@ -1,0 +1,13 @@
+.pricing-need-more-info {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	margin: 4em 0;
+}
+
+.pricing-need-more-info__headline {
+	font-size: 1.5rem !important;
+	font-weight: 700 !important;
+	line-height: inherit;
+	padding-bottom: 0.9375rem;
+}

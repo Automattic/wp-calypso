@@ -286,14 +286,21 @@ export function receiveSiteFrontPage( siteId, { show_on_front, page_on_front, pa
 
 /**
  * Returns an action object to be used to update the site migration status.
- * @param  {number} siteId Site ID
- * @param  {string} migrationStatus The status of the migration.
+ * @param {number} siteId Site ID
+ * @param {string} migrationStatus The status of the migration.
+ * @param {string} migrationErrorStatus The status error of the migration.
  * @param {string} lastModified Optional timestamp from the migration DB record
  * @returns {Object} Action object
  */
-export const updateSiteMigrationMeta = ( siteId, migrationStatus, lastModified = null ) => ( {
+export const updateSiteMigrationMeta = (
+	siteId,
+	migrationStatus,
+	migrationErrorStatus,
+	lastModified = null
+) => ( {
 	siteId,
 	type: SITE_MIGRATION_STATUS_UPDATE,
 	migrationStatus,
+	migrationErrorStatus,
 	lastModified,
 } );

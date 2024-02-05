@@ -664,6 +664,12 @@ const sections = [
 		module: 'calypso/my-sites/site-monitoring',
 		group: 'sites',
 	},
+	{
+		name: 'github-deployments',
+		paths: [ '/github-deployments' ],
+		module: 'calypso/my-sites/github-deployments',
+		group: 'sites',
+	},
 ];
 
 module.exports = sections;

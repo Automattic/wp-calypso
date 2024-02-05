@@ -914,7 +914,10 @@ class ThemeSheet extends Component {
 	};
 
 	renderOverviewTab = () => {
-		const { download, isWpcomTheme, siteSlug, taxonomies, isPremium } = this.props;
+		const { download, isWpcomTheme, siteSlug, taxonomies, isPremium, themeTier } = this.props;
+
+		const showDownloadCard =
+			download && ( config.isEnabled( 'themes/tiers' ) ? 'free' === themeTier?.slug : ! isPremium );
 
 		return (
 			<div>
@@ -927,7 +930,7 @@ class ThemeSheet extends Component {
 						onClick={ this.trackFeatureClick }
 					/>
 				</div>
-				{ download && ! isPremium && <ThemeDownloadCard href={ download } /> }
+				{ showDownloadCard && <ThemeDownloadCard href={ download } /> }
 			</div>
 		);
 	};
@@ -1197,6 +1200,7 @@ class ThemeSheet extends Component {
 					this.props.recordTracksEvent( 'calypso_theme_sheet_primary_button_click', {
 						theme: this.props.themeId,
 						theme_type: themeType,
+						theme_tier: themeTier?.slug,
 						...( key && { action: key } ),
 					} );
 
@@ -1464,6 +1468,9 @@ class ThemeSheet extends Component {
 				upsellNudgePlan =
 					isExternallyManagedTheme || isBundledSoftwareSet ? PLAN_BUSINESS : PLAN_PREMIUM;
 			}
+			const upsellNudgeFeature = config.isEnabled( 'themes/tiers' )
+				? themeTier?.feature
+				: WPCOM_FEATURES_PREMIUM_THEMES_UNLIMITED;
 
 			pageUpsellBanner = (
 				<UpsellNudge
@@ -1472,7 +1479,7 @@ class ThemeSheet extends Component {
 					title={ this.getBannerUpsellTitle() }
 					description={ preventWidows( this.getBannerUpsellDescription() ) }
 					event="themes_plan_particular_free_with_plan"
-					feature={ WPCOM_FEATURES_PREMIUM_THEMES_UNLIMITED }
+					feature={ upsellNudgeFeature }
 					forceHref={ onClick === null }
 					disableHref={ onClick !== null }
 					onClick={ null === onClick ? noop : onClick }
@@ -1480,6 +1487,7 @@ class ThemeSheet extends Component {
 					showIcon={ true }
 					forceDisplay={ forceDisplay }
 					displayAsLink={ onClick !== null }
+					tracksClickProperties={ { theme_tier: themeTier?.slug } }
 				/>
 			);
 		}
@@ -1511,7 +1519,11 @@ class ThemeSheet extends Component {
 					showIcon
 					event="theme_upsell_plan_click"
 					tracksClickName="calypso_theme_upsell_plan_click"
-					tracksClickProperties={ { theme_id: themeId, theme_name: themeName } }
+					tracksClickProperties={ {
+						theme_id: themeId,
+						theme_name: themeName,
+						theme_tier: themeTier?.slug,
+					} }
 				/>
 			);
 		}

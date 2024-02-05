@@ -25,11 +25,11 @@
 		"@automattic/calypso-build": "workspace:^",
 		"@wordpress/api-fetch": "^6.47.0",
 		"@wordpress/base-styles": "^4.41.0",
-		"@wordpress/block-editor": "^12.18.1",
+		"@wordpress/block-editor": "^12.18.2",
 		"@wordpress/blocks": "^12.27.1",
 		"@wordpress/components": "^25.16.0",
 		"@wordpress/data": "^9.20.0",
-		"@wordpress/editor": "^13.27.1",
+		"@wordpress/editor": "^13.27.2",
 		"@wordpress/element": "^5.27.0",
 		"@wordpress/hooks": "^3.50.0",
 		"@wordpress/i18n": "^4.50.0",
@@ -49,6 +49,6 @@
 		"@automattic/calypso-eslint-overrides": "workspace:^",
 		"@wordpress/readable-js-assets-webpack-plugin": "^2.33.0",
 		"postcss": "^8.4.5",
-		"webpack": "^5.89.0"
+		"webpack": "^5.90.0"
 	}
 }

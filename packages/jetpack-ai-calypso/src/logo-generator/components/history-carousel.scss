@@ -1,0 +1,34 @@
+.jetpack-ai-logo-generator__carousel {
+	display: flex;
+	gap: 8px;
+	overflow-x: auto;
+	flex-shrink: 0;
+
+	.components-button {
+		height: unset;
+		padding: unset;
+	}
+
+	@media (min-width: 700px) {
+		padding: 2px;
+	}
+}
+
+.jetpack-ai-logo-generator__carousel-logo {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	border: 1px solid var(--studio-gray-5, #dcdcde);
+	border-radius: 2px;
+	flex-shrink: 0;
+
+	&.is-selected {
+		border-color: var(--color-link, #3858e9);
+		border-width: 1.5px;
+	}
+
+	img {
+		width: 48px;
+		height: 48px;
+	}
+}

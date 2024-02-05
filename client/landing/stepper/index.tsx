@@ -15,7 +15,6 @@ import { setupErrorLogger } from 'calypso/boot/common';
 import { setupLocale } from 'calypso/boot/locale';
 import AsyncLoad from 'calypso/components/async-load';
 import CalypsoI18nProvider from 'calypso/components/calypso-i18n-provider';
-import { addHotJarScript } from 'calypso/lib/analytics/hotjar';
 import getSuperProps from 'calypso/lib/analytics/super-props';
 import { initializeCurrentUser } from 'calypso/lib/user/shared-utils';
 import { createReduxStore } from 'calypso/state';
@@ -75,7 +74,7 @@ window.AppBoot = async () => {
 	requestAllBlogsAccess();
 
 	setupWpDataDebug();
-	addHotJarScript();
+	// addHotJarScript(); // Disabled temporarily.
 
 	// Add accessible-focus listener.
 	accessibleFocus();

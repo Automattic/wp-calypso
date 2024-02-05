@@ -9,7 +9,6 @@ import { connect } from 'react-redux';
 import AsyncLoad from 'calypso/components/async-load';
 import { BlockEditorSettings } from 'calypso/data/block-editor/use-block-editor-settings-query';
 import withBlockEditorSettings from 'calypso/data/block-editor/with-block-editor-settings';
-import { addHotJarScript } from 'calypso/lib/analytics/hotjar';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import memoizeLast from 'calypso/lib/memoize-last';
 import { navigate } from 'calypso/lib/navigate';
@@ -18,7 +17,6 @@ import { protectForm, ProtectedFormProps } from 'calypso/lib/protect-form';
 import { addQueryArgs } from 'calypso/lib/route';
 import wpcom from 'calypso/lib/wp';
 import EditorDocumentHead from 'calypso/post-editor/editor-document-head';
-import { getCurrentUserCountryCode } from 'calypso/state/current-user/selectors';
 import { setEditorIframeLoaded, startEditingPost } from 'calypso/state/editor/actions';
 import { getEditorPostId } from 'calypso/state/editor/selectors';
 import { selectMediaItems } from 'calypso/state/media/actions';
@@ -33,7 +31,6 @@ import { getSelectedEditor } from 'calypso/state/selectors/get-selected-editor';
 import getSiteUrl from 'calypso/state/selectors/get-site-url';
 import isSiteWPForTeams from 'calypso/state/selectors/is-site-wpforteams';
 import isUnlaunchedSite from 'calypso/state/selectors/is-unlaunched-site';
-import isUserRegistrationDaysWithinRange from 'calypso/state/selectors/is-user-registration-days-within-range';
 import shouldDisplayAppBanner from 'calypso/state/selectors/should-display-app-banner';
 import { updateSiteFrontPage } from 'calypso/state/sites/actions';
 import {
@@ -673,7 +670,7 @@ class CalypsoifyIframe extends Component< ComponentProps, State > {
 	};
 
 	render() {
-		const { iframeUrl, shouldLoadIframe, isNew7DUser, currentUserCountryCode } = this.props;
+		const { iframeUrl, shouldLoadIframe } = this.props;
 		const {
 			classicBlockEditorId,
 			isMediaModalVisible,
@@ -688,14 +685,6 @@ class CalypsoifyIframe extends Component< ComponentProps, State > {
 		const isUsingClassicBlock = !! classicBlockEditorId;
 		const isCheckoutOverlayEnabled = config.isEnabled( 'post-editor/checkout-overlay' );
 		const { redirectTo, isFocusedLaunch, ...cartData } = checkoutModalOptions || {};
-
-		if ( ! isNew7DUser && 'IN' === currentUserCountryCode ) {
-			addHotJarScript();
-
-			if ( window && window.hj ) {
-				window.hj( 'trigger', 'in_survey_1' );
-			}
-		}
 
 		return (
 			<Fragment>
@@ -865,7 +854,6 @@ const mapStateToProps = (
 		closeUrl,
 		closeLabel,
 		currentRoute,
-		currentUserCountryCode: getCurrentUserCountryCode( state ),
 		editedPostId: getEditorPostId( state ),
 		frameNonce: getSiteOption( state, siteId, 'frame_nonce' ) || '',
 		iframeUrl,
@@ -884,7 +872,6 @@ const mapStateToProps = (
 		parentPostId,
 		shouldDisplayAppBanner: displayAppBanner,
 		appBannerDismissed: isAppBannerDismissed( state ),
-		isNew7DUser: isUserRegistrationDaysWithinRange( state, null, 0, 7 ),
 	};
 };
 

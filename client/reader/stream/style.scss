@@ -962,3 +962,12 @@
 	margin-top: 0;
 }
 
+.following-manage__search-followed {
+	margin-left: 0;
+}
+
+.following-manage__search-followed-input {
+	@include breakpoint-deprecated( ">960px" ) {
+		min-width: 200px;
+	}
+}

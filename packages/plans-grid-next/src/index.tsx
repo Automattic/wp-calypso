@@ -1,4 +1,5 @@
-import { useTranslate } from 'i18n-calypso';
+import { useRef } from '@wordpress/element';
+import classnames from 'classnames';
 import ComparisonGrid from './components/comparison-grid';
 import FeaturesGrid from './components/features-grid';
 import PlanButton from './components/plan-button';
@@ -8,9 +9,8 @@ import PlansGridContextProvider from './grid-context';
 import useGridPlans from './hooks/data-store/use-grid-plans';
 import usePlanFeaturesForGridPlans from './hooks/data-store/use-plan-features-for-grid-plans';
 import useRestructuredPlanFeaturesForComparisonGrid from './hooks/data-store/use-restructured-plan-features-for-comparison-grid';
-import useIsLargeCurrency from './hooks/use-is-large-currency';
+import useGridSize from './hooks/use-grid-size';
 import { useManageTooltipToggle } from './hooks/use-manage-tooltip-toggle';
-import { usePlanPricingInfoFromGridPlans } from './hooks/use-plan-pricing-info-from-grid-plans';
 import useUpgradeClickHandler from './hooks/use-upgrade-click-handler';
 import type { ComparisonGridExternalProps, FeaturesGridExternalProps } from './types';
 import './style.scss';
@@ -40,31 +40,35 @@ const WrappedComparisonGrid = ( {
 		onUpgradeClick,
 	} );
 
+	const classNames = classnames( 'plans-grid-next', 'plans-grid-next__comparison-grid' );
+
 	return (
-		<PlansGridContextProvider
-			intent={ intent }
-			selectedSiteId={ selectedSiteId }
-			gridPlans={ gridPlans }
-			useCheckPlanAvailabilityForPurchase={ useCheckPlanAvailabilityForPurchase }
-			recordTracksEvent={ recordTracksEvent }
-			allFeaturesList={ allFeaturesList }
-			coupon={ coupon }
-		>
-			<ComparisonGrid
-				intervalType={ intervalType }
-				isInSignup={ isInSignup }
-				isLaunchPage={ isLaunchPage }
-				currentSitePlanSlug={ currentSitePlanSlug }
-				onUpgradeClick={ handleUpgradeClick }
+		<div className={ classNames }>
+			<PlansGridContextProvider
+				intent={ intent }
 				selectedSiteId={ selectedSiteId }
-				selectedPlan={ selectedPlan }
-				selectedFeature={ selectedFeature }
-				showUpgradeableStorage={ showUpgradeableStorage }
-				stickyRowOffset={ stickyRowOffset }
-				onStorageAddOnClick={ onStorageAddOnClick }
-				{ ...otherProps }
-			/>
-		</PlansGridContextProvider>
+				gridPlans={ gridPlans }
+				useCheckPlanAvailabilityForPurchase={ useCheckPlanAvailabilityForPurchase }
+				recordTracksEvent={ recordTracksEvent }
+				allFeaturesList={ allFeaturesList }
+				coupon={ coupon }
+			>
+				<ComparisonGrid
+					intervalType={ intervalType }
+					isInSignup={ isInSignup }
+					isLaunchPage={ isLaunchPage }
+					currentSitePlanSlug={ currentSitePlanSlug }
+					onUpgradeClick={ handleUpgradeClick }
+					selectedSiteId={ selectedSiteId }
+					selectedPlan={ selectedPlan }
+					selectedFeature={ selectedFeature }
+					showUpgradeableStorage={ showUpgradeableStorage }
+					stickyRowOffset={ stickyRowOffset }
+					onStorageAddOnClick={ onStorageAddOnClick }
+					{ ...otherProps }
+				/>
+			</PlansGridContextProvider>
+		</div>
 	);
 };
 
@@ -78,39 +82,48 @@ const WrappedFeaturesGrid = ( props: FeaturesGridExternalProps ) => {
 		allFeaturesList,
 		onUpgradeClick,
 		coupon,
+		isInAdmin,
 	} = props;
-	const translate = useTranslate();
-
-	const { prices, currencyCode } = usePlanPricingInfoFromGridPlans( {
-		gridPlans,
-	} );
-	const isLargeCurrency = useIsLargeCurrency( {
-		prices,
-		currencyCode: currencyCode || 'USD',
-	} );
-
 	const handleUpgradeClick = useUpgradeClickHandler( {
 		gridPlans,
 		onUpgradeClick,
 	} );
 
+	const gridContainerRef = useRef< HTMLDivElement | null >( null );
+	const gridSize = useGridSize( {
+		containerRef: gridContainerRef,
+		containerBreakpoints: new Map( [
+			[ 'small', 0 ],
+			[ 'medium', 740 ],
+			[ 'large', isInAdmin ? 1180 : 1320 ], // 1320 to fit Enterpreneur plan, 1180 to work in admin
+		] ),
+	} );
+
+	const classNames = classnames( 'plans-grid-next', 'plans-grid-next__features-grid', {
+		'is-small': 'small' === gridSize,
+		'is-medium': 'medium' === gridSize,
+		'is-large': 'large' === gridSize,
+		'is-visible': true,
+	} );
+
 	return (
-		<PlansGridContextProvider
-			intent={ intent }
-			selectedSiteId={ selectedSiteId }
-			gridPlans={ gridPlans }
-			coupon={ coupon }
-			useCheckPlanAvailabilityForPurchase={ useCheckPlanAvailabilityForPurchase }
-			recordTracksEvent={ recordTracksEvent }
-			allFeaturesList={ allFeaturesList }
-		>
-			<FeaturesGrid
-				{ ...props }
-				isLargeCurrency={ isLargeCurrency }
-				translate={ translate }
-				onUpgradeClick={ handleUpgradeClick }
-			/>
-		</PlansGridContextProvider>
+		<div ref={ gridContainerRef } className={ classNames }>
+			<PlansGridContextProvider
+				intent={ intent }
+				selectedSiteId={ selectedSiteId }
+				gridPlans={ gridPlans }
+				coupon={ coupon }
+				useCheckPlanAvailabilityForPurchase={ useCheckPlanAvailabilityForPurchase }
+				recordTracksEvent={ recordTracksEvent }
+				allFeaturesList={ allFeaturesList }
+			>
+				<FeaturesGrid
+					{ ...props }
+					onUpgradeClick={ handleUpgradeClick }
+					gridSize={ gridSize ?? undefined }
+				/>
+			</PlansGridContextProvider>
+		</div>
 	);
 };
 

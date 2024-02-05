@@ -1,3 +1,4 @@
+import { FormLabel } from '@automattic/components';
 import { createHigherOrderComponent } from '@wordpress/compose';
 import debugModule from 'debug';
 import { localize } from 'i18n-calypso';
@@ -7,7 +8,6 @@ import { connect } from 'react-redux';
 import FormButton from 'calypso/components/forms/form-button';
 import FormButtonsBar from 'calypso/components/forms/form-buttons-bar';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
-import FormLabel from 'calypso/components/forms/form-label';
 import FormTextInput from 'calypso/components/forms/form-text-input';
 import useAddExternalContributorMutation from 'calypso/data/external-contributors/use-add-external-contributor-mutation';
 import useExternalContributorsQuery from 'calypso/data/external-contributors/use-external-contributors';

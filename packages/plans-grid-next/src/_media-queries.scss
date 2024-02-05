@@ -10,7 +10,7 @@ $plans-2023-medium-breakpoint: 1350px;
 $minWidthToGridWidthMap: (
 	780px: "668px",
 	1024px: "860px",
-	1350px: "100%",
+	1200px: "100%",
 );
 
 // Plan Comparison Grid Breakpoints
@@ -73,90 +73,9 @@ $planComparisonMinWidthToGridWidthWithSidebarMap: (
 }
 
 /**
- * Show/hide desktop/tablet/mobile layouts based on the screen width.
- * Desktop layout: width > $plans-2023-medium-breakpoint
- * Tablet layout:  $plans-2023-small-breakpoint < width < $plans-2023-medium-breakpoint
- * Mobile layout:  width < $plans-2023-small-breakpoint
+ * @deprecated
+ * TODO clk Used in comparison grid
  */
-@mixin plan-features-layout-switcher {
-	.plan-features-2023-grid__desktop-view {
-		display: none;
-
-		@media ( min-width: $plans-2023-medium-breakpoint ) {
-			display: block;
-		}
-	}
-
-	.plan-features-2023-grid__tablet-view {
-		display: none;
-
-		@media ( min-width: $plans-2023-small-breakpoint ) {
-			display: block;
-		}
-
-		@media ( min-width: $plans-2023-medium-breakpoint ) {
-			display: none;
-		}
-	}
-
-	.plan-features-2023-grid__mobile-view {
-		display: flex;
-
-		@media ( min-width: $plans-2023-small-breakpoint ) {
-			display: none;
-		}
-	}
-
-	.plan-features-2023-grid__plan-spotlight {
-		display: none;
-
-		@media ( min-width: $plans-2023-small-breakpoint ) {
-			display: block;
-		}
-	}
-}
-
-/**
- * Same as `plan-features-layout-switcher`, except that we add the sidebar width to the breakpoints.
- */
-@mixin plan-features-layout-switcher-with-sidebar {
-	.plan-features-2023-grid__desktop-view {
-		display: none;
-
-		@media ( min-width: ( $plans-2023-medium-breakpoint + $plan-features-sidebar-width ) ) {
-			display: block;
-		}
-	}
-
-	.plan-features-2023-grid__tablet-view {
-		display: none;
-
-		@media ( min-width: ( $plans-2023-small-breakpoint + $plan-features-sidebar-width ) ) {
-			display: block;
-		}
-
-		@media ( min-width: ( $plans-2023-medium-breakpoint + $plan-features-sidebar-width ) ) {
-			display: none;
-		}
-	}
-
-	.plan-features-2023-grid__mobile-view {
-		display: flex;
-
-		@media ( min-width: ( $plans-2023-small-breakpoint + $plan-features-sidebar-width ) ) {
-			display: none;
-		}
-	}
-
-	.plan-features-2023-grid__plan-spotlight {
-		display: none;
-
-		@media ( min-width: $plans-2023-small-breakpoint + $plan-features-sidebar-width ) {
-			display: block;
-		}
-	}
-}
-
 @mixin plans-2023-break-small() {
 	body.is-section-stepper &,
 	body.is-section-signup.is-white-signup & {
@@ -178,6 +97,10 @@ $planComparisonMinWidthToGridWidthWithSidebarMap: (
 	}
 }
 
+/**
+ * @deprecated
+ * TODO clk Used in comparison grid
+ */
 @mixin plans-2023-break-medium() {
 	body.is-section-stepper &,
 	body.is-section-signup.is-white-signup & {
@@ -199,26 +122,14 @@ $planComparisonMinWidthToGridWidthWithSidebarMap: (
 	}
 }
 
-@mixin plans-section-break-medium() {
-	.is-section-plans:not(.is-sidebar-collapsed) & {
-		@media ( min-width: $plans-2023-medium-breakpoint + $plan-features-sidebar-width ) {
-			@content;
-		}
-	}
-
-	.is-section-plans.is-sidebar-collapsed & {
-		@media ( min-width: $plans-2023-medium-breakpoint ) {
-			@content;
-		}
-	}
-}
-
 /**
  * @see client/my-sites/plans/modernized-layout.tsx
  * This file introduces padding for the header on the plans page
  * at a custom mobile breakpoint.
  *
  * This mixin can be use to target that particular breakpoint.
+ *
+ * TODO clk used in plans-features-main / should migrate there
  */
 @mixin plans-section-custom-mobile-breakpoint() {
 	.is-section-plans & {
@@ -231,6 +142,8 @@ $planComparisonMinWidthToGridWidthWithSidebarMap: (
 /**
  * @see @automattic/plans-grid-next/src/components/plan-type-selector/style.scss
  * This introduces mobile only sticky behavior for the plan type selector.
+ *
+ * TODO clk need to update to use GridSize / container breakpoints
  *
  */
 @mixin plan-type-selector-custom-mobile-breakpoint() {

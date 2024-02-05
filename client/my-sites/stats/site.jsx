@@ -57,7 +57,6 @@ import PageViewTracker from './stats-page-view-tracker';
 import StatsPeriodHeader from './stats-period-header';
 import StatsPeriodNavigation from './stats-period-navigation';
 import StatsPlanUsage from './stats-plan-usage';
-import StatsRedirectFlow from './stats-reditect-flow';
 import statsStrings from './stats-strings';
 import StatsUpsellModal from './stats-upsell-modal';
 import { getPathWithUpdatedQueryString } from './utils';
@@ -307,7 +306,6 @@ class StatsSite extends Component {
 
 		return (
 			<div className="stats">
-				<StatsRedirectFlow />
 				{ ! isOdysseyStats && (
 					<div className="stats-banner-wrapper">
 						<JetpackBackupCredsBanner event="stats-backup-credentials" />
@@ -317,7 +315,7 @@ class StatsSite extends Component {
 					className="stats__section-header modernized-header"
 					title={ translate( 'Jetpack Stats' ) }
 					subtitle={ translate(
-						"Learn more about the activity and behavior of your site's visitors. {{learnMoreLink}}Learn more{{/learnMoreLink}}",
+						"Gain insights into the activity and behavior of your site's visitors. {{learnMoreLink}}Learn more{{/learnMoreLink}}",
 						{
 							components: {
 								learnMoreLink: <InlineSupportLink supportContext="stats" showIcon={ false } />,

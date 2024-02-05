@@ -1,9 +1,8 @@
-import { Button } from '@automattic/components';
+import { Button, FormLabel } from '@automattic/components';
 import styled from '@emotion/styled';
 import { useTranslate } from 'i18n-calypso';
 import { useState } from 'react';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
-import FormLabel from 'calypso/components/forms/form-label';
 import FormTextInput from 'calypso/components/forms/form-text-input';
 import SocialLogo from 'calypso/components/social-logo';
 import type { SocialProfilesState, SocialProfileUrlKey } from './types';

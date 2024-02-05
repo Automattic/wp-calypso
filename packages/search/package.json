@@ -52,7 +52,7 @@
 		"@storybook/cli": "^7.6.10",
 		"@storybook/react": "^7.6.10",
 		"@testing-library/dom": "^9.3.4",
-		"@testing-library/jest-dom": "^6.2.0",
+		"@testing-library/jest-dom": "^6.3.0",
 		"@testing-library/react": "^14.1.2",
 		"@testing-library/user-event": "^14.5.2",
 		"@wordpress/data": "^9.20.0",
@@ -60,7 +60,7 @@
 		"react": "^18.2.0",
 		"react-dom": "^18.2.0",
 		"typescript": "^5.3.3",
-		"webpack": "^5.89.0"
+		"webpack": "^5.90.0"
 	},
 	"scripts": {
 		"clean": "tsc --build ./tsconfig.json ./tsconfig-cjs.json --clean && rm -rf dist",

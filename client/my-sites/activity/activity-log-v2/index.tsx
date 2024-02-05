@@ -6,6 +6,7 @@ import { useTranslate } from 'i18n-calypso';
 import TimeMismatchWarning from 'calypso/blocks/time-mismatch-warning';
 import ActivityCardList from 'calypso/components/activity-card-list';
 import DocumentHead from 'calypso/components/data/document-head';
+import QuerySiteCredentials from 'calypso/components/data/query-site-credentials';
 import QuerySitePlans from 'calypso/components/data/query-site-plans';
 import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
 import Upsell from 'calypso/components/jetpack/upsell';
@@ -107,6 +108,7 @@ const ActivityLogV2: FunctionComponent = () => {
 		>
 			{ siteId && <QuerySitePlans siteId={ siteId } /> }
 			{ siteId && <QuerySitePurchases siteId={ siteId } /> }
+			{ siteId && <QuerySiteCredentials siteId={ siteId } /> }
 			<DocumentHead title={ translate( 'Activity log' ) } />
 			{ isJetpackCloud() && <SidebarNavigation /> }
 			<PageViewTracker path="/activity-log/:site" title="Activity log" />

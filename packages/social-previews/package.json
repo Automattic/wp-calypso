@@ -35,7 +35,7 @@
 	"scripts": {
 		"clean": "tsc --build ./tsconfig.json ./tsconfig-cjs.json --clean && rm -rf dist",
 		"build": "tsc --build ./tsconfig.json ./tsconfig-cjs.json && copy-assets",
-		"prepare": "yarn run clean && yarn run build",
+		"prepare": "yarn run build",
 		"prepack": "yarn run clean && yarn run build",
 		"watch": "tsc --build ./tsconfig.json --watch"
 	},
@@ -51,13 +51,13 @@
 	"devDependencies": {
 		"@automattic/calypso-build": "workspace:^",
 		"@automattic/calypso-typescript-config": "workspace:^",
-		"@testing-library/jest-dom": "^6.2.0",
+		"@testing-library/jest-dom": "^6.3.0",
 		"@testing-library/react": "^14.1.2",
 		"postcss": "^8.4.5",
 		"react": "^18.2.0",
 		"react-dom": "^18.2.0",
 		"typescript": "^5.3.3",
-		"webpack": "^5.89.0"
+		"webpack": "^5.90.0"
 	},
 	"peerDependencies": {
 		"@babel/runtime": "^7.23.8",

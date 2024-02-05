@@ -2,22 +2,22 @@
 @import "@wordpress/base-styles/mixins";
 @import "@wordpress/base-styles/colors";
 
-.header {
+.jetpack-product-store .header {
 	text-align: center;
-}
 
-.header__sub-title {
-	padding-top: 2em;
-	color: var(--studio-black);
-}
+	.header__sub-title {
+		padding-top: 2em;
+		color: var(--studio-black);
+	}
 
-.header__main-title {
-	h1 {
-		/* stylelint-disable-next-line declaration-property-unit-allowed-list */
-		font-size: 2.5em;
-		font-weight: 600;
+	.header__main-title {
+		h1 {
+			/* stylelint-disable-next-line declaration-property-unit-allowed-list */
+			font-size: 2.5em;
+			font-weight: 600;
 
-		margin: 1.5em auto 0.25em;
+			margin: 1.5em auto 0.25em;
+		}
 	}
 }
 
@@ -26,7 +26,7 @@
 .header__main-title
 .formatted-header__title {
 	max-width: 280px;
-	margin-bottom: 32px;
+	margin-bottom: 0;
 	margin-right: auto;
 	margin-left: auto;
 
@@ -42,4 +42,12 @@
 		line-height: 1.2;
 	}
 
+}
+
+.theme-jetpack-cloud .layout.is-section-jetpack-cloud-manage-pricing.has-no-masterbar {
+	padding-top: 0;
+}
+
+.is-group-jetpack-cloud.is-section-jetpack-cloud-manage-pricing div.jpcom-masterbar header.header {
+	margin-bottom: 0;
 }

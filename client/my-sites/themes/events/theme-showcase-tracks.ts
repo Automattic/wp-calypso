@@ -24,6 +24,7 @@ const getThemeShowcaseEventRecorder = (
 	themes: Array< Theme >,
 	filterString: string,
 	getThemeType: ( themeId: string ) => string,
+	getThemeTierForTheme: ( themeId: string ) => object,
 	isActiveTheme: ( themeId: string ) => boolean,
 	defaultCollectionId: string | null = null,
 	defaultCollectionIndex: number | null = null
@@ -56,6 +57,8 @@ const getThemeShowcaseEventRecorder = (
 				theme_on_page: Math.floor( adjustedPosition / query.number ),
 				action: snakeCase( action ),
 				theme_type: getThemeType( themeId ),
+				// @ts-expect-error Tiers are not yet typed
+				theme_tier: getThemeTierForTheme( themeId )?.slug,
 				is_collection: isCollection,
 				...( isCollection
 					? {
