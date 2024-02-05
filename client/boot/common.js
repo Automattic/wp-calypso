@@ -132,14 +132,25 @@ function saveOauthFlags() {
 	window.sessionStorage.setItem( 'flags', oauthFlag );
 }
 
-function authorizePath() {
+function authorizePath( context ) {
 	const redirectUri = new URL(
 		isJetpackCloud() ? '/connect/oauth/token' : '/api/oauth/token',
 		window.location
 	);
-	redirectUri.search = new URLSearchParams( {
-		next: window.location.pathname + window.location.search,
-	} ).toString();
+
+	// Allow a redirect to a different page in specific cases. Hard-coded to limit redirect attacks.
+	if (
+		window.location.pathname === '/manage/pricing' &&
+		context.pathname === '/partner-portal/issue-license/'
+	) {
+		redirectUri.search = new URLSearchParams( {
+			next: context.path,
+		} ).toString();
+	} else {
+		redirectUri.search = new URLSearchParams( {
+			next: window.location.pathname + window.location.search,
+		} ).toString();
+	}
 
 	const authUri = new URL( 'https://public-api.wordpress.com/oauth2/authorize' );
 	authUri.search = new URLSearchParams( {
@@ -174,7 +185,7 @@ const oauthTokenMiddleware = () => {
 
 			// Check we have an OAuth token, otherwise redirect to auth/login page
 			if ( getToken() === false && ! isValidSection ) {
-				window.location = authorizePath();
+				window.location = authorizePath( context );
 				return;
 			}
 
