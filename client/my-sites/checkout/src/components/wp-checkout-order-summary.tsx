@@ -37,6 +37,7 @@ import {
 	getSubtotalWithoutDiscounts,
 	filterAndGroupCostOverridesForDisplay,
 	getCreditsLineItemFromCart,
+	CostOverrideForDisplay,
 } from '@automattic/wpcom-checkout';
 import { keyframes } from '@emotion/react';
 import styled from '@emotion/styled';
@@ -146,6 +147,29 @@ export function CheckoutSummaryFeaturedList( {
 	);
 }
 
+/**
+ * The sidebar displays a notice that introductory offers are for the first
+ * term only if that is true. Since introductory offers do not read
+ * "Introductory Offer" (see `makeIntroductoryOfferCostOverrideUnique()`), we
+ * need to mark them to associate them with this notice.
+ *
+ * This function adds an asterisk after each one to do that, matching the
+ * asterisk on the sidebar notice.
+ *
+ * However, this asterisk is only added if the offer is for the first term so
+ * that the notice makes sense.
+ */
+function addAsteriskToSingleTermIntroductoryOffers(
+	costOverrides: CostOverrideForDisplay[]
+): CostOverrideForDisplay[] {
+	return costOverrides.map( ( override ) => {
+		if ( override.isSingleTermIntroductoryOffer ) {
+			override.humanReadableReason += '*';
+		}
+		return override;
+	} );
+}
+
 function hasIntroductoryOfferForInitialPurchaseOnly( responseCart: ResponseCart ): boolean {
 	return responseCart.products.some(
 		( product ) =>
@@ -180,7 +204,7 @@ function CheckoutSummaryPriceList() {
 			) }
 			{ ! hasCheckoutVersion( '2' ) && costOverridesList.length > 0 && (
 				<CostOverridesList
-					costOverridesList={ costOverridesList }
+					costOverridesList={ addAsteriskToSingleTermIntroductoryOffers( costOverridesList ) }
 					currency={ responseCart.currency }
 					couponCode={ responseCart.coupon }
 				/>

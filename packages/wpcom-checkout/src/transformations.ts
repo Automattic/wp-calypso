@@ -147,6 +147,7 @@ export interface CostOverrideForDisplay {
 	humanReadableReason: string;
 	overrideCode: string;
 	discountAmount: number;
+	isSingleTermIntroductoryOffer?: boolean;
 }
 
 function isUserVisibleCostOverride(
@@ -244,6 +245,10 @@ export function filterAndGroupCostOverridesForDisplay(
 					overrideCode: costOverride.override_code,
 					discountAmount:
 						discountAmount + getDiscountForCostOverrideForDisplay( costOverride, product ),
+					isSingleTermIntroductoryOffer: Boolean(
+						product.introductory_offer_terms?.enabled &&
+							product.introductory_offer_terms.transition_after_renewal_count === 0
+					),
 				};
 			} );
 
