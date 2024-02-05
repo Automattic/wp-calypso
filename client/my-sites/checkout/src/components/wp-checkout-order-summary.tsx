@@ -157,7 +157,6 @@ function CheckoutSummaryPriceList() {
 	const costOverridesList = filterAndGroupCostOverridesForDisplay( responseCart, translate );
 
 	const subtotalBeforeDiscounts = getSubtotalWithoutDiscounts( responseCart );
-	const renewalInfo = filterAndGroupIntroductoryOfferRenewalInfoForDisplay( responseCart );
 
 	return (
 		<>
@@ -205,16 +204,11 @@ function CheckoutSummaryPriceList() {
 				</CheckoutSubtotalSection>
 
 				<CheckoutSummaryTotal>
-					<span>
-						{ renewalInfo.length > 0 ? translate( 'Total due today' ) : translate( 'Total' ) }
-					</span>
+					<span>{ translate( 'Total' ) }</span>
 					<span className="wp-checkout-order-summary__total-price">
 						{ totalLineItem.formattedAmount }
 					</span>
 				</CheckoutSummaryTotal>
-				{ renewalInfo.length > 0 && (
-					<IntroductoryOfferFutureTotal responseCart={ responseCart } renewalInfo={ renewalInfo } />
-				) }
 
 				{ hasIntroductoryDiscount( responseCart ) && (
 					<CheckoutSummaryExplanation>
@@ -226,115 +220,6 @@ function CheckoutSummaryPriceList() {
 			</CheckoutSummaryAmountWrapper>
 		</>
 	);
-}
-
-function getIntroductoryOfferTermsForProduct(
-	responseCart: ResponseCart,
-	product: ResponseCartProduct
-) {
-	return responseCart.terms_of_service?.find( ( tos ) => {
-		if ( ! tos.key.includes( `product_id:${ product.product_id }` ) ) {
-			return false;
-		}
-		if ( product.meta && ! tos.key.includes( `meta:${ product.meta }` ) ) {
-			return false;
-		}
-		return true;
-	} );
-}
-
-function getRenewalDateAfterIntroductoryOffer(
-	responseCart: ResponseCart,
-	product: ResponseCartProduct
-): Date | undefined {
-	const firstTOS = getIntroductoryOfferTermsForProduct( responseCart, product );
-	if ( ! firstTOS ) {
-		return undefined;
-	}
-	const renewalDate = firstTOS.args?.subscription_auto_renew_date;
-	if ( ! renewalDate ) {
-		return undefined;
-	}
-	return new Date( renewalDate );
-}
-
-function getRenewalPriceAfterIntroductoryOffer(
-	responseCart: ResponseCart,
-	product: ResponseCartProduct
-): number | undefined {
-	const firstTOS = getIntroductoryOfferTermsForProduct( responseCart, product );
-	if ( ! firstTOS ) {
-		return undefined;
-	}
-	return firstTOS.args?.renewal_price_integer;
-}
-
-interface IntroductoryOfferRenewalInfo {
-	date: Date;
-	totalInteger: number;
-}
-
-function filterAndGroupIntroductoryOfferRenewalInfoForDisplay(
-	responseCart: ResponseCart
-): IntroductoryOfferRenewalInfo[] {
-	const productsWithOffers = responseCart.products.filter(
-		( product ) => product.introductory_offer_terms?.enabled
-	);
-	return Object.values(
-		productsWithOffers.reduce(
-			( grouped: Record< number, IntroductoryOfferRenewalInfo >, product ) => {
-				const endOfIntroductoryOfferDate = getRenewalDateAfterIntroductoryOffer(
-					responseCart,
-					product
-				);
-				const totalInteger = getRenewalPriceAfterIntroductoryOffer( responseCart, product );
-				if ( endOfIntroductoryOfferDate && totalInteger ) {
-					const previousTotalInteger =
-						grouped[ endOfIntroductoryOfferDate.getTime() ]?.totalInteger ?? 0;
-					grouped[ endOfIntroductoryOfferDate.getTime() ] = {
-						date: endOfIntroductoryOfferDate,
-						totalInteger: previousTotalInteger + totalInteger,
-					};
-				}
-				return grouped;
-			},
-			{}
-		)
-	);
-}
-
-function IntroductoryOfferFutureTotal( {
-	responseCart,
-	renewalInfo,
-}: {
-	responseCart: ResponseCart;
-	renewalInfo: IntroductoryOfferRenewalInfo[];
-} ) {
-	const translate = useTranslate();
-
-	return renewalInfo.map( ( info ) => {
-		return (
-			<CheckoutSummaryTotalAfterIntroductoryOffer key={ info.date.getTime() }>
-				<span>
-					{ translate( 'Due %(endOfIntroductoryOfferDate)s', {
-						args: {
-							endOfIntroductoryOfferDate: info.date.toLocaleDateString( undefined, {
-								month: 'short',
-								day: 'numeric',
-								year: 'numeric',
-							} ),
-						},
-					} ) }
-				</span>
-				<span className="wp-checkout-order-summary__total-price">
-					{ formatCurrency( info.totalInteger, responseCart.currency, {
-						isSmallestUnit: true,
-						stripZeros: true,
-					} ) }
-				</span>
-			</CheckoutSummaryTotalAfterIntroductoryOffer>
-		);
-	} );
 }
 
 export function LoadingCheckoutSummaryFeaturesList() {
@@ -1064,14 +949,6 @@ const CheckoutSummaryLineItem = styled.div< { isDiscount?: boolean } >`
 const CheckoutSummaryTotal = styled( CheckoutSummaryLineItem )`
 	color: ${ ( props ) => props.theme.colors.textColorDark };
 	font-size: 20px;
-	font-weight: ${ ( props ) => props.theme.weights.bold };
-	line-height: 26px;
-	margin-bottom: 16px;
-`;
-
-const CheckoutSummaryTotalAfterIntroductoryOffer = styled( CheckoutSummaryLineItem )`
-	color: ${ ( props ) => props.theme.colors.textColorDark };
-	font-size: 14px;
 	font-weight: ${ ( props ) => props.theme.weights.bold };
 	line-height: 26px;
 	margin-bottom: 16px;
