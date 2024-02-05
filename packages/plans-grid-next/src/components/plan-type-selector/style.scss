@@ -90,6 +90,18 @@
 		&:hover span.name {
 			color: var(--color-text);
 		}
+
+		.plan-type-selector__interval-type-dropdown-option {
+			display: flex;
+			padding: 13px 13px 13px 16px;
+
+			.discount {
+				display: flex;
+				border-radius: 3px;
+				line-height: 20px;
+			}
+		}
+
 		.components-flex {
 			overflow: hidden;
 			width: 100%;
