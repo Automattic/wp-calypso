@@ -90,16 +90,6 @@ describe( DataHelper.createSuiteTitle( 'Blocks: Media (Upload)' ), function () {
 			await imageBlock.upload( testFiles.imageReservedName.fullpath );
 		} );
 
-		it( `${ ImageBlock.blockName } block: upload image file using Calypso media modal `, async function () {
-			const blockHandle = await editorPage.addBlockFromSidebar(
-				ImageBlock.blockName,
-				ImageBlock.blockEditorSelector,
-				{ noSearch: true }
-			);
-			const imageBlock = new ImageBlock( page, blockHandle );
-			await imageBlock.uploadThroughMediaLibrary( testFiles.image.fullpath );
-		} );
-
 		it( `${ AudioBlock.blockName } block: upload audio file`, async function () {
 			const blockHandle = await editorPage.addBlockFromSidebar(
 				AudioBlock.blockName,
@@ -149,10 +139,6 @@ describe( DataHelper.createSuiteTitle( 'Blocks: Media (Upload)' ), function () {
 				// WP 6.6+, see https://github.com/WordPress/wordpress-develop/commit/2358de1767168232ff0e7c17e550b8a99f96002e
 				ImageBlock.validatePublishedContent( page, [ testFiles.imageReservedName.filename ] ),
 			] );
-		} );
-
-		it( 'Image added via Calypso modal is visible', async function () {
-			await ImageBlock.validatePublishedContent( page, [ testFiles.image.filename ] );
 		} );
 
 		it( `Audio block is visible`, async function () {

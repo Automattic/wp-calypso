@@ -27,6 +27,7 @@
 		"calypso/ai-assembler": false,
 		"calypso/big-sky": false,
 		"bilmur-script": true,
+		"block-editor/iframe": true,
 		"calypso/help-center": true,
 		"calypsoify/plugins": true,
 		"cancellation-offers": true,

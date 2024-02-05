@@ -7,7 +7,6 @@ import {
 	TestAccount,
 	envVariables,
 	EditorPage,
-	RevisionsComponent,
 	RevisionsPage,
 	getTestAccountByFeature,
 	envToFeatureKey,
@@ -27,7 +26,6 @@ describe( `Editor: Revisions`, function () {
 	] );
 
 	let editorPage: EditorPage;
-	let revisionsComponent: RevisionsComponent;
 	let revisionsPage: RevisionsPage;
 	let page: Page;
 
@@ -60,23 +58,12 @@ describe( `Editor: Revisions`, function () {
 	} );
 
 	it( 'Select first revision', async function () {
-		if ( envVariables.TEST_ON_ATOMIC ) {
-			revisionsPage = new RevisionsPage( page );
-			await revisionsPage.selectRevision( 1 );
-		} else {
-			revisionsComponent = new RevisionsComponent( page );
-			await revisionsComponent.selectRevision( 1 );
-		}
+		revisionsPage = new RevisionsPage( page );
+		await revisionsPage.selectRevision( 1 );
 	} );
 
 	it( 'Validate selected revision diff', async function () {
-		let revisionContent: string;
-
-		if ( envVariables.TEST_ON_ATOMIC ) {
-			revisionContent = await page.innerText( '.revisions-diff' );
-		} else {
-			revisionContent = await page.innerText( '.editor-diff-viewer__content' );
-		}
+		const revisionContent = await page.innerText( '.revisions-diff' );
 
 		expect( revisionContent ).toContain( 'Revision 1' );
 		expect( revisionContent ).not.toContain( 'Revision 2' );
@@ -84,14 +71,12 @@ describe( `Editor: Revisions`, function () {
 	} );
 
 	it( 'Load selected revision', async function () {
-		if ( envVariables.TEST_ON_ATOMIC ) {
-			await revisionsPage.loadSelectedRevision();
-		} else {
-			await revisionsComponent.loadSelectedRevision();
-		}
+		await revisionsPage.loadSelectedRevision();
 	} );
 
 	it( 'Validate loaded revision content', async function () {
+		await editorPage.waitUntilLoaded();
+
 		const postContent = await editorPage.getText();
 
 		expect( postContent ).toBe( 'Revision 1' );
