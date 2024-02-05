@@ -43,6 +43,7 @@ export const HostingFlowForkingPage = ( { siteCount }: HostingFlowForkingPagePro
 			<div
 				css={ {
 					display: 'flex',
+					padding: '2px',
 					flexDirection: 'column',
 					[ MEDIA_QUERIES.small ]: {
 						width: '100%',
