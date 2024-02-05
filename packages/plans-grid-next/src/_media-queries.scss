@@ -1,30 +1,11 @@
-@import "@automattic/components/src/highlight-cards/variables.scss";
-
-// TODO clk used in plans-features-main / should migrate there
-$plan-features-header-banner-height: 20px;
-
 $plans-2023-small-breakpoint: 780px;
-
-/**
- * @see client/my-sites/plans/modernized-layout.tsx
- * This file introduces padding for the header on the plans page
- * at a custom mobile breakpoint.
- *
- * This mixin can be use to target that particular breakpoint.
- *
- * TODO clk used in plans-features-main / should migrate there
- */
-@mixin plans-section-custom-mobile-breakpoint() {
-	.is-section-plans & {
-		@media ( min-width: $plans-2023-small-breakpoint ) {
-			@content;
-		}
-	}
-}
 
 /**
  * @see @automattic/plans-grid-next/src/components/plan-type-selector/style.scss
  * This introduces mobile only sticky behavior for the plan type selector.
+ *
+ * @deprecated
+ * TODO clk This should migrate to use grid-size on the parent container. As done for features/comparison grid.
  */
 @mixin plan-type-selector-custom-mobile-breakpoint() {
 	@media ( max-width: $plans-2023-small-breakpoint ) {
