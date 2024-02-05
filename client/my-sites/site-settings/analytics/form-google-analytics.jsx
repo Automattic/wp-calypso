@@ -115,6 +115,7 @@ const mapStateToProps = ( state ) => {
 		siteId,
 		siteIsJetpack,
 		sitePlugins,
+		jetpackModuleActive,
 		isJetpackModuleAvailable,
 		isAtomic: isAtomicSite( state, siteId ),
 		isGoogleAnalyticsEligible,

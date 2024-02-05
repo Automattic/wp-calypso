@@ -66,11 +66,11 @@
 		"@storybook/addon-actions": "^7.6.10",
 		"@storybook/react": "^7.6.10",
 		"@testing-library/dom": "^9.3.4",
-		"@testing-library/jest-dom": "^6.2.0",
+		"@testing-library/jest-dom": "^6.3.0",
 		"@testing-library/react": "^14.1.2",
 		"@testing-library/user-event": "^14.5.2",
 		"resize-observer-polyfill": "^1.5.1",
 		"typescript": "^5.3.3",
-		"webpack": "^5.89.0"
+		"webpack": "^5.90.0"
 	}
 }
