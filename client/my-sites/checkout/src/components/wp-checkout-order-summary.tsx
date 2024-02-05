@@ -186,6 +186,9 @@ function CheckoutSummaryPriceList() {
 	const totalLineItem = getTotalLineItemFromCart( responseCart );
 	const translate = useTranslate();
 	const costOverridesList = filterAndGroupCostOverridesForDisplay( responseCart, translate );
+	const isJetpackNotAtomic = responseCart.products.some( ( product ) => {
+		return isJetpackProduct( product ) || isJetpackPlan( product );
+	} );
 
 	const subtotalBeforeDiscounts = getSubtotalWithoutDiscounts( responseCart );
 
@@ -204,7 +207,11 @@ function CheckoutSummaryPriceList() {
 			) }
 			{ ! hasCheckoutVersion( '2' ) && costOverridesList.length > 0 && (
 				<CostOverridesList
-					costOverridesList={ addAsteriskToSingleTermIntroductoryOffers( costOverridesList ) }
+					costOverridesList={
+						isJetpackNotAtomic
+							? addAsteriskToSingleTermIntroductoryOffers( costOverridesList )
+							: costOverridesList
+					}
 					currency={ responseCart.currency }
 					couponCode={ responseCart.coupon }
 				/>
@@ -241,7 +248,7 @@ function CheckoutSummaryPriceList() {
 					</span>
 				</CheckoutSummaryTotal>
 
-				{ hasIntroductoryOfferForInitialPurchaseOnly( responseCart ) && (
+				{ isJetpackNotAtomic && hasIntroductoryOfferForInitialPurchaseOnly( responseCart ) && (
 					<CheckoutSummaryExplanation>
 						{ preventWidows(
 							translate( '*Introductory offer first term only, renews at regular rate.' )
