@@ -115,20 +115,6 @@ const SiteAdminInterfaceCard = ( { siteId } ) => {
 			<FormFieldset>
 				<FormLabel>
 					<FormRadioStyled
-						label={ translate( 'Default style' ) }
-						value="calypso"
-						checked={ selectedAdminInterface === 'calypso' }
-						onChange={ ( event ) => handleInputChange( event.target.value ) }
-						disabled={ isUpdating }
-					/>
-				</FormLabel>
-				<FormSettingExplanation>
-					{ translate( 'The WordPress.com redesign for a better experience.' ) }
-				</FormSettingExplanation>
-			</FormFieldset>
-			<FormFieldset>
-				<FormLabel>
-					<FormRadioStyled
 						label={ translate( 'Classic style' ) }
 						value="wp-admin"
 						checked={ selectedAdminInterface === 'wp-admin' }
@@ -137,7 +123,21 @@ const SiteAdminInterfaceCard = ( { siteId } ) => {
 					/>
 				</FormLabel>
 				<FormSettingExplanation>
-					{ translate( 'The classic WP-Admin WordPress interface.' ) }
+					{ translate( 'Use WP-Admin to manage your site.' ) }
+				</FormSettingExplanation>
+			</FormFieldset>
+			<FormFieldset>
+				<FormLabel>
+					<FormRadioStyled
+						label={ translate( 'Default style' ) }
+						value="calypso"
+						checked={ selectedAdminInterface === 'calypso' }
+						onChange={ ( event ) => handleInputChange( event.target.value ) }
+						disabled={ isUpdating }
+					/>
+				</FormLabel>
+				<FormSettingExplanation>
+					{ translate( 'Use WordPress.com’s legacy dashboard to manage your site.' ) }
 				</FormSettingExplanation>
 			</FormFieldset>
 		</Card>
