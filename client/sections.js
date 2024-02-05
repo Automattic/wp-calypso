@@ -576,8 +576,15 @@ const sections = [
 		enableLoggedOut: true,
 	},
 	{
+		name: 'jetpack-cloud-manage-pricing',
+		paths: [ '/manage/pricing' ],
+		module: 'calypso/jetpack-cloud/sections/manage/pricing',
+		group: 'jetpack-cloud',
+		enableLoggedOut: true,
+	},
+	{
 		name: 'jetpack-cloud-pricing',
-		paths: [ '/pricing', '/[^\\/|^manage/]+/pricing', '/plans', '/[^\\/]+/plans' ],
+		paths: [ '/pricing', '/[^\\/]+/pricing', '/plans', '/[^\\/]+/plans' ],
 		module: 'calypso/jetpack-cloud/sections/pricing',
 		group: 'jetpack-cloud',
 		enableLoggedOut: true,
@@ -588,13 +595,6 @@ const sections = [
 				href: 'https://fonts.googleapis.com/css2?family=Noto+Sans:ital,wght@0,400;0,700;1,400;1,700&display=swap',
 			},
 		],
-	},
-	{
-		name: 'jetpack-cloud-manage-pricing',
-		paths: [ '/manage/pricing' ],
-		module: 'calypso/jetpack-cloud/sections/manage/pricing',
-		group: 'jetpack-cloud',
-		enableLoggedOut: true,
 	},
 	{
 		name: 'jetpack-cloud-features-comparison',
