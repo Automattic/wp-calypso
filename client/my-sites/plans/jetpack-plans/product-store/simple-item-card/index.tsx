@@ -26,6 +26,7 @@ export const SimpleItemCard: React.FC< SimpleItemCardProps > = ( {
 				<div className="simple-item-card__header">
 					<div>
 						<h3 className="simple-item-card__title">{ title }</h3>
+						{ variant }
 						<div className="simple-item-card__price">{ price }</div>
 					</div>
 					{ ! isCondensedVersion && (
@@ -43,7 +44,6 @@ export const SimpleItemCard: React.FC< SimpleItemCardProps > = ( {
 						</Button>
 					) }
 				</div>
-				{ variant }
 				<div className="simple-item-card__footer">{ description }</div>
 			</div>
 		</div>
