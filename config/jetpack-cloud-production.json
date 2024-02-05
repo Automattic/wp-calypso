@@ -85,7 +85,7 @@
 		"jetpack-cloud-partner-portal": true,
 		"jetpack-cloud-plugin-management": true,
 		"jetpack-cloud-pricing": true,
-		"jetpack-cloud-manage-pricing": false,
+		"jetpack-cloud-manage-pricing": true,
 		"jetpack-cloud-settings": true,
 		"jetpack-cloud-golden-token": false,
 		"jetpack-search": true,
