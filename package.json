@@ -234,7 +234,7 @@
 		"@storybook/cli": "^7.6.10",
 		"@storybook/react": "^7.6.10",
 		"@tanstack/eslint-plugin-query": "^5.14.6",
-		"@testing-library/jest-dom": "^6.2.0",
+		"@testing-library/jest-dom": "^6.3.0",
 		"@types/gtag.js": "^0.0.18",
 		"@types/superagent": "^4.1.15",
 		"@types/wordpress__blocks": "^12.5.13",
