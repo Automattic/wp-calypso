@@ -8112,13 +8112,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/superagent@npm:^4.1.15":
-  version: 4.1.15
-  resolution: "@types/superagent@npm:4.1.15"
+"@types/superagent@npm:^4.1.24":
+  version: 4.1.24
+  resolution: "@types/superagent@npm:4.1.24"
   dependencies:
     "@types/cookiejar": "npm:*"
     "@types/node": "npm:*"
-  checksum: 73d624d82c2d8e094706af6b9b23b8d938d4013270e0276cc372c730a4d7495fedc62e0dbc1d0e35d3c224e73c71ca312339c8b09ad44825c71037e5c9d72843
+  checksum: 98109e94d4c0b2f9360ae31a411f8a830109704a080b6a7b5f12da2bb549e596fc6a4072f45fb2c3ddfcf23974c41ac68e3cbcbf9fd6f32fca64f81cc867d5e6
   languageName: node
   linkType: hard
 
@@ -32265,7 +32265,7 @@ __metadata:
     "@types/react-router-dom": "npm:^5.3.3"
     "@types/react-transition-group": "npm:^4.4.4"
     "@types/store": "npm:^2.0.2"
-    "@types/superagent": "npm:^4.1.15"
+    "@types/superagent": "npm:^4.1.24"
     "@types/uuid": "npm:^9.0.7"
     "@types/validator": "npm:^13.7.1"
     "@types/webpack-env": "npm:^1.18.4"
