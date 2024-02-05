@@ -1,3 +1,4 @@
+import { translate } from 'i18n-calypso';
 import { connect } from 'react-redux';
 import GeneralForm from 'calypso/my-sites/site-settings/form-general';
 import isSiteP2Hub from 'calypso/state/selectors/is-site-p2-hub';
@@ -11,7 +12,7 @@ const SiteSettingsGeneral = ( { site, isWPForTeamsSite, isP2Hub, isWpcomStagingS
 	<div className="site-settings__main general-settings">
 		<GeneralForm site={ site } />
 		{ isWPForTeamsSite && isP2Hub && <P2PreapprovedDomainsForm siteId={ site?.ID } /> }
-		{ ! isWpcomStagingSite && <SiteTools /> }
+		{ ! isWpcomStagingSite && <SiteTools headerTitle={ translate( 'Site tools' ) } /> }
 	</div>
 );
 
