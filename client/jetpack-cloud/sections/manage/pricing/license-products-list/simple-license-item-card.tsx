@@ -27,7 +27,6 @@ type SimpleLicenseItemCardProps = {
 	isCondensedVersion?: boolean;
 	isCtaDisabled?: boolean;
 	isCtaExternal?: boolean;
-	onClickCta?: VoidFunction;
 };
 
 export const SimpleLicenseItemCard = ( {
@@ -36,7 +35,6 @@ export const SimpleLicenseItemCard = ( {
 	ctaAsPrimary,
 	isCtaDisabled,
 	isCtaExternal,
-	onClickCta,
 }: SimpleLicenseItemCardProps ) => {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
@@ -151,10 +149,9 @@ export const SimpleLicenseItemCard = ( {
 				}
 				price={ price }
 				ctaAsPrimary={ ctaAsPrimary }
-				onClickCta={ onClickCta }
+				onClickCta={ onSelectProduct }
 				isCtaDisabled={ isCtaDisabled }
 				isCtaExternal={ isCtaExternal }
-				ctaHref={ isCtaDisabled ? '#' : getIssueLicenseURL( productSlug, bundleSize ) }
 				ctaAriaLabel={ ctaAriaLabel }
 				ctaLabel={ ctaLabel }
 			/>
