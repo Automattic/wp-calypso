@@ -71,6 +71,6 @@
 		"@testing-library/user-event": "^14.5.2",
 		"resize-observer-polyfill": "^1.5.1",
 		"typescript": "^5.3.3",
-		"webpack": "^5.89.0"
+		"webpack": "^5.90.0"
 	}
 }
