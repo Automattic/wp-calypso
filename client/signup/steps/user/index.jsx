@@ -458,7 +458,19 @@ export class UserStep extends Component {
 	}
 
 	getHeaderText() {
-		const { flowName, oauth2Client, translate, headerText, wccomFrom, isSocialFirst } = this.props;
+		const {
+			flowName,
+			oauth2Client,
+			translate,
+			headerText,
+			wccomFrom,
+			isSocialFirst,
+			userLoggedIn,
+		} = this.props;
+
+		if ( userLoggedIn ) {
+			return translate( 'Is this you?' );
+		}
 
 		if ( isCrowdsignalOAuth2Client( oauth2Client ) ) {
 			return translate( 'Sign up for Crowdsignal' );

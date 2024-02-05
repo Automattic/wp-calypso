@@ -1,3 +1,4 @@
+import { JetpackLogo } from '@automattic/components';
 import { NextButton, Title } from '@automattic/onboarding';
 import { useTranslate } from 'i18n-calypso';
 import React, { useState, useEffect } from 'react';
@@ -98,15 +99,42 @@ export function MigrationReady( props: Props ) {
 				/>
 			) }
 			{ isFetchingUserSettingsSelector ? (
-				<LoadingEllipsis />
+				<div className="import-layout__center">
+					<LoadingEllipsis />
+				</div>
 			) : (
 				<div className="import__pre-migration import__import-everything import__import-everything--redesign">
 					<div className="import__heading import__heading-center">
-						<Title>{ translate( 'You are ready to migrate' ) }</Title>
+						<Title>
+							{ translate( 'Your site is ready {{br/}}for its brand new home', {
+								components: {
+									br: <br />,
+								},
+							} ) }
+						</Title>
 					</div>
-					{ ! sourceSiteHasCredentials && (
-						<CredentialsCta onButtonClick={ onProvideCredentialsClick } />
-					) }
+					<div className="pre-migration__main-content">
+						<div className="pre-migration__main-content-primary-text">
+							{ translate(
+								"Enjoy a hassle-free migration process where we smoothly move your {{br/}}website's content, media files, themes, plugins, and settings.",
+								{
+									components: {
+										br: <br />,
+									},
+								}
+							) }
+						</div>
+						<div className="pre-migration__main-content-secondary-text">
+							{ translate(
+								'Unlock the benefits of {{strong}}WordPress.com{{/strong}} without any disruption.',
+								{
+									components: {
+										strong: <strong />,
+									},
+								}
+							) }
+						</div>
+					</div>
 					<div className="import__footer-button-container pre-migration__proceed">
 						<NextButton
 							type="button"
@@ -118,6 +146,12 @@ export function MigrationReady( props: Props ) {
 						>
 							{ translate( 'Start migration' ) }
 						</NextButton>
+					</div>
+					{ ! sourceSiteHasCredentials && (
+						<CredentialsCta onButtonClick={ onProvideCredentialsClick } />
+					) }
+					<div className="pre-migration__footer-jetpack-powered">
+						<JetpackLogo monochrome size={ 18 } /> <span>{ translate( 'Jetpack powered' ) }</span>
 					</div>
 				</div>
 			) }

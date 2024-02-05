@@ -21,6 +21,7 @@ const CostOverridesListStyle = styled.div`
 		justify-content: space-between;
 		grid-template-columns: auto auto;
 		margin-top: 4px;
+		gap: 16px;
 	}
 
 	& .cost-overrides-list-item--coupon {
@@ -81,7 +82,10 @@ export function CostOverridesList( {
 		<CostOverridesListStyle>
 			{ nonCouponOverrides.map( ( costOverride ) => {
 				return (
-					<div className="cost-overrides-list-item" key={ costOverride.humanReadableReason }>
+					<div
+						className="cost-overrides-list-item"
+						key={ costOverride.humanReadableReason + costOverride.overrideCode }
+					>
 						<span className="cost-overrides-list-item__reason">
 							{ costOverride.humanReadableReason }
 						</span>

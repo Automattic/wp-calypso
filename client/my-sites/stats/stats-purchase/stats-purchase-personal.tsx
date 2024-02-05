@@ -11,6 +11,7 @@ import { useTranslate } from 'i18n-calypso';
 import React, { useState } from 'react';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import useNoticeVisibilityMutation from 'calypso/my-sites/stats/hooks/use-notice-visibility-mutation';
+import { useNoticeVisibilityQuery } from 'calypso/my-sites/stats/hooks/use-notice-visibility-query';
 import { useSelector } from 'calypso/state';
 import getIsSiteWPCOM from 'calypso/state/selectors/is-site-wpcom';
 import gotoCheckoutPage from './stats-purchase-checkout-redirect';
@@ -52,6 +53,7 @@ const PersonalPurchase = ( {
 	const [ isSellingChecked, setSellingChecked ] = useState( false );
 	const [ isBusinessChecked, setBusinessChecked ] = useState( false );
 	const [ isDonationChecked, setDonationChecked ] = useState( false );
+	const [ isPostponeBusy, setPostponeBusy ] = useState( false );
 	const {
 		sliderStepPrice,
 		minSliderPrice,
@@ -103,7 +105,7 @@ const PersonalPurchase = ( {
 	if ( isNewPurchaseFlowEnabled ) {
 		continueButtonText = translate( 'Contribute and continue' );
 	}
-
+	const { refetch: refetchNotices } = useNoticeVisibilityQuery( siteId, 'focus_jetpack_purchase' );
 	const { mutateAsync: mutateNoticeVisbilityAsync } = useNoticeVisibilityMutation(
 		siteId,
 		'focus_jetpack_purchase',
@@ -133,14 +135,21 @@ const PersonalPurchase = ( {
 	};
 
 	const handleCheckoutPostponed = () => {
-		mutateNoticeVisbilityAsync().finally( () => {
-			// publish event
-			const event_from = isOdysseyStats ? 'jetpack_odyssey' : 'calypso';
-			recordTracksEvent( `${ event_from }_stats_purchase_flow_skip_button_clicked` );
+		setPostponeBusy( true );
 
-			// redirect to the Traffic page
-			setTimeout( () => page( `/stats/day/${ siteSlug }` ), 250 );
-		} );
+		mutateNoticeVisbilityAsync()
+			.then( refetchNotices )
+			.finally( () => {
+				// publish event
+				const event_from = isOdysseyStats ? 'jetpack_odyssey' : 'calypso';
+				recordTracksEvent( `${ event_from }_stats_purchase_flow_skip_button_clicked` );
+
+				// redirect to the Traffic page
+				setTimeout( () => {
+					setPostponeBusy( false );
+					page( `/stats/day/${ siteSlug }` );
+				}, 250 );
+			} );
 	};
 
 	return (
@@ -195,7 +204,7 @@ const PersonalPurchase = ( {
 			) }
 
 			{ subscriptionValue === 0 && (
-				<div className={ `${ COMPONENT_CLASS_NAME }__persnal-checklist` }>
+				<div className={ `${ COMPONENT_CLASS_NAME }__personal-checklist` }>
 					<p>
 						<strong>
 							{ translate( 'Please confirm non-commercial usage by checking each box:' ) }
@@ -270,7 +279,12 @@ const PersonalPurchase = ( {
 					</ButtonComponent>
 
 					{ isNewPurchaseFlowEnabled && (
-						<ButtonComponent variant="secondary" onClick={ handleCheckoutPostponed }>
+						<ButtonComponent
+							variant="secondary"
+							isBusy={ isWPCOMSite ? undefined : isPostponeBusy } // for <Button />
+							busy={ isWPCOMSite ? isPostponeBusy : undefined } // for <CalypsoButton />
+							onClick={ handleCheckoutPostponed }
+						>
 							{ translate( 'I will do it later' ) }
 						</ButtonComponent>
 					) }

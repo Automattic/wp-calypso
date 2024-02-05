@@ -15,8 +15,6 @@ import {
 	isWpcomEnterpriseGridPlan,
 	type PlanSlug,
 	UrlFriendlyTermType,
-	getBillingMonthsForTerm,
-	URL_FRIENDLY_TERMS_MAPPING,
 } from '@automattic/calypso-products';
 import page from '@automattic/calypso-router';
 import { Button, Spinner } from '@automattic/components';
@@ -79,6 +77,7 @@ import { useModalResolutionCallback } from './components/plan-upsell-modal/hooks
 import useCheckPlanAvailabilityForPurchase from './hooks/use-check-plan-availability-for-purchase';
 import useCurrentPlanManageHref from './hooks/use-current-plan-manage-href';
 import useFilterPlansForPlanFeatures from './hooks/use-filter-plans-for-plan-features';
+import useFilteredDisplayedIntervals from './hooks/use-filtered-displayed-intervals';
 import usePlanBillingPeriod from './hooks/use-plan-billing-period';
 import usePlanFromUpsells from './hooks/use-plan-from-upsells';
 import usePlanIntentFromSiteMeta from './hooks/use-plan-intent-from-site-meta';
@@ -528,19 +527,12 @@ const PlansFeaturesMain = ( {
 		_customerType = 'business';
 	}
 
-	let filteredDisplayedIntervals = displayedIntervals;
-	// Hide interval terms that are less than the current plan's term in months
-	if ( currentPlan?.productSlug && ! isFreePlan( currentPlan.productSlug ) ) {
-		const currentPlanIntervalTypeBillingMonths = getBillingMonthsForTerm(
-			getPlan( currentPlan.productSlug )?.term || ''
-		);
-		filteredDisplayedIntervals = displayedIntervals.filter( ( intervalType ) => {
-			const intervalTypeInMonths = getBillingMonthsForTerm(
-				URL_FRIENDLY_TERMS_MAPPING[ intervalType ] || ''
-			);
-			return intervalTypeInMonths >= currentPlanIntervalTypeBillingMonths;
-		} );
-	}
+	const filteredDisplayedIntervals = useFilteredDisplayedIntervals( {
+		productSlug: currentPlan?.productSlug,
+		displayedIntervals,
+		intent,
+		paidDomainName,
+	} );
 
 	const planTypeSelectorProps = useMemo( () => {
 		const props = {
@@ -898,6 +890,7 @@ const PlansFeaturesMain = ( {
 									generatedWPComSubdomain={ resolvedSubdomainName }
 									isCustomDomainAllowedOnFreePlan={ isCustomDomainAllowedOnFreePlan }
 									isInSignup={ isInSignup }
+									isInAdmin={ ! isInSignup }
 									isLaunchPage={ isLaunchPage }
 									onUpgradeClick={ handleUpgradeClick }
 									selectedFeature={ selectedFeature }
@@ -959,6 +952,7 @@ const PlansFeaturesMain = ( {
 											<ComparisonGrid
 												gridPlans={ gridPlansForComparisonGrid }
 												isInSignup={ isInSignup }
+												isInAdmin={ ! isInSignup }
 												isLaunchPage={ isLaunchPage }
 												onUpgradeClick={ handleUpgradeClick }
 												selectedFeature={ selectedFeature }

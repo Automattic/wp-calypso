@@ -6,7 +6,7 @@ import { isDomainUpsellCompleted } from '../../task-helper';
 import { recordTaskClickTracksEvent } from '../../tracking';
 import { TaskAction } from '../../types';
 
-const getDomainUpSellTask: TaskAction = ( task, flow, context ): Task => {
+export const getDomainUpSellTask: TaskAction = ( task, flow, context ): Task => {
 	const { siteInfoQueryArgs, site, checklistStatuses } = context;
 
 	const domainUpsellCompleted = isDomainUpsellCompleted( site, checklistStatuses );

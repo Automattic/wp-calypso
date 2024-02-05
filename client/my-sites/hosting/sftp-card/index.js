@@ -1,5 +1,5 @@
 import { FEATURE_SFTP, FEATURE_SSH } from '@automattic/calypso-products';
-import { Card, Button, Spinner } from '@automattic/components';
+import { Card, Button, FormLabel, Spinner } from '@automattic/components';
 import { updateLaunchpadSettings } from '@automattic/data-stores';
 import styled from '@emotion/styled';
 import { PanelBody, ToggleControl } from '@wordpress/components';
@@ -10,7 +10,6 @@ import CardHeading from 'calypso/components/card-heading';
 import ClipboardButtonInput from 'calypso/components/clipboard-button-input';
 import ExternalLink from 'calypso/components/external-link';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
-import FormLabel from 'calypso/components/forms/form-label';
 import InlineSupportLink from 'calypso/components/inline-support-link';
 import MaterialIcon from 'calypso/components/material-icon';
 import twoStepAuthorization from 'calypso/lib/two-step-authorization';

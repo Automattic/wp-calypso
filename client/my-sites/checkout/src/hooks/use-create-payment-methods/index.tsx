@@ -17,8 +17,10 @@ import {
 	createSofortPaymentMethodStore,
 	createAlipayMethod,
 	createAlipayPaymentMethodStore,
+	createRazorpayMethod,
 	isValueTruthy,
 } from '@automattic/wpcom-checkout';
+import debugFactory from 'debug';
 import { useMemo } from 'react';
 import { StoredPaymentMethod } from 'calypso/lib/checkout/payment-methods';
 import { translateCheckoutPaymentMethodToWpcomPaymentMethod } from 'calypso/my-sites/checkout/src/lib/translate-payment-method-names';
@@ -34,14 +36,18 @@ import {
 	createNetBankingMethod,
 } from '../../payment-methods/netbanking';
 import { createPayPalMethod, createPayPalStore } from '../../payment-methods/paypal';
+import { createPixPaymentMethod } from '../../payment-methods/pix';
 import { createWeChatMethod, createWeChatPaymentMethodStore } from '../../payment-methods/wechat';
 import useCreateExistingCards from './use-create-existing-cards';
+import type { RazorpayConfiguration, RazorpayLoadingError } from '@automattic/calypso-razorpay';
 import type { StripeConfiguration, StripeLoadingError } from '@automattic/calypso-stripe';
 import type { PaymentMethod } from '@automattic/composite-checkout';
 import type { CartKey } from '@automattic/shopping-cart';
 import type { ContactDetailsType } from '@automattic/wpcom-checkout';
 import type { Stripe } from '@stripe/stripe-js';
 import type { ReactNode } from 'react';
+
+const debug = debugFactory( 'calypso:use-create-payment-methods' );
 
 export { useCreateExistingCards };
 
@@ -107,6 +113,16 @@ export function useCreateCreditCard( {
 		]
 	);
 	return stripeMethod;
+}
+
+function useCreatePix(): PaymentMethod | null {
+	return useMemo(
+		() =>
+			createPixPaymentMethod( {
+				submitButtonContent: <CheckoutSubmitButtonContent />,
+			} ),
+		[]
+	);
 }
 
 function useCreateAlipay( {
@@ -196,11 +212,9 @@ function useCreateGiropay( {
 function useCreateWeChat( {
 	isStripeLoading,
 	stripeLoadingError,
-	siteSlug,
 }: {
 	isStripeLoading: boolean;
 	stripeLoadingError: StripeLoadingError;
-	siteSlug?: string | undefined;
 } ): PaymentMethod | null {
 	const shouldLoad = ! isStripeLoading && ! stripeLoadingError;
 	const paymentMethodStore = useMemo( () => createWeChatPaymentMethodStore(), [] );
@@ -209,10 +223,9 @@ function useCreateWeChat( {
 			shouldLoad
 				? createWeChatMethod( {
 						store: paymentMethodStore,
-						siteSlug,
 				  } )
 				: null,
-		[ shouldLoad, paymentMethodStore, siteSlug ]
+		[ shouldLoad, paymentMethodStore ]
 	);
 }
 
@@ -347,22 +360,58 @@ function useCreateGooglePay( {
 	}, [ stripe, stripeConfiguration, isStripeReady, cartKey ] );
 }
 
+function useCreateRazorpay( {
+	isRazorpayLoading,
+	razorpayLoadingError,
+	razorpayConfiguration,
+	cartKey,
+}: {
+	isRazorpayLoading: boolean;
+	razorpayLoadingError: RazorpayLoadingError;
+	razorpayConfiguration: RazorpayConfiguration | null;
+	cartKey: CartKey | undefined;
+} ): PaymentMethod | null {
+	if ( ! isEnabled( 'checkout/razorpay' ) ) {
+		debug( 'Razorpay disabled by configuration' );
+	}
+
+	const isRazorpayReady =
+		! isRazorpayLoading &&
+		! razorpayLoadingError &&
+		razorpayConfiguration &&
+		isEnabled( 'checkout/razorpay' );
+
+	return useMemo( () => {
+		return isRazorpayReady && razorpayConfiguration && cartKey
+			? createRazorpayMethod( {
+					razorpayConfiguration,
+					cartKey,
+					submitButtonContent: <CheckoutSubmitButtonContent />,
+			  } )
+			: null;
+	}, [ razorpayConfiguration, isRazorpayReady, cartKey ] );
+}
+
 export default function useCreatePaymentMethods( {
 	contactDetailsType,
 	isStripeLoading,
 	stripeLoadingError,
 	stripeConfiguration,
 	stripe,
+	isRazorpayLoading,
+	razorpayLoadingError,
+	razorpayConfiguration,
 	storedCards,
-	siteSlug,
 }: {
 	contactDetailsType: ContactDetailsType;
 	isStripeLoading: boolean;
 	stripeLoadingError: StripeLoadingError;
 	stripeConfiguration: StripeConfiguration | null;
 	stripe: Stripe | null;
+	isRazorpayLoading: boolean;
+	razorpayLoadingError: RazorpayLoadingError;
+	razorpayConfiguration: RazorpayConfiguration | null;
 	storedCards: StoredPaymentMethod[];
-	siteSlug: string | undefined;
 } ): PaymentMethod[] {
 	const cartKey = useCartKey();
 	const { responseCart } = useShoppingCart( cartKey );
@@ -373,6 +422,8 @@ export default function useCreatePaymentMethods( {
 		isStripeLoading,
 		stripeLoadingError,
 	} );
+
+	const pixMethod = useCreatePix();
 
 	const alipayMethod = useCreateAlipay( {
 		isStripeLoading,
@@ -409,7 +460,6 @@ export default function useCreatePaymentMethods( {
 	const wechatMethod = useCreateWeChat( {
 		isStripeLoading,
 		stripeLoadingError,
-		siteSlug,
 	} );
 
 	const shouldUseEbanx = responseCart.allowed_payment_methods.includes(
@@ -447,6 +497,13 @@ export default function useCreatePaymentMethods( {
 		cartKey,
 	} );
 
+	const razorpayMethod = useCreateRazorpay( {
+		isRazorpayLoading,
+		razorpayLoadingError,
+		razorpayConfiguration,
+		cartKey,
+	} );
+
 	const existingCardMethods = useCreateExistingCards( {
 		isStripeLoading,
 		stripeLoadingError,
@@ -466,10 +523,12 @@ export default function useCreatePaymentMethods( {
 		giropayMethod,
 		sofortMethod,
 		netbankingMethod,
+		pixMethod,
 		alipayMethod,
 		p24Method,
 		epsMethod,
 		wechatMethod,
 		bancontactMethod,
+		razorpayMethod,
 	].filter( isValueTruthy );
 }

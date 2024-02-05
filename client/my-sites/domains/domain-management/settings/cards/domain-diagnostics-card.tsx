@@ -63,41 +63,55 @@ export default function DomainDiagnosticsCard( { domain }: { domain: ResponseDom
 		setIsDismissEmailDnsIssuesDialogVisible( false );
 	};
 
-	const renderDiagnosticForRecord = ( record: string ) => {
-		const uppercaseRecord = record.toUpperCase();
-		const records = emailDnsDiagnostics.records;
+	const renderDiagnosticForRecordType = (
+		type: string,
+		status: string,
+		message: string,
+		correct_record: string | null
+	) => {
+		return (
+			<li key={ type }>
+				{ message }
+				{ correct_record ? (
+					<p>
+						<code>{ correct_record }</code>
+					</p>
+				) : null }
+			</li>
+		);
+	};
 
-		if ( records[ record ].status === 'incorrect' ) {
-			return (
-				<li key={ record }>
-					{ sprintf(
-						/* translators: dnsRecordType is a DNS record type, e.g. SPF, DKIM or DMARC */
-						translate(
-							'Your %(dnsRecordType)s record is incorrect. The correct record should be:'
-						),
-						{
-							dnsRecordType: uppercaseRecord,
-						}
-					) }
-					<p>
-						<code>{ records[ record ].correct_record }</code>
-					</p>
-				</li>
+	const renderDiagnosticForRecord = ( recordType: string ) => {
+		const uppercaseRecord = recordType.toUpperCase();
+		const records = emailDnsDiagnostics.records;
+		let message: string | null = null;
+
+		if ( records[ recordType ].error_message ) {
+			message = records[ recordType ].error_message ?? null;
+		} else if ( records[ recordType ].status === 'incorrect' ) {
+			message = sprintf(
+				/* translators: dnsRecordType is a DNS record type, e.g. SPF, DKIM or DMARC */
+				translate( 'Your %(dnsRecordType)s record is incorrect. The correct record should be:' ),
+				{
+					dnsRecordType: uppercaseRecord,
+				}
 			);
-		} else if ( records[ record ].status === 'not_found' ) {
-			return (
-				<li key={ record }>
-					{ sprintf(
-						/* translators: dnsRecordType is a DNS record type, e.g. SPF, DKIM or DMARC */
-						translate( 'There is no %(dnsRecordType)s record. The correct record should be:' ),
-						{
-							dnsRecordType: uppercaseRecord,
-						}
-					) }
-					<p>
-						<code>{ records[ record ].correct_record }</code>
-					</p>
-				</li>
+		} else if ( records[ recordType ].status === 'not_found' ) {
+			message = sprintf(
+				/* translators: dnsRecordType is a DNS record type, e.g. SPF, DKIM or DMARC */
+				translate( 'There is no %(dnsRecordType)s record. The correct record should be:' ),
+				{
+					dnsRecordType: uppercaseRecord,
+				}
+			);
+		}
+
+		if ( message ) {
+			return renderDiagnosticForRecordType(
+				recordType,
+				records[ recordType ].status,
+				message,
+				records[ recordType ].correct_record ?? null
 			);
 		}
 

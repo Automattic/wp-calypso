@@ -1,4 +1,3 @@
-import { isEnabled } from '@automattic/calypso-config';
 import { Button } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { useBreakpoint } from '@automattic/viewport-react';
@@ -397,8 +396,7 @@ function PluginDetails( props ) {
 			/>
 			<PluginDetailsNotices selectedSite={ selectedSite } plugin={ fullPlugin } />
 
-			{ isEnabled( 'marketplace-reviews-show' ) &&
-				userReviews.length === 0 &&
+			{ userReviews.length === 0 &&
 				canPublishReview &&
 				isMarketplaceProduct &&
 				! showPlaceholder && (
@@ -420,6 +418,7 @@ function PluginDetails( props ) {
 							plugin={ fullPlugin }
 							isPlaceholder={ showPlaceholder }
 							onReviewsClick={ () => setIsReviewsModalVisible( true ) }
+							isMarketplaceProduct={ isMarketplaceProduct }
 						/>
 					</div>
 					<div className="plugin-details__content">
@@ -500,7 +499,7 @@ function PluginDetails( props ) {
 					</div>
 				</div>
 			</div>
-			{ isEnabled( 'marketplace-reviews-show' ) && ! showPlaceholder && (
+			{ ! showPlaceholder && (
 				<div className="plugin-details__reviews">
 					<MarketplaceReviewsCards
 						slug={ fullPlugin.slug }

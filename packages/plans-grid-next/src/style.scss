@@ -1,4 +1,5 @@
 @import "@automattic/onboarding/styles/mixins";
+@import "./mixins";
 @import "./media-queries";
 
 $table-cell-max-width: 344px;
@@ -8,9 +9,17 @@ $mobile-card-max-width: 440px;
 	margin-top: 300px;
 }
 
+.plans-grid-next__features-grid {
+	display: none;
+
+	&.is-visible {
+		display: block;
+	}
+}
+
 .plan-features-2023-grid__header {
-	position: relative;
 	display: flex;
+	position: relative;
 	align-items: flex-start;
 	padding-inline: 20px 0;
 	padding-block: 0 8px;
@@ -22,16 +31,14 @@ $mobile-card-max-width: 440px;
 .plan-features-2023-grid__header-logo {
 	padding-left: 20px;
 
-	@include plans-2023-break-small {
+	@include plans-grid-medium-large {
 		margin-top: 36px;
-
-		.plan-features-2023-grid__table-top & {
-			margin-top: 62px;
-		}
 	}
 
-	@include plans-2023-break-medium {
-		margin-top: 36px;
+	.plan-features-2023-grid__table-top & {
+		@include plans-grid-large {
+			margin-top: 62px;
+		}
 	}
 }
 
@@ -54,6 +61,7 @@ $mobile-card-max-width: 440px;
 }
 
 .plan-features-2023-grid__mobile-view {
+	display: flex;
 	flex-direction: column;
 	align-items: stretch;
 	gap: 20px;
@@ -67,9 +75,15 @@ $mobile-card-max-width: 440px;
 		border-radius: 5px;
 		padding: 38px 0 20px 0;
 
-		@include plans-section-custom-mobile-breakpoint {
-			margin-left: 0;
-			margin-right: 0;
+		/*
+		 * TODO: Remove/refactor this once we have a better way to handle.
+		 * .is-section-plans refers to external context.
+		 */
+		@include plans-grid-medium-large {
+			.is-section-plans & {
+				margin-left: 0;
+				margin-right: 0;
+			}
 		}
 
 		&:first-of-type {
@@ -217,12 +231,12 @@ $mobile-card-max-width: 440px;
 	font-weight: 400;
 	padding: 0 20px 24px 20px;
 
-	@include plans-2023-break-small {
+	@include plans-grid-medium-large {
 		font-size: $font-body-small;
 		line-height: 20px;
 	}
 
-	@include plans-2023-break-medium {
+	@include plans-grid-large {
 		font-size: 0.813rem; /* stylelint-disable-line */
 		line-height: 16px;
 		padding-bottom: 8px;
@@ -251,13 +265,13 @@ $mobile-card-max-width: 440px;
 
 	&.is-top-buttons {
 		padding: 0 20px;
-		@include plans-2023-break-small {
+		@include plans-grid-medium-large {
 			padding-top: 16px;
 			padding-bottom: 16px;
 		}
 	}
 
-	@include plans-2023-break-small {
+	@include plans-grid-medium-large {
 		// The .plan-features-2023-grid__table-item is used to render the plan spotlight which doesn't
 		// use a table layout, but borders are only appropriate in table layout.
 		&:is(td) {
@@ -292,7 +306,8 @@ $mobile-card-max-width: 440px;
 
 		&.plan-features-2023-grid__header-billing-info {
 			padding-bottom: 16px;
-			@include plans-2023-break-small {
+
+			@include plans-grid-medium-large {
 				padding-bottom: 16px;
 			}
 		}
@@ -353,7 +368,7 @@ $mobile-card-max-width: 440px;
 			font-weight: 600;
 		}
 
-		@include plans-2023-break-small {
+		@include plans-grid-medium-large {
 			font-size: $font-body-extra-small;
 			line-height: 16px;
 		}
@@ -406,7 +421,7 @@ $mobile-card-max-width: 440px;
 		position: relative;
 		margin: 32px 0 0;
 
-		@include plans-2023-break-small {
+		@include plans-grid-medium-large {
 			margin: 0;
 			top: 14px;
 		}
@@ -469,10 +484,60 @@ $mobile-card-max-width: 440px;
 	}
 }
 
-body.is-section-stepper,
-body.is-section-signup.is-white-signup,
-.is-2023-pricing-grid {
 
+/* stylelint-disable-next-line no-duplicate-selectors */
+.plan-features-2023-grid__table-item {
+	.plan-features-2023-grid__common-title {
+		@include plans-grid-medium-large {
+			margin-top: 20px;
+			font-size: $font-body-extra-small;
+		}
+	}
+
+	&.plan-features-2023-grid__header-billing-info {
+		@include plans-grid-medium-large {
+			padding-bottom: 0;
+		}
+
+		.plans-grid-next__billing-timeframe-vip-price {
+			@include plans-grid-medium-large {
+				font-size: $font-body-small;
+				line-height: 20px;
+			}
+
+			@include plans-grid-large {
+				font-size: $font-body-extra-small;
+				line-height: 16px;
+			}
+		}
+	}
+
+	&.popular-plan-parent-class {
+		.plan-features-2023-grid__popular-badge {
+			@include plans-grid-medium-large {
+				position: absolute;
+				top: -35px; // at -35px this covers the top border of the table, including its top-right radius, as intended
+				right: -1px;
+				border-color: #e0e0e0;
+				border-width: 1px 1px 0 1px;
+				/* stylelint-disable-next-line scales/radii */
+				border-radius: 5px 5px 0 0;
+				border-style: solid;
+				padding-top: 20px;
+				margin-bottom: 0;
+
+				.plans-grid__plan-pill {
+					transform: translate(20px, 0);
+				}
+			}
+		}
+	}
+}
+
+/**
+ * TODO clk consolidate with the rest above
+ */
+.plans-grid-next {
 	.plan-features-2023-grid__table-item {
 		border-right: none;
 		background-color: transparent;
@@ -489,25 +554,11 @@ body.is-section-signup.is-white-signup,
 			font-size: $font-body-extra-small;
 			padding: 0 19px 24px 20px;
 
-			@include plans-2023-break-small {
-				padding-bottom: 0;
-			}
-
-			.plan-features-2023-grid__vip-price {
+			.plans-grid-next__billing-timeframe-vip-price {
 				font-size: $font-body;
 				line-height: 24px;
 				font-weight: 400;
 				color: var(--studio-gray-80);
-
-				@include plans-2023-break-small {
-					font-size: $font-body-small;
-					line-height: 20px;
-				}
-
-				@include plans-2023-break-medium {
-					font-size: $font-body-extra-small;
-					line-height: 16px;
-				}
 			}
 		}
 
@@ -520,19 +571,6 @@ body.is-section-signup.is-white-signup,
 				background: #fff;
 				color: #fff;
 				padding: 0 0 17px;
-
-				@include plans-2023-break-small {
-					position: absolute;
-					top: -35px; // at -35px this covers the top border of the table, including its top-right radius, as intended
-					right: -1px;
-					border-color: #e0e0e0;
-					border-width: 1px 1px 0 1px;
-					/* stylelint-disable-next-line scales/radii */
-					border-radius: 5px 5px 0 0;
-					border-style: solid;
-					padding-top: 20px;
-					margin-bottom: 0;
-				}
 
 				.plans-grid__plan-pill {
 					font-family: Inter, $sans;
@@ -551,9 +589,6 @@ body.is-section-signup.is-white-signup,
 					background-color: var(--studio-gray-80);
 					transform: translate(20px, -50px);
 					text-transform: unset;
-					@include plans-2023-break-small {
-						transform: translate(20px, 0);
-					}
 				}
 
 				&:not(.with-plan-logo) {
@@ -625,11 +660,6 @@ body.is-section-signup.is-white-signup,
 			padding: 0 20px;
 			margin-bottom: 12px;
 
-			@include plans-2023-break-small {
-				margin-top: 20px;
-				font-size: $font-body-extra-small;
-			}
-
 			&.is-personal-plan {
 				color: var(--studio-blue-60);
 			}
@@ -673,14 +703,26 @@ body.is-section-signup.is-white-signup,
 			color: var(--studio-orange-40);
 		}
 	}
+}
 
+/**
+ * TODO clk migrate out of plans-grid-next
+ */
+body.is-section-stepper,
+body.is-section-signup.is-white-signup {
 	.step-wrapper__header {
 		margin: 24px 20px 38px;
-
 		@include plans-2023-break-small {
 			margin: 24px 20px;
 		}
 	}
+}
+
+/**
+ * TODO clk migrate out of plans-grid-next
+ */
+.formatted-header {
+	margin-bottom: 0;
 }
 
 .plans-features-main__comparison-grid-container {
@@ -907,6 +949,7 @@ body.is-section-signup.is-white-signup,
 				color: unset;
 				margin-bottom: 0;
 			}
+			text-wrap: pretty;
 		}
 
 		&:not(.has-feature):not(.has-conditional-feature) {
@@ -976,7 +1019,7 @@ body.is-section-signup.is-white-signup,
 			margin: 7px 0 10px;
 		}
 
-		.plan-features-2023-grid__vip-price {
+		.plans-grid-next__billing-timeframe-vip-price {
 			font-size: $font-body;
 			line-height: 24px;
 			font-weight: 400;
@@ -993,10 +1036,6 @@ body.is-section-signup.is-white-signup,
 			}
 		}
 	}
-}
-
-.formatted-header {
-	margin-bottom: 0;
 }
 
 

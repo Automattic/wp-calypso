@@ -17,6 +17,7 @@ export const SimpleItemCard: React.FC< SimpleItemCardProps > = ( {
 	onClickCta,
 	price,
 	title,
+	variant,
 } ) => {
 	return (
 		<div className="simple-item-card">
@@ -25,6 +26,7 @@ export const SimpleItemCard: React.FC< SimpleItemCardProps > = ( {
 				<div className="simple-item-card__header">
 					<div>
 						<h3 className="simple-item-card__title">{ title }</h3>
+						{ variant }
 						<div className="simple-item-card__price">{ price }</div>
 					</div>
 					{ ! isCondensedVersion && (

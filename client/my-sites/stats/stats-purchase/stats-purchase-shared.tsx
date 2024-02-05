@@ -16,6 +16,11 @@ interface StatsCommercialPriceDisplayProps {
 	currencyCode: string;
 }
 
+interface StatsSingleItemPagePurchaseFrameProps {
+	children: React.ReactNode;
+	isFree?: boolean;
+}
+
 const StatsCommercialPriceDisplay = ( {
 	planValue,
 	currencyCode,
@@ -159,11 +164,6 @@ const StatsBenefitsFree = () => {
 	);
 };
 
-interface StatsSingleItemPagePurchaseFrameProps {
-	children: React.ReactNode;
-	isFree?: boolean;
-}
-
 const StatsSingleItemPagePurchaseFrame = ( {
 	children,
 	isFree = false,
@@ -191,10 +191,23 @@ const StatsSingleItemPagePurchaseFrame = ( {
 	);
 };
 
+const StatsSingleItemCard = ( { children }: { children: React.ReactNode } ) => {
+	return (
+		<div className={ classNames( COMPONENT_CLASS_NAME, `${ COMPONENT_CLASS_NAME }--single` ) }>
+			<Card className={ `${ COMPONENT_CLASS_NAME }__card-parent` }>
+				<div className={ `${ COMPONENT_CLASS_NAME }__card` }>
+					<div className={ `${ COMPONENT_CLASS_NAME }__card-inner--left` }>{ children }</div>
+				</div>
+			</Card>
+		</div>
+	);
+};
+
 export {
 	StatsCommercialPriceDisplay,
 	StatsBenefitsCommercial,
 	StatsBenefitsPersonal,
 	StatsBenefitsFree,
 	StatsSingleItemPagePurchaseFrame,
+	StatsSingleItemCard,
 };

@@ -93,6 +93,7 @@ export default function PluginDetailsV2( {
 								isJetpackCloud
 								plugin={ fullPlugin }
 								isPlaceholder={ showPlaceholder }
+								isMarketplaceProduct={ isMarketplaceProduct }
 							/>
 						</div>
 					</div>

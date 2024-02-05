@@ -98,5 +98,5 @@ async function getLoggedInLandingPage( { dispatch, getState } ) {
 		return `/home/${ primarySiteSlug }`;
 	}
 
-	return `/stats/${ primarySiteSlug }`;
+	return `/stats/day/${ primarySiteSlug }`;
 }

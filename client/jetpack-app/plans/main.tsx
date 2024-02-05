@@ -1,4 +1,3 @@
-import config from '@automattic/calypso-config';
 import { getPlan, PLAN_FREE } from '@automattic/calypso-products';
 import { addQueryArgs } from '@wordpress/url';
 import { useTranslate } from 'i18n-calypso';
@@ -119,13 +118,6 @@ const JetpackAppPlans: React.FC< JetpackAppPlansProps > = ( { paidDomainName, or
 						hidePlanTypeSelector
 						hidePlansFeatureComparison
 						setSiteUrlAsFreeDomainSuggestion={ setSiteUrlAsFreeDomainSuggestion }
-						showPlanTypeSelectorDropdown={
-							/**
-							 *	Override the default feature flag to prevent this feature from rendering in untested locations
-							 *  The hardcoded 'false' short curicuit should be removed once the feature is fully tested in the given context
-							 */
-							config.isEnabled( 'onboarding/interval-dropdown' ) && false
-						}
 					/>
 				</>
 			) : (

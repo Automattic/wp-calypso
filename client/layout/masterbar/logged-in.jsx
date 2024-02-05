@@ -141,7 +141,7 @@ class MasterbarLoggedIn extends Component {
 			/**
 			 * Reset the in-memory site lock for the currently selected site
 			 */
-			this.props.updateSiteMigrationMeta( currentSelectedSiteId, 'inactive', null );
+			this.props.updateSiteMigrationMeta( currentSelectedSiteId, 'inactive', null, null );
 
 			/**
 			 * Reset the migration on the backend

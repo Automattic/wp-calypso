@@ -1,6 +1,6 @@
 import {
 	FEATURE_INSTALL_THEMES,
-	WPCOM_FEATURES_PREMIUM_THEMES,
+	WPCOM_FEATURES_PREMIUM_THEMES_UNLIMITED,
 } from '@automattic/calypso-products';
 import pageRouter from '@automattic/calypso-router';
 import { compact } from 'lodash';
@@ -29,6 +29,7 @@ import {
 	prependThemeFilterKeys,
 	getIsLivePreviewStarted,
 	getThemeType,
+	getThemeTierForTheme,
 } from 'calypso/state/themes/selectors';
 import { getThemeHiddenFilters } from 'calypso/state/themes/selectors/get-theme-hidden-filters';
 import { addOptionsToGetUrl, trackClick, interlaceThemes } from './helpers';
@@ -40,6 +41,7 @@ class ThemesSelection extends Component {
 		getOptions: PropTypes.func,
 		getActionLabel: PropTypes.func,
 		incrementPage: PropTypes.func,
+		resetPage: PropTypes.func,
 		listLabel: PropTypes.string,
 		onScreenshotClick: PropTypes.func,
 		query: PropTypes.object.isRequired,
@@ -74,10 +76,20 @@ class ThemesSelection extends Component {
 	};
 
 	componentDidMount() {
+		if ( this.props.isRequesting || this.props.isLastPage ) {
+			return;
+		}
+
 		// Create "buffer zone" to prevent overscrolling too early bugging pagination requests.
 		const { query } = this.props;
 		if ( ! query.search && ! query.filter && ! query.tier ) {
 			this.props.incrementPage();
+		}
+	}
+
+	componentDidUpdate( nextProps ) {
+		if ( nextProps.query.number !== this.props.query.number ) {
+			this.props.resetPage();
 		}
 	}
 
@@ -295,6 +307,10 @@ function bindGetThemeType( state ) {
 	return ( themeId ) => getThemeType( state, themeId );
 }
 
+function bindGetThemeTierForTheme( state ) {
+	return ( themeId ) => getThemeTierForTheme( state, themeId );
+}
+
 // Exporting this for use in customized themes lists (recommended-themes.jsx, etc.)
 // We do not want pagination triggered in that use of the component.
 export const ConnectedThemesSelection = connect(
@@ -304,11 +320,11 @@ export const ConnectedThemesSelection = connect(
 	) => {
 		const isAtomic = isSiteAutomatedTransfer( state, siteId );
 		const premiumThemesEnabled = arePremiumThemesEnabled( state, siteId );
-		const hiddenFilters = getThemeHiddenFilters( state, siteId );
+		const hiddenFilters = getThemeHiddenFilters( state, siteId, tabFilter );
 		const hasUnlimitedPremiumThemes = siteHasFeature(
 			state,
 			siteId,
-			WPCOM_FEATURES_PREMIUM_THEMES
+			WPCOM_FEATURES_PREMIUM_THEMES_UNLIMITED
 		);
 		const canInstallThemes = siteHasFeature( state, siteId, FEATURE_INSTALL_THEMES );
 
@@ -366,12 +382,14 @@ export const ConnectedThemesSelection = connect(
 
 		const boundIsThemeActive = bindIsThemeActive( state, siteId );
 		const boundGetThemeType = bindGetThemeType( state );
+		const boundGetThemeTierForTheme = bindGetThemeTierForTheme( state );
 		const filterString = prependThemeFilterKeys( state, query.filter );
 		const themeShowcaseEventRecorder = getThemeShowcaseEventRecorder(
 			query,
 			themes,
 			filterString,
 			boundGetThemeType,
+			boundGetThemeTierForTheme,
 			boundIsThemeActive
 		);
 
@@ -445,6 +463,7 @@ class ThemesSelectionWithPage extends React.Component {
 				{ ...this.props }
 				page={ this.state.page }
 				incrementPage={ this.incrementPage }
+				resetPage={ this.resetPage }
 			>
 				{ this.props.children }
 			</ConnectedThemesSelection>

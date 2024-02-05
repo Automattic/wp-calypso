@@ -1,4 +1,4 @@
-import { keepPreviousData, useQuery } from '@tanstack/react-query';
+import { useQuery } from '@tanstack/react-query';
 import wpcom from 'calypso/lib/wp';
 import { DEFAULT_PER_PAGE, SubscribersFilterBy, SubscribersSortBy } from '../constants';
 import { getSubscribersCacheKey } from '../helpers';
@@ -53,7 +53,6 @@ const useSubscribersQuery = ( {
 			} );
 		},
 		enabled: !! siteId && shouldFetch,
-		placeholderData: keepPreviousData,
 	} );
 };
 

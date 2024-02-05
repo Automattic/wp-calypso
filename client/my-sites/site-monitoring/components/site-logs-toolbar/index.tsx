@@ -1,7 +1,7 @@
+import { SelectDropdown } from '@automattic/components';
 import { Button } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
-import SelectDropdown from 'calypso/components/select-dropdown';
 import { SiteLogsTab } from 'calypso/data/hosting/use-site-logs-query';
 import { useCurrentSiteGmtOffset } from '../../hooks/use-current-site-gmt-offset';
 import { useSiteLogsDownloader } from '../../hooks/use-site-logs-downloader';
@@ -153,10 +153,10 @@ export const SiteLogsToolbar = ( {
 								<SelectDropdown.Item
 									key={ option.value }
 									onClick={ () => onSeverityChange( option.value ) }
+									ariaLabel={ option.label }
+									selected={ option.value === severity }
 								>
-									<span>
-										<strong>{ option.label }</strong>
-									</span>
+									{ option.label }
 								</SelectDropdown.Item>
 							) ) }
 						</SelectDropdown>
@@ -176,10 +176,10 @@ export const SiteLogsToolbar = ( {
 									<SelectDropdown.Item
 										key={ option.value }
 										onClick={ () => onRequestTypeChange( option.value ) }
+										ariaLabel={ option.label }
+										selected={ option.value === requestType }
 									>
-										<span>
-											<strong>{ option.label }</strong>
-										</span>
+										{ option.label }
 									</SelectDropdown.Item>
 								) ) }
 							</SelectDropdown>
@@ -196,10 +196,10 @@ export const SiteLogsToolbar = ( {
 									<SelectDropdown.Item
 										key={ option.value }
 										onClick={ () => onRequestStatusChange( option.value ) }
+										ariaLabel={ option.label }
+										selected={ option.value === requestStatus }
 									>
-										<span>
-											<strong>{ option.label }</strong>
-										</span>
+										{ option.label }
 									</SelectDropdown.Item>
 								) ) }
 							</SelectDropdown>

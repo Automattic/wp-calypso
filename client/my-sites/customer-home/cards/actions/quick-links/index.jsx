@@ -1,7 +1,9 @@
+import config from '@automattic/calypso-config';
 import { getAllFeaturesForPlan } from '@automattic/calypso-products/';
 import { JetpackLogo, FoldableCard } from '@automattic/components';
+import { GeneratorModal } from '@automattic/jetpack-ai-calypso';
 import i18n, { getLocaleSlug, useTranslate } from 'i18n-calypso';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { connect, useSelector } from 'react-redux';
 import { useDebouncedCallback } from 'use-debounce';
 import fiverrIcon from 'calypso/assets/images/customer-home/fiverr-logo-grey.svg';
@@ -83,6 +85,7 @@ export const QuickLinks = ( {
 	const site = useSelector( ( state ) => getSite( state, siteId ) );
 	const hasBackups = getAllFeaturesForPlan( currentSitePlanSlug ).includes( 'backups' );
 	const hasBoost = site?.options?.jetpack_connection_active_plugins?.includes( 'jetpack-boost' );
+	const [ isAILogoGeneratorOpen, setIsAILogoGeneratorOpen ] = useState( false );
 
 	const addNewDomain = () => {
 		trackAddDomainAction();
@@ -234,6 +237,22 @@ export const QuickLinks = ( {
 						external
 						iconSrc={ fiverrIcon }
 					/>
+					{ config.isEnabled( 'jetpack/ai-logo-generator' ) && (
+						<>
+							<ActionBox
+								hideLinkIndicator
+								gridicon="plans"
+								label={ translate( 'Create a logo with Jetpack AI' ) }
+								onClick={ () => setIsAILogoGeneratorOpen( true ) }
+							/>
+							<GeneratorModal
+								siteDetails={ site }
+								isOpen={ isAILogoGeneratorOpen }
+								onClose={ () => setIsAILogoGeneratorOpen( false ) }
+								context="calypso"
+							/>
+						</>
+					) }
 				</>
 			) }
 			{ isAtomic && hasBoost && (

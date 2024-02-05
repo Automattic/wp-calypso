@@ -291,6 +291,10 @@ export function getEnhancedTasks( {
 				shouldDisplayWarning,
 				globalStylesMinimumPlan,
 				isVideoPressFlowWithUnsupportedPlan,
+				goToStep,
+				stripeConnectUrl,
+				queryClient,
+				setShowPlansModal,
 			};
 
 			switch ( task.id ) {
@@ -321,7 +325,7 @@ export function getEnhancedTasks( {
 					taskData = getTaskDefinition( flow, task, context ) || deprecatedData;
 					break;
 				case 'setup_newsletter':
-					taskData = {
+					deprecatedData = {
 						actionDispatch: () => {
 							recordTaskClickTracksEvent( flow, task.completed, task.id );
 							window.location.assign(
@@ -332,6 +336,7 @@ export function getEnhancedTasks( {
 							);
 						},
 					};
+					taskData = getTaskDefinition( flow, task, context ) || deprecatedData;
 					break;
 				case 'design_edited':
 					deprecatedData = {
@@ -392,7 +397,7 @@ export function getEnhancedTasks( {
 					taskData = getTaskDefinition( flow, task, context ) || deprecatedData;
 					break;
 				case 'subscribers_added':
-					taskData = {
+					deprecatedData = {
 						disabled: mustVerifyEmailBeforePosting || false,
 						actionDispatch: () => {
 							if ( goToStep ) {
@@ -401,9 +406,10 @@ export function getEnhancedTasks( {
 							}
 						},
 					};
+					taskData = getTaskDefinition( flow, task, context ) || deprecatedData;
 					break;
 				case 'migrate_content':
-					taskData = {
+					deprecatedData = {
 						disabled: mustVerifyEmailBeforePosting || false,
 						actionDispatch: () => {
 							recordTaskClickTracksEvent( flow, task.completed, task.id );
@@ -415,6 +421,7 @@ export function getEnhancedTasks( {
 							window.location.assign( `/import/${ siteSlug }` );
 						},
 					};
+					taskData = getTaskDefinition( flow, task, context ) || deprecatedData;
 					break;
 				case 'first_post_published':
 					deprecatedData = {
@@ -436,7 +443,7 @@ export function getEnhancedTasks( {
 					taskData = getTaskDefinition( flow, task, context ) || deprecatedData;
 					break;
 				case 'first_post_published_newsletter':
-					taskData = {
+					deprecatedData = {
 						isLaunchTask: true,
 						disabled: mustVerifyEmailBeforePosting || false,
 						actionDispatch: () => {
@@ -444,6 +451,7 @@ export function getEnhancedTasks( {
 							window.location.assign( `/post/${ siteSlug }` );
 						},
 					};
+					taskData = getTaskDefinition( flow, task, context ) || deprecatedData;
 					break;
 				case 'design_selected':
 				case 'design_completed':
@@ -476,7 +484,7 @@ export function getEnhancedTasks( {
 					taskData = getTaskDefinition( flow, task, context ) || deprecatedData;
 					break;
 				case 'setup_link_in_bio':
-					taskData = {
+					deprecatedData = {
 						actionDispatch: () => {
 							recordTaskClickTracksEvent( flow, task.completed, task.id );
 							window.location.assign(
@@ -487,9 +495,10 @@ export function getEnhancedTasks( {
 							);
 						},
 					};
+					taskData = getTaskDefinition( flow, task, context ) || deprecatedData;
 					break;
 				case 'links_added':
-					taskData = {
+					deprecatedData = {
 						actionDispatch: () => {
 							recordTaskClickTracksEvent( flow, task.completed, task.id );
 							window.location.assign(
@@ -499,9 +508,10 @@ export function getEnhancedTasks( {
 							);
 						},
 					};
+					taskData = getTaskDefinition( flow, task, context ) || deprecatedData;
 					break;
 				case 'link_in_bio_launched':
-					taskData = {
+					deprecatedData = {
 						isLaunchTask: true,
 						actionDispatch: () => {
 							if ( site?.ID ) {
@@ -524,6 +534,7 @@ export function getEnhancedTasks( {
 							}
 						},
 					};
+					taskData = getTaskDefinition( flow, task, context ) || deprecatedData;
 					break;
 				case 'site_launched':
 					deprecatedData = {
@@ -550,7 +561,7 @@ export function getEnhancedTasks( {
 					break;
 				}
 				case 'videopress_upload':
-					taskData = {
+					deprecatedData = {
 						actionUrl: launchpadUploadVideoLink,
 						disabled: isVideoPressFlowWithUnsupportedPlan || videoPressUploadCompleted,
 						actionDispatch: () => {
@@ -558,9 +569,11 @@ export function getEnhancedTasks( {
 							window.location.replace( launchpadUploadVideoLink );
 						},
 					};
+
+					taskData = getTaskDefinition( flow, task, context ) || deprecatedData;
 					break;
 				case 'videopress_launched':
-					taskData = {
+					deprecatedData = {
 						isLaunchTask: true,
 						actionDispatch: () => {
 							if ( site?.ID ) {
@@ -586,6 +599,7 @@ export function getEnhancedTasks( {
 							}
 						},
 					};
+					taskData = getTaskDefinition( flow, task, context ) || deprecatedData;
 					break;
 				case 'domain_upsell':
 					deprecatedData = {
@@ -624,16 +638,17 @@ export function getEnhancedTasks( {
 					taskData = getTaskDefinition( flow, task, context ) || deprecatedData;
 					break;
 				case 'verify_email':
-					taskData = {
+					deprecatedData = {
 						completed: isEmailVerified,
 						actionDispatch: () => {
 							recordTaskClickTracksEvent( flow, task.completed, task.id );
 							window.location.replace( task.calypso_path || '/me/account' );
 						},
 					};
+					taskData = getTaskDefinition( flow, task, context ) || deprecatedData;
 					break;
 				case 'set_up_payments':
-					taskData = {
+					deprecatedData = {
 						badge_text: task.completed ? translate( 'Connected' ) : null,
 						actionDispatch: () => {
 							recordTaskClickTracksEvent( flow, task.completed, task.id );
@@ -642,9 +657,10 @@ export function getEnhancedTasks( {
 								: window.location.assign( `/earn/payments/${ siteSlug }#launchpad` );
 						},
 					};
+					taskData = getTaskDefinition( flow, task, context ) || deprecatedData;
 					break;
 				case 'newsletter_plan_created':
-					taskData = {
+					deprecatedData = {
 						actionDispatch: () => {
 							recordTaskClickTracksEvent( flow, task.completed, task.id );
 							completePaidNewsletterTask();
@@ -655,6 +671,10 @@ export function getEnhancedTasks( {
 								  );
 						},
 					};
+					taskData = getTaskDefinition( flow, task, context ) || deprecatedData;
+					break;
+				case 'videopress_setup':
+					taskData = getTaskDefinition( flow, task, context ) || task;
 					break;
 			}
 			enhancedTaskList.push( { ...task, ...taskData } );

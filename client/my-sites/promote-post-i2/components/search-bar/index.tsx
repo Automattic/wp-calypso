@@ -1,12 +1,12 @@
 import config from '@automattic/calypso-config';
+import { SelectDropdown } from '@automattic/components';
 import Search, { SearchIcon } from '@automattic/search';
 import { useMediaQuery } from '@wordpress/compose';
 import { translate } from 'i18n-calypso';
 import React, { useEffect, useRef } from 'react';
-import './style.scss';
 import SegmentedControl from 'calypso/components/segmented-control';
-import SelectDropdown from 'calypso/components/select-dropdown';
 import CampaignsFilter, { CampaignsFilterType } from '../campaigns-filter';
+import './style.scss';
 
 export type SearchOptions = {
 	search?: string;

@@ -1,10 +1,26 @@
-import { ReactNode } from 'react';
-import { useFormStatusManager } from '../lib/form-status';
-import { useTransactionStatusManager } from '../lib/transaction-status';
+import { ReactNode, useEffect } from 'react';
+import { useFormAndTransactionStatusManager } from '../lib/form-and-transaction-status';
+import { FormStatus } from '../types';
 import FormAndTransactionEventHandler from './form-and-transaction-event-handler';
 import { FormStatusProvider } from './form-status-provider';
 import { TransactionStatusProvider } from './transaction-status-provider';
 import type { PaymentEventCallback, PaymentErrorCallback } from '../types';
+
+function getNewStatusFromProps( {
+	isLoading,
+	isValidating,
+}: {
+	isLoading: boolean;
+	isValidating: boolean;
+} ): FormStatus {
+	if ( isLoading ) {
+		return FormStatus.LOADING;
+	}
+	if ( isValidating ) {
+		return FormStatus.VALIDATING;
+	}
+	return FormStatus.READY;
+}
 
 export function FormAndTransactionProvider( {
 	onPaymentComplete,
@@ -23,15 +39,52 @@ export function FormAndTransactionProvider( {
 	redirectToUrl?: ( url: string ) => void;
 	children?: ReactNode;
 } ) {
-	// Keep track of form status state (loading, validating, ready, etc).
-	const formStatusManager = useFormStatusManager( Boolean( isLoading ), Boolean( isValidating ) );
+	const statusManager = useFormAndTransactionStatusManager();
 
-	// Keep track of transaction status state (pending, complete, redirecting, etc).
-	const transactionStatusManager = useTransactionStatusManager();
+	const {
+		formStatus,
+		setFormStatus,
+		transactionStatus,
+		previousTransactionStatus,
+		transactionError,
+		transactionLastResponse,
+		transactionRedirectUrl,
+		resetTransaction,
+		setTransactionError,
+		setTransactionComplete,
+		setTransactionPending,
+		setTransactionRedirecting,
+	} = statusManager;
+
+	useEffect( () => {
+		const newStatus = getNewStatusFromProps( {
+			isLoading: isLoading || false,
+			isValidating: isValidating || false,
+		} );
+		setFormStatus( newStatus );
+	}, [ isLoading, isValidating, setFormStatus ] );
 
 	return (
-		<TransactionStatusProvider transactionStatusManager={ transactionStatusManager }>
-			<FormStatusProvider formStatusManager={ formStatusManager }>
+		<TransactionStatusProvider
+			transactionStatusManager={ {
+				transactionStatus,
+				previousTransactionStatus,
+				transactionError,
+				transactionLastResponse,
+				transactionRedirectUrl,
+				resetTransaction,
+				setTransactionError,
+				setTransactionComplete,
+				setTransactionPending,
+				setTransactionRedirecting,
+			} }
+		>
+			<FormStatusProvider
+				formStatusManager={ {
+					formStatus,
+					setFormStatus,
+				} }
+			>
 				<FormAndTransactionEventHandler
 					onPaymentComplete={ onPaymentComplete }
 					onPaymentRedirect={ onPaymentRedirect }

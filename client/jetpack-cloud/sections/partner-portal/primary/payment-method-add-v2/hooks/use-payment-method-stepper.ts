@@ -2,7 +2,7 @@ import { getQueryArg } from '@wordpress/url';
 import { useTranslate } from 'i18n-calypso';
 import { useMemo } from 'react';
 
-export function usePaymentMethodStepper() {
+export function usePaymentMethodStepper( { withAssignLicense }: { withAssignLicense?: boolean } ) {
 	const translate = useTranslate();
 
 	const products = ( getQueryArg( window.location.href, 'products' ) ?? '' ).toString();
@@ -14,13 +14,18 @@ export function usePaymentMethodStepper() {
 
 	return useMemo( () => {
 		if ( isIssueLicenseFlow ) {
+			const steps = [
+				translate( 'Select licenses' ),
+				translate( 'Review selections' ),
+				translate( 'Add Payment Method' ),
+			];
+
+			if ( withAssignLicense ) {
+				steps.push( translate( 'Assign licenses' ) );
+			}
+
 			return {
-				steps: [
-					translate( 'Select licenses' ),
-					translate( 'Review selections' ),
-					translate( 'Add Payment Method' ),
-					translate( 'Assign licenses' ),
-				],
+				steps,
 				current: 2,
 			};
 		}
@@ -37,5 +42,5 @@ export function usePaymentMethodStepper() {
 		}
 
 		return null;
-	}, [ isIssueLicenseFlow, isSiteCreationFlow, translate ] );
+	}, [ isIssueLicenseFlow, isSiteCreationFlow, translate, withAssignLicense ] );
 }

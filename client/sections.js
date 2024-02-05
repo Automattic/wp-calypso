@@ -43,6 +43,12 @@ const sections = [
 		group: 'me',
 	},
 	{
+		name: 'developer',
+		paths: [ '/me/developer' ],
+		module: 'calypso/me/developer',
+		group: 'me',
+	},
+	{
 		name: 'notification-settings',
 		paths: [ '/me/notifications' ],
 		module: 'calypso/me/notification-settings',
@@ -656,6 +662,12 @@ const sections = [
 		name: 'site-monitoring',
 		paths: [ '/site-monitoring', '/site-logs' ],
 		module: 'calypso/my-sites/site-monitoring',
+		group: 'sites',
+	},
+	{
+		name: 'github-deployments',
+		paths: [ '/github-deployments' ],
+		module: 'calypso/my-sites/github-deployments',
 		group: 'sites',
 	},
 ];

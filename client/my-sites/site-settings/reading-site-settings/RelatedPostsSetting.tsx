@@ -1,5 +1,5 @@
+import { FormLabel } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
-import FormLabel from 'calypso/components/forms/form-label';
 import { RelatedPostsSetting as RelatedPostsFormFieldset } from 'calypso/my-sites/site-settings/related-posts';
 
 type RelatedPostsFields = {
@@ -15,6 +15,7 @@ type RelatedPostsSettingProps = {
 	handleToggle?: ( field: string ) => ( ( isChecked: boolean ) => void ) | undefined;
 	isRequestingSettings?: boolean;
 	isSavingSettings?: boolean;
+	isJetpackSelfHosted?: boolean | null;
 };
 
 export const RelatedPostsSetting = ( {
@@ -22,16 +23,20 @@ export const RelatedPostsSetting = ( {
 	handleToggle,
 	isRequestingSettings,
 	isSavingSettings,
+	isJetpackSelfHosted,
 }: RelatedPostsSettingProps ) => {
 	const translate = useTranslate();
 	return (
 		<>
-			<FormLabel>{ translate( 'Related Posts' ) }</FormLabel>
+			<FormLabel id="related-posts-settings" className="increase-margin-bottom-fix">
+				{ translate( 'Related Posts' ) }
+			</FormLabel>
 			<RelatedPostsFormFieldset
 				fields={ fields }
 				handleToggle={ handleToggle }
 				isRequestingSettings={ isRequestingSettings }
 				isSavingSettings={ isSavingSettings }
+				isJetpackSelfHosted={ isJetpackSelfHosted }
 			/>
 		</>
 	);

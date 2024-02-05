@@ -78,6 +78,8 @@ export type BlazablePost = {
 	post_url: string;
 	featured_image: string | false;
 	post_thumbnail?: string;
+	sku?: string;
+	price?: string;
 };
 
 export type BlazePagedItem = BlazablePost | Campaign;

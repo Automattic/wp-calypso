@@ -32,7 +32,6 @@ interface PreMigrationProps {
 	startImport: ( props?: StartImportTrackingProps ) => void;
 	navigateToVerifyEmailStep: () => void;
 	onContentOnlyClick: () => void;
-	onNotAuthorizedClick: () => void;
 }
 
 export const PreMigrationScreen: React.FunctionComponent< PreMigrationProps > = (
@@ -48,7 +47,6 @@ export const PreMigrationScreen: React.FunctionComponent< PreMigrationProps > = 
 		startImport,
 		navigateToVerifyEmailStep,
 		onContentOnlyClick,
-		onNotAuthorizedClick,
 	} = props;
 
 	const translate = useTranslate();
@@ -192,13 +190,20 @@ export const PreMigrationScreen: React.FunctionComponent< PreMigrationProps > = 
 
 	switch ( renderState ) {
 		case 'loading':
-			return <LoadingEllipsis />;
+			return (
+				<div className="import-layout__center">
+					<LoadingEllipsis />
+				</div>
+			);
 
 		case 'not-authorized':
 			return (
 				<NotAuthorized
-					onStartBuilding={ onNotAuthorizedClick }
-					onStartBuildingText={ translate( 'Skip to dashboard' ) }
+					type="source-site-not-connected"
+					sourceSiteUrl={ sourceSiteUrl }
+					targetSiteUrl={ targetSite.URL }
+					// After resolving the issue, we need to reload the page to re-fetch initial data
+					startImport={ () => window.location.reload() }
 				/>
 			);
 
