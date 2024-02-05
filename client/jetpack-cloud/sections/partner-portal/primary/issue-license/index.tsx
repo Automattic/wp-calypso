@@ -85,6 +85,21 @@ export default function IssueLicense( { selectedSite, suggestedProduct }: Assign
 			.flat();
 	}, [ selectedLicenses ] );
 
+	// If URL params are present, use them to open the review licenses modal directly.
+	useEffect( () => {
+		if ( getQueryArg( window.location.href, 'source' ) === 'manage-pricing-page' ) {
+			getGroupedLicenses();
+			setShowReviewLicenses( true );
+			dispatch(
+				recordTracksEvent( 'calypso_jetpack_manage_pricing_issue_license_review_licenses_show', {
+					total_licenses: getQueryArg( window.location.href, 'bundle_size' ),
+					product: getQueryArg( window.location.href, 'products' ),
+				} )
+			);
+		}
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [] ); // Intentionally leaving the array empty and disabling the eslint warning, as we want this to run only once.
+
 	const currentStep = showReviewLicenses ? 'reviewLicense' : 'issueLicense';
 
 	const selectedText =
@@ -160,7 +175,11 @@ export default function IssueLicense( { selectedSite, suggestedProduct }: Assign
 				sidebarNavigation={ <PartnerPortalSidebarNavigation /> }
 			>
 				<LayoutTop>
-					<AssignLicenseStepProgress currentStep={ currentStep } isBundleLicensing />
+					<AssignLicenseStepProgress
+						currentStep={ currentStep }
+						selectedSite={ selectedSite }
+						isBundleLicensing
+					/>
 
 					<LayoutHeader showStickyContent={ showStickyContent }>
 						<Title>{ translate( 'Issue product licenses' ) } </Title>

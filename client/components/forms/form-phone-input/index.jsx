@@ -1,3 +1,4 @@
+import { FormLabel } from '@automattic/components';
 import classnames from 'classnames';
 import { localize } from 'i18n-calypso';
 import { find } from 'lodash';
@@ -5,7 +6,6 @@ import PropTypes from 'prop-types';
 import { Component } from 'react';
 import FormCountrySelect from 'calypso/components/forms/form-country-select';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
-import FormLabel from 'calypso/components/forms/form-label';
 import FormTelInput from 'calypso/components/forms/form-tel-input';
 import phoneValidation from 'calypso/lib/phone-validation';
 

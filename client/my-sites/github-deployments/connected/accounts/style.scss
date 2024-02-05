@@ -1,0 +1,78 @@
+.github-deployments-accounts {
+	margin-top: 32px;
+	display: flex;
+	flex-direction: column;
+	gap: 24px;
+
+	.github-deployments-accounts-header {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+
+		input {
+			max-width: 250px;
+		}
+
+		input.form-text-input {
+			margin: 0;
+			padding: 7px 14px;
+			width: 100%;
+			color: var(--color-neutral-70);
+			font-size: 1rem;
+			line-height: 1.5;
+			border: 1px solid var(--color-neutral-10);
+			border-radius: 2px;
+			background-color: var(--color-surface);
+			transition: all 0.15s ease-in-out;
+			box-sizing: border-box;
+		}
+	}
+
+	table {
+
+		thead th {
+			padding: 16px 0;
+		}
+
+		td {
+			vertical-align: middle !important;
+		}
+
+		.github-deployments-account__details {
+			display: flex;
+			gap: 8px;
+			align-items: center;
+		}
+
+		.github-deployments-account__profile-picture {
+			width: 24px;
+			height: 24px;
+			border-radius: 50%;
+			margin-right: 8px;
+		}
+
+		.github-deployments-account__repository-access {
+			display: flex;
+			flex-direction: column;
+			gap: 8px;
+
+			.github-deployments-account__repositories {
+				color: var(--color-text-subtle);
+				font-size: $font-body-small;
+				overflow: hidden;
+				white-space: nowrap;
+				text-overflow: ellipsis;
+				max-width: 250px;
+			}
+		}
+	}
+}
+
+.github-deployments-account__menu-item-danger {
+	color: var(--color-error) !important;
+
+	button:hover {
+		border: none;
+	}
+}
+

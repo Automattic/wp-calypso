@@ -1,11 +1,11 @@
 import page from '@automattic/calypso-router';
+import { SelectDropdown } from '@automattic/components';
 import { SearchIcon, type ImperativeHandle as SearchImperativeHandle } from '@automattic/search';
 import { GroupableSiteLaunchStatuses, useSitesListGrouping } from '@automattic/sites';
 import styled from '@emotion/styled';
 import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
 import { ComponentPropsWithoutRef, useEffect, useRef } from 'react';
-import SelectDropdown from 'calypso/components/select-dropdown';
 import { MEDIA_QUERIES } from '../utils';
 import { SitesDisplayModeSwitcher } from './sites-display-mode-switcher';
 import { SitesSearch } from './sites-search';

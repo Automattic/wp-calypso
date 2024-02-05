@@ -3,11 +3,14 @@ import {
 	FEATURE_STYLE_CUSTOMIZATION,
 	isFreePlanProduct,
 } from '@automattic/calypso-products';
+import { updateLaunchpadSettings } from '@automattic/data-stores/src/queries/use-launchpad';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { Task } from '@automattic/launchpad';
+import { QueryClient } from '@tanstack/react-query';
 import { ExternalLink } from '@wordpress/components';
 import { addQueryArgs } from '@wordpress/url';
 import { translate } from 'i18n-calypso';
+import { ADD_TIER_PLAN_HASH } from 'calypso/my-sites/earn/memberships/constants';
 import {
 	recordGlobalStylesGattingPlanSelectedResetStylesEvent,
 	recordTaskClickTracksEvent,
@@ -48,7 +51,7 @@ const getPlanTaskSubtitle = (
 	);
 };
 
-const getPlanSelectedTask: TaskAction = ( task, flow, context ): Task => {
+export const getPlanSelectedTask: TaskAction = ( task, flow, context ): Task => {
 	const {
 		siteInfoQueryArgs,
 		displayGlobalStylesWarning,
@@ -97,7 +100,35 @@ const getPlanCompletedTask: TaskAction = ( task, flow, context ) => {
 	};
 };
 
+//TODO: Move the updateLaunchpadSettings to be a hoook and use queryclient to invalidate the hook.
+const completePaidNewsletterTask = async ( siteSlug: string | null, queryClient: QueryClient ) => {
+	if ( siteSlug ) {
+		await updateLaunchpadSettings( siteSlug, {
+			checklist_statuses: { newsletter_plan_created: true },
+		} );
+		queryClient?.invalidateQueries( { queryKey: [ 'launchpad' ] } );
+	}
+};
+
+const getNewsLetterPlanCreated: TaskAction = ( task, flow, context ) => {
+	const { site, siteSlug, queryClient, setShowPlansModal } = context;
+
+	return {
+		...task,
+		actionDispatch: () => {
+			recordTaskClickTracksEvent( task, flow, context );
+			completePaidNewsletterTask( siteSlug, queryClient );
+			site?.ID
+				? setShowPlansModal( true )
+				: window.location.assign(
+						`/earn/payments/${ siteSlug }?launchpad=add-product${ ADD_TIER_PLAN_HASH }`
+				  );
+		},
+	};
+};
+
 export const actions = {
 	plan_selected: getPlanSelectedTask,
 	plan_completed: getPlanCompletedTask,
+	newsletter_plan_created: getNewsLetterPlanCreated,
 };

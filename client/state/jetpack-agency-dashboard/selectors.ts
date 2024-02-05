@@ -60,6 +60,15 @@ export function getSelectedLicenses( state: AppState ): Array< string > {
 }
 
 /**
+ * Returns the selected licenses from the dashboard for all sites.
+ */
+export function getSelectedSiteLicenses(
+	state: AppState
+): Array< { siteId: number; products: Array< string > } > {
+	return state.agencyDashboard?.selectedSiteLicenses?.licenses || [];
+}
+
+/**
  * Returns the selected licenses site.
  */
 export function getSelectedLicensesSiteId( state: AppState ): number | null {
@@ -77,6 +86,19 @@ export function hasSelectedLicensesOfType(
 	return (
 		state.agencyDashboard?.selectedLicenses?.siteId === siteId &&
 		state.agencyDashboard?.selectedLicenses?.licenses.includes( type )
+	);
+}
+
+/**
+ * Returns true if there are any licenses of a specific type among the selected ones for a specific site.
+ */
+export function hasSelectedSiteLicensesOfType(
+	state: AppState,
+	siteId: number,
+	type: AllowedTypes
+): boolean {
+	return !! state.agencyDashboard?.selectedSiteLicenses?.licenses.find(
+		( license: any ) => license.siteId === siteId && license.products.includes( type )
 	);
 }
 

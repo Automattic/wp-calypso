@@ -1,8 +1,8 @@
 {
 	"name": "@automattic/jetpack-ai-calypso",
-	"version": "1.0.0",
+	"version": "2.0.0",
 	"description": "Jetpack AI utilities available to Calypso.",
-	"calypso:src": "src/index.js",
+	"calypso:src": "src/index.ts",
 	"main": "dist/cjs/index.js",
 	"module": "dist/esm/index.js",
 	"sideEffects": [
@@ -38,7 +38,7 @@
 	"scripts": {
 		"clean": "tsc --build ./tsconfig.json ./tsconfig-cjs.json --clean && rm -rf dist",
 		"build": "tsc --build ./tsconfig.json ./tsconfig-cjs.json && copy-assets",
-		"prepare": "yarn run clean && yarn run build",
+		"prepare": "yarn run build",
 		"prepack": "yarn run clean && yarn run build",
 		"watch": "tsc --build ./tsconfig.json --watch"
 	},
@@ -54,7 +54,8 @@
 		"webpack": "^5.89.0"
 	},
 	"peerDependencies": {
-		"@babel/runtime": "^7.23.7",
+		"@babel/runtime": "^7.23.8",
+		"@wordpress/data": "^9.20.0",
 		"react": "^18.2.0",
 		"react-dom": "^18.2.0"
 	},
@@ -62,5 +63,11 @@
 		"@babel/runtime": {
 			"optional": true
 		}
+	},
+	"dependencies": {
+		"@automattic/calypso-analytics": "workspace:^",
+		"@automattic/data-stores": "workspace:^",
+		"classnames": "^2.3.2",
+		"debug": "^4.3.4"
 	}
 }

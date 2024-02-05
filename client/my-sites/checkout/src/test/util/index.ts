@@ -42,6 +42,18 @@ export const stripeConfiguration = {
 	setup_intent_id: undefined,
 };
 
+export const razorpayConfiguration = {
+	js_url: 'https://checkout.razorpay.com/v1/checkout.js',
+	options: {
+		key: 'razorpay-public-key',
+		config: {
+			display: {
+				language: 'en',
+			},
+		},
+	},
+};
+
 export const processorOptions = {
 	includeDomainDetails: false,
 	includeGSuiteDetails: false,
@@ -445,6 +457,8 @@ export const professionalEmailMonthly: ResponseCartProduct = {
 };
 
 export const fetchStripeConfiguration = async () => stripeConfiguration;
+
+export const fetchRazorpayConfiguration = async () => razorpayConfiguration;
 
 export function mockSetCartEndpointWith( { currency, locale } ): SetCart {
 	return async ( _: CartKey, requestCart: RequestCart ): Promise< ResponseCart > => {

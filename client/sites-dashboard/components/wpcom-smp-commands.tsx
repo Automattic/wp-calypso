@@ -7,11 +7,13 @@ import {
 	backup as backupIcon,
 	brush as brushIcon,
 	chartBar as statsIcon,
+	code as codeIcon,
 	commentAuthorAvatar as profileIcon,
 	commentAuthorName as subscriberIcon,
 	download as downloadIcon,
 	edit as editIcon,
 	globe as domainsIcon,
+	seen as seenIcon,
 	home as dashboardIcon,
 	key as keyIcon,
 	media as mediaIcon,
@@ -64,7 +66,7 @@ function useCommandNavigation() {
 	// Callback to navigate to a command's destination
 	// used on command callback or siteFunctions onClick
 	const commandNavigation = useCallback(
-		( url: string ) =>
+		( url: string, { openInNewTab = false } = {} ) =>
 			( { close, command }: Pick< CommandCallBackParams, 'close' | 'command' > ) => {
 				dispatch(
 					recordTracksEvent( 'calypso_hosting_command_palette_navigate', {
@@ -73,8 +75,9 @@ function useCommandNavigation() {
 						is_wp_admin: url.includes( '/wp-admin' ),
 					} )
 				);
+
 				close();
-				navigate( url );
+				navigate( url, openInNewTab );
 			},
 		[ currentRoute, dispatch ]
 	);
@@ -362,6 +365,22 @@ export const useCommandsArrayWpcom = ( {
 			icon: cacheIcon,
 		},
 		{
+			name: 'visitSite',
+			label: __( 'Visit site homepage' ),
+			searchLabel: [
+				_x( 'visit site homepage', 'Keyword for the Visit site dashboard command' ),
+				_x( 'visit site', 'Keyword for the Visit site dashboard command' ),
+				_x( 'see site', 'Keyword for the Visit site dashboard command' ),
+				_x( 'browse site', 'Keyword for the Visit site dashboard command' ),
+			].join( ' ' ),
+			context: [ '/:site' ],
+			callback: setStateCallback( 'visitSite', __( 'Select site to visit the homepage' ) ),
+			siteFunctions: {
+				onClick: ( param ) => commandNavigation( param.site.URL, { openInNewTab: true } )( param ),
+			},
+			icon: seenIcon,
+		},
+		{
 			name: 'openSiteDashboard',
 			label: __( 'Open site dashboard' ),
 			searchLabel: [
@@ -437,6 +456,16 @@ export const useCommandsArrayWpcom = ( {
 			context: [ '/sites' ],
 			callback: commandNavigation( `/me` ),
 			icon: profileIcon,
+		},
+		{
+			name: 'viewDeveloperFeatures',
+			label: __( 'View developer features' ),
+			searchLabel: [
+				_x( 'view developer features', 'Keyword for the View developer features command' ),
+				_x( 'profile', 'Keyword for the View developer features command' ),
+			].join( ' ' ),
+			callback: commandNavigation( `/me/developer` ),
+			icon: codeIcon,
 		},
 		{
 			name: 'openReader',

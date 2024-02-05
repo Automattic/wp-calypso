@@ -1,0 +1,44 @@
+@import "@wordpress/base-styles/mixins";
+
+.github-deployments-create-repository {
+	.form-radios-bar {
+		display: flex;
+		justify-content: space-between;
+		gap: 8px;
+
+		> * {
+			display: flex;
+			flex: 1;
+			font-size: 0.75rem;
+			margin: 0;
+			border: 1px solid var(--color-neutral-10);
+			cursor: pointer;
+			background: none;
+			transition: box-shadow 0.1s linear;
+			height: 42px;
+			align-items: center;
+			box-sizing: border-box;
+			padding: 6px 12px;
+			border-radius: 2px;
+			white-space: nowrap;
+
+			.form-radio {
+				margin: 0;
+			}
+			.form-radio__label {
+				margin: 8px;
+			}
+		}
+	}
+
+	.action-buttons {
+		display: flex;
+		justify-content: flex-start;
+		margin-top: 24px;
+		gap: 8px;
+
+		:last-child {
+			color: var(--color-neutral);
+		}
+	}
+}

@@ -153,6 +153,50 @@ class Sites extends Component {
 			case 'site-monitoring':
 				path = translate( 'Site Monitoring' );
 				break;
+			case 'github-deployments':
+				path = translate( 'GitHub Deployments' );
+			case 'earn':
+				path = translate( 'Monetize' );
+				break;
+			case 'subscribers':
+				path = translate( 'Subscribers' );
+				break;
+			case 'themes':
+				path = translate( 'Themes' );
+				break;
+			case 'marketing':
+				path = translate( 'Marketing' );
+				break;
+			case 'import':
+				path = translate( 'Import' );
+				break;
+			case 'export':
+				path = translate( 'Export' );
+				break;
+			case 'email':
+				path = translate( 'Emails' );
+				break;
+			case 'purchases':
+				path = translate( 'Purchases' );
+				break;
+			case 'customize':
+				path = translate( 'Customizer' );
+				break;
+			case 'google-my-business':
+				path = translate( 'Google Business Profile' );
+				break;
+			case 'view':
+				path = translate( 'Preview' );
+				break;
+			case 'woocommerce-installation':
+				path = 'WooCommerce';
+				break;
+			case 'store':
+				path = translate( 'Store' );
+				break;
+			case 'add-ons':
+				path = translate( 'Add-ons' );
+				break;
 		}
 
 		return translate( 'Select a site to open {{strong}}%(path)s{{/strong}}', {

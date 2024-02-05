@@ -1,12 +1,17 @@
 import { isEnabled } from '@automattic/calypso-config';
-import { Task, TaskId, TaskContext, TaskActionTable } from '../types';
+import { actions as bioActions } from './bio';
+import { actions as contentActions } from './content';
 import { actions as designActions } from './design';
 import { actions as domainActions } from './domain';
+import { actions as emailActions } from './email';
+import { actions as paymentsActions } from './payments';
 import { actions as planActions } from './plan';
 import { actions as postActions } from './post';
 import { actions as setupActions } from './setup';
 import { actions as siteActions } from './site';
+import { actions as subscribersActions } from './subscribers';
 import { actions as videoPressActions } from './videopress';
+import type { Task, TaskId, TaskContext, TaskActionTable } from '../types';
 
 const DEFINITIONS: TaskActionTable = {
 	...setupActions,
@@ -15,6 +20,11 @@ const DEFINITIONS: TaskActionTable = {
 	...postActions,
 	...siteActions,
 	...planActions,
+	...emailActions,
+	...subscribersActions,
+	...contentActions,
+	...bioActions,
+	...paymentsActions,
 	...videoPressActions,
 };
 

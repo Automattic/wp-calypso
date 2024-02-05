@@ -10,6 +10,7 @@ export type ThankYouProductProps = {
 	details?: TranslateResult;
 	icon?: string;
 	actions?: React.ReactNode;
+	preview?: React.ReactElement;
 	isFree?: boolean;
 	isLoading?: boolean;
 };
@@ -19,6 +20,7 @@ export default function ThankYouProduct( {
 	details,
 	icon,
 	actions,
+	preview,
 	isFree = false,
 	isLoading = false,
 }: ThankYouProductProps ) {
@@ -52,6 +54,8 @@ export default function ThankYouProduct( {
 			</div>
 
 			{ actions && <div className="thank-you__product-actions">{ actions }</div> }
+
+			{ preview && <div className="thank-you__product-preview">{ preview }</div> }
 		</li>
 	);
 }

@@ -1,6 +1,6 @@
+import { FormLabel } from '@automattic/components';
 import PropTypes from 'prop-types';
 import { useState } from 'react';
-import FormLabel from 'calypso/components/forms/form-label';
 import FormRadio from 'calypso/components/forms/form-radio';
 import FormTextInput from 'calypso/components/forms/form-text-input';
 

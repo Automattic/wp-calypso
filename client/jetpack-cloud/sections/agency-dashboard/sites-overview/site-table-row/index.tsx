@@ -1,3 +1,4 @@
+import { isEnabled } from '@automattic/calypso-config';
 import classNames from 'classnames';
 import { Fragment, useContext } from 'react';
 import useFetchTestConnection from 'calypso/data/agency-dashboard/use-fetch-test-connection';
@@ -5,6 +6,7 @@ import { useDispatch, useSelector } from 'calypso/state';
 import { resetSite } from 'calypso/state/jetpack-agency-dashboard/actions';
 import {
 	getSelectedLicenses,
+	getSelectedSiteLicenses,
 	getSelectedLicensesSiteId,
 } from 'calypso/state/jetpack-agency-dashboard/selectors';
 import { getIsPartnerOAuthTokenLoaded } from 'calypso/state/partner-portal/partner/selectors';
@@ -39,8 +41,11 @@ export default function SiteTableRow( { index, columns, item, setExpanded, isExp
 	const isConnectionHealthy = site.value?.is_connection_healthy;
 	const isFavorite = item.isFavorite;
 
+	const isStreamlinedPurchasesEnabled = isEnabled( 'jetpack/streamline-license-purchases' );
+
 	const isPartnerOAuthTokenLoaded = useSelector( getIsPartnerOAuthTokenLoaded );
 	const selectedLicenses = useSelector( getSelectedLicenses );
+	const selectedSiteLicenses = useSelector( getSelectedSiteLicenses );
 	const selectedLicensesSiteId = useSelector( getSelectedLicensesSiteId );
 
 	const { data } = useFetchTestConnection( isPartnerOAuthTokenLoaded, isConnectionHealthy, blogId );
@@ -50,8 +55,9 @@ export default function SiteTableRow( { index, columns, item, setExpanded, isExp
 		selectedLicensesSiteId === blogId && selectedLicenses?.length;
 
 	// We should disable the license selection for all sites, but the active one.
-	const shouldDisableLicenseSelection =
-		selectedLicenses?.length && ! currentSiteHasSelectedLicenses;
+	const shouldDisableLicenseSelection = isStreamlinedPurchasesEnabled
+		? selectedSiteLicenses?.length
+		: selectedLicenses?.length && ! currentSiteHasSelectedLicenses;
 
 	const hasSiteConnectionError = ! isConnected;
 	const siteError = item.monitor.error || hasSiteConnectionError;
@@ -71,8 +77,9 @@ export default function SiteTableRow( { index, columns, item, setExpanded, isExp
 						// Click event should continue work as-is.
 						return;
 					}
-
-					dispatch( resetSite() );
+					if ( ! isStreamlinedPurchasesEnabled ) {
+						dispatch( resetSite() );
+					}
 					event.preventDefault();
 				} }
 			>

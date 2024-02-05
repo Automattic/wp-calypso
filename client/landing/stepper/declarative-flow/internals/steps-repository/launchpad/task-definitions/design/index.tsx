@@ -3,7 +3,7 @@ import { addQueryArgs } from '@wordpress/url';
 import { recordTaskClickTracksEvent } from '../../tracking';
 import { TaskAction } from '../../types';
 
-const getDesignSelectedTask: TaskAction = ( task, flow, context ): Task => {
+export const getDesignSelectedTask: TaskAction = ( task, flow, context ): Task => {
 	const { siteInfoQueryArgs } = context;
 
 	return {
@@ -17,9 +17,9 @@ const getDesignSelectedTask: TaskAction = ( task, flow, context ): Task => {
 	};
 };
 
-const getDesignCompletedTask = getDesignSelectedTask;
+export const getDesignCompletedTask = getDesignSelectedTask;
 
-const getDesignEdited: TaskAction = ( task, flow, context ) => {
+export const getDesignEditedTask: TaskAction = ( task, flow, context ) => {
 	const { siteInfoQueryArgs } = context;
 
 	return {
@@ -36,5 +36,5 @@ const getDesignEdited: TaskAction = ( task, flow, context ) => {
 export const actions = {
 	design_selected: getDesignSelectedTask,
 	design_completed: getDesignCompletedTask,
-	design_edited: getDesignEdited,
+	design_edited: getDesignEditedTask,
 };
