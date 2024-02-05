@@ -912,6 +912,15 @@ export function LineItemBillingInterval( { product }: { product: ResponseCartPro
 	}
 }
 
+/**
+ * This new component manages all of the 'additional' info we tend to tack onto line items.
+ * We can look at this as just a list of 'non billing interval' related things.
+ * Each condition should match a specific product, and all of its additional items stored within.
+ * @param { ResponseCartProduct } product
+ *
+ * return { string | null }
+ */
+
 function LineItemMetaInfo( { product }: { product: ResponseCartProduct } ) {
 	const translate = useTranslate();
 	const productSlug = product.product_slug;
