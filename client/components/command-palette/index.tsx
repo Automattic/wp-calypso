@@ -1,3 +1,4 @@
+import { recordTracksEvent } from '@automattic/calypso-analytics';
 import styled from '@emotion/styled';
 import { Modal, TextHighlight, __experimentalHStack as HStack } from '@wordpress/components';
 import { useDebounce } from '@wordpress/compose';
@@ -7,9 +8,6 @@ import { cleanForSlug } from '@wordpress/url';
 import classnames from 'classnames';
 import { Command, useCommandState } from 'cmdk';
 import { useEffect, useState, useRef, useMemo, useCallback } from 'react';
-import { useDispatch, useSelector } from 'calypso/state';
-import { recordTracksEvent } from 'calypso/state/analytics/actions';
-import { getCurrentRoutePattern } from 'calypso/state/selectors/get-current-route-pattern';
 import { COMMAND_SEPARATOR, useCommandFilter } from './use-command-filter';
 import { CommandCallBackParams, useCommandPalette } from './use-command-palette';
 
@@ -214,14 +212,11 @@ const NotFoundMessage = ( {
 	emptyListNotice,
 	currentRoute,
 }: NotFoundMessageProps ) => {
-	const dispatch = useDispatch();
 	const trackNotFoundDebounced = useDebounce( () => {
-		dispatch(
-			recordTracksEvent( 'calypso_hosting_command_palette_not_found', {
-				current_route: currentRoute,
-				search_text: search,
-			} )
-		);
+		recordTracksEvent( 'calypso_hosting_command_palette_not_found', {
+			current_route: currentRoute,
+			search_text: search,
+		} );
 	}, 600 );
 
 	useEffect( () => {
@@ -242,31 +237,28 @@ const CommandPalette = () => {
 	const [ isOpen, setIsOpen ] = useState( false );
 	const [ footerMessage, setFooterMessage ] = useState( '' );
 	const [ emptyListNotice, setEmptyListNotice ] = useState( '' );
-	const currentRoute = useSelector( ( state: object ) => getCurrentRoutePattern( state ) );
-	const dispatch = useDispatch();
+	// TODO: Find an alternative way to use the current route.
+	//const currentRoute = useSelector( ( state: object ) => getCurrentRoutePattern( state ) );
+	const currentRoute = null;
 	const open = useCallback( () => {
 		setIsOpen( true );
-		dispatch(
-			recordTracksEvent( 'calypso_hosting_command_palette_open', {
-				current_route: currentRoute,
-			} )
-		);
-	}, [ dispatch, currentRoute ] );
+		recordTracksEvent( 'calypso_hosting_command_palette_open', {
+			current_route: currentRoute,
+		} );
+	}, [ currentRoute ] );
 	const close = useCallback< CommandMenuGroupProps[ 'close' ] >(
 		( commandName = '', isExecuted = false ) => {
-			dispatch(
-				recordTracksEvent( 'calypso_hosting_command_palette_close', {
-					// For nested commands the command.name would be the siteId
-					// For root commands the selectedCommandName would be empty
-					command: selectedCommandName || commandName,
-					current_route: currentRoute,
-					search_text: search,
-					is_executed: isExecuted,
-				} )
-			);
+			recordTracksEvent( 'calypso_hosting_command_palette_close', {
+				// For nested commands the command.name would be the siteId
+				// For root commands the selectedCommandName would be empty
+				command: selectedCommandName || commandName,
+				current_route: currentRoute,
+				search_text: search,
+				is_executed: isExecuted,
+			} );
 			setIsOpen( false );
 		},
-		[ currentRoute, dispatch, search, selectedCommandName ]
+		[ currentRoute, search, selectedCommandName ]
 	);
 	const toggle = useCallback( () => ( isOpen ? close() : open() ), [ isOpen, close, open ] );
 	const commandFilter = useCommandFilter();
@@ -303,14 +295,12 @@ const CommandPalette = () => {
 	};
 
 	const goBackToRootCommands = ( fromKeyboard: boolean ) => {
-		dispatch(
-			recordTracksEvent( 'calypso_hosting_command_palette_back_to_root', {
-				command: selectedCommandName,
-				current_route: currentRoute,
-				search_text: search,
-				from_keyboard: fromKeyboard,
-			} )
-		);
+		recordTracksEvent( 'calypso_hosting_command_palette_back_to_root', {
+			command: selectedCommandName,
+			current_route: currentRoute,
+			search_text: search,
+			from_keyboard: fromKeyboard,
+		} );
 		reset();
 	};
 
