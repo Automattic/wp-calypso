@@ -38,11 +38,21 @@ const SORT_OPTIONS_RECENTLY_UPDATED = 'modified';
 const SORT_OPTIONS_MOST_LIKED = 'like_count';
 const SORT_OPTIONS_MOST_COMMENTED = 'comment_count';
 const SORT_OPTIONS_MOST_VIEWED = 'monthly_view_count';
+const SORT_OPTIONS_BUDGET_HIGH_LOW = 'budget_high_low';
+const SORT_OPTIONS_BUDGET_LOW_HIGH = 'budget_low_high';
+const SORT_OPTIONS_IMPRESSIONS_HIGH_LOW = 'impressions_high_low';
+const SORT_OPTIONS_IMPRESSIONS_LOW_HIGH = 'impressions_low_high';
 
 export const SORT_OPTIONS_DEFAULT = {
 	orderBy: SORT_OPTIONS_RECENTLY_UPDATED,
 	order: 'desc',
 };
+
+export const CAMPAIGNS_SORT_OPTIONS_DEFAULT = {
+	orderBy: SORT_OPTIONS_LAST_PUBLISHED,
+	order: 'desc',
+};
+
 const FILTER_OPTIONS_DEFAULT = {
 	status: '',
 	postType: '',
@@ -76,6 +86,29 @@ export default function SearchBar( props: Props ) {
 		{
 			label: translate( 'Most viewed' ),
 			value: SORT_OPTIONS_MOST_VIEWED,
+		},
+	];
+
+	const campaignSortOptions: Array< DropdownOption > = [
+		{
+			label: translate( 'Recently published' ),
+			value: SORT_OPTIONS_LAST_PUBLISHED,
+		},
+		{
+			label: translate( 'Budget: High - Low' ),
+			value: SORT_OPTIONS_BUDGET_HIGH_LOW,
+		},
+		{
+			label: translate( 'Budget: Low - High' ),
+			value: SORT_OPTIONS_BUDGET_LOW_HIGH,
+		},
+		{
+			label: translate( 'Impressions: High - Low' ),
+			value: SORT_OPTIONS_IMPRESSIONS_HIGH_LOW,
+		},
+		{
+			label: translate( 'Impressions: Low - High' ),
+			value: SORT_OPTIONS_IMPRESSIONS_LOW_HIGH,
 		},
 	];
 
@@ -137,6 +170,9 @@ export default function SearchBar( props: Props ) {
 	const tabsRef = useRef< { [ key: string ]: HTMLSpanElement | null } >( {} );
 	const [ searchInput, setSearchInput ] = React.useState< string | undefined >( '' );
 	const [ sortOption, setSortOption ] = React.useState( SORT_OPTIONS_DEFAULT );
+	const [ campaignSortOption, setCampaignSortOption ] = React.useState(
+		CAMPAIGNS_SORT_OPTIONS_DEFAULT
+	);
 	const [ filterOption, setFilterOption ] = React.useState( FILTER_OPTIONS_DEFAULT );
 	const isDesktop = useMediaQuery( '(min-width: 1055px)' );
 
@@ -202,15 +238,35 @@ export default function SearchBar( props: Props ) {
 		} );
 	};
 
-	const getSortLabel = () => {
-		const selectedOption = sortOptions.find( ( item ) => item.value === sortOption.orderBy )?.label;
+	const onCampaignChangeOrderOption = ( sort: DropdownOption ) => {
+		const newOrder = {
+			orderBy: sort.value,
+			order:
+				sort.value === 'budget_high_low' || sort.value === 'impressions_high_low' ? 'desc' : 'asc',
+		};
 
-		return selectedOption
-			? // translators: sortOption is something like Last published, Recently updated, etc.
-			  translate( 'Sort: %(sortOption)s', {
-					args: { sortOption: selectedOption },
-			  } )
-			: undefined;
+		setCampaignSortOption( newOrder );
+		handleSetSearch( {
+			search: searchInput || '',
+			order: newOrder,
+			filter: filterOption,
+		} );
+	};
+
+	const getSortLabel = () => {
+		const selectedOption = campaignSortOptions.find(
+			( item ) => item.value === campaignSortOption.orderBy
+		)?.label;
+
+		if ( selectedOption ) {
+			return isDesktop
+				? translate( 'Sort: %(sortOption)s', {
+						args: { sortOption: selectedOption },
+				  } )
+				: selectedOption;
+		}
+
+		return undefined;
 	};
 
 	const getPostTypeFilterLabel = () => {
@@ -314,6 +370,14 @@ export default function SearchBar( props: Props ) {
 								selectedText={ getCampaignFilterLabel() }
 							/>
 						) }
+
+						<SelectDropdown
+							className="promote-post-i2__search-bar-dropdown campaigns-order-by"
+							onSelect={ onCampaignChangeOrderOption }
+							options={ campaignSortOptions }
+							initialSelected={ campaignSortOption.orderBy }
+							selectedText={ getSortLabel() }
+						/>
 					</>
 				) }
 			</div>

@@ -36,6 +36,10 @@ $font-sf-pro-display: "SF Pro Display", $sans;
 				&.campaigns-filter .select-dropdown__container {
 					min-width: 160px;
 				}
+
+				&.campaigns-order-by .select-dropdown__container {
+					min-width: 100px;
+				}
 			}
 		}
 

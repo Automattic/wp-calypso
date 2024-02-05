@@ -55,6 +55,9 @@ export default function CampaignItem( props: Props ) {
 	const clicks_total = campaign_stats?.clicks_total ?? 0;
 	const spent_budget_cents = campaign_stats?.spent_budget_cents ?? 0;
 	const impressions_total = campaign_stats?.impressions_total ?? 0;
+	const conversion_rate = campaign_stats?.conversion_rate
+		? `${ campaign_stats.conversion_rate.toFixed( 2 ) }%`
+		: '-';
 
 	const moment = useLocalizedMoment();
 	const selectedSiteSlug = useSelector( getSelectedSiteSlug );
@@ -181,7 +184,7 @@ export default function CampaignItem( props: Props ) {
 				<div>{ formatNumber( clicks_total ) }</div>
 			</td>
 			<td className="campaign-item__conversion">
-				<div>-</div>
+				<div>{ conversion_rate } </div>
 			</td>
 			<td className="campaign-item__action">
 				<Button

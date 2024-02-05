@@ -56,6 +56,9 @@ export type CampaignStats = {
 	clicks_total: number;
 	spent_budget_cents: number;
 	deliver_margin_multiplier: number;
+	conversions_total?: number;
+	conversion_value?: number;
+	conversion_rate?: number;
 };
 
 export type BlazablePost = {
