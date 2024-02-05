@@ -263,7 +263,9 @@ export default function SearchBar( props: Props ) {
 				? translate( 'Sort: %(sortOption)s', {
 						args: { sortOption: selectedOption },
 				  } )
-				: selectedOption;
+				: translate( '%(sortOption)', {
+						args: { sortOption: selectedOption },
+				  } );
 		}
 
 		return undefined;
