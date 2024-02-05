@@ -2,19 +2,18 @@ import { Task } from '@automattic/launchpad';
 import { isBlogOnboardingFlow, isSiteAssemblerFlow } from '@automattic/onboarding';
 import { addQueryArgs } from '@wordpress/url';
 import { translate } from 'i18n-calypso';
-import { isDomainUpsellCompleted } from '../../task-helper';
+import { getSiteIdOrSlug, isDomainUpsellCompleted } from '../../task-helper';
 import { recordTaskClickTracksEvent } from '../../tracking';
 import { TaskAction } from '../../types';
 
 export const getDomainUpSellTask: TaskAction = ( task, flow, context ): Task => {
-	const { siteInfoQueryArgs, site, checklistStatuses } = context;
-
+	const { site, checklistStatuses, siteSlug } = context;
 	const domainUpsellCompleted = isDomainUpsellCompleted( site, checklistStatuses );
 
 	const getDestionationUrl = () => {
 		if ( isBlogOnboardingFlow( flow ) || isSiteAssemblerFlow( flow ) ) {
 			return addQueryArgs( `/setup/${ flow }/domains`, {
-				...siteInfoQueryArgs,
+				...getSiteIdOrSlug( flow, site, siteSlug ),
 				flowToReturnTo: flow,
 				new: site?.name,
 				domainAndPlanPackage: true,
@@ -22,9 +21,9 @@ export const getDomainUpSellTask: TaskAction = ( task, flow, context ): Task => 
 		}
 
 		return domainUpsellCompleted
-			? `/domains/manage/${ siteInfoQueryArgs?.siteSlug }`
+			? `/domains/manage/${ siteSlug }`
 			: addQueryArgs( `/setup/domain-upsell/domains`, {
-					...siteInfoQueryArgs,
+					...getSiteIdOrSlug( flow, site, siteSlug ),
 					flowToReturnTo: flow,
 					new: site?.name,
 			  } );
