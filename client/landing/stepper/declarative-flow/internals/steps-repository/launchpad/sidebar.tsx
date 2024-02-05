@@ -25,7 +25,7 @@ import { useSelector } from 'calypso/state';
 import { isCurrentUserEmailVerified } from 'calypso/state/current-user/selectors';
 import { getConnectUrlForSiteId } from 'calypso/state/memberships/settings/selectors';
 import { useSiteGlobalStylesStatus } from 'calypso/state/sites/hooks/use-site-global-styles-status';
-import { getEnhancedTasks } from './task-definitions';
+import { getEnhancedTasks } from './task-helper';
 import { getLaunchpadTranslations } from './translations';
 
 type SidebarProps = {
