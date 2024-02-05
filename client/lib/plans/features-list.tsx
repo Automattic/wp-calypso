@@ -526,12 +526,7 @@ export const FEATURES_LIST: FeatureList = {
 			if ( ! planSlug ) {
 				return '';
 			}
-			const localeSlug = i18n.getLocaleSlug();
-			const shouldShowInPersonalPlan =
-				config.isEnabled( 'themes/tiers' ) &&
-				( ( localeSlug && englishLocales.includes( localeSlug ) ) ||
-					i18n.hasTranslation( 'Dozens of premium themes' ) );
-			if ( shouldShowInPersonalPlan && isPersonalPlan( planSlug ) ) {
+			if ( config.isEnabled( 'themes/tiers' ) && isPersonalPlan( planSlug ) ) {
 				return i18n.translate( 'Dozens of premium themes' );
 			}
 			if (
@@ -548,15 +543,7 @@ export const FEATURES_LIST: FeatureList = {
 	[ WPCOM_FEATURES_PREMIUM_THEMES_UNLIMITED ]: {
 		getSlug: () => WPCOM_FEATURES_PREMIUM_THEMES_UNLIMITED,
 		getTitle: () => i18n.translate( 'Unlimited premium themes' ),
-		getDescription: () => {
-			const localeSlug = i18n.getLocaleSlug();
-			const shouldShowNewString =
-				( localeSlug && englishLocales.includes( localeSlug ) ) ||
-				i18n.hasTranslation( 'Switch between all of our premium design themes.' );
-			return shouldShowNewString
-				? i18n.translate( 'Switch between all of our premium design themes.' )
-				: i18n.translate( 'Switch between a collection of premium design themes.' );
-		},
+		getDescription: () => i18n.translate( 'Switch between all of our premium design themes.' ),
 	},
 
 	[ WPCOM_FEATURES_PREMIUM_THEMES_LIMITED ]: {
