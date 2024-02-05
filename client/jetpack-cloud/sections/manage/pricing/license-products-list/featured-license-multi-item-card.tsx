@@ -1,5 +1,4 @@
 import page from '@automattic/calypso-router';
-import { Button } from '@automattic/components';
 import { addQueryArgs } from '@wordpress/url';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback, useState } from 'react';
@@ -12,6 +11,7 @@ import getProductShortTitle from 'calypso/jetpack-cloud/sections/partner-portal/
 import getProductVariantShortTitle from 'calypso/jetpack-cloud/sections/partner-portal/lib/get-product-variant-short-title';
 import LicenseLightbox from 'calypso/jetpack-cloud/sections/partner-portal/license-lightbox/index';
 import LicenseLightboxLink from 'calypso/jetpack-cloud/sections/partner-portal/license-lightbox-link/index';
+import { FeaturedItemCard } from 'calypso/my-sites/plans/jetpack-plans/product-store/featured-item-card';
 import { HeroImageAPIFamily } from 'calypso/my-sites/plans/jetpack-plans/product-store/hero-image';
 import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
@@ -131,39 +131,30 @@ export const FeaturedLicenseMultiItemCard = ( {
 
 	return (
 		<>
-			<div className="featured-item-card">
-				<div className="featured-item-card--hero">{ hero }</div>
-
-				<div className="featured-item-card--body">
-					<div>
-						<h3 className="featured-item-card--title">{ title }</h3>
-						<MultipleChoiceQuestion
-							name={ `${ variant.family_slug }-variant-options` }
-							question={ translate( 'Select variant:' ) }
-							answers={ variantOptions }
-							selectedAnswerId={ variant.slug }
-							onAnswerChange={ onChangeOption }
-							shouldShuffleAnswers={ false }
-						/>
-						<div className="featured-item-card--price">{ price }</div>
-						<div className="featured-item-card--desc">{ productDescription }</div>
-						{ moreInfoLink }
-					</div>
-					<div className="featured-item-card--footer">
-						<Button
-							className="featured-item-card--cta"
-							primary={ ctaAsPrimary }
-							onClick={ onClickCta }
-							disabled={ isCtaDisabled }
-							target={ isCtaExternal ? '_blank' : undefined }
-							href={ isCtaDisabled ? '#' : getIssueLicenseURL( variantSlug, bundleSize ) }
-							aria-label={ ctaAriaLabel }
-						>
-							{ ctaLabel }
-						</Button>
-					</div>
-				</div>
-			</div>
+			<FeaturedItemCard
+				hero={ hero }
+				title={ title }
+				description={ productDescription }
+				price={ price }
+				moreInfoLink={ moreInfoLink }
+				ctaAsPrimary={ ctaAsPrimary }
+				onClickCta={ onClickCta }
+				isCtaDisabled={ isCtaDisabled }
+				isCtaExternal={ isCtaExternal }
+				ctaHref={ isCtaDisabled ? '#' : getIssueLicenseURL( variantSlug, bundleSize ) }
+				ctaAriaLabel={ ctaAriaLabel }
+				ctaLabel={ ctaLabel }
+				variant={
+					<MultipleChoiceQuestion
+						name={ `${ variant.family_slug }-variant-options` }
+						question={ translate( 'Select variant:' ) }
+						answers={ variantOptions }
+						selectedAnswerId={ variant.slug }
+						onAnswerChange={ onChangeOption }
+						shouldShuffleAnswers={ false }
+					/>
+				}
+			/>
 			{ showLightbox && (
 				<LicenseLightbox
 					product={ variant }
