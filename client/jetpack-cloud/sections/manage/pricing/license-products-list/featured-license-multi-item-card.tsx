@@ -67,7 +67,7 @@ export const FeaturedLicenseMultiItemCard = ( {
 
 			setVariant( selectedProduct );
 			dispatch(
-				recordTracksEvent( 'calypso_jp_manage_pricing_page_variant_option_click', {
+				recordTracksEvent( 'calypso_jetpack_manage_pricing_page_variant_option_click', {
 					product: selectedProductSlug,
 				} )
 			);
