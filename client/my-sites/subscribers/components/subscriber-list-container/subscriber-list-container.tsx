@@ -66,6 +66,7 @@ const SubscriberListContainer = ( {
 							className={ `subscriber-list-container__subscriber-count ${
 								isLoading ? 'loading-placeholder' : ''
 							}` }
+							title={ total > 1000 ? total.toLocaleString() : '' }
 						>
 							{ formatNumber( total, getLocaleSlug() || undefined ) }
 						</span>
