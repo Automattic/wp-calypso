@@ -30,10 +30,7 @@ const WpcomSiteTools = ( { isJetpack, isPossibleJetpackConnectionProblem, siteId
 			<NavigationHeader
 				navigationItems={ [] }
 				title={ translate( 'Site Tools' ) }
-				subtitle={ translate(
-					// TODO: define copy here
-					'Wordpress.com > Site Tools'
-				) }
+				subtitle={ translate( 'Manage your site settings, including site visibility, and more.' ) }
 			/>
 			<WpcomSiteToolsSettings />
 		</Main>
