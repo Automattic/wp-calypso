@@ -7,6 +7,8 @@ declare global {
 			currentSite: {
 				launchpad_screen: boolean | string;
 				site_intent: boolean | string;
+				admin_interface: boolean | string;
+				admin_menu_preferred_views: boolean | { [ key: string ]: string };
 			};
 		};
 	}

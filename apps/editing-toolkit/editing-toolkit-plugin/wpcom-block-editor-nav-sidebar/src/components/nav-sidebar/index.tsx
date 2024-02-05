@@ -123,7 +123,27 @@ function WpcomBlockEditorNavSidebar() {
 		defaultCloseUrl = `${ siteOrigin }/setup/${ siteIntent }/launchpad?siteSlug=${ siteSlug }`;
 		defaultCloseLabel = __( 'Next steps', 'full-site-editing' );
 	} else {
+		const currentSite = window?.wpcomBlockEditorNavSidebar?.currentSite;
+		const adminInterface = currentSite?.admin_interface;
+		const adminMenuPreferredViews = ( currentSite?.admin_menu_preferred_views || {} ) as {
+			[ key: string ]: string;
+		};
+		const editPagePreferredViewKey =
+			'edit.php' + ( postType.slug === 'post' ? '' : '?post_type=' + postType.slug );
+		const isEditPagePreferredViewClassic =
+			adminInterface === 'wp-admin' ||
+			adminMenuPreferredViews[ editPagePreferredViewKey ] === 'classic';
+
 		defaultCloseUrl = addQueryArgs( 'edit.php', { post_type: postType.slug } );
+
+		if ( ! isEditPagePreferredViewClassic ) {
+			if ( [ 'post', 'page' ].includes( postType.slug ) ) {
+				defaultCloseUrl = `${ siteOrigin }/${ postType.slug }s/${ siteSlug }`;
+			} else if ( [ 'jetpack-testimonial', 'jetpack-portfolio' ].includes( postType.slug ) ) {
+				defaultCloseUrl = `${ siteOrigin }/types/${ postType.slug }/${ siteSlug }`;
+			}
+		}
+
 		defaultCloseLabel = get(
 			postType,
 			[ 'labels', 'all_items' ],

@@ -92,8 +92,10 @@ class WPCOM_Block_Editor_Nav_Sidebar {
 	 */
 	public function get_current_site() {
 		return array(
-			'launchpad_screen' => get_option( 'launchpad_screen' ),
-			'site_intent'      => get_option( 'site_intent' ),
+			'launchpad_screen'           => get_option( 'launchpad_screen' ),
+			'site_intent'                => get_option( 'site_intent' ),
+			'admin_interface'            => get_option( 'wpcom_admin_interface' ),
+			'admin_menu_preferred_views' => get_user_option( 'jetpack_admin_menu_preferred_views' ),
 		);
 	}
 }

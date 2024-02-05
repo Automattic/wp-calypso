@@ -24,6 +24,10 @@ export const getEditorUrl = (
 			url = addQueryArgs( { calypsoify: '1' }, url );
 		}
 
+		if ( typeof window !== 'undefined' && window.location.origin !== 'https://wordpress.com' ) {
+			url = addQueryArgs( { calypso_origin: window.location.origin }, url );
+		}
+
 		return url;
 	}
 
