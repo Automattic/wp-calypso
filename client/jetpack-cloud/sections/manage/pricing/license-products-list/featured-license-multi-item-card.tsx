@@ -30,7 +30,6 @@ type FeaturedLicenseMultiItemCardProps = {
 	isCondensedVersion?: boolean;
 	isCtaDisabled?: boolean;
 	isCtaExternal?: boolean;
-	onClickCta?: VoidFunction;
 };
 
 export const FeaturedLicenseMultiItemCard = ( {
@@ -39,7 +38,6 @@ export const FeaturedLicenseMultiItemCard = ( {
 	ctaAsPrimary,
 	isCtaDisabled,
 	isCtaExternal,
-	onClickCta,
 }: FeaturedLicenseMultiItemCardProps ) => {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
@@ -119,7 +117,7 @@ export const FeaturedLicenseMultiItemCard = ( {
 	);
 
 	const onSelectProduct = useCallback( () => {
-		page( getIssueLicenseURL( variantSlug, bundleSize ) );
+		page.redirect( getIssueLicenseURL( variantSlug, bundleSize ) );
 	}, [ bundleSize, getIssueLicenseURL, variantSlug ] );
 
 	const onHideLightbox = useCallback( () => {
@@ -142,10 +140,9 @@ export const FeaturedLicenseMultiItemCard = ( {
 				}
 				price={ price }
 				ctaAsPrimary={ ctaAsPrimary }
-				onClickCta={ onClickCta }
+				onClickCta={ onSelectProduct }
 				isCtaDisabled={ isCtaDisabled }
 				isCtaExternal={ isCtaExternal }
-				ctaHref={ isCtaDisabled ? '#' : getIssueLicenseURL( variantSlug, bundleSize ) }
 				ctaAriaLabel={ ctaAriaLabel }
 				ctaLabel={ ctaLabel }
 				variant={
