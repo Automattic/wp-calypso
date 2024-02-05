@@ -112,6 +112,13 @@
 	}
 }
 
+@media (min-width: 480px) {
+	.item-price .display-price {
+		display: block !important;
+	}
+}
+
+
 .item-price .display-price {
 
 	display: block;
@@ -146,5 +153,5 @@
 			font-size: $font-title-small;
 		}
 	}
-}
 
+}
