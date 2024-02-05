@@ -134,9 +134,13 @@ export const FeaturedLicenseMultiItemCard = ( {
 			<FeaturedItemCard
 				hero={ hero }
 				title={ title }
-				description={ productDescription }
+				description={
+					<>
+						{ productDescription }
+						{ moreInfoLink }
+					</>
+				}
 				price={ price }
-				moreInfoLink={ moreInfoLink }
 				ctaAsPrimary={ ctaAsPrimary }
 				onClickCta={ onClickCta }
 				isCtaDisabled={ isCtaDisabled }

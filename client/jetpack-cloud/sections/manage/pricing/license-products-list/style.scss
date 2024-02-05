@@ -20,7 +20,6 @@
 	display: none;
 }
 
-
 .simple-item-card {
 
 	.license-lightbox-link {
@@ -45,6 +44,7 @@
 		font-size: 1rem;
 	}
 	.featured-item-card--body .license-lightbox-link {
+		display: block;
 		padding-top: 0.5rem;
 	}
 }

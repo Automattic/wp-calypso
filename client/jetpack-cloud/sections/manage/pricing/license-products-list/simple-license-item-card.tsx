@@ -150,7 +150,6 @@ export const SimpleLicenseItemCard = ( {
 					</>
 				}
 				price={ price }
-				moreInfoLink={ moreInfoLink }
 				ctaAsPrimary={ ctaAsPrimary }
 				onClickCta={ onClickCta }
 				isCtaDisabled={ isCtaDisabled }
