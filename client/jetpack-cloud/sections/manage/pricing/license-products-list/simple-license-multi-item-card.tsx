@@ -127,7 +127,7 @@ export const SimpleLicenseMultiItemCard = ( {
 	);
 
 	const onSelectProduct = useCallback( () => {
-		page( getIssueLicenseURL( variantSlug, bundleSize ) );
+		page.redirect( getIssueLicenseURL( variantSlug, bundleSize ) );
 	}, [ bundleSize, getIssueLicenseURL, variantSlug ] );
 
 	const onHideLightbox = useCallback( () => {

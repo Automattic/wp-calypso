@@ -123,7 +123,7 @@ export const SimpleLicenseItemCard = ( {
 	);
 
 	const onSelectProduct = useCallback( () => {
-		page( getIssueLicenseURL( productSlug, bundleSize ) );
+		page.redirect( getIssueLicenseURL( productSlug, bundleSize ) );
 	}, [ bundleSize, getIssueLicenseURL, productSlug ] );
 
 	const onHideLightbox = useCallback( () => {
