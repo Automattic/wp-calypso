@@ -42,9 +42,10 @@ const useSubscriptionPlans = ( subscriber: Subscriber ): SubscriptionPlanData[] 
 		if ( ! renewalPrice ) {
 			return '';
 		}
-
-		const money = getCurrencyObject( renewalPrice, currency );
-		return money.integer !== '0' ? `${ money.symbol }${ money.integer }` : '';
+		const money = getCurrencyObject( renewalPrice, currency, { stripZeros: false } );
+		return money.hasNonZeroFraction
+			? `${ money.symbol }${ money.integer }${ money.fraction }`
+			: `${ money.symbol }${ money.integer }`;
 	}
 
 	const transformSubscriptionPlans = ( subscriptions?: SubscriptionPlan[] ): PlanData[] => {
