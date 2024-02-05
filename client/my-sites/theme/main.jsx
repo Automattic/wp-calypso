@@ -917,7 +917,7 @@ class ThemeSheet extends Component {
 		const { download, isWpcomTheme, siteSlug, taxonomies, isPremium, themeTier } = this.props;
 
 		const showDownloadCard =
-			download && ( config.isEnabled( 'themes/tiers' ) ? 'free' === themeTier : ! isPremium );
+			download && ( config.isEnabled( 'themes/tiers' ) ? 'free' === themeTier?.slug : ! isPremium );
 
 		return (
 			<div>
