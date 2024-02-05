@@ -20,64 +20,7 @@
 	display: none;
 }
 
-.featured-item-card,
 .simple-item-card {
-
-	.multiple-choice-question {
-		margin-block-start: 10px;
-		margin-block-end: 10px;
-
-		.form-legend {
-			display: none;
-		}
-
-		.multiple-choice-question__answers {
-			display: flex;
-			gap: 24px;
-		}
-
-		.multiple-choice-question__answer-item-content {
-			margin: 0;
-		}
-
-		.form-radio {
-			margin: 0;
-		}
-
-		.form-label {
-			font-size: $font-body-small;
-			line-height: 1.2;
-			margin: 0;
-		}
-
-		.form-radio:checked::before {
-			background: var(--studio-green-50);
-		}
-	}
-}
-
-.simple-item-card {
-
-	.multiple-choice-question {
-		margin-block-start: 0;
-		margin-block-end: 8px;
-
-		.form-radio {
-			margin: 2px 0 0;
-		}
-
-		.form-label {
-			line-height: 1.5;
-		}
-
-		.form-radio__label {
-			font-size: $font-body-small;
-		}
-
-		.multiple-choice-question__answers {
-			gap: 24px;
-		}
-	}
 
 	.license-lightbox-link {
 		display: block;
@@ -101,6 +44,7 @@
 		font-size: 1rem;
 	}
 	.featured-item-card--body .license-lightbox-link {
+		display: block;
 		padding-top: 0.5rem;
 	}
 }

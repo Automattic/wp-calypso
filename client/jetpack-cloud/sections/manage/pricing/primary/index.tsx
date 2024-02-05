@@ -26,7 +26,7 @@ export default function ManagePricingPage() {
 	const [ selectedSize, setSelectedSize ] = useState< number >( DEFAULT_SELECTED_BUNDLE_SIZE );
 
 	useEffect( () => {
-		dispatch( recordTracksEvent( 'calypso_jetpack_manage_pricing_visit' ) );
+		dispatch( recordTracksEvent( 'calypso_jetpack_manage_pricing_page_visit' ) );
 	}, [ dispatch ] );
 
 	return (

@@ -1,11 +1,10 @@
 import page from '@automattic/calypso-router';
-import { Button } from '@automattic/components';
 import { Icon, plugins } from '@wordpress/icons';
 import { addQueryArgs } from '@wordpress/url';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback, useState } from 'react';
 import { useSelector } from 'react-redux';
-import 'calypso/my-sites/plans/jetpack-plans/product-store/featured-item-card/style.scss';
+import 'calypso/my-sites/plans/jetpack-plans/product-store/simple-item-card/style.scss';
 import getAPIFamilyProductIcon from 'calypso/jetpack-cloud/sections/manage/pricing/utils/get-api-family-product-icon';
 import { useProductDescription } from 'calypso/jetpack-cloud/sections/partner-portal/hooks';
 import { useURLQueryParams } from 'calypso/jetpack-cloud/sections/partner-portal/hooks/index';
@@ -13,6 +12,7 @@ import { LICENSE_INFO_MODAL_ID } from 'calypso/jetpack-cloud/sections/partner-po
 import getProductShortTitle from 'calypso/jetpack-cloud/sections/partner-portal/lib/get-product-short-title';
 import LicenseLightbox from 'calypso/jetpack-cloud/sections/partner-portal/license-lightbox/index';
 import LicenseLightboxLink from 'calypso/jetpack-cloud/sections/partner-portal/license-lightbox-link/index';
+import { SimpleItemCard } from 'calypso/my-sites/plans/jetpack-plans/product-store/simple-item-card';
 import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
@@ -139,32 +139,25 @@ export const SimpleLicenseItemCard = ( {
 
 	return (
 		<>
-			<div className="simple-item-card">
-				{ icon ? <div className="simple-item-card__icon">{ icon }</div> : null }
-				<div className="simple-item-card__body">
-					<div className="simple-item-card__header">
-						<div>
-							<h3 className="simple-item-card__title">{ title }</h3>
-							<div className="simple-item-card__price">{ price }</div>
-						</div>
-						<Button
-							className="simple-item-card__cta"
-							onClick={ onClickCta }
-							disabled={ isCtaDisabled }
-							href={ isCtaDisabled ? '#' : getIssueLicenseURL( productSlug, bundleSize ) }
-							target={ isCtaExternal ? '_blank' : undefined }
-							primary={ ctaAsPrimary }
-							aria-label={ ctaAriaLabel }
-						>
-							{ ctaLabel }
-						</Button>
-					</div>
-					<div className="simple-item-card__footer">
+			<SimpleItemCard
+				isCondensedVersion={ false }
+				title={ title }
+				icon={ icon }
+				description={
+					<>
 						{ productDescription }
 						{ moreInfoLink }
-					</div>
-				</div>
-			</div>
+					</>
+				}
+				price={ price }
+				ctaAsPrimary={ ctaAsPrimary }
+				onClickCta={ onClickCta }
+				isCtaDisabled={ isCtaDisabled }
+				isCtaExternal={ isCtaExternal }
+				ctaHref={ isCtaDisabled ? '#' : getIssueLicenseURL( productSlug, bundleSize ) }
+				ctaAriaLabel={ ctaAriaLabel }
+				ctaLabel={ ctaLabel }
+			/>
 			{ showLightbox && (
 				<LicenseLightbox
 					product={ item }
