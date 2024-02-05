@@ -13,11 +13,9 @@ describe( 'getSetupLinkInBioTask', () => {
 	const task = buildTask( { id: 'task', calypso_path: 'some-path' } );
 
 	it( 'use the calypso path with query params', () => {
-		expect(
-			getSetupLinkInBioTask( task, 'flowId', buildContext( { siteSlug: 'site.wordpress.com' } ) )
-		).toMatchObject( {
+		expect( getSetupLinkInBioTask( task, 'flowId', buildContext() ) ).toMatchObject( {
 			useCalypsoPath: true,
-			calypso_path: '/setup/link-in-bio-post-setup/linkInBioPostSetup?siteSlug=site.wordpress.com',
+			calypso_path: '/setup/link-in-bio-post-setup/linkInBioPostSetup',
 		} );
 	} );
 } );
