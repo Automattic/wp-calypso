@@ -15,16 +15,17 @@
 		border-radius: 8px; /* stylelint-disable-line scales/radii */
 		width: 682px;
 		height: 30px;
-		overflow: hidden;
 		margin: 20px auto;
 		padding: 1px 2px;
+		flex-wrap: nowrap;
+		overflow: auto;
 	}
 
 	.pricing-license-option-outer {
 		justify-content: center; /* Centers the inner div horizontally */
 		align-items: center; /* Centers the inner div vertically */
 		display: flex;
-		flex: 1;
+		flex: 0 0 auto;
 		width: 113px;
 		height: 30px;
 
@@ -35,7 +36,7 @@
 			text-align: center;
 			width: 100%;
 			font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
-			font-size: 14px; /* stylelint-disable-line declaration-property-unit-allowed-list */
+			font-size: $font-body-small;
 			cursor: pointer; /* Changes the cursor to a pointer */
 			user-select: none; /* Prevents text selection */
 

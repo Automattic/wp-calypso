@@ -33,7 +33,7 @@ export const AllLicenseItems = ( {
 					}
 
 					// If the product doesn't support bundles, force a bundle size of 1.
-					const supportedBundleSize = item.supported_bundles.length > 0 ? bundleSize : 1;
+					const supportedBundleSize = item?.supported_bundles?.length > 0 ? bundleSize : 1;
 
 					return (
 						<li key={ idx } className="jetpack-product-store__most-popular--item">

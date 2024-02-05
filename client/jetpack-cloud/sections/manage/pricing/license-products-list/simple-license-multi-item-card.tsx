@@ -1,5 +1,4 @@
 import page from '@automattic/calypso-router';
-import { Button } from '@automattic/components';
 import { addQueryArgs } from '@wordpress/url';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback, useState } from 'react';
@@ -13,6 +12,7 @@ import getProductShortTitle from 'calypso/jetpack-cloud/sections/partner-portal/
 import getProductVariantShortTitle from 'calypso/jetpack-cloud/sections/partner-portal/lib/get-product-variant-short-title';
 import LicenseLightbox from 'calypso/jetpack-cloud/sections/partner-portal/license-lightbox/index';
 import LicenseLightboxLink from 'calypso/jetpack-cloud/sections/partner-portal/license-lightbox-link/index';
+import { SimpleItemCard } from 'calypso/my-sites/plans/jetpack-plans/product-store/simple-item-card';
 import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
@@ -66,7 +66,7 @@ export const SimpleLicenseMultiItemCard = ( {
 
 			setVariant( selectedProduct );
 			dispatch(
-				recordTracksEvent( 'calypso_jp_manage_pricing_page_variant_option_click', {
+				recordTracksEvent( 'calypso_jetpack_manage_pricing_page_variant_option_click', {
 					product: selectedProductSlug,
 				} )
 			);
@@ -141,26 +141,25 @@ export const SimpleLicenseMultiItemCard = ( {
 
 	return (
 		<>
-			<div className="simple-item-card">
-				{ icon ? <div className="simple-item-card__icon">{ icon }</div> : null }
-				<div className="simple-item-card__body">
-					<div className="simple-item-card__header">
-						<div>
-							<h3 className="simple-item-card__title">{ title }</h3>
-							<div className="simple-item-card__price">{ price }</div>
-						</div>
-						<Button
-							className="simple-item-card__cta"
-							onClick={ onClickCta }
-							disabled={ isCtaDisabled }
-							href={ isCtaDisabled ? '#' : getIssueLicenseURL( variantSlug, bundleSize ) }
-							target={ isCtaExternal ? '_blank' : undefined }
-							primary={ ctaAsPrimary }
-							aria-label={ ctaAriaLabel }
-						>
-							{ ctaLabel }
-						</Button>
-					</div>
+			<SimpleItemCard
+				isCondensedVersion={ false }
+				title={ title }
+				icon={ icon }
+				description={
+					<>
+						{ productDescription }
+						{ moreInfoLink }
+					</>
+				}
+				price={ price }
+				ctaAsPrimary={ ctaAsPrimary }
+				onClickCta={ onClickCta }
+				isCtaDisabled={ isCtaDisabled }
+				isCtaExternal={ isCtaExternal }
+				ctaHref={ isCtaDisabled ? '#' : getIssueLicenseURL( variantSlug, bundleSize ) }
+				ctaAriaLabel={ ctaAriaLabel }
+				ctaLabel={ ctaLabel }
+				variant={
 					<MultipleChoiceQuestion
 						name={ `${ variant.family_slug }-variant-options` }
 						question={ translate( 'Select variant:' ) }
@@ -169,17 +168,13 @@ export const SimpleLicenseMultiItemCard = ( {
 						onAnswerChange={ onChangeOption }
 						shouldShuffleAnswers={ false }
 					/>
-					<div className="simple-item-card__footer">
-						{ productDescription }
-						{ moreInfoLink }
-					</div>
-				</div>
-			</div>
+				}
+			/>
 			{ showLightbox && (
 				<LicenseLightbox
 					product={ variant }
 					quantity={ bundleSize }
-					ctaLabel={ translate( 'Select License' ) }
+					ctaLabel={ translate( 'Select license' ) }
 					isCTAExternalLink={ false }
 					isCTAPrimary={ true }
 					isDisabled={ false }
