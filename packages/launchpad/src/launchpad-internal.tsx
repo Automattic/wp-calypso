@@ -68,14 +68,18 @@ const LaunchpadInternal = ( {
 		task?.actionDispatch?.();
 	};
 
-	const items = tasks.map( ( task ) => (
-		<ChecklistItem task={ task } key={ task.id } onClick={ () => itemClickHandler( task ) } />
-	) );
-
 	return (
 		<div className="launchpad__checklist-wrapper">
 			{ isFetchedAfterMount ? (
-				<Checklist items={ items } makeLastTaskPrimaryAction={ makeLastTaskPrimaryAction } />
+				<Checklist makeLastTaskPrimaryAction={ makeLastTaskPrimaryAction }>
+					{ tasks.map( ( task ) => (
+						<ChecklistItem
+							task={ task }
+							key={ task.id }
+							onClick={ () => itemClickHandler( task ) }
+						/>
+					) ) }
+				</Checklist>
 			) : (
 				<ChecklistPlaceHolder />
 			) }

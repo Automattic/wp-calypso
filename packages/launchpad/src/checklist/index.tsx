@@ -1,16 +1,16 @@
 import classNames from 'classnames';
+import { Children, cloneElement, type FC, type ReactElement } from 'react';
 import { Placeholder as CheckListPlacehoder } from '../checklist-item';
 import type { Props as CheckListItemProps } from '../checklist-item';
-import type { FC, PropsWithChildren, ReactElement } from 'react';
 import './style.scss';
 
-interface ChecklistProps extends PropsWithChildren {
-	items: Array< ReactElement< CheckListItemProps > >;
+interface ChecklistProps {
 	makeLastTaskPrimaryAction?: boolean;
+	children?: ReactElement< CheckListItemProps > | ReactElement< CheckListItemProps >[];
 }
 
 const Checklist: FC< ChecklistProps > = ( {
-	items = [],
+	children,
 	makeLastTaskPrimaryAction,
 }: ChecklistProps ) => {
 	return (
@@ -20,7 +20,12 @@ const Checklist: FC< ChecklistProps > = ( {
 			} ) }
 			aria-label="Launchpad Checklist"
 		>
-			{ items }
+			{ Children.map( children || [], ( child, index ) => {
+				if ( index === Children.count( children ) - 1 ) {
+					return cloneElement( child, { isPrimaryAction: true } );
+				}
+				return child;
+			} ) }
 		</ul>
 	);
 };
