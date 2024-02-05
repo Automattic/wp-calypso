@@ -17,6 +17,7 @@ export const SimpleItemCard: React.FC< SimpleItemCardProps > = ( {
 	onClickCta,
 	price,
 	title,
+	variant,
 } ) => {
 	return (
 		<div className="simple-item-card">
@@ -42,6 +43,7 @@ export const SimpleItemCard: React.FC< SimpleItemCardProps > = ( {
 						</Button>
 					) }
 				</div>
+				{ variant }
 				<div className="simple-item-card__footer">{ description }</div>
 			</div>
 		</div>
