@@ -69,7 +69,7 @@ const SubscriberListContainer = ( {
 							title={
 								total > 1000
 									? formatNumber( total, getLocaleSlug() || undefined, { notation: 'standard' } )
-									: ''
+									: undefined
 							}
 						>
 							{ formatNumber( total, getLocaleSlug() || undefined ) }
