@@ -1,5 +1,5 @@
 import config from '@automattic/calypso-config';
-import { CountComparisonCard } from '@automattic/components';
+import { ComponentSwapper, CountComparisonCard } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import QueryMembershipProducts from 'calypso/components/data/query-memberships';
 import useSubscribersOverview from 'calypso/my-sites/stats/hooks/use-subscribers-overview';
@@ -92,7 +92,7 @@ function SubscriberHighlightsListing( { siteId }: { siteId: number | null } ) {
 	const highlights = useSubscriberHighlights( siteId, hasAddedPaidSubscriptionProduct );
 
 	const standardHighlights = (
-		<>
+		<div className="highlight-cards-list">
 			{ highlights.map( ( highlight ) => (
 				<CountComparisonCard
 					key={ highlight.heading }
@@ -102,14 +102,24 @@ function SubscriberHighlightsListing( { siteId }: { siteId: number | null } ) {
 					note={ highlight.note }
 				/>
 			) ) }
-		</>
+		</div>
+	);
+
+	const mobileHighlights = (
+		<div>
+			<p>mobile highlights here</p>
+		</div>
 	);
 
 	return (
-		<div className="highlight-cards-list">
+		<>
 			{ siteId && ! isOdysseyStats && <QueryMembershipProducts siteId={ siteId } /> }
-			{ standardHighlights }
-		</div>
+			<ComponentSwapper
+				breakpoint="<660px"
+				breakpointActiveComponent={ mobileHighlights }
+				breakpointInactiveComponent={ standardHighlights }
+			/>
+		</>
 	);
 }
 
