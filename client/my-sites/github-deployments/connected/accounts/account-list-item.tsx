@@ -7,25 +7,25 @@ import Image from 'calypso/components/image/index';
 import PopoverMenuItem from 'calypso/components/popover-menu/item';
 import PopoverMenuSeparator from 'calypso/components/popover-menu/separator';
 import { GITHUB_DEPLOYMENTS_QUERY_KEY } from 'calypso/my-sites/github-deployments/constants';
-import { GitHubConnection } from 'calypso/my-sites/github-deployments/types';
-import { GITHUB_CONNECTION_QUERY_KEY } from 'calypso/my-sites/github-deployments/use-github-connection-query';
+import { GitHubInstallation } from 'calypso/my-sites/github-deployments/types';
+import { GITHUB_INSTALLATION_QUERY_KEY } from 'calypso/my-sites/github-deployments/use-github-installation-query';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { useDispatch, useSelector } from 'calypso/state/index';
 import { deleteStoredKeyringConnection } from 'calypso/state/sharing/keyring/actions';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors/index';
 
 interface GitHubAccountListItemProps {
-	connection: GitHubConnection;
+	connection: GitHubInstallation;
 }
 
-function getConfigureURL( { installation }: GitHubConnection ) {
+function getConfigureURL( { installation }: GitHubInstallation ) {
 	if ( installation.type === 'User' ) {
 		return `https://github.com/settings/installations/${ installation.id }`;
 	}
 	return `https://github.com/organizations/${ installation.login }/settings/installations/${ installation.id }`;
 }
 
-function getRepositoryAccess( { installation: { repositories } }: GitHubConnection ) {
+function getRepositoryAccess( { installation: { repositories } }: GitHubInstallation ) {
 	const repos = Object.values( repositories );
 	if ( repos.length === 1 && repos[ 0 ] === 'all' ) {
 		return <span>{ __( 'All repositories' ) }</span>;
@@ -58,12 +58,12 @@ export const GitHubAccountListItem = ( props: GitHubAccountListItemProps ) => {
 	const siteId = useSelector( getSelectedSiteId );
 
 	// Using ReactQuery to manage `isDisconnecting` state because it's not exposed from the Redux store.
-	const mutation = useMutation< unknown, unknown, GitHubConnection >( {
+	const mutation = useMutation< unknown, unknown, GitHubInstallation >( {
 		mutationFn: async ( connection ) => {
 			dispatch( recordTracksEvent( 'calypso_github_deployments_disconnect_account_click' ) );
 			await dispatch( deleteStoredKeyringConnection( connection ) );
 			await queryClient.invalidateQueries( {
-				queryKey: [ GITHUB_DEPLOYMENTS_QUERY_KEY, siteId, GITHUB_CONNECTION_QUERY_KEY ],
+				queryKey: [ GITHUB_DEPLOYMENTS_QUERY_KEY, siteId, GITHUB_INSTALLATION_QUERY_KEY ],
 			} );
 		},
 	} );

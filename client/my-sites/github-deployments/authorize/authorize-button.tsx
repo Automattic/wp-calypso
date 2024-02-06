@@ -8,7 +8,10 @@ import { requestKeyringConnections } from 'calypso/state/sharing/keyring/actions
 import { getKeyringServiceByName } from 'calypso/state/sharing/services/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { GITHUB_DEPLOYMENTS_QUERY_KEY } from '../constants';
-import { GITHUB_CONNECTION_QUERY_KEY, GithubConnectionData } from '../use-github-connection-query';
+import {
+	GITHUB_INSTALLATION_QUERY_KEY,
+	GithubInstallationData,
+} from '../use-github-installation-query';
 
 import './style.scss';
 
@@ -37,13 +40,13 @@ export const GitHubAuthorizeButton = ( props: GitHubAuthorizeProps ) => {
 			await dispatch( requestKeyringConnections() );
 		},
 		onSuccess: async () => {
-			const connectionKey = [ GITHUB_DEPLOYMENTS_QUERY_KEY, siteId, GITHUB_CONNECTION_QUERY_KEY ];
+			const connectionKey = [ GITHUB_DEPLOYMENTS_QUERY_KEY, siteId, GITHUB_INSTALLATION_QUERY_KEY ];
 			await queryClient.invalidateQueries( {
 				queryKey: connectionKey,
 			} );
 
 			const authorized =
-				queryClient.getQueryData< GithubConnectionData >( connectionKey )?.connected;
+				queryClient.getQueryData< GithubInstallationData >( connectionKey )?.connected;
 			dispatch( recordTracksEvent( 'calypso_hosting_github_authorize_complete', { authorized } ) );
 		},
 	} );

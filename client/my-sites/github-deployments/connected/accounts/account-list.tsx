@@ -1,9 +1,9 @@
 import { __ } from '@wordpress/i18n';
-import { GitHubConnection } from 'calypso/my-sites/github-deployments/types';
+import { GitHubInstallation } from 'calypso/my-sites/github-deployments/types';
 import { GitHubAccountListItem } from './account-list-item';
 
 interface GitHubAccountListProps {
-	connections: GitHubConnection[];
+	connections: GitHubInstallation[];
 }
 
 export const GitHubAccountList = ( { connections = [] }: GitHubAccountListProps ) => {

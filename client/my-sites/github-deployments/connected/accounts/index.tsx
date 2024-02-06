@@ -1,10 +1,10 @@
 import { __ } from '@wordpress/i18n';
 import { useState } from 'react';
-import { GitHubConnection } from 'calypso/my-sites/github-deployments/types';
+import { GitHubInstallation } from 'calypso/my-sites/github-deployments/types';
 import { useSelector } from 'calypso/state';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { GitHubAuthorizeButton } from '../../authorize/authorize-button';
-import { useGithubConnectionQuery } from '../../use-github-connection-query';
+import { useGithubInstallationQuery } from '../../use-github-installation-query';
 import { GitHubAccountList } from './account-list';
 import { SearchAccounts } from './search-accounts';
 
@@ -14,9 +14,9 @@ export const GitHubAccounts = () => {
 	const siteId = useSelector( getSelectedSiteId );
 	const [ query, setQuery ] = useState( '' );
 
-	const { data: connections } = useGithubConnectionQuery( siteId );
+	const { data: installations } = useGithubInstallationQuery( siteId );
 
-	const filter = ( connections: GitHubConnection[] ) => {
+	const filter = ( connections: GitHubInstallation[] ) => {
 		const trimmed = query.toLowerCase().trim();
 		if ( ! trimmed ) {
 			return connections;
@@ -32,7 +32,7 @@ export const GitHubAccounts = () => {
 				<SearchAccounts value={ query } onChange={ setQuery } />
 				<GitHubAuthorizeButton buttonText={ __( 'Connect GitHub Account' ) } />
 			</div>
-			<GitHubAccountList connections={ filter( connections || [] ) } />
+			<GitHubAccountList connections={ filter( installations || [] ) } />
 		</div>
 	);
 };

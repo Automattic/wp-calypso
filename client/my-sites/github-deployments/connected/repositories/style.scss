@@ -1,0 +1,119 @@
+.github-deployments-empty-repositories {
+	margin: auto;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	gap: 24px;
+	min-height: 300px;
+
+	&__empty-text {
+		display: flex;
+		flex-direction: column;
+	}
+
+	&__buttons{
+		display: flex;
+		gap: 24px;
+	}
+}
+
+.github-deployments-add-repository-dialog {
+	width: 700px;
+
+	.dialog__content {
+		display: flex;
+		flex-direction: column;
+		gap: 24px;
+	}
+
+	header {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+
+		span {
+			font-size: 22px;
+		}
+	}
+
+	&__search-bar {
+		display: flex;
+		align-items: center;
+		gap: 24px;
+		width: 100%;
+		> div {
+			flex-grow: 1;
+		}
+		.components-base-control__field {
+			margin-bottom: 0;
+		}
+	}
+
+	&__search-account {
+
+	}
+
+	&__label {
+
+	}
+
+	.components-select-control {
+		height: 40px;
+		.components-input-control__backdrop {
+			border: 1px solid var(--color-neutral-10);
+		}
+	}
+
+	&__repository {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		padding: 8px;
+		border: 1px solid var(--color-neutral-10);
+		border-radius: 2px;
+	}
+
+	&__automatic-deploys {
+		display: flex;
+		align-items: center;
+		gap: 8px;
+		font-size: smaller;
+	}
+
+	&__connect-button {
+		display: flex;
+		justify-content: flex-end;
+	}
+}
+
+.github-deployments-repository-list {
+	border-collapse: collapse;
+
+	th, td {
+		padding: 8px 0;
+		font-weight: normal;
+	}
+
+	th:first-child {
+		min-width: 350px;
+	}
+
+	tbody tr {
+		border-bottom: 1px solid var(--color-neutral-10);
+	}
+
+	td {
+		vertical-align: middle !important;
+	}
+
+	&__account {
+		display: flex;
+		align-items: center;
+		gap: 4px;
+	}
+
+	tr td:last-child {
+		text-align: right;
+	}
+}

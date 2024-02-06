@@ -8,7 +8,7 @@ import { getSelectedSiteId } from 'calypso/state/ui/selectors/index';
 import { GitHubAuthorize } from './authorize';
 import { GitHubConnected } from './connected';
 import { GitHubLoadingPlaceholder } from './loading-placeholder';
-import { useGithubConnectionQuery } from './use-github-connection-query';
+import { useGithubInstallationQuery } from './use-github-installation-query';
 
 import './style.scss';
 
@@ -16,13 +16,13 @@ export function GitHubDeployments() {
 	const titleHeader = translate( 'GitHub Deployments' );
 
 	const siteId = useSelector( getSelectedSiteId );
-	const { data: connections, isLoading } = useGithubConnectionQuery( siteId );
+	const { data: installations, isLoading } = useGithubInstallationQuery( siteId );
 
 	const renderContent = () => {
 		if ( isLoading ) {
 			return <GitHubLoadingPlaceholder />;
 		}
-		if ( connections?.length ) {
+		if ( installations?.length ) {
 			return <GitHubConnected />;
 		}
 		return <GitHubAuthorize />;
