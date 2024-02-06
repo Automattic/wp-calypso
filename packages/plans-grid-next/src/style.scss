@@ -451,6 +451,12 @@ $mobile-card-max-width: 440px;
 	.storage-add-on-dropdown-option__price {
 		margin-left: 4px;
 	}
+
+	.components-custom-select-control__item {
+		&.is-highlighted {
+			background-color: var(--studio-gray-0);
+		}
+	}
 }
 
 .storage-add-on-dropdown__offset-price-container {
