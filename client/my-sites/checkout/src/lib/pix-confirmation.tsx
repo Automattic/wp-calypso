@@ -116,17 +116,16 @@ export function PixConfirmation( {
 			<button className="pix-confirmation__cancel" onClick={ () => cancel() }>
 				{ translate( 'Cancel' ) }
 			</button>
-			<h2 className="pix-confirmation__title">{ translate( 'Confirm your payment' ) }</h2>
+			<h2 className="pix-confirmation__title">{ translate( 'Pay with Pix' ) }</h2>
 			<div className="pix-confirmation__content">
 				<p className="pix-confirmation__instructions">
 					{ translate(
-						'Please scan the QR code using the %(paymentMethod)s app to confirm your {{strong}}%(price)s payment{{/strong}}.',
+						'Please scan the QR code using your banking app to complete your {{strong}}%(price)s payment{{/strong}}.',
 						{
 							components: {
 								strong: <strong />,
 							},
 							args: {
-								paymentMethod: 'Pix',
 								price: formatCurrency( priceInteger, priceCurrency, {
 									isSmallestUnit: true,
 									stripZeros: true,
