@@ -17,6 +17,12 @@ import {
 	JETPACK_AGENCY_DASHBOARD_SELECT_SITE_LICENSE,
 	JETPACK_AGENCY_DASHBOARD_UNSELECT_SITE_LICENSE,
 	JETPACK_AGENCY_DASHBOARD_RESET_SITE_LICENSES,
+	JETPACK_AGENCY_DASHBOARD_CONNECT_URL_SITE_VALIDATION_VALIDATING,
+	JETPACK_AGENCY_DASHBOARD_CONNECT_URL_SITE_VALIDATION_JETPACK_CONNECTED,
+	JETPACK_AGENCY_DASHBOARD_CONNECT_URL_SITE_VALIDATION_WORDPRESS_SITE,
+	JETPACK_AGENCY_DASHBOARD_CONNECT_URL_SITE_VALIDATION_NON_WORDPRESS_SITE,
+	JETPACK_AGENCY_DASHBOARD_CONNECT_URL_SITE_VALIDATION_NOT_EXISTS,
+	JETPACK_AGENCY_DASHBOARD_CONNECT_URL_SITE_VALIDATION_ERROR,
 } from './action-types';
 
 const isStreamlinedPurchasesEnabled = isEnabled( 'jetpack/streamline-license-purchases' );
@@ -108,5 +114,47 @@ export function setSiteMonitorStatus( siteId: number, status: 'loading' | 'compl
 		type: JETPACK_AGENCY_DASHBOARD_SITE_MONITOR_STATUS_CHANGE,
 		siteId,
 		status,
+	};
+}
+
+export function setSiteValidatingStatusValidating( siteUrl: string ) {
+	return {
+		type: JETPACK_AGENCY_DASHBOARD_CONNECT_URL_SITE_VALIDATION_VALIDATING,
+		siteUrl,
+	};
+}
+
+export function setSiteValidatingStatusJetpackConnected( siteUrl: string ) {
+	return {
+		type: JETPACK_AGENCY_DASHBOARD_CONNECT_URL_SITE_VALIDATION_JETPACK_CONNECTED,
+		siteUrl,
+	};
+}
+
+export function setSiteValidatingStatusWordPressSite( siteUrl: string ) {
+	return {
+		type: JETPACK_AGENCY_DASHBOARD_CONNECT_URL_SITE_VALIDATION_WORDPRESS_SITE,
+		siteUrl,
+	};
+}
+
+export function setSiteValidatingStatusNonWordPressSite( siteUrl: string ) {
+	return {
+		type: JETPACK_AGENCY_DASHBOARD_CONNECT_URL_SITE_VALIDATION_NON_WORDPRESS_SITE,
+		siteUrl,
+	};
+}
+
+export function setSiteValidatingStatusNotExists( siteUrl: string ) {
+	return {
+		type: JETPACK_AGENCY_DASHBOARD_CONNECT_URL_SITE_VALIDATION_NOT_EXISTS,
+		siteUrl,
+	};
+}
+
+export function setSiteValidatingStatusError( siteUrl: string ) {
+	return {
+		type: JETPACK_AGENCY_DASHBOARD_CONNECT_URL_SITE_VALIDATION_ERROR,
+		siteUrl,
 	};
 }

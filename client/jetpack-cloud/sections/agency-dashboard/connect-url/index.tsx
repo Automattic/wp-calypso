@@ -4,27 +4,25 @@ import { useCallback, useState } from 'react';
 import QueryJetpackManageAddSiteUrl, {
 	SuccessData,
 } from 'calypso/components/data/query-jetpack-manage-add-site-url';
-import { useDispatch } from 'calypso/state';
+import { useDispatch, useSelector } from 'calypso/state';
+import {
+	setSiteValidatingStatusValidating,
+	setSiteValidatingStatusJetpackConnected,
+	setSiteValidatingStatusWordPressSite,
+	setSiteValidatingStatusNonWordPressSite,
+	setSiteValidatingStatusNotExists,
+} from 'calypso/state/jetpack-agency-dashboard/actions';
+import { getValidatedSites } from 'calypso/state/jetpack-agency-dashboard/selectors';
 import { JETPACK_CONNECT_COMPLETE_FLOW } from 'calypso/state/jetpack-connect/action-types';
 import SitesInput from './sites-input';
 import ValidateSites from './validate-sites';
 import './style.scss';
 
-type ValidationStatus =
-	| 'validating'
-	| 'jetpack-connected'
-	| 'wordpress-site'
-	| 'non-wordpress-site'
-	| 'not-exists'
-	| 'error';
-
-export interface SiteData {
-	validationStatus: ValidationStatus;
-}
-
 export default function ConnectUrl() {
 	const dispatch = useDispatch();
 	const translate = useTranslate();
+
+	const validatedSites = useSelector( getValidatedSites );
 
 	const [ detectedSites, setDetectedSites ] = useState( [] as string[] );
 	const [ detectedFilename, setDetectedFilename ] = useState( '' );
@@ -34,50 +32,42 @@ export default function ConnectUrl() {
 	const [ selectedColumn, setSelectedColumn ] = useState( '' );
 	const [ currentValidatingSiteIndex, setCurrentValidatingSiteIndex ] = useState( 0 );
 	const [ csvConfirmed, setCSVConfirmed ] = useState( false );
-	const [ validatedSites, setValidatedSites ] = useState( {} as { [ site: string ]: SiteData } );
 
 	const handleValidationSuccess = useCallback(
 		( data: SuccessData ) => {
 			if ( data.exists ) {
 				if ( data.isJetpackConnected ) {
-					setValidatedSites( {
-						...validatedSites,
-						[ currentValidatingSite ]: { validationStatus: 'jetpack-connected' },
-					} );
+					dispatch( setSiteValidatingStatusJetpackConnected( currentValidatingSite ) );
 				}
 
 				if ( ! data.isWordPress ) {
-					setValidatedSites( {
-						...validatedSites,
-						[ currentValidatingSite ]: { validationStatus: 'non-wordpress-site' },
-					} );
+					dispatch( setSiteValidatingStatusWordPressSite( currentValidatingSite ) );
 				} else {
-					setValidatedSites( {
-						...validatedSites,
-						[ currentValidatingSite ]: { validationStatus: 'wordpress-site' },
-					} );
+					dispatch( setSiteValidatingStatusNonWordPressSite( currentValidatingSite ) );
 				}
 			} else {
-				setValidatedSites( {
-					...validatedSites,
-					[ currentValidatingSite ]: { validationStatus: 'not-exists' },
-				} );
+				dispatch( setSiteValidatingStatusNotExists( currentValidatingSite ) );
 			}
 
 			/* Checks if there is another site to validate and moves the cursor forward */
-			if ( currentValidatingSiteIndex + 1 <= detectedSites.length ) {
-				const siteData = detectedSites[ currentValidatingSiteIndex + 1 ];
+			const nextValidatingSiteIndex = currentValidatingSiteIndex + 1;
+			if ( nextValidatingSiteIndex < detectedSites.length ) {
+				const siteData = detectedSites[ nextValidatingSiteIndex ];
+				// A check for siteData here might seem useless, but I am considering edge cases
+				// where the CSV file might be in a bad state and the condition above would still pass
 				if ( siteData ) {
 					const columnIndex = csvColumns.indexOf( selectedColumn );
-					dispatch( { type: JETPACK_CONNECT_COMPLETE_FLOW } );
-					setCurrentValidatingSite( siteData.split( ',' )[ columnIndex ] );
-					setCurrentValidatingSiteIndex( currentValidatingSiteIndex + 1 );
+					const nextSiteUrl = siteData.split( ',' )[ columnIndex ];
+					dispatch( setSiteValidatingStatusValidating( nextSiteUrl ) );
+					setCurrentValidatingSite( nextSiteUrl );
+					setCurrentValidatingSiteIndex( nextValidatingSiteIndex );
 				}
 			} else {
 				setValidating( false );
 				setCurrentValidatingSite( '' );
 				setCurrentValidatingSiteIndex( 0 );
 			}
+			dispatch( { type: JETPACK_CONNECT_COMPLETE_FLOW } );
 		},
 		[
 			currentValidatingSite,
@@ -86,7 +76,6 @@ export default function ConnectUrl() {
 			detectedSites,
 			setCurrentValidatingSite,
 			validatedSites,
-			setValidatedSites,
 			dispatch,
 		]
 	);
@@ -103,10 +92,8 @@ export default function ConnectUrl() {
 			// Define the selected column
 			setSelectedColumn( column );
 			// Initialize the map that stores the validation results
-			setValidatedSites( {
-				...validatedSites,
-				[ siteData[ columnIndex ] ]: { validationStatus: 'validating' },
-			} );
+			dispatch( setSiteValidatingStatusValidating( siteData[ columnIndex ] ) );
+			setValidating( true );
 			setCSVConfirmed( true );
 		},
 		[ detectedSites, csvColumns, validatedSites ]
@@ -129,10 +116,12 @@ export default function ConnectUrl() {
 
 	return (
 		<div className="connect-url">
-			<QueryJetpackManageAddSiteUrl
-				url={ currentValidatingSite }
-				onSuccess={ handleValidationSuccess }
-			/>
+			{ validating && (
+				<QueryJetpackManageAddSiteUrl
+					url={ currentValidatingSite }
+					onSuccess={ handleValidationSuccess }
+				/>
+			) }
 
 			<h2 className="connect-url__page-title">{ pageTitle }</h2>
 			<div className="connect-url__page-subtitle">{ pageSubtitle }</div>
