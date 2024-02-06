@@ -52,11 +52,20 @@ const GitHubLoginButton = ( {
 		}
 	}, [ socialServiceResponse ] );
 
+	const isDisabled = isFormDisabled || disabledState;
+
 	const handleClick = ( e: MouseEvent< HTMLButtonElement > ) => {
 		errorRef.current = e.currentTarget;
-	};
 
-	const isDisabled = Boolean( disabledState || isFormDisabled || errorState );
+		if ( isDisabled ) {
+			e.preventDefault();
+			return;
+		}
+
+		const clientId = config( 'github_oauth_client_id' );
+		const redirectUri = encodeURIComponent( 'https://wordpress.com/start/user' );
+		window.location.href = `https://github.com/login/oauth/authorize?client_id=${ clientId }&redirect_uri=${ redirectUri }`;
+	};
 
 	const eventHandlers = {
 		onClick: handleClick,
