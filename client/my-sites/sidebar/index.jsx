@@ -8,35 +8,26 @@
  */
 
 import { Spinner } from '@automattic/components';
-import { useTranslate } from 'i18n-calypso';
+import { translate } from 'i18n-calypso';
 import { Fragment } from 'react';
 import { useSelector } from 'react-redux';
 import Sidebar from 'calypso/layout/sidebar';
-import SidebarSeparator from 'calypso/layout/sidebar/separator';
+import CollapseSidebar from 'calypso/layout/sidebar/collapse-sidebar';
+import SidebarRegion from 'calypso/layout/sidebar/region';
+import CurrentSite from 'calypso/my-sites/current-site';
+import MySitesSidebarUnifiedBody from 'calypso/my-sites/sidebar/body';
 import { getIsRequestingAdminMenu } from 'calypso/state/admin-menu/selectors';
-import { getCurrentUser } from 'calypso/state/current-user/selectors';
-import isSiteWpcomAtomic from 'calypso/state/selectors/is-site-wpcom-atomic';
-import { isJetpackSite } from 'calypso/state/sites/selectors';
-import { getSidebarIsCollapsed, getSelectedSiteId } from 'calypso/state/ui/selectors';
-import MySitesSidebarUnifiedFooter from './footer';
-import MySitesSidebarUnifiedHeader from './header';
-import MySitesSidebarUnifiedItem from './item';
-import MySitesSidebarUnifiedMenu from './menu';
+import AddNewSite from './add-new-site';
+import useDomainsViewStatus from './use-domains-view-status';
 import useSiteMenuItems from './use-site-menu-items';
-import { itemLinkMatches } from './utils';
 import 'calypso/state/admin-menu/init';
 
 import './style.scss';
 
-export const MySitesSidebarUnified = ( { path, shouldShowGlobalSidebar } ) => {
+export const MySitesSidebarUnified = ( { path } ) => {
 	const menuItems = useSiteMenuItems();
+	const isAllDomainsView = useDomainsViewStatus();
 	const isRequestingMenu = useSelector( getIsRequestingAdminMenu );
-	const sidebarIsCollapsed = useSelector( getSidebarIsCollapsed );
-	const siteId = useSelector( getSelectedSiteId );
-	const currentUser = useSelector( getCurrentUser );
-	const isJetpack = useSelector( ( state ) => isJetpackSite( state, siteId ) );
-	const isSiteAtomic = useSelector( ( state ) => isSiteWpcomAtomic( state, siteId ) );
-	const translate = useTranslate();
 
 	/**
 	 * If there are no menu items and we are currently requesting some,
@@ -48,49 +39,19 @@ export const MySitesSidebarUnified = ( { path, shouldShowGlobalSidebar } ) => {
 		return <Spinner className="sidebar__menu-loading" />;
 	}
 
-	// Jetpack self-hosted sites should open external links to WP Admin in new tabs,
-	// since WP Admin is considered a separate area from Calypso on those sites.
-	const shouldOpenExternalLinksInCurrentTab = ! isJetpack || isSiteAtomic;
-
 	return (
 		<Fragment>
 			<Sidebar>
-				{ shouldShowGlobalSidebar && <MySitesSidebarUnifiedHeader /> }
-				<div className="sidebar__body">
-					{ menuItems.map( ( item, i ) => {
-						const isSelected = item?.url && itemLinkMatches( item.url, path );
-
-						if ( 'separator' === item?.type ) {
-							return <SidebarSeparator key={ i } />;
-						}
-
-						if ( item?.children?.length ) {
-							return (
-								<MySitesSidebarUnifiedMenu
-									key={ item.slug }
-									path={ path }
-									link={ item.url }
-									selected={ isSelected }
-									sidebarCollapsed={ sidebarIsCollapsed }
-									shouldOpenExternalLinksInCurrentTab={ shouldOpenExternalLinksInCurrentTab }
-									{ ...item }
-								/>
-							);
-						}
-
-						return (
-							<MySitesSidebarUnifiedItem
-								key={ item.slug }
-								selected={ isSelected }
-								shouldOpenExternalLinksInCurrentTab={ shouldOpenExternalLinksInCurrentTab }
-								{ ...item }
-							/>
-						);
-					} ) }
-				</div>
-				{ shouldShowGlobalSidebar && (
-					<MySitesSidebarUnifiedFooter user={ currentUser } translate={ translate } />
-				) }
+				<SidebarRegion>
+					<CurrentSite forceAllSitesView={ isAllDomainsView } />
+				</SidebarRegion>
+				<MySitesSidebarUnifiedBody path={ path } />
+				<CollapseSidebar
+					key="collapse"
+					title={ translate( 'Collapse menu' ) }
+					icon="dashicons-admin-collapse"
+				/>
+				<AddNewSite key="add-new-site" title={ translate( 'Add new site' ) } />
 			</Sidebar>
 		</Fragment>
 	);

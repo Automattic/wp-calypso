@@ -3,8 +3,9 @@ import { Component } from 'react';
 import { connect } from 'react-redux';
 import AsyncLoad from 'calypso/components/async-load';
 import { withCurrentRoute } from 'calypso/components/route';
+import { useGlobalSidebar } from 'calypso/layout/global-sidebar/hooks/use-global-sidebar';
 import SitePicker from 'calypso/my-sites/picker';
-import { useGlobalSidebar } from 'calypso/my-sites/sidebar/hooks/use-global-sidebar';
+import MySitesSidebarUnifiedBody from 'calypso/my-sites/sidebar/body';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 
 class MySitesNavigation extends Component {
@@ -71,11 +72,12 @@ class MySitesNavigation extends Component {
 		const asyncProps = {
 			placeholder: null,
 			path: this.props.path,
-			siteBasePath: this.props.siteBasePath,
-			shouldShowGlobalSidebar: this.props.isGlobalSidebarVisible,
 		};
-
-		const asyncSidebar = <AsyncLoad require="calypso/my-sites/sidebar" { ...asyncProps } />;
+		const asyncSidebar = (
+			<AsyncLoad require="calypso/layout/global-sidebar" { ...asyncProps }>
+				<MySitesSidebarUnifiedBody path={ this.props.path } />
+			</AsyncLoad>
+		);
 		return <div className="my-sites__navigation global-sidebar">{ asyncSidebar }</div>;
 	}
 

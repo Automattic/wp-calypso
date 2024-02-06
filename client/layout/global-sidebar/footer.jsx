@@ -1,6 +1,6 @@
 import Gravatar from 'calypso/components/gravatar';
 
-export const MySitesSidebarUnifiedFooter = ( { translate, user } ) => {
+export const GlobalSidebarFooter = ( { translate, user } ) => {
 	return (
 		<div className="sidebar__footer">
 			<span className="gap"></span>
@@ -19,4 +19,4 @@ export const MySitesSidebarUnifiedFooter = ( { translate, user } ) => {
 	);
 };
 
-export default MySitesSidebarUnifiedFooter;
+export default GlobalSidebarFooter;
