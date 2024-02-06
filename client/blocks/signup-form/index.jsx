@@ -113,6 +113,7 @@ class SignupForm extends Component {
 		translate: PropTypes.func.isRequired,
 		horizontal: PropTypes.bool,
 		shouldDisplayUserExistsError: PropTypes.bool,
+		submitForm: PropTypes.func,
 
 		// Connected props
 		oauth2Client: PropTypes.object,
@@ -710,7 +711,6 @@ class SignupForm extends Component {
 						) }
 					</>
 				) }
-
 				<FormLabel htmlFor="password">{ this.props.translate( 'Choose a password' ) }</FormLabel>
 				<FormPasswordInput
 					className="signup-form__input"
@@ -1238,6 +1238,7 @@ class SignupForm extends Component {
 						flowName={ this.props.flowName }
 						goToNextStep={ this.props.goToNextStep }
 						renderTerms={ this.termsOfServiceLink }
+						submitForm={ this.props.submitForm }
 						logInUrl={ logInUrl }
 						disabled={ this.props.disabled }
 						disableSubmitButton={ this.props.disableSubmitButton }
