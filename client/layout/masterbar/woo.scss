@@ -91,7 +91,8 @@
 	}
 
 	.button.is-primary,
-	.login .button.is-primary {
+	.login .button.is-primary,
+	.magic-login.is-white-login .magic-login__form-action .button.is-primary:not([disabled]) {
 		background-color: $woo-purple-60;
 		border: none;
 		color: #fff;

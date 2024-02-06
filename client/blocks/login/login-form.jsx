@@ -603,17 +603,6 @@ export class LoginForm extends Component {
 	};
 
 	getMagicLoginPageLink() {
-		if (
-			! canDoMagicLogin(
-				this.props.twoFactorAuthType,
-				this.props.oauth2Client,
-				this.props.wccomFrom,
-				this.props.isJetpackWooCommerceFlow
-			)
-		) {
-			return null;
-		}
-
 		const loginLink = getLoginLinkPageUrl(
 			this.props.locale,
 			this.props.currentRoute,
@@ -643,6 +632,19 @@ export class LoginForm extends Component {
 				},
 			}
 		);
+	}
+
+	renderPasswordValidationError() {
+		if (
+			canDoMagicLogin(
+				this.props.twoFactorAuthType,
+				this.props.oauth2Client,
+				this.props.isJetpackWooCommerceFlow
+			)
+		) {
+			return this.renderMagicLoginLink();
+		}
+		return this.props.requestError.message;
 	}
 
 	render() {
@@ -852,7 +854,7 @@ export class LoginForm extends Component {
 							/>
 
 							{ requestError && requestError.field === 'password' && (
-								<FormInputValidation isError text={ this.renderMagicLoginLink() } />
+								<FormInputValidation isError text={ this.renderPasswordValidationError() } />
 							) }
 						</div>
 					</div>
