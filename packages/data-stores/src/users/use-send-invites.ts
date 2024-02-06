@@ -6,15 +6,15 @@ interface Invitee {
 	role: string;
 }
 
-export function useSendInvites() {
+export function useSendInvites( siteId: string ) {
 	return useMutation( {
 		mutationFn: ( invitees: Invitee[] ) => {
 			return wpcomRequest( {
-				path: 'invites/new',
-				apiNamespace: 'wpcom/v2/',
+				path: `/sites/${ encodeURIComponent( siteId ) }/invites/new`,
+				apiNamespace: 'wpcom/v2',
 				apiVersion: '2',
 				method: 'POST',
-				body: { invitees },
+				body: { invitees: invitees },
 			} );
 		},
 	} );

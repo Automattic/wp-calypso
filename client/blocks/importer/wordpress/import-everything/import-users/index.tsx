@@ -21,7 +21,7 @@ const ImportUsers = ( { site } ) => {
 	const { data: externalContributors } = useExternalContributorsQuery( site?.ID );
 	const { data: p2Guests } = useP2GuestsQuery( site?.ID );
 	const { data, fetchNextPage, isLoading, isFetchingNextPage, hasNextPage } = usersQuery;
-	const { isPending: submittingInvites, mutateAsync: sendInvites } = useSendInvites();
+	const { isPending: isSubmittingInvites, mutateAsync: sendInvites } = useSendInvites( site?.ID );
 
 	const users = data?.users?.map( ( user ) => ( { user, checked: true } ) ) || [];
 	const [ usersList, setUsersList ] = useState( users );
@@ -118,7 +118,7 @@ const ImportUsers = ( { site } ) => {
 				className="import__user-migration-list"
 			/>
 			<div className="import__user-migration-button-container">
-				<NextButton type="button" onClick={ handleSubmit }>
+				<NextButton type="button" onClick={ handleSubmit } disabled={ isSubmittingInvites }>
 					{ sprintf(
 						// translators: %s: Number of users that will get invited.
 						translate( 'Invite %s users' ),
