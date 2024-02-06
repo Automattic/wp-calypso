@@ -24,16 +24,15 @@ type TopButtonsProps = {
 	};
 };
 
-const TopButtons = ( props: TopButtonsProps ) => {
-	const {
-		currentSitePlanSlug,
-		isInSignup,
-		isLaunchPage,
-		onUpgradeClick,
-		options,
-		planActionOverrides,
-		renderedGridPlans,
-	} = props;
+const TopButtons = ( {
+	currentSitePlanSlug,
+	isInSignup,
+	isLaunchPage,
+	onUpgradeClick,
+	options,
+	planActionOverrides,
+	renderedGridPlans,
+}: TopButtonsProps ) => {
 	const translate = useTranslate();
 
 	return renderedGridPlans.map(

@@ -8,9 +8,7 @@ type PlanTaglineProps = {
 	};
 };
 
-const PlanTagline = ( props: PlanTaglineProps ) => {
-	const { options, renderedGridPlans } = props;
-
+const PlanTagline = ( { options, renderedGridPlans }: PlanTaglineProps ) => {
 	return renderedGridPlans.map( ( { planSlug, tagline } ) => {
 		return (
 			<PlanDivOrTdContainer

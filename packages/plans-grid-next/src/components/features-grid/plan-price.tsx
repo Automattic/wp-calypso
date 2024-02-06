@@ -11,9 +11,12 @@ type PlanPriceProps = {
 	};
 };
 
-const PlanPrice = ( props: PlanPriceProps ) => {
-	const { currentSitePlanSlug, options, planUpgradeCreditsApplicable, renderedGridPlans } = props;
-
+const PlanPrice = ( {
+	currentSitePlanSlug,
+	options,
+	planUpgradeCreditsApplicable,
+	renderedGridPlans,
+}: PlanPriceProps ) => {
 	return renderedGridPlans.map( ( { planSlug } ) => {
 		return (
 			<PlanDivOrTdContainer

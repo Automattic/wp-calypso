@@ -16,9 +16,13 @@ type PlanStorageOptionsProps = {
 	};
 };
 
-const PlanStorageOptions = ( props: PlanStorageOptionsProps ) => {
-	const { intervalType, onStorageAddOnClick, options, renderedGridPlans, showUpgradeableStorage } =
-		props;
+const PlanStorageOptions = ( {
+	intervalType,
+	onStorageAddOnClick,
+	options,
+	renderedGridPlans,
+	showUpgradeableStorage,
+}: PlanStorageOptionsProps ) => {
 	const translate = useTranslate();
 
 	return renderedGridPlans.map( ( { planSlug, features: { storageOptions } } ) => {

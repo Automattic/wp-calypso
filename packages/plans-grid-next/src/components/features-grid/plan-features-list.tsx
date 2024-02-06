@@ -14,16 +14,15 @@ type PlanFeaturesListProps = {
 	};
 };
 
-const PlanFeaturesList = ( props: PlanFeaturesListProps ) => {
-	const {
-		generatedWPComSubdomain,
-		hideUnavailableFeatures,
-		isCustomDomainAllowedOnFreePlan,
-		options,
-		paidDomainName,
-		renderedGridPlans,
-		selectedFeature,
-	} = props;
+const PlanFeaturesList = ( {
+	generatedWPComSubdomain,
+	hideUnavailableFeatures,
+	isCustomDomainAllowedOnFreePlan,
+	options,
+	paidDomainName,
+	renderedGridPlans,
+	selectedFeature,
+}: PlanFeaturesListProps ) => {
 	const plansWithFeatures = renderedGridPlans.filter(
 		( gridPlan ) => ! isWpcomEnterpriseGridPlan( gridPlan.planSlug )
 	);

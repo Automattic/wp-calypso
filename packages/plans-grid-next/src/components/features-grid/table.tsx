@@ -36,26 +36,25 @@ type TableProps = {
 	};
 };
 
-const Table = ( props: TableProps ) => {
-	const {
-		currentSitePlanSlug,
-		generatedWPComSubdomain,
-		gridPlanForSpotlight,
-		hideUnavailableFeatures,
-		intervalType,
-		isCustomDomainAllowedOnFreePlan,
-		isInSignup,
-		isLaunchPage,
-		onStorageAddOnClick,
-		onUpgradeClick,
-		paidDomainName,
-		planActionOverrides,
-		planUpgradeCreditsApplicable,
-		renderedGridPlans,
-		selectedFeature,
-		showUpgradeableStorage,
-		stickyRowOffset,
-	} = props;
+const Table = ( {
+	currentSitePlanSlug,
+	generatedWPComSubdomain,
+	gridPlanForSpotlight,
+	hideUnavailableFeatures,
+	intervalType,
+	isCustomDomainAllowedOnFreePlan,
+	isInSignup,
+	isLaunchPage,
+	onStorageAddOnClick,
+	onUpgradeClick,
+	paidDomainName,
+	planActionOverrides,
+	planUpgradeCreditsApplicable,
+	renderedGridPlans,
+	selectedFeature,
+	showUpgradeableStorage,
+	stickyRowOffset,
+}: TableProps ) => {
 	// Do not render the spotlight plan if it exists
 	const gridPlansWithoutSpotlight = ! gridPlanForSpotlight
 		? renderedGridPlans

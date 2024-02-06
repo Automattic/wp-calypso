@@ -10,9 +10,7 @@ type PlanHeadersProps = {
 	};
 };
 
-const PlanHeaders = ( props: PlanHeadersProps ) => {
-	const { options, renderedGridPlans } = props;
-
+const PlanHeaders = ( { options, renderedGridPlans }: PlanHeadersProps ) => {
 	return renderedGridPlans.map( ( { planSlug, planTitle } ) => {
 		const headerClasses = classNames( 'plan-features-2023-grid__header', getPlanClass( planSlug ) );
 

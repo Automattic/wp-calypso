@@ -9,9 +9,7 @@ type PlanLogosProps = {
 	};
 };
 
-const PlanLogos = ( props: PlanLogosProps ) => {
-	const { isInSignup, options, renderedGridPlans } = props;
-
+const PlanLogos = ( { isInSignup, options, renderedGridPlans }: PlanLogosProps ) => {
 	return renderedGridPlans.map( ( { planSlug }, index ) => {
 		return (
 			<PlanLogo

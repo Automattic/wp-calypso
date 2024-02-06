@@ -25,8 +25,10 @@ type PreviousFeaturesIncludedTitleProps = {
 	};
 };
 
-const PreviousFeaturesIncludedTitle = ( props: PreviousFeaturesIncludedTitleProps ) => {
-	const { renderedGridPlans, options } = props;
+const PreviousFeaturesIncludedTitle = ( {
+	renderedGridPlans,
+	options,
+}: PreviousFeaturesIncludedTitleProps ) => {
 	const translate = useTranslate();
 
 	return renderedGridPlans.map( ( { planSlug } ) => {

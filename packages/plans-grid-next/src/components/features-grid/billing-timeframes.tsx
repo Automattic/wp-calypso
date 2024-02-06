@@ -11,9 +11,11 @@ type BillingTimeframesProps = {
 	};
 };
 
-const BillingTimeframes = ( props: BillingTimeframesProps ) => {
-	const { options, renderedGridPlans, showRefundPeriod } = props;
-
+const BillingTimeframes = ( {
+	options,
+	renderedGridPlans,
+	showRefundPeriod,
+}: BillingTimeframesProps ) => {
 	return renderedGridPlans.map( ( { planSlug } ) => {
 		const classes = classNames(
 			'plan-features-2023-grid__table-item',

@@ -13,8 +13,7 @@ type MobileFreeDomainProps = {
 	paidDomainName?: string;
 };
 
-const MobileFreeDomain = ( props: MobileFreeDomainProps ) => {
-	const { gridPlan, paidDomainName } = props;
+const MobileFreeDomain = ( { gridPlan, paidDomainName }: MobileFreeDomainProps ) => {
 	const { planSlug, isMonthlyPlan } = gridPlan;
 	const translate = useTranslate();
 
