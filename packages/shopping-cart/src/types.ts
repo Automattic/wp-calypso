@@ -507,6 +507,7 @@ export interface ResponseCartProductVariant {
 	currency: string;
 	price_integer: number;
 	price_before_discounts_integer: number;
+	introductory_offer_discount_integer: number;
 	introductory_offer_terms:
 		| Record< string, never >
 		| Pick< IntroductoryOfferTerms, 'interval_unit' | 'interval_count' >;
@@ -521,12 +522,58 @@ export interface ResponseCartCostOverride {
 	does_override_original_cost: boolean;
 }
 
+export type IntroductoryOfferUnit = 'day' | 'week' | 'month' | 'year' | 'indefinite';
+
 export interface IntroductoryOfferTerms {
+	/**
+	 * True if the introductory offer is active on this product.
+	 */
 	enabled: boolean;
-	interval_unit: string;
+
+	/**
+	 * The unit that, when combined with `interval_count`, determines how long
+	 * the introductory offer disount should be applied.
+	 */
+	interval_unit: IntroductoryOfferUnit;
+
+	/**
+	 * The count that, when combined with `interval_unit`, determines how long
+	 * the introductory offer lasts. eg: if `interval_count` is 3 and
+	 * `interval_unit` is 'month', the discount lasts for 3 months (but always
+	 * ends before the next renewal unless `transition_after_renewal_count` is
+	 * set). If the `interval_unit` is 'month' and the product normally renews
+	 * yearly, then the first renewal will be based on `interval_count` (eg:
+	 * after 3 months) instead.
+	 *
+	 * Note that we sometimes renew products a 30 days before their expiry
+	 * date, so in the above example, we would likely renew at the 2 month mark
+	 * instead.
+	 */
 	interval_count: number;
+
+	/**
+	 * If the introductory offer is not active (if `enabled` is false), the
+	 * reason will probably be a human-readable reason why (although it may not
+	 * exist even then).
+	 */
 	reason?: string;
+
+	/**
+	 * The number of times the introductory offer cost and period will be used
+	 * during renewals before using the regular cost and period. If this is 0,
+	 * the discount will last just for the initial purchase; otherwise it will
+	 * last for additional renewals also.
+	 */
 	transition_after_renewal_count: number;
+
+	/**
+	 * True if the last discounted renewal will subtract the introductory offer
+	 * period from the full period when calculating the price. For example: if
+	 * you provide a 3 month free trial on a yearly plan, the first renewal
+	 * would only cover 9 months (12 – 3 months). This reduced period is also
+	 * reflected in the renewal price, as the user will only pay for the 9
+	 * months instead of the full year.
+	 */
 	should_prorate_when_offer_ends: boolean;
 }
 
@@ -679,8 +726,10 @@ export interface TermsOfServiceRecordArgsBase {
 	product_meta: string;
 	product_name: string;
 	renewal_price: string;
+	renewal_price_integer: number;
 	is_renewal_price_prorated: boolean;
 	regular_renewal_price: string;
+	regular_renewal_price_integer: number;
 	email?: string;
 	card_type?: string;
 	card_last_4?: string;
