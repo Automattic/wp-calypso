@@ -1,4 +1,5 @@
 import { isWpcomEnterpriseGridPlan } from '@automattic/calypso-products';
+import { useMemo } from 'react';
 import { DataResponse, GridPlan } from '../../types';
 import PlanFeaturesContainer from '../plan-features-container';
 
@@ -23,9 +24,11 @@ const PlanFeaturesList = ( {
 	renderedGridPlans,
 	selectedFeature,
 }: PlanFeaturesListProps ) => {
-	const plansWithFeatures = renderedGridPlans.filter(
-		( gridPlan ) => ! isWpcomEnterpriseGridPlan( gridPlan.planSlug )
-	);
+	const plansWithFeatures = useMemo( () => {
+		return renderedGridPlans.filter(
+			( gridPlan ) => ! isWpcomEnterpriseGridPlan( gridPlan.planSlug )
+		);
+	}, [ renderedGridPlans ] );
 
 	return (
 		<PlanFeaturesContainer
