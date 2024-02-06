@@ -91,9 +91,8 @@ function SubscriberHighlightsListing( { siteId }: { siteId: number | null } ) {
 
 	const highlights = useSubscriberHighlights( siteId, hasAddedPaidSubscriptionProduct );
 
-	return (
-		<div className="highlight-cards-list">
-			{ siteId && ! isOdysseyStats && <QueryMembershipProducts siteId={ siteId } /> }
+	const standardHighlights = (
+		<>
 			{ highlights.map( ( highlight ) => (
 				<CountComparisonCard
 					key={ highlight.heading }
@@ -103,6 +102,13 @@ function SubscriberHighlightsListing( { siteId }: { siteId: number | null } ) {
 					note={ highlight.note }
 				/>
 			) ) }
+		</>
+	);
+
+	return (
+		<div className="highlight-cards-list">
+			{ siteId && ! isOdysseyStats && <QueryMembershipProducts siteId={ siteId } /> }
+			{ standardHighlights }
 		</div>
 	);
 }
