@@ -3,6 +3,8 @@
 @import "@automattic/components/src/styles/typography";
 
 .navigation-header.developer__header {
+	margin-top: 50px;
+
 	.formatted-header__title {
 		font-family: $brand-serif;
 		font-size: rem(44px);
