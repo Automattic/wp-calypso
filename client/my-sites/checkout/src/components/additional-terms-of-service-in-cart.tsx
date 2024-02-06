@@ -1,3 +1,4 @@
+import { domainProductSlugs } from '@automattic/calypso-products';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { TermsOfServiceRecord, useShoppingCart } from '@automattic/shopping-cart';
 import debugFactory from 'debug';
@@ -381,7 +382,11 @@ function getMessageForTermsOfServiceRecordUnknown(
 		},
 	};
 
-	if ( args.product_meta && args.product_meta !== '' && 'Domain Transfer' === args.product_name ) {
+	if (
+		args.product_meta &&
+		args.product_meta !== '' &&
+		args.product_slug === domainProductSlugs.TRANSFER_IN
+	) {
 		return translate(
 			'The promotional period of your %(productName)s subscription for %(domainName)s will begin once the domain transfer is completed. At that time, you will be notified of the promotional period, renewal date, and renewal price (%(renewalPrice)s) via email.',
 			{

@@ -723,8 +723,10 @@ export interface TermsOfServiceRecordArgsBase {
 	subscription_auto_renew_date?: string;
 	subscription_pre_renew_reminder_days?: string;
 	subscription_pre_renew_reminders_count?: number;
+	product_id: number;
 	product_meta: string;
 	product_name: string;
+	product_slug: string;
 	renewal_price: string;
 	renewal_price_integer: number;
 	is_renewal_price_prorated: boolean;
