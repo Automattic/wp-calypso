@@ -8,7 +8,6 @@ import '@testing-library/jest-dom';
 describe( 'ChecklistItem', () => {
 	const defaultProps = {
 		task: buildTask( { completed: false, disabled: false } ),
-		onClick: jest.fn(),
 	};
 
 	const renderComponent = ( props: Partial< Props > ) => {
@@ -73,6 +72,16 @@ describe( 'ChecklistItem', () => {
 			const taskButton = screen.queryByRole( 'button' );
 
 			expect( taskButton ).toBeDisabled();
+		} );
+
+		it( 'uses the task action dispatch when the task is clicked and no custom prop is used', async () => {
+			const actionDispatch = jest.fn();
+			renderComponent( { task: buildTask( { completed: true, actionDispatch } ) } );
+
+			const taskButton = screen.getByRole( 'button' );
+			await userEvent.click( taskButton );
+
+			expect( actionDispatch ).toHaveBeenCalledTimes( 1 );
 		} );
 
 		describe( 'and the task is kept enabled', () => {

@@ -125,7 +125,7 @@ export default function NextSteps( { onDismiss = () => {} } ) {
 			) }
 			<Checklist>
 				{ tasks.map( ( task ) => (
-					<ChecklistItem task={ task } key={ task.id } onClick={ task.actionDispatch } />
+					<ChecklistItem task={ task } key={ task.id } />
 				) ) }
 			</Checklist>
 		</div>

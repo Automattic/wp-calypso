@@ -61,7 +61,7 @@ const ChecklistItem: FC< Props > = ( { task, isPrimaryAction, onClick } ) => {
 				<Button
 					className="checklist-item__task-content"
 					data-task={ id }
-					onClick={ onClick }
+					onClick={ onClick ?? task.actionDispatch }
 					{ ...buttonProps }
 				>
 					{ completed && (
