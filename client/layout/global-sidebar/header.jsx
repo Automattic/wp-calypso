@@ -1,9 +1,9 @@
 import { useTranslate } from 'i18n-calypso';
 import AsyncLoad from 'calypso/components/async-load';
-import SidebarNotifications from 'calypso/my-sites/sidebar/menu-items/notifications/notifications';
-import SidebarSearch from 'calypso/my-sites/sidebar/menu-items/search/search';
+import SidebarNotifications from 'calypso/layout/global-sidebar/menu-items/notifications/notifications';
+import SidebarSearch from 'calypso/layout/global-sidebar/menu-items/search/search';
 
-export const MySitesSidebarUnifiedHeader = () => {
+export const GlobalSidebarHeader = () => {
 	const translate = useTranslate();
 	return (
 		<div className="sidebar__header">
@@ -34,4 +34,4 @@ export const MySitesSidebarUnifiedHeader = () => {
 	);
 };
 
-export default MySitesSidebarUnifiedHeader;
+export default GlobalSidebarHeader;
