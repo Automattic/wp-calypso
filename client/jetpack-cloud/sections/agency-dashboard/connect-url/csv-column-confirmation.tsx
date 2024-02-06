@@ -26,7 +26,7 @@ export default function CSVColumnConfirmation( {
 		);
 	} );
 
-	const showColumns = () => {
+	const openDropdown = () => {
 		setIsColumnsMenuOpen( true );
 	};
 
@@ -38,7 +38,7 @@ export default function CSVColumnConfirmation( {
 		<div className="connect-url-csv-column-confirmation">
 			<Button
 				ref={ buttonActionRef }
-				onClick={ showColumns }
+				onClick={ openDropdown }
 				className="connect-url-csv-column-confirmation__column-picker"
 			>
 				{ column ? (
