@@ -11,7 +11,7 @@ export const CurrentOption = styled.button< CurrentOptionProps >`
 	display: flex;
 	flex-direction: row;
 	justify-content: space-between;
-	${ hasCheckoutVersion( '2' ) ? `padding:4px 16px; height: 40px` : `padding:14px 16px` };
+	${ hasCheckoutVersion( '2' ) ? `padding: 10px; min-height: 40px` : `padding:14px 16px` };
 	width: 100%;
 	cursor: pointer;
 
@@ -38,13 +38,13 @@ export const Option = styled.li< OptionProps >`
 
 	${
 		hasCheckoutVersion( '2' )
-			? `flex-direction: column;
+			? `flex-direction: column; justify-content: center;
 		align-items: flex-start;
-		padding: 10px; height: 40px;`
+		padding: 10px; min-height: 40px;`
 			: `flex-direction: row;
 		justify-content: space-between; align-items: center;
 		/* the calc aligns the price with the price in CurrentOption */
-		padding: 10px calc( 14px + 24px + 16px ) 10px 16px; height: null;`
+		padding: 10px calc( 14px + 24px + 16px ) 10px 16px;`
 	}
 
 
