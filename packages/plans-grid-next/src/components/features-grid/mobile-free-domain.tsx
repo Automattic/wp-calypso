@@ -13,8 +13,10 @@ type MobileFreeDomainProps = {
 	paidDomainName?: string;
 };
 
-const MobileFreeDomain = ( { gridPlan, paidDomainName }: MobileFreeDomainProps ) => {
-	const { planSlug, isMonthlyPlan } = gridPlan;
+const MobileFreeDomain = ( {
+	gridPlan: { planSlug, isMonthlyPlan, features },
+	paidDomainName,
+}: MobileFreeDomainProps ) => {
 	const translate = useTranslate();
 
 	if ( isMonthlyPlan || isWpComFreePlan( planSlug ) || isWpcomEnterpriseGridPlan( planSlug ) ) {
@@ -24,9 +26,7 @@ const MobileFreeDomain = ( { gridPlan, paidDomainName }: MobileFreeDomainProps )
 	// Remove the custom domain feature for Woo Express plans with introductory offer.
 	if (
 		isWooExpressPlan( planSlug ) &&
-		! gridPlan.features.wpcomFeatures.some(
-			( feature ) => feature.getSlug() === FEATURE_CUSTOM_DOMAIN
-		)
+		! features.wpcomFeatures.some( ( feature ) => feature.getSlug() === FEATURE_CUSTOM_DOMAIN )
 	) {
 		return null;
 	}
