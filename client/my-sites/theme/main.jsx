@@ -45,6 +45,7 @@ import InlineSupportLink from 'calypso/components/inline-support-link';
 import Main from 'calypso/components/main';
 import PremiumGlobalStylesUpgradeModal from 'calypso/components/premium-global-styles-upgrade-modal';
 import SectionHeader from 'calypso/components/section-header';
+import ThemeSiteSelectorModal from 'calypso/components/theme-site-selector-modal';
 import { THEME_TIERS } from 'calypso/components/theme-tier/constants';
 import ThemeTierBadge from 'calypso/components/theme-tier/theme-tier-badge';
 import ThemeTypeBadge from 'calypso/components/theme-type-badge';
@@ -307,6 +308,7 @@ class ThemeSheet extends Component {
 		showUnlockStyleUpgradeModal: false,
 		isAtomicTransferCompleted: false,
 		isReviewsModalVisible: false,
+		isSiteSelectorModalVisible: true,
 	};
 
 	scrollToTop = () => {
@@ -1566,6 +1568,11 @@ class ThemeSheet extends Component {
 						<QueryActiveTheme siteId={ siteId } />
 					) /* TODO: Make QueryActiveTheme handle falsey siteId */
 				}
+				<ThemeSiteSelectorModal
+					isOpen={ this.state.isSiteSelectorModalVisible }
+					onClose={ () => this.setState( { isSiteSelectorModalVisible: false } ) }
+					themeId={ this.props.themeId }
+				/>
 				<ThanksModal source="details" themeId={ this.props.themeId } />
 				<ActivationModal source="details" />
 				<div className="theme__sheet-action-bar-container">
