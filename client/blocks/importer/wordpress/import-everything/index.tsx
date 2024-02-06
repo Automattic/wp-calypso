@@ -24,7 +24,6 @@ import DomainInfo from '../../components/domain-info';
 import DoneButton from '../../components/done-button';
 import NotAuthorized from '../../components/not-authorized';
 import { isTargetSitePlanCompatible } from '../../util';
-import ImportUsers from '../import-users';
 import { WPImportOption, type MigrationState } from '../types';
 import { clearMigrateSource, retrieveMigrateSource } from '../utils';
 import MigrationError from './migration-error';
@@ -221,6 +220,7 @@ export class ImportEverything extends SectionMigrate {
 
 	renderMigrationComplete() {
 		const { isMigrateFromWp } = this.props;
+
 		return (
 			<Hooray>
 				{ ! isMigrateFromWp

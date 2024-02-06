@@ -14,7 +14,14 @@ import type { UsersQuery, Member } from '@automattic/data-stores';
 
 import './style.scss';
 
-const ImportUsers = ( { site } ) => {
+interface Props {
+	site: {
+		ID: number;
+	};
+	onSubmit: () => void;
+}
+
+const ImportUsers = ( { site, onSubmit }: Props ) => {
 	const defaultTeamFetchOptions = { include_viewers: true };
 	const translate = useTranslate();
 	const usersQuery = useUsersQuery( site?.ID, defaultTeamFetchOptions ) as unknown as UsersQuery;
@@ -42,9 +49,10 @@ const ImportUsers = ( { site } ) => {
 		const result = await sendInvites( selectedUsers );
 
 		if ( result?.error ) {
-			// translators: %s: error message
-			alert( sprintf( translate( 'Error: %s' ), result.error ) );
+			// HANDLE ERROR
 		}
+
+		onSubmit?.();
 	};
 
 	const getUserRef = ( user: Member ) => {

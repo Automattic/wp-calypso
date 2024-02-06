@@ -530,6 +530,7 @@ export enum MigrationStatus {
 	BACKING_UP_QUEUED = 'backing-up-queued',
 	RESTORING = 'restoring',
 	DONE = 'done',
+	DONE_USER = 'done-user',
 	ERROR = 'error',
 }
 
