@@ -13,7 +13,7 @@ import {
 import { isStatsNoticeSettingsFetching } from 'calypso/state/stats/notices/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import useStatsPurchases from '../hooks/use-stats-purchases';
-import StatsLoader from './stats-loader';
+//import StatsLoader from './stats-loader';
 
 interface StatsRedirectFlowProps {
 	children: ReactNode;
@@ -92,7 +92,10 @@ const StatsRedirectFlow: React.FC< StatsRedirectFlowProps > = ( { children } ) =
 	} else if ( ! isFetching ) {
 		return <>{ children }</>;
 	} else if ( isFetching ) {
-		return <StatsLoader />;
+		// Escalation Workaround (2024-02-06): Don't show the spinner here as it causes an endless request loop.
+		return <>{ children }</>;
+
+		//return <StatsLoader />;
 	}
 
 	return <></>;
