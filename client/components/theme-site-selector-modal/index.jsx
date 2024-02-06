@@ -1,9 +1,11 @@
-import { createSitesListComponent } from '@automattic/sites';
-import { Button, Modal } from '@wordpress/components';
+import { createSitesListComponent, useSitesListSorting } from '@automattic/sites';
+import { Modal } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import { useState } from 'react';
+import QuerySiteFeatures from 'calypso/components/data/query-site-features';
 import { useSelector } from 'calypso/state';
-import getSites from 'calypso/state/selectors/get-sites';
+import getVisibleSites from 'calypso/state/selectors/get-visible-sites';
+import ThemeSiteSelectorActions from './theme-site-selector-actions';
 import ThemeSiteSelectorTableRow from './theme-site-selector-table-row';
 
 import './style.scss';
@@ -12,9 +14,13 @@ const ThemeSiteSelectorSitesList = createSitesListComponent( { grouping: false }
 
 export default function ThemeSiteSelectorModal( { isOpen, onClose, themeId } ) {
 	const translate = useTranslate();
-	const [ selected, setSelected ] = useState( '' );
+	const [ selectedSiteId, setSelectedSiteId ] = useState( null );
 
-	const allSites = useSelector( ( state ) => getSites( state, false ) );
+	const visibleSites = useSelector( ( state ) => getVisibleSites( state, false ) );
+	const sortedVisibleSites = useSitesListSorting( visibleSites, {
+		sortKey: 'lastInteractedWith',
+		sortOrder: 'desc',
+	} );
 
 	if ( ! isOpen ) {
 		return null;
@@ -29,9 +35,10 @@ export default function ThemeSiteSelectorModal( { isOpen, onClose, themeId } ) {
 				args: { themeName: themeId },
 			} ) }
 		>
+			<QuerySiteFeatures siteIds={ [ selectedSiteId ] } />
 			<div className="theme-site-selector-modal__content">
-				{ !! allSites.length && (
-					<ThemeSiteSelectorSitesList sites={ allSites }>
+				{ !! visibleSites.length && (
+					<ThemeSiteSelectorSitesList sites={ sortedVisibleSites }>
 						{ ( { sites } ) => (
 							<table>
 								<thead>
@@ -46,8 +53,8 @@ export default function ThemeSiteSelectorModal( { isOpen, onClose, themeId } ) {
 									{ sites?.slice( 0, 10 )?.map( ( site ) => (
 										<ThemeSiteSelectorTableRow
 											key={ site.ID }
-											onChange={ setSelected }
-											selected={ selected }
+											onChange={ setSelectedSiteId }
+											selected={ selectedSiteId }
 											site={ site }
 										/>
 									) ) }
@@ -57,11 +64,7 @@ export default function ThemeSiteSelectorModal( { isOpen, onClose, themeId } ) {
 					</ThemeSiteSelectorSitesList>
 				) }
 			</div>
-			<div className="theme-site-selector-modal__buttons">
-				<Button disabled={ ! selected } isPrimary>
-					{ translate( 'Activate this theme' ) }
-				</Button>
-			</div>
+			<ThemeSiteSelectorActions siteId={ selectedSiteId } themeId={ themeId } />
 		</Modal>
 	);
 }
