@@ -164,7 +164,7 @@ export default function GlueRecordsCard( { domain }: { domain: ResponseDomain } 
 		if ( ! nameserver ) {
 			return false;
 		}
-		// The hostname part of name servers in Key-Systems cannot be longer than 50 characters
+		// The subdomain part of name servers in Key-Systems cannot be longer than 50 characters
 		if (
 			nameserver.length > 50 ||
 			! nameserver.match(
