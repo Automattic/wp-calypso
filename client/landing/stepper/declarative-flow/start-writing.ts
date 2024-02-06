@@ -40,8 +40,8 @@ const startWriting: Flow = {
 				asyncComponent: () => import( './internals/steps-repository/site-picker-list' ),
 			},
 			{
-				slug: 'site-creation-step',
-				asyncComponent: () => import( './internals/steps-repository/site-creation-step' ),
+				slug: 'create-site',
+				asyncComponent: () => import( './internals/steps-repository/create-site' ),
 			},
 			{
 				slug: 'processing',
@@ -99,13 +99,13 @@ const startWriting: Flow = {
 					// Check for unlaunched sites
 					if ( providedDependencies?.filteredSitesCount === 0 ) {
 						// No unlaunched sites, redirect to new site creation step
-						return navigate( 'site-creation-step' );
+						return navigate( 'create-site' );
 					}
 					// With unlaunched sites, continue to new-or-existing-site step
 					return navigate( 'new-or-existing-site' );
 				case 'new-or-existing-site':
 					if ( 'new-site' === providedDependencies?.newExistingSiteChoice ) {
-						return navigate( 'site-creation-step' );
+						return navigate( 'create-site' );
 					}
 					return navigate( 'site-picker' );
 				case 'site-picker': {
@@ -125,7 +125,7 @@ const startWriting: Flow = {
 						);
 					}
 				}
-				case 'site-creation-step':
+				case 'create-site':
 					return navigate( 'processing' );
 				case 'processing': {
 					// If we just created a new site.
@@ -227,7 +227,7 @@ const startWriting: Flow = {
 		const isLoggedIn = useSelector( isUserLoggedIn );
 		const currentUserSiteCount = useSelector( getCurrentUserSiteCount );
 		const currentPath = window.location.pathname;
-		const isSiteCreationStep =
+		const isCreateSite =
 			currentPath.endsWith( 'setup/start-writing' ) ||
 			currentPath.endsWith( 'setup/start-writing/' ) ||
 			currentPath.includes( 'setup/start-writing/check-sites' );
@@ -250,15 +250,15 @@ const startWriting: Flow = {
 			locale,
 		} );
 		// Despite sending a CHECKING state, this function gets called again with the
-		// /setup/start-writing/site-creation-step route which has no locale in the path so we need to
+		// /setup/start-writing/create-site route which has no locale in the path so we need to
 		// redirect off of the first render.
-		// This effects both /setup/start-writing/<locale> starting points and /setup/start-writing/site-creation-step/<locale> urls.
+		// This effects both /setup/start-writing/<locale> starting points and /setup/start-writing/create-site/<locale> urls.
 		// The double call also hapens on urls without locale.
 		useEffect( () => {
 			if ( ! isLoggedIn ) {
 				redirect( logInUrl );
-			} else if ( isSiteCreationStep && ! userAlreadyHasSites ) {
-				redirect( '/setup/start-writing/site-creation-step' );
+			} else if ( isCreateSite && ! userAlreadyHasSites ) {
+				redirect( '/setup/start-writing/create-site' );
 			}
 		}, [] );
 
@@ -269,7 +269,7 @@ const startWriting: Flow = {
 				state: AssertConditionState.CHECKING,
 				message: `${ flowName } requires a logged in user`,
 			};
-		} else if ( isSiteCreationStep && ! userAlreadyHasSites ) {
+		} else if ( isCreateSite && ! userAlreadyHasSites ) {
 			result = {
 				state: AssertConditionState.CHECKING,
 				message: `${ flowName } with no preexisting sites`,
