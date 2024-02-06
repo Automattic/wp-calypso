@@ -1,3 +1,4 @@
+import { useSendInvites } from '@automattic/data-stores';
 import { NextButton, Title, SubTitle } from '@automattic/onboarding';
 import { useState } from '@wordpress/element';
 import { sprintf } from '@wordpress/i18n';
@@ -8,6 +9,7 @@ import useExternalContributorsQuery from 'calypso/data/external-contributors/use
 import useP2GuestsQuery from 'calypso/data/p2/use-p2-guests-query';
 import useUsersQuery from 'calypso/data/users/use-users-query';
 import ImportedUserItem from './imported-user-item';
+import { getRole } from './utils';
 import type { UsersQuery, Member } from '@automattic/data-stores';
 
 import './style.scss';
@@ -19,10 +21,31 @@ const ImportUsers = ( { site } ) => {
 	const { data: externalContributors } = useExternalContributorsQuery( site?.ID );
 	const { data: p2Guests } = useP2GuestsQuery( site?.ID );
 	const { data, fetchNextPage, isLoading, isFetchingNextPage, hasNextPage } = usersQuery;
+	const { isPending: submittingInvites, mutateAsync: sendInvites } = useSendInvites();
 
 	const users = data?.users?.map( ( user ) => ( { user, checked: true } ) ) || [];
 	const [ usersList, setUsersList ] = useState( users );
 	const [ checkedUsersNumber, setCheckedUsersNumber ] = useState( usersList?.length || 0 );
+
+	const handleSubmit = async () => {
+		const selectedUsers = usersList
+			.filter( ( user ) => user.checked )
+			.map( ( userItem ) => ( {
+				email_or_username: userItem.user?.email || userItem.user?.username,
+				role: getRole( userItem.user ),
+			} ) );
+
+		if ( selectedUsers.length === 0 ) {
+			return;
+		}
+
+		const result = await sendInvites( selectedUsers );
+
+		if ( result?.error ) {
+			// translators: %s: error message
+			alert( sprintf( translate( 'Error: %s' ), result.error ) );
+		}
+	};
 
 	const getUserRef = ( user: Member ) => {
 		return 'user-' + user?.ID;
@@ -95,12 +118,7 @@ const ImportUsers = ( { site } ) => {
 				className="import__user-migration-list"
 			/>
 			<div className="import__user-migration-button-container">
-				<NextButton
-					type="button"
-					onClick={ () => {
-						console.log( 'clicked' );
-					} }
-				>
+				<NextButton type="button" onClick={ handleSubmit }>
 					{ sprintf(
 						// translators: %s: Number of users that will get invited.
 						translate( 'Invite %s users' ),

@@ -9,7 +9,7 @@
 			text-decoration: underline;
 		}
 	}
-	
+
 	.import__user-migration-list {
 		margin: 0 auto;
 		width: 450px;
@@ -19,6 +19,7 @@
 		display: flex;
 		flex-direction: row;
 		justify-content: center;
+		margin-top: 24px;
 	}
 
 	.import__user-migration-footer {
@@ -45,7 +46,7 @@
 	}
 
 	.imported-user-item__email {
-		color: var( --studio-gray-60, #50575e );
+		color: var(--studio-gray-60, #50575e);
 		flex-grow: 1;
 		font-size: 0.875rem;
 	}
@@ -59,31 +60,31 @@
 		margin-left: auto;
 
 		.imported-user-item__role {
-			background: var( --color-surface );
-			border: 1px solid var( --color-neutral-light );
+			background: var(--color-surface);
+			border: 1px solid var(--color-neutral-light);
 			border-radius: 2px;
-			color: var( --color-text-subtle );
+			color: var(--color-text-subtle);
 			font-size: 0.75rem;
 			margin-left: 8px;
 			padding: 2px 6px;
 			white-space: pre;
 
 			&.role-super-admin {
-				background: var( --color-error );
+				background: var(--color-error);
 				border: none;
-				color: var( --color-text-inverted );
+				color: var(--color-text-inverted);
 			}
 
 			&.role-administrator,
 			&.role-admin-owner {
-				background: var( --color-neutral-70 );
+				background: var(--color-neutral-70);
 				border: none;
-				color: var( --color-text-inverted );
+				color: var(--color-text-inverted);
 			}
 		}
 	}
 }
 
 .imported-user-item + .imported-user-item {
-	border-top: 1px solid var( --studio-gray-5, #dcdcde );
+	border-top: 1px solid var(--studio-gray-5, #dcdcde);
 }

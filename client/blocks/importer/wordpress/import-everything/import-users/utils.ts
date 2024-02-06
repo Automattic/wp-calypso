@@ -32,7 +32,7 @@ export const getRole = ( user: Member ) => {
 		return user.roles[ 0 ];
 	}
 
-	return;
+	return 'follower';
 };
 
 export const getRoleBadgeText = ( role: string | undefined ) => {
