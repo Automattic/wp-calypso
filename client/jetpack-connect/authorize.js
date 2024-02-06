@@ -301,7 +301,6 @@ export class JetpackAuthorize extends Component {
 			this.isJetpackUpgradeFlow() ||
 			this.isFromJetpackConnectionManager() ||
 			this.isFromJetpackSocialPlugin() ||
-			this.isFromMyJetpack() ||
 			this.isFromJetpackSearchPlugin() ||
 			this.isFromJetpackVideoPressPlugin() ||
 			( this.isFromJetpackBackupPlugin() && siteHasBackups )
