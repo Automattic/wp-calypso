@@ -807,9 +807,11 @@ const CheckoutSidebarNudgeWrapper = styled.div`
 `;
 
 const CheckoutTermsAndCheckboxesWrapper = styled.div`
+	box-sizing: border-box;
 	display: flex;
 	flex-direction: column;
 	padding: 32px 20px 0 24px;
+	width: 100%;
 	@media ( ${ ( props ) => props.theme.breakpoints.desktopUp } ) {
 		padding: 32px 20px 0 40px;
 	}
