@@ -86,7 +86,9 @@ export const OptionList = styled.ul`
 export const Discount = styled.span`
 	color: ${ ( props ) => props.theme.colors.discount };
 	margin-right: 8px;
-	${ hasCheckoutVersion( '2' ) ? `align-items: left` : `align-items: center` }
+	${ hasCheckoutVersion( '2' )
+		? `align-items: left; font-size: 14px;`
+		: `align-items: center; font-size: 100%;` }
 
 	.rtl & {
 		margin-right: 0;
@@ -151,7 +153,9 @@ export const Variant = styled.div`
 export const Label = styled.span`
 	display: flex;
 	white-space: nowrap;
-	font-size: ${ hasCheckoutVersion( '2' ) ? '12px' : 'inherit' };
+
+	${ hasCheckoutVersion( '2' ) ? 'font-size: 14px' : 'font-size: inherit' };
+
 	// MOBILE_BREAKPOINT is <480px, used in useMobileBreakpoint
 	@media ( max-width: 480px ) {
 		flex-direction: column;
