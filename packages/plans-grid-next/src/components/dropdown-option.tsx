@@ -19,7 +19,6 @@ const Container = styled.div`
 	}
 
 	font-weight: 500;
-	font-size: 14px;
 
 	.title {
 		margin-right: 4px;
@@ -27,9 +26,6 @@ const Container = styled.div`
 	}
 	.is-highlighted & {
 		background-color: #f6f7f7;
-	}
-	button & {
-		padding-right: 32px;
 	}
 `;
 

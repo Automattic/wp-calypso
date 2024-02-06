@@ -444,9 +444,7 @@ $mobile-card-max-width: 440px;
 	.storage-add-on-dropdown-option__per-month {
 		display: inline-block;
 
-		// // Non standard rem allows us to match font size of other storage labels
-		// /* stylelint-disable-next-line scales/font-sizes */
-		// font-size: 0.7rem;
+		font-size: 0.75rem;
 		font-weight: 500;
 	}
 
