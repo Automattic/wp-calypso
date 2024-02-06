@@ -23,6 +23,7 @@ type SubscribersPageProviderProps = {
 	siteId: number | null;
 	filterOption: SubscribersFilterBy;
 	pageNumber: number;
+	timestamp: number;
 	searchTerm: string;
 	sortTerm: SubscribersSortBy;
 	filterOptionChanged: ( option: SubscribersFilterBy ) => void;
@@ -73,6 +74,7 @@ export const SubscribersPageProvider = ( {
 	filterOption = SubscribersFilterBy.All,
 	pageNumber,
 	searchTerm,
+	timestamp,
 	sortTerm = SubscribersSortBy.DateSubscribed,
 	filterOptionChanged,
 	pageChanged,
@@ -116,6 +118,7 @@ export const SubscribersPageProvider = ( {
 		siteId,
 		sortTerm,
 		filterOption: subscriberType,
+		timestamp,
 	} );
 	const pages = subscribersQueryResult.data?.pages || 0;
 
