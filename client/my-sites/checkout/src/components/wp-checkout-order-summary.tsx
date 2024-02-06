@@ -1,6 +1,7 @@
 import {
 	getPlan,
 	getYearlyPlanByMonthly,
+	isChargeback,
 	isDomainProduct,
 	isDomainTransfer,
 	isGoogleWorkspace,
@@ -115,6 +116,12 @@ export function CheckoutSummaryFeaturedList( {
 	) => void;
 } ) {
 	const translate = useTranslate();
+
+	// Return early if the cart is only Chargebacks fees
+	if ( responseCart.products.every( isChargeback ) ) {
+		return null;
+	}
+
 	const hasRenewalInCart = responseCart.products.some(
 		( product ) => product.extra.purchaseType === 'renewal'
 	);
