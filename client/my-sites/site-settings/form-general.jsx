@@ -29,7 +29,6 @@ import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormRadio from 'calypso/components/forms/form-radio';
 import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
 import FormInput from 'calypso/components/forms/form-text-input';
-import InfoPopover from 'calypso/components/info-popover';
 import InlineSupportLink from 'calypso/components/inline-support-link';
 import SiteLanguagePicker from 'calypso/components/language-picker/site-language-picker';
 import Notice from 'calypso/components/notice';
@@ -40,6 +39,7 @@ import { preventWidows } from 'calypso/lib/formatting';
 import scrollToAnchor from 'calypso/lib/scroll-to-anchor';
 import { domainManagementEdit } from 'calypso/my-sites/domains/paths';
 import SettingsSectionHeader from 'calypso/my-sites/site-settings/settings-section-header';
+import SiteSettingPrivacy from 'calypso/my-sites/site-settings/site-setting-privacy';
 import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
 import isSiteComingSoon from 'calypso/state/selectors/is-site-coming-soon';
 import isSiteP2Hub from 'calypso/state/selectors/is-site-p2-hub';
@@ -703,35 +703,31 @@ export class SiteSettingsFormGeneral extends Component {
 	}
 
 	privacySettings() {
-		const { isRequestingSettings, translate, handleSubmitForm, isSavingSettings, isP2HubSite } =
-			this.props;
+		const {
+			fields,
+			handleSubmitForm,
+			updateFields,
+			isP2HubSite,
+			isRequestingSettings,
+			isSavingSettings,
+			eventTracker,
+			trackEvent,
+		} = this.props;
 
 		if ( isP2HubSite ) {
 			return <></>;
 		}
+
 		return (
-			<>
-				<SettingsSectionHeader
-					disabled={ isRequestingSettings || isSavingSettings }
-					id="site-privacy-settings"
-					isSaving={ isSavingSettings }
-					onButtonClick={ handleSubmitForm }
-					showButton
-					title={ translate(
-						'Privacy {{infoPopover}} Control who can view your site. {{a}}Learn more{{/a}}. {{/infoPopover}}',
-						{
-							components: {
-								a: <InlineSupportLink showIcon={ false } supportContext="privacy" />,
-								infoPopover: <InfoPopover position="bottom right" />,
-							},
-							comment: 'Privacy Settings header',
-						}
-					) }
-				/>
-				<Card>
-					<form> { this.visibilityOptionsComingSoon() }</form>
-				</Card>
-			</>
+			<SiteSettingPrivacy
+				fields={ fields }
+				handleSubmitForm={ handleSubmitForm }
+				updateFields={ updateFields }
+				isRequestingSettings={ isRequestingSettings }
+				isSavingSettings={ isSavingSettings }
+				eventTracker={ eventTracker }
+				trackEvent={ trackEvent }
+			/>
 		);
 	}
 
