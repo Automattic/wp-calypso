@@ -20,7 +20,6 @@ import { useGetDomainsQuery } from 'calypso/data/domains/use-get-domains-query';
 import useHomeLayoutQuery, { getCacheKey } from 'calypso/data/home/use-home-layout-query';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import TrackComponentView from 'calypso/lib/analytics/track-component-view';
-import withTrackingTool from 'calypso/lib/analytics/with-tracking-tool';
 import { setDomainNotice } from 'calypso/lib/domains/set-domain-notice';
 import { preventWidows } from 'calypso/lib/formatting';
 import { getQueryArgs } from 'calypso/lib/query-args';
@@ -333,4 +332,4 @@ const mergeProps = ( stateProps, dispatchProps, ownProps ) => {
 
 const connectHome = connect( mapStateToProps, mapDispatchToProps, mergeProps );
 
-export default connectHome( withJetpackConnectionProblem( withTrackingTool( 'HotJar' )( Home ) ) );
+export default connectHome( withJetpackConnectionProblem( Home ) );
