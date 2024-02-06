@@ -5,7 +5,7 @@ import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect, useMemo, useState } from 'react';
 import DismissibleCard from 'calypso/blocks/dismissible-card';
-import { useCommandsArrayWpcom } from './wpcom-smp-commands';
+import { useCommandsArrayWpcom } from 'calypso/components/command-palette/wpcom-smp-commands';
 
 const HostingCommandPaletteBannerRoot = styled.div( {
 	marginBottom: 25,

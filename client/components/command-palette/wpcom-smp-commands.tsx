@@ -1,3 +1,4 @@
+import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { Gridicon, JetpackLogo } from '@automattic/components';
 import { SiteCapabilities } from '@automattic/data-stores';
 import { HELP_CENTER_STORE } from '@automattic/help-center/src/stores';
@@ -32,10 +33,7 @@ import {
 } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
 import { useCallback } from 'react';
-import {
-	Command,
-	CommandCallBackParams,
-} from 'calypso/components/command-palette/use-command-palette';
+import request from 'wpcom-proxy-request';
 import WooCommerceLogo from 'calypso/components/woocommerce-logo';
 import {
 	EDGE_CACHE_ENABLE_DISABLE_NOTICE_ID,
@@ -43,49 +41,46 @@ import {
 	useSetEdgeCacheMutation,
 	purgeEdgeCache,
 } from 'calypso/data/hosting/use-cache';
-import { SiteExcerptData } from 'calypso/data/sites/site-excerpt-types';
-import { navigate } from 'calypso/lib/navigate';
 import { useAddNewSiteUrl } from 'calypso/lib/paths/use-add-new-site-url';
-import wpcom from 'calypso/lib/wp';
 import { useOpenPhpMyAdmin } from 'calypso/my-sites/hosting/phpmyadmin-card';
-import { useDispatch, useSelector } from 'calypso/state';
-import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import { useDispatch } from 'calypso/state';
 import { clearWordPressCache } from 'calypso/state/hosting/actions';
-import { createNotice, removeNotice } from 'calypso/state/notices/actions';
 import { NoticeStatus } from 'calypso/state/notices/types';
-import getCurrentRoutePattern from 'calypso/state/selectors/get-current-route-pattern';
-import { generateSiteInterfaceLink, isCustomDomain, isNotAtomicJetpack, isP2Site } from '../utils';
+import { SiteExcerptData } from './site-excerpt-types';
+import { Command, CommandCallBackParams } from './use-command-palette';
+import { generateSiteInterfaceLink, isCustomDomain, isNotAtomicJetpack, isP2Site } from './utils';
 
 interface useCommandsArrayWpcomOptions {
 	setSelectedCommandName: ( name: string ) => void;
 }
 
-function useCommandNavigation() {
-	const dispatch = useDispatch();
-	const currentRoute = useSelector( getCurrentRoutePattern );
+function useCommandNavigation( { navigate } ) {
+	// TODO: Find an alternative way to use the current route.
+	//const currentRoute = useSelector( getCurrentRoutePattern );
+	const currentRoute = null;
 	// Callback to navigate to a command's destination
 	// used on command callback or siteFunctions onClick
 	const commandNavigation = useCallback(
 		( url: string, { openInNewTab = false } = {} ) =>
 			( { close, command }: Pick< CommandCallBackParams, 'close' | 'command' > ) => {
-				dispatch(
-					recordTracksEvent( 'calypso_hosting_command_palette_navigate', {
-						command: command.name,
-						current_route: currentRoute,
-						is_wp_admin: url.includes( '/wp-admin' ),
-					} )
-				);
-
+				recordTracksEvent( 'calypso_hosting_command_palette_navigate', {
+					command: command.name,
+					current_route: currentRoute,
+					is_wp_admin: url.includes( '/wp-admin' ),
+				} );
 				close();
 				navigate( url, openInNewTab );
 			},
-		[ currentRoute, dispatch ]
+		[ navigate, currentRoute ]
 	);
 	return commandNavigation;
 }
 
 export const useCommandsArrayWpcom = ( {
 	setSelectedCommandName,
+	createNotice,
+	removeNotice,
+	navigate,
 }: useCommandsArrayWpcomOptions ) => {
 	const { __, _x } = useI18n();
 	const setStateCallback =
@@ -96,7 +91,7 @@ export const useCommandsArrayWpcom = ( {
 			setPlaceholderOverride( placeholder );
 		};
 
-	const commandNavigation = useCommandNavigation();
+	const commandNavigation = useCommandNavigation( { navigate } );
 	const dispatch = useDispatch();
 
 	const { setEdgeCache } = useSetEdgeCacheMutation();
@@ -107,11 +102,9 @@ export const useCommandsArrayWpcom = ( {
 		duration: undefined | number | null = 5000,
 		additionalOptions: { button?: string; id?: string; onClick?: () => void } = {}
 	) => {
-		const { notice } = dispatch(
-			createNotice( noticeType, message, { duration, ...additionalOptions } )
-		);
+		const { notice } = createNotice( noticeType, message, { duration, ...additionalOptions } );
 		return {
-			removeNotice: () => dispatch( removeNotice( notice.noticeId ) ),
+			removeNotice: () => removeNotice( notice.noticeId ),
 		};
 	};
 	const createSiteUrl = useAddNewSiteUrl( {
@@ -137,9 +130,10 @@ export const useCommandsArrayWpcom = ( {
 	};
 
 	const fetchSshUser = async ( siteId: number ) => {
-		const response = await wpcom.req.get( {
+		const response = await request( {
 			path: `/sites/${ siteId }/hosting/ssh-users`,
 			apiNamespace: 'wpcom/v2',
+			apiVersion: '2',
 		} );
 
 		const sshUserResponse = response?.users;
@@ -205,11 +199,13 @@ export const useCommandsArrayWpcom = ( {
 			return;
 		}
 
-		const response = await wpcom.req.post( {
+		const response = await request( {
 			path: `/sites/${ siteId }/hosting/ssh-user/${ sshUser }/reset-password`,
 			apiNamespace: 'wpcom/v2',
-			body: {},
+			apiVersion: '2',
+			method: 'POST',
 		} );
+
 		const sshPassword = response?.password;
 
 		if ( ! sshPassword ) {

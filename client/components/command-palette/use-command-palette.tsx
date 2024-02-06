@@ -5,12 +5,13 @@ import styled from '@emotion/styled';
 import { __ } from '@wordpress/i18n';
 import { useCommandState } from 'cmdk';
 import { useCallback } from 'react';
-import { useCommandsArrayWpcom } from 'calypso/sites-dashboard/components/wpcom-smp-commands';
 import { SiteExcerptData } from './site-excerpt-types';
 import { useCapabilitiesQuery } from './use-capabilities-query';
 import { useCurrentSiteRankTop } from './use-current-site-rank-top';
 import { useSiteExcerptsQuery } from './use-site-excerpts-query';
 import { useSitesSortingQuery } from './use-sites-sorting-query';
+import { isCustomDomain } from './utils';
+import { useCommandsArrayWpcom } from './wpcom-smp-commands';
 
 const FillDefaultIconWhite = styled.div( {
 	flexShrink: 0,
@@ -84,13 +85,6 @@ interface SiteToActionParameters {
 	};
 }
 
-function isCustomDomain( siteSlug: string | null | undefined ): boolean {
-	if ( ! siteSlug ) {
-		return false;
-	}
-	return ! siteSlug.endsWith( '.wordpress.com' ) && ! siteSlug.endsWith( '.wpcomstaging.com' );
-}
-
 const useSiteToAction = () => {
 	// TODO: Find an alternative way to use the current route.
 	//const currentRoute = useSelector( ( state: object ) => getCurrentRoutePattern( state ) );
@@ -149,6 +143,9 @@ export const useCommandPalette = ( {
 	selectedCommandName,
 	setSelectedCommandName,
 	search,
+	createNotice,
+	removeNotice,
+	navigate,
 }: useCommandPaletteOptions ): {
 	commands: Command[];
 	filterNotice: string | undefined;
@@ -169,6 +166,9 @@ export const useCommandPalette = ( {
 	// Call the generateCommandsArray function to get the commands array
 	const commands = useCommandsArrayWpcom( {
 		setSelectedCommandName,
+		createNotice,
+		removeNotice,
+		navigate,
 	} ) as Command[];
 
 	// TODO: Find an alternative way to use the current route.

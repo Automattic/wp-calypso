@@ -92,11 +92,17 @@ export function CommandMenuGroup( {
 	setSelectedCommandName,
 	setFooterMessage,
 	setEmptyListNotice,
+	createNotice,
+	removeNotice,
+	navigate,
 }: CommandMenuGroupProps ) {
 	const { commands, filterNotice, emptyListNotice } = useCommandPalette( {
 		selectedCommandName,
 		setSelectedCommandName,
 		search,
+		createNotice,
+		removeNotice,
+		navigate,
 	} );
 
 	useEffect( () => {
@@ -230,7 +236,7 @@ const NotFoundMessage = ( {
 	return <>{ emptyListNotice || __( 'No results found.' ) }</>;
 };
 
-const CommandPalette = () => {
+const CommandPalette = ( { createNotice, removeNotice, navigate } ) => {
 	const [ placeHolderOverride, setPlaceholderOverride ] = useState( '' );
 	const [ search, setSearch ] = useState( '' );
 	const [ selectedCommandName, setSelectedCommandName ] = useState( '' );
@@ -378,6 +384,9 @@ const CommandPalette = () => {
 							setSelectedCommandName={ setSelectedCommandName }
 							setFooterMessage={ setFooterMessage }
 							setEmptyListNotice={ setEmptyListNotice }
+							createNotice={ createNotice }
+							removeNotice={ removeNotice }
+							navigate={ navigate }
 						/>
 					</Command.List>
 				</Command>
