@@ -42,6 +42,7 @@ export default function CSVColumnConfirmation( {
 				className="connect-url-csv-column-confirmation__column-picker"
 			>
 				{ column ? (
+					// Translators: %(column)s is a column name from a CSV file that is uploaded by the user.
 					translate( 'Column: %(column)s', { args: { column } } )
 				) : (
 					<>
