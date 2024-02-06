@@ -218,11 +218,11 @@ function renderRenewsOrExpiresOn( {
 	}
 
 	if ( isExpiring( purchase ) || isExpired( purchase ) ) {
-		return <>{ moment( purchase.expiryDate ).format( 'LL' ) }</>;
+		return <>{ moment.utc( purchase.expiryDate ).format( 'LL' ) }</>;
 	}
 
 	if ( isRenewing( purchase ) ) {
-		return <>{ moment( purchase.renewDate ).format( 'LL' ) }</>;
+		return <>{ moment.utc( purchase.renewDate ).format( 'LL' ) }</>;
 	}
 
 	if ( isOneTimePurchase( purchase ) ) {
