@@ -124,7 +124,13 @@ export const SimpleLicenseItemCard = ( {
 
 	const onSelectProduct = useCallback( () => {
 		page.redirect( getIssueLicenseURL( productSlug, bundleSize ) );
-	}, [ bundleSize, getIssueLicenseURL, productSlug ] );
+		dispatch(
+			recordTracksEvent( 'calypso_jetpack_manage_on_select_product_button_click', {
+				product: productSlug,
+				bundle_size: bundleSize,
+			} )
+		);
+	}, [ bundleSize, dispatch, getIssueLicenseURL, productSlug ] );
 
 	const onHideLightbox = useCallback( () => {
 		resetParams( [ LICENSE_INFO_MODAL_ID ] );
