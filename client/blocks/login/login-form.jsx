@@ -60,6 +60,7 @@ import getCurrentQueryArguments from 'calypso/state/selectors/get-current-query-
 import getCurrentRoute from 'calypso/state/selectors/get-current-route';
 import getInitialQueryArguments from 'calypso/state/selectors/get-initial-query-arguments';
 import isWooCommerceCoreProfilerFlow from 'calypso/state/selectors/is-woocommerce-core-profiler-flow';
+import ErrorNotice from './error-notice';
 import SocialLoginForm from './social';
 
 import './login-form.scss';
@@ -747,6 +748,7 @@ export class LoginForm extends Component {
 				{ this.renderPrivateSiteNotice() }
 
 				<Card className="login__form">
+					{ isWoo && <ErrorNotice /> }
 					<div className="login__form-userdata">
 						{ ! isWoo && linkingSocialUser && (
 							<p>
