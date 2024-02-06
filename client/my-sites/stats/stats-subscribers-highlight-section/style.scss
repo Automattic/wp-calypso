@@ -44,3 +44,26 @@
 		}
 	}
 }
+
+.highlight-cards-list-mobile {
+	display: flex;
+	flex-direction: column;
+	row-gap: 16px;
+	margin: 24px;
+
+	.highlight-cards-list-mobile__item {
+		display: flex;
+		align-items: center;
+	}
+
+	.highlight-cards-list-mobile__item-heading {
+		font-weight: 500;
+		font-size: 0.875rem;
+		line-height: 20px;
+	}
+	.highlight-cards-list-mobile__item-count {
+		margin-left: auto;
+		font-size: 1rem;
+		line-height: 24px;
+	}
+}
