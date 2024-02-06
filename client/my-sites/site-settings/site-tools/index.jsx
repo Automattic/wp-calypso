@@ -59,6 +59,7 @@ class SiteTools extends Component {
 			showManageConnection,
 			showStartSiteTransfer,
 			siteId,
+			headerTitle,
 		} = this.props;
 
 		const changeAddressLink = `/domains/manage/${ siteSlug }`;
@@ -97,7 +98,7 @@ class SiteTools extends Component {
 		return (
 			<div className="site-tools">
 				<QueryRewindState siteId={ siteId } />
-				<SettingsSectionHeader id="site-tools__header" title={ translate( 'Site tools' ) } />
+				<SettingsSectionHeader id="site-tools__header" title={ headerTitle } />
 				{ showChangeAddress && (
 					<SiteToolsLink
 						href={ changeAddressLink }
