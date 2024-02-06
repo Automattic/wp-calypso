@@ -10,6 +10,7 @@ export type WPCOMTransactionEndpointResponseSuccess = {
 	receipt_id: number;
 	order_id: number | '';
 	redirect_url?: string;
+	qr_code?: string;
 	is_gift_purchase: boolean;
 	display_price: string;
 	price_integer: number;
@@ -24,6 +25,7 @@ export type WPCOMTransactionEndpointResponseFailed = {
 	receipt_id: number;
 	order_id: number | '';
 	redirect_url?: string;
+	qr_code?: string;
 	is_gift_purchase: boolean;
 	display_price: string;
 	price_integer: number;
@@ -35,6 +37,7 @@ export type WPCOMTransactionEndpointResponseRedirect = {
 	message: { payment_intent_client_secret: string } | '';
 	order_id: number | '';
 	redirect_url: string;
+	qr_code?: string;
 	razorpay_order_id?: string;
 	razorpay_customer_id?: string;
 };
