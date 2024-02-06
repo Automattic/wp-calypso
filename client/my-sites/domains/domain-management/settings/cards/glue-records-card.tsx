@@ -165,8 +165,9 @@ export default function GlueRecordsCard( { domain }: { domain: ResponseDomain } 
 			return false;
 		}
 		if (
+			nameserver.length > 50 ||
 			! nameserver.match(
-				/^([A-Za-z0-9](?:[A-Za-z0-9-]{0,61}[A-Za-z0-9])?)(.[A-Za-z0-9](?:[A-Za-z0-9-]{0,61}[A-Za-z0-9])?)*$/
+				/^([A-Za-z0-9](?:[A-Za-z0-9-]{0,61}[A-Za-z0-9])?)(\.[A-Za-z0-9](?:[A-Za-z0-9-]{0,61}[A-Za-z0-9])?)*$/
 			)
 		) {
 			return false;
