@@ -111,6 +111,12 @@ export async function pixProcessor(
 				throw new Error( genericErrorMessage );
 			}
 
+			if ( ! response?.qr_code ) {
+				// eslint-disable-next-line no-console
+				console.error( 'Transaction response was missing required qr code' );
+				throw new Error( genericErrorMessage );
+			}
+
 			if ( userAgent.isMobile && response.redirect_url ) {
 				return makeRedirectResponse( response?.redirect_url );
 			}
@@ -126,6 +132,7 @@ export async function pixProcessor(
 			displayModal( {
 				root,
 				redirectUrl: response.redirect_url,
+				qrCode: response.qr_code,
 				priceInteger: responseCart.total_cost_integer,
 				priceCurrency: responseCart.currency,
 				cancel: () => {
@@ -197,6 +204,7 @@ function hideModal( root: Root ): void {
 function displayModal( {
 	root,
 	redirectUrl,
+	qrCode,
 	priceInteger,
 	priceCurrency,
 	cancel,
@@ -206,6 +214,7 @@ function displayModal( {
 }: {
 	root: Root;
 	redirectUrl: string;
+	qrCode: string;
 	priceInteger: number;
 	priceCurrency: string;
 	cancel: () => void;
@@ -216,6 +225,7 @@ function displayModal( {
 	root.render(
 		createElement( PixConfirmation, {
 			redirectUrl,
+			qrCode,
 			priceInteger,
 			priceCurrency,
 			cancel,
