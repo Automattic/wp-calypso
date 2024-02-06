@@ -6,10 +6,9 @@ import { renderHook } from '@testing-library/react';
 import React from 'react';
 import { Provider } from 'react-redux';
 import configureStore from 'redux-mock-store';
-import { useCommandsArrayWpcom } from '../../../sites-dashboard/components/wpcom-smp-commands';
-import { getCurrentRoutePattern } from '../../../state/selectors/get-current-route-pattern';
 import { useCommandPalette } from '../use-command-palette';
 import { useCurrentSiteRankTop } from '../use-current-site-rank-top';
+import { useCommandsArrayWpcom } from '../wpcom-smp-commands';
 
 const INITIAL_STATE = {
 	sites: {
@@ -188,7 +187,6 @@ describe( 'useCommandPalette', () => {
 	} );
 
 	it( 'should return all the commands in the order they are added to commandsWithViewMySiteOnSite; View My Site should be hidden in /sites context', () => {
-		( getCurrentRoutePattern as jest.Mock ).mockReturnValue( '/sites' );
 		( useCommandsArrayWpcom as jest.Mock ).mockReturnValue( commandsWithViewMySite );
 		const { result } = renderUseCommandPalette();
 
@@ -198,7 +196,6 @@ describe( 'useCommandPalette', () => {
 	} );
 
 	it( 'should return Enable Edge Cache command first as it matches the context; all other commands should follow in the order they are added to commandsWithContext array', () => {
-		( getCurrentRoutePattern as jest.Mock ).mockReturnValue( '/settings' );
 		( useCommandsArrayWpcom as jest.Mock ).mockReturnValue( commandsWithContext );
 
 		const { result } = renderUseCommandPalette();
