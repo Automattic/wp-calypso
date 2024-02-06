@@ -2,8 +2,8 @@ import { Badge, Gridicon } from '@automattic/components';
 import { Button } from '@wordpress/components';
 import classnames from 'classnames';
 import { translate, useRtl } from 'i18n-calypso';
-import { FC } from 'react';
-import { Task } from '../types';
+import type { Task } from '../types';
+import type { FC } from 'react';
 
 import './style.scss';
 

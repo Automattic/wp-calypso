@@ -2,7 +2,7 @@ import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import React from 'react';
-import LaunchpadInternal, { LaunchpadInternalProps } from '../launchpad-internal';
+import LaunchpadInternal, { type LaunchpadInternalProps } from '../launchpad-internal';
 import '@testing-library/jest-dom';
 import type { Task } from '../types';
 
