@@ -2,7 +2,7 @@ import config from '@automattic/calypso-config';
 import { Component } from 'react';
 import { connect } from 'react-redux';
 import AsyncLoad from 'calypso/components/async-load';
-import { useCurrentRoute } from 'calypso/components/route';
+import { withCurrentRoute } from 'calypso/components/route';
 import SitePicker from 'calypso/my-sites/picker';
 import { useGlobalSidebar } from 'calypso/my-sites/sidebar/hooks/use-global-sidebar';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
@@ -87,11 +87,13 @@ class MySitesNavigation extends Component {
 	}
 }
 
-export default connect( ( state ) => {
-	const siteId = getSelectedSiteId( state );
-	const { sectionGroup } = useCurrentRoute();
-	const { shouldShowGlobalSidebar } = useGlobalSidebar( siteId, sectionGroup );
-	return {
-		isGlobalSidebarVisible: shouldShowGlobalSidebar,
-	};
-}, null )( MySitesNavigation );
+export default withCurrentRoute(
+	connect( ( state, { currentSection } ) => {
+		const sectionGroup = currentSection?.group ?? null;
+		const siteId = getSelectedSiteId( state );
+		const { shouldShowGlobalSidebar } = useGlobalSidebar( siteId, sectionGroup );
+		return {
+			isGlobalSidebarVisible: shouldShowGlobalSidebar,
+		};
+	}, null )( MySitesNavigation )
+);
