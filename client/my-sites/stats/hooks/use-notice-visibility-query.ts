@@ -65,7 +65,8 @@ const queryNotices = async function ( siteId: number | null ): Promise< Notices 
 
 const useNoticesVisibilityQueryRaw = function < T >(
 	siteId: number | null,
-	select?: ( payload: Notices ) => T
+	select?: ( payload: Notices ) => T,
+	enabled?: boolean
 ) {
 	return useQuery( {
 		queryKey: [ 'stats', 'notices-visibility', 'raw', siteId ],
@@ -74,15 +75,24 @@ const useNoticesVisibilityQueryRaw = function < T >(
 		staleTime: 1000 * 30, // 30 seconds
 		retry: 1,
 		retryDelay: 3 * 1000, // 3 seconds,
+		enabled: enabled === false ? false : true,
 	} );
 };
 
-export function useNoticeVisibilityQuery( siteId: number | null, noticeId: NoticeIdType ) {
+export function useNoticeVisibilityQuery(
+	siteId: number | null,
+	noticeId: NoticeIdType,
+	enabled?: boolean
+) {
 	const selectVisibilityForSingleNotice = ( payload: Notices ) => {
 		payload = processConflictNotices( payload );
 		return !! payload?.[ noticeId ];
 	};
-	return useNoticesVisibilityQueryRaw< boolean >( siteId, selectVisibilityForSingleNotice );
+	return useNoticesVisibilityQueryRaw< boolean >(
+		siteId,
+		selectVisibilityForSingleNotice,
+		enabled
+	);
 }
 
 export function useNoticesVisibilityQuery( siteId: number | null ) {
