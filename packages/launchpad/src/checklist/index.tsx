@@ -22,7 +22,7 @@ const Checklist: FC< ChecklistProps > = ( {
 		>
 			{ Children.map( children || [], ( child, index ) => {
 				if ( index === Children.count( children ) - 1 ) {
-					return cloneElement( child, { isPrimaryAction: true } );
+					return cloneElement( child, { isPrimaryAction: makeLastTaskPrimaryAction } );
 				}
 				return child;
 			} ) }
