@@ -1,7 +1,7 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
-import { SiteDetailsOptions } from '@automattic/data-stores';
 import { useEffect, useMemo } from 'react';
 import type { Task } from '../types';
+import type { SiteDetailsOptions } from '@automattic/data-stores';
 
 interface LogParams {
 	tasks: Task[];
