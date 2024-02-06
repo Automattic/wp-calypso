@@ -1,6 +1,6 @@
 import classNames from 'classnames';
 import { Children, cloneElement, type FC, type ReactElement } from 'react';
-import { Placeholder as CheckListPlacehoder } from '../checklist-item';
+import { Placeholder as ChecklistPlaceholder } from '../checklist-item';
 import type { Props as CheckListItemProps } from '../checklist-item';
 import './style.scss';
 
@@ -33,10 +33,10 @@ const Checklist: FC< ChecklistProps > = ( {
 export const Placeholder = () => {
 	return (
 		<ul className="checklist__tasks" aria-label="Launchpad Checklist">
-			<CheckListPlacehoder />
-			<CheckListPlacehoder />
-			<CheckListPlacehoder />
-			<CheckListPlacehoder />
+			<ChecklistPlaceholder />
+			<ChecklistPlaceholder />
+			<ChecklistPlaceholder />
+			<ChecklistPlaceholder />
 		</ul>
 	);
 };
