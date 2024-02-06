@@ -17,6 +17,7 @@ import DisconnectSite from './disconnect-site';
 import ConfirmDisconnection from './disconnect-site/confirm';
 import ManageConnection from './manage-connection';
 import SiteOwnerTransfer from './site-owner-transfer/site-owner-transfer';
+import SiteTransferred from './site-owner-transfer/site-transferred';
 import StartOver from './start-over';
 
 function canDeleteSite( state, siteId ) {
@@ -114,6 +115,11 @@ export function manageConnection( context, next ) {
 
 export function startSiteOwnerTransfer( context, next ) {
 	context.primary = <SiteOwnerTransfer />;
+	next();
+}
+
+export function showSiteTransferredScreen( context, next ) {
+	context.primary = <SiteTransferred />;
 	next();
 }
 
