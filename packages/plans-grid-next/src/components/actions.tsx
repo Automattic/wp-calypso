@@ -21,7 +21,7 @@ import { isMobile } from '@automattic/viewport';
 import styled from '@emotion/styled';
 import { useSelect } from '@wordpress/data';
 import { useCallback } from '@wordpress/element';
-import { localize, TranslateResult, useTranslate } from 'i18n-calypso';
+import { TranslateResult, useTranslate } from 'i18n-calypso';
 import { usePlansGridContext } from '../grid-context';
 import useDefaultStorageOption from '../hooks/data-store/use-default-storage-option';
 import useIsLargeCurrency from '../hooks/use-is-large-currency';
@@ -528,7 +528,7 @@ const PlanFeaturesActionsButton: React.FC< PlanFeaturesActionsButtonProps > = ( 
 	);
 };
 
-const PlanFeatures2023GridActions = localize( ( props: PlanFeaturesActionsButtonProps ) => {
+const PlanFeatures2023GridActions = ( props: PlanFeaturesActionsButtonProps ) => {
 	return (
 		<div className="plan-features-2023-gridrison__actions">
 			<div className="plan-features-2023-gridrison__actions-buttons">
@@ -536,6 +536,6 @@ const PlanFeatures2023GridActions = localize( ( props: PlanFeaturesActionsButton
 			</div>
 		</div>
 	);
-} );
+};
 
 export default PlanFeatures2023GridActions;
