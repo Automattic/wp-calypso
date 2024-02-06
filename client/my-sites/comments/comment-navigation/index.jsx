@@ -1,4 +1,11 @@
-import { Button, Count, Gridicon, Popover, SegmentedControl } from '@automattic/components';
+import {
+	Button,
+	Count,
+	Gridicon,
+	Popover,
+	SegmentedControl,
+	FormLabel,
+} from '@automattic/components';
 import { localize } from 'i18n-calypso';
 import { get, includes, isEqual, map } from 'lodash';
 import { createRef, Component } from 'react';
@@ -6,7 +13,6 @@ import { connect } from 'react-redux';
 import ButtonGroup from 'calypso/components/button-group';
 import FormCheckbox from 'calypso/components/forms/form-checkbox';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
-import FormLabel from 'calypso/components/forms/form-label';
 import Search from 'calypso/components/search';
 import SectionNav from 'calypso/components/section-nav';
 import NavItem from 'calypso/components/section-nav/item';
