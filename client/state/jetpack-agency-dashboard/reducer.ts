@@ -132,11 +132,13 @@ type ValidationStatus =
 	| 'not-exists'
 	| 'error';
 
-export interface SiteData {
+// Possibly adding more properties for this interface
+// when connecting to more back-end features
+export interface JetpackManageAddSiteStatus {
 	validationStatus: ValidationStatus;
 }
 
-const validatedSites: Reducer< { [ siteUrl: string ]: SiteData }, AnyAction > = (
+const validatedSites: Reducer< { [ siteUrl: string ]: JetpackManageAddSiteStatus }, AnyAction > = (
 	state = {},
 	action: AnyAction
 ): AppState => {

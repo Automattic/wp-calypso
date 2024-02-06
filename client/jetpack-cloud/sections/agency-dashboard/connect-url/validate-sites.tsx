@@ -1,7 +1,7 @@
 import { Button, Gridicon } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
+import { JetpackManageAddSiteStatus } from 'calypso/state/jetpack-agency-dashboard/reducer';
 import Spinner from './spinner';
-import { SiteData } from './';
 
 export default function ValidateSites( {
 	detectedSites,
@@ -10,7 +10,7 @@ export default function ValidateSites( {
 }: {
 	detectedSites: string[];
 	urlColumnIndex: number;
-	validatedSites: { [ site: string ]: SiteData };
+	validatedSites: { [ site: string ]: JetpackManageAddSiteStatus };
 } ) {
 	const translate = useTranslate();
 
