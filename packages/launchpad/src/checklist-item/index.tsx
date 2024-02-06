@@ -16,7 +16,7 @@ export interface Props {
 
 const ChecklistItem: FC< Props > = ( { task, isPrimaryAction, onClick } ) => {
 	const isRtl = useRtl();
-	const { id, completed, disabled, title, subtitle } = task;
+	const { id, completed, disabled = false, title, subtitle, actionDispatch } = task;
 
 	// Display chevron if task is incomplete. Don't display chevron and badge at the same time.
 	const shouldDisplayChevron = ! completed && ! disabled && ! task.badge_text;
@@ -38,7 +38,7 @@ const ChecklistItem: FC< Props > = ( { task, isPrimaryAction, onClick } ) => {
 		disabled,
 		...( disabled ? {} : { href: buttonHref } ),
 	};
-
+	const onClickHandler = onClick || actionDispatch;
 	return (
 		<li
 			className={ classnames( 'checklist-item__task', {
@@ -52,7 +52,7 @@ const ChecklistItem: FC< Props > = ( { task, isPrimaryAction, onClick } ) => {
 				<Button
 					className="checklist-item__checklist-primary-button"
 					data-task={ id }
-					onClick={ onClick }
+					onClick={ onClickHandler }
 					{ ...buttonProps }
 				>
 					{ title }
@@ -61,7 +61,7 @@ const ChecklistItem: FC< Props > = ( { task, isPrimaryAction, onClick } ) => {
 				<Button
 					className="checklist-item__task-content"
 					data-task={ id }
-					onClick={ onClick ?? task.actionDispatch }
+					onClick={ onClickHandler }
 					{ ...buttonProps }
 				>
 					{ completed && (

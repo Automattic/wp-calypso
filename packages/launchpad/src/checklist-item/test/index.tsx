@@ -7,7 +7,11 @@ import '@testing-library/jest-dom';
 
 describe( 'ChecklistItem', () => {
 	const defaultProps = {
-		task: buildTask( { completed: false, disabled: false } ),
+		task: buildTask( {
+			completed: false,
+			disabled: false,
+			actionDispatch: jest.fn(),
+		} ),
 	};
 
 	const renderComponent = ( props: Partial< Props > ) => {
@@ -35,6 +39,54 @@ describe( 'ChecklistItem', () => {
 		await userEvent.click( taskButton );
 
 		expect( onClick ).toHaveBeenCalledTimes( 1 );
+	} );
+
+	it( 'uses the task action dispatch when the task is clicked and no custom onClick prop is used', async () => {
+		const actionDispatch = jest.fn();
+		renderComponent( {
+			task: buildTask( { actionDispatch, completed: false, disabled: false } ),
+		} );
+
+		const taskButton = screen.getByRole( 'button' );
+		await userEvent.click( taskButton );
+
+		expect( actionDispatch ).toHaveBeenCalledTimes( 1 );
+	} );
+
+	it( 'calls the onclick when calypso path is available', async () => {
+		const onClick = jest.fn();
+		renderComponent( {
+			onClick,
+			isPrimaryAction: true,
+			task: buildTask( {
+				useCalypsoPath: true,
+				disabled: false,
+				calypso_path: 'https://wordpress.com',
+			} ),
+		} );
+
+		const taskButton = screen.getByRole( 'link' );
+		await userEvent.click( taskButton );
+
+		expect( onClick ).toHaveBeenCalledTimes( 1 );
+	} );
+
+	it( 'calls the task action dispatch when calypso path is available', async () => {
+		const actionDispatch = jest.fn();
+		renderComponent( {
+			isPrimaryAction: true,
+			task: buildTask( {
+				useCalypsoPath: true,
+				disabled: false,
+				calypso_path: 'https://wordpress.com',
+				actionDispatch,
+			} ),
+		} );
+
+		const taskButton = screen.getByRole( 'link' );
+		await userEvent.click( taskButton );
+
+		expect( actionDispatch ).toHaveBeenCalledTimes( 1 );
 	} );
 
 	describe( 'when the task is disabled', () => {
@@ -72,16 +124,6 @@ describe( 'ChecklistItem', () => {
 			const taskButton = screen.queryByRole( 'button' );
 
 			expect( taskButton ).toBeDisabled();
-		} );
-
-		it( 'uses the task action dispatch when the task is clicked and no custom prop is used', async () => {
-			const actionDispatch = jest.fn();
-			renderComponent( { task: buildTask( { completed: true, actionDispatch } ) } );
-
-			const taskButton = screen.getByRole( 'button' );
-			await userEvent.click( taskButton );
-
-			expect( actionDispatch ).toHaveBeenCalledTimes( 1 );
 		} );
 
 		describe( 'and the task is kept enabled', () => {

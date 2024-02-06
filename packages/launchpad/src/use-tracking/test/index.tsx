@@ -16,7 +16,6 @@ describe( 'useTracking', () => {
 			buildTask( { id: 'task-1', completed: true } ),
 			buildTask( { id: 'task-2', completed: false } ),
 		],
-		flow: 'start-writing',
 		...options,
 	} );
 
@@ -31,7 +30,6 @@ describe( 'useTracking', () => {
 			number_of_completed_steps: 1,
 			context: 'customer-home',
 			site_intent: 'build',
-			flow: 'start-writing',
 		} );
 	} );
 
@@ -50,7 +48,6 @@ describe( 'useTracking', () => {
 			site_intent: 'build',
 			order: 3,
 			task_id: 'task-1',
-			flow: 'start-writing',
 		} );
 	} );
 
@@ -85,7 +82,6 @@ describe( 'useTracking', () => {
 			number_of_completed_steps: 1,
 			context: 'customer-home',
 			site_intent: 'build',
-			flow: 'start-writing',
 		} );
 	} );
 } );
