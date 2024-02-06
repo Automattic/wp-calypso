@@ -37,14 +37,12 @@ import {
 	getSubtotalWithoutDiscounts,
 	filterAndGroupCostOverridesForDisplay,
 	getCreditsLineItemFromCart,
-	CostOverrideForDisplay,
 } from '@automattic/wpcom-checkout';
 import { keyframes } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useTranslate } from 'i18n-calypso';
 import * as React from 'react';
 import { hasFreeCouponTransfersOnly } from 'calypso/lib/cart-values/cart-items';
-import { preventWidows } from 'calypso/lib/formatting';
 import { isWcMobileApp } from 'calypso/lib/mobile-app';
 import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
 import { getSignupCompleteFlowName } from 'calypso/signup/storageUtils';
@@ -146,38 +144,6 @@ export function CheckoutSummaryFeaturedList( {
 		</>
 	);
 }
-
-/**
- * The sidebar displays a notice that introductory offers are for the first
- * term only if that is true. Since introductory offers do not read
- * "Introductory Offer" (see `makeIntroductoryOfferCostOverrideUnique()`), we
- * need to mark them to associate them with this notice.
- *
- * This function adds an asterisk after each one to do that, matching the
- * asterisk on the sidebar notice.
- *
- * However, this asterisk is only added if the offer is for the first term so
- * that the notice makes sense.
- */
-function addAsteriskToSingleTermIntroductoryOffers(
-	costOverrides: CostOverrideForDisplay[]
-): CostOverrideForDisplay[] {
-	return costOverrides.map( ( override ) => {
-		if ( override.isSingleTermIntroductoryOffer ) {
-			override.humanReadableReason += '*';
-		}
-		return override;
-	} );
-}
-
-function hasIntroductoryOfferForInitialPurchaseOnly( responseCart: ResponseCart ): boolean {
-	return responseCart.products.some(
-		( product ) =>
-			!! product.introductory_offer_terms?.enabled &&
-			product.introductory_offer_terms.transition_after_renewal_count === 0
-	);
-}
-
 function CheckoutSummaryPriceList() {
 	const cartKey = useCartKey();
 	const { responseCart } = useShoppingCart( cartKey );
@@ -186,9 +152,6 @@ function CheckoutSummaryPriceList() {
 	const totalLineItem = getTotalLineItemFromCart( responseCart );
 	const translate = useTranslate();
 	const costOverridesList = filterAndGroupCostOverridesForDisplay( responseCart, translate );
-	const isJetpackNotAtomic = responseCart.products.some( ( product ) => {
-		return isJetpackProduct( product ) || isJetpackPlan( product );
-	} );
 
 	const subtotalBeforeDiscounts = getSubtotalWithoutDiscounts( responseCart );
 
@@ -207,11 +170,7 @@ function CheckoutSummaryPriceList() {
 			) }
 			{ ! hasCheckoutVersion( '2' ) && costOverridesList.length > 0 && (
 				<CostOverridesList
-					costOverridesList={
-						isJetpackNotAtomic
-							? addAsteriskToSingleTermIntroductoryOffers( costOverridesList )
-							: costOverridesList
-					}
+					costOverridesList={ costOverridesList }
 					currency={ responseCart.currency }
 					couponCode={ responseCart.coupon }
 				/>
@@ -247,14 +206,6 @@ function CheckoutSummaryPriceList() {
 						{ totalLineItem.formattedAmount }
 					</span>
 				</CheckoutSummaryTotal>
-
-				{ isJetpackNotAtomic && hasIntroductoryOfferForInitialPurchaseOnly( responseCart ) && (
-					<CheckoutSummaryExplanation>
-						{ preventWidows(
-							translate( '*Introductory offer first term only, renews at regular rate.' )
-						) }
-					</CheckoutSummaryExplanation>
-				) }
 			</CheckoutSummaryAmountWrapper>
 		</>
 	);
@@ -990,14 +941,6 @@ const CheckoutSummaryTotal = styled( CheckoutSummaryLineItem )`
 	font-weight: ${ ( props ) => props.theme.weights.bold };
 	line-height: 26px;
 	margin-bottom: 16px;
-`;
-
-const CheckoutSummaryExplanation = styled( CheckoutSummaryLineItem )`
-	color: ${ ( props ) => props.theme.colors.textColorLight };
-	font-size: 12px;
-	font-weight: ${ ( props ) => props.theme.weights.normal };
-	font-style: italic;
-	line-height: 16px;
 `;
 
 const LoadingCopy = styled.p`

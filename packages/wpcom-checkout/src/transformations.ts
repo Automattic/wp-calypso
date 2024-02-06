@@ -147,7 +147,6 @@ export interface CostOverrideForDisplay {
 	humanReadableReason: string;
 	overrideCode: string;
 	discountAmount: number;
-	isSingleTermIntroductoryOffer?: boolean;
 }
 
 function isUserVisibleCostOverride(
@@ -208,16 +207,8 @@ function makeIntroductoryOfferCostOverrideUnique(
 	return costOverride;
 }
 
-function getDiscountForCostOverrideForDisplay(
-	costOverride: ResponseCartCostOverride,
-	product: ResponseCartProduct
-): number {
-	// Subtract fake "multi-year" discount from some introductory
-	// cost overrides so we can display it separately below.
-	const oneYearVariant = getYearlyVariantFromProduct( product );
-	return shouldConsiderIntroOfferAsMultiYearDiscount( product ) && oneYearVariant
-		? oneYearVariant.introductory_offer_discount_integer
-		: costOverride.old_subtotal_integer - costOverride.new_subtotal_integer;
+function getDiscountForCostOverrideForDisplay( costOverride: ResponseCartCostOverride ): number {
+	return costOverride.old_subtotal_integer - costOverride.new_subtotal_integer;
 }
 
 export function filterAndGroupCostOverridesForDisplay(
@@ -243,12 +234,7 @@ export function filterAndGroupCostOverridesForDisplay(
 				grouped[ costOverride.human_readable_reason ] = {
 					humanReadableReason: costOverride.human_readable_reason,
 					overrideCode: costOverride.override_code,
-					discountAmount:
-						discountAmount + getDiscountForCostOverrideForDisplay( costOverride, product ),
-					isSingleTermIntroductoryOffer: Boolean(
-						product.introductory_offer_terms?.enabled &&
-							product.introductory_offer_terms.transition_after_renewal_count === 0
-					),
+					discountAmount: discountAmount + getDiscountForCostOverrideForDisplay( costOverride ),
 				};
 			} );
 
@@ -323,36 +309,6 @@ function canDisplayMultiYearDiscountForProduct( product: ResponseCartProduct ): 
 }
 
 /**
- * The idea of a multi-year discount is conceptual; it is not a true discount
- * in terms of our billing system. Purchases of different product renewal
- * intervals have different prices set and the amount they save depends on what
- * you compare them to.
- *
- * Some products do not have a multi-year discount for their base prices but we
- * want to consider part of their introductory offers as a multi-year discount
- * instead. This function returns true if this is one of those products.
- */
-function shouldConsiderIntroOfferAsMultiYearDiscount( product: ResponseCartProduct ): boolean {
-	if (
-		! product.cost_overrides?.some(
-			( costOverride ) => costOverride.override_code === 'introductory-offer'
-		)
-	) {
-		return false;
-	}
-
-	const isJetpack = isJetpackProduct( product ) || isJetpackPlan( product );
-	if (
-		isJetpack &&
-		isBiennially( product ) &&
-		! isJetpackSocialAdvancedSlug( product.product_slug )
-	) {
-		return true;
-	}
-	return false;
-}
-
-/**
  * We want to be able to display a discount for a multi-year purchase, although
  * this is not a true discount; purchases of different product renewal
  * intervals have different prices set and the amount they save depends on what
@@ -370,28 +326,6 @@ function shouldConsiderIntroOfferAsMultiYearDiscount( product: ResponseCartProdu
  */
 function getMultiYearDiscountForProduct( product: ResponseCartProduct ): number {
 	if ( ! product.months_per_bill_period || ! canDisplayMultiYearDiscountForProduct( product ) ) {
-		return 0;
-	}
-
-	if ( shouldConsiderIntroOfferAsMultiYearDiscount( product ) ) {
-		// Pretend that the introductory offer discount is only what it would
-		// be for the one year variant. Then consider the remaining
-		// introductory offer discount as the multi-year discount.
-		const oneYearVariant = getYearlyVariantFromProduct( product );
-		if ( oneYearVariant ) {
-			const oneYearVariantIntroOfferDiscount = oneYearVariant.introductory_offer_discount_integer;
-			const productIntroOffer = product.cost_overrides?.find(
-				( override ) => override.override_code === 'introductory-offer'
-			);
-			const productIntroOfferDiscount = productIntroOffer
-				? productIntroOffer.old_subtotal_integer - productIntroOffer.new_subtotal_integer
-				: 0;
-			const multiYearDiscount = productIntroOfferDiscount - oneYearVariantIntroOfferDiscount;
-
-			if ( multiYearDiscount > 0 ) {
-				return multiYearDiscount;
-			}
-		}
 		return 0;
 	}
 
@@ -414,11 +348,9 @@ function getSubtotalWithoutDiscountsForProduct( product: ResponseCartProduct ): 
 	// discount, since that is not a real discount) by the cost of each
 	// product's multi-year discount so that we can display that savings as a
 	// discount.
-	if ( ! shouldConsiderIntroOfferAsMultiYearDiscount( product ) ) {
-		const multiYearDiscount = getMultiYearDiscountForProduct( product );
-		if ( multiYearDiscount ) {
-			return product.item_original_subtotal_integer + multiYearDiscount;
-		}
+	const multiYearDiscount = getMultiYearDiscountForProduct( product );
+	if ( multiYearDiscount ) {
+		return product.item_original_subtotal_integer + multiYearDiscount;
 	}
 
 	return product.item_original_subtotal_integer;
