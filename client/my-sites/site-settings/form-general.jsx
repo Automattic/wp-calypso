@@ -369,6 +369,7 @@ export class SiteSettingsFormGeneral extends Component {
 		const blogPublic = parseInt( fields.blog_public, 10 );
 		const wpcomComingSoon = 1 === parseInt( fields.wpcom_coming_soon, 10 );
 		const wpcomPublicComingSoon = 1 === parseInt( fields.wpcom_public_coming_soon, 10 );
+		const partnerPrivacy = parseInt( fields.partner_privacy, 10 );
 		// isPrivateAndUnlaunched means it is an unlaunched coming soon v1 site
 		const isPrivateAndUnlaunched = -1 === blogPublic && this.props.isUnlaunchedSite;
 		const isNonAtomicJetpackSite = siteIsJetpack && ! siteIsAtomic;
@@ -473,6 +474,7 @@ export class SiteSettingsFormGeneral extends Component {
 											wpcomPublicComingSoon || blogPublic === -1 || blogPublic === 1 ? 0 : 1,
 										wpcom_coming_soon: 0,
 										wpcom_public_coming_soon: 0,
+										partner_privacy: partnerPrivacy,
 									} )
 								}
 								disabled={ isRequestingSettings }
@@ -483,6 +485,33 @@ export class SiteSettingsFormGeneral extends Component {
 								{ translate(
 									'This option does not block access to your site — it is up to search engines to honor your request.'
 								) }
+							</FormSettingExplanation>
+						</FormLabel>
+						<FormLabel className="site-settings__visibility-label is-checkbox is-hidden">
+							<FormInputCheckbox
+								name="partner_privacy"
+								value="1"
+								checked={
+									( wpcomPublicComingSoon && blogPublic === 0 && isComingSoonDisabled ) ||
+									( 0 === blogPublic && ! wpcomPublicComingSoon ) ||
+									partnerPrivacy === 1
+								}
+								onChange={ () =>
+									this.handleVisibilityOptionChange( {
+										partner_privacy: partnerPrivacy === 1 ? 0 : 1,
+										blog_public: blogPublic,
+										wpcom_coming_soon: wpcomComingSoon,
+										wpcom_public_coming_soon: wpcomPublicComingSoon,
+									} )
+								}
+								disabled={ isRequestingSettings || ( 0 === blogPublic && ! wpcomPublicComingSoon ) }
+								onClick={ eventTracker( 'Clicked Partnership Radio Button' ) }
+							/>
+							<span>
+								{ translate( 'Do not share public blog content with third party partners.' ) }
+							</span>
+							<FormSettingExplanation>
+								{ translate( 'Some descirption here.' ) }
 							</FormSettingExplanation>
 						</FormLabel>
 					</>
@@ -524,12 +553,14 @@ export class SiteSettingsFormGeneral extends Component {
 		blog_public,
 		wpcom_coming_soon,
 		wpcom_public_coming_soon,
+		partner_privacy,
 	} ) => {
 		const { trackEvent, updateFields } = this.props;
 		trackEvent( `Set blog_public to ${ blog_public }` );
 		trackEvent( `Set wpcom_coming_soon to ${ wpcom_coming_soon }` );
 		trackEvent( `Set wpcom_public_coming_soon to ${ wpcom_public_coming_soon }` );
-		updateFields( { blog_public, wpcom_coming_soon, wpcom_public_coming_soon } );
+		trackEvent( `Set partner_privacy to ${ partner_privacy }` );
+		updateFields( { blog_public, wpcom_coming_soon, wpcom_public_coming_soon, partner_privacy } );
 	};
 
 	Timezone() {
