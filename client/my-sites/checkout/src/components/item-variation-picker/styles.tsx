@@ -86,6 +86,7 @@ export const OptionList = styled.ul`
 export const Discount = styled.span`
 	color: ${ ( props ) => props.theme.colors.discount };
 	margin-right: 8px;
+	${ hasCheckoutVersion( '2' ) ? `align-items: left` : `align-items: center` }
 
 	.rtl & {
 		margin-right: 0;
@@ -130,7 +131,6 @@ export const Price = styled.span`
 `;
 
 export const Variant = styled.div`
-	align-items: center;
 	display: flex;
 	font-size: 14px;
 	font-weight: 400;
@@ -138,6 +138,10 @@ export const Variant = styled.div`
 	line-height: 20px;
 	width: 100%;
 	column-gap: 20px;
+
+	${ hasCheckoutVersion( '2' )
+		? `flex-direction: column; align-items: left`
+		: `flex-direciton: row; align-items: center` }
 
 	.item-variant-option--selected & {
 		color: var( --studio-white );
@@ -168,6 +172,7 @@ export const IntroPricingText = styled.span`
 `;
 
 export const PriceTextContainer = styled.span`
-	text-align: right;
-	font-size: ${ hasCheckoutVersion( '2' ) ? '12px' : 'inherit' };
+	${ hasCheckoutVersion( '2' )
+		? 'font-size: 12px; text-align: initial;'
+		: 'font-size: inherit;	text-align: right;' };
 `;
