@@ -6,6 +6,7 @@ import { recordTracksEvent } from '@automattic/calypso-analytics';
 import config from '@automattic/calypso-config';
 import { Spinner, GMClosureNotice } from '@automattic/components';
 import { isDefaultLocale, getLanguage, useLocale } from '@automattic/i18n-utils';
+import { Button } from '@wordpress/components';
 import { useEffect, useMemo } from '@wordpress/element';
 import { hasTranslation, sprintf } from '@wordpress/i18n';
 import { comment, Icon } from '@wordpress/icons';
@@ -13,7 +14,7 @@ import { useI18n } from '@wordpress/react-i18n';
 import classnames from 'classnames';
 import { FC } from 'react';
 import { useSelector } from 'react-redux';
-import { Link, LinkProps } from 'react-router-dom';
+import { Link, LinkProps, useNavigate } from 'react-router-dom';
 import { getSectionName } from 'calypso/state/ui/selectors';
 /**
  * Internal Dependencies
@@ -279,31 +280,26 @@ export const HelpCenterContactButton: FC = () => {
 	const { __ } = useI18n();
 	const { url, isLoading } = useStillNeedHelpURL();
 	const sectionName = useSelector( getSectionName );
-	const redirectToWpcom = url === 'https://wordpress.com/help/contact';
+	const navigate = useNavigate();
 
-	const trackContactButtonClicked = () => {
+	const contactButtonClicked = () => {
 		recordTracksEvent( 'calypso_inlinehelp_morehelp_click', {
 			force_site_id: true,
 			location: 'help-center',
 			section: sectionName,
 		} );
+		navigate( url );
 	};
 
-	let to = redirectToWpcom ? { pathname: url } : url;
-
-	if ( isLoading ) {
-		to = '';
-	}
-
 	return (
-		<Link
-			to={ to }
-			target={ redirectToWpcom ? '_blank' : '_self' }
-			onClick={ trackContactButtonClicked }
+		<Button
+			isBusy={ isLoading }
+			disabled={ isLoading }
+			onClick={ contactButtonClicked }
 			className="button help-center-contact-page__button"
 		>
 			<Icon icon={ comment } />
 			<span>{ __( 'Still need help?', __i18n_text_domain__ ) }</span>
-		</Link>
+		</Button>
 	);
 };
