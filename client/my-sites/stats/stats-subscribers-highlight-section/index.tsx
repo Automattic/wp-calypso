@@ -106,8 +106,15 @@ function SubscriberHighlightsListing( { siteId }: { siteId: number | null } ) {
 	);
 
 	const mobileHighlights = (
-		<div>
-			<p>mobile highlights here</p>
+		<div className="highlight-cards-list-mobile">
+			{ highlights.map( ( highlight ) => (
+				<div className="highlight-cards-list-mobile__item">
+					<span className="highlight-cards-list-mobile__item-heading">{ highlight.heading }</span>
+					<span className="highlight-cards-list-mobile__item-count">
+						{ isPaidSubscriptionProductsLoading ? '-' : highlight.count }
+					</span>
+				</div>
+			) ) }
 		</div>
 	);
 
