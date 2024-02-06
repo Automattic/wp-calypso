@@ -71,27 +71,25 @@ export const JetpackItemVariantDropDownPrice: FunctionComponent< {
 					/>
 				) }
 			</Label>
-			{ discountInteger > 0 && (
-				<PriceTextContainer>
-					{ ! isMobile && (
-						<JetpackDiscountDisplay
-							finalPriceInteger={ variant.priceInteger }
-							discountInteger={ discountInteger }
-							currency={ variant.currency }
-							showIntroOffer={ showIntroOffer }
-							isFirstMonthTrial={ isFirstMonthTrial( variant ) }
-						/>
-					) }
-					{ ! hasCheckoutVersion( '2' ) && (
-						<Price aria-hidden={ variant.introductoryInterval > 0 }>
-							{ formatCurrency( variant.priceInteger, variant.currency, {
-								stripZeros: true,
-								isSmallestUnit: true,
-							} ) }
-						</Price>
-					) }
-				</PriceTextContainer>
-			) }
+			<PriceTextContainer>
+				{ ! isMobile && discountInteger > 0 && (
+					<JetpackDiscountDisplay
+						finalPriceInteger={ variant.priceInteger }
+						discountInteger={ discountInteger }
+						currency={ variant.currency }
+						showIntroOffer={ showIntroOffer }
+						isFirstMonthTrial={ isFirstMonthTrial( variant ) }
+					/>
+				) }
+				{ ! hasCheckoutVersion( '2' ) && (
+					<Price aria-hidden={ variant.introductoryInterval > 0 }>
+						{ formatCurrency( variant.priceInteger, variant.currency, {
+							stripZeros: true,
+							isSmallestUnit: true,
+						} ) }
+					</Price>
+				) }
+			</PriceTextContainer>
 		</Variant>
 	);
 };

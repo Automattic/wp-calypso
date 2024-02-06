@@ -171,24 +171,22 @@ export const ItemVariantDropDownPrice: FunctionComponent< {
 				{ variant.variantLabel }
 				{ hasDiscount && isMobile && <DiscountPercentage percent={ discountPercentage } /> }
 			</Label>
-			{ hasDiscount && (
-				<PriceTextContainer>
-					{ hasDiscount && ! isMobile && canDisplayDiscountPercentage && (
-						<DiscountPercentage percent={ discountPercentage } />
-					) }
-					{ ! hasCheckoutVersion( '2' ) && hasDiscount && ! isIntroductoryOffer && (
-						<DoNotPayThis>{ formattedCompareToPriceForVariantTerm }</DoNotPayThis>
-					) }
-					{ ! hasCheckoutVersion( '2' ) && (
-						<Price aria-hidden={ isIntroductoryOffer }>{ formattedCurrentPrice }</Price>
-					) }
-					<IntroPricing>
-						<IntroPricingText>
-							{ isIntroductoryOffer && translatedIntroOfferDetails() }
-						</IntroPricingText>
-					</IntroPricing>
-				</PriceTextContainer>
-			) }
+			<PriceTextContainer>
+				{ hasDiscount && ! isMobile && canDisplayDiscountPercentage && (
+					<DiscountPercentage percent={ discountPercentage } />
+				) }
+				{ ! hasCheckoutVersion( '2' ) && hasDiscount && ! isIntroductoryOffer && (
+					<DoNotPayThis>{ formattedCompareToPriceForVariantTerm }</DoNotPayThis>
+				) }
+				{ ! hasCheckoutVersion( '2' ) && (
+					<Price aria-hidden={ isIntroductoryOffer }>{ formattedCurrentPrice }</Price>
+				) }
+				<IntroPricing>
+					<IntroPricingText>
+						{ isIntroductoryOffer && translatedIntroOfferDetails() }
+					</IntroPricingText>
+				</IntroPricing>
+			</PriceTextContainer>
 		</Variant>
 	);
 };
