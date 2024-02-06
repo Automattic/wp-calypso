@@ -118,7 +118,10 @@ function PixForm( { state }: { state: PixPaymentMethodState } ) {
 				onChange={ ( value: string ) => {
 					state.change( 'taxpayerId', value );
 				} }
-				label={ translate( 'Taxpayer Identification Number' ) }
+				label={ translate( 'CPF', {
+					textOnly: true,
+					comment: 'The taxpayer identification number for Brazil',
+				} ) }
 				value={ state.data.taxpayerId }
 				disabled={ formStatus !== FormStatus.READY }
 			/>
