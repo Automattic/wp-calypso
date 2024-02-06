@@ -381,6 +381,21 @@ function getMessageForTermsOfServiceRecordUnknown(
 		},
 	};
 
+	if ( args.product_meta && args.product_meta !== '' && 'Domain Transfer' === args.product_name ) {
+		return translate(
+			'The promotional period of your %(productName)s subscription for %(domainName)s will begin once the domain transfer is completed. At that time, you will be notified of the promotional period, renewal date, and renewal price (%(renewalPrice)s) via email.',
+			{
+				args: {
+					...defaultRenewalArgs.args,
+					domainName: args.product_meta,
+				},
+				components: {
+					...defaultRenewalArgs.components,
+				},
+			}
+		);
+	}
+
 	if ( args.product_meta && args.product_meta !== '' ) {
 		return translate(
 			'At the end of the promotional period your %(productName)s subscription for %(domainName)s will renew at the normal price of %(renewalPrice)s. You can add or update your payment method at any time {{link}}here{{/link}}.',
