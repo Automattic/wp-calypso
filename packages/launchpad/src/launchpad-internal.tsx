@@ -8,7 +8,6 @@ import type { SiteDetails, UseLaunchpadOptions } from '@automattic/data-stores';
 
 export interface LaunchpadInternalProps {
 	site?: SiteDetails | null;
-	flow?: string;
 	siteSlug: string | null;
 	checklistSlug: string | null;
 	makeLastTaskPrimaryAction?: boolean;
@@ -24,7 +23,6 @@ export interface LaunchpadInternalProps {
  * Please use the main Launchpad component whenever possible.
  */
 const LaunchpadInternal = ( {
-	flow,
 	site,
 	siteSlug,
 	checklistSlug,
@@ -57,7 +55,6 @@ const LaunchpadInternal = ( {
 		tasks,
 		checklistSlug,
 		siteIntent: site?.options?.site_intent,
-		flow,
 		context: launchpadContext,
 	} );
 

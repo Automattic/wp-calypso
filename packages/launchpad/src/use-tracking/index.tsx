@@ -8,11 +8,10 @@ interface LogParams {
 	checklistSlug: string | null;
 	context: string;
 	siteIntent: SiteDetailsOptions[ 'site_intent' ];
-	flow?: string;
 }
 
 export const useTracking = ( params: LogParams ) => {
-	const { tasks, checklistSlug, context, siteIntent, flow } = params;
+	const { tasks, checklistSlug, context, siteIntent } = params;
 	const completedSteps = useMemo( () => tasks.filter( ( task ) => task.completed ), [ tasks ] );
 	const taskNames = useMemo( () => tasks.map( ( task ) => task.id ).join( ',' ), [ tasks ] );
 	const numberOfSteps = tasks.length;
@@ -32,7 +31,6 @@ export const useTracking = ( params: LogParams ) => {
 			checklist_slug: checklistSlug,
 			context: context,
 			site_intent: siteIntent,
-			flow,
 		} );
 
 		tasks.forEach( ( task: Task ) => {
@@ -42,7 +40,6 @@ export const useTracking = ( params: LogParams ) => {
 				is_completed: task.completed,
 				context: context,
 				order: task.order,
-				flow,
 				site_intent: siteIntent,
 			} );
 		} );
@@ -61,7 +58,6 @@ export const useTracking = ( params: LogParams ) => {
 			site_intent: siteIntent,
 			task_id: task.id,
 			order: task.order,
-			flow,
 		} );
 	};
 
