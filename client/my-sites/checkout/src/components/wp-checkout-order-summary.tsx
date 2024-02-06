@@ -2,6 +2,7 @@ import {
 	getPlan,
 	getYearlyPlanByMonthly,
 	isChargeback,
+	isCredits,
 	isDomainProduct,
 	isDomainTransfer,
 	isGoogleWorkspace,
@@ -118,7 +119,7 @@ export function CheckoutSummaryFeaturedList( {
 	const translate = useTranslate();
 
 	// Return early if the cart is only Chargebacks fees
-	if ( responseCart.products.every( isChargeback ) ) {
+	if ( responseCart.products.every( isChargeback || isCredits ) ) {
 		return null;
 	}
 

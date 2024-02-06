@@ -1,4 +1,4 @@
-import { isChargeback } from '@automattic/calypso-products';
+import { isChargeback, isCredits } from '@automattic/calypso-products';
 import styled from '@emotion/styled';
 import { Icon, reusableBlock } from '@wordpress/icons';
 import { CheckoutSummaryRefundWindows } from './wp-checkout-order-summary';
@@ -35,7 +35,7 @@ const StyledIcon = styled( Icon )`
 
 export function CheckoutMoneyBackGuarantee( { cart } ) {
 	// Return early if the cart is only Chargebacks fees
-	if ( cart.products.every( isChargeback ) ) {
+	if ( cart.products.every( isChargeback || isCredits ) ) {
 		return null;
 	}
 
