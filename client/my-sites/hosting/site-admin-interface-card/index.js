@@ -1,5 +1,6 @@
 /* eslint-disable wpcalypso/jsx-gridicon-size */
 import { Card, FormLabel } from '@automattic/components';
+import { useHasEnTranslation } from '@automattic/i18n-utils';
 import styled from '@emotion/styled';
 import { useTranslate, localize } from 'i18n-calypso';
 import { useState, useEffect } from 'react';
@@ -34,6 +35,7 @@ const FormRadioStyled = styled( FormRadio )( {
 
 const SiteAdminInterfaceCard = ( { siteId } ) => {
 	const translate = useTranslate();
+	const hasEnTranslation = useHasEnTranslation();
 	const dispatch = useDispatch();
 	const removeAllNotices = () => {
 		dispatch( removeNotice( successNoticeId ) );
@@ -123,7 +125,9 @@ const SiteAdminInterfaceCard = ( { siteId } ) => {
 					/>
 				</FormLabel>
 				<FormSettingExplanation>
-					{ translate( 'Use WP-Admin to manage your site.' ) }
+					{ hasEnTranslation( 'Use WP-Admin to manage your site.' )
+						? translate( 'Use WP-Admin to manage your site.' )
+						: translate( 'The classic WP-Admin WordPress interface.' ) }
 				</FormSettingExplanation>
 			</FormFieldset>
 			<FormFieldset>
@@ -137,7 +141,9 @@ const SiteAdminInterfaceCard = ( { siteId } ) => {
 					/>
 				</FormLabel>
 				<FormSettingExplanation>
-					{ translate( 'Use WordPress.com’s legacy dashboard to manage your site.' ) }
+					{ hasEnTranslation( 'Use WordPress.com’s legacy dashboard to manage your site.' )
+						? translate( 'Use WordPress.com’s legacy dashboard to manage your site.' )
+						: translate( 'The WordPress.com redesign for a better experience.' ) }
 				</FormSettingExplanation>
 			</FormFieldset>
 		</Card>
