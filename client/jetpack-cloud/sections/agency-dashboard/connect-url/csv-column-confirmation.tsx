@@ -45,7 +45,7 @@ export default function CSVColumnConfirmation( {
 					translate( 'Column: %(column)s', { args: { column } } )
 				) : (
 					<>
-						{ translate( 'Choose site column' ) }
+						{ translate( 'Choose URL column' ) }
 						<Icon icon={ chevronDown } />
 					</>
 				) }
