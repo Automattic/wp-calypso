@@ -434,6 +434,9 @@ $mobile-card-max-width: 440px;
 
 	.storage-add-on-dropdown-option {
 		display: inline-block;
+		line-height: 20px;
+		min-height: 30px;
+		padding-top: 5px;
 	}
 
 	.storage-add-on-dropdown-option__title {
