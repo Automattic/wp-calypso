@@ -2,7 +2,7 @@ import { Card } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback, useState } from 'react';
 import QueryJetpackManageAddSiteUrl, {
-	SuccessData,
+	JetpackManageAddSiteData,
 } from 'calypso/components/data/query-jetpack-manage-add-site-url';
 import { useDispatch, useSelector } from 'calypso/state';
 import {
@@ -34,7 +34,7 @@ export default function ConnectUrl() {
 	const [ csvConfirmed, setCSVConfirmed ] = useState( false );
 
 	const handleValidationSuccess = useCallback(
-		( data: SuccessData ) => {
+		( data: JetpackManageAddSiteData ) => {
 			if ( data.exists ) {
 				if ( data.isJetpackConnected ) {
 					dispatch( setSiteValidatingStatusJetpackConnected( currentValidatingSite ) );

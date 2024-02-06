@@ -2,7 +2,7 @@ import { useDispatch, useSelector } from 'calypso/state';
 import { checkUrl } from 'calypso/state/jetpack-connect/actions/check-url';
 import { getConnectingSite } from 'calypso/state/jetpack-connect/selectors';
 
-export type SuccessData = {
+export type JetpackManageAddSiteData = {
 	exists: boolean;
 	isWordPress: boolean;
 	isJetpack: boolean;
@@ -13,7 +13,7 @@ export type SuccessData = {
 
 interface Props {
 	url: string;
-	onSuccess: ( data: SuccessData ) => void;
+	onSuccess: ( data: JetpackManageAddSiteData ) => void;
 	onError?: ( data: object ) => void;
 }
 
@@ -22,7 +22,7 @@ export default function QueryJetpackManageAddSiteUrl( { url, onSuccess }: Props 
 	const connectingSite = useSelector( getConnectingSite );
 
 	if ( connectingSite.isFetched ) {
-		onSuccess( connectingSite.data as SuccessData );
+		onSuccess( connectingSite.data as JetpackManageAddSiteData );
 		return null;
 	}
 
