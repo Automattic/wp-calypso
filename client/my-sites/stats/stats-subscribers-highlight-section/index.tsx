@@ -65,18 +65,6 @@ function useSubscriberHighlights(
 	return highlights;
 }
 
-function SubscriberHighlightsHeader() {
-	const translate = useTranslate();
-	const localizedTitle = translate( 'All-time stats', {
-		comment: 'Heading for Subscribers page highlights section',
-	} );
-
-	// TODO: Add an explanation here if we're running an older version of Odyssey Stats
-	//       without support for subscriber highlights API endpoint support.
-
-	return <h1 className="highlight-cards-heading">{ localizedTitle }</h1>;
-}
-
 type HighlightData = {
 	heading: string;
 	count: number | null;
@@ -123,22 +111,28 @@ function SubscriberHighlightsMobile( { highlights, isLoading }: SubscriberHighli
 	return mobileHighlights;
 }
 
-function SubscriberHighlightsListing( { siteId }: { siteId: number | null } ) {
+export default function SubscribersHighlightSection( { siteId }: { siteId: number | null } ) {
+	const translate = useTranslate();
+	const localizedTitle = translate( 'All-time stats', {
+		comment: 'Heading for Subscribers page highlights section',
+	} );
+
 	const isOdysseyStats = config.isEnabled( 'is_running_in_jetpack_site' );
 
 	// Check if the site has any paid subscription products added.
-	// Intentionally not using `getProductsForSiteId` here because we want to show the loading state.
+	// Intentionally not using getProductsForSiteId here because we want to show the loading state.
 	const products = useSelector( ( state ) => state.memberships?.productList?.items[ siteId ?? 0 ] );
 
 	// Odyssey Stats doesn't support the membership API endpoint yet.
-	// Products with an `undefined` value rather than an empty array means the API call has not been completed yet.
+	// Products with an undefined value rather than an empty array means the API call has not been completed yet.
 	const isPaidSubscriptionProductsLoading = ! isOdysseyStats && ! products;
 	const hasAddedPaidSubscriptionProduct = ! isOdysseyStats && products && products.length > 0;
 
 	const highlights = useSubscriberHighlights( siteId, hasAddedPaidSubscriptionProduct );
 
 	return (
-		<>
+		<div className="highlight-cards subscribers-page has-odyssey-stats-bg-color">
+			<h1 className="highlight-cards-heading">{ localizedTitle }</h1>
 			{ siteId && ! isOdysseyStats && <QueryMembershipProducts siteId={ siteId } /> }
 			<ComponentSwapper
 				breakpoint="<660px"
@@ -155,15 +149,6 @@ function SubscriberHighlightsListing( { siteId }: { siteId: number | null } ) {
 					/>
 				}
 			/>
-		</>
-	);
-}
-
-export default function SubscribersHighlightSection( { siteId }: { siteId: number | null } ) {
-	return (
-		<div className="highlight-cards subscribers-page has-odyssey-stats-bg-color">
-			<SubscriberHighlightsHeader />
-			<SubscriberHighlightsListing siteId={ siteId } />
 		</div>
 	);
 }
