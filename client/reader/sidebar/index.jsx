@@ -11,7 +11,7 @@ import QueryReaderLists from 'calypso/components/data/query-reader-lists';
 import QueryReaderOrganizations from 'calypso/components/data/query-reader-organizations';
 import QueryReaderTeams from 'calypso/components/data/query-reader-teams';
 import { withCurrentRoute } from 'calypso/components/route';
-//import { useGlobalSidebar } from 'calypso/layout/global-sidebar/hooks/use-global-sidebar';
+import { useGlobalSidebar } from 'calypso/layout/global-sidebar/hooks/use-global-sidebar';
 import Sidebar from 'calypso/layout/sidebar';
 import SidebarFooter from 'calypso/layout/sidebar/footer';
 import SidebarItem from 'calypso/layout/sidebar/item';
@@ -39,7 +39,7 @@ import {
 import { isListsOpen, isTagsOpen } from 'calypso/state/reader-ui/sidebar/selectors';
 import { getReaderTeams } from 'calypso/state/teams/selectors';
 import { setNextLayoutFocus } from 'calypso/state/ui/layout-focus/actions';
-//import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import ReaderSidebarHelper from './helper';
 import ReaderSidebarPromo from './promo';
 import ReaderSidebarLists from './reader-sidebar-lists';
@@ -300,7 +300,7 @@ export class ReaderSidebar extends Component {
 			<Sidebar onClick={ this.handleClick }>
 				<SidebarRegion>
 					<ReaderSidebarNudges />
-					{ this.renderSidebar() }
+					{ this.renderSidebarMenu() }
 				</SidebarRegion>
 
 				<ReaderSidebarPromo />
@@ -320,11 +320,10 @@ export class ReaderSidebar extends Component {
 
 export default withCurrentRoute(
 	connect(
-		( state ) => {
-			//}, { currentSection } ) => {
-			//const sectionGroup = currentSection?.group ?? null;
-			//const siteId = getSelectedSiteId( state );
-			const { shouldShowGlobalSidebar } = true; //useGlobalSidebar( siteId, sectionGroup );
+		( state, { currentSection } ) => {
+			const sectionGroup = currentSection?.group ?? null;
+			const siteId = getSelectedSiteId( state );
+			const { shouldShowGlobalSidebar } = useGlobalSidebar( siteId, sectionGroup );
 			return {
 				isListsOpen: isListsOpen( state ),
 				isTagsOpen: isTagsOpen( state ),
