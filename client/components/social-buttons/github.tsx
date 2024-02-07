@@ -21,6 +21,7 @@ type GithubLoginButtonProps = {
 	children?: ReactNode;
 	responseHandler: ( response: any ) => void;
 	redirectUri: string;
+	onClick?: () => void;
 	socialServiceResponse?: string | null;
 };
 
@@ -28,6 +29,7 @@ const GitHubLoginButton = ( {
 	children,
 	responseHandler,
 	redirectUri,
+	onClick,
 	socialServiceResponse,
 }: GithubLoginButtonProps ) => {
 	const translate = useTranslate();
@@ -62,6 +64,10 @@ const GitHubLoginButton = ( {
 		if ( isDisabled ) {
 			e.preventDefault();
 			return;
+		}
+
+		if ( onClick ) {
+			onClick();
 		}
 
 		const clientId = config( 'github_oauth_client_id' );

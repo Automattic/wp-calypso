@@ -135,6 +135,9 @@ const SocialAuthenticationForm = ( {
 								socialServiceResponse={ socialService === 'github' ? socialServiceResponse : null }
 								redirectUri={ getRedirectUri( 'github' ) }
 								responseHandler={ handleGitHubResponse }
+								onClick={ () => {
+									trackLoginAndRememberRedirect( 'github' );
+								} }
 							/>
 						) : null }
 
