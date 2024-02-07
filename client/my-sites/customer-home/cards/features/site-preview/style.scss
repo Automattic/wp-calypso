@@ -32,22 +32,6 @@
 			height: 235px;
 			pointer-events: none;
 			width: 100%;
-			iframe {
-				// The idea is to zoom-out the iframe to get most of the content
-				// into the thumbnail and then we scale it down so it remains the
-				// size of the parent component (357% * 0.28 ~= 100%)
-				min-height: 375%;
-				width: 357%;
-				max-width: 357%;
-				transform: scale(0.28);
-				transform-origin: top left;
-				translate: 0 -10px;
-			}
-
-			.home-site-preview__thumbnail-placeholder {
-				height: 100%;
-				@include placeholder();
-			}
 		}
 
 		.home-site-preview__thumbnail-label {
@@ -74,13 +58,26 @@
 			max-width: calc(100% - 24px);
 
 			.home-site-preview__info-title {
-				color: var(--color-neutral-80);
+				color: var(--color-text);
 				flex: 1 1 auto;
 				font-family: inherit;
 				font-size: $font-body;
 				font-weight: 500;
 				line-height: 24px;
 			}
+		}
+	}
+
+	.home-site-preview__ellipses-button {
+		margin: auto 0;
+
+		.gridicon {
+			cursor: pointer;
+			fill: var(--color-neutral-light);
+		}
+
+		&.is-open .gridicon {
+			transform: rotate(90deg);
 		}
 	}
 }
