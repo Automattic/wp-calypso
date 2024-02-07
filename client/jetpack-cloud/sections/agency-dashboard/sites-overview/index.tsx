@@ -42,6 +42,7 @@ import SiteContentHeader from './site-content-header';
 import SiteNotifications from './site-notifications';
 import SiteSearchFilterContainer from './site-search-filter-container/SiteSearchFilterContainer';
 import SiteTopHeaderButtons from './site-top-header-buttons';
+import SitesDataViews from './sites-dataviews';
 import type { Site } from '../sites-overview/types';
 
 import './style.scss';
@@ -65,6 +66,7 @@ export default function SitesOverview() {
 	const selectedLicensesSiteId = useSelector( getSelectedLicensesSiteId );
 
 	const isStreamlinedPurchasesEnabled = isEnabled( 'jetpack/streamline-license-purchases' );
+	const isSitesDataViewsEnabled = isEnabled( 'jetpack/manage-sites-dataviews' );
 
 	const selectedLicensesCount = isStreamlinedPurchasesEnabled
 		? selectedSiteLicenses.reduce( ( acc, { products } ) => acc + products.length, 0 )
@@ -341,70 +343,76 @@ export default function SitesOverview() {
 							// Render the add site and issue license buttons on mobile as a different component.
 							! isLargeScreen && <SiteTopHeaderButtons />
 						}
-						<SectionNav
-							applyUpdatedStyles
-							selectedText={
-								<span>
-									{ selectedTab.label }
-									<Count count={ selectedTab.count } compact={ true } />
-								</span>
-							}
-							selectedCount={ selectedTab.count }
-							className={ classNames(
-								isMobile && highlightTab && isFavoritesTab && 'sites-overview__highlight-tab'
-							) }
-						>
-							<NavTabs selectedText={ selectedTab.label } selectedCount={ selectedTab.count }>
-								{ navItems.map( ( props ) => (
-									<NavItem { ...props } compactCount={ true } />
-								) ) }
-							</NavTabs>
-						</SectionNav>
+						{ ! isSitesDataViewsEnabled && (
+							<SectionNav
+								applyUpdatedStyles
+								selectedText={
+									<span>
+										{ selectedTab.label }
+										<Count count={ selectedTab.count } compact={ true } />
+									</span>
+								}
+								selectedCount={ selectedTab.count }
+								className={ classNames(
+									isMobile && highlightTab && isFavoritesTab && 'sites-overview__highlight-tab'
+								) }
+							>
+								<NavTabs selectedText={ selectedTab.label } selectedCount={ selectedTab.count }>
+									{ navItems.map( ( props ) => (
+										<NavItem { ...props } compactCount={ true } />
+									) ) }
+								</NavTabs>
+							</SectionNav>
+						) }
 					</div>
 				</div>
 				<div className="sites-overview__content">
-					<div ref={ containerRef } className="sites-overview__content-wrapper">
-						{ ( ! showEmptyState || hasAppliedFilter ) && (
-							<SiteSearchFilterContainer
-								searchQuery={ search }
-								currentPage={ currentPage }
-								filter={ filter }
-								isLoading={ isLoading }
-							/>
-						) }
+					{ isSitesDataViewsEnabled ? (
+						<SitesDataViews data={ data } isLoading={ isLoading } />
+					) : (
+						<div ref={ containerRef } className="sites-overview__content-wrapper">
+							{ ( ! showEmptyState || hasAppliedFilter ) && (
+								<SiteSearchFilterContainer
+									searchQuery={ search }
+									currentPage={ currentPage }
+									filter={ filter }
+									isLoading={ isLoading }
+								/>
+							) }
 
-						{ showEmptyState ? (
-							<div className="sites-overview__no-sites">{ emptyState }</div>
-						) : (
-							<DashboardDataContext.Provider
-								value={ {
-									verifiedContacts: {
-										emails: verifiedContacts?.emails ?? [],
-										phoneNumbers: verifiedContacts?.phoneNumbers ?? [],
-										refetchIfFailed: () => {
-											if ( fetchContactFailed ) {
-												refetchContacts();
-											}
-											return;
+							{ showEmptyState ? (
+								<div className="sites-overview__no-sites">{ emptyState }</div>
+							) : (
+								<DashboardDataContext.Provider
+									value={ {
+										verifiedContacts: {
+											emails: verifiedContacts?.emails ?? [],
+											phoneNumbers: verifiedContacts?.phoneNumbers ?? [],
+											refetchIfFailed: () => {
+												if ( fetchContactFailed ) {
+													refetchContacts();
+												}
+												return;
+											},
 										},
-									},
-									products: products ?? [],
-									isLargeScreen: showLargeScreen,
-								} }
-							>
-								<>
-									<QueryProductsList type="jetpack" currency="USD" />
-									<SiteContent
-										data={ data }
-										isLoading={ isLoading }
-										currentPage={ currentPage }
-										isFavoritesTab={ isFavoritesTab }
-										ref={ siteTableRef }
-									/>
-								</>
-							</DashboardDataContext.Provider>
-						) }
-					</div>
+										products: products ?? [],
+										isLargeScreen: showLargeScreen,
+									} }
+								>
+									<>
+										<QueryProductsList type="jetpack" currency="USD" />
+										<SiteContent
+											data={ data }
+											isLoading={ isLoading }
+											currentPage={ currentPage }
+											isFavoritesTab={ isFavoritesTab }
+											ref={ siteTableRef }
+										/>
+									</>
+								</DashboardDataContext.Provider>
+							) }
+						</div>
+					) }
 				</div>
 			</div>
 			{ ! isLargeScreen && selectedLicensesCount > 0 && (
