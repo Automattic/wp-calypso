@@ -879,16 +879,6 @@ export function selectSiteIfLoggedIn( context, next ) {
 	selectSite( context );
 }
 
-export function selectSiteIfLoggedInWithSites( context, next ) {
-	const state = context.store.getState();
-	if ( isUserLoggedIn( state ) && getCurrentUserSiteCount( state ) && ! context.params.site_id ) {
-		selectSite( context );
-		return;
-	}
-
-	siteSelection( context, next );
-}
-
 /**
  * If the section has an "all sites" view to delay the site selection,
  * only handle the site selection with 0 or 1 sites.
