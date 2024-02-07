@@ -20,12 +20,16 @@ import './style.scss';
 type GithubLoginButtonProps = {
 	children?: ReactNode;
 	responseHandler: ( response: any ) => void;
+	redirectUri: string;
+	onClick?: () => void;
 	socialServiceResponse?: string | null;
 };
 
 const GitHubLoginButton = ( {
 	children,
 	responseHandler,
+	redirectUri,
+	onClick,
 	socialServiceResponse,
 }: GithubLoginButtonProps ) => {
 	const translate = useTranslate();
@@ -52,11 +56,19 @@ const GitHubLoginButton = ( {
 		}
 	}, [ socialServiceResponse ] );
 
+	const isDisabled = isFormDisabled || disabledState;
+
 	const handleClick = ( e: MouseEvent< HTMLButtonElement > ) => {
 		errorRef.current = e.currentTarget;
-	};
+		e.preventDefault();
 
-	const isDisabled = Boolean( disabledState || isFormDisabled || errorState );
+		if ( onClick ) {
+			onClick();
+		}
+
+		const clientId = config( 'github_oauth_client_id' );
+		window.location.href = `https://github.com/login/oauth/authorize?client_id=${ clientId }&redirect_uri=${ redirectUri }`;
+	};
 
 	const eventHandlers = {
 		onClick: handleClick,
