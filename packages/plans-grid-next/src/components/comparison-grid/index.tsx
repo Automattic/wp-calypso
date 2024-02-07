@@ -27,6 +27,7 @@ import { plansGridMediumLarge } from '../../css-mixins';
 import { usePlansGridContext } from '../../grid-context';
 import useHighlightAdjacencyMatrix from '../../hooks/use-highlight-adjacency-matrix';
 import { useManageTooltipToggle } from '../../hooks/use-manage-tooltip-toggle';
+import useUpgradeClickHandler from '../../hooks/use-upgrade-click-handler';
 import filterUnusedFeaturesObject from '../../lib/filter-unused-features-object';
 import getPlanFeaturesObject from '../../lib/get-plan-features-object';
 import { isStorageUpgradeableForPlan } from '../../lib/is-storage-upgradeable-for-plan';
@@ -1058,6 +1059,11 @@ const ComparisonGrid = ( {
 	// 100px is the padding of the footer row
 	const [ bottomHeaderRef, isBottomHeaderInView ] = useInView( { rootMargin: '-100px' } );
 
+	const handleUpgradeClick = useUpgradeClickHandler( {
+		gridPlans,
+		onUpgradeClick,
+	} );
+
 	return (
 		<div className="plan-comparison-grid">
 			<Grid isInSignup={ isInSignup }>
@@ -1075,7 +1081,7 @@ const ComparisonGrid = ( {
 							isLaunchPage={ isLaunchPage }
 							onPlanChange={ onPlanChange }
 							currentSitePlanSlug={ currentSitePlanSlug }
-							onUpgradeClick={ onUpgradeClick }
+							onUpgradeClick={ handleUpgradeClick }
 							planActionOverrides={ planActionOverrides }
 							selectedPlan={ selectedPlan }
 							showRefundPeriod={ showRefundPeriod }
@@ -1108,7 +1114,7 @@ const ComparisonGrid = ( {
 					isFooter={ true }
 					onPlanChange={ onPlanChange }
 					currentSitePlanSlug={ currentSitePlanSlug }
-					onUpgradeClick={ onUpgradeClick }
+					onUpgradeClick={ handleUpgradeClick }
 					planActionOverrides={ planActionOverrides }
 					selectedPlan={ selectedPlan }
 					showRefundPeriod={ showRefundPeriod }

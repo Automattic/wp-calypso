@@ -11,7 +11,6 @@ import usePlanFeaturesForGridPlans from './hooks/data-store/use-plan-features-fo
 import useRestructuredPlanFeaturesForComparisonGrid from './hooks/data-store/use-restructured-plan-features-for-comparison-grid';
 import useGridSize from './hooks/use-grid-size';
 import { useManageTooltipToggle } from './hooks/use-manage-tooltip-toggle';
-import useUpgradeClickHandler from './hooks/use-upgrade-click-handler';
 import type { ComparisonGridExternalProps, FeaturesGridExternalProps } from './types';
 import './style.scss';
 
@@ -22,7 +21,6 @@ const WrappedComparisonGrid = ( {
 	useCheckPlanAvailabilityForPurchase,
 	recordTracksEvent,
 	allFeaturesList,
-	onUpgradeClick,
 	intervalType,
 	isInSignup,
 	isLaunchPage,
@@ -35,11 +33,6 @@ const WrappedComparisonGrid = ( {
 	coupon,
 	...otherProps
 }: ComparisonGridExternalProps ) => {
-	const handleUpgradeClick = useUpgradeClickHandler( {
-		gridPlans,
-		onUpgradeClick,
-	} );
-
 	const gridContainerRef = useRef< HTMLDivElement | null >( null );
 	const gridSize = useGridSize( {
 		containerRef: gridContainerRef,
@@ -77,7 +70,6 @@ const WrappedComparisonGrid = ( {
 					isInSignup={ isInSignup }
 					isLaunchPage={ isLaunchPage }
 					currentSitePlanSlug={ currentSitePlanSlug }
-					onUpgradeClick={ handleUpgradeClick }
 					selectedSiteId={ selectedSiteId }
 					selectedPlan={ selectedPlan }
 					selectedFeature={ selectedFeature }
@@ -100,14 +92,9 @@ const WrappedFeaturesGrid = ( props: FeaturesGridExternalProps ) => {
 		useCheckPlanAvailabilityForPurchase,
 		recordTracksEvent,
 		allFeaturesList,
-		onUpgradeClick,
 		coupon,
 		isInAdmin,
 	} = props;
-	const handleUpgradeClick = useUpgradeClickHandler( {
-		gridPlans,
-		onUpgradeClick,
-	} );
 
 	const gridContainerRef = useRef< HTMLDivElement | null >( null );
 	const gridSize = useGridSize( {
@@ -137,11 +124,7 @@ const WrappedFeaturesGrid = ( props: FeaturesGridExternalProps ) => {
 				recordTracksEvent={ recordTracksEvent }
 				allFeaturesList={ allFeaturesList }
 			>
-				<FeaturesGrid
-					{ ...props }
-					onUpgradeClick={ handleUpgradeClick }
-					gridSize={ gridSize ?? undefined }
-				/>
+				<FeaturesGrid { ...props } gridSize={ gridSize ?? undefined } />
 			</PlansGridContextProvider>
 		</div>
 	);
