@@ -703,39 +703,19 @@ $mobile-card-max-width: 440px;
 	}
 }
 
-/**
- * TODO clk migrate out of plans-grid-next
- */
-body.is-section-stepper,
-body.is-section-signup.is-white-signup {
-	.step-wrapper__header {
-		margin: 24px 20px 38px;
-	}
-}
-
-/**
- * TODO clk migrate out of plans-grid-next
- */
-.formatted-header {
-	margin-bottom: 0;
-}
-
-.plans-features-main__comparison-grid-container {
-	.plan-comparison-grid {
-		.plan-comparison-grid__feature-group-row.is-storage-feature {
-			align-items: flex-start;
-		}
-	}
-}
-
 .plan-comparison-grid {
+	.plan-comparison-grid__feature-group-row.is-storage-feature {
+		align-items: flex-start;
+	}
+
 	.plan-features-2023-gridrison__actions {
 		margin-bottom: auto;
-
-		&-buttons {
-			min-height: 40px;
-		}
 	}
+
+	.plan-features-2023-gridrison__actions-buttons {
+		min-height: 40px;
+	}
+	
 	.plan-comparison-grid__header-cell {
 		display: flex;
 		flex-direction: column;
@@ -1039,4 +1019,21 @@ body.is-section-signup.is-white-signup {
 	max-width: 768px;
 	margin-left: auto !important;
 	margin-right: auto !important;
+}
+
+/**
+ * TODO clk migrate out of plans-grid-next
+ */
+body.is-section-stepper,
+body.is-section-signup.is-white-signup {
+	.step-wrapper__header {
+		margin: 24px 20px 38px;
+	}
+}
+ 
+/**
+ * TODO clk migrate out of plans-grid-next
+ */
+.formatted-header {
+	margin-bottom: 0;
 }

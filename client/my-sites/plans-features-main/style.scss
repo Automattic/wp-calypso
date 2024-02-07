@@ -1,6 +1,7 @@
 @import "@wordpress/base-styles/breakpoints";
 @import "@wordpress/base-styles/mixins";
 @import "@wordpress/base-styles/variables";
+@import "@automattic/plans-grid-next/src/media-queries";
 @import "./media-queries";
 
 $plan-features-header-banner-height: 20px;
