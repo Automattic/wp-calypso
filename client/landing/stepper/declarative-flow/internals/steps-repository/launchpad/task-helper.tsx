@@ -15,9 +15,6 @@ export const getSiteIdOrSlug = (
 	site: SiteDetails | null,
 	siteSlug?: string | null
 ) => {
-	// if ( !! siteSlug && !! site?.ID ) {
-	// 	return null;
-	// }
 	return isBlogOnboardingFlow( flow ) || isSiteAssemblerFlow( flow )
 		? { siteId: site?.ID }
 		: { siteSlug };
