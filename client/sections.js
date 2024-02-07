@@ -591,10 +591,11 @@ const sections = [
 	},
 	{
 		name: 'jetpack-cloud-manage-pricing',
-		paths: [ '/manage/pricing' ],
+		paths: [ '/manage/pricing', '/[^\\/]+/manage/pricing' ],
 		module: 'calypso/jetpack-cloud/sections/manage/pricing',
 		group: 'jetpack-cloud',
 		enableLoggedOut: true,
+		isomorphic: true,
 	},
 	{
 		name: 'jetpack-cloud-features-comparison',
