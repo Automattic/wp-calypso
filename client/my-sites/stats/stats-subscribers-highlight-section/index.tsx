@@ -137,27 +137,23 @@ function SubscriberHighlightsListing( { siteId }: { siteId: number | null } ) {
 
 	const highlights = useSubscriberHighlights( siteId, hasAddedPaidSubscriptionProduct );
 
-	const standardHighlights = (
-		<SubscriberHighlightsStandard
-			highlights={ highlights }
-			isLoading={ isPaidSubscriptionProductsLoading }
-		/>
-	);
-
-	const mobileHighlights = (
-		<SubscriberHighlightsMobile
-			highlights={ highlights }
-			isLoading={ isPaidSubscriptionProductsLoading }
-		/>
-	);
-
 	return (
 		<>
 			{ siteId && ! isOdysseyStats && <QueryMembershipProducts siteId={ siteId } /> }
 			<ComponentSwapper
 				breakpoint="<660px"
-				breakpointActiveComponent={ mobileHighlights }
-				breakpointInactiveComponent={ standardHighlights }
+				breakpointActiveComponent={
+					<SubscriberHighlightsMobile
+						highlights={ highlights }
+						isLoading={ isPaidSubscriptionProductsLoading }
+					/>
+				}
+				breakpointInactiveComponent={
+					<SubscriberHighlightsStandard
+						highlights={ highlights }
+						isLoading={ isPaidSubscriptionProductsLoading }
+					/>
+				}
 			/>
 		</>
 	);
