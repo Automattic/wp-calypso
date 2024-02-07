@@ -20,12 +20,14 @@ import './style.scss';
 type GithubLoginButtonProps = {
 	children?: ReactNode;
 	responseHandler: ( response: any ) => void;
+	redirectUri: string;
 	socialServiceResponse?: string | null;
 };
 
 const GitHubLoginButton = ( {
 	children,
 	responseHandler,
+	redirectUri,
 	socialServiceResponse,
 }: GithubLoginButtonProps ) => {
 	const translate = useTranslate();
@@ -63,7 +65,6 @@ const GitHubLoginButton = ( {
 		}
 
 		const clientId = config( 'github_oauth_client_id' );
-		const redirectUri = encodeURIComponent( 'https://wordpress.com/start/user' );
 		window.location.href = `https://github.com/login/oauth/authorize?client_id=${ clientId }&redirect_uri=${ redirectUri }`;
 	};
 
