@@ -1,8 +1,9 @@
 import Gravatar from 'calypso/components/gravatar';
+import SidebarFooter from 'calypso/layout/sidebar/footer';
 
 export const GlobalSidebarFooter = ( { translate, user } ) => {
 	return (
-		<div className="sidebar__footer">
+		<SidebarFooter>
 			<span className="gap"></span>
 			<a href="/read" className="link-reader">
 				<span className="reader"></span>
@@ -15,7 +16,7 @@ export const GlobalSidebarFooter = ( { translate, user } ) => {
 					size={ 28 }
 				/>
 			</a>
-		</div>
+		</SidebarFooter>
 	);
 };
 
