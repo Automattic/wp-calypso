@@ -77,6 +77,52 @@ function SubscriberHighlightsHeader() {
 	return <h1 className="highlight-cards-heading">{ localizedTitle }</h1>;
 }
 
+type HighlightData = {
+	heading: string;
+	count: number | null;
+	note?: string | undefined;
+};
+
+type SubscriberHighlightsRenderProps = {
+	highlights: HighlightData[];
+	isLoading: boolean;
+};
+
+function SubscriberHighlightsStandard( {
+	highlights,
+	isLoading,
+}: SubscriberHighlightsRenderProps ) {
+	return (
+		<div className="highlight-cards-list">
+			{ highlights.map( ( highlight ) => (
+				<CountComparisonCard
+					key={ highlight.heading }
+					heading={ isLoading ? '-' : highlight.heading }
+					count={ isLoading ? null : highlight.count }
+					showValueTooltip
+					note={ highlight.note }
+				/>
+			) ) }
+		</div>
+	);
+}
+
+function SubscriberHighlightsMobile( { highlights, isLoading }: SubscriberHighlightsRenderProps ) {
+	const mobileHighlights = (
+		<div className="highlight-cards-list-mobile">
+			{ highlights.map( ( highlight ) => (
+				<div className="highlight-cards-list-mobile__item" key={ highlight.heading }>
+					<span className="highlight-cards-list-mobile__item-heading">{ highlight.heading }</span>
+					<span className="highlight-cards-list-mobile__item-count">
+						{ isLoading ? '-' : <ShortenedNumber value={ highlight.count } /> }
+					</span>
+				</div>
+			) ) }
+		</div>
+	);
+	return mobileHighlights;
+}
+
 function SubscriberHighlightsListing( { siteId }: { siteId: number | null } ) {
 	const isOdysseyStats = config.isEnabled( 'is_running_in_jetpack_site' );
 
@@ -92,34 +138,17 @@ function SubscriberHighlightsListing( { siteId }: { siteId: number | null } ) {
 	const highlights = useSubscriberHighlights( siteId, hasAddedPaidSubscriptionProduct );
 
 	const standardHighlights = (
-		<div className="highlight-cards-list">
-			{ highlights.map( ( highlight ) => (
-				<CountComparisonCard
-					key={ highlight.heading }
-					heading={ isPaidSubscriptionProductsLoading ? '-' : highlight.heading }
-					count={ isPaidSubscriptionProductsLoading ? null : highlight.count }
-					showValueTooltip
-					note={ highlight.note }
-				/>
-			) ) }
-		</div>
+		<SubscriberHighlightsStandard
+			highlights={ highlights }
+			isLoading={ isPaidSubscriptionProductsLoading }
+		/>
 	);
 
 	const mobileHighlights = (
-		<div className="highlight-cards-list-mobile">
-			{ highlights.map( ( highlight ) => (
-				<div className="highlight-cards-list-mobile__item">
-					<span className="highlight-cards-list-mobile__item-heading">{ highlight.heading }</span>
-					<span className="highlight-cards-list-mobile__item-count">
-						{ isPaidSubscriptionProductsLoading ? (
-							'-'
-						) : (
-							<ShortenedNumber value={ highlight.count } />
-						) }
-					</span>
-				</div>
-			) ) }
-		</div>
+		<SubscriberHighlightsMobile
+			highlights={ highlights }
+			isLoading={ isPaidSubscriptionProductsLoading }
+		/>
 	);
 
 	return (
