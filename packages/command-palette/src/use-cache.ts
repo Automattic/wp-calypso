@@ -1,4 +1,4 @@
-import { useMutation, UseMutationOptions, useQueryClient } from '@tanstack/react-query';
+/*import { useMutation, UseMutationOptions, useQueryClient } from '@tanstack/react-query';
 import { useI18n } from '@wordpress/react-i18n';
 import { useCallback } from 'react';
 import request from 'wpcom-proxy-request';
@@ -116,4 +116,4 @@ export const useSetEdgeCacheMutation = (
 	);
 
 	return { setEdgeCache, ...rest };
-};
+};*/

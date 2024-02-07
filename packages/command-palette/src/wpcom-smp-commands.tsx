@@ -1,11 +1,11 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
-import { Gridicon, JetpackLogo } from '@automattic/components';
+/*import { Gridicon, JetpackLogo } from '@automattic/components';
 import { SiteCapabilities } from '@automattic/data-stores';
-import { HELP_CENTER_STORE } from '@automattic/help-center/src/stores';
+import { HELP_CENTER_STORE } from 'packages/help-center/src/stores';
 import styled from '@emotion/styled';
-import { useDispatch as useDataStoreDispatch } from '@wordpress/data';
+import { useDispatch as useDataStoreDispatch } from '@wordpress/data';*/
 import {
-	alignJustify as acitvityLogIcon,
+	/*alignJustify as acitvityLogIcon,
 	backup as backupIcon,
 	brush as brushIcon,
 	chartBar as statsIcon,
@@ -26,45 +26,50 @@ import {
 	plus as plusIcon,
 	postComments as postCommentsIcon,
 	settings as settingsIcon,
-	tool as toolIcon,
+	tool as toolIcon,*/
 	wordpress as wordpressIcon,
-	reusableBlock as cacheIcon,
+	/*reusableBlock as cacheIcon,
 	help as helpIcon,
-	comment as feedbackIcon,
+	comment as feedbackIcon,*/
 } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
 import { useCallback } from 'react';
-import request from 'wpcom-proxy-request';
+/*import request from 'wpcom-proxy-request';
 import { useAddNewSiteUrl } from 'calypso/lib/paths/use-add-new-site-url';
-import { useOpenPhpMyAdmin } from 'calypso/my-sites/hosting/phpmyadmin-card';
+import { useOpenPhpMyAdmin } from 'calypso/my-sites/hosting/phpmyadmin-card/index.js';
 import { useDispatch } from 'calypso/state';
-import { clearWordPressCache } from 'calypso/state/hosting/actions';
-import { NoticeStatus } from 'calypso/state/notices/types';
+import { clearWordPressCache } from 'client/state/hosting/actions.js';
+import { NoticeStatus } from 'client/state/notices/types';
 import { SiteExcerptData } from './site-excerpt-types';
 import {
 	EDGE_CACHE_ENABLE_DISABLE_NOTICE_ID,
 	getEdgeCacheStatus,
 	useSetEdgeCacheMutation,
 	purgeEdgeCache,
-} from './use-cache';
+} from './use-cache';*/
 import { Command, CommandCallBackParams } from './use-command-palette';
-import { generateSiteInterfaceLink, isCustomDomain, isNotAtomicJetpack, isP2Site } from './utils';
+//import { generateSiteInterfaceLink, isCustomDomain, isNotAtomicJetpack, isP2Site } from './utils';
 
-const WooCommerceLogo = styled.svg`
+/*const WooCommerceLogo = styled.svg`
 	margin: 0 auto 20px;
 	path {
 		fill: var( --studio-black );
 	}
-`;
+`;*/
+
+interface useCommandNavigationOptions {
+	navigate: ( path: string, openInNewTab: boolean ) => void;
+}
 
 interface useCommandsArrayWpcomOptions {
 	setSelectedCommandName: ( name: string ) => void;
+	navigate: ( path: string, openInNewTab: boolean ) => void;
 }
 
-function useCommandNavigation( { navigate } ) {
+function useCommandNavigation( { navigate }: useCommandNavigationOptions ) {
 	// TODO: Find an alternative way to use the current route.
 	//const currentRoute = useSelector( getCurrentRoutePattern );
-	const currentRoute = null;
+	const currentRoute = window.location.pathname;
 	// Callback to navigate to a command's destination
 	// used on command callback or siteFunctions onClick
 	const commandNavigation = useCallback(
@@ -85,9 +90,9 @@ function useCommandNavigation( { navigate } ) {
 
 export const useCommandsArrayWpcom = ( {
 	setSelectedCommandName,
-	createNotice,
-	removeNotice,
 	navigate,
+	/*createNotice,
+	removeNotice,*/
 }: useCommandsArrayWpcomOptions ) => {
 	const { __, _x } = useI18n();
 	const setStateCallback =
@@ -99,7 +104,7 @@ export const useCommandsArrayWpcom = ( {
 		};
 
 	const commandNavigation = useCommandNavigation( { navigate } );
-	const dispatch = useDispatch();
+	/*const dispatch = useDispatch();
 
 	const { setEdgeCache } = useSetEdgeCacheMutation( {}, createNotice );
 
@@ -278,7 +283,7 @@ export const useCommandsArrayWpcom = ( {
 		mode: 'EMAIL',
 		'disable-gpt': 'true',
 		'source-command-palette': 'true',
-	} ).toString() }`;
+	} ).toString() }`;*/
 
 	const commands: Command[] = [
 		{
@@ -292,7 +297,7 @@ export const useCommandsArrayWpcom = ( {
 			callback: commandNavigation( `/sites` ),
 			icon: wordpressIcon,
 		},
-		{
+		/*{
 			name: 'getHelp',
 			label: __( 'Get help' ),
 			searchLabel: [
@@ -1333,7 +1338,7 @@ export const useCommandsArrayWpcom = ( {
 				setShowHelpCenter( true );
 			},
 			icon: feedbackIcon,
-		},
+		},*/
 	];
 
 	return commands;

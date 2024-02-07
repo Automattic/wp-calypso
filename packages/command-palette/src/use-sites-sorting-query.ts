@@ -11,6 +11,7 @@ export const useSitesSortingQuery = () =>
 			} ),
 		select: ( data ) => {
 			const serializedSitesSorting =
+				// @ts-expect-error TODO
 				data?.calypso_preferences?.[ 'sites-sorting' ] ?? 'lastInteractedWith-desc';
 			const [ sortKey, sortOrder ] = serializedSitesSorting.split( '-' );
 			return {

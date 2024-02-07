@@ -18,7 +18,9 @@ export const useCapabilitiesQuery = () =>
 		},
 		select: ( data ) => {
 			const capabilities = {};
+			// @ts-expect-error TODO
 			data.sites.forEach( ( site ) => {
+				// @ts-expect-error TODO
 				capabilities[ site.ID ] = site.capabilities;
 			} );
 			return capabilities;

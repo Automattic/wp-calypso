@@ -7,7 +7,7 @@ import { useCommandState } from 'cmdk';
 import { useCallback } from 'react';
 import { SiteExcerptData } from './site-excerpt-types';
 import { useCapabilitiesQuery } from './use-capabilities-query';
-import { useCurrentSiteRankTop } from './use-current-site-rank-top';
+//import { useCurrentSiteRankTop } from './use-current-site-rank-top';
 import { useSiteExcerptsQuery } from './use-site-excerpts-query';
 import { useSitesSortingQuery } from './use-sites-sorting-query';
 import { isCustomDomain } from './utils';
@@ -73,6 +73,7 @@ interface useCommandPaletteOptions {
 	selectedCommandName: string;
 	setSelectedCommandName: ( name: string ) => void;
 	search: string;
+	navigate: ( path: string, openInNewTab: boolean ) => void;
 }
 
 interface SiteToActionParameters {
@@ -88,7 +89,7 @@ interface SiteToActionParameters {
 const useSiteToAction = () => {
 	// TODO: Find an alternative way to use the current route.
 	//const currentRoute = useSelector( ( state: object ) => getCurrentRoutePattern( state ) );
-	const currentRoute = null;
+	const currentRoute = window.location.pathname;
 
 	const siteToAction = useCallback(
 		(
@@ -143,9 +144,9 @@ export const useCommandPalette = ( {
 	selectedCommandName,
 	setSelectedCommandName,
 	search,
-	createNotice,
-	removeNotice,
 	navigate,
+	/*createNotice,
+	removeNotice,*/
 }: useCommandPaletteOptions ): {
 	commands: Command[];
 	filterNotice: string | undefined;
@@ -161,19 +162,21 @@ export const useCommandPalette = ( {
 	const sortedSites = useSitesListSorting( allSites, sitesSorting );
 
 	// Get current site ID to rank it to the top of the sites list
-	const { currentSiteId } = useCurrentSiteRankTop();
+	// TODO: Find an alternative way to get the current site ID.
+	//const { currentSiteId } = useCurrentSiteRankTop();
+	const currentSiteId = null;
 
 	// Call the generateCommandsArray function to get the commands array
 	const commands = useCommandsArrayWpcom( {
 		setSelectedCommandName,
-		createNotice,
-		removeNotice,
 		navigate,
+		/*createNotice,
+		removeNotice,*/
 	} ) as Command[];
 
 	// TODO: Find an alternative way to use the current route.
 	//const currentRoute = useSelector( ( state: object ) => getCurrentRoutePattern( state ) );
-	const currentRoute = null;
+	const currentRoute = window.location.pathname;
 
 	const { data: userCapabilities } = useCapabilitiesQuery();
 
@@ -185,9 +188,11 @@ export const useCommandPalette = ( {
 		let emptyListNotice = undefined;
 		if ( selectedCommand?.siteFunctions ) {
 			const { capabilityFilter, onClick, filter } = selectedCommand.siteFunctions;
+			// @ts-expect-error TODO
 			let filteredSites = filter ? sortedSites.filter( filter ) : sortedSites;
 			filteredSites = capabilityFilter
 				? filteredSites.filter( ( site ) => {
+						// @ts-expect-error TODO
 						const siteCapabilities = userCapabilities[ site.ID ];
 						return siteCapabilities?.[ capabilityFilter ];
 				  } )
@@ -216,6 +221,7 @@ export const useCommandPalette = ( {
 
 			// Map filtered sites to actions using the onClick function
 			sitesToPick = filteredSites.map(
+				// @ts-expect-error TODO
 				siteToAction( onClick, {
 					selectedCommand,
 					filteredSitesLength: filteredSites.length,

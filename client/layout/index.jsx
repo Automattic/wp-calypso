@@ -340,7 +340,7 @@ class Layout extends Component {
 				) }
 				{ config.isEnabled( 'yolo/command-palette' ) && (
 					<AsyncLoad
-						require="calypso/components/command-palette"
+						require="@automattic/command-palette"
 						placeholder={ null }
 						createNotice={ this.props.createNotice }
 						removeNotice={ this.props.removeNotice }
