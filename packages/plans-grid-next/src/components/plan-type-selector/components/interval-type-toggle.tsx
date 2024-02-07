@@ -33,7 +33,8 @@ export const IntervalTypeToggle: React.FunctionComponent< IntervalTypeProps > = 
 	const maxDiscount = useMaxDiscount(
 		props.plans,
 		useCheckPlanAvailabilityForPurchase,
-		selectedSiteId
+		selectedSiteId,
+		coupon
 	);
 	const pricingMeta = Plans.usePricingMetaForGridPlans( {
 		planSlugs: currentSitePlanSlug ? [ currentSitePlanSlug ] : [],

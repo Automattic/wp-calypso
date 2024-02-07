@@ -11,7 +11,8 @@ import { useState } from '@wordpress/element';
 export default function useMaxDiscount(
 	plans: PlanSlug[],
 	useCheckPlanAvailabilityForPurchase: Plans.UseCheckPlanAvailabilityForPurchase,
-	selectedSiteId?: number | null
+	selectedSiteId?: number | null,
+	coupon?: string
 ): number {
 	const [ maxDiscount, setMaxDiscount ] = useState( 0 );
 	const wpcomMonthlyPlans = ( plans || [] ).filter( isWpComPlan ).filter( isMonthly );
@@ -22,7 +23,7 @@ export default function useMaxDiscount(
 		planSlugs: wpcomMonthlyPlans,
 		withoutPlanUpgradeCredits: true,
 		selectedSiteId,
-		coupon: undefined,
+		coupon,
 		useCheckPlanAvailabilityForPurchase,
 		storageAddOns: null,
 	} );
@@ -30,7 +31,7 @@ export default function useMaxDiscount(
 		planSlugs: yearlyVariantPlanSlugs,
 		withoutPlanUpgradeCredits: true,
 		selectedSiteId,
-		coupon: undefined,
+		coupon,
 		useCheckPlanAvailabilityForPurchase,
 		storageAddOns: null,
 	} );

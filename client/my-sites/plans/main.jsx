@@ -274,6 +274,7 @@ class Plans extends Component {
 				selectedPlan={ this.props.selectedPlan }
 				redirectTo={ this.props.redirectTo }
 				withDiscount={ this.props.withDiscount }
+				coupon={ this.props.withDiscount }
 				discountEndDate={ this.props.discountEndDate }
 				siteId={ selectedSite?.ID }
 				plansWithScroll={ false }
@@ -366,6 +367,7 @@ class Plans extends Component {
 			currentPlanIntervalType,
 			domainFromHomeUpsellFlow,
 			jetpackAppPlans,
+			withDiscount,
 		} = this.props;
 
 		if ( ! selectedSite || this.isInvalidPlanInterval() || ! currentPlan ) {
@@ -416,7 +418,7 @@ class Plans extends Component {
 				<DocumentHead title={ translate( 'Plans', { textOnly: true } ) } />
 				<PageViewTracker path="/plans/:site" title="Plans" />
 				<QueryContactDetailsCache />
-				<QueryPlans />
+				<QueryPlans coupon={ withDiscount } />
 				<TrackComponentView eventName="calypso_plans_view" />
 				{ ( isDomainUpsell || domainFromHomeUpsellFlow ) && (
 					<DomainUpsellDialog domain={ selectedSite.slug } />
