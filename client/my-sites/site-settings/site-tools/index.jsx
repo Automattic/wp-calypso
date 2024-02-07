@@ -56,6 +56,7 @@ class SiteTools extends Component {
 			showClone,
 			showDeleteContent,
 			showDeleteSite,
+			showHeaderCode,
 			showManageConnection,
 			showStartSiteTransfer,
 			siteId,
@@ -63,6 +64,7 @@ class SiteTools extends Component {
 		} = this.props;
 
 		const changeAddressLink = `/domains/manage/${ siteSlug }`;
+		const headerCodeLink = `/settings/header-code/${ siteSlug }`;
 		const startOverLink = `/settings/start-over/${ siteSlug }`;
 		const startSiteTransferLink = `/settings/start-site-transfer/${ siteSlug }`;
 		const deleteSiteLink = `/settings/delete-site/${ siteSlug }`;
@@ -74,6 +76,9 @@ class SiteTools extends Component {
 		const startOverText = translate(
 			"Remove all posts, pages, and media to start fresh while keeping your site's address."
 		);
+
+		const headerCode = translate( 'Header code' );
+		const headerCodeText = translate( 'Insert code within the <head> of your site.' );
 
 		const deleteSite = translate( 'Delete your site permanently' );
 		const deleteSiteText = translate(
@@ -116,6 +121,13 @@ class SiteTools extends Component {
 						} }
 						title={ copyTitle }
 						description={ copyText }
+					/>
+				) }
+				{ showHeaderCode && (
+					<SiteToolsLink
+						href={ headerCodeLink }
+						title={ headerCode }
+						description={ headerCodeText }
 					/>
 				) }
 				{ showClone && (
@@ -220,6 +232,7 @@ export default compose( [
 				showClone: 'active' === rewindState.state && ! isAtomic,
 				showDeleteContent: isAtomic || ( ! isJetpack && ! isVip && ! isP2Hub ),
 				showDeleteSite: ( ! isJetpack || isAtomic ) && ! isVip && sitePurchasesLoaded,
+				showHeaderCode: isJetpack || isAtomic,
 				showManageConnection: isJetpack && ! isAtomic,
 				showStartSiteTransfer,
 				siteId,

@@ -142,6 +142,10 @@ const contextLinks = {
 		link: 'https://wordpress.com/support/export/',
 		post_id: 2087,
 	},
+	'insert-header-code': {
+		link: 'https://wordpress.com/support/adding-code-to-headers/',
+		post_id: 187480,
+	},
 	'introduction-to-woocommerce': {
 		link: 'https://wordpress.com/support/introduction-to-woocommerce/',
 		post_id: 176336,

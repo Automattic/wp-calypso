@@ -1,0 +1,15 @@
+.header-code__editor {
+	font-family: $code;
+	font-size: $font-body-small;
+	min-height: 250px;
+}
+
+.header-code .header-code__warning {
+	display: flex;
+	font-style: normal;
+	margin-bottom: 1.5em;
+
+	.gridicon {
+		margin-right: 4px;
+	}
+}

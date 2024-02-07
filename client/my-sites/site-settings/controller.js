@@ -15,6 +15,7 @@ import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selecto
 import DeleteSite from './delete-site';
 import DisconnectSite from './disconnect-site';
 import ConfirmDisconnection from './disconnect-site/confirm';
+import HeaderCodeSettings from './header-code';
 import ManageConnection from './manage-connection';
 import SiteOwnerTransfer from './site-owner-transfer/site-owner-transfer';
 import StartOver from './start-over';
@@ -57,6 +58,19 @@ export function redirectIfCantDeleteSite( context, next ) {
 export function redirectIfCantStartSiteOwnerTransfer( context, next ) {
 	const state = context.store.getState();
 	if ( ! canCurrentUserStartSiteOwnerTransfer( state, getSelectedSiteId( state ) ) ) {
+		return page.redirect( '/settings/general/' + getSelectedSiteSlug( state ) );
+	}
+	next();
+}
+
+export function redirectIfCantAddHeaderCode( context, next ) {
+	const state = context.store.getState();
+	const siteId = getSelectedSiteId( state );
+
+	if (
+		( ! isSiteAutomatedTransfer( state, siteId ) && ! isJetpackSite( state, siteId ) ) ||
+		! canCurrentUser( state, siteId, 'manage_options' )
+	) {
 		return page.redirect( '/settings/general/' + getSelectedSiteSlug( state ) );
 	}
 	next();
@@ -114,6 +128,11 @@ export function manageConnection( context, next ) {
 
 export function startSiteOwnerTransfer( context, next ) {
 	context.primary = <SiteOwnerTransfer />;
+	next();
+}
+
+export function headerCode( context, next ) {
+	context.primary = <HeaderCodeSettings />;
 	next();
 }
 
