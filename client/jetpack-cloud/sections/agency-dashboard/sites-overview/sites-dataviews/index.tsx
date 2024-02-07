@@ -197,6 +197,9 @@ const SitesDataViews = ( { data, isLoading }: Props ) => {
 		},
 	];*/
 
+	// TODO: remove this hardcoded style. If we set background in the CSS it will be loaded with and without the feature flag:
+	document.body.style.backgroundColor = 'white';
+
 	return (
 		<>
 			<div style={ { marginBottom: '40px', textAlign: 'center' } }>
