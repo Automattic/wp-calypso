@@ -76,7 +76,7 @@ const LaunchSite = () => {
 		querySiteDomainsComponent = '';
 	}
 
-	const blogPublic = parseInt( siteSettings.blog_public, 10 );
+	const blogPublic = parseInt( siteSettings && siteSettings.blog_public, 10 );
 
 	// isPrivateAndUnlaunched means it is an unlaunched coming soon v1 site
 	const isPrivateAndUnlaunched = -1 === blogPublic && isUnlaunchedSite;
