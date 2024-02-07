@@ -16,14 +16,3 @@
 .invite-accept .notice__text {
 	word-wrap: break-word;
 }
-.is-section-accept-invite .invite-accept {
-	margin-top: 50px;
-	@media (min-width: $break-small) {
-		margin-top: 150px;
-	}
-}
-.is-section-accept-invite {
-	.layout__content {
-		padding: 24px;
-	}
-}
