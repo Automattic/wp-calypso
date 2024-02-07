@@ -22,7 +22,6 @@ import { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
 import fiverrLogo from 'calypso/assets/images/customer-home/fiverr-logo.svg';
 import UpsellNudge from 'calypso/blocks/upsell-nudge';
-import QuerySiteDomains from 'calypso/components/data/query-site-domains';
 import QuerySiteSettings from 'calypso/components/data/query-site-settings';
 import FormInputCheckbox from 'calypso/components/forms/form-checkbox';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
@@ -49,7 +48,6 @@ import isUnlaunchedSite from 'calypso/state/selectors/is-unlaunched-site';
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import { getDomainsBySiteId } from 'calypso/state/sites/domains/selectors';
 import { useSiteGlobalStylesStatus } from 'calypso/state/sites/hooks/use-site-global-styles-status';
-import { launchSite } from 'calypso/state/sites/launch/actions';
 import {
 	isSiteOnECommerceTrial as getIsSiteOnECommerceTrial,
 	isSiteOnMigrationTrial as getIsSiteOnMigrationTrial,
@@ -68,7 +66,7 @@ import {
 import { BuiltByUpsell } from './built-by-upsell-banner';
 import Masterbar from './masterbar';
 import SiteIconSetting from './site-icon-setting';
-import TrialUpsellNotice from './trial-upsell-notice';
+import LaunchSite from './site-visibility/launch-site';
 import wrapSettingsForm from './wrap-settings-form';
 
 export class SiteSettingsFormGeneral extends Component {
@@ -584,124 +582,6 @@ export class SiteSettingsFormGeneral extends Component {
 		recordTracksEvent( eventName );
 	};
 
-	getTrialUpsellNotice() {
-		const { translate, siteSlug, isSiteOnECommerceTrial, isSiteOnMigrationTrial, isLaunchable } =
-			this.props;
-		if ( isLaunchable ) {
-			return null;
-		}
-		let noticeText;
-		if ( isSiteOnECommerceTrial ) {
-			noticeText = translate(
-				'Before you can share your store with the world, you need to {{a}}pick a plan{{/a}}.',
-				{
-					components: {
-						a: (
-							<a
-								href={ `/plans/${ siteSlug }` }
-								onClick={ this.recordTracksEventForTrialNoticeClick }
-							/>
-						),
-					},
-				}
-			);
-		} else if ( isSiteOnMigrationTrial ) {
-			noticeText = translate( 'Ready to launch your site? {{a}}Upgrade to a paid plan{{/a}}.', {
-				components: {
-					a: (
-						<a
-							href={ `/plans/${ siteSlug }` }
-							onClick={ this.recordTracksEventForTrialNoticeClick }
-						/>
-					),
-				},
-			} );
-		}
-
-		return noticeText && <TrialUpsellNotice text={ noticeText } />;
-	}
-
-	renderLaunchSite() {
-		const {
-			translate,
-			siteDomains,
-			siteSlug,
-			siteId,
-			isPaidPlan,
-			isComingSoon,
-			fields,
-			hasSitePreviewLink,
-			site,
-			isLaunchable,
-		} = this.props;
-
-		const launchSiteClasses = classNames( 'site-settings__general-settings-launch-site-button', {
-			'site-settings__disable-privacy-settings': ! siteDomains.length,
-		} );
-		const btnText = translate( 'Launch site' );
-		let querySiteDomainsComponent;
-		let btnComponent;
-
-		if ( 0 === siteDomains.length ) {
-			querySiteDomainsComponent = <QuerySiteDomains siteId={ siteId } />;
-			btnComponent = <Button>{ btnText }</Button>;
-		} else if ( isPaidPlan && siteDomains.length > 1 ) {
-			btnComponent = (
-				<Button onClick={ this.props.launchSite } disabled={ ! isLaunchable }>
-					{ btnText }
-				</Button>
-			);
-			querySiteDomainsComponent = '';
-		} else {
-			btnComponent = (
-				<Button
-					href={ `/start/launch-site?siteSlug=${ siteSlug }&source=general-settings&new=${ site.title }&search=yes` }
-				>
-					{ btnText }
-				</Button>
-			);
-			querySiteDomainsComponent = '';
-		}
-
-		const blogPublic = parseInt( fields.blog_public, 10 );
-		// isPrivateAndUnlaunched means it is an unlaunched coming soon v1 site
-		const isPrivateAndUnlaunched = -1 === blogPublic && this.props.isUnlaunchedSite;
-
-		const showPreviewLink = isComingSoon && hasSitePreviewLink;
-
-		const LaunchCard = showPreviewLink ? CompactCard : Card;
-
-		return (
-			<>
-				<SettingsSectionHeader title={ translate( 'Launch site' ) } />
-				<LaunchCard>
-					{ this.getTrialUpsellNotice() }
-					<div className="site-settings__general-settings-launch-site">
-						<div className="site-settings__general-settings-launch-site-text">
-							<p>
-								{ isComingSoon || isPrivateAndUnlaunched
-									? translate(
-											'Your site hasn\'t been launched yet. It is hidden from visitors behind a "Coming Soon" notice until it is launched.'
-									  )
-									: translate(
-											"Your site hasn't been launched yet. It's private; only you can see it until it is launched."
-									  ) }
-							</p>
-						</div>
-						<div className={ launchSiteClasses }>{ btnComponent }</div>
-					</div>
-				</LaunchCard>
-				{ showPreviewLink && (
-					<Card>
-						<SitePreviewLink siteUrl={ site.URL } siteId={ siteId } source="launch-settings" />
-					</Card>
-				) }
-
-				{ querySiteDomainsComponent }
-			</>
-		);
-	}
-
 	privacySettings() {
 		const { isRequestingSettings, translate, handleSubmitForm, isSavingSettings, isP2HubSite } =
 			this.props;
@@ -921,9 +801,11 @@ export class SiteSettingsFormGeneral extends Component {
 
 				{ this.props.isUnlaunchedSite &&
 				! isAtomicAndEditingToolkitDeactivated &&
-				! isWpcomStagingSite
-					? this.renderLaunchSite()
-					: this.privacySettings() }
+				! isWpcomStagingSite ? (
+					<LaunchSite />
+				) : (
+					this.privacySettings()
+				) }
 				{ this.enhancedOwnershipSettings() }
 				<BuiltByUpsell
 					site={ site }
@@ -1015,14 +897,6 @@ export class SiteSettingsFormGeneral extends Component {
 	}
 }
 
-const mapDispatchToProps = ( dispatch, ownProps ) => {
-	const { site } = ownProps;
-
-	return {
-		launchSite: () => dispatch( launchSite( site.ID ) ),
-	};
-};
-
 const connectComponent = connect( ( state ) => {
 	const siteId = getSelectedSiteId( state );
 	return {
@@ -1050,7 +924,7 @@ const connectComponent = connect( ( state ) => {
 		isLaunchable:
 			! getIsSiteOnECommerceTrial( state, siteId ) && ! getIsSiteOnMigrationTrial( state, siteId ),
 	};
-}, mapDispatchToProps );
+} );
 
 const getFormSettings = ( settings ) => {
 	const defaultSettings = {

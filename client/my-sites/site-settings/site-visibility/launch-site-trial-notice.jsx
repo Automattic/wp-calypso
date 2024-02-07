@@ -1,4 +1,7 @@
+<<<<<<< HEAD
 import { recordTracksEvent } from '@automattic/calypso-analytics';
+=======
+>>>>>>> a77fb4a2b5 (Modularize Launch Site and add Launch Site button to Site Tools)
 import { translate } from 'i18n-calypso';
 import { useSelector } from 'calypso/state';
 import {
@@ -17,6 +20,7 @@ export const LaunchSiteTrialUpsellNotice = () => {
 		getIsSiteOnMigrationTrial( state, siteId )
 	);
 	const isLaunchable = ! isSiteOnECommerceTrial && ! isSiteOnMigrationTrial;
+<<<<<<< HEAD
 
 	const recordTracksEventForTrialNoticeClick = () => {
 		const eventName = isSiteOnECommerceTrial
@@ -25,6 +29,8 @@ export const LaunchSiteTrialUpsellNotice = () => {
 		recordTracksEvent( eventName );
 	};
 
+=======
+>>>>>>> a77fb4a2b5 (Modularize Launch Site and add Launch Site button to Site Tools)
 	if ( isLaunchable ) {
 		return null;
 	}
@@ -34,14 +40,32 @@ export const LaunchSiteTrialUpsellNotice = () => {
 			'Before you can share your store with the world, you need to {{a}}pick a plan{{/a}}.',
 			{
 				components: {
+<<<<<<< HEAD
 					a: <a href={ `/plans/${ siteSlug }` } onClick={ recordTracksEventForTrialNoticeClick } />,
+=======
+					a: (
+						<a
+							href={ `/plans/${ siteSlug }` }
+							onClick={ this.recordTracksEventForTrialNoticeClick }
+						/>
+					),
+>>>>>>> a77fb4a2b5 (Modularize Launch Site and add Launch Site button to Site Tools)
 				},
 			}
 		);
 	} else if ( isSiteOnMigrationTrial ) {
 		noticeText = translate( 'Ready to launch your site? {{a}}Upgrade to a paid plan{{/a}}.', {
 			components: {
+<<<<<<< HEAD
 				a: <a href={ `/plans/${ siteSlug }` } onClick={ recordTracksEventForTrialNoticeClick } />,
+=======
+				a: (
+					<a
+						href={ `/plans/${ siteSlug }` }
+						onClick={ this.recordTracksEventForTrialNoticeClick }
+					/>
+				),
+>>>>>>> a77fb4a2b5 (Modularize Launch Site and add Launch Site button to Site Tools)
 			},
 		} );
 	}
