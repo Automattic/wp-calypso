@@ -54,6 +54,8 @@
 	.highlight-cards-list-mobile__item {
 		display: flex;
 		align-items: center;
+		box-shadow: 0 0 0 1px var(--color-border-subtle);
+		padding: 12px;
 	}
 
 	.highlight-cards-list-mobile__item-heading {
@@ -63,7 +65,9 @@
 	}
 	.highlight-cards-list-mobile__item-count {
 		margin-left: auto;
-		font-size: 1rem;
-		line-height: 24px;
+		font-size: 1.5rem;
+		line-height: 32px;
+
+		font-family: Recoleta, "Noto Serif", Georgia, "Times New Roman", Times, serif;
 	}
 }
