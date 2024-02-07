@@ -81,7 +81,7 @@ const useNoticesVisibilityQueryRaw = function < T >(
 		staleTime: 1000 * 30, // 30 seconds
 		retry: 1,
 		retryDelay: 3 * 1000, // 3 seconds,
-		enabled: enabled === false ? false : true,
+		enabled: enabled !== false,
 	} );
 };
 
