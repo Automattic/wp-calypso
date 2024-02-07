@@ -96,7 +96,7 @@ function SubscriberHighlightsStandard( {
 }
 
 function SubscriberHighlightsMobile( { highlights, isLoading }: SubscriberHighlightsRenderProps ) {
-	const mobileHighlights = (
+	return (
 		<div className="highlight-cards-list-mobile">
 			{ highlights.map( ( highlight ) => (
 				<div className="highlight-cards-list-mobile__item" key={ highlight.heading }>
@@ -108,7 +108,6 @@ function SubscriberHighlightsMobile( { highlights, isLoading }: SubscriberHighli
 			) ) }
 		</div>
 	);
-	return mobileHighlights;
 }
 
 export default function SubscribersHighlightSection( { siteId }: { siteId: number | null } ) {
