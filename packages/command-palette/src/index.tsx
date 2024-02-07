@@ -20,6 +20,7 @@ interface CommandMenuGroupProps
 	setSelectedCommandName: ( name: string ) => void;
 	setFooterMessage?: ( message: string ) => void;
 	setEmptyListNotice?: ( message: string ) => void;
+	navigate: ( path: string, openInNewTab: boolean ) => void;
 }
 
 const StyledCommandsMenuContainer = styled.div( {
@@ -92,17 +93,17 @@ export function CommandMenuGroup( {
 	setSelectedCommandName,
 	setFooterMessage,
 	setEmptyListNotice,
-	createNotice,
-	removeNotice,
 	navigate,
+	/*createNotice,
+	removeNotice,*/
 }: CommandMenuGroupProps ) {
 	const { commands, filterNotice, emptyListNotice } = useCommandPalette( {
 		selectedCommandName,
 		setSelectedCommandName,
 		search,
-		createNotice,
-		removeNotice,
 		navigate,
+		/*createNotice,
+		removeNotice,*/
 	} );
 
 	useEffect( () => {
@@ -212,6 +213,10 @@ interface NotFoundMessageProps {
 	currentRoute: string | null;
 }
 
+interface CommandPaletteProps {
+	navigate: ( path: string, openInNewTab: boolean ) => void;
+}
+
 const NotFoundMessage = ( {
 	selectedCommandName,
 	search,
@@ -236,7 +241,7 @@ const NotFoundMessage = ( {
 	return <>{ emptyListNotice || __( 'No results found.' ) }</>;
 };
 
-const CommandPalette = ( { createNotice, removeNotice, navigate } ) => {
+const CommandPalette = ( { navigate }: CommandPaletteProps ) => {
 	const [ placeHolderOverride, setPlaceholderOverride ] = useState( '' );
 	const [ search, setSearch ] = useState( '' );
 	const [ selectedCommandName, setSelectedCommandName ] = useState( '' );
@@ -245,7 +250,7 @@ const CommandPalette = ( { createNotice, removeNotice, navigate } ) => {
 	const [ emptyListNotice, setEmptyListNotice ] = useState( '' );
 	// TODO: Find an alternative way to use the current route.
 	//const currentRoute = useSelector( ( state: object ) => getCurrentRoutePattern( state ) );
-	const currentRoute = null;
+	const currentRoute = window.location.pathname
 	const open = useCallback( () => {
 		setIsOpen( true );
 		recordTracksEvent( 'calypso_hosting_command_palette_open', {
@@ -384,9 +389,9 @@ const CommandPalette = ( { createNotice, removeNotice, navigate } ) => {
 							setSelectedCommandName={ setSelectedCommandName }
 							setFooterMessage={ setFooterMessage }
 							setEmptyListNotice={ setEmptyListNotice }
-							createNotice={ createNotice }
-							removeNotice={ removeNotice }
 							navigate={ navigate }
+							/*createNotice={ createNotice }
+							removeNotice={ removeNotice }*/
 						/>
 					</Command.List>
 				</Command>
