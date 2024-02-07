@@ -54,18 +54,25 @@ export const processConflictNotices = ( notices: Notices ): Notices => {
 };
 
 const queryNotices = async function ( siteId: number | null ): Promise< Notices > {
-	const payload = await wpcom.req.get( {
-		method: 'GET',
-		apiNamespace: 'wpcom/v2',
-		path: `/sites/${ siteId }/jetpack-stats-dashboard/notices`,
-	} );
+	let payload;
+
+	try {
+		payload = await wpcom.req.get( {
+			method: 'GET',
+			apiNamespace: 'wpcom/v2',
+			path: `/sites/${ siteId }/jetpack-stats-dashboard/notices`,
+		} );
+	} catch ( error ) {
+		return DEFAULT_NOTICES_VISIBILITY;
+	}
 
 	return { ...DEFAULT_NOTICES_VISIBILITY, ...payload };
 };
 
 const useNoticesVisibilityQueryRaw = function < T >(
 	siteId: number | null,
-	select?: ( payload: Notices ) => T
+	select?: ( payload: Notices ) => T,
+	enabled?: boolean
 ) {
 	return useQuery( {
 		queryKey: [ 'stats', 'notices-visibility', 'raw', siteId ],
@@ -74,15 +81,24 @@ const useNoticesVisibilityQueryRaw = function < T >(
 		staleTime: 1000 * 30, // 30 seconds
 		retry: 1,
 		retryDelay: 3 * 1000, // 3 seconds,
+		enabled: enabled !== false,
 	} );
 };
 
-export function useNoticeVisibilityQuery( siteId: number | null, noticeId: NoticeIdType ) {
+export function useNoticeVisibilityQuery(
+	siteId: number | null,
+	noticeId: NoticeIdType,
+	enabled?: boolean
+) {
 	const selectVisibilityForSingleNotice = ( payload: Notices ) => {
 		payload = processConflictNotices( payload );
 		return !! payload?.[ noticeId ];
 	};
-	return useNoticesVisibilityQueryRaw< boolean >( siteId, selectVisibilityForSingleNotice );
+	return useNoticesVisibilityQueryRaw< boolean >(
+		siteId,
+		selectVisibilityForSingleNotice,
+		enabled
+	);
 }
 
 export function useNoticesVisibilityQuery( siteId: number | null ) {

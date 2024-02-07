@@ -5,6 +5,7 @@ import { useDispatch } from 'react-redux';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { useNoticeVisibilityQuery } from 'calypso/my-sites/stats/hooks/use-notice-visibility-query';
 import { useSelector } from 'calypso/state';
+import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import { isJetpackSite, getSiteOption, getSiteSlug } from 'calypso/state/sites/selectors';
 import {
 	requestStatNoticeSettings,
@@ -13,7 +14,7 @@ import {
 import { isStatsNoticeSettingsFetching } from 'calypso/state/stats/notices/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import useStatsPurchases from '../hooks/use-stats-purchases';
-//import StatsLoader from './stats-loader';
+import StatsLoader from './stats-loader';
 
 interface StatsRedirectFlowProps {
 	children: ReactNode;
@@ -34,9 +35,17 @@ const StatsRedirectFlow: React.FC< StatsRedirectFlowProps > = ( { children } ) =
 		isJetpackSite( state, siteId, { treatAtomicAsJetpackSite: false } )
 	);
 
+	const canUserManageOptions = useSelector( ( state ) =>
+		canCurrentUser( state, siteId, 'manage_options' )
+	);
+	const canUserViewStats = useSelector( ( state ) =>
+		canCurrentUser( state, siteId, 'view_stats' )
+	);
+
 	const { isFetching, data: purchaseNotPosponed } = useNoticeVisibilityQuery(
 		siteId,
-		'focus_jetpack_purchase'
+		'focus_jetpack_purchase',
+		canUserManageOptions
 	);
 
 	const hasPlan = isFreeOwned || isPWYWOwned || isCommercialOwned || supportCommercialUse;
@@ -89,13 +98,10 @@ const StatsRedirectFlow: React.FC< StatsRedirectFlowProps > = ( { children } ) =
 		);
 
 		return <></>;
-	} else if ( ! isFetching ) {
+	} else if ( ! isFetching || ( canUserViewStats && ! canUserManageOptions ) ) {
 		return <>{ children }</>;
 	} else if ( isFetching ) {
-		// Escalation Workaround (2024-02-06): Don't show the spinner here as it causes an endless request loop.
-		return <>{ children }</>;
-
-		//return <StatsLoader />;
+		return <StatsLoader />;
 	}
 
 	return <></>;
