@@ -112,24 +112,11 @@ const useCalculatedDiscounts = () => {
 			// We don't show the discount for free trials (annual) in upsell if biennial plan doesn't have free trial.
 			priceBreakdown.push( {
 				label: __( 'Introductory offer*' ),
-				priceInteger: current.priceBeforeDiscounts - current.priceInteger,
+				priceInteger: biennial.priceBeforeDiscounts - biennial.priceInteger,
 				isDiscount: true,
 			} );
 		}
 	}
-
-	// Multi-year discount
-	const oneYearForTwoYearsPrice =
-		current.priceBeforeDiscounts * 2 -
-		priceBreakdown
-			.filter( ( { isDiscount } ) => isDiscount )
-			.reduce( ( sum, discount ) => sum + discount.priceInteger, 0 );
-
-	priceBreakdown.push( {
-		label: __( 'Multi-year discount' ),
-		priceInteger: oneYearForTwoYearsPrice - biennial.priceInteger,
-		isDiscount: true,
-	} );
 
 	// Coupon discount is added on top of other discounts
 	if ( product.coupon_savings_integer ) {
