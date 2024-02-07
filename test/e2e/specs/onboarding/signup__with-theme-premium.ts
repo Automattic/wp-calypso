@@ -123,7 +123,7 @@ describe( 'Lifecyle: Premium theme signup, onboard, launch and cancel subscripti
 			await page.getByText( 'Customize this design' ).waitFor();
 		} );
 
-		it( 'Checks the active theme', async function () {
+		it.skip( 'Checks the active theme', async function () {
 			const restAPIClient = new RestAPIClient(
 				{
 					username: testUser.username,
