@@ -21,7 +21,6 @@ class MySitesNavigation extends Component {
 			placeholder: null,
 			path: this.props.path,
 			siteBasePath: this.props.siteBasePath,
-			shouldShowGlobalSidebar: this.props.shouldShowGlobalSidebar,
 		};
 
 		let asyncSidebar = null;
@@ -72,6 +71,7 @@ class MySitesNavigation extends Component {
 		const asyncProps = {
 			placeholder: null,
 			path: this.props.path,
+			useSidebarMenu: false,
 		};
 		const asyncSidebar = (
 			<AsyncLoad require="calypso/layout/global-sidebar" { ...asyncProps }>
