@@ -4,10 +4,13 @@ import { useTranslate } from 'i18n-calypso';
 import surveyImage from 'calypso/assets/images/illustrations/developer-survey.svg';
 
 type DevSurveyNotice = {
-	onClose: () => void;
+	onClose: ( remindTimeInSeconds: number ) => void;
 	onOk: () => void;
 	localeSlug: string;
 };
+
+const ONE_DAY_IN_SECONDS = 24 * 60 * 60;
+const ONE_YEAR_IN_SECONDS = 365 * ONE_DAY_IN_SECONDS;
 
 export const DevSurveyNotice = ( { onClose, onOk, localeSlug }: DevSurveyNotice ) => {
 	const translate = useTranslate();
@@ -19,13 +22,19 @@ export const DevSurveyNotice = ( { onClose, onOk, localeSlug }: DevSurveyNotice 
 
 	return (
 		<div className="developer-survey-notice">
-			<Button className="developer-survey-notice__backdrop" onClick={ onClose } />
+			<Button
+				className="developer-survey-notice__backdrop"
+				onClick={ () => onClose( ONE_YEAR_IN_SECONDS ) }
+			/>
 			<div className="developer-survey-notice__popup">
 				<div className="developer-survey-notice__popup-head">
 					<div className="developer-survey-notice__popup-head-title">
 						{ translate( 'Developer Survey' ) }
 					</div>
-					<Button onClick={ onClose } className="developer-survey-notice__popup-head-close">
+					<Button
+						onClick={ () => onClose( ONE_YEAR_IN_SECONDS ) }
+						className="developer-survey-notice__popup-head-close"
+					>
 						<Gridicon icon="cross" size={ 16 } />
 					</Button>
 				</div>
@@ -44,7 +53,7 @@ export const DevSurveyNotice = ( { onClose, onOk, localeSlug }: DevSurveyNotice 
 					<div className="developer-survey-notice__popup-content-buttons">
 						<Button
 							className="developer-survey-notice__popup-content-buttons-cancel"
-							onClick={ onClose }
+							onClick={ () => onClose( ONE_DAY_IN_SECONDS ) }
 						>
 							{ translate( 'Remind later' ) }
 						</Button>

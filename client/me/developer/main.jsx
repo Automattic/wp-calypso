@@ -149,10 +149,10 @@ class Developer extends Component {
 
 								this.hideDevSurveyNotice();
 							} }
-							onClose={ () => {
+							onClose={ ( remindTimeInSeconds ) => {
 								recordTracksEvent( 'calypso_me_developer_survey_dismissed' );
 
-								this.setDeveloperSurveyCookie( 'dismissed', 24 * 60 * 60 ); // 1 day
+								this.setDeveloperSurveyCookie( 'dismissed', remindTimeInSeconds );
 
 								this.hideDevSurveyNotice();
 							} }
