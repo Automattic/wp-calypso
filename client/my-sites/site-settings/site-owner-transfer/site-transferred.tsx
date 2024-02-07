@@ -94,6 +94,7 @@ const SiteTransferred = () => {
 			<PageViewTracker path="/settings/site-transferred/:site" title="Marketplace > Thank you" />
 			<Global
 				styles={ css`
+					body.is-section-settings,
 					body.is-section-settings .layout__content {
 						background: var( --studio-white );
 					}
