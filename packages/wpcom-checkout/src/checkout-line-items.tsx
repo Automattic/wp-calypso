@@ -244,7 +244,7 @@ const DeleteButtonWrapper = styled.div`
 
 const DeleteButton = styled( Button )< { theme?: Theme } >`
 	width: auto;
-	${ hasCheckoutVersion2 ? `font-size:  14px;` : `font-size: 0.75rem` };
+	${ hasCheckoutVersion2 ? `font-size:  12px;` : `font-size: 0.75rem` };
 	color: ${ ( props ) => props.theme.colors.textColorLight };
 `;
 
