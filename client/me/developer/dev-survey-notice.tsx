@@ -19,8 +19,16 @@ export const DevSurveyNotice = ( { onClose, onOk, localeSlug }: DevSurveyNotice 
 
 	return (
 		<div className="developer-survey-notice">
-			<div className="developer-survey-notice__backdrop" />
+			<Button className="developer-survey-notice__backdrop" onClick={ onClose } />
 			<div className="developer-survey-notice__popup">
+				<div className="developer-survey-notice__popup-head">
+					<div className="developer-survey-notice__popup-head-title">
+						{ translate( 'Developer Survey' ) }
+					</div>
+					<Button onClick={ onClose } className="developer-survey-notice__popup-head-close">
+						<Gridicon icon="cross" size={ 16 } />
+					</Button>
+				</div>
 				<div className="developer-survey-notice__popup-img">
 					<img src={ surveyImage } alt="" />
 				</div>
@@ -38,7 +46,7 @@ export const DevSurveyNotice = ( { onClose, onOk, localeSlug }: DevSurveyNotice 
 							className="developer-survey-notice__popup-content-buttons-cancel"
 							onClick={ onClose }
 						>
-							{ translate( 'Close' ) }
+							{ translate( 'Remind later' ) }
 						</Button>
 						<Button
 							className="developer-survey-notice__popup-content-buttons-ok"
@@ -50,9 +58,6 @@ export const DevSurveyNotice = ( { onClose, onOk, localeSlug }: DevSurveyNotice 
 							{ translate( 'Take survey' ) }
 						</Button>
 					</div>
-					<Button onClick={ onClose } className="developer-survey-notice__popup-content-close">
-						<Gridicon icon="cross" size={ 24 } />
-					</Button>
 				</div>
 			</div>
 		</div>

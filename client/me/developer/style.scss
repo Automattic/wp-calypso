@@ -100,6 +100,7 @@
 		top: 0;
 		width: 100%;
 		height: 100%;
+		cursor: default;
 	}
 	.developer-survey-notice__popup {
 		position: absolute;
@@ -111,6 +112,31 @@
 		border-radius: 2px;
 		box-shadow: 0 3px 1px 0 rgba(0, 0, 0, 0.04), 0 3px 8px 0 rgba(0, 0, 0, 0.12);
 		overflow: hidden;
+		font-family: $font-sf-pro-text;
+
+		.developer-survey-notice__popup-head {
+			background: #0675c4;
+			border-bottom: 1px solid #f6f7f7;
+			height: 56px;
+			padding: 0 14px 0 16px;
+			display: flex;
+			align-items: center;
+			justify-content: space-between;
+
+			.developer-survey-notice__popup-head-title {
+				color: var(--studio-white);
+				font-size: rem(14px);
+				font-weight: 500;
+				line-height: 20px;
+				letter-spacing: -0.15px;
+			}
+
+			.developer-survey-notice__popup-head-close {
+				svg {
+					fill: var(--studio-white);
+				}
+			}
+		}
 
 		.developer-survey-notice__popup-img img {
 			width: 100%;
@@ -120,7 +146,6 @@
 		.developer-survey-notice__popup-content {
 			padding: 18px 24px 30px;
 			background: var(--studio-white);
-			font-family: $font-sf-pro-text;
 
 			.developer-survey-notice__popup-content-title {
 				font-size: rem(16px);
@@ -157,15 +182,6 @@
 					font-size: rem(14px);
 					line-height: 20px;
 					letter-spacing: -0.15px;
-				}
-			}
-			.developer-survey-notice__popup-content-close {
-				position: absolute;
-				top: 6px;
-				right: 0;
-
-				svg {
-					fill: var(--studio-white);
 				}
 			}
 		}
