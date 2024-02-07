@@ -114,6 +114,8 @@ class SignupForm extends Component {
 		horizontal: PropTypes.bool,
 		shouldDisplayUserExistsError: PropTypes.bool,
 		submitForm: PropTypes.func,
+		invite: PropTypes.object,
+		renderInviteExplanationLabel: PropTypes.func,
 
 		// Connected props
 		oauth2Client: PropTypes.object,
@@ -1100,6 +1102,18 @@ class SignupForm extends Component {
 			: formState.getFieldValue( this.state.form, 'email' );
 	};
 
+	getPasswordlessInviteHeaderText = () => {
+		if ( this.props.invite?.site.title ) {
+			return this.props.translate( 'Sign up to start editing {{span}}%(domain)s{{/span}}', {
+				args: { domain: this.props.invite.site.title },
+				components: {
+					span: <span>{ this.props.invite.site.title }</span>,
+				},
+			} );
+		}
+		return;
+	};
+
 	render() {
 		if ( this.getUserExistsError( this.props ) && ! this.props.shouldDisplayUserExistsError ) {
 			return null;
@@ -1245,6 +1259,9 @@ class SignupForm extends Component {
 						queryArgs={ this.props.queryArgs }
 						userEmail={ this.getEmailValue() }
 						{ ...gravatarProps }
+						labelText={ this.props.translate( 'Your email address' ) }
+						inviteFormTitle={ this.getPasswordlessInviteHeaderText() }
+						renderInviteExplanationLabel={ this.props.renderInviteExplanationLabel() }
 					/>
 
 					{ ! isGravatar && (

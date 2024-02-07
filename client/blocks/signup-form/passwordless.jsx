@@ -28,6 +28,9 @@ class PasswordlessSignupForm extends Component {
 		submitButtonLabel: PropTypes.string,
 		submitButtonLoadingLabel: PropTypes.string,
 		userEmail: PropTypes.string,
+		renderInviteExplanationLabel: PropTypes.string,
+		inviteFormTitle: PropTypes.object,
+		labelText: PropTypes.string,
 	};
 
 	static defaultProps = {
@@ -279,8 +282,8 @@ class PasswordlessSignupForm extends Component {
 			);
 		}
 		const submitButtonText = isSubmitting
-			? this.props.submitButtonLoadingLabel || this.props.translate( 'Creating Your Account…' )
-			: this.props.submitButtonLabel || this.props.translate( 'Create your account' );
+			? this.props.submitButtonLoadingLabel || this.props.translate( 'Sending link.' )
+			: this.props.submitButtonLabel || this.props.translate( 'Send link to sign up' );
 
 		return (
 			<LoggedOutFormFooter>
@@ -297,7 +300,26 @@ class PasswordlessSignupForm extends Component {
 	}
 
 	getLabelText() {
-		return this.props.labelText ?? this.props.translate( 'Enter your email address' );
+		return (
+			<div className="signup-form__passwordless-email-label">
+				<FormLabel>
+					{ this.props.labelText || this.props.translate( 'Enter your email address' ) }
+				</FormLabel>
+			</div>
+		);
+	}
+
+	getFormButtonAndToS() {
+		const isPasswordlessInviteForm = this.props.inviteFormTitle;
+		return isPasswordlessInviteForm ? (
+			<>
+				{ this.formFooter() } { this.props.renderTerms?.() }
+			</>
+		) : (
+			<>
+				{ this.props.renderTerms?.() } { this.formFooter() }
+			</>
+		);
 	}
 
 	render() {
@@ -307,7 +329,16 @@ class PasswordlessSignupForm extends Component {
 			<div className="signup-form__passwordless-form-wrapper">
 				<LoggedOutForm onSubmit={ this.onFormSubmit } noValidate>
 					<ValidationFieldset errorMessages={ errorMessages }>
-						<FormLabel htmlFor="signup-email">{ this.getLabelText() }</FormLabel>
+						{ this.props.inviteFormTitle && (
+							<FormLabel htmlFor="signup-email" className="signup-form__passwordless-invite-title">
+								{ this.props.inviteFormTitle }
+							</FormLabel>
+						) }
+						{ this.props.renderInviteExplanationLabel && (
+							<FormLabel>{ this.props.renderInviteExplanationLabel }</FormLabel>
+						) }
+
+						{ this.getLabelText() }
 						<FormTextInput
 							autoCapitalize="off"
 							autoCorrect="off"
@@ -323,8 +354,7 @@ class PasswordlessSignupForm extends Component {
 							autoFocus
 						/>
 					</ValidationFieldset>
-					{ this.props.renderTerms?.() }
-					{ this.formFooter() }
+					{ this.getFormButtonAndToS() }
 				</LoggedOutForm>
 			</div>
 		);
