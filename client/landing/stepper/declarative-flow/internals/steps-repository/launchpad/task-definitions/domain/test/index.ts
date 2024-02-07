@@ -13,7 +13,7 @@ describe( 'getDesignEditedTask', () => {
 	const task = buildTask( { id: 'task', calypso_path: 'some-path' } );
 
 	it( 'return the domains manage site page when is not a onboarding flow', () => {
-		const context = buildContext( { siteSlug: 'site.wordpress.com' } );
+		const context = buildContext( { siteInfoQueryArgs: { siteSlug: 'site.wordpress.com' } } );
 
 		expect( getDomainUpSellTask( task, 'flowId', context ) ).toMatchObject( {
 			useCalypsoPath: true,
@@ -22,24 +22,22 @@ describe( 'getDesignEditedTask', () => {
 	} );
 
 	it( 'returns the setup domain page when the flow is blog onboarding', () => {
-		const site = buildSiteDetails( { name: 'site.wordpress.com' } );
-		const context = buildContext( { siteSlug: 'site.wordpress.com', site } );
+		const context = buildContext( { siteInfoQueryArgs: { siteSlug: 'site.wordpress.com' } } );
 
 		expect( getDomainUpSellTask( task, START_WRITING_FLOW, context ) ).toMatchObject( {
 			useCalypsoPath: true,
 			calypso_path:
-				'/setup/start-writing/domains?siteId=211078228&flowToReturnTo=start-writing&new=site.wordpress.com&domainAndPlanPackage=true',
+				'/setup/start-writing/domains?siteSlug=site.wordpress.com&flowToReturnTo=start-writing&domainAndPlanPackage=true',
 		} );
 	} );
 
 	it( 'use the setup domain page when the flow is site assembler onboarding', () => {
-		const site = buildSiteDetails( { name: 'site.wordpress.com' } );
-		const context = buildContext( { site } );
+		const context = buildContext( { siteInfoQueryArgs: { siteSlug: 'site.wordpress.com' } } );
 
 		expect( getDomainUpSellTask( task, AI_ASSEMBLER_FLOW, context ) ).toMatchObject( {
 			useCalypsoPath: true,
 			calypso_path:
-				'/setup/ai-assembler/domains?siteId=211078228&flowToReturnTo=ai-assembler&new=site.wordpress.com&domainAndPlanPackage=true',
+				'/setup/ai-assembler/domains?siteSlug=site.wordpress.com&flowToReturnTo=ai-assembler&domainAndPlanPackage=true',
 		} );
 	} );
 
@@ -48,7 +46,7 @@ describe( 'getDesignEditedTask', () => {
 		freeSite.plan.is_free = true;
 
 		const context = buildContext( {
-			siteSlug: 'site.wordpress.com',
+			siteInfoQueryArgs: { siteSlug: 'site.wordpress.com' },
 			site: freeSite,
 		} );
 
@@ -64,7 +62,7 @@ describe( 'getDesignEditedTask', () => {
 		freeSite.plan.is_free = true;
 
 		const context = buildContext( {
-			siteSlug: 'site.wordpress.com',
+			siteInfoQueryArgs: { siteSlug: 'site.wordpress.com' },
 			site: freeSite,
 		} );
 

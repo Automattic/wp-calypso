@@ -17,7 +17,7 @@ describe( 'getFirstPostPublished', () => {
 	const task = buildTask( { id: 'task', calypso_path: 'some-path' } );
 
 	it( 'returns the plans page', () => {
-		const context = buildContext( { siteSlug: 'site.wordpress.com' } );
+		const context = buildContext( { siteInfoQueryArgs: { siteSlug: 'site.wordpress.com' } } );
 
 		expect( getFirstPostPublished( task, 'flowId', context ) ).toMatchObject( {
 			useCalypsoPath: true,
@@ -27,7 +27,7 @@ describe( 'getFirstPostPublished', () => {
 
 	it( 'disables when is a newsletter flow and the emails is not verified', () => {
 		const context = buildContext( {
-			siteSlug: 'site.wordpress.com',
+			siteInfoQueryArgs: { siteSlug: 'site.wordpress.com' },
 			isEmailVerified: false,
 		} );
 
@@ -39,7 +39,7 @@ describe( 'getFirstPostPublished', () => {
 	it( 'returns the wp-admin post new page when is a blog onboarding flow', () => {
 		const siteSlug = 'site.wordpress.com';
 		const context = buildContext( {
-			siteSlug,
+			siteInfoQueryArgs: { siteSlug },
 			isEmailVerified: false,
 		} );
 

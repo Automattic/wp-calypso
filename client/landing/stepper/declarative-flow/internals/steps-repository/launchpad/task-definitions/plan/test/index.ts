@@ -1,4 +1,3 @@
-import { START_WRITING_FLOW, VIDEOPRESS_FLOW } from '@automattic/onboarding';
 import { getPlanSelectedTask } from '../';
 import { buildTask } from '../../../test/lib/fixtures';
 import { type TaskContext } from '../../../types';
@@ -14,7 +13,7 @@ describe( 'getPlanSelectedTask', () => {
 	const task = buildTask( { id: 'task', calypso_path: 'some-path' } );
 
 	it( 'returns the plans page', () => {
-		const context = buildContext( { siteSlug: 'site.wordpress.com' } );
+		const context = buildContext( { siteInfoQueryArgs: { siteSlug: 'site.wordpress.com' } } );
 
 		expect( getPlanSelectedTask( task, 'flowId', context ) ).toMatchObject( {
 			useCalypsoPath: true,
@@ -24,11 +23,11 @@ describe( 'getPlanSelectedTask', () => {
 
 	it( 'returns the plans page with style customization flag', () => {
 		const context = buildContext( {
-			siteSlug: 'site.wordpress.com',
-			displayGlobalStylesWarning: true,
+			siteInfoQueryArgs: { siteSlug: 'site.wordpress.com' },
+			shouldDisplayWarning: true,
 		} );
 
-		expect( getPlanSelectedTask( task, START_WRITING_FLOW, context ) ).toMatchObject( {
+		expect( getPlanSelectedTask( task, 'flowId', context ) ).toMatchObject( {
 			useCalypsoPath: true,
 			calypso_path: '/plans/site.wordpress.com?feature=style-customization',
 		} );
@@ -36,24 +35,27 @@ describe( 'getPlanSelectedTask', () => {
 
 	it( 'returns the plans page with video upload flag', () => {
 		const context = buildContext( {
-			siteSlug: 'site.wordpress.com',
+			siteInfoQueryArgs: { siteSlug: 'site.wordpress.com' },
+			shouldDisplayWarning: true,
+			isVideoPressFlowWithUnsupportedPlan: true,
 		} );
 
-		expect( getPlanSelectedTask( task, VIDEOPRESS_FLOW, context ) ).toMatchObject( {
+		expect( getPlanSelectedTask( task, 'flowId', context ) ).toMatchObject( {
 			useCalypsoPath: true,
 			calypso_path: '/plans/site.wordpress.com?feature=video-upload',
 		} );
 	} );
 
-	it( 'returns completed as false when is videopress flow and has no plan cart item', () => {
+	it( 'returns completed as false when isVideoPressFlowWithUnsupportedPlan is true', () => {
 		const task = buildTask( { completed: true } );
 
 		const context = buildContext( {
-			siteSlug: 'site.wordpress.com',
-			planCartItem: null,
+			siteInfoQueryArgs: { siteSlug: 'site.wordpress.com' },
+			shouldDisplayWarning: true,
+			isVideoPressFlowWithUnsupportedPlan: true,
 		} );
 
-		expect( getPlanSelectedTask( task, VIDEOPRESS_FLOW, context ) ).toMatchObject( {
+		expect( getPlanSelectedTask( task, 'flowId', context ) ).toMatchObject( {
 			completed: false,
 		} );
 	} );
