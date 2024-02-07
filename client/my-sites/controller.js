@@ -883,7 +883,7 @@ export function selectSiteIfLoggedIn( context, next ) {
  * If the section has an "all sites" view to delay the site selection,
  * only handle the site selection with 0 or 1 sites.
  */
-export function selectSiteIfLoggedInWithOneSite( context, next ) {
+export function selectSiteOrSkipIfLoggedInWithMultipleSites( context, next ) {
 	const state = context.store.getState();
 	const isLoggedIn = isUserLoggedIn( state );
 	const siteCount = getCurrentUserSiteCount( state );
