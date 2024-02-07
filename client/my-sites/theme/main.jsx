@@ -60,7 +60,7 @@ import ThanksModal from 'calypso/my-sites/themes/thanks-modal';
 import { connectOptions } from 'calypso/my-sites/themes/theme-options';
 import ThemePreview from 'calypso/my-sites/themes/theme-preview';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
-import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
+import { getCurrentUserSiteCount, isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { productToBeInstalled } from 'calypso/state/marketplace/purchase-flow/actions';
 import { errorNotice } from 'calypso/state/notices/actions';
 import { getProductsList } from 'calypso/state/products-list/selectors';
@@ -271,6 +271,7 @@ class ThemeSheet extends Component {
 		retired: PropTypes.bool,
 		// Connected props
 		isLoggedIn: PropTypes.bool,
+		siteCount: PropTypes.number,
 		isActive: PropTypes.bool,
 		isThemePurchased: PropTypes.bool,
 		isJetpack: PropTypes.bool,
@@ -308,7 +309,7 @@ class ThemeSheet extends Component {
 		showUnlockStyleUpgradeModal: false,
 		isAtomicTransferCompleted: false,
 		isReviewsModalVisible: false,
-		isSiteSelectorModalVisible: true,
+		isSiteSelectorModalVisible: false,
 	};
 
 	scrollToTop = () => {
@@ -368,7 +369,13 @@ class ThemeSheet extends Component {
 		);
 	};
 
-	onButtonClick = () => {
+	onButtonClick = ( event ) => {
+		if ( this.shouldSelectSite() ) {
+			event?.preventDefault();
+			this.setState( { isSiteSelectorModalVisible: true } );
+			return;
+		}
+
 		this.onBeforeOptionAction();
 		this.props.defaultOption.action?.( this.props.themeId );
 	};
@@ -592,6 +599,11 @@ class ThemeSheet extends Component {
 
 		// Show theme upsell banner on Atomic sites.
 		return isAtomic && isPremium && ! canUserUploadThemes && ! hasUnlimitedPremiumThemes;
+	}
+
+	shouldSelectSite() {
+		const { isLoggedIn, siteCount, siteId } = this.props;
+		return isLoggedIn && ! siteId && siteCount > 1;
 	}
 
 	renderScreenshot() {
@@ -1198,15 +1210,17 @@ class ThemeSheet extends Component {
 						  } )
 						: null
 				}
-				onClick={ () => {
+				onClick={ ( event ) => {
+					const action = this.shouldSelectSite() ? 'selectSite' : key;
+
 					this.props.recordTracksEvent( 'calypso_theme_sheet_primary_button_click', {
 						theme: this.props.themeId,
 						theme_type: themeType,
 						theme_tier: themeTier?.slug,
-						...( key && { action: key } ),
+						...( action && { action } ),
 					} );
 
-					this.onButtonClick();
+					this.onButtonClick( event );
 				} }
 				primary
 				disabled={ this.state.disabledButton }
@@ -1444,7 +1458,7 @@ class ThemeSheet extends Component {
 
 		let onClick = null;
 
-		if ( isExternallyManagedTheme && isLoggedIn && siteId ) {
+		if ( this.shouldSelectSite() || ( isExternallyManagedTheme && isLoggedIn && siteId ) ) {
 			onClick = this.onButtonClick;
 		} else if ( ! isLoggedIn ) {
 			onClick = launchPricing;
@@ -1496,11 +1510,20 @@ class ThemeSheet extends Component {
 
 		if ( hasWpOrgThemeUpsellBanner || hasThemeUpsellBannerAtomic ) {
 			const themeInstallationURL = `/marketplace/theme/${ themeId }/install/${ siteSlug }`;
+			const onThemeUpsellPlanClick = ( event ) => {
+				if ( this.shouldSelectSite() ) {
+					event?.preventDefault();
+					this.setState( { isSiteSelectorModalVisible: true } );
+					return;
+				}
+
+				this.props.setProductToBeInstalled( themeId, siteSlug );
+			};
 			pageUpsellBanner = (
 				<UpsellNudge
 					plan={ PLAN_BUSINESS }
 					className="theme__page-upsell-banner"
-					onClick={ () => this.props.setProductToBeInstalled( themeId, siteSlug ) }
+					onClick={ onThemeUpsellPlanClick }
 					title={ translate( 'Access this third-party theme with the %(businessPlanName)s plan!', {
 						args: { businessPlanName: getPlan( PLAN_BUSINESS ).getTitle() },
 					} ) }
@@ -1510,7 +1533,8 @@ class ThemeSheet extends Component {
 							{ args: { businessPlanName: getPlan( PLAN_BUSINESS ).getTitle() } }
 						)
 					) }
-					forceHref
+					forceHref={ ! this.shouldSelectSite() }
+					disableHref={ this.shouldSelectSite() }
 					feature={ FEATURE_UPLOAD_THEMES }
 					forceDisplay
 					href={
@@ -1766,6 +1790,7 @@ export default connect(
 			isWpcomStaging,
 			productionSiteSlug,
 			isLoggedIn: isUserLoggedIn( state ),
+			siteCount: getCurrentUserSiteCount( state ),
 			isActive: isThemeActive( state, themeId, siteId ),
 			isJetpack,
 			isAtomic,
