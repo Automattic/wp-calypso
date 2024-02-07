@@ -54,11 +54,17 @@ export const processConflictNotices = ( notices: Notices ): Notices => {
 };
 
 const queryNotices = async function ( siteId: number | null ): Promise< Notices > {
-	const payload = await wpcom.req.get( {
-		method: 'GET',
-		apiNamespace: 'wpcom/v2',
-		path: `/sites/${ siteId }/jetpack-stats-dashboard/notices`,
-	} );
+	let payload;
+
+	try {
+		payload = await wpcom.req.get( {
+			method: 'GET',
+			apiNamespace: 'wpcom/v2',
+			path: `/sites/${ siteId }/jetpack-stats-dashboard/notices`,
+		} );
+	} catch ( error ) {
+		return DEFAULT_NOTICES_VISIBILITY;
+	}
 
 	return { ...DEFAULT_NOTICES_VISIBILITY, ...payload };
 };
