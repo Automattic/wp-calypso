@@ -60,11 +60,7 @@ const GitHubLoginButton = ( {
 
 	const handleClick = ( e: MouseEvent< HTMLButtonElement > ) => {
 		errorRef.current = e.currentTarget;
-
-		if ( isDisabled ) {
-			e.preventDefault();
-			return;
-		}
+		e.preventDefault();
 
 		if ( onClick ) {
 			onClick();
