@@ -1,26 +1,27 @@
-import { createSitesListComponent, useSitesListSorting } from '@automattic/sites';
 import { Modal } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
-import { useState } from 'react';
-import QuerySiteFeatures from 'calypso/components/data/query-site-features';
-import { useSelector } from 'calypso/state';
-import getVisibleSites from 'calypso/state/selectors/get-visible-sites';
-import ThemeSiteSelectorActions from './theme-site-selector-actions';
-import ThemeSiteSelectorTableRow from './theme-site-selector-table-row';
-
-import './style.scss';
-
-const ThemeSiteSelectorSitesList = createSitesListComponent( { grouping: false } );
+import SiteSelector from 'calypso/components/site-selector';
+import { navigate } from 'calypso/lib/navigate';
+import { addSiteFragment } from 'calypso/lib/route';
+import { useSelector, useStore } from 'calypso/state';
+import getCurrentRoute from 'calypso/state/selectors/get-current-route';
+import { getSiteSlug } from 'calypso/state/sites/selectors';
+import { getCanonicalTheme } from 'calypso/state/themes/selectors';
 
 export default function ThemeSiteSelectorModal( { isOpen, onClose, themeId } ) {
+	const store = useStore();
 	const translate = useTranslate();
-	const [ selectedSiteId, setSelectedSiteId ] = useState( null );
 
-	const visibleSites = useSelector( ( state ) => getVisibleSites( state, false ) );
-	const sortedVisibleSites = useSitesListSorting( visibleSites, {
-		sortKey: 'lastInteractedWith',
-		sortOrder: 'desc',
-	} );
+	const theme = useSelector( ( state ) => getCanonicalTheme( state, null, themeId ) );
+
+	const currentRoute = useSelector( getCurrentRoute );
+
+	const onSiteSelect = ( siteId ) => {
+		const siteSlug = getSiteSlug( store.getState(), siteId );
+		const pathWithSite = addSiteFragment( currentRoute, siteSlug );
+		navigate( pathWithSite );
+		onClose();
+	};
 
 	if ( ! isOpen ) {
 		return null;
@@ -30,41 +31,15 @@ export default function ThemeSiteSelectorModal( { isOpen, onClose, themeId } ) {
 		<Modal
 			className="theme-site-selector-modal"
 			onRequestClose={ onClose }
-			size="large"
+			size="medium"
 			title={ translate( 'Select a site to activate %(themeName)s', {
-				args: { themeName: themeId },
+				args: { themeName: theme?.name },
 			} ) }
 		>
-			<QuerySiteFeatures siteIds={ [ selectedSiteId ] } />
 			<div className="theme-site-selector-modal__content">
-				{ !! visibleSites.length && (
-					<ThemeSiteSelectorSitesList sites={ sortedVisibleSites }>
-						{ ( { sites } ) => (
-							<table>
-								<thead>
-									<tr>
-										<th></th>
-										<th>{ translate( 'Site' ) }</th>
-										<th>{ translate( 'Plan' ) }</th>
-										<th>{ translate( 'Last updated' ) }</th>
-									</tr>
-								</thead>
-								<tbody>
-									{ sites?.slice( 0, 10 )?.map( ( site ) => (
-										<ThemeSiteSelectorTableRow
-											key={ site.ID }
-											onChange={ setSelectedSiteId }
-											selected={ selectedSiteId }
-											site={ site }
-										/>
-									) ) }
-								</tbody>
-							</table>
-						) }
-					</ThemeSiteSelectorSitesList>
-				) }
+				<p>{ translate( 'Some unsupported sites may be hidden.' ) }</p>
+				<SiteSelector onSiteSelect={ onSiteSelect } isReskinned />
 			</div>
-			<ThemeSiteSelectorActions siteId={ selectedSiteId } themeId={ themeId } />
 		</Modal>
 	);
 }
