@@ -4,19 +4,20 @@ import { addQueryArgs } from '@wordpress/url';
 import { recordTaskClickTracksEvent } from '../../tracking';
 import { TaskAction } from '../../types';
 
+
 export const getFirstPostPublished: TaskAction = ( task, flow, context ): Task => {
-	const { siteInfoQueryArgs, isEmailVerified } = context;
-	const mustVerifyEmailBeforePosting = isNewsletterFlow( flow ) && ! isEmailVerified;
+	const { siteSlug, isEmailVerified } = context;
+	const mustVerifyEmailBeforePosting = isNewsletterFlow( flow || null ) && ! isEmailVerified;
 
 	return {
 		...task,
-		disabled:
-			mustVerifyEmailBeforePosting || ( task.completed && isBlogOnboardingFlow( flow ) ) || false,
-		calypso_path: ! isBlogOnboardingFlow( flow )
-			? `/post/${ siteInfoQueryArgs?.siteSlug }`
-			: addQueryArgs( `https://${ siteInfoQueryArgs?.siteSlug }/wp-admin/post-new.php`, {
+		disabled: mustVerifyEmailBeforePosting || ( task.completed && isBlogOnboardingFlow( flow || null ) ) ||
+			false,
+		calypso_path: ! isBlogOnboardingFlow( flow || null )
+			? `/post/${ siteSlug }`
+			: addQueryArgs( `https://${ siteSlug }/wp-admin/post-new.php`, {
 					origin: window.location.origin,
-			  } ),
+			 } ),
 		actionDispatch: () => recordTaskClickTracksEvent( task, flow, context ),
 		useCalypsoPath: true,
 	};
