@@ -40,10 +40,29 @@ const WrappedComparisonGrid = ( {
 		onUpgradeClick,
 	} );
 
-	const classNames = classnames( 'plans-grid-next', 'plans-grid-next__comparison-grid' );
+	const gridContainerRef = useRef< HTMLDivElement | null >( null );
+	const gridSize = useGridSize( {
+		containerRef: gridContainerRef,
+		containerBreakpoints: new Map( [
+			[ 'small', 0 ],
+			[ 'smedium', 686 ],
+			[ 'medium', 835 ], // enough to fit Enterpreneur plan. was 686
+			[ 'large', 1005 ], // enough to fit Enterpreneur plan. was 870
+			[ 'xlarge', 1180 ],
+		] ),
+	} );
+
+	const classNames = classnames( 'plans-grid-next', 'plans-grid-next__comparison-grid', {
+		'is-small': 'small' === gridSize,
+		'is-smedium': 'smedium' === gridSize,
+		'is-medium': 'medium' === gridSize,
+		'is-large': 'large' === gridSize,
+		'is-xlarge': 'xlarge' === gridSize,
+		'is-visible': true,
+	} );
 
 	return (
-		<div className={ classNames }>
+		<div ref={ gridContainerRef } className={ classNames }>
 			<PlansGridContextProvider
 				intent={ intent }
 				selectedSiteId={ selectedSiteId }
@@ -65,6 +84,7 @@ const WrappedComparisonGrid = ( {
 					showUpgradeableStorage={ showUpgradeableStorage }
 					stickyRowOffset={ stickyRowOffset }
 					onStorageAddOnClick={ onStorageAddOnClick }
+					gridSize={ gridSize ?? undefined }
 					{ ...otherProps }
 				/>
 			</PlansGridContextProvider>

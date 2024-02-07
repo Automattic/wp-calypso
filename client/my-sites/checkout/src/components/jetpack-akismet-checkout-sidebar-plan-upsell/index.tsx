@@ -23,6 +23,7 @@ type PriceBreakdown = {
 	isBold?: boolean;
 	isDiscount?: boolean;
 	forceDisplay?: boolean;
+	isIntroductoryOffer?: boolean;
 };
 
 const debug = debugFactory( 'calypso:checkout-sidebar-plan-upsell' );
@@ -107,6 +108,7 @@ const useCalculatedDiscounts = () => {
 				label: __( 'Free trial*' ),
 				priceInteger: product.item_original_monthly_cost_integer,
 				isDiscount: true,
+				isIntroductoryOffer: true,
 			} );
 		} else if ( ! isProductFreeTrial ) {
 			// We don't show the discount for free trials (annual) in upsell if biennial plan doesn't have free trial.
@@ -114,6 +116,7 @@ const useCalculatedDiscounts = () => {
 				label: __( 'Introductory offer*' ),
 				priceInteger: current.priceBeforeDiscounts - current.priceInteger,
 				isDiscount: true,
+				isIntroductoryOffer: true,
 			} );
 		}
 	}
@@ -209,6 +212,10 @@ const JetpackAkismetCheckoutSidebarPlanUpsell: FC = () => {
 
 	const { percentSavings, priceBreakdown, finalBreakdown } = calculatedDiscounts;
 
+	const hasIntroductoryOffers = priceBreakdown.some(
+		( breakdown ) => breakdown.isIntroductoryOffer
+	);
+
 	const isLoading = FormStatus.READY !== formStatus;
 	const cardTitle = sprintf(
 		// translators: "percentSavings" is the savings percentage for the upgrade as a number, like '20' for '20%'.
@@ -232,6 +239,10 @@ const JetpackAkismetCheckoutSidebarPlanUpsell: FC = () => {
 				{ finalBreakdown.map( ( props ) => (
 					<UpsellEntry key={ props.label } { ...props } />
 				) ) }
+			</div>
+			<div>
+				{ hasIntroductoryOffers &&
+					__( '*Introductory offer first term only, renews at regular rate.' ) }
 			</div>
 			<PromoCardCTA
 				cta={ {

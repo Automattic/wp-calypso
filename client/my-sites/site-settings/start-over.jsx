@@ -26,6 +26,7 @@ import isUnlaunchedSite from 'calypso/state/selectors/is-unlaunched-site';
 import { getSite, getSiteDomain, isJetpackSite } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import { BuiltByUpsell } from './built-by-upsell-banner';
+import { getSettingsSource } from './site-tools/utils';
 
 function SiteResetCard( {
 	translate,
@@ -43,6 +44,8 @@ function SiteResetCard( {
 	const { data: status, refetch: refetchResetStatus } = useSiteResetStatusQuery( siteId );
 	const [ isDomainConfirmed, setDomainConfirmed ] = useState( false );
 	const [ resetComplete, setResetComplete ] = useState( false );
+
+	const source = getSettingsSource();
 
 	const checkStatus = async () => {
 		if ( status?.status !== 'completed' && isAtomic ) {
@@ -304,7 +307,7 @@ function SiteResetCard( {
 				) }
 			/>
 			<PageViewTracker path="/settings/start-reset/:site" title="Settings > Site Reset" />
-			<HeaderCake backHref={ '/settings/general/' + selectedSiteSlug }>
+			<HeaderCake backHref={ `${ source }/${ selectedSiteSlug }` }>
 				<h1>{ translate( 'Site Reset' ) }</h1>
 			</HeaderCake>
 			{ renderBody() }

@@ -24,6 +24,7 @@ import { getSite, getSiteDomain } from 'calypso/state/sites/selectors';
 import { hasSitesAsLandingPage } from 'calypso/state/sites/selectors/has-sites-as-landing-page';
 import { setSelectedSiteId } from 'calypso/state/ui/actions';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
+import { getSettingsSource } from '../site-tools/utils';
 
 import './style.scss';
 
@@ -91,7 +92,8 @@ class DeleteSite extends Component {
 
 	_goBack = () => {
 		const { siteSlug } = this.props;
-		page( '/settings/general/' + siteSlug );
+		const source = getSettingsSource();
+		page( `${ source }/${ siteSlug }` );
 	};
 
 	componentDidUpdate( prevProps ) {

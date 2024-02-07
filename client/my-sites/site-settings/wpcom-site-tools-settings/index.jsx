@@ -6,6 +6,7 @@ import getIsUnlaunchedSite from 'calypso/state/selectors/is-unlaunched-site';
 import { getSiteOption } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import SiteTools from '../site-tools';
+import { SOURCE_SETTINGS_SITE_TOOLS } from '../site-tools/utils';
 import LaunchSite from '../site-visibility/launch-site';
 
 const SiteSettingsGeneral = ( {
@@ -17,7 +18,9 @@ const SiteSettingsGeneral = ( {
 		{ isUnlaunchedSite && ! isAtomicAndEditingToolkitDeactivated && ! isWpcomStagingSite && (
 			<LaunchSite />
 		) }
-		{ ! isWpcomStagingSite && <SiteTools headerTitle={ translate( 'Other tools' ) } /> }
+		{ ! isWpcomStagingSite && (
+			<SiteTools headerTitle={ translate( 'Other tools' ) } source={ SOURCE_SETTINGS_SITE_TOOLS } />
+		) }
 	</div>
 );
 
