@@ -1,5 +1,6 @@
 import { useSendInvites } from '@automattic/data-stores';
 import { NextButton, Title, SubTitle } from '@automattic/onboarding';
+import { Button } from '@wordpress/components';
 import { useState } from '@wordpress/element';
 import { sprintf } from '@wordpress/i18n';
 import { useTranslate } from 'i18n-calypso';
@@ -73,6 +74,7 @@ const ImportUsers = ( { site, onSubmit }: Props ) => {
 		index: number
 	) => {
 		const { user, checked } = listUser;
+		console.log('user', user)
 		const isExternalContributor =
 			externalContributors && externalContributors.includes( user?.linked_user_ID ?? user?.ID );
 
@@ -125,15 +127,6 @@ const ImportUsers = ( { site, onSubmit }: Props ) => {
 				guessedItemHeight={ 126 }
 				className="import__user-migration-list"
 			/>
-			<div className="import__user-migration-button-container">
-				<NextButton type="button" onClick={ handleSubmit } disabled={ isSubmittingInvites }>
-					{ sprintf(
-						// translators: %s: Number of users that will get invited.
-						translate( 'Invite %s users' ),
-						checkedUsersNumber
-					) }
-				</NextButton>
-			</div>
 			<div className="import__user-migration-footer">
 				{ translate(
 					'After clicking the button to invite, the selected users {{strong}}will receive invitation emails{{/strong}} to join your site, ensuring a smooth transition.',
@@ -143,6 +136,20 @@ const ImportUsers = ( { site, onSubmit }: Props ) => {
 						},
 					}
 				) }
+			</div>
+			<div className="import__user-migration-button-container">
+				<NextButton type="button" onClick={ handleSubmit } disabled={ isSubmittingInvites }>
+					{ sprintf(
+						// translators: %s: Number of users that will get invited.
+						translate( 'Invite %s users' ),
+						checkedUsersNumber
+					) }
+				</NextButton>
+			</div>
+			<div className="import__user-migration-button-container">
+				<Button variant="link" onClick={ () => onSubmit?.() } disabled={ isSubmittingInvites }>
+					{ translate( 'Skip for now' ) }
+				</Button>
 			</div>
 		</div>
 	);

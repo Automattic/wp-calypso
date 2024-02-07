@@ -20,6 +20,12 @@
 		flex-direction: row;
 		justify-content: center;
 		margin-top: 24px;
+
+		.is-link {
+			color: var(--studio-gray-100);
+			font-size: 0.875rem;
+			font-weight: 500;
+		}
 	}
 
 	.import__user-migration-footer {
