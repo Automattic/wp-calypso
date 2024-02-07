@@ -3,14 +3,19 @@
  */
 
 import { isEnabled } from '@automattic/calypso-config';
+import { SiteDetails } from '@automattic/data-stores';
 import { render, fireEvent, screen } from '@testing-library/react';
 import React from 'react';
 import { Provider } from 'react-redux';
 import configureStore from 'redux-mock-store';
+import { getSelectedSite } from 'calypso/state/ui/selectors';
+import getSelectedSiteId from 'calypso/state/ui/selectors/get-selected-site-id';
 import useSubscriptionPlans from '../../../hooks/use-subscription-plans';
 import { SubscriberRow } from '../subscriber-row';
 
 jest.mock( '@automattic/calypso-config' );
+jest.mock( 'calypso/state/ui/selectors' );
+jest.mock( 'calypso/state/ui/selectors/get-selected-site-id' );
 jest.mock( '../../../hooks/use-subscription-plans' );
 
 const mockStore = configureStore();
@@ -43,6 +48,10 @@ describe( 'SubscriberRow', () => {
 	beforeEach( () => {
 		mockUseSubscriptionPlans.mockReturnValue( [ { plan: 'Plan 1' }, { plan: 'Plan 2' } ] );
 		( isEnabled as jest.MockedFunction< typeof isEnabled > ).mockReturnValue( true );
+		( getSelectedSiteId as jest.MockedFunction< typeof getSelectedSiteId > ).mockReturnValue( 42 );
+		( getSelectedSite as jest.MockedFunction< typeof getSelectedSite > ).mockReturnValue( {
+			ID: 42,
+		} as SiteDetails );
 
 		render(
 			<Provider store={ store }>

@@ -27,6 +27,7 @@ import JetpackColophon from 'calypso/components/jetpack-colophon';
 import Main from 'calypso/components/main';
 import NavigationHeader from 'calypso/components/navigation-header';
 import memoizeLast from 'calypso/lib/memoize-last';
+import version_compare from 'calypso/lib/version-compare';
 import {
 	recordGoogleEvent,
 	recordTracksEvent,
@@ -37,7 +38,7 @@ import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import getCurrentRouteParameterized from 'calypso/state/selectors/get-current-route-parameterized';
 import isJetpackModuleActive from 'calypso/state/selectors/is-jetpack-module-active';
 import isPrivateSite from 'calypso/state/selectors/is-private-site';
-import { isJetpackSite } from 'calypso/state/sites/selectors';
+import { getJetpackStatsAdminVersion, isJetpackSite } from 'calypso/state/sites/selectors';
 import { requestModuleSettings } from 'calypso/state/stats/module-settings/actions';
 import { getModuleSettings } from 'calypso/state/stats/module-settings/selectors';
 import { getModuleToggles } from 'calypso/state/stats/module-toggles/selectors';
@@ -203,6 +204,7 @@ class StatsSite extends Component {
 			isOdysseyStats,
 			context,
 			moduleSettings,
+			statsAdminVersion,
 		} = this.props;
 
 		let defaultPeriod = PAST_SEVEN_DAYS;
@@ -295,6 +297,13 @@ class StatsSite extends Component {
 			}
 		);
 
+		// The Plan Usage API endpoint would not be available for Odyssey Stats before Jetpack version `0.15.0-alpha`.
+		const isPlanUsageEnabled = !! (
+			config.isEnabled( 'stats/plan-usage' ) &&
+			( ! isOdysseyStats ||
+				( statsAdminVersion && version_compare( statsAdminVersion, '0.15.0-alpha', '>=' ) ) )
+		);
+
 		return (
 			<div className="stats">
 				{ ! isOdysseyStats && (
@@ -306,7 +315,7 @@ class StatsSite extends Component {
 					className="stats__section-header modernized-header"
 					title={ translate( 'Jetpack Stats' ) }
 					subtitle={ translate(
-						"Learn more about the activity and behavior of your site's visitors. {{learnMoreLink}}Learn more{{/learnMoreLink}}",
+						"Gain insights into the activity and behavior of your site's visitors. {{learnMoreLink}}Learn more{{/learnMoreLink}}",
 						{
 							components: {
 								learnMoreLink: <InlineSupportLink supportContext="stats" showIcon={ false } />,
@@ -465,7 +474,7 @@ class StatsSite extends Component {
 						}
 					</div>
 				</div>
-				{ config.isEnabled( 'stats/plan-usage' ) && (
+				{ isPlanUsageEnabled && (
 					<StatsPlanUsage siteId={ siteId } isOdysseyStats={ isOdysseyStats } />
 				) }
 				{ /* Only load Jetpack Upsell Section for Odyssey Stats */ }
@@ -531,6 +540,7 @@ class StatsSite extends Component {
 		} else if ( this.props.showEnableStatsModule ) {
 			return this.renderEnableStatsModule();
 		}
+
 		return this.renderStats();
 	}
 
@@ -582,6 +592,7 @@ export default connect(
 		const siteId = getSelectedSiteId( state );
 		const canUserManageOptions = canCurrentUser( state, siteId, 'manage_options' );
 		const isJetpack = isJetpackSite( state, siteId );
+		const statsAdminVersion = getJetpackStatsAdminVersion( state, siteId );
 		const isOdysseyStats = config.isEnabled( 'is_running_in_jetpack_site' );
 
 		// Odyssey Stats: This UX is not possible in Odyssey as this page would not be able to render in the first place.
@@ -615,6 +626,7 @@ export default connect(
 			moduleSettings: getModuleSettings( state, siteId, 'traffic' ),
 			moduleToggles: getModuleToggles( state, siteId, 'traffic' ),
 			upsellModalView,
+			statsAdminVersion,
 		};
 	},
 	{

@@ -1,8 +1,7 @@
-import { Card } from '@automattic/components';
+import { Card, FormLabel } from '@automattic/components';
 import { Component } from 'react';
 import BulkSelect from 'calypso/components/bulk-select';
 import FormInputCheckbox from 'calypso/components/forms/form-checkbox';
-import FormLabel from 'calypso/components/forms/form-label';
 
 export default class extends Component {
 	static displayName = 'BulkSelects';

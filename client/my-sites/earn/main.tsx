@@ -36,7 +36,7 @@ type Tab = {
 
 const EarningsMain = ( { section, query, path }: EarningsMainProps ) => {
 	const translate = useTranslate();
-	const site = useSelector( ( state ) => getSelectedSite( state ) );
+	const site = useSelector( getSelectedSite );
 	const canAccessAds = useSelector( ( state ) => canAccessWordAds( state, site?.ID ) );
 	const isJetpack = useSelector( ( state ) => isJetpackSite( state, site?.ID ) );
 	const adsProgramName = isJetpack ? 'Ads' : 'WordAds';

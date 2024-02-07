@@ -7,14 +7,14 @@ import {
 } from '@automattic/calypso-products';
 import { Button } from '@automattic/components';
 import { localize } from 'i18n-calypso';
-import { Component, Fragment } from 'react';
-import wrapWithClickOutside from 'react-click-outside';
+import { Fragment, useState, useCallback } from 'react';
 import { connect } from 'react-redux';
 import DocumentHead from 'calypso/components/data/document-head';
 import QueryJetpackModules from 'calypso/components/data/query-jetpack-modules';
 import QueryKeyringConnections from 'calypso/components/data/query-keyring-connections';
 import QueryKeyringServices from 'calypso/components/data/query-keyring-services';
 import QueryReaderTeams from 'calypso/components/data/query-reader-teams';
+import QuerySites from 'calypso/components/data/query-sites';
 import FeatureExample from 'calypso/components/feature-example';
 import Layout from 'calypso/components/layout';
 import Column from 'calypso/components/layout/column';
@@ -31,24 +31,25 @@ import { isAutomatticTeamMember } from 'calypso/reader/lib/teams';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { fetchAutomatedTransferStatus } from 'calypso/state/automated-transfer/actions';
 import { transferStates } from 'calypso/state/automated-transfer/constants';
-import {
-	getAutomatedTransferStatus,
-	isAutomatedTransferActive,
-} from 'calypso/state/automated-transfer/selectors';
+import { getAutomatedTransferStatus } from 'calypso/state/automated-transfer/selectors';
 import { getAtomicHostingIsLoadingSftpData } from 'calypso/state/selectors/get-atomic-hosting-is-loading-sftp-data';
-import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
+import isSiteWpcomAtomic from 'calypso/state/selectors/is-site-wpcom-atomic';
 import isSiteWpcomStaging from 'calypso/state/selectors/is-site-wpcom-staging';
+import { isUserEligibleForFreeHostingTrial } from 'calypso/state/selectors/is-user-eligible-for-free-hosting-trial';
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import { requestSite } from 'calypso/state/sites/actions';
-import {
-	isSiteOnECommerceTrial,
-	isSiteOnHostingTrial,
-	isSiteOnMigrationTrial,
-} from 'calypso/state/sites/plans/selectors';
+import { isSiteOnBusinessTrial, isSiteOnECommerceTrial } from 'calypso/state/sites/plans/selectors';
 import isJetpackSite from 'calypso/state/sites/selectors/is-jetpack-site';
 import { getReaderTeams } from 'calypso/state/teams/selectors';
-import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
+import {
+	getSelectedSite,
+	getSelectedSiteId,
+	getSelectedSiteSlug,
+} from 'calypso/state/ui/selectors';
+import { TrialAcknowledgeModal } from '../plans/trials/trial-acknowledge/acknowlege-modal';
+import { WithOnclickTrialRequest } from '../plans/trials/trial-acknowledge/with-onclick-trial-request';
 import CacheCard from './cache-card';
+import HostingActivateStatus from './hosting-activate-status';
 import { HostingUpsellNudge } from './hosting-upsell-nudge';
 import PhpMyAdminCard from './phpmyadmin-card';
 import RestorePlanSoftwareCard from './restore-plan-software-card';
@@ -93,7 +94,7 @@ const MainCards = ( {
 	isBasicHostingDisabled,
 	isGithubIntegrationEnabled,
 	isWpcomStagingSite,
-	isMigrationTrial,
+	isBusinessTrial,
 	siteId,
 } ) => {
 	const mainCards = [
@@ -145,9 +146,9 @@ const MainCards = ( {
 			content: <CacheCard disabled={ isBasicHostingDisabled } />,
 			type: 'basic',
 		},
-		{
+		siteId && {
 			feature: 'wp-admin',
-			content: <SiteAdminInterfaceCard />,
+			content: <SiteAdminInterfaceCard siteId={ siteId } />,
 			type: 'basic',
 		},
 	].filter( ( card ) => card !== null );
@@ -161,7 +162,7 @@ const MainCards = ( {
 		<ShowEnabledFeatureCards
 			cards={ mainCards }
 			availableTypes={ availableTypes }
-			showDisabledCards={ ! isMigrationTrial }
+			showDisabledCards={ ! isBusinessTrial }
 		/>
 	);
 };
@@ -184,207 +185,194 @@ const SidebarCards = ( { isBasicHostingDisabled } ) => {
 	return <ShowEnabledFeatureCards cards={ sidebarCards } availableTypes={ availableTypes } />;
 };
 
-class Hosting extends Component {
-	state = {
-		clickOutside: false,
+const Hosting = ( props ) => {
+	const {
+		teams,
+		clickActivate,
+		isECommerceTrial,
+		isBusinessTrial,
+		isWpcomStagingSite,
+		siteId,
+		siteSlug,
+		translate,
+		isLoadingSftpData,
+		hasAtomicFeature,
+		hasSftpFeature,
+		hasStagingSitesFeature,
+		isJetpack,
+		isEligibleForHostingTrial,
+		fetchUpdatedData,
+		isSiteAtomic,
+		transferState,
+	} = props;
+
+	const [ isTrialAcknowledgeModalOpen, setIsTrialAcknowledgeModalOpen ] = useState( false );
+	const [ hasTransfer, setHasTransferring ] = useState(
+		transferState &&
+			! [
+				transferStates.NONE,
+				transferStates.INQUIRING,
+				transferStates.ERROR,
+				transferStates.COMPLETED,
+				transferStates.COMPLETE,
+			].includes( transferState )
+	);
+
+	const canSiteGoAtomic = ! isSiteAtomic && hasSftpFeature;
+	const showHostingActivationBanner = canSiteGoAtomic && ! hasTransfer;
+
+	const onSecondaryCTAClick = () => {
+		if ( ! isEligibleForHostingTrial ) {
+			return;
+		}
+		setIsTrialAcknowledgeModalOpen( true );
 	};
 
-	handleClickOutside( event ) {
-		const { COMPLETE } = transferStates;
-		const { isTransferring, transferState } = this.props;
+	const setOpenModal = ( isOpen ) => {
+		setIsTrialAcknowledgeModalOpen( isOpen );
+	};
 
-		if ( isTransferring && COMPLETE !== transferState ) {
-			event.preventDefault();
-			event.stopImmediatePropagation();
-			this.setState( { clickOutside: true } );
-		}
-	}
+	const trialRequested = () => {
+		setHasTransferring( true );
+	};
 
-	componentDidMount() {
-		const { COMPLETE } = transferStates;
-		// Check if a reverted site still has the COMPLETE status
-		if ( this.props.transferState === COMPLETE ) {
-			// Try to refresh the transfer state
-			this.props.fetchAutomatedTransferStatus( this.props.siteId );
-		}
-	}
-
-	render() {
-		const {
-			teams,
-			clickActivate,
-			isAdvancedHostingDisabled,
-			isBasicHostingDisabled,
-			isECommerceTrial,
-			isMigrationTrial,
-			isHostingTrial,
-			isSiteAtomic,
-			isTransferring,
-			isWpcomStagingSite,
-			requestSiteById,
-			siteId,
-			siteSlug,
-			translate,
-			transferState,
-			isLoadingSftpData,
-			hasAtomicFeature,
-			hasStagingSitesFeature,
-			isJetpack,
-		} = this.props;
-
-		const getUpgradeBanner = () => {
-			// The eCommerce Trial requires a different upsell path.
-			const targetPlan = ! isECommerceTrial
-				? undefined
-				: {
-						callToAction: translate( 'Upgrade your plan' ),
-						feature: FEATURE_SFTP_DATABASE,
-						href: `/plans/${ siteSlug }?feature=${ encodeURIComponent( FEATURE_SFTP_DATABASE ) }`,
-						title: translate( 'Upgrade your plan to access all hosting features' ),
-				  };
-
-			return <HostingUpsellNudge siteId={ siteId } targetPlan={ targetPlan } />;
-		};
-
-		const { COMPLETE, FAILURE } = transferStates;
-
-		const isTransferInProgress = () => isTransferring && COMPLETE !== transferState;
-
-		const getAtomicActivationNotice = () => {
-			// Transfer in progress
-			if ( isTransferInProgress() || ( isBasicHostingDisabled && COMPLETE === transferState ) ) {
-				if ( COMPLETE === transferState ) {
-					requestSiteById( siteId );
-				}
-
-				let activationText = translate( 'Please wait while we activate the hosting features.' );
-				if ( this.state.clickOutside ) {
-					activationText = translate( "Don't leave quite yet! Just a bit longer." );
-				}
-
-				return (
-					<>
-						<Notice
-							className="hosting__activating-notice"
-							status="is-info"
-							showDismiss={ false }
-							text={ activationText }
-							icon="sync"
-						/>
-					</>
-				);
+	const requestUpdatedSiteData = useCallback(
+		( isTransferring, wasTransferring, isTransferCompleted ) => {
+			if ( isTransferring && ! hasTransfer ) {
+				setHasTransferring( true );
 			}
 
-			if ( hasAtomicFeature && ! isSiteAtomic && ! isTransferring ) {
-				const failureNotice = FAILURE === transferState && (
-					<Notice
-						status="is-error"
-						showDismiss={ false }
-						text={ translate( 'There was an error activating hosting features.' ) }
-						icon="bug"
-					/>
-				);
-
-				return (
-					<>
-						{ failureNotice }
-						<Notice
-							status="is-info"
-							showDismiss={ false }
-							text={ translate(
-								'Please activate the hosting access to begin using these features.'
-							) }
-							icon="globe"
-						>
-							<TrackComponentView eventName="calypso_hosting_configuration_activate_impression" />
-							<NoticeAction
-								onClick={ clickActivate }
-								href={ `/hosting-config/activate/${ siteSlug }` }
-							>
-								{ translate( 'Activate' ) }
-							</NoticeAction>
-						</Notice>
-					</>
-				);
+			if ( ! isTransferring && wasTransferring && isTransferCompleted ) {
+				fetchUpdatedData();
 			}
+		},
+		[]
+	);
 
+	const getUpgradeBanner = () => {
+		if ( hasTransfer ) {
 			return null;
-		};
+		}
+		// The eCommerce Trial requires a different upsell path.
+		const targetPlan = ! isECommerceTrial
+			? undefined
+			: {
+					callToAction: translate( 'Upgrade your plan' ),
+					feature: FEATURE_SFTP_DATABASE,
+					href: `/plans/${ siteSlug }?feature=${ encodeURIComponent( FEATURE_SFTP_DATABASE ) }`,
+					title: translate( 'Upgrade your plan to access all hosting features' ),
+			  };
+		const secondaryCallToAction = isEligibleForHostingTrial ? translate( 'Try for free' ) : null;
+		return (
+			<HostingUpsellNudge
+				siteId={ siteId }
+				targetPlan={ targetPlan }
+				secondaryCallToAction={ secondaryCallToAction }
+				secondaryOnClick={ onSecondaryCTAClick }
+			/>
+		);
+	};
 
-		const getContent = () => {
-			const isGithubIntegrationEnabled =
-				isEnabled( 'github-integration-i1' ) && isAutomatticTeamMember( teams );
-
+	const getAtomicActivationNotice = () => {
+		if ( showHostingActivationBanner ) {
 			return (
-				<>
-					{ isJetpack && <QueryJetpackModules siteId={ siteId } /> }
-					{ isGithubIntegrationEnabled && (
-						<>
-							<QueryKeyringServices />
-							<QueryKeyringConnections />
-						</>
-					) }
+				<Notice
+					className="hosting__activating-notice"
+					status="is-info"
+					showDismiss={ false }
+					text={ translate( 'Please activate the hosting access to begin using these features.' ) }
+					icon="globe"
+				>
+					<TrackComponentView eventName="calypso_hosting_configuration_activate_impression" />
+					<NoticeAction onClick={ clickActivate } href={ `/hosting-config/activate/${ siteSlug }` }>
+						{ translate( 'Activate' ) }
+					</NoticeAction>
+				</Notice>
+			);
+		}
+	};
+
+	const getContent = () => {
+		const isGithubIntegrationEnabled =
+			isEnabled( 'github-integration-i1' ) && isAutomatticTeamMember( teams );
+		const WrapperComponent = ! isSiteAtomic ? FeatureExample : Fragment;
+
+		return (
+			<>
+				{ isSiteAtomic && <QuerySites siteId={ siteId } /> }
+				{ isJetpack && <QueryJetpackModules siteId={ siteId } /> }
+				{ isGithubIntegrationEnabled && (
+					<>
+						<QueryKeyringServices />
+						<QueryKeyringConnections />
+					</>
+				) }
+				<WrapperComponent>
 					<Layout className="hosting__layout">
 						<Column type="main" className="hosting__main-layout-col">
 							<MainCards
 								hasStagingSitesFeature={ hasStagingSitesFeature }
-								isAdvancedHostingDisabled={ isAdvancedHostingDisabled }
-								isBasicHostingDisabled={ isBasicHostingDisabled }
+								isAdvancedHostingDisabled={ ! hasSftpFeature || ! isSiteAtomic }
+								isBasicHostingDisabled={ ! hasAtomicFeature || ! isSiteAtomic }
 								isGithubIntegrationEnabled={ isGithubIntegrationEnabled }
 								isWpcomStagingSite={ isWpcomStagingSite }
-								isMigrationTrial={ isMigrationTrial }
+								isBusinessTrial={ isBusinessTrial && ! hasTransfer }
 								siteId={ siteId }
 							/>
 						</Column>
 						<Column type="sidebar">
-							<SidebarCards isBasicHostingDisabled={ isBasicHostingDisabled } />
+							<SidebarCards isBasicHostingDisabled={ ! hasAtomicFeature || ! isSiteAtomic } />
 						</Column>
 					</Layout>
-				</>
-			);
-		};
-
-		/* We want to show the upsell banner for the following cases:
-		 *  1. The site does not have the Atomic feature.
-		 *  2. The site is Atomic, is not transferring, and doesn't have advanced hosting features.
-		 * Otherwise, we show the activation notice, which may be empty.
-		 */
-		const shouldShowUpgradeBanner =
-			! hasAtomicFeature ||
-			( isSiteAtomic &&
-				! isTransferInProgress() &&
-				isAdvancedHostingDisabled &&
-				! isWpcomStagingSite );
-		const banner = shouldShowUpgradeBanner ? getUpgradeBanner() : getAtomicActivationNotice();
-
-		const isBusinessTrial = isMigrationTrial || isHostingTrial;
-
-		return (
-			<Main wideLayout className="hosting">
-				{ ! isLoadingSftpData && <ScrollToAnchorOnMount offset={ HEADING_OFFSET } /> }
-				<PageViewTracker path="/hosting-config/:site" title="Hosting Configuration" />
-				<DocumentHead title={ translate( 'Hosting Configuration' ) } />
-				<NavigationHeader
-					navigationItems={ [] }
-					title={ translate( 'Hosting Configuration' ) }
-					subtitle={ translate( 'Access your website’s database and more advanced settings.' ) }
-				/>
-				{ ! isBusinessTrial && banner }
-				{ isBusinessTrial && (
-					<TrialBanner
-						callToAction={
-							<Button primary href={ `/plans/${ siteSlug }` }>
-								{ translate( 'Upgrade plan' ) }
-							</Button>
-						}
-					/>
-				) }
-				{ getContent() }
-				<QueryReaderTeams />
-			</Main>
+				</WrapperComponent>
+			</>
 		);
-	}
-}
+	};
+
+	/* We want to show the upsell banner for the following cases:
+	 *  1. The site does not have the Atomic feature.
+	 *  2. The site is Atomic, is not transferring, and doesn't have advanced hosting features.
+	 * Otherwise, we show the activation notice, which may be empty.
+	 */
+	const shouldShowUpgradeBanner =
+		! hasAtomicFeature || ( ! hasTransfer && ! hasSftpFeature && ! isWpcomStagingSite );
+	const banner = shouldShowUpgradeBanner ? getUpgradeBanner() : getAtomicActivationNotice();
+
+	return (
+		<Main wideLayout className="hosting">
+			{ ! isLoadingSftpData && <ScrollToAnchorOnMount offset={ HEADING_OFFSET } /> }
+			<PageViewTracker path="/hosting-config/:site" title="Hosting" />
+			<DocumentHead title={ translate( 'Hosting' ) } />
+			<NavigationHeader
+				navigationItems={ [] }
+				title={ translate( 'Hosting' ) }
+				subtitle={ translate( 'Access your website’s database and more advanced settings.' ) }
+			/>
+			{ ! showHostingActivationBanner && ! isTrialAcknowledgeModalOpen && (
+				<HostingActivateStatus
+					context="hosting"
+					onTick={ requestUpdatedSiteData }
+					keepAlive={ ! isSiteAtomic && hasTransfer }
+				/>
+			) }
+			{ ! isBusinessTrial && banner }
+			{ isBusinessTrial && ( ! hasTransfer || isSiteAtomic ) && (
+				<TrialBanner
+					callToAction={
+						<Button primary href={ `/plans/${ siteSlug }` }>
+							{ translate( 'Upgrade plan' ) }
+						</Button>
+					}
+				/>
+			) }
+			{ getContent() }
+			{ isEligibleForHostingTrial && isTrialAcknowledgeModalOpen && (
+				<TrialAcknowledgeModal setOpenModal={ setOpenModal } trialRequested={ trialRequested } />
+			) }
+			<QueryReaderTeams />
+		</Main>
+	);
+};
 
 export const clickActivate = () =>
 	recordTracksEvent( 'calypso_hosting_configuration_activate_click' );
@@ -395,25 +383,26 @@ export default connect(
 		const hasAtomicFeature = siteHasFeature( state, siteId, WPCOM_FEATURES_ATOMIC );
 		const hasSftpFeature = siteHasFeature( state, siteId, FEATURE_SFTP );
 		const hasStagingSitesFeature = siteHasFeature( state, siteId, FEATURE_SITE_STAGING_SITES );
-		const isSiteAtomic = isSiteAutomatedTransfer( state, siteId );
+		const site = getSelectedSite( state );
+		const isEligibleForHostingTrial =
+			isUserEligibleForFreeHostingTrial( state ) && site && site.plan?.is_free;
+		const isSiteAtomic = isSiteWpcomAtomic( state, siteId );
 
 		return {
 			teams: getReaderTeams( state ),
 			isJetpack: isJetpackSite( state, siteId ),
 			isECommerceTrial: isSiteOnECommerceTrial( state, siteId ),
-			isMigrationTrial: isSiteOnMigrationTrial( state, siteId ),
-			isHostingTrial: isSiteOnHostingTrial( state, siteId ),
+			isBusinessTrial: isSiteOnBusinessTrial( state, siteId ),
 			transferState: getAutomatedTransferStatus( state, siteId ),
-			isTransferring: isAutomatedTransferActive( state, siteId ),
-			isAdvancedHostingDisabled: ! hasSftpFeature || ! isSiteAtomic,
-			isBasicHostingDisabled: ! hasAtomicFeature || ! isSiteAtomic,
-			isLoadingSftpData: getAtomicHostingIsLoadingSftpData( state, siteId ),
-			isSiteAtomic,
+			hasSftpFeature,
 			hasAtomicFeature,
+			isLoadingSftpData: getAtomicHostingIsLoadingSftpData( state, siteId ),
 			siteSlug: getSelectedSiteSlug( state ),
 			siteId,
 			isWpcomStagingSite: isSiteWpcomStaging( state, siteId ),
 			hasStagingSitesFeature,
+			isEligibleForHostingTrial,
+			isSiteAtomic,
 		};
 	},
 	{
@@ -421,4 +410,4 @@ export default connect(
 		fetchAutomatedTransferStatus,
 		requestSiteById: requestSite,
 	}
-)( localize( wrapWithClickOutside( Hosting ) ) );
+)( localize( WithOnclickTrialRequest( Hosting ) ) );

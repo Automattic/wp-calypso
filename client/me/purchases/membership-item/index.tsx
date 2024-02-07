@@ -18,12 +18,18 @@ const MembershipTerms = ( { subscription }: { subscription: MembershipSubscripti
 
 	return (
 		<>
-			{ translate( 'Renews at %(amount)s on %(date)s', {
-				args: {
-					amount: formatCurrency( Number( subscription.renewal_price ), subscription.currency ),
-					date: moment( subscription.end_date ).format( 'LL' ),
-				},
-			} ) }
+			{ subscription.renew_interval === null
+				? translate( 'Expires on %(date)s', {
+						args: {
+							date: moment( subscription.end_date ).format( 'LL' ),
+						},
+				  } )
+				: translate( 'Renews at %(amount)s on %(date)s', {
+						args: {
+							amount: formatCurrency( Number( subscription.renewal_price ), subscription.currency ),
+							date: moment( subscription.end_date ).format( 'LL' ),
+						},
+				  } ) }
 		</>
 	);
 };

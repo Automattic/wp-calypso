@@ -9,9 +9,6 @@ import {
 } from '@wordpress/components';
 import classnames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
-import { ORDERED_PATTERN_PAGES_CATEGORIES } from '../constants';
-import { useCategoriesOrder } from '../hooks';
-import type { Category, Pattern } from '../types';
 import './page-list.scss';
 
 interface PageListItemProps {
@@ -40,20 +37,13 @@ const PageListItem = ( { label, isSelected, isDisabled }: PageListItemProps ) =>
 };
 
 interface PageListProps {
-	categories: Category[];
-	pagesMapByCategory: Record< string, Pattern[] >;
-	selectedPageSlugs: string[];
+	pagesToShow: any[];
 	onSelectPage: ( selectedPage: string ) => void;
 }
 
-const PageList = ( {
-	categories,
-	pagesMapByCategory,
-	selectedPageSlugs,
-	onSelectPage,
-}: PageListProps ) => {
+const PageList = ( { pagesToShow, onSelectPage }: PageListProps ) => {
 	const translate = useTranslate();
-	const categoriesInOrder = useCategoriesOrder( categories, ORDERED_PATTERN_PAGES_CATEGORIES );
+
 	const composite = useCompositeState( { orientation: 'vertical' } );
 
 	return (
@@ -74,29 +64,17 @@ const PageList = ( {
 				>
 					<PageListItem label={ translate( 'Homepage' ) } isDisabled />
 				</CompositeItem>
-				{ categoriesInOrder.map( ( category: Category ) => {
-					const { name } = category;
-					const isSelected = name ? selectedPageSlugs.includes( name ) : false;
-					const hasPages = name && pagesMapByCategory[ name ]?.length;
-
-					if ( ! hasPages ) {
-						return null;
-					}
-
+				{ pagesToShow.map( ( page ) => {
 					return (
 						<CompositeItem
 							{ ...composite }
-							key={ name }
+							key={ page.name }
 							role="checkbox"
 							as="button"
-							aria-checked={ isSelected }
-							onClick={ () => onSelectPage( name ) }
+							aria-checked={ page.isSelected }
+							onClick={ () => onSelectPage( page.name ) }
 						>
-							<PageListItem
-								// Show the latest-updated page per category
-								label={ pagesMapByCategory[ name ][ 0 ].title }
-								isSelected={ isSelected }
-							/>
+							<PageListItem label={ page.title } isSelected={ page.isSelected } />
 						</CompositeItem>
 					);
 				} ) }

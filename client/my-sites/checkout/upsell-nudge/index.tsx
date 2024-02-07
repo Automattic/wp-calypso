@@ -5,6 +5,7 @@ import {
 	Product,
 	isPlan,
 } from '@automattic/calypso-products';
+import { RazorpayHookProvider } from '@automattic/calypso-razorpay';
 import page from '@automattic/calypso-router';
 import { StripeHookProvider } from '@automattic/calypso-stripe';
 import { CompactCard, Gridicon } from '@automattic/components';
@@ -20,7 +21,7 @@ import QueryProductsList from 'calypso/components/data/query-products-list';
 import QuerySitePlans from 'calypso/components/data/query-site-plans';
 import QuerySites from 'calypso/components/data/query-sites';
 import Main from 'calypso/components/main';
-import { getStripeConfiguration } from 'calypso/lib/store-transactions';
+import { getRazorpayConfiguration, getStripeConfiguration } from 'calypso/lib/store-transactions';
 import { TITAN_MAIL_MONTHLY_SLUG, TITAN_MAIL_YEARLY_SLUG } from 'calypso/lib/titan/constants';
 import getThankYouPageUrl from 'calypso/my-sites/checkout/get-thank-you-page-url';
 import ProfessionalEmailUpsell from 'calypso/my-sites/checkout/upsell-nudge/professional-email-upsell';
@@ -50,12 +51,12 @@ import {
 } from 'calypso/state/sites/plans/selectors';
 import { getSitePlan, getSiteSlug } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
-import { BusinessPlanUpgradeUpsell } from './business-plan-upgrade-upsell';
-import PurchaseModal from './purchase-modal';
+import PurchaseModal from '../purchase-modal';
 import {
 	type WithIsEligibleForOneClickCheckoutProps,
 	withIsEligibleForOneClickCheckout,
-} from './purchase-modal/with-is-eligible-for-one-click-checkout';
+} from '../purchase-modal/with-is-eligible-for-one-click-checkout';
+import { BusinessPlanUpgradeUpsell } from './business-plan-upgrade-upsell';
 import { QuickstartSessionsRetirement } from './quickstart-sessions-retirement';
 import type { WithShoppingCartProps, MinimalRequestCartProduct } from '@automattic/shopping-cart';
 import type { IAppState } from 'calypso/state/types';
@@ -247,7 +248,6 @@ export class UpsellNudge extends Component< UpsellNudgeProps, UpsellNudgeState >
 			case PROFESSIONAL_EMAIL_UPSELL:
 				return (
 					<ProfessionalEmailUpsell
-						currencyCode={ currencyCode ?? 'USD' }
 						domainName={ upgradeItem ?? '' }
 						handleClickAccept={ this.handleClickAccept }
 						handleClickDecline={ this.handleClickDecline }
@@ -424,14 +424,18 @@ export class UpsellNudge extends Component< UpsellNudgeProps, UpsellNudgeState >
 
 		return (
 			<StripeHookProvider fetchStripeConfiguration={ getStripeConfiguration }>
-				<PurchaseModal
-					productToAdd={ productToAdd }
-					onClose={ onCloseModal }
-					siteSlug={ this.props.siteSlug }
-					showFeatureList={
-						!! ( this.props.product && isPlan( { productSlug: this.props.product?.product_slug } ) )
-					}
-				/>
+				<RazorpayHookProvider fetchRazorpayConfiguration={ getRazorpayConfiguration }>
+					<PurchaseModal
+						productToAdd={ productToAdd }
+						onClose={ onCloseModal }
+						siteSlug={ this.props.siteSlug }
+						showFeatureList={
+							!! (
+								this.props.product && isPlan( { productSlug: this.props.product?.product_slug } )
+							)
+						}
+					/>
+				</RazorpayHookProvider>
 			</StripeHookProvider>
 		);
 	};

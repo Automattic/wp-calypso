@@ -1,5 +1,10 @@
-import { getPlan, PLAN_BUSINESS } from '@automattic/calypso-products';
-import { CompactCard, ProductIcon, Gridicon } from '@automattic/components';
+import {
+	getPlan,
+	PLAN_ECOMMERCE_TRIAL_MONTHLY,
+	PLAN_BUSINESS,
+	PLAN_WOOEXPRESS_SMALL,
+} from '@automattic/calypso-products';
+import { CompactCard, ProductIcon, Gridicon, PlanPrice } from '@automattic/components';
 import { localize } from 'i18n-calypso';
 import { get } from 'lodash';
 import PropTypes from 'prop-types';
@@ -8,7 +13,6 @@ import { connect } from 'react-redux';
 import CardHeading from 'calypso/components/card-heading';
 import QueryPlans from 'calypso/components/data/query-plans';
 import HeaderCake from 'calypso/components/header-cake';
-import PlanPrice from 'calypso/my-sites/plan-price';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getCurrentUserCurrencyCode } from 'calypso/state/currency-code/selectors';
 import { getPlanRawPrice } from 'calypso/state/plans/selectors';
@@ -28,6 +32,24 @@ class StepUpgrade extends Component {
 		this.props.recordTracksEvent( 'calypso_site_migration_business_viewed' );
 	}
 
+	getHeadingText( isEcommerceTrial, upsellPlanName ) {
+		const { translate } = this.props;
+
+		if ( isEcommerceTrial ) {
+			// translators: %(essentialPlanName)s is the name of the Essential plan
+			return translate( 'An %(essentialPlanName)s Plan is required to import everything.', {
+				args: {
+					essentialPlanName: upsellPlanName,
+				},
+			} );
+		}
+
+		// translators: %(businessPlanName)s is the name of the Creator/Business plan
+		return translate( 'A %(businessPlanName)s Plan is required to import everything.', {
+			args: { businessPlanName: upsellPlanName },
+		} );
+	}
+
 	render() {
 		const {
 			billingTimeFrame,
@@ -44,6 +66,11 @@ class StepUpgrade extends Component {
 		const sourceSiteDomain = get( sourceSite, 'domain' );
 		const targetSiteDomain = get( targetSite, 'domain' );
 		const backHref = `/migrate/from/${ sourceSiteSlug }/to/${ targetSiteSlug }`;
+		const currentPlanSlug = get( targetSite, 'plan.product_slug' );
+		const isEcommerceTrial = currentPlanSlug === PLAN_ECOMMERCE_TRIAL_MONTHLY;
+		const upsellPlanName = isEcommerceTrial
+			? getPlan( PLAN_WOOEXPRESS_SMALL )?.getTitle()
+			: getPlan( PLAN_BUSINESS )?.getTitle();
 
 		return (
 			<>
@@ -51,11 +78,7 @@ class StepUpgrade extends Component {
 				<HeaderCake backHref={ backHref }>{ translate( 'Import Everything' ) }</HeaderCake>
 
 				<CompactCard>
-					<CardHeading>
-						{ translate( 'A %(businessPlanName)s Plan is required to import everything.', {
-							args: { businessPlanName: getPlan( PLAN_BUSINESS ).getTitle() },
-						} ) }
-					</CardHeading>
+					<CardHeading>{ this.getHeadingText( isEcommerceTrial, upsellPlanName ) }</CardHeading>
 					<div>
 						{ translate(
 							'To import your themes, plugins, users, and settings from %(sourceSiteDomain)s we need to upgrade your WordPress.com site.',
@@ -109,7 +132,14 @@ class StepUpgrade extends Component {
 								<ProductIcon slug="business-bundle" />
 							</div>
 							<div className="migrate__plan-upsell-info">
-								<div className="migrate__plan-name">{ translate( 'WordPress.com Business' ) }</div>
+								<div className="migrate__plan-name">
+									{
+										// translators: %(planName)s is the name of the Creator/Business/Essential plan
+										translate( 'WordPress.com %(planName)s', {
+											args: { planName: upsellPlanName },
+										} )
+									}
+								</div>
 								<div className="migrate__plan-price">
 									<PlanPrice rawPrice={ planPrice } currencyCode={ currency } />
 								</div>
@@ -130,10 +160,12 @@ class StepUpgrade extends Component {
 }
 
 export default connect(
-	( state ) => {
-		const plan = getPlan( PLAN_BUSINESS );
+	( state, ownProps ) => {
+		const { targetSite } = ownProps;
+		const currentPlanSlug = get( targetSite, 'plan.product_slug' );
+		const isEcommerceTrial = currentPlanSlug === PLAN_ECOMMERCE_TRIAL_MONTHLY;
+		const plan = isEcommerceTrial ? getPlan( PLAN_WOOEXPRESS_SMALL ) : getPlan( PLAN_BUSINESS );
 		const planId = plan.getProductId();
-
 		return {
 			billingTimeFrame: plan.getBillingTimeFrame(),
 			currency: getCurrentUserCurrencyCode( state ),

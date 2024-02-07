@@ -129,7 +129,7 @@ In addition, `CheckoutProvider` monitors the [transaction status](#useTransactio
 
 - If the `transactionStatus` changes to [`.PENDING`](#TransactionStatus), the [form status](#useFormStatus) will be set to [`.SUBMITTING`](#FormStatus).
 - If the `transactionStatus` changes to [`.ERROR`](#TransactionStatus), the transaction status will be set to [`.NOT_STARTED`](#TransactionStatus), the [form status](#useFormStatus) will be set to [`.READY`](#FormStatus), and the error message will be sent to the `onPaymentError` handler.
-- If the `transactionStatus` changes to [`.COMPLETE`](#TransactionStatus), the [form status](#useFormStatus) will be set to [`.COMPLETE`](#FormStatus) (which will cause the `onPaymentComplete` function to be called).
+- If the `transactionStatus` changes to [`.COMPLETE`](#TransactionStatus), the `onPaymentComplete` function will be called.
 - If the `transactionStatus` changes to [`.REDIRECTING`](#TransactionStatus), the page will be redirected to the `transactionRedirectUrl` (or will register an error as above if there is no url).
 - If the `transactionStatus` changes to [`.NOT_STARTED`](#TransactionStatus), the [form status](#useFormStatus) will be set to [`.READY`](#FormStatus).
 
@@ -201,7 +201,6 @@ An enum that holds the values of the [form status](#useFormStatus).
 - `.READY`
 - `.SUBMITTING`
 - `.VALIDATING`
-- `.COMPLETE`
 
 ### PaymentMethodStep
 
@@ -263,7 +262,6 @@ A React Hook that will return an object with the following properties. Used to r
 - `setFormLoading: () => void`. Function to change the form status to [`.LOADING`](#FormStatus).
 - `setFormValidating: () => void`. Function to change the form status to [`.VALIDATING`](#FormStatus).
 - `setFormSubmitting: () => void`. Function to change the form status to [`.SUBMITTING`](#FormStatus). Usually you can use [setTransactionPending](#useTransactionStatus) instead, which will call this.
-- `setFormComplete: () => void`. Function to change the form status to [`.COMPLETE`](#FormStatus). Note that this will trigger `onPaymentComplete` from [CheckoutProvider](#CheckoutProvider). Usually you can use [setTransactionComplete](#useTransactionStatus) instead, which will call this.
 
 Only works within [CheckoutProvider](#CheckoutProvider) which may sometimes change the status itself based on its props.
 

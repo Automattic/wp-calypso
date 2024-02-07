@@ -1,16 +1,17 @@
 /* eslint-disable wpcalypso/jsx-gridicon-size */
-import { Card } from '@automattic/components';
+import { Card, FormLabel } from '@automattic/components';
+import { useHasEnTranslation } from '@automattic/i18n-utils';
 import styled from '@emotion/styled';
 import { useTranslate, localize } from 'i18n-calypso';
 import { useState, useEffect } from 'react';
-import { connect, useDispatch } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import CardHeading from 'calypso/components/card-heading';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
-import FormLabel from 'calypso/components/forms/form-label';
 import FormRadio from 'calypso/components/forms/form-radio';
 import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
 import InlineSupportLink from 'calypso/components/inline-support-link';
 import MaterialIcon from 'calypso/components/material-icon';
+import { useSelector } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import {
 	errorNotice,
@@ -19,8 +20,8 @@ import {
 	successNotice,
 } from 'calypso/state/notices/actions';
 import { getSiteOption } from 'calypso/state/sites/selectors';
-import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { useSiteInterfaceMutation } from './use-select-interface-mutation';
+
 const changeLoadingNoticeId = 'admin-interface-change-loading';
 const successNoticeId = 'admin-interface-change-success';
 const failureNoticeId = 'admin-interface-change-failure';
@@ -32,14 +33,18 @@ const FormRadioStyled = styled( FormRadio )( {
 	},
 } );
 
-const SiteAdminInterfaceCard = ( { siteId, adminInterface } ) => {
+const SiteAdminInterfaceCard = ( { siteId } ) => {
 	const translate = useTranslate();
+	const hasEnTranslation = useHasEnTranslation();
 	const dispatch = useDispatch();
 	const removeAllNotices = () => {
 		dispatch( removeNotice( successNoticeId ) );
 		dispatch( removeNotice( failureNoticeId ) );
 		dispatch( removeNotice( changeLoadingNoticeId ) );
 	};
+	const adminInterface = useSelector( ( state ) =>
+		getSiteOption( state, siteId, 'wpcom_admin_interface' )
+	);
 
 	const { setSiteInterface, isLoading: isUpdating } = useSiteInterfaceMutation( siteId, {
 		onMutate: () => {
@@ -98,29 +103,17 @@ const SiteAdminInterfaceCard = ( { siteId, adminInterface } ) => {
 			</CardHeading>
 			<p>
 				{ translate(
-					'Set the style for the admin interface. {{supportLink}}Learn more{{/supportLink}}.',
+					'Set the admin interface style for all users. {{supportLink}}Learn more{{/supportLink}}.',
 					{
 						components: {
-							supportLink: <InlineSupportLink supportContext="dashboard" showIcon={ false } />,
+							supportLink: (
+								<InlineSupportLink supportContext="admin-interface-style" showIcon={ false } />
+							),
 						},
 					}
 				) }
 			</p>
 
-			<FormFieldset>
-				<FormLabel>
-					<FormRadioStyled
-						label={ translate( 'Default style' ) }
-						value="calypso"
-						checked={ selectedAdminInterface === 'calypso' }
-						onChange={ ( event ) => handleInputChange( event.target.value ) }
-						disabled={ isUpdating }
-					/>
-				</FormLabel>
-				<FormSettingExplanation>
-					{ translate( 'The WordPress.com redesign for a better experience.' ) }
-				</FormSettingExplanation>
-			</FormFieldset>
 			<FormFieldset>
 				<FormLabel>
 					<FormRadioStyled
@@ -132,16 +125,29 @@ const SiteAdminInterfaceCard = ( { siteId, adminInterface } ) => {
 					/>
 				</FormLabel>
 				<FormSettingExplanation>
-					{ translate( 'The classic WP-Admin WordPress interface.' ) }
+					{ hasEnTranslation( 'Use WP-Admin to manage your site.' )
+						? translate( 'Use WP-Admin to manage your site.' )
+						: translate( 'The classic WP-Admin WordPress interface.' ) }
+				</FormSettingExplanation>
+			</FormFieldset>
+			<FormFieldset>
+				<FormLabel>
+					<FormRadioStyled
+						label={ translate( 'Default style' ) }
+						value="calypso"
+						checked={ selectedAdminInterface === 'calypso' }
+						onChange={ ( event ) => handleInputChange( event.target.value ) }
+						disabled={ isUpdating }
+					/>
+				</FormLabel>
+				<FormSettingExplanation>
+					{ hasEnTranslation( 'Use WordPress.com’s legacy dashboard to manage your site.' )
+						? translate( 'Use WordPress.com’s legacy dashboard to manage your site.' )
+						: translate( 'The WordPress.com redesign for a better experience.' ) }
 				</FormSettingExplanation>
 			</FormFieldset>
 		</Card>
 	);
 };
 
-export default connect( ( state ) => {
-	const siteId = getSelectedSiteId( state );
-	const adminInterface = getSiteOption( state, siteId, 'wpcom_admin_interface' ) || 'calypso';
-
-	return { siteId, adminInterface };
-} )( localize( SiteAdminInterfaceCard ) );
+export default localize( SiteAdminInterfaceCard );

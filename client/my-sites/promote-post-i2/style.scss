@@ -74,7 +74,7 @@
 			}
 
 			&.promote-post-i2__search-bar-search {
-				height: 42px;
+				height: 44px;
 			}
 		}
 	}
@@ -564,10 +564,11 @@ $break-medium-expanded-menu: $break-medium + 272px;
 	.promote-post-i2__search-bar-wrapper,
 	.promote-post-i2__table,
 	.promote-post-i2__aux-wrapper,
-	.posts-list-banner__container .posts-list-banner__content {
-		max-width: 1040px;
+	.posts-list-banner__container .posts-list-banner__content,
+	.posts-list-woo-banner__container .posts-list-banner__content {
 		margin-left: auto;
 		margin-right: auto;
+		max-width: 1040px;
 	}
 }
 

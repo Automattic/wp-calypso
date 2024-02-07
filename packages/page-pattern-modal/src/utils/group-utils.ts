@@ -1,7 +1,6 @@
 /**
  * Sorts the keys on the group object to have a preferred order.
  * If some groups exist without a preferred order, they will be included last
- *
  * @param preferredGroupOrder the order of group slugs that we want
  * @param groupsObject an object with all group information, with group names as keys
  */

@@ -1,12 +1,11 @@
 import page from '@automattic/calypso-router';
-import { Button, FormInputValidation, Gridicon } from '@automattic/components';
+import { Button, FormInputValidation, Gridicon, SelectDropdown } from '@automattic/components';
 import classnames from 'classnames';
 import { useTranslate, TranslateResult } from 'i18n-calypso';
 import { FC, useState, useCallback, useEffect, useMemo } from 'react';
 import footerCardImg from 'calypso/assets/images/jetpack/licensing-card.png';
 import QueryProducts from 'calypso/components/data/query-products-list';
 import LicensingActivation from 'calypso/components/jetpack/licensing-activation';
-import SelectDropdown from 'calypso/components/select-dropdown';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { addQueryArgs, urlToSlug } from 'calypso/lib/url';
 import { useSelector, useDispatch } from 'calypso/state';
@@ -66,7 +65,7 @@ const LicensingActivationThankYou: FC< Props > = ( {
 		hasProductInfo ? getProductName( state, productSlug ) : null
 	);
 	const productsList: ProductsList = useSelector( getProductsList );
-	const isProductListFetching = useSelector( ( state ) => getIsProductListFetching( state ) );
+	const isProductListFetching = useSelector( getIsProductListFetching );
 	const userName = useSelector( getCurrentUserName );
 	const jetpackSites = useSelector( getJetpackSites ) as JetpackSite[];
 

@@ -1,7 +1,7 @@
+import { FormLabel } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import { FunctionComponent, ChangeEvent } from 'react';
 import FormCheckbox from 'calypso/components/forms/form-checkbox';
-import FormLabel from 'calypso/components/forms/form-label';
 import type { RewindConfig } from './types';
 
 import './style.scss';

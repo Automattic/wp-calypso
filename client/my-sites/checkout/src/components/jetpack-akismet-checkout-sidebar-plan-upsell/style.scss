@@ -1,23 +1,47 @@
 .checkout-sidebar-plan-upsell.jetpack {
+	background-color: #fafff5; // custom color for accessibility reasons
+	border: solid 1px var(--studio-jetpack-green-40);
+	border-radius: 2px;
+	color: var(--studio-gray-80);
+
 	.action-panel__title,
-	strong,
 	div {
 		color: var(--studio-gray-80);
 	}
 
+	.checkout-sidebar-plan-upsell__separator {
+		margin: 0.75rem 0;
+		width: 100%;
+		background-color: var(--studio-gray-10);
+	}
+
 	.checkout-sidebar-plan-upsell__plan-grid {
-		grid-template-columns: 1fr 1fr;
+		grid-template-columns: 3fr 2fr;
+		grid-template-rows: auto;
 
 		> div {
 			border-top: none;
 		}
+
+		.checkout-sidebar-plan-upsell__plan-grid-cell {
+			&.section-bold,
+			&.section-discount {
+				font-weight: 600;
+			}
+			&.section-discount {
+				color: var(--studio-jetpack-green-50);
+			}
+		}
 	}
 
-	.checkout-sidebar-plan-upsell__plan-grid-cell.section-title {
-		border-bottom: 1px solid #ccc;
+	.action-panel__title {
+		text-align: center;
+		font-weight: 600;
+		font-size: 1.5rem;
+	}
 
-		:not(:first-child) {
-			padding-top: 0.75rem;
-		}
+	.promo-card__cta-button {
+		color: var(--studio-gray-80);
+		border-color: var(--studio-gray-80);
 	}
 }

@@ -6,24 +6,27 @@ import {
 	getSubscriberDetailsType,
 	getSubscribersCacheKey,
 } from '../helpers';
+import useManySubsSite from '../hooks/use-many-subs-site';
 import { useRecordSubscriberRemoved } from '../tracks';
 import type { SubscriberEndpointResponse, Subscriber, SubscriberListArgs } from '../types';
 
 const useSubscriberRemoveMutation = (
-	siteId: number | undefined | null,
+	siteId: number | null,
 	args: SubscriberListArgs,
 	invalidateDetailsCache = false
 ) => {
 	const { currentPage, perPage = DEFAULT_PER_PAGE, filterOption, searchTerm, sortTerm } = args;
 	const queryClient = useQueryClient();
 	const recordSubscriberRemoved = useRecordSubscriberRemoved();
+	const { hasManySubscribers } = useManySubsSite( siteId );
 	const subscribersCacheKey = getSubscribersCacheKey(
 		siteId,
 		currentPage,
 		perPage,
 		searchTerm,
 		sortTerm,
-		filterOption
+		filterOption,
+		hasManySubscribers
 	);
 
 	return useMutation( {
@@ -94,9 +97,10 @@ const useSubscriberRemoveMutation = (
 								siteId,
 								page + 1,
 								perPage,
-								filterOption,
 								searchTerm,
-								sortTerm
+								sortTerm,
+								filterOption,
+								hasManySubscribers
 							)
 						);
 						if ( nextPageQueryData && nextPageQueryData.subscribers.length ) {
@@ -139,7 +143,15 @@ const useSubscriberRemoveMutation = (
 			if ( context?.previousPages ) {
 				context.previousPages?.forEach( ( previousSubscribers, page ) => {
 					queryClient.setQueryData(
-						getSubscribersCacheKey( siteId, page, perPage, filterOption, searchTerm, sortTerm ),
+						getSubscribersCacheKey(
+							siteId,
+							page,
+							perPage,
+							searchTerm,
+							sortTerm,
+							filterOption,
+							hasManySubscribers
+						),
 						previousSubscribers
 					);
 				} );

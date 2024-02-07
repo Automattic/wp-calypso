@@ -34,7 +34,7 @@ export const stringifySitesSorting = ( sorting: Required< SitesSortOptions > ): 
 };
 
 export const useSitesSorting = () => {
-	const siteCount = useSelector( ( state ) => getCurrentUserSiteCount( state ) );
+	const siteCount = useSelector( getCurrentUserSiteCount );
 
 	const [ sitesSorting, onSitesSortingChange ] = useAsyncPreference< SitesSorting >( {
 		defaultValue: stringifySitesSorting(

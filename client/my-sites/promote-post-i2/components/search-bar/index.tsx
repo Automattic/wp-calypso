@@ -1,9 +1,12 @@
+import config from '@automattic/calypso-config';
+import { SelectDropdown } from '@automattic/components';
 import Search, { SearchIcon } from '@automattic/search';
+import { useMediaQuery } from '@wordpress/compose';
 import { translate } from 'i18n-calypso';
-import React, { useEffect } from 'react';
-import './style.scss';
-import SelectDropdown from 'calypso/components/select-dropdown';
+import React, { useEffect, useRef } from 'react';
+import SegmentedControl from 'calypso/components/segmented-control';
 import CampaignsFilter, { CampaignsFilterType } from '../campaigns-filter';
+import './style.scss';
 
 export type SearchOptions = {
 	search?: string;
@@ -20,6 +23,8 @@ export type SearchOptions = {
 interface Props {
 	mode: 'campaigns' | 'posts';
 	handleSetSearch: ( search: SearchOptions ) => void;
+	postType?: string;
+	handleFilterPostTypeChange?: ( type: string ) => void;
 }
 
 type DropdownOption = {
@@ -44,7 +49,8 @@ const FILTER_OPTIONS_DEFAULT = {
 };
 
 export default function SearchBar( props: Props ) {
-	const { mode, handleSetSearch } = props;
+	const { mode, handleSetSearch, postType, handleFilterPostTypeChange } = props;
+	const isWooStore = config.isEnabled( 'is_running_in_woo_site' );
 
 	const sortOptions: Array< DropdownOption > = [
 		{
@@ -92,15 +98,30 @@ export default function SearchBar( props: Props ) {
 		},
 	];
 
+	const wooPostTypeOptions = [
+		{
+			value: 'product',
+			label: translate( 'Products' ),
+		},
+		{
+			value: 'post,page',
+			label: translate( 'Posts & Pages' ),
+		},
+	];
+
+	const options = isWooStore ? wooPostTypeOptions : postTypeOptions;
+	// Smooth horizontal scrolling on mobile views
+	const tabsRef = useRef< { [ key: string ]: HTMLSpanElement | null } >( {} );
 	const [ searchInput, setSearchInput ] = React.useState< string | undefined >( '' );
 	const [ sortOption, setSortOption ] = React.useState( SORT_OPTIONS_DEFAULT );
 	const [ filterOption, setFilterOption ] = React.useState( FILTER_OPTIONS_DEFAULT );
+	const isDesktop = useMediaQuery( '(min-width: 1055px)' );
 
 	useEffect( () => {
 		handleSetSearch( {
 			search: '',
 			order: SORT_OPTIONS_DEFAULT,
-			filter: FILTER_OPTIONS_DEFAULT,
+			filter: { ...FILTER_OPTIONS_DEFAULT, postType: postType || '' },
 		} );
 	}, [] );
 
@@ -126,11 +147,15 @@ export default function SearchBar( props: Props ) {
 		} );
 	};
 
-	const onChangePostTypeFilter = ( option: DropdownOption ) => {
+	const onChangePostTypeFilter = ( option: string ) => {
 		const newFilter = {
 			...filterOption,
-			postType: option.value,
+			postType: option,
 		};
+
+		if ( handleFilterPostTypeChange ) {
+			handleFilterPostTypeChange( option );
+		}
 
 		setFilterOption( newFilter );
 		handleSetSearch( {
@@ -166,8 +191,9 @@ export default function SearchBar( props: Props ) {
 	};
 
 	const getPostTypeFilterLabel = () => {
-		const selectedOption = postTypeOptions.find( ( item ) => item.value === filterOption.postType )
-			?.label;
+		const options = isWooStore ? wooPostTypeOptions : postTypeOptions;
+
+		const selectedOption = options.find( ( item ) => item.value === postType )?.label;
 
 		return selectedOption
 			? // translators: filterOption is something like All, Posts and Pages
@@ -199,13 +225,31 @@ export default function SearchBar( props: Props ) {
 			<div className="promote-post-i2__search-bar-options">
 				{ mode === 'posts' && (
 					<>
-						<SelectDropdown
-							className="promote-post-i2__search-bar-dropdown post-type"
-							onSelect={ onChangePostTypeFilter }
-							options={ postTypeOptions }
-							initialSelected={ filterOption.postType }
-							selectedText={ getPostTypeFilterLabel() }
-						/>
+						{ isDesktop ? (
+							<SegmentedControl primary compact>
+								{ options.map( ( option ) => (
+									<SegmentedControl.Item
+										key={ option.value }
+										selected={ postType === option.value }
+										onClick={ () => onChangePostTypeFilter( option.value ) }
+									>
+										<span ref={ ( el ) => ( tabsRef.current[ option.value ] = el ) }>
+											{ ' ' }
+											{ option.label }{ ' ' }
+										</span>
+									</SegmentedControl.Item>
+								) ) }
+							</SegmentedControl>
+						) : (
+							<SelectDropdown
+								className="promote-post-i2__search-bar-dropdown post-type"
+								onSelect={ ( option: DropdownOption ) => onChangePostTypeFilter( option.value ) }
+								options={ isWooStore ? wooPostTypeOptions : postTypeOptions }
+								initialSelected={ postType }
+								selectedText={ getPostTypeFilterLabel() }
+							/>
+						) }
+
 						<SelectDropdown
 							className="promote-post-i2__search-bar-dropdown order-by"
 							onSelect={ onChangeOrderOption }

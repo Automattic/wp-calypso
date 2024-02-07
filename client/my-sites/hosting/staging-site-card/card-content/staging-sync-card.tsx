@@ -1,8 +1,8 @@
+import { FormLabel } from '@automattic/components';
 import styled from '@emotion/styled';
 import { translate, useTranslate } from 'i18n-calypso';
 import { ChangeEvent, useCallback, useEffect, useMemo, useState } from 'react';
 import { useDispatch } from 'react-redux';
-import FormLabel from 'calypso/components/forms/form-label';
 import FormRadio from 'calypso/components/forms/form-radio';
 import FormInput from 'calypso/components/forms/form-text-input';
 import Notice from 'calypso/components/notice';

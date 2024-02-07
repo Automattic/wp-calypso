@@ -1,6 +1,7 @@
-import { Card } from '@automattic/components';
+import { Card, FoldableCard } from '@automattic/components';
 import { isWithinBreakpoint } from '@automattic/viewport';
 import classNames from 'classnames';
+import { localize } from 'i18n-calypso';
 import { debounce, get, isEqual } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
@@ -15,6 +16,7 @@ import CommentHeader from 'calypso/my-sites/comments/comment/comment-header';
 import CommentReply from 'calypso/my-sites/comments/comment/comment-reply';
 import { getMinimumComment } from 'calypso/my-sites/comments/comment/utils';
 import { getSiteComment } from 'calypso/state/comments/selectors';
+import { getCurrentUserId } from 'calypso/state/current-user/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 
 import './style.scss';
@@ -27,11 +29,11 @@ export class Comment extends Component {
 		commentsListQuery: PropTypes.object,
 		isAtMaxDepth: PropTypes.bool,
 		isBulkMode: PropTypes.bool,
-		isEditMode: PropTypes.bool,
 		isPostView: PropTypes.bool,
 		isSelected: PropTypes.bool,
 		redirect: PropTypes.func,
 		refreshCommentData: PropTypes.bool,
+		isSingularEditMode: PropTypes.bool,
 		toggleSelected: PropTypes.func,
 		updateLastUndo: PropTypes.func,
 	};
@@ -40,7 +42,6 @@ export class Comment extends Component {
 		super( props );
 
 		this.state = {
-			isEditMode: props.isEditMode,
 			isReplyVisible: false,
 			offsetTop: 0,
 		};
@@ -61,8 +62,7 @@ export class Comment extends Component {
 				? 0
 				: this.getCommentOffsetTop();
 
-		this.setState( ( { isEditMode, isReplyVisible } ) => ( {
-			isEditMode: wasBulkMode !== isBulkMode ? false : isEditMode,
+		this.setState( ( { isReplyVisible } ) => ( {
 			isReplyVisible: wasBulkMode !== isBulkMode ? false : isReplyVisible,
 			offsetTop,
 		} ) );
@@ -128,10 +128,7 @@ export class Comment extends Component {
 	};
 
 	toggleEditMode = () => {
-		this.setState( ( { isEditMode } ) => ( {
-			isEditMode: ! isEditMode,
-			isReplyVisible: false,
-		} ) );
+		this.props.onToggleEditMode( this.props.commentId );
 	};
 
 	toggleReply = () =>
@@ -139,41 +136,28 @@ export class Comment extends Component {
 
 	toggleSelected = () => this.props.toggleSelected( this.props.minimumComment );
 
-	render() {
+	renderComment() {
 		const {
 			siteId,
 			postId,
 			commentId,
-			commentIsPending,
 			commentsListQuery,
-			isAtMaxDepth,
 			isBulkMode,
 			isLoading,
 			isPostView,
 			isSelected,
+			isSingularEditMode,
 			redirect,
 			refreshCommentData,
 			updateLastUndo,
 		} = this.props;
-		const { isEditMode, isReplyVisible } = this.state;
 
-		const classes = classNames( 'comment', {
-			'is-at-max-depth': isAtMaxDepth,
-			'is-bulk-mode': isBulkMode,
-			'is-edit-mode': isEditMode,
-			'is-placeholder': isLoading,
-			'is-pending': commentIsPending,
-			'is-reply-visible': isReplyVisible,
-		} );
+		const { isReplyVisible } = this.state;
+
+		const isEditMode = isSingularEditMode && ! isBulkMode;
 
 		return (
-			<Card
-				className={ classes }
-				id={ `comment-${ commentId }` }
-				onClick={ isBulkMode ? this.toggleSelected : undefined }
-				onKeyDown={ this.keyDownHandler }
-				ref={ this.storeCardRef }
-			>
+			<>
 				{ refreshCommentData && (
 					<QueryComment commentId={ commentId } siteId={ siteId } forceWpcom />
 				) }
@@ -202,6 +186,66 @@ export class Comment extends Component {
 				{ isEditMode && ! isLoading && (
 					<CommentEdit { ...{ commentId } } toggleEditMode={ this.toggleEditMode } />
 				) }
+			</>
+		);
+	}
+
+	render() {
+		const {
+			commentHasNoReply,
+			commentId,
+			commentIsPending,
+			isAtMaxDepth,
+			isBulkMode,
+			isLoading,
+			isSingularEditMode,
+			isOwnComment,
+			filterUnreplied,
+			translate,
+		} = this.props;
+
+		const { isReplyVisible } = this.state;
+
+		const isEditMode = isSingularEditMode && ! isBulkMode;
+
+		const classes = classNames( 'comment', {
+			'is-at-max-depth': isAtMaxDepth,
+			'is-bulk-mode': isBulkMode,
+			'is-edit-mode': isEditMode,
+			'is-placeholder': isLoading,
+			'is-pending': commentIsPending,
+			'is-reply-visible': isReplyVisible,
+		} );
+
+		if ( filterUnreplied && ! isBulkMode && ( ! commentHasNoReply || isOwnComment ) ) {
+			return (
+				<FoldableCard
+					className={ classes }
+					compact
+					header={
+						isOwnComment
+							? translate( 'This is your own comment' )
+							: translate( "You've already replied to this comment" )
+					}
+					id={ `comment-${ commentId }` }
+					onClick={ isBulkMode ? this.toggleSelected : undefined }
+					onKeyDown={ this.keyDownHandler }
+					ref={ this.storeCardRef }
+				>
+					{ this.renderComment() }
+				</FoldableCard>
+			);
+		}
+
+		return (
+			<Card
+				className={ classes }
+				id={ `comment-${ commentId }` }
+				onClick={ isBulkMode ? this.toggleSelected : undefined }
+				onKeyDown={ this.keyDownHandler }
+				ref={ this.storeCardRef }
+			>
+				{ this.renderComment() }
 			</Card>
 		);
 	}
@@ -211,13 +255,16 @@ const mapStateToProps = ( state, { commentId } ) => {
 	const siteId = getSelectedSiteId( state );
 	const comment = getSiteComment( state, siteId, commentId );
 	const commentStatus = get( comment, 'status' );
+	const currentUserId = getCurrentUserId( state );
 	return {
 		siteId,
 		postId: get( comment, 'post.ID' ),
 		commentIsPending: 'unapproved' === commentStatus,
+		commentHasNoReply: ! get( comment, 'i_replied' ),
 		isLoading: typeof comment === 'undefined',
+		isOwnComment: get( comment, 'author.ID' ) === currentUserId,
 		minimumComment: getMinimumComment( comment ),
 	};
 };
 
-export default connect( mapStateToProps )( Comment );
+export default connect( mapStateToProps )( localize( Comment ) );

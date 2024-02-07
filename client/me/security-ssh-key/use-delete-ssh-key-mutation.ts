@@ -41,6 +41,6 @@ export const useDeleteSSHKeyMutation = (
 	return {
 		deleteSSHKey,
 		keyBeingDeleted:
-			mutation.isLoading && mutation.variables ? mutation.variables.sshKeyName : null,
+			mutation.isPending && mutation.variables ? mutation.variables.sshKeyName : null,
 	};
 };

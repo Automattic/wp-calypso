@@ -6,6 +6,7 @@ import { useTranslate } from 'i18n-calypso';
 import TimeMismatchWarning from 'calypso/blocks/time-mismatch-warning';
 import ActivityCardList from 'calypso/components/activity-card-list';
 import DocumentHead from 'calypso/components/data/document-head';
+import QuerySiteCredentials from 'calypso/components/data/query-site-credentials';
 import QuerySitePlans from 'calypso/components/data/query-site-plans';
 import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
 import Upsell from 'calypso/components/jetpack/upsell';
@@ -19,6 +20,7 @@ import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import { backupClonePath } from 'calypso/my-sites/backup/paths';
 import { useSelector, useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import { hasJetpackPartnerAccess as hasJetpackPartnerAccessSelector } from 'calypso/state/partner-portal/partner/selectors';
 import getActivityLogFilter from 'calypso/state/selectors/get-activity-log-filter';
 import getSettingsUrl from 'calypso/state/selectors/get-settings-url';
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
@@ -35,11 +37,19 @@ const ActivityLogV2: FunctionComponent = () => {
 	const filter = useSelector( ( state ) => getActivityLogFilter( state, siteId ) );
 	const { data: logs } = useActivityLogQuery( siteId, filter );
 	const selectedSiteSlug = useSelector( getSelectedSiteSlug );
+	const hasJetpackPartnerAccess = useSelector( hasJetpackPartnerAccessSelector );
 
 	const siteHasFullActivityLog = useSelector(
 		( state ) => siteId && siteHasFeature( state, siteId, WPCOM_FEATURES_FULL_ACTIVITY_LOG )
 	);
 	const settingsUrl = useSelector( ( state ) => getSettingsUrl( state, siteId, 'general' ) );
+
+	let upsellURL;
+	if ( hasJetpackPartnerAccess ) {
+		upsellURL = `/partner-portal/issue-license?site_id=${ siteId }`;
+	} else {
+		upsellURL = `/pricing/${ selectedSiteSlug }`;
+	}
 
 	const jetpackCloudHeader = siteHasFullActivityLog ? (
 		<div className="activity-log-v2__header">
@@ -80,8 +90,8 @@ const ActivityLogV2: FunctionComponent = () => {
 						'by type and date range to quickly find the information you need.'
 				)
 			) }
-			buttonLink={ `https://cloud.jetpack.com/pricing/${ selectedSiteSlug }` }
-			buttonText={ translate( 'Upgrade Now' ) }
+			buttonLink={ upsellURL }
+			buttonText={ translate( 'Upgrade now' ) }
 			onClick={ () =>
 				dispatch( recordTracksEvent( 'calypso_jetpack_activity_log_upgrade_click' ) )
 			}
@@ -98,6 +108,7 @@ const ActivityLogV2: FunctionComponent = () => {
 		>
 			{ siteId && <QuerySitePlans siteId={ siteId } /> }
 			{ siteId && <QuerySitePurchases siteId={ siteId } /> }
+			{ siteId && <QuerySiteCredentials siteId={ siteId } /> }
 			<DocumentHead title={ translate( 'Activity log' ) } />
 			{ isJetpackCloud() && <SidebarNavigation /> }
 			<PageViewTracker path="/activity-log/:site" title="Activity log" />

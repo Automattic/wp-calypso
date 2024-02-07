@@ -605,9 +605,8 @@ class Login extends Component {
 	}
 
 	renderToS() {
-		const { isSocialFirst, translate, twoFactorEnabled } = this.props;
-
-		if ( ! isSocialFirst || twoFactorEnabled ) {
+		const { isSocialFirst, translate, twoFactorAuthType } = this.props;
+		if ( ! isSocialFirst || twoFactorAuthType ) {
 			return null;
 		}
 
@@ -715,7 +714,7 @@ class Login extends Component {
 			);
 		}
 
-		if ( twoFactorEnabled ) {
+		if ( twoFactorEnabled && twoFactorAuthType ) {
 			return (
 				<Fragment>
 					<AsyncLoad

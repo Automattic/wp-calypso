@@ -12,7 +12,6 @@ import './style.scss';
 export default function NextSteps( { onDismiss = () => {} } ) {
 	const dispatch = useDispatch();
 	const translate = useTranslate();
-	const tracksPrefix = 'calypso_jetpack_manage_overview_next_steps';
 
 	const preferences = useSelector( getAllRemotePreferences );
 
@@ -37,7 +36,9 @@ export default function NextSteps( { onDismiss = () => {} } ) {
 			completed: checkTourCompletion( 'dashboardWalkthrough' ),
 			disabled: false,
 			actionDispatch: () => {
-				dispatch( recordTracksEvent( tracksPrefix + '_get_familiar_click' ) );
+				dispatch(
+					recordTracksEvent( 'calypso_jetpack_manage_overview_next_steps_get_familiar_click' )
+				);
 				resetTour( [ 'dashboardWalkthrough' ] );
 			},
 			id: 'get_familiar',
@@ -46,10 +47,12 @@ export default function NextSteps( { onDismiss = () => {} } ) {
 		},
 		{
 			calypso_path: '/dashboard?tour=add-new-site',
-			completed: checkTourCompletion( 'addSiteStep2' ),
+			completed: checkTourCompletion( 'addSiteStep1' ),
 			disabled: false,
 			actionDispatch: () => {
-				dispatch( recordTracksEvent( tracksPrefix + '_add_sites_click' ) );
+				dispatch(
+					recordTracksEvent( 'calypso_jetpack_manage_overview_next_steps_add_sites_click' )
+				);
 				resetTour( [ 'addSiteStep1', 'addSiteStep2' ] );
 			},
 			id: 'add_sites',
@@ -61,7 +64,9 @@ export default function NextSteps( { onDismiss = () => {} } ) {
 			completed: checkTourCompletion( 'enableMonitorStep2' ),
 			disabled: false,
 			actionDispatch: () => {
-				dispatch( recordTracksEvent( tracksPrefix + '_bulk_editing_click' ) );
+				dispatch(
+					recordTracksEvent( 'calypso_jetpack_manage_overview_next_steps_bulk_editing_click' )
+				);
 				resetTour( [ 'enableMonitorStep1', 'enableMonitorStep2' ] );
 			},
 			id: 'bulk_editing',
@@ -73,7 +78,9 @@ export default function NextSteps( { onDismiss = () => {} } ) {
 			completed: checkTourCompletion( 'pluginOverview' ),
 			disabled: false,
 			actionDispatch: () => {
-				dispatch( recordTracksEvent( tracksPrefix + '_plugin_management_click' ) );
+				dispatch(
+					recordTracksEvent( 'calypso_jetpack_manage_overview_next_steps_plugin_management_click' )
+				);
 				resetTour( [ 'pluginOverview' ] );
 			},
 			id: 'plugin_management',
@@ -106,7 +113,9 @@ export default function NextSteps( { onDismiss = () => {} } ) {
 					<button
 						className="dismiss"
 						onClick={ () => {
-							dispatch( recordTracksEvent( tracksPrefix + '_dismiss_click' ) );
+							dispatch(
+								recordTracksEvent( 'calypso_jetpack_manage_overview_next_steps_dismiss_click' )
+							);
 							onDismiss();
 						} }
 					>

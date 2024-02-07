@@ -20,7 +20,7 @@ import { useDispatch } from '@wordpress/data';
 import { addQueryArgs } from '@wordpress/url';
 import { localize, useTranslate } from 'i18n-calypso';
 import PropTypes from 'prop-types';
-import { Component, useEffect } from 'react';
+import { Component } from 'react';
 import { connect } from 'react-redux';
 import Banner from 'calypso/components/banner';
 import DocumentHead from 'calypso/components/data/document-head';
@@ -33,13 +33,11 @@ import Main from 'calypso/components/main';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import TrackComponentView from 'calypso/lib/analytics/track-component-view';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
-import withTrackingTool from 'calypso/lib/analytics/with-tracking-tool';
 import { getDomainRegistrations } from 'calypso/lib/cart-values/cart-items';
 import { PerformanceTrackerStop } from 'calypso/lib/performance-tracking';
 import PlansNavigation from 'calypso/my-sites/plans/navigation';
 import P2PlansMain from 'calypso/my-sites/plans/p2-plans-main';
 import PlansFeaturesMain from 'calypso/my-sites/plans-features-main';
-import { useOdieAssistantContext } from 'calypso/odie/context';
 import { getPlanSlug } from 'calypso/state/plans/selectors';
 import { getByPurchaseId } from 'calypso/state/purchases/selectors';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
@@ -282,6 +280,7 @@ class Plans extends Component {
 				showLegacyStorageFeature={ this.props.siteHasLegacyStorage }
 				intent={ plansIntent }
 				isSpotlightOnCurrentPlan={ ! this.props.isDomainAndPlanPackageFlow }
+				showPlanTypeSelectorDropdown={ isEnabled( 'onboarding/interval-dropdown' ) }
 			/>
 		);
 	}
@@ -500,22 +499,9 @@ const ConnectedPlans = connect( ( state ) => {
 		domainFromHomeUpsellFlow: getDomainFromHomeUpsellInQuery( state ),
 		siteHasLegacyStorage: siteHasFeature( state, selectedSiteId, FEATURE_LEGACY_STORAGE_200GB ),
 	};
-} )( withCartKey( withShoppingCart( localize( withTrackingTool( 'HotJar' )( Plans ) ) ) ) );
+} )( withCartKey( withShoppingCart( localize( Plans ) ) ) );
 
 export default function PlansWrapper( props ) {
-	const { sendNudge } = useOdieAssistantContext();
-
-	useEffect( () => {
-		if ( props.intervalType === 'monthly' ) {
-			sendNudge( {
-				nudge: 'monthly-plan',
-				initialMessage:
-					'I see you are sitting on a monthly plan. I can recommend you to switch to an annual plan, so you can save some money.',
-				context: { plan: 'monthly' },
-			} );
-		}
-	}, [ props.intervalType ] );
-
 	return (
 		<CalypsoShoppingCartProvider>
 			<ConnectedPlans { ...props } />

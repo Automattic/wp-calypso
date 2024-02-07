@@ -13,6 +13,7 @@ import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getCurrentRoutePattern } from 'calypso/state/selectors/get-current-route-pattern';
 import { useSitesSorting } from 'calypso/state/sites/hooks/use-sites-sorting';
 import { useCurrentSiteRankTop } from './use-current-site-rank-top';
+import type { AppState } from 'calypso/types';
 
 const FillDefaultIconWhite = styled.div( {
 	flexShrink: 0,
@@ -32,6 +33,7 @@ type OnClickSiteFunction = ( {
 	command: Command;
 } ) => void;
 interface SiteFunctions {
+	capabilityFilter?: string;
 	onClick: OnClickSiteFunction;
 	filter?: ( site: SiteExcerptData ) => boolean | undefined | null;
 	filterNotice?: string;
@@ -152,6 +154,8 @@ export const useCommandPalette = ( {
 
 	const currentRoute = useSelector( ( state: object ) => getCurrentRoutePattern( state ) );
 
+	const userCapabilities = useSelector( ( state: AppState ) => state.currentUser.capabilities );
+
 	// Logic for selected command (sites)
 	if ( selectedCommandName ) {
 		const selectedCommand = commands.find( ( c ) => c.name === selectedCommandName );
@@ -159,8 +163,14 @@ export const useCommandPalette = ( {
 		let filterNotice = undefined;
 		let emptyListNotice = undefined;
 		if ( selectedCommand?.siteFunctions ) {
-			const { onClick, filter } = selectedCommand.siteFunctions;
+			const { capabilityFilter, onClick, filter } = selectedCommand.siteFunctions;
 			let filteredSites = filter ? sortedSites.filter( filter ) : sortedSites;
+			filteredSites = capabilityFilter
+				? filteredSites.filter( ( site ) => {
+						const siteCapabilities = userCapabilities[ site.ID ];
+						return siteCapabilities?.[ capabilityFilter ];
+				  } )
+				: filteredSites;
 			if ( sortedSites.length === 0 ) {
 				emptyListNotice = __( "You don't have any sites yet." );
 			} else if ( filteredSites.length === 0 ) {

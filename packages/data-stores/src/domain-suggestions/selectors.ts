@@ -66,7 +66,6 @@ export const isLoadingDomainSuggestions = (
 
 /**
  * Do not use this selector. It is for internal use.
- *
  * @param state Store state
  * @param queryObject Normalized object representing the query
  * @returns suggestions

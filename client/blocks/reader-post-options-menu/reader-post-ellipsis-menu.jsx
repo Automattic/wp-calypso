@@ -38,6 +38,7 @@ class ReaderPostEllipsisMenu extends Component {
 	static propTypes = {
 		post: PropTypes.object,
 		feed: PropTypes.object,
+		followSource: PropTypes.string,
 		onBlock: PropTypes.func,
 		openSuggestedFollows: PropTypes.func,
 		showFollow: PropTypes.bool,
@@ -53,6 +54,7 @@ class ReaderPostEllipsisMenu extends Component {
 
 	static defaultProps = {
 		onBlock: noop,
+		followSource: READER_POST_OPTIONS_MENU,
 		openSuggestedFollows: noop,
 		position: 'top left',
 		showFollow: true,
@@ -66,7 +68,7 @@ class ReaderPostEllipsisMenu extends Component {
 
 	openSuggestedFollowsModal = ( shouldOpen ) => {
 		if ( shouldOpen ) {
-			this.props.openSuggestedFollows();
+			this.props.openSuggestedFollows( shouldOpen );
 		}
 	};
 
@@ -263,6 +265,7 @@ class ReaderPostEllipsisMenu extends Component {
 			currentRoute,
 			hasOrganization,
 			isLoggedIn,
+			followSource,
 		} = this.props;
 
 		const { ID: postId, site_ID: siteId } = post;
@@ -298,7 +301,7 @@ class ReaderPostEllipsisMenu extends Component {
 						siteId={ siteId }
 						postId={ postId }
 						post={ post }
-						followSource={ READER_POST_OPTIONS_MENU }
+						followSource={ followSource }
 						followIcon={ ReaderFollowConversationIcon( { iconSize: 20 } ) }
 						followingIcon={ ReaderFollowingConversationIcon( { iconSize: 20 } ) }
 					/>
@@ -308,7 +311,7 @@ class ReaderPostEllipsisMenu extends Component {
 					<ReaderFollowButton
 						tagName={ PopoverMenuItem }
 						siteUrl={ post.feed_URL || post.site_URL }
-						followSource={ READER_POST_OPTIONS_MENU }
+						followSource={ followSource }
 						iconSize={ 20 }
 						followLabel={ translate( 'Subscribe' ) }
 						followingLabel={ translate( 'Unsubscribe' ) }

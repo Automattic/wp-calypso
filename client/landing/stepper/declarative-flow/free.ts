@@ -1,14 +1,14 @@
 import { type OnboardSelect, type UserSelect } from '@automattic/data-stores';
 import { isAssemblerDesign } from '@automattic/design-picker';
 import { useLocale } from '@automattic/i18n-utils';
-import { useFlowProgress, FREE_FLOW } from '@automattic/onboarding';
+import { FREE_FLOW } from '@automattic/onboarding';
 import { useSelect, useDispatch } from '@wordpress/data';
 import { addQueryArgs } from '@wordpress/url';
 import { translate } from 'i18n-calypso';
 import { useEffect } from 'react';
 import { getLocaleFromQueryParam, getLocaleFromPathname } from 'calypso/boot/locale';
 import { skipLaunchpad } from 'calypso/landing/stepper/utils/skip-launchpad';
-import wpcom from 'calypso/lib/wp';
+import { triggerGuidesForStep } from 'calypso/lib/guides/trigger-guides-for-step';
 import {
 	setSignupCompleteSlug,
 	persistSignupDestination,
@@ -53,9 +53,7 @@ const free: Flow = {
 
 	useStepNavigation( _currentStep, navigate ) {
 		const flowName = this.name;
-		const { setStepProgress, setPendingAction } = useDispatch( ONBOARD_STORE );
-		const flowProgress = useFlowProgress( { stepName: _currentStep, flowName } );
-		setStepProgress( flowProgress );
+		const { setPendingAction } = useDispatch( ONBOARD_STORE );
 		const siteId = useSiteIdParam();
 		const siteSlug = useSiteSlug();
 		const selectedDesign = useSelect(
@@ -63,17 +61,7 @@ const free: Flow = {
 			[]
 		);
 
-		// trigger guides on step movement, we don't care about failures or response
-		wpcom.req.post(
-			'guides/trigger',
-			{
-				apiNamespace: 'wpcom/v2/',
-			},
-			{
-				flow: flowName,
-				step: _currentStep,
-			}
-		);
+		triggerGuidesForStep( flowName, _currentStep );
 
 		const exitFlow = ( to: string ) => {
 			setPendingAction( () => {
@@ -90,9 +78,9 @@ const free: Flow = {
 
 			switch ( _currentStep ) {
 				case 'freeSetup':
-					return navigate( 'site-creation-step' );
+					return navigate( 'create-site' );
 
-				case 'site-creation-step':
+				case 'create-site':
 					return navigate( 'processing' );
 
 				case 'processing':

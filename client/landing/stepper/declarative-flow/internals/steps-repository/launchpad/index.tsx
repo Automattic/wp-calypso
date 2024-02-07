@@ -26,7 +26,7 @@ import './style.scss';
 
 type LaunchpadProps = {
 	navigation: NavigationControls;
-	flow: string | null;
+	flow: string;
 };
 
 const Launchpad: Step = ( { navigation, flow }: LaunchpadProps ) => {

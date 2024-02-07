@@ -34,7 +34,7 @@ const EmailForwardingAddNewCompactList = ( {
 	);
 	const existingEmailForwards = emailAccounts[ 0 ]?.emails ?? [];
 
-	const { mutate: addEmailForward, isLoading: isAddingEmailForward } =
+	const { mutate: addEmailForward, isPending: isAddingEmailForward } =
 		useAddEmailForwardMutation( selectedDomainName );
 
 	const hasValidEmailForwards = () => {

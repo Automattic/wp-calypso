@@ -37,6 +37,7 @@ export const membershipCouponFromApi = ( coupon ) => ( {
 	discount_type: coupon.discount_type,
 	discount_value: parseFloat( coupon.discount_value ),
 	discount_percentage: parseFloat( coupon.discount_percentage ),
+	discount_currency: coupon.discount_currency,
 	start_date: coupon.start_date,
 	end_date: coupon.end_date,
 	plan_ids_allow_list: coupon.plan_ids_allow_list.map( ( productId ) => parseInt( productId ) ),
@@ -45,6 +46,12 @@ export const membershipCouponFromApi = ( coupon ) => ( {
 	first_time_purchase_only: coupon.first_time_purchase_only ? true : false,
 	duration: coupon.duration,
 	email_allow_list: coupon.email_allow_list ?? [],
+} );
+
+export const membershipGiftFromApi = ( gift ) => ( {
+	gift_id: parseInt( gift.gift_id ),
+	user_id: parseInt( gift.user_id ),
+	plan_id: parseInt( gift.plan_id ),
 } );
 
 export const handleMembershipProductsList = dispatchRequest( {

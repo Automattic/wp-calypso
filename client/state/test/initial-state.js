@@ -7,14 +7,9 @@ import * as browserStorage from 'calypso/lib/browser-storage';
 import { isSupportSession } from 'calypso/lib/user/support-user-interop';
 import { createReduxStore } from 'calypso/state';
 import { addReducerToStore } from 'calypso/state/add-reducer';
+import { MAX_AGE, SERIALIZE_THROTTLE } from 'calypso/state/constants';
 import currentUser from 'calypso/state/current-user/reducer';
-import {
-	getInitialState,
-	getStateFromCache,
-	persistOnChange,
-	MAX_AGE,
-	SERIALIZE_THROTTLE,
-} from 'calypso/state/initial-state';
+import { getInitialState, getStateFromCache, persistOnChange } from 'calypso/state/initial-state';
 import { loadPersistedState } from 'calypso/state/persisted-state';
 import postTypes from 'calypso/state/post-types/reducer';
 import reader from 'calypso/state/reader/reducer';

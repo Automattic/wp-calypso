@@ -43,6 +43,12 @@ const sections = [
 		group: 'me',
 	},
 	{
+		name: 'developer',
+		paths: [ '/me/developer' ],
+		module: 'calypso/me/developer',
+		group: 'me',
+	},
+	{
 		name: 'notification-settings',
 		paths: [ '/me/notifications' ],
 		module: 'calypso/me/notification-settings',
@@ -570,6 +576,13 @@ const sections = [
 		enableLoggedOut: true,
 	},
 	{
+		name: 'jetpack-cloud-manage-pricing',
+		paths: [ '/manage/pricing' ],
+		module: 'calypso/jetpack-cloud/sections/manage/pricing',
+		group: 'jetpack-cloud',
+		enableLoggedOut: true,
+	},
+	{
 		name: 'jetpack-cloud-pricing',
 		paths: [ '/pricing', '/[^\\/]+/pricing', '/plans', '/[^\\/]+/plans' ],
 		module: 'calypso/jetpack-cloud/sections/pricing',
@@ -649,6 +662,12 @@ const sections = [
 		name: 'site-monitoring',
 		paths: [ '/site-monitoring', '/site-logs' ],
 		module: 'calypso/my-sites/site-monitoring',
+		group: 'sites',
+	},
+	{
+		name: 'github-deployments',
+		paths: [ '/github-deployments' ],
+		module: 'calypso/my-sites/github-deployments',
 		group: 'sites',
 	},
 ];

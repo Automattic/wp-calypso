@@ -1,0 +1,414 @@
+/* stylelint-disable declaration-property-unit-allowed-list */
+
+.verbum-editor-wrapper {
+	width: 100%;
+	box-sizing: border-box;
+
+	@import "@wordpress/components/build-style/style";
+	@import "@wordpress/edit-post/build-style/style";
+	@import "@wordpress/block-editor/build-style/style";
+	@import "@wordpress/block-editor/build-style/content";
+
+	.editor__header {
+		top: 0;
+		background-color: #fefefe;
+		overflow: hidden;
+		position: sticky;
+		display: grid;
+		border: 1px solid var(--color-neutral-0);
+		// Avoid double border.
+		border-bottom: none;
+
+		&.is-editing {
+			overflow: visible;
+		}
+
+		@at-root body.admin-bar & {
+			top: 32px;
+		}
+
+		.editor__header-wrapper {
+			display: flex;
+			overflow: hidden;
+			justify-content: space-between;
+			align-items: center;
+			min-height: 52px;
+			border-bottom: solid 1px #dcdcde;
+
+			button {
+				box-shadow: none;
+			}
+
+			.editor__header-toolbar {
+				flex-grow: 1;
+
+				.block-editor-block-contextual-toolbar.components-accessible-toolbar {
+					border-bottom: none;
+				}
+
+				.block-editor-block-toolbar {
+
+					.block-editor-block-settings-menu,
+					button:disabled {
+						display: none;
+					}
+
+					.block-editor-block-parent-selector {
+						background-color: transparent;
+
+						button.block-editor-block-parent-selector__button {
+							border: none;
+						}
+					}
+				}
+			}
+
+			.block-editor-inserter {
+				padding: 5px 8px;
+
+				.block-editor-inserter__toggle {
+					svg {
+						margin: auto;
+					}
+				}
+			}
+
+			.block-editor-media-placeholder__url-input-form {
+				display: flex;
+				box-sizing: border-box;
+			}
+
+			.block-editor-media-flow__url-input {
+				border-top: 1px solid #1e1e1e;
+				margin-top: -9px;
+				padding: 8px 16px;
+
+				.block-editor-media-replace-flow__image-url-label {
+					display: block;
+					margin-bottom: 8px;
+					font-size: 13px;
+				}
+
+				.block-editor-link-control {
+					width: 300px;
+				}
+			}
+		}
+	}
+
+	.editor__main {
+		border: 1px solid var(--color-neutral-0);
+		margin-bottom: 10px;
+		&.loading-placeholder {
+			&.loading {
+				display: flex;
+				justify-content: center;
+				align-items: center;
+			}
+		}
+
+		&,
+		& iframe {
+			min-height: 140px;
+		}
+	}
+}
+
+
+/**
+ * Tooltips are added as a new element appended to the main DOM.
+ * Therefore we need to style them outside the Verbum selector.
+ */
+div[id^="portal/tooltip"] {
+	.components-tooltip {
+		background: #000;
+		border-radius: 2px;
+		color: #f0f0f0;
+		font-size: 12px;
+		line-height: 1.4;
+		padding: 4px 8px;
+		text-align: center;
+		z-index: 1000002;
+	}
+
+	.components-tooltip__shortcut {
+		margin-left: 8px;
+	}
+}
+
+/**
+ * Some popover components are added as a new element appended to the main DOM.
+ * Therefore we need to style them outside the Verbum selector.
+ */
+.components-popover__content {
+	background: #fff;
+	color: var(--verbum-font-color, #1e1e1e);
+	border-radius: 2px;
+	box-shadow: 0 0 0 1px #ccc, 0 0.7px 1px rgba(0, 0, 0, 0.1), 0 1.2px 1.7px -0.2px rgba(0, 0, 0, 0.1), 0 2.3px 3.3px -0.5px rgba(0, 0, 0, 0.1);
+	width: auto;
+
+	button.components-button {
+		align-items: center;
+		-webkit-appearance: none;
+		background: none;
+		border: 0;
+		border-radius: 2px;
+		box-sizing: border-box;
+		color: var(--wp-components-color-foreground, #1e1e1e);
+		cursor: pointer;
+		display: inline-flex;
+		font-family: inherit;
+		font-size: 13px;
+		font-weight: 400;
+		margin: 0;
+		padding: 6px;
+		text-decoration: none;
+		transition: box-shadow 0.1s linear;
+
+		&:hover {
+			color: var(--wp-components-color-accent, var(--wp-admin-theme-color, #3858e9));
+		}
+
+		svg {
+			fill: currentColor;
+		}
+	}
+
+	/**
+	 * Image URL popover
+	 */
+	.block-editor-url-popover__input-container .block-editor-url-popover__row {
+		form.block-editor-media-placeholder__url-input-form {
+			display: flex;
+			flex-grow: 1;
+
+			input.block-editor-media-placeholder__url-input-field {
+				width: initial;
+				padding: 0 8px;
+				line-height: 2;
+				min-height: 30px;
+				font-size: 14px;
+				box-shadow: 0 0 0 transparent;
+				border-radius: 4px;
+				border: 1px solid #8c8f94;
+				background-color: #fff;
+				color: #2c3338;
+			}
+		}
+	}
+
+	/**
+	 * Paragraph link popover
+	 */
+	.block-editor-link-control {
+		font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
+		max-width: 350px;
+		min-width: auto;
+		width: 90vw;
+		position: relative;
+
+		.block-editor-link-control__search-input-wrapper {
+			position: relative;
+
+			// Search bar
+			.block-editor-url-input.block-editor-link-control__field.block-editor-link-control__search-input {
+				margin: 16px;
+
+				.block-editor-url-input__input {
+					border: 1px solid #949494;
+					border-radius: 2px;
+					box-shadow: 0 0 0 transparent;
+					display: block;
+					height: 40px;
+					line-height: normal;
+					margin: 0;
+					padding: 8px 16px;
+					position: relative;
+					transition: box-shadow 0.1s linear;
+					width: 100%;
+				}
+			}
+
+			// Enter button
+			.block-editor-link-control__search-enter {
+				position: absolute;
+				top: 3px;
+				right: 19px;
+
+				button.block-editor-link-control__search-submit {
+					&[aria-disabled="true"] {
+						cursor: default;
+						opacity: 0.3;
+					}
+				}
+			}
+
+			// Search results
+			.block-editor-link-control__search-results-wrapper .block-editor-link-control__search-results {
+				margin-top: -16px;
+				max-height: 200px;
+				overflow-y: auto;
+				padding: 8px;
+
+				button.block-editor-link-control__search-item {
+					height: auto;
+					width: 100%;
+					text-align: left;
+					justify-content: start;
+
+					.block-editor-link-control__search-item-icon {
+						display: flex;
+						flex-shrink: 0;
+						justify-content: center;
+						margin-right: 8px;
+						max-height: 24px;
+						position: relative;
+						width: 24px;
+					}
+
+					.components-menu-item__item {
+						display: inline-block;
+						overflow: hidden;
+						text-overflow: ellipsis;
+						width: 100%;
+						margin-right: auto;
+						min-width: 160px;
+						white-space: nowrap;
+
+						.components-menu-item__info-wrapper {
+							display: flex;
+							flex-direction: column;
+							margin-right: auto;
+						}
+
+						.components-menu-item__info {
+							color: #757575;
+							font-size: 12px;
+							margin-top: 4px;
+							white-space: normal;
+						}
+
+						mark {
+							background-color: transparent;
+							color: inherit;
+							font-weight: 600;
+						}
+					}
+
+					.components-menu-item__shortcut {
+						color: #757575;
+						text-transform: capitalize;
+						white-space: nowrap;
+						align-self: center;
+						margin-left: auto;
+						margin-right: 0;
+						padding-left: 24px;
+					}
+				}
+			}
+		}
+
+		// Link settings
+		.block-editor-link-control__search-item {
+			background: transparent;
+			border: 0;
+			cursor: default;
+			padding: 16px;
+			width: 100%;
+			box-sizing: border-box;
+			font-size: 13px;
+
+			.block-editor-link-control__search-item-top {
+				align-items: center;
+				display: flex;
+				flex-direction: row;
+				width: 100%;
+
+				.block-editor-link-control__search-item-header {
+					align-items: flex-start;
+					display: flex;
+					flex: 1;
+					flex-direction: row;
+					margin-right: 8px;
+					overflow-wrap: break-word;
+					white-space: pre-wrap;
+
+					.block-editor-link-control__search-item-icon {
+						display: flex;
+						flex-shrink: 0;
+						justify-content: center;
+						margin-right: 8px;
+						max-height: 24px;
+						position: relative;
+						width: 24px;
+					}
+
+					.block-editor-link-control__search-item-details {
+						max-width: 144px;
+
+						a.block-editor-link-control__search-item-title {
+							display: block;
+							font-weight: 500;
+							line-height: 24px;
+							position: relative;
+							color: #0073aa;
+
+							.components-external-link__icon {
+								display: none;
+							}
+						}
+
+						.block-editor-link-control__search-item-info {
+							word-break: break-all;
+						}
+					}
+				}
+			}
+
+			.block-editor-link-control__settings {
+				border: 0;
+				margin: 0;
+				padding: 0;
+
+				.block-editor-link-control__setting {
+					padding: 20px 8px 8px 0;
+					margin-bottom: 0;
+
+					.components-base-control__field {
+						display: flex;
+					}
+
+					.components-checkbox-control__input-container {
+						margin-right: 12px;
+						display: inline-block;
+						vertical-align: middle;
+						position: relative;
+
+						input.components-checkbox-control__input {
+							margin: 0;
+							height: 20px;
+							width: 20px;
+						}
+					}
+
+					.components-checkbox-control__label {
+						line-height: 1.4em;
+					}
+				}
+			}
+		}
+	}
+
+	/**
+	 * Rich text toolbar
+	 */
+	.block-editor-rich-text__inline-format-toolbar-group .components-toolbar-group {
+		display: flex;
+		flex-direction: row;
+		flex-wrap: wrap;
+		justify-content: flex-start;
+		margin: 0;
+		padding: 0;
+		list-style: none;
+	}
+}

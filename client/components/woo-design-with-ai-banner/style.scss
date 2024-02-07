@@ -1,0 +1,68 @@
+
+.woocommerce-customize-store-banner {
+	background: rgba(242, 237, 255, 0.6) url(calypso/assets/images/woocommerce/cys-banner-background.svg) no-repeat center right;
+	background-size: auto 218px;
+	background-position-y: 29px;
+	border-radius: 4px;
+	display: flex;
+	min-height: 248px;
+	align-items: center;
+	grid-column: 1/-1;
+	grid-row-start: 2;
+	margin: 0 16px 48px;
+
+	&.last-row {
+		grid-row-start: auto;
+		grid-row-end: span 1; /* This will make it span one row, effectively placing it on the last row */
+	}
+
+	.woocommerce-customize-store-banner-content {
+		width: 450px;
+		margin-left: 50px;
+
+		@media only screen and (min-width: 1400px) {
+			width: 700px;
+		}
+
+		button.is-link {
+			color: var(--wp-admin-theme-color, #3858e9);
+			text-decoration: none;
+			font-weight: 500;
+		}
+
+		button.components-button {
+			padding: 8px 16px;
+			height: 40px;
+		}
+
+		button.components-button + button.components-button { // add left margin for all buttons with another button to its left
+			margin-left: 12px;
+		}
+
+		h1 {
+			font-size: 1.25rem;
+			line-height: 23.87px;
+			font-weight: 500;
+			color: #000;
+			margin-top: 28px;
+			padding: 0;
+		}
+
+		p {
+			margin: 12px 0 28px 0;
+			color: #2f2f2f;
+			line-height: 16px;
+
+			&.ai-disclaimer {
+				color: #757575;
+				font-size: rem(12px);
+				margin-top: 10px;
+				line-height: 18px;
+
+				a {
+					text-decoration: none;
+				}
+			}
+		}
+	}
+}

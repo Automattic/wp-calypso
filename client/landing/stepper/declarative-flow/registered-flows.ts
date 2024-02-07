@@ -12,6 +12,7 @@ import {
 	VIDEOPRESS_TV_FLOW,
 	VIDEOPRESS_TV_PURCHASE_FLOW,
 	GOOGLE_TRANSFER,
+	REBLOGGING_FLOW,
 } from '@automattic/onboarding';
 import type { Flow } from '../declarative-flow/internals/types';
 
@@ -127,6 +128,9 @@ const availableFlows: Record< string, () => Promise< { default: Flow } > > = {
 
 	'domain-user-transfer': () =>
 		import( /* webpackChunkName: "domain-user-transfer-flow" */ './domain-user-transfer' ),
+
+	[ REBLOGGING_FLOW ]: () =>
+		import( /* webpackChunkName: "reblogging-flow" */ '../declarative-flow/reblogging' ),
 };
 
 const videoPressTvFlows: Record< string, () => Promise< { default: Flow } > > = config.isEnabled(

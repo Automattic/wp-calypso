@@ -13,6 +13,7 @@ import QueryJetpackCredentialsStatus from 'calypso/components/data/query-jetpack
 import QueryProductsList from 'calypso/components/data/query-products-list';
 import QueryRewindPolicies from 'calypso/components/data/query-rewind-policies';
 import QueryRewindState from 'calypso/components/data/query-rewind-state';
+import QuerySiteCredentials from 'calypso/components/data/query-site-credentials';
 import QuerySiteFeatures from 'calypso/components/data/query-site-features';
 import QuerySiteProducts from 'calypso/components/data/query-site-products';
 import QuerySiteSettings from 'calypso/components/data/query-site-settings';
@@ -27,7 +28,6 @@ import { INDEX_FORMAT } from 'calypso/lib/jetpack/backup-utils';
 import useDateWithOffset from 'calypso/lib/jetpack/hooks/use-date-with-offset';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
-import { areJetpackCredentialsInvalid } from 'calypso/state/jetpack/credentials/selectors';
 import isRewindPoliciesInitialized from 'calypso/state/rewind/selectors/is-rewind-policies-initialized';
 import getActivityLogFilter from 'calypso/state/selectors/get-activity-log-filter';
 import getDoesRewindNeedCredentials from 'calypso/state/selectors/get-does-rewind-need-credentials';
@@ -130,10 +130,6 @@ function AdminContent( { selectedDate } ) {
 	const activityLogFilter = useSelector( ( state ) => getActivityLogFilter( state, siteId ) );
 	const isFiltering = ! isFilterEmpty( activityLogFilter );
 
-	const areCredentialsInvalid = useSelector( ( state ) =>
-		areJetpackCredentialsInvalid( state, siteId, 'main' )
-	);
-
 	const needCredentials = useSelector( ( state ) => getDoesRewindNeedCredentials( state, siteId ) );
 
 	const onDateChange = useCallback(
@@ -147,6 +143,7 @@ function AdminContent( { selectedDate } ) {
 		<>
 			<QuerySiteSettings siteId={ siteId } />
 			<QuerySiteFeatures siteIds={ [ siteId ] } />
+			<QuerySiteCredentials siteId={ siteId } />
 			<QueryRewindPolicies
 				siteId={ siteId } /* The policies inform the max visible limit for backups */
 			/>
@@ -166,8 +163,6 @@ function AdminContent( { selectedDate } ) {
 						onDateChange={ onDateChange }
 						selectedDate={ selectedDate }
 						needCredentials={ needCredentials }
-						areCredentialsInvalid={ areCredentialsInvalid }
-						isAtomic={ isAtomic }
 					/>
 				</>
 			) }
@@ -175,13 +170,7 @@ function AdminContent( { selectedDate } ) {
 	);
 }
 
-function BackupStatus( {
-	selectedDate,
-	needCredentials,
-	onDateChange,
-	areCredentialsInvalid,
-	isAtomic,
-} ) {
+function BackupStatus( { selectedDate, needCredentials, onDateChange } ) {
 	const isFetchingSiteFeatures = useSelectedSiteSelector( isRequestingSiteFeatures );
 	const isPoliciesInitialized = useSelectedSiteSelector( isRewindPoliciesInitialized );
 	const siteSlug = useSelector( getSelectedSiteSlug );
@@ -230,10 +219,8 @@ function BackupStatus( {
 					</div>
 				) }
 
-				{ ! isAtomic && ( needCredentials || areCredentialsInvalid ) && <EnableRestoresBanner /> }
-				{ ! needCredentials && ( ! areCredentialsInvalid || isAtomic ) && hasRealtimeBackups && (
-					<BackupsMadeRealtimeBanner />
-				) }
+				{ needCredentials && <EnableRestoresBanner /> }
+				{ ! needCredentials && hasRealtimeBackups && <BackupsMadeRealtimeBanner /> }
 
 				<BackupDatePicker onDateChange={ onDateChange } selectedDate={ selectedDate } />
 				<BackupStorageSpace />

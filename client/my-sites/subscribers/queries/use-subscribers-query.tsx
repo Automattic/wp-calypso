@@ -12,6 +12,7 @@ type SubscriberQueryParams = {
 	search?: string;
 	sortTerm?: SubscribersSortBy;
 	filterOption?: SubscribersFilterBy;
+	timestamp: number;
 };
 
 const useSubscribersQuery = ( {
@@ -19,14 +20,24 @@ const useSubscribersQuery = ( {
 	page = 1,
 	perPage = DEFAULT_PER_PAGE,
 	search,
+	timestamp,
 	sortTerm = SubscribersSortBy.DateSubscribed,
 	filterOption = SubscribersFilterBy.All,
 }: SubscriberQueryParams ) => {
 	const { hasManySubscribers, isLoading } = useManySubsSite( siteId );
 	const shouldFetch = ! isLoading;
 
-	return useQuery< SubscriberEndpointResponse >( {
-		queryKey: getSubscribersCacheKey( siteId, page, perPage, search, sortTerm, filterOption ),
+	const query = useQuery< SubscriberEndpointResponse >( {
+		queryKey: getSubscribersCacheKey(
+			siteId,
+			page,
+			perPage,
+			search,
+			sortTerm,
+			filterOption,
+			hasManySubscribers,
+			timestamp
+		),
 		queryFn: () => {
 			// This is a temporary solution until we have a better way to handle this.
 			const pathRoute = hasManySubscribers ? 'subscribers_by_user_type' : 'subscribers';
@@ -45,8 +56,9 @@ const useSubscribersQuery = ( {
 			} );
 		},
 		enabled: !! siteId && shouldFetch,
-		keepPreviousData: true,
 	} );
+
+	return { ...query, isLoading: query.isLoading || isLoading };
 };
 
 export default useSubscribersQuery;

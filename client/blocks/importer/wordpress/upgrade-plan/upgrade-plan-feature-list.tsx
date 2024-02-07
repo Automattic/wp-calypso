@@ -1,12 +1,12 @@
 import { JetpackPlan, Plan, WPComPlan } from '@automattic/calypso-products';
 import { Badge } from '@automattic/components';
+import { Plans2023Tooltip } from '@automattic/plans-grid-next';
 import { chevronDown, Icon } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
 import classnames from 'classnames';
 import React, { useState } from 'react';
 import JetpackLogo from 'calypso/components/jetpack-logo';
 import { getFeatureByKey } from 'calypso/lib/plans/features-list';
-import { Plans2023Tooltip } from 'calypso/my-sites/plans-grid/components/plans-2023-tooltip';
 
 interface Props {
 	plan: Plan | JetpackPlan | WPComPlan | undefined;

@@ -1,7 +1,9 @@
+import config from '@automattic/calypso-config';
 import { getAllFeaturesForPlan } from '@automattic/calypso-products/';
 import { JetpackLogo, FoldableCard } from '@automattic/components';
+import { GeneratorModal } from '@automattic/jetpack-ai-calypso';
 import i18n, { getLocaleSlug, useTranslate } from 'i18n-calypso';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { connect, useSelector } from 'react-redux';
 import { useDebouncedCallback } from 'use-debounce';
 import fiverrIcon from 'calypso/assets/images/customer-home/fiverr-logo-grey.svg';
@@ -14,7 +16,6 @@ import {
 	usePromoteWidget,
 	PromoteWidgetStatus,
 } from 'calypso/lib/promote-post';
-import { useOdieAssistantContext } from 'calypso/odie/context';
 import { bumpStat, composeAnalytics, recordTracksEvent } from 'calypso/state/analytics/actions';
 import { savePreference } from 'calypso/state/preferences/actions';
 import { getPreference } from 'calypso/state/preferences/selectors';
@@ -73,7 +74,6 @@ export const QuickLinks = ( {
 	isAtomic,
 } ) => {
 	const translate = useTranslate();
-	const { sendNudge } = useOdieAssistantContext();
 	const [
 		debouncedUpdateHomeQuickLinksToggleStatus,
 		,
@@ -85,13 +85,9 @@ export const QuickLinks = ( {
 	const site = useSelector( ( state ) => getSite( state, siteId ) );
 	const hasBackups = getAllFeaturesForPlan( currentSitePlanSlug ).includes( 'backups' );
 	const hasBoost = site?.options?.jetpack_connection_active_plugins?.includes( 'jetpack-boost' );
+	const [ isAILogoGeneratorOpen, setIsAILogoGeneratorOpen ] = useState( false );
 
 	const addNewDomain = () => {
-		sendNudge( {
-			nudge: 'add-domain',
-			initialMessage:
-				'I see you want to add a domain. I can give you a few tips on how to do that.',
-		} );
 		trackAddDomainAction();
 	};
 
@@ -241,6 +237,22 @@ export const QuickLinks = ( {
 						external
 						iconSrc={ fiverrIcon }
 					/>
+					{ config.isEnabled( 'jetpack/ai-logo-generator' ) && (
+						<>
+							<ActionBox
+								hideLinkIndicator
+								gridicon="plans"
+								label={ translate( 'Create a logo with Jetpack AI' ) }
+								onClick={ () => setIsAILogoGeneratorOpen( true ) }
+							/>
+							<GeneratorModal
+								siteDetails={ site }
+								isOpen={ isAILogoGeneratorOpen }
+								onClose={ () => setIsAILogoGeneratorOpen( false ) }
+								context="calypso"
+							/>
+						</>
+					) }
 				</>
 			) }
 			{ isAtomic && hasBoost && (

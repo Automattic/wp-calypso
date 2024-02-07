@@ -1,8 +1,10 @@
 import { Card } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import DocumentHead from 'calypso/components/data/document-head';
 import OverviewProducts from 'calypso/jetpack-cloud/sections/overview/primary/overview-products';
+import { useDispatch } from 'calypso/state';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import IntroCards from '../intro-cards';
 import NextSteps from '../next-steps';
 
@@ -10,6 +12,11 @@ import './style.scss';
 
 export default function Overview() {
 	const translate = useTranslate();
+	const dispatch = useDispatch();
+
+	useEffect( () => {
+		dispatch( recordTracksEvent( 'calypso_jetpack_manage_overview_visit' ) );
+	}, [ dispatch ] );
 
 	const getPrefFromLocalStorage = ( key: string ): boolean => {
 		const rawPref = localStorage.getItem( key ) ?? 'false';

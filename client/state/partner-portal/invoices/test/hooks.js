@@ -15,10 +15,7 @@ jest.mock( 'react-redux', () => ( {
 } ) );
 
 function createQueryClient() {
-	const logger = {
-		error: jest.fn(),
-	};
-	return new QueryClient( { logger } );
+	return new QueryClient();
 }
 
 describe( 'useInvoicesQuery', () => {

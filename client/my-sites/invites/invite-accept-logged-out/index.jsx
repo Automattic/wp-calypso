@@ -52,6 +52,10 @@ class InviteAcceptLoggedOut extends Component {
 
 	submitForm = ( form, userData, _, afterSubmitCallback = noop ) => {
 		const { invite } = this.props;
+		recordTracksEvent( 'calypso_invite_accept_logged_out_submit', {
+			role: invite?.role,
+			site_id: invite?.site?.ID,
+		} );
 
 		this.setState( { submitting: true } );
 		debug( 'Storing invite_accepted: ' + JSON.stringify( invite ) );
@@ -175,6 +179,7 @@ class InviteAcceptLoggedOut extends Component {
 			<div>
 				<SignupForm
 					redirectToAfterLoginUrl={ window.location.href }
+					isPasswordless={ true }
 					disabled={ this.state.submitting }
 					formHeader={ this.renderFormHeader() }
 					submitting={ this.state.submitting }

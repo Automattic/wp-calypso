@@ -1,3 +1,4 @@
+import { usePrevious } from '@wordpress/compose';
 import { useSelect } from '@wordpress/data';
 import { useEffect } from 'react';
 import { useSelector, useDispatch } from 'calypso/state';
@@ -17,6 +18,7 @@ export function useSite() {
 	const isRequestingSelectedSite = useSelector( ( state ) =>
 		isRequestingSite( state, siteIdOrSlug )
 	);
+	const lastRequestedSiteIdOrSlug = usePrevious( siteIdOrSlug );
 
 	const site = useSelect(
 		( select ) => {
@@ -29,7 +31,12 @@ export function useSite() {
 
 	// Request the site for the redux store
 	useEffect( () => {
-		if ( siteIdOrSlug && ! selectedSite && ! isRequestingSelectedSite ) {
+		if (
+			siteIdOrSlug &&
+			siteIdOrSlug !== lastRequestedSiteIdOrSlug &&
+			! selectedSite &&
+			! isRequestingSelectedSite
+		) {
 			dispatch( requestSite( siteIdOrSlug ) );
 		}
 	}, [ siteIdOrSlug, selectedSite, isRequestingSelectedSite ] );

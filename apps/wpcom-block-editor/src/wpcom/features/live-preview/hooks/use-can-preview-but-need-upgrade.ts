@@ -1,8 +1,7 @@
-import config from '@automattic/calypso-config';
 import {
 	FEATURE_WOOP,
 	WPCOM_FEATURES_ATOMIC,
-	WPCOM_FEATURES_PREMIUM_THEMES,
+	WPCOM_FEATURES_PREMIUM_THEMES_UNLIMITED,
 	PLAN_PERSONAL,
 	PLAN_PREMIUM,
 	PLAN_BUSINESS,
@@ -43,15 +42,15 @@ const needUpgrade = ( {
 	 */
 	const canUseWooCommerceTheme =
 		previewingThemeType === WOOCOMMERCE_THEME &&
-		[ WPCOM_FEATURES_PREMIUM_THEMES, FEATURE_WOOP, WPCOM_FEATURES_ATOMIC ].every( ( feature ) =>
-			activeFeatures.includes( feature )
+		[ WPCOM_FEATURES_PREMIUM_THEMES_UNLIMITED, FEATURE_WOOP, WPCOM_FEATURES_ATOMIC ].every(
+			( feature ) => activeFeatures.includes( feature )
 		);
 	if ( canUseWooCommerceTheme ) {
 		return false;
 	}
 	const canUsePremiumTheme =
 		previewingThemeType === PREMIUM_THEME &&
-		activeFeatures.includes( WPCOM_FEATURES_PREMIUM_THEMES );
+		activeFeatures.includes( WPCOM_FEATURES_PREMIUM_THEMES_UNLIMITED );
 	if ( canUsePremiumTheme ) {
 		return false;
 	}
@@ -139,10 +138,7 @@ export const useCanPreviewButNeedUpgrade = (
 
 	const handleCanPreviewButNeedUpgrade = useCallback(
 		( previewingTheme: ReturnType< typeof usePreviewingTheme > ) => {
-			const livePreviewUpgradeTypes = [ WOOCOMMERCE_THEME, PREMIUM_THEME ];
-			if ( config.isEnabled( 'themes/tiers' ) ) {
-				livePreviewUpgradeTypes.push( PERSONAL_THEME );
-			}
+			const livePreviewUpgradeTypes = [ WOOCOMMERCE_THEME, PREMIUM_THEME, PERSONAL_THEME ];
 
 			/**
 			 * Currently, Live Preview only supports upgrades for WooCommerce and Premium themes.

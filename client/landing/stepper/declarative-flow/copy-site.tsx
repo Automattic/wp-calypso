@@ -1,10 +1,10 @@
-import { useFlowProgress, COPY_SITE_FLOW } from '@automattic/onboarding';
-import { useDispatch, useSelect } from '@wordpress/data';
+import { COPY_SITE_FLOW } from '@automattic/onboarding';
+import { useSelect } from '@wordpress/data';
 import { addQueryArgs } from '@wordpress/url';
 import { translate } from 'i18n-calypso';
 import { useEffect, useState } from 'react';
 import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
-import { ONBOARD_STORE, SITE_STORE } from 'calypso/landing/stepper/stores';
+import { SITE_STORE } from 'calypso/landing/stepper/stores';
 import {
 	clearSignupDestinationCookie,
 	setSignupCompleteSlug,
@@ -14,9 +14,9 @@ import {
 import { useSiteCopy } from '../hooks/use-site-copy';
 import { recordSubmitStep } from './internals/analytics/record-submit-step';
 import AutomatedCopySite from './internals/steps-repository/automated-copy-site';
+import CreateSite from './internals/steps-repository/create-site';
 import DomainsStep from './internals/steps-repository/domains';
 import ProcessingStep from './internals/steps-repository/processing-step';
-import SiteCreationStep from './internals/steps-repository/site-creation-step';
 import {
 	AssertConditionResult,
 	AssertConditionState,
@@ -79,7 +79,7 @@ const copySite: Flow = {
 	useSteps() {
 		return [
 			{ slug: 'domains', component: DomainsStep },
-			{ slug: 'site-creation-step', component: SiteCreationStep },
+			{ slug: 'create-site', component: CreateSite },
 			{ slug: 'processing', component: ProcessingStep },
 			{ slug: 'automated-copy', component: AutomatedCopySite },
 			{
@@ -100,24 +100,19 @@ const copySite: Flow = {
 
 	useStepNavigation( _currentStepSlug, navigate ) {
 		const flowName = this.name;
-		const { setStepProgress } = useDispatch( ONBOARD_STORE );
-
-		const flowProgress = useFlowProgress( { stepName: _currentStepSlug, flowName } );
 		const urlQueryParams = useQuery();
-
-		setStepProgress( flowProgress );
 
 		const submit = async ( providedDependencies: ProvidedDependencies = {} ) => {
 			recordSubmitStep( providedDependencies, '', flowName, _currentStepSlug );
 
 			switch ( _currentStepSlug ) {
 				case 'domains': {
-					return navigate( 'site-creation-step', {
+					return navigate( 'create-site', {
 						sourceSlug: urlQueryParams.get( 'sourceSlug' ),
 					} );
 				}
 
-				case 'site-creation-step': {
+				case 'create-site': {
 					return navigate( 'processing' );
 				}
 

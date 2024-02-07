@@ -3,13 +3,12 @@ import { useDispatch, useSelect } from '@wordpress/data';
 import { useEffect, useLayoutEffect } from 'react';
 import { ImporterMainPlatform } from 'calypso/blocks/import/types';
 import { SiteExcerptData } from 'calypso/data/sites/site-excerpt-types';
+import CreateSite from 'calypso/landing/stepper/declarative-flow/internals/steps-repository/create-site';
 import MigrationError from 'calypso/landing/stepper/declarative-flow/internals/steps-repository/migration-error';
 import { ProcessingResult } from 'calypso/landing/stepper/declarative-flow/internals/steps-repository/processing-step/constants';
-import SiteCreationStep from 'calypso/landing/stepper/declarative-flow/internals/steps-repository/site-creation-step';
 import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
 import { useSiteSlugParam } from 'calypso/landing/stepper/hooks/use-site-slug-param';
 import { ONBOARD_STORE, USER_STORE } from 'calypso/landing/stepper/stores';
-import { useSiteSetupFlowProgress } from '../hooks/use-site-setup-flow-progress';
 import Import from './internals/steps-repository/import';
 import ImportReady from './internals/steps-repository/import-ready';
 import ImportReadyNot from './internals/steps-repository/import-ready-not';
@@ -40,7 +39,7 @@ const importHostedSiteFlow: Flow = {
 			{ slug: 'importReadyWpcom', component: ImportReadyWpcom },
 			{ slug: 'importReadyPreview', component: ImportReadyPreview },
 			{ slug: 'sitePicker', component: SitePickerStep },
-			{ slug: 'siteCreationStep', component: SiteCreationStep },
+			{ slug: 'createSite', component: CreateSite },
 			{ slug: 'importerWordpress', component: ImporterWordpress },
 			{ slug: 'trialAcknowledge', component: TrialAcknowledge },
 			{ slug: 'verifyEmail', component: ImportVerifyEmail },
@@ -50,19 +49,13 @@ const importHostedSiteFlow: Flow = {
 	},
 
 	useStepNavigation( _currentStep, navigate ) {
-		const { setStepProgress, setPendingAction } = useDispatch( ONBOARD_STORE );
+		const { setPendingAction } = useDispatch( ONBOARD_STORE );
 		const urlQueryParams = useQuery();
 		const fromParam = urlQueryParams.get( 'from' );
 		const siteSlugParam = useSiteSlugParam();
 		const siteCount =
 			useSelect( ( select ) => ( select( USER_STORE ) as UserSelect ).getCurrentUser(), [] )
 				?.site_count ?? 0;
-
-		const flowProgress = useSiteSetupFlowProgress( _currentStep, 'import' );
-
-		if ( flowProgress ) {
-			setStepProgress( flowProgress );
-		}
 
 		const exitFlow = ( to: string ) => {
 			setPendingAction( () => {
@@ -126,7 +119,7 @@ const importHostedSiteFlow: Flow = {
 						}
 
 						case 'create-site':
-							return navigate( 'siteCreationStep' );
+							return navigate( 'createSite' );
 					}
 				}
 				case 'importReadyPreview': {
@@ -139,7 +132,7 @@ const importHostedSiteFlow: Flow = {
 						}
 
 						if ( from ) {
-							return navigate( `siteCreationStep?from=${ encodeURIComponent( from ) }` );
+							return navigate( `createSite?from=${ encodeURIComponent( from ) }` );
 						}
 						return navigate( 'error' );
 					}
@@ -198,7 +191,7 @@ const importHostedSiteFlow: Flow = {
 					return exitFlow( `/home/${ siteSlugParam }` );
 				}
 
-				case 'siteCreationStep':
+				case 'createSite':
 					return navigate( 'processing' );
 
 				case 'error':

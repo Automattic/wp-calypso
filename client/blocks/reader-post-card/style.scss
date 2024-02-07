@@ -173,6 +173,7 @@
 
 				.reader-post-card__post-details {
 					min-height: auto;
+					padding-bottom: 6px;
 				}
 			}
 
@@ -675,10 +676,6 @@
 
 // Gallery cards
 .reader-post-card .reader-featured-video__video {
-	padding-bottom: 17px;
-}
-
-.is-pocketcasts .reader-featured-video__video {
 	padding-bottom: 0;
 }
 

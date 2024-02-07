@@ -1,4 +1,4 @@
-import FormLabel from 'calypso/components/forms/form-label';
+import { FormLabel } from '@automattic/components';
 import FormTextarea from 'calypso/components/forms/form-textarea';
 
 const TranslatableTextarea = ( {

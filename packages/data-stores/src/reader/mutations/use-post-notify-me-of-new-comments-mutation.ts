@@ -81,7 +81,7 @@ const usePostNotifyMeOfNewCommentsMutation = () => {
 			}
 		},
 		onSettled: () => {
-			queryClient.invalidateQueries( postSubscriptionsQueryKeyPrefix );
+			queryClient.invalidateQueries( { queryKey: postSubscriptionsQueryKeyPrefix } );
 		},
 	} );
 };

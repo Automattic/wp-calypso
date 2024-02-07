@@ -1,3 +1,4 @@
+import { isEnabled } from '@automattic/calypso-config';
 import page from '@automattic/calypso-router';
 import { Gridicon, Tooltip } from '@automattic/components';
 import { addQueryArgs } from '@wordpress/url';
@@ -6,7 +7,10 @@ import { useCallback, useMemo, useRef, useState } from 'react';
 import { useDispatch, useSelector } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { selectLicense, unselectLicense } from 'calypso/state/jetpack-agency-dashboard/actions';
-import { hasSelectedLicensesOfType } from 'calypso/state/jetpack-agency-dashboard/selectors';
+import {
+	hasSelectedLicensesOfType,
+	hasSelectedSiteLicensesOfType,
+} from 'calypso/state/jetpack-agency-dashboard/selectors';
 import { getCurrentPartner } from 'calypso/state/partner-portal/partner/selectors';
 import { DASHBOARD_PRODUCT_SLUGS_BY_TYPE } from '../lib/constants';
 import { AllowedTypes, RowMetaData, SiteData } from '../types';
@@ -34,8 +38,12 @@ export default function SiteStatsColumn( { type, rows, metadata, disabled }: Pro
 
 	const siteId = rows.site.value.blog_id;
 
+	const isStreamlinedPurchasesEnabled = isEnabled( 'jetpack/streamline-license-purchases' );
+
 	const isLicenseSelected = useSelector( ( state ) =>
-		hasSelectedLicensesOfType( state, siteId, type )
+		isStreamlinedPurchasesEnabled
+			? hasSelectedSiteLicensesOfType( state, siteId, type )
+			: hasSelectedLicensesOfType( state, siteId, type )
 	);
 
 	const partner = useSelector( getCurrentPartner );
@@ -50,13 +58,17 @@ export default function SiteStatsColumn( { type, rows, metadata, disabled }: Pro
 	}, [ siteId, type ] );
 
 	const handleSelectLicenseAction = useCallback( () => {
+		if ( isStreamlinedPurchasesEnabled ) {
+			dispatch( selectLicense( siteId, type ) );
+			return;
+		}
 		const inactiveProducts = Object.values( rows ).filter( ( row ) => row?.status === 'inactive' );
 		if ( inactiveProducts.length > 1 ) {
 			return dispatch( selectLicense( siteId, type ) );
 		}
 		// Redirect to issue-license if there is only one inactive product available for a site
 		return page( issueLicenseRedirectUrl );
-	}, [ dispatch, issueLicenseRedirectUrl, rows, siteId, type ] );
+	}, [ dispatch, isStreamlinedPurchasesEnabled, issueLicenseRedirectUrl, rows, siteId, type ] );
 
 	const handleDeselectLicenseAction = useCallback( () => {
 		dispatch( unselectLicense( siteId, type ) );

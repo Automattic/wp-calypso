@@ -36,7 +36,7 @@ const EVENT_GOOGLE_ANALYTICS_BANNER_CLICK = 'calypso_stats_google_analytics_bann
 const EVENT_GOOGLE_ANALYTICS_BANNER_DISMISS = 'calypso_stats_google_analytics_banner_dismiss';
 
 const MiniCarousel = ( { slug, isSitePrivate } ) => {
-	const selectedSiteId = useSelector( ( state ) => getSelectedSiteId( state ) );
+	const selectedSiteId = useSelector( getSelectedSiteId );
 
 	const { data: hasNeverPublishedPost, isLoading: isHasNeverPublishedPostLoading } =
 		useHasNeverPublishedPost( selectedSiteId ?? null, true, {
@@ -79,6 +79,7 @@ const MiniCarousel = ( { slug, isSitePrivate } ) => {
 
 	const showGoogleAnalyticsPromo =
 		! useSelector( isBlockDismissed( EVENT_GOOGLE_ANALYTICS_BANNER_DISMISS ) ) &&
+		! jetpackNonAtomic &&
 		( isFreePlan( currentPlanSlug ) || isPersonalPlan( currentPlanSlug ) );
 
 	const viewEvents = useMemo( () => {

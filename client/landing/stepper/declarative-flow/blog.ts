@@ -48,6 +48,7 @@ const Blog: Flow = {
 			variationName: 'blogger-intent',
 			redirectTo: `/setup/blog`,
 			locale,
+			pageTitle: translate( 'Blog' ),
 		} );
 
 		// Despite sending a CHECKING state, this function gets called again with the

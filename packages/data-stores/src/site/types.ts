@@ -143,6 +143,33 @@ export interface SiteDetails {
 	canUpdateFiles?: boolean;
 	isMainNetworkSite?: boolean;
 	isSecondaryNetworkSite?: boolean;
+
+	// Migration
+	site_migration?: SourceSiteMigrationBase;
+}
+
+export enum SiteCapabilities {
+	ACTIVATE_PLUGINS = 'activate_plugins',
+	ACTIVATE_WORDADS = 'activate_wordads',
+	DELETE_OTHERS_POSTS = 'delete_others_posts',
+	DELETE_USERS = 'delete_users',
+	EDIT_OTHERS_PAGES = 'edit_others_pages',
+	EDIT_OTHERS_POSTS = 'edit_others_posts',
+	EDIT_PAGES = 'edit_pages',
+	EDIT_POSTS = 'edit_posts',
+	EDIT_THEME_OPTIONS = 'edit_theme_options',
+	EDIT_USERS = 'edit_users',
+	LIST_USERS = 'list_users',
+	MANAGE_CATEGORIES = 'manage_categories',
+	MANAGE_OPTIONS = 'manage_options',
+	MODERATE_COMMENTS = 'moderate_comments',
+	OWN_SITE = 'own_site',
+	PROMOTE_USERS = 'promote_users',
+	PUBLISH_POSTS = 'publish_posts',
+	REMOVE_USERS = 'remove_users',
+	UPLOAD_FILES = 'upload_files',
+	VIEW_HOSTING = 'view_hosting',
+	VIEW_STATS = 'view_stats',
 }
 
 export interface SiteDetailsCapabilities {
@@ -263,26 +290,19 @@ export interface Cart {
 	blog_id: number;
 	cart_key: number;
 	coupon: string;
-	coupon_discounts: unknown[];
-	coupon_discounts_integer: unknown[];
 	is_coupon_applied: boolean;
 	next_domain_is_free: boolean;
 	next_domain_condition: string;
 	products: unknown[];
 	total_cost: number;
 	currency: string;
-	total_cost_display: string;
 	total_cost_integer: number;
 	temporary: boolean;
 	tax: unknown;
-	sub_total: number;
-	sub_total_display: string;
 	sub_total_integer: number;
 	total_tax: number;
-	total_tax_display: string;
 	total_tax_integer: number;
 	credits: number;
-	credits_display: string;
 	credits_integer: number;
 	allowed_payment_methods: unknown[];
 	messages: Record< 'errors' | 'success', unknown >;
@@ -340,6 +360,7 @@ export interface Domain {
 	product_slug?: any;
 	owner: string;
 	is_pending_icann_verification?: boolean;
+	is_mapped_to_atomic_site: boolean;
 }
 
 export interface SiteSettings {
@@ -460,6 +481,7 @@ interface PaletteColor {
 }
 
 export interface GlobalStyles {
+	slug?: string;
 	title?: string;
 	settings: {
 		color: {
@@ -500,13 +522,111 @@ export interface CurrentTheme {
 
 export type SiteSelect = SelectFromMap< typeof selectors >;
 
-export interface SourceSiteMigrationDetails {
-	status: string;
+export enum MigrationStatus {
+	UNKNOWN = 'unknown',
+	INACTIVE = 'inactive',
+	NEW = 'new',
+	BACKING_UP = 'backing-up',
+	BACKING_UP_QUEUED = 'backing-up-queued',
+	RESTORING = 'restoring',
+	DONE = 'done',
+	ERROR = 'error',
+}
+
+export enum MigrationStatusError {
+	OLD_JETPACK = 'old_jetpack',
+	FORBIDDEN = 'forbidden',
+	GENERIC = 'error',
+	SOURCE_SITE_MULTISITE = 'source_site_multisite',
+	SOURCE_SITE_IS_ATOMIC = 'source_site_is_atomic',
+	SOURCE_SITE_IS_PROTECTED = 'source_site_is_protected',
+	TARGET_SITE_IS_PROTECTED = 'target_site_is_protected',
+	NO_START_USER_ADMIN_ON_SOURCE = 'no_start_user_admin_on_source',
+	NO_START_USER_ADMIN_ON_TARGET = 'no_start_user_admin_on_target',
+	NO_START_SOURCE_IN_PROGRESS = 'no_start_source_in_progress',
+	NO_START_TARGET_IN_PROGRESS = 'no_start_target_in_progress',
+	WPCOM_MIGRATION_PLUGIN_INCOMPATIBLE = 'wpcom_migration_plugin_incompatible',
+
+	// Start of migration #1
+	ACTIVATE_REWIND = 'error-rewind-activate',
+	BACKUP_QUEUEING = 'error-backup-queue',
+
+	// Start of backup
+	// eslint-disable-next-line inclusive-language/use-inclusive-words
+	MISSING_SOURCE_MASTER_USER = 'error-get-master-user',
+
+	// During backup
+	NO_BACKUP_STATUS = 'error-backup-status',
+	BACKUP_SITE_NOT_ACCESSIBLE = 'error-backup-fail-not-accessible',
+	BACKUP_UNKNOWN = 'error-backup-fail-unknown',
+
+	// End of backup
+	WOA_GET_TRANSFER_RECORD = 'error-atomic-transfer-get',
+	MISSING_WOA_CREDENTIALS = 'error-credentials-atomic',
+
+	// Start of restore
+	RESTORE_QUEUE = 'error-restore-queue',
+	RESTORE_FAILED = 'error-restore-fail',
+
+	// During restore
+	RESTORE_STATUS = 'error-restore-status',
+
+	// End of restore
+	FIX_EXTERNAL_USER_ID = 'error-fix-external-user-id',
+	GET_SOURCE_EXTERNAL_USER_ID = 'error-get-external-user-id',
+	GET_USER_TOKEN = 'error-get-target-user-token',
+	UPDATE_TARGET_USER_TOKEN = 'error-update-target-user-token',
+
+	// Start of migration #2
+	// End of backup #2
+	WOA_TRANSFER = 'error-atomic-transfer',
+
+	// Miscellanous
+	GENERAL = 'error-general',
+	UNKNOWN = 'error-unknown',
+}
+
+export interface SourceSiteMigrationBase {
 	source_blog_id?: number;
+	error_status?: MigrationStatusError;
+	status: MigrationStatus;
+	last_modified: string;
+	// Migration meta
+	recent_migration?: boolean;
+	failed_backup_source?: boolean;
+}
+
+export interface SourceSiteMigrationDetails extends SourceSiteMigrationBase {
 	target_blog_id?: number;
+	site_migration_id: number;
+	percent: number;
+	created: string;
+	is_atomic: boolean;
+	// Statistics
+	backup_percent?: number;
+	backup_size?: number;
+	backup_started?: string;
+	site_size?: number;
+	restore_percent?: number;
+	restore_message?: string;
+	restore_failure?: string;
+	restore_started?: number;
+	comments_count?: number;
+	plugins_count?: number;
+	posts_count?: number;
+	tables_count?: number;
+	themes_count?: number;
+	uploads_count?: number;
+	real_percent?: number;
+	wp_version?: string;
+	// Source site details
 	is_target_blog_admin?: boolean;
 	is_target_blog_upgraded?: boolean;
 	target_blog_slug?: string;
+	// Steps details
+	step?: number;
+	step_name?: string;
+	total_steps?: number;
 }
 
 export interface Page {

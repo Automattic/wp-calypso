@@ -68,7 +68,7 @@ describe( DataHelper.createSuiteTitle( 'Signup: WordPress.com WPCC' ), function 
 			// Waiting for `networkidle` is required so Calypso loading won't swallow up
 			// the click on navbar in the Close Account steps.
 			await Promise.all( [
-				page.waitForNavigation( { url: '**/read', waitUntil: 'load' } ),
+				page.waitForNavigation( { url: '**/sites', waitUntil: 'load' } ),
 				page.goto( DataHelper.getCalypsoURL() ),
 			] );
 		} );

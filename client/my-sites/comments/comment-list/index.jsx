@@ -28,9 +28,11 @@ export class CommentList extends Component {
 		comments: PropTypes.array,
 		commentsCount: PropTypes.number,
 		counts: PropTypes.object,
+		filterUnreplied: PropTypes.bool,
 		order: PropTypes.string,
 		recordChangePage: PropTypes.func,
 		replyComment: PropTypes.func,
+		setFilterUnreplied: PropTypes.func,
 		setOrder: PropTypes.func,
 		siteId: PropTypes.number,
 		status: PropTypes.string,
@@ -40,6 +42,7 @@ export class CommentList extends Component {
 	state = {
 		isBulkMode: false,
 		selectedComments: [],
+		editingCommentId: null,
 	};
 
 	componentDidUpdate() {
@@ -50,6 +53,15 @@ export class CommentList extends Component {
 			return changePage( totalPages );
 		}
 	}
+
+	toggleEditMode = ( commentId ) => {
+		this.setState( ( { editingCommentId } ) => {
+			if ( commentId === editingCommentId ) {
+				return { editingCommentId: null };
+			}
+			return { editingCommentId: commentId };
+		} );
+	};
 
 	shouldComponentUpdate = ( nextProps, nextState ) =>
 		! isEqual( this.props, nextProps ) || ! isEqual( this.state, nextState );
@@ -120,11 +132,13 @@ export class CommentList extends Component {
 			comments,
 			commentsCount,
 			counts,
+			filterUnreplied,
 			isLoading,
 			isPostView,
 			order,
 			page,
 			postId,
+			setFilterUnreplied,
 			setOrder,
 			siteId,
 			siteFragment,
@@ -162,12 +176,14 @@ export class CommentList extends Component {
 					commentsListQuery={ commentsListQuery }
 					commentsPage={ comments }
 					counts={ counts }
+					filterUnreplied={ filterUnreplied }
 					isBulkMode={ isBulkMode }
 					isPostView={ isPostView }
 					isSelectedAll={ this.isSelectedAll() }
 					order={ order }
 					postId={ postId }
 					selectedComments={ selectedComments }
+					setFilterUnreplied={ setFilterUnreplied }
 					setOrder={ setOrder }
 					siteId={ siteId }
 					siteFragment={ siteFragment }
@@ -182,10 +198,13 @@ export class CommentList extends Component {
 							<Comment
 								commentId={ commentId }
 								commentsListQuery={ commentsListQuery }
+								filterUnreplied={ filterUnreplied }
 								isBulkMode={ isBulkMode }
 								isPostView={ isPostView }
 								isSelected={ this.isCommentSelected( commentId ) }
 								toggleSelected={ this.toggleCommentSelected }
+								onToggleEditMode={ this.toggleEditMode }
+								isSingularEditMode={ this.state.editingCommentId === commentId }
 							/>
 						</CommentTransition>
 					) ) }
@@ -221,8 +240,14 @@ export class CommentList extends Component {
 	}
 }
 
-const mapStateToProps = ( state, { order, page, postId, siteId, status } ) => {
-	const comments = getCommentsPage( state, siteId, { order, page, postId, status } );
+const mapStateToProps = ( state, { filterUnreplied, order, page, postId, siteId, status } ) => {
+	const comments = getCommentsPage( state, siteId, {
+		filterUnreplied,
+		order,
+		page,
+		postId,
+		status,
+	} );
 	const counts = getSiteCommentCounts( state, siteId, postId );
 	const commentsCount = get( counts, 'unapproved' === status ? 'pending' : status );
 	const isLoading = typeof comments === 'undefined';

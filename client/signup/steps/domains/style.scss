@@ -305,8 +305,9 @@ body.is-section-signup.is-white-signup {
 		.register-domain-step .domains__domain-side-content-container {
 			display: flex;
 
-			@include break-small {
+			@include break-medium {
 				flex-direction: row;
+				justify-content: center;
 
 				.domains__domain-side-content {
 					padding-top: 0;
@@ -334,6 +335,11 @@ body.is-section-signup.is-white-signup {
 			margin: 0;
 
 			@include break-small {
+				width: 80%;
+				margin: 0 auto;
+			}
+
+			@include break-medium {
 				width: 290px;
 				margin: 0 20px;
 			}

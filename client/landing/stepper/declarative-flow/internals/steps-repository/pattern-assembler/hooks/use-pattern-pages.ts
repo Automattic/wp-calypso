@@ -1,14 +1,116 @@
 import { useSearchParams } from 'react-router-dom';
-import { INITIAL_PAGES } from '../constants';
-import type { Pattern } from '../types';
+import { INITIAL_PAGES, ORDERED_PATTERN_PAGES_CATEGORIES } from '../constants';
+import { useCategoriesOrder } from '../hooks';
+import { getPagePatternTitle, isPriorityPattern } from '../utils';
+import type { Pattern, Category, CustomPageTitle } from '../types';
 
-const usePatternPages = ( pagesMapByCategory: Record< string, Pattern[] > ) => {
+const usePatternPages = (
+	pageCategoryPatternsMap: Record< string, Pattern[] >,
+	categories: Category[],
+	dotcomPatterns: Pattern[]
+): {
+	pages: Pattern[];
+	pageSlugs: string[];
+	setPageSlugs: ( slugs: string[] ) => void;
+	pagesToShow: any[];
+} => {
 	const [ searchParams, setSearchParams ] = useSearchParams();
+	let pageCategoriesInOrder;
+	let pageSlugs: string[] = [];
+	let pages: Pattern[] = [];
+	let pagesToShow: any[] = [];
+	let mockedPages: CustomPageTitle[] = [];
 	const page_slugs = searchParams.get( 'page_slugs' );
+	const custom_pages = searchParams.get( 'custom_pages' );
 
-	const pageSlugs = page_slugs !== null ? page_slugs.split( ',' ).filter( Boolean ) : INITIAL_PAGES;
+	if ( page_slugs !== null ) {
+		pageSlugs = page_slugs.split( ',' ).filter( Boolean );
+	}
 
-	const pages = pageSlugs.map( ( slug ) => pagesMapByCategory[ slug ]?.[ 0 ] ).filter( Boolean );
+	// eslint-disable-next-line prefer-const
+	pageCategoriesInOrder = useCategoriesOrder( categories, ORDERED_PATTERN_PAGES_CATEGORIES );
+
+	if ( custom_pages !== null ) {
+		try {
+			mockedPages = JSON.parse( custom_pages );
+		} catch ( e ) {}
+	}
+
+	// Pairs of page title and pattern id can be passed in the URL from AI flow.
+	if ( mockedPages.length > 0 ) {
+		mockedPages.forEach( ( { ID, title, selected }: CustomPageTitle ) => {
+			const patterns = dotcomPatterns.filter( ( pattern: Pattern ) => pattern.ID === ID );
+			if ( patterns.length === 0 ) {
+				return;
+			}
+			const pattern = patterns[ 0 ];
+			pattern.title = title;
+
+			if ( selected ) {
+				pageSlugs.push( pattern?.name || '' );
+				pages.push( pattern );
+			}
+			pagesToShow.push( {
+				name: pattern?.name || '',
+				title: title,
+				isSelected: !! selected,
+			} );
+		} );
+
+		const setPageSlugs = ( slugs: string[] ) => {
+			setSearchParams(
+				( currentSearchParams ) => {
+					const newMockedPages = mockedPages.map( ( page: CustomPageTitle ) => {
+						const patterns = dotcomPatterns.filter(
+							( pattern: Pattern ) => pattern.ID === page.ID
+						);
+						page.selected = slugs.includes( patterns[ 0 ].name );
+						return page;
+					} );
+					currentSearchParams.set( 'custom_pages', JSON.stringify( newMockedPages ) );
+
+					return currentSearchParams;
+				},
+				{ replace: true }
+			);
+		};
+
+		return { pages, pageSlugs, setPageSlugs, pagesToShow };
+	}
+
+	if ( page_slugs === null ) {
+		pageSlugs = INITIAL_PAGES;
+	}
+
+	const getFeaturedPageOrFirstInCategory = ( name: string ) =>
+		pageCategoryPatternsMap[ name ]?.find( isPriorityPattern ) ||
+		pageCategoryPatternsMap[ name ]?.[ 0 ];
+
+	pages = pageSlugs
+		.map( ( name ) => {
+			const page = getFeaturedPageOrFirstInCategory( name );
+			if ( page ) {
+				return {
+					...page,
+					title: getPagePatternTitle( page ),
+				};
+			}
+		} )
+		.filter( Boolean ) as Pattern[];
+
+	pagesToShow = pageCategoriesInOrder
+		.map( ( category: Category ) => {
+			const { name = '' } = category;
+			const page = getFeaturedPageOrFirstInCategory( name );
+			if ( page ) {
+				return {
+					name,
+					title: getPagePatternTitle( page ),
+					isSelected: pageSlugs.includes( name ),
+				};
+			}
+		} )
+		.filter( Boolean );
 
 	const setPageSlugs = ( slugs: string[] ) => {
 		setSearchParams(
@@ -25,7 +127,7 @@ const usePatternPages = ( pagesMapByCategory: Record< string, Pattern[] > ) => {
 		);
 	};
 
-	return { pages, pageSlugs, setPageSlugs };
+	return { pages, pageSlugs, setPageSlugs, pagesToShow };
 };
 
 export default usePatternPages;

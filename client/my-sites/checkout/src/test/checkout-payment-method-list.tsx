@@ -76,7 +76,7 @@ describe( 'Checkout payment methods list', () => {
 	} );
 
 	it( 'does not render the full credits payment method option when partial credits are available', async () => {
-		const cartChanges = { credits_integer: 15400, credits_display: 'R$154' };
+		const cartChanges = { credits_integer: 15400 };
 		render(
 			<MockCheckout
 				initialCart={ initialCart }
@@ -90,7 +90,7 @@ describe( 'Checkout payment methods list', () => {
 	} );
 
 	it( 'renders the paypal payment method option when partial credits are available', async () => {
-		const cartChanges = { credits_integer: 15400, credits_display: 'R$154' };
+		const cartChanges = { credits_integer: 15400 };
 		render(
 			<MockCheckout
 				initialCart={ initialCart }
@@ -106,7 +106,6 @@ describe( 'Checkout payment methods list', () => {
 	it( 'renders the full credits payment method option when full credits are available', async () => {
 		const cartChanges = {
 			credits_integer: 15600,
-			credits_display: 'R$156',
 			total_tax_integer: 0,
 			total_cost_integer: 0,
 		};
@@ -126,9 +125,7 @@ describe( 'Checkout payment methods list', () => {
 		const cartChanges = {
 			coupon: 'FREE',
 			sub_total_integer: 0,
-			sub_total_display: '0',
 			credits_integer: 0,
-			credits_display: '0',
 			total_tax_integer: 0,
 			total_cost_integer: 0,
 			products: [
@@ -153,7 +150,6 @@ describe( 'Checkout payment methods list', () => {
 	it( 'renders the full credits payment method option when full credits are available for a one-time purchase', async () => {
 		const cartChanges = {
 			credits_integer: 15600,
-			credits_display: 'R$156',
 			total_tax_integer: 0,
 			total_cost_integer: 0,
 			products: [
@@ -178,7 +174,6 @@ describe( 'Checkout payment methods list', () => {
 	it( 'renders the full credits payment method option when full credits are available for a renewal with a saved payment method', async () => {
 		const cartChanges = {
 			credits_integer: 15600,
-			credits_display: 'R$156',
 			total_tax_integer: 0,
 			total_cost_integer: 0,
 			products: [
@@ -204,7 +199,6 @@ describe( 'Checkout payment methods list', () => {
 	it( 'renders the full credits payment method option when full credits are available for a renewal without a saved payment method', async () => {
 		const cartChanges = {
 			credits_integer: 15600,
-			credits_display: 'R$156',
 			total_tax_integer: 0,
 			total_cost_integer: 0,
 			products: [
@@ -230,7 +224,6 @@ describe( 'Checkout payment methods list', () => {
 	it( 'does not render the other payment method options when full credits are available', async () => {
 		const cartChanges = {
 			credits_integer: 15600,
-			credits_display: 'R$156',
 			total_tax_integer: 0,
 			total_cost_integer: 0,
 		};
@@ -255,7 +248,7 @@ describe( 'Checkout payment methods list', () => {
 	} );
 
 	it( 'does not render the paypal payment method option when the purchase is free', async () => {
-		const cartChanges = { total_cost_integer: 0, total_cost_display: '0' };
+		const cartChanges = { total_cost_integer: 0 };
 		render(
 			<MockCheckout
 				initialCart={ initialCart }
@@ -271,11 +264,8 @@ describe( 'Checkout payment methods list', () => {
 	it( 'does not render the full credits payment method option when full credits are available but the purchase is free', async () => {
 		const cartChanges = {
 			total_tax_integer: 0,
-			total_tax_display: 'R$0',
 			total_cost_integer: 0,
-			total_cost_display: '0',
 			credits_integer: 15600,
-			credits_display: 'R$156',
 		};
 		render(
 			<MockCheckout
@@ -290,7 +280,7 @@ describe( 'Checkout payment methods list', () => {
 	} );
 
 	it( 'renders the free payment method option when the purchase is free', async () => {
-		const cartChanges = { total_cost_integer: 0, total_cost_display: '0' };
+		const cartChanges = { total_cost_integer: 0 };
 		render(
 			<MockCheckout
 				initialCart={ initialCart }
@@ -304,7 +294,7 @@ describe( 'Checkout payment methods list', () => {
 	} );
 
 	it( 'does not render the contact step when the purchase is free', async () => {
-		const cartChanges = { total_cost_integer: 0, total_cost_display: '0' };
+		const cartChanges = { total_cost_integer: 0 };
 		render(
 			<MockCheckout
 				initialCart={ initialCart }

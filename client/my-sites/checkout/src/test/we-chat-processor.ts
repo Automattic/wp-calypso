@@ -3,6 +3,9 @@
  */
 
 import { getEmptyResponseCart, getEmptyResponseCartProduct } from '@automattic/shopping-cart';
+import { act, render } from '@testing-library/react';
+import { translate } from 'i18n-calypso';
+import { createElement } from 'react';
 import weChatProcessor from '../lib/we-chat-processor';
 import {
 	mockTransactionsEndpoint,
@@ -12,6 +15,7 @@ import {
 	countryCode,
 	postalCode,
 	contactDetailsForDomain,
+	mockOrderEndpoint,
 } from './util';
 
 describe( 'weChatProcessor', () => {
@@ -47,7 +51,7 @@ describe( 'weChatProcessor', () => {
 			payment_partner: 'IE',
 			postal_code: '10001',
 			success_url:
-				'https://example.com/checkout/thank-you/no-site/pending?redirectTo=https%3A%2F%2Fexample.com%2Fthank-you',
+				'https://example.com/checkout/thank-you/no-site/pending/:orderId?redirectTo=%2Fthank-you&receiptId=%3AreceiptId',
 			zip: '10001',
 		},
 		tos: {
@@ -61,27 +65,60 @@ describe( 'weChatProcessor', () => {
 		},
 	};
 
-	const redirect_url = 'https://test-redirect-url';
-
 	it( 'sends the correct data to the endpoint with no site and one product', async () => {
-		const transactionsEndpoint = mockTransactionsEndpoint( mockTransactionsRedirectResponse );
+		// The processor renders the dialog into a div so that div must be
+		// present to avoid errors.
+		render( createElement( 'div', { className: 'we-chat-modal-target' } ) );
+
+		const orderId = 54321;
+		const mockOrderStatus = {
+			order_id: orderId,
+			user_id: 1234,
+			receipt_id: undefined,
+			processing_status: 'payment-failure',
+		};
+		mockOrderEndpoint( orderId, () => [ 200, mockOrderStatus ] );
+		const transactionsEndpoint = mockTransactionsEndpoint( () =>
+			mockTransactionsRedirectResponse( orderId )
+		);
 		const submitData = {
 			name: 'test name',
 		};
-		const expected = { payload: { redirect_url }, type: 'MANUAL' };
-		await expect(
-			weChatProcessor( submitData, {
-				...options,
-				contactDetails: {
-					countryCode,
-					postalCode,
-				},
-			} )
-		).resolves.toStrictEqual( expected );
+		const expected = {
+			payload: "Sorry, we couldn't process your payment. Please try again later.",
+			type: 'ERROR',
+		};
+
+		// We have to use `act()` because this changes the DOM async and
+		// otherwise we get a bunch of warnings.
+		await act( async () => {
+			await expect(
+				weChatProcessor(
+					submitData,
+					{
+						...options,
+						contactDetails: {
+							countryCode,
+							postalCode,
+						},
+					},
+					translate
+				)
+			).resolves.toStrictEqual( expected );
+		} );
+
 		expect( transactionsEndpoint ).toHaveBeenCalledWith( basicExpectedStripeRequest );
 	} );
 
 	it( 'returns an explicit error response if the transaction fails', async () => {
+		// The processor renders the dialog into a div so that div must be
+		// present to avoid errors.
+		render( createElement( 'div', { className: 'we-chat-modal-target' } ) );
+
+		const submitData = {
+			name: 'test name',
+		};
+
 		mockTransactionsEndpoint( () => [
 			400,
 			{
@@ -89,38 +126,71 @@ describe( 'weChatProcessor', () => {
 				message: 'test error',
 			},
 		] );
-		const submitData = {
-			name: 'test name',
-		};
 		const expected = { payload: 'test error', type: 'ERROR' };
-		await expect(
-			weChatProcessor( submitData, {
-				...options,
-				contactDetails: {
-					countryCode,
-					postalCode,
-				},
-			} )
-		).resolves.toStrictEqual( expected );
+
+		// We have to use `act()` because this changes the DOM async and
+		// otherwise we get a bunch of warnings.
+		await act( async () => {
+			await expect(
+				weChatProcessor(
+					submitData,
+					{
+						...options,
+						contactDetails: {
+							countryCode,
+							postalCode,
+						},
+					},
+					translate
+				)
+			).resolves.toStrictEqual( expected );
+		} );
 	} );
 
 	it( 'sends the correct data to the endpoint with a site and one product', async () => {
-		const transactionsEndpoint = mockTransactionsEndpoint( mockTransactionsRedirectResponse );
+		// The processor renders the dialog into a div so that div must be
+		// present to avoid errors.
+		render( createElement( 'div', { className: 'we-chat-modal-target' } ) );
+
+		const orderId = 54321;
+		const mockOrderStatus = {
+			order_id: orderId,
+			user_id: 1234,
+			receipt_id: undefined,
+			processing_status: 'payment-failure',
+		};
+		mockOrderEndpoint( orderId, () => [ 200, mockOrderStatus ] );
+		const transactionsEndpoint = mockTransactionsEndpoint( () =>
+			mockTransactionsRedirectResponse( orderId )
+		);
 		const submitData = {
 			name: 'test name',
 		};
-		const expected = { payload: { redirect_url }, type: 'MANUAL' };
-		await expect(
-			weChatProcessor( submitData, {
-				...options,
-				siteSlug: 'example.wordpress.com',
-				siteId: 1234567,
-				contactDetails: {
-					countryCode,
-					postalCode,
-				},
-			} )
-		).resolves.toStrictEqual( expected );
+		const expected = {
+			payload: "Sorry, we couldn't process your payment. Please try again later.",
+			type: 'ERROR',
+		};
+
+		// We have to use `act()` because this changes the DOM async and
+		// otherwise we get a bunch of warnings.
+		await act( async () => {
+			await expect(
+				weChatProcessor(
+					submitData,
+					{
+						...options,
+						siteSlug: 'example.wordpress.com',
+						siteId: 1234567,
+						contactDetails: {
+							countryCode,
+							postalCode,
+						},
+					},
+					translate
+				)
+			).resolves.toStrictEqual( expected );
+		} );
+
 		expect( transactionsEndpoint ).toHaveBeenCalledWith( {
 			...basicExpectedStripeRequest,
 			cart: {
@@ -132,38 +202,65 @@ describe( 'weChatProcessor', () => {
 			payment: {
 				...basicExpectedStripeRequest.payment,
 				success_url:
-					'https://example.com/checkout/thank-you/example.wordpress.com/pending?redirectTo=https%3A%2F%2Fexample.com%2Fthank-you',
+					'https://example.com/checkout/thank-you/example.wordpress.com/pending/:orderId?redirectTo=%2Fthank-you&receiptId=%3AreceiptId',
 			},
 		} );
 	} );
 
 	it( 'sends the correct data to the endpoint with tax information', async () => {
-		const transactionsEndpoint = mockTransactionsEndpoint( mockTransactionsRedirectResponse );
+		// The processor renders the dialog into a div so that div must be
+		// present to avoid errors.
+		render( createElement( 'div', { className: 'we-chat-modal-target' } ) );
+
+		const orderId = 54321;
+		const mockOrderStatus = {
+			order_id: orderId,
+			user_id: 1234,
+			receipt_id: undefined,
+			processing_status: 'payment-failure',
+		};
+		mockOrderEndpoint( orderId, () => [ 200, mockOrderStatus ] );
+		const transactionsEndpoint = mockTransactionsEndpoint( () =>
+			mockTransactionsRedirectResponse( orderId )
+		);
 		const submitData = {
 			name: 'test name',
 		};
-		const expected = { payload: { redirect_url }, type: 'MANUAL' };
-		await expect(
-			weChatProcessor( submitData, {
-				...options,
-				siteSlug: 'example.wordpress.com',
-				siteId: 1234567,
-				contactDetails: {
-					countryCode,
-					postalCode,
-				},
-				responseCart: {
-					...options.responseCart,
-					tax: {
-						display_taxes: true,
-						location: {
-							postal_code: 'pr267ry',
-							country_code: 'GB',
+		const expected = {
+			payload: "Sorry, we couldn't process your payment. Please try again later.",
+			type: 'ERROR',
+		};
+
+		// We have to use `act()` because this changes the DOM async and
+		// otherwise we get a bunch of warnings.
+		await act( async () => {
+			await expect(
+				weChatProcessor(
+					submitData,
+					{
+						...options,
+						siteSlug: 'example.wordpress.com',
+						siteId: 1234567,
+						contactDetails: {
+							countryCode,
+							postalCode,
+						},
+						responseCart: {
+							...options.responseCart,
+							tax: {
+								display_taxes: true,
+								location: {
+									postal_code: 'pr267ry',
+									country_code: 'GB',
+								},
+							},
 						},
 					},
-				},
-			} )
-		).resolves.toStrictEqual( expected );
+					translate
+				)
+			).resolves.toStrictEqual( expected );
+		} );
+
 		expect( transactionsEndpoint ).toHaveBeenCalledWith( {
 			...basicExpectedStripeRequest,
 			cart: {
@@ -176,27 +273,54 @@ describe( 'weChatProcessor', () => {
 			payment: {
 				...basicExpectedStripeRequest.payment,
 				success_url:
-					'https://example.com/checkout/thank-you/example.wordpress.com/pending?redirectTo=https%3A%2F%2Fexample.com%2Fthank-you',
+					'https://example.com/checkout/thank-you/example.wordpress.com/pending/:orderId?redirectTo=%2Fthank-you&receiptId=%3AreceiptId',
 			},
 		} );
 	} );
 
 	it( 'sends the correct data to the endpoint with a site and one domain product', async () => {
-		const transactionsEndpoint = mockTransactionsEndpoint( mockTransactionsRedirectResponse );
+		// The processor renders the dialog into a div so that div must be
+		// present to avoid errors.
+		render( createElement( 'div', { className: 'we-chat-modal-target' } ) );
+
+		const orderId = 54321;
+		const mockOrderStatus = {
+			order_id: orderId,
+			user_id: 1234,
+			receipt_id: undefined,
+			processing_status: 'payment-failure',
+		};
+		mockOrderEndpoint( orderId, () => [ 200, mockOrderStatus ] );
+		const transactionsEndpoint = mockTransactionsEndpoint( () =>
+			mockTransactionsRedirectResponse( orderId )
+		);
 		const submitData = {
 			name: 'test name',
 		};
-		const expected = { payload: { redirect_url }, type: 'MANUAL' };
-		await expect(
-			weChatProcessor( submitData, {
-				...options,
-				siteSlug: 'example.wordpress.com',
-				siteId: 1234567,
-				contactDetails: contactDetailsForDomain,
-				responseCart: { ...cart, products: [ domainProduct ] },
-				includeDomainDetails: true,
-			} )
-		).resolves.toStrictEqual( expected );
+		const expected = {
+			payload: "Sorry, we couldn't process your payment. Please try again later.",
+			type: 'ERROR',
+		};
+
+		// We have to use `act()` because this changes the DOM async and
+		// otherwise we get a bunch of warnings.
+		await act( async () => {
+			await expect(
+				weChatProcessor(
+					submitData,
+					{
+						...options,
+						siteSlug: 'example.wordpress.com',
+						siteId: 1234567,
+						contactDetails: contactDetailsForDomain,
+						responseCart: { ...cart, products: [ domainProduct ] },
+						includeDomainDetails: true,
+					},
+					translate
+				)
+			).resolves.toStrictEqual( expected );
+		} );
+
 		expect( transactionsEndpoint ).toHaveBeenCalledWith( {
 			...basicExpectedStripeRequest,
 			cart: {
@@ -210,7 +334,7 @@ describe( 'weChatProcessor', () => {
 			payment: {
 				...basicExpectedStripeRequest.payment,
 				success_url:
-					'https://example.com/checkout/thank-you/example.wordpress.com/pending?redirectTo=https%3A%2F%2Fexample.com%2Fthank-you',
+					'https://example.com/checkout/thank-you/example.wordpress.com/pending/:orderId?redirectTo=%2Fthank-you&receiptId=%3AreceiptId',
 			},
 		} );
 	} );

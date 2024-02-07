@@ -48,18 +48,10 @@ export class ActivationModal extends Component {
 			if ( 'activeTheme' === action ) {
 				this.props.acceptActivationModal( newThemeId );
 
-				/**
-				 * We don't want to keep the current homepage since it's "broken" for now.
-				 * Update this when we find a way to improve the theme switch experience as a whole.
-				 * @see pbxlJb-3Uv-p2
-				 */
-				const keepCurrentHomepage = false;
-
 				recordTracksEvent( 'calypso_theme_autoloading_homepage_modal_activate_click', {
 					theme: newThemeId,
-					keep_current_homepage: keepCurrentHomepage,
 				} );
-				return this.props.activateTheme( newThemeId, siteId, source, false, keepCurrentHomepage );
+				return this.props.activateTheme( newThemeId, siteId, source, false );
 			} else if ( 'dismiss' === action ) {
 				recordTracksEvent( 'calypso_theme_autoloading_homepage_modal_dismiss', {
 					action: 'escape',

@@ -42,7 +42,7 @@ const JetpackCloudUpsell: FunctionComponent< Props > = ( {
 					href={ String( buttonLink ) }
 					onClick={ onClick }
 					primary
-					target={ openButtonLinkOnNewTab ? '_blank' : '_self' }
+					target={ openButtonLinkOnNewTab ? '_blank' : undefined }
 				>
 					{ buttonText || translate( 'Upgrade now' ) }
 				</Button>

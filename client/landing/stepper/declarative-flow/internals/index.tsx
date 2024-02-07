@@ -11,7 +11,6 @@ import React, { useEffect, useCallback, useMemo, Suspense, lazy } from 'react';
 import Modal from 'react-modal';
 import { Navigate, Route, Routes, generatePath, useNavigate, useLocation } from 'react-router-dom';
 import DocumentHead from 'calypso/components/data/document-head';
-import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
 import { STEPPER_INTERNAL_STORE } from 'calypso/landing/stepper/stores';
 import { recordPageView } from 'calypso/lib/analytics/page-view';
 import { recordSignupStart } from 'calypso/lib/analytics/signup';
@@ -22,17 +21,29 @@ import {
 } from 'calypso/signup/storageUtils';
 import { useSelector } from 'calypso/state';
 import { getSite, isRequestingSite } from 'calypso/state/sites/selectors';
+import { useQuery } from '../../hooks/use-query';
+import { useSaveQueryParams } from '../../hooks/use-save-query-params';
 import { useSiteData } from '../../hooks/use-site-data';
 import useSyncRoute from '../../hooks/use-sync-route';
 import { ONBOARD_STORE } from '../../stores';
 import kebabCase from '../../utils/kebabCase';
 import { getAssemblerSource } from './analytics/record-design';
 import recordStepStart from './analytics/record-step-start';
-import StepRoute from './components/step-route';
-import StepperLoader from './components/stepper-loader';
+import { StepRoute, StepperLoader } from './components';
 import { AssertConditionState, Flow, StepperStep, StepProps } from './types';
 import './global.scss';
 import type { OnboardSelect, StepperInternalSelect } from '@automattic/data-stores';
+
+/**
+ * This can be used when renaming a step. Simply add a map entry with the new step slug and the old step slug and Stepper will fire `calypso_signup_step_start` events for both slugs. This ensures that funnels with the old slug will still work.
+ */
+export const getStepOldSlug = ( stepSlug: string ): string | undefined => {
+	const stepSlugMap: Record< string, string > = {
+		'create-site': 'site-creation-step',
+	};
+
+	return stepSlugMap[ stepSlug ];
+};
 
 /**
  * This component accepts a single flow property. It does the following:
@@ -64,6 +75,7 @@ export const FlowRenderer: React.FC< { flow: Flow } > = ( { flow } ) => {
 
 	const location = useLocation();
 	const currentStepRoute = location.pathname.split( '/' )[ 2 ]?.replace( /\/+$/, '' );
+	const stepOldSlug = getStepOldSlug( currentStepRoute );
 	const { __ } = useI18n();
 	const navigate = useNavigate();
 	const { setStepData } = useDispatch( STEPPER_INTERNAL_STORE );
@@ -76,8 +88,8 @@ export const FlowRenderer: React.FC< { flow: Flow } > = ( { flow } ) => {
 		[]
 	);
 
-	const urlQueryParams = useQuery();
-	const ref = urlQueryParams.get( 'ref' ) || '';
+	useSaveQueryParams();
+	const ref = useQuery().get( 'ref' ) || '';
 
 	const { site, siteSlugOrId } = useSiteData();
 
@@ -115,6 +127,7 @@ export const FlowRenderer: React.FC< { flow: Flow } > = ( { flow } ) => {
 		setStepData( {
 			path: path,
 			intent: intent,
+			previousStep: currentStepRoute,
 			...extraData,
 		} );
 
@@ -167,6 +180,14 @@ export const FlowRenderer: React.FC< { flow: Flow } > = ( { flow } ) => {
 				is_in_hosting_flow: isAnyHostingFlow( flow.name ),
 				...( design && { assembler_source: getAssemblerSource( design ) } ),
 			} );
+
+			if ( stepOldSlug ) {
+				recordStepStart( flow.name, kebabCase( stepOldSlug ), {
+					intent,
+					is_in_hosting_flow: isAnyHostingFlow( flow.name ),
+					...( design && { assembler_source: getAssemblerSource( design ) } ),
+				} );
+			}
 		}
 
 		// Also record page view for data and analytics

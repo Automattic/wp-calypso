@@ -8,6 +8,7 @@ const STATIC_PATHS = [
 	'/nostats.js',
 	'/version',
 	'/__webpack_hmr',
+	'_favicon.ico',
 ];
 
 /**

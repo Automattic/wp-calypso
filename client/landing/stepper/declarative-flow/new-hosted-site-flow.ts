@@ -11,7 +11,6 @@ import {
 import { useSelector } from 'calypso/state';
 import { isUserEligibleForFreeHostingTrial } from 'calypso/state/selectors/is-user-eligible-for-free-hosting-trial';
 import { useQuery } from '../hooks/use-query';
-import { useSiteSetupFlowProgress } from '../hooks/use-site-setup-flow-progress';
 import { ONBOARD_STORE, USER_STORE } from '../stores';
 import { recordSubmitStep } from './internals/analytics/record-submit-step';
 import { Flow, ProvidedDependencies } from './internals/types';
@@ -29,8 +28,8 @@ const hosting: Flow = {
 				asyncComponent: () => import( './internals/steps-repository/trial-acknowledge' ),
 			},
 			{
-				slug: 'siteCreationStep',
-				asyncComponent: () => import( './internals/steps-repository/site-creation-step' ),
+				slug: 'createSite',
+				asyncComponent: () => import( './internals/steps-repository/create-site' ),
 			},
 			{
 				slug: 'processing',
@@ -39,14 +38,7 @@ const hosting: Flow = {
 		];
 	},
 	useStepNavigation( _currentStepSlug, navigate ) {
-		const { setStepProgress, setPlanCartItem } = useDispatch( ONBOARD_STORE );
-
-		const flowProgress = useSiteSetupFlowProgress( _currentStepSlug, 'host' );
-
-		if ( flowProgress ) {
-			setStepProgress( flowProgress );
-		}
-
+		const { setPlanCartItem } = useDispatch( ONBOARD_STORE );
 		const flowName = this.name;
 
 		const goBack = () => {
@@ -74,14 +66,14 @@ const hosting: Flow = {
 						return navigate( 'trialAcknowledge' );
 					}
 
-					return navigate( 'siteCreationStep' );
+					return navigate( 'createSite' );
 				}
 
 				case 'trialAcknowledge': {
-					return navigate( 'siteCreationStep' );
+					return navigate( 'createSite' );
 				}
 
-				case 'siteCreationStep':
+				case 'createSite':
 					return navigate( 'processing' );
 
 				case 'processing': {

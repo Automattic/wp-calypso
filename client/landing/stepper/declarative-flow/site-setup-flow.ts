@@ -1,3 +1,4 @@
+import config from '@automattic/calypso-config';
 import { Onboard } from '@automattic/data-stores';
 import { Design, isAssemblerDesign, isAssemblerSupported } from '@automattic/design-picker';
 import { useSelect, useDispatch } from '@wordpress/data';
@@ -11,12 +12,9 @@ import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getActiveTheme, getCanonicalTheme } from 'calypso/state/themes/selectors';
 import { WRITE_INTENT_DEFAULT_DESIGN } from '../constants';
 import { useIsPluginBundleEligible } from '../hooks/use-is-plugin-bundle-eligible';
-import { useSite } from '../hooks/use-site';
-import { useSiteIdParam } from '../hooks/use-site-id-param';
-import { useSiteSetupFlowProgress } from '../hooks/use-site-setup-flow-progress';
-import { useSiteSlugParam } from '../hooks/use-site-slug-param';
+import { useSiteData } from '../hooks/use-site-data';
 import { useCanUserManageOptions } from '../hooks/use-user-can-manage-options';
-import { ONBOARD_STORE, SITE_STORE, USER_STORE } from '../stores';
+import { ONBOARD_STORE, SITE_STORE, USER_STORE, STEPPER_INTERNAL_STORE } from '../stores';
 import { recordSubmitStep } from './internals/analytics/record-submit-step';
 import { STEPS } from './internals/steps';
 import { redirect } from './internals/steps-repository/import/util';
@@ -27,7 +25,12 @@ import {
 	Flow,
 	ProvidedDependencies,
 } from './internals/types';
-import type { OnboardSelect, SiteSelect, UserSelect } from '@automattic/data-stores';
+import type {
+	OnboardSelect,
+	SiteSelect,
+	UserSelect,
+	StepperInternalSelect,
+} from '@automattic/data-stores';
 
 const SiteIntent = Onboard.SiteIntent;
 
@@ -61,6 +64,7 @@ const siteSetupFlow: Flow = {
 			STEPS.GOALS,
 			STEPS.INTENT,
 			STEPS.OPTIONS,
+			STEPS.DESIGN_CHOICES,
 			STEPS.DESIGN_SETUP,
 			STEPS.PATTERN_ASSEMBLER,
 			STEPS.BLOGGER_STARTING_POINT,
@@ -86,6 +90,11 @@ const siteSetupFlow: Flow = {
 	},
 	useStepNavigation( currentStep, navigate ) {
 		const flowName = this.name;
+		const stepData = useSelect(
+			( select ) => ( select( STEPPER_INTERNAL_STORE ) as StepperInternalSelect ).getStepData(),
+			[]
+		);
+
 		const intent = useSelect(
 			( select ) => ( select( ONBOARD_STORE ) as OnboardSelect ).getIntent(),
 			[]
@@ -103,24 +112,17 @@ const siteSetupFlow: Flow = {
 			( select ) => ( select( ONBOARD_STORE ) as OnboardSelect ).getStartingPoint(),
 			[]
 		);
-		const siteId = useSiteIdParam();
-		const siteSlugParam = useSiteSlugParam();
-		const site = useSite();
+
+		const { site, siteSlug, siteId } = useSiteData();
 		const currentThemeId = useSelector( ( state ) => getActiveTheme( state, site?.ID || -1 ) );
 		const currentTheme = useSelector( ( state ) =>
 			getCanonicalTheme( state, site?.ID || -1, currentThemeId )
 		);
+
 		const isLaunched = site?.launch_status === 'launched' ? true : false;
 
 		const urlQueryParams = useQuery();
 		const isPluginBundleEligible = useIsPluginBundleEligible();
-
-		let siteSlug: string | null = null;
-		if ( siteSlugParam ) {
-			siteSlug = siteSlugParam;
-		} else if ( site ) {
-			siteSlug = new URL( site.URL ).host;
-		}
 
 		const adminUrl = useSelect(
 			( select ) =>
@@ -135,16 +137,10 @@ const siteSetupFlow: Flow = {
 			( select ) => ( select( ONBOARD_STORE ) as OnboardSelect ).getStoreType(),
 			[]
 		);
-		const { setPendingAction, setStepProgress, resetOnboardStoreWithSkipFlags, setIntent } =
+		const { setPendingAction, resetOnboardStoreWithSkipFlags, setIntent } =
 			useDispatch( ONBOARD_STORE );
 		const { setDesignOnSite } = useDispatch( SITE_STORE );
 		const dispatch = reduxDispatch();
-
-		const flowProgress = useSiteSetupFlowProgress( currentStep, intent );
-
-		if ( flowProgress ) {
-			setStepProgress( flowProgress );
-		}
 
 		const exitFlow = ( to: string, options: ExitFlowOptions = {} ) => {
 			setPendingAction( () => {
@@ -302,7 +298,8 @@ const siteSetupFlow: Flow = {
 					const intent = params[ 0 ];
 					switch ( intent ) {
 						case 'firstPost': {
-							return exitFlow( `https://wordpress.com/post/${ siteSlug }` );
+							const exitUrl = addQueryArgs( { new_prompt: true }, `/post/${ siteSlug }` );
+							return exitFlow( exitUrl );
 						}
 						case 'courses': {
 							return navigate( 'courses' );
@@ -329,9 +326,17 @@ const siteSetupFlow: Flow = {
 						case SiteIntent.Write:
 						case SiteIntent.Sell:
 							return navigate( 'options' );
-						default:
+						default: {
+							if ( config.isEnabled( 'onboarding/design-choices' ) && isAssemblerSupported() ) {
+								return navigate( 'design-choices' );
+							}
 							return navigate( 'designSetup' );
+						}
 					}
+				}
+
+				case 'design-choices': {
+					return navigate( providedDependencies.destination as string );
 				}
 
 				case 'intent': {
@@ -454,40 +459,53 @@ const siteSetupFlow: Flow = {
 							return navigate( 'options' );
 						case SiteIntent.Write:
 							return navigate( 'bloggerStartingPoint' );
-						default:
+						default: {
+							if ( config.isEnabled( 'onboarding/design-choices' ) && isAssemblerSupported() ) {
+								return navigate( 'design-choices' );
+							}
 							return navigate( 'goals' );
+						}
 					}
 
-				case 'pattern-assembler':
+				case 'design-choices': {
+					return navigate( 'goals' );
+				}
+
+				case 'pattern-assembler': {
+					if ( stepData?.previousStep ) {
+						return navigate( stepData?.previousStep );
+					}
+
 					return navigate( 'designSetup' );
+				}
 
 				case 'importList':
 					// eslint-disable-next-line no-case-declarations
 					const backToStep = urlQueryParams.get( 'backToStep' );
 
 					if ( backToStep ) {
-						return navigate( `${ backToStep }?siteSlug=${ siteSlugParam }` );
+						return navigate( `${ backToStep }?siteSlug=${ siteSlug }` );
 					}
 
-					return navigate( `import?siteSlug=${ siteSlugParam }` );
+					return navigate( `import?siteSlug=${ siteSlug }` );
 
 				case 'importerBlogger':
 				case 'importerMedium':
 				case 'importerSquarespace':
-					return navigate( `importList?siteSlug=${ siteSlugParam }` );
+					return navigate( `importList?siteSlug=${ siteSlug }` );
 
 				case 'importerWordpress':
 					if ( urlQueryParams.get( 'option' ) === 'content' ) {
-						return navigate( `importList?siteSlug=${ siteSlugParam }` );
+						return navigate( `importList?siteSlug=${ siteSlug }` );
 					}
-					return navigate( `import?siteSlug=${ siteSlugParam }` );
+					return navigate( `import?siteSlug=${ siteSlug }` );
 
 				case 'importerWix':
 				case 'importReady':
 				case 'importReadyNot':
 				case 'importReadyWpcom':
 				case 'importReadyPreview':
-					return navigate( `import?siteSlug=${ siteSlugParam }` );
+					return navigate( `import?siteSlug=${ siteSlug }` );
 
 				case 'options':
 					return navigate( 'goals' );
@@ -537,15 +555,20 @@ const siteSetupFlow: Flow = {
 		};
 
 		const goToStep = ( step: string ) => {
-			navigate( step );
+			switch ( step ) {
+				case 'import':
+					return navigate( `import?siteSlug=${ siteSlug }` );
+
+				default:
+					return navigate( step );
+			}
 		};
 
 		return { goNext, goBack, goToStep, submit, exitFlow };
 	},
 
 	useAssertConditions(): AssertConditionResult {
-		const siteSlug = useSiteSlugParam();
-		const siteId = useSiteIdParam();
+		const { siteSlug, siteId } = useSiteData();
 		const userIsLoggedIn = useSelect(
 			( select ) => ( select( USER_STORE ) as UserSelect ).isCurrentUserLoggedIn(),
 			[]

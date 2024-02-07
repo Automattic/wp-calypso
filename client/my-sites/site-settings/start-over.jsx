@@ -1,4 +1,4 @@
-import { Button } from '@automattic/components';
+import { Button, FormLabel } from '@automattic/components';
 import {
 	useSiteResetContentSummaryQuery,
 	useSiteResetMutation,
@@ -12,7 +12,6 @@ import { connect } from 'react-redux';
 import ActionPanel from 'calypso/components/action-panel';
 import ActionPanelBody from 'calypso/components/action-panel/body';
 import ActionPanelFooter from 'calypso/components/action-panel/footer';
-import FormLabel from 'calypso/components/forms/form-label';
 import FormTextInput from 'calypso/components/forms/form-text-input';
 import HeaderCake from 'calypso/components/header-cake';
 import InlineSupportLink from 'calypso/components/inline-support-link';

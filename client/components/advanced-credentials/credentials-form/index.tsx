@@ -1,16 +1,20 @@
-import { Button, FormInputValidation, Gridicon } from '@automattic/components';
+import {
+	Button,
+	FormInputValidation,
+	FormLabel,
+	Gridicon,
+	SegmentedControl,
+} from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import { FunctionComponent, useState, FormEventHandler } from 'react';
 import FormInputCheckbox from 'calypso/components/forms/form-checkbox';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
-import FormLabel from 'calypso/components/forms/form-label';
 import FormPasswordInput from 'calypso/components/forms/form-password-input';
 import FormSelect from 'calypso/components/forms/form-select';
 import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
 import FormTextInput from 'calypso/components/forms/form-text-input';
 import FormTextArea from 'calypso/components/forms/form-textarea';
 import InfoPopover from 'calypso/components/info-popover';
-import SegmentedControl from 'calypso/components/segmented-control';
 import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { FormState, FormMode, FormErrors, INITIAL_FORM_INTERACTION } from '../form';
@@ -21,6 +25,7 @@ import './style.scss';
 interface Props {
 	formErrors: FormErrors;
 	formMode: FormMode;
+	formModeSwitcher?: 'segmented' | 'simple';
 	disabled?: boolean;
 	formState: FormState;
 	onFormStateChange: ( newFormState: FormState ) => void;
@@ -38,6 +43,7 @@ const ServerCredentialsForm: FunctionComponent< Props > = ( {
 	formState,
 	formErrors,
 	formMode,
+	formModeSwitcher = 'segmented',
 	onFormStateChange,
 	onModeChange,
 	host,
@@ -118,7 +124,7 @@ const ServerCredentialsForm: FunctionComponent< Props > = ( {
 	const renderServerUsernameForm = () => (
 		<FormFieldset className="credentials-form__username">
 			<div className="credentials-form__support-info">
-				<FormLabel htmlFor="server-username">{ translate( 'Server username' ) }</FormLabel>
+				<FormLabel htmlFor="server-username">{ translate( 'Username' ) }</FormLabel>
 				{ hostInfo?.inline?.user && (
 					<InfoPopover>
 						<InlineInfo
@@ -152,7 +158,7 @@ const ServerCredentialsForm: FunctionComponent< Props > = ( {
 			{ renderServerUsernameForm() }
 			<FormFieldset className="credentials-form__password">
 				<div className="credentials-form__support-info">
-					<FormLabel htmlFor="server-password">{ translate( 'Server password' ) }</FormLabel>
+					<FormLabel htmlFor="server-password">{ translate( 'Password' ) }</FormLabel>
 					{ hostInfo?.inline?.pass && (
 						<InfoPopover>
 							<InlineInfo
@@ -212,9 +218,11 @@ const ServerCredentialsForm: FunctionComponent< Props > = ( {
 						formErrors.kpri && ( interactions.kpri || ! formErrors.kpri.waitForInteraction )
 					}
 				/>
-				<FormSettingExplanation>
-					{ translate( 'Only non-encrypted private keys are supported.' ) }
-				</FormSettingExplanation>
+				{ formModeSwitcher === 'segmented' && (
+					<FormSettingExplanation>
+						{ translate( 'Only non-encrypted private keys are supported.' ) }
+					</FormSettingExplanation>
+				) }
 				{ formErrors.kpri && ( interactions.kpri || ! formErrors.kpri.waitForInteraction ) && (
 					<FormInputValidation isError={ true } text={ formErrors.kpri.message } />
 				) }
@@ -398,32 +406,34 @@ const ServerCredentialsForm: FunctionComponent< Props > = ( {
 			{ ! isAlternate && withHeader && <h3>{ getFormHeaderText() }</h3> }
 			{ withHeader && <p className="credentials-form__intro-text">{ getSubHeaderText() }</p> }
 			{ withHeader && renderCredentialLinks() }
-			<FormFieldset className="credentials-form__protocol-type">
-				<div className="credentials-form__support-info">
-					<FormLabel htmlFor="protocol-type">{ translate( 'Credential type' ) }</FormLabel>
-					{ hostInfo?.inline?.protocol && (
-						<InfoPopover>
-							<InlineInfo
-								field="protocol"
-								host={ host }
-								info={ hostInfo.inline.protocol }
-								protocol={ formState.protocol }
-							/>
-						</InfoPopover>
-					) }
-				</div>
-				<FormSelect
-					name="protocol"
-					id="protocol-type"
-					value={ formState.protocol }
-					onChange={ handleFormChange }
-					disabled={ disabled }
-				>
-					{ allowFtp && <option value="ftp">{ translate( 'FTP' ) }</option> }
-					<option value="ssh">{ translate( 'SSH/SFTP' ) }</option>
-				</FormSelect>
-			</FormFieldset>
-
+			{ ! allowFtp && <input type="hidden" name="protocol" value="ssh" /> }
+			{ allowFtp && (
+				<FormFieldset className="credentials-form__protocol-type">
+					<div className="credentials-form__support-info">
+						<FormLabel htmlFor="protocol-type">{ translate( 'Credential type' ) }</FormLabel>
+						{ hostInfo?.inline?.protocol && (
+							<InfoPopover>
+								<InlineInfo
+									field="protocol"
+									host={ host }
+									info={ hostInfo.inline.protocol }
+									protocol={ formState.protocol }
+								/>
+							</InfoPopover>
+						) }
+					</div>
+					<FormSelect
+						name="protocol"
+						id="protocol-type"
+						value={ formState.protocol }
+						onChange={ handleFormChange }
+						disabled={ disabled }
+					>
+						<option value="ftp">{ translate( 'FTP' ) }</option>
+						<option value="ssh">{ translate( 'SSH/SFTP' ) }</option>
+					</FormSelect>
+				</FormFieldset>
+			) }
 			<div className="credentials-form__row">
 				<FormFieldset className="credentials-form__server-address">
 					<div className="credentials-form__support-info">
@@ -485,7 +495,6 @@ const ServerCredentialsForm: FunctionComponent< Props > = ( {
 					) }
 				</FormFieldset>
 			</div>
-
 			<FormFieldset className="credentials-form__path">
 				<div className="credentials-form__support-info">
 					<FormLabel htmlFor="wordpress-path">
@@ -513,13 +522,11 @@ const ServerCredentialsForm: FunctionComponent< Props > = ( {
 						formErrors.path && ( interactions.path || ! formErrors.path.waitForInteraction )
 					}
 				/>
-
 				{ formErrors.path && ( interactions.path || ! formErrors.path.waitForInteraction ) && (
 					<FormInputValidation isError={ true } text={ formErrors.path.message } />
 				) }
 			</FormFieldset>
-
-			{ 'ftp' !== formState.protocol && (
+			{ formModeSwitcher === 'segmented' && 'ftp' !== formState.protocol && (
 				<div className="credentials-form__mode-control">
 					<div className="credentials-form__support-info">
 						<SegmentedControl disabled={ disabled }>
@@ -549,9 +556,36 @@ const ServerCredentialsForm: FunctionComponent< Props > = ( {
 					</div>
 				</div>
 			) }
-
+			{ formModeSwitcher === 'simple' && (
+				<FormFieldset>
+					<FormLabel>{ translate( 'SSH credentials' ) }</FormLabel>
+					<FormSettingExplanation>
+						{ translate(
+							'Your credentials will be used only to migrate the site and won’t be stored anywhere.'
+						) }
+					</FormSettingExplanation>
+				</FormFieldset>
+			) }
 			{ formMode === FormMode.Password ? renderPasswordForm() : renderPrivateKeyForm() }
-
+			{ formModeSwitcher === 'simple' && (
+				<>
+					{ formMode === FormMode.Password && (
+						<p>
+							<Button plain onClick={ () => onModeChange( FormMode.PrivateKey ) }>
+								{ translate( 'Use private key instead' ) }
+							</Button>
+						</p>
+					) }
+					{ formMode === FormMode.PrivateKey && (
+						<p>
+							<span>{ translate( 'Only non-encrypted private keys are supported.' ) }</span>{ ' ' }
+							<Button plain onClick={ () => onModeChange( FormMode.Password ) }>
+								{ translate( 'Use a password instead' ) }
+							</Button>
+						</p>
+					) }
+				</>
+			) }
 			{ isAlternate && (
 				<FormFieldset className="credentials-form__save-for-later">
 					<FormLabel htmlFor="save-for-later">

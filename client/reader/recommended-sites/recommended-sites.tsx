@@ -61,7 +61,7 @@ const RecommendedSites = () => {
 	);
 
 	const offset = useSelector( ( state ) => getReaderRecommendedSitesPagingOffset( state, seed ) );
-	const blockedSites = useSelector( ( state ) => getBlockedSites( state ) );
+	const blockedSites = useSelector( getBlockedSites );
 
 	const filteredRecommendedSites = useMemo( () => {
 		if ( ! Array.isArray( recommendedSites ) || ! recommendedSites.length ) {

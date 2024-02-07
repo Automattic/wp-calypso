@@ -118,8 +118,8 @@ const StatsDateControl = ( {
 			return shortcut.label;
 		}
 		// Generate a full date range for the label.
-		const startDate = moment( dateRange.chartStart ).format( 'MMMM Do, YYYY' );
-		const endDate = moment( dateRange.chartEnd ).format( 'MMMM Do, YYYY' );
+		const startDate = moment( dateRange.chartStart ).format( 'LL' );
+		const endDate = moment( dateRange.chartEnd ).format( 'LL' );
 		return `${ startDate } - ${ endDate }`;
 	};
 

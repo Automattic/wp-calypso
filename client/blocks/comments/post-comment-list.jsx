@@ -1,4 +1,4 @@
-import { Button, Gridicon } from '@automattic/components';
+import { Button, Gridicon, SegmentedControl } from '@automattic/components';
 import classnames from 'classnames';
 import { translate } from 'i18n-calypso';
 import { get, size, delay, pickBy } from 'lodash';
@@ -7,7 +7,6 @@ import { Component, createRef } from 'react';
 import { connect } from 'react-redux';
 import ConversationFollowButton from 'calypso/blocks/conversation-follow-button';
 import { shouldShowConversationFollowButton } from 'calypso/blocks/conversation-follow-button/helper';
-import SegmentedControl from 'calypso/components/segmented-control';
 import ReaderFollowConversationIcon from 'calypso/reader/components/icons/follow-conversation-icon';
 import ReaderFollowingConversationIcon from 'calypso/reader/components/icons/following-conversation-icon';
 import { recordAction, recordGaEvent, recordTrackForPost } from 'calypso/reader/stats';

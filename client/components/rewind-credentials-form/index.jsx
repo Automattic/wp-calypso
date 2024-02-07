@@ -1,7 +1,7 @@
 /**
  * External dependendies
  */
-import { Button, FormInputValidation, Gridicon } from '@automattic/components';
+import { Button, FormInputValidation, FormLabel, Gridicon } from '@automattic/components';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
 import { get, isEmpty } from 'lodash';
@@ -10,7 +10,6 @@ import { Component } from 'react';
 import { connect } from 'react-redux';
 import QuerySiteCredentials from 'calypso/components/data/query-site-credentials';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
-import FormLabel from 'calypso/components/forms/form-label';
 import FormPasswordInput from 'calypso/components/forms/form-password-input';
 import FormSelect from 'calypso/components/forms/form-select';
 import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';

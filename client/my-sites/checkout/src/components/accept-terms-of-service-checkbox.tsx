@@ -1,9 +1,9 @@
+import { FormLabel } from '@automattic/components';
 import { hasCheckoutVersion } from '@automattic/wpcom-checkout';
 import styled from '@emotion/styled';
 import { localize, LocalizeProps, TranslateResult } from 'i18n-calypso';
 import { useState } from 'react';
 import FormCheckbox from 'calypso/components/forms/form-checkbox';
-import FormLabel from 'calypso/components/forms/form-label';
 import { useToSFoldableCard } from '../hooks/use-tos-foldable-card';
 
 const CheckboxTermsWrapper = styled.div< { showToSFoldableCard: boolean } >`

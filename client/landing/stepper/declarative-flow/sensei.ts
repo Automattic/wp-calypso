@@ -1,11 +1,9 @@
 import { useLocale } from '@automattic/i18n-utils';
-import { SENSEI_FLOW, useFlowProgress } from '@automattic/onboarding';
-import { useDispatch } from '@wordpress/data';
+import { SENSEI_FLOW } from '@automattic/onboarding';
 import { translate } from 'i18n-calypso';
 import { useSelector } from 'react-redux';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { useSiteSlug } from '../hooks/use-site-slug';
-import { ONBOARD_STORE } from '../stores';
 import { redirect } from './internals/steps-repository/import/util';
 import Intro from './internals/steps-repository/intro';
 import ProcessingStep from './internals/steps-repository/processing-step';
@@ -41,14 +39,9 @@ const sensei: Flow = {
 	},
 
 	useStepNavigation( _currentStep, navigate ) {
-		const flowName = this.name;
 		const locale = useLocale();
-		const { setStepProgress } = useDispatch( ONBOARD_STORE );
-		const flowProgress = useFlowProgress( { stepName: _currentStep, flowName } );
 		const siteSlug = useSiteSlug();
 		const isLoggedIn = useSelector( isUserLoggedIn );
-
-		setStepProgress( flowProgress );
 
 		const submit = ( deps: any, stepResult?: string ) => {
 			if ( stepResult ) {

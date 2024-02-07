@@ -1097,7 +1097,7 @@ class PurchaseNotice extends Component<
 		const expiry = moment.utc( purchase.expiryDate );
 		const daysToExpiry = isExpired( purchase )
 			? 0
-			: Math.ceil( expiry.diff( moment().utc(), 'days', true ) );
+			: Math.floor( expiry.diff( moment().utc(), 'days', true ) );
 		const productType =
 			productSlug === PLAN_ECOMMERCE_TRIAL_MONTHLY
 				? translate( 'ecommerce' )

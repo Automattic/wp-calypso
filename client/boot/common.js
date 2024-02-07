@@ -153,7 +153,7 @@ function authorizePath() {
 	return authUri.toString();
 }
 
-const JP_CLOUD_PUBLIC_ROUTES = [ '/pricing', '/plans', '/features/comparison' ];
+const JP_CLOUD_PUBLIC_ROUTES = [ '/pricing', '/plans', '/features/comparison', '/manage/pricing' ];
 
 const oauthTokenMiddleware = () => {
 	if ( config.isEnabled( 'oauth' ) ) {
@@ -223,8 +223,8 @@ const configureReduxStore = ( currentUser, reduxStore ) => {
 	}
 
 	if ( config.isEnabled( 'network-connection' ) ) {
-		asyncRequire( 'calypso/lib/network-connection', ( networkConnection ) =>
-			networkConnection.init( reduxStore )
+		asyncRequire( 'calypso/lib/network-connection' ).then( ( networkConnection ) =>
+			networkConnection.default.init( reduxStore )
 		);
 	}
 

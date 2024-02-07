@@ -1,13 +1,13 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
-import { Button, FormInputValidation, Gridicon } from '@automattic/components';
+import { Button, FormInputValidation, FormLabel, Gridicon } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import Accordion from 'calypso/components/domains/accordion';
 import FormButton from 'calypso/components/forms/form-button';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
-import FormLabel from 'calypso/components/forms/form-label';
 import FormTextInputWithAffixes from 'calypso/components/forms/form-text-input-with-affixes';
+import useCreateGlueRecordMutation from 'calypso/data/domains/glue-records/use-create-glue-record-mutation';
 import useDeleteGlueRecordMutation from 'calypso/data/domains/glue-records/use-delete-glue-record-mutation';
 import useDomainGlueRecordsQuery, {
 	GlueRecordObject,
@@ -30,10 +30,11 @@ export default function GlueRecordsCard( { domain }: { domain: ResponseDomain } 
 	const [ isExpanded, setIsExpanded ] = useState( false );
 	const [ isSaving, setIsSaving ] = useState( false );
 	const [ isRemoving, setIsRemoving ] = useState( false );
+	const [ isAdding, setIsAdding ] = useState( false );
 	const [ isEditing, setIsEditing ] = useState( false );
-	const [ record, setRecord ] = useState( '' );
+	const [ nameserver, setNameserver ] = useState( '' );
 	const [ ipAddress, setIpAddress ] = useState( '' );
-	const [ isValidRecord, setIsValidRecord ] = useState( true );
+	const [ isValidNameserver, setIsValidNameserver ] = useState( true );
 	const [ isValidIpAddress, setIsValidIpAddress ] = useState( true );
 
 	const {
@@ -45,19 +46,33 @@ export default function GlueRecordsCard( { domain }: { domain: ResponseDomain } 
 	} = useDomainGlueRecordsQuery( domain.name );
 
 	const clearState = () => {
+		setIsAdding( false );
 		setIsEditing( false );
-		setRecord( '' );
+		setNameserver( '' );
 		setIpAddress( '' );
 		setIsSaving( false );
 		setIsRemoving( false );
-		setIsValidRecord( true );
+		setIsValidNameserver( true );
 		setIsValidIpAddress( true );
 	};
+
+	// Display success notices when the glue record is created
+	const { createGlueRecord } = useCreateGlueRecordMutation( domain.name, {
+		onSuccess() {
+			dispatch( successNotice( translate( 'Glue record updated.' ), noticeOptions ) );
+			clearState();
+		},
+		onError( error ) {
+			dispatch( errorNotice( error.message, noticeOptions ) );
+			clearState();
+		},
+	} );
 
 	// Display success notices when the glue record is updated
 	const { updateGlueRecord } = useUpdateGlueRecordMutation( domain.name, {
 		onSuccess() {
-			dispatch( successNotice( translate( 'Glue record updated and enabled.' ), noticeOptions ) );
+			dispatch( successNotice( translate( 'Glue record created and enabled.' ), noticeOptions ) );
+			refetchGlueRecordsData();
 			clearState();
 		},
 		onError( error ) {
@@ -96,7 +111,7 @@ export default function GlueRecordsCard( { domain }: { domain: ResponseDomain } 
 	}, [ isError, dispatch, translate ] );
 
 	const showGlueRecordForm = () => {
-		setIsEditing( true );
+		setIsAdding( true );
 	};
 
 	useEffect( () => {
@@ -122,10 +137,10 @@ export default function GlueRecordsCard( { domain }: { domain: ResponseDomain } 
 		setIpAddress( ipAddress );
 	};
 
-	const handleRecordChange = ( event: React.ChangeEvent< HTMLInputElement > ) => {
-		const record = event.target.value;
+	const handleNameserverChange = ( event: React.ChangeEvent< HTMLInputElement > ) => {
+		const nameserver = event.target.value;
 
-		setRecord( record.toLowerCase() );
+		setNameserver( nameserver.toLowerCase() );
 	};
 
 	const handleDelete = ( record: GlueRecordObject ) => {
@@ -134,16 +149,28 @@ export default function GlueRecordsCard( { domain }: { domain: ResponseDomain } 
 
 		recordTracksEvent( 'calypso_domain_glue_records_delete_record', {
 			domain: domain.domain,
-			record: record.record,
+			record: record.nameserver,
 			address: record.address,
 		} );
 	};
 
-	const validateRecord = () => {
-		if ( ! record ) {
+	const handleEdit = ( record: GlueRecordObject ) => {
+		setNameserver( record.nameserver.replace( `.${ domain.domain }`, '' ) );
+		setIpAddress( record.address );
+		setIsEditing( true );
+	};
+
+	const validateNameserver = () => {
+		if ( ! nameserver ) {
 			return false;
 		}
-		if ( ! record.match( /^[A-Za-z0-9](?:[A-Za-z0-9-]{0,61}[A-Za-z0-9])?$/ ) ) {
+		// The subdomain part of name servers in Key-Systems cannot be longer than 50 characters
+		if (
+			nameserver.length > 50 ||
+			! nameserver.match(
+				/^([A-Za-z0-9](?:[A-Za-z0-9-]{0,61}[A-Za-z0-9])?)(\.[A-Za-z0-9](?:[A-Za-z0-9-]{0,61}[A-Za-z0-9])?)*$/
+			)
+		) {
 			return false;
 		}
 		return true;
@@ -160,12 +187,12 @@ export default function GlueRecordsCard( { domain }: { domain: ResponseDomain } 
 	};
 
 	const validateGlueRecord = () => {
-		const recordIsValid = validateRecord();
+		const nameserverIsValid = validateNameserver();
 		const ipAddressIsValid = validateIpAddress();
-		setIsValidRecord( recordIsValid );
+		setIsValidNameserver( nameserverIsValid );
 		setIsValidIpAddress( ipAddressIsValid );
 
-		return recordIsValid && ipAddressIsValid;
+		return nameserverIsValid && ipAddressIsValid;
 	};
 
 	const handleSubmit = () => {
@@ -174,16 +201,29 @@ export default function GlueRecordsCard( { domain }: { domain: ResponseDomain } 
 		}
 
 		setIsSaving( true );
-		updateGlueRecord( {
-			record: `${ record }.${ domain.domain }`,
-			address: ipAddress,
-		} );
 
-		recordTracksEvent( 'calypso_domain_glue_records_add_record', {
-			domain: domain.domain,
-			record: `${ record }.${ domain.domain }`,
-			address: ipAddress,
-		} );
+		if ( isEditing ) {
+			updateGlueRecord( {
+				nameserver: `${ nameserver }.${ domain.domain }`,
+				address: ipAddress,
+			} );
+		} else {
+			createGlueRecord( {
+				nameserver: `${ nameserver }.${ domain.domain }`,
+				address: ipAddress,
+			} );
+		}
+
+		recordTracksEvent(
+			isEditing
+				? 'calypso_domain_glue_records_update_record'
+				: 'calypso_domain_glue_records_add_record',
+			{
+				domain: domain.domain,
+				nameserver: `${ nameserver }.${ domain.domain }`,
+				address: ipAddress,
+			}
+		);
 	};
 
 	const handleCancel = () => {
@@ -195,13 +235,13 @@ export default function GlueRecordsCard( { domain }: { domain: ResponseDomain } 
 	};
 
 	const FormViewRow = ( { child: child }: { child: GlueRecordObject } ) => (
-		<FormFieldset key={ `view-${ child.record }` }>
+		<FormFieldset key={ `view-${ child.nameserver }` }>
 			<div className="domain-glue-records-card__fields">
 				<div className="glue-record-data">
 					<div className="domain-glue-records-card__fields-row">
 						<div className="label">{ translate( 'Name server' ) }:</div>
 						<div className="value">
-							<strong>{ child.record }</strong>
+							<strong>{ child.nameserver }</strong>
 						</div>
 					</div>
 
@@ -216,7 +256,16 @@ export default function GlueRecordsCard( { domain }: { domain: ResponseDomain } 
 					<Button
 						scary
 						disabled={ isSaving || isRemoving }
-						className="edit-redirect-button"
+						className="edit-glue-record-button"
+						onClick={ () => handleEdit( child ) }
+					>
+						<Gridicon icon="pencil" />
+						{ translate( 'Edit' ) }
+					</Button>
+					<Button
+						scary
+						disabled={ isSaving || isRemoving }
+						className="delete-glue-record-button"
 						onClick={ () => handleDelete( child ) }
 					>
 						<Gridicon icon="trash" />
@@ -227,22 +276,28 @@ export default function GlueRecordsCard( { domain }: { domain: ResponseDomain } 
 		</FormFieldset>
 	);
 
-	const FormRowEditable = ( { child }: { child: GlueRecordObject } ) => (
+	const FormRowEditable = ( {
+		child,
+		isEditing = false,
+	}: {
+		child: GlueRecordObject;
+		isEditing: boolean;
+	} ) => (
 		<>
-			<FormFieldset key={ `edit-${ child.record }` }>
+			<FormFieldset key={ `edit-${ child.nameserver }` }>
 				<FormLabel>{ translate( 'Name server' ) }</FormLabel>
 				<div>
 					<FormTextInputWithAffixes
 						placeholder={ translate( 'Enter subdomain (e.g. ns1)' ) }
-						disabled={ isLoadingData || isSaving }
-						name="record"
-						onChange={ handleRecordChange }
-						value={ record }
+						disabled={ isLoadingData || isSaving || isEditing }
+						name="nameserver"
+						onChange={ handleNameserverChange }
+						value={ nameserver }
 						maxLength={ 1000 }
 						suffix={ <FormLabel>.{ domain.domain }</FormLabel> }
-						isError={ ! isValidRecord }
+						isError={ ! isValidNameserver }
 					/>
-					{ ! isValidRecord && (
+					{ ! isValidNameserver && (
 						<div className="domain-glue-records-card__error-field">
 							<FormInputValidation isError text={ translate( 'Invalid subdomain' ) } />
 						</div>
@@ -320,16 +375,25 @@ export default function GlueRecordsCard( { domain }: { domain: ResponseDomain } 
 					} }
 				>
 					{ data?.map( ( item ) => FormViewRow( { child: item } ) ) }
+					{ isAdding &&
+						FormRowEditable( {
+							child: {
+								nameserver: '',
+								address: '',
+							},
+							isEditing: false,
+						} ) }
 					{ isEditing &&
 						FormRowEditable( {
 							child: {
-								record: '',
-								address: '',
+								nameserver,
+								address: ipAddress,
 							},
+							isEditing: true,
 						} ) }
 				</form>
 
-				{ ! isEditing && data && data.length < 3 && (
+				{ ! isAdding && data && data.length < 3 && (
 					<Button borderless className="link-button" onClick={ () => showGlueRecordForm() }>
 						{ translate( '+ Add Glue Record' ) }
 					</Button>

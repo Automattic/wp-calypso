@@ -26,7 +26,7 @@ export const SubscribeModalSetting = ( {
 	// Construct a link to edit the modal
 	const { data: activeThemeData } = useActiveThemeQuery( siteId, true );
 	const isFSEActive = activeThemeData?.[ 0 ]?.is_block_theme ?? false;
-	const themeSlug = activeThemeData?.[ 0 ]?.template;
+	const themeSlug = activeThemeData?.[ 0 ]?.stylesheet;
 	const siteEditorUrl = useSelector( ( state: object ) => getSiteEditorUrl( state, siteId ) );
 	const subscribeModalEditorUrl = isFSEActive
 		? addQueryArgs( siteEditorUrl, {
@@ -46,11 +46,11 @@ export const SubscribeModalSetting = ( {
 				checked={ !! value }
 				onChange={ handleToggle( SUBSCRIBE_MODAL_OPTION ) }
 				disabled={ disabled }
-				label={ translate( 'Enable subscriber pop-up' ) }
+				label={ translate( 'Enable subscription pop-up' ) }
 			/>
 			<FormSettingExplanation>
 				{ translate(
-					'Grow your subscriber list by enabling a pop-up modal with a subscribe form. This will show as readers scroll.'
+					'Grow your subscriber list by enabling a pop-up modal with a subscription form. This will show as readers scroll.'
 				) }
 				{ subscribeModalEditorUrl && (
 					<>

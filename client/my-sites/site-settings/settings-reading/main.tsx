@@ -157,7 +157,7 @@ const ReadingSettingsForm = wrapSettingsForm( getFormSettings )(
 
 const ReadingSettings = () => {
 	const translate = useTranslate();
-	const siteId = useSelector( ( state ) => getSelectedSiteId( state ) );
+	const siteId = useSelector( getSelectedSiteId );
 	const isJetpack = useSelector( ( state ) => isJetpackSite( state, siteId ) );
 	const isPossibleJetpackConnectionProblem = useIsJetpackConnectionProblem( siteId as number );
 
