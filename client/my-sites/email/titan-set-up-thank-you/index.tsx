@@ -91,11 +91,7 @@ const TitanSetUpThankYou = ( {
 			'Complete your professional email setup to start sending and receiving emails from your custom domain today.'
 		);
 		headerButtons = (
-			<Button
-				href={ getTitanSetUpMailboxPath( selectedSiteSlug, domainName ) }
-				className="manage-all-domains22"
-				variant="primary"
-			>
+			<Button href={ getTitanSetUpMailboxPath( selectedSiteSlug, domainName ) } variant="primary">
 				{ translate( 'Set up mailbox' ) }
 			</Button>
 		);
