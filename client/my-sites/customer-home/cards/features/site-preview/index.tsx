@@ -13,7 +13,6 @@ import { getWpComDomainBySiteId } from 'calypso/state/sites/domains/selectors';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import './style.scss';
 import { SitePreviewEllipsisMenu } from './site-preview-ellipsis-menu';
-
 interface ThumbnailWrapperProps {
 	showEditSite: boolean;
 	editSiteURL: string;
