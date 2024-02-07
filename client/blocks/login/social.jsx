@@ -114,6 +114,9 @@ class SocialLoginForm extends Component {
 		);
 	};
 
+	// eslint-disable-next-line no-unused-vars
+	handleGitHubResponse = ( response ) => {};
+
 	recordEvent = ( eventName, service, params ) =>
 		this.props.recordTracksEvent( eventName, {
 			social_account_type: service,
@@ -139,6 +142,7 @@ class SocialLoginForm extends Component {
 				compact={ this.props.compact }
 				handleGoogleResponse={ this.handleGoogleResponse }
 				handleAppleResponse={ this.handleAppleResponse }
+				handleGitHubResponse={ this.handleGitHubResponse }
 				getRedirectUri={ this.getRedirectUri }
 				trackLoginAndRememberRedirect={ this.trackLoginAndRememberRedirect }
 				socialService={ this.props.socialService }

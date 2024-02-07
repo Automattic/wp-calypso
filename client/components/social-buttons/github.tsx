@@ -19,9 +19,15 @@ import './style.scss';
 
 type GithubLoginButtonProps = {
 	children?: ReactNode;
+	responseHandler: ( response: any ) => void;
+	socialServiceResponse?: string | null;
 };
 
-const GitHubLoginButton = ( { children }: GithubLoginButtonProps ) => {
+const GitHubLoginButton = ( {
+	children,
+	responseHandler,
+	socialServiceResponse,
+}: GithubLoginButtonProps ) => {
 	const translate = useTranslate();
 
 	const isFormDisabled = useSelector( isFormDisabledSelector );
@@ -39,6 +45,12 @@ const GitHubLoginButton = ( { children }: GithubLoginButtonProps ) => {
 			return;
 		}
 	} );
+
+	useEffect( () => {
+		if ( socialServiceResponse ) {
+			responseHandler( socialServiceResponse );
+		}
+	}, [ socialServiceResponse ] );
 
 	const handleClick = ( e: MouseEvent< HTMLButtonElement > ) => {
 		errorRef.current = e.currentTarget;
