@@ -1,5 +1,5 @@
 import config from '@automattic/calypso-config';
-import { ComponentSwapper, CountComparisonCard, formattedNumber } from '@automattic/components';
+import { ComponentSwapper, CountComparisonCard, ShortenedNumber } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import QueryMembershipProducts from 'calypso/components/data/query-memberships';
 import useSubscribersOverview from 'calypso/my-sites/stats/hooks/use-subscribers-overview';
@@ -111,7 +111,11 @@ function SubscriberHighlightsListing( { siteId }: { siteId: number | null } ) {
 				<div className="highlight-cards-list-mobile__item">
 					<span className="highlight-cards-list-mobile__item-heading">{ highlight.heading }</span>
 					<span className="highlight-cards-list-mobile__item-count">
-						{ isPaidSubscriptionProductsLoading ? '-' : formattedNumber( highlight.count ) }
+						{ isPaidSubscriptionProductsLoading ? (
+							'-'
+						) : (
+							<ShortenedNumber value={ highlight.count } />
+						) }
 					</span>
 				</div>
 			) ) }
