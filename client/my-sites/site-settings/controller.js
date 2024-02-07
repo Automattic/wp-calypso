@@ -118,7 +118,7 @@ export function startSiteOwnerTransfer( context, next ) {
 	next();
 }
 
-export function showSiteTransferredScreen( context, next ) {
+export function renderSiteTransferredScreen( context, next ) {
 	context.primary = <SiteTransferred />;
 	next();
 }
