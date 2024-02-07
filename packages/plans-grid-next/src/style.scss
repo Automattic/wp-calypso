@@ -756,7 +756,7 @@ body.is-section-signup.is-white-signup {
 			display: none;
 		}
 
-		@include plans-2023-break-small {
+		@include plans-grid-medium-large {
 			padding-top: 34px;
 
 			&.popular-plan-parent-class {
@@ -778,7 +778,7 @@ body.is-section-signup.is-white-signup {
 			}
 		}
 
-		@include plans-2023-break-medium {
+		@include plans-grid-large {
 			&.plan-is-footer {
 				padding-top: 110px;
 			}
@@ -806,7 +806,7 @@ body.is-section-signup.is-white-signup {
 				}
 			}
 
-			@include plans-2023-break-small {
+			@include plans-grid-medium-large {
 				.plan-features-2023-grid__popular-badge {
 					padding: 20px 0 25px;
 					position: absolute;
@@ -894,10 +894,10 @@ body.is-section-signup.is-white-signup {
 			background-color: var(--studio-gray-80);
 			text-transform: unset;
 
-			@include plans-2023-break-small {
+			@include plans-grid-medium-large {
 				left: 15px;
 			}
-			@include plans-2023-break-medium {
+			@include plans-grid-large {
 				top: 55px;
 			}
 		}
@@ -947,7 +947,7 @@ body.is-section-signup.is-white-signup {
 
 		.plan-comparison-grid__plan-conditional-title {
 			@extend %plan-comparison-grid__plan-subtitle;
-			@include plans-2023-break-small {
+			@include plans-grid-medium-large {
 				color: unset;
 				margin-bottom: 0;
 			}
@@ -961,7 +961,7 @@ body.is-section-signup.is-white-signup {
 			}
 		}
 
-		@include plans-2023-break-small {
+		@include plans-grid-medium-large {
 			.plan-comparison-grid__plan-image,
 			.plan-comparison-grid__plan-title,
 			.plan-comparison-grid__plan-subtitle {
@@ -991,7 +991,7 @@ body.is-section-signup.is-white-signup {
 			right: -1px;
 		}
 
-		@include plans-2023-break-small {
+		@include plans-grid-medium-large {
 			&::before,
 			&:not(:last-of-type)::after {
 				display: block;
@@ -1017,7 +1017,7 @@ body.is-section-signup.is-white-signup {
 		min-height: 30px;
 		line-height: 1.3;
 
-		@include plans-2023-break-small {
+		@include plans-grid-medium-large {
 			margin: 7px 0 10px;
 		}
 
@@ -1027,12 +1027,12 @@ body.is-section-signup.is-white-signup {
 			font-weight: 400;
 			color: var(--studio-gray-80);
 
-			@include plans-2023-break-small {
+			@include plans-grid-medium-large {
 				font-size: $font-body-small;
 				line-height: 20px;
 			}
 
-			@include plans-2023-break-medium {
+			@include plans-grid-large {
 				font-size: $font-body-extra-small;
 				line-height: 16px;
 			}
