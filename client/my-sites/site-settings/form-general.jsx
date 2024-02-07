@@ -515,10 +515,10 @@ export class SiteSettingsFormGeneral extends Component {
 								disabled={ isRequestingSettings || ( 0 === blogPublic && ! wpcomPublicComingSoon ) }
 								onClick={ eventTracker( 'Clicked Partnership Radio Button' ) }
 							/>
-							<span>{ translate( 'Discourage research agencies from indexing this site.' ) }</span>
+							<span>{ translate( 'Discourage research partners from indexing this site.' ) }</span>
 							<FormSettingExplanation>
 								{ translate(
-									'This option will request research agencies not to index your site. {{researchPrivacyLink}}Learn more' +
+									'This option will request research partners not to index your site. {{researchPrivacyLink}}Learn more' +
 										'{{/researchPrivacyLink}}.',
 									{
 										components: {
