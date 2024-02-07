@@ -15,7 +15,7 @@ describe( 'getSiteLaunchedTask', () => {
 
 	it( 'doesnt use the calypso path', () => {
 		const siteSlug = 'site.wordpress.com';
-		const context = buildContext( { siteSlug } );
+		const context = buildContext( { siteInfoQueryArgs: { siteSlug } } );
 
 		expect( getSiteLaunchedTask( task, 'flowId', context ) ).toMatchObject( {
 			useCalypsoPath: false,
@@ -24,7 +24,7 @@ describe( 'getSiteLaunchedTask', () => {
 
 	it( 'returns disabled when is an blog onboarding flow', () => {
 		const siteSlug = 'site.wordpress.com';
-		const context = buildContext( { siteSlug } );
+		const context = buildContext( { siteInfoQueryArgs: { siteSlug } } );
 
 		expect( getSiteLaunchedTask( task, START_WRITING_FLOW, context ) ).toMatchObject( {
 			disabled: true,
@@ -37,7 +37,7 @@ describe( 'getBlogLaunchedTask', () => {
 
 	it( 'doesnt use the calypso path', () => {
 		const siteSlug = 'site.wordpress.com';
-		const context = buildContext( { siteSlug } );
+		const context = buildContext( { siteInfoQueryArgs: { siteSlug } } );
 
 		expect( getBlogLaunchedTask( task, 'flowId', context ) ).toMatchObject( {
 			useCalypsoPath: false,
@@ -46,7 +46,7 @@ describe( 'getBlogLaunchedTask', () => {
 
 	it( 'returns disabled when is an blog onboarding flow', () => {
 		const siteSlug = 'site.wordpress.com';
-		const context = buildContext( { siteSlug } );
+		const context = buildContext( { siteInfoQueryArgs: { siteSlug } } );
 
 		expect( getBlogLaunchedTask( task, START_WRITING_FLOW, context ) ).toMatchObject( {
 			disabled: true,
@@ -59,7 +59,7 @@ describe( 'getVideopressLaunchedTask', () => {
 
 	it( 'doesnt use the calypso path', () => {
 		const siteSlug = 'site.wordpress.com';
-		const context = buildContext( { siteSlug } );
+		const context = buildContext( { siteInfoQueryArgs: { siteSlug } } );
 
 		expect( getVideopressLaunchedTask( task, 'flowId', context ) ).toMatchObject( {
 			useCalypsoPath: false,
@@ -68,7 +68,7 @@ describe( 'getVideopressLaunchedTask', () => {
 
 	it( 'returns disabled when is an blog onboarding flow', () => {
 		const siteSlug = 'site.wordpress.com';
-		const context = buildContext( { siteSlug } );
+		const context = buildContext( { siteInfoQueryArgs: { siteSlug } } );
 
 		expect( getVideopressLaunchedTask( task, START_WRITING_FLOW, context ) ).toMatchObject( {
 			disabled: true,
