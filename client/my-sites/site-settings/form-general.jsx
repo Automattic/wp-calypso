@@ -24,6 +24,7 @@ import fiverrLogo from 'calypso/assets/images/customer-home/fiverr-logo.svg';
 import UpsellNudge from 'calypso/blocks/upsell-nudge';
 import QuerySiteDomains from 'calypso/components/data/query-site-domains';
 import QuerySiteSettings from 'calypso/components/data/query-site-settings';
+import ExternalLink from 'calypso/components/external-link';
 import FormInputCheckbox from 'calypso/components/forms/form-checkbox';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormRadio from 'calypso/components/forms/form-radio';
@@ -369,7 +370,8 @@ export class SiteSettingsFormGeneral extends Component {
 		const blogPublic = parseInt( fields.blog_public, 10 );
 		const wpcomComingSoon = 1 === parseInt( fields.wpcom_coming_soon, 10 );
 		const wpcomPublicComingSoon = 1 === parseInt( fields.wpcom_public_coming_soon, 10 );
-		const partnerPrivacy = parseInt( fields.partner_privacy, 10 );
+		const partnerOptOut = !! fields.wpcom_partner_sharing_opt_out;
+
 		// isPrivateAndUnlaunched means it is an unlaunched coming soon v1 site
 		const isPrivateAndUnlaunched = -1 === blogPublic && this.props.isUnlaunchedSite;
 		const isNonAtomicJetpackSite = siteIsJetpack && ! siteIsAtomic;
@@ -387,6 +389,12 @@ export class SiteSettingsFormGeneral extends Component {
 			}
 		);
 		const showPreviewLink = isComingSoon && hasSitePreviewLink;
+		const researchPrivacyLink = (
+			<ExternalLink
+				href={ localizeUrl( 'https://wordpress.com/support/privacy-settings/#public' ) }
+				target="_blank"
+			/>
+		);
 		return (
 			<FormFieldset>
 				{ ! isNonAtomicJetpackSite &&
@@ -474,7 +482,7 @@ export class SiteSettingsFormGeneral extends Component {
 											wpcomPublicComingSoon || blogPublic === -1 || blogPublic === 1 ? 0 : 1,
 										wpcom_coming_soon: 0,
 										wpcom_public_coming_soon: 0,
-										partner_privacy: partnerPrivacy,
+										wpcom_partner_sharing_opt_out: partnerOptOut,
 									} )
 								}
 								disabled={ isRequestingSettings }
@@ -489,16 +497,16 @@ export class SiteSettingsFormGeneral extends Component {
 						</FormLabel>
 						<FormLabel className="site-settings__visibility-label is-checkbox is-hidden">
 							<FormInputCheckbox
-								name="partner_privacy"
+								name="wpcom_partner_sharing_opt_out"
 								value="1"
 								checked={
 									( wpcomPublicComingSoon && blogPublic === 0 && isComingSoonDisabled ) ||
 									( 0 === blogPublic && ! wpcomPublicComingSoon ) ||
-									partnerPrivacy === 1
+									partnerOptOut
 								}
 								onChange={ () =>
 									this.handleVisibilityOptionChange( {
-										partner_privacy: partnerPrivacy === 1 ? 0 : 1,
+										wpcom_partner_sharing_opt_out: partnerOptOut === true ? false : true,
 										blog_public: blogPublic,
 										wpcom_coming_soon: wpcomComingSoon,
 										wpcom_public_coming_soon: wpcomPublicComingSoon,
@@ -507,11 +515,17 @@ export class SiteSettingsFormGeneral extends Component {
 								disabled={ isRequestingSettings || ( 0 === blogPublic && ! wpcomPublicComingSoon ) }
 								onClick={ eventTracker( 'Clicked Partnership Radio Button' ) }
 							/>
-							<span>
-								{ translate( 'Do not share public blog content with third party partners.' ) }
-							</span>
+							<span>{ translate( 'Discourage research agencies from indexing this site.' ) }</span>
 							<FormSettingExplanation>
-								{ translate( 'Some descirption here.' ) }
+								{ translate(
+									'This option will request research agencies not to index your site. {{researchPrivacyLink}}Learn more' +
+										'{{/researchPrivacyLink}}.',
+									{
+										components: {
+											researchPrivacyLink,
+										},
+									}
+								) }
 							</FormSettingExplanation>
 						</FormLabel>
 					</>
@@ -553,14 +567,19 @@ export class SiteSettingsFormGeneral extends Component {
 		blog_public,
 		wpcom_coming_soon,
 		wpcom_public_coming_soon,
-		partner_privacy,
+		wpcom_partner_sharing_opt_out,
 	} ) => {
 		const { trackEvent, updateFields } = this.props;
 		trackEvent( `Set blog_public to ${ blog_public }` );
 		trackEvent( `Set wpcom_coming_soon to ${ wpcom_coming_soon }` );
 		trackEvent( `Set wpcom_public_coming_soon to ${ wpcom_public_coming_soon }` );
-		trackEvent( `Set partner_privacy to ${ partner_privacy }` );
-		updateFields( { blog_public, wpcom_coming_soon, wpcom_public_coming_soon, partner_privacy } );
+		trackEvent( `Set wpcom_partner_sharing_opt_out to ${ wpcom_partner_sharing_opt_out }` );
+		updateFields( {
+			blog_public,
+			wpcom_coming_soon,
+			wpcom_public_coming_soon,
+			wpcom_partner_sharing_opt_out,
+		} );
 	};
 
 	Timezone() {
@@ -1090,6 +1109,7 @@ const getFormSettings = ( settings ) => {
 		lang_id: '',
 		timezone_string: '',
 		blog_public: '',
+		wpcom_partner_sharing_opt_out: false,
 		wpcom_coming_soon: '',
 		wpcom_legacy_contact: '',
 		wpcom_locked_mode: false,
@@ -1115,6 +1135,7 @@ const getFormSettings = ( settings ) => {
 		wpcom_locked_mode: settings.wpcom_locked_mode,
 		wpcom_public_coming_soon: settings.wpcom_public_coming_soon,
 		wpcom_gifting_subscription: !! settings.wpcom_gifting_subscription,
+		wpcom_partner_sharing_opt_out: settings.wpcom_partner_sharing_opt_out,
 	};
 
 	// handling `gmt_offset` and `timezone_string` values
