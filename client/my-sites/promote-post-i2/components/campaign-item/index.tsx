@@ -1,3 +1,4 @@
+import config from '@automattic/calypso-config';
 import page from '@automattic/calypso-router';
 import { safeImageUrl } from '@automattic/calypso-url';
 import { Badge } from '@automattic/components';
@@ -70,10 +71,12 @@ export default function CampaignItem( props: Props ) {
 		[ budget_cents, end_date, spent_budget_cents, start_date ]
 	);
 
-	const budgetString = campaignDays ? `$${ formatCents( totalBudgetLeft || 0 ) } ` : '-';
+	const budgetString =
+		campaignDays && totalBudgetLeft ? `$${ formatCents( totalBudgetLeft ) } ` : '-';
 	const budgetStringMobile = campaignDays ? `$${ totalBudget } budget` : null;
+	const isWooStore = config.isEnabled( 'is_running_in_woo_site' );
 
-	const postType = ( type: string ) => {
+	const getPostType = ( type: string ) => {
 		switch ( type ) {
 			case 'post':
 				return translate( 'Post' );
@@ -148,9 +151,9 @@ export default function CampaignItem( props: Props ) {
 							></div>
 						) }
 						<div className="campaign-item__title-row">
-							<div className="campaign-item__post-type-mobile">{ postType( type ) }</div>
+							<div className="campaign-item__post-type-mobile">{ getPostType( type ) }</div>
 							<div className="campaign-item__title">{ name }</div>
-							<div className="campaign-item__post-type">{ postType( type ) }</div>
+							<div className="campaign-item__post-type">{ getPostType( type ) }</div>
 							<div className="campaign-item__status-mobile">{ statusBadge }</div>
 						</div>
 					</div>
@@ -183,9 +186,12 @@ export default function CampaignItem( props: Props ) {
 			<td className="campaign-item__clicks">
 				<div>{ formatNumber( clicks_total ) }</div>
 			</td>
-			<td className="campaign-item__conversion">
-				<div>{ conversion_rate } </div>
-			</td>
+			{ isWooStore && (
+				<td className="campaign-item__conversion">
+					<div>{ conversion_rate } </div>
+				</td>
+			) }
+
 			<td className="campaign-item__action">
 				<Button
 					variant="secondary"

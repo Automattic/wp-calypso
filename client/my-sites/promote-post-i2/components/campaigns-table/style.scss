@@ -85,7 +85,7 @@ $font-sf-pro-text: "SF Pro Text", $sans;
 		}
 
 		&__conversion {
-			width: 20%;
+			width: 12%;
 		}
 
 		&__action {
@@ -130,6 +130,7 @@ $font-sf-pro-text: "SF Pro Text", $sans;
 		padding-right: 16px;
 		padding-top: 16px;
 		vertical-align: middle;
+		text-align: left;
 	}
 
 	td:last-child {

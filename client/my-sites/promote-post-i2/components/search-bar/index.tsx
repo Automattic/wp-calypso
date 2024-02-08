@@ -174,7 +174,7 @@ export default function SearchBar( props: Props ) {
 		CAMPAIGNS_SORT_OPTIONS_DEFAULT
 	);
 	const [ filterOption, setFilterOption ] = React.useState( FILTER_OPTIONS_DEFAULT );
-	const isDesktop = useMediaQuery( '(min-width: 1055px)' );
+	const isDesktop = useMediaQuery( '(min-width: 1200px)' );
 
 	useEffect( () => {
 		handleSetSearch( {
