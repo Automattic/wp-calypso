@@ -1103,11 +1103,12 @@ class SignupForm extends Component {
 	};
 
 	getPasswordlessInviteHeaderText = () => {
-		if ( this.props.invite?.site.title ) {
+		const { invite } = this.props;
+		if ( invite?.site.title ) {
 			return this.props.translate( 'Sign up to start editing {{span}}%(domain)s{{/span}}', {
-				args: { domain: this.props.invite.site.title },
+				args: { domain: invite.site.title },
 				components: {
-					span: <span>{ this.props.invite.site.title }</span>,
+					span: <span>{ invite.site.title }</span>,
 				},
 			} );
 		}
