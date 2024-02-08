@@ -85,8 +85,9 @@ const GitHubLoginButton = ( {
 			return;
 		}
 
-		const { access_token, id_token } = response.body as ExchangeCodeForTokenResponse;
-		responseHandler( { access_token, id_token } );
+		const { access_token } = response?.body?.data as ExchangeCodeForTokenResponse;
+		responseHandler( access_token );
+		// TODO
 		/*
 		this.props.recordTracksEvent( 'calypso_social_button_auth_code_exchange_success', {
 			social_account_type: 'google',
