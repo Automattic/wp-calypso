@@ -2,6 +2,7 @@
 @import "@automattic/typography/styles/woo-commerce";
 
 .woo {
+	$woo-purple-40: #966ccf;
 	$woo-purple-50: #7f54b3;
 	$woo-purple-60: #674399;
 	$woo-purple-70: #533582;
@@ -63,17 +64,21 @@
 	}
 
 	a,
-	a:visited,
-	a:hover,
-	.wp-login__links a:hover,
-	.wp-login__links button:hover,
-	.button:not(.social-buttons__button) {
+	.wp-login__links a,
+	.wp-login__links button,
+	.button:not(.social-buttons__button),
+	.magic-login__footer a {
 		font-size: $woo-font-size-base;
 		line-height: 28px;
 		text-align: center;
 		color: $gray-50;
 		text-decoration: underline;
 		letter-spacing: 0;
+
+		&:hover,
+		&:visited {
+			color: $gray-50;
+		}
 	}
 
 	.button:not(.social-buttons__button) {
@@ -86,12 +91,20 @@
 	}
 
 	.button.is-primary,
-	.button.is-primary[disabled],
-	.login .button.is-primary {
-		background: $woo-purple-60;
+	.login .button.is-primary,
+	.magic-login.is-white-login .magic-login__form-action .button.is-primary:not([disabled]) {
+		background-color: $woo-purple-60;
 		border: none;
 		color: #fff;
 		width: 100%;
+
+		&.is-busy {
+			background-image: none;
+		}
+
+		&:hover {
+			background-color: $woo-purple-40;
+		}
 
 		&:disabled {
 			background-color: var(--studio-gray-0);
@@ -137,9 +150,9 @@
 			line-height: 20px; /* 142.857% */
 			letter-spacing: -0.24px;
 
+
 			a,
-			a:visited,
-			a:hover, {
+			a:visited, {
 				color: $woo-purple-60;
 				font-size: rem(14px);
 				font-style: normal;
@@ -147,6 +160,10 @@
 				line-height: 20px;
 				letter-spacing: -0.24px;
 				text-decoration: none;
+			}
+
+			a:hover {
+				color: $woo-purple-40;
 			}
 		}
 	}
@@ -314,6 +331,10 @@
 			font-weight: 400;
 			font-size: 1rem;
 			text-decoration: none;
+
+			&:hover {
+				color: $woo-purple-40;
+			}
 		}
 
 		@media screen and ( max-width: 660px ) {
@@ -660,6 +681,10 @@
 
 	.wp-login__footer--oauth {
 		display: none;
+	}
+
+	.app-promo.magic-link-app-promo {
+		padding: 24px;
 	}
 
 	.auth-form__social-buttons-tos {

@@ -819,7 +819,7 @@ class Login extends Component {
 	}
 
 	render() {
-		const { isJetpack, oauth2Client, locale } = this.props;
+		const { isJetpack, oauth2Client, locale, isWoo } = this.props;
 
 		return (
 			<div
@@ -830,7 +830,8 @@ class Login extends Component {
 			>
 				{ this.renderHeader() }
 
-				<ErrorNotice locale={ locale } />
+				{ /* For Woo, we render the ErrrorNotice component in login-form.jsx */ }
+				{ ! isWoo && <ErrorNotice locale={ locale } /> }
 
 				{ this.renderNotice() }
 
