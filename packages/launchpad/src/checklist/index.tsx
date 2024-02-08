@@ -13,6 +13,8 @@ const Checklist: FC< ChecklistProps > = ( {
 	children,
 	makeLastTaskPrimaryAction,
 }: ChecklistProps ) => {
+	const lastChildIndex = Children.count( children ) - 1;
+
 	return (
 		<ul
 			className={ classNames( 'checklist__tasks', {
@@ -21,7 +23,7 @@ const Checklist: FC< ChecklistProps > = ( {
 			aria-label="Launchpad Checklist"
 		>
 			{ Children.map( children || [], ( child, index ) => {
-				if ( index === Children.count( children ) - 1 ) {
+				if ( index === lastChildIndex ) {
 					return cloneElement( child, { isPrimaryAction: makeLastTaskPrimaryAction } );
 				}
 				return child;
