@@ -736,6 +736,8 @@ body.is-section-signup.is-white-signup {
 }
 
 .plan-comparison-grid {
+	display: flex; // required to make grid not stretch with container
+
 	.plan-features-2023-gridrison__actions {
 		margin-bottom: auto;
 
