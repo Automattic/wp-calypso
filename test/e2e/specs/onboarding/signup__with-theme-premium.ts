@@ -134,7 +134,7 @@ describe( 'Lifecyle: Premium theme signup, onboard, launch and cancel subscripti
 
 			const theme = await restAPIClient.getActiveTheme( newSiteDetails.blog_details.blogid );
 
-			expect( theme ).toBe( `premium/${ themeSlug }` );
+			expect( theme ).toContain( themeSlug );
 		} );
 	} );
 

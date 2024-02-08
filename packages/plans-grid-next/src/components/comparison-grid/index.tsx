@@ -23,6 +23,7 @@ import {
 	forwardRef,
 } from 'react';
 import { useInView } from 'react-intersection-observer';
+import { plansGridMediumLarge } from '../../css-mixins';
 import { usePlansGridContext } from '../../grid-context';
 import useHighlightAdjacencyMatrix from '../../hooks/use-highlight-adjacency-matrix';
 import { useManageTooltipToggle } from '../../hooks/use-manage-tooltip-toggle';
@@ -30,8 +31,7 @@ import filterUnusedFeaturesObject from '../../lib/filter-unused-features-object'
 import getPlanFeaturesObject from '../../lib/get-plan-features-object';
 import { isStorageUpgradeableForPlan } from '../../lib/is-storage-upgradeable-for-plan';
 import { sortPlans } from '../../lib/sort-plan-properties';
-import { plansBreakSmall } from '../../media-queries';
-import { getStorageStringFromFeature, usePricingBreakpoint } from '../../util';
+import { getStorageStringFromFeature } from '../../util';
 import PlanFeatures2023GridActions from '../actions';
 import PlanFeatures2023GridHeaderPrice from '../header-price';
 import PlanTypeSelector from '../plan-type-selector';
@@ -94,7 +94,7 @@ const Title = styled.div< { isHiddenInMobile?: boolean } >`
 		flex-shrink: 0;
 	}
 
-	${ plansBreakSmall( css`
+	${ plansGridMediumLarge( css`
 		padding-inline-start: 0;
 		border: none;
 		padding: 0;
@@ -112,7 +112,7 @@ const Grid = styled.div< { isInSignup?: boolean } >`
 	background: #fff;
 	border: solid 1px #e0e0e0;
 
-	${ plansBreakSmall( css`
+	${ plansGridMediumLarge( css`
 		border-radius: 5px;
 	` ) }
 
@@ -132,7 +132,7 @@ const Row = styled.div< {
 	align-items: stretch;
 	display: ${ ( props ) => ( props.isHiddenInMobile ? 'none' : 'flex' ) };
 
-	${ plansBreakSmall( css`
+	${ plansGridMediumLarge( css`
 		display: flex;
 		align-items: center;
 		margin: 0 20px;
@@ -143,7 +143,7 @@ const Row = styled.div< {
 	${ ( props ) =>
 		props.isHighlighted &&
 		css`
-			${ plansBreakSmall( css`
+			${ plansGridMediumLarge( css`
 				background-color: #fafafa;
 				border-top: 1px solid #eee;
 				font-weight: bold;
@@ -159,7 +159,7 @@ const PlanRow = styled( Row )`
 		display: ${ ( props ) => ( props.isHiddenInMobile ? 'none' : 'flex' ) };
 	}
 
-	${ plansBreakSmall( css`
+	${ plansGridMediumLarge( css`
 		border-bottom: none;
 		align-items: stretch;
 
@@ -175,7 +175,7 @@ const TitleRow = styled( Row )`
 	cursor: pointer;
 	display: flex;
 
-	${ plansBreakSmall( css`
+	${ plansGridMediumLarge( css`
 		cursor: default;
 		border-bottom: none;
 		padding: 20px 0 10px;
@@ -212,12 +212,12 @@ const Cell = styled.div< { textAlign?: 'start' | 'center' | 'end' } >`
 	${ Row }:last-of-type & {
 		padding-bottom: 24px;
 
-		${ plansBreakSmall( css`
+		${ plansGridMediumLarge( css`
 			padding-bottom: 0px;
 		` ) }
 	}
 
-	${ plansBreakSmall( css`
+	${ plansGridMediumLarge( css`
 		padding: 0 14px;
 		border-right: none;
 		justify-content: center;
@@ -240,7 +240,7 @@ const RowTitleCell = styled.div`
 	display: none;
 	font-size: 14px;
 	padding-right: 10px;
-	${ plansBreakSmall( css`
+	${ plansGridMediumLarge( css`
 		display: block;
 		flex: 1;
 		min-width: 290px;
@@ -293,7 +293,7 @@ const StorageButton = styled.div`
 	min-width: 64px;
 	margin-top: 10px;
 
-	${ plansBreakSmall( css`
+	${ plansGridMediumLarge( css`
 		margin-top: 0;
 	` ) }
 `;
@@ -458,7 +458,7 @@ const ComparisonGridHeaderCell = ( {
 
 const PlanTypeSelectorWrapper = styled.div`
 	display: none;
-	${ plansBreakSmall( css`
+	${ plansGridMediumLarge( css`
 		display: block;
 	` ) }
 `;
@@ -945,6 +945,7 @@ const ComparisonGrid = ( {
 	showRefundPeriod,
 	planTypeSelectorProps,
 	planUpgradeCreditsApplicable,
+	gridSize,
 }: ComparisonGridProps ) => {
 	const { gridPlans } = usePlansGridContext();
 	const [ activeTooltipId, setActiveTooltipId ] = useManageTooltipToggle();
@@ -963,46 +964,35 @@ const ComparisonGrid = ( {
 		? getWooExpressFeaturesGrouped()
 		: getPlanFeaturesGrouped();
 
-	let largeBreakpoint;
-	let mediumBreakpoint;
-	let smallBreakpoint;
-
-	if ( isInSignup ) {
-		// Breakpoints without admin sidebar
-		largeBreakpoint = 1281;
-		mediumBreakpoint = 1024;
-		smallBreakpoint = 880;
-	} else {
-		// Breakpoints with admin sidebar
-		largeBreakpoint = 1553; // 1500px + 272px (sidebar)
-		mediumBreakpoint = 1296; // 1340px + 272px (sidebar)
-		smallBreakpoint = 1152; // keeping original breakpoint to match Plan Grid
-	}
-
-	const isLargeBreakpoint = usePricingBreakpoint( largeBreakpoint );
-	const isMediumBreakpoint = usePricingBreakpoint( mediumBreakpoint );
-	const isSmallBreakpoint = usePricingBreakpoint( smallBreakpoint );
-
 	const [ visiblePlans, setVisiblePlans ] = useState< PlanSlug[] >( [] );
 
 	const displayedGridPlans = useMemo( () => {
-		return sortPlans( gridPlans, currentSitePlanSlug, isMediumBreakpoint );
-	}, [ gridPlans, currentSitePlanSlug, isMediumBreakpoint ] );
+		return sortPlans( gridPlans, currentSitePlanSlug, 'small' === gridSize );
+	}, [ gridPlans, currentSitePlanSlug, gridSize ] );
 
 	useEffect( () => {
 		let newVisiblePlans = displayedGridPlans.map( ( { planSlug } ) => planSlug );
 		let visibleLength = newVisiblePlans.length;
 
-		visibleLength = isLargeBreakpoint ? 4 : visibleLength;
-		visibleLength = isMediumBreakpoint ? 3 : visibleLength;
-		visibleLength = isSmallBreakpoint ? 2 : visibleLength;
+		switch ( gridSize ) {
+			case 'large':
+				visibleLength = 4;
+				break;
+			case 'medium':
+				visibleLength = 3;
+				break;
+			case 'smedium':
+			case 'small':
+				visibleLength = 2;
+				break;
+		}
 
 		if ( newVisiblePlans.length !== visibleLength ) {
 			newVisiblePlans = newVisiblePlans.slice( 0, visibleLength );
 		}
 
 		setVisiblePlans( newVisiblePlans );
-	}, [ isLargeBreakpoint, isMediumBreakpoint, isSmallBreakpoint, displayedGridPlans, isInSignup ] );
+	}, [ gridSize, displayedGridPlans, isInSignup ] );
 
 	const visibleGridPlans = useMemo(
 		() =>

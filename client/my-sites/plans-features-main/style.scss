@@ -44,6 +44,8 @@
 }
 
 .plans-features-main__comparison-grid-container {
+	width: 100%;
+
 	&.is-hidden {
 		display: none;
 	}
@@ -122,17 +124,14 @@
 .is-section-plans .plans-features-main__comparison-grid-container {
 	scroll-margin-top: $plan-features-header-banner-height + 24px;
 	margin: auto;
-	@include plan-comparison-grid-breakpoints-with-sidebar;
 }
 
 .is-section-signup .plans-features-main__comparison-grid-container {
 	margin: auto;
-	@include plan-comparison-grid-breakpoints;
 }
 
 .is-section-stepper .plans-features-main__comparison-grid-container {
 	margin: auto;
-	@include plan-comparison-grid-breakpoints;
 }
 
 .is-2023-pricing-grid .plan-features-2023-grid__content {
