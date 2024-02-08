@@ -22,7 +22,7 @@ export const IntervalTypeToggle: React.FunctionComponent< IntervalTypeProps > = 
 		title,
 		coupon,
 		selectedSiteId,
-		onPlanIntervalChange,
+		onPlanIntervalUpdate,
 	} = props;
 	const showBiennialToggle = displayedIntervals.includes( '2yearly' );
 	const [ spanRef, setSpanRef ] = useState< HTMLSpanElement >();
@@ -76,10 +76,10 @@ export const IntervalTypeToggle: React.FunctionComponent< IntervalTypeProps > = 
 						<SegmentedControl.Item
 							key={ interval }
 							selected={ intervalType === interval }
-							onChange={ () => {
+							onClick={ () => {
 								// TODO: Double check need for additionalPathProps
-								// TODO: Refactor parameter for onPlanIntervalChange method
-								onPlanIntervalChange( { key: interval } );
+								// TODO: Refactor parameter for onPlanIntervalUpdate method
+								onPlanIntervalUpdate( { key: interval } );
 							} }
 							isPlansInsideStepper={ props.isPlansInsideStepper }
 						>

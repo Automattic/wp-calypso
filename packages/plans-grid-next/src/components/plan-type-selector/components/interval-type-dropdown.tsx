@@ -4,7 +4,7 @@ import useIntervalOptions from '../hooks/use-interval-options';
 import type { IntervalTypeProps, SupportedUrlFriendlyTermType } from '../../../types';
 
 export const IntervalTypeDropdown: React.FunctionComponent< IntervalTypeProps > = ( props ) => {
-	const { hideDiscount, intervalType, displayedIntervals, onPlanIntervalChange } = props;
+	const { hideDiscount, intervalType, displayedIntervals, onPlanIntervalUpdate } = props;
 	const supportedIntervalType = (
 		displayedIntervals.includes( intervalType ) ? intervalType : 'yearly'
 	) as SupportedUrlFriendlyTermType;
@@ -32,7 +32,7 @@ export const IntervalTypeDropdown: React.FunctionComponent< IntervalTypeProps > 
 				options={ selectOptionsList }
 				value={ selectOptionsList.find( ( { key } ) => key === supportedIntervalType ) }
 				onChange={ ( { selectedItem }: { selectedItem: { key: SupportedUrlFriendlyTermType } } ) =>
-					onPlanIntervalChange && onPlanIntervalChange( selectedItem )
+					onPlanIntervalUpdate && onPlanIntervalUpdate( selectedItem )
 				}
 			/>
 		</div>

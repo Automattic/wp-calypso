@@ -180,7 +180,7 @@ export type PlanTypeSelectorProps = {
 	withDiscount?: string;
 	enableStickyBehavior?: boolean;
 	stickyPlanTypeSelectorOffset?: number;
-	onPlanIntervalChange: ( selectedItem: { key: SupportedUrlFriendlyTermType } ) => void;
+	onPlanIntervalUpdate: ( selectedItem: { key: SupportedUrlFriendlyTermType } ) => void;
 	layoutClassName?: string;
 	siteSlug?: string | null;
 	selectedPlan?: string;
@@ -225,7 +225,7 @@ export type IntervalTypeProps = Pick<
 	| 'useCheckPlanAvailabilityForPurchase'
 	| 'title'
 	| 'coupon'
-	| 'onPlanIntervalChange'
+	| 'onPlanIntervalUpdate'
 >;
 
 export type SupportedUrlFriendlyTermType = Extract<

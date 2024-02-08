@@ -196,7 +196,7 @@ export interface PlansFeaturesMainProps {
 	 * Shows the plan type selector dropdown instead of the default toggle
 	 */
 	showPlanTypeSelectorDropdown?: boolean;
-	onPlanIntervalChange?: ( path: string ) => void;
+	onPlanIntervalUpdate?: ( path: string ) => void;
 }
 
 const SecondaryFormattedHeader = ( { siteSlug }: { siteSlug?: string | null } ) => {
@@ -259,7 +259,7 @@ const PlansFeaturesMain = ( {
 	renderSiblingWhenLoaded,
 	showPlanTypeSelectorDropdown = false,
 	coupon,
-	onPlanIntervalChange,
+	onPlanIntervalUpdate,
 }: PlansFeaturesMainProps ) => {
 	const [ isModalOpen, setIsModalOpen ] = useState( false );
 	const [ lastClickedPlan, setLastClickedPlan ] = useState< string | null >( null );
@@ -578,8 +578,8 @@ const PlansFeaturesMain = ( {
 				jetpackAppPlans: isJetpackAppFlow,
 			} );
 
-			if ( onPlanIntervalChange ) {
-				return onPlanIntervalChange( pathOrQueryParam );
+			if ( onPlanIntervalUpdate ) {
+				return onPlanIntervalUpdate( pathOrQueryParam );
 			}
 
 			if ( hasQueryArg( pathOrQueryParam, 'intervalType' ) ) {
@@ -592,7 +592,7 @@ const PlansFeaturesMain = ( {
 
 		return {
 			...props,
-			onPlanIntervalChange: handlePlanIntervalChange,
+			onPlanIntervalUpdate: handlePlanIntervalChange,
 		};
 	}, [
 		basePlansPath,
@@ -614,7 +614,7 @@ const PlansFeaturesMain = ( {
 		siteId,
 		withDiscount,
 		getPlanTypeDestination,
-		onPlanIntervalChange,
+		onPlanIntervalUpdate,
 	] );
 
 	const isEligibleForTrial = useSelector( isUserEligibleForFreeHostingTrial );
