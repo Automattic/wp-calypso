@@ -5,6 +5,7 @@ import classNames from 'classnames';
 import { translate } from 'i18n-calypso';
 import QuerySiteDomains from 'calypso/components/data/query-site-domains';
 import SitePreviewLink from 'calypso/components/site-preview-link';
+import SettingsSectionHeader from 'calypso/my-sites/site-settings/settings-section-header';
 import { useSelector } from 'calypso/state';
 import isSiteComingSoon from 'calypso/state/selectors/is-site-coming-soon';
 import getIsUnlaunchedSite from 'calypso/state/selectors/is-unlaunched-site';
@@ -17,12 +18,9 @@ import {
 	isSiteOnMigrationTrial as getIsSiteOnMigrationTrial,
 } from 'calypso/state/sites/plans/selectors';
 import { isCurrentPlanPaid } from 'calypso/state/sites/selectors';
-import {
-	getSelectedSite,
-	getSelectedSiteId,
-	getSelectedSiteSlug,
-} from 'calypso/state/ui/selectors';
-import SettingsSectionHeader from '../settings-section-header';
+import getSelectedSite from 'calypso/state/ui/selectors/get-selected-site';
+import getSelectedSiteId from 'calypso/state/ui/selectors/get-selected-site-id';
+import getSelectedSiteSlug from 'calypso/state/ui/selectors/get-selected-site-slug';
 import { LaunchSiteTrialUpsellNotice } from './launch-site-trial-notice';
 
 import './styles.scss';
