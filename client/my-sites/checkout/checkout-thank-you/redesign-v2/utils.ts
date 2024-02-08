@@ -1,10 +1,10 @@
 import { isWpComPlan, isP2Plus, isTitanMail } from '@automattic/calypso-products';
 import { CheckoutThankYouCombinedProps, getFailedPurchases, getPurchases } from '..';
 import {
+	getDomainPurchase,
 	isBulkDomainTransfer,
 	isDomainOnly,
-	isPurchaseTitanWithoutMailboxes,
-	getDomainPurchase,
+	isTitanWithoutMailboxes,
 } from '../utils';
 
 /**
@@ -31,10 +31,7 @@ export const isRefactoredForThankYouV2 = ( props: CheckoutThankYouCombinedProps 
 		return true;
 	}
 
-	if (
-		isPurchaseTitanWithoutMailboxes( props.selectedFeature ) &&
-		getDomainPurchase( purchases )
-	) {
+	if ( isTitanWithoutMailboxes( props.selectedFeature ) && getDomainPurchase( purchases ) ) {
 		return true;
 	}
 

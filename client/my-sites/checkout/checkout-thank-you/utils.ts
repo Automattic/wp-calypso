@@ -138,5 +138,5 @@ export const getDomainPurchase = ( purchases: ReceiptPurchase[] ) =>
 			isDomainRegistration( purchase )
 	);
 
-export const isPurchaseTitanWithoutMailboxes = ( selectedFeature: string ) =>
+export const isTitanWithoutMailboxes = ( selectedFeature: string ) =>
 	selectedFeature === 'email-license';

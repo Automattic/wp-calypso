@@ -103,11 +103,11 @@ import StarterPlanDetails from './starter-plan-details';
 import TransferPending from './transfer-pending';
 import './style.scss';
 import {
+	getDomainPurchase,
 	getDomainPurchaseTypeAndPredicate,
 	isBulkDomainTransfer,
 	isDomainOnly,
-	getDomainPurchase,
-	isPurchaseTitanWithoutMailboxes,
+	isTitanWithoutMailboxes,
 } from './utils';
 import type { FindPredicate } from './utils';
 import type { SitesPlansResult } from '../src/hooks/product-variants';
@@ -596,7 +596,7 @@ export class CheckoutThankYou extends Component<
 						isDomainOnlySite={ this.props.domainOnlySiteFlow }
 					/>
 				);
-			} else if ( isPurchaseTitanWithoutMailboxes( selectedFeature ) && domainPurchase ) {
+			} else if ( isTitanWithoutMailboxes( selectedFeature ) && domainPurchase ) {
 				// To reproduce it: https://github.com/Automattic/wp-calypso/pull/87098#titan-wo-mailboxes
 				pageContent = (
 					<TitanSetUpThankYou

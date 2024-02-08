@@ -2,7 +2,7 @@ import { Button } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import ThankYouV2 from 'calypso/components/thank-you-v2';
 import { TITAN_CONTROL_PANEL_CONTEXT_GET_MOBILE_APP } from 'calypso/lib/titan/constants';
-import { ThankYouEmailProduct } from 'calypso/my-sites/checkout/checkout-thank-you/redesign-v2/products/email-product';
+import { ThankYouTitanProduct } from 'calypso/my-sites/checkout/checkout-thank-you/redesign-v2/products/titan-product';
 import { recordEmailAppLaunchEvent } from 'calypso/my-sites/email/email-management/home/utils';
 import {
 	getTitanControlPanelRedirectPath,
@@ -79,7 +79,7 @@ const TitanSetUpThankYou = ( {
 		title = translate( 'Say hello to your new email address' );
 		subtitle = translate( "All set! Now it's time to update your contact details." );
 		products = (
-			<ThankYouEmailProduct
+			<ThankYouTitanProduct
 				domainName={ domainName }
 				siteSlug={ selectedSiteSlug }
 				emailAddress={ emailAddress }

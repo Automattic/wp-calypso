@@ -13,7 +13,7 @@ export type ThankYouEmailProductProps = {
 	emailAddress: string;
 };
 
-export function ThankYouEmailProduct( {
+export function ThankYouTitanProduct( {
 	domainName,
 	siteSlug,
 	emailAddress,
