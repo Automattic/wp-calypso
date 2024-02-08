@@ -1686,6 +1686,7 @@ __metadata:
   resolution: "@automattic/sites@workspace:packages/sites"
   dependencies:
     "@automattic/calypso-typescript-config": "workspace:^"
+    "@automattic/search": "workspace:^"
     "@testing-library/jest-dom": "npm:^6.3.0"
     "@testing-library/react": "npm:^14.1.2"
     typescript: "npm:^5.3.3"
@@ -32268,7 +32269,6 @@ __metadata:
     "@automattic/launchpad": "workspace:^"
     "@automattic/plans-grid-next": "workspace:^"
     "@automattic/privacy-toolset": "workspace:^"
-    "@automattic/sites": "workspace:^"
     "@automattic/typography": "workspace:^"
     "@automattic/verbum-block-editor": "workspace:^"
     "@automattic/viewport": "workspace:^"
