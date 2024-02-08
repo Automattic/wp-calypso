@@ -89,13 +89,16 @@ $font-sf-pro-text: "SF Pro Text", $sans;
 		}
 		button.is-primary {
 			border-radius: 2px;
-			border: 1px solid #3858e9;
-			background: #3858e9;
+			border: 1px solid #117ac9;
+			background: #117ac9;
 			height: 48px;
 			font-weight: 500;
+			&:hover {
+				background: #0e64a5;
+			}
 		}
 		.signup-form__passwordless-invite-title {
-			color: #101517;
+			color: var(--studio-gray-100#2c3338);
 			text-align: center;
 			font-family: $recoleta-font-family;
 			font-size: 2rem;
@@ -104,7 +107,7 @@ $font-sf-pro-text: "SF Pro Text", $sans;
 			letter-spacing: 0.2px;
 		}
 		label {
-			color: #2c3338;
+			color: var(--studio-gray-50, #2c3338);
 			text-align: center;
 			font-size: 1rem;
 			font-weight: 400;
@@ -114,7 +117,7 @@ $font-sf-pro-text: "SF Pro Text", $sans;
 			margin: 24px 0 8px 0;
 			.form-label {
 				text-align: left;
-				font-size: rem(14px);
+				font-size: $font-body-small; // 14px
 				font-weight: 500;
 			}
 		}
@@ -124,11 +127,11 @@ $font-sf-pro-text: "SF Pro Text", $sans;
 	}
 	.signup-form__terms-of-service-link {
 		margin: 0;
-		color: #646970;
-		font-size: rem(14px);
+		color: var(--studio-gray-50, #2c3338);
+		font-size: $font-body-small; // 14px
 		line-height: 20px;
 		a {
-			color: #2c3338;
+			color: var(--studio-gray-80, #2c3338);
 			font-style: normal;
 			text-decoration-line: underline;
 		}
@@ -138,7 +141,6 @@ $font-sf-pro-text: "SF Pro Text", $sans;
 		margin: 16px 0 16px 0;
 		padding: 0;
 	}
-
 }
 .validation-fieldset__validation-message {
 	min-height: auto;
@@ -151,13 +153,13 @@ $font-sf-pro-text: "SF Pro Text", $sans;
 		margin: 0;
 	}
 	.logged-out-form__link-item {
-		color: #1d2327;
+		color: var(--studio-gray-90, #2c3338);
 		font-weight: 500;
-		text-underline-offset: 4px;
+		text-underline-offset: 5px;
 		margin-top: 32px;
 		padding: 0;
 		&:hover {
-			color: #1d2327;
+			color: var(--studio-blue-50, #0675c4);
 		}
 	}
 }
