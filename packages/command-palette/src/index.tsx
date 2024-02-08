@@ -94,8 +94,6 @@ export function CommandMenuGroup( {
 	setFooterMessage,
 	setEmptyListNotice,
 	navigate,
-	/*createNotice,
-	removeNotice,*/
 }: CommandMenuGroupProps ) {
 	const { commands, filterNotice, emptyListNotice } = useCommandPalette( {
 		selectedCommandName,
@@ -250,7 +248,7 @@ const CommandPalette = ( { navigate }: CommandPaletteProps ) => {
 	const [ emptyListNotice, setEmptyListNotice ] = useState( '' );
 	// TODO: Find an alternative way to use the current route.
 	//const currentRoute = useSelector( ( state: object ) => getCurrentRoutePattern( state ) );
-	const currentRoute = window.location.pathname
+	const currentRoute = window.location.pathname;
 	const open = useCallback( () => {
 		setIsOpen( true );
 		recordTracksEvent( 'calypso_hosting_command_palette_open', {
