@@ -98,7 +98,7 @@ $font-sf-pro-text: "SF Pro Text", $sans;
 			}
 		}
 		.signup-form__passwordless-invite-title {
-			color: var(--studio-gray-100#2c3338);
+			color: var(--studio-gray-100, #2c3338);
 			text-align: center;
 			font-family: $recoleta-font-family;
 			font-size: 2rem;
