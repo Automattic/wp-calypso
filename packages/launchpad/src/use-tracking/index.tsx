@@ -47,7 +47,7 @@ export const useTracking = ( params: LogParams ) => {
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [ JSON.stringify( tasks ), siteIntent ] );
 
-	const trackClick = ( task: Task ) => {
+	const trackTaskClick = ( task: Task ) => {
 		recordTracksEvent( 'calypso_launchpad_task_clicked', {
 			number_of_steps: numberOfSteps,
 			number_of_completed_steps: numberOfCompletedSteps,
@@ -62,6 +62,6 @@ export const useTracking = ( params: LogParams ) => {
 	};
 
 	return {
-		trackClick,
+		trackTaskClick,
 	};
 };

@@ -70,7 +70,7 @@ describe( 'useTracking', () => {
 		jest.clearAllMocks();
 		const { result } = renderHook( () => useTracking( buildDefaultProps() ) );
 
-		result.current.trackClick( tasks[ 1 ] );
+		result.current.trackTaskClick( tasks[ 1 ] );
 
 		expect( recordTracksEvent ).toHaveBeenCalledWith( 'calypso_launchpad_task_clicked', {
 			checklist_slug: 'site-setup-checklist',
