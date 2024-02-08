@@ -27,7 +27,7 @@ interface Props {
 	handleFilterPostTypeChange?: ( type: string ) => void;
 }
 
-type DropdownOption = {
+export type DropdownOption = {
 	label: string;
 	value: string;
 };
@@ -142,26 +142,26 @@ export default function SearchBar( props: Props ) {
 		},
 	];
 
-	const campaignFilterOptions = [
+	const campaignFilterOptions: Array< DropdownOption > = [
 		{
 			value: '',
 			label: translate( 'All' ),
 		},
 		{
 			value: 'active',
-			label: translate( 'Active', { context: 'comment status' } ),
+			label: translate( 'Active' ),
 		},
 		{
 			value: 'created',
-			label: translate( 'In moderation', { context: 'comment status' } ),
+			label: translate( 'In moderation' ),
 		},
 		{
 			value: 'finished',
-			label: translate( 'Completed', { context: 'comment status' } ),
+			label: translate( 'Completed' ),
 		},
 		{
 			value: 'rejected',
-			label: translate( 'Rejected', { context: 'comment status' } ),
+			label: translate( 'Rejected' ),
 		},
 	];
 
@@ -254,9 +254,13 @@ export default function SearchBar( props: Props ) {
 	};
 
 	const getSortLabel = () => {
-		const selectedOption = campaignSortOptions.find(
-			( item ) => item.value === campaignSortOption.orderBy
-		)?.label;
+		let selectedSortOption = campaignSortOption.orderBy;
+		if ( campaignSortOption.orderBy === 'budget' || campaignSortOption.orderBy === 'impressions' ) {
+			selectedSortOption = `${ campaignSortOption.orderBy }|${ campaignSortOption.order }`;
+		}
+
+		const selectedOption = campaignSortOptions.find( ( item ) => item.value === selectedSortOption )
+			?.label;
 
 		if ( selectedOption ) {
 			return isDesktop
@@ -358,6 +362,7 @@ export default function SearchBar( props: Props ) {
 							<CampaignsFilter
 								handleChangeFilter={ onChangeStatus }
 								campaignsFilter={ filterOption.status as CampaignsFilterType }
+								options={ campaignFilterOptions }
 							/>
 						) }
 
