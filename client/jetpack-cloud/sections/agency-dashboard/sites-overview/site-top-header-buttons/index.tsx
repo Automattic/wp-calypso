@@ -71,6 +71,13 @@ export default function SiteTopHeaderButtons() {
 								)
 							)
 						}
+						onClickBlueHostMenuItem={ () =>
+							dispatch(
+								recordTracksEvent(
+									'calypso_jetpack_agency_dashboard_sites_overview_create_bluehost_site_click'
+								)
+							)
+						}
 						onClickUrlMenuItem={ () =>
 							dispatch(
 								recordTracksEvent(
