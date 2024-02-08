@@ -32,8 +32,7 @@
 		"a8c-for-agencies": true,
 		"always_use_logout_url": true,
 		"dev/auth-helper": true,
-		"dev/preferences-helper": true,
-		"oauth": true
+		"dev/preferences-helper": true
 	},
 	"enable_all_sections": false,
 	"sections": {
