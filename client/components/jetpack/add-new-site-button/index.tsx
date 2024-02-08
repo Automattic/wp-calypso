@@ -60,7 +60,7 @@ const AddNewSiteButton = ( {
 
 			<PopoverMenuItem onClick={ onClickBlueHostMenuItem } href={ bluehostCreateSiteUrl }>
 				<BlueHostLogo size={ 18 } />
-				<span>{ translate( 'Create a new Bluehost site' ) }</span>
+				<span>{ translate( 'Create a new BlueHost site' ) }</span>
 			</PopoverMenuItem>
 
 			{ isEnabled( 'jetpack/url-only-connection' ) && (
