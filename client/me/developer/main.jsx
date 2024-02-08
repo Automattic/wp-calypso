@@ -142,7 +142,7 @@ class Developer extends Component {
 	}
 
 	componentWillUnmount() {
-		document.body.removeChild( this.surveyNoticeWrapper );
+		this.surveyNoticeWrapper && document.body.removeChild( this.surveyNoticeWrapper );
 	}
 
 	componentDidUpdate( prevProps ) {
