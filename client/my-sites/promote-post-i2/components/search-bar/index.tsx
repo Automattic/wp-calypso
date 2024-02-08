@@ -38,10 +38,10 @@ const SORT_OPTIONS_RECENTLY_UPDATED = 'modified';
 const SORT_OPTIONS_MOST_LIKED = 'like_count';
 const SORT_OPTIONS_MOST_COMMENTED = 'comment_count';
 const SORT_OPTIONS_MOST_VIEWED = 'monthly_view_count';
-const SORT_OPTIONS_BUDGET_HIGH_LOW = 'budget_high_low';
-const SORT_OPTIONS_BUDGET_LOW_HIGH = 'budget_low_high';
-const SORT_OPTIONS_IMPRESSIONS_HIGH_LOW = 'impressions_high_low';
-const SORT_OPTIONS_IMPRESSIONS_LOW_HIGH = 'impressions_low_high';
+const SORT_OPTIONS_BUDGET_HIGH_LOW = 'budget|desc';
+const SORT_OPTIONS_BUDGET_LOW_HIGH = 'budget|asc';
+const SORT_OPTIONS_IMPRESSIONS_HIGH_LOW = 'impressions|desc';
+const SORT_OPTIONS_IMPRESSIONS_LOW_HIGH = 'impressions|asc';
 
 export const SORT_OPTIONS_DEFAULT = {
 	orderBy: SORT_OPTIONS_RECENTLY_UPDATED,
@@ -239,10 +239,10 @@ export default function SearchBar( props: Props ) {
 	};
 
 	const onCampaignChangeOrderOption = ( sort: DropdownOption ) => {
+		const [ orderBy, order ] = sort.value.split( '|' );
 		const newOrder = {
-			orderBy: sort.value,
-			order:
-				sort.value === 'budget_high_low' || sort.value === 'impressions_high_low' ? 'desc' : 'asc',
+			orderBy: orderBy,
+			order: order === 'asc' ? 'asc' : 'desc',
 		};
 
 		setCampaignSortOption( newOrder );
