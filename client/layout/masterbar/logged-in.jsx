@@ -41,6 +41,7 @@ import { getCurrentLayoutFocus } from 'calypso/state/ui/layout-focus/selectors';
 import { getSectionGroup, getSectionName, getSelectedSiteId } from 'calypso/state/ui/selectors';
 import Item from './item';
 import Masterbar from './masterbar';
+import WpAdminBar from './masterbar-core-style';
 import { MasterBarMobileMenu } from './masterbar-menu';
 import Notifications from './masterbar-notifications/notifications-button';
 
@@ -523,6 +524,15 @@ class MasterbarLoggedIn extends Component {
 
 		if ( isCheckout || isCheckoutPending || isCheckoutFailed ) {
 			return this.renderCheckout();
+		}
+
+		// eslint-disable-next-line no-constant-condition
+		if ( true || 'this-is-for-development-of-the-component' ) {
+			return (
+				<Masterbar>
+					<WpAdminBar />
+				</Masterbar>
+			);
 		}
 
 		if ( isMobile ) {
