@@ -1,0 +1,42 @@
+{
+	"env": "production",
+	"env_id": "a8c-for-agencies-production",
+	"favicon_url": "/calypso/images/favicons/favicon-jetpack-cloud-production.ico",
+	"client_slug": "browser",
+	"protocol": "http",
+	"hostname": "agencies.automattic.com",
+	"i18n_default_locale_slug": "en",
+	"login_url": "/connect",
+	"logout_url": "https://jetpack.com",
+	"jetpack_connect_url": "https://wordpress.com/jetpack/connect",
+	"site_name": "Automattic For Agencies",
+	"meta": [
+		{
+			"name": "description",
+			"content": "TBD"
+		},
+		{
+			"property": "og:description",
+			"content": "TBD"
+		},
+		{
+			"property": "og:image",
+			"content": "TBD"
+		}
+	],
+	"oauth_client_id": 69041,
+	"zendesk_presales_chat_key": "7c42153f-f579-49ba-a33e-246b2d27fb93",
+	"zendesk_presales_chat_key_jp_agency_dashboard": "dc0b7d60-f893-4ab4-8aa8-7d7ca45270d8",
+	"features": {
+		"a8c-for-agencies": true
+	},
+	"enable_all_sections": false,
+	"sections": {
+		"a8c-for-agencies": true
+	},
+	"site_filter": [],
+	"theme": "a8c-for-agencies",
+	"restricted_me_access": false,
+	"theme_color": "#2fb41f",
+	"hotjar_enabled": true
+}

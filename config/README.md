@@ -41,6 +41,10 @@ For development of Jetpack, this looks something like:
 
 > jetpack-cloud-development -> jetpack-cloud-horizon -> jetpack-cloud-stage -> jetpack-cloud-production
 
+For development of Automattic for Agencies, this looks something like:
+
+> a8c-for-agencies-development -> a8c-for-agencies-horizon -> a8c-for-agencies-stage -> a8c-for-agencies-production
+
 As we enable a feature through these progressions, left to right, the feature should most likely be enabled on environments to the left. For example, if a WordPress.com feature is currently enabled in horizon, it should likely also be enabled in development and wpcalypso.
 
 Lastly, once you ship to production, you should consider cleaning up your flag checks to leave a tidy development environment.
