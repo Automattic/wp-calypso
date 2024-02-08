@@ -22,6 +22,9 @@
 		"access": "public"
 	},
 	"bugs": "https://github.com/Automattic/wp-calypso/issues",
+	"dependencies": {
+		"@automattic/search": "workspace:^"
+	},
 	"peerDependencies": {
 		"@wordpress/data": "^9.21.0",
 		"react": "^18.2.0",

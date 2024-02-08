@@ -145,8 +145,6 @@ export const useCommandPalette = ( {
 	setSelectedCommandName,
 	search,
 	navigate,
-	/*createNotice,
-	removeNotice,*/
 }: useCommandPaletteOptions ): {
 	commands: Command[];
 	filterNotice: string | undefined;
@@ -188,15 +186,18 @@ export const useCommandPalette = ( {
 		let emptyListNotice = undefined;
 		if ( selectedCommand?.siteFunctions ) {
 			const { capabilityFilter, onClick, filter } = selectedCommand.siteFunctions;
-			// @ts-expect-error TODO
+			// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+			// @ts-ignore TODO
 			let filteredSites = filter ? sortedSites.filter( filter ) : sortedSites;
-			filteredSites = capabilityFilter
-				? filteredSites.filter( ( site ) => {
-						// @ts-expect-error TODO
-						const siteCapabilities = userCapabilities[ site.ID ];
-						return siteCapabilities?.[ capabilityFilter ];
-				  } )
-				: filteredSites;
+			if ( capabilityFilter ) {
+				// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+				// @ts-ignore TODO
+				filteredSites = filteredSites.filter( ( site ) => {
+					// @ts-expect-error TODO
+					const siteCapabilities = userCapabilities[ site.ID ];
+					return siteCapabilities?.[ capabilityFilter ];
+				} );
+			}
 			if ( sortedSites.length === 0 ) {
 				emptyListNotice = __( "You don't have any sites yet." );
 			} else if ( filteredSites.length === 0 ) {
@@ -208,12 +209,16 @@ export const useCommandPalette = ( {
 			}
 
 			if ( currentSiteId ) {
+				// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+				// @ts-ignore TODO
 				const currentSite = filteredSites.find( ( site ) => site.ID === currentSiteId );
 
 				if ( currentSite ) {
 					// Move current site to the top of the list
 					filteredSites = [
 						currentSite,
+						// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+						// @ts-ignore TODO
 						...filteredSites.filter( ( site ) => site.ID !== currentSiteId ),
 					];
 				}
@@ -221,7 +226,8 @@ export const useCommandPalette = ( {
 
 			// Map filtered sites to actions using the onClick function
 			sitesToPick = filteredSites.map(
-				// @ts-expect-error TODO
+				// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+				// @ts-ignore TODO
 				siteToAction( onClick, {
 					selectedCommand,
 					filteredSitesLength: filteredSites.length,

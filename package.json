@@ -156,7 +156,6 @@
 		"@automattic/launchpad": "workspace:^",
 		"@automattic/plans-grid-next": "workspace:^",
 		"@automattic/privacy-toolset": "workspace:^",
-		"@automattic/sites": "workspace:^",
 		"@automattic/typography": "workspace:^",
 		"@automattic/verbum-block-editor": "workspace:^",
 		"@automattic/viewport": "workspace:^",

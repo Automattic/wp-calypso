@@ -4,7 +4,7 @@ import {
 	SITE_EXCERPT_REQUEST_FIELDS,
 	SITE_EXCERPT_REQUEST_OPTIONS,
 } from './site-excerpt-constants';
-import { getJetpackSiteCollisions, getUnmappedUrl, urlToSlug, withoutHttp } from './utils.js';
+import { getJetpackSiteCollisions, getUnmappedUrl, urlToSlug, withoutHttp } from './utils';
 
 export const useSiteExcerptsQuery = () =>
 	useQuery( {
