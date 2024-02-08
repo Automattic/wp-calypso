@@ -3,7 +3,7 @@ import { Button } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import surveyImage from 'calypso/assets/images/illustrations/developer-survey.svg';
 
-type DeveloperSurveyNotice = {
+type DeveloperSurveyNoticeProps = {
 	onClose: ( remindTimeInSeconds: number, buttonName: string ) => void;
 	onSurveyClick: () => void;
 	localeSlug: string;
@@ -16,7 +16,7 @@ export const DeveloperSurveyNotice = ( {
 	onClose,
 	onSurveyClick,
 	localeSlug,
-}: DeveloperSurveyNotice ) => {
+}: DeveloperSurveyNoticeProps ) => {
 	const translate = useTranslate();
 
 	const href =
