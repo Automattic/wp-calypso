@@ -76,11 +76,7 @@ export const IntervalTypeToggle: React.FunctionComponent< IntervalTypeProps > = 
 						<SegmentedControl.Item
 							key={ interval }
 							selected={ intervalType === interval }
-							onClick={ () => {
-								// TODO: Refactor parameter for onPlanIntervalUpdate method
-								onPlanIntervalUpdate( { key: interval } );
-							} }
-							isPlansInsideStepper={ props.isPlansInsideStepper }
+							onClick={ () => onPlanIntervalUpdate( interval ) }
 						>
 							<span>
 								{ interval === 'monthly' ? translate( 'Pay monthly' ) : null }

@@ -31,9 +31,11 @@ export const IntervalTypeDropdown: React.FunctionComponent< IntervalTypeProps > 
 				label=""
 				options={ selectOptionsList }
 				value={ selectOptionsList.find( ( { key } ) => key === supportedIntervalType ) }
-				onChange={ ( { selectedItem }: { selectedItem: { key: SupportedUrlFriendlyTermType } } ) =>
-					onPlanIntervalUpdate && onPlanIntervalUpdate( selectedItem )
-				}
+				onChange={ ( {
+					selectedItem: { key: intervalType },
+				}: {
+					selectedItem: { key: SupportedUrlFriendlyTermType };
+				} ) => onPlanIntervalUpdate && onPlanIntervalUpdate( intervalType ) }
 			/>
 		</div>
 	);

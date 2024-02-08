@@ -558,7 +558,7 @@ const PlansFeaturesMain = ( {
 			withDiscount,
 		};
 
-		const handlePlanIntervalUpdate = ( selectedItem: { key: SupportedUrlFriendlyTermType } ) => {
+		const handlePlanIntervalUpdate = ( interval: SupportedUrlFriendlyTermType ) => {
 			let isDomainUpsellFlow: string | null = '';
 			let isDomainAndPlanPackageFlow: string | null = '';
 			let isJetpackAppFlow: string | null = '';
@@ -572,7 +572,7 @@ const PlansFeaturesMain = ( {
 			}
 
 			const pathOrQueryParam = getPlanTypeDestination( props, {
-				intervalType: selectedItem.key,
+				intervalType: interval,
 				domain: isDomainUpsellFlow,
 				domainAndPlanPackage: isDomainAndPlanPackageFlow,
 				jetpackAppPlans: isJetpackAppFlow,
