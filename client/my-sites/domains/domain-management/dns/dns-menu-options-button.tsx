@@ -356,7 +356,7 @@ function DnsMenuOptionsButton( {
 						disabled={ hasDefaultEmailRecords || ! domain }
 					>
 						<Icon icon={ redo } size={ 14 } className="gridicon" viewBox="2 2 20 20" />
-						{ __( 'Restore default email records' ) }
+						{ __( 'Restore default email authentication records' ) }
 					</PopoverMenuItem>
 				) }
 
