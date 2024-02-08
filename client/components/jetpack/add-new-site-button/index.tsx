@@ -1,7 +1,7 @@
 import { isEnabled } from '@automattic/calypso-config';
 import { Gridicon, WordPressLogo } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
-import BlueHostLogo from 'calypso/components/bluehost-logo';
+import BluehostLogo from 'calypso/components/bluehost-logo';
 import JetpackLogo from 'calypso/components/jetpack-logo';
 import PopoverMenuItem from 'calypso/components/popover-menu/item';
 import SplitButton from 'calypso/components/split-button';
@@ -15,7 +15,7 @@ type Props = {
 	onClickAddNewSite?: () => void;
 	onClickWpcomMenuItem?: () => void;
 	onClickJetpackMenuItem?: () => void;
-	onClickBlueHostMenuItem?: () => void;
+	onClickBluehostMenuItem?: () => void;
 	onClickUrlMenuItem?: () => void;
 };
 
@@ -27,7 +27,7 @@ const AddNewSiteButton = ( {
 	onClickAddNewSite,
 	onClickWpcomMenuItem,
 	onClickJetpackMenuItem,
-	onClickBlueHostMenuItem,
+	onClickBluehostMenuItem,
 	onClickUrlMenuItem,
 }: Props ): JSX.Element => {
 	const translate = useTranslate();
@@ -58,9 +58,9 @@ const AddNewSiteButton = ( {
 				<span>{ translate( 'Connect a site to Jetpack' ) }</span>
 			</PopoverMenuItem>
 
-			<PopoverMenuItem onClick={ onClickBlueHostMenuItem } href={ bluehostCreateSiteUrl }>
-				<BlueHostLogo size={ 18 } />
-				<span>{ translate( 'Create a new BlueHost site' ) }</span>
+			<PopoverMenuItem onClick={ onClickBluehostMenuItem } href={ bluehostCreateSiteUrl }>
+				<BluehostLogo size={ 18 } />
+				<span>{ translate( 'Create a new Bluehost site' ) }</span>
 			</PopoverMenuItem>
 
 			{ isEnabled( 'jetpack/url-only-connection' ) && (

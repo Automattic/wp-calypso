@@ -2,7 +2,7 @@ type Props = {
 	size?: number;
 };
 
-export default function BlueHostLogo( { size = 12 }: Props ) {
+export default function BluehostLogo( { size = 12 }: Props ) {
 	return (
 		<svg
 			className="gridicon bluehost-logo"
