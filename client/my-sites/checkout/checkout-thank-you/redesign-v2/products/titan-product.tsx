@@ -10,7 +10,7 @@ import getCurrentRoute from 'calypso/state/selectors/get-current-route';
 export type ThankYouEmailProductProps = {
 	domainName: string;
 	siteSlug: string | null;
-	emailAddress: string;
+	emailAddress?: string;
 };
 
 export function ThankYouTitanProduct( {
@@ -19,39 +19,49 @@ export function ThankYouTitanProduct( {
 	emailAddress,
 }: ThankYouEmailProductProps ) {
 	const translate = useTranslate();
+	const titanAppsUrlPrefix = useTitanAppsUrlPrefix();
 
 	const currentRoute = useSelector( getCurrentRoute );
 	const emailManagementPath = getEmailManagementPath( siteSlug, domainName, currentRoute );
 
-	const mailboxesPath = getMailboxesPath( siteSlug );
-	const titanAppsUrlPrefix = useTitanAppsUrlPrefix();
-	const inboxPath = getTitanEmailUrl(
-		titanAppsUrlPrefix,
-		emailAddress,
-		false,
-		`${ window.location.protocol }//${ window.location.host }${ mailboxesPath }`
-	);
+	let inboxButton;
+	if ( emailAddress ) {
+		const mailboxesPath = getMailboxesPath( siteSlug );
+
+		const inboxPath = getTitanEmailUrl(
+			titanAppsUrlPrefix,
+			emailAddress,
+			false,
+			`${ window.location.protocol }//${ window.location.host }${ mailboxesPath }`
+		);
+
+		inboxButton = (
+			<Button
+				variant="primary"
+				href={ inboxPath }
+				onClick={ () => {
+					recordEmailAppLaunchEvent( {
+						provider: 'titan',
+						app: 'webmail',
+						context: 'checkout-thank-you',
+					} );
+				} }
+			>
+				{ translate( 'Go to inbox' ) }
+			</Button>
+		);
+	}
+
+	const details = emailAddress ?? translate( 'for %(domainName)s', { args: { domainName } } );
 
 	return (
 		<ThankYouProduct
 			name={ translate( 'Professional email' ) }
-			key={ emailAddress }
-			details={ emailAddress }
+			key={ domainName + emailAddress }
+			details={ details }
 			actions={
 				<>
-					<Button
-						variant="primary"
-						href={ inboxPath }
-						onClick={ () => {
-							recordEmailAppLaunchEvent( {
-								provider: 'titan',
-								app: 'webmail',
-								context: 'checkout-thank-you',
-							} );
-						} }
-					>
-						{ translate( 'Go to inbox' ) }
-					</Button>
+					{ inboxButton }
 					<Button variant="secondary" href={ emailManagementPath }>
 						{ translate( 'Manage email' ) }
 					</Button>

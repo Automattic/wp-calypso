@@ -73,18 +73,10 @@ const TitanSetUpThankYou = ( {
 	let title;
 	let subtitle;
 	let headerButtons;
-	let products;
 
 	if ( emailAddress ) {
 		title = translate( 'Say hello to your new email address' );
 		subtitle = translate( "All set! Now it's time to update your contact details." );
-		products = (
-			<ThankYouTitanProduct
-				domainName={ domainName }
-				siteSlug={ selectedSiteSlug }
-				emailAddress={ emailAddress }
-			/>
-		);
 	} else {
 		title = translate( 'Almost done, set up your Professional Email' );
 		subtitle = translate(
@@ -96,6 +88,14 @@ const TitanSetUpThankYou = ( {
 			</Button>
 		);
 	}
+
+	const products = (
+		<ThankYouTitanProduct
+			domainName={ domainName }
+			siteSlug={ selectedSiteSlug }
+			emailAddress={ emailAddress }
+		/>
+	);
 
 	return (
 		<>
