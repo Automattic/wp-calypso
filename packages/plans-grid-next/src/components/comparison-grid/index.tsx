@@ -109,11 +109,16 @@ const Title = styled.div< { isHiddenInMobile?: boolean } >`
 	` ) }
 `;
 
-const Grid = styled.div< { isInSignup?: boolean } >`
+const Grid = styled.div< { isInSignup?: boolean; visiblePlans: number } >`
 	display: grid;
 	margin: ${ ( props ) => ( props.isInSignup ? '90px auto 0' : '64px auto 0' ) };
 	background: #fff;
 	border: solid 1px #e0e0e0;
+	${ ( props ) =>
+		props.visiblePlans &&
+		css`
+			max-width: ${ rowCellMaxWidth * props.visiblePlans + featureGroupRowTitleCellMaxWidth }px;
+		` }
 
 	${ plansGridMediumLarge( css`
 		border-radius: 5px;
@@ -130,7 +135,9 @@ const Row = styled.div< {
 	className?: string;
 	isHighlighted?: boolean;
 } >`
+	justify-content: space-between;
 	margin-bottom: -1px;
+	align-items: stretch;
 	display: ${ ( props ) => ( props.isHiddenInMobile ? 'none' : 'flex' ) };
 
 	${ plansGridMediumLarge( css`
@@ -250,10 +257,6 @@ const RowTitleCell = styled.div< {
 		flex: 1;
 		min-width: 290px;
 	` ) }
-	/** 
-	 * max-width is set below primarily for sanity to avoid cells extending infinitely 
-	 * on change to container's layout. If it proves limiting, it can be removed.
-	 **/
 	max-width: ${ ( props ) => {
 		if ( props.isPlaceholderHeaderCell || props.isFeatureGroupRowTitleCell ) {
 			return `${ featureGroupRowTitleCellMaxWidth }px`;
@@ -1080,7 +1083,7 @@ const ComparisonGrid = ( {
 
 	return (
 		<div className="plan-comparison-grid">
-			<Grid isInSignup={ isInSignup }>
+			<Grid isInSignup={ isInSignup } visiblePlans={ visiblePlans.length }>
 				<StickyContainer
 					disabled={ isBottomHeaderInView }
 					stickyClass="is-sticky-header-row"
