@@ -558,7 +558,7 @@ const PlansFeaturesMain = ( {
 			withDiscount,
 		};
 
-		const handlePlanIntervalChange = ( selectedItem: { key: SupportedUrlFriendlyTermType } ) => {
+		const handlePlanIntervalUpdate = ( selectedItem: { key: SupportedUrlFriendlyTermType } ) => {
 			let isDomainUpsellFlow: string | null = '';
 			let isDomainAndPlanPackageFlow: string | null = '';
 			let isJetpackAppFlow: string | null = '';
@@ -592,7 +592,7 @@ const PlansFeaturesMain = ( {
 
 		return {
 			...props,
-			onPlanIntervalUpdate: handlePlanIntervalChange,
+			onPlanIntervalUpdate: handlePlanIntervalUpdate,
 		};
 	}, [
 		basePlansPath,

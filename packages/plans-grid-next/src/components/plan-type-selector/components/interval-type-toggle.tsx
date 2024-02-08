@@ -77,7 +77,6 @@ export const IntervalTypeToggle: React.FunctionComponent< IntervalTypeProps > = 
 							key={ interval }
 							selected={ intervalType === interval }
 							onClick={ () => {
-								// TODO: Double check need for additionalPathProps
 								// TODO: Refactor parameter for onPlanIntervalUpdate method
 								onPlanIntervalUpdate( { key: interval } );
 							} }
