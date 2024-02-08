@@ -52,17 +52,17 @@ class Developer extends Component {
 		} );
 	};
 
-	shouldShowDevSurveyNotice = ( isDevAccount ) => {
+	shouldShowDeveloperSurveyNotice = ( isDeveloperAccount ) => {
 		const cookies = cookie.parse( document.cookie );
 
-		const isDevAccountEnabled = isDevAccount ?? this.props.getSetting( 'is_dev_account' );
+		const isDevAccountEnabled = isDeveloperAccount ?? this.props.getSetting( 'is_dev_account' );
 
 		return (
 			isDevAccountEnabled && ! [ 'completed', 'dismissed' ].includes( cookies.developer_survey )
 		);
 	};
 
-	showDevSurveyNotice = () => {
+	showDeveloperSurveyNotice = () => {
 		if ( this.props.currentUser.localeSlug === 'en' ) {
 			if ( ! this.surveyNoticeWrapper ) {
 				this.surveyNoticeWrapper = document.createElement( 'div' );
@@ -113,15 +113,15 @@ class Developer extends Component {
 		this.props.removeNotice( this.developerSurveyNoticeId );
 	};
 
-	handleToggleIsDevAccount = ( isDevAccount ) => {
-		this.props.setUserSetting( 'is_dev_account', isDevAccount );
+	handleToggleIsDevAccount = ( isDeveloperAccount ) => {
+		this.props.setUserSetting( 'is_dev_account', isDeveloperAccount );
 
 		recordTracksEvent( 'calypso_me_is_dev_account_toggled', {
-			enabled: isDevAccount ? 1 : 0,
+			enabled: isDeveloperAccount ? 1 : 0,
 		} );
 
-		if ( this.shouldShowDevSurveyNotice( isDevAccount ) ) {
-			this.showDevSurveyNotice();
+		if ( this.shouldShowDeveloperSurveyNotice( isDeveloperAccount ) ) {
+			this.showDeveloperSurveyNotice();
 		} else {
 			this.hideDeveloperSurveyNotice();
 		}
@@ -149,8 +149,8 @@ class Developer extends Component {
 		const isJustLoadedUserSettings =
 			prevProps.isFetchingUserSettings && ! this.props.isFetchingUserSettings;
 
-		if ( isJustLoadedUserSettings && this.shouldShowDevSurveyNotice() ) {
-			this.showDevSurveyNotice();
+		if ( isJustLoadedUserSettings && this.shouldShowDeveloperSurveyNotice() ) {
+			this.showDeveloperSurveyNotice();
 		}
 	}
 
