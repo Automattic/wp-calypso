@@ -3,16 +3,20 @@ import { Button } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import surveyImage from 'calypso/assets/images/illustrations/developer-survey.svg';
 
-type DevSurveyNotice = {
-	onClose: ( remindTimeInSeconds: number ) => void;
-	onOk: () => void;
+type DeveloperSurveyNotice = {
+	onClose: ( remindTimeInSeconds: number, buttonName: string ) => void;
+	onSurveyClick: () => void;
 	localeSlug: string;
 };
 
 const ONE_DAY_IN_SECONDS = 24 * 60 * 60;
 const ONE_YEAR_IN_SECONDS = 365 * ONE_DAY_IN_SECONDS;
 
-export const DevSurveyNotice = ( { onClose, onOk, localeSlug }: DevSurveyNotice ) => {
+export const DeveloperSurveyNotice = ( {
+	onClose,
+	onSurveyClick,
+	localeSlug,
+}: DeveloperSurveyNotice ) => {
 	const translate = useTranslate();
 
 	const href =
@@ -24,7 +28,7 @@ export const DevSurveyNotice = ( { onClose, onOk, localeSlug }: DevSurveyNotice 
 		<div className="developer-survey-notice">
 			<Button
 				className="developer-survey-notice__backdrop"
-				onClick={ () => onClose( ONE_YEAR_IN_SECONDS ) }
+				onClick={ () => onClose( ONE_DAY_IN_SECONDS, 'backdrop' ) }
 			/>
 			<div className="developer-survey-notice__popup">
 				<div className="developer-survey-notice__popup-head">
@@ -32,14 +36,14 @@ export const DevSurveyNotice = ( { onClose, onOk, localeSlug }: DevSurveyNotice 
 						{ translate( 'Developer Survey' ) }
 					</div>
 					<Button
-						onClick={ () => onClose( ONE_YEAR_IN_SECONDS ) }
+						onClick={ () => onClose( ONE_YEAR_IN_SECONDS, 'close-button' ) }
 						className="developer-survey-notice__popup-head-close"
 					>
 						<Gridicon icon="cross" size={ 16 } />
 					</Button>
 				</div>
 				<div className="developer-survey-notice__popup-img">
-					<img src={ surveyImage } alt="" />
+					<img src={ surveyImage } alt={ translate( 'Code editor' ) } />
 				</div>
 				<div className="developer-survey-notice__popup-content">
 					<div className="developer-survey-notice__popup-content-title">
@@ -53,7 +57,7 @@ export const DevSurveyNotice = ( { onClose, onOk, localeSlug }: DevSurveyNotice 
 					<div className="developer-survey-notice__popup-content-buttons">
 						<Button
 							className="developer-survey-notice__popup-content-buttons-cancel"
-							onClick={ () => onClose( ONE_DAY_IN_SECONDS ) }
+							onClick={ () => onClose( ONE_DAY_IN_SECONDS, 'remind-later-button' ) }
 						>
 							{ translate( 'Remind later' ) }
 						</Button>
@@ -62,7 +66,7 @@ export const DevSurveyNotice = ( { onClose, onOk, localeSlug }: DevSurveyNotice 
 							href={ href }
 							target="_blank"
 							rel="noopener noreferrer"
-							onClick={ onOk }
+							onClick={ onSurveyClick }
 						>
 							{ translate( 'Take survey' ) }
 						</Button>

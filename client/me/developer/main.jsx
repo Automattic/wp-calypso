@@ -17,20 +17,31 @@ import ReauthRequired from 'calypso/me/reauth-required';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
 import { successNotice, removeNotice } from 'calypso/state/notices/actions';
 import { isFetchingUserSettings } from 'calypso/state/user-settings/selectors';
-import { DevSurveyNotice } from './dev-survey-notice';
+import { DeveloperSurveyNotice } from './dev-survey-notice';
 import { DeveloperFeatures } from './features/index';
 import { getIAmDeveloperCopy } from './get-i-am-a-developer-copy';
 
 import './style.scss';
 
 class Developer extends Component {
+	developerSurveyNoticeId = 'developer-survey';
+	getSurveyHref = () => {
+		const isES = this.props.currentUser.localeSlug === 'es';
+
+		if ( isES ) {
+			return 'https://wordpressdotcom.survey.fm/developer-survey-es';
+		}
+
+		return 'https://wordpressdotcom.survey.fm/developer-survey';
+	};
+
 	surveyNoticeWrapper = null;
 
 	constructor( props ) {
 		super( props );
 
 		this.state = {
-			isVisibleDevSurveyNotice: false,
+			isDeveloperSurveyNoticeVisible: false,
 		};
 	}
 
@@ -52,18 +63,54 @@ class Developer extends Component {
 	};
 
 	showDevSurveyNotice = () => {
-		if ( ! this.surveyNoticeWrapper ) {
-			this.surveyNoticeWrapper = document.createElement( 'div' );
-			document.body.appendChild( this.surveyNoticeWrapper );
-		}
+		if ( this.props.currentUser.localeSlug === 'en' ) {
+			if ( ! this.surveyNoticeWrapper ) {
+				this.surveyNoticeWrapper = document.createElement( 'div' );
+				document.body.appendChild( this.surveyNoticeWrapper );
+			}
 
-		this.setState( { isVisibleDevSurveyNotice: true } );
+			this.setState( { isDeveloperSurveyNoticeVisible: true } );
+		} else {
+			const noticeMessage = this.props.translate(
+				"Hey developer! How do {{i}}you{{/i}} use WordPress.com? Spare a moment? We'd love to hear what you think in a {{surveyLink}}quick survey{{/surveyLink}}.",
+				{
+					components: {
+						i: <i />,
+						surveyLink: (
+							<a
+								href={ this.getSurveyHref() }
+								target="_blank"
+								rel="noopener noreferrer"
+								onClick={ () => {
+									recordTracksEvent( 'calypso_me_developer_survey_clicked' );
+
+									this.hideDevSurveyNotice();
+								} }
+							/>
+						),
+					},
+				}
+			);
+
+			const noticeProps = {
+				id: this.developerSurveyNoticeId,
+				isPersistent: true,
+				onDismissClick: () => {
+					recordTracksEvent( 'calypso_me_developer_survey_dismissed' );
+
+					this.setDeveloperSurveyCookie( 'dismissed', 24 * 60 * 60 ); // 1 day
+					this.props.removeNotice( this.developerSurveyNoticeId );
+				},
+			};
+			this.props.successNotice( noticeMessage, noticeProps );
+		}
 
 		recordTracksEvent( 'calypso_me_developer_survey_impression' );
 	};
 
 	hideDevSurveyNotice = () => {
-		this.setState( { isVisibleDevSurveyNotice: false } );
+		this.setState( { isDeveloperSurveyNoticeVisible: false } );
+		this.props.removeNotice( this.developerSurveyNoticeId );
 	};
 
 	handleToggleIsDevAccount = ( isDevAccount ) => {
@@ -140,17 +187,19 @@ class Developer extends Component {
 					<DeveloperFeatures />
 				</Main>
 
-				{ this.state.isVisibleDevSurveyNotice &&
+				{ this.state.isDeveloperSurveyNoticeVisible &&
 					ReactDOM.createPortal(
-						<DevSurveyNotice
+						<DeveloperSurveyNotice
 							localeSlug={ this.props.currentUser.localeSlug }
-							onOk={ () => {
+							onSurveyClick={ () => {
 								recordTracksEvent( 'calypso_me_developer_survey_clicked' );
 
 								this.hideDevSurveyNotice();
 							} }
-							onClose={ ( remindTimeInSeconds ) => {
-								recordTracksEvent( 'calypso_me_developer_survey_dismissed' );
+							onClose={ ( remindTimeInSeconds, buttonName ) => {
+								recordTracksEvent( 'calypso_me_developer_survey_dismissed', {
+									context: buttonName,
+								} );
 
 								this.setDeveloperSurveyCookie( 'dismissed', remindTimeInSeconds );
 
