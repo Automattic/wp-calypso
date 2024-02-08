@@ -115,7 +115,13 @@ class SocialLoginForm extends Component {
 	};
 
 	// eslint-disable-next-line no-unused-vars
+<<<<<<< HEAD
 	handleGitHubResponse = ( response ) => {};
+=======
+	handleGitHubResponse = ( response ) => {
+		// console.log( this.props );
+	};
+>>>>>>> 39a379f1a6 (Draft PR)
 
 	recordEvent = ( eventName, service, params ) =>
 		this.props.recordTracksEvent( eventName, {
