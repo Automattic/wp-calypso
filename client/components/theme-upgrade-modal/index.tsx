@@ -275,11 +275,15 @@ export const ThemeUpgradeModal = ( {
 	};
 
 	const getExternallyManagedPurchaseModalData = (): UpgradeModalContent => {
-		const businessPlanPrice = monthlyBusinessPlanProduct?.combined_cost_display;
+		const businessPlan =
+			marketplaceProduct?.product_term === 'year'
+				? businessPlanProduct
+				: monthlyBusinessPlanProduct;
+		const businessPlanPrice = businessPlan?.combined_cost_display;
 		const productPrice = marketplaceProduct?.cost_display;
 
 		const businessPlanPriceText =
-			monthlyBusinessPlanProduct?.product_term === 'year'
+			businessPlan?.product_term === 'year'
 				? translate( '%(cost)s per year', { args: { cost: businessPlanPrice || '' } } )
 				: translate( '%(cost)s per month', { args: { cost: businessPlanPrice || '' } } );
 
