@@ -266,7 +266,7 @@ export default function SearchBar( props: Props ) {
 				: selectedOption;
 		}
 
-		return undefined;
+		return isDesktop ? translate( 'Sort: Last published' ) : translate( 'Recently published' );
 	};
 
 	const getPostTypeFilterLabel = () => {
