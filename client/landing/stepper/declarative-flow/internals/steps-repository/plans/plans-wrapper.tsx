@@ -167,7 +167,6 @@ const PlansWrapper: React.FC< Props > = ( props ) => {
 		return (
 			<div>
 				<PlansFeaturesMain
-					isPlansInsideStepper={ true }
 					siteId={ site?.ID }
 					displayedIntervals={ [ 'yearly', '2yearly', '3yearly', 'monthly' ] }
 					hideFreePlan={ hideFreePlan }

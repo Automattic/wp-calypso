@@ -187,7 +187,6 @@ export interface PlansFeaturesMainProps {
 	hideEnterprisePlan?: boolean;
 	isStepperUpgradeFlow?: boolean;
 	isLaunchPage?: boolean | null;
-	isPlansInsideStepper?: boolean;
 	hideUnavailableFeatures?: boolean; // used to hide features that are not available, instead of strike-through as explained in #76206
 	showLegacyStorageFeature?: boolean;
 	isSpotlightOnCurrentPlan?: boolean;
@@ -251,7 +250,6 @@ const PlansFeaturesMain = ( {
 	hideUnavailableFeatures = false,
 	isInSignup = false,
 	isCustomDomainAllowedOnFreePlan = false,
-	isPlansInsideStepper = false,
 	isStepperUpgradeFlow = false,
 	isLaunchPage = false,
 	showLegacyStorageFeature = false,
@@ -540,7 +538,6 @@ const PlansFeaturesMain = ( {
 			isStepperUpgradeFlow,
 			isInSignup,
 			eligibleForWpcomMonthlyPlans,
-			isPlansInsideStepper,
 			intervalType,
 			customerType: _customerType,
 			siteSlug,
@@ -599,7 +596,6 @@ const PlansFeaturesMain = ( {
 		isStepperUpgradeFlow,
 		isInSignup,
 		eligibleForWpcomMonthlyPlans,
-		isPlansInsideStepper,
 		intervalType,
 		_customerType,
 		siteSlug,

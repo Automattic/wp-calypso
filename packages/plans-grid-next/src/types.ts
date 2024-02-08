@@ -189,7 +189,6 @@ export type PlanTypeSelectorProps = {
 	isInSignup: boolean;
 	plans: PlanSlug[];
 	eligibleForWpcomMonthlyPlans?: boolean;
-	isPlansInsideStepper: boolean;
 	hideDiscount?: boolean;
 	redirectTo?: string | null;
 	isStepperUpgradeFlow: boolean;
@@ -215,7 +214,6 @@ export type IntervalTypeProps = Pick<
 	| 'plans'
 	| 'isInSignup'
 	| 'eligibleForWpcomMonthlyPlans'
-	| 'isPlansInsideStepper'
 	| 'hideDiscount'
 	| 'redirectTo'
 	| 'showPlanTypeSelectorDropdown'
