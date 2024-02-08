@@ -574,14 +574,6 @@ export class SiteSettingsFormGeneral extends Component {
 		);
 	}
 
-	recordTracksEventForTrialNoticeClick = () => {
-		const { recordTracksEvent, isSiteOnECommerceTrial } = this.props;
-		const eventName = isSiteOnECommerceTrial
-			? `calypso_ecommerce_trial_launch_banner_click`
-			: `calypso_migration_trial_launch_banner_click`;
-		recordTracksEvent( eventName );
-	};
-
 	privacySettings() {
 		const { isRequestingSettings, translate, handleSubmitForm, isSavingSettings, isP2HubSite } =
 			this.props;
