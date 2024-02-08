@@ -74,7 +74,6 @@ const ImportUsers = ( { site, onSubmit }: Props ) => {
 		index: number
 	) => {
 		const { user, checked } = listUser;
-		console.log('user', user)
 		const isExternalContributor =
 			externalContributors && externalContributors.includes( user?.linked_user_ID ?? user?.ID );
 
