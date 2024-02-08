@@ -22,6 +22,7 @@ import superagent from 'superagent'; // Don't have Node.js fetch lib yet.
 import wooDnaConfig from 'calypso/jetpack-connect/woo-dna-config';
 import { STEPPER_SECTION_DEFINITION } from 'calypso/landing/stepper/section';
 import { SUBSCRIPTIONS_SECTION_DEFINITION } from 'calypso/landing/subscriptions/section';
+import isA8CForAgencies from 'calypso/lib/a8c-for-agencies/is-a8c-for-agencies';
 import { shouldSeeCookieBanner } from 'calypso/lib/analytics/utils';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import { login } from 'calypso/lib/paths';
@@ -143,7 +144,11 @@ function getDefaultContext( request, response, entrypoint = 'entry-main' ) {
 	setStore( reduxStore, getCachedState );
 	performanceMark( request.context, 'create basic options', true );
 
-	const devEnvironments = [ 'development', 'jetpack-cloud-development' ];
+	const devEnvironments = [
+		'development',
+		'jetpack-cloud-development',
+		'a8c-for-agencies-development',
+	];
 	const isDebug = devEnvironments.includes( calypsoEnv ) || request.query.debug !== undefined;
 
 	const reactQueryDevtoolsHelper = config.isEnabled( 'dev/react-query-devtools' );
@@ -235,6 +240,18 @@ function getDefaultContext( request, response, entrypoint = 'entry-main' ) {
 
 	if ( calypsoEnv === 'jetpack-cloud-development' ) {
 		context.badge = 'jetpack-cloud-dev';
+		context.feedbackURL = 'https://github.com/Automattic/wp-calypso/issues/';
+		context.branchName = getCurrentBranchName();
+		context.commitChecksum = getCurrentCommitShortChecksum();
+	}
+
+	if ( calypsoEnv === 'a8c-for-agencies-stage' ) {
+		context.badge = 'a8c-for-agencies-staging';
+		context.feedbackURL = 'https://github.com/Automattic/wp-calypso/issues/';
+	}
+
+	if ( calypsoEnv === 'a8c-for-agencies-development' ) {
+		context.badge = 'a8c-for-agencies-dev';
 		context.feedbackURL = 'https://github.com/Automattic/wp-calypso/issues/';
 		context.branchName = getCurrentBranchName();
 		context.commitChecksum = getCurrentCommitShortChecksum();
@@ -883,7 +900,7 @@ export default function pages() {
 	app.use( setupLoggedInContext );
 	app.use( middlewareUnsupportedBrowser() );
 
-	if ( ! isJetpackCloud() ) {
+	if ( ! ( isJetpackCloud() || isA8CForAgencies() ) ) {
 		wpcomPages( app );
 	}
 
