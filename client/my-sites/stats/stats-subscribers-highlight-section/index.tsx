@@ -112,7 +112,7 @@ function SubscriberHighlightsMobile( { highlights, isLoading }: SubscriberHighli
 
 export default function SubscribersHighlightSection( { siteId }: { siteId: number | null } ) {
 	const translate = useTranslate();
-	const localizedTitle = translate( 'All-time stats', {
+	const localizedTitle = translate( 'All-time stats -- modified', {
 		comment: 'Heading for Subscribers page highlights section',
 	} );
 
@@ -131,7 +131,7 @@ export default function SubscribersHighlightSection( { siteId }: { siteId: numbe
 
 	return (
 		<div className="highlight-cards subscribers-page has-odyssey-stats-bg-color">
-			<h1 className="highlight-cards-heading">{ localizedTitle }</h1>
+			<h3 className="highlight-cards-heading">{ localizedTitle }</h3>
 			{ siteId && ! isOdysseyStats && <QueryMembershipProducts siteId={ siteId } /> }
 			<ComponentSwapper
 				breakpoint="<660px"
