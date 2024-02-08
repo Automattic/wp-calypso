@@ -114,12 +114,48 @@ class SocialLoginForm extends Component {
 		);
 	};
 
+<<<<<<< HEAD
 	// eslint-disable-next-line no-unused-vars
 <<<<<<< HEAD
 	handleGitHubResponse = ( response ) => {};
 =======
 	handleGitHubResponse = ( response ) => {
 		// console.log( this.props );
+=======
+	handleGitHubResponse = ( tokens, triggeredByUser = true ) => {
+		const { onSuccess, socialService } = this.props;
+		let redirectTo = this.props.redirectTo;
+
+		// ignore response if the user did not click on the google button
+		// and did not follow the redirect flow
+		if ( ! triggeredByUser && socialService !== 'github' ) {
+			return;
+		}
+
+		// load persisted redirect_to url from session storage, needed for redirect_to to work with google redirect flow
+		if ( ! triggeredByUser && ! redirectTo ) {
+			redirectTo = window.sessionStorage.getItem( 'login_redirect_to' );
+		}
+
+		window.sessionStorage.removeItem( 'login_redirect_to' );
+
+		const socialInfo = {
+			service: 'github',
+			access_token: tokens.access_token,
+			id_token: tokens.id_token,
+		};
+
+		this.props.loginSocialUser( socialInfo, redirectTo ).then(
+			() => {
+				this.recordEvent( 'calypso_login_social_login_success', 'github' );
+
+				onSuccess();
+			},
+			( error ) => {
+				this.reportSocialLoginFailure( { service: 'github', socialInfo, error } );
+			}
+		);
+>>>>>>> c79acc8397 (Implement basic version of responseHandler)
 	};
 >>>>>>> 39a379f1a6 (Draft PR)
 
