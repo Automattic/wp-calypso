@@ -51,7 +51,7 @@ const LaunchpadInternal = ( {
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [ JSON.stringify( checklist ), taskFilter ] );
 
-	const { trackClick } = useTracking( {
+	const { trackTaskClick } = useTracking( {
 		tasks,
 		checklistSlug,
 		siteIntent: site?.options?.site_intent,
@@ -60,7 +60,7 @@ const LaunchpadInternal = ( {
 
 	const itemClickHandler = ( task: Task ) => {
 		if ( enableAutoTracking ) {
-			trackClick( task );
+			trackTaskClick( task );
 		}
 		task?.actionDispatch?.();
 	};
