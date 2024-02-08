@@ -69,6 +69,9 @@ function DropdownIcon() {
 	);
 }
 
+const featureGroupRowTitleCellMaxWidth = 450;
+const rowCellMaxWidth = 290;
+
 const JetpackIconContainer = styled.div`
 	padding-inline-start: 6px;
 	display: inline-block;
@@ -106,11 +109,16 @@ const Title = styled.div< { isHiddenInMobile?: boolean } >`
 	` ) }
 `;
 
-const Grid = styled.div< { isInSignup?: boolean } >`
+const Grid = styled.div< { isInSignup?: boolean; visiblePlans: number } >`
 	display: grid;
-	margin-top: ${ ( props ) => ( props.isInSignup ? '90px' : '64px' ) };
+	margin: ${ ( props ) => ( props.isInSignup ? '90px auto 0' : '64px auto 0' ) };
 	background: #fff;
 	border: solid 1px #e0e0e0;
+	${ ( props ) =>
+		props.visiblePlans &&
+		css`
+			max-width: ${ rowCellMaxWidth * props.visiblePlans + featureGroupRowTitleCellMaxWidth }px;
+		` }
 
 	${ plansGridMediumLarge( css`
 		border-radius: 5px;
@@ -192,6 +200,7 @@ const Cell = styled.div< { textAlign?: 'start' | 'center' | 'end' } >`
 	align-items: center;
 	padding: 33px 20px 0;
 	border-right: solid 1px #e0e0e0;
+	max-width: ${ rowCellMaxWidth }px;
 
 	.gridicon {
 		fill: currentColor;
@@ -236,7 +245,10 @@ const Cell = styled.div< { textAlign?: 'start' | 'center' | 'end' } >`
 	` ) }
 `;
 
-const RowTitleCell = styled.div`
+const RowTitleCell = styled.div< {
+	isPlaceholderHeaderCell?: boolean;
+	isFeatureGroupRowTitleCell?: boolean;
+} >`
 	display: none;
 	font-size: 14px;
 	padding-right: 10px;
@@ -245,6 +257,12 @@ const RowTitleCell = styled.div`
 		flex: 1;
 		min-width: 290px;
 	` ) }
+	max-width: ${ ( props ) => {
+		if ( props.isPlaceholderHeaderCell || props.isFeatureGroupRowTitleCell ) {
+			return `${ featureGroupRowTitleCellMaxWidth }px`;
+		}
+		return `${ rowCellMaxWidth }px`;
+	} };
 `;
 
 const PlanSelector = styled.header`
@@ -493,6 +511,7 @@ const ComparisonGridHeader = forwardRef< HTMLDivElement, ComparisonGridHeaderPro
 				<RowTitleCell
 					key="feature-name"
 					className="plan-comparison-grid__header-cell is-placeholder-header-cell"
+					isPlaceholderHeaderCell={ true }
 				>
 					{ isStuck && planTypeSelectorProps && (
 						<PlanTypeSelectorWrapper>
@@ -737,7 +756,11 @@ const ComparisonGridFeatureGroupRow: React.FunctionComponent< {
 			className={ rowClasses }
 			isHighlighted={ isHighlighted }
 		>
-			<RowTitleCell key="feature-name" className="is-feature-group-row-title-cell">
+			<RowTitleCell
+				key="feature-name"
+				className="is-feature-group-row-title-cell"
+				isFeatureGroupRowTitleCell={ true }
+			>
 				{ isStorageFeature ? (
 					<Plans2023Tooltip
 						text={ translate( 'Space to store your photos, media, and more.' ) }
@@ -1060,7 +1083,7 @@ const ComparisonGrid = ( {
 
 	return (
 		<div className="plan-comparison-grid">
-			<Grid isInSignup={ isInSignup }>
+			<Grid isInSignup={ isInSignup } visiblePlans={ visiblePlans.length }>
 				<StickyContainer
 					disabled={ isBottomHeaderInView }
 					stickyClass="is-sticky-header-row"
