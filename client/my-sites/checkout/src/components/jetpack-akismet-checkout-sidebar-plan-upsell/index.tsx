@@ -6,9 +6,10 @@ import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
 import classNames from 'classnames';
 import debugFactory from 'debug';
-import { useCallback, type FC } from 'react';
+import { useCallback, type FC, useMemo } from 'react';
 import PromoCard from 'calypso/components/promo-section/promo-card';
 import PromoCardCTA from 'calypso/components/promo-section/promo-card/cta';
+import { preventWidows } from 'calypso/lib/formatting';
 import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
 import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
@@ -187,6 +188,27 @@ const UpsellEntry: FC< Omit< PriceBreakdown, 'priceInteger' > & { priceInteger?:
 	);
 };
 
+const IntroductoryOfferAsterisk: FC< { renewalsCount: number } > = ( { renewalsCount } ) => {
+	const { __, _n } = useI18n();
+	const description = useMemo( () => {
+		if ( renewalsCount > 0 ) {
+			return sprintf(
+				// translators: %d is the number of renewals after the introductory offer.
+				_n(
+					'*Introductory offer first term and %d renewal only, then renews at regular rate.',
+					'*Introductory offer first term and %d renewals only, then renews at regular rate.',
+					renewalsCount
+				),
+				renewalsCount
+			);
+		}
+
+		return __( '*Introductory offer first term only, renews at regular rate.' );
+	}, [ renewalsCount, __, _n ] );
+
+	return <>{ preventWidows( description ) }</>;
+};
+
 const JetpackAkismetCheckoutSidebarPlanUpsell: FC = () => {
 	const { __ } = useI18n();
 	const { formStatus } = useFormStatus();
@@ -227,10 +249,12 @@ const JetpackAkismetCheckoutSidebarPlanUpsell: FC = () => {
 					<UpsellEntry key={ props.label } { ...props } />
 				) ) }
 			</div>
-			<div>
-				{ hasIntroductoryOffers &&
-					__( '*Introductory offer first term only, renews at regular rate.' ) }
-			</div>
+			{ hasIntroductoryOffers && product.introductory_offer_terms && (
+				<IntroductoryOfferAsterisk
+					renewalsCount={ product.introductory_offer_terms.transition_after_renewal_count }
+				/>
+			) }
+
 			<PromoCardCTA
 				cta={ {
 					disabled: isLoading,
