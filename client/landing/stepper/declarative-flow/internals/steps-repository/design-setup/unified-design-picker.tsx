@@ -406,9 +406,7 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 	const isBundled = selectedDesign?.software_sets && selectedDesign.software_sets.length > 0;
 
 	const isLockedTheme =
-		( isEnabled( 'themes/tiers' ) &&
-			selectedDesign?.design_tier === PERSONAL_THEME &&
-			! canSiteActivateTheme ) ||
+		( isEnabled( 'themes/tiers' ) && ! canSiteActivateTheme ) ||
 		( selectedDesign?.is_premium && ! isPremiumThemeAvailable && ! didPurchaseSelectedTheme ) ||
 		( selectedDesign?.is_externally_managed &&
 			( ! isMarketplaceThemeSubscribed || ! isExternallyManagedThemeAvailable ) ) ||

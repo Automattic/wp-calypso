@@ -9,6 +9,7 @@ import { getCurrentUserEmail } from 'calypso/state/current-user/selectors';
 import { successNotice } from 'calypso/state/notices/actions';
 import { getDomainsBySiteId } from 'calypso/state/sites/domains/selectors';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
+import { getSettingsSource } from '../site-tools/utils';
 import { ConfirmationTransfer } from './confirmation-transfer';
 import PendingDomainTransfer from './pending-domain-transfer';
 import SiteOwnerTransferEligibility from './site-owner-user-search';
@@ -67,7 +68,8 @@ const SiteOwnerTransfer = () => {
 		if ( ! pendingDomain && newSiteOwner && ! transferSiteSuccess ) {
 			setNewSiteOwner( null );
 		} else {
-			page( '/settings/general/' + selectedSite.slug );
+			const source = getSettingsSource();
+			page( `${ source }/${ selectedSite.slug }` );
 		}
 	};
 

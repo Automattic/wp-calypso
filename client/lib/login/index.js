@@ -184,10 +184,6 @@ export const canDoMagicLogin = ( twoFactorAuthType, oauth2Client, isJetpackWooCo
 		return false;
 	}
 
-	if ( isWooOAuth2Client( oauth2Client ) ) {
-		return false;
-	}
-
 	if ( isJetpackWooCommerceFlow ) {
 		return false;
 	}
