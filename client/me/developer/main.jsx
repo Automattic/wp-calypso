@@ -84,7 +84,7 @@ class Developer extends Component {
 								onClick={ () => {
 									recordTracksEvent( 'calypso_me_developer_survey_clicked' );
 
-									this.hideDevSurveyNotice();
+									this.hideDeveloperSurveyNotice();
 								} }
 							/>
 						),
@@ -108,7 +108,7 @@ class Developer extends Component {
 		recordTracksEvent( 'calypso_me_developer_survey_impression' );
 	};
 
-	hideDevSurveyNotice = () => {
+	hideDeveloperSurveyNotice = () => {
 		this.setState( { isDeveloperSurveyNoticeVisible: false } );
 		this.props.removeNotice( this.developerSurveyNoticeId );
 	};
@@ -123,7 +123,7 @@ class Developer extends Component {
 		if ( this.shouldShowDevSurveyNotice( isDevAccount ) ) {
 			this.showDevSurveyNotice();
 		} else {
-			this.hideDevSurveyNotice();
+			this.hideDeveloperSurveyNotice();
 		}
 
 		setTimeout( () => this.props.removeNotice( 'save-user-settings' ), 3000 );
@@ -194,7 +194,7 @@ class Developer extends Component {
 							onSurveyClick={ () => {
 								recordTracksEvent( 'calypso_me_developer_survey_clicked' );
 
-								this.hideDevSurveyNotice();
+								this.hideDeveloperSurveyNotice();
 							} }
 							onClose={ ( remindTimeInSeconds, buttonName ) => {
 								recordTracksEvent( 'calypso_me_developer_survey_dismissed', {
@@ -203,7 +203,7 @@ class Developer extends Component {
 
 								this.setDeveloperSurveyCookie( 'dismissed', remindTimeInSeconds );
 
-								this.hideDevSurveyNotice();
+								this.hideDeveloperSurveyNotice();
 							} }
 						/>,
 						this.surveyNoticeWrapper
