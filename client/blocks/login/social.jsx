@@ -114,15 +114,7 @@ class SocialLoginForm extends Component {
 		);
 	};
 
-<<<<<<< HEAD
-	// eslint-disable-next-line no-unused-vars
-<<<<<<< HEAD
-	handleGitHubResponse = ( response ) => {};
-=======
-	handleGitHubResponse = ( response ) => {
-		// console.log( this.props );
-=======
-	handleGitHubResponse = ( tokens, triggeredByUser = true ) => {
+	handleGitHubResponse = ( access_token, triggeredByUser = true ) => {
 		const { onSuccess, socialService } = this.props;
 		let redirectTo = this.props.redirectTo;
 
@@ -141,8 +133,7 @@ class SocialLoginForm extends Component {
 
 		const socialInfo = {
 			service: 'github',
-			access_token: tokens.access_token,
-			id_token: tokens.id_token,
+			access_token: access_token,
 		};
 
 		this.props.loginSocialUser( socialInfo, redirectTo ).then(
@@ -155,9 +146,7 @@ class SocialLoginForm extends Component {
 				this.reportSocialLoginFailure( { service: 'github', socialInfo, error } );
 			}
 		);
->>>>>>> c79acc8397 (Implement basic version of responseHandler)
 	};
->>>>>>> 39a379f1a6 (Draft PR)
 
 	recordEvent = ( eventName, service, params ) =>
 		this.props.recordTracksEvent( eventName, {
