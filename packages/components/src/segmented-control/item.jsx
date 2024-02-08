@@ -40,7 +40,6 @@ class SegmentedControlItem extends Component {
 		return (
 			<li className={ itemClassName } role="none">
 				<a
-					active={ this.props.isPlansInsideStepper }
 					href={ this.props.path }
 					className={ linkClassName }
 					onClick={ this.props.onClick }
