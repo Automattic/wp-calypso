@@ -28,6 +28,11 @@ type GithubLoginButtonProps = {
 	socialServiceResponse?: string | null;
 };
 
+type ExchangeCodeForTokenResponse = {
+	access_token: string;
+	id_token: string;
+};
+
 const GitHubLoginButton = ( {
 	children,
 	responseHandler,
@@ -49,7 +54,6 @@ const GitHubLoginButton = ( {
 	const exchangeCodeForToken = async ( auth_code: string ) => {
 		let response;
 		try {
-			// eslint-disable-next-line
 			response = await postLoginRequest( 'exchange-social-auth-code', {
 				service: 'github',
 				auth_code,
@@ -57,7 +61,7 @@ const GitHubLoginButton = ( {
 				client_secret: config( 'wpcom_signup_key' ),
 			} );
 		} catch ( httpError ) {
-			const { code: error_code } = getErrorFromHTTPError( httpError );
+			const { code: error_code } = getErrorFromHTTPError( httpError as object );
 
 			if ( error_code ) {
 				// TODO
@@ -80,6 +84,9 @@ const GitHubLoginButton = ( {
 
 			return;
 		}
+
+		const { access_token, id_token } = response.body as ExchangeCodeForTokenResponse;
+		responseHandler( { access_token, id_token } );
 		/*
 		this.props.recordTracksEvent( 'calypso_social_button_auth_code_exchange_success', {
 			social_account_type: 'google',
