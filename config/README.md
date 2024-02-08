@@ -43,7 +43,7 @@ For development of Jetpack, this looks something like:
 
 For development of Automattic for Agencies, this looks something like:
 
-> a8c-for-agencies-development -> a8c-for-agencies-horizon -> a8c-for-agencies-stage -> a8c-for-agencies-production
+> a8c-for-agencies-development -> a8c-for-agencies-stage -> a8c-for-agencies-production
 
 As we enable a feature through these progressions, left to right, the feature should most likely be enabled on environments to the left. For example, if a WordPress.com feature is currently enabled in horizon, it should likely also be enabled in development and wpcalypso.
 
