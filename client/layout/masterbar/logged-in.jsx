@@ -518,8 +518,15 @@ class MasterbarLoggedIn extends Component {
 	}
 
 	render() {
-		const { isInEditor, isCheckout, isCheckoutPending, isCheckoutFailed, loadHelpCenterIcon } =
-			this.props;
+		const {
+			isInEditor,
+			isCheckout,
+			isCheckoutPending,
+			isCheckoutFailed,
+			loadHelpCenterIcon,
+			currentSelectedSiteId,
+			currentSelectedSiteSlug,
+		} = this.props;
 		const { isMobile } = this.state;
 
 		if ( isCheckout || isCheckoutPending || isCheckoutFailed ) {
@@ -530,7 +537,7 @@ class MasterbarLoggedIn extends Component {
 		if ( true || 'this-is-for-development-of-the-component' ) {
 			return (
 				<Masterbar>
-					<WpAdminBar />
+					<WpAdminBar siteId={ currentSelectedSiteId } siteSlug={ currentSelectedSiteSlug } />
 				</Masterbar>
 			);
 		}
