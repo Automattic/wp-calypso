@@ -11,7 +11,7 @@ import Menupop from './menupop';
 
 import './core-masterbar.scss';
 
-function WpAdminBar( { siteId, siteSlug } ) {
+function WpAdminBar( { siteId, siteSlug, renderHelpCenter, renderNotifications } ) {
 	const translate = useTranslate();
 
 	// Internal management links.
@@ -161,9 +161,11 @@ function WpAdminBar( { siteId, siteSlug } ) {
 						</div>
 					</Menupop>
 					<li id="wp-admin-bar-wp-notifications">
-						<a
+						{ renderNotifications() }
+						{ /* <a
 							href=""
 							class="ab-item"
+							aria-haspopup="true"
 							onClick={ () =>
 								alert(
 									"This should open the notification panel on the right side of the page, or redirect to the notifications page in reader if that doesn't work"
@@ -171,18 +173,20 @@ function WpAdminBar( { siteId, siteSlug } ) {
 							}
 						>
 							<span class="ab-icon" aria-hidden="true"></span>
-						</a>
+						</a> */ }
 					</li>
 					<li id="wp-admin-bar-wp-help">
-						<a
-							href="#"
-							class="ab-item"
-							onClick={ () =>
-								alert( 'This should open the help center popover on the right side of the page' )
-							}
-						>
-							<span class="ab-icon" aria-hidden="true"></span>
-						</a>
+						{ renderHelpCenter() }
+						{ /* <a
+								href="#"
+								class="ab-item"
+								aria-haspopup="true"
+								// onClick={ () =>
+								// 	alert( 'This should open the help center popover on the right side of the page' )
+								// }
+							>
+								<span class="ab-icon" aria-hidden="true"></span>
+							</a> */ }
 					</li>
 				</ul>
 			</div>

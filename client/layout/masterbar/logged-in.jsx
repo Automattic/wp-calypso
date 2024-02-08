@@ -537,7 +537,12 @@ class MasterbarLoggedIn extends Component {
 		if ( true || 'this-is-for-development-of-the-component' ) {
 			return (
 				<Masterbar>
-					<WpAdminBar siteId={ currentSelectedSiteId } siteSlug={ currentSelectedSiteSlug } />
+					<WpAdminBar
+						siteId={ currentSelectedSiteId }
+						siteSlug={ currentSelectedSiteSlug }
+						renderHelpCenter={ loadHelpCenterIcon && ( () => this.renderHelpCenter() ) }
+						renderNotifications={ () => this.renderNotifications() }
+					/>
 				</Masterbar>
 			);
 		}
