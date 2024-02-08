@@ -102,7 +102,6 @@ export default function LoadStatsPage( { children }: AsyncLoadProps ) {
 
 	return (
 		<StatsRedirectFlow>
-			{ /* Only query site purchases on Calypso via existing data component */ }
 			<QuerySitePurchases siteId={ siteId } />
 			{ children }
 		</StatsRedirectFlow>
