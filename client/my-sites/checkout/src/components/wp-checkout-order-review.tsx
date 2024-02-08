@@ -165,7 +165,7 @@ export default function WPCheckoutOrderReview( {
 
 	return (
 		<>
-			{ hasCheckoutVersion( '2' ) && (
+			{ hasCheckoutVersion( '2' ) && selectedSiteData && (
 				<div className="checkout-site-preview">
 					<SitePreviewWrapper>
 						<SitePreview showEditSite={ false } showSiteDetails={ false } />
