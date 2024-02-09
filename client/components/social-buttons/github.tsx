@@ -30,7 +30,6 @@ type GithubLoginButtonProps = {
 
 type ExchangeCodeForTokenResponse = {
 	access_token: string;
-	id_token: string;
 };
 
 const GitHubLoginButton = ( {
