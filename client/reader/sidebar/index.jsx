@@ -277,10 +277,9 @@ export class ReaderSidebar extends Component {
 		const asyncProps = {
 			placeholder: null,
 			path: this.props.path,
-			useSidebarMenu: false,
 			onClick: this.handleClick,
 		};
-		const asyncSidebar = (
+		return (
 			<AsyncLoad require="calypso/layout/global-sidebar" { ...asyncProps }>
 				<SidebarRegion>
 					<ReaderSidebarNudges />
@@ -288,11 +287,8 @@ export class ReaderSidebar extends Component {
 				</SidebarRegion>
 
 				<ReaderSidebarPromo />
-
-				<SidebarFooter />
 			</AsyncLoad>
 		);
-		return <div className="my-sites__navigation global-sidebar">{ asyncSidebar }</div>;
 	}
 
 	renderSidebar() {
