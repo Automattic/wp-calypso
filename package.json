@@ -111,7 +111,7 @@
 		"start-jetpack-cloud": "CALYPSO_ENV=jetpack-cloud-development yarn run start",
 		"start-jetpack-cloud-p": "PORT=3001 CALYPSO_ENV=jetpack-cloud-development yarn run build-server && PORT=3001 CALYPSO_ENV=jetpack-cloud-development yarn run start-build",
 		"start-a8c-for-agencies": "CALYPSO_ENV=a8c-for-agencies-development yarn run start",
-		"start-a8c-for-agencies-p": "PORT=3001 CALYPSO_ENV=a8c-for-agencies-development yarn run build-server && PORT=3001 CALYPSO_ENV=a8c-for-agencies-development yarn run start-build",
+		"start-a8c-for-agencies-p": "PORT=3002 CALYPSO_ENV=a8c-for-agencies-development yarn run build-server && PORT=3002 CALYPSO_ENV=a8c-for-agencies-development yarn run start-build",
 		"storybook:start": "sb dev -c ./.storybook -p 6006",
 		"storybook:build": "sb build -c ./.storybook",
 		"test": "run-s -s test-client test-packages test-server test-build-tools",
