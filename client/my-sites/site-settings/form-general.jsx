@@ -24,7 +24,6 @@ import fiverrLogo from 'calypso/assets/images/customer-home/fiverr-logo.svg';
 import UpsellNudge from 'calypso/blocks/upsell-nudge';
 import QuerySiteDomains from 'calypso/components/data/query-site-domains';
 import QuerySiteSettings from 'calypso/components/data/query-site-settings';
-import ExternalLink from 'calypso/components/external-link';
 import FormInputCheckbox from 'calypso/components/forms/form-checkbox';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormRadio from 'calypso/components/forms/form-radio';
@@ -389,12 +388,7 @@ export class SiteSettingsFormGeneral extends Component {
 			}
 		);
 		const showPreviewLink = isComingSoon && hasSitePreviewLink;
-		const researchPrivacyLink = (
-			<ExternalLink
-				href={ localizeUrl( 'https://wordpress.com/support/privacy-settings/#public' ) }
-				target="_blank"
-			/>
-		);
+
 		return (
 			<FormFieldset>
 				{ ! isNonAtomicJetpackSite &&
@@ -515,16 +509,10 @@ export class SiteSettingsFormGeneral extends Component {
 								disabled={ isRequestingSettings || ( 0 === blogPublic && ! wpcomPublicComingSoon ) }
 								onClick={ eventTracker( 'Clicked Partnership Radio Button' ) }
 							/>
-							<span>{ translate( 'Discourage research partners from indexing this site.' ) }</span>
+							<span>{ translate( 'Discourage AI Training and Research Partners.' ) }</span>
 							<FormSettingExplanation>
 								{ translate(
-									'This option will request research partners not to index your site. {{researchPrivacyLink}}Learn more' +
-										'{{/researchPrivacyLink}}.',
-									{
-										components: {
-											researchPrivacyLink,
-										},
-									}
+									'This option discourages our network of research partners from using your sites content, which may involve training AI models.'
 								) }
 							</FormSettingExplanation>
 						</FormLabel>
