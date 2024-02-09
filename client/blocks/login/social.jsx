@@ -47,7 +47,7 @@ class SocialLoginForm extends Component {
 		const { onSuccess, socialService } = this.props;
 		let redirectTo = this.props.redirectTo;
 
-		// ignore response if the user did not click on the Google button
+		// ignore response if the user did not click on the google button
 		// and did not follow the redirect flow
 		if ( ! triggeredByUser && socialService !== 'google' ) {
 			return;
@@ -124,7 +124,7 @@ class SocialLoginForm extends Component {
 			return;
 		}
 
-		// load persisted redirect_to url from session storage, needed for redirect_to to work with google redirect flow
+		// load persisted redirect_to url from session storage, needed for redirect_to to work with GitHub redirect flow
 		if ( ! triggeredByUser && ! redirectTo ) {
 			redirectTo = window.sessionStorage.getItem( 'login_redirect_to' );
 		}
