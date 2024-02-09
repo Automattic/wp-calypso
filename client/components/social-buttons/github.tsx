@@ -13,9 +13,11 @@ import {
 } from 'react';
 import GitHubIcon from 'calypso/components/social-icons/github';
 import { preventWidows } from 'calypso/lib/formatting';
-import { useSelector } from 'calypso/state';
+import { useSelector, useDispatch } from 'calypso/state';
+import { recordTracksEvent } from 'calypso/state/analytics/actions/record';
 import { isFormDisabled as isFormDisabledSelector } from 'calypso/state/login/selectors';
 import { getErrorFromHTTPError, postLoginRequest } from 'calypso/state/login/utils';
+import { errorNotice } from 'calypso/state/notices/actions';
 import type { AppState } from 'calypso/types';
 
 import './style.scss';
@@ -43,6 +45,7 @@ const GitHubLoginButton = ( {
 
 	const { code, service } = useSelector( ( state: AppState ) => state.route?.query?.initial );
 	const isFormDisabled = useSelector( isFormDisabledSelector );
+	const dispatch = useDispatch();
 
 	const [ disabledState ] = useState< boolean >( false );
 	const [ errorState ] = useState< string | null >( null );
@@ -63,41 +66,34 @@ const GitHubLoginButton = ( {
 			const { code: error_code } = getErrorFromHTTPError( httpError as object );
 
 			if ( error_code ) {
-				// TODO
-				/*
-				this.props.recordTracksEvent( 'calypso_social_button_auth_code_exchange_failure', {
-					social_account_type: 'google',
-					starting_point: this.props.startingPoint,
-					error_code,
-				} );
-				*/
+				dispatch(
+					recordTracksEvent( 'calypso_social_button_auth_code_exchange_failure', {
+						social_account_type: 'github',
+						// TODO
+						//starting_point: this.props.startingPoint,
+						error_code,
+					} )
+				);
 			}
-			// TODO
-			/*
-			this.props.showErrorNotice(
-				this.props.translate(
-					'Something went wrong when trying to connect with Google. Please try again.'
+
+			dispatch(
+				errorNotice(
+					translate( 'Something went wrong when trying to connect with GitHub. Please try again.' )
 				)
 			);
-			*/
-
 			return;
 		}
 
+		dispatch(
+			recordTracksEvent( 'calypso_social_button_auth_code_exchange_success', {
+				social_account_type: 'github',
+				// TODO
+				//starting_point: this.props.startingPoint,
+			} )
+		);
+
 		const { access_token } = response?.body?.data as ExchangeCodeForTokenResponse;
-
 		responseHandler( access_token, true );
-		// TODO
-		/*
-		this.props.recordTracksEvent( 'calypso_social_button_auth_code_exchange_success', {
-			social_account_type: 'google',
-			starting_point: this.props.startingPoint,
-		} );
-
-		const { access_token, id_token } = response.body.data;
-
-		this.props.responseHandler( { access_token, id_token } );
-		*/
 	};
 
 	useEffect( () => {
