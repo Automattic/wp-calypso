@@ -22,6 +22,7 @@ const importHostedSiteFlow: Flow = {
 		}, [] );
 
 		return [
+			STEPS.IMPORT,
 			STEPS.IMPORT_READY,
 			STEPS.IMPORT_READY_NOT,
 			STEPS.IMPORT_READY_WPCOM,
