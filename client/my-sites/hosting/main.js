@@ -1,4 +1,3 @@
-import { isEnabled } from '@automattic/calypso-config';
 import {
 	FEATURE_SFTP,
 	FEATURE_SFTP_DATABASE,
@@ -92,7 +91,6 @@ const MainCards = ( {
 	hasStagingSitesFeature,
 	isAdvancedHostingDisabled,
 	isBasicHostingDisabled,
-	isGithubIntegrationEnabled,
 	isWpcomStagingSite,
 	isBusinessTrial,
 	siteId,
@@ -124,13 +122,11 @@ const MainCards = ( {
 					type: 'advanced',
 			  }
 			: null,
-		isGithubIntegrationEnabled
-			? {
-					feature: 'github',
-					content: <GitHubCard />,
-					type: 'advanced',
-			  }
-			: null,
+		{
+			feature: 'github',
+			content: <GitHubCard />,
+			type: 'advanced',
+		},
 		{
 			feature: 'web-server-settings',
 			content: <WebServerSettingsCard disabled={ isAdvancedHostingDisabled } />,
@@ -293,8 +289,7 @@ const Hosting = ( props ) => {
 	};
 
 	const getContent = () => {
-		const isGithubIntegrationEnabled =
-			isEnabled( 'github-integration-i1' ) && isAutomatticTeamMember( teams );
+		const isGithubIntegrationEnabled = isAutomatticTeamMember( teams );
 		const WrapperComponent = ! isSiteAtomic ? FeatureExample : Fragment;
 
 		return (

@@ -18,7 +18,7 @@ export const LastDeploymentInformation = ( {
 }: LastDeploymentInformationProps ) => {
 	const translate = useTranslate();
 
-	const totalFailures = deployment.move_failures.length + deployment.remove_failures.length;
+	const totalFailures = deployment.move_failures?.length + deployment.remove_failures?.length;
 	const deploymentTime = new Intl.DateTimeFormat( i18n.getLocaleSlug() ?? 'en', {
 		dateStyle: 'medium',
 		timeStyle: 'short',
