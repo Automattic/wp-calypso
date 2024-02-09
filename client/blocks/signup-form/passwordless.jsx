@@ -299,18 +299,12 @@ class PasswordlessSignupForm extends Component {
 		);
 	}
 
-	getLabelText() {
-		return (
-			<div className="signup-form__passwordless-email-label">
-				<FormLabel>
-					{ this.props.labelText || this.props.translate( 'Enter your email address' ) }
-				</FormLabel>
-			</div>
-		);
+	renderLabelText() {
+		return this.props.labelText ?? this.props.translate( 'Enter your email address' );
 	}
 
 	getFormButtonAndToS() {
-		const isPasswordlessInviteForm = this.props.inviteFormTitle;
+		const isPasswordlessInviteForm = this.props.isInviteLoggedOut;
 		return isPasswordlessInviteForm ? (
 			<>
 				{ this.formFooter() } { this.props.renderTerms?.() }
@@ -329,16 +323,7 @@ class PasswordlessSignupForm extends Component {
 			<div className="signup-form__passwordless-form-wrapper">
 				<LoggedOutForm onSubmit={ this.onFormSubmit } noValidate>
 					<ValidationFieldset errorMessages={ errorMessages }>
-						{ this.props.inviteFormTitle && (
-							<FormLabel htmlFor="signup-email" className="signup-form__passwordless-invite-title">
-								{ this.props.inviteFormTitle }
-							</FormLabel>
-						) }
-						{ this.props.renderInviteExplanationLabel && (
-							<FormLabel>{ this.props.renderInviteExplanationLabel }</FormLabel>
-						) }
-
-						{ this.getLabelText() }
+						<FormLabel htmlFor="signup-email">{ this.renderLabelText() }</FormLabel>
 						<FormTextInput
 							autoCapitalize="off"
 							autoCorrect="off"

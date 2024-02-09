@@ -18,6 +18,8 @@ import WpcomLoginForm from 'calypso/signup/wpcom-login-form';
 import { createAccount, acceptInvite } from 'calypso/state/invites/actions';
 import getCurrentQueryArguments from 'calypso/state/selectors/get-current-query-arguments';
 import { getExplanationForInvite } from '../utils';
+
+import './style.scss';
 /**
  * Module variables
  */
@@ -181,12 +183,17 @@ class InviteAcceptLoggedOut extends Component {
 		}
 
 		return (
-			<div>
+			<div className="invite-accept-logged-out-wrapper">
+				<header className="invite-accept-logged-out-invite-header">
+					<h1>{ this.props.translate( 'Sign up to start editing' ) }</h1>
+					<span>{ this.props.invite?.site.title }</span>
+					<p className="invite-accept-logged-out-invite-description">
+						{ this.renderInviteExplanationLabel() }
+					</p>
+				</header>
 				<SignupForm
 					redirectToAfterLoginUrl={ window.location.href }
 					isPasswordless={ true }
-					invite={ this.props.invite }
-					renderInviteExplanationLabel={ this.renderInviteExplanationLabel }
 					submitButtonLabel={ this.props.translate( 'Create an account' ) }
 					disabled={ this.state.submitting }
 					formHeader={ this.renderFormHeader() }
@@ -198,12 +205,14 @@ class InviteAcceptLoggedOut extends Component {
 					email={ this.props.invite.sentTo }
 					suggestedUsername=""
 					disableEmailInput={ this.props.forceMatchingEmail }
+					isInviteLoggedOut={ true }
 					disableEmailExplanation={ this.props.translate(
 						'This invite is only valid for %(email)s.',
 						{
 							args: { email: this.props.invite.sentTo },
 						}
 					) }
+					labelText={ this.props.translate( 'Your email address' ) }
 				/>
 				{ this.state.userData && this.loginUser() }
 			</div>

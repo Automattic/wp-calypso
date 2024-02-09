@@ -1,10 +1,6 @@
 @import "calypso/components/text-control/style.scss";
 @import "@wordpress/base-styles/breakpoints";
 @import "@wordpress/base-styles/mixins";
-@import "@automattic/typography/styles/variables";
-
-$recoleta-font-family: "Recoleta", sans-serif;
-$font-sf-pro-text: "SF Pro Text", $sans;
 
 .signup-form .signup-form__input.form-text-input {
 	margin-bottom: 20px;
@@ -71,101 +67,20 @@ $font-sf-pro-text: "SF Pro Text", $sans;
 	text-decoration: underline;
 }
 
-.is-section-accept-invite .signup-form__passwordless-form-wrapper {
-	width: 100%;
-	margin: 0 auto;
-	@media (min-width: $break-small) {
-		width: 372px;
-	}
-	font-family: $font-sf-pro-text;
-	.card.logged-out-form {
-		background-color: transparent;
-		box-shadow: none;
-		max-width: 372px;
-		margin: 0 auto;
-		padding: 16px;
-		@media (min-width: $break-small) {
-			padding: 0;
-		}
-		button.is-primary {
-			border-radius: 2px;
-			border: 1px solid #117ac9;
-			background: #117ac9;
-			height: 48px;
-			font-weight: 500;
-			&:hover {
-				background: #0e64a5;
-			}
-		}
-		.signup-form__passwordless-invite-title {
-			color: var(--studio-gray-100, #2c3338);
-			text-align: center;
-			font-family: $recoleta-font-family;
-			font-size: 2rem;
-			font-weight: 400;
-			line-height: normal;
-			letter-spacing: 0.2px;
-			span {
-				word-break: break-word;
-			}
-		}
-		label {
-			color: var(--studio-gray-50, #2c3338);
-			text-align: center;
-			font-size: 1rem;
-			font-weight: 400;
-			line-height: 24px;
-		}
-		.signup-form__passwordless-email-label {
-			margin: 24px 0 8px 0;
-			.form-label {
-				text-align: left;
-				font-size: $font-body-small; // 14px
-				font-weight: 500;
-			}
-		}
-		.form-fieldset {
-			margin-bottom: 0;
-		}
-	}
+.signup-form__passwordless-form-wrapper {
 	.signup-form__terms-of-service-link {
-		margin: 0;
-		color: var(--studio-gray-50, #2c3338);
-		font-size: $font-body-small; // 14px
-		line-height: 20px;
-		a {
-			color: var(--studio-gray-80, #2c3338);
-			font-style: normal;
-			text-decoration-line: underline;
-		}
+		margin: 4px 0;
 	}
 
 	.logged-out-form__footer {
-		margin: 16px 0 16px 0;
-		padding: 0;
+		margin-top: 0;
+	}
+
+	.validation-fieldset__validation-message {
+		min-height: auto;
 	}
 }
-.validation-fieldset__validation-message {
-	min-height: auto;
-}
-.logged-out-form__links {
-	max-width: 100%;
-	margin: 0;
-	&::before {
-		content: "";
-		margin: 0;
-	}
-	.logged-out-form__link-item {
-		color: var(--studio-gray-90, #2c3338);
-		font-weight: 500;
-		text-underline-offset: 5px;
-		margin-top: 32px;
-		padding: 0;
-		&:hover {
-			color: var(--studio-blue-50, #0675c4);
-		}
-	}
-}
+
 .signup-form__recaptcha-tos {
 	display: none;
 	padding: 20px 10px 10px;
@@ -224,16 +139,6 @@ $font-sf-pro-text: "SF Pro Text", $sans;
 
 body.is-section-signup,
 body.is-section-accept-invite {
-	background: #fdfdfd;
-	.invite-accept {
-		margin-top: 50px;
-		@media (min-width: $break-small) {
-			margin-top: 150px;
-		}
-	}
-	.layout__content {
-		padding: 24px;
-	}
 	.signup__step.is-user-social,
 	// ::::: Onboarding_PM_Passwordless_Experiment ::::::
 	// This selector is part of an experiment which is supposed to be cleaned up
