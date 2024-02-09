@@ -28,9 +28,8 @@ class PasswordlessSignupForm extends Component {
 		submitButtonLabel: PropTypes.string,
 		submitButtonLoadingLabel: PropTypes.string,
 		userEmail: PropTypes.string,
-		renderInviteExplanationLabel: PropTypes.string,
-		inviteFormTitle: PropTypes.object,
 		labelText: PropTypes.string,
+		isInviteLoggedOutForm: PropTypes.bool,
 	};
 
 	static defaultProps = {
@@ -304,7 +303,7 @@ class PasswordlessSignupForm extends Component {
 	}
 
 	getFormButtonAndToS() {
-		const isPasswordlessInviteForm = this.props.isInviteLoggedOut;
+		const isPasswordlessInviteForm = this.props.isInviteLoggedOutForm;
 		return isPasswordlessInviteForm ? (
 			<>
 				{ this.formFooter() } { this.props.renderTerms?.() }

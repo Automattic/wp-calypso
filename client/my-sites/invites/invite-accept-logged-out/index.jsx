@@ -194,7 +194,6 @@ class InviteAcceptLoggedOut extends Component {
 				<SignupForm
 					redirectToAfterLoginUrl={ window.location.href }
 					isPasswordless={ true }
-					submitButtonLabel={ this.props.translate( 'Create an account' ) }
 					disabled={ this.state.submitting }
 					formHeader={ this.renderFormHeader() }
 					submitting={ this.state.submitting }
@@ -205,13 +204,14 @@ class InviteAcceptLoggedOut extends Component {
 					email={ this.props.invite.sentTo }
 					suggestedUsername=""
 					disableEmailInput={ this.props.forceMatchingEmail }
-					isInviteLoggedOut={ true }
 					disableEmailExplanation={ this.props.translate(
 						'This invite is only valid for %(email)s.',
 						{
 							args: { email: this.props.invite.sentTo },
 						}
 					) }
+					submitButtonLabel={ this.props.translate( 'Create an account' ) }
+					isInviteLoggedOutForm={ true }
 					labelText={ this.props.translate( 'Your email address' ) }
 				/>
 				{ this.state.userData && this.loginUser() }
