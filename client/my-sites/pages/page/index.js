@@ -336,7 +336,7 @@ class Page extends Component {
 		return (
 			<PopoverMenuItem onClick={ this.copyPage } href={ duplicateUrl }>
 				<Gridicon icon="clipboard" size={ 18 } />
-				{ this.props.translate( 'Copy page' ) }
+				{ this.props.translate( 'Duplicate page' ) }
 			</PopoverMenuItem>
 		);
 	}

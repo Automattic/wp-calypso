@@ -30,7 +30,7 @@ function PostActionsEllipsisMenuDuplicate( {
 	return (
 		<PopoverMenuItem href={ duplicateUrl } onClick={ onDuplicateClick } icon="clipboard">
 			<QueryJetpackModules siteId={ siteId } />
-			{ translate( 'Copy post' ) }
+			{ translate( 'Duplicate post' ) }
 		</PopoverMenuItem>
 	);
 }
