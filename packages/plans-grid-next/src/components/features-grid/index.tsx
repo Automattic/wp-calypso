@@ -8,6 +8,7 @@ import {
 import { FoldableCard } from '@automattic/components';
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
+import useUpgradeClickHandler from '../../hooks/use-upgrade-click-handler';
 import BillingTimeframes from './billing-timeframes';
 import MobileFreeDomain from './mobile-free-domain';
 import PlanFeaturesList from './plan-features-list';
@@ -242,6 +243,11 @@ const FeaturesGrid = ( {
 	isCustomDomainAllowedOnFreePlan,
 	gridSize,
 }: FeaturesGridProps ) => {
+	const handleUpgradeClick = useUpgradeClickHandler( {
+		gridPlans,
+		onUpgradeClick,
+	} );
+
 	const spotlightPlanProps = {
 		currentSitePlanSlug,
 		gridPlanForSpotlight,
@@ -249,7 +255,7 @@ const FeaturesGrid = ( {
 		isInSignup,
 		isLaunchPage,
 		onStorageAddOnClick,
-		onUpgradeClick,
+		onUpgradeClick: handleUpgradeClick,
 		planActionOverrides,
 		planUpgradeCreditsApplicable,
 		selectedFeature,
