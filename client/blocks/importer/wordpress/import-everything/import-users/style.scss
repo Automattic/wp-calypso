@@ -3,6 +3,12 @@
 @import "@wordpress/base-styles/mixins";
 
 .import__user-migration {
+	margin-bottom: 32px;
+
+	@include break-small {
+		margin-bottom: 0;
+	}
+
 	.onboarding-subtitle {
 		a {
 			color: var(--studio-gray-60);
@@ -12,27 +18,43 @@
 
 	.import__user-migration-list {
 		margin: 0 auto;
-		width: 450px;
+
+		@include break-mobile {
+			width: 450px;
+		}
 	}
 
 	.import__user-migration-button-container {
 		display: flex;
 		flex-direction: row;
 		justify-content: center;
-		margin-top: 24px;
+		margin-top: 16px;
 
 		.is-link {
 			color: var(--studio-gray-100);
 			font-size: 0.875rem;
 			font-weight: 500;
 		}
+
+		button.action-buttons__next {
+			width: 100%;
+			@include break-mobile {
+				width: auto;
+			}
+		}
 	}
 
 	.import__user-migration-footer {
 		font-size: 0.75rem;
-		margin: 1rem auto 0 auto;
+		margin: 1rem 24px 0 auto;
 		text-align: center;
-		width: 261px;
+		width: 100%;
+		max-width: 361px;
+
+		@include break-mobile {
+			margin: 1rem auto 0 auto;
+			width: 261px;
+		}
 	}
 }
 
@@ -41,9 +63,15 @@
 	align-items: center;
 	box-shadow: none;
 	padding: 16px 0 16px 0;
+	flex-wrap: wrap;
 
 	@include break-mobile {
 		padding: 20px 0 20px 0;
+		flex-wrap: nowrap;
+	}
+
+	.components-checkbox-control__input-container {
+		margin-right: 16px;
 	}
 
 	.imported-user-item__display-name {
@@ -63,7 +91,21 @@
 	}
 
 	.imported-user-item__roles {
-		margin-left: auto;
+		margin-left: 40px;
+		flex-basis: 100%;
+		display: flex;
+		margin-top: 0.5rem;
+		flex-wrap: wrap;
+		row-gap: 8px;
+		column-gap: 4px;
+		justify-content: flex-start;
+
+		@include break-mobile {
+			margin-left: auto;
+			flex-basis: auto;
+			margin-top: 0;
+			justify-content: flex-end;
+		}
 
 		.imported-user-item__role {
 			background: var(--color-surface);
@@ -71,9 +113,13 @@
 			border-radius: 2px;
 			color: var(--color-text-subtle);
 			font-size: 0.75rem;
-			margin-left: 8px;
+			margin-left: 0;
 			padding: 2px 6px;
 			white-space: pre;
+
+			&:first-child {
+				margin-left: 0;
+			}
 
 			&.role-super-admin {
 				background: var(--color-error);
