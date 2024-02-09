@@ -59,7 +59,7 @@ class SocialSignupForm extends Component {
 	};
 
 	// eslint-disable-next-line no-unused-vars
-	handleGitHubResponse = ( accessToken, triggeredByUser ) => {
+	handleGitHubResponse = ( accessToken, triggeredByUser = true ) => {
 		if ( ! triggeredByUser && this.props.socialService !== 'github' ) {
 			return;
 		}
