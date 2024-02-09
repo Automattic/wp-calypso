@@ -494,9 +494,10 @@ export function generateFlows( {
 			destination: getDIFMSignupDestination,
 			description: 'A flow for DIFM Lite leads',
 			excludeFromManageSiteFlows: true,
-			lastModified: '2023-10-11',
+			lastModified: '2024-02-09',
 			enableBranchSteps: true,
 			hideProgressIndicator: true,
+			enablePresales: true,
 		},
 		{
 			name: 'do-it-for-me-store',
@@ -512,9 +513,10 @@ export function generateFlows( {
 			destination: getDIFMSignupDestination,
 			description: 'The BBE store flow',
 			excludeFromManageSiteFlows: true,
-			lastModified: '2023-10-11',
+			lastModified: '2024-02-09',
 			enableBranchSteps: true,
 			hideProgressIndicator: true,
+			enablePresales: true,
 		},
 		{
 			name: 'website-design-services',
@@ -523,7 +525,8 @@ export function generateFlows( {
 			description: 'A flow for DIFM onboarding',
 			excludeFromManageSiteFlows: true,
 			providesDependenciesInQuery: [ 'siteSlug' ],
-			lastModified: '2022-05-02',
+			lastModified: '2024-02-09',
+			enablePresales: true,
 		},
 
 		{
