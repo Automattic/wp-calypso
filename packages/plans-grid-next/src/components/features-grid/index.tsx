@@ -8,6 +8,7 @@ import {
 import { FoldableCard } from '@automattic/components';
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
+import useGridPlanForSpotlight from '../../hooks/data-store/use-grid-plan-for-spotlight';
 import useUpgradeClickHandler from '../../hooks/use-upgrade-click-handler';
 import BillingTimeframes from './billing-timeframes';
 import MobileFreeDomain from './mobile-free-domain';
@@ -46,7 +47,6 @@ const MobileView = ( {
 	currentSitePlanSlug,
 	generatedWPComSubdomain,
 	gridPlanForSpotlight,
-	renderedGridPlans,
 	hideUnavailableFeatures,
 	intervalType,
 	isCustomDomainAllowedOnFreePlan,
@@ -57,6 +57,7 @@ const MobileView = ( {
 	paidDomainName,
 	planActionOverrides,
 	planUpgradeCreditsApplicable,
+	renderedGridPlans,
 	selectedFeature,
 	showUpgradeableStorage,
 }: MobileViewProps ) => {
@@ -224,28 +225,36 @@ const TabletView = ( {
 };
 
 const FeaturesGrid = ( {
-	gridPlans,
-	gridPlanForSpotlight,
-	stickyRowOffset,
-	isInSignup,
-	planUpgradeCreditsApplicable,
 	currentSitePlanSlug,
-	isLaunchPage,
-	planActionOverrides,
-	onUpgradeClick,
-	intervalType,
-	onStorageAddOnClick,
-	showUpgradeableStorage,
-	paidDomainName,
-	hideUnavailableFeatures,
-	selectedFeature,
 	generatedWPComSubdomain,
-	isCustomDomainAllowedOnFreePlan,
+	gridPlans,
 	gridSize,
+	hideUnavailableFeatures,
+	intent,
+	intervalType,
+	isCustomDomainAllowedOnFreePlan,
+	isInSignup,
+	isLaunchPage,
+	isSpotlightOnCurrentPlan,
+	onStorageAddOnClick,
+	onUpgradeClick,
+	paidDomainName,
+	planActionOverrides,
+	planUpgradeCreditsApplicable,
+	selectedFeature,
+	showUpgradeableStorage,
+	stickyRowOffset,
 }: FeaturesGridProps ) => {
 	const handleUpgradeClick = useUpgradeClickHandler( {
 		gridPlans,
 		onUpgradeClick,
+	} );
+
+	const gridPlanForSpotlight = useGridPlanForSpotlight( {
+		sitePlanSlug: currentSitePlanSlug,
+		isSpotlightOnCurrentPlan,
+		intent,
+		gridPlansForFeaturesGrid: gridPlans,
 	} );
 
 	const spotlightPlanProps = {

@@ -2,15 +2,12 @@ import config from '@automattic/calypso-config';
 import {
 	chooseDefaultCustomerType,
 	getPlan,
-	getPlanClass,
 	getPlanPath,
 	isFreePlan,
 	isPersonalPlan,
 	PLAN_PERSONAL,
 	PRODUCT_1GB_SPACE,
 	WPComStorageAddOnSlug,
-	PLAN_HOSTING_TRIAL_MONTHLY,
-	PLAN_ENTERPRISE_GRID_WPCOM,
 	PLAN_FREE,
 	isWpcomEnterpriseGridPlan,
 	type PlanSlug,
@@ -25,8 +22,8 @@ import {
 	ComparisonGrid,
 	PlanTypeSelector,
 	useGridPlans,
-	usePlanFeaturesForGridPlans,
-	useRestructuredPlanFeaturesForComparisonGrid,
+	usePlansForFeaturesGrid,
+	usePlansForComparisonGrid,
 } from '@automattic/plans-grid-next';
 import { isMobile } from '@automattic/viewport';
 import styled from '@emotion/styled';
@@ -84,7 +81,6 @@ import usePlanIntentFromSiteMeta from './hooks/use-plan-intent-from-site-meta';
 import { usePlanUpgradeCreditsApplicable } from './hooks/use-plan-upgrade-credits-applicable';
 import useGetFreeSubdomainSuggestion from './hooks/use-suggested-free-domain-from-paid-domain';
 import type {
-	GridPlan,
 	PlansIntent,
 	DataResponse,
 	PlanActionOverrides,
@@ -94,8 +90,6 @@ import type { MinimalRequestCartProduct } from '@automattic/shopping-cart';
 import type { IAppState } from 'calypso/state/types';
 
 import './style.scss';
-
-const SPOTLIGHT_ENABLED_INTENTS = [ 'plans-default-wpcom' ];
 
 const FreePlanSubHeader = styled.p`
 	margin: -32px 0 40px 0;
@@ -446,23 +440,6 @@ const PlansFeaturesMain = ( {
 		selectedSiteId: siteId,
 	} );
 
-	const planFeaturesForFeaturesGrid = usePlanFeaturesForGridPlans( {
-		gridPlans: gridPlans || [],
-		allFeaturesList: FEATURES_LIST,
-		intent,
-		selectedFeature,
-		showLegacyStorageFeature,
-		isInSignup,
-	} );
-
-	const planFeaturesForComparisonGrid = useRestructuredPlanFeaturesForComparisonGrid( {
-		gridPlans: gridPlans || [],
-		allFeaturesList: FEATURES_LIST,
-		intent,
-		selectedFeature,
-		showLegacyStorageFeature,
-	} );
-
 	// TODO: `useFilterPlansForPlanFeatures` should gradually deprecate and whatever remains to fall into the `useGridPlans` hook
 	const filteredPlansForPlanFeatures = useFilterPlansForPlanFeatures( {
 		plans: gridPlans || [],
@@ -476,39 +453,24 @@ const PlansFeaturesMain = ( {
 	} );
 
 	// we neeed only the visible ones for comparison grid (these should extend into plans-ui data store selectors)
-	const gridPlansForComparisonGrid = useMemo( () => {
-		const hiddenPlans = [ PLAN_HOSTING_TRIAL_MONTHLY, PLAN_ENTERPRISE_GRID_WPCOM ];
-
-		return filteredPlansForPlanFeatures.reduce( ( acc, gridPlan ) => {
-			if ( gridPlan.isVisible && ! hiddenPlans.includes( gridPlan.planSlug ) ) {
-				return [
-					...acc,
-					{
-						...gridPlan,
-						features: planFeaturesForComparisonGrid[ gridPlan.planSlug ],
-					},
-				];
-			}
-
-			return acc;
-		}, [] as GridPlan[] );
-	}, [ filteredPlansForPlanFeatures, planFeaturesForComparisonGrid ] );
+	const plansForComparisonGrid = usePlansForComparisonGrid( {
+		allFeaturesList: FEATURES_LIST,
+		gridPlans: filteredPlansForPlanFeatures,
+		intent,
+		selectedFeature,
+		showLegacyStorageFeature,
+	} );
 
 	// we neeed only the visible ones for features grid (these should extend into plans-ui data store selectors)
-	const gridPlansForFeaturesGrid = useMemo( () => {
-		return filteredPlansForPlanFeatures.reduce( ( acc, gridPlan ) => {
-			if ( gridPlan.isVisible ) {
-				return [
-					...acc,
-					{
-						...gridPlan,
-						features: planFeaturesForFeaturesGrid[ gridPlan.planSlug ],
-					},
-				];
-			}
-			return acc;
-		}, [] as GridPlan[] );
-	}, [ filteredPlansForPlanFeatures, planFeaturesForFeaturesGrid ] );
+	const plansForFeaturesGrid = usePlansForFeaturesGrid( {
+		allFeaturesList: FEATURES_LIST,
+		availablePlans: gridPlans || [],
+		gridPlans: filteredPlansForPlanFeatures,
+		intent,
+		isInSignup,
+		selectedFeature,
+		showLegacyStorageFeature,
+	} );
 
 	let hidePlanSelector = false;
 	// In the "purchase a plan and free domain" flow we do not want to show
@@ -549,7 +511,7 @@ const PlansFeaturesMain = ( {
 			displayedIntervals: filteredDisplayedIntervals,
 			showPlanTypeSelectorDropdown,
 			kind: planTypeSelector,
-			plans: gridPlansForFeaturesGrid.map( ( gridPlan ) => gridPlan.planSlug ),
+			plans: plansForFeaturesGrid.map( ( gridPlan ) => gridPlan.planSlug ),
 			currentSitePlanSlug: sitePlanSlug,
 			useCheckPlanAvailabilityForPurchase,
 			recordTracksEvent,
@@ -608,7 +570,7 @@ const PlansFeaturesMain = ( {
 		filteredDisplayedIntervals,
 		showPlanTypeSelectorDropdown,
 		planTypeSelector,
-		gridPlansForFeaturesGrid,
+		plansForFeaturesGrid,
 		sitePlanSlug,
 		coupon,
 		siteId,
@@ -681,24 +643,6 @@ const PlansFeaturesMain = ( {
 		canUserManageCurrentPlan,
 		currentPlanManageHref,
 	] );
-
-	/**
-	 * The spotlight in smaller grids looks broken.
-	 * So for now we only allow the spotlight in the default grid plans grid where we display all 6 plans.
-	 * In order to accommodate this for other variations with lesser number of plans the design needs to be reworked.
-	 * Or else the intent needs to be explicitly allow the spotlight to be shown in this relevant intent.
-	 * Eventually once the spotlight card is made responsive this flag can be removed.
-	 * Check : https://github.com/Automattic/wp-calypso/pull/80232 for more details.
-	 */
-	const gridPlanForSpotlight = useMemo( () => {
-		return sitePlanSlug &&
-			isSpotlightOnCurrentPlan &&
-			SPOTLIGHT_ENABLED_INTENTS.includes( intent ?? '' )
-			? gridPlansForFeaturesGrid.find(
-					( { planSlug } ) => getPlanClass( planSlug ) === getPlanClass( sitePlanSlug )
-			  )
-			: undefined;
-	}, [ sitePlanSlug, isSpotlightOnCurrentPlan, intent, gridPlansForFeaturesGrid ] );
 
 	const [ masterbarHeight, setMasterbarHeight ] = useState( 0 );
 	/**
@@ -787,7 +731,7 @@ const PlansFeaturesMain = ( {
 		: masterbarHeight;
 	const planUpgradeCreditsApplicable = usePlanUpgradeCreditsApplicable(
 		siteId,
-		gridPlansForFeaturesGrid.map( ( gridPlan ) => gridPlan.planSlug )
+		plansForFeaturesGrid.map( ( gridPlan ) => gridPlan.planSlug )
 	);
 
 	return (
@@ -832,7 +776,7 @@ const PlansFeaturesMain = ( {
 				/>
 				{ siteId && (
 					<PlanNotice
-						visiblePlans={ gridPlansForFeaturesGrid.map( ( gridPlan ) => gridPlan.planSlug ) }
+						visiblePlans={ plansForFeaturesGrid.map( ( gridPlan ) => gridPlan.planSlug ) }
 						siteId={ siteId }
 						isInSignup={ isInSignup }
 						{ ...( withDiscount &&
@@ -884,8 +828,7 @@ const PlansFeaturesMain = ( {
 						>
 							<div className="plans-wrapper">
 								<FeaturesGrid
-									gridPlans={ gridPlansForFeaturesGrid }
-									gridPlanForSpotlight={ gridPlanForSpotlight }
+									gridPlans={ plansForFeaturesGrid }
 									paidDomainName={ paidDomainName }
 									generatedWPComSubdomain={ resolvedSubdomainName }
 									isCustomDomainAllowedOnFreePlan={ isCustomDomainAllowedOnFreePlan }
@@ -910,6 +853,7 @@ const PlansFeaturesMain = ( {
 									recordTracksEvent={ recordTracksEvent }
 									coupon={ coupon }
 									planUpgradeCreditsApplicable={ planUpgradeCreditsApplicable }
+									isSpotlightOnCurrentPlan={ isSpotlightOnCurrentPlan }
 								/>
 								{ showEscapeHatch && hidePlansFeatureComparison && (
 									<div className="plans-features-main__escape-hatch">
@@ -950,7 +894,7 @@ const PlansFeaturesMain = ( {
 												/>
 											) }
 											<ComparisonGrid
-												gridPlans={ gridPlansForComparisonGrid }
+												gridPlans={ plansForComparisonGrid }
 												isInSignup={ isInSignup }
 												isInAdmin={ ! isInSignup }
 												isLaunchPage={ isLaunchPage }

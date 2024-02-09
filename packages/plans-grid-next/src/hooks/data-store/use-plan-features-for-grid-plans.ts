@@ -14,6 +14,15 @@ import type {
 } from '../../types';
 import type { FeatureObject, FeatureList } from '@automattic/calypso-products';
 
+export type UsePlanFeaturesForGridPlansParams = {
+	allFeaturesList: FeatureList;
+	gridPlans: Omit< GridPlan, 'features' >[];
+	intent?: PlansIntent;
+	isInSignup?: boolean;
+	selectedFeature?: string | null;
+	showLegacyStorageFeature?: boolean;
+};
+
 export type UsePlanFeaturesForGridPlans = ( {
 	gridPlans,
 	// allFeaturesList temporary until feature definitions are ported to calypso-products package
@@ -22,14 +31,7 @@ export type UsePlanFeaturesForGridPlans = ( {
 	showLegacyStorageFeature,
 	selectedFeature,
 	isInSignup,
-}: {
-	gridPlans: Omit< GridPlan, 'features' >[];
-	allFeaturesList: FeatureList;
-	intent?: PlansIntent;
-	selectedFeature?: string | null;
-	showLegacyStorageFeature?: boolean;
-	isInSignup?: boolean;
-} ) => { [ planSlug: string ]: PlanFeaturesForGridPlan };
+}: UsePlanFeaturesForGridPlansParams ) => { [ planSlug: string ]: PlanFeaturesForGridPlan };
 
 /**
  * usePlanFeaturesForGridPlans:

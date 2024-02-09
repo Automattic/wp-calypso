@@ -8,6 +8,8 @@ import { Plans2023Tooltip } from './components/plans-2023-tooltip';
 import PlansGridContextProvider from './grid-context';
 import useGridPlans from './hooks/data-store/use-grid-plans';
 import usePlanFeaturesForGridPlans from './hooks/data-store/use-plan-features-for-grid-plans';
+import usePlansForComparisonGrid from './hooks/data-store/use-plans-for-comparison-grid';
+import usePlansForFeaturesGrid from './hooks/data-store/use-plans-for-features-grid';
 import useRestructuredPlanFeaturesForComparisonGrid from './hooks/data-store/use-restructured-plan-features-for-comparison-grid';
 import useGridSize from './hooks/use-grid-size';
 import { useManageTooltipToggle } from './hooks/use-manage-tooltip-toggle';
@@ -154,4 +156,6 @@ export {
 	useGridPlans,
 	usePlanFeaturesForGridPlans,
 	useRestructuredPlanFeaturesForComparisonGrid,
+	usePlansForFeaturesGrid,
+	usePlansForComparisonGrid,
 };
