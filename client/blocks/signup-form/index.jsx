@@ -1108,7 +1108,7 @@ class SignupForm extends Component {
 			return this.props.translate( 'Sign up to start editing {{span}}%(domain)s{{/span}}', {
 				args: { domain: invite.site.title },
 				components: {
-					span: <span>{ invite.site.title }</span>,
+					span: <span />,
 				},
 			} );
 		}
