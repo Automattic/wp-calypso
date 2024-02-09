@@ -187,7 +187,6 @@ export interface PlansFeaturesMainProps {
 	hideEnterprisePlan?: boolean;
 	isStepperUpgradeFlow?: boolean;
 	isLaunchPage?: boolean | null;
-	isPlansInsideStepper?: boolean;
 	hideUnavailableFeatures?: boolean; // used to hide features that are not available, instead of strike-through as explained in #76206
 	showLegacyStorageFeature?: boolean;
 	isSpotlightOnCurrentPlan?: boolean;
@@ -196,7 +195,7 @@ export interface PlansFeaturesMainProps {
 	 * Shows the plan type selector dropdown instead of the default toggle
 	 */
 	showPlanTypeSelectorDropdown?: boolean;
-	onPlanIntervalChange?: ( path: string ) => void;
+	onPlanIntervalUpdate?: ( path: string ) => void;
 }
 
 const SecondaryFormattedHeader = ( { siteSlug }: { siteSlug?: string | null } ) => {
@@ -251,7 +250,6 @@ const PlansFeaturesMain = ( {
 	hideUnavailableFeatures = false,
 	isInSignup = false,
 	isCustomDomainAllowedOnFreePlan = false,
-	isPlansInsideStepper = false,
 	isStepperUpgradeFlow = false,
 	isLaunchPage = false,
 	showLegacyStorageFeature = false,
@@ -259,7 +257,7 @@ const PlansFeaturesMain = ( {
 	renderSiblingWhenLoaded,
 	showPlanTypeSelectorDropdown = false,
 	coupon,
-	onPlanIntervalChange,
+	onPlanIntervalUpdate,
 }: PlansFeaturesMainProps ) => {
 	const [ isModalOpen, setIsModalOpen ] = useState( false );
 	const [ lastClickedPlan, setLastClickedPlan ] = useState< string | null >( null );
@@ -540,7 +538,6 @@ const PlansFeaturesMain = ( {
 			isStepperUpgradeFlow,
 			isInSignup,
 			eligibleForWpcomMonthlyPlans,
-			isPlansInsideStepper,
 			intervalType,
 			customerType: _customerType,
 			siteSlug,
@@ -558,7 +555,7 @@ const PlansFeaturesMain = ( {
 			withDiscount,
 		};
 
-		const handlePlanIntervalChange = ( selectedItem: { key: SupportedUrlFriendlyTermType } ) => {
+		const handlePlanIntervalUpdate = ( interval: SupportedUrlFriendlyTermType ) => {
 			let isDomainUpsellFlow: string | null = '';
 			let isDomainAndPlanPackageFlow: string | null = '';
 			let isJetpackAppFlow: string | null = '';
@@ -572,14 +569,14 @@ const PlansFeaturesMain = ( {
 			}
 
 			const pathOrQueryParam = getPlanTypeDestination( props, {
-				intervalType: selectedItem.key,
+				intervalType: interval,
 				domain: isDomainUpsellFlow,
 				domainAndPlanPackage: isDomainAndPlanPackageFlow,
 				jetpackAppPlans: isJetpackAppFlow,
 			} );
 
-			if ( onPlanIntervalChange ) {
-				return onPlanIntervalChange( pathOrQueryParam );
+			if ( onPlanIntervalUpdate ) {
+				return onPlanIntervalUpdate( pathOrQueryParam );
 			}
 
 			if ( hasQueryArg( pathOrQueryParam, 'intervalType' ) ) {
@@ -592,14 +589,13 @@ const PlansFeaturesMain = ( {
 
 		return {
 			...props,
-			onPlanIntervalChange: handlePlanIntervalChange,
+			onPlanIntervalUpdate: handlePlanIntervalUpdate,
 		};
 	}, [
 		basePlansPath,
 		isStepperUpgradeFlow,
 		isInSignup,
 		eligibleForWpcomMonthlyPlans,
-		isPlansInsideStepper,
 		intervalType,
 		_customerType,
 		siteSlug,
@@ -614,7 +610,7 @@ const PlansFeaturesMain = ( {
 		siteId,
 		withDiscount,
 		getPlanTypeDestination,
-		onPlanIntervalChange,
+		onPlanIntervalUpdate,
 	] );
 
 	const isEligibleForTrial = useSelector( isUserEligibleForFreeHostingTrial );
