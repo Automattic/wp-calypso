@@ -6,7 +6,7 @@ interface Props {
 	children?: React.ReactNode;
 	disabled?: boolean;
 	label?: string;
-	toolTipText?: string;
+	tooltipText?: string;
 	trackEventName?: string;
 	variant: 'primary' | 'secondary' | 'tertiary';
 }
@@ -14,7 +14,7 @@ interface Props {
 const BackupNowButton: FunctionComponent< Props > = ( {
 	children,
 	disabled = false,
-	toolTipText,
+	tooltipText,
 	trackEventName,
 	variant,
 } ) => {
@@ -32,8 +32,8 @@ const BackupNowButton: FunctionComponent< Props > = ( {
 
 	return (
 		<>
-			{ toolTipText ? (
-				<Tooltip text={ toolTipText }>{ button }</Tooltip>
+			{ tooltipText ? (
+				<Tooltip text={ tooltipText }>{ button }</Tooltip>
 			) : (
 				<button onClick={ handleClick } disabled={ disabled }>
 					{ button }

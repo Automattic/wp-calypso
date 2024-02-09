@@ -8,7 +8,7 @@ function render() {
 		<div>
 			<BackupNowButton
 				variant="primary"
-				toolTipText="Click here to backup your site now."
+				tooltipText="Click here to backup your site now."
 				trackEventName="calypso_jetpack_backup_now"
 			>
 				Backup Now
