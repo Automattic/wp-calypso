@@ -6,7 +6,7 @@ interface Invitee {
 	role: string;
 }
 
-export function useSendInvites( siteId: string ) {
+export function useSendInvites( siteId: number ) {
 	return useMutation( {
 		mutationFn: ( invitees: Invitee[] ) => {
 			return wpcomRequest( {
