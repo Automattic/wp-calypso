@@ -1,4 +1,5 @@
 import { useSendInvites } from '@automattic/data-stores';
+import { localizeUrl } from '@automattic/i18n-utils';
 import { NextButton, Title, SubTitle } from '@automattic/onboarding';
 import { Button } from '@wordpress/components';
 import { useState } from '@wordpress/element';
@@ -140,7 +141,10 @@ const ImportUsers = ( { site, onSubmit }: Props ) => {
 						{
 							components: {
 								secureSignOnLink: (
-									<ExternalLink target="_blank" href="https://jetpack.com/support/sso/" />
+									<ExternalLink
+										target="_blank"
+										href={ localizeUrl( 'https://jetpack.com/support/sso/' ) }
+									/>
 								),
 							},
 						}
