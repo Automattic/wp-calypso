@@ -1,5 +1,5 @@
 import { translate, useTranslate, getLocaleSlug } from 'i18n-calypso';
-import { createElement, useCallback, useMemo } from 'react';
+import { useCallback, useMemo } from 'react';
 import {
 	PRODUCT_JETPACK_ANTI_SPAM_BI_YEARLY,
 	PRODUCT_JETPACK_ANTI_SPAM,
@@ -176,47 +176,7 @@ export const getJetpackProductsShortNames = (): Record< string, TranslateResult 
 };
 
 export const getJetpackProductsDisplayNames = (): Record< string, TranslateResult > => {
-	const backupDaily = translate( 'VaultPress Backup {{em}}Daily{{/em}}', {
-		components: {
-			em: <em />,
-		},
-	} );
-	const backupRealtime = (
-		<>
-			{ translate( 'VaultPress Backup {{em}}Real-time{{/em}}', {
-				components: {
-					em: <em style={ { whiteSpace: 'nowrap' } } />,
-				},
-			} ) }
-		</>
-	);
-	const backup = translate( 'VaultPress Backup' );
-	const search = translate( 'Site Search', { context: 'Jetpack product name' } );
-	const stats = translate( 'Stats (Personal)', { context: 'Jetpack product name' } );
-	const statsFree = translate( 'Stats (Free)', { context: 'Jetpack product name' } );
-	const statsCommercial = translate( 'Stats', { context: 'Jetpack product name' } );
-	const scan = translate( 'Scan' );
-	const scanRealtime = (
-		<>
-			{ translate( 'Scan {{em}}Real-time{{/em}}', {
-				components: {
-					em: <em style={ { whiteSpace: 'nowrap' } } />,
-				},
-			} ) }
-		</>
-	);
-	const videoPress = translate( 'VideoPress' );
-	const aiAssistant = translate( 'AI', { context: 'Jetpack product name' } );
-	const creator = translate( 'Creator', { context: 'Jetpack product name' } );
-	const antiSpam = translate( 'Akismet {{s}}Anti-spam{{/s}}', {
-		components: {
-			s: <span style={ { whiteSpace: 'nowrap' } } />,
-		},
-	} );
-	const boost = translate( 'Boost', { context: 'Jetpack product name' } );
-	const socialBasic = translate( 'Social', { context: 'Jetpack product name' } );
-	const socialAdvanced = translate( 'Social', { context: 'Jetpack product name' } );
-
+	const vaultPressBackupName = getJetpackProductsShortNames()[ PRODUCT_JETPACK_BACKUP_T1_YEARLY ];
 	const text10gb = translate( '%(numberOfGigabytes)dGB', '%(numberOfGigabytes)dGB', {
 		comment:
 			'Displays an amount of gigabytes. Plural string used in case GB needs to be pluralized.',
@@ -251,70 +211,24 @@ export const getJetpackProductsDisplayNames = (): Record< string, TranslateResul
 	} );
 
 	//Backup Add-on products
-	const backupAddon10gb = translate( 'VaultPress Backup Add-on Storage (%(storageAmount)s)', {
-		args: { storageAmount: text10gb },
+	const backupAddon10gb = translate( '%(pluginName)s Add-on Storage (%(storageAmount)s)', {
+		args: { storageAmount: text10gb, pluginName: vaultPressBackupName },
 	} );
-	const backupAddon100gb = translate( 'VaultPress Backup Add-on Storage (%(storageAmount)s)', {
-		args: { storageAmount: text100gb },
+	const backupAddon100gb = translate( '%(pluginName)s Add-on Storage (%(storageAmount)s)', {
+		args: { storageAmount: text100gb, pluginName: vaultPressBackupName },
 	} );
-	const backupAddon1tb = translate( 'VaultPress Backup Add-on Storage (%(storageAmount)s)', {
-		args: { storageAmount: text1tb },
+	const backupAddon1tb = translate( '%(pluginName)s Add-on Storage (%(storageAmount)s)', {
+		args: { storageAmount: text1tb, pluginName: vaultPressBackupName },
 	} );
-	const backupAddon3tb = translate( 'VaultPress Backup Add-on Storage (%(storageAmount)s)', {
-		args: { storageAmount: text3tb },
+	const backupAddon3tb = translate( '%(pluginName)s Add-on Storage (%(storageAmount)s)', {
+		args: { storageAmount: text3tb, pluginName: vaultPressBackupName },
 	} );
-	const backupAddon5tb = translate( 'VaultPress Backup Add-on Storage (%(storageAmount)s)', {
-		args: { storageAmount: text5tb },
+	const backupAddon5tb = translate( '%(pluginName)s Add-on Storage (%(storageAmount)s)', {
+		args: { storageAmount: text5tb, pluginName: vaultPressBackupName },
 	} );
 
 	return {
-		[ PRODUCT_JETPACK_AI_MONTHLY ]: aiAssistant,
-		[ PRODUCT_JETPACK_AI_YEARLY ]: aiAssistant,
-		[ PRODUCT_JETPACK_AI_BI_YEARLY ]: aiAssistant,
-		[ PRODUCT_JETPACK_CREATOR_MONTHLY ]: creator,
-		[ PRODUCT_JETPACK_CREATOR_YEARLY ]: creator,
-		[ PRODUCT_JETPACK_CREATOR_BI_YEARLY ]: creator,
-		[ PRODUCT_JETPACK_BACKUP_DAILY ]: backupDaily,
-		[ PRODUCT_JETPACK_BACKUP_DAILY_MONTHLY ]: backupDaily,
-		[ PRODUCT_JETPACK_BACKUP_REALTIME ]: backupRealtime,
-		[ PRODUCT_JETPACK_BACKUP_REALTIME_MONTHLY ]: backupRealtime,
-		[ PRODUCT_JETPACK_BACKUP_T0_YEARLY ]: backup,
-		[ PRODUCT_JETPACK_BACKUP_T0_MONTHLY ]: backup,
-		[ PRODUCT_JETPACK_BACKUP_T1_BI_YEARLY ]: backup,
-		[ PRODUCT_JETPACK_BACKUP_T1_YEARLY ]: backup,
-		[ PRODUCT_JETPACK_BACKUP_T1_MONTHLY ]: backup,
-		[ PRODUCT_JETPACK_BACKUP_T2_YEARLY ]: backup,
-		[ PRODUCT_JETPACK_BACKUP_T2_MONTHLY ]: backup,
-		[ PRODUCT_JETPACK_BOOST_BI_YEARLY ]: boost,
-		[ PRODUCT_JETPACK_BOOST ]: boost,
-		[ PRODUCT_JETPACK_BOOST_MONTHLY ]: boost,
-		[ PRODUCT_JETPACK_SEARCH_BI_YEARLY ]: search,
-		[ PRODUCT_JETPACK_SEARCH ]: search,
-		[ PRODUCT_JETPACK_SEARCH_MONTHLY ]: search,
-		[ PRODUCT_WPCOM_SEARCH ]: search,
-		[ PRODUCT_WPCOM_SEARCH_MONTHLY ]: search,
-		[ PRODUCT_JETPACK_STATS_BI_YEARLY ]: statsCommercial,
-		[ PRODUCT_JETPACK_STATS_YEARLY ]: statsCommercial,
-		[ PRODUCT_JETPACK_STATS_MONTHLY ]: statsCommercial,
-		[ PRODUCT_JETPACK_STATS_PWYW_YEARLY ]: stats,
-		[ PRODUCT_JETPACK_STATS_FREE ]: statsFree,
-		[ PRODUCT_JETPACK_SCAN_BI_YEARLY ]: scan,
-		[ PRODUCT_JETPACK_SCAN ]: scan,
-		[ PRODUCT_JETPACK_SCAN_MONTHLY ]: scan,
-		[ PRODUCT_JETPACK_SCAN_REALTIME ]: scanRealtime,
-		[ PRODUCT_JETPACK_SCAN_REALTIME_MONTHLY ]: scanRealtime,
-		[ PRODUCT_JETPACK_VIDEOPRESS_BI_YEARLY ]: videoPress,
-		[ PRODUCT_JETPACK_VIDEOPRESS ]: videoPress,
-		[ PRODUCT_JETPACK_VIDEOPRESS_MONTHLY ]: videoPress,
-		[ PRODUCT_JETPACK_ANTI_SPAM_BI_YEARLY ]: antiSpam,
-		[ PRODUCT_JETPACK_ANTI_SPAM ]: antiSpam,
-		[ PRODUCT_JETPACK_ANTI_SPAM_MONTHLY ]: antiSpam,
-		[ PRODUCT_JETPACK_SOCIAL_BASIC_BI_YEARLY ]: socialBasic,
-		[ PRODUCT_JETPACK_SOCIAL_BASIC ]: socialBasic,
-		[ PRODUCT_JETPACK_SOCIAL_BASIC_MONTHLY ]: socialBasic,
-		[ PRODUCT_JETPACK_SOCIAL_ADVANCED_BI_YEARLY ]: socialAdvanced,
-		[ PRODUCT_JETPACK_SOCIAL_ADVANCED ]: socialAdvanced,
-		[ PRODUCT_JETPACK_SOCIAL_ADVANCED_MONTHLY ]: socialAdvanced,
+		...getJetpackProductsShortNames(),
 		[ PRODUCT_JETPACK_BACKUP_ADDON_STORAGE_10GB_MONTHLY ]: backupAddon10gb,
 		[ PRODUCT_JETPACK_BACKUP_ADDON_STORAGE_100GB_MONTHLY ]: backupAddon100gb,
 		[ PRODUCT_JETPACK_BACKUP_ADDON_STORAGE_1TB_MONTHLY ]: backupAddon1tb,
