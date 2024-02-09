@@ -30,17 +30,7 @@ const BackupNowButton: FunctionComponent< Props > = ( {
 		</Button>
 	);
 
-	return (
-		<>
-			{ tooltipText ? (
-				<Tooltip text={ tooltipText }>{ button }</Tooltip>
-			) : (
-				<button onClick={ handleClick } disabled={ disabled }>
-					{ button }
-				</button>
-			) }
-		</>
-	);
+	return <>{ tooltipText ? <Tooltip text={ tooltipText }>{ button }</Tooltip> : button }</>;
 };
 
 export default BackupNowButton;
