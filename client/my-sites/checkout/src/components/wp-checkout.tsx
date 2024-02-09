@@ -772,24 +772,58 @@ const CheckoutSummaryTitlePrice = styled.span`
 
 const CheckoutSummaryBody = styled.div`
 	box-sizing: border-box;
-	display: none;
 	margin: 0 auto;
 	max-width: 600px;
 	width: 100%;
 	padding: 24px;
+	${ hasCheckoutVersion( '2' )
+		? `grid-template-areas: 
+			"preview"
+			"review"
+			"summary"
+			"nudge"
+			"features";
+			display: grid;
+			`
+		: `display: none` };
 
 	.is-visible & {
-		display: block;
+		${ hasCheckoutVersion( '2' ) ? ' display: grid' : 'display: block' };
+	}
+
+	& .checkout-site-preview {
+		grid-area: preview;
+	}
+
+	& .checkout-review-order {
+		grid-area: review;
 	}
 
 	@media ( ${ ( props ) => props.theme.breakpoints.tabletUp } ) {
 		padding: 24px;
+
+		${ hasCheckoutVersion( '2' ) &&
+		`grid-template-areas: 
+			"review review"
+			"summary summary"
+			"features nudge"
+			` };
 	}
 
 	@media ( ${ ( props ) => props.theme.breakpoints.desktopUp } ) {
-		display: block;
 		max-width: 328px;
 		padding: 0;
+
+		${ hasCheckoutVersion( '2' )
+			? `grid-template-areas: 
+			"preview"	
+			"review"
+			"summary"
+			"nudge"
+			"features";
+			display: grid;
+			`
+			: `display: block;` };
 
 		& .card {
 			box-shadow: none;
@@ -800,6 +834,7 @@ const CheckoutSummaryBody = styled.div`
 const CheckoutSidebarNudgeWrapper = styled.div`
 	display: flex;
 	flex-direction: column;
+	${ hasCheckoutVersion( '2' ) && `grid-area: nudge` };
 
 	& > * {
 		max-width: 288px;

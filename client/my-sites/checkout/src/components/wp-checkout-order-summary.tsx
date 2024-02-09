@@ -816,10 +816,16 @@ const pulse = keyframes`
 
 const CheckoutSummaryCard = styled.div`
 	border-bottom: none 0;
+	${ hasCheckoutVersion( '2' ) && `grid-area: summary` }
 `;
 
 const CheckoutSummaryFeatures = styled.div`
 	padding: 24px 0;
+	${ hasCheckoutVersion( '2' ) && `grid-area: features; justify-self: center;` }
+
+	@media ( ${ ( props ) => props.theme.breakpoints.tabletUp } ) {
+		${ hasCheckoutVersion( '2' ) && ` justify-self: flex-start;` }
+	}
 
 	@media ( ${ ( props ) => props.theme.breakpoints.desktopUp } ) {
 		padding: 24px 0;
