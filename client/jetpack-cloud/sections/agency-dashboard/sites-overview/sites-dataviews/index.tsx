@@ -202,12 +202,6 @@ const SitesDataViews = ( { data, isLoading }: Props ) => {
 
 	return (
 		<>
-			<div style={ { marginBottom: '40px', textAlign: 'center' } }>
-				<b>Hello DataViews!</b>
-				<br />
-				The is a quick working prototype of the Table Atelier in Jetpack Manage
-			</div>
-
 			<DataViews
 				data={ sites }
 				paginationInfo={ { totalItems: 0, totalPages: 0 } }
