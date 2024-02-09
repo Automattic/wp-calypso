@@ -9,6 +9,7 @@ import InfiniteList from 'calypso/components/infinite-list';
 import useExternalContributorsQuery from 'calypso/data/external-contributors/use-external-contributors';
 import useP2GuestsQuery from 'calypso/data/p2/use-p2-guests-query';
 import useUsersQuery from 'calypso/data/users/use-users-query';
+import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import ImportedUserItem from './imported-user-item';
 import { getRole } from './utils';
 import type { UsersQuery, Member, UserItem } from '@automattic/data-stores';
@@ -34,6 +35,7 @@ const ImportUsers = ( { site, onSubmit }: Props ) => {
 	const users = usersData?.users?.map( ( user ) => ( { user, checked: true } ) ) || [];
 	const [ usersList, setUsersList ] = useState( users );
 	const [ checkedUsersNumber, setCheckedUsersNumber ] = useState( usersList?.length || 0 );
+	const [ userInviteError, setUserInviteError ] = useState( 'generic_error' );
 
 	const handleSubmit = async () => {
 		const selectedUsers = usersList
@@ -47,18 +49,24 @@ const ImportUsers = ( { site, onSubmit }: Props ) => {
 			return;
 		}
 
+		recordTracksEvent( 'calypso_site_importer_import_users_submit_invite', {
+			numberOfInvites: selectedUsers.length,
+		} );
+
 		const result = await sendInvites( selectedUsers )
 			.then( ( response ) => {
 				return response;
 			} )
 			.catch( () => {
-				// Show generic error message
+				// Show generic error message (adding this basic idea for now)
+				setUserInviteError( 'generic_error' );
 			} );
 
 		if ( result && Array.isArray( result ) ) {
 			const hasError = result.some( ( item ) => item.errors.length > 0 );
 			if ( hasError ) {
-				// Show error message
+				// Show error message (adding this basic idea for now)
+				setUserInviteError( 'found_failure' );
 			}
 
 			// Should we call onSubmit if any errors?
@@ -102,6 +110,19 @@ const ImportUsers = ( { site, onSubmit }: Props ) => {
 		);
 	};
 
+	const getUserInviteError = () => {
+		switch ( userInviteError ) {
+			case 'generic_error':
+				return translate( 'There was an error inviting users. Please try again.' );
+			case 'found_failure':
+				return translate(
+					'Some users were not invited. Please try again or contact support if the issue persists.'
+				);
+			default:
+				return null;
+		}
+	};
+
 	return (
 		<div className="import__user-migration">
 			<div className="import__heading import__heading-center">
@@ -126,6 +147,9 @@ const ImportUsers = ( { site, onSubmit }: Props ) => {
 					) }
 				</SubTitle>
 			</div>
+			{ userInviteError ? (
+				<div className="import__user-migration-error-message">{ getUserInviteError() }</div>
+			) : null }
 			<InfiniteList
 				items={ usersList }
 				fetchNextPage={ fetchNextPage }
@@ -134,6 +158,7 @@ const ImportUsers = ( { site, onSubmit }: Props ) => {
 				renderItem={ renderUser }
 				getItemRef={ getUserRef }
 				guessedItemHeight={ 126 }
+				renderLoadingPlaceholders={ () => <div>Loading...</div> }
 				className="import__user-migration-list"
 			/>
 			<div className="import__user-migration-footer">
@@ -162,7 +187,14 @@ const ImportUsers = ( { site, onSubmit }: Props ) => {
 				</NextButton>
 			</div>
 			<div className="import__user-migration-button-container">
-				<Button variant="link" onClick={ () => onSubmit?.() } disabled={ isSubmittingInvites }>
+				<Button
+					variant="link"
+					onClick={ () => {
+						recordTracksEvent( 'calypso_site_importer_import_users_skip', {} );
+						onSubmit?.();
+					} }
+					disabled={ isSubmittingInvites }
+				>
 					{ translate( 'Skip for now' ) }
 				</Button>
 			</div>
