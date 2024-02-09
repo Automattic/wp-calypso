@@ -1,9 +1,41 @@
-@import "@wordpress/base-styles/mixins";
+@import '@wordpress/base-styles/mixins';
 
 .github-deployments-create-repository {
+	.repository-name-formfieldset {
+		display: flex;
+		flex-direction: row;
+		align-items: flex-start;
+		gap: 16px;
+	}
+
+	.action-panel {
+		display: flex;
+	}
+
+	.action-panel__body {
+		display: flex;
+		gap: 16px;
+		flex: 0.5;
+		color: var( --color-text-primary );
+	}
+
+	.card.header-cake {
+		margin-bottom: 0;
+		border-bottom: none;
+	}
+
+	.select-dropdown__header {
+		height: 40px;
+	}
+
+	.select-dropdown__container {
+		width: 100%;
+	}
+
 	.form-radios-bar {
 		display: flex;
 		justify-content: space-between;
+		flex-direction: column;
 		gap: 8px;
 
 		> * {
@@ -11,7 +43,7 @@
 			flex: 1;
 			font-size: 0.75rem;
 			margin: 0;
-			border: 1px solid var(--color-neutral-10);
+			border: 1px solid var( --color-neutral-10 );
 			cursor: pointer;
 			background: none;
 			transition: box-shadow 0.1s linear;
@@ -31,14 +63,13 @@
 		}
 	}
 
-	.action-buttons {
+	.deploy-toggle {
 		display: flex;
-		justify-content: flex-start;
-		margin-top: 24px;
-		gap: 8px;
+		align-items: center;
+	}
 
-		:last-child {
-			color: var(--color-neutral);
-		}
+	.components-form-toggle {
+		margin-left: 5px;
+		margin-top: 1px;
 	}
 }

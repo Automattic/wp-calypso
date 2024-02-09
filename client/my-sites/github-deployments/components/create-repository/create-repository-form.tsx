@@ -1,9 +1,8 @@
-import { FormLabel } from '@automattic/components';
-import { Button } from '@wordpress/components';
+import { FormLabel, SelectDropdown } from '@automattic/components';
+import { Button, FormToggle } from '@wordpress/components';
 import { createInterpolateElement } from '@wordpress/element';
 import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
-import classNames from 'classnames';
 import { useState } from 'react';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormRadiosBar from 'calypso/components/forms/form-radios-bar';
@@ -15,17 +14,11 @@ import './style.scss';
 
 type CreateRepositoryFormProps = {
 	onRepositoryCreated?: () => void;
-	className?: string;
-	onCancel?: () => void;
 };
 
 type ProjectType = 'theme' | 'plugin' | 'site';
 
-export const CreateRepositoryForm = ( {
-	onRepositoryCreated,
-	className,
-	onCancel,
-}: CreateRepositoryFormProps ) => {
+export const CreateRepositoryForm = ( { onRepositoryCreated }: CreateRepositoryFormProps ) => {
 	const { __ } = useI18n();
 	const [ checked, setChecked ] = useState< ProjectType >( 'theme' );
 	const [ selectedTemplate, setSelectedTemplate ] = useState(
@@ -34,10 +27,6 @@ export const CreateRepositoryForm = ( {
 
 	const handleCreateRepository = () => {
 		onRepositoryCreated?.();
-	};
-
-	const handleCancel = () => {
-		onCancel?.();
 	};
 
 	const handleTemplateChange = ( event: React.ChangeEvent< HTMLSelectElement > ) => {
@@ -57,11 +46,23 @@ export const CreateRepositoryForm = ( {
 	};
 
 	return (
-		<form className={ classNames( 'github-deployments-create-repository', className ) }>
-			<FormFieldset>
-				<FormLabel htmlFor="projectName">{ __( 'Project Name' ) }</FormLabel>
-				<FormTextInput id="projectName" />
-			</FormFieldset>
+		<form style={ { width: '100%' } }>
+			<div className="repository-name-formfieldset">
+				<FormFieldset style={ { flex: 0.5 } }>
+					<FormLabel htmlFor="githubAccount">{ __( 'Github account' ) }</FormLabel>
+					<SelectDropdown
+						id="githubAccount"
+						options={ [
+							{ label: 'Account 1', value: 'account1' },
+							{ label: 'Account 2', value: 'account2' },
+						] }
+					/>
+				</FormFieldset>
+				<FormFieldset style={ { flex: 1 } }>
+					<FormLabel htmlFor="repoName">{ __( 'Repository name' ) }</FormLabel>
+					<FormTextInput id="repoName" placeholder="my-amazing-project" />
+				</FormFieldset>
+			</div>
 			<FormFieldset>
 				<FormLabel>{ __( 'What are you building ' ) }</FormLabel>
 				<FormRadiosBar
@@ -76,39 +77,19 @@ export const CreateRepositoryForm = ( {
 				/>
 			</FormFieldset>
 			<FormFieldset>
-				<FormLabel htmlFor="template">{ __( 'Select starter template' ) }</FormLabel>
-				<FormSelect
-					id="template"
-					value={ selectedTemplate.value }
-					onChange={ handleTemplateChange }
-				>
-					{ getRepositoryTemplate( checked ).map( ( template ) => (
-						<option key={ template.value } value={ template.value }>
-							{ template.name }
-						</option>
-					) ) }
-				</FormSelect>
-				<small style={ { marginTop: '12px' } }>
-					{ createInterpolateElement(
-						sprintf(
-							/* translators: %s is the name of the template */
-							__( 'Learn more about the <link>%s</link> template' ),
-							selectedTemplate.name
-						),
-						{
-							link: <InlineSupportLink supportContext="site-monitoring" showIcon={ false } />,
-						}
-					) }
-				</small>
+				<FormLabel htmlFor="directory">{ __( 'Destination directory' ) }</FormLabel>
+				<FormTextInput id="directory" placeholder="/" />
 			</FormFieldset>
-			<div className="action-buttons">
-				<Button variant="primary" onClick={ handleCreateRepository }>
-					{ __( 'Create repository' ) }
-				</Button>
-				<Button variant="tertiary" onClick={ handleCancel }>
-					{ __( 'Cancel' ) }
-				</Button>
-			</div>
+			<FormFieldset>
+				<FormLabel htmlFor="deploy">{ __( 'Automatic deploys' ) }</FormLabel>
+				<div className="deploy-toggle">
+					<FormToggle id="deploy" checked={ true } onChange={ () => {} } />
+					<small style={ { marginLeft: '8px' } }>{ __( 'Deploy changes on push ' ) }</small>
+				</div>
+			</FormFieldset>
+			<Button variant="primary" onClick={ handleCreateRepository }>
+				{ __( 'Create repository' ) }
+			</Button>
 		</form>
 	);
 };

@@ -1,29 +1,23 @@
-import { Modal } from '@wordpress/components';
 import { useI18n } from '@wordpress/react-i18n';
+import ActionPanel from 'calypso/components/action-panel';
+import ActionPanelBody from 'calypso/components/action-panel/body';
+import HeaderCake from 'calypso/components/header-cake';
+import Main from 'calypso/components/main';
 import { CreateRepositoryForm } from './create-repository-form';
-
-type CreateRepositoryModalProps = {
-	onClose: () => void;
-	onRepositoryCreated?: () => void;
-	className?: string;
-};
-
-export const CreateRepositoryModal = ( {
-	onClose,
-	className,
-	onRepositoryCreated,
-}: CreateRepositoryModalProps ) => {
+import './style.scss';
+export const CreateRepository = () => {
 	const { __ } = useI18n();
+
 	return (
-		<Modal
-			className={ className }
-			onRequestClose={ onClose }
-			shouldCloseOnEsc={ false }
-			size="medium"
-			shouldCloseOnClickOutside={ false }
-			title={ __( 'Create repository' ) }
-		>
-			<CreateRepositoryForm onRepositoryCreated={ onRepositoryCreated } onCancel={ onClose } />
-		</Modal>
+		<Main fullWidthLayout className="github-deployments-create-repository">
+			<HeaderCake backHref="#">
+				<h1>{ __( 'Create repository' ) }</h1>
+			</HeaderCake>
+			<ActionPanel style={ { margin: 0 } }>
+				<ActionPanelBody>
+					<CreateRepositoryForm onRepositoryCreated={ () => {} } />
+				</ActionPanelBody>
+			</ActionPanel>
+		</Main>
 	);
 };

@@ -11,6 +11,7 @@ import { GitHubLoadingPlaceholder } from './loading-placeholder';
 import { useGithubConnectionQuery } from './use-github-connection-query';
 
 import './style.scss';
+import { CreateRepository } from './components/create-repository';
 
 export function GitHubDeployments() {
 	const titleHeader = translate( 'GitHub Deployments' );
@@ -45,7 +46,7 @@ export function GitHubDeployments() {
 					}
 				) }
 			></FormattedHeader>
-			{ renderContent() }
+			<CreateRepository />
 		</Main>
 	);
 }
