@@ -26,6 +26,7 @@ import { ScrollToAnchorOnMount } from 'calypso/components/scroll-to-anchor-on-mo
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import TrackComponentView from 'calypso/lib/analytics/track-component-view';
 import { GitHubCard } from 'calypso/my-sites/hosting/github';
+import { GitHubAppCard } from 'calypso/my-sites/hosting/github-app';
 import TrialBanner from 'calypso/my-sites/plans/trials/trial-banner';
 import { isAutomatticTeamMember } from 'calypso/reader/lib/teams';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
@@ -128,6 +129,13 @@ const MainCards = ( {
 			? {
 					feature: 'github',
 					content: <GitHubCard />,
+					type: 'advanced',
+			  }
+			: null,
+		isGithubIntegrationEnabled
+			? {
+					feature: 'github',
+					content: <GitHubAppCard />,
 					type: 'advanced',
 			  }
 			: null,
