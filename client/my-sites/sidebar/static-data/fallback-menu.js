@@ -43,18 +43,18 @@ export default function buildFallbackResponse( {
 } = {} ) {
 	const fallbackResponse = [
 		{
-			// icon: 'dashicons-dashboard',
-			slug: 'wp-admin',
-			title: translate( 'Dashboard' ),
-			type: 'menu-item',
-			url: `https://${ siteDomain }/wp-admin/`,
-		},
-		{
 			// icon: 'dashicons-admin-home',
 			slug: 'home',
 			title: translate( 'My Home' ),
 			type: 'menu-item',
 			url: `/home/${ siteDomain }`,
+		},
+		{
+			// icon: 'dashicons-dashboard',
+			slug: 'wp-admin',
+			title: translate( 'WP Admin' ),
+			type: 'menu-item',
+			url: `https://${ siteDomain }/wp-admin/`,
 		},
 		{
 			// icon: JETPACK_ICON,
@@ -212,7 +212,7 @@ export default function buildFallbackResponse( {
 		{
 			slug: 'options-hosting-configuration-php',
 			// icon: 'dashicons-admin-generic',
-			title: translate( 'Hosting Configuration' ),
+			title: translate( 'Hosting' ),
 			type: 'submenu-item',
 			url: `/hosting-config/${ siteDomain }`,
 		},
