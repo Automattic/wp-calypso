@@ -43,7 +43,6 @@ import { getPurchaseByProductSlug } from 'calypso/lib/purchases/utils';
 import DomainWarnings from 'calypso/my-sites/domains/components/domain-warnings';
 import JetpackChecklist from 'calypso/my-sites/plans/current-plan/jetpack-checklist';
 import PlanRenewalMessage from 'calypso/my-sites/plans/jetpack-plans/plan-renewal-message';
-import ModernizedLayout from 'calypso/my-sites/plans/modernized-layout';
 import PlansNavigation from 'calypso/my-sites/plans/navigation';
 import { getSitePurchases } from 'calypso/state/purchases/selectors';
 import getConciergeScheduleId from 'calypso/state/selectors/get-concierge-schedule-id';
@@ -212,7 +211,6 @@ class CurrentPlan extends Component {
 			shouldShowDomainWarnings,
 			showThankYou,
 			translate,
-			isJetpackNotAtomic,
 		} = this.props;
 
 		const currentPlanSlug = selectedSite?.plan?.product_slug ?? '';
@@ -233,8 +231,7 @@ class CurrentPlan extends Component {
 		}
 
 		return (
-			<div>
-				{ ! isJetpackNotAtomic && <ModernizedLayout /> }
+			<Main className="current-plan__content" fullWidthLayout>
 				<DocumentHead title={ translate( 'My Plan' ) } />
 				{ selectedSiteId && (
 					<QueryConciergeInitial key={ selectedSiteId } siteId={ selectedSiteId } />
@@ -244,60 +241,53 @@ class CurrentPlan extends Component {
 				<QuerySitePurchases siteId={ selectedSiteId } />
 				<QuerySiteProducts siteId={ selectedSiteId } />
 				{ shouldQuerySiteDomains && <QuerySiteDomains siteId={ selectedSiteId } /> }
-				<div>
-					<NavigationHeader
-						className="plans__section-header"
-						navigationItems={ [] }
-						title={ translate( 'Plans' ) }
-						subtitle={ translate(
-							'Learn about the features included in your WordPress.com plan.'
-						) }
+				{ showThankYou && ! this.state.hideThankYouModal && (
+					<Dialog
+						baseClassName="current-plan__dialog dialog__content dialog__backdrop"
+						isVisible={ showThankYou }
+						onClose={ this.hideThankYouModalOnClose }
+					>
+						{ this.renderThankYou() }
+					</Dialog>
+				) }
+
+				{ showDomainWarnings && (
+					<DomainWarnings
+						domains={ domains }
+						position="current-plan"
+						selectedSite={ selectedSite }
+						allowedRules={ [
+							'newDomainsWithPrimary',
+							'newDomains',
+							'unverifiedDomainsCanManage',
+							'unverifiedDomainsCannotManage',
+							'wrongNSMappedDomains',
+							'newTransfersWrongNS',
+						] }
 					/>
-					<div className="current-plan current-plan__content">
-						{ showThankYou && ! this.state.hideThankYouModal && (
-							<Dialog
-								baseClassName="current-plan__dialog dialog__content dialog__backdrop"
-								isVisible={ showThankYou }
-								onClose={ this.hideThankYouModalOnClose }
-							>
-								{ this.renderThankYou() }
-							</Dialog>
-						) }
+				) }
 
-						<PlansNavigation path={ path } />
+				<NavigationHeader
+					className="plans__section-header"
+					navigationItems={ [] }
+					title={ translate( 'Plans' ) }
+					subtitle={ translate( 'Learn about the features included in your WordPress.com plan.' ) }
+				/>
 
-						<Main fullWidthLayout>
-							{ showDomainWarnings && (
-								<DomainWarnings
-									domains={ domains }
-									position="current-plan"
-									selectedSite={ selectedSite }
-									allowedRules={ [
-										'newDomainsWithPrimary',
-										'newDomains',
-										'unverifiedDomainsCanManage',
-										'unverifiedDomainsCannotManage',
-										'wrongNSMappedDomains',
-										'newTransfersWrongNS',
-									] }
-								/>
-							) }
+				<PlansNavigation path={ path } />
 
-							{ showExpiryNotice && (
-								<Notice status="is-info" text={ <PlanRenewalMessage /> } showDismiss={ false }>
-									<NoticeAction href={ `/plans/${ selectedSite.slug || '' }` }>
-										{ translate( 'View plans' ) }
-									</NoticeAction>
-								</Notice>
-							) }
+				{ showExpiryNotice && (
+					<Notice status="is-info" text={ <PlanRenewalMessage /> } showDismiss={ false }>
+						<NoticeAction href={ `/plans/${ selectedSite.slug || '' }` }>
+							{ translate( 'View plans' ) }
+						</NoticeAction>
+					</Notice>
+				) }
 
-							{ isTrial ? this.renderTrialPage() : this.renderMain() }
+				{ isTrial ? this.renderTrialPage() : this.renderMain() }
 
-							<TrackComponentView eventName="calypso_plans_my_plan_view" />
-						</Main>
-					</div>
-				</div>
-			</div>
+				<TrackComponentView eventName="calypso_plans_my_plan_view" />
+			</Main>
 		);
 	}
 }

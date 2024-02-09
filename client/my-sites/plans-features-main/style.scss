@@ -74,7 +74,7 @@
 	width: unset;
 
 	@include plans-section-custom-mobile-breakpoint {
-		margin: 0 0 24px;
+		margin: 24px 0;
 		width: 100%;
 	}
 }

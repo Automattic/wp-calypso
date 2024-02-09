@@ -1,30 +1,31 @@
 @import "@wordpress/base-styles/breakpoints";
 @import "@wordpress/base-styles/mixins";
+@import "@automattic/plans-grid-next/src/media-queries";
 
-.plans main {
-	@include break-medium {
-		padding-top: 24px;
-	}
-	// a formatted-header instance used within main (not as section header)
-	.plans__formatted-header {
-		&.is-domain-upsell {
-			margin-top: 30px;
-			display: flex;
-			justify-content: center;
+body.is-section-plans {
+	.main {
+		@include break-medium {
+			padding-top: 24px;
+		}
+		// a formatted-header instance used within main (not as section header)
+		.plans__formatted-header {
+			&.is-domain-upsell {
+				margin-top: 30px;
+				display: flex;
+				justify-content: center;
 
-			.formatted-header__title,
-			.formatted-header__subtitle {
-				max-width: $break-medium;
-			}
+				.formatted-header__title,
+				.formatted-header__subtitle {
+					max-width: $break-medium;
+				}
 
-			.formatted-header__title {
-				font-size: 2rem;
+				.formatted-header__title {
+					font-size: 2rem;
+				}
 			}
 		}
 	}
-}
 
-body.is-section-plans {
 	.layout__content {
 		@media (min-width: $break-small) {
 			padding: 79px 0 0 0 !important;
@@ -41,9 +42,6 @@ body.is-section-plans {
 			.section-nav__panel {
 				padding: 0 max(calc(50% - 612px), 32px);
 			}
-			.main {
-				padding: 17px max(calc(50% - 612px), 32px);
-			}
 		}
 		@media (max-width: $break-mobile) {
 			.navigation-header {
@@ -52,9 +50,6 @@ body.is-section-plans {
 			}
 			.section-nav__panel {
 				padding: 0 max(calc(50% - 612px), 15px);
-			}
-			.main {
-				padding: 17px max(calc(50% - 612px), 15px);
 			}
 		}
 	}
@@ -111,6 +106,95 @@ body.is-section-plans.is-domain-plan-package-flow {
 			}
 			p {
 				padding: 0 80px;
+			}
+		}
+	}
+}
+
+// Modernized layout - currently used for all non-Jetpack sites.
+$plans-background-color: #fdfdfd;
+$plans-section-break-medium: $plans-2023-medium-breakpoint;
+$plans-section-break-mobile: $plans-2023-small-breakpoint;
+
+.is-section-plans {
+	.layout__content {
+		background-color: $plans-background-color;
+	}
+
+	.main.is-full-width-layout {
+		max-width: calc(100% - 32px);
+		padding-top: 0;
+		width: 1224px;
+	}
+
+	.layout:not(.is-jetpack-site) .navigation {
+		box-shadow: inset 0 -1px 0 #0000000d;
+		background-color: var(--studio-white);
+
+		.segmented-control {
+			margin-left: 0;
+
+			@media (min-width: $plans-section-break-medium) {
+				margin-left: 16px;
+			}
+		}
+
+		.section-nav {
+			margin: 0;
+			box-shadow: inset 0 -1px 0 #0000000d;
+		}
+
+		.section-nav-group__label {
+			padding: 0;
+		}
+
+		.section-nav__panel {
+			padding: 0;
+
+			@media (max-width: $plans-section-break-medium) {
+				padding: 0 16px;
+			}
+		}
+
+		.section-nav-tab {
+			&:not(:first-of-type) {
+				margin-left: 16px;
+
+				@media (max-width: $plans-section-break-mobile) {
+					margin-left: 0;
+				}
+			}
+
+			.section-nav-tab__link {
+				padding: 8px 12px;
+				font-size: $font-body-small;
+				line-height: 20px;
+
+				&:hover {
+					color: var(--color-neutral-60);
+					background-color: var(--color-surface);
+				}
+
+				@media (max-width: $plans-section-break-medium) {
+					padding: 8px 0;
+				}
+
+				@media (max-width: $plans-section-break-mobile) {
+					padding: 8px;
+				}
+			}
+
+			@media (min-width: $plans-section-break-mobile) {
+				.section-nav-tab__link {
+					color: var(--color-neutral-60);
+				}
+				&.is-selected {
+					border-bottom-color: var(--color-neutral-100);
+
+					.section-nav-tab__link {
+						color: var(--color-neutral-100);
+					}
+				}
 			}
 		}
 	}
