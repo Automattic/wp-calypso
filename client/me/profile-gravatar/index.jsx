@@ -27,8 +27,10 @@ export default function ProfileGravatar( { user, inSidebar, profileImgSize } ) {
 					<Gravatar user={ user } size={ size } imgSize={ GRAVATAR_IMG_SIZE } />
 				</Animate>
 			</div>
-			<h2 className="profile-gravatar__user-display-name">{ user.display_name }</h2>
-			<div className="profile-gravatar__user-secondary-info">@{ user.username }</div>
+			<div className="profile-gravatar__user-info">
+				<h2 className="profile-gravatar__user-display-name">{ user.display_name }</h2>
+				<div className="profile-gravatar__user-secondary-info">@{ user.username }</div>
+			</div>
 		</div>
 	);
 }
