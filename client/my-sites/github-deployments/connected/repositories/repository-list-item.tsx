@@ -1,22 +1,27 @@
 import { Button } from '@automattic/components';
 import { __ } from '@wordpress/i18n';
 import { Icon, lock } from '@wordpress/icons';
+import { GitHubRepositoryData } from '../../use-github-repositories-query';
 
-interface GitHubAccountListItemProps {
+interface GitHubRepositoryListItemProps {
+	repository: GitHubRepositoryData;
 	onSelect(): void;
 }
 
-export const GitHubAccountListItem = ( { onSelect }: GitHubAccountListItemProps ) => {
+export const GitHubRepositoryListItem = ( {
+	repository,
+	onSelect,
+}: GitHubRepositoryListItemProps ) => {
 	return (
 		<tr>
 			<td>
 				<div className="github-deployments-repository-list__account">
-					@Account <Icon icon={ lock } />
+					{ repository.full_name } { repository.private && <Icon icon={ lock } size={ 16 } /> }
 				</div>
 			</td>
-			<td>1st Feb 2024</td>
+			<td>{ new Date( repository.updated_at ).toLocaleDateString() }</td>
 			<td>
-				<Button primary compact onClick={ onSelect }>
+				<Button compact onClick={ onSelect }>
 					{ __( 'Select' ) }
 				</Button>
 			</td>

@@ -1,16 +1,17 @@
+import { ExternalLink } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
-import { GitHubInstallation } from 'calypso/my-sites/github-deployments/types';
-import { GitHubAccountListItem } from './repository-list-item';
+import { GitHubRepositoryData } from '../../use-github-repositories-query';
+import { GitHubRepositoryListItem } from './repository-list-item';
 
 interface GitHubAccountListProps {
-	connections: GitHubInstallation[];
-	onSelect(): void;
+	repositories: GitHubRepositoryData[];
+	onSelect( repository: GitHubRepositoryData ): void;
 }
 
-export const GitHubRepositoryList = ( { connections = [], onSelect }: GitHubAccountListProps ) => {
+export const GitHubRepositoryList = ( { repositories, onSelect }: GitHubAccountListProps ) => {
 	return (
-		<div>
-			<table className="github-deployments-repository-list">
+		<div className="github-deployments-repository-list">
+			<table>
 				<thead>
 					<tr>
 						<th>{ __( 'Repository' ) }</th>
@@ -19,16 +20,19 @@ export const GitHubRepositoryList = ( { connections = [], onSelect }: GitHubAcco
 					</tr>
 				</thead>
 				<tbody>
-					{ connections.map( ( connection ) => (
-						<GitHubAccountListItem key={ connection.ID } connection={ connection } />
+					{ repositories.map( ( repository, index ) => (
+						<GitHubRepositoryListItem
+							key={ index }
+							repository={ repository }
+							onSelect={ () => onSelect( repository ) }
+						/>
 					) ) }
-					<GitHubAccountListItem onSelect={ onSelect } />
-					<GitHubAccountListItem onSelect={ onSelect } />
-					<GitHubAccountListItem onSelect={ onSelect } />
-					<GitHubAccountListItem onSelect={ onSelect } />
-					<GitHubAccountListItem onSelect={ onSelect } />
 				</tbody>
 			</table>
+			<p className="github-deployments-adjust-permissions">
+				{ __( 'Missing some repositories?' ) }{ ' ' }
+				<ExternalLink href="#"> { __( 'Adjust permissions on GitHub' ) } </ExternalLink>
+			</p>
 		</div>
 	);
 };

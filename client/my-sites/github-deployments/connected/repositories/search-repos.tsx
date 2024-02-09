@@ -1,29 +1,23 @@
 import { useI18n } from '@wordpress/react-i18n';
-import { useState } from 'react';
 import { Search } from './search';
 
 interface SearchReposProps {
-	siteId: number | null;
-	connectionId: number;
-	onSelect( repo: string ): void;
+	value: string;
 	onChange?( query: string ): void;
 }
 
-export const SearchRepos = ( { onSelect, onChange }: SearchReposProps ) => {
+export const SearchRepos = ( { value, onChange }: SearchReposProps ) => {
 	const { __ } = useI18n();
-	const [ query, setQuery ] = useState( '' );
 
 	return (
 		<Search
-			query={ query }
+			query={ value }
 			id="repository"
-			className="connect-branch__repository-field"
+			className="github-deployments-repositories__search"
 			placeholder={ __( 'Start typing a repo…' ) }
 			options={ [] }
 			isSearching={ false }
-			onSelect={ onSelect }
 			onChange={ ( query ) => {
-				setQuery( query.trim() );
 				onChange?.( query.trim() );
 			} }
 		/>
