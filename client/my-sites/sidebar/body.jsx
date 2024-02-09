@@ -1,5 +1,9 @@
 import { useSelector } from 'react-redux';
+import { useCurrentRoute } from 'calypso/components/route';
+import { useGlobalSidebar } from 'calypso/layout/global-sidebar/hooks/use-global-sidebar';
+import SidebarNotifications from 'calypso/layout/global-sidebar/notifications/notifications';
 import SidebarSeparator from 'calypso/layout/sidebar/separator';
+import isNotificationsOpen from 'calypso/state/selectors/is-notifications-open';
 import isSiteWpcomAtomic from 'calypso/state/selectors/is-site-wpcom-atomic';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
 import { getSidebarIsCollapsed, getSelectedSiteId } from 'calypso/state/ui/selectors';
@@ -11,12 +15,15 @@ import 'calypso/state/admin-menu/init';
 
 import './style.scss';
 
-export const MySitesSidebarUnifiedBody = ( { path } ) => {
+export const MySitesSidebarUnifiedBody = ( { path, children } ) => {
 	const menuItems = useSiteMenuItems();
 	const sidebarIsCollapsed = useSelector( getSidebarIsCollapsed );
 	const siteId = useSelector( getSelectedSiteId );
 	const isJetpack = useSelector( ( state ) => isJetpackSite( state, siteId ) );
 	const isSiteAtomic = useSelector( ( state ) => isSiteWpcomAtomic( state, siteId ) );
+	const isNotificationsPanelOpen = useSelector( ( state ) => isNotificationsOpen( state ) );
+	const { currentSection } = useCurrentRoute();
+	const shouldShowGlobalSidebar = useGlobalSidebar( siteId, currentSection );
 
 	// Jetpack self-hosted sites should open external links to WP Admin in new tabs,
 	// since WP Admin is considered a separate area from Calypso on those sites.
@@ -25,10 +32,27 @@ export const MySitesSidebarUnifiedBody = ( { path } ) => {
 	return (
 		<>
 			{ menuItems.map( ( item, i ) => {
-				const isSelected = item?.url && itemLinkMatches( item.url, path );
+				let isSelected = item?.url && itemLinkMatches( item.url, path );
+
+				if ( shouldShowGlobalSidebar && isNotificationsPanelOpen ) {
+					// The notifications panel is open, so we should not highlight the notifications menu item in the global sidebar.
+					isSelected = false;
+				}
 
 				if ( 'separator' === item?.type ) {
 					return <SidebarSeparator key={ i } />;
+				}
+
+				if ( 'custom-menu-item' === item?.type && 'notifications' === item?.slug ) {
+					return (
+						<SidebarNotifications
+							key={ item.slug }
+							isShowing={ false }
+							isActive={ true }
+							className="sidebar__item-notifications"
+							title={ item.title }
+						/>
+					);
 				}
 
 				if ( item?.children?.length ) {
@@ -54,6 +78,7 @@ export const MySitesSidebarUnifiedBody = ( { path } ) => {
 					/>
 				);
 			} ) }
+			{ children }
 		</>
 	);
 };

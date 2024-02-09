@@ -1,5 +1,5 @@
 import config from '@automattic/calypso-config';
-import { Component } from 'react';
+import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import AsyncLoad from 'calypso/components/async-load';
 import { withCurrentRoute } from 'calypso/components/route';
@@ -71,7 +71,6 @@ class MySitesNavigation extends Component {
 		const asyncProps = {
 			placeholder: null,
 			path: this.props.path,
-			useSidebarMenu: false,
 		};
 		const asyncSidebar = (
 			<AsyncLoad require="calypso/layout/global-sidebar" { ...asyncProps }>

@@ -1,7 +1,7 @@
 import { Count, Badge, Gridicon } from '@automattic/components';
 import classnames from 'classnames';
 import PropTypes from 'prop-types';
-import { useEffect } from 'react';
+import React, { useEffect, useRef, forwardRef } from 'react';
 import { useSelector } from 'react-redux';
 import MaterialIcon from 'calypso/components/material-icon';
 import TranslatableString from 'calypso/components/translatable/proptype';
@@ -10,8 +10,9 @@ import { isExternal } from 'calypso/lib/url';
 import { preload } from 'calypso/sections-helper';
 import { getSidebarIsCollapsed } from 'calypso/state/ui/selectors';
 
-//const SidebarMenuItem = forwardRef(
-export default function SidebarItem( props ) {
+const NotificationsSidebarItem = forwardRef( ( props, ref ) => {
+	const preloadedRef = useRef( false );
+
 	const isExternalLink = isExternal( props.link );
 	const showAsExternal = ( isExternalLink && ! props.forceInternalLink ) || props.forceExternalLink;
 	const classes = classnames( props.className, props.tipTarget, {
@@ -19,12 +20,13 @@ export default function SidebarItem( props ) {
 		'has-unseen': props.hasUnseen,
 	} );
 	const sidebarIsCollapsed = useSelector( getSidebarIsCollapsed );
-	const { materialIcon, materialIconStyle, icon, customIcon, count, badge, ref } = props;
+	const { materialIcon, materialIconStyle, icon, customIcon, count, badge } = props;
 
 	let _preloaded = false;
 
 	const itemPreload = () => {
 		if ( ! _preloaded && props.preloadSectionName ) {
+			preloadedRef.current = true;
 			_preloaded = true;
 			preload();
 		}
@@ -84,9 +86,9 @@ export default function SidebarItem( props ) {
 			</a>
 		</li>
 	);
-}
+} );
 
-SidebarItem.propTypes = {
+NotificationsSidebarItem.propTypes = {
 	label: TranslatableString.isRequired,
 	className: PropTypes.string,
 	link: PropTypes.string.isRequired,
@@ -105,3 +107,5 @@ SidebarItem.propTypes = {
 	count: PropTypes.number,
 	badge: PropTypes.string,
 };
+
+export default NotificationsSidebarItem;

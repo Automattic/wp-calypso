@@ -10,7 +10,7 @@ import './style.scss';
 // it's the popular value for large Gravatars in Calypso
 const GRAVATAR_IMG_SIZE = 400;
 
-export default function ProfileGravatar( { user, inSidebar } ) {
+export default function ProfileGravatar( { user, inSidebar, profileImgSize } ) {
 	const dispatch = useDispatch();
 
 	// record clicks on non-interactive profile picture
@@ -18,11 +18,13 @@ export default function ProfileGravatar( { user, inSidebar } ) {
 		dispatch( recordGoogleEvent( 'Me', 'Clicked on Unclickable Gravatar Image in Sidebar' ) );
 	}
 
+	const size = profileImgSize || 150;
+
 	return (
 		<div className={ classNames( 'profile-gravatar', { 'is-in-sidebar': inSidebar } ) }>
 			<div role="presentation" onClick={ recordGravatarMisclick }>
 				<Animate type="appear">
-					<Gravatar user={ user } size={ 150 } imgSize={ GRAVATAR_IMG_SIZE } />
+					<Gravatar user={ user } size={ size } imgSize={ GRAVATAR_IMG_SIZE } />
 				</Animate>
 			</div>
 			<h2 className="profile-gravatar__user-display-name">{ user.display_name }</h2>

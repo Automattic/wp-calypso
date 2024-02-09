@@ -3,6 +3,8 @@ import { useLocale } from '@automattic/i18n-utils';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect, useMemo } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
+import { useCurrentRoute } from 'calypso/components/route';
+import { useGlobalSidebar } from 'calypso/layout/global-sidebar/hooks/use-global-sidebar';
 import domainOnlyFallbackMenu from 'calypso/my-sites/sidebar/static-data/domain-only-fallback-menu';
 import { getAdminMenu } from 'calypso/state/admin-menu/selectors';
 import { getPluginOnSite } from 'calypso/state/plugins/installed/selectors';
@@ -17,6 +19,7 @@ import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { requestAdminMenu } from '../../state/admin-menu/actions';
 import allSitesMenu from './static-data/all-sites-menu';
 import buildFallbackResponse from './static-data/fallback-menu';
+import globalSidebarMenu from './static-data/global-sidebar-menu';
 import jetpackMenu from './static-data/jetpack-fallback-menu';
 
 const useSiteMenuItems = () => {
@@ -30,13 +33,14 @@ const useSiteMenuItems = () => {
 	const isAtomic = useSelector( ( state ) => isAtomicSite( state, selectedSiteId ) );
 	const locale = useLocale();
 	const isAllDomainsView = '/domains/manage' === currentRoute;
-	const isSitesView = '/sites' === currentRoute;
+	const { currentSection } = useCurrentRoute();
+	const shouldShowGlobalSidebar = useGlobalSidebar( selectedSiteId, currentSection );
 
 	useEffect( () => {
-		if ( ! isSitesView && selectedSiteId && siteDomain ) {
+		if ( selectedSiteId && siteDomain ) {
 			dispatch( requestAdminMenu( selectedSiteId ) );
 		}
-	}, [ dispatch, selectedSiteId, siteDomain, isSitesView, locale ] );
+	}, [ dispatch, selectedSiteId, siteDomain, locale ] );
 
 	/**
 	 * As a general rule we allow fallback data to remain as static as possible.
@@ -61,7 +65,7 @@ const useSiteMenuItems = () => {
 
 	const shouldShowAddOnsInFallbackMenu = isEnabled( 'my-sites/add-ons' ) && ! isAtomic;
 
-	const hasSiteWithPlugins = false; //useSelector( canAnySiteHavePlugins );
+	const hasSiteWithPlugins = useSelector( canAnySiteHavePlugins );
 
 	const hasUnifiedImporter = isEnabled( 'importer/unified' );
 
@@ -99,10 +103,14 @@ const useSiteMenuItems = () => {
 		} );
 	}, [ isJetpack, menuItems, siteDomain, translate ] );
 
+	if ( shouldShowGlobalSidebar ) {
+		return globalSidebarMenu();
+	}
+
 	/**
 	 * When no site domain is provided, lets show only menu items that support all sites screens.
 	 */
-	if ( ! siteDomain || isAllDomainsView || isSitesView ) {
+	if ( ! siteDomain || isAllDomainsView ) {
 		return allSitesMenu( { showManagePlugins: hasSiteWithPlugins } );
 	}
 
