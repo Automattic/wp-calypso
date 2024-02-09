@@ -715,7 +715,7 @@ $mobile-card-max-width: 440px;
 	.plan-features-2023-gridrison__actions-buttons {
 		min-height: 40px;
 	}
-	
+
 	.plan-comparison-grid__header-cell {
 		display: flex;
 		flex-direction: column;
@@ -1013,14 +1013,6 @@ $mobile-card-max-width: 440px;
 	}
 }
 
-
-/* Hosting onboarding flow */
-.is-hosting div.plan-features-2023-grid__content {
-	max-width: 768px;
-	margin-left: auto !important;
-	margin-right: auto !important;
-}
-
 /**
  * TODO clk migrate out of plans-grid-next
  */
@@ -1030,7 +1022,7 @@ body.is-section-signup.is-white-signup {
 		margin: 24px 20px 38px;
 	}
 }
- 
+
 /**
  * TODO clk migrate out of plans-grid-next
  */
