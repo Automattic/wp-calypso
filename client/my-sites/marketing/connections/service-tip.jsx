@@ -19,12 +19,12 @@ import { getSelectedSite, getSelectedSiteId } from 'calypso/state/ui/selectors';
  * a method with the tip's content.
  * @type {string[]}
  */
-const SERVICES_WITH_TIPS = [ 'instagram', 'google_plus' ];
+const SERVICES_WITH_TIPS = [ 'instagram' ];
 /**
  * List of services we provide tips for, only if the site is connected to Jetpack.
  * @type {string[]}
  */
-const JETPACK_SERVICES_WITH_TIPS = SERVICES_WITH_TIPS.concat( [ 'facebook', 'twitter' ] );
+const JETPACK_SERVICES_WITH_TIPS = SERVICES_WITH_TIPS.concat( [ 'facebook' ] );
 
 class SharingServiceTip extends Component {
 	static propTypes = {
@@ -46,13 +46,13 @@ class SharingServiceTip extends Component {
 
 	facebook() {
 		return this.props.translate(
-			'You can also add a {{likeBoxLink}}Like Box{{/likeBoxLink}}, a {{shareButtonLink}}share button{{/shareButtonLink}}, or {{embedLink}}embed{{/embedLink}} your page or profile on your site.',
+			'You can also add a {{pagePluginLink}}Page Plugin{{/pagePluginLink}}, a {{shareButtonLink}}share button{{/shareButtonLink}}, or {{embedLink}}embed{{/embedLink}} your page or profile on your site.',
 			{
 				components: {
-					likeBoxLink: (
+					pagePluginLink: (
 						<a
 							href={ localizeUrl(
-								'https://wordpress.com/support/facebook-integration/#facebook-like-box'
+								'https://wordpress.com/support/facebook-embeds/#facebook-page-plugin-widget'
 							) }
 						/>
 					),
@@ -70,42 +70,20 @@ class SharingServiceTip extends Component {
 		);
 	}
 
-	twitter() {
-		return this.props.translate(
-			'You can also add a {{widgetLink}}Twitter Timeline Widget{{/widgetLink}} to display any public timeline on your site.',
-			{
-				components: {
-					widgetLink: (
-						<a
-							href={ localizeUrl(
-								'https://wordpress.com/support/widgets/twitter-timeline-widget/'
-							) }
-						/>
-					),
-				},
-				context: 'Sharing: Tip in settings',
-			}
-		);
-	}
-
 	instagram() {
 		return this.props.translate(
-			'You can also add an {{widgetLink}}Instagram Widget{{/widgetLink}} to display your latest Instagram photos on your site.',
+			'You can also add the {{blockLink}}Latest Instagram Posts block{{/blockLink}} to display your latest Instagram photos on your site.',
 			{
 				components: {
-					widgetLink: (
+					blockLink: (
 						<a
-							href={ localizeUrl( 'https://wordpress.com/support/instagram/instagram-widget/' ) }
+							href={ localizeUrl( 'https://wordpress.com/support/instagram/' ) }
 						/>
 					),
 				},
 				context: 'Sharing: Tip in settings',
 			}
 		);
-	}
-
-	google_plus() {
-		return null;
 	}
 
 	render() {
@@ -114,8 +92,7 @@ class SharingServiceTip extends Component {
 			! includes(
 				this.props.hasJetpack ? JETPACK_SERVICES_WITH_TIPS : SERVICES_WITH_TIPS,
 				service.ID
-			) ||
-			'google_plus' === service.ID
+			)
 		) {
 			return <div className="connections__sharing-service-tip" />;
 		}
