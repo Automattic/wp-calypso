@@ -46,19 +46,19 @@ export const initialClientsData = {
 		id: 50019,
 		name: 'woo',
 		title: 'WooCommerce',
-		icon: 'https://woocommerce.com/wp-content/themes/woo/images/logo-woocommerce@2x.png',
+		icon: 'https://woo.com/wp-content/themes/woo/images/logo-woocommerce@2x.png',
 	},
 	50915: {
 		id: 50915,
 		name: 'woo',
 		title: 'WooCommerce',
-		icon: 'https://woocommerce.com/wp-content/themes/woo/images/logo-woocommerce@2x.png',
+		icon: 'https://woo.com/wp-content/themes/woo/images/logo-woocommerce@2x.png',
 	},
 	50916: {
 		id: 50916,
 		name: 'woo',
-		title: 'WooCommerce.com',
-		icon: 'https://woocommerce.com/wp-content/themes/woo/images/logo-woocommerce@2x.png',
+		title: 'Woo.com',
+		icon: 'https://woo.com/wp-content/themes/woo/images/logo-woocommerce@2x.png',
 	},
 	68663: {
 		id: 68663,

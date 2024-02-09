@@ -144,7 +144,7 @@ export function WooExpressPlans( props: WooExpressPlansProps ) {
 						) }
 					</div>
 					<div className="enterprise-ecommerce__cta">
-						<Button href="https://woocommerce.com/enterprise-ecommerce/?utm_source=wooexpress&utm_campaign=plans_grid">
+						<Button href="https://woo.com/enterprise-ecommerce/?utm_source=wooexpress&utm_campaign=plans_grid">
 							{ translate( 'Learn more' ) }
 						</Button>
 					</div>

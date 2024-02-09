@@ -27,7 +27,7 @@ describe( 'actions', () => {
 				desc: '',
 				org: 'Automattic, Inc',
 				url: 'https://wordpress.org/plugins/woocommerce-services/',
-				support: 'https://woocommerce.com/my-account/create-a-ticket/',
+				support: 'https://woo.com/my-account/contact-support/',
 				pay_ref: 'stripe:1234',
 				pay_part: 'stripe',
 				cc_type: 'mastercard',

@@ -10,7 +10,7 @@ import './woo.scss';
 const WooOauthMasterbar = () => {
 	const backNav = (
 		<li className="masterbar__woo-nav-item">
-			<a className="masterbar__login-back-link" href="https://woocommerce.com">
+			<a className="masterbar__login-back-link" href="https://woo.com">
 				{ createInterpolateElement( __( '<arrow/> Back' ), {
 					arrow: <Gridicon icon="chevron-left" size={ 18 } />,
 				} ) }
@@ -24,7 +24,7 @@ const WooOauthMasterbar = () => {
 				<nav className="masterbar__woo-nav-wrapper">
 					<ul className="masterbar__woo-nav">
 						<li className="masterbar__woo-nav-item">
-							<a href="https://woocommerce.com" className="masterbar__woo-link">
+							<a href="https://woo.com" className="masterbar__woo-link">
 								<SVGIcon
 									name="woocommerce-logo"
 									icon={ WooLogo }

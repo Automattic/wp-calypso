@@ -107,7 +107,7 @@ const SignupSuccess = () => {
 				<p className="signup-success__footer-contact">
 					<a href="https://wpvip.com/?ref=partners-lp">WordPress.com VIP</a>,{ ' ' }
 					<a href="https://jetpack.com/for/hosts/?ref=partners-lp">Jetpack</a>, or{ ' ' }
-					<a href="https://woocommerce.com/?ref=partners-lp">WooCommerce</a>
+					<a href="https://woo.com/?ref=partners-lp">WooCommerce</a>
 				</p>
 			</div>
 		</ThemeProvider>

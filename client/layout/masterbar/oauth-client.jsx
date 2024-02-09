@@ -31,7 +31,7 @@ const DefaultOauthClientMasterbar = ( { oauth2Client } ) => (
 
 				{ isWooOAuth2Client( oauth2Client ) && (
 					<li className="masterbar__oauth-client-close">
-						<a href="https://woocommerce.com">
+						<a href="https://woo.com">
 							Cancel <span>X</span>
 						</a>
 					</li>

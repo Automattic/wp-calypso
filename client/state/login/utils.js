@@ -174,7 +174,7 @@ export async function postLoginRequest( action, bodyObj ) {
 }
 
 /**
- * https://woocommerce.com/partner-signup uses a wp.com branded login and signup flow
+ * https://woo.com/partner-signup uses a wp.com branded login and signup flow
  * while using woocommerces's oauth client id.
  *
  * This function check for is_partner_signup query or detects this situation by checking

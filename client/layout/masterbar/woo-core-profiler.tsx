@@ -47,7 +47,7 @@ const WooCoreProfilerMasterbar = ( { translate }: { translate: ( text: string ) 
 				<nav className="masterbar__woo-nav-wrapper">
 					<ul className="masterbar__woo-nav">
 						<li className="masterbar__woo-nav-item">
-							<a href="https://woocommerce.com" className="masterbar__woo-link">
+							<a href="https://woo.com" className="masterbar__woo-link">
 								<SVGIcon
 									name="woocommerce-logo"
 									icon={ WooLogo }
