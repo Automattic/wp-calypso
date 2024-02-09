@@ -117,7 +117,7 @@ export const FeaturedLicenseMultiItemCard = ( {
 	);
 
 	const onSelectProduct = useCallback( () => {
-		page.redirect( getIssueLicenseURL( variantSlug, bundleSize ) );
+		page.replace( getIssueLicenseURL( variantSlug, bundleSize ) );
 		dispatch(
 			recordTracksEvent( 'calypso_jetpack_manage_on_select_product_button_click', {
 				product: variantSlug,
