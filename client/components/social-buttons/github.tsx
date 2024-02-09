@@ -22,7 +22,7 @@ import './style.scss';
 
 type GithubLoginButtonProps = {
 	children?: ReactNode;
-	responseHandler: ( response: any ) => void;
+	responseHandler: ( response: any, triggeredByUser?: boolean ) => void;
 	redirectUri: string;
 	onClick?: () => void;
 	socialServiceResponse?: string | null;
@@ -86,7 +86,8 @@ const GitHubLoginButton = ( {
 		}
 
 		const { access_token } = response?.body?.data as ExchangeCodeForTokenResponse;
-		responseHandler( access_token );
+
+		responseHandler( access_token, true );
 		// TODO
 		/*
 		this.props.recordTracksEvent( 'calypso_social_button_auth_code_exchange_success', {
