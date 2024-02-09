@@ -35,7 +35,7 @@ const ImportUsers = ( { site, onSubmit }: Props ) => {
 	const users = usersData?.users?.map( ( user ) => ( { user, checked: true } ) ) || [];
 	const [ usersList, setUsersList ] = useState( users );
 	const [ checkedUsersNumber, setCheckedUsersNumber ] = useState( usersList?.length || 0 );
-	const [ userInviteError, setUserInviteError ] = useState( 'generic_error' );
+	const [ userInviteError, setUserInviteError ] = useState( '' );
 
 	const handleSubmit = async () => {
 		const selectedUsers = usersList
