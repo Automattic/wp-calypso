@@ -30,6 +30,7 @@ import { navigate } from 'calypso/lib/navigate';
 import isReaderTagEmbedPage from 'calypso/lib/reader/is-reader-tag-embed-page';
 import { getMessagePathForJITM } from 'calypso/lib/route';
 import UserVerificationChecker from 'calypso/lib/user/verification-checker';
+import { useCommandsArrayWpcom } from 'calypso/sites-dashboard/components/wpcom-smp-commands';
 import { isOffline } from 'calypso/state/application/selectors';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { createNotice, removeNotice } from 'calypso/state/notices/actions';
@@ -345,6 +346,7 @@ class Layout extends Component {
 						createNotice={ this.props.createNotice }
 						removeNotice={ this.props.removeNotice }
 						navigate={ navigate }
+						useExtraCommands={ useCommandsArrayWpcom }
 					/>
 				) }
 			</div>
