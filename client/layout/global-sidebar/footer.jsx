@@ -5,7 +5,9 @@ import ProfileGravatar from 'calypso/me/profile-gravatar';
 export const GlobalSidebarFooter = ( { translate, user } ) => {
 	return (
 		<SidebarFooter>
-			<ProfileGravatar inSidebar user={ user } profileImgSize={ 24 } />
+			<a href="/me" className="sidebar__footer-link">
+				<ProfileGravatar inSidebar user={ user } profileImgSize={ 24 } />
+			</a>
 			<span className="gap"></span>
 			<AsyncLoad
 				require="./menu-items/help-center/help-center"

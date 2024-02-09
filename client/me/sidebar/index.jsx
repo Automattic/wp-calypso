@@ -65,14 +65,12 @@ class MeSidebar extends Component {
 		const asyncProps = {
 			placeholder: null,
 			path: this.props.path,
-			useSidebarMenu: false,
 		};
-		const asyncSidebar = (
+		return (
 			<AsyncLoad require="calypso/layout/global-sidebar" { ...asyncProps }>
 				{ this.renderMenu() }
 			</AsyncLoad>
 		);
-		return <div className="my-sites__navigation global-sidebar">{ asyncSidebar }</div>;
 	}
 
 	renderSidebar() {
