@@ -5,7 +5,6 @@ import { recordTracksEvent } from 'calypso/state/analytics/actions';
 interface Props {
 	children?: React.ReactNode;
 	disabled?: boolean;
-	label?: string;
 	tooltipText?: string;
 	trackEventName?: string;
 	variant: 'primary' | 'secondary' | 'tertiary';
