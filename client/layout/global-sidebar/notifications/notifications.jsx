@@ -5,11 +5,11 @@ import { connect } from 'react-redux';
 import store from 'store';
 import AsyncLoad from 'calypso/components/async-load';
 import TranslatableString from 'calypso/components/translatable/proptype';
+import NotificationsSidebarItem from 'calypso/layout/global-sidebar/notifications/sidebar-item';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import hasUnseenNotifications from 'calypso/state/selectors/has-unseen-notifications';
 import isNotificationsOpen from 'calypso/state/selectors/is-notifications-open';
 import { toggleNotificationsPanel } from 'calypso/state/ui/actions';
-import SidebarMenuItem from '../menu-item';
 import { BellIcon } from './bell-icon';
 
 import './style.scss';
@@ -18,7 +18,7 @@ class SidebarNotifications extends Component {
 	static propTypes = {
 		isActive: PropTypes.bool,
 		className: PropTypes.string,
-		tooltip: TranslatableString,
+		title: TranslatableString,
 		//connected
 		isNotificationsOpen: PropTypes.bool,
 		hasUnseenNotifications: PropTypes.bool,
@@ -117,15 +117,16 @@ class SidebarNotifications extends Component {
 
 		return (
 			<>
-				<SidebarMenuItem
-					url="/notifications"
-					icon={ <BellIcon newItems={ this.state.newNote } active={ this.props.isActive } /> }
-					onClick={ this.toggleNotesFrame }
-					isActive={ this.props.isActive }
-					tooltip={ this.props.tooltip }
+				<NotificationsSidebarItem
+					key="notifications"
+					label={ this.props.title }
+					link="/read/notifications"
+					onNavigate={ this.toggleNotesFrame }
+					selected={ this.props.isNotificationsOpen }
+					customIcon={ <BellIcon newItems={ this.state.newNote } active={ this.props.isActive } /> }
+					forceInternalLink={ true }
 					className={ classes }
 					ref={ this.notificationLink }
-					key={ this.state.animationState }
 				/>
 				<div className="sidebar-notifications__panel" ref={ this.notificationPanel }>
 					<AsyncLoad

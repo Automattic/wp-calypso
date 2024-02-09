@@ -1,21 +1,21 @@
-import Gravatar from 'calypso/components/gravatar';
+import AsyncLoad from 'calypso/components/async-load';
 import SidebarFooter from 'calypso/layout/sidebar/footer';
+import ProfileGravatar from 'calypso/me/profile-gravatar';
 
 export const GlobalSidebarFooter = ( { translate, user } ) => {
 	return (
 		<SidebarFooter>
+			<ProfileGravatar inSidebar user={ user } profileImgSize={ 24 } />
 			<span className="gap"></span>
-			<a href="/read" className="link-reader">
-				<span className="reader"></span>
-			</a>
-			<a href="/me" className="link-profile">
-				<Gravatar
-					className="masterbar__item-me-gravatar"
-					user={ user }
-					alt={ translate( 'My Profile' ) }
-					size={ 28 }
-				/>
-			</a>
+			<AsyncLoad
+				require="./menu-items/help-center/help-center"
+				tooltip={ translate( 'Help' ) }
+				placeholder={
+					<div className="link-help">
+						<span className="help"></span>
+					</div>
+				}
+			/>
 		</SidebarFooter>
 	);
 };
