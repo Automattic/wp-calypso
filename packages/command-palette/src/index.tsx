@@ -9,7 +9,12 @@ import classnames from 'classnames';
 import { Command, useCommandState } from 'cmdk';
 import { useEffect, useState, useRef, useMemo, useCallback } from 'react';
 import { COMMAND_SEPARATOR, useCommandFilter } from './use-command-filter';
-import { CommandCallBackParams, useCommandPalette } from './use-command-palette';
+import {
+	Command as CommandType,
+	CommandCallBackParams,
+	useCommandPalette,
+	useExtraCommandsParams,
+} from './use-command-palette';
 
 import '@wordpress/commands/build-style/style.css';
 
@@ -21,6 +26,7 @@ interface CommandMenuGroupProps
 	setFooterMessage?: ( message: string ) => void;
 	setEmptyListNotice?: ( message: string ) => void;
 	navigate: ( path: string, openInNewTab: boolean ) => void;
+	useExtraCommands?: ( options: useExtraCommandsParams ) => CommandType[];
 }
 
 const StyledCommandsMenuContainer = styled.div( {
@@ -94,14 +100,14 @@ export function CommandMenuGroup( {
 	setFooterMessage,
 	setEmptyListNotice,
 	navigate,
+	useExtraCommands,
 }: CommandMenuGroupProps ) {
 	const { commands, filterNotice, emptyListNotice } = useCommandPalette( {
 		selectedCommandName,
 		setSelectedCommandName,
 		search,
 		navigate,
-		/*createNotice,
-		removeNotice,*/
+		useExtraCommands,
 	} );
 
 	useEffect( () => {
@@ -213,6 +219,7 @@ interface NotFoundMessageProps {
 
 interface CommandPaletteProps {
 	navigate: ( path: string, openInNewTab: boolean ) => void;
+	useExtraCommands?: ( options: useExtraCommandsParams ) => CommandType[];
 }
 
 const NotFoundMessage = ( {
@@ -239,7 +246,7 @@ const NotFoundMessage = ( {
 	return <>{ emptyListNotice || __( 'No results found.' ) }</>;
 };
 
-const CommandPalette = ( { navigate }: CommandPaletteProps ) => {
+export const CommandPalette = ( { navigate, useExtraCommands }: CommandPaletteProps ) => {
 	const [ placeHolderOverride, setPlaceholderOverride ] = useState( '' );
 	const [ search, setSearch ] = useState( '' );
 	const [ selectedCommandName, setSelectedCommandName ] = useState( '' );
@@ -388,8 +395,7 @@ const CommandPalette = ( { navigate }: CommandPaletteProps ) => {
 							setFooterMessage={ setFooterMessage }
 							setEmptyListNotice={ setEmptyListNotice }
 							navigate={ navigate }
-							/*createNotice={ createNotice }
-							removeNotice={ removeNotice }*/
+							useExtraCommands={ useExtraCommands }
 						/>
 					</Command.List>
 				</Command>
@@ -398,5 +404,3 @@ const CommandPalette = ( { navigate }: CommandPaletteProps ) => {
 		</Modal>
 	);
 };
-
-export default CommandPalette;

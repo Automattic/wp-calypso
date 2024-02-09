@@ -5,7 +5,7 @@
 	"main": "dist/cjs/index.js",
 	"module": "dist/esm/index.js",
 	"types": "dist/types/index.d.ts",
-	"calypso:src": "src/index.tsx",
+	"calypso:src": "index.ts",
 	"sideEffects": [
 		"*.css",
 		"*.scss"

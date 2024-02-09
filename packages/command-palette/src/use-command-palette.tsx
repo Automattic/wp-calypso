@@ -6,12 +6,11 @@ import { __ } from '@wordpress/i18n';
 import { useCommandState } from 'cmdk';
 import { useCallback } from 'react';
 import { SiteExcerptData } from './site-excerpt-types';
-import { useCapabilitiesQuery } from './use-capabilities-query';
 //import { useCurrentSiteRankTop } from './use-current-site-rank-top';
-import { useSiteExcerptsQuery } from './use-site-excerpts-query';
+import { useCommands } from './use-commands';
+import { useSites } from './use-sites';
 import { useSitesSortingQuery } from './use-sites-sorting-query';
 import { isCustomDomain } from './utils';
-import { useCommandsArrayWpcom } from './wpcom-smp-commands';
 
 const FillDefaultIconWhite = styled.div( {
 	flexShrink: 0,
@@ -69,11 +68,17 @@ export interface Command {
 	image?: JSX.Element;
 	siteFunctions?: SiteFunctions;
 }
+
+export interface useExtraCommandsParams {
+	setSelectedCommandName: ( name: string ) => void;
+}
+
 interface useCommandPaletteOptions {
 	selectedCommandName: string;
 	setSelectedCommandName: ( name: string ) => void;
 	search: string;
 	navigate: ( path: string, openInNewTab: boolean ) => void;
+	useExtraCommands?: ( options: useExtraCommandsParams ) => Command[];
 }
 
 interface SiteToActionParameters {
@@ -145,12 +150,13 @@ export const useCommandPalette = ( {
 	setSelectedCommandName,
 	search,
 	navigate,
+	useExtraCommands,
 }: useCommandPaletteOptions ): {
 	commands: Command[];
 	filterNotice: string | undefined;
 	emptyListNotice: string | undefined;
 } => {
-	const { data: allSites = [] } = useSiteExcerptsQuery();
+	const { data: allSites = [] } = useSites();
 	const siteToAction = useSiteToAction();
 
 	const listVisibleCount = useCommandState( ( state ) => state.filtered.count );
@@ -165,18 +171,28 @@ export const useCommandPalette = ( {
 	const currentSiteId = null;
 
 	// Call the generateCommandsArray function to get the commands array
-	const commands = useCommandsArrayWpcom( {
+	const defaultCommands = useCommands( {
 		setSelectedCommandName,
 		navigate,
-		/*createNotice,
-		removeNotice,*/
 	} ) as Command[];
+
+	// TODO: Remove after porting all commands.
+	if ( ! useExtraCommands ) {
+		useExtraCommands = () => [];
+	}
+	const extraCommands = useExtraCommands( { setSelectedCommandName } );
+	const commands = defaultCommands.concat( extraCommands );
 
 	// TODO: Find an alternative way to use the current route.
 	//const currentRoute = useSelector( ( state: object ) => getCurrentRoutePattern( state ) );
 	const currentRoute = window.location.pathname;
 
-	const { data: userCapabilities } = useCapabilitiesQuery();
+	const userCapabilities = [];
+	// @ts-expect-error TODO
+	sortedSites.forEach( ( site ) => {
+		// @ts-expect-error TODO
+		userCapabilities[ site.ID ] = site.capabilities;
+	} );
 
 	// Logic for selected command (sites)
 	if ( selectedCommandName ) {
