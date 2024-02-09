@@ -116,10 +116,7 @@ const GitHubLoginButton = ( {
 
 	useEffect( () => {
 		if ( code && service === 'github' ) {
-			exchangeCodeForToken( code ).then( () => {
-				// console.log(code);
-				//				responseHandler( code );
-			} );
+			exchangeCodeForToken( code );
 		}
 	}, [ code, service ] );
 
