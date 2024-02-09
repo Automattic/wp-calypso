@@ -11,7 +11,7 @@ import useP2GuestsQuery from 'calypso/data/p2/use-p2-guests-query';
 import useUsersQuery from 'calypso/data/users/use-users-query';
 import ImportedUserItem from './imported-user-item';
 import { getRole } from './utils';
-import type { UsersQuery, Member } from '@automattic/data-stores';
+import type { UsersQuery, Member, UserItem } from '@automattic/data-stores';
 
 import './style.scss';
 
@@ -28,17 +28,17 @@ const ImportUsers = ( { site, onSubmit }: Props ) => {
 	const usersQuery = useUsersQuery( site?.ID, defaultTeamFetchOptions ) as unknown as UsersQuery;
 	const { data: externalContributors } = useExternalContributorsQuery( site?.ID );
 	const { data: p2Guests } = useP2GuestsQuery( site?.ID );
-	const { data, fetchNextPage, isLoading, isFetchingNextPage, hasNextPage } = usersQuery;
+	const { data: usersData, fetchNextPage, isFetchingNextPage, hasNextPage } = usersQuery;
 	const { isPending: isSubmittingInvites, mutateAsync: sendInvites } = useSendInvites( site?.ID );
 
-	const users = data?.users?.map( ( user ) => ( { user, checked: true } ) ) || [];
+	const users = usersData?.users?.map( ( user ) => ( { user, checked: true } ) ) || [];
 	const [ usersList, setUsersList ] = useState( users );
 	const [ checkedUsersNumber, setCheckedUsersNumber ] = useState( usersList?.length || 0 );
 
 	const handleSubmit = async () => {
 		const selectedUsers = usersList
 			.filter( ( user ) => user.checked )
-			.map( ( userItem ) => ( {
+			.map( ( userItem: UserItem ) => ( {
 				email_or_username: userItem.user?.email || userItem.user?.username,
 				role: getRole( userItem.user ),
 			} ) );
@@ -47,13 +47,23 @@ const ImportUsers = ( { site, onSubmit }: Props ) => {
 			return;
 		}
 
-		const result = await sendInvites( selectedUsers );
+		const result = await sendInvites( selectedUsers )
+			.then( ( response ) => {
+				return response;
+			} )
+			.catch( () => {
+				// Show generic error message
+			} );
 
-		if ( result?.error ) {
-			// HANDLE ERROR
+		if ( result && Array.isArray( result ) ) {
+			const hasError = result.some( ( item ) => item.errors.length > 0 );
+			if ( hasError ) {
+				// Show error message
+			}
+
+			// Should we call onSubmit if any errors?
+			onSubmit?.();
 		}
-
-		onSubmit?.();
 	};
 
 	const getUserRef = ( user: Member ) => {
@@ -137,12 +147,18 @@ const ImportUsers = ( { site, onSubmit }: Props ) => {
 				) }
 			</div>
 			<div className="import__user-migration-button-container">
-				<NextButton type="button" onClick={ handleSubmit } disabled={ isSubmittingInvites }>
-					{ sprintf(
-						// translators: %s: Number of users that will get invited.
-						translate( 'Invite %s users' ),
-						checkedUsersNumber
-					) }
+				<NextButton
+					type="button"
+					onClick={ handleSubmit }
+					disabled={ isSubmittingInvites || checkedUsersNumber < 1 }
+				>
+					{ checkedUsersNumber === 1
+						? translate( 'Invite 1 user' )
+						: sprintf(
+								// translators: %s: Number of users that will get invited.
+								translate( 'Invite %s users' ),
+								checkedUsersNumber
+						  ) }
 				</NextButton>
 			</div>
 			<div className="import__user-migration-button-container">
