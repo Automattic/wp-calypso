@@ -282,8 +282,8 @@ class PasswordlessSignupForm extends Component {
 			);
 		}
 		const submitButtonText = isSubmitting
-			? this.props.submitButtonLoadingLabel || this.props.translate( 'Creating account.' )
-			: this.props.submitButtonLabel || this.props.translate( 'Create an account' );
+			? this.props.submitButtonLoadingLabel || this.props.translate( 'Creating Your Account…' )
+			: this.props.submitButtonLabel || this.props.translate( 'Create your account' );
 
 		return (
 			<LoggedOutFormFooter>

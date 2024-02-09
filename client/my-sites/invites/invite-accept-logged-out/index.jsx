@@ -187,6 +187,7 @@ class InviteAcceptLoggedOut extends Component {
 					isPasswordless={ true }
 					invite={ this.props.invite }
 					renderInviteExplanationLabel={ this.renderInviteExplanationLabel }
+					submitButtonLabel={ this.props.translate( 'Create an account' ) }
 					disabled={ this.state.submitting }
 					formHeader={ this.renderFormHeader() }
 					submitting={ this.state.submitting }

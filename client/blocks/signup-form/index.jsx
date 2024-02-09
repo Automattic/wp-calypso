@@ -1263,6 +1263,7 @@ class SignupForm extends Component {
 						labelText={ this.props.translate( 'Your email address' ) }
 						inviteFormTitle={ this.getPasswordlessInviteHeaderText() }
 						renderInviteExplanationLabel={ this.props.renderInviteExplanationLabel() }
+						submitButtonLabel={ this.props.submitButtonLabel }
 					/>
 
 					{ ! isGravatar && (
