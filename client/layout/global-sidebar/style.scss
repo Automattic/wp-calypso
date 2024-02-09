@@ -25,14 +25,6 @@
 		}
 
 		a.link-logo {
-			align-items: center;
-			background: var(--studio-white);
-			border-radius: 18px; /* stylelint-disable-line scales/radii */
-			display: flex;
-			gap: 4px;
-			padding: 6px 8px;
-			transition: all 150ms ease-out;
-
 			.dotcom {
 				position: relative;
 				top: 2px;
@@ -52,15 +44,9 @@
 			flex: 1;
 		}
 
-		span.logo {
-			background-image: url(calypso/assets/images/global-sidebar/logo.svg);
-			width: 18px;
-			height: 18px;
-		}
-
 		span.dotcom {
 			background-image: url(calypso/assets/images/global-sidebar/dotcom.svg);
-			width: 55px;
+			width: 148px;
 		}
 
 		button.search {
@@ -97,16 +83,46 @@
 		span.gap {
 			flex: 1;
 		}
-
-		span.reader {
-			background-image: url(calypso/assets/images/global-sidebar/reader.svg);
-			width: 32px;
-			height: 32px;
-		}
 	}
 
 	.sidebar__body {
 		flex: 1;
 		overflow-y: auto;
+
+		.selected {
+			.sidebar__heading,
+			.sidebar__menu-link {
+				.sidebar__menu-icon.sidebar_svg-notifications {
+					fill: var(--color-sidebar-menu-selected-background);
+					path {
+						stroke: var(--color-sidebar-menu-selected-text);
+					}
+				}
+			}
+		}
 	}
+
+	.sidebar-notifications {
+
+		.sidebar__menu-icon.sidebar_svg-notifications {
+			fill: var(--color-sidebar-background);
+			path {
+				stroke: var(--color-sidebar-gridicon-fill);
+			}
+		}
+
+		&:hover {
+			.sidebar__menu-icon.sidebar_svg-notifications {
+				fill: var(--color-sidebar-menu-hover-background);
+				path {
+					stroke: var(--color-sidebar-menu-hover-text);
+				}
+			}
+		}
+	}
+
+}
+
+.masterbar {
+	border: none;
 }

@@ -1,6 +1,5 @@
 import { Spinner } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
-import { Fragment } from 'react';
 import { useSelector } from 'react-redux';
 import GlobalSidebarFooter from 'calypso/layout/global-sidebar/footer';
 import GlobalSidebarHeader from 'calypso/layout/global-sidebar/header';
@@ -27,13 +26,15 @@ const GlobalSidebar = ( { children, onClick = undefined, className = '', ...prop
 	}
 
 	return (
-		<Fragment>
+		<div className="global-sidebar">
 			<GlobalSidebarHeader />
-			<Sidebar className={ className } { ...props } onClick={ onClick }>
-				{ children }
-			</Sidebar>
+			<div className="sidebar__body">
+				<Sidebar className={ className } { ...props } onClick={ onClick }>
+					{ children }
+				</Sidebar>
+			</div>
 			<GlobalSidebarFooter user={ currentUser } translate={ translate } />
-		</Fragment>
+		</div>
 	);
 };
 

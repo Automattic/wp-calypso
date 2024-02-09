@@ -10,6 +10,7 @@ import { isExternal } from 'calypso/lib/url';
 import { preload } from 'calypso/sections-helper';
 import { getSidebarIsCollapsed } from 'calypso/state/ui/selectors';
 
+// This is similar to the SidebarItem component, but supports setting a ref on the link in the sidebar, necesary for the notifications panel to work correctly.
 const NotificationsSidebarItem = forwardRef( ( props, ref ) => {
 	const preloadedRef = useRef( false );
 
