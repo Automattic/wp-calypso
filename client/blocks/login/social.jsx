@@ -47,7 +47,7 @@ class SocialLoginForm extends Component {
 		const { onSuccess, socialService } = this.props;
 		let redirectTo = this.props.redirectTo;
 
-		// ignore response if the user did not click on the google button
+		// ignore response if the user did not click on the Google button
 		// and did not follow the redirect flow
 		if ( ! triggeredByUser && socialService !== 'google' ) {
 			return;
@@ -118,7 +118,7 @@ class SocialLoginForm extends Component {
 		const { onSuccess, socialService } = this.props;
 		let redirectTo = this.props.redirectTo;
 
-		// ignore response if the user did not click on the google button
+		// ignore response if the user did not click on the GitHub button
 		// and did not follow the redirect flow
 		if ( ! triggeredByUser && socialService !== 'github' ) {
 			return;
