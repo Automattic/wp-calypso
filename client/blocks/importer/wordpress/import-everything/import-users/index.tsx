@@ -2,7 +2,7 @@ import { useSendInvites } from '@automattic/data-stores';
 import { NextButton, Title, SubTitle } from '@automattic/onboarding';
 import { Button } from '@wordpress/components';
 import { useState } from '@wordpress/element';
-import { sprintf } from '@wordpress/i18n';
+import { sprintf, _n } from '@wordpress/i18n';
 import { useTranslate } from 'i18n-calypso';
 import ExternalLink from 'calypso/components/external-link';
 import InfiniteList from 'calypso/components/infinite-list';
@@ -177,13 +177,17 @@ const ImportUsers = ( { site, onSubmit }: Props ) => {
 					onClick={ handleSubmit }
 					disabled={ isSubmittingInvites || checkedUsersNumber < 1 }
 				>
-					{ checkedUsersNumber === 1
-						? translate( 'Invite 1 user' )
-						: sprintf(
-								// translators: %s: Number of users that will get invited.
-								translate( 'Invite %s users' ),
-								checkedUsersNumber
-						  ) }
+					{ sprintf(
+						/* translators: The number of selected users to send WP.com invite */
+						_n(
+							'Invite %(checkedUsersNumber)d user',
+							'Invite %(checkedUsersNumber)d users',
+							checkedUsersNumber
+						),
+						{
+							checkedUsersNumber,
+						}
+					) }
 				</NextButton>
 			</div>
 			<div className="import__user-migration-button-container">
