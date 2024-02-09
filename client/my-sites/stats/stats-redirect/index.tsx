@@ -52,7 +52,8 @@ const StatsRedirectFlow: React.FC< StatsRedirectFlowProps > = ( { children } ) =
 		canUserManageOptions
 	);
 
-	const isFetching = isRequestingSitePurchases || isRequestingNotices;
+	// in Calypso `isRequestingSitePurchases` is constantly looping requesting and not requesting
+	const isFetching = ( isOdysseyStats && isRequestingSitePurchases ) || isRequestingNotices;
 	const hasPlan = isFreeOwned || isPWYWOwned || isCommercialOwned || supportCommercialUse;
 	const qualifiedUser =
 		siteCreatedTimeStamp && new Date( siteCreatedTimeStamp ) > new Date( '2024-01-31' );
