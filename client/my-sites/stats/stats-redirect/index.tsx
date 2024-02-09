@@ -102,14 +102,14 @@ const StatsRedirectFlow: React.FC< StatsRedirectFlowProps > = ( { children } ) =
 			250
 		);
 
-		return <></>;
+		return null;
 	} else if ( ! isFetching || ( canUserViewStats && ! canUserManageOptions ) ) {
 		return <>{ children }</>;
 	} else if ( isFetching ) {
 		return <StatsLoader />;
 	}
 
-	return <></>;
+	return null;
 };
 
 export default StatsRedirectFlow;

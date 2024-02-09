@@ -47,14 +47,16 @@ export default function OdysseyQuerySitePurchases( { siteId }: { siteId: number 
 	const reduxDispatch = useDispatch();
 
 	useEffect( () => {
-		if ( isFetching ) {
-			return;
-		}
 		// Dispatch evet marking as requesting
 		reduxDispatch( {
 			type: PURCHASES_SITE_FETCH,
 			siteId,
 		} );
+
+		if ( isFetching ) {
+			return;
+		}
+
 		if ( isError( purchases ) || hasOtherErrors ) {
 			// Dispatch to the Purchases reducer for error status
 			reduxDispatch( {
@@ -69,7 +71,7 @@ export default function OdysseyQuerySitePurchases( { siteId }: { siteId: number 
 				purchases: purchases,
 			} );
 		}
-	}, [ purchases, isFetching, reduxDispatch, hasOtherErrors ] );
+	}, [ purchases, isFetching, reduxDispatch, hasOtherErrors, siteId ] );
 
 	return null;
 }

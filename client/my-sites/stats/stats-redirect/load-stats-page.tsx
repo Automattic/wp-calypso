@@ -101,9 +101,9 @@ export default function LoadStatsPage( { children }: AsyncLoadProps ) {
 	}
 
 	return (
-		<StatsRedirectFlow>
+		<>
 			{ isOdysseyStats && <QuerySitePurchases siteId={ siteId } /> }
-			{ children }
-		</StatsRedirectFlow>
+			<StatsRedirectFlow>{ children }</StatsRedirectFlow>
+		</>
 	);
 }
