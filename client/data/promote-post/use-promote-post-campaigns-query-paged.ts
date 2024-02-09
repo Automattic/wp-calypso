@@ -19,6 +19,10 @@ const getSearchOptionsQueryParams = ( searchOptions: SearchOptions ) => {
 		}
 	}
 
+	if ( searchOptions.order ) {
+		searchQueryParams += `&order=${ searchOptions.order.order }&order_by=${ searchOptions.order.orderBy }`;
+	}
+
 	return searchQueryParams;
 };
 
