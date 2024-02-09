@@ -4,7 +4,7 @@
 	"favicon_url": "/calypso/images/favicons/favicon-jetpack-cloud-development.ico",
 	"client_slug": "browser",
 	"protocol": "http",
-	"hostname": "automattic.agencies.localhost",
+	"hostname": "agencies.localhost",
 	"i18n_default_locale_slug": "en",
 	"port": 3000,
 	"site_name": "Automattic For Agencies",
