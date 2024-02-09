@@ -88,108 +88,90 @@ import {
 import type { FAQ, SelectorProductFeaturesItem } from './types';
 import type { TranslateResult } from 'i18n-calypso';
 
-// Translatable strings
 export const getJetpackProductsShortNames = (): Record< string, TranslateResult > => {
 	return {
-		[ PRODUCT_JETPACK_BACKUP_DAILY ]: translate( 'VaultPress Backup {{em}}Daily{{/em}}', {
-			components: {
-				em: createElement( 'em' ),
-			},
-		} ),
-		[ PRODUCT_JETPACK_BACKUP_DAILY_MONTHLY ]: translate( 'VaultPress Backup {{em}}Daily{{/em}}', {
-			components: {
-				em: createElement( 'em' ),
-			},
-		} ),
-		[ PRODUCT_JETPACK_BACKUP_REALTIME ]: translate( 'VaultPress Backup {{em}}Real-time{{/em}}', {
-			components: {
-				em: createElement( 'em', { style: { whiteSpace: 'nowrap' } } ),
-			},
-		} ),
-		[ PRODUCT_JETPACK_BACKUP_REALTIME_MONTHLY ]: translate(
-			'VaultPress Backup {{em}}Real-time{{/em}}',
-			{
-				components: {
-					em: createElement( 'em', { style: { whiteSpace: 'nowrap' } } ),
-				},
-			}
+		[ PRODUCT_JETPACK_BACKUP_DAILY ]: (
+			<>
+				VaultPress Backup <em>Daily</em>
+			</>
 		),
-		[ PRODUCT_JETPACK_BACKUP_T0_YEARLY ]: translate( 'VaultPress Backup' ),
-		[ PRODUCT_JETPACK_BACKUP_T0_MONTHLY ]: translate( 'VaultPress Backup' ),
-		[ PRODUCT_JETPACK_BACKUP_T1_BI_YEARLY ]: translate( 'VaultPress Backup' ),
-		[ PRODUCT_JETPACK_BACKUP_T1_YEARLY ]: translate( 'VaultPress Backup' ),
-		[ PRODUCT_JETPACK_BACKUP_T1_MONTHLY ]: translate( 'VaultPress Backup' ),
-		[ PRODUCT_JETPACK_BACKUP_T2_YEARLY ]: translate( 'VaultPress Backup' ),
-		[ PRODUCT_JETPACK_BACKUP_T2_MONTHLY ]: translate( 'VaultPress Backup' ),
-		[ PRODUCT_JETPACK_BOOST_BI_YEARLY ]: translate( 'Boost' ),
-		[ PRODUCT_JETPACK_BOOST ]: translate( 'Boost' ),
-		[ PRODUCT_JETPACK_BOOST_MONTHLY ]: translate( 'Boost' ),
-		[ PRODUCT_JETPACK_SCAN_REALTIME ]: translate( 'Scan {{em}}Real-time{{/em}}', {
-			components: {
-				em: createElement( 'em', { style: { whiteSpace: 'nowrap' } } ),
-			},
-		} ),
-		[ PRODUCT_JETPACK_SCAN_REALTIME_MONTHLY ]: translate( 'Scan {{em}}Real-time{{/em}}', {
-			components: {
-				em: createElement( 'em', { style: { whiteSpace: 'nowrap' } } ),
-			},
-		} ),
-		[ PRODUCT_JETPACK_SCAN_BI_YEARLY ]: translate( 'Scan' ),
-		[ PRODUCT_JETPACK_SCAN ]: translate( 'Scan' ),
-		[ PRODUCT_JETPACK_SCAN_MONTHLY ]: translate( 'Scan' ),
-		[ PRODUCT_JETPACK_SEARCH_BI_YEARLY ]: translate( 'Search' ),
-		[ PRODUCT_JETPACK_SEARCH ]: translate( 'Search' ),
-		[ PRODUCT_JETPACK_SEARCH_FREE ]: translate( 'Search' ),
-		[ PRODUCT_JETPACK_SEARCH_MONTHLY ]: translate( 'Search' ),
-		[ PRODUCT_WPCOM_SEARCH ]: translate( 'Search' ),
-		[ PRODUCT_WPCOM_SEARCH_MONTHLY ]: translate( 'Search' ),
-		[ PRODUCT_JETPACK_ANTI_SPAM_BI_YEARLY ]: translate( 'Akismet {{s}}Anti-spam{{/s}}', {
-			components: {
-				s: <span style={ { whiteSpace: 'nowrap' } } />,
-			},
-		} ),
-		[ PRODUCT_JETPACK_ANTI_SPAM ]: translate( 'Akismet {{s}}Anti-spam{{/s}}', {
-			components: {
-				s: <span style={ { whiteSpace: 'nowrap' } } />,
-			},
-		} ),
-		[ PRODUCT_JETPACK_ANTI_SPAM_MONTHLY ]: translate( 'Akismet {{s}}Anti-spam{{/s}}', {
-			components: {
-				s: <span style={ { whiteSpace: 'nowrap' } } />,
-			},
-		} ),
-		[ PRODUCT_JETPACK_VIDEOPRESS_BI_YEARLY ]: translate( 'VideoPress' ),
-		[ PRODUCT_JETPACK_VIDEOPRESS ]: translate( 'VideoPress' ),
-		[ PRODUCT_JETPACK_VIDEOPRESS_MONTHLY ]: translate( 'VideoPress' ),
-		[ PRODUCT_JETPACK_SOCIAL_BASIC_BI_YEARLY ]: translate( 'Social', {
-			context: 'Jetpack product name',
-		} ),
-		[ PRODUCT_JETPACK_SOCIAL_BASIC ]: translate( 'Social', { context: 'Jetpack product name' } ),
-		[ PRODUCT_JETPACK_SOCIAL_BASIC_MONTHLY ]: translate( 'Social', {
-			context: 'Jetpack product name',
-		} ),
-		[ PRODUCT_JETPACK_SOCIAL_ADVANCED_BI_YEARLY ]: translate( 'Social', {
-			context: 'Jetpack product name',
-		} ),
-		[ PRODUCT_JETPACK_SOCIAL_ADVANCED ]: translate( 'Social', { context: 'Jetpack product name' } ),
-		[ PRODUCT_JETPACK_SOCIAL_ADVANCED_MONTHLY ]: translate( 'Social', {
-			context: 'Jetpack product name',
-		} ),
-		[ PRODUCT_JETPACK_STATS_BI_YEARLY ]: translate( 'Stats', { context: 'Jetpack product name' } ),
-		[ PRODUCT_JETPACK_STATS_YEARLY ]: translate( 'Stats', { context: 'Jetpack product name' } ),
-		[ PRODUCT_JETPACK_STATS_MONTHLY ]: translate( 'Stats', { context: 'Jetpack product name' } ),
-		[ PRODUCT_JETPACK_AI_MONTHLY ]: translate( 'AI', { context: 'Jetpack product name' } ),
-		[ PRODUCT_JETPACK_AI_YEARLY ]: translate( 'AI', { context: 'Jetpack product name' } ),
-		[ PRODUCT_JETPACK_AI_BI_YEARLY ]: translate( 'AI', { context: 'Jetpack product name' } ),
-		[ PRODUCT_JETPACK_CREATOR_BI_YEARLY ]: translate( 'Creator', {
-			context: 'Jetpack product name',
-		} ),
-		[ PRODUCT_JETPACK_CREATOR_YEARLY ]: translate( 'Creator', {
-			context: 'Jetpack product name',
-		} ),
-		[ PRODUCT_JETPACK_CREATOR_MONTHLY ]: translate( 'Creator', {
-			context: 'Jetpack product name',
-		} ),
+		[ PRODUCT_JETPACK_BACKUP_DAILY_MONTHLY ]: (
+			<>
+				VaultPress Backup <em>Daily</em>
+			</>
+		),
+		[ PRODUCT_JETPACK_BACKUP_REALTIME ]: (
+			<>
+				VaultPress Backup <em style={ { whiteSpace: 'nowrap' } }>Real-time</em>
+			</>
+		),
+		[ PRODUCT_JETPACK_BACKUP_REALTIME_MONTHLY ]: (
+			<>
+				VaultPress Backup <em style={ { whiteSpace: 'nowrap' } }>Real-time</em>
+			</>
+		),
+		[ PRODUCT_JETPACK_BACKUP_T0_YEARLY ]: 'VaultPress Backup',
+		[ PRODUCT_JETPACK_BACKUP_T0_MONTHLY ]: 'VaultPress Backup',
+		[ PRODUCT_JETPACK_BACKUP_T1_BI_YEARLY ]: 'VaultPress Backup',
+		[ PRODUCT_JETPACK_BACKUP_T1_YEARLY ]: 'VaultPress Backup',
+		[ PRODUCT_JETPACK_BACKUP_T1_MONTHLY ]: 'VaultPress Backup',
+		[ PRODUCT_JETPACK_BACKUP_T2_YEARLY ]: 'VaultPress Backup',
+		[ PRODUCT_JETPACK_BACKUP_T2_MONTHLY ]: 'VaultPress Backup',
+		[ PRODUCT_JETPACK_BOOST_BI_YEARLY ]: 'Boost',
+		[ PRODUCT_JETPACK_BOOST ]: 'Boost',
+		[ PRODUCT_JETPACK_BOOST_MONTHLY ]: 'Boost',
+		[ PRODUCT_JETPACK_SCAN_REALTIME ]: (
+			<>
+				Scan <em style={ { whiteSpace: 'nowrap' } }>Real-time</em>
+			</>
+		),
+		[ PRODUCT_JETPACK_SCAN_REALTIME_MONTHLY ]: (
+			<>
+				Scan <em style={ { whiteSpace: 'nowrap' } }>Real-time</em>
+			</>
+		),
+		[ PRODUCT_JETPACK_SCAN_BI_YEARLY ]: 'Scan',
+		[ PRODUCT_JETPACK_SCAN ]: 'Scan',
+		[ PRODUCT_JETPACK_SCAN_MONTHLY ]: 'Scan',
+		[ PRODUCT_JETPACK_SEARCH_BI_YEARLY ]: 'Search',
+		[ PRODUCT_JETPACK_SEARCH ]: 'Search',
+		[ PRODUCT_JETPACK_SEARCH_FREE ]: 'Search',
+		[ PRODUCT_JETPACK_SEARCH_MONTHLY ]: 'Search',
+		[ PRODUCT_WPCOM_SEARCH ]: 'Search',
+		[ PRODUCT_WPCOM_SEARCH_MONTHLY ]: 'Search',
+		[ PRODUCT_JETPACK_ANTI_SPAM_BI_YEARLY ]: (
+			<>
+				Akismet <em style={ { whiteSpace: 'nowrap' } }>Anti-spam</em>
+			</>
+		),
+		[ PRODUCT_JETPACK_ANTI_SPAM ]: (
+			<>
+				Akismet <em style={ { whiteSpace: 'nowrap' } }>Anti-spam</em>
+			</>
+		),
+		[ PRODUCT_JETPACK_ANTI_SPAM_MONTHLY ]: (
+			<>
+				Akismet <em style={ { whiteSpace: 'nowrap' } }>Anti-spam</em>
+			</>
+		),
+		[ PRODUCT_JETPACK_VIDEOPRESS_BI_YEARLY ]: 'VideoPress',
+		[ PRODUCT_JETPACK_VIDEOPRESS ]: 'VideoPress',
+		[ PRODUCT_JETPACK_VIDEOPRESS_MONTHLY ]: 'VideoPress',
+		[ PRODUCT_JETPACK_SOCIAL_BASIC_BI_YEARLY ]: 'Social',
+		[ PRODUCT_JETPACK_SOCIAL_BASIC ]: 'Social',
+		[ PRODUCT_JETPACK_SOCIAL_BASIC_MONTHLY ]: 'Social',
+		[ PRODUCT_JETPACK_SOCIAL_ADVANCED_BI_YEARLY ]: 'Social',
+		[ PRODUCT_JETPACK_SOCIAL_ADVANCED ]: 'Social',
+		[ PRODUCT_JETPACK_SOCIAL_ADVANCED_MONTHLY ]: 'Social',
+		[ PRODUCT_JETPACK_STATS_BI_YEARLY ]: 'Stats',
+		[ PRODUCT_JETPACK_STATS_YEARLY ]: 'Stats',
+		[ PRODUCT_JETPACK_STATS_MONTHLY ]: 'Stats',
+		[ PRODUCT_JETPACK_AI_MONTHLY ]: 'AI',
+		[ PRODUCT_JETPACK_AI_YEARLY ]: 'AI',
+		[ PRODUCT_JETPACK_AI_BI_YEARLY ]: 'AI',
+		[ PRODUCT_JETPACK_CREATOR_BI_YEARLY ]: 'Creator',
+		[ PRODUCT_JETPACK_CREATOR_YEARLY ]: 'Creator',
+		[ PRODUCT_JETPACK_CREATOR_MONTHLY ]: 'Creator',
 	};
 };
 
