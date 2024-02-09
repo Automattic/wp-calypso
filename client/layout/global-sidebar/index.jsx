@@ -1,4 +1,4 @@
-import { Spinner } from '@automattic/components';
+import { Spinner, Gridicon } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import { useSelector } from 'react-redux';
 import GlobalSidebarFooter from 'calypso/layout/global-sidebar/footer';
@@ -30,6 +30,14 @@ const GlobalSidebar = ( { children, onClick = undefined, className = '', ...prop
 			<GlobalSidebarHeader />
 			<div className="sidebar__body">
 				<Sidebar className={ className } { ...props } onClick={ onClick }>
+					{ props.requireBackLink && (
+						<div className="sidebar__back-link">
+							<a href="/sites">
+								<Gridicon icon="chevron-left" size={ 24 } />
+								<span className="sidebar__back-link-text">{ translate( 'Back' ) }</span>
+							</a>
+						</div>
+					) }
 					{ children }
 				</Sidebar>
 			</div>

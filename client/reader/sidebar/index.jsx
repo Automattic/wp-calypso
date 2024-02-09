@@ -6,11 +6,11 @@ import { localize } from 'i18n-calypso';
 import { defer, startsWith } from 'lodash';
 import { Component } from 'react';
 import { connect } from 'react-redux';
-import AsyncLoad from 'calypso/components/async-load';
 import QueryReaderLists from 'calypso/components/data/query-reader-lists';
 import QueryReaderOrganizations from 'calypso/components/data/query-reader-organizations';
 import QueryReaderTeams from 'calypso/components/data/query-reader-teams';
 import { withCurrentRoute } from 'calypso/components/route';
+import GlobalSidebar from 'calypso/layout/global-sidebar';
 import { useGlobalSidebar } from 'calypso/layout/global-sidebar/hooks/use-global-sidebar';
 import Sidebar from 'calypso/layout/sidebar';
 import SidebarFooter from 'calypso/layout/sidebar/footer';
@@ -278,16 +278,17 @@ export class ReaderSidebar extends Component {
 			placeholder: null,
 			path: this.props.path,
 			onClick: this.handleClick,
+			requireBackLink: true,
 		};
 		return (
-			<AsyncLoad require="calypso/layout/global-sidebar" { ...asyncProps }>
+			<GlobalSidebar { ...asyncProps }>
 				<SidebarRegion>
 					<ReaderSidebarNudges />
 					{ this.renderSidebarMenu() }
 				</SidebarRegion>
 
 				<ReaderSidebarPromo />
-			</AsyncLoad>
+			</GlobalSidebar>
 		);
 	}
 

@@ -4,8 +4,8 @@ import { englishLocales, localizeUrl } from '@automattic/i18n-utils';
 import i18n, { localize } from 'i18n-calypso';
 import { Component } from 'react';
 import { connect } from 'react-redux';
-import AsyncLoad from 'calypso/components/async-load';
 import { withCurrentRoute } from 'calypso/components/route';
+import GlobalSidebar from 'calypso/layout/global-sidebar';
 import { useGlobalSidebar } from 'calypso/layout/global-sidebar/hooks/use-global-sidebar';
 import Sidebar from 'calypso/layout/sidebar';
 import CollapseSidebar from 'calypso/layout/sidebar/collapse-sidebar';
@@ -65,12 +65,9 @@ class MeSidebar extends Component {
 		const asyncProps = {
 			placeholder: null,
 			path: this.props.path,
+			requireBackLink: true,
 		};
-		return (
-			<AsyncLoad require="calypso/layout/global-sidebar" { ...asyncProps }>
-				{ this.renderMenu() }
-			</AsyncLoad>
-		);
+		return <GlobalSidebar { ...asyncProps }>{ this.renderMenu() }</GlobalSidebar>;
 	}
 
 	renderSidebar() {
