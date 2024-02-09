@@ -14,14 +14,17 @@ export const resetStore = () =>
 export const setSelectedStorageOptionForPlan = ( {
 	addOnSlug,
 	planSlug,
+	siteId,
 }: {
 	addOnSlug: WPComStorageAddOnSlug;
 	planSlug: PlanSlug;
+	siteId: number;
 } ) =>
 	( {
 		type: 'WPCOM_PLANS_UI_SET_SELECTED_STORAGE_OPTION_FOR_PLAN',
 		addOnSlug,
 		planSlug,
+		siteId,
 	} ) as const;
 
 export type WpcomPlansUIAction = ReturnType<
