@@ -1,13 +1,9 @@
-import { Button } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import ThankYouV2 from 'calypso/components/thank-you-v2';
 import { TITAN_CONTROL_PANEL_CONTEXT_GET_MOBILE_APP } from 'calypso/lib/titan/constants';
 import { ThankYouTitanProduct } from 'calypso/my-sites/checkout/checkout-thank-you/redesign-v2/products/titan-product';
 import { recordEmailAppLaunchEvent } from 'calypso/my-sites/email/email-management/home/utils';
-import {
-	getTitanControlPanelRedirectPath,
-	getTitanSetUpMailboxPath,
-} from 'calypso/my-sites/email/paths';
+import { getTitanControlPanelRedirectPath } from 'calypso/my-sites/email/paths';
 import { useSelector } from 'calypso/state';
 import getCurrentRoute from 'calypso/state/selectors/get-current-route';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
@@ -72,20 +68,14 @@ const TitanSetUpThankYou = ( {
 
 	let title;
 	let subtitle;
-	let headerButtons;
 
 	if ( emailAddress ) {
 		title = translate( 'Say hello to your new email address' );
 		subtitle = translate( "All set! Now it's time to update your contact details." );
 	} else {
-		title = translate( 'Almost done, set up your Professional Email' );
+		title = translate( 'Congratulations on your purchase!' );
 		subtitle = translate(
 			'Complete your professional email setup to start sending and receiving emails from your custom domain today.'
-		);
-		headerButtons = (
-			<Button href={ getTitanSetUpMailboxPath( selectedSiteSlug, domainName ) } variant="primary">
-				{ translate( 'Set up mailbox' ) }
-			</Button>
 		);
 	}
 
@@ -102,7 +92,6 @@ const TitanSetUpThankYou = ( {
 			<ThankYouV2
 				title={ title }
 				subtitle={ subtitle }
-				headerButtons={ headerButtons }
 				products={ products }
 				footerDetails={ footerDetails }
 			/>

@@ -191,7 +191,7 @@ export default {
 		next();
 	},
 
-	// Steps to reproduce it: https://github.com/Automattic/wp-calypso/pull/87098#email-management-titan-set-up-thank-you
+	// Thank you page for when user sets up a mailbox after purchasing a Titan subscription.
 	emailManagementTitanSetUpThankYou( pageContext, next ) {
 		pageContext.primary = (
 			<Main className="checkout-thank-you is-redesign-v2">

@@ -3,7 +3,11 @@ import { useTranslate } from 'i18n-calypso';
 import ThankYouProduct from 'calypso/components/thank-you-v2/product';
 import { getTitanEmailUrl, useTitanAppsUrlPrefix } from 'calypso/lib/titan';
 import { recordEmailAppLaunchEvent } from 'calypso/my-sites/email/email-management/home/utils';
-import { getEmailManagementPath, getMailboxesPath } from 'calypso/my-sites/email/paths';
+import {
+	getEmailManagementPath,
+	getMailboxesPath,
+	getTitanSetUpMailboxPath,
+} from 'calypso/my-sites/email/paths';
 import { useSelector } from 'calypso/state';
 import getCurrentRoute from 'calypso/state/selectors/get-current-route';
 
@@ -24,7 +28,7 @@ export function ThankYouTitanProduct( {
 	const currentRoute = useSelector( getCurrentRoute );
 	const emailManagementPath = getEmailManagementPath( siteSlug, domainName, currentRoute );
 
-	let inboxButton;
+	const actions = [];
 	if ( emailAddress ) {
 		const mailboxesPath = getMailboxesPath( siteSlug );
 
@@ -35,7 +39,7 @@ export function ThankYouTitanProduct( {
 			`${ window.location.protocol }//${ window.location.host }${ mailboxesPath }`
 		);
 
-		inboxButton = (
+		actions.push(
 			<Button
 				variant="primary"
 				href={ inboxPath }
@@ -50,23 +54,29 @@ export function ThankYouTitanProduct( {
 				{ translate( 'Go to inbox' ) }
 			</Button>
 		);
+
+		actions.push(
+			<Button variant="secondary" href={ emailManagementPath }>
+				{ translate( 'Manage email' ) }
+			</Button>
+		);
+	} else {
+		actions.push(
+			<Button href={ getTitanSetUpMailboxPath( siteSlug, domainName ) } variant="primary">
+				{ translate( 'Set up mailbox' ) }
+			</Button>
+		);
 	}
 
-	const details = emailAddress ?? translate( 'for %(domainName)s', { args: { domainName } } );
+	const details =
+		emailAddress ?? translate( 'Set up for %(domainName)s', { args: { domainName } } );
 
 	return (
 		<ThankYouProduct
-			name={ translate( 'Professional email' ) }
+			name={ translate( 'Professional Email' ) }
 			key={ domainName + emailAddress }
 			details={ details }
-			actions={
-				<>
-					{ inboxButton }
-					<Button variant="secondary" href={ emailManagementPath }>
-						{ translate( 'Manage email' ) }
-					</Button>
-				</>
-			}
+			actions={ actions }
 			isLoading={ false }
 		/>
 	);

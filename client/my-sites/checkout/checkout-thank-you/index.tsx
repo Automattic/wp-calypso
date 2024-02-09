@@ -597,7 +597,8 @@ export class CheckoutThankYou extends Component<
 					/>
 				);
 			} else if ( isTitanWithoutMailboxes( selectedFeature ) && domainPurchase ) {
-				// To reproduce it: https://github.com/Automattic/wp-calypso/pull/87098#titan-wo-mailboxes
+				// Users may purchase Titan subscription without specifying the mailbox name using
+				// the onboard with email flow (https://wordpress.com/start/onboarding-with-email/mailbox-domain)
 				pageContent = (
 					<TitanSetUpThankYou
 						domainName={ domainPurchase.meta }
