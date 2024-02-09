@@ -92,6 +92,12 @@
 		.selected {
 			.sidebar__heading,
 			.sidebar__menu-link {
+				.sidebar_svg-reader {
+					fill: var(--color-sidebar-menu-selected-background);
+					g path {
+						stroke: var(--color-sidebar-menu-selected-text);
+					}
+				}
 				.sidebar__menu-icon.sidebar_svg-notifications {
 					fill: var(--color-sidebar-menu-selected-background);
 					path {
@@ -102,15 +108,30 @@
 		}
 	}
 
-	.sidebar-notifications {
+	.sidebar__menu-item-parent {
+		.sidebar_svg-reader {
+			fill: var(--color-sidebar-background);
+			g path {
+				stroke: var(--color-sidebar-gridicon-fill);
+			}
+		}
+		&:hover {
+			.sidebar_svg-reader {
+				fill: var(--color-sidebar-menu-hover-background);
+				g path {
+					stroke: var(--color-sidebar-menu-hover-text);
+				}
+			}
+		}
+	}
 
+	.sidebar-notifications {
 		.sidebar__menu-icon.sidebar_svg-notifications {
 			fill: var(--color-sidebar-background);
 			path {
 				stroke: var(--color-sidebar-gridicon-fill);
 			}
 		}
-
 		&:hover {
 			.sidebar__menu-icon.sidebar_svg-notifications {
 				fill: var(--color-sidebar-menu-hover-background);

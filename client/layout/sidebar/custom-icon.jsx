@@ -12,7 +12,14 @@ import React from 'react';
 
 // TODO: will need to move this to a better place
 const CustomReaderIcon = () => (
-	<svg fill="none" height="32" viewBox="0 0 32 32" width="32" xmlns="http://www.w3.org/2000/svg">
+	<svg
+		className="sidebar__menu-icon sidebar_svg-reader"
+		fill="none"
+		height="20"
+		viewBox="4 4 24 24"
+		width="20"
+		xmlns="http://www.w3.org/2000/svg"
+	>
 		<clipPath id="a">
 			<path d="m4 11.2002h24v10.2857h-24z"></path>
 		</clipPath>
