@@ -43,21 +43,21 @@ export default function buildFallbackResponse( {
 } = {} ) {
 	const fallbackResponse = [
 		{
-			icon: 'dashicons-dashboard',
+			// icon: 'dashicons-dashboard',
 			slug: 'wp-admin',
 			title: translate( 'Dashboard' ),
 			type: 'menu-item',
 			url: `https://${ siteDomain }/wp-admin/`,
 		},
 		{
-			icon: 'dashicons-admin-home',
+			// icon: 'dashicons-admin-home',
 			slug: 'home',
 			title: translate( 'My Home' ),
 			type: 'menu-item',
 			url: `/home/${ siteDomain }`,
 		},
 		{
-			icon: JETPACK_ICON,
+			// icon: JETPACK_ICON,
 			slug: 'jetpack',
 			title: translate( 'Jetpack' ),
 			type: 'menu-item',
@@ -115,7 +115,7 @@ export default function buildFallbackResponse( {
 			slug: 'Plans',
 			title: translate( 'Plans' ),
 			type: 'submenu-item',
-			icon: 'dashicons-cart',
+			// icon: 'dashicons-cart',
 			url: `/plans/${ siteDomain }`,
 		},
 		...( shouldShowAddOns
@@ -132,7 +132,7 @@ export default function buildFallbackResponse( {
 			slug: 'Domains',
 			title: translate( 'Domains' ),
 			type: 'submenu-item',
-			icon: 'dashicons-admin-site',
+			// icon: 'dashicons-admin-site',
 			url: `/domains/manage/${ siteDomain }`,
 		},
 		{
@@ -140,19 +140,19 @@ export default function buildFallbackResponse( {
 			title: translate( 'Emails' ),
 			type: 'submenu-item',
 			url: `/email/${ siteDomain }`,
-			icon: 'dashicons-email',
+			// icon: 'dashicons-email',
 		},
 		{
 			slug: 'Purchases',
 			title: translate( 'Purchases' ),
 			type: 'submenu-item',
-			icon: 'dashicons-money-alt',
+			// icon: 'dashicons-money-alt',
 			url: `/purchases/subscriptions/${ siteDomain }`,
 		},
 		...( shouldShowLinks
 			? [
 					{
-						icon: 'dashicons-admin-links',
+						// icon: 'dashicons-admin-links',
 						slug: 'link-manager-php',
 						title: translate( 'Links' ),
 						type: 'menu-item',
@@ -188,10 +188,10 @@ export default function buildFallbackResponse( {
 			title: translate( 'Themes' ),
 			type: 'submenu-item',
 			url: `/themes/${ siteDomain }`,
-			icon: 'dashicons-admin-appearance',
+			// icon: 'dashicons-admin-appearance',
 		},
 		{
-			icon: 'dashicons-admin-plugins',
+			// icon: 'dashicons-admin-plugins',
 			slug: 'plugins',
 			title: translate( 'Plugins' ),
 			type: 'menu-item',
@@ -204,20 +204,20 @@ export default function buildFallbackResponse( {
 						slug: 'tools-site-monitoring',
 						title: translate( 'Site Monitoring' ),
 						type: 'submenu-item',
-						icon: 'dashicons-visibility',
+						// icon: 'dashicons-visibility',
 						url: `/site-monitoring/${ siteDomain }`,
 					},
 			  ]
 			: [] ),
 		{
 			slug: 'options-hosting-configuration-php',
-			icon: 'dashicons-admin-generic',
+			// icon: 'dashicons-admin-generic',
 			title: translate( 'Hosting Configuration' ),
 			type: 'submenu-item',
 			url: `/hosting-config/${ siteDomain }`,
 		},
 		{
-			icon: 'dashicons-admin-tools',
+			// icon: 'dashicons-admin-tools',
 			slug: 'options-general-php',
 			title: translate( 'Site Tools' ),
 			type: 'menu-item',
