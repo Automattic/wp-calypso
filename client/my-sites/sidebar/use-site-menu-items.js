@@ -15,6 +15,7 @@ import isDomainOnlySite from 'calypso/state/selectors/is-domain-only-site';
 import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
 import isSiteWPForTeams from 'calypso/state/selectors/is-site-wpforteams';
 import { getSiteDomain, isJetpackSite } from 'calypso/state/sites/selectors';
+import getSiteOption from 'calypso/state/sites/selectors/get-site-option';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { requestAdminMenu } from '../../state/admin-menu/actions';
 import allSitesMenu from './static-data/all-sites-menu';
@@ -28,13 +29,20 @@ const useSiteMenuItems = () => {
 	const currentRoute = useSelector( ( state ) => getCurrentRoute( state ) );
 	const selectedSiteId = useSelector( getSelectedSiteId );
 	const siteDomain = useSelector( ( state ) => getSiteDomain( state, selectedSiteId ) );
-	const menuItems = useSelector( ( state ) => getAdminMenu( state, selectedSiteId ) );
+	let menuItems = useSelector( ( state ) => getAdminMenu( state, selectedSiteId ) );
 	const isJetpack = useSelector( ( state ) => isJetpackSite( state, selectedSiteId ) );
 	const isAtomic = useSelector( ( state ) => isAtomicSite( state, selectedSiteId ) );
 	const locale = useLocale();
 	const isAllDomainsView = '/domains/manage' === currentRoute;
 	const { currentSection } = useCurrentRoute();
 	const { shouldShowGlobalSidebar } = useGlobalSidebar( selectedSiteId, currentSection?.group );
+
+	const adminInterface = useSelector( ( state ) =>
+		getSiteOption( state, selectedSiteId, 'wpcom_admin_interface' )
+	);
+	if ( adminInterface === 'wp-admin' ) {
+		menuItems = null;
+	}
 
 	useEffect( () => {
 		if ( selectedSiteId && siteDomain ) {
