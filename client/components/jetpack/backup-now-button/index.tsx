@@ -1,13 +1,14 @@
 import { Button, Tooltip } from '@wordpress/components';
 import { FunctionComponent, useCallback, useState } from 'react';
-import { useDispatch } from 'react-redux';
 import useTrackCallback from 'calypso/lib/jetpack/use-track-callback';
+import { useDispatch } from 'calypso/state';
 import { rewindBackupSite } from 'calypso/state/activity-log/actions';
 
 interface Props {
 	children?: React.ReactNode;
+	siteId: number;
 	tooltipText?: string;
-	trackEventName?: string;
+	trackEventName: string;
 	variant: 'primary' | 'secondary' | 'tertiary';
 }
 
