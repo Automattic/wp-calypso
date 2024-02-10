@@ -1,5 +1,4 @@
 import config from '@automattic/calypso-config';
-// import { Button } from '@automattic/components';
 import { Button, Tooltip } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import { FunctionComponent } from 'react';
