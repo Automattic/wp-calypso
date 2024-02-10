@@ -5,6 +5,7 @@ import { FunctionComponent } from 'react';
 import useTrackCallback from 'calypso/lib/jetpack/use-track-callback';
 import { useDispatch, useSelector } from 'calypso/state';
 import { rewindBackupSite } from 'calypso/state/activity-log/actions';
+import { getInProgressBackupForSite } from 'calypso/state/rewind/selectors';
 import getBackupStoppedFlag from 'calypso/state/rewind/selectors/get-backup-stopped-flag';
 
 interface Props {
@@ -28,6 +29,7 @@ const BackupNowButton: FunctionComponent< Props > = ( {
 	const [ disabled, setDisabled ] = useState( false );
 	const [ buttonContent, setButtonContent ] = useState( children );
 	const [ currentTooltip, setCurrentTooltip ] = useState( tooltipText );
+	const [ enqueued, setEnqueued ] = useState( false );
 	const inProgressText = translate( 'Backup Queued' );
 	const requestBackupSite = useCallback(
 		() => dispatch( rewindBackupSite( siteId ) ),
@@ -37,16 +39,31 @@ const BackupNowButton: FunctionComponent< Props > = ( {
 	const enqueueBackup = () => {
 		trackedRequestBackupSite();
 		setDisabled( true );
-		setButtonContent( inProgressText );
+		setEnqueued( true );
 	};
+	const backupCurrentlyInProgress = useSelector( ( state ) =>
+		getInProgressBackupForSite( state, siteId )
+	);
 
 	useEffect( () => {
 		if ( areBackupsStopped ) {
 			setCurrentTooltip( translate( 'Cannot queue backups due to reaching storage limits.' ) );
+		} else if ( backupCurrentlyInProgress || enqueued ) {
+			setCurrentTooltip( translate( 'A backup is currently in progress.' ) );
+			setButtonContent( inProgressText );
 		} else {
 			setCurrentTooltip( tooltipText );
 		}
-	}, [ areBackupsStopped, tooltipText, translate ] );
+	}, [
+		areBackupsStopped,
+		backupCurrentlyInProgress,
+		tooltipText,
+		translate,
+		inProgressText,
+		enqueued,
+	] );
+
+	// TODO: If we want to re-enable the backup button we can set enqueue to false once we detect a backup in progress
 
 	const button = (
 		<div>
@@ -54,7 +71,7 @@ const BackupNowButton: FunctionComponent< Props > = ( {
 			<Button
 				variant={ variant }
 				onClick={ enqueueBackup }
-				disabled={ areBackupsStopped || disabled }
+				disabled={ backupCurrentlyInProgress || areBackupsStopped || disabled }
 			>
 				{ buttonContent }
 			</Button>
