@@ -173,6 +173,7 @@ function BackupStatus( { selectedDate, needCredentials, onDateChange } ) {
 	const isFetchingSiteFeatures = useSelectedSiteSelector( isRequestingSiteFeatures );
 	const isPoliciesInitialized = useSelectedSiteSelector( isRewindPoliciesInitialized );
 	const siteSlug = useSelector( getSelectedSiteSlug );
+	const siteId = useSelector( getSelectedSiteId );
 	const translate = useTranslate();
 
 	const hasRealtimeBackups = useSelectedSiteSelector(
@@ -198,7 +199,7 @@ function BackupStatus( { selectedDate, needCredentials, onDateChange } ) {
 						<div className="backup__header-right">
 							{ siteSlug && (
 								<>
-									<BackupActionsToolbar siteSlug={ siteSlug } />
+									<BackupActionsToolbar siteId={ siteId } siteSlug={ siteSlug } />
 								</>
 							) }
 						</div>
