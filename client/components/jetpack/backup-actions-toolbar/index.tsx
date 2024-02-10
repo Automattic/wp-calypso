@@ -9,10 +9,11 @@ import BackupNowButton from '../backup-now-button';
 import './style.scss';
 
 interface Props {
-	siteSlug: 'string';
+	siteId: number;
+	siteSlug: string;
 }
 
-const BackupActionsToolbar: FunctionComponent< Props > = ( { siteSlug } ) => {
+const BackupActionsToolbar: FunctionComponent< Props > = ( { siteId, siteSlug } ) => {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 
@@ -34,7 +35,11 @@ const BackupActionsToolbar: FunctionComponent< Props > = ( { siteSlug } ) => {
 	);
 
 	const backupNow = (
-		<BackupNowButton variant="primary" trackEventName="calypso_jetpack_backup_now">
+		<BackupNowButton
+			siteId={ siteId }
+			variant="primary"
+			trackEventName="calypso_jetpack_backup_now"
+		>
 			{ translate( 'Backup Now' ) }
 		</BackupNowButton>
 	);
