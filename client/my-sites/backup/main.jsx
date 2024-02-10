@@ -1,3 +1,4 @@
+import config from '@automattic/calypso-config';
 import { WPCOM_FEATURES_REAL_TIME_BACKUPS } from '@automattic/calypso-products';
 import page from '@automattic/calypso-router';
 import { Button } from '@automattic/components';
@@ -18,6 +19,7 @@ import QuerySiteFeatures from 'calypso/components/data/query-site-features';
 import QuerySiteProducts from 'calypso/components/data/query-site-products';
 import QuerySiteSettings from 'calypso/components/data/query-site-settings';
 import InlineSupportLink from 'calypso/components/inline-support-link';
+import BackupNowButton from 'calypso/components/jetpack/backup-now-button';
 import BackupPlaceholder from 'calypso/components/jetpack/backup-placeholder';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import Main from 'calypso/components/main';
@@ -199,21 +201,28 @@ function BackupStatus( { selectedDate, needCredentials, onDateChange } ) {
 						</div>
 						<div className="backup__header-right">
 							{ siteSlug && (
-								<Tooltip
-									text={ translate(
-										'To test your site changes, migrate or keep your data safe in another site'
-									) }
-								>
-									<Button
-										className="backup__clone-button"
-										href={ backupClonePath( siteSlug ) }
-										onClick={ () =>
-											dispatch( recordTracksEvent( 'calypso_jetpack_backup_copy_site' ) )
-										}
+								<>
+									<Tooltip
+										text={ translate(
+											'To test your site changes, migrate or keep your data safe in another site'
+										) }
 									>
-										{ translate( 'Copy site' ) }
-									</Button>
-								</Tooltip>
+										<Button
+											className="backup__clone-button"
+											href={ backupClonePath( siteSlug ) }
+											onClick={ () =>
+												dispatch( recordTracksEvent( 'calypso_jetpack_backup_copy_site' ) )
+											}
+										>
+											{ translate( 'Copy site' ) }
+										</Button>
+									</Tooltip>
+									{ config.isEnabled( 'jetpack/backup-on-demand' ) && (
+										<BackupNowButton variant="primary" trackEventName="calypso_jetpack_backup_now">
+											{ translate( 'Backup Now' ) }
+										</BackupNowButton>
+									) }
+								</>
 							) }
 						</div>
 					</div>
