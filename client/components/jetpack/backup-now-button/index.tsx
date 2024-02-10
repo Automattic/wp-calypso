@@ -1,10 +1,11 @@
 import { Button, Tooltip } from '@wordpress/components';
-import { FunctionComponent } from 'react';
-import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import { FunctionComponent, useCallback, useState } from 'react';
+import { useDispatch } from 'react-redux';
+import useTrackCallback from 'calypso/lib/jetpack/use-track-callback';
+import { rewindBackupSite } from 'calypso/state/activity-log/actions';
 
 interface Props {
 	children?: React.ReactNode;
-	disabled?: boolean;
 	tooltipText?: string;
 	trackEventName?: string;
 	variant: 'primary' | 'secondary' | 'tertiary';
@@ -12,19 +13,25 @@ interface Props {
 
 const BackupNowButton: FunctionComponent< Props > = ( {
 	children,
-	disabled = false,
+	siteId,
 	tooltipText,
 	trackEventName,
 	variant,
 } ) => {
-	const handleClick = () => {
-		if ( trackEventName ) {
-			recordTracksEvent( trackEventName );
-		}
+	const dispatch = useDispatch();
+	const [ disabled, setDisabled ] = useState( false );
+	const requestBackupSite = useCallback(
+		() => dispatch( rewindBackupSite( siteId ) ),
+		[ dispatch, siteId ]
+	);
+	const trackedRequestBackupSite = useTrackCallback( requestBackupSite, trackEventName );
+	const enqueueBackup = () => {
+		trackedRequestBackupSite();
+		setDisabled( true );
 	};
 
 	const button = (
-		<Button variant={ variant } onClick={ handleClick } disabled={ disabled }>
+		<Button variant={ variant } onClick={ enqueueBackup } disabled={ disabled }>
 			{ children }
 		</Button>
 	);
