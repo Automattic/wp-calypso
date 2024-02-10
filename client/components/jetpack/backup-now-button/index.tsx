@@ -1,8 +1,11 @@
 import { Button, Tooltip } from '@wordpress/components';
-import { FunctionComponent, useCallback, useState } from 'react';
+import { useCallback, useState, useEffect } from '@wordpress/element';
+import { useTranslate } from 'i18n-calypso';
+import { FunctionComponent } from 'react';
 import useTrackCallback from 'calypso/lib/jetpack/use-track-callback';
-import { useDispatch } from 'calypso/state';
+import { useDispatch, useSelector } from 'calypso/state';
 import { rewindBackupSite } from 'calypso/state/activity-log/actions';
+import getBackupStoppedFlag from 'calypso/state/rewind/selectors/get-backup-stopped-flag';
 
 interface Props {
 	children?: React.ReactNode;
@@ -19,8 +22,13 @@ const BackupNowButton: FunctionComponent< Props > = ( {
 	trackEventName,
 	variant,
 } ) => {
+	const translate = useTranslate();
 	const dispatch = useDispatch();
+	const areBackupsStopped = useSelector( ( state ) => getBackupStoppedFlag( state, siteId ) );
 	const [ disabled, setDisabled ] = useState( false );
+	const [ buttonContent, setButtonContent ] = useState( children );
+	const [ currentTooltip, setCurrentTooltip ] = useState( tooltipText );
+	const inProgressText = translate( 'Backup Queued' );
 	const requestBackupSite = useCallback(
 		() => dispatch( rewindBackupSite( siteId ) ),
 		[ dispatch, siteId ]
@@ -29,15 +37,31 @@ const BackupNowButton: FunctionComponent< Props > = ( {
 	const enqueueBackup = () => {
 		trackedRequestBackupSite();
 		setDisabled( true );
+		setButtonContent( inProgressText );
 	};
 
+	useEffect( () => {
+		if ( areBackupsStopped ) {
+			setCurrentTooltip( translate( 'Cannot queue backups due to reaching storage limits.' ) );
+		} else {
+			setCurrentTooltip( tooltipText );
+		}
+	}, [ areBackupsStopped, tooltipText, translate ] );
+
 	const button = (
-		<Button variant={ variant } onClick={ enqueueBackup } disabled={ disabled }>
-			{ children }
-		</Button>
+		<div>
+			{ /* Wrapped in a div to avoid disabled button blocking hover events from reaching Tooltip */ }
+			<Button
+				variant={ variant }
+				onClick={ enqueueBackup }
+				disabled={ areBackupsStopped || disabled }
+			>
+				{ buttonContent }
+			</Button>
+		</div>
 	);
 
-	return <>{ tooltipText ? <Tooltip text={ tooltipText }>{ button }</Tooltip> : button }</>;
+	return <>{ currentTooltip ? <Tooltip text={ currentTooltip }>{ button }</Tooltip> : button }</>;
 };
 
 export default BackupNowButton;
