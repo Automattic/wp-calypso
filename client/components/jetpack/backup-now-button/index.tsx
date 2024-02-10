@@ -67,12 +67,14 @@ const BackupNowButton: FunctionComponent< Props > = ( {
 		} else if ( backupCurrentlyInProgress ) {
 			setCurrentTooltip( statusTooltipTexts.IN_PROGRESS );
 			setButtonContent( statusLabels.IN_PROGRESS );
+			setEnqueued( false );
 		} else if ( enqueued ) {
 			setButtonContent( statusLabels.QUEUED );
 			setCurrentTooltip( statusTooltipTexts.QUEUED );
 		} else {
 			setButtonContent( children );
 			setCurrentTooltip( tooltipText );
+			setDisabled( false );
 		}
 	}, [ areBackupsStopped, backupCurrentlyInProgress, tooltipText, translate, enqueued, children ] );
 
