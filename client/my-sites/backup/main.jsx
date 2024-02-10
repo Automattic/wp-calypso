@@ -219,7 +219,7 @@ function BackupStatus( { selectedDate, needCredentials, onDateChange } ) {
 									</Tooltip>
 									{ config.isEnabled( 'jetpack/backup-on-demand' ) && (
 										<BackupNowButton variant="primary" trackEventName="calypso_jetpack_backup_now">
-											Backup Now
+											{ translate( 'Backup Now' ) }
 										</BackupNowButton>
 									) }
 								</>
