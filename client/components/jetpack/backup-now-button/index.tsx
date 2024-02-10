@@ -2,9 +2,11 @@ import { Button, Tooltip } from '@wordpress/components';
 import { useCallback, useState, useEffect } from '@wordpress/element';
 import { useTranslate } from 'i18n-calypso';
 import { FunctionComponent } from 'react';
+import { EVERY_SECOND, Interval } from 'calypso/lib/interval';
 import useTrackCallback from 'calypso/lib/jetpack/use-track-callback';
 import { useDispatch, useSelector } from 'calypso/state';
 import { rewindBackupSite } from 'calypso/state/activity-log/actions';
+import { requestRewindBackups } from 'calypso/state/rewind/backups/actions';
 import { getInProgressBackupForSite } from 'calypso/state/rewind/selectors';
 import getBackupStoppedFlag from 'calypso/state/rewind/selectors/get-backup-stopped-flag';
 
@@ -30,7 +32,6 @@ const BackupNowButton: FunctionComponent< Props > = ( {
 	const [ buttonContent, setButtonContent ] = useState( children );
 	const [ currentTooltip, setCurrentTooltip ] = useState( tooltipText );
 	const [ enqueued, setEnqueued ] = useState( false );
-	const inProgressText = translate( 'Backup Queued' );
 	const requestBackupSite = useCallback(
 		() => dispatch( rewindBackupSite( siteId ) ),
 		[ dispatch, siteId ]
@@ -45,23 +46,35 @@ const BackupNowButton: FunctionComponent< Props > = ( {
 		getInProgressBackupForSite( state, siteId )
 	);
 
+	const refreshBackupProgress = useCallback(
+		() => dispatch( requestRewindBackups( siteId ) ),
+		[ dispatch, siteId ]
+	);
+
 	useEffect( () => {
+		const statusLabels = {
+			QUEUED: translate( 'Backup queued' ),
+			IN_PROGRESS: translate( 'Backup in progress' ),
+		};
+
+		const statusTooltipTexts = {
+			QUEUED: translate( 'A backup has been queued and will start shortly.' ),
+			IN_PROGRESS: translate( 'A backup is currently in progress.' ),
+		};
+
 		if ( areBackupsStopped ) {
 			setCurrentTooltip( translate( 'Cannot queue backups due to reaching storage limits.' ) );
-		} else if ( backupCurrentlyInProgress || enqueued ) {
-			setCurrentTooltip( translate( 'A backup is currently in progress.' ) );
-			setButtonContent( inProgressText );
+		} else if ( backupCurrentlyInProgress ) {
+			setCurrentTooltip( statusTooltipTexts.IN_PROGRESS );
+			setButtonContent( statusLabels.IN_PROGRESS );
+		} else if ( enqueued ) {
+			setButtonContent( statusLabels.QUEUED );
+			setCurrentTooltip( statusTooltipTexts.QUEUED );
 		} else {
+			setButtonContent( children );
 			setCurrentTooltip( tooltipText );
 		}
-	}, [
-		areBackupsStopped,
-		backupCurrentlyInProgress,
-		tooltipText,
-		translate,
-		inProgressText,
-		enqueued,
-	] );
+	}, [ areBackupsStopped, backupCurrentlyInProgress, tooltipText, translate, enqueued, children ] );
 
 	// TODO: If we want to re-enable the backup button we can set enqueue to false once we detect a backup in progress
 
@@ -78,7 +91,14 @@ const BackupNowButton: FunctionComponent< Props > = ( {
 		</div>
 	);
 
-	return <>{ currentTooltip ? <Tooltip text={ currentTooltip }>{ button }</Tooltip> : button }</>;
+	return (
+		<>
+			{ currentTooltip ? <Tooltip text={ currentTooltip }>{ button }</Tooltip> : button }
+			{ enqueued && ! backupCurrentlyInProgress && (
+				<Interval onTick={ refreshBackupProgress } period={ EVERY_SECOND } />
+			) }
+		</>
+	);
 };
 
 export default BackupNowButton;
