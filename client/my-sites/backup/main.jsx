@@ -1,12 +1,10 @@
-import config from '@automattic/calypso-config';
 import { WPCOM_FEATURES_REAL_TIME_BACKUPS } from '@automattic/calypso-products';
 import page from '@automattic/calypso-router';
-import { Button } from '@automattic/components';
-import { ExternalLink, Tooltip } from '@wordpress/components';
+import { ExternalLink } from '@wordpress/components';
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
+import { useSelector } from 'react-redux';
 import TimeMismatchWarning from 'calypso/blocks/time-mismatch-warning';
 import BackupStorageSpace from 'calypso/components/backup-storage-space';
 import DocumentHead from 'calypso/components/data/document-head';
@@ -19,7 +17,7 @@ import QuerySiteFeatures from 'calypso/components/data/query-site-features';
 import QuerySiteProducts from 'calypso/components/data/query-site-products';
 import QuerySiteSettings from 'calypso/components/data/query-site-settings';
 import InlineSupportLink from 'calypso/components/inline-support-link';
-import BackupNowButton from 'calypso/components/jetpack/backup-now-button';
+import BackupActionsToolbar from 'calypso/components/jetpack/backup-actions-toolbar';
 import BackupPlaceholder from 'calypso/components/jetpack/backup-placeholder';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import Main from 'calypso/components/main';
@@ -29,7 +27,6 @@ import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { INDEX_FORMAT } from 'calypso/lib/jetpack/backup-utils';
 import useDateWithOffset from 'calypso/lib/jetpack/hooks/use-date-with-offset';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
-import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import isRewindPoliciesInitialized from 'calypso/state/rewind/selectors/is-rewind-policies-initialized';
 import getActivityLogFilter from 'calypso/state/selectors/get-activity-log-filter';
 import getDoesRewindNeedCredentials from 'calypso/state/selectors/get-does-rewind-need-credentials';
@@ -42,7 +39,7 @@ import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selecto
 import BackupDatePicker from './backup-date-picker';
 import BackupsMadeRealtimeBanner from './banners/backups-made-realtime-banner';
 import EnableRestoresBanner from './banners/enable-restores-banner';
-import { backupMainPath, backupClonePath } from './paths';
+import { backupMainPath } from './paths';
 import SearchResults from './search-results';
 import { DailyStatus, RealtimeStatus } from './status';
 
@@ -178,7 +175,6 @@ function BackupStatus( { selectedDate, needCredentials, onDateChange } ) {
 	const siteSlug = useSelector( getSelectedSiteSlug );
 	const siteId = useSelector( getSelectedSiteId );
 	const translate = useTranslate();
-	const dispatch = useDispatch();
 
 	const hasRealtimeBackups = useSelectedSiteSelector(
 		siteHasFeature,
@@ -203,30 +199,7 @@ function BackupStatus( { selectedDate, needCredentials, onDateChange } ) {
 						<div className="backup__header-right">
 							{ siteSlug && (
 								<>
-									<Tooltip
-										text={ translate(
-											'To test your site changes, migrate or keep your data safe in another site'
-										) }
-									>
-										<Button
-											className="backup__clone-button"
-											href={ backupClonePath( siteSlug ) }
-											onClick={ () =>
-												dispatch( recordTracksEvent( 'calypso_jetpack_backup_copy_site' ) )
-											}
-										>
-											{ translate( 'Copy site' ) }
-										</Button>
-									</Tooltip>
-									{ config.isEnabled( 'jetpack/backup-on-demand' ) && (
-										<BackupNowButton
-											variant="primary"
-											trackEventName="calypso_jetpack_backup_now"
-											siteId={ siteId }
-										>
-											{ translate( 'Backup Now' ) }
-										</BackupNowButton>
-									) }
+									<BackupActionsToolbar siteId={ siteId } siteSlug={ siteSlug } />
 								</>
 							) }
 						</div>
