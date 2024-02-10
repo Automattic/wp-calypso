@@ -176,6 +176,7 @@ function BackupStatus( { selectedDate, needCredentials, onDateChange } ) {
 	const isFetchingSiteFeatures = useSelectedSiteSelector( isRequestingSiteFeatures );
 	const isPoliciesInitialized = useSelectedSiteSelector( isRewindPoliciesInitialized );
 	const siteSlug = useSelector( getSelectedSiteSlug );
+	const siteId = useSelector( getSelectedSiteId );
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 
@@ -218,7 +219,11 @@ function BackupStatus( { selectedDate, needCredentials, onDateChange } ) {
 										</Button>
 									</Tooltip>
 									{ config.isEnabled( 'jetpack/backup-on-demand' ) && (
-										<BackupNowButton variant="primary" trackEventName="calypso_jetpack_backup_now">
+										<BackupNowButton
+											variant="primary"
+											trackEventName="calypso_jetpack_backup_now"
+											siteId={ siteId }
+										>
 											{ translate( 'Backup Now' ) }
 										</BackupNowButton>
 									) }
