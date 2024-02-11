@@ -31,6 +31,7 @@
 	"features": {
 		"activity-log/v2": true,
 		"always_use_logout_url": true,
+		"checkout/ebanx-pix": false,
 		"checkout/google-pay": false,
 		"checkout/vat-form": true,
 		"checkout/checkout-version": false,
@@ -44,8 +45,9 @@
 		"jetpack/activity-log-sharing": true,
 		"jetpack/agency-dashboard": true,
 		"jetpack/backup-messaging-i3": true,
-		"jetpack/backup-retention-settings": true,
+		"jetpack/backup-on-demand": true,
 		"jetpack/backup-restore-preflight-checks": true,
+		"jetpack/backup-retention-settings": true,
 		"jetpack/card-addition-improvements": true,
 		"jetpack/golden-token": true,
 		"jetpack/plugin-management": true,

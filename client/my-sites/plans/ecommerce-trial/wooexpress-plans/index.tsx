@@ -119,7 +119,6 @@ export function WooExpressPlans( props: WooExpressPlansProps ) {
 					<PlanIntervalSelector
 						className="wooexpress-plans__interval-toggle price-toggle"
 						intervals={ planIntervals }
-						isPlansInsideStepper={ false }
 						use2023PricingGridStyles={ true }
 					/>
 				</div>
