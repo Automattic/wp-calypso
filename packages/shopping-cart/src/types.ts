@@ -727,6 +727,7 @@ export interface TermsOfServiceRecordArgsBase {
 	product_meta: string;
 	product_name: string;
 	product_slug: string;
+	domain_transfer_slug: string;
 	renewal_price: string;
 	renewal_price_integer: number;
 	is_renewal_price_prorated: boolean;
