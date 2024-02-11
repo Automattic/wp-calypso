@@ -25,6 +25,7 @@
 		"calypsoify/plugins": true,
 		"cancellation-offers": true,
 		"catch-js-errors": false,
+		"checkout/ebanx-pix": true,
 		"checkout/google-pay": true,
 		"checkout/vat-form": true,
 		"checkout/checkout-version": true,
