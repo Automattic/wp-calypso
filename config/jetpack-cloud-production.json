@@ -30,6 +30,7 @@
 		"activity-log/v2": true,
 		"ad-tracking": true,
 		"always_use_logout_url": true,
+		"checkout/ebanx-pix": false,
 		"checkout/google-pay": false,
 		"checkout/vat-form": true,
 		"checkout/checkout-version": false,
