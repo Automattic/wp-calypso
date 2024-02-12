@@ -14,17 +14,15 @@ export interface GitHubRepositoryData {
 }
 
 export const useGithubRepositoriesQuery = (
-	account?: string,
-	query?: string,
+	installationId: number,
 	options?: UseQueryOptions< GitHubRepositoryData[] >
 ) => {
 	const path = addQueryArgs( '/hosting/github/repositories', {
-		account,
-		query,
+		installation_id: installationId,
 	} );
 
 	return useQuery< GitHubRepositoryData[] >( {
-		queryKey: [ GITHUB_DEPLOYMENTS_QUERY_KEY, GITHUB_REPOSITORIES_QUERY_KEY, path ],
+		queryKey: [ GITHUB_DEPLOYMENTS_QUERY_KEY, GITHUB_REPOSITORIES_QUERY_KEY, installationId ],
 		queryFn: (): GitHubRepositoryData[] =>
 			wp.req.get( {
 				path,

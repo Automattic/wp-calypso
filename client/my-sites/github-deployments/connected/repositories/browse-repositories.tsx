@@ -8,8 +8,10 @@ import './style.scss';
 
 interface GitHubBrowseRepositoriesProps {
 	accounts: GitHubAccountData[];
+	account: GitHubAccountData;
 	repositories: GitHubRepositoryData[];
 	onSelectRepository( repository: GitHubRepositoryData ): void;
+	onChangeAccount( account: GitHubAccountData ): void;
 }
 
 function filterRepositories( repositories: GitHubRepositoryData[], query: string ) {
@@ -24,17 +26,22 @@ function filterRepositories( repositories: GitHubRepositoryData[], query: string
 
 export const GitHubBrowseRepositories = ( {
 	accounts,
+	account,
 	repositories,
 	onSelectRepository,
+	onChangeAccount,
 }: GitHubBrowseRepositoriesProps ) => {
-	const [ account, setAccount ] = useState( accounts[ 0 ] );
 	const [ query, setQuery ] = useState( '' );
 
 	const filteredRepositories = filterRepositories( repositories, query );
 	return (
 		<div className="github-deployments-repositories">
 			<div className="github-deployments-repositories__search-bar">
-				<GitHubAccountsDropdown accounts={ accounts } value={ account } onChange={ setAccount } />
+				<GitHubAccountsDropdown
+					accounts={ accounts }
+					value={ account }
+					onChange={ onChangeAccount }
+				/>
 				<SearchRepos value={ query } onChange={ setQuery } />
 			</div>
 			<GitHubRepositoryList repositories={ filteredRepositories } onSelect={ onSelectRepository } />

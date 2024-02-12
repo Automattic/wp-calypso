@@ -28,9 +28,7 @@ export const GitHubAccountsDropdown = ( { accounts, value, onChange }: GitHubAcc
 			) ) }
 			<SelectDropdown.Separator />
 			<SelectDropdown.Item key="add">
-				<ExternalLink href="/me" target="__blank">
-					{ __( 'Add GitHub account ' ) }
-				</ExternalLink>
+				<ExternalLink href="/me">{ __( 'Add GitHub account ' ) }</ExternalLink>
 			</SelectDropdown.Item>
 		</SelectDropdown>
 	);

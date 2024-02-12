@@ -5,7 +5,7 @@ interface SearchProps {
 	className?: string;
 	placeholder: string;
 	options: string[];
-	onSelect( option: string ): void;
+	onSelect?( option: string ): void;
 	onChange?( query: string, selected: boolean ): void;
 	disabled?: boolean;
 	isSearching: boolean;
@@ -32,7 +32,7 @@ export const Search = ( {
 			showIcon={ isSearching }
 			isSearching={ isSearching }
 			onChange={ ( query: string, selected: boolean ) => {
-				if ( selected ) {
+				if ( selected && onSelect ) {
 					return onSelect( query );
 				}
 

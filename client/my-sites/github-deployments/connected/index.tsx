@@ -1,5 +1,5 @@
 import { Card } from '@automattic/components';
-import { IconButton } from '@wordpress/components';
+import { Button } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { arrowLeft } from '@wordpress/icons';
 import { useState } from 'react';
@@ -16,15 +16,21 @@ interface GitHubConnectedProps {
 }
 
 export const GitHubConnected = ( { accounts }: GitHubConnectedProps ) => {
-	const [ repository, setRepository ] = useState< GitHubRepositoryData | undefined >();
+	const [ repository, setRepository ] = useState< GitHubRepositoryData | null >( null );
+	const [ account, setAccount ] = useState( accounts[ 0 ] );
 
-	const { data: repositories = [], isLoading: isLoadingRepositories } =
-		useGithubRepositoriesQuery();
+	const { data: repositories = [], isLoading: isLoadingRepositories } = useGithubRepositoriesQuery(
+		account.external_id
+	);
 
 	function renderBody() {
 		if ( repository ) {
 			return (
-				<GitHubConnectRepository repository={ repository } goBack={ () => setRepository( null ) } />
+				<GitHubConnectRepository
+					account={ account }
+					repository={ repository }
+					goBack={ () => setRepository( null ) }
+				/>
 			);
 		}
 		if ( isLoadingRepositories ) {
@@ -34,7 +40,9 @@ export const GitHubConnected = ( { accounts }: GitHubConnectedProps ) => {
 			<GitHubBrowseRepositories
 				repositories={ repositories }
 				accounts={ accounts }
+				account={ account }
 				onSelectRepository={ setRepository }
+				onChangeAccount={ setAccount }
 			/>
 		);
 	}
@@ -50,9 +58,9 @@ export const GitHubConnected = ( { accounts }: GitHubConnectedProps ) => {
 	return (
 		<Card className="github-deployments-authorized-card">
 			<div className="github-deployments-authorized-card__header">
-				<IconButton icon={ arrowLeft } onClick={ handleBack }>
+				<Button icon={ arrowLeft } onClick={ handleBack }>
 					{ __( 'Back' ) }
-				</IconButton>
+				</Button>
 				<span>{ __( ' Connect repository' ) }</span>
 			</div>
 			<div className="github-deployments-authorized-card__body">{ renderBody() }</div>

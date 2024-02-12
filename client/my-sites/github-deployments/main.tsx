@@ -15,7 +15,7 @@ import './style.scss';
 export function GitHubDeployments() {
 	const titleHeader = translate( 'GitHub Deployments' );
 
-	const { data: accounts, isLoading } = useGithubAccountsQuery();
+	const { data: accounts = [], isLoading } = useGithubAccountsQuery();
 
 	const renderContent = () => {
 		if ( isLoading ) {
