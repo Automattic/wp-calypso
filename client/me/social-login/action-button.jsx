@@ -5,6 +5,7 @@ import { Component } from 'react';
 import { connect } from 'react-redux';
 import FormButton from 'calypso/components/forms/form-button';
 import AppleLoginButton from 'calypso/components/social-buttons/apple';
+import GithubLoginButton from 'calypso/components/social-buttons/github';
 import GoogleSocialButton from 'calypso/components/social-buttons/google';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { fetchCurrentUser } from 'calypso/state/current-user/actions';
@@ -158,6 +159,19 @@ class SocialLoginActionButton extends Component {
 				>
 					{ actionButton }
 				</AppleLoginButton>
+			);
+		}
+
+		if ( service === 'github' ) {
+			return (
+				<GithubLoginButton
+					onClick={ this.handleButtonClick }
+					responseHandler={ this.handleSocialServiceResponse }
+					redirectUri={ redirectUri }
+					socialServiceResponse={ this.props.socialServiceResponse }
+				>
+					{ actionButton }
+				</GithubLoginButton>
 			);
 		}
 
