@@ -2,8 +2,8 @@ import { Card } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback, useEffect, useState } from 'react';
 import useCreateUrlOnlySiteMutation from 'calypso/components/data/query-jetpack-manage-add-site-url/use-create-url-only-site-mutation';
+import CreateSites, { Site } from './create-sites';
 import SitesInput from './sites-input';
-import ValidateSites, { Site } from './validate-sites';
 import './style.scss';
 
 export default function ConnectUrl() {
@@ -16,22 +16,25 @@ export default function ConnectUrl() {
 	const [ processed, setProcessed ] = useState( [] as Site[] );
 	const createUrlOnlySiteMutation = useCreateUrlOnlySiteMutation();
 
-	const shiftQueue = useCallback( () => {
-		// Cheeky immutable Array.shift through destructuring.
-		const [ shift, ...rest ] = queue;
-		setProcessed( [ ...processed, shift ] );
-		setQueue( rest );
-		return shift;
-	}, [ queue, setQueue ] );
+	const shiftQueue = useCallback(
+		( success: boolean ) => {
+			// Cheeky immutable Array.shift through destructuring.
+			const [ shift, ...rest ] = queue;
+
+			shift.status = success ? 'success' : 'error';
+			setProcessed( [ ...processed, shift ] );
+			setQueue( rest );
+			return shift;
+		},
+		[ queue, setQueue ]
+	);
 
 	const onCreateSiteSuccess = useCallback( () => {
-		shiftQueue();
-		// @todo show a success message about the return value from shiftQueue.
+		shiftQueue( true );
 	}, [ shiftQueue, setQueue ] );
 
 	const onCreateSiteError = useCallback( () => {
-		shiftQueue();
-		// @todo show an error message about the return value from shiftQueue.
+		shiftQueue( false );
 	}, [ shiftQueue, setQueue ] );
 
 	useEffect( () => {
@@ -62,7 +65,7 @@ export default function ConnectUrl() {
 
 			setSelectedColumn( column );
 			setCSVConfirmed( true );
-			setQueue( sites.map( ( site ) => ( { url: site[ index ] || '' } ) ) );
+			setQueue( sites.map( ( site ) => ( { url: site[ index ] || '', status: 'pending' } ) ) );
 		},
 		[ sites, selectedColumn ]
 	);
@@ -105,7 +108,7 @@ export default function ConnectUrl() {
 				</>
 			) : (
 				<Card>
-					<ValidateSites processed={ processed } queue={ queue } />
+					<CreateSites processed={ processed } queue={ queue } />
 				</Card>
 			) }
 		</div>

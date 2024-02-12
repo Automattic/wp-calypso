@@ -4,15 +4,10 @@ import Spinner from './spinner';
 
 export interface Site {
 	url: string;
+	status: 'pending' | 'success' | 'error';
 }
 
-export default function ValidateSites( {
-	processed,
-	queue,
-}: {
-	processed: Site[];
-	queue: Site[];
-} ) {
+export default function CreateSites( { processed, queue }: { processed: Site[]; queue: Site[] } ) {
 	const translate = useTranslate();
 
 	return (
@@ -26,7 +21,7 @@ export default function ValidateSites( {
 			<div>
 				{ processed.map( ( site, index ) => (
 					<div className="connect-url__validate-sites-row" key={ index }>
-						<Gridicon icon="gridicons-checkmark-circle" />
+						<Gridicon icon={ site.status === 'success' ? 'checkmark-circle' : 'cross-circle' } />
 						<div>{ site.url }</div>
 					</div>
 				) ) }
