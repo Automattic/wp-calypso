@@ -55,7 +55,7 @@
 		"classnames": "^2.3.2",
 		"cmdk": "^0.2.0",
 		"utility-types": "^3.10.0",
-		"wpcom-proxy-request": "workspace:^"
+		"wpcom": "workspace:^"
 	},
 	"peerDependencies": {
 		"@wordpress/data": "^9.20.0",

@@ -1,17 +1,16 @@
 import { useQuery } from '@tanstack/react-query';
-import request from 'wpcom-proxy-request';
+import type { WPCOM } from 'wpcom';
 
-export const useSitesSortingQuery = () =>
+export const useSitesSortingQuery = ( wpcom: WPCOM ) =>
 	useQuery( {
 		queryKey: [ 'command-palette', 'sites-sorting' ],
 		queryFn: () =>
-			request( {
+			wpcom.req.get( {
 				path: '/me/preferences',
 				apiVersion: '1.1',
 			} ),
 		select: ( data ) => {
 			const serializedSitesSorting =
-				// @ts-expect-error TODO
 				data?.calypso_preferences?.[ 'sites-sorting' ] ?? 'lastInteractedWith-desc';
 			const [ sortKey, sortOrder ] = serializedSitesSorting.split( '-' );
 			return {

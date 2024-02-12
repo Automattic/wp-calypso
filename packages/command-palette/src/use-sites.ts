@@ -1,6 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
-import request from 'wpcom-proxy-request';
 import { getJetpackSiteCollisions, getUnmappedUrl, urlToSlug, withoutHttp } from './utils';
+import type { WPCOM } from 'wpcom';
 
 // Performance-optimized request for lists of sites.
 // Don't add more fields because you will make the request slower.
@@ -41,25 +41,29 @@ export const SITE_REQUEST_OPTIONS = [
 	'wpcom_admin_interface',
 ] as const;
 
-export const useSites = () =>
+export const useSites = ( wpcom: WPCOM ) =>
 	useQuery( {
-		queryKey: [ 'command-palette', 'site-excerpts' ],
+		queryKey: [ 'command-palette', 'sites' ],
 		queryFn: () =>
-			request( {
-				path: '/me/sites',
-				apiVersion: '1.2',
-				query: new URLSearchParams( {
+			wpcom.req.get(
+				{
+					path: '/me/sites',
+					apiVersion: '1.2',
+				},
+				{
 					fields: SITE_REQUEST_FIELDS.join( ',' ),
 					options: SITE_REQUEST_OPTIONS.join( ',' ),
 					site_visibility: 'all',
 					site_activity: 'active',
 					include_domain_only: 'false',
-				} ).toString(),
-			} ),
+				}
+			),
 		select: ( data ) => {
-			// @ts-expect-error TODO
+			// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+			// @ts-ignore TODO
 			const conflictingSites = getJetpackSiteCollisions( data.sites );
-			// @ts-expect-error TODO
+			// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+			// @ts-ignore TODO
 			return data.sites.map( ( site ) => computeFields( site, conflictingSites ) );
 		},
 	} );

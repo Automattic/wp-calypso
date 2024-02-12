@@ -15,6 +15,7 @@ import {
 	useCommandPalette,
 	useExtraCommandsParams,
 } from './use-command-palette';
+import type { WPCOM } from 'wpcom';
 
 import '@wordpress/commands/build-style/style.css';
 
@@ -27,6 +28,7 @@ interface CommandMenuGroupProps
 	setEmptyListNotice?: ( message: string ) => void;
 	navigate: ( path: string, openInNewTab: boolean ) => void;
 	useExtraCommands?: ( options: useExtraCommandsParams ) => CommandType[];
+	wpcom: WPCOM;
 }
 
 const StyledCommandsMenuContainer = styled.div( {
@@ -101,6 +103,7 @@ export function CommandMenuGroup( {
 	setEmptyListNotice,
 	navigate,
 	useExtraCommands,
+	wpcom,
 }: CommandMenuGroupProps ) {
 	const { commands, filterNotice, emptyListNotice } = useCommandPalette( {
 		selectedCommandName,
@@ -108,6 +111,7 @@ export function CommandMenuGroup( {
 		search,
 		navigate,
 		useExtraCommands,
+		wpcom,
 	} );
 
 	useEffect( () => {
@@ -220,6 +224,7 @@ interface NotFoundMessageProps {
 interface CommandPaletteProps {
 	navigate: ( path: string, openInNewTab: boolean ) => void;
 	useExtraCommands?: ( options: useExtraCommandsParams ) => CommandType[];
+	wpcom: WPCOM;
 }
 
 const NotFoundMessage = ( {
@@ -246,7 +251,7 @@ const NotFoundMessage = ( {
 	return <>{ emptyListNotice || __( 'No results found.' ) }</>;
 };
 
-export const CommandPalette = ( { navigate, useExtraCommands }: CommandPaletteProps ) => {
+export const CommandPalette = ( { navigate, useExtraCommands, wpcom }: CommandPaletteProps ) => {
 	const [ placeHolderOverride, setPlaceholderOverride ] = useState( '' );
 	const [ search, setSearch ] = useState( '' );
 	const [ selectedCommandName, setSelectedCommandName ] = useState( '' );
@@ -396,6 +401,7 @@ export const CommandPalette = ( { navigate, useExtraCommands }: CommandPalettePr
 							setEmptyListNotice={ setEmptyListNotice }
 							navigate={ navigate }
 							useExtraCommands={ useExtraCommands }
+							wpcom={ wpcom }
 						/>
 					</Command.List>
 				</Command>

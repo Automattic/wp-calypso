@@ -7,6 +7,7 @@
 	"main": "dist/cjs/index.js",
 	"module": "dist/esm/index.js",
 	"calypso:src": "src/index.js",
+	"types": "src/index.d.ts",
 	"author": "Automattic Inc.",
 	"private": true,
 	"scripts": {

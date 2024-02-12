@@ -557,6 +557,8 @@ __metadata:
     redux: "npm:^4.2.1"
     webpack: "npm:^5.90.0"
     webpack-bundle-analyzer: "npm:^4.10.1"
+    wpcom: "workspace:^"
+    wpcom-proxy-request: "workspace:^"
   languageName: unknown
   linkType: soft
 
@@ -583,7 +585,7 @@ __metadata:
     cmdk: "npm:^0.2.0"
     typescript: "npm:^5.3.3"
     utility-types: "npm:^3.10.0"
-    wpcom-proxy-request: "workspace:^"
+    wpcom: "workspace:^"
   peerDependencies:
     "@wordpress/data": ^9.20.0
     react: ^18.2.0

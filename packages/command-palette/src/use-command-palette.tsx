@@ -11,6 +11,7 @@ import { useCommands } from './use-commands';
 import { useSites } from './use-sites';
 import { useSitesSortingQuery } from './use-sites-sorting-query';
 import { isCustomDomain } from './utils';
+import type { WPCOM } from 'wpcom';
 
 const FillDefaultIconWhite = styled.div( {
 	flexShrink: 0,
@@ -79,6 +80,7 @@ interface useCommandPaletteOptions {
 	search: string;
 	navigate: ( path: string, openInNewTab: boolean ) => void;
 	useExtraCommands?: ( options: useExtraCommandsParams ) => Command[];
+	wpcom: WPCOM;
 }
 
 interface SiteToActionParameters {
@@ -151,18 +153,19 @@ export const useCommandPalette = ( {
 	search,
 	navigate,
 	useExtraCommands,
+	wpcom,
 }: useCommandPaletteOptions ): {
 	commands: Command[];
 	filterNotice: string | undefined;
 	emptyListNotice: string | undefined;
 } => {
-	const { data: allSites = [] } = useSites();
+	const { data: allSites = [] } = useSites( wpcom );
 	const siteToAction = useSiteToAction();
 
 	const listVisibleCount = useCommandState( ( state ) => state.filtered.count );
 
 	// Sort sites in the nested commands to be consistent with site switcher and /sites page
-	const { data: sitesSorting } = useSitesSortingQuery();
+	const { data: sitesSorting } = useSitesSortingQuery( wpcom );
 	const sortedSites = useSitesListSorting( allSites, sitesSorting );
 
 	// Get current site ID to rank it to the top of the sites list
@@ -187,10 +190,9 @@ export const useCommandPalette = ( {
 	//const currentRoute = useSelector( ( state: object ) => getCurrentRoutePattern( state ) );
 	const currentRoute = window.location.pathname;
 
-	const userCapabilities = [];
+	const userCapabilities: { [ key: number ]: { [ key: string ]: boolean }[] } = {};
 	// @ts-expect-error TODO
-	sortedSites.forEach( ( site ) => {
-		// @ts-expect-error TODO
+	allSites.forEach( ( site ) => {
 		userCapabilities[ site.ID ] = site.capabilities;
 	} );
 
@@ -202,15 +204,12 @@ export const useCommandPalette = ( {
 		let emptyListNotice = undefined;
 		if ( selectedCommand?.siteFunctions ) {
 			const { capabilityFilter, onClick, filter } = selectedCommand.siteFunctions;
-			// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-			// @ts-ignore TODO
+			// @ts-expect-error TODO
 			let filteredSites = filter ? sortedSites.filter( filter ) : sortedSites;
 			if ( capabilityFilter ) {
-				// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-				// @ts-ignore TODO
 				filteredSites = filteredSites.filter( ( site ) => {
-					// @ts-expect-error TODO
 					const siteCapabilities = userCapabilities[ site.ID ];
+					// @ts-expect-error TODO
 					return siteCapabilities?.[ capabilityFilter ];
 				} );
 			}

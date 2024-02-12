@@ -31,7 +31,9 @@
 		"calypso": "workspace:^",
 		"react": "^18.2.0",
 		"react-dom": "^18.2.0",
-		"redux": "^4.2.1"
+		"redux": "^4.2.1",
+		"wpcom": "workspace:^",
+		"wpcom-proxy-request": "workspace:^"
 	},
 	"devDependencies": {
 		"@automattic/calypso-apps-builder": "workspace:^",
