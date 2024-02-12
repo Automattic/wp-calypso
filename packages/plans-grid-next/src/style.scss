@@ -430,14 +430,13 @@ $mobile-card-max-width: 440px;
 
 .components-custom-select-control {
 	line-height: 0px;
+	font-size: 0.75rem;
 
-	.storage-add-on-dropdown-option__text-container {
-		padding: 6px 0;
-		line-height: 20px;
-	}
-
-	.storage-add-on-dropdown-option__price-container {
+	.storage-add-on-dropdown-option {
 		display: inline-block;
+		line-height: 20px;
+		min-height: 30px;
+		padding-top: 5px;
 	}
 
 	.storage-add-on-dropdown-option__title {
@@ -447,17 +446,20 @@ $mobile-card-max-width: 440px;
 
 	.storage-add-on-dropdown-option__price,
 	.storage-add-on-dropdown-option__per-month {
-		color: var(--studio-green-50);
 		display: inline-block;
 
-		// // Non standard rem allows us to match font size of other storage labels
-		// /* stylelint-disable-next-line scales/font-sizes */
-		// font-size: 0.7rem;
+		font-size: 0.75rem;
 		font-weight: 500;
 	}
 
 	.storage-add-on-dropdown-option__price {
 		margin-left: 4px;
+	}
+
+	.components-custom-select-control__item {
+		&.is-highlighted {
+			background-color: var(--studio-gray-0);
+		}
 	}
 }
 
@@ -754,7 +756,7 @@ body.is-section-signup.is-white-signup {
 			display: none;
 		}
 
-		@include plans-2023-break-small {
+		@include plans-grid-medium-large {
 			padding-top: 34px;
 
 			&.popular-plan-parent-class {
@@ -776,7 +778,7 @@ body.is-section-signup.is-white-signup {
 			}
 		}
 
-		@include plans-2023-break-medium {
+		@include plans-grid-large {
 			&.plan-is-footer {
 				padding-top: 110px;
 			}
@@ -804,7 +806,7 @@ body.is-section-signup.is-white-signup {
 				}
 			}
 
-			@include plans-2023-break-small {
+			@include plans-grid-medium-large {
 				.plan-features-2023-grid__popular-badge {
 					padding: 20px 0 25px;
 					position: absolute;
@@ -892,10 +894,10 @@ body.is-section-signup.is-white-signup {
 			background-color: var(--studio-gray-80);
 			text-transform: unset;
 
-			@include plans-2023-break-small {
+			@include plans-grid-medium-large {
 				left: 15px;
 			}
-			@include plans-2023-break-medium {
+			@include plans-grid-large {
 				top: 55px;
 			}
 		}
@@ -945,7 +947,7 @@ body.is-section-signup.is-white-signup {
 
 		.plan-comparison-grid__plan-conditional-title {
 			@extend %plan-comparison-grid__plan-subtitle;
-			@include plans-2023-break-small {
+			@include plans-grid-medium-large {
 				color: unset;
 				margin-bottom: 0;
 			}
@@ -959,7 +961,7 @@ body.is-section-signup.is-white-signup {
 			}
 		}
 
-		@include plans-2023-break-small {
+		@include plans-grid-medium-large {
 			.plan-comparison-grid__plan-image,
 			.plan-comparison-grid__plan-title,
 			.plan-comparison-grid__plan-subtitle {
@@ -989,7 +991,7 @@ body.is-section-signup.is-white-signup {
 			right: -1px;
 		}
 
-		@include plans-2023-break-small {
+		@include plans-grid-medium-large {
 			&::before,
 			&:not(:last-of-type)::after {
 				display: block;
@@ -1015,7 +1017,7 @@ body.is-section-signup.is-white-signup {
 		min-height: 30px;
 		line-height: 1.3;
 
-		@include plans-2023-break-small {
+		@include plans-grid-medium-large {
 			margin: 7px 0 10px;
 		}
 
@@ -1025,12 +1027,12 @@ body.is-section-signup.is-white-signup {
 			font-weight: 400;
 			color: var(--studio-gray-80);
 
-			@include plans-2023-break-small {
+			@include plans-grid-medium-large {
 				font-size: $font-body-small;
 				line-height: 20px;
 			}
 
-			@include plans-2023-break-medium {
+			@include plans-grid-large {
 				font-size: $font-body-extra-small;
 				line-height: 16px;
 			}

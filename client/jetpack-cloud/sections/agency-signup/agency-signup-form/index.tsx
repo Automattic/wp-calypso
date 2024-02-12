@@ -1,7 +1,7 @@
 import page from '@automattic/calypso-router';
 import { Card } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
-import { useCallback, useEffect } from 'react';
+import { useCallback, useEffect, useRef } from 'react';
 import CardHeading from 'calypso/components/card-heading';
 import QueryJetpackPartnerPortalPartner from 'calypso/components/data/query-jetpack-partner-portal-partner';
 import CompanyDetailsForm from 'calypso/jetpack-cloud/sections/partner-portal/company-details-form';
@@ -78,17 +78,17 @@ export default function AgencySignupForm() {
 	// Redirect the user to the dashboard if they are already a partner,
 	// or the overview page if the form was submitted successfully,
 	// or the issue licenses page if coming via the /manage/pricing page.
+	const source = useRef( queryParams.get( 'source' ) );
+	const bundleSize = useRef( queryParams.get( 'bundle_size' ) );
+	const products = useRef( queryParams.get( 'products' ) );
 	useEffect( () => {
 		if ( createPartner.isSuccess ) {
-			if ( queryParams.get( 'source' ) === 'manage-pricing-page' ) {
-				const bundleSize = queryParams.get( 'bundle_size' ) || '1';
-				const path = `/partner-portal/issue-license?product_slug=${ queryParams.get(
-					'products'
-				) }&bundle_size=${ bundleSize }&source=manage-pricing-page`;
+			if ( source.current === 'manage-pricing-page' ) {
+				const path = `/partner-portal/issue-license?products=${ products.current }&bundle_size=${ bundleSize.current }&source=manage-pricing-page`;
 				page.redirect( path );
+			} else {
+				page.redirect( overviewPath() );
 			}
-			// Redirect to dashboard until Overview page is built.
-			page.redirect( overviewPath() );
 		} else if ( partner ) {
 			page.redirect( dashboardPath() );
 		}

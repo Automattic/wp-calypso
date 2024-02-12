@@ -75,7 +75,13 @@ function applyFlags( flagsString: string, modificationMethod: string ) {
 	} );
 }
 
-const flagEnvironments = [ 'wpcalypso', 'horizon', 'stage', 'jetpack-cloud-stage' ];
+const flagEnvironments = [
+	'wpcalypso',
+	'horizon',
+	'stage',
+	'jetpack-cloud-stage',
+	'a8c-for-agencies-stage',
+];
 
 if (
 	process.env.NODE_ENV === 'development' ||

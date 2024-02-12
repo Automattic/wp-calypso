@@ -24,6 +24,7 @@ const usePlanComparisonUrl = () => {
 
 export const NeedMoreInfo: React.FC = () => {
 	const translate = useTranslate();
+	const locale = useLocale();
 
 	const planComparisonUrl = usePlanComparisonUrl();
 
@@ -39,8 +40,8 @@ export const NeedMoreInfo: React.FC = () => {
 					trackEventName="calypso_plans_comparison_table_link_click"
 				/>
 				<MoreInfoBox
-					buttonLabel={ translate( 'Explore Jetpack for Agencies' ) }
-					buttonLink={ localizeUrl( 'https://jetpack.com/for/agencies/' ) }
+					buttonLabel={ translate( 'Explore bulk pricing' ) }
+					buttonLink={ localizeUrl( 'https://cloud.jetpack.com/manage/pricing', locale ) }
 					trackEventName="calypso_jpcom_agencies_page_more_info_button_link_click"
 				/>
 			</div>

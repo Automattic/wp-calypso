@@ -1,3 +1,5 @@
+const anyLocaleRegex = '([a-z]{2,3}|[a-z]{2}-[a-z]{2})';
+
 const sections = [
 	{
 		name: 'root',
@@ -577,7 +579,7 @@ const sections = [
 	},
 	{
 		name: 'jetpack-cloud-pricing',
-		paths: [ '/pricing', '/[^\\/|^manage/]+/pricing', '/plans', '/[^\\/]+/plans' ],
+		paths: [ '/pricing', '/(?!manage)[^\\/]+/pricing', '/plans', '/[^\\/]+/plans' ],
 		module: 'calypso/jetpack-cloud/sections/pricing',
 		group: 'jetpack-cloud',
 		enableLoggedOut: true,
@@ -591,10 +593,11 @@ const sections = [
 	},
 	{
 		name: 'jetpack-cloud-manage-pricing',
-		paths: [ '/manage/pricing' ],
+		paths: [ '/manage/pricing', `/${ anyLocaleRegex }/manage/pricing` ],
 		module: 'calypso/jetpack-cloud/sections/manage/pricing',
 		group: 'jetpack-cloud',
 		enableLoggedOut: true,
+		isomorphic: true,
 	},
 	{
 		name: 'jetpack-cloud-features-comparison',
@@ -669,6 +672,13 @@ const sections = [
 		paths: [ '/github-deployments' ],
 		module: 'calypso/my-sites/github-deployments',
 		group: 'sites',
+	},
+	{
+		name: 'a8c-for-agencies',
+		paths: [ '/' ],
+		module: 'calypso/a8c-for-agencies',
+		group: 'a8c-for-agencies',
+		enableLoggedOut: true,
 	},
 ];
 

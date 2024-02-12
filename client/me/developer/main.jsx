@@ -5,6 +5,7 @@ import cookie from 'cookie';
 import { localize } from 'i18n-calypso';
 import { flowRight as compose } from 'lodash';
 import { Component } from 'react';
+import ReactDOM from 'react-dom';
 import { connect } from 'react-redux';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import Main from 'calypso/components/main';
@@ -16,6 +17,7 @@ import ReauthRequired from 'calypso/me/reauth-required';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
 import { successNotice, removeNotice } from 'calypso/state/notices/actions';
 import { isFetchingUserSettings } from 'calypso/state/user-settings/selectors';
+import { DeveloperSurveyNotice } from './dev-survey-notice';
 import { DeveloperFeatures } from './features/index';
 import { getIAmDeveloperCopy } from './get-i-am-a-developer-copy';
 
@@ -23,7 +25,6 @@ import './style.scss';
 
 class Developer extends Component {
 	developerSurveyNoticeId = 'developer-survey';
-
 	getSurveyHref = () => {
 		const isES = this.props.currentUser.localeSlug === 'es';
 
@@ -34,6 +35,16 @@ class Developer extends Component {
 		return 'https://wordpressdotcom.survey.fm/developer-survey';
 	};
 
+	surveyNoticeWrapper = null;
+
+	constructor( props ) {
+		super( props );
+
+		this.state = {
+			isDeveloperSurveyNoticeVisible: false,
+		};
+	}
+
 	setDeveloperSurveyCookie = ( value, maxAge ) => {
 		document.cookie = cookie.serialize( 'developer_survey', value, {
 			path: '/',
@@ -41,65 +52,78 @@ class Developer extends Component {
 		} );
 	};
 
-	shouldShowDevSurveyNotice = ( isDevAccount ) => {
+	shouldShowDeveloperSurveyNotice = ( isDeveloperAccount ) => {
 		const cookies = cookie.parse( document.cookie );
 
-		const isDevAccountEnabled = isDevAccount ?? this.props.getSetting( 'is_dev_account' );
+		const isDevAccountEnabled = isDeveloperAccount ?? this.props.getSetting( 'is_dev_account' );
 
 		return (
 			isDevAccountEnabled && ! [ 'completed', 'dismissed' ].includes( cookies.developer_survey )
 		);
 	};
 
-	showDevSurveyNotice = () => {
-		const noticeMessage = this.props.translate(
-			"Hey developer! How do {{i}}you{{/i}} use WordPress.com? Spare a moment? We'd love to hear what you think in a {{surveyLink}}quick survey{{/surveyLink}}.",
-			{
-				components: {
-					i: <i />,
-					surveyLink: (
-						<a
-							href={ this.getSurveyHref() }
-							target="_blank"
-							rel="noopener noreferrer"
-							onClick={ () => {
-								recordTracksEvent( 'calypso_me_developer_survey_clicked' );
-
-								this.props.removeNotice( this.developerSurveyNoticeId );
-							} }
-						/>
-					),
-				},
+	showDeveloperSurveyNotice = () => {
+		if ( this.props.currentUser.localeSlug === 'en' ) {
+			if ( ! this.surveyNoticeWrapper ) {
+				this.surveyNoticeWrapper = document.createElement( 'div' );
+				document.body.appendChild( this.surveyNoticeWrapper );
 			}
-		);
 
-		const noticeProps = {
-			id: this.developerSurveyNoticeId,
-			isPersistent: true,
-			onDismissClick: () => {
-				recordTracksEvent( 'calypso_me_developer_survey_dismissed' );
+			this.setState( { isDeveloperSurveyNoticeVisible: true } );
+		} else {
+			const noticeMessage = this.props.translate(
+				"Hey developer! How do {{i}}you{{/i}} use WordPress.com? Spare a moment? We'd love to hear what you think in a {{surveyLink}}quick survey{{/surveyLink}}.",
+				{
+					components: {
+						i: <i />,
+						surveyLink: (
+							<a
+								href={ this.getSurveyHref() }
+								target="_blank"
+								rel="noopener noreferrer"
+								onClick={ () => {
+									recordTracksEvent( 'calypso_me_developer_survey_clicked' );
 
-				this.setDeveloperSurveyCookie( 'dismissed', 24 * 60 * 60 ); // 1 day
+									this.hideDeveloperSurveyNotice();
+								} }
+							/>
+						),
+					},
+				}
+			);
 
-				this.props.removeNotice( this.developerSurveyNoticeId );
-			},
-		};
+			const noticeProps = {
+				id: this.developerSurveyNoticeId,
+				isPersistent: true,
+				onDismissClick: () => {
+					recordTracksEvent( 'calypso_me_developer_survey_dismissed' );
 
-		this.props.successNotice( noticeMessage, noticeProps );
+					this.setDeveloperSurveyCookie( 'dismissed', 24 * 60 * 60 ); // 1 day
+					this.props.removeNotice( this.developerSurveyNoticeId );
+				},
+			};
+			this.props.successNotice( noticeMessage, noticeProps );
+		}
+
 		recordTracksEvent( 'calypso_me_developer_survey_impression' );
 	};
 
-	handleToggleIsDevAccount = ( isDevAccount ) => {
-		this.props.setUserSetting( 'is_dev_account', isDevAccount );
+	hideDeveloperSurveyNotice = () => {
+		this.setState( { isDeveloperSurveyNoticeVisible: false } );
+		this.props.removeNotice( this.developerSurveyNoticeId );
+	};
+
+	handleToggleIsDevAccount = ( isDeveloperAccount ) => {
+		this.props.setUserSetting( 'is_dev_account', isDeveloperAccount );
 
 		recordTracksEvent( 'calypso_me_is_dev_account_toggled', {
-			enabled: isDevAccount ? 1 : 0,
+			enabled: isDeveloperAccount ? 1 : 0,
 		} );
 
-		if ( this.shouldShowDevSurveyNotice( isDevAccount ) ) {
-			this.showDevSurveyNotice();
+		if ( this.shouldShowDeveloperSurveyNotice( isDeveloperAccount ) ) {
+			this.showDeveloperSurveyNotice();
 		} else {
-			this.props.removeNotice( this.developerSurveyNoticeId );
+			this.hideDeveloperSurveyNotice();
 		}
 
 		setTimeout( () => this.props.removeNotice( 'save-user-settings' ), 3000 );
@@ -117,46 +141,74 @@ class Developer extends Component {
 		}
 	}
 
+	componentWillUnmount() {
+		this.surveyNoticeWrapper && document.body.removeChild( this.surveyNoticeWrapper );
+	}
+
 	componentDidUpdate( prevProps ) {
 		const isJustLoadedUserSettings =
 			prevProps.isFetchingUserSettings && ! this.props.isFetchingUserSettings;
 
-		if ( isJustLoadedUserSettings && this.shouldShowDevSurveyNotice() ) {
-			this.showDevSurveyNotice();
+		if ( isJustLoadedUserSettings && this.shouldShowDeveloperSurveyNotice() ) {
+			this.showDeveloperSurveyNotice();
 		}
 	}
 
 	render() {
 		return (
-			<Main className="developer" wideLayout>
-				<PageViewTracker path="/me/developer" title="Me > Developer" />
-				<ReauthRequired twoStepAuthorization={ twoStepAuthorization } />
-				<NavigationHeader
-					navigationItems={ [] }
-					title={ this.props.translate( 'Developer Features' ) }
-					subtitle={ this.props.translate(
-						'Take WordPress.com further with early access to new developer features.'
+			<>
+				<Main className="developer" wideLayout>
+					<PageViewTracker path="/me/developer" title="Me > Developer" />
+					<ReauthRequired twoStepAuthorization={ twoStepAuthorization } />
+					<NavigationHeader
+						navigationItems={ [] }
+						title={ this.props.translate( 'Developer Features' ) }
+						subtitle={ this.props.translate(
+							'Take WordPress.com further with early access to new developer features.'
+						) }
+						className="developer__header"
+					/>
+
+					<form onChange={ this.props.submitForm }>
+						<FormFieldset
+							className={ classnames( 'developer__is_dev_account-fieldset', {
+								'is-loading': this.props.isFetchingUserSettings,
+							} ) }
+						>
+							<ToggleControl
+								disabled={ this.props.isFetchingUserSettings || this.props.isUpdatingUserSettings }
+								checked={ this.props.getSetting( 'is_dev_account' ) }
+								onChange={ this.handleToggleIsDevAccount }
+								label={ getIAmDeveloperCopy( this.props.translate ) }
+							/>
+						</FormFieldset>
+					</form>
+
+					<DeveloperFeatures />
+				</Main>
+
+				{ this.state.isDeveloperSurveyNoticeVisible &&
+					ReactDOM.createPortal(
+						<DeveloperSurveyNotice
+							localeSlug={ this.props.currentUser.localeSlug }
+							onSurveyClick={ () => {
+								recordTracksEvent( 'calypso_me_developer_survey_clicked' );
+
+								this.hideDeveloperSurveyNotice();
+							} }
+							onClose={ ( remindTimeInSeconds, buttonName ) => {
+								recordTracksEvent( 'calypso_me_developer_survey_dismissed', {
+									context: buttonName,
+								} );
+
+								this.setDeveloperSurveyCookie( 'dismissed', remindTimeInSeconds );
+
+								this.hideDeveloperSurveyNotice();
+							} }
+						/>,
+						this.surveyNoticeWrapper
 					) }
-					className="developer__header"
-				/>
-
-				<form onChange={ this.props.submitForm }>
-					<FormFieldset
-						className={ classnames( 'developer__is_dev_account-fieldset', {
-							'is-loading': this.props.isFetchingUserSettings,
-						} ) }
-					>
-						<ToggleControl
-							disabled={ this.props.isFetchingUserSettings || this.props.isUpdatingUserSettings }
-							checked={ this.props.getSetting( 'is_dev_account' ) }
-							onChange={ this.handleToggleIsDevAccount }
-							label={ getIAmDeveloperCopy( this.props.translate ) }
-						/>
-					</FormFieldset>
-				</form>
-
-				<DeveloperFeatures />
-			</Main>
+			</>
 		);
 	}
 }

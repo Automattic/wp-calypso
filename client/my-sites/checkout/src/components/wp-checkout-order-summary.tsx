@@ -1,6 +1,8 @@
 import {
 	getPlan,
 	getYearlyPlanByMonthly,
+	isChargeback,
+	isCredits,
 	isDomainProduct,
 	isDomainTransfer,
 	isGoogleWorkspace,
@@ -37,14 +39,12 @@ import {
 	getSubtotalWithoutDiscounts,
 	filterAndGroupCostOverridesForDisplay,
 	getCreditsLineItemFromCart,
-	hasIntroductoryDiscount,
 } from '@automattic/wpcom-checkout';
 import { keyframes } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useTranslate } from 'i18n-calypso';
 import * as React from 'react';
 import { hasFreeCouponTransfersOnly } from 'calypso/lib/cart-values/cart-items';
-import { preventWidows } from 'calypso/lib/formatting';
 import { isWcMobileApp } from 'calypso/lib/mobile-app';
 import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
 import { getSignupCompleteFlowName } from 'calypso/signup/storageUtils';
@@ -115,6 +115,12 @@ export function CheckoutSummaryFeaturedList( {
 	) => void;
 } ) {
 	const translate = useTranslate();
+
+	// Return early if the cart is only Chargebacks fees
+	if ( responseCart.products.every( isChargeback || isCredits ) ) {
+		return null;
+	}
+
 	const hasRenewalInCart = responseCart.products.some(
 		( product ) => product.extra.purchaseType === 'renewal'
 	);
@@ -146,7 +152,6 @@ export function CheckoutSummaryFeaturedList( {
 		</>
 	);
 }
-
 function CheckoutSummaryPriceList() {
 	const cartKey = useCartKey();
 	const { responseCart } = useShoppingCart( cartKey );
@@ -209,13 +214,6 @@ function CheckoutSummaryPriceList() {
 						{ totalLineItem.formattedAmount }
 					</span>
 				</CheckoutSummaryTotal>
-				{ hasIntroductoryDiscount( responseCart ) && (
-					<CheckoutSummaryExplanation>
-						{ preventWidows(
-							translate( '*Introductory offer first term only, renews at regular rate.' )
-						) }
-					</CheckoutSummaryExplanation>
-				) }
 			</CheckoutSummaryAmountWrapper>
 		</>
 	);
@@ -951,14 +949,6 @@ const CheckoutSummaryTotal = styled( CheckoutSummaryLineItem )`
 	font-weight: ${ ( props ) => props.theme.weights.bold };
 	line-height: 26px;
 	margin-bottom: 16px;
-`;
-
-const CheckoutSummaryExplanation = styled( CheckoutSummaryLineItem )`
-	color: ${ ( props ) => props.theme.colors.textColorLight };
-	font-size: 12px;
-	font-weight: ${ ( props ) => props.theme.weights.normal };
-	font-style: italic;
-	line-height: 16px;
 `;
 
 const LoadingCopy = styled.p`

@@ -113,6 +113,7 @@ class SignupForm extends Component {
 		translate: PropTypes.func.isRequired,
 		horizontal: PropTypes.bool,
 		shouldDisplayUserExistsError: PropTypes.bool,
+		submitForm: PropTypes.func,
 
 		// Connected props
 		oauth2Client: PropTypes.object,
@@ -710,7 +711,6 @@ class SignupForm extends Component {
 						) }
 					</>
 				) }
-
 				<FormLabel htmlFor="password">{ this.props.translate( 'Choose a password' ) }</FormLabel>
 				<FormPasswordInput
 					className="signup-form__input"
@@ -907,9 +907,8 @@ class SignupForm extends Component {
 			return this.globalNotice(
 				{
 					message: this.props.translate(
-						'We found a WordPress.com account with the email address "%(email)s". ' +
-							'{{a}}Log in to this account{{/a}} to connect it to your profile, ' +
-							'or sign up with a different email address.',
+						'We found a WordPress.com account with the email "%(email)s". ' +
+							'{{a}}Log in to connect it{{/a}}, or use a different email to sign up.',
 						{
 							args: { email: userExistsError.email },
 							components: {
@@ -1239,6 +1238,7 @@ class SignupForm extends Component {
 						flowName={ this.props.flowName }
 						goToNextStep={ this.props.goToNextStep }
 						renderTerms={ this.termsOfServiceLink }
+						submitForm={ this.props.submitForm }
 						logInUrl={ logInUrl }
 						disabled={ this.props.disabled }
 						disableSubmitButton={ this.props.disableSubmitButton }

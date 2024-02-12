@@ -179,6 +179,7 @@ class InviteAcceptLoggedOut extends Component {
 			<div>
 				<SignupForm
 					redirectToAfterLoginUrl={ window.location.href }
+					isPasswordless={ true }
 					disabled={ this.state.submitting }
 					formHeader={ this.renderFormHeader() }
 					submitting={ this.state.submitting }

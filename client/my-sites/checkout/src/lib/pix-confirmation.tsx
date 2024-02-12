@@ -93,6 +93,7 @@ function CheckoutLogo( {
 
 export function PixConfirmation( {
 	redirectUrl,
+	qrCode,
 	priceInteger,
 	priceCurrency,
 	cancel,
@@ -100,6 +101,7 @@ export function PixConfirmation( {
 	isJetpackNotAtomic,
 }: {
 	redirectUrl: string;
+	qrCode: string;
 	priceInteger: number;
 	priceCurrency: string;
 	cancel: () => void;
@@ -136,7 +138,7 @@ export function PixConfirmation( {
 				</p>
 
 				<div className="pix-confirmation__qrcode">
-					<QRCodeSVG value={ redirectUrl } />
+					<QRCodeSVG value={ qrCode } />
 				</div>
 
 				<div className="pix-confirmation__manual-instructions">

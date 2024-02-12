@@ -1,0 +1,26 @@
+{
+	"env": "development",
+	"env_id": "a8c-for-agencies-development",
+	"favicon_url": "/calypso/images/favicons/favicon-jetpack-cloud-development.ico",
+	"client_slug": "browser",
+	"protocol": "http",
+	"hostname": "agencies.localhost",
+	"i18n_default_locale_slug": "en",
+	"port": 3000,
+	"site_name": "Automattic For Agencies",
+	"features": {
+		"a8c-for-agencies": true,
+		"always_use_logout_url": true,
+		"dev/auth-helper": true,
+		"dev/preferences-helper": true
+	},
+	"enable_all_sections": false,
+	"sections": {
+		"a8c-for-agencies": true
+	},
+	"site_filter": [],
+	"theme": "jetpack-cloud",
+	"restricted_me_access": false,
+	"theme_color": "#2fb41f",
+	"hotjar_enabled": true
+}

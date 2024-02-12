@@ -1,5 +1,6 @@
 /* eslint-disable wpcalypso/jsx-gridicon-size */
 import { Card, FormLabel } from '@automattic/components';
+import { useHasEnTranslation } from '@automattic/i18n-utils';
 import styled from '@emotion/styled';
 import { useTranslate, localize } from 'i18n-calypso';
 import { useState, useEffect } from 'react';
@@ -34,6 +35,7 @@ const FormRadioStyled = styled( FormRadio )( {
 
 const SiteAdminInterfaceCard = ( { siteId } ) => {
 	const translate = useTranslate();
+	const hasEnTranslation = useHasEnTranslation();
 	const dispatch = useDispatch();
 	const removeAllNotices = () => {
 		dispatch( removeNotice( successNoticeId ) );
@@ -115,20 +117,6 @@ const SiteAdminInterfaceCard = ( { siteId } ) => {
 			<FormFieldset>
 				<FormLabel>
 					<FormRadioStyled
-						label={ translate( 'Default style' ) }
-						value="calypso"
-						checked={ selectedAdminInterface === 'calypso' }
-						onChange={ ( event ) => handleInputChange( event.target.value ) }
-						disabled={ isUpdating }
-					/>
-				</FormLabel>
-				<FormSettingExplanation>
-					{ translate( 'The WordPress.com redesign for a better experience.' ) }
-				</FormSettingExplanation>
-			</FormFieldset>
-			<FormFieldset>
-				<FormLabel>
-					<FormRadioStyled
 						label={ translate( 'Classic style' ) }
 						value="wp-admin"
 						checked={ selectedAdminInterface === 'wp-admin' }
@@ -137,7 +125,25 @@ const SiteAdminInterfaceCard = ( { siteId } ) => {
 					/>
 				</FormLabel>
 				<FormSettingExplanation>
-					{ translate( 'The classic WP-Admin WordPress interface.' ) }
+					{ hasEnTranslation( 'Use WP-Admin to manage your site.' )
+						? translate( 'Use WP-Admin to manage your site.' )
+						: translate( 'The classic WP-Admin WordPress interface.' ) }
+				</FormSettingExplanation>
+			</FormFieldset>
+			<FormFieldset>
+				<FormLabel>
+					<FormRadioStyled
+						label={ translate( 'Default style' ) }
+						value="calypso"
+						checked={ selectedAdminInterface === 'calypso' }
+						onChange={ ( event ) => handleInputChange( event.target.value ) }
+						disabled={ isUpdating }
+					/>
+				</FormLabel>
+				<FormSettingExplanation>
+					{ hasEnTranslation( 'Use WordPress.com’s legacy dashboard to manage your site.' )
+						? translate( 'Use WordPress.com’s legacy dashboard to manage your site.' )
+						: translate( 'The WordPress.com redesign for a better experience.' ) }
 				</FormSettingExplanation>
 			</FormFieldset>
 		</Card>

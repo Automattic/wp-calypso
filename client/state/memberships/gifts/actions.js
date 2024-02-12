@@ -17,7 +17,7 @@ export function receiveDeleteCoupon( siteId, giftId ) {
 	};
 }
 
-export const requestAddGift = ( siteId, gift, noticeText ) => {
+export const requestAddGift = ( siteId, gift, noticeText, onConfirm ) => {
 	return ( dispatch ) => {
 		dispatch( {
 			gift,
@@ -46,6 +46,9 @@ export const requestAddGift = ( siteId, gift, noticeText ) => {
 						} )
 					);
 				}
+
+				onConfirm();
+
 				return membershipGift;
 			} )
 			.catch( ( error ) => {

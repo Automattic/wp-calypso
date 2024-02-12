@@ -60,7 +60,7 @@ function hasSourceSlug( data: unknown ): data is { sourceSlug: string } {
 	return false;
 }
 
-const SiteCreationStep: Step = function SiteCreationStep( { navigation, flow, data } ) {
+const CreateSite: Step = function CreateSite( { navigation, flow, data } ) {
 	const { submit } = navigation;
 	const { __ } = useI18n();
 	const { mutateAsync: addHostingTrial } = useAddHostingTrialMutation();
@@ -252,7 +252,7 @@ const SiteCreationStep: Step = function SiteCreationStep( { navigation, flow, da
 			<StepContainer
 				shouldHideNavButtons={ true }
 				hideFormattedHeader={ true }
-				stepName="site-creation-step"
+				stepName="create-site"
 				isHorizontalLayout={ true }
 				recordTracksEvent={ recordTracksEvent }
 				stepContent={
@@ -272,4 +272,4 @@ const SiteCreationStep: Step = function SiteCreationStep( { navigation, flow, da
 	);
 };
 
-export default SiteCreationStep;
+export default CreateSite;
