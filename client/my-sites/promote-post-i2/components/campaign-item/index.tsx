@@ -56,8 +56,11 @@ export default function CampaignItem( props: Props ) {
 	const clicks_total = campaign_stats?.clicks_total ?? 0;
 	const spent_budget_cents = campaign_stats?.spent_budget_cents ?? 0;
 	const impressions_total = campaign_stats?.impressions_total ?? 0;
+	const conversion_rate_percentage = campaign_stats?.conversion_rate
+		? campaign_stats.conversion_rate * 100
+		: 0;
 	const conversion_rate = campaign_stats?.conversion_rate
-		? `${ campaign_stats.conversion_rate.toFixed( 2 ) }%`
+		? `${ conversion_rate_percentage.toFixed( 2 ) }%`
 		: '-';
 
 	const moment = useLocalizedMoment();
