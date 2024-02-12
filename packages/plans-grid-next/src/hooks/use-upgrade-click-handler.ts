@@ -13,11 +13,12 @@ export type UpgradeClickHandler = (
 interface Props {
 	gridPlans: GridPlan[]; // TODO clk: to be removed, grabbed from context
 	onUpgradeClick?: UpgradeClickHandler;
+	selectedSiteId: number;
 }
 
-const useUpgradeClickHandler = ( { gridPlans, onUpgradeClick }: Props ) => {
+const useUpgradeClickHandler = ( { gridPlans, onUpgradeClick, selectedSiteId }: Props ) => {
 	const selectedStorageOptions = useSelect( ( select ) => {
-		return select( WpcomPlansUI.store ).getSelectedStorageOptions();
+		return select( WpcomPlansUI.store ).getSelectedStorageOptions( selectedSiteId );
 	}, [] );
 
 	return useCallback(
