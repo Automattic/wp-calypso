@@ -7,8 +7,10 @@
 	"hostname": "agencies.automattic.com",
 	"i18n_default_locale_slug": "en",
 	"site_name": "Automattic For Agencies",
+	"oauth_client_id": 95932,
 	"features": {
-		"a8c-for-agencies": true
+		"a8c-for-agencies": true,
+		"oauth": true
 	},
 	"enable_all_sections": false,
 	"sections": {
