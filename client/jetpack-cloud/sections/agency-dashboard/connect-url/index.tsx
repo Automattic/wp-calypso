@@ -1,128 +1,90 @@
 import { Card } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
-import { useCallback, useState } from 'react';
-import QueryJetpackManageAddSiteUrl, {
-	JetpackManageAddSiteData,
-} from 'calypso/components/data/query-jetpack-manage-add-site-url';
-import { useDispatch, useSelector } from 'calypso/state';
-import {
-	setSiteValidatingStatusValidating,
-	setSiteValidatingStatusJetpackConnected,
-	setSiteValidatingStatusWordPressSite,
-	setSiteValidatingStatusNonWordPressSite,
-	setSiteValidatingStatusNotExists,
-} from 'calypso/state/jetpack-agency-dashboard/actions';
-import { getValidatedSites } from 'calypso/state/jetpack-agency-dashboard/selectors';
-import { JETPACK_CONNECT_COMPLETE_FLOW } from 'calypso/state/jetpack-connect/action-types';
+import { useCallback, useEffect, useState } from 'react';
+import useCreateUrlOnlySiteMutation from 'calypso/components/data/query-jetpack-manage-add-site-url/use-create-url-only-site-mutation';
 import SitesInput from './sites-input';
-import ValidateSites from './validate-sites';
+import ValidateSites, { Site } from './validate-sites';
 import './style.scss';
 
 export default function ConnectUrl() {
-	const dispatch = useDispatch();
 	const translate = useTranslate();
 
-	const validatedSites = useSelector( getValidatedSites );
-
-	const [ detectedSites, setDetectedSites ] = useState( [] as string[] );
-	const [ detectedFilename, setDetectedFilename ] = useState( '' );
-	const [ validating, setValidating ] = useState( false );
-	const [ currentValidatingSite, setCurrentValidatingSite ] = useState( '' );
+	const [ filename, setFilename ] = useState( '' );
+	const [ sites, setSites ] = useState( [] as string[][] );
 	const [ csvColumns, setCSVColumns ] = useState( [] as string[] );
+	const [ queue, setQueue ] = useState( [] as Site[] );
+	const [ processed, setProcessed ] = useState( [] as Site[] );
+	const createUrlOnlySiteMutation = useCreateUrlOnlySiteMutation();
+
+	const shiftQueue = useCallback( () => {
+		// Cheeky immutable Array.shift through destructuring.
+		const [ shift, ...rest ] = queue;
+		setProcessed( [ ...processed, shift ] );
+		setQueue( rest );
+		return shift;
+	}, [ queue, setQueue ] );
+
+	const onCreateSiteSuccess = useCallback( () => {
+		shiftQueue();
+		// @todo show a success message about the return value from shiftQueue.
+	}, [ shiftQueue, setQueue ] );
+
+	const onCreateSiteError = useCallback( () => {
+		shiftQueue();
+		// @todo show an error message about the return value from shiftQueue.
+	}, [ shiftQueue, setQueue ] );
+
+	useEffect( () => {
+		if ( queue.length < 1 ) {
+			return;
+		}
+
+		createUrlOnlySiteMutation.mutate(
+			{ url: queue[ 0 ].url },
+			{
+				onSuccess: onCreateSiteSuccess,
+				onError: onCreateSiteError,
+			}
+		);
+	}, [ queue, createUrlOnlySiteMutation.mutate ] );
+
 	const [ selectedColumn, setSelectedColumn ] = useState( '' );
-	const [ currentValidatingSiteIndex, setCurrentValidatingSiteIndex ] = useState( 0 );
 	const [ csvConfirmed, setCSVConfirmed ] = useState( false );
-
-	const handleValidationSuccess = useCallback(
-		( data: JetpackManageAddSiteData ) => {
-			if ( data.exists ) {
-				if ( data.isJetpackConnected ) {
-					dispatch( setSiteValidatingStatusJetpackConnected( currentValidatingSite ) );
-				}
-
-				if ( ! data.isWordPress ) {
-					dispatch( setSiteValidatingStatusWordPressSite( currentValidatingSite ) );
-				} else {
-					dispatch( setSiteValidatingStatusNonWordPressSite( currentValidatingSite ) );
-				}
-			} else {
-				dispatch( setSiteValidatingStatusNotExists( currentValidatingSite ) );
-			}
-
-			/* Checks if there is another site to validate and moves the cursor forward */
-			const nextValidatingSiteIndex = currentValidatingSiteIndex + 1;
-			if ( nextValidatingSiteIndex < detectedSites.length ) {
-				const siteData = detectedSites[ nextValidatingSiteIndex ];
-				// A check for siteData here might seem useless, but I am considering edge cases
-				// where the CSV file might be in a bad state and the condition above would still pass
-				if ( siteData ) {
-					const columnIndex = csvColumns.indexOf( selectedColumn );
-					const nextSiteUrl = siteData.split( ',' )[ columnIndex ];
-					dispatch( setSiteValidatingStatusValidating( nextSiteUrl ) );
-					setCurrentValidatingSite( nextSiteUrl );
-					setCurrentValidatingSiteIndex( nextValidatingSiteIndex );
-				}
-			} else {
-				setValidating( false );
-				setCurrentValidatingSite( '' );
-				setCurrentValidatingSiteIndex( 0 );
-			}
-			dispatch( { type: JETPACK_CONNECT_COMPLETE_FLOW } );
-		},
-		[
-			currentValidatingSite,
-			csvColumns,
-			currentValidatingSiteIndex,
-			detectedSites,
-			setCurrentValidatingSite,
-			validatedSites,
-			dispatch,
-		]
-	);
+	const isProcessing = queue.length > 0;
 
 	const handleCSVLoadConfirmation = useCallback(
 		( column: string ) => {
-			// Get the data from the first site on the list
-			const siteData = detectedSites[ 0 ].split( ',' );
-			// Get the index of the selected column from the columns list
-			const columnIndex = csvColumns.indexOf( column );
-			// Set the pointer to the first site to start the queue
-			setCurrentValidatingSite( siteData[ columnIndex ] );
-			setCurrentValidatingSiteIndex( 0 );
-			// Define the selected column
+			const index = csvColumns.indexOf( column );
+
+			if ( index === -1 ) {
+				return;
+			}
+
 			setSelectedColumn( column );
-			// Initialize the map that stores the validation results
-			dispatch( setSiteValidatingStatusValidating( siteData[ columnIndex ] ) );
-			setValidating( true );
 			setCSVConfirmed( true );
+			setQueue( sites.map( ( site ) => ( { url: site[ index ] || '' } ) ) );
 		},
-		[ detectedSites, csvColumns, validatedSites ]
+		[ sites, selectedColumn ]
 	);
 
 	const onCSVLoad = useCallback(
-		( fileContents: string[] ) => {
-			const columns: string[] = fileContents[ 0 ].split( ',' );
-			const sitesData: string[] = fileContents.slice( 1 );
-			setCSVColumns( columns );
-			setDetectedSites( sitesData );
+		( lines: string[][] ) => {
+			if ( lines.length < 2 ) {
+				return;
+			}
+			setCSVColumns( lines[ 0 ] );
+			setSites( lines.slice( 1 ) );
 		},
-		[ setCSVColumns, setDetectedSites ]
+		[ setCSVColumns, setSites ]
 	);
 
-	const pageTitle = validating ? translate( 'Adding sites' ) : translate( 'Add sites by URL' );
-	const pageSubtitle = validating
+	const pageTitle = isProcessing ? translate( 'Adding sites' ) : translate( 'Add sites by URL' );
+	const pageSubtitle = isProcessing
 		? translate( 'Please wait while we add all sites to your account.' )
 		: translate( 'Add one or multiple sites at once by entering their address below.' );
 
 	return (
 		<div className="connect-url">
-			{ validating && (
-				<QueryJetpackManageAddSiteUrl
-					url={ currentValidatingSite }
-					onSuccess={ handleValidationSuccess }
-				/>
-			) }
-
 			<h2 className="connect-url__page-title">{ pageTitle }</h2>
 			<div className="connect-url__page-subtitle">{ pageSubtitle }</div>
 			{ ! csvConfirmed ? (
@@ -130,10 +92,11 @@ export default function ConnectUrl() {
 					<Card>
 						<SitesInput
 							{ ...{
-								detectedSites,
-								setDetectedSites,
-								detectedFilename,
-								setDetectedFilename,
+								sites: sites,
+								setSites: setSites,
+								filename: filename,
+								setFilename: setFilename,
+								csvColumns,
 								onCSVLoad,
 							} }
 							onCSVLoadConfirmation={ handleCSVLoadConfirmation }
@@ -142,11 +105,7 @@ export default function ConnectUrl() {
 				</>
 			) : (
 				<Card>
-					<ValidateSites
-						{ ...{ detectedSites } }
-						urlColumnIndex={ csvColumns.indexOf( selectedColumn ) }
-						validatedSites={ validatedSites }
-					/>
+					<ValidateSites processed={ processed } queue={ queue } />
 				</Card>
 			) }
 		</div>

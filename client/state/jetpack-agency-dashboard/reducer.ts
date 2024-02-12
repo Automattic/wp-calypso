@@ -11,12 +11,6 @@ import {
 	JETPACK_AGENCY_DASHBOARD_SELECT_SITE_LICENSE,
 	JETPACK_AGENCY_DASHBOARD_UNSELECT_SITE_LICENSE,
 	JETPACK_AGENCY_DASHBOARD_RESET_SITE_LICENSES,
-	JETPACK_AGENCY_DASHBOARD_CONNECT_URL_SITE_VALIDATION_VALIDATING,
-	JETPACK_AGENCY_DASHBOARD_CONNECT_URL_SITE_VALIDATION_JETPACK_CONNECTED,
-	JETPACK_AGENCY_DASHBOARD_CONNECT_URL_SITE_VALIDATION_WORDPRESS_SITE,
-	JETPACK_AGENCY_DASHBOARD_CONNECT_URL_SITE_VALIDATION_NON_WORDPRESS_SITE,
-	JETPACK_AGENCY_DASHBOARD_CONNECT_URL_SITE_VALIDATION_NOT_EXISTS,
-	JETPACK_AGENCY_DASHBOARD_CONNECT_URL_SITE_VALIDATION_ERROR,
 } from './action-types';
 import type {
 	PurchasedProductsInfo,
@@ -124,66 +118,11 @@ const selectedSiteLicenses: Reducer<
 	}
 };
 
-type ValidationStatus =
-	| 'validating'
-	| 'jetpack-connected'
-	| 'wordpress-site'
-	| 'non-wordpress-site'
-	| 'not-exists'
-	| 'error';
-
-// Possibly adding more properties for this interface
-// when connecting to more back-end features
-export interface JetpackManageAddSiteStatus {
-	validationStatus: ValidationStatus;
-}
-
-const validatedSites: Reducer< { [ siteUrl: string ]: JetpackManageAddSiteStatus }, AnyAction > = (
-	state = {},
-	action: AnyAction
-): AppState => {
-	switch ( action?.type ) {
-		case JETPACK_AGENCY_DASHBOARD_CONNECT_URL_SITE_VALIDATION_VALIDATING:
-			return {
-				...state,
-				[ action.siteUrl ]: 'validating',
-			};
-		case JETPACK_AGENCY_DASHBOARD_CONNECT_URL_SITE_VALIDATION_JETPACK_CONNECTED:
-			return {
-				...state,
-				[ action.siteUrl ]: 'jetpack-connected',
-			};
-		case JETPACK_AGENCY_DASHBOARD_CONNECT_URL_SITE_VALIDATION_WORDPRESS_SITE:
-			return {
-				...state,
-				[ action.siteUrl ]: 'wordpress-site',
-			};
-		case JETPACK_AGENCY_DASHBOARD_CONNECT_URL_SITE_VALIDATION_NON_WORDPRESS_SITE:
-			return {
-				...state,
-				[ action.siteUrl ]: 'non-wordpress-site',
-			};
-		case JETPACK_AGENCY_DASHBOARD_CONNECT_URL_SITE_VALIDATION_NOT_EXISTS:
-			return {
-				...state,
-				[ action.siteUrl ]: 'not-exists',
-			};
-		case JETPACK_AGENCY_DASHBOARD_CONNECT_URL_SITE_VALIDATION_ERROR:
-			return {
-				...state,
-				[ action.siteUrl ]: 'error',
-			};
-	}
-
-	return state;
-};
-
 const combinedReducer = combineReducers( {
 	purchasedLicense,
 	selectedLicenses,
 	siteMonitorStatus,
 	selectedSiteLicenses,
-	validatedSites,
 } );
 
 export default withStorageKey( 'agencyDashboard', combinedReducer );

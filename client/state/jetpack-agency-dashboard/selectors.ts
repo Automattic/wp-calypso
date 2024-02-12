@@ -1,5 +1,4 @@
 import { getPreference } from 'calypso/state/preferences/selectors';
-import { JetpackManageAddSiteStatus } from './reducer';
 import type {
 	Preference,
 	AllowedTypes,
@@ -105,10 +104,4 @@ export function hasSelectedSiteLicensesOfType(
 
 export function getSiteMonitorStatuses( state: AppState ): SiteMonitorStatus {
 	return state.agencyDashboard?.siteMonitorStatus?.statuses;
-}
-
-export function getValidatedSites( state: AppState ): {
-	[ siteUrl: string ]: JetpackManageAddSiteStatus;
-} {
-	return state.agencyDashboard?.validatedSites;
 }

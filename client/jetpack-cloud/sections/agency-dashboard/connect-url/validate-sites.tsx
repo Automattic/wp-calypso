@@ -1,39 +1,42 @@
 import { Button, Gridicon } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
-import { JetpackManageAddSiteStatus } from 'calypso/state/jetpack-agency-dashboard/reducer';
 import Spinner from './spinner';
 
+export interface Site {
+	url: string;
+}
+
 export default function ValidateSites( {
-	detectedSites,
-	urlColumnIndex,
-	validatedSites,
+	processed,
+	queue,
 }: {
-	detectedSites: string[];
-	urlColumnIndex: number;
-	validatedSites: { [ site: string ]: JetpackManageAddSiteStatus };
+	processed: Site[];
+	queue: Site[];
 } ) {
 	const translate = useTranslate();
-
-	const domainList = detectedSites.map( ( site: string ) => (
-		<div className="connect-url__validate-sites-row" key={ site }>
-			{ validatedSites[ site ]?.validationStatus === 'validating' ? (
-				<Spinner />
-			) : (
-				<Gridicon icon="gridicons-checkmark-circle" />
-			) }
-			<div>{ site.split( ',' )[ urlColumnIndex ] }</div>
-		</div>
-	) );
 
 	return (
 		<div className="connect-url__validate-sites">
 			<div className="connect-url__validate-sites-quantity">
 				{ translate( 'Adding {{strong}}%(num)d sites{{/strong}}', {
-					args: { num: detectedSites.length },
+					args: { num: queue.length },
 					components: { strong: <strong /> },
 				} ) }
 			</div>
-			<div>{ domainList }</div>
+			<div>
+				{ processed.map( ( site, index ) => (
+					<div className="connect-url__validate-sites-row" key={ index }>
+						<Gridicon icon="gridicons-checkmark-circle" />
+						<div>{ site.url }</div>
+					</div>
+				) ) }
+				{ queue.map( ( site, index ) => (
+					<div className="connect-url__validate-sites-row" key={ index }>
+						<Spinner />
+						<div>{ site.url }</div>
+					</div>
+				) ) }
+			</div>
 			<Button disabled={ true }>{ translate( 'Adding sites' ) }</Button>
 		</div>
 	);
