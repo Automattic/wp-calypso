@@ -12147,7 +12147,7 @@ __metadata:
     core-js-bundle: "npm:^3.6.4"
     cpf_cnpj: "npm:^0.2.0"
     creditcards: "npm:^3.1.0"
-    csv-parse: "npm:5.1.0"
+    csv-parse: "npm:^5.1.0"
     d3-array: "npm:^2.4.0"
     d3-axis: "npm:^1.0.12"
     d3-scale: "npm:^3.2.1"
@@ -14056,7 +14056,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"csv-parse@npm:5.1.0, csv-parse@npm:^5.1.0":
+"csv-parse@npm:^5.1.0":
   version: 5.1.0
   resolution: "csv-parse@npm:5.1.0"
   checksum: 63a85f8a7b0df613e0c2039e3a62d3c3877f670952dc0c0dfc2ba642f5d8b5d33b1bfb6943c65bec5ea56bba39c3ae6d3b93cf649f436c3d6cc558aa98905653
