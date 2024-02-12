@@ -52,9 +52,10 @@
 		display: flex;
 		gap: 8px;
 		justify-content: flex-end;
-		padding: 12px 24px 30px;
+		padding: 30px 24px;
 		position: relative;
 		z-index: 6;
+		border-top: 1px solid var(--studio-gray-80);
 
 		a {
 			color: var(--nav-link);
@@ -80,6 +81,11 @@
 			display: flex;
 			align-items: center;
 			width: 100%;
+			.gravatar {
+				width: 24px;
+				height: 24px;
+				max-width: initial;
+			}
 		}
 
 		.profile-gravatar__user-info {
@@ -90,6 +96,15 @@
 		.profile-gravatar__user-secondary-info {
 			margin: 0;
 			padding: 0;
+			text-align: left;
+		}
+		.profile-gravatar__user-display-name {
+			font-size: rem(16px);
+			font-weight: 400;
+		}
+		.profile-gravatar__user-secondary-info {
+			font-size: rem(14px);
+			font-weight: 400;
 		}
 	}
 

@@ -8,7 +8,6 @@ export const GlobalSidebarFooter = ( { translate, user } ) => {
 			<a href="/me" className="sidebar__footer-link">
 				<ProfileGravatar inSidebar user={ user } profileImgSize={ 24 } />
 			</a>
-			<span className="gap"></span>
 			<AsyncLoad
 				require="./menu-items/help-center/help-center"
 				tooltip={ translate( 'Help' ) }
