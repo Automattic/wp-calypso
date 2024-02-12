@@ -38,7 +38,7 @@
 		"@babel/compat-data": "^7.23.5",
 		"@babel/core": "^7.23.7",
 		"@types/webpack-env": "^1.18.4",
-		"@wordpress/browserslist-config": "^5.33.0",
+		"@wordpress/browserslist-config": "^5.34.0",
 		"@wordpress/dependency-extraction-webpack-plugin": "^5.1.0",
 		"autoprefixer": "^10.2.5",
 		"babel-loader": "^8.2.3",
