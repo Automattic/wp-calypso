@@ -8,7 +8,7 @@ import {
 import { FoldableCard } from '@automattic/components';
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
-import useGridPlanForSpotlight from '../../hooks/data-store/use-grid-plan-for-spotlight';
+import usePlanForSpotlight from '../../hooks/data-store/use-plan-for-spotlight';
 import useUpgradeClickHandler from '../../hooks/use-upgrade-click-handler';
 import BillingTimeframes from './billing-timeframes';
 import MobileFreeDomain from './mobile-free-domain';
@@ -47,6 +47,7 @@ const MobileView = ( {
 	currentSitePlanSlug,
 	generatedWPComSubdomain,
 	gridPlanForSpotlight,
+	renderedGridPlans,
 	hideUnavailableFeatures,
 	intervalType,
 	isCustomDomainAllowedOnFreePlan,
@@ -57,7 +58,6 @@ const MobileView = ( {
 	paidDomainName,
 	planActionOverrides,
 	planUpgradeCreditsApplicable,
-	renderedGridPlans,
 	selectedFeature,
 	showUpgradeableStorage,
 }: MobileViewProps ) => {
@@ -225,32 +225,32 @@ const TabletView = ( {
 };
 
 const FeaturesGrid = ( {
-	currentSitePlanSlug,
-	generatedWPComSubdomain,
 	gridPlans,
-	gridSize,
-	hideUnavailableFeatures,
-	intent,
-	intervalType,
-	isCustomDomainAllowedOnFreePlan,
-	isInSignup,
-	isLaunchPage,
-	isSpotlightOnCurrentPlan,
-	onStorageAddOnClick,
-	onUpgradeClick,
-	paidDomainName,
-	planActionOverrides,
-	planUpgradeCreditsApplicable,
-	selectedFeature,
-	showUpgradeableStorage,
 	stickyRowOffset,
+	isInSignup,
+	planUpgradeCreditsApplicable,
+	currentSitePlanSlug,
+	isLaunchPage,
+	planActionOverrides,
+	onUpgradeClick,
+	intervalType,
+	onStorageAddOnClick,
+	showUpgradeableStorage,
+	paidDomainName,
+	hideUnavailableFeatures,
+	selectedFeature,
+	generatedWPComSubdomain,
+	isCustomDomainAllowedOnFreePlan,
+	gridSize,
+	isSpotlightOnCurrentPlan,
+	intent,
 }: FeaturesGridProps ) => {
 	const handleUpgradeClick = useUpgradeClickHandler( {
 		gridPlans,
 		onUpgradeClick,
 	} );
 
-	const gridPlanForSpotlight = useGridPlanForSpotlight( {
+	const gridPlanForSpotlight = usePlanForSpotlight( {
 		sitePlanSlug: currentSitePlanSlug,
 		isSpotlightOnCurrentPlan,
 		intent,

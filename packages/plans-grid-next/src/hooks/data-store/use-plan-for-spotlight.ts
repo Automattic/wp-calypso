@@ -4,14 +4,14 @@ import { GridPlan } from '../../types';
 
 const SPOTLIGHT_ENABLED_INTENTS = [ 'plans-default-wpcom' ];
 
-type Params = {
+interface Params {
 	gridPlansForFeaturesGrid: GridPlan[];
 	intent: string | undefined;
 	isSpotlightOnCurrentPlan?: boolean;
 	sitePlanSlug?: string | null;
-};
+}
 
-const useGridPlanForSpotlight = ( {
+const usePlanForSpotlight = ( {
 	gridPlansForFeaturesGrid,
 	intent,
 	isSpotlightOnCurrentPlan,
@@ -28,4 +28,4 @@ const useGridPlanForSpotlight = ( {
 	}, [ sitePlanSlug, isSpotlightOnCurrentPlan, intent, gridPlansForFeaturesGrid ] );
 };
 
-export default useGridPlanForSpotlight;
+export default usePlanForSpotlight;

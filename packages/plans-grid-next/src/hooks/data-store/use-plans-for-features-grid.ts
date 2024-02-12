@@ -3,7 +3,7 @@ import { useMemo } from 'react';
 import { GridPlan, PlansIntent } from '../../types';
 import usePlanFeaturesForGridPlans from './use-plan-features-for-grid-plans';
 
-type Params = {
+interface Params {
 	allFeaturesList: FeatureList;
 	availablePlans: Omit< GridPlan, 'features' >[];
 	gridPlans: Omit< GridPlan, 'features' >[];
@@ -11,7 +11,7 @@ type Params = {
 	isInSignup?: boolean;
 	selectedFeature?: string | null;
 	showLegacyStorageFeature?: boolean;
-};
+}
 
 const usePlansForFeaturesGrid = ( {
 	allFeaturesList,

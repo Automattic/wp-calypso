@@ -7,13 +7,13 @@ import { useMemo } from 'react';
 import { GridPlan, PlansIntent } from '../../types';
 import useRestructuredPlanFeaturesForComparisonGrid from './use-restructured-plan-features-for-comparison-grid';
 
-type Params = {
+interface Params {
 	allFeaturesList: FeatureList;
 	gridPlans: Omit< GridPlan, 'features' >[];
 	intent?: PlansIntent;
 	selectedFeature?: string | null;
 	showLegacyStorageFeature?: boolean;
-};
+}
 
 const usePlansForComparisonGrid = ( {
 	allFeaturesList,
