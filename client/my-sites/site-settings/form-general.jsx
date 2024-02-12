@@ -489,33 +489,37 @@ export class SiteSettingsFormGeneral extends Component {
 								) }
 							</FormSettingExplanation>
 						</FormLabel>
-						<FormLabel className="site-settings__visibility-label is-checkbox is-hidden">
-							<FormInputCheckbox
-								name="wpcom_data_sharing_opt_out"
-								value={ true }
-								checked={
-									( wpcomPublicComingSoon && blogPublic === 0 && isComingSoonDisabled ) ||
-									( 0 === blogPublic && ! wpcomPublicComingSoon ) ||
-									partnerOptOut
-								}
-								onChange={ () =>
-									this.handleVisibilityOptionChange( {
-										wpcom_data_sharing_opt_out: partnerOptOut === true ? false : true,
-										blog_public: blogPublic,
-										wpcom_coming_soon: wpcomComingSoon,
-										wpcom_public_coming_soon: wpcomPublicComingSoon,
-									} )
-								}
-								disabled={ isRequestingSettings || ( 0 === blogPublic && ! wpcomPublicComingSoon ) }
-								onClick={ eventTracker( 'Clicked Partnership Radio Button' ) }
-							/>
-							<span>{ translate( 'Discourage AI training and third-party data use' ) }</span>
-							<FormSettingExplanation>
-								{ translate(
-									'This option discourages our network of data partners from using your content, including for training AI models.'
-								) }
-							</FormSettingExplanation>
-						</FormLabel>
+						{ ! isNonAtomicJetpackSite && (
+							<FormLabel className="site-settings__visibility-label is-checkbox is-hidden">
+								<FormInputCheckbox
+									name="wpcom_data_sharing_opt_out"
+									value={ true }
+									checked={
+										( wpcomPublicComingSoon && blogPublic === 0 && isComingSoonDisabled ) ||
+										( 0 === blogPublic && ! wpcomPublicComingSoon ) ||
+										partnerOptOut
+									}
+									onChange={ () =>
+										this.handleVisibilityOptionChange( {
+											wpcom_data_sharing_opt_out: partnerOptOut === true ? false : true,
+											blog_public: blogPublic,
+											wpcom_coming_soon: wpcomComingSoon,
+											wpcom_public_coming_soon: wpcomPublicComingSoon,
+										} )
+									}
+									disabled={
+										isRequestingSettings || ( 0 === blogPublic && ! wpcomPublicComingSoon )
+									}
+									onClick={ eventTracker( 'Clicked Partnership Radio Button' ) }
+								/>
+								<span>{ translate( 'Discourage AI training and third-party data use' ) }</span>
+								<FormSettingExplanation>
+									{ translate(
+										'This option discourages our network of data partners from using your content, including for training AI models.'
+									) }
+								</FormSettingExplanation>
+							</FormLabel>
+						) }
 					</>
 				) }
 				{ ! isNonAtomicJetpackSite && (
