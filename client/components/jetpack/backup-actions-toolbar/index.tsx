@@ -40,7 +40,7 @@ const BackupActionsToolbar: FunctionComponent< Props > = ( { siteId, siteSlug } 
 			variant="primary"
 			trackEventName="calypso_jetpack_backup_now"
 		>
-			{ translate( 'Backup Now' ) }
+			{ translate( 'Backup now' ) }
 		</BackupNowButton>
 	);
 
