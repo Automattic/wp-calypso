@@ -17,12 +17,14 @@ type TitanSetUpThankYouProps = {
 	domainName: string;
 	emailAddress?: string;
 	isDomainOnlySite?: boolean;
+	newQuantityOfMailboxes?: number;
 };
 
 const TitanSetUpThankYou = ( {
 	domainName,
 	emailAddress,
 	isDomainOnlySite = false,
+	newQuantityOfMailboxes,
 }: TitanSetUpThankYouProps ) => {
 	const currentRoute = useSelector( getCurrentRoute );
 	const selectedSite = useSelector( getSelectedSite );
@@ -57,7 +59,7 @@ const TitanSetUpThankYou = ( {
 		},
 		{
 			key: 'footer-questions-email',
-			title: translate( 'Email questions? find answers' ),
+			title: translate( 'Email questions? We have the answers' ),
 			description: translate(
 				'Explore our comprehensive support guides and find solutions to all your email tinquiries.'
 			),
@@ -84,6 +86,7 @@ const TitanSetUpThankYou = ( {
 			domainName={ domainName }
 			siteSlug={ selectedSiteSlug }
 			emailAddress={ emailAddress }
+			newQuantityOfMailboxes={ newQuantityOfMailboxes || 0 }
 		/>
 	);
 

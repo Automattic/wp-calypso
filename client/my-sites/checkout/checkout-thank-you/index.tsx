@@ -589,9 +589,12 @@ export class CheckoutThankYou extends Component<
 			} else if ( purchases.length === 1 && isPlan( purchases[ 0 ] ) ) {
 				pageContent = <PlanOnlyThankYou primaryPurchase={ purchases[ 0 ] } />;
 			} else if ( wasTitanEmailOnlyProduct ) {
+				const titanPurchase = purchases.find( ( purchase ) => isTitanMail( purchase ) );
+
 				pageContent = (
 					<TitanSetUpThankYou
 						domainName={ purchases[ 0 ].meta }
+						newQuantityOfMailboxes={ titanPurchase?.newQuantity }
 						emailAddress={ email }
 						isDomainOnlySite={ this.props.domainOnlySiteFlow }
 					/>
