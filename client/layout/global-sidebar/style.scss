@@ -15,26 +15,19 @@
 	.sidebar__header {
 		display: flex;
 		gap: 8px;
-		padding: 30px 24px 12px;
+		padding: 30px 24px;
 		transition: all 150ms ease-out;
-		height: 32px;
+		align-items: center;
+		border-bottom: 1px solid var(--studio-gray-80);
 
 		a {
 			color: var(--nav-link);
 			text-decoration: none;
 		}
 
-		a.link-logo {
-			.dotcom {
-				position: relative;
-				top: 2px;
-			}
-		}
-
 		span,
-		button.search {
+		button.sidebar__item-search {
 			display: flex;
-			background-position: center;
 			background-repeat: no-repeat;
 			width: 28px;
 			height: 28px;
@@ -49,8 +42,8 @@
 			width: 148px;
 		}
 
-		button.search {
-			background-image: url(calypso/assets/images/global-sidebar/search.svg);
+		.sidebar__item-search {
+			cursor: pointer;
 		}
 	}
 
@@ -103,6 +96,42 @@
 	.sidebar__body {
 		flex: 1;
 		overflow-y: auto;
+		padding-top: 36px;
+
+		.sidebar {
+			display: flex;
+			gap: 6px;
+		}
+
+		a.sidebar__menu-link {
+			padding: 8px 8px 8px 20px;
+
+			.dashicons-before {
+				&::before {
+					width: 32px;
+					height: 32px;
+					line-height: 32px;
+					font-size: rem(22px);
+					vertical-align: middle;
+				}
+			}
+			.menu-link-text {
+				font-size: rem(16px);
+				font-weight: 400;
+				padding: 0;
+				max-height: auto;
+			}
+		}
+
+		li.sidebar__separator {
+			margin: 0 0 24px;
+		}
+
+		svg.sidebar__menu-icon {
+			width: 24px;
+			height: 24px;
+			padding: 4px;
+		}
 
 		.selected {
 			.sidebar__heading,
@@ -110,7 +139,7 @@
 				.sidebar_svg-reader {
 					fill: var(--color-sidebar-menu-selected-background);
 					g path {
-						stroke: var(--color-sidebar-menu-selected-text);
+						fill: var(--color-sidebar-menu-selected-text);
 					}
 				}
 				.sidebar__menu-icon.sidebar_svg-notifications {
@@ -127,14 +156,14 @@
 		.sidebar_svg-reader {
 			fill: var(--color-sidebar-background);
 			g path {
-				stroke: var(--color-sidebar-gridicon-fill);
+				fill: var(--color-sidebar-gridicon-fill);
 			}
 		}
 		&:hover {
 			.sidebar_svg-reader {
 				fill: var(--color-sidebar-menu-hover-background);
 				g path {
-					stroke: var(--color-sidebar-menu-hover-text);
+					fill: var(--color-sidebar-menu-hover-text);
 				}
 			}
 		}
