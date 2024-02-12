@@ -492,7 +492,7 @@ export class SiteSettingsFormGeneral extends Component {
 						<FormLabel className="site-settings__visibility-label is-checkbox is-hidden">
 							<FormInputCheckbox
 								name="wpcom_partner_sharing_opt_out"
-								value="1"
+								value={ true }
 								checked={
 									( wpcomPublicComingSoon && blogPublic === 0 && isComingSoonDisabled ) ||
 									( 0 === blogPublic && ! wpcomPublicComingSoon ) ||
@@ -509,10 +509,10 @@ export class SiteSettingsFormGeneral extends Component {
 								disabled={ isRequestingSettings || ( 0 === blogPublic && ! wpcomPublicComingSoon ) }
 								onClick={ eventTracker( 'Clicked Partnership Radio Button' ) }
 							/>
-							<span>{ translate( 'Discourage AI Training and Research Partners.' ) }</span>
+							<span>{ translate( 'Discourage AI training and third-party data use' ) }</span>
 							<FormSettingExplanation>
 								{ translate(
-									'This option discourages our network of research partners from using your sites content, which may involve training AI models.'
+									'This option discourages our network of data partners from using your content, including for training AI models.'
 								) }
 							</FormSettingExplanation>
 						</FormLabel>
