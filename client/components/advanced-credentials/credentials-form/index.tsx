@@ -124,7 +124,7 @@ const ServerCredentialsForm: FunctionComponent< Props > = ( {
 	const renderServerUsernameForm = () => (
 		<FormFieldset className="credentials-form__username">
 			<div className="credentials-form__support-info">
-				<FormLabel htmlFor="server-username">{ translate( 'Username' ) }</FormLabel>
+				<FormLabel htmlFor="server-username">{ translate( 'Server username' ) }</FormLabel>
 				{ hostInfo?.inline?.user && (
 					<InfoPopover>
 						<InlineInfo
@@ -158,7 +158,7 @@ const ServerCredentialsForm: FunctionComponent< Props > = ( {
 			{ renderServerUsernameForm() }
 			<FormFieldset className="credentials-form__password">
 				<div className="credentials-form__support-info">
-					<FormLabel htmlFor="server-password">{ translate( 'Password' ) }</FormLabel>
+					<FormLabel htmlFor="server-password">{ translate( 'Server password' ) }</FormLabel>
 					{ hostInfo?.inline?.pass && (
 						<InfoPopover>
 							<InlineInfo
@@ -455,7 +455,7 @@ const ServerCredentialsForm: FunctionComponent< Props > = ( {
 						placeholder={ translate( 'example.com' ) }
 						value={ formState.host }
 						onChange={ handleFormChange }
-						disabled={ disabled }
+						disabled={ true }
 						isError={
 							formErrors.host && ( interactions.host || ! formErrors.host.waitForInteraction )
 						}
@@ -467,7 +467,7 @@ const ServerCredentialsForm: FunctionComponent< Props > = ( {
 
 				<FormFieldset className="credentials-form__port-number">
 					<div className="credentials-form__support-info">
-						<FormLabel htmlFor="server-port">{ translate( 'Port number' ) }</FormLabel>
+						<FormLabel htmlFor="server-port">{ translate( 'Port' ) }</FormLabel>
 						{ hostInfo?.inline?.port && (
 							<InfoPopover>
 								<InlineInfo
@@ -556,16 +556,6 @@ const ServerCredentialsForm: FunctionComponent< Props > = ( {
 					</div>
 				</div>
 			) }
-			{ formModeSwitcher === 'simple' && (
-				<FormFieldset>
-					<FormLabel>{ translate( 'SSH credentials' ) }</FormLabel>
-					<FormSettingExplanation>
-						{ translate(
-							'Your credentials will be used only to migrate the site and won’t be stored anywhere.'
-						) }
-					</FormSettingExplanation>
-				</FormFieldset>
-			) }
 			{ formMode === FormMode.Password ? renderPasswordForm() : renderPrivateKeyForm() }
 			{ formModeSwitcher === 'simple' && (
 				<>
@@ -578,8 +568,12 @@ const ServerCredentialsForm: FunctionComponent< Props > = ( {
 					) }
 					{ formMode === FormMode.PrivateKey && (
 						<p>
-							<span>{ translate( 'Only non-encrypted private keys are supported.' ) }</span>{ ' ' }
-							<Button plain onClick={ () => onModeChange( FormMode.Password ) }>
+							<div>{ translate( 'Only non-encrypted private keys are supported.' ) }</div>{ ' ' }
+							<Button
+								className="credentials-form__mode-switch-to-password"
+								plain
+								onClick={ () => onModeChange( FormMode.Password ) }
+							>
 								{ translate( 'Use a password instead' ) }
 							</Button>
 						</p>
