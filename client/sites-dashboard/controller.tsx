@@ -113,7 +113,6 @@ function sitesDashboard( context: PageJSContext, next: () => void ) {
 	const sitesDashboardGlobalStyles = css`
 		body.is-group-sites-dashboard {
 			background: #fdfdfd;
-			margin-left: var( --sidebar-width-max );
 
 			.layout__content {
 				// The page header background extends all the way to the edge of the screen
@@ -130,7 +129,6 @@ function sitesDashboard( context: PageJSContext, next: () => void ) {
 			}
 		}
 	`;
-
 	context.secondary = <MySitesNavigation path={ context.path } />;
 	context.primary = (
 		<>
