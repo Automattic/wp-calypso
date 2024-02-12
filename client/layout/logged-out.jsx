@@ -26,6 +26,7 @@ import {
 	isJetpackCloudOAuth2Client,
 	isWPJobManagerOAuth2Client,
 	isGravPoweredOAuth2Client,
+	isBlazeProAuth2Client,
 } from 'calypso/lib/oauth2-clients';
 import { createAccountUrl } from 'calypso/lib/paths';
 import isReaderTagEmbedPage from 'calypso/lib/reader/is-reader-tag-embed-page';
@@ -129,6 +130,7 @@ const LayoutLoggedOut = ( {
 		'is-popup': isPopup,
 		'is-jetpack-woocommerce-flow': isJetpackWooCommerceFlow,
 		'is-jetpack-woo-dna-flow': isJetpackWooDnaFlow,
+		'is-blaze-pro-oauth-flow': isBlazeProAuth2Client( oauth2Client ),
 		'is-p2-login': isP2Login,
 		'is-gravatar': isGravatar,
 		'is-wp-job-manager': isWPJobManager,
@@ -154,7 +156,7 @@ const LayoutLoggedOut = ( {
 			masterbar = (
 				<MasterbarLogin goBackUrl={ localizeUrl( 'https://wordpress.com/partners/', locale ) } />
 			);
-		} else if ( isGravatar || isGravPoweredClient ) {
+		} else if ( isGravatar || isGravPoweredClient || isBlazeProAuth2Client( oauth2Client ) ) {
 			masterbar = null;
 		} else {
 			classes.dops = true;

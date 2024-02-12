@@ -16,7 +16,7 @@
 	}
 
 	body.is-section-signup:not(.is-section-jetpack-connect):not(.is-section-settings)
-	.layout:not(.dops):not(.is-wccom-oauth-flow)
+	.layout:not(.dops):not(.is-wccom-oauth-flow):not(.is-blaze-pro-oauth-flow)
 	& {
 		color: var(--color-text-inverted);
 

@@ -56,6 +56,7 @@ class Document extends Component {
 			feedbackURL,
 			inlineScriptNonce,
 			isSupportSession,
+			isBlazeProConnect, // TODO: continue from here
 			isWooDna,
 			requestFrom,
 			useTranslationChunks,
@@ -167,6 +168,7 @@ class Document extends Component {
 									[ 'is-section-' + sectionName ]: sectionName,
 									'is-jetpack-woocommerce-flow': isJetpackWooCommerceFlow,
 									'is-jetpack-woo-dna-flow': isJetpackWooDnaFlow,
+									'is-blaze-pro-oauth-flow': isBlazeProConnect,
 								} ) }
 							>
 								<div className="layout__content">

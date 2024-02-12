@@ -24,6 +24,7 @@ import { STEPPER_SECTION_DEFINITION } from 'calypso/landing/stepper/section';
 import { SUBSCRIPTIONS_SECTION_DEFINITION } from 'calypso/landing/subscriptions/section';
 import { shouldSeeCookieBanner } from 'calypso/lib/analytics/utils';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
+import { isBlazeProAuth2Client } from 'calypso/lib/oauth2-clients';
 import { login } from 'calypso/lib/paths';
 import loginRouter, { LOGIN_SECTION_DEFINITION } from 'calypso/login';
 import sections from 'calypso/sections';
@@ -150,6 +151,11 @@ function getDefaultContext( request, response, entrypoint = 'entry-main' ) {
 	];
 	const isDebug = devEnvironments.includes( calypsoEnv ) || request.query.debug !== undefined;
 
+	const oauthClientId = request.query.oauth2_client_id || request.query.client_id;
+	const isBlazeProConnect =
+		// ( 'login' === sectionName || 'signup' === sectionName ) &&
+		isBlazeProAuth2Client( { id: parseInt( oauthClientId ) } );
+
 	const reactQueryDevtoolsHelper = config.isEnabled( 'dev/react-query-devtools' );
 	const authHelper = config.isEnabled( 'dev/auth-helper' );
 	const accountSettingsHelper = config.isEnabled( 'dev/account-settings-helper' );
@@ -175,6 +181,7 @@ function getDefaultContext( request, response, entrypoint = 'entry-main' ) {
 		sanitize: sanitize,
 		requestFrom: request.query.from,
 		isWooDna: wooDnaConfig( request.query ).isWooDnaFlow(),
+		isBlazeProConnect,
 		badge: false,
 		lang: config( 'i18n_default_locale_slug' ),
 		entrypoint: entrypointFiles,

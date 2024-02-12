@@ -2,9 +2,7 @@
 @import "@wordpress/base-styles/mixins";
 @import "calypso/assets/stylesheets/p2-extends";
 
-$breakpoint-mobile: 782px; //Mobile size.
-
-.layout:not(.is-jetpack-woocommerce-flow):not(.is-jetpack-woo-dna-flow):not(.is-wccom-oauth-flow):not(.is-woocommerce-core-profiler-flow) {
+.layout:not(.is-jetpack-woocommerce-flow):not(.is-jetpack-woo-dna-flow):not(.is-wccom-oauth-flow):not(.is-woocommerce-core-profiler-flow):not(.is-blaze-pro-oauth-flow) {
 	.login.is-jetpack {
 		.button.is-primary {
 			background-color: var(--studio-jetpack-green-50);
@@ -22,6 +20,7 @@ $breakpoint-mobile: 782px; //Mobile size.
 	}
 }
 
+// TODO: determine whether it's needed to mention Blaze Pro here
 .layout.is-wccom-oauth-flow {
 	.layout__content {
 		padding-top: 48px;
@@ -38,7 +37,8 @@ $breakpoint-mobile: 782px; //Mobile size.
 
 .layout.is-jetpack-woocommerce-flow,
 .layout.is-jetpack-woo-dna-flow,
-.layout.is-wccom-oauth-flow {
+.layout.is-wccom-oauth-flow,
+.layout.is-blaze-pro-oauth-flow {
 	.login__jetpack-logo,
 	.login__woocommerce-logo {
 		text-align: center;

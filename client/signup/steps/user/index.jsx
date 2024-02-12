@@ -20,6 +20,7 @@ import {
 	isWooOAuth2Client,
 	isJetpackCloudOAuth2Client,
 	isGravatarOAuth2Client,
+	isBlazeProAuth2Client,
 } from 'calypso/lib/oauth2-clients';
 import { login } from 'calypso/lib/paths';
 import { WPCC } from 'calypso/lib/url/support';
@@ -240,6 +241,8 @@ export class UserStep extends Component {
 							'Link displayed on the Signup page to users having account to log in WooCommerce via WordPress.com',
 					}
 				);
+			} else if ( isBlazeProAuth2Client( oauth2Client ) ) {
+				subHeaderText = '';
 			} else if ( isCrowdsignalOAuth2Client( oauth2Client ) ) {
 				subHeaderText = translate(
 					'By creating an account via any of the options below, {{br/}}you agree to our {{a}}Terms of Service{{/a}}.',
@@ -484,6 +487,14 @@ export class UserStep extends Component {
 			return (
 				<div className={ classNames( 'signup-form__woo-wrapper' ) }>
 					<h3>{ translate( "Let's get started" ) }</h3>
+				</div>
+			);
+		}
+
+		if ( isBlazeProAuth2Client( oauth2Client ) ) {
+			return (
+				<div className={ classNames( 'signup-form__blaze-pro-wrapper' ) }>
+					<h3>{ translate( 'Sign up' ) }</h3>
 				</div>
 			);
 		}

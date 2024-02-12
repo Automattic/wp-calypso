@@ -45,6 +45,7 @@ import {
 	isCrowdsignalOAuth2Client,
 	isWooOAuth2Client,
 	isGravatarOAuth2Client,
+	isBlazeProAuth2Client,
 } from 'calypso/lib/oauth2-clients';
 import { login, lostPassword } from 'calypso/lib/paths';
 import { addQueryArgs } from 'calypso/lib/url';
@@ -833,6 +834,78 @@ class SignupForm extends Component {
 		);
 	}
 
+	renderBlazePro() {
+		return (
+			<div>
+				<TextControl
+					label={ this.props.translate( 'Email address' ) }
+					disabled={
+						this.state.submitting || !! this.props.disabled || !! this.props.disableEmailInput
+					}
+					id="email"
+					name="email"
+					type="email"
+					value={ formState.getFieldValue( this.state.form, 'email' ) }
+					onBlur={ this.handleBlur }
+					onChange={ ( value ) => {
+						this.formStateController.handleFieldChange( {
+							name: 'email',
+							value,
+						} );
+					} }
+				/>
+				{ this.emailDisableExplanation() }
+
+				{ formState.isFieldInvalid( this.state.form, 'email' ) && (
+					<FormInputValidation isError text={ this.getErrorMessagesWithLogin( 'email' ) } />
+				) }
+
+				{ this.props.displayUsernameInput && (
+					<>
+						<TextControl
+							label={ this.props.translate( 'Choose a username' ) }
+							disabled={ this.state.submitting || this.props.disabled }
+							id="username"
+							name="username"
+							value={ formState.getFieldValue( this.state.form, 'username' ) }
+							onBlur={ this.handleBlur }
+							onChange={ ( value ) => {
+								this.formStateController.handleFieldChange( {
+									name: 'username',
+									value,
+								} );
+							} }
+						/>
+
+						{ formState.isFieldInvalid( this.state.form, 'username' ) && (
+							<FormInputValidation isError text={ this.getErrorMessagesWithLogin( 'username' ) } />
+						) }
+					</>
+				) }
+
+				<TextControl
+					label={ this.props.translate( 'Choose a password' ) }
+					disabled={ this.state.submitting || this.props.disabled }
+					id="password"
+					name="password"
+					type="password"
+					value={ formState.getFieldValue( this.state.form, 'password' ) }
+					onBlur={ this.handleBlur }
+					onChange={ ( value ) => {
+						this.formStateController.handleFieldChange( {
+							name: 'password',
+							value,
+						} );
+					} }
+				/>
+
+				{ this.passwordValidationExplanation() }
+
+				{ this.props.formFooter || this.formFooter() }
+			</div>
+		);
+	}
+
 	handleTosClick = () => {
 		recordTracksEvent( 'calypso_signup_tos_link_click' );
 	};
@@ -1166,6 +1239,35 @@ class SignupForm extends Component {
 			);
 		}
 
+		if ( this.props.isBlazePro ) {
+			return (
+				<div className={ classNames( 'signup-form__woocommerce', this.props.className ) }>
+					<LoggedOutForm onSubmit={ this.handleWooCommerceSubmit } noValidate={ true }>
+						{ this.props.formHeader && (
+							<header className="signup-form__header">{ this.props.formHeader }</header>
+						) }
+
+						{ this.renderBlazePro() }
+
+						{ this.props.isSocialSignupEnabled && ! this.userCreationComplete() && (
+							<SocialSignupForm
+								handleResponse={ this.handleWooCommerceSocialConnect }
+								socialService={ this.props.socialService }
+								socialServiceResponse={ this.props.socialServiceResponse }
+								redirectToAfterLoginUrl={ this.props.redirectToAfterLoginUrl }
+							/>
+						) }
+					</LoggedOutForm>
+
+					{ this.props.footerLink || (
+						<LoggedOutFormLinkItem href={ this.getLoginLink() }>
+							{ this.props.translate( 'Log in with an existing WordPress.com account' ) }
+						</LoggedOutFormLinkItem>
+					) }
+				</div>
+			);
+		}
+
 		if ( this.props.isP2Flow ) {
 			const socialProps = pick( this.props, [
 				'isSocialSignupEnabled',
@@ -1331,6 +1433,7 @@ export default connect(
 			from: get( getCurrentQueryArguments( state ), 'from' ),
 			wccomFrom: get( getCurrentQueryArguments( state ), 'wccom-from' ),
 			isWoo: isWooOAuth2Client( oauth2Client ) || isWooCoreProfilerFlow,
+			isBlazePro: isBlazeProAuth2Client( oauth2Client ),
 			isWooCoreProfilerFlow,
 			isP2Flow:
 				isP2Flow( props.flowName ) || get( getCurrentQueryArguments( state ), 'from' ) === 'p2',

@@ -75,6 +75,11 @@ export const initialClientsData = {
 		name: 'jetpack-cloud',
 		title: 'Jetpack Cloud',
 	},
+	92099: {
+		id: 92099,
+		name: 'blaze-pro',
+		title: 'Blaze Pro',
+	},
 };
 
 export function clients( state = initialClientsData, action ) {
