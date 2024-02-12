@@ -673,6 +673,13 @@ const sections = [
 		module: 'calypso/my-sites/github-deployments',
 		group: 'sites',
 	},
+	{
+		name: 'a8c-for-agencies',
+		paths: [ '/' ],
+		module: 'calypso/a8c-for-agencies',
+		group: 'a8c-for-agencies',
+		enableLoggedOut: true,
+	},
 ];
 
 module.exports = sections;
