@@ -220,7 +220,7 @@
 	"devDependencies": {
 		"@automattic/calypso-eslint-overrides": "workspace:^",
 		"@sentry/webpack-plugin": "^1.21.0",
-		"@storybook/addon-actions": "^7.6.10",
+		"@storybook/addon-actions": "^7.6.12",
 		"@tanstack/query-sync-storage-persister": "^5.15.5",
 		"@testing-library/dom": "^9.3.4",
 		"@testing-library/jest-dom": "^6.3.0",
