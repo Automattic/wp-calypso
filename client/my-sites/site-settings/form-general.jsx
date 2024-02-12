@@ -406,7 +406,7 @@ export class SiteSettingsFormGeneral extends Component {
 											blog_public: 0,
 											wpcom_coming_soon: 0,
 											wpcom_public_coming_soon: 1,
-											wpcom_data_sharing_opt_out: thirdPartySharingOptOut,
+											wpcom_data_sharing_opt_out: 0,
 										} )
 									}
 									disabled={ isComingSoonDisabled }
@@ -502,10 +502,11 @@ export class SiteSettingsFormGeneral extends Component {
 									}
 									onChange={ () =>
 										this.handleVisibilityOptionChange( {
-											wpcom_data_sharing_opt_out: thirdPartySharingOptOut === true ? false : true,
-											blog_public: blogPublic,
+											blog_public:
+												blogPublic === 1 || wpcomPublicComingSoon || blogPublic === -1 ? 1 : 0,
 											wpcom_coming_soon: 0,
 											wpcom_public_coming_soon: 0,
+											wpcom_data_sharing_opt_out: ! thirdPartySharingOptOut,
 										} )
 									}
 									disabled={ isRequestingSettings }
@@ -536,7 +537,7 @@ export class SiteSettingsFormGeneral extends Component {
 										blog_public: -1,
 										wpcom_coming_soon: 0,
 										wpcom_public_coming_soon: 0,
-										wpcom_data_sharing_opt_out: true,
+										wpcom_data_sharing_opt_out: 0,
 									} )
 								}
 								disabled={ isRequestingSettings }
