@@ -117,7 +117,14 @@
 			display: flex;
 			gap: 6px;
 		}
-
+		.sidebar__menu:not(.is-togglable) {
+			display: flex;
+			flex-direction: column;
+			gap: 6px;
+		}
+		.sidebar__menu.is-togglable a.sidebar__heading {
+			padding: 8px 8px 8px 20px;
+		}
 		a.sidebar__menu-link {
 			padding: 8px 8px 8px 20px;
 
@@ -136,6 +143,9 @@
 				padding: 0;
 				max-height: auto;
 			}
+		}
+		.sidebar__menu-item-title-text {
+			line-height: 32px;
 		}
 
 		li.sidebar__separator {
