@@ -406,7 +406,7 @@ export class SiteSettingsFormGeneral extends Component {
 											blog_public: 0,
 											wpcom_coming_soon: 0,
 											wpcom_public_coming_soon: 1,
-											wpcom_data_sharing_opt_out: true,
+											wpcom_data_sharing_opt_out: thirdPartySharingOptOut,
 										} )
 									}
 									disabled={ isComingSoonDisabled }
@@ -444,7 +444,7 @@ export class SiteSettingsFormGeneral extends Component {
 										blog_public: isWpcomStagingSite ? 0 : 1,
 										wpcom_coming_soon: 0,
 										wpcom_public_coming_soon: 0,
-										wpcom_data_sharing_opt_out: false,
+										wpcom_data_sharing_opt_out: thirdPartySharingOptOut,
 									} )
 								}
 								disabled={ isRequestingSettings }
@@ -496,13 +496,16 @@ export class SiteSettingsFormGeneral extends Component {
 								<FormInputCheckbox
 									name="wpcom_data_sharing_opt_out"
 									value={ true }
-									checked={ thirdPartySharingOptOut }
+									checked={
+										( wpcomPublicComingSoon && thirdPartySharingOptOut && isComingSoonDisabled ) ||
+										( thirdPartySharingOptOut && ! wpcomPublicComingSoon )
+									}
 									onChange={ () =>
 										this.handleVisibilityOptionChange( {
 											wpcom_data_sharing_opt_out: thirdPartySharingOptOut === true ? false : true,
 											blog_public: blogPublic,
-											wpcom_coming_soon: wpcomComingSoon,
-											wpcom_public_coming_soon: wpcomPublicComingSoon,
+											wpcom_coming_soon: 0,
+											wpcom_public_coming_soon: 0,
 										} )
 									}
 									disabled={ isRequestingSettings }
