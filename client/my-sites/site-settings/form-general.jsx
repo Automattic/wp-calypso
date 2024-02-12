@@ -369,7 +369,7 @@ export class SiteSettingsFormGeneral extends Component {
 		const blogPublic = parseInt( fields.blog_public, 10 );
 		const wpcomComingSoon = 1 === parseInt( fields.wpcom_coming_soon, 10 );
 		const wpcomPublicComingSoon = 1 === parseInt( fields.wpcom_public_coming_soon, 10 );
-		const partnerOptOut = !! fields.wpcom_partner_sharing_opt_out;
+		const partnerOptOut = !! fields.wpcom_third_party_data_opt_out;
 
 		// isPrivateAndUnlaunched means it is an unlaunched coming soon v1 site
 		const isPrivateAndUnlaunched = -1 === blogPublic && this.props.isUnlaunchedSite;
@@ -476,7 +476,7 @@ export class SiteSettingsFormGeneral extends Component {
 											wpcomPublicComingSoon || blogPublic === -1 || blogPublic === 1 ? 0 : 1,
 										wpcom_coming_soon: 0,
 										wpcom_public_coming_soon: 0,
-										wpcom_partner_sharing_opt_out: partnerOptOut,
+										wpcom_third_party_data_opt_out: partnerOptOut,
 									} )
 								}
 								disabled={ isRequestingSettings }
@@ -491,7 +491,7 @@ export class SiteSettingsFormGeneral extends Component {
 						</FormLabel>
 						<FormLabel className="site-settings__visibility-label is-checkbox is-hidden">
 							<FormInputCheckbox
-								name="wpcom_partner_sharing_opt_out"
+								name="wpcom_third_party_data_opt_out"
 								value={ true }
 								checked={
 									( wpcomPublicComingSoon && blogPublic === 0 && isComingSoonDisabled ) ||
@@ -500,7 +500,7 @@ export class SiteSettingsFormGeneral extends Component {
 								}
 								onChange={ () =>
 									this.handleVisibilityOptionChange( {
-										wpcom_partner_sharing_opt_out: partnerOptOut === true ? false : true,
+										wpcom_third_party_data_opt_out: partnerOptOut === true ? false : true,
 										blog_public: blogPublic,
 										wpcom_coming_soon: wpcomComingSoon,
 										wpcom_public_coming_soon: wpcomPublicComingSoon,
@@ -555,18 +555,18 @@ export class SiteSettingsFormGeneral extends Component {
 		blog_public,
 		wpcom_coming_soon,
 		wpcom_public_coming_soon,
-		wpcom_partner_sharing_opt_out,
+		wpcom_third_party_data_opt_out,
 	} ) => {
 		const { trackEvent, updateFields } = this.props;
 		trackEvent( `Set blog_public to ${ blog_public }` );
 		trackEvent( `Set wpcom_coming_soon to ${ wpcom_coming_soon }` );
 		trackEvent( `Set wpcom_public_coming_soon to ${ wpcom_public_coming_soon }` );
-		trackEvent( `Set wpcom_partner_sharing_opt_out to ${ wpcom_partner_sharing_opt_out }` );
+		trackEvent( `Set wpcom_third_party_data_opt_out to ${ wpcom_third_party_data_opt_out }` );
 		updateFields( {
 			blog_public,
 			wpcom_coming_soon,
 			wpcom_public_coming_soon,
-			wpcom_partner_sharing_opt_out,
+			wpcom_third_party_data_opt_out,
 		} );
 	};
 
@@ -1097,7 +1097,7 @@ const getFormSettings = ( settings ) => {
 		lang_id: '',
 		timezone_string: '',
 		blog_public: '',
-		wpcom_partner_sharing_opt_out: false,
+		wpcom_third_party_data_opt_out: false,
 		wpcom_coming_soon: '',
 		wpcom_legacy_contact: '',
 		wpcom_locked_mode: false,
@@ -1123,7 +1123,7 @@ const getFormSettings = ( settings ) => {
 		wpcom_locked_mode: settings.wpcom_locked_mode,
 		wpcom_public_coming_soon: settings.wpcom_public_coming_soon,
 		wpcom_gifting_subscription: !! settings.wpcom_gifting_subscription,
-		wpcom_partner_sharing_opt_out: settings.wpcom_partner_sharing_opt_out,
+		wpcom_third_party_data_opt_out: settings.wpcom_third_party_data_opt_out,
 	};
 
 	// handling `gmt_offset` and `timezone_string` values
