@@ -329,6 +329,7 @@ $design-preview-sidebar-width: 311px;
 
 		.components-navigator-screen & {
 			margin-top: 2px;
+			padding: 0 16px;
 		}
 
 		@supports ( scrollbar-gutter: stable ) {
