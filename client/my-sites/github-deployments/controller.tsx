@@ -24,7 +24,7 @@ export const redirectHomeIfIneligible: Callback = ( context, next ) => {
 	const state = context.store.getState();
 	const siteId = getSelectedSiteId( state );
 
-	if ( ! isEnabled( 'github-integration-i1' ) || ! isAtomicSite( state, siteId ) ) {
+	if ( ! isEnabled( 'github-deployments' ) || ! isAtomicSite( state, siteId ) ) {
 		context.page.replace( `/home/${ context.params.siteId }` );
 		return;
 	}
