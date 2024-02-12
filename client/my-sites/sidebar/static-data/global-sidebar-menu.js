@@ -6,9 +6,6 @@ import { translate } from 'i18n-calypso';
 export default function allSitesMenu() {
 	return [
 		{
-			type: 'separator',
-		},
-		{
 			icon: 'dashicons-admin-home',
 			slug: 'sites',
 			title: translate( 'Sites' ),

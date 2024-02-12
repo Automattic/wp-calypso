@@ -36,7 +36,7 @@ const SidebarMenuItem = forwardRef(
 						<span className="sidebar__item-bubble" aria-label="You have unseen content" />
 					) }
 					{ icon && ( typeof icon !== 'string' ? icon : <Gridicon icon={ icon } size={ 24 } /> ) }
-					<span className="sidebar__item-content">{ children }</span>
+					{ children && <span className="sidebar__item-content">{ children }</span> }
 				</Fragment>
 			);
 		};
