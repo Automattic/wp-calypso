@@ -229,8 +229,10 @@
 	border: none;
 }
 
-.layout__content {
-	padding-top: 0;
-	margin-top: 0;
-	top: 0;
+.has-no-masterbar {
+	.layout__content {
+		padding-top: 0;
+		margin-top: 0;
+		top: 0;
+	}
 }
