@@ -104,6 +104,10 @@ $design-preview-sidebar-width: 311px;
 	inset-inline-end: 0;
 	overflow: auto;
 
+	.components-item.navigator-item {
+		margin: 2px;
+	}
+
 	/**
 	 * Global Styles Variations
 	 */
