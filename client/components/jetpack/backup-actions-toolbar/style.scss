@@ -1,0 +1,17 @@
+@import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/mixins";
+
+.jetpack-backup__actions-toolbar {
+	display: flex;
+	gap: 10px;
+	flex-direction: column-reverse;
+
+	@include break-small {
+		flex-direction: row;
+	}
+
+	a {
+		justify-content: center;
+	}
+}
+

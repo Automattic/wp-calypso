@@ -1,11 +1,15 @@
 import page from '@automattic/calypso-router';
+import { getLanguageRouteParam } from '@automattic/i18n-utils';
 import { makeLayout, render as clientRender } from 'calypso/controller';
-import { jetpackManagePricingPath } from 'calypso/lib/jetpack/paths';
+import { setLocaleMiddleware } from 'calypso/controller/shared';
 import * as controller from './controller';
 
 export default function () {
+	const lang = getLanguageRouteParam();
+
 	page(
-		jetpackManagePricingPath(),
+		`/${ lang }/manage/pricing`,
+		setLocaleMiddleware(),
 		controller.jetpackManagePricingContext,
 		makeLayout,
 		clientRender

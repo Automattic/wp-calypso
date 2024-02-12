@@ -1,3 +1,5 @@
+const anyLocaleRegex = '([a-z]{2,3}|[a-z]{2}-[a-z]{2})';
+
 const sections = [
 	{
 		name: 'root',
@@ -591,10 +593,11 @@ const sections = [
 	},
 	{
 		name: 'jetpack-cloud-manage-pricing',
-		paths: [ '/manage/pricing' ],
+		paths: [ '/manage/pricing', `/${ anyLocaleRegex }/manage/pricing` ],
 		module: 'calypso/jetpack-cloud/sections/manage/pricing',
 		group: 'jetpack-cloud',
 		enableLoggedOut: true,
+		isomorphic: true,
 	},
 	{
 		name: 'jetpack-cloud-features-comparison',
