@@ -31,10 +31,14 @@
 			}
 
 			@include break-large {
-				width: 550px;
+				width: 600px;
 
 				.credentials-form__username {
 					max-width: 320px;
+
+					&.credentials-form__form-mode-private-key {
+						max-width: 100%;
+					}
 				}
 			}
 
@@ -50,6 +54,11 @@
 			.button-plain {
 				text-decoration: underline;
 				cursor: pointer;
+				color: var(--studio-gray-100);
+
+				&.credentials-form__mode-switch-to-password {
+					margin-top: 1rem;
+				}
 			}
 
 			.credentials-form__kpri {
@@ -57,10 +66,11 @@
 			}
 
 			.credentials-form__user-pass {
-				flex-direction: column;
+				flex-direction: row;
+				column-gap: 1rem;
 
 				& > fieldset {
-					flex: 0;
+					flex: 1 0 290px;
 					margin-inline-end: 0;
 
 					&.credentials-form__username {
@@ -80,7 +90,7 @@
 			width: 240px;
 			text-align: left;
 			margin-inline-start: rem(40px);
-			margin-top: 200px;
+			margin-top: 26px;
 			margin-bottom: 1rem;
 
 			@include break-large {
@@ -88,8 +98,8 @@
 			}
 
 			h3 {
-				font-weight: 500;
-				font-size: 1rem;
+				font-weight: 400;
+				font-size: 1.25rem;
 				margin-bottom: 1rem;
 			}
 
@@ -208,7 +218,7 @@
 			box-sizing: border-box;
 			font-size: 0.875rem;
 			/* We need to allow space for the SVG checkmark */
-			padding: 0.875rem calc(0.5rem + 24px) 0.875rem 1rem;
+			padding: 0.875rem 1rem 0.875rem 1rem;
 		}
 
 		*::placeholder {
