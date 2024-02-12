@@ -41,15 +41,12 @@ export function Credentials( props: Props ) {
 				<SubTitle className="onboarding-subtitle--full-width">
 					{
 						// translators: %(sourceSite)s and %(targetSite)s are the site slugs - e.g. my-website.wordpress.com
-						translate(
-							'Provide your SSH server credentials to migrate %(sourceSite)s to %(targetSite)s',
-							{
-								args: {
-									sourceSite: sourceSite?.slug,
-									targetSite: targetSite?.slug,
-								},
-							}
-						)
+						translate( 'Your site %(sourceSite)s will be migrated to %(targetSite)s', {
+							args: {
+								sourceSite: sourceSite?.slug,
+								targetSite: targetSite?.slug,
+							},
+						} )
 					}
 				</SubTitle>
 			</div>

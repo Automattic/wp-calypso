@@ -249,7 +249,7 @@ export const CredentialsForm: React.FunctionComponent< Props > = ( props ) => {
 							{ translate( 'Skip credentials' ) }
 						</Button>
 						&nbsp;
-						{ translate( 'for a slower setup' ) }
+						{ translate( '(slower setup)' ) }
 					</div>
 				</div>
 			</form>
