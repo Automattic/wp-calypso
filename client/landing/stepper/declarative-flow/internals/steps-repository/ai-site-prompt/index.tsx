@@ -42,7 +42,13 @@ const AISitePrompt: Step = function ( props ) {
 		[]
 	);
 
-	const [ callAIAssembler, setPrompt, prompt, loading ] = useAIAssembler();
+	const [ callAIAssembler, setPrompt, prompt, loading, callUrlData, setUrlData, urlData ] =
+		useAIAssembler();
+
+	const onUrlSubmit = async ( event: FormEvent ) => {
+		event.preventDefault();
+		callUrlData();
+	};
 
 	const onSubmit = async ( event: FormEvent ) => {
 		event.preventDefault();
@@ -71,6 +77,27 @@ const AISitePrompt: Step = function ( props ) {
 								</StyledNextButton>
 							) }
 						</ActionSection>
+					</form>
+				</div>
+				<div className="site-prompt__get-from-url-containter">
+					<br />
+					<form onSubmit={ onUrlSubmit }>
+						<TextareaControl
+							help={ __( 'Or enter the URL of a site you really like.' ) }
+							rows={ 1 }
+							value={ urlData }
+							onChange={ ( value ) => setUrlData( value ) }
+							disabled={ loading }
+						/>
+
+						<>
+							{ loading && <LoadingEllipsis /> }
+							{ ! loading && (
+								<StyledNextButton type="submit" disabled={ loading || urlData.length < 6 }>
+									{ __( 'Inspire me' ) }
+								</StyledNextButton>
+							) }
+						</>
 					</form>
 				</div>
 			</>

@@ -4,10 +4,66 @@ import { useSearchParams } from 'react-router-dom';
 import wpcomRequest from 'wpcom-proxy-request';
 
 // eslint-disable-next-line @typescript-eslint/ban-types
-export default function useAIAssembler(): [ Function, Function, string, boolean ] {
+export default function useAIAssembler(): [
+	Function,
+	Function,
+	string,
+	boolean,
+	Function,
+	Function,
+	string,
+] {
 	const [ searchParams, setSearchParams ] = useSearchParams();
 	const [ prompt, setPrompt ] = useState( searchParams.get( 'ai_description' ) || '' );
+	const [ urlData, setUrlData ] = useState( '' );
 	const [ loading, setLoading ] = useState( false );
+
+	const formatResponseToString = ( response ) => {
+		let formattedString = `The website for '${ response.site_info.title }' is focused on ${ response.site_info.purpose }, with a theme centered around ${ response.site_info.theme }. The site features several key sections:\n\n`;
+
+		response.sections.forEach( ( section ) => {
+			formattedString += `- ${ section.name.replace( '_', ' ' ).toUpperCase() }: ${
+				section.description
+			}\n`;
+		} );
+
+		formattedString += `\nThe site employs a distinctive color palette with primary colors and accent colors including:\n`;
+
+		response.colors.forEach( ( color ) => {
+			if ( color.name ) {
+				formattedString += `- ${ color.name.toUpperCase() } (${ color.slug }): ${ color.color }\n`;
+			} else {
+				formattedString += `- ${ color.slug.toUpperCase() }: ${ color.color }\n`;
+			}
+		} );
+
+		return formattedString;
+	};
+
+	function callUrlData() {
+		setLoading( true );
+		return wpcomRequest( {
+			path: '/url-to-site/analyze',
+			method: 'POST',
+			apiNamespace: 'wpcom/v2',
+			body: {
+				url: urlData,
+			},
+		} )
+			.catch( ( err ) => {
+				setLoading( false );
+				console.log( 'URL Description AI error', err ); /* eslint-disable-line no-console */
+				return Promise.reject( err );
+			} )
+			.then( ( response: any ) => {
+				setLoading( false );
+				console.log( 'URL description response', response ); /* eslint-disable-line no-console */
+				// This actually passes the patterns to the pattern assembler.
+				const formattedString = formatResponseToString( response );
+				setPrompt( formattedString );
+				return Promise.resolve( response );
+			} );
+	}
 
 	function callAIAssembler() {
 		setSearchParams( ( currentSearchParams: any ) => {
@@ -79,5 +135,5 @@ export default function useAIAssembler(): [ Function, Function, string, boolean 
 				return Promise.resolve( response );
 			} );
 	}
-	return [ callAIAssembler, setPrompt, prompt, loading ];
+	return [ callAIAssembler, setPrompt, prompt, loading, callUrlData, setUrlData, urlData ];
 }
