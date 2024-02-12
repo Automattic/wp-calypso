@@ -406,7 +406,7 @@ export class SiteSettingsFormGeneral extends Component {
 											blog_public: 0,
 											wpcom_coming_soon: 0,
 											wpcom_public_coming_soon: 1,
-											wpcom_data_sharing_opt_out: 0,
+											wpcom_data_sharing_opt_out: false,
 										} )
 									}
 									disabled={ isComingSoonDisabled }
@@ -537,7 +537,7 @@ export class SiteSettingsFormGeneral extends Component {
 										blog_public: -1,
 										wpcom_coming_soon: 0,
 										wpcom_public_coming_soon: 0,
-										wpcom_data_sharing_opt_out: 0,
+										wpcom_data_sharing_opt_out: false,
 									} )
 								}
 								disabled={ isRequestingSettings }
@@ -1128,7 +1128,7 @@ const getFormSettings = ( settings ) => {
 		wpcom_locked_mode: settings.wpcom_locked_mode,
 		wpcom_public_coming_soon: settings.wpcom_public_coming_soon,
 		wpcom_gifting_subscription: !! settings.wpcom_gifting_subscription,
-		wpcom_data_sharing_opt_out: settings.wpcom_data_sharing_opt_out,
+		wpcom_data_sharing_opt_out: !! settings.wpcom_data_sharing_opt_out,
 	};
 
 	// handling `gmt_offset` and `timezone_string` values

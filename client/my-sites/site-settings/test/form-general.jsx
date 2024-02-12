@@ -251,6 +251,7 @@ describe( 'SiteSettingsFormGeneral', () => {
 					wpcom_public_coming_soon: 0,
 					wpcom_coming_soon: 0,
 					blog_public: '-1',
+					wpcom_data_sharing_opt_out: false,
 				},
 			};
 			const { container, getByLabelText } = renderWithRedux(
@@ -276,6 +277,7 @@ describe( 'SiteSettingsFormGeneral', () => {
 				blog_public: 1,
 				wpcom_coming_soon: 0,
 				wpcom_public_coming_soon: 0,
+				wpcom_data_sharing_opt_out: false,
 			} );
 
 			await userEvent.click( discourageRadio );
@@ -283,6 +285,7 @@ describe( 'SiteSettingsFormGeneral', () => {
 				blog_public: 0,
 				wpcom_coming_soon: 0,
 				wpcom_public_coming_soon: 0,
+				wpcom_data_sharing_opt_out: false,
 			} );
 		} );
 
@@ -347,6 +350,7 @@ describe( 'SiteSettingsFormGeneral', () => {
 					wpcom_public_coming_soon: 0,
 					wpcom_coming_soon: 0,
 					blog_public: 1,
+					wpcom_data_sharing_opt_out: false,
 				},
 			};
 			const { container, getByLabelText } = renderWithRedux(
@@ -372,6 +376,50 @@ describe( 'SiteSettingsFormGeneral', () => {
 				blog_public: 0,
 				wpcom_coming_soon: 0,
 				wpcom_public_coming_soon: 0,
+				wpcom_data_sharing_opt_out: false,
+			} );
+		} );
+
+		test( 'Jetpack Site, Public -> click Discourage AI training', async () => {
+			testProps = {
+				...jetpackProps,
+				isComingSoon: false,
+				isUnlaunchedSite: false,
+				siteIsJetpack: true,
+				siteIsAtomic: true,
+				fields: {
+					wpcom_public_coming_soon: 0,
+					wpcom_coming_soon: 0,
+					blog_public: 1,
+					wpcom_data_sharing_opt_out: false,
+				},
+			};
+			const { container, getByLabelText } = renderWithRedux(
+				<SiteSettingsFormGeneral { ...testProps } />,
+				{
+					ui: {
+						selectedSiteId: 1234,
+					},
+				}
+			);
+			expect(
+				container.querySelectorAll( '.site-settings__general-settings-launch-site' ).length
+			).toBe( 0 );
+			expect( container.querySelectorAll( '[name="wpcom_data_sharing_opt_out"]' ).length ).toBe(
+				1
+			);
+
+			const discourageRadio = getByLabelText( 'Discourage AI training and third-party data use', {
+				exact: false,
+			} );
+			expect( discourageRadio ).not.toBeChecked();
+
+			await userEvent.click( discourageRadio );
+			expect( testProps.updateFields ).toHaveBeenCalledWith( {
+				blog_public: 1,
+				wpcom_coming_soon: 0,
+				wpcom_public_coming_soon: 0,
+				wpcom_data_sharing_opt_out: true,
 			} );
 		} );
 
@@ -476,6 +524,7 @@ describe( 'SiteSettingsFormGeneral', () => {
 					wpcom_public_coming_soon: 1,
 					wpcom_coming_soon: 0,
 					blog_public: 0,
+					wpcom_data_sharing_opt_out: false,
 				},
 			};
 			const { container, getByLabelText } = renderWithRedux(
@@ -497,6 +546,7 @@ describe( 'SiteSettingsFormGeneral', () => {
 				blog_public: 0,
 				wpcom_coming_soon: 0,
 				wpcom_public_coming_soon: 0,
+				wpcom_data_sharing_opt_out: false,
 			} );
 		} );
 
@@ -588,6 +638,7 @@ describe( 'SiteSettingsFormGeneral', () => {
 				blog_public: 0,
 				wpcom_coming_soon: 0,
 				wpcom_public_coming_soon: 0,
+				wpcom_data_sharing_opt_out: false,
 			} );
 		} );
 
@@ -608,6 +659,7 @@ describe( 'SiteSettingsFormGeneral', () => {
 				blog_public: 1,
 				wpcom_coming_soon: 0,
 				wpcom_public_coming_soon: 0,
+				wpcom_data_sharing_opt_out: false,
 			} );
 		} );
 
@@ -617,25 +669,45 @@ describe( 'SiteSettingsFormGeneral', () => {
 					'Coming soon',
 					'Coming Soon',
 					1,
-					{ blog_public: 0, wpcom_coming_soon: 0, wpcom_public_coming_soon: 1 },
+					{
+						blog_public: 0,
+						wpcom_coming_soon: 0,
+						wpcom_data_sharing_opt_out: false,
+						wpcom_public_coming_soon: 1,
+					},
 				],
 				[
 					'Public',
 					'Public',
 					-1,
-					{ blog_public: 1, wpcom_coming_soon: 0, wpcom_public_coming_soon: 0 },
+					{
+						blog_public: 1,
+						wpcom_coming_soon: 0,
+						wpcom_data_sharing_opt_out: false,
+						wpcom_public_coming_soon: 0,
+					},
 				],
 				[
 					'Hidden',
 					'Discourage search engines from indexing this site',
 					-1,
-					{ blog_public: 0, wpcom_coming_soon: 0, wpcom_public_coming_soon: 0 },
+					{
+						blog_public: 0,
+						wpcom_coming_soon: 0,
+						wpcom_data_sharing_opt_out: false,
+						wpcom_public_coming_soon: 0,
+					},
 				],
 				[
 					'Private',
 					'Private',
 					1,
-					{ blog_public: -1, wpcom_coming_soon: 0, wpcom_public_coming_soon: 0 },
+					{
+						blog_public: -1,
+						wpcom_coming_soon: 0,
+						wpcom_data_sharing_opt_out: false,
+						wpcom_public_coming_soon: 0,
+					},
 				],
 			].forEach( ( [ name, text, initialBlogPublic, updatedFields ] ) => {
 				test( `${ name } option should be selectable`, async () => {
