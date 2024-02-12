@@ -21,20 +21,23 @@ import getIsSiteWPCOM from 'calypso/state/selectors/is-site-wpcom';
 import { getSiteSlug, getSiteOption } from 'calypso/state/sites/selectors';
 import isJetpackSite from 'calypso/state/sites/selectors/is-jetpack-site';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
-import useStatsPurchases from '../hooks/use-stats-purchases';
-import PageViewTracker from '../stats-page-view-tracker';
-import StatsLoader from '../stats-redirect/stats-loader';
-import { StatsPurchaseNoticePage, StatsPurchaseNotice } from './stats-purchase-notice';
+import useStatsPurchases from '../../hooks/use-stats-purchases';
+import PageViewTracker from '../../stats-page-view-tracker';
+import {
+	StatsPurchaseNoticePage,
+	StatsPurchaseNotice,
+} from '../../stats-purchase/stats-purchase-notice';
 import {
 	StatsSingleItemPagePurchase,
 	StatsSingleItemPersonalPurchasePage,
-} from './stats-purchase-single-item';
+} from '../../stats-purchase/stats-purchase-single-item';
 import StatsPurchaseWizard, {
 	SCREEN_PURCHASE,
 	SCREEN_TYPE_SELECTION,
 	TYPE_COMMERCIAL,
 	TYPE_PERSONAL,
-} from './stats-purchase-wizard';
+} from '../../stats-purchase/stats-purchase-wizard';
+import StatsLoader from '../../stats-redirect/stats-loader';
 
 const StatsPurchasePage = ( {
 	query,
