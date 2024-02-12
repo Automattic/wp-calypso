@@ -4,8 +4,10 @@ export interface DomainUpsellDialog {
 	show: boolean;
 }
 
+type SiteId = string;
+
 export interface SelectedStorageOptionForPlans {
-	[ key: string ]: {
+	[ key: SiteId ]: {
 		[ key in PlanSlug ]: WPComStorageAddOnSlug;
 	};
 }
