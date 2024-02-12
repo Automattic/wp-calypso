@@ -7,4 +7,5 @@ export const getSelectedStorageOptionForPlan = (
 	planSlug: PlanSlug,
 	siteId: number
 ) => state.selectedStorageOptionForPlans?.[ siteId ]?.[ planSlug ];
-export const getSelectedStorageOptions = ( state: State ) => state.selectedStorageOptionForPlans;
+export const getSelectedStorageOptions = ( state: State, siteId: number ) =>
+	state.selectedStorageOptionForPlans?.[ siteId ];
