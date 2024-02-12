@@ -34,7 +34,7 @@ const useSiteMenuItems = () => {
 	const locale = useLocale();
 	const isAllDomainsView = '/domains/manage' === currentRoute;
 	const { currentSection } = useCurrentRoute();
-	const shouldShowGlobalSidebar = useGlobalSidebar( selectedSiteId, currentSection );
+	const { shouldShowGlobalSidebar } = useGlobalSidebar( selectedSiteId, currentSection?.group );
 
 	useEffect( () => {
 		if ( selectedSiteId && siteDomain ) {
