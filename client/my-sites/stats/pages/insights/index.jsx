@@ -12,15 +12,15 @@ import Main from 'calypso/components/main';
 import NavigationHeader from 'calypso/components/navigation-header';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
-import AllTimeHighlightsSection from '../all-time-highlights-section';
-import AllTimeViewsSection from '../all-time-views-section';
-import AnnualHighlightsSection from '../annual-highlights-section';
-import PostingActivity from '../post-trends';
-import Comments from '../stats-comments';
-import StatsModule from '../stats-module';
-import PageViewTracker from '../stats-page-view-tracker';
-import StatShares from '../stats-shares';
-import statsStrings from '../stats-strings';
+import AllTimeHighlightsSection from '../../all-time-highlights-section';
+import AllTimeViewsSection from '../../all-time-views-section';
+import AnnualHighlightsSection from '../../annual-highlights-section';
+import PostingActivity from '../../post-trends';
+import Comments from '../../stats-comments';
+import StatsModule from '../../stats-module';
+import PageViewTracker from '../../stats-page-view-tracker';
+import StatShares from '../../stats-shares';
+import statsStrings from '../../stats-strings';
 
 const StatsInsights = ( props ) => {
 	const { siteId, siteSlug, translate, isOdysseyStats, isJetpack } = props;

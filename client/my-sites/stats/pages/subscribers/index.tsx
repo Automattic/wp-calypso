@@ -18,14 +18,14 @@ import {
 	isSimpleSite,
 } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
-import useSubscribersTotalsQueries from '../hooks/use-subscribers-totals-query';
-import Followers from '../stats-followers';
-import StatsModulePlaceholder from '../stats-module/placeholder';
-import StatsModuleEmails from '../stats-module-emails';
-import PageViewTracker from '../stats-page-view-tracker';
-import SubscribersChartSection, { PeriodType } from '../stats-subscribers-chart-section';
-import SubscribersHighlightSection from '../stats-subscribers-highlight-section';
-import SubscribersOverview from '../stats-subscribers-overview';
+import useSubscribersTotalsQueries from '../../hooks/use-subscribers-totals-query';
+import Followers from '../../stats-followers';
+import StatsModulePlaceholder from '../../stats-module/placeholder';
+import StatsModuleEmails from '../../stats-module-emails';
+import PageViewTracker from '../../stats-page-view-tracker';
+import SubscribersChartSection, { PeriodType } from '../../stats-subscribers-chart-section';
+import SubscribersHighlightSection from '../../stats-subscribers-highlight-section';
+import SubscribersOverview from '../../stats-subscribers-overview';
 import type { Moment } from 'moment';
 
 interface StatsSubscribersPageProps {
