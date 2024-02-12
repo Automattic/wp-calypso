@@ -369,7 +369,7 @@ export class SiteSettingsFormGeneral extends Component {
 		const blogPublic = parseInt( fields.blog_public, 10 );
 		const wpcomComingSoon = 1 === parseInt( fields.wpcom_coming_soon, 10 );
 		const wpcomPublicComingSoon = 1 === parseInt( fields.wpcom_public_coming_soon, 10 );
-		const partnerOptOut = !! fields.wpcom_data_sharing_opt_out;
+		const thirdPartySharingOptOut = !! fields.wpcom_data_sharing_opt_out;
 
 		// isPrivateAndUnlaunched means it is an unlaunched coming soon v1 site
 		const isPrivateAndUnlaunched = -1 === blogPublic && this.props.isUnlaunchedSite;
@@ -406,6 +406,7 @@ export class SiteSettingsFormGeneral extends Component {
 											blog_public: 0,
 											wpcom_coming_soon: 0,
 											wpcom_public_coming_soon: 1,
+											wpcom_data_sharing_opt_out: true,
 										} )
 									}
 									disabled={ isComingSoonDisabled }
@@ -443,6 +444,7 @@ export class SiteSettingsFormGeneral extends Component {
 										blog_public: isWpcomStagingSite ? 0 : 1,
 										wpcom_coming_soon: 0,
 										wpcom_public_coming_soon: 0,
+										wpcom_data_sharing_opt_out: false,
 									} )
 								}
 								disabled={ isRequestingSettings }
@@ -476,7 +478,7 @@ export class SiteSettingsFormGeneral extends Component {
 											wpcomPublicComingSoon || blogPublic === -1 || blogPublic === 1 ? 0 : 1,
 										wpcom_coming_soon: 0,
 										wpcom_public_coming_soon: 0,
-										wpcom_data_sharing_opt_out: partnerOptOut,
+										wpcom_data_sharing_opt_out: thirdPartySharingOptOut,
 									} )
 								}
 								disabled={ isRequestingSettings }
@@ -494,22 +496,16 @@ export class SiteSettingsFormGeneral extends Component {
 								<FormInputCheckbox
 									name="wpcom_data_sharing_opt_out"
 									value={ true }
-									checked={
-										( wpcomPublicComingSoon && blogPublic === 0 && isComingSoonDisabled ) ||
-										( 0 === blogPublic && ! wpcomPublicComingSoon ) ||
-										partnerOptOut
-									}
+									checked={ thirdPartySharingOptOut }
 									onChange={ () =>
 										this.handleVisibilityOptionChange( {
-											wpcom_data_sharing_opt_out: partnerOptOut === true ? false : true,
+											wpcom_data_sharing_opt_out: thirdPartySharingOptOut === true ? false : true,
 											blog_public: blogPublic,
 											wpcom_coming_soon: wpcomComingSoon,
 											wpcom_public_coming_soon: wpcomPublicComingSoon,
 										} )
 									}
-									disabled={
-										isRequestingSettings || ( 0 === blogPublic && ! wpcomPublicComingSoon )
-									}
+									disabled={ isRequestingSettings }
 									onClick={ eventTracker( 'Clicked Partnership Radio Button' ) }
 								/>
 								<span>{ translate( 'Discourage AI training and third-party data use' ) }</span>
@@ -537,6 +533,7 @@ export class SiteSettingsFormGeneral extends Component {
 										blog_public: -1,
 										wpcom_coming_soon: 0,
 										wpcom_public_coming_soon: 0,
+										wpcom_data_sharing_opt_out: true,
 									} )
 								}
 								disabled={ isRequestingSettings }
