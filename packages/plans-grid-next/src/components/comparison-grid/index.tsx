@@ -110,9 +110,9 @@ const Title = styled.div< { isHiddenInMobile?: boolean } >`
 	` ) }
 `;
 
-const Grid = styled.div< { isInSignup?: boolean; visiblePlans: number } >`
+const Grid = styled.div< { visiblePlans: number } >`
 	display: grid;
-	margin: ${ ( props ) => ( props.isInSignup ? '90px auto 0' : '64px auto 0' ) };
+	margin: 0 auto;
 	background: #fff;
 	border: solid 1px #e0e0e0;
 	${ ( props ) =>
@@ -1087,9 +1087,19 @@ const ComparisonGrid = ( {
 		onUpgradeClick,
 	} );
 
+	/**
+	 * Search for "any" plan with a highlight label, not just the visible ones.
+	 * This will keep the grid static while user interacts (selects different plans to compare).
+	 * Some padding is applied in the stylesheet to cover the badges/labels.
+	 */
+	const hasHighlightedPlan = gridPlans.some( ( { highlightLabel } ) => !! highlightLabel );
+	const classes = classNames( 'plan-comparison-grid', {
+		'has-highlighted-plan': hasHighlightedPlan,
+	} );
+
 	return (
-		<div className="plan-comparison-grid">
-			<Grid isInSignup={ isInSignup } visiblePlans={ visiblePlans.length }>
+		<div className={ classes }>
+			<Grid visiblePlans={ visiblePlans.length }>
 				<StickyContainer
 					disabled={ isBottomHeaderInView }
 					stickyClass="is-sticky-header-row"

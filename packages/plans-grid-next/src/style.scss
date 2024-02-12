@@ -184,6 +184,11 @@ $mobile-card-max-width: 440px;
 	border-spacing: 0;
 	width: 100%;
 
+	&.has-highlighted-plan {
+		// margin (not padding) to not break internal borders/layout
+		margin-top: 35px; // enough to cover `plans-grid__popular-badge` repositioning (top: -35px)
+	}
+
 	&.has-1-cols {
 		max-width: $table-cell-max-width;
 	}
@@ -524,6 +529,16 @@ $mobile-card-max-width: 440px;
 				color: #fff;
 				padding: 0 0 17px;
 
+				.plan-grid-next & {
+					.foo & {
+						padding-top: 35px; // enough to cover `plans-grid__popular-badge` repositioning (top: -35px)
+					}
+				}
+
+				.plan-grid-next__comparison-grid & {
+					padding-top: 50px; // enough to cover `plans-grid__popular-badge` repositioning (top: -43px)
+				}
+
 				.plans-grid__plan-pill {
 					font-family: Inter, $sans;
 					font-size: 0.75rem;
@@ -693,6 +708,12 @@ $mobile-card-max-width: 440px;
 }
 
 .plan-comparison-grid {
+	&.has-highlighted-plan {
+		@include plans-grid-medium-large {
+			padding-top: 50px; // enough to cover `plans-grid__popular-badge` repositioning (top: -43px)
+		}
+	}
+
 	.plan-comparison-grid__feature-group-row.is-storage-feature {
 		align-items: flex-start;
 	}

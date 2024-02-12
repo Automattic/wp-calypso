@@ -39,7 +39,10 @@ $plan-features-header-banner-height: 20px;
 		margin: 0 20px;
 		padding: 0 0 10px;
 		overflow-x: visible;
-		padding-top: 35px; // enough to cover `plans-grid__popular-badge` repositioning (top: -35px)
+	}
+
+	.plans-grid-next__comparison-grid {
+		margin-top: 30px;
 	}
 }
 
@@ -129,7 +132,7 @@ $plan-features-header-banner-height: 20px;
 }
 
 .plans-features-main__group.is-wpcom.is-2023-pricing-grid {
-	margin-top: 24px;
+	padding-top: 24px;
 }
 
 /**
