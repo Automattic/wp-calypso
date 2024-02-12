@@ -51,7 +51,7 @@
 		align-items: center;
 		display: flex;
 		gap: 8px;
-		justify-content: flex-end;
+		justify-content: space-between;
 		padding: 30px 24px;
 		position: relative;
 		z-index: 6;
@@ -235,4 +235,8 @@
 		margin-top: 0;
 		top: 0;
 	}
+}
+
+body.is-section-sites-dashboard {
+	margin-left: var(--sidebar-width-max);
 }
