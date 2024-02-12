@@ -61,7 +61,7 @@ export const DeveloperSurveyNotice = ( {
 							className="developer-survey-notice__popup-content-buttons-cancel"
 							onClick={ () => onClose( ONE_DAY_IN_SECONDS, 'remind-later-button' ) }
 						>
-							{ hasTranslation( 'Maybe later' )
+							{ hasTranslation( 'Maybe later' ) || localeSlug === 'en'
 								? translate( 'Maybe later' )
 								: translate( 'Remind later' ) }
 						</Button>
