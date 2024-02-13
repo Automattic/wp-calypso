@@ -189,8 +189,8 @@ class InviteFormHeader extends Component {
 	render() {
 		const roleExplanation = getExplanationForInvite(
 			this.props.role,
-			this.props.translate,
-			this.getSiteName()
+			this.getSiteName(),
+			this.props.translate
 		);
 		return (
 			<div className="invite-form-header">

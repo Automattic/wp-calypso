@@ -10,7 +10,6 @@ import { getRedirectAfterAccept } from 'calypso/my-sites/invites/utils';
 import { setUserEmailVerified } from 'calypso/state/current-user/actions';
 import { getCurrentUserEmail, isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { acceptInvite as acceptInviteAction } from 'calypso/state/invites/actions';
-import { WpLoggedOutInviteLogo } from './invite-accept-logged-out/wp-logo';
 
 /**
  * Module variables
@@ -59,7 +58,6 @@ export function acceptInvite( context, next ) {
 	context.primary = (
 		<>
 			<AcceptInviteTitle />
-			<WpLoggedOutInviteLogo />
 			<InviteAccept
 				siteId={ context.params.site_id }
 				inviteKey={ context.params.invitation_key }
