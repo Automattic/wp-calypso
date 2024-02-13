@@ -71,7 +71,7 @@ import isSiteMigrationInProgress from 'calypso/state/selectors/is-site-migration
 import isSiteP2Hub from 'calypso/state/selectors/is-site-p2-hub';
 import isSiteWpcomStaging from 'calypso/state/selectors/is-site-wpcom-staging';
 import isSiteWPForTeams from 'calypso/state/selectors/is-site-wpforteams';
-import wasTrialSite from 'calypso/state/selectors/was-trial-site';
+import wasEcommerceTrialSite from 'calypso/state/selectors/was-ecommerce-trial-site';
 import wasUpgradedFromTrialSite from 'calypso/state/selectors/was-upgraded-from-trial-site';
 import { requestSite } from 'calypso/state/sites/actions';
 import { getDomainsBySiteId } from 'calypso/state/sites/domains/selectors';
@@ -329,7 +329,7 @@ function onSelectedSiteAvailable( context ) {
 	// If we had a trial plan, and the user doesn't have a paid plan (active or expired),
 	// redirect to full-page trial expired page.
 	if (
-		wasTrialSite( state, selectedSite.ID ) &&
+		wasEcommerceTrialSite( state, selectedSite.ID ) &&
 		! wasUpgradedFromTrialSite( state, selectedSite.ID ) &&
 		[ PLAN_FREE, PLAN_JETPACK_FREE ].includes( currentPlanSlug )
 	) {
