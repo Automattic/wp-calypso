@@ -225,6 +225,52 @@ body.is-section-promote-post-i2 .layout__content .campaign-item-details.main {
 			}
 		}
 
+		.campaign-item-details__main-stats-row-top {
+			display: flex;
+			flex-direction: row;
+			flex-grow: 1;
+			> div {
+				display: flex;
+				flex-direction: column;
+				padding: 16px;
+
+				@media (min-width: $break-medium) {
+					padding: 24px;
+					width: 28%;
+				}
+
+				&:first-child {
+					@media (min-width: $break-medium) {
+						width: 44%;
+					}
+				}
+
+			}
+		}
+
+		.campaign-item-details__main-stats-row-bottom {
+			display: flex;
+			flex-direction: row;
+			flex-grow: 1;
+			> div {
+				display: flex;
+				flex-direction: column;
+				padding: 16px;
+
+				@media (min-width: $break-medium) {
+					padding: 24px;
+					width: 28%;
+				}
+
+				&:first-child {
+					@media (min-width: $break-medium) {
+						width: 44%;
+					}
+				}
+
+			}
+		}
+
 		.campaign-item-details__payment-row {
 			width: 100%;
 

@@ -431,7 +431,7 @@ export default function CampaignItemDetails( props: Props ) {
 						{ status !== 'created' && (
 							<div className="campaign-item-details__main-stats-container">
 								<div className="campaign-item-details__main-stats">
-									<div className="campaign-item-details__main-stats-row">
+									<div className="campaign-item-details__main-stats-row-top">
 										<div>
 											<span className="campaign-item-details__label">
 												{ translate( 'Impressions' ) }
@@ -451,6 +451,32 @@ export default function CampaignItemDetails( props: Props ) {
 										<div>
 											<span className="campaign-item-details__label">
 												{ translate( 'Click-through rate' ) }
+											</span>
+											<span className="campaign-item-details__text wp-brand-font">
+												{ ! isLoading ? ctrFormatted : <FlexibleSkeleton /> }
+											</span>
+										</div>
+									</div>
+									<div className="campaign-item-details__main-stats-row-bottom">
+										<div>
+											<span className="campaign-item-details__label">
+												{ translate( 'Conversion Value' ) }
+											</span>
+											<span className="campaign-item-details__text wp-brand-font">
+												{ ! isLoading ? impressionsTotal : <FlexibleSkeleton /> }
+											</span>
+										</div>
+										<div>
+											<span className="campaign-item-details__label">
+												{ translate( 'Conversions' ) }
+											</span>
+											<span className="campaign-item-details__text wp-brand-font">
+												{ ! isLoading ? clicks_total : <FlexibleSkeleton /> }
+											</span>
+										</div>
+										<div>
+											<span className="campaign-item-details__label">
+												{ translate( 'Conversion Rate' ) }
 											</span>
 											<span className="campaign-item-details__text wp-brand-font">
 												{ ! isLoading ? ctrFormatted : <FlexibleSkeleton /> }
