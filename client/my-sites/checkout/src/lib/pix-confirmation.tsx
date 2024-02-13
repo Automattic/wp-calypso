@@ -36,7 +36,8 @@ const ConfirmationDiv = styled.dialog`
 	}
 
 	.pix-confirmation__content {
-		width: 330px;
+		max-width: 400px;
+		padding: 0 12px;
 	}
 
 	.pix-confirmation__title {
@@ -61,7 +62,7 @@ const ConfirmationDiv = styled.dialog`
 
 	.pix-confirmation__manual-instructions {
 		margin-top: 28px;
-		font-weight: 400px;
+		font-weight: 400;
 		font-size: 16px;
 		line-height: 24px;
 	}
@@ -71,8 +72,13 @@ const ConfirmationDiv = styled.dialog`
 	}
 
 	.pix-confirmation__manual-instructions-title {
-		font-weight: 500px;
+		font-weight: 700;
 		margin: 6px;
+	}
+
+	.pix-copy-code-button {
+		border: 1px solid var( --color-neutral-20 );
+		margin-top: 24px;
 	}
 `;
 
@@ -147,14 +153,20 @@ export function PixConfirmation( {
 					<h3 className="pix-confirmation__manual-instructions-title">
 						{ translate( 'On mobile?' ) }
 					</h3>
-					<p>
+					<div>
 						{ translate(
 							'Choose to pay via Pix in your banking app, then copy and paste the follow code into the app.'
 						) }
-						<ClipboardButton onCopy={ displayCopyConfirmation } text={ qrCode }>
-							{ translate( 'Copy the Pix code' ) }
-						</ClipboardButton>
-					</p>
+						<div>
+							<ClipboardButton
+								onCopy={ displayCopyConfirmation }
+								text={ qrCode }
+								className="pix-copy-code-button"
+							>
+								{ translate( 'Copy the Pix code' ) }
+							</ClipboardButton>
+						</div>
+					</div>
 				</div>
 			</div>
 		</ConfirmationDiv>
