@@ -19,7 +19,6 @@ import { redirectToLogout } from 'calypso/state/current-user/actions';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
 import { successNotice, infoNotice } from 'calypso/state/notices/actions';
 import { hideMasterbar } from 'calypso/state/ui/actions';
-import { WpLoggedOutInviteLogo } from '../invite-accept-logged-out/wp-logo';
 import normalizeInvite from './utils/normalize-invite';
 
 import './style.scss';
@@ -163,10 +162,7 @@ class InviteAccept extends Component {
 		return this.props.user ? (
 			<LoggedIn { ...props } user={ this.props.user } />
 		) : (
-			<>
-				<WpLoggedOutInviteLogo />
-				<LoggedOut { ...props } />
-			</>
+			<LoggedOut { ...props } />
 		);
 	};
 
