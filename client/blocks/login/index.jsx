@@ -19,6 +19,7 @@ import { getSignupUrl, isReactLostPasswordScreenEnabled } from 'calypso/lib/logi
 import {
 	isCrowdsignalOAuth2Client,
 	isJetpackCloudOAuth2Client,
+	isA4AOAuth2Client,
 	isWooOAuth2Client,
 } from 'calypso/lib/oauth2-clients';
 import { login } from 'calypso/lib/paths';
@@ -447,11 +448,26 @@ class Login extends Component {
 			if ( isJetpackCloudOAuth2Client( oauth2Client ) ) {
 				headerText = translate( 'Howdy! Log in to Jetpack.com with your WordPress.com account.' );
 				preHeader = (
-					<div className="login__jetpack-cloud-wrapper">
+					<div>
 						<JetpackPlusWpComLogo className="login__jetpack-plus-wpcom-logo" size={ 24 } />
 					</div>
 				);
+			}
 
+			if ( isA4AOAuth2Client( oauth2Client ) ) {
+				headerText = translate(
+					'Howdy! Log in to Automattic for Agencies with your WordPress.com account.'
+				);
+				preHeader = (
+					<div>
+						{
+							// TODO: Add Automattic for Agencies logo
+						 }
+					</div>
+				);
+			}
+
+			if ( isJetpackCloudOAuth2Client( oauth2Client ) || isA4AOAuth2Client( oauth2Client ) ) {
 				// If users arrived here from the lost password flow, show them a specific message about it
 				postHeader = currentQuery.lostpassword_flow && (
 					<p className="login__form-post-header">
@@ -826,6 +842,7 @@ class Login extends Component {
 				className={ classNames( 'login', {
 					'is-jetpack': isJetpack,
 					'is-jetpack-cloud': isJetpackCloudOAuth2Client( oauth2Client ),
+					'is-a4a': isA4AOAuth2Client( oauth2Client ),
 				} ) }
 			>
 				{ this.renderHeader() }
