@@ -1,7 +1,8 @@
 import { WordPressLogo } from '@automattic/components';
 import formatCurrency from '@automattic/format-currency';
 import styled from '@emotion/styled';
-import { ClipboardButton } from '@wordpress/components';
+import { Button } from '@wordpress/components';
+import { useCopyToClipboard } from '@wordpress/compose';
 import { useTranslate } from 'i18n-calypso';
 import { QRCodeSVG } from 'qrcode.react';
 import { useState } from 'react';
@@ -117,9 +118,9 @@ export function PixConfirmation( {
 	const translate = useTranslate();
 	const [ hasCopied, setHasCopied ] = useState( false );
 
-	const displayCopyConfirmation = () => {
+	const copyButtonRef = useCopyToClipboard( qrCode, () => {
 		setHasCopied( true );
-	};
+	} );
 
 	return (
 		<ConfirmationDiv className="pix-confirmation">
@@ -160,13 +161,9 @@ export function PixConfirmation( {
 							'Choose to pay via Pix in your banking app, then copy and paste the follow code into the app.'
 						) }
 						<div>
-							<ClipboardButton
-								onCopy={ displayCopyConfirmation }
-								text={ qrCode }
-								className="pix-copy-code-button"
-							>
+							<Button ref={ copyButtonRef } className="pix-copy-code-button">
 								{ hasCopied ? translate( 'Copied!' ) : translate( 'Copy the Pix code' ) }
-							</ClipboardButton>
+							</Button>
 						</div>
 					</div>
 				</div>
