@@ -131,7 +131,6 @@ export async function pixProcessor(
 			let explicitClosureMessage: string | undefined;
 			displayModal( {
 				root,
-				redirectUrl: response.redirect_url,
 				qrCode: response.qr_code,
 				priceInteger: responseCart.total_cost_integer,
 				priceCurrency: responseCart.currency,
@@ -203,7 +202,6 @@ function hideModal( root: Root ): void {
 
 function displayModal( {
 	root,
-	redirectUrl,
 	qrCode,
 	priceInteger,
 	priceCurrency,
@@ -213,7 +211,6 @@ function displayModal( {
 	isJetpackNotAtomic,
 }: {
 	root: Root;
-	redirectUrl: string;
 	qrCode: string;
 	priceInteger: number;
 	priceCurrency: string;
@@ -224,7 +221,6 @@ function displayModal( {
 } ) {
 	root.render(
 		createElement( PixConfirmation, {
-			redirectUrl,
 			qrCode,
 			priceInteger,
 			priceCurrency,

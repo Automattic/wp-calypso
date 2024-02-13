@@ -1,6 +1,7 @@
 import { WordPressLogo } from '@automattic/components';
 import formatCurrency from '@automattic/format-currency';
 import styled from '@emotion/styled';
+import { ClipboardButton } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import { QRCodeSVG } from 'qrcode.react';
 import AkismetLogo from 'calypso/components/akismet-logo';
@@ -92,7 +93,6 @@ function CheckoutLogo( {
 }
 
 export function PixConfirmation( {
-	redirectUrl,
 	qrCode,
 	priceInteger,
 	priceCurrency,
@@ -100,7 +100,6 @@ export function PixConfirmation( {
 	isAkismet,
 	isJetpackNotAtomic,
 }: {
-	redirectUrl: string;
 	qrCode: string;
 	priceInteger: number;
 	priceCurrency: string;
@@ -109,6 +108,10 @@ export function PixConfirmation( {
 	isJetpackNotAtomic: boolean;
 } ) {
 	const translate = useTranslate();
+
+	const displayCopyConfirmation = () => {
+		// FIXME
+	};
 
 	return (
 		<ConfirmationDiv className="pix-confirmation">
@@ -145,9 +148,12 @@ export function PixConfirmation( {
 						{ translate( 'On mobile?' ) }
 					</h3>
 					<p>
-						{ translate( 'To open and pay with the app directly, {{a}}click here{{/a}}.', {
-							components: { a: <a href={ redirectUrl } /> },
-						} ) }
+						{ translate(
+							'Choose to pay via Pix in your banking app, then copy and paste the follow code into the app.'
+						) }
+						<ClipboardButton onCopy={ displayCopyConfirmation } text={ qrCode }>
+							{ translate( 'Copy the Pix code' ) }
+						</ClipboardButton>
 					</p>
 				</div>
 			</div>
