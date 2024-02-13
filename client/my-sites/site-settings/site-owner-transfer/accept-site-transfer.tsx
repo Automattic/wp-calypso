@@ -35,14 +35,14 @@ export function AcceptSiteTransfer( props: any ) {
 	const fetchAndAcceptInvite = async ( props: any ) => {
 		try {
 			const { siteId, inviteKey, redirectTo } = props;
-			const response = await wpcom.req.get( `/sites/${ siteId }/invites/${ inviteKey }` );
-			const pendingInvite = normalizeInvite( response );
+			const pendingInvite = await wpcom.req.get( `/sites/${ siteId }/invites/${ inviteKey }` );
+			const invite = normalizeInvite( pendingInvite );
 
-			pendingInvite.inviteKey = inviteKey;
+			invite.inviteKey = inviteKey;
 
-			await dispatch( acceptInvite( pendingInvite, null ) );
+			await dispatch( acceptInvite( invite, null ) );
 
-			store.set( 'accepted_site_transfer_invite', pendingInvite );
+			store.set( 'accepted_site_transfer_invite', invite );
 			navigate( redirectTo );
 		} catch {
 			setError(
