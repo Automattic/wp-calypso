@@ -1,15 +1,21 @@
+import page from '@automattic/calypso-router';
 import { Gridicon } from '@automattic/components';
 import { DropdownMenu, MenuGroup, MenuItem, Spinner } from '@wordpress/components';
 import { Fragment } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
-import { useDeleteCodeDeployment } from 'calypso/my-sites/github-deployments/deployments/use-delete-code-deployment';
-import { CodeDeploymentData } from 'calypso/my-sites/github-deployments/use-code-deployments-query';
+import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';
+import { useSelector } from '../../../state';
+import { manageDeployment } from '../routes';
+import { CodeDeploymentData } from './use-code-deployments-query';
+import { useDeleteCodeDeployment } from './use-delete-code-deployment';
 
 interface GitHubRepositoryListItemProps {
 	deployment: CodeDeploymentData;
 }
 
 export const DeploymentsListItem = ( { deployment }: GitHubRepositoryListItemProps ) => {
+	const siteSlug = useSelector( getSelectedSiteSlug );
+
 	const { deleteDeployment, isPending } = useDeleteCodeDeployment(
 		deployment.blog_id,
 		deployment.id
@@ -42,8 +48,14 @@ export const DeploymentsListItem = ( { deployment }: GitHubRepositoryListItemPro
 						{ ( { onClose } ) => (
 							<Fragment>
 								<MenuGroup>
-									<MenuItem onClick={ onClose }>Item 1</MenuItem>
-									<MenuItem onClick={ onClose }>Item 2</MenuItem>
+									<MenuItem
+										onClick={ () => {
+											page( manageDeployment( siteSlug!, deployment.id ) );
+											onClose();
+										} }
+									>
+										{ __( 'Configure repository' ) }
+									</MenuItem>
 								</MenuGroup>
 								<MenuGroup>
 									<MenuItem
