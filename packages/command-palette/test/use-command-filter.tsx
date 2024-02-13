@@ -1,6 +1,3 @@
-/**
- * @jest-environment jsdom
- */
 import { COMMAND_SEPARATOR, useCommandFilter } from '../src/use-command-filter';
 
 describe( 'useCommandFilter', () => {
