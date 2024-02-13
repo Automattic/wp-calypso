@@ -28,10 +28,6 @@ body.is-section-promote-post-i2 .layout__content .campaign-item-details.main {
 		}
 	}
 
-	.campaign-item-promote-again-button {
-		margin-top: 24px;
-	}
-
 	.campaign-item-header {
 		margin: 0 64px;
 		padding-bottom: 24px;
@@ -485,9 +481,10 @@ body.is-section-promote-post-i2 .layout__content .campaign-item-details.main {
 	}
 
 	.campaign-item-details__support-buttons-container {
-
 		display: flex;
 		flex-direction: column;
+		justify-content: center;
+		margin-top: 24px;
 
 		@media (max-width: $break-medium) {
 			margin-left: 16px;
@@ -495,7 +492,9 @@ body.is-section-promote-post-i2 .layout__content .campaign-item-details.main {
 		}
 
 		.campaign-item-details__support-buttons {
-
+			button:first-child {
+				margin-top: 10px;
+			}
 
 			button,
 			a {

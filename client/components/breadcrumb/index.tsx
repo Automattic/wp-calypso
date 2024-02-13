@@ -90,12 +90,13 @@ interface Props {
 	items: Item[];
 	mobileItem?: Item;
 	compact?: boolean;
+	singleButton?: boolean;
 	hideWhenOnlyOneLevel?: boolean;
 }
 
 const Breadcrumb: React.FunctionComponent< Props > = ( props ) => {
 	const translate = useTranslate();
-	const { items, mobileItem, compact = false, hideWhenOnlyOneLevel } = props;
+	const { items, mobileItem, compact = false, hideWhenOnlyOneLevel, singleButton = false } = props;
 
 	if ( items.length === 1 ) {
 		if ( hideWhenOnlyOneLevel ) {
@@ -117,6 +118,16 @@ const Breadcrumb: React.FunctionComponent< Props > = ( props ) => {
 			<StyledBackLink className="breadcrumbs-back" href={ urlBack }>
 				<Gridicon icon="chevron-left" size={ 18 } />
 				{ label }
+			</StyledBackLink>
+		);
+	}
+
+	if ( singleButton ) {
+		const [ item ] = items;
+		return (
+			<StyledBackLink className="breadcrumbs-back" href={ item.href }>
+				<Gridicon icon="chevron-left" size={ 18 } />
+				{ item.label }
 			</StyledBackLink>
 		);
 	}

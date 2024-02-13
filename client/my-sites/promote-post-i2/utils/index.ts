@@ -172,6 +172,12 @@ export const formatNumber = ( number: number, onlyPositives = false ): string =>
 	return number.toLocaleString();
 };
 
+export const canPromoteCampaignAgain = ( status: string ) => {
+	return [ campaignStatus.FINISHED, campaignStatus.CANCELED, campaignStatus.REJECTED ].includes(
+		status
+	);
+};
+
 export const canCancelCampaign = ( status: string ) => {
 	return [ campaignStatus.SCHEDULED, campaignStatus.CREATED, campaignStatus.ACTIVE ].includes(
 		status
