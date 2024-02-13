@@ -1,31 +1,11 @@
 /**
  * @jest-environment jsdom
  */
-/*
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { act, fireEvent, render, screen } from '@testing-library/react';
 import React from 'react';
-import { Provider } from 'react-redux';
-import configureStore from 'redux-mock-store';
-import { getCurrentRoutePattern } from 'calypso/state/selectors/get-current-route-pattern.js';
-import CommandPalette from '../index';
-import { useCommandPalette } from '../use-command-palette';
-
-const INITIAL_STATE = {
-	sites: {
-		items: {},
-	},
-	currentUser: {
-		capabilities: {
-			[ 1 ]: {
-				manage_options: true,
-			},
-		},
-	},
-	ui: {
-		selectedSiteId: 1,
-	},
-};
+import CommandPalette from '../src/index';
+import { useCommandPalette } from '../src/use-command-palette';
 
 const commands = [
 	{
@@ -58,12 +38,9 @@ const commands = [
 		},
 	},
 ];
-const mockStore = configureStore();
-const store = mockStore( INITIAL_STATE );
 const queryClient = new QueryClient();
 
-jest.mock( '../../../state/selectors/get-current-route-pattern' );
-jest.mock( '../use-command-palette' );
+jest.mock( '../src/use-command-palette' );
 
 window.ResizeObserver = jest.fn( () => ( {
 	observe: jest.fn(),
@@ -72,8 +49,6 @@ window.ResizeObserver = jest.fn( () => ( {
 } ) );
 
 describe( 'CommandPalette', () => {
-	( getCurrentRoutePattern as jest.Mock ).mockReturnValue( '/sites' );
-
 	const renderCommandPalette = () => {
 		( useCommandPalette as jest.Mock ).mockReturnValue( {
 			commands: commands,
@@ -81,12 +56,21 @@ describe( 'CommandPalette', () => {
 			emptyListNotice: 'No results found',
 		} );
 
+		const wpcom = {
+			req: {
+				get: () => {},
+			},
+		};
+
 		render(
-			<Provider store={ store }>
-				<QueryClientProvider client={ queryClient }>
-					<CommandPalette />
-				</QueryClientProvider>
-			</Provider>
+			<QueryClientProvider client={ queryClient }>
+				<CommandPalette
+					currentRoute="/sites"
+					currentSiteId={ null }
+					navigate={ () => {} }
+					wpcom={ wpcom }
+				/>
+			</QueryClientProvider>
 		);
 
 		act( () => {
@@ -150,4 +134,4 @@ describe( 'CommandPalette', () => {
 
 		expect( screen.queryByText( 'Get help' ) ).toBeNull();
 	} );
-} );*/
+} );

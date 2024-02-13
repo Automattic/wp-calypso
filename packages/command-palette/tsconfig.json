@@ -6,5 +6,6 @@
 		"rootDir": "src"
 	},
 	"include": [ "src" ],
+	"exclude": [ "**/test/*" ],
 	"references": [ { "path": "../sites" } ]
 }
