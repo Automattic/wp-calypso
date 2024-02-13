@@ -19,6 +19,10 @@ interface GitHubBrowseRepositoriesProps {
 	onChangeAccount( account: GitHubAccountData ): void;
 }
 
+const pageSize = 10;
+
+export type SortOption = 'name_asc' | 'name_desc' | 'date_asc' | 'date_desc';
+
 function filterRepositories( repositories: GitHubRepositoryData[], query: string ) {
 	const trimmed = query.trim();
 	if ( trimmed ) {
@@ -29,7 +33,28 @@ function filterRepositories( repositories: GitHubRepositoryData[], query: string
 	return repositories;
 }
 
-const pageSize = 10;
+function sortRepositories( repositories: GitHubRepositoryData[], sortKey: SortOption ) {
+	switch ( sortKey ) {
+		case 'name_asc':
+			return repositories.sort( ( left, right ) => {
+				return left.full_name.localeCompare( right.full_name );
+			} );
+		case 'date_asc':
+			return repositories.sort( ( left, right ) => {
+				return left.updated_at.localeCompare( right.updated_at );
+			} );
+		case 'name_desc':
+			return repositories.sort( ( left, right ) => {
+				return left.full_name.localeCompare( right.full_name ) * -1;
+			} );
+		case 'date_desc':
+			return repositories.sort( ( left, right ) => {
+				return left.updated_at.localeCompare( right.updated_at ) * -1;
+			} );
+		default:
+			return repositories;
+	}
+}
 
 export const GitHubBrowseRepositories = ( {
 	accounts,
@@ -37,17 +62,25 @@ export const GitHubBrowseRepositories = ( {
 	onSelectRepository,
 	onChangeAccount,
 }: GitHubBrowseRepositoriesProps ) => {
+	const [ sort, setSort ] = useState< SortOption >( 'name_desc' );
 	const [ page, setPage ] = useState( 1 );
+	const [ query, setQuery ] = useState( '' );
+
 	const { data: repositories = [], isLoading: isLoadingRepositories } = useGithubRepositoriesQuery(
 		account.external_id
 	);
 
-	const [ query, setQuery ] = useState( '' );
-	const filteredRepositories = filterRepositories( repositories, query );
+	const filteredRepositories = sortRepositories( filterRepositories( repositories, query ), sort );
+
 	const currentPage = filteredRepositories.slice(
 		( page - 1 ) * pageSize,
 		( page - 1 ) * pageSize + pageSize
 	);
+
+	function handleQueryChange( query ) {
+		setQuery( query );
+		setPage( 1 );
+	}
 
 	if ( isLoadingRepositories ) {
 		return <GitHubLoadingPlaceholder />;
@@ -61,13 +94,18 @@ export const GitHubBrowseRepositories = ( {
 					value={ account }
 					onChange={ onChangeAccount }
 				/>
-				<SearchRepos value={ query } onChange={ setQuery } />
+				<SearchRepos value={ query } onChange={ handleQueryChange } />
 			</div>
-			<GitHubRepositoryList repositories={ currentPage } onSelect={ onSelectRepository } />
+			<GitHubRepositoryList
+				repositories={ currentPage }
+				onSelect={ onSelectRepository }
+				sortKey={ sort }
+				onSortChange={ setSort }
+			/>
 			<Pagination
 				page={ page }
 				perPage={ pageSize }
-				total={ repositories.length }
+				total={ filteredRepositories.length }
 				pageClick={ setPage }
 			/>
 		</div>
