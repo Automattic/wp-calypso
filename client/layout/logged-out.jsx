@@ -221,6 +221,9 @@ const LayoutLoggedOut = ( {
 			{ isJetpackCloud() && (
 				<AsyncLoad require="calypso/jetpack-cloud/style" placeholder={ null } />
 			) }
+			{ config.isEnabled( 'a8c-for-agencies' ) && (
+				<AsyncLoad require="calypso/a8c-for-agencies/style" placeholder={ null } />
+			) }
 			<div id="content" className="layout__content">
 				<AsyncLoad require="calypso/components/global-notices" placeholder={ null } id="notices" />
 				<div id="primary" className="layout__primary">
