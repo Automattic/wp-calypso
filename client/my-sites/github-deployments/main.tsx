@@ -3,27 +3,26 @@ import DocumentHead from 'calypso/components/data/document-head';
 import FormattedHeader from 'calypso/components/formatted-header';
 import InlineSupportLink from 'calypso/components/inline-support-link';
 import Main from 'calypso/components/main';
-import { useSelector } from 'calypso/state/index';
-import { getSelectedSiteId } from 'calypso/state/ui/selectors/index';
 import { GitHubAuthorize } from './authorize';
 import { GitHubConnected } from './connected';
 import { GitHubLoadingPlaceholder } from './loading-placeholder';
-import { useGithubConnectionQuery } from './use-github-connection-query';
+import { useGithubAccountsQuery } from './use-github-accounts-query';
 
 import './style.scss';
+
+// Follow test plan at D137459 to add your token for testing.
 
 export function GitHubDeployments() {
 	const titleHeader = translate( 'GitHub Deployments' );
 
-	const siteId = useSelector( getSelectedSiteId );
-	const { data: connections, isLoading } = useGithubConnectionQuery( siteId );
+	const { data: accounts = [], isLoading } = useGithubAccountsQuery();
 
 	const renderContent = () => {
 		if ( isLoading ) {
 			return <GitHubLoadingPlaceholder />;
 		}
-		if ( connections?.length ) {
-			return <GitHubConnected />;
+		if ( accounts.length ) {
+			return <GitHubConnected accounts={ accounts } />;
 		}
 		return <GitHubAuthorize />;
 	};

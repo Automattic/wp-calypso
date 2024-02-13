@@ -1,5 +1,25 @@
 .github-deployments-authorized-card {
 	display: flex;
 	flex-direction: column;
-	padding-top: 8px;
+	padding: 0;
+
+	&__header {
+		height: 60px;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		border-bottom: 1px solid var(--color-border-subtle);
+		position: relative;
+
+		button {
+			position: absolute;
+			left: 16px;
+		}
+	}
+
+	&__body {
+		padding: 32px;
+	}
+
 }
+
