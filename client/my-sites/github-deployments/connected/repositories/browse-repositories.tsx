@@ -14,7 +14,6 @@ import './style.scss';
 interface GitHubBrowseRepositoriesProps {
 	accounts: GitHubAccountData[];
 	account: GitHubAccountData;
-	repositories: GitHubRepositoryData[];
 	onSelectRepository( repository: GitHubRepositoryData ): void;
 	onChangeAccount( account: GitHubAccountData ): void;
 }
@@ -77,7 +76,7 @@ export const GitHubBrowseRepositories = ( {
 		( page - 1 ) * pageSize + pageSize
 	);
 
-	function handleQueryChange( query ) {
+	function handleQueryChange( query: string ) {
 		setQuery( query );
 		setPage( 1 );
 	}

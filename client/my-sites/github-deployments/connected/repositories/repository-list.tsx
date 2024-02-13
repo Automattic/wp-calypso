@@ -3,8 +3,8 @@ import { ExternalLink, Icon } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { chevronDown, chevronUp } from '@wordpress/icons';
 import { GitHubRepositoryData } from '../../use-github-repositories-query';
+import { SortOption } from './browse-repositories';
 import { GitHubRepositoryListItem } from './repository-list-item';
-import { SortOption } from '.	/browse-repositories';
 
 interface GitHubAccountListProps {
 	repositories: GitHubRepositoryData[];
