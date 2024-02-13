@@ -44,7 +44,7 @@ export const useCreateCodeDeployment = (
 					branch_name: branchName,
 					target_dir: targetDir,
 					installation_id: installationId,
-					is_automayed: isAutomated,
+					is_automated: isAutomated,
 				}
 			),
 		...options,
