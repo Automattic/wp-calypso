@@ -6,6 +6,8 @@ import { renderHook } from '@testing-library/react';
 import React from 'react';
 import { useCommandPalette } from '../src/use-command-palette';
 import { useCommands } from '../src/use-commands';
+import { useSites } from '../src/use-sites';
+import { useSitesSortingQuery } from '../src/use-sites-sorting-query';
 
 const commands = [
 	{
@@ -117,9 +119,24 @@ jest.mock( 'cmdk', () => ( {
 jest.mock( '../src/use-commands', () => ( {
 	useCommands: jest.fn(),
 } ) );
+jest.mock( '../src/use-sites-sorting-query', () => ( {
+	useSitesSortingQuery: jest.fn(),
+} ) );
+jest.mock( '../src/use-sites', () => ( {
+	useSites: jest.fn(),
+} ) );
 
 describe( 'useCommandPalette', () => {
 	const queryClient = new QueryClient();
+	( useSitesSortingQuery as jest.Mock ).mockReturnValue( {
+		data: {
+			sortKey: 'alphabetically',
+			sortOrder: 'asc',
+		},
+	} );
+	( useSites as jest.Mock ).mockReturnValue( {
+		data: [],
+	} );
 
 	const wpcom = {
 		req: {
@@ -127,7 +144,7 @@ describe( 'useCommandPalette', () => {
 		},
 	};
 
-	const renderUseCommandPalette = () =>
+	const renderUseCommandPalette = ( currentRoute = null ) =>
 		renderHook(
 			() =>
 				useCommandPalette( {
@@ -137,7 +154,7 @@ describe( 'useCommandPalette', () => {
 					search: '',
 					navigate: () => {},
 					wpcom: wpcom,
-					currentRoute: '/sites',
+					currentRoute,
 				} ),
 			{
 				wrapper: ( { children } ) => (
@@ -164,7 +181,7 @@ describe( 'useCommandPalette', () => {
 
 	it( 'should return all the commands in the order they are added to commandsWithViewMySiteOnSite; View My Site should be hidden in /sites context', () => {
 		( useCommands as jest.Mock ).mockReturnValue( commandsWithViewMySite );
-		const { result } = renderUseCommandPalette();
+		const { result } = renderUseCommandPalette( '/sites' );
 
 		expect( result.current.commands.map( ( { name, label } ) => ( { name, label } ) ) ).toEqual(
 			commandsWithViewMySiteOnSitesResult
@@ -174,7 +191,7 @@ describe( 'useCommandPalette', () => {
 	it( 'should return Enable Edge Cache command first as it matches the context; all other commands should follow in the order they are added to commandsWithContext array', () => {
 		( useCommands as jest.Mock ).mockReturnValue( commandsWithContext );
 
-		const { result } = renderUseCommandPalette();
+		const { result } = renderUseCommandPalette( '/settings' );
 		expect(
 			result.current.commands.map( ( { name, label, context } ) => ( { name, label, context } ) )
 		).toEqual( commandsWithContextResult );
