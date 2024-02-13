@@ -5,6 +5,7 @@ import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
 import { useState } from 'react';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
+import FormRadio from 'calypso/components/forms/form-radio';
 import FormRadiosBar from 'calypso/components/forms/form-radios-bar';
 import FormSelect from 'calypso/components/forms/form-select';
 import FormTextInput from 'calypso/components/forms/form-text-input';
@@ -65,7 +66,31 @@ export const CreateRepositoryForm = ( { onRepositoryCreated }: CreateRepositoryF
 			</div>
 			<FormFieldset>
 				<FormLabel>{ __( 'What are you building ' ) }</FormLabel>
-				<FormRadiosBar
+				<FormFieldset>
+					<FormRadio label={ __( 'A theme' ) } onChange={ () => {} } className={ undefined } />
+					<div>
+						<FormSelect onChange={ handleTemplateChange } value={ selectedTemplate.value }>
+							{ getRepositoryTemplate( checked ).map( ( template ) => (
+								<option key={ template.value } value={ template.value }>
+									{ template.name }
+								</option>
+							) ) }
+						</FormSelect>
+						<small style={ { marginTop: '12px' } }>
+							{ createInterpolateElement(
+								sprintf(
+									/* translators: %s is the name of the template */
+									__( 'Learn more about the <link>%s</link> template' ),
+									selectedTemplate.name
+								),
+								{
+									link: <InlineSupportLink supportContext="site-monitoring" showIcon={ false } />,
+								}
+							) }
+						</small>
+					</div>
+				</FormFieldset>
+				{ /* <FormRadiosBar
 					items={ [
 						{ label: __( 'A theme' ), value: 'theme' },
 						{ label: __( 'A plugin' ), value: 'plugin' },
@@ -74,7 +99,7 @@ export const CreateRepositoryForm = ( { onRepositoryCreated }: CreateRepositoryF
 					checked={ checked }
 					onChange={ handleCheckedChange }
 					disabled={ false }
-				/>
+				/> */ }
 			</FormFieldset>
 			<FormFieldset>
 				<FormLabel htmlFor="directory">{ __( 'Destination directory' ) }</FormLabel>
