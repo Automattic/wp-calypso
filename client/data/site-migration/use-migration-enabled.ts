@@ -1,3 +1,4 @@
+import config from '@automattic/calypso-config';
 import { useQuery } from '@tanstack/react-query';
 import wpcom from 'calypso/lib/wp';
 import type { MigrationEnabledResponse } from './types';
@@ -38,6 +39,7 @@ export const useMigrationEnabledInfoQuery = (
 			return {
 				...data,
 				can_migrate: !! (
+					config.isEnabled( 'stepper/site-migration-flow' ) ||
 					( data.migration_activated && data.migration_compatible ) ||
 					( data.jetpack_activated && data.jetpack_compatible )
 				),
