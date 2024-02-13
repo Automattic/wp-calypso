@@ -1,4 +1,4 @@
-import { getCurrentUserId } from 'calypso/state/current-user/selectors';
+import { getCurrentUserEmail, getCurrentUserId } from 'calypso/state/current-user/selectors';
 import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
 import isSiteP2Hub from 'calypso/state/selectors/is-site-p2-hub';
 import isSiteWPForTeams from 'calypso/state/selectors/is-site-wpforteams';
@@ -19,6 +19,7 @@ export default function canCurrentUserStartSiteOwnerTransfer(
 	siteId: number | null
 ): boolean {
 	const userId = getCurrentUserId( state );
+	const userEmail = getCurrentUserEmail( state );
 	const siteOwnerId = getSelectedSite( state )?.site_owner;
 	if ( ! siteOwnerId || ! userId || ! siteId ) {
 		return false;
@@ -36,6 +37,16 @@ export default function canCurrentUserStartSiteOwnerTransfer(
 		isSiteWpcomStaging( state, siteId )
 	) {
 		return false;
+	}
+
+	const inviteCacheKey = 'accepted_site_transfer_invite';
+	const acceptedInvite = store.get( inviteCacheKey );
+
+	store.remove( inviteCacheKey );
+
+	// Allow user to accept the site transfer if they just have accepted the site transfer.
+	if ( acceptedInvite && acceptedInvite.sentTo === userEmail ) {
+		return true;
 	}
 
 	return siteOwnerId === userId;

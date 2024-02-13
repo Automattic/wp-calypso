@@ -1,8 +1,7 @@
 import page from '@automattic/calypso-router';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect, useState } from 'react';
-import { LoadingBar } from 'calypso/components/loading-bar';
-import Notice from 'calypso/components/notice';
+import { SiteTransferringLoadingCard } from 'calypso/my-sites/site-settings/site-owner-transfer/site-transferring-loading-card';
 import { useConfirmTransfer } from './use-confirm-transfer';
 
 /**
@@ -34,31 +33,19 @@ export function ConfirmationTransfer( {
 		confirmTransfer( confirmationHash );
 	}, [ confirmTransfer, confirmationHash ] );
 
-	if ( error ) {
-		return (
-			<Notice status="is-error" showDismiss={ false }>
-				<div data-testid="error">
-					<p>
-						{ translate(
-							'There was an error confirming the site transfer. Please {{link}}contact our support team{{/link}} for help.',
-							{
-								components: {
-									link: <a href="/help" />,
-								},
-							}
-						) }
-					</p>
-				</div>
-			</Notice>
-		);
-	}
+	const customError = translate(
+		'There was an error confirming the site transfer. Please {{link}}contact our support team{{/link}} for help.',
+		{
+			components: {
+				link: <a href="/help" />,
+			},
+		}
+	);
 
 	return (
-		<>
-			<p>
-				<LoadingBar key="transfer-site-loading-bar" progress={ progress } />
-			</p>
-			<p>{ translate( 'We are transferring your site.' ) }</p>
-		</>
+		<SiteTransferringLoadingCard
+			progress={ progress }
+			error={ error ? customError : '' }
+		></SiteTransferringLoadingCard>
 	);
 }

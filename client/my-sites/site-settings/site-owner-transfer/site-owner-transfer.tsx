@@ -10,13 +10,11 @@ import { successNotice } from 'calypso/state/notices/actions';
 import { getDomainsBySiteId } from 'calypso/state/sites/domains/selectors';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import { getSettingsSource } from '../site-tools/utils';
-import { ConfirmationTransfer } from './confirmation-transfer';
 import PendingDomainTransfer from './pending-domain-transfer';
 import SiteOwnerTransferEligibility from './site-owner-user-search';
 import { SiteTransferCard } from './site-transfer-card';
 import StartSiteOwnerTransfer from './start-site-owner-transfer';
 import { User } from './use-administrators';
-import { useConfirmationTransferHash } from './use-confirmation-transfer-hash';
 
 const Strong = styled( 'strong' )( {
 	fontWeight: 500,
@@ -54,7 +52,6 @@ const SiteOwnerTransfer = () => {
 	const nonWpcomDomains = useSelector( ( state ) =>
 		getDomainsBySiteId( state, selectedSite?.ID )
 	)?.filter( ( domain ) => ! domain.isWPCOMDomain );
-	const confirmationHash = useConfirmationTransferHash();
 
 	const pendingDomain = nonWpcomDomains?.find(
 		( wpcomDomain: ResponseDomain ) => wpcomDomain.pendingTransfer
@@ -72,14 +69,6 @@ const SiteOwnerTransfer = () => {
 			page( `${ source }/${ selectedSite.slug }` );
 		}
 	};
-
-	if ( confirmationHash ) {
-		return (
-			<SiteTransferCard onClick={ onBackClick }>
-				<ConfirmationTransfer siteId={ selectedSite.ID } confirmationHash={ confirmationHash } />
-			</SiteTransferCard>
-		);
-	}
 
 	return (
 		<SiteTransferCard onClick={ onBackClick }>

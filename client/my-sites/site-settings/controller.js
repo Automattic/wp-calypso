@@ -1,6 +1,7 @@
 import page from '@automattic/calypso-router';
 import { billingHistory } from 'calypso/me/purchases/paths';
 import SiteSettingsMain from 'calypso/my-sites/site-settings/main';
+import { ConfirmationTransfer } from 'calypso/my-sites/site-settings/site-owner-transfer/confirmation-transfer';
 import WpcomSiteTools from 'calypso/my-sites/site-settings/wpcom-site-tools';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
@@ -131,6 +132,16 @@ export function acceptSiteTransfer( context, next ) {
 			inviteKey={ context.params.invitation_key }
 			redirectTo={ context.query.nextStep }
 			dispatch={ context.store.dispatch }
+		/>
+	);
+	next();
+}
+
+export function renderConfirmTransferScreen( context, next ) {
+	context.primary = (
+		<ConfirmationTransfer
+			siteId={ context.params.site_id }
+			confirmationHash={ context.params.hash }
 		/>
 	);
 	next();

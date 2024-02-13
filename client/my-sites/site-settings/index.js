@@ -18,6 +18,7 @@ import {
 	startSiteOwnerTransfer,
 	renderSiteTransferredScreen,
 	wpcomSiteTools,
+	renderConfirmTransferScreen,
 } from 'calypso/my-sites/site-settings/controller';
 import { setScroll, siteSettings } from 'calypso/my-sites/site-settings/settings-controller';
 
@@ -118,6 +119,15 @@ export default function () {
 		'/settings/site-transferred/:site_id',
 		siteSelection,
 		renderSiteTransferredScreen,
+		makeLayout,
+		clientRender
+	);
+
+	page(
+		'/settings/site-transfer/:site_id/confirm/:hash',
+		siteSelection,
+		redirectIfCantStartSiteOwnerTransfer,
+		renderConfirmTransferScreen,
 		makeLayout,
 		clientRender
 	);
