@@ -259,7 +259,7 @@ const NotFoundMessage = ( {
 	return <>{ emptyListNotice || __( 'No results found.', __i18n_text_domain__ ) }</>;
 };
 
-export const CommandPalette = ( {
+const CommandPalette = ( {
 	currentSiteId,
 	navigate,
 	useExtraCommands,
@@ -427,3 +427,6 @@ export const CommandPalette = ( {
 		</Modal>
 	);
 };
+
+export default CommandPalette;
+export type { Command, CommandCallBackParams } from './use-command-palette';
