@@ -31,11 +31,14 @@ export function SiteTransferCard( {
 			<NavigationHeader
 				navigationItems={ [] }
 				title={ translate( 'Site Transfer' ) }
-				subtitle={ translate( 'Transfer your site, plan and purchases. {{a}}Learn more.{{/a}}', {
-					components: {
-						a: <InlineSupportLink supportContext="site-transfer" showIcon={ false } />,
-					},
-				} ) }
+				subtitle={ translate(
+					'Transfer this site to a new or existing site member with just a few clicks. {{a}}Learn more.{{/a}}',
+					{
+						components: {
+							a: <InlineSupportLink supportContext="site-transfer" showIcon={ false } />,
+						},
+					}
+				) }
 			/>
 
 			<PageViewTracker
