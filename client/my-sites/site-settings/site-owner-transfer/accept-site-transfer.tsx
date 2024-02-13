@@ -10,11 +10,12 @@ import { useEffect } from '@wordpress/element';
 import wpcom from 'calypso/lib/wp';
 import normalizeInvite from 'calypso/my-sites/invites/invite-accept/utils/normalize-invite';
 import { LoadingBar } from 'calypso/components/loading-bar';
-import { errorNotice } from 'calypso/state/notices/actions';
 import store from 'store';
 import DocumentHead from 'calypso/components/data/document-head';
 import { Global, css } from '@emotion/react';
 import MasterbarStyled from 'calypso/my-sites/checkout/checkout-thank-you/redesign-v2/masterbar-styled';
+import { useState } from 'react';
+import Notice from 'calypso/components/notice';
 
 const ActionPanelStyled = styled( ActionPanel )( {
 	fontSize: '14px',
@@ -26,9 +27,10 @@ const ActionPanelStyled = styled( ActionPanel )( {
 } );
 
 export function AcceptSiteTransfer( props: any ) {
+	const translate = useTranslate();
 	const dispatch = props.dispatch;
-
 	const progress = 0.15;
+	const [ error, setError ] = useState< string >( '' );
 
 	const fetchAndAcceptInvite = async ( props: any ) => {
 		try {
@@ -43,8 +45,11 @@ export function AcceptSiteTransfer( props: any ) {
 			store.set( 'accepted_site_transfer_invite', invite );
 			navigate( redirectTo );
 		} catch {
-			dispatch( errorNotice( 'Failed to accept the transfer!' ) );
-			navigate( '/sites' );
+			setError(
+				translate(
+					'Failed to add you as an administrator in the site. Please contact the original site owner to invite you as administrator first'
+				)
+			);
 		}
 	};
 
@@ -52,7 +57,25 @@ export function AcceptSiteTransfer( props: any ) {
 		fetchAndAcceptInvite( props );
 	} );
 
-	const translate = useTranslate();
+	const renderLoadingBar = () => {
+		return (
+			<>
+				<p>{ translate( 'Hold tight. We are making it happen!' ) }</p>
+				<LoadingBar key="transfer-site-loading-bar" progress={ progress } />
+			</>
+		);
+	};
+
+	const renderError = () => {
+		return (
+			<Notice status="is-error" showDismiss={ false }>
+				<div data-testid="error">
+					<p>{ error }</p>
+				</div>
+			</Notice>
+		);
+	};
+
 	return (
 		<>
 			<DocumentHead title={ translate( 'Site Transfer' ) } />
@@ -66,12 +89,7 @@ export function AcceptSiteTransfer( props: any ) {
 			/>
 			<MasterbarStyled canGoBack={ false } />
 			<Main>
-				<ActionPanelStyled>
-					<p>{ translate( 'Hold tight. We are making it happen!' ) }</p>
-					<p>
-						<LoadingBar key="transfer-site-loading-bar" progress={ progress } />
-					</p>
-				</ActionPanelStyled>
+				<ActionPanelStyled>{ ! error ? renderLoadingBar() : renderError() }</ActionPanelStyled>
 			</Main>
 		</>
 	);
