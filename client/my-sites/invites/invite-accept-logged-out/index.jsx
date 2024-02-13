@@ -17,6 +17,7 @@ import P2InviteAcceptLoggedOut from 'calypso/my-sites/invites/p2/invite-accept-l
 import WpcomLoginForm from 'calypso/signup/wpcom-login-form';
 import { createAccount, acceptInvite } from 'calypso/state/invites/actions';
 import getCurrentQueryArguments from 'calypso/state/selectors/get-current-query-arguments';
+import { WpLoggedOutInviteLogo } from '../invite-accept-logged-out/wp-logo';
 import { getExplanationForInvite } from '../utils';
 
 import './style.scss';
@@ -183,39 +184,43 @@ class InviteAcceptLoggedOut extends Component {
 		}
 
 		return (
-			<div className="invite-accept-logged-out-wrapper">
-				<header className="invite-accept-logged-out-invite-header">
-					<h1>{ this.props.translate( 'Sign up to start editing' ) }</h1>
-					<span>{ this.props.invite?.site.title }</span>
-					<p className="invite-accept-logged-out-invite-description">
-						{ this.renderInviteExplanationLabel() }
-					</p>
-				</header>
-				<SignupForm
-					redirectToAfterLoginUrl={ window.location.href }
-					isPasswordless={ true }
-					disabled={ this.state.submitting }
-					formHeader={ this.renderFormHeader() }
-					submitting={ this.state.submitting }
-					save={ this.save }
-					submitForm={ this.submitForm }
-					submitButtonText={ this.submitButtonText() }
-					footerLink={ this.renderFooterLink() }
-					email={ this.props.invite.sentTo }
-					suggestedUsername=""
-					disableEmailInput={ this.props.forceMatchingEmail }
-					disableEmailExplanation={ this.props.translate(
-						'This invite is only valid for %(email)s.',
-						{
-							args: { email: this.props.invite.sentTo },
-						}
-					) }
-					submitButtonLabel={ this.props.translate( 'Create an account' ) }
-					isInviteLoggedOutForm={ true }
-					labelText={ this.props.translate( 'Your email address' ) }
-				/>
-				{ this.state.userData && this.loginUser() }
-			</div>
+			<>
+				<WpLoggedOutInviteLogo />
+				<div className="invite-accept-logged-out-wrapper">
+					<header className="invite-accept-logged-out-invite-header">
+						<h1>{ this.props.translate( 'Sign up to start editing' ) }</h1>
+						<span>{ this.props.invite?.site.title }</span>
+						<p className="invite-accept-logged-out-invite-description">
+							{ this.renderInviteExplanationLabel() }
+						</p>
+					</header>
+					<SignupForm
+						redirectToAfterLoginUrl={ window.location.href }
+						isPasswordless={ true }
+						disablePasswordInput={ true }
+						disabled={ this.state.submitting }
+						formHeader={ this.renderFormHeader() }
+						submitting={ this.state.submitting }
+						save={ this.save }
+						submitForm={ this.submitForm }
+						submitButtonText={ this.submitButtonText() }
+						footerLink={ this.renderFooterLink() }
+						email={ this.props.invite.sentTo }
+						suggestedUsername=""
+						disableEmailInput={ this.props.forceMatchingEmail }
+						disableEmailExplanation={ this.props.translate(
+							'This invite is only valid for %(email)s.',
+							{
+								args: { email: this.props.invite.sentTo },
+							}
+						) }
+						submitButtonLabel={ this.props.translate( 'Create an account' ) }
+						isInviteLoggedOutForm={ true }
+						labelText={ this.props.translate( 'Your email address' ) }
+					/>
+					{ this.state.userData && this.loginUser() }
+				</div>
+			</>
 		);
 	}
 }
