@@ -64,12 +64,9 @@ const StatsRedirectFlow: React.FC< StatsRedirectFlowProps > = ( { children } ) =
 
 	// Fetch notice state via direct API request.
 	useEffect( () => {
-		console.log( 'useEffect fetching notices...' );
 		async function fetchNotices() {
 			const data = await fetchNoticesAsync( siteId );
 			const payload = processConflictNotices( data );
-			console.log( 'data: ', data );
-			console.log( 'payload: ', payload );
 			setIsRequestingNotices( false );
 			setPurchaseNotPosponed( payload?.focus_jetpack_purchase );
 		}
