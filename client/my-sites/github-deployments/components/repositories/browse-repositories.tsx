@@ -1,21 +1,20 @@
 import { useState } from 'react';
 import Pagination from 'calypso/components/pagination/index';
-import { GitHubLoadingPlaceholder } from 'calypso/my-sites/github-deployments/loading-placeholder';
-import { GitHubAccountsDropdown } from '../../components/accounts-dropdown/index';
+import { GitHubLoadingPlaceholder } from 'calypso/my-sites/github-deployments/components/loading-placeholder';
 import { GitHubAccountData } from '../../use-github-accounts-query';
 import {
 	GitHubRepositoryData,
 	useGithubRepositoriesQuery,
 } from '../../use-github-repositories-query';
+import { GitHubAccountsDropdown } from '../accounts-dropdown/index';
 import { GitHubRepositoryList } from './repository-list';
 import { SearchRepos } from './search-repos';
 import './style.scss';
 
 interface GitHubBrowseRepositoriesProps {
 	accounts: GitHubAccountData[];
-	account: GitHubAccountData;
-	onSelectRepository( repository: GitHubRepositoryData ): void;
-	onChangeAccount( account: GitHubAccountData ): void;
+	initialInstallationId?: number;
+	onSelectRepository( installation: GitHubAccountData, repository: GitHubRepositoryData ): void;
 }
 
 const pageSize = 10;
@@ -57,10 +56,17 @@ function sortRepositories( repositories: GitHubRepositoryData[], sortKey: SortOp
 
 export const GitHubBrowseRepositories = ( {
 	accounts,
-	account,
+	initialInstallationId,
 	onSelectRepository,
-	onChangeAccount,
 }: GitHubBrowseRepositoriesProps ) => {
+	const [ account, setAccount ] = useState< GitHubAccountData >( () => {
+		const preselectedInstallation = accounts.find(
+			( account ) => account.external_id === initialInstallationId
+		);
+
+		return preselectedInstallation ?? accounts[ 0 ];
+	} );
+
 	const [ sort, setSort ] = useState< SortOption >( 'name_desc' );
 	const [ page, setPage ] = useState( 1 );
 	const [ query, setQuery ] = useState( '' );
@@ -88,16 +94,12 @@ export const GitHubBrowseRepositories = ( {
 	return (
 		<div className="github-deployments-repositories">
 			<div className="github-deployments-repositories__search-bar">
-				<GitHubAccountsDropdown
-					accounts={ accounts }
-					value={ account }
-					onChange={ onChangeAccount }
-				/>
+				<GitHubAccountsDropdown accounts={ accounts } value={ account } onChange={ setAccount } />
 				<SearchRepos value={ query } onChange={ handleQueryChange } />
 			</div>
 			<GitHubRepositoryList
 				repositories={ currentPage }
-				onSelect={ onSelectRepository }
+				onSelect={ ( repository ) => onSelectRepository( account, repository ) }
 				sortKey={ sort }
 				onSortChange={ setSort }
 			/>

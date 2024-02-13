@@ -1,5 +1,5 @@
 import { useI18n } from '@wordpress/react-i18n';
-import { Search } from '../../components/search/search';
+import { Search } from '../search/search';
 
 interface SearchReposProps {
 	value: string;
