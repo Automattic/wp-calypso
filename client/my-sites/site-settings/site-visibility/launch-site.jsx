@@ -1,8 +1,8 @@
 import { WPCOM_FEATURES_SITE_PREVIEW_LINKS } from '@automattic/calypso-products';
 import { Card, CompactCard, Button } from '@automattic/components';
-import { dispatch } from '@wordpress/data';
 import classNames from 'classnames';
 import { translate } from 'i18n-calypso';
+import { connect } from 'react-redux';
 import QuerySiteDomains from 'calypso/components/data/query-site-domains';
 import SitePreviewLink from 'calypso/components/site-preview-link';
 import { useSelector } from 'calypso/state';
@@ -27,7 +27,7 @@ import { LaunchSiteTrialUpsellNotice } from './launch-site-trial-notice';
 
 import './styles.scss';
 
-const LaunchSite = () => {
+const LaunchSite = ( { dispatchLaunchSite } ) => {
 	const site = useSelector( ( state ) => getSelectedSite( state ) );
 	const siteId = useSelector( ( state ) => getSelectedSiteId( state ) );
 	const siteSettings = useSelector( ( state ) => getSiteSettings( state, siteId ) );
@@ -50,7 +50,7 @@ const LaunchSite = () => {
 	} );
 	const btnText = translate( 'Launch site' );
 	const handleLaunchSite = () => {
-		dispatch( launchSite( site.ID ) );
+		dispatchLaunchSite( site.ID );
 	};
 	let querySiteDomainsComponent;
 	let btnComponent;
@@ -116,4 +116,10 @@ const LaunchSite = () => {
 	);
 };
 
-export default LaunchSite;
+const mapDispatchToProps = ( dispatch ) => {
+	return {
+		dispatchLaunchSite: ( siteID ) => dispatch( launchSite( siteID ) ),
+	};
+};
+
+export default connect( null, mapDispatchToProps )( LaunchSite );
