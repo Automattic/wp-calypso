@@ -13,7 +13,7 @@ import Sidebar, {
 import { useDispatch, useSelector } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { isAgencyUser } from 'calypso/state/partner-portal/partner/selectors';
-import getJetpackAdminUrl from 'calypso/state/sites/selectors/get-jetpack-admin-url';
+import { getJetpackAdminUrl } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import UserFeedbackModalForm from '../user-feedback-modal-form';
 import SidebarHeader from './header';
