@@ -1,3 +1,4 @@
+import { isEnabled } from '@automattic/calypso-config';
 import { ListTile, Popover } from '@automattic/components';
 import { useSiteLaunchStatusLabel } from '@automattic/sites';
 import { css } from '@emotion/css';
@@ -176,7 +177,9 @@ export default memo( function SitesTableRow( { site }: SiteTableRowProps ) {
 					leading={
 						<ListTileLeading
 							href={
-								isAtomicSite && siteDefaultInterface( site ) === 'wp-admin'
+								isAtomicSite &&
+								siteDefaultInterface( site ) === 'wp-admin' &&
+								! isEnabled( 'layout/dotcom-nav-redesign' )
 									? getSiteWpAdminUrl( site ) || getDashboardUrl( site.slug )
 									: getDashboardUrl( site.slug )
 							}
@@ -189,7 +192,9 @@ export default memo( function SitesTableRow( { site }: SiteTableRowProps ) {
 						<ListTileTitle>
 							<SiteName
 								href={
-									isAtomicSite && siteDefaultInterface( site ) === 'wp-admin'
+									isAtomicSite &&
+									siteDefaultInterface( site ) === 'wp-admin' &&
+									! isEnabled( 'layout/dotcom-nav-redesign' )
 										? getSiteWpAdminUrl( site ) || getDashboardUrl( site.slug )
 										: getDashboardUrl( site.slug )
 								}
