@@ -47,7 +47,7 @@ export function AcceptSiteTransfer( props: any ) {
 		} catch {
 			setError(
 				translate(
-					'Failed to add you as an administrator in the site. Please contact the original site owner to invite you as administrator first'
+					'Failed to add you as an administrator in the site. Please contact the original site owner to invite you as administrator first.'
 				)
 			);
 		}
