@@ -83,6 +83,7 @@ export default function CampaignItemDetails( props: Props ) {
 	const isSmallScreen = useBreakpoint( '<660px' );
 	const { campaign, isLoading, siteId } = props;
 	const campaignId = campaign?.campaign_id;
+	const isWooStore = config.isEnabled( 'is_running_in_woo_site' );
 
 	const {
 		audience_list,
@@ -457,32 +458,35 @@ export default function CampaignItemDetails( props: Props ) {
 											</span>
 										</div>
 									</div>
-									<div className="campaign-item-details__main-stats-row-bottom">
-										<div>
-											<span className="campaign-item-details__label">
-												{ translate( 'Conversion Value' ) }
-											</span>
-											<span className="campaign-item-details__text wp-brand-font">
-												{ ! isLoading ? impressionsTotal : <FlexibleSkeleton /> }
-											</span>
+
+									{ isWooStore && (
+										<div className="campaign-item-details__main-stats-row-bottom">
+											<div>
+												<span className="campaign-item-details__label">
+													{ translate( 'Conversion Value' ) }
+												</span>
+												<span className="campaign-item-details__text wp-brand-font">
+													{ ! isLoading ? impressionsTotal : <FlexibleSkeleton /> }
+												</span>
+											</div>
+											<div>
+												<span className="campaign-item-details__label">
+													{ translate( 'Conversions' ) }
+												</span>
+												<span className="campaign-item-details__text wp-brand-font">
+													{ ! isLoading ? clicks_total : <FlexibleSkeleton /> }
+												</span>
+											</div>
+											<div>
+												<span className="campaign-item-details__label">
+													{ translate( 'Conversion Rate' ) }
+												</span>
+												<span className="campaign-item-details__text wp-brand-font">
+													{ ! isLoading ? ctrFormatted : <FlexibleSkeleton /> }
+												</span>
+											</div>
 										</div>
-										<div>
-											<span className="campaign-item-details__label">
-												{ translate( 'Conversions' ) }
-											</span>
-											<span className="campaign-item-details__text wp-brand-font">
-												{ ! isLoading ? clicks_total : <FlexibleSkeleton /> }
-											</span>
-										</div>
-										<div>
-											<span className="campaign-item-details__label">
-												{ translate( 'Conversion Rate' ) }
-											</span>
-											<span className="campaign-item-details__text wp-brand-font">
-												{ ! isLoading ? ctrFormatted : <FlexibleSkeleton /> }
-											</span>
-										</div>
-									</div>
+									) }
 								</div>
 							</div>
 						) }
