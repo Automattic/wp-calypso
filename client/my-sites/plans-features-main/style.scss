@@ -2,6 +2,9 @@
 @import "@wordpress/base-styles/mixins";
 @import "@wordpress/base-styles/variables";
 @import "@automattic/plans-grid-next/src/media-queries";
+@import "./media-queries";
+
+$plan-features-header-banner-height: 20px;
 
 :root {
 	--scss-font-body-small: #{$font-body-small};
@@ -36,10 +39,7 @@
 		margin: 0 20px;
 		padding: 0 0 10px;
 		overflow-x: visible;
-
-		@include plans-2023-break-small {
-			padding-top: 35px; // enough to cover `plans-grid__popular-badge` repositioning (top: -35px)
-		}
+		padding-top: 35px; // enough to cover `plans-grid__popular-badge` repositioning (top: -35px)
 	}
 }
 
@@ -55,17 +55,6 @@
 			// Overrides the plans-wrapper parent container margins
 			margin: 0 -20px;
 		}
-	}
-}
-
-// Content group
-.plans-features-main__group {
-	& + & {
-		padding-top: 19px; // popular banner height adjustment
-	}
-
-	+ .faq {
-		margin-top: 20px;
 	}
 }
 
@@ -137,39 +126,10 @@
 .is-2023-pricing-grid .plan-features-2023-grid__content {
 	position: relative;
 	margin: auto;
-
-	.is-section-stepper &,
-	.is-section-signup & {
-		@include pricing-grid-breakpoints;
-	}
-
-	.is-section-plans:not(.is-sidebar-collapsed) & {
-		@include pricing-grid-breakpoints-with-sidebar;
-
-	}
-
-	.is-section-plans.is-sidebar-collapsed.is-domain-plan-package-flow & {
-		@include pricing-grid-breakpoints-with-sidebar;
-
-	}
-
-	.is-section-plans.is-sidebar-collapsed:not(.is-domain-plan-package-flow) & {
-		@include pricing-grid-breakpoints;
-	}
-
 }
 
 .plans-features-main__group.is-wpcom.is-2023-pricing-grid {
-	padding-top: 19px;
 	margin-top: 24px;
-}
-
-.plans-features-main__group.is-wpcom:not(.is-2023-pricing-grid) {
-	padding-top: 26px;
-
-	@media ( min-width: 880px ) {
-		padding-top: 19px;
-	}
 }
 
 // Required additional specificity
@@ -387,5 +347,12 @@ body.is-section-plans .layout__content .main {
 			margin: 0;
 			padding: 17px max(calc(50% - 612px), 30px);
 		}
+	}
+}
+
+body.is-section-stepper,
+body.is-section-signup.is-white-signup {
+	.step-wrapper__header {
+		margin: 24px 20px 38px;
 	}
 }
