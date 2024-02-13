@@ -114,6 +114,7 @@ class SignupForm extends Component {
 		horizontal: PropTypes.bool,
 		shouldDisplayUserExistsError: PropTypes.bool,
 		submitForm: PropTypes.func,
+		isInviteLoggedOutForm: PropTypes.bool,
 
 		// Connected props
 		oauth2Client: PropTypes.object,
@@ -1245,6 +1246,9 @@ class SignupForm extends Component {
 						queryArgs={ this.props.queryArgs }
 						userEmail={ this.getEmailValue() }
 						{ ...gravatarProps }
+						submitButtonLabel={ this.props.submitButtonLabel }
+						isInviteLoggedOutForm={ this.props.isInviteLoggedOutForm }
+						labelText={ this.props.labelText }
 					/>
 
 					{ ! isGravatar && (

@@ -17,7 +17,9 @@ import P2InviteAcceptLoggedOut from 'calypso/my-sites/invites/p2/invite-accept-l
 import WpcomLoginForm from 'calypso/signup/wpcom-login-form';
 import { createAccount, acceptInvite } from 'calypso/state/invites/actions';
 import getCurrentQueryArguments from 'calypso/state/selectors/get-current-query-arguments';
+import { getExplanationForInvite } from '../utils';
 
+import './style.scss';
 /**
  * Module variables
  */
@@ -119,7 +121,7 @@ class InviteAcceptLoggedOut extends Component {
 		return (
 			<LoggedOutFormLinks>
 				<LoggedOutFormLinkItem onClick={ this.clickSignInLink }>
-					{ this.props.translate( 'Already have a WordPress.com account? Log in now.' ) }
+					{ this.props.translate( 'Already have a WordPress.com account?' ) }
 				</LoggedOutFormLinkItem>
 				{ this.renderEmailOnlySubscriptionLink() }
 			</LoggedOutFormLinks>
@@ -145,17 +147,22 @@ class InviteAcceptLoggedOut extends Component {
 		/* eslint-disable wpcalypso/jsx-classname-namespace */
 		return (
 			<div className="sign-up-form">
-				<Card className="logged-out-form">
+				<div className="logged-out-form">
 					{ this.renderFormHeader() }
 					<Card className="logged-out-form__footer">
 						<FormButton className="signup-form__submit" onClick={ this.clickSignInLink }>
 							{ this.props.translate( 'Sign In' ) }
 						</FormButton>
 					</Card>
-				</Card>
+				</div>
 			</div>
 			/* eslint-enable */
 		);
+	};
+
+	renderInviteExplanationLabel = () => {
+		const { role, site } = this.props.invite;
+		return getExplanationForInvite( role, site.title, this.props.translate );
 	};
 
 	render() {
@@ -176,7 +183,14 @@ class InviteAcceptLoggedOut extends Component {
 		}
 
 		return (
-			<div>
+			<div className="invite-accept-logged-out-wrapper">
+				<header className="invite-accept-logged-out-invite-header">
+					<h1>{ this.props.translate( 'Sign up to start editing' ) }</h1>
+					<span>{ this.props.invite?.site.title }</span>
+					<p className="invite-accept-logged-out-invite-description">
+						{ this.renderInviteExplanationLabel() }
+					</p>
+				</header>
 				<SignupForm
 					redirectToAfterLoginUrl={ window.location.href }
 					isPasswordless={ true }
@@ -196,6 +210,9 @@ class InviteAcceptLoggedOut extends Component {
 							args: { email: this.props.invite.sentTo },
 						}
 					) }
+					submitButtonLabel={ this.props.translate( 'Create an account' ) }
+					isInviteLoggedOutForm={ true }
+					labelText={ this.props.translate( 'Your email address' ) }
 				/>
 				{ this.state.userData && this.loginUser() }
 			</div>
