@@ -10,7 +10,6 @@ import { isExternal } from 'calypso/lib/url';
 import { preload } from 'calypso/sections-helper';
 import { getSidebarIsCollapsed } from 'calypso/state/ui/selectors';
 
-//const SidebarMenuItem = forwardRef(
 export default function SidebarItem( props ) {
 	const isExternalLink = isExternal( props.link );
 	const showAsExternal = ( isExternalLink && ! props.forceInternalLink ) || props.forceExternalLink;

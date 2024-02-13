@@ -5,7 +5,7 @@ import { connect } from 'react-redux';
 import store from 'store';
 import AsyncLoad from 'calypso/components/async-load';
 import TranslatableString from 'calypso/components/translatable/proptype';
-import NotificationsSidebarItem from 'calypso/layout/global-sidebar/notifications/sidebar-item';
+import SidebarMenuItem from 'calypso/layout/global-sidebar/menu-items/menu-item';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import hasUnseenNotifications from 'calypso/state/selectors/has-unseen-notifications';
 import isNotificationsOpen from 'calypso/state/selectors/is-notifications-open';
@@ -117,16 +117,15 @@ class SidebarNotifications extends Component {
 
 		return (
 			<>
-				<NotificationsSidebarItem
-					key="notifications"
-					label={ this.props.title }
-					link="/read/notifications"
-					onNavigate={ this.toggleNotesFrame }
-					selected={ this.props.isNotificationsOpen }
-					customIcon={ <BellIcon newItems={ this.state.newNote } active={ this.props.isActive } /> }
-					forceInternalLink={ true }
+				<SidebarMenuItem
+					url="/notifications"
+					icon={ <BellIcon newItems={ this.state.newNote } active={ this.props.isActive } /> }
+					onClick={ this.toggleNotesFrame }
+					isActive={ this.props.isActive }
+					tooltip={ this.props.tooltip }
 					className={ classes }
 					ref={ this.notificationLink }
+					key={ this.state.animationState }
 				/>
 				<div className="sidebar-notifications__panel" ref={ this.notificationPanel }>
 					<AsyncLoad
