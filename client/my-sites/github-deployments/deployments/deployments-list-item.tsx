@@ -1,3 +1,8 @@
+import { Gridicon } from '@automattic/components';
+import { DropdownMenu, MenuGroup, MenuItem, Spinner } from '@wordpress/components';
+import { Fragment } from '@wordpress/element';
+import { __ } from '@wordpress/i18n';
+import { useDeleteCodeDeployment } from 'calypso/my-sites/github-deployments/deployments/use-delete-code-deployment';
 import { CodeDeploymentData } from 'calypso/my-sites/github-deployments/use-code-deployments-query';
 
 interface GitHubRepositoryListItemProps {
@@ -5,6 +10,11 @@ interface GitHubRepositoryListItemProps {
 }
 
 export const DeploymentsListItem = ( { deployment }: GitHubRepositoryListItemProps ) => {
+	const { deleteDeployment, isPending } = useDeleteCodeDeployment(
+		deployment.blog_id,
+		deployment.id
+	);
+
 	return (
 		<tr>
 			<td>
@@ -25,7 +35,30 @@ export const DeploymentsListItem = ( { deployment }: GitHubRepositoryListItemPro
 				<span>Duration</span>
 			</td>
 			<td>
-				<span>...</span>
+				{ isPending ? (
+					<Spinner />
+				) : (
+					<DropdownMenu icon={ <Gridicon icon="ellipsis" /> } label="Select a direction">
+						{ ( { onClose } ) => (
+							<Fragment>
+								<MenuGroup>
+									<MenuItem onClick={ onClose }>Item 1</MenuItem>
+									<MenuItem onClick={ onClose }>Item 2</MenuItem>
+								</MenuGroup>
+								<MenuGroup>
+									<MenuItem
+										onClick={ () => {
+											deleteDeployment();
+											onClose();
+										} }
+									>
+										{ __( 'Disconnect repository ' ) }
+									</MenuItem>
+								</MenuGroup>
+							</Fragment>
+						) }
+					</DropdownMenu>
+				) }
 			</td>
 		</tr>
 	);

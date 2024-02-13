@@ -1,13 +1,10 @@
 import { Button, FormLabel } from '@automattic/components';
-import { QueryClient } from '@tanstack/react-query';
 import { ExternalLink, FormToggle, SelectControl, Spinner } from '@wordpress/components';
 import { __, sprintf } from '@wordpress/i18n';
 import { ChangeEvent, useState } from 'react';
 import FormFieldset from 'calypso/components/forms/form-fieldset/index';
 import FormTextInput from 'calypso/components/forms/form-text-input/index';
 import { useCreateCodeDeployment } from 'calypso/my-sites/github-deployments/connect/use-create-code-deployment';
-import { GITHUB_DEPLOYMENTS_QUERY_KEY } from 'calypso/my-sites/github-deployments/constants';
-import { CODE_DEPLOYMENTS_QUERY_KEY } from 'calypso/my-sites/github-deployments/use-code-deployments-query';
 import { GitHubAccountData } from 'calypso/my-sites/github-deployments/use-github-accounts-query';
 import { useGithubRepositoryBranchesQuery } from 'calypso/my-sites/github-deployments/use-github-repository-branches-query';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
@@ -35,7 +32,6 @@ export const GitHubConnectRepository = ( {
 	goBack,
 	onConnected,
 }: ConnectRepositoryDialogProps ) => {
-	const queryClient = new QueryClient();
 	const dispatch = useDispatch();
 	const [ branch, setBranch ] = useState( repository.default_branch );
 	const [ destPath, setDestPath ] = useState( '/' );
@@ -65,9 +61,6 @@ export const GitHubConnectRepository = ( {
 			);
 		},
 		onSettled: ( _, error ) => {
-			queryClient.invalidateQueries( {
-				queryKey: [ GITHUB_DEPLOYMENTS_QUERY_KEY, CODE_DEPLOYMENTS_QUERY_KEY, siteId ],
-			} );
 			dispatch(
 				recordTracksEvent( 'calypso_hosting_github_create_deployment_success', {
 					connected: ! error,
