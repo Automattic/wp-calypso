@@ -560,14 +560,14 @@ const ServerCredentialsForm: FunctionComponent< Props > = ( {
 			{ formModeSwitcher === 'simple' && (
 				<>
 					{ formMode === FormMode.Password && (
-						<p>
+						<div className="credentials-form__mode-simple-switcher">
 							<Button plain onClick={ () => onModeChange( FormMode.PrivateKey ) }>
 								{ translate( 'Use private key instead' ) }
 							</Button>
-						</p>
+						</div>
 					) }
 					{ formMode === FormMode.PrivateKey && (
-						<p>
+						<div className="credentials-form__mode-simple-switcher">
 							<div>{ translate( 'Only non-encrypted private keys are supported.' ) }</div>{ ' ' }
 							<Button
 								className="credentials-form__mode-switch-to-password"
@@ -576,7 +576,7 @@ const ServerCredentialsForm: FunctionComponent< Props > = ( {
 							>
 								{ translate( 'Use a password instead' ) }
 							</Button>
-						</p>
+						</div>
 					) }
 				</>
 			) }
