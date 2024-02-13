@@ -86,17 +86,14 @@ export function useSubscribersQueries(
 	dates: string[]
 ): { isLoading: boolean; isError: boolean; subscribersData: SubscribersData[] } {
 	const queryConfigs = dates.map( ( date, index ) => ( {
+		...getDefaultQueryParams< SubscriberPayload >(),
 		queryKey: [ 'stats', 'subscribers', index, siteId, period, quantity, date ],
 		queryFn: () => querySubscribers( siteId, period, quantity, date ),
 		select: selectSubscribers,
 		staleTime: 1000 * 60 * 5, // 5 minutes
 	} ) );
 
-	const results = useQueries( {
-		...getDefaultQueryParams< SubscribersData[] >(),
-		queries: queryConfigs,
-	} );
-
+	const results = useQueries( { queries: queryConfigs } );
 	const isLoading = results.some( ( result ) => result.isLoading );
 	const isError = results.some( ( result ) => result.isError );
 	const subscribersData = results.map( ( result ) => result.data ).filter( isValueTruthy );
