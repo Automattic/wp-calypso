@@ -102,7 +102,7 @@ const DoYouLoveJetpackStatsNotice = ( {
 		? translate(
 				'Finesse your scaling-up strategy with detailed insights and data. Upgrade to an Explorer plan for a richer understanding and smarter decision-making.'
 		  )
-		: translate( 'Upgrade to get priority support and stop the upgrade notices.' );
+		: translate( 'Upgrade to support future development and stop the upgrade banners.' );
 
 	const CTAText = isWPCOMPaidStatsFlow ? translate( 'Upgrade' ) : translate( 'Upgrade my Stats' );
 
