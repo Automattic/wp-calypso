@@ -32,7 +32,7 @@ const ErrorText = styled.p( {
 	fontSize: '100%',
 } );
 
-const NonWPUserExplanation = styled( FormSettingExplanation )( {
+const FieldExplanation = styled( FormSettingExplanation )( {
 	a: {
 		color: 'var(--studio-gray-50)',
 		textDecoration: 'underline',
@@ -89,7 +89,7 @@ const SiteOwnerTransferEligibility = ( {
 		<form onSubmit={ handleFormSubmit }>
 			<FormText>
 				{ translate(
-					'Transfer the ownership of {{strong}}%(siteSlug)s{{/strong}} and related purchases to another user by adding their Email or their WordPress.com Usernamei in the following form.',
+					"Ready to transfer {{strong}}%(siteSlug)s{{/strong}} and its associated purchases? Simply enter the new owner's email or WordPress.com username below, or choose an existing user to start the transfer process.",
 					{
 						args: { siteSlug },
 						components: { strong: <Strong /> },
@@ -120,11 +120,11 @@ const SiteOwnerTransferEligibility = ( {
 						<ErrorText>{ siteTransferEligibilityError }</ErrorText>
 					</Error>
 				) }
-				<NonWPUserExplanation>
+				<FieldExplanation>
 					{ translate(
-						"If the person you want to transfer ownership doesn't have a WordPress.com account yet they will be invited to create one."
+						"If the new owner isn't on WordPress.com yet, we'll guide them through a simple sign-up process."
 					) }
-				</NonWPUserExplanation>
+				</FieldExplanation>
 			</FormFieldset>
 
 			<ButtonStyled
