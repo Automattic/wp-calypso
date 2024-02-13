@@ -75,10 +75,6 @@ class PluginUpload extends Component {
 		}
 	}
 
-	back = () => {
-		page.back();
-	};
-
 	onProceedClick = () => {
 		const isFreeTrialEligible = this.props.isEligibleForHostingTrial;
 		this.setState( {
@@ -161,7 +157,9 @@ class PluginUpload extends Component {
 				<PageViewTracker path="/plugins/upload/:site" title="Plugins > Upload" />
 				<QueryEligibility siteId={ siteId } />
 				<NavigationHeader navigationItems={ [] } title={ translate( 'Plugins' ) } />
-				<HeaderCake onClick={ this.back }>{ translate( 'Install plugin' ) }</HeaderCake>
+				<HeaderCake backHref={ `/plugins/${ siteSlug }` }>
+					{ translate( 'Install plugin' ) }
+				</HeaderCake>
 				{ ! showTrialAcknowledgeModal && ! isJetpack && (
 					<HostingActivateStatus
 						context="plugin"
