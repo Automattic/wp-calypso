@@ -259,10 +259,11 @@ class PasswordlessSignupForm extends Component {
 			email: value,
 			errorMessages: null,
 		} );
+		this.props.onInputChange?.( event );
+	};
 
-		const { onInputChange, onInputBlur } = this.props;
-		onInputChange?.( event );
-		onInputBlur?.( event );
+	onInputBlur = ( event ) => {
+		this.props.onInputBlur?.( event );
 	};
 
 	renderNotice() {
@@ -341,6 +342,7 @@ class PasswordlessSignupForm extends Component {
 							id="signup-email"
 							value={ this.state.email }
 							onChange={ this.onInputChange }
+							onBlur={ this.onInputBlur }
 							disabled={ isSubmitting || !! this.props.disabled }
 							placeholder={ this.props.inputPlaceholder }
 							// eslint-disable-next-line jsx-a11y/no-autofocus -- It's the only field on the page
