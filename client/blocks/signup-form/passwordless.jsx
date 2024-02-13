@@ -28,6 +28,8 @@ class PasswordlessSignupForm extends Component {
 		submitButtonLabel: PropTypes.string,
 		submitButtonLoadingLabel: PropTypes.string,
 		userEmail: PropTypes.string,
+		labelText: PropTypes.string,
+		isInviteLoggedOutForm: PropTypes.bool,
 	};
 
 	static defaultProps = {
@@ -300,6 +302,18 @@ class PasswordlessSignupForm extends Component {
 		return this.props.labelText ?? this.props.translate( 'Enter your email address' );
 	}
 
+	getFormButtonAndToS() {
+		return this.props.isInviteLoggedOutForm ? (
+			<>
+				{ this.formFooter() } { this.props.renderTerms?.() }
+			</>
+		) : (
+			<>
+				{ this.props.renderTerms?.() } { this.formFooter() }
+			</>
+		);
+	}
+
 	render() {
 		const { errorMessages, isSubmitting } = this.state;
 
@@ -323,8 +337,7 @@ class PasswordlessSignupForm extends Component {
 							autoFocus
 						/>
 					</ValidationFieldset>
-					{ this.props.renderTerms?.() }
-					{ this.formFooter() }
+					{ this.getFormButtonAndToS() }
 				</LoggedOutForm>
 			</div>
 		);

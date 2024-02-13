@@ -1,5 +1,6 @@
 import { Gridicon } from '@automattic/components';
 import { Button } from '@wordpress/components';
+import { useI18n } from '@wordpress/react-i18n';
 import { useTranslate } from 'i18n-calypso';
 import surveyImage from 'calypso/assets/images/illustrations/developer-survey.svg';
 
@@ -18,6 +19,7 @@ export const DeveloperSurveyNotice = ( {
 	localeSlug,
 }: DeveloperSurveyNoticeProps ) => {
 	const translate = useTranslate();
+	const { hasTranslation } = useI18n();
 
 	const href =
 		localeSlug === 'es'
@@ -59,7 +61,9 @@ export const DeveloperSurveyNotice = ( {
 							className="developer-survey-notice__popup-content-buttons-cancel"
 							onClick={ () => onClose( ONE_DAY_IN_SECONDS, 'remind-later-button' ) }
 						>
-							{ translate( 'Remind later' ) }
+							{ hasTranslation( 'Maybe later' ) || localeSlug === 'en'
+								? translate( 'Maybe later' )
+								: translate( 'Remind later' ) }
 						</Button>
 						<Button
 							className="developer-survey-notice__popup-content-buttons-ok"

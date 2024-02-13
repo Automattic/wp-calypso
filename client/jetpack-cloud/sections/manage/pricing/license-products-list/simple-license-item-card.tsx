@@ -123,7 +123,7 @@ export const SimpleLicenseItemCard = ( {
 	);
 
 	const onSelectProduct = useCallback( () => {
-		page.redirect( getIssueLicenseURL( productSlug, bundleSize ) );
+		page.replace( getIssueLicenseURL( productSlug, bundleSize ) );
 		dispatch(
 			recordTracksEvent( 'calypso_jetpack_manage_on_select_product_button_click', {
 				product: productSlug,

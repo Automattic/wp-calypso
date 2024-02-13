@@ -24,17 +24,6 @@ import { getIAmDeveloperCopy } from './get-i-am-a-developer-copy';
 import './style.scss';
 
 class Developer extends Component {
-	developerSurveyNoticeId = 'developer-survey';
-	getSurveyHref = () => {
-		const isES = this.props.currentUser.localeSlug === 'es';
-
-		if ( isES ) {
-			return 'https://wordpressdotcom.survey.fm/developer-survey-es';
-		}
-
-		return 'https://wordpressdotcom.survey.fm/developer-survey';
-	};
-
 	surveyNoticeWrapper = null;
 
 	constructor( props ) {
@@ -63,54 +52,18 @@ class Developer extends Component {
 	};
 
 	showDeveloperSurveyNotice = () => {
-		if ( this.props.currentUser.localeSlug === 'en' ) {
-			if ( ! this.surveyNoticeWrapper ) {
-				this.surveyNoticeWrapper = document.createElement( 'div' );
-				document.body.appendChild( this.surveyNoticeWrapper );
-			}
-
-			this.setState( { isDeveloperSurveyNoticeVisible: true } );
-		} else {
-			const noticeMessage = this.props.translate(
-				"Hey developer! How do {{i}}you{{/i}} use WordPress.com? Spare a moment? We'd love to hear what you think in a {{surveyLink}}quick survey{{/surveyLink}}.",
-				{
-					components: {
-						i: <i />,
-						surveyLink: (
-							<a
-								href={ this.getSurveyHref() }
-								target="_blank"
-								rel="noopener noreferrer"
-								onClick={ () => {
-									recordTracksEvent( 'calypso_me_developer_survey_clicked' );
-
-									this.hideDeveloperSurveyNotice();
-								} }
-							/>
-						),
-					},
-				}
-			);
-
-			const noticeProps = {
-				id: this.developerSurveyNoticeId,
-				isPersistent: true,
-				onDismissClick: () => {
-					recordTracksEvent( 'calypso_me_developer_survey_dismissed' );
-
-					this.setDeveloperSurveyCookie( 'dismissed', 24 * 60 * 60 ); // 1 day
-					this.props.removeNotice( this.developerSurveyNoticeId );
-				},
-			};
-			this.props.successNotice( noticeMessage, noticeProps );
+		if ( ! this.surveyNoticeWrapper ) {
+			this.surveyNoticeWrapper = document.createElement( 'div' );
+			document.body.appendChild( this.surveyNoticeWrapper );
 		}
+
+		this.setState( { isDeveloperSurveyNoticeVisible: true } );
 
 		recordTracksEvent( 'calypso_me_developer_survey_impression' );
 	};
 
 	hideDeveloperSurveyNotice = () => {
 		this.setState( { isDeveloperSurveyNoticeVisible: false } );
-		this.props.removeNotice( this.developerSurveyNoticeId );
 	};
 
 	handleToggleIsDevAccount = ( isDeveloperAccount ) => {
@@ -142,7 +95,7 @@ class Developer extends Component {
 	}
 
 	componentWillUnmount() {
-		document.body.removeChild( this.surveyNoticeWrapper );
+		this.surveyNoticeWrapper && document.body.removeChild( this.surveyNoticeWrapper );
 	}
 
 	componentDidUpdate( prevProps ) {
