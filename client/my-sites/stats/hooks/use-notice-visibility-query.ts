@@ -70,6 +70,11 @@ const queryNotices = async function ( siteId: number | null ): Promise< Notices 
 	return { ...DEFAULT_NOTICES_VISIBILITY, ...payload };
 };
 
+// Temporarily exposing queryNotices.
+export async function fetchNoticesAsync( siteId: number | null ): Promise< Notices > {
+	return queryNotices( siteId );
+}
+
 const useNoticesVisibilityQueryRaw = function < T >(
 	siteId: number | null,
 	select?: ( payload: Notices ) => T,

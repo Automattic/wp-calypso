@@ -1,9 +1,9 @@
 import config from '@automattic/calypso-config';
 import page from '@automattic/calypso-router';
-import { useEffect, ReactNode } from 'react';
+import { useEffect, useState, ReactNode } from 'react';
 import { useDispatch } from 'react-redux';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
-import { useNoticeVisibilityQuery } from 'calypso/my-sites/stats/hooks/use-notice-visibility-query';
+import { fetchNoticesAsync } from 'calypso/my-sites/stats/hooks/use-notice-visibility-query';
 import { useSelector } from 'calypso/state';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import { isJetpackSite, getSiteOption, getSiteSlug } from 'calypso/state/sites/selectors';
@@ -20,6 +20,9 @@ interface StatsRedirectFlowProps {
 }
 
 const StatsRedirectFlow: React.FC< StatsRedirectFlowProps > = ( { children } ) => {
+	const [ isRequestingNotices, setIsRequestingNotices ] = useState( false );
+	const [ purchaseNotPosponed, setPurchaseNotPosponed ] = useState( false );
+
 	const siteId = useSelector( getSelectedSiteId );
 	const siteSlug = useSelector( ( state ) => getSiteSlug( state, siteId ) );
 	const siteCreatedTimeStamp = useSelector( ( state ) =>
@@ -46,11 +49,28 @@ const StatsRedirectFlow: React.FC< StatsRedirectFlowProps > = ( { children } ) =
 		canCurrentUser( state, siteId, 'view_stats' )
 	);
 
+	// TODO: Investigate useNoticeVisibilityQuery.
+	// Tempoararily moved away from this to fix a page refresh bug.
+	/*
 	const { isFetching: isRequestingNotices, data: purchaseNotPosponed } = useNoticeVisibilityQuery(
 		siteId,
 		'focus_jetpack_purchase',
 		canUserManageOptions
 	);
+	*/
+
+	// Fetch notice state via direct API request.
+	useEffect( () => {
+		console.log( 'useEffect fetching notices...' );
+		async function fetchNotices() {
+			const data = await fetchNoticesAsync( siteId );
+			console.log( 'data: ', data );
+			setIsRequestingNotices( false );
+			setPurchaseNotPosponed( data?.focus_jetpack_purchase );
+		}
+		setIsRequestingNotices( true );
+		fetchNotices();
+	}, [ siteId ] );
 
 	// in Calypso `isRequestingSitePurchases` is constantly looping requesting and not requesting
 	const isFetching = isRequestingSitePurchases || isRequestingNotices;
