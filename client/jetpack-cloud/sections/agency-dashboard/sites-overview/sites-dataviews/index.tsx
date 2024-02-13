@@ -169,34 +169,6 @@ const SitesDataViews = ( { data, isLoading }: Props ) => {
 		},
 	];
 
-	/*const actions = [
-		{
-			id: 'issue_license',
-			label: 'Issue new license',
-			isPrimary: false,
-		},
-		{
-			id: 'view_activity',
-			label: 'View activity',
-			isPrimary: false,
-		},
-		{
-			id: 'copy_site',
-			label: 'Copy this site',
-			isPrimary: false,
-		},
-		{
-			id: 'View site',
-			label: 'Issue new license',
-			isPrimary: false,
-		},
-		{
-			id: 'Visit WP Admin',
-			label: 'Issue new license',
-			isPrimary: false,
-		},
-	];*/
-
 	// TODO: remove this hardcoded style. If we set background in the CSS it will be loaded with and without the feature flag:
 	document.body.style.backgroundColor = 'white';
 
