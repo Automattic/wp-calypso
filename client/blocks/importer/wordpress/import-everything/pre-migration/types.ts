@@ -9,6 +9,7 @@ export type CredentialsProtocol = 'ftp' | 'ssh';
 
 export type PreMigrationState =
 	| 'loading'
+	| 'new-migration-flow'
 	| 'not-authorized'
 	| 'credentials'
 	| 'upgrade-plan'

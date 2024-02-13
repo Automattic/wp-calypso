@@ -1,3 +1,4 @@
+import config from '@automattic/calypso-config';
 import { SiteDetails } from '@automattic/data-stores';
 import { useTranslate } from 'i18n-calypso';
 import React, { useEffect, useState, useMemo, useCallback } from 'react';
@@ -160,7 +161,9 @@ export const PreMigrationScreen: React.FunctionComponent< PreMigrationProps > = 
 	 * Decide the render state based on the current component state
 	 */
 	useEffect( () => {
-		if (
+		if ( config.isEnabled( 'stepper/site-migration-flow' ) ) {
+			setRenderState( 'new-migration-flow' );
+		} else if (
 			! isInitFetchingDone &&
 			( isFetchingMigrationData || isAddingTrial || queryTargetSitePlanStatus === 'fetched' )
 		) {
@@ -260,6 +263,9 @@ export const PreMigrationScreen: React.FunctionComponent< PreMigrationProps > = 
 					onProvideCredentialsClick={ toggleCredentialsForm }
 				/>
 			);
+
+		case 'new-migration-flow':
+			return <div>This is where instructions would go</div>;
 	}
 };
 
