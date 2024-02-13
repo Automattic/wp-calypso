@@ -4,6 +4,7 @@
 
 const path = require( 'path' );
 const getBaseWebpackConfig = require( '@automattic/calypso-build/webpack.config.js' );
+const webpack = require( 'webpack' );
 
 function getWebpackConfig( env, argv ) {
 	const webpackConfig = getBaseWebpackConfig( env, argv );
@@ -17,6 +18,12 @@ function getWebpackConfig( env, argv ) {
 			...webpackConfig.output,
 			filename: '[name].min.js',
 		},
+		plugins: [
+			...webpackConfig.plugins,
+			new webpack.DefinePlugin( {
+				__i18n_text_domain__: JSON.stringify( 'command-palette' ),
+			} ),
+		],
 	};
 }
 

@@ -1,4 +1,4 @@
-import { CommandPalette } from '@automattic/command-palette';
+import CommandPalette from '@automattic/command-palette';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import domReady from '@wordpress/dom-ready';
 import { render } from 'react-dom';
