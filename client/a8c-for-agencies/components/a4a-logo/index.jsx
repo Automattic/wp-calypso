@@ -19,7 +19,7 @@ const A4ALogo = ( { full = false, size = 32, className } ) => {
 	}
 
 	return (
-		<svg width={ size } height={ size } viewBox="0 0 64 64">
+		<svg width={ size } height={ size } className={ classes } viewBox="0 0 64 64">
 			<path
 				fillRule="evenodd"
 				clipRule="evenodd"

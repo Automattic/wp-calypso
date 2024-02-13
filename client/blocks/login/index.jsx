@@ -8,6 +8,7 @@ import { capitalize, get, isEmpty, startsWith } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
+import A4APlusWpComLogo from 'calypso/a8c-for-agencies/components/a4a-plus-wpcom-logo';
 import VisitSite from 'calypso/blocks/visit-site';
 import AsyncLoad from 'calypso/components/async-load';
 import JetpackPlusWpComLogo from 'calypso/components/jetpack-plus-wpcom-logo';
@@ -53,6 +54,7 @@ import isWooCommerceCoreProfilerFlow from 'calypso/state/selectors/is-woocommerc
 import ContinueAsUser from './continue-as-user';
 import ErrorNotice from './error-notice';
 import LoginForm from './login-form';
+
 import './style.scss';
 
 /*
@@ -460,9 +462,7 @@ class Login extends Component {
 				);
 				preHeader = (
 					<div>
-						{
-							// TODO: Add Automattic for Agencies logo
-						 }
+						<A4APlusWpComLogo size={ 24 } />
 					</div>
 				);
 			}
