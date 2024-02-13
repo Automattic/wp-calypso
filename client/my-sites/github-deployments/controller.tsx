@@ -1,6 +1,4 @@
 import { isEnabled } from '@automattic/calypso-config';
-import QueryKeyringConnections from 'calypso/components/data/query-keyring-connections';
-import QueryKeyringServices from 'calypso/components/data/query-keyring-services';
 import { PageViewTracker } from 'calypso/lib/analytics/page-view-tracker';
 import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
@@ -12,8 +10,6 @@ export const githubDeployments: Callback = ( context, next ) => {
 	context.primary = (
 		<>
 			<PageViewTracker path="/github-deployments/:site" title="GitHub Deployments" delay={ 500 } />
-			<QueryKeyringServices />
-			<QueryKeyringConnections />
 			<GitHubDeployments />
 		</>
 	);
@@ -24,7 +20,7 @@ export const redirectHomeIfIneligible: Callback = ( context, next ) => {
 	const state = context.store.getState();
 	const siteId = getSelectedSiteId( state );
 
-	if ( ! isEnabled( 'github-integration-i1' ) || ! isAtomicSite( state, siteId ) ) {
+	if ( ! isEnabled( 'github-deployments' ) || ! isAtomicSite( state, siteId ) ) {
 		context.page.replace( `/home/${ context.params.siteId }` );
 		return;
 	}

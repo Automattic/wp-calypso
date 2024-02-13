@@ -1,7 +1,7 @@
 import { localize } from 'i18n-calypso';
 import { Component } from 'react';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
-
+import { getExplanationForInvite } from '../utils';
 import './style.scss';
 
 class InviteFormHeader extends Component {
@@ -186,72 +186,12 @@ class InviteFormHeader extends Component {
 		return title;
 	};
 
-	getExplanationForInvite = () => {
-		let explanation = '';
-
-		switch ( this.props.role ) {
-			case 'administrator':
-				explanation = this.props.translate(
-					'As an administrator, you will be able to manage all aspects of %(siteName)s.',
-					{
-						args: {
-							siteName: this.getSiteName(),
-						},
-					}
-				);
-				break;
-			case 'editor':
-				explanation = this.props.translate(
-					'As an editor, you will be able to publish and manage your own posts and the posts of others, as well as upload media.'
-				);
-				break;
-			case 'author':
-				explanation = this.props.translate(
-					'As an author, you will be able to publish and edit your own posts as well as upload media.'
-				);
-				break;
-			case 'contributor':
-				explanation = this.props.translate(
-					'As a contributor, you will be able to write and manage your own posts, but you will not be able to publish.'
-				);
-				break;
-			case 'subscriber':
-				explanation = this.props.translate(
-					'As a viewer, you will be able to manage your profile on %(siteName)s.',
-					{
-						args: {
-							siteName: this.getSiteName(),
-						},
-					}
-				);
-				break;
-			case 'viewer':
-				explanation = this.props.translate(
-					'As a viewer, you will be able to view the private site %(siteName)s.',
-					{
-						args: {
-							siteName: this.getSiteName(),
-						},
-					}
-				);
-				break;
-			case 'follower':
-				explanation = this.props.translate(
-					'As a follower, you can read the latest posts from %(siteName)s in the WordPress.com Reader.',
-					{
-						args: {
-							siteName: this.getSiteName(),
-						},
-					}
-				);
-				break;
-		}
-
-		return explanation;
-	};
-
 	render() {
-		const roleExplanation = this.getExplanationForInvite();
+		const roleExplanation = getExplanationForInvite(
+			this.props.role,
+			this.getSiteName(),
+			this.props.translate
+		);
 		return (
 			<div className="invite-form-header">
 				<h3 className="invite-form-header__title">

@@ -6,6 +6,14 @@ exports[`makePot concatenated pot should match its snapshot 1`] = `
 msgid \\"\\"
 msgstr \\"Content-Type: text/plain; charset=utf-8\\\\n\\"
 
+#: test/examples/private-fields.js:2
+msgid \\"Private property\\"
+msgstr \\"\\"
+
+#: test/examples/private-fields.js:4
+msgid \\"Private method\\"
+msgstr \\"\\"
+
 #: test/examples/react-1.jsx:10
 #: test/examples/react-2.jsx:5
 msgid \\"Prop string\\"
@@ -110,6 +118,7 @@ msgstr[1] \\"\\"
 
 exports[`makePot pot files should match their snapshots 1`] = `
 Array [
+  "output/test-examples-private-fields.js.pot",
   "output/test-examples-react-1.jsx.pot",
   "output/test-examples-react-2.jsx.pot",
   "output/test-examples-translate-1.js.pot",
@@ -121,6 +130,19 @@ Array [
 `;
 
 exports[`makePot pot files should match their snapshots 2`] = `
+"msgid \\"\\"
+msgstr \\"Content-Type: text/plain; charset=utf-8\\\\n\\"
+
+#: test/examples/private-fields.js:2
+msgid \\"Private property\\"
+msgstr \\"\\"
+
+#: test/examples/private-fields.js:4
+msgid \\"Private method\\"
+msgstr \\"\\""
+`;
+
+exports[`makePot pot files should match their snapshots 3`] = `
 "msgid \\"\\"
 msgstr \\"Content-Type: text/plain; charset=utf-8\\\\n\\"
 
@@ -137,7 +159,7 @@ msgstr[0] \\"\\"
 msgstr[1] \\"\\""
 `;
 
-exports[`makePot pot files should match their snapshots 3`] = `
+exports[`makePot pot files should match their snapshots 4`] = `
 "msgid \\"\\"
 msgstr \\"Content-Type: text/plain; charset=utf-8\\\\n\\"
 
@@ -154,7 +176,7 @@ msgstr[0] \\"\\"
 msgstr[1] \\"\\""
 `;
 
-exports[`makePot pot files should match their snapshots 4`] = `
+exports[`makePot pot files should match their snapshots 5`] = `
 "msgid \\"\\"
 msgstr \\"Content-Type: text/plain; charset=utf-8\\\\n\\"
 
@@ -185,7 +207,7 @@ msgstr[0] \\"\\"
 msgstr[1] \\"\\""
 `;
 
-exports[`makePot pot files should match their snapshots 5`] = `
+exports[`makePot pot files should match their snapshots 6`] = `
 "msgid \\"\\"
 msgstr \\"Content-Type: text/plain; charset=utf-8\\\\n\\"
 
@@ -215,7 +237,7 @@ msgstr[0] \\"\\"
 msgstr[1] \\"\\""
 `;
 
-exports[`makePot pot files should match their snapshots 6`] = `
+exports[`makePot pot files should match their snapshots 7`] = `
 "msgid \\"\\"
 msgstr \\"Content-Type: text/plain; charset=utf-8\\\\n\\"
 
@@ -224,7 +246,7 @@ msgid \\"Decorator Preset\\"
 msgstr \\"\\""
 `;
 
-exports[`makePot pot files should match their snapshots 7`] = `
+exports[`makePot pot files should match their snapshots 8`] = `
 "msgid \\"\\"
 msgstr \\"Content-Type: text/plain; charset=utf-8\\\\n\\"
 
@@ -233,7 +255,7 @@ msgid \\"Typescript react component string\\"
 msgstr \\"\\""
 `;
 
-exports[`makePot pot files should match their snapshots 8`] = `
+exports[`makePot pot files should match their snapshots 9`] = `
 "msgid \\"\\"
 msgstr \\"Content-Type: text/plain; charset=utf-8\\\\n\\"
 

@@ -1,6 +1,5 @@
 import { FEATURE_STATS_PAID } from '@automattic/calypso-products';
 import { useState, useEffect } from 'react';
-import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
 import version_compare from 'calypso/lib/version-compare';
 import {
 	DEFAULT_NOTICES_VISIBILITY,
@@ -164,14 +163,10 @@ export default function StatsNotices( {
 	}
 
 	return (
-		<>
-			{ /* The component is replaced on build for Odyssey to query from Jetpack */ }
-			<QuerySitePurchases siteId={ siteId } />
-			<NewStatsNotices
-				siteId={ siteId }
-				isOdysseyStats={ isOdysseyStats }
-				statsPurchaseSuccess={ statsPurchaseSuccess }
-			/>
-		</>
+		<NewStatsNotices
+			siteId={ siteId }
+			isOdysseyStats={ isOdysseyStats }
+			statsPurchaseSuccess={ statsPurchaseSuccess }
+		/>
 	);
 }

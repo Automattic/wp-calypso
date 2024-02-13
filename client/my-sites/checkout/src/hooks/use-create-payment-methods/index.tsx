@@ -116,12 +116,15 @@ export function useCreateCreditCard( {
 }
 
 function useCreatePix(): PaymentMethod | null {
+	const isPixEnabled = isEnabled( 'checkout/ebanx-pix' );
 	return useMemo(
 		() =>
-			createPixPaymentMethod( {
-				submitButtonContent: <CheckoutSubmitButtonContent />,
-			} ),
-		[]
+			isPixEnabled
+				? createPixPaymentMethod( {
+						submitButtonContent: <CheckoutSubmitButtonContent />,
+				  } )
+				: null,
+		[ isPixEnabled ]
 	);
 }
 
