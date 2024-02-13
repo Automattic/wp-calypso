@@ -1,3 +1,4 @@
+import { isEnabled } from '@automattic/calypso-config';
 import {
 	DEFAULT_SITE_LAUNCH_STATUS_GROUP_VALUE,
 	siteLaunchStatusGroupValues,
@@ -110,7 +111,7 @@ function hostingFlowForkingPage( context: PageJSContext, next: () => void ) {
 }
 
 function sitesDashboard( context: PageJSContext, next: () => void ) {
-	const sitesDashboardGlobalStyles = css`
+	let sitesDashboardGlobalStyles = css`
 		body.is-group-sites-dashboard {
 			background: #fdfdfd;
 
@@ -129,7 +130,19 @@ function sitesDashboard( context: PageJSContext, next: () => void ) {
 			}
 		}
 	`;
-	context.secondary = <MySitesNavigation path={ context.path } />;
+
+	// Update body margin to account for the sidebar width if the new nav is enabled
+	if ( isEnabled( 'layout/dotcom-nav-redesign' ) ) {
+		sitesDashboardGlobalStyles = css`
+			${ sitesDashboardGlobalStyles }
+			body.is-group-sites-dashboard {
+				margin-left: var( --sidebar-width-max );
+			}
+		`;
+	}
+	if ( isEnabled( 'layout/dotcom-nav-redesign' ) ) {
+		context.secondary = <MySitesNavigation path={ context.path } />;
+	}
 	context.primary = (
 		<>
 			<Global styles={ sitesDashboardGlobalStyles } />

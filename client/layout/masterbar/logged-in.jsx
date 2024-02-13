@@ -10,6 +10,7 @@ import { Component } from 'react';
 import { connect } from 'react-redux';
 import AsyncLoad from 'calypso/components/async-load';
 import Gravatar from 'calypso/components/gravatar';
+import { useGlobalSidebar } from 'calypso/layout/global-sidebar/hooks/use-global-sidebar';
 import { getStatsPathForTab } from 'calypso/lib/route';
 import wpcom from 'calypso/lib/wp';
 import { domainManagementList } from 'calypso/my-sites/domains/paths';
@@ -244,7 +245,6 @@ class MasterbarLoggedIn extends Component {
 		const {
 			domainOnlySite,
 			hasNoSites,
-			hasMoreThanOneSite,
 			siteSlug,
 			translate,
 			isCustomerHomeEnabled,
@@ -542,21 +542,15 @@ class MasterbarLoggedIn extends Component {
 	}
 
 	render() {
-		const {
-			isInEditor,
-			isCheckout,
-			isCheckoutPending,
-			isCheckoutFailed,
-			loadHelpCenterIcon,
-			siteSlug,
-		} = this.props;
+		const { isInEditor, isCheckout, isCheckoutPending, isCheckoutFailed, loadHelpCenterIcon } =
+			this.props;
 		const { isMobile } = this.state;
 
 		if ( isCheckout || isCheckoutPending || isCheckoutFailed ) {
 			return this.renderCheckout();
 		}
 
-		if ( this.isActive( 'sites' ) && siteSlug ) {
+		if ( this.props.shouldShowGlobalSidebar ) {
 			return (
 				<>
 					<Masterbar>
@@ -640,6 +634,7 @@ export default connect(
 			isSiteMigrationActiveRoute( state );
 
 		const siteCount = getCurrentUserSiteCount( state ) ?? 0;
+		const { shouldShowGlobalSidebar } = useGlobalSidebar( siteId, sectionGroup );
 
 		return {
 			isCustomerHomeEnabled: canCurrentUserUseCustomerHome( state, siteId ),
@@ -671,6 +666,7 @@ export default connect(
 				new Date( getCurrentUserDate( state ) ).getTime() > NEW_MASTERBAR_SHIPPING_DATE,
 			currentRoute: getCurrentRoute( state ),
 			isSiteTrialExpired: isTrialExpired( state, siteId ),
+			shouldShowGlobalSidebar,
 		};
 	},
 	{
