@@ -17,38 +17,6 @@
 	}
 }
 
-.github-deployments-connect-repository {
-	max-width: 500px;
-	padding-bottom: 32px;
-
-	.form-label {
-		font-weight: 500;
-	}
-
-	.components-select-control {
-		height: 40px;
-		.components-input-control__backdrop {
-			border: 1px solid var(--color-neutral-10);
-		}
-	}
-
-	&__repository {
-		display: flex;
-		align-items: center;
-		justify-content: space-between;
-		padding: 8px;
-		border: 1px solid var(--color-neutral-10);
-		border-radius: 2px;
-	}
-
-	&__automatic-deploys {
-		display: flex;
-		align-items: center;
-		gap: 8px;
-		font-size: smaller;
-	}
-}
-
 .github-deployments-repository-list {
 
 	table {

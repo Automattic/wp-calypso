@@ -3,8 +3,8 @@ import { Button } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { arrowLeft } from '@wordpress/icons';
 import { useState } from 'react';
-import { GitHubBrowseRepositories } from 'calypso/my-sites/github-deployments/connected/repositories/browse-repositories';
-import { GitHubConnectRepository } from 'calypso/my-sites/github-deployments/connected/repositories/connect-repository';
+import { GitHubConnectRepository } from 'calypso/my-sites/github-deployments/connect/connect-repository';
+import { GitHubBrowseRepositories } from 'calypso/my-sites/github-deployments/connect/repositories/browse-repositories';
 import { GitHubAccountData } from '../use-github-accounts-query';
 import { GitHubRepositoryData } from '../use-github-repositories-query';
 
@@ -12,9 +12,10 @@ import './style.scss';
 
 interface GitHubConnectedProps {
 	accounts: GitHubAccountData[];
+	onBack(): void;
 }
 
-export const GitHubConnected = ( { accounts }: GitHubConnectedProps ) => {
+export const GitHubConnect = ( { accounts, onBack }: GitHubConnectedProps ) => {
 	const [ repository, setRepository ] = useState< GitHubRepositoryData | null >( null );
 	const [ account, setAccount ] = useState( accounts[ 0 ] );
 
@@ -25,6 +26,7 @@ export const GitHubConnected = ( { accounts }: GitHubConnectedProps ) => {
 					account={ account }
 					repository={ repository }
 					goBack={ () => setRepository( null ) }
+					onConnected={ onBack }
 				/>
 			);
 		}
@@ -43,7 +45,7 @@ export const GitHubConnected = ( { accounts }: GitHubConnectedProps ) => {
 		if ( repository ) {
 			setRepository( null );
 		} else {
-			//todo where to go back to?
+			onBack();
 		}
 	}
 
