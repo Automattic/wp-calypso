@@ -1,6 +1,7 @@
 import { calculateMonthlyPriceForPlan } from '@automattic/calypso-products';
 import { useLocale } from '@automattic/i18n-utils';
 import { useQuery, type UseQueryResult } from '@tanstack/react-query';
+import { getQueryArg } from '@wordpress/url';
 import wpcomRequest from 'wpcom-proxy-request';
 import unpackIntroOffer from './lib/unpack-intro-offer';
 import useQueryKeysFactory from './lib/use-query-keys-factory';
@@ -26,6 +27,13 @@ function usePlans( {
 	const params = new URLSearchParams();
 	coupon && params.append( 'coupon_code', coupon );
 	params.append( 'locale', locale );
+
+	if ( typeof window !== 'undefined' ) {
+		const currency = getQueryArg( window.location.search, 'currency' );
+		if ( typeof currency === 'string' ) {
+			params.append( 'currency', currency );
+		}
+	}
 
 	return useQuery( {
 		queryKey: queryKeys.plans( coupon ),
