@@ -101,6 +101,15 @@ class SocialLoginActionButton extends Component {
 			};
 		}
 
+		if ( service === 'github' ) {
+			this.recordLoginSuccess( service );
+
+			socialInfo = {
+				...socialInfo,
+				access_token: response.access_token,
+			};
+		}
+
 		return this.props.connectSocialUser( socialInfo ).then( this.refreshUser );
 	};
 

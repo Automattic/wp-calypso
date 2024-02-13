@@ -93,7 +93,7 @@ const GitHubLoginButton = ( {
 		);
 
 		const { access_token } = response?.body?.data as ExchangeCodeForTokenResponse;
-		responseHandler( access_token, true );
+		responseHandler( { access_token } );
 	};
 
 	useEffect( () => {
