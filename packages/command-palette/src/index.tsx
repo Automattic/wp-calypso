@@ -93,6 +93,7 @@ const StyledCommandsFooter = styled.div( {
 } );
 
 export function CommandMenuGroup( {
+	currentSiteId,
 	search,
 	close,
 	setSearch,
@@ -106,6 +107,7 @@ export function CommandMenuGroup( {
 	wpcom,
 }: CommandMenuGroupProps ) {
 	const { commands, filterNotice, emptyListNotice } = useCommandPalette( {
+		currentSiteId,
 		selectedCommandName,
 		setSelectedCommandName,
 		search,
@@ -222,6 +224,7 @@ interface NotFoundMessageProps {
 }
 
 interface CommandPaletteProps {
+	currentSiteId: number | null;
 	navigate: ( path: string, openInNewTab: boolean ) => void;
 	useExtraCommands?: ( options: useExtraCommandsParams ) => CommandType[];
 	wpcom: WPCOM;
@@ -251,7 +254,12 @@ const NotFoundMessage = ( {
 	return <>{ emptyListNotice || __( 'No results found.', __i18n_text_domain__ ) }</>;
 };
 
-export const CommandPalette = ( { navigate, useExtraCommands, wpcom }: CommandPaletteProps ) => {
+export const CommandPalette = ( {
+	currentSiteId,
+	navigate,
+	useExtraCommands,
+	wpcom,
+}: CommandPaletteProps ) => {
 	const [ placeHolderOverride, setPlaceholderOverride ] = useState( '' );
 	const [ search, setSearch ] = useState( '' );
 	const [ selectedCommandName, setSelectedCommandName ] = useState( '' );
@@ -392,6 +400,7 @@ export const CommandPalette = ( { navigate, useExtraCommands, wpcom }: CommandPa
 							/>
 						</StyledCommandsEmpty>
 						<CommandMenuGroup
+							currentSiteId={ currentSiteId }
 							search={ search }
 							close={ ( commandName, isExecuted ) => {
 								close( commandName, isExecuted );

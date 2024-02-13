@@ -5,7 +5,6 @@ import styled from '@emotion/styled';
 import { __ } from '@wordpress/i18n';
 import { useCommandState } from 'cmdk';
 import { useCallback } from 'react';
-//import { useCurrentSiteRankTop } from './use-current-site-rank-top';
 import { useCommands } from './use-commands';
 import { SiteData, useSites } from './use-sites';
 import { useSitesSortingQuery } from './use-sites-sorting-query';
@@ -74,6 +73,7 @@ export interface useExtraCommandsParams {
 }
 
 interface useCommandPaletteOptions {
+	currentSiteId: number | null;
 	selectedCommandName: string;
 	setSelectedCommandName: ( name: string ) => void;
 	search: string;
@@ -147,6 +147,7 @@ const useSiteToAction = () => {
 };
 
 export const useCommandPalette = ( {
+	currentSiteId,
 	selectedCommandName,
 	setSelectedCommandName,
 	search,
@@ -166,11 +167,6 @@ export const useCommandPalette = ( {
 	// Sort sites in the nested commands to be consistent with site switcher and /sites page
 	const { data: sitesSorting } = useSitesSortingQuery( wpcom );
 	const sortedSites = useSitesListSorting( allSites, sitesSorting );
-
-	// Get current site ID to rank it to the top of the sites list
-	// TODO: Find an alternative way to get the current site ID.
-	//const { currentSiteId } = useCurrentSiteRankTop();
-	const currentSiteId = null;
 
 	// Call the generateCommandsArray function to get the commands array
 	const defaultCommands = useCommands( {
