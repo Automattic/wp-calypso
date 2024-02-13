@@ -1,4 +1,4 @@
-export interface GitHubConnection {
+export interface GitHubInstallation {
 	ID: number;
 	connected: boolean;
 	installation: Installation;
