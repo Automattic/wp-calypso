@@ -251,10 +251,10 @@ const FeaturesGrid = ( {
 	} );
 
 	const gridPlanForSpotlight = usePlanForSpotlight( {
-		sitePlanSlug: currentSitePlanSlug,
-		isSpotlightOnCurrentPlan,
 		intent,
-		gridPlansForFeaturesGrid: gridPlans,
+		isSpotlightOnCurrentPlan,
+		plansForFeaturesGrid: gridPlans,
+		sitePlanSlug: currentSitePlanSlug,
 	} );
 
 	const spotlightPlanProps = {

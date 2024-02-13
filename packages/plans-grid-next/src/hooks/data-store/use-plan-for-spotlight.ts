@@ -5,14 +5,14 @@ import { GridPlan } from '../../types';
 const SPOTLIGHT_ENABLED_INTENTS = [ 'plans-default-wpcom' ];
 
 interface Params {
-	gridPlansForFeaturesGrid: GridPlan[];
+	plansForFeaturesGrid: GridPlan[];
 	intent: string | undefined;
 	isSpotlightOnCurrentPlan?: boolean;
 	sitePlanSlug?: string | null;
 }
 
 const usePlanForSpotlight = ( {
-	gridPlansForFeaturesGrid,
+	plansForFeaturesGrid,
 	intent,
 	isSpotlightOnCurrentPlan,
 	sitePlanSlug,
@@ -21,11 +21,11 @@ const usePlanForSpotlight = ( {
 		const isIntentSpotlightEnabled = intent ? SPOTLIGHT_ENABLED_INTENTS.includes( intent ) : false;
 
 		return sitePlanSlug && isSpotlightOnCurrentPlan && isIntentSpotlightEnabled
-			? gridPlansForFeaturesGrid.find(
+			? plansForFeaturesGrid.find(
 					( { planSlug } ) => getPlanClass( planSlug ) === getPlanClass( sitePlanSlug )
 			  )
 			: undefined;
-	}, [ sitePlanSlug, isSpotlightOnCurrentPlan, intent, gridPlansForFeaturesGrid ] );
+	}, [ sitePlanSlug, isSpotlightOnCurrentPlan, intent, plansForFeaturesGrid ] );
 };
 
 export default usePlanForSpotlight;
