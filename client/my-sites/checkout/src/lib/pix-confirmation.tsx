@@ -119,6 +119,9 @@ export function PixConfirmation( {
 	const [ hasCopied, setHasCopied ] = useState( false );
 
 	const copyButtonRef = useCopyToClipboard( qrCode, () => {
+		// useCopyToClipboard doesn't actually seem to work in my testing, so we
+		// just copy it directly.
+		navigator.clipboard.writeText( qrCode );
 		setHasCopied( true );
 	} );
 
