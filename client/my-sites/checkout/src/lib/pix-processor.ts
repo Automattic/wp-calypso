@@ -1,11 +1,6 @@
-import {
-	makeRedirectResponse,
-	makeErrorResponse,
-	makeSuccessResponse,
-} from '@automattic/composite-checkout';
+import { makeErrorResponse, makeSuccessResponse } from '@automattic/composite-checkout';
 import { createElement } from 'react';
 import { Root, createRoot } from 'react-dom/client';
-import userAgent from 'calypso/lib/user-agent';
 import { PurchaseOrderStatus, fetchPurchaseOrder } from '../hooks/use-purchase-order';
 import { recordTransactionBeginAnalytics } from '../lib/analytics';
 import getDomainDetails from '../lib/get-domain-details';
@@ -115,10 +110,6 @@ export async function pixProcessor(
 				// eslint-disable-next-line no-console
 				console.error( 'Transaction response was missing required qr code' );
 				throw new Error( genericErrorMessage );
-			}
-
-			if ( userAgent.isMobile && response.redirect_url ) {
-				return makeRedirectResponse( response?.redirect_url );
 			}
 
 			if ( ! response.order_id ) {
