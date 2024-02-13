@@ -4,9 +4,11 @@ import { Icon, check } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { useState, FormEvent, ChangeEvent } from 'react';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
-import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
 import FormTextInput from 'calypso/components/forms/form-text-input';
+import useUsersQuery from 'calypso/data/users/use-users-query';
+import TeamMembers from 'calypso/my-sites/people/team-members';
 import { useCheckSiteTransferEligibility } from './use-check-site-transfer-eligibility';
+import type { UsersQuery } from 'calypso/my-sites/people/team-members/types';
 
 const Strong = styled( 'strong' )( {
 	fontWeight: 500,
@@ -32,14 +34,8 @@ const ErrorText = styled.p( {
 	fontSize: '100%',
 } );
 
-const FieldExplanation = styled( FormSettingExplanation )( {
-	a: {
-		color: 'var(--studio-gray-50)',
-		textDecoration: 'underline',
-		'&:hover': {
-			color: 'var(--studio-gray-80)',
-		},
-	},
+const FieldExplanation = styled.p( {
+	color: 'var(--studio-gray-50)',
 } );
 
 const SiteOwnerTransferEligibility = ( {
@@ -54,6 +50,12 @@ const SiteOwnerTransferEligibility = ( {
 	const translate = useTranslate();
 	const [ tempSiteOwner, setTempSiteOwner ] = useState< string >( '' );
 	const [ siteTransferEligibilityError, setSiteTransferEligibilityError ] = useState( '' );
+	const usersQuery = useUsersQuery( siteId, {
+		search: `*${ tempSiteOwner }*`,
+		search_columns: [ 'display_name', 'user_login', 'user_email' ],
+		include_viewers: false,
+	} ) as unknown as UsersQuery;
+	const usersFound = usersQuery?.data?.users?.length > 0;
 
 	const { checkSiteTransferEligibility, isPending: isCheckingSiteTransferEligibility } =
 		useCheckSiteTransferEligibility( siteId, {
@@ -105,9 +107,7 @@ const SiteOwnerTransferEligibility = ( {
 					value={ tempSiteOwner }
 					isError={ recipientError }
 					placeholder={ translate( 'my-client@example.com' ) }
-					onChange={ ( e: ChangeEvent< HTMLInputElement > ) => {
-						onRecipientChange( e.target.value );
-					} }
+					onChange={ ( e: ChangeEvent< HTMLInputElement > ) => onRecipientChange( e.target.value ) }
 				/>
 				{ recipientError && (
 					<div className="form-validation-icon">
@@ -120,12 +120,23 @@ const SiteOwnerTransferEligibility = ( {
 						<ErrorText>{ siteTransferEligibilityError }</ErrorText>
 					</Error>
 				) }
+			</FormFieldset>
+			{ ! usersFound && (
 				<FieldExplanation>
 					{ translate(
 						"If the new owner isn't on WordPress.com yet, we'll guide them through a simple sign-up process."
 					) }
 				</FieldExplanation>
-			</FormFieldset>
+			) }
+
+			{ tempSiteOwner && usersFound && (
+				<TeamMembers
+					search={ tempSiteOwner }
+					usersQuery={ usersQuery }
+					showAddTeamMembersBtn={ false }
+					showHeader={ false }
+				/>
+			) }
 
 			<ButtonStyled
 				busy={ isCheckingSiteTransferEligibility }
