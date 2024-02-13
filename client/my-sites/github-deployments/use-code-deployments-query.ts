@@ -25,10 +25,11 @@ export interface CreatedBy {
 }
 
 export const useCodeDeploymentsQuery = (
-	siteId: number,
+	siteId: number | null,
 	options?: UseQueryOptions< CodeDeploymentData[] >
 ) => {
 	return useQuery< CodeDeploymentData[] >( {
+		enabled: !! siteId,
 		queryKey: [ GITHUB_DEPLOYMENTS_QUERY_KEY, CODE_DEPLOYMENTS_QUERY_KEY, siteId ],
 		queryFn: (): CodeDeploymentData[] =>
 			wp.req.get( {
