@@ -40,12 +40,22 @@
 	font-size: 0.75rem;
 }
 
-.connect-url__validate-sites-spinner {
-	margin-right: 1rem;
+.connect-url__create-sites-list {
+	padding: 0;
+	margin: 0;
+}
+
+.connect-url__create-sites-list li {
+	list-style-type: none;
+	padding: 0;
 	margin-bottom: 1rem;
 }
 
-.connect-url__validate-sites-spinner-animation {
+.connect-url__create-sites-list li > svg {
+	margin-right: 1rem;
+}
+
+.connect-url__create-sites-spinner-animation {
 	transform-origin: center;
 	animation: spinner 0.6s linear infinite;
 }
@@ -56,11 +66,11 @@
 	}
 }
 
-.connect-url__validate-sites-quantity {
+.connect-url__create-sites-quantity {
 	margin-bottom: 1rem;
 }
 
-.connect-url__validate-sites-row {
+.connect-url__create-sites-row {
 	display: flex;
 }
 

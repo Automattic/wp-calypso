@@ -1,4 +1,4 @@
-import { Button, Gridicon } from '@automattic/components';
+import { Gridicon } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import Spinner from './spinner';
 
@@ -11,28 +11,27 @@ export default function CreateSites( { processed, queue }: { processed: Site[]; 
 	const translate = useTranslate();
 
 	return (
-		<div className="connect-url__validate-sites">
-			<div className="connect-url__validate-sites-quantity">
-				{ translate( 'Adding {{strong}}%(num)d sites{{/strong}}', {
-					args: { num: queue.length },
+		<div className="connect-url__create-sites">
+			<div className="connect-url__create-sites-quantity">
+				{ translate( 'Adding {{strong}}%(num)d sites{{/strong}}:', {
+					args: { num: processed.length + queue.length },
 					components: { strong: <strong /> },
 				} ) }
 			</div>
-			<div>
+			<ul className="connect-url__create-sites-list">
 				{ processed.map( ( site, index ) => (
-					<div className="connect-url__validate-sites-row" key={ index }>
+					<li className="connect-url__create-sites-row" key={ index }>
 						<Gridicon icon={ site.status === 'success' ? 'checkmark-circle' : 'cross-circle' } />
 						<div>{ site.url }</div>
-					</div>
+					</li>
 				) ) }
 				{ queue.map( ( site, index ) => (
-					<div className="connect-url__validate-sites-row" key={ index }>
+					<li className="connect-url__create-sites-row" key={ index }>
 						<Spinner />
 						<div>{ site.url }</div>
-					</div>
+					</li>
 				) ) }
-			</div>
-			<Button disabled={ true }>{ translate( 'Adding sites' ) }</Button>
+			</ul>
 		</div>
 	);
 }
