@@ -3,9 +3,7 @@
 import styled from '@emotion/styled';
 import { useTranslate } from 'i18n-calypso';
 import ActionPanel from 'calypso/components/action-panel';
-import HeaderCake from 'calypso/components/header-cake';
 import Main from 'calypso/components/main';
-import NavigationHeader from 'calypso/components/navigation-header';
 import { navigate } from 'calypso/lib/navigate';
 import { acceptInvite } from 'calypso/state/invites/actions';
 import { useEffect } from '@wordpress/element';
@@ -14,9 +12,13 @@ import normalizeInvite from 'calypso/my-sites/invites/invite-accept/utils/normal
 import { LoadingBar } from 'calypso/components/loading-bar';
 import { errorNotice } from 'calypso/state/notices/actions';
 import store from 'store';
+import DocumentHead from 'calypso/components/data/document-head';
+import { Global, css } from '@emotion/react';
+import MasterbarStyled from 'calypso/my-sites/checkout/checkout-thank-you/redesign-v2/masterbar-styled';
 
 const ActionPanelStyled = styled( ActionPanel )( {
 	fontSize: '14px',
+	margin: '20% 30px 0 30px',
 	fontWeight: 400,
 	'.action-panel__body': {
 		color: 'var(--studio-gray-70)',
@@ -26,7 +28,7 @@ const ActionPanelStyled = styled( ActionPanel )( {
 export function AcceptSiteTransfer( props: any ) {
 	const dispatch = props.dispatch;
 
-	const progress = 0.2;
+	const progress = 0.15;
 
 	const fetchAndAcceptInvite = async ( props: any ) => {
 		try {
@@ -52,17 +54,25 @@ export function AcceptSiteTransfer( props: any ) {
 
 	const translate = useTranslate();
 	return (
-		<Main>
-			<NavigationHeader navigationItems={ [] } title={ translate( 'Site Transfer' ) } />
-			<HeaderCake isCompact={ true }>
-				<h1>{ translate( 'Site Transfer' ) }</h1>
-			</HeaderCake>
-			<ActionPanelStyled>
-				<p>
-					<LoadingBar key="transfer-site-loading-bar" progress={ progress } />
-				</p>
-				<p>{ translate( 'We are transferring your site.' ) }</p>
-			</ActionPanelStyled>
-		</Main>
+		<>
+			<DocumentHead title={ translate( 'Site Transfer' ) } />
+			<Global
+				styles={ css`
+					body.is-section-settings,
+					body.is-section-settings .layout__content {
+						background: var( --studio-white );
+					}
+				` }
+			/>
+			<MasterbarStyled canGoBack={ false } />
+			<Main>
+				<ActionPanelStyled>
+					<p>{ translate( 'Hold tight. We are making it happen!' ) }</p>
+					<p>
+						<LoadingBar key="transfer-site-loading-bar" progress={ progress } />
+					</p>
+				</ActionPanelStyled>
+			</Main>
+		</>
 	);
 }
