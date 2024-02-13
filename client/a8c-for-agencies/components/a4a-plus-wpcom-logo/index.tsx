@@ -1,9 +1,13 @@
 import colorStudio from '@automattic/color-studio';
 import classNames from 'classnames';
-import PropTypes from 'prop-types';
 import A4ALogo from '../a4a-logo';
 
 import './style.scss';
+
+interface A4APlusWpComLogoProps {
+	size?: number;
+	className?: string;
+}
 
 /**
  * Module constants
@@ -12,7 +16,7 @@ const PALETTE = colorStudio.colors;
 const COLOR_WORDPRESS = PALETTE[ 'WordPress Blue 40' ];
 const COLOR_GRAY = PALETTE[ 'Gray 80' ];
 
-const A4APlusWpComLogo = ( { size = 32, className } ) => {
+const A4APlusWpComLogo = ( { size = 32, className }: A4APlusWpComLogoProps ) => {
 	const classes = classNames( className );
 
 	const plusWpComLogo = (
@@ -35,11 +39,6 @@ const A4APlusWpComLogo = ( { size = 32, className } ) => {
 			{ plusWpComLogo }
 		</>
 	);
-};
-
-A4APlusWpComLogo.propTypes = {
-	className: PropTypes.string,
-	size: PropTypes.number,
 };
 
 export default A4APlusWpComLogo;
