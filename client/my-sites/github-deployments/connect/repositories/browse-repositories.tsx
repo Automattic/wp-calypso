@@ -26,7 +26,7 @@ function filterRepositories( repositories: GitHubRepositoryData[], query: string
 	const trimmed = query.trim();
 	if ( trimmed ) {
 		return repositories.filter( ( repository ) =>
-			repository.full_name.toLowerCase().includes( trimmed )
+			repository.name.toLowerCase().includes( trimmed )
 		);
 	}
 	return repositories;
@@ -36,7 +36,7 @@ function sortRepositories( repositories: GitHubRepositoryData[], sortKey: SortOp
 	switch ( sortKey ) {
 		case 'name_asc':
 			return repositories.sort( ( left, right ) => {
-				return left.full_name.localeCompare( right.full_name );
+				return left.name.localeCompare( right.name );
 			} );
 		case 'date_asc':
 			return repositories.sort( ( left, right ) => {
@@ -44,7 +44,7 @@ function sortRepositories( repositories: GitHubRepositoryData[], sortKey: SortOp
 			} );
 		case 'name_desc':
 			return repositories.sort( ( left, right ) => {
-				return left.full_name.localeCompare( right.full_name ) * -1;
+				return left.name.localeCompare( right.name ) * -1;
 			} );
 		case 'date_desc':
 			return repositories.sort( ( left, right ) => {

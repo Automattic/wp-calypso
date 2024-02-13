@@ -16,7 +16,7 @@ export const GitHubRepositoryListItem = ( {
 		<tr>
 			<td>
 				<div className="github-deployments-repository-list__account">
-					{ repository.full_name } { repository.private && <Icon icon={ lock } size={ 16 } /> }
+					{ repository.name } { repository.private && <Icon icon={ lock } size={ 16 } /> }
 				</div>
 			</td>
 			<td>{ new Date( repository.updated_at ).toLocaleDateString() }</td>
