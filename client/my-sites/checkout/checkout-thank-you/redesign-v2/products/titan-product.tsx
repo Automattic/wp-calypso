@@ -15,14 +15,14 @@ export type ThankYouEmailProductProps = {
 	domainName: string;
 	siteSlug: string | null;
 	emailAddress?: string;
-	newQuantityOfMailboxes: number;
+	numberOfMailboxesPurchased?: number;
 };
 
 export function ThankYouTitanProduct( {
 	domainName,
 	siteSlug,
 	emailAddress,
-	newQuantityOfMailboxes,
+	numberOfMailboxesPurchased,
 }: ThankYouEmailProductProps ) {
 	const translate = useTranslate();
 	const titanAppsUrlPrefix = useTitanAppsUrlPrefix();
@@ -71,12 +71,12 @@ export function ThankYouTitanProduct( {
 	}
 
 	let details;
-	if ( newQuantityOfMailboxes > 1 ) {
+	if ( numberOfMailboxesPurchased && numberOfMailboxesPurchased > 1 ) {
 		details = translate( '%(quantity)s mailboxes for %(domainName)s', {
-			args: { quantity: newQuantityOfMailboxes, domainName },
+			args: { quantity: numberOfMailboxesPurchased, domainName },
 		} );
 	} else if ( ! emailAddress ) {
-		details = translate( 'Set up for %(domainName)s', { args: { domainName } } );
+		details = translate( 'Set up your mailbox for %(domainName)s', { args: { domainName } } );
 	} else {
 		details = emailAddress;
 	}

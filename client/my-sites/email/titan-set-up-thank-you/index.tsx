@@ -17,14 +17,14 @@ type TitanSetUpThankYouProps = {
 	domainName: string;
 	emailAddress?: string;
 	isDomainOnlySite?: boolean;
-	newQuantityOfMailboxes?: number;
+	numberOfMailboxesPurchased?: number;
 };
 
 const TitanSetUpThankYou = ( {
 	domainName,
 	emailAddress,
 	isDomainOnlySite = false,
-	newQuantityOfMailboxes,
+	numberOfMailboxesPurchased,
 }: TitanSetUpThankYouProps ) => {
 	const currentRoute = useSelector( getCurrentRoute );
 	const selectedSite = useSelector( getSelectedSite );
@@ -86,7 +86,7 @@ const TitanSetUpThankYou = ( {
 			domainName={ domainName }
 			siteSlug={ selectedSiteSlug }
 			emailAddress={ emailAddress }
-			newQuantityOfMailboxes={ newQuantityOfMailboxes || 0 }
+			numberOfMailboxesPurchased={ numberOfMailboxesPurchased }
 		/>
 	);
 

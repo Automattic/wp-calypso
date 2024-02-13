@@ -594,7 +594,7 @@ export class CheckoutThankYou extends Component<
 				pageContent = (
 					<TitanSetUpThankYou
 						domainName={ purchases[ 0 ].meta }
-						newQuantityOfMailboxes={ titanPurchase?.newQuantity }
+						numberOfMailboxesPurchased={ titanPurchase?.newQuantity }
 						emailAddress={ email }
 						isDomainOnlySite={ this.props.domainOnlySiteFlow }
 					/>
