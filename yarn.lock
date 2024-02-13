@@ -546,16 +546,16 @@ __metadata:
     "@automattic/calypso-eslint-overrides": "workspace:^"
     "@automattic/command-palette": "workspace:^"
     "@tanstack/react-query": "npm:^5.15.5"
-    "@wordpress/data": "npm:^9.20.0"
-    "@wordpress/dependency-extraction-webpack-plugin": "npm:^5.1.0"
-    "@wordpress/dom-ready": "npm:^3.50.0"
+    "@wordpress/data": "npm:^9.21.0"
+    "@wordpress/dependency-extraction-webpack-plugin": "npm:^5.2.0"
+    "@wordpress/dom-ready": "npm:^3.51.0"
     calypso: "workspace:^"
     npm-run-all: "npm:^4.1.5"
     postcss: "npm:^8.4.5"
     react: "npm:^18.2.0"
     react-dom: "npm:^18.2.0"
     redux: "npm:^4.2.1"
-    webpack: "npm:^5.90.0"
+    webpack: "npm:^5.90.1"
     webpack-bundle-analyzer: "npm:^4.10.1"
     wpcom: "workspace:^"
     wpcom-proxy-request: "workspace:^"
@@ -576,18 +576,18 @@ __metadata:
     "@emotion/styled": "npm:^11.11.0"
     "@tanstack/react-query": "npm:^5.15.5"
     "@wordpress/commands": "npm:^0.21.0"
-    "@wordpress/components": "npm:^25.16.0"
-    "@wordpress/compose": "npm:^6.27.0"
-    "@wordpress/i18n": "npm:^4.50.0"
-    "@wordpress/icons": "npm:^9.41.0"
-    "@wordpress/url": "npm:^3.51.0"
+    "@wordpress/components": "npm:^26.0.0"
+    "@wordpress/compose": "npm:^6.28.0"
+    "@wordpress/i18n": "npm:^4.51.0"
+    "@wordpress/icons": "npm:^9.42.0"
+    "@wordpress/url": "npm:^3.52.0"
     classnames: "npm:^2.3.2"
     cmdk: "npm:^0.2.0"
     typescript: "npm:^5.3.3"
     utility-types: "npm:^3.10.0"
     wpcom: "workspace:^"
   peerDependencies:
-    "@wordpress/data": ^9.20.0
+    "@wordpress/data": ^9.21.0
     react: ^18.2.0
     react-dom: ^18.2.0
     redux: ^4.2.1
@@ -1709,6 +1709,7 @@ __metadata:
   resolution: "@automattic/sites@workspace:packages/sites"
   dependencies:
     "@automattic/calypso-typescript-config": "workspace:^"
+    "@automattic/search": "workspace:^"
     "@testing-library/jest-dom": "npm:^6.4.1"
     "@testing-library/react": "npm:^14.2.1"
     typescript: "npm:^5.3.3"
@@ -9060,6 +9061,28 @@ __metadata:
   version: 5.34.0
   resolution: "@wordpress/browserslist-config@npm:5.34.0"
   checksum: 502d1f2b3728a79ad8ea9794637e8b1c6f5d918b9caeda1c89aabcc972b0dcf4940918ea601ce07890a04c95fa9479b59bbd6d0f3267e64a44fff7ee26105fb8
+  languageName: node
+  linkType: hard
+
+"@wordpress/commands@npm:^0.21.0":
+  version: 0.21.0
+  resolution: "@wordpress/commands@npm:0.21.0"
+  dependencies:
+    "@babel/runtime": "npm:^7.16.0"
+    "@wordpress/components": "npm:^25.16.0"
+    "@wordpress/data": "npm:^9.20.0"
+    "@wordpress/element": "npm:^5.27.0"
+    "@wordpress/i18n": "npm:^4.50.0"
+    "@wordpress/icons": "npm:^9.41.0"
+    "@wordpress/keyboard-shortcuts": "npm:^4.27.0"
+    "@wordpress/private-apis": "npm:^0.32.0"
+    classnames: "npm:^2.3.1"
+    cmdk: "npm:^0.2.0"
+    rememo: "npm:^4.0.2"
+  peerDependencies:
+    react: ^18.0.0
+    react-dom: ^18.0.0
+  checksum: cab86cb31b83923cc73ba6477f1236c487636c744145581e6b2a5e91e018763d5dc75270815b44291d5db9d150cde9931933143606c2d1c6c2f82e3ffef2f2bd
   languageName: node
   linkType: hard
 
@@ -32234,7 +32257,6 @@ __metadata:
     "@automattic/launchpad": "workspace:^"
     "@automattic/plans-grid-next": "workspace:^"
     "@automattic/privacy-toolset": "workspace:^"
-    "@automattic/sites": "workspace:^"
     "@automattic/typography": "workspace:^"
     "@automattic/verbum-block-editor": "workspace:^"
     "@automattic/viewport": "workspace:^"
