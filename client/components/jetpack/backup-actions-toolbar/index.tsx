@@ -1,4 +1,3 @@
-import config from '@automattic/calypso-config';
 import { Button, Tooltip } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import { FunctionComponent } from 'react';
@@ -47,7 +46,7 @@ const BackupActionsToolbar: FunctionComponent< Props > = ( { siteId, siteSlug } 
 	return (
 		<div className="jetpack-backup__actions-toolbar">
 			{ copySite }
-			{ config.isEnabled( 'jetpack/backup-on-demand' ) && backupNow }
+			{ backupNow }
 		</div>
 	);
 };
