@@ -3,7 +3,10 @@ import page from '@automattic/calypso-router';
 import { useEffect, useState, ReactNode } from 'react';
 import { useDispatch } from 'react-redux';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
-import { fetchNoticesAsync } from 'calypso/my-sites/stats/hooks/use-notice-visibility-query';
+import {
+	fetchNoticesAsync,
+	processConflictNotices,
+} from 'calypso/my-sites/stats/hooks/use-notice-visibility-query';
 import { useSelector } from 'calypso/state';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import { isJetpackSite, getSiteOption, getSiteSlug } from 'calypso/state/sites/selectors';
@@ -64,9 +67,11 @@ const StatsRedirectFlow: React.FC< StatsRedirectFlowProps > = ( { children } ) =
 		console.log( 'useEffect fetching notices...' );
 		async function fetchNotices() {
 			const data = await fetchNoticesAsync( siteId );
+			const payload = processConflictNotices( data );
 			console.log( 'data: ', data );
+			console.log( 'payload: ', payload );
 			setIsRequestingNotices( false );
-			setPurchaseNotPosponed( data?.focus_jetpack_purchase );
+			setPurchaseNotPosponed( payload?.focus_jetpack_purchase );
 		}
 		setIsRequestingNotices( true );
 		fetchNotices();
