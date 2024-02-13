@@ -39,7 +39,9 @@ export const GitHubConnectRepository = ( {
 	const siteId = useSelector( getSelectedSiteId );
 
 	const { data: branches = [], isLoading: isFetchingBranches } = useGithubRepositoryBranchesQuery(
-		repository.full_name
+		account.external_id,
+		repository.owner,
+		repository.name
 	);
 
 	const branchOptions = branches.map( ( branch ) => ( { value: branch, label: branch } ) );
@@ -83,8 +85,8 @@ export const GitHubConnectRepository = ( {
 			<FormFieldset>
 				<FormLabel>{ __( 'Repository' ) }</FormLabel>
 				<div className="github-deployments-connect-repository__repository">
-					<ExternalLink href={ `https://github.com/${ repository.full_name }` }>
-						{ repository.full_name }
+					<ExternalLink href={ `https://github.com/${ repository.owner }/${ repository.name }` }>
+						{ repository.owner }/{ repository.name }
 					</ExternalLink>
 					<Button compact onClick={ goBack }>
 						{ __( 'Change' ) }
