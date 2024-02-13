@@ -124,7 +124,7 @@ export default function () {
 	);
 
 	page(
-		'/settings/site-transfer/:site_id/confirm/:hash',
+		'/settings/site-transfer/:hash/confirm/:site_id',
 		siteSelection,
 		redirectIfCantStartSiteOwnerTransfer,
 		renderConfirmTransferScreen,
