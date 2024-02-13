@@ -160,8 +160,9 @@ export const PreMigrationScreen: React.FunctionComponent< PreMigrationProps > = 
 	/**
 	 * Decide the render state based on the current component state
 	 */
+	const isNewMigrationFlowEnabled = config.isEnabled( 'stepper/site-migration-flow' );
 	useEffect( () => {
-		if ( config.isEnabled( 'stepper/site-migration-flow' ) ) {
+		if ( isNewMigrationFlowEnabled && isTargetSitePlanCompatible ) {
 			setRenderState( 'new-migration-flow' );
 		} else if (
 			! isInitFetchingDone &&
