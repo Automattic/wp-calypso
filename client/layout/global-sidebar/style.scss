@@ -25,7 +25,7 @@
 			text-decoration: none;
 		}
 
-		span,
+		span.dotcom,
 		button.sidebar__item-search {
 			display: flex;
 			background-repeat: no-repeat;
@@ -185,9 +185,6 @@
 	.sidebar-notifications {
 		.sidebar__menu-icon.sidebar_svg-notifications {
 			fill: var(--color-sidebar-background);
-			path {
-				stroke: var(--color-sidebar-menu-selected-text);
-			}
 		}
 	}
 
