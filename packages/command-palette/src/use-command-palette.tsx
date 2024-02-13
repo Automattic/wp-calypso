@@ -80,6 +80,7 @@ interface useCommandPaletteOptions {
 	navigate: ( path: string, openInNewTab: boolean ) => void;
 	useExtraCommands?: ( options: useExtraCommandsParams ) => Command[];
 	wpcom: WPCOM;
+	currentRoute: string | null;
 }
 
 interface SiteToActionParameters {
@@ -92,11 +93,7 @@ interface SiteToActionParameters {
 	};
 }
 
-const useSiteToAction = () => {
-	// TODO: Find an alternative way to use the current route.
-	//const currentRoute = useSelector( ( state: object ) => getCurrentRoutePattern( state ) );
-	const currentRoute = window.location.pathname;
-
+const useSiteToAction = ( { currentRoute }: { currentRoute: string | null } ) => {
 	const siteToAction = useCallback(
 		(
 			onClickSite: SiteToActionParameters[ 'onClickSite' ],
@@ -154,13 +151,14 @@ export const useCommandPalette = ( {
 	navigate,
 	useExtraCommands,
 	wpcom,
+	currentRoute,
 }: useCommandPaletteOptions ): {
 	commands: Command[];
 	filterNotice: string | undefined;
 	emptyListNotice: string | undefined;
 } => {
 	const { data: allSites = [] } = useSites( wpcom );
-	const siteToAction = useSiteToAction();
+	const siteToAction = useSiteToAction( { currentRoute } );
 
 	const listVisibleCount = useCommandState( ( state ) => state.filtered.count );
 
@@ -180,10 +178,6 @@ export const useCommandPalette = ( {
 	}
 	const extraCommands = useExtraCommands( { setSelectedCommandName } );
 	const commands = defaultCommands.concat( extraCommands );
-
-	// TODO: Find an alternative way to use the current route.
-	//const currentRoute = useSelector( ( state: object ) => getCurrentRoutePattern( state ) );
-	const currentRoute = window.location.pathname;
 
 	const userCapabilities: { [ key: number ]: { [ key: string ]: boolean }[] } = {};
 	// @ts-expect-error TODO

@@ -6,6 +6,7 @@ import { Command, CommandCallBackParams } from './use-command-palette';
 
 interface useCommandNavigationOptions {
 	navigate: ( path: string, openInNewTab: boolean ) => void;
+	currentRoute: string | null;
 }
 
 export interface useCommandsParams {
@@ -13,10 +14,7 @@ export interface useCommandsParams {
 	navigate: ( path: string, openInNewTab: boolean ) => void;
 }
 
-function useCommandNavigation( { navigate }: useCommandNavigationOptions ) {
-	// TODO: Find an alternative way to use the current route.
-	//const currentRoute = useSelector( getCurrentRoutePattern );
-	const currentRoute = window.location.pathname;
+function useCommandNavigation( { navigate, currentRoute }: useCommandNavigationOptions ) {
 	// Callback to navigate to a command's destination
 	// used on command callback or siteFunctions onClick
 	const commandNavigation = useCallback(

@@ -21,6 +21,7 @@ import '@wordpress/commands/build-style/style.css';
 
 interface CommandMenuGroupProps
 	extends Pick< CommandCallBackParams, 'close' | 'setSearch' | 'setPlaceholderOverride' > {
+	currentSiteId: number | null;
 	search: string;
 	selectedCommandName: string;
 	setSelectedCommandName: ( name: string ) => void;
@@ -29,6 +30,7 @@ interface CommandMenuGroupProps
 	navigate: ( path: string, openInNewTab: boolean ) => void;
 	useExtraCommands?: ( options: useExtraCommandsParams ) => CommandType[];
 	wpcom: WPCOM;
+	currentRoute: string | null;
 }
 
 const StyledCommandsMenuContainer = styled.div( {
@@ -105,6 +107,7 @@ export function CommandMenuGroup( {
 	navigate,
 	useExtraCommands,
 	wpcom,
+	currentRoute,
 }: CommandMenuGroupProps ) {
 	const { commands, filterNotice, emptyListNotice } = useCommandPalette( {
 		currentSiteId,
@@ -114,6 +117,7 @@ export function CommandMenuGroup( {
 		navigate,
 		useExtraCommands,
 		wpcom,
+		currentRoute,
 	} );
 
 	useEffect( () => {
@@ -228,6 +232,7 @@ interface CommandPaletteProps {
 	navigate: ( path: string, openInNewTab: boolean ) => void;
 	useExtraCommands?: ( options: useExtraCommandsParams ) => CommandType[];
 	wpcom: WPCOM;
+	currentRoute: string | null;
 }
 
 const NotFoundMessage = ( {
@@ -259,6 +264,7 @@ export const CommandPalette = ( {
 	navigate,
 	useExtraCommands,
 	wpcom,
+	currentRoute,
 }: CommandPaletteProps ) => {
 	const [ placeHolderOverride, setPlaceholderOverride ] = useState( '' );
 	const [ search, setSearch ] = useState( '' );
@@ -266,9 +272,6 @@ export const CommandPalette = ( {
 	const [ isOpen, setIsOpen ] = useState( false );
 	const [ footerMessage, setFooterMessage ] = useState( '' );
 	const [ emptyListNotice, setEmptyListNotice ] = useState( '' );
-	// TODO: Find an alternative way to use the current route.
-	//const currentRoute = useSelector( ( state: object ) => getCurrentRoutePattern( state ) );
-	const currentRoute = window.location.pathname;
 	const open = useCallback( () => {
 		setIsOpen( true );
 		recordTracksEvent( 'calypso_hosting_command_palette_open', {

@@ -537,31 +537,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@automattic/command-palette-wp-admin@workspace:apps/command-palette-wp-admin":
-  version: 0.0.0-use.local
-  resolution: "@automattic/command-palette-wp-admin@workspace:apps/command-palette-wp-admin"
-  dependencies:
-    "@automattic/calypso-apps-builder": "workspace:^"
-    "@automattic/calypso-build": "workspace:^"
-    "@automattic/calypso-eslint-overrides": "workspace:^"
-    "@automattic/command-palette": "workspace:^"
-    "@tanstack/react-query": "npm:^5.15.5"
-    "@wordpress/data": "npm:^9.21.0"
-    "@wordpress/dependency-extraction-webpack-plugin": "npm:^5.2.0"
-    "@wordpress/dom-ready": "npm:^3.51.0"
-    calypso: "workspace:^"
-    npm-run-all: "npm:^4.1.5"
-    postcss: "npm:^8.4.5"
-    react: "npm:^18.2.0"
-    react-dom: "npm:^18.2.0"
-    redux: "npm:^4.2.1"
-    webpack: "npm:^5.90.1"
-    webpack-bundle-analyzer: "npm:^4.10.1"
-    wpcom: "workspace:^"
-    wpcom-proxy-request: "workspace:^"
-  languageName: unknown
-  linkType: soft
-
 "@automattic/command-palette@workspace:^, @automattic/command-palette@workspace:packages/command-palette":
   version: 0.0.0-use.local
   resolution: "@automattic/command-palette@workspace:packages/command-palette"

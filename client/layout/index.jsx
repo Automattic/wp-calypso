@@ -37,6 +37,7 @@ import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { getCurrentOAuth2Client } from 'calypso/state/oauth2-clients/ui/selectors';
 import { getPreference } from 'calypso/state/preferences/selectors';
 import getCurrentQueryArguments from 'calypso/state/selectors/get-current-query-arguments';
+import { getCurrentRoutePattern } from 'calypso/state/selectors/get-current-route-pattern';
 import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
 import isWooCommerceCoreProfilerFlow from 'calypso/state/selectors/is-woocommerce-core-profiler-flow';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
@@ -347,6 +348,7 @@ class Layout extends Component {
 						navigate={ navigate }
 						useExtraCommands={ useCommandsArrayWpcom }
 						wpcom={ wpcom }
+						currentRoute={ this.props.currentRoutePattern }
 					/>
 				) }
 			</div>
@@ -435,6 +437,7 @@ export default withCurrentRoute(
 			sidebarIsCollapsed: sectionName !== 'reader' && getSidebarIsCollapsed( state ),
 			userAllowedToHelpCenter,
 			currentRoute,
+			currentRoutePattern: getCurrentRoutePattern( state ),
 		};
 	} )( Layout )
 );
