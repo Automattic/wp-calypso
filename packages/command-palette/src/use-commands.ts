@@ -12,6 +12,7 @@ interface useCommandNavigationOptions {
 export interface useCommandsParams {
 	setSelectedCommandName: ( name: string ) => void;
 	navigate: ( path: string, openInNewTab: boolean ) => void;
+	currentRoute: string | null;
 }
 
 function useCommandNavigation( { navigate, currentRoute }: useCommandNavigationOptions ) {
@@ -33,7 +34,11 @@ function useCommandNavigation( { navigate, currentRoute }: useCommandNavigationO
 	return commandNavigation;
 }
 
-export const useCommands = ( { setSelectedCommandName, navigate }: useCommandsParams ) => {
+export const useCommands = ( {
+	setSelectedCommandName,
+	navigate,
+	currentRoute,
+}: useCommandsParams ) => {
 	const { __, _x } = useI18n();
 	const setStateCallback =
 		( actionName: string, placeholder: string = __( 'Select a site', __i18n_text_domain__ ) ) =>
@@ -43,7 +48,7 @@ export const useCommands = ( { setSelectedCommandName, navigate }: useCommandsPa
 			setPlaceholderOverride( placeholder );
 		};
 
-	const commandNavigation = useCommandNavigation( { navigate } );
+	const commandNavigation = useCommandNavigation( { navigate, currentRoute } );
 
 	const commands: Command[] = [
 		{

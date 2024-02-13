@@ -170,6 +170,7 @@ export const useCommandPalette = ( {
 	const defaultCommands = useCommands( {
 		setSelectedCommandName,
 		navigate,
+		currentRoute,
 	} ) as Command[];
 
 	// TODO: Remove after porting all commands.

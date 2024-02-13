@@ -418,6 +418,7 @@ export const CommandPalette = ( {
 							navigate={ navigate }
 							useExtraCommands={ useExtraCommands }
 							wpcom={ wpcom }
+							currentRoute={ currentRoute }
 						/>
 					</Command.List>
 				</Command>
