@@ -45,17 +45,17 @@
 	"devDependencies": {
 		"@automattic/calypso-build": "workspace:^",
 		"@automattic/calypso-typescript-config": "workspace:^",
-		"@testing-library/jest-dom": "^6.3.0",
-		"@testing-library/react": "^14.1.2",
+		"@testing-library/jest-dom": "^6.4.1",
+		"@testing-library/react": "^14.2.1",
 		"postcss": "^8.4.5",
 		"react": "^18.2.0",
 		"react-dom": "^18.2.0",
 		"typescript": "^5.3.3",
-		"webpack": "^5.90.0"
+		"webpack": "^5.90.1"
 	},
 	"peerDependencies": {
 		"@babel/runtime": "^7.23.8",
-		"@wordpress/data": "^9.20.0",
+		"@wordpress/data": "^9.21.0",
 		"react": "^18.2.0",
 		"react-dom": "^18.2.0"
 	},
