@@ -5,10 +5,9 @@ import styled from '@emotion/styled';
 import { __ } from '@wordpress/i18n';
 import { useCommandState } from 'cmdk';
 import { useCallback } from 'react';
-import { SiteExcerptData } from './site-excerpt-types';
 //import { useCurrentSiteRankTop } from './use-current-site-rank-top';
 import { useCommands } from './use-commands';
-import { useSites } from './use-sites';
+import { SiteData, useSites } from './use-sites';
 import { useSitesSortingQuery } from './use-sites-sorting-query';
 import { isCustomDomain } from './utils';
 import type { WPCOM } from 'wpcom';
@@ -41,13 +40,13 @@ type OnClickSiteFunction = ( {
 	command,
 }: {
 	close: CloseFunction;
-	site: SiteExcerptData;
+	site: SiteData;
 	command: Command;
 } ) => void;
 interface SiteFunctions {
 	capabilityFilter?: string;
 	onClick: OnClickSiteFunction;
-	filter?: ( site: SiteExcerptData ) => boolean | undefined | null;
+	filter?: ( site: SiteData ) => boolean | undefined | null;
 	filterNotice?: string;
 	emptyListNotice?: string;
 }
@@ -108,7 +107,7 @@ const useSiteToAction = () => {
 				search,
 			}: SiteToActionParameters[ 'properties' ]
 		) =>
-			( site: SiteExcerptData ): Command => {
+			( site: SiteData ): Command => {
 				const siteName = site.name || site.URL; // Use site.name if present, otherwise default to site.URL
 				return {
 					name: `${ site.ID }`,
@@ -214,7 +213,7 @@ export const useCommandPalette = ( {
 				} );
 			}
 			if ( sortedSites.length === 0 ) {
-				emptyListNotice = __( "You don't have any sites yet." );
+				emptyListNotice = __( "You don't have any sites yet.", __i18n_text_domain__ );
 			} else if ( filteredSites.length === 0 ) {
 				emptyListNotice = selectedCommand.siteFunctions?.emptyListNotice;
 			}

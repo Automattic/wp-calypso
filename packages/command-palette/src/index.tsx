@@ -208,7 +208,7 @@ function CommandInput( {
 			ref={ commandMenuInput }
 			value={ search }
 			onValueChange={ setSearch }
-			placeholder={ placeholder || __( 'Search for commands' ) }
+			placeholder={ placeholder || __( 'Search for commands', __i18n_text_domain__ ) }
 			aria-activedescendant={ itemId }
 		/>
 	);
@@ -248,7 +248,7 @@ const NotFoundMessage = ( {
 		return trackNotFoundDebounced.cancel;
 	}, [ search, selectedCommandName, trackNotFoundDebounced ] );
 
-	return <>{ emptyListNotice || __( 'No results found.' ) }</>;
+	return <>{ emptyListNotice || __( 'No results found.', __i18n_text_domain__ ) }</>;
 };
 
 export const CommandPalette = ( { navigate, useExtraCommands, wpcom }: CommandPaletteProps ) => {
@@ -357,13 +357,17 @@ export const CommandPalette = ( { navigate, useExtraCommands, wpcom }: CommandPa
 			__experimentalHideHeader
 		>
 			<StyledCommandsMenuContainer className="commands-command-menu__container">
-				<Command label={ __( 'Command palette' ) } onKeyDown={ onKeyDown } filter={ commandFilter }>
+				<Command
+					label={ __( 'Command palette', __i18n_text_domain__ ) }
+					onKeyDown={ onKeyDown }
+					filter={ commandFilter }
+				>
 					<div className="commands-command-menu__header">
 						{ selectedCommandName ? (
 							<BackButton
 								type="button"
 								onClick={ () => goBackToRootCommands( false ) }
-								aria-label={ __( 'Go back to the previous screen' ) }
+								aria-label={ __( 'Go back to the previous screen', __i18n_text_domain__ ) }
 							>
 								<Icon icon={ backIcon } />
 							</BackButton>

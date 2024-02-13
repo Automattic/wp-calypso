@@ -1,5 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
 import { getJetpackSiteCollisions, getUnmappedUrl, urlToSlug, withoutHttp } from './utils';
+import type { SiteDetails, SiteDetailsOptions } from '@automattic/data-stores';
 import type { WPCOM } from 'wpcom';
 
 // Performance-optimized request for lists of sites.
@@ -40,6 +41,18 @@ export const SITE_REQUEST_OPTIONS = [
 	'wpcom_staging_blog_ids',
 	'wpcom_admin_interface',
 ] as const;
+
+export type SiteNetworkData = Pick< SiteDetails, ( typeof SITE_REQUEST_FIELDS )[ number ] > & {
+	options?: Pick< SiteDetailsOptions, ( typeof SITE_REQUEST_OPTIONS )[ number ] >;
+};
+
+export type SiteData = Pick<
+	SiteDetails,
+	( typeof SITE_REQUEST_FIELDS )[ number ] | ( typeof SITE_COMPUTED_FIELDS )[ number ]
+> & {
+	title: string;
+	options?: Pick< SiteDetailsOptions, ( typeof SITE_REQUEST_OPTIONS )[ number ] >;
+};
 
 export const useSites = ( wpcom: WPCOM ) =>
 	useQuery( {

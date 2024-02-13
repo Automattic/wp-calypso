@@ -38,7 +38,7 @@ function useCommandNavigation( { navigate }: useCommandNavigationOptions ) {
 export const useCommands = ( { setSelectedCommandName, navigate }: useCommandsParams ) => {
 	const { __, _x } = useI18n();
 	const setStateCallback =
-		( actionName: string, placeholder: string = __( 'Select a site' ) ) =>
+		( actionName: string, placeholder: string = __( 'Select a site', __i18n_text_domain__ ) ) =>
 		( { setSearch, setPlaceholderOverride }: CommandCallBackParams ) => {
 			setSearch( '' );
 			setSelectedCommandName( actionName );
@@ -50,25 +50,32 @@ export const useCommands = ( { setSelectedCommandName, navigate }: useCommandsPa
 	const commands: Command[] = [
 		{
 			name: 'viewMySites',
-			label: __( 'View my sites' ),
+			label: __( 'View my sites', __i18n_text_domain__ ),
 			searchLabel: [
-				_x( 'view my sites', 'Keyword for the View my sites command' ),
-				_x( 'manage sites', 'Keyword for the View my sites command' ),
-				_x( 'sites dashboard', 'Keyword for the View my sites command' ),
+				_x( 'view my sites', 'Keyword for the View my sites command', __i18n_text_domain__ ),
+				_x( 'manage sites', 'Keyword for the View my sites command', __i18n_text_domain__ ),
+				_x( 'sites dashboard', 'Keyword for the View my sites command', __i18n_text_domain__ ),
 			].join( ' ' ),
 			callback: commandNavigation( `/sites` ),
 			icon: wordpressIcon,
 		},
 		{
 			name: 'openSiteDashboard',
-			label: __( 'Open site dashboard' ),
+			label: __( 'Open site dashboard', __i18n_text_domain__ ),
 			searchLabel: [
-				_x( 'open site dashboard', 'Keyword for the Open site dashboard command' ),
-				_x( 'admin', 'Keyword for the Open site dashboard command' ),
-				_x( 'wp-admin', 'Keyword for the Open site dashboard command' ),
+				_x(
+					'open site dashboard',
+					'Keyword for the Open site dashboard command',
+					__i18n_text_domain__
+				),
+				_x( 'admin', 'Keyword for the Open site dashboard command', __i18n_text_domain__ ),
+				_x( 'wp-admin', 'Keyword for the Open site dashboard command', __i18n_text_domain__ ),
 			].join( ' ' ),
 			context: [ '/sites' ],
-			callback: setStateCallback( 'openSiteDashboard', __( 'Select site to open dashboard' ) ),
+			callback: setStateCallback(
+				'openSiteDashboard',
+				__( 'Select site to open dashboard', __i18n_text_domain__ )
+			),
 			siteFunctions: {
 				onClick: ( param ) => commandNavigation( `/home/${ param.site.slug }` )( param ),
 			},
