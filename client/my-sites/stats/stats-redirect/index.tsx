@@ -24,7 +24,7 @@ interface StatsRedirectFlowProps {
 
 const StatsRedirectFlow: React.FC< StatsRedirectFlowProps > = ( { children } ) => {
 	const [ isRequestingNotices, setIsRequestingNotices ] = useState( false );
-	const [ purchaseNotPosponed, setPurchaseNotPosponed ] = useState( false );
+	const [ purchaseNotPostponed, setPurchaseNotPostponed ] = useState( false );
 
 	const siteId = useSelector( getSelectedSiteId );
 	const siteSlug = useSelector( ( state ) => getSiteSlug( state, siteId ) );
@@ -55,7 +55,7 @@ const StatsRedirectFlow: React.FC< StatsRedirectFlowProps > = ( { children } ) =
 	// TODO: Investigate useNoticeVisibilityQuery.
 	// Tempoararily moved away from this to fix a page refresh bug.
 	/*
-	const { isFetching: isRequestingNotices, data: purchaseNotPosponed } = useNoticeVisibilityQuery(
+	const { isFetching: isRequestingNotices, data: purchaseNotPostponed } = useNoticeVisibilityQuery(
 		siteId,
 		'focus_jetpack_purchase',
 		canUserManageOptions
@@ -68,7 +68,7 @@ const StatsRedirectFlow: React.FC< StatsRedirectFlowProps > = ( { children } ) =
 			const notices = await fetchNoticesAsync( siteId );
 			const processedNotices = processConflictNotices( notices );
 			setIsRequestingNotices( false );
-			setPurchaseNotPosponed( processedNotices?.focus_jetpack_purchase );
+			setPurchaseNotPostponed( processedNotices?.focus_jetpack_purchase );
 		}
 		setIsRequestingNotices( true );
 		fetchNotices();
@@ -85,7 +85,7 @@ const StatsRedirectFlow: React.FC< StatsRedirectFlowProps > = ( { children } ) =
 		config.isEnabled( 'stats/checkout-flows-v2' ) &&
 		isSiteJetpackNotAtomic &&
 		! hasPlan &&
-		purchaseNotPosponed &&
+		purchaseNotPostponed &&
 		qualifiedUser;
 
 	const dispatch = useDispatch();
@@ -97,11 +97,11 @@ const StatsRedirectFlow: React.FC< StatsRedirectFlowProps > = ( { children } ) =
 		} else {
 			dispatch(
 				receiveStatNoticeSettings( siteId, {
-					focus_jetpack_purchase: purchaseNotPosponed,
+					focus_jetpack_purchase: purchaseNotPostponed,
 				} )
 			);
 		}
-	}, [ dispatch, redirectToPurchase, siteId, isFetching, purchaseNotPosponed ] );
+	}, [ dispatch, redirectToPurchase, siteId, isFetching, purchaseNotPostponed ] );
 
 	// render purchase flow for Jetpack sites created after February 2024
 	if ( ! isFetching && redirectToPurchase && siteSlug ) {
