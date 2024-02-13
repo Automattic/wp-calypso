@@ -1,4 +1,5 @@
 import { LoadingPlaceholder } from '@automattic/components';
+import './style.scss';
 
 export const GitHubLoadingPlaceholder = () => {
 	return (
