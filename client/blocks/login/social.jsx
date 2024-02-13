@@ -114,7 +114,7 @@ class SocialLoginForm extends Component {
 		);
 	};
 
-	handleGitHubResponse = ( access_token, triggeredByUser = true ) => {
+	handleGitHubResponse = ( { access_token }, triggeredByUser = true ) => {
 		const { onSuccess, socialService } = this.props;
 		let redirectTo = this.props.redirectTo;
 
