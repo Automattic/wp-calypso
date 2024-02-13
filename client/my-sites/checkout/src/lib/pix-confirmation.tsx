@@ -4,6 +4,7 @@ import styled from '@emotion/styled';
 import { ClipboardButton } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import { QRCodeSVG } from 'qrcode.react';
+import { useState } from 'react';
 import AkismetLogo from 'calypso/components/akismet-logo';
 import JetpackLogo from 'calypso/components/jetpack-logo';
 
@@ -114,9 +115,10 @@ export function PixConfirmation( {
 	isJetpackNotAtomic: boolean;
 } ) {
 	const translate = useTranslate();
+	const [ hasCopied, setHasCopied ] = useState( false );
 
 	const displayCopyConfirmation = () => {
-		// FIXME
+		setHasCopied( true );
 	};
 
 	return (
@@ -163,7 +165,7 @@ export function PixConfirmation( {
 								text={ qrCode }
 								className="pix-copy-code-button"
 							>
-								{ translate( 'Copy the Pix code' ) }
+								{ hasCopied ? translate( 'Copied!' ) : translate( 'Copy the Pix code' ) }
 							</ClipboardButton>
 						</div>
 					</div>
