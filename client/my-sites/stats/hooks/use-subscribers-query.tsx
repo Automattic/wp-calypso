@@ -1,6 +1,7 @@
 import { isValueTruthy } from '@automattic/wpcom-checkout';
 import { useQuery, useQueries, UseQueryResult } from '@tanstack/react-query';
 import wpcom from 'calypso/lib/wp';
+import getDefaultQueryParams from './default-query-params';
 
 export interface SubscriberPayload {
 	date: string;
@@ -70,6 +71,7 @@ export default function useSubscribersQuery(
 	const queryDate = date ? date.toISOString() : new Date().toISOString();
 
 	return useQuery( {
+		...getDefaultQueryParams< SubscriberPayload >(),
 		queryKey: [ 'stats', 'subscribers', siteId, period, quantity, queryDate ],
 		queryFn: () => querySubscribers( siteId, period, quantity, queryDate ),
 		select: selectSubscribers,
@@ -90,10 +92,10 @@ export function useSubscribersQueries(
 		staleTime: 1000 * 60 * 5, // 5 minutes
 	} ) );
 
-	const results = useQueries( { queries: queryConfigs } ) as UseQueryResult<
-		SubscriberPayload,
-		unknown
-	>[];
+	const results = useQueries( {
+		...getDefaultQueryParams< SubscribersData[] >(),
+		queries: queryConfigs,
+	} );
 
 	const isLoading = results.some( ( result ) => result.isLoading );
 	const isError = results.some( ( result ) => result.isError );
