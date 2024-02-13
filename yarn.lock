@@ -12138,6 +12138,7 @@ __metadata:
     core-js-bundle: "npm:^3.6.4"
     cpf_cnpj: "npm:^0.2.0"
     creditcards: "npm:^3.1.0"
+    csv-parse: "npm:^5.1.0"
     d3-array: "npm:^2.4.0"
     d3-axis: "npm:^1.0.12"
     d3-scale: "npm:^3.2.1"

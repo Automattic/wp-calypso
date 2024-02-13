@@ -2,7 +2,7 @@ import { useMutation, UseMutationOptions, useQueryClient } from '@tanstack/react
 import { useCallback } from 'react';
 import wp from 'calypso/lib/wp';
 import { GITHUB_DEPLOYMENTS_QUERY_KEY } from 'calypso/my-sites/github-deployments/constants';
-import { GITHUB_REPOSITORIES_QUERY_KEY } from 'calypso/my-sites/github-deployments/use-github-repositories-query';
+import { CODE_DEPLOYMENTS_QUERY_KEY } from 'calypso/my-sites/github-deployments/use-code-deployments-query';
 
 interface MutationVariables {
 	externalRepositoryId: number;
@@ -50,7 +50,7 @@ export const useCreateCodeDeployment = (
 		...options,
 		onSuccess: async ( ...args ) => {
 			await queryClient.invalidateQueries( {
-				queryKey: [ GITHUB_DEPLOYMENTS_QUERY_KEY, GITHUB_REPOSITORIES_QUERY_KEY ],
+				queryKey: [ GITHUB_DEPLOYMENTS_QUERY_KEY, CODE_DEPLOYMENTS_QUERY_KEY, siteId ],
 			} );
 			options.onSuccess?.( ...args );
 		},

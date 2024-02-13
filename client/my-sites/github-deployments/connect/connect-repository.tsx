@@ -4,21 +4,22 @@ import { __, sprintf } from '@wordpress/i18n';
 import { ChangeEvent, useState } from 'react';
 import FormFieldset from 'calypso/components/forms/form-fieldset/index';
 import FormTextInput from 'calypso/components/forms/form-text-input/index';
-import { useCreateCodeDeployment } from 'calypso/my-sites/github-deployments/connected/repositories/use-create-code-deployment';
+import { useCreateCodeDeployment } from 'calypso/my-sites/github-deployments/connect/use-create-code-deployment';
 import { GitHubAccountData } from 'calypso/my-sites/github-deployments/use-github-accounts-query';
 import { useGithubRepositoryBranchesQuery } from 'calypso/my-sites/github-deployments/use-github-repository-branches-query';
-import { useDispatch, useSelector } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import { useDispatch, useSelector } from 'calypso/state/index';
 import { errorNotice, successNotice } from 'calypso/state/notices/actions';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors/index';
-import { GitHubRepositoryData } from '../../use-github-repositories-query';
+import { GitHubRepositoryData } from '../use-github-repositories-query';
 
-import './style.scss';
+import './repositories/style.scss';
 
 interface ConnectRepositoryDialogProps {
 	repository: GitHubRepositoryData;
 	account: GitHubAccountData;
 	goBack(): void;
+	onConnected(): void;
 }
 
 const noticeOptions = {
@@ -29,12 +30,13 @@ export const GitHubConnectRepository = ( {
 	repository,
 	account,
 	goBack,
+	onConnected,
 }: ConnectRepositoryDialogProps ) => {
 	const dispatch = useDispatch();
 	const [ branch, setBranch ] = useState( repository.default_branch );
 	const [ destPath, setDestPath ] = useState( '/' );
 	const [ isAutoDeploy, setIsAutoDeploy ] = useState( false );
-	const selectedSiteId = useSelector( getSelectedSiteId );
+	const siteId = useSelector( getSelectedSiteId );
 
 	const { data: branches = [], isLoading: isFetchingBranches } = useGithubRepositoryBranchesQuery(
 		repository.full_name
@@ -42,9 +44,10 @@ export const GitHubConnectRepository = ( {
 
 	const branchOptions = branches.map( ( branch ) => ( { value: branch, label: branch } ) );
 
-	const { createDeployment, isPending } = useCreateCodeDeployment( selectedSiteId, {
+	const { createDeployment, isPending } = useCreateCodeDeployment( siteId, {
 		onSuccess: () => {
 			dispatch( successNotice( __( 'Deployment created.' ), noticeOptions ) );
+			onConnected();
 		},
 		onError: ( error ) => {
 			dispatch(

@@ -1,0 +1,48 @@
+.github-deployments-list {
+	display: flex;
+	flex-direction: column;
+	gap: 32px;
+
+	.github-deployments__search {
+		max-width: 504px;
+	}
+
+	table {
+		border-collapse: collapse;
+	}
+
+	th {
+		.button-plain {
+			text-align: left;
+			line-height: 20px;
+			letter-spacing: -0.15px;
+
+			&:focus {
+				outline: thin dotted;
+			}
+		}
+	}
+
+	th,
+	td {
+		padding: 8px 0;
+		font-weight: normal;
+	}
+
+	th:first-child {
+		width: 350px;
+	}
+
+	tbody tr:not(:last-of-type) {
+		border-bottom: 1px solid var(--color-border-subtle);
+	}
+
+	td {
+		vertical-align: middle !important;
+	}
+
+	tr td:last-child {
+		text-align: right;
+	}
+
+}
