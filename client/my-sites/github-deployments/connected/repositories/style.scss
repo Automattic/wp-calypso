@@ -50,7 +50,6 @@
 }
 
 .github-deployments-repository-list {
-	font-size: $font-body-small;
 
 	table {
 		border-collapse: collapse;
@@ -63,7 +62,7 @@
 	}
 
 	th:first-child {
-		width: 250px;
+		width: 350px;
 	}
 
 	tbody tr:not(:last-of-type) {
@@ -83,8 +82,9 @@
 	tr td:last-child {
 		text-align: right;
 	}
+}
 
-	&__adjust-permissions {
-		font-size: smaller;
-	}
+.github-deployments-adjust-permissions {
+	font-size: $font-body-small;
+	margin-bottom: 0;
 }

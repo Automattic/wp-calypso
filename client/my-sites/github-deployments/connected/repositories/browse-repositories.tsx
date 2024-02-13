@@ -1,7 +1,12 @@
 import { useState } from 'react';
+import Pagination from 'calypso/components/pagination/index';
+import { GitHubLoadingPlaceholder } from 'calypso/my-sites/github-deployments/loading-placeholder';
 import { GitHubAccountsDropdown } from '../../components/accounts-dropdown/index';
 import { GitHubAccountData } from '../../use-github-accounts-query';
-import { GitHubRepositoryData } from '../../use-github-repositories-query';
+import {
+	GitHubRepositoryData,
+	useGithubRepositoriesQuery,
+} from '../../use-github-repositories-query';
 import { GitHubRepositoryList } from './repository-list';
 import { SearchRepos } from './search-repos';
 import './style.scss';
@@ -24,16 +29,30 @@ function filterRepositories( repositories: GitHubRepositoryData[], query: string
 	return repositories;
 }
 
+const pageSize = 10;
+
 export const GitHubBrowseRepositories = ( {
 	accounts,
 	account,
-	repositories,
 	onSelectRepository,
 	onChangeAccount,
 }: GitHubBrowseRepositoriesProps ) => {
-	const [ query, setQuery ] = useState( '' );
+	const [ page, setPage ] = useState( 1 );
+	const { data: repositories = [], isLoading: isLoadingRepositories } = useGithubRepositoriesQuery(
+		account.external_id
+	);
 
+	const [ query, setQuery ] = useState( '' );
 	const filteredRepositories = filterRepositories( repositories, query );
+	const currentPage = filteredRepositories.slice(
+		( page - 1 ) * pageSize,
+		( page - 1 ) * pageSize + pageSize
+	);
+
+	if ( isLoadingRepositories ) {
+		return <GitHubLoadingPlaceholder />;
+	}
+
 	return (
 		<div className="github-deployments-repositories">
 			<div className="github-deployments-repositories__search-bar">
@@ -44,7 +63,13 @@ export const GitHubBrowseRepositories = ( {
 				/>
 				<SearchRepos value={ query } onChange={ setQuery } />
 			</div>
-			<GitHubRepositoryList repositories={ filteredRepositories } onSelect={ onSelectRepository } />
+			<GitHubRepositoryList repositories={ currentPage } onSelect={ onSelectRepository } />
+			<Pagination
+				page={ page }
+				perPage={ pageSize }
+				total={ repositories.length }
+				pageClick={ setPage }
+			/>
 		</div>
 	);
 };

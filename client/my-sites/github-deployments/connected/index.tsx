@@ -5,9 +5,8 @@ import { arrowLeft } from '@wordpress/icons';
 import { useState } from 'react';
 import { GitHubBrowseRepositories } from 'calypso/my-sites/github-deployments/connected/repositories/browse-repositories';
 import { GitHubConnectRepository } from 'calypso/my-sites/github-deployments/connected/repositories/connect-repository';
-import { GitHubLoadingPlaceholder } from 'calypso/my-sites/github-deployments/loading-placeholder';
 import { GitHubAccountData } from '../use-github-accounts-query';
-import { GitHubRepositoryData, useGithubRepositoriesQuery } from '../use-github-repositories-query';
+import { GitHubRepositoryData } from '../use-github-repositories-query';
 
 import './style.scss';
 
@@ -19,10 +18,6 @@ export const GitHubConnected = ( { accounts }: GitHubConnectedProps ) => {
 	const [ repository, setRepository ] = useState< GitHubRepositoryData | null >( null );
 	const [ account, setAccount ] = useState( accounts[ 0 ] );
 
-	const { data: repositories = [], isLoading: isLoadingRepositories } = useGithubRepositoriesQuery(
-		account.external_id
-	);
-
 	function renderBody() {
 		if ( repository ) {
 			return (
@@ -33,12 +28,9 @@ export const GitHubConnected = ( { accounts }: GitHubConnectedProps ) => {
 				/>
 			);
 		}
-		if ( isLoadingRepositories ) {
-			return <GitHubLoadingPlaceholder />;
-		}
+
 		return (
 			<GitHubBrowseRepositories
-				repositories={ repositories }
 				accounts={ accounts }
 				account={ account }
 				onSelectRepository={ setRepository }
