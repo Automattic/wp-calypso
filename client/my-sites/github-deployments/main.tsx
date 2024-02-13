@@ -1,28 +1,26 @@
-import { Button } from '@automattic/components';
 import { translate } from 'i18n-calypso';
 import { useState } from 'react';
 import DocumentHead from 'calypso/components/data/document-head';
-import FormattedHeader from 'calypso/components/formatted-header';
 import InlineSupportLink from 'calypso/components/inline-support-link';
 import Main from 'calypso/components/main';
-import { CodeDeployments } from 'calypso/my-sites/github-deployments/deployments/index';
+import NavigationHeader from 'calypso/components/navigation-header';
 import { useSelector } from 'calypso/state/index';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors/index';
 import { GitHubAuthorize } from './authorize';
+import { GitHubAuthorizeButton } from './authorize/authorize-button';
 import { GitHubConnect } from './connect';
+import { ConnectionWizardButton } from './connection-wizard-button';
+import { CodeDeployments } from './deployments';
 import { GitHubLoadingPlaceholder } from './loading-placeholder';
 import { useCodeDeploymentsQuery } from './use-code-deployments-query';
 import { useGithubAccountsQuery } from './use-github-accounts-query';
-
 import './style.scss';
-
-// Follow test plan at D137459 to add your token for testing.
 
 type Tab = 'list' | 'connect';
 
 export function GitHubDeployments() {
 	const titleHeader = translate( 'GitHub Deployments' );
-	const siteId = useSelector( getSelectedSiteId ) as number;
+	const siteId = useSelector( getSelectedSiteId );
 	const [ tab, setTab ] = useState< Tab >( 'list' );
 
 	const { data: accounts = [], isLoading: isLoadingAccounts } = useGithubAccountsQuery();
@@ -40,8 +38,24 @@ export function GitHubDeployments() {
 		setTab( 'list' );
 	};
 
+	const renderTopRightButton = () => {
+		if ( isLoadingDeployments || isLoadingAccounts ) {
+			return null;
+		}
+
+		if ( showConnectButton ) {
+			return <ConnectionWizardButton onClick={ handleConnect } />;
+		}
+
+		if ( deployments && ! accounts ) {
+			return <GitHubAuthorizeButton />;
+		}
+
+		return null;
+	};
+
 	const renderContent = () => {
-		if ( isLoadingAccounts || isLoadingDeployments ) {
+		if ( isLoadingDeployments || isLoadingAccounts ) {
 			return <GitHubLoadingPlaceholder />;
 		}
 
@@ -58,30 +72,23 @@ export function GitHubDeployments() {
 
 	return (
 		<Main className="github-deployments" fullWidthLayout>
-			<div className="github-deployments__page-header">
-				<DocumentHead title={ titleHeader } />
-				<FormattedHeader
-					align="left"
-					headerText={ titleHeader }
-					subHeaderText={ translate(
-						"Changes pushed to the selected branch's repos will be automatically deployed. {{learnMoreLink}}Learn more{{/learnMoreLink}}.",
-						{
-							components: {
-								learnMoreLink: (
-									<InlineSupportLink supportContext="site-monitoring" showIcon={ false } />
-								),
-							},
-						}
-					) }
-				></FormattedHeader>
-				{ showConnectButton && (
-					<div>
-						<Button primary onClick={ handleConnect }>
-							{ translate( 'Connect repository' ) }
-						</Button>
-					</div>
+			<DocumentHead title={ titleHeader } />
+			<NavigationHeader
+				compactBreadcrumb
+				title={ titleHeader }
+				subtitle={ translate(
+					"Changes pushed to the selected branch's repos will be automatically deployed. {{learnMoreLink}}Learn more{{/learnMoreLink}}.",
+					{
+						components: {
+							learnMoreLink: (
+								<InlineSupportLink supportContext="site-monitoring" showIcon={ false } />
+							),
+						},
+					}
 				) }
-			</div>
+			>
+				{ renderTopRightButton() }
+			</NavigationHeader>
 			{ renderContent() }
 		</Main>
 	);
