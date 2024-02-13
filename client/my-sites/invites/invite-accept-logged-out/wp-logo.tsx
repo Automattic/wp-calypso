@@ -3,6 +3,7 @@ import React from 'react';
 export const WpLoggedOutInviteLogo: React.FC = () => {
 	return (
 		<svg
+			className="logged-out-wp-logo"
 			aria-hidden="true"
 			role="img"
 			focusable="false"
