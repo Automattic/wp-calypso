@@ -6,9 +6,9 @@ export const BellIcon = ( { newItems, active } ) => {
 			<svg
 				className="sidebar__menu-icon sidebar_svg-notifications"
 				fill="none"
-				height="20"
-				viewBox="2 2 24 24"
-				width="20"
+				height="24"
+				viewBox="0 0 24 24"
+				width="24"
 				xmlns="http://www.w3.org/2000/svg"
 			>
 				<path

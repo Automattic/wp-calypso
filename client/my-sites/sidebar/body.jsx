@@ -1,7 +1,6 @@
 import { useSelector } from 'react-redux';
 import { useCurrentRoute } from 'calypso/components/route';
 import { useGlobalSidebar } from 'calypso/layout/global-sidebar/hooks/use-global-sidebar';
-import SidebarNotifications from 'calypso/layout/global-sidebar/notifications/notifications';
 import SidebarSeparator from 'calypso/layout/sidebar/separator';
 import isNotificationsOpen from 'calypso/state/selectors/is-notifications-open';
 import isSiteWpcomAtomic from 'calypso/state/selectors/is-site-wpcom-atomic';
@@ -41,18 +40,6 @@ export const MySitesSidebarUnifiedBody = ( { path, children } ) => {
 
 				if ( 'separator' === item?.type ) {
 					return <SidebarSeparator key={ i } />;
-				}
-
-				if ( 'custom-menu-item' === item?.type && 'notifications' === item?.slug ) {
-					return (
-						<SidebarNotifications
-							key={ item.slug }
-							isShowing={ false }
-							isActive={ true }
-							className="sidebar__item-notifications"
-							title={ item.title }
-						/>
-					);
 				}
 
 				if ( item?.children?.length ) {

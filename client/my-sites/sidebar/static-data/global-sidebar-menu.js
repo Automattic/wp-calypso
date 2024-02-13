@@ -21,24 +21,5 @@ export default function allSitesMenu() {
 			type: 'menu-item',
 			url: '/domains/manage',
 		},
-		{
-			type: 'separator',
-		},
-		{
-			icon: 'custom-icon-reader',
-			slug: 'reader',
-			title: translate( 'Reader' ),
-			navigationLabel: translate( 'View plugins for all sites' ),
-			type: 'menu-item',
-			url: '/read',
-		},
-		{
-			icon: 'custom-icon-notifications',
-			slug: 'notifications',
-			title: translate( 'Notifications' ),
-			navigationLabel: translate( 'View all notifications' ),
-			type: 'custom-menu-item',
-			url: '/read/notifications',
-		},
 	];
 }
