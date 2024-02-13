@@ -323,12 +323,18 @@ export class RenderDomainsStep extends Component {
 		);
 	};
 
-	handleSkip = ( googleAppsCartItem, shouldHideFreePlan = false, signupDomainOrigin ) => {
+	handleSkip = (
+		googleAppsCartItem,
+		shouldHideFreePlan = false,
+		signupDomainOrigin,
+		migrateSite = false
+	) => {
 		const tracksProperties = Object.assign(
 			{
 				section: this.getAnalyticsSection(),
 				flow: this.props.flowName,
 				step: this.props.stepName,
+				migration: migrateSite,
 			},
 			this.isDependencyShouldHideFreePlanProvided()
 				? { should_hide_free_plan: shouldHideFreePlan }
@@ -346,13 +352,25 @@ export class RenderDomainsStep extends Component {
 		this.props.saveSignupStep( stepData );
 
 		defer( () => {
-			this.submitWithDomain( { googleAppsCartItem, shouldHideFreePlan, signupDomainOrigin } );
+			this.submitWithDomain( {
+				googleAppsCartItem,
+				shouldHideFreePlan,
+				signupDomainOrigin,
+				migrateSite,
+			} );
 		} );
 	};
 
 	handleDomainExplainerClick = () => {
 		const hideFreePlan = true;
 		this.handleSkip( undefined, hideFreePlan, SIGNUP_DOMAIN_ORIGIN.CHOOSE_LATER );
+	};
+
+	handleSiteMigrationClick = () => {
+		const hideFreePlan = true;
+		const migrateSite = true;
+
+		this.handleSkip( undefined, hideFreePlan, SIGNUP_DOMAIN_ORIGIN.SITE_MIGRATION, migrateSite );
 	};
 
 	handleUseYourDomainClick = () => {
@@ -371,7 +389,12 @@ export class RenderDomainsStep extends Component {
 		}
 	};
 
-	submitWithDomain = ( { googleAppsCartItem, shouldHideFreePlan = false, signupDomainOrigin } ) => {
+	submitWithDomain = ( {
+		googleAppsCartItem,
+		shouldHideFreePlan = false,
+		signupDomainOrigin,
+		migrateSite = false,
+	} ) => {
 		const { step } = this.props;
 		const { suggestion } = step;
 
@@ -432,7 +455,10 @@ export class RenderDomainsStep extends Component {
 		);
 
 		this.props.setDesignType( this.getDesignType() );
-		this.props.goToNextStep();
+
+		if ( migrateSite ) {
+			this.props.goToNextStep( 'site-migration' );
+		}
 
 		// Start the username suggestion process.
 		siteUrl && this.props.fetchUsernameSuggestion( siteUrl.split( '.' )[ 0 ] );
@@ -908,6 +934,9 @@ export class RenderDomainsStep extends Component {
 
 		return (
 			<div className="domains__domain-side-content-container">
+				<div className="domains__domain-side-content">
+					<ReskinSideExplainer type="site-migration" onClick={ this.handleSiteMigrationClick } />
+				</div>
 				{ domainsInCart.length > 0 || this.state.wpcomSubdomainSelected ? (
 					<DomainsMiniCart
 						domainsInCart={ domainsInCart }
