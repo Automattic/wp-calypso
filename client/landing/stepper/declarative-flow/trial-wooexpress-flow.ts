@@ -102,9 +102,9 @@ const wooexpress: Flow = {
 		};
 
 		// Despite sending a CHECKING state, this function gets called again with the
-		// /setup/wooexpress/createSite route which has no locale in the path so we need to
+		// /setup/wooexpress/create-site route which has no locale in the path so we need to
 		// redirect off of the first render.
-		// This effects both /setup/wooexpress/<locale> starting points and /setup/wooexpress/createSite/<locale> urls.
+		// This effects both /setup/wooexpress/<locale> starting points and /setup/wooexpress/create-site/<locale> urls.
 		// The double call also hapens on urls without locale.
 		useEffect( () => {
 			// Log when profiler data does not contain valid data.
@@ -173,7 +173,7 @@ const wooexpress: Flow = {
 			const adminUrl = siteId && getSiteOption( siteId, 'admin_url' );
 
 			switch ( currentStep ) {
-				case 'createSite': {
+				case 'create-site': {
 					return navigate( 'processing', {
 						currentStep,
 					} );
