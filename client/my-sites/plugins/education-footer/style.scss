@@ -1,17 +1,31 @@
+@import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/mixins";
 @import "../grid-mixins.scss";
 
 .education-footer__cards {
-	@include display-grid;
-	@include grid-template-columns(3, 24px, 1fr);
+	@include break-small {
+		@include display-grid;
+		@include grid-template-columns(3, 24px, 1fr);
+	}
 
 	.card {
 		font-size: $font-body-small;
+		margin-bottom: 24px;
+
+		@include break-small {
+			margin-bottom: 0;
+		}
 	}
 }
 
 .marketplace__cards {
-	@include display-grid;
-	@include grid-template-columns(3, 20px, 1fr);
+	padding: 0 16px;
+
+	@include break-small {
+		@include display-grid;
+		@include grid-template-columns(3, 20px, 1fr);
+		padding: 0;
+	}
 
 	div {
 		width: 100%;
