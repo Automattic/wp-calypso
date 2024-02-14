@@ -78,10 +78,7 @@ describe( 'useTracking', () => {
 			checklist_completed: false,
 			is_completed: false,
 			order: 4,
-			number_of_steps: 2,
-			number_of_completed_steps: 1,
 			context: 'customer-home',
-			site_intent: 'build',
 		} );
 	} );
 } );

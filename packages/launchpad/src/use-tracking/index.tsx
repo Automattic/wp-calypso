@@ -49,13 +49,10 @@ export const useTracking = ( params: LogParams ) => {
 
 	const trackTaskClick = ( task: Task ) => {
 		recordTracksEvent( 'calypso_launchpad_task_clicked', {
-			number_of_steps: numberOfSteps,
-			number_of_completed_steps: numberOfCompletedSteps,
 			checklist_completed: isCheckListCompleted,
 			is_completed: task.completed,
 			checklist_slug: checklistSlug,
 			context: context,
-			site_intent: siteIntent,
 			task_id: task.id,
 			order: task.order,
 		} );
