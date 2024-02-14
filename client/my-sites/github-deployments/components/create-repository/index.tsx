@@ -9,11 +9,11 @@ export const CreateRepository = () => {
 	const { __ } = useI18n();
 
 	return (
-		<Main fullWidthLayout className="github-deployments-create-repository">
+		<Main fullWidthLayout>
 			<HeaderCake backHref="#">
 				<h1>{ __( 'Create repository' ) }</h1>
 			</HeaderCake>
-			<ActionPanel style={ { margin: 0 } }>
+			<ActionPanel>
 				<ActionPanelBody>
 					<CreateRepositoryForm onRepositoryCreated={ () => {} } />
 				</ActionPanelBody>
