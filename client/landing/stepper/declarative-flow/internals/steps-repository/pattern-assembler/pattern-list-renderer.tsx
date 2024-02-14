@@ -42,7 +42,7 @@ const PatternListItem = ( {
 	onSelect,
 }: PatternListItemProps ) => {
 	const ref = useRef< HTMLButtonElement >();
-	const { ref: inViewRef, inView: inViewOnce } = useInView( {
+	const { ref: inViewRef } = useInView( {
 		triggerOnce: true,
 	} );
 
@@ -75,7 +75,7 @@ const PatternListItem = ( {
 				aria-current={ isSelected }
 				onClick={ () => onSelect( pattern ) }
 			>
-				{ isShown && inViewOnce ? (
+				{ isShown ? (
 					<PatternRenderer
 						key={ pattern.ID }
 						patternId={ encodePatternId( pattern.ID ) }

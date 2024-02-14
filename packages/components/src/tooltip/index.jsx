@@ -25,7 +25,7 @@ function Tooltip( props ) {
 			isVisible={ props.isVisible }
 			position={ props.position }
 			showDelay={ props.showDelay }
-			hideArrow
+			hideArrow={ props.hideArrow ?? true }
 		>
 			{ props.children }
 		</Popover>
