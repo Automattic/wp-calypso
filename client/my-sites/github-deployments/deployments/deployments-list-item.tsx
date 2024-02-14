@@ -8,6 +8,8 @@ import { useSelector } from '../../../state';
 import { manageDeploymentPage } from '../routes';
 import { CodeDeploymentData } from './use-code-deployments-query';
 import { useDeleteCodeDeployment } from './use-delete-code-deployment';
+import { formatDate } from 'calypso/my-sites/github-deployments/utils/Dates';
+import { useLocale } from '@automattic/i18n-utils';
 
 interface GitHubRepositoryListItemProps {
 	deployment: CodeDeploymentData;
@@ -15,6 +17,7 @@ interface GitHubRepositoryListItemProps {
 
 export const DeploymentsListItem = ( { deployment }: GitHubRepositoryListItemProps ) => {
 	const siteSlug = useSelector( getSelectedSiteSlug );
+	const locale = useLocale();
 
 	const { deleteDeployment, isPending } = useDeleteCodeDeployment(
 		deployment.blog_id,
@@ -35,7 +38,7 @@ export const DeploymentsListItem = ( { deployment }: GitHubRepositoryListItemPro
 				<span>Status</span>
 			</td>
 			<td>
-				<span>{ new Date( deployment.updated_on ).toLocaleDateString() }</span>
+				<span>{ formatDate( locale, new Date( deployment.updated_on ) ) }</span>
 			</td>
 			<td>
 				<span>Duration</span>
@@ -48,6 +51,14 @@ export const DeploymentsListItem = ( { deployment }: GitHubRepositoryListItemPro
 						{ ( { onClose } ) => (
 							<Fragment>
 								<MenuGroup>
+									<MenuItem
+										onClick={ () => {
+											page( manageDeploymentPage( siteSlug!, deployment.id ) );
+											onClose();
+										} }
+									>
+										{ __( 'Trigger manual deploy' ) }
+									</MenuItem>
 									<MenuItem
 										onClick={ () => {
 											page( manageDeploymentPage( siteSlug!, deployment.id ) );
