@@ -421,7 +421,7 @@ const AdsFormSettings = () => {
 					<div className="ads__child-settings">
 						<FormSettingExplanation>
 							{ translate(
-								'Enable the GDPR Banner to ensure compliance with EU laws by allowing EU site visitors provide consent for personalized ads.'
+								'Show a cookie banner to all EU and UK site visitors prompting them to consent to their personal data being used to personalize the ads they see. Without proper consents EU/UK visitors will only see lower paying non-personalized ads.'
 							) }
 						</FormSettingExplanation>
 					</div>
