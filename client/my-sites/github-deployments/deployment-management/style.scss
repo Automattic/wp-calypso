@@ -20,6 +20,47 @@
 		padding: 8px;
 		border: 1px solid var(--color-neutral-10);
 		border-radius: 2px;
+		background-color: #fff;
+	}
+
+	.deployment-style {
+		&__repository {
+			label {
+				margin-bottom: 0;
+			}
+		}
+
+		.form-text-input-with-affixes {
+			&:first-of-type {
+				margin-bottom: 8px;
+			}
+
+			&:nth-child(2) {
+				.form-text-input-with-affixes__prefix {
+					border-bottom: none;
+				}
+			}
+
+			svg {
+				border-radius: 15px;
+				color: #fff;
+				fill: #fff;
+
+				&.success {
+					background: green;
+				}
+				&.error {
+					background: red;
+				}
+			}
+		}
+
+		.github-deployments-connect-repository__repository {
+			display: block;
+			border-top: none;
+			margin-bottom: 16px;
+			padding: 16px;
+		}
 	}
 
 	&__automatic-deploys {

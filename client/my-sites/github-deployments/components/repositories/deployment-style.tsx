@@ -1,12 +1,13 @@
 import { FormLabel, Spinner } from '@automattic/components';
-import { Popover, SelectControl } from '@wordpress/components';
+import { Icon, SelectControl, Button } from '@wordpress/components';
+import { check, closeSmall } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
 import { translate } from 'i18n-calypso';
 import { useState } from 'react';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormRadiosBar from 'calypso/components/forms/form-radios-bar';
-import InlineSupportLink from 'calypso/components/inline-support-link';
 import SupportInfo from 'calypso/components/support-info';
+import { FormTextInputWithAffixes } from 'calypso/devdocs/design/playground-scope';
 interface DeploymentStyleProps {
 	onChange?( query: string ): void;
 }
@@ -72,6 +73,41 @@ export const DeploymentStyle = ( { onChange }: DeploymentStyleProps ) => {
 					</div>
 				</FormFieldset>
 			) }
+
+			<FormFieldset>
+				<FormLabel>{ __( 'Workflow check' ) }</FormLabel>
+				<p>
+					{ translate( 'Please edit {{filename}}{{/filename}} and fix the problems we found:', {
+						components: { filename: <span>deploy-live.yml</span> },
+					} ) }
+				</p>
+				<FormTextInputWithAffixes
+					noWrap
+					prefix={ <Icon size={ 25 } icon={ check } className="success" /> }
+					value={ __( 'The workflow is triggered on push' ) }
+					id="site-redirect__input"
+				/>
+				<FormTextInputWithAffixes
+					noWrap
+					prefix={ <Icon size={ 25 } icon={ closeSmall } className="error" /> }
+					value={ __( 'The upload artifact has the required name' ) }
+					id="site-redirect__input"
+				/>
+				<div className="github-deployments-connect-repository__repository">
+					<p>{ __( "Ensure that your workflow generates an artifact named 'wpcom'." ) }</p>
+					<p>
+						- name: Upload the artifact <br></br>uses: actions/upload-artifact@v4 <br></br>with:
+						name: wpcom
+					</p>
+				</div>
+
+				<Button type="submit" className="button form-button">
+					{ __( 'Verify workflow' ) }
+				</Button>
+				<Button type="submit" className="button form-button">
+					{ __( 'Fix workflow for me' ) }
+				</Button>
+			</FormFieldset>
 		</div>
 	);
 };
