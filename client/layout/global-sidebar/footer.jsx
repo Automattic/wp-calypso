@@ -25,10 +25,10 @@ const CustomReaderIcon = () => (
 export const GlobalSidebarFooter = ( { translate, user } ) => {
 	return (
 		<SidebarFooter>
-			<a href="/read" className="sidebar__footer-link">
+			<a href="/read" className="sidebar__footer-link" title={ translate( 'Reader' ) }>
 				<CustomReaderIcon />
 			</a>
-			<a href="/me" className="sidebar__footer-link">
+			<a href="/me" className="sidebar__footer-link" title={ translate( 'Profile' ) }>
 				<Gravatar user={ user } size={ 24 } imgSize={ 24 } />
 			</a>
 			<AsyncLoad
