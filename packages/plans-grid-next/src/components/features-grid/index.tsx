@@ -8,7 +8,7 @@ import {
 import { FoldableCard } from '@automattic/components';
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
-import usePlanForSpotlight from '../../hooks/data-store/use-plan-for-spotlight';
+import useGridPlanForSpotlight from '../../hooks/data-store/use-grid-plan-for-spotlight';
 import useUpgradeClickHandler from '../../hooks/use-upgrade-click-handler';
 import BillingTimeframes from './billing-timeframes';
 import MobileFreeDomain from './mobile-free-domain';
@@ -250,7 +250,7 @@ const FeaturesGrid = ( {
 		onUpgradeClick,
 	} );
 
-	const gridPlanForSpotlight = usePlanForSpotlight( {
+	const gridPlanForSpotlight = useGridPlanForSpotlight( {
 		intent,
 		isSpotlightOnCurrentPlan,
 		plansForFeaturesGrid: gridPlans,

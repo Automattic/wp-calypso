@@ -15,7 +15,7 @@ interface Params {
 	showLegacyStorageFeature?: boolean;
 }
 
-const usePlansForComparisonGrid = ( {
+const useGridPlansForComparisonGrid = ( {
 	allFeaturesList,
 	gridPlans,
 	intent,
@@ -49,4 +49,4 @@ const usePlansForComparisonGrid = ( {
 	}, [ gridPlans, planFeaturesForComparisonGrid ] );
 };
 
-export default usePlansForComparisonGrid;
+export default useGridPlansForComparisonGrid;

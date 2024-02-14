@@ -13,7 +13,7 @@ interface Params {
 	showLegacyStorageFeature?: boolean;
 }
 
-const usePlansForFeaturesGrid = ( {
+const useGridPlansForFeaturesGrid = ( {
 	allFeaturesList,
 	availablePlans,
 	gridPlans,
@@ -47,4 +47,4 @@ const usePlansForFeaturesGrid = ( {
 	}, [ gridPlans, planFeaturesForFeaturesGrid ] );
 };
 
-export default usePlansForFeaturesGrid;
+export default useGridPlansForFeaturesGrid;

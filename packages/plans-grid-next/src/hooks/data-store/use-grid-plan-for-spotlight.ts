@@ -11,7 +11,7 @@ interface Params {
 	sitePlanSlug?: string | null;
 }
 
-const usePlanForSpotlight = ( {
+const useGridPlanForSpotlight = ( {
 	plansForFeaturesGrid,
 	intent,
 	isSpotlightOnCurrentPlan,
@@ -28,4 +28,4 @@ const usePlanForSpotlight = ( {
 	}, [ sitePlanSlug, isSpotlightOnCurrentPlan, intent, plansForFeaturesGrid ] );
 };
 
-export default usePlanForSpotlight;
+export default useGridPlanForSpotlight;

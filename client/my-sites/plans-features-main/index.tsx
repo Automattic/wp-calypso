@@ -22,8 +22,8 @@ import {
 	ComparisonGrid,
 	PlanTypeSelector,
 	useGridPlans,
-	usePlansForFeaturesGrid,
-	usePlansForComparisonGrid,
+	useGridPlansForFeaturesGrid,
+	useGridPlansForComparisonGrid,
 } from '@automattic/plans-grid-next';
 import { isMobile } from '@automattic/viewport';
 import styled from '@emotion/styled';
@@ -453,7 +453,7 @@ const PlansFeaturesMain = ( {
 	} );
 
 	// we neeed only the visible ones for comparison grid (these should extend into plans-ui data store selectors)
-	const plansForComparisonGrid = usePlansForComparisonGrid( {
+	const gridPlansForComparisonGrid = useGridPlansForComparisonGrid( {
 		allFeaturesList: FEATURES_LIST,
 		gridPlans: filteredPlansForPlanFeatures,
 		intent,
@@ -462,7 +462,7 @@ const PlansFeaturesMain = ( {
 	} );
 
 	// we neeed only the visible ones for features grid (these should extend into plans-ui data store selectors)
-	const plansForFeaturesGrid = usePlansForFeaturesGrid( {
+	const gridPlansForFeaturesGrid = useGridPlansForFeaturesGrid( {
 		allFeaturesList: FEATURES_LIST,
 		availablePlans: gridPlans || [],
 		gridPlans: filteredPlansForPlanFeatures,
@@ -511,7 +511,7 @@ const PlansFeaturesMain = ( {
 			displayedIntervals: filteredDisplayedIntervals,
 			showPlanTypeSelectorDropdown,
 			kind: planTypeSelector,
-			plans: plansForFeaturesGrid.map( ( gridPlan ) => gridPlan.planSlug ),
+			plans: gridPlansForFeaturesGrid.map( ( gridPlan ) => gridPlan.planSlug ),
 			currentSitePlanSlug: sitePlanSlug,
 			useCheckPlanAvailabilityForPurchase,
 			recordTracksEvent,
@@ -570,7 +570,7 @@ const PlansFeaturesMain = ( {
 		filteredDisplayedIntervals,
 		showPlanTypeSelectorDropdown,
 		planTypeSelector,
-		plansForFeaturesGrid,
+		gridPlansForFeaturesGrid,
 		sitePlanSlug,
 		coupon,
 		siteId,
@@ -731,7 +731,7 @@ const PlansFeaturesMain = ( {
 		: masterbarHeight;
 	const planUpgradeCreditsApplicable = usePlanUpgradeCreditsApplicable(
 		siteId,
-		plansForFeaturesGrid.map( ( gridPlan ) => gridPlan.planSlug )
+		gridPlansForFeaturesGrid.map( ( gridPlan ) => gridPlan.planSlug )
 	);
 
 	return (
@@ -776,7 +776,7 @@ const PlansFeaturesMain = ( {
 				/>
 				{ siteId && (
 					<PlanNotice
-						visiblePlans={ plansForFeaturesGrid.map( ( gridPlan ) => gridPlan.planSlug ) }
+						visiblePlans={ gridPlansForFeaturesGrid.map( ( gridPlan ) => gridPlan.planSlug ) }
 						siteId={ siteId }
 						isInSignup={ isInSignup }
 						{ ...( withDiscount &&
@@ -828,7 +828,7 @@ const PlansFeaturesMain = ( {
 						>
 							<div className="plans-wrapper">
 								<FeaturesGrid
-									gridPlans={ plansForFeaturesGrid }
+									gridPlans={ gridPlansForFeaturesGrid }
 									paidDomainName={ paidDomainName }
 									generatedWPComSubdomain={ resolvedSubdomainName }
 									isCustomDomainAllowedOnFreePlan={ isCustomDomainAllowedOnFreePlan }
@@ -894,7 +894,7 @@ const PlansFeaturesMain = ( {
 												/>
 											) }
 											<ComparisonGrid
-												gridPlans={ plansForComparisonGrid }
+												gridPlans={ gridPlansForComparisonGrid }
 												isInSignup={ isInSignup }
 												isInAdmin={ ! isInSignup }
 												isLaunchPage={ isLaunchPage }
