@@ -30,6 +30,8 @@ class PasswordlessSignupForm extends Component {
 		userEmail: PropTypes.string,
 		labelText: PropTypes.string,
 		isInviteLoggedOutForm: PropTypes.bool,
+		onInputBlur: PropTypes.func,
+		onInputChange: PropTypes.func,
 	};
 
 	static defaultProps = {
@@ -247,12 +249,21 @@ class PasswordlessSignupForm extends Component {
 		}
 	}, 1000 );
 
-	onInputChange = ( { target: { value } } ) => {
+	onInputChange = ( event ) => {
+		const {
+			target: { value },
+		} = event;
+
 		this.debouncedEmailSuggestion( value );
 		this.setState( {
 			email: value,
 			errorMessages: null,
 		} );
+		this.props.onInputChange?.( event );
+	};
+
+	onInputBlur = ( event ) => {
+		this.props.onInputBlur?.( event );
 	};
 
 	renderNotice() {
@@ -331,11 +342,13 @@ class PasswordlessSignupForm extends Component {
 							id="signup-email"
 							value={ this.state.email }
 							onChange={ this.onInputChange }
+							onBlur={ this.onInputBlur }
 							disabled={ isSubmitting || !! this.props.disabled }
 							placeholder={ this.props.inputPlaceholder }
 							// eslint-disable-next-line jsx-a11y/no-autofocus -- It's the only field on the page
 							autoFocus
 						/>
+						{ this.props.children }
 					</ValidationFieldset>
 					{ this.getFormButtonAndToS() }
 				</LoggedOutForm>
