@@ -3,6 +3,7 @@ import { get } from 'lodash';
 import { makeLayout, render as clientRender } from 'calypso/controller';
 import { navigation, siteSelection, sites } from 'calypso/my-sites/controller';
 import {
+	acceptSiteTransfer,
 	deleteSite,
 	disconnectSite,
 	disconnectSiteConfirm,
@@ -117,6 +118,13 @@ export default function () {
 		'/settings/site-transferred/:site_id',
 		siteSelection,
 		renderSiteTransferredScreen,
+		makeLayout,
+		clientRender
+	);
+
+	page(
+		'/settings/site-transfer/:site_id/accept/:invitation_key',
+		acceptSiteTransfer,
 		makeLayout,
 		clientRender
 	);

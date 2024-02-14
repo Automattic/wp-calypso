@@ -1,92 +1,11 @@
-@import "@automattic/components/src/highlight-cards/variables.scss";
-
-$plan-features-sidebar-width: 272px;
-$plan-features-header-banner-height: 20px;
-
-// Plan Features Grid Breakpoints
 $plans-2023-small-breakpoint: 780px;
-
-$minWidthToGridWidthMap: (
-	780px: "668px",
-	1024px: "860px",
-	1200px: "100%",
-);
-
-/**
- * @deprecated
- * TODO clk used in plans-features-main / should migrate there
- *   - creates a bit of snapping effect on the various breakpoints
- *   - if it's not really necessary, we should remove it
- */
-@mixin pricing-grid-breakpoints {
-	width: 100%;
-
-	@each $screenMinWidth, $gridWidth in $minWidthToGridWidthMap {
-		@media ( min-width: #{$screenMinWidth} ) {
-			width: #{$gridWidth};
-		}
-	}
-}
-
-/**
- * Media queries for the plans grid on the /plans page.
- * This should stretch to fill it's container.
- *
- * @deprecated
- * TODO clk this should just be set as the default behavior for the grid
- */
-@mixin pricing-grid-breakpoints-with-sidebar {
-	width: 100%;
-}
-
-/**
- * @deprecated
- * TODO clk used in plans-features-main / should migrate there
- */
-@mixin plans-2023-break-small() {
-	body.is-section-stepper &,
-	body.is-section-signup.is-white-signup & {
-		@media ( min-width: $plans-2023-small-breakpoint ) {
-			@content;
-		}
-	}
-
-	.is-section-plans:not(.is-sidebar-collapsed) & {
-		@media ( min-width: $plans-2023-small-breakpoint + $plan-features-sidebar-width ) {
-			@content;
-		}
-	}
-
-	.is-section-plans.is-sidebar-collapsed & {
-		@media ( min-width: $plans-2023-small-breakpoint ) {
-			@content;
-		}
-	}
-}
-
-/**
- * @see client/my-sites/plans/modernized-layout.tsx
- * This file introduces padding for the header on the plans page
- * at a custom mobile breakpoint.
- *
- * This mixin can be use to target that particular breakpoint.
- *
- * TODO clk used in plans-features-main / should migrate there
- */
-@mixin plans-section-custom-mobile-breakpoint() {
-	.is-section-plans & {
-		@media ( min-width: $plans-2023-small-breakpoint ) {
-			@content;
-		}
-	}
-}
 
 /**
  * @see @automattic/plans-grid-next/src/components/plan-type-selector/style.scss
  * This introduces mobile only sticky behavior for the plan type selector.
  *
- * TODO clk need to update to use GridSize / container breakpoints
- *
+ * @deprecated
+ * TODO clk This should migrate to use grid-size on the parent container. As done for features/comparison grid.
  */
 @mixin plan-type-selector-custom-mobile-breakpoint() {
 	@media ( max-width: $plans-2023-small-breakpoint ) {
