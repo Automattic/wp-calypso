@@ -49,10 +49,14 @@ describe( 'LaunchpadInternal', () => {
 		await userEvent.click( screen.getByRole( 'button', { name: /Task 1/ } ) );
 
 		await waitFor( () => {
-			expect( recordTracksEvent ).toHaveBeenCalledWith(
-				'calypso_launchpad_task_clicked',
-				expect.any( Object )
-			);
+			expect( recordTracksEvent ).toHaveBeenCalledWith( 'calypso_launchpad_task_clicked', {
+				checklist_completed: false,
+				checklist_slug: 'some-site',
+				context: 'some-context',
+				is_completed: false,
+				order: undefined,
+				task_id: 'task1',
+			} );
 		} );
 	} );
 
