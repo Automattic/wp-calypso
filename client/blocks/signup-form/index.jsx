@@ -50,6 +50,7 @@ import { login, lostPassword } from 'calypso/lib/paths';
 import { addQueryArgs } from 'calypso/lib/url';
 import wpcom from 'calypso/lib/wp';
 import { isP2Flow } from 'calypso/signup/is-flow';
+import ValidationFieldset from 'calypso/signup/validation-fieldset';
 import { recordTracksEventWithClientId } from 'calypso/state/analytics/actions';
 import { redirectToLogout } from 'calypso/state/current-user/actions';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
@@ -114,6 +115,7 @@ class SignupForm extends Component {
 		horizontal: PropTypes.bool,
 		shouldDisplayUserExistsError: PropTypes.bool,
 		submitForm: PropTypes.func,
+		isInviteLoggedOutForm: PropTypes.bool,
 
 		// Connected props
 		oauth2Client: PropTypes.object,
@@ -166,6 +168,7 @@ class SignupForm extends Component {
 			},
 			form: stateWithFilledUsername,
 			validationInitialized: false,
+			emailErrorMessage: '',
 		};
 	}
 
@@ -283,7 +286,7 @@ class SignupForm extends Component {
 	validate = ( fields, onComplete ) => {
 		const fieldsForValidation = filter( [
 			'email',
-			'password',
+			this.props.isPasswordless === false && 'password', // Remove password from validation if passwordless
 			this.props.displayUsernameInput && 'username',
 			this.props.displayNameInput && 'firstName',
 			this.props.displayNameInput && 'lastName',
@@ -761,6 +764,16 @@ class SignupForm extends Component {
 		this.handleSubmit( event );
 	};
 
+	handlePasswordlessSubmit = ( passwordLessData ) => {
+		this.formStateController.handleSubmit( ( hasErrors ) => {
+			if ( hasErrors ) {
+				this.setState( { submitting: false } );
+				return;
+			}
+			this.props.submitForm( this.state.form, passwordLessData );
+		} );
+	};
+
 	renderWooCommerce() {
 		return (
 			<div>
@@ -1213,6 +1226,7 @@ class SignupForm extends Component {
 		}
 
 		const isGravatar = this.props.isGravatar;
+		const emailErrorMessage = this.getErrorMessagesWithLogin( 'email' );
 		const showSeparator =
 			! config.isEnabled( 'desktop' ) && this.isHorizontal() && ! this.userCreationComplete();
 
@@ -1238,14 +1252,23 @@ class SignupForm extends Component {
 						flowName={ this.props.flowName }
 						goToNextStep={ this.props.goToNextStep }
 						renderTerms={ this.termsOfServiceLink }
-						submitForm={ this.props.submitForm }
+						submitForm={ this.handlePasswordlessSubmit }
 						logInUrl={ logInUrl }
 						disabled={ this.props.disabled }
-						disableSubmitButton={ this.props.disableSubmitButton }
+						disableSubmitButton={ this.props.disableSubmitButton || emailErrorMessage }
 						queryArgs={ this.props.queryArgs }
 						userEmail={ this.getEmailValue() }
 						{ ...gravatarProps }
-					/>
+						submitButtonLabel={ this.props.submitButtonLabel }
+						isInviteLoggedOutForm={ this.props.isInviteLoggedOutForm }
+						labelText={ this.props.labelText }
+						onInputBlur={ this.handleBlur }
+						onInputChange={ this.handleChangeEvent }
+					>
+						{ emailErrorMessage && (
+							<ValidationFieldset errorMessages={ [ emailErrorMessage ] }></ValidationFieldset>
+						) }
+					</PasswordlessSignupForm>
 
 					{ ! isGravatar && (
 						<>

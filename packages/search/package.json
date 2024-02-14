@@ -30,7 +30,7 @@
 		"@automattic/typography": "workspace:^",
 		"@babel/runtime": "^7.23.8",
 		"@wordpress/base-styles": "^4.42.0",
-		"@wordpress/components": "^26.0.0",
+		"@wordpress/components": "^26.0.1",
 		"@wordpress/compose": "^6.28.0",
 		"@wordpress/icons": "^9.42.0",
 		"@wordpress/react-i18n": "^3.49.0",

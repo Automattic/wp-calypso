@@ -6,7 +6,8 @@ import { GITHUB_DEPLOYMENTS_QUERY_KEY } from './constants';
 export const GITHUB_REPOSITORIES_QUERY_KEY = 'github-repositories';
 
 export interface GitHubRepositoryData {
-	full_name: string;
+	owner: string;
+	name: string;
 	id: number;
 	private: boolean;
 	default_branch: string;

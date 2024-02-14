@@ -1,5 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
 import wpcom from 'calypso/lib/wp';
+import getDefaultQueryParams from './default-query-params';
 
 const DEFAULT_SERVER_NOTICES_VISIBILITY = {
 	opt_in_new_stats: false,
@@ -75,12 +76,10 @@ const useNoticesVisibilityQueryRaw = function < T >(
 	enabled?: boolean
 ) {
 	return useQuery( {
+		...getDefaultQueryParams< Notices >(),
 		queryKey: [ 'stats', 'notices-visibility', 'raw', siteId ],
 		queryFn: () => queryNotices( siteId ),
 		select,
-		staleTime: 1000 * 30, // 30 seconds
-		retry: 1,
-		retryDelay: 3 * 1000, // 3 seconds,
 		enabled: enabled !== false,
 	} );
 };

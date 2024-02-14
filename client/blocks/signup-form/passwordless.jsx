@@ -28,6 +28,10 @@ class PasswordlessSignupForm extends Component {
 		submitButtonLabel: PropTypes.string,
 		submitButtonLoadingLabel: PropTypes.string,
 		userEmail: PropTypes.string,
+		labelText: PropTypes.string,
+		isInviteLoggedOutForm: PropTypes.bool,
+		onInputBlur: PropTypes.func,
+		onInputChange: PropTypes.func,
 	};
 
 	static defaultProps = {
@@ -245,12 +249,21 @@ class PasswordlessSignupForm extends Component {
 		}
 	}, 1000 );
 
-	onInputChange = ( { target: { value } } ) => {
+	onInputChange = ( event ) => {
+		const {
+			target: { value },
+		} = event;
+
 		this.debouncedEmailSuggestion( value );
 		this.setState( {
 			email: value,
 			errorMessages: null,
 		} );
+		this.props.onInputChange?.( event );
+	};
+
+	onInputBlur = ( event ) => {
+		this.props.onInputBlur?.( event );
 	};
 
 	renderNotice() {
@@ -300,6 +313,18 @@ class PasswordlessSignupForm extends Component {
 		return this.props.labelText ?? this.props.translate( 'Enter your email address' );
 	}
 
+	getFormButtonAndToS() {
+		return this.props.isInviteLoggedOutForm ? (
+			<>
+				{ this.formFooter() } { this.props.renderTerms?.() }
+			</>
+		) : (
+			<>
+				{ this.props.renderTerms?.() } { this.formFooter() }
+			</>
+		);
+	}
+
 	render() {
 		const { errorMessages, isSubmitting } = this.state;
 
@@ -317,14 +342,15 @@ class PasswordlessSignupForm extends Component {
 							id="signup-email"
 							value={ this.state.email }
 							onChange={ this.onInputChange }
+							onBlur={ this.onInputBlur }
 							disabled={ isSubmitting || !! this.props.disabled }
 							placeholder={ this.props.inputPlaceholder }
 							// eslint-disable-next-line jsx-a11y/no-autofocus -- It's the only field on the page
 							autoFocus
 						/>
+						{ this.props.children }
 					</ValidationFieldset>
-					{ this.props.renderTerms?.() }
-					{ this.formFooter() }
+					{ this.getFormButtonAndToS() }
 				</LoggedOutForm>
 			</div>
 		);

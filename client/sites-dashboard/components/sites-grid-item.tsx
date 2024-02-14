@@ -1,3 +1,4 @@
+import { isEnabled } from '@automattic/calypso-config';
 import { Button } from '@automattic/components';
 import { useSiteLaunchStatusLabel, getSiteLaunchStatus } from '@automattic/sites';
 import { css } from '@emotion/css';
@@ -125,7 +126,9 @@ export const SitesGridItem = memo( ( props: SitesGridItemProps ) => {
 	const siteDashboardUrlProps = showThumbnailLink
 		? {
 				href:
-					isAtomicSite && siteDefaultInterface( site ) === 'wp-admin'
+					isAtomicSite &&
+					siteDefaultInterface( site ) === 'wp-admin' &&
+					! isEnabled( 'layout/dotcom-nav-redesign' )
 						? getSiteWpAdminUrl( site ) || getDashboardUrl( site.slug )
 						: getDashboardUrl( site.slug ),
 				title: __( 'Visit Dashboard' ),

@@ -221,6 +221,9 @@ const LayoutLoggedOut = ( {
 			{ isJetpackCloud() && (
 				<AsyncLoad require="calypso/jetpack-cloud/style" placeholder={ null } />
 			) }
+			{ config.isEnabled( 'a8c-for-agencies' ) && (
+				<AsyncLoad require="calypso/a8c-for-agencies/style" placeholder={ null } />
+			) }
 			<div id="content" className="layout__content">
 				<AsyncLoad require="calypso/components/global-notices" placeholder={ null } id="notices" />
 				<div id="primary" className="layout__primary">
@@ -300,6 +303,7 @@ export default withCurrentRoute(
 			const isJetpackLogin = currentRoute.startsWith( '/log-in/jetpack' );
 			const isPartnerSignup = isPartnerSignupQuery( currentQuery );
 			const isPartnerSignupStart = currentRoute.startsWith( '/start/wpcc' );
+			const isInvitationURL = currentRoute.startsWith( '/accept-invite' );
 			const isJetpackWooDnaFlow = wooDnaConfig( getInitialQueryArguments( state ) ).isWooDnaFlow();
 			const isP2Login = 'login' === sectionName && 'p2' === currentQuery?.from;
 			const oauth2Client = getCurrentOAuth2Client( state );
@@ -324,7 +328,11 @@ export default withCurrentRoute(
 				isGravatar ||
 				isGravPoweredClient;
 			const noMasterbarForRoute =
-				isJetpackLogin || ( isWhiteLogin && ! isPartnerSignup ) || isJetpackWooDnaFlow || isP2Login;
+				isJetpackLogin ||
+				( isWhiteLogin && ! isPartnerSignup ) ||
+				isJetpackWooDnaFlow ||
+				isP2Login ||
+				isInvitationURL;
 			const isPopup = '1' === currentQuery?.is_popup;
 			const noMasterbarForSection =
 				! isWooOAuth2Client( oauth2Client ) &&
