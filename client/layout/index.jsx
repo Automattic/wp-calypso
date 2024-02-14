@@ -19,6 +19,7 @@ import { withCurrentRoute } from 'calypso/components/route';
 import SympathyDevWarning from 'calypso/components/sympathy-dev-warning';
 import { retrieveMobileRedirect } from 'calypso/jetpack-connect/persistence-utils';
 import wooDnaConfig from 'calypso/jetpack-connect/woo-dna-config';
+import { useGlobalSidebar } from 'calypso/layout/global-sidebar/hooks/use-global-sidebar';
 import HtmlIsIframeClassname from 'calypso/layout/html-is-iframe-classname';
 import EmptyMasterbar from 'calypso/layout/masterbar/empty';
 import MasterbarLoggedIn from 'calypso/layout/masterbar/logged-in';
@@ -64,7 +65,10 @@ const HELP_CENTER_STORE = HelpCenter.register();
 
 function SidebarScrollSynchronizer() {
 	const isNarrow = useBreakpoint( '<660px' );
-	const active = ! isNarrow && ! config.isEnabled( 'jetpack-cloud' ); // Jetpack cloud hasn't yet aligned with WPCOM.
+	const active =
+		! isNarrow &&
+		! config.isEnabled( 'jetpack-cloud' ) && // Jetpack cloud hasn't yet aligned with WPCOM.
+		! config.isEnabled( 'layout/dotcom-nav-redesign' ); // Dotcom nav redesign is not yet aligned with WPCOM - the handleScroll function is not yet compatible with the new layout.
 
 	useEffect( () => {
 		if ( active ) {
@@ -361,6 +365,7 @@ export default withCurrentRoute(
 		const isWooCoreProfilerFlow =
 			[ 'jetpack-connect', 'login' ].includes( sectionName ) &&
 			isWooCommerceCoreProfilerFlow( state );
+		const { shouldShowGlobalSidebar } = useGlobalSidebar( siteId, sectionGroup );
 		const noMasterbarForRoute =
 			isJetpackLogin ||
 			currentRoute === '/me/account/closed' ||
@@ -376,6 +381,7 @@ export default withCurrentRoute(
 			noMasterbarForRoute ||
 			isWpMobileApp() ||
 			isWcMobileApp() ||
+			shouldShowGlobalSidebar ||
 			isJetpackCloud();
 		const isJetpackMobileFlow = 'jetpack-connect' === sectionName && !! retrieveMobileRedirect();
 		const isJetpackWooCommerceFlow =
@@ -428,6 +434,7 @@ export default withCurrentRoute(
 			sidebarIsCollapsed: sectionName !== 'reader' && getSidebarIsCollapsed( state ),
 			userAllowedToHelpCenter,
 			currentRoute,
+			shouldShowGlobalSidebar,
 		};
 	} )( Layout )
 );
