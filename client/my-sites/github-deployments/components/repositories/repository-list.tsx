@@ -21,7 +21,7 @@ export const GitHubBrowseRepositoriesList = ( {
 	query,
 	onSelectRepository,
 }: RepositoriesListProps ) => {
-	const [ sort, setSort ] = useState< SortOption >( 'name_desc' );
+	const [ sort, setSort ] = useState< SortOption >( 'name_asc' );
 	const [ page, setPage ] = useState( 1 );
 
 	useLayoutEffect( () => {
