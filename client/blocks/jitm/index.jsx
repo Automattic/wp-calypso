@@ -149,23 +149,23 @@ export function JITM( props ) {
 	if ( jitm?.content?.icon === 'jetpack' && ! isJetpack ) {
 		jitm.content.icon = '';
 	}
-
-	return (
-		<>
-			<QueryJITM
-				siteId={ currentSite.ID }
-				messagePath={ messagePath }
-				searchQuery={ searchQuery }
-			/>
-			{ isFetching && jitmPlaceholder }
-			{ jitm &&
-				renderTemplate( jitm.template || props.template, {
-					...jitm,
-					...getEventHandlers( props, dispatch ),
-					currentSite,
-				} ) }
-		</>
-	);
+	return null;
+	// return (
+	// 	<>
+	// 		<QueryJITM
+	// 			siteId={ currentSite.ID }
+	// 			messagePath={ messagePath }
+	// 			searchQuery={ searchQuery }
+	// 		/>
+	// 		{ isFetching && jitmPlaceholder }
+	// 		{ jitm &&
+	// 			renderTemplate( jitm.template || props.template, {
+	// 				...jitm,
+	// 				...getEventHandlers( props, dispatch ),
+	// 				currentSite,
+	// 			} ) }
+	// 	</>
+	// );
 }
 
 JITM.propTypes = {

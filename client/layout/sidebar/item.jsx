@@ -18,7 +18,7 @@ export default function SidebarItem( props ) {
 		'has-unseen': props.hasUnseen,
 	} );
 	const sidebarIsCollapsed = useSelector( getSidebarIsCollapsed );
-	const { materialIcon, materialIconStyle, icon, customIcon, count, badge } = props;
+	const { materialIcon, materialIconStyle, icon, customIcon, count, badge, ref } = props;
 
 	let _preloaded = false;
 
@@ -48,6 +48,7 @@ export default function SidebarItem( props ) {
 				onClick={ props.onNavigate }
 				href={ props.link }
 				onMouseEnter={ itemPreload }
+				ref={ ref }
 				{ ...linkProps }
 			>
 				{ icon && <Gridicon className="sidebar__menu-icon" icon={ icon } size={ 24 } /> }

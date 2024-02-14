@@ -153,7 +153,15 @@ const Home = ( {
 				subtitle={ translate( 'Your hub for posting, editing, and growing your site.' ) }
 			>
 				<Button href={ site.URL } onClick={ trackViewSiteAction } target="_blank">
-					{ translate( 'Visit site' ) }
+					{ translate( 'View site' ) }
+				</Button>
+				<Button
+					href={ site.URL + '/wp-admin' }
+					primary
+					onClick={ trackViewSiteAction }
+					target="_blank"
+				>
+					{ translate( 'Visit WP Admin' ) }
 				</Button>
 			</NavigationHeader>
 

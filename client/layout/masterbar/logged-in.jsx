@@ -10,6 +10,7 @@ import { Component } from 'react';
 import { connect } from 'react-redux';
 import AsyncLoad from 'calypso/components/async-load';
 import Gravatar from 'calypso/components/gravatar';
+import { useGlobalSidebar } from 'calypso/layout/global-sidebar/hooks/use-global-sidebar';
 import { getStatsPathForTab } from 'calypso/lib/route';
 import wpcom from 'calypso/lib/wp';
 import { domainManagementList } from 'calypso/my-sites/domains/paths';
@@ -210,12 +211,40 @@ class MasterbarLoggedIn extends Component {
 		return 'my-sites';
 	};
 
+	renderGlobalMySites() {
+		const { siteSlug, translate, section } = this.props;
+		const { isMenuOpen, isResponsiveMenu } = this.state;
+
+		let mySitesUrl = '/sites';
+
+		const icon =
+			this.state.isMobile && this.props.isInEditor ? 'chevron-left' : this.wordpressIcon();
+
+		if ( 'sites' === section && isResponsiveMenu ) {
+			mySitesUrl = '';
+		}
+		if ( ! siteSlug && section === 'sites-dashboard' ) {
+			// we are the /sites page but there is no site. Disable the home link
+			return <Item icon={ icon } disabled />;
+		}
+
+		return (
+			<Item
+				url={ mySitesUrl }
+				tipTarget="my-sites"
+				icon={ icon }
+				onClick={ this.clickMySites }
+				isActive={ this.isActive( 'sites' ) && ! isMenuOpen }
+				tooltip={ translate( 'Manage your sites' ) }
+			/>
+		);
+	}
+
 	// will render as back button on mobile and in editor
 	renderMySites() {
 		const {
 			domainOnlySite,
 			hasNoSites,
-			hasMoreThanOneSite,
 			siteSlug,
 			translate,
 			isCustomerHomeEnabled,
@@ -257,11 +286,7 @@ class MasterbarLoggedIn extends Component {
 				isActive={ this.isActive( 'sites' ) && ! isMenuOpen }
 				tooltip={ translate( 'Manage your sites' ) }
 				preloadSection={ this.preloadMySites }
-			>
-				{ hasNoSites || hasMoreThanOneSite
-					? translate( 'My Sites', { comment: 'Toolbar, must be shorter than ~12 chars' } )
-					: translate( 'My Site', { comment: 'Toolbar, must be shorter than ~12 chars' } ) }
-			</Item>
+			/>
 		);
 	}
 
@@ -525,6 +550,18 @@ class MasterbarLoggedIn extends Component {
 			return this.renderCheckout();
 		}
 
+		if ( this.props.shouldShowGlobalSidebar ) {
+			return (
+				<>
+					<Masterbar>
+						<div className="masterbar__section masterbar__section--left">
+							{ this.renderGlobalMySites() }
+						</div>
+					</Masterbar>
+				</>
+			);
+		}
+
 		if ( isMobile ) {
 			if ( isInEditor && loadHelpCenterIcon ) {
 				return (
@@ -597,6 +634,7 @@ export default connect(
 			isSiteMigrationActiveRoute( state );
 
 		const siteCount = getCurrentUserSiteCount( state ) ?? 0;
+		const { shouldShowGlobalSidebar } = useGlobalSidebar( siteId, sectionGroup );
 
 		return {
 			isCustomerHomeEnabled: canCurrentUserUseCustomerHome( state, siteId ),
@@ -628,6 +666,7 @@ export default connect(
 				new Date( getCurrentUserDate( state ) ).getTime() > NEW_MASTERBAR_SHIPPING_DATE,
 			currentRoute: getCurrentRoute( state ),
 			isSiteTrialExpired: isTrialExpired( state, siteId ),
+			shouldShowGlobalSidebar,
 		};
 	},
 	{
