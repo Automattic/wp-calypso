@@ -116,7 +116,7 @@ const StatsSubscribersPage = ( { period }: StatsSubscribersPageProps ) => {
 							) }
 							<div className={ statsModuleListClass }>
 								<Followers path="followers" />
-								{ ! isOdysseyStats && period && (
+								{ period && (
 									<StatsModuleEmails period={ period } query={ { period, date: today } } />
 								) }
 							</div>

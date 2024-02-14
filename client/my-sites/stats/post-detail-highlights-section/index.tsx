@@ -4,8 +4,6 @@ import QuerySiteStats from 'calypso/components/data/query-site-stats';
 import { decodeEntities, stripHTML } from 'calypso/lib/formatting';
 import { useSelector } from 'calypso/state';
 import { getCurrentUserLocale } from 'calypso/state/current-user/selectors';
-import isSiteWpcomAtomic from 'calypso/state/selectors/is-site-wpcom-atomic';
-import { isJetpackSite } from 'calypso/state/sites/selectors';
 import { getPostStat } from 'calypso/state/stats/posts/selectors';
 import StatsDetailsNavigation from '../stats-details-navigation';
 import PostLikes from '../stats-post-likes';
@@ -59,15 +57,11 @@ export default function PostDetailHighlightsSection( {
 		title: decodeEntities( stripHTML( textTruncator( post?.title, POST_STATS_CARD_TITLE_LIMIT ) ) ),
 	};
 
-	const isJetpack = useSelector( ( state ) => siteId && isJetpackSite( state, siteId ) );
-	const isAtomic = useSelector( ( state ) => siteId && isSiteWpcomAtomic( state, siteId ) );
-	const isWPcomSite = ! isJetpack || isAtomic;
-
 	// postId > 0: Show the tabs for posts except for the Home Page (postId = 0).
 	// isWPcomSite: The Newsletter Stats is only covering `WPCOM sites` for now.
 	// TODO: remove the (post?.date && new Date(post?.date) >= new Date("2023-05-30")) check when the Newsletter Stats data is backfilled.
 	const isEmailTabsAvailable =
-		postId > 0 && isWPcomSite && post?.date && new Date( post?.date ) >= new Date( '2023-05-30' );
+		postId > 0 && post?.date && new Date( post?.date ) >= new Date( '2023-05-30' );
 
 	return (
 		<>

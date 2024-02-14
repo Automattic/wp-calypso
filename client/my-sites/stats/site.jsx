@@ -457,9 +457,7 @@ class StatsSite extends Component {
 								showSummaryLink
 							/>
 						) }
-						{ ! isOdysseyStats && (
-							<StatsModuleEmails period={ this.props.period } query={ query } />
-						) }
+						<StatsModuleEmails period={ this.props.period } query={ query } />
 						{
 							// File downloads are not yet supported in Jetpack Stats
 							// TODO: Confirm the above statement.
