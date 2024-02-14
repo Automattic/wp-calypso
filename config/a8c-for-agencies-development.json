@@ -8,15 +8,18 @@
 	"i18n_default_locale_slug": "en",
 	"port": 3000,
 	"site_name": "Automattic For Agencies",
+	"oauth_client_id": 95928,
 	"features": {
 		"a8c-for-agencies": true,
 		"always_use_logout_url": true,
 		"dev/auth-helper": true,
-		"dev/preferences-helper": true
+		"dev/preferences-helper": true,
+		"oauth": true
 	},
 	"enable_all_sections": false,
 	"sections": {
-		"a8c-for-agencies": true
+		"a8c-for-agencies": true,
+		"a8c-for-agencies-auth": true
 	},
 	"site_filter": [],
 	"theme": "jetpack-cloud",
