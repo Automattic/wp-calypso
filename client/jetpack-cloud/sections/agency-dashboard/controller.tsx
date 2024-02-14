@@ -2,6 +2,7 @@ import { recordTracksEvent } from '@automattic/calypso-analytics';
 import config from '@automattic/calypso-config';
 import page, { type Callback } from '@automattic/calypso-router';
 import JetpackManageSidebar from 'calypso/jetpack-cloud/sections/sidebar-navigation/jetpack-manage';
+import { sitesPath } from 'calypso/lib/jetpack/paths';
 import { isAgencyUser } from 'calypso/state/partner-portal/partner/selectors';
 import { setAllSitesSelected } from 'calypso/state/ui/actions';
 import ConnectUrl from './connect-url';
@@ -38,6 +39,10 @@ export const agencyDashboardContext: Callback = ( context, next ) => {
 		return page.redirect( '/' );
 	}
 
+	const showSitesDashboardV2 =
+		config.isEnabled( 'jetpack/manage-sites-dataviews' ) &&
+		context.section.paths[ 0 ] === sitesPath();
+
 	const currentPage = parseInt( contextPage ) || 1;
 	context.header = <Header />;
 	context.secondary = <JetpackManageSidebar path={ context.path } />;
@@ -47,6 +52,7 @@ export const agencyDashboardContext: Callback = ( context, next ) => {
 			currentPage={ currentPage }
 			filter={ filter }
 			sort={ sort }
+			showSitesDashboardV2={ showSitesDashboardV2 }
 		/>
 	);
 
