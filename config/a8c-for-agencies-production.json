@@ -1,7 +1,7 @@
 {
 	"env": "production",
 	"env_id": "a8c-for-agencies-production",
-	"favicon_url": "/calypso/images/favicons/favicon-jetpack-cloud-production.ico",
+	"favicon_url": "/calypso/images/favicons/favicon-a4a-prod.ico",
 	"client_slug": "browser",
 	"protocol": "http",
 	"hostname": "agencies.automattic.com",
