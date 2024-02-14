@@ -1,5 +1,6 @@
 import { Button, Gravatar } from '@automattic/components';
-import { Icon, external } from '@wordpress/icons';
+import { Icon, chevronDown, external } from '@wordpress/icons';
+import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback, useRef, useState } from 'react';
 import { useDispatch, useSelector } from 'calypso/state';
@@ -49,7 +50,12 @@ const DropdownMenu = ( { isExpanded }: DropdownMenuProps ) => {
 	);
 };
 
-const ProfileDropdown = () => {
+type ProfileDropdownProps = {
+	compact?: boolean;
+	dropdownPosition?: 'up' | 'down';
+};
+
+const ProfileDropdown = ( { compact, dropdownPosition = 'down' }: ProfileDropdownProps ) => {
 	const dispatch = useDispatch();
 	const translate = useTranslate();
 	const user = useSelector( getCurrentUser );
@@ -74,7 +80,10 @@ const ProfileDropdown = () => {
 	return (
 		<nav
 			ref={ dropdownRef }
-			className="a4a-sidebar__profile-dropdown"
+			className={ classNames(
+				'a4a-sidebar__profile-dropdown',
+				`is-align-menu-${ dropdownPosition }`
+			) }
 			aria-label={
 				translate( 'User menu', {
 					comment: 'Label used to differentiate navigation landmarks in screen readers',
@@ -94,6 +103,12 @@ const ProfileDropdown = () => {
 					size={ 32 }
 					alt={ translate( 'My Profile', { textOnly: true } ) }
 				/>
+
+				{ ! compact && (
+					<div className="a4a-sidebar__profile-dropdown-button-label">
+						{ user?.display_name } <Icon icon={ chevronDown } />
+					</div>
+				) }
 			</Button>
 			<DropdownMenu isExpanded={ isMenuExpanded } />
 		</nav>

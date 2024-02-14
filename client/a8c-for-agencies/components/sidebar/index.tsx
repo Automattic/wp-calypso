@@ -11,6 +11,7 @@ import Sidebar, {
 import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import SidebarHeader from './header';
+import ProfileDropdown from './header/profile-dropdown';
 import SiteSelector from './site-selector';
 
 import './style.scss';
@@ -37,6 +38,9 @@ type Props = {
 		label: string;
 		onClick: () => void;
 	};
+	withSiteSelector?: boolean;
+	withGetHelpLink?: boolean;
+	withUserProfileFooter?: boolean;
 };
 
 const A4ASidebar = ( {
@@ -46,13 +50,16 @@ const A4ASidebar = ( {
 	title,
 	description,
 	backButtonProps,
+	withSiteSelector,
+	withGetHelpLink,
+	withUserProfileFooter,
 }: Props ) => {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 
 	return (
 		<Sidebar className={ classNames( 'a4a-sidebar', className ) }>
-			<SidebarHeader forceAllSitesView />
+			<SidebarHeader simple={ ! withSiteSelector } forceAllSitesView />
 
 			<SidebarMain>
 				<SidebarNavigator initialPath={ path }>
@@ -81,26 +88,30 @@ const A4ASidebar = ( {
 
 			<SidebarFooter className="a4a-sidebar__footer">
 				<ul>
-					<SidebarNavigatorMenuItem
-						isExternalLink
-						title={ translate( 'Get help', {
-							comment: 'A4A sidebar navigation item',
-						} ) }
-						link="https://agencies.automattic.com/support"
-						path=""
-						icon={ <JetpackIcons icon="help" /> }
-						onClickMenuItem={ () => {
-							dispatch(
-								recordTracksEvent( 'calypso_a4a_sidebar_menu_click', {
-									menu_item: 'A4A / Support',
-								} )
-							);
-						} }
-					/>
+					{ withGetHelpLink && (
+						<SidebarNavigatorMenuItem
+							isExternalLink
+							title={ translate( 'Get help', {
+								comment: 'A4A sidebar navigation item',
+							} ) }
+							link="https://agencies.automattic.com/support"
+							path=""
+							icon={ <JetpackIcons icon="help" /> }
+							onClickMenuItem={ () => {
+								dispatch(
+									recordTracksEvent( 'calypso_a4a_sidebar_menu_click', {
+										menu_item: 'A4A / Support',
+									} )
+								);
+							} }
+						/>
+					) }
+
+					{ withUserProfileFooter && <ProfileDropdown dropdownPosition="up" /> }
 				</ul>
 			</SidebarFooter>
 
-			<SiteSelector />
+			{ withSiteSelector && <SiteSelector /> }
 		</Sidebar>
 	);
 };

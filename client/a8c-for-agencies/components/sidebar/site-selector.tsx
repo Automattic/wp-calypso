@@ -1,7 +1,6 @@
 import { useRef } from 'react';
 import BaseSiteSelector from 'calypso/components/site-selector';
 import { useDispatch, useSelector } from 'calypso/state';
-import { hasJetpackPartnerAccess } from 'calypso/state/partner-portal/partner/selectors';
 import { setLayoutFocus } from 'calypso/state/ui/layout-focus/actions';
 import { getCurrentLayoutFocus } from 'calypso/state/ui/layout-focus/selectors';
 import useOutsideClickCallback from './use-outside-click-callback';
@@ -42,21 +41,17 @@ const useHideSiteSelectorOnFocusOut = () => {
 const SiteSelector = () => {
 	const isVisible = useSelector( ( state ) => getCurrentLayoutFocus( state ) === SITES_FOCUS );
 	const siteSelectorRef = useHideSiteSelectorOnFocusOut();
-	const canAccessJetpackManage = useSelector( hasJetpackPartnerAccess );
 
 	return (
 		<BaseSiteSelector
 			forwardRef={ siteSelectorRef }
-			className="jetpack-cloud-sidebar__site-selector"
+			className="a4a-sidebar__site-selector"
 			indicator
-			showAddNewSite
-			showAllSites={ canAccessJetpackManage }
+			showAllSites
 			/* eslint-disable-next-line jsx-a11y/no-autofocus */
 			autoFocus={ isVisible }
-			isJetpackAgencyDashboard={ canAccessJetpackManage }
-			allSitesPath="/dashboard"
-			siteBasePath="/landing"
-			wpcomSiteBasePath="https://wordpress.com/home"
+			allSitesPath="/"
+			siteBasePath="/"
 		/>
 	);
 };
