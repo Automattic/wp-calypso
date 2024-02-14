@@ -3,6 +3,8 @@ import { useLocale } from '@automattic/i18n-utils';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect, useMemo } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
+import { useCurrentRoute } from 'calypso/components/route';
+import { useGlobalSidebar } from 'calypso/layout/global-sidebar/hooks/use-global-sidebar';
 import domainOnlyFallbackMenu from 'calypso/my-sites/sidebar/static-data/domain-only-fallback-menu';
 import { getAdminMenu } from 'calypso/state/admin-menu/selectors';
 import { getPluginOnSite } from 'calypso/state/plugins/installed/selectors';
@@ -17,19 +19,22 @@ import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { requestAdminMenu } from '../../state/admin-menu/actions';
 import allSitesMenu from './static-data/all-sites-menu';
 import buildFallbackResponse from './static-data/fallback-menu';
+import globalSidebarMenu from './static-data/global-sidebar-menu';
 import jetpackMenu from './static-data/jetpack-fallback-menu';
 
 const useSiteMenuItems = () => {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
+	const currentRoute = useSelector( ( state ) => getCurrentRoute( state ) );
 	const selectedSiteId = useSelector( getSelectedSiteId );
 	const siteDomain = useSelector( ( state ) => getSiteDomain( state, selectedSiteId ) );
 	const menuItems = useSelector( ( state ) => getAdminMenu( state, selectedSiteId ) );
 	const isJetpack = useSelector( ( state ) => isJetpackSite( state, selectedSiteId ) );
 	const isAtomic = useSelector( ( state ) => isAtomicSite( state, selectedSiteId ) );
 	const locale = useLocale();
-	const currentRoute = useSelector( getCurrentRoute );
 	const isAllDomainsView = '/domains/manage' === currentRoute;
+	const { currentSection } = useCurrentRoute();
+	const { shouldShowGlobalSidebar } = useGlobalSidebar( selectedSiteId, currentSection?.group );
 
 	useEffect( () => {
 		if ( selectedSiteId && siteDomain ) {
@@ -97,6 +102,10 @@ const useSiteMenuItems = () => {
 			return menuItem;
 		} );
 	}, [ isJetpack, menuItems, siteDomain, translate ] );
+
+	if ( shouldShowGlobalSidebar ) {
+		return globalSidebarMenu();
+	}
 
 	/**
 	 * When no site domain is provided, lets show only menu items that support all sites screens.

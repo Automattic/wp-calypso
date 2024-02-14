@@ -1,7 +1,13 @@
 import config from '@automattic/calypso-config';
-import { Component } from 'react';
+import React, { Component } from 'react';
+import { connect } from 'react-redux';
 import AsyncLoad from 'calypso/components/async-load';
+import { withCurrentRoute } from 'calypso/components/route';
+import GlobalSidebar from 'calypso/layout/global-sidebar';
+import { useGlobalSidebar } from 'calypso/layout/global-sidebar/hooks/use-global-sidebar';
 import SitePicker from 'calypso/my-sites/picker';
+import MySitesSidebarUnifiedBody from 'calypso/my-sites/sidebar/body';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 
 class MySitesNavigation extends Component {
 	static displayName = 'MySitesNavigation';
@@ -11,7 +17,7 @@ class MySitesNavigation extends Component {
 		event.stopPropagation();
 	};
 
-	render() {
+	renderSidebar() {
 		const asyncProps = {
 			placeholder: null,
 			path: this.props.path,
@@ -61,6 +67,34 @@ class MySitesNavigation extends Component {
 			</div>
 		);
 	}
+
+	renderGlobalSidebar() {
+		const asyncProps = {
+			placeholder: null,
+			path: this.props.path,
+		};
+		return (
+			<GlobalSidebar { ...asyncProps }>
+				<MySitesSidebarUnifiedBody path={ this.props.path } />
+			</GlobalSidebar>
+		);
+	}
+
+	render() {
+		if ( this.props.isGlobalSidebarVisible ) {
+			return this.renderGlobalSidebar();
+		}
+		return this.renderSidebar();
+	}
 }
 
-export default MySitesNavigation;
+export default withCurrentRoute(
+	connect( ( state, { currentSection } ) => {
+		const sectionGroup = currentSection?.group ?? null;
+		const siteId = getSelectedSiteId( state );
+		const { shouldShowGlobalSidebar } = useGlobalSidebar( siteId, sectionGroup );
+		return {
+			isGlobalSidebarVisible: shouldShowGlobalSidebar,
+		};
+	}, null )( MySitesNavigation )
+);
