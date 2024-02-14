@@ -45,4 +45,71 @@
 		text-align: right;
 	}
 
+	&__repository-details {
+		display: flex;
+		flex-direction: column;
+		span {
+			color: var(--Gray-Gray-40, #787c82);
+			font-size: $font-body-small;
+		}
+	}
+
+	&__commit-details {
+		display: flex;
+		flex-direction: column;
+		> div {
+			display: flex;
+			gap: 8px;
+			font-size: $font-body-small;
+		}
+	}
+
+	&__menu-item-danger {
+		color: var(--color-error);
+	}
+}
+
+
+.github-deployments-status {
+	display: inline-flex;
+	min-height: 24px;
+	padding-left: 8px;
+	padding-right: 8px;
+	justify-content: center;
+	align-items: center;
+	gap: 4px;
+	/* stylelint-disable-next-line scales/radii */
+	border-radius: 12px;
+
+	&__pending {
+		background-color: var(--Green-Green-5, #b8e6bf);
+	}
+
+	&__queued {
+		background-color: var(--Yellow-Yellow-5, #f5e6b3);
+	}
+
+	&__running {
+		background-color: var(--Green-Green-5, #b8e6bf);
+	}
+
+	&__success {
+		background-color: var(--Green-Green-5, #b8e6bf);
+	}
+
+	&__failed {
+		background-color: var(--Red-Red-5, #facfd2);
+	}
+
+	&__building {
+		background-color: var(--Blue-Blue-5, #bbe0fa);
+	}
+
+	span {
+		/* stylelint-disable-next-line declaration-property-unit-allowed-list */
+		font-size: 13px;
+		font-style: normal;
+		font-weight: 400;
+		line-height: 20px; /* 153.846% */
+	}
 }

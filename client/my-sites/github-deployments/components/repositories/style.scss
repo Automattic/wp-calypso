@@ -56,7 +56,10 @@
 	&__account {
 		display: flex;
 		align-items: center;
-		gap: 4px;
+		span {
+			color: var(--Gray-Gray-40, #787c82);
+			font-size: $font-body-small;
+		}
 	}
 
 	tr td:last-child {
