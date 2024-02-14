@@ -8,7 +8,6 @@ import {
 import { FoldableCard } from '@automattic/components';
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
-import useGridPlanForSpotlight from '../../hooks/data-store/use-grid-plan-for-spotlight';
 import useUpgradeClickHandler from '../../hooks/use-upgrade-click-handler';
 import BillingTimeframes from './billing-timeframes';
 import MobileFreeDomain from './mobile-free-domain';
@@ -226,6 +225,7 @@ const TabletView = ( {
 
 const FeaturesGrid = ( {
 	gridPlans,
+	gridPlanForSpotlight,
 	stickyRowOffset,
 	isInSignup,
 	planUpgradeCreditsApplicable,
@@ -242,19 +242,10 @@ const FeaturesGrid = ( {
 	generatedWPComSubdomain,
 	isCustomDomainAllowedOnFreePlan,
 	gridSize,
-	isSpotlightOnCurrentPlan,
-	intent,
 }: FeaturesGridProps ) => {
 	const handleUpgradeClick = useUpgradeClickHandler( {
 		gridPlans,
 		onUpgradeClick,
-	} );
-
-	const gridPlanForSpotlight = useGridPlanForSpotlight( {
-		intent,
-		isSpotlightOnCurrentPlan,
-		plansForFeaturesGrid: gridPlans,
-		sitePlanSlug: currentSitePlanSlug,
 	} );
 
 	const spotlightPlanProps = {

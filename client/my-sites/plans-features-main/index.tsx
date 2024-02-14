@@ -25,6 +25,7 @@ import {
 	useGridPlansForFeaturesGrid,
 	useGridPlansForComparisonGrid,
 } from '@automattic/plans-grid-next';
+import useGridPlanForSpotlight from '@automattic/plans-grid-next/src/hooks/data-store/use-grid-plan-for-spotlight';
 import { isMobile } from '@automattic/viewport';
 import styled from '@emotion/styled';
 import { useDispatch } from '@wordpress/data';
@@ -644,6 +645,13 @@ const PlansFeaturesMain = ( {
 		currentPlanManageHref,
 	] );
 
+	const gridPlanForSpotlight = useGridPlanForSpotlight( {
+		intent,
+		isSpotlightOnCurrentPlan,
+		gridPlansForFeaturesGrid,
+		sitePlanSlug,
+	} );
+
 	const [ masterbarHeight, setMasterbarHeight ] = useState( 0 );
 	/**
 	 * Calculates the height of the masterbar if it exists, and passes it to the component as an offset
@@ -829,6 +837,7 @@ const PlansFeaturesMain = ( {
 							<div className="plans-wrapper">
 								<FeaturesGrid
 									gridPlans={ gridPlansForFeaturesGrid }
+									gridPlanForSpotlight={ gridPlanForSpotlight }
 									paidDomainName={ paidDomainName }
 									generatedWPComSubdomain={ resolvedSubdomainName }
 									isCustomDomainAllowedOnFreePlan={ isCustomDomainAllowedOnFreePlan }
@@ -853,7 +862,6 @@ const PlansFeaturesMain = ( {
 									recordTracksEvent={ recordTracksEvent }
 									coupon={ coupon }
 									planUpgradeCreditsApplicable={ planUpgradeCreditsApplicable }
-									isSpotlightOnCurrentPlan={ isSpotlightOnCurrentPlan }
 								/>
 								{ showEscapeHatch && hidePlansFeatureComparison && (
 									<div className="plans-features-main__escape-hatch">
