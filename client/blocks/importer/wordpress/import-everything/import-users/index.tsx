@@ -51,7 +51,7 @@ const ImportUsers = ( { site, onSubmit }: Props ) => {
 		}
 
 		recordTracksEvent( 'calypso_site_importer_import_users_submit_invite', {
-			numberOfInvites: selectedUsers.length,
+			number_of_invites: selectedUsers.length,
 		} );
 
 		const result = await sendInvites( selectedUsers )
