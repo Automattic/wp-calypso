@@ -415,7 +415,7 @@ const AdsFormSettings = () => {
 						checked={ !! settings.cmp_enabled }
 						disabled={ isDisabled }
 						onChange={ () => handleCompactToggle( 'cmp_enabled' ) }
-						label={ translate( 'Enable GDPR Consent banner' ) }
+						label={ translate( 'Enable GDPR Consent Banner' ) }
 					/>
 
 					<div className="ads__child-settings">
