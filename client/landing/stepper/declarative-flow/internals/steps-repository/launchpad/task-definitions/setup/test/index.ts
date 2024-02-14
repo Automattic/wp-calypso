@@ -18,7 +18,7 @@ describe( 'getSetupFreeTask', () => {
 
 	it( 'returns the link', () => {
 		const siteSlug = 'site.wordpress.com';
-		const context = buildContext( { siteInfoQueryArgs: { siteSlug } } );
+		const context = buildContext( { siteSlug } );
 
 		expect( getSetupFreeTask( task, 'flowId', context ) ).toMatchObject( {
 			useCalypsoPath: true,
@@ -33,7 +33,7 @@ describe( 'getSetupBlogTask', () => {
 
 	it( 'returns the link', () => {
 		const siteSlug = 'site.wordpress.com';
-		const context = buildContext( { siteInfoQueryArgs: { siteSlug } } );
+		const context = buildContext( { siteSlug } );
 
 		expect( getSetupBlogTask( task, 'flowId', context ) ).toMatchObject( {
 			useCalypsoPath: true,
@@ -48,7 +48,7 @@ describe( 'getSetupVideoPressTask', () => {
 
 	it( 'returns the link', () => {
 		const siteSlug = 'site.wordpress.com';
-		const context = buildContext( { siteInfoQueryArgs: { siteSlug } } );
+		const context = buildContext( { siteSlug } );
 
 		expect( getSetupVideoPressTask( task, 'flowId', context ) ).toMatchObject( {
 			useCalypsoPath: true,
@@ -63,7 +63,7 @@ describe( 'getSetupGeneralTask', () => {
 
 	it( 'returns the link', () => {
 		const siteSlug = 'site.wordpress.com';
-		const context = buildContext( { siteInfoQueryArgs: { siteSlug } } );
+		const context = buildContext( { siteSlug } );
 
 		expect( getSetupGeneralTask( task, 'flowId', context ) ).toMatchObject( {
 			useCalypsoPath: true,
