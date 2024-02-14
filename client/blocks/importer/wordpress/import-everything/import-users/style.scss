@@ -47,6 +47,10 @@
 			@include break-mobile {
 				width: auto;
 			}
+
+			&:disabled {
+				border-color: var(--color-neutral-5);
+			}
 		}
 	}
 
