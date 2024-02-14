@@ -85,10 +85,6 @@ export default function ( pageBase = '/' ) {
 
 	page.base( pageBase );
 
-	// Email stats Pages
-	statsPage( `/stats/email/:statType/:period(${ validEmailPeriods })/:email_id/:site`, emailStats );
-	statsPage( `/stats/day/emails/:site`, emailSummary );
-
 	// Redirect this to default /stats/day view in order to keep
 	// the paths and page view reporting consistent.
 	page( '/', '/stats/day/:site' );
