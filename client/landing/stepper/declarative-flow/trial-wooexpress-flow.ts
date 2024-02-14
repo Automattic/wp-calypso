@@ -9,6 +9,7 @@ import { useSiteSlugParam } from '../hooks/use-site-slug-param';
 import { USER_STORE, ONBOARD_STORE, SITE_STORE } from '../stores';
 import { getLoginUrl } from '../utils/path';
 import { recordSubmitStep } from './internals/analytics/record-submit-step';
+import { STEPS } from './internals/steps';
 import { AssignTrialResult } from './internals/steps-repository/assign-trial-plan/constants';
 import { ProcessingResult } from './internals/steps-repository/processing-step/constants';
 import { AssertConditionState } from './internals/types';
@@ -20,27 +21,12 @@ const wooexpress: Flow = {
 
 	useSteps() {
 		return [
-			{
-				slug: 'createSite',
-				asyncComponent: () => import( './internals/steps-repository/create-site' ),
-			},
-			{
-				slug: 'processing',
-				asyncComponent: () => import( './internals/steps-repository/processing-step' ),
-			},
-			{
-				slug: 'assignTrialPlan',
-				asyncComponent: () => import( './internals/steps-repository/assign-trial-plan' ),
-			},
-			{
-				slug: 'waitForAtomic',
-				asyncComponent: () => import( './internals/steps-repository/wait-for-atomic' ),
-			},
-			{
-				slug: 'waitForPluginInstall',
-				asyncComponent: () => import( './internals/steps-repository/wait-for-plugin-install' ),
-			},
-			{ slug: 'error', asyncComponent: () => import( './internals/steps-repository/error-step' ) },
+			STEPS.SITE_CREATION_STEP,
+			STEPS.PROCESSING,
+			STEPS.ASSIGN_TRIAL_PLAN,
+			STEPS.WAIT_FOR_ATOMIC,
+			STEPS.WAIT_FOR_PLUGIN_INSTALL,
+			STEPS.ERROR,
 		];
 	},
 	useAssertConditions(): AssertConditionResult {
