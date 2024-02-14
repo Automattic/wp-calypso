@@ -44,6 +44,7 @@ type Props = {
 		label: string;
 		onClick: () => void;
 	};
+	defaultSelectedMenuItem?: string;
 };
 
 const USER_FEEDBACK_FORM_URL_HASH = '#product-feedback';
@@ -56,6 +57,7 @@ const JetpackCloudSidebar = ( {
 	title,
 	description,
 	backButtonProps,
+	defaultSelectedMenuItem,
 }: Props ) => {
 	const isAgency = useSelector( isAgencyUser );
 	const siteId = useSelector( getSelectedSiteId );
@@ -66,13 +68,18 @@ const JetpackCloudSidebar = ( {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 
-	// Determine whether to initially show the user feedback form.
-	const shouldShowUserFeedbackForm = window.location.hash === USER_FEEDBACK_FORM_URL_HASH;
+	const [ selectedMenuItem, setSelectedMenuItem ] = useState< string | null >( null );
 
-	const [ showUserFeedbackForm, setShowUserFeedbackForm ] = useState( shouldShowUserFeedbackForm );
+	const selectMenuItem = ( link: string ) => {
+		setSelectedMenuItem( link );
+	};
+
+	// Determine whether to initially show the user feedback form.
+	const [ showUserFeedbackForm, setShowUserFeedbackForm ] = useState( false );
 
 	const onShareProductFeedback = useCallback( () => {
 		dispatch( recordTracksEvent( 'calypso_jetpack_sidebar_share_product_feedback_click' ) );
+		selectMenuItem( USER_FEEDBACK_FORM_URL_HASH );
 		setShowUserFeedbackForm( true );
 	}, [ dispatch ] );
 
@@ -80,7 +87,17 @@ const JetpackCloudSidebar = ( {
 		// Remove any hash from the URL.
 		history.pushState( null, '', window.location.pathname + window.location.search );
 		setShowUserFeedbackForm( false );
+		setSelectedMenuItem( null ); // Reset selectedMenuItem
 	}, [] );
+
+	const isSitesSubmenuLinkSelected = ( link: string, selectedMenuItem: string | null ) => {
+		if ( link === defaultSelectedMenuItem && ! selectedMenuItem ) {
+			return true;
+		} else if ( selectedMenuItem === link ) {
+			return true;
+		}
+		return false;
+	};
 
 	return (
 		<Sidebar className={ classNames( 'jetpack-cloud-sidebar', className ) }>
@@ -99,12 +116,18 @@ const JetpackCloudSidebar = ( {
 								key={ item.link }
 								{ ...item }
 								onClickMenuItem={ ( path ) => {
+									if ( item.link !== selectedMenuItem ) {
+										selectMenuItem( item.link );
+									}
 									if ( item.trackEventName ) {
 										dispatch( recordTracksEvent( item.trackEventName, item.trackEventProps ) );
 									}
 
 									item.onClickMenuItem?.( path );
 								} }
+								{ ...( item.link.startsWith( '/dashboard' ) && {
+									isSelected: isSitesSubmenuLinkSelected( item.link, selectedMenuItem ),
+								} ) }
 							/>
 						) ) }
 					</SidebarNavigatorMenu>
@@ -123,6 +146,7 @@ const JetpackCloudSidebar = ( {
 							onClickMenuItem={ () => {
 								dispatch( recordTracksEvent( 'calypso_jetpack_sidebar_wp_admin_link_click' ) );
 							} }
+							isSelected={ jetpackAdminUrl === selectedMenuItem }
 						/>
 					) }
 					<SidebarNavigatorMenuItem
@@ -140,6 +164,7 @@ const JetpackCloudSidebar = ( {
 								} )
 							);
 						} }
+						isSelected={ 'https://jetpack.com/support' === selectedMenuItem }
 					/>
 
 					{ isAgency && (
@@ -151,6 +176,7 @@ const JetpackCloudSidebar = ( {
 							path=""
 							icon={ <Icon icon={ starEmpty } /> }
 							onClickMenuItem={ onShareProductFeedback }
+							isSelected={ USER_FEEDBACK_FORM_URL_HASH === selectedMenuItem }
 						/>
 					) }
 				</ul>

@@ -6,7 +6,7 @@ import NewSidebar from 'calypso/jetpack-cloud/components/sidebar';
 import { itemLinkMatches } from 'calypso/my-sites/sidebar/utils';
 import { isSectionNameEnabled } from 'calypso/sections-filter';
 import {
-	JETPACK_MANAGE_DASHBOARD_LINK,
+	JETPACK_MANAGE_DASHBOARD_LINK_NEEDS_ATTENTION,
 	JETPACK_MANAGE_PLUGINS_LINK,
 	JETPACK_MANAGE_LICENCES_LINK,
 	JETPACK_MANAGE_BILLING_LINK,
@@ -42,11 +42,12 @@ const JetpackManageSidebar = ( { path }: { path: string } ) => {
 		createItem( {
 			icon: category,
 			path: '/',
-			link: JETPACK_MANAGE_DASHBOARD_LINK,
+			link: JETPACK_MANAGE_DASHBOARD_LINK_NEEDS_ATTENTION,
 			title: translate( 'Sites' ),
 			trackEventProps: {
 				menu_item: 'Jetpack Cloud / Dashboard',
 			},
+			withChevron: true,
 		} ),
 		createItem( {
 			icon: plugins,
