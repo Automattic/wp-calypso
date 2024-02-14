@@ -8,7 +8,11 @@ export default ( state = {}, action ) => {
 				...state,
 
 				[ action.siteId ]: {
-					connectedAccountId: get( action, 'data.connected_account_id', null ),
+					isConnected: get(
+						action,
+						'data.is_connected',
+						get( action, 'data.connected_account_id', null ) > 0
+					),
 					connectedAccountDescription: get( action, 'data.connected_account_description', null ),
 					connectedAccountDefaultCurrency: get(
 						action,

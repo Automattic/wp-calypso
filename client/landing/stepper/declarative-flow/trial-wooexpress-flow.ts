@@ -21,8 +21,8 @@ const wooexpress: Flow = {
 	useSteps() {
 		return [
 			{
-				slug: 'siteCreationStep',
-				asyncComponent: () => import( './internals/steps-repository/site-creation-step' ),
+				slug: 'createSite',
+				asyncComponent: () => import( './internals/steps-repository/create-site' ),
 			},
 			{
 				slug: 'processing',
@@ -116,9 +116,9 @@ const wooexpress: Flow = {
 		};
 
 		// Despite sending a CHECKING state, this function gets called again with the
-		// /setup/wooexpress/siteCreationStep route which has no locale in the path so we need to
+		// /setup/wooexpress/createSite route which has no locale in the path so we need to
 		// redirect off of the first render.
-		// This effects both /setup/wooexpress/<locale> starting points and /setup/wooexpress/siteCreationStep/<locale> urls.
+		// This effects both /setup/wooexpress/<locale> starting points and /setup/wooexpress/createSite/<locale> urls.
 		// The double call also hapens on urls without locale.
 		useEffect( () => {
 			// Log when profiler data does not contain valid data.
@@ -187,7 +187,7 @@ const wooexpress: Flow = {
 			const adminUrl = siteId && getSiteOption( siteId, 'admin_url' );
 
 			switch ( currentStep ) {
-				case 'siteCreationStep': {
+				case 'createSite': {
 					return navigate( 'processing', {
 						currentStep,
 					} );

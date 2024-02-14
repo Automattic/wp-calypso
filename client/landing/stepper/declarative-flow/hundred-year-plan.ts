@@ -51,8 +51,8 @@ const HundredYearPlanFlow: Flow = {
 				},
 
 				{
-					slug: 'siteCreationStep',
-					asyncComponent: () => import( './internals/steps-repository/site-creation-step' ),
+					slug: 'createSite',
+					asyncComponent: () => import( './internals/steps-repository/create-site' ),
 				},
 			];
 		}
@@ -72,8 +72,8 @@ const HundredYearPlanFlow: Flow = {
 			},
 
 			{
-				slug: 'siteCreationStep',
-				asyncComponent: () => import( './internals/steps-repository/site-creation-step' ),
+				slug: 'createSite',
+				asyncComponent: () => import( './internals/steps-repository/create-site' ),
 			},
 		];
 	},
@@ -141,8 +141,8 @@ const HundredYearPlanFlow: Flow = {
 					setPlanCartItem( {
 						product_slug: PLAN_100_YEARS,
 					} );
-					return navigate( 'siteCreationStep' );
-				case 'siteCreationStep':
+					return navigate( 'createSite' );
+				case 'createSite':
 					return navigate( 'processing' );
 				case 'processing':
 					if ( providedDependencies?.goToCheckout && providedDependencies?.siteSlug ) {

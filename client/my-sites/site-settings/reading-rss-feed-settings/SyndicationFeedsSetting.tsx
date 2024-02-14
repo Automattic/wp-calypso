@@ -23,7 +23,11 @@ export const SyndicationFeedsSetting = ( {
 	const siteFeedUrl = siteUrl ? `${ siteUrl }/feed/` : '';
 	return (
 		<FormFieldset>
-			<FormLabel id={ `${ SYNDICATION_FEEDS_OPTION }-label` } htmlFor={ SYNDICATION_FEEDS_OPTION }>
+			<FormLabel
+				id={ `${ SYNDICATION_FEEDS_OPTION }-label` }
+				className="reduce-margin-bottom-fix"
+				htmlFor={ SYNDICATION_FEEDS_OPTION }
+			>
 				{ translate( 'Syndication feeds' ) }
 			</FormLabel>
 			<div>

@@ -1,6 +1,8 @@
 import {
 	getPlan,
 	getYearlyPlanByMonthly,
+	isChargeback,
+	isCredits,
 	isDomainProduct,
 	isDomainTransfer,
 	isGoogleWorkspace,
@@ -37,14 +39,12 @@ import {
 	getSubtotalWithoutDiscounts,
 	filterAndGroupCostOverridesForDisplay,
 	getCreditsLineItemFromCart,
-	hasIntroductoryDiscount,
 } from '@automattic/wpcom-checkout';
 import { keyframes } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useTranslate } from 'i18n-calypso';
 import * as React from 'react';
 import { hasFreeCouponTransfersOnly } from 'calypso/lib/cart-values/cart-items';
-import { preventWidows } from 'calypso/lib/formatting';
 import { isWcMobileApp } from 'calypso/lib/mobile-app';
 import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
 import { getSignupCompleteFlowName } from 'calypso/signup/storageUtils';
@@ -115,6 +115,12 @@ export function CheckoutSummaryFeaturedList( {
 	) => void;
 } ) {
 	const translate = useTranslate();
+
+	// Return early if the cart is only Chargebacks fees
+	if ( responseCart.products.every( isChargeback || isCredits ) ) {
+		return null;
+	}
+
 	const hasRenewalInCart = responseCart.products.some(
 		( product ) => product.extra.purchaseType === 'renewal'
 	);
@@ -146,7 +152,6 @@ export function CheckoutSummaryFeaturedList( {
 		</>
 	);
 }
-
 function CheckoutSummaryPriceList() {
 	const cartKey = useCartKey();
 	const { responseCart } = useShoppingCart( cartKey );
@@ -179,27 +184,29 @@ function CheckoutSummaryPriceList() {
 				/>
 			) }
 			<CheckoutSummaryAmountWrapper>
-				<CheckoutSummaryLineItem key="checkout-summary-line-item-subtotal">
-					<span>{ translate( 'Subtotal' ) }</span>
-					<span>
-						{ formatCurrency( responseCart.sub_total_integer, responseCart.currency, {
-							isSmallestUnit: true,
-							stripZeros: true,
-						} ) }
-					</span>
-				</CheckoutSummaryLineItem>
-				{ taxLineItems.map( ( taxLineItem ) => (
-					<CheckoutSummaryLineItem key={ 'checkout-summary-line-item-' + taxLineItem.id }>
-						<span>{ taxLineItem.label }</span>
-						<span>{ taxLineItem.formattedAmount }</span>
+				<CheckoutSubtotalSection>
+					<CheckoutSummaryLineItem key="checkout-summary-line-item-subtotal">
+						<span>{ translate( 'Subtotal' ) }</span>
+						<span>
+							{ formatCurrency( responseCart.sub_total_integer, responseCart.currency, {
+								isSmallestUnit: true,
+								stripZeros: true,
+							} ) }
+						</span>
 					</CheckoutSummaryLineItem>
-				) ) }
-				{ creditsLineItem && responseCart.sub_total_integer > 0 && (
-					<CheckoutSummaryLineItem key={ 'checkout-summary-line-item-' + creditsLineItem.id }>
-						<span>{ creditsLineItem.label }</span>
-						<span>{ creditsLineItem.formattedAmount }</span>
-					</CheckoutSummaryLineItem>
-				) }
+					{ taxLineItems.map( ( taxLineItem ) => (
+						<CheckoutSummaryLineItem key={ 'checkout-summary-line-item-' + taxLineItem.id }>
+							<span>{ taxLineItem.label }</span>
+							<span>{ taxLineItem.formattedAmount }</span>
+						</CheckoutSummaryLineItem>
+					) ) }
+					{ creditsLineItem && responseCart.sub_total_integer > 0 && (
+						<CheckoutSummaryLineItem key={ 'checkout-summary-line-item-' + creditsLineItem.id }>
+							<span>{ creditsLineItem.label }</span>
+							<span>{ creditsLineItem.formattedAmount }</span>
+						</CheckoutSummaryLineItem>
+					) }
+				</CheckoutSubtotalSection>
 
 				<CheckoutSummaryTotal>
 					<span>{ translate( 'Total' ) }</span>
@@ -207,13 +214,6 @@ function CheckoutSummaryPriceList() {
 						{ totalLineItem.formattedAmount }
 					</span>
 				</CheckoutSummaryTotal>
-				{ hasIntroductoryDiscount( responseCart ) && (
-					<CheckoutSummaryExplanation>
-						{ preventWidows(
-							translate( '*Introductory offer first term only, renews at regular rate.' )
-						) }
-					</CheckoutSummaryExplanation>
-				) }
 			</CheckoutSummaryAmountWrapper>
 		</>
 	);
@@ -904,6 +904,12 @@ CheckoutSummaryFeaturesListItem.defaultProps = {
 	isSupported: true,
 };
 
+const CheckoutSubtotalSection = styled.div`
+	border-bottom: 1px solid ${ ( props ) => props.theme.colors.borderColorLight };
+	margin-bottom: 20px;
+	padding-bottom: 20px;
+`;
+
 const CheckoutSummaryAmountWrapper = styled.div`
 	border-top: 1px solid ${ ( props ) => props.theme.colors.borderColorLight };
 	padding: 20px 0;
@@ -916,12 +922,6 @@ const CheckoutFirstSubtotalLineItem = styled.div`
 	justify-content: space-between;
 	line-height: 20px;
 	margin-bottom: 16px;
-
-	&:nth-last-of-type( 2 ) {
-		border-bottom: 1px solid ${ ( props ) => props.theme.colors.borderColorLight };
-		margin-bottom: 20px;
-		padding-bottom: 20px;
-	}
 
 	.is-loading & {
 		animation: ${ pulse } 1.5s ease-in-out infinite;
@@ -938,12 +938,6 @@ const CheckoutSummaryLineItem = styled.div< { isDiscount?: boolean } >`
 
 	color: ${ ( props ) => ( props.isDiscount ? props.theme.colors.discount : 'inherit' ) };
 
-	&:nth-last-of-type( 3 ) {
-		border-bottom: 1px solid ${ ( props ) => props.theme.colors.borderColorLight };
-		margin-bottom: 20px;
-		padding-bottom: 20px;
-	}
-
 	.is-loading & {
 		animation: ${ pulse } 1.5s ease-in-out infinite;
 	}
@@ -955,14 +949,6 @@ const CheckoutSummaryTotal = styled( CheckoutSummaryLineItem )`
 	font-weight: ${ ( props ) => props.theme.weights.bold };
 	line-height: 26px;
 	margin-bottom: 16px;
-`;
-
-const CheckoutSummaryExplanation = styled( CheckoutSummaryLineItem )`
-	color: ${ ( props ) => props.theme.colors.textColorLight };
-	font-size: 12px;
-	font-weight: ${ ( props ) => props.theme.weights.normal };
-	font-style: italic;
-	line-height: 16px;
 `;
 
 const LoadingCopy = styled.p`

@@ -142,8 +142,8 @@ export const STEPS = {
 	},
 
 	SITE_CREATION_STEP: {
-		slug: 'site-creation-step',
-		asyncComponent: () => import( './steps-repository/site-creation-step' ),
+		slug: 'create-site',
+		asyncComponent: () => import( './steps-repository/create-site' ),
 	},
 
 	SITE_LAUNCH: {

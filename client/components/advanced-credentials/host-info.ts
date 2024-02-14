@@ -328,6 +328,11 @@ export const topHosts: Host[] = [
 			ftp: 'https://www.siteground.com/kb/establish-ftp-connection-hosting-account/',
 		},
 	},
+	{
+		id: 'pressable',
+		name: 'Pressable',
+		supportLink: 'https://pressable.com/knowledgebase/connect-to-ssh-on-pressable/',
+	},
 ];
 
 export const genericInfo: Host = {

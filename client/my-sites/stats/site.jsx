@@ -38,6 +38,7 @@ import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import getCurrentRouteParameterized from 'calypso/state/selectors/get-current-route-parameterized';
 import isJetpackModuleActive from 'calypso/state/selectors/is-jetpack-module-active';
 import isPrivateSite from 'calypso/state/selectors/is-private-site';
+import isAtomicSite from 'calypso/state/selectors/is-site-wpcom-atomic';
 import { getJetpackStatsAdminVersion, isJetpackSite } from 'calypso/state/sites/selectors';
 import { requestModuleSettings } from 'calypso/state/stats/module-settings/actions';
 import { getModuleSettings } from 'calypso/state/stats/module-settings/selectors';
@@ -199,6 +200,7 @@ class StatsSite extends Component {
 			date,
 			siteId,
 			slug,
+			isAtomic,
 			isJetpack,
 			isSitePrivate,
 			isOdysseyStats,
@@ -208,6 +210,8 @@ class StatsSite extends Component {
 		} = this.props;
 
 		let defaultPeriod = PAST_SEVEN_DAYS;
+
+		const shouldShowUpsells = isOdysseyStats && ! isAtomic;
 
 		// Set the current period based on the module settings.
 		// @TODO: Introduce the loading state to avoid flickering due to slow module settings request.
@@ -477,8 +481,8 @@ class StatsSite extends Component {
 				{ isPlanUsageEnabled && (
 					<StatsPlanUsage siteId={ siteId } isOdysseyStats={ isOdysseyStats } />
 				) }
-				{ /* Only load Jetpack Upsell Section for Odyssey Stats */ }
-				{ ! isOdysseyStats ? null : (
+				{ /* Only load Jetpack Upsell Section for Odyssey Stats excluding Atomic */ }
+				{ ! shouldShowUpsells ? null : (
 					<AsyncLoad require="calypso/my-sites/stats/jetpack-upsell-section" />
 				) }
 				<PromoCards isOdysseyStats={ isOdysseyStats } pageSlug="traffic" slug={ slug } />
@@ -616,6 +620,7 @@ export default connect(
 
 		return {
 			canUserViewStats,
+			isAtomic: isAtomicSite( state, siteId ),
 			isJetpack,
 			isSitePrivate: isPrivateSite( state, siteId ),
 			siteId,

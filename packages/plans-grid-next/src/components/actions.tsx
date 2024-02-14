@@ -21,7 +21,7 @@ import { isMobile } from '@automattic/viewport';
 import styled from '@emotion/styled';
 import { useSelect } from '@wordpress/data';
 import { useCallback } from '@wordpress/element';
-import { localize, TranslateResult, useTranslate } from 'i18n-calypso';
+import { TranslateResult, useTranslate } from 'i18n-calypso';
 import { usePlansGridContext } from '../grid-context';
 import useDefaultStorageOption from '../hooks/data-store/use-default-storage-option';
 import useIsLargeCurrency from '../hooks/use-is-large-currency';
@@ -538,4 +538,4 @@ const PlanFeatures2023GridActions = ( props: PlanFeaturesActionsButtonProps ) =>
 	);
 };
 
-export default localize( PlanFeatures2023GridActions );
+export default PlanFeatures2023GridActions;

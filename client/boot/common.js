@@ -51,6 +51,8 @@ import { setupLocale } from './locale';
 
 const debug = debugFactory( 'calypso' );
 
+const isA8CForAgenciesEnabled = config.isEnabled( 'a8c-for-agencies' );
+
 const setupContextMiddleware = ( reduxStore, reactQueryClient ) => {
 	page( '*', ( context, next ) => {
 		const parsed = getUrlParts( context.canonicalPath );
@@ -134,7 +136,7 @@ function saveOauthFlags() {
 
 function authorizePath() {
 	const redirectUri = new URL(
-		isJetpackCloud() ? '/connect/oauth/token' : '/api/oauth/token',
+		isJetpackCloud() || isA8CForAgenciesEnabled ? '/connect/oauth/token' : '/api/oauth/token',
 		window.location
 	);
 	redirectUri.search = new URLSearchParams( {
@@ -153,7 +155,7 @@ function authorizePath() {
 	return authUri.toString();
 }
 
-const JP_CLOUD_PUBLIC_ROUTES = [ '/pricing', '/plans', '/features/comparison' ];
+const JP_CLOUD_PUBLIC_ROUTES = [ '/pricing', '/plans', '/features/comparison', '/manage/pricing' ];
 
 const oauthTokenMiddleware = () => {
 	if ( config.isEnabled( 'oauth' ) ) {

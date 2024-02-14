@@ -103,12 +103,14 @@ const SubscribersHeader = ( { selectedSiteId, isUnverified }: SubscribersHeaderP
 type SubscribersProps = {
 	filterOption: SubscribersFilterBy;
 	pageNumber: number;
+	timestamp: number;
 	searchTerm: string;
 	sortTerm: SubscribersSortBy;
 	filterOptionChanged: ( option: SubscribersFilterBy ) => void;
 	pageChanged: ( page: number ) => void;
 	searchTermChanged: ( term: string ) => void;
 	sortTermChanged: ( term: SubscribersSortBy ) => void;
+	reloadData: () => void;
 };
 
 const SubscribersPage = ( {
@@ -116,10 +118,12 @@ const SubscribersPage = ( {
 	pageNumber,
 	searchTerm,
 	sortTerm,
+	timestamp,
 	filterOptionChanged,
 	pageChanged,
 	searchTermChanged,
 	sortTermChanged,
+	reloadData,
 }: SubscribersProps ) => {
 	const selectedSite = useSelector( getSelectedSite );
 
@@ -160,6 +164,7 @@ const SubscribersPage = ( {
 		setGiftUserId( user_id );
 		setGiftUsername( display_name );
 	};
+
 	return (
 		<SubscribersPageProvider
 			siteId={ siteId }
@@ -167,6 +172,7 @@ const SubscribersPage = ( {
 			pageNumber={ pageNumber }
 			searchTerm={ searchTerm }
 			sortTerm={ sortTerm }
+			timestamp={ timestamp }
 			filterOptionChanged={ filterOptionChanged }
 			pageChanged={ pageChanged }
 			searchTermChanged={ searchTermChanged }
@@ -202,7 +208,10 @@ const SubscribersPage = ( {
 							userId={ giftUserId }
 							username={ giftUsername }
 							onCancel={ () => setGiftUserId( 0 ) }
-							onConfirm={ () => setGiftUserId( 0 ) }
+							onConfirm={ function () {
+								setGiftUserId( 0 );
+								reloadData();
+							} }
 						/>
 					) }
 					{ selectedSite && <AddSubscribersModal site={ selectedSite } /> }

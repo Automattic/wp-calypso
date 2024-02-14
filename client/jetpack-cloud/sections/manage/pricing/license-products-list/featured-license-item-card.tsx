@@ -26,7 +26,6 @@ type FeaturedLicenseItemCardProps = {
 	isCondensedVersion?: boolean;
 	isCtaDisabled?: boolean;
 	isCtaExternal?: boolean;
-	onClickCta?: VoidFunction;
 };
 
 export const FeaturedLicenseItemCard = ( {
@@ -35,7 +34,6 @@ export const FeaturedLicenseItemCard = ( {
 	ctaAsPrimary,
 	isCtaDisabled,
 	isCtaExternal,
-	onClickCta,
 }: FeaturedLicenseItemCardProps ) => {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
@@ -91,8 +89,14 @@ export const FeaturedLicenseItemCard = ( {
 	);
 
 	const onSelectProduct = useCallback( () => {
-		page( getIssueLicenseURL( productSlug, bundleSize ) );
-	}, [ bundleSize, getIssueLicenseURL, productSlug ] );
+		page.replace( getIssueLicenseURL( productSlug, bundleSize ) );
+		dispatch(
+			recordTracksEvent( 'calypso_jetpack_manage_on_select_product_button_click', {
+				product: productSlug,
+				bundle_size: bundleSize,
+			} )
+		);
+	}, [ bundleSize, dispatch, getIssueLicenseURL, productSlug ] );
 
 	const onHideLightbox = useCallback( () => {
 		resetParams( [ LICENSE_INFO_MODAL_ID ] );
@@ -114,10 +118,9 @@ export const FeaturedLicenseItemCard = ( {
 				}
 				price={ price }
 				ctaAsPrimary={ ctaAsPrimary }
-				onClickCta={ onClickCta }
+				onClickCta={ onSelectProduct }
 				isCtaDisabled={ isCtaDisabled }
 				isCtaExternal={ isCtaExternal }
-				ctaHref={ isCtaDisabled ? '#' : getIssueLicenseURL( productSlug, bundleSize ) }
 				ctaAriaLabel={ ctaAriaLabel }
 				ctaLabel={ ctaLabel }
 			/>

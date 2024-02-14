@@ -1,4 +1,5 @@
 import { Plans, type AddOnMeta } from '@automattic/data-stores';
+import { UpgradeClickHandler } from './hooks/use-upgrade-click-handler';
 import type {
 	UrlFriendlyTermType,
 	PlanSlug,
@@ -32,12 +33,7 @@ export interface GridPlan {
 	planSlug: PlanSlug;
 	freeTrialPlanSlug?: PlanSlug;
 	isVisible: boolean;
-	features: {
-		wpcomFeatures: TransformedFeatureObject[];
-		jetpackFeatures: TransformedFeatureObject[];
-		storageOptions: StorageOption[];
-		conditionalFeatures?: FeatureObject[];
-	};
+	features: PlanFeaturesForGridPlan;
 	tagline: TranslateResult;
 	planTitle: TranslateResult;
 	availableForPurchase: boolean;
@@ -121,7 +117,7 @@ export interface CommonGridProps {
 	showRefundPeriod?: boolean;
 	// only used for comparison grid
 	planTypeSelectorProps?: PlanTypeSelectorProps;
-	onUpgradeClick: ( planSlug: PlanSlug ) => void;
+	onUpgradeClick?: UpgradeClickHandler;
 	planUpgradeCreditsApplicable?: number | null;
 	gridContainerRef?: React.MutableRefObject< HTMLDivElement | null >;
 	gridSize?: string;
@@ -185,7 +181,7 @@ export type PlanTypeSelectorProps = {
 	withDiscount?: string;
 	enableStickyBehavior?: boolean;
 	stickyPlanTypeSelectorOffset?: number;
-	onPlanIntervalChange: ( selectedItem: { key: SupportedUrlFriendlyTermType } ) => void;
+	onPlanIntervalUpdate: ( interval: SupportedUrlFriendlyTermType ) => void;
 	layoutClassName?: string;
 	siteSlug?: string | null;
 	selectedPlan?: string;
@@ -194,7 +190,6 @@ export type PlanTypeSelectorProps = {
 	isInSignup: boolean;
 	plans: PlanSlug[];
 	eligibleForWpcomMonthlyPlans?: boolean;
-	isPlansInsideStepper: boolean;
 	hideDiscount?: boolean;
 	redirectTo?: string | null;
 	isStepperUpgradeFlow: boolean;
@@ -220,7 +215,6 @@ export type IntervalTypeProps = Pick<
 	| 'plans'
 	| 'isInSignup'
 	| 'eligibleForWpcomMonthlyPlans'
-	| 'isPlansInsideStepper'
 	| 'hideDiscount'
 	| 'redirectTo'
 	| 'showPlanTypeSelectorDropdown'
@@ -230,7 +224,7 @@ export type IntervalTypeProps = Pick<
 	| 'useCheckPlanAvailabilityForPurchase'
 	| 'title'
 	| 'coupon'
-	| 'onPlanIntervalChange'
+	| 'onPlanIntervalUpdate'
 >;
 
 export type SupportedUrlFriendlyTermType = Extract<

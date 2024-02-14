@@ -3,6 +3,7 @@ import page from '@automattic/calypso-router';
 import { Button, Card, FormInputValidation, FormLabel, Gridicon } from '@automattic/components';
 import { alert } from '@automattic/components/src/icons';
 import { localizeUrl } from '@automattic/i18n-utils';
+import { Spinner } from '@wordpress/components';
 import { Icon } from '@wordpress/icons';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
@@ -59,6 +60,7 @@ import getCurrentQueryArguments from 'calypso/state/selectors/get-current-query-
 import getCurrentRoute from 'calypso/state/selectors/get-current-route';
 import getInitialQueryArguments from 'calypso/state/selectors/get-initial-query-arguments';
 import isWooCommerceCoreProfilerFlow from 'calypso/state/selectors/is-woocommerce-core-profiler-flow';
+import ErrorNotice from './error-notice';
 import SocialLoginForm from './social';
 
 import './login-form.scss';
@@ -602,17 +604,6 @@ export class LoginForm extends Component {
 	};
 
 	getMagicLoginPageLink() {
-		if (
-			! canDoMagicLogin(
-				this.props.twoFactorAuthType,
-				this.props.oauth2Client,
-				this.props.wccomFrom,
-				this.props.isJetpackWooCommerceFlow
-			)
-		) {
-			return null;
-		}
-
 		const loginLink = getLoginLinkPageUrl(
 			this.props.locale,
 			this.props.currentRoute,
@@ -642,6 +633,19 @@ export class LoginForm extends Component {
 				},
 			}
 		);
+	}
+
+	renderPasswordValidationError() {
+		if (
+			canDoMagicLogin(
+				this.props.twoFactorAuthType,
+				this.props.oauth2Client,
+				this.props.isJetpackWooCommerceFlow
+			)
+		) {
+			return this.renderMagicLoginLink();
+		}
+		return this.props.requestError.message;
 	}
 
 	render() {
@@ -744,6 +748,7 @@ export class LoginForm extends Component {
 				{ this.renderPrivateSiteNotice() }
 
 				<Card className="login__form">
+					{ isWoo && <ErrorNotice /> }
 					<div className="login__form-userdata">
 						{ ! isWoo && linkingSocialUser && (
 							<p>
@@ -851,7 +856,7 @@ export class LoginForm extends Component {
 							/>
 
 							{ requestError && requestError.field === 'password' && (
-								<FormInputValidation isError text={ this.renderMagicLoginLink() } />
+								<FormInputValidation isError text={ this.renderPasswordValidationError() } />
 							) }
 						</div>
 					</div>
@@ -859,8 +864,12 @@ export class LoginForm extends Component {
 					<p className="login__form-terms">{ socialToS }</p>
 					{ isWoo && ! isPartnerSignup && this.renderLostPasswordLink() }
 					<div className="login__form-action">
-						<FormsButton primary busy={ isSendingEmail } disabled={ isSubmitButtonDisabled }>
-							{ this.getLoginButtonText() }
+						<FormsButton
+							primary
+							busy={ ! isWoo && isSendingEmail }
+							disabled={ isSubmitButtonDisabled }
+						>
+							{ isWoo && isSendingEmail ? <Spinner /> : this.getLoginButtonText() }
 						</FormsButton>
 					</div>
 

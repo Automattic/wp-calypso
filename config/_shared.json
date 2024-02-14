@@ -26,6 +26,8 @@
 	"wpcom_support_blog": "en.support.wordpress.com",
 	"apple_pay_merchant_id": "merchant.com.wordpress",
 	"apple_oauth_client_id": "com.wordpress.siwa",
+	"github_app_slug": "wordpress-com-official",
+	"github_oauth_client_id": "Iv1.a72902e7053ea8aa",
 	"google_oauth_client_id": "108380595987-j91sm1alavcdgd81i2655kp8q1lbtvrc.apps.googleusercontent.com",
 	"facebook_app_id": "611241942420191",
 	"livechat_support_locales": [ "en", "en-gb" ],

@@ -71,6 +71,20 @@ function hostingFlowForkingPage( context: PageJSContext, next: () => void ) {
 				min-height: auto; /* browsing a different page might inject this style on the page */
 			}
 
+			.button.is-primary {
+				min-width: 160px;
+				background-color: var( --studio-blue-50 );
+				border-color: var( --studio-blue-50 );
+			}
+
+			.button.is-primary:active:not( :disabled ),
+			.button.is-primary:hover:not( :disabled ),
+			.button.is-primary:focus:not( :disabled ) {
+				background-color: var( --studio-blue-60 );
+				border-color: var( --studio-blue-60 );
+				box-shadow: 0 0 0 2px var( --studio-blue-60 );
+			}
+
 			${ MEDIA_QUERIES.mediumOrLarger } {
 				height: 100vh;
 

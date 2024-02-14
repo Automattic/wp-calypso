@@ -28,7 +28,6 @@ import TokenField from 'calypso/components/token-field';
 import withSiteRoles from 'calypso/data/site-roles/with-site-roles';
 import accept from 'calypso/lib/accept';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
-import withTrackingTool from 'calypso/lib/analytics/with-tracking-tool';
 import getWpcomFollowerRole from 'calypso/lib/get-wpcom-follower-role';
 import { userCan } from 'calypso/lib/site/utils';
 import wpcom from 'calypso/lib/wp';
@@ -800,6 +799,4 @@ const mapDispatchToProps = {
 
 const connectComponent = connect( mapStateToProps, mapDispatchToProps );
 
-export default connectComponent(
-	localize( withTrackingTool( 'HotJar' )( withSiteRoles( InvitePeople ) ) )
-);
+export default connectComponent( localize( withSiteRoles( InvitePeople ) ) );

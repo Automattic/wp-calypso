@@ -41,7 +41,7 @@ class TransferConfirmationDialog extends PureComponent {
 		}
 
 		return translate(
-			'Do you want to connect {{strong}}%(domainName)s{{/strong}} ' +
+			'Do you want to attach {{strong}}%(domainName)s{{/strong}} ' +
 				'to site {{strong}}%(targetSiteTitle)s{{/strong}}?',
 			{
 				args: { domainName: domain.name, targetSiteTitle },
@@ -97,7 +97,7 @@ class TransferConfirmationDialog extends PureComponent {
 	render() {
 		const { domain, isMapping, translate } = this.props;
 		const actionLabel = ! isMapping
-			? translate( 'Confirm Connection' )
+			? translate( 'Confirm Attachment' )
 			: translate( 'Confirm Domain Connection Transfer' );
 		const buttons = [
 			{
@@ -118,7 +118,9 @@ class TransferConfirmationDialog extends PureComponent {
 
 		return (
 			<Dialog isVisible={ this.props.isVisible } buttons={ buttons } onClose={ this.props.onClose }>
-				<h1>{ translate( 'Confirm Connection' ) }</h1>
+				<h1>
+					{ ! isMapping ? translate( 'Confirm Attachment' ) : translate( 'Confirm Connection' ) }
+				</h1>
 				<p>{ this.getMessage() }</p>
 				{ hasEmailWithUs && this.renderEmailSubscriptionInformation() }
 				{ ! this.props.isTargetSiteOnPaidPlan && this.renderTargetSiteOnFreePlanWarnings() }

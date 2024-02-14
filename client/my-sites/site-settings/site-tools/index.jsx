@@ -59,13 +59,15 @@ class SiteTools extends Component {
 			showManageConnection,
 			showStartSiteTransfer,
 			siteId,
+			headerTitle,
+			source,
 		} = this.props;
 
-		const changeAddressLink = `/domains/manage/${ siteSlug }`;
-		const startOverLink = `/settings/start-over/${ siteSlug }`;
-		const startSiteTransferLink = `/settings/start-site-transfer/${ siteSlug }`;
-		const deleteSiteLink = `/settings/delete-site/${ siteSlug }`;
-		const manageConnectionLink = `/settings/manage-connection/${ siteSlug }`;
+		const changeAddressLink = `/domains/manage/${ siteSlug }?source=${ source }`;
+		const startOverLink = `/settings/start-over/${ siteSlug }?source=${ source }`;
+		const startSiteTransferLink = `/settings/start-site-transfer/${ siteSlug }?source=${ source }`;
+		const deleteSiteLink = `/settings/delete-site/${ siteSlug }?source=${ source }`;
+		const manageConnectionLink = `/settings/manage-connection/${ siteSlug }?source=${ source }`;
 
 		const changeSiteAddress = translate( 'Change your site address' );
 
@@ -97,7 +99,7 @@ class SiteTools extends Component {
 		return (
 			<div className="site-tools">
 				<QueryRewindState siteId={ siteId } />
-				<SettingsSectionHeader id="site-tools__header" title={ translate( 'Site tools' ) } />
+				<SettingsSectionHeader id="site-tools__header" title={ headerTitle } />
 				{ showChangeAddress && (
 					<SiteToolsLink
 						href={ changeAddressLink }

@@ -2,6 +2,8 @@
 @import "@wordpress/base-styles/mixins";
 
 .site-settings {
+	$margin-bottom-setting-label: 5px;
+
 	font-size: $font-body-small;
 
 	fieldset.form-fieldset {
@@ -42,9 +44,19 @@
 
 	legend,
 	label {
-		margin-bottom: 5px;
+		margin-bottom: $margin-bottom-setting-label;
 		font-size: $font-body-small;
 		font-weight: 700;
+	}
+
+	// Addressing an issue of inconsistent spacing bettwen setting label's and the following block: https://github.com/Automattic/wp-calypso/issues/72721
+	label.reduce-margin-bottom-fix {
+		margin-bottom: $margin-bottom-setting-label - 3px;
+	}
+
+	// Addressing an issue of inconsistent spacing bettwen setting label's and the following block: https://github.com/Automattic/wp-calypso/issues/72721
+	label.increase-margin-bottom-fix {
+		margin-bottom: $margin-bottom-setting-label + 2px;
 	}
 
 	.components-toggle-control__label {
@@ -571,20 +583,6 @@ button.site-settings__general-settings-set-guessed-timezone.button.is-borderless
 	}
 }
 
-.site-settings__general-settings-launch-site {
-	display: flex;
-	justify-content: space-between;
-}
-
-.site-settings__general-settings-launch-site-text {
-	flex-grow: 2;
-}
-
-.site-settings__general-settings-launch-site-button {
-	margin-left: 20px;
-	white-space: nowrap;
-}
-
 .site-settings__disable-privacy-settings {
 	opacity: 0.33;
 	pointer-events: none;
@@ -796,4 +794,14 @@ button.site-settings__general-settings-set-guessed-timezone.button.is-borderless
 	color: var(--color-text-subtle);
 	font-size: $font-body-small;
 	font-style: italic;
+}
+
+.support-info + .jetpack-module-toggle,
+.support-info + .components-toggle-control,
+.support-info + .custom-content-types__module-settings {
+	display: flex;
+}
+
+.jetpack-module-toggle {
+	flex-direction: column;
 }

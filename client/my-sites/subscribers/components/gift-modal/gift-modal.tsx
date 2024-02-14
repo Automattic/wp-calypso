@@ -52,10 +52,10 @@ const GiftSubscriptionModal = ( {
 					args: {
 						username: username,
 					},
-				} )
+				} ),
+				onConfirm
 			)
 		);
-		onConfirm();
 	};
 
 	return (
