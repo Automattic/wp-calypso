@@ -33,7 +33,7 @@
 		"@automattic/typography": "workspace:^",
 		"@automattic/viewport-react": "workspace:^",
 		"@wordpress/base-styles": "^4.42.0",
-		"@wordpress/components": "^26.0.0",
+		"@wordpress/components": "^26.0.1",
 		"@wordpress/icons": "^9.42.0",
 		"@wordpress/react-i18n": "^3.49.0",
 		"canvas-confetti": "^1.6.0",
