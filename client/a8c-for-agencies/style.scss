@@ -13,12 +13,8 @@
 
 	.main {
 		box-sizing: border-box;
-		padding-left: 16px;
-		padding-right: 16px;
-	}
-
-	input::placeholder {
-		color: var(--color-neutral-10) !important;
+		padding-inline-start: 16px;
+		padding-inline-end: 16px;
 	}
 }
 
@@ -30,16 +26,16 @@
 	// On mobile views this accommodates the masterbar, but we don't have one;
 	// so, we can remove it by default and re-add it when our width is >660px.
 	.layout__content {
-		padding-top: initial;
+		padding-block-start: initial;
 	}
 
 	@include breakpoint-deprecated( ">660px" ) {
-		padding-top: 32px;
+		padding-block-start: 32px;
 	}
 }
 
 .theme-a8c-for-agencies .layout__secondary {
-	border-right: initial;
+	border-inline-end: initial;
 
 	// Allow visible overflow, so the profile dropdown menu can be displayed
 	overflow: initial;
@@ -67,8 +63,6 @@
 
 		.all-sites,
 		.site {
-			--color-sidebar-menu-selected-background: #e3f0e4;
-
 			margin: 4px 4px 0 4px;
 
 			&.is-selected,
@@ -80,7 +74,6 @@
 }
 
 // Universal Text Styles
-
 html {
 	h2 {
 		font-size: $font-title-small;
@@ -115,18 +108,8 @@ html {
 	}
 }
 
-.theme-a8c-for-agencies .ReactModalPortal {
-	.dialog.card {
-		box-shadow: 0 0 0 1px var(--color-border-subtle), 0 4px 12px var(--color-neutral-10);
-	}
-
-	.dialog__action-buttons {
-		border-radius: 0 0 var(--a4a-corners-soft) var(--a4a-corners-soft);
-	}
-}
-
 .layout__secondary {
-	border-right: 1px solid var(--color-sidebar-border);
+	border-inline-end: 1px solid var(--color-sidebar-border);
 }
 
 .layout.focus-content .layout__secondary {
