@@ -85,6 +85,10 @@ export default function ( pageBase = '/' ) {
 
 	page.base( pageBase );
 
+	// Email stats Pages
+	statsPage( `/stats/email/:statType/:period(${ validEmailPeriods })/:email_id/:site`, emailStats );
+	statsPage( `/stats/day/emails/:site`, emailSummary );
+
 	// Redirect this to default /stats/day view in order to keep
 	// the paths and page view reporting consistent.
 	page( '/', '/stats/day/:site' );
@@ -125,12 +129,12 @@ export default function ( pageBase = '/' ) {
 	// Stat Purchase Page
 	statsPage( '/stats/purchase/:site', purchase );
 
-	// Anything else should redirect to default stats page
-	statsPage( '*', redirectToSiteTrafficPage );
-
 	// Email stats Pages
 	statsPage( `/stats/email/:statType/:period(${ validEmailPeriods })/:email_id/:site`, emailStats );
 	statsPage( `/stats/day/emails/:site`, emailSummary );
+
+	// Anything else should redirect to default stats page
+	statsPage( '*', redirectToSiteTrafficPage );
 
 	// Enable hashbang for routing in Jetpack.
 	page( { hashbang: true } );
