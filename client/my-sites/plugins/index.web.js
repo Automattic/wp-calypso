@@ -14,6 +14,7 @@ import {
 	renderProvisionPlugins,
 	jetpackCanUpdate,
 	plugins,
+	updatesManager,
 	relatedPlugins,
 	redirectTrialSites,
 	redirectMailPoetUpgrade,
@@ -134,6 +135,16 @@ export default function ( router ) {
 		redirectTrialSites,
 		jetpackCanUpdate,
 		plugins,
+		makeLayout,
+		clientRender
+	);
+
+	router(
+		`/${ langParam }/plugins/updates-manager/:site_id?`,
+		redirectLoggedOut,
+		siteSelection,
+		navigation,
+		updatesManager,
 		makeLayout,
 		clientRender
 	);

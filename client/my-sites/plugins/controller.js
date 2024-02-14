@@ -5,6 +5,7 @@ import { redirectLoggedOut } from 'calypso/controller';
 import { gaRecordEvent } from 'calypso/lib/analytics/ga';
 import { getSiteFragment, sectionify } from 'calypso/lib/route';
 import { navigation } from 'calypso/my-sites/controller';
+import { UpdatesManager } from 'calypso/my-sites/plugins/updates-manager';
 import { isUserLoggedIn, getCurrentUserSiteCount } from 'calypso/state/current-user/selectors';
 import getSelectedOrAllSitesWithPlugins from 'calypso/state/selectors/get-selected-or-all-sites-with-plugins';
 import { fetchSitePlans } from 'calypso/state/sites/plans/actions';
@@ -102,12 +103,22 @@ export function renderProvisionPlugins( context, next ) {
 	next();
 }
 
+export function renderUpdatesManager( context, next ) {
+	context.primary = createElement( UpdatesManager, {} );
+	next();
+}
+
 export function plugins( context, next ) {
 	const { pluginFilter: filter = 'all' } = context.params;
 	const basePath = sectionify( context.path ).replace( '/' + filter, '' );
 
 	context.params.pluginFilter = filter;
 	renderPluginList( context, basePath );
+	next();
+}
+
+export function updatesManager( context, next ) {
+	renderUpdatesManager( context, next );
 	next();
 }
 
