@@ -547,11 +547,21 @@ __metadata:
     "@automattic/calypso-build": "workspace:^"
     "@automattic/calypso-eslint-overrides": "workspace:^"
     "@automattic/command-palette": "workspace:^"
+    "@automattic/i18n-utils": "workspace:^"
+    "@automattic/languages": "workspace:^"
+    "@automattic/wp-babel-makepot": "workspace:^"
     "@tanstack/react-query": "npm:^5.15.5"
     "@wordpress/data": "npm:^9.20.0"
     "@wordpress/dependency-extraction-webpack-plugin": "npm:^5.1.0"
     "@wordpress/dom-ready": "npm:^3.50.0"
+    "@wordpress/i18n": "npm:^4.51.0"
+    "@wordpress/react-i18n": "npm:^3.49.0"
     calypso: "workspace:^"
+    gettext-parser: "npm:6.0.0"
+    i18n-calypso: "workspace:^"
+    lodash: "npm:^4.17.21"
+    mkdirp: "npm:1.0.4"
+    node-fetch: "npm:2.6.6"
     npm-run-all: "npm:^4.1.5"
     postcss: "npm:^8.4.5"
     react: "npm:^18.2.0"
@@ -17822,6 +17832,18 @@ __metadata:
   languageName: node
   linkType: hard
 
+"gettext-parser@npm:6.0.0, gettext-parser@npm:^6.0.0":
+  version: 6.0.0
+  resolution: "gettext-parser@npm:6.0.0"
+  dependencies:
+    content-type: "npm:^1.0.4"
+    encoding: "npm:^0.1.13"
+    readable-stream: "npm:^4.1.0"
+    safe-buffer: "npm:^5.2.1"
+  checksum: 2e492fed36bba00de2bd5666d52191321f438e8565b119364f72e70899a39a984046fbe478056d4aeaf879118623f3863bd5350e85e78862b316c383017afbfa
+  languageName: node
+  linkType: hard
+
 "gettext-parser@npm:^1.3.1":
   version: 1.4.0
   resolution: "gettext-parser@npm:1.4.0"
@@ -17841,18 +17863,6 @@ __metadata:
     readable-stream: "npm:^3.6.0"
     safe-buffer: "npm:^5.2.0"
   checksum: 06082d4f6250f9d79fd7f6d07566bc918dfa5918547fd0c3d27dbe00ee05558fe9421933ce03003b9ea32e30d44d5a792bbc4ac67049e431fd4f4273d51374f5
-  languageName: node
-  linkType: hard
-
-"gettext-parser@npm:^6.0.0":
-  version: 6.0.0
-  resolution: "gettext-parser@npm:6.0.0"
-  dependencies:
-    content-type: "npm:^1.0.4"
-    encoding: "npm:^0.1.13"
-    readable-stream: "npm:^4.1.0"
-    safe-buffer: "npm:^5.2.1"
-  checksum: 2e492fed36bba00de2bd5666d52191321f438e8565b119364f72e70899a39a984046fbe478056d4aeaf879118623f3863bd5350e85e78862b316c383017afbfa
   languageName: node
   linkType: hard
 
@@ -22983,6 +22993,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"mkdirp@npm:1.0.4, mkdirp@npm:^1.0.3, mkdirp@npm:^1.0.4":
+  version: 1.0.4
+  resolution: "mkdirp@npm:1.0.4"
+  bin:
+    mkdirp: bin/cmd.js
+  checksum: 46ea0f3ffa8bc6a5bc0c7081ffc3907777f0ed6516888d40a518c5111f8366d97d2678911ad1a6882bf592fa9de6c784fea32e1687bb94e1f4944170af48a5cf
+  languageName: node
+  linkType: hard
+
 "mkdirp@npm:^0.5.1, mkdirp@npm:^0.5.4, mkdirp@npm:^0.5.5, mkdirp@npm:~0.5.1":
   version: 0.5.5
   resolution: "mkdirp@npm:0.5.5"
@@ -22991,15 +23010,6 @@ __metadata:
   bin:
     mkdirp: bin/cmd.js
   checksum: 4469faeeba703bc46b7cdbe3097d6373747a581eb8b556ce41c8fd25a826eb3254466c6522ba823c2edb0b6f0da7beb91cf71f040bc4e361534a3e67f0994bd0
-  languageName: node
-  linkType: hard
-
-"mkdirp@npm:^1.0.3, mkdirp@npm:^1.0.4":
-  version: 1.0.4
-  resolution: "mkdirp@npm:1.0.4"
-  bin:
-    mkdirp: bin/cmd.js
-  checksum: 46ea0f3ffa8bc6a5bc0c7081ffc3907777f0ed6516888d40a518c5111f8366d97d2678911ad1a6882bf592fa9de6c784fea32e1687bb94e1f4944170af48a5cf
   languageName: node
   linkType: hard
 
@@ -23361,6 +23371,15 @@ __metadata:
   version: 1.1.1
   resolution: "node-fetch-native@npm:1.1.1"
   checksum: 4b12e42c7bd80688acbfd8cceaa246aa00c532d00193e049d9ccce7038b135932a7f1d8a12107e790b827f295d1fd9e76706b634bce7c7e375e6a2f96e233e0f
+  languageName: node
+  linkType: hard
+
+"node-fetch@npm:2.6.6":
+  version: 2.6.6
+  resolution: "node-fetch@npm:2.6.6"
+  dependencies:
+    whatwg-url: "npm:^5.0.0"
+  checksum: f9b5c8789c7bcd393a2fb70d752e36d5b5e84eb52bd5bffceb4fb64ac81dce1a1f55ca023a990e51bbf8594fc502ea9bea3004037e6eab65205cd84e8af94fc9
   languageName: node
   linkType: hard
 
