@@ -1,7 +1,7 @@
 {
 	"env": "development",
 	"env_id": "a8c-for-agencies-development",
-	"favicon_url": "/calypso/images/favicons/favicon-jetpack-cloud-development.ico",
+	"favicon_url": "/calypso/images/favicons/favicon-a4a-dev.ico",
 	"client_slug": "browser",
 	"protocol": "http",
 	"hostname": "agencies.localhost",
