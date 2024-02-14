@@ -84,6 +84,13 @@ describe( 'useTracking', () => {
 				site_intent: 'some-site-intent',
 			} )
 		);
+
+		expect( recordTracksEvent ).toHaveBeenCalledWith(
+			'calypso_launchpad_task_view',
+			expect.objectContaining( {
+				site_intent: 'some-site-intent',
+			} )
+		);
 	} );
 
 	it( 'tracks the click event', () => {
