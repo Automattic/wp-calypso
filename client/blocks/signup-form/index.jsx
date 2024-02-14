@@ -286,7 +286,7 @@ class SignupForm extends Component {
 	validate = ( fields, onComplete ) => {
 		const fieldsForValidation = filter( [
 			'email',
-			this.props.disablePasswordInput && 'password',
+			this.props.isPasswordless === false && 'password', // Remove password from validation if passwordless
 			this.props.displayUsernameInput && 'username',
 			this.props.displayNameInput && 'firstName',
 			this.props.displayNameInput && 'lastName',
@@ -762,6 +762,16 @@ class SignupForm extends Component {
 			}
 		} );
 		this.handleSubmit( event );
+	};
+
+	handlePasswordlessSubmit = ( passwordLessData ) => {
+		this.formStateController.handleSubmit( ( hasErrors ) => {
+			if ( hasErrors ) {
+				this.setState( { submitting: false } );
+				return;
+			}
+			this.props.submitForm( this.state.form, passwordLessData );
+		} );
 	};
 
 	renderWooCommerce() {
@@ -1242,7 +1252,7 @@ class SignupForm extends Component {
 						flowName={ this.props.flowName }
 						goToNextStep={ this.props.goToNextStep }
 						renderTerms={ this.termsOfServiceLink }
-						submitForm={ this.props.submitForm }
+						submitForm={ this.handlePasswordlessSubmit }
 						logInUrl={ logInUrl }
 						disabled={ this.props.disabled }
 						disableSubmitButton={ this.props.disableSubmitButton || emailErrorMessage }
