@@ -9,15 +9,16 @@ import { setLayoutFocus } from 'calypso/state/ui/layout-focus/actions';
 import { getCurrentLayoutFocus } from 'calypso/state/ui/layout-focus/selectors';
 import getSelectedSiteId from 'calypso/state/ui/selectors/get-selected-site-id';
 import { AppState } from 'calypso/types';
-import JetpackLogo from './jetpack-logo.svg';
+import a8cLogo from './a8c-logo.svg';
 import ProfileDropdown from './profile-dropdown';
 
 type Props = {
 	forceAllSitesView?: boolean;
+	simple?: boolean;
 };
 
 const AllSitesIcon = () => (
-	<img className="a4a-sidebar__all-sites-icon" src={ JetpackLogo } alt="" role="presentation" />
+	<img className="a4a-sidebar__all-sites-icon" src={ a8cLogo } alt="" role="presentation" />
 );
 
 // NOTE: This hook is a little hacky, to get around the "outside click"
@@ -55,11 +56,19 @@ const useShowSiteSelector = ( {
 	}, [ dispatch, forceAllSitesView, isSiteSelectorVisible, selectedSiteId ] );
 };
 
-const Header = ( { forceAllSitesView = false }: Props ) => {
+const Header = ( { forceAllSitesView = false, simple }: Props ) => {
 	const translate = useTranslate();
 	const selectedSiteId = useSelector( getSelectedSiteId );
 
 	const showSiteSelector = useShowSiteSelector( { forceAllSitesView, selectedSiteId } );
+
+	if ( simple ) {
+		return (
+			<div className="a4a-sidebar__header">
+				<AllSitesIcon />
+			</div>
+		);
+	}
 
 	return (
 		<SidebarHeader className="a4a-sidebar__header">
@@ -80,7 +89,7 @@ const Header = ( { forceAllSitesView = false }: Props ) => {
 					onSelect={ showSiteSelector }
 				/>
 			) }
-			<ProfileDropdown />
+			<ProfileDropdown compact />
 		</SidebarHeader>
 	);
 };

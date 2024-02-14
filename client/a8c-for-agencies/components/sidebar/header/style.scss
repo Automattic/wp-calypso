@@ -12,10 +12,20 @@
 	display: flex;
 	justify-content: center;
 	align-items: center;
+	gap: 12px;
 
 	height: 100%;
 
 	cursor: pointer;
+}
+
+.a4a-sidebar__profile-dropdown-button-label {
+	display: flex;
+	flex-direction: row;
+	justify-content: center;
+	align-items: flex-start;
+	gap: 4px;
+
 }
 
 html.accessible-focus .a4a-sidebar__profile-dropdown-button:focus {
@@ -56,6 +66,11 @@ html.accessible-focus .a4a-sidebar__profile-dropdown-button:focus {
 
 	font-size: $font-body-small;
 }
+
+.a4a-sidebar__profile-dropdown.is-align-menu-up .a4a-sidebar__profile-dropdown-menu {
+	top: calc(-100% + -48px);
+}
+
 
 .a4a-sidebar__profile-dropdown-menu-item {
 	padding: 1px 0;
