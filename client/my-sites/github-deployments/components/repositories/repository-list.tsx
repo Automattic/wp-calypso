@@ -1,78 +1,95 @@
-import { Button } from '@automattic/components';
-import { ExternalLink, Icon } from '@wordpress/components';
-import { __ } from '@wordpress/i18n';
-import { chevronDown, chevronUp } from '@wordpress/icons';
-import { GitHubRepositoryData } from '../../use-github-repositories-query';
-import { SortOption } from './browse-repositories';
-import { GitHubRepositoryListItem } from './repository-list-item';
+import { useLayoutEffect, useState } from 'react';
+import Pagination from 'calypso/components/pagination';
+import { GitHubAccountData } from '../../use-github-accounts-query';
+import {
+	GitHubRepositoryData,
+	useGithubRepositoriesQuery,
+} from '../../use-github-repositories-query';
+import { GitHubLoadingPlaceholder } from '../loading-placeholder';
+import { GitHubRepositoryListTable, SortOption } from './repository-list-table';
 
-interface GitHubAccountListProps {
-	repositories: GitHubRepositoryData[];
-	onSelect( repository: GitHubRepositoryData ): void;
-	sortKey: SortOption;
-	onSortChange( sort: SortOption ): void;
+const pageSize = 10;
+
+interface RepositoriesListProps {
+	account: GitHubAccountData;
+	query: string;
+	onSelectRepository( installation: GitHubAccountData, repository: GitHubRepositoryData ): void;
 }
 
-type SortPair = [ SortOption, SortOption ];
+export const GitHubBrowseRepositoriesList = ( {
+	account,
+	query,
+	onSelectRepository,
+}: RepositoriesListProps ) => {
+	const [ sort, setSort ] = useState< SortOption >( 'name_desc' );
+	const [ page, setPage ] = useState( 1 );
 
-const nameSorts: SortPair = [ 'name_asc', 'name_desc' ];
-const dateSorts: SortPair = [ 'date_asc', 'date_desc' ];
+	useLayoutEffect( () => {
+		setPage( 1 );
+	}, [ query ] );
 
-export const GitHubRepositoryList = ( {
-	repositories,
-	onSelect,
-	sortKey,
-	onSortChange,
-}: GitHubAccountListProps ) => {
-	function getSortIcon( pair: SortPair ) {
-		if ( sortKey === pair[ 0 ] ) {
-			return <Icon size={ 16 } icon={ chevronDown } />;
-		} else if ( sortKey === pair[ 1 ] ) {
-			return <Icon size={ 16 } icon={ chevronUp } />;
-		}
-	}
+	const { data: repositories = [], isLoading: isLoadingRepositories } = useGithubRepositoriesQuery(
+		account.external_id
+	);
 
-	function handleChangeSort( pair: SortPair ) {
-		if ( sortKey === pair[ 0 ] ) {
-			return pair[ 1 ];
-		}
-		return pair[ 0 ];
+	const filteredRepositories = sortRepositories( filterRepositories( repositories, query ), sort );
+
+	const currentPage = filteredRepositories.slice(
+		( page - 1 ) * pageSize,
+		( page - 1 ) * pageSize + pageSize
+	);
+
+	if ( isLoadingRepositories ) {
+		return <GitHubLoadingPlaceholder />;
 	}
 
 	return (
-		<div className="github-deployments-repository-list">
-			<table>
-				<thead>
-					<tr>
-						<th>
-							<Button plain onClick={ () => onSortChange( handleChangeSort( nameSorts ) ) }>
-								<span>{ __( 'Repository' ) }</span>
-								{ getSortIcon( nameSorts ) }
-							</Button>
-						</th>
-						<th>
-							<Button plain onClick={ () => onSortChange( handleChangeSort( dateSorts ) ) }>
-								<span>{ __( 'Last Updated ' ) }</span>
-								{ getSortIcon( dateSorts ) }
-							</Button>
-						</th>
-						<th> </th>
-					</tr>
-				</thead>
-				<tbody>
-					{ repositories.map( ( repository, index ) => (
-						<GitHubRepositoryListItem
-							key={ index }
-							repository={ repository }
-							onSelect={ () => onSelect( repository ) }
-						/>
-					) ) }
-				</tbody>
-			</table>
-			<p className="github-deployments-adjust-permissions">
-				{ __( 'Missing some repositories?' ) }{ ' ' }
-				<ExternalLink href="#"> { __( 'Adjust permissions on GitHub' ) } </ExternalLink>
-			</p>
-		</div>
+		<>
+			<GitHubRepositoryListTable
+				repositories={ currentPage }
+				onSelect={ ( repository ) => onSelectRepository( account, repository ) }
+				sortKey={ sort }
+				onSortChange={ setSort }
+			/>
+			<Pagination
+				page={ page }
+				perPage={ pageSize }
+				total={ filteredRepositories.length }
+				pageClick={ setPage }
+			/>
+		</>
 	);
 };
+
+function filterRepositories( repositories: GitHubRepositoryData[], query: string ) {
+	const trimmed = query.trim();
+	if ( trimmed ) {
+		return repositories.filter( ( repository ) =>
+			repository.name.toLowerCase().includes( trimmed )
+		);
+	}
+	return repositories;
+}
+
+function sortRepositories( repositories: GitHubRepositoryData[], sortKey: SortOption ) {
+	switch ( sortKey ) {
+		case 'name_asc':
+			return repositories.sort( ( left, right ) => {
+				return left.name.localeCompare( right.name );
+			} );
+		case 'date_asc':
+			return repositories.sort( ( left, right ) => {
+				return left.updated_at.localeCompare( right.updated_at );
+			} );
+		case 'name_desc':
+			return repositories.sort( ( left, right ) => {
+				return left.name.localeCompare( right.name ) * -1;
+			} );
+		case 'date_desc':
+			return repositories.sort( ( left, right ) => {
+				return left.updated_at.localeCompare( right.updated_at ) * -1;
+			} );
+		default:
+			return repositories;
+	}
+}

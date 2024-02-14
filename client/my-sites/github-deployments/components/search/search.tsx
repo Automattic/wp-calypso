@@ -1,4 +1,4 @@
-import SuggestionSearch from 'calypso/components/suggestion-search/index';
+import SuggestionSearch from 'calypso/components/suggestion-search';
 
 interface SearchProps {
 	id: string;

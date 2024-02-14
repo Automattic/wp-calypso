@@ -7,35 +7,13 @@ import SocialLogo from 'calypso/components/social-logo';
 import { useDispatch } from 'calypso/state';
 import { errorNotice } from 'calypso/state/notices/actions';
 import { useGithubAccountsQuery } from '../use-github-accounts-query';
+import { openPopup } from '../utils/open-popup';
 
 const AUTHORIZE_URL = addQueryArgs( 'https://github.com/login/oauth/authorize', {
 	client_id: config( 'github_oauth_client_id' ),
 } );
 
 const POPUP_ID = 'github-oauth-authorize';
-
-const authorizeGitHub = () => {
-	return new Promise< void >( ( resolve, reject ) => {
-		let popup: Window | null;
-
-		try {
-			popup = window.open( AUTHORIZE_URL, POPUP_ID, 'height=600,width=700' );
-		} catch {
-			return reject();
-		}
-
-		if ( ! popup ) {
-			reject();
-		}
-
-		const interval = setInterval( (): void => {
-			if ( popup?.closed ) {
-				resolve();
-				clearInterval( interval );
-			}
-		}, 500 );
-	} );
-};
 
 export const GitHubAuthorizeButton = () => {
 	const { __ } = useI18n();
@@ -48,7 +26,7 @@ export const GitHubAuthorizeButton = () => {
 	const startAuthorization = () => {
 		setIsAuthorizing( true );
 
-		authorizeGitHub()
+		openPopup( { url: AUTHORIZE_URL, popupId: POPUP_ID } )
 			.then( () => refetch() )
 			.catch( () => dispatch( errorNotice( 'Failed to authorize GitHub. Please try again.' ) ) )
 			.finally( () => setIsAuthorizing( false ) );
