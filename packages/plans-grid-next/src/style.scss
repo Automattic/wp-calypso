@@ -497,7 +497,7 @@ $mobile-card-max-width: 440px;
 .plans-grid-next {
 	// insignificant padding important to prevent parent/child margins from collapsing
 	// creates a barrier between parent/child elements
-	// the alternative (oveflow: auto) would break the sticky behavior
+	// the alternative (oveflow: auto) would break the sticky behavior on the headers
 	padding: 1px;
 
 	.plan-features-2023-grid__table-item {
