@@ -702,7 +702,7 @@ const sections = [
 	},
 	{
 		name: 'a8c-for-agencies-sites',
-		paths: [ '/sites' ],
+		paths: [ '/sites', 'sites/favorite' ],
 		module: 'calypso/a8c-for-agencies/sections/sites',
 		group: 'a8c-for-agencies',
 		enableLoggedOut: true,
