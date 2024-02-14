@@ -1,0 +1,32 @@
+@import "../grid-mixins.scss";
+
+.education-footer__cards {
+	@include display-grid;
+	@include grid-template-columns(3, 24px, 1fr);
+
+	.card {
+		font-size: $font-body-small;
+	}
+}
+
+.marketplace__cards {
+	@include display-grid;
+	@include grid-template-columns(3, 20px, 1fr);
+
+	div {
+		width: 100%;
+	}
+}
+
+.button.marketplace-cta {
+	min-width: 122px;
+	margin-bottom: 26px;
+
+	// This is only shown for logged-out users, so override colour schemes.
+	background: var(--color-primary);
+	border: 0;
+
+	&:hover {
+		background: var(--color-primary-dark);
+	}
+}
