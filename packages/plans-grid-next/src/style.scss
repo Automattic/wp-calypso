@@ -495,6 +495,11 @@ $mobile-card-max-width: 440px;
  * TODO clk consolidate with the rest above
  */
 .plans-grid-next {
+	// insignificant padding important to prevent parent/child margins from collapsing
+	// creates a barrier between parent/child elements
+	// the alternative (oveflow: auto) would break the sticky behavior
+	padding: 1px;
+
 	.plan-features-2023-grid__table-item {
 		border-right: none;
 		background-color: transparent;
@@ -528,16 +533,6 @@ $mobile-card-max-width: 440px;
 				background: #fff;
 				color: #fff;
 				padding: 0 0 17px;
-
-				.plan-grid-next & {
-					.foo & {
-						padding-top: 35px; // enough to cover `plans-grid__popular-badge` repositioning (top: -35px)
-					}
-				}
-
-				.plan-grid-next__comparison-grid & {
-					padding-top: 50px; // enough to cover `plans-grid__popular-badge` repositioning (top: -43px)
-				}
 
 				.plans-grid__plan-pill {
 					font-family: Inter, $sans;
