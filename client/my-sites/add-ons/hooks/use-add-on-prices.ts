@@ -5,6 +5,7 @@ import { getProductCurrencyCode, getProductBySlug } from 'calypso/state/products
 
 const useAddOnPrices = ( productSlug: string, quantity?: number ) => {
 	const product = useSelector( ( state ) => getProductBySlug( state, productSlug ) );
+	// TODO clk add-ons: add a hook to data-stores/products-list
 	const currencyCode = useSelector( ( state ) => getProductCurrencyCode( state, productSlug ) );
 
 	return useMemo( () => {

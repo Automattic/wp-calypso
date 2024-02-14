@@ -33,13 +33,16 @@ const useSpaceUpgradesPurchased = ( {
 	isInSignup: boolean;
 	siteId?: number;
 } ) => {
+	// TODO clk add-ons: move to data-stores/billing/queries
 	const { billingTransactions, isLoading } = usePastBillingTransactions( isInSignup );
+	// TODO clk add-ons: move to data-stores/billing/hooks
 	const filter = useSelector( ( state ) => getBillingTransactionFilters( state, 'past' ) );
 
 	return useMemo( () => {
 		const spaceUpgradesPurchased: number[] = [];
 
 		if ( billingTransactions && ! isInSignup ) {
+			// TODO clk add-ons: move to data-stores/billing/hooks
 			const filteredTransactions = filterTransactions( billingTransactions, filter, siteId );
 			if ( filteredTransactions?.length ) {
 				for ( const transaction of filteredTransactions ) {
@@ -169,23 +172,23 @@ const useAddOns = ( siteId?: number, isInSignup = false ): ( AddOnMeta | null )[
 	// if upgrade is bought - show as manage
 	// if upgrade is not bought - only show it if available storage and if it's larger than previously bought upgrade
 
-	// TODO clk: move to data-stores/queries
+	// TODO clk add-ons: move to data-stores/queries
 	const { data: mediaStorage } = useMediaStorageQuery( siteId );
 
-	// TODO clk: move to data-stores/queries
-	const siteFeatures = useSelector( ( state ) => getFeaturesBySiteId( state, siteId ) );
-
-	// TODO clk: maybe move to data-stores, otherwise pass in as a prop
+	// TODO clk add-ons: maybe move to data-stores, otherwise pass in as a prop
 	const { isLoading, spaceUpgradesPurchased } = useSpaceUpgradesPurchased( { isInSignup, siteId } );
 
-	// TODO clk: same as siteId?
+	// TODO clk add-ons: same as siteId?
 	const selectedSite = useSelector( getSelectedSite ) ?? null;
 
-	// TODO clk: fine
+	// TODO clk add-ons: fine
 	const activeAddOns = useActiveAddOnsDefs( selectedSite );
 
-	// TODO clk: add a query to data-stores/products-list
+	// TODO clk add-ons: add a query to data-stores/products-list
 	const productsList = useSelector( getProductsList );
+
+	// TODO clk add-ons: move to data-stores/queries
+	const siteFeatures = useSelector( ( state ) => getFeaturesBySiteId( state, siteId ) );
 
 	return useMemo(
 		() =>

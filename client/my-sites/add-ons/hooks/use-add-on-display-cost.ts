@@ -9,6 +9,7 @@ const useAddOnDisplayCost = ( productSlug: string, quantity?: number ) => {
 	const formattedCost = prices?.formattedMonthlyPrice || '';
 
 	return useSelector( ( state ) => {
+		// TODO clk add-ons: add a hook to data-stores/products-list
 		const product = getProductBySlug( state, productSlug );
 
 		if ( product?.product_term === 'month' ) {

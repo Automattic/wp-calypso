@@ -10,9 +10,12 @@ import type { AddOnMeta } from '@automattic/data-stores';
  */
 const useAddOnPurchaseStatus = ( { productSlug, featureSlugs }: AddOnMeta ) => {
 	const translate = useTranslate();
+	// TODO clk add-ons: pass in as selectedSiteId ( only used as selectedSite?.ID )
 	const selectedSite = useSelector( getSelectedSite );
+	// TODO clk add-ons: move to data-stores/site/queries - useSitePurchases
 	const sitePurchases = useSelector( ( state ) => getSitePurchases( state, selectedSite?.ID ) );
 	const purchased = sitePurchases.find( ( product ) => product.productSlug === productSlug );
+	// TODO clk add-ons: add a hook to data-stores/site/queries - useSiteFeatures
 	const isSiteFeature = useSelector(
 		( state ) =>
 			selectedSite &&
