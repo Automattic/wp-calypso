@@ -6,7 +6,7 @@ import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selecto
 import { GitHubDeploymentCreation } from './deployment-creation';
 import { GitHubDeploymentManagement } from './deployment-management';
 import { GitHubDeployments } from './deployments';
-import { index } from './routes';
+import { indexPage } from './routes';
 import type { Callback } from '@automattic/calypso-router';
 
 export const deploymentsList: Callback = ( context, next ) => {
@@ -42,7 +42,7 @@ export const deploymentManagement: Callback = ( context, next ) => {
 	const siteSlug = getSelectedSiteSlug( state );
 
 	if ( ! codeDeploymentId ) {
-		return context.page.replace( index( siteSlug! ) );
+		return context.page.replace( indexPage( siteSlug! ) );
 	}
 
 	context.primary = (

@@ -61,9 +61,9 @@ export const GitHubRepositoryListTable = ( {
 					</tr>
 				</thead>
 				<tbody>
-					{ repositories.map( ( repository, index ) => (
+					{ repositories.map( ( repository ) => (
 						<GitHubRepositoryListItem
-							key={ index }
+							key={ repository.id }
 							repository={ repository }
 							onSelect={ () => onSelect( repository ) }
 						/>

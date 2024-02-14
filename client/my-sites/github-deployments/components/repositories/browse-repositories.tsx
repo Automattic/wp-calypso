@@ -1,7 +1,7 @@
 import { Card } from '@automattic/components';
 import { useI18n } from '@wordpress/react-i18n';
 import { ComponentProps, useState } from 'react';
-import { GitHubAccountsDropdown } from '../accounts-dropdown/index';
+import { GitHubAccountsDropdown } from '../accounts-dropdown';
 import { useLiveAccounts } from '../accounts-dropdown/use-live-accounts';
 import { GitHubLoadingPlaceholder } from '../loading-placeholder';
 import { GitHubBrowseRepositoriesList } from './repository-list';

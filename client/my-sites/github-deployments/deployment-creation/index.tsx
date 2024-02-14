@@ -6,7 +6,7 @@ import ActionPanel from '../../../components/action-panel';
 import HeaderCake from '../../../components/header-cake';
 import { PageShell } from '../components/page-shell';
 import { GitHubBrowseRepositories } from '../components/repositories/browse-repositories';
-import { createRepository, index } from '../routes';
+import { createDeploymentPage, indexPage } from '../routes';
 import { GitHubDeploymentCreationForm } from './deployment-creation-form';
 
 interface GitHubConnectedProps {
@@ -21,7 +21,7 @@ export const GitHubDeploymentCreation = ( {
 	const siteSlug = useSelector( getSelectedSiteSlug );
 
 	const goToDeployments = () => {
-		page( index( siteSlug! ) );
+		page( indexPage( siteSlug! ) );
 	};
 
 	const renderContent = () => {
@@ -38,7 +38,7 @@ export const GitHubDeploymentCreation = ( {
 						initialInstallationId={ installationId }
 						onSelectRepository={ ( installation, repository ) => {
 							page.replace(
-								createRepository( siteSlug!, {
+								createDeploymentPage( siteSlug!, {
 									installationId: installation.external_id,
 									repositoryId: repository.id,
 								} )

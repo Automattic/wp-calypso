@@ -1,11 +1,11 @@
 import page from '@automattic/calypso-router';
 import { useI18n } from '@wordpress/react-i18n';
-import { useSelector } from 'calypso/state/index';
-import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors/index';
+import { useSelector } from 'calypso/state';
+import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import { GitHubLoadingPlaceholder } from '../components/loading-placeholder';
 import { PageShell } from '../components/page-shell';
 import { GitHubBrowseRepositories } from '../components/repositories/browse-repositories';
-import { createRepository } from '../routes';
+import { createDeploymentPage } from '../routes';
 import { useGithubAccountsQuery } from '../use-github-accounts-query';
 import { GitHubAuthorizeButton } from './authorize-button';
 import { GitHubAuthorizeCard } from './authorize-card';
@@ -31,7 +31,7 @@ export function GitHubDeployments() {
 			return (
 				<ConnectionWizardButton
 					onClick={ () => {
-						page( createRepository( siteSlug! ) );
+						page( createDeploymentPage( siteSlug! ) );
 					} }
 				/>
 			);
@@ -54,7 +54,7 @@ export function GitHubDeployments() {
 				<GitHubBrowseRepositories
 					onSelectRepository={ ( installation, repository ) => {
 						page(
-							createRepository( siteSlug!, {
+							createDeploymentPage( siteSlug!, {
 								installationId: installation.external_id,
 								repositoryId: repository.id,
 							} )
