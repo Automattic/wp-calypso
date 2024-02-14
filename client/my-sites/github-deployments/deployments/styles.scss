@@ -49,7 +49,7 @@
 		display: flex;
 		flex-direction: column;
 		span {
-			color: var(--Gray-Gray-40, #787C82);
+			color: var(--Gray-Gray-40, #787c82);
 			font-size: $font-body-small;
 		}
 	}
@@ -73,37 +73,40 @@
 .github-deployments-status {
 	display: inline-flex;
 	min-height: 24px;
-	padding: 0px 8px;
+	padding-left: 8px;
+	padding-right: 8px;
 	justify-content: center;
 	align-items: center;
 	gap: 4px;
+	/* stylelint-disable-next-line scales/radii */
 	border-radius: 12px;
 
 	&__pending {
-		background-color: var(--Green-Green-5, #B8E6BF);
+		background-color: var(--Green-Green-5, #b8e6bf);
 	}
 
 	&__queued {
-		background-color: var(--Yellow-Yellow-5, #F5E6B3);
+		background-color: var(--Yellow-Yellow-5, #f5e6b3);
 	}
 
 	&__running {
-		background-color: var(--Green-Green-5, #B8E6BF);
+		background-color: var(--Green-Green-5, #b8e6bf);
 	}
 
 	&__success {
-		background-color: var(--Green-Green-5, #B8E6BF);
+		background-color: var(--Green-Green-5, #b8e6bf);
 	}
 
 	&__failed {
-		background-color: var(--Red-Red-5, #FACFD2);
+		background-color: var(--Red-Red-5, #facfd2);
 	}
 
 	&__building {
-		background-color: var(--Blue-Blue-5, #BBE0FA);
+		background-color: var(--Blue-Blue-5, #bbe0fa);
 	}
 
 	span {
+		/* stylelint-disable-next-line declaration-property-unit-allowed-list */
 		font-size: 13px;
 		font-style: normal;
 		font-weight: 400;
