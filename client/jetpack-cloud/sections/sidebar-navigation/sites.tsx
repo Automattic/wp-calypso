@@ -2,7 +2,6 @@ import page from '@automattic/calypso-router';
 import { chevronLeft, formatListBulletsRTL, starEmpty, category } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import NewSidebar from 'calypso/jetpack-cloud/components/sidebar';
-import { itemLinkMatches } from 'calypso/my-sites/sidebar/utils';
 import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import {
@@ -21,7 +20,7 @@ const SitesSidebar = ( { path }: { path: string } ) => {
 		...props,
 		path: JETPACK_MANAGE_DASHBOARD_LINK_NEEDS_ATTENTION,
 		trackEventName: 'calypso_jetpack_sidebar_menu_click',
-		isSelected: itemLinkMatches( props.link, path ),
+		isSelected: props.link === path,
 	} );
 
 	const menuItems = [
@@ -75,7 +74,6 @@ const SitesSidebar = ( { path }: { path: string } ) => {
 					page( JETPACK_MANAGE_OVERVIEW_LINK );
 				},
 			} }
-			defaultSelectedMenuItem={ JETPACK_MANAGE_DASHBOARD_LINK_NEEDS_ATTENTION } // Pass the default selected menu item
 		/>
 	);
 };
