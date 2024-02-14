@@ -34,7 +34,7 @@ export default function PostItem( {
 	const viewCount = post?.monthly_view_count ?? 0;
 	const likeCount = post?.like_count ?? 0;
 	const commentCount = post?.comment_count ?? 0;
-	const productPrice = post.price ?? '-';
+	const productPrice = post?.price ?? '-';
 	const isWooProduct = isRunningInWooStore && filterType === 'product';
 
 	const mobileStatsSeparator = <span className="blazepress-mobile-stats-mid-dot">&#183;</span>;
@@ -78,9 +78,15 @@ export default function PostItem( {
 					) }
 					<div className="post-item__post-title">
 						<div className="post-item__post-subheading-mobile">
-							{ getPostType( post.type ) }
-							{ mobileStatsSeparator }
-							{ postDate }
+							{ isWooProduct ? (
+								<>{ post.sku || '-' }</>
+							) : (
+								<>
+									{ getPostType( post.type ) }
+									{ mobileStatsSeparator }
+									{ postDate }
+								</>
+							) }
 						</div>
 						<div className="post-item__post-title-content">
 							<span>{ titleShortened || __( 'Untitled' ) }</span>
@@ -92,6 +98,13 @@ export default function PostItem( {
 								</InfoPopover>
 							) }
 						</div>
+						{ isWooProduct && (
+							<div className="post-item__post-subheading-mobile">
+								{ productPrice }
+								{ mobileStatsSeparator }
+								{ postDate }
+							</div>
+						) }
 					</div>
 				</div>
 				<div className="post-item__post-data-row post-item__post-data-row-mobile">
