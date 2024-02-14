@@ -2,12 +2,12 @@ import { isWpcomEnterpriseGridPlan, type PlanSlug } from '@automattic/calypso-pr
 import { PlanPrice } from '@automattic/components';
 import styled from '@emotion/styled';
 import { useTranslate } from 'i18n-calypso';
-import { usePlansGridContext } from '../grid-context';
-import useIsLargeCurrency from '../hooks/use-is-large-currency';
-import { usePlanPricingInfoFromGridPlans } from '../hooks/use-plan-pricing-info-from-grid-plans';
-import type { GridPlan } from '../types';
+import { usePlansGridContext } from '../../grid-context';
+import useIsLargeCurrency from '../../hooks/use-is-large-currency';
+import { usePlanPricingInfoFromGridPlans } from '../../hooks/use-plan-pricing-info-from-grid-plans';
+import type { GridPlan } from '../../types';
 
-interface PlanFeatures2023GridHeaderPriceProps {
+interface HeaderPrice {
 	planSlug: PlanSlug;
 	planUpgradeCreditsApplicable?: number | null;
 	currentSitePlanSlug?: string | null;
@@ -131,11 +131,11 @@ const HeaderPriceContainer = styled.div`
 	}
 `;
 
-const PlanFeatures2023GridHeaderPrice = ( {
+const HeaderPrice = ( {
 	planSlug,
 	planUpgradeCreditsApplicable,
 	visibleGridPlans,
-}: PlanFeatures2023GridHeaderPriceProps ) => {
+}: HeaderPrice ) => {
 	const translate = useTranslate();
 	const { gridPlansIndex } = usePlansGridContext();
 	const {
@@ -301,4 +301,4 @@ const PlanFeatures2023GridHeaderPrice = ( {
 	);
 };
 
-export default PlanFeatures2023GridHeaderPrice;
+export default HeaderPrice;

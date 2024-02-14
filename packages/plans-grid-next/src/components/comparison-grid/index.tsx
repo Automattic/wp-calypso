@@ -34,11 +34,11 @@ import { isStorageUpgradeableForPlan } from '../../lib/is-storage-upgradeable-fo
 import { sortPlans } from '../../lib/sort-plan-properties';
 import { getStorageStringFromFeature } from '../../util';
 import PlanFeatures2023GridActions from '../actions';
-import PlanFeatures2023GridHeaderPrice from '../header-price';
 import PlanTypeSelector from '../plan-type-selector';
 import { Plans2023Tooltip } from '../plans-2023-tooltip';
 import PopularBadge from '../popular-badge';
 import BillingTimeframe from '../shared/billing-timeframe';
+import HeaderPrice from '../shared/header-price';
 import { StickyContainer } from '../sticky-container';
 import StorageAddOnDropdown from '../storage-add-on-dropdown';
 import type {
@@ -450,7 +450,7 @@ const ComparisonGridHeaderCell = ( {
 					{ showPlanSelect && <DropdownIcon /> }
 				</h4>
 			</PlanSelector>
-			<PlanFeatures2023GridHeaderPrice
+			<HeaderPrice
 				planSlug={ planSlug }
 				planUpgradeCreditsApplicable={ planUpgradeCreditsApplicable }
 				currentSitePlanSlug={ currentSitePlanSlug }

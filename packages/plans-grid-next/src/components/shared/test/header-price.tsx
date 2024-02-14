@@ -12,15 +12,15 @@ jest.mock( 'react-redux', () => ( {
 	...jest.requireActual( 'react-redux' ),
 	useSelector: jest.fn(),
 } ) );
-jest.mock( '../../grid-context', () => ( { usePlansGridContext: jest.fn() } ) );
+jest.mock( '../../../grid-context', () => ( { usePlansGridContext: jest.fn() } ) );
 
 import { type PlanSlug, PLAN_ANNUAL_PERIOD, PLAN_PERSONAL } from '@automattic/calypso-products';
 import { render } from '@testing-library/react';
 import React from 'react';
-import { usePlansGridContext } from '../../grid-context';
-import PlanFeatures2023GridHeaderPrice from '../header-price';
+import { usePlansGridContext } from '../../../grid-context';
+import HeaderPrice from '../header-price';
 
-describe( 'PlanFeatures2023GridHeaderPrice', () => {
+describe( 'HeaderPrice', () => {
 	const defaultProps = {
 		isLargeCurrency: false,
 		planSlug: PLAN_PERSONAL as PlanSlug,
@@ -49,7 +49,7 @@ describe( 'PlanFeatures2023GridHeaderPrice', () => {
 			},
 		} ) );
 
-		const { container } = render( <PlanFeatures2023GridHeaderPrice { ...defaultProps } /> );
+		const { container } = render( <HeaderPrice { ...defaultProps } /> );
 		const rawPrice = container.querySelector( '.plan-price.is-original' );
 		const discountedPrice = container.querySelector( '.plan-price.is-discounted' );
 
@@ -74,7 +74,7 @@ describe( 'PlanFeatures2023GridHeaderPrice', () => {
 			},
 		} ) );
 
-		const { container } = render( <PlanFeatures2023GridHeaderPrice { ...defaultProps } /> );
+		const { container } = render( <HeaderPrice { ...defaultProps } /> );
 		const rawPrice = container.querySelector( '.plan-price' );
 		const discountedPrice = container.querySelector( '.plan-price.is-discounted' );
 
