@@ -10,10 +10,19 @@ interface LogParams {
 	siteIntent: SiteDetailsOptions[ 'site_intent' ];
 }
 
+const stringifyTasks = ( tasks: Task[] ) => {
+	const prefix = ',';
+	const suffix = ',';
+	const separator = ',';
+
+	const taskIds = tasks.map( ( task ) => task.id ).join( separator );
+	return `${ prefix }${ taskIds }${ suffix }`;
+};
+
 export const useTracking = ( params: LogParams ) => {
 	const { tasks, checklistSlug, context, siteIntent } = params;
 	const completedSteps = useMemo( () => tasks.filter( ( task ) => task.completed ), [ tasks ] );
-	const taskNames = useMemo( () => tasks.map( ( task ) => task.id ).join( ',' ), [ tasks ] );
+	const taskNames = useMemo( () => stringifyTasks( tasks ), [ tasks ] );
 	const numberOfSteps = tasks.length;
 	const numberOfCompletedSteps = completedSteps.length;
 	const isCheckListCompleted = completedSteps.length === tasks.length;

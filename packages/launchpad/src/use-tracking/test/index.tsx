@@ -24,13 +24,20 @@ describe( 'useTracking', () => {
 
 		expect( recordTracksEvent ).toHaveBeenCalledWith( 'calypso_launchpad_tasklist_viewed', {
 			checklist_slug: 'site-setup-checklist',
-			tasks: 'task-1,task-2',
+			tasks: ',task-1,task-2,',
 			is_completed: false,
 			number_of_steps: 2,
 			number_of_completed_steps: 1,
 			context: 'customer-home',
 			site_intent: 'build',
 		} );
+	} );
+
+	it( 'use comma as prefix and suffix for the task names to simplify queries on the logs tool', () => {
+		renderHook( () => useTracking( buildDefaultProps() ) );
+
+		const tasks = jest.mocked( recordTracksEvent ).mock.calls[ 0 ][ 1 ].tasks;
+		expect( tasks ).toBe( ',task-1,task-2,' );
 	} );
 
 	it( 'tracks the view event by task', () => {
