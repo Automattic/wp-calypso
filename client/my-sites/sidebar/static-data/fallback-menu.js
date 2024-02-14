@@ -89,13 +89,13 @@ export default function buildFallbackResponse( {
 		},
 		{
 			slug: 'options-hosting-configuration-php',
-			// icon: 'dashicons-admin-generic',
+			icon: 'dashicons-admin-generic',
 			title: translate( 'Hosting' ),
 			type: 'submenu-item',
 			url: `/hosting-config/${ siteDomain }`,
 		},
 		{
-			// icon: 'dashicons-admin-tools',
+			icon: 'dashicons-admin-tools',
 			slug: 'options-general-php',
 			title: translate( 'Site Tools' ),
 			type: 'menu-item',
@@ -107,7 +107,7 @@ export default function buildFallbackResponse( {
 						slug: 'tools-site-monitoring',
 						title: translate( 'Site Monitoring' ),
 						type: 'submenu-item',
-						// icon: 'dashicons-visibility',
+						icon: 'dashicons-visibility',
 						url: `/site-monitoring/${ siteDomain }`,
 					},
 			  ]
@@ -118,6 +118,7 @@ export default function buildFallbackResponse( {
 			title: translate( 'Monetize' ),
 			type: 'menu-item',
 			url: `/earn/${ siteDomain }`,
+			icon: 'dashicons-money',
 		},
 		{
 			parent: 'jetpack',
@@ -125,6 +126,7 @@ export default function buildFallbackResponse( {
 			title: translate( 'Podcasting' ),
 			type: 'submenu-item',
 			url: `/settings/podcasting/${ siteDomain }`,
+			icon: 'dashicons-microphone',
 		},
 		{
 			parent: 'jetpack',
@@ -132,6 +134,7 @@ export default function buildFallbackResponse( {
 			title: translate( 'Subscribers' ),
 			type: 'submenu-item',
 			url: `/users/subscribers/${ siteDomain }`,
+			icon: 'dashicons-groups',
 		},
 	];
 
