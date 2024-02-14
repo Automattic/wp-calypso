@@ -3,12 +3,12 @@ import { Button } from '@wordpress/components';
 import classnames from 'classnames';
 import { translate, useRtl } from 'i18n-calypso';
 import type { Task } from '../types';
-import type { FC } from 'react';
+import type { FC, Key } from 'react';
 
 import './style.scss';
 
 export interface Props {
-	key?: React.Key;
+	key?: Key;
 	task: Task;
 	isPrimaryAction?: boolean;
 	onClick?: () => void;
