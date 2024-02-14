@@ -2,7 +2,7 @@ import { useMutation, UseMutationOptions, useQueryClient } from '@tanstack/react
 import { useCallback } from 'react';
 import wp from 'calypso/lib/wp';
 import { GITHUB_DEPLOYMENTS_QUERY_KEY } from 'calypso/my-sites/github-deployments/constants';
-import { CODE_DEPLOYMENTS_QUERY_KEY } from 'calypso/my-sites/github-deployments/use-code-deployments-query';
+import { CODE_DEPLOYMENTS_QUERY_KEY } from 'calypso/my-sites/github-deployments/deployments/use-code-deployments-query';
 
 interface MutationVariables {
 	externalRepositoryId: number;
@@ -21,8 +21,9 @@ interface MutationError {
 	message: string;
 }
 
-export const useCreateCodeDeployment = (
+export const useUpdateCodeDeployment = (
 	siteId: number | null,
+	codeDeploymentId: number,
 	options: UseMutationOptions< MutationResponse, MutationError, MutationVariables > = {}
 ) => {
 	const queryClient = useQueryClient();
@@ -34,9 +35,9 @@ export const useCreateCodeDeployment = (
 			installationId,
 			isAutomated,
 		}: MutationVariables ) =>
-			wp.req.post(
+			wp.req.put(
 				{
-					path: `/sites/${ siteId }/hosting/code-deployments`,
+					path: `/sites/${ siteId }/hosting/code-deployments/${ codeDeploymentId }`,
 					apiNamespace: 'wpcom/v2',
 				},
 				{
@@ -51,14 +52,18 @@ export const useCreateCodeDeployment = (
 		onSuccess: async ( ...args ) => {
 			await queryClient.invalidateQueries( {
 				queryKey: [ GITHUB_DEPLOYMENTS_QUERY_KEY, CODE_DEPLOYMENTS_QUERY_KEY, siteId ],
+				exact: false,
 			} );
-			options.onSuccess?.( ...args );
+			return options.onSuccess?.( ...args );
 		},
 	} );
 
-	const { mutate, isPending } = mutation;
+	const { mutateAsync, isPending } = mutation;
 
-	const createDeployment = useCallback( ( args: MutationVariables ) => mutate( args ), [ mutate ] );
+	const updateDeployment = useCallback(
+		( args: MutationVariables ) => mutateAsync( args ),
+		[ mutateAsync ]
+	);
 
-	return { createDeployment, isPending };
+	return { updateDeployment, isPending };
 };

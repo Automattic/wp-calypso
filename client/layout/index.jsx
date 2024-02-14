@@ -296,6 +296,9 @@ class Layout extends Component {
 				{ isJetpackCloud() && (
 					<AsyncLoad require="calypso/jetpack-cloud/style" placeholder={ null } />
 				) }
+				{ config.isEnabled( 'a8c-for-agencies' ) && (
+					<AsyncLoad require="calypso/a8c-for-agencies/style" placeholder={ null } />
+				) }
 				{ this.props.isOffline && <OfflineStatus /> }
 				<div id="content" className="layout__content">
 					{ config.isEnabled( 'jitms' ) && this.props.isEligibleForJITM && (

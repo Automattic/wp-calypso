@@ -3,10 +3,11 @@ import { ExternalLink, Icon } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { chevronDown, chevronUp } from '@wordpress/icons';
 import { GitHubRepositoryData } from '../../use-github-repositories-query';
-import { SortOption } from './browse-repositories';
 import { GitHubRepositoryListItem } from './repository-list-item';
 
-interface GitHubAccountListProps {
+export type SortOption = 'name_asc' | 'name_desc' | 'date_asc' | 'date_desc';
+
+interface GitHubAccountListTableProps {
 	repositories: GitHubRepositoryData[];
 	onSelect( repository: GitHubRepositoryData ): void;
 	sortKey: SortOption;
@@ -18,12 +19,12 @@ type SortPair = [ SortOption, SortOption ];
 const nameSorts: SortPair = [ 'name_asc', 'name_desc' ];
 const dateSorts: SortPair = [ 'date_asc', 'date_desc' ];
 
-export const GitHubRepositoryList = ( {
+export const GitHubRepositoryListTable = ( {
 	repositories,
 	onSelect,
 	sortKey,
 	onSortChange,
-}: GitHubAccountListProps ) => {
+}: GitHubAccountListTableProps ) => {
 	function getSortIcon( pair: SortPair ) {
 		if ( sortKey === pair[ 0 ] ) {
 			return <Icon size={ 16 } icon={ chevronDown } />;
@@ -60,9 +61,9 @@ export const GitHubRepositoryList = ( {
 					</tr>
 				</thead>
 				<tbody>
-					{ repositories.map( ( repository, index ) => (
+					{ repositories.map( ( repository ) => (
 						<GitHubRepositoryListItem
-							key={ index }
+							key={ repository.id }
 							repository={ repository }
 							onSelect={ () => onSelect( repository ) }
 						/>
