@@ -6,7 +6,7 @@ import HeaderCake from '../../../components/header-cake';
 import { useSelector } from '../../../state';
 import { GitHubLoadingPlaceholder } from '../components/loading-placeholder';
 import { PageShell } from '../components/page-shell';
-import { index } from '../routes';
+import { indexPage } from '../routes';
 import { GitHubDeploymentManagementForm } from './deployment-management-form';
 import { useCodeDeploymentQuery } from './use-code-deployment-query';
 
@@ -22,7 +22,7 @@ export const GitHubDeploymentManagement = ( { codeDeploymentId }: GitHubConnecte
 	const { data: codeDeployment } = useCodeDeploymentQuery( siteId, codeDeploymentId );
 
 	const goToDeployments = () => {
-		page( index( siteSlug! ) );
+		page( indexPage( siteSlug! ) );
 	};
 
 	const renderContent = () => {

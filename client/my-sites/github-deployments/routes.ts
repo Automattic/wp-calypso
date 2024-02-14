@@ -5,18 +5,18 @@ interface CreateRepositoryRouteParams {
 	repositoryId?: number;
 }
 
-export const index = ( siteSlug: string ) => `/github-deployments/${ siteSlug }`;
+export const indexPage = ( siteSlug: string ) => `/github-deployments/${ siteSlug }`;
 
-export const createRepository = (
+export const createDeploymentPage = (
 	siteSlug: string,
 	{ installationId, repositoryId }: CreateRepositoryRouteParams = {}
 ) => {
 	return addQueryArgs(
 		{ installation_id: installationId, repository_id: repositoryId },
-		`${ index( siteSlug ) }/create`
+		`${ indexPage( siteSlug ) }/create`
 	);
 };
 
-export const manageDeployment = ( siteSlug: string, deploymentId: number ) => {
-	return `${ index( siteSlug ) }/manage/${ deploymentId }`;
+export const manageDeploymentPage = ( siteSlug: string, deploymentId: number ) => {
+	return `${ indexPage( siteSlug ) }/manage/${ deploymentId }`;
 };

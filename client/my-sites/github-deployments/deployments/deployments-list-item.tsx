@@ -5,7 +5,7 @@ import { Fragment } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import { useSelector } from '../../../state';
-import { manageDeployment } from '../routes';
+import { manageDeploymentPage } from '../routes';
 import { CodeDeploymentData } from './use-code-deployments-query';
 import { useDeleteCodeDeployment } from './use-delete-code-deployment';
 
@@ -50,7 +50,7 @@ export const DeploymentsListItem = ( { deployment }: GitHubRepositoryListItemPro
 								<MenuGroup>
 									<MenuItem
 										onClick={ () => {
-											page( manageDeployment( siteSlug!, deployment.id ) );
+											page( manageDeploymentPage( siteSlug!, deployment.id ) );
 											onClose();
 										} }
 									>

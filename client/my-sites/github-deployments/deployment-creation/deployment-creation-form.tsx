@@ -6,7 +6,7 @@ import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selecto
 import { useDispatch, useSelector } from '../../../state';
 import { GitHubConnectionForm } from '../components/github-connection-form';
 import { GitHubLoadingPlaceholder } from '../components/loading-placeholder';
-import { createRepository } from '../routes';
+import { createDeploymentPage } from '../routes';
 import { useGithubAccountsQuery } from '../use-github-accounts-query';
 import { useGithubRepositoriesQuery } from '../use-github-repositories-query';
 import { useCreateCodeDeployment } from './use-create-code-deployment';
@@ -73,7 +73,7 @@ export const GitHubDeploymentCreationForm = ( {
 			account={ installation }
 			repository={ repository }
 			changeRepository={ () => {
-				page.replace( createRepository( siteSlug!, { installationId } ) );
+				page.replace( createDeploymentPage( siteSlug!, { installationId } ) );
 			} }
 			onSubmit={ ( { externalRepositoryId, branchName, targetDir, installationId, isAutomated } ) =>
 				createDeployment( {

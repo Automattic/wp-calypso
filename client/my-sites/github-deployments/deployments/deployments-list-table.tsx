@@ -83,8 +83,8 @@ export const DeploymentsListTable = ( {
 				</tr>
 			</thead>
 			<tbody>
-				{ deployments.map( ( deployment, index ) => (
-					<DeploymentsListItem key={ index } deployment={ deployment } />
+				{ deployments.map( ( deployment ) => (
+					<DeploymentsListItem key={ deployment.id } deployment={ deployment } />
 				) ) }
 			</tbody>
 		</table>
