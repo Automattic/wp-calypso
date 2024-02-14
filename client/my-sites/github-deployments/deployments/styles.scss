@@ -45,4 +45,68 @@
 		text-align: right;
 	}
 
+	&__repository-details {
+		display: flex;
+		flex-direction: column;
+		span {
+			color: var(--Gray-Gray-40, #787C82);
+			font-size: $font-body-small;
+		}
+	}
+
+	&__commit-details {
+		display: flex;
+		flex-direction: column;
+		> div {
+			display: flex;
+			gap: 8px;
+			font-size: $font-body-small;
+		}
+	}
+
+	&__menu-item-danger {
+		color: var(--color-error);
+	}
+}
+
+
+.github-deployments-status {
+	display: inline-flex;
+	min-height: 24px;
+	padding: 0px 8px;
+	justify-content: center;
+	align-items: center;
+	gap: 4px;
+	border-radius: 12px;
+
+	&__pending {
+		background-color: var(--Green-Green-5, #B8E6BF);
+	}
+
+	&__queued {
+		background-color: var(--Yellow-Yellow-5, #F5E6B3);
+	}
+
+	&__running {
+		background-color: var(--Green-Green-5, #B8E6BF);
+	}
+
+	&__success {
+		background-color: var(--Green-Green-5, #B8E6BF);
+	}
+
+	&__failed {
+		background-color: var(--Red-Red-5, #FACFD2);
+	}
+
+	&__building {
+		background-color: var(--Blue-Blue-5, #BBE0FA);
+	}
+
+	span {
+		font-size: 13px;
+		font-style: normal;
+		font-weight: 400;
+		line-height: 20px; /* 153.846% */
+	}
 }

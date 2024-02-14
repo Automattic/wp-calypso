@@ -1,9 +1,9 @@
 import { Button } from '@automattic/components';
+import { useLocale } from '@automattic/i18n-utils';
 import { __ } from '@wordpress/i18n';
 import { Icon, lock } from '@wordpress/icons';
+import { formatDate } from 'calypso/my-sites/github-deployments/utils/dates';
 import { GitHubRepositoryData } from '../../use-github-repositories-query';
-import { formatDate } from 'calypso/my-sites/github-deployments/utils/Dates';
-import { useLocale } from '@automattic/i18n-utils';
 
 interface GitHubRepositoryListItemProps {
 	repository: GitHubRepositoryData;

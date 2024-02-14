@@ -55,8 +55,11 @@
 
 	&__account {
 		display: flex;
-		align-items: center;
-		gap: 4px;
+		flex-direction: column;
+		span {
+			color: var(--Gray-Gray-40, #787C82);
+			font-size: $font-body-small;
+		}
 	}
 
 	tr td:last-child {
