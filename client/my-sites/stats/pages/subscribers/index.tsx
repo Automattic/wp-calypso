@@ -17,6 +17,7 @@ import {
 	getJetpackStatsAdminVersion,
 	isSimpleSite,
 } from 'calypso/state/sites/selectors';
+import getStatsFeatureSupportChecks from 'calypso/state/sites/selectors/get-stats-feature-supports';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import useSubscribersTotalsQueries from '../../hooks/use-subscribers-totals-query';
 import Followers from '../../stats-followers';
@@ -50,10 +51,14 @@ const StatsSubscribersPage = ( { period }: StatsSubscribersPageProps ) => {
 	);
 	const isOdysseyStats = config.isEnabled( 'is_running_in_jetpack_site' );
 	// Always show chart for Calypso, and check compatibility for Odyssey.
+	// TODO: refactor the checking to `client/state/sites/selectors/get-stats-feature-supports.ts`.
 	const isChartVisible =
 		! isOdysseyStats ||
 		( statsAdminVersion && version_compare( statsAdminVersion, '0.11.0-alpha', '>=' ) );
 
+	const { supportEmailStats } = useSelector( ( state ) =>
+		getStatsFeatureSupportChecks( state, siteId )
+	);
 	const today = new Date().toISOString().slice( 0, 10 );
 
 	const statsModuleListClass = classNames(
@@ -116,7 +121,7 @@ const StatsSubscribersPage = ( { period }: StatsSubscribersPageProps ) => {
 							) }
 							<div className={ statsModuleListClass }>
 								<Followers path="followers" />
-								{ period && (
+								{ supportEmailStats && period && (
 									<StatsModuleEmails period={ period } query={ { period, date: today } } />
 								) }
 							</div>

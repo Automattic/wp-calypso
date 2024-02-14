@@ -40,6 +40,7 @@ import isJetpackModuleActive from 'calypso/state/selectors/is-jetpack-module-act
 import isPrivateSite from 'calypso/state/selectors/is-private-site';
 import isAtomicSite from 'calypso/state/selectors/is-site-wpcom-atomic';
 import { getJetpackStatsAdminVersion, isJetpackSite } from 'calypso/state/sites/selectors';
+import getStatsFeatureSupportChecks from 'calypso/state/sites/selectors/get-stats-feature-supports';
 import { requestModuleSettings } from 'calypso/state/stats/module-settings/actions';
 import { getModuleSettings } from 'calypso/state/stats/module-settings/selectors';
 import { getModuleToggles } from 'calypso/state/stats/module-toggles/selectors';
@@ -302,6 +303,7 @@ class StatsSite extends Component {
 		);
 
 		// The Plan Usage API endpoint would not be available for Odyssey Stats before Jetpack version `0.15.0-alpha`.
+		// TODO: refactor the checking to `client/state/sites/selectors/get-stats-feature-supports.ts`.
 		const isPlanUsageEnabled = !! (
 			config.isEnabled( 'stats/plan-usage' ) &&
 			( ! isOdysseyStats ||
@@ -457,7 +459,9 @@ class StatsSite extends Component {
 								showSummaryLink
 							/>
 						) }
-						<StatsModuleEmails period={ this.props.period } query={ query } />
+						{ this.props.supportEmailStats && (
+							<StatsModuleEmails period={ this.props.period } query={ query } />
+						) }
 						{
 							// File downloads are not yet supported in Jetpack Stats
 							// TODO: Confirm the above statement.
@@ -630,6 +634,7 @@ export default connect(
 			moduleToggles: getModuleToggles( state, siteId, 'traffic' ),
 			upsellModalView,
 			statsAdminVersion,
+			supportEmailStats: getStatsFeatureSupportChecks( state, siteId ),
 		};
 	},
 	{

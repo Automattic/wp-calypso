@@ -153,7 +153,7 @@ export default function StatsNotices( {
 	const statsAdminVersion = useSelector( ( state: object ) =>
 		getJetpackStatsAdminVersion( state, siteId )
 	);
-
+	// TODO: refactor the checking to `client/state/sites/selectors/get-stats-feature-supports.ts`.
 	const supportNewStatsNotices =
 		! isOdysseyStats ||
 		!! ( statsAdminVersion && version_compare( statsAdminVersion, '0.10.0-alpha', '>=' ) );
