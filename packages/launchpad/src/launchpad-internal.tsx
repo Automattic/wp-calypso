@@ -54,7 +54,7 @@ const LaunchpadInternal = ( {
 	const { trackTaskClick } = useTracking( {
 		tasks,
 		checklistSlug,
-		siteIntent: site?.options?.site_intent,
+		site,
 		context: launchpadContext,
 	} );
 

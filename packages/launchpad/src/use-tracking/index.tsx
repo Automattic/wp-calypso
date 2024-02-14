@@ -1,13 +1,13 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { useEffect, useMemo } from 'react';
 import type { Task } from '../types';
-import type { SiteDetailsOptions } from '@automattic/data-stores';
+import type { SiteDetails } from '@automattic/data-stores';
 
 interface LogParams {
 	tasks: Task[];
 	checklistSlug: string | null;
 	context: string;
-	siteIntent: SiteDetailsOptions[ 'site_intent' ];
+	site: SiteDetails | null | undefined;
 }
 
 const stringifyTasks = ( tasks: Task[] ) => {
@@ -20,17 +20,19 @@ const stringifyTasks = ( tasks: Task[] ) => {
 };
 
 export const useTracking = ( params: LogParams ) => {
-	const { tasks, checklistSlug, context, siteIntent } = params;
+	const { tasks, checklistSlug, context, site } = params;
 	const completedSteps = useMemo( () => tasks.filter( ( task ) => task.completed ), [ tasks ] );
 	const taskNames = useMemo( () => stringifyTasks( tasks ), [ tasks ] );
 	const numberOfSteps = tasks.length;
 	const numberOfCompletedSteps = completedSteps.length;
 	const isCheckListCompleted = completedSteps.length === tasks.length;
+	const hasSite = !! site;
 
 	useEffect( () => {
-		if ( tasks.length === 0 || ! siteIntent ) {
+		if ( tasks.length === 0 || ! hasSite ) {
 			return;
 		}
+		const siteIntent = site?.options?.site_intent;
 
 		recordTracksEvent( 'calypso_launchpad_tasklist_viewed', {
 			number_of_steps: numberOfSteps,
@@ -54,7 +56,7 @@ export const useTracking = ( params: LogParams ) => {
 		} );
 		// Array of tasks requires deep comparison
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [ JSON.stringify( tasks ), siteIntent ] );
+	}, [ JSON.stringify( tasks ), hasSite ] );
 
 	const trackTaskClick = ( task: Task ) => {
 		recordTracksEvent( 'calypso_launchpad_task_clicked', {

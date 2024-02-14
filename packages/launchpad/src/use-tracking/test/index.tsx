@@ -2,6 +2,7 @@ import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { renderHook } from '@testing-library/react';
 import { useTracking } from '..';
 import { buildTask } from '../../test/lib/fixtures';
+import type { SiteDetails } from '@automattic/data-stores';
 
 jest.mock( '@automattic/calypso-analytics' );
 
@@ -11,7 +12,7 @@ describe( 'useTracking', () => {
 	const buildDefaultProps = ( options = {} ) => ( {
 		checklistSlug: 'site-setup-checklist',
 		context: 'customer-home',
-		siteIntent: 'build',
+		site: { options: { site_intent: 'build' } } as SiteDetails,
 		tasks: [
 			buildTask( { id: 'task-1', completed: true } ),
 			buildTask( { id: 'task-2', completed: false } ),
@@ -66,6 +67,23 @@ describe( 'useTracking', () => {
 
 		// 3 calls: 1 for the view and 2 for the tasks
 		expect( recordTracksEvent ).toHaveBeenCalledTimes( 3 );
+	} );
+
+	it( 'logs the load events only when the site info is available', () => {
+		const { rerender } = renderHook( ( site = null ) =>
+			useTracking( buildDefaultProps( { site } ) )
+		);
+
+		expect( recordTracksEvent ).toHaveBeenCalledTimes( 0 );
+
+		rerender( { options: { site_intent: 'some-site-intent' } } as SiteDetails );
+
+		expect( recordTracksEvent ).toHaveBeenCalledWith(
+			'calypso_launchpad_tasklist_viewed',
+			expect.objectContaining( {
+				site_intent: 'some-site-intent',
+			} )
+		);
 	} );
 
 	it( 'tracks the click event', () => {
