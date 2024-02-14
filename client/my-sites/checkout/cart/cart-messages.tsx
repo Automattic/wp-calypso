@@ -3,7 +3,7 @@ import { useShoppingCart } from '@automattic/shopping-cart';
 import { useDisplayCartMessages } from '@automattic/wpcom-checkout';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback, useMemo } from 'react';
-import { JETPACK_SUPPORT } from 'calypso/lib/url/support';
+import { JETPACK_CONTACT_SUPPORT, JETPACK_SUPPORT } from 'calypso/lib/url/support';
 import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
 import { useDispatch, useSelector } from 'calypso/state';
 import { errorNotice, successNotice, removeNotice } from 'calypso/state/notices/actions';
@@ -131,6 +131,33 @@ function getInvalidMultisitePurchaseErrorMessage( {
 	);
 }
 
+function getJetpackLegacyUpgradeErrorMessage( {
+	translate,
+	message,
+	selectedSiteSlug,
+}: {
+	translate: ReturnType< typeof useTranslate >;
+	message: string;
+	selectedSiteSlug: string | null | undefined;
+} ) {
+	return (
+		<div style={ { maxWidth: '500px' } }>
+			{ message }&nbsp;
+			<a
+				href={
+					localizeUrl( JETPACK_CONTACT_SUPPORT ) +
+					'&assistant=false&subject=legacy-upgrade' +
+					( selectedSiteSlug ? '&url=' + selectedSiteSlug : '' )
+				}
+				target="_blank"
+				rel="noopener noreferrer"
+			>
+				{ translate( 'Contact Support' ) }
+			</a>
+		</div>
+	);
+}
+
 // Use this to transform message strings into React components
 function getMessagePrettifier(
 	translate: ReturnType< typeof useTranslate >,
@@ -146,6 +173,13 @@ function getMessagePrettifier(
 
 			case 'invalid-product-multisite':
 				return getInvalidMultisitePurchaseErrorMessage( { translate, message: message.message } );
+
+			case 'invalid-jetpack-legacy-upgrade':
+				return getJetpackLegacyUpgradeErrorMessage( {
+					translate,
+					message: message.message,
+					selectedSiteSlug,
+				} );
 
 			default:
 				return message.message;
