@@ -705,7 +705,7 @@ $mobile-card-max-width: 440px;
 .plan-comparison-grid {
 	&.has-highlighted-plan {
 		@include plans-grid-medium-large {
-			padding-top: 50px; // enough to cover `plans-grid__popular-badge` repositioning (top: -43px)
+			padding-top: 43px; // enough to cover `plans-grid__popular-badge` repositioning (top: -43px)
 		}
 	}
 
