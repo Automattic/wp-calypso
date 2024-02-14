@@ -72,4 +72,4 @@ export type { OnboardSelect, OnboardActions } from './onboard';
 export type { StepperInternalSelect } from './stepper-internal';
 export type { SiteActions } from './site';
 export type { UserActions } from './user';
-export type { Member, UseQuery, UsersQuery, UserItem } from './users/types';
+export type { Member, UseQuery, UsersQuery } from './users/types';

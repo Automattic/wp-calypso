@@ -23,11 +23,6 @@ export type Member = {
 	date_subscribed?: string;
 };
 
-export type UserItem = {
-	user: Member;
-	checked: boolean;
-};
-
 export type UseQuery = {
 	hasNextPage: boolean;
 	refetch: () => void;

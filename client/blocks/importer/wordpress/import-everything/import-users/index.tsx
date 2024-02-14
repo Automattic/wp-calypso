@@ -13,7 +13,7 @@ import useUsersQuery from 'calypso/data/users/use-users-query';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import ImportedUserItem from './imported-user-item';
 import { getRole } from './utils';
-import type { UsersQuery, Member, UserItem } from '@automattic/data-stores';
+import type { UsersQuery, Member } from '@automattic/data-stores';
 
 import './style.scss';
 
@@ -41,8 +41,9 @@ const ImportUsers = ( { site, onSubmit }: Props ) => {
 	const handleSubmit = async () => {
 		const selectedUsers = usersList
 			.filter( ( user ) => user.checked )
-			.map( ( userItem: UserItem ) => ( {
-				email_or_username: userItem.user?.email || userItem.user?.login,
+			.map( ( userItem ) => ( {
+				email_or_username:
+					typeof userItem.user?.email === 'string' ? userItem.user?.email : userItem.user?.login,
 				role: getRole( userItem.user ),
 			} ) );
 
