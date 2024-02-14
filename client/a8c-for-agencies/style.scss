@@ -6,8 +6,6 @@
 }
 
 .theme-a8c-for-agencies {
-	background-color: var(--studio-wordpress-blue-90);
-
 	// Masterbar
 	@media only screen and ( min-width: 782px ) {
 		--masterbar-height: 46px;
@@ -41,8 +39,6 @@
 }
 
 .theme-a8c-for-agencies .layout__secondary {
-	background-color: var(--studio-wordpress-blue-90);
-
 	border-right: initial;
 
 	// Allow visible overflow, so the profile dropdown menu can be displayed
