@@ -20,18 +20,13 @@ export function GitHubDeployments() {
 	const siteSlug = useSelector( getSelectedSiteSlug );
 	const { __ } = useI18n();
 
-	const { data: accounts = [], isLoading: isLoadingAccounts } = useGithubAccountsQuery();
-	const { data: deployments = [], isLoading: isLoadingDeployments } =
-		useCodeDeploymentsQuery( siteId );
+	const { data: accounts, isLoading: isLoadingAccounts } = useGithubAccountsQuery();
+	const { data: deployments } = useCodeDeploymentsQuery( siteId );
 
-	const hasConnectedAnAccount = accounts.length > 0;
-	const hasDeployments = deployments.length > 0;
+	const hasConnectedAnAccount = accounts && accounts.length > 0;
+	const hasDeployments = deployments && deployments.length > 0;
 
 	const renderTopRightButton = () => {
-		if ( isLoadingDeployments || isLoadingAccounts ) {
-			return null;
-		}
-
 		if ( hasConnectedAnAccount && hasDeployments ) {
 			return (
 				<ConnectionWizardButton
@@ -50,31 +45,30 @@ export function GitHubDeployments() {
 	};
 
 	const renderContent = () => {
-		if ( isLoadingDeployments || isLoadingAccounts ) {
-			return <GitHubLoadingPlaceholder />;
-		}
-
-		if ( hasDeployments ) {
+		if ( deployments?.length ) {
 			return <GitHubDeploymentsList deployments={ deployments } />;
 		}
 
-		if ( ! hasConnectedAnAccount ) {
+		if ( accounts ) {
+			return (
+				<GitHubBrowseRepositories
+					onSelectRepository={ ( installation, repository ) => {
+						page(
+							createRepository( siteSlug!, {
+								installationId: installation.external_id,
+								repositoryId: repository.id,
+							} )
+						);
+					} }
+				/>
+			);
+		}
+
+		if ( ! accounts && ! isLoadingAccounts ) {
 			return <GitHubAuthorizeCard />;
 		}
 
-		return (
-			<GitHubBrowseRepositories
-				accounts={ accounts }
-				onSelectRepository={ ( installation, repository ) => {
-					page(
-						createRepository( siteSlug!, {
-							installationId: installation.external_id,
-							repositoryId: repository.id,
-						} )
-					);
-				} }
-			/>
-		);
+		return <GitHubLoadingPlaceholder />;
 	};
 
 	return (
