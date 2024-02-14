@@ -55,7 +55,7 @@
 
 	&__account {
 		display: flex;
-		flex-direction: column;
+		align-items: center;
 		span {
 			color: var(--Gray-Gray-40, #787c82);
 			font-size: $font-body-small;
