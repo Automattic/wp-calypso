@@ -26,12 +26,17 @@ export const useTracking = ( params: Params ) => {
 	const numberOfSteps = tasks.length;
 	const numberOfCompletedSteps = completedSteps.length;
 	const isCheckListCompleted = completedSteps.length === tasks.length;
-	const hasSite = !! site;
+	const isSiteAvailable = !! site;
+	const hasNoTask = tasks.length === 0;
+
+	// We skip the view events until we have fetched the site details to avoid sending incomplete data
+	const shoulSkipTracking = hasNoTask || ! isSiteAvailable;
 
 	useEffect( () => {
-		if ( tasks.length === 0 || ! hasSite ) {
+		if ( shoulSkipTracking ) {
 			return;
 		}
+
 		const siteIntent = site?.options?.site_intent;
 
 		recordTracksEvent( 'calypso_launchpad_tasklist_viewed', {
@@ -56,7 +61,7 @@ export const useTracking = ( params: Params ) => {
 		} );
 		// Array of tasks requires deep comparison
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [ JSON.stringify( tasks ), hasSite ] );
+	}, [ JSON.stringify( tasks ), shoulSkipTracking ] );
 
 	const trackTaskClick = ( task: Task ) => {
 		recordTracksEvent( 'calypso_launchpad_task_clicked', {
