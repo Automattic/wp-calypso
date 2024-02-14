@@ -22,7 +22,7 @@
 		"a8c-for-agencies-auth": true
 	},
 	"site_filter": [],
-	"theme": "jetpack-cloud",
+	"theme": "a8c-for-agencies",
 	"restricted_me_access": false,
 	"theme_color": "#2fb41f",
 	"hotjar_enabled": true
