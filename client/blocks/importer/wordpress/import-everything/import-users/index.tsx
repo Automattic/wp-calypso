@@ -42,7 +42,7 @@ const ImportUsers = ( { site, onSubmit }: Props ) => {
 		const selectedUsers = usersList
 			.filter( ( user ) => user.checked )
 			.map( ( userItem: UserItem ) => ( {
-				email_or_username: userItem.user?.email || userItem.user?.username,
+				email_or_username: userItem.user?.email || userItem.user?.login,
 				role: getRole( userItem.user ),
 			} ) );
 
