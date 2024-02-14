@@ -161,7 +161,7 @@ export function PixConfirmation( {
 					</h3>
 					<div>
 						{ translate(
-							'Choose to pay via Pix in your banking app, then copy and paste the follow code into the app.'
+							'Choose to pay via Pix in your banking app, then copy and paste the following code into the app.'
 						) }
 						<div>
 							<Button ref={ copyButtonRef } className="pix-copy-code-button">
