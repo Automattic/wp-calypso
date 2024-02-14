@@ -179,8 +179,11 @@ export default function SearchBar( props: Props ) {
 	useEffect( () => {
 		handleSetSearch( {
 			search: '',
-			order: SORT_OPTIONS_DEFAULT,
-			filter: { ...FILTER_OPTIONS_DEFAULT, postType: postType || '' },
+			order: mode === 'posts' ? SORT_OPTIONS_DEFAULT : CAMPAIGNS_SORT_OPTIONS_DEFAULT,
+			filter:
+				mode === 'posts'
+					? { ...FILTER_OPTIONS_DEFAULT, postType: postType || '' }
+					: FILTER_OPTIONS_DEFAULT,
 		} );
 	}, [] );
 
