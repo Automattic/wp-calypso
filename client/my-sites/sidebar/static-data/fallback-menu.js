@@ -43,79 +43,17 @@ export default function buildFallbackResponse( {
 } = {} ) {
 	const fallbackResponse = [
 		{
-			// icon: 'dashicons-admin-home',
+			icon: 'dashicons-admin-home',
 			slug: 'home',
 			title: translate( 'My Home' ),
 			type: 'menu-item',
 			url: `/home/${ siteDomain }`,
 		},
 		{
-			// icon: 'dashicons-dashboard',
-			slug: 'wp-admin',
-			title: translate( 'WP Admin' ),
-			type: 'menu-item',
-			url: `https://${ siteDomain }/wp-admin/`,
-		},
-		{
-			// icon: JETPACK_ICON,
-			slug: 'jetpack',
-			title: translate( 'Jetpack' ),
-			type: 'menu-item',
-			url: `/activity-log/${ siteDomain }`,
-			children: [
-				{
-					parent: 'jetpack',
-					slug: 'jetpack-activity-log',
-					title: translate( 'Activity Log' ),
-					type: 'submenu-item',
-					url: `/activity-log/${ siteDomain }`,
-				},
-				{
-					parent: 'jetpack',
-					slug: 'jetpack-backup',
-					title: translate( 'VaultPress Backup' ),
-					type: 'submenu-item',
-					url: `/backup/${ siteDomain }`,
-				},
-				{
-					parent: 'jetpack',
-					slug: 'subscribers',
-					title: translate( 'Subscribers' ),
-					type: 'submenu-item',
-					url: `/subscribers/${ siteDomain }`,
-				},
-				{
-					parent: 'jetpack',
-					slug: 'tools-earn',
-					title: translate( 'Monetize' ),
-					type: 'menu-item',
-					url: `/earn/${ siteDomain }`,
-				},
-				...( config.isEnabled( 'settings/newsletter-settings-page' )
-					? [
-							{
-								parent: 'jetpack',
-								slug: 'options-newsletter-php',
-								title: translate( 'Newsletter' ),
-								type: 'submenu-item',
-								url: `/settings/newsletter/${ siteDomain }`,
-							},
-					  ]
-					: [] ),
-				{
-					parent: 'jetpack',
-					slug: 'options-podcasting-php',
-					title: translate( 'Podcasting' ),
-					type: 'submenu-item',
-					url: `/settings/podcasting/${ siteDomain }`,
-				},
-			],
-		},
-		{
 			slug: 'Plans',
 			title: translate( 'Plans' ),
 			type: 'submenu-item',
-			// icon: 'dashicons-cart',
+			icon: 'dashicons-cart',
 			url: `/plans/${ siteDomain }`,
 		},
 		...( shouldShowAddOns
@@ -132,7 +70,7 @@ export default function buildFallbackResponse( {
 			slug: 'Domains',
 			title: translate( 'Domains' ),
 			type: 'submenu-item',
-			// icon: 'dashicons-admin-site',
+			icon: 'dashicons-admin-site',
 			url: `/domains/manage/${ siteDomain }`,
 		},
 		{
@@ -140,75 +78,15 @@ export default function buildFallbackResponse( {
 			title: translate( 'Emails' ),
 			type: 'submenu-item',
 			url: `/email/${ siteDomain }`,
-			// icon: 'dashicons-email',
+			icon: 'dashicons-email',
 		},
 		{
 			slug: 'Purchases',
 			title: translate( 'Purchases' ),
 			type: 'submenu-item',
-			// icon: 'dashicons-money-alt',
+			icon: 'dashicons-money-alt',
 			url: `/purchases/subscriptions/${ siteDomain }`,
 		},
-		...( shouldShowLinks
-			? [
-					{
-						// icon: 'dashicons-admin-links',
-						slug: 'link-manager-php',
-						title: translate( 'Links' ),
-						type: 'menu-item',
-						url: `https://${ siteDomain }/wp-admin/link-manager.php`,
-						children: [
-							{
-								parent: 'link-manager.php',
-								slug: 'link-manager-php',
-								title: translate( 'All Links' ),
-								type: 'submenu-item',
-								url: `https://${ siteDomain }/wp-admin/link-manager.php`,
-							},
-							{
-								parent: 'link-manager.php',
-								slug: 'link-add-php',
-								title: translate( 'Add New', { context: 'link' } ),
-								type: 'submenu-item',
-								url: `https://${ siteDomain }/wp-admin/link-add.php`,
-							},
-							{
-								parent: 'link-manager.php',
-								slug: 'edit-tags-phptaxonomylink_category',
-								title: translate( 'Link Categories' ),
-								type: 'submenu-item',
-								url: `https://${ siteDomain }/wp-admin/edit-tags.php?taxonomy=link_category`,
-							},
-						],
-					},
-			  ]
-			: [] ),
-		{
-			slug: 'themes-php',
-			title: translate( 'Themes' ),
-			type: 'submenu-item',
-			url: `/themes/${ siteDomain }`,
-			// icon: 'dashicons-admin-appearance',
-		},
-		{
-			// icon: 'dashicons-admin-plugins',
-			slug: 'plugins',
-			title: translate( 'Plugins' ),
-			type: 'menu-item',
-			url: `/plugins/${ siteDomain }`,
-		},
-
-		...( showSiteMonitoring
-			? [
-					{
-						slug: 'tools-site-monitoring',
-						title: translate( 'Site Monitoring' ),
-						type: 'submenu-item',
-						// icon: 'dashicons-visibility',
-						url: `/site-monitoring/${ siteDomain }`,
-					},
-			  ]
-			: [] ),
 		{
 			slug: 'options-hosting-configuration-php',
 			// icon: 'dashicons-admin-generic',
@@ -222,6 +100,38 @@ export default function buildFallbackResponse( {
 			title: translate( 'Site Tools' ),
 			type: 'menu-item',
 			url: `/settings/general/${ siteDomain }`,
+		},
+		...( showSiteMonitoring
+			? [
+					{
+						slug: 'tools-site-monitoring',
+						title: translate( 'Site Monitoring' ),
+						type: 'submenu-item',
+						// icon: 'dashicons-visibility',
+						url: `/site-monitoring/${ siteDomain }`,
+					},
+			  ]
+			: [] ),
+		{
+			parent: 'jetpack',
+			slug: 'tools-earn',
+			title: translate( 'Monetize' ),
+			type: 'menu-item',
+			url: `/earn/${ siteDomain }`,
+		},
+		{
+			parent: 'jetpack',
+			slug: 'options-podcasting-php',
+			title: translate( 'Podcasting' ),
+			type: 'submenu-item',
+			url: `/settings/podcasting/${ siteDomain }`,
+		},
+		{
+			parent: 'jetpack',
+			slug: 'options-podcasting-php',
+			title: translate( 'Subscribers' ),
+			type: 'submenu-item',
+			url: `/users/subscribers/${ siteDomain }`,
 		},
 	];
 

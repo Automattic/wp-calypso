@@ -7,7 +7,9 @@ export const useGlobalSidebar = ( siteId, sectionGroup ) => {
 			sectionGroup === 'me' ||
 			sectionGroup === 'reader' ||
 			sectionGroup === 'sites-dashboard' ||
-			( sectionGroup === 'sites' && ! siteId );
+			( sectionGroup === 'sites' && ! siteId ) ||
+			sectionGroup === 'sites';
 	}
+
 	return { shouldShowGlobalSidebar };
 };

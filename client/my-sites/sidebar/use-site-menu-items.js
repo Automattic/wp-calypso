@@ -111,7 +111,7 @@ const useSiteMenuItems = () => {
 		} );
 	}, [ isJetpack, menuItems, siteDomain, translate ] );
 
-	if ( shouldShowGlobalSidebar ) {
+	if ( shouldShowGlobalSidebar && adminInterface !== 'wp-admin' ) {
 		return globalSidebarMenu();
 	}
 
