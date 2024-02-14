@@ -2,8 +2,9 @@ import CommandPalette from '@automattic/command-palette';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import domReady from '@wordpress/dom-ready';
 import { render } from 'react-dom';
+import setLocale from './locale';
 
-function wpcomInitCommandPalette() {
+async function wpcomInitCommandPalette() {
 	const navigate = ( path, openInNewTab ) => {
 		window.open(
 			path.startsWith( '/' ) ? `https://wordpress.com${ path }` : path,
@@ -15,6 +16,9 @@ function wpcomInitCommandPalette() {
 	document.body.appendChild( commandPaletteContainer );
 
 	const queryClient = new QueryClient();
+
+	// TODO: Need to get this from the user settings.
+	setLocale( 'tr' );
 
 	render(
 		<QueryClientProvider client={ queryClient }>

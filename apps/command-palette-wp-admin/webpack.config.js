@@ -4,6 +4,7 @@
 
 const path = require( 'path' );
 const getBaseWebpackConfig = require( '@automattic/calypso-build/webpack.config.js' );
+const GenerateChunksMapPlugin = require( '../../build-tools/webpack/generate-chunks-map-plugin' );
 
 function getWebpackConfig( env, argv ) {
 	const webpackConfig = getBaseWebpackConfig( env, argv );
@@ -17,6 +18,12 @@ function getWebpackConfig( env, argv ) {
 			...webpackConfig.output,
 			filename: '[name].min.js',
 		},
+		plugins: [
+			...webpackConfig.plugins,
+			new GenerateChunksMapPlugin( {
+				output: path.resolve( __dirname, 'dist/chunks-map.json' ),
+			} ),
+		],
 	};
 }
 
