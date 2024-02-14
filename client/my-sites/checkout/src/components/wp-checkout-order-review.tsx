@@ -150,6 +150,8 @@ export default function WPCheckoutOrderReview( {
 	const wpcomDomain = useSelector( ( state ) =>
 		getWpComDomainBySiteId( state, selectedSiteData?.ID )
 	);
+	const searchParams = new URLSearchParams( window.location.search );
+	const isSignupCheckout = searchParams.get( 'signup' ) === '1';
 
 	// This is what will be displayed at the top of checkout prefixed by "Site: ".
 	const domainUrl = getDomainToDisplayInCheckoutHeader( responseCart, selectedSiteData, siteUrl );
@@ -170,7 +172,7 @@ export default function WPCheckoutOrderReview( {
 	return (
 		<>
 			{ /** Only show the site preview for WPCOM domains that have a site connected to the site id **/ }
-			{ hasCheckoutVersion( '2' ) && selectedSiteData && wpcomDomain && (
+			{ hasCheckoutVersion( '2' ) && selectedSiteData && wpcomDomain && ! isSignupCheckout && (
 				<div className="checkout-site-preview">
 					<SitePreviewWrapper>
 						<SitePreview showEditSite={ false } showSiteDetails={ false } />
