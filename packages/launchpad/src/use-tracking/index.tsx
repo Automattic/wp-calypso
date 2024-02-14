@@ -3,7 +3,7 @@ import { useEffect, useMemo } from 'react';
 import type { Task } from '../types';
 import type { SiteDetails } from '@automattic/data-stores';
 
-interface LogParams {
+interface Params {
 	tasks: Task[];
 	checklistSlug: string | null;
 	context: string;
@@ -19,7 +19,7 @@ const stringifyTasks = ( tasks: Task[] ) => {
 	return `${ prefix }${ taskIds }${ suffix }`;
 };
 
-export const useTracking = ( params: LogParams ) => {
+export const useTracking = ( params: Params ) => {
 	const { tasks, checklistSlug, context, site } = params;
 	const completedSteps = useMemo( () => tasks.filter( ( task ) => task.completed ), [ tasks ] );
 	const taskNames = useMemo( () => stringifyTasks( tasks ), [ tasks ] );
