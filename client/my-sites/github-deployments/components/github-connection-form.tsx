@@ -7,7 +7,7 @@ import FormTextInput from 'calypso/components/forms/form-text-input';
 import { GitHubAccountData } from 'calypso/my-sites/github-deployments/use-github-accounts-query';
 import { useGithubRepositoryBranchesQuery } from 'calypso/my-sites/github-deployments/use-github-repository-branches-query';
 import { GitHubRepositoryData } from '../use-github-repositories-query';
-
+import { DeploymentStyle } from './repositories/deployment-style';
 import '../components/repositories/style.scss';
 
 interface CodeDeploymentData {
@@ -73,46 +73,53 @@ export const GitHubConnectionForm = ( {
 				}
 			} }
 		>
-			<FormFieldset>
-				<FormLabel>{ __( 'Repository' ) }</FormLabel>
-				<div className="github-deployments-connect-repository__repository">
-					<ExternalLink href={ `https://github.com/${ repository.owner }/${ repository.name }` }>
-						{ repository.owner }/{ repository.name }
-					</ExternalLink>
-					{ changeRepository && (
-						<Button compact onClick={ changeRepository }>
-							{ __( 'Change' ) }
-						</Button>
-					) }
-				</div>
-			</FormFieldset>
-			<FormFieldset>
-				<FormLabel>{ __( 'Deployment branch' ) }</FormLabel>
-				<SelectControl value={ branch } options={ branchOptions } onChange={ setBranch } />
-				{ isFetchingBranches && <Spinner /> }
-			</FormFieldset>
-			<FormFieldset>
-				<FormLabel>{ __( 'Destination directory' ) }</FormLabel>
-				<FormTextInput
-					value={ destPath }
-					onChange={ ( event: ChangeEvent< HTMLInputElement > ) =>
-						setDestPath( event.currentTarget.value )
-					}
-				/>
-			</FormFieldset>
-			<FormFieldset>
-				<FormLabel>{ __( 'Automatic deploys' ) }</FormLabel>
-				<div className="github-deployments-connect-repository__automatic-deploys">
-					<FormToggle
-						checked={ isAutoDeploy }
-						onChange={ () => setIsAutoDeploy( ! isAutoDeploy ) }
+			<div className="github-deployments-connect-repository__configs">
+				<FormFieldset>
+					<FormLabel>{ __( 'Repository' ) }</FormLabel>
+					<div className="github-deployments-connect-repository__repository">
+						<ExternalLink href={ `https://github.com/${ repository.owner }/${ repository.name }` }>
+							{ repository.owner }/{ repository.name }
+						</ExternalLink>
+						{ changeRepository && (
+							<Button compact onClick={ changeRepository }>
+								{ __( 'Change' ) }
+							</Button>
+						) }
+					</div>
+				</FormFieldset>
+				<FormFieldset>
+					<FormLabel>{ __( 'Deployment branch' ) }</FormLabel>
+					<SelectControl value={ branch } options={ branchOptions } onChange={ setBranch } />
+					{ isFetchingBranches && <Spinner /> }
+				</FormFieldset>
+				<FormFieldset>
+					<FormLabel>{ __( 'Destination directory' ) }</FormLabel>
+					<FormTextInput
+						value={ destPath }
+						onChange={ ( event: ChangeEvent< HTMLInputElement > ) =>
+							setDestPath( event.currentTarget.value )
+						}
 					/>
-					<span>{ __( 'Deploy changes on push' ) }</span>
-				</div>
-			</FormFieldset>
-			<Button type="submit" primary busy={ isPending } disabled={ isPending }>
-				{ ctaLabel }
-			</Button>
+				</FormFieldset>
+				<FormFieldset>
+					<FormLabel>{ __( 'Automatic deploys' ) }</FormLabel>
+					<div className="github-deployments-connect-repository__automatic-deploys">
+						<FormToggle
+							checked={ isAutoDeploy }
+							onChange={ () => setIsAutoDeploy( ! isAutoDeploy ) }
+						/>
+						<span>{ __( 'Deploy changes on push' ) }</span>
+					</div>
+				</FormFieldset>
+				<Button type="submit" primary busy={ isPending } disabled={ isPending }>
+					{ ctaLabel }
+				</Button>
+			</div>
+			<div className="github-deployments-connect-repository__deployment-style">
+				<FormFieldset>
+					<DeploymentStyle />
+				</FormFieldset>
+			</div>
 		</form>
 	);
 };

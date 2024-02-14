@@ -1,6 +1,6 @@
 .github-deployments-connect-repository {
-	max-width: 500px;
 	padding-bottom: 32px;
+	display: flex;
 
 	.form-label {
 		font-weight: 500;
@@ -27,5 +27,22 @@
 		align-items: center;
 		gap: 8px;
 		font-size: smaller;
+	}
+
+	&__configs {
+		width: 45%;
+		margin-right: 5%;
+	}
+
+	&__deployment-style {
+		padding: 24px;
+		width: 50%;
+
+		.deployment-style {
+			border-radius: 2px;
+			background-color: var(--studio-gray-0);
+			border: 1px solid var(--color-neutral-10);
+			padding: 24px;
+		}
 	}
 }
