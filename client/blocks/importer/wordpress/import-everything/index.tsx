@@ -327,9 +327,7 @@ export class ImportEverything extends SectionMigrate {
 				return this.renderLoading();
 
 			case MigrationStatus.INACTIVE:
-				//ONLY FOR TESTING
-				return this.renderMigratingUsers();
-			// return this.renderMigrationConfirm();
+				return this.renderMigrationConfirm();
 
 			case MigrationStatus.NEW:
 			case MigrationStatus.BACKING_UP:
