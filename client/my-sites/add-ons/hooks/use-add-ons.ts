@@ -187,7 +187,7 @@ const useAddOns = ( siteId?: number, isInSignup = false ): ( AddOnMeta | null )[
 	// TODO clk add-ons: add a query to data-stores/products-list
 	const productsList = useSelector( getProductsList );
 
-	// TODO clk add-ons: move to data-stores/queries
+	// TODO clk add-ons: add a hook to data-stores/site/queries - useSiteFeatures
 	const siteFeatures = useSelector( ( state ) => getFeaturesBySiteId( state, siteId ) );
 
 	return useMemo(
