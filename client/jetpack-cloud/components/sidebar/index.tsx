@@ -71,7 +71,6 @@ const JetpackCloudSidebar = ( {
 
 	const [ showUserFeedbackForm, setShowUserFeedbackForm ] = useState( shouldShowUserFeedbackForm );
 
-	// Determine whether to initially show the user feedback form.
 	const onShareProductFeedback = useCallback( () => {
 		dispatch( recordTracksEvent( 'calypso_jetpack_sidebar_share_product_feedback_click' ) );
 		setShowUserFeedbackForm( true );

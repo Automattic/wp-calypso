@@ -59,7 +59,7 @@ const SitesSidebar = ( { path }: { path: string } ) => {
 	return (
 		<NewSidebar
 			isJetpackManage
-			path="/dashboard"
+			path={ JETPACK_MANAGE_DASHBOARD_LINK }
 			menuItems={ menuItems }
 			title={ translate( 'Sites' ) }
 			description={ translate( 'Manage all your sites and Jetpack services from one place.' ) }
