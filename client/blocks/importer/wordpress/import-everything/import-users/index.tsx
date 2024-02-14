@@ -2,7 +2,7 @@ import { useSendInvites } from '@automattic/data-stores';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { NextButton, Title, SubTitle } from '@automattic/onboarding';
 import { Button } from '@wordpress/components';
-import { useState } from '@wordpress/element';
+import { useEffect, useState } from '@wordpress/element';
 import { sprintf, _n } from '@wordpress/i18n';
 import { useTranslate } from 'i18n-calypso';
 import ExternalLink from 'calypso/components/external-link';
@@ -124,6 +124,14 @@ const ImportUsers = ( { site, onSubmit }: Props ) => {
 				return null;
 		}
 	};
+
+	useEffect( () => {
+		const users = usersData?.users?.map( ( user ) => ( { user, checked: true } ) ) || [];
+		if ( JSON.stringify( users ) !== JSON.stringify( usersList ) ) {
+			setUsersList( users );
+			setCheckedUsersNumber( users?.length || 0 );
+		}
+	}, [ usersData, usersList ] );
 
 	return (
 		<div className="import__user-migration">
