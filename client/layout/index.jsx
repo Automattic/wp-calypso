@@ -65,7 +65,10 @@ const HELP_CENTER_STORE = HelpCenter.register();
 
 function SidebarScrollSynchronizer() {
 	const isNarrow = useBreakpoint( '<660px' );
-	const active = ! isNarrow && ! config.isEnabled( 'jetpack-cloud' ); // Jetpack cloud hasn't yet aligned with WPCOM.
+	const active =
+		! isNarrow &&
+		! config.isEnabled( 'jetpack-cloud' ) && // Jetpack cloud hasn't yet aligned with WPCOM.
+		! config.isEnabled( 'layout/dotcom-nav-redesign' ); // Dotcom nav redesign is not yet aligned with WPCOM - the handleScroll function is not yet compatible with the new layout.
 
 	useEffect( () => {
 		if ( active ) {

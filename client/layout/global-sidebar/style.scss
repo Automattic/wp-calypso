@@ -32,15 +32,6 @@
 		a.sidebar__menu-link {
 			padding: 8px 8px 8px 20px;
 
-			.dashicons-before {
-				&::before {
-					width: 32px;
-					height: 32px;
-					line-height: 32px;
-					font-size: rem(22px);
-					vertical-align: middle;
-				}
-			}
 			.menu-link-text {
 				font-size: rem(16px);
 				font-weight: 400;
