@@ -91,7 +91,7 @@ export default function PromotedPosts( { tab }: Props ) {
 
 	/* query for campaigns */
 	const [ campaignsSearchOptions, setCampaignsSearchOptions ] = useState< SearchOptions >( {
-		order: { orderBy: 'date', order: 'desc' },
+		order: { orderBy: 'created_at', order: 'desc' },
 	} );
 	const campaignsQuery = useCampaignsQueryPaged( selectedSiteId ?? 0, campaignsSearchOptions );
 	const {
