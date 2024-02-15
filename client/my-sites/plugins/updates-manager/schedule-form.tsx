@@ -17,7 +17,7 @@ export const ScheduleForm = () => {
 
 	return (
 		<form>
-			<Flex className="schedule-form" align="start" gap={ 4 } expanded={ true }>
+			<Flex className="schedule-form" align="start" gap={ 8 } expanded={ true }>
 				<FlexBlock>
 					<TextControl label="Name" value={ name } onChange={ setName } />
 					<TimePicker onChange={ function noRefCheck() {} } />
