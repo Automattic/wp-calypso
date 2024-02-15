@@ -5,7 +5,6 @@
 
 import {
 	DataHelper,
-	SidebarComponent,
 	PreviewComponent,
 	ThemesPage,
 	ThemesDetailPage,
@@ -15,6 +14,7 @@ import {
 	getTestAccountByFeature,
 	envToFeatureKey,
 } from '@automattic/calypso-e2e';
+import { getCalypsoURL } from '@automattic/calypso-e2e/dist/types/src/data-helper';
 import { Browser, Page } from 'playwright';
 
 declare const browser: Browser;
@@ -23,7 +23,6 @@ describe( DataHelper.createSuiteTitle( 'Theme: Preview and Activate' ), () => {
 	const accountName = getTestAccountByFeature( envToFeatureKey( envVariables ) );
 	const testAccount = new TestAccount( accountName );
 	const testAccountSiteDomain = testAccount.getSiteURL( { protocol: false } );
-	let sidebarComponent: SidebarComponent;
 	let themesPage: ThemesPage;
 	let themesDetailPage: ThemesDetailPage;
 	let previewComponent: PreviewComponent;
@@ -39,8 +38,14 @@ describe( DataHelper.createSuiteTitle( 'Theme: Preview and Activate' ), () => {
 	} );
 
 	it( 'Navigate to Appearance > Themes', async function () {
-		sidebarComponent = new SidebarComponent( page );
-		await sidebarComponent.navigate( 'Appearance', 'Themes' );
+		/**
+		 * Temporarily disabled sidebar code due to the Untangling Calypso & Nav Redesign project.
+		 * Awaiting final UI design.
+		 * @see https://github.com/Automattic/wp-calypso/pull/87477
+		 */
+		page.goto( getCalypsoURL( `themes/${ testAccount.getSiteURL( { protocol: false } ) }` ) );
+		// sidebarComponent = new SidebarComponent( page );
+		// await sidebarComponent.navigate( 'Appearance', 'Themes' );
 	} );
 
 	it( `Choose test site ${ testAccountSiteDomain } if Site Selector is shown`, async function () {

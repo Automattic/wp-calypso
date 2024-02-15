@@ -8,7 +8,6 @@ import {
 	envToFeatureKey,
 	envVariables,
 	DataHelper,
-	SidebarComponent,
 	MarketingPage,
 	TestAccount,
 	NoticeComponent,
@@ -54,12 +53,18 @@ describe( DataHelper.createSuiteTitle( 'Marketing: SEO Preview' ), function () {
 	} );
 
 	it( 'Navigate to Tools > Marketing page', async function () {
-		if ( envVariables.ATOMIC_VARIATION === 'ecomm-plan' ) {
-			await marketingPage.visit( testAccount.getSiteURL( { protocol: false } ) );
-		} else {
-			const sidebarComponent = new SidebarComponent( page );
-			await sidebarComponent.navigate( 'Tools', 'Marketing' );
-		}
+		/**
+		 * Temporarily disabled sidebar code due to the Untangling Calypso & Nav Redesign project.
+		 * Awaiting final UI design.
+		 * @see https://github.com/Automattic/wp-calypso/pull/87477
+		 */
+		await marketingPage.visit( testAccount.getSiteURL( { protocol: false } ) );
+		// if ( envVariables.ATOMIC_VARIATION === 'ecomm-plan' ) {
+		// 	await marketingPage.visit( testAccount.getSiteURL( { protocol: false } ) );
+		// } else {
+		// 	const sidebarComponent = new SidebarComponent( page );
+		// 	await sidebarComponent.navigate( 'Tools', 'Marketing' );
+		// }
 	} );
 
 	it( 'Click on Traffic tab', async function () {
