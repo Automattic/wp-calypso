@@ -10,6 +10,8 @@ jest.mock(
 		}
 );
 
+jest.mock( 'calypso/state/selectors/is-site-p2-hub' );
+
 import {
 	PLAN_FREE,
 	PLAN_BLOGGER,
@@ -27,6 +29,7 @@ import moment from 'moment';
 import editorReducer from 'calypso/state/editor/reducer';
 import jetpackReducer from 'calypso/state/jetpack/reducer';
 import mediaReducer from 'calypso/state/media/reducer';
+import isSiteP2Hub from 'calypso/state/selectors/is-site-p2-hub';
 import siteSettingsReducer from 'calypso/state/site-settings/reducer';
 import timezonesReducer from 'calypso/state/timezones/reducer';
 import uiReducer from 'calypso/state/ui/reducer';
@@ -160,7 +163,6 @@ describe( 'SiteSettingsFormGeneral', () => {
 				siteIsJetpack: true,
 				siteIsP2Hub: false,
 				isAtomicAndEditingToolkitDeactivated: false,
-				isP2HubSite: false,
 				isWPForTeamsSite: false,
 				isWpcomStagingSite: false,
 				updateFields: jest.fn( ( fields ) => {
@@ -180,7 +182,6 @@ describe( 'SiteSettingsFormGeneral', () => {
 				siteIsJetpack: true,
 				siteIsP2Hub: false,
 				isAtomicAndEditingToolkitDeactivated: false,
-				isP2HubSite: false,
 				isWPForTeamsSite: false,
 				isWpcomStagingSite: true,
 				updateFields: jest.fn( ( fields ) => {
@@ -200,7 +201,6 @@ describe( 'SiteSettingsFormGeneral', () => {
 				siteIsJetpack: true,
 				siteIsP2Hub: false,
 				isAtomicAndEditingToolkitDeactivated: false,
-				isP2HubSite: false,
 				isWPForTeamsSite: false,
 				isWpcomStagingSite: false,
 				updateFields: jest.fn( ( fields ) => {
@@ -216,7 +216,6 @@ describe( 'SiteSettingsFormGeneral', () => {
 				siteIsJetpack: false,
 				siteIsP2Hub: false,
 				isAtomicAndEditingToolkitDeactivated: false,
-				isP2HubSite: false,
 				isWPForTeamsSite: false,
 				isWpcomStagingSite: false,
 				updateFields: jest.fn( ( fields ) => {
@@ -859,13 +858,9 @@ describe( 'SiteSettingsFormGeneral', () => {
 
 		describe( 'P2 Hub', () => {
 			it( 'Should not show the privacy settings UI', () => {
-				testProps = {
-					...testProps,
-					isP2HubSite: true,
-				};
+				isSiteP2Hub.mockImplementation( () => true );
 
 				const { container } = renderWithRedux( <SiteSettingsFormGeneral { ...testProps } /> );
-
 				expect( container.querySelectorAll( '#site-privacy-settings' ) ).toHaveLength( 0 );
 			} );
 		} );
