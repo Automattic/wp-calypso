@@ -26,6 +26,7 @@ export function logStashLoadErrorEvent(
 		...additionalData,
 		type: errorType,
 		message: convertErrorToString( error ),
+		tags: [ 'checkout-error-boundary' ],
 	} );
 }
 
