@@ -3,11 +3,11 @@ import { Icon, chevronDown, external } from '@wordpress/icons';
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback, useRef, useState } from 'react';
+import useOutsideClickCallback from 'calypso/lib/use-outside-click-callback';
 import { useDispatch, useSelector } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions/record';
 import { redirectToLogout } from 'calypso/state/current-user/actions';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
-import useOutsideClickCallback from '../use-outside-click-callback';
 
 import './style.scss';
 
