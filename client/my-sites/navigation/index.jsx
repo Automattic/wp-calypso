@@ -32,6 +32,8 @@ class MySitesNavigation extends Component {
 		let sitePickerProps = {};
 
 		if ( config.isEnabled( 'jetpack-cloud' ) ) {
+			// eslint-disable-next-line no-console
+			console.debug( 'MySitesNavigation - jetpack-cloud flag enabled' );
 			asyncSidebar = (
 				<AsyncLoad
 					require="calypso/jetpack-cloud/sections/sidebar-navigation/manage-selected-site"
@@ -47,6 +49,8 @@ class MySitesNavigation extends Component {
 				showHiddenSites: false,
 			};
 		} else {
+			// eslint-disable-next-line no-console
+			console.debug( 'MySitesNavigation - jetpack-cloud flag disabled' );
 			asyncSidebar = <AsyncLoad require="calypso/my-sites/sidebar" { ...asyncProps } />;
 
 			sitePickerProps = {
@@ -55,7 +59,8 @@ class MySitesNavigation extends Component {
 				maxResults: 50,
 			};
 		}
-
+		// eslint-disable-next-line no-console
+		console.debug( 'MySitesNavigation - renderSitePicker', renderSitePicker );
 		return (
 			<div className="my-sites__navigation">
 				{ renderSitePicker && (
