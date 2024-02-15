@@ -127,12 +127,13 @@ const GitHubLoginButton = ( {
 		}
 
 		const clientId = config( 'github_oauth_client_id' );
+		const scope = encodeURIComponent( 'read:user,user:email' );
 		const redirectEndpoint = encodeURIComponent(
 			`https://public-api.wordpress.com/wpcom/v2/hosting/github/app-callback?final_redirect_uri=${
 				redirectUri.split( '?' )[ 0 ]
 			}`
 		);
-		window.location.href = `https://github.com/login/oauth/authorize?client_id=${ clientId }&redirect_uri=${ redirectEndpoint }`;
+		window.location.href = `https://github.com/login/oauth/authorize?client_id=${ clientId }&scope=${ scope }&redirect_uri=${ redirectEndpoint }`;
 	};
 
 	const eventHandlers = {
