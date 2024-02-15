@@ -465,7 +465,7 @@ const PlansFeaturesMain = ( {
 	// we neeed only the visible ones for features grid (these should extend into plans-ui data store selectors)
 	const gridPlansForFeaturesGrid = useGridPlansForFeaturesGrid( {
 		allFeaturesList: FEATURES_LIST,
-		availablePlans: gridPlans || [],
+		availableGridPlans: gridPlans || [],
 		gridPlans: filteredPlansForPlanFeatures,
 		intent,
 		isInSignup,

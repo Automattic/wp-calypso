@@ -5,7 +5,7 @@ import usePlanFeaturesForGridPlans from './use-plan-features-for-grid-plans';
 
 interface Params {
 	allFeaturesList: FeatureList;
-	availablePlans: Omit< GridPlan, 'features' >[];
+	availableGridPlans: Omit< GridPlan, 'features' >[];
 	gridPlans: Omit< GridPlan, 'features' >[];
 	intent?: PlansIntent;
 	isInSignup?: boolean;
@@ -15,7 +15,7 @@ interface Params {
 
 const useGridPlansForFeaturesGrid = ( {
 	allFeaturesList,
-	availablePlans,
+	availableGridPlans,
 	gridPlans,
 	intent,
 	isInSignup,
@@ -24,7 +24,7 @@ const useGridPlansForFeaturesGrid = ( {
 }: Params ): GridPlan[] => {
 	const planFeaturesForFeaturesGrid = usePlanFeaturesForGridPlans( {
 		allFeaturesList,
-		gridPlans: availablePlans,
+		gridPlans: availableGridPlans,
 		intent,
 		isInSignup,
 		selectedFeature,
