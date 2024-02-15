@@ -21,7 +21,7 @@ import { getSiteOption } from '../../state/sites/selectors';
 import allSitesMenu from './static-data/all-sites-menu';
 import buildFallbackResponse from './static-data/fallback-menu';
 import globalSidebarMenu from './static-data/global-sidebar-menu';
-import globalSiteViewSidebarMenu from './static-data/global-site-view-sidebar-menu';
+import globalSiteSidebarMenu from './static-data/global-site-sidebar-menu';
 import jetpackMenu from './static-data/jetpack-fallback-menu';
 
 const useSiteMenuItems = () => {
@@ -39,7 +39,7 @@ const useSiteMenuItems = () => {
 	const adminInterface = useSelector( ( state ) =>
 		getSiteOption( state, selectedSiteId, 'wpcom_admin_interface' )
 	);
-	const { shouldShowGlobalSidebar, shouldShowGlobalSiteViewSidebar } = useGlobalSidebar(
+	const { shouldShowGlobalSidebar, shouldShowGlobalSiteSidebar } = useGlobalSidebar(
 		selectedSiteId,
 		currentSection?.group
 	);
@@ -115,8 +115,8 @@ const useSiteMenuItems = () => {
 		return globalSidebarMenu();
 	}
 	// Global Site View should be limited to classic interface users only for now.
-	if ( shouldShowGlobalSiteViewSidebar && adminInterface === 'wp-admin' ) {
-		return globalSiteViewSidebarMenu( {
+	if ( shouldShowGlobalSiteSidebar && adminInterface === 'wp-admin' ) {
+		return globalSiteSidebarMenu( {
 			siteDomain,
 			shouldShowAddOns: shouldShowAddOnsInFallbackMenu,
 			showSiteMonitoring: isAtomic,

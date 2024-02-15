@@ -82,7 +82,7 @@ class MySitesNavigation extends Component {
 	}
 
 	// TODO: Add styles
-	renderGlobalSiteViewSidebar() {
+	renderGlobalSiteSidebar() {
 		return (
 			<GlobalSidebar path={ this.props.path }>
 				<MySitesSidebarUnifiedBody path={ this.props.path } />
@@ -95,7 +95,7 @@ class MySitesNavigation extends Component {
 			return this.renderGlobalSidebar();
 		}
 		if ( this.props.isGlobalSiteSidebarVisible ) {
-			return this.renderGlobalSiteViewSidebar();
+			return this.renderGlobalSiteSidebar();
 		}
 		return this.renderSidebar();
 	}
@@ -106,14 +106,14 @@ export default withCurrentRoute(
 		const sectionGroup = currentSection?.group ?? null;
 		const siteId = getSelectedSiteId( state );
 		const adminInterface = getSiteOption( state, siteId, 'wpcom_admin_interface' );
-		const { shouldShowGlobalSidebar, shouldShowGlobalSiteViewSidebar } = useGlobalSidebar(
+		const { shouldShowGlobalSidebar, shouldShowGlobalSiteSidebar } = useGlobalSidebar(
 			siteId,
 			sectionGroup
 		);
 		return {
 			isGlobalSidebarVisible: shouldShowGlobalSidebar,
 			// Global Site View should be limited to classic interface users only for now.
-			isGlobalSiteSidebarVisible: shouldShowGlobalSiteViewSidebar && adminInterface === 'wp-admin',
+			isGlobalSiteSidebarVisible: shouldShowGlobalSiteSidebar && adminInterface === 'wp-admin',
 		};
 	}, null )( MySitesNavigation )
 );

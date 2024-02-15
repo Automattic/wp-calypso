@@ -4,7 +4,7 @@ import { translate } from 'i18n-calypso';
  * Menu items for the Global Site View sidebar.
  * TODO: Update all icons
  */
-export default function globalSiteViewSidebarMenu( {
+export default function globalSiteSidebarMenu( {
 	shouldShowAddOns,
 	showSiteMonitoring,
 	siteDomain,

@@ -3,7 +3,7 @@ import { translate } from 'i18n-calypso';
 /**
  * Menu items that support all sites screen.
  */
-export default function allSitesMenu() {
+export default function globalSidebarMenu() {
 	return [
 		{
 			icon: 'dashicons-admin-home',
