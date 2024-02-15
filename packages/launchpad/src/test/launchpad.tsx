@@ -1,8 +1,8 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import React from 'react';
-import LaunchpadInternal, { type LaunchpadInternalProps } from '../launchpad-internal';
+import React, { ComponentProps } from 'react';
+import { LaunchpadInternal } from '../launchpad-internal';
 import '@testing-library/jest-dom';
 import type { Task } from '../types';
 
@@ -32,7 +32,7 @@ describe( 'LaunchpadInternal', () => {
 		checklistSlug: 'some-site',
 		launchpadContext: 'some-context',
 	};
-	const renderComponent = ( props: Partial< LaunchpadInternalProps > = {} ) => {
+	const renderComponent = ( props: Partial< ComponentProps< typeof LaunchpadInternal > > = {} ) => {
 		return render( <LaunchpadInternal { ...defaultProps } { ...props } /> );
 	};
 

@@ -1,12 +1,12 @@
 import { useLaunchpad } from '@automattic/data-stores';
-import { useMemo } from 'react';
+import { type FC, useMemo } from 'react';
 import Checklist, { Placeholder as ChecklistPlaceHolder } from './checklist';
 import ChecklistItem from './checklist-item';
 import { useTracking } from './use-tracking';
 import type { Task } from './types';
 import type { SiteDetails, UseLaunchpadOptions } from '@automattic/data-stores';
 
-export interface LaunchpadInternalProps {
+interface Props {
 	site?: SiteDetails | null;
 	siteSlug: string | null;
 	checklistSlug: string | null;
@@ -22,7 +22,7 @@ export interface LaunchpadInternalProps {
  * Low-level launchpad component that should only be used in exceptional cases.
  * Please use the main Launchpad component whenever possible.
  */
-const LaunchpadInternal = ( {
+const LaunchpadInternal: FC< Props > = ( {
 	site,
 	siteSlug,
 	checklistSlug,
@@ -31,7 +31,7 @@ const LaunchpadInternal = ( {
 	useLaunchpadOptions = {},
 	launchpadContext,
 	enableAutoTracking = false,
-}: LaunchpadInternalProps ) => {
+} ) => {
 	const launchpadData = useLaunchpad(
 		siteSlug || '',
 		checklistSlug,

@@ -20,6 +20,7 @@ describe( 'Checklist', () => {
 	it( 'renders a empty list when provided no tasks', () => {
 		render( <Checklist /> );
 		const checklistItems = screen.queryByRole( 'listitem' );
+
 		expect( checklistItems ).not.toBeInTheDocument();
 	} );
 } );

@@ -1,18 +1,16 @@
 import classNames from 'classnames';
-import { Children, cloneElement, type FC, type ReactElement } from 'react';
-import { Placeholder as ChecklistItemPlaceholder } from '../checklist-item';
-import type { Props as ChecklistItemProps } from '../checklist-item';
+import { Children, cloneElement, type FC, type ReactElement, type ComponentProps } from 'react';
+import ChecklistItem, { Placeholder as ChecklistItemPlaceholder } from '../checklist-item';
 import './style.scss';
 
-interface ChecklistProps {
+interface Props {
 	makeLastTaskPrimaryAction?: boolean;
-	children?: ReactElement< ChecklistItemProps > | ReactElement< ChecklistItemProps >[];
+	children?:
+		| ReactElement< ComponentProps< typeof ChecklistItem > >
+		| ReactElement< ComponentProps< typeof ChecklistItem > >[];
 }
 
-const Checklist: FC< ChecklistProps > = ( {
-	children,
-	makeLastTaskPrimaryAction,
-}: ChecklistProps ) => {
+const Checklist: FC< Props > = ( { children, makeLastTaskPrimaryAction } ) => {
 	const lastChildIndex = Children.count( children ) - 1;
 
 	return (
