@@ -45,10 +45,8 @@ export function upload( context, next ) {
 export function renderThemes( context, next ) {
 	const state = context.store.getState();
 	if ( isUserLoggedIn( state ) ) {
-		console.debug( 'renderThemes:loggedIn' ); // eslint-disable-line no-console
 		return loggedIn( context, next );
 	}
 
-	console.debug( 'renderThemes:loggedOut' ); // eslint-disable-line no-console
 	return loggedOut( context, next );
 }
