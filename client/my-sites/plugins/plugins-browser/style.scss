@@ -95,7 +95,7 @@ body.is-section-plugins #primary .main.is-logged-out {
 		}
 	}
 
-	.components-button.is-pressed::before {
+	.responsive-toolbar-group__button-item.is-pressed::before {
 		background: var(--studio-blue-50);
 		left: 0;
 		right: 0;
