@@ -48,7 +48,7 @@ const StatsSubscribersPage = ( { period }: StatsSubscribersPageProps ) => {
 	const statsModuleListClass = classNames(
 		'stats__module-list stats__module--unified',
 		{
-			'supports-email-stats': ! supportsEmailStats,
+			'is-email-stats-unavailable': ! supportsEmailStats,
 			'is-jetpack': isJetpack,
 		},
 		'subscribers-page'
