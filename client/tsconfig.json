@@ -1,6 +1,7 @@
 {
 	"extends": "@automattic/calypso-typescript-config/mixed-package.json",
 	"compilerOptions": {
+		"jsx": "react",
 		"rootDir": ".",
 		"noEmit": true,
 		"types": [ "node", "@types/gtag.js" ],

@@ -94,7 +94,7 @@ export const ORDERED_PATTERN_PAGES_CATEGORIES = [
 ];
 
 // From URL params for testing
-const searchParams = new URLSearchParams( window.location.search );
+const searchParams = new URLSearchParams( /* window.location.search */ );
 const viewportWidth = searchParams.get( 'viewportWidth' );
 const placeholderHeight = searchParams.get( 'placeholderHeight' );
 

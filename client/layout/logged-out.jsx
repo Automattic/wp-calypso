@@ -177,9 +177,15 @@ const LayoutLoggedOut = ( {
 	) {
 		masterbar = null;
 	} else if (
-		[ 'plugins', 'themes', 'theme', 'reader', 'subscriptions', 'site-profiler' ].includes(
-			sectionName
-		) &&
+		[
+			'patterns',
+			'plugins',
+			'themes',
+			'theme',
+			'reader',
+			'subscriptions',
+			'site-profiler',
+		].includes( sectionName ) &&
 		! isReaderTagPage &&
 		! isReaderSearchPage &&
 		! isReaderDiscoverPage
@@ -255,16 +261,17 @@ const LayoutLoggedOut = ( {
 				</>
 			) }
 
-			{ [ 'themes', 'theme', 'reader' ].includes( sectionName ) && ! isReaderTagEmbed && (
-				<UniversalNavbarFooter
-					onLanguageChange={ ( e ) => {
-						navigate( `/${ e.target.value + pathNameWithoutLocale }` );
-						window.location.reload();
-					} }
-					currentRoute={ currentRoute }
-					isLoggedIn={ isLoggedIn }
-				/>
-			) }
+			{ [ 'patterns', 'themes', 'theme', 'reader' ].includes( sectionName ) &&
+				! isReaderTagEmbed && (
+					<UniversalNavbarFooter
+						onLanguageChange={ ( e ) => {
+							navigate( `/${ e.target.value + pathNameWithoutLocale }` );
+							window.location.reload();
+						} }
+						currentRoute={ currentRoute }
+						isLoggedIn={ isLoggedIn }
+					/>
+				) }
 
 			{ ! isLoggedIn && ! isReaderTagEmbed && (
 				<ReaderJoinConversationDialog

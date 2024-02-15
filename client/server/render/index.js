@@ -253,7 +253,9 @@ export function serverRender( req, res ) {
 		performanceMark( req.context, 'redux store', true );
 		attachHead( context );
 
-		const isomorphicSubtrees = context.section?.isomorphic ? [ 'themes', 'ui', 'plugins' ] : [];
+		const isomorphicSubtrees = context.section?.isomorphic
+			? [ 'patterns', 'themes', 'ui', 'plugins' ]
+			: [];
 		const initialClientStateTrees = [ 'documentHead', ...isomorphicSubtrees ];
 
 		// Send state to client
