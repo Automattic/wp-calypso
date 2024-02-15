@@ -2,10 +2,7 @@ import { recordTracksEvent } from '@automattic/calypso-analytics';
 import config from '@automattic/calypso-config';
 import page, { type Callback } from '@automattic/calypso-router';
 import JetpackManageSidebar from 'calypso/jetpack-cloud/sections/sidebar-navigation/jetpack-manage';
-import {
-	JETPACK_MANAGE_DASHBOARD_LINK_NEEDS_ATTENTION,
-	JETPACK_MANAGE_DASHBOARD_LINK_FAVORITES,
-} from 'calypso/jetpack-cloud/sections/sidebar-navigation/lib/constants';
+import { JETPACK_MANAGE_SITES_LINK } from 'calypso/jetpack-cloud/sections/sidebar-navigation/lib/constants';
 import SitesSidebar from 'calypso/jetpack-cloud/sections/sidebar-navigation/sites';
 import { isAgencyUser } from 'calypso/state/partner-portal/partner/selectors';
 import { setAllSitesSelected } from 'calypso/state/ui/actions';
@@ -45,9 +42,7 @@ export const agencyDashboardContext: Callback = ( context, next ) => {
 
 	const currentPage = parseInt( contextPage ) || 1;
 
-	const isDesiredUrl =
-		context.path === JETPACK_MANAGE_DASHBOARD_LINK_FAVORITES ||
-		context.path.includes( JETPACK_MANAGE_DASHBOARD_LINK_NEEDS_ATTENTION );
+	const isDesiredUrl = context.path.includes( JETPACK_MANAGE_SITES_LINK );
 
 	context.header = <Header />;
 	context.secondary = ! isDesiredUrl ? (
