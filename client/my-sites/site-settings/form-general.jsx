@@ -701,19 +701,8 @@ export class SiteSettingsFormGeneral extends Component {
 	}
 
 	privacySettings() {
-		const {
-			fields,
-			handleSubmitForm,
-			updateFields,
-			isP2HubSite,
-			isRequestingSettings,
-			isSavingSettings,
-		} = this.props;
-
-		if ( isP2HubSite ) {
-			return <></>;
-		}
-
+		const { fields, handleSubmitForm, updateFields, isRequestingSettings, isSavingSettings } =
+			this.props;
 		return (
 			<SiteSettingPrivacy
 				fields={ fields }

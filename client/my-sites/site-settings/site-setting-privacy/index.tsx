@@ -6,6 +6,7 @@ import InlineSupportLink from 'calypso/components/inline-support-link';
 import SettingsSectionHeader from 'calypso/my-sites/site-settings/settings-section-header';
 import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
 import isSiteComingSoon from 'calypso/state/selectors/is-site-coming-soon';
+import isSiteP2Hub from 'calypso/state/selectors/is-site-p2-hub';
 import isSiteWpcomStaging from 'calypso/state/selectors/is-site-wpcom-staging';
 import isSiteWPForTeams from 'calypso/state/selectors/is-site-wpforteams';
 import isUnlaunchedSite from 'calypso/state/selectors/is-unlaunched-site';
@@ -40,6 +41,7 @@ const SiteSettingPrivacy = ( {
 	const siteIsAtomic = useSelector( ( state ) => isSiteAutomatedTransfer( state, siteId ) );
 	const siteIsJetpack = useSelector( ( state ) => isJetpackSite( state, siteId ) );
 	const isComingSoon = useSelector( ( state: AppState ) => isSiteComingSoon( state, siteId ) );
+	const isP2HubSite = useSelector( ( state: AppState ) => isSiteP2Hub( state, siteId ) );
 	const isUnlaunched = useSelector( ( state: AppState ) => isUnlaunchedSite( state, siteId ) );
 	const isWpcomStagingSite = useSelector( ( state ) => isSiteWpcomStaging( state, siteId ) );
 	const isWPForTeamsSite = useSelector( ( state ) => isSiteWPForTeams( state, siteId ) );
@@ -47,6 +49,10 @@ const SiteSettingPrivacy = ( {
 		( state ) => !! getSiteOption( state, siteId, 'editing_toolkit_is_active' )
 	);
 	const isAtomicAndEditingToolkitDeactivated = !! siteIsAtomic && ! isEditingToolkitActive;
+
+	if ( isP2HubSite ) {
+		return <></>;
+	}
 
 	return (
 		<>
