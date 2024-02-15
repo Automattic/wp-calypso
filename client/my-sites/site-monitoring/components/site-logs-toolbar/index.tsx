@@ -1,6 +1,9 @@
 import { SelectDropdown } from '@automattic/components';
 import { Button } from '@wordpress/components';
+import { Icon, moreHorizontalMobile } from '@wordpress/icons';
+import classnames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
+import { useState } from 'react';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import { SiteLogsTab } from 'calypso/data/hosting/use-site-logs-query';
 import { useCurrentSiteGmtOffset } from '../../hooks/use-current-site-gmt-offset';
@@ -69,6 +72,7 @@ export const SiteLogsToolbar = ( {
 	const siteGmtOffset = useCurrentSiteGmtOffset();
 
 	const isDownloading = state.status === 'downloading';
+	const [ isMobileOpen, setIsMobileOpen ] = useState( false );
 
 	const handleTimeRangeChange = ( newStart: Moment | null, newEnd: Moment | null ) => {
 		if (
@@ -77,7 +81,7 @@ export const SiteLogsToolbar = ( {
 		) {
 			return;
 		}
-
+		setIsMobileOpen( false );
 		onDateTimeChange( newStart || startDateTime, newEnd || endDateTime );
 	};
 
@@ -121,7 +125,18 @@ export const SiteLogsToolbar = ( {
 
 	return (
 		<div className="site-logs-toolbar">
-			<div className="site-logs-toolbar__top-row">
+			<Button
+				className="site-logs-toolbar__filter"
+				onClick={ () => {
+					setIsMobileOpen( ! isMobileOpen );
+				} }
+			>
+				{ translate( 'Filter' ) }
+				<Icon className="stats-icon" icon={ moreHorizontalMobile } size={ 22 } />
+			</Button>
+			<div
+				className={ classnames( 'site-logs-toolbar__top-row', { 'is-hidden': ! isMobileOpen } ) }
+			>
 				<label htmlFor="from">{ translate( 'From' ) }</label>
 				<DateTimePicker
 					id="from"
@@ -152,7 +167,10 @@ export const SiteLogsToolbar = ( {
 							{ severities.map( ( option ) => (
 								<SelectDropdown.Item
 									key={ option.value }
-									onClick={ () => onSeverityChange( option.value ) }
+									onClick={ () => {
+										onSeverityChange( option.value );
+										setIsMobileOpen( false );
+									} }
 									ariaLabel={ option.label }
 									selected={ option.value === severity }
 								>
@@ -175,7 +193,10 @@ export const SiteLogsToolbar = ( {
 								{ requestTypes.map( ( option ) => (
 									<SelectDropdown.Item
 										key={ option.value }
-										onClick={ () => onRequestTypeChange( option.value ) }
+										onClick={ () => {
+											onRequestTypeChange( option.value );
+											setIsMobileOpen( false );
+										} }
 										ariaLabel={ option.label }
 										selected={ option.value === requestType }
 									>
@@ -195,7 +216,10 @@ export const SiteLogsToolbar = ( {
 								{ requestStatuses.map( ( option ) => (
 									<SelectDropdown.Item
 										key={ option.value }
-										onClick={ () => onRequestStatusChange( option.value ) }
+										onClick={ () => {
+											onRequestStatusChange( option.value );
+											setIsMobileOpen( false );
+										} }
 										ariaLabel={ option.label }
 										selected={ option.value === requestStatus }
 									>
