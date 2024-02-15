@@ -24,6 +24,7 @@ import {
 	isWooOAuth2Client,
 	isGravatarOAuth2Client,
 	isJetpackCloudOAuth2Client,
+	isA4AOAuth2Client,
 	isWPJobManagerOAuth2Client,
 	isGravPoweredOAuth2Client,
 } from 'calypso/lib/oauth2-clients';
@@ -114,6 +115,7 @@ const LayoutLoggedOut = ( {
 		! isJetpackLogin &&
 		! isGravPoweredLoginPage &&
 		! isJetpackCloudOAuth2Client( oauth2Client ) &&
+		! isA4AOAuth2Client( oauth2Client ) &&
 		! isWooOAuth2Client( oauth2Client );
 
 	const classes = {
