@@ -48,8 +48,8 @@ export const UpdatesManager = () => {
 							<tr>
 								<th>Name</th>
 								<th>Time</th>
-								<th>Frequency</th>
-								<th>Plugins</th>
+								<th style={ { textAlign: 'center' } }>Frequency</th>
+								<th style={ { textAlign: 'center' } }>Plugins</th>
 								<th style={ { textAlign: 'end' } }>Actions</th>
 							</tr>
 						</thead>
@@ -57,8 +57,8 @@ export const UpdatesManager = () => {
 							<tr>
 								<td>Move to WordPress.com plugin</td>
 								<td>Feb 28 2023 7:00 PM UTC</td>
-								<td>Daily</td>
-								<td>1</td>
+								<td style={ { textAlign: 'center' } }>Daily</td>
+								<td style={ { textAlign: 'center' } }>1</td>
 								<td style={ { textAlign: 'end' } }>
 									<IconButton icon={ edit } label="Edit" />
 									<IconButton
@@ -73,8 +73,8 @@ export const UpdatesManager = () => {
 							<tr>
 								<td>Security plugins</td>
 								<td>Feb 28 2023 7:00 PM UTC</td>
-								<td>Daily</td>
-								<td>3</td>
+								<td style={ { textAlign: 'center' } }>Daily</td>
+								<td style={ { textAlign: 'center' } }>3</td>
 								<td style={ { textAlign: 'end' } }>
 									<IconButton icon={ edit } label="Edit" />
 									<IconButton
@@ -91,7 +91,7 @@ export const UpdatesManager = () => {
 				</CardBody>
 				<CardFooter>
 					<Button variant="primary" onClick={ () => setIsModalOpen( true ) }>
-						Add
+						Create a new schedule
 					</Button>
 				</CardFooter>
 			</Card>

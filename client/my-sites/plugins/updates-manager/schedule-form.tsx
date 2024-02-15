@@ -1,4 +1,5 @@
 import {
+	Button,
 	TextControl,
 	TimePicker,
 	RadioControl,
@@ -69,6 +70,9 @@ export const ScheduleForm = () => {
 					</VStack>
 				</FlexBlock>
 			</Flex>
+			<div style={ { textAlign: 'end' } }>
+				<Button variant="primary">Create</Button>
+			</div>
 		</form>
 	);
 };
