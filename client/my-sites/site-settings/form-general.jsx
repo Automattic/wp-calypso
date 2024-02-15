@@ -388,6 +388,9 @@ export class SiteSettingsFormGeneral extends Component {
 			}
 		);
 		const showPreviewLink = isComingSoon && hasSitePreviewLink;
+		const discourageSearchChecked =
+			( wpcomPublicComingSoon && blogPublic === 0 && isComingSoonDisabled ) ||
+			( 0 === blogPublic && ! wpcomPublicComingSoon );
 
 		return (
 			<FormFieldset>
@@ -468,10 +471,7 @@ export class SiteSettingsFormGeneral extends Component {
 							<FormInputCheckbox
 								name="blog_public"
 								value="0"
-								checked={
-									( wpcomPublicComingSoon && blogPublic === 0 && isComingSoonDisabled ) ||
-									( 0 === blogPublic && ! wpcomPublicComingSoon )
-								}
+								checked={ discourageSearchChecked }
 								onChange={ () =>
 									this.handleVisibilityOptionChange( {
 										blog_public:
@@ -498,7 +498,8 @@ export class SiteSettingsFormGeneral extends Component {
 									value={ true }
 									checked={
 										( wpcomPublicComingSoon && thirdPartySharingOptOut && isComingSoonDisabled ) ||
-										( thirdPartySharingOptOut && ! wpcomPublicComingSoon )
+										( thirdPartySharingOptOut && ! wpcomPublicComingSoon ) ||
+										discourageSearchChecked
 									}
 									onChange={ () =>
 										this.handleVisibilityOptionChange( {
@@ -509,12 +510,12 @@ export class SiteSettingsFormGeneral extends Component {
 											wpcom_data_sharing_opt_out: ! thirdPartySharingOptOut,
 										} )
 									}
-									disabled={ isRequestingSettings }
+									disabled={ isRequestingSettings || discourageSearchChecked }
 									onClick={ eventTracker( 'Clicked Partnership Radio Button' ) }
 								/>
 								<span>
 									{ translate(
-										'Prevent third-party data sharing for %(siteName)s {{infoPopover}}Limit AI training and prevent third-party data use. {{a}}Learn more.{{/a}}{{/infoPopover}}',
+										'Prevent third-party data sharing for %(siteName)s {{infoPopover}}Limit AI training and prevent third-party data use. Automatically enabled when discouraging search engine indexing. {{a}}Learn more.{{/a}}{{/infoPopover}}',
 										{
 											args: {
 												siteName: site.domain ?? translate( 'this site' ),
