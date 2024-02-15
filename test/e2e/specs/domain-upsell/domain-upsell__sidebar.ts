@@ -12,7 +12,6 @@ import {
 	SecretsManager,
 	RestAPIClient,
 } from '@automattic/calypso-e2e';
-import { getCalypsoURL } from '@automattic/calypso-e2e/dist/types/src/data-helper';
 import { Page, Browser } from 'playwright';
 import { getNewPlanName } from '../shared';
 
@@ -63,7 +62,9 @@ describe( DataHelper.createSuiteTitle( 'Sidebar: Domain upsell' ), function () {
 		 * Awaiting final UI design.
 		 * @see https://github.com/Automattic/wp-calypso/pull/87477
 		 */
-		page.goto( getCalypsoURL( `domains/add/${ testAccount.getSiteURL( { protocol: false } ) }` ) );
+		page.goto(
+			DataHelper.getCalypsoURL( `domains/add/${ testAccount.getSiteURL( { protocol: false } ) }` )
+		);
 		// sidebarComponent = new SidebarComponent( page );
 		// await sidebarComponent.openNotice(
 		// 	'Upgrade',

@@ -3,7 +3,6 @@
  */
 
 import { DataHelper, SiteImportPage, TestAccount } from '@automattic/calypso-e2e';
-import { getCalypsoURL } from '@automattic/calypso-e2e/dist/types/src/data-helper';
 import { Page, Browser } from 'playwright';
 
 declare const browser: Browser;
@@ -26,7 +25,9 @@ describe( DataHelper.createSuiteTitle( 'Site Import' ), function () {
 		 * Awaiting final UI design.
 		 * @see https://github.com/Automattic/wp-calypso/pull/87477
 		 */
-		page.goto( getCalypsoURL( `import/${ testAccount.getSiteURL( { protocol: false } ) }` ) );
+		page.goto(
+			DataHelper.getCalypsoURL( `import/${ testAccount.getSiteURL( { protocol: false } ) }` )
+		);
 		// const sidebarComponent = new SidebarComponent( page );
 		// await sidebarComponent.navigate( 'Tools', 'Import' );
 	} );
