@@ -6,21 +6,21 @@ import ActionPanel from 'calypso/components/action-panel';
 import Main from 'calypso/components/main';
 import { navigate } from 'calypso/lib/navigate';
 import { acceptInvite } from 'calypso/state/invites/actions';
-import { useEffect } from '@wordpress/element';
 import wpcom from 'calypso/lib/wp';
 import normalizeInvite from 'calypso/my-sites/invites/invite-accept/utils/normalize-invite';
 import { LoadingBar } from 'calypso/components/loading-bar';
 import DocumentHead from 'calypso/components/data/document-head';
 import { Global, css } from '@emotion/react';
 import MasterbarStyled from 'calypso/my-sites/checkout/checkout-thank-you/redesign-v2/masterbar-styled';
-import { useCallback, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import Notice from 'calypso/components/notice';
 import { useInterval } from 'calypso/lib/interval';
 import { requestSite } from 'calypso/state/sites/actions';
 import { useSelector } from 'react-redux';
 import { getSite } from 'calypso/state/sites/selectors';
 import { getCurrentUserId } from 'calypso/state/current-user/selectors';
-import * as React from 'react';
+import { PageViewTracker } from 'calypso/lib/analytics/page-view-tracker';
+import { setSelectedSiteId } from 'calypso/state/ui/actions';
 
 const ActionPanelStyled = styled( ActionPanel )( {
 	fontSize: '14px',
@@ -68,6 +68,13 @@ export function AcceptSiteTransfer( props: any ) {
 		},
 		[ dispatch, translate ]
 	);
+
+	// set the selected site id
+	useEffect( () => {
+		if ( site ) {
+			dispatch( setSelectedSiteId( site.ID ) );
+		}
+	}, [ site, dispatch ] );
 
 	// attempt to accept the invite
 	useEffect( () => {
@@ -141,6 +148,10 @@ export function AcceptSiteTransfer( props: any ) {
 	return (
 		<>
 			<DocumentHead title={ translate( 'Site Transfer' ) } />
+			<PageViewTracker
+				path="/settings/settings/site-transfer/:site"
+				title="Marketplace > Thank you"
+			/>
 			<Global
 				styles={ css`
 					body.is-section-settings,
