@@ -16,7 +16,7 @@ const POPUP_ID = 'github-app-authorize';
 
 export const useLiveAccounts = ( { initialAccountId }: UseLiveAccountsParameters ) => {
 	const { __ } = useI18n();
-	const { data: accounts = [], refetch } = useGithubAccountsQuery();
+	const { data: accounts = [], refetch, isLoading: isLoadingAccounts } = useGithubAccountsQuery();
 	const dispatch = useDispatch();
 
 	const [ account, setAccount ] = useState< GitHubAccountData | undefined >( () => {
@@ -64,5 +64,6 @@ export const useLiveAccounts = ( { initialAccountId }: UseLiveAccountsParameters
 		onNewInstallationRequest,
 		setAccount,
 		accounts,
+		isLoadingAccounts,
 	};
 };

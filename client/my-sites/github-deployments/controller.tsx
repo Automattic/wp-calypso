@@ -1,5 +1,6 @@
 import { isEnabled } from '@automattic/calypso-config';
 import { PageViewTracker } from 'calypso/lib/analytics/page-view-tracker';
+import { CreateRepository } from 'calypso/my-sites/github-deployments/components/repositories/create-repository/index';
 import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
@@ -53,6 +54,20 @@ export const deploymentManagement: Callback = ( context, next ) => {
 				delay={ 500 }
 			/>
 			<GitHubDeploymentManagement codeDeploymentId={ codeDeploymentId } />
+		</>
+	);
+	next();
+};
+
+export const createNewRepository: Callback = ( context, next ) => {
+	context.primary = (
+		<>
+			<PageViewTracker
+				path="/github-deployments/:site/create-new-repository"
+				title="Create Repository"
+				delay={ 500 }
+			/>
+			<CreateRepository />
 		</>
 	);
 	next();

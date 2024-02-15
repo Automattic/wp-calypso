@@ -6,18 +6,19 @@ import FormRadio from 'calypso/components/forms/form-radio';
 import FormSelect from 'calypso/components/forms/form-select';
 import { getRepositoryTemplate } from './templates';
 
-type ProjectType = 'theme' | 'plugin' | 'site';
+export type ProjectType = 'theme' | 'plugin' | 'site';
 
 type FormRadioWithTemplateSelectProps = {
 	isChecked?: boolean;
 	label: string;
 	projectType: ProjectType;
 	onChange?: () => void;
-	onTemplateSelected?: ( template?: RepositoryTemplate ) => void;
+	onTemplateSelected: ( template: RepositoryTemplate ) => void;
+	template: RepositoryTemplate;
 	rest?: [ string, string ];
 } & React.HTMLProps< HTMLDivElement >;
 
-type RepositoryTemplate = {
+export type RepositoryTemplate = {
 	name: string;
 	value: string;
 	link: string;
@@ -29,12 +30,12 @@ export const FormRadioWithTemplateSelect = ( {
 	projectType,
 	onTemplateSelected,
 	onChange,
-	...rest
+	template,
 }: FormRadioWithTemplateSelectProps ) => {
 	const { __ } = useI18n();
 
 	const [ checked, setChecked ] = useState< boolean >( isChecked );
-	const [ selectedTemplate, setSelectedTemplate ] = useState< RepositoryTemplate | undefined >();
+	const [ selectedTemplate, setSelectedTemplate ] = useState< RepositoryTemplate >( template );
 
 	useEffect( () => {
 		setChecked( isChecked );
@@ -46,8 +47,10 @@ export const FormRadioWithTemplateSelect = ( {
 		const selectedTemplate = templates?.find(
 			( template: { value: string } ) => template.value === selectedValue
 		);
-		setSelectedTemplate( selectedTemplate );
-		onTemplateSelected?.( selectedTemplate );
+		if ( selectedTemplate ) {
+			setSelectedTemplate( selectedTemplate );
+			onTemplateSelected( selectedTemplate );
+		}
 	};
 
 	return (
@@ -55,7 +58,6 @@ export const FormRadioWithTemplateSelect = ( {
 			className={ classNames( 'form-radio__container', {
 				checked: checked,
 			} ) }
-			{ ...rest }
 		>
 			<FormRadio
 				checked={ checked }

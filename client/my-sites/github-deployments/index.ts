@@ -6,6 +6,7 @@ import {
 	deploymentsList,
 	deploymentCreation,
 	deploymentManagement,
+	createNewRepository,
 } from './controller';
 
 export default function () {
@@ -36,6 +37,16 @@ export default function () {
 		redirectHomeIfIneligible,
 		navigation,
 		deploymentManagement,
+		makeLayout,
+		clientRender
+	);
+
+	page(
+		'/github-deployments/:site/create-new-repository',
+		siteSelection,
+		redirectHomeIfIneligible,
+		navigation,
+		createNewRepository,
 		makeLayout,
 		clientRender
 	);

@@ -5,6 +5,10 @@
 	gap: 24px;
 	color: var(--color-primary);
 
+	.form-label {
+		font-weight: 500;
+	}
+
 	.repository-name-formfieldset {
 		display: flex;
 		flex-direction: row;
@@ -28,6 +32,12 @@
 	.form-radio__container.checked .form-radio {
 		border: 1px solid var(--color-accent);
 		color: var(--color-accent);
+	}
+
+	&__project-type {
+		.form-radio__container:not(:first-child) {
+			margin-top: 8px;
+		}
 	}
 
 	.form-radio__container {

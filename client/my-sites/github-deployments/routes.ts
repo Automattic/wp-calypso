@@ -1,15 +1,19 @@
 import { addQueryArgs } from 'calypso/lib/url';
 
-interface CreateRepositoryRouteParams {
+interface CreateDeploymentRouteParams {
 	installationId?: number;
 	repositoryId?: number;
+}
+
+interface CreateNewRepositoryRouteParams {
+	installationId?: number;
 }
 
 export const indexPage = ( siteSlug: string ) => `/github-deployments/${ siteSlug }`;
 
 export const createDeploymentPage = (
 	siteSlug: string,
-	{ installationId, repositoryId }: CreateRepositoryRouteParams = {}
+	{ installationId, repositoryId }: CreateDeploymentRouteParams = {}
 ) => {
 	return addQueryArgs(
 		{ installation_id: installationId, repository_id: repositoryId },
@@ -19,4 +23,14 @@ export const createDeploymentPage = (
 
 export const manageDeploymentPage = ( siteSlug: string, deploymentId: number ) => {
 	return `${ indexPage( siteSlug ) }/manage/${ deploymentId }`;
+};
+
+export const createRepositoryPage = (
+	siteSlug: string,
+	{ installationId }: CreateNewRepositoryRouteParams = {}
+) => {
+	return addQueryArgs(
+		{ installation_id: installationId },
+		`${ indexPage( siteSlug ) }/create-new-repository`
+	);
 };
