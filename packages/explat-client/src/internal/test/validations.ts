@@ -17,9 +17,12 @@ describe( 'isObject', () => {
 
 describe( 'isName', () => {
 	it( 'returns true for a valid name', () => {
+		expect( Validations.isName( 'a' ) ).toBe( true );
+		expect( Validations.isName( '1' ) ).toBe( true );
+		expect( Validations.isName( 'a1' ) ).toBe( true );
+		expect( Validations.isName( 'experiment' ) ).toBe( true );
 		expect( Validations.isName( 'experiment_name' ) ).toBe( true );
-		expect( Validations.isName( 'asdfkjhkjh09182lk_asdf[-123=@#$%^' ) ).toBe( true );
-		expect( Validations.isName( '!@#$%^&*(IO)_asdfkjn.;```' ) ).toBe( true );
+		expect( Validations.isName( 'experiment_name_v1' ) ).toBe( true );
 	} );
 	it( 'returns false for an invalid name', () => {
 		expect( Validations.isName( '' ) ).toBe( false );
@@ -27,6 +30,9 @@ describe( 'isName', () => {
 		expect( Validations.isName( {} ) ).toBe( false );
 		expect( Validations.isName( undefined ) ).toBe( false );
 		expect( Validations.isName( null ) ).toBe( false );
+		expect( Validations.isName( '!@#$%^&*(IO)_asdfkjn.;```' ) ).toBe( false );
+		expect( Validations.isName( 'asdfkjhkjh09182lk_asdf[-123=@#$%^' ) ).toBe( false );
+		expect( Validations.isName( 'experiment_V1' ) ).toBe( false );
 	} );
 } );
 

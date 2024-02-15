@@ -9,6 +9,7 @@ import { isEmpty, omit, get } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
+import A4ALogo from 'calypso/a8c-for-agencies/components/a4a-logo';
 import SignupForm from 'calypso/blocks/signup-form';
 import JetpackLogo from 'calypso/components/jetpack-logo';
 import WooCommerceConnectCartHeader from 'calypso/components/woocommerce-connect-cart-header';
@@ -19,6 +20,7 @@ import {
 	isCrowdsignalOAuth2Client,
 	isWooOAuth2Client,
 	isJetpackCloudOAuth2Client,
+	isA4AOAuth2Client,
 	isGravatarOAuth2Client,
 } from 'calypso/lib/oauth2-clients';
 import { login } from 'calypso/lib/paths';
@@ -44,6 +46,7 @@ import { getCurrentOAuth2Client } from 'calypso/state/oauth2-clients/ui/selector
 import getCurrentQueryArguments from 'calypso/state/selectors/get-current-query-arguments';
 import { getSuggestedUsername } from 'calypso/state/signup/optional-dependencies/selectors';
 import { saveSignupStep, submitSignupStep } from 'calypso/state/signup/progress/actions';
+
 import './style.scss';
 
 function getRedirectToAfterLoginUrl( {
@@ -490,9 +493,20 @@ export class UserStep extends Component {
 
 		if ( isJetpackCloudOAuth2Client( oauth2Client ) ) {
 			return (
-				<div className={ classNames( 'signup-form__jetpack-cloud-wrapper' ) }>
+				<div className={ classNames( 'signup-form__wrapper' ) }>
 					<JetpackLogo full={ false } size={ 60 } />
 					<h3>{ translate( 'Sign up to Jetpack.com with a WordPress.com account.' ) }</h3>
+				</div>
+			);
+		}
+
+		if ( isA4AOAuth2Client( oauth2Client ) ) {
+			return (
+				<div className={ classNames( 'signup-form__wrapper' ) }>
+					<A4ALogo size={ 60 } />
+					<h3>
+						{ translate( 'Sign up to Automattic for Agencies with a WordPress.com account.' ) }
+					</h3>
 				</div>
 			);
 		}

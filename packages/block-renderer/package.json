@@ -31,7 +31,7 @@
 	"dependencies": {
 		"@automattic/global-styles": "workspace:^",
 		"@tanstack/react-query": "^5.15.5",
-		"@wordpress/block-editor": "^12.19.0",
+		"@wordpress/block-editor": "^12.19.1",
 		"@wordpress/compose": "^6.28.0",
 		"classnames": "^2.3.2",
 		"tslib": "^2.3.0",

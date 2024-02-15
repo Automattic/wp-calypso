@@ -1,5 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
 import wpcom from 'calypso/lib/wp';
+import getDefaultQueryParams from 'calypso/my-sites/stats/hooks/default-query-params';
 
 type Module = 'akismet' | 'protect' | 'vaultpress' | 'monitor' | 'stats' | 'verification-tools';
 type ModuleData = number | string | boolean;
@@ -38,13 +39,12 @@ function queryModuleData( module: Module ): Promise< ModuleData > {
 }
 
 export default function useModuleDataQuery( module: Module ) {
-	return useQuery< ModuleData, Error >( {
+	return useQuery( {
+		...getDefaultQueryParams(),
 		queryKey: [ 'stats-widget', 'module-data', module ],
 		queryFn: () => queryModuleData( module ),
 		staleTime: 5 * 60 * 1000,
 		// If the module is not active, we don't want to retry the query.
 		retry: false,
-		retryOnMount: false,
-		refetchOnWindowFocus: false,
 	} );
 }

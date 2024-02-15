@@ -190,4 +190,24 @@ export const STEPS = {
 		slug: 'bundleTransfer',
 		asyncComponent: () => import( './steps-repository/bundle-transfer' ),
 	},
+
+	WAIT_FOR_ATOMIC: {
+		slug: 'waitForAtomic',
+		asyncComponent: () => import( './steps-repository/wait-for-atomic' ),
+	},
+
+	WAIT_FOR_PLUGIN_INSTALL: {
+		slug: 'waitForPluginInstall',
+		asyncComponent: () => import( './steps-repository/wait-for-plugin-install' ),
+	},
+
+	ASSIGN_TRIAL_PLAN: {
+		slug: 'assignTrialPlan',
+		asyncComponent: () => import( './steps-repository/assign-trial-plan' ),
+	},
+
+	SITE_MIGRATION_INSTRUCTIONS: {
+		slug: 'site-migration-instructions',
+		asyncComponent: () => import( './steps-repository/site-migration-instructions' ),
+	},
 };

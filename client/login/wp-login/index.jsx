@@ -18,6 +18,7 @@ import TranslatorInvite from 'calypso/components/translator-invite';
 import { getSignupUrl, pathWithLeadingSlash } from 'calypso/lib/login';
 import {
 	isJetpackCloudOAuth2Client,
+	isA4AOAuth2Client,
 	isCrowdsignalOAuth2Client,
 	isWooOAuth2Client,
 } from 'calypso/lib/oauth2-clients';
@@ -302,7 +303,10 @@ export class Login extends Component {
 
 		// If we got here coming from Jetpack Cloud login page, we want to go back
 		// to it after we finish the process
-		if ( isJetpackCloudOAuth2Client( this.props.oauth2Client ) ) {
+		if (
+			isJetpackCloudOAuth2Client( this.props.oauth2Client ) ||
+			isA4AOAuth2Client( this.props.oauth2Client )
+		) {
 			const currentUrl = new URL( window.location.href );
 			currentUrl.searchParams.append( 'lostpassword_flow', true );
 			const queryArgs = {
@@ -342,7 +346,10 @@ export class Login extends Component {
 			usernameOrEmail,
 		} = this.props;
 
-		if ( isJetpackCloudOAuth2Client( oauth2Client ) && '/log-in/authenticator' !== currentRoute ) {
+		if (
+			( isJetpackCloudOAuth2Client( oauth2Client ) || isA4AOAuth2Client( oauth2Client ) ) &&
+			'/log-in/authenticator' !== currentRoute
+		) {
 			return null;
 		}
 

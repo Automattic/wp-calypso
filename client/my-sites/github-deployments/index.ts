@@ -1,17 +1,52 @@
 import page from '@automattic/calypso-router';
 import { makeLayout, render as clientRender } from 'calypso/controller';
 import { navigation, siteSelection, sites } from 'calypso/my-sites/controller';
-import { redirectHomeIfIneligible, githubDeployments } from './controller';
+import {
+	redirectHomeIfIneligible,
+	deploymentsList,
+	deploymentCreation,
+	deploymentManagement,
+	createNewRepository,
+} from './controller';
 
 export default function () {
 	page( '/github-deployments', siteSelection, sites, makeLayout, clientRender );
 
 	page(
-		'/github-deployments/:siteId',
+		'/github-deployments/:site',
 		siteSelection,
 		redirectHomeIfIneligible,
 		navigation,
-		githubDeployments,
+		deploymentsList,
+		makeLayout,
+		clientRender
+	);
+
+	page(
+		'/github-deployments/:site/create',
+		siteSelection,
+		redirectHomeIfIneligible,
+		navigation,
+		deploymentCreation,
+		makeLayout,
+		clientRender
+	);
+	page(
+		'/github-deployments/:site/manage/:deploymentId',
+		siteSelection,
+		redirectHomeIfIneligible,
+		navigation,
+		deploymentManagement,
+		makeLayout,
+		clientRender
+	);
+
+	page(
+		'/github-deployments/:site/create-new-repository',
+		siteSelection,
+		redirectHomeIfIneligible,
+		navigation,
+		createNewRepository,
 		makeLayout,
 		clientRender
 	);

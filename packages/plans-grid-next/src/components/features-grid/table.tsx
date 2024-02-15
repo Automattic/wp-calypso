@@ -59,9 +59,19 @@ const Table = ( {
 	const gridPlansWithoutSpotlight = ! gridPlanForSpotlight
 		? renderedGridPlans
 		: renderedGridPlans.filter( ( { planSlug } ) => gridPlanForSpotlight.planSlug !== planSlug );
+	/**
+	 * Search for a plan with a highlight label.
+	 * Some margin is applied in the stylesheet to cover the badges/labels.
+	 */
+	const hasHighlightedPlan = gridPlansWithoutSpotlight.some(
+		( { highlightLabel } ) => !! highlightLabel
+	);
 	const tableClasses = classNames(
 		'plan-features-2023-grid__table',
-		`has-${ gridPlansWithoutSpotlight.length }-cols`
+		`has-${ gridPlansWithoutSpotlight.length }-cols`,
+		{
+			'has-highlighted-plan': hasHighlightedPlan,
+		}
 	);
 	const translate = useTranslate();
 
