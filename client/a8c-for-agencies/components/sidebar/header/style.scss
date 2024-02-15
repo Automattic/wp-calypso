@@ -40,13 +40,13 @@ html.accessible-focus .a4a-sidebar__profile-dropdown-button:focus {
 
 	position: absolute;
 	// 4px below the bottom of the icon
-	top: calc(100% + 4px);
+	inset-block-start: calc(100% + 4px);
 
 	// Float the dropdown to the left on small screens,
 	// and to the right on larger screens
-	right: 0;
+	inset-inline-end: 0;
 	@include breakpoint-deprecated( ">660px" ) {
-		right: initial;
+		inset-inline-end: initial;
 	}
 
 	// The menu should render "on top" of the profile picture & site switcher
@@ -68,7 +68,7 @@ html.accessible-focus .a4a-sidebar__profile-dropdown-button:focus {
 }
 
 .a4a-sidebar__profile-dropdown.is-align-menu-up .a4a-sidebar__profile-dropdown-menu {
-	top: calc(-100% + -48px);
+	inset-block-start: calc(-100% + -48px);
 }
 
 
@@ -117,6 +117,6 @@ a.a4a-sidebar__external-link {
 
 	svg {
 		position: absolute;
-		right: 16px;
+		inset-inline-end: 16px;
 	}
 }
