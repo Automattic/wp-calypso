@@ -2,7 +2,6 @@ import { recordTracksEvent } from '@automattic/calypso-analytics';
 import config, { enable, isEnabled } from '@automattic/calypso-config';
 import page, { type Callback } from '@automattic/calypso-router';
 import JetpackManageSidebar from 'calypso/jetpack-cloud/sections/sidebar-navigation/jetpack-manage';
-import { JETPACK_MANAGE_SITES_LINK } from 'calypso/jetpack-cloud/sections/sidebar-navigation/lib/constants';
 import SitesSidebar from 'calypso/jetpack-cloud/sections/sidebar-navigation/sites';
 import { sitesPath } from 'calypso/lib/jetpack/paths';
 import { isSectionNameEnabled } from 'calypso/sections-filter';
@@ -52,13 +51,11 @@ export const agencyDashboardContext: Callback = ( context, next ) => {
 
 	const currentPage = parseInt( contextPage ) || 1;
 
-	const isDesiredUrl = context.path.includes( JETPACK_MANAGE_SITES_LINK );
-
 	context.header = <Header />;
-	context.secondary = ! isDesiredUrl ? (
-		<JetpackManageSidebar path={ context.path } />
-	) : (
+	context.secondary = showSitesDashboardV2 ? (
 		<SitesSidebar path={ context.path } />
+	) : (
+		<JetpackManageSidebar path={ context.path } />
 	);
 	context.primary = (
 		<DashboardOverview
