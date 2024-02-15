@@ -19,6 +19,10 @@ const getSearchOptionsQueryParams = ( searchOptions: SearchOptions ) => {
 		}
 	}
 
+	if ( searchOptions.order ) {
+		searchQueryParams += `&order=${ searchOptions.order.order }&order_by=${ searchOptions.order.orderBy }`;
+	}
+
 	return searchQueryParams;
 };
 
@@ -32,7 +36,7 @@ const useCampaignsQueryPaged = (
 	return useInfiniteQuery( {
 		queryKey: [ 'promote-post-campaigns', siteId, searchQueryParams ],
 		queryFn: async ( { pageParam } ) => {
-			const searchCampaignsUrl = `/search/campaigns/site/${ siteId }?order=desc&order_by=created_at&page=${ pageParam }${ searchQueryParams }`;
+			const searchCampaignsUrl = `/search/campaigns/site/${ siteId }?page=${ pageParam }${ searchQueryParams }`;
 			const resultQuery = await requestDSPHandleErrors< CampaignQueryResult >(
 				siteId,
 				searchCampaignsUrl
