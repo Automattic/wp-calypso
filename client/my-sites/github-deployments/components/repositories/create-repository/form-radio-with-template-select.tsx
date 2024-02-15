@@ -4,7 +4,10 @@ import { useI18n } from '@wordpress/react-i18n';
 import classNames from 'classnames';
 import FormRadio from 'calypso/components/forms/form-radio';
 import FormSelect from 'calypso/components/forms/form-select';
-import { getRepositoryTemplate } from './templates';
+import {
+	RepositoryTemplate,
+	useGithubRepositoriesTemplatesQuery,
+} from './use-create-code-deployment-and-repository';
 
 export type ProjectType = 'theme' | 'plugin' | 'site';
 
@@ -18,12 +21,6 @@ type FormRadioWithTemplateSelectProps = {
 	rest?: [ string, string ];
 } & React.HTMLProps< HTMLDivElement >;
 
-export type RepositoryTemplate = {
-	name: string;
-	value: string;
-	link: string;
-};
-
 export const FormRadioWithTemplateSelect = ( {
 	isChecked = false,
 	label,
@@ -36,6 +33,9 @@ export const FormRadioWithTemplateSelect = ( {
 
 	const [ checked, setChecked ] = useState< boolean >( isChecked );
 	const [ selectedTemplate, setSelectedTemplate ] = useState< RepositoryTemplate >( template );
+	const repositoryTemplates = useGithubRepositoriesTemplatesQuery().data?.filter(
+		( template ) => template.type === projectType
+	);
 
 	useEffect( () => {
 		setChecked( isChecked );
@@ -43,9 +43,8 @@ export const FormRadioWithTemplateSelect = ( {
 
 	const handleTemplateChange = ( event: React.ChangeEvent< HTMLSelectElement > ) => {
 		const selectedValue = event.currentTarget.value;
-		const templates = getRepositoryTemplate( projectType );
-		const selectedTemplate = templates?.find(
-			( template: { value: string } ) => template.value === selectedValue
+		const selectedTemplate = repositoryTemplates?.find(
+			( template: { key: string } ) => template.key === selectedValue
 		);
 		if ( selectedTemplate ) {
 			setSelectedTemplate( selectedTemplate );
@@ -72,13 +71,13 @@ export const FormRadioWithTemplateSelect = ( {
 				{ checked && (
 					<FormSelect
 						onChange={ handleTemplateChange }
-						value={ selectedTemplate?.value ?? 'Select template' }
+						value={ selectedTemplate?.key ?? 'Select template' }
 					>
 						<option value="Select template" disabled>
 							{ __( 'Select template' ) }
 						</option>
-						{ getRepositoryTemplate( projectType ).map( ( template ) => (
-							<option key={ template.value } value={ template.value }>
+						{ repositoryTemplates?.map( ( template ) => (
+							<option key={ template.key } value={ template.key }>
 								{ template.name }
 							</option>
 						) ) }
@@ -87,7 +86,11 @@ export const FormRadioWithTemplateSelect = ( {
 				{ checked && selectedTemplate && (
 					<small style={ { marginTop: '12px' } }>
 						{ createInterpolateElement( __( 'Learn more about the <link/> template' ), {
-							link: <ExternalLink href="#">{ selectedTemplate?.name }</ExternalLink>,
+							link: (
+								<ExternalLink href={ selectedTemplate?.link }>
+									{ selectedTemplate?.name }
+								</ExternalLink>
+							),
 						} ) }
 					</small>
 				) }

@@ -7,13 +7,12 @@ import FormRadiosBar from 'calypso/components/forms/form-radios-bar';
 import FormTextInput from 'calypso/components/forms/form-text-input';
 import { GitHubAccountsDropdown } from 'calypso/my-sites/github-deployments/components/accounts-dropdown/index';
 import { useLiveAccounts } from 'calypso/my-sites/github-deployments/components/accounts-dropdown/use-live-accounts';
+import { FormRadioWithTemplateSelect, ProjectType } from './form-radio-with-template-select';
 import {
-	FormRadioWithTemplateSelect,
-	ProjectType,
+	MutationVariables,
 	RepositoryTemplate,
-} from './form-radio-with-template-select';
-import { repositoryTemplates } from './templates';
-import { MutationVariables } from './use-create-code-deployment-and-repository';
+	useGithubRepositoriesTemplatesQuery,
+} from './use-create-code-deployment-and-repository';
 
 import './style.scss';
 
@@ -34,17 +33,16 @@ export const CreateRepositoryForm = ( { onRepositoryCreated }: CreateRepositoryF
 	const [ type, setType ] = useState< ProjectType >( 'plugin' );
 	const [ isPrivate, setIsPrivate ] = useState( true );
 	const [ isAutomated, setIsAutomated ] = useState( false );
-	const [ template, setTemplate ] = useState< RepositoryTemplate >(
-		repositoryTemplates.plugin[ 0 ]
-	);
-
+	const [ template, setTemplate ] = useState< RepositoryTemplate >( '' );
+	const repositoryTemplates = useGithubRepositoriesTemplatesQuery().data;
+	const isLoadingTemplates = false; // TODO: add loading status
 	const isFormValid = repositoryName.trim() && ! isLoadingAccounts;
 
 	const handleCreateRepository = () => {
 		const repositoryAccount = account || accounts[ 0 ];
 		onRepositoryCreated( {
 			installationId: repositoryAccount.external_id,
-			template: template.value,
+			template: template.key,
 			accountName: repositoryAccount.account_name,
 			repositoryName,
 			isPrivate,
@@ -96,39 +94,51 @@ export const CreateRepositoryForm = ( { onRepositoryCreated }: CreateRepositoryF
 				</FormFieldset>
 				<FormFieldset className="github-deployments-create-repository__project-type">
 					<FormLabel>{ __( 'What are you building ' ) }</FormLabel>
-					<FormRadioWithTemplateSelect
-						label={ __( 'A plugin' ) }
-						projectType="plugin"
-						isChecked={ type === 'plugin' }
-						onChange={ () => {
-							setType( 'plugin' );
-							setTemplate( repositoryTemplates.plugin[ 0 ] );
-						} }
-						onTemplateSelected={ setTemplate }
-						template={ template }
-					/>
-					<FormRadioWithTemplateSelect
-						label={ __( 'A theme' ) }
-						projectType="theme"
-						isChecked={ type === 'theme' }
-						onChange={ () => {
-							setType( 'theme' );
-							setTemplate( repositoryTemplates.theme[ 0 ] );
-						} }
-						onTemplateSelected={ setTemplate }
-						template={ template }
-					/>
-					<FormRadioWithTemplateSelect
-						label={ __( 'A site' ) }
-						projectType="site"
-						isChecked={ type === 'site' }
-						onChange={ () => {
-							setType( 'site' );
-							setTemplate( repositoryTemplates.site[ 0 ] );
-						} }
-						onTemplateSelected={ setTemplate }
-						template={ template }
-					/>
+					{ isLoadingTemplates ? (
+						<Spinner />
+					) : (
+						<>
+							<FormRadioWithTemplateSelect
+								label={ __( 'A plugin' ) }
+								projectType="plugin"
+								isChecked={ type === 'plugin' }
+								onChange={ () => {
+									setType( 'plugin' );
+									setTemplate(
+										repositoryTemplates?.filter( ( template ) => template.type === 'plugin' )[ 0 ]
+									);
+								} }
+								onTemplateSelected={ setTemplate }
+								template={ template }
+							/>
+							<FormRadioWithTemplateSelect
+								label={ __( 'A theme' ) }
+								projectType="theme"
+								isChecked={ type === 'theme' }
+								onChange={ () => {
+									setType( 'theme' );
+									setTemplate(
+										repositoryTemplates?.filter( ( template ) => template.type === 'theme' )[ 0 ]
+									);
+								} }
+								onTemplateSelected={ setTemplate }
+								template={ template }
+							/>
+							<FormRadioWithTemplateSelect
+								label={ __( 'A site' ) }
+								projectType="site"
+								isChecked={ type === 'site' }
+								onChange={ () => {
+									setType( 'site' );
+									setTemplate(
+										repositoryTemplates?.filter( ( template ) => template.type === 'site' )[ 0 ]
+									);
+								} }
+								onTemplateSelected={ setTemplate }
+								template={ template }
+							/>
+						</>
+					) }
 				</FormFieldset>
 				<FormFieldset>
 					<FormLabel htmlFor="deploy">{ __( 'Automatic deploys' ) }</FormLabel>

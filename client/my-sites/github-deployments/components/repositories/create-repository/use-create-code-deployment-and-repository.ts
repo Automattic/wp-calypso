@@ -1,4 +1,5 @@
-import { useMutation, UseMutationOptions, useQueryClient } from '@tanstack/react-query';
+import { useMutation, UseMutationOptions, useQueryClient, useQuery } from '@tanstack/react-query';
+import { addQueryArgs } from '@wordpress/url';
 import { useCallback } from 'react';
 import wp from 'calypso/lib/wp';
 import { GITHUB_DEPLOYMENTS_QUERY_KEY } from 'calypso/my-sites/github-deployments/constants';
@@ -68,4 +69,29 @@ export const useCreateCodeDeploymentAndRepository = (
 	);
 
 	return { createDeploymentAndRepository, isPending };
+};
+
+export const GITHUB_REPOSITORIES_QUERY_KEY = 'github-repositories';
+
+export type RepositoryTemplate = {
+	type: string;
+	name: string;
+	key: string;
+	link: string;
+};
+
+export const useGithubRepositoriesTemplatesQuery = () => {
+	const path = addQueryArgs( '/hosting/github/repositories/templates' );
+
+	return useQuery< RepositoryTemplate[] >( {
+		queryKey: [ GITHUB_DEPLOYMENTS_QUERY_KEY, GITHUB_REPOSITORIES_QUERY_KEY ],
+		queryFn: (): RepositoryTemplate[] =>
+			wp.req.get( {
+				path,
+				apiNamespace: 'wpcom/v2',
+			} ),
+		meta: {
+			persist: false,
+		},
+	} );
 };
