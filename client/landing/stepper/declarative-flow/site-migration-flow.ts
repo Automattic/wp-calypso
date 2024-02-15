@@ -20,6 +20,7 @@ const siteMigration: Flow = {
 			STEPS.WAIT_FOR_ATOMIC,
 			STEPS.WAIT_FOR_PLUGIN_INSTALL,
 			STEPS.PROCESSING,
+			STEPS.SITE_MIGRATION_INSTRUCTIONS,
 			STEPS.ERROR,
 		];
 	},
@@ -143,8 +144,7 @@ const siteMigration: Flow = {
 					}
 
 					if ( providedDependencies?.pluginsInstalled ) {
-						//@TODO: Send users to the import instructions
-						return exitFlow( `/home/${ siteSlug }` );
+						return navigate( 'site-migration-instructions' );
 					}
 				}
 
@@ -156,6 +156,10 @@ const siteMigration: Flow = {
 
 				case 'waitForPluginInstall': {
 					return navigate( 'processing' );
+				}
+
+				case 'site-migration-instructions': {
+					return exitFlow( `/home/${ siteSlug }` );
 				}
 			}
 		}
