@@ -68,16 +68,6 @@ const JetpackManageSidebar = ( { path }: { path: string } ) => {
 		...( isSectionNameEnabled( 'jetpack-cloud-overview' ) ? [ overviewMenuItem ] : [] ),
 		...( showSitesV2Menu ? [ sitesV2MenuItem ] : [ dashboardMenuItem ] ),
 		createItem( {
-			icon: category,
-			path: '/',
-			link: JETPACK_MANAGE_DASHBOARD_LINK,
-			title: translate( 'Sites' ),
-			trackEventProps: {
-				menu_item: 'Jetpack Cloud / Dashboard',
-			},
-			withChevron: true,
-		} ),
-		createItem( {
 			icon: plugins,
 			path: '/',
 			link: JETPACK_MANAGE_PLUGINS_LINK,
