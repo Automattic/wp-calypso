@@ -478,7 +478,7 @@ export class SiteSettingsFormGeneral extends Component {
 											wpcomPublicComingSoon || blogPublic === -1 || blogPublic === 1 ? 0 : 1,
 										wpcom_coming_soon: 0,
 										wpcom_public_coming_soon: 0,
-										wpcom_data_sharing_opt_out: thirdPartySharingOptOut,
+										wpcom_data_sharing_opt_out: true,
 									} )
 								}
 								disabled={ isRequestingSettings }
