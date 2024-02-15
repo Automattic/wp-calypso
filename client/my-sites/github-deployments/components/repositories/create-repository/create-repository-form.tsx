@@ -1,7 +1,7 @@
 import { FormLabel } from '@automattic/components';
 import { Button, FormToggle, Spinner } from '@wordpress/components';
 import { useI18n } from '@wordpress/react-i18n';
-import { ChangeEvent, useState } from 'react';
+import { ChangeEvent, useEffect, useState } from 'react';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormRadiosBar from 'calypso/components/forms/form-radios-bar';
 import FormTextInput from 'calypso/components/forms/form-text-input';
@@ -31,7 +31,8 @@ export const CreateRepositoryForm = ( { onRepositoryCreated }: CreateRepositoryF
 		isLoadingAccounts,
 	} = useLiveAccounts( {} );
 	const [ repositoryName, setRepositoryName ] = useState( '' );
-	const [ type, setType ] = useState< ProjectType >( 'plugin' );
+	const [ targetDir, setTargetDir ] = useState( '/' );
+	const [ projectType, setProjectType ] = useState< ProjectType >( 'plugin' );
 	const [ isPrivate, setIsPrivate ] = useState( true );
 	const [ isAutomated, setIsAutomated ] = useState( false );
 	const [ template, setTemplate ] = useState< RepositoryTemplate >(
@@ -47,10 +48,25 @@ export const CreateRepositoryForm = ( { onRepositoryCreated }: CreateRepositoryF
 			template: template.value,
 			accountName: repositoryAccount.account_name,
 			repositoryName,
+			targetDir,
 			isPrivate,
 			isAutomated,
 		} );
 	};
+
+	useEffect( () => {
+		switch ( projectType ) {
+			case 'plugin':
+				setTargetDir( '/wp-content/plugins/' + repositoryName );
+				break;
+			case 'theme':
+				setTargetDir( '/wp-content/themes/' + repositoryName );
+				break;
+			case 'site':
+				setTargetDir( '/' );
+				break;
+		}
+	}, [ projectType, repositoryName ] );
 
 	return (
 		<div className="github-deployments-create-repository">
@@ -75,9 +91,9 @@ export const CreateRepositoryForm = ( { onRepositoryCreated }: CreateRepositoryF
 							id="repoName"
 							placehlder={ __( 'Repository name' ) }
 							value={ repositoryName }
-							onChange={ ( event: ChangeEvent< HTMLInputElement > ) =>
-								setRepositoryName( event.currentTarget.value )
-							}
+							onChange={ async ( event: ChangeEvent< HTMLInputElement > ) => {
+								setRepositoryName( event.currentTarget.value );
+							} }
 						/>
 					</FormFieldset>
 				</div>
@@ -99,10 +115,9 @@ export const CreateRepositoryForm = ( { onRepositoryCreated }: CreateRepositoryF
 					<FormRadioWithTemplateSelect
 						label={ __( 'A plugin' ) }
 						projectType="plugin"
-						isChecked={ type === 'plugin' }
+						isChecked={ projectType === 'plugin' }
 						onChange={ () => {
-							setType( 'plugin' );
-							setTemplate( repositoryTemplates.plugin[ 0 ] );
+							setProjectType( 'plugin' );
 						} }
 						onTemplateSelected={ setTemplate }
 						template={ template }
@@ -110,10 +125,9 @@ export const CreateRepositoryForm = ( { onRepositoryCreated }: CreateRepositoryF
 					<FormRadioWithTemplateSelect
 						label={ __( 'A theme' ) }
 						projectType="theme"
-						isChecked={ type === 'theme' }
+						isChecked={ projectType === 'theme' }
 						onChange={ () => {
-							setType( 'theme' );
-							setTemplate( repositoryTemplates.theme[ 0 ] );
+							setProjectType( 'theme' );
 						} }
 						onTemplateSelected={ setTemplate }
 						template={ template }
@@ -121,13 +135,21 @@ export const CreateRepositoryForm = ( { onRepositoryCreated }: CreateRepositoryF
 					<FormRadioWithTemplateSelect
 						label={ __( 'A site' ) }
 						projectType="site"
-						isChecked={ type === 'site' }
+						isChecked={ projectType === 'site' }
 						onChange={ () => {
-							setType( 'site' );
-							setTemplate( repositoryTemplates.site[ 0 ] );
+							setProjectType( 'site' );
 						} }
 						onTemplateSelected={ setTemplate }
 						template={ template }
+					/>
+					<FormLabel htmlFor="targetDir">{ __( 'Destination directory' ) }</FormLabel>
+					<FormTextInput
+						id="targetDir"
+						placehlder="/"
+						value={ targetDir }
+						onChange={ ( event: ChangeEvent< HTMLInputElement > ) =>
+							setTargetDir( event.currentTarget.value )
+						}
 					/>
 				</FormFieldset>
 				<FormFieldset>

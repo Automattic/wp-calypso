@@ -87,7 +87,11 @@ export const FormRadioWithTemplateSelect = ( {
 				{ checked && selectedTemplate && (
 					<small style={ { marginTop: '12px' } }>
 						{ createInterpolateElement( __( 'Learn more about the <link/> template' ), {
-							link: <ExternalLink href="#">{ selectedTemplate?.name }</ExternalLink>,
+							link: (
+								<ExternalLink href={ selectedTemplate?.link }>
+									{ selectedTemplate?.name }
+								</ExternalLink>
+							),
 						} ) }
 					</small>
 				) }
