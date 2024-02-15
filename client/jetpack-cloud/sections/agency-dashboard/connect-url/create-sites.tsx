@@ -9,27 +9,46 @@ export interface Site {
 export default function CreateSites( { processed, queue }: { processed: Site[]; queue: Site[] } ) {
 	const translate = useTranslate();
 
+	const successfull = processed.filter( ( site ) => site.status === 'success' );
+	const unsucessfull = processed.filter( ( site ) => site.status !== 'success' );
+
 	return (
 		<div className="connect-url__create-sites">
 			{ processed.length === processed.length + queue.length ? (
-				<>
-					<div className="connect-url__create-sites-quantity">
-						{ translate( 'Adding {{strong}}%(num)d sites{{/strong}}:', {
-							args: { num: processed.length + queue.length },
-							components: { strong: <strong /> },
-						} ) }
+				<div className="connect-url__create-sites-list">
+					<div className="connect-url__create-sites-list-successful">
+						<div className="connect-url__create-sites-quantity">
+							{ translate( 'Successfully added {{strong}}%(num)d sites{{/strong}}:', {
+								args: { num: successfull.length },
+								components: { strong: <strong /> },
+							} ) }
+						</div>
+						<ul>
+							{ successfull.map( ( site, index ) => (
+								<li className="connect-url__create-sites-row" key={ index }>
+									<Gridicon icon="checkmark-circle" />
+									<div>{ site.url }</div>
+								</li>
+							) ) }
+						</ul>
 					</div>
-					<ul className="connect-url__create-sites-list">
-						{ processed.map( ( site, index ) => (
-							<li className="connect-url__create-sites-row" key={ index }>
-								<Gridicon
-									icon={ site.status === 'success' ? 'checkmark-circle' : 'cross-circle' }
-								/>
-								<div>{ site.url }</div>
-							</li>
-						) ) }
-					</ul>
-				</>
+					<div className="connect-url__create-sites-list-unsuccessful">
+						<div className="connect-url__create-sites-quantity">
+							{ translate( 'Failed to add {{strong}}%(num)d sites{{/strong}}:', {
+								args: { num: unsucessfull.length },
+								components: { strong: <strong /> },
+							} ) }
+						</div>
+						<ul>
+							{ unsucessfull.map( ( site, index ) => (
+								<li className="connect-url__create-sites-row" key={ index }>
+									<Gridicon icon="cross-circle" />
+									<div>{ site.url }</div>
+								</li>
+							) ) }
+						</ul>
+					</div>
+				</div>
 			) : (
 				<div className="connect-url__create-sites-progress">
 					<h3 className="connect-url__create-sites-progress-title">

@@ -43,6 +43,11 @@
 .connect-url__create-sites-list {
 	padding: 0;
 	margin: 0;
+	display: flex;
+}
+
+.connect-url__create-sites-list ul {
+	margin: 0;
 }
 
 .connect-url__create-sites-list li {
@@ -53,6 +58,19 @@
 
 .connect-url__create-sites-list li > svg {
 	margin-right: 1rem;
+}
+
+.connect-url__create-sites-list-successful,
+.connect-url__create-sites-list-unsuccessful {
+	flex: 1;
+}
+
+.connect-url__create-sites-list-successful li > svg {
+	fill: var(--studio-jetpack-green-40);
+}
+
+.connect-url__create-sites-list-unsuccessful li > svg {
+	fill: var(--studio-red-40);
 }
 
 .connect-url__create-sites-quantity {
