@@ -1,58 +1,35 @@
 /**
  * @jest-environment jsdom
  */
-import React from 'react';
-import { MemoryRouter } from 'react-router';
-import { renderWithProvider } from '../../../../test-helpers/testing-library';
 import siteMigrationFlow from '../site-migration-flow';
-
-const FakeStepRender = ( { currentStep, navigate, submitParams } ) => {
-	const { submit } = siteMigrationFlow.useStepNavigation( currentStep, navigate );
-
-	if ( submit ) {
-		submit( submitParams );
-	}
-	return null;
-};
+import { getFlowLocation, renderFlow } from './helpers';
 
 describe( 'Site Migration Flow', () => {
 	describe( 'navigation', () => {
-		const render = ( { currentStep, navigate }, submitParams = {} ) => {
-			renderWithProvider(
-				<MemoryRouter initialEntries={ [ '/some-path?siteSlug=example.wordpress.com' ] }>
-					<FakeStepRender
-						currentStep={ currentStep }
-						navigate={ navigate }
-						submitParams={ submitParams }
-					/>
-				</MemoryRouter>
-			);
-		};
+		it( 'navigates from import to waitForAtomic', async () => {
+			const { runUseStepNavigationSubmit } = renderFlow( siteMigrationFlow );
 
-		it( 'navigates from import to waitForAtomic', () => {
-			const navigate = jest.fn();
-			render( { currentStep: 'import', navigate } );
+			runUseStepNavigationSubmit( { currentStep: 'import' } );
 
-			expect( navigate ).toHaveBeenCalledWith( 'waitForAtomic', {
-				siteSlug: 'example.wordpress.com',
+			expect( getFlowLocation() ).toEqual( {
+				path: '/waitForAtomic',
+				state: { siteSlug: 'example.wordpress.com' },
 			} );
 		} );
 
-		it( 'navigates from processing to waitForAtomic', () => {
-			const navigate = jest.fn();
-			render( { currentStep: 'waitForAtomic', navigate } );
+		it( 'navigates from processing to waitForPluginInstall when atomic is finished', () => {
+			const { runUseStepNavigationSubmit } = renderFlow( siteMigrationFlow );
 
-			expect( navigate ).toHaveBeenCalledWith( 'processing', {
-				currentStep: 'waitForAtomic',
+			runUseStepNavigationSubmit( {
+				currentStep: 'processing',
+				dependencies: {
+					finishedWaitingForAtomic: true,
+				},
 			} );
-		} );
 
-		it( 'navigates from processing to waitForPlugin when the atomic is ready', () => {
-			const navigate = jest.fn();
-			render( { currentStep: 'processing', navigate }, { finishedWaitingForAtomic: true } );
-
-			expect( navigate ).toHaveBeenCalledWith( 'waitForPluginInstall', {
-				siteSlug: 'example.wordpress.com',
+			expect( getFlowLocation() ).toEqual( {
+				path: '/waitForPluginInstall',
+				state: { siteSlug: 'example.wordpress.com' },
 			} );
 		} );
 	} );
