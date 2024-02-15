@@ -14,6 +14,7 @@ import { getSiteOption, isJetpackSite } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import SiteSettingPrivacyForm from './form';
 import type { AppState } from 'calypso/types';
+import './style.scss';
 
 export interface Fields {
 	blog_public: number;
