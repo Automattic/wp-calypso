@@ -1,25 +1,19 @@
 import { DataViews } from '@wordpress/dataviews';
 import { useTranslate } from 'i18n-calypso';
-import { useCallback } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import SiteActions from 'calypso/jetpack-cloud/sections/agency-dashboard/sites-overview/site-actions';
 import useFormattedSites from 'calypso/jetpack-cloud/sections/agency-dashboard/sites-overview/site-content/hooks/use-formatted-sites';
 import SiteStatusContent from 'calypso/jetpack-cloud/sections/agency-dashboard/sites-overview/site-status-content';
 import TextPlaceholder from 'calypso/jetpack-cloud/sections/partner-portal/text-placeholder';
 import { AllowedTypes, Site, SiteData } from '../types';
+import { SitesDataViewsProps } from './interfaces';
 
 import './style.scss';
 
-interface Props {
-	data:
-		| { sites: Array< Site >; total: number; perPage: number; totalFavorites: number }
-		| undefined;
-	isLoading: boolean;
-}
-
-const SitesDataViews = ( { data, isLoading }: Props ) => {
+const SitesDataViews = ( { data, isLoading, onViewChange }: SitesDataViewsProps ) => {
 	const translate = useTranslate();
 
-	const view = {
+	const [ view, setView ] = useState( {
 		type: 'table',
 		perPage: 10,
 		page: 1,
@@ -31,7 +25,18 @@ const SitesDataViews = ( { data, isLoading }: Props ) => {
 		filters: [ { field: 'status', operator: 'in', value: 'Needs attention' } ],
 		hiddenFields: [ 'status' ],
 		layout: {},
-	};
+		selectedSite: undefined,
+	} );
+
+	useEffect( () => {
+		onViewChange( {
+			search: view.search,
+			sort: view.sort,
+			filters: view.filters,
+			selectedSite: view.selectedSite,
+			page: view.page,
+		} );
+	}, [ view.search, view.sort, view.filters, view.selectedSite, view.page, onViewChange ] );
 
 	const sites = useFormattedSites( data?.sites ?? [] );
 
@@ -187,7 +192,7 @@ const SitesDataViews = ( { data, isLoading }: Props ) => {
 					}
 					return item.site.value.blog_id;
 				} }
-				onChangeView={ () => {} }
+				onChangeView={ setView }
 				supportedLayouts={ [ 'table' ] }
 				actions={ [] }
 				isLoading={ isLoading }
