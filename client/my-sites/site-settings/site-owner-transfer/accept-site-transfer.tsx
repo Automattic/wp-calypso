@@ -10,12 +10,17 @@ import { useEffect } from '@wordpress/element';
 import wpcom from 'calypso/lib/wp';
 import normalizeInvite from 'calypso/my-sites/invites/invite-accept/utils/normalize-invite';
 import { LoadingBar } from 'calypso/components/loading-bar';
-import store from 'store';
 import DocumentHead from 'calypso/components/data/document-head';
 import { Global, css } from '@emotion/react';
 import MasterbarStyled from 'calypso/my-sites/checkout/checkout-thank-you/redesign-v2/masterbar-styled';
-import { useState } from 'react';
+import { useCallback, useState } from 'react';
 import Notice from 'calypso/components/notice';
+import { useInterval } from 'calypso/lib/interval';
+import { requestSite } from 'calypso/state/sites/actions';
+import { useSelector } from 'react-redux';
+import { getSite } from 'calypso/state/sites/selectors';
+import { getCurrentUserId } from 'calypso/state/current-user/selectors';
+import * as React from 'react';
 
 const ActionPanelStyled = styled( ActionPanel )( {
 	fontSize: '14px',
@@ -30,32 +35,87 @@ export function AcceptSiteTransfer( props: any ) {
 	const translate = useTranslate();
 	const dispatch = props.dispatch;
 	const progress = 0.15;
-	const [ error, setError ] = useState< string >( '' );
+	const maxAttempts = 10; // 1 minute
 
-	const fetchAndAcceptInvite = async ( props: any ) => {
-		try {
-			const { siteId, inviteKey, redirectTo } = props;
-			const pendingInvite = await wpcom.req.get( `/sites/${ siteId }/invites/${ inviteKey }` );
-			const invite = normalizeInvite( pendingInvite );
+	const site = useSelector( ( state: object ) => getSite( state, props.siteId ) );
+	const userId = useSelector( ( state: object ) => getCurrentUserId( state ) );
 
-			invite.inviteKey = inviteKey;
+	const [ error, setError ] = useState< string | React.ReactNode >( '' );
+	const [ inviteAccepted, setInviteAccepted ] = useState< boolean >( true );
+	const [ currentAttempt, setCurrentAttempt ] = React.useState( 0 );
 
-			await dispatch( acceptInvite( invite, null ) );
+	const isSiteOwner = site && site.site_owner === userId;
 
-			store.set( 'accepted_site_transfer_invite', invite );
-			navigate( redirectTo );
-		} catch {
+	const fetchAndAcceptInvite = useCallback(
+		async ( props: any ) => {
+			try {
+				const { siteId, inviteKey } = props;
+				const pendingInvite = await wpcom.req.get( `/sites/${ siteId }/invites/${ inviteKey }` );
+				const invite = normalizeInvite( pendingInvite );
+
+				invite.inviteKey = inviteKey;
+
+				await dispatch( acceptInvite( invite, null ) );
+
+				setInviteAccepted( true );
+			} catch {
+				setError(
+					translate(
+						'Failed to add you as an administrator in the site. Please contact the original site owner to invite you as administrator first.'
+					)
+				);
+			}
+		},
+		[ dispatch, translate ]
+	);
+
+	// attempt to accept the invite
+	useEffect( () => {
+		if ( ! inviteAccepted ) {
+			fetchAndAcceptInvite( props );
+		}
+	}, [ inviteAccepted, fetchAndAcceptInvite, props ] );
+
+	// redirect to the site settings page if the invite was accepted and the user is the site owner
+	useEffect( () => {
+		let redirect = props.redirectTo ?? null;
+
+		if ( ! redirect && site ) {
+			redirect = '/settings/site-transferred/' + site.slug;
+		}
+
+		if ( ! redirect ) {
+			redirect = '/sites';
+		}
+
+		if ( isSiteOwner ) {
+			navigate( redirect );
+		}
+	}, [ isSiteOwner, site, props ] );
+
+	// show an error message if the invite was not accepted and the user is not the site owner
+	useEffect( () => {
+		if ( currentAttempt > maxAttempts ) {
 			setError(
 				translate(
-					'Failed to add you as an administrator in the site. Please contact the original site owner to invite you as administrator first.'
+					'There was an error while processing the site transfer. Please {{link}}contact our support team{{/link}} for help.',
+					{
+						components: {
+							link: <a href="/help" />,
+						},
+					}
 				)
 			);
 		}
-	};
+	}, [ currentAttempt, translate ] );
 
-	useEffect( () => {
-		fetchAndAcceptInvite( props );
-	} );
+	useInterval(
+		async () => {
+			dispatch( requestSite( props.siteId ) );
+			setCurrentAttempt( ( step ) => step + 1 );
+		},
+		inviteAccepted && ! isSiteOwner && ! error ? 3000 : null
+	);
 
 	const renderLoadingBar = () => {
 		return (
