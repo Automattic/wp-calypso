@@ -1,0 +1,13 @@
+.schedule-form {
+	& > div {
+		min-width: 350px;
+	}
+
+	.components-datetime__time {
+		margin-bottom: 1rem;
+	}
+
+	.components-radio-control__input {
+		padding: 0;
+	}
+}
