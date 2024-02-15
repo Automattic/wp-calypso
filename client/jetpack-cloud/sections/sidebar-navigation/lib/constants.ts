@@ -1,4 +1,5 @@
 export const JETPACK_MANAGE_DASHBOARD_LINK = '/dashboard';
+export const JETPACK_MANAGE_SITES_LINK = '/sites';
 export const JETPACK_MANAGE_PLUGINS_LINK = '/plugins/manage';
 export const JETPACK_CLOUD_ACTIVITY_LOG_LINK = '/activity-log';
 export const JETPACK_CLOUD_SEARCH_LINK = '/jetpack-search';

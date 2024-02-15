@@ -620,7 +620,7 @@ const sections = [
 		group: 'jetpack-cloud',
 	},
 	{
-		name: 'jetpack-cloud-agency-sites',
+		name: 'jetpack-cloud-agency-sites-v2',
 		paths: [ '/sites' ],
 		module: 'calypso/jetpack-cloud/sections/agency-dashboard',
 		group: 'jetpack-cloud',
