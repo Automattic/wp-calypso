@@ -4,6 +4,16 @@ type MessageAction = 'checkoutCompleted' | 'checkoutFailed' | 'checkoutCancelled
 export const isPopup = () =>
 	typeof window !== 'undefined' && window.opener && window.opener !== window;
 
+function isValidHttpUrl( data: string ): boolean {
+	let url;
+	try {
+		url = new URL( data );
+	} catch ( error ) {
+		return false;
+	}
+	return url.protocol === 'http:' || url.protocol === 'https:';
+}
+
 // Send the message to the opener.
 export const sendMessageToOpener = ( siteSlug: string, action: MessageAction ) => {
 	if ( ! isPopup() ) {
@@ -12,7 +22,11 @@ export const sendMessageToOpener = ( siteSlug: string, action: MessageAction ) =
 	if ( ! siteSlug ) {
 		return false;
 	}
+	const targetOrigin = `https://${ siteSlug }`;
+	if ( ! isValidHttpUrl( targetOrigin ) ) {
+		return false;
+	}
 
-	window.opener.postMessage( { action }, `https://${ siteSlug }` );
+	window.opener.postMessage( { action }, targetOrigin );
 	return true;
 };
