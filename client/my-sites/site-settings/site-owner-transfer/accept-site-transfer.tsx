@@ -76,7 +76,7 @@ export function AcceptSiteTransfer( props: any ) {
 		}
 	}, [ inviteAccepted, fetchAndAcceptInvite, props ] );
 
-	// redirect to the site settings page if the invite was accepted and the user is the site owner
+	// redirect to the site confirmation page if the invite was accepted and the user is the site owner
 	useEffect( () => {
 		let redirect = props.redirectTo ?? null;
 
@@ -95,7 +95,7 @@ export function AcceptSiteTransfer( props: any ) {
 		}
 	}, [ isSiteOwner, site, props ] );
 
-	// show an error message if the invite was not accepted and the user is not the site owner
+	// show an error message if the user is not the site owner
 	useEffect( () => {
 		if ( currentAttempt > maxAttempts ) {
 			setError(
