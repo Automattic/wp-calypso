@@ -90,9 +90,7 @@ export default function PromotedPosts( { tab }: Props ) {
 	const { data: creditBalance = '0.00' } = useCreditBalanceQuery();
 
 	/* query for campaigns */
-	const [ campaignsSearchOptions, setCampaignsSearchOptions ] = useState< SearchOptions >( {
-		order: { orderBy: 'created_at', order: 'desc' },
-	} );
+	const [ campaignsSearchOptions, setCampaignsSearchOptions ] = useState< SearchOptions >( {} );
 	const campaignsQuery = useCampaignsQueryPaged( selectedSiteId ?? 0, campaignsSearchOptions );
 	const {
 		fetchNextPage: fetchCampaignsNextPage,

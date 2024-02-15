@@ -180,7 +180,7 @@ export default function SearchBar( props: Props ) {
 	useEffect( () => {
 		handleSetSearch( {
 			search: '',
-			order: mode === 'posts' ? SORT_OPTIONS_DEFAULT : CAMPAIGNS_SORT_OPTIONS_DEFAULT,
+			order: mode === 'posts' ? SORT_OPTIONS_DEFAULT : undefined,
 			filter:
 				mode === 'posts'
 					? { ...FILTER_OPTIONS_DEFAULT, postType: postType || '' }
