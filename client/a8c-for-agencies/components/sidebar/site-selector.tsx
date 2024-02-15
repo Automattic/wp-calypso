@@ -1,9 +1,9 @@
 import { useRef } from 'react';
 import BaseSiteSelector from 'calypso/components/site-selector';
+import useOutsideClickCallback from 'calypso/lib/use-outside-click-callback';
 import { useDispatch, useSelector } from 'calypso/state';
 import { setLayoutFocus } from 'calypso/state/ui/layout-focus/actions';
 import { getCurrentLayoutFocus } from 'calypso/state/ui/layout-focus/selectors';
-import useOutsideClickCallback from './use-outside-click-callback';
 
 /* NOTE: Code for this component was borrowed from calypso/my-sites/picker,
  * with some slight modifications because we can safely assume we're using
