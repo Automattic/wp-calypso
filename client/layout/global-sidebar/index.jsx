@@ -21,11 +21,13 @@ const GlobalSidebar = ( { children, onClick = undefined, className = '', ...prop
 		return <Spinner className="sidebar__menu-loading" />;
 	}
 
+	const { requireBackLink, ...sidebarProps } = props;
+
 	return (
 		<div className="global-sidebar">
 			<div className="sidebar__body">
-				<Sidebar className={ className } { ...props } onClick={ onClick }>
-					{ props.requireBackLink && (
+				<Sidebar className={ className } { ...sidebarProps } onClick={ onClick }>
+					{ requireBackLink && (
 						<div className="sidebar__back-link">
 							<a href="/sites">
 								<Gridicon icon="chevron-left" size={ 24 } />
