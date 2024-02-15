@@ -1,5 +1,5 @@
 import { FeatureList } from '@automattic/calypso-products';
-import { useMemo } from 'react';
+import { useMemo } from '@wordpress/element';
 import { GridPlan, PlansIntent } from '../../types';
 import usePlanFeaturesForGridPlans from './use-plan-features-for-grid-plans';
 
