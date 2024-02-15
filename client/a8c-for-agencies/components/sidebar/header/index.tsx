@@ -9,7 +9,7 @@ import { setLayoutFocus } from 'calypso/state/ui/layout-focus/actions';
 import { getCurrentLayoutFocus } from 'calypso/state/ui/layout-focus/selectors';
 import getSelectedSiteId from 'calypso/state/ui/selectors/get-selected-site-id';
 import { AppState } from 'calypso/types';
-import a8cLogo from './a8c-logo.svg';
+import A4ALogo from '../../a4a-logo';
 import ProfileDropdown from './profile-dropdown';
 
 type Props = {
@@ -17,9 +17,7 @@ type Props = {
 	simple?: boolean;
 };
 
-const AllSitesIcon = () => (
-	<img className="a4a-sidebar__all-sites-icon" src={ a8cLogo } alt="" role="presentation" />
-);
+const AllSitesIcon = () => <A4ALogo className="a4a-sidebar__all-sites-icon" size={ 32 } />;
 
 // NOTE: This hook is a little hacky, to get around the "outside click"
 // close behavior that happens inside `<SiteSelector />`. Instead of
