@@ -116,7 +116,9 @@ const SiteSettingPrivacyForm = ( {
 										} )
 									}
 									disabled={ isComingSoonDisabled }
-									onClick={ recordEvent( 'Clicked Site Visibility Radio Button' ) }
+									onClick={ () => {
+										recordEvent( 'Clicked Site Visibility Radio Button' );
+									} }
 									label={ translate( 'Coming Soon' ) }
 								/>
 							</FormLabel>
