@@ -714,13 +714,6 @@ const sections = [
 		group: 'a8c-for-agencies',
 		enableLoggedOut: true,
 	},
-	{
-		name: 'a8c-for-agencies-marketplace',
-		paths: [ '/marketplace' ],
-		module: 'calypso/a8c-for-agencies/sections/marketplace',
-		group: 'a8c-for-agencies',
-		enableLoggedOut: true,
-	},
 ];
 
 module.exports = sections;
