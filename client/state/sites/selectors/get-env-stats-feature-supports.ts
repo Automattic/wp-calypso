@@ -15,9 +15,14 @@ export default function getEnvStatsFeatureSupportChecks( state: object, siteId: 
 	const statsAdminVersion = getJetpackStatsAdminVersion( state, siteId );
 
 	return {
-		supportsEmailStats: version_greater_than_or_equal(
+		supportsHighlightsSettings: version_greater_than_or_equal(
 			statsAdminVersion,
-			'0.16.0-alpha',
+			'0.9.0-alpha',
+			isOdysseyStats
+		),
+		supportsNewStatsNotices: version_greater_than_or_equal(
+			statsAdminVersion,
+			'0.10.0-alpha',
 			isOdysseyStats
 		),
 		supportsSubscriberChart: version_greater_than_or_equal(
@@ -30,9 +35,9 @@ export default function getEnvStatsFeatureSupportChecks( state: object, siteId: 
 			'0.15.0-alpha',
 			isOdysseyStats
 		),
-		supportsHighlightsSettings: version_greater_than_or_equal(
+		supportsEmailStats: version_greater_than_or_equal(
 			statsAdminVersion,
-			'0.9.0-alpha',
+			'0.16.0-alpha',
 			isOdysseyStats
 		),
 	};
