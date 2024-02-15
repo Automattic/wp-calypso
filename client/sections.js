@@ -721,41 +721,6 @@ const sections = [
 		group: 'a8c-for-agencies',
 		enableLoggedOut: true,
 	},
-	{
-		name: 'a8c-for-agencies-users',
-		paths: [ '/users' ],
-		module: 'calypso/a8c-for-agencies/sections/users',
-		group: 'a8c-for-agencies',
-		enableLoggedOut: true,
-	},
-	{
-		name: 'a8c-for-agencies-purchases',
-		paths: [ '/purchases', 'purchases/billing', 'purchases/payment-methods', 'purchases/invoices' ],
-		module: 'calypso/a8c-for-agencies/sections/purchases',
-		group: 'a8c-for-agencies',
-		enableLoggedOut: true,
-	},
-	{
-		name: 'a8c-for-agencies-resources',
-		paths: [ '/resources' ],
-		module: 'calypso/a8c-for-agencies/sections/resources',
-		group: 'a8c-for-agencies',
-		enableLoggedOut: true,
-	},
-	{
-		name: 'a8c-for-agencies-referrals',
-		paths: [ '/referrals' ],
-		module: 'calypso/a8c-for-agencies/sections/referrals',
-		group: 'a8c-for-agencies',
-		enableLoggedOut: true,
-	},
-	{
-		name: 'a8c-for-agencies-settings',
-		paths: [ '/settings' ],
-		module: 'calypso/a8c-for-agencies/sections/settings',
-		group: 'a8c-for-agencies',
-		enableLoggedOut: true,
-	},
 ];
 
 module.exports = sections;
