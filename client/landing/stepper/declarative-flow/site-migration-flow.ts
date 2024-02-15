@@ -15,7 +15,13 @@ const siteMigration: Flow = {
 	name: 'site-migration',
 
 	useSteps() {
-		return [ STEPS.IMPORT, STEPS.ERROR ];
+		return [
+			STEPS.IMPORT,
+			STEPS.WAIT_FOR_ATOMIC,
+			STEPS.WAIT_FOR_PLUGIN_INSTALL,
+			STEPS.PROCESSING,
+			STEPS.ERROR,
+		];
 	},
 	useAssertConditions(): AssertConditionResult {
 		const { setProfilerData } = useDispatch( ONBOARD_STORE );
@@ -105,8 +111,8 @@ const siteMigration: Flow = {
 
 		return result;
 	},
-	// TODO - We'll need to add the `navigate` argument back once we start adding more steps.
-	useStepNavigation( currentStep ) {
+
+	useStepNavigation( currentStep, navigate ) {
 		const flowName = this.name;
 		const intent = useSelect(
 			( select ) => ( select( ONBOARD_STORE ) as OnboardSelect ).getIntent(),
@@ -128,7 +134,28 @@ const siteMigration: Flow = {
 
 			switch ( currentStep ) {
 				case 'import': {
-					return exitFlow( `/home/${ siteId ?? siteSlug }` );
+					return navigate( 'waitForAtomic', { siteId, siteSlug } );
+				}
+
+				case 'processing': {
+					if ( providedDependencies?.finishedWaitingForAtomic ) {
+						return navigate( 'waitForPluginInstall', { siteId, siteSlug } );
+					}
+
+					if ( providedDependencies?.pluginsInstalled ) {
+						//@TODO: Send users to the import instructions
+						return exitFlow( `/home/${ siteSlug }` );
+					}
+				}
+
+				case 'waitForAtomic': {
+					return navigate( 'processing', {
+						currentStep,
+					} );
+				}
+
+				case 'waitForPluginInstall': {
+					return navigate( 'processing' );
 				}
 			}
 		}
