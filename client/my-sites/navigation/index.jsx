@@ -7,6 +7,7 @@ import GlobalSidebar from 'calypso/layout/global-sidebar';
 import { useGlobalSidebar } from 'calypso/layout/global-sidebar/hooks/use-global-sidebar';
 import SitePicker from 'calypso/my-sites/picker';
 import MySitesSidebarUnifiedBody from 'calypso/my-sites/sidebar/body';
+import { getSiteOption } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 
 class MySitesNavigation extends Component {
@@ -104,13 +105,15 @@ export default withCurrentRoute(
 	connect( ( state, { currentSection } ) => {
 		const sectionGroup = currentSection?.group ?? null;
 		const siteId = getSelectedSiteId( state );
+		const adminInterface = getSiteOption( state, siteId, 'wpcom_admin_interface' );
 		const { shouldShowGlobalSidebar, shouldShowGlobalSiteViewSidebar } = useGlobalSidebar(
 			siteId,
 			sectionGroup
 		);
 		return {
 			isGlobalSidebarVisible: shouldShowGlobalSidebar,
-			isGlobalSiteSidebarVisible: shouldShowGlobalSiteViewSidebar,
+			// Global Site View should be limited to classic interface users only for now.
+			isGlobalSiteSidebarVisible: shouldShowGlobalSiteViewSidebar && adminInterface === 'wp-admin',
 		};
 	}, null )( MySitesNavigation )
 );
