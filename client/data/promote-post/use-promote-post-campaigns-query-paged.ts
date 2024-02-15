@@ -32,7 +32,7 @@ const useCampaignsQueryPaged = (
 	return useInfiniteQuery( {
 		queryKey: [ 'promote-post-campaigns', siteId, searchQueryParams ],
 		queryFn: async ( { pageParam } ) => {
-			const searchCampaignsUrl = `/search/campaigns/site/${ siteId }?order=asc&order_by=post_date&page=${ pageParam }${ searchQueryParams }`;
+			const searchCampaignsUrl = `/search/campaigns/site/${ siteId }?order=desc&order_by=created_at&page=${ pageParam }${ searchQueryParams }`;
 			const resultQuery = await requestDSPHandleErrors< CampaignQueryResult >(
 				siteId,
 				searchCampaignsUrl
