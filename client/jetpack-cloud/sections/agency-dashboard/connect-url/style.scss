@@ -91,3 +91,21 @@
 .connect-url-csv-column-confirmation__column-picker {
 	display: flex;
 }
+
+.connect-url__create-sites-progress {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	padding: 24px;
+	min-height: 280px; // Not specified on, but trying to follow design
+
+	.connect-url__create-sites-progress-title {
+		margin-bottom: 0.5rem;
+		font-size: 2.25rem;
+	}
+
+	.connect-url__create-sites-progress-subtitle {
+		margin-bottom: 2rem;
+	}
+}
