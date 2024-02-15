@@ -4,7 +4,7 @@ import QuerySiteStats from 'calypso/components/data/query-site-stats';
 import { decodeEntities, stripHTML } from 'calypso/lib/formatting';
 import { useSelector } from 'calypso/state';
 import { getCurrentUserLocale } from 'calypso/state/current-user/selectors';
-import getStatsFeatureSupportChecks from 'calypso/state/sites/selectors/get-stats-feature-supports';
+import getEnvStatsFeatureSupportChecks from 'calypso/state/sites/selectors/get-env-stats-feature-supports';
 import { getPostStat } from 'calypso/state/stats/posts/selectors';
 import StatsDetailsNavigation from '../stats-details-navigation';
 import PostLikes from '../stats-post-likes';
@@ -57,8 +57,8 @@ export default function PostDetailHighlightsSection( {
 		post_thumbnail: post?.post_thumbnail?.URL || null,
 		title: decodeEntities( stripHTML( textTruncator( post?.title, POST_STATS_CARD_TITLE_LIMIT ) ) ),
 	};
-	const { supportEmailStats } = useSelector( ( state ) =>
-		getStatsFeatureSupportChecks( state, siteId )
+	const { supportsEmailStats } = useSelector( ( state ) =>
+		getEnvStatsFeatureSupportChecks( state, siteId )
 	);
 
 	// postId > 0: Show the tabs for posts except for the Home Page (postId = 0).
@@ -68,7 +68,7 @@ export default function PostDetailHighlightsSection( {
 		postId > 0 &&
 		post?.date &&
 		new Date( post?.date ) >= new Date( '2023-05-30' ) &&
-		supportEmailStats;
+		supportsEmailStats;
 
 	return (
 		<>

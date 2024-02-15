@@ -10,22 +10,22 @@ const version_greater_than_or_equal = (
 	return !! ( ! isOdysseyStats || ( version && version_compare( version, compareVersion, '>=' ) ) );
 };
 
-export default function getStatsFeatureSupportChecks( state: object, siteId: number | null ) {
+export default function getEnvStatsFeatureSupportChecks( state: object, siteId: number | null ) {
 	const isOdysseyStats = config.isEnabled( 'is_running_in_jetpack_site' );
 	const statsAdminVersion = getJetpackStatsAdminVersion( state, siteId );
 
 	return {
-		supportEmailStats: version_greater_than_or_equal(
+		supportsEmailStats: version_greater_than_or_equal(
 			statsAdminVersion,
 			'0.16.0-alpha',
 			isOdysseyStats
 		),
-		supportSubscriberChart: version_greater_than_or_equal(
+		supportsSubscriberChart: version_greater_than_or_equal(
 			statsAdminVersion,
 			'0.11.0-alpha',
 			isOdysseyStats
 		),
-		supportPlanUsage: version_greater_than_or_equal(
+		supportsPlanUsage: version_greater_than_or_equal(
 			statsAdminVersion,
 			'0.15.0-alpha',
 			isOdysseyStats

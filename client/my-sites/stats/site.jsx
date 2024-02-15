@@ -39,7 +39,7 @@ import isJetpackModuleActive from 'calypso/state/selectors/is-jetpack-module-act
 import isPrivateSite from 'calypso/state/selectors/is-private-site';
 import isAtomicSite from 'calypso/state/selectors/is-site-wpcom-atomic';
 import { getJetpackStatsAdminVersion, isJetpackSite } from 'calypso/state/sites/selectors';
-import getStatsFeatureSupportChecks from 'calypso/state/sites/selectors/get-stats-feature-supports';
+import getEnvStatsFeatureSupportChecks from 'calypso/state/sites/selectors/get-env-stats-feature-supports';
 import { requestModuleSettings } from 'calypso/state/stats/module-settings/actions';
 import { getModuleSettings } from 'calypso/state/stats/module-settings/selectors';
 import { getModuleToggles } from 'calypso/state/stats/module-toggles/selectors';
@@ -206,8 +206,8 @@ class StatsSite extends Component {
 			isOdysseyStats,
 			context,
 			moduleSettings,
-			supportPlanUsage,
-			supportEmailStats,
+			supportsPlanUsage,
+			supportsEmailStats,
 		} = this.props;
 
 		let defaultPeriod = PAST_SEVEN_DAYS;
@@ -451,7 +451,7 @@ class StatsSite extends Component {
 								showSummaryLink
 							/>
 						) }
-						{ supportEmailStats && (
+						{ supportsEmailStats && (
 							<StatsModuleEmails period={ this.props.period } query={ query } />
 						) }
 						{
@@ -472,7 +472,7 @@ class StatsSite extends Component {
 						}
 					</div>
 				</div>
-				{ supportPlanUsage && (
+				{ supportsPlanUsage && (
 					<StatsPlanUsage siteId={ siteId } isOdysseyStats={ isOdysseyStats } />
 				) }
 				{ /* Only load Jetpack Upsell Section for Odyssey Stats excluding Atomic */ }
@@ -611,7 +611,10 @@ export default connect(
 		const slug = getSelectedSiteSlug( state );
 		const upsellModalView =
 			config.isEnabled( 'stats/paid-wpcom-v2' ) && getUpsellModalView( state, siteId );
-		const { supportPlanUsage, supportEmailStats } = getStatsFeatureSupportChecks( state, siteId );
+		const { supportsPlanUsage, supportsEmailStats } = getEnvStatsFeatureSupportChecks(
+			state,
+			siteId
+		);
 
 		return {
 			canUserViewStats,
@@ -627,8 +630,8 @@ export default connect(
 			moduleToggles: getModuleToggles( state, siteId, 'traffic' ),
 			upsellModalView,
 			statsAdminVersion,
-			supportEmailStats,
-			supportPlanUsage,
+			supportsEmailStats,
+			supportsPlanUsage,
 		};
 	},
 	{

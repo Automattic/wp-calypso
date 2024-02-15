@@ -11,7 +11,7 @@ import { SubscriberLaunchpad } from 'calypso/my-sites/subscribers/components/sub
 import { useSelector } from 'calypso/state';
 import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
 import { isJetpackSite, getSiteSlug, isSimpleSite } from 'calypso/state/sites/selectors';
-import getStatsFeatureSupportChecks from 'calypso/state/sites/selectors/get-stats-feature-supports';
+import getEnvStatsFeatureSupportChecks from 'calypso/state/sites/selectors/get-env-stats-feature-supports';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import useSubscribersTotalsQueries from '../../hooks/use-subscribers-totals-query';
 import Followers from '../../stats-followers';
@@ -40,15 +40,15 @@ const StatsSubscribersPage = ( { period }: StatsSubscribersPageProps ) => {
 	const siteSlug = useSelector( ( state ) => getSiteSlug( state, siteId ) );
 	const isJetpack = useSelector( ( state ) => isJetpackSite( state, siteId ) );
 	const isOdysseyStats = config.isEnabled( 'is_running_in_jetpack_site' );
-	const { supportEmailStats, supportSubscriberChart } = useSelector( ( state ) =>
-		getStatsFeatureSupportChecks( state, siteId )
+	const { supportsEmailStats, supportsSubscriberChart } = useSelector( ( state ) =>
+		getEnvStatsFeatureSupportChecks( state, siteId )
 	);
 	const today = new Date().toISOString().slice( 0, 10 );
 
 	const statsModuleListClass = classNames(
 		'stats__module-list stats__module--unified',
 		{
-			'supports-email-stats': ! supportEmailStats,
+			'supports-email-stats': ! supportsEmailStats,
 			'is-jetpack': isJetpack,
 		},
 		'subscribers-page'
@@ -93,7 +93,7 @@ const StatsSubscribersPage = ( { period }: StatsSubscribersPageProps ) => {
 					) : (
 						<>
 							<SubscribersHighlightSection siteId={ siteId } />
-							{ supportSubscriberChart && (
+							{ supportsSubscriberChart && (
 								<>
 									<SubscribersChartSection
 										siteId={ siteId }
@@ -105,7 +105,7 @@ const StatsSubscribersPage = ( { period }: StatsSubscribersPageProps ) => {
 							) }
 							<div className={ statsModuleListClass }>
 								<Followers path="followers" />
-								{ supportEmailStats && period && (
+								{ supportsEmailStats && period && (
 									<StatsModuleEmails period={ period } query={ { period, date: today } } />
 								) }
 							</div>
