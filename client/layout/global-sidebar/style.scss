@@ -67,6 +67,10 @@
 			fill: var(--color-sidebar-gridicon-fill);
 		}
 	}
+
+	.site {
+		flex: unset;
+	}
 }
 
 .masterbar {
