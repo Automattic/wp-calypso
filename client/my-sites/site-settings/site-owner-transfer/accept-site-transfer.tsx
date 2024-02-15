@@ -42,7 +42,7 @@ export function AcceptSiteTransfer( props: any ) {
 
 	const [ error, setError ] = useState< string | React.ReactNode >( '' );
 	const [ inviteAccepted, setInviteAccepted ] = useState< boolean >( false );
-	const [ currentAttempt, setCurrentAttempt ] = React.useState( 0 );
+	const [ currentAttempt, setCurrentAttempt ] = useState< number >( 0 );
 
 	const isSiteOwner = site && site.site_owner === userId;
 
