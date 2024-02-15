@@ -71,6 +71,15 @@
 	}
 }
 
+.is-mobile-app-view .site-logs-toolbar__download {
+	display: none;
+}
+.site-logs-container .site-logs-toolbar .site-logs-toolbar__badge {
+	height: 8px;
+	width: 8px;
+	padding: 0;
+	margin-right: 4px;
+}
 .site-logs-toolbar__download-progress {
 	display: flex;
 	align-items: center;

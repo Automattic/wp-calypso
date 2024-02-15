@@ -1,6 +1,5 @@
-import { SelectDropdown } from '@automattic/components';
+import { SelectDropdown, Gridicon, Badge } from '@automattic/components';
 import { Button } from '@wordpress/components';
-import { Icon, moreHorizontalMobile } from '@wordpress/icons';
 import classnames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import { useState } from 'react';
@@ -131,8 +130,11 @@ export const SiteLogsToolbar = ( {
 					setIsMobileOpen( ! isMobileOpen );
 				} }
 			>
+				{ ( severity || requestType || requestStatus ) && (
+					<Badge className="site-logs-toolbar__badge" type="success"></Badge>
+				) }
 				{ translate( 'Filter' ) }
-				<Icon className="stats-icon" icon={ moreHorizontalMobile } size={ 22 } />
+				<Gridicon icon="filter" />
 			</Button>
 			<div
 				className={ classnames( 'site-logs-toolbar__top-row', { 'is-hidden': ! isMobileOpen } ) }
@@ -232,6 +234,7 @@ export const SiteLogsToolbar = ( {
 				) }
 
 				<Button
+					className="site-logs-toolbar__download"
 					disabled={ isDownloading }
 					isBusy={ isDownloading }
 					variant="primary"
