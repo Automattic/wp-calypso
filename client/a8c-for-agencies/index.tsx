@@ -1,7 +1,9 @@
 import page from '@automattic/calypso-router';
 import { makeLayout, render as clientRender } from 'calypso/controller';
-import { a8cForAgenciesContext } from './controller';
+import { overviewContext, redirectToOverviewContext, sitesContext } from './controller';
 
 export default function () {
-	page( '/', a8cForAgenciesContext, makeLayout, clientRender );
+	page( '/', redirectToOverviewContext, makeLayout, clientRender );
+	page( '/overview', overviewContext, makeLayout, clientRender );
+	page( '/sites', sitesContext, makeLayout, clientRender );
 }
