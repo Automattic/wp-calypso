@@ -81,7 +81,6 @@ const SiteSettingPrivacy = ( {
 					updateFields={ updateFields }
 					isAtomicAndEditingToolkitDeactivated={ isAtomicAndEditingToolkitDeactivated }
 					isComingSoon={ isComingSoon }
-					isP2HubSite={ isP2HubSite }
 					isRequestingSettings={ isRequestingSettings }
 					isSavingSettings={ isSavingSettings }
 					isUnlaunchedSite={ isUnlaunched }
