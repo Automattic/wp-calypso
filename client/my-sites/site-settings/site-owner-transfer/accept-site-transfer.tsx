@@ -21,6 +21,7 @@ import { getSite } from 'calypso/state/sites/selectors';
 import { getCurrentUserId } from 'calypso/state/current-user/selectors';
 import { PageViewTracker } from 'calypso/lib/analytics/page-view-tracker';
 import { setSelectedSiteId } from 'calypso/state/ui/actions';
+import { getSelectedSiteId as setCurrentSideId } from 'calypso/state/ui/selectors';
 
 const ActionPanelStyled = styled( ActionPanel )( {
 	fontSize: '14px',
@@ -37,6 +38,7 @@ export function AcceptSiteTransfer( props: any ) {
 	const progress = 0.15;
 	const maxAttempts = 10;
 
+	const selectedSiteId = useSelector( ( state: object ) => setCurrentSideId( state ) );
 	const site = useSelector( ( state: object ) => getSite( state, props.siteId ) );
 	const userId = useSelector( ( state: object ) => getCurrentUserId( state ) );
 
@@ -69,12 +71,13 @@ export function AcceptSiteTransfer( props: any ) {
 		[ dispatch, translate ]
 	);
 
-	// set the selected site id
+	// set the selected site id if it's not set. This is needed to display masterbar correctly.
+	// This is happening because this route does not use `siteSelection` middleware.
 	useEffect( () => {
-		if ( site ) {
+		if ( site && selectedSiteId !== site.ID ) {
 			dispatch( setSelectedSiteId( site.ID ) );
 		}
-	}, [ site, dispatch ] );
+	}, [ selectedSiteId, site, dispatch ] );
 
 	// attempt to accept the invite
 	useEffect( () => {
