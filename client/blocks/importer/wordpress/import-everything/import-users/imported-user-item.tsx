@@ -3,7 +3,7 @@ import { CheckboxControl } from '@wordpress/components';
 import { useState } from '@wordpress/element';
 import classNames from 'classnames';
 import { translate } from 'i18n-calypso';
-import { getRole, getRoleBadgeText, renderNameOrEmail } from './utils';
+import { getRole, getRoleBadgeText, getNameOrEmail } from './utils';
 import type { Member } from '@automattic/data-stores';
 
 interface UserListItemProps {
@@ -93,7 +93,7 @@ const UserListItem = ( {
 		<CompactCard className="imported-user-item">
 			<CheckboxControl checked={ isCheckedState } onChange={ handleOnCheckChange } />
 			<div className="imported-user-item__user-info">
-				<div className="imported-user-item__display-name">{ renderNameOrEmail( user ) }</div>
+				<div className="imported-user-item__display-name">{ getNameOrEmail( user ) }</div>
 				<div className="imported-user-item__email">{ user.email }</div>
 			</div>
 			{ renderRole( user ) }
