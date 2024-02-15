@@ -1,26 +1,4 @@
-const REPOSITORY_TEMPLATES = {
-	theme: [
-		{
-			name: 'Underscores',
-			value: 'underscores',
-			link: 'https://underscores.me/',
-		},
-		{
-			name: 'Timber',
-			value: 'timber',
-			link: 'https://timber.github.io/docs/',
-		},
-		{
-			name: 'Sage',
-			value: 'sage',
-			link: 'https://roots.io/sage/docs/',
-		},
-		{
-			name: 'Understrap',
-			value: 'understrap',
-			link: 'https://understrap.com/',
-		},
-	],
+export const repositoryTemplates = {
 	plugin: [
 		{
 			name: 'WordPress Plugin Boilerplate',
@@ -41,6 +19,28 @@ const REPOSITORY_TEMPLATES = {
 			name: 'Team51',
 			value: 'team51',
 			link: 'https://example.com',
+		},
+	],
+	theme: [
+		{
+			name: 'Underscores',
+			value: 'underscores',
+			link: 'https://underscores.me/',
+		},
+		{
+			name: 'Timber',
+			value: 'timber',
+			link: 'https://timber.github.io/docs/',
+		},
+		{
+			name: 'Sage',
+			value: 'githubdeployments-theme-template3',
+			link: 'https://roots.io/sage/docs/',
+		},
+		{
+			name: 'Understrap',
+			value: 'understrap',
+			link: 'https://understrap.com/',
 		},
 	],
 	site: [
@@ -67,6 +67,8 @@ const REPOSITORY_TEMPLATES = {
 	],
 };
 
-export const getRepositoryTemplate = ( projectType: keyof typeof REPOSITORY_TEMPLATES ) => {
-	return REPOSITORY_TEMPLATES[ projectType ];
+export const defaultTemplate = repositoryTemplates.plugin[ 0 ];
+
+export const getRepositoryTemplate = ( projectType: keyof typeof repositoryTemplates ) => {
+	return repositoryTemplates[ projectType ];
 };
