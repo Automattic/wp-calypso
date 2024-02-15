@@ -5,8 +5,11 @@ export const isPopup = () =>
 	typeof window !== 'undefined' && window.opener && window.opener !== window;
 
 // Send the message to the opener.
-export const sendMessageToOpener = ( siteSlug: string = '', action: MessageAction ) => {
+export const sendMessageToOpener = ( siteSlug: string, action: MessageAction ) => {
 	if ( ! isPopup() ) {
+		return false;
+	}
+	if ( ! siteSlug ) {
 		return false;
 	}
 
