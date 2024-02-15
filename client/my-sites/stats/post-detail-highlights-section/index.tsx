@@ -62,7 +62,6 @@ export default function PostDetailHighlightsSection( {
 	);
 
 	// postId > 0: Show the tabs for posts except for the Home Page (postId = 0).
-	// isWPcomSite: The Newsletter Stats is only covering `WPCOM sites` for now.
 	// TODO: remove the (post?.date && new Date(post?.date) >= new Date("2023-05-30")) check when the Newsletter Stats data is backfilled.
 	const isEmailTabsAvailable =
 		postId > 0 &&
