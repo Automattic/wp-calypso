@@ -17,9 +17,11 @@ import isSiteWPForTeams from 'calypso/state/selectors/is-site-wpforteams';
 import { getSiteDomain, isJetpackSite } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { requestAdminMenu } from '../../state/admin-menu/actions';
+import { getSiteOption } from '../../state/sites/selectors';
 import allSitesMenu from './static-data/all-sites-menu';
 import buildFallbackResponse from './static-data/fallback-menu';
 import globalSidebarMenu from './static-data/global-sidebar-menu';
+import globalSiteSidebarMenu from './static-data/global-site-sidebar-menu';
 import jetpackMenu from './static-data/jetpack-fallback-menu';
 
 const useSiteMenuItems = () => {
@@ -34,7 +36,13 @@ const useSiteMenuItems = () => {
 	const locale = useLocale();
 	const isAllDomainsView = '/domains/manage' === currentRoute;
 	const { currentSection } = useCurrentRoute();
-	const { shouldShowGlobalSidebar } = useGlobalSidebar( selectedSiteId, currentSection?.group );
+	const adminInterface = useSelector( ( state ) =>
+		getSiteOption( state, selectedSiteId, 'wpcom_admin_interface' )
+	);
+	const { shouldShowGlobalSidebar, shouldShowGlobalSiteSidebar } = useGlobalSidebar(
+		selectedSiteId,
+		currentSection?.group
+	);
 
 	useEffect( () => {
 		if ( selectedSiteId && siteDomain ) {
@@ -105,6 +113,14 @@ const useSiteMenuItems = () => {
 
 	if ( shouldShowGlobalSidebar ) {
 		return globalSidebarMenu();
+	}
+	// Global Site View should be limited to classic interface users only for now.
+	if ( shouldShowGlobalSiteSidebar && adminInterface === 'wp-admin' ) {
+		return globalSiteSidebarMenu( {
+			siteDomain,
+			shouldShowAddOns: shouldShowAddOnsInFallbackMenu,
+			showSiteMonitoring: isAtomic,
+		} );
 	}
 
 	/**

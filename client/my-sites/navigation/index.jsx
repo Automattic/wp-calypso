@@ -7,6 +7,7 @@ import GlobalSidebar from 'calypso/layout/global-sidebar';
 import { useGlobalSidebar } from 'calypso/layout/global-sidebar/hooks/use-global-sidebar';
 import SitePicker from 'calypso/my-sites/picker';
 import MySitesSidebarUnifiedBody from 'calypso/my-sites/sidebar/body';
+import { getSiteOption } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 
 class MySitesNavigation extends Component {
@@ -80,9 +81,21 @@ class MySitesNavigation extends Component {
 		);
 	}
 
+	// TODO: Add styles
+	renderGlobalSiteSidebar() {
+		return (
+			<GlobalSidebar path={ this.props.path }>
+				<MySitesSidebarUnifiedBody path={ this.props.path } />
+			</GlobalSidebar>
+		);
+	}
+
 	render() {
 		if ( this.props.isGlobalSidebarVisible ) {
 			return this.renderGlobalSidebar();
+		}
+		if ( this.props.isGlobalSiteSidebarVisible ) {
+			return this.renderGlobalSiteSidebar();
 		}
 		return this.renderSidebar();
 	}
@@ -92,9 +105,15 @@ export default withCurrentRoute(
 	connect( ( state, { currentSection } ) => {
 		const sectionGroup = currentSection?.group ?? null;
 		const siteId = getSelectedSiteId( state );
-		const { shouldShowGlobalSidebar } = useGlobalSidebar( siteId, sectionGroup );
+		const adminInterface = getSiteOption( state, siteId, 'wpcom_admin_interface' );
+		const { shouldShowGlobalSidebar, shouldShowGlobalSiteSidebar } = useGlobalSidebar(
+			siteId,
+			sectionGroup
+		);
 		return {
 			isGlobalSidebarVisible: shouldShowGlobalSidebar,
+			// Global Site View should be limited to classic interface users only for now.
+			isGlobalSiteSidebarVisible: shouldShowGlobalSiteSidebar && adminInterface === 'wp-admin',
 		};
 	}, null )( MySitesNavigation )
 );
