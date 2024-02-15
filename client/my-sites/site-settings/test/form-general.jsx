@@ -285,7 +285,7 @@ describe( 'SiteSettingsFormGeneral', () => {
 				blog_public: 0,
 				wpcom_coming_soon: 0,
 				wpcom_public_coming_soon: 0,
-				wpcom_data_sharing_opt_out: false,
+				wpcom_data_sharing_opt_out: true,
 			} );
 		} );
 
@@ -376,7 +376,7 @@ describe( 'SiteSettingsFormGeneral', () => {
 				blog_public: 0,
 				wpcom_coming_soon: 0,
 				wpcom_public_coming_soon: 0,
-				wpcom_data_sharing_opt_out: false,
+				wpcom_data_sharing_opt_out: true,
 			} );
 		} );
 
@@ -409,7 +409,7 @@ describe( 'SiteSettingsFormGeneral', () => {
 				1
 			);
 
-			const discourageRadio = getByLabelText( 'Discourage AI training and third-party data use', {
+			const discourageRadio = getByLabelText( 'Prevent third-party data sharing for', {
 				exact: false,
 			} );
 			expect( discourageRadio ).not.toBeChecked();
@@ -638,7 +638,7 @@ describe( 'SiteSettingsFormGeneral', () => {
 				blog_public: 0,
 				wpcom_coming_soon: 0,
 				wpcom_public_coming_soon: 0,
-				wpcom_data_sharing_opt_out: false,
+				wpcom_data_sharing_opt_out: true,
 			} );
 		} );
 
@@ -659,7 +659,7 @@ describe( 'SiteSettingsFormGeneral', () => {
 				blog_public: 1,
 				wpcom_coming_soon: 0,
 				wpcom_public_coming_soon: 0,
-				wpcom_data_sharing_opt_out: false,
+				wpcom_data_sharing_opt_out: true,
 			} );
 		} );
 
@@ -694,7 +694,7 @@ describe( 'SiteSettingsFormGeneral', () => {
 					{
 						blog_public: 0,
 						wpcom_coming_soon: 0,
-						wpcom_data_sharing_opt_out: false,
+						wpcom_data_sharing_opt_out: true,
 						wpcom_public_coming_soon: 0,
 					},
 				],
