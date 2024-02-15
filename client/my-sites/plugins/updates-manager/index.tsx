@@ -1,10 +1,22 @@
-import { Button, IconButton, Card, CardHeader, CardBody, CardFooter } from '@wordpress/components';
+import {
+	Button,
+	Modal,
+	IconButton,
+	Card,
+	CardHeader,
+	CardBody,
+	CardFooter,
+} from '@wordpress/components';
 import { trash, edit } from '@wordpress/icons';
+import { useState } from 'react';
 import { navItems } from 'calypso/blocks/stats-navigation/constants';
 import MainComponent from 'calypso/components/main';
 import NavigationHeader from 'calypso/components/navigation-header';
+import { ScheduleForm } from 'calypso/my-sites/plugins/updates-manager/schedule-form';
 
 export const UpdatesManager = () => {
+	const [ isModalOpen, setIsModalOpen ] = useState( true );
+
 	return (
 		<MainComponent wideLayout>
 			<NavigationHeader
@@ -14,6 +26,11 @@ export const UpdatesManager = () => {
 				screenReader={ navItems.traffic?.label }
 				navigationItems={ [] }
 			></NavigationHeader>
+			{ isModalOpen && (
+				<Modal title="Schedule a new update set" onRequestClose={ () => setIsModalOpen( false ) }>
+					<ScheduleForm />
+				</Modal>
+			) }
 			<Card>
 				<CardHeader>Schedules</CardHeader>
 				<CardBody>
@@ -52,7 +69,9 @@ export const UpdatesManager = () => {
 					</table>
 				</CardBody>
 				<CardFooter>
-					<Button variant="primary">Add</Button>
+					<Button variant="primary" onClick={ () => setIsModalOpen( true ) }>
+						Add
+					</Button>
 				</CardFooter>
 			</Card>
 		</MainComponent>
