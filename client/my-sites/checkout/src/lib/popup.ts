@@ -27,6 +27,12 @@ export const sendMessageToOpener = ( siteSlug: string, action: MessageAction ) =
 		return false;
 	}
 
-	window.opener.postMessage( { action }, targetOrigin );
+	try {
+		window.opener.postMessage( { action }, targetOrigin );
+	} catch ( error ) {
+		// eslint-disable-next-line no-console
+		console.error( `Sending action '${ action }' to window.opener failed: ${ error }` );
+		return false;
+	}
 	return true;
 };
