@@ -47,7 +47,7 @@ export const GitHubDeploymentCreationForm = ( {
 			dispatch(
 				errorNotice(
 					// translators: "reason" is why connecting the branch failed.
-					sprintf( __( 'Failed create deployment: %(reason)s' ), { reason: error.message } ),
+					sprintf( __( 'Failed to create deployment: %(reason)s' ), { reason: error.message } ),
 					{
 						...noticeOptions,
 					}
