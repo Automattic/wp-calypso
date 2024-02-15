@@ -25,7 +25,10 @@ export function logStashLoadErrorEvent(
 	return logStashEvent( 'composite checkout load error', {
 		...additionalData,
 		type: errorType,
-		message: convertErrorToString( error ),
+		message: additionalData.message
+			? String( additionalData.message )
+			: convertErrorToString( error ),
+		errorMessage: convertErrorToString( error ),
 		tags: [ 'checkout-error-boundary' ],
 	} );
 }
