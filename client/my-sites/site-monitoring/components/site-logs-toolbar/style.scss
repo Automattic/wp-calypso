@@ -26,6 +26,7 @@
 		justify-content: flex-start;
 		gap: 16px;
 		padding-bottom: 16px;
+		clear: both;
 
 		.site-logs-toolbar-filter-element {
 			display: flex;
@@ -33,7 +34,10 @@
 			gap: 16px;
 		}
 	}
-
+	.site-logs-toolbar__filter {
+		display: none;
+		float: right;
+	}
 	@media screen and ( max-width: 600px ) {
 		.site-logs-toolbar__top-row {
 			flex-direction: column;
@@ -43,6 +47,13 @@
 				flex-direction: column;
 				align-items: stretch;
 			}
+
+			&.is-hidden {
+				display: none;
+			}
+		}
+		.site-logs-toolbar__filter {
+			display: flex;
 		}
 
 		.select-dropdown .select-dropdown__container {
@@ -60,6 +71,15 @@
 	}
 }
 
+.is-mobile-app-view .site-logs-toolbar__download {
+	display: none;
+}
+.site-logs-container .site-logs-toolbar .site-logs-toolbar__badge {
+	height: 8px;
+	width: 8px;
+	padding: 0;
+	margin-right: 4px;
+}
 .site-logs-toolbar__download-progress {
 	display: flex;
 	align-items: center;
