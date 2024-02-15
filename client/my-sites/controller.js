@@ -509,10 +509,12 @@ export function noSite( context, next ) {
 		! isRenewal &&
 		hasSite
 	) {
+		console.debug( 'noSite - hasSite' ); // eslint-disable-line no-console
 		siteSelection( context, next );
 		return;
 	}
 
+	console.debug( 'noSite - setting selected site to null' ); // eslint-disable-line no-console
 	context.store.dispatch( setSelectedSiteId( null ) );
 	return next();
 }
@@ -911,7 +913,9 @@ export function selectSiteOrSkipIfLoggedInWithMultipleSites( context, next ) {
 
 export function hideNavigationIfLoggedInWithNoSites( context, next ) {
 	const state = context.store.getState();
+	console.debug( 'hideNavigationIfLoggedInWithNoSites' ); // eslint-disable-line no-console
 	if ( isUserLoggedIn( state ) && getCurrentUserSiteCount( state ) === 0 ) {
+		console.debug( 'hideNavigationIfLoggedInWithNoSites - hiding left navigation' ); // eslint-disable-line no-console
 		context.hideLeftNavigation = true;
 	}
 	next();
@@ -919,7 +923,9 @@ export function hideNavigationIfLoggedInWithNoSites( context, next ) {
 
 export function addNavigationIfLoggedIn( context, next ) {
 	const state = context.store.getState();
+	console.debug( 'addNavigationIfLoggedIn' ); // eslint-disable-line no-console
 	if ( isUserLoggedIn( state ) && getCurrentUserSiteCount( state ) > 0 ) {
+		console.debug( 'addNavigationIfLoggedIn - adding left navigation' ); // eslint-disable-line no-console
 		navigation( context, next );
 	}
 	next();
