@@ -80,9 +80,21 @@ class MySitesNavigation extends Component {
 		);
 	}
 
+	renderGlobalSiteViewSidebar() {
+		return (
+			<GlobalSidebar path={ this.props.path }>
+				<a href="/sites">All Sites</a>
+				<MySitesSidebarUnifiedBody path={ this.props.path } />
+			</GlobalSidebar>
+		);
+	}
+
 	render() {
 		if ( this.props.isGlobalSidebarVisible ) {
 			return this.renderGlobalSidebar();
+		}
+		if ( this.props.isGlobalSiteSidebarVisible ) {
+			return this.renderGlobalSiteViewSidebar();
 		}
 		return this.renderSidebar();
 	}
@@ -92,9 +104,13 @@ export default withCurrentRoute(
 	connect( ( state, { currentSection } ) => {
 		const sectionGroup = currentSection?.group ?? null;
 		const siteId = getSelectedSiteId( state );
-		const { shouldShowGlobalSidebar } = useGlobalSidebar( siteId, sectionGroup );
+		const { shouldShowGlobalSidebar, shouldShowGlobalSiteViewSidebar } = useGlobalSidebar(
+			siteId,
+			sectionGroup
+		);
 		return {
 			isGlobalSidebarVisible: shouldShowGlobalSidebar,
+			isGlobalSiteSidebarVisible: shouldShowGlobalSiteViewSidebar,
 		};
 	}, null )( MySitesNavigation )
 );

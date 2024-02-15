@@ -20,6 +20,7 @@ import { requestAdminMenu } from '../../state/admin-menu/actions';
 import allSitesMenu from './static-data/all-sites-menu';
 import buildFallbackResponse from './static-data/fallback-menu';
 import globalSidebarMenu from './static-data/global-sidebar-menu';
+import globalSiteViewSidebarMenu from './static-data/global-site-view-sidebar-menu';
 import jetpackMenu from './static-data/jetpack-fallback-menu';
 
 const useSiteMenuItems = () => {
@@ -34,7 +35,10 @@ const useSiteMenuItems = () => {
 	const locale = useLocale();
 	const isAllDomainsView = '/domains/manage' === currentRoute;
 	const { currentSection } = useCurrentRoute();
-	const { shouldShowGlobalSidebar } = useGlobalSidebar( selectedSiteId, currentSection?.group );
+	const { shouldShowGlobalSidebar, shouldShowGlobalSiteViewSidebar } = useGlobalSidebar(
+		selectedSiteId,
+		currentSection?.group
+	);
 
 	useEffect( () => {
 		if ( selectedSiteId && siteDomain ) {
@@ -105,6 +109,13 @@ const useSiteMenuItems = () => {
 
 	if ( shouldShowGlobalSidebar ) {
 		return globalSidebarMenu();
+	}
+	if ( shouldShowGlobalSiteViewSidebar ) {
+		return globalSiteViewSidebarMenu( {
+			siteDomain,
+			shouldShowAddOns: shouldShowAddOnsInFallbackMenu,
+			showSiteMonitoring: isAtomic,
+		} );
 	}
 
 	/**
