@@ -17,7 +17,7 @@ export default function globalSiteViewSidebarMenu( {
 		{
 			icon: 'dashicons-arrow-left-alt2',
 			slug: 'all-sites',
-			title: translate( 'All Sites' ),
+			title: translate( 'All sites' ),
 			type: 'menu-item',
 			url: `/sites`,
 		},
@@ -98,7 +98,7 @@ export default function globalSiteViewSidebarMenu( {
 		{
 			icon: 'dashicons-admin-home',
 			slug: 'settings-site-tools',
-			title: translate( 'Site Tools' ),
+			title: translate( 'Tools' ),
 			type: 'menu-item',
 			url: `/settings/site-tools/${ siteDomain }`,
 		},
@@ -107,7 +107,7 @@ export default function globalSiteViewSidebarMenu( {
 					{
 						icon: 'dashicons-admin-home',
 						slug: 'tools-site-monitoring',
-						title: translate( 'Site Monitoring' ),
+						title: translate( 'Monitoring' ),
 						type: 'menu-item',
 						url: `/site-monitoring/${ siteDomain }`,
 					},
