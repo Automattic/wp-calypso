@@ -14,6 +14,7 @@ import {
 	getTestAccountByFeature,
 	envToFeatureKey,
 } from '@automattic/calypso-e2e';
+import { getCalypsoURL } from '@automattic/calypso-e2e/dist/types/src/data-helper';
 import { Browser, Page } from 'playwright';
 
 declare const browser: Browser;
@@ -42,9 +43,7 @@ describe( DataHelper.createSuiteTitle( 'Theme: Preview and Activate' ), () => {
 		 * Awaiting final UI design.
 		 * @see https://github.com/Automattic/wp-calypso/pull/87477
 		 */
-		page.goto(
-			DataHelper.getCalypsoURL( `themes/${ testAccount.getSiteURL( { protocol: false } ) }` )
-		);
+		page.goto( getCalypsoURL( `themes/${ testAccount.getSiteURL( { protocol: false } ) }` ) );
 		// sidebarComponent = new SidebarComponent( page );
 		// await sidebarComponent.navigate( 'Appearance', 'Themes' );
 	} );
