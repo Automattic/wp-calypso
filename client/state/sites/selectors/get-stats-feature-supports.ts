@@ -8,8 +8,8 @@ export default function getStatsFeatureSupportChecks( state: object, siteId: num
 
 	const supportEmailStats = !! (
 		! isOdysseyStats ||
-		( statsAdminVersion && version_compare( statsAdminVersion, '0.15.0-alpha', '>=' ) )
-	); // TODO: change the version to the version which supports the email APIs!
+		( statsAdminVersion && version_compare( statsAdminVersion, '0.16.0-alpha', '>=' ) )
+	);
 
 	const supportSubscriberChart =
 		! isOdysseyStats ||
