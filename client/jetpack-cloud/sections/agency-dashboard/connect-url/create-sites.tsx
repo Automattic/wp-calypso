@@ -1,6 +1,5 @@
 import { Gridicon, ProgressBar } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
-import Spinner from './spinner';
 
 export interface Site {
 	url: string;
@@ -26,12 +25,6 @@ export default function CreateSites( { processed, queue }: { processed: Site[]; 
 								<Gridicon
 									icon={ site.status === 'success' ? 'checkmark-circle' : 'cross-circle' }
 								/>
-								<div>{ site.url }</div>
-							</li>
-						) ) }
-						{ queue.map( ( site, index ) => (
-							<li className="connect-url__create-sites-row" key={ index }>
-								<Spinner />
 								<div>{ site.url }</div>
 							</li>
 						) ) }
