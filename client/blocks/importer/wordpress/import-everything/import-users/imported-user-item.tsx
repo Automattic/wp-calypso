@@ -6,7 +6,7 @@ import { translate } from 'i18n-calypso';
 import { getRole, getRoleBadgeText, getNameOrEmail } from './utils';
 import type { Member } from '@automattic/data-stores';
 
-interface UserListItemProps {
+interface ImportedUserItemProps {
 	user: Member;
 	isChecked: boolean;
 	isExternalContributor: boolean;
@@ -14,13 +14,13 @@ interface UserListItemProps {
 	onChangeChecked: ( isChecked: boolean ) => void;
 }
 
-const UserListItem = ( {
+const ImportedUserItem = ( {
 	user,
 	isChecked,
 	isExternalContributor,
 	isP2Guest,
 	onChangeChecked,
-}: UserListItemProps ) => {
+}: ImportedUserItemProps ) => {
 	const [ isCheckedState, setIsCheckedState ] = useState( isChecked );
 
 	if ( ! user ) {
@@ -101,4 +101,4 @@ const UserListItem = ( {
 	);
 };
 
-export default UserListItem;
+export default ImportedUserItem;
