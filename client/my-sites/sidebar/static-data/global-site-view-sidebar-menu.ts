@@ -15,6 +15,17 @@ export default function globalSiteViewSidebarMenu( {
 } ) {
 	return [
 		{
+			icon: 'dashicons-arrow-left-alt2',
+			slug: 'all-sites',
+			title: translate( 'All Sites' ),
+			type: 'menu-item',
+			url: `/sites`,
+		},
+
+		{
+			type: 'separator',
+		},
+		{
 			icon: 'dashicons-admin-home',
 			slug: 'home',
 			title: translate( 'Home' ),
