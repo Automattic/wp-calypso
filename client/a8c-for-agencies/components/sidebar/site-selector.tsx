@@ -7,7 +7,7 @@ import { getCurrentLayoutFocus } from 'calypso/state/ui/layout-focus/selectors';
 
 /* NOTE: Code for this component was borrowed from calypso/my-sites/picker,
  * with some slight modifications because we can safely assume we're using
- * Jetpack Cloud.
+ * Automattic for Agencies.
  */
 
 const SITES_FOCUS = 'sites';

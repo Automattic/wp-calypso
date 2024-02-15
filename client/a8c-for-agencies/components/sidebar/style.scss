@@ -4,20 +4,22 @@
 // This file is meant to house style rules that all implementations of the base
 // sidebar will implement by default.
 .a4a-sidebar {
+	background-color: var(--color-sidebar-background);
+
 	.a4a-sidebar__site-selector {
 		background-color: var(--color-sidebar-background);
 	}
 
 	.sidebar-v2__menu-item {
 		svg {
-			color: #6f6f6f;
+			color: var(--color-sidebar-text);
 		}
 		&.is-active {
-			background: var(--studio-green-0);
-			color: var(--studio-green-50);
+			background: var(--color-sidebar-menu-selected-background);
+			color: var(--color-sidebar-menu-selected-text);
 
 			svg {
-				color: var(--studio-green-50);
+				color: var(--color-sidebar-menu-selected-text);
 			}
 		}
 	}
