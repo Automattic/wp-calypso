@@ -462,7 +462,7 @@ class Login extends Component {
 				);
 				preHeader = (
 					<div>
-						<A4APlusWpComLogo size={ 24 } />
+						<A4APlusWpComLogo className="login__a4a-plus-wpcom-logo" size={ 32 } />
 					</div>
 				);
 			}
