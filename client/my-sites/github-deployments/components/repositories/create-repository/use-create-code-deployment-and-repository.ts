@@ -9,6 +9,7 @@ export interface MutationVariables {
 	template: string;
 	accountName: string;
 	repositoryName: string;
+	destinationDirectory: string;
 	isPrivate?: boolean;
 	isAutomated?: boolean;
 }
@@ -33,6 +34,7 @@ export const useCreateCodeDeploymentAndRepository = (
 			installationId,
 			accountName,
 			repositoryName,
+			destinationDirectory,
 			isPrivate,
 			isAutomated,
 		}: MutationVariables ) =>
@@ -49,6 +51,7 @@ export const useCreateCodeDeploymentAndRepository = (
 					is_private: isPrivate,
 					is_automated: isAutomated,
 					blog_id: siteId,
+					destination_directory: destinationDirectory,
 				}
 			),
 		...options,

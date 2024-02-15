@@ -7,6 +7,10 @@
 
 	.form-label {
 		font-weight: 500;
+
+		&[for="destinationDirectory"] {
+			margin-top: 24px;
+		}
 	}
 
 	.repository-name-formfieldset {
