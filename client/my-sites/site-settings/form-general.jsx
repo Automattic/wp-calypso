@@ -512,10 +512,23 @@ export class SiteSettingsFormGeneral extends Component {
 									disabled={ isRequestingSettings }
 									onClick={ eventTracker( 'Clicked Partnership Radio Button' ) }
 								/>
-								<span>{ translate( 'Discourage AI training and third-party data use' ) }</span>
+								<span>
+									{ translate(
+										'Prevent third-party data sharing for %(siteName)s {{infoPopover}}Limit AI training and prevent third-party data use. {{a}}Learn more.{{/a}}{{/infoPopover}}',
+										{
+											args: {
+												siteName: site.domain ?? translate( 'this site' ),
+											},
+											components: {
+												a: <InlineSupportLink showIcon={ false } supportContext="privacy" />,
+												infoPopover: <InfoPopover position="bottom right" iconSize="12" />,
+											},
+										}
+									) }
+								</span>
 								<FormSettingExplanation>
 									{ translate(
-										'This option discourages our network of data partners from using your content, including for training AI models.'
+										'This option will prevent this site’s content from being shared with our licensed network of data and research partners, including training AI models.'
 									) }
 								</FormSettingExplanation>
 							</FormLabel>
