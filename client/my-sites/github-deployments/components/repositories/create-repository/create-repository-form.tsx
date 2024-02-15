@@ -31,7 +31,7 @@ export const CreateRepositoryForm = ( { onRepositoryCreated }: CreateRepositoryF
 		isLoadingAccounts,
 	} = useLiveAccounts( {} );
 	const [ repositoryName, setRepositoryName ] = useState( '' );
-	const [ destinationDirectory, setDestinationDirectory ] = useState( '/' );
+	const [ targetDir, setTargetDir ] = useState( '/' );
 	const [ projectType, setProjectType ] = useState< ProjectType >( 'plugin' );
 	const [ isPrivate, setIsPrivate ] = useState( true );
 	const [ isAutomated, setIsAutomated ] = useState( false );
@@ -48,7 +48,7 @@ export const CreateRepositoryForm = ( { onRepositoryCreated }: CreateRepositoryF
 			template: template.value,
 			accountName: repositoryAccount.account_name,
 			repositoryName,
-			destinationDirectory,
+			targetDir,
 			isPrivate,
 			isAutomated,
 		} );
@@ -57,16 +57,13 @@ export const CreateRepositoryForm = ( { onRepositoryCreated }: CreateRepositoryF
 	useEffect( () => {
 		switch ( projectType ) {
 			case 'plugin':
-				setTemplate( repositoryTemplates.plugin[ 0 ] );
-				setDestinationDirectory( '/wp-content/plugins/' + repositoryName );
+				setTargetDir( '/wp-content/plugins/' + repositoryName );
 				break;
 			case 'theme':
-				setTemplate( repositoryTemplates.theme[ 0 ] );
-				setDestinationDirectory( '/wp-content/themes/' + repositoryName );
+				setTargetDir( '/wp-content/themes/' + repositoryName );
 				break;
 			case 'site':
-				setTemplate( repositoryTemplates.site[ 0 ] );
-				setDestinationDirectory( '/' );
+				setTargetDir( '/' );
 				break;
 		}
 	}, [ projectType, repositoryName ] );
@@ -145,13 +142,13 @@ export const CreateRepositoryForm = ( { onRepositoryCreated }: CreateRepositoryF
 						onTemplateSelected={ setTemplate }
 						template={ template }
 					/>
-					<FormLabel htmlFor="destinationDirectory">{ __( 'Destination directory' ) }</FormLabel>
+					<FormLabel htmlFor="targetDir">{ __( 'Destination directory' ) }</FormLabel>
 					<FormTextInput
-						id="destinationDirectory"
+						id="targetDir"
 						placehlder="/"
-						value={ destinationDirectory }
+						value={ targetDir }
 						onChange={ ( event: ChangeEvent< HTMLInputElement > ) =>
-							setDestinationDirectory( event.currentTarget.value )
+							setTargetDir( event.currentTarget.value )
 						}
 					/>
 				</FormFieldset>
