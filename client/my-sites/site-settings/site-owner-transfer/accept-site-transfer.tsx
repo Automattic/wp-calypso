@@ -80,7 +80,7 @@ export function AcceptSiteTransfer( props: any ) {
 	useEffect( () => {
 		let redirect = props.redirectTo ?? null;
 
-		// If the redirect is not set and site is not set, redirect to the usual confirmation page
+		// If the redirect is not set and site is set, redirect to the usual confirmation page
 		if ( ! redirect && site ) {
 			redirect = '/settings/site-transferred/' + site.slug;
 		}
