@@ -5,6 +5,7 @@
 import {
 	DataHelper,
 	DomainSearchComponent,
+	SidebarComponent,
 	PlansPage,
 	CartCheckoutPage,
 	TestAccount,
@@ -12,7 +13,6 @@ import {
 	SecretsManager,
 	RestAPIClient,
 } from '@automattic/calypso-e2e';
-import { getCalypsoURL } from '@automattic/calypso-e2e/dist/types/src/data-helper';
 import { Page, Browser } from 'playwright';
 import { getNewPlanName } from '../shared';
 
@@ -24,9 +24,9 @@ describe( DataHelper.createSuiteTitle( 'Sidebar: Domain upsell' ), function () {
 	let domainSearchComponent: DomainSearchComponent;
 	let cartCheckoutPage: CartCheckoutPage;
 	let plansPage: PlansPage;
+	let sidebarComponent: SidebarComponent;
 	let selectedDomain: string;
 	let page: Page;
-	let testAccount: TestAccount;
 	const credentials = SecretsManager.secrets.testAccounts.simpleSiteFreePlanUser;
 	const siteSlug = credentials.testSites?.primary?.url as string;
 	const siteId = credentials.testSites?.primary?.id as number;
@@ -37,7 +37,7 @@ describe( DataHelper.createSuiteTitle( 'Sidebar: Domain upsell' ), function () {
 		page = await browser.newPage();
 
 		// Authenticate as simpleSiteFreePlanUser.
-		testAccount = new TestAccount( 'simpleSiteFreePlanUser' );
+		const testAccount = new TestAccount( 'simpleSiteFreePlanUser' );
 		await testAccount.authenticate( page );
 		await BrowserManager.setStoreCookie( page );
 
@@ -58,17 +58,11 @@ describe( DataHelper.createSuiteTitle( 'Sidebar: Domain upsell' ), function () {
 	} );
 
 	it( 'Click Claim on the sidebar Domain Upsell', async function () {
-		/**
-		 * Temporarily disabled sidebar code due to the Untangling Calypso & Nav Redesign project.
-		 * Awaiting final UI design.
-		 * @see https://github.com/Automattic/wp-calypso/pull/87477
-		 */
-		page.goto( getCalypsoURL( `domains/add/${ testAccount.getSiteURL( { protocol: false } ) }` ) );
-		// sidebarComponent = new SidebarComponent( page );
-		// await sidebarComponent.openNotice(
-		// 	'Upgrade',
-		// 	`**/domains/add/${ siteSlug }?domainAndPlanPackage=true`
-		// );
+		sidebarComponent = new SidebarComponent( page );
+		await sidebarComponent.openNotice(
+			'Upgrade',
+			`**/domains/add/${ siteSlug }?domainAndPlanPackage=true`
+		);
 	} );
 
 	it( 'Search for a domain name', async function () {

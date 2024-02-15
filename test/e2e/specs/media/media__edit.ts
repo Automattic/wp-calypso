@@ -8,13 +8,13 @@ import {
 	DataHelper,
 	MediaHelper,
 	MediaPage,
+	SidebarComponent,
 	TestFile,
 	TestAccount,
 	getTestAccountByFeature,
 	envToFeatureKey,
 	envVariables,
 } from '@automattic/calypso-e2e';
-import { getCalypsoURL } from '@automattic/calypso-e2e/dist/types/src/data-helper';
 import { Page, Browser } from 'playwright';
 import { TEST_IMAGE_PATH } from '../constants';
 
@@ -52,20 +52,14 @@ describe( DataHelper.createSuiteTitle( 'Media: Edit Media' ), function () {
 	} );
 
 	it( 'Navigate to Media', async function () {
-		/**
-		 * Temporarily disabled sidebar code due to the Untangling Calypso & Nav Redesign project.
-		 * Awaiting final UI design.
-		 * @see https://github.com/Automattic/wp-calypso/pull/87477
-		 */
-		page.goto( getCalypsoURL( `media/${ testAccount.getSiteURL( { protocol: false } ) }` ) );
-		// // eCommerce plan loads WP-Admin for home dashboard,
-		// // so instead navigate straight to the Media page.
-		// if ( envVariables.ATOMIC_VARIATION === 'ecomm-plan' ) {
-		// 	await mediaPage.visit( testAccount.credentials.testSites?.primary.url as string );
-		// } else {
-		// 	const sidebarComponent = new SidebarComponent( page );
-		// 	await sidebarComponent.navigate( 'Media' );
-		// }
+		// eCommerce plan loads WP-Admin for home dashboard,
+		// so instead navigate straight to the Media page.
+		if ( envVariables.ATOMIC_VARIATION === 'ecomm-plan' ) {
+			await mediaPage.visit( testAccount.credentials.testSites?.primary.url as string );
+		} else {
+			const sidebarComponent = new SidebarComponent( page );
+			await sidebarComponent.navigate( 'Media' );
+		}
 	} );
 
 	it( 'Upload image', async function () {
