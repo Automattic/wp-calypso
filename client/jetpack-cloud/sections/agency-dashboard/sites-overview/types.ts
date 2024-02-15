@@ -214,6 +214,7 @@ export interface DashboardOverviewContextInterface {
 	currentPage: number;
 	filter: { issueTypes: Array< AgencyDashboardFilterOption >; showOnlyFavorites: boolean };
 	sort: DashboardSortInterface;
+	showSitesDashboardV2: boolean;
 }
 
 export interface SitesOverviewContextInterface extends DashboardOverviewContextInterface {
