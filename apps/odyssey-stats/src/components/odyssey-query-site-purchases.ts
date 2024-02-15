@@ -6,6 +6,7 @@ import { isError } from 'lodash';
 import { useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 import wpcom from 'calypso/lib/wp';
+import getDefaultQueryParams from 'calypso/my-sites/stats/hooks/default-query-params';
 import {
 	PURCHASES_SITE_FETCH,
 	PURCHASES_SITE_FETCH_COMPLETED,
@@ -28,13 +29,12 @@ async function queryOdysseyQuerySitePurchases( siteId: number | null ) {
 
 const useOdysseyQuerySitePurchases = ( siteId: number | null ) => {
 	return useQuery( {
+		...getDefaultQueryParams(),
 		queryKey: [ 'odyssey-stats', 'site-purchases', siteId ],
 		queryFn: () => queryOdysseyQuerySitePurchases( siteId ),
 		staleTime: 10 * 1000,
 		// If the module is not active, we don't want to retry the query.
 		retry: false,
-		retryOnMount: false,
-		refetchOnWindowFocus: false,
 	} );
 };
 
@@ -61,7 +61,7 @@ export default function OdysseyQuerySitePurchases( { siteId }: { siteId: number 
 			// Dispatch to the Purchases reducer for error status
 			reduxDispatch( {
 				type: PURCHASES_SITE_FETCH_FAILED,
-				error: purchases.message,
+				error: 'purchase_fetch_failed',
 			} );
 		} else {
 			// Dispatch to the Purchases reducer for consistent requesting status

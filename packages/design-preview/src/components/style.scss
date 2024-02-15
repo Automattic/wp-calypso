@@ -104,6 +104,11 @@ $design-preview-sidebar-width: 311px;
 	inset-inline-end: 0;
 	overflow: auto;
 
+	.components-item.navigator-item {
+		margin: 2px;
+		padding-left: 6px;
+	}
+
 	/**
 	 * Global Styles Variations
 	 */
@@ -329,6 +334,7 @@ $design-preview-sidebar-width: 311px;
 
 		.components-navigator-screen & {
 			margin-top: 2px;
+			padding: 0 16px;
 		}
 
 		@supports ( scrollbar-gutter: stable ) {
