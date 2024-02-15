@@ -6,7 +6,7 @@ import { getFlowLocation, renderFlow } from './helpers';
 
 describe( 'Site Migration Flow', () => {
 	describe( 'navigation', () => {
-		it( 'navigates from import to waitForAtomic', async () => {
+		it( 'redirects from the import page to waitForAtomic page', async () => {
 			const { runUseStepNavigationSubmit } = renderFlow( siteMigrationFlow );
 
 			runUseStepNavigationSubmit( { currentStep: 'import' } );
@@ -17,7 +17,7 @@ describe( 'Site Migration Flow', () => {
 			} );
 		} );
 
-		it( 'navigates from processing to waitForPluginInstall when atomic is finished', () => {
+		it( 'redirect from the processing page to the waitForPluginInstall when atomic waiting is finished', () => {
 			const { runUseStepNavigationSubmit } = renderFlow( siteMigrationFlow );
 
 			runUseStepNavigationSubmit( {
