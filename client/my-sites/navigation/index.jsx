@@ -1,4 +1,5 @@
 import config from '@automattic/calypso-config';
+import { translate } from 'i18n-calypso';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import AsyncLoad from 'calypso/components/async-load';
@@ -80,10 +81,13 @@ class MySitesNavigation extends Component {
 		);
 	}
 
+	// TODO: Add styles
 	renderGlobalSiteViewSidebar() {
 		return (
 			<GlobalSidebar path={ this.props.path }>
-				<a href="/sites">All Sites</a>
+				<li>
+					<a href="/sites">&lt; { translate( 'All Sites' ) }</a>
+				</li>
 				<MySitesSidebarUnifiedBody path={ this.props.path } />
 			</GlobalSidebar>
 		);

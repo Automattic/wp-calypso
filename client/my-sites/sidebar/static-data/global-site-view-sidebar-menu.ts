@@ -20,6 +20,14 @@ export default function globalSiteViewSidebarMenu( {
 			type: 'menu-item',
 			url: `/home/${ siteDomain }`,
 		},
+
+		/**
+		 * ACCOUNT section
+		 * TODO: We need to render the "ACCOUNT" label.
+		 */
+		{
+			type: 'separator',
+		},
 		{
 			icon: 'dashicons-admin-home',
 			slug: 'upgrades',
@@ -61,6 +69,10 @@ export default function globalSiteViewSidebarMenu( {
 			url: `/purchases/subscriptions/${ siteDomain }`,
 		},
 
+		/**
+		 * SITE section
+		 * TODO: We need to render the "SITE" label.
+		 */
 		{
 			type: 'separator',
 		},
@@ -90,6 +102,10 @@ export default function globalSiteViewSidebarMenu( {
 			  ]
 			: [] ),
 
+		/**
+		 * GROW section
+		 * TODO: We need to render the "GROW" label.
+		 */
 		{
 			type: 'separator',
 		},
