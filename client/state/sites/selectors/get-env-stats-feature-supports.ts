@@ -30,5 +30,10 @@ export default function getEnvStatsFeatureSupportChecks( state: object, siteId: 
 			'0.15.0-alpha',
 			isOdysseyStats
 		),
+		supportsHighlightsSettings: version_greater_than_or_equal(
+			statsAdminVersion,
+			'0.9.0-alpha',
+			isOdysseyStats
+		),
 	};
 }
