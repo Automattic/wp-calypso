@@ -114,7 +114,7 @@ export function AcceptSiteTransfer( props: any ) {
 	useInterval(
 		async () => {
 			dispatch( requestSite( props.siteId ) );
-			setCurrentAttempt( ( step ) => step + 1 );
+			setCurrentAttempt( ( attempt ) => attempt + 1 );
 		},
 		inviteAccepted && ! isSiteOwner && ! error ? 3000 : null
 	);
