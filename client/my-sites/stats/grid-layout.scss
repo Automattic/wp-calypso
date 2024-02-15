@@ -55,7 +55,7 @@ $grid-vertical-gutters: 32px;
 		display: none;
 	}
 
-	&.is-odyssey-stats {
+	&.supports-email-stats {
 		@include stats-desktop-grid(
 			"followers followers followers followers followers followers followers followers followers followers followers followers",
 			1

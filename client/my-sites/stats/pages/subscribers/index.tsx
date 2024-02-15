@@ -7,16 +7,10 @@ import DocumentHead from 'calypso/components/data/document-head';
 import JetpackColophon from 'calypso/components/jetpack-colophon';
 import Main from 'calypso/components/main';
 import NavigationHeader from 'calypso/components/navigation-header';
-import version_compare from 'calypso/lib/version-compare';
 import { SubscriberLaunchpad } from 'calypso/my-sites/subscribers/components/subscriber-launchpad';
 import { useSelector } from 'calypso/state';
 import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
-import {
-	isJetpackSite,
-	getSiteSlug,
-	getJetpackStatsAdminVersion,
-	isSimpleSite,
-} from 'calypso/state/sites/selectors';
+import { isJetpackSite, getSiteSlug, isSimpleSite } from 'calypso/state/sites/selectors';
 import getStatsFeatureSupportChecks from 'calypso/state/sites/selectors/get-stats-feature-supports';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import useSubscribersTotalsQueries from '../../hooks/use-subscribers-totals-query';
@@ -45,18 +39,8 @@ const StatsSubscribersPage = ( { period }: StatsSubscribersPageProps ) => {
 	const siteId = useSelector( getSelectedSiteId );
 	const siteSlug = useSelector( ( state ) => getSiteSlug( state, siteId ) );
 	const isJetpack = useSelector( ( state ) => isJetpackSite( state, siteId ) );
-	// Run-time configuration.
-	const statsAdminVersion = useSelector( ( state ) =>
-		getJetpackStatsAdminVersion( state, siteId )
-	);
 	const isOdysseyStats = config.isEnabled( 'is_running_in_jetpack_site' );
-	// Always show chart for Calypso, and check compatibility for Odyssey.
-	// TODO: refactor the checking to `client/state/sites/selectors/get-stats-feature-supports.ts`.
-	const isChartVisible =
-		! isOdysseyStats ||
-		( statsAdminVersion && version_compare( statsAdminVersion, '0.11.0-alpha', '>=' ) );
-
-	const { supportEmailStats } = useSelector( ( state ) =>
+	const { supportEmailStats, supportSubscriberChart } = useSelector( ( state ) =>
 		getStatsFeatureSupportChecks( state, siteId )
 	);
 	const today = new Date().toISOString().slice( 0, 10 );
@@ -64,7 +48,7 @@ const StatsSubscribersPage = ( { period }: StatsSubscribersPageProps ) => {
 	const statsModuleListClass = classNames(
 		'stats__module-list stats__module--unified',
 		{
-			'is-odyssey-stats': isOdysseyStats,
+			'supports-email-stats': ! supportEmailStats,
 			'is-jetpack': isJetpack,
 		},
 		'subscribers-page'
@@ -109,7 +93,7 @@ const StatsSubscribersPage = ( { period }: StatsSubscribersPageProps ) => {
 					) : (
 						<>
 							<SubscribersHighlightSection siteId={ siteId } />
-							{ isChartVisible && (
+							{ supportSubscriberChart && (
 								<>
 									<SubscribersChartSection
 										siteId={ siteId }
