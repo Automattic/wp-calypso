@@ -1,6 +1,7 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
-import config, { enable, isEnabled } from '@automattic/calypso-config';
+import config, { disable, enable, isEnabled } from '@automattic/calypso-config';
 import page, { type Callback } from '@automattic/calypso-router';
+import { Banner } from 'calypso/components/banner';
 import JetpackManageSidebar from 'calypso/jetpack-cloud/sections/sidebar-navigation/jetpack-manage';
 import { sitesPath } from 'calypso/lib/jetpack/paths';
 import { isSectionNameEnabled } from 'calypso/sections-filter';
@@ -44,21 +45,49 @@ export const agencyDashboardContext: Callback = ( context, next ) => {
 		isSectionNameEnabled( 'jetpack-cloud-agency-sites-v2' ) &&
 		context.section.paths[ 0 ] === sitesPath();
 
+	let bannerDescription =
+		'Activate the new design for the Sites Dashboard section and enjoy the new features we have for you.';
+	let bannerTitle = 'Good news! Now you can check our new Sites Dashboard design!';
 	if ( showSitesDashboardV2 && ! isEnabled( 'jetpack/manage-sites-v2-menu' ) ) {
 		enable( 'jetpack/manage-sites-v2-menu' );
+	}
+	if ( showSitesDashboardV2 && isEnabled( 'jetpack/manage-sites-v2-menu' ) ) {
+		bannerTitle = 'You are using the new Sites Dashboard design!';
+		bannerDescription =
+			'Any feedback? We would love to hear from you! If you want to go back to the old design, you can deactivate it here.';
 	}
 
 	const currentPage = parseInt( contextPage ) || 1;
 	context.header = <Header />;
 	context.secondary = <JetpackManageSidebar path={ context.path } />;
 	context.primary = (
-		<DashboardOverview
-			search={ search }
-			currentPage={ currentPage }
-			filter={ filter }
-			sort={ sort }
-			showSitesDashboardV2={ showSitesDashboardV2 }
-		/>
+		<>
+			{ isSectionNameEnabled( 'jetpack-cloud-agency-sites-v2' ) && (
+				<Banner
+					title={ bannerTitle }
+					description={ bannerDescription }
+					callToAction={ showSitesDashboardV2 ? 'Deactivate' : 'Activate' }
+					horizontal
+					jetpack
+					onClick={ () => {
+						if ( showSitesDashboardV2 ) {
+							disable( 'jetpack/manage-sites-v2-menu' );
+							document.location.href = '/dashboard'; // full reload
+						} else {
+							enable( 'jetpack/manage-sites-v2-menu' );
+							page.redirect( '/sites' );
+						}
+					} }
+				/>
+			) }
+			<DashboardOverview
+				search={ search }
+				currentPage={ currentPage }
+				filter={ filter }
+				sort={ sort }
+				showSitesDashboardV2={ showSitesDashboardV2 }
+			/>
+		</>
 	);
 
 	// By definition, Sites Management does not select any one specific site
