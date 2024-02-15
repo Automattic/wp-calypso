@@ -55,17 +55,6 @@
 	margin-right: 1rem;
 }
 
-.connect-url__create-sites-spinner-animation {
-	transform-origin: center;
-	animation: spinner 0.6s linear infinite;
-}
-
-@keyframes spinner {
-	100% {
-		transform: rotate(360deg);
-	}
-}
-
 .connect-url__create-sites-quantity {
 	margin-bottom: 1rem;
 }
