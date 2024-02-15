@@ -6,6 +6,7 @@ import {
 	CardHeader,
 	CardBody,
 	CardFooter,
+	__experimentalConfirmDialog as ConfirmDialog,
 } from '@wordpress/components';
 import { trash, edit } from '@wordpress/icons';
 import { useState } from 'react';
@@ -15,7 +16,12 @@ import NavigationHeader from 'calypso/components/navigation-header';
 import { ScheduleForm } from 'calypso/my-sites/plugins/updates-manager/schedule-form';
 
 export const UpdatesManager = () => {
-	const [ isModalOpen, setIsModalOpen ] = useState( true );
+	const [ isConfirmOpen, setIsConfirmOpen ] = useState( false );
+	const [ isModalOpen, setIsModalOpen ] = useState( false );
+
+	const closeConfirm = () => {
+		setIsConfirmOpen( false );
+	};
 
 	return (
 		<MainComponent wideLayout>
@@ -31,6 +37,9 @@ export const UpdatesManager = () => {
 					<ScheduleForm />
 				</Modal>
 			) }
+			<ConfirmDialog isOpen={ isConfirmOpen } onConfirm={ closeConfirm } onCancel={ closeConfirm }>
+				Are you sure you want to delete this schedule?
+			</ConfirmDialog>
 			<Card>
 				<CardHeader>Schedules</CardHeader>
 				<CardBody>
@@ -41,28 +50,40 @@ export const UpdatesManager = () => {
 								<th>Time</th>
 								<th>Frequency</th>
 								<th>Plugins</th>
-								<th>Action</th>
+								<th style={ { textAlign: 'end' } }>Actions</th>
 							</tr>
 						</thead>
 						<tbody>
 							<tr>
 								<td>Move to WordPress.com plugin</td>
-								<td>12:00 AM</td>
+								<td>Feb 28 2023 7:00 PM UTC</td>
 								<td>Daily</td>
 								<td>1</td>
-								<td>
+								<td style={ { textAlign: 'end' } }>
 									<IconButton icon={ edit } label="Edit" />
-									<IconButton icon={ trash } label="Remove" />
+									<IconButton
+										icon={ trash }
+										label="Remove"
+										onClick={ () => {
+											setIsConfirmOpen( true );
+										} }
+									/>
 								</td>
 							</tr>
 							<tr>
 								<td>Security plugins</td>
-								<td>12:00 AM</td>
+								<td>Feb 28 2023 7:00 PM UTC</td>
 								<td>Daily</td>
 								<td>3</td>
-								<td>
+								<td style={ { textAlign: 'end' } }>
 									<IconButton icon={ edit } label="Edit" />
-									<IconButton icon={ trash } label="Remove" />
+									<IconButton
+										icon={ trash }
+										label="Remove"
+										onClick={ () => {
+											setIsConfirmOpen( true );
+										} }
+									/>
 								</td>
 							</tr>
 						</tbody>
