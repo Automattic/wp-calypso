@@ -35,7 +35,7 @@ export function AcceptSiteTransfer( props: any ) {
 	const translate = useTranslate();
 	const dispatch = props.dispatch;
 	const progress = 0.15;
-	const maxAttempts = 10; // 1 minute
+	const maxAttempts = 10;
 
 	const site = useSelector( ( state: object ) => getSite( state, props.siteId ) );
 	const userId = useSelector( ( state: object ) => getCurrentUserId( state ) );
