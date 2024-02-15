@@ -91,7 +91,7 @@ export default function globalSiteViewSidebarMenu( {
 		{
 			icon: 'dashicons-admin-home',
 			slug: 'options-hosting-configuration-php',
-			title: translate( 'Hosting Configuration' ),
+			title: translate( 'Hosting' ),
 			type: 'menu-item',
 			url: `/hosting-config/${ siteDomain }`,
 		},
