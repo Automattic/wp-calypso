@@ -7,7 +7,7 @@ import type { FC, Key } from 'react';
 
 import './style.scss';
 
-export interface Props {
+interface Props {
 	key?: Key;
 	task: Task;
 	isPrimaryAction?: boolean;

@@ -1,7 +1,7 @@
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import React from 'react';
-import ChecklistItem, { type Props } from '..';
+import React, { ComponentProps } from 'react';
+import ChecklistItem from '..';
 import { buildTask } from '../../test/lib/fixtures';
 import '@testing-library/jest-dom';
 
@@ -14,7 +14,7 @@ describe( 'ChecklistItem', () => {
 		} ),
 	};
 
-	const renderComponent = ( props: Partial< Props > ) => {
+	const renderComponent = ( props: Partial< ComponentProps< typeof ChecklistItem > > ) => {
 		render( <ChecklistItem { ...defaultProps } { ...props } /> );
 	};
 	it( 'displays a badge', () => {
