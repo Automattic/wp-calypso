@@ -19,9 +19,8 @@ import { requestSite } from 'calypso/state/sites/actions';
 import { useSelector } from 'react-redux';
 import { getSite } from 'calypso/state/sites/selectors';
 import { getCurrentUserId } from 'calypso/state/current-user/selectors';
-import { PageViewTracker } from 'calypso/lib/analytics/page-view-tracker';
 import { setSelectedSiteId } from 'calypso/state/ui/actions';
-import { getSelectedSiteId as setCurrentSideId } from 'calypso/state/ui/selectors';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 
 const ActionPanelStyled = styled( ActionPanel )( {
 	fontSize: '14px',
@@ -38,12 +37,12 @@ export function AcceptSiteTransfer( props: any ) {
 	const progress = 0.15;
 	const maxAttempts = 10;
 
-	const selectedSiteId = useSelector( ( state: object ) => setCurrentSideId( state ) );
+	const selectedSiteId = useSelector( ( state: object ) => getSelectedSiteId( state ) );
 	const site = useSelector( ( state: object ) => getSite( state, props.siteId ) );
 	const userId = useSelector( ( state: object ) => getCurrentUserId( state ) );
 
 	const [ error, setError ] = useState< string | React.ReactNode >( '' );
-	const [ inviteAccepted, setInviteAccepted ] = useState< boolean >( false );
+	const [ inviteAccepted, setInviteAccepted ] = useState< boolean >( true );
 	const [ currentAttempt, setCurrentAttempt ] = useState< number >( 0 );
 
 	const isSiteOwner = site && site.site_owner === userId;
@@ -151,10 +150,6 @@ export function AcceptSiteTransfer( props: any ) {
 	return (
 		<>
 			<DocumentHead title={ translate( 'Site Transfer' ) } />
-			<PageViewTracker
-				path="/settings/settings/site-transfer/:site"
-				title="Marketplace > Thank you"
-			/>
 			<Global
 				styles={ css`
 					body.is-section-settings,
