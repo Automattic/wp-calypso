@@ -1,19 +1,14 @@
-import { recordTracksEvent } from '@automattic/calypso-analytics';
-import {
-	PLAN_PREMIUM,
-	FEATURE_STYLE_CUSTOMIZATION,
-	WPCOM_FEATURES_SITE_PREVIEW_LINKS,
-	getPlan,
-} from '@automattic/calypso-products';
-import { Button, FormLabel, Gridicon } from '@automattic/components';
+import { WPCOM_FEATURES_SITE_PREVIEW_LINKS } from '@automattic/calypso-products';
+import { FormLabel } from '@automattic/components';
 import classnames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
-import { useSelector } from 'react-redux';
 import FormInputCheckbox from 'calypso/components/forms/form-checkbox';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormRadio from 'calypso/components/forms/form-radio';
 import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
 import SitePreviewLink from 'calypso/components/site-preview-link';
+import { useDispatch, useSelector } from 'calypso/state';
+import { recordGoogleEvent } from 'calypso/state/analytics/actions';
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import { useSiteGlobalStylesStatus } from 'calypso/state/sites/hooks/use-site-global-styles-status';
 import {
@@ -21,8 +16,8 @@ import {
 	getSelectedSiteId,
 	getSelectedSiteSlug,
 } from 'calypso/state/ui/selectors';
+import SiteSettingPrivacyNotice from './notice';
 import type { Fields } from './index';
-import type { SiteDetails } from '@automattic/data-stores';
 
 interface SiteSettingPrivacyFormProps {
 	fields: Fields;
@@ -36,60 +31,7 @@ interface SiteSettingPrivacyFormProps {
 	isWpcomStagingSite: boolean;
 	siteIsAtomic: boolean | null;
 	siteIsJetpack: boolean | null;
-	eventTracker: ( message: string ) => void;
-	trackEvent: ( message: string ) => void;
 }
-
-interface SiteSettingPrivacyFormNoticeProps {
-	selectedSite: SiteDetails | null | undefined;
-	siteSlug: string | null;
-}
-
-const SiteSettingPrivacyFormNotice = ( {
-	selectedSite,
-	siteSlug,
-}: SiteSettingPrivacyFormNoticeProps ) => {
-	const translate = useTranslate();
-	const upgradeUrl = `/plans/${ siteSlug }?plan=${ PLAN_PREMIUM }&feature=${ FEATURE_STYLE_CUSTOMIZATION }`;
-
-	return (
-		<>
-			<div className="site-settings__advanced-customization-notice">
-				<div className="site-settings__advanced-customization-notice-cta">
-					<Gridicon icon="info-outline" />
-					<span>
-						{ translate(
-							'Your site contains premium styles that will only be visible once you upgrade to a %(planName)s plan.',
-							{
-								args: {
-									planName: getPlan( PLAN_PREMIUM )?.getTitle() ?? '',
-								},
-							}
-						) }
-					</span>
-				</div>
-				<div className="site-settings__advanced-customization-notice-buttons">
-					{ selectedSite && (
-						<Button href={ selectedSite.URL } target="_blank">
-							{ translate( 'View site' ) }
-						</Button>
-					) }
-					<Button
-						className="is-primary"
-						href={ upgradeUrl }
-						onClick={ () => {
-							recordTracksEvent( 'calypso_global_styles_gating_settings_notice_upgrade_click', {
-								cta_name: 'settings_site_privacy',
-							} );
-						} }
-					>
-						{ translate( 'Upgrade' ) }
-					</Button>
-				</div>
-			</div>
-		</>
-	);
-};
 
 const SiteSettingPrivacyForm = ( {
 	fields,
@@ -103,9 +45,8 @@ const SiteSettingPrivacyForm = ( {
 	isUnlaunchedSite,
 	isWPForTeamsSite,
 	isWpcomStagingSite,
-	eventTracker,
-	trackEvent,
 }: SiteSettingPrivacyFormProps ) => {
+	const dispatch = useDispatch();
 	const translate = useTranslate();
 	const selectedSite = useSelector( getSelectedSite );
 	const siteId = useSelector( getSelectedSiteId ) || -1;
@@ -132,14 +73,18 @@ const SiteSettingPrivacyForm = ( {
 	const showPreviewLink = isComingSoon && hasSitePreviewLink;
 	const shouldShowPremiumStylesNotice = globalStylesInUse && shouldLimitGlobalStyles;
 
+	const recordEvent = ( message: string ) => {
+		dispatch( recordGoogleEvent( 'Site Settings', message ) );
+	};
+
 	const handleVisibilityOptionChange = ( {
 		blog_public,
 		wpcom_coming_soon,
 		wpcom_public_coming_soon,
 	}: Fields ) => {
-		trackEvent( `Set blog_public to ${ blog_public }` );
-		trackEvent( `Set wpcom_coming_soon to ${ wpcom_coming_soon }` );
-		trackEvent( `Set wpcom_public_coming_soon to ${ wpcom_public_coming_soon }` );
+		recordEvent( `Set blog_public to ${ blog_public }` );
+		recordEvent( `Set wpcom_coming_soon to ${ wpcom_coming_soon }` );
+		recordEvent( `Set wpcom_public_coming_soon to ${ wpcom_public_coming_soon }` );
 		updateFields( { blog_public, wpcom_coming_soon, wpcom_public_coming_soon } );
 	};
 
@@ -151,7 +96,7 @@ const SiteSettingPrivacyForm = ( {
 					! isAtomicAndEditingToolkitDeactivated && (
 						<>
 							{ shouldShowPremiumStylesNotice && (
-								<SiteSettingPrivacyFormNotice selectedSite={ selectedSite } siteSlug={ siteSlug } />
+								<SiteSettingPrivacyNotice selectedSite={ selectedSite } siteSlug={ siteSlug } />
 							) }
 							<FormLabel
 								className={ classnames( 'site-settings__visibility-label is-coming-soon', {
@@ -171,7 +116,7 @@ const SiteSettingPrivacyForm = ( {
 										} )
 									}
 									disabled={ isComingSoonDisabled }
-									onClick={ eventTracker( 'Clicked Site Visibility Radio Button' ) }
+									onClick={ recordEvent( 'Clicked Site Visibility Radio Button' ) }
 									label={ translate( 'Coming Soon' ) }
 								/>
 							</FormLabel>
@@ -210,7 +155,7 @@ const SiteSettingPrivacyForm = ( {
 								}
 								disabled={ isRequestingSettings }
 								onClick={ () => {
-									eventTracker( 'Clicked Site Visibility Radio Button' );
+									recordEvent( 'Clicked Site Visibility Radio Button' );
 								} }
 								label={ translate( 'Public' ) }
 							/>
@@ -245,7 +190,7 @@ const SiteSettingPrivacyForm = ( {
 								}
 								disabled={ isRequestingSettings }
 								onClick={ () => {
-									eventTracker( 'Clicked Site Visibility Radio Button' );
+									recordEvent( 'Clicked Site Visibility Radio Button' );
 								} }
 							/>
 							<span>{ translate( 'Discourage search engines from indexing this site' ) }</span>
@@ -277,7 +222,7 @@ const SiteSettingPrivacyForm = ( {
 								}
 								disabled={ isRequestingSettings }
 								onClick={ () => {
-									eventTracker( 'Clicked Site Visibility Radio Button' );
+									recordEvent( 'Clicked Site Visibility Radio Button' );
 								} }
 								label={ translate( 'Private' ) }
 							/>

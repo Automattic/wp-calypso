@@ -1,10 +1,8 @@
 import { isEnabled } from '@automattic/calypso-config';
 import {
 	PLAN_BUSINESS,
-	PLAN_PREMIUM,
 	WPCOM_FEATURES_NO_WPCOM_BRANDING,
 	WPCOM_FEATURES_SITE_PREVIEW_LINKS,
-	FEATURE_STYLE_CUSTOMIZATION,
 	getPlan,
 } from '@automattic/calypso-products';
 import {
@@ -710,8 +708,6 @@ export class SiteSettingsFormGeneral extends Component {
 			isP2HubSite,
 			isRequestingSettings,
 			isSavingSettings,
-			eventTracker,
-			trackEvent,
 		} = this.props;
 
 		if ( isP2HubSite ) {
@@ -725,8 +721,6 @@ export class SiteSettingsFormGeneral extends Component {
 				updateFields={ updateFields }
 				isRequestingSettings={ isRequestingSettings }
 				isSavingSettings={ isSavingSettings }
-				eventTracker={ eventTracker }
-				trackEvent={ trackEvent }
 			/>
 		);
 	}
@@ -970,43 +964,6 @@ export class SiteSettingsFormGeneral extends Component {
 				) }
 				{ this.toolbarOption() }
 			</div>
-		);
-	}
-
-	advancedCustomizationNotice() {
-		const { translate, selectedSite, siteSlug } = this.props;
-		const upgradeUrl = `/plans/${ siteSlug }?plan=${ PLAN_PREMIUM }&feature=${ FEATURE_STYLE_CUSTOMIZATION }`;
-
-		return (
-			<>
-				<div className="site-settings__advanced-customization-notice">
-					<div className="site-settings__advanced-customization-notice-cta">
-						<Gridicon icon="info-outline" />
-						<span>
-							{ translate(
-								'Your site contains premium styles that will only be visible once you upgrade to a %(planName)s plan.',
-								{
-									args: {
-										planName: getPlan( PLAN_PREMIUM )?.getTitle() ?? '',
-									},
-								}
-							) }
-						</span>
-					</div>
-					<div className="site-settings__advanced-customization-notice-buttons">
-						<Button href={ selectedSite.URL } target="_blank">
-							{ translate( 'View site' ) }
-						</Button>
-						<Button
-							className="is-primary"
-							href={ upgradeUrl }
-							onClick={ this.trackAdvancedCustomizationUpgradeClick }
-						>
-							{ translate( 'Upgrade' ) }
-						</Button>
-					</div>
-				</div>
-			</>
 		);
 	}
 }

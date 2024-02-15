@@ -26,8 +26,6 @@ interface SiteSettingPrivacyProps {
 	updateFields: ( fields: Fields ) => void;
 	isRequestingSettings: boolean;
 	isSavingSettings: boolean;
-	eventTracker: () => void;
-	trackEvent: () => void;
 }
 
 const SiteSettingPrivacy = ( {
@@ -36,8 +34,6 @@ const SiteSettingPrivacy = ( {
 	updateFields,
 	isRequestingSettings,
 	isSavingSettings,
-	eventTracker,
-	trackEvent,
 }: SiteSettingPrivacyProps ) => {
 	const translate = useTranslate();
 	const siteId = useSelector( getSelectedSiteId ) || -1;
@@ -85,8 +81,6 @@ const SiteSettingPrivacy = ( {
 					isWpcomStagingSite={ isWpcomStagingSite }
 					siteIsAtomic={ siteIsAtomic }
 					siteIsJetpack={ siteIsJetpack }
-					eventTracker={ eventTracker }
-					trackEvent={ trackEvent }
 				/>
 			</Card>
 		</>
