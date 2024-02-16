@@ -36,7 +36,6 @@ const ImportUsers = ( { site, onSubmit }: Props ) => {
 	const users = usersData?.users?.map( ( user ) => ( { user, checked: true } ) ) || [];
 	const [ usersList, setUsersList ] = useState( users );
 	const [ checkedUsersNumber, setCheckedUsersNumber ] = useState( usersList?.length || 0 );
-	const [ userInviteError, setUserInviteError ] = useState( '' );
 
 	const handleSubmit = async () => {
 		const selectedUsers = usersList
@@ -55,25 +54,13 @@ const ImportUsers = ( { site, onSubmit }: Props ) => {
 			number_of_invites: selectedUsers.length,
 		} );
 
-		const result = await sendInvites( selectedUsers )
+		await sendInvites( selectedUsers )
 			.then( ( response ) => {
 				return response;
 			} )
-			.catch( () => {
-				// Show generic error message (adding this basic idea for now)
-				setUserInviteError( 'generic_error' );
-			} );
+			.catch( () => {} );
 
-		if ( result && Array.isArray( result ) ) {
-			const hasError = result.some( ( item ) => item.errors.length > 0 );
-			if ( hasError ) {
-				// Show error message (adding this basic idea for now)
-				setUserInviteError( 'found_failure' );
-			}
-
-			// Should we call onSubmit if any errors?
-			onSubmit?.();
-		}
+		onSubmit?.();
 	};
 
 	const getUserRef = ( user: Member ) => {
@@ -112,19 +99,6 @@ const ImportUsers = ( { site, onSubmit }: Props ) => {
 		);
 	};
 
-	const getUserInviteError = () => {
-		switch ( userInviteError ) {
-			case 'generic_error':
-				return translate( 'There was an error inviting users. Please try again.' );
-			case 'found_failure':
-				return translate(
-					'Some users were not invited. Please try again or contact support if the issue persists.'
-				);
-			default:
-				return null;
-		}
-	};
-
 	useEffect( () => {
 		const users = usersData?.users?.map( ( user ) => ( { user, checked: true } ) ) || [];
 		if ( JSON.stringify( users ) !== JSON.stringify( usersList ) ) {
@@ -160,9 +134,6 @@ const ImportUsers = ( { site, onSubmit }: Props ) => {
 					) }
 				</SubTitle>
 			</div>
-			{ userInviteError ? (
-				<div className="import__user-migration-error-message">{ getUserInviteError() }</div>
-			) : null }
 			<InfiniteList
 				items={ usersList }
 				fetchNextPage={ fetchNextPage }
