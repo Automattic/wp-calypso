@@ -172,7 +172,6 @@ export const getVideopressLaunchedTask: TaskAction = ( task, flow, context ): Ta
 						} )
 					);
 				} );
-				recordTaskClickTracksEvent( task, flow, context );
 				submit?.();
 			}
 		},
