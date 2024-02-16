@@ -8,6 +8,7 @@ interface Params {
 	checklistSlug: string | null;
 	context: string;
 	site: SiteDetails | null | undefined;
+	flow?: string;
 }
 
 const stringifyTasks = ( tasks: Task[] ) => {
@@ -20,7 +21,7 @@ const stringifyTasks = ( tasks: Task[] ) => {
 };
 
 export const useTracking = ( params: Params ) => {
-	const { tasks, checklistSlug, context, site } = params;
+	const { tasks, checklistSlug, context, site, flow } = params;
 	const completedSteps = useMemo( () => tasks.filter( ( task ) => task.completed ), [ tasks ] );
 	const taskNames = useMemo( () => stringifyTasks( tasks ), [ tasks ] );
 	const numberOfSteps = tasks.length;
@@ -47,6 +48,7 @@ export const useTracking = ( params: Params ) => {
 			checklist_slug: checklistSlug,
 			context: context,
 			site_intent: siteIntent,
+			flow,
 		} );
 
 		tasks.forEach( ( task: Task ) => {
@@ -57,6 +59,7 @@ export const useTracking = ( params: Params ) => {
 				context: context,
 				order: task.order,
 				site_intent: siteIntent,
+				flow,
 			} );
 		} );
 		// Array of tasks requires deep comparison
@@ -70,6 +73,7 @@ export const useTracking = ( params: Params ) => {
 			checklist_slug: checklistSlug,
 			context: context,
 			task_id: task.id,
+			flow,
 			order: task.order,
 		} );
 	};

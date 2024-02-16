@@ -274,6 +274,7 @@ const Sidebar = ( {
 						</div>
 					) }
 					<LaunchpadInternal
+						flow={ flow }
 						site={ site }
 						siteSlug={ launchpadKey }
 						checklistSlug={ checklistSlug }
