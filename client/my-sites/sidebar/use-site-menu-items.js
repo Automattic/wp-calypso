@@ -77,31 +77,35 @@ const useSiteMenuItems = () => {
 
 	const hasUnifiedImporter = isEnabled( 'importer/unified' );
 
-	// Temporary fix to display the Newsletter menu item in the Settings menu for Jetpack sites.
-	// This can be removed once the code is released: https://github.com/Automattic/jetpack/pull/33065
-	const menuItemsWithNewsletterSettings = useMemo( () => {
-		if ( ! isJetpack || ! Array.isArray( menuItems ) || menuItems.length === 0 ) {
+	// Temporary patch to force display Github deployments menu item for testing (Cft).
+	// This can be removed once testing is complete.
+	const menuItemsWithGithubDeployments = useMemo( () => {
+		if (
+			! isJetpack ||
+			! Array.isArray( menuItems ) ||
+			menuItems.length === 0 ||
+			! isEnabled( 'github-deployments' )
+		) {
 			return menuItems;
 		}
 
 		return menuItems.map( ( menuItem ) => {
-			if ( menuItem.icon === 'dashicons-admin-settings' && Array.isArray( menuItem.children ) ) {
-				// Check if the 'Newsletter' submenu already exists.
-				const newsletterExists = menuItem.children.some(
-					( child ) => child.url && child.url.startsWith( '/settings/newsletter/' )
+			if ( menuItem.icon === 'dashicons-admin-tools' && Array.isArray( menuItem.children ) ) {
+				const githubDeploymentsExist = menuItem.children.some(
+					( child ) => child.url && child.url.startsWith( '/github-deployments/' )
 				);
 
-				if ( ! newsletterExists ) {
+				if ( ! githubDeploymentsExist ) {
 					return {
 						...menuItem,
 						children: [
 							...menuItem.children,
 							{
 								parent: menuItem.children[ 0 ].parent,
-								slug: 'newsletter',
-								title: translate( 'Newsletter' ),
+								slug: 'tools-github-deployments',
+								title: translate( 'GitHub Deployments' ),
 								type: 'submenu-item',
-								url: `/settings/newsletter/${ siteDomain }`,
+								url: `/github-deployments/${ siteDomain }`,
 							},
 						],
 					};
@@ -158,7 +162,7 @@ const useSiteMenuItems = () => {
 		showSiteMonitoring: isAtomic,
 	};
 
-	return menuItemsWithNewsletterSettings ?? buildFallbackResponse( fallbackDataOverrides );
+	return menuItemsWithGithubDeployments ?? buildFallbackResponse( fallbackDataOverrides );
 };
 
 export default useSiteMenuItems;
