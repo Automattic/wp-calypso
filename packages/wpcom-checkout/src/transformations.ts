@@ -154,6 +154,10 @@ function getDiscountReasonForIntroductoryOffer(
 export interface CostOverrideForDisplay {
 	humanReadableReason: string;
 	overrideCode: string;
+
+	/**
+	 * The amount saved by this cost override in the currency's smallest unit.
+	 */
 	discountAmount: number;
 }
 
@@ -219,6 +223,36 @@ function getDiscountForCostOverrideForDisplay( costOverride: ResponseCartCostOve
 	return costOverride.old_subtotal_integer - costOverride.new_subtotal_integer;
 }
 
+/**
+ * Returns cost overrides (typically discounts) for display in checkout.
+ *
+ * Cost overrides are applied to shopping-cart line items, but they are
+ * displayed as if they applied to the entire cart. For example, we may have
+ * two items which have a "Coupon code" discount, but we will only display one
+ * "Coupon code" discount line which shows the savings from both of those items
+ * combined.
+ *
+ * This function therefore merges the discounts for each line item in the cart
+ * by the item's human-readable reason.
+ *
+ * In most cases, the human-readable reasons are provided directly by the
+ * shopping-cart, but each cost override also includes a unique code which
+ * identifies it and we can use those codes to perform special behaviors for
+ * certain discounts. For example we rename Sale Coupon discounts to mention
+ * the item on sale.
+ *
+ * This function also removes original cost overrides since they are never
+ * displayed to users (they represent a change to the product's base price
+ * rather than a discount).
+ *
+ * Finally, this adds a fake "multi-year" pseudo-discount in some cases (see
+ * `canDisplayMultiYearDiscountForProduct()`). In that case, the cart item's
+ * total will also need to be increased by this amount for the discount to be
+ * subtracted without messing up the math. See
+ * `getMultiYearDiscountForProduct()`,
+ * `getSubtotalWithoutDiscountsForProduct()`, and
+ * `getSubtotalWithoutDiscounts().`
+ */
 export function filterAndGroupCostOverridesForDisplay(
 	responseCart: ResponseCart,
 	translate: ReturnType< typeof useTranslate >
@@ -331,6 +365,8 @@ function canDisplayMultiYearDiscountForProduct( product: ResponseCartProduct ): 
  *
  * This function returns the amount by which we'd need to increase that price,
  * which is also the amount of the pseudo-discount.
+ *
+ * Note that this function returns the cost in the currency's smallest unit.
  */
 function getMultiYearDiscountForProduct( product: ResponseCartProduct ): number {
 	if ( ! product.months_per_bill_period || ! canDisplayMultiYearDiscountForProduct( product ) ) {
@@ -351,25 +387,68 @@ function getMultiYearDiscountForProduct( product: ResponseCartProduct ): number 
 	return 0;
 }
 
-function getSubtotalWithoutDiscountsForProduct( product: ResponseCartProduct ): number {
-	// Increase the undiscounted subtotal (which does not include a multi-year
-	// discount, since that is not a real discount) by the cost of each
-	// product's multi-year discount so that we can display that savings as a
-	// discount.
+/**
+ * Return a shopping-cart line item's cost before any discounts are applied.
+ *
+ * Note that this function returns the cost in the currency's smallest unit.
+ */
+export function getSubtotalWithoutDiscountsForProduct( product: ResponseCartProduct ): number {
+	// If there is a fake multi-year pseudo-discount being displayed for this
+	// line item, we need to increase the total of the line item by that amount
+	// so that the math for the discount makes sense. See
+	// `getMultiYearDiscountForProduct()`.
 	const multiYearDiscount = getMultiYearDiscountForProduct( product );
-	if ( multiYearDiscount ) {
-		return product.item_original_subtotal_integer + multiYearDiscount;
+
+	// Return the last original cost override's new price.
+	const originalCostOverrides =
+		product.cost_overrides?.filter( ( override ) => override.does_override_original_cost ) ?? [];
+	if ( originalCostOverrides.length > 0 ) {
+		const lastOriginalCostOverride = originalCostOverrides.pop();
+		if ( lastOriginalCostOverride ) {
+			return lastOriginalCostOverride.new_subtotal_integer + multiYearDiscount;
+		}
 	}
 
-	return product.item_original_subtotal_integer;
+	// If there are no original cost overrides, return the first cost override's
+	// old price.
+	if ( product.cost_overrides && product.cost_overrides.length > 0 ) {
+		const firstOverride = product.cost_overrides[ 0 ];
+		if ( firstOverride ) {
+			return firstOverride.old_subtotal_integer + multiYearDiscount;
+		}
+	}
+
+	// If there are no cost overrides, return the item's cost, since it has no
+	// discounts.
+	return product.item_subtotal_integer + multiYearDiscount;
 }
 
+/**
+ * Return the shopping-cart subtotal before any discounts have been applied to
+ * any cart item.
+ *
+ * This does not include credits which are not a discount; they reduce the
+ * final price after taxes.
+ *
+ * Note that this function returns the cost in the currency's smallest unit.
+ */
 export function getSubtotalWithoutDiscounts( responseCart: ResponseCart ): number {
 	return responseCart.products.reduce( ( total, product ) => {
 		return total + getSubtotalWithoutDiscountsForProduct( product );
 	}, 0 );
 }
 
+/**
+ * Return the total savings from shopping-cart item discounts.
+ *
+ * This includes fake "multi-year" pseudo-discounts. See
+ * `getMultiYearDiscountForProduct()`.
+ *
+ * This does not include credits which are not a discount; they reduce the
+ * final price after taxes.
+ *
+ * Note that this function returns the cost in the currency's smallest unit.
+ */
 export function getTotalDiscountsWithoutCredits(
 	responseCart: ResponseCart,
 	translate: ReturnType< typeof useTranslate >
