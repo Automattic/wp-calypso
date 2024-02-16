@@ -1,3 +1,4 @@
+import { isEnabled } from '@automattic/calypso-config';
 import { FEATURE_SECURITY_SETTINGS, WPCOM_FEATURES_SCAN } from '@automattic/calypso-products';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
@@ -64,7 +65,7 @@ export const SiteSettingsSecurity = ( {
 			<SiteSettingsNavigation site={ site } section="security" />
 			{ showCredentials && <JetpackCredentials /> }
 			{ showJetpackBanner && <JetpackCredentialsBanner siteSlug={ site.slug } /> }
-			<JetpackMonitor />
+			{ ! isEnabled( 'layout/dotcom-nav-redesign' ) && <JetpackMonitor /> }
 			<FormSecurity />
 		</Main>
 	);
