@@ -62,12 +62,11 @@ class MeSidebar extends Component {
 	};
 
 	renderGlobalSidebar() {
-		const asyncProps = {
-			placeholder: null,
+		const props = {
 			path: this.props.path,
 			requireBackLink: true,
 		};
-		return <GlobalSidebar { ...asyncProps }>{ this.renderMenu() }</GlobalSidebar>;
+		return <GlobalSidebar { ...props }>{ this.renderMenu() }</GlobalSidebar>;
 	}
 
 	renderSidebar() {
