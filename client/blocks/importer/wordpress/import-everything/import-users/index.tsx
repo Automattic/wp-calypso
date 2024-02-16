@@ -5,12 +5,14 @@ import { Button } from '@wordpress/components';
 import { useEffect, useState } from '@wordpress/element';
 import { sprintf, _n } from '@wordpress/i18n';
 import { useTranslate } from 'i18n-calypso';
+import { useSelector } from 'react-redux';
 import ExternalLink from 'calypso/components/external-link';
 import InfiniteList from 'calypso/components/infinite-list';
 import useExternalContributorsQuery from 'calypso/data/external-contributors/use-external-contributors';
 import useP2GuestsQuery from 'calypso/data/p2/use-p2-guests-query';
 import useUsersQuery from 'calypso/data/users/use-users-query';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
+import { getCurrentUserId } from 'calypso/state/current-user/selectors';
 import ImportedUserItem from './imported-user-item';
 import { getRole } from './utils';
 import type { UsersQuery, Member } from '@automattic/data-stores';
@@ -26,6 +28,7 @@ interface Props {
 
 const ImportUsers = ( { site, onSubmit }: Props ) => {
 	const defaultTeamFetchOptions = { include_viewers: true };
+	const userId = useSelector( getCurrentUserId );
 	const translate = useTranslate();
 	const usersQuery = useUsersQuery( site?.ID, defaultTeamFetchOptions ) as unknown as UsersQuery;
 	const { data: externalContributors } = useExternalContributorsQuery( site?.ID );
@@ -100,12 +103,18 @@ const ImportUsers = ( { site, onSubmit }: Props ) => {
 	};
 
 	useEffect( () => {
-		const users = usersData?.users?.map( ( user ) => ( { user, checked: true } ) ) || [];
+		let users = usersData?.users?.map( ( user ) => ( { user, checked: true } ) ) || [];
+		if ( userId && users ) {
+			// Remove the current user from users array
+			users = users.filter( ( userItem ) => {
+				return userItem?.user?.linked_user_ID !== userId;
+			} );
+		}
 		if ( JSON.stringify( users ) !== JSON.stringify( usersList ) ) {
 			setUsersList( users );
 			setCheckedUsersNumber( users?.length || 0 );
 		}
-	}, [ usersData, usersList ] );
+	}, [ userId, usersData, usersList ] );
 
 	return (
 		<div className="import__user-migration">
