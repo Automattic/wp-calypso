@@ -13,7 +13,6 @@ import { connect } from 'react-redux';
 import AllSites from 'calypso/blocks/all-sites';
 import SitePlaceholder from 'calypso/blocks/site/placeholder';
 import Search from 'calypso/components/search';
-import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import scrollIntoViewport from 'calypso/lib/scroll-into-viewport';
 import { addQueryArgs } from 'calypso/lib/url';
 import allSitesMenu from 'calypso/my-sites/sidebar/static-data/all-sites-menu';
@@ -323,14 +322,6 @@ export class SiteSelector extends Component {
 		// Eventually, we'll want to filter out domain-only sites at the API boundary instead.
 		sites = sites.filter( ( site ) => ! site?.options?.is_domain_only );
 
-		// For Jetpack Cloud, we filter only wp-admin interface Atomic sites
-		if ( isJetpackCloud() ) {
-			sites = sites.filter( ( site ) => {
-				return (
-					! site?.options?.is_wpcom_atomic || 'wp-admin' === site?.options?.wpcom_admin_interface
-				);
-			} );
-		}
 		return sites;
 	}
 
