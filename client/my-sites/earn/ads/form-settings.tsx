@@ -410,22 +410,25 @@ const AdsFormSettings = () => {
 						</FormFieldset>
 					</div>
 				) }
-				<FormFieldset>
-					<ToggleControl
-						checked={ !! settings.cmp_enabled }
-						disabled={ isDisabled }
-						onChange={ () => handleCompactToggle( 'cmp_enabled' ) }
-						label={ translate( 'Enable GDPR Consent Banner' ) }
-					/>
 
-					<div className="ads__child-settings">
-						<FormSettingExplanation>
-							{ translate(
-								'Show a cookie banner to all EU and UK site visitors prompting them to consent to their personal data being used to personalize the ads they see. Without proper consents EU/UK visitors will only see lower paying non-personalized ads.'
-							) }
-						</FormSettingExplanation>
-					</div>
-				</FormFieldset>
+				{ siteIsJetpack && (
+					<FormFieldset>
+						<ToggleControl
+							checked={ !! settings.cmp_enabled }
+							disabled={ isDisabled }
+							onChange={ () => handleCompactToggle( 'cmp_enabled' ) }
+							label={ translate( 'Enable GDPR Consent Banner' ) }
+						/>
+
+						<div className="ads__child-settings">
+							<FormSettingExplanation>
+								{ translate(
+									'Show a cookie banner to all EU and UK site visitors prompting them to consent to their personal data being used to personalize the ads they see. Without proper consents EU/UK visitors will only see lower paying non-personalized ads.'
+								) }
+							</FormSettingExplanation>
+						</div>
+					</FormFieldset>
+				) }
 			</div>
 		);
 	}
