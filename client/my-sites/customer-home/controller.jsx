@@ -1,3 +1,4 @@
+import { isEnabled } from '@automattic/calypso-config';
 import page from '@automattic/calypso-router';
 import { fetchLaunchpad } from '@automattic/data-stores';
 import { areLaunchpadTasksCompleted } from 'calypso/landing/stepper/declarative-flow/internals/steps-repository/launchpad/task-helper';
@@ -44,7 +45,10 @@ export async function maybeRedirect( context, next ) {
 	const isSiteLaunched = site?.launch_status === 'launched' || false;
 	let fetchPromise;
 
-	if ( isSiteOnWooExpressEcommerceTrial( state, siteId ) ) {
+	if (
+		isSiteOnWooExpressEcommerceTrial( state, siteId ) &&
+		! isEnabled( 'layout/dotcom-nav-redesign' )
+	) {
 		// Pre-fetch plugins and modules to avoid flashing content prior deciding whether to redirect.
 		fetchPromise = Promise.allSettled( [
 			context.store.dispatch( fetchSitePlugins( siteId ) ),
