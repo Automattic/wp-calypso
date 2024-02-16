@@ -1,13 +1,13 @@
-import { FormLabel, Spinner } from '@automattic/components';
+import { FoldableCard, FormLabel, Spinner, Card } from '@automattic/components';
 import { Icon, SelectControl, Button } from '@wordpress/components';
 import { check, closeSmall } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
+import classNames from 'classnames';
 import { translate } from 'i18n-calypso';
 import { useState } from 'react';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormRadiosBar from 'calypso/components/forms/form-radios-bar';
 import SupportInfo from 'calypso/components/support-info';
-import { FormTextInputWithAffixes } from 'calypso/devdocs/design/playground-scope';
 interface DeploymentStyleProps {
 	onChange?( query: string ): void;
 }
@@ -42,24 +42,13 @@ export const DeploymentStyle = ( { onChange }: DeploymentStyleProps ) => {
 		{ value: 'test', label: 'test.yml' },
 	];
 
-	const RenderWorkflowCheck = ( { state, label }: { state: WorkFlowStates; label: string } ) => {
-		const RenderIcon = () => {
-			if ( state === 'loading' ) {
-				return <Spinner />;
-			}
+	const RenderIcon = ( { state }: { state: WorkFlowStates } ) => {
+		if ( state === 'loading' ) {
+			return <Spinner className="custom-icons" />;
+		}
 
-			const icon = state === 'success' ? check : closeSmall;
-			return <Icon size={ 20 } icon={ icon } className={ state } />;
-		};
-
-		return (
-			<FormTextInputWithAffixes
-				noWrap
-				prefix={ RenderIcon() }
-				value={ label }
-				id="site-redirect__input"
-			/>
-		);
+		const icon = state === 'success' ? check : closeSmall;
+		return <Icon size={ 20 } icon={ icon } className={ classNames( 'custom-icons', state ) } />;
 	};
 
 	setTimeout( () => {
@@ -112,25 +101,30 @@ export const DeploymentStyle = ( { onChange }: DeploymentStyleProps ) => {
 						components: { filename: <span>deploy-live.yml</span> },
 					} ) }
 				</p>
-				<RenderWorkflowCheck
-					state={ workflowTriggeredOnPush }
-					label={ __( 'The workflow is triggered on push' ) }
-				/>
-				<RenderWorkflowCheck
-					state={ workflowUploadArtifact }
-					label={ __( 'The upload artifact has the required name' ) }
-				/>
-				{ workflowUploadArtifact === 'error' && (
-					<div className="github-deployments-connect-repository__repository">
+				<Card className="deployment-style__workflow-card">
+					<RenderIcon state={ workflowTriggeredOnPush } />
+					{ __( 'The workflow is triggered on push' ) }
+				</Card>
+				<FoldableCard
+					expanded={ workflowUploadArtifact === 'error' }
+					header={
+						<div>
+							<RenderIcon state={ workflowUploadArtifact } />
+							{ __( 'The upload artifact has the required name' ) }
+						</div>
+					}
+					screenReaderText="More"
+				>
+					<div>
 						<p>{ __( "Ensure that your workflow generates an artifact named 'wpcom'." ) }</p>
 						<p>
 							- name: Upload the artifact <br></br>uses: actions/upload-artifact@v4 <br></br>with:
 							name: wpcom
 						</p>
 					</div>
-				) }
+				</FoldableCard>
 
-				<div className="github-deployments-connect-repository__actions">
+				<div className="deployment-style__actions">
 					<Button type="button" className="button form-button">
 						{ __( 'Verify workflow' ) }
 					</Button>
