@@ -1,5 +1,5 @@
+import { Icon, search } from '@wordpress/icons';
 import classnames from 'classnames';
-import SidebarCustomIcon from 'calypso/layout/sidebar/custom-icon';
 import SidebarMenuItem from '../menu-item';
 
 const SidebarSearch = ( { tooltip } ) => {
@@ -11,7 +11,7 @@ const SidebarSearch = ( { tooltip } ) => {
 					'is-active': false,
 				} ) }
 				tooltip={ tooltip }
-				icon={ <SidebarCustomIcon icon="dashicons-search" /> }
+				icon={ <Icon icon={ search } size={ 28 } /> }
 			/>
 		</>
 	);

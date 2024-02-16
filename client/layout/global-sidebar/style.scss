@@ -158,25 +158,8 @@
 	}
 
 	.sidebar__item-search {
-		.sidebar__menu-icon {
-			margin: 0;
-			&::before {
-				content: "\f179";
-				/* stylelint-disable-next-line font-family-no-missing-generic-family-keyword */
-				font-family: dashicons;
-				/* stylelint-disable-next-line  declaration-property-unit-allowed-list */
-				font-size: 28px;
-				line-height: 28px;
-				background-color: var(--studio-black);
-				color: var(--studio-white);
-				margin: 0 0 0 8px;
-				/* Flip the icon horizontally */
-				-moz-transform: scale(-1, 1);
-				-webkit-transform: scale(-1, 1);
-				-o-transform: scale(-1, 1);
-				-ms-transform: scale(-1, 1);
-				transform: scale(-1, 1);
-			}
+		svg {
+			fill: var(--studio-white);
 		}
 	}
 }
