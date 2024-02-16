@@ -1,8 +1,13 @@
 import { useSelector } from 'react-redux';
+import Site from 'calypso/blocks/site';
 import SidebarSeparator from 'calypso/layout/sidebar/separator';
 import isSiteWpcomAtomic from 'calypso/state/selectors/is-site-wpcom-atomic';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
-import { getSidebarIsCollapsed, getSelectedSiteId } from 'calypso/state/ui/selectors';
+import {
+	getSidebarIsCollapsed,
+	getSelectedSiteId,
+	getSelectedSite,
+} from 'calypso/state/ui/selectors';
 import MySitesSidebarUnifiedItem from './item';
 import MySitesSidebarUnifiedMenu from './menu';
 import useSiteMenuItems from './use-site-menu-items';
@@ -14,6 +19,7 @@ import './style.scss';
 export const MySitesSidebarUnifiedBody = ( { path, children } ) => {
 	const menuItems = useSiteMenuItems();
 	const sidebarIsCollapsed = useSelector( getSidebarIsCollapsed );
+	const site = useSelector( getSelectedSite );
 	const siteId = useSelector( getSelectedSiteId );
 	const isJetpack = useSelector( ( state ) => isJetpackSite( state, siteId ) );
 	const isSiteAtomic = useSelector( ( state ) => isSiteWpcomAtomic( state, siteId ) );
@@ -27,6 +33,9 @@ export const MySitesSidebarUnifiedBody = ( { path, children } ) => {
 			{ menuItems.map( ( item, i ) => {
 				const isSelected = item?.url && itemLinkMatches( item.url, path );
 
+				if ( 'current-site' === item?.type ) {
+					return <Site site={ site } href={ item?.url } isSelected={ isSelected } />;
+				}
 				if ( 'separator' === item?.type ) {
 					return <SidebarSeparator key={ i } />;
 				}

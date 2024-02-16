@@ -12,6 +12,72 @@
 		height: 100%;
 	}
 
+	.tooltip {
+		position: relative;
+
+		&::after {
+			background: var(--studio-white);
+			border-radius: 4px;
+			bottom: -30px;
+			color: var(--studio-black);
+			content: attr(data-tooltip);
+			display: none;
+			font-size: 14px; /* stylelint-disable-line declaration-property-unit-allowed-list */
+			padding: 6px 10px;
+			position: absolute;
+			right: 0;
+			white-space: nowrap;
+			z-index: 8;
+		}
+
+		&:hover::after {
+			display: block;
+		}
+	}
+
+	.tooltip-bottom {
+		&::after {
+			left: 0;
+			right: unset;
+		}
+	}
+
+	.sidebar__header {
+		align-items: center;
+		display: flex;
+		gap: 8px;
+		padding: 30px 24px 29px;
+
+		a {
+			color: var(--nav-link);
+			text-decoration: none;
+		}
+
+		span.dotcom,
+		button.sidebar__item-search,
+		a.sidebar__item-notifications {
+			display: flex;
+			width: 28px;
+			height: 28px;
+			margin: 0;
+		}
+
+		span.gap {
+			flex: 1;
+		}
+
+		span.dotcom {
+			background-image: url(calypso/assets/images/global-sidebar/dotcom.svg);
+			background-repeat: no-repeat;
+			background-position: center;
+			width: 125px;
+		}
+
+		.sidebar__item-search {
+			cursor: pointer;
+		}
+	}
+
 	.sidebar__body {
 		flex: 1;
 		overflow-y: auto;
@@ -19,11 +85,6 @@
 
 		.sidebar {
 			display: flex;
-			gap: 6px;
-		}
-		.sidebar__menu:not(.is-togglable) {
-			display: flex;
-			flex-direction: column;
 			gap: 6px;
 		}
 		.sidebar__menu.is-togglable a.sidebar__heading {
@@ -60,6 +121,12 @@
 		}
 	}
 
+	.sidebar-notifications {
+		.sidebar__menu-icon.sidebar_svg-notifications {
+			fill: var(--color-sidebar-background);
+		}
+	}
+
 	.sidebar__back-link {
 		padding-left: 12px;
 		a {
@@ -70,6 +137,18 @@
 		svg.gridicons-chevron-left {
 			vertical-align: top;
 			fill: var(--color-sidebar-gridicon-fill);
+		}
+	}
+
+	.site {
+		flex: unset;
+
+		&.is-selected {
+			background: var(--color-sidebar-menu-selected-background);
+		}
+
+		&:hover {
+			background: var(--color-sidebar-menu-hover-background);
 		}
 	}
 }

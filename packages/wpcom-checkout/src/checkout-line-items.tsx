@@ -41,6 +41,7 @@ import { isWpComProductRenewal } from './is-wpcom-product-renewal';
 import { joinClasses } from './join-classes';
 import { getPartnerCoupon } from './partner-coupon';
 import IonosLogo from './partner-logo-ionos';
+import { getSubtotalWithoutDiscountsForProduct } from './transformations';
 import type { LineItemType } from './types';
 import type {
 	GSuiteProductUser,
@@ -1244,27 +1245,6 @@ const DesktopGiftWrapper = styled.div`
 	}
 `;
 
-/**
- * Note that this function returns the cost in the currency's smallest unit.
- */
-function getCostBeforeDiscounts( product: ResponseCartProduct ): number {
-	const originalCostOverrides =
-		product.cost_overrides?.filter( ( override ) => override.does_override_original_cost ) ?? [];
-	if ( originalCostOverrides.length > 0 ) {
-		const lastOriginalCostOverride = originalCostOverrides.pop();
-		if ( lastOriginalCostOverride ) {
-			return lastOriginalCostOverride.new_subtotal_integer;
-		}
-	}
-	if ( product.cost_overrides && product.cost_overrides.length > 0 ) {
-		const firstOverride = product.cost_overrides[ 0 ];
-		if ( firstOverride ) {
-			return firstOverride.old_subtotal_integer;
-		}
-	}
-	return product.item_subtotal_integer;
-}
-
 function CheckoutLineItem( {
 	children,
 	product,
@@ -1340,10 +1320,7 @@ function CheckoutLineItem( {
 			? product.item_subtotal_integer / product.quantity
 			: product.item_subtotal_integer;
 
-	// Introductory offers have their renewal price returned as the original
-	// cost property, and we don't want to show that as the item's cost before
-	// discounts, so we calculate that separately here.
-	const costBeforeDiscounts = getCostBeforeDiscounts( product );
+	const costBeforeDiscounts = getSubtotalWithoutDiscountsForProduct( product );
 
 	const actualAmountDisplay = formatCurrency( itemSubtotalInteger, product.currency, {
 		isSmallestUnit: true,

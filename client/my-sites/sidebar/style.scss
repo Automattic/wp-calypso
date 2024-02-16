@@ -28,6 +28,13 @@
 	--color-sidebar-submenu-hover-text: #00b9eb;
 	--color-sidebar-submenu-selected-background: transparent;
 	--color-sidebar-submenu-selected-text: var(--color-text-inverted);
+
+	.is-global-sidebar-visible {
+		--sidebar-width-max: 314px;
+		--sidebar-width-min: 314px;
+
+		--color-sidebar-background: var(--studio-black);
+	}
 }
 
 // Local Vars
@@ -317,6 +324,10 @@ $font-size: rem(14px);
 				padding-right: 12px;
 			}
 		}
+	}
+
+	.global-sidebar .sidebar {
+		background-color: var(--studio-black);
 	}
 
 	//client/components/site-selector/style.scss

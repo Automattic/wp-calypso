@@ -1,6 +1,7 @@
 import { Spinner, Gridicon } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import { useSelector } from 'react-redux';
+import GlobalSidebarHeader from 'calypso/layout/global-sidebar/header';
 import useSiteMenuItems from 'calypso/my-sites/sidebar/use-site-menu-items';
 import { getIsRequestingAdminMenu } from 'calypso/state/admin-menu/selectors';
 import Sidebar from '../sidebar';
@@ -21,11 +22,14 @@ const GlobalSidebar = ( { children, onClick = undefined, className = '', ...prop
 		return <Spinner className="sidebar__menu-loading" />;
 	}
 
+	const { requireBackLink, ...sidebarProps } = props;
+
 	return (
 		<div className="global-sidebar">
+			<GlobalSidebarHeader />
 			<div className="sidebar__body">
-				<Sidebar className={ className } { ...props } onClick={ onClick }>
-					{ props.requireBackLink && (
+				<Sidebar className={ className } { ...sidebarProps } onClick={ onClick }>
+					{ requireBackLink && (
 						<div className="sidebar__back-link">
 							<a href="/sites">
 								<Gridicon icon="chevron-left" size={ 24 } />
