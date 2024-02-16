@@ -744,6 +744,8 @@ export default function CheckoutMain( {
 		[ responseCart.products ]
 	);
 
+	const product_slug_list = responseCart?.products?.map( ( product ) => product.product_slug );
+
 	return (
 		<Fragment>
 			<QueryJetpackSaleCoupon />
@@ -751,7 +753,7 @@ export default function CheckoutMain( {
 			<QuerySitePurchases siteId={ updatedSiteId } />
 			{ isSiteless && <QueryUserPurchases /> }
 			<QueryPlans />
-			<QueryProducts />
+			<QueryProducts product_slug_list={ product_slug_list } />
 			<QueryContactDetailsCache />
 			{ cartHasSearchProduct && <QueryPostCounts siteId={ updatedSiteId || -1 } type="post" /> }
 			<PageViewTracker
