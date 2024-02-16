@@ -1002,6 +1002,7 @@ const getFormSettings = ( settings ) => {
 		timezone_string: '',
 		blog_public: '',
 		wpcom_coming_soon: '',
+		wpcom_data_sharing_opt_out: false,
 		wpcom_legacy_contact: '',
 		wpcom_locked_mode: false,
 		wpcom_public_coming_soon: '',
@@ -1022,6 +1023,7 @@ const getFormSettings = ( settings ) => {
 		timezone_string: settings.timezone_string,
 
 		wpcom_coming_soon: settings.wpcom_coming_soon,
+		wpcom_data_sharing_opt_out: !! settings.wpcom_data_sharing_opt_out,
 		wpcom_legacy_contact: settings.wpcom_legacy_contact,
 		wpcom_locked_mode: settings.wpcom_locked_mode,
 		wpcom_public_coming_soon: settings.wpcom_public_coming_soon,
