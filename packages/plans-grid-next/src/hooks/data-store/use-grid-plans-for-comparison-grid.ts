@@ -3,7 +3,7 @@ import {
 	PLAN_ENTERPRISE_GRID_WPCOM,
 	PLAN_HOSTING_TRIAL_MONTHLY,
 } from '@automattic/calypso-products';
-import { useMemo } from 'react';
+import { useMemo } from '@wordpress/element';
 import { GridPlan, PlansIntent } from '../../types';
 import useRestructuredPlanFeaturesForComparisonGrid from './use-restructured-plan-features-for-comparison-grid';
 

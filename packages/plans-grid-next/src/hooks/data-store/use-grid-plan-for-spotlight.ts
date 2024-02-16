@@ -1,5 +1,5 @@
 import { getPlanClass } from '@automattic/calypso-products';
-import { useMemo } from 'react';
+import { useMemo } from '@wordpress/element';
 import { GridPlan, PlansIntent } from '../../types';
 
 const SPOTLIGHT_ENABLED_INTENTS = [ 'plans-default-wpcom' ];
