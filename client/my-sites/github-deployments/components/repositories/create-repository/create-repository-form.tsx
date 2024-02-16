@@ -117,21 +117,21 @@ export const CreateRepositoryForm = ( {
 				<FormFieldset className="github-deployments-create-repository__project-type">
 					<FormLabel>{ __( 'What are you building ' ) }</FormLabel>
 					<FormRadioWithTemplateSelect
-						label={ __( 'A plugin' ) }
-						projectType="plugin"
-						isChecked={ projectType === 'plugin' }
-						onChange={ () => {
-							setProjectType( 'plugin' );
-						} }
-						onTemplateSelected={ setTemplate }
-						template={ template }
-					/>
-					<FormRadioWithTemplateSelect
 						label={ __( 'A theme' ) }
 						projectType="theme"
 						isChecked={ projectType === 'theme' }
 						onChange={ () => {
 							setProjectType( 'theme' );
+						} }
+						onTemplateSelected={ setTemplate }
+						template={ template }
+					/>
+					<FormRadioWithTemplateSelect
+						label={ __( 'A plugin' ) }
+						projectType="plugin"
+						isChecked={ projectType === 'plugin' }
+						onChange={ () => {
+							setProjectType( 'plugin' );
 						} }
 						onTemplateSelected={ setTemplate }
 						template={ template }
