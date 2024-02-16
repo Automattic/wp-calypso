@@ -11,10 +11,7 @@ const SidebarSearch = ( { tooltip } ) => {
 					'is-active': false,
 				} ) }
 				tooltip={ tooltip }
-				icon={ <Icon
-					icon={ search }
-					size={ 28 }
-				/> }
+				icon={ <Icon icon={ search } size={ 28 } /> }
 			/>
 		</>
 	);

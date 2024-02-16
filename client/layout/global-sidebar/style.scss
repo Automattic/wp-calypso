@@ -87,11 +87,9 @@
 			display: flex;
 			gap: 6px;
 		}
-
 		.sidebar__menu.is-togglable a.sidebar__heading {
 			padding: 8px 8px 8px 20px;
 		}
-
 		a.sidebar__menu-link {
 			padding: 8px 8px 8px 20px;
 
@@ -102,7 +100,6 @@
 				max-height: auto;
 			}
 		}
-
 		.sidebar__menu-item-title-text {
 			line-height: 32px;
 		}
@@ -116,7 +113,6 @@
 			.sidebar__menu-link {
 				.sidebar_svg-reader {
 					fill: var(--color-sidebar-menu-selected-background);
-
 					g path {
 						fill: var(--color-sidebar-menu-selected-text);
 					}
@@ -133,7 +129,6 @@
 
 	.sidebar__back-link {
 		padding-left: 12px;
-
 		a {
 			color: var(--nav-link);
 			text-decoration: none;
