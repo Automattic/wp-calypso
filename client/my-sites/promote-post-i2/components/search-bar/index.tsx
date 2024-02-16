@@ -27,7 +27,7 @@ interface Props {
 	handleFilterPostTypeChange?: ( type: string ) => void;
 }
 
-type DropdownOption = {
+export type DropdownOption = {
 	label: string;
 	value: string;
 };
@@ -38,11 +38,22 @@ const SORT_OPTIONS_RECENTLY_UPDATED = 'modified';
 const SORT_OPTIONS_MOST_LIKED = 'like_count';
 const SORT_OPTIONS_MOST_COMMENTED = 'comment_count';
 const SORT_OPTIONS_MOST_VIEWED = 'monthly_view_count';
+const SORT_OPTIONS_IMPRESSIONS_HIGH_LOW = 'impressions_total|desc';
+const SORT_OPTIONS_IMPRESSIONS_LOW_HIGH = 'impressions_total|asc';
+const SORT_OPTIONS_CLICKS_HIGH_LOW = 'clicks_total|desc';
+const SORT_OPTIONS_CLICKS_LOW_HIGH = 'clicks_total|asc';
+const SORT_OPTIONS_CREATED_AT = 'created_at';
 
 export const SORT_OPTIONS_DEFAULT = {
-	orderBy: SORT_OPTIONS_RECENTLY_UPDATED,
+	orderBy: SORT_OPTIONS_LAST_PUBLISHED,
 	order: 'desc',
 };
+
+export const CAMPAIGNS_SORT_OPTIONS_DEFAULT = {
+	orderBy: SORT_OPTIONS_CREATED_AT,
+	order: 'desc',
+};
+
 const FILTER_OPTIONS_DEFAULT = {
 	status: '',
 	postType: '',
@@ -79,6 +90,29 @@ export default function SearchBar( props: Props ) {
 		},
 	];
 
+	const campaignSortOptions: Array< DropdownOption > = [
+		{
+			label: translate( 'Recently published' ),
+			value: SORT_OPTIONS_CREATED_AT,
+		},
+		{
+			label: translate( 'Impressions: High - Low' ),
+			value: SORT_OPTIONS_IMPRESSIONS_HIGH_LOW,
+		},
+		{
+			label: translate( 'Impressions: Low - High' ),
+			value: SORT_OPTIONS_IMPRESSIONS_LOW_HIGH,
+		},
+		{
+			label: translate( 'Clicks: High - Low' ),
+			value: SORT_OPTIONS_CLICKS_HIGH_LOW,
+		},
+		{
+			label: translate( 'Clicks: Low - High' ),
+			value: SORT_OPTIONS_CLICKS_LOW_HIGH,
+		},
+	];
+
 	const postTypeOptions: Array< DropdownOption > = [
 		{
 			label: translate( 'All' ),
@@ -109,19 +143,48 @@ export default function SearchBar( props: Props ) {
 		},
 	];
 
+	const campaignFilterOptions: Array< DropdownOption > = [
+		{
+			value: '',
+			label: translate( 'All' ),
+		},
+		{
+			value: 'active',
+			label: translate( 'Active' ),
+		},
+		{
+			value: 'created',
+			label: translate( 'In moderation' ),
+		},
+		{
+			value: 'finished',
+			label: translate( 'Completed' ),
+		},
+		{
+			value: 'rejected',
+			label: translate( 'Rejected' ),
+		},
+	];
+
 	const options = isWooStore ? wooPostTypeOptions : postTypeOptions;
 	// Smooth horizontal scrolling on mobile views
 	const tabsRef = useRef< { [ key: string ]: HTMLSpanElement | null } >( {} );
 	const [ searchInput, setSearchInput ] = React.useState< string | undefined >( '' );
 	const [ sortOption, setSortOption ] = React.useState( SORT_OPTIONS_DEFAULT );
+	const [ campaignSortOption, setCampaignSortOption ] = React.useState(
+		CAMPAIGNS_SORT_OPTIONS_DEFAULT
+	);
 	const [ filterOption, setFilterOption ] = React.useState( FILTER_OPTIONS_DEFAULT );
-	const isDesktop = useMediaQuery( '(min-width: 1055px)' );
+	const isDesktop = useMediaQuery( '(min-width: 1300px)' );
 
 	useEffect( () => {
 		handleSetSearch( {
 			search: '',
-			order: SORT_OPTIONS_DEFAULT,
-			filter: { ...FILTER_OPTIONS_DEFAULT, postType: postType || '' },
+			order: mode === 'posts' ? SORT_OPTIONS_DEFAULT : undefined,
+			filter:
+				mode === 'posts'
+					? { ...FILTER_OPTIONS_DEFAULT, postType: postType || '' }
+					: FILTER_OPTIONS_DEFAULT,
 		} );
 	}, [] );
 
@@ -179,15 +242,42 @@ export default function SearchBar( props: Props ) {
 		} );
 	};
 
-	const getSortLabel = () => {
-		const selectedOption = sortOptions.find( ( item ) => item.value === sortOption.orderBy )?.label;
+	const onCampaignChangeOrderOption = ( sort: DropdownOption ) => {
+		const [ orderBy, order ] = sort.value.split( '|' );
+		const newOrder = {
+			orderBy: orderBy,
+			order: order === 'asc' ? 'asc' : 'desc',
+		};
 
-		return selectedOption
-			? // translators: sortOption is something like Last published, Recently updated, etc.
-			  translate( 'Sort: %(sortOption)s', {
-					args: { sortOption: selectedOption },
-			  } )
-			: undefined;
+		setCampaignSortOption( newOrder );
+		handleSetSearch( {
+			search: searchInput || '',
+			order: newOrder,
+			filter: filterOption,
+		} );
+	};
+
+	const getSortLabel = () => {
+		let selectedSortOption = campaignSortOption.orderBy;
+		if (
+			campaignSortOption.orderBy === 'clicks_total' ||
+			campaignSortOption.orderBy === 'impressions_total'
+		) {
+			selectedSortOption = `${ campaignSortOption.orderBy }|${ campaignSortOption.order }`;
+		}
+
+		const selectedOption = campaignSortOptions.find( ( item ) => item.value === selectedSortOption )
+			?.label;
+
+		if ( selectedOption ) {
+			return isDesktop
+				? translate( 'Sort: %(sortOption)s', {
+						args: { sortOption: selectedOption },
+				  } )
+				: selectedOption;
+		}
+
+		return isDesktop ? translate( 'Sort: Last published' ) : translate( 'Recently published' );
 	};
 
 	const getPostTypeFilterLabel = () => {
@@ -198,6 +288,19 @@ export default function SearchBar( props: Props ) {
 		return selectedOption
 			? // translators: filterOption is something like All, Posts and Pages
 			  translate( 'Post type: %(filterOption)s', {
+					args: { filterOption: selectedOption },
+			  } )
+			: undefined;
+	};
+
+	const getCampaignFilterLabel = () => {
+		const selectedOption = campaignFilterOptions.find(
+			( item ) => item.value === filterOption.status
+		)?.label;
+
+		return selectedOption
+			? // translators: filterOption is something like All, Active, In Moderation, Completed or Rejected.
+			  translate( '%(filterOption)s campaigns', {
 					args: { filterOption: selectedOption },
 			  } )
 			: undefined;
@@ -261,10 +364,33 @@ export default function SearchBar( props: Props ) {
 				) }
 
 				{ mode === 'campaigns' && (
-					<CampaignsFilter
-						handleChangeFilter={ onChangeStatus }
-						campaignsFilter={ filterOption.status as CampaignsFilterType }
-					/>
+					<>
+						{ isDesktop && (
+							<CampaignsFilter
+								handleChangeFilter={ onChangeStatus }
+								campaignsFilter={ filterOption.status as CampaignsFilterType }
+								options={ campaignFilterOptions }
+							/>
+						) }
+
+						{ ! isDesktop && (
+							<SelectDropdown
+								className="promote-post-i2__search-bar-dropdown campaigns-filter"
+								onSelect={ ( option: DropdownOption ) => onChangeStatus( option.value ) }
+								options={ campaignFilterOptions }
+								initialSelected={ filterOption.status }
+								selectedText={ getCampaignFilterLabel() }
+							/>
+						) }
+
+						<SelectDropdown
+							className="promote-post-i2__search-bar-dropdown campaigns-order-by"
+							onSelect={ onCampaignChangeOrderOption }
+							options={ campaignSortOptions }
+							initialSelected={ campaignSortOption.orderBy }
+							selectedText={ getSortLabel() }
+						/>
+					</>
 				) }
 			</div>
 		</div>

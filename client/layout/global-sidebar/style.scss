@@ -21,11 +21,6 @@
 			display: flex;
 			gap: 6px;
 		}
-		.sidebar__menu:not(.is-togglable) {
-			display: flex;
-			flex-direction: column;
-			gap: 6px;
-		}
 		.sidebar__menu.is-togglable a.sidebar__heading {
 			padding: 8px 8px 8px 20px;
 		}
@@ -70,6 +65,18 @@
 		svg.gridicons-chevron-left {
 			vertical-align: top;
 			fill: var(--color-sidebar-gridicon-fill);
+		}
+	}
+
+	.site {
+		flex: unset;
+
+		&.is-selected {
+			background: var(--color-sidebar-menu-selected-background);
+		}
+
+		&:hover {
+			background: var(--color-sidebar-menu-hover-background);
 		}
 	}
 }

@@ -5,7 +5,7 @@ import SiteActions from 'calypso/jetpack-cloud/sections/agency-dashboard/sites-o
 import useFormattedSites from 'calypso/jetpack-cloud/sections/agency-dashboard/sites-overview/site-content/hooks/use-formatted-sites';
 import SiteStatusContent from 'calypso/jetpack-cloud/sections/agency-dashboard/sites-overview/site-status-content';
 import TextPlaceholder from 'calypso/jetpack-cloud/sections/partner-portal/text-placeholder';
-import { AllowedTypes, Site, SiteData } from '../types';
+import { AllowedTypes, SiteData } from '../types';
 import { SitesDataViewsProps } from './interfaces';
 
 import './style.scss';
@@ -58,7 +58,7 @@ const SitesDataViews = ( { data, isLoading, onViewChange }: SitesDataViewsProps 
 				);
 			}
 		},
-		[ sites ]
+		[ sites, isLoading ]
 	);
 
 	const fields = [
