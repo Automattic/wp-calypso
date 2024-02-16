@@ -274,14 +274,13 @@ export class ReaderSidebar extends Component {
 	}
 
 	renderGlobalSidebar() {
-		const asyncProps = {
-			placeholder: null,
+		const props = {
 			path: this.props.path,
 			onClick: this.handleClick,
 			requireBackLink: true,
 		};
 		return (
-			<GlobalSidebar { ...asyncProps }>
+			<GlobalSidebar { ...props }>
 				<SidebarRegion>
 					<ReaderSidebarNudges />
 					{ this.renderSidebarMenu() }
