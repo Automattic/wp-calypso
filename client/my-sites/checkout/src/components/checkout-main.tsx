@@ -53,6 +53,7 @@ import { CHECKOUT_STORE } from '../lib/wpcom-store';
 import { CheckoutLoadingPlaceholder } from './checkout-loading-placeholder';
 import { OnChangeItemVariant } from './item-variation-picker';
 import JetpackProRedirectModal from './jetpack-pro-redirect-modal';
+import PrePurchaseNotices from './prepurchase-notices';
 import WPCheckout from './wp-checkout';
 import type { PaymentProcessorOptions } from '../types/payment-processors';
 import type {
@@ -85,7 +86,6 @@ export interface CheckoutMainProps {
 	isNoSiteCart?: boolean;
 	isGiftPurchase?: boolean;
 	isInModal?: boolean;
-	infoMessage?: JSX.Element;
 	// IMPORTANT NOTE: This will not be called for redirect payment methods like
 	// PayPal. They will redirect directly to the post-checkout page decided by
 	// `getThankYouUrl`.
@@ -125,7 +125,6 @@ export default function CheckoutMain( {
 	isLoggedOutCart,
 	isNoSiteCart,
 	isGiftPurchase,
-	infoMessage,
 	isInModal,
 	onAfterPaymentComplete,
 	disabledThankYouPage,
@@ -764,7 +763,7 @@ export default function CheckoutMain( {
 					changeSelection={ changeSelection }
 					countriesList={ countriesList }
 					createUserAndSiteBeforeTransaction={ createUserAndSiteBeforeTransaction }
-					infoMessage={ infoMessage }
+					infoMessage={ <PrePurchaseNotices siteId={ updatedSiteId } isSiteless={ isSiteless } /> }
 					isLoggedOutCart={ !! isLoggedOutCart }
 					onPageLoadError={ onPageLoadError }
 					removeProductFromCart={ removeProductFromCartAndMaybeRedirect }
