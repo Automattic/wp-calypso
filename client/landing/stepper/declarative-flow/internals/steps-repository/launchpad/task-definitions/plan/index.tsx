@@ -14,10 +14,7 @@ import { addQueryArgs } from '@wordpress/url';
 import { translate } from 'i18n-calypso';
 import { ADD_TIER_PLAN_HASH } from 'calypso/my-sites/earn/memberships/constants';
 import { getSiteIdOrSlug } from '../../task-helper';
-import {
-	recordGlobalStylesGattingPlanSelectedResetStylesEvent,
-	recordTaskClickTracksEvent,
-} from '../../tracking';
+import { recordGlobalStylesGattingPlanSelectedResetStylesEvent } from '../../tracking';
 import { TaskAction, TaskContext } from '../../types';
 
 const getPlanTaskSubtitle = (
@@ -68,7 +65,6 @@ export const getPlanSelectedTask: TaskAction = ( task, flow, context ): Task => 
 	return {
 		...task,
 		actionDispatch: () => {
-			recordTaskClickTracksEvent( task, flow, context );
 			if ( displayGlobalStylesWarning ) {
 				recordGlobalStylesGattingPlanSelectedResetStylesEvent( task, flow, context, {
 					displayGlobalStylesWarning,
@@ -96,7 +92,6 @@ const getPlanCompletedTask: TaskAction = ( task, flow, context ) => {
 
 	return {
 		...task,
-		actionDispatch: () => recordTaskClickTracksEvent( task, flow, context ),
 		calypso_path: addQueryArgs( `/setup/${ flow }/plans`, {
 			...getSiteIdOrSlug( flow, site, siteSlug ),
 		} ),
@@ -123,7 +118,6 @@ const getNewsLetterPlanCreated: TaskAction = ( task, flow, context ) => {
 	return {
 		...task,
 		actionDispatch: () => {
-			recordTaskClickTracksEvent( task, flow, context );
 			completePaidNewsletterTask( siteSlug, queryClient );
 			site?.ID
 				? setShowPlansModal( true )
