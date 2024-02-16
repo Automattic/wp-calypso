@@ -74,6 +74,7 @@ export const DeploymentStyle = ( { onDefineStyle, onValidationChange }: Deployme
 		}
 
 		if ( deploymentStyle === 'custom' ) {
+			setTriggeredOnPushStatus( 'loading' );
 			setUploadArtifactStatus( 'loading' );
 
 			// Just to simulate a backend call
@@ -136,14 +137,27 @@ export const DeploymentStyle = ( { onDefineStyle, onValidationChange }: Deployme
 								components: { filename: <span>deploy-live.yml</span> },
 							} ) }
 						</p>
-						<Card
-							className={ classNames( 'github-deployments-deployment-style__workflow-card', {
-								error: triggeredOnPushStatus === 'error' && validationTriggered,
-							} ) }
+
+						<FoldableCard
+							className={ triggeredOnPushStatus === 'error' && validationTriggered ? 'error' : '' }
+							expanded={ triggeredOnPushStatus === 'error' }
+							header={
+								<div>
+									<RenderIcon state={ triggeredOnPushStatus } />
+									{ __( 'The workflow is triggered on push' ) }
+								</div>
+							}
+							screenReaderText="More"
 						>
-							<RenderIcon state={ triggeredOnPushStatus } />
-							{ __( 'The workflow is triggered on push' ) }
-						</Card>
+							<div>
+								<p>{ __( "Ensure that your workflow generates an artifact named 'wpcom'." ) }</p>
+								<p>
+									- name: Upload the artifact <br></br>uses: actions/upload-artifact@v4 <br></br>
+									with: name: wpcom
+								</p>
+							</div>
+						</FoldableCard>
+
 						<FoldableCard
 							className={ uploadArtifactStatus === 'error' && validationTriggered ? 'error' : '' }
 							expanded={ uploadArtifactStatus === 'error' }
