@@ -12,12 +12,19 @@ interface DeploymentStyleProps {
 	onChange?( query: string ): void;
 }
 
+type WorkFlowStates = 'loading' | 'success' | 'error';
+
 export const DeploymentStyle = ( { onChange }: DeploymentStyleProps ) => {
 	const { __ } = useI18n();
 
 	const [ deploymentStyle, setDeploymentStyle ] = useState( 'simple' );
 	const [ isFetchingWorkflows, setFechingWorkflows ] = useState( true );
 	const [ selectedWorkflow, setSelectedWorkflow ] = useState( 'none' );
+
+	const [ workflowTriggeredOnPush, setWorkflowTriggeredOnPush ] =
+		useState< WorkFlowStates >( 'loading' );
+	const [ workflowUploadArtifact, setWorkflowUploadArtifact ] =
+		useState< WorkFlowStates >( 'loading' );
 
 	const handleDeploymentStyleChange = ( event ) => {
 		const { value } = event.currentTarget;
@@ -34,6 +41,30 @@ export const DeploymentStyle = ( { onChange }: DeploymentStyleProps ) => {
 		{ value: 'deploy-live', label: 'deploy-live.yml' },
 		{ value: 'test', label: 'test.yml' },
 	];
+
+	const RenderWorkflowCheck = ( { state, label }: { state: WorkFlowStates; label: string } ) => {
+		const RenderIcon = () => {
+			if ( state === 'loading' ) {
+				return <Spinner />;
+			}
+
+			const icon = state === 'success' ? check : closeSmall;
+			return <Icon size={ 20 } icon={ icon } className={ state } />;
+		};
+
+		return (
+			<FormTextInputWithAffixes
+				noWrap
+				prefix={ RenderIcon() }
+				value={ label }
+				id="site-redirect__input"
+			/>
+		);
+	};
+
+	setTimeout( () => {
+		setWorkflowUploadArtifact( 'error' );
+	}, 2000 );
 
 	return (
 		<div className="deployment-style">
@@ -81,32 +112,32 @@ export const DeploymentStyle = ( { onChange }: DeploymentStyleProps ) => {
 						components: { filename: <span>deploy-live.yml</span> },
 					} ) }
 				</p>
-				<FormTextInputWithAffixes
-					noWrap
-					prefix={ <Icon size={ 25 } icon={ check } className="success" /> }
-					value={ __( 'The workflow is triggered on push' ) }
-					id="site-redirect__input"
+				<RenderWorkflowCheck
+					state={ workflowTriggeredOnPush }
+					label={ __( 'The workflow is triggered on push' ) }
 				/>
-				<FormTextInputWithAffixes
-					noWrap
-					prefix={ <Icon size={ 25 } icon={ closeSmall } className="error" /> }
-					value={ __( 'The upload artifact has the required name' ) }
-					id="site-redirect__input"
+				<RenderWorkflowCheck
+					state={ workflowUploadArtifact }
+					label={ __( 'The upload artifact has the required name' ) }
 				/>
-				<div className="github-deployments-connect-repository__repository">
-					<p>{ __( "Ensure that your workflow generates an artifact named 'wpcom'." ) }</p>
-					<p>
-						- name: Upload the artifact <br></br>uses: actions/upload-artifact@v4 <br></br>with:
-						name: wpcom
-					</p>
-				</div>
+				{ workflowUploadArtifact === 'error' && (
+					<div className="github-deployments-connect-repository__repository">
+						<p>{ __( "Ensure that your workflow generates an artifact named 'wpcom'." ) }</p>
+						<p>
+							- name: Upload the artifact <br></br>uses: actions/upload-artifact@v4 <br></br>with:
+							name: wpcom
+						</p>
+					</div>
+				) }
 
-				<Button type="submit" className="button form-button">
-					{ __( 'Verify workflow' ) }
-				</Button>
-				<Button type="submit" className="button form-button">
-					{ __( 'Fix workflow for me' ) }
-				</Button>
+				<div className="github-deployments-connect-repository__actions">
+					<Button type="button" className="button form-button">
+						{ __( 'Verify workflow' ) }
+					</Button>
+					<Button type="button" className="button form-button">
+						{ __( 'Fix workflow for me' ) }
+					</Button>
+				</div>
 			</FormFieldset>
 		</div>
 	);

@@ -31,26 +31,29 @@
 		}
 
 		.form-text-input-with-affixes {
+			span {
+				display: flex;
+				background: #fff;
+			}
+
+			input {
+				border-left: none;
+			}
+
 			&:first-of-type {
 				margin-bottom: 8px;
 			}
 
-			&:nth-child(2) {
-				.form-text-input-with-affixes__prefix {
-					border-bottom: none;
-				}
-			}
-
 			svg {
-				border-radius: 15px;
+				border-radius: 50%;
 				color: #fff;
 				fill: #fff;
 
 				&.success {
-					background: green;
+					background: var(--studio-green);
 				}
 				&.error {
-					background: red;
+					background: var(--studio-red);
 				}
 			}
 		}
@@ -58,8 +61,11 @@
 		.github-deployments-connect-repository__repository {
 			display: block;
 			border-top: none;
-			margin-bottom: 16px;
 			padding: 16px;
+		}
+
+		.github-deployments-connect-repository__actions {
+			margin-top: 16px;
 		}
 	}
 
