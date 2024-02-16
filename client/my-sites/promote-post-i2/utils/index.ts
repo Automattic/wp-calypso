@@ -230,7 +230,7 @@ export function getAdvertisingDashboardPath( path: string ) {
 	return `${ pathPrefix }${ path }`;
 }
 
-export const getShortDateString = ( date: string ) => {
+export const getShortDateString = ( date: string, withTime: boolean = false ) => {
 	const timestamp = moment( Date.parse( date ) );
 	const now = moment();
 
@@ -242,6 +242,16 @@ export const getShortDateString = ( date: string ) => {
 	const dateDiff = Math.abs( now.diff( timestamp, 'days' ) );
 	if ( dateDiff < 7 ) {
 		return timestamp.fromNow();
+	}
+
+	if ( withTime ) {
+		const format = timestamp.isSame( now, 'year' )
+			? // translators: Moment.js date format, `MMM` refers to short month name (e.g. `Sep`), `DD`` refers to 2-digit day of month (e.g. `05`). Wrap text [] to be displayed as is, for example `DD [de] MMM` will be formatted as `05 de sep.`. HH:mm refers to 24-hour time format (e.g. `18:00`).
+			  _x( 'MMM DD, HH:mm', 'short date format' )
+			: // translators: Moment.js date format, `MMM` refers to short month name (e.g. `Sep`), `DD`` refers to 2-digit day of month (e.g. `05`), `YYYY` refers to the full year format (e.g. `2023`). Wrap text [] to be displayed as is, for example `DD [de] MMM [de] YYYY` will be formatted as `05 de sep. de 2023`. HH:mm refers to 24-hour time format (e.g. `18:00`).
+			  _x( 'MMM DD, YYYY HH:mm', 'short date with year format' );
+
+		return moment( date ).format( format );
 	}
 
 	const format = timestamp.isSame( now, 'year' )

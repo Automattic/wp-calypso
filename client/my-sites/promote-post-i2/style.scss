@@ -31,12 +31,18 @@
 
 			.post-item__actions-mobile {
 				display: flex;
+				align-items: flex-end;
 				justify-content: space-between;
-				margin-top: 20px;
+			}
+
+			.post-item__stats-mobile {
+				@include blazepress-data-row-font-mobile;
+				align-items: center;
+				display: flex;
+				justify-content: space-between;
 				width: 100%;
 			}
 
-			.post-item__stats-mobile,
 			.campaign-item__stats-mobile {
 				align-self: start;
 				@include blazepress-data-row-font-mobile;

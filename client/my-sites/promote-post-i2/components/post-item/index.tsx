@@ -3,12 +3,10 @@ import { safeImageUrl } from '@automattic/calypso-url';
 import './style.scss';
 import { Button } from '@wordpress/components';
 import { __, _n, sprintf } from '@wordpress/i18n';
-import InfoPopover from 'calypso/components/info-popover';
 import { BlazablePost } from 'calypso/data/promote-post/types';
 import resizeImageUrl from 'calypso/lib/resize-image-url';
 import useOpenPromoteWidget from '../../hooks/use-open-promote-widget';
-import { formatNumber, getPostType } from '../../utils';
-import RelativeTime from '../relative-time';
+import { formatNumber, getShortDateString, getPostType } from '../../utils';
 
 export default function PostItem( {
 	post,
@@ -27,9 +25,7 @@ export default function PostItem( {
 	const featuredImage = safeUrl && resizeImageUrl( safeUrl, 108, 0 );
 	const isRunningInWooStore = config.isEnabled( 'is_running_in_woo_site' );
 
-	const postDate = (
-		<RelativeTime date={ post.date } showTooltip={ true } tooltipTitle={ __( 'Published date' ) } />
-	);
+	const postDate = post?.date ? getShortDateString( post.date, true ) : '-';
 
 	const viewCount = post?.monthly_view_count ?? 0;
 	const likeCount = post?.like_count ?? 0;
@@ -38,9 +34,8 @@ export default function PostItem( {
 	const isWooProduct = isRunningInWooStore && filterType === 'product';
 
 	const mobileStatsSeparator = <span className="blazepress-mobile-stats-mid-dot">&#183;</span>;
-
-	const titleIsLong = post?.title.length > 55;
-	const titleShortened = titleIsLong ? post?.title.slice( 0, 55 ) + '...' : post?.title;
+	const titleIsLong = post?.title.length > 35;
+	const titleShortened = titleIsLong ? post?.title.slice( 0, 35 ) + '...' : post?.title;
 
 	return (
 		<tr className="post-item__row">
@@ -82,25 +77,32 @@ export default function PostItem( {
 								<>{ post.sku || '-' }</>
 							) : (
 								<>
-									{ getPostType( post.type ) }
+									{ sprintf(
+										// translators: %s is number of post's likes
+										_n( '%s like', '%s likes', likeCount ),
+										formatNumber( likeCount, true )
+									) }
 									{ mobileStatsSeparator }
-									{ postDate }
+									{ sprintf(
+										// translators: %s is number of post's comments
+										_n( '%s comment', '%s comments', commentCount ),
+										formatNumber( commentCount, true )
+									) }
 								</>
 							) }
 						</div>
 						<div className="post-item__post-title-content">
 							<span>{ titleShortened || __( 'Untitled' ) }</span>
-							{ titleIsLong && (
-								<InfoPopover position="bottom right">
-									{ __( 'Title: ' ) }
-									<br />
-									<span className="popover-title">{ post?.title }</span>
-								</InfoPopover>
-							) }
 						</div>
-						{ isWooProduct && (
+						{ isWooProduct ? (
 							<div className="post-item__post-subheading-mobile">
 								{ productPrice }
+								{ mobileStatsSeparator }
+								{ postDate }
+							</div>
+						) : (
+							<div className="post-item__post-subheading-mobile">
+								{ getPostType( post.type ) }
 								{ mobileStatsSeparator }
 								{ postDate }
 							</div>
@@ -109,60 +111,30 @@ export default function PostItem( {
 				</div>
 				<div className="post-item__post-data-row post-item__post-data-row-mobile">
 					<div className="post-item__stats-mobile">
-						{ isWooProduct && (
-							<>
-								{
-									// translators: %s is the price for the current product */
-									sprintf( 'Price: %s', productPrice )
-								}
-								{ mobileStatsSeparator }
-								{
-									// translators: %s is the SKU for the current product
-									sprintf( 'SKU: %s', post.sku || '-' )
-								}
-								{ mobileStatsSeparator }
-							</>
-						) }
 						{ sprintf(
 							// translators: %s is number of post's visitors
 							_n( '%s visitor', '%s visitors', viewCount ),
 							formatNumber( viewCount, true )
 						) }
-						{ ! isWooProduct && (
-							<>
-								{ mobileStatsSeparator }
-								{
-									// translators: %s is number of post's likes
-									sprintf( _n( '%s like', '%s likes', likeCount ), formatNumber( likeCount, true ) )
-								}
-								{ mobileStatsSeparator }
-
-								{ sprintf(
-									// translators: %s is number of post's comments
-									_n( '%s comment', '%s comments', commentCount ),
-									formatNumber( commentCount, true )
-								) }
-							</>
-						) }
-					</div>
-					<div className="post-item__actions-mobile">
-						<a
-							href={ post.post_url }
-							className="button post-item__view-link"
-							target="_blank"
-							rel="noreferrer"
-						>
-							{ __( 'View' ) }
-						</a>
-						<Button
-							variant="secondary"
-							isBusy={ false }
-							disabled={ false }
-							onClick={ onClickPromote }
-							className="post-item__post-promote-button"
-						>
-							{ __( 'Promote' ) }
-						</Button>
+						<div className="post-item__actions-mobile">
+							<a
+								href={ post.post_url }
+								className="post-item__view-button"
+								target="_blank"
+								rel="noreferrer"
+							>
+								{ __( 'View' ) }
+							</a>
+							<Button
+								variant="secondary"
+								isBusy={ false }
+								disabled={ false }
+								onClick={ onClickPromote }
+								className="post-item__post-promote-button-mobile"
+							>
+								{ __( 'Promote' ) }
+							</Button>
+						</div>
 					</div>
 				</div>
 			</td>
