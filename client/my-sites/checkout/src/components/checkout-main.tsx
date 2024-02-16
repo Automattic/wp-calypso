@@ -1,4 +1,3 @@
-import { JETPACK_SEARCH_PRODUCTS } from '@automattic/calypso-products';
 import { useRazorpay } from '@automattic/calypso-razorpay';
 import { useStripe } from '@automattic/calypso-stripe';
 import colorStudio from '@automattic/color-studio';
@@ -10,13 +9,6 @@ import debugFactory from 'debug';
 import { useTranslate } from 'i18n-calypso';
 import { Fragment, useCallback, useMemo } from 'react';
 import QueryContactDetailsCache from 'calypso/components/data/query-contact-details-cache';
-import QueryJetpackSaleCoupon from 'calypso/components/data/query-jetpack-sale-coupon';
-import QueryPlans from 'calypso/components/data/query-plans';
-import QueryPostCounts from 'calypso/components/data/query-post-counts';
-import QueryProducts from 'calypso/components/data/query-products-list';
-import QuerySitePlans from 'calypso/components/data/query-site-plans';
-import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
-import QueryUserPurchases from 'calypso/components/data/query-user-purchases';
 import { recordAddEvent } from 'calypso/lib/analytics/cart';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import useSiteDomains from 'calypso/my-sites/checkout/src/hooks/use-site-domains';
@@ -734,26 +726,9 @@ export default function CheckoutMain( {
 		reduxDispatch( infoNotice( translate( 'Redirecting to payment partner…' ) ) );
 	}, [ reduxDispatch, translate ] );
 
-	const cartHasSearchProduct = useMemo(
-		() =>
-			responseCart.products.some( ( { product_slug } ) =>
-				JETPACK_SEARCH_PRODUCTS.includes(
-					product_slug as ( typeof JETPACK_SEARCH_PRODUCTS )[ number ]
-				)
-			),
-		[ responseCart.products ]
-	);
-
 	return (
 		<Fragment>
-			<QueryJetpackSaleCoupon />
-			<QuerySitePlans siteId={ updatedSiteId } />
-			<QuerySitePurchases siteId={ updatedSiteId } />
-			{ isSiteless && <QueryUserPurchases /> }
-			<QueryPlans />
-			<QueryProducts />
 			<QueryContactDetailsCache />
-			{ cartHasSearchProduct && <QueryPostCounts siteId={ updatedSiteId || -1 } type="post" /> }
 			<PageViewTracker
 				path={ analyticsPath }
 				title="Checkout"
