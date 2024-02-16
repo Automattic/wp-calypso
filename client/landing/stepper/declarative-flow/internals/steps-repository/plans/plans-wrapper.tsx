@@ -114,7 +114,7 @@ const PlansWrapper: React.FC< Props > = ( props ) => {
 		document.documentElement.scrollTop = location.state?.scrollTop || 0;
 	}, [ location.state?.scrollTop, planIntervalPath ] );
 
-	const onPlanIntervalChange = ( path: string ) => {
+	const onPlanIntervalUpdate = ( path: string ) => {
 		setPlanIntervalPath( path );
 
 		navigate( path, {
@@ -167,7 +167,6 @@ const PlansWrapper: React.FC< Props > = ( props ) => {
 		return (
 			<div>
 				<PlansFeaturesMain
-					isPlansInsideStepper={ true }
 					siteId={ site?.ID }
 					displayedIntervals={ [ 'yearly', '2yearly', '3yearly', 'monthly' ] }
 					hideFreePlan={ hideFreePlan }
@@ -185,7 +184,7 @@ const PlansWrapper: React.FC< Props > = ( props ) => {
 					setSiteUrlAsFreeDomainSuggestion={ setSiteUrlAsFreeDomainSuggestion }
 					renderSiblingWhenLoaded={ () => props.shouldIncludeFAQ && <PlanFAQ /> }
 					showPlanTypeSelectorDropdown={ config.isEnabled( 'onboarding/interval-dropdown' ) }
-					onPlanIntervalChange={ onPlanIntervalChange }
+					onPlanIntervalUpdate={ onPlanIntervalUpdate }
 				/>
 			</div>
 		);

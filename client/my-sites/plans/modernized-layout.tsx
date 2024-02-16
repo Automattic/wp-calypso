@@ -16,7 +16,7 @@ const ModernizedLayout: React.FunctionComponent = () => {
 	// ----------------------------------------------
 	// from @automattic/components/src/highlight-cards/variables.scss:
 	// ----------------------------------------------
-	// If changed, also change @plans-section-custom-mobile-breakpoint in client/my-sites/plans-grid/_media-queries.scss
+	// If changed, also change @plans-section-custom-mobile-breakpoint in client/my-sites/plans-features-main/_media-queries.scss
 	const customBreakpointSmall = '780px';
 	const verticalMargin = '32px';
 	// ----------------------------------------------

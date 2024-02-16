@@ -6,9 +6,10 @@ import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
 import classNames from 'classnames';
 import debugFactory from 'debug';
-import { useCallback, type FC } from 'react';
+import { useCallback, type FC, useMemo } from 'react';
 import PromoCard from 'calypso/components/promo-section/promo-card';
 import PromoCardCTA from 'calypso/components/promo-section/promo-card/cta';
+import { preventWidows } from 'calypso/lib/formatting';
 import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
 import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
@@ -23,6 +24,7 @@ type PriceBreakdown = {
 	isBold?: boolean;
 	isDiscount?: boolean;
 	forceDisplay?: boolean;
+	isIntroductoryOffer?: boolean;
 };
 
 const debug = debugFactory( 'calypso:checkout-sidebar-plan-upsell' );
@@ -107,29 +109,18 @@ const useCalculatedDiscounts = () => {
 				label: __( 'Free trial*' ),
 				priceInteger: product.item_original_monthly_cost_integer,
 				isDiscount: true,
+				isIntroductoryOffer: true,
 			} );
 		} else if ( ! isProductFreeTrial ) {
 			// We don't show the discount for free trials (annual) in upsell if biennial plan doesn't have free trial.
 			priceBreakdown.push( {
 				label: __( 'Introductory offer*' ),
-				priceInteger: current.priceBeforeDiscounts - current.priceInteger,
+				priceInteger: biennial.priceBeforeDiscounts - biennial.priceInteger,
 				isDiscount: true,
+				isIntroductoryOffer: true,
 			} );
 		}
 	}
-
-	// Multi-year discount
-	const oneYearForTwoYearsPrice =
-		current.priceBeforeDiscounts * 2 -
-		priceBreakdown
-			.filter( ( { isDiscount } ) => isDiscount )
-			.reduce( ( sum, discount ) => sum + discount.priceInteger, 0 );
-
-	priceBreakdown.push( {
-		label: __( 'Multi-year discount' ),
-		priceInteger: oneYearForTwoYearsPrice - biennial.priceInteger,
-		isDiscount: true,
-	} );
 
 	// Coupon discount is added on top of other discounts
 	if ( product.coupon_savings_integer ) {
@@ -197,6 +188,27 @@ const UpsellEntry: FC< Omit< PriceBreakdown, 'priceInteger' > & { priceInteger?:
 	);
 };
 
+const IntroductoryOfferAsterisk: FC< { renewalsCount: number } > = ( { renewalsCount } ) => {
+	const { __, _n } = useI18n();
+	const description = useMemo( () => {
+		if ( renewalsCount > 0 ) {
+			return sprintf(
+				// translators: %d is the number of renewals after the introductory offer.
+				_n(
+					'*Introductory offer first term and %d renewal only, then renews at regular rate.',
+					'*Introductory offer first term and %d renewals only, then renews at regular rate.',
+					renewalsCount
+				),
+				renewalsCount
+			);
+		}
+
+		return __( '*Introductory offer first term only, renews at regular rate.' );
+	}, [ renewalsCount, __, _n ] );
+
+	return <>{ preventWidows( description ) }</>;
+};
+
 const JetpackAkismetCheckoutSidebarPlanUpsell: FC = () => {
 	const { __ } = useI18n();
 	const { formStatus } = useFormStatus();
@@ -208,6 +220,10 @@ const JetpackAkismetCheckoutSidebarPlanUpsell: FC = () => {
 	}
 
 	const { percentSavings, priceBreakdown, finalBreakdown } = calculatedDiscounts;
+
+	const hasIntroductoryOffers = priceBreakdown.some(
+		( breakdown ) => breakdown.isIntroductoryOffer
+	);
 
 	const isLoading = FormStatus.READY !== formStatus;
 	const cardTitle = sprintf(
@@ -233,6 +249,12 @@ const JetpackAkismetCheckoutSidebarPlanUpsell: FC = () => {
 					<UpsellEntry key={ props.label } { ...props } />
 				) ) }
 			</div>
+			{ hasIntroductoryOffers && product.introductory_offer_terms && (
+				<IntroductoryOfferAsterisk
+					renewalsCount={ product.introductory_offer_terms.transition_after_renewal_count }
+				/>
+			) }
+
 			<PromoCardCTA
 				cta={ {
 					disabled: isLoading,

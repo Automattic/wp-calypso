@@ -393,4 +393,3 @@ object WpCalypso : GitVcsRoot({
 		uploadedKey = "matticbot"
 	}
 })
-

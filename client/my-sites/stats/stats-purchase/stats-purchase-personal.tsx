@@ -319,15 +319,6 @@ function StatsBenefitsListing( {
 				<li className={ `${ COMPONENT_CLASS_NAME }__benefits-item--included` }>
 					{ translate( 'GDPR compliance' ) }
 				</li>
-				{ subscriptionValue > 0 ? (
-					<li className={ `${ COMPONENT_CLASS_NAME }__benefits-item--included` }>
-						{ translate( 'Access to upcoming advanced features' ) }
-					</li>
-				) : (
-					<li className={ `${ COMPONENT_CLASS_NAME }__benefits-item--not-included` }>
-						{ translate( 'No access to upcoming advanced features' ) }
-					</li>
-				) }
 				{ subscriptionValue >= defaultStartingValue ? (
 					<li className={ `${ COMPONENT_CLASS_NAME }__benefits-item--included` }>
 						{ translate( 'Priority support' ) }
@@ -337,6 +328,9 @@ function StatsBenefitsListing( {
 						{ translate( 'No priority support' ) }
 					</li>
 				) }
+				<li className={ `${ COMPONENT_CLASS_NAME }__benefits-item--not-included` }>
+					{ translate( 'No access to upcoming advanced features' ) }
+				</li>
 			</ul>
 		</div>
 	);

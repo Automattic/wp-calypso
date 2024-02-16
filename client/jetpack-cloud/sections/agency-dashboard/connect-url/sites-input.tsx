@@ -1,53 +1,62 @@
 import { Button, FormLabel } from '@automattic/components';
+import { parse } from 'csv-parse/browser/esm/sync';
 import { useTranslate } from 'i18n-calypso';
-import { Dispatch, SetStateAction } from 'react';
+import { useState } from 'react';
 import FilePicker from 'calypso/components/file-picker';
 import FormTextarea from 'calypso/components/forms/form-textarea';
+import CSVColumnConfirmation from './csv-column-confirmation';
 
 export default function SitesInput( {
-	detectedSites,
-	setDetectedSites,
-	detectedFilename,
-	setDetectedFilename,
-	handleValidate,
+	sites,
+	setSites,
+	filename,
+	setFilename,
+	csvColumns,
+	onCSVLoad,
+	onCSVLoadConfirmation,
 }: {
-	detectedSites: string[];
-	setDetectedSites: Dispatch< SetStateAction< string[] > >;
-	detectedFilename: string;
-	setDetectedFilename: Dispatch< SetStateAction< string > >;
-	handleValidate: () => void;
+	sites: string[][];
+	setSites: ( sites: string[][] ) => void;
+	filename: string;
+	setFilename: ( filename: string ) => void;
+	csvColumns: string[];
+	onCSVLoad: ( lines: string[][] ) => void;
+	onCSVLoadConfirmation: ( column: string ) => void;
 } ) {
 	const translate = useTranslate();
+	const [ column, setColumn ] = useState( '' );
 
 	let fileReader: any;
 
 	const handleFileRead = () => {
-		const sites: string[] = [];
-		const content = fileReader.result;
-		const lines = content.split( /\r\n|\n/ );
-		lines.forEach( ( line: string ) => {
-			const fields = line.split( ',' );
-			sites.push( fields[ 0 ] );
+		if ( typeof fileReader.result !== 'string' ) {
+			// @todo error handling.
+			return;
+		}
+
+		// @todo error handling
+		const lines = parse( fileReader.result, {
+			skip_empty_lines: true,
 		} );
 
-		setDetectedSites( sites.filter( ( url ) => url.trim() !== 'url' ) );
+		onCSVLoad( lines );
 	};
 
 	const onFilePick = ( files: File[] ) => {
 		fileReader = new FileReader();
 		fileReader.onloadend = handleFileRead;
 		fileReader.readAsText( files[ 0 ] );
-		setDetectedFilename( files[ 0 ].name );
+		setFilename( files[ 0 ].name );
 	};
 
 	const onTextareaChange = ( event: any ) =>
-		setDetectedSites(
-			0 === event.target.value.length
+		setSites(
+			0 === event.target.value.trim().length
 				? []
 				: event.target.value
-						.split( /,|\n/ )
-						.filter( ( url: string ) => url.trim() !== '' )
+						.split( /[\r\n,]+/ )
 						.map( ( url: string ) => url.trim() )
+						.filter( ( url: string ) => url !== '' )
 		);
 
 	const filePicker = (
@@ -62,9 +71,9 @@ export default function SitesInput( {
 
 	const uploadResults = (
 		<>
-			<FormLabel>{ detectedFilename }</FormLabel>
+			<FormLabel>{ filename }</FormLabel>
 			<div className="connect-url__file-picker-url-count">
-				{ translate( '%(num)d sites detected', { args: { num: detectedSites.length } } ) }
+				{ translate( '%(num)d sites detected', { args: { num: sites.length } } ) }
 			</div>
 		</>
 	);
@@ -84,14 +93,25 @@ export default function SitesInput( {
 
 			<div className="connect-url__file-picker">
 				<FilePicker accept=".csv,.txt" onPick={ onFilePick }>
-					{ '' === detectedFilename ? filePicker : uploadResults }
+					{ '' === filename ? filePicker : uploadResults }
 				</FilePicker>
+				{ filename && csvColumns.length > 0 && (
+					<CSVColumnConfirmation
+						columns={ csvColumns }
+						onColumnSelect={ setColumn }
+						column={ column }
+					/>
+				) }
 			</div>
 
-			<Button primary disabled={ 0 === detectedSites.length } onClick={ handleValidate }>
-				{ 0 === detectedSites.length
+			<Button
+				primary
+				disabled={ 0 === sites.length || ! column }
+				onClick={ () => onCSVLoadConfirmation( column ) }
+			>
+				{ 0 === sites.length && column
 					? translate( 'Add sites' )
-					: translate( 'Add %(num)d sites', { args: { num: detectedSites.length } } ) }
+					: translate( 'Add %(num)d sites', { args: { num: sites.length } } ) }
 			</Button>
 		</>
 	);

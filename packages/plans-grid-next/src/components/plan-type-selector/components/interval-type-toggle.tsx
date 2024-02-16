@@ -6,9 +6,8 @@ import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import * as React from 'react';
 import useMaxDiscount from '../hooks/use-max-discount';
-import generatePath from '../utils';
 import PopupMessages from './popup-messages';
-import type { IntervalTypeProps } from '../../../types';
+import type { IntervalTypeProps, SupportedUrlFriendlyTermType } from '../../../types';
 
 export const IntervalTypeToggle: React.FunctionComponent< IntervalTypeProps > = ( props ) => {
 	const translate = useTranslate();
@@ -23,6 +22,7 @@ export const IntervalTypeToggle: React.FunctionComponent< IntervalTypeProps > = 
 		title,
 		coupon,
 		selectedSiteId,
+		onPlanIntervalUpdate,
 	} = props;
 	const showBiennialToggle = displayedIntervals.includes( '2yearly' );
 	const [ spanRef, setSpanRef ] = useState< HTMLSpanElement >();
@@ -60,21 +60,9 @@ export const IntervalTypeToggle: React.FunctionComponent< IntervalTypeProps > = 
 		}
 	}
 
-	const additionalPathProps = {
-		...( props.redirectTo ? { redirect_to: props.redirectTo } : {} ),
-		...( props.selectedPlan ? { plan: props.selectedPlan } : {} ),
-		...( props.selectedFeature ? { feature: props.selectedFeature } : {} ),
-	};
-
-	const isDomainUpsellFlow = new URLSearchParams( window.location.search ).get( 'domain' );
-
-	const isDomainAndPlanPackageFlow = new URLSearchParams( window.location.search ).get(
-		'domainAndPlanPackage'
-	);
-
-	const isJetpackAppFlow = new URLSearchParams( window.location.search ).get( 'jetpackAppPlans' );
-
-	const intervalTabs = showBiennialToggle ? [ 'yearly', '2yearly' ] : [ 'monthly', 'yearly' ];
+	const intervalTabs: SupportedUrlFriendlyTermType[] = showBiennialToggle
+		? [ 'yearly', '2yearly' ]
+		: [ 'monthly', 'yearly' ];
 
 	return (
 		<>
@@ -88,14 +76,7 @@ export const IntervalTypeToggle: React.FunctionComponent< IntervalTypeProps > = 
 						<SegmentedControl.Item
 							key={ interval }
 							selected={ intervalType === interval }
-							path={ generatePath( props, {
-								intervalType: interval,
-								domain: isDomainUpsellFlow,
-								domainAndPlanPackage: isDomainAndPlanPackageFlow,
-								jetpackAppPlans: isJetpackAppFlow,
-								...additionalPathProps,
-							} ) }
-							isPlansInsideStepper={ props.isPlansInsideStepper }
+							onClick={ () => onPlanIntervalUpdate( interval ) }
 						>
 							<span>
 								{ interval === 'monthly' ? translate( 'Pay monthly' ) : null }

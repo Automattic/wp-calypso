@@ -1,5 +1,5 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
-import { localizeUrl } from '@automattic/i18n-utils';
+import { localizeUrl, useLocale } from '@automattic/i18n-utils';
 import { useBreakpoint } from '@automattic/viewport-react';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect, useMemo } from 'react';
@@ -27,6 +27,7 @@ const CONNECT_STORE_HEIGHT = 0;
 
 const IntroPricingBanner: React.FC = () => {
 	const translate = useTranslate();
+	const locale = useLocale();
 	const shouldShowCart = useSelector( isJetpackCloudCartEnabled );
 	const clientRect = useBoundingClientRect( '.header__content .header__jetpack-masterbar-cart' );
 	const isSmallScreen = useBreakpoint( '<660px' );
@@ -94,11 +95,10 @@ const IntroPricingBanner: React.FC = () => {
 							onClick={ () =>
 								recordTracksEvent( 'calypso_jpcom_agencies_page_intro_banner_link_click' )
 							}
-							href={ localizeUrl( 'https://jetpack.com/for/agencies/' ) }
-							target="_blank"
+							href={ localizeUrl( 'https://cloud.jetpack.com/manage/pricing', locale ) }
 							rel="noreferrer"
 						>
-							{ preventWidows( translate( 'Explore Jetpack for Agencies' ) ) }
+							{ preventWidows( translate( 'Explore bulk pricing' ) ) }
 						</a>
 					</div>
 					{ shouldShowCart && hasCrossed && (

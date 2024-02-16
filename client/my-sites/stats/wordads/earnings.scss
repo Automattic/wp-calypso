@@ -1,5 +1,6 @@
 @import "@automattic/components/src/styles/mixins";
 @import "@automattic/typography/styles/variables";
+@import "@automattic/components/src/highlight-cards/variables.scss";
 
 
 .ads__table-header {
@@ -25,6 +26,7 @@
 
 .earnings_history {
 	border-radius: 4px;
+	margin-bottom: $vertical-margin;
 
 	table {
 		margin: 0;

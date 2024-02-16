@@ -11,7 +11,7 @@ export const CurrentOption = styled.button< CurrentOptionProps >`
 	display: flex;
 	flex-direction: row;
 	justify-content: space-between;
-	${ hasCheckoutVersion( '2' ) ? `padding:4px 16px; height: 40px` : `padding:14px 16px` };
+	${ hasCheckoutVersion( '2' ) ? `padding: 10px; min-height: 40px` : `padding:14px 16px` };
 	width: 100%;
 	cursor: pointer;
 
@@ -28,33 +28,33 @@ export const CurrentOption = styled.button< CurrentOptionProps >`
 `;
 
 export const Option = styled.li< OptionProps >`
-	align-items: center;
 	background: white;
 	border: 1px solid ${ ( props ) => props.theme.colors.borderColor };
-	color: var( --studio-gray-50 );
+	color: #646970;
 	display: flex;
-	flex-direction: row;
 	font-size: ${ ( props ) => props.theme.fontSize.small };
 	font-weight: ${ ( props ) => props.theme.weights.normal };
-	justify-content: space-between;
-	/* the calc aligns the price with the price in CurrentOption */
-	padding: 10px calc( 14px + 24px + 16px ) 10px 16px;
 	cursor: pointer;
-	${ hasCheckoutVersion( '2' ) ? `height: 40px` : null };
-	&:hover {
-		background: var( --studio-blue-0 );
 
-		.is-jetpack & {
-			background: var( --studio-gray-0 );
-		}
+	${
+		hasCheckoutVersion( '2' )
+			? `flex-direction: column; justify-content: center;
+		align-items: flex-start;
+		padding: 10px; min-height: 40px;`
+			: `flex-direction: row;
+		justify-content: space-between; align-items: center;
+		/* the calc aligns the price with the price in CurrentOption */
+		padding: 10px calc( 14px + 24px + 16px ) 10px 16px;`
+	}
+
+
+	&:hover {
+		var( --studio-blue-0 );
 	}
 
 	&.item-variant-option--selected {
-		background: var( --studio-blue-60 );
-
-		.is-jetpack & {
-			background: var( --studio-gray-80 );
-		}
+		background: #055d9c;
+		color: #fff;
 	}
 `;
 
@@ -86,6 +86,9 @@ export const OptionList = styled.ul`
 export const Discount = styled.span`
 	color: ${ ( props ) => props.theme.colors.discount };
 	margin-right: 8px;
+	${ hasCheckoutVersion( '2' )
+		? `align-items: left; font-size: 14px;`
+		: `align-items: center; font-size: 100%;` }
 
 	.rtl & {
 		margin-right: 0;
@@ -130,7 +133,6 @@ export const Price = styled.span`
 `;
 
 export const Variant = styled.div`
-	align-items: center;
 	display: flex;
 	font-size: 14px;
 	font-weight: 400;
@@ -138,6 +140,10 @@ export const Variant = styled.div`
 	line-height: 20px;
 	width: 100%;
 	column-gap: 20px;
+
+	${ hasCheckoutVersion( '2' )
+		? `flex-direction: column; align-items: left`
+		: `flex-direciton: row; align-items: center` }
 
 	.item-variant-option--selected & {
 		color: var( --studio-white );
@@ -147,7 +153,9 @@ export const Variant = styled.div`
 export const Label = styled.span`
 	display: flex;
 	white-space: nowrap;
-	font-size: ${ hasCheckoutVersion( '2' ) ? '12px' : 'inherit' };
+
+	${ hasCheckoutVersion( '2' ) ? 'font-size: 14px' : 'font-size: inherit' };
+
 	// MOBILE_BREAKPOINT is <480px, used in useMobileBreakpoint
 	@media ( max-width: 480px ) {
 		flex-direction: column;
@@ -168,6 +176,7 @@ export const IntroPricingText = styled.span`
 `;
 
 export const PriceTextContainer = styled.span`
-	text-align: right;
-	font-size: ${ hasCheckoutVersion( '2' ) ? '12px' : 'inherit' };
+	${ hasCheckoutVersion( '2' )
+		? 'font-size: 12px; text-align: initial;'
+		: 'font-size: inherit;	text-align: right;' };
 `;

@@ -58,6 +58,9 @@ class SocialSignupForm extends Component {
 		} );
 	};
 
+	// eslint-disable-next-line no-unused-vars
+	handleGitHubResponse = ( response ) => {};
+
 	trackSocialSignup = ( service ) => {
 		this.props.recordTracksEvent( 'calypso_signup_social_button_click', {
 			social_account_type: service,
@@ -103,6 +106,7 @@ class SocialSignupForm extends Component {
 			<SocialAuthenticationForm
 				compact={ this.props.compact }
 				handleGoogleResponse={ this.handleGoogleResponse }
+				handleGitHubResponse={ this.handleGitHubResponse }
 				handleAppleResponse={ this.handleAppleResponse }
 				getRedirectUri={ this.getRedirectUri }
 				trackLoginAndRememberRedirect={ this.trackLoginAndRememberRedirect }

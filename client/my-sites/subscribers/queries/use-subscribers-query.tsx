@@ -27,7 +27,7 @@ const useSubscribersQuery = ( {
 	const { hasManySubscribers, isLoading } = useManySubsSite( siteId );
 	const shouldFetch = ! isLoading;
 
-	return useQuery< SubscriberEndpointResponse >( {
+	const query = useQuery< SubscriberEndpointResponse >( {
 		queryKey: getSubscribersCacheKey(
 			siteId,
 			page,
@@ -57,6 +57,8 @@ const useSubscribersQuery = ( {
 		},
 		enabled: !! siteId && shouldFetch,
 	} );
+
+	return { ...query, isLoading: query.isLoading || isLoading };
 };
 
 export default useSubscribersQuery;
