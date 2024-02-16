@@ -80,19 +80,27 @@
 		flex-wrap: nowrap;
 	}
 
-	.components-checkbox-control__input-container {
-		margin-right: 1rem;
+	.components-checkbox-control {
+		flex: 0 0 30px;
+
+		.components-checkbox-control__input-container {
+			margin-right: 1rem;
+		}
 	}
 
 	.imported-user-item__display-name {
 		font-size: 1rem;
 		font-weight: 500;
+		text-overflow: ellipsis;
+		overflow: hidden;
 	}
 
 	.imported-user-item__email {
 		color: var(--studio-gray-60, #50575e);
 		flex-grow: 1;
 		font-size: 0.875rem;
+		text-overflow: ellipsis;
+		overflow: hidden;
 	}
 
 	.imported-user-item__linked {
@@ -112,7 +120,7 @@
 
 		@include break-mobile {
 			margin-left: auto;
-			flex-basis: auto;
+			flex-basis: calc(100% - 15rem);
 			margin-top: 0;
 			justify-content: flex-end;
 		}
@@ -143,6 +151,16 @@
 				border: none;
 				color: var(--color-text-inverted);
 			}
+		}
+	}
+
+	.imported-user-item__user-info {
+		text-overflow: ellipsis;
+		overflow: hidden;
+		flex-basis: calc(100% - 40px);
+
+		@include break-mobile {
+			flex-basis: 200px;
 		}
 	}
 }
