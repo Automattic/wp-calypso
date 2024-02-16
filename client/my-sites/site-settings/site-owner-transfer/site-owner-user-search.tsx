@@ -83,7 +83,7 @@ const SiteOwnerTransferEligibility = ( {
 
 	function onUserClick( userLogin: string ) {
 		onRecipientChange( userLogin );
-		checkSiteTransferEligibility( { newSiteOwner: tempSiteOwner } );
+		checkSiteTransferEligibility( { newSiteOwner: userLogin } );
 	}
 
 	function onRecipientChange( recipient: string ) {
