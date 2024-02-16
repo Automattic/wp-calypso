@@ -44,6 +44,10 @@
 			padding: 12px;
 			display: flex;
 			align-items: center;
+
+			&.no-margin {
+				margin-bottom: 0;
+			}
 		}
 
 		.card,
@@ -71,6 +75,12 @@
 
 		&__actions {
 			margin-top: 16px;
+		}
+
+		.form-fieldset .form-label {
+			margin-top: 20px;
+			margin-bottom: 8px;
+			font-weight: bold;
 		}
 	}
 

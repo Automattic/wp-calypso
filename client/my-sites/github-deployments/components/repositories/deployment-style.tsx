@@ -13,15 +13,16 @@ interface DeploymentStyleProps {
 	onValidationChange?( status: WorkFlowStates ): void;
 }
 
+type DeploymentStle = 'simple' | 'custom';
 type WorkFlowStates = 'loading' | 'success' | 'error';
 
 export const DeploymentStyle = ( { onDefineStyle, onValidationChange }: DeploymentStyleProps ) => {
 	const { __ } = useI18n();
 
-	const [ deploymentStyle, setDeploymentStyle ] = useState( 'simple' );
+	const [ deploymentStyle, setDeploymentStyle ] = useState< DeploymentStle >( 'simple' );
 	const [ isFetchingWorkflows, setFechingWorkflows ] = useState( true );
 	const [ selectedWorkflow, setSelectedWorkflow ] = useState( 'none' );
-
+	const [ isCreatingNewWorkflow, setIsCreatingNewWorkflow ] = useState( false );
 	const [ workflowTriggeredOnPush, setWorkflowTriggeredOnPush ] =
 		useState< WorkFlowStates >( 'loading' );
 	const [ workflowUploadArtifact, setWorkflowUploadArtifact ] =
@@ -41,6 +42,7 @@ export const DeploymentStyle = ( { onDefineStyle, onValidationChange }: Deployme
 		{ value: 'none', label: __( 'Deployment workflows' ) },
 		{ value: 'deploy-live', label: 'deploy-live.yml' },
 		{ value: 'test', label: 'test.yml' },
+		{ value: 'create-new', label: __( 'Create new workflow' ) },
 	];
 
 	const RenderIcon = ( { state }: { state: WorkFlowStates } ) => {
@@ -55,6 +57,14 @@ export const DeploymentStyle = ( { onDefineStyle, onValidationChange }: Deployme
 	useEffect( () => {
 		onValidationChange?.( workflowUploadArtifact );
 	}, [ workflowUploadArtifact ] );
+
+	useEffect( () => {
+		if ( deploymentStyle === 'custom' && selectedWorkflow === 'create-new' ) {
+			setIsCreatingNewWorkflow( true );
+		} else {
+			setIsCreatingNewWorkflow( false );
+		}
+	}, [ deploymentStyle, selectedWorkflow ] );
 
 	setTimeout( () => {
 		setWorkflowUploadArtifact( 'error' );
@@ -100,43 +110,69 @@ export const DeploymentStyle = ( { onDefineStyle, onValidationChange }: Deployme
 			) }
 
 			<FormFieldset>
-				<FormLabel>{ __( 'Workflow check' ) }</FormLabel>
-				<p>
-					{ translate( 'Please edit {{filename}}{{/filename}} and fix the problems we found:', {
-						components: { filename: <span>deploy-live.yml</span> },
-					} ) }
-				</p>
-				<Card className="deployment-style__workflow-card">
-					<RenderIcon state={ workflowTriggeredOnPush } />
-					{ __( 'The workflow is triggered on push' ) }
-				</Card>
-				<FoldableCard
-					expanded={ workflowUploadArtifact === 'error' }
-					header={
-						<div>
-							<RenderIcon state={ workflowUploadArtifact } />
-							{ __( 'The upload artifact has the required name' ) }
-						</div>
-					}
-					screenReaderText="More"
-				>
-					<div>
-						<p>{ __( "Ensure that your workflow generates an artifact named 'wpcom'." ) }</p>
+				{ deploymentStyle === 'custom' && ! isCreatingNewWorkflow && (
+					<>
+						<FormLabel>{ __( 'Workflow check' ) }</FormLabel>
 						<p>
-							- name: Upload the artifact <br></br>uses: actions/upload-artifact@v4 <br></br>with:
-							name: wpcom
+							{ translate( 'Please edit {{filename}}{{/filename}} and fix the problems we found:', {
+								components: { filename: <span>deploy-live.yml</span> },
+							} ) }
 						</p>
+						<Card className="deployment-style__workflow-card">
+							<RenderIcon state={ workflowTriggeredOnPush } />
+							{ __( 'The workflow is triggered on push' ) }
+						</Card>
+						<FoldableCard
+							expanded={ workflowUploadArtifact === 'error' }
+							header={
+								<div>
+									<RenderIcon state={ workflowUploadArtifact } />
+									{ __( 'The upload artifact has the required name' ) }
+								</div>
+							}
+							screenReaderText="More"
+						>
+							<div>
+								<p>{ __( "Ensure that your workflow generates an artifact named 'wpcom'." ) }</p>
+								<p>
+									- name: Upload the artifact <br></br>uses: actions/upload-artifact@v4 <br></br>
+									with: name: wpcom
+								</p>
+							</div>
+						</FoldableCard>
+					</>
+				) }
+				{ deploymentStyle === 'custom' && isCreatingNewWorkflow && (
+					<>
+						<FormLabel>{ __( 'Custom workflow' ) }</FormLabel>
+						<p>
+							{ __(
+								'Create a new workflow file in your repository with the following content and then click ‘Verify workflow’ or let us install it for you.'
+							) }
+						</p>
+						<Card className="deployment-style__workflow-card no-margin">
+							<code>.github/workflows/wpcom.yml</code>
+						</Card>
+						<Card className="deployment-style__workflow-card">
+							<div>
+								<p>
+									- name: Upload the artifact <br></br>uses: actions/upload-artifact@v4 <br></br>
+									with: name: wpcom
+								</p>
+							</div>
+						</Card>
+					</>
+				) }
+				{ deploymentStyle === 'custom' && (
+					<div className="deployment-style__actions">
+						<Button type="button" className="button form-button">
+							{ __( 'Verify workflow' ) }
+						</Button>
+						<Button type="button" className="button form-button">
+							{ __( 'Fix workflow for me' ) }
+						</Button>
 					</div>
-				</FoldableCard>
-
-				<div className="deployment-style__actions">
-					<Button type="button" className="button form-button">
-						{ __( 'Verify workflow' ) }
-					</Button>
-					<Button type="button" className="button form-button">
-						{ __( 'Fix workflow for me' ) }
-					</Button>
-				</div>
+				) }
 			</FormFieldset>
 		</div>
 	);
