@@ -4,6 +4,9 @@ import { englishLocales, localizeUrl } from '@automattic/i18n-utils';
 import i18n, { localize } from 'i18n-calypso';
 import { Component } from 'react';
 import { connect } from 'react-redux';
+import { withCurrentRoute } from 'calypso/components/route';
+import GlobalSidebar from 'calypso/layout/global-sidebar';
+import { useGlobalSidebar } from 'calypso/layout/global-sidebar/hooks/use-global-sidebar';
 import Sidebar from 'calypso/layout/sidebar';
 import CollapseSidebar from 'calypso/layout/sidebar/collapse-sidebar';
 import SidebarFooter from 'calypso/layout/sidebar/footer';
@@ -19,6 +22,7 @@ import { redirectToLogout } from 'calypso/state/current-user/actions';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
 import { logoutUser } from 'calypso/state/logout/actions';
 import { setNextLayoutFocus } from 'calypso/state/ui/layout-focus/actions';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 
 import './style.scss';
 import 'calypso/my-sites/sidebar/style.scss'; // Copy styles from the My Sites sidebar.
@@ -57,12 +61,31 @@ class MeSidebar extends Component {
 		this.props.recordGoogleEvent( 'Me', 'Clicked on Sidebar Sign Out Link' );
 	};
 
-	render() {
+	renderGlobalSidebar() {
+		const props = {
+			path: this.props.path,
+			requireBackLink: true,
+		};
+		return <GlobalSidebar { ...props }>{ this.renderMenu() }</GlobalSidebar>;
+	}
+
+	renderSidebar() {
+		const { translate } = this.props;
+		return (
+			<Sidebar>
+				{ this.renderMenu() }
+				<CollapseSidebar title={ translate( 'Collapse menu' ) } icon="dashicons-admin-collapse" />
+				<SidebarFooter />
+			</Sidebar>
+		);
+	}
+
+	renderMenu() {
 		const { context, locale, translate } = this.props;
 		const path = context.path.replace( '/me', '' ); // Remove base path.
 
 		return (
-			<Sidebar>
+			<>
 				<SidebarRegion>
 					<ProfileGravatar inSidebar user={ this.props.currentUser } />
 
@@ -175,21 +198,34 @@ class MeSidebar extends Component {
 						/>
 					</SidebarMenu>
 				</SidebarRegion>
-				<CollapseSidebar title={ translate( 'Collapse menu' ) } icon="dashicons-admin-collapse" />
-				<SidebarFooter />
-			</Sidebar>
+			</>
 		);
+	}
+
+	render() {
+		if ( this.props.shouldShowGlobalSidebar ) {
+			return this.renderGlobalSidebar();
+		}
+		return this.renderSidebar();
 	}
 }
 
-export default connect(
-	( state ) => ( {
-		currentUser: getCurrentUser( state ),
-	} ),
-	{
-		logoutUser,
-		recordGoogleEvent,
-		redirectToLogout,
-		setNextLayoutFocus,
-	}
-)( localize( MeSidebar ) );
+export default withCurrentRoute(
+	connect(
+		( state, { currentSection } ) => {
+			const sectionGroup = currentSection?.group ?? null;
+			const siteId = getSelectedSiteId( state );
+			const { shouldShowGlobalSidebar } = useGlobalSidebar( siteId, sectionGroup );
+			return {
+				currentUser: getCurrentUser( state ),
+				shouldShowGlobalSidebar,
+			};
+		},
+		{
+			logoutUser,
+			recordGoogleEvent,
+			redirectToLogout,
+			setNextLayoutFocus,
+		}
+	)( localize( MeSidebar ) )
+);
