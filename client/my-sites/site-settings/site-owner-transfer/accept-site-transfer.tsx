@@ -1,24 +1,22 @@
-/* eslint-disable prettier/prettier */
-/* eslint-disable import/order */
+import { Global, css } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useTranslate } from 'i18n-calypso';
-import ActionPanel from 'calypso/components/action-panel';
-import Main from 'calypso/components/main';
-import { navigate } from 'calypso/lib/navigate';
-import { acceptInvite } from 'calypso/state/invites/actions';
-import wpcom from 'calypso/lib/wp';
-import normalizeInvite from 'calypso/my-sites/invites/invite-accept/utils/normalize-invite';
-import { LoadingBar } from 'calypso/components/loading-bar';
-import DocumentHead from 'calypso/components/data/document-head';
-import { Global, css } from '@emotion/react';
-import MasterbarStyled from 'calypso/my-sites/checkout/checkout-thank-you/redesign-v2/masterbar-styled';
 import { useCallback, useEffect, useState } from 'react';
+import ActionPanel from 'calypso/components/action-panel';
+import DocumentHead from 'calypso/components/data/document-head';
+import { LoadingBar } from 'calypso/components/loading-bar';
+import Main from 'calypso/components/main';
 import Notice from 'calypso/components/notice';
 import { useInterval } from 'calypso/lib/interval';
-import { requestSite } from 'calypso/state/sites/actions';
-import { useSelector } from 'react-redux';
-import { getSite } from 'calypso/state/sites/selectors';
+import { navigate } from 'calypso/lib/navigate';
+import wpcom from 'calypso/lib/wp';
+import MasterbarStyled from 'calypso/my-sites/checkout/checkout-thank-you/redesign-v2/masterbar-styled';
+import normalizeInvite from 'calypso/my-sites/invites/invite-accept/utils/normalize-invite';
+import { useSelector } from 'calypso/state';
 import { getCurrentUserId } from 'calypso/state/current-user/selectors';
+import { acceptInvite } from 'calypso/state/invites/actions';
+import { requestSite } from 'calypso/state/sites/actions';
+import { getSite } from 'calypso/state/sites/selectors';
 import { setSelectedSiteId } from 'calypso/state/ui/actions';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 
@@ -42,7 +40,7 @@ export function AcceptSiteTransfer( props: any ) {
 	const userId = useSelector( ( state: object ) => getCurrentUserId( state ) );
 
 	const [ error, setError ] = useState< string | React.ReactNode >( '' );
-	const [ inviteAccepted, setInviteAccepted ] = useState< boolean >( false );
+	const [ inviteAccepted, setInviteAccepted ] = useState< boolean >( true );
 	const [ currentAttempt, setCurrentAttempt ] = useState< number >( 0 );
 
 	const isSiteOwner = site && site.site_owner === userId;
