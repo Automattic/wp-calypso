@@ -43,7 +43,7 @@ const Launchpad = ( {
 
 	const site = useSelect(
 		( select ) => {
-			return siteSlug && ( select( SITE_STORE ) as SiteSelect ).getSite( siteSlug );
+			return siteSlug ? ( select( SITE_STORE ) as SiteSelect ).getSite( siteSlug ) : null;
 		},
 		[ siteSlug ]
 	);
@@ -81,11 +81,13 @@ const Launchpad = ( {
 				<ShareSiteModal setModalIsOpen={ setShareSiteModalIsOpen } site={ site } />
 			) }
 			<LaunchpadInternal
+				site={ site }
 				siteSlug={ siteSlug }
 				checklistSlug={ checklistSlug }
 				taskFilter={ taskFilter }
 				useLaunchpadOptions={ launchpadOptions }
 				launchpadContext={ launchpadContext }
+				enableAutoTracking
 			/>
 		</>
 	);
