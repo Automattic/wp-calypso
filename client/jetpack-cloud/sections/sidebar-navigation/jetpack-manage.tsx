@@ -57,6 +57,7 @@ const JetpackManageSidebar = ( { path }: { path: string } ) => {
 		trackEventProps: {
 			menu_item: 'Jetpack Cloud / Dashboard v2',
 		},
+		withChevron: true,
 	} );
 
 	const showSitesV2Menu =
