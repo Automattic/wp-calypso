@@ -220,7 +220,7 @@ const SiteSettingPrivacyForm = ( {
 							<FormLabel className="site-settings__visibility-label is-checkbox is-hidden">
 								<FormInputCheckbox
 									name="wpcom_data_sharing_opt_out"
-									value={ true }
+									value="true"
 									checked={
 										( wpcomPublicComingSoon && wpcomDataSharingOptOut && isComingSoonDisabled ) ||
 										( wpcomDataSharingOptOut && ! wpcomPublicComingSoon ) ||
