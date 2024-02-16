@@ -6,7 +6,7 @@ import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormTextInput from 'calypso/components/forms/form-text-input';
 import { GitHubAccountsDropdown } from 'calypso/my-sites/github-deployments/components/accounts-dropdown/index';
 import { useLiveAccounts } from 'calypso/my-sites/github-deployments/components/accounts-dropdown/use-live-accounts';
-import { DeploymentStyle } from '../deployment-style';
+import { DeploymentStyle } from '../deployment-style/deployment-style';
 import {
 	FormRadioWithTemplateSelect,
 	ProjectType,

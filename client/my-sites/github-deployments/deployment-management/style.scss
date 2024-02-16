@@ -23,82 +23,6 @@
 		background-color: #fff;
 	}
 
-	.deployment-style {
-		&__repository {
-			label {
-				margin-bottom: 0;
-			}
-		}
-
-		.foldable-card {
-			&__header {
-				min-height: auto !important;
-				padding: 12px;
-			}
-			&__main {
-				flex: none;
-			}
-			&__action {
-				display: none;
-			}
-		}
-
-		&__workflow-card {
-			padding: 12px;
-			display: flex;
-			align-items: center;
-
-			&.no-margin {
-				margin-bottom: 0;
-			}
-		}
-
-		.card,
-		.foldable-card {
-			> div,
-			.foldable-card__main > div {
-				display: flex;
-				align-items: center;
-			}
-
-			&.error {
-				border: 1px solid var(--color-error);
-
-				.foldable-card__content {
-					border-top: 1px solid var(--color-error);
-				}
-
-				.foldable-card__action {
-					display: block;
-				}
-			}
-
-			.custom-icons {
-				margin-right: 6px;
-				border-radius: 50%;
-				color: #fff;
-				fill: #fff;
-
-				&.success {
-					background: var(--studio-green);
-				}
-				&.error {
-					background: var(--studio-red);
-				}
-			}
-		}
-
-		&__actions {
-			margin-top: 16px;
-		}
-
-		.form-fieldset .form-label {
-			margin-top: 20px;
-			margin-bottom: 8px;
-			font-weight: bold;
-		}
-	}
-
 	&__automatic-deploys {
 		display: flex;
 		align-items: center;
@@ -115,11 +39,5 @@
 		background-color: var(--studio-gray-0);
 		padding: 24px;
 		width: 50%;
-	}
-
-	.support-info {
-		float: none;
-		display: inline-block;
-		margin-left: 5px;
 	}
 }

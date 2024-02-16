@@ -7,7 +7,7 @@ import FormTextInput from 'calypso/components/forms/form-text-input';
 import { GitHubAccountData } from 'calypso/my-sites/github-deployments/use-github-accounts-query';
 import { useGithubRepositoryBranchesQuery } from 'calypso/my-sites/github-deployments/use-github-repository-branches-query';
 import { GitHubRepositoryData } from '../use-github-repositories-query';
-import { DeploymentStyle } from './repositories/deployment-style';
+import { DeploymentStyle } from './repositories/deployment-style/deployment-style';
 import '../components/repositories/style.scss';
 
 interface CodeDeploymentData {

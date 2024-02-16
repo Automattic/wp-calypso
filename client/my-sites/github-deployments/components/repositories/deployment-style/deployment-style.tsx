@@ -8,6 +8,9 @@ import { useEffect, useState } from 'react';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormRadiosBar from 'calypso/components/forms/form-radios-bar';
 import SupportInfo from 'calypso/components/support-info';
+
+import './style.scss';
+
 interface DeploymentStyleProps {
 	onDefineStyle?( style: string ): void;
 	onValidationChange?( status: WorkFlowStates ): void;
@@ -86,7 +89,7 @@ export const DeploymentStyle = ( { onDefineStyle, onValidationChange }: Deployme
 	}, [ deploymentStyle, selectedWorkflow ] );
 
 	return (
-		<div className="deployment-style">
+		<div className="github-deployments-deployment-style">
 			<h3 style={ { fontSize: '16px', marginBottom: '16px' } }>
 				{ __( 'Pick your deployment style' ) }
 			</h3>
@@ -134,7 +137,7 @@ export const DeploymentStyle = ( { onDefineStyle, onValidationChange }: Deployme
 							} ) }
 						</p>
 						<Card
-							className={ classNames( 'deployment-style__workflow-card', {
+							className={ classNames( 'github-deployments-deployment-style__workflow-card', {
 								error: triggeredOnPushStatus === 'error' && validationTriggered,
 							} ) }
 						>
@@ -170,10 +173,10 @@ export const DeploymentStyle = ( { onDefineStyle, onValidationChange }: Deployme
 								'Create a new workflow file in your repository with the following content and then click ‘Verify workflow’ or let us install it for you.'
 							) }
 						</p>
-						<Card className="deployment-style__workflow-card no-margin">
+						<Card className="github-deployments-deployment-style__workflow-card no-margin">
 							<code>.github/workflows/wpcom.yml</code>
 						</Card>
-						<Card className="deployment-style__workflow-card">
+						<Card className="github-deployments-deployment-style__workflow-card">
 							<div>
 								<p>
 									- name: Upload the artifact <br></br>uses: actions/upload-artifact@v4 <br></br>
@@ -184,7 +187,7 @@ export const DeploymentStyle = ( { onDefineStyle, onValidationChange }: Deployme
 					</>
 				) }
 				{ deploymentStyle === 'custom' && (
-					<div className="deployment-style__actions">
+					<div className="github-deployments-deployment-style__actions">
 						<Button type="button" className="button form-button">
 							{ __( 'Verify workflow' ) }
 						</Button>
