@@ -65,7 +65,7 @@ export const SiteSettingsSecurity = ( {
 			<SiteSettingsNavigation site={ site } section="security" />
 			{ showCredentials && <JetpackCredentials /> }
 			{ showJetpackBanner && <JetpackCredentialsBanner siteSlug={ site.slug } /> }
-			{ ! isEnabled( 'layout/dotcom-nav-redesign' ) && <JetpackMonitor /> }
+			<JetpackMonitor />
 			<FormSecurity />
 		</Main>
 	);
