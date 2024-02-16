@@ -11,7 +11,7 @@ const SidebarSearch = ( { tooltip } ) => {
 					'is-active': false,
 				} ) }
 				tooltip={ tooltip }
-				icon={ <SidebarCustomIcon icon="dashicon-search" /> }
+				icon={ <SidebarCustomIcon icon="dashicons-search" /> }
 			/>
 		</>
 	);
