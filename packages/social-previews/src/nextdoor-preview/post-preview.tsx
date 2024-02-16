@@ -1,6 +1,6 @@
 import { __ } from '@wordpress/i18n';
 import cx from 'classnames';
-import { baseDomain, formatNextdoorDate, preparePreviewText } from '../helpers';
+import { baseDomain, formatNextdoorDate, preparePreviewText, stripHtmlTags } from '../helpers';
 import { FEED_TEXT_MAX_LENGTH, FEED_TEXT_MAX_LINES } from './constants';
 import { FooterActions } from './footer-actions';
 import { ChevronIcon } from './icons/chevron-icon';
@@ -89,7 +89,9 @@ export function NextdoorPostPreview( {
 							) }
 							{ url ? (
 								<div className="nextdoor-preview__description">
-									<h2 className="nextdoor-preview__description--title">{ title }</h2>
+									<h2 className="nextdoor-preview__description--title">
+										{ title || stripHtmlTags( description ).substring( 0, 50 ) }
+									</h2>
 									<span className="nextdoor-preview__description--url">{ baseDomain( url ) }</span>
 								</div>
 							) : null }
