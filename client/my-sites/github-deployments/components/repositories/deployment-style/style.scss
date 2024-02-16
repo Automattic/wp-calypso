@@ -16,15 +16,8 @@
 		&__action {
 			display: none;
 		}
-	}
-
-	&__workflow-card {
-		padding: 12px;
-		display: flex;
-		align-items: center;
-
-		&.no-margin {
-			margin-bottom: 0;
+		&__content {
+			background-color: var(--studio-gray-0);
 		}
 	}
 

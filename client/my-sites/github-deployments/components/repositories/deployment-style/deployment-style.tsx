@@ -1,4 +1,4 @@
-import { FoldableCard, FormLabel, Spinner, Card } from '@automattic/components';
+import { FoldableCard, FormLabel, Spinner } from '@automattic/components';
 import { Icon, SelectControl, Button } from '@wordpress/components';
 import { check, closeSmall } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
@@ -16,13 +16,13 @@ interface DeploymentStyleProps {
 	onValidationChange?( status: WorkFlowStates ): void;
 }
 
-type DeploymentStle = 'simple' | 'custom';
+type DeploymentStyle = 'simple' | 'custom';
 type WorkFlowStates = 'loading' | 'success' | 'error';
 
 export const DeploymentStyle = ( { onDefineStyle, onValidationChange }: DeploymentStyleProps ) => {
 	const { __ } = useI18n();
 
-	const [ deploymentStyle, setDeploymentStyle ] = useState< DeploymentStle >( 'simple' );
+	const [ deploymentStyle, setDeploymentStyle ] = useState< DeploymentStyle >( 'simple' );
 	const [ isFetchingWorkflows, setFechingWorkflows ] = useState( true );
 	const [ selectedWorkflow, setSelectedWorkflow ] = useState( 'none' );
 	const [ isCreatingNewWorkflow, setIsCreatingNewWorkflow ] = useState( false );
@@ -31,8 +31,7 @@ export const DeploymentStyle = ( { onDefineStyle, onValidationChange }: Deployme
 		useState< WorkFlowStates >( 'loading' );
 	const [ uploadArtifactStatus, setUploadArtifactStatus ] = useState< WorkFlowStates >( 'loading' );
 
-	const handleDeploymentStyleChange = ( event ) => {
-		const { value } = event.currentTarget;
+	const handleDeploymentStyleChange = ( value: DeploymentStyle ) => {
 		setDeploymentStyle( value );
 	};
 
@@ -85,6 +84,7 @@ export const DeploymentStyle = ( { onDefineStyle, onValidationChange }: Deployme
 				setTimeout( () => {
 					setValidationTriggered( true );
 				}, 1000 );
+				setFechingWorkflows( true );
 			}, 1000 );
 		}
 	}, [ deploymentStyle, selectedWorkflow ] );
@@ -100,7 +100,7 @@ export const DeploymentStyle = ( { onDefineStyle, onValidationChange }: Deployme
 					{ label: __( 'Customizable' ), value: 'custom' },
 				] }
 				checked={ deploymentStyle }
-				onChange={ handleDeploymentStyleChange }
+				onChange={ ( event ) => handleDeploymentStyleChange( event.currentTarget.value ) }
 				disabled={ false }
 			/>
 
@@ -187,17 +187,20 @@ export const DeploymentStyle = ( { onDefineStyle, onValidationChange }: Deployme
 								'Create a new workflow file in your repository with the following content and then click ‘Verify workflow’ or let us install it for you.'
 							) }
 						</p>
-						<Card className="github-deployments-deployment-style__workflow-card no-margin">
-							<code>.github/workflows/wpcom.yml</code>
-						</Card>
-						<Card className="github-deployments-deployment-style__workflow-card">
+
+						<FoldableCard
+							className={ uploadArtifactStatus === 'error' && validationTriggered ? 'error' : '' }
+							expanded={ true }
+							header={ <div>.github/workflows/wpcom.yml</div> }
+							screenReaderText="More"
+						>
 							<div>
 								<p>
 									- name: Upload the artifact <br></br>uses: actions/upload-artifact@v4 <br></br>
 									with: name: wpcom
 								</p>
 							</div>
-						</Card>
+						</FoldableCard>
 					</>
 				) }
 				{ deploymentStyle === 'custom' && (
