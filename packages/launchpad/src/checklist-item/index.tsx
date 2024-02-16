@@ -2,13 +2,21 @@ import { Badge, Gridicon } from '@automattic/components';
 import { Button } from '@wordpress/components';
 import classnames from 'classnames';
 import { translate, useRtl } from 'i18n-calypso';
-import { Task } from '../types';
+import type { Task } from '../types';
+import type { FC, Key } from 'react';
 
 import './style.scss';
 
-const ChecklistItem = ( { task, isPrimaryAction }: { task: Task; isPrimaryAction?: boolean } ) => {
+interface Props {
+	key?: Key;
+	task: Task;
+	isPrimaryAction?: boolean;
+	onClick?: () => void;
+}
+
+const ChecklistItem: FC< Props > = ( { task, isPrimaryAction, onClick } ) => {
 	const isRtl = useRtl();
-	const { id, completed, disabled, title, subtitle, actionDispatch } = task;
+	const { id, completed, disabled = false, title, subtitle, actionDispatch } = task;
 
 	// Display chevron if task is incomplete. Don't display chevron and badge at the same time.
 	const shouldDisplayChevron = ! completed && ! disabled && ! task.badge_text;
@@ -30,7 +38,7 @@ const ChecklistItem = ( { task, isPrimaryAction }: { task: Task; isPrimaryAction
 		disabled,
 		...( disabled ? {} : { href: buttonHref } ),
 	};
-
+	const onClickHandler = onClick || actionDispatch;
 	return (
 		<li
 			className={ classnames( 'checklist-item__task', {
@@ -44,7 +52,7 @@ const ChecklistItem = ( { task, isPrimaryAction }: { task: Task; isPrimaryAction
 				<Button
 					className="checklist-item__checklist-primary-button"
 					data-task={ id }
-					onClick={ actionDispatch }
+					onClick={ onClickHandler }
 					{ ...buttonProps }
 				>
 					{ title }
@@ -53,7 +61,7 @@ const ChecklistItem = ( { task, isPrimaryAction }: { task: Task; isPrimaryAction
 				<Button
 					className="checklist-item__task-content"
 					data-task={ id }
-					onClick={ actionDispatch }
+					onClick={ onClickHandler }
 					{ ...buttonProps }
 				>
 					{ completed && (
@@ -89,7 +97,7 @@ const ChecklistItem = ( { task, isPrimaryAction }: { task: Task; isPrimaryAction
 	);
 };
 
-ChecklistItem.Placeholder = () => {
+export const Placeholder: FC = () => {
 	return (
 		<div className="checklist-item__task-content is-placeholder">
 			<div className="checklist-item__content">

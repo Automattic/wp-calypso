@@ -274,9 +274,11 @@ const Sidebar = ( {
 						</div>
 					) }
 					<LaunchpadInternal
+						site={ site }
 						siteSlug={ launchpadKey }
 						checklistSlug={ checklistSlug }
 						taskFilter={ () => enhancedTasks || [] }
+						launchpadContext="onboarding"
 						makeLastTaskPrimaryAction={ true }
 					/>
 					{ showPlansModal && site?.ID && (

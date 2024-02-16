@@ -6,7 +6,6 @@ import { translate } from 'i18n-calypso';
 export default function globalSidebarMenu() {
 	return [
 		{
-			icon: 'dashicons-admin-home',
 			slug: 'sites',
 			title: translate( 'Sites' ),
 			navigationLabel: translate( 'Manage all my sites' ),
@@ -14,7 +13,6 @@ export default function globalSidebarMenu() {
 			url: '/sites',
 		},
 		{
-			icon: 'dashicons-admin-site-alt3',
 			slug: 'domains',
 			title: translate( 'Domains' ),
 			navigationLabel: translate( 'Manage all domains' ),
