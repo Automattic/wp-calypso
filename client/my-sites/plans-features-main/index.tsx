@@ -24,8 +24,8 @@ import {
 	useGridPlans,
 	useGridPlansForFeaturesGrid,
 	useGridPlansForComparisonGrid,
+	useGridPlanForSpotlight,
 } from '@automattic/plans-grid-next';
-import useGridPlanForSpotlight from '@automattic/plans-grid-next/src/hooks/data-store/use-grid-plan-for-spotlight';
 import { isMobile } from '@automattic/viewport';
 import styled from '@emotion/styled';
 import { useDispatch } from '@wordpress/data';

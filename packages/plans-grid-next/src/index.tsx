@@ -6,6 +6,7 @@ import PlanButton from './components/plan-button';
 import PlanTypeSelector from './components/plan-type-selector';
 import { Plans2023Tooltip } from './components/plans-2023-tooltip';
 import PlansGridContextProvider from './grid-context';
+import useGridPlanForSpotlight from './hooks/data-store/use-grid-plan-for-spotlight';
 import useGridPlans from './hooks/data-store/use-grid-plans';
 import useGridPlansForComparisonGrid from './hooks/data-store/use-grid-plans-for-comparison-grid';
 import useGridPlansForFeaturesGrid from './hooks/data-store/use-grid-plans-for-features-grid';
@@ -154,4 +155,5 @@ export {
 	useGridPlans,
 	useGridPlansForFeaturesGrid,
 	useGridPlansForComparisonGrid,
+	useGridPlanForSpotlight,
 };
