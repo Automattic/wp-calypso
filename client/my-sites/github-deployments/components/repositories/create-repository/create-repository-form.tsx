@@ -1,5 +1,5 @@
-import { FormLabel } from '@automattic/components';
-import { Button, FormToggle, Spinner } from '@wordpress/components';
+import { FormLabel, Button } from '@automattic/components';
+import { FormToggle, Spinner } from '@wordpress/components';
 import { useI18n } from '@wordpress/react-i18n';
 import { ChangeEvent, useEffect, useState } from 'react';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
@@ -19,9 +19,13 @@ import './style.scss';
 
 type CreateRepositoryFormProps = {
 	onRepositoryCreated( args: MutationVariables ): void;
+	isPending?: boolean;
 };
 
-export const CreateRepositoryForm = ( { onRepositoryCreated }: CreateRepositoryFormProps ) => {
+export const CreateRepositoryForm = ( {
+	onRepositoryCreated,
+	isPending,
+}: CreateRepositoryFormProps ) => {
 	const { __ } = useI18n();
 	const {
 		account,
@@ -113,21 +117,21 @@ export const CreateRepositoryForm = ( { onRepositoryCreated }: CreateRepositoryF
 				<FormFieldset className="github-deployments-create-repository__project-type">
 					<FormLabel>{ __( 'What are you building ' ) }</FormLabel>
 					<FormRadioWithTemplateSelect
-						label={ __( 'A plugin' ) }
-						projectType="plugin"
-						isChecked={ projectType === 'plugin' }
-						onChange={ () => {
-							setProjectType( 'plugin' );
-						} }
-						onTemplateSelected={ setTemplate }
-						template={ template }
-					/>
-					<FormRadioWithTemplateSelect
 						label={ __( 'A theme' ) }
 						projectType="theme"
 						isChecked={ projectType === 'theme' }
 						onChange={ () => {
 							setProjectType( 'theme' );
+						} }
+						onTemplateSelected={ setTemplate }
+						template={ template }
+					/>
+					<FormRadioWithTemplateSelect
+						label={ __( 'A plugin' ) }
+						projectType="plugin"
+						isChecked={ projectType === 'plugin' }
+						onChange={ () => {
+							setProjectType( 'plugin' );
 						} }
 						onTemplateSelected={ setTemplate }
 						template={ template }
@@ -163,7 +167,12 @@ export const CreateRepositoryForm = ( { onRepositoryCreated }: CreateRepositoryF
 						<p style={ { margin: '0', marginLeft: '8px' } }>{ __( 'Deploy changes on push ' ) }</p>
 					</div>
 				</FormFieldset>
-				<Button variant="primary" disabled={ ! isFormValid } onClick={ handleCreateRepository }>
+				<Button
+					primary
+					busy={ isPending }
+					disabled={ ! isFormValid }
+					onClick={ handleCreateRepository }
+				>
 					{ __( 'Create repository' ) }
 				</Button>
 			</form>
