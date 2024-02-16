@@ -1,6 +1,6 @@
 import classnames from 'classnames';
+import SidebarCustomIcon from 'calypso/layout/sidebar/custom-icon';
 import SidebarMenuItem from '../menu-item';
-import { SearchIcon } from './icon';
 
 const SidebarSearch = ( { tooltip } ) => {
 	return (
@@ -11,7 +11,7 @@ const SidebarSearch = ( { tooltip } ) => {
 					'is-active': false,
 				} ) }
 				tooltip={ tooltip }
-				icon={ <SearchIcon /> }
+				icon={ <SidebarCustomIcon icon="dashicon-search" /> }
 			/>
 		</>
 	);
