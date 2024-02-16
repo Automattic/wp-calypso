@@ -6,7 +6,7 @@ import { useState, FormEvent, ChangeEvent } from 'react';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormTextInput from 'calypso/components/forms/form-text-input';
 import useUsersQuery from 'calypso/data/users/use-users-query';
-import TeamMembers from 'calypso/my-sites/people/team-members';
+import TeamMembersSiteTransfer from 'calypso/my-sites/people/team-members-site-transfer';
 import { useCheckSiteTransferEligibility } from './use-check-site-transfer-eligibility';
 import type { UsersQuery } from 'calypso/my-sites/people/team-members/types';
 
@@ -81,6 +81,11 @@ const SiteOwnerTransferEligibility = ( {
 		checkSiteTransferEligibility( { newSiteOwner: tempSiteOwner } );
 	};
 
+	function onUserClick( userLogin: string ) {
+		onRecipientChange( userLogin );
+		checkSiteTransferEligibility( { newSiteOwner: tempSiteOwner } );
+	}
+
 	function onRecipientChange( recipient: string ) {
 		const value = recipient.trim();
 		setTempSiteOwner( value );
@@ -130,11 +135,10 @@ const SiteOwnerTransferEligibility = ( {
 			) }
 
 			{ tempSiteOwner && usersFound && (
-				<TeamMembers
+				<TeamMembersSiteTransfer
 					search={ tempSiteOwner }
 					usersQuery={ usersQuery }
-					showAddTeamMembersBtn={ false }
-					showHeader={ false }
+					onClick={ ( userLogin: string ) => onUserClick( userLogin ) }
 				/>
 			) }
 
