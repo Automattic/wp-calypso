@@ -19,6 +19,7 @@ const SiteSettingsGeneral = ( {
 	updateFields,
 	isRequestingSettings,
 	isSavingSettings,
+	isJetpack,
 
 	isWpcomStagingSite,
 	isAtomicAndEditingToolkitDeactivated,
@@ -36,7 +37,7 @@ const SiteSettingsGeneral = ( {
 				isSavingSettings={ isSavingSettings }
 			/>
 		) }
-		{ isEnabled( 'layout/dotcom-nav-redesign' ) && <JetpackMonitor /> }
+		{ isJetpack && isEnabled( 'layout/dotcom-nav-redesign' ) && <JetpackMonitor /> }
 		{ ! isWpcomStagingSite && (
 			<SiteTools headerTitle={ translate( 'Other tools' ) } source={ SOURCE_SETTINGS_SITE_TOOLS } />
 		) }
