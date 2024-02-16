@@ -111,7 +111,7 @@ const SiteOwnerTransferEligibility = ( {
 					name="recipient"
 					value={ tempSiteOwner }
 					isError={ recipientError }
-					placeholder={ translate( 'my-client@example.com' ) }
+					placeholder="@"
 					onChange={ ( e: ChangeEvent< HTMLInputElement > ) => onRecipientChange( e.target.value ) }
 				/>
 				{ recipientError && (
