@@ -3,7 +3,7 @@ import { FoldableCard } from '@automattic/components';
 import { hasCheckoutVersion, styled } from '@automattic/wpcom-checkout';
 import { useSelect } from '@wordpress/data';
 import { useTranslate } from 'i18n-calypso';
-import { Fragment } from 'react';
+import { Fragment, ReactNode } from 'react';
 import isAkismetCheckout from 'calypso/lib/akismet/is-akismet-checkout';
 import { has100YearPlan, hasRenewableSubscription } from 'calypso/lib/cart-values/cart-items';
 import isJetpackCheckout from 'calypso/lib/jetpack/is-jetpack-checkout';
@@ -69,12 +69,6 @@ export default function CheckoutTerms( { cart }: { cart: ResponseCart } ) {
 	const shouldShowJetpackSocialAdvancedPricingDisclaimer =
 		showJetpackSocialAdvancedPricingDisclaimer( cart );
 
-	const shouldRenderFoldableCard =
-		shouldShowRefundPolicy ||
-		shouldShowInternationalFeeNotice ||
-		shouldShowBundledDomainNotice ||
-		shouldShowJetpackSocialAdvancedPricingDisclaimer;
-
 	return (
 		<Fragment>
 			<div className="checkout__terms" id="checkout-terms">
@@ -103,22 +97,14 @@ export default function CheckoutTerms( { cart }: { cart: ResponseCart } ) {
 					{ ! isGiftPurchase && <TitanTermsOfService cart={ cart } /> }
 
 					<TermsCollapsedContent>
-						{ shouldRenderFoldableCard && (
-							<FoldableCard
-								clickableHeader={ true }
-								compact
-								className="checkout__terms-foldable-card"
-								header={ translate( 'Read more' ) }
-								screenReaderText={ translate( 'Read more' ) }
-							>
-								{ shouldShowRefundPolicy && <RefundPolicies cart={ cart } /> }
-								{ shouldShowBundledDomainNotice && <BundledDomainNotice cart={ cart } /> }
-								{ shouldShowInternationalFeeNotice && <InternationalFeeNotice /> }
-								{ shouldShowJetpackSocialAdvancedPricingDisclaimer && (
-									<JetpackSocialAdvancedPricingDisclaimer />
-								) }
-							</FoldableCard>
-						) }
+						<CheckoutTermsReadMore>
+							{ shouldShowRefundPolicy && <RefundPolicies cart={ cart } /> }
+							{ shouldShowBundledDomainNotice && <BundledDomainNotice cart={ cart } /> }
+							{ shouldShowInternationalFeeNotice && <InternationalFeeNotice /> }
+							{ shouldShowJetpackSocialAdvancedPricingDisclaimer && (
+								<JetpackSocialAdvancedPricingDisclaimer />
+							) }
+						</CheckoutTermsReadMore>
 					</TermsCollapsedContent>
 				</>
 			) : (
@@ -140,5 +126,25 @@ export default function CheckoutTerms( { cart }: { cart: ResponseCart } ) {
 				</>
 			) }
 		</Fragment>
+	);
+}
+
+function CheckoutTermsReadMore( { children }: { children: ReactNode } ) {
+	const translate = useTranslate();
+	if ( ! children ) {
+		return null;
+	}
+	return (
+		<TermsCollapsedContent>
+			<FoldableCard
+				clickableHeader={ true }
+				compact
+				className="checkout__terms-foldable-card"
+				header={ translate( 'Read more' ) }
+				screenReaderText={ translate( 'Read more' ) }
+			>
+				{ children }
+			</FoldableCard>
+		</TermsCollapsedContent>
 	);
 }
