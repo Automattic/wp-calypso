@@ -55,7 +55,7 @@ const SiteOwnerTransferEligibility = ( {
 		search_columns: [ 'display_name', 'user_login', 'user_email' ],
 		include_viewers: false,
 	} ) as unknown as UsersQuery;
-	const usersFound = usersQuery?.data?.users?.length > 0;
+	const usersFound = usersQuery?.data?.users?.length ?? 0 > 0;
 
 	const { checkSiteTransferEligibility, isPending: isCheckingSiteTransferEligibility } =
 		useCheckSiteTransferEligibility( siteId, {
