@@ -60,7 +60,7 @@ const SitesDataViews = ( {
 		},
 		{
 			id: 'site',
-			header: translate( 'SITE' ),
+			header: <span>{ translate( 'SITE' ) }</span>,
 			getValue: ( { item }: { item: SiteData } ) => item.site.value.url,
 			render: ( { item }: { item: SiteData } ) => {
 				if ( isLoading ) {
@@ -82,7 +82,7 @@ const SitesDataViews = ( {
 		},
 		{
 			id: 'stats',
-			header: 'STATS',
+			header: <span>STATS</span>,
 			getValue: () => 'Stats status',
 			render: ( { item }: { item: SiteData } ) => renderField( 'stats', item ),
 			enableHiding: false,
@@ -90,7 +90,7 @@ const SitesDataViews = ( {
 		},
 		{
 			id: 'boost',
-			header: 'BOOST',
+			header: <span>BOOST</span>,
 			getValue: ( { item }: { item: SiteData } ) => item.boost.status,
 			render: ( { item }: { item: SiteData } ) => renderField( 'boost', item ),
 			enableHiding: false,
@@ -98,7 +98,7 @@ const SitesDataViews = ( {
 		},
 		{
 			id: 'backup',
-			header: 'BACKUP',
+			header: <span>BACKUP</span>,
 			getValue: () => 'Backup status',
 			render: ( { item }: { item: SiteData } ) => renderField( 'backup', item ),
 			enableHiding: false,
@@ -106,7 +106,7 @@ const SitesDataViews = ( {
 		},
 		{
 			id: 'monitor',
-			header: 'MONITOR',
+			header: <span>MONITOR</span>,
 			getValue: () => 'Monitor status',
 			render: ( { item }: { item: SiteData } ) => renderField( 'monitor', item ),
 			enableHiding: false,
@@ -114,7 +114,7 @@ const SitesDataViews = ( {
 		},
 		{
 			id: 'scan',
-			header: 'SCAN',
+			header: <span>SCAN</span>,
 			getValue: () => 'Scan status',
 			render: ( { item }: { item: SiteData } ) => renderField( 'scan', item ),
 			enableHiding: false,
@@ -122,7 +122,7 @@ const SitesDataViews = ( {
 		},
 		{
 			id: 'plugins',
-			header: 'PLUGINS',
+			header: <span>PLUGINS</span>,
 			getValue: () => 'Plugins status',
 			render: ( { item }: { item: SiteData } ) => renderField( 'plugin', item ),
 			enableHiding: false,
@@ -151,7 +151,7 @@ const SitesDataViews = ( {
 		},
 		{
 			id: 'actions',
-			header: translate( 'ACTIONS' ),
+			header: <span>{ translate( 'ACTIONS' ) }</span>,
 			getValue: ( { item }: { item: SiteData } ) => item.isFavorite,
 			render: ( { item }: { item: SiteData } ) => {
 				if ( isLoading ) {
