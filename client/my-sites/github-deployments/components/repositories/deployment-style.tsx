@@ -23,14 +23,13 @@ export const DeploymentStyle = ( { onDefineStyle, onValidationChange }: Deployme
 	const [ isFetchingWorkflows, setFechingWorkflows ] = useState( true );
 	const [ selectedWorkflow, setSelectedWorkflow ] = useState( 'none' );
 	const [ isCreatingNewWorkflow, setIsCreatingNewWorkflow ] = useState( false );
-	const [ workflowTriggeredOnPush, setWorkflowTriggeredOnPush ] =
+	const [ validationTriggered, setValidationTriggered ] = useState( false );
+	const [ triggeredOnPushStatus, setTriggeredOnPushStatus ] =
 		useState< WorkFlowStates >( 'loading' );
-	const [ workflowUploadArtifact, setWorkflowUploadArtifact ] =
-		useState< WorkFlowStates >( 'loading' );
+	const [ uploadArtifactStatus, setUploadArtifactStatus ] = useState< WorkFlowStates >( 'loading' );
 
 	const handleDeploymentStyleChange = ( event ) => {
 		const { value } = event.currentTarget;
-		onDefineStyle?.( value );
 		setDeploymentStyle( value );
 	};
 
@@ -55,8 +54,14 @@ export const DeploymentStyle = ( { onDefineStyle, onValidationChange }: Deployme
 	};
 
 	useEffect( () => {
-		onValidationChange?.( workflowUploadArtifact );
-	}, [ workflowUploadArtifact ] );
+		onDefineStyle?.( deploymentStyle );
+
+		if ( deploymentStyle === 'simple' ) {
+			onValidationChange?.( 'success' );
+		} else {
+			onValidationChange?.( uploadArtifactStatus );
+		}
+	}, [ onDefineStyle, onValidationChange, deploymentStyle, uploadArtifactStatus ] );
 
 	useEffect( () => {
 		if ( deploymentStyle === 'custom' && selectedWorkflow === 'create-new' ) {
@@ -64,11 +69,21 @@ export const DeploymentStyle = ( { onDefineStyle, onValidationChange }: Deployme
 		} else {
 			setIsCreatingNewWorkflow( false );
 		}
-	}, [ deploymentStyle, selectedWorkflow ] );
 
-	setTimeout( () => {
-		setWorkflowUploadArtifact( 'error' );
-	}, 2000 );
+		if ( deploymentStyle === 'custom' ) {
+			setUploadArtifactStatus( 'loading' );
+
+			// Just to simulate a backend call
+			setTimeout( () => {
+				const status = Math.random() > 0.5 ? 'success' : 'error';
+				setTriggeredOnPushStatus( status );
+				setUploadArtifactStatus( status );
+				setTimeout( () => {
+					setValidationTriggered( true );
+				}, 1000 );
+			}, 1000 );
+		}
+	}, [ deploymentStyle, selectedWorkflow ] );
 
 	return (
 		<div className="deployment-style">
@@ -118,15 +133,20 @@ export const DeploymentStyle = ( { onDefineStyle, onValidationChange }: Deployme
 								components: { filename: <span>deploy-live.yml</span> },
 							} ) }
 						</p>
-						<Card className="deployment-style__workflow-card">
-							<RenderIcon state={ workflowTriggeredOnPush } />
+						<Card
+							className={ classNames( 'deployment-style__workflow-card', {
+								error: triggeredOnPushStatus === 'error' && validationTriggered,
+							} ) }
+						>
+							<RenderIcon state={ triggeredOnPushStatus } />
 							{ __( 'The workflow is triggered on push' ) }
 						</Card>
 						<FoldableCard
-							expanded={ workflowUploadArtifact === 'error' }
+							className={ uploadArtifactStatus === 'error' && validationTriggered ? 'error' : '' }
+							expanded={ uploadArtifactStatus === 'error' }
 							header={
 								<div>
-									<RenderIcon state={ workflowUploadArtifact } />
+									<RenderIcon state={ uploadArtifactStatus } />
 									{ __( 'The upload artifact has the required name' ) }
 								</div>
 							}

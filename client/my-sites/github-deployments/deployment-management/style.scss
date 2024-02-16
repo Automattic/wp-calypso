@@ -38,6 +38,9 @@
 			&__main {
 				flex: none;
 			}
+			&__action {
+				display: none;
+			}
 		}
 
 		&__workflow-card {
@@ -56,6 +59,18 @@
 			.foldable-card__main > div {
 				display: flex;
 				align-items: center;
+			}
+
+			&.error {
+				border: 1px solid var(--color-error);
+
+				.foldable-card__content {
+					border-top: 1px solid var(--color-error);
+				}
+
+				.foldable-card__action {
+					display: block;
+				}
 			}
 
 			.custom-icons {
