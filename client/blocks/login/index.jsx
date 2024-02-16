@@ -423,9 +423,12 @@ class Login extends Component {
 				} else {
 					headerText = <h3>{ translate( "Let's get started" ) }</h3>;
 					const poweredByWpCom =
-						wccomFrom === 'nux'
-							? translate( 'All Woo Express stores are powered by WordPress.com!' )
-							: translate( 'All Woo stores are powered by WordPress.com!' );
+						wccomFrom === 'nux' ? (
+							<>
+								{ translate( 'All Woo Express stores are powered by WordPress.com!' ) }
+								<br />
+							</>
+						) : null;
 					const accountSelectionOrLoginToContinue = this.showContinueAsUser()
 						? translate( "First, select the account you'd like to use." )
 						: translate(
@@ -440,7 +443,6 @@ class Login extends Component {
 					postHeader = (
 						<p className="login__header-subtitle">
 							{ poweredByWpCom }
-							<br />
 							{ accountSelectionOrLoginToContinue }
 						</p>
 					);
