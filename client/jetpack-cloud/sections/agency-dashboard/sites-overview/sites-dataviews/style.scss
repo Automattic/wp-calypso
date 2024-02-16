@@ -1,0 +1,72 @@
+@import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/mixins";
+
+.sites-overview__content {
+
+	thead {
+		th.sites-dataviews__site {
+			background: var(--studio-white);
+			td {
+				padding: 16px 0;
+				border-bottom: 1px solid var(--studio-gray-5);
+			}
+		}
+	}
+
+	tr.dataviews-view-table__row {
+		background: var(--studio-white);
+
+		&:hover {
+			background: var(--studio-gray-0);
+		}
+
+		th {
+			padding: 16px 0;
+			border-bottom: 1px solid var(--studio-gray-5);
+			font-size: rem(13px);
+			font-weight: 400;
+		}
+
+		td {
+			padding: 16px 0;
+			border-bottom: 1px solid var(--studio-gray-5);
+			vertical-align: middle;
+		}
+	}
+}
+
+.components-search-control input[type="search"].components-search-control__input {
+	background: var(--studio-white);
+	border: 1px solid var(--studio-gray-5);
+}
+
+.dataviews-filters__view-actions {
+	margin-bottom: 16px;
+}
+
+.sites-dataviews__site {
+	display: flex;
+	flex-direction: row;
+}
+
+.sites-dataviews__site-name {
+	display: flex;
+	flex-direction: column;
+	align-items: flex-start;
+	justify-content: flex-start;
+	white-space: nowrap;
+	font-weight: 600;
+}
+
+.sites-dataviews__site-url {
+	font-size: 0.75rem;
+	color: var(--studio-gray-60);
+	font-weight: 400;
+}
+
+.sites-dataviews__site-favicon {
+	width: 50px;
+	height: 50px;
+	background: linear-gradient(45deg, #ff0056, #ff8a78, #57b7ff, #9c00d4);
+	margin-right: 16px;
+}

@@ -25,7 +25,7 @@ import { useSelector } from 'calypso/state';
 import { isCurrentUserEmailVerified } from 'calypso/state/current-user/selectors';
 import { getConnectUrlForSiteId } from 'calypso/state/memberships/settings/selectors';
 import { useSiteGlobalStylesStatus } from 'calypso/state/sites/hooks/use-site-global-styles-status';
-import { getEnhancedTasks } from './task-helper';
+import { getEnhancedTasks } from './task-definitions';
 import { getLaunchpadTranslations } from './translations';
 
 type SidebarProps = {
@@ -274,9 +274,11 @@ const Sidebar = ( {
 						</div>
 					) }
 					<LaunchpadInternal
+						site={ site }
 						siteSlug={ launchpadKey }
 						checklistSlug={ checklistSlug }
 						taskFilter={ () => enhancedTasks || [] }
+						launchpadContext="onboarding"
 						makeLastTaskPrimaryAction={ true }
 					/>
 					{ showPlansModal && site?.ID && (

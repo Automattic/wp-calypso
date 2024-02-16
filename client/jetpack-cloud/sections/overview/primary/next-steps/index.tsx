@@ -1,5 +1,5 @@
 import { CircularProgressBar } from '@automattic/components';
-import { Checklist, type Task } from '@automattic/launchpad';
+import { Checklist, ChecklistItem, type Task } from '@automattic/launchpad';
 import { useTranslate } from 'i18n-calypso';
 import { JETPACK_MANAGE_ONBOARDING_TOURS_PREFERENCE_NAME } from 'calypso/jetpack-cloud/sections/onboarding-tours/constants';
 import { useDispatch, useSelector } from 'calypso/state';
@@ -123,7 +123,11 @@ export default function NextSteps( { onDismiss = () => {} } ) {
 					</button>
 				</p>
 			) }
-			<Checklist tasks={ tasks } />
+			<Checklist>
+				{ tasks.map( ( task ) => (
+					<ChecklistItem task={ task } key={ task.id } />
+				) ) }
+			</Checklist>
 		</div>
 	);
 }
