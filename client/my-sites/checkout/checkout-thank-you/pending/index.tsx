@@ -133,10 +133,11 @@ function performRedirect( url: string ): void {
 // If the current page is in the pop-up, notify to the opener and delay the redirection.
 // Otherwise, do the redirection immediately.
 function notifyAndPerformRedirect(
-	siteSlug: string = '',
+	siteSlug: string | undefined,
 	{ isError, isUnknown, url }: RedirectInstructions
 ): void {
 	if (
+		siteSlug &&
 		sendMessageToOpener( siteSlug, isError || isUnknown ? 'checkoutFailed' : 'checkoutCompleted' )
 	) {
 		window.setTimeout( () => performRedirect( url ), 3000 );

@@ -133,7 +133,6 @@ const StatsBenefitsPersonal = () => {
 				<li>{ translate( 'Traffic stats and trends for posts and pages' ) }</li>
 				<li>{ translate( 'Detailed statistics about links leading to your site' ) }</li>
 				<li>{ translate( 'GDPR compliance' ) }</li>
-				<li>{ translate( 'Access to upcoming advanced features' ) }</li>
 				{ /** TODO: check sub price for validation -  will need support added to use-stats-purchases hook */ }
 				<li>{ translate( 'Priority support' ) }</li>
 			</ul>

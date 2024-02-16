@@ -16,6 +16,7 @@ import { useSelector, useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { NON_PRIMARY_DOMAINS_TO_FREE_USERS } from 'calypso/state/current-user/constants';
 import { currentUserHasFlag, getCurrentUser } from 'calypso/state/current-user/selectors';
+import { getWpComDomainBySiteId } from 'calypso/state/sites/domains/selectors';
 import getSelectedSite from 'calypso/state/ui/selectors/get-selected-site';
 import Coupon from './coupon';
 import { WPOrderReviewLineItems, WPOrderReviewSection } from './wp-order-review-line-items';
@@ -146,6 +147,11 @@ export default function WPCheckoutOrderReview( {
 	);
 
 	const selectedSiteData = useSelector( getSelectedSite );
+	const wpcomDomain = useSelector( ( state ) =>
+		getWpComDomainBySiteId( state, selectedSiteData?.ID )
+	);
+	const searchParams = new URLSearchParams( window.location.search );
+	const isSignupCheckout = searchParams.get( 'signup' ) === '1';
 
 	// This is what will be displayed at the top of checkout prefixed by "Site: ".
 	const domainUrl = getDomainToDisplayInCheckoutHeader( responseCart, selectedSiteData, siteUrl );
@@ -165,7 +171,8 @@ export default function WPCheckoutOrderReview( {
 
 	return (
 		<>
-			{ hasCheckoutVersion( '2' ) && (
+			{ /** Only show the site preview for WPCOM domains that have a site connected to the site id **/ }
+			{ hasCheckoutVersion( '2' ) && selectedSiteData && wpcomDomain && ! isSignupCheckout && (
 				<div className="checkout-site-preview">
 					<SitePreviewWrapper>
 						<SitePreview showEditSite={ false } showSiteDetails={ false } />

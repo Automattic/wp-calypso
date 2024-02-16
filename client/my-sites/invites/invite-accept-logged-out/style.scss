@@ -67,6 +67,17 @@ body.is-section-accept-invite {
 			&:hover {
 				background: #0e64a5;
 			}
+			&:focus {
+				background-color: #0e64a5;
+				border-color: #0e64a5;
+				color: var(--color-text-inverted);
+				box-shadow: none;
+			}
+			&:disabled {
+				background: var(--studio-gray-20);
+				border: 1px solid var(--studio-gray-20);
+				color: var(--color-surface);
+			}
 		}
 		label.form-label {
 			color: var(--studio-gray-60, #50575e);
