@@ -58,7 +58,7 @@ class SocialSignupForm extends Component {
 		} );
 	};
 
-	handleGitHubResponse = ( accessToken, triggeredByUser = true ) => {
+	handleGitHubResponse = ( { accessToken }, triggeredByUser = true ) => {
 		if ( ! triggeredByUser && this.props.socialService !== 'github' ) {
 			return;
 		}
