@@ -1,6 +1,7 @@
 import { Card } from '@automattic/components';
 import InfiniteList from 'calypso/components/infinite-list';
 import { useSelector } from 'calypso/state';
+import { getCurrentUserId } from 'calypso/state/current-user/selectors';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import PeopleListItemTransfer from './people-list-item-transfer';
 import type { UsersQuery } from './types';
@@ -16,11 +17,12 @@ interface Props {
 function TeamMembersSiteTransfer( props: Props ) {
 	const { search, usersQuery } = props;
 	const site = useSelector( getSelectedSite );
+	const currentUserId = useSelector( getCurrentUserId );
 
 	const listKey = [ 'team-members', site?.ID, search ].join( '-' );
 	const { data, fetchNextPage, isLoading, isFetchingNextPage, hasNextPage } = usersQuery;
 
-	const members = data?.users || [];
+	const members = data?.users.filter( ( user ) => user.ID !== currentUserId ) || [];
 
 	function getPersonRef( user: Member ) {
 		return 'user-' + user?.ID;
