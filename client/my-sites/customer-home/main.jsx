@@ -1,3 +1,4 @@
+import config from '@automattic/calypso-config';
 import { Button } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { useQueryClient } from '@tanstack/react-query';
@@ -65,6 +66,7 @@ const Home = ( {
 	site,
 	siteId,
 	trackViewSiteAction,
+	trackOpenWPAdminAction,
 	isSiteWooExpressEcommerceTrial,
 	ssoModuleActive,
 	fetchingJetpackModules,
@@ -143,6 +145,29 @@ const Home = ( {
 		return <WooCommerceHomePlaceholder />;
 	}
 
+	const headerActions =
+		config.isEnabled( 'layout/dotcom-nav-redesign' ) &&
+		'wp-admin' === site?.options?.wpcom_admin_interface ? (
+			<>
+				<Button href={ site.URL } onClick={ trackViewSiteAction } target="_blank">
+					{ translate( 'View site' ) }
+				</Button>
+				<Button
+					href={ site.URL + '/wp-admin' }
+					onClick={ trackOpenWPAdminAction }
+					target="_blank"
+					primary
+				>
+					{ translate( 'Open WP Admin' ) }
+				</Button>
+			</>
+		) : (
+			<>
+				<Button href={ site.URL } onClick={ trackViewSiteAction } target="_blank">
+					{ translate( 'Visit site' ) }
+				</Button>
+			</>
+		);
 	const header = (
 		<div className="customer-home__heading">
 			<NavigationHeader
@@ -152,9 +177,7 @@ const Home = ( {
 				title={ translate( 'My Home' ) }
 				subtitle={ translate( 'Your hub for posting, editing, and growing your site.' ) }
 			>
-				<Button href={ site.URL } onClick={ trackViewSiteAction } target="_blank">
-					{ translate( 'Visit site' ) }
-				</Button>
+				{ headerActions }
 			</NavigationHeader>
 
 			<div className="customer-home__site-content">
@@ -315,9 +338,16 @@ const trackViewSiteAction = ( isStaticHomePage ) =>
 		bumpStat( 'calypso_customer_home', 'my_site_view_site' )
 	);
 
+const trackOpenWPAdminAction = () =>
+	composeAnalytics(
+		recordTracksEvent( 'calypso_customer_home_my_site_open_wpadmin_click', {} ),
+		bumpStat( 'calypso_customer_home', 'my_site_open_wpadmin' )
+	);
+
 const mapDispatchToProps = {
 	trackViewSiteAction,
 	verifyIcannEmail,
+	trackOpenWPAdminAction,
 };
 
 const mergeProps = ( stateProps, dispatchProps, ownProps ) => {
@@ -326,6 +356,7 @@ const mergeProps = ( stateProps, dispatchProps, ownProps ) => {
 		...ownProps,
 		...stateProps,
 		trackViewSiteAction: () => dispatchProps.trackViewSiteAction( isStaticHomePage ),
+		trackOpenWPAdminAction: () => dispatchProps.trackOpenWPAdminAction(),
 		handleVerifyIcannEmail: dispatchProps.verifyIcannEmail,
 	};
 };
