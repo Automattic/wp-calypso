@@ -19,9 +19,13 @@ import './style.scss';
 
 type CreateRepositoryFormProps = {
 	onRepositoryCreated( args: MutationVariables ): void;
+	isPending?: boolean;
 };
 
-export const CreateRepositoryForm = ( { onRepositoryCreated }: CreateRepositoryFormProps ) => {
+export const CreateRepositoryForm = ( {
+	onRepositoryCreated,
+	isPending,
+}: CreateRepositoryFormProps ) => {
 	const { __ } = useI18n();
 	const {
 		account,
@@ -163,7 +167,12 @@ export const CreateRepositoryForm = ( { onRepositoryCreated }: CreateRepositoryF
 						<p style={ { margin: '0', marginLeft: '8px' } }>{ __( 'Deploy changes on push ' ) }</p>
 					</div>
 				</FormFieldset>
-				<Button variant="primary" disabled={ ! isFormValid } onClick={ handleCreateRepository }>
+				<Button
+					variant="primary"
+					disabled={ ! isFormValid || isPending }
+					busy={ isPending }
+					onClick={ handleCreateRepository }
+				>
 					{ __( 'Create repository' ) }
 				</Button>
 			</form>
