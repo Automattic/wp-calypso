@@ -75,6 +75,7 @@ export interface BoostData {
 }
 
 export interface Site {
+	sticker: string[];
 	blog_id: number;
 	blogname: string;
 	url: string;
