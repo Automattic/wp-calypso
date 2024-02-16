@@ -26,6 +26,7 @@ class SocialLoginActionButton extends Component {
 
 	state = {
 		fetchingUser: false,
+		userHasDisconnected: false,
 	};
 
 	refreshUser = async () => {
@@ -115,13 +116,16 @@ class SocialLoginActionButton extends Component {
 
 	disconnectFromSocialService = () => {
 		const { service } = this.props;
-		return this.props.disconnectSocialUser( service ).then( this.refreshUser );
+		return this.props.disconnectSocialUser( service ).then( () => {
+			this.refreshUser();
+			this.setState( { userHasDisconnected: true } );
+		} );
 	};
 
 	render() {
 		const { service, isConnected, isUpdatingSocialConnection, redirectUri, translate } = this.props;
 
-		const { fetchingUser } = this.state;
+		const { fetchingUser, userHasDisconnected } = this.state;
 
 		const buttonLabel = isConnected ? translate( 'Disconnect' ) : translate( 'Connect' );
 		const disabled = isUpdatingSocialConnection || fetchingUser;
@@ -178,6 +182,7 @@ class SocialLoginActionButton extends Component {
 					responseHandler={ this.handleSocialServiceResponse }
 					redirectUri={ redirectUri }
 					socialServiceResponse={ this.props.socialServiceResponse }
+					userHasDisconnected={ userHasDisconnected }
 				>
 					{ actionButton }
 				</GithubLoginButton>
