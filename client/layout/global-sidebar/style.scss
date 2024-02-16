@@ -70,6 +70,14 @@
 
 	.site {
 		flex: unset;
+
+		&.is-selected {
+			background: var(--color-sidebar-menu-selected-background);
+		}
+
+		&:hover {
+			background: var(--color-sidebar-menu-hover-background);
+		}
 	}
 }
 

@@ -22,6 +22,7 @@ export default function globalSiteSidebarMenu( {
 		},
 		{
 			type: 'current-site',
+			url: `/home/${ siteDomain }`,
 		},
 		{
 			slug: 'upgrades',
