@@ -1,5 +1,5 @@
-import { FormLabel } from '@automattic/components';
-import { Button, FormToggle, Spinner } from '@wordpress/components';
+import { FormLabel, Button } from '@automattic/components';
+import { FormToggle, Spinner } from '@wordpress/components';
 import { useI18n } from '@wordpress/react-i18n';
 import { ChangeEvent, useEffect, useState } from 'react';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
@@ -168,9 +168,9 @@ export const CreateRepositoryForm = ( {
 					</div>
 				</FormFieldset>
 				<Button
-					variant="primary"
-					disabled={ ! isFormValid || isPending }
+					primary
 					busy={ isPending }
+					disabled={ ! isFormValid }
 					onClick={ handleCreateRepository }
 				>
 					{ __( 'Create repository' ) }
