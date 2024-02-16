@@ -96,6 +96,11 @@ const GitHubLoginButton = ( {
 		responseHandler( { access_token } );
 	};
 
+	const stripQueryString = ( url: string ) => {
+		const urlParts = url.split( '?' );
+		return urlParts[ 0 ];
+	};
+
 	useEffect( () => {
 		// This feature is already gated inside client/blocks/authentication/social/index.tsx
 		// Adding an extra check here to prevent accidental inclusions in other parts of the app
@@ -129,9 +134,9 @@ const GitHubLoginButton = ( {
 		const clientId = config( 'github_oauth_client_id' );
 		const scope = encodeURIComponent( 'read:user,user:email' );
 		const redirectEndpoint = encodeURIComponent(
-			`https://public-api.wordpress.com/wpcom/v2/hosting/github/app-callback?final_redirect_uri=${
-				redirectUri.split( '?' )[ 0 ]
-			}`
+			`https://public-api.wordpress.com/wpcom/v2/hosting/github/app-callback?final_redirect_uri=${ stripQueryString(
+				redirectUri
+			) }`
 		);
 		window.location.href = `https://github.com/login/oauth/authorize?client_id=${ clientId }&scope=${ scope }&redirect_uri=${ redirectEndpoint }`;
 	};
