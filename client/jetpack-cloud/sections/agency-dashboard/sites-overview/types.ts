@@ -76,6 +76,7 @@ export interface BoostData {
 
 export interface Site {
 	blog_id: number;
+	blogname: string;
 	url: string;
 	url_with_scheme: string;
 	monitor_active: boolean;
@@ -98,6 +99,8 @@ export interface Site {
 	has_paid_agency_monitor: boolean;
 	is_atomic: boolean;
 	has_pending_boost_one_time_score: boolean;
+	has_vulnerable_plugins: boolean;
+	latest_scan_has_threats_found: boolean;
 	active_paid_subscription_slugs: Array< string >;
 }
 export interface SiteNode {
@@ -211,6 +214,7 @@ export interface DashboardOverviewContextInterface {
 	currentPage: number;
 	filter: { issueTypes: Array< AgencyDashboardFilterOption >; showOnlyFavorites: boolean };
 	sort: DashboardSortInterface;
+	showSitesDashboardV2: boolean;
 }
 
 export interface SitesOverviewContextInterface extends DashboardOverviewContextInterface {
