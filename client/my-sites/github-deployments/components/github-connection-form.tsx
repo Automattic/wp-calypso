@@ -51,6 +51,7 @@ export const GitHubConnectionForm = ( {
 	const branchList = branches.length > 0 ? branches : [ branch ];
 	const branchOptions = branchList.map( ( branch ) => ( { value: branch, label: branch } ) );
 	const [ isPending, setIsPending ] = useState( false );
+	const [ deploymentStyleError, setDeploymentStyleError ] = useState( false );
 
 	return (
 		<form
@@ -111,13 +112,24 @@ export const GitHubConnectionForm = ( {
 						<span>{ __( 'Deploy changes on push' ) }</span>
 					</div>
 				</FormFieldset>
-				<Button type="submit" primary busy={ isPending } disabled={ isPending }>
+				<Button
+					type="submit"
+					primary
+					busy={ isPending }
+					disabled={ isPending || deploymentStyleError }
+				>
 					{ ctaLabel }
 				</Button>
 			</div>
 			<div className="github-deployments-connect-repository__deployment-style">
 				<FormFieldset>
-					<DeploymentStyle />
+					<DeploymentStyle
+						onValidationChange={ ( status ) => {
+							if ( status !== 'success' ) {
+								setDeploymentStyleError( true );
+							}
+						} }
+					/>
 				</FormFieldset>
 			</div>
 		</form>

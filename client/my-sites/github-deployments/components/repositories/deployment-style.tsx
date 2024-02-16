@@ -4,17 +4,18 @@ import { check, closeSmall } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
 import classNames from 'classnames';
 import { translate } from 'i18n-calypso';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormRadiosBar from 'calypso/components/forms/form-radios-bar';
 import SupportInfo from 'calypso/components/support-info';
 interface DeploymentStyleProps {
-	onChange?( query: string ): void;
+	onDefineStyle?( style: string ): void;
+	onValidationChange?( status: WorkFlowStates ): void;
 }
 
 type WorkFlowStates = 'loading' | 'success' | 'error';
 
-export const DeploymentStyle = ( { onChange }: DeploymentStyleProps ) => {
+export const DeploymentStyle = ( { onDefineStyle, onValidationChange }: DeploymentStyleProps ) => {
 	const { __ } = useI18n();
 
 	const [ deploymentStyle, setDeploymentStyle ] = useState( 'simple' );
@@ -28,7 +29,7 @@ export const DeploymentStyle = ( { onChange }: DeploymentStyleProps ) => {
 
 	const handleDeploymentStyleChange = ( event ) => {
 		const { value } = event.currentTarget;
-
+		onDefineStyle?.( value );
 		setDeploymentStyle( value );
 	};
 
@@ -50,6 +51,10 @@ export const DeploymentStyle = ( { onChange }: DeploymentStyleProps ) => {
 		const icon = state === 'success' ? check : closeSmall;
 		return <Icon size={ 20 } icon={ icon } className={ classNames( 'custom-icons', state ) } />;
 	};
+
+	useEffect( () => {
+		onValidationChange?.( workflowUploadArtifact );
+	}, [ workflowUploadArtifact ] );
 
 	setTimeout( () => {
 		setWorkflowUploadArtifact( 'error' );
