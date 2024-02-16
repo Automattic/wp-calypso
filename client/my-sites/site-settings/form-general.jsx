@@ -367,8 +367,6 @@ export class SiteSettingsFormGeneral extends Component {
 		const blogPublic = parseInt( fields.blog_public, 10 );
 		const wpcomComingSoon = 1 === parseInt( fields.wpcom_coming_soon, 10 );
 		const wpcomPublicComingSoon = 1 === parseInt( fields.wpcom_public_coming_soon, 10 );
-		const thirdPartySharingOptOut = !! fields.wpcom_data_sharing_opt_out;
-
 		// isPrivateAndUnlaunched means it is an unlaunched coming soon v1 site
 		const isPrivateAndUnlaunched = -1 === blogPublic && this.props.isUnlaunchedSite;
 		const isNonAtomicJetpackSite = siteIsJetpack && ! siteIsAtomic;
@@ -386,10 +384,6 @@ export class SiteSettingsFormGeneral extends Component {
 			}
 		);
 		const showPreviewLink = isComingSoon && hasSitePreviewLink;
-		const discourageSearchChecked =
-			( wpcomPublicComingSoon && blogPublic === 0 && isComingSoonDisabled ) ||
-			( 0 === blogPublic && ! wpcomPublicComingSoon );
-
 		return (
 			<FormFieldset>
 				{ ! isNonAtomicJetpackSite &&
@@ -407,7 +401,6 @@ export class SiteSettingsFormGeneral extends Component {
 											blog_public: 0,
 											wpcom_coming_soon: 0,
 											wpcom_public_coming_soon: 1,
-											wpcom_data_sharing_opt_out: false,
 										} )
 									}
 									disabled={ isComingSoonDisabled }
@@ -445,7 +438,6 @@ export class SiteSettingsFormGeneral extends Component {
 										blog_public: isWpcomStagingSite ? 0 : 1,
 										wpcom_coming_soon: 0,
 										wpcom_public_coming_soon: 0,
-										wpcom_data_sharing_opt_out: thirdPartySharingOptOut,
 									} )
 								}
 								disabled={ isRequestingSettings }
@@ -469,14 +461,16 @@ export class SiteSettingsFormGeneral extends Component {
 							<FormInputCheckbox
 								name="blog_public"
 								value="0"
-								checked={ discourageSearchChecked }
+								checked={
+									( wpcomPublicComingSoon && blogPublic === 0 && isComingSoonDisabled ) ||
+									( 0 === blogPublic && ! wpcomPublicComingSoon )
+								}
 								onChange={ () =>
 									this.handleVisibilityOptionChange( {
 										blog_public:
 											wpcomPublicComingSoon || blogPublic === -1 || blogPublic === 1 ? 0 : 1,
 										wpcom_coming_soon: 0,
 										wpcom_public_coming_soon: 0,
-										wpcom_data_sharing_opt_out: true,
 									} )
 								}
 								disabled={ isRequestingSettings }
@@ -489,49 +483,6 @@ export class SiteSettingsFormGeneral extends Component {
 								) }
 							</FormSettingExplanation>
 						</FormLabel>
-						{ ! isNonAtomicJetpackSite && (
-							<FormLabel className="site-settings__visibility-label is-checkbox is-hidden">
-								<FormInputCheckbox
-									name="wpcom_data_sharing_opt_out"
-									value={ true }
-									checked={
-										( wpcomPublicComingSoon && thirdPartySharingOptOut && isComingSoonDisabled ) ||
-										( thirdPartySharingOptOut && ! wpcomPublicComingSoon ) ||
-										discourageSearchChecked
-									}
-									onChange={ () =>
-										this.handleVisibilityOptionChange( {
-											blog_public:
-												blogPublic === 1 || wpcomPublicComingSoon || blogPublic === -1 ? 1 : 0,
-											wpcom_coming_soon: 0,
-											wpcom_public_coming_soon: 0,
-											wpcom_data_sharing_opt_out: ! thirdPartySharingOptOut,
-										} )
-									}
-									disabled={ isRequestingSettings || discourageSearchChecked }
-									onClick={ eventTracker( 'Clicked Partnership Radio Button' ) }
-								/>
-								<span>
-									{ translate(
-										'Prevent third-party data sharing for %(siteName)s {{infoPopover}}Limit AI training and prevent third-party data use. Automatically enabled when discouraging search engine indexing. {{a}}Learn more.{{/a}}{{/infoPopover}}',
-										{
-											args: {
-												siteName: site.domain ?? translate( 'this site' ),
-											},
-											components: {
-												a: <InlineSupportLink showIcon={ false } supportContext="privacy" />,
-												infoPopover: <InfoPopover position="bottom right" iconSize="12" />,
-											},
-										}
-									) }
-								</span>
-								<FormSettingExplanation>
-									{ translate(
-										'This option will prevent this site’s content from being shared with our licensed network of data and research partners, including training AI models.'
-									) }
-								</FormSettingExplanation>
-							</FormLabel>
-						) }
 					</>
 				) }
 				{ ! isNonAtomicJetpackSite && (
@@ -549,7 +500,6 @@ export class SiteSettingsFormGeneral extends Component {
 										blog_public: -1,
 										wpcom_coming_soon: 0,
 										wpcom_public_coming_soon: 0,
-										wpcom_data_sharing_opt_out: false,
 									} )
 								}
 								disabled={ isRequestingSettings }
@@ -572,19 +522,12 @@ export class SiteSettingsFormGeneral extends Component {
 		blog_public,
 		wpcom_coming_soon,
 		wpcom_public_coming_soon,
-		wpcom_data_sharing_opt_out,
 	} ) => {
 		const { trackEvent, updateFields } = this.props;
 		trackEvent( `Set blog_public to ${ blog_public }` );
 		trackEvent( `Set wpcom_coming_soon to ${ wpcom_coming_soon }` );
 		trackEvent( `Set wpcom_public_coming_soon to ${ wpcom_public_coming_soon }` );
-		trackEvent( `Set wpcom_data_sharing_opt_out to ${ wpcom_data_sharing_opt_out }` );
-		updateFields( {
-			blog_public,
-			wpcom_coming_soon,
-			wpcom_public_coming_soon,
-			wpcom_data_sharing_opt_out,
-		} );
+		updateFields( { blog_public, wpcom_coming_soon, wpcom_public_coming_soon } );
 	};
 
 	Timezone() {
@@ -1058,7 +1001,6 @@ const getFormSettings = ( settings ) => {
 		lang_id: '',
 		timezone_string: '',
 		blog_public: '',
-		wpcom_data_sharing_opt_out: false,
 		wpcom_coming_soon: '',
 		wpcom_legacy_contact: '',
 		wpcom_locked_mode: false,
@@ -1084,7 +1026,6 @@ const getFormSettings = ( settings ) => {
 		wpcom_locked_mode: settings.wpcom_locked_mode,
 		wpcom_public_coming_soon: settings.wpcom_public_coming_soon,
 		wpcom_gifting_subscription: !! settings.wpcom_gifting_subscription,
-		wpcom_data_sharing_opt_out: !! settings.wpcom_data_sharing_opt_out,
 	};
 
 	// handling `gmt_offset` and `timezone_string` values
