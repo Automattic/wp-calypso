@@ -87,7 +87,6 @@ const Launchpad = ( {
 				taskFilter={ taskFilter }
 				useLaunchpadOptions={ launchpadOptions }
 				launchpadContext={ launchpadContext }
-				enableAutoTracking
 			/>
 		</>
 	);
