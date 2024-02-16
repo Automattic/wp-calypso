@@ -1,12 +1,12 @@
 import { getPlanClass } from '@automattic/calypso-products';
 import { useMemo } from 'react';
-import { GridPlan } from '../../types';
+import { GridPlan, PlansIntent } from '../../types';
 
 const SPOTLIGHT_ENABLED_INTENTS = [ 'plans-default-wpcom' ];
 
 interface Params {
 	gridPlansForFeaturesGrid: GridPlan[];
-	intent: string | undefined;
+	intent?: PlansIntent;
 	isSpotlightOnCurrentPlan?: boolean;
 	sitePlanSlug?: string | null;
 }
