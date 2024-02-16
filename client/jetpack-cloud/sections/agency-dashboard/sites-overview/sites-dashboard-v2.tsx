@@ -55,6 +55,7 @@ export default function SitesDashboardV2() {
 		currentPage,
 		filter,
 		sort,
+		// TODO - These props will be used when we implement the bulk management:
 		// selectedSites,
 		// setSelectedSites,
 		// setIsBulkManagementActive,

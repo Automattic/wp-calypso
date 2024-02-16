@@ -53,7 +53,7 @@ const SitesDataViews = ( { data, isLoading }: Props ) => {
 				);
 			}
 		},
-		[ sites ]
+		[ sites, isLoading ]
 	);
 
 	const fields = [
