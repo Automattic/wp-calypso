@@ -5,7 +5,7 @@ import ActionPanel from 'calypso/components/action-panel';
 import ActionPanelBody from 'calypso/components/action-panel/body';
 import HeaderCake from 'calypso/components/header-cake';
 import Main from 'calypso/components/main';
-import { indexPage } from 'calypso/my-sites/github-deployments/routes';
+import { createPage, indexPage } from 'calypso/my-sites/github-deployments/routes';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { useDispatch, useSelector } from 'calypso/state/index';
 import { errorNotice, successNotice } from 'calypso/state/notices/actions';
@@ -26,7 +26,7 @@ export const CreateRepository = () => {
 	const { __ } = useI18n();
 	const siteId = useSelector( getSelectedSiteId );
 	const siteSlug = useSelector( getSelectedSiteSlug );
-
+	const createPath = createPage( siteSlug! );
 	const goToDeployments = () => {
 		page( indexPage( siteSlug! ) );
 	};
@@ -67,7 +67,7 @@ export const CreateRepository = () => {
 
 	return (
 		<Main fullWidthLayout>
-			<HeaderCake backHref="#">
+			<HeaderCake backHref={ createPath }>
 				<h1>{ __( 'Create repository' ) }</h1>
 			</HeaderCake>
 			<ActionPanel>

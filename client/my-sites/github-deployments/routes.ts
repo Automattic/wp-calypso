@@ -11,6 +11,8 @@ interface CreateNewRepositoryRouteParams {
 
 export const indexPage = ( siteSlug: string ) => `/github-deployments/${ siteSlug }`;
 
+export const createPage = ( siteSlug: string ) => `/github-deployments/${ siteSlug }/create`;
+
 export const createDeploymentPage = (
 	siteSlug: string,
 	{ installationId, repositoryId }: CreateDeploymentRouteParams = {}
