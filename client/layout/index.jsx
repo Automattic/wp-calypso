@@ -37,7 +37,7 @@ import { getPreference } from 'calypso/state/preferences/selectors';
 import getCurrentQueryArguments from 'calypso/state/selectors/get-current-query-arguments';
 import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
 import isWooCommerceCoreProfilerFlow from 'calypso/state/selectors/is-woocommerce-core-profiler-flow';
-import { isJetpackSite } from 'calypso/state/sites/selectors';
+import { getSiteOption, isJetpackSite } from 'calypso/state/sites/selectors';
 import { isSupportSession } from 'calypso/state/support/selectors';
 import { getCurrentLayoutFocus } from 'calypso/state/ui/layout-focus/selectors';
 import {
@@ -247,6 +247,8 @@ class Layout extends Component {
 			'is-jetpack-woo-dna-flow': this.props.isJetpackWooDnaFlow,
 			'is-woocommerce-core-profiler-flow': this.props.isWooCoreProfilerFlow,
 			woo: this.props.isWooCoreProfilerFlow,
+			'is-global-sidebar-visible': this.props.isGlobalSidebarVisible,
+			'is-global-site-sidebar-visible': this.props.isGlobalSiteSidebarVisible,
 		} );
 
 		const optionalBodyProps = () => {
@@ -365,7 +367,11 @@ export default withCurrentRoute(
 		const isWooCoreProfilerFlow =
 			[ 'jetpack-connect', 'login' ].includes( sectionName ) &&
 			isWooCommerceCoreProfilerFlow( state );
-		const { shouldShowGlobalSidebar } = useGlobalSidebar( siteId, sectionGroup );
+		const adminInterface = getSiteOption( state, siteId, 'wpcom_admin_interface' );
+		const { shouldShowGlobalSidebar, shouldShowGlobalSiteSidebar } = useGlobalSidebar(
+			siteId,
+			sectionGroup
+		);
 		const noMasterbarForRoute =
 			isJetpackLogin ||
 			currentRoute === '/me/account/closed' ||
@@ -434,7 +440,9 @@ export default withCurrentRoute(
 			sidebarIsCollapsed: sectionName !== 'reader' && getSidebarIsCollapsed( state ),
 			userAllowedToHelpCenter,
 			currentRoute,
-			shouldShowGlobalSidebar,
+			isGlobalSidebarVisible: shouldShowGlobalSidebar,
+			// Global Site View should be limited to classic interface users only for now.
+			isGlobalSiteSidebarVisible: shouldShowGlobalSiteSidebar && adminInterface === 'wp-admin',
 		};
 	} )( Layout )
 );
