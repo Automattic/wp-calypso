@@ -139,6 +139,9 @@ $mobile-card-max-width: 440px;
 		}
 
 		.components-custom-select-control {
+			.storage-add-on-dropdown-option__title {
+				font-size: 0.875rem;
+			}
 			.components-custom-select-control__button {
 				height: 40px;
 			}
@@ -665,6 +668,8 @@ $mobile-card-max-width: 440px;
 			color: var(--studio-orange-40);
 		}
 	}
+
+	// test
 
 	.components-custom-select-control {
 		line-height: 0px;
