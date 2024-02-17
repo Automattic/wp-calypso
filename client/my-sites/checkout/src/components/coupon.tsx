@@ -47,7 +47,7 @@ export default function Coupon( {
 		>
 			{ hasCheckoutVersion( '2' ) ? (
 				<>
-					<CouponLabel>Coupon code</CouponLabel>
+					<CouponLabel>{ translate( 'Coupon code' ) }</CouponLabel>
 					<CouponField
 						id={ id }
 						inputClassName="coupon-code"
