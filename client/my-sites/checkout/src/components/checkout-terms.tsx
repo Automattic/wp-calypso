@@ -92,16 +92,14 @@ export default function CheckoutTerms( { cart }: { cart: ResponseCart } ) {
 				{ ! isGiftPurchase && <ThirdPartyPluginsTermsOfService cart={ cart } /> }
 				{ ! isGiftPurchase && <TitanTermsOfService cart={ cart } /> }
 
-				<TermsCollapsedContent>
-					<CheckoutTermsReadMore>
-						{ shouldShowRefundPolicy && <RefundPolicies cart={ cart } /> }
-						{ shouldShowBundledDomainNotice && <BundledDomainNotice cart={ cart } /> }
-						{ shouldShowInternationalFeeNotice && <InternationalFeeNotice /> }
-						{ shouldShowJetpackSocialAdvancedPricingDisclaimer && (
-							<JetpackSocialAdvancedPricingDisclaimer />
-						) }
-					</CheckoutTermsReadMore>
-				</TermsCollapsedContent>
+				<CheckoutTermsReadMore>
+					{ shouldShowRefundPolicy && <RefundPolicies cart={ cart } /> }
+					{ shouldShowBundledDomainNotice && <BundledDomainNotice cart={ cart } /> }
+					{ shouldShowInternationalFeeNotice && <InternationalFeeNotice /> }
+					{ shouldShowJetpackSocialAdvancedPricingDisclaimer && (
+						<JetpackSocialAdvancedPricingDisclaimer />
+					) }
+				</CheckoutTermsReadMore>
 			</>
 		</Fragment>
 	);
