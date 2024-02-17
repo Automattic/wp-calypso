@@ -821,10 +821,10 @@ const CheckoutSummaryCard = styled.div`
 
 const CheckoutSummaryFeatures = styled.div`
 	padding: 24px 0;
-	${ hasCheckoutVersion( '2' ) && `grid-area: features; justify-self: center;` }
+	${ hasCheckoutVersion( '2' ) && `grid-area: features; justify-self: flex-start;` }
 
 	@media ( ${ ( props ) => props.theme.breakpoints.tabletUp } ) {
-		${ hasCheckoutVersion( '2' ) && ` justify-self: flex-start;` }
+		${ hasCheckoutVersion( '2' ) ? ` padding: 0 0 24px` : `padding: 24px 0;` }
 	}
 
 	@media ( ${ ( props ) => props.theme.breakpoints.desktopUp } ) {

@@ -775,24 +775,24 @@ const CheckoutSummaryBody = styled.div`
 	margin: 0 auto;
 	max-width: 600px;
 	width: 100%;
-	padding: 24px;
-	${ hasCheckoutVersion( '2' )
-		? `grid-template-areas: 
+	padding: 32px 24px 24px 24px;
+	display: none;
+
+	.is-visible & {
+		${ hasCheckoutVersion( '2' )
+			? ` display: grid;
+			grid-template-areas:
 			"preview"
 			"review"
 			"summary"
 			"nudge"
-			"features";
-			display: grid;
-			`
-		: `display: none` };
-
-	.is-visible & {
-		${ hasCheckoutVersion( '2' ) ? ' display: grid' : 'display: block' };
+			"features";`
+			: `display: block;` };
 	}
 
 	& .checkout-site-preview {
 		grid-area: preview;
+		display: none;
 	}
 
 	& .checkout-review-order {
@@ -800,33 +800,41 @@ const CheckoutSummaryBody = styled.div`
 	}
 
 	@media ( ${ ( props ) => props.theme.breakpoints.tabletUp } ) {
-		padding: 24px;
+		padding: 50px 24px 24px 24px;
 
-		${ hasCheckoutVersion( '2' ) &&
-		`grid-template-areas: 
+		.is-visible & {
+			${ hasCheckoutVersion( '2' ) &&
+			`grid-template-areas:
+			"preview preview"
 			"review review"
 			"summary summary"
 			"features nudge"
 			` };
+		}
 	}
 
 	@media ( ${ ( props ) => props.theme.breakpoints.desktopUp } ) {
 		max-width: 328px;
 		padding: 0;
 
-		${ hasCheckoutVersion( '2' )
-			? `grid-template-areas: 
-			"preview"	
-			"review"
-			"summary"
-			"nudge"
-			"features";
-			display: grid;
+		.is-visible & {
+			${ hasCheckoutVersion( '2' )
+				? `grid-template-areas:
+					"preview"
+					"review"
+					"summary"
+					"nudge"
+					"features";
+					display: grid;
 			`
-			: `display: block;` };
-
+				: `display: block;` };
+		}
 		& .card {
 			box-shadow: none;
+		}
+
+		& .checkout-site-preview {
+			display: block;
 		}
 	}
 `;
