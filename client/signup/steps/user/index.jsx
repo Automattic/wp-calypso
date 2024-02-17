@@ -1,11 +1,11 @@
 import config from '@automattic/calypso-config';
 import { localizeUrl } from '@automattic/i18n-utils';
-import { isNewsletterFlow, isHostingSignupFlow } from '@automattic/onboarding';
+import { isHostingSignupFlow, isNewsletterFlow } from '@automattic/onboarding';
 import { isMobile } from '@automattic/viewport';
 import { Button } from '@wordpress/components';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
-import { isEmpty, omit, get } from 'lodash';
+import { get, isEmpty, omit } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
@@ -17,11 +17,11 @@ import { initGoogleRecaptcha, recordGoogleRecaptchaAction } from 'calypso/lib/an
 import detectHistoryNavigation from 'calypso/lib/detect-history-navigation';
 import { getSocialServiceFromClientId } from 'calypso/lib/login';
 import {
-	isCrowdsignalOAuth2Client,
-	isWooOAuth2Client,
-	isJetpackCloudOAuth2Client,
 	isA4AOAuth2Client,
+	isCrowdsignalOAuth2Client,
 	isGravatarOAuth2Client,
+	isJetpackCloudOAuth2Client,
+	isWooOAuth2Client,
 } from 'calypso/lib/oauth2-clients';
 import { login } from 'calypso/lib/paths';
 import { WPCC } from 'calypso/lib/url/support';
@@ -345,7 +345,7 @@ export class UserStep extends Component {
 		} );
 	};
 
-	submit = ( data ) => {
+	submit = async ( data ) => {
 		const { flowName, stepName, oauth2Signup } = this.props;
 		const dependencies = {};
 		if ( oauth2Signup ) {

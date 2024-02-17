@@ -1209,6 +1209,12 @@ export function excludeStepIfEmailVerified( stepName, defaultDependencies, nextP
 	flows.excludeStep( stepName );
 }
 
+export function excludeSurveyStepIfInactive( stepName, defaultDependencies, nextProps ) {
+	if ( nextProps.initialContext?.isSignupSurveyActive === false ) {
+		flows.excludeStep( stepName );
+	}
+}
+
 export function excludeStepIfProfileComplete( stepName, defaultDependencies, nextProps ) {
 	if ( includes( flows.excludedSteps, stepName ) ) {
 		return;
