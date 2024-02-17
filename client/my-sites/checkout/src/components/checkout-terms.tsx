@@ -3,7 +3,7 @@ import { FoldableCard } from '@automattic/components';
 import { styled } from '@automattic/wpcom-checkout';
 import { useSelect } from '@wordpress/data';
 import { useTranslate } from 'i18n-calypso';
-import { Fragment, ReactNode } from 'react';
+import { Children, Fragment, ReactNode, isValidElement } from 'react';
 import isAkismetCheckout from 'calypso/lib/akismet/is-akismet-checkout';
 import { has100YearPlan, hasRenewableSubscription } from 'calypso/lib/cart-values/cart-items';
 import isJetpackCheckout from 'calypso/lib/jetpack/is-jetpack-checkout';
@@ -107,9 +107,15 @@ export default function CheckoutTerms( { cart }: { cart: ResponseCart } ) {
 	);
 }
 
+/**
+ * Render a FoldableCard to contain TOS items or nothing if there are no items.
+ */
 function CheckoutTermsReadMore( { children }: { children: ReactNode } ) {
 	const translate = useTranslate();
-	if ( ! children ) {
+	// Note that this technique for finding children does not work for strings or
+	// empty fragments. Hopefully all children passed to this component are
+	// components themselves or null.
+	if ( ! children || Children.toArray( children ).filter( isValidElement ).length === 0 ) {
 		return null;
 	}
 	return (
