@@ -43,8 +43,8 @@ export function Credentials( props: Props ) {
 						// translators: %(sourceSite)s and %(targetSite)s are the site slugs - e.g. my-website.wordpress.com
 						translate( 'Your site %(sourceSite)s will be migrated to %(targetSite)s', {
 							args: {
-								sourceSite: sourceSite?.slug,
-								targetSite: targetSite?.slug,
+								sourceSite: sourceSite.slug,
+								targetSite: targetSite.slug,
 							},
 						} )
 					}
