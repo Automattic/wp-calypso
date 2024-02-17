@@ -8,7 +8,6 @@ import { useSelect } from '@wordpress/data';
 import debugFactory from 'debug';
 import { useTranslate } from 'i18n-calypso';
 import { Fragment, useCallback, useMemo } from 'react';
-import QueryContactDetailsCache from 'calypso/components/data/query-contact-details-cache';
 import { recordAddEvent } from 'calypso/lib/analytics/cart';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import useSiteDomains from 'calypso/my-sites/checkout/src/hooks/use-site-domains';
@@ -727,7 +726,6 @@ export default function CheckoutMain( {
 
 	return (
 		<Fragment>
-			<QueryContactDetailsCache />
 			<PageViewTracker
 				path={ analyticsPath }
 				title="Checkout"
