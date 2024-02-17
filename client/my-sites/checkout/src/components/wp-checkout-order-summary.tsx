@@ -957,7 +957,7 @@ const CheckoutSummaryTotal = styled( CheckoutSummaryLineItem )`
 	font-size: 20px;
 
 	& span {
-		font-family: 'Recoleta', sans-serif;
+		${ hasCheckoutVersion( '2' ) ? `font-family: 'Recoleta', sans-serif;` : null }
 	}
 
 	& .wp-checkout-order-summary__label {
