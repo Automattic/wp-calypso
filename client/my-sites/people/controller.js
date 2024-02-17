@@ -6,6 +6,7 @@ import { getSiteFragment } from 'calypso/lib/route';
 import { setNextLayoutFocus } from 'calypso/state/ui/layout-focus/actions';
 import { getCurrentLayoutFocus } from 'calypso/state/ui/layout-focus/selectors';
 import { getSelectedSite, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
+import CreatePeople from './create-people';
 import EditTeamMember from './edit-team-member-form';
 import InvitePeople from './invite-people';
 import PeopleList from './main';
@@ -32,6 +33,10 @@ export default {
 
 	people( context, next ) {
 		renderPeopleList( context, next );
+	},
+
+	createPeople( context, next ) {
+		renderCreatePeople( context, next );
 	},
 
 	invitePeople( context, next ) {
@@ -108,6 +113,25 @@ function renderPeopleList( context, next ) {
 			{ isEnabled( 'user-management-revamp' ) && (
 				<SubscribersTeam filter={ context.params.filter } search={ context.query.s } />
 			) }
+		</>
+	);
+	next();
+}
+
+function renderCreatePeople( context, next ) {
+	const state = context.store.getState();
+	const site = getSelectedSite( state );
+
+	const CreatePeopleTitle = () => {
+		const translate = useTranslate();
+
+		return <DocumentHead title={ translate( 'Create People', { textOnly: true } ) } />;
+	};
+
+	context.primary = (
+		<>
+			<CreatePeopleTitle />
+			<CreatePeople key={ site.ID } site={ site } />
 		</>
 	);
 	next();

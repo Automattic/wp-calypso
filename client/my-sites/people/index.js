@@ -95,6 +95,16 @@ export default function () {
 	);
 
 	page(
+		'/people/create/:site_id',
+		peopleController.enforceSiteEnding,
+		siteSelection,
+		navigation,
+		peopleController.createPeople,
+		makeLayout,
+		clientRender
+	);
+
+	page(
 		'/people/new/:site_id',
 		peopleController.enforceSiteEnding,
 		siteSelection,

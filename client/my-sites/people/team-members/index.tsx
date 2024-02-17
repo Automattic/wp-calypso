@@ -1,3 +1,4 @@
+import config from '@automattic/calypso-config';
 import { Card, Button } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import InfiniteList from 'calypso/components/infinite-list';
@@ -27,7 +28,10 @@ function TeamMembers( props: Props ) {
 	const members = data?.users || [];
 	const membersTotal = data?.total;
 
-	const addTeamMemberLink = `/people/new/${ site?.slug }`;
+	const createTeamMemberLink = `/people/create/${ site?.slug }`;
+	const inviteTeamMemberLink = `/people/new/${ site?.slug }`;
+
+	const showCreateTeamMembers = config.isEnabled( 'calypso/user-creation' );
 
 	function getPersonRef( user: Member ) {
 		return 'user-' + user?.ID;
@@ -79,9 +83,14 @@ function TeamMembers( props: Props ) {
 			return (
 				<>
 					<PeopleListSectionHeader isPlaceholder={ isLoading } label={ getHeaderLabel() }>
+						{ showCreateTeamMembers && (
+							<Button compact primary href={ createTeamMemberLink }>
+								{ translate( 'Create a team member' ) }
+							</Button>
+						) }
 						{ showAddTeamMembersBtn && (
-							<Button compact primary href={ addTeamMemberLink }>
-								{ translate( 'Add a team member' ) }
+							<Button compact primary href={ inviteTeamMemberLink }>
+								{ translate( 'Invite a team member' ) }
 							</Button>
 						) }
 					</PeopleListSectionHeader>

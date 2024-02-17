@@ -35,6 +35,7 @@
 		"calypso/ai-blogging-prompts": true,
 		"calypso/ai-assembler": true,
 		"calypso/help-center": true,
+		"calypso/user-creation": true,
 		"calypsoify/plugins": true,
 		"cancellation-offers": true,
 		"checkout/ebanx-pix": true,
