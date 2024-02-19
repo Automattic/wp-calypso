@@ -1,0 +1,101 @@
+@import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/mixins";
+
+.jetpack-product-store__most-popular--heading,
+.jetpack-product-store__all-items--header {
+	margin-bottom: 0.5rem !important;
+}
+
+.jetpack-product-store__most-popular--subheading,
+.jetpack-product-store__all-items--subheader {
+	color: var(--studio-gray-50);
+	font-size: $font-body-small;
+}
+
+.jetpack-product-store__all-items--grid {
+	padding-top: 2.5rem;
+}
+
+.jetpack-product-store__products-list .license-lightbox-link-icon {
+	display: none;
+}
+
+.simple-item-card {
+
+	.license-lightbox-link {
+		display: block;
+	}
+
+	.item-price .display-price .is-discounted {
+		.plan-price__currency-symbol,
+		.plan-price__integer,
+		.plan-price__fraction {
+			font-size: 1rem;
+		}
+	}
+
+	div:has(.woocommerce-extension-plugin-icon) {
+		background: linear-gradient(160deg, #f5f5ff 7.24%, #f2edff 64.73%, #d8d6ff 116.53%);
+	}
+}
+
+.featured-item-card {
+	.featured-item-card--desc {
+		font-size: 1rem;
+	}
+	.featured-item-card--body .license-lightbox-link {
+		display: block;
+		padding-top: 0.5rem;
+	}
+}
+
+.jetpack-product-store__most-popular--item .featured-item-card .display-price {
+	display: block !important;
+	.product-license-price-with-discount__price-discount {
+		font-size: $font-title-small;
+	}
+}
+
+@media (min-width: 480px) {
+	.item-price .display-price {
+		display: block !important;
+	}
+}
+
+
+.item-price .display-price {
+
+	display: block;
+
+	.display-price__details {
+		padding-top: 0.1rem;
+		color: var(--studio-gray-50);
+	}
+
+	.display-price__prices {
+		padding-right: 3px;
+	}
+
+	.product-license-price-with-discount__price-interval {
+		color: var(--studio-gray-50);
+		font-size: $font-body-extra-small;
+		padding-top: 4px;
+		display: block;
+	}
+
+	.product-license-price-with-discount__price-discount {
+		font-size: 1rem;
+		font-weight: 500;
+		color: var(--studio-jetpack-green-50);
+		text-wrap: nowrap;
+	}
+
+	.is-discounted {
+		.plan-price__currency-symbol,
+		.plan-price__integer,
+		.plan-price__fraction {
+			font-size: $font-title-small;
+		}
+	}
+
+}

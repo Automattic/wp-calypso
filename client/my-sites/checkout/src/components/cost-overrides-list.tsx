@@ -21,6 +21,7 @@ const CostOverridesListStyle = styled.div`
 		justify-content: space-between;
 		grid-template-columns: auto auto;
 		margin-top: 4px;
+		gap: 16px;
 	}
 
 	& .cost-overrides-list-item--coupon {

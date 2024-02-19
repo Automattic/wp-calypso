@@ -18,9 +18,9 @@
 	"homepage": "https://github.com/Automattic/wp-calypso/tree/HEAD/packages/i18n-calypso#readme",
 	"dependencies": {
 		"@automattic/interpolate-components": "workspace:^",
-		"@babel/runtime": "^7.23.7",
+		"@babel/runtime": "^7.23.8",
 		"@tannin/sprintf": "^1.1.0",
-		"@wordpress/compose": "^6.26.0",
+		"@wordpress/compose": "^6.28.0",
 		"debug": "^4.3.3",
 		"events": "^3.0.0",
 		"hash.js": "^1.1.5",

@@ -1,4 +1,4 @@
-import config from '@automattic/calypso-config';
+import { isEnabled } from '@automattic/calypso-config';
 import { Card } from '@automattic/components';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
@@ -22,6 +22,7 @@ import getUserSettings from 'calypso/state/selectors/get-user-settings';
 import isTwoStepEnabled from 'calypso/state/selectors/is-two-step-enabled';
 import { fetchUserSettings } from 'calypso/state/user-settings/actions';
 import { isFetchingUserSettings } from 'calypso/state/user-settings/selectors';
+import Security2faEnhancedSecuritySetting from '../security-2fa-enhanced-security-setting';
 
 import './style.scss';
 
@@ -89,9 +90,20 @@ class TwoStep extends Component {
 		return <Security2faBackupCodes />;
 	};
 
+	renderEnhancedSecuritySetting = () => {
+		if (
+			! isEnabled( 'two-factor/enhanced-security' ) ||
+			this.props.isFetchingUserSettings ||
+			! this.props.isTwoStepEnabled
+		) {
+			return null;
+		}
+		return <Security2faEnhancedSecuritySetting />;
+	};
+
 	render() {
 		const { path, translate } = this.props;
-		const useCheckupMenu = config.isEnabled( 'security/security-checkup' );
+		const useCheckupMenu = isEnabled( 'security/security-checkup' );
 
 		return (
 			<Main wideLayout className="security two-step">
@@ -113,6 +125,7 @@ class TwoStep extends Component {
 
 				<Card>{ this.renderTwoStepSection() }</Card>
 
+				{ this.renderEnhancedSecuritySetting() }
 				{ this.render2faKey() }
 				{ this.renderBackupCodes() }
 				{ this.renderApplicationPasswords() }

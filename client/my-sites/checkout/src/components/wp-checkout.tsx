@@ -61,7 +61,6 @@ import { errorNotice, removeNotice } from 'calypso/state/notices/actions';
 import { isMarketplaceProduct } from 'calypso/state/products-list/selectors';
 import getPreviousRoute from 'calypso/state/selectors/get-previous-route';
 import useCouponFieldState from '../hooks/use-coupon-field-state';
-import { useToSFoldableCard } from '../hooks/use-tos-foldable-card';
 import { validateContactDetails } from '../lib/contact-validation';
 import getContactDetailsType from '../lib/get-contact-details-type';
 import { updateCartContactDetailsForCheckout } from '../lib/update-cart-contact-details-for-checkout';
@@ -75,7 +74,6 @@ import badgeSecurity from './assets/icons/security.svg';
 import { CheckoutCompleteRedirecting } from './checkout-complete-redirecting';
 import CheckoutNextSteps from './checkout-next-steps';
 import { CheckoutSidebarPlanUpsell } from './checkout-sidebar-plan-upsell';
-import { CheckoutSlowProcessingNotice } from './checkout-slow-processing-notice';
 import { EmptyCart, shouldShowEmptyCartPage } from './empty-cart';
 import { GoogleDomainsCopy } from './google-transfers-copy';
 import JetpackAkismetCheckoutSidebarPlanUpsell from './jetpack-akismet-checkout-sidebar-plan-upsell';
@@ -224,6 +222,22 @@ const getPresalesChatKey = ( responseCart: ObjectWithProducts ) => {
 	return 'wpcom';
 };
 
+/* Include a condition for your use case here if you want to show a specific nudge in the checkout sidebar */
+function CheckoutSidebarNudge( { responseCart }: { responseCart: ResponseCart } ) {
+	const isWcMobile = isWcMobileApp();
+	const isDIFMInCart = hasDIFMProduct( responseCart );
+	const hasMonthlyProduct = responseCart?.products?.some( isMonthlyProduct );
+
+	if ( ! isWcMobile && ! isDIFMInCart && ! hasMonthlyProduct ) {
+		return (
+			<CheckoutSidebarNudgeWrapper>
+				<CheckoutSidebarPlanUpsell />
+				<JetpackAkismetCheckoutSidebarPlanUpsell />
+			</CheckoutSidebarNudgeWrapper>
+		);
+	}
+	return null;
+}
 export default function WPCheckout( {
 	addItemToCart,
 	changeSelection,
@@ -334,7 +348,6 @@ export default function WPCheckout( {
 
 	const { transactionStatus } = useTransactionStatus();
 	const paymentMethod = usePaymentMethod();
-	const showToSFoldableCard = useToSFoldableCard();
 
 	const hasMarketplaceProduct =
 		useDoesCartHaveMarketplaceProductRequiringConfirmation( responseCart );
@@ -368,8 +381,6 @@ export default function WPCheckout( {
 		applyDomainContactValidationResults,
 		clearDomainContactErrorMessages,
 	} = checkoutActions;
-
-	const isWcMobile = isWcMobileApp();
 
 	if ( transactionStatus === TransactionStatus.COMPLETE ) {
 		debug( 'rendering post-checkout redirecting page' );
@@ -421,9 +432,6 @@ export default function WPCheckout( {
 		);
 	}
 
-	const isDIFMInCart = hasDIFMProduct( responseCart );
-	const hasMonthlyProduct = responseCart?.products?.some( isMonthlyProduct );
-
 	const nextStepButtonText =
 		locale.startsWith( 'en' ) || i18n.hasTranslation( 'Continue to payment' )
 			? translate( 'Continue to payment', { textOnly: true } )
@@ -433,7 +441,6 @@ export default function WPCheckout( {
 		<WPCheckoutWrapper>
 			<WPCheckoutSidebarContent>
 				{ isLoading && <LoadingSidebarContent /> }
-				{ formStatus === FormStatus.SUBMITTING && <CheckoutSlowProcessingNotice /> }
 				{ ! isLoading && (
 					<CheckoutSummaryArea className={ isSummaryVisible ? 'is-visible' : '' }>
 						<CheckoutErrorBoundary
@@ -467,12 +474,7 @@ export default function WPCheckout( {
 								) }
 
 								<WPCheckoutOrderSummary siteId={ siteId } onChangeSelection={ changeSelection } />
-								{ ! isWcMobile && ! isDIFMInCart && ! hasMonthlyProduct && (
-									<>
-										<CheckoutSidebarPlanUpsell />
-										<JetpackAkismetCheckoutSidebarPlanUpsell />
-									</>
-								) }
+								<CheckoutSidebarNudge responseCart={ responseCart } />
 								{ hasCheckoutVersion( '2' ) && (
 									<CheckoutSummaryFeaturedList
 										responseCart={ responseCart }
@@ -654,13 +656,11 @@ export default function WPCheckout( {
 						validateForm={ validateForm }
 						submitButtonHeader={ <SubmitButtonHeader /> }
 						submitButtonFooter={
-							// Temporarily disabling this lint rule until hasCheckoutVersion is removed
-							// eslint-disable-next-line no-nested-ternary
 							hasCartJetpackProductsOnly ? (
 								<JetpackCheckoutSeals />
-							) : hasCheckoutVersion( '2' ) || showToSFoldableCard ? (
+							) : (
 								<CheckoutMoneyBackGuarantee cart={ responseCart } />
-							) : null
+							)
 						}
 					/>
 				</CheckoutStepGroup>
@@ -793,10 +793,21 @@ const CheckoutSummaryBody = styled.div`
 	}
 `;
 
+const CheckoutSidebarNudgeWrapper = styled.div`
+	display: flex;
+	flex-direction: column;
+
+	& > * {
+		max-width: 288px;
+	}
+`;
+
 const CheckoutTermsAndCheckboxesWrapper = styled.div`
+	box-sizing: border-box;
 	display: flex;
 	flex-direction: column;
 	padding: 32px 20px 0 24px;
+	width: 100%;
 	@media ( ${ ( props ) => props.theme.breakpoints.desktopUp } ) {
 		padding: 32px 20px 0 40px;
 	}

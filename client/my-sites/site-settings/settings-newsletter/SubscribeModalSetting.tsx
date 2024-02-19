@@ -26,7 +26,7 @@ export const SubscribeModalSetting = ( {
 	// Construct a link to edit the modal
 	const { data: activeThemeData } = useActiveThemeQuery( siteId, true );
 	const isFSEActive = activeThemeData?.[ 0 ]?.is_block_theme ?? false;
-	const themeSlug = activeThemeData?.[ 0 ]?.template;
+	const themeSlug = activeThemeData?.[ 0 ]?.stylesheet;
 	const siteEditorUrl = useSelector( ( state: object ) => getSiteEditorUrl( state, siteId ) );
 	const subscribeModalEditorUrl = isFSEActive
 		? addQueryArgs( siteEditorUrl, {

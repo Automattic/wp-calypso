@@ -1,0 +1,43 @@
+.github-deployments-connect-repository {
+	padding-bottom: 32px;
+	display: flex;
+
+	.form-label {
+		font-weight: 500;
+	}
+
+	.components-select-control {
+		height: 40px;
+		.components-input-control__backdrop {
+			border: 1px solid var(--color-neutral-10);
+		}
+	}
+
+	&__repository {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		padding: 8px;
+		border: 1px solid var(--color-neutral-10);
+		border-radius: 2px;
+		background-color: #fff;
+	}
+
+	&__automatic-deploys {
+		display: flex;
+		align-items: center;
+		gap: 8px;
+		font-size: smaller;
+	}
+
+	&__configs {
+		width: 45%;
+		margin-right: 5%;
+	}
+
+	&__deployment-style {
+		background-color: var(--studio-gray-0);
+		padding: 24px;
+		width: 50%;
+	}
+}

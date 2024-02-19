@@ -42,7 +42,7 @@ type WordAdSettings = {
 
 const WordAdsPayments = () => {
 	const translate = useTranslate();
-	const siteId = useSelector( ( state ) => getSelectedSiteId( state ) );
+	const siteId = useSelector( getSelectedSiteId );
 	const payments: Payments = useSelector( ( state ) => getWordAdsPayments( state, siteId ?? 0 ) );
 	const wordAdsSettings: WordAdSettings = useSelector( ( state ) =>
 		getWordadsSettings( state, siteId )

@@ -76,7 +76,7 @@ Within the components inside [CheckoutProvider](#CheckoutProvider), [usePaymentM
 
 When a payment method is ready to submit its data, it can use an appropriate "payment processor" function. These are functions passed to [CheckoutProvider](#CheckoutProvider) with the `paymentProcessors` prop and each one has a unique key. For convenience, the `submitButton` will be provided with an `onClick` function prop that will begin the transaction. The `onClick` function takes one argument, an object that contains the data needed by the payment processor function.
 
-The payment processor function's response will control what happens next. Each payment processor function must return a Promise that resolves to one of four results: [makeManualResponse](#makeManualResponse), [makeRedirectResponse](#makeRedirectResponse), [makeSuccessResponse](#makeSuccessResponse), or [makeErrorResponse](#makeErrorResponse).
+The payment processor function's response will control what happens next. Each payment processor function must return a Promise that resolves to one of three results: [makeRedirectResponse](#makeRedirectResponse), [makeSuccessResponse](#makeSuccessResponse), or [makeErrorResponse](#makeErrorResponse).
 
 ## API
 
@@ -129,7 +129,7 @@ In addition, `CheckoutProvider` monitors the [transaction status](#useTransactio
 
 - If the `transactionStatus` changes to [`.PENDING`](#TransactionStatus), the [form status](#useFormStatus) will be set to [`.SUBMITTING`](#FormStatus).
 - If the `transactionStatus` changes to [`.ERROR`](#TransactionStatus), the transaction status will be set to [`.NOT_STARTED`](#TransactionStatus), the [form status](#useFormStatus) will be set to [`.READY`](#FormStatus), and the error message will be sent to the `onPaymentError` handler.
-- If the `transactionStatus` changes to [`.COMPLETE`](#TransactionStatus), the [form status](#useFormStatus) will be set to [`.COMPLETE`](#FormStatus) (which will cause the `onPaymentComplete` function to be called).
+- If the `transactionStatus` changes to [`.COMPLETE`](#TransactionStatus), the `onPaymentComplete` function will be called.
 - If the `transactionStatus` changes to [`.REDIRECTING`](#TransactionStatus), the page will be redirected to the `transactionRedirectUrl` (or will register an error as above if there is no url).
 - If the `transactionStatus` changes to [`.NOT_STARTED`](#TransactionStatus), the [form status](#useFormStatus) will be set to [`.READY`](#FormStatus).
 
@@ -201,7 +201,6 @@ An enum that holds the values of the [form status](#useFormStatus).
 - `.READY`
 - `.SUBMITTING`
 - `.VALIDATING`
-- `.COMPLETE`
 
 ### PaymentMethodStep
 
@@ -213,7 +212,6 @@ An enum that holds the values of the [payment processor function return value's 
 
 - `.SUCCESS` (the payload will be an `unknown` object that is the server response).
 - `.REDIRECT` (the payload will be a `string` that is the redirect URL).
-- `.MANUAL` (the payload will be an `unknown` object that is determined by the payment processor function).
 - `.ERROR` (the payload will be a `string` that is the error message).
 
 ### TransactionStatus
@@ -238,10 +236,6 @@ A function to create a `CheckoutStepGroupStore` which can be passed to [Checkout
 
 An action creator function to be used by a [payment processor function](#payment-methods) for a [ERROR](#PaymentProcessorResponseType) response. It takes one string argument and will record the string as the error.
 
-### makeManualResponse
-
-An action creator function to be used by a [payment processor function](#payment-methods) for a [MANUAL](#PaymentProcessorResponseType) response; it will do nothing but pass along its argument as a `payload` property to the resolved Promise of the `onClick` function.
-
 ### makeRedirectResponse
 
 An action creator function to be used by a [payment processor function](#payment-methods) for a [REDIRECT](#PaymentProcessorResponseType) response. It takes one string argument and will cause the page to redirect to the URL in that string.
@@ -263,7 +257,6 @@ A React Hook that will return an object with the following properties. Used to r
 - `setFormLoading: () => void`. Function to change the form status to [`.LOADING`](#FormStatus).
 - `setFormValidating: () => void`. Function to change the form status to [`.VALIDATING`](#FormStatus).
 - `setFormSubmitting: () => void`. Function to change the form status to [`.SUBMITTING`](#FormStatus). Usually you can use [setTransactionPending](#useTransactionStatus) instead, which will call this.
-- `setFormComplete: () => void`. Function to change the form status to [`.COMPLETE`](#FormStatus). Note that this will trigger `onPaymentComplete` from [CheckoutProvider](#CheckoutProvider). Usually you can use [setTransactionComplete](#useTransactionStatus) instead, which will call this.
 
 Only works within [CheckoutProvider](#CheckoutProvider) which may sometimes change the status itself based on its props.
 

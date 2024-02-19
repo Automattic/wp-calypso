@@ -365,6 +365,17 @@ const PatternAssembler = ( props: StepProps & NoticesProps ) => {
 		}
 	};
 
+	const onPreselectPattern = ( type: PatternType, selectedPattern: Pattern ) => {
+		injectCategoryToPattern( selectedPattern, categories, type );
+
+		if ( 'header' === type ) {
+			setHeader( selectedPattern );
+		}
+		if ( 'footer' === type ) {
+			setFooter( selectedPattern );
+		}
+	};
+
 	const onSubmit = () => {
 		const design = getDesign() as Design;
 		const stylesheet = design.recipe?.stylesheet ?? '';
@@ -501,11 +512,7 @@ const PatternAssembler = ( props: StepProps & NoticesProps ) => {
 			return false;
 		}
 
-		if ( currentScreen.name === 'confirmation' ) {
-			return false;
-		}
-
-		return true;
+		return ! [ 'confirmation', 'upsell' ].includes( currentScreen.name );
 	};
 
 	const customActionButtons = () => {
@@ -649,6 +656,7 @@ const PatternAssembler = ( props: StepProps & NoticesProps ) => {
 				<NavigatorScreen path={ NAVIGATOR_PATHS.MAIN } partialMatch>
 					<ScreenMain
 						onMainItemSelect={ onMainItemSelect }
+						onPreselectPattern={ onPreselectPattern }
 						hasHeader={ !! header }
 						hasFooter={ !! footer }
 						sections={ sections }

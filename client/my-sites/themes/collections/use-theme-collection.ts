@@ -5,6 +5,7 @@ import {
 	getThemeDetailsUrl as getThemeDetailsUrlSelector,
 	getThemesForQueryIgnoringPage,
 	getThemeType as getThemeTypeSelector,
+	getThemeTierForTheme as getThemeTierForThemeSelector,
 	isInstallingTheme,
 	isThemeActive,
 	prependThemeFilterKeys,
@@ -46,6 +47,10 @@ export function useThemeCollection( query: ThemesQuery ) {
 		( state ) => ( themeId: string ) => getThemeTypeSelector( state, themeId )
 	);
 
+	const getThemeTierForTheme = useSelector(
+		( state ) => ( themeId: string ) => getThemeTierForThemeSelector( state, themeId )
+	);
+
 	const getThemeDetailsUrl = useSelector(
 		( state ) => ( themeId: string ) =>
 			getThemeDetailsUrlSelector( state, themeId, siteId as number )
@@ -61,6 +66,7 @@ export function useThemeCollection( query: ThemesQuery ) {
 		isLivePreviewStarted,
 		siteId,
 		getThemeType,
+		getThemeTierForTheme,
 		filterString,
 		getThemeDetailsUrl,
 	};

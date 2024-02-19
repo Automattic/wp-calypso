@@ -39,7 +39,7 @@ const RenewLink = styled.a( {
 
 export function SitesGridActionRenew( { site, isUpgradeable }: SitesGridActionRenewProps ) {
 	const { __ } = useI18n();
-	const userId = useSelector( ( state ) => getCurrentUserId( state ) );
+	const userId = useSelector( getCurrentUserId );
 	const isSiteOwner = site.site_owner === userId;
 	const productSlug = site.plan?.product_slug;
 

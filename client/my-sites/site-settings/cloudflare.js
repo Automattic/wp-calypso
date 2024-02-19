@@ -21,7 +21,7 @@ const Cloudflare = () => {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 	const showCloudflare = config.isEnabled( 'cloudflare' );
-	const siteId = useSelector( ( state ) => getSelectedSiteId( state ) ) || 0;
+	const siteId = useSelector( getSelectedSiteId ) || 0;
 	const hasCloudflareCDN = useSelector( ( state ) =>
 		siteHasFeature( state, siteId, WPCOM_FEATURES_CLOUDFLARE_CDN )
 	);

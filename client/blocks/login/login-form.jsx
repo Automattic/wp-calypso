@@ -1,7 +1,10 @@
 import config from '@automattic/calypso-config';
 import page from '@automattic/calypso-router';
-import { Button, Card, FormInputValidation, Gridicon } from '@automattic/components';
+import { Button, Card, FormInputValidation, FormLabel, Gridicon } from '@automattic/components';
+import { alert } from '@automattic/components/src/icons';
 import { localizeUrl } from '@automattic/i18n-utils';
+import { Spinner } from '@wordpress/components';
+import { Icon } from '@wordpress/icons';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
 import { capitalize, defer, includes, get } from 'lodash';
@@ -12,7 +15,6 @@ import { connect } from 'react-redux';
 import { FormDivider } from 'calypso/blocks/authentication';
 import JetpackConnectSiteOnly from 'calypso/blocks/jetpack-connect-site-only';
 import FormsButton from 'calypso/components/forms/form-button';
-import FormLabel from 'calypso/components/forms/form-label';
 import FormPasswordInput from 'calypso/components/forms/form-password-input';
 import FormTextInput from 'calypso/components/forms/form-text-input';
 import Notice from 'calypso/components/notice';
@@ -37,6 +39,7 @@ import {
 	loginUser,
 	resetAuthAccountType,
 } from 'calypso/state/login/actions';
+import { cancelSocialAccountConnectLinking } from 'calypso/state/login/actions/cancel-social-account-connect-linking';
 import { resetMagicLoginRequestForm } from 'calypso/state/login/magic-login/actions';
 import {
 	getAuthAccountType as getAuthAccountTypeSelector,
@@ -57,6 +60,7 @@ import getCurrentQueryArguments from 'calypso/state/selectors/get-current-query-
 import getCurrentRoute from 'calypso/state/selectors/get-current-route';
 import getInitialQueryArguments from 'calypso/state/selectors/get-initial-query-arguments';
 import isWooCommerceCoreProfilerFlow from 'calypso/state/selectors/is-woocommerce-core-profiler-flow';
+import ErrorNotice from './error-notice';
 import SocialLoginForm from './social';
 
 import './login-form.scss';
@@ -94,6 +98,7 @@ export class LoginForm extends Component {
 		isSignupExistingAccount: PropTypes.bool,
 		sendMagicLoginLink: PropTypes.func,
 		isSendingEmail: PropTypes.bool,
+		cancelSocialAccountConnectLinking: PropTypes.func,
 	};
 
 	state = {
@@ -599,17 +604,6 @@ export class LoginForm extends Component {
 	};
 
 	getMagicLoginPageLink() {
-		if (
-			! canDoMagicLogin(
-				this.props.twoFactorAuthType,
-				this.props.oauth2Client,
-				this.props.wccomFrom,
-				this.props.isJetpackWooCommerceFlow
-			)
-		) {
-			return null;
-		}
-
 		const loginLink = getLoginLinkPageUrl(
 			this.props.locale,
 			this.props.currentRoute,
@@ -639,6 +633,19 @@ export class LoginForm extends Component {
 				},
 			}
 		);
+	}
+
+	renderPasswordValidationError() {
+		if (
+			canDoMagicLogin(
+				this.props.twoFactorAuthType,
+				this.props.oauth2Client,
+				this.props.isJetpackWooCommerceFlow
+			)
+		) {
+			return this.renderMagicLoginLink();
+		}
+		return this.props.requestError.message;
 	}
 
 	render() {
@@ -741,8 +748,9 @@ export class LoginForm extends Component {
 				{ this.renderPrivateSiteNotice() }
 
 				<Card className="login__form">
+					{ isWoo && <ErrorNotice /> }
 					<div className="login__form-userdata">
-						{ linkingSocialUser && (
+						{ ! isWoo && linkingSocialUser && (
 							<p>
 								{ this.props.translate(
 									'We found a WordPress.com account with the email address "%(email)s". ' +
@@ -803,6 +811,24 @@ export class LoginForm extends Component {
 
 						{ isP2Login && this.isPasswordView() && this.renderChangeUsername() }
 
+						{ isWoo && linkingSocialUser && (
+							<Notice
+								className="login__form-user-exists-notice"
+								status="is-warning"
+								icon={ <Icon icon={ alert } size={ 20 } fill="#d67709" /> }
+								showDismiss
+								onDismissClick={ this.props.cancelSocialAccountConnectLinking }
+								text={ this.props.translate(
+									'You already have a WordPress.com account with this email address. Add your password to log in or {{signupLink}}create a new account{{/signupLink}}.',
+									{
+										components: {
+											signupLink: <a href={ signupUrl } />,
+										},
+									}
+								) }
+							/>
+						) }
+
 						<div
 							className={ classNames( 'login__form-password', {
 								'is-hidden': isPasswordHidden,
@@ -830,7 +856,7 @@ export class LoginForm extends Component {
 							/>
 
 							{ requestError && requestError.field === 'password' && (
-								<FormInputValidation isError text={ this.renderMagicLoginLink() } />
+								<FormInputValidation isError text={ this.renderPasswordValidationError() } />
 							) }
 						</div>
 					</div>
@@ -838,8 +864,12 @@ export class LoginForm extends Component {
 					<p className="login__form-terms">{ socialToS }</p>
 					{ isWoo && ! isPartnerSignup && this.renderLostPasswordLink() }
 					<div className="login__form-action">
-						<FormsButton primary busy={ isSendingEmail } disabled={ isSubmitButtonDisabled }>
-							{ this.getLoginButtonText() }
+						<FormsButton
+							primary
+							busy={ ! isWoo && isSendingEmail }
+							disabled={ isSubmitButtonDisabled }
+						>
+							{ isWoo && isSendingEmail ? <Spinner /> : this.getLoginButtonText() }
 						</FormsButton>
 					</div>
 
@@ -928,5 +958,6 @@ export default connect(
 		recordTracksEvent,
 		resetAuthAccountType,
 		resetMagicLoginRequestForm,
+		cancelSocialAccountConnectLinking,
 	}
 )( localize( LoginForm ) );

@@ -140,6 +140,15 @@ function PaymentMethodForm() {
 
 	const handleChangeError = useCallback(
 		( { transactionError }: { transactionError: string | null } ) => {
+			if (
+				transactionError &&
+				( transactionError.toLowerCase().includes( 'cvc' ) ||
+					transactionError.toLowerCase().includes( 'security code' ) )
+			) {
+				transactionError = translate(
+					'Your payment method cvc code or expiration date is invalid.'
+				);
+			}
 			reduxDispatch(
 				errorNotice(
 					transactionError ||

@@ -1,4 +1,4 @@
-import { Card } from '@automattic/components';
+import { Card, FormLabel } from '@automattic/components';
 import { ToggleControl } from '@wordpress/components';
 import classnames from 'classnames';
 import { localize } from 'i18n-calypso';
@@ -8,7 +8,6 @@ import { connect } from 'react-redux';
 import EditGravatar from 'calypso/blocks/edit-gravatar';
 import FormButton from 'calypso/components/forms/form-button';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
-import FormLabel from 'calypso/components/forms/form-label';
 import FormTextInput from 'calypso/components/forms/form-text-input';
 import FormTextarea from 'calypso/components/forms/form-textarea';
 import InlineSupportLink from 'calypso/components/inline-support-link';
@@ -24,7 +23,6 @@ import ProfileLinks from 'calypso/me/profile-links';
 import ReauthRequired from 'calypso/me/reauth-required';
 import { recordGoogleEvent } from 'calypso/state/analytics/actions';
 import { isFetchingUserSettings } from 'calypso/state/user-settings/selectors';
-import { getIAmDeveloperCopy } from './get-i-am-a-developer-copy';
 import UpdatedGravatarString from './updated-gravatar-string';
 
 import './style.scss';
@@ -129,23 +127,10 @@ class Profile extends Component {
 							} ) }
 						>
 							<ToggleControl
-								disabled={ this.props.isFetchingUserSettings }
+								disabled={ this.props.getDisabledState() || this.props.isFetchingUserSettings }
 								checked={ this.props.getSetting( 'gravatar_profile_hidden' ) }
 								onChange={ this.toggleGravatarHidden }
 								label={ <UpdatedGravatarString gravatarProfileLink={ gravatarProfileLink } /> }
-							/>
-						</FormFieldset>
-
-						<FormFieldset
-							className={ classnames( {
-								'profile__is_dev_account-fieldset-is-loading': this.props.isFetchingUserSettings,
-							} ) }
-						>
-							<ToggleControl
-								disabled={ this.props.isFetchingUserSettings }
-								checked={ this.props.getSetting( 'is_dev_account' ) }
-								onChange={ this.toggleIsDevAccount }
-								label={ getIAmDeveloperCopy( this.props.translate ) }
 							/>
 						</FormFieldset>
 

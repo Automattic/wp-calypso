@@ -71,7 +71,7 @@ import isSiteMigrationInProgress from 'calypso/state/selectors/is-site-migration
 import isSiteP2Hub from 'calypso/state/selectors/is-site-p2-hub';
 import isSiteWpcomStaging from 'calypso/state/selectors/is-site-wpcom-staging';
 import isSiteWPForTeams from 'calypso/state/selectors/is-site-wpforteams';
-import wasTrialSite from 'calypso/state/selectors/was-trial-site';
+import wasEcommerceTrialSite from 'calypso/state/selectors/was-ecommerce-trial-site';
 import wasUpgradedFromTrialSite from 'calypso/state/selectors/was-upgraded-from-trial-site';
 import { requestSite } from 'calypso/state/sites/actions';
 import { getDomainsBySiteId } from 'calypso/state/sites/domains/selectors';
@@ -329,7 +329,7 @@ function onSelectedSiteAvailable( context ) {
 	// If we had a trial plan, and the user doesn't have a paid plan (active or expired),
 	// redirect to full-page trial expired page.
 	if (
-		wasTrialSite( state, selectedSite.ID ) &&
+		wasEcommerceTrialSite( state, selectedSite.ID ) &&
 		! wasUpgradedFromTrialSite( state, selectedSite.ID ) &&
 		[ PLAN_FREE, PLAN_JETPACK_FREE ].includes( currentPlanSlug )
 	) {
@@ -646,10 +646,9 @@ export function siteSelection( context, next ) {
 				let freshSiteId = getSiteId( getState(), siteFragment );
 
 				if ( ! freshSiteId ) {
-					const wpcomStagingFragment = siteFragment.replace(
-						/\b.wordpress.com/,
-						'.wpcomstaging.com'
-					);
+					const wpcomStagingFragment = siteFragment
+						.toString()
+						.replace( /\b.wordpress.com/, '.wpcomstaging.com' );
 					freshSiteId = getSiteId( getState(), wpcomStagingFragment );
 				}
 
@@ -880,14 +879,34 @@ export function selectSiteIfLoggedIn( context, next ) {
 	selectSite( context );
 }
 
-export function selectSiteIfLoggedInWithSites( context, next ) {
+/**
+ * If the section has an "all sites" view to delay the site selection,
+ * only handle the site selection with 0 or 1 sites.
+ */
+export function selectSiteOrSkipIfLoggedInWithMultipleSites( context, next ) {
 	const state = context.store.getState();
-	if ( isUserLoggedIn( state ) && getCurrentUserSiteCount( state ) && ! context.params.site_id ) {
+	const isLoggedIn = isUserLoggedIn( state );
+	const siteCount = getCurrentUserSiteCount( state );
+	const siteFragment =
+		context.params.site || context.params.site_id || getSiteFragment( context.path );
+
+	// If the user is logged out, has 0 sites, or the path contains a site fragment,
+	// proceed with the regular site selection.
+	if ( ! isLoggedIn || ! siteCount || !! siteFragment ) {
+		siteSelection( context, next );
+		return;
+	}
+
+	// If the user only has 1 site and the path doesn't contain a site fragment,
+	// select the site automatically and move on.
+	if ( siteCount === 1 ) {
 		selectSite( context );
 		return;
 	}
 
-	siteSelection( context, next );
+	// If the user has multiple sites and the path doesn't contain a site fragment,
+	// proceed with rendering the page, delaying the site selection.
+	next();
 }
 
 export function hideNavigationIfLoggedInWithNoSites( context, next ) {

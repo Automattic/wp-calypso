@@ -1,5 +1,6 @@
 @use "sass:math";
 @import "uplot/dist/uPlot.min.css";
+@import "@automattic/typography/styles/variables";
 @import "@wordpress/base-styles/breakpoints";
 @import "@wordpress/base-styles/mixins";
 
@@ -43,6 +44,55 @@ $section-max-width: 1224px;
 			margin-right: 16px;
 		}
 	}
+}
+
+.is-mobile-app-view {
+	.site-monitoring__formatted-header,
+	.site-monitoring-tab-panel {
+		display: none;
+	}
+
+	.site-monitoring-time-controls__title {
+		font-family: $sans;
+		font-size: $font-body-large;
+	}
+	.site-monitoring__chart-subtitle {
+		margin-bottom: 0;
+	}
+
+	&.is-section-site-monitoring .focus-content:not(.has-no-sidebar) .layout__content {
+		padding-top: 40px;
+	}
+
+	.site-monitoring__chart {
+		border: 0;
+		padding: 0;
+		margin: 0 -24px 24px -50px;
+
+		.site-monitoring__chart-header {
+			padding: 0 24px 0 50px;
+		}
+	}
+
+	.u-legend {
+		padding: 0 24px 0 50px;
+	}
+
+	.site-monitoring-http-verbs-pie-chart .pie-chart__legend {
+		flex-direction: column;
+		justify-content: space-around;
+		gap: 4px;
+		align-items: center;
+
+		.legend-item {
+			align-items: center;
+		}
+	}
+
+	.site-monitoring__chart-header {
+		margin-bottom: 12px;
+	}
+
 }
 
 .site-monitoring {

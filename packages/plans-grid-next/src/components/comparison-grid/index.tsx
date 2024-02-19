@@ -6,6 +6,7 @@ import {
 	getWooExpressFeaturesGrouped,
 	FEATURE_GROUP_PAYMENT_TRANSACTION_FEES,
 	getPlans,
+	PLAN_WOOEXPRESS_MEDIUM_MONTHLY,
 } from '@automattic/calypso-products';
 import { Gridicon, JetpackLogo } from '@automattic/components';
 import { css } from '@emotion/react';
@@ -23,23 +24,22 @@ import {
 	forwardRef,
 } from 'react';
 import { useInView } from 'react-intersection-observer';
+import { plansGridMediumLarge } from '../../css-mixins';
 import { usePlansGridContext } from '../../grid-context';
 import useHighlightAdjacencyMatrix from '../../hooks/use-highlight-adjacency-matrix';
-import useIsLargeCurrency from '../../hooks/use-is-large-currency';
 import { useManageTooltipToggle } from '../../hooks/use-manage-tooltip-toggle';
-import { usePlanPricingInfoFromGridPlans } from '../../hooks/use-plan-pricing-info-from-grid-plans';
+import useUpgradeClickHandler from '../../hooks/use-upgrade-click-handler';
 import filterUnusedFeaturesObject from '../../lib/filter-unused-features-object';
 import getPlanFeaturesObject from '../../lib/get-plan-features-object';
 import { isStorageUpgradeableForPlan } from '../../lib/is-storage-upgradeable-for-plan';
 import { sortPlans } from '../../lib/sort-plan-properties';
-import { plansBreakSmall } from '../../media-queries';
-import { getStorageStringFromFeature, usePricingBreakpoint } from '../../util';
+import { getStorageStringFromFeature } from '../../util';
 import PlanFeatures2023GridActions from '../actions';
-import PlanFeatures2023GridBillingTimeframe from '../billing-timeframe';
 import PlanFeatures2023GridHeaderPrice from '../header-price';
 import PlanTypeSelector from '../plan-type-selector';
 import { Plans2023Tooltip } from '../plans-2023-tooltip';
 import PopularBadge from '../popular-badge';
+import BillingTimeframe from '../shared/billing-timeframe';
 import { StickyContainer } from '../sticky-container';
 import StorageAddOnDropdown from '../storage-add-on-dropdown';
 import type {
@@ -71,6 +71,9 @@ function DropdownIcon() {
 	);
 }
 
+const featureGroupRowTitleCellMaxWidth = 450;
+const rowCellMaxWidth = 290;
+
 const JetpackIconContainer = styled.div`
 	padding-inline-start: 6px;
 	display: inline-block;
@@ -96,7 +99,7 @@ const Title = styled.div< { isHiddenInMobile?: boolean } >`
 		flex-shrink: 0;
 	}
 
-	${ plansBreakSmall( css`
+	${ plansGridMediumLarge( css`
 		padding-inline-start: 0;
 		border: none;
 		padding: 0;
@@ -108,13 +111,18 @@ const Title = styled.div< { isHiddenInMobile?: boolean } >`
 	` ) }
 `;
 
-const Grid = styled.div< { isInSignup?: boolean } >`
+const Grid = styled.div< { visiblePlans: number } >`
 	display: grid;
-	margin-top: ${ ( props ) => ( props.isInSignup ? '90px' : '64px' ) };
+	margin: 0 auto;
 	background: #fff;
 	border: solid 1px #e0e0e0;
+	${ ( props ) =>
+		props.visiblePlans &&
+		css`
+			max-width: ${ rowCellMaxWidth * props.visiblePlans + featureGroupRowTitleCellMaxWidth }px;
+		` }
 
-	${ plansBreakSmall( css`
+	${ plansGridMediumLarge( css`
 		border-radius: 5px;
 	` ) }
 
@@ -134,7 +142,7 @@ const Row = styled.div< {
 	align-items: stretch;
 	display: ${ ( props ) => ( props.isHiddenInMobile ? 'none' : 'flex' ) };
 
-	${ plansBreakSmall( css`
+	${ plansGridMediumLarge( css`
 		display: flex;
 		align-items: center;
 		margin: 0 20px;
@@ -145,7 +153,7 @@ const Row = styled.div< {
 	${ ( props ) =>
 		props.isHighlighted &&
 		css`
-			${ plansBreakSmall( css`
+			${ plansGridMediumLarge( css`
 				background-color: #fafafa;
 				border-top: 1px solid #eee;
 				font-weight: bold;
@@ -161,7 +169,7 @@ const PlanRow = styled( Row )`
 		display: ${ ( props ) => ( props.isHiddenInMobile ? 'none' : 'flex' ) };
 	}
 
-	${ plansBreakSmall( css`
+	${ plansGridMediumLarge( css`
 		border-bottom: none;
 		align-items: stretch;
 
@@ -177,7 +185,7 @@ const TitleRow = styled( Row )`
 	cursor: pointer;
 	display: flex;
 
-	${ plansBreakSmall( css`
+	${ plansGridMediumLarge( css`
 		cursor: default;
 		border-bottom: none;
 		padding: 20px 0 10px;
@@ -194,6 +202,7 @@ const Cell = styled.div< { textAlign?: 'start' | 'center' | 'end' } >`
 	align-items: center;
 	padding: 33px 20px 0;
 	border-right: solid 1px #e0e0e0;
+	max-width: ${ rowCellMaxWidth }px;
 
 	.gridicon {
 		fill: currentColor;
@@ -214,12 +223,12 @@ const Cell = styled.div< { textAlign?: 'start' | 'center' | 'end' } >`
 	${ Row }:last-of-type & {
 		padding-bottom: 24px;
 
-		${ plansBreakSmall( css`
+		${ plansGridMediumLarge( css`
 			padding-bottom: 0px;
 		` ) }
 	}
 
-	${ plansBreakSmall( css`
+	${ plansGridMediumLarge( css`
 		padding: 0 14px;
 		border-right: none;
 		justify-content: center;
@@ -238,15 +247,24 @@ const Cell = styled.div< { textAlign?: 'start' | 'center' | 'end' } >`
 	` ) }
 `;
 
-const RowTitleCell = styled.div`
+const RowTitleCell = styled.div< {
+	isPlaceholderHeaderCell?: boolean;
+	isFeatureGroupRowTitleCell?: boolean;
+} >`
 	display: none;
 	font-size: 14px;
 	padding-right: 10px;
-	${ plansBreakSmall( css`
+	${ plansGridMediumLarge( css`
 		display: block;
 		flex: 1;
 		min-width: 290px;
 	` ) }
+	max-width: ${ ( props ) => {
+		if ( props.isPlaceholderHeaderCell || props.isFeatureGroupRowTitleCell ) {
+			return `${ featureGroupRowTitleCellMaxWidth }px`;
+		}
+		return `${ rowCellMaxWidth }px`;
+	} };
 `;
 
 const PlanSelector = styled.header`
@@ -295,7 +313,7 @@ const StorageButton = styled.div`
 	min-width: 64px;
 	margin-top: 10px;
 
-	${ plansBreakSmall( css`
+	${ plansGridMediumLarge( css`
 		margin-top: 0;
 	` ) }
 `;
@@ -344,7 +362,6 @@ type ComparisonGridHeaderProps = {
 type ComparisonGridHeaderCellProps = Omit< ComparisonGridHeaderProps, 'planTypeSelectorProps' > & {
 	allVisible: boolean;
 	isLastInRow: boolean;
-	isLargeCurrency: boolean;
 	planSlug: PlanSlug;
 };
 
@@ -364,7 +381,6 @@ const ComparisonGridHeaderCell = ( {
 	displayedGridPlans,
 	currentSitePlanSlug,
 	isLaunchPage,
-	isLargeCurrency,
 	onUpgradeClick,
 	planActionOverrides,
 	planUpgradeCreditsApplicable,
@@ -438,15 +454,11 @@ const ComparisonGridHeaderCell = ( {
 			<PlanFeatures2023GridHeaderPrice
 				planSlug={ planSlug }
 				planUpgradeCreditsApplicable={ planUpgradeCreditsApplicable }
-				isLargeCurrency={ isLargeCurrency }
 				currentSitePlanSlug={ currentSitePlanSlug }
 				visibleGridPlans={ visibleGridPlans }
 			/>
 			<div className="plan-comparison-grid__billing-info">
-				<PlanFeatures2023GridBillingTimeframe
-					planSlug={ planSlug }
-					showRefundPeriod={ showRefundPeriod }
-				/>
+				<BillingTimeframe planSlug={ planSlug } showRefundPeriod={ showRefundPeriod } />
 			</div>
 			<PlanFeatures2023GridActions
 				currentSitePlanSlug={ currentSitePlanSlug }
@@ -458,6 +470,7 @@ const ComparisonGridHeaderCell = ( {
 				planActionOverrides={ planActionOverrides }
 				showMonthlyPrice={ false }
 				isStuck={ false }
+				visibleGridPlans={ visibleGridPlans }
 			/>
 		</Cell>
 	);
@@ -465,7 +478,7 @@ const ComparisonGridHeaderCell = ( {
 
 const PlanTypeSelectorWrapper = styled.div`
 	display: none;
-	${ plansBreakSmall( css`
+	${ plansGridMediumLarge( css`
 		display: block;
 	` ) }
 `;
@@ -493,21 +506,14 @@ const ComparisonGridHeader = forwardRef< HTMLDivElement, ComparisonGridHeaderPro
 	) => {
 		const translate = useTranslate();
 		const allVisible = visibleGridPlans.length === displayedGridPlans.length;
-		const { prices, currencyCode } = usePlanPricingInfoFromGridPlans( {
-			gridPlans: visibleGridPlans,
-		} );
 		const { coupon } = usePlansGridContext();
-
-		const isLargeCurrency = useIsLargeCurrency( {
-			prices,
-			currencyCode: currencyCode || 'USD',
-		} );
 
 		return (
 			<PlanRow isHiddenInMobile={ isHiddenInMobile } ref={ ref }>
 				<RowTitleCell
 					key="feature-name"
 					className="plan-comparison-grid__header-cell is-placeholder-header-cell"
+					isPlaceholderHeaderCell={ true }
 				>
 					{ isStuck && planTypeSelectorProps && (
 						<PlanTypeSelectorWrapper>
@@ -535,7 +541,6 @@ const ComparisonGridHeader = forwardRef< HTMLDivElement, ComparisonGridHeaderPro
 						currentSitePlanSlug={ currentSitePlanSlug }
 						onUpgradeClick={ onUpgradeClick }
 						isLaunchPage={ isLaunchPage }
-						isLargeCurrency={ isLargeCurrency }
 						planActionOverrides={ planActionOverrides }
 						selectedPlan={ selectedPlan }
 						showRefundPeriod={ showRefundPeriod }
@@ -746,6 +751,9 @@ const ComparisonGridFeatureGroupRow: React.FunctionComponent< {
 	const featureSlug = feature?.getSlug() ?? '';
 	const footnote = planFeatureFootnotes?.footnotesByFeature?.[ featureSlug ];
 	const tooltipId = `${ feature?.getSlug() }-comparison-grid`;
+	const hasWooExpressPlans = visibleGridPlans.some( ( { planSlug } ) =>
+		isWooExpressPlan( planSlug )
+	);
 
 	return (
 		<Row
@@ -753,7 +761,11 @@ const ComparisonGridFeatureGroupRow: React.FunctionComponent< {
 			className={ rowClasses }
 			isHighlighted={ isHighlighted }
 		>
-			<RowTitleCell key="feature-name" className="is-feature-group-row-title-cell">
+			<RowTitleCell
+				key="feature-name"
+				className="is-feature-group-row-title-cell"
+				isFeatureGroupRowTitleCell={ true }
+			>
 				{ isStorageFeature ? (
 					<Plans2023Tooltip
 						text={ translate( 'Space to store your photos, media, and more.' ) }
@@ -768,12 +780,16 @@ const ComparisonGridFeatureGroupRow: React.FunctionComponent< {
 						{ feature && (
 							<>
 								<Plans2023Tooltip
-									text={ feature.getDescription?.() }
+									text={ feature.getDescription?.( {
+										planSlug: hasWooExpressPlans ? PLAN_WOOEXPRESS_MEDIUM_MONTHLY : undefined,
+									} ) }
 									setActiveTooltipId={ setActiveTooltipId }
 									activeTooltipId={ activeTooltipId }
 									id={ tooltipId }
 								>
-									{ feature.getTitle() }
+									{ feature.getTitle( {
+										planSlug: hasWooExpressPlans ? PLAN_WOOEXPRESS_MEDIUM_MONTHLY : undefined,
+									} ) }
 									{ footnote && (
 										<FeatureFootnote>
 											<sup>{ footnote }</sup>
@@ -961,6 +977,7 @@ const ComparisonGrid = ( {
 	showRefundPeriod,
 	planTypeSelectorProps,
 	planUpgradeCreditsApplicable,
+	gridSize,
 }: ComparisonGridProps ) => {
 	const { gridPlans } = usePlansGridContext();
 	const [ activeTooltipId, setActiveTooltipId ] = useManageTooltipToggle();
@@ -979,46 +996,35 @@ const ComparisonGrid = ( {
 		? getWooExpressFeaturesGrouped()
 		: getPlanFeaturesGrouped();
 
-	let largeBreakpoint;
-	let mediumBreakpoint;
-	let smallBreakpoint;
-
-	if ( isInSignup ) {
-		// Breakpoints without admin sidebar
-		largeBreakpoint = 1281;
-		mediumBreakpoint = 1024;
-		smallBreakpoint = 880;
-	} else {
-		// Breakpoints with admin sidebar
-		largeBreakpoint = 1553; // 1500px + 272px (sidebar)
-		mediumBreakpoint = 1296; // 1340px + 272px (sidebar)
-		smallBreakpoint = 1152; // keeping original breakpoint to match Plan Grid
-	}
-
-	const isLargeBreakpoint = usePricingBreakpoint( largeBreakpoint );
-	const isMediumBreakpoint = usePricingBreakpoint( mediumBreakpoint );
-	const isSmallBreakpoint = usePricingBreakpoint( smallBreakpoint );
-
 	const [ visiblePlans, setVisiblePlans ] = useState< PlanSlug[] >( [] );
 
 	const displayedGridPlans = useMemo( () => {
-		return sortPlans( gridPlans, currentSitePlanSlug, isMediumBreakpoint );
-	}, [ gridPlans, currentSitePlanSlug, isMediumBreakpoint ] );
+		return sortPlans( gridPlans, currentSitePlanSlug, 'small' === gridSize );
+	}, [ gridPlans, currentSitePlanSlug, gridSize ] );
 
 	useEffect( () => {
 		let newVisiblePlans = displayedGridPlans.map( ( { planSlug } ) => planSlug );
 		let visibleLength = newVisiblePlans.length;
 
-		visibleLength = isLargeBreakpoint ? 4 : visibleLength;
-		visibleLength = isMediumBreakpoint ? 3 : visibleLength;
-		visibleLength = isSmallBreakpoint ? 2 : visibleLength;
+		switch ( gridSize ) {
+			case 'large':
+				visibleLength = 4;
+				break;
+			case 'medium':
+				visibleLength = 3;
+				break;
+			case 'smedium':
+			case 'small':
+				visibleLength = 2;
+				break;
+		}
 
 		if ( newVisiblePlans.length !== visibleLength ) {
 			newVisiblePlans = newVisiblePlans.slice( 0, visibleLength );
 		}
 
 		setVisiblePlans( newVisiblePlans );
-	}, [ isLargeBreakpoint, isMediumBreakpoint, isSmallBreakpoint, displayedGridPlans, isInSignup ] );
+	}, [ gridSize, displayedGridPlans, isInSignup ] );
 
 	const visibleGridPlans = useMemo(
 		() =>
@@ -1084,9 +1090,24 @@ const ComparisonGrid = ( {
 	// 100px is the padding of the footer row
 	const [ bottomHeaderRef, isBottomHeaderInView ] = useInView( { rootMargin: '-100px' } );
 
+	const handleUpgradeClick = useUpgradeClickHandler( {
+		gridPlans,
+		onUpgradeClick,
+	} );
+
+	/**
+	 * Search for "any" plan with a highlight label, not just the visible ones.
+	 * This will keep the grid static while user interacts (selects different plans to compare).
+	 * Some padding is applied in the stylesheet to cover the badges/labels.
+	 */
+	const hasHighlightedPlan = gridPlans.some( ( { highlightLabel } ) => !! highlightLabel );
+	const classes = classNames( 'plan-comparison-grid', {
+		'has-highlighted-plan': hasHighlightedPlan,
+	} );
+
 	return (
-		<div className="plan-comparison-grid">
-			<Grid isInSignup={ isInSignup }>
+		<div className={ classes }>
+			<Grid visiblePlans={ visiblePlans.length }>
 				<StickyContainer
 					disabled={ isBottomHeaderInView }
 					stickyClass="is-sticky-header-row"
@@ -1101,7 +1122,7 @@ const ComparisonGrid = ( {
 							isLaunchPage={ isLaunchPage }
 							onPlanChange={ onPlanChange }
 							currentSitePlanSlug={ currentSitePlanSlug }
-							onUpgradeClick={ onUpgradeClick }
+							onUpgradeClick={ handleUpgradeClick }
 							planActionOverrides={ planActionOverrides }
 							selectedPlan={ selectedPlan }
 							showRefundPeriod={ showRefundPeriod }
@@ -1134,7 +1155,7 @@ const ComparisonGrid = ( {
 					isFooter={ true }
 					onPlanChange={ onPlanChange }
 					currentSitePlanSlug={ currentSitePlanSlug }
-					onUpgradeClick={ onUpgradeClick }
+					onUpgradeClick={ handleUpgradeClick }
 					planActionOverrides={ planActionOverrides }
 					selectedPlan={ selectedPlan }
 					showRefundPeriod={ showRefundPeriod }

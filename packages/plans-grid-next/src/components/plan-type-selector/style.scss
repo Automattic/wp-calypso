@@ -90,6 +90,23 @@
 		&:hover span.name {
 			color: var(--color-text);
 		}
+
+		button .plan-type-selector__interval-type-dropdown-option {
+			padding-right: 32px;
+		}
+
+		.plan-type-selector__interval-type-dropdown-option {
+			display: flex;
+			padding: 13px 13px 13px 16px;
+			font-size: 0.875rem;
+
+			.discount {
+				display: flex;
+				border-radius: 3px;
+				line-height: 20px;
+			}
+		}
+
 		.components-flex {
 			overflow: hidden;
 			width: 100%;
@@ -116,7 +133,6 @@
 			border-bottom-left-radius: 2px;
 			box-sizing: border-box;
 			border: 1px solid var(--studio-gray-10);
-			border-top: none;
 			margin-top: -2px;
 		}
 		.components-custom-select-control__item {

@@ -1,20 +1,21 @@
 import page from '@automattic/calypso-router';
 import styled from '@emotion/styled';
 import { useTranslate } from 'i18n-calypso';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useQueryUserPurchases } from 'calypso/components/data/query-user-purchases';
 import { ResponseDomain } from 'calypso/lib/domains/types';
 import { useDispatch, useSelector } from 'calypso/state';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getCurrentUserEmail } from 'calypso/state/current-user/selectors';
 import { successNotice } from 'calypso/state/notices/actions';
 import { getDomainsBySiteId } from 'calypso/state/sites/domains/selectors';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
+import { getSettingsSource } from '../site-tools/utils';
 import { ConfirmationTransfer } from './confirmation-transfer';
 import PendingDomainTransfer from './pending-domain-transfer';
 import SiteOwnerTransferEligibility from './site-owner-user-search';
 import { SiteTransferCard } from './site-transfer-card';
 import StartSiteOwnerTransfer from './start-site-owner-transfer';
-import { User } from './use-administrators';
 import { useConfirmationTransferHash } from './use-confirmation-transfer-hash';
 
 const Strong = styled( 'strong' )( {
@@ -44,8 +45,8 @@ const SiteTransferComplete = () => {
 
 const SiteOwnerTransfer = () => {
 	useQueryUserPurchases();
-	const selectedSite = useSelector( ( state ) => getSelectedSite( state ) );
-	const [ newSiteOwner, setNewSiteOwner ] = useState< User | null >( null );
+	const selectedSite = useSelector( getSelectedSite );
+	const [ newSiteOwner, setNewSiteOwner ] = useState< string | null >( null );
 	const [ transferSiteSuccess, setSiteTransferSuccess ] = useState( false );
 
 	const translate = useTranslate();
@@ -59,6 +60,10 @@ const SiteOwnerTransfer = () => {
 		( wpcomDomain: ResponseDomain ) => wpcomDomain.pendingTransfer
 	);
 
+	useEffect( () => {
+		dispatch( recordTracksEvent( 'calypso_site_owner_transfer_page_view' ) );
+	}, [ dispatch ] );
+
 	if ( ! selectedSite?.ID || ! selectedSite?.slug ) {
 		return null;
 	}
@@ -67,7 +72,8 @@ const SiteOwnerTransfer = () => {
 		if ( ! pendingDomain && newSiteOwner && ! transferSiteSuccess ) {
 			setNewSiteOwner( null );
 		} else {
-			page( '/settings/general/' + selectedSite.slug );
+			const source = getSettingsSource();
+			page( `${ source }/${ selectedSite.slug }` );
 		}
 	};
 

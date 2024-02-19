@@ -1,6 +1,6 @@
 import config from '@automattic/calypso-config';
 import page from '@automattic/calypso-router';
-import { Button, FormInputValidation } from '@automattic/components';
+import { Button, FormInputValidation, FormLabel } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
 import classNames from 'classnames';
 import debugModule from 'debug';
@@ -27,7 +27,6 @@ import { connect } from 'react-redux';
 import { FormDivider } from 'calypso/blocks/authentication';
 import ContinueAsUser from 'calypso/blocks/login/continue-as-user';
 import FormButton from 'calypso/components/forms/form-button';
-import FormLabel from 'calypso/components/forms/form-label';
 import FormPasswordInput from 'calypso/components/forms/form-password-input';
 import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
 import FormTextInput from 'calypso/components/forms/form-text-input';
@@ -51,6 +50,7 @@ import { login, lostPassword } from 'calypso/lib/paths';
 import { addQueryArgs } from 'calypso/lib/url';
 import wpcom from 'calypso/lib/wp';
 import { isP2Flow } from 'calypso/signup/is-flow';
+import ValidationFieldset from 'calypso/signup/validation-fieldset';
 import { recordTracksEventWithClientId } from 'calypso/state/analytics/actions';
 import { redirectToLogout } from 'calypso/state/current-user/actions';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
@@ -58,6 +58,7 @@ import { createSocialUserFailed } from 'calypso/state/login/actions';
 import { getCurrentOAuth2Client } from 'calypso/state/oauth2-clients/ui/selectors';
 import getCurrentQueryArguments from 'calypso/state/selectors/get-current-query-arguments';
 import isWooCommerceCoreProfilerFlow from 'calypso/state/selectors/is-woocommerce-core-profiler-flow';
+import { resetSignup } from 'calypso/state/signup/actions';
 import { getSectionName } from 'calypso/state/ui/selectors';
 import CrowdsignalSignupForm from './crowdsignal';
 import P2SignupForm from './p2';
@@ -113,6 +114,8 @@ class SignupForm extends Component {
 		translate: PropTypes.func.isRequired,
 		horizontal: PropTypes.bool,
 		shouldDisplayUserExistsError: PropTypes.bool,
+		submitForm: PropTypes.func,
+		isInviteLoggedOutForm: PropTypes.bool,
 
 		// Connected props
 		oauth2Client: PropTypes.object,
@@ -165,6 +168,7 @@ class SignupForm extends Component {
 			},
 			form: stateWithFilledUsername,
 			validationInitialized: false,
+			emailErrorMessage: '',
 		};
 	}
 
@@ -233,7 +237,20 @@ class SignupForm extends Component {
 
 			this.props.createSocialUserFailed( socialInfo, userExistsError, 'signup' );
 
-			page( login( { redirectTo: this.props.redirectToAfterLoginUrl } ) );
+			// Reset the signup step so that we don't re trigger this logic when the user goes back from login screen.
+			this.props.resetSignup();
+
+			const loginLink = this.getLoginLink( { emailAddress: userExistsError.email } );
+			page(
+				addQueryArgs(
+					{
+						service: this.props.step?.service,
+						access_token: this.props.step?.access_token,
+						id_token: this.props.step?.id_token,
+					},
+					loginLink
+				)
+			);
 		}
 	}
 
@@ -269,7 +286,7 @@ class SignupForm extends Component {
 	validate = ( fields, onComplete ) => {
 		const fieldsForValidation = filter( [
 			'email',
-			'password',
+			this.props.isPasswordless === false && 'password', // Remove password from validation if passwordless
 			this.props.displayUsernameInput && 'username',
 			this.props.displayNameInput && 'firstName',
 			this.props.displayNameInput && 'lastName',
@@ -697,7 +714,6 @@ class SignupForm extends Component {
 						) }
 					</>
 				) }
-
 				<FormLabel htmlFor="password">{ this.props.translate( 'Choose a password' ) }</FormLabel>
 				<FormPasswordInput
 					className="signup-form__input"
@@ -746,6 +762,16 @@ class SignupForm extends Component {
 			}
 		} );
 		this.handleSubmit( event );
+	};
+
+	handlePasswordlessSubmit = ( passwordLessData ) => {
+		this.formStateController.handleSubmit( ( hasErrors ) => {
+			if ( hasErrors ) {
+				this.setState( { submitting: false } );
+				return;
+			}
+			this.props.submitForm( this.state.form, passwordLessData );
+		} );
 	};
 
 	renderWooCommerce() {
@@ -894,9 +920,8 @@ class SignupForm extends Component {
 			return this.globalNotice(
 				{
 					message: this.props.translate(
-						'We found a WordPress.com account with the email address "%(email)s". ' +
-							'{{a}}Log in to this account{{/a}} to connect it to your profile, ' +
-							'or sign up with a different email address.',
+						'We found a WordPress.com account with the email "%(email)s". ' +
+							'{{a}}Log in to connect it{{/a}}, or use a different email to sign up.',
 						{
 							args: { email: userExistsError.email },
 							components: {
@@ -1201,6 +1226,7 @@ class SignupForm extends Component {
 		}
 
 		const isGravatar = this.props.isGravatar;
+		const emailErrorMessage = this.getErrorMessagesWithLogin( 'email' );
 		const showSeparator =
 			! config.isEnabled( 'desktop' ) && this.isHorizontal() && ! this.userCreationComplete();
 
@@ -1226,13 +1252,23 @@ class SignupForm extends Component {
 						flowName={ this.props.flowName }
 						goToNextStep={ this.props.goToNextStep }
 						renderTerms={ this.termsOfServiceLink }
+						submitForm={ this.handlePasswordlessSubmit }
 						logInUrl={ logInUrl }
 						disabled={ this.props.disabled }
-						disableSubmitButton={ this.props.disableSubmitButton }
+						disableSubmitButton={ this.props.disableSubmitButton || emailErrorMessage }
 						queryArgs={ this.props.queryArgs }
 						userEmail={ this.getEmailValue() }
 						{ ...gravatarProps }
-					/>
+						submitButtonLabel={ this.props.submitButtonLabel }
+						isInviteLoggedOutForm={ this.props.isInviteLoggedOutForm }
+						labelText={ this.props.labelText }
+						onInputBlur={ this.handleBlur }
+						onInputChange={ this.handleChangeEvent }
+					>
+						{ emailErrorMessage && (
+							<ValidationFieldset errorMessages={ [ emailErrorMessage ] }></ValidationFieldset>
+						) }
+					</PasswordlessSignupForm>
 
 					{ ! isGravatar && (
 						<>
@@ -1328,5 +1364,6 @@ export default connect(
 		trackLoginMidFlow: () => recordTracksEventWithClientId( 'calypso_signup_login_midflow' ),
 		createSocialUserFailed,
 		redirectToLogout,
+		resetSignup,
 	}
 )( localize( SignupForm ) );

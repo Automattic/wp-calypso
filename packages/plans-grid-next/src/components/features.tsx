@@ -130,12 +130,12 @@ const PlanFeatures2023GridFeatures: React.FC< {
 										</Plans2023Tooltip>
 									) : (
 										<Plans2023Tooltip
-											text={ currentFeature.getDescription?.() }
+											text={ currentFeature.getDescription?.( { planSlug } ) }
 											activeTooltipId={ activeTooltipId }
 											setActiveTooltipId={ setActiveTooltipId }
 											id={ key }
 										>
-											{ currentFeature.getTitle( paidDomainName ) }
+											{ currentFeature.getTitle( { domainName: paidDomainName, planSlug } ) }
 										</Plans2023Tooltip>
 									) }
 								</span>

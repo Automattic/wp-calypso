@@ -1,12 +1,10 @@
-import { hasCheckoutVersion } from '@automattic/wpcom-checkout';
+import { FormLabel } from '@automattic/components';
 import styled from '@emotion/styled';
 import { localize, LocalizeProps, TranslateResult } from 'i18n-calypso';
 import { useState } from 'react';
 import FormCheckbox from 'calypso/components/forms/form-checkbox';
-import FormLabel from 'calypso/components/forms/form-label';
-import { useToSFoldableCard } from '../hooks/use-tos-foldable-card';
 
-const CheckboxTermsWrapper = styled.div< { showToSFoldableCard: boolean } >`
+const CheckboxTermsWrapper = styled.div`
 	column-gap: 8px;
 	display: grid;
 	grid-template-areas:
@@ -16,12 +14,10 @@ const CheckboxTermsWrapper = styled.div< { showToSFoldableCard: boolean } >`
 	row-gap: 4px;
 	align-items: center;
 	padding: 0;
-	margin: ${ ( showToSFoldableCard ) =>
-		hasCheckoutVersion( '2' ) || showToSFoldableCard ? '1em 0' : '0' };
+	margin: 1em 0;
 
 	@media ( ${ ( props ) => props.theme.breakpoints.tabletUp } ) {
-		padding: ${ ( showToSFoldableCard ) =>
-			hasCheckoutVersion( '2' ) || showToSFoldableCard ? '0' : '24px 0' };
+		padding: 0;
 	}
 `;
 
@@ -73,11 +69,9 @@ function AcceptTermsOfServiceCheckbox( {
 		onChange( event.target.checked );
 	};
 
-	const showToSFoldableCard = useToSFoldableCard();
-
 	return (
 		<FormLabel>
-			<CheckboxTermsWrapper showToSFoldableCard={ showToSFoldableCard }>
+			<CheckboxTermsWrapper>
 				<StyledFormCheckbox
 					onChange={ handleChange }
 					onBlur={ () => setTouched( true ) }

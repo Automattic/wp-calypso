@@ -1,3 +1,4 @@
+import config from '@automattic/calypso-config';
 import { translate, useTranslate } from 'i18n-calypso';
 import Notice from 'calypso/components/notice';
 import { Campaign } from 'calypso/data/promote-post/types';
@@ -42,6 +43,7 @@ export default function CampaignsList( props: Props ) {
 		hasMorePages,
 		campaigns,
 	} = props;
+	const isWooStore = config.isEnabled( 'is_running_in_woo_site' );
 
 	const translate = useTranslate();
 
@@ -93,6 +95,7 @@ export default function CampaignsList( props: Props ) {
 								campaigns={ campaigns }
 								isLoading={ isLoading }
 								isFetchingPageResults={ isFetching }
+								isWooStore={ isWooStore }
 							/>
 						) }
 					</div>

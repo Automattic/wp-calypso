@@ -7,6 +7,7 @@ import {
 	isCrowdsignalOAuth2Client,
 	isGravPoweredOAuth2Client,
 	isJetpackCloudOAuth2Client,
+	isA4AOAuth2Client,
 	isWooOAuth2Client,
 	isIntenseDebateOAuth2Client,
 } from 'calypso/lib/oauth2-clients';
@@ -121,14 +122,6 @@ export function getSignupUrl( currentQuery, currentRoute, oauth2Client, locale, 
 		return `${ signupUrl }/wpcc?${ oauth2Params.toString() }`;
 	}
 
-	if ( oauth2Client && isJetpackCloudOAuth2Client( oauth2Client ) ) {
-		const oauth2Params = new URLSearchParams( {
-			oauth2_client_id: oauth2Client.id,
-			oauth2_redirect: redirectTo,
-		} );
-		return `${ signupUrl }/wpcc?${ oauth2Params.toString() }`;
-	}
-
 	if ( oauth2Client ) {
 		const oauth2Params = new URLSearchParams( {
 			oauth2_client_id: oauth2Client.id,
@@ -184,7 +177,8 @@ export const canDoMagicLogin = ( twoFactorAuthType, oauth2Client, isJetpackWooCo
 		return false;
 	}
 
-	if ( isWooOAuth2Client( oauth2Client ) ) {
+	// Automattic for Agencies cannot have users being sent to WordPress.com
+	if ( isA4AOAuth2Client( oauth2Client ) ) {
 		return false;
 	}
 

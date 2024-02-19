@@ -7,6 +7,7 @@ import { usePlansGridContext } from '../grid-context';
 import useDefaultStorageOption from '../hooks/data-store/use-default-storage-option';
 import useIsLargeCurrency from '../hooks/use-is-large-currency';
 import { getStorageStringFromFeature } from '../util';
+import DropdownOption from './dropdown-option';
 import type { PlanSlug, StorageOption, WPComStorageAddOnSlug } from '@automattic/calypso-products';
 import type { AddOnMeta } from '@automattic/data-stores';
 
@@ -49,25 +50,22 @@ const StorageAddOnOption = ( {
 	return (
 		<>
 			{ price && ! isLargeCurrency && ! priceOnSeparateLine ? (
-				<div className="storage-add-on-dropdown-option__text-container">
-					<span className="storage-add-on-dropdown-option__title">{ title }</span>
-					<div className="storage-add-on-dropdown-option__price-container">
-						<span>
-							{ translate(
-								'{{priceSpan}}+{{nbsp/}}%(price)s{{/priceSpan}}{{perMonthSpan}}/month{{/perMonthSpan}}',
-								{
-									args: { price },
-									components: {
-										nbsp: <>&nbsp;</>,
-										priceSpan: <span className="storage-add-on-dropdown-option__price" />,
-										perMonthSpan: <span className="storage-add-on-dropdown-option__per-month" />,
-									},
-									comment: 'The cost of a storage add on per month. Example reads as "+ $50/month"',
-								}
-							) }
-						</span>
-					</div>
-				</div>
+				<DropdownOption className="storage-add-on-dropdown-option" title={ title }>
+					<span>
+						{ translate(
+							'{{priceSpan}}+{{nbsp/}}%(price)s{{/priceSpan}}{{perMonthSpan}}/month{{/perMonthSpan}}',
+							{
+								args: { price },
+								components: {
+									nbsp: <>&nbsp;</>,
+									priceSpan: <span className="storage-add-on-dropdown-option__price" />,
+									perMonthSpan: <span className="storage-add-on-dropdown-option__per-month" />,
+								},
+								comment: 'The cost of a storage add on per month. Example reads as "+ $50/month"',
+							}
+						) }
+					</span>
+				</DropdownOption>
 			) : (
 				<span className="storage-add-on-dropdown-option__title">{ title }</span>
 			) }

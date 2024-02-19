@@ -299,9 +299,9 @@ function useSubmenuItems( site: SiteExcerptData ) {
 				sectionName: 'staging_site',
 			},
 			{
-				condition: isEnabled( 'github-integration-i1' ) && isA12n,
+				condition: isEnabled( 'github-deployments' ) && isA12n,
 				label: __( 'Deploy from GitHub' ),
-				href: `/hosting-config/${ siteSlug }#connect-github`,
+				href: `/github-deployments/${ siteSlug }`,
 				sectionName: 'connect_github',
 			},
 			{

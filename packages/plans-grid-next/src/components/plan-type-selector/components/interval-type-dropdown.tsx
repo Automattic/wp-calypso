@@ -1,40 +1,10 @@
-import styled from '@emotion/styled';
 import { CustomSelectControl } from '@wordpress/components';
+import DropdownOption from '../../dropdown-option';
 import useIntervalOptions from '../hooks/use-interval-options';
 import type { IntervalTypeProps, SupportedUrlFriendlyTermType } from '../../../types';
 
-const IntervalTypeOption = styled.div`
-	& span.name,
-	&:visited span.name,
-	&:hover span.name {
-		color: var( --color-text );
-	}
-
-	font-weight: 500;
-	padding: 13px 13px 13px 16px;
-	font-size: 14px;
-	display: flex;
-	.discount {
-		color: var( --studio-green-50 );
-		display: flex;
-		line-height: 14px;
-		border-radius: 3px;
-		line-height: 20px;
-	}
-	.name {
-		margin-right: 4px;
-		line-height: 20px;
-	}
-	.is-highlighted & {
-		background-color: #f6f7f7;
-	}
-	button & {
-		padding-right: 32px;
-	}
-`;
-
 export const IntervalTypeDropdown: React.FunctionComponent< IntervalTypeProps > = ( props ) => {
-	const { hideDiscount, intervalType, displayedIntervals, onPlanIntervalChange } = props;
+	const { hideDiscount, intervalType, displayedIntervals, onPlanIntervalUpdate } = props;
 	const supportedIntervalType = (
 		displayedIntervals.includes( intervalType ) ? intervalType : 'yearly'
 	) as SupportedUrlFriendlyTermType;
@@ -43,12 +13,14 @@ export const IntervalTypeDropdown: React.FunctionComponent< IntervalTypeProps > 
 	const selectOptionsList = Object.values( optionsList ).map( ( option ) => ( {
 		key: option.key,
 		name: (
-			<IntervalTypeOption>
-				<span className="name"> { option.name } </span>
+			<DropdownOption
+				className="plan-type-selector__interval-type-dropdown-option"
+				title={ option.name }
+			>
 				{ option.discountText && ! hideDiscount ? (
 					<span className="discount"> { option.discountText } </span>
 				) : null }
-			</IntervalTypeOption>
+			</DropdownOption>
 		),
 	} ) );
 
@@ -59,9 +31,11 @@ export const IntervalTypeDropdown: React.FunctionComponent< IntervalTypeProps > 
 				label=""
 				options={ selectOptionsList }
 				value={ selectOptionsList.find( ( { key } ) => key === supportedIntervalType ) }
-				onChange={ ( { selectedItem }: { selectedItem: { key: SupportedUrlFriendlyTermType } } ) =>
-					onPlanIntervalChange && onPlanIntervalChange( selectedItem )
-				}
+				onChange={ ( {
+					selectedItem: { key: intervalType },
+				}: {
+					selectedItem: { key: SupportedUrlFriendlyTermType };
+				} ) => onPlanIntervalUpdate && onPlanIntervalUpdate( intervalType ) }
 			/>
 		</div>
 	);

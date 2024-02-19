@@ -4,6 +4,10 @@ import {
 	MEMBERSHIPS_SUBSCRIPTION_STOP,
 	MEMBERSHIPS_SUBSCRIPTION_STOP_SUCCESS,
 	MEMBERSHIPS_SUBSCRIPTION_STOP_FAILURE,
+	MEMBERSHIPS_SUBSCRIPTION_UPDATING,
+	MEMBERSHIPS_SUBSCRIPTION_UPDATING_SUCCESS,
+	MEMBERSHIPS_SUBSCRIPTION_UPDATING_FAILURE,
+	MEMBERSHIPS_SUBSCRIPTION_UPDATE,
 } from 'calypso/state/action-types';
 
 import 'calypso/state/data-layer/wpcom/sites/memberships/subscriptions';
@@ -12,6 +16,64 @@ import 'calypso/state/memberships/init';
 export const requestSubscriptionsList = () => ( {
 	type: MEMBERSHIPS_SUBSCRIPTIONS_LIST_REQUEST,
 } );
+
+export const requestAutoRenewDisable = ( subscriptionId ) => {
+	return ( dispatch ) => {
+		dispatch( {
+			type: MEMBERSHIPS_SUBSCRIPTION_UPDATING,
+			subscriptionId,
+		} );
+		return wpcom.req
+			.post( `/me/memberships/subscriptions/${ subscriptionId }/auto_renew/disable` )
+			.then( ( response ) => {
+				dispatch( {
+					type: MEMBERSHIPS_SUBSCRIPTION_UPDATE,
+					subscriptionId,
+					updates: response.subscription,
+				} );
+				dispatch( {
+					type: MEMBERSHIPS_SUBSCRIPTION_UPDATING_SUCCESS,
+					subscriptionId,
+				} );
+			} )
+			.catch( ( error ) => {
+				dispatch( {
+					type: MEMBERSHIPS_SUBSCRIPTION_UPDATING_FAILURE,
+					subscriptionId,
+					error,
+				} );
+			} );
+	};
+};
+
+export const requestAutoRenewResume = ( subscriptionId ) => {
+	return ( dispatch ) => {
+		dispatch( {
+			type: MEMBERSHIPS_SUBSCRIPTION_UPDATING,
+			subscriptionId,
+		} );
+		return wpcom.req
+			.post( `/me/memberships/subscriptions/${ subscriptionId }/auto_renew/enable` )
+			.then( ( response ) => {
+				dispatch( {
+					type: MEMBERSHIPS_SUBSCRIPTION_UPDATE,
+					subscriptionId,
+					updates: response.subscription,
+				} );
+				dispatch( {
+					type: MEMBERSHIPS_SUBSCRIPTION_UPDATING_SUCCESS,
+					subscriptionId,
+				} );
+			} )
+			.catch( ( error ) => {
+				dispatch( {
+					type: MEMBERSHIPS_SUBSCRIPTION_UPDATING_FAILURE,
+					subscriptionId,
+					error,
+				} );
+			} );
+	};
+};
 
 export const requestSubscriptionStop = ( subscriptionId ) => {
 	return ( dispatch ) => {

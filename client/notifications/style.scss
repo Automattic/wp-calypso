@@ -235,3 +235,14 @@ div.reader-notifications__panel {
 		}
 	}
 }
+
+// Adjust the where the notifications panel is positioned when the global sidebar is visible
+.is-global-sidebar-visible {
+	div.reader-notifications__panel {
+		#wpnc-panel.wpnc__main {
+			&.wpnt-open {
+				left: 314px;
+			}
+		}
+	}
+}

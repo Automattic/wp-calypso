@@ -16,6 +16,11 @@ interface StatsCommercialPriceDisplayProps {
 	currencyCode: string;
 }
 
+interface StatsSingleItemPagePurchaseFrameProps {
+	children: React.ReactNode;
+	isFree?: boolean;
+}
+
 const StatsCommercialPriceDisplay = ( {
 	planValue,
 	currencyCode,
@@ -128,7 +133,6 @@ const StatsBenefitsPersonal = () => {
 				<li>{ translate( 'Traffic stats and trends for posts and pages' ) }</li>
 				<li>{ translate( 'Detailed statistics about links leading to your site' ) }</li>
 				<li>{ translate( 'GDPR compliance' ) }</li>
-				<li>{ translate( 'Access to upcoming advanced features' ) }</li>
 				{ /** TODO: check sub price for validation -  will need support added to use-stats-purchases hook */ }
 				<li>{ translate( 'Priority support' ) }</li>
 			</ul>
@@ -159,11 +163,6 @@ const StatsBenefitsFree = () => {
 	);
 };
 
-interface StatsSingleItemPagePurchaseFrameProps {
-	children: React.ReactNode;
-	isFree?: boolean;
-}
-
 const StatsSingleItemPagePurchaseFrame = ( {
 	children,
 	isFree = false,
@@ -191,10 +190,23 @@ const StatsSingleItemPagePurchaseFrame = ( {
 	);
 };
 
+const StatsSingleItemCard = ( { children }: { children: React.ReactNode } ) => {
+	return (
+		<div className={ classNames( COMPONENT_CLASS_NAME, `${ COMPONENT_CLASS_NAME }--single` ) }>
+			<Card className={ `${ COMPONENT_CLASS_NAME }__card-parent` }>
+				<div className={ `${ COMPONENT_CLASS_NAME }__card` }>
+					<div className={ `${ COMPONENT_CLASS_NAME }__card-inner--left` }>{ children }</div>
+				</div>
+			</Card>
+		</div>
+	);
+};
+
 export {
 	StatsCommercialPriceDisplay,
 	StatsBenefitsCommercial,
 	StatsBenefitsPersonal,
 	StatsBenefitsFree,
 	StatsSingleItemPagePurchaseFrame,
+	StatsSingleItemCard,
 };

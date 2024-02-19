@@ -8,7 +8,6 @@ import {
 	WPCOM_FEATURES_SCAN,
 	WPCOM_FEATURES_VIDEOPRESS,
 } from '@automattic/calypso-products';
-import isSiteAtomic from 'calypso/state/selectors/is-site-wpcom-atomic';
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import getSiteSlug from 'calypso/state/sites/selectors/get-site-slug';
 import isBackupPluginActive from 'calypso/state/sites/selectors/is-backup-plugin-active';
@@ -165,13 +164,6 @@ describe( 'getLandingPath', () => {
 describe( 'isSiteEligibleForJetpackCloud', () => {
 	beforeEach( () => {
 		jest.resetAllMocks();
-	} );
-
-	it( 'should return false for Atomic sites', () => {
-		isJetpackSite.mockReturnValue( true );
-		isSiteAtomic.mockReturnValue( true );
-
-		expect( isSiteEligibleForJetpackCloud( {}, 0 ) ).toEqual( false );
 	} );
 
 	it( 'should return false for multisites', () => {

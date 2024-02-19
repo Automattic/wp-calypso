@@ -324,6 +324,14 @@ const blockInfoMapping: { [ key: string ]: { link: string; postId: number } } = 
 		link: 'https://wordpress.com/support/paid-newsletters/#use-the-paywall-block',
 		postId: 168381,
 	},
+	'jetpack/sharing-buttons': {
+		link: 'https://wordpress.com/support/wordpress-editor/blocks/sharing-buttons-block/',
+		postId: 330003,
+	},
+	'jetpack/like': {
+		link: 'https://wordpress.com/support/likes/',
+		postId: 7294,
+	},
 };
 
 export const blockInfoWithVariations: {

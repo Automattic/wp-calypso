@@ -166,6 +166,7 @@ export type SiteSubscriptionDetails< DateT = Date > = {
 };
 
 export type SiteSubscriptionPaymentDetails = {
+	is_gift: boolean;
 	ID: string;
 	site_id: string;
 	status: string;

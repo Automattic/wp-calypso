@@ -45,8 +45,8 @@ type AdsWrapperProps = {
 const AdsWrapper = ( { section, children }: AdsWrapperProps ) => {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
-	const site = useSelector( ( state ) => getSelectedSite( state ) );
-	const siteSlug = useSelector( ( state ) => getSelectedSiteSlug( state ) );
+	const site = useSelector( getSelectedSite );
+	const siteSlug = useSelector( getSelectedSiteSlug );
 
 	const canAccessAds = useSelector( ( state ) => canAccessWordAds( state, site?.ID ) );
 	const wordAdsStatus = useSelector( ( state ) => getSiteWordadsStatus( state, site?.ID ) );

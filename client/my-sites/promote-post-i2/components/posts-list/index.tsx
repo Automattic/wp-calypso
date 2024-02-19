@@ -109,6 +109,7 @@ export default function PostsList( props: Props ) {
 								posts={ posts }
 								isLoading={ isLoading }
 								isFetchingPageResults={ isFetching }
+								type={ postType }
 							/>
 						) }
 					</div>

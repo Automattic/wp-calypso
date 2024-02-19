@@ -13,7 +13,7 @@ import Sidebar, {
 import { useDispatch, useSelector } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { isAgencyUser } from 'calypso/state/partner-portal/partner/selectors';
-import getJetpackAdminUrl from 'calypso/state/sites/selectors/get-jetpack-admin-url';
+import { getJetpackAdminUrl } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import UserFeedbackModalForm from '../user-feedback-modal-form';
 import SidebarHeader from './header';
@@ -58,7 +58,7 @@ const JetpackCloudSidebar = ( {
 	backButtonProps,
 }: Props ) => {
 	const isAgency = useSelector( isAgencyUser );
-	const siteId = useSelector( ( state ) => getSelectedSiteId( state ) );
+	const siteId = useSelector( getSelectedSiteId );
 	const jetpackAdminUrl = useSelector( ( state ) =>
 		siteId ? getJetpackAdminUrl( state, siteId ) : null
 	);

@@ -8,12 +8,18 @@
 	padding: 0 rem(20px);
 	max-width: 100%;
 
+
 	.pre-migration__form-container {
 		display: flex;
 		flex-wrap: wrap;
 		position: relative;
 		justify-content: center;
 		width: 100%;
+
+		p {
+			font-size: 0.875rem;
+			color: var(--color-text-subtle);
+		}
 
 		.pre-migration__form {
 			width: 100%;
@@ -25,34 +31,76 @@
 			}
 
 			@include break-large {
-				width: 550px;
+				width: 600px;
+
+				.credentials-form__username {
+					max-width: 290px;
+
+					&.credentials-form__form-mode-private-key {
+						max-width: 100%;
+					}
+				}
 			}
 
 			.credentials-form {
 				margin-top: 0;
-				margin-bottom: rem(20px);
+				margin-bottom: 3rem;
+			}
+
+			.form-setting-explanation {
+				font-style: normal;
+			}
+
+			.button-plain {
+				text-decoration: underline;
+				cursor: pointer;
+				color: var(--studio-gray-100);
+
+				&.credentials-form__mode-switch-to-password {
+					margin-top: 1rem;
+				}
+			}
+
+			.credentials-form__kpri {
+				margin-bottom: 0;
+			}
+
+			.credentials-form__user-pass {
+				flex-direction: row;
+				column-gap: 1rem;
+
+				& > fieldset {
+					flex: 1 0 290px;
+					margin-inline-end: 0;
+
+					&.credentials-form__username {
+						margin-right: 0;
+					}
+
+					&:last-child {
+						margin-bottom: 0.5rem;
+					}
+				}
 			}
 		}
 
 		.pre-migration__credentials-help {
-			text-align: left;
-			width: 100%;
+			display: none;
 			order: 1;
+			width: 240px;
+			text-align: left;
+			margin-inline-start: rem(40px);
+			margin-top: 26px;
 			margin-bottom: 1rem;
 
-			@include break-medium {
-				margin-inline-start: rem(40px);
-				width: 220px;
-				order: 2;
-			}
-
 			@include break-large {
-				width: 240px;
+				display: block;
 			}
 
 			h3 {
-				font-weight: 500;
-				font-size: 1rem;
+				font-weight: 400;
+				font-size: 1.25rem;
+				margin-bottom: 1rem;
 			}
 
 			p {
@@ -64,6 +112,23 @@
 			select {
 				margin-top: 1rem;
 				width: 100%;
+			}
+		}
+
+		.credentials-form__actions {
+			display: flex;
+			flex-direction: column;
+			align-items: center;
+
+			button[type="submit"] {
+				min-width: 225px !important;
+			}
+
+			& > div {
+				font-size: 0.875rem;
+				/* stylelint-disable-next-line declaration-property-unit-allowed-list */
+				line-height: 2.5rem;
+				text-align: center;
 			}
 		}
 	}
@@ -95,13 +160,37 @@
 		text-align: center;
 	}
 
+	.pre-migration__main-content {
+		text-align: center;
+		margin-top: rem(-44px);
+		margin-bottom: rem(40px);
+		line-height: 24px;
+		color: var(--gray-gray-50, #646970);
+
+		&-primary-text {
+			margin-bottom: rem(24px);
+			& br {
+				display: none;
+				@include break-medium {
+					display: inline;
+				}
+			}
+		}
+	}
+
 	.pre-migration__credentials {
 		text-align: center;
+		margin-top: rem(16px);
 		margin-bottom: rem(40px);
+		color: var(--gray-gray-50, #646970);
+		font-size: 0.75rem;
 
 		button {
 			vertical-align: baseline;
-			font-size: 1rem;
+			color: var(--gray-gray-50, #646970);
+			font-size: 0.75rem;
+			padding: 0;
+			font-weight: 400;
 		}
 	}
 
@@ -129,7 +218,7 @@
 			box-sizing: border-box;
 			font-size: 0.875rem;
 			/* We need to allow space for the SVG checkmark */
-			padding: 0.875rem calc(0.5rem + 24px) 0.875rem 1rem;
+			padding: 0.875rem 1rem 0.875rem 1rem;
 		}
 
 		*::placeholder {
@@ -144,14 +233,17 @@
 		.credentials-form__support-info {
 			margin-bottom: rem(8px);
 		}
+	}
 
-		/** Adjust margins to also work well with RTL languages **/
-		.credentials-form__server-address.form-fieldset,
-		.credentials-form__username.form-fieldset {
-			@include break-large {
-				margin: 0;
-				margin-inline-end: rem(16px);
-			}
+	.pre-migration__footer-jetpack-powered {
+		margin-top: rem(420px);
+		margin-bottom: rem(40px);
+		display: flex;
+		font-size: 0.75rem;
+		justify-content: center;
+
+		& svg.jetpack-logo {
+			margin-right: 0.5rem;
 		}
 	}
 }

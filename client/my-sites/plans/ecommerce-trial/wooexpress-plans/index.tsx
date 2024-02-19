@@ -1,4 +1,3 @@
-import config from '@automattic/calypso-config';
 import {
 	PLAN_FREE,
 	PLAN_WOOEXPRESS_MEDIUM,
@@ -120,7 +119,6 @@ export function WooExpressPlans( props: WooExpressPlansProps ) {
 					<PlanIntervalSelector
 						className="wooexpress-plans__interval-toggle price-toggle"
 						intervals={ planIntervals }
-						isPlansInsideStepper={ false }
 						use2023PricingGridStyles={ true }
 					/>
 				</div>
@@ -133,13 +131,6 @@ export function WooExpressPlans( props: WooExpressPlansProps ) {
 					hidePlanTypeSelector={ true }
 					hideUnavailableFeatures={ true }
 					intent="plans-woocommerce"
-					showPlanTypeSelectorDropdown={
-						/**
-						 *	Override the default feature flag to prevent this feature from rendering in untested locations
-						 *  The hardcoded 'false' short curicuit should be removed once the feature is fully tested in the given context
-						 */
-						config.isEnabled( 'onboarding/interval-dropdown' ) && false
-					}
 				/>
 			</div>
 

@@ -1,4 +1,5 @@
 import { Plans, type AddOnMeta } from '@automattic/data-stores';
+import { UpgradeClickHandler } from './hooks/use-upgrade-click-handler';
 import type {
 	UrlFriendlyTermType,
 	PlanSlug,
@@ -8,7 +9,7 @@ import type {
 	StorageOption,
 } from '@automattic/calypso-products';
 import type { MinimalRequestCartProduct } from '@automattic/shopping-cart';
-import type { LocalizeProps, TranslateResult } from 'i18n-calypso';
+import type { TranslateResult } from 'i18n-calypso';
 
 /******************
  * Grid Plan Types:
@@ -32,12 +33,7 @@ export interface GridPlan {
 	planSlug: PlanSlug;
 	freeTrialPlanSlug?: PlanSlug;
 	isVisible: boolean;
-	features: {
-		wpcomFeatures: TransformedFeatureObject[];
-		jetpackFeatures: TransformedFeatureObject[];
-		storageOptions: StorageOption[];
-		conditionalFeatures?: FeatureObject[];
-	};
+	features: PlanFeaturesForGridPlan;
 	tagline: TranslateResult;
 	planTitle: TranslateResult;
 	availableForPurchase: boolean;
@@ -56,6 +52,8 @@ export interface GridPlan {
 /***********************
  * Grid Component Types:
  ***********************/
+
+export type GridSize = 'small' | 'medium' | 'large';
 
 export type PlansIntent =
 	| 'plans-blog-onboarding'
@@ -103,6 +101,7 @@ export interface CommonGridProps {
 	 */
 	selectedSiteId?: number | null;
 	isInSignup: boolean;
+	isInAdmin: boolean;
 	isLaunchPage?: boolean | null;
 	isReskinned?: boolean;
 	onStorageAddOnClick?: ( addOnSlug: WPComStorageAddOnSlug ) => void;
@@ -118,14 +117,14 @@ export interface CommonGridProps {
 	showRefundPeriod?: boolean;
 	// only used for comparison grid
 	planTypeSelectorProps?: PlanTypeSelectorProps;
-	onUpgradeClick: ( planSlug: PlanSlug ) => void;
+	onUpgradeClick?: UpgradeClickHandler;
 	planUpgradeCreditsApplicable?: number | null;
+	gridContainerRef?: React.MutableRefObject< HTMLDivElement | null >;
+	gridSize?: string;
 }
 
 export interface FeaturesGridProps extends CommonGridProps {
 	gridPlans: GridPlan[];
-	isLargeCurrency: boolean;
-	translate: LocalizeProps[ 'translate' ];
 	currentPlanManageHref?: string;
 	generatedWPComSubdomain: DataResponse< { domain_name: string } >;
 	gridPlanForSpotlight?: GridPlan;
@@ -151,7 +150,7 @@ export type GridContextProps = {
 };
 
 export type ComparisonGridExternalProps = Omit< GridContextProps, 'children' > &
-	Omit< ComparisonGridProps, 'onUpgradeClick' > & {
+	Omit< ComparisonGridProps, 'onUpgradeClick' | 'gridContainerRef' | 'gridSize' > & {
 		onUpgradeClick?: (
 			cartItems?: MinimalRequestCartProduct[] | null,
 			clickedPlanSlug?: PlanSlug
@@ -159,7 +158,10 @@ export type ComparisonGridExternalProps = Omit< GridContextProps, 'children' > &
 	};
 
 export type FeaturesGridExternalProps = Omit< GridContextProps, 'children' > &
-	Omit< FeaturesGridProps, 'onUpgradeClick' | 'isLargeCurrency' | 'translate' > & {
+	Omit<
+		FeaturesGridProps,
+		'onUpgradeClick' | 'isLargeCurrency' | 'translate' | 'gridContainerRef' | 'gridSize'
+	> & {
 		onUpgradeClick?: (
 			cartItems?: MinimalRequestCartProduct[] | null,
 			clickedPlanSlug?: PlanSlug
@@ -179,7 +181,7 @@ export type PlanTypeSelectorProps = {
 	withDiscount?: string;
 	enableStickyBehavior?: boolean;
 	stickyPlanTypeSelectorOffset?: number;
-	onPlanIntervalChange: ( selectedItem: { key: SupportedUrlFriendlyTermType } ) => void;
+	onPlanIntervalUpdate: ( interval: SupportedUrlFriendlyTermType ) => void;
 	layoutClassName?: string;
 	siteSlug?: string | null;
 	selectedPlan?: string;
@@ -188,7 +190,6 @@ export type PlanTypeSelectorProps = {
 	isInSignup: boolean;
 	plans: PlanSlug[];
 	eligibleForWpcomMonthlyPlans?: boolean;
-	isPlansInsideStepper: boolean;
 	hideDiscount?: boolean;
 	redirectTo?: string | null;
 	isStepperUpgradeFlow: boolean;
@@ -214,7 +215,6 @@ export type IntervalTypeProps = Pick<
 	| 'plans'
 	| 'isInSignup'
 	| 'eligibleForWpcomMonthlyPlans'
-	| 'isPlansInsideStepper'
 	| 'hideDiscount'
 	| 'redirectTo'
 	| 'showPlanTypeSelectorDropdown'
@@ -224,7 +224,7 @@ export type IntervalTypeProps = Pick<
 	| 'useCheckPlanAvailabilityForPurchase'
 	| 'title'
 	| 'coupon'
-	| 'onPlanIntervalChange'
+	| 'onPlanIntervalUpdate'
 >;
 
 export type SupportedUrlFriendlyTermType = Extract<

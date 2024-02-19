@@ -290,7 +290,7 @@ class Starter_Page_Templates {
 	public function get_page_templates( string $locale ) {
 		$page_template_data   = get_transient( $this->get_templates_cache_key( $locale ) );
 		$override_source_site = apply_filters( 'a8c_override_patterns_source_site', false );
-		$is_assembler_v2_site = in_array( get_stylesheet(), array( 'pub/assembler', 'assembler' ), true );
+		$is_assembler_v2_site = in_array( get_stylesheet(), array( 'pub/assembler', 'assembler' ), true ) || isset( $_GET['v2_patterns'] ); // phpcs:ignore WordPress.Security.NonceVerification.Recommended
 
 		// Load fresh data if we don't have any or vertical_id doesn't match.
 		if ( $is_assembler_v2_site || false === $page_template_data || ( defined( 'WP_DEBUG' ) && WP_DEBUG ) || false !== $override_source_site ) {
@@ -302,7 +302,7 @@ class Starter_Page_Templates {
 
 			if ( $is_assembler_v2_site ) {
 				$request_params = array(
-					'site'       => 'assemblerv2patterns.wordpress.com',
+					'site'       => 'dotcompatterns.wordpress.com',
 					'categories' => 'page',
 					'post_type'  => 'wp_block',
 				);

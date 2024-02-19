@@ -86,7 +86,7 @@ export default function PlanNotice( props: PlanNoticeProps ) {
 		discountInformation &&
 		getDiscountByName( discountInformation.withDiscount, discountInformation.discountEndDate );
 	const planUpgradeCreditsApplicable = usePlanUpgradeCreditsApplicable( siteId, visiblePlans );
-	const currencyCode = useSelector( ( state ) => getCurrentUserCurrencyCode( state ) );
+	const currencyCode = useSelector( getCurrentUserCurrencyCode );
 
 	switch ( noticeType ) {
 		case NO_NOTICE:
@@ -137,7 +137,7 @@ export default function PlanNotice( props: PlanNoticeProps ) {
 					isReskinned={ true }
 				>
 					{ translate(
-						'We’ve applied the {{b}}%(amountInCurrency)s{{/b}} {{a}}upgrade credit{{/a}} from your current plan as a deduction to your new plan, below. This remaining credit will be applied at checkout if you upgrade today!',
+						'You have {{b}}%(amountInCurrency)s{{/b}} in {{a}}upgrade credits{{/a}} available from your current plan. This credit will be applied to the pricing below at checkout if you upgrade today!',
 						{
 							args: {
 								amountInCurrency: formatCurrency(

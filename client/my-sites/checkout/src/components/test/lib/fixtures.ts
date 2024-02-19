@@ -9,7 +9,6 @@ export const responseCartWithRenewal: Pick< ResponseCart, 'products' > = {
 			product_id: 74,
 			product_name: '.live Domain Registration',
 			product_slug: 'dotlive_domain',
-			product_cost_integer: 38000,
 			meta: 'user-personal-site-test-1234.live',
 			cost: 380,
 			currency: 'USD',

@@ -1,12 +1,11 @@
 import { getTracksAnonymousUserId } from '@automattic/calypso-analytics';
 import config from '@automattic/calypso-config';
 import {
-	FEATURE_PREMIUM_THEMES_V2,
 	FEATURE_UPLOAD_THEMES_PLUGINS,
 	FEATURE_UPLOAD_THEMES,
 	PLAN_BUSINESS,
 	PLAN_PREMIUM,
-	WPCOM_FEATURES_PREMIUM_THEMES,
+	WPCOM_FEATURES_PREMIUM_THEMES_UNLIMITED,
 	WPCOM_FEATURES_INSTALL_PLUGINS,
 	getPlan,
 	PLAN_PERSONAL,
@@ -108,6 +107,7 @@ import {
 import { getIsLoadingCart } from 'calypso/state/themes/selectors/get-is-loading-cart';
 import { getBackPath } from 'calypso/state/themes/themes-ui/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import { ReviewsModal } from '../marketplace/components/reviews-modal';
 import EligibilityWarningModal from '../themes/atomic-transfer-dialog';
 import { LivePreviewButton } from './live-preview-button';
 import ThemeDownloadCard from './theme-download-card';
@@ -306,6 +306,7 @@ class ThemeSheet extends Component {
 		disabledButton: true,
 		showUnlockStyleUpgradeModal: false,
 		isAtomicTransferCompleted: false,
+		isReviewsModalVisible: false,
 	};
 
 	scrollToTop = () => {
@@ -809,10 +810,31 @@ class ThemeSheet extends Component {
 
 	renderReviews = () => {
 		const { name, themeId } = this.props;
+		const { isReviewsModalVisible } = this.state;
 
 		return (
 			<div className="theme__sheet-reviews-summary">
-				<ReviewsSummary slug={ themeId } productName={ name } productType="theme" />
+				<ReviewsModal
+					isVisible={ isReviewsModalVisible }
+					onClose={ () => {
+						this.setState( {
+							isReviewsModalVisible: false,
+						} );
+					} }
+					productName={ name }
+					slug={ themeId }
+					productType="theme"
+				/>
+				<ReviewsSummary
+					slug={ themeId }
+					productName={ name }
+					productType="theme"
+					onReviewsClick={ () => {
+						this.setState( {
+							isReviewsModalVisible: true,
+						} );
+					} }
+				/>
 			</div>
 		);
 	};
@@ -892,7 +914,10 @@ class ThemeSheet extends Component {
 	};
 
 	renderOverviewTab = () => {
-		const { download, isWpcomTheme, siteSlug, taxonomies, isPremium } = this.props;
+		const { download, isWpcomTheme, siteSlug, taxonomies, isPremium, themeTier } = this.props;
+
+		const showDownloadCard =
+			download && ( config.isEnabled( 'themes/tiers' ) ? 'free' === themeTier?.slug : ! isPremium );
 
 		return (
 			<div>
@@ -905,7 +930,7 @@ class ThemeSheet extends Component {
 						onClick={ this.trackFeatureClick }
 					/>
 				</div>
-				{ download && ! isPremium && <ThemeDownloadCard href={ download } /> }
+				{ showDownloadCard && <ThemeDownloadCard href={ download } /> }
 			</div>
 		);
 	};
@@ -1175,6 +1200,7 @@ class ThemeSheet extends Component {
 					this.props.recordTracksEvent( 'calypso_theme_sheet_primary_button_click', {
 						theme: this.props.themeId,
 						theme_type: themeType,
+						theme_tier: themeTier?.slug,
 						...( key && { action: key } ),
 					} );
 
@@ -1355,7 +1381,9 @@ class ThemeSheet extends Component {
 
 			// @TODO we should add a new feature for personal plan themes or what we agree on.
 			const feature =
-				PLAN_PREMIUM === plan ? FEATURE_PREMIUM_THEMES_V2 : FEATURE_UPLOAD_THEMES_PLUGINS;
+				PLAN_PREMIUM === plan
+					? WPCOM_FEATURES_PREMIUM_THEMES_UNLIMITED
+					: FEATURE_UPLOAD_THEMES_PLUGINS;
 
 			plansUrl = `/plans/${ siteSlug }/?plan=${ plan }&feature=${ feature }&redirect_to=${ redirectTo }`;
 		} else {
@@ -1440,6 +1468,9 @@ class ThemeSheet extends Component {
 				upsellNudgePlan =
 					isExternallyManagedTheme || isBundledSoftwareSet ? PLAN_BUSINESS : PLAN_PREMIUM;
 			}
+			const upsellNudgeFeature = config.isEnabled( 'themes/tiers' )
+				? themeTier?.feature
+				: WPCOM_FEATURES_PREMIUM_THEMES_UNLIMITED;
 
 			pageUpsellBanner = (
 				<UpsellNudge
@@ -1448,7 +1479,7 @@ class ThemeSheet extends Component {
 					title={ this.getBannerUpsellTitle() }
 					description={ preventWidows( this.getBannerUpsellDescription() ) }
 					event="themes_plan_particular_free_with_plan"
-					feature={ WPCOM_FEATURES_PREMIUM_THEMES }
+					feature={ upsellNudgeFeature }
 					forceHref={ onClick === null }
 					disableHref={ onClick !== null }
 					onClick={ null === onClick ? noop : onClick }
@@ -1456,6 +1487,7 @@ class ThemeSheet extends Component {
 					showIcon={ true }
 					forceDisplay={ forceDisplay }
 					displayAsLink={ onClick !== null }
+					tracksClickProperties={ { theme_tier: themeTier?.slug } }
 				/>
 			);
 		}
@@ -1487,7 +1519,11 @@ class ThemeSheet extends Component {
 					showIcon
 					event="theme_upsell_plan_click"
 					tracksClickName="calypso_theme_upsell_plan_click"
-					tracksClickProperties={ { theme_id: themeId, theme_name: themeName } }
+					tracksClickProperties={ {
+						theme_id: themeId,
+						theme_name: themeName,
+						theme_tier: themeTier?.slug,
+					} }
 				/>
 			);
 		}
@@ -1736,7 +1772,11 @@ export default connect(
 			isSiteWooExpressFreeTrial: isSiteOnECommerceTrial( state, siteId ),
 			isSiteBundleEligible: isSiteEligibleForBundledSoftware( state, siteId ),
 			forumUrl: getThemeForumUrl( state, themeId, siteId ),
-			hasUnlimitedPremiumThemes: siteHasFeature( state, siteId, WPCOM_FEATURES_PREMIUM_THEMES ),
+			hasUnlimitedPremiumThemes: siteHasFeature(
+				state,
+				siteId,
+				WPCOM_FEATURES_PREMIUM_THEMES_UNLIMITED
+			),
 			showTryAndCustomize: shouldShowTryAndCustomize( state, themeId, siteId ),
 			canInstallPlugins: siteHasFeature( state, siteId, WPCOM_FEATURES_INSTALL_PLUGINS ),
 			canUserUploadThemes: siteHasFeature( state, siteId, FEATURE_UPLOAD_THEMES ),

@@ -5,6 +5,7 @@ import { connect } from 'react-redux';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getFilteredAndSortedPlugins } from 'calypso/state/plugins/installed/selectors-ts';
 import getCurrentRouteParameterized from 'calypso/state/selectors/get-current-route-parameterized';
+import getJetpackModule from 'calypso/state/selectors/get-jetpack-module';
 import isJetpackModuleActive from 'calypso/state/selectors/is-jetpack-module-active';
 import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
@@ -31,6 +32,7 @@ export const GoogleAnalyticsForm = ( props ) => {
 		uniqueEventTracker,
 		path,
 		isAtomic,
+		isJetpackModuleAvailable,
 		isGoogleAnalyticsEligible,
 	} = props;
 	const [ isCodeValid, setIsCodeValid ] = useState( true );
@@ -85,6 +87,10 @@ export const GoogleAnalyticsForm = ( props ) => {
 		isAtomic,
 	};
 	if ( ( props.siteIsJetpack && ! isAtomic ) || ( isAtomic && isGoogleAnalyticsEligible ) ) {
+		// Google Analytics module is not available (important distinction from not active)
+		if ( ! isJetpackModuleAvailable ) {
+			return null;
+		}
 		return <GoogleAnalyticsJetpackForm { ...newProps } />;
 	}
 	return <GoogleAnalyticsSimpleForm { ...newProps } />;
@@ -94,6 +100,7 @@ const mapStateToProps = ( state ) => {
 	const site = getSelectedSite( state );
 	const siteId = getSelectedSiteId( state );
 	const isGoogleAnalyticsEligible = siteHasFeature( state, siteId, FEATURE_GOOGLE_ANALYTICS );
+	const isJetpackModuleAvailable = Boolean( getJetpackModule( state, siteId, 'google-analytics' ) );
 	const jetpackModuleActive = isJetpackModuleActive( state, siteId, 'google-analytics' );
 	const siteIsJetpack = isJetpackSite( state, siteId );
 	const googleAnalyticsEnabled = site && ( ! siteIsJetpack || jetpackModuleActive );
@@ -109,6 +116,7 @@ const mapStateToProps = ( state ) => {
 		siteIsJetpack,
 		sitePlugins,
 		jetpackModuleActive,
+		isJetpackModuleAvailable,
 		isAtomic: isAtomicSite( state, siteId ),
 		isGoogleAnalyticsEligible,
 	};

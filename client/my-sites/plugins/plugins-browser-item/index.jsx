@@ -258,7 +258,7 @@ function InstalledInOrPricing( {
 	currentSites,
 } ) {
 	const translate = useTranslate();
-	const selectedSiteId = useSelector( ( state ) => getSelectedSiteId( state ) );
+	const selectedSiteId = useSelector( getSelectedSiteId );
 	const isMarketplaceProduct = useSelector( ( state ) =>
 		isMarketplaceProductSelector( state, plugin.slug )
 	);
