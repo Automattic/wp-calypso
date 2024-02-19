@@ -10,7 +10,7 @@ function wpcomInitCommandPalette() {
 	wpcom.request( { metaAPI: { accessAllUsersBlogs: true } } );
 
 	// TODO: Find a way to get the current site ID.
-	const currentSiteId = null;
+	const currentSiteId = window?.commandPaletteConfig?.siteId || null;
 	const currentRoute = window.location.pathname;
 
 	const navigate = ( path, openInNewTab ) => {
@@ -28,7 +28,8 @@ function wpcomInitCommandPalette() {
 	render(
 		<QueryClientProvider client={ queryClient }>
 			<CommandPalette
-				currentSideId={ currentSiteId }
+				currentSiteId={ currentSiteId }
+				singleSiteMode={ true }
 				navigate={ navigate }
 				wpcom={ wpcom }
 				currentRoute={ currentRoute }
