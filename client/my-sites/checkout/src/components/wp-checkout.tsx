@@ -61,7 +61,6 @@ import { errorNotice, removeNotice } from 'calypso/state/notices/actions';
 import { isMarketplaceProduct } from 'calypso/state/products-list/selectors';
 import getPreviousRoute from 'calypso/state/selectors/get-previous-route';
 import useCouponFieldState from '../hooks/use-coupon-field-state';
-import { useToSFoldableCard } from '../hooks/use-tos-foldable-card';
 import { validateContactDetails } from '../lib/contact-validation';
 import getContactDetailsType from '../lib/get-contact-details-type';
 import { updateCartContactDetailsForCheckout } from '../lib/update-cart-contact-details-for-checkout';
@@ -349,7 +348,6 @@ export default function WPCheckout( {
 
 	const { transactionStatus } = useTransactionStatus();
 	const paymentMethod = usePaymentMethod();
-	const showToSFoldableCard = useToSFoldableCard();
 
 	const hasMarketplaceProduct =
 		useDoesCartHaveMarketplaceProductRequiringConfirmation( responseCart );
@@ -658,13 +656,11 @@ export default function WPCheckout( {
 						validateForm={ validateForm }
 						submitButtonHeader={ <SubmitButtonHeader /> }
 						submitButtonFooter={
-							// Temporarily disabling this lint rule until hasCheckoutVersion is removed
-							// eslint-disable-next-line no-nested-ternary
 							hasCartJetpackProductsOnly ? (
 								<JetpackCheckoutSeals />
-							) : hasCheckoutVersion( '2' ) || showToSFoldableCard ? (
+							) : (
 								<CheckoutMoneyBackGuarantee cart={ responseCart } />
-							) : null
+							)
 						}
 					/>
 				</CheckoutStepGroup>

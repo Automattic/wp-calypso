@@ -42,6 +42,7 @@ import {
 } from '@automattic/wpcom-checkout';
 import { keyframes } from '@emotion/react';
 import styled from '@emotion/styled';
+import { Icon, reusableBlock } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import * as React from 'react';
 import { hasFreeCouponTransfersOnly } from 'calypso/lib/cart-values/cart-items';
@@ -62,6 +63,16 @@ import type { TranslateResult } from 'i18n-calypso';
 
 // This will make converting to TS less noisy. The order of components can be reorganized later
 /* eslint-disable @typescript-eslint/no-use-before-define */
+
+const StyledIcon = styled( Icon )`
+	fill: '#1E1E1E';
+	margin-right: 0.3em;
+
+	.rtl & {
+		margin-right: 0;
+		margin-left: 0.3em;
+	}
+`;
 
 export function WPCheckoutOrderSummary( {
 	siteId,
@@ -306,9 +317,11 @@ function CheckoutSummaryGiftFeaturesList( { siteSlug }: { siteSlug: string } ) {
 export function CheckoutSummaryRefundWindows( {
 	cart,
 	highlight = false,
+	includeRefundIcon,
 }: {
 	cart: ResponseCart;
 	highlight?: boolean;
+	includeRefundIcon?: boolean;
 } ) {
 	const translate = useTranslate();
 
@@ -404,10 +417,13 @@ export function CheckoutSummaryRefundWindows( {
 	}
 
 	return (
-		<CheckoutSummaryFeaturesListItem>
-			<WPCheckoutCheckIcon id="features-list-refund-text" />
-			{ highlight ? <strong>{ text }</strong> : text }
-		</CheckoutSummaryFeaturesListItem>
+		<>
+			{ includeRefundIcon && <StyledIcon icon={ reusableBlock } size={ 24 } /> }
+			<CheckoutSummaryFeaturesListItem>
+				<WPCheckoutCheckIcon id="features-list-refund-text" />
+				{ highlight ? <strong>{ text }</strong> : text }
+			</CheckoutSummaryFeaturesListItem>
+		</>
 	);
 }
 

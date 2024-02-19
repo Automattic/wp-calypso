@@ -15,16 +15,12 @@ import styled from '@emotion/styled';
 import { useTranslate } from 'i18n-calypso';
 import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
 import CheckoutTerms from '../components/checkout-terms';
-import { useToSFoldableCard } from '../hooks/use-tos-foldable-card';
 import { WPOrderReviewSection } from './wp-order-review-line-items';
 
-const CheckoutTermsWrapper = styled.div< {
-	showToSFoldableCard: boolean;
-} >`
+const CheckoutTermsWrapper = styled.div`
 	& > * {
 		margin: 16px 0;
-		padding-left: ${ ( { showToSFoldableCard } ) =>
-			hasCheckoutVersion( '2' ) || showToSFoldableCard ? null : '24px' };
+		padding-left: 0;
 		position: relative;
 	}
 
@@ -116,11 +112,9 @@ export default function BeforeSubmitCheckoutHeader() {
 		} ),
 	};
 
-	const showToSFoldableCard = useToSFoldableCard();
-
 	return (
 		<>
-			<CheckoutTermsWrapper showToSFoldableCard={ showToSFoldableCard }>
+			<CheckoutTermsWrapper>
 				<CheckoutTerms cart={ responseCart } />
 			</CheckoutTermsWrapper>
 

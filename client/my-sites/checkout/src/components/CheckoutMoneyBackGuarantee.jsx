@@ -1,6 +1,5 @@
 import { isChargeback, isCredits } from '@automattic/calypso-products';
 import styled from '@emotion/styled';
-import { Icon, reusableBlock } from '@wordpress/icons';
 import { CheckoutSummaryRefundWindows } from './wp-checkout-order-summary';
 
 const CheckoutMoneyBackGuaranteeWrapper = styled.div`
@@ -23,16 +22,6 @@ const CheckoutMoneyBackGuaranteeWrapper = styled.div`
 	}
 `;
 
-const StyledIcon = styled( Icon )`
-	fill: '#1E1E1E';
-	margin-right: 0.3em;
-
-	.rtl & {
-		margin-right: 0;
-		margin-left: 0.3em;
-	}
-`;
-
 export function CheckoutMoneyBackGuarantee( { cart } ) {
 	// Return early if the cart is only Chargebacks fees
 	if ( cart.products.every( isChargeback || isCredits ) ) {
@@ -46,8 +35,7 @@ export function CheckoutMoneyBackGuarantee( { cart } ) {
 	return (
 		! allCartItemsAreDomains && (
 			<CheckoutMoneyBackGuaranteeWrapper>
-				<StyledIcon icon={ reusableBlock } size={ 24 } />
-				<CheckoutSummaryRefundWindows cart={ cart } />
+				<CheckoutSummaryRefundWindows cart={ cart } includeRefundIcon />
 			</CheckoutMoneyBackGuaranteeWrapper>
 		)
 	);
