@@ -14,7 +14,6 @@ import { getCurrentUserLocale } from 'calypso/state/current-user/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import CalypsoShoppingCartProvider from './calypso-shopping-cart-provider';
 import CheckoutMain from './src/components/checkout-main';
-import PrePurchaseNotices from './src/components/prepurchase-notices';
 import { logStashLoadErrorEvent } from './src/lib/analytics';
 import type { SitelessCheckoutType } from '@automattic/wpcom-checkout';
 
@@ -78,8 +77,6 @@ export default function CheckoutMainWrapper( {
 	const locale = useSelector( getCurrentUserLocale );
 	const selectedSiteId = useSelector( getSelectedSiteId ) ?? undefined;
 
-	const prepurchaseNotices = <PrePurchaseNotices />;
-
 	useEffect( () => {
 		if ( productAliasFromUrl ) {
 			logToLogstash( {
@@ -126,7 +123,6 @@ export default function CheckoutMainWrapper( {
 								feature={ selectedFeature }
 								plan={ plan }
 								isComingFromUpsell={ isComingFromUpsell }
-								infoMessage={ prepurchaseNotices }
 								sitelessCheckoutType={ sitelessCheckoutType }
 								isLoggedOutCart={ isLoggedOutCart }
 								isNoSiteCart={ isNoSiteCart }
