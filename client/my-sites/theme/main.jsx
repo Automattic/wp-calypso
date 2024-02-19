@@ -55,7 +55,7 @@ import { PerformanceTrackerStop } from 'calypso/lib/performance-tracking';
 import { ReviewsSummary } from 'calypso/my-sites/marketplace/components/reviews-summary';
 import { useBundleSettingsByTheme } from 'calypso/my-sites/theme/hooks/use-bundle-settings';
 import ActivationModal from 'calypso/my-sites/themes/activation-modal';
-import { localizeThemesPath } from 'calypso/my-sites/themes/helpers';
+import { localizeThemesPath, shouldSelectSite } from 'calypso/my-sites/themes/helpers';
 import ThanksModal from 'calypso/my-sites/themes/thanks-modal';
 import { connectOptions } from 'calypso/my-sites/themes/theme-options';
 import ThemePreview from 'calypso/my-sites/themes/theme-preview';
@@ -370,7 +370,9 @@ class ThemeSheet extends Component {
 	};
 
 	onButtonClick = ( event ) => {
-		if ( this.shouldSelectSite() ) {
+		const { isLoggedIn, siteCount, siteId } = this.props;
+
+		if ( shouldSelectSite( { isLoggedIn, siteCount, siteId } ) ) {
 			event?.preventDefault();
 			this.setState( { isSiteSelectorModalVisible: true } );
 			return;
@@ -1192,6 +1194,7 @@ class ThemeSheet extends Component {
 			tier,
 			selectedStyleVariationSlug: styleVariationSlug,
 			themeType,
+			siteCount,
 			siteId,
 			themeTier,
 		} = this.props;
@@ -1211,7 +1214,7 @@ class ThemeSheet extends Component {
 						: null
 				}
 				onClick={ ( event ) => {
-					const action = this.shouldSelectSite() ? 'selectSite' : key;
+					const action = shouldSelectSite( { isLoggedIn, siteCount, siteId } ) ? 'selectSite' : key;
 
 					this.props.recordTracksEvent( 'calypso_theme_sheet_primary_button_click', {
 						theme: this.props.themeId,
@@ -1358,6 +1361,7 @@ class ThemeSheet extends Component {
 		const section = this.validateSection( this.props.section );
 		const {
 			themeId,
+			siteCount,
 			siteId,
 			siteSlug,
 			retired,
@@ -1458,7 +1462,10 @@ class ThemeSheet extends Component {
 
 		let onClick = null;
 
-		if ( this.shouldSelectSite() || ( isExternallyManagedTheme && isLoggedIn && siteId ) ) {
+		if (
+			shouldSelectSite( { isLoggedIn, siteCount, siteId } ) ||
+			( isExternallyManagedTheme && isLoggedIn && siteId )
+		) {
 			onClick = this.onButtonClick;
 		} else if ( ! isLoggedIn ) {
 			onClick = launchPricing;
@@ -1511,7 +1518,7 @@ class ThemeSheet extends Component {
 		if ( hasWpOrgThemeUpsellBanner || hasThemeUpsellBannerAtomic ) {
 			const themeInstallationURL = `/marketplace/theme/${ themeId }/install/${ siteSlug }`;
 			const onThemeUpsellPlanClick = ( event ) => {
-				if ( this.shouldSelectSite() ) {
+				if ( shouldSelectSite( { isLoggedIn, siteCount, siteId } ) ) {
 					event?.preventDefault();
 					this.setState( { isSiteSelectorModalVisible: true } );
 					return;
@@ -1533,8 +1540,8 @@ class ThemeSheet extends Component {
 							{ args: { businessPlanName: getPlan( PLAN_BUSINESS ).getTitle() } }
 						)
 					) }
-					forceHref={ ! this.shouldSelectSite() }
-					disableHref={ this.shouldSelectSite() }
+					forceHref={ ! shouldSelectSite( { isLoggedIn, siteCount, siteId } ) }
+					disableHref={ shouldSelectSite( { isLoggedIn, siteCount, siteId } ) }
 					feature={ FEATURE_UPLOAD_THEMES }
 					forceDisplay
 					href={
