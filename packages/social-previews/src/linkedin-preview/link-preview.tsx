@@ -1,4 +1,4 @@
-import { stripHtmlTags } from '../helpers';
+import { getNoteTitle } from '../helpers';
 import { LinkedInPostPreview } from './post-preview';
 import { LinkedInPreviewProps } from './types';
 
@@ -16,7 +16,7 @@ export function LinkedInLinkPreview( props: LinkedInLinkPreviewProps ) {
 			// Override the props that are irrelevant to link preview
 			description=""
 			media={ undefined }
-			title={ props.title || stripHtmlTags( props.description ).substring( 0, 50 ) }
+			title={ props.title || getNoteTitle( props.description ) }
 		/>
 	);
 }

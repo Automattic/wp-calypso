@@ -1,5 +1,5 @@
 import { __, sprintf } from '@wordpress/i18n';
-import { baseDomain, preparePreviewText, stripHtmlTags } from '../helpers';
+import { baseDomain, getNoteTitle, preparePreviewText } from '../helpers';
 import { FEED_TEXT_MAX_LENGTH, FEED_TEXT_MAX_LINES } from './constants';
 import { DefaultAvatar } from './icons/default-avatar';
 import { LinkedInPreviewProps } from './types';
@@ -91,7 +91,7 @@ export function LinkedInPostPreview( {
 							{ url ? (
 								<div className="linkedin-preview__description">
 									<h2 className="linkedin-preview__description--title">
-										{ title || stripHtmlTags( description ).substring( 0, 50 ) }
+										{ title || getNoteTitle( description ) }
 									</h2>
 									<div className="linkedin-preview__description--meta">
 										<span className="linkedin-preview__description--url">

@@ -40,6 +40,15 @@ export const stripHtmlTags: Formatter< Array< string > > = ( description, allowe
 	return description ? description.replace( pattern, '' ) : '';
 };
 
+/**
+ * For social note posts we use the first 50 characters of the description.
+ * @param description The post description.
+ * @returns The first 50 characters of the description.
+ */
+export const getNoteTitle = ( description: string ): string => {
+	return stripHtmlTags( description ).substring( 0, 50 );
+};
+
 export const hasTag = ( text: string, tag: string ): boolean => {
 	const pattern = new RegExp( `<${ tag }[^>]*>`, 'gi' );
 
