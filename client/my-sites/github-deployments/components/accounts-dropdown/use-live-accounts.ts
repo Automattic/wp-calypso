@@ -1,8 +1,5 @@
 import config from '@automattic/calypso-config';
-import { useI18n } from '@wordpress/react-i18n';
-import { useEffect, useRef, useState } from 'react';
-import { useDispatch } from 'calypso/state';
-import { errorNotice } from 'calypso/state/notices/actions';
+import { useLayoutEffect, useState } from 'react';
 import { GitHubAccountData, useGithubAccountsQuery } from '../../use-github-accounts-query';
 import { openPopup } from '../../utils/open-popup';
 
@@ -12,51 +9,56 @@ interface UseLiveAccountsParameters {
 
 const APP_SLUG = config( 'github_app_slug' );
 const INSTALL_APP_URL = `https://github.com/apps/${ APP_SLUG }/installations/new`;
-const POPUP_ID = 'github-app-authorize';
+
+const POPUP_ID = 'github-app-install';
 
 export const useLiveAccounts = ( { initialAccountId }: UseLiveAccountsParameters ) => {
-	const { __ } = useI18n();
 	const { data: accounts = [], refetch, isLoading: isLoadingAccounts } = useGithubAccountsQuery();
-	const dispatch = useDispatch();
 
-	const [ account, setAccount ] = useState< GitHubAccountData | undefined >( () => {
-		const preselectedInstallation = accounts.find(
-			( account ) => account.external_id === initialAccountId
-		);
+	const [ account, setAccount ] = useState< GitHubAccountData >();
 
-		return preselectedInstallation ?? accounts.at( 0 );
-	} );
-
-	const didRequestInstallation = useRef( false );
-	const lastAccounts = useRef( accounts );
-
-	useEffect( () => {
-		if ( accounts.length < 2 ) {
-			setAccount( accounts[ 0 ] );
+	useLayoutEffect( () => {
+		if ( accounts.length === 0 || account ) {
+			return;
 		}
 
-		if ( didRequestInstallation.current && lastAccounts.current.length !== accounts.length ) {
-			const newAccount = accounts.at( -1 );
+		if ( initialAccountId ) {
+			const preselectedAccount = accounts.find(
+				( account ) => account.external_id === initialAccountId
+			);
 
-			if ( newAccount ) {
-				setAccount( newAccount );
+			if ( preselectedAccount ) {
+				setAccount( preselectedAccount );
+				return;
 			}
-
-			didRequestInstallation.current = false;
 		}
 
-		lastAccounts.current = accounts;
-	}, [ accounts ] );
+		setAccount( accounts[ 0 ] );
+	}, [ accounts, account, initialAccountId ] );
 
 	const onNewInstallationRequest = () => {
-		openPopup( { url: INSTALL_APP_URL, popupId: POPUP_ID } )
-			.then( async () => {
-				didRequestInstallation.current = true;
-				await refetch();
+		openPopup< { installationId: number } >( {
+			url: INSTALL_APP_URL,
+			popupId: POPUP_ID,
+			expectedEvent: 'github-app-installed',
+		} )
+			.then( async ( { installationId } ) => {
+				const { data: newAccounts } = await refetch();
+
+				const newInstallation = newAccounts?.find(
+					( account ) => account.external_id === installationId
+				);
+
+				if ( newInstallation ) {
+					setAccount( newInstallation );
+				}
 			} )
-			.catch( () =>
-				dispatch( errorNotice( __( 'Failed to authorize GitHub. Please try again.' ) ) )
-			);
+			.catch( () => {
+				/**
+				 * Do nothing. On installation updates, the user isn't redirected to our callback,
+				 * so we can't check whether the action succeeded or failed in this case.
+				 */
+			} );
 	};
 
 	return {
