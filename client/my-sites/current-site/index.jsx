@@ -49,7 +49,7 @@ class CurrentSite extends Component {
 		if ( isEnabled( 'layout/dotcom-nav-redesign' ) ) {
 			return (
 				<span className="current-site__switch-sites">
-					<Button borderless href="/sites">
+					<Button borderless href="/sites" onClick={ this.onAllSitesClick }>
 						<span
 							// eslint-disable-next-line wpcalypso/jsx-classname-namespace
 							className={ `gridicon dashicons-before dashicons-arrow-${ arrowDirection }-alt2` }
