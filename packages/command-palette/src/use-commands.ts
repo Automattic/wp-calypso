@@ -13,6 +13,7 @@ export interface useCommandsParams {
 	setSelectedCommandName: ( name: string ) => void;
 	navigate: ( path: string, openInNewTab: boolean ) => void;
 	currentRoute: string | null;
+	singleSiteMode: boolean;
 }
 
 function useCommandNavigation( { navigate, currentRoute }: useCommandNavigationOptions ) {
@@ -38,6 +39,7 @@ export const useCommands = ( {
 	setSelectedCommandName,
 	navigate,
 	currentRoute,
+	singleSiteMode,
 }: useCommandsParams ) => {
 	const { __, _x } = useI18n();
 	const setStateCallback =
@@ -49,6 +51,36 @@ export const useCommands = ( {
 		};
 
 	const commandNavigation = useCommandNavigation( { navigate, currentRoute } );
+
+	const openDashboardCommand = {
+		name: 'openSiteDashboard',
+		label: __( 'Open site dashboard', __i18n_text_domain__ ),
+		searchLabel: [
+			_x(
+				'open site dashboard',
+				'Keyword for the Open site dashboard command',
+				__i18n_text_domain__
+			),
+			_x( 'admin', 'Keyword for the Open site dashboard command', __i18n_text_domain__ ),
+			_x( 'wp-admin', 'Keyword for the Open site dashboard command', __i18n_text_domain__ ),
+		].join( ' ' ),
+		context: [ '/sites' ],
+		...( singleSiteMode
+			? {
+					callback: commandNavigation( `/sites` ),
+			  }
+			: {
+					callback: setStateCallback(
+						'openSiteDashboard',
+						__( 'Select site to open dashboard', __i18n_text_domain__ )
+					),
+					siteFunctions: {
+						onClick: ( param ) => commandNavigation( `/home/${ param.site.slug }` )( param ),
+					},
+			  } ),
+
+		icon: dashboardIcon,
+	};
 
 	const commands: Command[] = [
 		{
@@ -62,28 +94,7 @@ export const useCommands = ( {
 			callback: commandNavigation( `/sites` ),
 			icon: wordpressIcon,
 		},
-		{
-			name: 'openSiteDashboard',
-			label: __( 'Open site dashboard', __i18n_text_domain__ ),
-			searchLabel: [
-				_x(
-					'open site dashboard',
-					'Keyword for the Open site dashboard command',
-					__i18n_text_domain__
-				),
-				_x( 'admin', 'Keyword for the Open site dashboard command', __i18n_text_domain__ ),
-				_x( 'wp-admin', 'Keyword for the Open site dashboard command', __i18n_text_domain__ ),
-			].join( ' ' ),
-			context: [ '/sites' ],
-			callback: setStateCallback(
-				'openSiteDashboard',
-				__( 'Select site to open dashboard', __i18n_text_domain__ )
-			),
-			siteFunctions: {
-				onClick: ( param ) => commandNavigation( `/home/${ param.site.slug }` )( param ),
-			},
-			icon: dashboardIcon,
-		},
+		openDashboardCommand,
 	];
 
 	return commands;

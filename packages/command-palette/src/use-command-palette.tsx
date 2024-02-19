@@ -81,6 +81,7 @@ interface useCommandPaletteOptions {
 	useExtraCommands?: ( options: useExtraCommandsParams ) => Command[];
 	wpcom: WPCOM;
 	currentRoute: string | null;
+	singleSiteMode: boolean;
 }
 
 interface SiteToActionParameters {
@@ -152,6 +153,7 @@ export const useCommandPalette = ( {
 	useExtraCommands,
 	wpcom,
 	currentRoute,
+	singleSiteMode = false,
 }: useCommandPaletteOptions ): {
 	commands: Command[];
 	filterNotice: string | undefined;
@@ -171,6 +173,7 @@ export const useCommandPalette = ( {
 		setSelectedCommandName,
 		navigate,
 		currentRoute,
+		singleSiteMode,
 	} ) as Command[];
 
 	// TODO: Remove after porting all commands.
