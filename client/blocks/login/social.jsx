@@ -118,8 +118,6 @@ class SocialLoginForm extends Component {
 		const { onSuccess, socialService } = this.props;
 		const redirectTo = this.props.redirectTo;
 
-		// ignore response if the user did not click on the GitHub button
-		// and did not follow the redirect flow
 		if ( socialService !== 'github' ) {
 			return;
 		}
