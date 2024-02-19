@@ -14,7 +14,11 @@ import { useEffect, useMemo, useState } from 'react';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormRadiosBar from 'calypso/components/forms/form-radios-bar';
 import SupportInfo from 'calypso/components/support-info';
-import { useDeploymentWorkflowsQuery } from './use-deployment-workflows-query';
+import {
+	WorkFlowStates,
+	useCheckWorkflowQuery,
+	useDeploymentWorkflowsQuery,
+} from './use-deployment-workflows-query';
 
 import './style.scss';
 
@@ -24,7 +28,6 @@ interface DeploymentStyleProps {
 }
 
 type DeploymentStyle = 'simple' | 'custom';
-type WorkFlowStates = 'loading' | 'success' | 'error';
 
 export const DeploymentStyle = ( { onDefineStyle, onValidationChange }: DeploymentStyleProps ) => {
 	const { __ } = useI18n();
@@ -56,6 +59,12 @@ export const DeploymentStyle = ( { onDefineStyle, onValidationChange }: Deployme
 	const [ uploadArtifactStatus, setUploadArtifactStatus ] = useState< WorkFlowStates >( 'loading' );
 	const [ errorMesseage, setErrorMesseage ] = useState( '' );
 
+	const { isLoading: isCheckingWorkflowFile, data: workflowCheckResult } = useCheckWorkflowQuery(
+		installationId,
+		repositoryId,
+		selectedWorkflow
+	);
+
 	const handleDeploymentStyleChange = ( value: DeploymentStyle ) => {
 		setDeploymentStyle( value );
 	};
@@ -86,14 +95,31 @@ export const DeploymentStyle = ( { onDefineStyle, onValidationChange }: Deployme
 	};
 
 	useEffect( () => {
+		workflowCheckResult?.checked_items?.forEach( ( item ) => {
+			if ( item.validation_name === 'triggered_on_push' ) {
+				setTriggeredOnPushStatus( item.status );
+			}
+			if ( item.validation_name === 'upload_artifact_with_required_name' ) {
+				setUploadArtifactStatus( item.status );
+			}
+		} );
+	}, [ workflowCheckResult ] );
+
+	useEffect( () => {
 		onDefineStyle?.( deploymentStyle );
 
 		if ( deploymentStyle === 'simple' ) {
 			onValidationChange?.( 'success' );
 		} else {
-			onValidationChange?.( uploadArtifactStatus );
+			onValidationChange?.( workflowCheckResult?.conclusion || 'loading' );
 		}
-	}, [ onDefineStyle, onValidationChange, deploymentStyle, uploadArtifactStatus ] );
+	}, [
+		onDefineStyle,
+		onValidationChange,
+		deploymentStyle,
+		uploadArtifactStatus,
+		workflowCheckResult,
+	] );
 
 	useEffect( () => {
 		if ( deploymentStyle === 'custom' && selectedWorkflow === 'create-new' ) {
@@ -103,22 +129,7 @@ export const DeploymentStyle = ( { onDefineStyle, onValidationChange }: Deployme
 		}
 
 		if ( deploymentStyle === 'custom' ) {
-			setTriggeredOnPushStatus( 'loading' );
-			setUploadArtifactStatus( 'loading' );
 			setErrorMesseage( '' );
-
-			// Just to simulate a backend call
-			setTimeout( () => {
-				const status = Math.random() > 0.5 ? 'success' : 'error';
-				setTriggeredOnPushStatus( status );
-				setUploadArtifactStatus( status );
-				setTimeout( () => {
-					setValidationTriggered( true );
-				}, 1000 );
-				if ( status === 'error' ) {
-					setErrorMesseage( 'Please fix this error' );
-				}
-			}, 1000 );
 		}
 	}, [ deploymentStyle, selectedWorkflow ] );
 
@@ -203,7 +214,9 @@ export const DeploymentStyle = ( { onDefineStyle, onValidationChange }: Deployme
 								expanded={ uploadArtifactStatus === 'error' }
 								header={
 									<>
-										<RenderIcon state={ uploadArtifactStatus } />
+										<RenderIcon
+											state={ isCheckingWorkflowFile ? 'loading' : uploadArtifactStatus }
+										/>
 										{ __( 'The upload artifact has the required name' ) }
 									</>
 								}

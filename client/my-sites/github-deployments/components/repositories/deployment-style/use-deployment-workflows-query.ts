@@ -8,6 +8,17 @@ export const CODE_DEPLOYMENTS_QUERY_KEY = 'code-deployments';
 export interface Workflows {
 	file_name: string;
 }
+export type WorkFlowStates = 'loading' | 'success' | 'error';
+
+export interface WorkflowsValidationItem {
+	validation_name: string;
+	status: WorkFlowStates;
+}
+
+export interface WorkflowsValidation {
+	conclusion: WorkFlowStates;
+	checked_items: WorkflowsValidationItem[];
+}
 
 export const useDeploymentWorkflowsQuery = (
 	installationId: number,
@@ -20,7 +31,7 @@ export const useDeploymentWorkflowsQuery = (
 	} );
 
 	return useQuery< Workflows[] >( {
-		queryKey: [ GITHUB_DEPLOYMENTS_QUERY_KEY, CODE_DEPLOYMENTS_QUERY_KEY, repositoryId ],
+		queryKey: [ GITHUB_DEPLOYMENTS_QUERY_KEY, CODE_DEPLOYMENTS_QUERY_KEY, path ],
 		queryFn: (): Workflows[] =>
 			wp.req.get( {
 				path,
@@ -30,5 +41,31 @@ export const useDeploymentWorkflowsQuery = (
 			persist: false,
 		},
 		...options,
+	} );
+};
+
+export const useCheckWorkflowQuery = (
+	installationId: number,
+	repositoryId: number,
+	workflowFilename: string
+) => {
+	const invalidFilenames = [ 'none', 'create-new' ];
+	const path = addQueryArgs( '/hosting/github/workflows/checks', {
+		installation_id: installationId,
+		repository_id: repositoryId,
+		workflow_filename: workflowFilename,
+	} );
+
+	return useQuery< WorkflowsValidation >( {
+		queryKey: [ GITHUB_DEPLOYMENTS_QUERY_KEY, CODE_DEPLOYMENTS_QUERY_KEY, path ],
+		enabled: ! invalidFilenames.includes( workflowFilename ),
+		queryFn: (): WorkflowsValidation =>
+			wp.req.get( {
+				path,
+				apiNamespace: 'wpcom/v2',
+			} ),
+		meta: {
+			persist: false,
+		},
 	} );
 };
