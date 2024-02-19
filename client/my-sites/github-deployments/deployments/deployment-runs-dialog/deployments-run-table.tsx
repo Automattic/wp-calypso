@@ -2,38 +2,25 @@ import { __ } from '@wordpress/i18n';
 import { SortButton } from 'calypso/my-sites/github-deployments/components/sort-button/sort-button';
 import { SortDirection } from 'calypso/my-sites/github-deployments/components/sort-button/use-sort';
 import { CodeDeploymentData } from 'calypso/my-sites/github-deployments/deployments/use-code-deployments-query';
-import { DeploymentsListItem } from './deployments-list-item';
+import { DeploymentsRunItem } from './deployments-run-item';
 
-interface DeploymentsListProps {
+interface DeploymentsRunsTableProps {
 	deployments: CodeDeploymentData[];
 	sortKey: string;
 	sortDirection: SortDirection;
-	onSortChange( sortKey: string ): void;
+	onSortChange( key: string ): void;
 }
 
-export const DeploymentsListTable = ( {
+export const DeploymentsRunsTable = ( {
 	deployments,
 	sortKey,
 	sortDirection,
 	onSortChange,
-}: DeploymentsListProps ) => {
+}: DeploymentsRunsTableProps ) => {
 	return (
 		<table>
 			<thead>
 				<tr>
-					<th>
-						<SortButton
-							value="name"
-							activeValue={ sortKey }
-							direction={ sortDirection }
-							onChange={ onSortChange }
-						>
-							<span>{ __( 'Repository' ) }</span>
-						</SortButton>
-					</th>
-					<th>
-						<span>{ __( 'Last commit' ) }</span>
-					</th>
 					<th>
 						<SortButton
 							value="status"
@@ -43,6 +30,9 @@ export const DeploymentsListTable = ( {
 						>
 							<span>{ __( 'Status' ) }</span>
 						</SortButton>
+					</th>
+					<th>
+						<span>{ __( 'Last commit' ) }</span>
 					</th>
 					<th>
 						<SortButton
@@ -64,12 +54,11 @@ export const DeploymentsListTable = ( {
 							<span>{ __( 'Duration' ) }</span>
 						</SortButton>
 					</th>
-					<th> </th>
 				</tr>
 			</thead>
 			<tbody>
 				{ deployments.map( ( deployment ) => (
-					<DeploymentsListItem key={ deployment.id } deployment={ deployment } />
+					<DeploymentsRunItem key={ deployment.id } deployment={ deployment } />
 				) ) }
 			</tbody>
 		</table>

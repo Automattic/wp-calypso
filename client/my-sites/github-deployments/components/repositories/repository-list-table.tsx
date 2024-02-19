@@ -1,61 +1,49 @@
-import { Button } from '@automattic/components';
-import { ExternalLink, Icon } from '@wordpress/components';
+import { ExternalLink } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
-import { chevronDown, chevronUp } from '@wordpress/icons';
+import { SortButton } from 'calypso/my-sites/github-deployments/components/sort-button/sort-button';
+import { SortDirection } from 'calypso/my-sites/github-deployments/components/sort-button/use-sort';
 import { GitHubRepositoryData } from '../../use-github-repositories-query';
 import { GitHubRepositoryListItem } from './repository-list-item';
-
-export type SortOption = 'name_asc' | 'name_desc' | 'date_asc' | 'date_desc';
 
 interface GitHubInstallationListTableProps {
 	repositories: GitHubRepositoryData[];
 	onSelect( repository: GitHubRepositoryData ): void;
-	sortKey: SortOption;
-	onSortChange( sort: SortOption ): void;
+	sortKey: string;
+	sortDirection: SortDirection;
+	onSortChange( key: string ): void;
 }
-
-type SortPair = [ SortOption, SortOption ];
-
-const nameSorts: SortPair = [ 'name_asc', 'name_desc' ];
-const dateSorts: SortPair = [ 'date_asc', 'date_desc' ];
 
 export const GitHubRepositoryListTable = ( {
 	repositories,
 	onSelect,
 	sortKey,
+	sortDirection,
 	onSortChange,
 }: GitHubInstallationListTableProps ) => {
-	function getSortIcon( pair: SortPair ) {
-		if ( sortKey === pair[ 0 ] ) {
-			return <Icon size={ 16 } icon={ chevronDown } />;
-		} else if ( sortKey === pair[ 1 ] ) {
-			return <Icon size={ 16 } icon={ chevronUp } />;
-		}
-	}
-
-	function handleChangeSort( pair: SortPair ) {
-		if ( sortKey === pair[ 0 ] ) {
-			return pair[ 1 ];
-		}
-		return pair[ 0 ];
-	}
-
 	return (
 		<div className="github-deployments-repository-list">
 			<table>
 				<thead>
 					<tr>
 						<th>
-							<Button plain onClick={ () => onSortChange( handleChangeSort( nameSorts ) ) }>
+							<SortButton
+								value="name"
+								activeValue={ sortKey }
+								direction={ sortDirection }
+								onChange={ onSortChange }
+							>
 								<span>{ __( 'Repository' ) }</span>
-								{ getSortIcon( nameSorts ) }
-							</Button>
+							</SortButton>
 						</th>
 						<th>
-							<Button plain onClick={ () => onSortChange( handleChangeSort( dateSorts ) ) }>
-								<span>{ __( 'Last Updated ' ) }</span>
-								{ getSortIcon( dateSorts ) }
-							</Button>
+							<SortButton
+								value="date"
+								activeValue={ sortKey }
+								direction={ sortDirection }
+								onChange={ onSortChange }
+							>
+								<span>{ __( 'Last update' ) }</span>
+							</SortButton>
 						</th>
 						<th> </th>
 					</tr>
