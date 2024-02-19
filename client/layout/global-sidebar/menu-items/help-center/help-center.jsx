@@ -13,7 +13,7 @@ import SidebarMenuItem from '../menu-item';
 
 const HELP_CENTER_STORE = HelpCenter.register();
 
-const SidebarHelpCenter = ( { tooltip } ) => {
+const SidebarHelpCenter = ( { tooltip, tooltipPlacement } ) => {
 	//const helpIconRef = useRef();
 	//const sectionName = useSelector( getSectionName );
 
@@ -42,6 +42,7 @@ const SidebarHelpCenter = ( { tooltip } ) => {
 					'is-active': helpCenterVisible,
 				} ) }
 				tooltip={ tooltip }
+				tooltipPlacement={ tooltipPlacement }
 				icon={ <Icon icon={ help } size={ 28 } /> }
 			/>
 		</>

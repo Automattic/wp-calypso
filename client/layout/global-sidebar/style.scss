@@ -41,6 +41,14 @@
 			right: unset;
 		}
 	}
+	.tooltip-top {
+		&::after {
+			right: unset;
+			bottom: unset;
+			left: 0;
+			top: -30px;
+		}
+	}
 
 	.sidebar__header {
 		align-items: center;
@@ -145,6 +153,7 @@
 			align-items: center;
 			margin-left: 20px;
 			height: 40px;
+			cursor: pointer;
 			svg {
 				fill: var(--studio-white);
 			}

@@ -31,15 +31,26 @@ export const GlobalSidebarFooter: FC< {
 } > = ( { translate, user } ) => {
 	return (
 		<SidebarFooter>
-			<a href="/read" className="sidebar__footer-link" title={ translate( 'Reader' ) }>
+			<a
+				href="/read"
+				className="sidebar__footer-link tooltip tooltip-top"
+				title={ translate( 'Reader' ) }
+				data-tooltip={ translate( 'Reader' ) }
+			>
 				<CustomReaderIcon />
 			</a>
-			<a href="/me" className="sidebar__footer-link" title={ translate( 'Profile' ) }>
+			<a
+				href="/me"
+				className="sidebar__footer-link tooltip tooltip-top"
+				title={ translate( 'Profile' ) }
+				data-tooltip={ translate( 'Profile' ) }
+			>
 				<Gravatar user={ user } size={ 20 } imgSize={ 20 } />
 			</a>
 			<AsyncLoad
 				require="./menu-items/help-center/help-center"
 				tooltip={ translate( 'Help' ) }
+				tooltipPlacement="top"
 				placeholder={
 					<div className="link-help">
 						<span className="help"></span>
