@@ -58,7 +58,7 @@ class SocialSignupForm extends Component {
 		} );
 	};
 
-	handleGitHubResponse = ( { accessToken }, triggeredByUser = true ) => {
+	handleGitHubResponse = ( { access_token }, triggeredByUser = true ) => {
 		if ( ! triggeredByUser && this.props.socialService !== 'github' ) {
 			return;
 		}
@@ -67,7 +67,7 @@ class SocialSignupForm extends Component {
 			social_account_type: 'github',
 		} );
 
-		this.props.handleResponse( 'github', accessToken, null, {
+		this.props.handleResponse( 'github', access_token, null, {
 			// Make accounts signed up via GitHub as dev accounts
 			is_dev_account: true,
 		} );

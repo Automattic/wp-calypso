@@ -114,22 +114,15 @@ class SocialLoginForm extends Component {
 		);
 	};
 
-	handleGitHubResponse = ( { access_token }, triggeredByUser = true ) => {
+	handleGitHubResponse = ( { access_token } ) => {
 		const { onSuccess, socialService } = this.props;
-		let redirectTo = this.props.redirectTo;
+		const redirectTo = this.props.redirectTo;
 
 		// ignore response if the user did not click on the GitHub button
 		// and did not follow the redirect flow
-		if ( ! triggeredByUser && socialService !== 'github' ) {
+		if ( socialService !== 'github' ) {
 			return;
 		}
-
-		// load persisted redirect_to url from session storage, needed for redirect_to to work with GitHub redirect flow
-		if ( ! triggeredByUser && ! redirectTo ) {
-			redirectTo = window.sessionStorage.getItem( 'login_redirect_to' );
-		}
-
-		window.sessionStorage.removeItem( 'login_redirect_to' );
 
 		const socialInfo = {
 			service: 'github',
@@ -164,6 +157,9 @@ class SocialLoginForm extends Component {
 
 	getRedirectUri = ( service ) => {
 		const host = typeof window !== 'undefined' && window.location.host;
+		if ( window.location.hostname === 'calypso.localhost' ) {
+			return `http://${ host }${ login( { socialService: service } ) }`;
+		}
 		return `https://${ host }${ login( { socialService: service } ) }`;
 	};
 

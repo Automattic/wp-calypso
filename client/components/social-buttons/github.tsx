@@ -93,7 +93,6 @@ const GitHubLoginButton = ( {
 				//starting_point: this.props.startingPoint,
 			} )
 		);
-
 		const { access_token } = response?.body?.data as ExchangeCodeForTokenResponse;
 		responseHandler( { access_token } );
 	};
