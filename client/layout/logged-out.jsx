@@ -180,11 +180,11 @@ const LayoutLoggedOut = ( {
 		[
 			'patterns',
 			'plugins',
-			'themes',
-			'theme',
 			'reader',
-			'subscriptions',
 			'site-profiler',
+			'subscriptions',
+			'theme',
+			'themes',
 		].includes( sectionName ) &&
 		! isReaderTagPage &&
 		! isReaderSearchPage &&
@@ -261,7 +261,7 @@ const LayoutLoggedOut = ( {
 				</>
 			) }
 
-			{ [ 'patterns', 'themes', 'theme', 'reader' ].includes( sectionName ) &&
+			{ [ 'patterns', 'reader', 'theme', 'themes' ].includes( sectionName ) &&
 				! isReaderTagEmbed && (
 					<UniversalNavbarFooter
 						onLanguageChange={ ( e ) => {

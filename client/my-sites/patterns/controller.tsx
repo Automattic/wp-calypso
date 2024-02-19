@@ -1,10 +1,8 @@
-import type { Context as PageJSContext } from '@automattic/calypso-router';
 import wpcom from 'calypso/lib/wp';
 import { getCurrentUserLocale, isUserLoggedIn } from 'calypso/state/current-user/selectors';
-import { getPatternSourceSiteID } from 'calypso/landing/stepper/declarative-flow/internals/steps-repository/pattern-assembler/constants';
+import Patterns from './patterns';
+import type { Context as PageJSContext } from '@automattic/calypso-router';
 import type { Pattern } from 'calypso/landing/stepper/declarative-flow/internals/steps-repository/pattern-assembler/types';
-import LoggedInComponent from './logged-in';
-import LoggedOutComponent from './logged-out';
 
 type Next = ( error?: Error ) => void;
 
@@ -25,7 +23,6 @@ export const fetchPatterns = ( context: PageJSContext, next: Next ) => {
 					categories: 'intro',
 					per_page: '5',
 					post_type: 'wp_block',
-					site: getPatternSourceSiteID(),
 				} );
 			},
 			staleTime: Infinity,
@@ -40,24 +37,12 @@ export const fetchPatterns = ( context: PageJSContext, next: Next ) => {
 		} );
 };
 
-const loggedIn = ( context: PageJSContext, next: Next ) => {
-	context.primary = <LoggedInComponent />;
-
-	next();
-};
-
-const loggedOut = ( context: PageJSContext, next: Next ) => {
-	context.primary = <LoggedOutComponent patterns={ context.params.patterns } />;
-
-	next();
-};
-
 export function renderPatterns( context: PageJSContext, next: Next ) {
-	/*const state = context.store.getState();
+	const state = context.store.getState();
 
-	if ( isUserLoggedIn( state ) ) {
-		return loggedIn( context, next );
-	}*/
+	context.primary = (
+		<Patterns isUserLoggedIn={ isUserLoggedIn( state ) } patterns={ context.params.patterns } />
+	);
 
-	return loggedOut( context, next );
+	next();
 }

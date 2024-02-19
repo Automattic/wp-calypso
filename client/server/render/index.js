@@ -254,7 +254,7 @@ export function serverRender( req, res ) {
 		attachHead( context );
 
 		const isomorphicSubtrees = context.section?.isomorphic
-			? [ 'patterns', 'themes', 'ui', 'plugins' ]
+			? [ 'patterns', 'plugins', 'themes', 'ui' ]
 			: [];
 		const initialClientStateTrees = [ 'documentHead', ...isomorphicSubtrees ];
 

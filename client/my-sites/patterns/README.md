@@ -1,3 +1,3 @@
 # Patterns
 
-Displays the Pattern Showcase, which resides on `/patterns`.
+Displays a showcase of WordPress.com patterns, which resides on `/patterns`.
