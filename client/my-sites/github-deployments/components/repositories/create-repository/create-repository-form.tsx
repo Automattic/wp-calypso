@@ -3,10 +3,10 @@ import { FormToggle, Spinner } from '@wordpress/components';
 import { useI18n } from '@wordpress/react-i18n';
 import { ChangeEvent, useEffect, useState } from 'react';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
-import FormRadiosBar from 'calypso/components/forms/form-radios-bar';
 import FormTextInput from 'calypso/components/forms/form-text-input';
 import { GitHubAccountsDropdown } from 'calypso/my-sites/github-deployments/components/accounts-dropdown/index';
 import { useLiveAccounts } from 'calypso/my-sites/github-deployments/components/accounts-dropdown/use-live-accounts';
+import { DeploymentStyle } from '../deployment-style/deployment-style';
 import {
 	FormRadioWithTemplateSelect,
 	ProjectType,
@@ -176,20 +176,7 @@ export const CreateRepositoryForm = ( {
 					{ __( 'Create repository' ) }
 				</Button>
 			</form>
-			<div className="deployment-style">
-				<h3 style={ { fontSize: '16px', marginBottom: '16px' } }>
-					{ __( 'Pick your deployment style' ) }
-				</h3>
-				<FormRadiosBar
-					items={ [
-						{ label: __( 'Simple' ), value: 'simple' },
-						{ label: __( 'Customizable' ), value: 'custom' },
-					] }
-					checked="simple"
-					onChange={ () => {} }
-					disabled={ false }
-				/>
-			</div>
+			<DeploymentStyle />
 		</div>
 	);
 };
