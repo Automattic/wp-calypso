@@ -1,6 +1,9 @@
 import AsyncLoad from 'calypso/components/async-load';
 import Gravatar from 'calypso/components/gravatar';
 import SidebarFooter from 'calypso/layout/sidebar/footer';
+import { UserData } from 'calypso/lib/user/user';
+import { LocalizeProps } from 'i18n-calypso';
+import { FC } from 'react';
 
 const CustomReaderIcon = () => (
 	<svg
@@ -22,7 +25,10 @@ const CustomReaderIcon = () => (
 		</g>
 	</svg>
 );
-export const GlobalSidebarFooter = ( { translate, user } ) => {
+export const GlobalSidebarFooter: FC< {
+	translate: LocalizeProps[ 'translate' ];
+	user?: UserData;
+} > = ( { translate, user } ) => {
 	return (
 		<SidebarFooter>
 			<a href="/read" className="sidebar__footer-link" title={ translate( 'Reader' ) }>
@@ -43,5 +49,3 @@ export const GlobalSidebarFooter = ( { translate, user } ) => {
 		</SidebarFooter>
 	);
 };
-
-export default GlobalSidebarFooter;

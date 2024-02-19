@@ -12,5 +12,3 @@ export const HelpIcon = () => (
 		</g>
 	</svg>
 );
-
-export default HelpIcon;
