@@ -1,6 +1,6 @@
+import { Icon, search } from '@wordpress/icons';
 import classnames from 'classnames';
 import SidebarMenuItem from '../menu-item';
-import { SearchIcon } from './icon';
 
 const SidebarSearch = ( { tooltip } ) => {
 	return (
@@ -11,7 +11,7 @@ const SidebarSearch = ( { tooltip } ) => {
 					'is-active': false,
 				} ) }
 				tooltip={ tooltip }
-				icon={ <SearchIcon /> }
+				icon={ <Icon icon={ search } size={ 28 } /> }
 			/>
 		</>
 	);

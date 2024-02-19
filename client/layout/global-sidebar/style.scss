@@ -191,6 +191,12 @@
 			background: var(--color-sidebar-menu-hover-background);
 		}
 	}
+
+	.sidebar__item-search {
+		svg {
+			fill: var(--studio-white);
+		}
+	}
 }
 
 .masterbar {
