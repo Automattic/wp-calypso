@@ -135,6 +135,9 @@ function sitesDashboard( context: PageJSContext, next: () => void ) {
 	if ( isEnabled( 'layout/dotcom-nav-redesign' ) ) {
 		sitesDashboardGlobalStyles = css`
 			${ sitesDashboardGlobalStyles }
+			body.is-group-sites-dashboard .layout__content {
+				padding-top: 0;
+			}
 			@media only screen and ( min-width: 782px ) {
 				div.layout.is-global-sidebar-visible {
 					.layout__primary {
