@@ -12,8 +12,8 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { THEME_TIERS } from 'calypso/components/theme-tier/constants';
 import withIsFSEActive from 'calypso/data/themes/with-is-fse-active';
-import { localizeThemesPath } from 'calypso/my-sites/themes/helpers';
-import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
+import { localizeThemesPath, shouldSelectSite } from 'calypso/my-sites/themes/helpers';
+import { getCurrentUserSiteCount, isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import getCustomizeUrl from 'calypso/state/selectors/get-customize-url';
 import isSiteWpcomAtomic from 'calypso/state/selectors/is-site-wpcom-atomic';
@@ -45,6 +45,7 @@ import {
 	getIsLivePreviewSupported,
 } from 'calypso/state/themes/selectors';
 import { isMarketplaceThemeSubscribed } from 'calypso/state/themes/selectors/is-marketplace-theme-subscribed';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 
 function getAllThemeOptions( { translate, isFSEActive } ) {
 	const purchase = {
@@ -308,9 +309,19 @@ function getAllThemeOptions( { translate, isFSEActive } ) {
 		},
 	};
 
-	const signupLabel = translate( 'Pick this design', {
-		comment: 'when signing up for a WordPress.com account with a selected theme',
-	} );
+	const signupLabel = ( state ) =>
+		shouldSelectSite( {
+			isLoggedIn: isUserLoggedIn( state ),
+			siteCount: getCurrentUserSiteCount( state ),
+			siteId: getSelectedSiteId( state ),
+		} )
+			? translate( 'Select a site to activate', {
+					comment:
+						'On the theme details page, button text shown so the user selects one of their sites before activating the selected theme',
+			  } )
+			: translate( 'Pick this design', {
+					comment: 'when signing up for a WordPress.com account with a selected theme',
+			  } );
 
 	const signup = {
 		label: signupLabel,
@@ -385,15 +396,19 @@ const connectOptionsHoc = connect(
 			localizeThemesPath( getUrl( state, t, siteId, options ), locale, isLoggedOut );
 		const mapHideForTheme = ( hideForTheme ) => ( t, s ) =>
 			hideForTheme( state, t, s ?? siteId, origin );
+		const mapLabel = ( label ) => label( state );
 
-		return mapValues( getAllThemeOptions( props ), ( option, key ) =>
-			Object.assign(
+		return mapValues( getAllThemeOptions( props ), ( option, key ) => {
+			return Object.assign(
 				{ key },
 				option,
 				option.getUrl ? { getUrl: mapGetUrl( option.getUrl ) } : {},
-				option.hideForTheme ? { hideForTheme: mapHideForTheme( option.hideForTheme ) } : {}
-			)
-		);
+				option.hideForTheme ? { hideForTheme: mapHideForTheme( option.hideForTheme ) } : {},
+				option.label
+					? { label: typeof option.label === 'function' ? mapLabel( option.label ) : option.label }
+					: {}
+			);
+		} );
 		/* eslint-enable wpcalypso/redux-no-bound-selectors */
 	},
 	( dispatch, props ) => {
