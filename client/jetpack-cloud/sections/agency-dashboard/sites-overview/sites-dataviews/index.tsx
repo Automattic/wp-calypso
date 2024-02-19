@@ -5,6 +5,7 @@ import SiteActions from 'calypso/jetpack-cloud/sections/agency-dashboard/sites-o
 import useFormattedSites from 'calypso/jetpack-cloud/sections/agency-dashboard/sites-overview/site-content/hooks/use-formatted-sites';
 import SiteStatusContent from 'calypso/jetpack-cloud/sections/agency-dashboard/sites-overview/site-status-content';
 import TextPlaceholder from 'calypso/jetpack-cloud/sections/partner-portal/text-placeholder';
+import SiteSetFavorite from '../site-set-favorite';
 import { AllowedTypes, SiteData } from '../types';
 import { SitesDataViewsProps } from './interfaces';
 
@@ -134,7 +135,13 @@ const SitesDataViews = ( {
 				if ( isLoading ) {
 					return <TextPlaceholder />;
 				}
-				return <div>{ item.isFavorite ? '★' : '☆' }</div>;
+				return (
+					<SiteSetFavorite
+						isFavorite={ item.isFavorite || false }
+						siteId={ item.site.value.blog_id }
+						siteUrl={ item.site.value.url }
+					/>
+				);
 			},
 			enableHiding: false,
 			enableSorting: false,
