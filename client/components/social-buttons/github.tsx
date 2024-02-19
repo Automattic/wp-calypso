@@ -28,6 +28,7 @@ type GithubLoginButtonProps = {
 	redirectUri: string;
 	onClick?: () => void;
 	socialServiceResponse?: string | null;
+	userHasDisconnected?: boolean;
 };
 
 type ExchangeCodeForTokenResponse = {
@@ -40,6 +41,7 @@ const GitHubLoginButton = ( {
 	redirectUri,
 	onClick,
 	socialServiceResponse,
+	userHasDisconnected,
 }: GithubLoginButtonProps ) => {
 	const translate = useTranslate();
 
@@ -116,10 +118,10 @@ const GitHubLoginButton = ( {
 	}, [ socialServiceResponse ] );
 
 	useEffect( () => {
-		if ( code && service === 'github' ) {
+		if ( code && service === 'github' && ! userHasDisconnected ) {
 			exchangeCodeForToken( code );
 		}
-	}, [ code, service ] );
+	}, [ code, service, userHasDisconnected ] );
 
 	const isDisabled = isFormDisabled || disabledState;
 
