@@ -603,11 +603,6 @@ class ThemeSheet extends Component {
 		return isAtomic && isPremium && ! canUserUploadThemes && ! hasUnlimitedPremiumThemes;
 	}
 
-	shouldSelectSite() {
-		const { isLoggedIn, siteCount, siteId } = this.props;
-		return isLoggedIn && ! siteId && siteCount > 1;
-	}
-
 	renderScreenshot() {
 		const { isWpcomTheme, name: themeName, demoUrl, translate } = this.props;
 		const screenshotFull = isWpcomTheme ? this.getFullLengthScreenshot() : this.props.screenshot;
