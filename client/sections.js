@@ -693,6 +693,27 @@ const sections = [
 		group: 'a8c-for-agencies',
 		enableLoggedOut: true,
 	},
+	{
+		name: 'a8c-for-agencies-overview',
+		paths: [ '/overview' ],
+		module: 'calypso/a8c-for-agencies/sections/overview',
+		group: 'a8c-for-agencies',
+		enableLoggedOut: true,
+	},
+	{
+		name: 'a8c-for-agencies-sites',
+		paths: [ '/sites', 'sites/favorite' ],
+		module: 'calypso/a8c-for-agencies/sections/sites',
+		group: 'a8c-for-agencies',
+		enableLoggedOut: true,
+	},
+	{
+		name: 'a8c-for-agencies-plugins',
+		paths: [ '/plugins' ],
+		module: 'calypso/a8c-for-agencies/sections/plugins',
+		group: 'a8c-for-agencies',
+		enableLoggedOut: true,
+	},
 ];
 
 module.exports = sections;

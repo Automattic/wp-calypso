@@ -19,7 +19,10 @@
 	"enable_all_sections": false,
 	"sections": {
 		"a8c-for-agencies": true,
-		"a8c-for-agencies-auth": true
+		"a8c-for-agencies-auth": true,
+		"a8c-for-agencies-overview": true,
+		"a8c-for-agencies-plugins": true,
+		"a8c-for-agencies-sites": true
 	},
 	"site_filter": [],
 	"theme": "a8c-for-agencies",
