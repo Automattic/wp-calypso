@@ -1,5 +1,7 @@
+import { isEnabled } from '@automattic/calypso-config';
 import { translate } from 'i18n-calypso';
 import { connect } from 'react-redux';
+import JetpackMonitor from 'calypso/my-sites/site-settings/form-jetpack-monitor';
 import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
 import isSiteWpcomStaging from 'calypso/state/selectors/is-site-wpcom-staging';
 import getIsUnlaunchedSite from 'calypso/state/selectors/is-unlaunched-site';
@@ -17,6 +19,7 @@ const SiteSettingsGeneral = ( {
 	updateFields,
 	isRequestingSettings,
 	isSavingSettings,
+	isJetpack,
 
 	isWpcomStagingSite,
 	isAtomicAndEditingToolkitDeactivated,
@@ -34,6 +37,7 @@ const SiteSettingsGeneral = ( {
 				isSavingSettings={ isSavingSettings }
 			/>
 		) }
+		{ isJetpack && isEnabled( 'layout/dotcom-nav-redesign' ) && <JetpackMonitor /> }
 		{ ! isWpcomStagingSite && (
 			<SiteTools headerTitle={ translate( 'Other tools' ) } source={ SOURCE_SETTINGS_SITE_TOOLS } />
 		) }
