@@ -413,7 +413,9 @@ class StatsSite extends Component {
 							summary={ false }
 						/>
 
-						<StatsModuleUTM period={ this.props.period } query={ query } />
+						{ config.isEnabled( 'stats/utm-module' ) && (
+							<StatsModuleUTM period={ this.props.period } query={ query } />
+						) }
 
 						{ ! this.isModuleHidden( 'authors' ) && (
 							<StatsModule
