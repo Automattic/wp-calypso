@@ -4,10 +4,12 @@ import { connect } from 'react-redux';
 import AsyncLoad from 'calypso/components/async-load';
 import { withCurrentRoute } from 'calypso/components/route';
 import GlobalSidebar from 'calypso/layout/global-sidebar';
-import { useGlobalSidebar } from 'calypso/layout/global-sidebar/hooks/use-global-sidebar';
 import SitePicker from 'calypso/my-sites/picker';
 import MySitesSidebarUnifiedBody from 'calypso/my-sites/sidebar/body';
-import { getSiteOption } from 'calypso/state/sites/selectors';
+import {
+	getShouldShowGlobalSidebar,
+	getShouldShowGlobalSiteSidebar,
+} from 'calypso/state/global-sidebar/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 
 class MySitesNavigation extends Component {
@@ -105,15 +107,15 @@ export default withCurrentRoute(
 	connect( ( state, { currentSection } ) => {
 		const sectionGroup = currentSection?.group ?? null;
 		const siteId = getSelectedSiteId( state );
-		const adminInterface = getSiteOption( state, siteId, 'wpcom_admin_interface' );
-		const { shouldShowGlobalSidebar, shouldShowGlobalSiteSidebar } = useGlobalSidebar(
+		const shouldShowGlobalSidebar = getShouldShowGlobalSidebar( state, siteId, sectionGroup );
+		const shouldShowGlobalSiteSidebar = getShouldShowGlobalSiteSidebar(
+			state,
 			siteId,
 			sectionGroup
 		);
 		return {
 			isGlobalSidebarVisible: shouldShowGlobalSidebar,
-			// Global Site View should be limited to classic interface users only for now.
-			isGlobalSiteSidebarVisible: shouldShowGlobalSiteSidebar && adminInterface === 'wp-admin',
+			isGlobalSiteSidebarVisible: shouldShowGlobalSiteSidebar,
 		};
 	}, null )( MySitesNavigation )
 );
