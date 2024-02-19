@@ -6,6 +6,7 @@ import { useState, FormEvent, ChangeEvent } from 'react';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormTextInput from 'calypso/components/forms/form-text-input';
 import useUsersQuery from 'calypso/data/users/use-users-query';
+import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import TeamMembersSiteTransfer from 'calypso/my-sites/people/team-members-site-transfer';
 import { useCheckSiteTransferEligibility } from './use-check-site-transfer-eligibility';
 import type { UsersQuery } from 'calypso/my-sites/people/team-members/types';
@@ -64,6 +65,9 @@ const SiteOwnerTransferEligibility = ( {
 			},
 			onError: ( e ) => {
 				setSiteTransferEligibilityError( e.message );
+				recordTracksEvent( 'calypso_site_owner_transfer_eligibility_error', {
+					message: e.message,
+				} );
 			},
 			onSuccess: () => {
 				if ( ! tempSiteOwner ) {
@@ -78,6 +82,10 @@ const SiteOwnerTransferEligibility = ( {
 		if ( ! tempSiteOwner ) {
 			return;
 		}
+
+		recordTracksEvent( 'calypso_site_owner_transfer_eligibility_submit', {
+			temp_site_owner: tempSiteOwner,
+		} );
 		checkSiteTransferEligibility( { newSiteOwner: tempSiteOwner } );
 	};
 

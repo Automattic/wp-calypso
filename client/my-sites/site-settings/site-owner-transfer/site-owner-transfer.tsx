@@ -1,10 +1,11 @@
 import page from '@automattic/calypso-router';
 import styled from '@emotion/styled';
 import { useTranslate } from 'i18n-calypso';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useQueryUserPurchases } from 'calypso/components/data/query-user-purchases';
 import { ResponseDomain } from 'calypso/lib/domains/types';
 import { useDispatch, useSelector } from 'calypso/state';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getCurrentUserEmail } from 'calypso/state/current-user/selectors';
 import { successNotice } from 'calypso/state/notices/actions';
 import { getDomainsBySiteId } from 'calypso/state/sites/domains/selectors';
@@ -58,6 +59,10 @@ const SiteOwnerTransfer = () => {
 	const pendingDomain = nonWpcomDomains?.find(
 		( wpcomDomain: ResponseDomain ) => wpcomDomain.pendingTransfer
 	);
+
+	useEffect( () => {
+		dispatch( recordTracksEvent( 'calypso_site_owner_transfer_page_view' ) );
+	}, [ dispatch ] );
 
 	if ( ! selectedSite?.ID || ! selectedSite?.slug ) {
 		return null;
