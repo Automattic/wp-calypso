@@ -1,7 +1,7 @@
 /**
  * @jest-environment jsdom
  */
-import { render, screen } from '@testing-library/react';
+import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { dispatch } from '@wordpress/data';
 import nock from 'nock';
@@ -97,7 +97,9 @@ describe( 'Checkout contact step', () => {
 		const countryField = await screen.findByLabelText( 'Country' );
 
 		// Validate that fields are pre-filled
-		expect( countryField.selectedOptions[ 0 ].value ).toBe( 'US' );
+		await waitFor( () => {
+			expect( countryField.selectedOptions[ 0 ].value ).toBe( 'US' );
+		} );
 		expect( await screen.findByLabelText( 'Postal code' ) ).toHaveValue( '10001' );
 
 		expect( await screen.findByTestId( 'payment-method-step--visible' ) ).toBeInTheDocument();
