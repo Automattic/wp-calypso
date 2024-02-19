@@ -53,6 +53,7 @@ import Countries from './stats-countries';
 import DatePicker from './stats-date-picker';
 import StatsModule from './stats-module';
 import StatsModuleEmails from './stats-module-emails';
+import StatsModuleUTM from './stats-module-utm';
 import StatsNotices from './stats-notices';
 import PageViewTracker from './stats-page-view-tracker';
 import StatsPeriodHeader from './stats-period-header';
@@ -411,6 +412,8 @@ class StatsSite extends Component {
 							query={ query }
 							summary={ false }
 						/>
+
+						<StatsModuleUTM period={ this.props.period } query={ query } />
 
 						{ ! this.isModuleHidden( 'authors' ) && (
 							<StatsModule

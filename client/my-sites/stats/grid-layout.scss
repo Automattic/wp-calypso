@@ -162,33 +162,36 @@ $grid-vertical-gutters: 32px;
 	@include stats-desktop-grid(
 		"posts posts posts posts posts posts posts referrers referrers referrers referrers referrers"
 		"country country country country country country country country country country country country"
+		"utm utm utm utm utm utm utm utm utm utm utm utm"
 		"authors authors authors authors search search search search clicks clicks clicks clicks"
 		"videos videos videos videos videos videos emails emails emails emails emails emails"
 		"downloads downloads downloads downloads downloads downloads x x x x x x",
-		6
+		7
 	);
 
 	@include stats-tablet-grid(
 		"posts posts posts posts referrers referrers referrers referrers"
 		"country country country country country country country country"
+		"utm utm utm utm utm utm utm utm"
 		"authors authors authors authors search search search search"
 		"clicks clicks clicks clicks videos videos videos videos"
 		"emails emails emails emails emails emails emails emails"
 		"downloads downloads downloads downloads downloads downloads downloads downloads",
-		7
+		8
 	);
 
 	@include stats-mobile-grid(
 		"posts posts posts posts"
 		"referrers referrers referrers referrers"
 		"country country country country"
+		"utm utm utm utm"
 		"authors authors authors authors"
 		"search search search search"
 		"clicks clicks clicks clicks"
 		"videos videos videos videos"
 		"emails emails emails emails"
 		"downloads downloads downloads downloads",
-		10
+		11
 	);
 
 	// @TODO: Refactor hidden modules with a more flexible layout (e.g., Flexbox) to fit mass configuration to moduels in the future.
@@ -333,6 +336,11 @@ $grid-vertical-gutters: 32px;
 	.stats__module-wrapper--countryviews,
 	.list-countryviews {
 		grid-area: country;
+	}
+
+	.stats__module-wrapper--utm,
+	.list-utm {
+		grid-area: utm;
 	}
 
 	.stats__module-wrapper--authors,
