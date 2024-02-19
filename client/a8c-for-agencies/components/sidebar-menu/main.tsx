@@ -44,5 +44,5 @@ export default function ( { path }: Props ) {
 		].map( ( item ) => createItem( item, path ) );
 	}, [ path, translate ] );
 
-	return <Sidebar path="" menuItems={ menuItems } />;
+	return <Sidebar path="" menuItems={ menuItems } withUserProfileFooter />;
 }
