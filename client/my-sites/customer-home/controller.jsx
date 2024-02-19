@@ -8,7 +8,11 @@ import { fetchSitePlugins } from 'calypso/state/plugins/installed/actions';
 import { getPluginOnSite } from 'calypso/state/plugins/installed/selectors';
 import isJetpackModuleActive from 'calypso/state/selectors/is-jetpack-module-active';
 import { isSiteOnWooExpressEcommerceTrial } from 'calypso/state/sites/plans/selectors';
-import { canCurrentUserUseCustomerHome, getSiteUrl } from 'calypso/state/sites/selectors';
+import {
+	canCurrentUserUseCustomerHome,
+	getSiteOption,
+	getSiteUrl,
+} from 'calypso/state/sites/selectors';
 import {
 	getSelectedSiteSlug,
 	getSelectedSiteId,
@@ -42,12 +46,14 @@ export async function maybeRedirect( context, next ) {
 
 	const siteId = getSelectedSiteId( state );
 	const site = getSelectedSite( state );
+	const adminInterface = getSiteOption( state, siteId, 'wpcom_admin_interface' );
+
 	const isSiteLaunched = site?.launch_status === 'launched' || false;
 	let fetchPromise;
 
 	if (
 		isSiteOnWooExpressEcommerceTrial( state, siteId ) &&
-		! isEnabled( 'layout/dotcom-nav-redesign' )
+		! ( isEnabled( 'layout/dotcom-nav-redesign' ) && adminInterface === 'wp-admin' )
 	) {
 		// Pre-fetch plugins and modules to avoid flashing content prior deciding whether to redirect.
 		fetchPromise = Promise.allSettled( [
