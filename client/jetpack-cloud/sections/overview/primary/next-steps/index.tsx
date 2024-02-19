@@ -1,3 +1,4 @@
+import { isEnabled } from '@automattic/calypso-config';
 import { CircularProgressBar } from '@automattic/components';
 import { Checklist, ChecklistItem, type Task } from '@automattic/launchpad';
 import { useTranslate } from 'i18n-calypso';
@@ -32,7 +33,9 @@ export default function NextSteps( { onDismiss = () => {} } ) {
 
 	const tasks: Task[] = [
 		{
-			calypso_path: '/dashboard?tour=dashboard-walkthrough',
+			calypso_path: isEnabled( 'jetpack/manage-sites-v2-menu' )
+				? '/sites?tour=dashboard-walkthrough'
+				: '/dashboard?tour=dashboard-walkthrough',
 			completed: checkTourCompletion( 'dashboardWalkthrough' ),
 			disabled: false,
 			actionDispatch: () => {
