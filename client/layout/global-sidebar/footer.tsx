@@ -69,7 +69,7 @@ export const GlobalSiteSidebarFooter: FC< {
 	return (
 		<SidebarFooter>
 			<a
-				href={ `https://${ selectedSiteSlug }/wp-admin/plugins.php` }
+				href={ `https://${ selectedSiteSlug }/wp-admin` }
 				className="sidebar__footer-wpadmin tooltip tooltip-top"
 				title={ translate( 'WP Admin' ) }
 				data-tooltip={ translate( 'WP Admin' ) }
