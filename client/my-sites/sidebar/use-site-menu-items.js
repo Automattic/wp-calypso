@@ -4,9 +4,12 @@ import { useTranslate } from 'i18n-calypso';
 import { useEffect, useMemo } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { useCurrentRoute } from 'calypso/components/route';
-import { useGlobalSidebar } from 'calypso/layout/global-sidebar/hooks/use-global-sidebar';
 import domainOnlyFallbackMenu from 'calypso/my-sites/sidebar/static-data/domain-only-fallback-menu';
 import { getAdminMenu } from 'calypso/state/admin-menu/selectors';
+import {
+	getShouldShowGlobalSidebar,
+	getShouldShowGlobalSiteSidebar,
+} from 'calypso/state/global-sidebar/selectors';
 import { getPluginOnSite } from 'calypso/state/plugins/installed/selectors';
 import { canAnySiteHavePlugins } from 'calypso/state/selectors/can-any-site-have-plugins';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
@@ -17,7 +20,6 @@ import isSiteWPForTeams from 'calypso/state/selectors/is-site-wpforteams';
 import { getSiteDomain, isJetpackSite } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { requestAdminMenu } from '../../state/admin-menu/actions';
-import { getSiteOption } from '../../state/sites/selectors';
 import allSitesMenu from './static-data/all-sites-menu';
 import buildFallbackResponse from './static-data/fallback-menu';
 import globalSidebarMenu from './static-data/global-sidebar-menu';
@@ -36,13 +38,12 @@ const useSiteMenuItems = () => {
 	const locale = useLocale();
 	const isAllDomainsView = '/domains/manage' === currentRoute;
 	const { currentSection } = useCurrentRoute();
-	const adminInterface = useSelector( ( state ) =>
-		getSiteOption( state, selectedSiteId, 'wpcom_admin_interface' )
-	);
-	const { shouldShowGlobalSidebar, shouldShowGlobalSiteSidebar } = useGlobalSidebar(
-		selectedSiteId,
-		currentSection?.group
-	);
+	const shouldShowGlobalSidebar = useSelector( ( state ) => {
+		return getShouldShowGlobalSidebar( state, selectedSiteId, currentSection?.group );
+	} );
+	const shouldShowGlobalSiteSidebar = useSelector( ( state ) => {
+		return getShouldShowGlobalSiteSidebar( state, selectedSiteId, currentSection?.group );
+	} );
 
 	useEffect( () => {
 		if ( selectedSiteId && siteDomain ) {
@@ -114,8 +115,7 @@ const useSiteMenuItems = () => {
 	if ( shouldShowGlobalSidebar ) {
 		return globalSidebarMenu();
 	}
-	// Global Site View should be limited to classic interface users only for now.
-	if ( shouldShowGlobalSiteSidebar && adminInterface === 'wp-admin' ) {
+	if ( shouldShowGlobalSiteSidebar ) {
 		return globalSiteSidebarMenu( {
 			siteDomain,
 			shouldShowAddOns: shouldShowAddOnsInFallbackMenu,
