@@ -13,7 +13,7 @@ const AUTHORIZE_URL = addQueryArgs( 'https://github.com/login/oauth/authorize', 
 	client_id: config( 'github_oauth_client_id' ),
 } );
 
-const POPUP_ID = 'github-oauth-authorize';
+const POPUP_ID = 'github-app-authorize';
 
 export const GitHubAuthorizeButton = () => {
 	const { __ } = useI18n();
@@ -26,7 +26,7 @@ export const GitHubAuthorizeButton = () => {
 	const startAuthorization = () => {
 		setIsAuthorizing( true );
 
-		openPopup( { url: AUTHORIZE_URL, popupId: POPUP_ID } )
+		openPopup( { url: AUTHORIZE_URL, popupId: POPUP_ID, expectedEvent: 'github-app-authorized' } )
 			.then( () => refetch() )
 			.catch( () => dispatch( errorNotice( 'Failed to authorize GitHub. Please try again.' ) ) )
 			.finally( () => setIsAuthorizing( false ) );
