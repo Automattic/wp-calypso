@@ -115,15 +115,20 @@ function usePrefillState( state: PixPaymentMethodState ): void {
 		state.change( 'phoneNumber', contactDetails.phone );
 	}
 
-	// Street number and address are separate in the Pix form but together in
-	// the tax form (where `contactDetails` comes from), so this attempts to
-	// split out the street number but it may be wrong.
+	// Street number and address are separate in the Pix form but joined
+	// together in the tax form (where `contactDetails` comes from), so this
+	// attempts to split out the street number so we can prefill both fields.
+	// Street numbers in Brazil seem to mostly follow the street name (eg: "Av.
+	// Foo, 1098"), so we look for a number at the end of the address. If this
+	// fails, we just fill the address field and leave the street number field
+	// blank. Other possible examples of entries: "Av. Xavier da Foo, 1773, apt
+	// 1000", or "Est. Terra Foo 700 c 4", or "rua Foo Bar 1975".
 	if ( contactDetails.address1 ) {
-		const regexpForStartingNumber = /^(\d+)\s+(.+)/;
-		const startingNumberSearch = contactDetails.address1.match( regexpForStartingNumber );
-		if ( startingNumberSearch && startingNumberSearch[ 1 ] && startingNumberSearch[ 2 ] ) {
-			state.change( 'streetNumber', startingNumberSearch[ 1 ] );
-			state.change( 'address', startingNumberSearch[ 2 ] );
+		const regexpForStreetNumber = /^(\D+?)[,\s]+(\d+|\d+[,\s]+\w+\s+\d+)$/;
+		const streetNumberSearch = contactDetails.address1.match( regexpForStreetNumber );
+		if ( streetNumberSearch && streetNumberSearch[ 1 ] && streetNumberSearch[ 2 ] ) {
+			state.change( 'address', streetNumberSearch[ 1 ] );
+			state.change( 'streetNumber', streetNumberSearch[ 2 ] );
 		} else {
 			state.change( 'address', contactDetails.address1 );
 		}
