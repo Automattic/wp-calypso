@@ -90,7 +90,6 @@
 	.sidebar__body {
 		flex: 1;
 		overflow-y: auto;
-		padding-top: 36px;
 
 		.sidebar {
 			display: flex;
@@ -100,17 +99,9 @@
 			padding: 8px 8px 8px 20px;
 		}
 		a.sidebar__menu-link {
-			padding: 8px 8px 8px 20px;
-
-			.menu-link-text {
-				font-size: rem(16px);
-				font-weight: 400;
-				padding: 0;
-				max-height: auto;
-			}
-		}
-		.sidebar__menu-item-title-text {
-			line-height: 32px;
+			padding: 12px 10px;
+			margin: 0 12px;
+			border-radius: 4px;
 		}
 
 		li.sidebar__separator {
