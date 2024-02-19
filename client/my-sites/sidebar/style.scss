@@ -1,6 +1,9 @@
 @import "@wordpress/base-styles/breakpoints";
 // The following changes should be merged in their respective files before nav unification goes to production
 @import url( //s1.wp.com/wp-includes/css/dashicons.css?v=20150727 );
+@import "@automattic/typography/styles/variables";
+
+$brand-text: "SF Pro Text", $sans;
 
 // Override Global Vars
 .theme-default {
@@ -29,11 +32,13 @@
 	--color-sidebar-submenu-selected-background: transparent;
 	--color-sidebar-submenu-selected-text: var(--color-text-inverted);
 
-	.is-global-sidebar-visible {
+	.is-global-sidebar-visible,
+	.is-global-site-sidebar-visible {
 		--sidebar-width-max: 314px;
 		--sidebar-width-min: 314px;
 
 		--color-sidebar-background: var(--studio-black);
+		--color-sidebar-menu-selected-background: #3858e9;
 	}
 }
 
@@ -328,6 +333,74 @@ $font-size: rem(14px);
 
 	.global-sidebar .sidebar {
 		background-color: var(--studio-black);
+
+		.selected .sidebar__menu-link::after {
+			display: none;
+		}
+
+		.sidebar__menu-link {
+			line-height: 15px;
+
+			&:hover,
+			&:focus {
+				box-shadow: none;
+				transition: none;
+				color: var(--studio-white);
+			}
+		}
+
+		.sidebar__menu-link-text {
+			font-family: $brand-text;
+			font-size: 13px; /* stylelint-disable-line declaration-property-unit-allowed-list */
+			font-style: normal;
+			font-weight: 400;
+			padding: 0;
+			margin: 0;
+			box-sizing: border-box;
+		}
+
+		.sidebar__menu-link,
+		.sidebar__menu.is-togglable .sidebar__heading {
+			padding: 12px 10px;
+			margin: 0 12px;
+			border-radius: 4px;
+		}
+
+		.sidebar__heading:not([tabindex="-1"]),
+		.sidebar__menu-link {
+			&:hover,
+			&:focus {
+				box-shadow: none;
+				transition: none;
+				color: var(--studio-white);
+			}
+		}
+
+		.sidebar__menu.is-togglable .sidebar__heading {
+			padding: 12px 10px;
+			margin: 0 12px;
+			border-radius: 4px;
+
+			&:hover {
+				background-color: var(--color-sidebar-menu-hover-background);
+				color: var(--studio-white);
+
+				.sidebar__menu-icon,
+				.sidebar__expandable-arrow {
+					fill: var(--studio-white);
+				}
+			}
+		}
+
+		.sidebar__expandable-content {
+			border-radius: 4px;
+			margin: 0 12px;
+		}
+
+		.sidebar__expandable-title {
+			padding: 0;
+			margin: 0;
+		}
 	}
 
 	//client/components/site-selector/style.scss
