@@ -111,6 +111,7 @@ export const MEDIA_QUERIES = {
 	small: `@media ${ SMALL_MEDIA_QUERY }`,
 	mediumOrSmaller: '@media screen and ( max-width: 781px )',
 	mediumOrLarger: '@media screen and ( min-width: 660px )',
+	largeOrSmaller: '@media screen and ( max-width: 960px )',
 	large: '@media screen and ( min-width: 960px )',
 	wide: '@media screen and ( min-width: 1280px )',
 };
