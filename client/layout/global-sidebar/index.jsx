@@ -1,12 +1,12 @@
 import { Spinner, Gridicon } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import { useSelector } from 'react-redux';
-import GlobalSidebarFooter from 'calypso/layout/global-sidebar/footer';
 import GlobalSidebarHeader from 'calypso/layout/global-sidebar/header';
 import useSiteMenuItems from 'calypso/my-sites/sidebar/use-site-menu-items';
 import { getIsRequestingAdminMenu } from 'calypso/state/admin-menu/selectors';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
 import Sidebar from '../sidebar';
+import { GlobalSidebarFooter } from './footer';
 import './style.scss';
 
 const GlobalSidebar = ( { children, onClick = undefined, className = '', ...props } ) => {
