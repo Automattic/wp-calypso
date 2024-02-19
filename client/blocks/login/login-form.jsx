@@ -59,6 +59,7 @@ import { getCurrentOAuth2Client } from 'calypso/state/oauth2-clients/ui/selector
 import getCurrentQueryArguments from 'calypso/state/selectors/get-current-query-arguments';
 import getCurrentRoute from 'calypso/state/selectors/get-current-route';
 import getInitialQueryArguments from 'calypso/state/selectors/get-initial-query-arguments';
+import getWccomFrom from 'calypso/state/selectors/get-wccom-from';
 import isWooCommerceCoreProfilerFlow from 'calypso/state/selectors/is-woocommerce-core-profiler-flow';
 import ErrorNotice from './error-notice';
 import SocialLoginForm from './social';
@@ -946,7 +947,7 @@ export default connect(
 				props.userEmail ||
 				getInitialQueryArguments( state )?.email_address ||
 				getCurrentQueryArguments( state )?.email_address,
-			wccomFrom: get( getCurrentQueryArguments( state ), 'wccom-from' ),
+			wccomFrom: getWccomFrom( state ),
 			currentQuery: getCurrentQueryArguments( state ),
 		};
 	},

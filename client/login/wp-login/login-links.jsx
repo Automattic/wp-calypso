@@ -25,6 +25,7 @@ import { resetMagicLoginRequestForm } from 'calypso/state/login/magic-login/acti
 import { isPartnerSignupQuery } from 'calypso/state/login/utils';
 import getCurrentQueryArguments from 'calypso/state/selectors/get-current-query-arguments';
 import getCurrentRoute from 'calypso/state/selectors/get-current-route';
+import getWccomFrom from 'calypso/state/selectors/get-wccom-from';
 
 export class LoginLinks extends Component {
 	static propTypes = {
@@ -296,7 +297,7 @@ export default connect(
 		isLoggedIn: Boolean( getCurrentUserId( state ) ),
 		query: getCurrentQueryArguments( state ),
 		isJetpackWooCommerceFlow: 'woocommerce-onboarding' === getCurrentQueryArguments( state ).from,
-		wccomFrom: getCurrentQueryArguments( state )[ 'wccom-from' ],
+		wccomFrom: getWccomFrom( state ),
 		isPartnerSignup: isPartnerSignupQuery( getCurrentQueryArguments( state ) ),
 	} ),
 	{
