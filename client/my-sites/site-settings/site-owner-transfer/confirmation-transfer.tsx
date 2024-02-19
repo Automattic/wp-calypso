@@ -36,6 +36,7 @@ export function ConfirmationTransfer( {
 					recordTracksEvent( 'calypso_site_owner_transfer_confirm_success' );
 					page.redirect( `/sites?site-transfer-confirm=true` );
 				} else if ( email_sent ) {
+					recordTracksEvent( 'calypso_site_owner_transfer_pending_invitation_sent' );
 					setIsEmailSent( true );
 				}
 			},
