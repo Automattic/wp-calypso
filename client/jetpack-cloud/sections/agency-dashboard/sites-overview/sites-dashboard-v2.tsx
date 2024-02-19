@@ -8,6 +8,7 @@ import DocumentHead from 'calypso/components/data/document-head';
 import Notice from 'calypso/components/notice';
 import SidebarNavigation from 'calypso/components/sidebar-navigation';
 import useFetchDashboardSites from 'calypso/data/agency-dashboard/use-fetch-dashboard-sites';
+import useFetchMonitorVerfiedContacts from 'calypso/data/agency-dashboard/use-fetch-monitor-verified-contacts';
 import { useDispatch, useSelector } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { resetSite } from 'calypso/state/jetpack-agency-dashboard/actions';
@@ -18,10 +19,12 @@ import {
 	getSelectedSiteLicenses,
 } from 'calypso/state/jetpack-agency-dashboard/selectors';
 import { errorNotice } from 'calypso/state/notices/actions';
+import useProductsQuery from 'calypso/state/partner-portal/licenses/hooks/use-products-query';
 import { getIsPartnerOAuthTokenLoaded } from 'calypso/state/partner-portal/partner/selectors';
 import { serializeQueryStringProducts } from '../../partner-portal/lib/querystring-products';
 import SitesOverviewContext from './context';
 import DashboardBanners from './dashboard-banners';
+import DashboardDataContext from './dashboard-data-context';
 import useQueryProvisioningBlogIds from './hooks/use-query-provisioning-blog-ids';
 import { DASHBOARD_PRODUCT_SLUGS_BY_TYPE } from './lib/constants';
 import SiteAddLicenseNotification from './site-add-license-notification';
@@ -197,6 +200,14 @@ export default function SitesDashboardV2() {
 
 	const isLargeScreen = isWithinBreakpoint( '>960px' );
 
+	const { data: products } = useProductsQuery();
+
+	const {
+		data: verifiedContacts,
+		refetch: refetchContacts,
+		isError: fetchContactFailed,
+	} = useFetchMonitorVerfiedContacts( isPartnerOAuthTokenLoaded );
+
 	const { data: provisioningBlogIds, isLoading: isLoadingProvisioningBlogIds } =
 		useQueryProvisioningBlogIds();
 
@@ -257,12 +268,29 @@ export default function SitesDashboardV2() {
 					</div>
 				</div>
 				<div className="sites-overview__content">
-					<SitesDataViews
-						data={ data }
-						isLoading={ isLoading }
-						onSitesViewChange={ onSitesViewChange }
-						sitesViewState={ sitesViewState }
-					/>
+					<DashboardDataContext.Provider
+						value={ {
+							verifiedContacts: {
+								emails: verifiedContacts?.emails ?? [],
+								phoneNumbers: verifiedContacts?.phoneNumbers ?? [],
+								refetchIfFailed: () => {
+									if ( fetchContactFailed ) {
+										refetchContacts();
+									}
+									return;
+								},
+							},
+							products: products ?? [],
+							isLargeScreen: isLargeScreen || false,
+						} }
+					>
+						<SitesDataViews
+							data={ data }
+							isLoading={ isLoading }
+							onSitesViewChange={ onSitesViewChange }
+							sitesViewState={ sitesViewState }
+						/>
+					</DashboardDataContext.Provider>
 				</div>
 			</div>
 			{ ! isLargeScreen && selectedLicensesCount > 0 && (
