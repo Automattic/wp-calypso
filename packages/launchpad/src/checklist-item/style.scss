@@ -23,6 +23,7 @@
 	outline: 0;
 	overflow: hidden;
 	text-decoration: none;
+	padding-left: 2px;
 
 	&:visited {
 		color: var(--color-neutral-100);
@@ -37,10 +38,9 @@
 		padding: 16px 0 16px 0;
 	}
 
-	&:focus {
-		border-color: var(--color-primary);
+	&:focus-visible {
+		outline: var(--color-primary);
 		box-shadow: 0 0 0 2px var(--color-primary-light);
-		text-indent: 2px;
 	}
 
 	.badge {
