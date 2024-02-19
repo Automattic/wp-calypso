@@ -44,6 +44,7 @@ class StatsModule extends Component {
 		listItemClassName: PropTypes.string,
 		gateStats: PropTypes.bool,
 		gateDownloads: PropTypes.bool,
+		moduleState: PropTypes.object,
 	};
 
 	static defaultProps = {
@@ -127,6 +128,7 @@ class StatsModule extends Component {
 			path,
 			data,
 			moduleStrings,
+			moduleState,
 			statType,
 			query,
 			period,
@@ -141,7 +143,15 @@ class StatsModule extends Component {
 		} = this.props;
 
 		// Only show loading indicators when nothing is in state tree, and request in-flight
-		const isLoading = ! this.state.loaded && ! ( data && data.length );
+		let isLoading = ! this.state.loaded && ! ( data && data.length );
+		// Account for state managed outside this component.
+		if ( moduleState !== undefined ) {
+			if ( moduleState.isRequestingData ) {
+				isLoading = true;
+			} else {
+				isLoading = false;
+			}
+		}
 
 		// TODO: Support error state in redux store
 		const hasError = false;
@@ -152,15 +162,19 @@ class StatsModule extends Component {
 			'stats-module__footer-actions--summary': summary,
 		} );
 
+		// Again, account for state managed outside this component.
+		const displayData = moduleState !== undefined ? moduleState.data : data;
+		const shouldQuerySiteStats = siteId && statType && moduleState === undefined;
+
 		return (
 			<>
-				{ siteId && statType && (
+				{ shouldQuerySiteStats && (
 					<QuerySiteStats statType={ statType } siteId={ siteId } query={ query } />
 				) }
 				<StatsListCard
 					className={ classNames( className, 'stats-module__card', path ) }
 					moduleType={ path }
-					data={ data }
+					data={ displayData }
 					useShortLabel={ useShortLabel }
 					title={ this.props.moduleStrings?.title }
 					emptyMessage={ moduleStrings.empty }

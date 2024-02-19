@@ -71,8 +71,8 @@ const StatsModuleUTM = ( props ) => {
 	const { period, query } = props;
 	const moduleStrings = statsStrings();
 
+	// TODO: Use TanStack for API requests.
 	const moduleState = useMockData();
-	console.log( moduleState );
 
 	return (
 		<StatsModule
@@ -80,8 +80,9 @@ const StatsModuleUTM = ( props ) => {
 			moduleStrings={ moduleStrings.utm }
 			period={ period }
 			query={ query }
-			statType="statsTopAuthors"
+			statType="statsUTM"
 			showSummaryLink
+			moduleState={ moduleState }
 		/>
 	);
 };
