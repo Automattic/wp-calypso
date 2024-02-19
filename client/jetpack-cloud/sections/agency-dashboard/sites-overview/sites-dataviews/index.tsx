@@ -1,13 +1,12 @@
 import { DataViews } from '@wordpress/dataviews';
 import { useTranslate } from 'i18n-calypso';
-import { useCallback, useEffect, useState } from 'react';
+import { useEffect, useCallback, useState, SetStateAction } from 'react';
 import SiteActions from 'calypso/jetpack-cloud/sections/agency-dashboard/sites-overview/site-actions';
 import useFormattedSites from 'calypso/jetpack-cloud/sections/agency-dashboard/sites-overview/site-content/hooks/use-formatted-sites';
 import SiteStatusContent from 'calypso/jetpack-cloud/sections/agency-dashboard/sites-overview/site-status-content';
 import TextPlaceholder from 'calypso/jetpack-cloud/sections/partner-portal/text-placeholder';
 import { AllowedTypes, SiteData } from '../types';
 import { SitesDataViewsProps } from './interfaces';
-
 import './style.scss';
 
 const SitesDataViews = ( { data, isLoading, onViewChange }: SitesDataViewsProps ) => {
@@ -22,11 +21,23 @@ const SitesDataViews = ( { data, isLoading, onViewChange }: SitesDataViewsProps 
 			direction: 'desc',
 		},
 		search: '',
-		filters: [ { field: 'status', operator: 'in', value: 'Needs attention' } ],
+		filters: [ { field: 'status', operator: 'in', value: 0 } ],
 		hiddenFields: [ 'status' ],
 		layout: {},
 		selectedSite: undefined,
 	} );
+
+	// Parse query string to get selected filter value
+	useEffect( () => {
+		const params = new URLSearchParams( window.location.search );
+		const selectedFilter = parseInt( params.get( 'selectedFilter' ) ?? '0' );
+		if ( selectedFilter ) {
+			setView( ( prevView ) => ( {
+				...prevView,
+				filters: [ { field: 'status', operator: 'in', value: selectedFilter } ],
+			} ) );
+		}
+	}, [] );
 
 	useEffect( () => {
 		onViewChange( {
@@ -39,6 +50,60 @@ const SitesDataViews = ( { data, isLoading, onViewChange }: SitesDataViewsProps 
 	}, [ view.search, view.sort, view.filters, view.selectedSite, view.page, onViewChange ] );
 
 	const sites = useFormattedSites( data?.sites ?? [] );
+
+	useEffect( () => {
+		if (
+			! window.location.href.includes( 'issue_types=all_issues' ) &&
+			view.filters.some( ( filter ) => filter.value === 1 )
+		) {
+			window.location.href = '/sites?issue_types=all_issues&selectedFilter=1';
+		}
+		if (
+			! window.location.pathname.includes( '/sites/favorites' ) &&
+			view.filters.some( ( filter ) => filter.value === 2 )
+		) {
+			window.location.href = '/sites/favorites?selectedFilter=2';
+		}
+		if (
+			! window.location.href.includes( 'issue_types=backup_failed' ) &&
+			view.filters.some( ( filter ) => filter.value === 3 )
+		) {
+			window.location.href = '/sites?issue_types=backup_failed&selectedFilter=3';
+		}
+		if (
+			! window.location.href.includes( 'issue_types=backup_warning' ) &&
+			view.filters.some( ( filter ) => filter.value === 4 )
+		) {
+			window.location.href = '/sites?issue_types=backup_warning&selectedFilter=4';
+		}
+		if (
+			! window.location.href.includes( 'issue_types=threats_found' ) &&
+			view.filters.some( ( filter ) => filter.value === 5 )
+		) {
+			window.location.href = '/sites?issue_types=threats_found&selectedFilter=5';
+		}
+		if (
+			! window.location.href.includes( 'issue_types=site_disconnected' ) &&
+			view.filters.some( ( filter ) => filter.value === 6 )
+		) {
+			window.location.href = '/sites?issue_types=site_disconnected&selectedFilter=6';
+		}
+		if (
+			! window.location.href.includes( 'issue_types=site_down' ) &&
+			view.filters.some( ( filter ) => filter.value === 7 )
+		) {
+			window.location.href = '/sites?issue_types=site_down&selectedFilter=7';
+		}
+		if (
+			! window.location.href.includes( 'issue_types=plugin_updates' ) &&
+			view.filters.some( ( filter ) => filter.value === 8 )
+		) {
+			window.location.href = '/sites?issue_types=plugin_updates&selectedFilter=8';
+		}
+		if ( ! ( window.location.href === '/sites' ) && view.filters.length === 0 ) {
+			window.location.href = '/sites';
+		}
+	}, [ view.filters ] );
 
 	const renderField = useCallback(
 		( column: AllowedTypes, item: SiteData ) => {
@@ -58,13 +123,13 @@ const SitesDataViews = ( { data, isLoading, onViewChange }: SitesDataViewsProps 
 				);
 			}
 		},
-		[ sites, isLoading ]
+		[ isLoading ]
 	);
 
 	const fields = [
 		{
 			id: 'status',
-			header: '',
+			header: translate( 'STATUS' ),
 			getValue: ( { item }: { item: SiteData } ) =>
 				item.site.error || item.scan.status === 'critical',
 			render: () => {},
@@ -72,6 +137,12 @@ const SitesDataViews = ( { data, isLoading, onViewChange }: SitesDataViewsProps 
 			elements: [
 				{ value: 1, label: 'Needs attention' },
 				{ value: 2, label: 'Favorite' },
+				{ value: 3, label: 'Backup failed' },
+				{ value: 4, label: 'Backup warning' },
+				{ value: 5, label: 'Threat found' },
+				{ value: 6, label: 'Site disconnected' },
+				{ value: 7, label: 'Site down' },
+				{ value: 8, label: 'Plugins needing updates' },
 			],
 			enableHiding: true,
 			enableSorting: true,
@@ -192,7 +263,21 @@ const SitesDataViews = ( { data, isLoading, onViewChange }: SitesDataViewsProps 
 					}
 					return item.site.value.blog_id;
 				} }
-				onChangeView={ setView }
+				onChangeView={ (
+					newView: SetStateAction< {
+						type: string;
+						perPage: number;
+						page: number;
+						sort: { field: string; direction: string };
+						search: string;
+						filters: { field: string; operator: string; value: number }[];
+						hiddenFields: string[];
+						layout: object;
+						selectedSite: undefined;
+					} >
+				) => {
+					setView( newView );
+				} }
 				supportedLayouts={ [ 'table' ] }
 				actions={ [] }
 				isLoading={ isLoading }
