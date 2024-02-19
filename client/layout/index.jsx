@@ -63,12 +63,9 @@ import './style.scss';
 
 const HELP_CENTER_STORE = HelpCenter.register();
 
-function SidebarScrollSynchronizer() {
+function SidebarScrollSynchronizer( { disabled } ) {
 	const isNarrow = useBreakpoint( '<660px' );
-	const active =
-		! isNarrow &&
-		! config.isEnabled( 'jetpack-cloud' ) && // Jetpack cloud hasn't yet aligned with WPCOM.
-		! config.isEnabled( 'layout/dotcom-nav-redesign' ); // Dotcom nav redesign is not yet aligned with WPCOM - the handleScroll function is not yet compatible with the new layout.
+	const active = ! disabled && ! isNarrow;
 
 	useEffect( () => {
 		if ( active ) {
@@ -269,6 +266,25 @@ class Layout extends Component {
 				shouldLoadInlineHelp( this.props.sectionName, this.props.currentRoute ) ) &&
 			this.props.userAllowedToHelpCenter;
 
+		const shouldDisableSidebarScrollSynchronizer = () => {
+			const { isGlobalSidebarVisible, isGlobalSiteSidebarVisible } = this.props;
+
+			// Jetpack cloud hasn't yet aligned with WPCOM.
+			if ( config.isEnabled( 'jetpack-cloud' ) ) {
+				return true;
+			}
+
+			// Dotcom nav redesign is not yet aligned with WPCOM - the handleScroll function is not yet compatible with the new layout.
+			if (
+				config.isEnabled( 'layout/dotcom-nav-redesign' ) &&
+				( isGlobalSidebarVisible || isGlobalSiteSidebarVisible )
+			) {
+				return true;
+			}
+
+			return false;
+		};
+
 		return (
 			<div className={ sectionClass }>
 				<HelpCenterLoader
@@ -276,7 +292,10 @@ class Layout extends Component {
 					loadHelpCenter={ loadHelpCenter }
 					currentRoute={ this.props.currentRoute }
 				/>
-				<SidebarScrollSynchronizer layoutFocus={ this.props.currentLayoutFocus } />
+				<SidebarScrollSynchronizer
+					layoutFocus={ this.props.currentLayoutFocus }
+					disabled={ shouldDisableSidebarScrollSynchronizer() }
+				/>
 				<SidebarOverflowDelay layoutFocus={ this.props.currentLayoutFocus } />
 				<BodySectionCssClass
 					layoutFocus={ this.props.currentLayoutFocus }
