@@ -1522,6 +1522,7 @@ class ThemeSheet extends Component {
 
 				this.props.setProductToBeInstalled( themeId, siteSlug );
 			};
+			const disableHref = shouldSelectSite( { isLoggedIn, siteCount, siteId } );
 			pageUpsellBanner = (
 				<UpsellNudge
 					plan={ PLAN_BUSINESS }
@@ -1536,8 +1537,8 @@ class ThemeSheet extends Component {
 							{ args: { businessPlanName: getPlan( PLAN_BUSINESS ).getTitle() } }
 						)
 					) }
-					forceHref={ ! shouldSelectSite( { isLoggedIn, siteCount, siteId } ) }
-					disableHref={ shouldSelectSite( { isLoggedIn, siteCount, siteId } ) }
+					forceHref={ ! disableHref }
+					disableHref={ disableHref }
 					feature={ FEATURE_UPLOAD_THEMES }
 					forceDisplay
 					href={
