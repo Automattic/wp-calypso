@@ -38,18 +38,19 @@ const SORT_OPTIONS_RECENTLY_UPDATED = 'modified';
 const SORT_OPTIONS_MOST_LIKED = 'like_count';
 const SORT_OPTIONS_MOST_COMMENTED = 'comment_count';
 const SORT_OPTIONS_MOST_VIEWED = 'monthly_view_count';
-const SORT_OPTIONS_BUDGET_HIGH_LOW = 'budget_cents|desc';
-const SORT_OPTIONS_BUDGET_LOW_HIGH = 'budget_cents|asc';
 const SORT_OPTIONS_IMPRESSIONS_HIGH_LOW = 'impressions_total|desc';
 const SORT_OPTIONS_IMPRESSIONS_LOW_HIGH = 'impressions_total|asc';
+const SORT_OPTIONS_CLICKS_HIGH_LOW = 'clicks_total|desc';
+const SORT_OPTIONS_CLICKS_LOW_HIGH = 'clicks_total|asc';
+const SORT_OPTIONS_CREATED_AT = 'created_at';
 
 export const SORT_OPTIONS_DEFAULT = {
-	orderBy: SORT_OPTIONS_RECENTLY_UPDATED,
+	orderBy: SORT_OPTIONS_LAST_PUBLISHED,
 	order: 'desc',
 };
 
 export const CAMPAIGNS_SORT_OPTIONS_DEFAULT = {
-	orderBy: SORT_OPTIONS_LAST_PUBLISHED,
+	orderBy: SORT_OPTIONS_CREATED_AT,
 	order: 'desc',
 };
 
@@ -92,15 +93,7 @@ export default function SearchBar( props: Props ) {
 	const campaignSortOptions: Array< DropdownOption > = [
 		{
 			label: translate( 'Recently published' ),
-			value: SORT_OPTIONS_LAST_PUBLISHED,
-		},
-		{
-			label: translate( 'Budget: High - Low' ),
-			value: SORT_OPTIONS_BUDGET_HIGH_LOW,
-		},
-		{
-			label: translate( 'Budget: Low - High' ),
-			value: SORT_OPTIONS_BUDGET_LOW_HIGH,
+			value: SORT_OPTIONS_CREATED_AT,
 		},
 		{
 			label: translate( 'Impressions: High - Low' ),
@@ -109,6 +102,14 @@ export default function SearchBar( props: Props ) {
 		{
 			label: translate( 'Impressions: Low - High' ),
 			value: SORT_OPTIONS_IMPRESSIONS_LOW_HIGH,
+		},
+		{
+			label: translate( 'Clicks: High - Low' ),
+			value: SORT_OPTIONS_CLICKS_HIGH_LOW,
+		},
+		{
+			label: translate( 'Clicks: Low - High' ),
+			value: SORT_OPTIONS_CLICKS_LOW_HIGH,
 		},
 	];
 
@@ -179,8 +180,11 @@ export default function SearchBar( props: Props ) {
 	useEffect( () => {
 		handleSetSearch( {
 			search: '',
-			order: SORT_OPTIONS_DEFAULT,
-			filter: { ...FILTER_OPTIONS_DEFAULT, postType: postType || '' },
+			order: mode === 'posts' ? SORT_OPTIONS_DEFAULT : undefined,
+			filter:
+				mode === 'posts'
+					? { ...FILTER_OPTIONS_DEFAULT, postType: postType || '' }
+					: FILTER_OPTIONS_DEFAULT,
 		} );
 	}, [] );
 
@@ -256,7 +260,7 @@ export default function SearchBar( props: Props ) {
 	const getSortLabel = () => {
 		let selectedSortOption = campaignSortOption.orderBy;
 		if (
-			campaignSortOption.orderBy === 'budget_cents' ||
+			campaignSortOption.orderBy === 'clicks_total' ||
 			campaignSortOption.orderBy === 'impressions_total'
 		) {
 			selectedSortOption = `${ campaignSortOption.orderBy }|${ campaignSortOption.order }`;
