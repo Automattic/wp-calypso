@@ -3,6 +3,7 @@ import { useTranslate } from 'i18n-calypso';
 import { useEffect, useState } from 'react';
 import { LoadingBar } from 'calypso/components/loading-bar';
 import Notice from 'calypso/components/notice';
+import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { useConfirmTransfer } from './use-confirm-transfer';
 
 /**
@@ -23,6 +24,7 @@ export function ConfirmationTransfer( {
 		{ siteId },
 		{
 			onSuccess: () => {
+				recordTracksEvent( 'calypso_site_owner_transfer_confirm_success' );
 				page.redirect( `/sites?site-transfer-confirm=true` );
 			},
 			onError: ( error ) => {
