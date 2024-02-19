@@ -75,7 +75,7 @@ export const GlobalSiteSidebarFooter: FC< {
 				data-tooltip={ translate( 'WP Admin' ) }
 			>
 				<Icon icon={ wordpress } className="wpicon" />
-				WP Admin
+				{ translate( 'WP Admin' ) }
 				<Icon icon={ external } className="external" />
 			</a>
 		</SidebarFooter>
