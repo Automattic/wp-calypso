@@ -388,7 +388,8 @@ export default withCurrentRoute(
 			isWpMobileApp() ||
 			isWcMobileApp() ||
 			shouldShowGlobalSidebar ||
-			isJetpackCloud();
+			isJetpackCloud() ||
+			config.isEnabled( 'a8c-for-agencies' );
 		const isJetpackMobileFlow = 'jetpack-connect' === sectionName && !! retrieveMobileRedirect();
 		const isJetpackWooCommerceFlow =
 			[ 'jetpack-connect', 'login' ].includes( sectionName ) &&
