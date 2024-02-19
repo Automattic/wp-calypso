@@ -9,6 +9,8 @@
 		&__header {
 			min-height: auto !important;
 			padding: 12px;
+			display: flex;
+			align-items: center;
 		}
 		&__main {
 			flex: none;
@@ -23,12 +25,6 @@
 
 	.card,
 	.foldable-card {
-		> div,
-		.foldable-card__main > div {
-			display: flex;
-			align-items: center;
-		}
-
 		&.error {
 			border: 1px solid var(--color-error);
 

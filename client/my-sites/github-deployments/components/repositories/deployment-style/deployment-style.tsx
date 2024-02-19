@@ -172,10 +172,10 @@ export const DeploymentStyle = ( { onDefineStyle, onValidationChange }: Deployme
 								}
 								expanded={ triggeredOnPushStatus === 'error' }
 								header={
-									<div>
+									<>
 										<RenderIcon state={ triggeredOnPushStatus } />
 										{ __( 'The workflow is triggered on push' ) }
-									</div>
+									</>
 								}
 								screenReaderText="More"
 							>
@@ -192,10 +192,10 @@ export const DeploymentStyle = ( { onDefineStyle, onValidationChange }: Deployme
 								className={ uploadArtifactStatus === 'error' && validationTriggered ? 'error' : '' }
 								expanded={ uploadArtifactStatus === 'error' }
 								header={
-									<div>
+									<>
 										<RenderIcon state={ uploadArtifactStatus } />
 										{ __( 'The upload artifact has the required name' ) }
-									</div>
+									</>
 								}
 								screenReaderText="More"
 							>
