@@ -19,13 +19,20 @@ export function ConfirmationTransfer( {
 } ) {
 	const translate = useTranslate();
 	const progress = 0.3;
+	const [ emailSent, setEmailSent ] = useState< boolean >( false );
 	const [ error, setError ] = useState< { message?: string } | null >( null );
 	const { confirmTransfer } = useConfirmTransfer(
 		{ siteId },
 		{
-			onSuccess: () => {
-				recordTracksEvent( 'calypso_site_owner_transfer_confirm_success' );
-				page.redirect( `/sites?site-transfer-confirm=true` );
+			onSuccess: ( data ) => {
+				const { transfer, email_sent } = data as { transfer: boolean; email_sent: boolean };
+
+				if ( transfer ) {
+					recordTracksEvent( 'calypso_site_owner_transfer_confirm_success' );
+					page.redirect( `/sites?site-transfer-confirm=true` );
+				} else if ( email_sent ) {
+					setEmailSent( true );
+				}
 			},
 			onError: ( error ) => {
 				setError( error as Error );
@@ -35,6 +42,20 @@ export function ConfirmationTransfer( {
 	useEffect( () => {
 		confirmTransfer( confirmationHash );
 	}, [ confirmTransfer, confirmationHash ] );
+
+	if ( emailSent ) {
+		return (
+			<Notice status="is-success" showDismiss={ false }>
+				<div data-testid="email-sent">
+					<p>
+						{ translate(
+							'We have sent an email to the new site owner to accept the site transfer. They will need to click the link in the email to complete the transfer. The link in email will expire in 7 days.'
+						) }
+					</p>
+				</div>
+			</Notice>
+		);
+	}
 
 	if ( error ) {
 		return (
