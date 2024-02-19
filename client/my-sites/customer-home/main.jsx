@@ -152,12 +152,7 @@ const Home = ( {
 				<Button href={ site.URL } onClick={ trackViewSiteAction } target="_blank">
 					{ translate( 'View site' ) }
 				</Button>
-				<Button
-					href={ site.URL + '/wp-admin' }
-					onClick={ trackOpenWPAdminAction }
-					target="_blank"
-					primary
-				>
+				<Button href={ site.URL + '/wp-admin' } onClick={ trackOpenWPAdminAction } primary>
 					{ translate( 'Open WP Admin' ) }
 				</Button>
 			</>
