@@ -54,7 +54,7 @@ export function ConfirmationTransfer( {
 			<Notice status="is-success" showDismiss={ false }>
 				<p>
 					{ translate(
-						'We have sent an email to the new site owner to accept the site transfer. They will need to click the link in the email to complete the transfer. The link in email will expire in 7 days.'
+						'We have invited the new user to accept the site transfer. They will need to click the link included in the email invitation for the site transfer to complete. The invitation will expire in 7 days.'
 					) }
 				</p>
 			</Notice>
