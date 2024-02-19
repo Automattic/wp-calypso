@@ -105,6 +105,10 @@ export function normalizeWporgTheme( theme ) {
 		normalizedTheme.author = author;
 	}
 
+	// Manually add the theme_tier for tracking purposes.
+	// @TODO: Replace this with the real tier definition from a new endpoint.
+	normalizedTheme.theme_tier = { slug: 'community' };
+
 	if ( ! normalizedTheme.tags ) {
 		return normalizedTheme;
 	}
