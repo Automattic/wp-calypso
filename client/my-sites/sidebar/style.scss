@@ -350,13 +350,50 @@ $font-size: rem(14px);
 
 		.sidebar__menu-link-text {
 			font-family: $brand-text;
-			/* stylelint-disable-next-line  declaration-property-unit-allowed-list */
-			font-size: 13px;
+			font-size: 13px; /* stylelint-disable-line declaration-property-unit-allowed-list */
 			font-style: normal;
 			font-weight: 400;
 			padding: 0;
 			margin: 0;
 			box-sizing: border-box;
+		}
+
+		.sidebar__menu-link,
+		.sidebar__menu.is-togglable .sidebar__heading {
+			padding: 12px 10px;
+			margin: 0 12px;
+			border-radius: 4px;
+		}
+
+		.sidebar__heading:not([tabindex="-1"]),
+		.sidebar__menu-link {
+			&:hover,
+			&:focus {
+				box-shadow: none;
+				transition: none;
+				color: var(--studio-white);
+			}
+		}
+
+		.sidebar__menu.is-togglable .sidebar__heading {
+			padding: 12px 10px;
+			margin: 0 12px;
+			border-radius: 4px;
+
+			&:hover {
+				background-color: var(--color-sidebar-menu-hover-background);
+				color: var(--studio-white);
+
+				.sidebar__menu-icon,
+				.sidebar__expandable-arrow {
+					fill: var(--studio-white);
+				}
+			}
+		}
+
+		.sidebar__expandable-title {
+			padding: 0;
+			margin: 0;
 		}
 	}
 
