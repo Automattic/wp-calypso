@@ -29,6 +29,7 @@ import SiteContentHeader from './site-content-header';
 import SiteNotifications from './site-notifications';
 import SiteTopHeaderButtons from './site-top-header-buttons';
 import SitesDataViews from './sites-dataviews';
+import { ViewChangeProps } from './sites-dataviews/interfaces';
 
 import './style.scss';
 
@@ -61,13 +62,25 @@ export default function SitesDashboardV2() {
 		// setIsBulkManagementActive,
 	} = useContext( SitesOverviewContext );
 
+	const [ sitesViewData, setSitesViewData ] = useState< ViewChangeProps >( {
+		search: search,
+		sort: {},
+		filters: [],
+		selectedSite: undefined,
+		page: currentPage,
+	} );
+
 	const { data, isError, isLoading, refetch } = useFetchDashboardSites(
 		isPartnerOAuthTokenLoaded,
-		search,
-		currentPage,
+		sitesViewData.search,
+		sitesViewData.page,
 		filter,
 		sort
 	);
+
+	const onSitesViewChange = ( sitesViewData: ViewChangeProps ) => {
+		setSitesViewData( sitesViewData );
+	};
 
 	useEffect( () => {
 		if ( jetpackSiteDisconnected ) {
@@ -234,7 +247,11 @@ export default function SitesDashboardV2() {
 					</div>
 				</div>
 				<div className="sites-overview__content">
-					<SitesDataViews data={ data } isLoading={ isLoading } />
+					<SitesDataViews
+						data={ data }
+						isLoading={ isLoading }
+						onViewChange={ onSitesViewChange }
+					/>
 				</div>
 			</div>
 			{ ! isLargeScreen && selectedLicensesCount > 0 && (
