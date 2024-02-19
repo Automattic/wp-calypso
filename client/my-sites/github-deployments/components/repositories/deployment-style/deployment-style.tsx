@@ -6,14 +6,18 @@ import {
 	Spinner,
 } from '@automattic/components';
 import { Icon, SelectControl } from '@wordpress/components';
+import { sprintf, __ } from '@wordpress/i18n';
 import { check, closeSmall } from '@wordpress/icons';
-import { useI18n } from '@wordpress/react-i18n';
 import classNames from 'classnames';
 import { translate } from 'i18n-calypso';
 import { useEffect, useMemo, useState } from 'react';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormRadiosBar from 'calypso/components/forms/form-radios-bar';
 import SupportInfo from 'calypso/components/support-info';
+import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
+import { useDispatch } from 'calypso/state';
+import { errorNotice, successNotice } from 'calypso/state/notices/actions';
+import { useCreateWorkflow } from './use-create-workflow';
 import {
 	WorkFlowStates,
 	useCheckWorkflowQuery,
@@ -36,7 +40,7 @@ interface WorkflowsValidationItem {
 type DeploymentStyle = 'simple' | 'custom';
 
 export const DeploymentStyle = ( { onDefineStyle, onValidationChange }: DeploymentStyleProps ) => {
-	const { __ } = useI18n();
+	const dispatch = useDispatch();
 
 	const installationId = 123;
 	const repositoryId = 123;
@@ -67,6 +71,34 @@ export const DeploymentStyle = ( { onDefineStyle, onValidationChange }: Deployme
 		repositoryId,
 		selectedWorkflow
 	);
+
+	const noticeOptions = {
+		duration: 3000,
+	};
+
+	const { createDeployment, isPending: isInstallingWorkflow } = useCreateWorkflow( {
+		onSuccess: () => {
+			dispatch( successNotice( __( 'Workflow created.' ), noticeOptions ) );
+		},
+		onError: ( error ) => {
+			dispatch(
+				errorNotice(
+					// translators: "reason" is why connecting the branch failed.
+					sprintf( __( 'Failed to create workflow: %(reason)s' ), { reason: error.message } ),
+					{
+						...noticeOptions,
+					}
+				)
+			);
+		},
+		onSettled: ( _, error ) => {
+			dispatch(
+				recordTracksEvent( 'calypso_hosting_github_create_workflow_success', {
+					connected: ! error,
+				} )
+			);
+		},
+	} );
 
 	const [ workflowsValidations, setWorkflowValidations ] = useState< WorkflowsValidationItem[] >( [
 		{
@@ -115,8 +147,13 @@ export const DeploymentStyle = ( { onDefineStyle, onValidationChange }: Deployme
 		alert( 'TODO: fixWorfklow' );
 	};
 
-	const installWorkflow = () => {
-		alert( 'TODO: installWorkflow' );
+	const installWorkflow = async () => {
+		createDeployment( {
+			repositoryId,
+			branchName: 'main',
+			installationId,
+			fileName: '.github/workflows/wpcom.yml',
+		} );
 	};
 
 	const RenderIcon = ( { state }: { state: WorkFlowStates } ) => {
@@ -281,7 +318,12 @@ export const DeploymentStyle = ( { onDefineStyle, onValidationChange }: Deployme
 							</Button>
 						) }
 						{ isCreatingNewWorkflow && (
-							<Button type="button" className="button form-button" onClick={ installWorkflow }>
+							<Button
+								type="button"
+								busy={ isInstallingWorkflow }
+								className="button form-button"
+								onClick={ installWorkflow }
+							>
 								{ __( 'Install workflow for me' ) }
 							</Button>
 						) }
