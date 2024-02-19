@@ -20,6 +20,8 @@ type ChatMetadata = {
 	onSuccess?: () => void;
 };
 
+export const ZENDESK_SOURCE_URL_TICKET_FIELD_ID = 23752099174548;
+
 export default function useChatWidget(
 	configName: ZendeskConfigName = 'zendesk_support_chat_key',
 	enabled = true
@@ -52,6 +54,9 @@ export default function useChatWidget(
 				if ( typeof window.zE === 'function' ) {
 					window.zE( 'messenger', 'open' );
 					window.zE( 'messenger', 'show' );
+					window.zE( 'messenger:set', 'conversationFields', [
+						{ id: ZENDESK_SOURCE_URL_TICKET_FIELD_ID, value: window.location.href },
+					] );
 				}
 			} )
 			.catch( () => {
