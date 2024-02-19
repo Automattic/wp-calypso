@@ -48,12 +48,16 @@
 	}
 }
 
+body.is-nav-unification {
+	#wpadminbar #wp-toolbar #wp-admin-bar-help-center {
+		margin-right: 5px;
+	}
+}
+
 #wpadminbar #wp-toolbar {
 	#wp-admin-bar-help-center {
-		position: relative;
 		padding: 0;
 		width: 36px;
-		right: 5px;
 		display: none;
 
 		@include breakpoint-deprecated( ">960px" ) {
