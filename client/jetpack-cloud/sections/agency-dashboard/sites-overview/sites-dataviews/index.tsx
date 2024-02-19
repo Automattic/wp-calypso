@@ -58,7 +58,7 @@ const SitesDataViews = ( { data, isLoading, onViewChange }: SitesDataViewsProps 
 				);
 			}
 		},
-		[ sites, isLoading ]
+		[ isLoading ]
 	);
 
 	const fields = [
