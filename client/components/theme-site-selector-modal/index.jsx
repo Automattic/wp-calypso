@@ -5,7 +5,7 @@ import { navigate } from 'calypso/lib/navigate';
 import { addSiteFragment } from 'calypso/lib/route';
 import { useSelector, useStore } from 'calypso/state';
 import getCurrentRoute from 'calypso/state/selectors/get-current-route';
-import { getSiteSlug } from 'calypso/state/sites/selectors';
+import { getSiteSlug, getSiteTitle } from 'calypso/state/sites/selectors';
 import { getCanonicalTheme } from 'calypso/state/themes/selectors';
 
 export default function ThemeSiteSelectorModal( { isOpen, onClose, themeId } ) {
@@ -17,10 +17,14 @@ export default function ThemeSiteSelectorModal( { isOpen, onClose, themeId } ) {
 	const currentRoute = useSelector( getCurrentRoute );
 
 	const onSiteSelect = ( siteId ) => {
-		const siteSlug = getSiteSlug( store.getState(), siteId );
+		const state = store.getState();
+
+		const siteSlug = getSiteSlug( state, siteId );
+		const siteTitle = getSiteTitle( state, siteId );
+
 		const pathWithSite = addSiteFragment( currentRoute, siteSlug );
 		navigate( pathWithSite );
-		onClose();
+		onClose( { siteTitle } );
 	};
 
 	if ( ! isOpen ) {

@@ -62,7 +62,7 @@ import ThemePreview from 'calypso/my-sites/themes/theme-preview';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getCurrentUserSiteCount, isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { productToBeInstalled } from 'calypso/state/marketplace/purchase-flow/actions';
-import { errorNotice } from 'calypso/state/notices/actions';
+import { successNotice, errorNotice } from 'calypso/state/notices/actions';
 import { getProductsList } from 'calypso/state/products-list/selectors';
 import { isUserPaid } from 'calypso/state/purchases/selectors';
 import getCurrentQueryArguments from 'calypso/state/selectors/get-current-query-arguments';
@@ -1378,6 +1378,7 @@ class ThemeSheet extends Component {
 			isThemeActivationSyncStarted,
 			isWpcomTheme,
 			isThemeAllowed,
+			successNotice: showSuccessNotice,
 			themeTier,
 		} = this.props;
 		const analyticsPath = `/theme/${ themeId }${ section ? '/' + section : '' }${
@@ -1601,7 +1602,27 @@ class ThemeSheet extends Component {
 				}
 				<ThemeSiteSelectorModal
 					isOpen={ this.state.isSiteSelectorModalVisible }
-					onClose={ () => this.setState( { isSiteSelectorModalVisible: false } ) }
+					onClose={ ( { siteTitle } ) => {
+						this.setState( { isSiteSelectorModalVisible: false } );
+
+						if ( siteTitle ) {
+							showSuccessNotice(
+								translate( 'You have selected the site {{strong}}%(siteTitle)s{{/strong}}.', {
+									args: { siteTitle },
+									components: { strong: <strong /> },
+									comment:
+										'On the theme details page, notification shown to the user after they choose one of their sites to activate the selected theme',
+								} ),
+								{
+									button: translate( 'Choose a different site', {
+										comment:
+											'On the theme details page, notification shown to the user offering them the option to choose a different site before activating the selected theme',
+									} ),
+									onClick: () => this.setState( { isSiteSelectorModalVisible: true } ),
+								}
+							);
+						}
+					} }
 					themeId={ this.props.themeId }
 				/>
 				<ThanksModal source="details" themeId={ this.props.themeId } />
@@ -1840,6 +1861,7 @@ export default connect(
 	},
 	{
 		setThemePreviewOptions,
+		successNotice,
 		recordTracksEvent,
 		themeStartActivationSync: themeStartActivationSyncAction,
 		errorNotice,
