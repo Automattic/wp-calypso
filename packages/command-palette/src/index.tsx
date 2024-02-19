@@ -31,6 +31,7 @@ interface CommandMenuGroupProps
 	useExtraCommands?: ( options: useExtraCommandsParams ) => CommandType[];
 	wpcom: WPCOM;
 	currentRoute: string | null;
+	singleSiteMode: boolean;
 }
 
 const StyledCommandsMenuContainer = styled.div( {
@@ -108,6 +109,7 @@ export function CommandMenuGroup( {
 	useExtraCommands,
 	wpcom,
 	currentRoute,
+	singleSiteMode,
 }: CommandMenuGroupProps ) {
 	const { commands, filterNotice, emptyListNotice } = useCommandPalette( {
 		currentSiteId,
@@ -118,6 +120,7 @@ export function CommandMenuGroup( {
 		useExtraCommands,
 		wpcom,
 		currentRoute,
+		singleSiteMode,
 	} );
 
 	useEffect( () => {
@@ -233,6 +236,7 @@ interface CommandPaletteProps {
 	useExtraCommands?: ( options: useExtraCommandsParams ) => CommandType[];
 	wpcom: WPCOM;
 	currentRoute: string | null;
+	singleSiteMode: boolean;
 }
 
 const NotFoundMessage = ( {
@@ -265,6 +269,7 @@ const CommandPalette = ( {
 	useExtraCommands,
 	wpcom,
 	currentRoute,
+	singleSiteMode = false,
 }: CommandPaletteProps ) => {
 	const [ placeHolderOverride, setPlaceholderOverride ] = useState( '' );
 	const [ search, setSearch ] = useState( '' );
@@ -419,6 +424,7 @@ const CommandPalette = ( {
 							useExtraCommands={ useExtraCommands }
 							wpcom={ wpcom }
 							currentRoute={ currentRoute }
+							singleSiteMode={ singleSiteMode }
 						/>
 					</Command.List>
 				</Command>
