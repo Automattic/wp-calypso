@@ -52,13 +52,11 @@ export function ConfirmationTransfer( {
 	if ( isEmailSent ) {
 		return (
 			<Notice status="is-success" showDismiss={ false }>
-				<div data-testid="email-sent">
-					<p>
-						{ translate(
-							'We have sent an email to the new site owner to accept the site transfer. They will need to click the link in the email to complete the transfer. The link in email will expire in 7 days.'
-						) }
-					</p>
-				</div>
+				<p>
+					{ translate(
+						'We have sent an email to the new site owner to accept the site transfer. They will need to click the link in the email to complete the transfer. The link in email will expire in 7 days.'
+					) }
+				</p>
 			</Notice>
 		);
 	}
