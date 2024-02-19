@@ -1,5 +1,8 @@
 /* Overide very specific css on an attribute */
 .sidebar {
+	li.sidebar-streams__search {
+		margin-top: 8px;
+	}
 	li.reader-sidebar-tags__list {
 		margin-bottom: 8px;
 	}
