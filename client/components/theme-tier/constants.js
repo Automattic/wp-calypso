@@ -31,32 +31,44 @@ const getIncludedWithLabel = ( planSlug ) => {
  * @typedef {Object} tier
  * @property {string} label The translated label of the theme tier.
  * @property {string} minimumUpsellPlan The minimum plan required to activate a theme belonging to the tier. Used for upselling purposes.
+ * @property {boolean} isFilterable Whether the tier can be used to filter the Theme Showcase.
  */
 export const THEME_TIERS = {
 	free: {
 		label: translate( 'Free' ),
 		minimumUpsellPlan: PLAN_FREE,
+		isFilterable: true,
 	},
 	personal: {
 		label: getIncludedWithLabel( PLAN_PERSONAL ),
 		minimumUpsellPlan: PLAN_PERSONAL,
+		isFilterable: true,
 	},
 	premium: {
 		label: getIncludedWithLabel( PLAN_PREMIUM ),
 		minimumUpsellPlan: PLAN_PREMIUM,
+		isFilterable: true,
 	},
 	partner: {
 		label: translate( 'Partner', {
 			context: 'This theme is developed and supported by a theme partner',
 		} ),
 		minimumUpsellPlan: PLAN_BUSINESS,
+		isFilterable: true,
 	},
 	woocommerce: {
 		label: translate( 'WooCommerce' ),
 		minimumUpsellPlan: PLAN_BUSINESS,
+		isFilterable: true,
 	},
 	sensei: {
-		label: translate( 'Sensei' ),
+		label: translate( 'Sensei LMS' ),
 		minimumUpsellPlan: PLAN_BUSINESS,
+		isFilterable: false,
+	},
+	community: {
+		label: translate( 'Community' ),
+		minimumUpsellPlan: PLAN_BUSINESS,
+		isFilterable: false,
 	},
 };
