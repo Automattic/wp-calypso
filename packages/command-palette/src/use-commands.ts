@@ -75,6 +75,7 @@ export const useCommands = ( {
 						__( 'Select site to open dashboard', __i18n_text_domain__ )
 					),
 					siteFunctions: {
+						// @ts-expect-error TODO
 						onClick: ( param ) => commandNavigation( `/home/${ param.site.slug }` )( param ),
 					},
 			  } ),
