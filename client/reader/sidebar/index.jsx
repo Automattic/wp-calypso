@@ -2,7 +2,7 @@ import { isEnabled } from '@automattic/calypso-config';
 import page from '@automattic/calypso-router';
 import { hasTranslation } from '@wordpress/i18n';
 import closest from 'component-closest';
-import { localize } from 'i18n-calypso';
+import i18n, { localize } from 'i18n-calypso';
 import { defer, startsWith } from 'lodash';
 import { Component } from 'react';
 import { connect } from 'react-redux';
@@ -158,8 +158,6 @@ export class ReaderSidebar extends Component {
 				<QueryReaderTeams />
 				<QueryReaderOrganizations />
 
-				<SidebarSeparator />
-
 				<SidebarItem
 					label={ translate( 'Search' ) }
 					onNavigate={ this.handleReaderSidebarSearchClicked }
@@ -278,6 +276,7 @@ export class ReaderSidebar extends Component {
 			path: this.props.path,
 			onClick: this.handleClick,
 			requireBackLink: true,
+			backLinkText: i18n.translate( 'All sites' ),
 		};
 		return (
 			<GlobalSidebar { ...props }>

@@ -25,7 +25,8 @@ const GlobalSidebar = ( { children, onClick = undefined, className = '', ...prop
 		return <Spinner className="sidebar__menu-loading" />;
 	}
 
-	const { requireBackLink, ...sidebarProps } = props;
+	const { requireBackLink, backLinkText, ...sidebarProps } = props;
+	const sidebarBackLinkText = backLinkText ?? translate( 'Back' );
 
 	return (
 		<div className="global-sidebar">
@@ -36,7 +37,7 @@ const GlobalSidebar = ( { children, onClick = undefined, className = '', ...prop
 						<div className="sidebar__back-link">
 							<a href="/sites">
 								<Gridicon icon="chevron-left" size={ 24 } />
-								<span className="sidebar__back-link-text">{ translate( 'Back' ) }</span>
+								<span className="sidebar__back-link-text">{ sidebarBackLinkText }</span>
 							</a>
 						</div>
 					) }
