@@ -1,12 +1,15 @@
 import { Spinner, Gridicon } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import { useSelector } from 'react-redux';
+import { useCurrentRoute } from 'calypso/components/route';
 import GlobalSidebarHeader from 'calypso/layout/global-sidebar/header';
 import useSiteMenuItems from 'calypso/my-sites/sidebar/use-site-menu-items';
 import { getIsRequestingAdminMenu } from 'calypso/state/admin-menu/selectors';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
+import { getShouldShowGlobalSiteSidebar } from 'calypso/state/global-sidebar/selectors';
+import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import Sidebar from '../sidebar';
-import { GlobalSidebarFooter } from './footer';
+import { GlobalSidebarFooter, GlobalSiteSidebarFooter } from './footer';
 import './style.scss';
 
 const GlobalSidebar = ( { children, onClick = undefined, className = '', ...props } ) => {
@@ -14,6 +17,12 @@ const GlobalSidebar = ( { children, onClick = undefined, className = '', ...prop
 	const isRequestingMenu = useSelector( getIsRequestingAdminMenu );
 	const translate = useTranslate();
 	const currentUser = useSelector( getCurrentUser );
+	const selectedSiteSlug = useSelector( ( state ) => getSelectedSiteSlug( state ) );
+	const selectedSiteId = useSelector( getSelectedSiteId );
+	const { currentSection } = useCurrentRoute();
+	const shouldShowGlobalSiteSidebar = useSelector( ( state ) => {
+		return getShouldShowGlobalSiteSidebar( state, selectedSiteId, currentSection?.group );
+	} );
 
 	/**
 	 * If there are no menu items and we are currently requesting some,
@@ -43,7 +52,11 @@ const GlobalSidebar = ( { children, onClick = undefined, className = '', ...prop
 					{ children }
 				</Sidebar>
 			</div>
-			<GlobalSidebarFooter user={ currentUser } translate={ translate } />
+			{ shouldShowGlobalSiteSidebar ? (
+				<GlobalSiteSidebarFooter selectedSiteSlug={ selectedSiteSlug } translate={ translate } />
+			) : (
+				<GlobalSidebarFooter user={ currentUser } translate={ translate } />
+			) }
 		</div>
 	);
 };

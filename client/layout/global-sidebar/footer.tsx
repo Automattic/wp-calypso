@@ -1,3 +1,4 @@
+import { Icon, wordpress, external } from '@wordpress/icons';
 import { LocalizeProps } from 'i18n-calypso';
 import { FC } from 'react';
 import AsyncLoad from 'calypso/components/async-load';
@@ -57,6 +58,26 @@ export const GlobalSidebarFooter: FC< {
 					</div>
 				}
 			/>
+		</SidebarFooter>
+	);
+};
+
+export const GlobalSiteSidebarFooter: FC< {
+	selectedSiteSlug: string;
+	translate: LocalizeProps[ 'translate' ];
+} > = ( { selectedSiteSlug, translate } ) => {
+	return (
+		<SidebarFooter>
+			<a
+				href={ `https://${ selectedSiteSlug }/wp-admin/plugins.php` }
+				className="sidebar__footer-wpadmin tooltip tooltip-top"
+				title={ translate( 'WP Admin' ) }
+				data-tooltip={ translate( 'WP Admin' ) }
+			>
+				<Icon icon={ wordpress } className="wpicon" />
+				WP Admin
+				<Icon icon={ external } className="external" />
+			</a>
 		</SidebarFooter>
 	);
 };
