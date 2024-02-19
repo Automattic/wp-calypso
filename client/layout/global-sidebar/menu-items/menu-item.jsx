@@ -9,6 +9,7 @@ const SidebarMenuItem = forwardRef(
 			tipTarget,
 			onClick,
 			tooltip,
+			tooltipPlacement,
 			icon,
 			className,
 			isActive,
@@ -45,7 +46,7 @@ const SidebarMenuItem = forwardRef(
 			'is-active': isActive,
 			'has-unseen': hasUnseen,
 			'sidebar__item--always-show-content': alwaysShowContent,
-			'tooltip tooltip-bottom': tooltip,
+			[ `tooltip tooltip-${ tooltipPlacement || 'bottom' }` ]: tooltip,
 		} );
 
 		const attributes = {

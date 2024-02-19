@@ -4,13 +4,16 @@ import { useSelector } from 'react-redux';
 import GlobalSidebarHeader from 'calypso/layout/global-sidebar/header';
 import useSiteMenuItems from 'calypso/my-sites/sidebar/use-site-menu-items';
 import { getIsRequestingAdminMenu } from 'calypso/state/admin-menu/selectors';
+import { getCurrentUser } from 'calypso/state/current-user/selectors';
 import Sidebar from '../sidebar';
+import { GlobalSidebarFooter } from './footer';
 import './style.scss';
 
 const GlobalSidebar = ( { children, onClick = undefined, className = '', ...props } ) => {
 	const menuItems = useSiteMenuItems();
 	const isRequestingMenu = useSelector( getIsRequestingAdminMenu );
 	const translate = useTranslate();
+	const currentUser = useSelector( getCurrentUser );
 
 	/**
 	 * If there are no menu items and we are currently requesting some,
@@ -40,6 +43,7 @@ const GlobalSidebar = ( { children, onClick = undefined, className = '', ...prop
 					{ children }
 				</Sidebar>
 			</div>
+			<GlobalSidebarFooter user={ currentUser } translate={ translate } />
 		</div>
 	);
 };
