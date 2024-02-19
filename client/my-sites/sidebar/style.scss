@@ -32,7 +32,8 @@ $brand-text: "SF Pro Text", $sans;
 	--color-sidebar-submenu-selected-background: transparent;
 	--color-sidebar-submenu-selected-text: var(--color-text-inverted);
 
-	.is-global-sidebar-visible {
+	.is-global-sidebar-visible,
+	.is-global-site-sidebar-visible {
 		--sidebar-width-max: 314px;
 		--sidebar-width-min: 314px;
 
