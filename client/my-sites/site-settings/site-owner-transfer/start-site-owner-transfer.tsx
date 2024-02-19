@@ -313,7 +313,7 @@ const StartSiteOwnerTransfer = ( {
 				disabled={ false }
 				label={
 					purchases.length === 0
-						? translate( 'I want to transfer the ownership of the site' )
+						? translate( 'I want to transfer the ownership of the site.' )
 						: translate( 'I want to transfer ownership of the site and all my related upgrades.' )
 				}
 				checked={ confirmSecondToggle }
