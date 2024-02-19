@@ -1618,7 +1618,7 @@ class ThemeSheet extends Component {
 							);
 						}
 					} }
-					themeId={ this.props.themeId }
+					themeId={ themeId }
 				/>
 				<ThanksModal source="details" themeId={ this.props.themeId } />
 				<ActivationModal source="details" />
