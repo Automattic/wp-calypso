@@ -150,7 +150,7 @@ const ImportUsers = ( { site, onSubmit }: Props ) => {
 				renderItem={ renderUser }
 				getItemRef={ getUserRef }
 				guessedItemHeight={ 126 }
-				renderLoadingPlaceholders={ () => <div>Loading...</div> }
+				renderLoadingPlaceholders={ () => <div>{ translate( 'Loading' ) }...</div> }
 				className="import__user-migration-list"
 			/>
 			<div className="import__user-migration-footer">
