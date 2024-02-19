@@ -72,6 +72,24 @@ export default function () {
 		),
 	};
 
+	statsStrings.utm = {
+		title: translate( 'UTM', { context: 'Stats: title of module', textOnly: true } ),
+		item: translate( 'UTM', { context: 'Stats: module row header for UTM module.' } ),
+		value: translate( 'Views', {
+			context: 'Stats: module row header for number of views per UTM.',
+		} ),
+		empty: translate(
+			'If you use UTM codes, your {{link}}campaign performance data{{/link}} will show here.',
+			{
+				comment: '{{link}} links to support documentation.',
+				components: {
+					link: <a href={ localizeUrl( `${ SUPPORT_URL }#utm` ) } />,
+				},
+				context: 'Stats: Info box label when the UTM module is empty',
+			}
+		),
+	};
+
 	statsStrings.search = {
 		title: translate( 'Search terms', { context: 'Stats: title of module', textOnly: true } ),
 		item: translate( 'Search term', {
