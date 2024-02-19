@@ -8,6 +8,7 @@ import { useState, FormEvent } from 'react';
 import { connect, useSelector } from 'react-redux';
 import ActionPanelBody from 'calypso/components/action-panel/body';
 import Notice from 'calypso/components/notice';
+import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { ResponseDomain } from 'calypso/lib/domains/types';
 import { getSitePurchases } from 'calypso/state/purchases/selectors';
 import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
@@ -269,6 +270,9 @@ const StartSiteOwnerTransfer = ( {
 			},
 			onError: ( error ) => {
 				setStartSiteTransferError( error.message );
+				recordTracksEvent( 'calypso_site_owner_transfer_start_transfer_error', {
+					message: error.message,
+				} );
 				onSiteTransferError?.();
 			},
 			onSuccess: () => {
@@ -283,6 +287,10 @@ const StartSiteOwnerTransfer = ( {
 		if ( ! siteOwner ) {
 			return;
 		}
+
+		recordTracksEvent( 'calypso_site_owner_transfer_start_transfer_submit', {
+			site_owner: siteOwner,
+		} );
 		startSiteOwnerTransfer( { newSiteOwner: siteOwner } );
 	};
 
