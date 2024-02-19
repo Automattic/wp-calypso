@@ -5,6 +5,8 @@ import { addQueryArgs } from '@wordpress/url';
 import { useState } from 'react';
 import SocialLogo from 'calypso/components/social-logo';
 import { useDispatch } from 'calypso/state';
+import { connectSocialUser } from 'calypso/state/login/actions';
+import { postLoginRequest } from 'calypso/state/login/utils';
 import { errorNotice } from 'calypso/state/notices/actions';
 import { useGithubAccountsQuery } from '../use-github-accounts-query';
 import { openPopup } from '../utils/open-popup';
@@ -26,7 +28,31 @@ export const GitHubAuthorizeButton = () => {
 	const startAuthorization = () => {
 		setIsAuthorizing( true );
 
-		openPopup( { url: AUTHORIZE_URL, popupId: POPUP_ID, expectedEvent: 'github-app-authorized' } )
+		openPopup< { code: string } >( {
+			url: AUTHORIZE_URL,
+			popupId: POPUP_ID,
+			expectedEvent: 'github-app-authorized',
+		} )
+			.then( ( { code } ) => {
+				return postLoginRequest( 'exchange-social-auth-code', {
+					service: 'github',
+					auth_code: code,
+					client_id: config( 'wpcom_signup_id' ),
+					client_secret: config( 'wpcom_signup_key' ),
+				} );
+			} )
+			.then( async ( response ) => {
+				if ( ! response.body?.data?.access_token ) {
+					throw new Error( 'Access token not included in the response.' );
+				}
+
+				return dispatch(
+					connectSocialUser( {
+						service: 'github',
+						access_token: response.body.data.access_token,
+					} )
+				);
+			} )
 			.then( () => refetch() )
 			.catch( () => dispatch( errorNotice( 'Failed to authorize GitHub. Please try again.' ) ) )
 			.finally( () => setIsAuthorizing( false ) );
