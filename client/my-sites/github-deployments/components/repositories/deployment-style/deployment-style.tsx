@@ -10,10 +10,11 @@ import { check, closeSmall } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
 import classNames from 'classnames';
 import { translate } from 'i18n-calypso';
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormRadiosBar from 'calypso/components/forms/form-radios-bar';
 import SupportInfo from 'calypso/components/support-info';
+import { useDeploymentWorkflowsQuery } from './use-deployment-workflows-query';
 
 import './style.scss';
 
@@ -28,8 +29,25 @@ type WorkFlowStates = 'loading' | 'success' | 'error';
 export const DeploymentStyle = ( { onDefineStyle, onValidationChange }: DeploymentStyleProps ) => {
 	const { __ } = useI18n();
 
+	const installationId = 123;
+	const repositoryId = 123;
+	const { data: workflows, isLoading: isFetchingWorkflows } = useDeploymentWorkflowsQuery(
+		installationId,
+		repositoryId
+	);
+
+	const workflowsForRendering = useMemo( () => {
+		const mappedValues = [ { value: 'none', label: __( 'Deployment workflows' ) } ].concat(
+			workflows?.map( ( workflow ) => ( {
+				value: workflow.file_name,
+				label: workflow.file_name,
+			} ) ) || []
+		);
+
+		return mappedValues.concat( { value: 'create-new', label: __( 'Create new workflow' ) } );
+	}, [ workflows ] );
+
 	const [ deploymentStyle, setDeploymentStyle ] = useState< DeploymentStyle >( 'simple' );
-	const [ isFetchingWorkflows, setFechingWorkflows ] = useState( true );
 	const [ selectedWorkflow, setSelectedWorkflow ] = useState( 'none' );
 	const [ isCreatingNewWorkflow, setIsCreatingNewWorkflow ] = useState( false );
 	const [ validationTriggered, setValidationTriggered ] = useState( false );
@@ -57,13 +75,6 @@ export const DeploymentStyle = ( { onDefineStyle, onValidationChange }: Deployme
 	const installWorkflow = () => {
 		alert( 'TODO: installWorkflow' );
 	};
-
-	const workflows = [
-		{ value: 'none', label: __( 'Deployment workflows' ) },
-		{ value: 'deploy-live', label: 'deploy-live.yml' },
-		{ value: 'test', label: 'test.yml' },
-		{ value: 'create-new', label: __( 'Create new workflow' ) },
-	];
 
 	const RenderIcon = ( { state }: { state: WorkFlowStates } ) => {
 		if ( state === 'loading' ) {
@@ -104,7 +115,6 @@ export const DeploymentStyle = ( { onDefineStyle, onValidationChange }: Deployme
 				setTimeout( () => {
 					setValidationTriggered( true );
 				}, 1000 );
-				setFechingWorkflows( true );
 				if ( status === 'error' ) {
 					setErrorMesseage( 'Please fix this error' );
 				}
@@ -143,7 +153,7 @@ export const DeploymentStyle = ( { onDefineStyle, onValidationChange }: Deployme
 					<div className="github-deployments-connect-repository__automatic-deploys">
 						<SelectControl
 							value={ selectedWorkflow }
-							options={ workflows }
+							options={ workflowsForRendering }
 							onChange={ handleWorkflowChange }
 						/>
 						{ isFetchingWorkflows && <Spinner /> }
