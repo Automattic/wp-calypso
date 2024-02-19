@@ -116,7 +116,9 @@ $brand-text: "SF Pro Text", $sans;
 			display: none;
 		}
 
-
+		li.sidebar-streams__search {
+			margin: 0;
+		}
 	}
 
 	.sidebar__footer {
