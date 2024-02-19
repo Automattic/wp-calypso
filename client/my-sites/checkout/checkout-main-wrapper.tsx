@@ -1,6 +1,5 @@
 import config from '@automattic/calypso-config';
 import { RazorpayHookProvider } from '@automattic/calypso-razorpay';
-import { captureException } from '@automattic/calypso-sentry';
 import { StripeHookProvider } from '@automattic/calypso-stripe';
 import colorStudio from '@automattic/color-studio';
 import { CheckoutErrorBoundary } from '@automattic/composite-checkout';
@@ -16,21 +15,11 @@ import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import CalypsoShoppingCartProvider from './calypso-shopping-cart-provider';
 import CheckoutMain from './src/components/checkout-main';
 import PrePurchaseNotices from './src/components/prepurchase-notices';
-import { convertErrorToString } from './src/lib/analytics';
+import { logStashLoadErrorEvent } from './src/lib/analytics';
 import type { SitelessCheckoutType } from '@automattic/wpcom-checkout';
 
 const logCheckoutError = ( error: Error ) => {
-	captureException( error.cause ? error.cause : error );
-	logToLogstash( {
-		feature: 'calypso_client',
-		message: 'composite checkout load error',
-		severity: config( 'env_id' ) === 'production' ? 'error' : 'debug',
-		extra: {
-			env: config( 'env_id' ),
-			type: 'checkout_system_decider',
-			message: convertErrorToString( error ),
-		},
-	} );
+	logStashLoadErrorEvent( 'checkout_system_decider', error );
 };
 
 const CheckoutMainWrapperStyles = styled.div`
