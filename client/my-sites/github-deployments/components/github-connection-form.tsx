@@ -24,7 +24,7 @@ interface InitialValues {
 	isAutomated: boolean;
 }
 
-interface ConnectRepositoryDialogProps {
+interface GitHubConnectionFormProps {
 	repository: GitHubRepositoryData;
 	installation: GitHubInstallationData;
 	ctaLabel: string;
@@ -40,7 +40,7 @@ export const GitHubConnectionForm = ( {
 	initialValues = { branch: repository.default_branch, destPath: '/', isAutomated: false },
 	changeRepository,
 	onSubmit,
-}: ConnectRepositoryDialogProps ) => {
+}: GitHubConnectionFormProps ) => {
 	const [ branch, setBranch ] = useState( initialValues.branch );
 	const [ destPath, setDestPath ] = useState( initialValues.destPath );
 	const [ isAutoDeploy, setIsAutoDeploy ] = useState( initialValues.isAutomated );
