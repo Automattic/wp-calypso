@@ -6,6 +6,11 @@ import Notice from 'calypso/components/notice';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { useConfirmTransfer } from './use-confirm-transfer';
 
+type SiteTransferResponse = {
+	transfer?: boolean;
+	email_sent?: boolean;
+};
+
 /**
  * Component to display the confirmation of the site transfer when the new owner clicks on the link in the email.
  * The confirmation hash. That URL is provided in the email.
@@ -19,19 +24,19 @@ export function ConfirmationTransfer( {
 } ) {
 	const translate = useTranslate();
 	const progress = 0.3;
-	const [ emailSent, setEmailSent ] = useState< boolean >( false );
+	const [ isEmailSent, setIsEmailSent ] = useState< boolean >( false );
 	const [ error, setError ] = useState< { message?: string } | null >( null );
 	const { confirmTransfer } = useConfirmTransfer(
 		{ siteId },
 		{
 			onSuccess: ( data ) => {
-				const { transfer, email_sent } = data as { transfer: boolean; email_sent: boolean };
+				const { transfer, email_sent } = data as SiteTransferResponse;
 
 				if ( transfer ) {
 					recordTracksEvent( 'calypso_site_owner_transfer_confirm_success' );
 					page.redirect( `/sites?site-transfer-confirm=true` );
 				} else if ( email_sent ) {
-					setEmailSent( true );
+					setIsEmailSent( true );
 				}
 			},
 			onError: ( error ) => {
@@ -43,7 +48,7 @@ export function ConfirmationTransfer( {
 		confirmTransfer( confirmationHash );
 	}, [ confirmTransfer, confirmationHash ] );
 
-	if ( emailSent ) {
+	if ( isEmailSent ) {
 		return (
 			<Notice status="is-success" showDismiss={ false }>
 				<div data-testid="email-sent">
