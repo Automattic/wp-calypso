@@ -46,6 +46,18 @@ export const DeploymentStyle = ( { onDefineStyle, onValidationChange }: Deployme
 		setSelectedWorkflow( value );
 	};
 
+	const handleVerifyWorkflow = () => {
+		alert( 'TODO: Verify workflow' );
+	};
+
+	const fixWorfklow = () => {
+		alert( 'TODO: fixWorfklow' );
+	};
+
+	const installWorkflow = () => {
+		alert( 'TODO: installWorkflow' );
+	};
+
 	const workflows = [
 		{ value: 'none', label: __( 'Deployment workflows' ) },
 		{ value: 'deploy-live', label: 'deploy-live.yml' },
@@ -140,56 +152,63 @@ export const DeploymentStyle = ( { onDefineStyle, onValidationChange }: Deployme
 			) }
 
 			<FormFieldset>
-				{ deploymentStyle === 'custom' && ! isCreatingNewWorkflow && (
-					<>
-						<FormLabel>{ __( 'Workflow check' ) }</FormLabel>
-						<p>
-							{ translate( 'Please edit {{filename}}{{/filename}} and fix the problems we found:', {
-								components: { filename: <span>deploy-live.yml</span> },
-							} ) }
-						</p>
+				{ deploymentStyle === 'custom' &&
+					selectedWorkflow !== 'none' &&
+					! isCreatingNewWorkflow && (
+						<>
+							<FormLabel>{ __( 'Workflow check' ) }</FormLabel>
+							<p>
+								{ translate(
+									'Please edit {{filename}}{{/filename}} and fix the problems we found:',
+									{
+										components: { filename: <span>deploy-live.yml</span> },
+									}
+								) }
+							</p>
 
-						<FoldableCard
-							className={ triggeredOnPushStatus === 'error' && validationTriggered ? 'error' : '' }
-							expanded={ triggeredOnPushStatus === 'error' }
-							header={
+							<FoldableCard
+								className={
+									triggeredOnPushStatus === 'error' && validationTriggered ? 'error' : ''
+								}
+								expanded={ triggeredOnPushStatus === 'error' }
+								header={
+									<div>
+										<RenderIcon state={ triggeredOnPushStatus } />
+										{ __( 'The workflow is triggered on push' ) }
+									</div>
+								}
+								screenReaderText="More"
+							>
 								<div>
-									<RenderIcon state={ triggeredOnPushStatus } />
-									{ __( 'The workflow is triggered on push' ) }
+									<p>{ __( "Ensure that your workflow generates an artifact named 'wpcom'." ) }</p>
+									<p>
+										- name: Upload the artifact <br></br>uses: actions/upload-artifact@v4 <br></br>
+										with: name: wpcom
+									</p>
 								</div>
-							}
-							screenReaderText="More"
-						>
-							<div>
-								<p>{ __( "Ensure that your workflow generates an artifact named 'wpcom'." ) }</p>
-								<p>
-									- name: Upload the artifact <br></br>uses: actions/upload-artifact@v4 <br></br>
-									with: name: wpcom
-								</p>
-							</div>
-						</FoldableCard>
+							</FoldableCard>
 
-						<FoldableCard
-							className={ uploadArtifactStatus === 'error' && validationTriggered ? 'error' : '' }
-							expanded={ uploadArtifactStatus === 'error' }
-							header={
+							<FoldableCard
+								className={ uploadArtifactStatus === 'error' && validationTriggered ? 'error' : '' }
+								expanded={ uploadArtifactStatus === 'error' }
+								header={
+									<div>
+										<RenderIcon state={ uploadArtifactStatus } />
+										{ __( 'The upload artifact has the required name' ) }
+									</div>
+								}
+								screenReaderText="More"
+							>
 								<div>
-									<RenderIcon state={ uploadArtifactStatus } />
-									{ __( 'The upload artifact has the required name' ) }
+									<p>{ __( "Ensure that your workflow generates an artifact named 'wpcom'." ) }</p>
+									<p>
+										- name: Upload the artifact <br></br>uses: actions/upload-artifact@v4 <br></br>
+										with: name: wpcom
+									</p>
 								</div>
-							}
-							screenReaderText="More"
-						>
-							<div>
-								<p>{ __( "Ensure that your workflow generates an artifact named 'wpcom'." ) }</p>
-								<p>
-									- name: Upload the artifact <br></br>uses: actions/upload-artifact@v4 <br></br>
-									with: name: wpcom
-								</p>
-							</div>
-						</FoldableCard>
-					</>
-				) }
+							</FoldableCard>
+						</>
+					) }
 				{ deploymentStyle === 'custom' && isCreatingNewWorkflow && (
 					<>
 						<FormLabel>{ __( 'Custom workflow' ) }</FormLabel>
@@ -214,18 +233,24 @@ export const DeploymentStyle = ( { onDefineStyle, onValidationChange }: Deployme
 						</FoldableCard>
 					</>
 				) }
-				{ errorMesseage && <FormInputValidation isError={ true } text={ errorMesseage } /> }
-				{ deploymentStyle === 'custom' && (
+				{ deploymentStyle === 'custom' && errorMesseage && (
+					<FormInputValidation isError={ true } text={ errorMesseage } />
+				) }
+				{ deploymentStyle === 'custom' && selectedWorkflow !== 'none' && (
 					<div className="github-deployments-deployment-style__actions">
-						<Button type="button" className="button form-button">
+						<Button type="button" className="button form-button" onClick={ handleVerifyWorkflow }>
 							{ __( 'Verify workflow' ) }
 						</Button>
-						<Button type="button" className="button form-button">
-							{ __( 'Fix workflow for me' ) }
-						</Button>
-						<Button type="button" className="button form-button">
-							{ __( 'Install workflow for me' ) }
-						</Button>
+						{ ( triggeredOnPushStatus === 'error' || uploadArtifactStatus === 'error' ) && (
+							<Button type="button" className="button form-button" onClick={ fixWorfklow }>
+								{ __( 'Fix workflow for me' ) }
+							</Button>
+						) }
+						{ isCreatingNewWorkflow && (
+							<Button type="button" className="button form-button" onClick={ installWorkflow }>
+								{ __( 'Install workflow for me' ) }
+							</Button>
+						) }
 					</div>
 				) }
 			</FormFieldset>
