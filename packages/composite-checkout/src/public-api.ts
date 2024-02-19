@@ -26,7 +26,6 @@ import {
 import {
 	usePaymentProcessor,
 	usePaymentProcessors,
-	makeManualResponse,
 	makeSuccessResponse,
 	makeRedirectResponse,
 	makeErrorResponse,
@@ -54,7 +53,6 @@ export {
 	createCheckoutStepGroupStore,
 	makeErrorResponse,
 	isErrorResponse,
-	makeManualResponse,
 	makeRedirectResponse,
 	makeSuccessResponse,
 	useAllPaymentMethods,

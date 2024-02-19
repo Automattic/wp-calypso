@@ -326,10 +326,9 @@ const getBlocksTracker = ( eventName ) => ( blockIds, fromRootClientId, toRootCl
 const maybeTrackPatternInsertion = ( actionData, additionalData ) => {
 	const { rootClientId, blocks_replaced, insert_method, search_term } = additionalData;
 	const context = getBlockEventContextProperties( rootClientId );
-	const {
-		__experimentalBlockPatterns: patterns,
-		__experimentalBlockPatternCategories: patternCategories,
-	} = select( 'core/block-editor' ).getSettings();
+	const { __experimentalBlockPatternCategories: patternCategories } =
+		select( 'core/block-editor' ).getSettings();
+	const patterns = select( 'core/block-editor' ).__experimentalGetAllowedPatterns();
 
 	const meta = find( actionData, ( item ) => item?.patternName );
 	let patternName = meta?.patternName;

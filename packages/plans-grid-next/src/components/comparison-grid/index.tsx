@@ -6,6 +6,7 @@ import {
 	getWooExpressFeaturesGrouped,
 	FEATURE_GROUP_PAYMENT_TRANSACTION_FEES,
 	getPlans,
+	PLAN_WOOEXPRESS_MEDIUM_MONTHLY,
 } from '@automattic/calypso-products';
 import { Gridicon, JetpackLogo } from '@automattic/components';
 import { css } from '@emotion/react';
@@ -110,9 +111,9 @@ const Title = styled.div< { isHiddenInMobile?: boolean } >`
 	` ) }
 `;
 
-const Grid = styled.div< { isInSignup?: boolean; visiblePlans: number } >`
+const Grid = styled.div< { visiblePlans: number } >`
 	display: grid;
-	margin: ${ ( props ) => ( props.isInSignup ? '90px auto 0' : '64px auto 0' ) };
+	margin: 0 auto;
 	background: #fff;
 	border: solid 1px #e0e0e0;
 	${ ( props ) =>
@@ -750,6 +751,9 @@ const ComparisonGridFeatureGroupRow: React.FunctionComponent< {
 	const featureSlug = feature?.getSlug() ?? '';
 	const footnote = planFeatureFootnotes?.footnotesByFeature?.[ featureSlug ];
 	const tooltipId = `${ feature?.getSlug() }-comparison-grid`;
+	const hasWooExpressPlans = visibleGridPlans.some( ( { planSlug } ) =>
+		isWooExpressPlan( planSlug )
+	);
 
 	return (
 		<Row
@@ -776,12 +780,16 @@ const ComparisonGridFeatureGroupRow: React.FunctionComponent< {
 						{ feature && (
 							<>
 								<Plans2023Tooltip
-									text={ feature.getDescription?.() }
+									text={ feature.getDescription?.( {
+										planSlug: hasWooExpressPlans ? PLAN_WOOEXPRESS_MEDIUM_MONTHLY : undefined,
+									} ) }
 									setActiveTooltipId={ setActiveTooltipId }
 									activeTooltipId={ activeTooltipId }
 									id={ tooltipId }
 								>
-									{ feature.getTitle() }
+									{ feature.getTitle( {
+										planSlug: hasWooExpressPlans ? PLAN_WOOEXPRESS_MEDIUM_MONTHLY : undefined,
+									} ) }
 									{ footnote && (
 										<FeatureFootnote>
 											<sup>{ footnote }</sup>
@@ -1087,9 +1095,19 @@ const ComparisonGrid = ( {
 		onUpgradeClick,
 	} );
 
+	/**
+	 * Search for "any" plan with a highlight label, not just the visible ones.
+	 * This will keep the grid static while user interacts (selects different plans to compare).
+	 * Some padding is applied in the stylesheet to cover the badges/labels.
+	 */
+	const hasHighlightedPlan = gridPlans.some( ( { highlightLabel } ) => !! highlightLabel );
+	const classes = classNames( 'plan-comparison-grid', {
+		'has-highlighted-plan': hasHighlightedPlan,
+	} );
+
 	return (
-		<div className="plan-comparison-grid">
-			<Grid isInSignup={ isInSignup } visiblePlans={ visiblePlans.length }>
+		<div className={ classes }>
+			<Grid visiblePlans={ visiblePlans.length }>
 				<StickyContainer
 					disabled={ isBottomHeaderInView }
 					stickyClass="is-sticky-header-row"

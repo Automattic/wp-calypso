@@ -1,4 +1,5 @@
 import { isEnabled } from '@automattic/calypso-config';
+import { Icon, lineSolid } from '@wordpress/icons';
 import classNames from 'classnames';
 import { Fragment, useContext } from 'react';
 import useFetchTestConnection from 'calypso/data/agency-dashboard/use-fetch-test-connection';
@@ -19,7 +20,6 @@ import SitePhpVersion from '../site-expanded-content/site-php-version';
 import SiteStatusContent from '../site-status-content';
 import SiteTableExpand from '../site-table-expand';
 import type { SiteData, SiteColumns } from '../types';
-
 import './style.scss';
 
 interface Props {
@@ -62,6 +62,8 @@ export default function SiteTableRow( { index, columns, item, setExpanded, isExp
 	const hasSiteConnectionError = ! isConnected;
 	const siteError = item.monitor.error || hasSiteConnectionError;
 	const isMostRecentJetpackConnectedSite = mostRecentConnectedSite === site.value.url;
+	const isUrlOnly = site?.value?.sticker?.includes( 'jetpack-manage-url-only-site' );
+
 	return (
 		<Fragment>
 			<tr
@@ -88,6 +90,20 @@ export default function SiteTableRow( { index, columns, item, setExpanded, isExp
 					if ( hasSiteConnectionError && column.key !== 'site' ) {
 						return null;
 					}
+
+					if ( isUrlOnly && ! [ 'site', 'monitor' ].includes( column.key ) ) {
+						return (
+							<td
+								className={ classNames( column.className, {
+									'site-table__td-is-url-only': isUrlOnly,
+								} ) }
+								key={ `table-data-${ row.type }-${ blogId }` }
+							>
+								<Icon className="site-table__empty-icon" icon={ lineSolid } />
+							</td>
+						);
+					}
+
 					const isCritical = 'critical' === row.status;
 					if ( row.type ) {
 						return (

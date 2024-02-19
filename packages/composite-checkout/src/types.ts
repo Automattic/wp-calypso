@@ -164,16 +164,11 @@ export type PaymentProcessorRedirect = {
 	type: PaymentProcessorResponseType.REDIRECT;
 	payload: string | undefined;
 };
-export type PaymentProcessorManual = {
-	type: PaymentProcessorResponseType.MANUAL;
-	payload: unknown;
-};
 
 export type PaymentProcessorResponse =
 	| PaymentProcessorError
 	| PaymentProcessorSuccess
-	| PaymentProcessorRedirect
-	| PaymentProcessorManual;
+	| PaymentProcessorRedirect;
 
 export type PaymentProcessorSubmitData = unknown;
 
@@ -184,7 +179,6 @@ export type PaymentProcessorFunction = (
 export enum PaymentProcessorResponseType {
 	SUCCESS = 'SUCCESS',
 	REDIRECT = 'REDIRECT',
-	MANUAL = 'MANUAL',
 	ERROR = 'ERROR',
 }
 

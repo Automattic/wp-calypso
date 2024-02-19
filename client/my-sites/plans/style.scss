@@ -25,7 +25,7 @@
 }
 
 body.is-section-plans {
-	.layout__content {
+	.layout:not(.has-no-sidebar) .layout__content {
 		@media (min-width: $break-small) {
 			padding: 79px 0 0 0 !important;
 		}

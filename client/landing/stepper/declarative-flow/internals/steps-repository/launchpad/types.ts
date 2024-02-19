@@ -39,7 +39,6 @@ export type TaskId =
 	| 'first_post_published'
 	| 'first_post_published_newsletter'
 	| 'subscribers_added'
-	| 'site_launched'
 	| 'plan_selected'
 	| 'plan_completed'
 	| 'newsletter_plan_created'
@@ -47,13 +46,11 @@ export type TaskId =
 	| 'link_in_bio_launched'
 	| 'migrate_content'
 	| 'links_added'
-	| 'site_launched'
 	| 'set_up_payments';
 
 export interface TaskContext {
 	tasks: Task[];
 	site: SiteDetails | null;
-	siteInfoQueryArgs?: { siteId?: number; siteSlug?: string | null };
 	checklistStatuses?: ChecklistStatuses;
 	isEmailVerified: boolean;
 	planCartItem?: MinimalRequestCartProduct | null;
@@ -62,9 +59,7 @@ export interface TaskContext {
 	siteSlug: string | null;
 	submit: NavigationControls[ 'submit' ];
 	displayGlobalStylesWarning: boolean;
-	shouldDisplayWarning: boolean;
 	globalStylesMinimumPlan: string;
-	isVideoPressFlowWithUnsupportedPlan: boolean;
 	translatedPlanName?: ReactNode | string;
 	goToStep?: NavigationControls[ 'goToStep' ];
 	stripeConnectUrl?: string;

@@ -27,7 +27,6 @@ import JetpackColophon from 'calypso/components/jetpack-colophon';
 import Main from 'calypso/components/main';
 import NavigationHeader from 'calypso/components/navigation-header';
 import memoizeLast from 'calypso/lib/memoize-last';
-import version_compare from 'calypso/lib/version-compare';
 import {
 	recordGoogleEvent,
 	recordTracksEvent,
@@ -38,7 +37,9 @@ import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import getCurrentRouteParameterized from 'calypso/state/selectors/get-current-route-parameterized';
 import isJetpackModuleActive from 'calypso/state/selectors/is-jetpack-module-active';
 import isPrivateSite from 'calypso/state/selectors/is-private-site';
+import isAtomicSite from 'calypso/state/selectors/is-site-wpcom-atomic';
 import { getJetpackStatsAdminVersion, isJetpackSite } from 'calypso/state/sites/selectors';
+import getEnvStatsFeatureSupportChecks from 'calypso/state/sites/selectors/get-env-stats-feature-supports';
 import { requestModuleSettings } from 'calypso/state/stats/module-settings/actions';
 import { getModuleSettings } from 'calypso/state/stats/module-settings/selectors';
 import { getModuleToggles } from 'calypso/state/stats/module-toggles/selectors';
@@ -199,15 +200,19 @@ class StatsSite extends Component {
 			date,
 			siteId,
 			slug,
+			isAtomic,
 			isJetpack,
 			isSitePrivate,
 			isOdysseyStats,
 			context,
 			moduleSettings,
-			statsAdminVersion,
+			supportsPlanUsage,
+			supportsEmailStats,
 		} = this.props;
 
 		let defaultPeriod = PAST_SEVEN_DAYS;
+
+		const shouldShowUpsells = isOdysseyStats && ! isAtomic;
 
 		// Set the current period based on the module settings.
 		// @TODO: Introduce the loading state to avoid flickering due to slow module settings request.
@@ -295,13 +300,6 @@ class StatsSite extends Component {
 				'stats__module-list--traffic-no-authors': this.isModuleHidden( 'authors' ),
 				'stats__module-list--traffic-no-videos': this.isModuleHidden( 'videos' ),
 			}
-		);
-
-		// The Plan Usage API endpoint would not be available for Odyssey Stats before Jetpack version `0.15.0-alpha`.
-		const isPlanUsageEnabled = !! (
-			config.isEnabled( 'stats/plan-usage' ) &&
-			( ! isOdysseyStats ||
-				( statsAdminVersion && version_compare( statsAdminVersion, '0.15.0-alpha', '>=' ) ) )
 		);
 
 		return (
@@ -453,7 +451,7 @@ class StatsSite extends Component {
 								showSummaryLink
 							/>
 						) }
-						{ ! isOdysseyStats && (
+						{ supportsEmailStats && (
 							<StatsModuleEmails period={ this.props.period } query={ query } />
 						) }
 						{
@@ -474,11 +472,11 @@ class StatsSite extends Component {
 						}
 					</div>
 				</div>
-				{ isPlanUsageEnabled && (
+				{ supportsPlanUsage && (
 					<StatsPlanUsage siteId={ siteId } isOdysseyStats={ isOdysseyStats } />
 				) }
-				{ /* Only load Jetpack Upsell Section for Odyssey Stats */ }
-				{ ! isOdysseyStats ? null : (
+				{ /* Only load Jetpack Upsell Section for Odyssey Stats excluding Atomic */ }
+				{ ! shouldShowUpsells ? null : (
 					<AsyncLoad require="calypso/my-sites/stats/jetpack-upsell-section" />
 				) }
 				<PromoCards isOdysseyStats={ isOdysseyStats } pageSlug="traffic" slug={ slug } />
@@ -613,9 +611,14 @@ export default connect(
 		const slug = getSelectedSiteSlug( state );
 		const upsellModalView =
 			config.isEnabled( 'stats/paid-wpcom-v2' ) && getUpsellModalView( state, siteId );
+		const { supportsPlanUsage, supportsEmailStats } = getEnvStatsFeatureSupportChecks(
+			state,
+			siteId
+		);
 
 		return {
 			canUserViewStats,
+			isAtomic: isAtomicSite( state, siteId ),
 			isJetpack,
 			isSitePrivate: isPrivateSite( state, siteId ),
 			siteId,
@@ -627,6 +630,8 @@ export default connect(
 			moduleToggles: getModuleToggles( state, siteId, 'traffic' ),
 			upsellModalView,
 			statsAdminVersion,
+			supportsEmailStats,
+			supportsPlanUsage,
 		};
 	},
 	{

@@ -36,7 +36,6 @@ export class RelatedPostsFlow implements BlockFlow {
 
 		if ( this.configurationData.headline ) {
 			await context.addedBlockLocator
-				.getByRole( 'document', { name: 'Block: Related Posts' } )
 				.getByRole( 'document', { name: 'Block: Heading' } )
 				.fill( this.configurationData.headline );
 		}

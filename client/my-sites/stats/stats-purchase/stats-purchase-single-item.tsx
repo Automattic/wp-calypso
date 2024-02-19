@@ -7,7 +7,7 @@ import React, { useState, useCallback } from 'react';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { useSelector } from 'calypso/state';
 import getIsSiteWPCOM from 'calypso/state/selectors/is-site-wpcom';
-import getSiteAdminUrl from 'calypso/state/sites/selectors/get-site-admin-url';
+import { isJetpackSite, getSiteAdminUrl } from 'calypso/state/sites/selectors';
 import useStatsPurchases from '../hooks/use-stats-purchases';
 import { StatsCommercialUpgradeSlider, getTierQuentity } from './stats-commercial-upgrade-slider';
 import gotoCheckoutPage from './stats-purchase-checkout-redirect';
@@ -75,6 +75,7 @@ interface StatsPersonalPurchaseProps {
 }
 
 interface StatsCommercialFlowOptOutFormProps {
+	siteId: number | null;
 	siteSlug: string;
 	isCommercial: boolean | null;
 }
@@ -309,7 +310,11 @@ const StatsSingleItemPagePurchase = ( {
 			</StatsSingleItemPagePurchaseFrame>
 			{ ! isCommercialOwned && (
 				<StatsSingleItemCard>
-					<StatsCommercialFlowOptOutForm isCommercial={ isCommercial } siteSlug={ siteSlug } />
+					<StatsCommercialFlowOptOutForm
+						isCommercial={ isCommercial }
+						siteId={ siteId }
+						siteSlug={ siteSlug }
+					/>
 				</StatsSingleItemCard>
 			) }
 		</>
@@ -318,10 +323,14 @@ const StatsSingleItemPagePurchase = ( {
 
 function StatsCommercialFlowOptOutForm( {
 	isCommercial,
+	siteId,
 	siteSlug,
 }: StatsCommercialFlowOptOutFormProps ) {
 	const translate = useTranslate();
 	const isOdysseyStats = config.isEnabled( 'is_running_in_jetpack_site' );
+	const isJetpackSupport: boolean = useSelector( ( state ) =>
+		Boolean( isJetpackSite( state, siteId, { treatAtomicAsJetpackSite: false } ) )
+	);
 
 	// Checkbox state
 	const [ isAdsChecked, setAdsChecked ] = useState( false );
@@ -339,9 +348,9 @@ function StatsCommercialFlowOptOutForm( {
 		const event_from = isOdysseyStats ? 'jetpack_odyssey' : 'calypso';
 		recordTracksEvent( `${ event_from }_stats_purchase_commercial_update_classification_clicked` );
 
-		const mailTo = isOdysseyStats ? 'support@jetpack.com' : 'help@wordpress.com';
-		const emailSubject = translate( 'Jetpack Stats Commercial Classification Dispute' );
-		const emailBody = `Hi Jetpack Team,\n
+		// No need to translate this as we'd prefer customer communication to be in English.
+		const subject = 'Jetpack Stats Commercial Classification Dispute';
+		const message = `Hi Jetpack Team,\n
 I'm writing to dispute the classification of my site '${ siteSlug }' as commercial.\n
 I can confirm that,
 - I don't have ads on my site.
@@ -350,11 +359,23 @@ I can confirm that,
 - I don't solicit donations or sponsorships on my site.\n
 Could you please take a look at my site and update the classification if necessary?\n
 Thanks\n\n`;
-		const emailHref = `mailto:${ mailTo }?subject=${ encodeURIComponent(
-			emailSubject
-		) }&body=${ encodeURIComponent( emailBody ) }`;
 
-		setTimeout( () => ( window.location.href = emailHref ), 250 );
+		// For Jetpack sites, link to https://jetpack.com/contact-support/ with pre-filled form.
+		if ( isJetpackSupport ) {
+			window.open(
+				`https://jetpack.com/contact-support/?assistant=false&url=${ siteSlug }&subject=${ encodeURIComponent(
+					subject
+				) }&message=${ encodeURIComponent( message ) }`
+			);
+			return;
+		}
+
+		// TODO: Assess whether this is appropriate escalation approach for Dotcom sites.
+		const mailTo = 'help@wordpress.com';
+		const emailHref = `mailto:${ mailTo }?subject=${ encodeURIComponent(
+			subject
+		) }&body=${ encodeURIComponent( message ) }`;
+		window.open( emailHref );
 	};
 
 	const isFormSubmissionDisabled = () => {

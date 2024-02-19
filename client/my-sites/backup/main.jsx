@@ -18,6 +18,7 @@ import QuerySiteProducts from 'calypso/components/data/query-site-products';
 import QuerySiteSettings from 'calypso/components/data/query-site-settings';
 import InlineSupportLink from 'calypso/components/inline-support-link';
 import BackupActionsToolbar from 'calypso/components/jetpack/backup-actions-toolbar';
+import BackupNowButton from 'calypso/components/jetpack/backup-now-button';
 import BackupPlaceholder from 'calypso/components/jetpack/backup-placeholder';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import Main from 'calypso/components/main';
@@ -96,7 +97,15 @@ const BackupPage = ( { queryDate } ) => {
 								},
 							}
 						) }
-					/>
+					>
+						<BackupNowButton
+							siteId={ siteId }
+							variant="primary"
+							trackEventName="calypso_jetpack_backup_now"
+						>
+							{ translate( 'Backup now' ) }
+						</BackupNowButton>
+					</NavigationHeader>
 				) }
 
 				<AdminContent selectedDate={ selectedDate } />

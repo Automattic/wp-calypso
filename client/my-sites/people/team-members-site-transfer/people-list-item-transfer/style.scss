@@ -1,0 +1,33 @@
+.people-list-item.card.is-compact {
+	border-bottom: 1px solid var(--color-neutral-0);
+	box-shadow: none;
+	display: flex;
+	overflow: hidden;
+	position: relative;
+
+	@include breakpoint-deprecated( ">480px" ) {
+		padding: 24px;
+	}
+
+	&:last-of-type {
+		border-bottom: none;
+	}
+
+	&:focus {
+		outline: 2px solid var(--color-primary-light);
+		z-index: z-index("root", ".people-list-item.card.is-compact:focus");
+	}
+}
+
+.people-list-item-transfer__profile-container {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	flex-grow: 1;
+	overflow: hidden;
+	cursor: pointer;
+}
+
+.people-list-item-transfer__action {
+	color: #3858e9;
+}

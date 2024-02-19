@@ -119,9 +119,6 @@ async function handlePaymentProcessorResponse(
 		setTransactionComplete( processorResponse.payload );
 		return processorResponse;
 	}
-	if ( processorResponse.type === PaymentProcessorResponseType.MANUAL ) {
-		return processorResponse;
-	}
 	throw new InvalidPaymentProcessorResponseError( paymentProcessorId );
 }
 

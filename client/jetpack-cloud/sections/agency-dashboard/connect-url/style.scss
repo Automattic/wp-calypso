@@ -7,7 +7,10 @@
 }
 
 .connect-url__file-picker {
-	display: block;
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	align-items: center;
 	width: 100%;
 	border: 1px dashed #ccc;
 	padding: 2rem 0;
@@ -37,26 +40,79 @@
 	font-size: 0.75rem;
 }
 
-.connect-url__validate-sites-spinner {
-	margin-right: 1rem;
+.connect-url__create-sites-list {
+	padding: 0;
+	margin: 0;
+	display: flex;
+}
+
+.connect-url__create-sites-list ul {
+	margin: 0;
+}
+
+.connect-url__create-sites-list li {
+	list-style-type: none;
+	padding: 0;
 	margin-bottom: 1rem;
 }
 
-.connect-url__validate-sites-spinner-animation {
-	transform-origin: center;
-	animation: spinner 0.6s linear infinite;
+.connect-url__create-sites-list li > svg {
+	margin-right: 1rem;
 }
 
-@keyframes spinner {
-	100% {
-		transform: rotate(360deg);
+.connect-url__create-sites-list-successful,
+.connect-url__create-sites-list-unsuccessful {
+	flex: 1;
+}
+
+.connect-url__create-sites-list-successful li > svg {
+	fill: var(--studio-jetpack-green-40);
+}
+
+.connect-url__create-sites-list-unsuccessful li > svg {
+	fill: var(--studio-red-40);
+}
+
+.connect-url__create-sites-quantity {
+	margin-bottom: 1rem;
+}
+
+.connect-url__create-sites-row {
+	display: flex;
+}
+
+.connect-url-csv-column-confirmation {
+	.card {
+		margin-bottom: 1px;
+	}
+
+	&__page-title {
+		margin-bottom: 0.5rem;
+	}
+
+	&__page-subtitle {
+		margin-bottom: 2rem;
 	}
 }
 
-.connect-url__validate-sites-quantity {
-	margin-bottom: 1rem;
+.connect-url-csv-column-confirmation__column-picker {
+	display: flex;
 }
 
-.connect-url__validate-sites-row {
+.connect-url__create-sites-progress {
 	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	padding: 24px;
+	min-height: 280px; // Not specified on, but trying to follow design
+
+	.connect-url__create-sites-progress-title {
+		margin-bottom: 0.5rem;
+		font-size: 2.25rem;
+	}
+
+	.connect-url__create-sites-progress-subtitle {
+		margin-bottom: 2rem;
+	}
 }
