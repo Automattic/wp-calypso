@@ -56,11 +56,11 @@ const ImportUsers = ( { site, onSubmit }: Props ) => {
 			number_of_invites: selectedUsers.length,
 		} );
 
-		await sendInvites( selectedUsers )
-			.then( ( response ) => {
+		try {
+			await sendInvites( selectedUsers ).then( ( response ) => {
 				return response;
-			} )
-			.catch( () => {} );
+			} );
+		} catch ( e ) {}
 
 		onSubmit?.();
 	};
