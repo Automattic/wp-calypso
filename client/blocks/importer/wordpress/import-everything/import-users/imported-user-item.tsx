@@ -38,10 +38,6 @@ const ImportedUserItem = ( {
 		let roleBadge;
 		let p2GuestBadge;
 
-		if ( ! user ) {
-			return null;
-		}
-
 		if ( user && user.is_super_admin ) {
 			superAdminBadge = (
 				<div className="imported-user-item__role role-super-admin">
@@ -96,7 +92,7 @@ const ImportedUserItem = ( {
 				<div className="imported-user-item__display-name">{ getNameOrEmail( user ) }</div>
 				<div className="imported-user-item__email">{ user.email }</div>
 			</div>
-			{ renderRole( user ) }
+			{ user && renderRole( user ) }
 		</CompactCard>
 	);
 };
