@@ -131,7 +131,7 @@ body.is-section-promote-post-i2 {
 		}
 
 		&__view-button {
-			@include blazepress-data-row-font-mobile;
+			@include blazepress-data-row-font-buttons-mobile;
 			background-color: #f6f7f7;
 			border-radius: 4px;
 			border: none;
@@ -140,7 +140,7 @@ body.is-section-promote-post-i2 {
 			width: 53px;
 			max-width: 53px;
 			line-height: 30px;
-			margin-right: 8px;
+			margin-right: 12px;
 			text-decoration: none;
 			text-align: center;
 			align-items: center;
@@ -240,7 +240,12 @@ body.is-section-promote-post-i2 {
 								@include blazepress-data-row-font-mobile;
 
 								display: block;
-								margin-bottom: 8px;
+								margin-bottom: 4px;
+							}
+
+							.post-item__post-subtitle-mobile {
+								@include blazepress-data-row-font-mobile;
+								display: block;
 							}
 
 							.post-item__post-title-content {

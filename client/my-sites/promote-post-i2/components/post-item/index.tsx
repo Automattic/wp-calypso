@@ -95,13 +95,13 @@ export default function PostItem( {
 							<span>{ titleShortened || __( 'Untitled' ) }</span>
 						</div>
 						{ isWooProduct ? (
-							<div className="post-item__post-subheading-mobile">
+							<div className="post-item__post-subtitle-mobile">
 								{ productPrice }
 								{ mobileStatsSeparator }
 								{ postDate }
 							</div>
 						) : (
-							<div className="post-item__post-subheading-mobile">
+							<div className="post-item__post-subtitle-mobile">
 								{ getPostType( post.type ) }
 								{ mobileStatsSeparator }
 								{ postDate }

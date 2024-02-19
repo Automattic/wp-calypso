@@ -19,6 +19,13 @@
 	line-height: 1.5;
 }
 
+@mixin blazepress-data-row-font-buttons-mobile {
+	color: var(--studio-gray-60);
+	font-size: 0.75rem;
+	font-weight: 500;
+	line-height: 1.5;
+}
+
 @mixin blazepress-data-row {
 	&data-row {
 		align-items: center;
