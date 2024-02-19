@@ -3,7 +3,7 @@ import { Card, FormLabel } from '@automattic/components';
 import { useHasEnTranslation } from '@automattic/i18n-utils';
 import styled from '@emotion/styled';
 import { useTranslate, localize } from 'i18n-calypso';
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { useDispatch } from 'react-redux';
 import CardHeading from 'calypso/components/card-heading';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
@@ -42,8 +42,8 @@ const SiteAdminInterfaceCard = ( { siteId } ) => {
 		dispatch( removeNotice( failureNoticeId ) );
 		dispatch( removeNotice( changeLoadingNoticeId ) );
 	};
-	const adminInterface = useSelector( ( state ) =>
-		getSiteOption( state, siteId, 'wpcom_admin_interface' )
+	const adminInterface = useSelector(
+		( state ) => getSiteOption( state, siteId, 'wpcom_admin_interface' ) || 'calypso'
 	);
 
 	const { setSiteInterface, isLoading: isUpdating } = useSiteInterfaceMutation( siteId, {
@@ -75,9 +75,7 @@ const SiteAdminInterfaceCard = ( { siteId } ) => {
 	} );
 
 	// Initialize the state with the value passed as a prop
-	const [ selectedAdminInterface, setSelectedAdminInterface ] = useState(
-		adminInterface ?? 'calypso'
-	);
+	const [ selectedAdminInterface, setSelectedAdminInterface ] = useState( adminInterface );
 
 	const handleInputChange = async ( value ) => {
 		dispatch(
@@ -88,12 +86,6 @@ const SiteAdminInterfaceCard = ( { siteId } ) => {
 		setSiteInterface( value );
 		setSelectedAdminInterface( value );
 	};
-
-	useEffect( () => {
-		if ( adminInterface ) {
-			setSelectedAdminInterface( adminInterface );
-		}
-	}, [ adminInterface ] );
 
 	return (
 		<Card>
