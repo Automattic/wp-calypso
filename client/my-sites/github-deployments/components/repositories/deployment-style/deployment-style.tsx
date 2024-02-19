@@ -1,5 +1,11 @@
-import { FoldableCard, FormLabel, Spinner } from '@automattic/components';
-import { Icon, SelectControl, Button } from '@wordpress/components';
+import {
+	Button,
+	FoldableCard,
+	FormInputValidation,
+	FormLabel,
+	Spinner,
+} from '@automattic/components';
+import { Icon, SelectControl } from '@wordpress/components';
 import { check, closeSmall } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
 import classNames from 'classnames';
@@ -30,6 +36,7 @@ export const DeploymentStyle = ( { onDefineStyle, onValidationChange }: Deployme
 	const [ triggeredOnPushStatus, setTriggeredOnPushStatus ] =
 		useState< WorkFlowStates >( 'loading' );
 	const [ uploadArtifactStatus, setUploadArtifactStatus ] = useState< WorkFlowStates >( 'loading' );
+	const [ errorMesseage, setErrorMesseage ] = useState( '' );
 
 	const handleDeploymentStyleChange = ( value: DeploymentStyle ) => {
 		setDeploymentStyle( value );
@@ -75,6 +82,7 @@ export const DeploymentStyle = ( { onDefineStyle, onValidationChange }: Deployme
 		if ( deploymentStyle === 'custom' ) {
 			setTriggeredOnPushStatus( 'loading' );
 			setUploadArtifactStatus( 'loading' );
+			setErrorMesseage( '' );
 
 			// Just to simulate a backend call
 			setTimeout( () => {
@@ -85,6 +93,9 @@ export const DeploymentStyle = ( { onDefineStyle, onValidationChange }: Deployme
 					setValidationTriggered( true );
 				}, 1000 );
 				setFechingWorkflows( true );
+				if ( status === 'error' ) {
+					setErrorMesseage( 'Please fix this error' );
+				}
 			}, 1000 );
 		}
 	}, [ deploymentStyle, selectedWorkflow ] );
@@ -203,6 +214,7 @@ export const DeploymentStyle = ( { onDefineStyle, onValidationChange }: Deployme
 						</FoldableCard>
 					</>
 				) }
+				{ errorMesseage && <FormInputValidation isError={ true } text={ errorMesseage } /> }
 				{ deploymentStyle === 'custom' && (
 					<div className="github-deployments-deployment-style__actions">
 						<Button type="button" className="button form-button">
@@ -210,6 +222,9 @@ export const DeploymentStyle = ( { onDefineStyle, onValidationChange }: Deployme
 						</Button>
 						<Button type="button" className="button form-button">
 							{ __( 'Fix workflow for me' ) }
+						</Button>
+						<Button type="button" className="button form-button">
+							{ __( 'Install workflow for me' ) }
 						</Button>
 					</div>
 				) }
