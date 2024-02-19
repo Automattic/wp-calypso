@@ -9,7 +9,6 @@ import Main from 'calypso/components/main';
 import NavigationHeader from 'calypso/components/navigation-header';
 import { SubscriberLaunchpad } from 'calypso/my-sites/subscribers/components/subscriber-launchpad';
 import { useSelector } from 'calypso/state';
-import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
 import { isJetpackSite, getSiteSlug, isSimpleSite } from 'calypso/state/sites/selectors';
 import getEnvStatsFeatureSupportChecks from 'calypso/state/sites/selectors/get-env-stats-feature-supports';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
@@ -54,14 +53,13 @@ const StatsSubscribersPage = ( { period }: StatsSubscribersPageProps ) => {
 		'subscribers-page'
 	);
 
-	// TODO: Pass subscribersTotals as props to SubscribersHighlightSection to avoid duplicate queries.
 	const { data: subscribersTotals, isLoading } = useSubscribersTotalsQueries( siteId );
 	const isSimple = useSelector( isSimpleSite );
-	const isAtomic = useSelector( ( state ) => isAtomicSite( state, siteId ) );
 	const hasNoSubscriberOtherThanAdmin =
 		! subscribersTotals?.total ||
 		( subscribersTotals?.total === 1 && subscribersTotals?.is_owner_subscribing );
-	const showLaunchpad = ! isLoading && ( isSimple || isAtomic ) && hasNoSubscriberOtherThanAdmin;
+	// The Launchpad only works for Simple sites.
+	const showLaunchpad = ! isLoading && isSimple && hasNoSubscriberOtherThanAdmin;
 
 	// Track the last viewed tab.
 	// Necessary to properly configure the fixed navigation headers.
