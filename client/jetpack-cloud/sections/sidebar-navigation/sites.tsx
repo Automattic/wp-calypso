@@ -20,7 +20,10 @@ const SitesSidebar = ( { path }: { path: string } ) => {
 		...props,
 		path: JETPACK_MANAGE_SITES_LINK_NEEDS_ATTENTION,
 		trackEventName: 'calypso_jetpack_sidebar_menu_click',
-		isSelected: props.link === path,
+		isSelected:
+			props.link === JETPACK_MANAGE_SITES_LINK_FAVORITES
+				? props.link === path.split( '?' )[ 0 ]
+				: props.link === path.split( '&' )[ 0 ],
 	} );
 
 	const menuItems = [

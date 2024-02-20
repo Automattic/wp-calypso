@@ -106,7 +106,7 @@ export default function SitesDashboardV2() {
 
 	useEffect( () => {
 		const arrayMap = [
-			'?issue_types=all_isues',
+			'?issue_types=all_issues',
 			'/favorites',
 			'?issue_types=backup_failed',
 			'?issue_types=backup_warning',
