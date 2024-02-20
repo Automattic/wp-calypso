@@ -1,10 +1,12 @@
 import { DataViews } from '@wordpress/dataviews';
+import { Icon, starFilled } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback } from 'react';
 import SiteActions from 'calypso/jetpack-cloud/sections/agency-dashboard/sites-overview/site-actions';
 import useFormattedSites from 'calypso/jetpack-cloud/sections/agency-dashboard/sites-overview/site-content/hooks/use-formatted-sites';
 import SiteStatusContent from 'calypso/jetpack-cloud/sections/agency-dashboard/sites-overview/site-status-content';
 import TextPlaceholder from 'calypso/jetpack-cloud/sections/partner-portal/text-placeholder';
+import SiteSetFavorite from '../site-set-favorite';
 import { AllowedTypes, SiteData } from '../types';
 import { SitesDataViewsProps } from './interfaces';
 
@@ -128,13 +130,21 @@ const SitesDataViews = ( {
 		},
 		{
 			id: 'favorite',
-			header: '★',
+			header: <Icon className="site-table__favorite-icon" size={ 24 } icon={ starFilled } />,
 			getValue: ( { item }: { item: SiteData } ) => item.isFavorite,
 			render: ( { item }: { item: SiteData } ) => {
 				if ( isLoading ) {
 					return <TextPlaceholder />;
 				}
-				return <div>{ item.isFavorite ? '★' : '☆' }</div>;
+				return (
+					<span className="sites-dataviews__favorite-btn-wrapper">
+						<SiteSetFavorite
+							isFavorite={ item.isFavorite || false }
+							siteId={ item.site.value.blog_id }
+							siteUrl={ item.site.value.url }
+						/>
+					</span>
+				);
 			},
 			enableHiding: false,
 			enableSorting: false,
