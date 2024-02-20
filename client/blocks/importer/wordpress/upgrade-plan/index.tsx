@@ -19,7 +19,7 @@ interface Props {
 	isBusy: boolean;
 	ctaText: string;
 	subTitleText?: string;
-	showTitleAndSubTitle?: boolean;
+	hideTitleAndSubTitle?: boolean;
 	navigateToVerifyEmailStep: () => void;
 	onCtaClick: () => void;
 	onContentOnlyClick?: () => void;
@@ -36,7 +36,7 @@ export const UpgradePlan: React.FunctionComponent< Props > = ( props: Props ) =>
 		onContentOnlyClick,
 		ctaText,
 		subTitleText,
-		showTitleAndSubTitle = true,
+		hideTitleAndSubTitle = false,
 		onCtaClick,
 		isBusy,
 		trackingEventsProps,
@@ -70,7 +70,7 @@ export const UpgradePlan: React.FunctionComponent< Props > = ( props: Props ) =>
 
 	return (
 		<div className="import__upgrade-plan">
-			{ showTitleAndSubTitle && (
+			{ ! hideTitleAndSubTitle && (
 				<div className="import__heading import__heading-center">
 					<Title>{ translate( 'Upgrade your plan' ) }</Title>
 					<SubTitle>
