@@ -335,7 +335,7 @@ class StatsSummary extends Component {
 				summaryView = (
 					<>
 						{ this.renderSummaryHeader( path, statType, false, moduleQuery ) }
-						<StatsModuleUTM period={ this.props.period } query={ moduleQuery } />
+						<StatsModuleUTM period={ this.props.period } query={ moduleQuery } summary />
 					</>
 				);
 				break;

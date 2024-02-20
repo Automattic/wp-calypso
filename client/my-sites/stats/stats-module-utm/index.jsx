@@ -3,7 +3,7 @@ import StatsModule2 from './stats-module';
 import { useMockData } from './useMockData';
 
 const StatsModuleUTM = ( props ) => {
-	const { period, query } = props;
+	const { period, query, summary = false } = props;
 	const moduleStrings = statsStrings();
 
 	// TODO: Use TanStack for API requests.
@@ -19,6 +19,7 @@ const StatsModuleUTM = ( props ) => {
 			statType="statsUTM"
 			showSummaryLink
 			moduleState={ moduleState }
+			summary={ summary }
 		/>
 	);
 };
