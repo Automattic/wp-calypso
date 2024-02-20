@@ -41,10 +41,10 @@ const mockUTMData = [
 ];
 
 async function fetchMockDataAsync() {
-	// Make an API request. This will fail without an API key but we don't care.
-	const response = await fetch( `https://api.api-ninjas.com/v1/loremipsum?paragraphs=4` );
-	const data = await response.json();
-	return data;
+	const fetchDelay = 4000;
+	// Simulate an API request so we can see the loading state.
+	await new Promise( ( r ) => setTimeout( r, fetchDelay ) );
+	return mockUTMData;
 }
 
 export function useMockData() {
@@ -53,10 +53,9 @@ export function useMockData() {
 
 	useEffect( () => {
 		async function fetchMockData() {
-			// eslint-disable-next-line no-unused-vars
 			const fetchedData = await fetchMockDataAsync();
 			setIsRequestingData( false );
-			setData( mockUTMData );
+			setData( fetchedData );
 		}
 		setIsRequestingData( true );
 		fetchMockData();
