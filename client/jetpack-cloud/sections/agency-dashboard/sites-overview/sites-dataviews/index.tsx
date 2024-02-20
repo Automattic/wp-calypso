@@ -50,7 +50,7 @@ const SitesDataViews = ( {
 			type: 'enumeration',
 			elements: [
 				{ value: 1, label: 'Needs Attention' },
-				{ value: 2, label: 'Favorite' },
+				{ value: 2, label: 'Favorites' },
 				{ value: 3, label: 'Backup Failed' },
 				{ value: 4, label: 'Backup Warning' },
 				{ value: 5, label: 'Threat Found' },
