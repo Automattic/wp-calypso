@@ -1,0 +1,287 @@
+@import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/mixins";
+
+.main.a4a-layout {
+	header.current-section {
+		button {
+			padding: 20px 8px;
+		}
+	}
+}
+
+.a4a-layout__container {
+	max-width: 100%;
+	min-height: calc(100vh - 123px);
+	display: flex;
+	flex-direction: column;
+	margin: auto;
+	padding: 0;
+}
+
+.a4a-layout__body {
+	width: 100%;
+	margin-block-end: -32px;
+	flex: 1 1 100%;
+
+	@include breakpoint-deprecated( ">660px" ) {
+		// We need these negative margin values because we want to make the container full-width,
+		// but our element is inside a limited-width parent.
+		margin-inline-start: -73px;
+		padding-inline: 73px;
+	}
+}
+
+.a4a-layout__top-wrapper,
+.a4a-layout__body-wrapper {
+	margin-inline: 0;
+
+	> * {
+		max-width: 1500px;
+		margin-inline: auto !important;
+	}
+}
+
+.main.a4a-layout.is-with-border {
+	@include breakpoint-deprecated( ">660px" ) {
+		.a4a-layout__top {
+			border-block-end: 1px solid var(--color-primary-5);
+		}
+
+		.a4a-layout__body {
+			background: rgba(255, 255, 255, 0.5);
+			padding-block: 16px;
+		}
+	}
+}
+
+.a4a-layout__header {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	margin: auto;
+	height: 100%;
+
+	> * + * {
+		margin-inline-start: 24px;
+	}
+
+	@include breakpoint-deprecated( "<1280px" ) {
+		flex-wrap: wrap;
+
+		> * {
+			width: 100%;
+		}
+
+		> * + * {
+			margin-inline-start: 0;
+		}
+	}
+}
+
+.a4a-layout__header.has-actions > .a4a-layout__header-main {
+	@include breakpoint-deprecated( "660px-1280px" ) {
+		margin-block-end: 16px;
+	}
+}
+
+.a4a-layout__sticky-header {
+	position: fixed;
+	width: calc(100%);
+	left: 0;
+	top: var(--masterbar-height);
+	background-color: rgba(246, 247, 247, 0.95);
+	box-shadow: 2px 2px 2px 0 rgb(0 0 0 / 8%);
+	z-index: 1001;
+	height: 74px;
+
+	.a4a-layout__header {
+		flex-wrap: nowrap;
+		max-width: 1500px;
+		padding-inline: 48px;
+
+		> * {
+			width: auto;
+		}
+	}
+
+	.a4a-layout__header-main,
+	.a4a-layout__header-actions {
+		margin: 0;
+	}
+
+	.a4a-layout__header-subtitle {
+		display: none;
+	}
+
+	.a4a-layout__header-title {
+		font-size: rem(24px);
+		margin-block-end: 0;
+		display: none;
+
+		@include break-large {
+			display: block;
+		}
+	}
+
+	@include breakpoint-deprecated( ">660px" ) {
+		width: calc(100% - var(--sidebar-width-min));
+		left: var(--sidebar-width-min);
+	}
+
+	@include breakpoint-deprecated( ">960px" ) {
+		width: calc(100% - var(--sidebar-width-max));
+		left: var(--sidebar-width-max);
+	}
+}
+
+.a4a-layout__header-breadcrumb {
+	margin-block-end: 4px;
+}
+
+.a4a-layout__header-title {
+	font-size: 2.25rem;
+	margin-block-end: 8px;
+	font-weight: 600;
+	line-height: 1.2;
+}
+
+.a4a-layout__header-subtitle {
+	font-size: 1rem;
+	color: var(--studio-gray-60);
+	margin: 0;
+	font-weight: 400;
+	line-height: 1.2;
+}
+
+.section-nav.a4a-layout__navigation {
+	margin-block-start: 16px;
+
+	.section-nav__mobile-header-text .count {
+		margin-inline-start: 8px;
+	}
+
+	.select-dropdown__item.is-selected .count {
+		color: var(--color-text);
+	}
+
+	.select-dropdown__header {
+		border-width: 0;
+
+		.count {
+			top: 12.5px;
+		}
+
+		@include breakpoint-deprecated( ">660px" ) {
+			border-width: 1px;
+		}
+	}
+
+	.section-nav-tabs.is-dropdown {
+		width: 100%;
+		margin: 0 0 1px 0;
+
+		@include breakpoint-deprecated( ">660px" ) {
+			margin-block-end: 12px;
+		}
+	}
+
+	.select-dropdown__options {
+		margin-inline: -1px;
+	}
+
+	.section-nav-tabs__dropdown .select-dropdown__container {
+		max-width: unset;
+		width: 100%;
+	}
+
+	.section-nav-tabs__dropdown {
+		// Since the search below the dropdown has z-index: 22,
+		// we need to make sure the dropdown is above it
+		z-index: 23;
+	}
+
+	@include breakpoint-deprecated( ">960px" ) {
+		margin-block-start: 32px;
+	}
+}
+
+
+.a4a-layout__stepper {
+	display: flex;
+	justify-content: flex-start;
+	align-items: center;
+	margin-block: 16px 32px;
+}
+
+.a4a-layout__stepper-step {
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+
+	.a4a-layout__stepper-step-circle {
+		width: 20px;
+		height: 20px;
+		display: flex;
+		border-radius: 50%;
+		justify-content: center;
+		align-content: center;
+		align-items: center;
+		font-size: 0.75rem;
+	}
+
+	.a4a-layout__stepper-step-name {
+		margin-left: 0.5rem;
+		white-space: nowrap;
+	}
+
+	.a4a-layout__viewport {
+		margin-inline-start: 0;
+	}
+
+	&.is-current > .a4a-layout__stepper-step-circle {
+		background-color: var(--studio-gray-60);
+		border: 2px solid var(--studio-gray-60);
+		color: var(--studio-white);
+	}
+
+	&.is-next > .a4a-layout__stepper-step-circle {
+		border: 2px solid var(--studio-gray-60);
+		color: var(--studio-gray-80);
+	}
+
+	&.is-complete > .a4a-layout__stepper-step-circle {
+		background-color: var(--color-primary-50);
+		border: 2px solid var(--color-primary-50);
+		color: var(--studio-white);
+	}
+
+	&.is-next > .a4a-layout__stepper-step-name {
+		display: none;
+
+		@include break-medium {
+			display: flex;
+		}
+	}
+
+	&.is-complete > .a4a-layout__stepper-step-name,
+	&.is-complete > .a4a-layout__stepper-step-circle,
+	&.is-complete + .a4a-layout__stepper-step-separator {
+		display: none;
+
+		@include break-medium {
+			display: flex;
+		}
+	}
+}
+
+.a4a-layout__stepper-step-separator {
+	border: 1px solid var(--studio-gray-80);
+	width: 20px;
+	height: 0;
+	margin: 0 0.75rem;
+
+	@include break-medium {
+		width: 40px;
+		margin: 0 1.25rem;
+	}
+}
