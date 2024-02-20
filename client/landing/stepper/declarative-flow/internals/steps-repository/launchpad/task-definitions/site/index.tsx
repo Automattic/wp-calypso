@@ -15,7 +15,6 @@ import { translate } from 'i18n-calypso';
 import { ONBOARD_STORE, SITE_STORE } from 'calypso/landing/stepper/stores';
 import { goToCheckout } from 'calypso/landing/stepper/utils/checkout';
 import { isDomainUpsellCompleted } from '../../task-helper';
-import { recordTaskClickTracksEvent } from '../../tracking';
 import { TaskAction, TaskContext } from '../../types';
 
 const getCompletedTasks = ( tasks: Task[] ): Record< string, boolean > =>
@@ -112,7 +111,6 @@ const completeLaunchSiteTask = async ( task: Task, flow: string, context: TaskCo
 		await launchSite( site.ID );
 		// Waits for half a second so that the loading screen doesn't flash away too quickly
 		await new Promise( ( res ) => setTimeout( res, 500 ) );
-		recordTaskClickTracksEvent( task, flow, context );
 
 		return {
 			siteSlug,
