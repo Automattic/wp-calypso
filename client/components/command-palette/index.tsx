@@ -7,8 +7,11 @@ import { cleanForSlug } from '@wordpress/url';
 import classnames from 'classnames';
 import { Command, useCommandState } from 'cmdk';
 import { useEffect, useState, useRef, useMemo, useCallback } from 'react';
+import { connect } from 'react-redux';
 import { useDispatch, useSelector } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import { openCommandPalette, closeCommandPalette } from 'calypso/state/command-palette/actions';
+import { isCommandPaletteOpen } from 'calypso/state/command-palette/selectors';
 import { getCurrentRoutePattern } from 'calypso/state/selectors/get-current-route-pattern';
 import { COMMAND_SEPARATOR, useCommandFilter } from './use-command-filter';
 import { CommandCallBackParams, useCommandPalette } from './use-command-palette';
@@ -239,13 +242,13 @@ const CommandPalette = () => {
 	const [ placeHolderOverride, setPlaceholderOverride ] = useState( '' );
 	const [ search, setSearch ] = useState( '' );
 	const [ selectedCommandName, setSelectedCommandName ] = useState( '' );
-	const [ isOpen, setIsOpen ] = useState( false );
 	const [ footerMessage, setFooterMessage ] = useState( '' );
 	const [ emptyListNotice, setEmptyListNotice ] = useState( '' );
+	const isOpen = useSelector( ( state: object ) => isCommandPaletteOpen( state ) );
 	const currentRoute = useSelector( ( state: object ) => getCurrentRoutePattern( state ) );
 	const dispatch = useDispatch();
 	const open = useCallback( () => {
-		setIsOpen( true );
+		dispatch( openCommandPalette() );
 		dispatch(
 			recordTracksEvent( 'calypso_hosting_command_palette_open', {
 				current_route: currentRoute,
@@ -254,6 +257,7 @@ const CommandPalette = () => {
 	}, [ dispatch, currentRoute ] );
 	const close = useCallback< CommandMenuGroupProps[ 'close' ] >(
 		( commandName = '', isExecuted = false ) => {
+			dispatch( closeCommandPalette() );
 			dispatch(
 				recordTracksEvent( 'calypso_hosting_command_palette_close', {
 					// For nested commands the command.name would be the siteId
@@ -264,7 +268,6 @@ const CommandPalette = () => {
 					is_executed: isExecuted,
 				} )
 			);
-			setIsOpen( false );
 		},
 		[ currentRoute, dispatch, search, selectedCommandName ]
 	);
@@ -397,4 +400,4 @@ const CommandPalette = () => {
 	);
 };
 
-export default CommandPalette;
+export default connect( null, { openCommandPalette, closeCommandPalette } )( CommandPalette );
