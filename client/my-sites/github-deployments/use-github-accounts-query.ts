@@ -4,11 +4,14 @@ import { GITHUB_DEPLOYMENTS_QUERY_KEY } from './constants';
 
 const fetchAccounts = (): GitHubAccountData[] =>
 	wp.req.get( {
-		path: `/hosting/github/accounts`,
+		path: `/hosting/github/installations`, // @todo Change the references to this endpoint
 		apiNamespace: 'wpcom/v2',
 	} );
 
-const GITHUB_DEPLOYMENTS_ACCOUNTS_QUERY_KEY = [ GITHUB_DEPLOYMENTS_QUERY_KEY, 'github-accounts' ];
+const GITHUB_DEPLOYMENTS_ACCOUNTS_QUERY_KEY = [
+	GITHUB_DEPLOYMENTS_QUERY_KEY,
+	'github-installations',
+];
 
 export interface GitHubAccountData {
 	account_name: string;
