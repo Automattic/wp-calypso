@@ -45,7 +45,7 @@ const Row = styled.tr`
 	border-block-end: 1px solid #eee;
 `;
 
-const Column = styled.td< { tabletHidden?: boolean; laptopHidden: boolean } >`
+const Column = styled.td< { tabletHidden?: boolean } >`
 	padding-block-start: 12px;
 	padding-block-end: 12px;
 	padding-inline-end: 24px;
@@ -61,10 +61,6 @@ const Column = styled.td< { tabletHidden?: boolean; laptopHidden: boolean } >`
 	${ MEDIA_QUERIES.hideTableRows } {
 		${ ( props ) => props.tabletHidden && 'display: none;' };
 		padding-inline-end: 0;
-	}
-
-	${ MEDIA_QUERIES.hideTableRows } {
-		${ ( props ) => props.laptopHidden && 'display: none;' };
 	}
 
 	.stats-sparkline__bar {
