@@ -16,10 +16,11 @@ const siteMigration: Flow = {
 
 	useSteps() {
 		return [
-			STEPS.IMPORT,
+			STEPS.SITE_MIGRATION_SOURCE,
+			STEPS.SITE_MIGRATION_PLUGIN_INSTALL,
+			STEPS.PROCESSING,
 			STEPS.WAIT_FOR_ATOMIC,
 			STEPS.WAIT_FOR_PLUGIN_INSTALL,
-			STEPS.PROCESSING,
 			STEPS.SITE_MIGRATION_INSTRUCTIONS,
 			STEPS.ERROR,
 		];
@@ -122,7 +123,6 @@ const siteMigration: Flow = {
 		const siteSlugParam = useSiteSlugParam();
 
 		const { getSiteIdBySlug } = useSelect( ( select ) => select( SITE_STORE ) as SiteSelect, [] );
-
 		const exitFlow = ( to: string ) => {
 			window.location.assign( to );
 		};
@@ -134,31 +134,46 @@ const siteMigration: Flow = {
 			const siteId = getSiteIdBySlug( siteSlug );
 
 			switch ( currentStep ) {
-				case 'import': {
-					return navigate( 'waitForAtomic', { siteId, siteSlug } );
+				case STEPS.SITE_MIGRATION_SOURCE.slug: {
+					return navigate( STEPS.SITE_MIGRATION_PLUGIN_INSTALL.slug, {
+						siteId,
+						siteSlug,
+					} );
 				}
 
-				case 'processing': {
+				case STEPS.SITE_MIGRATION_PLUGIN_INSTALL.slug: {
+					if ( providedDependencies?.error ) {
+						return navigate( STEPS.ERROR.slug );
+					}
+
+					return navigate( STEPS.SITE_MIGRATION_INSTRUCTIONS.slug );
+				}
+
+				case STEPS.PROCESSING.slug: {
+					if ( providedDependencies?.error ) {
+						return navigate( STEPS.ERROR.slug );
+					}
+
 					if ( providedDependencies?.finishedWaitingForAtomic ) {
-						return navigate( 'waitForPluginInstall', { siteId, siteSlug } );
+						return navigate( STEPS.WAIT_FOR_PLUGIN_INSTALL.slug, { siteId, siteSlug } );
 					}
 
 					if ( providedDependencies?.pluginsInstalled ) {
-						return navigate( 'site-migration-instructions' );
+						return navigate( STEPS.SITE_MIGRATION_INSTRUCTIONS.slug );
 					}
 				}
 
-				case 'waitForAtomic': {
-					return navigate( 'processing', {
+				case STEPS.WAIT_FOR_ATOMIC.slug: {
+					return navigate( STEPS.PROCESSING.slug, {
 						currentStep,
 					} );
 				}
 
-				case 'waitForPluginInstall': {
-					return navigate( 'processing' );
+				case STEPS.WAIT_FOR_PLUGIN_INSTALL.slug: {
+					return navigate( STEPS.PROCESSING.slug );
 				}
 
-				case 'site-migration-instructions': {
+				case STEPS.SITE_MIGRATION_INSTRUCTIONS.slug: {
 					return exitFlow( `/home/${ siteSlug }` );
 				}
 			}
