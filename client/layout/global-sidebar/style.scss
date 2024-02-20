@@ -19,6 +19,8 @@ $brand-text: "SF Pro Text", $sans;
 		position: relative;
 
 		&::after {
+			height: 20px;
+			line-height: 20px;
 			background: var(--studio-white);
 			border-radius: 4px;
 			bottom: -30px;
@@ -49,7 +51,7 @@ $brand-text: "SF Pro Text", $sans;
 			right: unset;
 			bottom: unset;
 			left: 0;
-			top: -30px;
+			top: -35px;
 		}
 	}
 
