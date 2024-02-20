@@ -84,9 +84,8 @@ const BlockSettings: FunctionComponent<
 			return;
 		}
 
-		const normalizedDomain = value.replace( NORMALIZE_DOMAIN_REGEX, '$1' );
-		if ( VALIDATE_DOMAIN_REGEX.test( normalizedDomain ) ) {
-			setAttributes( { affiliateLink: normalizedDomain } );
+		if ( VALIDATE_DOMAIN_REGEX.test( value ) ) {
+			setAttributes( { affiliateLink: value } );
 		}
 	};
 

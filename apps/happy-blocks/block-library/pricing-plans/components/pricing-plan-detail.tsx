@@ -44,7 +44,7 @@ const PricingPlanDetail: FunctionComponent< BlockSaveProps< BlockAttributes > & 
 	}
 
 	if ( attributes.affiliateLink ) {
-		CtaLink = attributes.affiliateLink;
+		CtaLink = `${ PLANS_URL }/?aff=${ attributes.affiliateLink }`;
 	}
 
 	return (
