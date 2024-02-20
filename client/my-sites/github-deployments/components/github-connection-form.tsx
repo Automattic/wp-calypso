@@ -119,6 +119,10 @@ export const GitHubConnectionForm = ( {
 			<div className="github-deployments-connect-repository__deployment-style">
 				<FormFieldset>
 					<DeploymentStyle
+						branchName={ branch }
+						installationId={ account.external_id }
+						repositoryId={ repository.id }
+						onChooseWorkflow={ () => {} }
 						onValidationChange={ ( status ) => {
 							if ( status === 'success' ) {
 								setSubmitDisabled( false );

@@ -27,7 +27,10 @@ import {
 import './style.scss';
 
 interface DeploymentStyleProps {
-	onDefineStyle?( style: string ): void;
+	installationId: number;
+	repositoryId: number;
+	branchName: string;
+	onChooseWorkflow?( workflowFilename: string ): void;
 	onValidationChange?( status: WorkFlowStates ): void;
 }
 interface WorkflowsValidationItem {
@@ -39,14 +42,25 @@ interface WorkflowsValidationItem {
 
 type DeploymentStyle = 'simple' | 'custom';
 
-export const DeploymentStyle = ( { onDefineStyle, onValidationChange }: DeploymentStyleProps ) => {
+export const DeploymentStyle = ( {
+	installationId,
+	repositoryId,
+	branchName,
+	onChooseWorkflow,
+	onValidationChange,
+}: DeploymentStyleProps ) => {
 	const dispatch = useDispatch();
+	const [ deploymentStyle, setDeploymentStyle ] = useState< DeploymentStyle >( 'simple' );
+	const [ selectedWorkflow, setSelectedWorkflow ] = useState( 'none' );
+	const [ isCreatingNewWorkflow, setIsCreatingNewWorkflow ] = useState( false );
+	const [ validationTriggered, setValidationTriggered ] = useState( false );
+	const [ errorMesseage, setErrorMesseage ] = useState( '' );
 
-	const installationId = 123;
-	const repositoryId = 123;
 	const { data: workflows, isLoading: isFetchingWorkflows } = useDeploymentWorkflowsQuery(
 		installationId,
-		repositoryId
+		repositoryId,
+		branchName,
+		deploymentStyle
 	);
 
 	const workflowsForRendering = useMemo( () => {
@@ -60,15 +74,10 @@ export const DeploymentStyle = ( { onDefineStyle, onValidationChange }: Deployme
 		return mappedValues.concat( { value: 'create-new', label: __( 'Create new workflow' ) } );
 	}, [ workflows ] );
 
-	const [ deploymentStyle, setDeploymentStyle ] = useState< DeploymentStyle >( 'simple' );
-	const [ selectedWorkflow, setSelectedWorkflow ] = useState( 'none' );
-	const [ isCreatingNewWorkflow, setIsCreatingNewWorkflow ] = useState( false );
-	const [ validationTriggered, setValidationTriggered ] = useState( false );
-	const [ errorMesseage, setErrorMesseage ] = useState( '' );
-
 	const { isLoading: isCheckingWorkflowFile, data: workflowCheckResult } = useCheckWorkflowQuery(
 		installationId,
 		repositoryId,
+		branchName,
 		selectedWorkflow
 	);
 
@@ -135,8 +144,9 @@ export const DeploymentStyle = ( { onDefineStyle, onValidationChange }: Deployme
 		setDeploymentStyle( value );
 	};
 
-	const handleWorkflowChange = ( value: string ) => {
-		setSelectedWorkflow( value );
+	const handleWorkflowChange = ( workflowFilename: string ) => {
+		setSelectedWorkflow( workflowFilename );
+		onChooseWorkflow?.( workflowFilename );
 	};
 
 	const handleVerifyWorkflow = () => {
@@ -185,14 +195,12 @@ export const DeploymentStyle = ( { onDefineStyle, onValidationChange }: Deployme
 	}, [ workflowCheckResult ] );
 
 	useEffect( () => {
-		onDefineStyle?.( deploymentStyle );
-
 		if ( deploymentStyle === 'simple' ) {
 			onValidationChange?.( 'success' );
 		} else {
 			onValidationChange?.( workflowCheckResult?.conclusion || 'loading' );
 		}
-	}, [ onDefineStyle, onValidationChange, deploymentStyle, workflowCheckResult ] );
+	}, [ onValidationChange, deploymentStyle, workflowCheckResult ] );
 
 	useEffect( () => {
 		if ( deploymentStyle === 'custom' && selectedWorkflow === 'create-new' ) {

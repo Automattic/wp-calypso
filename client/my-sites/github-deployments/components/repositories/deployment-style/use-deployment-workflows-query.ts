@@ -23,15 +23,19 @@ export interface WorkflowsValidation {
 export const useDeploymentWorkflowsQuery = (
 	installationId: number,
 	repositoryId: number,
+	branchName: string,
+	deploymentStyle: string,
 	options?: Partial< UseQueryOptions< Workflows[] > >
 ) => {
 	const path = addQueryArgs( '/hosting/github/workflows', {
 		installation_id: installationId,
 		repository_id: repositoryId,
+		branch_name: branchName,
 	} );
 
 	return useQuery< Workflows[] >( {
 		queryKey: [ GITHUB_DEPLOYMENTS_QUERY_KEY, CODE_DEPLOYMENTS_QUERY_KEY, path ],
+		enabled: !! installationId && !! repositoryId && !! branchName && deploymentStyle !== 'simple',
 		queryFn: (): Workflows[] =>
 			wp.req.get( {
 				path,
@@ -47,12 +51,14 @@ export const useDeploymentWorkflowsQuery = (
 export const useCheckWorkflowQuery = (
 	installationId: number,
 	repositoryId: number,
+	branchName: string,
 	workflowFilename: string
 ) => {
 	const invalidFilenames = [ 'none', 'create-new' ];
 	const path = addQueryArgs( '/hosting/github/workflows/checks', {
 		installation_id: installationId,
 		repository_id: repositoryId,
+		branch_name: branchName,
 		workflow_filename: workflowFilename,
 	} );
 
