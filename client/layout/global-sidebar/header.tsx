@@ -24,5 +24,3 @@ export const GlobalSidebarHeader = () => {
 		</div>
 	);
 };
-
-export default GlobalSidebarHeader;

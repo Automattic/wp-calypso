@@ -9,7 +9,7 @@ import { Command, useCommandState } from 'cmdk';
 import { useEffect, useState, useRef, useMemo, useCallback } from 'react';
 import { useDispatch, useSelector } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
-import { openCommandPalette, closeCommandPalette } from 'calypso/state/command-palette/actions';
+import { closeCommandPalette } from 'calypso/state/command-palette/actions';
 import { isCommandPaletteOpen } from 'calypso/state/command-palette/selectors';
 import { getCurrentRoutePattern } from 'calypso/state/selectors/get-current-route-pattern';
 import { COMMAND_SEPARATOR, useCommandFilter } from './use-command-filter';
@@ -241,13 +241,15 @@ const CommandPalette = () => {
 	const [ placeHolderOverride, setPlaceholderOverride ] = useState( '' );
 	const [ search, setSearch ] = useState( '' );
 	const [ selectedCommandName, setSelectedCommandName ] = useState( '' );
+	const [ isOpenLocal, setIsOpenLocal ] = useState( false );
+	const isOpenGlobal = useSelector( ( state: object ) => isCommandPaletteOpen( state ) );
+	const isOpen = isOpenLocal || isOpenGlobal;
 	const [ footerMessage, setFooterMessage ] = useState( '' );
 	const [ emptyListNotice, setEmptyListNotice ] = useState( '' );
-	const isOpen = useSelector( ( state: object ) => isCommandPaletteOpen( state ) );
 	const currentRoute = useSelector( ( state: object ) => getCurrentRoutePattern( state ) );
 	const dispatch = useDispatch();
 	const open = useCallback( () => {
-		dispatch( openCommandPalette() );
+		setIsOpenLocal( true );
 		dispatch(
 			recordTracksEvent( 'calypso_hosting_command_palette_open', {
 				current_route: currentRoute,
@@ -256,6 +258,7 @@ const CommandPalette = () => {
 	}, [ dispatch, currentRoute ] );
 	const close = useCallback< CommandMenuGroupProps[ 'close' ] >(
 		( commandName = '', isExecuted = false ) => {
+			setIsOpenLocal( false );
 			dispatch( closeCommandPalette() );
 			dispatch(
 				recordTracksEvent( 'calypso_hosting_command_palette_close', {
