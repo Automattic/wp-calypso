@@ -146,7 +146,8 @@ function getJetpackLegacyUpgradeErrorMessage( {
 			<a
 				href={
 					localizeUrl( JETPACK_CONTACT_SUPPORT ) +
-					'&assistant=false&subject=legacy-upgrade' +
+					'&assistant=false&subject=' +
+					encodeURIComponent( 'Help with Jetpack Legacy Upgrade' ) +
 					( selectedSiteSlug ? '&url=' + selectedSiteSlug : '' )
 				}
 				target="_blank"
