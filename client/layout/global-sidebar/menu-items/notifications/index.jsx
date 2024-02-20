@@ -22,6 +22,7 @@ class SidebarNotifications extends Component {
 		//connected
 		isNotificationsOpen: PropTypes.bool,
 		hasUnseenNotifications: PropTypes.bool,
+		tooltip: TranslatableString,
 	};
 
 	notificationLink = createRef();

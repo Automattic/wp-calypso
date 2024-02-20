@@ -16,7 +16,6 @@ export const GlobalSidebarHeader = () => {
 			<span className="gap"></span>
 			<SidebarSearch tooltip={ translate( 'Jump to …' ) } />
 			<SidebarNotifications
-				isShowing={ false }
 				isActive={ true }
 				className="sidebar__item-notifications"
 				tooltip={ translate( 'Notifications' ) }
