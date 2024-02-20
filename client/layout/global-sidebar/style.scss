@@ -240,11 +240,11 @@ $brand-text: "SF Pro Text", $sans;
 		background: var(--color-sidebar-menu-hover-background);
 		flex: unset;
 		padding: 0;
-		margin: 0 12px;
+		margin: 16px 12px;
 		border-radius: 4px;
 
 		a.site__content {
-			padding: 16px 12px;
+			padding: 12px;
 		}
 		&.is-selected,
 		&:hover {
