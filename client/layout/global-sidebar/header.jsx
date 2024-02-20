@@ -14,7 +14,7 @@ export const GlobalSidebarHeader = () => {
 				<span className="dotcom"></span>
 			</a>
 			<span className="gap"></span>
-			<SidebarSearch tooltip={ translate( 'Jump to...' ) } />
+			<SidebarSearch tooltip={ translate( 'Jump to…' ) } />
 			<SidebarNotifications
 				isShowing={ false }
 				isActive={ true }
