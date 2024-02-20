@@ -147,7 +147,7 @@
 
 .a4a-layout__header-subtitle {
 	font-size: 1rem;
-	color: var(--studio-gray-60);
+	color: var(--color-neutral-60);
 	margin: 0;
 	font-weight: 400;
 	line-height: 1.2;
@@ -239,20 +239,20 @@
 	}
 
 	&.is-current > .a4a-layout__stepper-step-circle {
-		background-color: var(--studio-gray-60);
-		border: 2px solid var(--studio-gray-60);
-		color: var(--studio-white);
+		background-color: var(--color-neutral-60);
+		border: 2px solid var(--color-neutral-60);
+		color: var(--color-text-inverted);
 	}
 
 	&.is-next > .a4a-layout__stepper-step-circle {
-		border: 2px solid var(--studio-gray-60);
-		color: var(--studio-gray-80);
+		border: 2px solid var(--color-neutral-60);
+		color: var(--color-neutral-80);
 	}
 
 	&.is-complete > .a4a-layout__stepper-step-circle {
 		background-color: var(--color-primary-50);
 		border: 2px solid var(--color-primary-50);
-		color: var(--studio-white);
+		color: var(--color-text-inverted);
 	}
 
 	&.is-next > .a4a-layout__stepper-step-name {
@@ -275,7 +275,7 @@
 }
 
 .a4a-layout__stepper-step-separator {
-	border: 1px solid var(--studio-gray-80);
+	border: 1px solid var(--color-neutral-80);
 	width: 20px;
 	height: 0;
 	margin: 0 0.75rem;
