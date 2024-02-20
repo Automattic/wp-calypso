@@ -1,5 +1,5 @@
-import StatsModule from '../stats-module';
 import statsStrings from '../stats-strings';
+import StatsModule2 from './stats-module';
 import { useMockData } from './useMockData';
 
 const StatsModuleUTM = ( props ) => {
@@ -10,7 +10,7 @@ const StatsModuleUTM = ( props ) => {
 	const moduleState = useMockData();
 
 	return (
-		<StatsModule
+		<StatsModule2
 			className="stats-module-utm"
 			path="utm"
 			moduleStrings={ moduleStrings.utm }
