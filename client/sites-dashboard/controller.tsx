@@ -117,7 +117,7 @@ function sitesDashboard( context: PageJSContext, next: () => void ) {
 
 			.layout__content {
 				// The page header background extends all the way to the edge of the screen
-				padding-inline: 0;
+				// padding-inline: 0;
 
 				// Prevents the status dropdown from being clipped when the page content
 				// isn't tall enough
@@ -133,7 +133,7 @@ function sitesDashboard( context: PageJSContext, next: () => void ) {
 			@media only screen and ( min-width: 782px ) {
 				div.layout.is-global-sidebar-visible {
 					.layout__primary {
-						margin-left: var( --sidebar-width-max );
+						padding-top: 32px;
 					}
 				}
 			}

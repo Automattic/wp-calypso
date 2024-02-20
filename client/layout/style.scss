@@ -46,6 +46,10 @@ body.is-focus-sites {
 	box-sizing: border-box;
 	overflow: hidden;
 
+	.has-no-masterbar & {
+		padding: 79px 0 32px var(--sidebar-width-max);
+	}
+
 	// Various screens dont use a sidebar.
 	.has-no-sidebar & {
 		padding-left: 32px;
@@ -378,7 +382,8 @@ body.is-mobile-app-view {
 	.layout__content {
 		padding-top: 32px;
 	}
-	&.has-no-sidebar .layout__content {
+	&.has-no-sidebar .layout__content,
+	&.has-no-masterbar .layout__content {
 		padding-top: 0;
 	}
 }
