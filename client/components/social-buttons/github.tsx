@@ -103,14 +103,6 @@ const GitHubLoginButton = ( {
 	};
 
 	useEffect( () => {
-		// This feature is already gated inside client/blocks/authentication/social/index.tsx
-		// Adding an extra check here to prevent accidental inclusions in other parts of the app
-		if ( ! config.isEnabled( 'login/github' ) ) {
-			return;
-		}
-	} );
-
-	useEffect( () => {
 		if ( socialServiceResponse ) {
 			responseHandler( socialServiceResponse );
 		}
@@ -156,6 +148,12 @@ const GitHubLoginButton = ( {
 		};
 
 		customButton = cloneElement( children as ReactElement, childProps );
+	}
+
+	// This feature is already gated inside client/blocks/authentication/social/index.tsx
+	// Adding an extra check here to prevent accidental inclusions in other parts of the app
+	if ( ! config.isEnabled( 'login/github' ) ) {
+		return;
 	}
 
 	return (
