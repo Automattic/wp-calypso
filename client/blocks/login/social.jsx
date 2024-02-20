@@ -155,7 +155,7 @@ class SocialLoginForm extends Component {
 
 	getRedirectUri = ( service ) => {
 		const host = typeof window !== 'undefined' && window.location.host;
-		if ( window.location.hostname === 'calypso.localhost' ) {
+		if ( typeof window !== 'undefined' && window.location.hostname === 'calypso.localhost' ) {
 			return `http://${ host }${ login( { socialService: service } ) }`;
 		}
 		return `https://${ host }${ login( { socialService: service } ) }`;
