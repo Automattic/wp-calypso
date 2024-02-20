@@ -32,14 +32,14 @@ export const DeploymentsListItem = ( { deployment }: DeploymentsListItemProps ) 
 		deployment.id
 	);
 
-	const [ account, repo ] = deployment.repository_name.split( '/' );
+	const [ installation, repo ] = deployment.repository_name.split( '/' );
 
 	return (
 		<tr>
 			<td>
 				<div className="github-deployments-list__repository-details">
 					{ repo }
-					<span>{ account }</span>
+					<span>{ installation }</span>
 				</div>
 			</td>
 			<td>

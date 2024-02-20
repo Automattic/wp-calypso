@@ -3,7 +3,7 @@ import { addQueryArgs } from '@wordpress/url';
 import wp from 'calypso/lib/wp';
 import { GITHUB_DEPLOYMENTS_QUERY_KEY } from './constants';
 
-export const GITHUB_ACCOUNTS_QUERY_KEY = 'github-repository-branches';
+const GITHUB_BRANCHES_QUERY_KEY = 'github-repository-branches';
 
 export const useGithubRepositoryBranchesQuery = (
 	installationId: number,
@@ -13,7 +13,7 @@ export const useGithubRepositoryBranchesQuery = (
 	return useQuery< string[] >( {
 		queryKey: [
 			GITHUB_DEPLOYMENTS_QUERY_KEY,
-			GITHUB_ACCOUNTS_QUERY_KEY,
+			GITHUB_BRANCHES_QUERY_KEY,
 			installationId,
 			repositoryOwner,
 			repositoryName,
