@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { useExperiment } from 'calypso/lib/explat';
 import ReskinSideExplainer from '../reskin-side-explainer';
 
