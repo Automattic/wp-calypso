@@ -1,4 +1,4 @@
-import { Icon, wordpress } from '@wordpress/icons';
+import { Icon, wordpress, external } from '@wordpress/icons';
 import { LocalizeProps } from 'i18n-calypso';
 import { FC } from 'react';
 import AsyncLoad from 'calypso/components/async-load';
@@ -75,6 +75,7 @@ export const GlobalSiteSidebarFooter: FC< {
 			>
 				<Icon icon={ wordpress } className="wpicon" />
 				{ translate( 'WP Admin' ) }
+				<Icon icon={ external } className="external" />
 			</a>
 		</SidebarFooter>
 	);
