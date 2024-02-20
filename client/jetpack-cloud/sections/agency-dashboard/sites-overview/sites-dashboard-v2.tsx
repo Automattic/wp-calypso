@@ -106,14 +106,14 @@ export default function SitesDashboardV2() {
 
 	useEffect( () => {
 		const arrayMap = [
-			'?issue_type=all_isues',
+			'?issue_types=all_isues',
 			'/favorites',
-			'?issue_type=backup_failed',
-			'?issue_type=backup_warning',
-			'?issue_type=threats_found',
-			'?issue_type=site_disconnected',
-			'?issue_type=site_down',
-			'?issue_type=plugin_updates',
+			'?issue_types=backup_failed',
+			'?issue_types=backup_warning',
+			'?issue_types=threats_found',
+			'?issue_types=site_disconnected',
+			'?issue_types=site_down',
+			'?issue_types=plugin_updates',
 		];
 		// loop through the arrayMap and check that the filter value is not in the URL and the filter is selected,
 		// before redirecting to the correct filter page.
