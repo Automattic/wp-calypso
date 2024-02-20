@@ -1,6 +1,6 @@
 .schedule-form {
 	& > div {
-		min-width: 350px;
+		width: 100%;
 	}
 
 	.components-datetime__time {
@@ -9,5 +9,38 @@
 
 	.components-radio-control__input {
 		padding: 0;
+	}
+
+	.checkbox-options {
+		padding: 1.5rem;
+		border: solid 1px var(--color-border);
+		border-radius: 2px;
+	}
+
+	.form-field {
+		margin-bottom: 3rem;
+
+		&:last-child {
+			margin-bottom: 0;
+		}
+
+		& > label {
+			display: inline-block;
+			margin-bottom: 0.5rem;
+		}
+
+		label {
+			font-size: 0.875rem;
+			font-weight: 500;
+		}
+	}
+
+	.radio-option {
+		padding: 1.5rem;
+
+		&.selected {
+			border: solid 1px var(--color-primary);
+			border-radius: 2px;
+		}
 	}
 }
