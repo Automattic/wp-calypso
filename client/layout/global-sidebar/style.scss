@@ -40,6 +40,13 @@ $brand-text: "SF Pro Text", $sans;
 		}
 	}
 
+	.tooltip-bottom-left {
+		&::after {
+			left: 0;
+			right: unset;
+		}
+	}
+
 	.tooltip-top {
 		&::after {
 			right: unset;
