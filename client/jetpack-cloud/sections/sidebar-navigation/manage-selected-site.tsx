@@ -39,6 +39,7 @@ import {
 	JETPACK_CLOUD_ACTIVITY_LOG_LINK,
 	JETPACK_CLOUD_SEARCH_LINK,
 	JETPACK_CLOUD_SOCIAL_LINK,
+	JETPACK_CLOUD_SUBSCRIBERS_LINK,
 } from './lib/constants';
 
 const useMenuItems = ( {
@@ -130,6 +131,15 @@ const useMenuItems = ( {
 					trackEventName: 'calypso_jetpack_sidebar_social_clicked',
 					enabled: isAdmin && isSectionNameEnabled( 'jetpack-social' ) && ! isWPForTeamsSite,
 					isSelected: itemLinkMatches( path, `${ JETPACK_CLOUD_SOCIAL_LINK }/${ siteSlug }` ),
+				},
+				{
+					icon: <JetpackIcons icon="wordpress" size={ 24 } />,
+					path: '/',
+					link: `${ JETPACK_CLOUD_SUBSCRIBERS_LINK }/${ siteSlug }`,
+					title: translate( 'Subscribers' ),
+					trackEventName: 'calypso_jetpack_sidebar_subscribers_clicked',
+					enabled: isAdmin && isSectionNameEnabled( 'jetpack-subscribers' ) && ! isWPForTeamsSite,
+					isSelected: itemLinkMatches( path, `${ JETPACK_CLOUD_SUBSCRIBERS_LINK }/${ siteSlug }` ),
 				},
 				{
 					icon: settings,

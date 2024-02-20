@@ -95,6 +95,7 @@
 		"jetpack-cloud-golden-token": true,
 		"jetpack-search": true,
 		"jetpack-social": true,
+		"jetpack-subscribers": true,
 		"scan": true,
 		"site-purchases": true
 	},
