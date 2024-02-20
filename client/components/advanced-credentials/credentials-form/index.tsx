@@ -455,7 +455,7 @@ const ServerCredentialsForm: FunctionComponent< Props > = ( {
 						placeholder={ translate( 'example.com' ) }
 						value={ formState.host }
 						onChange={ handleFormChange }
-						disabled={ true }
+						disabled={ disabled }
 						isError={
 							formErrors.host && ( interactions.host || ! formErrors.host.waitForInteraction )
 						}
