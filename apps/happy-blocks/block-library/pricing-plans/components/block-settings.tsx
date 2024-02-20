@@ -23,6 +23,7 @@ interface Props {
 const NORMALIZE_DOMAIN_REGEX = /(?:^http(?:s)?:)?(?:[/]*)(?:www\.)?([^/?]*)(?:.*)$/gi;
 const VALIDATE_DOMAIN_REGEX =
 	/^(([A-Za-z0-9](?:[A-Za-z0-9-]{0,61}[A-Za-z0-9])?)\.)+([A-Za-z0-9](?:[A-Za-z0-9-]{0,61}[A-Za-z0-9])?)$/;
+const VALIDATE_AFFILIATE_REGEX = /^https:\/\/automattic\.pxf\.io\/.+/;
 
 const BlockSettings: FunctionComponent<
 	Pick< BlockEditProps< BlockAttributes >, 'attributes' | 'setAttributes' > & Props
@@ -79,14 +80,12 @@ const BlockSettings: FunctionComponent<
 	const onAffiliateChange = ( value: string ) => {
 		setNewAffiliateLinkInputValue( value );
 
-		if ( ! value ) {
+		if ( ! value || ! VALIDATE_AFFILIATE_REGEX.test( value ) ) {
 			setAttributes( { affiliateLink: false } );
 			return;
 		}
 
-		if ( VALIDATE_DOMAIN_REGEX.test( value ) ) {
-			setAttributes( { affiliateLink: value } );
-		}
+		setAttributes( { affiliateLink: value } );
 	};
 
 	return (

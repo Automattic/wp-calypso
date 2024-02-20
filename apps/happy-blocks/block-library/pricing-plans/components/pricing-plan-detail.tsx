@@ -34,6 +34,8 @@ const PricingPlanDetail: FunctionComponent< BlockSaveProps< BlockAttributes > & 
 		recordTracksEvent( 'calypso_happyblocks_upgrade_plan_click', {
 			plan: currentPlan.productSlug,
 			domain: attributes.domain,
+			isAffiliateLink: attributes.affiliateLink !== false,
+			affiliateLink: attributes.affiliateLink,
 		} );
 	};
 
@@ -44,7 +46,7 @@ const PricingPlanDetail: FunctionComponent< BlockSaveProps< BlockAttributes > & 
 	}
 
 	if ( attributes.affiliateLink ) {
-		CtaLink = `${ PLANS_URL }/?aff=${ attributes.affiliateLink }`;
+		CtaLink = attributes.affiliateLink;
 	}
 
 	return (
