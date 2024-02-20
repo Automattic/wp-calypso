@@ -60,7 +60,9 @@ const SitesDataViews = ( {
 		},
 		{
 			id: 'site',
-			header: <span>{ translate( 'SITE' ) }</span>,
+			header: (
+				<span className="sites-dataview__site-header">{ translate( 'Site' ).toUpperCase() }</span>
+			),
 			getValue: ( { item }: { item: SiteData } ) => item.site.value.url,
 			render: ( { item }: { item: SiteData } ) => {
 				if ( isLoading ) {
@@ -82,7 +84,7 @@ const SitesDataViews = ( {
 		},
 		{
 			id: 'stats',
-			header: <span>STATS</span>,
+			header: <span className="sites-dataview__stats-header">STATS</span>,
 			getValue: () => 'Stats status',
 			render: ( { item }: { item: SiteData } ) => renderField( 'stats', item ),
 			enableHiding: false,
@@ -90,7 +92,7 @@ const SitesDataViews = ( {
 		},
 		{
 			id: 'boost',
-			header: <span>BOOST</span>,
+			header: <span className="sites-dataview__boost-header">BOOST</span>,
 			getValue: ( { item }: { item: SiteData } ) => item.boost.status,
 			render: ( { item }: { item: SiteData } ) => renderField( 'boost', item ),
 			enableHiding: false,
@@ -98,7 +100,7 @@ const SitesDataViews = ( {
 		},
 		{
 			id: 'backup',
-			header: <span>BACKUP</span>,
+			header: <span className="sites-dataview__backup-header">BACKUP</span>,
 			getValue: () => 'Backup status',
 			render: ( { item }: { item: SiteData } ) => renderField( 'backup', item ),
 			enableHiding: false,
@@ -106,7 +108,7 @@ const SitesDataViews = ( {
 		},
 		{
 			id: 'monitor',
-			header: <span>MONITOR</span>,
+			header: <span className="sites-dataview__monitor-header">MONITOR</span>,
 			getValue: () => 'Monitor status',
 			render: ( { item }: { item: SiteData } ) => renderField( 'monitor', item ),
 			enableHiding: false,
@@ -114,7 +116,7 @@ const SitesDataViews = ( {
 		},
 		{
 			id: 'scan',
-			header: <span>SCAN</span>,
+			header: <span className="sites-dataview__scan-header">SCAN</span>,
 			getValue: () => 'Scan status',
 			render: ( { item }: { item: SiteData } ) => renderField( 'scan', item ),
 			enableHiding: false,
@@ -122,7 +124,7 @@ const SitesDataViews = ( {
 		},
 		{
 			id: 'plugins',
-			header: <span>PLUGINS</span>,
+			header: <span className="sites-dataview__plugins-header">PLUGINS</span>,
 			getValue: () => 'Plugins status',
 			render: ( { item }: { item: SiteData } ) => renderField( 'plugin', item ),
 			enableHiding: false,
@@ -130,7 +132,13 @@ const SitesDataViews = ( {
 		},
 		{
 			id: 'favorite',
-			header: <Icon className="site-table__favorite-icon" size={ 24 } icon={ starFilled } />,
+			header: (
+				<Icon
+					className="site-table__favorite-icon sites-dataview__favorites-header"
+					size={ 24 }
+					icon={ starFilled }
+				/>
+			),
 			getValue: ( { item }: { item: SiteData } ) => item.isFavorite,
 			render: ( { item }: { item: SiteData } ) => {
 				if ( isLoading ) {
@@ -151,7 +159,7 @@ const SitesDataViews = ( {
 		},
 		{
 			id: 'actions',
-			header: <span>{ translate( 'ACTIONS' ) }</span>,
+			header: <span className="sites-dataview__actions-header">{ translate( 'ACTIONS' ) }</span>,
 			getValue: ( { item }: { item: SiteData } ) => item.isFavorite,
 			render: ( { item }: { item: SiteData } ) => {
 				if ( isLoading ) {
