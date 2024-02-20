@@ -134,9 +134,10 @@ const StatsBenefitsPersonal = () => {
 				<li>{ translate( 'Detailed statistics about links leading to your site' ) }</li>
 				<li>{ translate( 'GDPR compliance' ) }</li>
 				{ /** TODO: check sub price for validation -  will need support added to use-stats-purchases hook */ }
-				<li>{ translate( 'Priority support' ) }</li>
+				<li>{ translate( 'Email support' ) }</li>
 			</ul>
 			<ul className={ `${ COMPONENT_CLASS_NAME }__benefits--not-included` }>
+				<li>{ translate( 'No access to upcoming advanced features' ) }</li>
 				<li>{ translate( 'No commercial use' ) }</li>
 			</ul>
 		</div>
@@ -155,8 +156,8 @@ const StatsBenefitsFree = () => {
 				<li>{ translate( 'GDPR compliance' ) }</li>
 			</ul>
 			<ul className={ `${ COMPONENT_CLASS_NAME }__benefits--not-included` }>
-				<li>{ translate( 'No access to upcoming features' ) }</li>
-				<li>{ translate( 'No priority support' ) }</li>
+				<li>{ translate( 'No access to upcoming advanced features' ) }</li>
+				<li>{ translate( 'No Email support (supported by forum)' ) }</li>
 				<li>{ translate( 'No commercial use' ) }</li>
 			</ul>
 		</div>
