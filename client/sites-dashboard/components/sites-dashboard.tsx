@@ -58,7 +58,6 @@ const PageHeader = styled.div( {
 
 	backgroundColor: 'var( --studio-white )',
 
-	paddingBlockStart: '24px',
 	paddingBlockEnd: '24px',
 
 	[ MEDIA_QUERIES.mediumOrSmaller ]: {
