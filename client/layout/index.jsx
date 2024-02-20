@@ -47,7 +47,7 @@ import {
 } from 'calypso/state/ui/selectors';
 import BodySectionCssClass from './body-section-css-class';
 import LayoutLoader from './loader';
-import { handleScroll } from './utils';
+import { handleScroll, handleScrollGlobalSidebar } from './utils';
 
 // goofy import for environment badge, which is SSR'd
 import 'calypso/components/environment-badge/style.scss';
@@ -63,30 +63,35 @@ import './style.scss';
 
 const HELP_CENTER_STORE = HelpCenter.register();
 
-function SidebarScrollSynchronizer() {
+function SidebarScrollSynchronizer( { isGlobalSidebarOrGlobalSiteSidebar } ) {
 	const isNarrow = useBreakpoint( '<660px' );
-	const active =
-		! isNarrow &&
-		! config.isEnabled( 'jetpack-cloud' ) && // Jetpack cloud hasn't yet aligned with WPCOM.
-		! config.isEnabled( 'layout/dotcom-nav-redesign' ); // Dotcom nav redesign is not yet aligned with WPCOM - the handleScroll function is not yet compatible with the new layout.
+	const active = ! isNarrow && ! config.isEnabled( 'jetpack-cloud' ); // Jetpack cloud hasn't yet aligned with WPCOM.
 
 	useEffect( () => {
 		if ( active ) {
-			window.addEventListener( 'scroll', handleScroll );
-			window.addEventListener( 'resize', handleScroll );
+			if ( isGlobalSidebarOrGlobalSiteSidebar ) {
+				window.addEventListener( 'scroll', handleScrollGlobalSidebar );
+			} else {
+				window.addEventListener( 'scroll', handleScroll );
+				window.addEventListener( 'resize', handleScroll );
+			}
 		}
 
 		return () => {
 			if ( active ) {
-				window.removeEventListener( 'scroll', handleScroll );
-				window.removeEventListener( 'resize', handleScroll );
+				if ( isGlobalSidebarOrGlobalSiteSidebar ) {
+					window.removeEventListener( 'scroll', handleScrollGlobalSidebar );
+				} else {
+					window.removeEventListener( 'scroll', handleScroll );
+					window.removeEventListener( 'resize', handleScroll );
+				}
 
 				// remove style attributes added by `handleScroll`
 				document.getElementById( 'content' )?.removeAttribute( 'style' );
 				document.getElementById( 'secondary' )?.removeAttribute( 'style' );
 			}
 		};
-	}, [ active ] );
+	}, [ active, isGlobalSidebarOrGlobalSiteSidebar ] );
 
 	return null;
 }
@@ -276,7 +281,12 @@ class Layout extends Component {
 					loadHelpCenter={ loadHelpCenter }
 					currentRoute={ this.props.currentRoute }
 				/>
-				<SidebarScrollSynchronizer layoutFocus={ this.props.currentLayoutFocus } />
+				<SidebarScrollSynchronizer
+					layoutFocus={ this.props.currentLayoutFocus }
+					isGlobalSidebarOrGlobalSiteSidebar={
+						this.props.isGlobalSidebarVisible || this.props.isGlobalSiteSidebarVisible
+					}
+				/>
 				<SidebarOverflowDelay layoutFocus={ this.props.currentLayoutFocus } />
 				<BodySectionCssClass
 					layoutFocus={ this.props.currentLayoutFocus }
