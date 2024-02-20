@@ -167,9 +167,11 @@ class Plans extends Component {
 	};
 
 	componentDidMount() {
-		const { selectedSite } = this.props;
+		const { currentPlan, selectedSite } = this.props;
 		this.redirectIfInvalidPlanInterval();
-		this.props.fetchSitePlans( selectedSite.ID );
+		if ( ! currentPlan && selectedSite ) {
+			this.props.fetchSitePlans( selectedSite.ID );
+		}
 
 		if ( this.props.isDomainAndPlanPackageFlow ) {
 			document.body.classList.add( 'is-domain-plan-package-flow' );
