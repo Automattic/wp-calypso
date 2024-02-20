@@ -122,7 +122,7 @@
 	width: 0; // Firefox needs explicit width (even 0)
 	flex: 1 0 auto;
 	text-align: initial;
-	margin-top: -3px;
+	margin-top: -2px;
 }
 
 .site__title {
@@ -139,7 +139,7 @@
 	max-width: 95%;
 	font-size: $font-body-extra-small;
 	line-height: 1.4;
-	margin-top: 2px;
+	margin-top: -1px;
 }
 
 .site__title-with-chevron-icon {
