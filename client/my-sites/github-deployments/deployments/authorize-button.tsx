@@ -7,7 +7,7 @@ import SocialLogo from 'calypso/components/social-logo';
 import { useDispatch } from 'calypso/state';
 import { postLoginRequest } from 'calypso/state/login/utils';
 import { errorNotice } from 'calypso/state/notices/actions';
-import { useGithubAccountsQuery } from '../use-github-accounts-query';
+import { useGithubInstallationsQuery } from '../use-github-installations-query';
 import { openPopup } from '../utils/open-popup';
 import { useSaveGitHubCredentialsMutation } from './use-save-github-credentials-mutation';
 
@@ -21,7 +21,7 @@ export const GitHubAuthorizeButton = () => {
 	const { __ } = useI18n();
 	const dispatch = useDispatch();
 
-	const { isLoading, isRefetching, refetch } = useGithubAccountsQuery();
+	const { isLoading, isRefetching, refetch } = useGithubInstallationsQuery();
 	const { saveGitHubCredentials } = useSaveGitHubCredentialsMutation();
 
 	const [ isAuthorizing, setIsAuthorizing ] = useState( false );

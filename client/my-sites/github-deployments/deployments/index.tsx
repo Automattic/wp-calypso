@@ -6,7 +6,7 @@ import { GitHubLoadingPlaceholder } from '../components/loading-placeholder';
 import { PageShell } from '../components/page-shell';
 import { GitHubBrowseRepositories } from '../components/repositories/browse-repositories';
 import { createDeploymentPage } from '../routes';
-import { useGithubAccountsQuery } from '../use-github-accounts-query';
+import { useGithubInstallationsQuery } from '../use-github-installations-query';
 import { GitHubAuthorizeButton } from './authorize-button';
 import { GitHubAuthorizeCard } from './authorize-card';
 import { ConnectionWizardButton } from './connection-wizard-button';
@@ -20,14 +20,14 @@ export function GitHubDeployments() {
 	const siteSlug = useSelector( getSelectedSiteSlug );
 	const { __ } = useI18n();
 
-	const { data: accounts, isLoading: isLoadingAccounts } = useGithubAccountsQuery();
+	const { data: installations, isLoading: isLoadingInstallations } = useGithubInstallationsQuery();
 	const { data: deployments } = useCodeDeploymentsQuery( siteId );
 
-	const hasConnectedAnAccount = accounts && accounts.length > 0;
+	const hasConnectedAnInstallation = installations && installations.length > 0;
 	const hasDeployments = deployments && deployments.length > 0;
 
 	const renderTopRightButton = () => {
-		if ( hasConnectedAnAccount && hasDeployments ) {
+		if ( hasConnectedAnInstallation && hasDeployments ) {
 			return (
 				<ConnectionWizardButton
 					onClick={ () => {
@@ -37,7 +37,7 @@ export function GitHubDeployments() {
 			);
 		}
 
-		if ( hasDeployments && ! hasConnectedAnAccount ) {
+		if ( hasDeployments && ! hasConnectedAnInstallation ) {
 			return <GitHubAuthorizeButton />;
 		}
 
@@ -49,7 +49,7 @@ export function GitHubDeployments() {
 			return <GitHubDeploymentsList deployments={ deployments } />;
 		}
 
-		if ( accounts ) {
+		if ( installations ) {
 			return (
 				<GitHubBrowseRepositories
 					onSelectRepository={ ( installation, repository ) => {
@@ -64,7 +64,7 @@ export function GitHubDeployments() {
 			);
 		}
 
-		if ( ! accounts && ! isLoadingAccounts ) {
+		if ( ! installations && ! isLoadingInstallations ) {
 			return <GitHubAuthorizeCard />;
 		}
 
