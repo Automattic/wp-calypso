@@ -34,7 +34,7 @@ export const GlobalSidebarFooter: FC< {
 		<SidebarFooter>
 			<a
 				href="/read"
-				className="sidebar__footer-link tooltip tooltip-top"
+				className="sidebar__footer-link sidebar__footer-reader tooltip tooltip-top"
 				title={ translate( 'Reader' ) }
 				data-tooltip={ translate( 'Reader' ) }
 			>
@@ -42,7 +42,7 @@ export const GlobalSidebarFooter: FC< {
 			</a>
 			<a
 				href="/me"
-				className="sidebar__footer-link tooltip tooltip-top"
+				className="sidebar__footer-link sidebar__footer-profile tooltip tooltip-top"
 				title={ translate( 'Profile' ) }
 				data-tooltip={ translate( 'Profile' ) }
 			>
