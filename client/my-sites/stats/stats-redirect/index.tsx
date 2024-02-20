@@ -1,19 +1,11 @@
 import config from '@automattic/calypso-config';
 import page from '@automattic/calypso-router';
-import { useEffect, useState, ReactNode } from 'react';
-import { useDispatch } from 'react-redux';
+import { ReactNode } from 'react';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
-import {
-	fetchNoticesAsync,
-	processConflictNotices,
-} from 'calypso/my-sites/stats/hooks/use-notice-visibility-query';
+import { useNoticeVisibilityQuery } from 'calypso/my-sites/stats/hooks/use-notice-visibility-query';
 import { useSelector } from 'calypso/state';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import { isJetpackSite, getSiteOption, getSiteSlug } from 'calypso/state/sites/selectors';
-import {
-	requestStatNoticeSettings,
-	receiveStatNoticeSettings,
-} from 'calypso/state/stats/notices/actions';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import useStatsPurchases from '../hooks/use-stats-purchases';
 import StatsLoader from './stats-loader';
@@ -23,9 +15,6 @@ interface StatsRedirectFlowProps {
 }
 
 const StatsRedirectFlow: React.FC< StatsRedirectFlowProps > = ( { children } ) => {
-	const [ isRequestingNotices, setIsRequestingNotices ] = useState( false );
-	const [ purchaseNotPostponed, setPurchaseNotPostponed ] = useState( false );
-
 	const siteId = useSelector( getSelectedSiteId );
 	const siteSlug = useSelector( ( state ) => getSiteSlug( state, siteId ) );
 	const siteCreatedTimeStamp = useSelector( ( state ) =>
@@ -38,7 +27,7 @@ const StatsRedirectFlow: React.FC< StatsRedirectFlowProps > = ( { children } ) =
 		isPWYWOwned,
 		isCommercialOwned,
 		supportCommercialUse,
-		isRequestingSitePurchases,
+		hasLoadedSitePurchases,
 	} = useStatsPurchases( siteId );
 
 	const isSiteJetpackNotAtomic = useSelector( ( state ) =>
@@ -52,30 +41,13 @@ const StatsRedirectFlow: React.FC< StatsRedirectFlowProps > = ( { children } ) =
 		canCurrentUser( state, siteId, 'view_stats' )
 	);
 
-	// TODO: Investigate useNoticeVisibilityQuery.
-	// Tempoararily moved away from this to fix a page refresh bug.
-	/*
-	const { isFetching: isRequestingNotices, data: purchaseNotPostponed } = useNoticeVisibilityQuery(
+	const { isLoading: isLoadingNotices, data: purchaseNotPostponed } = useNoticeVisibilityQuery(
 		siteId,
 		'focus_jetpack_purchase',
 		canUserManageOptions
 	);
-	*/
 
-	// Fetch notice state via direct API request.
-	useEffect( () => {
-		async function fetchNotices() {
-			const notices = await fetchNoticesAsync( siteId );
-			const processedNotices = processConflictNotices( notices );
-			setIsRequestingNotices( false );
-			setPurchaseNotPostponed( processedNotices?.focus_jetpack_purchase );
-		}
-		setIsRequestingNotices( true );
-		fetchNotices();
-	}, [ siteId ] );
-
-	// in Calypso `isRequestingSitePurchases` is constantly looping requesting and not requesting
-	const isFetching = isRequestingSitePurchases || isRequestingNotices;
+	const isLoading = ! hasLoadedSitePurchases || isLoadingNotices;
 	const hasPlan = isFreeOwned || isPWYWOwned || isCommercialOwned || supportCommercialUse;
 	const qualifiedUser =
 		siteCreatedTimeStamp && new Date( siteCreatedTimeStamp ) > new Date( '2024-01-31' );
@@ -88,23 +60,8 @@ const StatsRedirectFlow: React.FC< StatsRedirectFlowProps > = ( { children } ) =
 		purchaseNotPostponed &&
 		qualifiedUser;
 
-	const dispatch = useDispatch();
-
-	useEffect( () => {
-		if ( isFetching ) {
-			// when react-query is fetching data
-			dispatch( requestStatNoticeSettings( siteId ) );
-		} else {
-			dispatch(
-				receiveStatNoticeSettings( siteId, {
-					focus_jetpack_purchase: purchaseNotPostponed,
-				} )
-			);
-		}
-	}, [ dispatch, redirectToPurchase, siteId, isFetching, purchaseNotPostponed ] );
-
 	// render purchase flow for Jetpack sites created after February 2024
-	if ( ! isFetching && redirectToPurchase && siteSlug ) {
+	if ( ! isLoading && redirectToPurchase && siteSlug ) {
 		// We need to ensure we pass the irclick id for impact affiliate tracking if its set.
 		const currentParams = new URLSearchParams( window.location.search );
 		const queryParams = new URLSearchParams();
@@ -125,9 +82,9 @@ const StatsRedirectFlow: React.FC< StatsRedirectFlowProps > = ( { children } ) =
 		);
 
 		return null;
-	} else if ( ! isFetching || ( canUserViewStats && ! canUserManageOptions ) ) {
+	} else if ( ! isLoading || ( canUserViewStats && ! canUserManageOptions ) ) {
 		return <>{ children }</>;
-	} else if ( isFetching ) {
+	} else if ( isLoading ) {
 		return <StatsLoader />;
 	}
 
