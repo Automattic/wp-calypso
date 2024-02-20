@@ -122,3 +122,21 @@
 		line-height: 20px; /* 153.846% */
 	}
 }
+
+.github-deployments-delete-deployment-dialog {
+	max-width: 560px;
+
+	p,
+	.components-toggle-control__label {
+		font-size: $font-body-small;
+	}
+
+	p {
+		line-height: 20px;
+	}
+
+	.components-form-toggle,
+	.components-toggle-control__label {
+		line-height: 1;
+	}
+}
