@@ -237,14 +237,22 @@ $brand-text: "SF Pro Text", $sans;
 	}
 
 	.site {
+		background: var(--color-sidebar-menu-hover-background);
 		flex: unset;
+		padding: 0;
+		margin: 16px 12px;
+		border-radius: 4px;
 
-		&.is-selected {
-			background: var(--color-sidebar-menu-selected-background);
+		a.site__content {
+			padding: 12px;
 		}
-
+		&.is-selected,
 		&:hover {
-			background: var(--color-sidebar-menu-hover-background);
+			background: var(--color-sidebar-menu-selected-background);
+
+			.site__domain {
+				color: var(--color-sidebar-menu-selected-text);
+			}
 		}
 	}
 
