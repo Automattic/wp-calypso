@@ -19,6 +19,7 @@ interface Props {
 	isBusy: boolean;
 	ctaText: string;
 	subTitleText?: string;
+	showTitleAndSubTitle?: boolean;
 	navigateToVerifyEmailStep: () => void;
 	onCtaClick: () => void;
 	onContentOnlyClick?: () => void;
@@ -35,6 +36,7 @@ export const UpgradePlan: React.FunctionComponent< Props > = ( props: Props ) =>
 		onContentOnlyClick,
 		ctaText,
 		subTitleText,
+		showTitleAndSubTitle = true,
 		onCtaClick,
 		isBusy,
 		trackingEventsProps,
@@ -68,28 +70,33 @@ export const UpgradePlan: React.FunctionComponent< Props > = ( props: Props ) =>
 
 	return (
 		<div className="import__upgrade-plan">
-			<div className="import__heading import__heading-center">
-				<Title>{ translate( 'Upgrade your plan' ) }</Title>
-				<SubTitle>
-					{ subTitleText ||
-						translate( 'Migrating themes, plugins, users, and settings requires a %(plan)s plan.', {
-							args: {
-								plan: plan?.getTitle() ?? '',
-							},
-						} ) }
-					<br />
-					{ ! isEligibleForTrialPlan &&
-						onContentOnlyClick &&
-						translate(
-							'To just migrate the content, use the {{link}}free content-only import option{{/link}}.',
-							{
-								components: {
-									link: <Button borderless={ true } onClick={ onContentOnlyClick } />,
-								},
-							}
-						) }
-				</SubTitle>
-			</div>
+			{ showTitleAndSubTitle && (
+				<div className="import__heading import__heading-center">
+					<Title>{ translate( 'Upgrade your plan' ) }</Title>
+					<SubTitle>
+						{ subTitleText ||
+							translate(
+								'Migrating themes, plugins, users, and settings requires a %(plan)s plan.',
+								{
+									args: {
+										plan: plan?.getTitle() ?? '',
+									},
+								}
+							) }
+						<br />
+						{ ! isEligibleForTrialPlan &&
+							onContentOnlyClick &&
+							translate(
+								'To just migrate the content, use the {{link}}free content-only import option{{/link}}.',
+								{
+									components: {
+										link: <Button borderless={ true } onClick={ onContentOnlyClick } />,
+									},
+								}
+							) }
+					</SubTitle>
+				</div>
+			) }
 
 			<UpgradePlanDetails>
 				<NextButton isBusy={ isBusy } disabled={ isAddingTrial } onClick={ onCtaClick }>
