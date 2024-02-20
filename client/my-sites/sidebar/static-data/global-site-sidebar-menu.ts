@@ -19,6 +19,7 @@ export default function globalSiteSidebarMenu( {
 			title: translate( 'All sites' ),
 			type: 'menu-item',
 			url: `/sites`,
+			className: 'sidebar__menu-item-all-sites',
 		},
 		{
 			type: 'current-site',
