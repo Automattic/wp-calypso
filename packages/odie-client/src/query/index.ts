@@ -5,7 +5,7 @@ import { canAccessWpcomApis } from 'wpcom-proxy-request';
 import wpcom from 'calypso/lib/wp';
 import { WAPUU_ERROR_MESSAGE, ODIE_THUMBS_DOWN_RATING_VALUE } from '..';
 import { useOdieAssistantContext } from '../context';
-import { setOdieStorage } from '../data';
+import { broadcastOdieMessage, setOdieStorage } from '../data';
 import type { Chat, Message, MessageRole, MessageType, OdieAllowedBots } from '../types';
 
 // Either we use wpcom or apiFetch for the request for accessing odie endpoint for atomic or wpcom sites
@@ -68,7 +68,8 @@ export const useOdieSendMessage = (): UseMutationResult<
 	{ message: Message },
 	{ internal_message_id: string }
 > => {
-	const { chat, botNameSlug, setIsLoading, addMessage, updateMessage } = useOdieAssistantContext();
+	const { chat, botNameSlug, setIsLoading, addMessage, updateMessage, odieClientId } =
+		useOdieAssistantContext();
 	return useMutation<
 		{ chat_id: string; messages: Message[] },
 		unknown,
@@ -76,6 +77,7 @@ export const useOdieSendMessage = (): UseMutationResult<
 		{ internal_message_id: string }
 	>( {
 		mutationFn: ( { message }: { message: Message } ) => {
+			broadcastOdieMessage( message, odieClientId );
 			return buildSendChatMessage( { ...message }, botNameSlug, chat.chat_id );
 		},
 		onMutate: ( { message } ) => {
@@ -99,16 +101,19 @@ export const useOdieSendMessage = (): UseMutationResult<
 			const { internal_message_id } = context;
 
 			if ( ! data.messages || ! data.messages[ 0 ].content ) {
-				updateMessage( {
+				const message = {
 					content: WAPUU_ERROR_MESSAGE,
 					internal_message_id,
 					role: 'bot',
 					type: 'error',
-				} );
+				} as Message;
+
+				updateMessage( message );
+				broadcastOdieMessage( message, odieClientId );
 
 				return;
 			}
-			updateMessage( {
+			const message = {
 				message_id: data.messages[ 0 ].message_id,
 				internal_message_id,
 				content: data.messages[ 0 ].content,
@@ -116,8 +121,10 @@ export const useOdieSendMessage = (): UseMutationResult<
 				simulateTyping: data.messages[ 0 ].simulateTyping,
 				type: 'message',
 				context: data.messages[ 0 ].context,
-			} );
+			} as Message;
+			updateMessage( message );
 
+			broadcastOdieMessage( message, odieClientId );
 			setOdieStorage( 'chat_id', data.chat_id );
 		},
 		onSettled: () => {
@@ -128,12 +135,15 @@ export const useOdieSendMessage = (): UseMutationResult<
 				throw new Error( 'Context is undefined' );
 			}
 			const { internal_message_id } = context;
-			updateMessage( {
+			const message = {
 				content: WAPUU_ERROR_MESSAGE,
 				internal_message_id,
 				role: 'bot',
 				type: 'error',
-			} );
+			} as Message;
+			updateMessage( message );
+
+			broadcastOdieMessage( message, odieClientId );
 		},
 	} );
 };
