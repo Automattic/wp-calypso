@@ -1,12 +1,11 @@
 import {
-	Button,
 	TextControl,
 	TimePicker,
 	RadioControl,
 	CheckboxControl,
 	__experimentalVStack as VStack,
 	Flex,
-	FlexBlock,
+	FlexItem,
 } from '@wordpress/components';
 import { useState } from 'react';
 
@@ -18,8 +17,14 @@ export const ScheduleForm = () => {
 
 	return (
 		<form>
-			<Flex className="schedule-form" align="start" gap={ 8 } expanded={ true }>
-				<FlexBlock>
+			<Flex
+				className="schedule-form"
+				direction={ [ 'column', 'row' ] }
+				expanded={ true }
+				align="start"
+				gap={ 8 }
+			>
+				<FlexItem>
 					<TextControl label="Name" value={ name } onChange={ setName } />
 					<TimePicker onChange={ function noRefCheck() {} } />
 					<RadioControl
@@ -37,8 +42,8 @@ export const ScheduleForm = () => {
 						] }
 						selected={ frequency }
 					/>
-				</FlexBlock>
-				<FlexBlock>
+				</FlexItem>
+				<FlexItem>
 					<VStack>
 						<label htmlFor="select-all">Plugins</label>
 						<CheckboxControl
@@ -68,11 +73,8 @@ export const ScheduleForm = () => {
 							onChange={ function noRefCheck() {} }
 						/>
 					</VStack>
-				</FlexBlock>
+				</FlexItem>
 			</Flex>
-			<div style={ { textAlign: 'end' } }>
-				<Button variant="primary">Create</Button>
-			</div>
 		</form>
 	);
 };
