@@ -264,6 +264,15 @@ $brand-text: "SF Pro Text", $sans;
 	}
 }
 
+.accessible-focus .global-sidebar {
+	*:focus {
+		outline-style: solid;
+		outline-color: var(--color-sidebar-menu-selected-background);
+		outline-width: 2px;
+		outline-offset: 2px;
+	}
+}
+
 .masterbar {
 	border: none;
 }
