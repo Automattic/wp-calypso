@@ -39,8 +39,26 @@
 		padding: 1.5rem;
 
 		&.selected {
-			border: solid 1px var(--color-primary);
+			border: solid 1px var(--color-primary) !important;
 			border-radius: 2px;
+
+			& > .components-radio-control {
+				margin-bottom: 1rem;
+			}
+		}
+
+		&:last-child {
+			border-bottom: solid 1px var(--color-border-subtle);
+		}
+	}
+
+	.time-controls {
+		& > div {
+			display: inline-block;
+
+			&:first-child {
+				margin-inline-end: 0.5rem;
+			}
 		}
 	}
 }

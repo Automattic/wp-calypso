@@ -2,10 +2,12 @@ import {
 	TextControl,
 	RadioControl,
 	SearchControl,
+	SelectControl,
 	CheckboxControl,
 	__experimentalVStack as VStack,
 	Flex,
 	FlexItem,
+	FlexBlock,
 } from '@wordpress/components';
 import classnames from 'classnames';
 import { useState } from 'react';
@@ -44,6 +46,91 @@ export const ScheduleForm = () => {
 								] }
 								selected={ frequency }
 							></RadioControl>
+							{ frequency === 'daily' && (
+								<Flex gap={ 6 }>
+									<FlexBlock>
+										<div className="form-field">
+											<label htmlFor="time">What time?</label>
+											<div className="time-controls">
+												<SelectControl
+													name="time"
+													__next40pxDefaultSize
+													onBlur={ function noRefCheck() {} }
+													onChange={ function noRefCheck() {} }
+													onFocus={ function noRefCheck() {} }
+													options={ [
+														{
+															label: '00',
+															value: '0',
+														},
+														{
+															label: '01',
+															value: '1',
+														},
+														{
+															label: '02',
+															value: '3',
+														},
+														{
+															label: '03',
+															value: '3',
+														},
+														{
+															label: '04',
+															value: '4',
+														},
+														{
+															label: '05',
+															value: '5',
+														},
+														{
+															label: '06',
+															value: '6',
+														},
+														{
+															label: '07',
+															value: '7',
+														},
+														{
+															label: '08',
+															value: '8',
+														},
+														{
+															label: '09',
+															value: '9',
+														},
+														{
+															label: '10',
+															value: '10',
+														},
+														{
+															label: '11',
+															value: '11',
+														},
+													] }
+												/>
+												<SelectControl
+													name="period"
+													__next40pxDefaultSize
+													onBlur={ function noRefCheck() {} }
+													onChange={ function noRefCheck() {} }
+													onFocus={ function noRefCheck() {} }
+													options={ [
+														{
+															label: 'AM',
+															value: 'am',
+														},
+														{
+															label: 'PM',
+															value: 'pm',
+														},
+													] }
+												/>
+											</div>
+										</div>
+									</FlexBlock>
+								</Flex>
+							) }
 						</div>
 						<div className={ classnames( 'radio-option', { selected: frequency === 'weekly' } ) }>
 							<RadioControl
@@ -57,6 +144,133 @@ export const ScheduleForm = () => {
 								] }
 								selected={ frequency }
 							></RadioControl>
+							{ frequency === 'weekly' && (
+								<Flex gap={ 6 }>
+									<FlexItem>
+										<div className="form-field">
+											<label htmlFor="day">What day?</label>
+											<SelectControl
+												name="day"
+												__next40pxDefaultSize
+												onBlur={ function noRefCheck() {} }
+												onChange={ function noRefCheck() {} }
+												onFocus={ function noRefCheck() {} }
+												options={ [
+													{
+														label: 'Monday',
+														value: 'a',
+													},
+													{
+														label: 'Tuesday',
+														value: 'b',
+													},
+													{
+														label: 'Wednesday',
+														value: 'c',
+													},
+													{
+														label: 'Thursday',
+														value: 'd',
+													},
+													{
+														label: 'Friday',
+														value: 'e',
+													},
+													{
+														label: 'Saturday',
+														value: 'f',
+													},
+													{
+														label: 'Sunday',
+														value: 'g',
+													},
+												] }
+											/>
+										</div>
+									</FlexItem>
+									<FlexBlock>
+										<div className="form-field">
+											<label htmlFor="time">What time?</label>
+											<div className="time-controls">
+												<SelectControl
+													name="time"
+													__next40pxDefaultSize
+													onBlur={ function noRefCheck() {} }
+													onChange={ function noRefCheck() {} }
+													onFocus={ function noRefCheck() {} }
+													options={ [
+														{
+															label: '00',
+															value: '0',
+														},
+														{
+															label: '01',
+															value: '1',
+														},
+														{
+															label: '02',
+															value: '3',
+														},
+														{
+															label: '03',
+															value: '3',
+														},
+														{
+															label: '04',
+															value: '4',
+														},
+														{
+															label: '05',
+															value: '5',
+														},
+														{
+															label: '06',
+															value: '6',
+														},
+														{
+															label: '07',
+															value: '7',
+														},
+														{
+															label: '08',
+															value: '8',
+														},
+														{
+															label: '09',
+															value: '9',
+														},
+														{
+															label: '10',
+															value: '10',
+														},
+														{
+															label: '11',
+															value: '11',
+														},
+													] }
+												/>
+												<SelectControl
+													name="period"
+													__next40pxDefaultSize
+													onBlur={ function noRefCheck() {} }
+													onChange={ function noRefCheck() {} }
+													onFocus={ function noRefCheck() {} }
+													options={ [
+														{
+															label: 'AM',
+															value: 'am',
+														},
+														{
+															label: 'PM',
+															value: 'pm',
+														},
+													] }
+												/>
+											</div>
+										</div>
+									</FlexBlock>
+								</Flex>
+							) }
 						</div>
 					</div>
 				</FlexItem>
