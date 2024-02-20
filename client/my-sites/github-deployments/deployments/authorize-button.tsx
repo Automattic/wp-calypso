@@ -5,11 +5,11 @@ import { addQueryArgs } from '@wordpress/url';
 import { useState } from 'react';
 import SocialLogo from 'calypso/components/social-logo';
 import { useDispatch } from 'calypso/state';
-import { connectSocialUser } from 'calypso/state/login/actions';
 import { postLoginRequest } from 'calypso/state/login/utils';
 import { errorNotice } from 'calypso/state/notices/actions';
 import { useGithubAccountsQuery } from '../use-github-accounts-query';
 import { openPopup } from '../utils/open-popup';
+import { useSaveGitHubCredentialsMutation } from './use-save-github-credentials-mutation';
 
 const AUTHORIZE_URL = addQueryArgs( 'https://github.com/login/oauth/authorize', {
 	client_id: config( 'github_oauth_client_id' ),
@@ -22,6 +22,7 @@ export const GitHubAuthorizeButton = () => {
 	const dispatch = useDispatch();
 
 	const { isLoading, isRefetching, refetch } = useGithubAccountsQuery();
+	const { saveGitHubCredentials } = useSaveGitHubCredentialsMutation();
 
 	const [ isAuthorizing, setIsAuthorizing ] = useState( false );
 
@@ -46,12 +47,7 @@ export const GitHubAuthorizeButton = () => {
 					throw new Error( 'Access token not included in the response.' );
 				}
 
-				return dispatch(
-					connectSocialUser( {
-						service: 'github',
-						access_token: response.body.data.access_token,
-					} )
-				);
+				return saveGitHubCredentials( { accessToken: response.body.data.access_token } );
 			} )
 			.then( () => refetch() )
 			.catch( () => dispatch( errorNotice( 'Failed to authorize GitHub. Please try again.' ) ) )
