@@ -22,20 +22,22 @@ export interface WorkflowsValidation {
 
 export const useDeploymentWorkflowsQuery = (
 	installationId: number,
-	repositoryId: number,
+	repositoryName: string,
+	repositoryOwner: string,
 	branchName: string,
 	deploymentStyle: string,
 	options?: Partial< UseQueryOptions< Workflows[] > >
 ) => {
 	const path = addQueryArgs( '/hosting/github/workflows', {
 		installation_id: installationId,
-		repository_id: repositoryId,
+		repository_name: repositoryName,
+		repository_owner: repositoryOwner,
 		branch_name: branchName,
 	} );
 
 	return useQuery< Workflows[] >( {
 		queryKey: [ GITHUB_DEPLOYMENTS_QUERY_KEY, CODE_DEPLOYMENTS_QUERY_KEY, path ],
-		enabled: !! installationId && !! repositoryId && !! branchName && deploymentStyle !== 'simple',
+		enabled: !! installationId && deploymentStyle !== 'simple',
 		queryFn: (): Workflows[] =>
 			wp.req.get( {
 				path,

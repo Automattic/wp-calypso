@@ -121,7 +121,7 @@ export const GitHubConnectionForm = ( {
 					<DeploymentStyle
 						branchName={ branch }
 						installationId={ account.external_id }
-						repositoryId={ repository.id }
+						repository={ repository }
 						onChooseWorkflow={ () => {} }
 						onValidationChange={ ( status ) => {
 							if ( status === 'success' ) {

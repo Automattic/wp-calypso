@@ -15,6 +15,7 @@ import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormRadiosBar from 'calypso/components/forms/form-radios-bar';
 import SupportInfo from 'calypso/components/support-info';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
+import { GitHubRepositoryData } from 'calypso/my-sites/github-deployments/use-github-repositories-query';
 import { useDispatch } from 'calypso/state';
 import { errorNotice, successNotice } from 'calypso/state/notices/actions';
 import { useCreateWorkflow } from './use-create-workflow';
@@ -28,7 +29,7 @@ import './style.scss';
 
 interface DeploymentStyleProps {
 	installationId: number;
-	repositoryId: number;
+	repository: GitHubRepositoryData;
 	branchName: string;
 	onChooseWorkflow?( workflowFilename: string ): void;
 	onValidationChange?( status: WorkFlowStates ): void;
@@ -44,7 +45,7 @@ type DeploymentStyle = 'simple' | 'custom';
 
 export const DeploymentStyle = ( {
 	installationId,
-	repositoryId,
+	repository,
 	branchName,
 	onChooseWorkflow,
 	onValidationChange,
@@ -58,7 +59,8 @@ export const DeploymentStyle = ( {
 
 	const { data: workflows, isLoading: isFetchingWorkflows } = useDeploymentWorkflowsQuery(
 		installationId,
-		repositoryId,
+		repository.name,
+		repository.owner,
 		branchName,
 		deploymentStyle
 	);
@@ -76,7 +78,7 @@ export const DeploymentStyle = ( {
 
 	const { isLoading: isCheckingWorkflowFile, data: workflowCheckResult } = useCheckWorkflowQuery(
 		installationId,
-		repositoryId,
+		repository.id,
 		branchName,
 		selectedWorkflow
 	);
@@ -177,7 +179,7 @@ export const DeploymentStyle = ( {
 
 	useEffect( () => {
 		const workflowsValidationsChanged = workflowsValidations.map( ( validation ) => {
-			const item = workflowCheckResult?.checked_items.find( ( checkedItem ) => {
+			const item = workflowCheckResult?.checked_items?.find( ( checkedItem ) => {
 				return checkedItem.validation_name === validation.key;
 			} );
 
