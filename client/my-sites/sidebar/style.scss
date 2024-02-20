@@ -340,13 +340,6 @@ $font-size: rem(14px);
 
 		.sidebar__menu-link {
 			line-height: 15px;
-
-			&:hover,
-			&:focus {
-				box-shadow: none;
-				transition: none;
-				color: var(--studio-white);
-			}
 		}
 
 		.sidebar__menu-link-text {
@@ -368,11 +361,37 @@ $font-size: rem(14px);
 
 		.sidebar__heading:not([tabindex="-1"]),
 		.sidebar__menu-link {
+			color: var(--studio-gray-5);
+
+			.sidebar__menu-icon {
+				color: inherit;
+
+				&::before {
+					transition: none;
+				}
+			}
+
 			&:hover,
 			&:focus {
 				box-shadow: none;
 				transition: none;
 				color: var(--studio-white);
+
+				.sidebar__menu-icon {
+					color: inherit;
+				}
+			}
+		}
+
+		// Custom styles for “< All sites”
+		.sidebar__menu-item-all-sites {
+			.sidebar__menu-link {
+				padding-left: 6px;
+			}
+
+			.sidebar__menu-link-text {
+				font-size: 16px; /* stylelint-disable-line declaration-property-unit-allowed-list */
+				font-weight: 600;
 			}
 		}
 
