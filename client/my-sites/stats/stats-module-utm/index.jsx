@@ -11,6 +11,7 @@ const StatsModuleUTM = ( props ) => {
 
 	return (
 		<StatsModule
+			className="stats-module-utm"
 			path="utm"
 			moduleStrings={ moduleStrings.utm }
 			period={ period }

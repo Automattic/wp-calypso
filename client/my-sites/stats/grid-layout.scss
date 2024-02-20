@@ -162,36 +162,33 @@ $grid-vertical-gutters: 32px;
 	@include stats-desktop-grid(
 		"posts posts posts posts posts posts posts referrers referrers referrers referrers referrers"
 		"country country country country country country country country country country country country"
-		"utm utm utm utm utm utm utm utm utm utm utm utm"
 		"authors authors authors authors search search search search clicks clicks clicks clicks"
 		"videos videos videos videos videos videos emails emails emails emails emails emails"
 		"downloads downloads downloads downloads downloads downloads x x x x x x",
-		7
+		6
 	);
 
 	@include stats-tablet-grid(
 		"posts posts posts posts referrers referrers referrers referrers"
 		"country country country country country country country country"
-		"utm utm utm utm utm utm utm utm"
 		"authors authors authors authors search search search search"
 		"clicks clicks clicks clicks videos videos videos videos"
 		"emails emails emails emails emails emails emails emails"
 		"downloads downloads downloads downloads downloads downloads downloads downloads",
-		8
+		7
 	);
 
 	@include stats-mobile-grid(
 		"posts posts posts posts"
 		"referrers referrers referrers referrers"
 		"country country country country"
-		"utm utm utm utm"
 		"authors authors authors authors"
 		"search search search search"
 		"clicks clicks clicks clicks"
 		"videos videos videos videos"
 		"emails emails emails emails"
 		"downloads downloads downloads downloads",
-		11
+		10
 	);
 
 	// @TODO: Refactor hidden modules with a more flexible layout (e.g., Flexbox) to fit mass configuration to moduels in the future.
@@ -381,4 +378,8 @@ $grid-vertical-gutters: 32px;
 	.list-emails {
 		grid-area: emails;
 	}
+}
+
+.stats-module-utm {
+	margin-bottom: 32px;
 }

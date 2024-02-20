@@ -413,10 +413,6 @@ class StatsSite extends Component {
 							summary={ false }
 						/>
 
-						{ config.isEnabled( 'stats/utm-module' ) && (
-							<StatsModuleUTM period={ this.props.period } query={ query } />
-						) }
-
 						{ ! this.isModuleHidden( 'authors' ) && (
 							<StatsModule
 								path="authors"
@@ -476,6 +472,17 @@ class StatsSite extends Component {
 							)
 						}
 					</div>
+
+					{
+						// TODO: Move this under the Countries module.
+						// - Will require some reworking of the CSS to work correctly though.
+						// - Because of the visibility toggles for Authors and Videos, we require multiple
+						// copies of the Grid CSS.
+						// - May have to move from grid to flexbox.
+					 }
+					{ config.isEnabled( 'stats/utm-module' ) && (
+						<StatsModuleUTM period={ this.props.period } query={ query } />
+					) }
 				</div>
 				{ supportsPlanUsage && (
 					<StatsPlanUsage siteId={ siteId } isOdysseyStats={ isOdysseyStats } />
