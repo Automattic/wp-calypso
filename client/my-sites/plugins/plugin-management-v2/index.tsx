@@ -1,7 +1,7 @@
 import classNames from 'classnames';
 import { TranslateResult, useTranslate } from 'i18n-calypso';
 import { ReactElement, useEffect, useMemo } from 'react';
-import GuidedTour from 'calypso/jetpack-cloud/components/guided-tour';
+import PluginOverviewTour from 'calypso/jetpack-cloud/sections/onboarding-tours/plugin-overview-tour';
 import { useDispatch } from 'calypso/state';
 import { resetPluginStatuses } from 'calypso/state/plugins/installed/status/actions';
 import BulkActionsHeader from './bulk-actions-header';
@@ -137,9 +137,6 @@ export default function PluginManagementV2( {
 
 		return <div className="plugin-management-v2__no-sites">{ emptyMessage }</div>;
 	}
-	const urlParams = new URLSearchParams( window.location.search );
-	const shouldRenderPluginManagementTour =
-		urlParams.get( 'tour' ) === 'plugin-management' && ! isLoading && plugins.length > 0;
 
 	return (
 		<>
@@ -160,45 +157,7 @@ export default function PluginManagementV2( {
 					updatePlugin={ updatePlugin }
 				/>
 			</div>
-			{ shouldRenderPluginManagementTour && (
-				<GuidedTour
-					className="jetpack-cloud-plugin-management-v2__guided-tour"
-					preferenceName="jetpack-cloud-plugin-management-v2-plugin-overview-tour"
-					tours={ [
-						{
-							target: '#plugin-management-v2__installed-plugins-table-header',
-							popoverPosition: 'bottom right',
-							title: translate( 'Plugins overview' ),
-							description: translate(
-								'Here you can see all installed plugins across all of your sites.'
-							),
-						},
-						{
-							target: '#plugin-management-v2__edit-all-button',
-							popoverPosition: 'bottom left',
-							title: translate( 'Select to edit all plugins' ),
-							description: translate( 'You can manage all of your plugins at once.' ),
-							nextStepOnTargetClick: '#plugin-management-v2__edit-all-button',
-						},
-						{
-							target: '#plugin-list-header__buttons-autoupdate-button',
-							popoverPosition: 'bottom left',
-							title: translate( 'Bulk management options' ),
-							description: translate(
-								'Here you can activate or deactivate all of your plugins, set them to autoupdate or disable it entirely.'
-							),
-						},
-						{
-							target: '#plugin-list-header__buttons-update-button',
-							popoverPosition: 'bottom left',
-							title: translate( 'All plugins update' ),
-							description: translate(
-								'You can update all your out-of-date plugins with the auto-update feature.'
-							),
-						},
-					] }
-				/>
-			) }
+			<PluginOverviewTour isLoading={ isLoading } pluginCount={ plugins.length } />
 		</>
 	);
 }

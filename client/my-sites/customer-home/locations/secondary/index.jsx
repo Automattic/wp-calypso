@@ -1,4 +1,5 @@
 import { createElement } from 'react';
+import DotPager from 'calypso/components/dot-pager';
 import {
 	SECTION_BLOGGING_PROMPT,
 	SECTION_BLOGANUARY_BLOGGING_PROMPT,
@@ -30,6 +31,16 @@ const getAdditionalPropsForCard = ( { card, siteId } ) => {
 	return additionalProps;
 };
 
+const SecondaryCard = ( { card, siteId } ) => {
+	if ( CARD_COMPONENTS[ card ] ) {
+		return createElement( CARD_COMPONENTS[ card ], {
+			...getAdditionalPropsForCard( { card, siteId } ),
+		} );
+	}
+
+	return null;
+};
+
 const Secondary = ( { cards, siteId } ) => {
 	if ( ! cards || ! cards.length ) {
 		return null;
@@ -37,14 +48,36 @@ const Secondary = ( { cards, siteId } ) => {
 
 	return (
 		<>
-			{ cards.map(
-				( card, index ) =>
-					CARD_COMPONENTS[ card ] &&
-					createElement( CARD_COMPONENTS[ card ], {
-						key: card + index,
-						...getAdditionalPropsForCard( { card, siteId } ),
-					} )
-			) }
+			{ cards.map( ( card, index ) => {
+				if ( Array.isArray( card ) && card.length > 0 ) {
+					return (
+						<DotPager
+							key={ 'my_home_secondary_pager_' + index }
+							className="secondary__customer-home-location-content"
+							showControlLabels="true"
+							hasDynamicHeight
+						>
+							{ card.map( ( innerCard, innerIndex ) => {
+								return (
+									<SecondaryCard
+										key={ 'my_home_secondary_pager_' + index + '_' + card + '_' + innerIndex }
+										card={ innerCard }
+										siteId={ siteId }
+									/>
+								);
+							} ) }
+						</DotPager>
+					);
+				}
+
+				return (
+					<SecondaryCard
+						key={ 'my_home_secondary_' + card + '_' + index }
+						card={ card }
+						siteId={ siteId }
+					/>
+				);
+			} ) }
 		</>
 	);
 };

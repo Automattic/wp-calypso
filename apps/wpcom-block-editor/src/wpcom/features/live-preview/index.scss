@@ -1,15 +1,42 @@
 @import "./upgrade-modal";
-@import "./upgrade-notice";
 
-.components-editor-notices__pinned .components-notice__content {
-	display: flex;
-	margin-right: 0;
+.components-notice:has(.wpcom-live-preview-action) {
+	.components-notice__content {
+		display: flex;
+		align-items: center;
+		margin-right: 0;
 
-	.components-notice__actions {
-		margin-left: auto;
+		.components-notice__actions {
+			margin-left: auto;
+
+			.components-notice__action {
+				margin-top: 0;
+				white-space: nowrap;
+			}
+		}
+	}
+}
+
+.wpcom-live-preview-sidebar-notice-container {
+	padding: 24px 24px 0;
+	border-top: 1px solid #2f2f2f;
+
+	// Hide the original border only when the notice is present.
+	+ .edit-site-save-hub {
+		border-top: none;
+		padding-top: 0;
+	}
+
+	.wpcom-live-preview-sidebar-notice {
+		margin: 0 0 24px;
+		color: var(--color-text);
+
+		.components-notice__content {
+			margin-right: 0;
+		}
 
 		.components-notice__action {
-			margin-top: 0;
+			margin: 8px 0 0;
 		}
 	}
 }

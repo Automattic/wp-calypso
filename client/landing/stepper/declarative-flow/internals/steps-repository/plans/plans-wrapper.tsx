@@ -1,3 +1,4 @@
+import config from '@automattic/calypso-config';
 import { PRODUCT_1GB_SPACE } from '@automattic/calypso-products';
 import { Button } from '@automattic/components';
 import {
@@ -15,11 +16,13 @@ import {
 import { MinimalRequestCartProduct } from '@automattic/shopping-cart';
 import { useDesktopBreakpoint } from '@automattic/viewport-react';
 import { useSelect, useDispatch } from '@wordpress/data';
+import { useState } from '@wordpress/element';
 import { useI18n } from '@wordpress/react-i18n';
 import classNames from 'classnames';
 import { localize, useTranslate } from 'i18n-calypso';
-import React, { useEffect } from 'react';
+import React, { useEffect, useLayoutEffect } from 'react';
 import { connect } from 'react-redux';
+import { useNavigate, useLocation } from 'react-router';
 import { useSite } from 'calypso/landing/stepper/hooks/use-site';
 import { getPlanCartItem } from 'calypso/lib/cart-values/cart-items';
 import PlansFeaturesMain from 'calypso/my-sites/plans-features-main';
@@ -31,7 +34,7 @@ import { setSelectedSiteId } from 'calypso/state/ui/actions';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { ONBOARD_STORE } from '../../../../stores';
 import type { OnboardSelect } from '@automattic/data-stores';
-import type { PlansIntent } from 'calypso/my-sites/plans-grid/hooks/npm-ready/data-store/use-grid-plans';
+import type { PlansIntent } from '@automattic/plans-grid-next';
 import './style.scss';
 
 interface Props {
@@ -86,9 +89,12 @@ const PlansWrapper: React.FC< Props > = ( props ) => {
 		}
 	}, [ selectedSiteId, siteId, setSelectedSiteId ] );
 
+	const [ planIntervalPath, setPlanIntervalPath ] = useState< string >( '' );
 	const { __ } = useI18n();
 	const translate = useTranslate();
 	const isDesktop = useDesktopBreakpoint();
+	const navigate = useNavigate();
+	const location = useLocation();
 	const stepName = 'plans';
 	const customerType = 'personal';
 	const headerText = __( 'Choose a plan' );
@@ -97,6 +103,26 @@ const PlansWrapper: React.FC< Props > = ( props ) => {
 	const hideFreePlan = plansIntent
 		? reduxHideFreePlan && 'plans-blog-onboarding' === plansIntent
 		: reduxHideFreePlan;
+
+	useLayoutEffect( () => {
+		// Plan intervals are changed by parsing query params. Updating query params
+		// with react-router, however, rerenders the whole page. The effect is that,
+		// whenever a new plan interval is selected, the viewport is reset to the top
+		// of the page. Because of this, we manually restore scroll position here.
+		// Ideally we'd switch to using react-router <ScrollRestoration> whenever stepper
+		// flows are refactored to use a data router
+		document.documentElement.scrollTop = location.state?.scrollTop || 0;
+	}, [ location.state?.scrollTop, planIntervalPath ] );
+
+	const onPlanIntervalUpdate = ( path: string ) => {
+		setPlanIntervalPath( path );
+
+		navigate( path, {
+			preventScrollReset: true,
+			replace: true,
+			state: { scrollTop: document.documentElement.scrollTop },
+		} );
+	};
 
 	const onUpgradeClick = ( cartItems?: MinimalRequestCartProduct[] | null ) => {
 		const planCartItem = getPlanCartItem( cartItems );
@@ -141,9 +167,8 @@ const PlansWrapper: React.FC< Props > = ( props ) => {
 		return (
 			<div>
 				<PlansFeaturesMain
-					isPlansInsideStepper={ true }
 					siteId={ site?.ID }
-					showBiennialToggle={ false }
+					displayedIntervals={ [ 'yearly', '2yearly', '3yearly', 'monthly' ] }
 					hideFreePlan={ hideFreePlan }
 					isInSignup={ isInSignup }
 					isStepperUpgradeFlow={ true }
@@ -158,6 +183,8 @@ const PlansWrapper: React.FC< Props > = ( props ) => {
 					removePaidDomain={ removePaidDomain }
 					setSiteUrlAsFreeDomainSuggestion={ setSiteUrlAsFreeDomainSuggestion }
 					renderSiblingWhenLoaded={ () => props.shouldIncludeFAQ && <PlanFAQ /> }
+					showPlanTypeSelectorDropdown={ config.isEnabled( 'onboarding/interval-dropdown' ) }
+					onPlanIntervalUpdate={ onPlanIntervalUpdate }
 				/>
 			</div>
 		);

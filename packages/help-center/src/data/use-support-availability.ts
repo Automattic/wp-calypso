@@ -1,4 +1,4 @@
-import { useQuery } from '@tanstack/react-query';
+import { keepPreviousData, useQuery } from '@tanstack/react-query';
 import apiFetch from '@wordpress/api-fetch';
 import wpcomRequest, { canAccessWpcomApis } from 'wpcom-proxy-request';
 import { OtherSupportAvailability, ChatAvailability } from '../types';
@@ -31,7 +31,7 @@ export function useSupportAvailability< SUPPORT_TYPE extends 'CHAT' | 'OTHER' >(
 				  } as APIFetchOptions ),
 		enabled,
 		refetchOnWindowFocus: false,
-		keepPreviousData: true,
+		placeholderData: keepPreviousData,
 		staleTime: 6 * 60 * 60 * 1000, // 6 hours
 	} );
 }

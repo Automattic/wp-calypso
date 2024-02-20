@@ -1,0 +1,33 @@
+{
+	"env": "development",
+	"env_id": "a8c-for-agencies-development",
+	"favicon_url": "/calypso/images/favicons/favicon-a4a-dev.ico",
+	"client_slug": "browser",
+	"protocol": "http",
+	"hostname": "agencies.localhost",
+	"i18n_default_locale_slug": "en",
+	"port": 3000,
+	"site_name": "Automattic For Agencies",
+	"oauth_client_id": 95928,
+	"features": {
+		"a8c-for-agencies": true,
+		"always_use_logout_url": true,
+		"dev/auth-helper": true,
+		"dev/preferences-helper": true,
+		"oauth": true
+	},
+	"enable_all_sections": false,
+	"sections": {
+		"a8c-for-agencies": true,
+		"a8c-for-agencies-auth": true,
+		"a8c-for-agencies-overview": true,
+		"a8c-for-agencies-plugins": true,
+		"a8c-for-agencies-sites": true,
+		"a8c-for-agencies-marketplace": true
+	},
+	"site_filter": [],
+	"theme": "a8c-for-agencies",
+	"restricted_me_access": false,
+	"theme_color": "#2fb41f",
+	"hotjar_enabled": true
+}

@@ -23,6 +23,7 @@ import { Icon, rotateLeft } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { useState, useRef, useMemo } from 'react';
 import { useSearchParams } from 'react-router-dom';
+import QueryActiveTheme from 'calypso/components/data/query-active-theme';
 import { createRecordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { useDispatch as useReduxDispatch } from 'calypso/state';
 import { activateOrInstallThenActivate } from 'calypso/state/themes/actions';
@@ -51,7 +52,6 @@ import withNotices, { NoticesProps } from './notices/notices';
 import PagePreviewList from './pages/page-preview-list';
 import PatternAssemblerContainer from './pattern-assembler-container';
 import PatternLargePreview from './pattern-large-preview';
-import ScreenActivation from './screen-activation';
 import ScreenColorPalettes from './screen-color-palettes';
 import ScreenConfirmation from './screen-confirmation';
 import ScreenFontPairings from './screen-font-pairings';
@@ -80,6 +80,7 @@ const PatternAssembler = ( props: StepProps & NoticesProps ) => {
 	const [ sectionPosition, setSectionPosition ] = useState< number | null >( null );
 	const wrapperRef = useRef< HTMLDivElement | null >( null );
 	const [ activePosition, setActivePosition ] = useState( -1 );
+	const [ surveyDismissed, setSurveyDismissed ] = useState( false );
 	const { goBack, goNext, submit } = navigation;
 	const { assembleSite, saveSiteSettings } = useDispatch( SITE_STORE );
 	const reduxDispatch = useReduxDispatch();
@@ -127,9 +128,13 @@ const PatternAssembler = ( props: StepProps & NoticesProps ) => {
 		hasFont: !! fontVariation,
 	} );
 
-	const { pages, pageSlugs, setPageSlugs } = usePatternPages( pageCategoryPatternsMap );
+	const { pages, pageSlugs, setPageSlugs, pagesToShow } = usePatternPages(
+		pageCategoryPatternsMap,
+		categories,
+		dotcomPatterns
+	);
 
-	const currentScreen = useCurrentScreen( { isNewSite, shouldUnlockGlobalStyles } );
+	const currentScreen = useCurrentScreen( { shouldUnlockGlobalStyles } );
 
 	const stylesheet = selectedDesign?.recipe?.stylesheet || '';
 
@@ -232,11 +237,11 @@ const PatternAssembler = ( props: StepProps & NoticesProps ) => {
 			} );
 		} );
 
-		pages.forEach( ( { ID, name, categories = {} } ) => {
-			const category_slug = Object.keys( categories )[ 0 ];
+		pages.forEach( ( pattern: Pattern ) => {
+			const category_slug = Object.keys( pattern.categories )[ 0 ];
 			recordTracksEvent( PATTERN_ASSEMBLER_EVENTS.PAGE_FINAL_SELECT, {
-				pattern_id: ID,
-				pattern_name: name,
+				pattern_id: pattern.ID,
+				pattern_name: pattern.name,
 				...( category_slug && { pattern_category: category_slug } ),
 			} );
 		} );
@@ -360,6 +365,17 @@ const PatternAssembler = ( props: StepProps & NoticesProps ) => {
 		}
 	};
 
+	const onPreselectPattern = ( type: PatternType, selectedPattern: Pattern ) => {
+		injectCategoryToPattern( selectedPattern, categories, type );
+
+		if ( 'header' === type ) {
+			setHeader( selectedPattern );
+		}
+		if ( 'footer' === type ) {
+			setFooter( selectedPattern );
+		}
+	};
+
 	const onSubmit = () => {
 		const design = getDesign() as Design;
 		const stylesheet = design.recipe?.stylesheet ?? '';
@@ -373,13 +389,12 @@ const PatternAssembler = ( props: StepProps & NoticesProps ) => {
 			Promise.resolve()
 				.then( () =>
 					reduxDispatch(
-						activateOrInstallThenActivate(
-							themeId,
-							site?.ID,
-							'assembler',
-							false,
-							false
-						) as ThunkAction< PromiseLike< string >, any, any, AnyAction >
+						activateOrInstallThenActivate( themeId, site?.ID, 'assembler', false ) as ThunkAction<
+							PromiseLike< string >,
+							any,
+							any,
+							AnyAction
+						>
 					)
 				)
 				.then( ( activeThemeStylesheet: string ) =>
@@ -387,7 +402,7 @@ const PatternAssembler = ( props: StepProps & NoticesProps ) => {
 						homeHtml: sections.map( ( pattern ) => pattern.html ).join( '' ),
 						headerHtml: header?.html,
 						footerHtml: footer?.html,
-						pages: pages.map( ( page ) => ( {
+						pages: pages.map( ( page: Pattern ) => ( {
 							title: page.title,
 							content: page.html,
 						} ) ),
@@ -440,7 +455,7 @@ const PatternAssembler = ( props: StepProps & NoticesProps ) => {
 	const globalStylesUpgradeProps = useGlobalStylesUpgradeProps( {
 		flowName: flow,
 		stepName,
-		nextScreenName: isNewSite ? 'confirmation' : 'activation',
+		nextScreenName: 'confirmation',
 		onUpgradeLater: onContinue,
 		recordTracksEvent,
 	} );
@@ -490,6 +505,14 @@ const PatternAssembler = ( props: StepProps & NoticesProps ) => {
 		// Don't show the “Back” button if the site is being created by the site assembler flow.
 		// as the previous step is the site creation step that cannot be undone.
 		return isSiteAssemblerFlow( flow );
+	};
+
+	const shouldIgnoreSelectedPagesInPreview = () => {
+		if ( flow === AI_ASSEMBLER_FLOW ) {
+			return false;
+		}
+
+		return ! [ 'confirmation', 'upsell' ].includes( currentScreen.name );
 	};
 
 	const customActionButtons = () => {
@@ -542,11 +565,6 @@ const PatternAssembler = ( props: StepProps & NoticesProps ) => {
 
 		resetRecipe();
 		goBack?.();
-	};
-
-	const onActivate = () => {
-		recordTracksEvent( PATTERN_ASSEMBLER_EVENTS.SCREEN_ACTIVATION_ACTIVATE_CLICK );
-		onContinue();
 	};
 
 	const onConfirm = () => {
@@ -617,7 +635,7 @@ const PatternAssembler = ( props: StepProps & NoticesProps ) => {
 
 	const onScreenPagesSelect = ( pageSlug: string ) => {
 		if ( pageSlugs.includes( pageSlug ) ) {
-			setPageSlugs( pageSlugs.filter( ( item ) => item !== pageSlug ) );
+			setPageSlugs( pageSlugs.filter( ( item: string ) => item !== pageSlug ) );
 			recordTracksEvent( PATTERN_ASSEMBLER_EVENTS.SCREEN_PAGES_PAGE_REMOVE, { page: pageSlug } );
 		} else {
 			setPageSlugs( [ ...pageSlugs, pageSlug ] );
@@ -633,9 +651,12 @@ const PatternAssembler = ( props: StepProps & NoticesProps ) => {
 		<div className="pattern-assembler__wrapper" ref={ wrapperRef } tabIndex={ -1 }>
 			{ noticeUI }
 			<div className="pattern-assembler__sidebar">
+				<QueryActiveTheme siteId={ site?.ID } />
+
 				<NavigatorScreen path={ NAVIGATOR_PATHS.MAIN } partialMatch>
 					<ScreenMain
 						onMainItemSelect={ onMainItemSelect }
+						onPreselectPattern={ onPreselectPattern }
 						hasHeader={ !! header }
 						hasFooter={ !! footer }
 						sections={ sections }
@@ -658,21 +679,22 @@ const PatternAssembler = ( props: StepProps & NoticesProps ) => {
 
 				<NavigatorScreen path={ NAVIGATOR_PATHS.PAGES } partialMatch>
 					<ScreenPages
-						categories={ categories }
-						pagesMapByCategory={ pageCategoryPatternsMap }
-						selectedPageSlugs={ pageSlugs }
+						pagesToShow={ pagesToShow }
 						onSelect={ onScreenPagesSelect }
 						onContinueClick={ onContinue }
 						recordTracksEvent={ recordTracksEvent }
 					/>
 				</NavigatorScreen>
 
-				<NavigatorScreen path={ NAVIGATOR_PATHS.ACTIVATION } className="screen-activation">
-					<ScreenActivation onActivate={ onActivate } />
-				</NavigatorScreen>
-
 				<NavigatorScreen path={ NAVIGATOR_PATHS.CONFIRMATION } className="screen-confirmation">
-					<ScreenConfirmation onConfirm={ onConfirm } />
+					<ScreenConfirmation
+						isNewSite={ isNewSite }
+						siteId={ site?.ID }
+						selectedDesign={ selectedDesign }
+						surveyDismissed={ surveyDismissed }
+						setSurveyDismissed={ setSurveyDismissed }
+						onConfirm={ onConfirm }
+					/>
 				</NavigatorScreen>
 
 				<NavigatorScreen path={ NAVIGATOR_PATHS.UPSELL } className="screen-upsell">
@@ -690,6 +712,7 @@ const PatternAssembler = ( props: StepProps & NoticesProps ) => {
 						selectedSections={ sections }
 						selectedFooter={ footer }
 						patternsMapByCategory={ layoutCategoryPatternsMap }
+						pages={ ! shouldIgnoreSelectedPagesInPreview() ? pages : undefined }
 						onSelect={ onSelect }
 						recordTracksEvent={ recordTracksEvent }
 						isNewSite={ isNewSite }
@@ -728,12 +751,7 @@ const PatternAssembler = ( props: StepProps & NoticesProps ) => {
 					sections={ sections }
 					footer={ footer }
 					activePosition={ activePosition }
-					pages={
-						// Consider the selected pages in the final screen.
-						currentScreen.name === 'confirmation' || currentScreen.name === 'activation'
-							? pages
-							: undefined
-					}
+					pages={ ! shouldIgnoreSelectedPagesInPreview() ? pages : undefined }
 					onDeleteSection={ onDeleteSection }
 					onMoveUpSection={ onMoveUpSection }
 					onMoveDownSection={ onMoveDownSection }

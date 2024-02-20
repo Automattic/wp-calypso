@@ -9,7 +9,7 @@ export function renderWithProvider(
 ): RenderResult {
 	const queryClient = new QueryClient();
 
-	const Wrapper = ( { children }: { children: React.ReactElement } ) => {
+	const Wrapper = ( { children }: { children: React.ReactNode } ) => {
 		if ( renderOptions.wrapper ) {
 			children = <renderOptions.wrapper>{ children }</renderOptions.wrapper>;
 		}
@@ -155,6 +155,7 @@ export function testDomain(
 		registry_expiry_date: '',
 		subdomain_part: '',
 		auth_code_required: true,
+		is_mapped_to_atomic_site: false,
 		...defaults,
 	};
 

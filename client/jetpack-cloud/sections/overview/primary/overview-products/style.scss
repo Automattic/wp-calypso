@@ -1,0 +1,41 @@
+@import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/mixins";
+
+.overview-products__is-loading {
+	min-height: 444px;
+	@include placeholder( --color-neutral-10 );
+}
+.overview-products__header {
+	align-items: flex-start;
+	column-gap: 32px;
+	display: flex;
+	flex-direction: row;
+	justify-content: space-between;
+	margin-bottom: 32px;
+}
+
+.overview-products__title {
+	font-size: rem(16px);
+	margin-bottom: 4px;
+}
+
+.overview-products__description {
+	font-size: rem(14px);
+	display: none;
+
+	@include break-medium {
+		display: block;
+	}
+}
+
+.overview-products__cta {
+	align-items: center;
+	border-width: 0;
+	display: flex;
+	font-size: rem(13px);
+	justify-content: center;
+	min-width: 5.7rem;
+	margin: auto 0;
+	padding: 5px 26px;
+	white-space: nowrap;
+}

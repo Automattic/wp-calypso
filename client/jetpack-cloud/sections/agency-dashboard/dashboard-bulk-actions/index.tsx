@@ -1,9 +1,8 @@
-import { Button, Gridicon } from '@automattic/components';
+import { Button, Gridicon, SelectDropdown } from '@automattic/components';
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
-import { useState, createRef, useContext } from 'react';
+import { createRef, useContext } from 'react';
 import ButtonGroup from 'calypso/components/button-group';
-import SelectDropdown from 'calypso/components/select-dropdown';
 import NotificationSettings from '../downtime-monitoring/notification-settings';
 import { useJetpackAgencyDashboardRecordTrackEvent } from '../hooks';
 import SitesOverviewContext from '../sites-overview/context';
@@ -31,17 +30,16 @@ export default function DashboardBulkActions( {
 }: Props ) {
 	const actionBarRef = createRef< HTMLDivElement >();
 	const translate = useTranslate();
-	const { setIsBulkManagementActive } = useContext( SitesOverviewContext );
+	const { setIsBulkManagementActive, setIsPopoverOpen, isPopoverOpen } =
+		useContext( SitesOverviewContext );
 
 	const handleToggleActivateMonitor = useHandleToggleMonitor( selectedSites, isLargeScreen );
 	const handleResetNotification = useHandleResetNotification( selectedSites, isLargeScreen );
 	const { actionBarVisible } = useHandleShowHideActionBar( actionBarRef );
 	const recordEvent = useJetpackAgencyDashboardRecordTrackEvent( selectedSites, isLargeScreen );
 
-	const [ showNotificationSettingsPopup, setShowNotificationSettingsPopup ] = useState( false );
-
 	function toggleNotificationSettingsPopup() {
-		setShowNotificationSettingsPopup( ( isOpen ) => ! isOpen );
+		setIsPopoverOpen( ( isPopoverOpen ) => ! isPopoverOpen );
 	}
 
 	const toggleMonitorActions = [
@@ -62,11 +60,13 @@ export default function DashboardBulkActions( {
 			label: translate( 'Custom Notification' ),
 			action: () => toggleNotificationSettingsPopup(),
 			actionName: 'custom_notification_click',
+			className: 'dashboard-bulk-actions__custom_notification_button',
 		},
 		{
 			label: translate( 'Reset Notification' ),
 			action: () => handleResetNotification(),
 			actionName: 'reset_notification_click',
+			className: 'dashboard-bulk-actions__reset_notification_button',
 		},
 	];
 
@@ -91,12 +91,13 @@ export default function DashboardBulkActions( {
 					</Button>
 				) ) }
 			</ButtonGroup>
-			{ otherMonitorActions.map( ( { label, action, actionName } ) => (
+			{ otherMonitorActions.map( ( { label, action, actionName, className } ) => (
 				<ButtonGroup key={ label }>
 					<Button
 						compact
 						disabled={ disabled }
 						onClick={ () => handleAction( action, actionName ) }
+						className={ className }
 					>
 						{ label }
 					</Button>
@@ -139,7 +140,7 @@ export default function DashboardBulkActions( {
 					</Button>
 				</ButtonGroup>
 			</div>
-			{ showNotificationSettingsPopup && (
+			{ isPopoverOpen && (
 				<NotificationSettings
 					sites={ selectedSites }
 					bulkUpdateSettings={ bulkUpdateSettings }

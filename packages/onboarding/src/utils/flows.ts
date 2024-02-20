@@ -1,3 +1,4 @@
+export const ACCOUNT_FLOW = 'account';
 export const AI_ASSEMBLER_FLOW = 'ai-assembler';
 export const NEWSLETTER_FLOW = 'newsletter';
 export const NEWSLETTER_POST_SETUP_FLOW = 'newsletter-post-setup';
@@ -21,6 +22,7 @@ export const WOOEXPRESS_FLOW = 'wooexpress';
 export const FREE_FLOW = 'free';
 export const FREE_POST_SETUP_FLOW = 'free-post-setup';
 export const MIGRATION_FLOW = 'import-focused';
+export const SITE_MIGRATION_FLOW = 'site-migration';
 export const COPY_SITE_FLOW = 'copy-site';
 export const BUILD_FLOW = 'build';
 export const WRITE_FLOW = 'write';
@@ -35,6 +37,7 @@ export const DOMAIN_UPSELL_FLOW = 'domain-upsell';
 export const DOMAIN_TRANSFER = 'domain-transfer';
 export const GOOGLE_TRANSFER = 'google-transfer';
 export const HUNDRED_YEAR_PLAN_FLOW = 'hundred-year-plan';
+export const REBLOGGING_FLOW = 'reblogging';
 
 export const isLinkInBioFlow = ( flowName: string | null | undefined ) => {
 	return Boolean(
@@ -114,6 +117,10 @@ export const isCopySiteFlow = ( flowName: string | null ) => {
 
 export const isWooExpressFlow = ( flowName: string | null ) => {
 	return Boolean( flowName && [ WOOEXPRESS_FLOW ].includes( flowName ) );
+};
+
+export const isNewSiteMigrationFlow = ( flowName: string | null ) => {
+	return Boolean( flowName && [ SITE_MIGRATION_FLOW ].includes( flowName ) );
 };
 
 export const isBuildFlow = ( flowName: string | null ) => {

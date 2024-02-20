@@ -17,6 +17,11 @@ describe( '<PaymentMethodAdd>', () => {
 			documentHead: { unreadCount: 1 },
 			sites: { items: {} },
 			currentUser: { capabilities: {} },
+			partnerPortal: {
+				partner: {
+					isPartnerOAuthTokenLoaded: true,
+				},
+			},
 		};
 
 		const store = createStore( ( state ) => state, initialState );

@@ -9,6 +9,8 @@ export type SubscriberEndpointResponse = {
 };
 
 export type SubscriptionPlan = {
+	is_gift: boolean;
+	gift_id: number;
 	paid_subscription_id: string;
 	status: string;
 	title: string;

@@ -31,26 +31,45 @@ $grid-vertical-gutters: 32px;
 
 .stats__module-list.stats__module--unified.subscribers-page {
 	@include stats-desktop-grid(
-		"followers followers followers followers followers followers publicize publicize publicize publicize publicize publicize"
-		"emails emails emails emails emails emails emails emails emails emails emails emails",
-		2
+		"followers followers followers followers followers followers emails emails emails emails emails emails",
+		1
 	);
 
 	@include stats-tablet-grid(
-		"followers followers followers followers publicize publicize publicize publicize"
-		"emails emails emails emails emails emails emails emails",
-		2
+		"followers followers followers emails emails emails emails",
+		1
 	);
 
 	@include stats-mobile-grid(
 		"followers followers followers followers"
-		"publicize publicize publicize publicize"
 		"emails emails emails emails",
-		3
+		2
 	);
 
 	@media (max-width: 660px) {
 		padding: 0 16px;
+	}
+
+	// Eliminate the vertical gap appended to the bottom of the grid.
+	&::after {
+		display: none;
+	}
+
+	&.is-email-stats-unavailable {
+		@include stats-desktop-grid(
+			"followers followers followers followers followers followers followers followers followers followers followers followers",
+			1
+		);
+
+		@include stats-tablet-grid(
+			"followers followers followers followers followers followers",
+			1
+		);
+
+		@include stats-mobile-grid(
+			"followers followers followers followers",
+			1
+		);
 	}
 
 	.stats__module-wrapper--followers,

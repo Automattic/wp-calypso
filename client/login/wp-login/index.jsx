@@ -18,6 +18,7 @@ import TranslatorInvite from 'calypso/components/translator-invite';
 import { getSignupUrl, pathWithLeadingSlash } from 'calypso/lib/login';
 import {
 	isJetpackCloudOAuth2Client,
+	isA4AOAuth2Client,
 	isCrowdsignalOAuth2Client,
 	isWooOAuth2Client,
 } from 'calypso/lib/oauth2-clients';
@@ -302,7 +303,10 @@ export class Login extends Component {
 
 		// If we got here coming from Jetpack Cloud login page, we want to go back
 		// to it after we finish the process
-		if ( isJetpackCloudOAuth2Client( this.props.oauth2Client ) ) {
+		if (
+			isJetpackCloudOAuth2Client( this.props.oauth2Client ) ||
+			isA4AOAuth2Client( this.props.oauth2Client )
+		) {
 			const currentUrl = new URL( window.location.href );
 			currentUrl.searchParams.append( 'lostpassword_flow', true );
 			const queryArgs = {
@@ -337,17 +341,20 @@ export class Login extends Component {
 			locale,
 			oauth2Client,
 			pathname,
-			query,
+			currentQuery,
 			translate,
 			usernameOrEmail,
 		} = this.props;
 
-		if ( isJetpackCloudOAuth2Client( oauth2Client ) && '/log-in/authenticator' !== currentRoute ) {
+		if (
+			( isJetpackCloudOAuth2Client( oauth2Client ) || isA4AOAuth2Client( oauth2Client ) ) &&
+			'/log-in/authenticator' !== currentRoute
+		) {
 			return null;
 		}
 
-		if ( isP2Login && query?.redirect_to ) {
-			const urlParts = getUrlParts( query.redirect_to );
+		if ( isP2Login && currentQuery?.redirect_to ) {
+			const urlParts = getUrlParts( currentQuery.redirect_to );
 			if ( urlParts.pathname.startsWith( '/accept-invite/' ) ) {
 				return null;
 			}
@@ -356,7 +363,7 @@ export class Login extends Component {
 		// use '?signup_url' if explicitly passed as URL query param
 		const signupUrl = this.props.signupUrl
 			? window.location.origin + pathWithLeadingSlash( this.props.signupUrl )
-			: getSignupUrl( query, currentRoute, oauth2Client, locale, pathname );
+			: getSignupUrl( currentQuery, currentRoute, oauth2Client, locale, pathname );
 
 		return (
 			<a

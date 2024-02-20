@@ -1,4 +1,5 @@
-import { numberFormat, translate } from 'i18n-calypso';
+import formatNumber from '@automattic/components/src/number-formatters/lib/format-number';
+import { getLocaleSlug, translate } from 'i18n-calypso';
 import { useEffect } from 'react';
 import Pagination from 'calypso/components/pagination';
 import { EmptyListView } from 'calypso/my-sites/subscribers/components/empty-list-view';
@@ -19,12 +20,14 @@ type SubscriberListContainerProps = {
 	siteId: number | null;
 	onClickView: ( subscriber: Subscriber ) => void;
 	onClickUnsubscribe: ( subscriber: Subscriber ) => void;
+	onGiftSubscription: ( subscriber: Subscriber ) => void;
 };
 
 const SubscriberListContainer = ( {
 	siteId,
 	onClickView,
 	onClickUnsubscribe,
+	onGiftSubscription,
 }: SubscriberListContainerProps ) => {
 	const {
 		grandTotal,
@@ -47,11 +50,11 @@ const SubscriberListContainer = ( {
 		if ( ! isLoading && subscribers.length === 0 && page > 1 ) {
 			pageChangeCallback( pages ?? 0 );
 		}
-	}, [ isLoading, subscribers, page, pageChangeCallback ] );
+	}, [ isLoading, subscribers, page, pageChangeCallback, pages ] );
 
 	return (
 		<section className="subscriber-list-container">
-			{ ! isLoading && ( Boolean( grandTotal ) || searchTerm ) && (
+			{ Boolean( grandTotal ) && (
 				<>
 					<div className="subscriber-list-container__header">
 						<span className="subscriber-list-container__title">
@@ -64,7 +67,7 @@ const SubscriberListContainer = ( {
 								isLoading ? 'loading-placeholder' : ''
 							}` }
 						>
-							{ numberFormat( total, 0 ) }
+							{ formatNumber( total, getLocaleSlug() || undefined ) }
 						</span>
 					</div>
 
@@ -83,7 +86,11 @@ const SubscriberListContainer = ( {
 			{ ! isLoading && Boolean( grandTotal ) && (
 				<>
 					{ Boolean( total ) && (
-						<SubscriberList onView={ onClickView } onUnsubscribe={ onClickUnsubscribe } />
+						<SubscriberList
+							onView={ onClickView }
+							onGiftSubscription={ onGiftSubscription }
+							onUnsubscribe={ onClickUnsubscribe }
+						/>
 					) }
 					{ ! total && <NoSearchResults searchTerm={ searchTerm } /> }
 

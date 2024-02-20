@@ -12,6 +12,7 @@ export interface Props {
 export interface FoldableNavItem {
 	icon?: JSX.Element;
 	link: string;
+	slug: string;
 	title: TranslateResult;
 	trackEventName: string;
 	isExternalLink?: boolean;

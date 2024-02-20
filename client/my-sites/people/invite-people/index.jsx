@@ -1,6 +1,6 @@
 import { isEnabled } from '@automattic/calypso-config';
 import page from '@automattic/calypso-router';
-import { Card, Button } from '@automattic/components';
+import { Card, Button, FormLabel } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
 import debugModule from 'debug';
 import { localize } from 'i18n-calypso';
@@ -16,7 +16,6 @@ import ClipboardButton from 'calypso/components/forms/clipboard-button';
 import CountedTextarea from 'calypso/components/forms/counted-textarea';
 import FormButton from 'calypso/components/forms/form-button';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
-import FormLabel from 'calypso/components/forms/form-label';
 import FormSelect from 'calypso/components/forms/form-select';
 import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
 import FormTextInput from 'calypso/components/forms/form-text-input';
@@ -29,7 +28,6 @@ import TokenField from 'calypso/components/token-field';
 import withSiteRoles from 'calypso/data/site-roles/with-site-roles';
 import accept from 'calypso/lib/accept';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
-import withTrackingTool from 'calypso/lib/analytics/with-tracking-tool';
 import getWpcomFollowerRole from 'calypso/lib/get-wpcom-follower-role';
 import { userCan } from 'calypso/lib/site/utils';
 import wpcom from 'calypso/lib/wp';
@@ -801,6 +799,4 @@ const mapDispatchToProps = {
 
 const connectComponent = connect( mapStateToProps, mapDispatchToProps );
 
-export default connectComponent(
-	localize( withTrackingTool( 'HotJar' )( withSiteRoles( InvitePeople ) ) )
-);
+export default connectComponent( localize( withSiteRoles( InvitePeople ) ) );

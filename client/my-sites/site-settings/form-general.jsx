@@ -1,10 +1,8 @@
 import { isEnabled } from '@automattic/calypso-config';
 import {
 	PLAN_BUSINESS,
-	PLAN_PREMIUM,
 	WPCOM_FEATURES_NO_WPCOM_BRANDING,
 	WPCOM_FEATURES_SITE_PREVIEW_LINKS,
-	FEATURE_STYLE_CUSTOMIZATION,
 	getPlan,
 } from '@automattic/calypso-products';
 import {
@@ -12,7 +10,7 @@ import {
 	WPCOM_FEATURES_LOCKED_MODE,
 	WPCOM_FEATURES_LEGACY_CONTACT,
 } from '@automattic/calypso-products/src';
-import { Card, CompactCard, Button, Gridicon } from '@automattic/components';
+import { Card, CompactCard, Button, FormLabel, Gridicon } from '@automattic/components';
 import { guessTimezone, localizeUrl } from '@automattic/i18n-utils';
 import languages from '@automattic/languages';
 import { ToggleControl } from '@wordpress/components';
@@ -26,7 +24,6 @@ import QuerySiteDomains from 'calypso/components/data/query-site-domains';
 import QuerySiteSettings from 'calypso/components/data/query-site-settings';
 import FormInputCheckbox from 'calypso/components/forms/form-checkbox';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
-import FormLabel from 'calypso/components/forms/form-label';
 import FormRadio from 'calypso/components/forms/form-radio';
 import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
 import FormInput from 'calypso/components/forms/form-text-input';
@@ -40,6 +37,7 @@ import { preventWidows } from 'calypso/lib/formatting';
 import scrollToAnchor from 'calypso/lib/scroll-to-anchor';
 import { domainManagementEdit } from 'calypso/my-sites/domains/paths';
 import SettingsSectionHeader from 'calypso/my-sites/site-settings/settings-section-header';
+import SiteSettingPrivacy from 'calypso/my-sites/site-settings/site-setting-privacy';
 import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
 import isSiteComingSoon from 'calypso/state/selectors/is-site-coming-soon';
 import isSiteP2Hub from 'calypso/state/selectors/is-site-p2-hub';
@@ -375,6 +373,10 @@ export class SiteSettingsFormGeneral extends Component {
 		const isAnyComingSoonEnabled =
 			( 0 === blogPublic && wpcomPublicComingSoon ) || isPrivateAndUnlaunched || wpcomComingSoon;
 		const isComingSoonDisabled = isRequestingSettings || isAtomicAndEditingToolkitDeactivated;
+		const isPublicChecked =
+			( wpcomPublicComingSoon && blogPublic === 0 && isComingSoonDisabled ) ||
+			( blogPublic === 0 && ! wpcomPublicComingSoon ) ||
+			blogPublic === 1;
 		const comingSoonFormLabelClasses = classNames(
 			'site-settings__visibility-label is-coming-soon',
 			{
@@ -382,31 +384,6 @@ export class SiteSettingsFormGeneral extends Component {
 			}
 		);
 		const showPreviewLink = isComingSoon && hasSitePreviewLink;
-
-		const PublicFormRadio = () => (
-			<FormLabel className="site-settings__visibility-label is-public">
-				<FormRadio
-					name="blog_public"
-					value="1"
-					checked={
-						( wpcomPublicComingSoon && blogPublic === 0 && isComingSoonDisabled ) ||
-						( blogPublic === 0 && ! wpcomPublicComingSoon ) ||
-						blogPublic === 1
-					}
-					onChange={ () =>
-						this.handleVisibilityOptionChange( {
-							blog_public: isWpcomStagingSite ? 0 : 1,
-							wpcom_coming_soon: 0,
-							wpcom_public_coming_soon: 0,
-						} )
-					}
-					disabled={ isRequestingSettings }
-					onClick={ eventTracker( 'Clicked Site Visibility Radio Button' ) }
-					label={ translate( 'Public' ) }
-				/>
-			</FormLabel>
-		);
-
 		return (
 			<FormFieldset>
 				{ ! isNonAtomicJetpackSite &&
@@ -449,22 +426,37 @@ export class SiteSettingsFormGeneral extends Component {
 							) }
 						</>
 					) }
-				{ isWpcomStagingSite && (
+				{ ! isNonAtomicJetpackSite && (
 					<>
-						<PublicFormRadio />
+						<FormLabel className="site-settings__visibility-label is-public">
+							<FormRadio
+								name="blog_public"
+								value="1"
+								checked={ isPublicChecked }
+								onChange={ () =>
+									this.handleVisibilityOptionChange( {
+										blog_public: isWpcomStagingSite ? 0 : 1,
+										wpcom_coming_soon: 0,
+										wpcom_public_coming_soon: 0,
+									} )
+								}
+								disabled={ isRequestingSettings }
+								onClick={ eventTracker( 'Clicked Site Visibility Radio Button' ) }
+								label={ translate( 'Public' ) }
+							/>
+						</FormLabel>
 						<FormSettingExplanation>
-							{ translate(
-								'Your site is visible to everyone, but search engines are discouraged from indexing staging sites.'
-							) }
+							{ isWpcomStagingSite
+								? translate(
+										'Your site is visible to everyone, but search engines are discouraged from indexing staging sites.'
+								  )
+								: translate( 'Your site is visible to everyone.' ) }
 						</FormSettingExplanation>
 					</>
 				) }
-				{ ! isNonAtomicJetpackSite && ! isWpcomStagingSite && <PublicFormRadio /> }
+
 				{ ! isWpcomStagingSite && (
 					<>
-						<FormSettingExplanation>
-							{ translate( 'Your site is visible to everyone.' ) }
-						</FormSettingExplanation>
 						<FormLabel className="site-settings__visibility-label is-checkbox is-hidden">
 							<FormInputCheckbox
 								name="blog_public"
@@ -709,31 +701,16 @@ export class SiteSettingsFormGeneral extends Component {
 	}
 
 	privacySettings() {
-		const { isRequestingSettings, translate, handleSubmitForm, isSavingSettings, isP2HubSite } =
+		const { fields, handleSubmitForm, updateFields, isRequestingSettings, isSavingSettings } =
 			this.props;
-
-		if ( isP2HubSite ) {
-			return <></>;
-		}
 		return (
-			<>
-				<SettingsSectionHeader
-					disabled={ isRequestingSettings || isSavingSettings }
-					id="site-privacy-settings"
-					isSaving={ isSavingSettings }
-					onButtonClick={ handleSubmitForm }
-					showButton
-					title={ translate( 'Privacy {{learnMoreLink/}}', {
-						components: {
-							learnMoreLink: <InlineSupportLink supportContext="privacy" showText={ false } />,
-						},
-						comment: 'Privacy Settings header',
-					} ) }
-				/>
-				<Card>
-					<form> { this.visibilityOptionsComingSoon() }</form>
-				</Card>
-			</>
+			<SiteSettingPrivacy
+				fields={ fields }
+				handleSubmitForm={ handleSubmitForm }
+				updateFields={ updateFields }
+				isRequestingSettings={ isRequestingSettings }
+				isSavingSettings={ isSavingSettings }
+			/>
 		);
 	}
 
@@ -976,43 +953,6 @@ export class SiteSettingsFormGeneral extends Component {
 				) }
 				{ this.toolbarOption() }
 			</div>
-		);
-	}
-
-	advancedCustomizationNotice() {
-		const { translate, selectedSite, siteSlug } = this.props;
-		const upgradeUrl = `/plans/${ siteSlug }?plan=${ PLAN_PREMIUM }&feature=${ FEATURE_STYLE_CUSTOMIZATION }`;
-
-		return (
-			<>
-				<div className="site-settings__advanced-customization-notice">
-					<div className="site-settings__advanced-customization-notice-cta">
-						<Gridicon icon="info-outline" />
-						<span>
-							{ translate(
-								'Your site contains premium styles that will only be visible once you upgrade to a %(planName)s plan.',
-								{
-									args: {
-										planName: getPlan( PLAN_PREMIUM )?.getTitle() ?? '',
-									},
-								}
-							) }
-						</span>
-					</div>
-					<div className="site-settings__advanced-customization-notice-buttons">
-						<Button href={ selectedSite.URL } target="_blank">
-							{ translate( 'View site' ) }
-						</Button>
-						<Button
-							className="is-primary"
-							href={ upgradeUrl }
-							onClick={ this.trackAdvancedCustomizationUpgradeClick }
-						>
-							{ translate( 'Upgrade' ) }
-						</Button>
-					</div>
-				</div>
-			</>
 		);
 	}
 }

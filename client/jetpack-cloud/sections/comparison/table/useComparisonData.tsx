@@ -253,7 +253,7 @@ export const useComparisonData = () => {
 							},
 							COMPLETE: {
 								highlight: true,
-								content: translate( 'Social Basic' ),
+								content: translate( 'Social Advanced' ),
 							},
 						},
 					},
@@ -312,7 +312,7 @@ export const useComparisonData = () => {
 			},
 			{
 				sectionId: 'earn',
-				sectionName: translate( 'Earn' ),
+				sectionName: translate( 'Monetize' ),
 				icon: EarnIcon,
 				features: [
 					{

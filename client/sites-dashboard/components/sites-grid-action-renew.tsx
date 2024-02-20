@@ -39,7 +39,7 @@ const RenewLink = styled.a( {
 
 export function SitesGridActionRenew( { site, isUpgradeable }: SitesGridActionRenewProps ) {
 	const { __ } = useI18n();
-	const userId = useSelector( ( state ) => getCurrentUserId( state ) );
+	const userId = useSelector( getCurrentUserId );
 	const isSiteOwner = site.site_owner === userId;
 	const productSlug = site.plan?.product_slug;
 
@@ -60,7 +60,7 @@ export function SitesGridActionRenew( { site, isUpgradeable }: SitesGridActionRe
 			<Notice status="is-error" icon="notice" showDismiss={ false }>
 				<span ref={ ref }>
 					{
-						/* translators: %s - the plan's product name, such as Business or Pro. */
+						/* translators: %s - the plan's product name, such as Creator or Explorer. */
 						sprintf( __( '%s Plan expired.' ), site.plan?.product_name_short )
 					}
 				</span>

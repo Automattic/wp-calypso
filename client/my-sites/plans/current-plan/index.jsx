@@ -266,7 +266,7 @@ class CurrentPlan extends Component {
 
 						<PlansNavigation path={ path } />
 
-						<Main wideLayout>
+						<Main fullWidthLayout>
 							{ showDomainWarnings && (
 								<DomainWarnings
 									domains={ domains }

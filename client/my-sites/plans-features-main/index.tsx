@@ -2,24 +2,31 @@ import config from '@automattic/calypso-config';
 import {
 	chooseDefaultCustomerType,
 	getPlan,
-	getPlanClass,
 	getPlanPath,
 	isFreePlan,
 	isPersonalPlan,
 	PLAN_PERSONAL,
 	PRODUCT_1GB_SPACE,
 	WPComStorageAddOnSlug,
-	PLAN_HOSTING_TRIAL_MONTHLY,
-	PLAN_ENTERPRISE_GRID_WPCOM,
 	PLAN_FREE,
 	isWpcomEnterpriseGridPlan,
 	type PlanSlug,
 	UrlFriendlyTermType,
 } from '@automattic/calypso-products';
 import page from '@automattic/calypso-router';
-import { Button, Spinner, LoadingPlaceholder } from '@automattic/components';
+import { Button, Spinner } from '@automattic/components';
 import { WpcomPlansUI } from '@automattic/data-stores';
 import { isAnyHostingFlow } from '@automattic/onboarding';
+import {
+	FeaturesGrid,
+	ComparisonGrid,
+	PlanTypeSelector,
+	useGridPlans,
+	useGridPlansForFeaturesGrid,
+	useGridPlansForComparisonGrid,
+	useGridPlanForSpotlight,
+} from '@automattic/plans-grid-next';
+import { isMobile } from '@automattic/viewport';
 import styled from '@emotion/styled';
 import { useDispatch } from '@wordpress/data';
 import {
@@ -30,6 +37,7 @@ import {
 	useRef,
 	useState,
 } from '@wordpress/element';
+import { hasQueryArg } from '@wordpress/url';
 import classNames from 'classnames';
 import { localize, useTranslate } from 'i18n-calypso';
 import { ReactNode } from 'react';
@@ -51,11 +59,8 @@ import scrollIntoViewport from 'calypso/lib/scroll-into-viewport';
 import { addQueryArgs } from 'calypso/lib/url';
 import useStorageAddOns from 'calypso/my-sites/add-ons/hooks/use-storage-add-ons';
 import PlanNotice from 'calypso/my-sites/plans-features-main/components/plan-notice';
-import { FeaturesGrid, ComparisonGrid, PlanTypeSelector } from 'calypso/my-sites/plans-grid';
-import useGridPlans from 'calypso/my-sites/plans-grid/hooks/npm-ready/data-store/use-grid-plans';
-import usePlanFeaturesForGridPlans from 'calypso/my-sites/plans-grid/hooks/npm-ready/data-store/use-plan-features-for-grid-plans';
-import useRestructuredPlanFeaturesForComparisonGrid from 'calypso/my-sites/plans-grid/hooks/npm-ready/data-store/use-restructured-plan-features-for-comparison-grid';
-import { useFreeTrialPlanSlugs } from 'calypso/my-sites/plans-grid/hooks/npm-ready/use-free-trial-plan-slugs';
+import { useFreeTrialPlanSlugs } from 'calypso/my-sites/plans-features-main/hooks/use-free-trial-plan-slugs';
+import usePlanTypeDestinationCallback from 'calypso/my-sites/plans-features-main/hooks/use-plan-type-destination-callback';
 import { getCurrentUserName } from 'calypso/state/current-user/selectors';
 import canUpgradeToPlan from 'calypso/state/selectors/can-upgrade-to-plan';
 import getDomainFromHomeUpsellInQuery from 'calypso/state/selectors/get-domain-from-home-upsell-in-query';
@@ -67,26 +72,25 @@ import { getSitePlanSlug, getSiteSlug, isCurrentPlanPaid } from 'calypso/state/s
 import ComparisonGridToggle from './components/comparison-grid-toggle';
 import PlanUpsellModal from './components/plan-upsell-modal';
 import { useModalResolutionCallback } from './components/plan-upsell-modal/hooks/use-modal-resolution-callback';
-import usePricingMetaForGridPlans from './hooks/data-store/use-pricing-meta-for-grid-plans';
 import useCheckPlanAvailabilityForPurchase from './hooks/use-check-plan-availability-for-purchase';
 import useCurrentPlanManageHref from './hooks/use-current-plan-manage-href';
 import useFilterPlansForPlanFeatures from './hooks/use-filter-plans-for-plan-features';
-import useObservableForOdie from './hooks/use-observable-for-odie';
+import useFilteredDisplayedIntervals from './hooks/use-filtered-displayed-intervals';
 import usePlanBillingPeriod from './hooks/use-plan-billing-period';
 import usePlanFromUpsells from './hooks/use-plan-from-upsells';
 import usePlanIntentFromSiteMeta from './hooks/use-plan-intent-from-site-meta';
+import { usePlanUpgradeCreditsApplicable } from './hooks/use-plan-upgrade-credits-applicable';
 import useGetFreeSubdomainSuggestion from './hooks/use-suggested-free-domain-from-paid-domain';
-import type { MinimalRequestCartProduct } from '@automattic/shopping-cart';
 import type {
-	GridPlan,
 	PlansIntent,
-} from 'calypso/my-sites/plans-grid/hooks/npm-ready/data-store/use-grid-plans';
-import type { DataResponse, PlanActionOverrides } from 'calypso/my-sites/plans-grid/types';
+	DataResponse,
+	PlanActionOverrides,
+	SupportedUrlFriendlyTermType,
+} from '@automattic/plans-grid-next';
+import type { MinimalRequestCartProduct } from '@automattic/shopping-cart';
 import type { IAppState } from 'calypso/state/types';
 
 import './style.scss';
-
-const SPOTLIGHT_ENABLED_INTENTS = [ 'plans-default-wpcom' ];
 
 const FreePlanSubHeader = styled.p`
 	margin: -32px 0 40px 0;
@@ -135,6 +139,12 @@ export interface PlansFeaturesMainProps {
 	removePaidDomain?: () => void;
 	setSiteUrlAsFreeDomainSuggestion?: ( freeDomainSuggestion: { domain_name: string } ) => void;
 	intervalType?: Extract< UrlFriendlyTermType, 'monthly' | 'yearly' | '2yearly' | '3yearly' >;
+	/**
+	 * An array of intervals to be displayed in the plan type selector. Defaults to [ 'yearly', '2yearly', '3yearly', 'monthly' ]
+	 */
+	displayedIntervals?: Array<
+		Extract< UrlFriendlyTermType, 'monthly' | 'yearly' | '2yearly' | '3yearly' >
+	>;
 	planTypeSelector?: 'interval';
 	withDiscount?: string;
 	discountEndDate?: Date;
@@ -172,12 +182,15 @@ export interface PlansFeaturesMainProps {
 	hideEnterprisePlan?: boolean;
 	isStepperUpgradeFlow?: boolean;
 	isLaunchPage?: boolean | null;
-	isPlansInsideStepper?: boolean;
-	showBiennialToggle?: boolean;
 	hideUnavailableFeatures?: boolean; // used to hide features that are not available, instead of strike-through as explained in #76206
 	showLegacyStorageFeature?: boolean;
 	isSpotlightOnCurrentPlan?: boolean;
 	renderSiblingWhenLoaded?: () => ReactNode; // renders additional components as last dom node when plans grid dependecies are fully loaded
+	/**
+	 * Shows the plan type selector dropdown instead of the default toggle
+	 */
+	showPlanTypeSelectorDropdown?: boolean;
+	onPlanIntervalUpdate?: ( path: string ) => void;
 }
 
 const SecondaryFormattedHeader = ( { siteSlug }: { siteSlug?: string | null } ) => {
@@ -224,7 +237,7 @@ const PlansFeaturesMain = ( {
 	hideEcommercePlan,
 	hideEnterprisePlan,
 	intent: intentFromProps, // do not set a default value for this prop here
-	showBiennialToggle,
+	displayedIntervals = [ 'yearly', '2yearly', '3yearly', 'monthly' ],
 	customerType = 'personal',
 	planTypeSelector = 'interval',
 	intervalType = 'yearly',
@@ -232,13 +245,14 @@ const PlansFeaturesMain = ( {
 	hideUnavailableFeatures = false,
 	isInSignup = false,
 	isCustomDomainAllowedOnFreePlan = false,
-	isPlansInsideStepper = false,
 	isStepperUpgradeFlow = false,
 	isLaunchPage = false,
 	showLegacyStorageFeature = false,
 	isSpotlightOnCurrentPlan,
 	renderSiblingWhenLoaded,
+	showPlanTypeSelectorDropdown = false,
 	coupon,
+	onPlanIntervalUpdate,
 }: PlansFeaturesMainProps ) => {
 	const [ isModalOpen, setIsModalOpen ] = useState( false );
 	const [ lastClickedPlan, setLastClickedPlan ] = useState< string | null >( null );
@@ -260,13 +274,13 @@ const PlansFeaturesMain = ( {
 	const { setShowDomainUpsellDialog } = useDispatch( WpcomPlansUI.store );
 	const domainFromHomeUpsellFlow = useSelector( getDomainFromHomeUpsellInQuery );
 	const showUpgradeableStorage = config.isEnabled( 'plans/upgradeable-storage' );
-	const observableForOdieRef = useObservableForOdie();
 	const currentPlanManageHref = useCurrentPlanManageHref();
 	const canUserManageCurrentPlan = useSelector( ( state: IAppState ) =>
 		siteId
 			? ! isCurrentPlanPaid( state, siteId ) || isCurrentUserCurrentPlanOwner( state, siteId )
 			: null
 	);
+	const getPlanTypeDestination = usePlanTypeDestinationCallback();
 
 	const resolveModal = useModalResolutionCallback( {
 		isCustomDomainAllowedOnFreePlan,
@@ -409,7 +423,6 @@ const PlansFeaturesMain = ( {
 
 	const gridPlans = useGridPlans( {
 		allFeaturesList: FEATURES_LIST,
-		usePricingMetaForGridPlans,
 		useFreeTrialPlanSlugs,
 		selectedFeature,
 		term,
@@ -422,23 +435,8 @@ const PlansFeaturesMain = ( {
 		showLegacyStorageFeature,
 		isSubdomainNotGenerated: ! resolvedSubdomainName.result,
 		storageAddOns,
-	} );
-
-	const planFeaturesForFeaturesGrid = usePlanFeaturesForGridPlans( {
-		gridPlans: gridPlans || [],
-		allFeaturesList: FEATURES_LIST,
-		intent,
-		selectedFeature,
-		showLegacyStorageFeature,
-		isInSignup,
-	} );
-
-	const planFeaturesForComparisonGrid = useRestructuredPlanFeaturesForComparisonGrid( {
-		gridPlans: gridPlans || [],
-		allFeaturesList: FEATURES_LIST,
-		intent,
-		selectedFeature,
-		showLegacyStorageFeature,
+		coupon,
+		selectedSiteId: siteId,
 	} );
 
 	// TODO: `useFilterPlansForPlanFeatures` should gradually deprecate and whatever remains to fall into the `useGridPlans` hook
@@ -454,39 +452,24 @@ const PlansFeaturesMain = ( {
 	} );
 
 	// we neeed only the visible ones for comparison grid (these should extend into plans-ui data store selectors)
-	const gridPlansForComparisonGrid = useMemo( () => {
-		const hiddenPlans = [ PLAN_HOSTING_TRIAL_MONTHLY, PLAN_ENTERPRISE_GRID_WPCOM ];
-
-		return filteredPlansForPlanFeatures.reduce( ( acc, gridPlan ) => {
-			if ( gridPlan.isVisible && ! hiddenPlans.includes( gridPlan.planSlug ) ) {
-				return [
-					...acc,
-					{
-						...gridPlan,
-						features: planFeaturesForComparisonGrid[ gridPlan.planSlug ],
-					},
-				];
-			}
-
-			return acc;
-		}, [] as GridPlan[] );
-	}, [ filteredPlansForPlanFeatures, planFeaturesForComparisonGrid ] );
+	const gridPlansForComparisonGrid = useGridPlansForComparisonGrid( {
+		allFeaturesList: FEATURES_LIST,
+		gridPlans: filteredPlansForPlanFeatures,
+		intent,
+		selectedFeature,
+		showLegacyStorageFeature,
+	} );
 
 	// we neeed only the visible ones for features grid (these should extend into plans-ui data store selectors)
-	const gridPlansForFeaturesGrid = useMemo( () => {
-		return filteredPlansForPlanFeatures.reduce( ( acc, gridPlan ) => {
-			if ( gridPlan.isVisible ) {
-				return [
-					...acc,
-					{
-						...gridPlan,
-						features: planFeaturesForFeaturesGrid[ gridPlan.planSlug ],
-					},
-				];
-			}
-			return acc;
-		}, [] as GridPlan[] );
-	}, [ filteredPlansForPlanFeatures, planFeaturesForFeaturesGrid ] );
+	const gridPlansForFeaturesGrid = useGridPlansForFeaturesGrid( {
+		allFeaturesList: FEATURES_LIST,
+		availableGridPlans: gridPlans || [],
+		gridPlans: filteredPlansForPlanFeatures,
+		intent,
+		isInSignup,
+		selectedFeature,
+		showLegacyStorageFeature,
+	} );
 
 	let hidePlanSelector = false;
 	// In the "purchase a plan and free domain" flow we do not want to show
@@ -505,41 +488,95 @@ const PlansFeaturesMain = ( {
 		_customerType = 'business';
 	}
 
+	const filteredDisplayedIntervals = useFilteredDisplayedIntervals( {
+		productSlug: currentPlan?.productSlug,
+		displayedIntervals,
+		intent,
+		paidDomainName,
+	} );
+
 	const planTypeSelectorProps = useMemo( () => {
-		return {
+		const props = {
 			basePlansPath,
 			isStepperUpgradeFlow,
 			isInSignup,
 			eligibleForWpcomMonthlyPlans,
-			isPlansInsideStepper,
 			intervalType,
 			customerType: _customerType,
 			siteSlug,
 			selectedPlan,
 			selectedFeature,
-			showBiennialToggle,
+			displayedIntervals: filteredDisplayedIntervals,
+			showPlanTypeSelectorDropdown,
 			kind: planTypeSelector,
 			plans: gridPlansForFeaturesGrid.map( ( gridPlan ) => gridPlan.planSlug ),
 			currentSitePlanSlug: sitePlanSlug,
-			usePricingMetaForGridPlans,
+			useCheckPlanAvailabilityForPurchase,
 			recordTracksEvent,
+			coupon,
+			selectedSiteId: siteId,
+			withDiscount,
+		};
+
+		const handlePlanIntervalUpdate = ( interval: SupportedUrlFriendlyTermType ) => {
+			let isDomainUpsellFlow: string | null = '';
+			let isDomainAndPlanPackageFlow: string | null = '';
+			let isJetpackAppFlow: string | null = '';
+
+			if ( typeof window !== 'undefined' ) {
+				isDomainUpsellFlow = new URLSearchParams( window.location.search ).get( 'domain' );
+				isDomainAndPlanPackageFlow = new URLSearchParams( window.location.search ).get(
+					'domainAndPlanPackage'
+				);
+				isJetpackAppFlow = new URLSearchParams( window.location.search ).get( 'jetpackAppPlans' );
+			}
+
+			const pathOrQueryParam = getPlanTypeDestination( props, {
+				intervalType: interval,
+				domain: isDomainUpsellFlow,
+				domainAndPlanPackage: isDomainAndPlanPackageFlow,
+				jetpackAppPlans: isJetpackAppFlow,
+			} );
+
+			if ( onPlanIntervalUpdate ) {
+				return onPlanIntervalUpdate( pathOrQueryParam );
+			}
+
+			if ( hasQueryArg( pathOrQueryParam, 'intervalType' ) ) {
+				const currentPath = window.location.pathname;
+				return page( currentPath + pathOrQueryParam );
+			}
+
+			page( pathOrQueryParam );
+		};
+
+		return {
+			...props,
+			onPlanIntervalUpdate: handlePlanIntervalUpdate,
 		};
 	}, [
-		_customerType,
 		basePlansPath,
-		gridPlansForFeaturesGrid,
-		intervalType,
-		planTypeSelector,
-		selectedFeature,
-		selectedPlan,
-		sitePlanSlug,
-		siteSlug,
-		isInSignup,
-		isPlansInsideStepper,
 		isStepperUpgradeFlow,
-		showBiennialToggle,
+		isInSignup,
 		eligibleForWpcomMonthlyPlans,
+		intervalType,
+		_customerType,
+		siteSlug,
+		selectedPlan,
+		selectedFeature,
+		filteredDisplayedIntervals,
+		showPlanTypeSelectorDropdown,
+		planTypeSelector,
+		gridPlansForFeaturesGrid,
+		sitePlanSlug,
+		coupon,
+		siteId,
+		withDiscount,
+		getPlanTypeDestination,
+		onPlanIntervalUpdate,
 	] );
+
+	const isEligibleForTrial = useSelector( isUserEligibleForFreeHostingTrial );
 
 	/**
 	 * The effects on /plans page need to be checked if this variable is initialized
@@ -553,6 +590,12 @@ const PlansFeaturesMain = ( {
 					status: 'enabled',
 				},
 			};
+
+			if ( ! isEligibleForTrial && intentFromProps === 'plans-new-hosted-site' ) {
+				actionOverrides.trialAlreadyUsed = {
+					postButtonText: translate( "You've already used your free trial! Thanks!" ),
+				};
+			}
 		}
 
 		if ( sitePlanSlug && intentFromProps !== 'plans-p2' ) {
@@ -598,23 +641,12 @@ const PlansFeaturesMain = ( {
 		currentPlanManageHref,
 	] );
 
-	/**
-	 * The spotlight in smaller grids looks broken.
-	 * So for now we only allow the spotlight in the default grid plans grid where we display all 6 plans.
-	 * In order to accommodate this for other variations with lesser number of plans the design needs to be reworked.
-	 * Or else the intent needs to be explicitly allow the spotlight to be shown in this relevant intent.
-	 * Eventually once the spotlight card is made responsive this flag can be removed.
-	 * Check : https://github.com/Automattic/wp-calypso/pull/80232 for more details.
-	 */
-	const gridPlanForSpotlight = useMemo( () => {
-		return sitePlanSlug &&
-			isSpotlightOnCurrentPlan &&
-			SPOTLIGHT_ENABLED_INTENTS.includes( intent ?? '' )
-			? gridPlansForFeaturesGrid.find(
-					( { planSlug } ) => getPlanClass( planSlug ) === getPlanClass( sitePlanSlug )
-			  )
-			: undefined;
-	}, [ sitePlanSlug, isSpotlightOnCurrentPlan, intent, gridPlansForFeaturesGrid ] );
+	const gridPlanForSpotlight = useGridPlanForSpotlight( {
+		intent,
+		isSpotlightOnCurrentPlan,
+		gridPlansForFeaturesGrid,
+		sitePlanSlug,
+	} );
 
 	const [ masterbarHeight, setMasterbarHeight ] = useState( 0 );
 	/**
@@ -696,6 +728,16 @@ const PlansFeaturesMain = ( {
 
 	const isPlansGridReady = ! isLoadingGridPlans && ! resolvedSubdomainName.isLoading;
 
+	const enablePlanTypeSelectorStickyBehavior = isMobile() && showPlanTypeSelectorDropdown;
+	const stickyPlanTypeSelectorHeight = isMobile() ? 62 : 48;
+	const comparisonGridStickyRowOffset = enablePlanTypeSelectorStickyBehavior
+		? stickyPlanTypeSelectorHeight + masterbarHeight
+		: masterbarHeight;
+	const planUpgradeCreditsApplicable = usePlanUpgradeCreditsApplicable(
+		siteId,
+		gridPlansForFeaturesGrid.map( ( gridPlan ) => gridPlan.planSlug )
+	);
+
 	return (
 		<>
 			<div
@@ -769,9 +811,13 @@ const PlansFeaturesMain = ( {
 				{ isPlansGridReady && (
 					<>
 						{ ! hidePlanSelector && (
-							<div className="plans-features-main__plan-type-selector">
-								<PlanTypeSelector { ...planTypeSelectorProps } />
-							</div>
+							<PlanTypeSelector
+								{ ...planTypeSelectorProps }
+								layoutClassName="plans-features-main__plan-type-selector-layout"
+								enableStickyBehavior={ enablePlanTypeSelectorStickyBehavior }
+								stickyPlanTypeSelectorOffset={ masterbarHeight - 1 }
+								coupon={ coupon }
+							/>
 						) }
 						<div
 							className={ classNames(
@@ -792,10 +838,11 @@ const PlansFeaturesMain = ( {
 									generatedWPComSubdomain={ resolvedSubdomainName }
 									isCustomDomainAllowedOnFreePlan={ isCustomDomainAllowedOnFreePlan }
 									isInSignup={ isInSignup }
+									isInAdmin={ ! isInSignup }
 									isLaunchPage={ isLaunchPage }
 									onUpgradeClick={ handleUpgradeClick }
 									selectedFeature={ selectedFeature }
-									siteId={ siteId }
+									selectedSiteId={ siteId }
 									intervalType={ intervalType }
 									hideUnavailableFeatures={ hideUnavailableFeatures }
 									currentSitePlanSlug={ sitePlanSlug }
@@ -804,10 +851,13 @@ const PlansFeaturesMain = ( {
 									showLegacyStorageFeature={ showLegacyStorageFeature }
 									showUpgradeableStorage={ showUpgradeableStorage }
 									stickyRowOffset={ masterbarHeight }
-									usePricingMetaForGridPlans={ usePricingMetaForGridPlans }
+									useCheckPlanAvailabilityForPurchase={ useCheckPlanAvailabilityForPurchase }
 									allFeaturesList={ FEATURES_LIST }
 									onStorageAddOnClick={ handleStorageAddOnClick }
 									showRefundPeriod={ isAnyHostingFlow( flowName ) }
+									recordTracksEvent={ recordTracksEvent }
+									coupon={ coupon }
+									planUpgradeCreditsApplicable={ planUpgradeCreditsApplicable }
 								/>
 								{ showEscapeHatch && hidePlansFeatureComparison && (
 									<div className="plans-features-main__escape-hatch">
@@ -825,7 +875,6 @@ const PlansFeaturesMain = ( {
 													? translate( 'Hide comparison' )
 													: translate( 'Compare plans' )
 											}
-											ref={ observableForOdieRef }
 										/>
 										{ showEscapeHatch && (
 											<div className="plans-features-main__escape-hatch">
@@ -842,32 +891,38 @@ const PlansFeaturesMain = ( {
 												{ translate( 'Compare our plans and find yours' ) }
 											</PlanComparisonHeader>
 											{ ! hidePlanSelector && showPlansComparisonGrid && (
-												<div className="plans-features-main__plan-type-selector">
-													<PlanTypeSelector { ...planTypeSelectorProps } />
-												</div>
+												<PlanTypeSelector
+													{ ...planTypeSelectorProps }
+													layoutClassName="plans-features-main__plan-type-selector-layout"
+													coupon={ coupon }
+												/>
 											) }
 											<ComparisonGrid
 												gridPlans={ gridPlansForComparisonGrid }
 												isInSignup={ isInSignup }
+												isInAdmin={ ! isInSignup }
 												isLaunchPage={ isLaunchPage }
 												onUpgradeClick={ handleUpgradeClick }
 												selectedFeature={ selectedFeature }
 												selectedPlan={ selectedPlan }
-												siteId={ siteId }
+												selectedSiteId={ siteId }
 												intervalType={ intervalType }
 												hideUnavailableFeatures={ hideUnavailableFeatures }
 												currentSitePlanSlug={ sitePlanSlug }
 												planActionOverrides={ planActionOverrides }
 												intent={ intent }
 												showUpgradeableStorage={ showUpgradeableStorage }
-												stickyRowOffset={ masterbarHeight }
-												usePricingMetaForGridPlans={ usePricingMetaForGridPlans }
+												stickyRowOffset={ comparisonGridStickyRowOffset }
+												useCheckPlanAvailabilityForPurchase={ useCheckPlanAvailabilityForPurchase }
 												allFeaturesList={ FEATURES_LIST }
 												onStorageAddOnClick={ handleStorageAddOnClick }
 												showRefundPeriod={ isAnyHostingFlow( flowName ) }
 												planTypeSelectorProps={
 													! hidePlanSelector ? planTypeSelectorProps : undefined
 												}
+												coupon={ coupon }
+												recordTracksEvent={ recordTracksEvent }
+												planUpgradeCreditsApplicable={ planUpgradeCreditsApplicable }
 											/>
 											<ComparisonGridToggle
 												onClick={ toggleShowPlansComparisonGrid }

@@ -22,21 +22,12 @@
 }
 
 button.update-plugin__new-version {
-	text-decoration: underline;
-	font-weight: 600;
+	background-color: var(--studio-jetpack-green-50);
+	color: var(--studio-white);
 	position: relative;
 	inset-inline-start: 20px;
-
-	a {
-		display: inline !important;
-	}
 }
 
-.theme-jetpack-cloud {
-	button.update-plugin__new-version {
-		color: var(--studio-jetpack-green-50) !important;
-	}
-}
 
 button.update-plugin__retry-button {
 	text-decoration: underline;

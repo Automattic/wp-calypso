@@ -12,17 +12,13 @@ import { LoadingEllipsis } from 'calypso/components/loading-ellipsis';
 import WarningCard from 'calypso/components/warning-card';
 import { useSite } from 'calypso/landing/stepper/hooks/use-site';
 import { useSitePluginSlug } from 'calypso/landing/stepper/hooks/use-site-plugin-slug';
-import {
-	AUTOMATED_ELIGIBILITY_STORE,
-	SITE_STORE,
-	ONBOARD_STORE,
-} from 'calypso/landing/stepper/stores';
+import { AUTOMATED_ELIGIBILITY_STORE, SITE_STORE } from 'calypso/landing/stepper/stores';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { addQueryArgs } from 'calypso/lib/url';
 import { eligibilityHolds as eligibilityHoldsConstants } from 'calypso/state/automated-transfer/constants';
 import SupportCard from '../store-address/support-card';
 import type { Step } from '../../types';
-import type { OnboardSelect, SiteSelect } from '@automattic/data-stores';
+import type { SiteSelect } from '@automattic/data-stores';
 import type { TransferEligibilityError } from '@automattic/data-stores/src/automated-transfer-eligibility/types';
 import './style.scss';
 
@@ -72,10 +68,6 @@ const BundleConfirm: Step = function BundleConfirm( { navigation } ) {
 		[ siteId ]
 	);
 	const { requestLatestAtomicTransfer } = useDispatch( SITE_STORE );
-	const stepProgress = useSelect(
-		( select ) => ( select( ONBOARD_STORE ) as OnboardSelect ).getStepProgress(),
-		[]
-	);
 
 	useEffect( () => {
 		if ( ! siteId ) {
@@ -336,7 +328,6 @@ const BundleConfirm: Step = function BundleConfirm( { navigation } ) {
 				/>
 			}
 			stepContent={ getContent() }
-			stepProgress={ stepProgress }
 			recordTracksEvent={ recordTracksEvent }
 		/>
 	);

@@ -37,7 +37,7 @@ const BloggingPromptCard = ( { siteId, viewContext, showMenu, index } ) => {
 	let { data: prompts } = useBloggingPrompts( siteId, startDate, maxNumberOfPrompts );
 	// This will not do a request until we have the `isEnabled( 'calypso/ai-blogging-prompts' )` feature flag enabled.
 	const { data: aiPrompts } = useAIBloggingPrompts( siteId );
-	if ( prompts && aiPrompts ) {
+	if ( prompts && aiPrompts && ! isBloganuary() ) {
 		prompts = mergePromptStreams( prompts, aiPrompts );
 	}
 

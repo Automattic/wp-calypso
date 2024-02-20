@@ -1,17 +1,17 @@
 import formatNumber from '@automattic/components/src/number-formatters/lib/format-number';
 import formatCurrency from '@automattic/format-currency';
 import { useTranslate } from 'i18n-calypso';
+import { useEffect } from 'react';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import TierUpgradeSlider from 'calypso/my-sites/stats/stats-purchase/tier-upgrade-slider';
 import { useSelector } from 'calypso/state';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { StatsPlanTierUI } from '../types';
-import useAvailableUpgradeTiers from '../use-available-upgrade-tiers';
+import {
+	EXTENSION_THRESHOLD_IN_MILLION,
+	default as useAvailableUpgradeTiers,
+} from '../use-available-upgrade-tiers';
 import './styles.scss';
-
-// Special case for per-unit fees over the max tier.
-// In millions.
-const EXTENSION_THRESHOLD = 2;
 
 function useTranslatedStrings() {
 	const translate = useTranslate();
@@ -32,7 +32,7 @@ function useTranslatedStrings() {
 	};
 }
 
-function getStepsForTiers( tiers: StatsPlanTierUI[] ) {
+function getStepsForTiers( tiers: StatsPlanTierUI[], currencyCode: string ) {
 	// TODO: Review tier values from API.
 	// Should consider validating the inputs before displaying them.
 	return tiers.map( ( tier ) => {
@@ -47,16 +47,25 @@ function getStepsForTiers( tiers: StatsPlanTierUI[] ) {
 		// Special case that scenario for now.
 		let views = '';
 		if ( tier.views === null ) {
-			views = `${ formatNumber( EXTENSION_THRESHOLD * 1000000 ) }+`;
+			views = `${ formatNumber( EXTENSION_THRESHOLD_IN_MILLION * 1000000 ) }+`;
 		} else {
 			views = formatNumber( tier.views );
 		}
+
+		const tierUpgradePricePerMonth = ( tier.upgrade_price || 0 ) / 12;
 
 		// Return the new step with string values.
 		return {
 			lhValue: views,
 			rhValue: price,
-			tierViews: tier.views === null ? EXTENSION_THRESHOLD * 1000000 : tier.views,
+			originalPrice: tier.price,
+			upgradePrice: tierUpgradePricePerMonth
+				? formatCurrency( tierUpgradePricePerMonth, currencyCode, {
+						isSmallestUnit: true,
+						stripZeros: true,
+				  } )
+				: '',
+			tierViews: tier.views === null ? EXTENSION_THRESHOLD_IN_MILLION * 1000000 : tier.views,
 		};
 	} );
 }
@@ -71,7 +80,7 @@ const getTierQuentity = ( tiers: StatsPlanTierUI, isTierUpgradeSliderEnabled: bo
 	if ( isTierUpgradeSliderEnabled ) {
 		if ( tiers?.views === null && tiers?.transform_quantity_divide_by ) {
 			// handle extension an tier by muliplying the limit of the highest tier
-			return EXTENSION_THRESHOLD * tiers.transform_quantity_divide_by; // TODO: this will use a dynamic multiplier (#85246)
+			return EXTENSION_THRESHOLD_IN_MILLION * tiers.transform_quantity_divide_by; // TODO: this will use a dynamic multiplier (#85246)
 		}
 		return tiers?.views;
 	}
@@ -91,7 +100,7 @@ function StatsCommercialUpgradeSlider( {
 	// 5. Nofiying the parent component when the slider changes.
 
 	const translate = useTranslate();
-	const siteId = useSelector( ( state ) => getSelectedSiteId( state ) );
+	const siteId = useSelector( getSelectedSiteId );
 	const tiers = useAvailableUpgradeTiers( siteId );
 	const uiStrings = useTranslatedStrings();
 
@@ -99,16 +108,16 @@ function StatsCommercialUpgradeSlider( {
 	// Determine this based on last tier in the list.
 	// The translate() call returns a node so we need to set the type correctly.
 	let perUnitFeeMessaging;
-	const lastTier = tiers.at( -1 );
+	const lastTier = tiers[ tiers.length - 1 ];
 	const hasPerUnitFee = !! lastTier?.per_unit_fee;
 	if ( hasPerUnitFee ) {
-		const perUnitFee = Number( lastTier?.per_unit_fee );
+		// The price is yearly for yearly plans, so we need to divide by 12.
+		const perUnitFee = Number( lastTier?.per_unit_fee ) / 12;
 
 		perUnitFeeMessaging = translate(
-			'This is the base price for %(views_extension_limit)s million monthly views; beyond that, you will be charged additional +%(extension_value)s per million views.',
+			"Beyond 1 million, we'll charge an extra %(extension_value)s per million views per month.", // TODO: we'll need a 'learn more' here.
 			{
 				args: {
-					views_extension_limit: EXTENSION_THRESHOLD,
 					extension_value: formatCurrency( perUnitFee, currencyCode, {
 						isSmallestUnit: true,
 						stripZeros: true,
@@ -119,7 +128,7 @@ function StatsCommercialUpgradeSlider( {
 	}
 
 	// Transform the tiers into a format that the slider can use.
-	const steps = getStepsForTiers( tiers );
+	const steps = getStepsForTiers( tiers, currencyCode );
 
 	const handleSliderChanged = ( index: number ) => {
 		const quantity = getTierQuentity( tiers[ index ], true );
@@ -133,6 +142,12 @@ function StatsCommercialUpgradeSlider( {
 
 		onSliderChange( quantity as number );
 	};
+
+	useEffect( () => {
+		// Update fetched tier quantity of the first step back to the parent component for checkout.
+		const firstStepQuantity = getTierQuentity( tiers[ 0 ], true );
+		onSliderChange( firstStepQuantity as number );
+	}, [ JSON.stringify( tiers ), onSliderChange ] );
 
 	return (
 		<TierUpgradeSlider

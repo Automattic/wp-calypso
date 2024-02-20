@@ -17,7 +17,7 @@ import EmailNoDomain from 'calypso/my-sites/email/email-management/home/email-no
 import EmailPlan from 'calypso/my-sites/email/email-management/home/email-plan';
 import { IntervalLength } from 'calypso/my-sites/email/email-providers-comparison/interval-length';
 import EmailProvidersStackedComparisonPage from 'calypso/my-sites/email/email-providers-comparison/stacked';
-import { emailManagementTitanSetUpMailbox, emailManagement } from 'calypso/my-sites/email/paths';
+import { getTitanSetUpMailboxPath, getEmailManagementPath } from 'calypso/my-sites/email/paths';
 import { useSelector } from 'calypso/state';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import hasLoadedSites from 'calypso/state/selectors/has-loaded-sites';
@@ -95,7 +95,7 @@ const EmailHome = ( props: EmailManagementHomeProps ) => {
 		}
 		return canCurrentUser( state, selectedSite.ID, 'manage_options' );
 	} );
-	const hasSitesLoaded = useSelector( ( state ) => hasLoadedSites( state ) );
+	const hasSitesLoaded = useSelector( hasLoadedSites );
 
 	const addEmailForwardMutationActive = useAddEmailForwardMutationIsLoading();
 
@@ -182,13 +182,11 @@ const EmailHome = ( props: EmailManagementHomeProps ) => {
 			( domainsWithEmail[ 0 ].titanMailSubscription?.maximumMailboxCount ?? 0 ) > 0 &&
 			getConfiguredTitanMailboxCount( domainsWithEmail[ 0 ] ) === 0
 		) {
-			page.redirect(
-				emailManagementTitanSetUpMailbox( selectedSite.slug, domainsWithEmail[ 0 ].domain )
-			);
+			page.redirect( getTitanSetUpMailboxPath( selectedSite.slug, domainsWithEmail[ 0 ].domain ) );
 			return null;
 		}
 
-		page.redirect( emailManagement( selectedSite.slug, domainsWithEmail[ 0 ].domain ) );
+		page.redirect( getEmailManagementPath( selectedSite.slug, domainsWithEmail[ 0 ].domain ) );
 		return null;
 	}
 

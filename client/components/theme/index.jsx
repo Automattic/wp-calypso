@@ -2,8 +2,10 @@ import { isEnabled } from '@automattic/calypso-config';
 import { Card, Button, Gridicon } from '@automattic/components';
 import {
 	DesignPreviewImage,
+	PREMIUM_THEME,
 	ThemeCard,
 	isDefaultGlobalStylesVariationSlug,
+	isLockedStyleVariation,
 } from '@automattic/design-picker';
 import { localize } from 'i18n-calypso';
 import { isEmpty, isEqual } from 'lodash';
@@ -18,7 +20,10 @@ import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { useSiteGlobalStylesStatus } from 'calypso/state/sites/hooks/use-site-global-styles-status';
 import { getSiteSlug } from 'calypso/state/sites/selectors';
 import { updateThemes } from 'calypso/state/themes/actions/theme-update';
-import { isExternallyManagedTheme as getIsExternallyManagedTheme } from 'calypso/state/themes/selectors';
+import {
+	isExternallyManagedTheme as getIsExternallyManagedTheme,
+	getThemeType,
+} from 'calypso/state/themes/selectors';
 import { setThemesBookmark } from 'calypso/state/themes/themes-ui/actions';
 import ThemeMoreButton from './more-button';
 
@@ -42,6 +47,7 @@ export class Theme extends Component {
 			taxonomies: PropTypes.object,
 			update: PropTypes.object,
 			soft_launched: PropTypes.bool,
+			isCustomGeneratedTheme: PropTypes.bool,
 		} ),
 		// If true, highlight this theme as active
 		active: PropTypes.bool,
@@ -86,6 +92,7 @@ export class Theme extends Component {
 		softLaunched: PropTypes.bool,
 		selectedStyleVariation: PropTypes.object,
 		shouldLimitGlobalStyles: PropTypes.bool,
+		themeType: PropTypes.string,
 	};
 
 	static defaultProps = {
@@ -96,6 +103,14 @@ export class Theme extends Component {
 		actionLabel: '',
 		active: false,
 	};
+
+	constructor( props ) {
+		super( props );
+
+		this.state = {
+			isScreenshotLoaded: false,
+		};
+	}
 
 	prevThemeThumbnailRef = createRef( null );
 	themeThumbnailRef = createRef( null );
@@ -145,8 +160,22 @@ export class Theme extends Component {
 	}
 
 	renderScreenshot() {
-		const { isExternallyManagedTheme, selectedStyleVariation, theme } = this.props;
+		const { isExternallyManagedTheme, selectedStyleVariation, theme, siteSlug, translate } =
+			this.props;
+		const { isScreenshotLoaded } = this.state;
 		const { description, screenshot } = theme;
+
+		if ( theme.isCustomGeneratedTheme ) {
+			return (
+				<iframe
+					scrolling="no"
+					loading="lazy"
+					title={ translate( 'Custom Theme Preview' ) }
+					className="theme__site-preview"
+					src={ `//${ siteSlug }/?hide_banners=true&preview_overlay=true&preview=true&cys-hide-admin-bar=1` }
+				/>
+			);
+		}
 
 		if ( ! screenshot ) {
 			return (
@@ -181,10 +210,13 @@ export class Theme extends Component {
 
 		return (
 			<img
-				alt={ decodeEntities( description ) }
+				alt={ isScreenshotLoaded ? decodeEntities( description ) : '' }
 				className="theme__img"
 				src={ themeImgSrc }
 				srcSet={ `${ themeImgSrcDoubleDpi } 2x` }
+				onLoad={ () => {
+					this.setState( { isScreenshotLoaded: true } );
+				} }
 			/>
 		);
 	}
@@ -267,7 +299,7 @@ export class Theme extends Component {
 	};
 
 	renderMoreButton = () => {
-		const { active, buttonContents, index, theme } = this.props;
+		const { active, buttonContents, index, theme, siteId } = this.props;
 
 		let moreOptions = buttonContents;
 		if ( isEnabled( 'themes/tiers' ) ) {
@@ -287,8 +319,10 @@ export class Theme extends Component {
 		return (
 			<ThemeMoreButton
 				index={ index }
+				siteId={ siteId }
 				themeId={ theme.id }
 				themeName={ theme.name }
+				hasStyleVariations={ !! theme?.style_variations?.length }
 				active={ active }
 				onMoreButtonClick={ this.props.onMoreButtonClick }
 				onMoreButtonItemClick={ this.props.onMoreButtonItemClick }
@@ -298,30 +332,35 @@ export class Theme extends Component {
 	};
 
 	renderBadge = () => {
-		const isLockedStyleVariation =
-			this.props.shouldLimitGlobalStyles &&
-			! isDefaultGlobalStylesVariationSlug( this.props.selectedStyleVariation?.slug );
+		const { selectedStyleVariation, shouldLimitGlobalStyles, siteId, siteSlug, theme, themeType } =
+			this.props;
+
+		const isPremiumTheme = isEnabled( 'themes/tiers' )
+			? theme.theme_tier?.slug === PREMIUM_THEME
+			: themeType === PREMIUM_THEME;
+
+		const isLocked = isLockedStyleVariation( {
+			isPremiumTheme,
+			styleVariationSlug: selectedStyleVariation?.slug,
+			shouldLimitGlobalStyles,
+		} );
+
 		if ( isEnabled( 'themes/tiers' ) ) {
-			return (
-				<ThemeTierBadge
-					themeId={ this.props.theme.id }
-					isLockedStyleVariation={ isLockedStyleVariation }
-				/>
-			);
+			return <ThemeTierBadge themeId={ theme.id } isLockedStyleVariation={ isLocked } />;
 		}
 		return (
 			<ThemeTypeBadge
-				siteId={ this.props.siteId }
-				siteSlug={ this.props.siteSlug }
-				themeId={ this.props.theme.id }
-				isLockedStyleVariation={ isLockedStyleVariation }
+				siteId={ siteId }
+				siteSlug={ siteSlug }
+				themeId={ theme.id }
+				isLockedStyleVariation={ isLocked }
 			/>
 		);
 	};
 
 	render() {
 		const { selectedStyleVariation, theme } = this.props;
-		const { name, description, style_variations = [] } = theme;
+		const { name, description, style_variations = [], isCustomGeneratedTheme } = theme;
 		const themeDescription = decodeEntities( description );
 
 		if ( this.props.isPlaceholder ) {
@@ -344,7 +383,7 @@ export class Theme extends Component {
 				isActive={ this.props.active }
 				isLoading={ this.props.loading }
 				isSoftLaunched={ this.props.softLaunched }
-				isShowDescriptionOnImageHover
+				isShowDescriptionOnImageHover={ ! isCustomGeneratedTheme }
 				onClick={ this.setBookmark }
 				onImageClick={ this.onScreenshotClick }
 				onStyleVariationClick={ this.onStyleVariationClick }
@@ -368,6 +407,7 @@ const ConnectedTheme = connect(
 			isUpdated: themesUpdated && themesUpdated.indexOf( theme.id ) > -1,
 			isExternallyManagedTheme,
 			siteSlug: getSiteSlug( state, siteId ),
+			themeType: getThemeType( state, theme.id ),
 		};
 	},
 	{ recordTracksEvent, setThemesBookmark, updateThemes }

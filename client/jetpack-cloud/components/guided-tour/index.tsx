@@ -1,7 +1,8 @@
+import page from '@automattic/calypso-router';
 import { Popover, Button } from '@automattic/components';
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
-import React, { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useDispatch, useSelector } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getJetpackDashboardPreference as getPreference } from 'calypso/state/jetpack-agency-dashboard/selectors';
@@ -24,13 +25,15 @@ export interface Tour {
 		| 'left'
 		| 'top left';
 	nextStepOnTargetClick?: string;
-	redirectOnButtonClick?: string;
+	forceShowSkipButton?: boolean;
 }
 
 interface Props {
 	className?: string;
 	tours: Tour[];
 	preferenceName: string;
+	redirectAfterTourEnds?: string;
+	hideSteps?: boolean;
 }
 
 // This hook will return the async element matching the target selector.
@@ -64,7 +67,13 @@ const useAsyncElement = ( target: string, timeoutDuration: number ): HTMLElement
 	return asyncElement;
 };
 
-const GuidedTour = ( { className, tours, preferenceName }: Props ) => {
+const GuidedTour = ( {
+	className,
+	tours,
+	preferenceName,
+	redirectAfterTourEnds,
+	hideSteps = false,
+}: Props ) => {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 
@@ -82,7 +91,7 @@ const GuidedTour = ( { className, tours, preferenceName }: Props ) => {
 		target,
 		popoverPosition,
 		nextStepOnTargetClick,
-		redirectOnButtonClick,
+		forceShowSkipButton = false,
 	} = tours[ currentStep ];
 
 	const targetElement = useAsyncElement( target, 3000 );
@@ -105,10 +114,10 @@ const GuidedTour = ( { className, tours, preferenceName }: Props ) => {
 				tour: preferenceName,
 			} )
 		);
-		if ( redirectOnButtonClick ) {
-			window.location.href = redirectOnButtonClick;
+		if ( redirectAfterTourEnds ) {
+			page.redirect( redirectAfterTourEnds );
 		}
-	}, [ dispatch, preferenceName, preference, redirectOnButtonClick ] );
+	}, [ dispatch, preferenceName, preference, redirectAfterTourEnds ] );
 
 	const nextStep = useCallback( () => {
 		if ( currentStep < tours.length - 1 ) {
@@ -119,23 +128,24 @@ const GuidedTour = ( { className, tours, preferenceName }: Props ) => {
 	}, [ currentStep, tours.length, endTour ] );
 
 	useEffect( () => {
-		let target: Element | null = null;
-		if ( nextStepOnTargetClick ) {
+		let nextStepClickTargetElement: Element | null = null;
+		// We should wait for targetElement before attaching any events to advance to the next step
+		if ( nextStepOnTargetClick && targetElement && ! isDismissed && hasFetched ) {
 			// Find the target element using the nextStepOnTargetClick selector
-			target = document.querySelector( nextStepOnTargetClick );
-			if ( target ) {
-				// Attach the event listener to the target
-				target.addEventListener( 'click', nextStep );
+			nextStepClickTargetElement = document.querySelector( nextStepOnTargetClick );
+			if ( nextStepClickTargetElement ) {
+				// Attach the event listener to the nextStepClickTargetElement
+				nextStepClickTargetElement.addEventListener( 'click', nextStep );
 			}
 		}
 
 		// Cleanup function to remove the event listener
 		return () => {
-			if ( target ) {
-				target.removeEventListener( 'click', nextStep );
+			if ( nextStepClickTargetElement ) {
+				nextStepClickTargetElement.removeEventListener( 'click', nextStep );
 			}
 		};
-	}, [ nextStepOnTargetClick, nextStep ] );
+	}, [ nextStepOnTargetClick, nextStep, targetElement, isDismissed, hasFetched ] );
 
 	if ( isDismissed ) {
 		return null;
@@ -155,8 +165,8 @@ const GuidedTour = ( { className, tours, preferenceName }: Props ) => {
 			<div className="guided-tour__popover-footer">
 				<div>
 					{
-						// Show the step count if there are multiple steps and we're not on the last step
-						tours.length > 1 && (
+						// Show the step count if there are multiple steps and we're not on the last step, unless we explicitly choose to hide them
+						tours.length > 1 && ! hideSteps && (
 							<span className="guided-tour__popover-step-count">
 								{ translate( 'Step %(currentStep)d of %(totalSteps)d', {
 									args: { currentStep: currentStep + 1, totalSteps: tours.length },
@@ -166,21 +176,20 @@ const GuidedTour = ( { className, tours, preferenceName }: Props ) => {
 					}
 				</div>
 				<div className="guided-tour__popover-footer-right-content">
-					{ ! nextStepOnTargetClick && (
-						<>
-							{
-								// Show the skip button if there are multiple steps and we're not on the last step
-								tours.length > 1 && currentStep < tours.length - 1 && (
-									<Button borderless onClick={ endTour }>
-										{ translate( 'Skip' ) }
-									</Button>
-								)
-							}
+					<>
+						{ ( ( ! nextStepOnTargetClick && tours.length > 1 && currentStep < tours.length - 1 ) ||
+							forceShowSkipButton ) && (
+							// Show the skip button if there are multiple steps and we're not on the last step, unless we explicitly choose to add them
+							<Button borderless onClick={ endTour }>
+								{ translate( 'Skip' ) }
+							</Button>
+						) }
+						{ ! nextStepOnTargetClick && (
 							<Button onClick={ nextStep }>
 								{ currentStep === tours.length - 1 ? lastTourLabel : translate( 'Next' ) }
 							</Button>
-						</>
-					) }
+						) }
+					</>
 				</div>
 			</div>
 		</Popover>

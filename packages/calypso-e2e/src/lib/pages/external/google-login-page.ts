@@ -99,6 +99,24 @@ export class GoogleLoginPage {
 		const locator = this.page.getByRole( 'textbox', { name: 'Enter code' } );
 
 		await this.waitUntilStable( locator );
-		await locator.type( code, { delay: 30 } );
+		await locator.first().type( code, { delay: 30 } );
+	}
+
+	/**
+	 * Checks if the given text is present and stable on the page.
+	 *
+	 * @param {string} selector The selector to check for.
+	 * @returns {Promise<boolean>} A promise that resolves to true if the text is present and stable, otherwise false.
+	 */
+	async isVisible( selector: string ): Promise< boolean > {
+		const locator = this.page.locator( selector );
+		try {
+			await this.waitUntilStable( locator );
+			const isVisible = await locator.isVisible();
+			return isVisible;
+		} catch ( error ) {
+			console.error( `Error checking for selector "${ selector }":`, error );
+			return false;
+		}
 	}
 }

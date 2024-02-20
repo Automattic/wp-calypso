@@ -10,6 +10,7 @@ interface Props {
 	selectedFooter: Pattern | null;
 	selectedSections: Pattern[];
 	patternsMapByCategory: { [ key: string ]: Pattern[] };
+	pages?: Pattern[];
 	onSelect: (
 		type: PatternType,
 		selectedPattern: Pattern | null,

@@ -38,14 +38,14 @@ const FoldableNav = ( {
 	const onOpen = () => {
 		savePreferenceType( 'expanded', true );
 		if ( tracksName ) {
-			dispatch( recordTracksEvent( tracksName + '_expanded_true' ) );
+			dispatch( recordTracksEvent( tracksName, { expanded: true } ) );
 		}
 	};
 
 	const onClose = () => {
 		savePreferenceType( 'expanded', false );
 		if ( tracksName ) {
-			dispatch( recordTracksEvent( tracksName + '_expanded_false' ) );
+			dispatch( recordTracksEvent( tracksName, { expanded: false } ) );
 		}
 	};
 
@@ -60,7 +60,7 @@ const FoldableNav = ( {
 					icon={ navItem.icon ?? <></> }
 					path="/"
 					onClickMenuItem={ () =>
-						dispatch( recordTracksEvent( navItem.trackEventName, { nav_item: navItem.title } ) )
+						dispatch( recordTracksEvent( navItem.trackEventName, { nav_item: navItem.slug } ) )
 					}
 					{ ...navItem }
 				/>

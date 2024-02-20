@@ -13,6 +13,12 @@ import esSite3 from 'calypso/assets/images/difm/site-builds-es/es-3.jpg';
 import esSite4 from 'calypso/assets/images/difm/site-builds-es/es-4.jpg';
 import esSite5 from 'calypso/assets/images/difm/site-builds-es/es-5.jpg';
 import esSite6 from 'calypso/assets/images/difm/site-builds-es/es-6.jpg';
+import wooSite1 from 'calypso/assets/images/difm/woo-site-builds-en/woo-1.jpg';
+import wooSite2 from 'calypso/assets/images/difm/woo-site-builds-en/woo-2.jpg';
+import wooSite3 from 'calypso/assets/images/difm/woo-site-builds-en/woo-3.jpg';
+import wooSite4 from 'calypso/assets/images/difm/woo-site-builds-en/woo-4.jpg';
+import wooSite5 from 'calypso/assets/images/difm/woo-site-builds-en/woo-5.jpg';
+import wooSite6 from 'calypso/assets/images/difm/woo-site-builds-en/woo-6.jpg';
 import type { CSSPropertiesWithMultiValues } from '@emotion/serialize';
 
 /**
@@ -100,7 +106,10 @@ const AnimatedSlideshow = styled.div< AnimatedSlideShowProps >`
 	${ ( props ) => nthOfTypeAnimationDelay( props.slideCount, props.interval ) }
 `;
 
-const getLocalizedImages = ( locale: string ) => {
+const getLocalizedImages = ( locale: string, isStoreFlow: boolean ) => {
+	if ( isStoreFlow ) {
+		return [ wooSite1, wooSite2, wooSite3, wooSite4, wooSite5, wooSite6 ];
+	}
 	switch ( locale ) {
 		case 'es':
 			return [ esSite1, esSite2, esSite3, esSite4, esSite5, esSite6 ];
@@ -109,9 +118,9 @@ const getLocalizedImages = ( locale: string ) => {
 	}
 };
 
-export default function SiteBuildShowcase() {
+export default function SiteBuildShowcase( { isStoreFlow }: { isStoreFlow: boolean } ) {
 	const locale = useLocale();
-	const images = getLocalizedImages( locale );
+	const images = getLocalizedImages( locale, isStoreFlow );
 	return (
 		<AnimatedSlideshow slideCount={ images.length } interval={ 8 } fadeDelay={ 2.5 }>
 			{ images.map( ( image, index ) => (

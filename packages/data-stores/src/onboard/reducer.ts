@@ -10,7 +10,7 @@ import type {
 import type { DomainSuggestion } from '../domain-suggestions';
 import type { FeatureId } from '../shared-types';
 // somewhat hacky, but resolves the circular dependency issue
-import type { Design, FontPair, StyleVariation } from '@automattic/design-picker/src/types';
+import type { Design, StyleVariation } from '@automattic/design-picker/src/types';
 import type { MinimalRequestCartProduct } from '@automattic/shopping-cart';
 import type { Reducer } from 'redux';
 
@@ -92,19 +92,6 @@ const randomizedDesigns: Reducer< { featured: Design[] }, OnboardAction > = (
 	}
 	if ( action.type === 'RESET_ONBOARD_STORE' ) {
 		return { featured: [] };
-	}
-	return state;
-};
-
-const selectedFonts: Reducer< FontPair | undefined, OnboardAction > = (
-	state = undefined,
-	action
-) => {
-	if ( action.type === 'SET_FONTS' ) {
-		return action.fonts;
-	}
-	if ( action.type === 'RESET_FONTS' || action.type === 'RESET_ONBOARD_STORE' ) {
-		return undefined;
 	}
 	return state;
 };
@@ -248,36 +235,6 @@ const siteAccentColor: Reducer< string, OnboardAction > = ( state = '', action )
 	return state;
 };
 
-const anchorPodcastId: Reducer< string | null, OnboardAction > = ( state = '', action ) => {
-	if ( action.type === 'SET_ANCHOR_PODCAST_ID' ) {
-		return action.anchorPodcastId;
-	}
-	if ( action.type === 'RESET_ONBOARD_STORE' ) {
-		return '';
-	}
-	return state;
-};
-
-const anchorEpisodeId: Reducer< string | null, OnboardAction > = ( state = '', action ) => {
-	if ( action.type === 'SET_ANCHOR_PODCAST_EPISODE_ID' ) {
-		return action.anchorEpisodeId;
-	}
-	if ( action.type === 'RESET_ONBOARD_STORE' ) {
-		return '';
-	}
-	return state;
-};
-
-const anchorSpotifyUrl: Reducer< string | null, OnboardAction > = ( state = '', action ) => {
-	if ( action.type === 'SET_ANCHOR_PODCAST_SPOTIFY_URL' ) {
-		return action.anchorSpotifyUrl;
-	}
-	if ( action.type === 'RESET_ONBOARD_STORE' ) {
-		return '';
-	}
-	return state;
-};
-
 const hasOnboardingStarted: Reducer< boolean, OnboardAction > = ( state = false, action ) => {
 	if ( action.type === 'ONBOARDING_START' ) {
 		return true;
@@ -367,16 +324,6 @@ const progressTitle: Reducer< string | undefined, OnboardAction > = ( state, act
 	return state;
 };
 
-const stepProgress: Reducer< { count: number; progress: number } | undefined, OnboardAction > = (
-	state,
-	action
-) => {
-	if ( action.type === 'SET_STEP_PROGRESS' ) {
-		return action.stepProgress;
-	}
-	return state;
-};
-
 const goals: Reducer< SiteGoal[], OnboardAction > = ( state = [], action ) => {
 	if ( action.type === 'SET_GOALS' ) {
 		return action.goals;
@@ -418,6 +365,26 @@ const ecommerceFlowRecurType: Reducer< string, OnboardAction > = ( state = '', a
 		return action.ecommerceFlowRecurType;
 	}
 	if ( action.type === 'RESET_ONBOARD_STORE' ) {
+		return '';
+	}
+	return state;
+};
+
+const couponCode: Reducer< string, OnboardAction > = ( state = '', action ) => {
+	if ( action.type === 'SET_COUPON_CODE' ) {
+		return action.couponCode;
+	}
+	if ( [ 'RESET_COUPON_CODE', 'RESET_ONBOARD_STORE' ].includes( action.type ) ) {
+		return '';
+	}
+	return state;
+};
+
+const storageAddonSlug: Reducer< string, OnboardAction > = ( state = '', action ) => {
+	if ( action.type === 'SET_STORAGE_ADDON_SLUG' ) {
+		return action.storageAddonSlug;
+	}
+	if ( [ 'RESET_STORAGE_ADDON_SLUG', 'RESET_ONBOARD_STORE' ].includes( action.type ) ) {
 		return '';
 	}
 	return state;
@@ -581,9 +548,6 @@ const paidSubscribers: Reducer< boolean, OnboardAction > = ( state = false, acti
 };
 
 const reducer = combineReducers( {
-	anchorPodcastId,
-	anchorEpisodeId,
-	anchorSpotifyUrl,
 	domain,
 	domainCartItem,
 	domainSearch,
@@ -597,7 +561,6 @@ const reducer = combineReducers( {
 	domainTransferAuthCodes,
 	shouldImportDomainTransferDnsRecords,
 	storeType,
-	selectedFonts,
 	selectedDesign,
 	selectedStyleVariation,
 	selectedSite,
@@ -612,7 +575,6 @@ const reducer = combineReducers( {
 	pendingAction,
 	progress,
 	progressTitle,
-	stepProgress,
 	goals,
 	hideFreePlan,
 	hidePlansFeatureComparison,
@@ -622,6 +584,8 @@ const reducer = combineReducers( {
 	verticalId,
 	storeLocationCountryCode,
 	ecommerceFlowRecurType,
+	couponCode,
+	storageAddonSlug,
 	planCartItem,
 	productCartItems,
 	isMigrateFromWp,

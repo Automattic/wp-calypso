@@ -14,7 +14,7 @@ const SubscriberLaunchpad = ( {
 	const { checklistSlug, taskFilter, numberOfSteps, completedSteps } =
 		useSubscriberLaunchpadTasks();
 	const translate = useTranslate();
-	const site = useSelector( ( state ) => getSelectedSite( state ) );
+	const site = useSelector( getSelectedSite );
 
 	return (
 		<div className="subscriber-launchpad">

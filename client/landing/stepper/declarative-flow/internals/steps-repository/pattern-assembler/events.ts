@@ -26,12 +26,6 @@ export const PATTERN_ASSEMBLER_EVENTS = {
 	CONTINUE_MISCLICK: 'calypso_signup_pattern_assembler_continue_misclick',
 
 	/**
-	 * Screen Activation
-	 */
-	SCREEN_ACTIVATION_ACTIVATE_CLICK:
-		'calypso_signup_pattern_assembler_screen_activation_activate_click',
-
-	/**
 	 * Screen Confirmation
 	 */
 	SCREEN_CONFIRMATION_CONFIRM_CLICK:

@@ -1,8 +1,7 @@
 /* global wpcomGlobalStyles */
 
 import { recordTracksEvent } from '@automattic/calypso-analytics';
-import { usePlans } from '@automattic/data-stores/src/plans';
-import { PLAN_PREMIUM } from '@automattic/data-stores/src/plans/constants';
+import { getPlan, PLAN_PREMIUM } from '@automattic/calypso-products';
 import { Button, Modal } from '@wordpress/components';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { useEffect } from '@wordpress/element';
@@ -16,7 +15,6 @@ import './modal.scss';
 const GlobalStylesModal = () => {
 	const isSiteEditor = useSelect( ( select ) => !! select( 'core/edit-site' ), [] );
 	const { viewCanvasPath } = useCanvas();
-	const plans = usePlans();
 
 	const isVisible = useSelect(
 		( select ) => {
@@ -64,13 +62,14 @@ const GlobalStylesModal = () => {
 		return null;
 	}
 
+	const planName = getPlan( PLAN_PREMIUM ).getTitle();
 	const description = sprintf(
 		/* translators: %s is the short-form Premium plan name */
 		__(
 			"Change all of your site's fonts, colors and more. Available on the %s plan.",
 			'full-site-editing'
 		),
-		plans.data?.[ PLAN_PREMIUM ]?.productNameShort || ''
+		planName
 	);
 
 	return (

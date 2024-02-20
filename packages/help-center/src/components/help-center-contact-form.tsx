@@ -7,6 +7,7 @@ import config from '@automattic/calypso-config';
 import { getPlan, getPlanTermLabel, isFreePlanProduct } from '@automattic/calypso-products';
 import { FormInputValidation, Popover, Spinner } from '@automattic/components';
 import { useLocale } from '@automattic/i18n-utils';
+import { getOdieStorage } from '@automattic/odie-client';
 import { useQueryClient } from '@tanstack/react-query';
 import { Button, TextControl, CheckboxControl, Tip } from '@wordpress/components';
 import { useDispatch, useSelect } from '@wordpress/data';
@@ -93,8 +94,8 @@ export const HelpCenterContactForm = () => {
 	const [ hideSiteInfo, setHideSiteInfo ] = useState( false );
 	const [ hasSubmittingError, setHasSubmittingError ] = useState< boolean >( false );
 	const locale = useLocale();
-	const { isLoading: submittingTicket, mutateAsync: submitTicket } = useSubmitTicketMutation();
-	const { isLoading: submittingTopic, mutateAsync: submitTopic } = useSubmitForumsMutation();
+	const { isPending: submittingTicket, mutateAsync: submitTicket } = useSubmitTicketMutation();
+	const { isPending: submittingTopic, mutateAsync: submitTopic } = useSubmitForumsMutation();
 	const userId = useSelector( getCurrentUserId );
 	const { data: userSites } = useUserSites( userId );
 	const userWithNoSites = userSites?.sites.length === 0;
@@ -114,7 +115,7 @@ export const HelpCenterContactForm = () => {
 		};
 	}, [] );
 
-	const { setSite, resetStore, setUserDeclaredSite, setShowMessagingChat, setSubject, setMessage } =
+	const { resetStore, setUserDeclaredSite, setShowMessagingChat, setSubject, setMessage } =
 		useDispatch( HELP_CENTER_STORE );
 
 	const {
@@ -237,9 +238,7 @@ export const HelpCenterContactForm = () => {
 			section: sectionName,
 		} );
 
-		const savedCurrentSite = currentSite;
 		resetStore();
-		setSite( savedCurrentSite );
 
 		navigate( '/' );
 	}
@@ -291,6 +290,8 @@ export const HelpCenterContactForm = () => {
 		const productId = plan?.getProductId();
 		const productName = plan?.getTitle();
 		const productTerm = getPlanTermLabel( productSlug, ( text ) => text );
+		const wapuuChatId = getOdieStorage( 'last_chat_id' );
+		const aiChatId = wapuuFlow ? wapuuChatId ?? '' : gptResponse?.answer_id;
 
 		switch ( mode ) {
 			case 'CHAT':
@@ -316,9 +317,21 @@ export const HelpCenterContactForm = () => {
 						initialChatMessage += `<strong>Automated AI response from ${ gptResponse.source } that was presented to user before they started chat</strong>:<br />`;
 						initialChatMessage += gptResponse.response;
 					}
-					openChatWidget( initialChatMessage, supportSite.URL, () =>
-						setHasSubmittingError( true )
-					);
+
+					if ( wapuuFlow ) {
+						initialChatMessage += '<br /><br />';
+						initialChatMessage += wapuuChatId
+							? `<strong>Wapuu chat reference: ${ wapuuChatId }</strong>:<br />`
+							: '<strong>Wapuu chat reference is not available</strong>:<br />';
+						initialChatMessage += 'User was chatting with Wapuu before they started chat<br />';
+					}
+
+					openChatWidget( {
+						aiChatId: aiChatId,
+						message: initialChatMessage,
+						siteUrl: supportSite.URL,
+						onError: () => setHasSubmittingError( true ),
+					} );
 					break;
 				}
 				break;
@@ -337,6 +350,12 @@ export const HelpCenterContactForm = () => {
 							}`
 						);
 					}
+
+					if ( params.get( 'source-command-palette' ) === 'true' ) {
+						ticketMeta.push(
+							`From Hosting Command Palette: Please post this user feedback to #dotcom-yolo on Slack.`
+						);
+					}
 					const kayakoMessage = [ ...ticketMeta, '\n', message ].join( '\n' );
 
 					submitTicket( {
@@ -347,7 +366,7 @@ export const HelpCenterContactForm = () => {
 						is_chat_overflow: overflow,
 						source: 'source_wpcom_help_center',
 						blog_url: supportSite.URL,
-						ai_chat_id: gptResponse?.answer_id,
+						ai_chat_id: aiChatId,
 						ai_message: gptResponse?.response,
 					} )
 						.then( () => {

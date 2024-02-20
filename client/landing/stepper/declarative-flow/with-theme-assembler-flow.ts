@@ -1,6 +1,6 @@
 import { Onboard } from '@automattic/data-stores';
 import { getAssemblerDesign } from '@automattic/design-picker';
-import { useFlowProgress, WITH_THEME_ASSEMBLER_FLOW } from '@automattic/onboarding';
+import { WITH_THEME_ASSEMBLER_FLOW } from '@automattic/onboarding';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { useEffect } from 'react';
 import { useSelector } from 'react-redux';
@@ -62,9 +62,7 @@ const withThemeAssemblerFlow: Flow = {
 			( select ) => ( select( ONBOARD_STORE ) as OnboardSelect ).getIntent(),
 			[]
 		);
-		const { setStepProgress, setPendingAction } = useDispatch( ONBOARD_STORE );
-		const flowProgress = useFlowProgress( { stepName: _currentStep, flowName } );
-		setStepProgress( flowProgress );
+		const { setPendingAction } = useDispatch( ONBOARD_STORE );
 		const siteSlug = useSiteSlug();
 
 		const exitFlow = ( to: string ) => {
@@ -95,7 +93,7 @@ const withThemeAssemblerFlow: Flow = {
 					return exitFlow( `/site-editor/${ siteSlug }?${ params }` );
 				}
 
-				case 'patternAssembler': {
+				case 'pattern-assembler': {
 					return navigate( 'processing' );
 				}
 
@@ -107,7 +105,7 @@ const withThemeAssemblerFlow: Flow = {
 
 		const goBack = () => {
 			switch ( _currentStep ) {
-				case 'patternAssembler': {
+				case 'pattern-assembler': {
 					return window.location.assign( `/themes/${ siteSlug }` );
 				}
 			}

@@ -27,7 +27,7 @@ import { CtaButton } from 'calypso/components/promo-section/promo-card/cta';
 import wp from 'calypso/lib/wp';
 import { useDispatch, useSelector } from 'calypso/state';
 import { bumpStat, composeAnalytics, recordTracksEvent } from 'calypso/state/analytics/actions';
-import { getConnectedAccountIdForSiteId } from 'calypso/state/memberships/settings/selectors';
+import { getIsConnectedForSiteId } from 'calypso/state/memberships/settings/selectors';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
@@ -47,7 +47,7 @@ const Home = () => {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 	const [ peerReferralLink, setPeerReferralLink ] = useState( '' );
-	const site = useSelector( ( state ) => getSelectedSite( state ) );
+	const site = useSelector( getSelectedSite );
 	const sitePlanSlug = useSelector( ( state ) => getSitePlanSlug( state, site?.ID ?? 0 ) );
 	const hasWordAdsFeature = useSelector( ( state ) => siteHasWordAds( state, site?.ID ?? null ) );
 	const isJetpack = useSelector( ( state ) => isJetpackSite( state, site?.ID ) );
@@ -55,8 +55,8 @@ const Home = () => {
 	const isUserAdmin = useSelector( ( state ) =>
 		canCurrentUser( state, site?.ID, 'manage_options' )
 	);
-	const connectedAccountId = useSelector( ( state ) =>
-		getConnectedAccountIdForSiteId( state, site?.ID )
+	const hasConnectedAccount = useSelector( ( state ) =>
+		getIsConnectedForSiteId( state, site?.ID )
 	);
 	const hasSimplePayments = useSelector( ( state ) =>
 		siteHasFeature( state, site?.ID ?? null, FEATURE_SIMPLE_PAYMENTS )
@@ -64,7 +64,6 @@ const Home = () => {
 	const isRequestingWordAds = useSelector( ( state ) =>
 		isRequestingWordAdsApprovalForSite( state, site )
 	);
-	const hasConnectedAccount = Boolean( connectedAccountId );
 	const isNonAtomicJetpack = Boolean( isJetpack && ! isSiteTransfer );
 	const hasSetupAds = Boolean( site?.options?.wordads || isRequestingWordAds );
 	const isLoading = hasConnectedAccount === null || sitePlanSlug === null;

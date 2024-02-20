@@ -9,7 +9,7 @@ import { ProcessingResult } from 'calypso/landing/stepper/declarative-flow/inter
 import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
 import { useSiteSlugParam } from 'calypso/landing/stepper/hooks/use-site-slug-param';
 import { ONBOARD_STORE } from 'calypso/landing/stepper/stores';
-import { useSiteSetupFlowProgress } from '../hooks/use-site-setup-flow-progress';
+import CreateSite from './internals/steps-repository/create-site';
 import DesignSetup from './internals/steps-repository/design-setup';
 import ImportStep from './internals/steps-repository/import';
 import ImportList from './internals/steps-repository/import-list';
@@ -26,7 +26,6 @@ import ImporterWordpress from './internals/steps-repository/importer-wordpress';
 import MigrationHandler from './internals/steps-repository/migration-handler';
 import PatternAssembler from './internals/steps-repository/pattern-assembler';
 import ProcessingStep from './internals/steps-repository/processing-step';
-import SiteCreationStep from './internals/steps-repository/site-creation-step';
 import SitePickerStep from './internals/steps-repository/site-picker';
 import TrialAcknowledge from './internals/steps-repository/trial-acknowledge';
 import { Flow, ProvidedDependencies } from './internals/types';
@@ -50,9 +49,9 @@ const importFlow: Flow = {
 			{ slug: 'importerSquarespace', component: ImporterSquarespace },
 			{ slug: 'importerWordpress', component: ImporterWordpress },
 			{ slug: 'designSetup', component: DesignSetup },
-			{ slug: 'patternAssembler', component: PatternAssembler },
+			{ slug: 'pattern-assembler', component: PatternAssembler },
 			{ slug: 'processing', component: ProcessingStep },
-			{ slug: 'siteCreationStep', component: SiteCreationStep },
+			{ slug: 'createSite', component: CreateSite },
 			{ slug: 'migrationHandler', component: MigrationHandler },
 			{ slug: 'trialAcknowledge', component: TrialAcknowledge },
 			{ slug: 'sitePicker', component: SitePickerStep },
@@ -62,7 +61,7 @@ const importFlow: Flow = {
 	},
 
 	useStepNavigation( _currentStep, navigate ) {
-		const { setStepProgress, setPendingAction } = useDispatch( ONBOARD_STORE );
+		const { setPendingAction } = useDispatch( ONBOARD_STORE );
 		const { addTempSiteToSourceOption } = useAddTempSiteToSourceOptionMutation();
 		const urlQueryParams = useQuery();
 		const fromParam = urlQueryParams.get( 'from' );
@@ -76,11 +75,6 @@ const importFlow: Flow = {
 			( select ) => ( select( ONBOARD_STORE ) as OnboardSelect ).getIsMigrateFromWp(),
 			[]
 		);
-		const flowProgress = useSiteSetupFlowProgress( _currentStep, 'import' );
-
-		if ( flowProgress ) {
-			setStepProgress( flowProgress );
-		}
 
 		const exitFlow = ( to: string ) => {
 			setPendingAction( () => {
@@ -102,11 +96,11 @@ const importFlow: Flow = {
 			if ( providedDependencies?.status === 'inactive' ) {
 				// This means they haven't kick off the migration before, so we send them to select/create a new site
 				if ( ! providedDependencies?.targetBlogId ) {
-					return userHasSite ? navigate( 'sitePicker' ) : navigate( 'siteCreationStep' );
+					return userHasSite ? navigate( 'sitePicker' ) : navigate( 'createSite' );
 				}
 				// For some reason, the admin role is mismatch, we want to select/create a new site for them as well
 				if ( providedDependencies?.isAdminOnTarget === false ) {
-					return userHasSite ? navigate( 'sitePicker' ) : navigate( 'siteCreationStep' );
+					return userHasSite ? navigate( 'sitePicker' ) : navigate( 'createSite' );
 				}
 			}
 			// For those who hasn't paid or in the middle of the migration process, we sent them to the importerWordPress step
@@ -171,16 +165,16 @@ const importFlow: Flow = {
 				case 'designSetup': {
 					const { selectedDesign: _selectedDesign } = providedDependencies;
 					if ( isAssemblerDesign( _selectedDesign as Design ) && isAssemblerSupported() ) {
-						return navigate( 'patternAssembler' );
+						return navigate( 'pattern-assembler' );
 					}
 
 					return navigate( 'processing' );
 				}
 
-				case 'patternAssembler':
+				case 'pattern-assembler':
 					return navigate( 'processing' );
 
-				case 'siteCreationStep':
+				case 'createSite':
 					return navigate( 'processing' );
 
 				case 'processing': {
@@ -265,7 +259,7 @@ const importFlow: Flow = {
 						}
 
 						case 'create-site':
-							return navigate( 'siteCreationStep' );
+							return navigate( 'createSite' );
 
 						default:
 							return navigate( `migrationHandler` );

@@ -1,4 +1,4 @@
-import { Button, Card } from '@automattic/components';
+import { Button, Card, FormLabel } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { ToggleControl } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
@@ -7,7 +7,6 @@ import { Fragment, useState, useEffect, ChangeEvent, FormEvent } from 'react';
 import QueryWordadsSettings from 'calypso/components/data/query-wordads-settings';
 import FormCheckbox from 'calypso/components/forms/form-checkbox';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
-import FormLabel from 'calypso/components/forms/form-label';
 import FormLegend from 'calypso/components/forms/form-legend';
 import FormRadio from 'calypso/components/forms/form-radio';
 import FormSectionHeading from 'calypso/components/forms/form-section-heading';
@@ -55,8 +54,8 @@ const AdsFormSettings = () => {
 	const [ settings, setSettings ] = useState< Settings >( {} );
 	const [ isChanged, setIsChanged ] = useState( false );
 
-	const site = useSelector( ( state ) => getSelectedSite( state ) );
-	const siteId = useSelector( ( state ) => getSelectedSiteId( state ) );
+	const site = useSelector( getSelectedSite );
+	const siteId = useSelector( getSelectedSiteId );
 	const siteUrl = useSelector( ( state ) => getSiteUrl( state, siteId ?? 0 ) );
 	const siteIsJetpack = useSelector( ( state ) => isJetpackSite( state, siteId ?? 0 ) );
 	const isSavingSettings = useSelector( ( state ) =>

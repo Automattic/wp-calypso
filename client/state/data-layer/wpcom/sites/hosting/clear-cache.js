@@ -41,7 +41,6 @@ const clearWordPressCacheSuccess = () => {
 		hostingClearWordPressCacheTracking( true ),
 		successNotice( translate( 'Successfully cleared WordPress cache.' ), {
 			id: updateNoticeId,
-			showDismiss: false,
 			duration: 5000,
 		} ),
 	];

@@ -26,6 +26,7 @@ const useDefaultSiteColumns = ( isLargeScreen = false ): SiteColumns => {
 					{
 						key: 'boost',
 						title: translate( 'Boost score' ),
+						className: 'jetpack-cloud-site-column__boost',
 						isExpandable: true,
 						showInfo: true,
 					},
@@ -48,34 +49,34 @@ const useDefaultSiteColumns = ( isLargeScreen = false ): SiteColumns => {
 			{
 				key: 'stats',
 				title: translate( 'Stats' ),
-				className: 'width-fit-content',
+				className: 'width-fit-content jetpack-cloud-site-column__stats',
 				isExpandable: true,
 			},
 			...boostColumn,
 			{
 				key: 'backup',
 				title: translate( 'Backup' ),
-				className: 'fixed-site-column',
+				className: 'fixed-site-column jetpack-cloud-site-column__backup',
 				isExpandable: true,
 				showInfo: true,
 			},
 			{
 				key: 'scan',
 				title: translate( 'Scan' ),
-				className: 'fixed-site-column',
+				className: 'fixed-site-column jetpack-cloud-site-column__scan',
 				showInfo: true,
 			},
 			{
 				key: 'monitor',
 				title: translate( 'Monitor' ),
-				className: 'min-width-100px',
+				className: 'min-width-100px jetpack-cloud-site-column__monitor',
 				isExpandable: true,
 				showInfo: isPaidMonitorEnabled,
 			},
 			{
 				key: 'plugin',
 				title: translate( 'Plugins' ),
-				className: 'width-fit-content',
+				className: 'width-fit-content jetpack-cloud-site-column__plugin',
 			},
 		];
 	}, [

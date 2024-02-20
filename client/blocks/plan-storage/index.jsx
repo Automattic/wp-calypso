@@ -3,15 +3,18 @@ import {
 	planHasFeature,
 	isBusinessPlan,
 	isEcommercePlan,
+	isWooExpressMediumPlan,
 	PLAN_FREE,
 	PLAN_WPCOM_PRO,
 	PLAN_WPCOM_FLEXIBLE,
 	PLAN_WPCOM_STARTER,
 	isProPlan,
 } from '@automattic/calypso-products';
+import { Tooltip } from '@automattic/components';
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import PropTypes from 'prop-types';
+import { useRef, useState } from 'react';
 import { useSelector } from 'react-redux';
 import useMediaStorageQuery from 'calypso/data/media-storage/use-media-storage-query';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
@@ -21,7 +24,6 @@ import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
 import isSiteWpcomStaging from 'calypso/state/selectors/is-site-wpcom-staging';
 import { getSitePlanSlug, getSiteSlug, isJetpackSite } from 'calypso/state/sites/selectors';
 import PlanStorageBar from './bar';
-import Tooltip from './tooltip';
 
 import './style.scss';
 
@@ -41,6 +43,8 @@ export function PlanStorage( { children, className, siteId } ) {
 	const legacySiteWithHigherLimits = useSelector( ( state ) =>
 		isLegacySiteWithHigherLimits( state, siteId )
 	);
+	const [ isTooltipVisible, setTooltipVisible ] = useState( false );
+	const tooltipAnchorRef = useRef( null );
 
 	if ( ( jetpackSite && ! atomicSite ) || ! canViewBar || ! sitePlanSlug ) {
 		return null;
@@ -74,7 +78,10 @@ export function PlanStorage( { children, className, siteId } ) {
 	}
 
 	const planHasTopStorageSpace =
-		isBusinessPlan( sitePlanSlug ) || isEcommercePlan( sitePlanSlug ) || isProPlan( sitePlanSlug );
+		isBusinessPlan( sitePlanSlug ) ||
+		isEcommercePlan( sitePlanSlug ) ||
+		isProPlan( sitePlanSlug ) ||
+		isWooExpressMediumPlan( sitePlanSlug );
 
 	const displayUpgradeLink = canUserUpgrade && ! planHasTopStorageSpace && ! isStagingSite;
 	const isSharedQuota = isStagingSite || hasStagingSite;
@@ -91,28 +98,46 @@ export function PlanStorage( { children, className, siteId } ) {
 		</>
 	);
 
+	const showTooltip = () => setTooltipVisible( true );
+	const hideTooltip = () => setTooltipVisible( false );
+
 	if ( displayUpgradeLink ) {
 		return (
-			<Tooltip
-				title={ translate( 'Upgrade your plan to increase your storage space.' ) }
-				className="plan-storage__tooltip"
-			>
-				<a className={ classNames( className, 'plan-storage' ) } href={ `/plans/${ siteSlug }` }>
+			<>
+				<a
+					className={ classNames( className, 'plan-storage' ) }
+					href={ `/plans/${ siteSlug }` }
+					ref={ tooltipAnchorRef }
+					onMouseOver={ showTooltip }
+					onMouseOut={ hideTooltip }
+					onFocus={ showTooltip }
+					onBlur={ hideTooltip }
+				>
 					{ planStorageComponents }
 				</a>
-			</Tooltip>
+				<Tooltip context={ tooltipAnchorRef.current } isVisible={ isTooltipVisible }>
+					{ translate( 'Upgrade your plan to increase your storage space.' ) }
+				</Tooltip>
+			</>
 		);
 	}
 	if ( isSharedQuota ) {
 		return (
-			<Tooltip
-				title={ translate( 'Storage quota is shared between production and staging.' ) }
-				className="plan-storage__tooltip"
-			>
-				<div className={ classNames( className, 'plan-storage plan-storage__shared_quota' ) }>
+			<>
+				<div
+					className={ classNames( className, 'plan-storage plan-storage__shared_quota' ) }
+					ref={ tooltipAnchorRef }
+					onMouseOver={ showTooltip }
+					onMouseOut={ hideTooltip }
+					onFocus={ showTooltip }
+					onBlur={ hideTooltip }
+				>
 					{ planStorageComponents }
 				</div>
-			</Tooltip>
+				<Tooltip context={ tooltipAnchorRef.current } isVisible={ isTooltipVisible }>
+					{ translate( 'Storage quota is shared between production and staging.' ) }
+				</Tooltip>
+			</>
 		);
 	}
 	return <div className={ classNames( className, 'plan-storage' ) }>{ planStorageComponents }</div>;

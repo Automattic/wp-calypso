@@ -9,22 +9,35 @@ import { Icon, addTemplate, brush, cloudUpload } from '@wordpress/icons';
 import { localize } from 'i18n-calypso';
 import { isEmpty, times } from 'lodash';
 import PropTypes from 'prop-types';
-import React, { useCallback, useEffect, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { connect, useSelector } from 'react-redux';
 import InfiniteScroll from 'calypso/components/infinite-scroll';
 import Theme from 'calypso/components/theme';
 import withIsFSEActive from 'calypso/data/themes/with-is-fse-active';
+import { getWooMyCustomThemeOptions } from 'calypso/my-sites/themes/theme-options';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import getSiteEditorUrl from 'calypso/state/selectors/get-site-editor-url';
 import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import { isSiteOnECommerceTrial, isSiteOnWooExpress } from 'calypso/state/sites/plans/selectors';
-import { getSiteThemeInstallUrl } from 'calypso/state/sites/selectors';
+import {
+	getSiteThemeInstallUrl,
+	getSiteAdminUrl,
+	getSiteSlug,
+	isWooCYSEligibleSite,
+} from 'calypso/state/sites/selectors';
 import { upsellCardDisplayed as upsellCardDisplayedAction } from 'calypso/state/themes/actions';
 import { DEFAULT_THEME_QUERY } from 'calypso/state/themes/constants';
+import { isDefaultWooExpressThemeActive } from 'calypso/state/themes/selectors/is-wooexpress-default-theme-active';
 import { getThemesBookmark } from 'calypso/state/themes/themes-ui/selectors';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
+import WooDesignWithAIBanner from '../woo-design-with-ai-banner';
+import {
+	StartNewDesignWarningModal,
+	StartOverWarningModal,
+} from '../woo-design-with-ai-warning-modals';
 import getSiteAssemblerUrl from './get-site-assembler-url';
+import useWooActiveThemeQuery from './use-woo-active-theme-query';
 
 import './style.scss';
 
@@ -45,7 +58,26 @@ const getGridColumns = ( gridContainerRef, minColumnWidth, margin ) => {
 	return columnsPerRow;
 };
 
+const getWarningModalComponent = ( isDefaultWooExpressTheme, isCurrentThemeAIGenerated ) => {
+	switch ( true ) {
+		case isCurrentThemeAIGenerated:
+			return StartOverWarningModal;
+		case ! isDefaultWooExpressTheme:
+			return StartNewDesignWarningModal;
+		default:
+			return null;
+	}
+};
+
 export const ThemesList = ( { tabFilter, ...props } ) => {
+	const {
+		themes,
+		translate,
+		isSiteWooExpressOrEcomFreeTrial,
+		siteSlug,
+		siteAdminUrl,
+		getButtonOptions,
+	} = props;
 	const themesListRef = useRef( null );
 	const [ showSecondUpsellNudge, setShowSecondUpsellNudge ] = useState( false );
 	const updateShowSecondUpsellNudge = useCallback( () => {
@@ -96,6 +128,51 @@ export const ThemesList = ( { tabFilter, ...props } ) => {
 		window.location.assign( destinationUrl );
 	};
 
+	const [ openWarningModal, setOpenWarningModal ] = useState( false );
+	const { data: activeTheme } = useWooActiveThemeQuery(
+		selectedSite?.ID,
+		isSiteWooExpressOrEcomFreeTrial
+	);
+
+	const goToWooDesignWithAI = () => {
+		props.recordTracksEvent( 'calypso_themeshowcase_woo_design_with_ai_cta_click', {
+			is_ai_generated: activeTheme?.is_ai_generated,
+		} );
+
+		window.location.assign(
+			`${ siteAdminUrl }admin.php?page=wc-admin&path=/customize-store/design-with-ai`
+		);
+	};
+
+	const _themes = useMemo( () => {
+		if ( ! activeTheme?.is_ai_generated ) {
+			return themes;
+		}
+
+		const activeThemeIndex = themes.findIndex( ( theme ) => theme.id === activeTheme?.slug );
+		if ( activeThemeIndex < 0 ) {
+			return themes;
+		}
+
+		const theme = themes[ activeThemeIndex ];
+
+		return [
+			...themes.slice( 0, activeThemeIndex ),
+			{
+				...theme,
+				isCustomGeneratedTheme: true,
+				name: translate( 'My custom theme' ),
+				buttonOptions: getWooMyCustomThemeOptions( {
+					options: getButtonOptions( theme.id ),
+					translate,
+					siteAdminUrl,
+					siteSlug,
+				} ),
+			},
+			...themes.slice( activeThemeIndex + 1 ),
+		];
+	}, [ themes, translate, activeTheme, getButtonOptions, siteAdminUrl, siteSlug ] );
+
 	if ( ! props.loading && props.themes.length === 0 ) {
 		return (
 			<Empty
@@ -116,9 +193,22 @@ export const ThemesList = ( { tabFilter, ...props } ) => {
 		</div>
 	);
 
+	const DesignWithAIWarningModal = getWarningModalComponent(
+		props.isDefaultWooExpressThemeActive,
+		activeTheme?.is_ai_generated
+	);
+
+	const onClickWooBannerCTA = () => {
+		if ( props.isDefaultWooExpressThemeActive ) {
+			goToWooDesignWithAI();
+		} else {
+			setOpenWarningModal( true );
+		}
+	};
+
 	return (
 		<div className="themes-list" ref={ themesListRef }>
-			{ props.themes.map( ( theme, index ) => (
+			{ _themes.map( ( theme, index ) => (
 				<ThemeBlock
 					key={ 'theme-block' + index }
 					theme={ theme }
@@ -131,9 +221,24 @@ export const ThemesList = ( { tabFilter, ...props } ) => {
 				 Second plan upsell at 7th row is implemented through CSS. */ }
 			{ showSecondUpsellNudge && SecondUpsellNudge }
 			{ /* The Pattern Assembler CTA will display on the 9th row and the behavior is controlled by CSS */ }
-			{ ! ( props.isSiteWooExpressOrEcomFreeTrial && props.tier === 'free' ) &&
+			{ ! props.isWooCYSEligibleSite &&
+				! ( props.isSiteWooExpressOrEcomFreeTrial && props.tier === 'free' ) &&
 				tabFilter !== 'my-themes' &&
-				props.themes.length > 0 && <PatternAssemblerCta onButtonClick={ goToSiteAssemblerFlow } /> }
+				_themes.length > 0 && <PatternAssemblerCta onButtonClick={ goToSiteAssemblerFlow } /> }
+			{ /* The Woo Design with AI banner will be displayed on the 2nd or last row.The behavior is controlled by CSS */ }
+			{ props.isWooCYSEligibleSite && _themes.length > 0 && (
+				<WooDesignWithAIBanner
+					className={ activeTheme?.is_ai_generated ? 'last-row' : 'second-row' }
+					onClick={ onClickWooBannerCTA }
+				/>
+			) }
+			{ DesignWithAIWarningModal && openWarningModal && (
+				<DesignWithAIWarningModal
+					setOpenModal={ setOpenWarningModal }
+					onContinue={ goToWooDesignWithAI }
+					adminUrl={ siteAdminUrl }
+				/>
+			) }
 			{ props.children }
 			{ props.loading && <LoadingPlaceholders placeholderCount={ props.placeholderCount } /> }
 			<InfiniteScroll nextPageMethod={ fetchNextPage } />
@@ -166,7 +271,7 @@ ThemesList.propTypes = {
 	] ),
 	siteId: PropTypes.number,
 	searchTerm: PropTypes.string,
-	tier: PropTypes.oneOf( [ '', 'free', 'premium', 'marketplace' ] ),
+	tier: PropTypes.string,
 	upsellCardDisplayed: PropTypes.func,
 	children: PropTypes.node,
 };
@@ -187,7 +292,7 @@ ThemesList.defaultProps = {
 };
 
 export function ThemeBlock( props ) {
-	const { theme, index, tabFilter } = props;
+	const { theme, index, tabFilter, tier } = props;
 	const [ selectedStyleVariation, setSelectedStyleVariation ] = useState( null );
 
 	if ( isEmpty( theme ) ) {
@@ -201,9 +306,15 @@ export function ThemeBlock( props ) {
 	return (
 		<Theme
 			key={ `theme-${ theme.id }` }
-			buttonContents={ props.getButtonOptions( theme.id, selectedStyleVariation ) }
+			buttonContents={
+				// Allow theme to override button options.
+				theme.buttonOptions
+					? theme.buttonOptions
+					: props.getButtonOptions( theme.id, selectedStyleVariation )
+			}
 			screenshotClickUrl={ props.getScreenshotUrl?.( theme.id, {
 				tabFilter,
+				tierFilter: tier,
 				styleVariationSlug: selectedStyleVariation?.slug,
 			} ) }
 			onScreenshotClick={ props.onScreenshotClick }
@@ -418,8 +529,12 @@ function LoadingPlaceholders( { placeholderCount } ) {
 const mapStateToProps = ( state, { siteId } ) => {
 	return {
 		themesBookmark: getThemesBookmark( state ),
+		siteSlug: getSiteSlug( state, siteId ),
 		isSiteWooExpressOrEcomFreeTrial:
 			isSiteOnECommerceTrial( state, siteId ) || isSiteOnWooExpress( state, siteId ),
+		isWooCYSEligibleSite: isWooCYSEligibleSite( state, siteId ),
+		isDefaultWooExpressThemeActive: isDefaultWooExpressThemeActive( state, siteId ),
+		siteAdminUrl: getSiteAdminUrl( state, siteId ),
 	};
 };
 

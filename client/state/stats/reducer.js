@@ -6,6 +6,8 @@ import highlights from './highlights/reducer';
 import lists from './lists/reducer';
 import moduleSettings from './module-settings/reducer';
 import moduleToggles from './module-toggles/reducer';
+import notices from './notices/reducer';
+import paidStatsUpsell from './paid-stats-upsell/reducer';
 import posts from './posts/reducer';
 import recentPostViews from './recent-post-views/reducer';
 
@@ -18,6 +20,8 @@ const combinedReducer = combineReducers( {
 	posts,
 	emails,
 	recentPostViews,
+	paidStatsUpsell,
+	notices,
 } );
 const statsReducer = withStorageKey( 'stats', combinedReducer );
 

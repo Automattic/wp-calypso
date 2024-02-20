@@ -4,6 +4,7 @@ import { DESIGN_FIRST_FLOW } from '@automattic/onboarding';
 import { useDispatch } from '@wordpress/data';
 import { useEffect } from '@wordpress/element';
 import { addQueryArgs, getQueryArg } from '@wordpress/url';
+import { translate } from 'i18n-calypso';
 import { useSelector } from 'react-redux';
 import { getLocaleFromQueryParam, getLocaleFromPathname } from 'calypso/boot/locale';
 import { recordSubmitStep } from 'calypso/landing/stepper/declarative-flow/internals/analytics/record-submit-step';
@@ -22,7 +23,9 @@ import { useLoginUrl } from '../utils/path';
 
 const designFirst: Flow = {
 	name: DESIGN_FIRST_FLOW,
-	title: 'Blog',
+	get title() {
+		return translate( 'Blog' );
+	},
 	useSteps() {
 		return [
 			{
@@ -38,8 +41,8 @@ const designFirst: Flow = {
 				asyncComponent: () => import( './internals/steps-repository/site-picker-list' ),
 			},
 			{
-				slug: 'site-creation-step',
-				asyncComponent: () => import( './internals/steps-repository/site-creation-step' ),
+				slug: 'create-site',
+				asyncComponent: () => import( './internals/steps-repository/create-site' ),
 			},
 			{
 				slug: 'processing',
@@ -97,13 +100,13 @@ const designFirst: Flow = {
 					// Check for unlaunched sites
 					if ( providedDependencies?.filteredSitesCount === 0 ) {
 						// No unlaunched sites, redirect to new site creation step
-						return navigate( 'site-creation-step' );
+						return navigate( 'create-site' );
 					}
 					// With unlaunched sites, continue to new-or-existing-site step
 					return navigate( 'new-or-existing-site' );
 				case 'new-or-existing-site':
 					if ( 'new-site' === providedDependencies?.newExistingSiteChoice ) {
-						return navigate( 'site-creation-step' );
+						return navigate( 'create-site' );
 					}
 					return navigate( 'site-picker' );
 				case 'site-picker': {
@@ -127,7 +130,7 @@ const designFirst: Flow = {
 					}
 					return navigate( 'launchpad' );
 				}
-				case 'site-creation-step':
+				case 'create-site':
 					return navigate( 'processing' );
 				case 'processing': {
 					// If we just created a new site.
@@ -239,7 +242,7 @@ const designFirst: Flow = {
 		const isLoggedIn = useSelector( isUserLoggedIn );
 		const currentUserSiteCount = useSelector( getCurrentUserSiteCount );
 		const currentPath = window.location.pathname;
-		const isSiteCreationStep =
+		const isCreateSite =
 			currentPath.endsWith( 'setup/design-first' ) ||
 			currentPath.endsWith( 'setup/design-first/' ) ||
 			currentPath.includes( 'setup/design-first/check-sites' );
@@ -258,23 +261,23 @@ const designFirst: Flow = {
 		const logInUrl = useLoginUrl( {
 			variationName: flowName,
 			redirectTo: window.location.href.replace( window.location.origin, '' ),
-			pageTitle: 'Pick a design',
+			pageTitle: translate( 'Pick a design' ),
 			locale,
 		} );
 
 		// Despite sending a CHECKING state, this function gets called again with the
-		// /setup/design-first/site-creation-step route which has no locale in the path so we need to
+		// /setup/design-first/create-site route which has no locale in the path so we need to
 		// redirect off of the first render.
-		// This effects both /setup/design-first/<locale> starting points and /setup/design-first/site-creation-step/<locale> urls.
+		// This effects both /setup/design-first/<locale> starting points and /setup/design-first/create-site/<locale> urls.
 		// The double call also hapens on urls without locale.
 		useEffect( () => {
 			if ( ! isLoggedIn ) {
 				redirect( logInUrl );
 			} else if (
-				isSiteCreationStep &&
+				isCreateSite &&
 				( ! userAlreadyHasSites || getQueryArg( window.location.href, 'ref' ) === 'calypshowcase' )
 			) {
-				redirect( `/setup/design-first/site-creation-step${ window.location.search }` );
+				redirect( `/setup/design-first/create-site${ window.location.search }` );
 			}
 		}, [] );
 
@@ -282,10 +285,10 @@ const designFirst: Flow = {
 
 		if ( ! isLoggedIn ) {
 			result = {
-				state: AssertConditionState.CHECKING,
+				state: AssertConditionState.FAILURE,
 				message: `${ flowName } requires a logged in user`,
 			};
-		} else if ( isSiteCreationStep && ! userAlreadyHasSites ) {
+		} else if ( isCreateSite && ! userAlreadyHasSites ) {
 			result = {
 				state: AssertConditionState.CHECKING,
 				message: `${ flowName } with no preexisting sites`,

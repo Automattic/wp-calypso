@@ -90,12 +90,12 @@ const updateDesign: Flow = {
 					}
 
 					if ( providedDependencies?.shouldGoToAssembler ) {
-						return navigate( 'patternAssembler' );
+						return navigate( 'pattern-assembler' );
 					}
 
 					return navigate( `processing?siteSlug=${ siteSlug }&flowToReturnTo=${ flowToReturnTo }` );
 
-				case 'patternAssembler': {
+				case 'pattern-assembler': {
 					return navigate( `processing?siteSlug=${ siteSlug }&flowToReturnTo=${ flowToReturnTo }` );
 				}
 			}
@@ -103,7 +103,7 @@ const updateDesign: Flow = {
 
 		const goBack = () => {
 			switch ( currentStep ) {
-				case 'patternAssembler':
+				case 'pattern-assembler':
 					return navigate( 'designSetup' );
 			}
 		};

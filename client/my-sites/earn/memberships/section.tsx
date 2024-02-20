@@ -14,9 +14,10 @@ import { getEarningsWithDefaultsForSiteId } from 'calypso/state/memberships/earn
 import { getProductsForSiteId } from 'calypso/state/memberships/product-list/selectors';
 import { requestDisconnectSiteStripeAccount } from 'calypso/state/memberships/settings/actions';
 import {
-	getConnectedAccountIdForSiteId,
 	getConnectedAccountDescriptionForSiteId,
 	getConnectUrlForSiteId,
+	getCouponsAndGiftsEnabledForSiteId,
+	getIsConnectedForSiteId,
 } from 'calypso/state/memberships/settings/selectors';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import CommissionFees from '../components/commission-fees';
@@ -26,6 +27,7 @@ import {
 	OLD_ADD_NEWSLETTER_PAYMENT_PLAN_HASH,
 	LAUNCHPAD_HASH,
 } from './constants';
+import CouponList from './coupons-list';
 import ProductList from './products-list';
 import './style.scss';
 
@@ -37,13 +39,13 @@ function MembershipsSection( { query }: MembershipsSectionProps ) {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 	const source = getSource();
-	const [ disconnectedConnectedAccountId, setDisconnectedConnectedAccountId ] = useState( null );
 
-	const site = useSelector( ( state ) => getSelectedSite( state ) );
+	const site = useSelector( getSelectedSite );
 
-	const connectedAccountId = useSelector( ( state ) =>
-		getConnectedAccountIdForSiteId( state, site?.ID )
+	const hasConnectedAccount = useSelector( ( state ) =>
+		getIsConnectedForSiteId( state, site?.ID )
 	);
+	const [ showDisconnectStripeDialog, setShowDisconnectStripeDialog ] = useState( false );
 
 	const products = useSelector( ( state ) => getProductsForSiteId( state, site?.ID ) );
 
@@ -54,6 +56,10 @@ function MembershipsSection( { query }: MembershipsSectionProps ) {
 
 	const { commission } = useSelector( ( state ) =>
 		getEarningsWithDefaultsForSiteId( state, site?.ID )
+	);
+
+	const couponsAndGiftsEnabled = useSelector( ( state ) =>
+		getCouponsAndGiftsEnabledForSiteId( state, site?.ID )
 	);
 
 	const navigateToLaunchpad = useCallback( () => {
@@ -69,20 +75,19 @@ function MembershipsSection( { query }: MembershipsSectionProps ) {
 			dispatch(
 				requestDisconnectSiteStripeAccount(
 					site?.ID,
-					connectedAccountId,
 					translate( 'Please wait, disconnecting Stripe\u2026' ),
 					translate( 'Stripe account is disconnected.' )
 				)
 			);
 		}
-		setDisconnectedConnectedAccountId( null );
+		setShowDisconnectStripeDialog( false );
 	}
 
 	function renderSettings() {
 		return (
 			<div>
 				<SectionHeader label={ translate( 'Settings' ) }>
-					{ ! connectedAccountId && (
+					{ ! hasConnectedAccount && (
 						<Button
 							primary
 							compact
@@ -95,9 +100,9 @@ function MembershipsSection( { query }: MembershipsSectionProps ) {
 						</Button>
 					) }
 				</SectionHeader>
-				{ connectedAccountId ? (
+				{ hasConnectedAccount ? (
 					<Card
-						onClick={ () => setDisconnectedConnectedAccountId( connectedAccountId ) }
+						onClick={ () => setShowDisconnectStripeDialog( true ) }
 						className="memberships__settings-link"
 					>
 						<div className="memberships__module-plans-content">
@@ -148,7 +153,7 @@ function MembershipsSection( { query }: MembershipsSectionProps ) {
 				</p>
 				<Dialog
 					className="memberships__stripe-disconnect-modal"
-					isVisible={ !! disconnectedConnectedAccountId }
+					isVisible={ showDisconnectStripeDialog }
 					buttons={ [
 						{
 							label: translate( 'Cancel' ),
@@ -254,7 +259,7 @@ function MembershipsSection( { query }: MembershipsSectionProps ) {
 		<div>
 			<QueryMembershipsSettings siteId={ site.ID } source={ source } />
 			<QueryMembershipsEarnings siteId={ site?.ID ?? 0 } />
-			{ ! connectedAccountId && ! connectUrl && (
+			{ ! hasConnectedAccount && ! connectUrl && (
 				<div className="earn__payments-loading">
 					<LoadingEllipsis />
 				</div>
@@ -262,6 +267,7 @@ function MembershipsSection( { query }: MembershipsSectionProps ) {
 			<div>
 				{ renderNotices() }
 				<ProductList />
+				{ couponsAndGiftsEnabled && <CouponList /> }
 				{ renderSettings() }
 			</div>
 		</div>

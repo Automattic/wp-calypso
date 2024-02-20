@@ -1,5 +1,6 @@
 import { LoadingPlaceholder } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
+import { PlanButton } from '@automattic/plans-grid-next';
 import { useEffect, useState } from '@wordpress/element';
 import { useTranslate } from 'i18n-calypso';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
@@ -10,7 +11,6 @@ import {
 	Row,
 	RowWithBorder,
 	SubHeading,
-	StyledButton,
 	DomainName,
 } from './components';
 import SuggestedPlanSection from './components/suggested-plan-section';
@@ -19,12 +19,9 @@ import { DomainPlanDialogProps, MODAL_VIEW_EVENT_NAME } from '.';
 export function FreePlanPaidDomainDialog( {
 	paidDomainName,
 	generatedWPComSubdomain,
-	suggestedPlanSlug,
 	onFreePlanSelected,
 	onPlanSelected,
-}: DomainPlanDialogProps & {
-	paidDomainName: string;
-} ) {
+}: DomainPlanDialogProps ) {
 	const translate = useTranslate();
 	const [ isBusy, setIsBusy ] = useState( false );
 
@@ -33,11 +30,6 @@ export function FreePlanPaidDomainDialog( {
 			dialog_type: 'custom_domain_and_free_plan',
 		} );
 	}, [] );
-
-	function handlePaidPlanClick() {
-		setIsBusy( true );
-		onPlanSelected();
-	}
 
 	function handleFreePlanClick() {
 		setIsBusy( true );
@@ -71,15 +63,15 @@ export function FreePlanPaidDomainDialog( {
 				<RowWithBorder>
 					<SuggestedPlanSection
 						paidDomainName={ paidDomainName }
-						suggestedPlanSlug={ suggestedPlanSlug }
 						isBusy={ isBusy }
-						onButtonClick={ handlePaidPlanClick }
+						onPlanSelected={ onPlanSelected }
 					/>
 				</RowWithBorder>
 				<Row>
 					<DomainName>
 						{ generatedWPComSubdomain.isLoading && <LoadingPlaceholder /> }
 						{ generatedWPComSubdomain.result &&
+							paidDomainName &&
 							translate( '%(paidDomainName)s redirects to %(wpcomFreeDomain)s', {
 								args: {
 									paidDomainName,
@@ -88,13 +80,13 @@ export function FreePlanPaidDomainDialog( {
 								comment: '%(wpcomFreeDomain)s is a WordPress.com subdomain, e.g. foo.wordpress.com',
 							} ) }
 					</DomainName>
-					<StyledButton
+					<PlanButton
 						disabled={ generatedWPComSubdomain.isLoading || ! generatedWPComSubdomain.result }
 						busy={ isBusy }
 						onClick={ handleFreePlanClick }
 					>
 						{ translate( 'Continue with Free plan' ) }
-					</StyledButton>
+					</PlanButton>
 				</Row>
 			</ButtonContainer>
 		</DialogContainer>

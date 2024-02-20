@@ -8,6 +8,12 @@
 		}
 	}
 
+	&.navigation-header {
+		@media ( min-width: 661px ) and ( max-width: 1380px ) {
+			padding: 0 32px 24px 32px;
+		}
+	}
+
 	tbody tr:nth-child(odd),
 	.is-fixed-row-header tbody > tr:nth-child(odd) > th {
 		background-color: var(--studio-gray-0);

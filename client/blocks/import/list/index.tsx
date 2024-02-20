@@ -1,5 +1,5 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
-import { Button, FormLabel, SelectDropdown } from '@automattic/components';
+import { Button, Gridicon, FormLabel, SelectDropdown } from '@automattic/components';
 import { Title, SubTitle } from '@automattic/onboarding';
 import { chevronRight, Icon } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
@@ -24,11 +24,12 @@ interface Props {
 	siteSlug: string | null;
 	submit?: ( dependencies: Record< string, unknown > ) => void;
 	getFinalImporterUrl: ( siteSlug: string, fromSite: string, platform: ImporterPlatform ) => string;
+	onNavBack?: () => void;
 }
 
 export default function ListStep( props: Props ) {
 	const { __ } = useI18n();
-	const { siteSlug, submit, getFinalImporterUrl } = props;
+	const { siteSlug, submit, getFinalImporterUrl, onNavBack } = props;
 
 	const primaryListOptions: ImporterOption[] = [
 		{ value: 'wordpress', label: 'WordPress', icon: 'wordpress' },
@@ -60,6 +61,14 @@ export default function ListStep( props: Props ) {
 
 	return (
 		<>
+			{ onNavBack && (
+				<div className="import__navigation">
+					<Button onClick={ onNavBack } borderless={ true } type="button">
+						<Gridicon icon="chevron-left" size={ 18 } />
+						Back
+					</Button>
+				</div>
+			) }
 			<div className="list__wrapper">
 				<div className="import__heading import__heading-center">
 					<Title>{ __( 'Import content from another platform' ) }</Title>

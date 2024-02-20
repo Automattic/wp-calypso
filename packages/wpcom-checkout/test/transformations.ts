@@ -203,7 +203,7 @@ describe( 'getCreditsLineItemFromCart', function () {
 	} );
 
 	it( 'returns line item for credits', () => {
-		const cartWithCredits = { ...cart, credits_integer: 400, credits_display: 'JPY 400' };
+		const cartWithCredits = { ...cart, credits_integer: 400 };
 		const expected: LineItemType = {
 			id: 'credits',
 			type: 'credits',
@@ -215,7 +215,7 @@ describe( 'getCreditsLineItemFromCart', function () {
 	} );
 
 	it( 'returns line item for credits display value clamped to subtotal', () => {
-		const cartWithCredits = { ...cart, credits_integer: 80000, credits_display: 'JPY 80000' };
+		const cartWithCredits = { ...cart, credits_integer: 80000 };
 		const expected: LineItemType = {
 			id: 'credits',
 			type: 'credits',

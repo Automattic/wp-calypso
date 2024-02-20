@@ -1,8 +1,9 @@
 import config from '@automattic/calypso-config';
 import { PlansSelect, SiteSelect } from '@automattic/data-stores';
+import { TIMELESS_PLAN_BUSINESS, TIMELESS_PLAN_PREMIUM } from '@automattic/data-stores/src/plans';
 import { StyleVariation } from '@automattic/design-picker';
 import { useLocale } from '@automattic/i18n-utils';
-import { useFlowProgress, VIDEOPRESS_FLOW } from '@automattic/onboarding';
+import { VIDEOPRESS_FLOW } from '@automattic/onboarding';
 import { useSelect, useDispatch } from '@wordpress/data';
 import { translate } from 'i18n-calypso';
 import { useEffect, useState } from 'react';
@@ -68,10 +69,8 @@ const videopress: Flow = {
 			( select ) => select( ONBOARD_STORE ) as OnboardSelect,
 			[]
 		);
-		const { setDomain, setSelectedDesign, setSiteDescription, setSiteTitle, setStepProgress } =
+		const { setDomain, setSelectedDesign, setSiteDescription, setSiteTitle } =
 			useDispatch( ONBOARD_STORE );
-		const flowProgress = useFlowProgress( { stepName: _currentStep, flowName: name } );
-		setStepProgress( flowProgress );
 		const siteId = useSiteIdParam();
 		const _siteSlug = useSiteSlug();
 		const userIsLoggedIn = useSelect(
@@ -240,9 +239,13 @@ const videopress: Flow = {
 					blogdescription: siteDescription,
 				} );
 
-				let planObject = supportedPlans.find( ( plan ) => 'premium' === plan.periodAgnosticSlug );
+				let planObject = supportedPlans.find(
+					( plan ) => TIMELESS_PLAN_PREMIUM === plan.periodAgnosticSlug
+				);
 				if ( ! planObject ) {
-					planObject = supportedPlans.find( ( plan ) => 'business' === plan.periodAgnosticSlug );
+					planObject = supportedPlans.find(
+						( plan ) => TIMELESS_PLAN_BUSINESS === plan.periodAgnosticSlug
+					);
 				}
 
 				const planProductObject = getPlanProduct( planObject?.periodAgnosticSlug, 'MONTHLY' );

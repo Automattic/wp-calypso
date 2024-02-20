@@ -22,6 +22,7 @@ import { successNotice } from 'calypso/state/notices/actions';
 import { useSitesSorting } from 'calypso/state/sites/hooks/use-sites-sorting';
 import { useSitesDashboardImportSiteUrl } from '../hooks/use-sites-dashboard-import-site-url';
 import { MEDIA_QUERIES, TRACK_SOURCE_NAME } from '../utils';
+import { HostingCommandPaletteBanner } from './hosting-command-palette-banner';
 import { NoSitesMessage } from './no-sites-message';
 import {
 	SitesDashboardQueryParams,
@@ -57,7 +58,6 @@ const PageHeader = styled.div( {
 
 	backgroundColor: 'var( --studio-white )',
 
-	paddingBlockStart: '24px',
 	paddingBlockEnd: '24px',
 
 	[ MEDIA_QUERIES.mediumOrSmaller ]: {
@@ -80,7 +80,7 @@ const HeaderControls = styled.div( {
 	marginInline: 'auto',
 	display: 'flex',
 	flexDirection: 'row',
-	alignItems: 'center',
+	alignItems: 'flex-start',
 } );
 
 const DashboardHeading = styled.h1( {
@@ -157,6 +157,10 @@ const popoverHoverStyles = css`
 	}
 `;
 
+const StyledHostingCommandPaletteBanner = styled( HostingCommandPaletteBanner )( {
+	maxWidth: MAX_PAGE_WIDTH,
+} );
+
 const SitesDashboardSitesList = createSitesListComponent();
 
 export function SitesDashboard( {
@@ -200,6 +204,7 @@ export function SitesDashboard( {
 		<main>
 			<DocumentHead title={ __( 'Sites' ) } />
 			<PageHeader>
+				<StyledHostingCommandPaletteBanner />
 				<HeaderControls>
 					<DashboardHeading>{ __( 'Sites' ) }</DashboardHeading>
 					<ManageAllDomainsButton href="/domains/manage">

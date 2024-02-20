@@ -29,9 +29,12 @@ import { isWpMobileApp, isWcMobileApp } from 'calypso/lib/mobile-app';
 import isReaderTagEmbedPage from 'calypso/lib/reader/is-reader-tag-embed-page';
 import { getMessagePathForJITM } from 'calypso/lib/route';
 import UserVerificationChecker from 'calypso/lib/user/verification-checker';
-import { OdieAssistantProvider } from 'calypso/odie/context';
 import { isOffline } from 'calypso/state/application/selectors';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
+import {
+	getShouldShowGlobalSidebar,
+	getShouldShowGlobalSiteSidebar,
+} from 'calypso/state/global-sidebar/selectors';
 import { getCurrentOAuth2Client } from 'calypso/state/oauth2-clients/ui/selectors';
 import { getPreference } from 'calypso/state/preferences/selectors';
 import getCurrentQueryArguments from 'calypso/state/selectors/get-current-query-arguments';
@@ -47,7 +50,7 @@ import {
 } from 'calypso/state/ui/selectors';
 import BodySectionCssClass from './body-section-css-class';
 import LayoutLoader from './loader';
-import { handleScroll } from './utils';
+import { handleScroll, handleScrollGlobalSidebar } from './utils';
 
 // goofy import for environment badge, which is SSR'd
 import 'calypso/components/environment-badge/style.scss';
@@ -63,27 +66,35 @@ import './style.scss';
 
 const HELP_CENTER_STORE = HelpCenter.register();
 
-function SidebarScrollSynchronizer() {
+function SidebarScrollSynchronizer( { isGlobalSidebarOrGlobalSiteSidebar } ) {
 	const isNarrow = useBreakpoint( '<660px' );
 	const active = ! isNarrow && ! config.isEnabled( 'jetpack-cloud' ); // Jetpack cloud hasn't yet aligned with WPCOM.
 
 	useEffect( () => {
 		if ( active ) {
-			window.addEventListener( 'scroll', handleScroll );
-			window.addEventListener( 'resize', handleScroll );
+			if ( isGlobalSidebarOrGlobalSiteSidebar ) {
+				window.addEventListener( 'scroll', handleScrollGlobalSidebar );
+			} else {
+				window.addEventListener( 'scroll', handleScroll );
+				window.addEventListener( 'resize', handleScroll );
+			}
 		}
 
 		return () => {
 			if ( active ) {
-				window.removeEventListener( 'scroll', handleScroll );
-				window.removeEventListener( 'resize', handleScroll );
+				if ( isGlobalSidebarOrGlobalSiteSidebar ) {
+					window.removeEventListener( 'scroll', handleScrollGlobalSidebar );
+				} else {
+					window.removeEventListener( 'scroll', handleScroll );
+					window.removeEventListener( 'resize', handleScroll );
+				}
 
 				// remove style attributes added by `handleScroll`
 				document.getElementById( 'content' )?.removeAttribute( 'style' );
 				document.getElementById( 'secondary' )?.removeAttribute( 'style' );
 			}
 		};
-	}, [ active ] );
+	}, [ active, isGlobalSidebarOrGlobalSiteSidebar ] );
 
 	return null;
 }
@@ -202,10 +213,6 @@ class Layout extends Component {
 		// intentionally don't remove these in unmount
 	}
 
-	shouldShowOdieAssistant() {
-		return false;
-	}
-
 	renderMasterbar( loadHelpCenterIcon ) {
 		if ( this.props.masterbarIsHidden ) {
 			return <EmptyMasterbar />;
@@ -248,6 +255,8 @@ class Layout extends Component {
 			'is-jetpack-woo-dna-flow': this.props.isJetpackWooDnaFlow,
 			'is-woocommerce-core-profiler-flow': this.props.isWooCoreProfilerFlow,
 			woo: this.props.isWooCoreProfilerFlow,
+			'is-global-sidebar-visible': this.props.isGlobalSidebarVisible,
+			'is-global-site-sidebar-visible': this.props.isGlobalSiteSidebarVisible,
 		} );
 
 		const optionalBodyProps = () => {
@@ -275,7 +284,12 @@ class Layout extends Component {
 					loadHelpCenter={ loadHelpCenter }
 					currentRoute={ this.props.currentRoute }
 				/>
-				<SidebarScrollSynchronizer layoutFocus={ this.props.currentLayoutFocus } />
+				<SidebarScrollSynchronizer
+					layoutFocus={ this.props.currentLayoutFocus }
+					isGlobalSidebarOrGlobalSiteSidebar={
+						this.props.isGlobalSidebarVisible || this.props.isGlobalSiteSidebarVisible
+					}
+				/>
 				<SidebarOverflowDelay layoutFocus={ this.props.currentLayoutFocus } />
 				<BodySectionCssClass
 					layoutFocus={ this.props.currentLayoutFocus }
@@ -301,6 +315,9 @@ class Layout extends Component {
 				{ isJetpackCloud() && (
 					<AsyncLoad require="calypso/jetpack-cloud/style" placeholder={ null } />
 				) }
+				{ config.isEnabled( 'a8c-for-agencies' ) && (
+					<AsyncLoad require="calypso/a8c-for-agencies/style" placeholder={ null } />
+				) }
 				{ this.props.isOffline && <OfflineStatus /> }
 				<div id="content" className="layout__content">
 					{ config.isEnabled( 'jitms' ) && this.props.isEligibleForJITM && (
@@ -319,13 +336,7 @@ class Layout extends Component {
 						{ this.props.secondary }
 					</div>
 					<div id="primary" className="layout__primary">
-						{ this.shouldShowOdieAssistant() ? (
-							<OdieAssistantProvider sectionName={ this.props.sectionName }>
-								{ this.props.primary }
-							</OdieAssistantProvider>
-						) : (
-							this.props.primary
-						) }
+						{ this.props.primary }
 					</div>
 				</div>
 				<AsyncLoad require="calypso/layout/community-translator" placeholder={ null } />
@@ -369,6 +380,12 @@ export default withCurrentRoute(
 		const isWooCoreProfilerFlow =
 			[ 'jetpack-connect', 'login' ].includes( sectionName ) &&
 			isWooCommerceCoreProfilerFlow( state );
+		const shouldShowGlobalSidebar = getShouldShowGlobalSidebar( state, siteId, sectionGroup );
+		const shouldShowGlobalSiteSidebar = getShouldShowGlobalSiteSidebar(
+			state,
+			siteId,
+			sectionGroup
+		);
 		const noMasterbarForRoute =
 			isJetpackLogin ||
 			currentRoute === '/me/account/closed' ||
@@ -384,7 +401,10 @@ export default withCurrentRoute(
 			noMasterbarForRoute ||
 			isWpMobileApp() ||
 			isWcMobileApp() ||
-			isJetpackCloud();
+			shouldShowGlobalSidebar ||
+			shouldShowGlobalSiteSidebar ||
+			isJetpackCloud() ||
+			config.isEnabled( 'a8c-for-agencies' );
 		const isJetpackMobileFlow = 'jetpack-connect' === sectionName && !! retrieveMobileRedirect();
 		const isJetpackWooCommerceFlow =
 			[ 'jetpack-connect', 'login' ].includes( sectionName ) &&
@@ -436,6 +456,8 @@ export default withCurrentRoute(
 			sidebarIsCollapsed: sectionName !== 'reader' && getSidebarIsCollapsed( state ),
 			userAllowedToHelpCenter,
 			currentRoute,
+			isGlobalSidebarVisible: shouldShowGlobalSidebar,
+			isGlobalSiteSidebarVisible: shouldShowGlobalSiteSidebar,
 		};
 	} )( Layout )
 );

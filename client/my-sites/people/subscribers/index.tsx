@@ -27,7 +27,7 @@ function Subscribers( props: Props ) {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 	const { search, followersQuery } = props;
-	const site = useSelector( ( state ) => getSelectedSite( state ) );
+	const site = useSelector( getSelectedSite );
 
 	const listKey = [ 'subscribers', site?.ID, 'all', search ].join( '-' );
 	const { data, fetchNextPage, isLoading, isFetchingNextPage, hasNextPage, refetch } =

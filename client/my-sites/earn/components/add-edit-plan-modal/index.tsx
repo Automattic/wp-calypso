@@ -1,4 +1,4 @@
-import { Dialog, FormInputValidation, FoldableCard } from '@automattic/components';
+import { Dialog, FormInputValidation, FormLabel, FoldableCard } from '@automattic/components';
 import formatCurrency from '@automattic/format-currency';
 import { ToggleControl } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
@@ -6,7 +6,6 @@ import { ChangeEvent, useState, useEffect, useMemo } from 'react';
 import CountedTextArea from 'calypso/components/forms/counted-textarea';
 import FormCurrencyInput from 'calypso/components/forms/form-currency-input';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
-import FormLabel from 'calypso/components/forms/form-label';
 import FormSectionHeading from 'calypso/components/forms/form-section-heading';
 import FormSelect from 'calypso/components/forms/form-select';
 import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
@@ -60,10 +59,15 @@ function minimumCurrencyTransactionAmount(
 	currency: string,
 	connectedAccountDefaultCurrency: string
 ): number {
-	if ( connectedAccountDefaultCurrency.toUpperCase() === currency ) {
-		return currency_min[ currency ];
+	const currencyMin = currency_min?.[ currency ];
+	if ( ! currencyMin ) {
+		return 0;
 	}
-	return currency_min[ currency ] * 2;
+
+	if ( connectedAccountDefaultCurrency?.toUpperCase() === currency ) {
+		return currencyMin;
+	}
+	return currencyMin * 2;
 }
 
 const MAX_LENGTH_CUSTOM_CONFIRMATION_EMAIL_MESSAGE = 2000;
@@ -76,7 +80,7 @@ const RecurringPaymentsPlanAddEditModal = ( {
 }: RecurringPaymentsPlanAddEditModalProps ) => {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
-	const selectedSiteId = useSelector( ( state ) => getSelectedSiteId( state ) );
+	const selectedSiteId = useSelector( getSelectedSiteId );
 	const connectedAccountDefaultCurrency = useSelector( ( state ) =>
 		getconnectedAccountDefaultCurrencyForSiteId( state, siteId ?? selectedSiteId )
 	);

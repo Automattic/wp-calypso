@@ -6,7 +6,7 @@
 
 		.screen-upsell__plan-heading {
 			margin-bottom: 8px;
-			font-size: 20px; /* stylelint-disable-line declaration-property-unit-allowed-list */
+			font-size: $font-title-small;
 			font-weight: 500;
 			line-height: 26px;
 			color: var(--studio-gray-100, #101517);
@@ -16,14 +16,14 @@
 			display: flex;
 
 			.plan-price__integer {
-				font-size: 32px; /* stylelint-disable-line declaration-property-unit-allowed-list */
+				font-size: $font-title-large;
 				font-weight: 500;
 				color: var(--studio-gray-100, #101517);
 			}
 
 			.plan-price__currency-symbol {
 				margin-top: 2px;
-				font-size: 16px; /* stylelint-disable-line declaration-property-unit-allowed-list */
+				font-size: $font-body;
 				font-weight: 500;
 				color: var(--studio-gray-100, #101517);
 			}

@@ -1,0 +1,43 @@
+@import "@automattic/color-studio/dist/color-variables";
+
+.jetpack-upgrade-plan-banner .jetpack-upgrade-plan-banner__wrapper {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	font-size: $font-body-small;
+	background: $studio-black;
+	padding: 8px 16px;
+	border-radius: 2px;
+}
+
+.jetpack-upgrade-plan-banner .jetpack-upgrade-plan-banner__wrapper .jetpack-upgrade-plan-banner__banner-description {
+	color: $studio-white;
+	line-height: 21px;
+	word-wrap: break-word;
+	vertical-align: middle;
+}
+
+.jetpack-upgrade-plan-banner .jetpack-upgrade-plan-banner__wrapper .jetpack-upgrade-plan-banner__icon {
+	width: 24px;
+	height: 24px;
+	position: relative;
+	vertical-align: middle;
+	margin-right: 8px;
+
+	path {
+		fill: $studio-gray-30;
+	}
+}
+
+.jetpack-upgrade-plan-banner .jetpack-upgrade-plan-banner__wrapper .components-button {
+	height: auto;
+	line-height: 20px;
+	font-size: $font-body-extra-small;
+	font-weight: 600;
+	padding: 4px 8px;
+}
+
+.jetpack-upgrade-plan-banner .jetpack-upgrade-plan-banner__wrapper .components-button.is-primary {
+	background: $studio-white;
+	color: $studio-black;
+}

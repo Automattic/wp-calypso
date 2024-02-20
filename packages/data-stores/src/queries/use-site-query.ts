@@ -4,10 +4,9 @@ import wpcomRequest from 'wpcom-proxy-request';
 
 export function useSiteQuery< TError = unknown, TData = SiteDetails >(
 	sourceSiteSlug: string | number | null | undefined,
-	options: UseQueryOptions< SiteDetails, TError, TData > = {}
+	options: Omit< UseQueryOptions< SiteDetails, TError, TData >, 'queryKey' > = {}
 ) {
 	return useQuery( {
-		queryKey: getSiteQueryKey( sourceSiteSlug ),
 		queryFn: () =>
 			wpcomRequest< SiteDetails >( {
 				path: '/sites/' + encodeURIComponent( sourceSiteSlug ?? '' ),
@@ -16,6 +15,7 @@ export function useSiteQuery< TError = unknown, TData = SiteDetails >(
 			persist: false,
 		},
 		...options,
+		queryKey: getSiteQueryKey( sourceSiteSlug ),
 		enabled: Boolean( sourceSiteSlug ) && options.enabled,
 	} );
 }

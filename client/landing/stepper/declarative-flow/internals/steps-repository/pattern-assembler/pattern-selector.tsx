@@ -12,6 +12,7 @@ type PatternSelectorProps = {
 	onSelect: ( selectedPattern: Pattern | null ) => void;
 	selectedPattern: Pattern | null;
 	selectedPatterns?: Pattern[];
+	transformPatternHtml?: ( patternHtml: string ) => string;
 	isShowMorePatterns?: boolean;
 };
 
@@ -20,6 +21,7 @@ const PatternSelector = ( {
 	onSelect,
 	selectedPattern,
 	selectedPatterns,
+	transformPatternHtml,
 	isShowMorePatterns,
 }: PatternSelectorProps ) => {
 	const translate = useTranslate();
@@ -42,6 +44,7 @@ const PatternSelector = ( {
 						selectedPatterns={ selectedPatterns }
 						activeClassName="pattern-selector__block-list--selected-pattern"
 						composite={ composite }
+						transformPatternHtml={ transformPatternHtml }
 						onSelect={ onSelect }
 						isShowMorePatterns={ isShowMorePatterns }
 					/>

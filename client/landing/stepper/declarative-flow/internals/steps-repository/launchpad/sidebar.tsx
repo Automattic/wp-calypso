@@ -5,7 +5,7 @@ import {
 	sortLaunchpadTasksByCompletionStatus,
 	useLaunchpad,
 } from '@automattic/data-stores';
-import { LaunchpadInternal } from '@automattic/launchpad';
+import { LaunchpadInternal, type Task } from '@automattic/launchpad';
 import { isBlogOnboardingFlow } from '@automattic/onboarding';
 import { useQueryClient } from '@tanstack/react-query';
 import { useSelect } from '@wordpress/data';
@@ -25,9 +25,8 @@ import { useSelector } from 'calypso/state';
 import { isCurrentUserEmailVerified } from 'calypso/state/current-user/selectors';
 import { getConnectUrlForSiteId } from 'calypso/state/memberships/settings/selectors';
 import { useSiteGlobalStylesStatus } from 'calypso/state/sites/hooks/use-site-global-styles-status';
-import { getEnhancedTasks } from './task-helper';
+import { getEnhancedTasks } from './task-definitions';
 import { getLaunchpadTranslations } from './translations';
-import { type Task } from './types';
 
 type SidebarProps = {
 	sidebarDomain: ResponseDomain;
@@ -36,7 +35,7 @@ type SidebarProps = {
 	submit: NavigationControls[ 'submit' ];
 	goNext: NavigationControls[ 'goNext' ];
 	goToStep?: NavigationControls[ 'goToStep' ];
-	flow: string | null;
+	flow: string;
 };
 
 function getUrlInfo( url: string ) {
@@ -65,6 +64,7 @@ const Sidebar = ( {
 	const translate = useTranslate();
 	const site = useSite();
 	const siteIntentOption = site?.options?.site_intent ?? null;
+	const checklistSlug = siteIntentOption;
 	const clipboardButtonEl = useRef< HTMLButtonElement >( null );
 	const [ clipboardCopied, setClipboardCopied ] = useState( false );
 	const [ showPlansModal, setShowPlansModal ] = useState( false );
@@ -274,8 +274,11 @@ const Sidebar = ( {
 						</div>
 					) }
 					<LaunchpadInternal
+						site={ site }
 						siteSlug={ launchpadKey }
+						checklistSlug={ checklistSlug }
 						taskFilter={ () => enhancedTasks || [] }
+						launchpadContext="onboarding"
 						makeLastTaskPrimaryAction={ true }
 					/>
 					{ showPlansModal && site?.ID && (

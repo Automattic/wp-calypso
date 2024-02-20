@@ -7,6 +7,10 @@ body.is-section-plans.is-expired-business-trial-plan {
 		--color-surface-backdrop: var(--color-surface);
 	}
 
+	.layout__content {
+		padding-left: 0 !important;
+	}
+
 	.main.is-wide-layout {
 		@media ( max-width: $break-medium ) {
 			padding-left: 1.25rem;

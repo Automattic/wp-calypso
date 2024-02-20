@@ -1,6 +1,8 @@
+import { getPlan, PLAN_BUSINESS } from '@automattic/calypso-products';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { Modal } from '@wordpress/components';
 import { createElement, createInterpolateElement } from '@wordpress/element';
+import { sprintf } from '@wordpress/i18n';
 import { Icon, close, check } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
 import { FeatureName, FeatureList, ImporterPlatform, UrlData } from '../types';
@@ -43,6 +45,7 @@ const ImportPlatformDetails: React.FunctionComponent< DetailsProps > = ( data ) 
 	const { __ } = useI18n();
 	const { platform, onClose, fromSite } = data;
 	const learnMoreHref = localizeUrl( 'https://wordpress.com/support/import/' );
+	const plan = getPlan( PLAN_BUSINESS );
 
 	const translatedFeatureList: FeatureList = {
 		tags: __( 'Tags' ),
@@ -194,7 +197,16 @@ const ImportPlatformDetails: React.FunctionComponent< DetailsProps > = ( data ) 
 										) ) }
 								</ul>
 								<div className="import__details-footer">
-									<i>*{ __( 'Requires a Business plan.' ) }</i>
+									<i>
+										*
+										{ sprintf(
+											/* translators: %(plan)s: name of plan */
+											__( 'Requires a %(plan)s plan.' ),
+											{
+												plan: plan?.getTitle() ?? '',
+											}
+										) }
+									</i>
 								</div>
 							</>
 						) }

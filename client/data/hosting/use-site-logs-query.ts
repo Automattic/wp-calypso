@@ -1,4 +1,4 @@
-import { UseQueryOptions, useQuery, useQueryClient } from '@tanstack/react-query';
+import { UseQueryOptions, keepPreviousData, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useEffect, useState } from 'react';
 import wpcom from 'calypso/lib/wp';
 
@@ -78,7 +78,7 @@ export function useSiteLogsQuery(
 				}
 			);
 		},
-		keepPreviousData: true,
+		placeholderData: keepPreviousData,
 		enabled: !! siteId && params.start <= params.end,
 		staleTime: Infinity, // The logs within a specified time range never change.
 		select( { data } ) {

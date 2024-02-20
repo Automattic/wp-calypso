@@ -1,8 +1,9 @@
 import { Button } from '@wordpress/components';
 import { chevronDown } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
-import { useMemo, useState } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import { PATTERN_ASSEMBLER_EVENTS } from './events';
+import { injectTitlesToPageListBlock } from './html-transformers';
 import PatternSelector from './pattern-selector';
 import { isPriorityPattern } from './utils';
 import type { Pattern, Category } from './types';
@@ -15,9 +16,11 @@ type PatternListPanelProps = {
 	selectedCategory: string | null;
 	patternsMapByCategory: { [ key: string ]: Pattern[] };
 	selectedPatterns?: Pattern[];
+	pages?: Pattern[];
 	label?: string;
 	description?: string;
 	recordTracksEvent: ( name: string, eventProperties?: any ) => void;
+	isNewSite: boolean;
 };
 
 const PatternListPanel = ( {
@@ -26,10 +29,12 @@ const PatternListPanel = ( {
 	selectedCategory,
 	categories,
 	patternsMapByCategory,
+	pages,
 	label,
 	description,
 	onSelect,
 	recordTracksEvent,
+	isNewSite,
 }: PatternListPanelProps ) => {
 	const translate = useTranslate();
 	const [ isShowMorePatterns, setIsShowMorePatterns ] = useState( false );
@@ -41,6 +46,20 @@ const PatternListPanel = ( {
 
 	const hasNonPriorityPatterns = categoryPatterns?.find(
 		( pattern ) => ! isPriorityPattern( pattern )
+	);
+
+	const transformPatternHtml = useCallback(
+		( patternHtml: string ) => {
+			const pageTitles = pages?.map( ( page ) => page.title );
+			const isCategoryHeader = category && category.name === 'header';
+			if ( isCategoryHeader && pageTitles ) {
+				return injectTitlesToPageListBlock( patternHtml, pageTitles, {
+					replaceCurrentPages: isNewSite,
+				} );
+			}
+			return patternHtml;
+		},
+		[ isNewSite, pages, category ]
 	);
 
 	if ( ! category ) {
@@ -58,6 +77,7 @@ const PatternListPanel = ( {
 				onSelect={ onSelect }
 				selectedPattern={ selectedPattern }
 				selectedPatterns={ selectedPatterns }
+				transformPatternHtml={ transformPatternHtml }
 				isShowMorePatterns={ isShowMorePatterns }
 			/>
 			{ ! isShowMorePatterns && hasNonPriorityPatterns && (

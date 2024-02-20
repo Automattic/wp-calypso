@@ -3,6 +3,10 @@ import {
 	MEMBERSHIPS_SUBSCRIPTION_STOP,
 	MEMBERSHIPS_SUBSCRIPTION_STOP_SUCCESS,
 	MEMBERSHIPS_SUBSCRIPTION_STOP_FAILURE,
+	MEMBERSHIPS_SUBSCRIPTION_UPDATE,
+	MEMBERSHIPS_SUBSCRIPTION_UPDATING,
+	MEMBERSHIPS_SUBSCRIPTION_UPDATING_SUCCESS,
+	MEMBERSHIPS_SUBSCRIPTION_UPDATING_FAILURE,
 } from 'calypso/state/action-types';
 import { combineReducers } from 'calypso/state/utils';
 
@@ -18,6 +22,10 @@ export const items = ( state = [], action ) => {
 		case MEMBERSHIPS_SUBSCRIPTIONS_RECEIVE: {
 			const { subscriptions } = action;
 			return subscriptions;
+		}
+		case MEMBERSHIPS_SUBSCRIPTION_UPDATE: {
+			const { subscriptionId, updates } = action;
+			return state.map( ( sub ) => ( sub.ID === subscriptionId ? { ...sub, ...updates } : sub ) );
 		}
 		case MEMBERSHIPS_SUBSCRIPTION_STOP_SUCCESS: {
 			const { subscriptionId } = action;
@@ -59,7 +67,39 @@ export const stoppingSubscription = ( state = [], action ) => {
 	return state;
 };
 
+export const updatingSubscription = ( state = [], action ) => {
+	switch ( action.type ) {
+		case MEMBERSHIPS_SUBSCRIPTION_UPDATING: {
+			const { subscriptionId } = action;
+
+			return {
+				...state,
+				[ subscriptionId ]: 'start',
+			};
+		}
+		case MEMBERSHIPS_SUBSCRIPTION_UPDATING_SUCCESS: {
+			const { subscriptionId } = action;
+
+			return {
+				...state,
+				[ subscriptionId ]: 'success',
+			};
+		}
+		case MEMBERSHIPS_SUBSCRIPTION_UPDATING_FAILURE: {
+			const { subscriptionId } = action;
+
+			return {
+				...state,
+				[ subscriptionId ]: 'fail',
+			};
+		}
+	}
+
+	return state;
+};
+
 export default combineReducers( {
 	items,
 	stoppingSubscription,
+	updatingSubscription,
 } );

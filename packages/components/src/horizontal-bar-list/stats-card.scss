@@ -104,13 +104,13 @@
 		.stats-card__content .stats-card--header-and-body .stats-card--body,
 		.stats-card__content .stats-card--hero,
 		.stats-card__content .stats-card--footer {
-			filter: blur(5px);
+			filter: blur(10px);
 			z-index: 0;
+			margin-bottom: 24px;
 		}
 
 		.stats-card__overlay {
 			z-index: 1;
-			background: rgba(255, 255, 255, 0.5);
 		}
 	}
 

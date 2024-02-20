@@ -44,15 +44,10 @@ const AISitePrompt: Step = function ( props ) {
 
 	const [ callAIAssembler, setPrompt, prompt, loading ] = useAIAssembler();
 
-	const stepProgress = useSelect(
-		( select ) => ( select( ONBOARD_STORE ) as OnboardSelect ).getStepProgress(),
-		[]
-	);
-
 	const onSubmit = async ( event: FormEvent ) => {
 		event.preventDefault();
 		callAIAssembler()
-			?.then( () => submit?.() )
+			?.then( () => submit?.( { aiSitePrompt: prompt } ) )
 			?.catch( () => goNext?.() );
 	};
 
@@ -103,7 +98,6 @@ const AISitePrompt: Step = function ( props ) {
 						/>
 					}
 					stepContent={ getContent() }
-					stepProgress={ stepProgress }
 					recordTracksEvent={ recordTracksEvent }
 				/>
 			</div>

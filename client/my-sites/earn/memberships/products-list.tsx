@@ -41,7 +41,7 @@ function ProductsList() {
 	const [ showDeleteDialog, setShowDeleteDialog ] = useState( false );
 	const [ product, setProduct ] = useState< Product | null >( null );
 	const [ annualProduct, setAnnualProduct ] = useState< Product | null >( null );
-	const site = useSelector( ( state ) => getSelectedSite( state ) );
+	const site = useSelector( getSelectedSite );
 	const features = useSelector( ( state ) => getFeaturesBySiteId( state, site?.ID ) );
 	const hasLoadedFeatures = features?.active.length > 0;
 	const products: Product[] = useSelector( ( state ) => getProductsForSiteId( state, site?.ID ) );

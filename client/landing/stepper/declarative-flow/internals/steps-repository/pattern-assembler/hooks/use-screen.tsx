@@ -1,19 +1,18 @@
 import { PLAN_PREMIUM } from '@automattic/calypso-products';
-import { usePlans } from '@automattic/data-stores/src/plans';
+import { Plans } from '@automattic/data-stores';
 import { useHasEnTranslation } from '@automattic/i18n-utils';
 import { useTranslate, TranslateResult } from 'i18n-calypso';
 import { NAVIGATOR_PATHS } from '../constants';
 import type { ScreenName } from '../types';
 
 export type UseScreenOptions = {
-	isNewSite?: boolean;
 	shouldUnlockGlobalStyles?: boolean;
 };
 
 export type Screen = {
 	name: string;
 	title: string;
-	description: TranslateResult;
+	description?: TranslateResult;
 	continueLabel: string;
 	/** The label for going back from the next screen */
 	backLabel?: string;
@@ -25,7 +24,7 @@ export type Screen = {
 const useScreen = ( screenName: ScreenName, options: UseScreenOptions = {} ): Screen => {
 	const translate = useTranslate();
 	const hasEnTranslation = useHasEnTranslation();
-	const plans = usePlans();
+	const plans = Plans.usePlans( { coupon: undefined } );
 	const screens: Record< ScreenName, Screen > = {
 		main: {
 			name: 'main',
@@ -87,17 +86,9 @@ const useScreen = ( screenName: ScreenName, options: UseScreenOptions = {} ): Sc
 			backLabel: hasEnTranslation( 'premium styles' ) ? translate( 'premium styles' ) : undefined,
 			initialPath: NAVIGATOR_PATHS.UPSELL,
 		},
-		activation: {
-			name: 'activation',
-			title: translate( 'Activate this theme' ),
-			description: translate( 'Activating this theme will result in the following changes.' ),
-			continueLabel: translate( 'Activate' ),
-			initialPath: NAVIGATOR_PATHS.ACTIVATION,
-		},
 		confirmation: {
 			name: 'confirmation',
 			title: translate( 'Great job!' ),
-			description: translate( 'Time to add some content and bring your site to life!' ),
 			continueLabel: translate( 'Start adding content' ),
 			initialPath: NAVIGATOR_PATHS.CONFIRMATION,
 		},
@@ -108,22 +99,14 @@ const useScreen = ( screenName: ScreenName, options: UseScreenOptions = {} ): Sc
 		styles: screens.main,
 		pages: screens.styles,
 		upsell: screens.pages,
-		activation: options.shouldUnlockGlobalStyles ? screens.upsell : screens.pages,
 		confirmation: options.shouldUnlockGlobalStyles ? screens.upsell : screens.pages,
 	};
 
 	const nextScreens = {
 		main: screens.styles,
 		styles: screens.pages,
-		pages: ( () => {
-			if ( options.shouldUnlockGlobalStyles ) {
-				return screens.upsell;
-			}
-
-			return options.isNewSite ? screens.confirmation : screens.activation;
-		} )(),
-		upsell: options.isNewSite ? screens.confirmation : screens.activation,
-		activation: null,
+		pages: options.shouldUnlockGlobalStyles ? screens.upsell : screens.confirmation,
+		upsell: screens.confirmation,
 		confirmation: null,
 	};
 

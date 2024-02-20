@@ -6,6 +6,7 @@ const SitesOverviewContext = createContext< SitesOverviewContextInterface >( {
 	search: '',
 	filter: { issueTypes: [], showOnlyFavorites: false },
 	isBulkManagementActive: false,
+	showSitesDashboardV2: false,
 	setIsBulkManagementActive: () => {
 		return undefined;
 	},
@@ -22,6 +23,10 @@ const SitesOverviewContext = createContext< SitesOverviewContextInterface >( {
 	},
 	mostRecentConnectedSite: null,
 	setMostRecentConnectedSite: () => {
+		return undefined;
+	},
+	isPopoverOpen: false,
+	setIsPopoverOpen: () => {
 		return undefined;
 	},
 	sort: {

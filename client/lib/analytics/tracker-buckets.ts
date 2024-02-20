@@ -4,6 +4,7 @@ import {
 	isPiiUrl,
 	isUrlExcludedForPerformance,
 	mayWeTrackUserGpcInCcpaRegion,
+	mayWeSessionTrack,
 } from 'calypso/lib/analytics/utils';
 import { isE2ETest } from 'calypso/lib/e2e';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
@@ -33,6 +34,8 @@ const allAdTrackers = [
 	'parsely',
 	'clarity',
 ] as const;
+
+const sessionAdTrackers = [ 'hotjar' ];
 
 type AdTracker = ( typeof allAdTrackers )[ number ];
 
@@ -76,7 +79,7 @@ export const AdTrackersBuckets: { [ key in AdTracker ]: Bucket | null } = {
 
 const checkGtagInit = (): boolean => 'dataLayer' in window && 'gtag' in window;
 
-const checkWooGTMInit = (): boolean => {
+const checkGtmInit = (): boolean => {
 	return 'dataLayer' in window && 'google_tag_manager' in window;
 };
 
@@ -85,7 +88,7 @@ export const AdTrackersInitGuards: Partial< { [ key in AdTracker ]: () => boolea
 	gaEnhancedEcommerce: checkGtagInit,
 	floodlight: checkGtagInit,
 	googleAds: checkGtagInit,
-	googleTagManager: checkWooGTMInit,
+	googleTagManager: checkGtmInit,
 	bing: () => 'uetq' in window,
 	outbrain: () => 'obApi' in window,
 	pinterest: () => 'pintrk' in window,
@@ -95,7 +98,6 @@ export const AdTrackersInitGuards: Partial< { [ key in AdTracker ]: () => boolea
 	criteo: () => 'criteo_q' in window,
 	quora: () => 'qp' in window,
 	adroll: () => 'adRoll' in window,
-	parsely: () => 'PARSELY' in window,
 	clarity: () => 'clarity' in window,
 };
 
@@ -133,5 +135,12 @@ export const mayWeInitTracker = ( tracker: AdTracker ) => {
 	return null !== bucket && mayWeTrackByBucket( bucket );
 };
 
-export const mayWeTrackByTracker = ( tracker: AdTracker ) =>
-	mayWeInitTracker( tracker ) && isTrackerIntialized( tracker );
+export const mayWeTrackByTracker = ( tracker: AdTracker ) => {
+	const mayTrackerInit = mayWeInitTracker( tracker ) && isTrackerIntialized( tracker );
+
+	if ( sessionAdTrackers.includes( tracker ) ) {
+		return mayWeSessionTrack() && mayTrackerInit;
+	}
+
+	return mayTrackerInit;
+};

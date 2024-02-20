@@ -13,9 +13,9 @@ class PrimaryHeader extends Component {
 		return (
 			<Fragment>
 				<ClosureNotice
-					displayAt="2023-12-18 00:00Z"
-					closesAt="2023-12-24 00:00Z"
-					reopensAt="2023-12-26 07:00Z"
+					displayAt="2023-12-26 00:00Z"
+					closesAt="2023-12-31 00:00Z"
+					reopensAt="2024-01-02 07:00Z"
 				/>
 				<Card>
 					<img

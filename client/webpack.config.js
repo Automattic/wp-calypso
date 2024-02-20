@@ -295,6 +295,7 @@ const webpackConfig = {
 	node: false,
 	plugins: [
 		new webpack.DefinePlugin( {
+			'typeof window': JSON.stringify( 'object' ),
 			'process.env.NODE_ENV': JSON.stringify( bundleEnv ),
 			'process.env.NODE_DEBUG': JSON.stringify( process.env.NODE_DEBUG || false ),
 			'process.env.GUTENBERG_PHASE': JSON.stringify( 1 ),

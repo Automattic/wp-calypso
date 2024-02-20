@@ -17,7 +17,8 @@ type EarnLaunchpadProps = {
 const EarnLaunchpad = ( { launchpad }: EarnLaunchpadProps ) => {
 	const { checklistSlug, taskFilter, numberOfSteps, completedSteps } = launchpad;
 	const translate = useTranslate();
-	const site = useSelector( ( state ) => getSelectedSite( state ) );
+	const site = useSelector( getSelectedSite );
+	const isNewsletter = 'newsletter' === site?.options?.site_intent;
 
 	return (
 		<div className="earn__launchpad">
@@ -31,7 +32,9 @@ const EarnLaunchpad = ( { launchpad }: EarnLaunchpadProps ) => {
 					/>
 				</div>
 				<h2 className="earn__launchpad-title">
-					{ translate( 'Create your paid offering in two steps.' ) }
+					{ isNewsletter
+						? translate( 'Create your paid newsletter in two steps.' )
+						: translate( 'Create your paid offering in two steps.' ) }
 				</h2>
 				<p className="earn__launchpad-description">
 					{ translate( 'Let your fans support your art, writing, or project directly.' ) }

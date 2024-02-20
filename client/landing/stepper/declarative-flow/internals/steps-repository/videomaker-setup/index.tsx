@@ -41,8 +41,6 @@ const VideomakerSetup: Step = function VideomakerSetup( { navigation } ) {
 			is_premium: ! config.isEnabled( 'videomaker-trial' ),
 			title: 'Videomaker',
 			categories: [],
-			features: [],
-			template: styleVariation?.name ?? '',
 		} );
 
 		if ( config.isEnabled( 'videomaker-trial' ) && styleVariation ) {

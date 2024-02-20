@@ -460,7 +460,7 @@ export default function CampaignItemDetails( props: Props ) {
 
 											{ databarTotal > 0 && (
 												<span className="campaign-item-details__label">
-													{ translate( 'Views' ) }
+													{ translate( 'Visitors' ) }
 												</span>
 											) }
 										</div>

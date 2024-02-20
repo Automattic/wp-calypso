@@ -1,7 +1,8 @@
 import { hydrate, QueryClient } from '@tanstack/react-query';
 import { persistQueryClient } from '@tanstack/react-query-persist-client';
 import { throttle } from 'lodash';
-import { shouldPersist, MAX_AGE, SERIALIZE_THROTTLE } from 'calypso/state/initial-state';
+import { MAX_AGE, SERIALIZE_THROTTLE } from 'calypso/state/constants';
+import { shouldPersist } from 'calypso/state/initial-state';
 import {
 	getPersistedStateItem,
 	loadPersistedState,
@@ -12,7 +13,7 @@ import { shouldDehydrateQuery } from './should-dehydrate-query';
 export async function createQueryClient( userId?: number ): Promise< QueryClient > {
 	await loadPersistedState();
 	const queryClient = new QueryClient( {
-		defaultOptions: { queries: { cacheTime: MAX_AGE } },
+		defaultOptions: { queries: { gcTime: MAX_AGE } },
 	} );
 	await hydrateBrowserState( queryClient, userId );
 	return queryClient;

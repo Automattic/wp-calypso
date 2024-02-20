@@ -36,7 +36,7 @@ const ClosureNotice = ( { closesAt, displayAt, reopensAt } ) => {
 		);
 	} else {
 		message = translate(
-			'{{strong}}Quick Start Sessions will be closed from %(closesAt)s – %(reopensAt)s for the Christmas holiday.{{/strong}}{{br/}}' +
+			'{{strong}}Quick Start Sessions will be closed from %(closesAt)s – %(reopensAt)s for the New Year’s holiday.{{/strong}}{{br/}}' +
 				'If you need to get in touch with us, please submit a {{link}}support request from this page{{/link}} and we will get to it as fast as we can. ' +
 				'Quick Start Sessions will re-open at %(reopensAt)s. Thank you for your understanding!',
 			{

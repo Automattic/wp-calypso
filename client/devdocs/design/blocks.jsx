@@ -41,7 +41,6 @@ import ReaderImportButton from 'calypso/blocks/reader-import-button/docs/example
 import ReaderJoinConversationDialogExample from 'calypso/blocks/reader-join-conversation/docs/example';
 import ReaderPostCard from 'calypso/blocks/reader-post-card/docs/example';
 import ReaderPostOptionsMenu from 'calypso/blocks/reader-post-options-menu/docs/example';
-import ReaderRecommendedSites from 'calypso/blocks/reader-recommended-sites/docs/example';
 import RelatedPostCard from 'calypso/blocks/reader-related-card/docs/example';
 import ReaderShare from 'calypso/blocks/reader-share/docs/example';
 import ReaderSiteStreamLink from 'calypso/blocks/reader-site-stream-link/docs/example';
@@ -152,7 +151,6 @@ export default class AppComponents extends Component {
 					<AuthorCompactProfile />
 					<ReaderPostCard />
 					<ReaderCombinedCard />
-					<ReaderRecommendedSites />
 					<PlanPrice />
 					<PostShare readmeFilePath="post-share" />
 					<PlanThankYouCard readmeFilePath="plan-thank-you-card" />

@@ -39,17 +39,17 @@ import {
 	domainUseMyDomain,
 } from 'calypso/my-sites/domains/paths';
 import {
-	emailManagement,
-	emailManagementAddEmailForwards,
-	emailManagementAddGSuiteUsers,
-	emailManagementForwarding,
-	emailManagementMailboxes,
-	emailManagementInDepthComparison,
-	emailManagementManageTitanAccount,
-	emailManagementManageTitanMailboxes,
-	emailManagementNewTitanAccount,
-	emailManagementPurchaseNewEmailAccount,
-	emailManagementTitanControlPanelRedirect,
+	getEmailManagementPath,
+	getAddEmailForwardsPath,
+	getAddGSuiteUsersPath,
+	getForwardingPath,
+	getMailboxesPath,
+	getEmailInDepthComparisonPath,
+	getManageTitanAccountPath,
+	getManageTitanMailboxesPath,
+	getNewTitanAccountPath,
+	getPurchaseNewEmailAccountPath,
+	getTitanControlPanelRedirectPath,
 } from 'calypso/my-sites/email/paths';
 import DIFMLiteInProgress from 'calypso/my-sites/marketing/do-it-for-me/difm-lite-in-progress';
 import NavigationComponent from 'calypso/my-sites/navigation';
@@ -71,7 +71,8 @@ import isSiteMigrationInProgress from 'calypso/state/selectors/is-site-migration
 import isSiteP2Hub from 'calypso/state/selectors/is-site-p2-hub';
 import isSiteWpcomStaging from 'calypso/state/selectors/is-site-wpcom-staging';
 import isSiteWPForTeams from 'calypso/state/selectors/is-site-wpforteams';
-import wasTrialSite from 'calypso/state/selectors/was-trial-site';
+import wasEcommerceTrialSite from 'calypso/state/selectors/was-ecommerce-trial-site';
+import wasUpgradedFromTrialSite from 'calypso/state/selectors/was-upgraded-from-trial-site';
 import { requestSite } from 'calypso/state/sites/actions';
 import { getDomainsBySiteId } from 'calypso/state/sites/domains/selectors';
 import {
@@ -85,6 +86,7 @@ import { isSupportSession } from 'calypso/state/support/selectors';
 import { setSelectedSiteId, setAllSitesSelected } from 'calypso/state/ui/actions';
 import { setLayoutFocus } from 'calypso/state/ui/layout-focus/actions';
 import { getSelectedSite, getSelectedSiteId } from 'calypso/state/ui/selectors';
+
 /*
  * @FIXME Shorthand, but I might get rid of this.
  */
@@ -127,6 +129,34 @@ export function createNavigation( context ) {
 			siteBasePath={ basePath }
 		/>
 	);
+}
+
+export function renderRebloggingEmptySites( context ) {
+	setSectionMiddleware( { group: 'sites' } )( context );
+	recordTracksEvent( 'calypso_post_share_no_sites' );
+
+	const actionURL = addQueryArgs(
+		{
+			blog_post: context.query?.url,
+		},
+		'/setup/reblogging'
+	);
+
+	context.primary = createElement( () =>
+		NoSitesMessage( {
+			title: i18n.translate( 'Create a site to reblog' ),
+			line: i18n.translate(
+				"Create your first website to reblog content from other sites you're following."
+			),
+			actionURL,
+			actionCallback: () => {
+				recordTracksEvent( 'calypso_post_share_no_sites_create_site_click' );
+			},
+		} )
+	);
+
+	makeLayout( context, noop );
+	clientRender( context );
 }
 
 export function renderEmptySites( context ) {
@@ -196,23 +226,23 @@ function isPathAllowedForDomainOnlySite( path, slug, primaryDomain, contextParam
 		domainManagementTransfer,
 		domainManagementTransferOut,
 		domainManagementTransferToOtherSite,
-		emailManagement,
-		emailManagementAddEmailForwards,
-		emailManagementAddGSuiteUsers,
-		emailManagementForwarding,
-		emailManagementMailboxes,
-		emailManagementInDepthComparison,
-		emailManagementManageTitanAccount,
-		emailManagementManageTitanMailboxes,
-		emailManagementNewTitanAccount,
-		emailManagementPurchaseNewEmailAccount,
-		emailManagementTitanControlPanelRedirect,
+		getEmailManagementPath,
+		getAddEmailForwardsPath,
+		getAddGSuiteUsersPath,
+		getForwardingPath,
+		getMailboxesPath,
+		getEmailInDepthComparisonPath,
+		getManageTitanAccountPath,
+		getManageTitanMailboxesPath,
+		getNewTitanAccountPath,
+		getPurchaseNewEmailAccountPath,
+		getTitanControlPanelRedirectPath,
 	];
 
 	// Builds a list of paths using a site slug plus any additional parameter that may be required
 	let domainManagementPaths = allPaths.map( ( pathFactory ) => {
-		if ( pathFactory === emailManagementAddGSuiteUsers ) {
-			return emailManagementAddGSuiteUsers( slug, slug, contextParams.productType );
+		if ( pathFactory === getAddGSuiteUsersPath ) {
+			return getAddGSuiteUsersPath( slug, slug, contextParams.productType );
 		}
 
 		return pathFactory( slug, slug );
@@ -276,7 +306,7 @@ function isPathAllowedForDomainOnlySite( path, slug, primaryDomain, contextParam
  * @returns {boolean} true if the path is allowed, false otherwise
  */
 function isPathAllowedForDIFMInProgressSite( path, slug, domains, contextParams ) {
-	const DIFMLiteInProgressAllowedPaths = [ domainAddNew(), emailManagement( slug ) ];
+	const DIFMLiteInProgressAllowedPaths = [ domainAddNew(), getEmailManagementPath( slug ) ];
 
 	const isAllowedForDomainOnlySites = domains.some( ( domain ) =>
 		isPathAllowedForDomainOnlySite( path, slug, domain, contextParams )
@@ -296,9 +326,11 @@ function onSelectedSiteAvailable( context ) {
 	// Use getSitePlanSlug() as it ignores expired plans.
 	const currentPlanSlug = getSitePlanSlug( state, selectedSite.ID );
 
-	// If we had a trial plan, and the user doesn't have an active paid plan, redirect to fullpage trial expired page.
+	// If we had a trial plan, and the user doesn't have a paid plan (active or expired),
+	// redirect to full-page trial expired page.
 	if (
-		wasTrialSite( state, selectedSite.ID ) &&
+		wasEcommerceTrialSite( state, selectedSite.ID ) &&
+		! wasUpgradedFromTrialSite( state, selectedSite.ID ) &&
 		[ PLAN_FREE, PLAN_JETPACK_FREE ].includes( currentPlanSlug )
 	) {
 		const permittedPathPrefixes = [
@@ -412,6 +444,7 @@ function createSitesComponent( context ) {
 			getSiteSelectionHeaderText={ context.getSiteSelectionHeaderText }
 			fromSite={ context.query.site }
 			clearPageTitle={ context.clearPageTitle }
+			isPostShare={ context.query?.is_post_share }
 		/>
 	);
 }
@@ -459,6 +492,7 @@ export function noSite( context, next ) {
 	const isDomainOnlyFlow = context.query?.isDomainOnly === '1' || ! siteFragment;
 	const isJetpackCheckoutFlow = context.pathname.includes( '/checkout/jetpack' );
 	const isAkismetCheckoutFlow = context.pathname.includes( '/checkout/akismet' );
+	const isMarketplaceSitelessCheckoutFlow = context.pathname.includes( '/checkout/marketplace' );
 	const isDomainsManage = context.pathname === '/domains/manage/';
 	const isGiftCheckoutFlow = context.pathname.includes( '/gift/' );
 	const isRenewal = context.pathname.includes( '/renew/' );
@@ -467,6 +501,7 @@ export function noSite( context, next ) {
 		! isDomainOnlyFlow &&
 		! isJetpackCheckoutFlow &&
 		! isAkismetCheckoutFlow &&
+		! isMarketplaceSitelessCheckoutFlow &&
 		! isGiftCheckoutFlow &&
 		! isDomainsManage &&
 		// We allow renewals without a site through because we want to show these
@@ -505,7 +540,11 @@ export function siteSelection( context, next ) {
 
 	// The user doesn't have any sites: render `NoSitesMessage`
 	if ( currentUser && currentUser.site_count === 0 && shouldRenderNoSites ) {
-		renderEmptySites( context );
+		if ( context.query?.is_post_share ) {
+			renderRebloggingEmptySites( context );
+		} else {
+			renderEmptySites( context );
+		}
 		recordNoSitesPageView( context, siteFragment );
 		return;
 	}
@@ -607,10 +646,9 @@ export function siteSelection( context, next ) {
 				let freshSiteId = getSiteId( getState(), siteFragment );
 
 				if ( ! freshSiteId ) {
-					const wpcomStagingFragment = siteFragment.replace(
-						/\b.wordpress.com/,
-						'.wpcomstaging.com'
-					);
+					const wpcomStagingFragment = siteFragment
+						.toString()
+						.replace( /\b.wordpress.com/, '.wpcomstaging.com' );
 					freshSiteId = getSiteId( getState(), wpcomStagingFragment );
 				}
 
@@ -841,14 +879,34 @@ export function selectSiteIfLoggedIn( context, next ) {
 	selectSite( context );
 }
 
-export function selectSiteIfLoggedInWithSites( context, next ) {
+/**
+ * If the section has an "all sites" view to delay the site selection,
+ * only handle the site selection with 0 or 1 sites.
+ */
+export function selectSiteOrSkipIfLoggedInWithMultipleSites( context, next ) {
 	const state = context.store.getState();
-	if ( isUserLoggedIn( state ) && getCurrentUserSiteCount( state ) && ! context.params.site_id ) {
+	const isLoggedIn = isUserLoggedIn( state );
+	const siteCount = getCurrentUserSiteCount( state );
+	const siteFragment =
+		context.params.site || context.params.site_id || getSiteFragment( context.path );
+
+	// If the user is logged out, has 0 sites, or the path contains a site fragment,
+	// proceed with the regular site selection.
+	if ( ! isLoggedIn || ! siteCount || !! siteFragment ) {
+		siteSelection( context, next );
+		return;
+	}
+
+	// If the user only has 1 site and the path doesn't contain a site fragment,
+	// select the site automatically and move on.
+	if ( siteCount === 1 ) {
 		selectSite( context );
 		return;
 	}
 
-	siteSelection( context, next );
+	// If the user has multiple sites and the path doesn't contain a site fragment,
+	// proceed with rendering the page, delaying the site selection.
+	next();
 }
 
 export function hideNavigationIfLoggedInWithNoSites( context, next ) {

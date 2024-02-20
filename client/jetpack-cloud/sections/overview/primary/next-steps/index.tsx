@@ -1,8 +1,11 @@
 import { CircularProgressBar } from '@automattic/components';
-import { Checklist, type Task } from '@automattic/launchpad';
+import { Checklist, ChecklistItem, type Task } from '@automattic/launchpad';
 import { useTranslate } from 'i18n-calypso';
-import { useDispatch } from 'calypso/state';
+import { JETPACK_MANAGE_ONBOARDING_TOURS_PREFERENCE_NAME } from 'calypso/jetpack-cloud/sections/onboarding-tours/constants';
+import { useDispatch, useSelector } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import { savePreference } from 'calypso/state/preferences/actions';
+import { getAllRemotePreferences } from 'calypso/state/preferences/selectors';
 
 import './style.scss';
 
@@ -10,51 +13,78 @@ export default function NextSteps( { onDismiss = () => {} } ) {
 	const dispatch = useDispatch();
 	const translate = useTranslate();
 
-	const tracksPrefix = 'calypso_jetpack_manage_overview_next_steps';
+	const preferences = useSelector( getAllRemotePreferences );
+
+	const checkTourCompletion = ( prefSlug: string ): boolean => {
+		if ( preferences && JETPACK_MANAGE_ONBOARDING_TOURS_PREFERENCE_NAME[ prefSlug ] ) {
+			return JETPACK_MANAGE_ONBOARDING_TOURS_PREFERENCE_NAME[ prefSlug ] in preferences;
+		}
+		return false;
+	};
+
+	const resetTour = ( prefSlugs: string[] ): void => {
+		prefSlugs.forEach( ( slug ) => {
+			if ( JETPACK_MANAGE_ONBOARDING_TOURS_PREFERENCE_NAME[ slug ] ) {
+				dispatch( savePreference( JETPACK_MANAGE_ONBOARDING_TOURS_PREFERENCE_NAME[ slug ], null ) );
+			}
+		} );
+	};
 
 	const tasks: Task[] = [
 		{
-			calypso_path: '',
-			completed: false,
+			calypso_path: '/dashboard?tour=dashboard-walkthrough',
+			completed: checkTourCompletion( 'dashboardWalkthrough' ),
 			disabled: false,
 			actionDispatch: () => {
-				dispatch( recordTracksEvent( tracksPrefix + '_get_familiar_click' ) );
+				dispatch(
+					recordTracksEvent( 'calypso_jetpack_manage_overview_next_steps_get_familiar_click' )
+				);
+				resetTour( [ 'dashboardWalkthrough' ] );
 			},
 			id: 'get_familiar',
-			title: 'Get familiar with the sites management dashboard',
+			title: translate( 'Get familiar with the sites management dashboard' ),
 			useCalypsoPath: true,
 		},
 		{
-			calypso_path: '',
-			completed: false,
+			calypso_path: '/dashboard?tour=add-new-site',
+			completed: checkTourCompletion( 'addSiteStep1' ),
 			disabled: false,
 			actionDispatch: () => {
-				dispatch( recordTracksEvent( tracksPrefix + '_add_sites_click' ) );
+				dispatch(
+					recordTracksEvent( 'calypso_jetpack_manage_overview_next_steps_add_sites_click' )
+				);
+				resetTour( [ 'addSiteStep1', 'addSiteStep2' ] );
 			},
 			id: 'add_sites',
-			title: 'Learn how to add new sites',
+			title: translate( 'Learn how to add new sites' ),
 			useCalypsoPath: true,
 		},
 		{
-			calypso_path: '',
-			completed: false,
+			calypso_path: '/dashboard?tour=enable-monitor',
+			completed: checkTourCompletion( 'enableMonitorStep2' ),
 			disabled: false,
 			actionDispatch: () => {
-				dispatch( recordTracksEvent( tracksPrefix + '_bulk_editing_click' ) );
+				dispatch(
+					recordTracksEvent( 'calypso_jetpack_manage_overview_next_steps_bulk_editing_click' )
+				);
+				resetTour( [ 'enableMonitorStep1', 'enableMonitorStep2' ] );
 			},
 			id: 'bulk_editing',
-			title: 'Learn bulk editing and enabling downtime monitoring',
+			title: translate( 'Learn bulk editing and enabling downtime monitoring' ),
 			useCalypsoPath: true,
 		},
 		{
-			calypso_path: '',
-			completed: false,
+			calypso_path: '/plugins/manage?tour=plugin-management',
+			completed: checkTourCompletion( 'pluginOverview' ),
 			disabled: false,
 			actionDispatch: () => {
-				dispatch( recordTracksEvent( tracksPrefix + '_plugin_management_click' ) );
+				dispatch(
+					recordTracksEvent( 'calypso_jetpack_manage_overview_next_steps_plugin_management_click' )
+				);
+				resetTour( [ 'pluginOverview' ] );
 			},
 			id: 'plugin_management',
-			title: 'Explore plugin management',
+			title: translate( 'Explore plugin management' ),
 			useCalypsoPath: true,
 		},
 	];
@@ -83,7 +113,9 @@ export default function NextSteps( { onDismiss = () => {} } ) {
 					<button
 						className="dismiss"
 						onClick={ () => {
-							dispatch( recordTracksEvent( tracksPrefix + '_dismiss_click' ) );
+							dispatch(
+								recordTracksEvent( 'calypso_jetpack_manage_overview_next_steps_dismiss_click' )
+							);
 							onDismiss();
 						} }
 					>
@@ -91,7 +123,11 @@ export default function NextSteps( { onDismiss = () => {} } ) {
 					</button>
 				</p>
 			) }
-			<Checklist tasks={ tasks } />
+			<Checklist>
+				{ tasks.map( ( task ) => (
+					<ChecklistItem task={ task } key={ task.id } />
+				) ) }
+			</Checklist>
 		</div>
 	);
 }

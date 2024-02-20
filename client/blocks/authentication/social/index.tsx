@@ -4,10 +4,11 @@ import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import { useSelector } from 'react-redux';
 import AppleLoginButton from 'calypso/components/social-buttons/apple';
+import GithubSocialButton from 'calypso/components/social-buttons/github';
 import GoogleSocialButton from 'calypso/components/social-buttons/google';
 import { preventWidows } from 'calypso/lib/formatting';
 import { isWooOAuth2Client } from 'calypso/lib/oauth2-clients';
-import { isWpccFlow } from 'calypso/signup/utils';
+import { isWpccFlow } from 'calypso/signup/is-flow';
 import { getCurrentOAuth2Client } from 'calypso/state/oauth2-clients/ui/selectors';
 import getCurrentRoute from 'calypso/state/selectors/get-current-route';
 import isWooCommerceCoreProfilerFlow from 'calypso/state/selectors/is-woocommerce-core-profiler-flow';
@@ -20,6 +21,7 @@ interface SocialAuthenticationFormProps {
 	compact?: boolean;
 	handleGoogleResponse: ( response: any ) => void;
 	handleAppleResponse: ( response: any ) => void;
+	handleGitHubResponse: ( response: any ) => void;
 	getRedirectUri: ( service: string ) => string;
 	trackLoginAndRememberRedirect: ( service: string ) => void;
 	socialService: string;
@@ -34,6 +36,7 @@ interface SocialAuthenticationFormProps {
 const SocialAuthenticationForm = ( {
 	compact,
 	handleGoogleResponse,
+	handleGitHubResponse,
 	handleAppleResponse,
 	getRedirectUri,
 	trackLoginAndRememberRedirect,
@@ -126,6 +129,18 @@ const SocialAuthenticationForm = ( {
 								isWpccFlow( flowName ) && ! isLogin ? window?.location?.search?.slice( 1 ) : null
 							}
 						/>
+
+						{ config.isEnabled( 'login/github' ) ? (
+							<GithubSocialButton
+								socialServiceResponse={ socialService === 'github' ? socialServiceResponse : null }
+								redirectUri={ getRedirectUri( 'github' ) }
+								responseHandler={ handleGitHubResponse }
+								onClick={ () => {
+									trackLoginAndRememberRedirect( 'github' );
+								} }
+							/>
+						) : null }
+
 						{ children }
 					</div>
 					{ ! isWoo && ! disableTosText && <SocialToS /> }

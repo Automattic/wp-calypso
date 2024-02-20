@@ -8,10 +8,16 @@ import { SubscriberProfile } from '../subscriber-profile';
 export type SubscriberRowProps = {
 	onUnsubscribe: ( subscriber: Subscriber ) => void;
 	onView: ( subscriber: Subscriber ) => void;
+	onGiftSubscription: ( subscriber: Subscriber ) => void;
 	subscriber: Subscriber;
 };
 
-export const SubscriberRow = ( { subscriber, onView, onUnsubscribe }: SubscriberRowProps ) => {
+export const SubscriberRow = ( {
+	subscriber,
+	onView,
+	onUnsubscribe,
+	onGiftSubscription,
+}: SubscriberRowProps ) => {
 	const { avatar, display_name, email_address, url, date_subscribed, open_rate } = subscriber;
 	const subscriptionPlans = useSubscriptionPlans( subscriber );
 
@@ -43,6 +49,10 @@ export const SubscriberRow = ( { subscriber, onView, onUnsubscribe }: Subscriber
 			<span className="subscriber-list__menu-column" role="cell">
 				<SubscriberPopover
 					onView={ () => onView( subscriber ) }
+					onGiftSubscription={
+						// Do not show if user is not on WPCOM
+						subscriber.user_id ? () => onGiftSubscription( subscriber ) : undefined
+					}
 					onUnsubscribe={ () => onUnsubscribe( subscriber ) }
 					isViewButtonVisible
 				/>

@@ -39,6 +39,7 @@ class Starter_Page_Templates {
 		add_action( 'enqueue_block_editor_assets', array( $this, 'enqueue_assets' ) );
 		add_action( 'delete_attachment', array( $this, 'clear_sideloaded_image_cache' ) );
 		add_action( 'switch_theme', array( $this, 'clear_templates_cache' ) );
+		add_action( 'block_editor_settings_all', array( $this, 'add_default_editor_styles_for_classic_themes' ), 10, 2 );
 	}
 
 	/**
@@ -209,6 +210,19 @@ class Starter_Page_Templates {
 			}
 		}
 
+		// Hide non-user-facing categories (Pages & Virtual Theme) in modal
+		$hidden_categories = array( 'page', 'virtual-theme' );
+		foreach ( $page_templates as &$page_template ) {
+			if ( ! isset( $page_template['categories'] ) ) {
+				continue;
+			}
+			foreach ( $page_template['categories'] as $category ) {
+				if ( in_array( $category['slug'], $hidden_categories, true ) ) {
+					unset( $page_template['categories'][ $category['slug'] ] );
+				}
+			}
+		}
+
 		if ( empty( $page_templates ) ) {
 			$this->pass_error_to_frontend( __( 'No data received from the vertical API. Skipped showing modal window with template selection.', 'full-site-editing' ) );
 			return;
@@ -276,17 +290,27 @@ class Starter_Page_Templates {
 	public function get_page_templates( string $locale ) {
 		$page_template_data   = get_transient( $this->get_templates_cache_key( $locale ) );
 		$override_source_site = apply_filters( 'a8c_override_patterns_source_site', false );
+		$is_assembler_v2_site = in_array( get_stylesheet(), array( 'pub/assembler', 'assembler' ), true ) || isset( $_GET['v2_patterns'] ); // phpcs:ignore WordPress.Security.NonceVerification.Recommended
 
 		// Load fresh data if we don't have any or vertical_id doesn't match.
-		if ( false === $page_template_data || ( defined( 'WP_DEBUG' ) && WP_DEBUG ) || false !== $override_source_site ) {
+		if ( $is_assembler_v2_site || false === $page_template_data || ( defined( 'WP_DEBUG' ) && WP_DEBUG ) || false !== $override_source_site ) {
+			$request_params = array(
+				'site'         => $override_source_site,
+				'tags'         => 'layout',
+				'pattern_meta' => 'is_web',
+			);
+
+			if ( $is_assembler_v2_site ) {
+				$request_params = array(
+					'site'       => 'dotcompatterns.wordpress.com',
+					'categories' => 'page',
+					'post_type'  => 'wp_block',
+				);
+			}
 
 			$request_url = esc_url_raw(
 				add_query_arg(
-					array(
-						'site'         => $override_source_site,
-						'tags'         => 'layout',
-						'pattern_meta' => 'is_web',
-					),
+					$request_params,
 					'https://public-api.wordpress.com/rest/v1/ptk/patterns/' . $locale
 				)
 			);
@@ -306,7 +330,7 @@ class Starter_Page_Templates {
 			$page_template_data = json_decode( wp_remote_retrieve_body( $response ), true );
 
 			// Only save to cache if we have not overridden the source site.
-			if ( false === $override_source_site ) {
+			if ( ! $is_assembler_v2_site && false === $override_source_site ) {
 				set_transient( $this->get_templates_cache_key( $locale ), $page_template_data, DAY_IN_SECONDS );
 			}
 
@@ -399,5 +423,44 @@ class Starter_Page_Templates {
 		}
 
 		return $registered_categories;
+	}
+
+	/**
+	 * Fix for text overlapping on the page patterns preview on classic themes.
+	 *
+	 * @param object $editor_settings Editor settings.
+	 * @param object $editor_context  Editor context.
+	 *
+	 * Only for classic themes because the default styles for block themes include a line-height for the body.
+	 * This issue would not exist if the WordPress wp-admin common.css for the body element (line-height: 1.4em)
+	 * does not overwrite the Gutenberg block-library reset.css for .editor-styles-wrapper (line-height: normal).
+	 *
+	 * This fix adds the default editor styles as custom styles in the editor settings. These are used in the
+	 * editor canvas (.editor-styles-wrapper) and pattern previews (BlockPreview).
+	 * Custom styles are safe because they are overwritten by local block styles, global styles, or theme stylesheets.
+	 **/
+	public function add_default_editor_styles_for_classic_themes( $editor_settings, $editor_context ) {
+		$theme = wp_get_theme( normalize_theme_slug( get_stylesheet() ) );
+		if ( $theme->is_block_theme() ) {
+			// Only for classic themes
+			return $editor_settings;
+		}
+		if ( 'core/edit-post' !== $editor_context->name || 'page' !== $editor_context->post->post_type ) {
+			// Only for page editor
+			return $editor_settings;
+		}
+		if ( ! function_exists( 'gutenberg_dir_path' ) ) {
+			return $editor_settings;
+		}
+
+		$default_editor_styles_file = gutenberg_dir_path() . 'build/block-editor/default-editor-styles.css';
+		if ( ! file_exists( $default_editor_styles_file ) ) {
+			return $editor_settings;
+		}
+		$default_editor_styles       = file_get_contents( $default_editor_styles_file ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_get_contents_file_get_contents
+		$editor_settings['styles'][] = array(
+			'css' => $default_editor_styles,
+		);
+		return $editor_settings;
 	}
 }

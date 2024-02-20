@@ -1,7 +1,9 @@
 import { isEnabled } from '@automattic/calypso-config';
 import {
+	getPlan,
 	FEATURE_SFTP,
 	FEATURE_SITE_STAGING_SITES,
+	PLAN_BUSINESS,
 	WPCOM_FEATURES_MANAGE_PLUGINS,
 	WPCOM_FEATURES_SITE_PREVIEW_LINKS,
 } from '@automattic/calypso-products';
@@ -15,6 +17,7 @@ import {
 import { css } from '@emotion/css';
 import styled from '@emotion/styled';
 import { DropdownMenu, MenuGroup, MenuItem as CoreMenuItem, Modal } from '@wordpress/components';
+import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
 import { addQueryArgs } from '@wordpress/url';
 import { ComponentType, useEffect, useMemo, useState } from 'react';
@@ -118,6 +121,7 @@ const ManagePluginsItem = ( { site, recordTracks }: SitesMenuItemProps ) => {
 	const [ href, label ] = hasManagePluginsFeature
 		? [ getManagePluginsUrl( site.slug ), __( 'Manage plugins' ) ]
 		: [ getPluginsUrl( site.slug ), __( 'Plugins' ) ];
+	const upsellPlanName = getPlan( PLAN_BUSINESS )?.getTitle() ?? '';
 
 	return (
 		<MenuItemLink
@@ -127,7 +131,16 @@ const ManagePluginsItem = ( { site, recordTracks }: SitesMenuItemProps ) => {
 					has_manage_plugins_feature: hasManagePluginsFeature,
 				} )
 			}
-			info={ ! hasManagePluginsFeature ? __( 'Requires a Business Plan' ) : undefined }
+			info={
+				! hasManagePluginsFeature
+					? sprintf(
+							/* translators: %s - the plan's product name, such as Creator or Explorer. */ __(
+								'Requires a %s Plan'
+							),
+							upsellPlanName
+					  )
+					: undefined
+			}
 		>
 			{ label }
 		</MenuItemLink>
@@ -286,9 +299,9 @@ function useSubmenuItems( site: SiteExcerptData ) {
 				sectionName: 'staging_site',
 			},
 			{
-				condition: isEnabled( 'github-integration-i1' ) && isA12n,
+				condition: isEnabled( 'github-deployments' ) && isA12n,
 				label: __( 'Deploy from GitHub' ),
-				href: `/hosting-config/${ siteSlug }#connect-github`,
+				href: `/github-deployments/${ siteSlug }`,
 				sectionName: 'connect_github',
 			},
 			{
@@ -318,6 +331,7 @@ function HostingConfigurationSubmenu( { site, recordTracks }: SitesMenuItemProps
 	const submenuProps = useSubmenuPopoverProps< HTMLDivElement >( {
 		offset: -8,
 	} );
+	const upsellPlanName = getPlan( PLAN_BUSINESS )?.getTitle() ?? '';
 
 	if ( submenuItems.length === 0 ) {
 		return null;
@@ -332,7 +346,17 @@ function HostingConfigurationSubmenu( { site, recordTracks }: SitesMenuItemProps
 					product_slug: site.plan?.product_slug,
 				} }
 			/>
-			<MenuItemLink info={ displayUpsell ? __( 'Requires a Business Plan' ) : undefined }>
+			<MenuItemLink
+				info={
+					displayUpsell
+						? sprintf(
+								/* translators: %s - the plan's product name, such as Creator or Explorer. */
+								__( 'Requires a %s Plan' ),
+								upsellPlanName
+						  )
+						: undefined
+				}
+			>
 				{ __( 'Hosting configuration' ) } <MenuItemGridIcon icon="chevron-right" size={ 18 } />
 			</MenuItemLink>
 			<SubmenuPopover
@@ -348,8 +372,12 @@ function HostingConfigurationSubmenu( { site, recordTracks }: SitesMenuItemProps
 								product_slug: site.plan?.product_slug,
 							} }
 						/>
-						{ __(
-							'Upgrade to the Business Plan to enable SFTP & SSH, database access, GitHub deploys, and more…'
+						{ sprintf(
+							/* translators: %s - the plan's product name, such as Creator or Explorer. */
+							__(
+								'Upgrade to the %s Plan to enable SFTP & SSH, database access, GitHub deploys, and more…'
+							),
+							upsellPlanName
 						) }
 						<Button
 							compact

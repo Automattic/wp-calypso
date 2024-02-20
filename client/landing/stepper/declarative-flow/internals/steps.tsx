@@ -21,6 +21,11 @@ export const STEPS = {
 
 	COURSES: { slug: 'courses', asyncComponent: () => import( './steps-repository/courses' ) },
 
+	DESIGN_CHOICES: {
+		slug: 'design-choices',
+		asyncComponent: () => import( './steps-repository/design-choices' ),
+	},
+
 	DESIGN_SETUP: {
 		slug: 'designSetup',
 		asyncComponent: () => import( './steps-repository/design-setup' ),
@@ -125,7 +130,7 @@ export const STEPS = {
 	},
 
 	PATTERN_ASSEMBLER: {
-		slug: 'patternAssembler',
+		slug: 'pattern-assembler',
 		asyncComponent: () => import( './steps-repository/pattern-assembler' ),
 	},
 
@@ -137,8 +142,8 @@ export const STEPS = {
 	},
 
 	SITE_CREATION_STEP: {
-		slug: 'site-creation-step',
-		asyncComponent: () => import( './steps-repository/site-creation-step' ),
+		slug: 'create-site',
+		asyncComponent: () => import( './steps-repository/create-site' ),
 	},
 
 	SITE_LAUNCH: {
@@ -184,5 +189,25 @@ export const STEPS = {
 	BUNDLE_TRANSFER: {
 		slug: 'bundleTransfer',
 		asyncComponent: () => import( './steps-repository/bundle-transfer' ),
+	},
+
+	WAIT_FOR_ATOMIC: {
+		slug: 'waitForAtomic',
+		asyncComponent: () => import( './steps-repository/wait-for-atomic' ),
+	},
+
+	WAIT_FOR_PLUGIN_INSTALL: {
+		slug: 'waitForPluginInstall',
+		asyncComponent: () => import( './steps-repository/wait-for-plugin-install' ),
+	},
+
+	ASSIGN_TRIAL_PLAN: {
+		slug: 'assignTrialPlan',
+		asyncComponent: () => import( './steps-repository/assign-trial-plan' ),
+	},
+
+	SITE_MIGRATION_INSTRUCTIONS: {
+		slug: 'site-migration-instructions',
+		asyncComponent: () => import( './steps-repository/site-migration-instructions' ),
 	},
 };

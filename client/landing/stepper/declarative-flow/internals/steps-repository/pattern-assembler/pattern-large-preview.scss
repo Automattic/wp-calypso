@@ -13,6 +13,12 @@
 	box-sizing: border-box;
 	z-index: 1;
 	transition: margin-inline-start 0.2s ease-out;
+
+	&.device-switcher__container--is-computer:has(.pattern-large-preview__placeholder) {
+		.device-switcher__frame {
+			max-width: 1080px;
+		}
+	}
 }
 
 .pattern-large-preview__patterns {
@@ -22,6 +28,11 @@
 	list-style-type: none;
 	overflow: auto;
 	background: var(--pattern-large-preview-background);
+
+	&--has-placeholder {
+		display: flex;
+		flex-direction: column;
+	}
 
 	/**
 	 * Hides the scrollbar to avoid the layout keeps changes forever
@@ -71,9 +82,11 @@
 .pattern-large-preview__placeholder {
 	display: flex;
 	flex-direction: column;
+	flex-grow: 1;
 	align-items: center;
 	justify-content: center;
 	width: 100%;
+	padding: 40px;
 	color: var(--studio-gray-60);
 	background: #f8f8f8;
 

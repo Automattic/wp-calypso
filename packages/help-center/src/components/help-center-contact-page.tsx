@@ -14,7 +14,6 @@ import classnames from 'classnames';
 import { FC } from 'react';
 import { useSelector } from 'react-redux';
 import { Link, LinkProps } from 'react-router-dom';
-import { noop } from 'calypso/odie/context';
 import { getSectionName } from 'calypso/state/ui/selectors';
 /**
  * Internal Dependencies
@@ -37,6 +36,7 @@ const ConditionalLink: FC< { active: boolean } & LinkProps > = ( { active, ...pr
 	return <span { ...props }></span>;
 };
 
+const noop = () => {};
 type ContactOption = 'chat' | 'forum' | 'email';
 const generateContactOnClickEvent = (
 	contactOption: ContactOption,
@@ -197,9 +197,9 @@ export const HelpCenterContactPage: FC< HelpCenterContactPageProps > = ( {
 				) }
 				{ supportActivity && <HelpCenterActiveTicketNotice tickets={ supportActivity } /> }
 				<GMClosureNotice
-					displayAt="2023-12-18 00:00Z"
-					closesAt="2023-12-24 00:00Z"
-					reopensAt="2023-12-26 07:00Z"
+					displayAt="2023-12-26 00:00Z"
+					closesAt="2023-12-31 00:00Z"
+					reopensAt="2024-01-02 07:00Z"
 					enabled={ renderChat.render }
 				/>
 

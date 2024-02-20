@@ -7,6 +7,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import CredentialsFormAdvanced from 'calypso/components/advanced-credentials/credentials-form';
 import {
 	FormMode,
+	FormState,
 	INITIAL_FORM_ERRORS,
 	INITIAL_FORM_STATE,
 	validate,
@@ -28,14 +29,19 @@ interface Props {
 	selectedHost: string;
 	migrationTrackingProps: StartImportTrackingProps;
 	onChangeProtocol: ( protocol: CredentialsProtocol ) => void;
+	allowFtp?: boolean;
 }
 
 export const CredentialsForm: React.FunctionComponent< Props > = ( props ) => {
-	const { sourceSite, targetSite, migrationTrackingProps, startImport } = props;
+	const { sourceSite, targetSite, migrationTrackingProps, startImport, allowFtp } = props;
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 	const { hostname } = new URL( sourceSite.URL );
-	const [ formState, setFormState ] = useState( { ...INITIAL_FORM_STATE, host: hostname } );
+	const [ formState, setFormState ] = useState( {
+		...INITIAL_FORM_STATE,
+		host: hostname,
+		...( ! allowFtp ? { protocol: 'ssh', port: 22 } : {} ),
+	} as FormState );
 	const [ formErrors, setFormErrors ] = useState( INITIAL_FORM_ERRORS );
 	const [ formMode, setFormMode ] = useState( FormMode.Password );
 	const [ hasMissingFields, setHasMissingFields ] = useState( false );
@@ -81,7 +87,7 @@ export const CredentialsForm: React.FunctionComponent< Props > = ( props ) => {
 		dispatch( updateCredentials( sourceSite.ID, credentials, true, false ) );
 	};
 
-	const { migrateProvision, isLoading, isError, error } =
+	const { migrateProvision, isPending, isError, error } =
 		useMigrateProvisionMutation( handleUpdateCredentials );
 
 	const submitCredentials = useCallback(
@@ -181,15 +187,17 @@ export const CredentialsForm: React.FunctionComponent< Props > = ( props ) => {
 			) }
 			<form onSubmit={ submitCredentials }>
 				<CredentialsFormAdvanced
-					disabled={ isFormSubmissionPending || isLoading }
+					disabled={ isFormSubmissionPending || isPending }
 					formErrors={ formErrors }
 					formMode={ formMode }
+					formModeSwitcher="simple"
 					formState={ formState }
 					host={ props.selectedHost }
 					role="main"
 					onFormStateChange={ setFormState }
 					onModeChange={ setFormMode }
 					withHeader={ false }
+					allowFtp={ allowFtp }
 				/>
 
 				{ updateError && (
@@ -212,33 +220,37 @@ export const CredentialsForm: React.FunctionComponent< Props > = ( props ) => {
 					</div>
 				) }
 
-				<div className="pre-migration__content pre-migration__proceed import__footer-button-container">
-					<NextButton type="submit" isBusy={ isFormSubmissionPending || isLoading }>
-						{ isFormSubmissionPending || isLoading
+				<div className="credentials-form__actions">
+					<NextButton type="submit" isBusy={ isFormSubmissionPending || isPending }>
+						{ isFormSubmissionPending || isPending
 							? translate( 'Testing credentials' )
 							: translate( 'Start migration' ) }
 					</NextButton>
-					<Button
-						borderless={ true }
-						className="action-buttons__borderless"
-						onClick={ ( e: React.MouseEvent< HTMLButtonElement > ) => {
-							e.preventDefault();
+					<div>
+						<Button
+							borderless={ true }
+							className="action-buttons__borderless"
+							onClick={ ( e: React.MouseEvent< HTMLButtonElement > ) => {
+								e.preventDefault();
 
-							if ( ! migrationConfirmed ) {
-								setShowConfirmModal( true );
-								setConfirmCallback( () =>
-									startImportCallback.bind( null, {
-										type: 'skip-credentials',
-										...migrationTrackingProps,
-									} )
-								);
-							} else {
-								startImportCallback( { type: 'skip-credentials', ...migrationTrackingProps } );
-							}
-						} }
-					>
-						{ translate( 'Skip credentials (slower setup)' ) }
-					</Button>
+								if ( ! migrationConfirmed ) {
+									setShowConfirmModal( true );
+									setConfirmCallback( () =>
+										startImportCallback.bind( null, {
+											type: 'skip-credentials',
+											...migrationTrackingProps,
+										} )
+									);
+								} else {
+									startImportCallback( { type: 'skip-credentials', ...migrationTrackingProps } );
+								}
+							} }
+						>
+							{ translate( 'Skip credentials' ) }
+						</Button>
+						&nbsp;
+						{ translate( 'for a slower setup' ) }
+					</div>
 				</div>
 			</form>
 		</>

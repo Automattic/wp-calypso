@@ -53,6 +53,14 @@ export default ( router ) => {
 		clientRender
 	);
 
+	router(
+		paths.purchasesRoot + '/subscription-removed',
+		sidebar,
+		membershipsController.cancelledSubscriptionReturnFromRedirect,
+		makeLayout,
+		clientRender
+	);
+
 	// Legacy:
 
 	router( paths.deprecated.upcomingCharges, () => page.redirect( paths.purchasesRoot ) );

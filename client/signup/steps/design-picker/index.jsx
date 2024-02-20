@@ -1,33 +1,30 @@
-import { PLAN_PREMIUM, WPCOM_FEATURES_PREMIUM_THEMES } from '@automattic/calypso-products';
-import page from '@automattic/calypso-router';
-import { Button, PremiumBadge } from '@automattic/components';
+import {
+	PLAN_PREMIUM,
+	WPCOM_FEATURES_PREMIUM_THEMES_UNLIMITED,
+} from '@automattic/calypso-products';
+import { PremiumBadge } from '@automattic/components';
 import DesignPicker, {
 	isBlankCanvasDesign,
-	getDesignUrl,
 	useCategorization,
 	useThemeDesignsQuery,
 } from '@automattic/design-picker';
 import { englishLocales, translationExists } from '@automattic/i18n-utils';
 import { shuffle } from '@automattic/js-utils';
-import { useViewportMatch } from '@wordpress/compose';
 import classnames from 'classnames';
-import { getLocaleSlug, useTranslate } from 'i18n-calypso';
+import { useTranslate } from 'i18n-calypso';
 import PropTypes from 'prop-types';
-import { useEffect, useLayoutEffect, useMemo, useState, useRef } from 'react';
+import { useEffect, useLayoutEffect, useMemo, useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import FormattedHeader from 'calypso/components/formatted-header';
-import WebPreview from 'calypso/components/web-preview';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
+import { triggerGuidesForStep } from 'calypso/lib/guides/trigger-guides-for-step';
 import AsyncCheckoutModal from 'calypso/my-sites/checkout/modal/async';
 import { openCheckoutModal } from 'calypso/my-sites/checkout/modal/utils';
 import StepWrapper from 'calypso/signup/step-wrapper';
-import { getStepUrl } from 'calypso/signup/utils';
-import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import { saveSignupStep, submitSignupStep } from 'calypso/state/signup/progress/actions';
 import { getSiteId } from 'calypso/state/sites/selectors';
 import LetUsChoose from './let-us-choose';
-import PreviewToolbar from './preview-toolbar';
 import './style.scss';
 
 export default function DesignPickerStep( props ) {
@@ -35,7 +32,6 @@ export default function DesignPickerStep( props ) {
 		flowName,
 		stepName,
 		isReskinned,
-		queryParams,
 		showDesignPickerCategories,
 		showLetUsChoose,
 		hideFullScreenPreview,
@@ -48,15 +44,12 @@ export default function DesignPickerStep( props ) {
 
 	const siteId = useSelector( ( state ) => getSiteId( state, dependencies.siteSlug ) );
 	const isPremiumThemeAvailable = useSelector( ( state ) =>
-		siteHasFeature( state, siteId, WPCOM_FEATURES_PREMIUM_THEMES )
+		siteHasFeature( state, siteId, WPCOM_FEATURES_PREMIUM_THEMES_UNLIMITED )
 	);
-
-	const userLoggedIn = useSelector( ( state ) => isUserLoggedIn( state ) );
 
 	const dispatch = useDispatch();
 	const translate = useTranslate();
 
-	const [ selectedDesign, setSelectedDesign ] = useState( null );
 	const scrollTop = useRef( 0 );
 
 	const getThemeFilters = () => {
@@ -75,7 +68,8 @@ export default function DesignPickerStep( props ) {
 
 	useEffect(
 		() => {
-			dispatch( saveSignupStep( { stepName: props.stepName } ) );
+			dispatch( saveSignupStep( { stepName: stepName } ) );
+			triggerGuidesForStep( flowName, stepName );
 		},
 		// Ignoring dependencies because we only want to save the step on first mount
 		// eslint-disable-next-line react-hooks/exhaustive-deps
@@ -112,11 +106,6 @@ export default function DesignPickerStep( props ) {
 		flow: flowName,
 		intent: dependencies.intent,
 	} );
-
-	// Update the selected design when the section changes
-	useEffect( () => {
-		setSelectedDesign( designs.find( ( { theme } ) => theme === props.stepSectionName ) );
-	}, [ designs, props.stepSectionName, setSelectedDesign ] );
 
 	const getCategorizationOptionsForStep = () => {
 		const result = {
@@ -161,19 +150,6 @@ export default function DesignPickerStep( props ) {
 		submitDesign( _selectedDesign );
 	}
 
-	function previewDesign( _selectedDesign ) {
-		const locale = ! userLoggedIn ? getLocaleSlug() : '';
-
-		recordTracksEvent(
-			'calypso_signup_design_preview_select',
-			getEventPropsByDesign( _selectedDesign )
-		);
-
-		page(
-			getStepUrl( props.flowName, props.stepName, _selectedDesign.theme, locale, queryParams )
-		);
-	}
-
 	function upgradePlan() {
 		openCheckoutModal( [ PLAN_PREMIUM ] );
 	}
@@ -186,15 +162,7 @@ export default function DesignPickerStep( props ) {
 		upgradePlan();
 	}
 
-	function upgradePlanFromPreview( design ) {
-		recordTracksEvent(
-			'calypso_signup_design_preview_upgrade_button_click',
-			getEventPropsByDesign( design )
-		);
-		upgradePlan();
-	}
-
-	function submitDesign( _selectedDesign = selectedDesign ) {
+	function submitDesign( _selectedDesign ) {
 		recordTracksEvent( 'calypso_signup_select_design', getEventPropsByDesign( _selectedDesign ) );
 		props.goToNextStep();
 	}
@@ -211,7 +179,6 @@ export default function DesignPickerStep( props ) {
 					theme={ isReskinned ? 'light' : 'dark' }
 					locale={ translate.localeSlug }
 					onSelect={ pickDesign }
-					onPreview={ previewDesign }
 					onUpgrade={ upgradePlanFromDesignPicker }
 					className={ classnames( {
 						'design-picker-step__has-categories': showDesignPickerCategories,
@@ -250,43 +217,6 @@ export default function DesignPickerStep( props ) {
 				{ showLetUsChoose && (
 					<LetUsChoose flowName={ props.flowName } designs={ designs } onSelect={ pickDesign } />
 				) }
-			</>
-		);
-	}
-
-	function renderDesignPreview() {
-		const {
-			signupDependencies: { siteSlug, siteTitle, intent },
-			hideExternalPreview,
-		} = props;
-
-		const previewUrl = getDesignUrl( selectedDesign, translate.localeSlug, {
-			iframe: true,
-			// If the user fills out the site title with write intent, we show it on the design preview
-			// Otherwise, use the title of selected design directly
-			site_title: intent === 'write' && siteTitle ? siteTitle : selectedDesign?.title,
-		} );
-
-		return (
-			<>
-				<WebPreview
-					className="design-picker__web-preview"
-					showPreview
-					isContentOnly
-					showClose={ false }
-					showEdit={ false }
-					externalUrl={ siteSlug }
-					showExternal={ ! hideExternalPreview }
-					previewUrl={ previewUrl }
-					loadingMessage={ translate(
-						'{{strong}}One moment, please…{{/strong}} loading your site.',
-						{
-							components: { strong: <strong /> },
-						}
-					) }
-					toolbarComponent={ PreviewToolbar }
-				/>
-				{ renderCheckoutModal() }
 			</>
 		);
 	}
@@ -331,47 +261,6 @@ export default function DesignPickerStep( props ) {
 
 		// Fall back to the default skip label used by <StepWrapper>
 		return undefined;
-	}
-
-	const isMobile = useViewportMatch( 'small', '<' );
-
-	if ( selectedDesign ) {
-		const isBlankCanvas = isBlankCanvasDesign( selectedDesign );
-		const designTitle = isBlankCanvas ? translate( 'Blank Canvas' ) : selectedDesign.title;
-		const defaultDependencies = { selectedDesign };
-		const locale = ! userLoggedIn ? getLocaleSlug() : '';
-		const shouldUpgrade = selectedDesign.is_premium && ! isPremiumThemeAvailable;
-
-		return (
-			<StepWrapper
-				{ ...props }
-				className="design-picker__preview"
-				fallbackHeaderText={ designTitle }
-				headerText={ designTitle }
-				fallbackSubHeaderText=""
-				subHeaderText=""
-				stepContent={ renderDesignPreview() }
-				align={ isMobile ? 'left' : 'center' }
-				hideSkip
-				hideNext={ shouldUpgrade }
-				nextLabelText={ translate( 'Start with %(designTitle)s', { args: { designTitle } } ) }
-				defaultDependencies={ defaultDependencies }
-				backUrl={ getStepUrl( flowName, stepName, '', locale, queryParams ) }
-				goToNextStep={ submitDesign }
-				stepSectionName={ designTitle }
-				customizedActionButtons={
-					shouldUpgrade && (
-						<Button
-							primary
-							borderless={ false }
-							onClick={ () => upgradePlanFromPreview( selectedDesign ) }
-						>
-							{ translate( 'Upgrade Plan' ) }
-						</Button>
-					)
-				}
-			/>
-		);
 	}
 
 	const intent = props.signupDependencies.intent;

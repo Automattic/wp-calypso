@@ -37,10 +37,13 @@ import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import getCurrentRouteParameterized from 'calypso/state/selectors/get-current-route-parameterized';
 import isJetpackModuleActive from 'calypso/state/selectors/is-jetpack-module-active';
 import isPrivateSite from 'calypso/state/selectors/is-private-site';
-import { isJetpackSite } from 'calypso/state/sites/selectors';
+import isAtomicSite from 'calypso/state/selectors/is-site-wpcom-atomic';
+import { getJetpackStatsAdminVersion, isJetpackSite } from 'calypso/state/sites/selectors';
+import getEnvStatsFeatureSupportChecks from 'calypso/state/sites/selectors/get-env-stats-feature-supports';
 import { requestModuleSettings } from 'calypso/state/stats/module-settings/actions';
 import { getModuleSettings } from 'calypso/state/stats/module-settings/selectors';
 import { getModuleToggles } from 'calypso/state/stats/module-toggles/selectors';
+import { getUpsellModalView } from 'calypso/state/stats/paid-stats-upsell/selectors';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import HighlightsSection from './highlights-section';
 import MiniCarousel from './mini-carousel';
@@ -56,6 +59,7 @@ import StatsPeriodHeader from './stats-period-header';
 import StatsPeriodNavigation from './stats-period-navigation';
 import StatsPlanUsage from './stats-plan-usage';
 import statsStrings from './stats-strings';
+import StatsUpsellModal from './stats-upsell-modal';
 import { getPathWithUpdatedQueryString } from './utils';
 
 // Sync hidable modules with StatsNavigation.
@@ -196,14 +200,19 @@ class StatsSite extends Component {
 			date,
 			siteId,
 			slug,
+			isAtomic,
 			isJetpack,
 			isSitePrivate,
 			isOdysseyStats,
 			context,
 			moduleSettings,
+			supportsPlanUsage,
+			supportsEmailStats,
 		} = this.props;
 
 		let defaultPeriod = PAST_SEVEN_DAYS;
+
+		const shouldShowUpsells = isOdysseyStats && ! isAtomic;
 
 		// Set the current period based on the module settings.
 		// @TODO: Introduce the loading state to avoid flickering due to slow module settings request.
@@ -304,7 +313,7 @@ class StatsSite extends Component {
 					className="stats__section-header modernized-header"
 					title={ translate( 'Jetpack Stats' ) }
 					subtitle={ translate(
-						"Learn more about the activity and behavior of your site's visitors. {{learnMoreLink}}Learn more{{/learnMoreLink}}",
+						"Gain insights into the activity and behavior of your site's visitors. {{learnMoreLink}}Learn more{{/learnMoreLink}}",
 						{
 							components: {
 								learnMoreLink: <InlineSupportLink supportContext="stats" showIcon={ false } />,
@@ -442,7 +451,7 @@ class StatsSite extends Component {
 								showSummaryLink
 							/>
 						) }
-						{ ! isOdysseyStats && (
+						{ supportsEmailStats && (
 							<StatsModuleEmails period={ this.props.period } query={ query } />
 						) }
 						{
@@ -463,16 +472,17 @@ class StatsSite extends Component {
 						}
 					</div>
 				</div>
-				{ config.isEnabled( 'stats/plan-usage' ) && (
+				{ supportsPlanUsage && (
 					<StatsPlanUsage siteId={ siteId } isOdysseyStats={ isOdysseyStats } />
 				) }
-				{ /* Only load Jetpack Upsell Section for Odyssey Stats */ }
-				{ ! isOdysseyStats ? null : (
+				{ /* Only load Jetpack Upsell Section for Odyssey Stats excluding Atomic */ }
+				{ ! shouldShowUpsells ? null : (
 					<AsyncLoad require="calypso/my-sites/stats/jetpack-upsell-section" />
 				) }
 				<PromoCards isOdysseyStats={ isOdysseyStats } pageSlug="traffic" slug={ slug } />
 				<JetpackColophon />
 				<AsyncLoad require="calypso/lib/analytics/track-resurrections" placeholder={ null } />
+				{ this.props.upsellModalView && <StatsUpsellModal siteId={ siteId } /> }
 			</div>
 		);
 	}
@@ -528,6 +538,7 @@ class StatsSite extends Component {
 		} else if ( this.props.showEnableStatsModule ) {
 			return this.renderEnableStatsModule();
 		}
+
 		return this.renderStats();
 	}
 
@@ -579,6 +590,7 @@ export default connect(
 		const siteId = getSelectedSiteId( state );
 		const canUserManageOptions = canCurrentUser( state, siteId, 'manage_options' );
 		const isJetpack = isJetpackSite( state, siteId );
+		const statsAdminVersion = getJetpackStatsAdminVersion( state, siteId );
 		const isOdysseyStats = config.isEnabled( 'is_running_in_jetpack_site' );
 
 		// Odyssey Stats: This UX is not possible in Odyssey as this page would not be able to render in the first place.
@@ -596,18 +608,36 @@ export default connect(
 		const canUserViewStats =
 			isOdysseyStats || canUserManageOptions || canCurrentUser( state, siteId, 'view_stats' );
 
+		const slug = getSelectedSiteSlug( state );
+		const upsellModalView =
+			config.isEnabled( 'stats/paid-wpcom-v2' ) && getUpsellModalView( state, siteId );
+		const { supportsPlanUsage, supportsEmailStats } = getEnvStatsFeatureSupportChecks(
+			state,
+			siteId
+		);
+
 		return {
 			canUserViewStats,
+			isAtomic: isAtomicSite( state, siteId ),
 			isJetpack,
 			isSitePrivate: isPrivateSite( state, siteId ),
 			siteId,
-			slug: getSelectedSiteSlug( state ),
+			slug,
 			showEnableStatsModule,
 			path: getCurrentRouteParameterized( state, siteId ),
 			isOdysseyStats,
 			moduleSettings: getModuleSettings( state, siteId, 'traffic' ),
 			moduleToggles: getModuleToggles( state, siteId, 'traffic' ),
+			upsellModalView,
+			statsAdminVersion,
+			supportsEmailStats,
+			supportsPlanUsage,
 		};
 	},
-	{ recordGoogleEvent, enableJetpackStatsModule, recordTracksEvent, requestModuleSettings }
+	{
+		recordGoogleEvent,
+		enableJetpackStatsModule,
+		recordTracksEvent,
+		requestModuleSettings,
+	}
 )( localize( StatsSite ) );

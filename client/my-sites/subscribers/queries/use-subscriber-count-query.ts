@@ -1,4 +1,4 @@
-import { useQuery } from '@tanstack/react-query';
+import { keepPreviousData, useQuery } from '@tanstack/react-query';
 import wpcom from 'calypso/lib/wp';
 
 export interface SubscribersTotals {
@@ -29,6 +29,6 @@ export default function useSubscriberCountQuery( siteId: number | null ) {
 			} );
 		},
 		enabled: !! siteId,
-		keepPreviousData: true,
+		placeholderData: keepPreviousData,
 	} );
 }

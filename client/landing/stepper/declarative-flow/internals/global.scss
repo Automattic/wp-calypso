@@ -73,6 +73,7 @@ button {
 .new-hosted-site,
 .import-hosted-site,
 .site-setup,
+.site-migration,
 .import-focused,
 .plugin-bundle,
 .newsletter-setup,
@@ -103,22 +104,6 @@ button {
 .hundred-year-plan,
 .link-in-bio-tld {
 	box-sizing: border-box;
-
-	.flow-progress {
-		position: absolute;
-		top: 0;
-		right: 0;
-		left: 0;
-		border-radius: 0;
-		z-index: 99;
-		height: 8px;
-		background-color: transparent;
-
-		.progress-bar__progress {
-			background-color: $onboarding-accent-blue;
-			border-radius: 0;
-		}
-	}
 
 	&.step-route {
 		padding: 60px 0 0;
@@ -359,15 +344,6 @@ button {
 		}
 	}
 
-	.progress-bar {
-		background-color: #fff;
-		position: absolute;
-
-		.progress-bar__progress {
-			border-radius: 0;
-		}
-	}
-
 	&.intro {
 		button.intro__button {
 			border-radius: 4px;
@@ -464,9 +440,6 @@ button {
 		font-family: proxima-nova, sans-serif;
 		font-weight: 600;
 		font-size: $font-title-large;
-	}
-	.flow-progress.progress-bar {
-		display: none;
 	}
 	.loading-bar {
 		background-color: var(--studio-woocommerce-purple-5);

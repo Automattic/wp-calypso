@@ -2,6 +2,7 @@ import { recordTracksEvent } from '@automattic/calypso-analytics';
 import config from '@automattic/calypso-config';
 import { FEATURE_INSTALL_THEMES } from '@automattic/calypso-products';
 import page from '@automattic/calypso-router';
+import { SelectDropdown } from '@automattic/components';
 import { isAssemblerSupported } from '@automattic/design-picker';
 import classNames from 'classnames';
 import { localize, translate } from 'i18n-calypso';
@@ -15,12 +16,10 @@ import QuerySitePlans from 'calypso/components/data/query-site-plans';
 import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
 import QueryThemeFilters from 'calypso/components/data/query-theme-filters';
 import { SearchThemes, SearchThemesV2 } from 'calypso/components/search-themes';
-import SelectDropdown from 'calypso/components/select-dropdown';
 import { THEME_TIERS } from 'calypso/components/theme-tier/constants';
 import getSiteAssemblerUrl from 'calypso/components/themes-list/get-site-assembler-url';
 import { getOptionLabel } from 'calypso/landing/subscriptions/helpers';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
-import { buildRelativeSearchUrl } from 'calypso/lib/build-url';
 import ActivationModal from 'calypso/my-sites/themes/activation-modal';
 import { THEME_COLLECTIONS } from 'calypso/my-sites/themes/collections/collection-definitions';
 import ShowcaseThemeCollection from 'calypso/my-sites/themes/collections/showcase-theme-collection';
@@ -36,6 +35,7 @@ import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import { isSiteOnWooExpress, isSiteOnECommerceTrial } from 'calypso/state/sites/plans/selectors';
 import { getSite, getSiteSlug } from 'calypso/state/sites/selectors';
 import { setBackPath } from 'calypso/state/themes/actions';
+import { STATIC_FILTERS, DEFAULT_STATIC_FILTER } from 'calypso/state/themes/constants';
 import {
 	arePremiumThemesEnabled,
 	getThemeFilterTerms,
@@ -46,7 +46,14 @@ import {
 } from 'calypso/state/themes/selectors';
 import { getThemesBookmark } from 'calypso/state/themes/themes-ui/selectors';
 import EligibilityWarningModal from './atomic-transfer-dialog';
-import { addTracking, getSubjectsFromTermTable, trackClick, localizeThemesPath } from './helpers';
+import {
+	addTracking,
+	getSubjectsFromTermTable,
+	trackClick,
+	localizeThemesPath,
+	isStaticFilter,
+	constructThemeShowcaseUrl,
+} from './helpers';
 import PatternAssemblerButton from './pattern-assembler-button';
 import ThemePreview from './theme-preview';
 import ThemeShowcaseHeader from './theme-showcase-header';
@@ -63,18 +70,22 @@ const optionShape = PropTypes.shape( {
 
 const staticFilters = {
 	MYTHEMES: {
-		key: 'my-themes',
+		key: STATIC_FILTERS.MYTHEMES,
 		text: translate( 'My Themes' ),
 	},
 	RECOMMENDED: {
-		key: 'recommended',
+		key: STATIC_FILTERS.RECOMMENDED,
 		text: translate( 'Recommended' ),
 	},
 	ALL: {
-		key: 'all',
+		key: STATIC_FILTERS.ALL,
 		text: translate( 'All' ),
 	},
 };
+
+const defaultStaticFilter = Object.values( staticFilters ).find(
+	( staticFilter ) => staticFilter.key === DEFAULT_STATIC_FILTER
+);
 
 class ThemeShowcase extends Component {
 	constructor( props ) {
@@ -150,13 +161,9 @@ class ThemeShowcase extends Component {
 
 	isThemeDiscoveryEnabled = () => config.isEnabled( 'themes/discovery' );
 
-	getDefaultStaticFilter = () => staticFilters.RECOMMENDED;
+	getDefaultStaticFilter = () => defaultStaticFilter;
 
-	isStaticFilter = ( tabFilter ) => {
-		return Object.values( staticFilters ).some(
-			( staticFilter ) => tabFilter.key === staticFilter.key
-		);
-	};
+	isStaticFilter = ( tabFilter ) => isStaticFilter( tabFilter.key );
 
 	getSubjectFilters = ( props ) => {
 		const { subjects } = props;
@@ -170,9 +177,17 @@ class ThemeShowcase extends Component {
 			return null;
 		}
 
-		const shouldShowMyThemesFilter =
-			( this.props.isJetpackSite && ! this.props.isAtomicSite ) ||
-			( this.props.isAtomicSite && this.props.siteCanInstallThemes );
+		if ( this.props.isSiteWooExpress ) {
+			return {
+				MYTHEMES: staticFilters.MYTHEMES,
+				RECOMMENDED: {
+					...staticFilters.RECOMMENDED,
+					text: translate( 'All Themes' ),
+				},
+			};
+		}
+
+		const shouldShowMyThemesFilter = !! this.props.siteId;
 
 		return {
 			...( shouldShowMyThemesFilter && { MYTHEMES: staticFilters.MYTHEMES } ),
@@ -300,36 +315,10 @@ class ThemeShowcase extends Component {
 	 * @returns {string} Theme showcase url
 	 */
 	constructUrl = ( sections ) => {
-		const {
-			category,
-			vertical,
-			tier,
-			filter,
-			siteSlug,
-			search,
-			locale,
-			isLoggedIn,
-			isCollectionView,
-		} = {
+		return constructThemeShowcaseUrl( {
 			...this.props,
 			...sections,
-		};
-		const siteIdSection = siteSlug ? `/${ siteSlug }` : '';
-		const categorySection =
-			category && category !== this.getDefaultStaticFilter().key ? `/${ category }` : '';
-		const verticalSection = vertical ? `/${ vertical }` : '';
-		const tierSection = tier && tier !== 'all' ? `/${ tier }` : '';
-
-		let filterSection = filter ? `/filter/${ filter }` : '';
-		filterSection = filterSection.replace( /\s/g, '+' );
-
-		const collectionSection = isCollectionView ? `/collection` : '';
-
-		let url = `/themes${ categorySection }${ verticalSection }${ tierSection }${ filterSection }${ collectionSection }${ siteIdSection }`;
-
-		url = localizeThemesPath( url, locale, ! isLoggedIn );
-
-		return buildRelativeSearchUrl( url, search );
+		} );
 	};
 
 	onTierSelectFilter = ( { value: tier } ) => {
@@ -566,9 +555,10 @@ class ThemeShowcase extends Component {
 			filterString,
 			isMultisite,
 			premiumThemesEnabled,
+			isSiteECommerceFreeTrial,
 			isSiteWooExpressOrEcomFreeTrial,
+			isSiteWooExpress,
 			isCollectionView,
-			isJetpackSite,
 			lastNonEditorRoute,
 		} = this.props;
 		const tier = this.props.tier || 'all';
@@ -599,7 +589,7 @@ class ThemeShowcase extends Component {
 			trackScrollPage: this.props.trackScrollPage,
 			scrollToSearchInput: this.scrollToSearchInput,
 			getOptions: this.getThemeOptions,
-			source: isJetpackSite && this.props.category !== staticFilters.MYTHEMES.key ? 'wpcom' : null,
+			source: this.props.category !== staticFilters.MYTHEMES.key ? 'wpcom' : null,
 		};
 
 		const tabFilters = this.getTabFilters();
@@ -624,10 +614,12 @@ class ThemeShowcase extends Component {
 					isCollectionView={ isCollectionView }
 					noIndex={ isCollectionView }
 					onPatternAssemblerButtonClick={ this.onDesignYourOwnClick }
+					isSiteWooExpressOrEcomFreeTrial={ isSiteWooExpressOrEcomFreeTrial }
+					isSiteECommerceFreeTrial={ isSiteECommerceFreeTrial }
 				/>
 				{ isLoggedIn && (
 					<ThemeShowcaseSurvey
-						survey={ SurveyType.DECEMBER_2023 }
+						survey={ SurveyType.FEBRUARY_2024 }
 						condition={ () => lastNonEditorRoute.includes( 'theme/' ) }
 					/>
 				) }
@@ -667,8 +659,12 @@ class ThemeShowcase extends Component {
 									</>
 								) }
 							</div>
-							<div className="themes__filters">
-								{ tabFilters && ! isSiteWooExpressOrEcomFreeTrial && (
+							<div
+								className={ classNames( 'themes__filters', {
+									'is-woo-express': isSiteWooExpress,
+								} ) }
+							>
+								{ tabFilters && ! isSiteECommerceFreeTrial && (
 									<ThemesToolbarGroup
 										items={ Object.values( tabFilters ) }
 										selectedKey={ this.getSelectedTabFilter().key }

@@ -1,0 +1,265 @@
+@import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/mixins";
+
+$left-margin: 36px;
+
+@keyframes purchaseModalBackdropfadeIn {
+	0% {
+		opacity: 0;
+		transform: scale(1.05);
+	}
+	100% {
+		opacity: 1;
+		transform: scale(1);
+	}
+}
+
+.purchase-modal.dialog__backdrop {
+	animation: purchaseModalBackdropfadeIn 0.2s ease-out;
+	animation-fill-mode: backwards;
+}
+
+.purchase-modal.dialog__content {
+	display: flex;
+	flex-direction: column;
+	align-items: flex-start;
+	max-width: 100%;
+	box-sizing: border-box;
+	padding: 0;
+
+	width: 460px;
+	&.has-feature-list {
+		width: 800px;
+	}
+
+	@media ( min-width: 480px ) {
+		padding: 0;
+	}
+}
+
+.purchase-modal__wrapper {
+	display: block;
+	.has-feature-list & {
+		display: flex;
+	}
+	width: 100%;
+	flex-direction: column;
+	gap: 12px;
+	@include break-medium {
+		gap: 36px;
+		flex-direction: row;
+	}
+}
+
+.purchase-modal__steps {
+	display: flex;
+	flex-direction: column;
+	max-width: 100%;
+	padding: 16px;
+	@include break-medium {
+		padding: 45px 36px;
+		.has-feature-list & {
+			max-width: 50%;
+			padding: 45px 0 45px 36px;
+		}
+	}
+}
+
+.purchase-modal__features {
+	background: var(--gray-gray-0, #f6f7f7);
+	padding: 45px 36px;
+	flex: 1;
+	@include break-medium {
+		padding: 45px 48px 45px 36px;
+	}
+}
+
+/**
+ * Close button
+ */
+.purchase-modal__close {
+	position: absolute;
+	top: 0;
+	right: 4px;
+	padding: 4px;
+}
+
+/**
+ * Order steps
+ */
+.purchase-modal__step {
+	position: relative;
+	margin: 0 0 24px $left-margin;
+	align-self: stretch;
+}
+
+.purchase-modal__step-icon {
+	position: absolute;
+	width: 27px;
+	height: 27px;
+	top: 0;
+	left: -$left-margin;
+	border-radius: 50;
+	background: #008a20;
+	text-align: center;
+
+	> svg {
+		margin-top: 4px;
+	}
+
+	&.is-placeholder {
+		@include placeholder();
+	}
+}
+
+.purchase-modal__step-title {
+	> a {
+		display: inline-block;
+		margin-left: 0.5em;
+		text-decoration: underline;
+	}
+
+	&.is-placeholder {
+		@include placeholder();
+		width: 20em;
+	}
+}
+
+.purchase-modal__step-content {
+	color: var(--color-neutral-40);
+	font-size: $font-body-small;
+
+	&.is-placeholder {
+		@include placeholder();
+		margin-top: 2px;
+		width: 15em;
+	}
+}
+
+.purchase-modal__order-step-row {
+	margin-bottom: 12px;
+}
+
+.purchase-modal__step-content-row {
+	display: flex;
+	flex-wrap: wrap;
+	justify-content: space-between;
+	color: var(--color-neutral-60);
+}
+
+.purchase-modal__product-offer {
+	&.is-discounted {
+		color: var(--color-success);
+	}
+}
+
+.purchase-modal__card-number {
+	display: inline-block;
+	margin: 0 0.5em;
+}
+
+/**
+ * Checkout Terms
+ */
+
+.purchase-modal {
+	& .checkout__terms-foldable-card,
+	.foldable-card.card.is-expanded {
+		margin: 8px 0 8px 20px;
+		box-shadow: none;
+		padding: 0;
+		font-size: $font-body-small;
+		& .foldable-card__expand {
+			top: 0;
+		}
+	}
+	& .foldable-card.is-expanded .foldable-card__content {
+		border-top: none;
+		padding-top: 8px;
+
+		& .checkout__terms-item {
+			margin-left: 0;
+		}
+	}
+	& .checkout__terms {
+		margin: 1em 0 4px;
+		padding-left: $left-margin;
+	}
+	& .checkout__terms-item {
+		margin-bottom: 8px;
+		margin-left: 36px;
+		margin-top: 8px;
+	}
+}
+
+/**
+ * Taxes and cost
+ */
+.purchase-modal__review {
+	display: flex;
+	align-self: stretch;
+	justify-content: space-between;
+	flex-wrap: wrap;
+
+	padding-inline-end: 18px;
+	@include break-medium {
+		padding-inline-end: 0;
+	}
+
+	> dt {
+		width: 60%;
+		margin-inline-start: 18px;
+		@include break-medium {
+			margin-inline-start: $left-margin;
+		}
+	}
+
+	> dd {
+		margin: 0;
+	}
+
+	&.is-placeholder {
+		> dt {
+			@include placeholder();
+			width: 8em;
+		}
+
+		> dd {
+			@include placeholder();
+			width: 5em;
+		}
+	}
+}
+
+.purchase-modal__tax {
+	font-weight: normal;
+	color: var(--color-neutral-40);
+	font-size: $font-body-small;
+}
+
+/**
+ * Pay button
+ */
+.purchase-modal__pay-button {
+	align-self: stretch;
+	font-size: 1rem;
+
+	margin: 24px 18px 0 18px;
+	@include break-medium {
+		margin: 24px 0 0 36px;
+	}
+
+	&.is-placeholder {
+		@include placeholder();
+		height: 2rem;
+	}
+}
+
+.purchase-modal__features-title {
+	color: var(--gray-gray-70, #3c434a);
+	font-size: 1rem;
+	font-style: normal;
+	font-weight: 500;
+	line-height: 20px;
+	margin-bottom: 10px;
+}

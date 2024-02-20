@@ -1,0 +1,79 @@
+{
+	"name": "@automattic/verbum-block-editor",
+	"version": "1.0.0",
+	"description": "A minimal Gutenberg editor form WPCOM and Jetpack comments.",
+	"homepage": "https://github.com/Automattic/wp-calypso",
+	"license": "GPL-2.0-or-later",
+	"author": "Automattic Inc.",
+	"main": "dist/cjs/index.js",
+	"module": "dist/esm/index.js",
+	"calypso:src": "src/index.ts",
+	"sideEffects": [
+		"*.css",
+		"*.scss"
+	],
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/Automattic/wp-calypso.git",
+		"directory": "packages/verbum-block-editor"
+	},
+	"publishConfig": {
+		"access": "public"
+	},
+	"bugs": "https://github.com/Automattic/wp-calypso/issues",
+	"types": "dist/types",
+	"scripts": {
+		"clean": "rm -rf dist",
+		"build": "NODE_ENV=production yarn dev",
+		"build:app": "calypso-build",
+		"dev": "yarn run calypso-apps-builder --localPath dist --remotePath /home/wpcom/public_html/widgets.wp.com/verbum-block-editor",
+		"watch": "tsc --build ./tsconfig.json --watch",
+		"prepare": "yarn build"
+	},
+	"dependencies": {
+		"@automattic/calypso-apps-builder": "workspace:^",
+		"@types/wordpress__block-editor": "^11.5.8",
+		"@wordpress/base-styles": "^4.42.0",
+		"@wordpress/block-editor": "^12.19.1",
+		"@wordpress/block-library": "^8.28.1",
+		"@wordpress/blocks": "^12.28.1",
+		"@wordpress/commands": "^0.22.1",
+		"@wordpress/components": "^26.0.1",
+		"@wordpress/data": "^9.21.0",
+		"@wordpress/element": "^5.28.0",
+		"@wordpress/format-library": "^4.28.1",
+		"@wordpress/i18n": "^4.51.0",
+		"@wordpress/icons": "^9.42.0",
+		"@wordpress/is-shallow-equal": "^4.51.0",
+		"@wordpress/keycodes": "^3.51.0",
+		"@wordpress/primitives": "^3.49.0",
+		"@wordpress/rich-text": "^6.28.1",
+		"@wordpress/url": "^3.52.0"
+	},
+	"devDependencies": {
+		"@automattic/calypso-build": "workspace:^",
+		"@automattic/calypso-color-schemes": "workspace:^",
+		"@automattic/calypso-typescript-config": "workspace:^",
+		"@types/wordpress__blocks": "^12.5.13",
+		"@typescript-eslint/eslint-plugin": "^6.20.0",
+		"@typescript-eslint/parser": "^6.20.0",
+		"@wordpress/eslint-plugin": "^17.8.0",
+		"@wordpress/stylelint-config": "^21.34.0",
+		"typescript": "^5.3.3"
+	},
+	"peerDependencies": {
+		"@babel/core": "*",
+		"@wordpress/data": "^9.21.0",
+		"@wordpress/element": "^5.28.0",
+		"@wordpress/i18n": "^4.51.0",
+		"debug": "^4.3.3",
+		"eslint": "*",
+		"postcss": "*",
+		"react": "^18.2.0",
+		"react-dom": "^18.2.0",
+		"redux": "^4.2.1",
+		"stylelint": "*",
+		"webpack": "*"
+	},
+	"private": true
+}

@@ -1,4 +1,9 @@
-import { FEATURE_UPLOAD_THEMES_PLUGINS, planHasFeature } from '@automattic/calypso-products';
+import {
+	FEATURE_UPLOAD_THEMES_PLUGINS,
+	PLAN_BUSINESS,
+	getPlan,
+	planHasFeature,
+} from '@automattic/calypso-products';
 import { Button, CompactCard } from '@automattic/components';
 import { Button as WpButton } from '@wordpress/components';
 import { localize } from 'i18n-calypso';
@@ -95,7 +100,13 @@ class StepImportOrMigrate extends Component {
 		}
 
 		if ( ! isTargetSiteAtomic ) {
-			return <p>{ translate( 'Import your entire site with the Business Plan.' ) }</p>;
+			return (
+				<p>
+					{ translate( 'Import your entire site with the %(planName)s plan.', {
+						args: { planName: getPlan( PLAN_BUSINESS )?.getTitle() ?? '' },
+					} ) }
+				</p>
+			);
 		}
 	};
 
@@ -115,7 +126,7 @@ class StepImportOrMigrate extends Component {
 
 		return (
 			<>
-				<HeaderCake backHref={ backHref }>Import from WordPress</HeaderCake>
+				<HeaderCake backHref={ backHref }>{ translate( 'Import from WordPress' ) }</HeaderCake>
 
 				<SitesBlock
 					sourceSite={ sourceSite }
@@ -134,7 +145,7 @@ class StepImportOrMigrate extends Component {
 								title: translate( 'Everything' ),
 								labels: everythingLabels,
 								description: translate(
-									"All your site's content, themes, plugins, users and settings"
+									"All your site's content, themes, plugins, users and settings."
 								),
 								enabled: sourceHasJetpack,
 							},

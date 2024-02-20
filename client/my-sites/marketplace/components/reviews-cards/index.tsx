@@ -1,4 +1,3 @@
-import { isEnabled } from '@automattic/calypso-config';
 import { Button } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import { useSelector } from 'react-redux';
@@ -19,12 +18,13 @@ export const MarketplaceReviewsCards = ( props: MarketplaceReviewsCardsProps ) =
 		...props,
 		perPage: 1,
 		author: currentUserId ?? undefined,
+		status: 'all',
 	} );
-	const { data: reviews, error } = useMarketplaceReviewsQuery( { ...props, perPage: 2, page: 1 } );
-
-	if ( ! isEnabled( 'marketplace-reviews-show' ) ) {
-		return null;
-	}
+	const { data: reviews, error } = useMarketplaceReviewsQuery( {
+		...props,
+		perPage: 2,
+		page: 1,
+	} );
 
 	if ( ! Array.isArray( reviews ) || error ) {
 		return null;
@@ -48,8 +48,6 @@ export const MarketplaceReviewsCards = ( props: MarketplaceReviewsCardsProps ) =
 				<div className="marketplace-reviews-cards__read-all">
 					<Button
 						className="is-link"
-						borderless
-						primary
 						onClick={ () => props.showMarketplaceReviews && props.showMarketplaceReviews() }
 						href=""
 					>

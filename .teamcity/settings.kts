@@ -162,7 +162,7 @@ object BuildBaseImages : BuildType({
 					registry.a8c.com/calypso/base:%image_tag%
 					registry.a8c.com/calypso/base:%build.number%
 				""".trimIndent()
-				commandArgs = "--no-cache --target base"
+				commandArgs = "--no-cache --target base --build-arg commit_sha=${Settings.WpCalypso.paramRefs.buildVcsNumber}"
 			}
 			param("dockerImage.platform", "linux")
 		}
@@ -393,4 +393,3 @@ object WpCalypso : GitVcsRoot({
 		uploadedKey = "matticbot"
 	}
 })
-

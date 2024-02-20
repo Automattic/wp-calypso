@@ -33,4 +33,9 @@ describe( 'calculateOverallStatus', () => {
 		];
 		expect( calculateOverallStatus( tests ) ).toEqual( PreflightTestStatus.PENDING );
 	} );
+
+	it( 'should return PENDING if tests are an empty array', () => {
+		const tests: PreflightTest[] = [];
+		expect( calculateOverallStatus( tests ) ).toEqual( PreflightTestStatus.PENDING );
+	} );
 } );

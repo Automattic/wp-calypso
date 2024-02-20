@@ -1,6 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
 import { fetchWordPressVersions } from 'calypso/lib/wporg';
-import { MAX_AGE } from 'calypso/state/initial-state';
+import { MAX_AGE } from 'calypso/state/constants';
 
 /**
  * A custom hook that fetches the latest WordPress version and returns it as a query result.

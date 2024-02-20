@@ -1,12 +1,12 @@
 import { updateLaunchpadSettings, type UserSelect } from '@automattic/data-stores';
-import { useFlowProgress, NEWSLETTER_FLOW } from '@automattic/onboarding';
+import { NEWSLETTER_FLOW } from '@automattic/onboarding';
 import { useSelect, useDispatch } from '@wordpress/data';
 import { addQueryArgs } from '@wordpress/url';
 import { translate } from 'i18n-calypso';
 import { useEffect } from 'react';
 import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
 import { skipLaunchpad } from 'calypso/landing/stepper/utils/skip-launchpad';
-import wpcom from 'calypso/lib/wp';
+import { triggerGuidesForStep } from 'calypso/lib/guides/trigger-guides-for-step';
 import {
 	clearSignupDestinationCookie,
 	setSignupCompleteSlug,
@@ -56,8 +56,8 @@ const newsletter: Flow = {
 				asyncComponent: () => import( './internals/steps-repository/subscribers' ),
 			},
 			{
-				slug: 'siteCreationStep',
-				asyncComponent: () => import( './internals/steps-repository/site-creation-step' ),
+				slug: 'createSite',
+				asyncComponent: () => import( './internals/steps-repository/create-site' ),
 			},
 			{
 				slug: 'launchpad',
@@ -80,21 +80,15 @@ const newsletter: Flow = {
 		);
 		const siteId = useSiteIdParam();
 		const siteSlug = useSiteSlug();
-		const { setStepProgress } = useDispatch( ONBOARD_STORE );
 		const query = useQuery();
 		const isComingFromMarketingPage = query.get( 'ref' ) === 'newsletter-lp';
 		const isLoadingIntroScreen =
 			! isComingFromMarketingPage && ( 'intro' === _currentStep || undefined === _currentStep );
 
-		const flowProgress = useFlowProgress( {
-			stepName: _currentStep,
-			flowName,
-		} );
-		setStepProgress( flowProgress );
 		const logInUrl = useLoginUrl( {
 			variationName: flowName,
 			redirectTo: `/setup/${ flowName }/newsletterSetup`,
-			pageTitle: 'Newsletter',
+			pageTitle: translate( 'Newsletter' ),
 		} );
 
 		const completeSubscribersTask = async () => {
@@ -110,17 +104,7 @@ const newsletter: Flow = {
 			window.location.assign( logInUrl );
 		}
 
-		// trigger guides on step movement, we don't care about failures or response
-		wpcom.req.post(
-			'guides/trigger',
-			{
-				apiNamespace: 'wpcom/v2/',
-			},
-			{
-				flow: flowName,
-				step: _currentStep,
-			}
-		);
+		triggerGuidesForStep( flowName, _currentStep );
 
 		function submit( providedDependencies: ProvidedDependencies = {} ) {
 			recordSubmitStep( providedDependencies, '', flowName, _currentStep );
@@ -143,9 +127,9 @@ const newsletter: Flow = {
 					return navigate( 'plans' );
 
 				case 'plans':
-					return navigate( 'siteCreationStep' );
+					return navigate( 'createSite' );
 
-				case 'siteCreationStep':
+				case 'createSite':
 					return navigate( 'processing' );
 
 				case 'processing':

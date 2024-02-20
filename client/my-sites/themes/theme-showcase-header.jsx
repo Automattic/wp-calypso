@@ -20,11 +20,14 @@ export default function ThemeShowcaseHeader( {
 	isCollectionView = false,
 	noIndex = false,
 	onPatternAssemblerButtonClick,
+	isSiteWooExpressOrEcomFreeTrial = false,
+	isSiteECommerceFreeTrial = false,
 } ) {
 	// eslint-disable-next-line no-shadow
 	const translate = useTranslate();
 	const isLoggedIn = useSelector( isUserLoggedIn );
 	const selectedSiteId = useSelector( getSelectedSiteId );
+
 	const description = useThemeShowcaseDescription( { filter, tier, vertical } );
 	const title = useThemeShowcaseTitle( { filter, tier, vertical } );
 	const loggedOutSeoContent = useThemeShowcaseLoggedOutSeoContent( filter, tier );
@@ -48,6 +51,9 @@ export default function ThemeShowcaseHeader( {
 				),
 		  }
 		: loggedOutSeoContent;
+
+	// Don't show the Install Theme button if the site is on a Ecommerce free trial or siteID is not available
+	const showInstallThemeButton = ! isSiteECommerceFreeTrial && !! selectedSiteId;
 
 	const metas = [
 		{
@@ -90,12 +96,8 @@ export default function ThemeShowcaseHeader( {
 						}
 					) }
 				>
-					{ selectedSiteId && (
-						<>
-							<InstallThemeButton />
-						</>
-					) }
-					{ isLoggedIn && (
+					{ showInstallThemeButton && <InstallThemeButton /> }
+					{ isLoggedIn && ! isSiteWooExpressOrEcomFreeTrial && (
 						<PatternAssemblerButton isPrimary onClick={ onPatternAssemblerButtonClick } />
 					) }
 				</NavigationHeader>

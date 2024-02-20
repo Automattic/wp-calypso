@@ -1,5 +1,5 @@
 import { Onboard, updateLaunchpadSettings } from '@automattic/data-stores';
-import { DEFAULT_ASSEMBLER_DESIGN, isAssemblerSupported } from '@automattic/design-picker';
+import { getAssemblerDesign, isAssemblerSupported } from '@automattic/design-picker';
 import { useLocale } from '@automattic/i18n-utils';
 import { ASSEMBLER_FIRST_FLOW } from '@automattic/onboarding';
 import { useDispatch, useSelect } from '@wordpress/data';
@@ -34,7 +34,7 @@ const assemblerFirstFlow: Flow = {
 			[]
 		);
 		const { setSelectedDesign, setIntent } = useDispatch( ONBOARD_STORE );
-		const selectedTheme = DEFAULT_ASSEMBLER_DESIGN.slug;
+		const selectedTheme = getAssemblerDesign().slug;
 		const theme = useSelector( ( state ) => getTheme( state, 'wpcom', selectedTheme ) );
 
 		// We have to query theme for the Jetpack site.
@@ -127,7 +127,7 @@ const assemblerFirstFlow: Flow = {
 				params.set( 'isNewSite', 'true' );
 			}
 
-			return navigate( `patternAssembler?${ params }` );
+			return navigate( `pattern-assembler?${ params }` );
 		};
 
 		const submit = async (
@@ -141,7 +141,7 @@ const assemblerFirstFlow: Flow = {
 					// Check for unlaunched sites
 					if ( providedDependencies?.filteredSitesCount === 0 ) {
 						// No unlaunched sites, redirect to new site creation step
-						return navigate( 'site-creation-step' );
+						return navigate( 'create-site' );
 					}
 					// With unlaunched sites, continue to new-or-existing-site step
 					return navigate( 'new-or-existing-site' );
@@ -149,12 +149,12 @@ const assemblerFirstFlow: Flow = {
 
 				case 'new-or-existing-site': {
 					if ( 'new-site' === providedDependencies?.newExistingSiteChoice ) {
-						return navigate( 'site-creation-step' );
+						return navigate( 'create-site' );
 					}
 					return navigate( 'site-picker' );
 				}
 
-				case 'site-creation-step': {
+				case 'create-site': {
 					return navigate( 'processing' );
 				}
 
@@ -200,7 +200,7 @@ const assemblerFirstFlow: Flow = {
 					return exitFlow( `/site-editor/${ siteSlug }?${ params }` );
 				}
 
-				case 'patternAssembler': {
+				case 'pattern-assembler': {
 					return navigate( 'processing' );
 				}
 
@@ -248,7 +248,7 @@ const assemblerFirstFlow: Flow = {
 					return navigate( 'launchpad' );
 				}
 
-				case 'patternAssembler': {
+				case 'pattern-assembler': {
 					const params = new URLSearchParams( window.location.search );
 					params.delete( 'siteSlug' );
 					params.delete( 'siteId' );
@@ -278,7 +278,7 @@ const assemblerFirstFlow: Flow = {
 		const isLoggedIn = useSelector( isUserLoggedIn );
 		const currentUserSiteCount = useSelector( getCurrentUserSiteCount );
 		const currentPath = window.location.pathname;
-		const isSiteCreationStep =
+		const isCreateSite =
 			currentPath.endsWith( `setup/${ flowName }` ) ||
 			currentPath.endsWith( `setup/${ flowName }/` ) ||
 			currentPath.includes( `setup/${ flowName }/check-sites` );
@@ -301,8 +301,8 @@ const assemblerFirstFlow: Flow = {
 		useEffect( () => {
 			if ( ! isLoggedIn ) {
 				window.location.assign( logInUrl );
-			} else if ( isSiteCreationStep && ! userAlreadyHasSites ) {
-				window.location.assign( `/setup/${ flowName }/site-creation-step` );
+			} else if ( isCreateSite && ! userAlreadyHasSites ) {
+				window.location.assign( `/setup/${ flowName }/create-site` );
 			}
 		}, [] );
 
@@ -313,7 +313,7 @@ const assemblerFirstFlow: Flow = {
 				state: AssertConditionState.CHECKING,
 				message: `${ flowName } requires a logged in user`,
 			};
-		} else if ( isSiteCreationStep && ! userAlreadyHasSites ) {
+		} else if ( isCreateSite && ! userAlreadyHasSites ) {
 			result = {
 				state: AssertConditionState.CHECKING,
 				message: `${ flowName } with no preexisting sites`,

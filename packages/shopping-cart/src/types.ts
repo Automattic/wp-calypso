@@ -255,8 +255,8 @@ export interface ResponseCart< P = ResponseCartProduct > {
 	total_cost_integer: number;
 
 	/**
-	 * The difference between `cost_before_coupon` and the actual price for all
-	 * products in the currency's smallest unit.
+	 * The difference between the cost before any coupon and the actual price
+	 * for all products in the currency's smallest unit.
 	 *
 	 * Note that the difference may be caused by many factors, not just coupons.
 	 * It's best not to rely on it.
@@ -298,7 +298,6 @@ export interface ResponseCart< P = ResponseCartProduct > {
 	allowed_payment_methods: string[];
 	coupon: string;
 	is_coupon_applied: boolean;
-	coupon_discounts_integer: number[];
 	locale: string;
 	is_signup: boolean;
 	messages?: ResponseCartMessages;
@@ -360,12 +359,6 @@ export interface ResponseCartProduct {
 	product_name_en: string;
 
 	/**
-	 * The cart item's original price in the currency's smallest unit.
-	 * @deprecated Use item_original_cost_integer or item_original_subtotal_integer.
-	 */
-	product_cost_integer: number;
-
-	/**
 	 * The cart item's original price without volume in the currency's smallest unit.
 	 *
 	 * Discounts and volume are not included, but quantity is included.
@@ -373,9 +366,9 @@ export interface ResponseCartProduct {
 	item_original_cost_integer: number;
 
 	/**
-	 * The monthly term subtotal of a cart item in the currency's smallest unit.
+	 * The monthly term original price of a cart item in the currency's smallest unit.
 	 */
-	item_subtotal_monthly_cost_integer: number;
+	item_original_monthly_cost_integer: number;
 
 	/**
 	 * The cart item's original price with volume in the currency's smallest unit.
@@ -404,28 +397,6 @@ export interface ResponseCartProduct {
 	 * @deprecated This is a float and is unreliable. Use item_subtotal_integer
 	 */
 	cost: number;
-
-	/**
-	 * The cart item's price before a coupon (if any) was applied.
-	 *
-	 * This is slightly misleading because although this is the product's cost
-	 * before a coupon was applied, it already includes sale coupons (which are
-	 * actually discounts), and other discounts and does not include certain
-	 * other price changes (eg: domain discounts). It's best not to rely on it.
-	 * @deprecated This is a float and is unreliable. Use
-	 * item_original_subtotal_integer if you
-	 * can, although those have slightly different meanings.
-	 */
-	cost_before_coupon?: number;
-
-	/**
-	 * The difference between `cost_before_coupon` and the actual price.
-	 *
-	 * Note that the difference may be caused by many factors, not just coupons.
-	 * It's best not to rely on it.
-	 * @deprecated This is a float and is unreliable. Use coupon_savings_integer
-	 */
-	coupon_savings?: number;
 
 	/**
 	 * The amount of the local currency deducted by an applied coupon, if any.
@@ -488,6 +459,7 @@ export interface ResponseCartProduct {
 	current_quantity: number | null;
 	extra: ResponseCartProductExtra;
 	item_tax: number;
+	item_tax_rate?: number;
 	product_type: string;
 	included_domain_purchase_amount: number;
 
@@ -526,10 +498,6 @@ export interface ResponseCartProduct {
 	is_included_for_100yearplan: boolean;
 
 	product_variants: ResponseCartProductVariant[];
-
-	// Temporary optional properties for the monthly pricing test
-	related_monthly_plan_cost_display?: string;
-	related_monthly_plan_cost_integer?: number;
 }
 
 export interface ResponseCartProductVariant {
@@ -539,6 +507,7 @@ export interface ResponseCartProductVariant {
 	currency: string;
 	price_integer: number;
 	price_before_discounts_integer: number;
+	introductory_offer_discount_integer: number;
 	introductory_offer_terms:
 		| Record< string, never >
 		| Pick< IntroductoryOfferTerms, 'interval_unit' | 'interval_count' >;
@@ -553,12 +522,58 @@ export interface ResponseCartCostOverride {
 	does_override_original_cost: boolean;
 }
 
+export type IntroductoryOfferUnit = 'day' | 'week' | 'month' | 'year' | 'indefinite';
+
 export interface IntroductoryOfferTerms {
+	/**
+	 * True if the introductory offer is active on this product.
+	 */
 	enabled: boolean;
-	interval_unit: string;
+
+	/**
+	 * The unit that, when combined with `interval_count`, determines how long
+	 * the introductory offer disount should be applied.
+	 */
+	interval_unit: IntroductoryOfferUnit;
+
+	/**
+	 * The count that, when combined with `interval_unit`, determines how long
+	 * the introductory offer lasts. eg: if `interval_count` is 3 and
+	 * `interval_unit` is 'month', the discount lasts for 3 months (but always
+	 * ends before the next renewal unless `transition_after_renewal_count` is
+	 * set). If the `interval_unit` is 'month' and the product normally renews
+	 * yearly, then the first renewal will be based on `interval_count` (eg:
+	 * after 3 months) instead.
+	 *
+	 * Note that we sometimes renew products a 30 days before their expiry
+	 * date, so in the above example, we would likely renew at the 2 month mark
+	 * instead.
+	 */
 	interval_count: number;
+
+	/**
+	 * If the introductory offer is not active (if `enabled` is false), the
+	 * reason will probably be a human-readable reason why (although it may not
+	 * exist even then).
+	 */
 	reason?: string;
+
+	/**
+	 * The number of times the introductory offer cost and period will be used
+	 * during renewals before using the regular cost and period. If this is 0,
+	 * the discount will last just for the initial purchase; otherwise it will
+	 * last for additional renewals also.
+	 */
 	transition_after_renewal_count: number;
+
+	/**
+	 * True if the last discounted renewal will subtract the introductory offer
+	 * period from the full period when calculating the price. For example: if
+	 * you provide a 3 month free trial on a yearly plan, the first renewal
+	 * would only cover 9 months (12 – 3 months). This reduced period is also
+	 * reflected in the renewal price, as the user will only pay for the 9
+	 * months instead of the full year.
+	 */
 	should_prorate_when_offer_ends: boolean;
 }
 
@@ -598,6 +613,7 @@ export interface ResponseCartProductExtra {
 	afterPurchaseUrl?: string;
 	isJetpackCheckout?: boolean;
 	isAkismetSitelessCheckout?: boolean;
+	isMarketplaceSitelessCheckout?: boolean;
 
 	/**
 	 * Marketplace properties
@@ -620,6 +636,8 @@ export interface RequestCartProductExtra extends ResponseCartProductExtra {
 	purchaseId?: string;
 	isAkismetSitelessCheckout?: boolean;
 	isJetpackCheckout?: boolean;
+	isMarketplaceSitelessCheckout?: boolean;
+	intentId?: number;
 	isGiftPurchase?: boolean;
 	jetpackSiteSlug?: string;
 	jetpackPurchaseToken?: string;
@@ -708,8 +726,10 @@ export interface TermsOfServiceRecordArgsBase {
 	product_meta: string;
 	product_name: string;
 	renewal_price: string;
+	renewal_price_integer: number;
 	is_renewal_price_prorated: boolean;
 	regular_renewal_price: string;
+	regular_renewal_price_integer: number;
 	email?: string;
 	card_type?: string;
 	card_last_4?: string;

@@ -1,6 +1,7 @@
 /**
  * @jest-environment jsdom
  */
+import { RazorpayHookProvider } from '@automattic/calypso-razorpay';
 import { StripeHookProvider } from '@automattic/calypso-stripe';
 import {
 	CheckoutProvider,
@@ -20,8 +21,32 @@ import {
 	createCreditCardPaymentMethodStore,
 	createCreditCardMethod,
 } from 'calypso/my-sites/checkout/src/payment-methods/credit-card';
-import { createTestReduxStore, fetchStripeConfiguration, stripeConfiguration } from './util';
+import {
+	createTestReduxStore,
+	fetchRazorpayConfiguration,
+	fetchStripeConfiguration,
+	stripeConfiguration,
+} from './util';
 import type { CardStoreType } from 'calypso/my-sites/checkout/src/payment-methods/credit-card/types';
+
+jest.mock( '@stripe/react-stripe-js', () => {
+	const mockUseElements = () => ( {
+		getElement: () => {
+			// The credit card payment method submit button requires passing
+			// the cardNumberElement to the payment processor. If the element
+			// cannot be found, it displays an error to the user. In order to
+			// test that the payment processor is called, we must mock the
+			// element, but mocking the whole field itself is quite difficult,
+			// so instead here we just mock the `useElements()` function which
+			// the submit button (`CreditCardPayButton`) uses to find the field
+			// and return a mock object.
+			return {};
+		},
+	} );
+
+	const stripe = jest.requireActual( '@stripe/react-stripe-js' );
+	return { ...stripe, useElements: mockUseElements };
+} );
 
 function TestWrapper( { paymentProcessors = undefined } ) {
 	const [ store ] = useState( () => createTestReduxStore() );
@@ -46,17 +71,19 @@ function TestWrapperInner( { paymentProcessors = undefined } ) {
 		<>
 			<GlobalNotices />
 			<StripeHookProvider fetchStripeConfiguration={ fetchStripeConfiguration }>
-				<CheckoutProvider
-					paymentMethods={ [ paymentMethod ] }
-					selectFirstAvailablePaymentMethod
-					paymentProcessors={ paymentProcessors ?? {} }
-				>
-					<CheckoutStepGroup>
-						<CompleteCreditCardFields />
-						<PaymentMethodStep />
-						<CheckoutFormSubmit />
-					</CheckoutStepGroup>
-				</CheckoutProvider>
+				<RazorpayHookProvider fetchRazorpayConfiguration={ fetchRazorpayConfiguration }>
+					<CheckoutProvider
+						paymentMethods={ [ paymentMethod ] }
+						selectFirstAvailablePaymentMethod
+						paymentProcessors={ paymentProcessors ?? {} }
+					>
+						<CheckoutStepGroup>
+							<CompleteCreditCardFields />
+							<PaymentMethodStep />
+							<CheckoutFormSubmit />
+						</CheckoutStepGroup>
+					</CheckoutProvider>
+				</RazorpayHookProvider>
 			</StripeHookProvider>
 		</>
 	);
@@ -134,7 +161,7 @@ describe( 'Credit card payment method', () => {
 				countryCode: '',
 				postalCode: '',
 				stripe: null,
-				cardNumberElement: undefined,
+				cardNumberElement: {},
 				stripeConfiguration,
 				useForAllSubscriptions: false,
 			} );

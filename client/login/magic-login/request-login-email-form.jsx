@@ -1,3 +1,4 @@
+import { FormLabel } from '@automattic/components';
 import { englishLocales } from '@automattic/i18n-utils';
 import { hasTranslation } from '@wordpress/i18n';
 import { localize } from 'i18n-calypso';
@@ -6,7 +7,6 @@ import { createRef, Component } from 'react';
 import { connect } from 'react-redux';
 import FormButton from 'calypso/components/forms/form-button';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
-import FormLabel from 'calypso/components/forms/form-label';
 import FormTextInput from 'calypso/components/forms/form-text-input';
 import LoggedOutForm from 'calypso/components/logged-out-form';
 import Notice from 'calypso/components/notice';
@@ -174,7 +174,7 @@ class RequestLoginEmailForm extends Component {
 		} = this.props;
 
 		const usernameOrEmail = this.getUsernameOrEmailFromState();
-		const siteIcon = this.state.site?.icon?.ico ?? this.state.site?.icon?.img ?? null;
+		const siteIcon = this.state.site?.icon?.img ?? this.state.site?.icon?.ico ?? null;
 
 		if ( showCheckYourEmail ) {
 			const emailAddress = usernameOrEmail.indexOf( '@' ) > 0 ? usernameOrEmail : null;

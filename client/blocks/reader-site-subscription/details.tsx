@@ -2,7 +2,7 @@ import { SubscriptionManager, Reader } from '@automattic/data-stores';
 import { useLocale } from '@automattic/i18n-utils';
 import { Button } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { SiteIcon } from 'calypso/blocks/site-icon';
 import FormattedHeader from 'calypso/components/formatted-header';
 import TimeSince from 'calypso/components/time-since';
@@ -42,13 +42,13 @@ const SiteSubscriptionDetails = ( {
 
 	const {
 		mutate: subscribe,
-		isLoading: subscribing,
+		isPending: subscribing,
 		isSuccess: subscribed,
 		error: subscribeError,
 	} = SubscriptionManager.useSiteSubscribeMutation();
 	const {
 		mutate: unsubscribe,
-		isLoading: unsubscribing,
+		isPending: unsubscribing,
 		isSuccess: unsubscribed,
 		error: unsubscribeError,
 	} = SubscriptionManager.useSiteUnsubscribeMutation();
@@ -73,12 +73,12 @@ const SiteSubscriptionDetails = ( {
 			const newPaymentPlans: PaymentPlan[] = [];
 
 			paymentDetails.forEach( ( paymentDetail: Reader.SiteSubscriptionPaymentDetails ) => {
-				const { ID, currency, renewal_price, renew_interval } = paymentDetail;
+				const { is_gift, ID, currency, renewal_price, renew_interval } = paymentDetail;
 				const renewalPrice = formatRenewalPrice( renewal_price, currency );
 				const when = getPaymentInterval( renew_interval );
 				const renewalDate = formatRenewalDate( paymentDetail.end_date, localeSlug );
-
 				newPaymentPlans.push( {
+					is_gift: is_gift,
 					id: ID,
 					renewalPrice: `${ renewalPrice }${ when }`,
 					renewalDate,
@@ -88,6 +88,18 @@ const SiteSubscriptionDetails = ( {
 			setPaymentPlans( newPaymentPlans );
 		}
 	}, [ localeSlug, paymentDetails ] );
+
+	const areAllPaymentsGifts = useMemo( () => {
+		if ( paymentDetails && paymentDetails.length ) {
+			for ( const plan in paymentPlans ) {
+				if ( ! paymentPlans[ plan ].is_gift ) {
+					return false;
+				}
+			}
+			return true;
+		}
+		return false; // No payments
+	}, [ paymentPlans ] );
 
 	const onClickCancelSubscriptionButton = () => {
 		if ( paymentPlans && !! paymentPlans.length ) {
@@ -257,18 +269,29 @@ const SiteSubscriptionDetails = ( {
 							</dd>
 						</dl>
 						{ paymentPlans &&
-							paymentPlans.map( ( { id, renewalPrice, renewalDate } ) => (
-								<dl className="site-subscription-info__list" key={ id }>
-									<dt>{ translate( 'Plan' ) }</dt>
-									<dd>{ renewalPrice }</dd>
-									{ renewalDate && (
-										<>
-											<dt>{ translate( 'Billing period' ) }</dt>
-											<dd>{ translate( 'Renews on %s', { args: [ renewalDate ] } ) }</dd>
-										</>
-									) }
-								</dl>
-							) ) }
+							paymentPlans.map( ( { is_gift, id, renewalPrice, renewalDate } ) => {
+								if ( is_gift ) {
+									return (
+										<dl className="site-subscription-info__list" key={ id }>
+											<dt>{ translate( 'Gift' ) }</dt>
+											<dd></dd>
+										</dl>
+									);
+								}
+
+								return (
+									<dl className="site-subscription-info__list" key={ id }>
+										<dt>{ translate( 'Plan' ) }</dt>
+										<dd>{ renewalPrice }</dd>
+										{ renewalDate && (
+											<>
+												<dt>{ translate( 'Billing period' ) }</dt>
+												<dd>{ translate( 'Renews on %s', { args: [ renewalDate ] } ) }</dd>
+											</>
+										) }
+									</dl>
+								);
+							} ) }
 					</div>
 
 					<div className="site-subscription-page__button-container">
@@ -284,7 +307,7 @@ const SiteSubscriptionDetails = ( {
 						<Button
 							className="site-subscription-page__unsubscribe-button"
 							onClick={ onClickCancelSubscriptionButton }
-							disabled={ unsubscribing }
+							disabled={ unsubscribing || areAllPaymentsGifts }
 						>
 							{ translate( 'Cancel subscription' ) }
 						</Button>

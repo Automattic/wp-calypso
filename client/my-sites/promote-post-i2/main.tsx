@@ -14,12 +14,11 @@ import {
 	BlazePagedItem,
 	Campaign,
 	CampaignQueryResult,
-	PostQueryResult,
 } from 'calypso/data/promote-post/types';
 import useCampaignsQueryPaged from 'calypso/data/promote-post/use-promote-post-campaigns-query-paged';
 import useCreditBalanceQuery from 'calypso/data/promote-post/use-promote-post-credit-balance-query';
 import usePostsQueryPaged, {
-	getSearchOptionsQueryParams,
+	usePostsQueryStats,
 } from 'calypso/data/promote-post/use-promote-post-posts-query-paged';
 import { addHotJarScript } from 'calypso/lib/analytics/hotjar';
 import CampaignsList from 'calypso/my-sites/promote-post-i2/components/campaigns-list';
@@ -36,11 +35,12 @@ import BlazePageViewTracker from './components/blaze-page-view-tracker';
 import CreditBalance from './components/credit-balance';
 import MainWrapper from './components/main-wrapper';
 import PostsListBanner from './components/posts-list-banner';
+import WooBanner from './components/woo-banner';
 import useOpenPromoteWidget from './hooks/use-open-promote-widget';
 import { getAdvertisingDashboardPath } from './utils';
 
 export const TAB_OPTIONS = [ 'posts', 'campaigns', 'credits' ] as const;
-
+const isWooStore = config.isEnabled( 'is_running_in_woo_site' );
 export type TabType = ( typeof TAB_OPTIONS )[ number ];
 export type TabOption = {
 	id: TabType;
@@ -71,6 +71,9 @@ export type PagedBlazeSearchResponse = {
 
 const POST_DEFAULT_SEARCH_OPTIONS: SearchOptions = {
 	order: SORT_OPTIONS_DEFAULT,
+	filter: {
+		postType: isWooStore ? 'product' : '',
+	},
 };
 
 export default function PromotedPosts( { tab }: Props ) {
@@ -118,6 +121,9 @@ export default function PromotedPosts( { tab }: Props ) {
 	);
 
 	/* query for posts */
+	const { data: postsStatsData } = usePostsQueryStats( selectedSiteId ?? 0 );
+	const { total_items: totalPostsUnfiltered } = postsStatsData || {};
+
 	const [ postsSearchOptions, setPostsSearchOptions ] = useState< SearchOptions >(
 		POST_DEFAULT_SEARCH_OPTIONS
 	);
@@ -134,19 +140,9 @@ export default function PromotedPosts( { tab }: Props ) {
 
 	const postsIsLoadingNewContent = postsIsLoading || postIsRefetching;
 
-	const initialPostQueryState = queryClient.getQueryState( [
-		'promote-post-posts',
-		selectedSiteId,
-		getSearchOptionsQueryParams( POST_DEFAULT_SEARCH_OPTIONS ),
-	] );
-
 	const { has_more_pages: postsHasMorePages, items: posts } = getPagedBlazeSearchData(
 		'posts',
 		postsData
-	);
-	const { total_items: totalPostsUnfiltered } = getPagedBlazeSearchData(
-		'posts',
-		initialPostQueryState?.data as InfiniteData< PostQueryResult >
 	);
 
 	const tabs: TabOption[] = [
@@ -199,6 +195,8 @@ export default function PromotedPosts( { tab }: Props ) {
 
 	const showBanner = ! campaignsIsLoading && ( totalCampaignsUnfiltered || 0 ) < 3;
 
+	const isWooBlaze = config.isEnabled( 'is_running_in_woo_site' );
+
 	// Add Hotjar script to the page.
 	addHotJarScript();
 
@@ -216,9 +214,13 @@ export default function PromotedPosts( { tab }: Props ) {
 					`${ baseClassName }_${ isMobile ? 'mobile' : 'desktop' }`
 				) }
 			>
-				{ translate(
-					'Use Blaze to grow your audience by promoting your content across Tumblr and WordPress.com.'
-				) }
+				{ isWooBlaze
+					? translate(
+							'Increase your sales by promoting your products and pages across millions of blogs and sites.'
+					  )
+					: translate(
+							'Use Blaze to grow your audience by promoting your content across Tumblr and WordPress.com.'
+					  ) }
 			</div>
 		);
 	};
@@ -234,7 +236,9 @@ export default function PromotedPosts( { tab }: Props ) {
 						'advertising__page-header_has-banner': showBanner,
 					} ) }
 					children={ headerSubtitle( false ) /* for desktop */ }
-					headerText={ translate( 'Advertising' ) }
+					headerText={
+						isWooBlaze ? translate( 'Blaze for WooCommerce' ) : translate( 'Advertising' )
+					}
 					align="left"
 				/>
 
@@ -252,7 +256,7 @@ export default function PromotedPosts( { tab }: Props ) {
 			</div>
 			{ headerSubtitle( true ) /* for mobile */ }
 
-			{ showBanner && <PostsListBanner /> }
+			{ showBanner && ( isWooBlaze ? <WooBanner /> : <PostsListBanner /> ) }
 
 			<PromotePostTabBar tabs={ tabs } selectedTab={ selectedTab } />
 

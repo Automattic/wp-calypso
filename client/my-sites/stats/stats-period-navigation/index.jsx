@@ -25,6 +25,7 @@ import {
 	STATS_PERIOD,
 } from 'calypso/my-sites/stats/constants';
 import { recordGoogleEvent as recordGoogleEventAction } from 'calypso/state/analytics/actions';
+import { toggleUpsellModal } from 'calypso/state/stats/paid-stats-upsell/actions';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { shouldGateStats } from '../hooks/use-should-gate-stats';
 import NavigationArrows from '../navigation-arrows';
@@ -165,6 +166,11 @@ class StatsPeriodNavigation extends PureComponent {
 		this.props.onChangeLegend( activeLegend );
 	};
 
+	onGatedHandler = ( events, source, statType ) => {
+		events.forEach( ( event ) => recordTracksEvent( event.name, event.params ) );
+		this.props.toggleUpsellModal( this.props.siteId, statType );
+	};
+
 	render() {
 		const {
 			children,
@@ -180,8 +186,8 @@ class StatsPeriodNavigation extends PureComponent {
 			dateRange,
 			shortcutList,
 			gateDateControl,
-			siteId,
 			intervals,
+			siteId,
 		} = this.props;
 
 		const isToday = moment( date ).isSame( moment(), period );
@@ -200,12 +206,13 @@ class StatsPeriodNavigation extends PureComponent {
 							queryParams={ queryParams }
 							dateRange={ dateRange }
 							shortcutList={ shortcutList }
+							onGatedHandler={ this.onGatedHandler }
 							overlay={
 								gateDateControl && (
 									<StatsCardUpsell
 										className="stats-module__upsell"
-										siteId={ siteId }
 										statType={ STATS_FEATURE_DATE_CONTROL }
+										siteId={ siteId }
 									/>
 								)
 							}
@@ -233,6 +240,7 @@ class StatsPeriodNavigation extends PureComponent {
 								period={ period }
 								queryParams={ queryParams }
 								intervals={ intervals }
+								onGatedHandler={ this.onGatedHandler }
 							/>
 						</div>
 					</div>
@@ -253,11 +261,6 @@ class StatsPeriodNavigation extends PureComponent {
 	}
 }
 
-const onGatedClick = ( siteId ) => ( events, source ) => {
-	events.forEach( ( event ) => recordTracksEvent( event.name, event.params ) );
-	page( `/stats/purchase/${ siteId }?productType=personal&from=${ source }` );
-};
-
 const connectComponent = connect(
 	( state, { period } ) => {
 		const siteId = getSelectedSiteId( state );
@@ -276,7 +279,6 @@ const connectComponent = connect(
 				period: STATS_PERIOD.DAY,
 				isGated: shouldGateStats( state, siteId, STATS_FEATURE_DATE_CONTROL_LAST_7_DAYS ),
 				statType: STATS_FEATURE_DATE_CONTROL_LAST_7_DAYS,
-				onGatedClick: onGatedClick( siteId ),
 			},
 			{
 				id: 'last_30_days',
@@ -286,7 +288,6 @@ const connectComponent = connect(
 				period: STATS_PERIOD.DAY,
 				isGated: shouldGateStats( state, siteId, STATS_FEATURE_DATE_CONTROL_LAST_30_DAYS ),
 				statType: STATS_FEATURE_DATE_CONTROL_LAST_30_DAYS,
-				onGatedClick: onGatedClick( siteId ),
 			},
 			{
 				id: 'last_3_months',
@@ -296,7 +297,6 @@ const connectComponent = connect(
 				period: STATS_PERIOD.WEEK,
 				isGated: shouldGateStats( state, siteId, STATS_FEATURE_DATE_CONTROL_LAST_90_DAYS ),
 				statType: STATS_FEATURE_DATE_CONTROL_LAST_90_DAYS,
-				onGatedClick: onGatedClick( siteId ),
 			},
 			{
 				id: 'last_year',
@@ -306,7 +306,6 @@ const connectComponent = connect(
 				period: STATS_PERIOD.MONTH,
 				isGated: shouldGateStats( state, siteId, STATS_FEATURE_DATE_CONTROL_LAST_YEAR ),
 				statType: STATS_FEATURE_DATE_CONTROL_LAST_YEAR,
-				onGatedClick: onGatedClick( siteId ),
 			},
 		];
 		const intervals = {
@@ -315,34 +314,30 @@ const connectComponent = connect(
 				label: translate( 'Days' ),
 				isGated: shouldGateStats( state, siteId, STATS_FEATURE_INTERVAL_DROPDOWN_DAY ),
 				statType: STATS_FEATURE_INTERVAL_DROPDOWN_DAY,
-				onGatedClick: onGatedClick( siteId ),
 			},
 			[ STATS_PERIOD.WEEK ]: {
 				id: STATS_PERIOD.WEEK,
 				label: translate( 'Weeks' ),
 				isGated: shouldGateStats( state, siteId, STATS_FEATURE_INTERVAL_DROPDOWN_WEEK ),
 				statType: STATS_FEATURE_INTERVAL_DROPDOWN_WEEK,
-				onGatedClick: onGatedClick( siteId ),
 			},
 			[ STATS_PERIOD.MONTH ]: {
 				id: STATS_PERIOD.MONTH,
 				label: translate( 'Months' ),
 				isGated: shouldGateStats( state, siteId, STATS_FEATURE_INTERVAL_DROPDOWN_MONTH ),
 				statType: STATS_FEATURE_INTERVAL_DROPDOWN_MONTH,
-				onGatedClick: onGatedClick( siteId ),
 			},
 			[ STATS_PERIOD.YEAR ]: {
 				id: STATS_PERIOD.YEAR,
 				label: translate( 'Years' ),
 				isGated: shouldGateStats( state, siteId, STATS_FEATURE_INTERVAL_DROPDOWN_YEAR ),
 				statType: STATS_FEATURE_INTERVAL_DROPDOWN_YEAR,
-				onGatedClick: onGatedClick( siteId ),
 			},
 		};
 
-		return { siteId, shortcutList, gateDateControl, gatePeriodInterval, intervals };
+		return { shortcutList, gateDateControl, gatePeriodInterval, intervals, siteId };
 	},
-	{ recordGoogleEvent: recordGoogleEventAction }
+	{ recordGoogleEvent: recordGoogleEventAction, toggleUpsellModal }
 );
 
 export default flowRight(

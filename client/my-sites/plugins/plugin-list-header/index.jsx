@@ -1,5 +1,5 @@
 import { WPCOM_FEATURES_MANAGE_PLUGINS } from '@automattic/calypso-products';
-import { Button, Gridicon } from '@automattic/components';
+import { Button, Gridicon, SelectDropdown } from '@automattic/components';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
 import { debounce } from 'lodash';
@@ -10,7 +10,6 @@ import { connect } from 'react-redux';
 import BulkSelect from 'calypso/components/bulk-select';
 import ButtonGroup from 'calypso/components/button-group';
 import SectionHeader from 'calypso/components/section-header';
-import SelectDropdown from 'calypso/components/select-dropdown';
 import { gaRecordEvent } from 'calypso/lib/analytics/ga';
 import getSites from 'calypso/state/selectors/get-sites';
 import isSiteWpcomAtomic from 'calypso/state/selectors/is-site-wpcom-atomic';

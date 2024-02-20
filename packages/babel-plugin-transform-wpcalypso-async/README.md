@@ -12,7 +12,7 @@ Example Babel config file:
 
 ```json
 {
-	"plugins": [ [ "@automattic/transform-wpcalypso-async", { "async": true } ] ]
+	"plugins": [ "@automattic/transform-wpcalypso-async" ]
 }
 ```
 
@@ -22,19 +22,18 @@ See [Babel options documentation](http://babeljs.io/docs/usage/options/) for mor
 
 `asyncRequire` will transform to one of:
 
-- dynamic `import()` if `async` plugin option is `true`
-- static `require` if `async` plugin option is `false` or unset
-- nothing (will be removed and no module will be imported) if the `ignore` plugin option is `true`
+- dynamic `import()` if the `ignore` plugin option is not `true`
+- a rejected `Promise` that throws an error that the import is ignored, if the `ignore` plugin option is `true`
 
-`asyncRequire` expects one required argument, with an optional callback:
+`asyncRequire` expects one required argument, the name of the imported module.
 
 ```js
-asyncRequire( 'calypso/components/search', ( Search ) => {
+asyncRequire( 'calypso/components/search' ).then( ( { default: Search } ) => {
 	console.log( Search );
 } );
 ```
 
-`<AsyncLoad />` will transform its `require` string prop to a function invoking `asyncRequire` when called.
+`<AsyncLoad />` will transform its `require` string prop to a function invoking a dynamic `import`, or throwing an error when the `ignore` option is enabled.
 
 ```js
 // Before:
@@ -44,15 +43,11 @@ asyncRequire( 'calypso/components/search', ( Search ) => {
 
 ```js
 // After:
+const ref = () => import( 'calypso/components/search' );
 
-<AsyncLoad
-	require={ function ( callback ) {
-		asyncRequire( 'calypso/components/search', callback );
-	} }
-/>;
+<AsyncLoad require={ ref } />;
 ```
 
 ## Options
 
-- `async` - controls whether transformations applied by the plugin should use a dynamic ESM `import` statement that enables [webpack code-splitting](https://webpack.github.io/docs/code-splitting.html) or the synchronous CommonJS `require` function. This defaults to `false`.
-- `ignore` - if set to `true`, the `asyncRequire` call will be completely removed, and `AsyncLoad` will show the placeholder forever and won't do any import. Useful for server side rendering where the render is one-pass and doesn't wait for any imports to finish.
+- `ignore` - if set to `true`, the `asyncRequire` call will be returning a rejected `Promise`, and `AsyncLoad` will show the placeholder forever and won't do any import. Useful for server side rendering where the render is one-pass and doesn't wait for any imports to finish.

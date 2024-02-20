@@ -132,11 +132,12 @@ export default function UpsellStep( { upsell, site, purchase, ...props }: StepPr
 						} );
 						page( getLiveChatUrl( upsell, site, purchase ) );
 
-						openChatWidget(
-							"User is contacting us from pre-cancellation form. Cancellation reason they've given: " +
+						openChatWidget( {
+							message:
+								"User is contacting us from pre-cancellation form. Cancellation reason they've given: " +
 								props.cancellationReason,
-							site.URL
-						);
+							siteUrl: site.URL,
+						} );
 						props.closeDialog();
 					} }
 					onDecline={ props.onDeclineUpsell }

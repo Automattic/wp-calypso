@@ -27,7 +27,9 @@ body.is-section-promote-post-i2 {
 		&-likes,
 		&-comments,
 		&-view,
-		&-promote {
+		&-promote,
+		&-sku,
+		&-price {
 			vertical-align: middle;
 		}
 
@@ -88,6 +90,16 @@ body.is-section-promote-post-i2 {
 			text-decoration-line: underline;
 			width: 5.4%;
 		}
+
+		&-price {
+			font-size: 0.875rem;
+			width: 10%;
+		}
+
+		&-sku {
+			font-size: 0.875rem;
+			width: 10%;
+		}
 	}
 
 	// View link
@@ -113,6 +125,10 @@ body.is-section-promote-post-i2 {
 
 		&__post-promote-button {
 			border-radius: 4px;
+			border: 1.5px solid var(--color-accent);
+			color: var(--color-accent);
+			background-color: var(--color-surface);
+			box-shadow: none;
 		}
 	}
 
@@ -176,6 +192,9 @@ body.is-section-promote-post-i2 {
 			&-likes,
 			&-comments,
 			&-view,
+			&-sku,
+			&-price,
+			&-visitors,
 			&-promote {
 				display: none;
 			}

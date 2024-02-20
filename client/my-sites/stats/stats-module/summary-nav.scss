@@ -105,6 +105,10 @@ $summary-nav-swap-width: 661px;
 		padding: 0;
 	}
 
+	.stats-summary-nav__gated-icon {
+		vertical-align: middle;
+	}
+
 	@media ( max-width: $break-medium ) {
 		padding: $summary-medium-padding;
 	}

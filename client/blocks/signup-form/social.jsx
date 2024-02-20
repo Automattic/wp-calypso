@@ -5,9 +5,10 @@ import { connect } from 'react-redux';
 import { SocialAuthenticationForm } from 'calypso/blocks/authentication';
 import { isWooOAuth2Client } from 'calypso/lib/oauth2-clients';
 import { login } from 'calypso/lib/paths';
-import { isWpccFlow } from 'calypso/signup/utils';
+import { isWpccFlow } from 'calypso/signup/is-flow';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getCurrentOAuth2Client } from 'calypso/state/oauth2-clients/ui/selectors';
+import getCurrentQueryArguments from 'calypso/state/selectors/get-current-query-arguments';
 import getCurrentRoute from 'calypso/state/selectors/get-current-route';
 import isWooCommerceCoreProfilerFlow from 'calypso/state/selectors/is-woocommerce-core-profiler-flow';
 
@@ -33,13 +34,11 @@ class SocialSignupForm extends Component {
 			return;
 		}
 
-		let extraUserData = {};
+		const extraUserData = { is_dev_account: this.props.isDevAccount };
 
 		if ( response.user ) {
-			extraUserData = {
-				user_name: response.user.name,
-				user_email: response.user.email,
-			};
+			extraUserData.user_name = response.user.name;
+			extraUserData.user_email = response.user.email;
 		}
 
 		this.props.handleResponse( 'apple', null, response.id_token, extraUserData );
@@ -54,8 +53,13 @@ class SocialSignupForm extends Component {
 			social_account_type: 'google',
 		} );
 
-		this.props.handleResponse( 'google', tokens.access_token, tokens.id_token );
+		this.props.handleResponse( 'google', tokens.access_token, tokens.id_token, {
+			is_dev_account: this.props.isDevAccount,
+		} );
 	};
+
+	// eslint-disable-next-line no-unused-vars
+	handleGitHubResponse = ( response ) => {};
 
 	trackSocialSignup = ( service ) => {
 		this.props.recordTracksEvent( 'calypso_signup_social_button_click', {
@@ -102,6 +106,7 @@ class SocialSignupForm extends Component {
 			<SocialAuthenticationForm
 				compact={ this.props.compact }
 				handleGoogleResponse={ this.handleGoogleResponse }
+				handleGitHubResponse={ this.handleGitHubResponse }
 				handleAppleResponse={ this.handleAppleResponse }
 				getRedirectUri={ this.getRedirectUri }
 				trackLoginAndRememberRedirect={ this.trackLoginAndRememberRedirect }
@@ -118,12 +123,17 @@ class SocialSignupForm extends Component {
 }
 
 export default connect(
-	( state ) => ( {
-		currentRoute: getCurrentRoute( state ),
-		oauth2Client: getCurrentOAuth2Client( state ),
-		isWoo:
-			isWooOAuth2Client( getCurrentOAuth2Client( state ) ) ||
-			isWooCommerceCoreProfilerFlow( state ),
-	} ),
+	( state ) => {
+		const query = getCurrentQueryArguments( state );
+
+		return {
+			currentRoute: getCurrentRoute( state ),
+			oauth2Client: getCurrentOAuth2Client( state ),
+			isDevAccount: query?.ref === 'developer-lp',
+			isWoo:
+				isWooOAuth2Client( getCurrentOAuth2Client( state ) ) ||
+				isWooCommerceCoreProfilerFlow( state ),
+		};
+	},
 	{ recordTracksEvent }
 )( localize( SocialSignupForm ) );

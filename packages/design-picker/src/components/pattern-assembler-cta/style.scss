@@ -29,7 +29,6 @@
 		padding: 96px 64px;
 	}
 
-
 	@media ( min-width: 1600px ) {
 		flex-direction: column;
 	}
@@ -39,6 +38,7 @@
 		display: flex;
 		flex-direction: column;
 		flex-grow: 1;
+		flex-shrink: 0;
 		gap: 24px;
 
 		@include break-wide {
@@ -117,36 +117,31 @@
 	}
 
 	.pattern-assembler-cta__button {
-		background-color: #fc8f65;
-		border-color: #fc8f65;
+		background-color: #010101;
+		border-color: #010101;
 		border-radius: 4px;
-		color: #1d2327;
 		letter-spacing: -0.15px;
 		line-height: 20px;
 		padding: 10px 24px;
 
-		&:hover {
-			background-color: #d67a56;
-			border-color: #d67a56;
-			color: #1d2327;
+		&:hover,
+		&:focus {
+			background-color: #333;
+			border-color: #333;
 		}
 	}
 
 	.pattern-assembler-cta__image-wrapper {
-		flex-grow: 1;
 		padding-left: 35px;
 		text-align: right;
-
-		@include break-wide {
-			flex-grow: 0;
-		}
-
-		@media ( min-width: 1600px ) {
-			margin: 0;
-		}
 	}
 
 	.pattern-assembler-cta__image {
-		width: 405px;
+		max-width: 405px;
+		width: 100%;
+
+		@include break-wide {
+			min-width: 380px;
+		}
 	}
 }

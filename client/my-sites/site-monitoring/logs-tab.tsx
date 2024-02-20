@@ -2,6 +2,7 @@ import { ToggleControl } from '@wordpress/components';
 import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
 import { useCallback, useEffect, useState } from 'react';
+import QuerySiteSettings from 'calypso/components/data/query-site-settings';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import Pagination from 'calypso/components/pagination';
 import { useSiteLogsQuery, FilterType } from 'calypso/data/hosting/use-site-logs-query';
@@ -196,6 +197,7 @@ export const LogsTab = ( {
 
 	return (
 		<div className="site-logs-container">
+			{ siteId && <QuerySiteSettings siteId={ siteId } /> }
 			<SiteLogsToolbar
 				logType={ logType }
 				startDateTime={ dateRange.startTime }

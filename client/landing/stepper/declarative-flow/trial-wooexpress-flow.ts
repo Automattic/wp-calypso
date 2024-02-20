@@ -5,19 +5,13 @@ import { useEffect } from 'react';
 import { getLocaleFromQueryParam, getLocaleFromPathname } from 'calypso/boot/locale';
 import recordGTMDatalayerEvent from 'calypso/lib/analytics/ad-tracking/woo/record-gtm-datalayer-event';
 import { logToLogstash } from 'calypso/lib/logstash';
-import { useSiteSetupFlowProgress } from '../hooks/use-site-setup-flow-progress';
 import { useSiteSlugParam } from '../hooks/use-site-slug-param';
 import { USER_STORE, ONBOARD_STORE, SITE_STORE } from '../stores';
 import { getLoginUrl } from '../utils/path';
 import { recordSubmitStep } from './internals/analytics/record-submit-step';
-import AssignTrialPlanStep from './internals/steps-repository/assign-trial-plan';
+import { STEPS } from './internals/steps';
 import { AssignTrialResult } from './internals/steps-repository/assign-trial-plan/constants';
-import ErrorStep from './internals/steps-repository/error-step';
-import ProcessingStep from './internals/steps-repository/processing-step';
 import { ProcessingResult } from './internals/steps-repository/processing-step/constants';
-import SiteCreationStep from './internals/steps-repository/site-creation-step';
-import WaitForAtomic from './internals/steps-repository/wait-for-atomic';
-import WaitForPluginInstall from './internals/steps-repository/wait-for-plugin-install';
 import { AssertConditionState } from './internals/types';
 import type { AssertConditionResult, Flow, ProvidedDependencies } from './internals/types';
 import type { OnboardSelect, SiteSelect, UserSelect } from '@automattic/data-stores';
@@ -27,12 +21,12 @@ const wooexpress: Flow = {
 
 	useSteps() {
 		return [
-			{ slug: 'siteCreationStep', component: SiteCreationStep },
-			{ slug: 'processing', component: ProcessingStep },
-			{ slug: 'assignTrialPlan', component: AssignTrialPlanStep },
-			{ slug: 'waitForAtomic', component: WaitForAtomic },
-			{ slug: 'waitForPluginInstall', component: WaitForPluginInstall },
-			{ slug: 'error', component: ErrorStep },
+			STEPS.SITE_CREATION_STEP,
+			STEPS.PROCESSING,
+			STEPS.ASSIGN_TRIAL_PLAN,
+			STEPS.WAIT_FOR_ATOMIC,
+			STEPS.WAIT_FOR_PLUGIN_INSTALL,
+			STEPS.ERROR,
 		];
 	},
 	useAssertConditions(): AssertConditionResult {
@@ -108,9 +102,9 @@ const wooexpress: Flow = {
 		};
 
 		// Despite sending a CHECKING state, this function gets called again with the
-		// /setup/wooexpress/siteCreationStep route which has no locale in the path so we need to
+		// /setup/wooexpress/create-site route which has no locale in the path so we need to
 		// redirect off of the first render.
-		// This effects both /setup/wooexpress/<locale> starting points and /setup/wooexpress/siteCreationStep/<locale> urls.
+		// This effects both /setup/wooexpress/<locale> starting points and /setup/wooexpress/create-site/<locale> urls.
 		// The double call also hapens on urls without locale.
 		useEffect( () => {
 			// Log when profiler data does not contain valid data.
@@ -160,11 +154,8 @@ const wooexpress: Flow = {
 		);
 		const siteSlugParam = useSiteSlugParam();
 
-		const { setStepProgress, setPluginsToVerify } = useDispatch( ONBOARD_STORE );
+		const { setPluginsToVerify } = useDispatch( ONBOARD_STORE );
 		setPluginsToVerify( [ 'woocommerce' ] );
-
-		const flowProgress = useSiteSetupFlowProgress( currentStep, intent );
-		setStepProgress( flowProgress );
 
 		const { getSiteIdBySlug, getSiteOption } = useSelect(
 			( select ) => select( SITE_STORE ) as SiteSelect,
@@ -182,7 +173,7 @@ const wooexpress: Flow = {
 			const adminUrl = siteId && getSiteOption( siteId, 'admin_url' );
 
 			switch ( currentStep ) {
-				case 'siteCreationStep': {
+				case 'create-site': {
 					return navigate( 'processing', {
 						currentStep,
 					} );

@@ -1,3 +1,4 @@
+import { isEnabled } from '@automattic/calypso-config';
 import { ListTile, Popover } from '@automattic/components';
 import { useSiteLaunchStatusLabel } from '@automattic/sites';
 import { css } from '@emotion/css';
@@ -147,7 +148,7 @@ export default memo( function SitesTableRow( { site }: SiteTableRowProps ) {
 	const { __ } = useI18n();
 	const translatedStatus = useSiteLaunchStatusLabel( site );
 	const { ref, inView } = useInView( { triggerOnce: true } );
-	const userId = useSelector( ( state ) => getCurrentUserId( state ) );
+	const userId = useSelector( getCurrentUserId );
 
 	const isP2Site = site.options?.is_wpforteams_site;
 	const isWpcomStagingSite = isStagingSite( site );
@@ -176,7 +177,9 @@ export default memo( function SitesTableRow( { site }: SiteTableRowProps ) {
 					leading={
 						<ListTileLeading
 							href={
-								isAtomicSite && siteDefaultInterface( site ) === 'wp-admin'
+								isAtomicSite &&
+								siteDefaultInterface( site ) === 'wp-admin' &&
+								! isEnabled( 'layout/dotcom-nav-redesign' )
 									? getSiteWpAdminUrl( site ) || getDashboardUrl( site.slug )
 									: getDashboardUrl( site.slug )
 							}
@@ -189,7 +192,9 @@ export default memo( function SitesTableRow( { site }: SiteTableRowProps ) {
 						<ListTileTitle>
 							<SiteName
 								href={
-									isAtomicSite && siteDefaultInterface( site ) === 'wp-admin'
+									isAtomicSite &&
+									siteDefaultInterface( site ) === 'wp-admin' &&
+									! isEnabled( 'layout/dotcom-nav-redesign' )
 										? getSiteWpAdminUrl( site ) || getDashboardUrl( site.slug )
 										: getDashboardUrl( site.slug )
 								}

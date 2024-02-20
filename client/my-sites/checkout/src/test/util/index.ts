@@ -42,6 +42,18 @@ export const stripeConfiguration = {
 	setup_intent_id: undefined,
 };
 
+export const razorpayConfiguration = {
+	js_url: 'https://checkout.razorpay.com/v1/checkout.js',
+	options: {
+		key: 'razorpay-public-key',
+		config: {
+			display: {
+				language: 'en',
+			},
+		},
+	},
+};
+
 export const processorOptions = {
 	includeDomainDetails: false,
 	includeGSuiteDetails: false,
@@ -446,6 +458,8 @@ export const professionalEmailMonthly: ResponseCartProduct = {
 
 export const fetchStripeConfiguration = async () => stripeConfiguration;
 
+export const fetchRazorpayConfiguration = async () => razorpayConfiguration;
+
 export function mockSetCartEndpointWith( { currency, locale } ): SetCart {
 	return async ( _: CartKey, requestCart: RequestCart ): Promise< ResponseCart > => {
 		const { products: requestProducts, coupon: requestCoupon } = requestCart;
@@ -468,7 +482,6 @@ export function mockSetCartEndpointWith( { currency, locale } ): SetCart {
 			cart_generated_at_timestamp: 12345,
 			cart_key: 1234,
 			coupon: requestCoupon,
-			coupon_discounts_integer: [],
 			coupon_savings_total_integer: requestCoupon ? 1000 : 0,
 			credits_integer: 0,
 			currency,
@@ -994,9 +1007,7 @@ function convertRequestProductToResponseProduct(
 					currency: currency,
 					is_domain_registration: false,
 					item_original_cost_integer: 14400,
-					item_original_cost_display: 'R$144',
 					item_subtotal_integer: 14400,
-					item_subtotal_display: 'R$144',
 					bill_period: '365',
 					months_per_bill_period: 12,
 					item_tax: 0,
@@ -1013,9 +1024,7 @@ function convertRequestProductToResponseProduct(
 					currency: currency,
 					is_domain_registration: false,
 					item_original_cost_integer: 0,
-					item_original_cost_display: 'R$0',
 					item_subtotal_integer: 0,
-					item_subtotal_display: 'R$0',
 					bill_period: '365',
 					months_per_bill_period: 12,
 					item_tax: 0,
@@ -1032,9 +1041,7 @@ function convertRequestProductToResponseProduct(
 					currency: currency,
 					is_domain_registration: true,
 					item_original_cost_integer: 70,
-					item_original_cost_display: 'R$70',
 					item_subtotal_integer: 70,
-					item_subtotal_display: 'R$70',
 					bill_period: '365',
 					months_per_bill_period: 12,
 					item_tax: 0,
@@ -1051,7 +1058,6 @@ function convertRequestProductToResponseProduct(
 					currency: currency,
 					is_domain_registration: false,
 					item_original_cost_integer: 7000,
-					item_original_cost_display: 'R$70',
 					item_subtotal_integer: 7000,
 					bill_period: '365',
 					months_per_bill_period: 12,
@@ -1073,7 +1079,6 @@ function convertRequestProductToResponseProduct(
 					currency: currency,
 					is_domain_registration: false,
 					item_original_cost_integer: 7000,
-					item_original_cost_display: 'R$70',
 					item_subtotal_integer: 7000,
 					bill_period: '365',
 					months_per_bill_period: 12,
@@ -1348,7 +1353,6 @@ export function getBasicCart(): ResponseCart {
 		total_tax_integer: 700,
 		total_cost_integer: 15600,
 		sub_total_integer: 15600,
-		coupon_discounts_integer: [],
 	};
 }
 
@@ -1553,7 +1557,7 @@ export function getPlansItemsState(): PricedAPIPlan[] {
 			product_slug: jetpackMonthly.product_slug as StorePlanSlug,
 			product_name: jetpackMonthly.product_name,
 			product_name_short: jetpackMonthly.product_name,
-			currency_code: 'USD',
+			currency_code: 'BRL',
 			bill_period: 31,
 			product_type: 'product',
 			raw_price: 14.95,
@@ -1565,7 +1569,7 @@ export function getPlansItemsState(): PricedAPIPlan[] {
 			product_slug: jetpackYearly.product_slug as StorePlanSlug,
 			product_name: jetpackYearly.product_name,
 			product_name_short: jetpackYearly.product_name,
-			currency_code: 'USD',
+			currency_code: 'BRL',
 			bill_period: 365,
 			product_type: 'product',
 			raw_price: 119.4,
@@ -1577,7 +1581,7 @@ export function getPlansItemsState(): PricedAPIPlan[] {
 			product_slug: jetpackBiannual.product_slug as StorePlanSlug,
 			product_name: jetpackBiannual.product_name,
 			product_name_short: jetpackBiannual.product_name,
-			currency_code: 'USD',
+			currency_code: 'BRL',
 			bill_period: 730,
 			product_type: 'product',
 			raw_price: 238.8,
@@ -1799,6 +1803,18 @@ export function mockCreateAccountEndpoint( endpointResponse ) {
 	return endpoint;
 }
 
+export function mockOrderEndpoint( orderId: number, endpointResponse ) {
+	const endpoint = jest.fn();
+	endpoint.mockReturnValue( true );
+
+	nock( 'https://public-api.wordpress.com' )
+		.get( '/rest/v1.1/me/transactions/order/' + orderId, ( body ) => {
+			return endpoint( body );
+		} )
+		.reply( endpointResponse );
+	return endpoint;
+}
+
 export function mockTransactionsEndpoint( transactionsEndpointResponse ) {
 	const transactionsEndpoint = jest.fn();
 	transactionsEndpoint.mockReturnValue( true );
@@ -1829,9 +1845,9 @@ export const mockCreateAccountSiteCreatedResponse = () => [
 	},
 ];
 
-export const mockTransactionsRedirectResponse = () => [
+export const mockTransactionsRedirectResponse = ( orderId?: number ) => [
 	200,
-	{ redirect_url: 'https://test-redirect-url' },
+	{ redirect_url: 'https://test-redirect-url', order_id: orderId },
 ];
 
 export const mockTransactionsSuccessResponse = () => [ 200, { success: 'true' } ];
@@ -2063,7 +2079,7 @@ function buildVariant( data: ResponseCartProduct ): ResponseCartProductVariant {
 				bill_period_in_months: jetpackMonthly.months_per_bill_period as number,
 				product_slug: data.product_slug,
 				currency: jetpackMonthly.currency,
-				price_integer: getVariantPrice( jetpackMonthly ),
+				price_integer: getVariantPrice( jetpackMonthly ) / 2,
 				price_before_discounts_integer: getVariantPrice( jetpackMonthly ),
 				introductory_offer_terms: {},
 			};
@@ -2073,7 +2089,7 @@ function buildVariant( data: ResponseCartProduct ): ResponseCartProductVariant {
 				bill_period_in_months: jetpackYearly.months_per_bill_period as number,
 				product_slug: data.product_slug,
 				currency: jetpackYearly.currency,
-				price_integer: getVariantPrice( jetpackYearly ),
+				price_integer: getVariantPrice( jetpackYearly ) / 2,
 				price_before_discounts_integer: getVariantPrice( jetpackYearly ),
 				introductory_offer_terms: {},
 			};
@@ -2083,7 +2099,7 @@ function buildVariant( data: ResponseCartProduct ): ResponseCartProductVariant {
 				bill_period_in_months: jetpackBiannual.months_per_bill_period as number,
 				product_slug: data.product_slug,
 				currency: jetpackBiannual.currency,
-				price_integer: getVariantPrice( jetpackBiannual ),
+				price_integer: getVariantPrice( jetpackBiannual ) / 2,
 				price_before_discounts_integer: getVariantPrice( jetpackBiannual ),
 				introductory_offer_terms: {},
 			};

@@ -101,7 +101,6 @@ import {
 	FEATURE_PREMIUM_CONTENT_BLOCK,
 	FEATURE_PREMIUM_CUSTOMIZABE_THEMES,
 	FEATURE_PREMIUM_SUPPORT,
-	FEATURE_PREMIUM_THEMES,
 	FEATURE_PRODUCT_BACKUP_DAILY_V2,
 	FEATURE_PRODUCT_BACKUP_REALTIME_V2,
 	FEATURE_PRODUCT_SCAN_DAILY_V2,
@@ -183,7 +182,7 @@ import {
 	FEATURE_STYLE_CUSTOMIZATION,
 	FEATURE_SUPPORT_EMAIL,
 	FEATURE_DESIGN_TOOLS,
-	FEATURE_PREMIUM_THEMES_V2,
+	FEATURE_PREMIUM_THEMES,
 	FEATURE_WORDADS,
 	FEATURE_PLUGINS_THEMES,
 	FEATURE_BANDWIDTH,
@@ -302,8 +301,20 @@ import {
 	FEATURE_GROUP_PAYMENT_TRANSACTION_FEES,
 	FEATURE_COMMISSION_FEE_STANDARD_FEATURES,
 	FEATURE_COMMISSION_FEE_WOO_FEATURES,
+	FEATURE_STATS_PAID,
+	FEATURE_SENSEI_SUPPORT,
+	FEATURE_SENSEI_UNLIMITED,
+	FEATURE_SENSEI_INTERACTIVE,
+	FEATURE_SENSEI_QUIZZES,
+	FEATURE_SENSEI_SELL_COURSES,
+	FEATURE_SENSEI_STORAGE,
+	FEATURE_SENSEI_HOSTING,
+	FEATURE_SENSEI_JETPACK,
+	WPCOM_FEATURES_PREMIUM_THEMES_LIMITED,
+	WPCOM_FEATURES_PREMIUM_THEMES_UNLIMITED,
+	isWooExpressPlan,
 } from '@automattic/calypso-products';
-import { localizeUrl } from '@automattic/i18n-utils';
+import { englishLocales, localizeUrl } from '@automattic/i18n-utils';
 import i18n from 'i18n-calypso';
 import SupportIcon from 'calypso/assets/images/onboarding/support.svg';
 import Theme2Image from 'calypso/assets/images/onboarding/theme-2.jpg';
@@ -509,32 +520,46 @@ export const FEATURES_LIST: FeatureList = {
 
 	[ FEATURE_PREMIUM_THEMES ]: {
 		getSlug: () => FEATURE_PREMIUM_THEMES,
-		getTitle: () => {
-			const localeSlug = i18n.getLocaleSlug();
-			const shouldShowNewString =
-				( localeSlug && config< string >( 'english_locales' ).includes( localeSlug ) ) ||
-				i18n.hasTranslation( 'Unlimited premium themes' );
-
-			return shouldShowNewString
-				? i18n.translate( 'Unlimited premium themes' )
-				: i18n.translate( 'Premium themes' );
+		getTitle: () => i18n.translate( 'Premium themes' ),
+		getIcon: () => <img src={ Theme2Image } alt={ i18n.translate( 'Premium themes' ) } />,
+		getDescription: () => i18n.translate( 'Switch between a collection of premium design themes.' ),
+		getConditionalTitle: ( planSlug ) => {
+			if ( ! planSlug ) {
+				return '';
+			}
+			if ( config.isEnabled( 'themes/tiers' ) && isPersonalPlan( planSlug ) ) {
+				return i18n.translate( 'Dozens of premium themes' );
+			}
+			if (
+				isPremiumPlan( planSlug ) ||
+				isBusinessPlan( planSlug ) ||
+				isEcommercePlan( planSlug )
+			) {
+				return i18n.translate( 'Unlimited premium themes' );
+			}
+			return '—';
 		},
-		getDescription: () => {
-			const localeSlug = i18n.getLocaleSlug();
-			const shouldShowNewString =
-				( localeSlug && config< string >( 'english_locales' ).includes( localeSlug ) ) ||
-				i18n.hasTranslation(
-					'Unlimited access to all of our advanced premium themes, including designs specifically tailored for businesses.'
-				);
+	},
 
-			return shouldShowNewString
-				? i18n.translate(
-						'Unlimited access to all of our advanced premium themes, including designs specifically tailored for businesses.'
-				  )
-				: i18n.translate(
-						'Access to all of our advanced premium theme templates, including templates specifically tailored for businesses.'
-				  );
+	[ WPCOM_FEATURES_PREMIUM_THEMES_UNLIMITED ]: {
+		getSlug: () => WPCOM_FEATURES_PREMIUM_THEMES_UNLIMITED,
+		getTitle: ( { planSlug = undefined } = {} ) => {
+			if ( planSlug && isWooExpressPlan( planSlug ) ) {
+				return i18n.translate( 'Beautiful themes' );
+			}
+			return i18n.translate( 'Unlimited premium themes' );
 		},
+		getDescription: ( { planSlug = undefined } = {} ) => {
+			if ( planSlug && isWooExpressPlan( planSlug ) ) {
+				return i18n.translate( 'Switch between a collection of beautiful themes.' );
+			}
+			return i18n.translate( 'Switch between all of our premium design themes.' );
+		},
+	},
+	[ WPCOM_FEATURES_PREMIUM_THEMES_LIMITED ]: {
+		getSlug: () => WPCOM_FEATURES_PREMIUM_THEMES_LIMITED,
+		getTitle: () => i18n.translate( 'Dozens of premium themes' ),
+		getDescription: () => i18n.translate( 'Switch between a collection of premium design themes.' ),
 	},
 
 	[ FEATURE_MONETISE ]: {
@@ -650,7 +675,7 @@ export const FEATURES_LIST: FeatureList = {
 			i18n.translate( 'Free .blog Domain for one year', {
 				context: 'title',
 			} ),
-		getDescription: ( domainName?: string ) => {
+		getDescription: ( { domainName = undefined } = {} ) => {
 			if ( domainName ) {
 				return i18n.translate( 'Your domain (%s) is included with this plan.', {
 					args: domainName,
@@ -665,7 +690,7 @@ export const FEATURES_LIST: FeatureList = {
 
 	[ FEATURE_CUSTOM_DOMAIN ]: {
 		getSlug: () => FEATURE_CUSTOM_DOMAIN,
-		getTitle: ( domainName?: string ) => {
+		getTitle: ( { domainName = undefined } = {} ) => {
 			if ( domainName ) {
 				return i18n.translate( '%(domainName)s is included', {
 					args: { domainName },
@@ -677,7 +702,7 @@ export const FEATURES_LIST: FeatureList = {
 			} );
 		},
 		getAlternativeTitle: () => i18n.translate( 'Free custom domain' ),
-		getDescription: ( domainName?: string ) => {
+		getDescription: ( { domainName = undefined } = {} ) => {
 			if ( domainName ) {
 				return i18n.translate( 'Your domain (%s) is included with this plan.', {
 					args: domainName,
@@ -1541,7 +1566,7 @@ export const FEATURES_LIST: FeatureList = {
 		getDescription: () => {
 			const localeSlug = i18n.getLocaleSlug();
 			const hasTranslation =
-				( localeSlug && config< string >( 'english_locales' ).includes( localeSlug ) ) ||
+				( localeSlug && englishLocales.includes( localeSlug ) ) ||
 				i18n.hasTranslation(
 					'A set of developer tools that give you more control over your site, simplify debugging, and make it easier to integrate with each step of your workflow.'
 				);
@@ -1945,13 +1970,6 @@ export const FEATURES_LIST: FeatureList = {
 				'Drag and drop your content and layouts with intuitive blocks and patterns.'
 			),
 	},
-	[ FEATURE_PREMIUM_THEMES_V2 ]: {
-		getSlug: () => FEATURE_PREMIUM_THEMES_V2,
-		getTitle: () => i18n.translate( 'Premium themes' ),
-		getIcon: () => <img src={ Theme2Image } alt={ i18n.translate( 'Premium themes' ) } />,
-		getCompareTitle: () => i18n.translate( 'A collection of premium design templates' ),
-		getDescription: () => i18n.translate( 'Switch between a collection of premium design themes.' ),
-	},
 	[ FEATURE_WORDADS ]: {
 		getSlug: () => FEATURE_WORDADS,
 		getTitle: () => i18n.translate( 'Earn with WordAds' ),
@@ -1963,6 +1981,14 @@ export const FEATURES_LIST: FeatureList = {
 		getTitle: () => i18n.translate( 'Install plugins & themes' ),
 		getDescription: () =>
 			i18n.translate( 'Unlock access to 50,000+ plugins, design templates, and integrations.' ),
+	},
+	[ FEATURE_STATS_PAID ]: {
+		getSlug: () => FEATURE_STATS_PAID,
+		getTitle: () => i18n.translate( 'Advanced stats' ),
+		getDescription: () =>
+			i18n.translate(
+				'Deep-dive analytics and conversion data to help you make decisions to grow your site.'
+			),
 	},
 	[ FEATURE_BANDWIDTH ]: {
 		getSlug: () => FEATURE_BANDWIDTH,
@@ -2224,7 +2250,7 @@ export const FEATURES_LIST: FeatureList = {
 		getSlug: () => FEATURE_STATS_JP,
 		getTitle: () => i18n.translate( 'Visitor stats' ),
 		getDescription: () =>
-			i18n.translate( 'At-a-glance and deep-dive data to measure your site’s success.' ),
+			i18n.translate( 'Basic integrated analytics to measure your site’s performance.' ),
 	},
 	[ FEATURE_SPAM_JP ]: {
 		getSlug: () => FEATURE_SPAM_JP,
@@ -2279,7 +2305,7 @@ export const FEATURES_LIST: FeatureList = {
 		getTitle: () => {
 			const localeSlug = i18n.getLocaleSlug();
 			const shouldShowNewString =
-				( localeSlug && config< string >( 'english_locales' ).includes( localeSlug ) ) ||
+				( localeSlug && englishLocales.includes( localeSlug ) ) ||
 				i18n.hasTranslation( 'Paid content gating' );
 
 			return shouldShowNewString
@@ -2672,6 +2698,47 @@ export const FEATURES_LIST: FeatureList = {
 		getDescription: () => '',
 	},
 	/* END: Woo Express Features */
+
+	/* START: Sensei Features */
+	[ FEATURE_SENSEI_SUPPORT ]: {
+		getSlug: () => FEATURE_SENSEI_SUPPORT,
+		getTitle: () => i18n.translate( 'Priority live chat support' ),
+	},
+	[ FEATURE_SENSEI_UNLIMITED ]: {
+		getSlug: () => FEATURE_SENSEI_UNLIMITED,
+		getTitle: () => i18n.translate( 'Unlimited courses and students' ),
+	},
+	[ FEATURE_SENSEI_INTERACTIVE ]: {
+		getSlug: () => FEATURE_SENSEI_INTERACTIVE,
+		getTitle: () => i18n.translate( 'Interactive videos and lessons' ),
+	},
+	[ FEATURE_SENSEI_QUIZZES ]: {
+		getSlug: () => FEATURE_SENSEI_QUIZZES,
+		getTitle: () => i18n.translate( 'Quizzes and certificates' ),
+	},
+	[ FEATURE_SENSEI_SELL_COURSES ]: {
+		getSlug: () => FEATURE_SENSEI_SELL_COURSES,
+		getTitle: () => i18n.translate( 'Sell courses and subscriptions' ),
+	},
+	[ FEATURE_SENSEI_STORAGE ]: {
+		getSlug: () => FEATURE_SENSEI_STORAGE,
+		getTitle: () => {
+			// If we have the new CTA translated or the locale is EN, return the new string, otherwise use the simpler already translated one.
+			return i18n.hasTranslation( '50GB file and video storage' ) ||
+				[ 'en', 'en-gb' ].includes( i18n.getLocaleSlug() || '' )
+				? i18n.translate( '50 GB file and video storage' )
+				: i18n.translate( '50 GB Storage' );
+		},
+	},
+	[ FEATURE_SENSEI_HOSTING ]: {
+		getSlug: () => FEATURE_SENSEI_HOSTING,
+		getTitle: () => i18n.translate( 'Best-in-class hosting' ),
+	},
+	[ FEATURE_SENSEI_JETPACK ]: {
+		getSlug: () => FEATURE_SENSEI_JETPACK,
+		getTitle: () => i18n.translate( 'Advanced Jetpack features' ),
+	},
+	/* END: Sensei Features */
 };
 
 export const getPlanFeaturesObject = ( planFeaturesList?: Array< string > ) => {

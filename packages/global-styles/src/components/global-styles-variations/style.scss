@@ -12,7 +12,7 @@
 
 .global-styles-variations {
 	display: flex;
-	flex-wrap: wrap;
+	flex-wrap: nowrap;
 	gap: 8px;
 	overflow: scroll;
 	padding: 6px 2px;
@@ -24,12 +24,9 @@
 	}
 
 	@include break-large {
+		flex-wrap: wrap;
 		padding-top: 12px;
 		padding-bottom: 2px;
-	}
-
-	@include breakpoint-deprecated( "<960px" ) {
-		flex-wrap: nowrap;
 	}
 
 	.global-styles-variation-container__iframe {

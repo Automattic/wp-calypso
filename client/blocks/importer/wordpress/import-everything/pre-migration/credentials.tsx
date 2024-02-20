@@ -1,5 +1,5 @@
 import { SiteDetails } from '@automattic/data-stores';
-import { Title } from '@automattic/onboarding';
+import { Title, SubTitle } from '@automattic/onboarding';
 import { useTranslate } from 'i18n-calypso';
 import React, { useState } from 'react';
 import { CredentialsForm } from './credentials-form';
@@ -11,13 +11,16 @@ interface Props {
 	targetSite: SiteDetails;
 	migrationTrackingProps: StartImportTrackingProps;
 	startImport: ( props?: StartImportTrackingProps ) => void;
+	allowFtp: boolean;
 }
 
 export function Credentials( props: Props ) {
 	const translate = useTranslate();
-	const { sourceSite, targetSite, migrationTrackingProps, startImport } = props;
+	const { sourceSite, targetSite, migrationTrackingProps, startImport, allowFtp } = props;
 	const [ selectedHost, setSelectedHost ] = useState( 'generic' );
-	const [ selectedProtocol, setSelectedProtocol ] = useState< 'ftp' | 'ssh' >( 'ftp' );
+	const [ selectedProtocol, setSelectedProtocol ] = useState< 'ftp' | 'ssh' >(
+		allowFtp ? 'ftp' : 'ssh'
+	);
 
 	const onChangeProtocol = ( protocol: 'ftp' | 'ssh' ) => {
 		setSelectedProtocol( protocol );
@@ -35,6 +38,20 @@ export function Credentials( props: Props ) {
 		<div className="import__pre-migration import__import-everything import__import-everything--redesign">
 			<div className="import__heading import__heading-center">
 				<Title>{ translate( 'You are ready to migrate' ) }</Title>
+				<SubTitle className="onboarding-subtitle--full-width">
+					{
+						// translators: %(sourceSite)s and %(targetSite)s are the site slugs - e.g. my-website.wordpress.com
+						translate(
+							'Provide your SSH server credentials to migrate %(sourceSite)s to %(targetSite)s',
+							{
+								args: {
+									sourceSite: sourceSite?.slug,
+									targetSite: targetSite?.slug,
+								},
+							}
+						)
+					}
+				</SubTitle>
 			</div>
 
 			<div className="pre-migration__form-container pre-migration__credentials-form">
@@ -46,6 +63,7 @@ export function Credentials( props: Props ) {
 						selectedHost={ selectedHost }
 						migrationTrackingProps={ migrationTrackingProps }
 						onChangeProtocol={ onChangeProtocol }
+						allowFtp={ allowFtp }
 					/>
 				</div>
 				<div className="pre-migration__credentials-help">

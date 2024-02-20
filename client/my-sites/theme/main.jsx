@@ -1,12 +1,11 @@
 import { getTracksAnonymousUserId } from '@automattic/calypso-analytics';
 import config from '@automattic/calypso-config';
 import {
-	FEATURE_PREMIUM_THEMES_V2,
 	FEATURE_UPLOAD_THEMES_PLUGINS,
 	FEATURE_UPLOAD_THEMES,
 	PLAN_BUSINESS,
 	PLAN_PREMIUM,
-	WPCOM_FEATURES_PREMIUM_THEMES,
+	WPCOM_FEATURES_PREMIUM_THEMES_UNLIMITED,
 	WPCOM_FEATURES_INSTALL_PLUGINS,
 	getPlan,
 	PLAN_PERSONAL,
@@ -14,7 +13,9 @@ import {
 import page from '@automattic/calypso-router';
 import { Button, Card, Gridicon } from '@automattic/components';
 import {
+	BUNDLED_THEME,
 	DEFAULT_GLOBAL_STYLES_VARIATION_SLUG,
+	DOT_ORG_THEME,
 	ThemePreview as ThemeWebPreview,
 	getDesignPreviewUrl,
 	isDefaultGlobalStylesVariationSlug,
@@ -45,7 +46,8 @@ import Main from 'calypso/components/main';
 import PremiumGlobalStylesUpgradeModal from 'calypso/components/premium-global-styles-upgrade-modal';
 import SectionHeader from 'calypso/components/section-header';
 import { THEME_TIERS } from 'calypso/components/theme-tier/constants';
-import getThemeTier from 'calypso/components/theme-tier/get-theme-tier';
+import ThemeTierBadge from 'calypso/components/theme-tier/theme-tier-badge';
+import ThemeTypeBadge from 'calypso/components/theme-type-badge';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { decodeEntities, preventWidows } from 'calypso/lib/formatting';
 import { PerformanceTrackerStop } from 'calypso/lib/performance-tracking';
@@ -70,11 +72,14 @@ import isSiteWPForTeams from 'calypso/state/selectors/is-site-wpforteams';
 import isVipSite from 'calypso/state/selectors/is-vip-site';
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import { useSiteGlobalStylesStatus } from 'calypso/state/sites/hooks/use-site-global-styles-status';
+import { isSiteOnECommerceTrial } from 'calypso/state/sites/plans/selectors';
 import { getSiteSlug, isJetpackSite } from 'calypso/state/sites/selectors';
 import {
 	setThemePreviewOptions,
 	themeStartActivationSync as themeStartActivationSyncAction,
 } from 'calypso/state/themes/actions';
+import { useIsThemeAllowedOnSite } from 'calypso/state/themes/hooks/use-is-theme-allowed-on-site';
+import { useThemeTierForTheme } from 'calypso/state/themes/hooks/use-theme-tier-for-theme';
 import {
 	doesThemeBundleSoftwareSet,
 	isThemeActive,
@@ -97,10 +102,12 @@ import {
 	isThemeActivationSyncStarted as getIsThemeActivationSyncStarted,
 	getIsLivePreviewSupported,
 	getThemeType,
+	isThemeWooCommerce,
 } from 'calypso/state/themes/selectors';
 import { getIsLoadingCart } from 'calypso/state/themes/selectors/get-is-loading-cart';
 import { getBackPath } from 'calypso/state/themes/themes-ui/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import { ReviewsModal } from '../marketplace/components/reviews-modal';
 import EligibilityWarningModal from '../themes/atomic-transfer-dialog';
 import { LivePreviewButton } from './live-preview-button';
 import ThemeDownloadCard from './theme-download-card';
@@ -168,7 +175,7 @@ const BannerUpsellDescription = ( {
  * @param {Function} props.translate
  * @param {boolean} props.isSiteEligibleForManagedExternalThemes
  * @param {boolean} props.isMarketplaceThemeSubscribed
- * @param {boolean} props.isThemeAllowedOnSite
+ * @param {boolean} props.isThemeAllowed
  * @param {Object} props.themeTier
  * @returns {string} The title for the banner upsell.
  */
@@ -179,7 +186,7 @@ const BannerUpsellTitle = ( {
 	translate,
 	isSiteEligibleForManagedExternalThemes,
 	isMarketplaceThemeSubscribed,
-	isThemeAllowedOnSite,
+	isThemeAllowed,
 	themeTier,
 } ) => {
 	const bundleSettings = useBundleSettingsByTheme( themeId );
@@ -195,7 +202,7 @@ const BannerUpsellTitle = ( {
 			}
 		);
 
-	if ( ! isThemeAllowedOnSite ) {
+	if ( ! isThemeAllowed ) {
 		switch ( THEME_TIERS[ themeTier.slug ].minimumUpsellPlan ) {
 			case PLAN_PERSONAL:
 				return translate(
@@ -299,6 +306,7 @@ class ThemeSheet extends Component {
 		disabledButton: true,
 		showUnlockStyleUpgradeModal: false,
 		isAtomicTransferCompleted: false,
+		isReviewsModalVisible: false,
 	};
 
 	scrollToTop = () => {
@@ -349,16 +357,18 @@ class ThemeSheet extends Component {
 	isRemoved = () =>
 		!! this.props.taxonomies?.theme_status?.find( ( status ) => status.slug === 'removed' );
 
-	onButtonClick = () => {
-		const { defaultOption, secondaryOption, themeId } = this.props;
-		const selectedStyleVariation = this.getSelectedStyleVariation();
-		if ( selectedStyleVariation ) {
-			this.props.setThemePreviewOptions( themeId, defaultOption, secondaryOption, {
-				styleVariation: selectedStyleVariation,
-			} );
-		}
+	onBeforeOptionAction = () => {
+		this.props.setThemePreviewOptions(
+			this.props.themeId,
+			this.props.defaultOption,
+			this.props.secondaryOption,
+			{ styleVariation: this.getSelectedStyleVariation() }
+		);
+	};
 
-		defaultOption.action && defaultOption.action( themeId );
+	onButtonClick = () => {
+		this.onBeforeOptionAction();
+		this.props.defaultOption.action?.( this.props.themeId );
 	};
 
 	onUnlockStyleButtonClick = () => {
@@ -383,7 +393,7 @@ class ThemeSheet extends Component {
 
 		if ( typeof window !== 'undefined' ) {
 			const params = new URLSearchParams( window.location.search );
-			if ( variation?.inline_css !== '' ) {
+			if ( variation.slug !== DEFAULT_GLOBAL_STYLES_VARIATION_SLUG ) {
 				params.set( 'style_variation', variation.slug );
 			} else {
 				params.delete( 'style_variation' );
@@ -493,12 +503,7 @@ class ThemeSheet extends Component {
 		// The embed live demo works only for WP.com themes
 		if ( isWpcomTheme && ! isExternallyManagedTheme ) {
 			const { preview } = this.props.options;
-			this.props.setThemePreviewOptions(
-				this.props.themeId,
-				this.props.defaultOption,
-				this.props.secondaryOption,
-				{ styleVariation: this.getSelectedStyleVariation() }
-			);
+			this.onBeforeOptionAction();
 			return preview.action( this.props.themeId );
 		}
 
@@ -554,14 +559,21 @@ class ThemeSheet extends Component {
 			isPremium,
 			isVip,
 			retired,
-			isThemeAllowedOnSite,
+			isThemeAllowed,
+			isSiteWooExpressFreeTrial,
+			isThemeBundleWooCommerce,
 		} = this.props;
+
+		// Woo Express plans don't show banner on Woo themes.
+		if ( isThemeBundleWooCommerce && isSiteWooExpressFreeTrial ) {
+			return false;
+		}
 
 		// Show theme upsell banner on Simple sites.
 		return (
 			( ! isJetpack && isPremium && ! hasUnlimitedPremiumThemes && ! isVip && ! retired ) ||
 			isBundledSoftwareSet ||
-			! isThemeAllowedOnSite ||
+			! isThemeAllowed ||
 			isExternallyManagedTheme
 		);
 	}
@@ -706,6 +718,33 @@ class ThemeSheet extends Component {
 		);
 	};
 
+	renderThemeBadge = () => {
+		const { siteId, siteSlug, themeId, themeTier, themeType } = this.props;
+
+		const isCommunityTheme = themeType === DOT_ORG_THEME;
+		const isPartnerTheme = themeTier.slug === 'partner';
+		const isSenseiOrWooCommerceTheme = themeType === BUNDLED_THEME;
+
+		if ( ! isCommunityTheme && ! isPartnerTheme && ! isSenseiOrWooCommerceTheme ) {
+			return null;
+		}
+
+		return config.isEnabled( 'themes/tiers' ) ? (
+			<ThemeTierBadge
+				className="theme__sheet-main-info-type"
+				showUpgradeBadge={ false }
+				themeId={ themeId }
+			/>
+		) : (
+			<ThemeTypeBadge
+				className="theme__sheet-main-info-type"
+				siteId={ siteId }
+				siteSlug={ siteSlug }
+				themeId={ themeId }
+			/>
+		);
+	};
+
 	renderHeader = () => {
 		const {
 			author,
@@ -734,6 +773,7 @@ class ThemeSheet extends Component {
 					<div className="theme__sheet-main-info">
 						<h1 className="theme__sheet-main-info-title">
 							{ title }
+							{ this.renderThemeBadge() }
 							{ softLaunched && (
 								<span className="theme__sheet-bar-soft-launched">{ translate( 'A8C Only' ) }</span>
 							) }
@@ -745,7 +785,11 @@ class ThemeSheet extends Component {
 							( this.shouldRenderUnlockStyleButton()
 								? this.renderUnlockStyleButton()
 								: this.renderButton() ) }
-						<LivePreviewButton siteId={ siteId } themeId={ themeId } />
+						<LivePreviewButton
+							siteId={ siteId }
+							themeId={ themeId }
+							onBeforeLivePreview={ this.onBeforeOptionAction }
+						/>
 						{ this.shouldRenderPreviewButton() && ! isLivePreviewSupported && (
 							<Button
 								onClick={ ( e ) => {
@@ -765,14 +809,32 @@ class ThemeSheet extends Component {
 	};
 
 	renderReviews = () => {
-		if ( ! config.isEnabled( 'marketplace-add-review' ) ) {
-			return null;
-		}
 		const { name, themeId } = this.props;
+		const { isReviewsModalVisible } = this.state;
 
 		return (
 			<div className="theme__sheet-reviews-summary">
-				<ReviewsSummary slug={ themeId } productName={ name } productType="theme" />
+				<ReviewsModal
+					isVisible={ isReviewsModalVisible }
+					onClose={ () => {
+						this.setState( {
+							isReviewsModalVisible: false,
+						} );
+					} }
+					productName={ name }
+					slug={ themeId }
+					productType="theme"
+				/>
+				<ReviewsSummary
+					slug={ themeId }
+					productName={ name }
+					productType="theme"
+					onReviewsClick={ () => {
+						this.setState( {
+							isReviewsModalVisible: true,
+						} );
+					} }
+				/>
 			</div>
 		);
 	};
@@ -852,7 +914,10 @@ class ThemeSheet extends Component {
 	};
 
 	renderOverviewTab = () => {
-		const { download, isWpcomTheme, siteSlug, taxonomies, isPremium } = this.props;
+		const { download, isWpcomTheme, siteSlug, taxonomies, isPremium, themeTier } = this.props;
+
+		const showDownloadCard =
+			download && ( config.isEnabled( 'themes/tiers' ) ? 'free' === themeTier?.slug : ! isPremium );
 
 		return (
 			<div>
@@ -865,7 +930,7 @@ class ThemeSheet extends Component {
 						onClick={ this.trackFeatureClick }
 					/>
 				</div>
-				{ download && ! isPremium && <ThemeDownloadCard href={ download } /> }
+				{ showDownloadCard && <ThemeDownloadCard href={ download } /> }
 			</div>
 		);
 	};
@@ -1010,8 +1075,10 @@ class ThemeSheet extends Component {
 			isSiteEligibleForManagedExternalThemes,
 			isMarketplaceThemeSubscribed,
 			isThemeActivationSyncStarted,
-			isThemeAllowedOnSite,
+			isThemeAllowed,
 			isThemeInstalled,
+			isSiteWooExpressFreeTrial,
+			isThemeBundleWooCommerce,
 		} = this.props;
 		const { isAtomicTransferCompleted } = this.state;
 		if ( isActive ) {
@@ -1024,10 +1091,10 @@ class ThemeSheet extends Component {
 			);
 		} else if ( isLoggedIn && siteId ) {
 			if (
-				( ( ! isThemeAllowedOnSite || isPremium ) &&
-					! isThemePurchased &&
-					! isExternallyManagedTheme ) ||
-				( isBundledSoftwareSet && ! canInstallPlugins )
+				( ( ! isThemeAllowed || isPremium ) && ! isThemePurchased && ! isExternallyManagedTheme ) ||
+				( isBundledSoftwareSet &&
+					! canInstallPlugins &&
+					! ( isSiteWooExpressFreeTrial && isThemeBundleWooCommerce ) )
 			) {
 				// upgrade plan
 				return translate( 'Upgrade to activate', {
@@ -1108,9 +1175,11 @@ class ThemeSheet extends Component {
 			isExternallyManagedTheme,
 			isLoggedIn,
 			tabFilter,
+			tier,
 			selectedStyleVariationSlug: styleVariationSlug,
 			themeType,
 			siteId,
+			themeTier,
 		} = this.props;
 
 		return (
@@ -1119,13 +1188,19 @@ class ThemeSheet extends Component {
 				href={
 					getUrl &&
 					( key === 'customize' || ! isExternallyManagedTheme || ! isLoggedIn || ! siteId )
-						? getUrl( this.props.themeId, { tabFilter, styleVariationSlug } )
+						? getUrl( this.props.themeId, {
+								tabFilter,
+								tierFilter: tier,
+								styleVariationSlug,
+								themeTier,
+						  } )
 						: null
 				}
 				onClick={ () => {
 					this.props.recordTracksEvent( 'calypso_theme_sheet_primary_button_click', {
 						theme: this.props.themeId,
 						theme_type: themeType,
+						theme_tier: themeTier?.slug,
 						...( key && { action: key } ),
 					} );
 
@@ -1282,7 +1357,7 @@ class ThemeSheet extends Component {
 			isExternallyManagedTheme,
 			isThemeActivationSyncStarted,
 			isWpcomTheme,
-			isThemeAllowedOnSite,
+			isThemeAllowed,
 			themeTier,
 		} = this.props;
 		const analyticsPath = `/theme/${ themeId }${ section ? '/' + section : '' }${
@@ -1298,7 +1373,7 @@ class ThemeSheet extends Component {
 		} else if ( siteSlug ) {
 			const redirectTo = `/theme/${ themeId }${ section ? '/' + section : '' }/${ siteSlug }`;
 			let plan;
-			if ( ! isThemeAllowedOnSite ) {
+			if ( ! isThemeAllowed ) {
 				plan = THEME_TIERS[ themeTier.slug ].minimumUpsellPlan;
 			} else {
 				plan = isExternallyManagedTheme || isBundledSoftwareSet ? PLAN_BUSINESS : PLAN_PREMIUM;
@@ -1306,7 +1381,9 @@ class ThemeSheet extends Component {
 
 			// @TODO we should add a new feature for personal plan themes or what we agree on.
 			const feature =
-				PLAN_PREMIUM === plan ? FEATURE_PREMIUM_THEMES_V2 : FEATURE_UPLOAD_THEMES_PLUGINS;
+				PLAN_PREMIUM === plan
+					? WPCOM_FEATURES_PREMIUM_THEMES_UNLIMITED
+					: FEATURE_UPLOAD_THEMES_PLUGINS;
 
 			plansUrl = `/plans/${ siteSlug }/?plan=${ plan }&feature=${ feature }&redirect_to=${ redirectTo }`;
 		} else {
@@ -1379,18 +1456,21 @@ class ThemeSheet extends Component {
 			const forceDisplay =
 				( isPremium && ! isThemePurchased ) ||
 				( isBundledSoftwareSet && ! isSiteBundleEligible ) ||
-				! isThemeAllowedOnSite ||
+				! isThemeAllowed ||
 				( isExternallyManagedTheme &&
 					! isThemeInstalled &&
 					( ! isMarketplaceThemeSubscribed || ! isSiteEligibleForManagedExternalThemes ) );
 
 			let upsellNudgePlan;
-			if ( ! isThemeAllowedOnSite ) {
+			if ( ! isThemeAllowed ) {
 				upsellNudgePlan = THEME_TIERS[ themeTier.slug ].minimumUpsellPlan;
 			} else {
 				upsellNudgePlan =
 					isExternallyManagedTheme || isBundledSoftwareSet ? PLAN_BUSINESS : PLAN_PREMIUM;
 			}
+			const upsellNudgeFeature = config.isEnabled( 'themes/tiers' )
+				? themeTier?.feature
+				: WPCOM_FEATURES_PREMIUM_THEMES_UNLIMITED;
 
 			pageUpsellBanner = (
 				<UpsellNudge
@@ -1399,7 +1479,7 @@ class ThemeSheet extends Component {
 					title={ this.getBannerUpsellTitle() }
 					description={ preventWidows( this.getBannerUpsellDescription() ) }
 					event="themes_plan_particular_free_with_plan"
-					feature={ WPCOM_FEATURES_PREMIUM_THEMES }
+					feature={ upsellNudgeFeature }
 					forceHref={ onClick === null }
 					disableHref={ onClick !== null }
 					onClick={ null === onClick ? noop : onClick }
@@ -1407,6 +1487,7 @@ class ThemeSheet extends Component {
 					showIcon={ true }
 					forceDisplay={ forceDisplay }
 					displayAsLink={ onClick !== null }
+					tracksClickProperties={ { theme_tier: themeTier?.slug } }
 				/>
 			);
 		}
@@ -1438,7 +1519,11 @@ class ThemeSheet extends Component {
 					showIcon
 					event="theme_upsell_plan_click"
 					tracksClickName="calypso_theme_upsell_plan_click"
-					tracksClickProperties={ { theme_id: themeId, theme_name: themeName } }
+					tracksClickProperties={ {
+						theme_id: themeId,
+						theme_name: themeName,
+						theme_tier: themeTier?.slug,
+					} }
 				/>
 			);
 		}
@@ -1568,7 +1653,10 @@ const ThemeSheetWithOptions = ( props ) => {
 		isExternallyManagedTheme,
 		isSiteEligibleForManagedExternalThemes,
 		isMarketplaceThemeSubscribed,
+		isSiteWooExpressFreeTrial,
+		isThemeBundleWooCommerce,
 	} = props;
+	const isThemeAllowed = useIsThemeAllowedOnSite( siteId, props.themeId );
 
 	let defaultOption;
 	let secondaryOption = 'tryandcustomize';
@@ -1594,17 +1682,25 @@ const ThemeSheetWithOptions = ( props ) => {
 		! isThemeInstalled
 	) {
 		defaultOption = 'subscribe';
-	} else if ( isPremium && ! isThemePurchased && ! isBundledSoftwareSet ) {
+	} else if ( ( isPremium && ! isThemePurchased && ! isBundledSoftwareSet ) || ! isThemeAllowed ) {
 		defaultOption = 'purchase';
-	} else if ( ! canInstallPlugins && isBundledSoftwareSet ) {
+	} else if (
+		! canInstallPlugins &&
+		isBundledSoftwareSet &&
+		! ( isSiteWooExpressFreeTrial && isThemeBundleWooCommerce )
+	) {
 		defaultOption = 'upgradePlanForBundledThemes';
 	} else {
 		defaultOption = 'activate';
 	}
 
+	const themeTier = useThemeTierForTheme( props.themeId );
+
 	return (
 		<ConnectedThemeSheet
 			{ ...props }
+			themeTier={ themeTier }
+			isThemeAllowed={ isThemeAllowed }
 			demo_uri={ demoUrl }
 			siteId={ siteId }
 			defaultOption={ defaultOption }
@@ -1635,7 +1731,6 @@ export default connect(
 		const productionSiteSlug = getSiteSlug( state, productionSite?.ID );
 		const isJetpack = isJetpackSite( state, siteId );
 		const isStandaloneJetpack = isJetpack && ! isAtomic;
-		const { themeTier, isThemeAllowedOnSite } = getThemeTier( state, siteId, themeId );
 
 		const isExternallyManagedTheme = getIsExternallyManagedTheme( state, theme?.id );
 		const isLoading =
@@ -1651,8 +1746,6 @@ export default connect(
 
 		return {
 			...theme,
-			themeTier,
-			isThemeAllowedOnSite: isThemeAllowedOnSite,
 			themeId,
 			price: getPremiumThemePrice( state, themeId, siteId ),
 			error,
@@ -1675,9 +1768,15 @@ export default connect(
 			isThemeInstalled: !! getTheme( state, siteId, themeId ),
 			isThemePurchased: isPremiumThemeAvailable( state, themeId, siteId ),
 			isBundledSoftwareSet: doesThemeBundleSoftwareSet( state, themeId ),
+			isThemeBundleWooCommerce: isThemeWooCommerce( state, themeId ),
+			isSiteWooExpressFreeTrial: isSiteOnECommerceTrial( state, siteId ),
 			isSiteBundleEligible: isSiteEligibleForBundledSoftware( state, siteId ),
 			forumUrl: getThemeForumUrl( state, themeId, siteId ),
-			hasUnlimitedPremiumThemes: siteHasFeature( state, siteId, WPCOM_FEATURES_PREMIUM_THEMES ),
+			hasUnlimitedPremiumThemes: siteHasFeature(
+				state,
+				siteId,
+				WPCOM_FEATURES_PREMIUM_THEMES_UNLIMITED
+			),
 			showTryAndCustomize: shouldShowTryAndCustomize( state, themeId, siteId ),
 			canInstallPlugins: siteHasFeature( state, siteId, WPCOM_FEATURES_INSTALL_PLUGINS ),
 			canUserUploadThemes: siteHasFeature( state, siteId, FEATURE_UPLOAD_THEMES ),

@@ -1,7 +1,7 @@
+import { FEATURE_STATS_PAID } from '@automattic/calypso-products';
 import { useState, useEffect } from 'react';
-import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
-import version_compare from 'calypso/lib/version-compare';
 import {
+	DEFAULT_NOTICES_VISIBILITY,
 	Notices,
 	useNoticesVisibilityQuery,
 	processConflictNotices,
@@ -9,12 +9,12 @@ import {
 import { useSelector, useDispatch } from 'calypso/state';
 import { resetSiteState } from 'calypso/state/purchases/actions';
 import { hasLoadedSitePurchasesFromServer } from 'calypso/state/purchases/selectors';
-import isSiteOnPaidPlan from 'calypso/state/selectors/is-site-on-paid-plan';
 import isSiteWpcom from 'calypso/state/selectors/is-site-wpcom';
 import isSiteWPForTeams from 'calypso/state/selectors/is-site-wpforteams';
 import isVipSite from 'calypso/state/selectors/is-vip-site';
+import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import { hasLoadedSitePlansFromServer } from 'calypso/state/sites/plans/selectors';
-import getJetpackStatsAdminVersion from 'calypso/state/sites/selectors/get-jetpack-stats-admin-version';
+import getEnvStatsFeatureSupportChecks from 'calypso/state/sites/selectors/get-env-stats-feature-supports';
 import getSiteOption from 'calypso/state/sites/selectors/get-site-option';
 import hasSiteProductJetpackStatsFree from 'calypso/state/sites/selectors/has-site-product-jetpack-stats-free';
 import hasSiteProductJetpackStatsPaid from 'calypso/state/sites/selectors/has-site-product-jetpack-stats-paid';
@@ -78,14 +78,13 @@ const NewStatsNotices = ( { siteId, isOdysseyStats, statsPurchaseSuccess }: Stat
 		( state ) => getSelectedSite( state )?.site_owner === TEAM51_OWNER_ID
 	);
 
-	// Check whether sites have paid plans of WPCOM.
-	const siteHasPaidPlan = useSelector( ( state ) => isSiteOnPaidPlan( state, siteId || 0 ) );
-	// TODO: Consolidate the proper way of checking WPCOM plans for supporting Stats to `hasSiteProductJetpackStatsPaid`.
-	const wpcomSiteHasPaidPlan = isWpcom && siteHasPaidPlan;
+	const wpcomSiteHasPaidStatsFeature = useSelector(
+		( state ) => isWpcom && siteHasFeature( state, siteId, FEATURE_STATS_PAID )
+	);
 
 	const hasPaidStats =
 		useSelector( ( state ) => hasSiteProductJetpackStatsPaid( state, siteId ) ) ||
-		wpcomSiteHasPaidPlan;
+		wpcomSiteHasPaidStatsFeature;
 	const hasFreeStats = useSelector( ( state ) => hasSiteProductJetpackStatsFree( state, siteId ) );
 
 	const { isRequestingSitePurchases, isCommercialOwned } = useStatsPurchases( siteId );
@@ -108,7 +107,7 @@ const NewStatsNotices = ( { siteId, isOdysseyStats, statsPurchaseSuccess }: Stat
 	const { isLoading, isError, data: serverNoticesVisibility } = useNoticesVisibilityQuery( siteId );
 
 	// TODO: Integrate checking purchases and plans loaded state into `hasSiteProductJetpackStatsPaid`.
-	const hasLoadedPurchases = useSelector( ( state ) => hasLoadedSitePurchasesFromServer( state ) );
+	const hasLoadedPurchases = useSelector( hasLoadedSitePurchasesFromServer );
 	// Only check plans loaded state for supporting Stats on WPCOM.
 	const hasLoadedPlans =
 		useSelector( ( state ) => hasLoadedSitePlansFromServer( state, siteId ) ) || isOdysseyStats;
@@ -124,7 +123,7 @@ const NewStatsNotices = ( { siteId, isOdysseyStats, statsPurchaseSuccess }: Stat
 	}
 
 	const calculatedNoticesVisibility = ensureOnlyOneNoticeVisible(
-		serverNoticesVisibility,
+		serverNoticesVisibility ?? DEFAULT_NOTICES_VISIBILITY,
 		noticeOptions
 	);
 
@@ -149,27 +148,19 @@ export default function StatsNotices( {
 	isOdysseyStats,
 	statsPurchaseSuccess,
 }: StatsNoticesProps ) {
-	const statsAdminVersion = useSelector( ( state: object ) =>
-		getJetpackStatsAdminVersion( state, siteId )
+	const { supportsNewStatsNotices } = useSelector( ( state ) =>
+		getEnvStatsFeatureSupportChecks( state, siteId )
 	);
 
-	const supportNewStatsNotices =
-		! isOdysseyStats ||
-		!! ( statsAdminVersion && version_compare( statsAdminVersion, '0.10.0-alpha', '>=' ) );
-
-	if ( ! supportNewStatsNotices ) {
+	if ( ! supportsNewStatsNotices ) {
 		return null;
 	}
 
 	return (
-		<>
-			{ /* The component is replaced on build for Odyssey to query from Jetpack */ }
-			<QuerySitePurchases siteId={ siteId } />
-			<NewStatsNotices
-				siteId={ siteId }
-				isOdysseyStats={ isOdysseyStats }
-				statsPurchaseSuccess={ statsPurchaseSuccess }
-			/>
-		</>
+		<NewStatsNotices
+			siteId={ siteId }
+			isOdysseyStats={ isOdysseyStats }
+			statsPurchaseSuccess={ statsPurchaseSuccess }
+		/>
 	);
 }

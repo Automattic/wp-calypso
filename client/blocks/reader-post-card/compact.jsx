@@ -18,14 +18,18 @@ const CompactPost = ( {
 	teams,
 	openSuggestedFollows,
 } ) => {
-	const onVideoThumbnailClick =
-		post.canonical_media?.mediaType === 'video'
-			? () => expandCard( { postKey, post, site } )
-			: null;
-
 	const isSmallScreen = useBreakpoint( '<660px' );
 	const [ hasExcerpt, setHasExcerpt ] = useState( true );
-	const imagePostWithoutExcerpt = post.canonical_media && ! hasExcerpt;
+	const [ showExcerpt, setShowExcerpt ] = useState( ! isExpanded ?? true );
+	const imagePostWithoutExcerpt = ( post.canonical_media && ! hasExcerpt ) || ! showExcerpt;
+	const onVideoThumbnailClick =
+		post.canonical_media?.mediaType === 'video'
+			? () => {
+					expandCard( { postKey, post, site } );
+					setHasExcerpt( false ); // Render compact post without excerpt
+					setShowExcerpt( false ); // Set showExcerpt to false to prevent excerpt from reappearing
+			  }
+			: null;
 
 	return (
 		<div className="reader-post-card__post">
@@ -56,7 +60,12 @@ const CompactPost = ( {
 							/>
 						) }
 					</div>
-					<ReaderExcerpt post={ post } setHasExcerpt={ setHasExcerpt } />
+					<ReaderExcerpt
+						post={ post }
+						hasExcerpt={ hasExcerpt }
+						showExcerpt={ showExcerpt }
+						setHasExcerpt={ setHasExcerpt }
+					/>
 				</div>
 				{ post.canonical_media && (
 					<div className="reader-post-card__post-media">

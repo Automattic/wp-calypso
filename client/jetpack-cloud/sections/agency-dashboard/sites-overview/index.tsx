@@ -23,6 +23,7 @@ import {
 	checkIfJetpackSiteGotDisconnected,
 	getSelectedLicenses,
 	getSelectedLicensesSiteId,
+	getSelectedSiteLicenses,
 } from 'calypso/state/jetpack-agency-dashboard/selectors';
 import { errorNotice } from 'calypso/state/notices/actions';
 import useProductsQuery from 'calypso/state/partner-portal/licenses/hooks/use-products-query';
@@ -60,9 +61,14 @@ export default function SitesOverview() {
 	const showLargeScreen = useDashboardShowLargeScreen( siteTableRef, containerRef );
 
 	const selectedLicenses = useSelector( getSelectedLicenses );
+	const selectedSiteLicenses = useSelector( getSelectedSiteLicenses );
 	const selectedLicensesSiteId = useSelector( getSelectedLicensesSiteId );
 
-	const selectedLicensesCount = selectedLicenses?.length;
+	const isStreamlinedPurchasesEnabled = isEnabled( 'jetpack/streamline-license-purchases' );
+
+	const selectedLicensesCount = isStreamlinedPurchasesEnabled
+		? selectedSiteLicenses.reduce( ( acc, { products } ) => acc + products.length, 0 )
+		: selectedLicenses?.length;
 
 	const highlightFavoriteTab = getQueryArg( window.location.href, 'highlight' ) === 'favorite-tab';
 
@@ -142,6 +148,14 @@ export default function SitesOverview() {
 		}
 	}, [ isError, translate, dispatch ] );
 
+	useEffect( () => {
+		if ( isStreamlinedPurchasesEnabled ) {
+			return () => {
+				dispatch( resetSite() );
+			};
+		}
+	}, [ isStreamlinedPurchasesEnabled, dispatch ] );
+
 	const pageTitle = translate( 'Sites' );
 
 	const basePath = '/dashboard';
@@ -204,31 +218,33 @@ export default function SitesOverview() {
 
 	const isFavoritesTab = selectedTab.key === 'favorites';
 
-	const isBundleUIEnabled = isEnabled( 'jetpack/bundle-licensing' );
+	const selectedProducts = selectedLicenses?.map( ( type: string ) => ( {
+		slug: DASHBOARD_PRODUCT_SLUGS_BY_TYPE[ type ],
+		quantity: 1,
+	} ) );
 
-	let serializedLicenses = selectedLicenses
-		?.map( ( type: string ) => DASHBOARD_PRODUCT_SLUGS_BY_TYPE[ type ] )
-		// If multiple products are selected, pass them as a comma-separated list.
-		.join( ',' );
-
-	if ( isBundleUIEnabled ) {
-		const selectedProducts = selectedLicenses?.map( ( type: string ) => ( {
-			slug: DASHBOARD_PRODUCT_SLUGS_BY_TYPE[ type ],
-			quantity: 1,
-		} ) );
-
-		serializedLicenses = serializeQueryStringProducts( selectedProducts );
-	}
+	const serializedLicenses = serializeQueryStringProducts( selectedProducts );
 
 	const issueLicenseRedirectUrl = useMemo( () => {
 		return addQueryArgs( `/partner-portal/issue-license/`, {
 			site_id: selectedLicensesSiteId,
-			...( isBundleUIEnabled
-				? { products: serializedLicenses }
-				: { product_slug: serializedLicenses } ),
+			products: serializedLicenses,
 			source: 'dashboard',
 		} );
-	}, [ isBundleUIEnabled, selectedLicensesSiteId, serializedLicenses ] );
+	}, [ selectedLicensesSiteId, serializedLicenses ] );
+
+	const handleIssueLicenses = () => {
+		if ( isStreamlinedPurchasesEnabled ) {
+			// TODO: Show a modal with the selected licenses and a button to issue them.
+			return;
+		}
+		dispatch(
+			recordTracksEvent( 'calypso_jetpack_agency_dashboard_licenses_select', {
+				site_id: selectedLicensesSiteId,
+				products: serializedLicenses,
+			} )
+		);
+	};
 
 	const renderIssueLicenseButton = () => {
 		return (
@@ -243,23 +259,24 @@ export default function SitesOverview() {
 				<Button
 					primary
 					className="sites-overview__licenses-buttons-issue-license"
-					href={ issueLicenseRedirectUrl }
-					onClick={ () =>
-						dispatch(
-							recordTracksEvent( 'calypso_jetpack_agency_dashboard_licenses_select', {
-								site_id: selectedLicensesSiteId,
-								products: serializedLicenses,
-							} )
-						)
-					}
+					href={ isStreamlinedPurchasesEnabled ? undefined : issueLicenseRedirectUrl }
+					onClick={ handleIssueLicenses }
 				>
-					{ translate( 'Issue %(numLicenses)d license', 'Issue %(numLicenses)d licenses', {
-						context: 'button label',
-						count: selectedLicensesCount,
-						args: {
-							numLicenses: selectedLicensesCount,
-						},
-					} ) }
+					{ isStreamlinedPurchasesEnabled
+						? translate( 'Review %(numLicenses)d license', 'Review %(numLicenses)d licenses', {
+								context: 'button label',
+								count: selectedLicensesCount,
+								args: {
+									numLicenses: selectedLicensesCount,
+								},
+						  } )
+						: translate( 'Issue %(numLicenses)d license', 'Issue %(numLicenses)d licenses', {
+								context: 'button label',
+								count: selectedLicensesCount,
+								args: {
+									numLicenses: selectedLicensesCount,
+								},
+						  } ) }
 				</Button>
 			</div>
 		);

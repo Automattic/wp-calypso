@@ -1,3 +1,4 @@
+import { isEnabled } from '@automattic/calypso-config';
 import {
 	DEFAULT_SITE_LAUNCH_STATUS_GROUP_VALUE,
 	siteLaunchStatusGroupValues,
@@ -6,6 +7,7 @@ import { Global, css } from '@emotion/react';
 import { removeQueryArgs } from '@wordpress/url';
 import AsyncLoad from 'calypso/components/async-load';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
+import MySitesNavigation from 'calypso/my-sites/navigation';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
 import { removeNotice } from 'calypso/state/notices/actions';
 import { hideMasterbar } from 'calypso/state/ui/actions';
@@ -71,6 +73,20 @@ function hostingFlowForkingPage( context: PageJSContext, next: () => void ) {
 				min-height: auto; /* browsing a different page might inject this style on the page */
 			}
 
+			.button.is-primary {
+				min-width: 160px;
+				background-color: var( --studio-blue-50 );
+				border-color: var( --studio-blue-50 );
+			}
+
+			.button.is-primary:active:not( :disabled ),
+			.button.is-primary:hover:not( :disabled ),
+			.button.is-primary:focus:not( :disabled ) {
+				background-color: var( --studio-blue-60 );
+				border-color: var( --studio-blue-60 );
+				box-shadow: 0 0 0 2px var( --studio-blue-60 );
+			}
+
 			${ MEDIA_QUERIES.mediumOrLarger } {
 				height: 100vh;
 
@@ -95,18 +111,13 @@ function hostingFlowForkingPage( context: PageJSContext, next: () => void ) {
 }
 
 function sitesDashboard( context: PageJSContext, next: () => void ) {
-	const sitesDashboardGlobalStyles = css`
+	let sitesDashboardGlobalStyles = css`
 		body.is-group-sites-dashboard {
 			background: #fdfdfd;
 
 			.layout__content {
 				// The page header background extends all the way to the edge of the screen
-				padding-block: 32px;
 				padding-inline: 0;
-
-				${ MEDIA_QUERIES.mediumOrSmaller } {
-					padding-block-start: 46px;
-				}
 
 				// Prevents the status dropdown from being clipped when the page content
 				// isn't tall enough
@@ -114,6 +125,23 @@ function sitesDashboard( context: PageJSContext, next: () => void ) {
 			}
 		}
 	`;
+
+	// Update body margin to account for the sidebar width if the new nav is enabled
+	if ( isEnabled( 'layout/dotcom-nav-redesign' ) ) {
+		sitesDashboardGlobalStyles = css`
+			${ sitesDashboardGlobalStyles }
+			@media only screen and ( min-width: 782px ) {
+				div.layout.is-global-sidebar-visible {
+					.layout__primary {
+						margin-left: var( --sidebar-width-max );
+					}
+				}
+			}
+		`;
+	}
+	if ( isEnabled( 'layout/dotcom-nav-redesign' ) ) {
+		context.secondary = <MySitesNavigation path={ context.path } />;
+	}
 
 	context.primary = (
 		<>

@@ -1,4 +1,4 @@
-import { Button } from '@automattic/components';
+import { Button, FormLabel } from '@automattic/components';
 import { StepContainer } from '@automattic/onboarding';
 import { useSelect, useDispatch } from '@wordpress/data';
 import { Icon } from '@wordpress/icons';
@@ -9,7 +9,6 @@ import storeImageUrl from 'calypso/assets/images/onboarding/store-onboarding.svg
 import DocumentHead from 'calypso/components/data/document-head';
 import FormattedHeader from 'calypso/components/formatted-header';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
-import FormLabel from 'calypso/components/forms/form-label';
 import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
 import FormInput from 'calypso/components/forms/form-text-input';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
@@ -102,13 +101,21 @@ export const SiteOptions = ( { navigation }: Pick< StepProps, 'navigation' > ) =
 					taglineExplanation: translate( 'In a few words, explain what your store is about.' ),
 				};
 			case 'write':
-			default:
 				return {
 					headerText: translate( "First, let's give your blog a name" ),
 					headerImage: siteOptionsUrl,
 					siteTitleLabel: translate( 'Blog name' ),
 					taglineLabel: translate( 'Tagline' ),
 					taglineExplanation: translate( 'In a few words, explain what your blog is about.' ),
+				};
+			case 'build':
+			default:
+				return {
+					headerText: translate( "Let's give your site a name" ),
+					headerImage: siteOptionsUrl,
+					siteTitleLabel: translate( 'Site name' ),
+					taglineLabel: translate( 'Tagline' ),
+					taglineExplanation: translate( 'In a few words, explain what your site is about.' ),
 				};
 		}
 	};

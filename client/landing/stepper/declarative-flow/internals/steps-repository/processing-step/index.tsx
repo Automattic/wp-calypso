@@ -63,10 +63,6 @@ const ProcessingStep: React.FC< ProcessingStepProps > = function ( props ) {
 		( select ) => ( select( ONBOARD_STORE ) as OnboardSelect ).getProgressTitle(),
 		[]
 	);
-	const stepProgress = useSelect(
-		( select ) => ( select( ONBOARD_STORE ) as OnboardSelect ).getStepProgress(),
-		[]
-	);
 
 	const getCurrentMessage = () => {
 		return props.title || progressTitle || loadingMessages[ currentMessageIndex ]?.title;
@@ -157,7 +153,6 @@ const ProcessingStep: React.FC< ProcessingStepProps > = function ( props ) {
 						</div>
 					</>
 				}
-				stepProgress={ stepProgress }
 				recordTracksEvent={ recordTracksEvent }
 				showJetpackPowered={ isJetpackPowered }
 				showFooterWooCommercePowered={ isWooCommercePowered }

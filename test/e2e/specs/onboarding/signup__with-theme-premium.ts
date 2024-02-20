@@ -62,12 +62,7 @@ describe( 'Lifecyle: Premium theme signup, onboard, launch and cancel subscripti
 		} );
 
 		it( 'Selects a Premium theme', async function () {
-			await page
-				.locator(
-					'div.theme-card:has(div.premium-badge):not(div.theme-card:has(div.is-marketplace))'
-				)
-				.first()
-				.click();
+			await page.locator( 'div.theme-card:has(div.theme-tier-badge--premium)' ).first().click();
 		} );
 
 		it( 'Navigate to Signup page', async function () {
@@ -139,7 +134,7 @@ describe( 'Lifecyle: Premium theme signup, onboard, launch and cancel subscripti
 
 			const theme = await restAPIClient.getActiveTheme( newSiteDetails.blog_details.blogid );
 
-			expect( theme ).toBe( `premium/${ themeSlug }` );
+			expect( theme ).toContain( themeSlug );
 		} );
 	} );
 

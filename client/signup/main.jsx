@@ -75,6 +75,7 @@ import flows from './config/flows';
 import { getStepComponent } from './config/step-components';
 import steps from './config/steps';
 import { addP2SignupClassName } from './controller';
+import { isReskinnedFlow, isP2Flow } from './is-flow';
 import {
 	persistSignupDestination,
 	setSignupCompleteSlug,
@@ -87,8 +88,6 @@ import {
 	getDestination,
 	getFirstInvalidStep,
 	getStepUrl,
-	isReskinnedFlow,
-	isP2Flow,
 } from './utils';
 import WpcomLoginForm from './wpcom-login-form';
 import './style.scss';
@@ -246,7 +245,7 @@ class Signup extends Component {
 
 	componentDidMount() {
 		debug( 'Signup component mounted' );
-		this.props.flowName === 'onboarding' && ! this.props.isLoggedIn && addHotJarScript();
+		this.props.flowName === 'website-design-services' && addHotJarScript();
 
 		recordSignupStart( this.props.flowName, this.props.refParameter, this.getRecordProps() );
 
@@ -814,8 +813,6 @@ class Signup extends Component {
 			};
 		}
 
-		const stepClassName = stepName === 'user-hosting' ? 'user' : stepName;
-
 		// If a coupon is provided as a query dependency, then hide the free plan.
 		// It's assumed here that the coupon applies to paid plans at the minimum, and
 		// in this scenario it wouldn't be necessary to show a free plan.
@@ -823,7 +820,7 @@ class Signup extends Component {
 
 		return (
 			<div className="signup__step" key={ stepKey }>
-				<div className={ `signup__step is-${ stepClassName }` }>
+				<div className={ `signup__step is-${ stepName }` }>
 					{ shouldRenderLocaleSuggestions && (
 						<LocaleSuggestions path={ this.props.path } locale={ this.props.locale } />
 					) }

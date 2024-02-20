@@ -18,9 +18,9 @@ exports[`ThemesList should render a div with a className of "themes-list" 1`] = 
         class="pattern-assembler-cta__image-wrapper"
       >
         <img
-          alt="Blank Canvas"
+          alt="Pattern Assembler"
           class="pattern-assembler-cta__image"
-          src="blank-canvas-cta.svg"
+          src="assembler-illustration.png"
         />
       </div>
       <div

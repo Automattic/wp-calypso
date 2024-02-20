@@ -35,15 +35,15 @@
 	"scripts": {
 		"clean": "tsc --build ./tsconfig.json ./tsconfig-cjs.json --clean && rm -rf dist",
 		"build": "tsc --build ./tsconfig.json ./tsconfig-cjs.json && copy-assets",
-		"prepare": "yarn run clean && yarn run build",
+		"prepare": "yarn run build",
 		"prepack": "yarn run clean && yarn run build",
 		"watch": "tsc --build ./tsconfig.json --watch"
 	},
 	"dependencies": {
 		"@emotion/react": "^11.11.1",
-		"@wordpress/components": "^25.14.0",
-		"@wordpress/element": "^5.25.0",
-		"@wordpress/i18n": "^4.48.0",
+		"@wordpress/components": "^26.0.1",
+		"@wordpress/element": "^5.28.0",
+		"@wordpress/i18n": "^4.51.0",
 		"classnames": "^2.3.2",
 		"prop-types": "^15.7.2",
 		"tslib": "^2.3.0"
@@ -51,16 +51,16 @@
 	"devDependencies": {
 		"@automattic/calypso-build": "workspace:^",
 		"@automattic/calypso-typescript-config": "workspace:^",
-		"@testing-library/jest-dom": "^6.1.5",
-		"@testing-library/react": "^14.1.2",
+		"@testing-library/jest-dom": "^6.4.1",
+		"@testing-library/react": "^14.2.1",
 		"postcss": "^8.4.5",
 		"react": "^18.2.0",
 		"react-dom": "^18.2.0",
-		"typescript": "^5.3.2",
-		"webpack": "^5.89.0"
+		"typescript": "^5.3.3",
+		"webpack": "^5.90.1"
 	},
 	"peerDependencies": {
-		"@babel/runtime": "^7.23.2",
+		"@babel/runtime": "^7.23.8",
 		"react": "^18.2.0",
 		"react-dom": "^18.2.0"
 	},

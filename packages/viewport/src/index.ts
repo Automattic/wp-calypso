@@ -129,7 +129,6 @@ export function getMediaQueryList( breakpoint: string ): undefined | QueryItem {
 
 /**
  * Returns whether the current window width matches a breakpoint.
- *
  * @param {string} breakpoint The breakpoint to consider.
  * @returns {boolean|undefined} Whether the provided breakpoint is matched.
  */
@@ -140,7 +139,6 @@ export function isWithinBreakpoint( breakpoint: string ): boolean | undefined {
 
 /**
  * Registers a listener to be notified of changes to breakpoint matching status.
- *
  * @param {string} breakpoint The breakpoint to consider.
  * @param {Function} listener The listener to be called on change.
  * @returns {Function} The function to be called when unsubscribing.
@@ -167,7 +165,6 @@ export function subscribeIsWithinBreakpoint(
 
 /**
  * Returns whether the current window width matches the mobile breakpoint.
- *
  * @returns {boolean|undefined} Whether the mobile breakpoint is matched.
  */
 export function isMobile(): boolean | undefined {
@@ -176,7 +173,6 @@ export function isMobile(): boolean | undefined {
 
 /**
  * Registers a listener to be notified of changes to mobile breakpoint matching status.
- *
  * @param {Function} listener The listener to be called on change.
  * @returns {Function} The registered subscription; undefined if none.
  */
@@ -186,7 +182,6 @@ export function subscribeIsMobile( listener: ListenerCallback ): UnsubcribeCallb
 
 /**
  * Returns whether the current window width matches the desktop breakpoint.
- *
  * @returns {boolean|undefined} Whether the desktop breakpoint is matched.
  */
 export function isDesktop(): boolean | undefined {
@@ -195,7 +190,6 @@ export function isDesktop(): boolean | undefined {
 
 /**
  * Registers a listener to be notified of changes to desktop breakpoint matching status.
- *
  * @param {Function} listener The listener to be called on change.
  * @returns {Function} The registered subscription; undefined if none.
  */
@@ -206,7 +200,6 @@ export function subscribeIsDesktop( listener: ListenerCallback ): UnsubcribeCall
 /**
  * Returns the current window width.
  * Avoid using this method, as it triggers a layout recalc.
- *
  * @returns {number} The current window width, in pixels.
  */
 export function getWindowInnerWidth(): number {
