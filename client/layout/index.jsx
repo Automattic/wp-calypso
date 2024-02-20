@@ -402,6 +402,7 @@ export default withCurrentRoute(
 			isWpMobileApp() ||
 			isWcMobileApp() ||
 			shouldShowGlobalSidebar ||
+			shouldShowGlobalSiteSidebar ||
 			isJetpackCloud() ||
 			config.isEnabled( 'a8c-for-agencies' );
 		const isJetpackMobileFlow = 'jetpack-connect' === sectionName && !! retrieveMobileRedirect();
