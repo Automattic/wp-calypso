@@ -1,4 +1,4 @@
-import { useInfiniteQuery } from '@tanstack/react-query';
+import { keepPreviousData, useInfiniteQuery } from '@tanstack/react-query';
 import { requestDSP } from 'calypso/lib/promote-post';
 import { SearchOptions } from 'calypso/my-sites/promote-post-i2/components/search-bar';
 import { CampaignQueryResult } from './types';
@@ -19,6 +19,10 @@ const getSearchOptionsQueryParams = ( searchOptions: SearchOptions ) => {
 		}
 	}
 
+	if ( searchOptions.order ) {
+		searchQueryParams += `&order=${ searchOptions.order.order }&order_by=${ searchOptions.order.orderBy }`;
+	}
+
 	return searchQueryParams;
 };
 
@@ -32,9 +36,8 @@ const useCampaignsQueryPaged = (
 	return useInfiniteQuery( {
 		queryKey: [ 'promote-post-campaigns', siteId, searchQueryParams ],
 		queryFn: async ( { pageParam = 1 } ) => {
-			const searchCampaignsUrl = `/search/campaigns/site/${ siteId }?order=asc&order_by=post_date&page=${ pageParam }${ searchQueryParams }`;
+			const searchCampaignsUrl = `/search/campaigns/site/${ siteId }?page=${ pageParam }${ searchQueryParams }`;
 			const resultQuery = await requestDSP< CampaignQueryResult >( siteId, searchCampaignsUrl );
-
 			const { campaigns, page, total_items, total_pages } = resultQuery;
 			const has_more_pages = page < total_pages;
 
@@ -49,11 +52,12 @@ const useCampaignsQueryPaged = (
 		...queryOptions,
 		enabled: !! siteId,
 		retryDelay: 3000,
-		keepPreviousData: true,
 		refetchOnWindowFocus: false,
+		placeholderData: keepPreviousData,
 		meta: {
 			persist: false,
 		},
+		initialPageParam: 1,
 		getNextPageParam: ( lastPage ) => {
 			if ( lastPage.has_more_pages ) {
 				return lastPage.page + 1;
