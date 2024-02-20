@@ -246,6 +246,7 @@ $brand-text: "SF Pro Text", $sans;
 		a.site__content {
 			padding: 16px 12px;
 		}
+		&.is-selected,
 		&:hover {
 			background: var(--color-sidebar-menu-selected-background);
 
