@@ -82,8 +82,8 @@ export default function SitesDashboardV2() {
 
 	const { data, isError, isLoading, refetch } = useFetchDashboardSites(
 		isPartnerOAuthTokenLoaded,
-		sitesViewState.search,
-		sitesViewState.page,
+		search,
+		currentPage,
 		filter,
 		sort
 	);
