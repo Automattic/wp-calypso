@@ -137,6 +137,7 @@ export interface SiteDetails {
 	was_hosting_trial?: boolean;
 	wpcom_url?: string;
 	user_interactions?: string[];
+	admin_color?: string[];
 
 	// Jetpack computed properties
 	canAutoupdateFiles?: boolean;
