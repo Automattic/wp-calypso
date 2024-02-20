@@ -72,6 +72,7 @@ const PageBodyWrapper = styled.div( {
 	maxWidth: MAX_PAGE_WIDTH,
 	marginBlock: 0,
 	marginInline: 'auto',
+	backgroundColor: '#fdfdfd',
 } );
 
 const HeaderControls = styled.div( {
