@@ -833,7 +833,12 @@ $font-size: rem(14px);
 		}
 
 		.focus-content:not(.has-no-sidebar) .layout__content {
-			padding: 47px 0 0;
+			padding-left: 0;
+			padding-right: 0;
+		}
+
+		.focus-content:not(.has-no-sidebar):not(.has-no-masterbar) .layout__content {
+			padding-top: 47px;
 		}
 
 		// client/layout/sidebar/style.scss
