@@ -35,7 +35,9 @@ const debug = debugFactory( 'calypso:razorpay-processor' );
 type RazorpayTransactionRequest = {
 	razorpay: Razorpay;
 	razorpayConfiguration: RazorpayConfiguration;
-	name: string | undefined;
+	name?: string;
+	phoneNumber?: string;
+	email?: string;
 };
 
 export default async function razorpayProcessor(

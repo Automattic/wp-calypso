@@ -18,6 +18,7 @@ import {
 	createAlipayMethod,
 	createAlipayPaymentMethodStore,
 	createRazorpayMethod,
+	createRazorpayPaymentMethodStore,
 	isValueTruthy,
 } from '@automattic/wpcom-checkout';
 import debugFactory from 'debug';
@@ -382,6 +383,8 @@ function useCreateRazorpay( {
 		debug( 'Razorpay disabled by configuration' );
 	}
 
+	const paymentMethodStore = useMemo( () => createRazorpayPaymentMethodStore(), [] );
+
 	const isRazorpayReady =
 		! isRazorpayLoading &&
 		! razorpayLoadingError &&
@@ -393,10 +396,11 @@ function useCreateRazorpay( {
 			? createRazorpayMethod( {
 					razorpayConfiguration,
 					cartKey,
+					store: paymentMethodStore,
 					submitButtonContent: <CheckoutSubmitButtonContent />,
 			  } )
 			: null;
-	}, [ razorpayConfiguration, isRazorpayReady, cartKey ] );
+	}, [ razorpayConfiguration, isRazorpayReady, cartKey, paymentMethodStore ] );
 }
 
 export default function useCreatePaymentMethods( {
