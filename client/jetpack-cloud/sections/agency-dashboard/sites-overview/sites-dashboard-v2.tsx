@@ -89,8 +89,56 @@ export default function SitesDashboardV2() {
 		( sitesViewData: SitesViewState ) => {
 			setSitesViewState( sitesViewData );
 		},
-		[ setSitesViewState ]
+		[ setSitesViewState, sitesViewState ]
 	);
+
+	// Parse query string to get selected filter value
+	useEffect( () => {
+		const params = new URLSearchParams( window.location.search );
+		const selectedFilter = parseInt( params.get( 'selectedFilter' ) ?? '0' );
+		if ( selectedFilter ) {
+			setSitesViewState( ( prevView ) => ( {
+				...prevView,
+				filters: [ { field: 'status', operator: 'in', value: selectedFilter } ],
+			} ) );
+		}
+	}, [] );
+
+	useEffect( () => {
+		const arrayMap = [
+			'?issue_type=all_isues',
+			'/favorites',
+			'?issue_type=backup_failed',
+			'?issue_type=backup_warning',
+			'?issue_type=threats_found',
+			'?issue_type=site_disconnected',
+			'?issue_type=site_down',
+			'?issue_type=plugin_updates',
+		];
+		// loop through the arrayMap and check that the filter value is not in the URL and the filter is selected,
+		// before redirecting to the correct filter page.
+		for ( let i = 0; i < arrayMap.length; i++ ) {
+			if (
+				! window.location.href.includes( arrayMap[ i ] ) &&
+				sitesViewState.filters.some( ( filter ) => filter.value === i + 1 )
+			) {
+				if ( sitesViewState.filters.some( ( filter ) => filter.value === 2 ) ) {
+					window.location.href = `/sites${ arrayMap[ i ] }?selectedFilter=${ i + 1 }`;
+				} else {
+					window.location.href = `/sites${ arrayMap[ i ] }&selectedFilter=${ i + 1 }`;
+				}
+			}
+		}
+		const resetButton = document.querySelector( '.dataviews-wrapper .is-tertiary' );
+		if (
+			! window.location.href.endsWith( 'sites' ) &&
+			document.querySelector( '.dataviews-wrapper [aria-label="Status"]' ) === null
+		) {
+			if ( resetButton && resetButton.hasAttribute( 'aria-disabled' ) ) {
+				window.location.href = '/sites';
+			}
+		}
+	}, [ sitesViewState.filters ] );
 
 	useEffect( () => {
 		if ( jetpackSiteDisconnected ) {
