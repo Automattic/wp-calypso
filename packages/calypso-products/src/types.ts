@@ -30,6 +30,7 @@ import type {
 	FEATURE_GROUP_SHIPPING,
 	WOOCOMMERCE_PRODUCTS,
 	TYPES_LIST,
+	SPACE_UPGRADE_PRODUCTS,
 } from './constants';
 import type { TranslateResult } from 'i18n-calypso';
 import type { ReactElement, MemoExoticComponent } from 'react';
@@ -56,6 +57,10 @@ export type FeatureObject = {
 export type FeatureList = {
 	[ key: string ]: FeatureObject;
 };
+
+// Space Upgrades
+// - Special products that do not yet map to the Product type in @automattic/calypso-products
+export type SpaceUpgradeProductSlug = ( typeof SPACE_UPGRADE_PRODUCTS )[ number ];
 
 // WPCom
 export type WPComProductSlug = ( typeof WPCOM_PRODUCTS )[ number ];

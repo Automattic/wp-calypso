@@ -1,6 +1,6 @@
 import { select } from '@wordpress/data';
 import { STORE_KEY } from './constants';
-import { ProductsList } from './types';
+import { APIProductsList } from './types';
 import type { State } from './reducer';
 
 export const getState = ( state: State ) => state;
@@ -14,7 +14,7 @@ export const getProductBySlug = ( _state: State, slug: string ) => {
 		return undefined;
 	}
 	const products = (
-		select( STORE_KEY ) as { getProductsList: () => ProductsList | undefined }
+		select( STORE_KEY ) as { getProductsList: () => APIProductsList | undefined }
 	 ).getProductsList();
 
 	if ( ! products ) {
@@ -30,7 +30,7 @@ export function getProductCurrencyCode( _state: State, slug: string ) {
 	}
 
 	const products = (
-		select( STORE_KEY ) as { getProductsList: () => ProductsList | undefined }
+		select( STORE_KEY ) as { getProductsList: () => APIProductsList | undefined }
 	 ).getProductsList();
 
 	if ( ! products ) {
@@ -46,7 +46,7 @@ export function getProductName( _state: State, slug: string ) {
 	}
 
 	const products = (
-		select( STORE_KEY ) as { getProductsList: () => ProductsList | undefined }
+		select( STORE_KEY ) as { getProductsList: () => APIProductsList | undefined }
 	 ).getProductsList();
 
 	if ( ! products ) {
@@ -62,7 +62,7 @@ export function getProductDescription( _state: State, slug: string ) {
 	}
 
 	const products = (
-		select( STORE_KEY ) as { getProductsList: () => ProductsList | undefined }
+		select( STORE_KEY ) as { getProductsList: () => APIProductsList | undefined }
 	 ).getProductsList();
 
 	if ( ! products ) {
@@ -78,7 +78,7 @@ export function getProductTerm( _state: State, slug: string ) {
 	}
 
 	const products = (
-		select( STORE_KEY ) as { getProductsList: () => ProductsList | undefined }
+		select( STORE_KEY ) as { getProductsList: () => APIProductsList | undefined }
 	 ).getProductsList();
 
 	if ( ! products ) {
@@ -94,7 +94,7 @@ export function getProductCost( _state: State, slug: string ) {
 	}
 
 	const products = (
-		select( STORE_KEY ) as { getProductsList: () => ProductsList | undefined }
+		select( STORE_KEY ) as { getProductsList: () => APIProductsList | undefined }
 	 ).getProductsList();
 
 	if ( ! products ) {
@@ -110,7 +110,7 @@ export function getProductPriceTierList( _state: State, slug: string ) {
 	}
 
 	const products = (
-		select( STORE_KEY ) as { getProductsList: () => ProductsList | undefined }
+		select( STORE_KEY ) as { getProductsList: () => APIProductsList | undefined }
 	 ).getProductsList();
 
 	if ( ! products ) {

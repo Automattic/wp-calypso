@@ -9,6 +9,22 @@ export const PRODUCT_WPCOM_UNLIMITED_THEMES = 'unlimited_themes';
 export const PRODUCT_1GB_SPACE = 'wordpress_com_1gb_space_addon_yearly';
 export const PRODUCT_WPCOM_CUSTOM_DESIGN = 'custom-design';
 
+// Space Upgrade Products
+// - Special products that do not yet map to the Product type in @automattic/calypso-products
+export const PRODUCT_1GB_SPACE_UPGRADE = '1gb_space_upgrade';
+export const PRODUCT_5GB_SPACE_UPGRADE = '5gb_space_upgrade';
+export const PRODUCT_10GB_SPACE_UPGRADE = '10gb_space_upgrade';
+export const PRODUCT_50GB_SPACE_UPGRADE = '50gb_space_upgrade';
+export const PRODUCT_100GB_SPACE_UPGRADE = '100gb_space_upgrade';
+
+export const SPACE_UPGRADE_PRODUCTS = < const >[
+	PRODUCT_1GB_SPACE_UPGRADE,
+	PRODUCT_5GB_SPACE_UPGRADE,
+	PRODUCT_10GB_SPACE_UPGRADE,
+	PRODUCT_50GB_SPACE_UPGRADE,
+	PRODUCT_100GB_SPACE_UPGRADE,
+];
+
 export const WPCOM_SEARCH_PRODUCTS = < const >[
 	PRODUCT_WPCOM_SEARCH,
 	PRODUCT_WPCOM_SEARCH_MONTHLY,

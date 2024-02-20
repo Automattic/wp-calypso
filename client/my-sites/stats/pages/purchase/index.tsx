@@ -107,15 +107,15 @@ const StatsPurchasePage = ( {
 
 	const commercialProduct = useSelector( ( state ) =>
 		getProductBySlug( state, PRODUCT_JETPACK_STATS_YEARLY )
-	) as ProductsList.ProductsListItem | null;
+	) as ProductsList.APIProductsListItem | null;
 
 	const commercialMonthlyProduct = useSelector( ( state ) =>
 		getProductBySlug( state, PRODUCT_JETPACK_STATS_MONTHLY )
-	) as ProductsList.ProductsListItem | null;
+	) as ProductsList.APIProductsListItem | null;
 
 	const pwywProduct = useSelector( ( state ) =>
 		getProductBySlug( state, PRODUCT_JETPACK_STATS_PWYW_YEARLY )
-	) as ProductsList.ProductsListItem | null;
+	) as ProductsList.APIProductsListItem | null;
 
 	const isLoading =
 		! commercialProduct || ! commercialMonthlyProduct || ! pwywProduct || isRequestingSitePurchases;
