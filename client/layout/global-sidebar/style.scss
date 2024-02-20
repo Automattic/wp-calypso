@@ -93,6 +93,11 @@ $brand-text: "SF Pro Text", $sans;
 		flex: 1;
 		overflow-y: auto;
 
+		scrollbar-width: none;
+		&::-webkit-scrollbar {
+			display: none;
+		}
+
 		.sidebar,
 		.sidebar__menu:not(.is-togglable) {
 			display: flex;
