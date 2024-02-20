@@ -78,7 +78,8 @@ export const DeploymentStyle = ( {
 
 	const { isLoading: isCheckingWorkflowFile, data: workflowCheckResult } = useCheckWorkflowQuery(
 		installationId,
-		repository.id,
+		repository.name,
+		repository.owner,
 		branchName,
 		selectedWorkflow
 	);
@@ -161,7 +162,7 @@ export const DeploymentStyle = ( {
 
 	const installWorkflow = async () => {
 		createDeployment( {
-			repositoryId,
+			repositoryId: repository.id,
 			branchName: 'main',
 			installationId,
 			fileName: '.github/workflows/wpcom.yml',

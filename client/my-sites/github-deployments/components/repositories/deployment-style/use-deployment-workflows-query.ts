@@ -52,14 +52,16 @@ export const useDeploymentWorkflowsQuery = (
 
 export const useCheckWorkflowQuery = (
 	installationId: number,
-	repositoryId: number,
+	repositoryName: string,
+	repositoryOwner: string,
 	branchName: string,
 	workflowFilename: string
 ) => {
 	const invalidFilenames = [ 'none', 'create-new' ];
 	const path = addQueryArgs( '/hosting/github/workflows/checks', {
 		installation_id: installationId,
-		repository_id: repositoryId,
+		repository_name: repositoryName,
+		repository_owner: repositoryOwner,
 		branch_name: branchName,
 		workflow_filename: workflowFilename,
 	} );
