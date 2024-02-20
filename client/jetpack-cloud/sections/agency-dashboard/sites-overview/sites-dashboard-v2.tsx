@@ -3,7 +3,7 @@ import { Button } from '@automattic/components';
 import { isWithinBreakpoint } from '@automattic/viewport';
 import { getQueryArg, removeQueryArgs, addQueryArgs } from '@wordpress/url';
 import { useTranslate } from 'i18n-calypso';
-import { useContext, useEffect, useState, useMemo } from 'react';
+import { useContext, useEffect, useState, useMemo, useCallback } from 'react';
 import DocumentHead from 'calypso/components/data/document-head';
 import Notice from 'calypso/components/notice';
 import SidebarNavigation from 'calypso/components/sidebar-navigation';
@@ -78,9 +78,12 @@ export default function SitesDashboardV2() {
 		sort
 	);
 
-	const onSitesViewChange = ( sitesViewData: ViewChangeProps ) => {
-		setSitesViewData( sitesViewData );
-	};
+	const onSitesViewChange = useCallback(
+		( sitesViewData: ViewChangeProps ) => {
+			setSitesViewData( sitesViewData );
+		},
+		[ setSitesViewData ]
+	);
 
 	useEffect( () => {
 		if ( jetpackSiteDisconnected ) {

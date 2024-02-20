@@ -8,7 +8,9 @@ import DismissibleCard from 'calypso/blocks/dismissible-card';
 import { useCommandsArrayWpcom } from './wpcom-smp-commands';
 
 const HostingCommandPaletteBannerRoot = styled.div( {
-	marginBottom: 25,
+	'&:not(:empty)': {
+		marginBottom: 25,
+	},
 	'.hosting-command-palette-banner': {
 		background: 'linear-gradient(270deg, #E9EFF5 12.03%, rgba(233, 239, 245, 0) 40.39%)',
 		display: 'flex',

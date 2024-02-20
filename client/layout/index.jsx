@@ -19,7 +19,6 @@ import { withCurrentRoute } from 'calypso/components/route';
 import SympathyDevWarning from 'calypso/components/sympathy-dev-warning';
 import { retrieveMobileRedirect } from 'calypso/jetpack-connect/persistence-utils';
 import wooDnaConfig from 'calypso/jetpack-connect/woo-dna-config';
-import { useGlobalSidebar } from 'calypso/layout/global-sidebar/hooks/use-global-sidebar';
 import HtmlIsIframeClassname from 'calypso/layout/html-is-iframe-classname';
 import EmptyMasterbar from 'calypso/layout/masterbar/empty';
 import MasterbarLoggedIn from 'calypso/layout/masterbar/logged-in';
@@ -32,12 +31,16 @@ import { getMessagePathForJITM } from 'calypso/lib/route';
 import UserVerificationChecker from 'calypso/lib/user/verification-checker';
 import { isOffline } from 'calypso/state/application/selectors';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
+import {
+	getShouldShowGlobalSidebar,
+	getShouldShowGlobalSiteSidebar,
+} from 'calypso/state/global-sidebar/selectors';
 import { getCurrentOAuth2Client } from 'calypso/state/oauth2-clients/ui/selectors';
 import { getPreference } from 'calypso/state/preferences/selectors';
 import getCurrentQueryArguments from 'calypso/state/selectors/get-current-query-arguments';
 import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
 import isWooCommerceCoreProfilerFlow from 'calypso/state/selectors/is-woocommerce-core-profiler-flow';
-import { getSiteOption, isJetpackSite } from 'calypso/state/sites/selectors';
+import { isJetpackSite } from 'calypso/state/sites/selectors';
 import { isSupportSession } from 'calypso/state/support/selectors';
 import { getCurrentLayoutFocus } from 'calypso/state/ui/layout-focus/selectors';
 import {
@@ -47,7 +50,7 @@ import {
 } from 'calypso/state/ui/selectors';
 import BodySectionCssClass from './body-section-css-class';
 import LayoutLoader from './loader';
-import { handleScroll } from './utils';
+import { handleScroll, handleScrollGlobalSidebar } from './utils';
 
 // goofy import for environment badge, which is SSR'd
 import 'calypso/components/environment-badge/style.scss';
@@ -63,30 +66,35 @@ import './style.scss';
 
 const HELP_CENTER_STORE = HelpCenter.register();
 
-function SidebarScrollSynchronizer() {
+function SidebarScrollSynchronizer( { isGlobalSidebarOrGlobalSiteSidebar } ) {
 	const isNarrow = useBreakpoint( '<660px' );
-	const active =
-		! isNarrow &&
-		! config.isEnabled( 'jetpack-cloud' ) && // Jetpack cloud hasn't yet aligned with WPCOM.
-		! config.isEnabled( 'layout/dotcom-nav-redesign' ); // Dotcom nav redesign is not yet aligned with WPCOM - the handleScroll function is not yet compatible with the new layout.
+	const active = ! isNarrow && ! config.isEnabled( 'jetpack-cloud' ); // Jetpack cloud hasn't yet aligned with WPCOM.
 
 	useEffect( () => {
 		if ( active ) {
-			window.addEventListener( 'scroll', handleScroll );
-			window.addEventListener( 'resize', handleScroll );
+			if ( isGlobalSidebarOrGlobalSiteSidebar ) {
+				window.addEventListener( 'scroll', handleScrollGlobalSidebar );
+			} else {
+				window.addEventListener( 'scroll', handleScroll );
+				window.addEventListener( 'resize', handleScroll );
+			}
 		}
 
 		return () => {
 			if ( active ) {
-				window.removeEventListener( 'scroll', handleScroll );
-				window.removeEventListener( 'resize', handleScroll );
+				if ( isGlobalSidebarOrGlobalSiteSidebar ) {
+					window.removeEventListener( 'scroll', handleScrollGlobalSidebar );
+				} else {
+					window.removeEventListener( 'scroll', handleScroll );
+					window.removeEventListener( 'resize', handleScroll );
+				}
 
 				// remove style attributes added by `handleScroll`
 				document.getElementById( 'content' )?.removeAttribute( 'style' );
 				document.getElementById( 'secondary' )?.removeAttribute( 'style' );
 			}
 		};
-	}, [ active ] );
+	}, [ active, isGlobalSidebarOrGlobalSiteSidebar ] );
 
 	return null;
 }
@@ -276,7 +284,12 @@ class Layout extends Component {
 					loadHelpCenter={ loadHelpCenter }
 					currentRoute={ this.props.currentRoute }
 				/>
-				<SidebarScrollSynchronizer layoutFocus={ this.props.currentLayoutFocus } />
+				<SidebarScrollSynchronizer
+					layoutFocus={ this.props.currentLayoutFocus }
+					isGlobalSidebarOrGlobalSiteSidebar={
+						this.props.isGlobalSidebarVisible || this.props.isGlobalSiteSidebarVisible
+					}
+				/>
 				<SidebarOverflowDelay layoutFocus={ this.props.currentLayoutFocus } />
 				<BodySectionCssClass
 					layoutFocus={ this.props.currentLayoutFocus }
@@ -367,8 +380,9 @@ export default withCurrentRoute(
 		const isWooCoreProfilerFlow =
 			[ 'jetpack-connect', 'login' ].includes( sectionName ) &&
 			isWooCommerceCoreProfilerFlow( state );
-		const adminInterface = getSiteOption( state, siteId, 'wpcom_admin_interface' );
-		const { shouldShowGlobalSidebar, shouldShowGlobalSiteSidebar } = useGlobalSidebar(
+		const shouldShowGlobalSidebar = getShouldShowGlobalSidebar( state, siteId, sectionGroup );
+		const shouldShowGlobalSiteSidebar = getShouldShowGlobalSiteSidebar(
+			state,
 			siteId,
 			sectionGroup
 		);
@@ -388,6 +402,7 @@ export default withCurrentRoute(
 			isWpMobileApp() ||
 			isWcMobileApp() ||
 			shouldShowGlobalSidebar ||
+			shouldShowGlobalSiteSidebar ||
 			isJetpackCloud() ||
 			config.isEnabled( 'a8c-for-agencies' );
 		const isJetpackMobileFlow = 'jetpack-connect' === sectionName && !! retrieveMobileRedirect();
@@ -442,8 +457,7 @@ export default withCurrentRoute(
 			userAllowedToHelpCenter,
 			currentRoute,
 			isGlobalSidebarVisible: shouldShowGlobalSidebar,
-			// Global Site View should be limited to classic interface users only for now.
-			isGlobalSiteSidebarVisible: shouldShowGlobalSiteSidebar && adminInterface === 'wp-admin',
+			isGlobalSiteSidebarVisible: shouldShowGlobalSiteSidebar,
 		};
 	} )( Layout )
 );

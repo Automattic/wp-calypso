@@ -58,7 +58,6 @@ const PageHeader = styled.div( {
 
 	backgroundColor: 'var( --studio-white )',
 
-	paddingBlockStart: '24px',
 	paddingBlockEnd: '24px',
 
 	[ MEDIA_QUERIES.mediumOrSmaller ]: {
@@ -81,7 +80,7 @@ const HeaderControls = styled.div( {
 	marginInline: 'auto',
 	display: 'flex',
 	flexDirection: 'row',
-	alignItems: 'center',
+	alignItems: 'flex-start',
 } );
 
 const DashboardHeading = styled.h1( {

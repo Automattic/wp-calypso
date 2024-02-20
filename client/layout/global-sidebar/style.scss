@@ -1,3 +1,5 @@
+@import "@automattic/typography/styles/variables";
+$brand-text: "SF Pro Text", $sans;
 .global-sidebar {
 	bottom: 0;
 	display: flex;
@@ -9,7 +11,7 @@
 	transition: all 220ms ease-out;
 	background-color: var(--studio-black);
 
-	ul {
+	ul.sidebar__menu:not(.is-togglable) {
 		height: 100%;
 	}
 
@@ -90,43 +92,38 @@
 	.sidebar__body {
 		flex: 1;
 		overflow-y: auto;
-		padding-top: 36px;
 
-		.sidebar {
+		scrollbar-width: none;
+		&::-webkit-scrollbar {
+			display: none;
+		}
+
+		.sidebar,
+		.sidebar__menu:not(.is-togglable) {
 			display: flex;
+			min-height: unset;
 			gap: 6px;
-		}
-		.sidebar__menu.is-togglable a.sidebar__heading {
-			padding: 8px 8px 8px 20px;
-		}
-		a.sidebar__menu-link {
-			padding: 8px 8px 8px 20px;
-
-			.menu-link-text {
-				font-size: rem(16px);
-				font-weight: 400;
-				padding: 0;
-				max-height: auto;
-			}
-		}
-		.sidebar__menu-item-title-text {
-			line-height: 32px;
+			flex-direction: column;
 		}
 
 		li.sidebar__separator {
 			margin: 0 0 24px;
 		}
 
-		.selected {
-			.sidebar__heading,
-			.sidebar__menu-link {
-				.sidebar_svg-reader {
-					fill: var(--color-sidebar-menu-selected-background);
-					g path {
-						fill: var(--color-sidebar-menu-selected-text);
-					}
-				}
-			}
+		svg.sidebar__menu-icon {
+			display: none;
+		}
+
+		.sidebar__expandable-arrow {
+			fill: var(--studio-white);
+		}
+
+		.selected .sidebar__menu-link::after {
+			display: none;
+		}
+
+		li.sidebar-streams__search {
+			margin: 0;
 		}
 	}
 
@@ -159,6 +156,25 @@
 				fill: var(--studio-white);
 			}
 		}
+		.sidebar__footer-wpadmin {
+			display: flex;
+			flex-grow: 1;
+			align-items: center;
+			color: var(--color-sidebar-text);
+			&:hover {
+				color: var(--color-sidebar-menu-hover-text);
+				text-decoration: underline;
+			}
+			svg {
+				fill: var(--studio-white);
+				&.wpicon {
+					margin-right: 10px;
+				}
+				&.external {
+					margin-left: auto;
+				}
+			}
+		}
 	}
 
 	.sidebar-notifications {
@@ -172,11 +188,21 @@
 		a {
 			color: var(--nav-link);
 			text-decoration: none;
+			align-items: center;
+			display: inline-flex;
+			margin-bottom: 24px;
+			padding: 9px;
+			gap: 8px;
 		}
 
 		svg.gridicons-chevron-left {
 			vertical-align: top;
 			fill: var(--color-sidebar-gridicon-fill);
+		}
+
+		.sidebar__back-link-text {
+			font-size: 13px; /* stylelint-disable-line declaration-property-unit-allowed-list */
+			vertical-align: text-bottom;
 		}
 	}
 
