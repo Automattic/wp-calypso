@@ -10,35 +10,33 @@ export default function DashboardWalkthroughTour() {
 
 	const urlParams = new URLSearchParams( window.location.search );
 	const shouldRenderDashboardTour = urlParams.get( 'tour' ) === 'dashboard-walkthrough';
-	// TODO: As soon as v1 is no longer in use we should
+	// TODO: As soon as v1 is no longer in use we should delete it
 	// Define targets for both versions of the dashboard
-	const dashboardTargets = {
-		v1: {
-			site: "a.section-nav-tab__link[tabindex='0']",
-			stats: '.site-table__table tr:first-child td.jetpack-cloud-site-column__stats',
-			boost: '.site-table__table tr:first-child td.jetpack-cloud-site-column__boost',
-			backup: '.site-table__table tr:first-child td.jetpack-cloud-site-column__backup',
-			scan: '.site-table__table tr:first-child td.jetpack-cloud-site-column__scan',
-			uptimeMonitor:
-				'.site-table__table tr:first-child td.jetpack-cloud-site-column__monitor .toggle-activate-monitoring__toggle-button',
-			pluginUpdates: '.site-table__table tr:first-child td.jetpack-cloud-site-column__plugin',
-			detailedViews: '.site-table__table tr:first-child td.site-table__expand-row',
-		},
-		v2: {
-			site: "table.dataviews-view-table th[data-field-id='site'] button",
-			stats: "table.dataviews-view-table th[data-field-id='stats'] span",
-			boost: "table.dataviews-view-table th[data-field-id='boost'] span",
-			backup: "table.dataviews-view-table th[data-field-id='backup'] span",
-			scan: "table.dataviews-view-table th[data-field-id='scan'] span",
-			uptimeMonitor: "table.dataviews-view-table th[data-field-id='monitor'] span",
-			pluginUpdates: "table.dataviews-view-table th[data-field-id='plugins'] span",
-			detailedViews: "table.dataviews-view-table th[data-field-id='actions'] span",
-		},
+	const dashboardTargetsV1 = {
+		site: "a.section-nav-tab__link[tabindex='0']",
+		stats: '.site-table__table tr:first-child td.jetpack-cloud-site-column__stats',
+		boost: '.site-table__table tr:first-child td.jetpack-cloud-site-column__boost',
+		backup: '.site-table__table tr:first-child td.jetpack-cloud-site-column__backup',
+		scan: '.site-table__table tr:first-child td.jetpack-cloud-site-column__scan',
+		uptimeMonitor:
+			'.site-table__table tr:first-child td.jetpack-cloud-site-column__monitor .toggle-activate-monitoring__toggle-button',
+		pluginUpdates: '.site-table__table tr:first-child td.jetpack-cloud-site-column__plugin',
+		detailedViews: '.site-table__table tr:first-child td.site-table__expand-row',
+	};
+	const dashboardTargetsV2 = {
+		site: '.sites-dataview__site-header',
+		stats: '.sites-dataview__stats-header',
+		boost: '.sites-dataview__boost-header',
+		backup: '.sites-dataview__backup-header',
+		scan: '.sites-dataview__scan-header',
+		uptimeMonitor: '.sites-dataview__monitor-header',
+		pluginUpdates: '.sites-dataview__plugins-header',
+		detailedViews: '.sites-dataview__actions-header',
 	};
 
 	const activeDashboardTargets = isEnabled( 'jetpack/manage-sites-v2-menu' )
-		? dashboardTargets.v2
-		: dashboardTargets.v1;
+		? dashboardTargetsV2
+		: dashboardTargetsV1;
 
 	return (
 		shouldRenderDashboardTour && (
