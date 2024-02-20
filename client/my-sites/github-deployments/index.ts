@@ -7,6 +7,7 @@ import {
 	deploymentCreation,
 	deploymentManagement,
 	createNewRepository,
+	deploymentRunLogs,
 } from './controller';
 
 export default function () {
@@ -47,6 +48,16 @@ export default function () {
 		redirectHomeIfIneligible,
 		navigation,
 		createNewRepository,
+		makeLayout,
+		clientRender
+	);
+
+	page(
+		'/github-deployments/:site/logs/:deploymentId',
+		siteSelection,
+		redirectHomeIfIneligible,
+		navigation,
+		deploymentRunLogs,
 		makeLayout,
 		clientRender
 	);

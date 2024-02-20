@@ -1,0 +1,40 @@
+table.github-deployments-logs {
+	border-collapse: collapse;
+
+	thead th span {
+		font-weight: 500;
+	}
+
+	th,
+	td {
+		padding: 8px 0;
+		font-weight: normal;
+	}
+
+	th:first-child {
+		width: 350px;
+	}
+
+	tbody tr:not(:last-of-type) {
+		border-bottom: 1px solid var(--color-border-subtle);
+	}
+
+	td {
+		vertical-align: middle !important;
+	}
+
+	tr td:last-child {
+		text-align: right;
+	}
+
+}
+
+td.github-deployments-logs-content {
+	text-align: left !important;
+
+	pre {
+		max-height: 400px;
+		overflow-y: auto;
+		white-space: pre-wrap;
+	}
+}

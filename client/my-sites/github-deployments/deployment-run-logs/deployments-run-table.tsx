@@ -1,38 +1,28 @@
 import { __ } from '@wordpress/i18n';
 import { SortButton } from 'calypso/my-sites/github-deployments/components/sort-button/sort-button';
 import { SortDirection } from 'calypso/my-sites/github-deployments/components/sort-button/use-sort';
-import { CodeDeploymentData } from 'calypso/my-sites/github-deployments/deployments/use-code-deployments-query';
+import { DeploymentRun } from 'calypso/my-sites/github-deployments/deployments/use-code-deployments-query';
 import { DeploymentsRunItem } from './deployments-run-item';
 
 interface DeploymentsRunsTableProps {
-	deployments: CodeDeploymentData[];
+	deploymentsRuns: DeploymentRun[];
 	sortKey: string;
 	sortDirection: SortDirection;
 	onSortChange( key: string ): void;
 }
 
 export const DeploymentsRunsTable = ( {
-	deployments,
+	deploymentsRuns,
 	sortKey,
 	sortDirection,
 	onSortChange,
 }: DeploymentsRunsTableProps ) => {
 	return (
-		<table>
+		<table className="github-deployments-logs">
 			<thead>
 				<tr>
 					<th>
-						<SortButton
-							value="status"
-							activeValue={ sortKey }
-							direction={ sortDirection }
-							onChange={ onSortChange }
-						>
-							<span>{ __( 'Status' ) }</span>
-						</SortButton>
-					</th>
-					<th>
-						<span>{ __( 'Last commit' ) }</span>
+						<span>{ __( 'Commit' ) }</span>
 					</th>
 					<th>
 						<SortButton
@@ -46,6 +36,16 @@ export const DeploymentsRunsTable = ( {
 					</th>
 					<th>
 						<SortButton
+							value="status"
+							activeValue={ sortKey }
+							direction={ sortDirection }
+							onChange={ onSortChange }
+						>
+							<span>{ __( 'Status' ) }</span>
+						</SortButton>
+					</th>
+					<th>
+						<SortButton
 							value="duration"
 							activeValue={ sortKey }
 							direction={ sortDirection }
@@ -54,11 +54,12 @@ export const DeploymentsRunsTable = ( {
 							<span>{ __( 'Duration' ) }</span>
 						</SortButton>
 					</th>
+					<th></th>
 				</tr>
 			</thead>
 			<tbody>
-				{ deployments.map( ( deployment ) => (
-					<DeploymentsRunItem key={ deployment.id } deployment={ deployment } />
+				{ deploymentsRuns.map( ( run ) => (
+					<DeploymentsRunItem key={ run.id } run={ run } />
 				) ) }
 			</tbody>
 		</table>

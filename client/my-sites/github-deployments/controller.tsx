@@ -1,6 +1,7 @@
 import { isEnabled } from '@automattic/calypso-config';
 import { PageViewTracker } from 'calypso/lib/analytics/page-view-tracker';
 import { CreateRepository } from 'calypso/my-sites/github-deployments/components/repositories/create-repository/index';
+import { DeploymentRunsLogs } from 'calypso/my-sites/github-deployments/deployment-run-logs/index';
 import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
@@ -68,6 +69,28 @@ export const createNewRepository: Callback = ( context, next ) => {
 				delay={ 500 }
 			/>
 			<CreateRepository />
+		</>
+	);
+	next();
+};
+
+export const deploymentRunLogs: Callback = ( context, next ) => {
+	const codeDeploymentId = parseInt( context.params.deploymentId, 10 ) || null;
+	const state = context.store.getState();
+	const siteSlug = getSelectedSiteSlug( state );
+
+	if ( ! codeDeploymentId ) {
+		return context.page.replace( indexPage( siteSlug! ) );
+	}
+
+	context.primary = (
+		<>
+			<PageViewTracker
+				path="/github-deployments/:site/logs/:deploymentId"
+				title="GitHub Deployments"
+				delay={ 500 }
+			/>
+			<DeploymentRunsLogs codeDeploymentId={ codeDeploymentId } />
 		</>
 	);
 	next();

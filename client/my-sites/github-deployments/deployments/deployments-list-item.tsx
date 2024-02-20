@@ -2,7 +2,7 @@ import page from '@automattic/calypso-router';
 import { Gridicon } from '@automattic/components';
 import { useLocale } from '@automattic/i18n-utils';
 import { DropdownMenu, ExternalLink, MenuGroup, MenuItem, Spinner } from '@wordpress/components';
-import { Fragment, useState } from '@wordpress/element';
+import { Fragment } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { Icon, linkOff } from '@wordpress/icons';
 import { DeploymentCommitDetails } from 'calypso/my-sites/github-deployments/deployments/deployment-commit-details';
@@ -15,7 +15,7 @@ import { useCreateCodeDeploymentRun } from 'calypso/my-sites/github-deployments/
 import { formatDate } from 'calypso/my-sites/github-deployments/utils/dates';
 import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import { useSelector } from '../../../state';
-import { manageDeploymentPage } from '../routes';
+import { manageDeploymentPage, viewDeploymentLogs } from '../routes';
 import { CodeDeploymentData } from './use-code-deployments-query';
 import { useDeleteCodeDeployment } from './use-delete-code-deployment';
 
@@ -26,7 +26,6 @@ interface DeploymentsListItemProps {
 export const DeploymentsListItem = ( { deployment }: DeploymentsListItemProps ) => {
 	const siteSlug = useSelector( getSelectedSiteSlug );
 	const locale = useLocale();
-	const [ showDeploymentList, setShowDeploymentList ] = useState( false );
 
 	const { deleteDeployment, isPending } = useDeleteCodeDeployment(
 		deployment.blog_id,
@@ -40,8 +39,6 @@ export const DeploymentsListItem = ( { deployment }: DeploymentsListItemProps ) 
 
 	const run = deployment.current_deployed_run;
 	const [ installation, repo ] = deployment.repository_name.split( '/' );
-
-	const toggleShowDeploymentList = () => setShowDeploymentList( ! showDeploymentList );
 
 	return (
 		<tr>
@@ -77,7 +74,7 @@ export const DeploymentsListItem = ( { deployment }: DeploymentsListItemProps ) 
 									</MenuItem>
 									<MenuItem
 										onClick={ () => {
-											toggleShowDeploymentList();
+											page( viewDeploymentLogs( siteSlug!, deployment.id ) );
 											onClose();
 										} }
 									>

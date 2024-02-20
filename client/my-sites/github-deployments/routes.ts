@@ -27,6 +27,10 @@ export const manageDeploymentPage = ( siteSlug: string, deploymentId: number ) =
 	return `${ indexPage( siteSlug ) }/manage/${ deploymentId }`;
 };
 
+export const viewDeploymentLogs = ( siteSlug: string, deploymentId: number ) => {
+	return `${ indexPage( siteSlug ) }/logs/${ deploymentId }`;
+};
+
 export const createRepositoryPage = (
 	siteSlug: string,
 	{ installationId }: CreateNewRepositoryRouteParams = {}

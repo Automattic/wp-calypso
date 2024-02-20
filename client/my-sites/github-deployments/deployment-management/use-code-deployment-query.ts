@@ -1,28 +1,9 @@
 import { useQuery, UseQueryOptions } from '@tanstack/react-query';
 import wp from 'calypso/lib/wp';
+import { CodeDeploymentData } from 'calypso/my-sites/github-deployments/deployments/use-code-deployments-query';
 import { GITHUB_DEPLOYMENTS_QUERY_KEY } from '../constants';
 
 export const CODE_DEPLOYMENTS_QUERY_KEY = 'code-deployments';
-
-export interface CodeDeploymentData {
-	id: number;
-	blog_id: number;
-	created_by_user_id: number;
-	created_on: string;
-	updated_on: string;
-	external_repository_id: number;
-	repository_name: string;
-	branch_name: string;
-	target_dir: string;
-	is_automated: boolean;
-	installation_id: number;
-	created_by: CreatedBy;
-}
-
-export interface CreatedBy {
-	id: number;
-	name: string;
-}
 
 export const useCodeDeploymentQuery = (
 	siteId: number | null,
