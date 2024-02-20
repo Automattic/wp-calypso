@@ -164,6 +164,9 @@ $brand-text: "SF Pro Text", $sans;
 				&.wpicon {
 					margin-right: 10px;
 				}
+				&.external {
+					margin-left: auto;
+				}
 			}
 		}
 	}
