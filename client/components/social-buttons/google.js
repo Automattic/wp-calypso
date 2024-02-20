@@ -56,7 +56,7 @@ class GoogleSocialButton extends Component {
 	}
 
 	componentDidMount() {
-		if ( this.props.authCodeFromRedirect ) {
+		if ( this.props.authCodeFromRedirect && this.props.serviceFromRedirect !== 'github' ) {
 			this.handleAuthorizationCode( {
 				auth_code: this.props.authCodeFromRedirect,
 				redirect_uri: this.props.redirectUri,
@@ -115,7 +115,6 @@ class GoogleSocialButton extends Component {
 
 	async handleAuthorizationCode( { auth_code, redirect_uri } ) {
 		let response;
-
 		try {
 			response = await postLoginRequest( 'exchange-social-auth-code', {
 				service: 'google',
@@ -263,6 +262,7 @@ export default connect(
 	( state ) => ( {
 		isFormDisabled: isFormDisabled( state ),
 		authCodeFromRedirect: getInitialQueryArguments( state ).code,
+		serviceFromRedirect: getInitialQueryArguments( state ).service,
 	} ),
 	{
 		recordTracksEvent,

@@ -5,6 +5,7 @@ import { Component } from 'react';
 import { connect } from 'react-redux';
 import FormButton from 'calypso/components/forms/form-button';
 import AppleLoginButton from 'calypso/components/social-buttons/apple';
+import GithubLoginButton from 'calypso/components/social-buttons/github';
 import GoogleSocialButton from 'calypso/components/social-buttons/google';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { fetchCurrentUser } from 'calypso/state/current-user/actions';
@@ -25,6 +26,7 @@ class SocialLoginActionButton extends Component {
 
 	state = {
 		fetchingUser: false,
+		userHasDisconnected: false,
 	};
 
 	refreshUser = async () => {
@@ -100,18 +102,30 @@ class SocialLoginActionButton extends Component {
 			};
 		}
 
+		if ( service === 'github' ) {
+			this.recordLoginSuccess( service );
+
+			socialInfo = {
+				...socialInfo,
+				access_token: response.access_token,
+			};
+		}
+
 		return this.props.connectSocialUser( socialInfo ).then( this.refreshUser );
 	};
 
 	disconnectFromSocialService = () => {
 		const { service } = this.props;
-		return this.props.disconnectSocialUser( service ).then( this.refreshUser );
+		return this.props.disconnectSocialUser( service ).then( () => {
+			this.refreshUser();
+			this.setState( { userHasDisconnected: true } );
+		} );
 	};
 
 	render() {
 		const { service, isConnected, isUpdatingSocialConnection, redirectUri, translate } = this.props;
 
-		const { fetchingUser } = this.state;
+		const { fetchingUser, userHasDisconnected } = this.state;
 
 		const buttonLabel = isConnected ? translate( 'Disconnect' ) : translate( 'Connect' );
 		const disabled = isUpdatingSocialConnection || fetchingUser;
@@ -158,6 +172,20 @@ class SocialLoginActionButton extends Component {
 				>
 					{ actionButton }
 				</AppleLoginButton>
+			);
+		}
+
+		if ( service === 'github' ) {
+			return (
+				<GithubLoginButton
+					onClick={ this.handleButtonClick }
+					responseHandler={ this.handleSocialServiceResponse }
+					redirectUri={ redirectUri }
+					socialServiceResponse={ this.props.socialServiceResponse }
+					userHasDisconnected={ userHasDisconnected }
+				>
+					{ actionButton }
+				</GithubLoginButton>
 			);
 		}
 

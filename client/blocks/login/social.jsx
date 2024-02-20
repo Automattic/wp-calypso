@@ -114,8 +114,30 @@ class SocialLoginForm extends Component {
 		);
 	};
 
-	// eslint-disable-next-line no-unused-vars
-	handleGitHubResponse = ( response ) => {};
+	handleGitHubResponse = ( { access_token } ) => {
+		const { onSuccess, socialService } = this.props;
+		const redirectTo = this.props.redirectTo;
+
+		if ( socialService !== 'github' ) {
+			return;
+		}
+
+		const socialInfo = {
+			service: 'github',
+			access_token: access_token,
+		};
+
+		this.props.loginSocialUser( socialInfo, redirectTo ).then(
+			() => {
+				this.recordEvent( 'calypso_login_social_login_success', 'github' );
+
+				onSuccess();
+			},
+			( error ) => {
+				this.reportSocialLoginFailure( { service: 'github', socialInfo, error } );
+			}
+		);
+	};
 
 	recordEvent = ( eventName, service, params ) =>
 		this.props.recordTracksEvent( eventName, {
@@ -133,6 +155,9 @@ class SocialLoginForm extends Component {
 
 	getRedirectUri = ( service ) => {
 		const host = typeof window !== 'undefined' && window.location.host;
+		if ( window.location.hostname === 'calypso.localhost' ) {
+			return `http://${ host }${ login( { socialService: service } ) }`;
+		}
 		return `https://${ host }${ login( { socialService: service } ) }`;
 	};
 

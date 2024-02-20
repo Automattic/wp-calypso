@@ -58,8 +58,20 @@ class SocialSignupForm extends Component {
 		} );
 	};
 
-	// eslint-disable-next-line no-unused-vars
-	handleGitHubResponse = ( response ) => {};
+	handleGitHubResponse = ( { access_token }, triggeredByUser = true ) => {
+		if ( ! triggeredByUser && this.props.socialService !== 'github' ) {
+			return;
+		}
+
+		this.props.recordTracksEvent( 'calypso_signup_social_button_success', {
+			social_account_type: 'github',
+		} );
+
+		this.props.handleResponse( 'github', access_token, null, {
+			// Make accounts signed up via GitHub as dev accounts
+			is_dev_account: true,
+		} );
+	};
 
 	trackSocialSignup = ( service ) => {
 		this.props.recordTracksEvent( 'calypso_signup_social_button_click', {
