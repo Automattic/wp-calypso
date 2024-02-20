@@ -5,13 +5,12 @@ import {
 	PRODUCT_1GB_SPACE,
 	WPCOM_FEATURES_AI_ASSISTANT,
 } from '@automattic/calypso-products';
-import { useAddOnCheckoutLink, useAddOnFeatureSlugs } from '@automattic/data-stores';
+import { useAddOnCheckoutLink, useAddOnFeatureSlugs, ProductsList } from '@automattic/data-stores';
 import { useMemo } from '@wordpress/element';
 import { useTranslate } from 'i18n-calypso';
 import useMediaStorageQuery from 'calypso/data/media-storage/use-media-storage-query';
 import { filterTransactions } from 'calypso/me/purchases/billing-history/filter-transactions';
 import { useSelector } from 'calypso/state';
-import { getProductsList } from 'calypso/state/products-list/selectors';
 import getBillingTransactionFilters from 'calypso/state/selectors/get-billing-transaction-filters';
 import getFeaturesBySiteId from 'calypso/state/selectors/get-site-features';
 import { usePastBillingTransactions } from 'calypso/state/sites/hooks/use-billing-history';
@@ -172,7 +171,7 @@ const useAddOns = ( siteId?: number, isInSignup = false ): ( AddOnMeta | null )[
 	const { isLoading, spaceUpgradesPurchased } = useSpaceUpgradesPurchased( { isInSignup, siteId } );
 	const selectedSite = useSelector( getSelectedSite ) ?? null;
 	const activeAddOns = useActiveAddOnsDefs( selectedSite );
-	const productsList = useSelector( getProductsList );
+	const productsList = ProductsList.useProducts();
 	const siteFeatures = useSelector( ( state ) => getFeaturesBySiteId( state, siteId ) );
 
 	return useMemo(
@@ -190,9 +189,9 @@ const useAddOns = ( siteId?: number, isInSignup = false ): ( AddOnMeta | null )[
 					return true;
 				} )
 				.map( ( addOn ) => {
-					const product = productsList[ addOn.productSlug ];
-					const name = addOn.name ? addOn.name : product?.product_name;
-					const description = addOn.description ?? product?.description;
+					const product = productsList.data?.[ addOn.productSlug as ProductsList.StoreProductSlug ];
+					const name = addOn.name ? addOn.name : product?.name || '';
+					const description = addOn.description ?? ( product?.description || '' );
 
 					// if it's a storage add on
 					if ( addOn.productSlug === PRODUCT_1GB_SPACE ) {

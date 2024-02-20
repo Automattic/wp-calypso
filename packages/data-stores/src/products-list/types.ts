@@ -10,6 +10,8 @@ export interface Dispatch {
 	dispatch: DispatchFromMap< typeof actions >;
 }
 
+export type StoreProductSlug = ProductSlug | SpaceUpgradeProductSlug;
+
 export interface ProductPriceTier {
 	minimumUnits: number;
 	maximumUnits?: undefined | null | number;
@@ -19,16 +21,24 @@ export interface ProductPriceTier {
 	maximumPriceDisplay?: string | null | undefined;
 }
 
+/**
+ * Product data as transformed for the UI
+ * - Only properties needed by the UI are included (which can gradually be expanded as needed)
+ */
 export interface Product {
+	id: number;
+	name: string;
+	term?: string;
+	description: string;
+	productSlug: StoreProductSlug;
 	costSmallestUnit: number;
 	currencyCode: string;
-	description: string;
 	priceTierList: ProductPriceTier[];
-	productName: string;
-	productSlug: ProductSlug;
-	productTerm?: string;
 }
 
+/**
+ * Product data as returned by the API
+ */
 export interface APIProductsListItem {
 	available: boolean;
 	combined_cost_display: string;
@@ -43,7 +53,7 @@ export interface APIProductsListItem {
 	price_tiers: any;
 	product_id: number;
 	product_name: string;
-	product_slug: ProductSlug | SpaceUpgradeProductSlug;
+	product_slug: StoreProductSlug;
 	product_term?: string;
 	product_type: string;
 }
