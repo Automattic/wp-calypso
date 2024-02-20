@@ -29,7 +29,7 @@ import SiteContentHeader from './site-content-header';
 import SiteNotifications from './site-notifications';
 import SiteTopHeaderButtons from './site-top-header-buttons';
 import SitesDataViews from './sites-dataviews';
-import { ViewChangeProps } from './sites-dataviews/interfaces';
+import { SitesViewState } from './sites-dataviews/interfaces';
 
 import './style.scss';
 
@@ -62,27 +62,34 @@ export default function SitesDashboardV2() {
 		// setIsBulkManagementActive,
 	} = useContext( SitesOverviewContext );
 
-	const [ sitesViewData, setSitesViewData ] = useState< ViewChangeProps >( {
-		search: search,
-		sort: {},
-		filters: [],
-		selectedSite: undefined,
+	const [ sitesViewState, setSitesViewState ] = useState< SitesViewState >( {
+		type: 'table',
+		perPage: 50,
 		page: currentPage,
+		sort: {
+			field: 'site',
+			direction: 'desc',
+		},
+		search: search,
+		filters: [],
+		hiddenFields: [ 'status' ],
+		layout: {},
+		selectedSite: undefined,
 	} );
 
 	const { data, isError, isLoading, refetch } = useFetchDashboardSites(
 		isPartnerOAuthTokenLoaded,
-		sitesViewData.search,
-		sitesViewData.page,
+		sitesViewState.search,
+		sitesViewState.page,
 		filter,
 		sort
 	);
 
 	const onSitesViewChange = useCallback(
-		( sitesViewData: ViewChangeProps ) => {
-			setSitesViewData( sitesViewData );
+		( sitesViewData: SitesViewState ) => {
+			setSitesViewState( sitesViewData );
 		},
-		[ setSitesViewData ]
+		[ setSitesViewState ]
 	);
 
 	useEffect( () => {
@@ -253,7 +260,8 @@ export default function SitesDashboardV2() {
 					<SitesDataViews
 						data={ data }
 						isLoading={ isLoading }
-						onViewChange={ onSitesViewChange }
+						onSitesViewChange={ onSitesViewChange }
+						sitesViewState={ sitesViewState }
 					/>
 				</div>
 			</div>

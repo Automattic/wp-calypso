@@ -1,6 +1,6 @@
 import { DataViews } from '@wordpress/dataviews';
 import { useTranslate } from 'i18n-calypso';
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback } from 'react';
 import SiteActions from 'calypso/jetpack-cloud/sections/agency-dashboard/sites-overview/site-actions';
 import useFormattedSites from 'calypso/jetpack-cloud/sections/agency-dashboard/sites-overview/site-content/hooks/use-formatted-sites';
 import SiteStatusContent from 'calypso/jetpack-cloud/sections/agency-dashboard/sites-overview/site-status-content';
@@ -10,33 +10,13 @@ import { SitesDataViewsProps } from './interfaces';
 
 import './style.scss';
 
-const SitesDataViews = ( { data, isLoading, onViewChange }: SitesDataViewsProps ) => {
+const SitesDataViews = ( {
+	data,
+	isLoading,
+	onSitesViewChange,
+	sitesViewState,
+}: SitesDataViewsProps ) => {
 	const translate = useTranslate();
-
-	const [ view, setView ] = useState( {
-		type: 'table',
-		perPage: 10,
-		page: 1,
-		sort: {
-			field: 'site',
-			direction: 'desc',
-		},
-		search: '',
-		filters: [ { field: 'status', operator: 'in', value: 'Needs attention' } ],
-		hiddenFields: [ 'status' ],
-		layout: {},
-		selectedSite: undefined,
-	} );
-
-	useEffect( () => {
-		onViewChange( {
-			search: view.search,
-			sort: view.sort,
-			filters: view.filters,
-			selectedSite: view.selectedSite,
-			page: view.page,
-		} );
-	}, [ view.search, view.sort, view.filters, view.selectedSite, view.page, onViewChange ] );
 
 	const sites = useFormattedSites( data?.sites ?? [] );
 
@@ -183,16 +163,16 @@ const SitesDataViews = ( { data, isLoading, onViewChange }: SitesDataViewsProps 
 				data={ sites }
 				paginationInfo={ { totalItems: 0, totalPages: 0 } }
 				fields={ fields }
-				view={ view }
+				view={ sitesViewState }
 				search={ true }
-				searchLabel="Search sites"
+				searchLabel={ translate( 'Search sites' ) }
 				getItemId={ ( item: SiteData ) => {
 					if ( isLoading ) {
 						return '';
 					}
 					return item.site.value.blog_id;
 				} }
-				onChangeView={ setView }
+				onChangeView={ onSitesViewChange }
 				supportedLayouts={ [ 'table' ] }
 				actions={ [] }
 				isLoading={ isLoading }
