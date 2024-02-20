@@ -80,7 +80,7 @@ const HeaderControls = styled.div( {
 	marginInline: 'auto',
 	display: 'flex',
 	flexDirection: 'row',
-	alignItems: 'center',
+	alignItems: 'flex-start',
 } );
 
 const DashboardHeading = styled.h1( {
