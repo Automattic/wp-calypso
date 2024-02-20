@@ -1,44 +1,56 @@
 import { Button } from '@automattic/components';
 import { StepContainer } from '@automattic/onboarding';
 import { useTranslate } from 'i18n-calypso';
-import DocumentHead from 'calypso/components/data/document-head';
-import FormattedHeader from 'calypso/components/formatted-header';
+import { useSite } from 'calypso/landing/stepper/hooks/use-site';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import type { Step } from '../../types';
+import './style.scss';
+
+type SubmitDestination = 'import' | 'migrate' | 'upgrade';
 
 const SiteMigrationSource: Step = function ( { navigation } ) {
 	const translate = useTranslate();
+	const site = useSite();
+	const canInstallPlugins = site?.plan?.features?.active.find(
+		( feature ) => feature === 'install-plugins'
+	)
+		? true
+		: false;
 
-	const handleSubmit = () => {
-		navigation.submit?.();
+	const handleSubmit = ( destination: SubmitDestination ) => {
+		navigation.submit?.( { destination } );
 	};
 
 	const stepContent = (
-		<div>
-			<p>Enter the url of the site you're migrating.</p>
-			<Button primary onClick={ handleSubmit }>
-				{ translate( 'Continue' ) }
-			</Button>
+		<div className="migration-info">
+			<div className="migration-info-column">
+				<h2>{ translate( 'Import' ) }</h2>
+				<Button primary onClick={ () => handleSubmit( 'import' ) }>
+					{ translate( 'Import my website content' ) }
+				</Button>
+			</div>
+			<div className="migration-info-column">
+				<h2>{ translate( 'Migrate' ) }</h2>
+				<Button
+					primary
+					onClick={ () => {
+						handleSubmit( canInstallPlugins ? 'migrate' : 'upgrade' );
+					} }
+				>
+					{ canInstallPlugins ? translate( 'Migrate my site' ) : translate( 'Upgrade to migrate' ) }
+				</Button>
+			</div>
 		</div>
 	);
 
 	return (
 		<>
-			<DocumentHead title="Which site are you migrating?" />
 			<StepContainer
-				stepName="site-migration-instructions"
+				stepName="site-migration-source"
 				shouldHideNavButtons={ false }
-				className="is-step-site-migration-instructions"
+				className="is-step-site-migration-source"
 				hideSkip={ true }
 				hideBack={ true }
-				isHorizontalLayout
-				formattedHeader={
-					<FormattedHeader
-						id="site-migration-instructions-header"
-						headerText="Which site are you migrating?"
-						align="left"
-					/>
-				}
 				stepContent={ stepContent }
 				recordTracksEvent={ recordTracksEvent }
 			/>
