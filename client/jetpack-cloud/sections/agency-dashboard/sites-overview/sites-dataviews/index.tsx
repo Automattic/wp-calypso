@@ -129,21 +129,24 @@ const SitesDataViews = ( { data, isLoading, onViewChange }: SitesDataViewsProps 
 	const fields = [
 		{
 			id: 'status',
-			header: translate( 'STATUS' ),
+			header: translate( 'Status' ),
 			getValue: ( { item }: { item: SiteData } ) =>
 				item.site.error || item.scan.status === 'critical',
 			render: () => {},
 			type: 'enumeration',
 			elements: [
-				{ value: 1, label: 'Needs attention' },
+				{ value: 1, label: 'Needs Attention' },
 				{ value: 2, label: 'Favorite' },
-				{ value: 3, label: 'Backup failed' },
-				{ value: 4, label: 'Backup warning' },
-				{ value: 5, label: 'Threat found' },
-				{ value: 6, label: 'Site disconnected' },
-				{ value: 7, label: 'Site down' },
-				{ value: 8, label: 'Plugins needing updates' },
+				{ value: 3, label: 'Backup Failed' },
+				{ value: 4, label: 'Backup Warning' },
+				{ value: 5, label: 'Threat Found' },
+				{ value: 6, label: 'Site Disconnected' },
+				{ value: 7, label: 'Site Down' },
+				{ value: 8, label: 'Plugins Needing Updates' },
 			],
+			filterBy: {
+				operators: [ 'in' ],
+			},
 			enableHiding: true,
 			enableSorting: true,
 		},
