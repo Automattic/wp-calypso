@@ -150,6 +150,22 @@ $brand-text: "SF Pro Text", $sans;
 				fill: var(--studio-white);
 			}
 		}
+		.sidebar__footer-wpadmin {
+			display: flex;
+			flex-grow: 1;
+			align-items: center;
+			color: var(--color-sidebar-text);
+			&:hover {
+				color: var(--color-sidebar-menu-hover-text);
+				text-decoration: underline;
+			}
+			svg {
+				fill: var(--studio-white);
+				&.wpicon {
+					margin-right: 10px;
+				}
+			}
+		}
 	}
 
 	.sidebar-notifications {
