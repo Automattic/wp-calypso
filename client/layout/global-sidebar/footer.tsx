@@ -70,9 +70,8 @@ export const GlobalSiteSidebarFooter: FC< {
 		<SidebarFooter>
 			<a
 				href={ `https://${ selectedSiteSlug }/wp-admin` }
-				className="sidebar__footer-wpadmin tooltip tooltip-top"
+				className="sidebar__footer-wpadmin"
 				title={ translate( 'WP Admin' ) }
-				data-tooltip={ translate( 'WP Admin' ) }
 			>
 				<Icon icon={ wordpress } className="wpicon" />
 				{ translate( 'WP Admin' ) }
