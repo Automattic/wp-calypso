@@ -1,5 +1,5 @@
+import { Button } from '@automattic/components';
 import { useLocale } from '@automattic/i18n-utils';
-import { Button } from '@wordpress/components';
 import { useState } from '@wordpress/element';
 import { chevronDown, chevronUp, Icon } from '@wordpress/icons';
 import { DeploymentCommitDetails } from 'calypso/my-sites/github-deployments/deployments/deployment-commit-details';
