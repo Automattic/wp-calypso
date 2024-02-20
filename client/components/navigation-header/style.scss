@@ -42,7 +42,7 @@
 .navigation-header__main {
 	display: flex;
 	justify-content: space-between;
-	align-items: center;
+	align-items: flex-start;
 	box-sizing: border-box;
 	column-gap: 10px;
 
@@ -104,4 +104,3 @@
 #primary header.navigation-header header.formatted-header {
 	margin: 0;
 }
-
