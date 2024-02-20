@@ -63,8 +63,6 @@ const PageHeader = styled.div( {
 	[ MEDIA_QUERIES.mediumOrSmaller ]: {
 		padding: '16px',
 	},
-
-	// boxShadow: 'inset 0px -1px 0px rgba( 0, 0, 0, 0.05 )',
 } );
 
 const PageBodyWrapper = styled.div( {
