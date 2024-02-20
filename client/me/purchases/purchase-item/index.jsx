@@ -393,11 +393,35 @@ class PurchaseItem extends Component {
 			return translate( 'Included with Plan' );
 		}
 
-		if (
-			( isOneTimePurchase( purchase ) || isAkismetFreeProduct( purchase ) ) &&
-			! isDomainTransfer( purchase )
-		) {
-			return translate( 'Never Expires' );
+		if ( isOneTimePurchase( purchase ) || isAkismetFreeProduct( purchase ) ) {
+			if ( ! isDomainTransfer( purchase ) ) {
+				return translate( 'Never Expires' );
+			}
+			if ( isDomainTransfer( purchase ) ) {
+				const translateOptions = {
+					args: {
+						amount: formatCurrency( purchase.priceInteger, purchase.currencyCode, {
+							isSmallestUnit: true,
+							stripZeros: true,
+						} ),
+						excludeTaxStringAbbreviation: excludeTaxStringAbbreviation,
+					},
+					components: {
+						abbr: <abbr title={ excludeTaxStringTitle } />,
+					},
+				};
+				if (
+					locale === 'en' ||
+					i18n.hasTranslation(
+						'After transfer completes, domain registration renews yearly at %(amount)s'
+					)
+				) {
+					return translate(
+						'After transfer completes, domain registration renews yearly at %(amount)s {{abbr}}%(excludeTaxStringAbbreviation)s{{/abbr}}',
+						translateOptions
+					);
+				}
+			}
 		}
 
 		return null;
