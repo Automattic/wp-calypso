@@ -29,8 +29,6 @@ const THead = styled.thead< { blockOffset: number } >( ( { blockOffset } ) => ( 
 	position: 'sticky',
 	zIndex: 3,
 	insetBlockStart: `${ blockOffset }px`,
-
-	background: '#fdfdfd',
 } ) );
 
 const headerShadow: React.CSSProperties = {

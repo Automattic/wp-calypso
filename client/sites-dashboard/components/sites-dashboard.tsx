@@ -38,7 +38,7 @@ interface SitesDashboardProps {
 	queryParams: SitesDashboardQueryParams;
 }
 
-const MAX_PAGE_WIDTH = '1280px';
+const MAX_PAGE_WIDTH = '1224px';
 
 // Two wrappers are necessary (both pagePadding _and_ wideCentered) because we
 // want there to be some padding that extends all around the page, but the header's
@@ -64,7 +64,7 @@ const PageHeader = styled.div( {
 		padding: '16px',
 	},
 
-	boxShadow: 'inset 0px -1px 0px rgba( 0, 0, 0, 0.05 )',
+	// boxShadow: 'inset 0px -1px 0px rgba( 0, 0, 0, 0.05 )',
 } );
 
 const PageBodyWrapper = styled.div( {
@@ -72,7 +72,6 @@ const PageBodyWrapper = styled.div( {
 	maxWidth: MAX_PAGE_WIDTH,
 	marginBlock: 0,
 	marginInline: 'auto',
-	backgroundColor: '#fdfdfd',
 } );
 
 const HeaderControls = styled.div( {
@@ -92,10 +91,22 @@ const DashboardHeading = styled.h1( {
 	flex: 1,
 } );
 
-const sitesMargin = css( {
-	marginBlockStart: 0,
+const sitesMarginTable = css( {
+	marginBlockStart: '14px',
 	marginInline: 0,
 	marginBlockEnd: '1.5em',
+	[ MEDIA_QUERIES.small ]: {
+		marginBlockStart: '0',
+	},
+} );
+
+const sitesMargin = css( {
+	marginBlockStart: '32px',
+	marginInline: 0,
+	marginBlockEnd: '1.5em',
+	[ MEDIA_QUERIES.small ]: {
+		marginBlockStart: '0',
+	},
 } );
 
 export const PageBodyBottomContainer = styled.div( {
@@ -281,7 +292,7 @@ export function SitesDashboard( {
 													<SitesTable
 														isLoading={ isLoading }
 														sites={ paginatedSites }
-														className={ sitesMargin }
+														className={ sitesMarginTable }
 													/>
 												) }
 												{ displayMode === 'tile' && (
