@@ -1,4 +1,5 @@
 import { DataViews } from '@wordpress/dataviews';
+import { Icon, starFilled } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback } from 'react';
 import SiteActions from 'calypso/jetpack-cloud/sections/agency-dashboard/sites-overview/site-actions';
@@ -129,18 +130,20 @@ const SitesDataViews = ( {
 		},
 		{
 			id: 'favorite',
-			header: '★',
+			header: <Icon className="site-table__favorite-icon" size={ 24 } icon={ starFilled } />,
 			getValue: ( { item }: { item: SiteData } ) => item.isFavorite,
 			render: ( { item }: { item: SiteData } ) => {
 				if ( isLoading ) {
 					return <TextPlaceholder />;
 				}
 				return (
-					<SiteSetFavorite
-						isFavorite={ item.isFavorite || false }
-						siteId={ item.site.value.blog_id }
-						siteUrl={ item.site.value.url }
-					/>
+					<span className="sites-dataviews__favorite-btn-wrapper">
+						<SiteSetFavorite
+							isFavorite={ item.isFavorite || false }
+							siteId={ item.site.value.blog_id }
+							siteUrl={ item.site.value.url }
+						/>
+					</span>
 				);
 			},
 			enableHiding: false,
