@@ -89,7 +89,7 @@ export default function SitesDashboardV2() {
 		( sitesViewData: SitesViewState ) => {
 			setSitesViewState( sitesViewData );
 		},
-		[ setSitesViewState, sitesViewState ]
+		[ setSitesViewState ]
 	);
 
 	// Parse query string to get selected filter value
