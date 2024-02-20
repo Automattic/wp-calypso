@@ -210,4 +210,14 @@ export const STEPS = {
 		slug: 'site-migration-instructions',
 		asyncComponent: () => import( './steps-repository/site-migration-instructions' ),
 	},
+
+	SITE_MIGRATION_SOURCE: {
+		slug: 'site-migration-import-from',
+		asyncComponent: () => import( './steps-repository/site-migration-source-site' ),
+	},
+
+	SITE_MIGRATION_PLUGIN_INSTALL: {
+		slug: 'site-migration-plugin-install',
+		asyncComponent: () => import( './steps-repository/site-migration-plugin-install' ),
+	},
 };
