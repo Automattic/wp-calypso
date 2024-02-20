@@ -19,6 +19,8 @@ $brand-text: "SF Pro Text", $sans;
 		position: relative;
 
 		&::after {
+			height: 20px;
+			line-height: 20px;
 			background: var(--studio-white);
 			border-radius: 4px;
 			bottom: -30px;
@@ -49,7 +51,7 @@ $brand-text: "SF Pro Text", $sans;
 			right: unset;
 			bottom: unset;
 			left: 0;
-			top: -30px;
+			top: -35px;
 		}
 	}
 
@@ -129,6 +131,7 @@ $brand-text: "SF Pro Text", $sans;
 
 	.sidebar__footer {
 		display: flex;
+		gap: 8px;
 		align-items: center;
 		padding: 16px 24px 16px 24px;
 		border-color: var(--studio-gray-90);
@@ -140,39 +143,66 @@ $brand-text: "SF Pro Text", $sans;
 		.sidebar__footer-link {
 			display: flex;
 			align-items: center;
-			margin-left: 20px;
-			height: 40px;
-			&:first-child {
-				margin-left: 4px;
-			}
 		}
 		.sidebar__item-help {
 			display: flex;
 			align-items: center;
-			margin-left: 20px;
-			height: 40px;
+			padding: 4px;
 			cursor: pointer;
+
 			svg {
-				fill: var(--studio-white);
+				height: 24px;
+				width: 24px;
 			}
+		}
+		.sidebar__footer-reader {
+			padding: 4px;
+		}
+		.sidebar__footer-profile {
+			padding: 6px;
 		}
 		.sidebar__footer-wpadmin {
 			display: flex;
 			flex-grow: 1;
 			align-items: center;
-			color: var(--color-sidebar-text);
-			&:hover {
-				color: var(--color-sidebar-menu-hover-text);
-				text-decoration: underline;
-			}
+			height: 16px;
+			padding: 8px 0;
+			font-size: 14px;  /* stylelint-disable-line declaration-property-unit-allowed-list */
+
 			svg {
-				fill: var(--studio-white);
 				&.wpicon {
 					margin-right: 10px;
 				}
 				&.external {
 					margin-left: auto;
 				}
+			}
+		}
+
+		.sidebar__item-help,
+		.sidebar__footer-link,
+		.sidebar__footer-wpadmin {
+			color: var(--studio-gray-5);
+
+			svg {
+				fill: var(--studio-gray-5);
+			}
+
+			&:hover {
+				color: var(--studio-white);
+				text-decoration: none;
+
+				svg {
+					fill: var(--studio-white);
+				}
+			}
+		}
+
+		.sidebar__footer-link,
+		.sidebar__item-help {
+			&:hover {
+				background-color: var(--color-sidebar-menu-hover-background);
+				border-radius: 4px;
 			}
 		}
 	}
@@ -207,14 +237,22 @@ $brand-text: "SF Pro Text", $sans;
 	}
 
 	.site {
+		background: var(--color-sidebar-menu-hover-background);
 		flex: unset;
+		padding: 0;
+		margin: 16px 12px;
+		border-radius: 4px;
 
-		&.is-selected {
-			background: var(--color-sidebar-menu-selected-background);
+		a.site__content {
+			padding: 12px;
 		}
-
+		&.is-selected,
 		&:hover {
-			background: var(--color-sidebar-menu-hover-background);
+			background: var(--color-sidebar-menu-selected-background);
+
+			.site__domain {
+				color: var(--color-sidebar-menu-selected-text);
+			}
 		}
 	}
 

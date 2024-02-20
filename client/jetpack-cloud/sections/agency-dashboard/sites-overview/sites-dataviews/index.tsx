@@ -1,6 +1,6 @@
 import { DataViews } from '@wordpress/dataviews';
 import { useTranslate } from 'i18n-calypso';
-import { useEffect, useCallback, useState, SetStateAction } from 'react';
+import { useCallback } from 'react';
 import SiteActions from 'calypso/jetpack-cloud/sections/agency-dashboard/sites-overview/site-actions';
 import useFormattedSites from 'calypso/jetpack-cloud/sections/agency-dashboard/sites-overview/site-content/hooks/use-formatted-sites';
 import SiteStatusContent from 'calypso/jetpack-cloud/sections/agency-dashboard/sites-overview/site-status-content';
@@ -9,101 +9,15 @@ import { AllowedTypes, SiteData } from '../types';
 import { SitesDataViewsProps } from './interfaces';
 import './style.scss';
 
-const SitesDataViews = ( { data, isLoading, onViewChange }: SitesDataViewsProps ) => {
+const SitesDataViews = ( {
+	data,
+	isLoading,
+	onSitesViewChange,
+	sitesViewState,
+}: SitesDataViewsProps ) => {
 	const translate = useTranslate();
 
-	const [ view, setView ] = useState( {
-		type: 'table',
-		perPage: 10,
-		page: 1,
-		sort: {
-			field: 'site',
-			direction: 'desc',
-		},
-		search: '',
-		filters: [ { field: 'status', operator: 'in', value: 0 } ],
-		hiddenFields: [ 'status' ],
-		layout: {},
-		selectedSite: undefined,
-	} );
-
-	// Parse query string to get selected filter value
-	useEffect( () => {
-		const params = new URLSearchParams( window.location.search );
-		const selectedFilter = parseInt( params.get( 'selectedFilter' ) ?? '0' );
-		if ( selectedFilter ) {
-			setView( ( prevView ) => ( {
-				...prevView,
-				filters: [ { field: 'status', operator: 'in', value: selectedFilter } ],
-			} ) );
-		}
-	}, [] );
-
-	useEffect( () => {
-		onViewChange( {
-			search: view.search,
-			sort: view.sort,
-			filters: view.filters,
-			selectedSite: view.selectedSite,
-			page: view.page,
-		} );
-	}, [ view.search, view.sort, view.filters, view.selectedSite, view.page, onViewChange ] );
-
 	const sites = useFormattedSites( data?.sites ?? [] );
-
-	useEffect( () => {
-		if (
-			! window.location.href.includes( 'issue_types=all_issues' ) &&
-			view.filters.some( ( filter ) => filter.value === 1 )
-		) {
-			window.location.href = '/sites?issue_types=all_issues&selectedFilter=1';
-		}
-		if (
-			! window.location.pathname.includes( '/sites/favorites' ) &&
-			view.filters.some( ( filter ) => filter.value === 2 )
-		) {
-			window.location.href = '/sites/favorites?selectedFilter=2';
-		}
-		if (
-			! window.location.href.includes( 'issue_types=backup_failed' ) &&
-			view.filters.some( ( filter ) => filter.value === 3 )
-		) {
-			window.location.href = '/sites?issue_types=backup_failed&selectedFilter=3';
-		}
-		if (
-			! window.location.href.includes( 'issue_types=backup_warning' ) &&
-			view.filters.some( ( filter ) => filter.value === 4 )
-		) {
-			window.location.href = '/sites?issue_types=backup_warning&selectedFilter=4';
-		}
-		if (
-			! window.location.href.includes( 'issue_types=threats_found' ) &&
-			view.filters.some( ( filter ) => filter.value === 5 )
-		) {
-			window.location.href = '/sites?issue_types=threats_found&selectedFilter=5';
-		}
-		if (
-			! window.location.href.includes( 'issue_types=site_disconnected' ) &&
-			view.filters.some( ( filter ) => filter.value === 6 )
-		) {
-			window.location.href = '/sites?issue_types=site_disconnected&selectedFilter=6';
-		}
-		if (
-			! window.location.href.includes( 'issue_types=site_down' ) &&
-			view.filters.some( ( filter ) => filter.value === 7 )
-		) {
-			window.location.href = '/sites?issue_types=site_down&selectedFilter=7';
-		}
-		if (
-			! window.location.href.includes( 'issue_types=plugin_updates' ) &&
-			view.filters.some( ( filter ) => filter.value === 8 )
-		) {
-			window.location.href = '/sites?issue_types=plugin_updates&selectedFilter=8';
-		}
-		if ( ! ( window.location.href === '/sites' ) && view.filters.length === 0 ) {
-			window.location.href = '/sites';
-		}
-	}, [ view.filters ] );
 
 	const renderField = useCallback(
 		( column: AllowedTypes, item: SiteData ) => {
@@ -257,30 +171,16 @@ const SitesDataViews = ( { data, isLoading, onViewChange }: SitesDataViewsProps 
 				data={ sites }
 				paginationInfo={ { totalItems: 0, totalPages: 0 } }
 				fields={ fields }
-				view={ view }
+				view={ sitesViewState }
 				search={ true }
-				searchLabel="Search sites"
+				searchLabel={ translate( 'Search sites' ) }
 				getItemId={ ( item: SiteData ) => {
 					if ( isLoading ) {
 						return '';
 					}
 					return item.site.value.blog_id;
 				} }
-				onChangeView={ (
-					newView: SetStateAction< {
-						type: string;
-						perPage: number;
-						page: number;
-						sort: { field: string; direction: string };
-						search: string;
-						filters: { field: string; operator: string; value: number }[];
-						hiddenFields: string[];
-						layout: object;
-						selectedSite: undefined;
-					} >
-				) => {
-					setView( newView );
-				} }
+				onChangeView={ onSitesViewChange }
 				supportedLayouts={ [ 'table' ] }
 				actions={ [] }
 				isLoading={ isLoading }
