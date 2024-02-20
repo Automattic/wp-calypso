@@ -1,4 +1,4 @@
-import { Button, SiteThumbnail } from '@automattic/components';
+import { Button } from '@automattic/components';
 import { useMobileBreakpoint } from '@automattic/viewport-react';
 import { useI18n } from '@wordpress/react-i18n';
 import { addQueryArgs } from '@wordpress/url';
@@ -9,6 +9,7 @@ import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { SiteUrl, Truncated } from 'calypso/sites-dashboard/components/sites-site-url';
 import { useSelector } from 'calypso/state';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
+import { getWpComDomainBySiteId } from 'calypso/state/sites/domains/selectors';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import './style.scss';
 import { SitePreviewEllipsisMenu } from './site-preview-ellipsis-menu';
@@ -63,6 +64,7 @@ const SitePreview = ( {
 		canCurrentUser( state, selectedSite?.ID ?? 0, 'manage_options' )
 	);
 	const isMobile = useMobileBreakpoint();
+	const wpcomDomain = useSelector( ( state ) => getWpComDomainBySiteId( state, selectedSite?.ID ) );
 
 	if ( isMobile ) {
 		return <></>;
@@ -77,6 +79,11 @@ const SitePreview = ( {
 		  } )
 		: '#';
 
+	// We use an iframe rather than mShot to not cache changes.
+	const iframeSrcKeepHomepage = wpcomDomain
+		? `//${ wpcomDomain.domain }/?hide_banners=true&preview_overlay=true&preview=true`
+		: '#';
+
 	const selectedSiteURL = selectedSite ? selectedSite.URL : '#';
 	const selectedSiteSlug = selectedSite ? selectedSite.slug : '...';
 	const selectedSiteName = selectedSite ? selectedSite.name : '&nbsp;';
@@ -89,16 +96,18 @@ const SitePreview = ( {
 						{ __( 'Edit site' ) }
 					</Button>
 				) }
-				<SiteThumbnail
-					className="home-site-preview__thumbnail"
-					mShotsUrl={ addQueryArgs( selectedSite?.URL, {
-						iframe: true,
-						preview: true,
-						hide_banners: true,
-					} ) }
-					width={ 400 }
-					height={ 375 }
-				></SiteThumbnail>
+				<div className="home-site-preview__thumbnail">
+					{ wpcomDomain ? (
+						<iframe
+							scrolling="no"
+							loading="lazy"
+							title={ __( 'Site Preview' ) }
+							src={ iframeSrcKeepHomepage }
+						/>
+					) : (
+						<div className="home-site-preview__thumbnail-placeholder" />
+					) }
+				</div>
 			</ThumbnailWrapper>
 			{ showSiteDetails && (
 				<div className="home-site-preview__action-bar">
