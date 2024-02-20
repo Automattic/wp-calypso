@@ -27,10 +27,11 @@ const VALIDATE_DOMAIN_REGEX =
 const BlockSettings: FunctionComponent<
 	Pick< BlockEditProps< BlockAttributes >, 'attributes' | 'setAttributes' > & Props
 > = ( { attributes, setAttributes, plans } ) => {
-	const { productSlug, planTypeOptions, domain } = attributes;
+	const { productSlug, planTypeOptions, domain, affiliateLink } = attributes;
 	const planOptions = usePlanOptions( plans );
 	const currentPlan = plans?.find( ( plan ) => plan.productSlug === productSlug );
 	const [ newDomainInputValue, setNewDomainInputValue ] = useState( domain );
+	const [ newAffiliateLinkInputValue, setNewAffiliateLinkInputValue ] = useState( affiliateLink );
 
 	const setPlan = ( type: string, term: string ) => {
 		const plan = plans?.find( ( plan ) => plan.type === type && plan.term === term );
@@ -75,6 +76,20 @@ const BlockSettings: FunctionComponent<
 		}
 	};
 
+	const onAffiliateChange = ( value: string ) => {
+		setNewAffiliateLinkInputValue( value );
+
+		if ( ! value ) {
+			setAttributes( { affiliateLink: false } );
+			return;
+		}
+
+		const normalizedDomain = value.replace( NORMALIZE_DOMAIN_REGEX, '$1' );
+		if ( VALIDATE_DOMAIN_REGEX.test( normalizedDomain ) ) {
+			setAttributes( { affiliateLink: normalizedDomain } );
+		}
+	};
+
 	return (
 		<InspectorControls>
 			<PanelBody
@@ -104,6 +119,13 @@ const BlockSettings: FunctionComponent<
 							'happy-blocks'
 						) }
 						onChange={ onDomainChange }
+					/>
+					<TextControl
+						className="hb-pricing-plans-embed__settings-domain"
+						label={ __( 'Affiliate Link', 'happy-blocks' ) }
+						value={ newAffiliateLinkInputValue || '' }
+						help={ __( 'Enter the affiliate link for the Upgrade CTA', 'happy-blocks' ) }
+						onChange={ onAffiliateChange }
 					/>
 					<RadioControl
 						label={ __( 'Price', 'happy-blocks' ) }

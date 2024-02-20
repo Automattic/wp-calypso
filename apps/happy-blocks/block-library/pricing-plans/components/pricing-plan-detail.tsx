@@ -37,9 +37,15 @@ const PricingPlanDetail: FunctionComponent< BlockSaveProps< BlockAttributes > & 
 		} );
 	};
 
-	const CtaLink = attributes.domain
-		? `${ CHECKOUT_URL }/${ attributes.domain }/${ currentPlan.pathSlug }`
-		: PLANS_URL;
+	let CtaLink = PLANS_URL;
+
+	if ( attributes.domain ) {
+		CtaLink = `${ CHECKOUT_URL }/${ attributes.domain }/${ currentPlan.pathSlug }`;
+	}
+
+	if ( attributes.affiliateLink ) {
+		CtaLink = attributes.affiliateLink;
+	}
 
 	return (
 		<section className="hb-pricing-plans-embed__detail">
