@@ -1,0 +1,52 @@
+.tooltip--selected-plugins {
+	text-align: left;
+}
+
+.plugins-update-manager {
+	.placeholder {
+		min-width: 60px;
+	}
+
+	.components-text {
+		color: var(--studio-gray-60);
+		font-size: 0.875rem;
+	}
+
+	p.components-text {
+		margin-bottom: 0.5rem;
+	}
+
+	.components-card-footer {
+		justify-content: center;
+	}
+
+	svg.icon-info {
+		fill: var(--studio-gray-60);
+		vertical-align: middle;
+		margin: -2px 4px 0 4px;
+	}
+
+	table {
+		th,
+		td {
+			font-size: 0.875rem;
+			padding: 1rem 0;
+			color: var(--studio-gray-60);
+			border-bottom: solid 1px var(--studio-gray-0);
+		}
+
+		th {
+			font-weight: 500;
+		}
+
+		td {
+			padding: 0.5rem 0;
+			vertical-align: middle;
+
+			&.name {
+				font-weight: 500;
+				color: var(--studio-gray-100);
+			}
+		}
+	}
+}
