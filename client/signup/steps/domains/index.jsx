@@ -920,7 +920,7 @@ export class RenderDomainsStep extends Component {
 						temporaryCart={ this.state.temporaryCart }
 						domainRemovalQueue={ this.state.domainRemovalQueue }
 						cartIsLoading={ cartIsLoading }
-						flowName={ this.props.flowName }
+						flowName={ flowName }
 						removeDomainClickHandler={ this.removeDomainClickHandler }
 						isMiniCartContinueButtonBusy={ this.state.isMiniCartContinueButtonBusy }
 						goToNext={ this.goToNext }
@@ -933,8 +933,11 @@ export class RenderDomainsStep extends Component {
 					this.props.isPlanSelectionAvailableLaterInFlow && (
 						<ChooseDomainLater
 							step={ this.props.step }
-							flowName={ this.props.flowName }
+							flowName={ flowName }
 							handleDomainExplainerClick={ this.handleDomainExplainerClick }
+							showEscapeHatchAfterQuery={
+								flowName === 'onboarding' || flowName === 'onboarding-pm'
+							}
 						/>
 					)
 				) }
