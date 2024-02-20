@@ -249,7 +249,7 @@ const sections = [
 	},
 	{
 		name: 'patterns',
-		paths: [ '/patterns' ],
+		paths: [ '/patterns', '/([a-z]{2,3}|[a-z]{2}-[a-z]{2})/patterns' ],
 		module: 'calypso/my-sites/patterns',
 		enableLoggedOut: true,
 		isomorphic: true,

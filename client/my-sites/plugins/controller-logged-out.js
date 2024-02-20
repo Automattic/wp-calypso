@@ -190,7 +190,7 @@ export async function fetchPlugin( context, next ) {
 
 	const dataOrError = await prefetchTimebox(
 		[
-			// We need to have the product list before prefetchPlugin so it can determin where to fetch from.
+			// We need to have the product list before prefetchPlugin so it can determine where to fetch from.
 			prefetchProductList( queryClient, store ).then( () =>
 				prefetchPlugin( queryClient, store, options )
 			),

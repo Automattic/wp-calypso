@@ -3,7 +3,7 @@ import { getLanguageRouteParam, getAnyLanguageRouteParam } from '@automattic/i18
 import {
 	makeLayout,
 	redirectInvalidLanguage,
-	redirectLoggedInUrl,
+	redirectWithoutLocaleParamInFrontIfLoggedIn,
 	render as clientRender,
 } from 'calypso/controller';
 import { setLocaleMiddleware } from 'calypso/controller/shared';
@@ -17,7 +17,7 @@ export default function () {
 
 	page(
 		[ '/discover', `/${ langParam }/discover` ],
-		redirectLoggedInUrl,
+		redirectWithoutLocaleParamInFrontIfLoggedIn,
 		setLocaleMiddleware(),
 		updateLastRoute,
 		sidebar,
