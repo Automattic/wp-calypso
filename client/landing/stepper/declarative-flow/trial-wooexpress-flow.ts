@@ -1,6 +1,7 @@
 import config from '@automattic/calypso-config';
 import { useLocale } from '@automattic/i18n-utils';
 import { useSelect, useDispatch } from '@wordpress/data';
+import { useTranslate } from 'i18n-calypso';
 import { useEffect } from 'react';
 import { getLocaleFromQueryParam, getLocaleFromPathname } from 'calypso/boot/locale';
 import recordGTMDatalayerEvent from 'calypso/lib/analytics/ad-tracking/woo/record-gtm-datalayer-event';
@@ -31,6 +32,8 @@ const wooexpress: Flow = {
 	},
 	useAssertConditions(): AssertConditionResult {
 		const { setProfilerData } = useDispatch( ONBOARD_STORE );
+		const { setSiteSetupError } = useDispatch( SITE_STORE );
+		const translate = useTranslate();
 		const userIsLoggedIn = useSelect(
 			( select ) => ( select( USER_STORE ) as UserSelect ).isCurrentUserLoggedIn(),
 			[]
@@ -48,6 +51,13 @@ const wooexpress: Flow = {
 		const queryLocaleSlug = getLocaleFromQueryParam();
 		const pathLocaleSlug = getLocaleFromPathname();
 		const locale = queryLocaleSlug || pathLocaleSlug || useLocaleSlug;
+
+		setSiteSetupError(
+			undefined,
+			translate(
+				'It looks like something went wrong while setting up your store. Please contact support so that we can help you out.'
+			)
+		);
 
 		const queryParams = new URLSearchParams( window.location.search );
 		const profilerData = queryParams.get( 'profilerdata' );

@@ -66,12 +66,6 @@ export default function globalSiteSidebarMenu( {
 			type: 'menu-item',
 			url: `/hosting-config/${ siteDomain }`,
 		},
-		{
-			slug: 'settings-site-tools',
-			title: translate( 'Tools' ),
-			type: 'menu-item',
-			url: `/settings/site-tools/${ siteDomain }`,
-		},
 		...( showSiteMonitoring
 			? [
 					{
@@ -99,6 +93,12 @@ export default function globalSiteSidebarMenu( {
 			title: translate( 'Subscribers' ),
 			type: 'menu-item',
 			url: `/subscribers/${ siteDomain }`,
+		},
+		{
+			slug: 'settings-site',
+			title: translate( 'Settings' ),
+			type: 'menu-item',
+			url: `/settings/general/${ siteDomain }`,
 		},
 	];
 }
