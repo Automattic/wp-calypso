@@ -20,7 +20,7 @@ import './style.scss';
 
 const getTitle = ( isAdminInterface ) => {
 	if ( isAdminInterface ) {
-		return translate( 'Site Tools' );
+		return translate( 'Settings' );
 	}
 	return translate( 'General Settings' );
 };
