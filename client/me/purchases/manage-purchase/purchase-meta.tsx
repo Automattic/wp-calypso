@@ -29,6 +29,7 @@ import { getByPurchaseId } from 'calypso/state/purchases/selectors';
 import { getSite, isRequestingSites } from 'calypso/state/sites/selectors';
 import { managePurchase } from '../paths';
 import { isAkismetTemporarySitePurchase, isTemporarySitePurchase } from '../utils';
+import PurchaseMetaAutoRenewCouponDetail from './purchase-meta-auto-renew-coupon-detail';
 import PurchaseMetaExpiration from './purchase-meta-expiration';
 import PurchaseMetaIntroductoryOfferDetail from './purchase-meta-introductory-offer-detail';
 import PurchaseMetaOwner from './purchase-meta-owner';
@@ -115,6 +116,7 @@ export default function PurchaseMeta( {
 					<span>
 						<abbr title={ excludeTaxStringTitle }>{ excludeTaxStringAbbreviation }</abbr>
 					</span>
+					<PurchaseMetaAutoRenewCouponDetail purchase={ purchase } />
 				</li>
 				<PurchaseMetaExpiration
 					purchase={ purchase }
