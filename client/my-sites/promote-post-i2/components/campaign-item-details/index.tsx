@@ -1,19 +1,13 @@
 import config from '@automattic/calypso-config';
 import './style.scss';
-import {
-	Badge,
-	Button,
-	Dialog,
-	HorizontalBarList,
-	HorizontalBarListItem,
-} from '@automattic/components';
+import { Badge, Button, Dialog } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { useBreakpoint } from '@automattic/viewport-react';
-import { __, sprintf } from '@wordpress/i18n';
 import { useTranslate } from 'i18n-calypso';
 import moment from 'moment/moment';
 import { useState } from 'react';
 import Breadcrumb, { Item } from 'calypso/components/breadcrumb';
+import InfoPopover from 'calypso/components/info-popover';
 import InlineSupportLink from 'calypso/components/inline-support-link';
 import Main from 'calypso/components/main';
 import Notice from 'calypso/components/notice';
@@ -100,7 +94,6 @@ export default function CampaignItemDetails( props: Props ) {
 		billing_data,
 		display_delivery_estimate = '',
 		target_urn,
-		delivery_percent,
 		created_at,
 		format,
 	} = campaign || {};
@@ -113,11 +106,9 @@ export default function CampaignItemDetails( props: Props ) {
 		budget_left,
 		total_budget,
 		total_budget_used,
-		views_organic,
-		stats_enabled,
 	} = campaign_stats || {};
 
-	const { card_name, payment_method, subtotal, credits, total } = billing_data || {};
+	const { card_name, payment_method, credits, total } = billing_data || {};
 	const { title, clickUrl } = content_config || {};
 	const canDisplayPaymentSection =
 		( status === 'finished' || status === 'canceled' ) &&
@@ -129,30 +120,34 @@ export default function CampaignItemDetails( props: Props ) {
 	} );
 
 	// Target block
-	const {
-		devices: devicesList,
-		topics: topicsList,
-		languages: languagesList,
-	} = audience_list || {};
+	const { topics: topicsList, languages: languagesList } = audience_list || {};
 
 	// Formatted labels
 	const ctrFormatted = clickthrough_rate ? `${ clickthrough_rate.toFixed( 2 ) }%` : '-';
 	const durationFormatted = getCampaignDurationFormatted( start_date, end_date );
 	const totalBudgetFormatted = `$${ formatCents( total_budget || 0 ) }`;
 	const totalBudgetLeftFormatted = `$${ formatCents( budget_left || 0 ) } ${ __( 'left' ) }`;
+	const overallSpendingPercentage =
+		total_budget_used && total_budget
+			? `${ ( ( total_budget_used / total_budget ) * 100 ).toFixed( 0 ) }% ${ __(
+					'of total budget'
+			  ) }`
+			: '';
 	const overallSpendingFormatted = `$${ formatCents( total_budget_used || 0 ) }`;
 	const deliveryEstimateFormatted = getCampaignEstimatedImpressions( display_delivery_estimate );
 	const campaignTitleFormatted = title || __( 'Untitled' );
 	const campaignCreatedFormatted = moment.utc( created_at ).format( 'MMMM DD, YYYY' );
-	const devicesListFormatted = devicesList ? `${ devicesList }` : __( 'All' );
 	const languagesListFormatted = languagesList
 		? `${ languagesList }`
 		: translate( 'All languages' );
 	const topicsListFormatted = topicsList ? `${ topicsList }` : __( 'All' );
 	const impressionsTotal = formatNumber( impressions_total );
-	const subtotalFormatted = `$${ formatCents( subtotal || 0 ) }`;
 	const creditsFormatted = `$${ formatCents( credits || 0 ) }`;
 	const totalFormatted = `$${ formatCents( total || 0 ) }`;
+	const dailyAverageSpending =
+		total_budget_used && duration_days
+			? ( total_budget_used / duration_days ).toFixed( 2 )
+			: undefined;
 
 	const navigationItems = [
 		{
@@ -196,20 +191,24 @@ export default function CampaignItemDetails( props: Props ) {
 		</span>
 	);
 
-	const databars = [
-		{
-			label: translate( 'Ad' ),
-			value: clicks_total || 0,
-		},
-		{
-			label: translate( 'Organic' ),
-			value: views_organic || 0,
-		},
-	];
-
-	const databarTotal = databars.reduce(
-		( total, { value } ) => ( value > 0 ? total + value : total ), // Sum only positive values.
-		0
+	const tabletIcon = (
+		<span className="campaign-item-details__tablet-icon">
+			<svg
+				xmlns="http://www.w3.org/2000/svg"
+				width="24"
+				height="24"
+				viewBox="0 0 24 24"
+				fill="none"
+			>
+				<path d="M14 16L10 16V17.5H14V16Z" fill="#A7AAAD" />
+				<path
+					fill-rule="evenodd"
+					clip-rule="evenodd"
+					d="M5 6C5 4.89543 5.89543 4 7 4L17 4C18.1046 4 19 4.89543 19 6V18C19 19.1046 18.1046 20 17 20H7C5.89543 20 5 19.1046 5 18L5 6ZM7 5.5L17 5.5C17.2761 5.5 17.5 5.72386 17.5 6V18C17.5 18.2761 17.2761 18.5 17 18.5H7C6.72386 18.5 6.5 18.2761 6.5 18L6.5 6C6.5 5.72386 6.72386 5.5 7 5.5Z"
+					fill="#A7AAAD"
+				/>
+			</svg>
+		</span>
 	);
 
 	const cancelCampaignButtonText =
@@ -421,10 +420,13 @@ export default function CampaignItemDetails( props: Props ) {
 								</div>
 								<div>
 									<span className="campaign-item-details__label">
-										{ translate( 'Overall spending ' ) }
+										{ translate( 'Spent so far' ) }
 									</span>
 									<span className="campaign-item-details__text wp-brand-font">
 										{ ! isLoading ? overallSpendingFormatted : <FlexibleSkeleton /> }
+									</span>
+									<span className="campaign-item-details__details">
+										{ ! isLoading ? overallSpendingPercentage : <FlexibleSkeleton /> }
 									</span>
 								</div>
 							</div>
@@ -450,9 +452,20 @@ export default function CampaignItemDetails( props: Props ) {
 											</span>
 										</div>
 										<div>
-											<span className="campaign-item-details__label">
-												{ translate( 'Click-through rate' ) }
-											</span>
+											<div>
+												<span className="campaign-item-details__label">
+													{ translate( 'Click-through rate' ) }
+												</span>
+												<InfoPopover position="bottom right">
+													{ __( 'Click-through rate: ' ) }
+													<br />
+													<span className="popover-title">
+														{ __(
+															'a metric used to measure the ratio of users who click on your ad to the number of total users view it.'
+														) }
+													</span>
+												</InfoPopover>
+											</div>
 											<span className="campaign-item-details__text wp-brand-font">
 												{ ! isLoading ? ctrFormatted : <FlexibleSkeleton /> }
 											</span>
@@ -495,85 +508,51 @@ export default function CampaignItemDetails( props: Props ) {
 								<div className="campaign-item-details__secondary-stats-row">
 									<div>
 										<span className="campaign-item-details__label">
-											{ translate( 'Estimated impressions' ) }
+											{ translate( 'Weekly Budget' ) }
+										</span>
+										<span className="campaign-item-details__text wp-brand-font">
+											{ ! isLoading ? totalBudgetFormatted : <FlexibleSkeleton /> }
+										</span>
+										<span className="campaign-item-details__details">
+											{ ! isLoading && dailyAverageSpending ? (
+												/* translators: Daily average spend: the current budget divided by the amount of days of the campaign */
+												`${ translate( 'Daily av. spend' ) } $${ dailyAverageSpending }`
+											) : (
+												<FlexibleSkeleton />
+											) }
+										</span>
+									</div>
+									<div>
+										<span className="campaign-item-details__label">
+											{ translate( 'Weekly impressions' ) }
 										</span>
 										<span className="campaign-item-details__text wp-brand-font">
 											{ ! isLoading ? deliveryEstimateFormatted : <FlexibleSkeleton /> }
 										</span>
-										{ ! isLoading && delivery_percent && delivery_percent > 100 ? (
-											<span className="campaign-item-details__details">
-												{ sprintf(
-													/* translators: %s: percentage of delivery (i.e. 30%) */
-													translate( 'Delivered %s more than estimated' ),
-													`${ delivery_percent }%`
-												) }
-											</span>
-										) : null }
-									</div>
-									<div>
-										<div className="campaign-item-details__traffic-container-header">
-											<span className="campaign-item-details__label">
-												{ translate( 'Traffic breakdown' ) }
-											</span>
-
-											{ databarTotal > 0 && (
-												<span className="campaign-item-details__label">
-													{ translate( 'Visitors' ) }
-												</span>
-											) }
-										</div>
-										<div className="campaign-item-details__traffic-container-body">
-											{ isLoading && <FlexibleSkeleton /> }
-
-											{ ! isLoading && databarTotal === 0 && (
-												<div className="campaign-item-details__traffic-no-data">
-													{ stats_enabled
-														? translate( 'No data' )
-														: translate( 'Stats are disabled for this site' ) }
-												</div>
-											) }
-
-											{ ! isLoading && databarTotal > 0 && (
-												<>
-													<ul className="horizontal-bar-list">
-														{ ! isLoading ? (
-															<HorizontalBarList>
-																{ databars?.map( ( item, index ) => (
-																	<HorizontalBarListItem
-																		key={ `bar_${ index }` }
-																		data={ item }
-																		maxValue={ databarTotal }
-																		hasIndicator={ false }
-																		leftSideItem={ null }
-																		useShortLabel={ false }
-																		useShortNumber={ true }
-																		isStatic={ true }
-																		usePlainCard={ false }
-																		isLinkUnderlined={ false }
-																		leftGroupToggle={ true }
-																	/>
-																) ) }
-															</HorizontalBarList>
-														) : (
-															<FlexibleSkeleton />
-														) }
-													</ul>
-													<div className="campaign-item-details__details no-bottom-margin">
-														{ translate( 'Compares traffic when campaign was active' ) }
-													</div>
-												</>
-											) }
-										</div>
+										<span className="campaign-item-details__details">
+											{ translate( 'Impressions are estimated' ) }
+										</span>
 									</div>
 								</div>
 
 								<div className="campaign-item-details__secondary-stats-row">
 									<div>
 										<span className="campaign-item-details__label">
-											{ translate( 'Audience' ) }
+											{ translate( 'Languages' ) }
 										</span>
 										<span className="campaign-item-details__details">
-											{ ! isLoading ? devicesListFormatted : <FlexibleSkeleton /> }
+											{ ! isLoading ? languagesListFormatted : <FlexibleSkeleton /> }
+										</span>
+										{
+											// TODO: Add CTA button div here.
+										 }
+									</div>
+									<div className="campaign-item-details__second-column">
+										<span className="campaign-item-details__label">
+											{ translate( 'Interests' ) }
+										</span>
+										<span className="campaign-item-details__details">
+											{ ! isLoading ? topicsListFormatted : <FlexibleSkeleton /> }
 										</span>
 										<span className="campaign-item-details__label">
 											{ translate( 'Location' ) }
@@ -585,40 +564,24 @@ export default function CampaignItemDetails( props: Props ) {
 												<FlexibleSkeleton />
 											) }
 										</span>
-									</div>
-									<div className="campaign-item-details__second-column">
-										<span className="campaign-item-details__label">
-											{ translate( 'Interests' ) }
-										</span>
-										<span className="campaign-item-details__details">
-											{ ! isLoading ? topicsListFormatted : <FlexibleSkeleton /> }
-										</span>
-										<span className="campaign-item-details__label">
-											{ translate( 'Languages' ) }
-										</span>
-										<span className="campaign-item-details__details">
-											{ ! isLoading ? languagesListFormatted : <FlexibleSkeleton /> }
-										</span>
-									</div>
-								</div>
-								<div className="campaign-item-details__secondary-stats-row">
-									<div className="campaign-item-details__ad-destination">
-										<span className="campaign-item-details__label">
-											{ translate( 'Ad destination' ) }
-										</span>
-										<div className="campaign-item-details__ad-destination-url-container">
-											{ ! isLoading ? (
-												<Button
-													className="campaign-item-details__ad-destination-url-link"
-													href={ clickUrl }
-													target="_blank"
-												>
-													{ clickUrl }
-													{ getExternalLinkIcon() }
-												</Button>
-											) : (
-												<FlexibleSkeleton />
-											) }
+										<div className="campaign-item-details__ad-destination">
+											<span className="campaign-item-details__label">
+												{ translate( 'Destination' ) }
+											</span>
+											<div className="campaign-item-details__ad-destination-url-container">
+												{ ! isLoading ? (
+													<Button
+														className="campaign-item-details__ad-destination-url-link"
+														href={ clickUrl }
+														target="_blank"
+													>
+														{ isWooStore ? translate( 'Product page' ) : translate( 'Post page' ) }
+														{ getExternalLinkIcon() }
+													</Button>
+												) : (
+													<FlexibleSkeleton />
+												) }
+											</div>
 										</div>
 									</div>
 								</div>
@@ -629,7 +592,7 @@ export default function CampaignItemDetails( props: Props ) {
 								<div className="campaign-item-details__payment">
 									<div className="campaign-item-details__payment-row">
 										<div className="campaign-item-details__secondary-payment-row">
-											<div>
+											<div className="campaign-item-details__payment-method">
 												{ payment_method && card_name && (
 													<>
 														<span className="campaign-item-details__label">
@@ -640,15 +603,7 @@ export default function CampaignItemDetails( props: Props ) {
 													</>
 												) }
 											</div>
-											<div>
-												{ ! isNaN( subtotal || 0 ) ? (
-													<span className="campaign-item-details__label">
-														<div>{ translate( 'Subtotal' ) }</div>
-														<div className="amount">{ subtotalFormatted }</div>
-													</span>
-												) : (
-													[]
-												) }
+											<div className="campaign-item-details__total">
 												{ credits ? (
 													<span className="campaign-item-details__label">
 														<div>{ translate( 'Credits' ) }</div>
@@ -660,7 +615,7 @@ export default function CampaignItemDetails( props: Props ) {
 												{ ! isNaN( total || 0 ) ? (
 													<>
 														<span className="campaign-item-details__label">
-															<div>{ translate( 'Total paid' ) }</div>
+															<div>{ translate( 'Total' ) }</div>
 															<div className="amount">{ totalFormatted }</div>
 														</span>
 														<p className="campaign-item-details__payment-charges-disclosure">
@@ -696,11 +651,12 @@ export default function CampaignItemDetails( props: Props ) {
 								templateFormat={ format || '' }
 								width={ format === 'html5_v2' ? '100%' : '300px' }
 							/>
-							<p className="campaign-item-details__preview-disclosure">
+							<div className="campaign-item-details__preview-disclosure">
+								{ tabletIcon }
 								{ translate(
 									'Depending on the platform, the ad may seem differently from the preview.'
 								) }
-							</p>
+							</div>
 						</div>
 
 						<div className="campaign-item-details__support-buttons-container">
