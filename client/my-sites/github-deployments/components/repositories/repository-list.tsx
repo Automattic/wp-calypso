@@ -1,6 +1,6 @@
 import { useLayoutEffect, useState } from 'react';
 import Pagination from 'calypso/components/pagination';
-import { GitHubAccountData } from '../../use-github-accounts-query';
+import { GitHubInstallationData } from '../../use-github-installations-query';
 import {
 	GitHubRepositoryData,
 	useGithubRepositoriesQuery,
@@ -11,13 +11,16 @@ import { GitHubRepositoryListTable, SortOption } from './repository-list-table';
 const pageSize = 10;
 
 interface RepositoriesListProps {
-	account: GitHubAccountData;
+	installation: GitHubInstallationData;
 	query: string;
-	onSelectRepository( installation: GitHubAccountData, repository: GitHubRepositoryData ): void;
+	onSelectRepository(
+		installation: GitHubInstallationData,
+		repository: GitHubRepositoryData
+	): void;
 }
 
 export const GitHubBrowseRepositoriesList = ( {
-	account,
+	installation,
 	query,
 	onSelectRepository,
 }: RepositoriesListProps ) => {
@@ -29,7 +32,7 @@ export const GitHubBrowseRepositoriesList = ( {
 	}, [ query ] );
 
 	const { data: repositories = [], isLoading: isLoadingRepositories } = useGithubRepositoriesQuery(
-		account.external_id
+		installation.external_id
 	);
 
 	const filteredRepositories = sortRepositories( filterRepositories( repositories, query ), sort );
@@ -47,7 +50,7 @@ export const GitHubBrowseRepositoriesList = ( {
 		<>
 			<GitHubRepositoryListTable
 				repositories={ currentPage }
-				onSelect={ ( repository ) => onSelectRepository( account, repository ) }
+				onSelect={ ( repository ) => onSelectRepository( installation, repository ) }
 				sortKey={ sort }
 				onSortChange={ setSort }
 			/>

@@ -247,6 +247,13 @@ const sections = [
 		module: 'calypso/my-sites/google-my-business',
 		group: 'sites',
 	},
+	{
+		name: 'patterns',
+		paths: [ '/patterns' ],
+		module: 'calypso/my-sites/patterns',
+		enableLoggedOut: true,
+		isomorphic: true,
+	},
 	// Since we're using find() and startsWith() on paths, 'themes' needs to go before 'theme',
 	// or it'll be falsely associated with the latter section.
 	{
@@ -711,6 +718,13 @@ const sections = [
 		name: 'a8c-for-agencies-plugins',
 		paths: [ '/plugins' ],
 		module: 'calypso/a8c-for-agencies/sections/plugins',
+		group: 'a8c-for-agencies',
+		enableLoggedOut: true,
+	},
+	{
+		name: 'a8c-for-agencies-marketplace',
+		paths: [ '/marketplace' ],
+		module: 'calypso/a8c-for-agencies/sections/marketplace',
 		group: 'a8c-for-agencies',
 		enableLoggedOut: true,
 	},

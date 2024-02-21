@@ -8,6 +8,7 @@ import DocumentHead from 'calypso/components/data/document-head';
 import Notice from 'calypso/components/notice';
 import SidebarNavigation from 'calypso/components/sidebar-navigation';
 import useFetchDashboardSites from 'calypso/data/agency-dashboard/use-fetch-dashboard-sites';
+import useFetchMonitorVerfiedContacts from 'calypso/data/agency-dashboard/use-fetch-monitor-verified-contacts';
 import { useDispatch, useSelector } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { resetSite } from 'calypso/state/jetpack-agency-dashboard/actions';
@@ -18,10 +19,12 @@ import {
 	getSelectedSiteLicenses,
 } from 'calypso/state/jetpack-agency-dashboard/selectors';
 import { errorNotice } from 'calypso/state/notices/actions';
+import useProductsQuery from 'calypso/state/partner-portal/licenses/hooks/use-products-query';
 import { getIsPartnerOAuthTokenLoaded } from 'calypso/state/partner-portal/partner/selectors';
 import { serializeQueryStringProducts } from '../../partner-portal/lib/querystring-products';
 import SitesOverviewContext from './context';
 import DashboardBanners from './dashboard-banners';
+import DashboardDataContext from './dashboard-data-context';
 import useQueryProvisioningBlogIds from './hooks/use-query-provisioning-blog-ids';
 import { DASHBOARD_PRODUCT_SLUGS_BY_TYPE } from './lib/constants';
 import SiteAddLicenseNotification from './site-add-license-notification';
@@ -29,7 +32,7 @@ import SiteContentHeader from './site-content-header';
 import SiteNotifications from './site-notifications';
 import SiteTopHeaderButtons from './site-top-header-buttons';
 import SitesDataViews from './sites-dataviews';
-import { ViewChangeProps } from './sites-dataviews/interfaces';
+import { SitesViewState } from './sites-dataviews/interfaces';
 
 import './style.scss';
 
@@ -62,27 +65,34 @@ export default function SitesDashboardV2() {
 		// setIsBulkManagementActive,
 	} = useContext( SitesOverviewContext );
 
-	const [ sitesViewData, setSitesViewData ] = useState< ViewChangeProps >( {
-		search: search,
-		sort: {},
-		filters: [],
-		selectedSite: undefined,
+	const [ sitesViewState, setSitesViewState ] = useState< SitesViewState >( {
+		type: 'table',
+		perPage: 50,
 		page: currentPage,
+		sort: {
+			field: 'site',
+			direction: 'desc',
+		},
+		search: search,
+		filters: [],
+		hiddenFields: [ 'status' ],
+		layout: {},
+		selectedSite: undefined,
 	} );
 
 	const { data, isError, isLoading, refetch } = useFetchDashboardSites(
 		isPartnerOAuthTokenLoaded,
-		sitesViewData.search,
-		sitesViewData.page,
+		search,
+		currentPage,
 		filter,
 		sort
 	);
 
 	const onSitesViewChange = useCallback(
-		( sitesViewData: ViewChangeProps ) => {
-			setSitesViewData( sitesViewData );
+		( sitesViewData: SitesViewState ) => {
+			setSitesViewState( sitesViewData );
 		},
-		[ setSitesViewData ]
+		[ setSitesViewState ]
 	);
 
 	useEffect( () => {
@@ -190,6 +200,14 @@ export default function SitesDashboardV2() {
 
 	const isLargeScreen = isWithinBreakpoint( '>960px' );
 
+	const { data: products } = useProductsQuery();
+
+	const {
+		data: verifiedContacts,
+		refetch: refetchContacts,
+		isError: fetchContactFailed,
+	} = useFetchMonitorVerfiedContacts( isPartnerOAuthTokenLoaded );
+
 	const { data: provisioningBlogIds, isLoading: isLoadingProvisioningBlogIds } =
 		useQueryProvisioningBlogIds();
 
@@ -250,11 +268,29 @@ export default function SitesDashboardV2() {
 					</div>
 				</div>
 				<div className="sites-overview__content">
-					<SitesDataViews
-						data={ data }
-						isLoading={ isLoading }
-						onViewChange={ onSitesViewChange }
-					/>
+					<DashboardDataContext.Provider
+						value={ {
+							verifiedContacts: {
+								emails: verifiedContacts?.emails ?? [],
+								phoneNumbers: verifiedContacts?.phoneNumbers ?? [],
+								refetchIfFailed: () => {
+									if ( fetchContactFailed ) {
+										refetchContacts();
+									}
+									return;
+								},
+							},
+							products: products ?? [],
+							isLargeScreen: isLargeScreen || false,
+						} }
+					>
+						<SitesDataViews
+							data={ data }
+							isLoading={ isLoading }
+							onSitesViewChange={ onSitesViewChange }
+							sitesViewState={ sitesViewState }
+						/>
+					</DashboardDataContext.Provider>
 				</div>
 			</div>
 			{ ! isLargeScreen && selectedLicensesCount > 0 && (

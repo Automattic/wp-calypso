@@ -12,13 +12,13 @@ import 'calypso/state/login/init';
 
 /**
  * Connects the current WordPress.com account with a third-party social account (Google ...).
- * @param {Object} socialInfo              Object containing the social service config data
- * @param {string} socialInfo.service      Social service associated with token, e.g. google.
- * @param {string} socialInfo.access_token OAuth2 Token returned from service.
- * @param {string} socialInfo.id_token     (Optional) OpenID Connect Token returned from service.
- * @param {string} socialInfo.user_name    (Optional) The user name associated with this connection, in case it's not part of id_token.
- * @param {string} socialInfo.user_email   (Optional) The user email associated with this connection, in case it's not part of id_token.
- * @param {string} redirectTo              Url to redirect the user to upon successful login
+ * @param {Object}  socialInfo              Object containing the social service config data
+ * @param {string}  socialInfo.service      Social service associated with token, e.g. google.
+ * @param {string}  socialInfo.access_token OAuth2 Token returned from service.
+ * @param {string=} socialInfo.id_token     (Optional) OpenID Connect Token returned from service.
+ * @param {string=} socialInfo.user_name    (Optional) The user name associated with this connection, in case it's not part of id_token.
+ * @param {string=} socialInfo.user_email   (Optional) The user email associated with this connection, in case it's not part of id_token.
+ * @param {string=} redirectTo              Url to redirect the user to upon successful login
  * @returns {Function} A thunk that can be dispatched
  */
 export const connectSocialUser =

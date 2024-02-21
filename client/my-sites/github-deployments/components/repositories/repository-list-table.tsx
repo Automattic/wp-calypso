@@ -7,7 +7,7 @@ import { GitHubRepositoryListItem } from './repository-list-item';
 
 export type SortOption = 'name_asc' | 'name_desc' | 'date_asc' | 'date_desc';
 
-interface GitHubAccountListTableProps {
+interface GitHubInstallationListTableProps {
 	repositories: GitHubRepositoryData[];
 	onSelect( repository: GitHubRepositoryData ): void;
 	sortKey: SortOption;
@@ -24,7 +24,7 @@ export const GitHubRepositoryListTable = ( {
 	onSelect,
 	sortKey,
 	onSortChange,
-}: GitHubAccountListTableProps ) => {
+}: GitHubInstallationListTableProps ) => {
 	function getSortIcon( pair: SortPair ) {
 		if ( sortKey === pair[ 0 ] ) {
 			return <Icon size={ 16 } icon={ chevronDown } />;

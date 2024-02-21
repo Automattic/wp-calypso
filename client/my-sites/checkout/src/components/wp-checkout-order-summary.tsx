@@ -220,7 +220,7 @@ function CheckoutSummaryPriceList() {
 				</CheckoutSubtotalSection>
 
 				<CheckoutSummaryTotal>
-					<span>{ translate( 'Total' ) }</span>
+					<span className="wp-checkout-order-summary__label">{ translate( 'Total' ) }</span>
 					<span className="wp-checkout-order-summary__total-price">
 						{ totalLineItem.formattedAmount }
 					</span>
@@ -832,10 +832,16 @@ const pulse = keyframes`
 
 const CheckoutSummaryCard = styled.div`
 	border-bottom: none 0;
+	${ hasCheckoutVersion( '2' ) && `grid-area: summary` }
 `;
 
 const CheckoutSummaryFeatures = styled.div`
 	padding: 24px 0;
+	${ hasCheckoutVersion( '2' ) && `grid-area: features; justify-self: flex-start;` }
+
+	@media ( ${ ( props ) => props.theme.breakpoints.tabletUp } ) {
+		${ hasCheckoutVersion( '2' ) ? ` padding: 0 0 24px` : `padding: 24px 0;` }
+	}
 
 	@media ( ${ ( props ) => props.theme.breakpoints.desktopUp } ) {
 		padding: 24px 0;
@@ -961,10 +967,22 @@ const CheckoutSummaryLineItem = styled.div< { isDiscount?: boolean } >`
 
 const CheckoutSummaryTotal = styled( CheckoutSummaryLineItem )`
 	color: ${ ( props ) => props.theme.colors.textColorDark };
-	font-size: 20px;
 	font-weight: ${ ( props ) => props.theme.weights.bold };
 	line-height: 26px;
-	margin-bottom: 16px;
+	${ hasCheckoutVersion( '2' ) ? `margin-bottom: 0px;` : `margin-bottom: 16px;` }
+	font-size: 20px;
+
+	& span {
+		${ hasCheckoutVersion( '2' ) ? `font-family: 'Recoleta', sans-serif;` : null }
+	}
+
+	& .wp-checkout-order-summary__label {
+		${ hasCheckoutVersion( '2' ) && 'font-size: 28px; line-height: 40px; ' }
+	}
+
+	& .wp-checkout-order-summary__total-price {
+		${ hasCheckoutVersion( '2' ) && 'font-size: 40px; line-height: 44px;' }
+	}
 `;
 
 const LoadingCopy = styled.p`

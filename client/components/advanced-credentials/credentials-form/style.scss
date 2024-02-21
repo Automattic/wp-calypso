@@ -80,10 +80,6 @@
 	}
 }
 
-.credentials-form__mode-simple-switcher {
-	font-size: $font-body-small;
-}
-
 .credentials-form__row {
 	display: flex;
 	flex-wrap: wrap;
@@ -94,14 +90,10 @@
 }
 
 @include breakpoint-deprecated( ">960px" ) {
-	.credentials-form__row {
-		flex-wrap: nowrap;
-	}
-
 	.credentials-form__server-address.form-fieldset,
 	.credentials-form__username.form-fieldset,
 	.credentials-form__password.form-fieldset {
-		flex: 1 0 496px;
+		flex: 1 0 240px;
 	}
 
 	.credentials-form__server-address.form-fieldset,
@@ -110,11 +102,7 @@
 	}
 
 	.credentials-form__port-number.form-fieldset {
-		flex: 0 0 87px;
-
-		.form-input-validation {
-			padding: 6px 12px 11px 34px;
-		}
+		flex: 0 0 160px;
 	}
 }
 

@@ -5,6 +5,8 @@
 
 	.github-deployments__search {
 		max-width: 504px;
+		display: flex;
+		height: 43px;
 	}
 
 	table {
@@ -25,7 +27,6 @@
 
 	th,
 	td {
-		padding: 8px 0;
 		font-weight: normal;
 	}
 
@@ -33,12 +34,19 @@
 		width: 350px;
 	}
 
+	thead tr,
 	tbody tr:not(:last-of-type) {
 		border-bottom: 1px solid var(--color-border-subtle);
 	}
 
 	td {
 		vertical-align: middle !important;
+	}
+
+	tr th {
+		padding: 8px 0 16px 0;
+		font-weight: 500;
+		color: var(--studio-gray-60, #50575e);
 	}
 
 	tr td:last-child {
@@ -48,6 +56,7 @@
 	&__repository-details {
 		display: flex;
 		flex-direction: column;
+		padding: 21px 0;
 		span {
 			color: var(--Gray-Gray-40, #787c82);
 			font-size: $font-body-small;
@@ -111,5 +120,23 @@
 		font-style: normal;
 		font-weight: 400;
 		line-height: 20px; /* 153.846% */
+	}
+}
+
+.github-deployments-delete-deployment-dialog {
+	max-width: 560px;
+
+	p,
+	.components-toggle-control__label {
+		font-size: $font-body-small;
+	}
+
+	p {
+		line-height: 20px;
+	}
+
+	.components-form-toggle,
+	.components-toggle-control__label {
+		line-height: 1;
 	}
 }

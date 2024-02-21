@@ -87,7 +87,7 @@ export const Discount = styled.span`
 	color: ${ ( props ) => props.theme.colors.discount };
 	margin-right: 8px;
 	${ hasCheckoutVersion( '2' )
-		? `align-items: left; font-size: 14px;`
+		? `align-items: left; font-size: 12px;`
 		: `align-items: center; font-size: 100%;` }
 
 	.rtl & {
