@@ -31,5 +31,3 @@ const buildEventTracker =
 export const recordGlobalStylesGattingPlanSelectedResetStylesEvent = buildEventTracker(
 	'calypso_launchpad_global_styles_gating_plan_selected_reset_styles'
 );
-
-export const recordTaskClickTracksEvent = buildEventTracker( 'calypso_launchpad_task_clicked' );
