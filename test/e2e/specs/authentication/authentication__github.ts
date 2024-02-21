@@ -24,7 +24,7 @@ describe( DataHelper.createSuiteTitle( 'Authentication: GitHub' ), function () {
 		} );
 
 		it( 'Click on Login with GitHub button', async function () {
-			// Without a short delay, the click might not work.
+			// Without a short delay, the click does not work.
 			await new Promise( ( resolve ) => setTimeout( resolve, 500 ) );
 
 			await Promise.all( [
@@ -74,7 +74,7 @@ describe( DataHelper.createSuiteTitle( 'Authentication: GitHub' ), function () {
 		} );
 
 		it( 'Click on Login with GitHub button', async function () {
-			// Without a short delay, the click might not work.
+			// Without a short delay, the click does not work.
 			await new Promise( ( resolve ) => setTimeout( resolve, 500 ) );
 
 			await Promise.all( [
