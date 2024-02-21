@@ -95,7 +95,7 @@
 		"layout/dotcom-nav-redesign": false,
 		"legal-updates-banner": false,
 		"livechat_solution": true,
-		"login/github": false,
+		"login/github": true,
 		"login/magic-login": true,
 		"login/react-lost-password-screen": true,
 		"login/social-first": true,
