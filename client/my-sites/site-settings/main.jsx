@@ -18,15 +18,15 @@ import GeneralSettings from './section-general';
 
 import './style.scss';
 
-const getTitle = ( isAdminInterface ) => {
-	if ( isAdminInterface ) {
+const getTitle = ( isClassicView ) => {
+	if ( isClassicView ) {
 		return translate( 'Settings' );
 	}
 	return translate( 'General Settings' );
 };
 
-const getSubtitle = ( isAdminInterface ) => {
-	if ( isAdminInterface ) {
+const getSubtitle = ( isClassicView ) => {
+	if ( isClassicView ) {
 		return translate( 'Manage your site settings, including site visibility, and more.' );
 	}
 	return translate(
@@ -38,14 +38,14 @@ const SiteSettingsComponent = ( {
 	isJetpack,
 	isPossibleJetpackConnectionProblem,
 	siteId,
-	isAdminInterface,
+	isClassicView,
 } ) => {
 	return (
 		<Main className="site-settings">
 			{ isJetpack && isPossibleJetpackConnectionProblem && (
 				<JetpackConnectionHealthBanner siteId={ siteId } />
 			) }
-			<DocumentHead title={ getTitle( isAdminInterface ) } />
+			<DocumentHead title={ getTitle( isClassicView ) } />
 			<QueryProductsList />
 			<QuerySitePurchases siteId={ siteId } />
 			<JetpackDevModeNotice />
@@ -53,8 +53,8 @@ const SiteSettingsComponent = ( {
 			<NavigationHeader
 				screenOptionsTab="options-general.php"
 				navigationItems={ [] }
-				title={ getTitle( isAdminInterface ) }
-				subtitle={ getSubtitle( isAdminInterface ) }
+				title={ getTitle( isClassicView ) }
+				subtitle={ getSubtitle( isClassicView ) }
 			/>
 			<SiteSettingsNavigation section="general" />
 			<GeneralSettings />
@@ -65,15 +65,15 @@ const SiteSettingsComponent = ( {
 SiteSettingsComponent.propTypes = {
 	// Connected props
 	siteId: PropTypes.number,
-	isAdminInterface: PropTypes.bool,
+	isClassicView: PropTypes.bool,
 };
 
 export default connect( ( state ) => {
 	const siteId = getSelectedSiteId( state );
-	const adminInterface = getSiteOption( state, siteId, 'wpcom_admin_interface' );
+	const isClassicView = getSiteOption( state, siteId, 'wpcom_admin_interface' ) === 'wp-admin';
 	return {
 		siteId,
 		isJetpack: isJetpackSite( state, siteId ),
-		isAdminInterface: adminInterface,
+		isClassicView,
 	};
 } )( localize( withJetpackConnectionProblem( SiteSettingsComponent ) ) );

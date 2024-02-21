@@ -684,7 +684,7 @@ export class SiteSettingsFormGeneral extends Component {
 			isAtomicAndEditingToolkitDeactivated,
 			isWpcomStagingSite,
 			isUnlaunchedSite: propsisUnlaunchedSite,
-			isAdminInterface,
+			isClassicView,
 		} = this.props;
 		const classes = classNames( 'site-settings__general-settings', {
 			'is-loading': isRequestingSettings,
@@ -694,7 +694,7 @@ export class SiteSettingsFormGeneral extends Component {
 			<div className={ classNames( classes ) }>
 				{ site && <QuerySiteSettings siteId={ site.ID } /> }
 
-				{ ! isAdminInterface && (
+				{ ! ( isEnabled( 'layout/dotcom-nav-redesign' ) && isClassicView ) && (
 					<>
 						<SettingsSectionHeader
 							data-tip-target="settings-site-profile-save"
@@ -728,47 +728,49 @@ export class SiteSettingsFormGeneral extends Component {
 					urlRef="unlaunched-settings"
 				/>
 				{ ! isWpcomStagingSite && this.giftOptions() }
-				{ ! isWPForTeamsSite && ! ( siteIsJetpack && ! siteIsAtomic ) && ! isAdminInterface && (
-					<div className="site-settings__footer-credit-container">
-						<SettingsSectionHeader
-							title={ translate( 'Footer credit' ) }
-							id="site-settings__footer-credit-header"
-						/>
-						<CompactCard className="site-settings__footer-credit-explanation">
-							<p>
-								{ preventWidows(
-									translate(
-										'You can customize your website by changing the footer credit in customizer.'
-									),
-									2
-								) }
-							</p>
-							<div>
-								<Button className="site-settings__footer-credit-change" href={ customizerUrl }>
-									{ translate( 'Change footer credit' ) }
-								</Button>
-							</div>
-						</CompactCard>
-						{ ! hasNoWpcomBranding && (
-							<UpsellNudge
-								feature={ WPCOM_FEATURES_NO_WPCOM_BRANDING }
-								plan={ PLAN_BUSINESS }
-								title={ translate(
-									'Remove the footer credit entirely with WordPress.com %(businessPlanName)s',
-
-									{ args: { businessPlanName: getPlan( PLAN_BUSINESS ).getTitle() } }
-								) }
-								description={ translate(
-									'Upgrade to remove the footer credit, use advanced SEO tools and more'
-								) }
-								showIcon={ true }
-								event="settings_remove_footer"
-								tracksImpressionName="calypso_upgrade_nudge_impression"
-								tracksClickName="calypso_upgrade_nudge_cta_click"
+				{ ! isWPForTeamsSite &&
+					! ( siteIsJetpack && ! siteIsAtomic ) &&
+					! ( isEnabled( 'layout/dotcom-nav-redesign' ) && isClassicView ) && (
+						<div className="site-settings__footer-credit-container">
+							<SettingsSectionHeader
+								title={ translate( 'Footer credit' ) }
+								id="site-settings__footer-credit-header"
 							/>
-						) }
-					</div>
-				) }
+							<CompactCard className="site-settings__footer-credit-explanation">
+								<p>
+									{ preventWidows(
+										translate(
+											'You can customize your website by changing the footer credit in customizer.'
+										),
+										2
+									) }
+								</p>
+								<div>
+									<Button className="site-settings__footer-credit-change" href={ customizerUrl }>
+										{ translate( 'Change footer credit' ) }
+									</Button>
+								</div>
+							</CompactCard>
+							{ ! hasNoWpcomBranding && (
+								<UpsellNudge
+									feature={ WPCOM_FEATURES_NO_WPCOM_BRANDING }
+									plan={ PLAN_BUSINESS }
+									title={ translate(
+										'Remove the footer credit entirely with WordPress.com %(businessPlanName)s',
+
+										{ args: { businessPlanName: getPlan( PLAN_BUSINESS ).getTitle() } }
+									) }
+									description={ translate(
+										'Upgrade to remove the footer credit, use advanced SEO tools and more'
+									) }
+									showIcon={ true }
+									event="settings_remove_footer"
+									tracksImpressionName="calypso_upgrade_nudge_impression"
+									tracksClickName="calypso_upgrade_nudge_cta_click"
+								/>
+							) }
+						</div>
+					) }
 				{ this.toolbarOption() }
 			</div>
 		);
@@ -785,7 +787,7 @@ const mapDispatchToProps = ( dispatch, ownProps ) => {
 
 const connectComponent = connect( ( state ) => {
 	const siteId = getSelectedSiteId( state );
-	const adminInterface = getSiteOption( state, siteId, 'wpcom_admin_interface' );
+	const isClassicView = getSiteOption( state, siteId, 'wpcom_admin_interface' ) === 'wp-admin';
 	return {
 		customizerUrl: getCustomizerUrl( state, siteId, 'identity' ),
 		hasNoWpcomBranding: siteHasFeature( state, siteId, WPCOM_FEATURES_NO_WPCOM_BRANDING ),
@@ -810,7 +812,7 @@ const connectComponent = connect( ( state ) => {
 		isSiteOnMigrationTrial: getIsSiteOnMigrationTrial( state, siteId ),
 		isLaunchable:
 			! getIsSiteOnECommerceTrial( state, siteId ) && ! getIsSiteOnMigrationTrial( state, siteId ),
-		isAdminInterface: adminInterface,
+		isClassicView,
 	};
 }, mapDispatchToProps );
 
