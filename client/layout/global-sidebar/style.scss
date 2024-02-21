@@ -96,6 +96,17 @@ $brand-text: "SF Pro Text", $sans;
 				fill: var(--studio-white);
 			}
 		}
+
+		.sidebar__skip-navigation {
+			position: absolute;
+			left: -10000px;
+			z-index: 1;
+			border-radius: 2px;
+
+			&:focus {
+				left: auto;
+			}
+		}
 	}
 
 	.sidebar__body {
