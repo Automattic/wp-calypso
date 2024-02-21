@@ -1,3 +1,4 @@
+@import "@wordpress/base-styles/variables";
 @import "@wordpress/base-styles/breakpoints";
 // The following changes should be merged in their respective files before nav unification goes to production
 @import url( //s1.wp.com/wp-includes/css/dashicons.css?v=20150727 );
@@ -350,7 +351,7 @@ $font-size: rem(14px);
 
 		.sidebar__menu-link-text {
 			font-family: $brand-text;
-			font-size: 13px; /* stylelint-disable-line declaration-property-unit-allowed-list */
+			font-size: $default-font-size;
 			font-style: normal;
 			font-weight: 400;
 			padding: 0;
@@ -396,7 +397,7 @@ $font-size: rem(14px);
 			}
 
 			.sidebar__menu-link-text {
-				font-size: 16px; /* stylelint-disable-line declaration-property-unit-allowed-list */
+				font-size: $font-body;
 				font-weight: 600;
 			}
 		}
