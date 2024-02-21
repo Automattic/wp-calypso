@@ -6,13 +6,10 @@ import { addSiteFragment } from 'calypso/lib/route';
 import { useSelector, useStore } from 'calypso/state';
 import getCurrentRoute from 'calypso/state/selectors/get-current-route';
 import { getSiteSlug, getSiteTitle } from 'calypso/state/sites/selectors';
-import { getCanonicalTheme } from 'calypso/state/themes/selectors';
 
-export default function ThemeSiteSelectorModal( { isOpen, onClose, themeId } ) {
+export default function ThemeSiteSelectorModal( { isOpen, onClose } ) {
 	const store = useStore();
 	const translate = useTranslate();
-
-	const theme = useSelector( ( state ) => getCanonicalTheme( state, null, themeId ) );
 
 	const currentRoute = useSelector( getCurrentRoute );
 
@@ -36,8 +33,8 @@ export default function ThemeSiteSelectorModal( { isOpen, onClose, themeId } ) {
 			className="theme-site-selector-modal"
 			onRequestClose={ onClose }
 			size="medium"
-			title={ translate( 'Select a site to activate %(themeName)s', {
-				args: { themeName: theme?.name },
+			title={ translate( 'Select a site', {
+				comment: 'Title for a modal dialog that lists all the user sites',
 			} ) }
 		>
 			<div className="theme-site-selector-modal__content">

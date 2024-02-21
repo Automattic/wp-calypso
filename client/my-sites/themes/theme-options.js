@@ -315,7 +315,7 @@ function getAllThemeOptions( { translate, isFSEActive } ) {
 			siteCount: getCurrentUserSiteCount( state ),
 			siteId: getSelectedSiteId( state ),
 		} )
-			? translate( 'Select a site to activate', {
+			? translate( 'Select a site to get started', {
 					comment:
 						'On the theme details page, button text shown so the user selects one of their sites before activating the selected theme',
 			  } )
