@@ -64,7 +64,12 @@ const StatsSubscribersPage = ( { period }: StatsSubscribersPageProps ) => {
 		( subscribersTotals?.total === 1 && subscribersTotals?.is_owner_subscribing );
 	const showLaunchpad = ! isLoading && hasNoSubscriberOtherThanAdmin;
 
-	const EmptyComponent = isSimple || isAtomic ? SubscriberLaunchpad : EmptyListView;
+	const emptyComponent =
+		isSimple || isAtomic ? (
+			<SubscriberLaunchpad launchpadContext="subscriber-stats" />
+		) : (
+			<EmptyListView />
+		);
 
 	// Track the last viewed tab.
 	// Necessary to properly configure the fixed navigation headers.
@@ -92,7 +97,7 @@ const StatsSubscribersPage = ( { period }: StatsSubscribersPageProps ) => {
 				{ isLoading && <StatsModulePlaceholder className="is-subscriber-page" isLoading /> }
 				{ ! isLoading &&
 					( showLaunchpad ? (
-						<EmptyComponent />
+						emptyComponent
 					) : (
 						<>
 							<SubscribersHighlightSection siteId={ siteId } />
