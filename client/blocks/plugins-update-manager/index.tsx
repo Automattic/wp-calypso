@@ -35,6 +35,14 @@ export const PluginsUpdateManager = () => {
 		setIsConfirmOpen( false );
 	};
 
+	const toolbarPluginsText = createInterpolateElement(
+		'<div>Move to WordPress.com<br />Akismet<br />Gravity Forms</div>',
+		{
+			div: <div className="tooltip--selected-plugins" />,
+			br: <br />,
+		}
+	) as string;
+
 	return (
 		<>
 			{ isModalOpen && (
@@ -100,13 +108,7 @@ export const PluginsUpdateManager = () => {
 									3
 									<Tooltip
 										className="selected-plugins"
-										text={ createInterpolateElement(
-											'<div>Move to WordPress.com<br />Akismet<br />Gravity Forms</div>',
-											{
-												div: <div className="tooltip--selected-plugins" />,
-												br: <br />,
-											}
-										) }
+										text={ toolbarPluginsText }
 										position="middle right"
 										delay={ 0 }
 										hideOnClick={ false }
