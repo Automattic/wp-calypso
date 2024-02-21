@@ -290,31 +290,35 @@ export function filterCostOverridesForLineItem(
 ): LineItemCostOverrideForDisplay[] {
 	const costOverrides = product?.cost_overrides ?? [];
 
-	return costOverrides
-		.filter( ( costOverride ) => isUserVisibleCostOverride( costOverride, product ) )
-		.map( ( costOverride ) => makeSaleCostOverrideUnique( costOverride, product, translate ) )
-		.map( ( costOverride ) =>
-			makeIntroductoryOfferCostOverrideUnique( costOverride, product, translate, true )
-		)
-		.map( ( costOverride ) => {
-			// Introductory offer discounts with term lengths that differ from
-			// the term length of the product (eg: a 3 month discount for an
-			// annual plan) need to be displayed differently because the
-			// discount is only temporary and the user will still be charged
-			// the remainder before the next renewal.
-			if ( doesIntroductoryOfferHaveDifferentTermLengthThanProduct( product ) ) {
+	return (
+		costOverrides
+			.filter( ( costOverride ) => isUserVisibleCostOverride( costOverride, product ) )
+			// Hide coupon overrides because they will be displayed separately.
+			.filter( ( costOverride ) => costOverride.override_code !== 'coupon-discount' )
+			.map( ( costOverride ) => makeSaleCostOverrideUnique( costOverride, product, translate ) )
+			.map( ( costOverride ) =>
+				makeIntroductoryOfferCostOverrideUnique( costOverride, product, translate, true )
+			)
+			.map( ( costOverride ) => {
+				// Introductory offer discounts with term lengths that differ from
+				// the term length of the product (eg: a 3 month discount for an
+				// annual plan) need to be displayed differently because the
+				// discount is only temporary and the user will still be charged
+				// the remainder before the next renewal.
+				if ( doesIntroductoryOfferHaveDifferentTermLengthThanProduct( product ) ) {
+					return {
+						humanReadableReason: costOverride.human_readable_reason,
+						overrideCode: costOverride.override_code,
+					};
+				}
+
 				return {
 					humanReadableReason: costOverride.human_readable_reason,
 					overrideCode: costOverride.override_code,
+					discountAmount: getDiscountForCostOverrideForDisplay( costOverride ),
 				};
-			}
-
-			return {
-				humanReadableReason: costOverride.human_readable_reason,
-				overrideCode: costOverride.override_code,
-				discountAmount: getDiscountForCostOverrideForDisplay( costOverride ),
-			};
-		} );
+			} )
+	);
 }
 
 /**

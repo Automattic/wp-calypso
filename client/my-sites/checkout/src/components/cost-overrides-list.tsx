@@ -73,11 +73,13 @@ export function CostOverridesList( {
 	currency,
 	removeCoupon,
 	couponCode,
+	showOnlyCoupons,
 }: {
 	costOverridesList: Array< CostOverrideForDisplay >;
 	currency: string;
 	removeCoupon?: RemoveCouponFromCart;
 	couponCode: ResponseCart[ 'coupon' ];
+	showOnlyCoupons?: boolean;
 } ) {
 	const translate = useTranslate();
 	// Let's put the coupon code last because it will have its own "Remove" button.
@@ -91,18 +93,21 @@ export function CostOverridesList( {
 	const isDisabled = formStatus !== FormStatus.READY;
 	return (
 		<CostOverridesListStyle>
-			{ nonCouponOverrides.map( ( costOverride ) => {
-				return (
-					<div className="cost-overrides-list-item" key={ costOverride.humanReadableReason }>
-						<span className="cost-overrides-list-item__reason">
-							{ costOverride.humanReadableReason }
-						</span>
-						<span className="cost-overrides-list-item__discount">
-							{ formatCurrency( -costOverride.discountAmount, currency, { isSmallestUnit: true } ) }
-						</span>
-					</div>
-				);
-			} ) }
+			{ ! showOnlyCoupons &&
+				nonCouponOverrides.map( ( costOverride ) => {
+					return (
+						<div className="cost-overrides-list-item" key={ costOverride.humanReadableReason }>
+							<span className="cost-overrides-list-item__reason">
+								{ costOverride.humanReadableReason }
+							</span>
+							<span className="cost-overrides-list-item__discount">
+								{ formatCurrency( -costOverride.discountAmount, currency, {
+									isSmallestUnit: true,
+								} ) }
+							</span>
+						</div>
+					);
+				} ) }
 			{ ! removeCoupon &&
 				couponOverrides.map( ( costOverride ) => {
 					return (

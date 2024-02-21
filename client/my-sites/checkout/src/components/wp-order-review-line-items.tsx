@@ -231,6 +231,7 @@ export function WPOrderReviewLineItems( {
 					currency={ responseCart.currency }
 					removeCoupon={ removeCoupon }
 					couponCode={ responseCart.coupon }
+					showOnlyCoupons
 				/>
 			) }
 		</WPOrderReviewList>
