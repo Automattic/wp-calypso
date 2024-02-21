@@ -10,6 +10,7 @@ import { getIntroductoryOfferIntervalDisplay } from './introductory-offer';
 import type { LineItemType } from './types';
 import type {
 	IntroductoryOfferTerms,
+	IntroductoryOfferUnit,
 	ResponseCart,
 	ResponseCartCostOverride,
 	ResponseCartProduct,
@@ -161,6 +162,20 @@ export interface CostOverrideForDisplay {
 	discountAmount: number;
 }
 
+export interface LineItemCostOverrideForDisplay {
+	humanReadableReason: string;
+	overrideCode: string;
+
+	/**
+	 * The amount saved by this cost override in the currency's smallest unit.
+	 *
+	 * If not set, a number will not be displayed. This can be useful for some
+	 * types of discounts where the amount will be communicated in some other
+	 * manner.
+	 */
+	discountAmount?: number;
+}
+
 function isUserVisibleCostOverride(
 	costOverride: ResponseCartCostOverride,
 	product: ResponseCartProduct
@@ -221,6 +236,69 @@ function makeIntroductoryOfferCostOverrideUnique(
 
 function getDiscountForCostOverrideForDisplay( costOverride: ResponseCartCostOverride ): number {
 	return costOverride.old_subtotal_integer - costOverride.new_subtotal_integer;
+}
+
+function getBillPeriodMonthsForIntroductoryOfferInterval(
+	interval: IntroductoryOfferUnit
+): number {
+	switch ( interval ) {
+		case 'month':
+			return 1;
+		case 'year':
+			return 12;
+		default:
+			return 0;
+	}
+}
+
+function doesIntroductoryOfferHaveDifferentTermLengthThanProduct(
+	costOverride: ResponseCartCostOverride,
+	product: ResponseCartProduct
+): boolean {
+	if ( costOverride.override_code !== 'introductory-offer' || ! product.introductory_offer_terms ) {
+		return false;
+	}
+	if (
+		getBillPeriodMonthsForIntroductoryOfferInterval(
+			product.introductory_offer_terms.interval_unit
+		) === product.months_per_bill_period
+	) {
+		return false;
+	}
+	return true;
+}
+
+export function filterCostOverridesForLineItem(
+	product: ResponseCartProduct,
+	translate: ReturnType< typeof useTranslate >
+): LineItemCostOverrideForDisplay[] {
+	const costOverrides = product?.cost_overrides ?? [];
+
+	return costOverrides
+		.filter( ( costOverride ) => isUserVisibleCostOverride( costOverride, product ) )
+		.map( ( costOverride ) => makeSaleCostOverrideUnique( costOverride, product, translate ) )
+		.map( ( costOverride ) =>
+			makeIntroductoryOfferCostOverrideUnique( costOverride, product, translate )
+		)
+		.map( ( costOverride ) => {
+			// Introductory offer discounts with term lengths that differ from
+			// the term length of the product (eg: a 3 month discount for an
+			// annual plan) need to be displayed differently because the
+			// discount is only temporary and the user will still be charged
+			// the remainder before the next renewal.
+			if ( doesIntroductoryOfferHaveDifferentTermLengthThanProduct( costOverride, product ) ) {
+				return {
+					humanReadableReason: costOverride.human_readable_reason,
+					overrideCode: costOverride.override_code,
+				};
+			}
+
+			return {
+				humanReadableReason: costOverride.human_readable_reason,
+				overrideCode: costOverride.override_code,
+				discountAmount: getDiscountForCostOverrideForDisplay( costOverride ),
+			};
+		} );
 }
 
 /**

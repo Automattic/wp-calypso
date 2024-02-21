@@ -5,16 +5,18 @@ import styled from '@emotion/styled';
 import { useTranslate } from 'i18n-calypso';
 import type { Theme } from '@automattic/composite-checkout';
 import type { ResponseCart, RemoveCouponFromCart } from '@automattic/shopping-cart';
-import type { CostOverrideForDisplay } from '@automattic/wpcom-checkout';
+import type {
+	CostOverrideForDisplay,
+	LineItemCostOverrideForDisplay,
+} from '@automattic/wpcom-checkout';
 
 const CostOverridesListStyle = styled.div`
+	grid-area: discounts;
 	display: flex;
 	flex-direction: column;
 	justify-content: space-between;
 	font-size: 12px;
 	font-weight: 400;
-	margin-top: 10px;
-	margin-bottom: 20px;
 
 	& .cost-overrides-list-item {
 		display: grid;
@@ -140,6 +142,32 @@ export function CostOverridesList( {
 						</div>
 					);
 				} ) }
+		</CostOverridesListStyle>
+	);
+}
+
+export function LineItemCostOverrides( {
+	costOverridesList,
+	currency,
+}: {
+	costOverridesList: LineItemCostOverrideForDisplay[];
+	currency: string;
+} ) {
+	return (
+		<CostOverridesListStyle>
+			{ costOverridesList.map( ( costOverride ) => {
+				return (
+					<div className="cost-overrides-list-item" key={ costOverride.humanReadableReason }>
+						<span className="cost-overrides-list-item__reason">
+							{ costOverride.humanReadableReason }
+						</span>
+						<span className="cost-overrides-list-item__discount">
+							{ costOverride.discountAmount &&
+								formatCurrency( -costOverride.discountAmount, currency, { isSmallestUnit: true } ) }
+						</span>
+					</div>
+				);
+			} ) }
 		</CostOverridesListStyle>
 	);
 }

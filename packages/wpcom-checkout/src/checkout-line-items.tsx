@@ -92,7 +92,8 @@ export const LineItem = styled( CheckoutLineItem )< {
 	grid-template-areas:
 		'label price'
 		'term remove'
-		'meta   meta';
+		'meta meta'
+		'discounts discounts';
 	gap: 6px 4px;
 	margin-bottom: 8px;
 	padding: 10px 0;`
@@ -223,9 +224,6 @@ const BillingInterval = styled.div< { theme?: Theme } >`
 	overflow-wrap: anywhere;
 	flex-direction: column;
 	align-content: flex-start;
-`;
-const DropdownWrapper = styled.span`
-	${ hasCheckoutVersion2 ? `width: 100%; max-width: 200px` : null }
 `;
 
 const DeleteButtonWrapper = styled.div`
@@ -1259,8 +1257,7 @@ function CheckoutLineItem( {
 	onRemoveProductClick,
 	onRemoveProductCancel,
 	isAkPro500Cart,
-	areThereVariants,
-	shouldShowVariantSelector,
+	shouldShowBillingInterval,
 }: PropsWithChildren< {
 	product: ResponseCartProduct;
 	className?: string;
@@ -1274,8 +1271,7 @@ function CheckoutLineItem( {
 	onRemoveProductClick?: ( label: string ) => void;
 	onRemoveProductCancel?: ( label: string ) => void;
 	isAkPro500Cart?: boolean;
-	areThereVariants?: boolean;
-	shouldShowVariantSelector?: boolean;
+	shouldShowBillingInterval?: boolean;
 } > ) {
 	const id = product.uuid;
 	const translate = useTranslate();
@@ -1378,17 +1374,15 @@ function CheckoutLineItem( {
 				</span>
 			) }
 
-			{ product && ! containsPartnerCoupon && (
+			{ ! containsPartnerCoupon && (
 				<>
 					{ hasCheckoutVersion2 ? (
 						<>
-							<BillingInterval>
-								{ areThereVariants && shouldShowVariantSelector ? (
-									<DropdownWrapper>{ children }</DropdownWrapper>
-								) : (
+							{ shouldShowBillingInterval && (
+								<BillingInterval>
 									<LineItemBillingIntervalWrapper product={ product } />
-								) }
-							</BillingInterval>
+								</BillingInterval>
+							) }
 							<LineItemMeta>
 								<LineItemMetaInfoWrapper product={ product } />
 								{ isJetpackSearch( product ) && <JetpackSearchMeta product={ product } /> }
@@ -1411,7 +1405,7 @@ function CheckoutLineItem( {
 				</>
 			) }
 
-			{ product && containsPartnerCoupon && (
+			{ containsPartnerCoupon && (
 				<LineItemMeta>
 					{ hasCheckoutVersion2 ? (
 						<LineItemBillingInterval product={ product } />
@@ -1429,7 +1423,8 @@ function CheckoutLineItem( {
 				<EmailMeta product={ product } isRenewal={ isRenewal } />
 			) }
 
-			{ ! hasCheckoutVersion2 && ! isEmail && <>{ children }</> }
+			{ children }
+
 			{ hasDeleteButton && removeProductFromCart && (
 				<>
 					<DeleteButtonWrapper>
