@@ -31,16 +31,30 @@
 			}
 
 			@include break-large {
-				width: 550px;
+				width: 600px;
 
 				.credentials-form__username {
-					max-width: 320px;
+					max-width: 290px;
+
+					&.credentials-form__form-mode-private-key {
+						max-width: 100%;
+					}
 				}
 			}
 
 			.credentials-form {
 				margin-top: 0;
 				margin-bottom: 3rem;
+			}
+
+			.credentials-form__port-number.form-fieldset {
+				@include break-large {
+					flex: 0 0 87px;
+
+					.form-input-validation {
+						padding: 6px 12px 11px 34px;
+					}
+				}
 			}
 
 			.form-setting-explanation {
@@ -50,6 +64,11 @@
 			.button-plain {
 				text-decoration: underline;
 				cursor: pointer;
+				color: var(--studio-gray-100);
+
+				&.credentials-form__mode-switch-to-password {
+					margin-top: 1rem;
+				}
 			}
 
 			.credentials-form__kpri {
@@ -57,10 +76,11 @@
 			}
 
 			.credentials-form__user-pass {
-				flex-direction: column;
+				flex-direction: row;
+				column-gap: 1rem;
 
 				& > fieldset {
-					flex: 0;
+					flex: 1 0 290px;
 					margin-inline-end: 0;
 
 					&.credentials-form__username {
@@ -208,7 +228,7 @@
 			box-sizing: border-box;
 			font-size: 0.875rem;
 			/* We need to allow space for the SVG checkmark */
-			padding: 0.875rem calc(0.5rem + 24px) 0.875rem 1rem;
+			padding: 0.875rem 1rem 0.875rem 1rem;
 		}
 
 		*::placeholder {
