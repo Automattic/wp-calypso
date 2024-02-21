@@ -34,7 +34,6 @@ import { CostOverridesList, LineItemCostOverrides } from './cost-overrides-list'
 import { ItemVariationPicker } from './item-variation-picker';
 import type { OnChangeAkProQuantity } from './akismet-pro-quantity-dropdown';
 import type { OnChangeItemVariant } from './item-variation-picker';
-import type { Theme } from '@automattic/composite-checkout';
 import type {
 	ResponseCart,
 	RemoveProductFromCart,
@@ -44,9 +43,9 @@ import type {
 } from '@automattic/shopping-cart';
 import type { PropsWithChildren } from 'react';
 
-const WPOrderReviewList = styled.ul< { theme?: Theme } >`
+const WPOrderReviewList = styled.ul< { hasCheckoutVersion2: boolean } >`
 	box-sizing: border-box;
-	margin: 24px 0;
+	${ ( props ) => ( props.hasCheckoutVersion2 ? 'margin: 24px 0 0 0;' : 'margin: 24px 0;' ) }
 	padding: 0;
 `;
 
@@ -172,7 +171,10 @@ export function WPOrderReviewLineItems( {
 	);
 
 	return (
-		<WPOrderReviewList className={ joinClasses( [ className, 'order-review-line-items' ] ) }>
+		<WPOrderReviewList
+			className={ joinClasses( [ className, 'order-review-line-items' ] ) }
+			hasCheckoutVersion2={ hasCheckoutVersion( '2' ) }
+		>
 			{ responseCart.products.map( ( product ) => (
 				<LineItemWrapper
 					key={ product.uuid }
