@@ -1,17 +1,19 @@
 import { FormStatus, useFormStatus, Button } from '@automattic/composite-checkout';
 import formatCurrency from '@automattic/format-currency';
 import {
+	type ResponseCart,
+	type RemoveCouponFromCart,
+	type ResponseCartProduct,
+	useShoppingCart,
+} from '@automattic/shopping-cart';
+import {
 	doesIntroductoryOfferHaveDifferentTermLengthThanProduct,
 	hasCheckoutVersion,
 } from '@automattic/wpcom-checkout';
 import styled from '@emotion/styled';
 import { useTranslate } from 'i18n-calypso';
+import useCartKey from '../../use-cart-key';
 import type { Theme } from '@automattic/composite-checkout';
-import type {
-	ResponseCart,
-	RemoveCouponFromCart,
-	ResponseCartProduct,
-} from '@automattic/shopping-cart';
 import type {
 	CostOverrideForDisplay,
 	LineItemCostOverrideForDisplay,
@@ -154,6 +156,8 @@ export function CostOverridesList( {
 }
 
 function LineItemCostOverrideIntroOfferDueDate( { product }: { product: ResponseCartProduct } ) {
+	const cartKey = useCartKey();
+	const { responseCart } = useShoppingCart( cartKey );
 	const translate = useTranslate();
 	if ( ! product.introductory_offer_terms?.enabled ) {
 		return null;
@@ -161,11 +165,26 @@ function LineItemCostOverrideIntroOfferDueDate( { product }: { product: Response
 	if ( ! doesIntroductoryOfferHaveDifferentTermLengthThanProduct( product ) ) {
 		return null;
 	}
+	const dueDate = responseCart.terms_of_service?.find( ( tos ) => {
+		if ( ! new RegExp( `product_id:${ product.product_id }` ).test( tos.key ) ) {
+			return false;
+		}
+		if ( product.meta && ! new RegExp( `meta:${ product.meta }` ).test( tos.key ) ) {
+			return false;
+		}
+		return true;
+	} )?.args?.subscription_auto_renew_date;
+	if ( ! dueDate ) {
+		return null;
+	}
+
 	return (
 		<div>
 			{ translate( 'Due %(dueDate)s: %(price)s', {
 				args: {
-					dueDate: 'May 21, 2024', // FIXME
+					dueDate: new Date( dueDate ).toLocaleDateString( undefined, {
+						dateStyle: 'long',
+					} ),
 					price: '$26.25', // FIXME
 				},
 			} ) }
