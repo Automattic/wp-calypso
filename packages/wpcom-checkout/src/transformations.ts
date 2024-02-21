@@ -141,13 +141,14 @@ export function getCreditsLineItemFromCart( responseCart: ResponseCart ): LineIt
 function getDiscountReasonForIntroductoryOffer(
 	product: ResponseCartProduct,
 	terms: IntroductoryOfferTerms,
-	translate: ReturnType< typeof useTranslate >
+	translate: ReturnType< typeof useTranslate >,
+	allowFreeText: boolean
 ): string {
 	return getIntroductoryOfferIntervalDisplay(
 		translate,
 		terms.interval_unit,
 		terms.interval_count,
-		product.item_subtotal_integer === 0,
+		product.item_subtotal_integer === 0 && allowFreeText,
 		'checkout',
 		terms.transition_after_renewal_count
 	);
@@ -219,7 +220,8 @@ function makeSaleCostOverrideUnique(
 function makeIntroductoryOfferCostOverrideUnique(
 	costOverride: ResponseCartCostOverride,
 	product: ResponseCartProduct,
-	translate: ReturnType< typeof useTranslate >
+	translate: ReturnType< typeof useTranslate >,
+	allowFreeText: boolean
 ): ResponseCartCostOverride {
 	// Replace introductory offer cost override text with wording specific to
 	// that offer.
@@ -229,7 +231,8 @@ function makeIntroductoryOfferCostOverrideUnique(
 			human_readable_reason: getDiscountReasonForIntroductoryOffer(
 				product,
 				product.introductory_offer_terms,
-				translate
+				translate,
+				allowFreeText
 			),
 		};
 	}
@@ -291,7 +294,7 @@ export function filterCostOverridesForLineItem(
 		.filter( ( costOverride ) => isUserVisibleCostOverride( costOverride, product ) )
 		.map( ( costOverride ) => makeSaleCostOverrideUnique( costOverride, product, translate ) )
 		.map( ( costOverride ) =>
-			makeIntroductoryOfferCostOverrideUnique( costOverride, product, translate )
+			makeIntroductoryOfferCostOverrideUnique( costOverride, product, translate, true )
 		)
 		.map( ( costOverride ) => {
 			// Introductory offer discounts with term lengths that differ from
@@ -359,7 +362,7 @@ export function filterAndGroupCostOverridesForDisplay(
 			.filter( ( costOverride ) => isUserVisibleCostOverride( costOverride, product ) )
 			.map( ( costOverride ) => makeSaleCostOverrideUnique( costOverride, product, translate ) )
 			.map( ( costOverride ) =>
-				makeIntroductoryOfferCostOverrideUnique( costOverride, product, translate )
+				makeIntroductoryOfferCostOverrideUnique( costOverride, product, translate, false )
 			)
 			.forEach( ( costOverride ) => {
 				// Group discounts by human_readable_reason.
