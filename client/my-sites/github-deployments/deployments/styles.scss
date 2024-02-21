@@ -114,6 +114,10 @@
 		background-color: var(--Blue-Blue-5, #bbe0fa);
 	}
 
+	&__warnings	{
+		background-color: var(--Yellow-Yellow-5, #f5c4a1);
+	}
+
 	span {
 		/* stylelint-disable-next-line declaration-property-unit-allowed-list */
 		font-size: 13px;

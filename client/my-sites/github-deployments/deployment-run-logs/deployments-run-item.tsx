@@ -1,8 +1,9 @@
 import { Button } from '@automattic/components';
 import { useLocale } from '@automattic/i18n-utils';
-import { Spinner } from '@wordpress/components';
 import { useState } from '@wordpress/element';
+import { __ } from '@wordpress/i18n';
 import { chevronDown, chevronUp, Icon } from '@wordpress/icons';
+import { GitHubLoadingPlaceholder } from 'calypso/my-sites/github-deployments/components/loading-placeholder/index';
 import { useCodeDeploymentsRunLogQuery } from 'calypso/my-sites/github-deployments/deployment-run-logs/use-code-deployment-run-log-query';
 import { DeploymentCommitDetails } from 'calypso/my-sites/github-deployments/deployments/deployment-commit-details';
 import { DeploymentDuration } from 'calypso/my-sites/github-deployments/deployments/deployment-duration';
@@ -64,11 +65,7 @@ export const DeploymentsRunItem = ( { run }: DeploymentsListItemProps ) => {
 				<tr>
 					<td className="github-deployments-logs-content" colSpan={ 5 }>
 						<pre>
-							{ isFetchingLogs && (
-								<div className="github-deployments-logs__loading">
-									<Spinner />
-								</div>
-							) }
+							{ isFetchingLogs && <GitHubLoadingPlaceholder /> }
 
 							{ logEntries.map( ( entry, id ) => (
 								<div key={ id }>
@@ -77,8 +74,8 @@ export const DeploymentsRunItem = ( { run }: DeploymentsListItemProps ) => {
 							) ) }
 
 							{ noLogsAvailable && (
-								<p className="github-deployments-logs-no-content">
-									No logs available for this deployment run.
+								<p className="github-deployments-logs-content__empty">
+									{ __( 'No logs available for this deployment run.' ) }
 								</p>
 							) }
 						</pre>

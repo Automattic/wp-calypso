@@ -4,6 +4,7 @@ export const DeployStatus = {
 	STATUS_RUNNING: 'running',
 	STATUS_SUCCESS: 'success',
 	STATUS_FAILED: 'failed',
+	STATUS_WARNINGS: 'warnings',
 	STATUS_BUILDING: 'building',
 } as const;
 

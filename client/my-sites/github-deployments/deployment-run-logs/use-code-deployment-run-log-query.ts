@@ -26,7 +26,7 @@ export const useCodeDeploymentsRunLogQuery = (
 	siteId: number | null,
 	deploymentId: number,
 	runId: number,
-	options?: UseQueryOptions< LogEntry[] >
+	options?: Partial< UseQueryOptions< LogEntry[] > >
 ) => {
 	return useQuery< LogEntry[] >( {
 		enabled: !! siteId,
