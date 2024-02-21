@@ -32,7 +32,13 @@ export const ScheduleForm = () => {
 				<FlexItem>
 					<div className="form-field">
 						<label htmlFor="name">Name</label>
-						<TextControl id="name" value={ name } onChange={ setName } __next40pxDefaultSize />
+						<TextControl
+							id="name"
+							value={ name }
+							onChange={ setName }
+							__next40pxDefaultSize
+							placeholder="Example: Security plugins"
+						/>
 						<Text className="validation-msg">
 							<Icon className="icon-info" icon={ info } size={ 16 } />
 							Please provide a name to this plugin update schedule.

@@ -11,6 +11,13 @@
 		padding: 0;
 	}
 
+	.components-search-control {
+		.components-input-control__container {
+			border: solid 1px #949494;
+			background-color: var(--studio-white);
+		}
+	}
+
 	.checkbox-options {
 		padding: 1.5rem;
 		border: solid 1px var(--color-border);
