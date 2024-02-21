@@ -65,6 +65,7 @@ export const GitHubDeploymentManagementForm = ( {
 			branch: codeDeployment.branch_name,
 			destPath: codeDeployment.target_dir,
 			isAutomated: codeDeployment.is_automated,
+			workflowPath: codeDeployment.workflow_path,
 		};
 	}, [ codeDeployment ] );
 
@@ -78,13 +79,21 @@ export const GitHubDeploymentManagementForm = ( {
 			ctaLabel={ __( 'Update connection' ) }
 			repository={ repository }
 			initialValues={ initialValues }
-			onSubmit={ ( { externalRepositoryId, branchName, targetDir, installationId, isAutomated } ) =>
+			onSubmit={ ( {
+				externalRepositoryId,
+				branchName,
+				targetDir,
+				installationId,
+				isAutomated,
+				workflowPath,
+			} ) =>
 				updateDeployment( {
 					externalRepositoryId,
 					branchName,
 					targetDir,
 					installationId,
 					isAutomated,
+					workflowPath,
 				} )
 			}
 		/>

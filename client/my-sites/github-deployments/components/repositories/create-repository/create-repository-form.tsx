@@ -6,7 +6,6 @@ import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormTextInput from 'calypso/components/forms/form-text-input';
 import { GitHubInstallationsDropdown } from 'calypso/my-sites/github-deployments/components/installations-dropdown';
 import { useLiveInstallations } from 'calypso/my-sites/github-deployments/components/installations-dropdown/use-live-installations';
-import { DeploymentStyle } from '../deployment-style/deployment-style';
 import {
 	FormRadioWithTemplateSelect,
 	ProjectType,
@@ -179,9 +178,7 @@ export const CreateRepositoryForm = ( {
 					{ __( 'Create repository' ) }
 				</Button>
 			</form>
-			<div className="github-deployments-create-repository__deployment-style">
-				<DeploymentStyle />
-			</div>
+			<div className="github-deployments-create-repository__deployment-style"></div>
 		</div>
 	);
 };

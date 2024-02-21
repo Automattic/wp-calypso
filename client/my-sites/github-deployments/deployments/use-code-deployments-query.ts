@@ -14,6 +14,7 @@ export interface CodeDeploymentData {
 	repository_name: string;
 	branch_name: string;
 	target_dir: string;
+	workflow_path: string;
 	is_automated: boolean;
 	installation_id: number;
 	created_by: CreatedBy;
