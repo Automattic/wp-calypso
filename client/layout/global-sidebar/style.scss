@@ -281,6 +281,14 @@ $brand-text: "SF Pro Text", $sans;
 		outline-width: 2px;
 		outline-offset: 2px;
 	}
+
+	.button,
+	.site__content {
+		&:focus {
+			box-shadow: none;
+			border-color: inherit;
+		}
+	}
 }
 
 .masterbar {
