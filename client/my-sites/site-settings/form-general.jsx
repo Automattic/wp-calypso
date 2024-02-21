@@ -915,7 +915,7 @@ export class SiteSettingsFormGeneral extends Component {
 					urlRef="unlaunched-settings"
 				/>
 				{ ! isWpcomStagingSite && this.giftOptions() }
-				{ ! isWPForTeamsSite && ! ( siteIsJetpack && ! siteIsAtomic ) && (
+				{ ! isWPForTeamsSite && ! ( siteIsJetpack && ! siteIsAtomic ) && ! isAdminInterface && (
 					<div className="site-settings__footer-credit-container">
 						<SettingsSectionHeader
 							title={ translate( 'Footer credit' ) }
