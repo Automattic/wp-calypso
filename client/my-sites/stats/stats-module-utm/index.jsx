@@ -6,7 +6,7 @@ const StatsModuleUTM = ( { period, postId, query } ) => {
 	const moduleStrings = statsStrings();
 
 	// TODO: Use TanStack for API requests.
-	const { isRequestingData, data } = useMockData();
+	const { isRequestingData, data } = useMockData( postId );
 
 	// TODO: Hide summary link on summary page too.
 	const hideSummaryLink = postId !== undefined;
