@@ -1,13 +1,14 @@
+import { Button, Gridicon } from '@automattic/components';
 import { DataViews } from '@wordpress/dataviews';
-import { Icon, starFilled } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
-import { useCallback } from 'react';
+import { useCallback, useMemo } from 'react';
 import SiteActions from 'calypso/jetpack-cloud/sections/agency-dashboard/sites-overview/site-actions';
 import useFormattedSites from 'calypso/jetpack-cloud/sections/agency-dashboard/sites-overview/site-content/hooks/use-formatted-sites';
 import SiteStatusContent from 'calypso/jetpack-cloud/sections/agency-dashboard/sites-overview/site-status-content';
+import SiteDataField from 'calypso/jetpack-cloud/sections/agency-dashboard/sites-overview/sites-dataviews/site-data-field';
 import TextPlaceholder from 'calypso/jetpack-cloud/sections/partner-portal/text-placeholder';
 import SiteSetFavorite from '../site-set-favorite';
-import { AllowedTypes, SiteData } from '../types';
+import { AllowedTypes, Site, SiteData } from '../types';
 import { SitesDataViewsProps } from './interfaces';
 
 import './style.scss';
@@ -21,6 +22,17 @@ const SitesDataViews = ( {
 	const translate = useTranslate();
 
 	const sites = useFormattedSites( data?.sites ?? [] );
+
+	const openSitePreviewPane = useCallback(
+		( site: Site ) => {
+			onSitesViewChange( {
+				...sitesViewState,
+				selectedSite: site,
+				type: 'list',
+			} );
+		},
+		[ onSitesViewChange, sitesViewState ]
+	);
 
 	const renderField = useCallback(
 		( column: AllowedTypes, item: SiteData ) => {
@@ -43,137 +55,146 @@ const SitesDataViews = ( {
 		[ isLoading ]
 	);
 
-	const fields = [
-		{
-			id: 'status',
-			header: '',
-			getValue: ( { item }: { item: SiteData } ) =>
-				item.site.error || item.scan.status === 'critical',
-			render: () => {},
-			type: 'enumeration',
-			elements: [
-				{ value: 1, label: 'Needs attention' },
-				{ value: 2, label: 'Favorite' },
-			],
-			enableHiding: true,
-			enableSorting: true,
-		},
-		{
-			id: 'site',
-			header: (
-				<span className="sites-dataview__site-header">{ translate( 'Site' ).toUpperCase() }</span>
-			),
-			getValue: ( { item }: { item: SiteData } ) => item.site.value.url,
-			render: ( { item }: { item: SiteData } ) => {
-				if ( isLoading ) {
-					return <TextPlaceholder />;
-				}
-				const site = item.site.value;
-				return (
-					<div className="sites-dataviews__site">
-						<div className="sites-dataviews__site-favicon"></div>
-						<div className="sites-dataviews__site-name">
-							<div>{ site.blogname }</div>
-							<div className="sites-dataviews__site-url">{ site.url }</div>
-						</div>
-					</div>
-				);
+	const fields = useMemo(
+		() => [
+			{
+				id: 'status',
+				header: '',
+				getValue: ( { item }: { item: SiteData } ) =>
+					item.site.error || item.scan.status === 'critical',
+				render: () => {},
+				type: 'enumeration',
+				elements: [
+					{ value: 1, label: 'Needs attention' },
+					{ value: 2, label: 'Favorite' },
+				],
+				enableHiding: true,
+				enableSorting: true,
 			},
-			enableHiding: false,
-			enableSorting: true,
-		},
-		{
-			id: 'stats',
-			header: <span className="sites-dataview__stats-header">STATS</span>,
-			getValue: () => 'Stats status',
-			render: ( { item }: { item: SiteData } ) => renderField( 'stats', item ),
-			enableHiding: false,
-			enableSorting: false,
-		},
-		{
-			id: 'boost',
-			header: <span className="sites-dataview__boost-header">BOOST</span>,
-			getValue: ( { item }: { item: SiteData } ) => item.boost.status,
-			render: ( { item }: { item: SiteData } ) => renderField( 'boost', item ),
-			enableHiding: false,
-			enableSorting: false,
-		},
-		{
-			id: 'backup',
-			header: <span className="sites-dataview__backup-header">BACKUP</span>,
-			getValue: () => 'Backup status',
-			render: ( { item }: { item: SiteData } ) => renderField( 'backup', item ),
-			enableHiding: false,
-			enableSorting: false,
-		},
-		{
-			id: 'monitor',
-			header: <span className="sites-dataview__monitor-header">MONITOR</span>,
-			getValue: () => 'Monitor status',
-			render: ( { item }: { item: SiteData } ) => renderField( 'monitor', item ),
-			enableHiding: false,
-			enableSorting: false,
-		},
-		{
-			id: 'scan',
-			header: <span className="sites-dataview__scan-header">SCAN</span>,
-			getValue: () => 'Scan status',
-			render: ( { item }: { item: SiteData } ) => renderField( 'scan', item ),
-			enableHiding: false,
-			enableSorting: false,
-		},
-		{
-			id: 'plugins',
-			header: <span className="sites-dataview__plugins-header">PLUGINS</span>,
-			getValue: () => 'Plugins status',
-			render: ( { item }: { item: SiteData } ) => renderField( 'plugin', item ),
-			enableHiding: false,
-			enableSorting: false,
-		},
-		{
-			id: 'favorite',
-			header: (
-				<Icon
-					className="site-table__favorite-icon sites-dataview__favorites-header"
-					size={ 24 }
-					icon={ starFilled }
-				/>
-			),
-			getValue: ( { item }: { item: SiteData } ) => item.isFavorite,
-			render: ( { item }: { item: SiteData } ) => {
-				if ( isLoading ) {
-					return <TextPlaceholder />;
-				}
-				return (
-					<span className="sites-dataviews__favorite-btn-wrapper">
-						<SiteSetFavorite
-							isFavorite={ item.isFavorite || false }
-							siteId={ item.site.value.blog_id }
-							siteUrl={ item.site.value.url }
+			{
+				id: 'site',
+				header: (
+					<span className="sites-dataview__site-header">{ translate( 'Site' ).toUpperCase() }</span>
+				),
+				getValue: ( { item }: { item: SiteData } ) => item.site.value.url,
+				render: ( { item }: { item: SiteData } ) => {
+					if ( isLoading ) {
+						return <TextPlaceholder />;
+					}
+					const site = item.site.value;
+					return (
+						<SiteDataField
+							site={ site }
+							isLoading={ isLoading }
+							onSiteTitleClick={ openSitePreviewPane }
 						/>
-					</span>
-				);
+					);
+				},
+				enableHiding: false,
+				enableSorting: true,
 			},
-			enableHiding: false,
-			enableSorting: false,
-		},
-		{
-			id: 'actions',
-			header: <span className="sites-dataview__actions-header">{ translate( 'ACTIONS' ) }</span>,
-			getValue: ( { item }: { item: SiteData } ) => item.isFavorite,
-			render: ( { item }: { item: SiteData } ) => {
-				if ( isLoading ) {
-					return <TextPlaceholder />;
-				}
-				return <SiteActions isLargeScreen site={ item.site } siteError={ item.site.error } />;
+			{
+				id: 'stats',
+				header: <span className="sites-dataview__stats-header">STATS</span>,
+				getValue: () => 'Stats status',
+				render: ( { item }: { item: SiteData } ) => renderField( 'stats', item ),
+				enableHiding: false,
+				enableSorting: false,
 			},
-			enableHiding: false,
-			enableSorting: false,
-		},
-	];
-
-	// TODO: remove this hardcoded style. If we set background in the CSS it will be loaded with and without the feature flag:
-	document.body.style.backgroundColor = 'white';
+			{
+				id: 'boost',
+				header: <span className="sites-dataview__boost-header">BOOST</span>,
+				getValue: ( { item }: { item: SiteData } ) => item.boost.status,
+				render: ( { item }: { item: SiteData } ) => renderField( 'boost', item ),
+				enableHiding: false,
+				enableSorting: false,
+			},
+			{
+				id: 'backup',
+				header: <span className="sites-dataview__backup-header">BACKUP</span>,
+				getValue: () => 'Backup status',
+				render: ( { item }: { item: SiteData } ) => renderField( 'backup', item ),
+				enableHiding: false,
+				enableSorting: false,
+			},
+			{
+				id: 'monitor',
+				header: <span className="sites-dataview__monitor-header">MONITOR</span>,
+				getValue: () => 'Monitor status',
+				render: ( { item }: { item: SiteData } ) => renderField( 'monitor', item ),
+				enableHiding: false,
+				enableSorting: false,
+			},
+			{
+				id: 'scan',
+				header: <span className="sites-dataview__scan-header">SCAN</span>,
+				getValue: () => 'Scan status',
+				render: ( { item }: { item: SiteData } ) => renderField( 'scan', item ),
+				enableHiding: false,
+				enableSorting: false,
+			},
+			{
+				id: 'plugins',
+				header: <span className="sites-dataview__plugins-header">PLUGINS</span>,
+				getValue: () => 'Plugins status',
+				render: ( { item }: { item: SiteData } ) => renderField( 'plugin', item ),
+				enableHiding: false,
+				enableSorting: false,
+			},
+			{
+				id: 'favorite',
+				header: (
+					<Icon
+						className="site-table__favorite-icon sites-dataview__favorites-header"
+						size={ 24 }
+						icon={ starFilled }
+					/>
+				),
+				getValue: ( { item }: { item: SiteData } ) => item.isFavorite,
+				render: ( { item }: { item: SiteData } ) => {
+					if ( isLoading ) {
+						return <TextPlaceholder />;
+					}
+					return (
+						<span className="sites-dataviews__favorite-btn-wrapper">
+							<SiteSetFavorite
+								isFavorite={ item.isFavorite || false }
+								siteId={ item.site.value.blog_id }
+								siteUrl={ item.site.value.url }
+							/>
+						</span>
+					);
+				},
+				enableHiding: false,
+				enableSorting: false,
+			},
+			{
+				id: 'actions',
+				header: <span className="sites-dataview__actions-header">{ translate( 'ACTIONS' ) }</span>,
+				getValue: ( { item }: { item: SiteData } ) => item.isFavorite,
+				render: ( { item }: { item: SiteData } ) => {
+					if ( isLoading ) {
+						return <TextPlaceholder />;
+					}
+					return (
+						<div className="sites-dataviews__actions">
+							<SiteActions isLargeScreen site={ item.site } siteError={ item.site.error } />
+							<Button
+								onClick={ () => openSitePreviewPane( item.site.value ) }
+								className="site-preview__open"
+								borderless
+							>
+								<Gridicon icon="chevron-right" />
+							</Button>
+						</div>
+					);
+				},
+				enableHiding: false,
+				enableSorting: false,
+			},
+		],
+		[ isLoading, openSitePreviewPane, renderField, translate ]
+	);
 
 	return (
 		<>
