@@ -431,11 +431,8 @@ export default withCurrentRoute(
 				'comments',
 			].includes( sectionName );
 			const sidebarIsHidden = ! secondary || isWcMobileApp() || isDomainAndPlanPackageFlow;
-
 			const userAllowedToHelpCenter = config.isEnabled( 'calypso/help-center' );
-
 			const isCommandPaletteOpen = getIsCommandPaletteOpen( state );
-
 			return {
 				masterbarIsHidden,
 				sidebarIsHidden,
