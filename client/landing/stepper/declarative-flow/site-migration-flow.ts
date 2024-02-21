@@ -2,8 +2,10 @@ import { useLocale } from '@automattic/i18n-utils';
 import { useSelect, useDispatch } from '@wordpress/data';
 import { useEffect } from 'react';
 import { getLocaleFromQueryParam, getLocaleFromPathname } from 'calypso/boot/locale';
+import { addQueryArgs } from 'calypso/lib/url';
 import { useSiteSlugParam } from '../hooks/use-site-slug-param';
 import { USER_STORE, ONBOARD_STORE, SITE_STORE } from '../stores';
+import { goToCheckout } from '../utils/checkout';
 import { getLoginUrl } from '../utils/path';
 import { recordSubmitStep } from './internals/analytics/record-submit-step';
 import { STEPS } from './internals/steps';
@@ -172,13 +174,25 @@ const siteMigration: Flow = {
 
 				case STEPS.SITE_MIGRATION_UPGRADE_PLAN.slug: {
 					if ( providedDependencies?.goToCheckout ) {
-						// Do nothing and wait for checkout redirect
+						const destination = addQueryArgs(
+							{
+								flags: 'onboarding/new-migration-flow',
+								siteSlug,
+							},
+							'/setup/site-migration/site-migration-instructions'
+						);
+						goToCheckout( {
+							flowName: 'site-migration',
+							stepName: 'site-migration-upgrade-plan',
+							siteSlug: siteSlug,
+							destination: destination,
+							plan: providedDependencies.plan as string,
+						} );
 						return;
 					}
 					if ( providedDependencies?.verifyEmail ) {
-						return navigate(
-							`verifyEmail?from=/setup/site-migration/site-migration-instructions?flags=onboarding/new-migration-flow&siteSlug=${ siteSlug }`
-						);
+						// not yet implemented
+						return;
 					}
 				}
 

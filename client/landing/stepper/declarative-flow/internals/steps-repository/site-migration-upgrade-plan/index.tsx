@@ -5,7 +5,6 @@ import DocumentHead from 'calypso/components/data/document-head';
 import FormattedHeader from 'calypso/components/formatted-header';
 import { useSite } from 'calypso/landing/stepper/hooks/use-site';
 import { useSiteSlug } from 'calypso/landing/stepper/hooks/use-site-slug';
-import { goToCheckout } from 'calypso/landing/stepper/utils/checkout';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import type { Step } from '../../types';
 
@@ -26,14 +25,10 @@ const SiteMigrationUpgradePlan: Step = function ( { navigation } ) {
 			isBusy={ false }
 			hideTitleAndSubTitle
 			onCtaClick={ () => {
-				goToCheckout( {
-					flowName: 'site-migration',
-					stepName: 'site-migration-upgrade-plan',
-					siteSlug: siteSlug,
-					destination: `/setup/site-migration/site-migration-instructions/?flags=onboarding/new-migration-flow&siteSlug=${ siteSlug }`,
+				navigation.submit?.( {
+					goToCheckout: true,
 					plan: plan.getPathSlug ? plan.getPathSlug() : '',
 				} );
-				navigation.submit?.( { goToCheckout: true } );
 			} }
 			navigateToVerifyEmailStep={ () => {
 				navigation.submit?.( { verifyEmail: true } );
