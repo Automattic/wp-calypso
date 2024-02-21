@@ -28,7 +28,7 @@ const ErrorStep: Step = function ErrorStep( { navigation } ) {
 		domain = siteDomains[ 0 ].domain;
 	}
 
-	const errorCopy = () => {
+	const messageCopy = () => {
 		// New copy waiting on translation.
 		if (
 			englishLocales.includes( translate?.localeSlug || '' ) ||
@@ -48,7 +48,7 @@ const ErrorStep: Step = function ErrorStep( { navigation } ) {
 	};
 
 	const headerText = siteSetupError?.error || __( "We've hit a snag" );
-	const bodyText = siteSetupError?.message || errorCopy();
+	const bodyText = siteSetupError?.message || messageCopy();
 
 	const getContent = () => {
 		return (
