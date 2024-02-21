@@ -280,11 +280,8 @@ export class ReaderSidebar extends Component {
 		};
 		return (
 			<GlobalSidebar { ...props }>
-				<SidebarRegion>
-					<ReaderSidebarNudges />
-					{ this.renderSidebarMenu() }
-				</SidebarRegion>
-
+				<ReaderSidebarNudges />
+				{ this.renderSidebarMenu() }
 				<ReaderSidebarPromo />
 			</GlobalSidebar>
 		);
