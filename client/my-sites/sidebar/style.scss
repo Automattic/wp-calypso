@@ -345,10 +345,6 @@ $font-size: rem(14px);
 	.global-sidebar .sidebar {
 		background-color: var(--studio-black);
 
-		.selected .sidebar__menu-link::after {
-			display: none;
-		}
-
 		.sidebar__menu-link {
 			line-height: 15px;
 		}
@@ -372,7 +368,7 @@ $font-size: rem(14px);
 
 		.sidebar__heading:not([tabindex="-1"]),
 		.sidebar__menu-link {
-			color: var(--studio-white);
+			color: var(--color-sidebar-text);
 
 			.sidebar__menu-icon {
 				color: inherit;
@@ -386,7 +382,7 @@ $font-size: rem(14px);
 			&:focus {
 				box-shadow: none;
 				transition: none;
-				color: var(--studio-white);
+				color: var(--color-sidebar-menu-hover-text);
 
 				.sidebar__menu-icon {
 					color: inherit;
@@ -413,11 +409,11 @@ $font-size: rem(14px);
 
 			&:hover {
 				background-color: var(--color-sidebar-menu-hover-background);
-				color: var(--studio-white);
+				color: var(--color-sidebar-menu-hover-text);
 
 				.sidebar__menu-icon,
 				.sidebar__expandable-arrow {
-					fill: var(--studio-white);
+					fill: var(--color-sidebar-menu-hover-text);
 				}
 			}
 		}
@@ -430,6 +426,14 @@ $font-size: rem(14px);
 		.sidebar__expandable-title {
 			padding: 0;
 			margin: 0;
+		}
+
+		.selected .sidebar__menu-link {
+			color: var(--color-sidebar-menu-selected-text);
+		}
+
+		.selected .sidebar__menu-link::after {
+			display: none;
 		}
 	}
 
