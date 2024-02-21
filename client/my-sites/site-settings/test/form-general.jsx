@@ -418,7 +418,7 @@ describe( 'SiteSettingsFormGeneral', () => {
 				1
 			);
 
-			const discourageRadio = getByLabelText( 'Prevent third-party data sharing for', {
+			const discourageRadio = getByLabelText( 'Prevent third-party sharing for', {
 				exact: false,
 			} );
 			expect( discourageRadio ).not.toBeChecked();
