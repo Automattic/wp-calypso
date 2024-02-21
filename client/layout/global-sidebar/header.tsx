@@ -1,4 +1,5 @@
 import { useTranslate } from 'i18n-calypso';
+import SkipNavigation from '../sidebar/skip-navigation';
 import SidebarNotifications from './menu-items/notifications';
 import { SidebarSearch } from './menu-items/search';
 
@@ -6,6 +7,10 @@ export const GlobalSidebarHeader = () => {
 	const translate = useTranslate();
 	return (
 		<div className="sidebar__header">
+			<SkipNavigation
+				skipToElementId="primary"
+				displayText={ translate( 'Skip to main content' ) }
+			/>
 			<a
 				href="/sites"
 				className="link-logo tooltip tooltip-bottom-left"
