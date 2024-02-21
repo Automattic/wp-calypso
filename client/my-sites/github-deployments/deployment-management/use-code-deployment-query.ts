@@ -5,11 +5,6 @@ import { CodeDeploymentData } from '../deployments/use-code-deployments-query';
 
 export const CODE_DEPLOYMENTS_QUERY_KEY = 'code-deployments';
 
-export interface CreatedBy {
-	id: number;
-	name: string;
-}
-
 export const useCodeDeploymentQuery = (
 	siteId: number | null,
 	deploymentId: number,

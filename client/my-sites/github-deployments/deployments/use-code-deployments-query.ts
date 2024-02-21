@@ -14,15 +14,36 @@ export interface CodeDeploymentData {
 	repository_name: string;
 	branch_name: string;
 	target_dir: string;
-	workflow_path: string;
 	is_automated: boolean;
 	installation_id: number;
 	created_by: CreatedBy;
+	current_deployed_run?: DeploymentRun;
+	current_deployment_run?: DeploymentRun;
+	workflow_path: string;
 }
 
 export interface CreatedBy {
 	id: number;
 	name: string;
+}
+
+export interface DeploymentRun {
+	id: number;
+	code_deployment_id: number;
+	created_on: string;
+	started_on: string;
+	completed_on: string;
+	status: string;
+	failure_code: string;
+	triggered_by_user_id: number;
+	metadata: Metadata;
+	code_deployment?: CodeDeploymentData;
+}
+
+export interface Metadata {
+	commit_message: string;
+	commit_sha: string;
+	job_id: number;
 }
 
 export const useCodeDeploymentsQuery = (
