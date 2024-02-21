@@ -1,23 +1,26 @@
 export const GROUP_WPCOM = 'GROUP_WPCOM';
 export const GROUP_P2 = 'GROUP_P2';
 
-// Products
-export const PRODUCT_NO_ADS = 'no-adverts/no-adverts.php';
+/**
+ * WPCOM Search Products
+ */
 export const PRODUCT_WPCOM_SEARCH = 'wpcom_search';
 export const PRODUCT_WPCOM_SEARCH_MONTHLY = 'wpcom_search_monthly';
-export const PRODUCT_WPCOM_UNLIMITED_THEMES = 'unlimited_themes';
-export const PRODUCT_1GB_SPACE = 'wordpress_com_1gb_space_addon_yearly';
-export const PRODUCT_WPCOM_CUSTOM_DESIGN = 'custom-design';
+export const WPCOM_SEARCH_PRODUCTS = < const >[
+	PRODUCT_WPCOM_SEARCH,
+	PRODUCT_WPCOM_SEARCH_MONTHLY,
+];
 
-// Space Upgrade Products
-// - Special products that do not yet map to the Product type in @automattic/calypso-products
+/**
+ * WPCOM Space Upgrade Products
+ * - Special products that do not yet map to the exported `PRODUCTS_LIST` in @automattic/calypso-products
+ */
 export const PRODUCT_1GB_SPACE_UPGRADE = '1gb_space_upgrade';
 export const PRODUCT_5GB_SPACE_UPGRADE = '5gb_space_upgrade';
 export const PRODUCT_10GB_SPACE_UPGRADE = '10gb_space_upgrade';
 export const PRODUCT_50GB_SPACE_UPGRADE = '50gb_space_upgrade';
 export const PRODUCT_100GB_SPACE_UPGRADE = '100gb_space_upgrade';
-
-export const SPACE_UPGRADE_PRODUCTS = < const >[
+export const WPCOM_SPACE_UPGRADE_PRODUCTS = < const >[
 	PRODUCT_1GB_SPACE_UPGRADE,
 	PRODUCT_5GB_SPACE_UPGRADE,
 	PRODUCT_10GB_SPACE_UPGRADE,
@@ -25,14 +28,29 @@ export const SPACE_UPGRADE_PRODUCTS = < const >[
 	PRODUCT_100GB_SPACE_UPGRADE,
 ];
 
-export const WPCOM_SEARCH_PRODUCTS = < const >[
-	PRODUCT_WPCOM_SEARCH,
-	PRODUCT_WPCOM_SEARCH_MONTHLY,
+/**
+ * WPCOM Other Products
+ * - Special products that do not yet map to the exported `PRODUCTS_LIST` in @automattic/calypso-products
+ */
+export const PRODUCT_NO_ADS = 'no-adverts/no-adverts.php';
+export const PRODUCT_WPCOM_UNLIMITED_THEMES = 'unlimited_themes';
+export const PRODUCT_1GB_SPACE = 'wordpress_com_1gb_space_addon_yearly';
+export const PRODUCT_WPCOM_CUSTOM_DESIGN = 'custom-design';
+export const WPCOM_OTHER_PRODUCTS = < const >[
+	PRODUCT_NO_ADS,
+	PRODUCT_WPCOM_UNLIMITED_THEMES,
+	PRODUCT_1GB_SPACE,
+	PRODUCT_WPCOM_CUSTOM_DESIGN,
 ];
 
+/**
+ * WPCOM Products / having definitions in `PRODUCTS_LIST` in @automattic/calypso-products
+ */
 export const WPCOM_PRODUCTS = < const >[ ...WPCOM_SEARCH_PRODUCTS ];
 
-// Plans
+/**
+ * Plans
+ */
 export const PLAN_BUSINESS_MONTHLY = 'business-bundle-monthly';
 export const PLAN_BUSINESS = 'business-bundle';
 export const PLAN_BUSINESS_2_YEARS = 'business-bundle-2y';

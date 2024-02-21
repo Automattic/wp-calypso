@@ -3,14 +3,15 @@ import type { DispatchFromMap } from '../mapped-types';
 import type {
 	PriceTierEntry,
 	ProductSlug,
-	SpaceUpgradeProductSlug,
+	WPComOtherProductSlug,
+	WPComSpaceUpgradeProductSlug,
 } from '@automattic/calypso-products';
 
 export interface Dispatch {
 	dispatch: DispatchFromMap< typeof actions >;
 }
 
-export type StoreProductSlug = ProductSlug | SpaceUpgradeProductSlug;
+export type StoreProductSlug = ProductSlug | WPComSpaceUpgradeProductSlug | WPComOtherProductSlug;
 
 export interface ProductPriceTier {
 	minimumUnits: number;
