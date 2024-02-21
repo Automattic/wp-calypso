@@ -1,10 +1,17 @@
 import { FormStatus, useFormStatus, Button } from '@automattic/composite-checkout';
 import formatCurrency from '@automattic/format-currency';
-import { hasCheckoutVersion } from '@automattic/wpcom-checkout';
+import {
+	doesIntroductoryOfferHaveDifferentTermLengthThanProduct,
+	hasCheckoutVersion,
+} from '@automattic/wpcom-checkout';
 import styled from '@emotion/styled';
 import { useTranslate } from 'i18n-calypso';
 import type { Theme } from '@automattic/composite-checkout';
-import type { ResponseCart, RemoveCouponFromCart } from '@automattic/shopping-cart';
+import type {
+	ResponseCart,
+	RemoveCouponFromCart,
+	ResponseCartProduct,
+} from '@automattic/shopping-cart';
 import type {
 	CostOverrideForDisplay,
 	LineItemCostOverrideForDisplay,
@@ -23,7 +30,7 @@ const CostOverridesListStyle = styled.div`
 		justify-content: space-between;
 		grid-template-columns: auto auto;
 		margin-top: 4px;
-		gap: 16px;
+		gap: 0 16px;
 	}
 
 	& .cost-overrides-list-item--coupon {
@@ -146,28 +153,63 @@ export function CostOverridesList( {
 	);
 }
 
+function LineItemCostOverrideIntroOfferDueDate( { product }: { product: ResponseCartProduct } ) {
+	const translate = useTranslate();
+	if ( ! product.introductory_offer_terms?.enabled ) {
+		return null;
+	}
+	if ( ! doesIntroductoryOfferHaveDifferentTermLengthThanProduct( product ) ) {
+		return null;
+	}
+	return (
+		<div>
+			{ translate( 'Due %(dueDate)s: %(price)s', {
+				args: {
+					dueDate: 'May 21, 2024', // FIXME
+					price: '$26.25', // FIXME
+				},
+			} ) }
+		</div>
+	);
+}
+
+function LineItemCostOverride( {
+	costOverride,
+	product,
+}: {
+	costOverride: LineItemCostOverrideForDisplay;
+	product: ResponseCartProduct;
+} ) {
+	return (
+		<div className="cost-overrides-list-item" key={ costOverride.humanReadableReason }>
+			<span className="cost-overrides-list-item__reason">{ costOverride.humanReadableReason }</span>
+			<span className="cost-overrides-list-item__discount">
+				{ costOverride.discountAmount &&
+					formatCurrency( -costOverride.discountAmount, product.currency, {
+						isSmallestUnit: true,
+					} ) }
+			</span>
+			<LineItemCostOverrideIntroOfferDueDate product={ product } />
+		</div>
+	);
+}
+
 export function LineItemCostOverrides( {
 	costOverridesList,
-	currency,
+	product,
 }: {
 	costOverridesList: LineItemCostOverrideForDisplay[];
-	currency: string;
+	product: ResponseCartProduct;
 } ) {
 	return (
 		<CostOverridesListStyle>
-			{ costOverridesList.map( ( costOverride ) => {
-				return (
-					<div className="cost-overrides-list-item" key={ costOverride.humanReadableReason }>
-						<span className="cost-overrides-list-item__reason">
-							{ costOverride.humanReadableReason }
-						</span>
-						<span className="cost-overrides-list-item__discount">
-							{ costOverride.discountAmount &&
-								formatCurrency( -costOverride.discountAmount, currency, { isSmallestUnit: true } ) }
-						</span>
-					</div>
-				);
-			} ) }
+			{ costOverridesList.map( ( costOverride ) => (
+				<LineItemCostOverride
+					product={ product }
+					costOverride={ costOverride }
+					key={ costOverride.humanReadableReason }
+				/>
+			) ) }
 		</CostOverridesListStyle>
 	);
 }

@@ -388,10 +388,7 @@ function LineItemWrapper( {
 					) }
 				</DropdownWrapper>
 				{ hasCheckoutVersion( '2' ) && (
-					<LineItemCostOverrides
-						costOverridesList={ costOverridesList }
-						currency={ product.currency }
-					/>
+					<LineItemCostOverrides product={ product } costOverridesList={ costOverridesList } />
 				) }
 			</LineItem>
 		</WPOrderReviewListItem>
