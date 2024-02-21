@@ -247,7 +247,7 @@ const SiteSettingPrivacyForm = ( {
 								</span>
 								<FormSettingExplanation>
 									{ translate(
-										'This option will prevent this site’s content from being shared with our licensed network of data and research partners, including those that train AI models. {{a}}Learn more{{/a}}.',
+										'This option will prevent this site’s content from being shared with our licensed network of content and research partners, including those that train AI models. {{a}}Learn more{{/a}}.',
 										{
 											components: {
 												a: (
