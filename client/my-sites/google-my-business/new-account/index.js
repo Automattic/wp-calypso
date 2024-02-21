@@ -62,7 +62,10 @@ class GoogleMyBusinessNewAccount extends Component {
 		/* eslint-disable wpcalypso/jsx-classname-namespace */
 		return (
 			<Main className="gmb-new-account" wideLayout>
-				<PageViewTracker path="/google-my-business/new/:site" title="Google My Business > New" />
+				<PageViewTracker
+					path="/google-my-business/new/:site"
+					title="Google Business Profile > New"
+				/>
 
 				<DocumentHead title={ translate( 'Google Business Profile' ) } />
 

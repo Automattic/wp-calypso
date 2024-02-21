@@ -79,7 +79,7 @@ class GoogleMyBusinessSelectLocation extends Component {
 			<Main className="gmb-select-location" wideLayout>
 				<PageViewTracker
 					path="/google-my-business/select-location/:site"
-					title="Google My Business > Select Location"
+					title="Google Business Profile > Select Location"
 				/>
 
 				<DocumentHead title={ translate( 'Google Business Profile' ) } />

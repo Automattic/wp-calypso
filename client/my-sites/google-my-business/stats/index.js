@@ -199,7 +199,7 @@ class GoogleMyBusinessStats extends Component {
 			<Main fullWidthLayout>
 				<PageViewTracker
 					path="/google-my-business/stats/:site"
-					title="Google My Business > Stats"
+					title="Google Business Profile > Stats"
 				/>
 
 				<DocumentHead title={ translate( 'Jetpack Stats' ) } />

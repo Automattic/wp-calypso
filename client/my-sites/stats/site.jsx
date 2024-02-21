@@ -556,7 +556,7 @@ class StatsSite extends Component {
 				{ config.isEnabled( 'stats/paid-wpcom-v2' ) && ! isOdysseyStats && (
 					<QuerySiteFeatures siteIds={ [ siteId ] } />
 				) }
-				{ /* Odyssey: Google My Business pages are currently unsupported. */ }
+				{ /* Odyssey: Google Business Profile pages are currently unsupported. */ }
 				{ ! isOdysseyStats && (
 					<>
 						<QueryKeyringConnections />
