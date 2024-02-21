@@ -1,5 +1,6 @@
 import { Button, Gridicon } from '@automattic/components';
 import { DataViews } from '@wordpress/dataviews';
+import { Icon, starFilled } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback, useMemo } from 'react';
 import SiteActions from 'calypso/jetpack-cloud/sections/agency-dashboard/sites-overview/site-actions';
