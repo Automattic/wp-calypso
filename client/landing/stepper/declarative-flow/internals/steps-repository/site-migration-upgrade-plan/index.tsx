@@ -1,58 +1,42 @@
 import { PLAN_BUSINESS, getPlan } from '@automattic/calypso-products';
 import { StepContainer } from '@automattic/onboarding';
-import { useTranslate } from 'i18n-calypso';
 import { UpgradePlan } from 'calypso/blocks/importer/wordpress/upgrade-plan';
 import DocumentHead from 'calypso/components/data/document-head';
 import FormattedHeader from 'calypso/components/formatted-header';
+import { useSite } from 'calypso/landing/stepper/hooks/use-site';
+import { useSiteSlug } from 'calypso/landing/stepper/hooks/use-site-slug';
+import { goToCheckout } from 'calypso/landing/stepper/utils/checkout';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
-import { useSelector } from 'calypso/state';
-import { getSite } from 'calypso/state/sites/selectors';
 import type { Step } from '../../types';
 
-// const SiteMigrationUpgradePlan: Step = function ( { navigation } ) {
-const SiteMigrationUpgradePlan: Step = function () {
-	const translate = useTranslate();
+const SiteMigrationUpgradePlan: Step = function ( { navigation } ) {
+	const siteItem = useSite();
+	const siteSlug = useSiteSlug();
+	const plan = getPlan( PLAN_BUSINESS );
 
-	// const handleSubmit = () => {
-	// 	navigation.submit?.();
-	// };
-
-	const siteId = 229660991;
-	const siteItem = useSelector( ( state ) => getSite( state, siteId ) );
-
-	if ( ! siteItem ) {
+	if ( ! siteItem || ! siteSlug || ! plan ) {
 		return;
 	}
-
-	const planName = getPlan( PLAN_BUSINESS )?.getTitle() || '';
 
 	const stepContent = (
 		<UpgradePlan
 			site={ siteItem }
-			ctaText={
-				// translators: %(plan)s is the plan name - e.g. Business or Creator
-				translate( 'Get %(plan)s', {
-					args: {
-						plan: planName,
-					},
-				} ) as string
-			}
-			subTitleText={
-				// translators: %(plan)s is the plan name - e.g. Business or Creator
-				translate( 'Importing a backup file requires a %(planName)s plan', {
-					args: {
-						planName,
-					},
-				} ) as string
-			}
+			ctaText=""
+			subTitleText=""
 			isBusy={ false }
+			hideTitleAndSubTitle
 			onCtaClick={ () => {
-				// console.log( 'CTA' );
-				// stepNavigator?.goToCheckoutPage?.( WPImportOption.CONTENT_ONLY );
+				goToCheckout( {
+					flowName: 'site-migration',
+					stepName: 'site-migration-upgrade-plan',
+					siteSlug: siteSlug,
+					destination: `/setup/site-migration/site-migration-instructions/?flags=onboarding/new-migration-flow&siteSlug=${ siteSlug }`,
+					plan: plan.getPathSlug ? plan.getPathSlug() : '',
+				} );
+				navigation.submit?.( { goToCheckout: true } );
 			} }
 			navigateToVerifyEmailStep={ () => {
-				// console.log( 'verify email' );
-				// stepNavigator?.goToVerifyEmailPage?.();
+				navigation.submit?.( { verifyEmail: true } );
 			} }
 		/>
 	);

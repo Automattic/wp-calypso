@@ -170,6 +170,18 @@ const siteMigration: Flow = {
 					} );
 				}
 
+				case STEPS.SITE_MIGRATION_UPGRADE_PLAN.slug: {
+					if ( providedDependencies?.goToCheckout ) {
+						// Do nothing and wait for checkout redirect
+						return;
+					}
+					if ( providedDependencies?.verifyEmail ) {
+						return navigate(
+							`verifyEmail?from=/setup/site-migration/site-migration-instructions?flags=onboarding/new-migration-flow&siteSlug=${ siteSlug }`
+						);
+					}
+				}
+
 				case STEPS.WAIT_FOR_PLUGIN_INSTALL.slug: {
 					return navigate( STEPS.PROCESSING.slug );
 				}
