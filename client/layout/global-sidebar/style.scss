@@ -249,6 +249,7 @@ $brand-text: "SF Pro Text", $sans;
 	.sidebar__back-link {
 		padding-left: 12px;
 		margin-top: 4px;
+
 		a {
 			color: var(--nav-link);
 			text-decoration: none;
@@ -256,6 +257,7 @@ $brand-text: "SF Pro Text", $sans;
 			display: inline-flex;
 			margin-bottom: 24px;
 			padding: 9px;
+			border-radius: 2px;
 			gap: 8px;
 		}
 
