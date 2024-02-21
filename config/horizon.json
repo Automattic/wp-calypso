@@ -134,6 +134,7 @@
 		"stats/plan-usage": true,
 		"stats/tier-upgrade-slider": true,
 		"stats/type-detection": true,
+		"stats/utm-module": false,
 		"stepper-woocommerce-poc": true,
 		"onboarding/new-migration-flow": false,
 		"storage-addon": true,

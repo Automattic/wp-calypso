@@ -46,7 +46,7 @@ const SiteSummary = styled.div`
 `;
 
 const CouponLinkWrapper = styled.div`
-	font-size: 14px;
+	${ hasCheckoutVersion( '2' ) ? `font-size: 12px;` : `font-size: 14px;` }
 `;
 
 const CouponAreaWrapper = styled.div`
@@ -59,8 +59,10 @@ const CouponEnableButton = styled.button`
 	cursor: pointer;
 	text-decoration: underline;
 	color: ${ ( props ) => props.theme.colors.highlight };
-	font-size: 14px;
 
+	&.wp-checkout-order-review__show-coupon-field-button {
+		${ hasCheckoutVersion( '2' ) ? `font-size: 12px` : `font-size: 14px;` }
+	}
 	:hover {
 		text-decoration: none;
 	}
