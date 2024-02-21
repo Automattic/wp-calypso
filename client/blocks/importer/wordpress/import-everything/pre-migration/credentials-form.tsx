@@ -30,6 +30,7 @@ interface Props {
 	migrationTrackingProps: StartImportTrackingProps;
 	onChangeProtocol: ( protocol: CredentialsProtocol ) => void;
 	allowFtp?: boolean;
+	importFlow?: string;
 }
 
 export const CredentialsForm: React.FunctionComponent< Props > = ( props ) => {
@@ -198,6 +199,7 @@ export const CredentialsForm: React.FunctionComponent< Props > = ( props ) => {
 					onModeChange={ setFormMode }
 					withHeader={ false }
 					allowFtp={ allowFtp }
+					importFlow={ props.importFlow }
 				/>
 
 				{ updateError && (
@@ -249,7 +251,7 @@ export const CredentialsForm: React.FunctionComponent< Props > = ( props ) => {
 							{ translate( 'Skip credentials' ) }
 						</Button>
 						&nbsp;
-						{ translate( 'for a slower setup' ) }
+						{ translate( '(slower setup)' ) }
 					</div>
 				</div>
 			</form>
