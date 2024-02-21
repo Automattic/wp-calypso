@@ -70,7 +70,7 @@ export default function globalSiteSidebarMenu( {
 			slug: 'settings-site-tools',
 			title: translate( 'Tools' ),
 			type: 'menu-item',
-			url: `/settings/site-tools/${ siteDomain }`,
+			url: `/settings/general/${ siteDomain }`,
 		},
 		...( showSiteMonitoring
 			? [

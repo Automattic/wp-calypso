@@ -871,6 +871,7 @@ export class SiteSettingsFormGeneral extends Component {
 			isAtomicAndEditingToolkitDeactivated,
 			isWpcomStagingSite,
 			isUnlaunchedSite: propsisUnlaunchedSite,
+			isAdminInterface,
 		} = this.props;
 		const classes = classNames( 'site-settings__general-settings', {
 			'is-loading': isRequestingSettings,
@@ -880,23 +881,27 @@ export class SiteSettingsFormGeneral extends Component {
 			<div className={ classNames( classes ) }>
 				{ site && <QuerySiteSettings siteId={ site.ID } /> }
 
-				<SettingsSectionHeader
-					data-tip-target="settings-site-profile-save"
-					disabled={ isRequestingSettings || isSavingSettings }
-					isSaving={ isSavingSettings }
-					onButtonClick={ handleSubmitForm }
-					showButton
-					title={ translate( 'Site profile' ) }
-				/>
-				<Card>
-					<form>
-						{ this.siteOptions() }
-						{ this.blogAddress() }
-						{ this.languageOptions() }
-						{ this.Timezone() }
-						{ siteIsJetpack && this.WordPressVersion() }
-					</form>
-				</Card>
+				{ ! isAdminInterface && (
+					<>
+						<SettingsSectionHeader
+							data-tip-target="settings-site-profile-save"
+							disabled={ isRequestingSettings || isSavingSettings }
+							isSaving={ isSavingSettings }
+							onButtonClick={ handleSubmitForm }
+							showButton
+							title={ translate( 'Site profile' ) }
+						/>
+						<Card>
+							<form>
+								{ this.siteOptions() }
+								{ this.blogAddress() }
+								{ this.languageOptions() }
+								{ this.Timezone() }
+								{ siteIsJetpack && this.WordPressVersion() }
+							</form>
+						</Card>
+					</>
+				) }
 
 				{ this.props.isUnlaunchedSite &&
 				! isAtomicAndEditingToolkitDeactivated &&
@@ -967,6 +972,7 @@ const mapDispatchToProps = ( dispatch, ownProps ) => {
 
 const connectComponent = connect( ( state ) => {
 	const siteId = getSelectedSiteId( state );
+	const adminInterface = getSiteOption( state, siteId, 'wpcom_admin_interface' );
 	return {
 		customizerUrl: getCustomizerUrl( state, siteId, 'identity' ),
 		hasNoWpcomBranding: siteHasFeature( state, siteId, WPCOM_FEATURES_NO_WPCOM_BRANDING ),
@@ -991,6 +997,7 @@ const connectComponent = connect( ( state ) => {
 		isSiteOnMigrationTrial: getIsSiteOnMigrationTrial( state, siteId ),
 		isLaunchable:
 			! getIsSiteOnECommerceTrial( state, siteId ) && ! getIsSiteOnMigrationTrial( state, siteId ),
+		isAdminInterface: adminInterface,
 	};
 }, mapDispatchToProps );
 
