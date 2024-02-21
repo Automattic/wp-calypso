@@ -1,36 +1,8 @@
-import { Gridicon } from '@automattic/components';
-import classnames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
-import { Fragment } from 'react';
+import LayoutStepper from 'calypso/a8c-for-agencies/components/layout/stepper';
 import { useSelector } from 'calypso/state';
 import getSites from 'calypso/state/selectors/get-sites';
 import type { SiteDetails } from '@automattic/data-stores';
-
-import './style.scss';
-
-function getStepClassName( currentStep: number, step: number ): string {
-	return classnames( {
-		'step-current': currentStep === step,
-		'step-next': currentStep < step,
-		'step-complete': currentStep > step,
-	} );
-}
-
-function CheckMarkOrNumber( { currentStep, step }: { currentStep: number; step: number } ) {
-	if ( currentStep > step ) {
-		return (
-			<span className="assign-license-step-progress__step-circle">
-				<Gridicon icon="checkmark" size={ 16 } />
-			</span>
-		);
-	}
-
-	return (
-		<span className="assign-license-step-progress__step-circle">
-			<span>{ step }</span>
-		</span>
-	);
-}
 
 type StepKey =
 	| 'issueLicense'
@@ -102,25 +74,7 @@ const AssignLicenseStepProgress = ( {
 	);
 
 	return (
-		<div className="assign-license-step-progress">
-			{ steps.map( ( { key, label }, index ) => (
-				<Fragment key={ key }>
-					<div
-						className={ `assign-license-step-progress__step ${ getStepClassName(
-							currentStepIndex,
-							index
-						) }` }
-					>
-						<CheckMarkOrNumber currentStep={ currentStepIndex + 1 } step={ index + 1 } />
-						<span className="assign-license-step-progress__step-name">{ label }</span>
-					</div>
-
-					{ index < steps.length - 1 && (
-						<div className="assign-license-step-progress__step-separator" />
-					) }
-				</Fragment>
-			) ) }
-		</div>
+		<LayoutStepper steps={ steps.map( ( step ) => step.label ) } current={ currentStepIndex } />
 	);
 };
 
