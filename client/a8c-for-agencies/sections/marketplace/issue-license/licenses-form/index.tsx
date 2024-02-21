@@ -250,7 +250,7 @@ export default function LicensesForm( {
 
 	return (
 		<div className="licenses-form">
-			<QueryProductsList type="jetpack" currency="USD" />
+			<QueryProductsList currency="USD" />
 
 			{ plans.length > 0 && (
 				<LicensesFormSection
