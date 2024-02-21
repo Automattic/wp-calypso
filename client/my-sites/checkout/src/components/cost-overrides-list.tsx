@@ -53,7 +53,7 @@ const CostOverridesListStyle = styled.div`
 
 const DeleteButton = styled( Button )< { theme?: Theme } >`
 	width: auto;
-	font-size: ${ hasCheckoutVersion( '2' ) ? '14px' : 'inherit' };
+	font-size: ${ hasCheckoutVersion( '2' ) ? '12px' : 'inherit' };
 	color: ${ ( props ) => props.theme.colors.textColorLight };
 `;
 
