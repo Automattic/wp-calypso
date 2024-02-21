@@ -7,7 +7,7 @@ import {
 	PRODUCT_FILTER_PRODUCTS,
 	PRODUCT_FILTER_VAULTPRESS_BACKUP_ADDONS,
 	PRODUCT_FILTER_WOOCOMMERCE_EXTENSIONS,
-} from '../constants';
+} from './constants';
 
 type Props = {
 	selectedProductFilter: string | null;

@@ -14,8 +14,8 @@ import {
 import useProductAndPlans from 'calypso/jetpack-cloud/sections/partner-portal/primary/issue-license/licenses-form/hooks/use-product-and-plans';
 import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
-import { PRODUCT_FILTER_ALL } from '../constants';
 import IssueLicenseContext from '../context';
+import { PRODUCT_FILTER_ALL } from './constants';
 import ProductFilterSearch from './product-filter-search';
 import ProductFilterSelect from './product-filter-select';
 import LicensesFormSection from './sections';
