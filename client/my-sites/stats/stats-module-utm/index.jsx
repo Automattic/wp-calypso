@@ -2,11 +2,14 @@ import StatsModuleDataQuery from '../stats-module/stats-module-data-query';
 import statsStrings from '../stats-strings';
 import { useMockData } from './useMockData';
 
-const StatsModuleUTM = ( { period, query } ) => {
+const StatsModuleUTM = ( { period, postId, query } ) => {
 	const moduleStrings = statsStrings();
 
 	// TODO: Use TanStack for API requests.
 	const { isRequestingData, data } = useMockData();
+
+	// TODO: Hide summary link on summary page too.
+	const hideSummaryLink = postId !== undefined;
 
 	return (
 		<StatsModuleDataQuery
@@ -17,8 +20,8 @@ const StatsModuleUTM = ( { period, query } ) => {
 			moduleStrings={ moduleStrings.utm }
 			period={ period }
 			query={ query }
-			summary={ false }
 			isLoading={ isRequestingData }
+			hideSummaryLink={ hideSummaryLink }
 		/>
 	);
 };
