@@ -1,0 +1,46 @@
+@import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/mixins";
+@import "../grid-mixins.scss";
+
+.education-footer__cards {
+	@include break-small {
+		@include display-grid;
+		@include grid-template-columns(3, 24px, 1fr);
+	}
+
+	.card {
+		font-size: $font-body-small;
+		margin-bottom: 24px;
+
+		@include break-small {
+			margin-bottom: 0;
+		}
+	}
+}
+
+.marketplace__cards {
+	padding: 0 16px;
+
+	@include break-small {
+		@include display-grid;
+		@include grid-template-columns(3, 20px, 1fr);
+		padding: 0;
+	}
+
+	div {
+		width: 100%;
+	}
+}
+
+.button.marketplace-cta {
+	min-width: 122px;
+	margin-bottom: 26px;
+
+	// This is only shown for logged-out users, so override colour schemes.
+	background: var(--color-primary);
+	border: 0;
+
+	&:hover {
+		background: var(--color-primary-dark);
+	}
+}
