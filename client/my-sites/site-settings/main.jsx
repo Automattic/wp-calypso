@@ -20,14 +20,14 @@ import GeneralSettings from './section-general';
 import './style.scss';
 
 const getTitle = ( isClassicView ) => {
-	if ( isClassicView ) {
+	if ( isEnabled( 'layout/dotcom-nav-redesign' ) && isClassicView ) {
 		return translate( 'Settings' );
 	}
 	return translate( 'General Settings' );
 };
 
 const getSubtitle = ( isClassicView ) => {
-	if ( isClassicView ) {
+	if ( isEnabled( 'layout/dotcom-nav-redesign' ) && isClassicView ) {
 		return translate( 'Manage your site settings, including site visibility, and more.' );
 	}
 	return translate(
