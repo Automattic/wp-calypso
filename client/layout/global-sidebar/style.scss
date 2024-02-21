@@ -232,6 +232,7 @@ $brand-text: "SF Pro Text", $sans;
 
 	.sidebar__back-link {
 		padding-left: 12px;
+		margin-top: 4px;
 		a {
 			color: var(--nav-link);
 			text-decoration: none;
@@ -283,7 +284,8 @@ $brand-text: "SF Pro Text", $sans;
 	}
 
 	.button,
-	.site__content {
+	.site__content,
+	.components-button {
 		&:focus {
 			box-shadow: none;
 			border-color: inherit;
