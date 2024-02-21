@@ -1,8 +1,10 @@
+// FIXME: Lets decide later if we need to move the calypso/jetpack-cloud imports to a shared common folder.
 import { useBreakpoint } from '@automattic/viewport-react';
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect, useMemo, useState } from 'react';
 import Layout from 'calypso/a8c-for-agencies/components/layout';
+import LayoutBody from 'calypso/a8c-for-agencies/components/layout/body';
 import LayoutHeader, {
 	LayoutHeaderSubtitle as Subtitle,
 	LayoutHeaderTitle as Title,
@@ -12,25 +14,26 @@ import LayoutNavigation, {
 } from 'calypso/a8c-for-agencies/components/layout/nav';
 import LayoutTop from 'calypso/a8c-for-agencies/components/layout/top';
 import MobileSidebarNavigation from 'calypso/a8c-for-agencies/components/sidebar/mobile-sidebar-navigation';
-// FIX ME: Lets decide later if we need to move this hook to a shared common folder.
 import { useProductBundleSize } from 'calypso/jetpack-cloud/sections/partner-portal/primary/issue-license/hooks/use-product-bundle-size';
 import { useDispatch, useSelector } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import getSites from 'calypso/state/selectors/get-sites';
 import AssignLicenseStepProgress from '../assign-license-step-progress';
+import IssueLicenseContext from './context';
+import LicensesForm from './licenses-form';
 import type { SelectedLicenseProp } from './types';
 import type { AssignLicenceProps } from '../types';
 import type { SiteDetails } from '@automattic/data-stores';
 
 import './style.scss';
 
-export default function IssueLicense( { siteId }: AssignLicenceProps ) {
+export default function IssueLicense( { siteId, suggestedProduct }: AssignLicenceProps ) {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 
 	const { selectedSize, setSelectedSize, availableSizes } = useProductBundleSize( true );
 
-	const [ selectedLicenses ] = useState< SelectedLicenseProp[] >( [] );
+	const [ selectedLicenses, setSelectedLicenses ] = useState< SelectedLicenseProp[] >( [] );
 	const [ showReviewLicenses ] = useState< boolean >( false );
 
 	const [ selectedSite, setSelectedSite ] = useState< SiteDetails | null | undefined >( null );
@@ -121,6 +124,16 @@ export default function IssueLicense( { siteId }: AssignLicenceProps ) {
 					<LayoutNavigationTabs { ...selectedItemProps } items={ navItems } />
 				</LayoutNavigation>
 			</LayoutTop>
+
+			<LayoutBody>
+				<IssueLicenseContext.Provider value={ { setSelectedLicenses, selectedLicenses } }>
+					<LicensesForm
+						selectedSite={ selectedSite }
+						suggestedProduct={ suggestedProduct }
+						quantity={ selectedSize }
+					/>
+				</IssueLicenseContext.Provider>
+			</LayoutBody>
 		</Layout>
 	);
 }
