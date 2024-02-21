@@ -118,8 +118,7 @@ export default function SitesDashboardV2() {
 			}
 		}
 
-		updateDashboardURLQueryArgs( { search: sitesViewState.search } );
-		updateDashboardURLQueryArgs( { filter: filterOptions } );
+		updateDashboardURLQueryArgs( { search: sitesViewState.search,  filter: filterOptions } );
 	}, [ sitesViewState ] );
 
 	useEffect( () => {
