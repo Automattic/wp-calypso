@@ -169,11 +169,13 @@ export interface LineItemCostOverrideForDisplay {
 	overrideCode: string;
 
 	/**
-	 * Typically this is the amount saved by this cost override.
+	 * The amount saved by this cost override in the currency's smallest unit.
 	 *
-	 * However, sometimes this is something else like an adjusted total.
+	 * If not set, a number will not be displayed. This can be useful for some
+	 * types of discounts where the amount will be communicated in some other
+	 * manner.
 	 */
-	formattedPrice: string;
+	discountAmount?: number;
 }
 
 function isUserVisibleCostOverride(
@@ -307,21 +309,13 @@ export function filterCostOverridesForLineItem(
 					return {
 						humanReadableReason: costOverride.human_readable_reason,
 						overrideCode: costOverride.override_code,
-						formattedPrice: formatCurrency( product.item_subtotal_integer, product.currency, {
-							isSmallestUnit: true,
-							stripZeros: true,
-						} ),
 					};
 				}
 
 				return {
 					humanReadableReason: costOverride.human_readable_reason,
 					overrideCode: costOverride.override_code,
-					formattedPrice: formatCurrency(
-						-getDiscountForCostOverrideForDisplay( costOverride ),
-						product.currency,
-						{ isSmallestUnit: true, stripZeros: true }
-					),
+					discountAmount: getDiscountForCostOverrideForDisplay( costOverride ),
 				};
 			} )
 	);

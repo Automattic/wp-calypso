@@ -189,17 +189,29 @@ function LineItemCostOverrideIntroOfferDueDate( { product }: { product: Response
 
 	return (
 		<div>
-			{ translate( 'Due %(dueDate)s: %(price)s', {
-				args: {
-					dueDate: new Date( dueDate ).toLocaleDateString( undefined, {
-						dateStyle: 'long',
-					} ),
-					price: formatCurrency( dueAmount, product.currency, {
-						isSmallestUnit: true,
-						stripZeros: true,
-					} ),
-				},
-			} ) }
+			<div>
+				{ translate( 'Due today: %(price)s', {
+					args: {
+						price: formatCurrency( product.item_subtotal_integer, product.currency, {
+							isSmallestUnit: true,
+							stripZeros: true,
+						} ),
+					},
+				} ) }
+			</div>
+			<div>
+				{ translate( 'Due %(dueDate)s: %(price)s', {
+					args: {
+						dueDate: new Date( dueDate ).toLocaleDateString( undefined, {
+							dateStyle: 'long',
+						} ),
+						price: formatCurrency( dueAmount, product.currency, {
+							isSmallestUnit: true,
+							stripZeros: true,
+						} ),
+					},
+				} ) }
+			</div>
 			<div>
 				<LineItemBillingInterval product={ product } />{ ' ' }
 				<span>
@@ -223,7 +235,12 @@ function LineItemCostOverride( {
 	return (
 		<div className="cost-overrides-list-item" key={ costOverride.humanReadableReason }>
 			<span className="cost-overrides-list-item__reason">{ costOverride.humanReadableReason }</span>
-			<span className="cost-overrides-list-item__discount">{ costOverride.formattedPrice }</span>
+			<span className="cost-overrides-list-item__discount">
+				{ costOverride.discountAmount &&
+					formatCurrency( -costOverride.discountAmount, product.currency, {
+						isSmallestUnit: true,
+					} ) }
+			</span>
 			<LineItemCostOverrideIntroOfferDueDate product={ product } />
 		</div>
 	);
