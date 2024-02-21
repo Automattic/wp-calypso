@@ -3,6 +3,7 @@ import './style.scss';
 import { Badge, Button, Dialog } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { useBreakpoint } from '@automattic/viewport-react';
+import { __ } from '@wordpress/i18n';
 import { useTranslate } from 'i18n-calypso';
 import moment from 'moment/moment';
 import { useState } from 'react';
@@ -452,20 +453,23 @@ export default function CampaignItemDetails( props: Props ) {
 											</span>
 										</div>
 										<div>
-											<div>
+											<span className="campaign-item-clicks">
 												<span className="campaign-item-details__label">
-													{ translate( 'Click-through rate' ) }
+													{ __( 'Click-through rate' ) }
+													<InfoPopover
+														className="campaign-item-clicks__info-button"
+														position="bottom right"
+													>
+														{ __( 'Click-through rate:' ) }
+														<br />
+														<span className="popover-title">
+															{ __(
+																'a metric used to measure the ratio of users who click on your ad to the number of total users view it.'
+															) }
+														</span>
+													</InfoPopover>
 												</span>
-												<InfoPopover position="bottom right">
-													{ __( 'Click-through rate: ' ) }
-													<br />
-													<span className="popover-title">
-														{ __(
-															'a metric used to measure the ratio of users who click on your ad to the number of total users view it.'
-														) }
-													</span>
-												</InfoPopover>
-											</div>
+											</span>
 											<span className="campaign-item-details__text wp-brand-font">
 												{ ! isLoading ? ctrFormatted : <FlexibleSkeleton /> }
 											</span>

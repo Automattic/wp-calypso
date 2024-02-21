@@ -245,7 +245,20 @@ body.is-section-promote-post-i2 .layout__content .campaign-item-details.main {
 						width: 44%;
 					}
 				}
+			}
 
+			.campaign-item-clicks {
+				height: 20px;
+				display: flex;
+				flex-direction: row;
+				align-items: center;
+			}
+
+			.campaign-item-clicks__info-button {
+				height: 20px;
+				display: inline-block;
+				vertical-align: bottom;
+				margin-left: 4px;
 			}
 		}
 
