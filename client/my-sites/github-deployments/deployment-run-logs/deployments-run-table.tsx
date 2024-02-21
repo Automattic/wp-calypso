@@ -26,22 +26,22 @@ export const DeploymentsRunsTable = ( {
 					</th>
 					<th>
 						<SortButton
-							value="date"
-							activeValue={ sortKey }
-							direction={ sortDirection }
-							onChange={ onSortChange }
-						>
-							<span>{ __( 'Date' ) }</span>
-						</SortButton>
-					</th>
-					<th>
-						<SortButton
 							value="status"
 							activeValue={ sortKey }
 							direction={ sortDirection }
 							onChange={ onSortChange }
 						>
 							<span>{ __( 'Status' ) }</span>
+						</SortButton>
+					</th>
+					<th>
+						<SortButton
+							value="date"
+							activeValue={ sortKey }
+							direction={ sortDirection }
+							onChange={ onSortChange }
+						>
+							<span>{ __( 'Date' ) }</span>
 						</SortButton>
 					</th>
 					<th>
