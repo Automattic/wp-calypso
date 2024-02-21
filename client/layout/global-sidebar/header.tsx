@@ -1,6 +1,6 @@
 import { useTranslate } from 'i18n-calypso';
 import SidebarNotifications from './menu-items/notifications';
-import SidebarSearch from './menu-items/search';
+import { SidebarSearch } from './menu-items/search';
 
 export const GlobalSidebarHeader = () => {
 	const translate = useTranslate();
@@ -16,7 +16,6 @@ export const GlobalSidebarHeader = () => {
 			<span className="gap"></span>
 			<SidebarSearch tooltip={ translate( 'Jump to…' ) } />
 			<SidebarNotifications
-				isShowing={ false }
 				isActive={ true }
 				className="sidebar__item-notifications"
 				tooltip={ translate( 'Notifications' ) }
@@ -24,5 +23,3 @@ export const GlobalSidebarHeader = () => {
 		</div>
 	);
 };
-
-export default GlobalSidebarHeader;

@@ -88,7 +88,12 @@ $brand-text: "SF Pro Text", $sans;
 		}
 
 		.sidebar__item-search {
+			justify-content: center;
+			align-items: center;
 			cursor: pointer;
+			svg {
+				fill: var(--studio-white);
+			}
 		}
 	}
 
@@ -254,12 +259,6 @@ $brand-text: "SF Pro Text", $sans;
 			.site__domain {
 				color: var(--color-sidebar-menu-selected-text);
 			}
-		}
-	}
-
-	.sidebar__item-search {
-		svg {
-			fill: var(--studio-white);
 		}
 	}
 }
