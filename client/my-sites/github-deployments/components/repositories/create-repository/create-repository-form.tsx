@@ -179,7 +179,9 @@ export const CreateRepositoryForm = ( {
 					{ __( 'Create repository' ) }
 				</Button>
 			</form>
-			<DeploymentStyle />
+			<div className="github-deployments-create-repository__deployment-style">
+				<DeploymentStyle />
+			</div>
 		</div>
 	);
 };
