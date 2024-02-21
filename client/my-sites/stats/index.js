@@ -41,6 +41,7 @@ export default function () {
 		'filedownloads',
 		'searchterms',
 		'annualstats',
+		'utm',
 	].join( '|' );
 
 	// Redirect this to default /stats/day view in order to keep

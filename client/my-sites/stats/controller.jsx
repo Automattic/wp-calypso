@@ -254,6 +254,7 @@ export function summary( context, next ) {
 		'filedownloads',
 		'searchterms',
 		'annualstats',
+		'utm',
 	];
 	let momentSiteZone = moment();
 
