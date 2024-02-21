@@ -45,7 +45,7 @@ const Row = styled.tr`
 	border-block-end: 1px solid #eee;
 `;
 
-const Column = styled.td< { mobileHidden?: boolean } >`
+const Column = styled.td< { tabletHidden?: boolean } >`
 	padding-block-start: 12px;
 	padding-block-end: 12px;
 	padding-inline-end: 24px;
@@ -58,8 +58,8 @@ const Column = styled.td< { mobileHidden?: boolean } >`
 	overflow: hidden;
 	text-overflow: ellipsis;
 
-	${ MEDIA_QUERIES.mediumOrSmaller } {
-		${ ( props ) => props.mobileHidden && 'display: none;' };
+	${ MEDIA_QUERIES.hideTableRows } {
+		${ ( props ) => props.tabletHidden && 'display: none;' };
 		padding-inline-end: 0;
 	}
 
@@ -71,13 +71,13 @@ const Column = styled.td< { mobileHidden?: boolean } >`
 const SiteListTile = styled( ListTile )`
 	margin-inline-end: 0;
 
-	${ MEDIA_QUERIES.mediumOrSmaller } {
+	${ MEDIA_QUERIES.hideTableRows } {
 		margin-inline-end: 12px;
 	}
 `;
 
 const ListTileLeading = styled( ThumbnailLink )`
-	${ MEDIA_QUERIES.mediumOrSmaller } {
+	${ MEDIA_QUERIES.hideTableRows } {
 		margin-inline-end: 12px;
 	}
 `;
@@ -218,10 +218,10 @@ export default memo( function SitesTableRow( { site }: SiteTableRowProps ) {
 					}
 				/>
 			</Column>
-			<Column mobileHidden>
+			<Column tabletHidden>
 				<SitePlan site={ site } userId={ userId } />
 			</Column>
-			<Column mobileHidden>
+			<Column tabletHidden>
 				<WithAtomicTransfer site={ site }>
 					{ ( result ) =>
 						result.wasTransferring ? (
@@ -235,10 +235,10 @@ export default memo( function SitesTableRow( { site }: SiteTableRowProps ) {
 					}
 				</WithAtomicTransfer>
 			</Column>
-			<Column mobileHidden>
+			<Column tabletHidden>
 				{ site.options?.updated_at ? <TimeSince date={ site.options.updated_at } /> : '' }
 			</Column>
-			<StatsColumnStyled mobileHidden>
+			<StatsColumnStyled tabletHidden>
 				{ inView && (
 					<>
 						{ hasStatsLoadingError ? (

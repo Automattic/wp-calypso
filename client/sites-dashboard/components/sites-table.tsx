@@ -22,7 +22,7 @@ const Table = styled.table`
 `;
 
 const THead = styled.thead< { blockOffset: number } >( ( { blockOffset } ) => ( {
-	[ MEDIA_QUERIES.mediumOrSmaller ]: {
+	[ MEDIA_QUERIES.hideTableRows ]: {
 		display: 'none',
 	},
 
