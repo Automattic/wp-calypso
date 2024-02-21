@@ -163,7 +163,7 @@ function buildLanguages( downloadedLanguages, languageRevisions ) {
 		// CHUNKS_MAP_PATTERN is relative to the project root, while require is relative to current dir. Hence the `../`
 		const chunksMap = require( '../' + CHUNKS_MAP_PATTERN );
 
-		// Get only the strings that are relevant to the modules for the odyssey-stats app
+		// Get only the strings that are relevant to the modules for the app
 		const allModulesReferences = Object.values( chunksMap ).flat();
 		const allModulesStrings = [
 			...new Set(
