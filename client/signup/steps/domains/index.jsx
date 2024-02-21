@@ -935,7 +935,7 @@ export class RenderDomainsStep extends Component {
 							hasSearchedDomains={ Array.isArray( this.props.step?.domainForm?.searchResults ) }
 							flowName={ flowName }
 							handleDomainExplainerClick={ this.handleDomainExplainerClick }
-							showEscapeHatchAfterQuery={
+							showEscapeHatchAfterSearch={
 								flowName === 'onboarding' || flowName === 'onboarding-pm'
 							}
 						/>

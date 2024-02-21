@@ -4,16 +4,16 @@ type Props = {
 	hasSearchedDomains: boolean;
 	handleDomainExplainerClick: () => void;
 	flowName: string;
-	showEscapeHatchAfterQuery: boolean;
+	showEscapeHatchAfterSearch: boolean;
 };
 
 export default function ChooseDomainLater( {
 	hasSearchedDomains,
 	handleDomainExplainerClick,
 	flowName,
-	showEscapeHatchAfterQuery,
+	showEscapeHatchAfterSearch,
 }: Props ) {
-	if ( showEscapeHatchAfterQuery && ! hasSearchedDomains ) {
+	if ( showEscapeHatchAfterSearch && ! hasSearchedDomains ) {
 		return null;
 	}
 
@@ -22,7 +22,7 @@ export default function ChooseDomainLater( {
 			<ReskinSideExplainer
 				onClick={ handleDomainExplainerClick }
 				type={
-					showEscapeHatchAfterQuery
+					showEscapeHatchAfterSearch
 						? 'free-domain-explainer-treatment-type'
 						: 'free-domain-explainer'
 				}
