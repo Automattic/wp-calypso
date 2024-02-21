@@ -403,14 +403,14 @@ export default withCurrentRoute(
 				// hide the masterBar until the section is loaded. To flicker the masterBar in, is better than to flicker it out.
 				! sectionName ||
 				( ! isWooCoreProfilerFlow && [ 'signup', 'jetpack-connect' ].includes( sectionName ) );
+			const isDesktop = isWithinBreakpoint( '>782px' );
 			const masterbarIsHidden =
 				! masterbarIsVisible( state ) ||
 				noMasterbarForSection ||
 				noMasterbarForRoute ||
 				isWpMobileApp() ||
 				isWcMobileApp() ||
-				shouldShowGlobalSidebar ||
-				shouldShowGlobalSiteSidebar ||
+				( ( shouldShowGlobalSidebar || shouldShowGlobalSiteSidebar ) && isDesktop ) ||
 				isJetpackCloud() ||
 				config.isEnabled( 'a8c-for-agencies' );
 			const isJetpackMobileFlow = 'jetpack-connect' === sectionName && !! retrieveMobileRedirect();

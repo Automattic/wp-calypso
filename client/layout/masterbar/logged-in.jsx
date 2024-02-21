@@ -141,7 +141,7 @@ class MasterbarLoggedIn extends Component {
 	clickMySites = () => {
 		this.props.recordTracksEvent( 'calypso_masterbar_my_sites_clicked' );
 
-		if ( this.props.shouldShowMobileGlobalNav ) {
+		if ( this.props.isMobileGlobalNavVisible ) {
 			// Fall through to navigate to /sites
 			return;
 		}
@@ -599,7 +599,7 @@ class MasterbarLoggedIn extends Component {
 			return this.renderCheckout();
 		}
 
-		if ( this.props.shouldShowMobileGlobalNav ) {
+		if ( this.props.isMobileGlobalNavVisible ) {
 			return (
 				<>
 					<Masterbar>
@@ -700,6 +700,7 @@ export default connect(
 			currentSelectedSiteId,
 			sectionGroup
 		);
+		const isDesktop = isWithinBreakpoint( '>782px' );
 		return {
 			isCustomerHomeEnabled: canCurrentUserUseCustomerHome( state, siteId ),
 			isNotificationsShowing: isNotificationsOpen( state ),
@@ -730,7 +731,8 @@ export default connect(
 				new Date( getCurrentUserDate( state ) ).getTime() > NEW_MASTERBAR_SHIPPING_DATE,
 			currentRoute: getCurrentRoute( state ),
 			isSiteTrialExpired: isTrialExpired( state, siteId ),
-			shouldShowMobileGlobalNav: shouldShowGlobalSidebar || shouldShowGlobalSiteSidebar,
+			isMobileGlobalNavVisible:
+				( shouldShowGlobalSidebar || shouldShowGlobalSiteSidebar ) && ! isDesktop,
 		};
 	},
 	{
