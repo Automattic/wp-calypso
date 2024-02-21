@@ -1,5 +1,5 @@
 import { GridPlan } from '../../types';
-import PlanLogo from '../plan-logo';
+import PlanLogo from './plan-logo';
 
 type PlanLogosProps = {
 	isInSignup: boolean;

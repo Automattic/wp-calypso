@@ -1,7 +1,7 @@
 import classNames from 'classnames';
 import { GridPlan } from '../../types';
-import PlanDivOrTdContainer from '../plan-div-td-container';
 import BillingTimeframe from '../shared/billing-timeframe';
+import PlanDivOrTdContainer from '../shared/plan-div-td-container';
 
 type BillingTimeframesProps = {
 	renderedGridPlans: GridPlan[];

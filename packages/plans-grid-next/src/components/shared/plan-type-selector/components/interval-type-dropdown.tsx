@@ -1,7 +1,7 @@
 import { CustomSelectControl } from '@wordpress/components';
-import DropdownOption from '../../dropdown-option';
 import useIntervalOptions from '../hooks/use-interval-options';
-import type { IntervalTypeProps, SupportedUrlFriendlyTermType } from '../../../types';
+import DropdownOption from './dropdown-option';
+import type { IntervalTypeProps, SupportedUrlFriendlyTermType } from '../../../../types';
 
 export const IntervalTypeDropdown: React.FunctionComponent< IntervalTypeProps > = ( props ) => {
 	const { hideDiscount, intervalType, displayedIntervals, onPlanIntervalUpdate } = props;

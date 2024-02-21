@@ -29,7 +29,7 @@ jest.mock( 'react-redux', () => ( {
 	useSelector: jest.fn( ( selector ) => selector() ),
 	useDispatch: jest.fn(),
 } ) );
-jest.mock( '../../grid-context', () => ( { usePlansGridContext: jest.fn() } ) );
+jest.mock( '../../../grid-context', () => ( { usePlansGridContext: jest.fn() } ) );
 
 import {
 	PLAN_ANNUAL_PERIOD,
@@ -46,10 +46,10 @@ import {
 import { render, screen } from '@testing-library/react';
 import { useDispatch } from '@wordpress/data';
 import React from 'react';
-import { usePlansGridContext } from '../../grid-context';
-import PlanFeatures2023GridActions from '../actions';
+import { usePlansGridContext } from '../../../grid-context';
+import PlanActions from '../plan-actions';
 
-describe( 'PlanFeatures2023GridActions', () => {
+describe( 'PlanActions', () => {
 	beforeEach( () => {
 		jest.clearAllMocks();
 		useDispatch.mockImplementation( jest.fn( () => ( { setShowDomainUpsellDialog: jest.fn() } ) ) );
@@ -101,7 +101,7 @@ describe( 'PlanFeatures2023GridActions', () => {
 			} ) );
 
 			render(
-				<PlanFeatures2023GridActions
+				<PlanActions
 					{ ...defaultProps }
 					currentSitePlanSlug={ PLAN_PREMIUM_2_YEARS }
 					planSlug={ PLAN_BUSINESS }
@@ -135,7 +135,7 @@ describe( 'PlanFeatures2023GridActions', () => {
 			} ) );
 
 			render(
-				<PlanFeatures2023GridActions
+				<PlanActions
 					{ ...defaultProps }
 					currentSitePlanSlug={ PLAN_PREMIUM }
 					planSlug={ PLAN_BUSINESS }
@@ -168,7 +168,7 @@ describe( 'PlanFeatures2023GridActions', () => {
 					},
 				} ) );
 				render(
-					<PlanFeatures2023GridActions
+					<PlanActions
 						{ ...defaultProps }
 						currentSitePlanSlug={ PLAN_BUSINESS_MONTHLY }
 						planSlug={ PLAN_BUSINESS }
@@ -205,7 +205,7 @@ describe( 'PlanFeatures2023GridActions', () => {
 				} ) );
 
 				render(
-					<PlanFeatures2023GridActions
+					<PlanActions
 						{ ...defaultProps }
 						currentSitePlanSlug={ PLAN_BUSINESS_MONTHLY }
 						planSlug={ PLAN_BUSINESS_2_YEARS }
@@ -237,7 +237,7 @@ describe( 'PlanFeatures2023GridActions', () => {
 					},
 				} ) );
 				render(
-					<PlanFeatures2023GridActions
+					<PlanActions
 						{ ...defaultProps }
 						currentSitePlanSlug={ PLAN_BUSINESS_MONTHLY }
 						planSlug={ PLAN_BUSINESS_3_YEARS }
@@ -262,11 +262,7 @@ describe( 'PlanFeatures2023GridActions', () => {
 					},
 				} ) );
 				render(
-					<PlanFeatures2023GridActions
-						{ ...defaultProps }
-						planSlug={ PLAN_BUSINESS_3_YEARS }
-						isStuck={ true }
-					/>
+					<PlanActions { ...defaultProps } planSlug={ PLAN_BUSINESS_3_YEARS } isStuck={ true } />
 				);
 				const upgradeButton = screen.getByRole( 'button', { name: 'Upgrade – $20' } );
 
@@ -290,7 +286,7 @@ describe( 'PlanFeatures2023GridActions', () => {
 					},
 				} ) );
 				render(
-					<PlanFeatures2023GridActions
+					<PlanActions
 						{ ...defaultProps }
 						planActionOverrides={ planActionOverrides }
 						isInSignup={ true }

@@ -34,14 +34,14 @@ import getPlanFeaturesObject from '../../lib/get-plan-features-object';
 import { isStorageUpgradeableForPlan } from '../../lib/is-storage-upgradeable-for-plan';
 import { sortPlans } from '../../lib/sort-plan-properties';
 import { getStorageStringFromFeature } from '../../util';
-import PlanFeatures2023GridActions from '../actions';
-import PlanFeatures2023GridHeaderPrice from '../header-price';
-import PlanTypeSelector from '../plan-type-selector';
-import { Plans2023Tooltip } from '../plans-2023-tooltip';
-import PopularBadge from '../popular-badge';
 import BillingTimeframe from '../shared/billing-timeframe';
-import { StickyContainer } from '../sticky-container';
-import StorageAddOnDropdown from '../storage-add-on-dropdown';
+import PlanActions from '../shared/plan-actions';
+import PlanHeaderPrice from '../shared/plan-header-price';
+import PlanTypeSelector from '../shared/plan-type-selector';
+import { PlansTooltip } from '../shared/plans-tooltip';
+import PopularBadge from '../shared/popular-badge';
+import { StickyContainer } from '../shared/sticky-container';
+import StorageAddOnDropdown from '../shared/storage-add-on-dropdown';
 import type {
 	GridPlan,
 	ComparisonGridProps,
@@ -451,7 +451,7 @@ const ComparisonGridHeaderCell = ( {
 					{ showPlanSelect && <DropdownIcon /> }
 				</h4>
 			</PlanSelector>
-			<PlanFeatures2023GridHeaderPrice
+			<PlanHeaderPrice
 				planSlug={ planSlug }
 				planUpgradeCreditsApplicable={ planUpgradeCreditsApplicable }
 				currentSitePlanSlug={ currentSitePlanSlug }
@@ -460,7 +460,7 @@ const ComparisonGridHeaderCell = ( {
 			<div className="plan-comparison-grid__billing-info">
 				<BillingTimeframe planSlug={ planSlug } showRefundPeriod={ showRefundPeriod } />
 			</div>
-			<PlanFeatures2023GridActions
+			<PlanActions
 				currentSitePlanSlug={ currentSitePlanSlug }
 				availableForPurchase={ gridPlan.availableForPurchase }
 				isInSignup={ isInSignup }
@@ -652,7 +652,7 @@ const ComparisonGridFeatureGroupRowCell: React.FunctionComponent< {
 						<>
 							{ planPaymentTransactionFees ? (
 								<>
-									<Plans2023Tooltip
+									<PlansTooltip
 										text={ feature?.getDescription?.() }
 										setActiveTooltipId={ setActiveTooltipId }
 										activeTooltipId={ activeTooltipId }
@@ -661,7 +661,7 @@ const ComparisonGridFeatureGroupRowCell: React.FunctionComponent< {
 										<span className="plan-comparison-grid__plan-title">
 											{ feature?.getAlternativeTitle?.() || feature?.getTitle() }
 										</span>
-									</Plans2023Tooltip>
+									</PlansTooltip>
 									<span className="plan-comparison-grid__plan-conditional-title">
 										{ planPaymentTransactionFees?.getAlternativeTitle?.() }
 									</span>
@@ -678,7 +678,7 @@ const ComparisonGridFeatureGroupRowCell: React.FunctionComponent< {
 									{ feature.getIcon() as React.ReactNode }
 								</span>
 							) }
-							<Plans2023Tooltip
+							<PlansTooltip
 								text={ feature?.getDescription?.() }
 								setActiveTooltipId={ setActiveTooltipId }
 								activeTooltipId={ activeTooltipId }
@@ -687,7 +687,7 @@ const ComparisonGridFeatureGroupRowCell: React.FunctionComponent< {
 								<span className="plan-comparison-grid__plan-title">
 									{ feature?.getAlternativeTitle?.() || feature?.getTitle() }
 								</span>
-							</Plans2023Tooltip>
+							</PlansTooltip>
 							{ feature?.getCompareTitle && (
 								<span className="plan-comparison-grid__plan-subtitle">
 									{ feature.getCompareTitle() }
@@ -767,19 +767,19 @@ const ComparisonGridFeatureGroupRow: React.FunctionComponent< {
 				isFeatureGroupRowTitleCell={ true }
 			>
 				{ isStorageFeature ? (
-					<Plans2023Tooltip
+					<PlansTooltip
 						text={ translate( 'Space to store your photos, media, and more.' ) }
 						setActiveTooltipId={ setActiveTooltipId }
 						activeTooltipId={ activeTooltipId }
 						id={ tooltipId }
 					>
 						{ translate( 'Storage' ) }
-					</Plans2023Tooltip>
+					</PlansTooltip>
 				) : (
 					<>
 						{ feature && (
 							<>
-								<Plans2023Tooltip
+								<PlansTooltip
 									text={ feature.getDescription?.( {
 										planSlug: hasWooExpressPlans ? PLAN_WOOEXPRESS_MEDIUM_MONTHLY : undefined,
 									} ) }
@@ -795,10 +795,10 @@ const ComparisonGridFeatureGroupRow: React.FunctionComponent< {
 											<sup>{ footnote }</sup>
 										</FeatureFootnote>
 									) }
-								</Plans2023Tooltip>
+								</PlansTooltip>
 								{ allJetpackFeatures.has( feature.getSlug() ) ? (
 									<JetpackIconContainer>
-										<Plans2023Tooltip
+										<PlansTooltip
 											text={ translate(
 												'Security, performance, and growth tools—powered by Jetpack.'
 											) }
@@ -807,7 +807,7 @@ const ComparisonGridFeatureGroupRow: React.FunctionComponent< {
 											id={ `jp-${ tooltipId }` }
 										>
 											<JetpackLogo size={ 16 } />
-										</Plans2023Tooltip>
+										</PlansTooltip>
 									</JetpackIconContainer>
 								) : null }
 							</>

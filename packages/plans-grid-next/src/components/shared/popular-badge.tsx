@@ -1,7 +1,7 @@
 import { getPlanClass, PlanSlug } from '@automattic/calypso-products';
 import classNames from 'classnames';
-import { usePlansGridContext } from '../grid-context';
-import PlanPill from './shared/plan-pill';
+import { usePlansGridContext } from '../../grid-context';
+import PlanPill from './plan-pill';
 
 const PopularBadge: React.FunctionComponent< {
 	isInSignup?: boolean;

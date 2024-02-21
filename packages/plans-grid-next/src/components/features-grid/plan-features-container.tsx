@@ -1,10 +1,10 @@
 import { JetpackLogo } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
-import { useManageTooltipToggle } from '../hooks/use-manage-tooltip-toggle';
-import { DataResponse, GridPlan } from '../types';
-import PlanFeatures2023GridFeatures from './features';
-import PlanDivOrTdContainer from './plan-div-td-container';
-import { Plans2023Tooltip } from './plans-2023-tooltip';
+import { useManageTooltipToggle } from '../../hooks/use-manage-tooltip-toggle';
+import { DataResponse, GridPlan } from '../../types';
+import PlanDivOrTdContainer from '../shared/plan-div-td-container';
+import { PlansTooltip } from '../shared/plans-tooltip';
+import PlanFeatures from './plan-features';
 
 const PlanFeaturesContainer: React.FC< {
 	plansWithFeatures: GridPlan[];
@@ -34,7 +34,7 @@ const PlanFeaturesContainer: React.FC< {
 					isTableCell={ isTableCell }
 					className="plan-features-2023-grid__table-item"
 				>
-					<PlanFeatures2023GridFeatures
+					<PlanFeatures
 						features={ wpcomFeatures }
 						planSlug={ planSlug }
 						paidDomainName={ paidDomainName }
@@ -47,17 +47,17 @@ const PlanFeaturesContainer: React.FC< {
 					/>
 					{ jetpackFeatures.length !== 0 && (
 						<div className="plan-features-2023-grid__jp-logo" key="jp-logo">
-							<Plans2023Tooltip
+							<PlansTooltip
 								text={ translate( 'Security, performance, and growth tools—powered by Jetpack.' ) }
 								setActiveTooltipId={ setActiveTooltipId }
 								activeTooltipId={ activeTooltipId }
 								id={ `${ planSlug }-jp-logo-${ mapIndex }` }
 							>
 								<JetpackLogo size={ 16 } />
-							</Plans2023Tooltip>
+							</PlansTooltip>
 						</div>
 					) }
-					<PlanFeatures2023GridFeatures
+					<PlanFeatures
 						features={ jetpackFeatures }
 						planSlug={ planSlug }
 						paidDomainName={ paidDomainName }

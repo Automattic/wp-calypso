@@ -16,7 +16,7 @@ import {
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import { GridPlan } from '../../types';
-import PlanDivOrTdContainer from '../plan-div-td-container';
+import PlanDivOrTdContainer from '../shared/plan-div-td-container';
 
 type PreviousFeaturesIncludedTitleProps = {
 	renderedGridPlans: GridPlan[];

@@ -6,7 +6,7 @@ import {
 } from '@automattic/calypso-products';
 import { useTranslate } from 'i18n-calypso';
 import { GridPlan } from '../../types';
-import { PlanFeaturesItem } from '../item';
+import { PlanFeaturesItem } from './plan-features-item';
 
 type MobileFreeDomainProps = {
 	gridPlan: GridPlan;

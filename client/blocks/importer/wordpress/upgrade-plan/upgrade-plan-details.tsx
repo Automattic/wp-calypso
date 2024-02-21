@@ -2,7 +2,7 @@ import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { getPlan, PLAN_BUSINESS, PLAN_BUSINESS_MONTHLY } from '@automattic/calypso-products';
 import { CloudLogo, Button, PlanPrice } from '@automattic/components';
 import { Title } from '@automattic/onboarding';
-import { Plans2023Tooltip, useManageTooltipToggle } from '@automattic/plans-grid-next';
+import { PlansTooltip, useManageTooltipToggle } from '@automattic/plans-grid-next';
 import { useI18n } from '@wordpress/react-i18n';
 import classnames from 'classnames';
 import React, { useState, useEffect } from 'react';
@@ -67,7 +67,7 @@ export const UpgradePlanDetails = ( props: Props ) => {
 
 			<div className={ classnames( 'import__upgrade-plan-container' ) }>
 				<div className={ classnames( 'import__upgrade-plan-header' ) }>
-					<Plans2023Tooltip
+					<PlansTooltip
 						text={ __(
 							'WP Cloud gives you the tools you need to add scalable, highly available, extremely fast WordPress hosting.'
 						) }
@@ -76,7 +76,7 @@ export const UpgradePlanDetails = ( props: Props ) => {
 						activeTooltipId={ activeTooltipId }
 					>
 						<CloudLogo />
-					</Plans2023Tooltip>
+					</PlansTooltip>
 					<Title className="plan-title" tagName="h2">
 						{ plan?.getTitle() }
 					</Title>

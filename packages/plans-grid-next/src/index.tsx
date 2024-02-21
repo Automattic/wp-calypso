@@ -2,9 +2,9 @@ import { useRef } from '@wordpress/element';
 import classnames from 'classnames';
 import ComparisonGrid from './components/comparison-grid';
 import FeaturesGrid from './components/features-grid';
-import PlanButton from './components/plan-button';
-import PlanTypeSelector from './components/plan-type-selector';
-import { Plans2023Tooltip } from './components/plans-2023-tooltip';
+import PlanButton from './components/shared/plan-button';
+import PlanTypeSelector from './components/shared/plan-type-selector';
+import { PlansTooltip } from './components/shared/plans-tooltip';
 import PlansGridContextProvider from './grid-context';
 import useGridPlanForSpotlight from './hooks/data-store/use-grid-plan-for-spotlight';
 import useGridPlans from './hooks/data-store/use-grid-plans';
@@ -144,7 +144,7 @@ export {
 	WrappedFeaturesGrid as FeaturesGrid,
 	PlanTypeSelector,
 	PlanButton,
-	Plans2023Tooltip,
+	PlansTooltip,
 };
 
 /**

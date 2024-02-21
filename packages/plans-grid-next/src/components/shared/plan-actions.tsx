@@ -22,16 +22,16 @@ import styled from '@emotion/styled';
 import { useSelect } from '@wordpress/data';
 import { useCallback } from '@wordpress/element';
 import { TranslateResult, useTranslate } from 'i18n-calypso';
-import { usePlansGridContext } from '../grid-context';
-import useDefaultStorageOption from '../hooks/data-store/use-default-storage-option';
-import useIsLargeCurrency from '../hooks/use-is-large-currency';
-import { useManageTooltipToggle } from '../hooks/use-manage-tooltip-toggle';
-import { usePlanPricingInfoFromGridPlans } from '../hooks/use-plan-pricing-info-from-grid-plans';
+import { usePlansGridContext } from '../../grid-context';
+import useDefaultStorageOption from '../../hooks/data-store/use-default-storage-option';
+import useIsLargeCurrency from '../../hooks/use-is-large-currency';
+import { useManageTooltipToggle } from '../../hooks/use-manage-tooltip-toggle';
+import { usePlanPricingInfoFromGridPlans } from '../../hooks/use-plan-pricing-info-from-grid-plans';
 import PlanButton from './plan-button';
-import { Plans2023Tooltip } from './plans-2023-tooltip';
-import type { GridPlan, PlanActionOverrides } from '../types';
+import { PlansTooltip } from './plans-tooltip';
+import type { GridPlan, PlanActionOverrides } from '../../types';
 
-type PlanFeaturesActionsButtonProps = {
+type PlanActionsButtonProps = {
 	availableForPurchase: boolean;
 	currentSitePlanSlug?: string | null;
 	isPopular?: boolean;
@@ -404,7 +404,7 @@ const LoggedInPlansFeatureActionButton = ( {
 
 	if ( ! availableForPurchase ) {
 		return (
-			<Plans2023Tooltip
+			<PlansTooltip
 				text={ translate( 'Please contact support to downgrade your plan.' ) }
 				setActiveTooltipId={ setActiveTooltipId }
 				activeTooltipId={ activeTooltipId }
@@ -417,14 +417,14 @@ const LoggedInPlansFeatureActionButton = ( {
 						{ translate( 'Please contact support to downgrade your plan.' ) }
 					</div>
 				) }
-			</Plans2023Tooltip>
+			</PlansTooltip>
 		);
 	}
 
 	return null;
 };
 
-const PlanFeaturesActionsButton: React.FC< PlanFeaturesActionsButtonProps > = ( {
+const PlanActionsButton: React.FC< PlanActionsButtonProps > = ( {
 	availableForPurchase = true,
 	currentSitePlanSlug,
 	isInSignup,
@@ -528,14 +528,14 @@ const PlanFeaturesActionsButton: React.FC< PlanFeaturesActionsButtonProps > = ( 
 	);
 };
 
-const PlanFeatures2023GridActions = ( props: PlanFeaturesActionsButtonProps ) => {
+const PlanGridActions = ( props: PlanActionsButtonProps ) => {
 	return (
 		<div className="plan-features-2023-gridrison__actions">
 			<div className="plan-features-2023-gridrison__actions-buttons">
-				<PlanFeaturesActionsButton { ...props } />
+				<PlanActionsButton { ...props } />
 			</div>
 		</div>
 	);
 };
 
-export default PlanFeatures2023GridActions;
+export default PlanGridActions;

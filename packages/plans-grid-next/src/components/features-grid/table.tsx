@@ -2,7 +2,7 @@ import { PlanSlug, WPComStorageAddOnSlug } from '@automattic/calypso-products';
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import { DataResponse, GridPlan, PlanActionOverrides } from '../../types';
-import { StickyContainer } from '../sticky-container';
+import { StickyContainer } from '../shared/sticky-container';
 import BillingTimeframes from './billing-timeframes';
 import PlanFeaturesList from './plan-features-list';
 import PlanHeaders from './plan-headers';

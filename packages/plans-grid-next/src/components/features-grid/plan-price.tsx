@@ -1,6 +1,6 @@
 import { GridPlan } from '../../types';
-import PlanFeatures2023GridHeaderPrice from '../header-price';
-import PlanDivOrTdContainer from '../plan-div-td-container';
+import PlanDivOrTdContainer from '../shared/plan-div-td-container';
+import PlanHeaderPrice from '../shared/plan-header-price';
 
 type PlanPriceProps = {
 	currentSitePlanSlug?: string | null;
@@ -25,7 +25,7 @@ const PlanPrice = ( {
 				className="plan-features-2023-grid__table-item plan-price"
 				isTableCell={ options?.isTableCell }
 			>
-				<PlanFeatures2023GridHeaderPrice
+				<PlanHeaderPrice
 					planSlug={ planSlug }
 					planUpgradeCreditsApplicable={ planUpgradeCreditsApplicable }
 					currentSitePlanSlug={ currentSitePlanSlug }

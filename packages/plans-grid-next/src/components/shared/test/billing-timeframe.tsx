@@ -11,7 +11,7 @@ jest.mock( 'react-redux', () => ( {
 	...jest.requireActual( 'react-redux' ),
 	useSelector: jest.fn( ( selector ) => selector() ),
 } ) );
-jest.mock( '../../grid-context', () => ( { usePlansGridContext: jest.fn() } ) );
+jest.mock( '../../../grid-context', () => ( { usePlansGridContext: jest.fn() } ) );
 jest.mock( '@automattic/data-stores', () => ( {
 	Plans: {
 		...jest.requireActual( '@automattic/data-stores' ).Plans,
@@ -34,8 +34,8 @@ import { Plans } from '@automattic/data-stores';
 import { formatCurrency } from '@automattic/format-currency';
 import { render } from '@testing-library/react';
 import React from 'react';
-import { usePlansGridContext } from '../../grid-context';
-import BillingTimeframe from '../shared/billing-timeframe';
+import { usePlansGridContext } from '../../../grid-context';
+import BillingTimeframe from '../billing-timeframe';
 
 describe( 'BillingTimeframe', () => {
 	const defaultProps = {

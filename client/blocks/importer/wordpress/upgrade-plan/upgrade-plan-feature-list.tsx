@@ -1,6 +1,6 @@
 import { JetpackPlan, Plan, WPComPlan } from '@automattic/calypso-products';
 import { Badge } from '@automattic/components';
-import { Plans2023Tooltip } from '@automattic/plans-grid-next';
+import { PlansTooltip } from '@automattic/plans-grid-next';
 import { chevronDown, Icon } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
 import classnames from 'classnames';
@@ -49,7 +49,7 @@ export const UpgradePlanFeatureList = ( props: Props ) => {
 				<>
 					{ wpcomFeatures?.map( ( feature, i ) => (
 						<li className={ classnames( 'import__upgrade-plan-feature' ) } key={ i }>
-							<Plans2023Tooltip
+							<PlansTooltip
 								id={ `feature-${ i }` }
 								text={ feature?.getDescription?.() }
 								setActiveTooltipId={ setActiveTooltipId }
@@ -57,7 +57,7 @@ export const UpgradePlanFeatureList = ( props: Props ) => {
 							>
 								{ i === 0 && <strong>{ feature?.getTitle() }</strong> }
 								{ i > 0 && <span>{ feature?.getTitle() }</span> }
-							</Plans2023Tooltip>
+							</PlansTooltip>
 						</li>
 					) ) }
 
@@ -66,14 +66,14 @@ export const UpgradePlanFeatureList = ( props: Props ) => {
 					</li>
 					{ jetpackFeatures?.map( ( feature, i ) => (
 						<li className={ classnames( 'import__upgrade-plan-feature' ) } key={ i }>
-							<Plans2023Tooltip
+							<PlansTooltip
 								id={ `jetpack-feature-${ i }` }
 								text={ feature?.getDescription?.() }
 								setActiveTooltipId={ setActiveTooltipId }
 								activeTooltipId={ activeTooltipId }
 							>
 								<span>{ feature?.getTitle() }</span>
-							</Plans2023Tooltip>
+							</PlansTooltip>
 						</li>
 					) ) }
 
