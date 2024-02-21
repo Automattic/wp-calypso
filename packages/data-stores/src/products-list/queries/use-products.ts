@@ -1,7 +1,7 @@
 import { useQuery, type UseQueryResult } from '@tanstack/react-query';
 import wpcomRequest from 'wpcom-proxy-request';
 import useQueryKeysFactory from './lib/use-query-keys-factory';
-import type { StoreProductSlug, Product, APIProductsList } from '../types';
+import type { StoreProductSlug, Product, RawAPIProductsList } from '../types';
 
 type ProductsIndex = {
 	[ productSlug in StoreProductSlug ]?: Product;
@@ -18,7 +18,7 @@ function useProducts(): UseQueryResult< ProductsIndex > {
 	return useQuery( {
 		queryKey: queryKeys.products(),
 		queryFn: async (): Promise< ProductsIndex > => {
-			const apiProducts: APIProductsList = await wpcomRequest( {
+			const apiProducts: RawAPIProductsList = await wpcomRequest( {
 				path: `/products`,
 				apiVersion: '1.1',
 			} );

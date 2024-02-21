@@ -133,7 +133,7 @@ function useAvailableUpgradeTiers(
 	// 1. Get the tiers. Default to yearly pricing.
 	const commercialProduct = useSelector( ( state ) =>
 		getProductBySlug( state, PRODUCT_JETPACK_STATS_YEARLY )
-	) as ProductsList.APIProductsListItem | null;
+	) as ProductsList.RawAPIProduct | null;
 	// TODO: Add the loading state of the plan usage query to avoid redundant re-rendering.
 	const { data: usageData } = usePlanUsageQuery( siteId );
 

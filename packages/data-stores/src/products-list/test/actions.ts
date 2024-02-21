@@ -1,5 +1,5 @@
 import { requestProductsList, receiveProductsListFailure, receiveProductsList } from '../actions';
-import { APIProductsList } from '../types';
+import { RawAPIProductsList } from '../types';
 
 describe( 'actions', () => {
 	it( 'should return a PRODUCTS_LIST_REQUEST action', () => {
@@ -44,7 +44,7 @@ describe( 'actions', () => {
 				product_term: 'year',
 				product_type: 'space',
 			},
-		} as APIProductsList;
+		} as RawAPIProductsList;
 
 		const expected = {
 			type: 'PRODUCTS_LIST_RECEIVE',

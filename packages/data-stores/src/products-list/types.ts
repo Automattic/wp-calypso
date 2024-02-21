@@ -40,7 +40,7 @@ export interface Product {
 /**
  * Product data as returned by the API
  */
-export interface APIProductsListItem {
+export interface RawAPIProduct {
 	available: boolean;
 	combined_cost_display: string;
 	cost: number;
@@ -59,7 +59,7 @@ export interface APIProductsListItem {
 	product_type: string;
 }
 
-export type APIProductsList = Record< string, APIProductsListItem >;
+export type RawAPIProductsList = Record< string, RawAPIProduct >;
 
 export interface ProductsListFailure {
 	message: string;
