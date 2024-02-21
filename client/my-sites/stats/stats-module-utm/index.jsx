@@ -1,25 +1,24 @@
+import StatsModuleDataQuery from '../stats-module/stats-module-data-query';
 import statsStrings from '../stats-strings';
-import StatsModule2 from './stats-module';
 import { useMockData } from './useMockData';
 
-const StatsModuleUTM = ( props ) => {
-	const { period, query, summary = false } = props;
+const StatsModuleUTM = ( { period, query } ) => {
 	const moduleStrings = statsStrings();
 
 	// TODO: Use TanStack for API requests.
-	const moduleState = useMockData();
+	const { isRequestingData, data } = useMockData();
 
 	return (
-		<StatsModule2
-			className="stats-module-utm"
+		<StatsModuleDataQuery
+			data={ data }
 			path="utm"
+			statType="statsUTM"
+			className="stats-module-utm"
 			moduleStrings={ moduleStrings.utm }
 			period={ period }
 			query={ query }
-			statType="statsUTM"
-			showSummaryLink
-			moduleState={ moduleState }
-			summary={ summary }
+			summary={ false }
+			isLoading={ isRequestingData }
 		/>
 	);
 };

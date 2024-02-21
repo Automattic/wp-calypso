@@ -332,11 +332,13 @@ class StatsSummary extends Component {
 				backLink = `/stats/traffic/`;
 				path = 'utm';
 				statType = 'statsUTM';
-				summaryView = (
+				summaryView = isEnabled( 'stats/utm-module' ) ? (
 					<>
 						{ this.renderSummaryHeader( path, statType, false, moduleQuery ) }
 						<StatsModuleUTM period={ this.props.period } query={ moduleQuery } summary />
 					</>
+				) : (
+					<div>This path is not available.</div>
 				);
 				break;
 			}
