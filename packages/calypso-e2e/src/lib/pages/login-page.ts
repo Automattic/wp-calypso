@@ -31,7 +31,7 @@ export class LoginPage {
 				status: 200,
 			} );
 		} );
-		return await this.page.goto( getCalypsoURL( targetUrl ), { timeout: 90000 } );
+		return await this.page.goto( getCalypsoURL( targetUrl ) );
 	}
 
 	/**
