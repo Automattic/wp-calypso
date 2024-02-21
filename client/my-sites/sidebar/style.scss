@@ -39,13 +39,17 @@ $brand-text: "SF Pro Text", $sans;
 		--sidebar-width-min: 295px;
 
 		--color-sidebar-background: var(--studio-black);
-		--color-sidebar-text-alternative: var(--studio-white);
 		// Resetting these colors to prevent bleeding from dashboard color schemes
-		--color-sidebar-text: var(--studio-white);
-		--color-sidebar-submenu-background: #2d2d2d;
+		--color-sidebar-text: var(--studio-gray-5);
+		--color-sidebar-text-alternative: var(--studio-gray-5);
 		--color-sidebar-menu-selected-background: #3858e9;
-		--color-sidebar-submenu-hover-text: #3858e9;
+		--color-sidebar-menu-selected-text: var(--studio-white);
+		--color-sidebar-menu-hover-text: var(--studio-white);
 		--color-sidebar-menu-hover-background: var(--studio-gray-90);
+		--color-sidebar-submenu-text: var(--studio-gray-5);
+		--color-sidebar-submenu-background: #2d2d2d;
+		--color-sidebar-submenu-selected-text: var(--studio-white);
+		--color-sidebar-submenu-hover-text: var(--studio-white);
 	}
 }
 
@@ -341,10 +345,6 @@ $font-size: rem(14px);
 	.global-sidebar .sidebar {
 		background-color: var(--studio-black);
 
-		.selected .sidebar__menu-link::after {
-			display: none;
-		}
-
 		.sidebar__menu-link {
 			line-height: 15px;
 		}
@@ -363,12 +363,12 @@ $font-size: rem(14px);
 		.sidebar__menu.is-togglable .sidebar__heading {
 			padding: 12px 10px;
 			margin: 0 12px;
-			border-radius: 4px;
+			border-radius: 2px;
 		}
 
 		.sidebar__heading:not([tabindex="-1"]),
 		.sidebar__menu-link {
-			color: var(--studio-white);
+			color: var(--color-sidebar-text);
 
 			.sidebar__menu-icon {
 				color: inherit;
@@ -382,7 +382,7 @@ $font-size: rem(14px);
 			&:focus {
 				box-shadow: none;
 				transition: none;
-				color: var(--studio-white);
+				color: var(--color-sidebar-menu-hover-text);
 
 				.sidebar__menu-icon {
 					color: inherit;
@@ -409,11 +409,11 @@ $font-size: rem(14px);
 
 			&:hover {
 				background-color: var(--color-sidebar-menu-hover-background);
-				color: var(--studio-white);
+				color: var(--color-sidebar-menu-hover-text);
 
 				.sidebar__menu-icon,
 				.sidebar__expandable-arrow {
-					fill: var(--studio-white);
+					fill: var(--color-sidebar-menu-hover-text);
 				}
 			}
 		}
@@ -426,6 +426,14 @@ $font-size: rem(14px);
 		.sidebar__expandable-title {
 			padding: 0;
 			margin: 0;
+		}
+
+		.selected .sidebar__menu-link {
+			color: var(--color-sidebar-menu-selected-text);
+		}
+
+		.selected .sidebar__menu-link::after {
+			display: none;
 		}
 	}
 

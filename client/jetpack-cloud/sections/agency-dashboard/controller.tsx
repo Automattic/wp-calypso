@@ -49,6 +49,12 @@ export const agencyDashboardContext: Callback = ( context, next ) => {
 		enable( 'jetpack/manage-sites-v2-menu' );
 	}
 
+	// TODO: This insert dynamically into the body the class sites-dashboard-v2 to be able to modify some styles outside
+	//  of the SitesDashboardV2 context. This way it won't affect the current styles in any context (dev, staging, production).
+	if ( showSitesDashboardV2 && ! document.body.classList.contains( 'sites-dashboard-v2' ) ) {
+		document.body.classList.add( 'sites-dashboard-v2' );
+	}
+
 	const currentPage = parseInt( contextPage ) || 1;
 
 	context.header = <Header />;

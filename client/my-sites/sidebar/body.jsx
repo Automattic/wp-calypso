@@ -34,7 +34,9 @@ export const MySitesSidebarUnifiedBody = ( { path, children } ) => {
 				const isSelected = item?.url && itemLinkMatches( item.url, path );
 
 				if ( 'current-site' === item?.type ) {
-					return <Site site={ site } href={ item?.url } isSelected={ isSelected } />;
+					return (
+						<Site key={ item.type } site={ site } href={ item?.url } isSelected={ isSelected } />
+					);
 				}
 				if ( 'separator' === item?.type ) {
 					return <SidebarSeparator key={ i } />;

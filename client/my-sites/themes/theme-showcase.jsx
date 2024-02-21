@@ -201,13 +201,20 @@ class ThemeShowcase extends Component {
 		const { isSiteWooExpressOrEcomFreeTrial, themeTiers } = this.props;
 
 		if ( config.isEnabled( 'themes/tiers' ) ) {
-			return [
-				{ value: 'all', label: translate( 'All' ) },
-				...Object.keys( themeTiers ).map( ( tier ) => ( {
-					value: tier,
-					label: THEME_TIERS[ tier ]?.label || tier,
-				} ) ),
-			];
+			const tiers = Object.keys( themeTiers ).reduce( ( availableTiers, tier ) => {
+				if ( ! THEME_TIERS[ tier ]?.isFilterable ) {
+					return availableTiers;
+				}
+				return [
+					...availableTiers,
+					{
+						value: tier,
+						label: THEME_TIERS[ tier ].label,
+					},
+				];
+			}, [] );
+
+			return [ { value: 'all', label: translate( 'All' ) }, ...tiers ];
 		}
 
 		const tiers = [

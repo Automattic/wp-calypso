@@ -1,18 +1,16 @@
+import { useTranslate } from 'i18n-calypso';
 import Main from 'calypso/components/main';
 
 import './style.scss';
 
 export default () => {
-	return (
-		<Main fullWidthLayout isLoggedOut>
-			<div>
-				<h1>Build your perfect site with patterns</h1>
+	const translate = useTranslate();
 
-				<p>
-					Hundreds of expertly designed, fully responsive patterns allow you to craft a beautiful
-					site in minutes.
-				</p>
-			</div>
+	return (
+		<Main isLoggedOut fullWidthLayout>
+			<h1>Build your perfect site with patterns</h1>
+
+			<p>{ translate( 'Trending' ) }</p>
 		</Main>
 	);
 };

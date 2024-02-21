@@ -5,12 +5,10 @@ import { GITHUB_DEPLOYMENTS_QUERY_KEY } from 'calypso/my-sites/github-deployment
 import { CODE_DEPLOYMENTS_QUERY_KEY } from 'calypso/my-sites/github-deployments/deployments/use-code-deployments-query';
 
 interface MutationVariables {
-	externalRepositoryId: number;
+	repositoryId: number;
 	branchName: string;
-	targetDir: string;
 	installationId: number;
-	isAutomated?: boolean;
-	workflowPath?: string;
+	fileName: string;
 }
 
 interface MutationResponse {
@@ -22,51 +20,45 @@ interface MutationError {
 	message: string;
 }
 
-export const useUpdateCodeDeployment = (
-	siteId: number | null,
-	codeDeploymentId: number,
+export const useCreateWorkflow = (
 	options: UseMutationOptions< MutationResponse, MutationError, MutationVariables > = {}
 ) => {
 	const queryClient = useQueryClient();
+	const path = `/hosting/github/workflows`;
 	const mutation = useMutation( {
 		mutationFn: async ( {
-			externalRepositoryId,
-			targetDir,
+			repositoryId,
 			branchName,
 			installationId,
-			isAutomated,
-			workflowPath,
+			fileName,
 		}: MutationVariables ) =>
-			wp.req.put(
+			wp.req.post(
 				{
-					path: `/sites/${ siteId }/hosting/code-deployments/${ codeDeploymentId }`,
+					path,
 					apiNamespace: 'wpcom/v2',
 				},
 				{
-					external_repository_id: externalRepositoryId,
+					repository_id: repositoryId,
 					branch_name: branchName,
-					target_dir: targetDir,
 					installation_id: installationId,
-					is_automated: isAutomated,
-					workflow_path: workflowPath,
+					file_name: fileName,
 				}
 			),
 		...options,
 		onSuccess: async ( ...args ) => {
 			await queryClient.invalidateQueries( {
-				queryKey: [ GITHUB_DEPLOYMENTS_QUERY_KEY, CODE_DEPLOYMENTS_QUERY_KEY, siteId ],
-				exact: false,
+				queryKey: [ GITHUB_DEPLOYMENTS_QUERY_KEY, CODE_DEPLOYMENTS_QUERY_KEY, path ],
 			} );
-			return options.onSuccess?.( ...args );
+			options.onSuccess?.( ...args );
 		},
 	} );
 
 	const { mutateAsync, isPending } = mutation;
 
-	const updateDeployment = useCallback(
+	const createDeployment = useCallback(
 		( args: MutationVariables ) => mutateAsync( args ),
 		[ mutateAsync ]
 	);
 
-	return { updateDeployment, isPending };
+	return { createDeployment, isPending };
 };

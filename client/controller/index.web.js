@@ -82,6 +82,7 @@ export const makeLayout = makeLayoutMiddleware( ProviderWrappedLayout );
  * For logged in users with bootstrap (production), ReactDOM.hydrate().
  * Otherwise (development), ReactDOM.render().
  * See: https://wp.me/pd2qbF-P#comment-20
+ *
  * @param context - Middleware context
  */
 function smartHydrate( context ) {
@@ -95,6 +96,7 @@ function smartHydrate( context ) {
 
 /**
  * Isomorphic routing helper, client side
+ *
  * @param { string } route - A route path
  * @param {...Function} middlewares - Middleware to be invoked for route
  *
@@ -168,6 +170,7 @@ export function redirectLoggedOut( context, next ) {
 /**
  * Middleware to redirect logged out users to create an account.
  * Designed for use in situations where no site is selected, such as the reader.
+ *
  * @param   {Object}   context Context object
  * @param   {Function} next    Calls next middleware
  * @returns {void}
@@ -184,6 +187,7 @@ export function redirectLoggedOutToSignup( context, next ) {
 
 /**
  * Middleware to redirect a user if they don't have the appropriate capability.
+ *
  * @param   {string}   capability Capability to check
  * @returns {Function}            Middleware function
  */
@@ -202,7 +206,8 @@ export function redirectIfCurrentUserCannot( capability ) {
 }
 
 /**
- * Removes the locale param from the path and redirects logged-in users to it.
+ * Removes the locale parameter from the path, and redirects logged-in users to it.
+ *
  * @param   {Object}   context Context object
  * @param   {Function} next    Calls next middleware
  * @returns {void}
@@ -219,6 +224,25 @@ export function redirectWithoutLocaleParamIfLoggedIn( context, next ) {
 	next();
 }
 
+/**
+ * Removes the locale parameter from the beginning of the path, and redirects logged-in users to it.
+ *
+ * @param   {Object}   context Context object
+ * @param   {Function} next    Calls next middleware
+ * @returns {void}
+ */
+export const redirectWithoutLocaleParamInFrontIfLoggedIn = ( context, next ) => {
+	if ( isUserLoggedIn( context.store.getState() ) ) {
+		const pathWithoutLocale = removeLocaleFromPathLocaleInFront( context.path );
+
+		if ( pathWithoutLocale !== context.path ) {
+			return page.redirect( pathWithoutLocale );
+		}
+	}
+
+	next();
+};
+
 export const notFound = ( context, next ) => {
 	/* eslint-disable wpcalypso/jsx-classname-namespace */
 	context.primary = (
@@ -231,15 +255,5 @@ export const notFound = ( context, next ) => {
 	);
 	/* eslint-enable wpcalypso/jsx-classname-namespace */
 
-	next();
-};
-
-export const redirectLoggedInUrl = ( context, next ) => {
-	if ( isUserLoggedIn( context.store.getState() ) ) {
-		const pathWithoutLocale = removeLocaleFromPathLocaleInFront( context.path );
-		if ( pathWithoutLocale !== context.path ) {
-			return page.redirect( pathWithoutLocale );
-		}
-	}
 	next();
 };
