@@ -9,7 +9,7 @@ import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { useDispatch, useSelector } from 'calypso/state/index';
 import { errorNotice, successNotice } from 'calypso/state/notices/actions';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors/index';
-import { PageShell } from '../../page-shell/page-shell';
+import { PageShell } from '../../page-shell';
 import { CreateRepositoryForm } from './create-repository-form';
 import {
 	MutationVariables,
