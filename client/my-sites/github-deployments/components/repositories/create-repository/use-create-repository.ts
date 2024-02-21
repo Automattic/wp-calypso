@@ -2,7 +2,6 @@ import { useMutation, UseMutationOptions, useQueryClient } from '@tanstack/react
 import { useCallback } from 'react';
 import wp from 'calypso/lib/wp';
 import { GITHUB_DEPLOYMENTS_QUERY_KEY } from 'calypso/my-sites/github-deployments/constants';
-import { CODE_DEPLOYMENTS_QUERY_KEY } from 'calypso/my-sites/github-deployments/deployments/use-code-deployments-query';
 
 export interface MutationVariables {
 	accountName: string;
@@ -23,8 +22,9 @@ interface MutationError {
 	message: string;
 }
 
+const GITHUB_REPOSITORIES_MUATION_KEY = 'github-repositories-mutation';
+
 export const useCreateRepository = (
-	siteId: number,
 	options: UseMutationOptions< MutationResponse, MutationError, MutationVariables > = {}
 ) => {
 	const queryClient = useQueryClient();
@@ -40,13 +40,12 @@ export const useCreateRepository = (
 					account_name: accountName,
 					repository_name: repositoryName,
 					is_private: isPrivate,
-					blog_id: siteId,
 				}
 			),
 		...options,
 		onSuccess: async ( ...args ) => {
 			await queryClient.invalidateQueries( {
-				queryKey: [ GITHUB_DEPLOYMENTS_QUERY_KEY, CODE_DEPLOYMENTS_QUERY_KEY, siteId ],
+				queryKey: [ GITHUB_DEPLOYMENTS_QUERY_KEY, GITHUB_REPOSITORIES_MUATION_KEY ],
 			} );
 			options.onSuccess?.( ...args );
 		},
