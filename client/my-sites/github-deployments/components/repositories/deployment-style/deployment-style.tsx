@@ -61,14 +61,13 @@ export const DeploymentStyle = ( {
 	// const [ validationTriggered, setValidationTriggered ] = useState( false );
 	const validationTriggered = false;
 	const [ errorMesseage, setErrorMesseage ] = useState( '' );
+	const isTemplateRepository = repository.owner === 'Automattic';
 
-	const { data: workflows, isLoading: isFetchingWorkflows } = useDeploymentWorkflowsQuery(
-		installationId,
-		repository.name,
-		repository.owner,
-		branchName,
-		deploymentStyle
-	);
+	const {
+		data: workflows,
+		isLoading: isFetchingWorkflows,
+		isRefetching: isRefreshingWorkflows,
+	} = useDeploymentWorkflowsQuery( installationId, repository, branchName, deploymentStyle );
 
 	const workflowsForRendering = useMemo( () => {
 		const mappedValues = [ { value: 'none', label: __( 'Deployment workflows' ) } ].concat(
@@ -89,10 +88,10 @@ export const DeploymentStyle = ( {
 		isRefetching: isRefreshingWorkflowValidation,
 	} = useCheckWorkflowQuery(
 		installationId,
-		repository.name,
-		repository.owner,
+		repository,
 		branchName,
-		selectedWorkflow || ''
+		selectedWorkflow || '',
+		isTemplateRepository
 	);
 
 	const noticeOptions = {
@@ -208,7 +207,7 @@ export const DeploymentStyle = ( {
 	}, [ workflowCheckResult ] );
 
 	useEffect( () => {
-		if ( deploymentStyle === 'simple' ) {
+		if ( deploymentStyle === 'simple' || isTemplateRepository ) {
 			onValidationChange?.( 'success' );
 		} else {
 			onValidationChange?.( workflowCheckResult?.conclusion || 'loading' );
@@ -271,106 +270,110 @@ export const DeploymentStyle = ( {
 							options={ workflowsForRendering }
 							onChange={ handleWorkflowChange }
 						/>
-						{ isFetchingWorkflows && <Spinner /> }
+						{ ( isFetchingWorkflows || isRefreshingWorkflows ) && <Spinner /> }
 					</div>
 				</FormFieldset>
 			) }
 
-			<FormFieldset>
-				{ deploymentStyle === 'custom' &&
-					selectedWorkflow !== 'none' &&
-					selectedWorkflow !== undefined &&
-					! isCreatingNewWorkflow && (
+			{ ! isTemplateRepository && (
+				<FormFieldset>
+					{ deploymentStyle === 'custom' &&
+						selectedWorkflow !== 'none' &&
+						selectedWorkflow !== undefined &&
+						! isCreatingNewWorkflow && (
+							<>
+								<FormLabel>{ __( 'Workflow check' ) }</FormLabel>
+								<p>
+									{ translate(
+										'Please edit {{filename}}{{/filename}} and fix the problems we found:',
+										{
+											components: { filename: <span>deploy-live.yml</span> },
+										}
+									) }
+								</p>
+
+								{ workflowsValidations.map( ( validation ) => (
+									<FoldableCard
+										key={ validation.key }
+										className={
+											validation.status === 'error' && validationTriggered ? 'error' : ''
+										}
+										expanded={ validation.status === 'error' }
+										header={
+											<>
+												<RenderIcon
+													state={
+														isCheckingWorkflowFile || isRefreshingWorkflowValidation
+															? 'loading'
+															: validation.status
+													}
+												/>
+												{ validation.label }
+											</>
+										}
+										screenReaderText="More"
+									>
+										{ validation.item }
+									</FoldableCard>
+								) ) }
+							</>
+						) }
+					{ deploymentStyle === 'custom' && isCreatingNewWorkflow && (
 						<>
-							<FormLabel>{ __( 'Workflow check' ) }</FormLabel>
+							<FormLabel>{ __( 'Custom workflow' ) }</FormLabel>
 							<p>
-								{ translate(
-									'Please edit {{filename}}{{/filename}} and fix the problems we found:',
-									{
-										components: { filename: <span>deploy-live.yml</span> },
-									}
+								{ __(
+									'Create a new workflow file in your repository with the following content and then click ‘Verify workflow’ or let us install it for you.'
 								) }
 							</p>
 
-							{ workflowsValidations.map( ( validation ) => (
-								<FoldableCard
-									key={ validation.key }
-									className={ validation.status === 'error' && validationTriggered ? 'error' : '' }
-									expanded={ validation.status === 'error' }
-									header={
-										<>
-											<RenderIcon
-												state={
-													isCheckingWorkflowFile || isRefreshingWorkflowValidation
-														? 'loading'
-														: validation.status
-												}
-											/>
-											{ validation.label }
-										</>
-									}
-									screenReaderText="More"
-								>
-									{ validation.item }
-								</FoldableCard>
-							) ) }
+							<FoldableCard
+								className={ validationTriggered ? 'error' : '' }
+								expanded={ true }
+								header={ <div>.github/workflows/wpcom.yml</div> }
+								screenReaderText="More"
+							>
+								<div>
+									<p>
+										- name: Upload the artifact <br></br>uses: actions/upload-artifact@v4 <br></br>
+										with: name: wpcom
+									</p>
+								</div>
+							</FoldableCard>
 						</>
 					) }
-				{ deploymentStyle === 'custom' && isCreatingNewWorkflow && (
-					<>
-						<FormLabel>{ __( 'Custom workflow' ) }</FormLabel>
-						<p>
-							{ __(
-								'Create a new workflow file in your repository with the following content and then click ‘Verify workflow’ or let us install it for you.'
-							) }
-						</p>
-
-						<FoldableCard
-							className={ validationTriggered ? 'error' : '' }
-							expanded={ true }
-							header={ <div>.github/workflows/wpcom.yml</div> }
-							screenReaderText="More"
-						>
-							<div>
-								<p>
-									- name: Upload the artifact <br></br>uses: actions/upload-artifact@v4 <br></br>
-									with: name: wpcom
-								</p>
-							</div>
-						</FoldableCard>
-					</>
-				) }
-				{ deploymentStyle === 'custom' && errorMesseage && (
-					<FormInputValidation isError={ true } text={ errorMesseage } />
-				) }
-				{ deploymentStyle === 'custom' && selectedWorkflow !== 'none' && (
-					<div className="github-deployments-deployment-style__actions">
-						<Button
-							type="button"
-							busy={ isCheckingWorkflowFile || isRefreshingWorkflowValidation }
-							className="button form-button"
-							onClick={ handleVerifyWorkflow }
-						>
-							{ __( 'Verify workflow' ) }
-						</Button>
-						{ /* { workflowCheckResult?.conclusion === 'error' && (
+					{ deploymentStyle === 'custom' && errorMesseage && (
+						<FormInputValidation isError={ true } text={ errorMesseage } />
+					) }
+					{ deploymentStyle === 'custom' && selectedWorkflow !== 'none' && (
+						<div className="github-deployments-deployment-style__actions">
+							<Button
+								type="button"
+								busy={ isCheckingWorkflowFile || isRefreshingWorkflowValidation }
+								className="button form-button"
+								onClick={ handleVerifyWorkflow }
+							>
+								{ __( 'Verify workflow' ) }
+							</Button>
+							{ /* { workflowCheckResult?.conclusion === 'error' && (
 							<Button type="button" className="button form-button" onClick={ fixWorfklow }>
 								{ __( 'Fix workflow for me' ) }
 							</Button>
 						) } */ }
-						{ isCreatingNewWorkflow && (
-							<Button
-								type="button"
-								busy={ isInstallingWorkflow }
-								className="button form-button"
-								onClick={ installWorkflow }
-							>
-								{ __( 'Install workflow for me' ) }
-							</Button>
-						) }
-					</div>
-				) }
-			</FormFieldset>
+							{ isCreatingNewWorkflow && (
+								<Button
+									type="button"
+									busy={ isInstallingWorkflow }
+									className="button form-button"
+									onClick={ installWorkflow }
+								>
+									{ __( 'Install workflow for me' ) }
+								</Button>
+							) }
+						</div>
+					) }
+				</FormFieldset>
+			) }
 		</div>
 	);
 };

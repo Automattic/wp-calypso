@@ -6,6 +6,8 @@ import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormTextInput from 'calypso/components/forms/form-text-input';
 import { GitHubInstallationsDropdown } from 'calypso/my-sites/github-deployments/components/installations-dropdown';
 import { useLiveInstallations } from 'calypso/my-sites/github-deployments/components/installations-dropdown/use-live-installations';
+import { GitHubRepositoryData } from 'calypso/my-sites/github-deployments/use-github-repositories-query';
+import { DeploymentStyle } from '../deployment-style/deployment-style';
 import {
 	FormRadioWithTemplateSelect,
 	ProjectType,
@@ -41,6 +43,10 @@ export const CreateRepositoryForm = ( {
 	const [ template, setTemplate ] = useState< RepositoryTemplate >(
 		repositoryTemplates.plugin[ 0 ]
 	);
+	const [ workflowPath, setWorkflowPath ] = useState< string | undefined >( undefined );
+	const [ repository, setRepository ] = useState< GitHubRepositoryData >(
+		{} as GitHubRepositoryData
+	);
 
 	const isFormValid = repositoryName.trim() && ! isLoadingInstallations;
 
@@ -73,6 +79,17 @@ export const CreateRepositoryForm = ( {
 				break;
 		}
 	}, [ projectType, repositoryName ] );
+
+	useEffect( () => {
+		setRepository( {
+			id: 0,
+			private: false,
+			updated_at: '',
+			name: template.value,
+			owner: 'Automattic',
+			default_branch: 'trunk',
+		} );
+	}, [ template ] );
 
 	return (
 		<div className="github-deployments-create-repository">
@@ -178,7 +195,17 @@ export const CreateRepositoryForm = ( {
 					{ __( 'Create repository' ) }
 				</Button>
 			</form>
-			<div className="github-deployments-create-repository__deployment-style"></div>
+			{ installation && (
+				<div className="github-deployments-create-repository__deployment-style">
+					<DeploymentStyle
+						branchName="main"
+						installationId={ installation.external_id }
+						repository={ repository }
+						onChooseWorkflow={ ( filePath ) => setWorkflowPath( filePath ) }
+						onValidationChange={ ( status ) => {} }
+					/>
+				</div>
+			) }
 		</div>
 	);
 };

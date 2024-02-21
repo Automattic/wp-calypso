@@ -134,7 +134,7 @@ export const GitHubConnectionForm = ( {
 						installationId={ installation.external_id }
 						repository={ repository }
 						workflowPath={ workflowPath }
-						onChooseWorkflow={ ( item ) => setWorkflowPath( item ) }
+						onChooseWorkflow={ ( filePath ) => setWorkflowPath( filePath ) }
 						onValidationChange={ ( status ) => {
 							if ( status === 'success' ) {
 								setSubmitDisabled( false );
