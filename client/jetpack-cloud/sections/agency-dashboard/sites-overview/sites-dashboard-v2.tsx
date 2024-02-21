@@ -10,9 +10,13 @@ import Notice from 'calypso/components/notice';
 import SidebarNavigation from 'calypso/components/sidebar-navigation';
 import useFetchDashboardSites from 'calypso/data/agency-dashboard/use-fetch-dashboard-sites';
 import useFetchMonitorVerfiedContacts from 'calypso/data/agency-dashboard/use-fetch-monitor-verified-contacts';
+import { AgencyDashboardFilterOption } from 'calypso/jetpack-cloud/sections/agency-dashboard/sites-overview/types';
 import { useDispatch, useSelector } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
-import { resetSite } from 'calypso/state/jetpack-agency-dashboard/actions';
+import {
+	resetSite,
+	updateDashboardURLQueryArgs,
+} from 'calypso/state/jetpack-agency-dashboard/actions';
 import {
 	checkIfJetpackSiteGotDisconnected,
 	getSelectedLicenses,
@@ -72,7 +76,7 @@ export default function SitesDashboardV2() {
 		perPage: 50,
 		page: currentPage,
 		sort: {
-			field: 'site',
+			field: 'url',
 			direction: 'desc',
 		},
 		search: search,
@@ -97,53 +101,26 @@ export default function SitesDashboardV2() {
 		[ setSitesViewState ]
 	);
 
-	// Parse query string to get selected filter value
 	useEffect( () => {
-		const params = new URLSearchParams( window.location.search );
-		const selectedFilter = parseInt( params.get( 'selectedFilter' ) ?? '0' );
-		if ( selectedFilter ) {
-			setSitesViewState( ( prevView ) => ( {
-				...prevView,
-				filters: [ { field: 'status', operator: 'in', value: selectedFilter } ],
-			} ) );
-		}
-	}, [] );
-
-	useEffect( () => {
-		const arrayMap = [
-			'?issue_types=all_issues',
-			'/favorites',
-			'?issue_types=backup_failed',
-			'?issue_types=backup_warning',
-			'?issue_types=threats_found',
-			'?issue_types=site_disconnected',
-			'?issue_types=site_down',
-			'?issue_types=plugin_updates',
+		let filterOptions: AgencyDashboardFilterOption[] = [];
+		const filterMap: AgencyDashboardFilterOption[] = [
+			'all_issues',
+			'backup_failed',
+			'backup_warning',
+			'threats_found',
+			'site_disconnected',
+			'site_down',
+			'plugin_updates',
 		];
-		// loop through the arrayMap and check that the filter value is not in the URL and the filter is selected,
-		// before redirecting to the correct filter page.
-		for ( let i = 0; i < arrayMap.length; i++ ) {
-			if (
-				! window.location.href.includes( arrayMap[ i ] ) &&
-				sitesViewState.filters.some( ( filter ) => filter.value === i + 1 )
-			) {
-				if ( sitesViewState.filters.some( ( filter ) => filter.value === 2 ) ) {
-					window.location.href = `/sites${ arrayMap[ i ] }?selectedFilter=${ i + 1 }`;
-				} else {
-					window.location.href = `/sites${ arrayMap[ i ] }&selectedFilter=${ i + 1 }`;
-				}
+		for ( let i = 0; i < filterMap.length; i++ ) {
+			if ( sitesViewState.filters.some( ( filter ) => filter.value === i + 1 ) ) {
+				filterOptions = [ filterMap[ i ] ];
 			}
 		}
-		const resetButton = document.querySelector( '.dataviews-wrapper .is-tertiary' );
-		if (
-			! window.location.href.endsWith( 'sites' ) &&
-			document.querySelector( '.dataviews-wrapper [aria-label="Status"]' ) === null
-		) {
-			if ( resetButton && resetButton.hasAttribute( 'aria-disabled' ) ) {
-				window.location.href = '/sites';
-			}
-		}
-	}, [ sitesViewState.filters ] );
+
+		updateDashboardURLQueryArgs( { search: sitesViewState.search } );
+		updateDashboardURLQueryArgs( { filter: filterOptions } );
+	}, [ sitesViewState ] );
 
 	useEffect( () => {
 		if ( jetpackSiteDisconnected ) {

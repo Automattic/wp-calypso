@@ -243,6 +243,7 @@ export interface DashboardDataContextInterface {
 }
 
 export type AgencyDashboardFilterOption =
+	| 'all_issues'
 	| 'backup_failed'
 	| 'backup_warning'
 	| 'threats_found'
