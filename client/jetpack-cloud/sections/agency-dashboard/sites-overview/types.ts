@@ -251,6 +251,10 @@ export type AgencyDashboardFilterOption =
 	| 'site_down'
 	| 'plugin_updates';
 
+export interface AgencyDashboardFilterMap {
+	[ key: number ]: AgencyDashboardFilterOption;
+}
+
 export type AgencyDashboardFilter = {
 	issueTypes: Array< AgencyDashboardFilterOption >;
 	showOnlyFavorites: boolean;

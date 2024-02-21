@@ -10,7 +10,7 @@ import Notice from 'calypso/components/notice';
 import SidebarNavigation from 'calypso/components/sidebar-navigation';
 import useFetchDashboardSites from 'calypso/data/agency-dashboard/use-fetch-dashboard-sites';
 import useFetchMonitorVerfiedContacts from 'calypso/data/agency-dashboard/use-fetch-monitor-verified-contacts';
-import { AgencyDashboardFilterOption } from 'calypso/jetpack-cloud/sections/agency-dashboard/sites-overview/types';
+import { AgencyDashboardFilterMap } from 'calypso/jetpack-cloud/sections/agency-dashboard/sites-overview/types';
 import { useDispatch, useSelector } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import {
@@ -101,25 +101,25 @@ export default function SitesDashboardV2() {
 		[ setSitesViewState ]
 	);
 
-	useEffect( () => {
-		let filterOptions: AgencyDashboardFilterOption[] = [];
-		const filterMap: AgencyDashboardFilterOption[] = [
-			'all_issues',
-			'backup_failed',
-			'backup_warning',
-			'threats_found',
-			'site_disconnected',
-			'site_down',
-			'plugin_updates',
-		];
-		for ( let i = 0; i < filterMap.length; i++ ) {
-			if ( sitesViewState.filters.some( ( filter ) => filter.value === i + 1 ) ) {
-				filterOptions = [ filterMap[ i ] ];
-			}
-		}
+	const filtersMap: AgencyDashboardFilterMap = {
+		1: 'all_issues',
+		2: 'backup_failed',
+		3: 'backup_warning',
+		4: 'threats_found',
+		5: 'site_disconnected',
+		6: 'site_down',
+		7: 'plugin_updates',
+	};
 
-		updateDashboardURLQueryArgs( { search: sitesViewState.search,  filter: filterOptions } );
-	}, [ sitesViewState ] );
+	useEffect( () => {
+		const filtersSelected = sitesViewState.filters.map( ( filter ) => filtersMap[ filter.value ] );
+
+		updateDashboardURLQueryArgs( { filter: filtersSelected } );
+	}, [ sitesViewState.filters ] );
+
+	useEffect( () => {
+		updateDashboardURLQueryArgs( { search: sitesViewState.search } );
+	}, [ sitesViewState.search ] );
 
 	useEffect( () => {
 		if ( jetpackSiteDisconnected ) {
