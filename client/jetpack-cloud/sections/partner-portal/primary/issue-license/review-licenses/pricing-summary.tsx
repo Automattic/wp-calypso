@@ -15,9 +15,13 @@ import type { SiteDetails } from '@automattic/data-stores';
 export default function PricingSummary( {
 	selectedLicenses,
 	selectedSite,
+	handleIssueLicense,
+	isLoading,
 }: {
 	selectedLicenses: SelectedLicenseProp[];
 	selectedSite?: SiteDetails | null;
+	handleIssueLicense?: () => void;
+	isLoading?: boolean;
 } ) {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
@@ -77,8 +81,8 @@ export default function PricingSummary( {
 			<Button
 				primary
 				className="review-licenses__cta-button"
-				onClick={ handleCTAClick }
-				busy={ ! isFormReady }
+				onClick={ handleIssueLicense ?? handleCTAClick }
+				busy={ ! isFormReady || isLoading }
 			>
 				{ translate( 'Issue %(numLicenses)d license', 'Issue %(numLicenses)d licenses', {
 					context: 'button label',

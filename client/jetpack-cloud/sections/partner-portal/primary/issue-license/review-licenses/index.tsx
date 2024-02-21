@@ -12,12 +12,22 @@ import type { SiteDetails } from '@automattic/data-stores';
 import './style.scss';
 
 interface Props {
+	isMultiSiteSelect?: boolean;
 	onClose: () => void;
 	selectedLicenses: SelectedLicenseProp[];
 	selectedSite?: SiteDetails | null;
+	handleIssueLicense?: () => void;
+	isLoading?: boolean;
 }
 
-export default function ReviewLicenses( { onClose, selectedLicenses, selectedSite }: Props ) {
+export default function ReviewLicenses( {
+	isMultiSiteSelect = false,
+	onClose,
+	selectedLicenses,
+	selectedSite,
+	handleIssueLicense,
+	isLoading,
+}: Props ) {
 	const translate = useTranslate();
 
 	const { sidebarRef, mainRef, initMobileSidebar } = useMobileSidebar();
@@ -41,6 +51,7 @@ export default function ReviewLicenses( { onClose, selectedLicenses, selectedSit
 								key={ `license-info-${ license.product_id }-${ license.quantity }` }
 								product={ license }
 								selectedSite={ selectedSite }
+								isMultiSiteSelect={ isMultiSiteSelect }
 							/>
 						) ) }
 					</div>
@@ -48,7 +59,12 @@ export default function ReviewLicenses( { onClose, selectedLicenses, selectedSit
 			</JetpackLightboxMain>
 
 			<JetpackLightboxAside ref={ sidebarRef }>
-				<PricingSummary selectedLicenses={ selectedLicenses } selectedSite={ selectedSite } />
+				<PricingSummary
+					selectedLicenses={ selectedLicenses }
+					selectedSite={ selectedSite }
+					handleIssueLicense={ handleIssueLicense }
+					isLoading={ isLoading }
+				/>
 			</JetpackLightboxAside>
 		</JetpackLightbox>
 	);

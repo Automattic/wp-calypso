@@ -83,7 +83,15 @@
 			padding: 5px 15px;
 			border-radius: 4px;
 			font-weight: 500;
+			margin-block-start: 16px;
+		}
 
+		.review-licenses__license-count-text {
+			font-weight: bold;
+		}
+
+		.review-licenses__license-site-url {
+			margin-block: 8px;
 		}
 
 		.review-licenses__license-description {

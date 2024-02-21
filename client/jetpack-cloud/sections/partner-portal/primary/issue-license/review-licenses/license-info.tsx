@@ -7,9 +7,11 @@ import type { SiteDetails } from '@automattic/data-stores';
 export default function LicenseInfo( {
 	product,
 	selectedSite,
+	isMultiSiteSelect = false,
 }: {
 	product: SelectedLicenseProp;
 	selectedSite?: SiteDetails | null;
+	isMultiSiteSelect?: boolean;
 } ) {
 	const translate = useTranslate();
 
@@ -30,7 +32,7 @@ export default function LicenseInfo( {
 						<label htmlFor={ title } className="review-licenses__license-label">
 							{ title }
 						</label>
-						{ ! selectedSite && (
+						{ ! isMultiSiteSelect && ! selectedSite && (
 							<span className="review-licenses__license-count">
 								{ translate( '%(numLicenses)d license', '%(numLicenses)d licenses', {
 									context: 'button label',
@@ -45,6 +47,27 @@ export default function LicenseInfo( {
 					<p className="review-licenses__license-description">
 						{ productInfo.lightboxDescription }
 					</p>
+					{ isMultiSiteSelect && (
+						<div className="review-licenses__license-count">
+							<div className="review-licenses__license-count-text">
+								{ translate( '%(numLicenses)d license', '%(numLicenses)d licenses', {
+									context: 'button label',
+									count: product.quantity,
+									args: {
+										numLicenses: product.quantity,
+									},
+								} ) }
+							</div>
+							{ product.siteUrls?.map( ( url ) => (
+								<div
+									key={ `license-site-url-${ product.product_id }-${ url }` }
+									className="review-licenses__license-site-url"
+								>
+									{ url }
+								</div>
+							) ) }
+						</div>
+					) }
 				</div>
 			</div>
 		</div>
