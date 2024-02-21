@@ -90,7 +90,6 @@
 		"jetpack-cloud-golden-token": false,
 		"jetpack-search": true,
 		"jetpack-social": true,
-		"jetpack-subscribers": true,
 		"scan": true,
 		"site-purchases": true
 	},
