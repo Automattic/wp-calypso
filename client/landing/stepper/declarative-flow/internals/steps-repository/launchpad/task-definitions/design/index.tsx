@@ -22,7 +22,7 @@ export const getDesignCompletedTask = getDesignSelectedTask;
 
 export const getDesignEditedTask: TaskAction = ( task, flow, context ) => {
 	const { site, siteSlug } = context;
-  
+
 	return {
 		...task,
 		actionDispatch: () => recordTaskClickTracksEvent( task, flow, context ),
