@@ -33,6 +33,7 @@ const StatsRedirectFlow: React.FC< StatsRedirectFlowProps > = ( { children } ) =
 		isCommercialOwned,
 		supportCommercialUse,
 		hasLoadedSitePurchases,
+		isRequestingSitePurchases,
 	} = useStatsPurchases( siteId );
 
 	const isSiteJetpackNotAtomic = useSelector( ( state ) =>
@@ -52,7 +53,7 @@ const StatsRedirectFlow: React.FC< StatsRedirectFlowProps > = ( { children } ) =
 		canUserManageOptions
 	);
 
-	const isLoading = ! hasLoadedSitePurchases || isLoadingNotices;
+	const isLoading = ! hasLoadedSitePurchases || isRequestingSitePurchases || isLoadingNotices;
 	const hasPlan = isFreeOwned || isPWYWOwned || isCommercialOwned || supportCommercialUse;
 	const qualifiedUser =
 		siteCreatedTimeStamp && new Date( siteCreatedTimeStamp ) > new Date( '2024-01-31' );
