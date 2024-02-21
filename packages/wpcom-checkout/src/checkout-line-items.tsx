@@ -1330,19 +1330,6 @@ function CheckoutLineItem( {
 
 	const isIntroductoryOfferWithDifferentLength =
 		doesIntroductoryOfferHaveDifferentTermLengthThanProduct( product );
-	const amountWithIntroductoryOfferOnly = product.cost_overrides?.reduce(
-		( total, costOverride ) =>
-			costOverride.override_code === 'introductory-offer'
-				? total + costOverride.new_subtotal_integer
-				: total,
-		0
-	);
-	const formattedAmountWithIntroductoryOfferOnly = amountWithIntroductoryOfferOnly
-		? formatCurrency( amountWithIntroductoryOfferOnly, product.currency, {
-				isSmallestUnit: true,
-				stripZeros: true,
-		  } )
-		: undefined;
 
 	return (
 		<div
@@ -1367,7 +1354,7 @@ function CheckoutLineItem( {
 				<LineItemPrice
 					actualAmount={
 						isIntroductoryOfferWithDifferentLength
-							? formattedAmountWithIntroductoryOfferOnly
+							? undefined
 							: formatCurrency( costBeforeDiscounts, product.currency, {
 									isSmallestUnit: true,
 									stripZeros: true,

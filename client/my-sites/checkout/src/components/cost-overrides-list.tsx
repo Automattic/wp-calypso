@@ -7,6 +7,7 @@ import {
 	useShoppingCart,
 } from '@automattic/shopping-cart';
 import {
+	LineItemBillingInterval,
 	doesIntroductoryOfferHaveDifferentTermLengthThanProduct,
 	hasCheckoutVersion,
 } from '@automattic/wpcom-checkout';
@@ -181,7 +182,8 @@ function LineItemCostOverrideIntroOfferDueDate( { product }: { product: Response
 	} )?.args;
 	const dueDate = tosData?.subscription_auto_renew_date;
 	const dueAmount = tosData?.renewal_price_integer;
-	if ( ! dueDate || ! dueAmount ) {
+	const renewAmount = tosData?.regular_renewal_price_integer;
+	if ( ! dueDate || ! dueAmount || ! renewAmount ) {
 		return null;
 	}
 
@@ -198,6 +200,15 @@ function LineItemCostOverrideIntroOfferDueDate( { product }: { product: Response
 					} ),
 				},
 			} ) }
+			<div>
+				<LineItemBillingInterval product={ product } />{ ' ' }
+				<span>
+					{ formatCurrency( renewAmount, product.currency, {
+						isSmallestUnit: true,
+						stripZeros: true,
+					} ) }
+				</span>
+			</div>
 		</div>
 	);
 }
@@ -212,12 +223,7 @@ function LineItemCostOverride( {
 	return (
 		<div className="cost-overrides-list-item" key={ costOverride.humanReadableReason }>
 			<span className="cost-overrides-list-item__reason">{ costOverride.humanReadableReason }</span>
-			<span className="cost-overrides-list-item__discount">
-				{ costOverride.discountAmount &&
-					formatCurrency( -costOverride.discountAmount, product.currency, {
-						isSmallestUnit: true,
-					} ) }
-			</span>
+			<span className="cost-overrides-list-item__discount">{ costOverride.formattedPrice }</span>
 			<LineItemCostOverrideIntroOfferDueDate product={ product } />
 		</div>
 	);
