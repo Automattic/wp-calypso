@@ -36,5 +36,15 @@ td.github-deployments-logs-content {
 		max-height: 400px;
 		overflow-y: auto;
 		white-space: pre-wrap;
+
+		.github-deployments-logs__loading {
+			text-align: center;
+		}
+
+		.github-deployments-logs-no-content {
+			text-align: center;
+			margin: 0;
+		}
 	}
 }
+

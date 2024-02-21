@@ -1,7 +1,9 @@
 import { Button } from '@automattic/components';
 import { useLocale } from '@automattic/i18n-utils';
+import { Spinner } from '@wordpress/components';
 import { useState } from '@wordpress/element';
 import { chevronDown, chevronUp, Icon } from '@wordpress/icons';
+import { useCodeDeploymentsRunLogQuery } from 'calypso/my-sites/github-deployments/deployment-run-logs/use-code-deployment-run-log-query';
 import { DeploymentCommitDetails } from 'calypso/my-sites/github-deployments/deployments/deployment-commit-details';
 import { DeploymentDuration } from 'calypso/my-sites/github-deployments/deployments/deployment-duration';
 import {
@@ -13,6 +15,8 @@ import {
 	DeploymentRun,
 } from 'calypso/my-sites/github-deployments/deployments/use-code-deployments-query';
 import { formatDate } from 'calypso/my-sites/github-deployments/utils/dates';
+import { useSelector } from 'calypso/state/index';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors/index';
 
 interface DeploymentsListItemProps {
 	run: DeploymentRun;
@@ -20,11 +24,20 @@ interface DeploymentsListItemProps {
 
 export const DeploymentsRunItem = ( { run }: DeploymentsListItemProps ) => {
 	const locale = useLocale();
+	const siteId = useSelector( getSelectedSiteId );
 	const deployment = run.code_deployment as CodeDeploymentData;
 	const [ expanded, setExpanded ] = useState( false );
 	const icon = expanded ? chevronUp : chevronDown;
+	const { data: logEntries = [], isLoading: isFetchingLogs } = useCodeDeploymentsRunLogQuery(
+		siteId,
+		deployment.id,
+		run.id,
+		{ enabled: expanded }
+	);
 
 	const handleToggleExpanded = () => setExpanded( ! expanded );
+
+	const noLogsAvailable = expanded && ! isFetchingLogs && logEntries.length === 0;
 
 	return (
 		<>
@@ -51,18 +64,23 @@ export const DeploymentsRunItem = ( { run }: DeploymentsListItemProps ) => {
 				<tr>
 					<td className="github-deployments-logs-content" colSpan={ 5 }>
 						<pre>
-							Starting deployment d03e94ae-adc5-41a4-bf7d-eb786c2f15b6 Downloading zipball
-							https://api.github.com/repos/wptest/zipball/ae2790b4e29fed1b48ddb56ecc19eb95db8ac7f9
-							Downloading zipball
-							https://api.github.com/repos/wptest/zipball/ae2790b4e29fed1b48ddb56ecc19eb95db8ac7f9
-							Downloading zipball
-							https://api.github.com/repos/wptest/zipball/ae2790b4e29fed1b48ddb56ecc19eb95db8ac7f9
-							Downloading zipball
-							https://api.github.com/repos/wptest/zipball/ae2790b4e29fed1b48ddb56ecc19eb95db8ac7f9
-							Zipball downloaded successfully. Extracting zipball to
-							/tmp/wptest_ae2790b4e29fed1b48ddb56ecc19eb95db8ac7f9 Failed to move
-							/tmp/wptest_ae2790b4e29fed1b48ddb56ecc19eb95db8ac7f9/javierarce-wptest-ae2790b Deleted
-							zipball. Deployment queued.
+							{ isFetchingLogs && (
+								<div className="github-deployments-logs__loading">
+									<Spinner />
+								</div>
+							) }
+
+							{ logEntries.map( ( entry, id ) => (
+								<div key={ id }>
+									{ entry.timestamp } { entry.level.toUpperCase() } { entry.message }
+								</div>
+							) ) }
+
+							{ noLogsAvailable && (
+								<p className="github-deployments-logs-no-content">
+									No logs available for this deployment run.
+								</p>
+							) }
 						</pre>
 					</td>
 				</tr>
