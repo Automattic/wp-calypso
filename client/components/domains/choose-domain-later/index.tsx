@@ -1,31 +1,19 @@
 import ReskinSideExplainer from '../reskin-side-explainer';
 
 type Props = {
-	step: {
-		domainForm: {
-			loadingResults: boolean;
-			searchResults?: Array< any > | null;
-		};
-	};
+	hasSearchedDomains: boolean;
 	handleDomainExplainerClick: () => void;
 	flowName: string;
 	showEscapeHatchAfterQuery: boolean;
 };
 
 export default function ChooseDomainLater( {
-	step,
+	hasSearchedDomains,
 	handleDomainExplainerClick,
 	flowName,
 	showEscapeHatchAfterQuery,
 }: Props ) {
-	const domainForm = step?.domainForm ?? {};
-
-	const isDomainResultsLoaded =
-		! domainForm.loadingResults &&
-		Array.isArray( domainForm?.searchResults ) &&
-		domainForm?.searchResults?.length > 0;
-
-	if ( showEscapeHatchAfterQuery && ! isDomainResultsLoaded ) {
+	if ( showEscapeHatchAfterQuery && ! hasSearchedDomains ) {
 		return null;
 	}
 

@@ -932,7 +932,7 @@ export class RenderDomainsStep extends Component {
 					! this.shouldHideDomainExplainer() &&
 					this.props.isPlanSelectionAvailableLaterInFlow && (
 						<ChooseDomainLater
-							step={ this.props.step }
+							hasSearchedDomains={ Array.isArray( this.props.step?.domainForm?.searchResults ) }
 							flowName={ flowName }
 							handleDomainExplainerClick={ this.handleDomainExplainerClick }
 							showEscapeHatchAfterQuery={
