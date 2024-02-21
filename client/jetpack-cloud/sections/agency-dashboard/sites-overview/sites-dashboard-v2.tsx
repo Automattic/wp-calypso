@@ -101,17 +101,16 @@ export default function SitesDashboardV2() {
 		[ setSitesViewState ]
 	);
 
-	const filtersMap: AgencyDashboardFilterMap = {
-		1: 'all_issues',
-		2: 'backup_failed',
-		3: 'backup_warning',
-		4: 'threats_found',
-		5: 'site_disconnected',
-		6: 'site_down',
-		7: 'plugin_updates',
-	};
-
 	useEffect( () => {
+		const filtersMap: AgencyDashboardFilterMap = {
+			1: 'all_issues',
+			2: 'backup_failed',
+			3: 'backup_warning',
+			4: 'threats_found',
+			5: 'site_disconnected',
+			6: 'site_down',
+			7: 'plugin_updates',
+		};
 		const filtersSelected = sitesViewState.filters.map( ( filter ) => filtersMap[ filter.value ] );
 
 		updateDashboardURLQueryArgs( { filter: filtersSelected } );
