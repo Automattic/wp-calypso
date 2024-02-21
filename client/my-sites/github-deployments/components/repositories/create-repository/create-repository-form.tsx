@@ -24,11 +24,13 @@ export type OnRepositoryCreatedParams = CreateRepositoryMutationVariables &
 type CreateRepositoryFormProps = {
 	onRepositoryCreated( args: OnRepositoryCreatedParams ): void;
 	isPending?: boolean;
+	isDisabled?: boolean;
 };
 
 export const CreateRepositoryForm = ( {
 	onRepositoryCreated,
 	isPending,
+	isDisabled,
 }: CreateRepositoryFormProps ) => {
 	const { __ } = useI18n();
 	const {
@@ -177,7 +179,7 @@ export const CreateRepositoryForm = ( {
 				<Button
 					primary
 					busy={ isPending }
-					disabled={ ! isFormValid }
+					disabled={ ! isFormValid || isDisabled }
 					onClick={ handleCreateRepository }
 				>
 					{ __( 'Create repository' ) }

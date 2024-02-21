@@ -6,16 +6,13 @@ import ActionPanelBody from 'calypso/components/action-panel/body';
 import HeaderCake from 'calypso/components/header-cake';
 import { indexPage } from 'calypso/my-sites/github-deployments/routes';
 import { useDispatch, useSelector } from 'calypso/state/index';
-import { errorNotice, successNotice } from 'calypso/state/notices/actions';
+import { errorNotice, successNotice, warningNotice } from 'calypso/state/notices/actions';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors/index';
 import { useCreateCodeDeployment } from '../../../deployment-creation/use-create-code-deployment';
 import { PageShell } from '../../page-shell/page-shell';
 import { CreateRepositoryForm, OnRepositoryCreatedParams } from './create-repository-form';
-import {
-	useCreateRepository,
-	MutationResponse as CreateRepositoryMutationResponse,
-} from './use-create-repository';
+import { useCreateRepository } from './use-create-repository';
 
 import './style.scss';
 
@@ -37,74 +34,62 @@ export const CreateRepository = () => {
 
 	const dispatch = useDispatch();
 
-	const { createRepository, isPending } = useCreateRepository( siteId as number );
-	const { createDeployment } = useCreateCodeDeployment( siteId as number );
-
-	async function handleCreateRepository( args: OnRepositoryCreatedParams ) {
-		let repository: CreateRepositoryMutationResponse | null = null;
-
-		try {
-			repository = await createRepository( args );
-			dispatch( successNotice( __( 'Repository created.' ), noticeOptions ) );
-		} catch ( error ) {
-			if ( error instanceof Error ) {
-				dispatch(
-					errorNotice(
-						// translators: "reason" is why creating the repository failed.
-						sprintf( __( 'Failed to create repository: %(reason)s' ), { reason: error.message } ),
-						{
-							...noticeOptions,
-						}
-					)
-				);
-			}
-
-			return;
-		}
-
-		if ( ! canUserCreateDeployment ) {
+	const { createRepository, isPending } = useCreateRepository( {
+		onError: ( error ) => {
 			dispatch(
 				errorNotice(
-					__( 'You do not have permissions to connect the created repository to the site.' ),
+					// translators: "reason" is why creating the repository failed.
+					sprintf( __( 'Failed to create repository: %(reason)s' ), { reason: error.message } ),
 					{
-						isPersistent: true,
+						...noticeOptions,
 					}
 				)
 			);
-
+		},
+	} );
+	const { createDeployment, isPending: isDeploying } = useCreateCodeDeployment( siteId as number, {
+		onSuccess: () => {
 			goToDeployments();
+			dispatch( successNotice( __( 'Repository connected' ), noticeOptions ) );
+		},
+		onError: ( error ) => {
+			dispatch(
+				errorNotice(
+					// translators: "reason" is why creating the repository failed.
+					sprintf( __( 'Failed to connect repository: %(reason)s' ), {
+						reason: error.message,
+					} ),
+					{
+						...noticeOptions,
+					}
+				)
+			);
+		},
+	} );
 
+	if ( ! canUserCreateDeployment ) {
+		dispatch(
+			warningNotice( __( 'You do not have permissions to create a repository to this site.' ), {
+				isPersistent: true,
+			} )
+		);
+	}
+
+	const handleCreateRepository = ( args: OnRepositoryCreatedParams ) => {
+		if ( ! canUserCreateDeployment ) {
 			return;
 		}
 
-		try {
-			await createDeployment( {
+		createRepository( args ).then( ( response ) => {
+			createDeployment( {
 				installationId: args.installationId,
-				externalRepositoryId: repository.external_id,
-				branchName: repository.default_branch,
+				externalRepositoryId: response.external_id,
+				branchName: response.default_branch,
 				targetDir: args.targetDir,
 				isAutomated: args.isAutomated,
 			} );
-
-			dispatch( successNotice( __( 'Repository connected.' ), noticeOptions ) );
-		} catch ( error ) {
-			if ( error instanceof Error ) {
-				dispatch(
-					errorNotice(
-						// translators: "reason" is why creating the repository failed.
-						sprintf( __( 'Failed to connect repository: %(reason)s' ), {
-							reason: error.message,
-						} ),
-						{
-							...noticeOptions,
-						}
-					)
-				);
-			}
-		} finally {
-			goToDeployments();
-		}
-	}
+		} );
+	};
 
 	return (
 		<PageShell pageTitle={ __( 'Create repository' ) }>
@@ -115,7 +100,8 @@ export const CreateRepository = () => {
 				<ActionPanelBody>
 					<CreateRepositoryForm
 						onRepositoryCreated={ handleCreateRepository }
-						isPending={ isPending }
+						isPending={ isPending || isDeploying }
+						isDisabled={ ! canUserCreateDeployment }
 					/>
 				</ActionPanelBody>
 			</ActionPanel>
