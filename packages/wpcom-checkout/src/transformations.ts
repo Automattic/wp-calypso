@@ -253,11 +253,22 @@ function getBillPeriodMonthsForIntroductoryOfferInterval(
 	}
 }
 
-function doesIntroductoryOfferHaveDifferentTermLengthThanProduct(
-	costOverride: ResponseCartCostOverride,
+/**
+ * Returns true if the product has an introductory offer which is for a
+ * different term length than the term length of the product (eg: a 3 month
+ * discount for an annual plan).
+ */
+export function doesIntroductoryOfferHaveDifferentTermLengthThanProduct(
 	product: ResponseCartProduct
 ): boolean {
-	if ( costOverride.override_code !== 'introductory-offer' || ! product.introductory_offer_terms ) {
+	if (
+		product.cost_overrides?.some( ( costOverride ) => {
+			costOverride.override_code !== 'introductory-offer';
+		} )
+	) {
+		return false;
+	}
+	if ( ! product.introductory_offer_terms?.enabled ) {
 		return false;
 	}
 	if (
@@ -288,7 +299,7 @@ export function filterCostOverridesForLineItem(
 			// annual plan) need to be displayed differently because the
 			// discount is only temporary and the user will still be charged
 			// the remainder before the next renewal.
-			if ( doesIntroductoryOfferHaveDifferentTermLengthThanProduct( costOverride, product ) ) {
+			if ( doesIntroductoryOfferHaveDifferentTermLengthThanProduct( product ) ) {
 				return {
 					humanReadableReason: costOverride.human_readable_reason,
 					overrideCode: costOverride.override_code,

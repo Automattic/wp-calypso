@@ -41,7 +41,10 @@ import { isWpComProductRenewal } from './is-wpcom-product-renewal';
 import { joinClasses } from './join-classes';
 import { getPartnerCoupon } from './partner-coupon';
 import IonosLogo from './partner-logo-ionos';
-import { getSubtotalWithoutDiscountsForProduct } from './transformations';
+import {
+	doesIntroductoryOfferHaveDifferentTermLengthThanProduct,
+	getSubtotalWithoutDiscountsForProduct,
+} from './transformations';
 import type { LineItemType } from './types';
 import type {
 	GSuiteProductUser,
@@ -198,7 +201,10 @@ const LineItemTitle = styled.div< { theme?: Theme; isSummary?: boolean } >`
 		   font-size: inherit;` }
 `;
 
-const LineItemPriceWrapper = styled.span< { theme?: Theme; isSummary?: boolean } >`
+const LineItemPriceWrapper = styled.span`
+	display: flex;
+	gap: 4px;
+
 	${ hasCheckoutVersion2
 		? `margin-left: 0px;
 		   font-size: 14px;
@@ -247,25 +253,16 @@ const DeleteButton = styled( Button )< { theme?: Theme } >`
 `;
 
 function LineItemPrice( {
-	isDiscounted,
 	actualAmount,
-	originalAmount,
-	isSummary,
+	crossedOutAmount,
 }: {
-	isDiscounted?: boolean;
-	actualAmount: string;
-	originalAmount?: string;
-	isSummary?: boolean;
+	actualAmount?: string;
+	crossedOutAmount?: string;
 } ) {
 	return (
-		<LineItemPriceWrapper isSummary={ isSummary }>
-			{ isDiscounted && originalAmount ? (
-				<>
-					<s>{ originalAmount }</s> { actualAmount }
-				</>
-			) : (
-				actualAmount
-			) }
+		<LineItemPriceWrapper>
+			{ crossedOutAmount && <s>{ crossedOutAmount }</s> }
+			<span>{ actualAmount }</span>
 		</LineItemPriceWrapper>
 	);
 }
@@ -313,14 +310,10 @@ function WPNonProductLineItem( {
 				{ label }
 			</LineItemTitle>
 			{ hasCheckoutVersion2 ? (
-				<LineItemPrice
-					aria-labelledby={ itemSpanId }
-					actualAmount={ actualAmountDisplay }
-					isSummary={ isSummary }
-				/>
+				<LineItemPrice aria-labelledby={ itemSpanId } actualAmount={ actualAmountDisplay } />
 			) : (
 				<span aria-labelledby={ itemSpanId } className="checkout-line-item__price">
-					<LineItemPrice actualAmount={ actualAmountDisplay } isSummary={ isSummary } />
+					<LineItemPrice actualAmount={ actualAmountDisplay } />
 				</span>
 			) }
 			{ hasDeleteButton && removeProductFromCart && (
@@ -1335,7 +1328,22 @@ function CheckoutLineItem( {
 		coupon: responseCart.coupon,
 	} );
 
-	/* eslint-disable wpcalypso/jsx-classname-namespace */
+	const isIntroductoryOfferWithDifferentLength =
+		doesIntroductoryOfferHaveDifferentTermLengthThanProduct( product );
+	const amountWithIntroductoryOfferOnly = product.cost_overrides?.reduce(
+		( total, costOverride ) =>
+			costOverride.override_code === 'introductory-offer'
+				? total + costOverride.new_subtotal_integer
+				: total,
+		0
+	);
+	const formattedAmountWithIntroductoryOfferOnly = amountWithIntroductoryOfferOnly
+		? formatCurrency( amountWithIntroductoryOfferOnly, product.currency, {
+				isSmallestUnit: true,
+				stripZeros: true,
+		  } )
+		: undefined;
+
 	return (
 		<div
 			className={ joinClasses( [ className, 'checkout-line-item' ] ) }
@@ -1357,19 +1365,28 @@ function CheckoutLineItem( {
 			</LineItemTitle>
 			{ hasCheckoutVersion2 ? (
 				<LineItemPrice
-					actualAmount={ formatCurrency( costBeforeDiscounts, product.currency, {
-						isSmallestUnit: true,
-						stripZeros: true,
-					} ) }
-					isSummary={ isSummary }
+					actualAmount={
+						isIntroductoryOfferWithDifferentLength
+							? formattedAmountWithIntroductoryOfferOnly
+							: formatCurrency( costBeforeDiscounts, product.currency, {
+									isSmallestUnit: true,
+									stripZeros: true,
+							  } )
+					}
+					crossedOutAmount={
+						isIntroductoryOfferWithDifferentLength
+							? formatCurrency( costBeforeDiscounts, product.currency, {
+									isSmallestUnit: true,
+									stripZeros: true,
+							  } )
+							: undefined
+					}
 				/>
 			) : (
 				<span aria-labelledby={ itemSpanId } className="checkout-line-item__price">
 					<LineItemPrice
-						isDiscounted={ isDiscounted }
 						actualAmount={ actualAmountDisplay }
-						originalAmount={ originalAmountDisplay }
-						isSummary={ isSummary }
+						crossedOutAmount={ isDiscounted ? originalAmountDisplay : undefined }
 					/>
 				</span>
 			) }
@@ -1485,5 +1502,4 @@ function CheckoutLineItem( {
 			) }
 		</div>
 	);
-	/* eslint-enable wpcalypso/jsx-classname-namespace */
 }
