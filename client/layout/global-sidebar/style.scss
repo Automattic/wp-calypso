@@ -122,6 +122,12 @@ $brand-text: "SF Pro Text", $sans;
 			flex-direction: column;
 		}
 
+		.sidebar {
+			&:first-child {
+				margin-top: 4px;
+			}
+		}
+
 		li.sidebar__separator {
 			margin: 0 0 24px;
 		}
