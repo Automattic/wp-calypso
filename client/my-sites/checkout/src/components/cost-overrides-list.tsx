@@ -165,7 +165,7 @@ function LineItemCostOverrideIntroOfferDueDate( { product }: { product: Response
 	if ( ! doesIntroductoryOfferHaveDifferentTermLengthThanProduct( product ) ) {
 		return null;
 	}
-	const dueDate = responseCart.terms_of_service?.find( ( tos ) => {
+	const tosData = responseCart.terms_of_service?.find( ( tos ) => {
 		if ( ! new RegExp( `product_id:${ product.product_id }` ).test( tos.key ) ) {
 			return false;
 		}
@@ -173,8 +173,10 @@ function LineItemCostOverrideIntroOfferDueDate( { product }: { product: Response
 			return false;
 		}
 		return true;
-	} )?.args?.subscription_auto_renew_date;
-	if ( ! dueDate ) {
+	} )?.args;
+	const dueDate = tosData?.subscription_auto_renew_date;
+	const dueAmount = tosData?.renewal_price_integer;
+	if ( ! dueDate || ! dueAmount ) {
 		return null;
 	}
 
@@ -185,7 +187,10 @@ function LineItemCostOverrideIntroOfferDueDate( { product }: { product: Response
 					dueDate: new Date( dueDate ).toLocaleDateString( undefined, {
 						dateStyle: 'long',
 					} ),
-					price: '$26.25', // FIXME
+					price: formatCurrency( dueAmount, product.currency, {
+						isSmallestUnit: true,
+						stripZeros: true,
+					} ),
 				},
 			} ) }
 		</div>
