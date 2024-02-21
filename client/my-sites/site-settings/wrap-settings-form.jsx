@@ -103,6 +103,7 @@ const wrapSettingsForm = ( getFormSettings ) => ( SettingsForm ) => {
 					this.props.errorNotice( text, noticeSettings );
 				}
 			} else if (
+				! this.props.isSavingSettings &&
 				this.props.siteIsJetpack &&
 				this.props.saveInstantSearchRequest?.status === 'success' &&
 				( typeof prevProps.saveInstantSearchRequest?.lastUpdated === 'undefined' ||
