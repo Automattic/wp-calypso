@@ -2,6 +2,7 @@ import { isEnabled } from '@automattic/calypso-config';
 import { Button } from '@automattic/components';
 import { isWithinBreakpoint } from '@automattic/viewport';
 import { getQueryArg, removeQueryArgs, addQueryArgs } from '@wordpress/url';
+import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import { useContext, useEffect, useState, useMemo, useCallback } from 'react';
 import DocumentHead from 'calypso/components/data/document-head';
@@ -228,76 +229,128 @@ export default function SitesDashboardV2() {
 		);
 	};
 
+	const closeSitePreviewPane = useCallback( () => {
+		if ( sitesViewState.selectedSite ) {
+			setSitesViewState( { ...sitesViewState, type: 'table', selectedSite: undefined } );
+		}
+	}, [ sitesViewState, setSitesViewState ] );
+
+	// TODO: the style element is injected temporary here only to not interfere with the styles in production.
 	return (
-		<div className="sites-overview">
-			<DocumentHead title={ pageTitle } />
-			<SidebarNavigation sectionTitle={ pageTitle } />
-			<SiteNotifications />
-			<div className="sites-overview__container">
-				<div className="sites-overview__tabs">
-					<div className="sites-overview__content-wrapper">
-						<DashboardBanners />
-
-						{ isProvisioningSite && ! hasDismissedProvisioningNotice && (
-							<Notice status="is-info" onDismissClick={ onDismissProvisioningNotice }>
-								{ translate(
-									"We're setting up your new WordPress.com site and will notify you once it's ready, which should only take a few minutes."
-								) }
-							</Notice>
-						) }
-						{ data?.sites && <SiteAddLicenseNotification /> }
-						<SiteContentHeader
-							content={
-								// render content only on large screens, The buttons for small screen have their own section
-								isLargeScreen &&
-								( selectedLicensesCount > 0 ? (
-									renderIssueLicenseButton()
-								) : (
-									<SiteTopHeaderButtons />
-								) )
-							}
-							pageTitle={ pageTitle }
-							// Only renderIssueLicenseButton should be sticky.
-							showStickyContent={ !! ( selectedLicensesCount > 0 && isLargeScreen ) }
-						/>
-
-						{
-							// Render the add site and issue license buttons on mobile as a different component.
-							! isLargeScreen && <SiteTopHeaderButtons />
+		<>
+			<style>
+				{ `
+					.sidebar-v2,
+					.sidebar-v2__navigator .components-surface.components-card {
+						background: var(--studio-gray-0) !important;
+					}
+					.sites-overview__large-screen {
+						.site-search-filter-container__search .search.is-open .search__open-icon {
+							width: 60px;
 						}
+					}
+
+					.layout__content {
+						padding: 0 16px 16px calc(var(--sidebar-width-max) + 16px);
+					}
+					
+					@media (min-width: 661px) {
+						.theme-jetpack-cloud .layout.has-no-masterbar {
+							padding-top: 16px !important;
+						}
+					}
+					
+					.sites-dataviews__favorite-btn-wrapper .site-set-favorite__favorite-icon {
+						visibility: visible;
+					}
+				` }
+			</style>
+			<div
+				className={ classNames(
+					'sites-dashboard__layout',
+					! sitesViewState.selectedSite && 'preview-hidden'
+				) }
+			>
+				<div className="sites-overview">
+					<DocumentHead title={ pageTitle } />
+					<SidebarNavigation sectionTitle={ pageTitle } />
+					<SiteNotifications />
+					<div className="sites-overview__container">
+						<div className="sites-overview__tabs">
+							<div className="sites-overview__content-wrapper">
+								<DashboardBanners />
+
+								{ isProvisioningSite && ! hasDismissedProvisioningNotice && (
+									<Notice status="is-info" onDismissClick={ onDismissProvisioningNotice }>
+										{ translate(
+											"We're setting up your new WordPress.com site and will notify you once it's ready, which should only take a few minutes."
+										) }
+									</Notice>
+								) }
+								{ data?.sites && <SiteAddLicenseNotification /> }
+								<SiteContentHeader
+									content={
+										// render content only on large screens, The buttons for small screen have their own section
+										isLargeScreen &&
+										( selectedLicensesCount > 0 ? (
+											renderIssueLicenseButton()
+										) : (
+											<SiteTopHeaderButtons />
+										) )
+									}
+									pageTitle={ pageTitle }
+									// Only renderIssueLicenseButton should be sticky.
+									showStickyContent={ !! ( selectedLicensesCount > 0 && isLargeScreen ) }
+								/>
+								{
+									// Render the add site and issue license buttons on mobile as a different component.
+									! isLargeScreen && <SiteTopHeaderButtons />
+								}
+							</div>
+						</div>
+						<div className="sites-overview__content">
+							<DashboardDataContext.Provider
+								value={ {
+									verifiedContacts: {
+										emails: verifiedContacts?.emails ?? [],
+										phoneNumbers: verifiedContacts?.phoneNumbers ?? [],
+										refetchIfFailed: () => {
+											if ( fetchContactFailed ) {
+												refetchContacts();
+											}
+											return;
+										},
+									},
+									products: products ?? [],
+									isLargeScreen: isLargeScreen || false,
+								} }
+							>
+								<SitesDataViews
+									data={ data }
+									isLoading={ isLoading }
+									onSitesViewChange={ onSitesViewChange }
+									sitesViewState={ sitesViewState }
+								/>
+							</DashboardDataContext.Provider>
+						</div>
+					</div>
+					{ ! isLargeScreen && selectedLicensesCount > 0 && (
+						<div className="sites-overview__issue-licenses-button-small-screen">
+							{ renderIssueLicenseButton() }
+						</div>
+					) }
+				</div>
+				<div className="site-preview__pane">
+					<div className="site-preview__header">
+						<h2>{ sitesViewState.selectedSite?.blogname }</h2>
+						<div>{ sitesViewState.selectedSite?.url }</div>
+						<hr />
+						<Button onClick={ closeSitePreviewPane } borderless>
+							<b>Close the Preview Pane</b>
+						</Button>
 					</div>
 				</div>
-				<div className="sites-overview__content">
-					<DashboardDataContext.Provider
-						value={ {
-							verifiedContacts: {
-								emails: verifiedContacts?.emails ?? [],
-								phoneNumbers: verifiedContacts?.phoneNumbers ?? [],
-								refetchIfFailed: () => {
-									if ( fetchContactFailed ) {
-										refetchContacts();
-									}
-									return;
-								},
-							},
-							products: products ?? [],
-							isLargeScreen: isLargeScreen || false,
-						} }
-					>
-						<SitesDataViews
-							data={ data }
-							isLoading={ isLoading }
-							onSitesViewChange={ onSitesViewChange }
-							sitesViewState={ sitesViewState }
-						/>
-					</DashboardDataContext.Provider>
-				</div>
 			</div>
-			{ ! isLargeScreen && selectedLicensesCount > 0 && (
-				<div className="sites-overview__issue-licenses-button-small-screen">
-					{ renderIssueLicenseButton() }
-				</div>
-			) }
-		</div>
+		</>
 	);
 }
