@@ -1,8 +1,6 @@
 .suggestion-search {
 	position: relative;
-	input.form-text-input {
-		padding-left: 42px;
-	}
+
 	.gridicon,
 	.spinner {
 		position: absolute;
@@ -14,6 +12,10 @@
 		// so this icon needs to move down a bit.
 		@include breakpoint-deprecated( "<660px" ) {
 			top: 16px;
+		}
+
+		+ input.form-text-input {
+			padding-left: 42px;
 		}
 	}
 
