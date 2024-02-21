@@ -130,7 +130,7 @@ export const PluginsUpdateManager = () => {
 							</tr>
 						</tbody>
 					</table>
-					<Text as="p" isBlock align="center">
+					<Text as="p">
 						<Icon className="icon-info" icon={ info } size={ 16 } />
 						The current feature implementation only allows to set up two schedules.
 					</Text>

@@ -47,8 +47,9 @@
 			}
 		}
 
-		&:last-child {
+		&:last-of-type {
 			border-bottom: solid 1px var(--color-border-subtle);
+			margin-bottom: 1rem;
 		}
 	}
 
@@ -60,5 +61,23 @@
 				margin-inline-end: 0.5rem;
 			}
 		}
+	}
+
+	.components-text.validation-msg {
+		display: block;
+		margin-bottom: 0.5rem;
+		font-size: 0.75rem;
+		color: var(--studio-red-50);
+
+		svg {
+			fill: var(--studio-red-50);
+			margin-left: 0;
+		}
+	}
+
+	.components-text.info-msg {
+		display: block;
+		font-size: 0.75rem;
+		margin-bottom: 0.5rem;
 	}
 }

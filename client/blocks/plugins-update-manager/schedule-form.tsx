@@ -4,11 +4,13 @@ import {
 	SearchControl,
 	SelectControl,
 	CheckboxControl,
+	__experimentalText as Text,
 	__experimentalVStack as VStack,
 	Flex,
 	FlexItem,
 	FlexBlock,
 } from '@wordpress/components';
+import { Icon, info } from '@wordpress/icons';
 import classnames from 'classnames';
 import { useState } from 'react';
 
@@ -31,6 +33,10 @@ export const ScheduleForm = () => {
 					<div className="form-field">
 						<label htmlFor="name">Name</label>
 						<TextControl id="name" value={ name } onChange={ setName } __next40pxDefaultSize />
+						<Text className="validation-msg">
+							<Icon className="icon-info" icon={ info } size={ 16 } />
+							Please provide a name to this plugin update schedule.
+						</Text>
 					</div>
 					<div className="form-field">
 						<label htmlFor="frequency">Update every</label>
@@ -55,9 +61,7 @@ export const ScheduleForm = () => {
 												<SelectControl
 													name="time"
 													__next40pxDefaultSize
-													onBlur={ function noRefCheck() {} }
 													onChange={ function noRefCheck() {} }
-													onFocus={ function noRefCheck() {} }
 													options={ [
 														{
 															label: '00',
@@ -272,11 +276,23 @@ export const ScheduleForm = () => {
 								</Flex>
 							) }
 						</div>
+						<Text className="validation-msg">
+							<Icon className="icon-info" icon={ info } size={ 16 } />
+							The current feature implementation only allows to set up two schedules.
+						</Text>
 					</div>
 				</FlexItem>
 				<FlexItem>
 					<div className="form-field">
 						<label htmlFor="select-all">Select plugins</label>
+						<span className="plugin-select-stats">10/10</span>
+						<Text className="info-msg">
+							Plugins not listed below are managed by WordPress.com and update automatically.
+						</Text>
+						<Text className="validation-msg">
+							<Icon className="icon-info" icon={ info } size={ 16 } />
+							Please pick another time for optimal performance, as this slot is already taken.
+						</Text>
 						<VStack className="checkbox-options">
 							<SearchControl onChange={ function noRefCheck() {} } />
 							<CheckboxControl
