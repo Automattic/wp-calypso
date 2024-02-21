@@ -139,6 +139,7 @@ export function getCreditsLineItemFromCart( responseCart: ResponseCart ): LineIt
 }
 
 function getDiscountReasonForIntroductoryOffer(
+	product: ResponseCartProduct,
 	terms: IntroductoryOfferTerms,
 	translate: ReturnType< typeof useTranslate >
 ): string {
@@ -146,7 +147,7 @@ function getDiscountReasonForIntroductoryOffer(
 		translate,
 		terms.interval_unit,
 		terms.interval_count,
-		false,
+		product.item_subtotal_integer === 0,
 		'checkout',
 		terms.transition_after_renewal_count
 	);
@@ -226,6 +227,7 @@ function makeIntroductoryOfferCostOverrideUnique(
 		return {
 			...costOverride,
 			human_readable_reason: getDiscountReasonForIntroductoryOffer(
+				product,
 				product.introductory_offer_terms,
 				translate
 			),
