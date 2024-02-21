@@ -9,7 +9,7 @@ const useDotcomPatterns = (
 	queryOptions: Omit< UseQueryOptions< any, unknown, Pattern[] >, 'queryKey' > = {}
 ): Pattern[] => {
 	const { data } = useQuery< any, unknown, Pattern[] >( {
-		queryKey: [ lang, 'patterns' ],
+		queryKey: [ 'patterns', 'assembler', lang ],
 		queryFn: () => {
 			return wpcomRequest( {
 				path: `/ptk/patterns/${ lang }`,

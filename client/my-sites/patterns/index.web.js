@@ -1,5 +1,9 @@
 import { getLanguageRouteParam } from '@automattic/i18n-utils';
-import { makeLayout, redirectWithoutLocaleParamInFrontIfLoggedIn } from 'calypso/controller';
+import {
+	makeLayout,
+	redirectWithoutLocaleParamInFrontIfLoggedIn,
+	render as clientRender,
+} from 'calypso/controller';
 import { setLocaleMiddleware } from 'calypso/controller/shared';
 import { fetchPatterns, renderPatterns } from 'calypso/my-sites/patterns/controller';
 
@@ -12,6 +16,7 @@ export default function ( router ) {
 		setLocaleMiddleware(),
 		fetchPatterns,
 		renderPatterns,
-		makeLayout
+		makeLayout,
+		clientRender
 	);
 }
