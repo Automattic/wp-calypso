@@ -31,7 +31,7 @@ export class LoginPage {
 				status: 200,
 			} );
 		} );
-		return await this.page.goto( getCalypsoURL( targetUrl ) );
+		return await this.page.goto( getCalypsoURL( targetUrl ), { timeout: 90000 } );
 	}
 
 	/**
@@ -122,6 +122,16 @@ export class LoginPage {
 		const locator = await this.page.locator( ':text-is("Continue with Apple")' );
 		await locator.click();
 
+		return locator;
+	}
+
+	/**
+	 * Clicks the "Continue with GitHub" link.
+	 */
+	async clickLoginWithGitHub(): Promise< Locator > {
+		const locator = await this.page.locator( ':text-is("Continue with GitHub")' );
+		await locator.waitFor();
+		await locator.click();
 		return locator;
 	}
 
