@@ -4,7 +4,7 @@ import { __ } from '@wordpress/i18n';
 import { ChangeEvent, useState } from 'react';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormTextInput from 'calypso/components/forms/form-text-input';
-import { GitHubAccountData } from 'calypso/my-sites/github-deployments/use-github-accounts-query';
+import { GitHubInstallationData } from 'calypso/my-sites/github-deployments/use-github-installations-query';
 import { useGithubRepositoryBranchesQuery } from 'calypso/my-sites/github-deployments/use-github-repository-branches-query';
 import { GitHubRepositoryData } from '../use-github-repositories-query';
 import { DeploymentStyle } from './repositories/deployment-style/deployment-style';
@@ -26,7 +26,7 @@ interface InitialValues {
 
 interface ConnectRepositoryDialogProps {
 	repository: GitHubRepositoryData;
-	account: GitHubAccountData;
+	installation: GitHubInstallationData;
 	ctaLabel: string;
 	initialValues?: InitialValues;
 	changeRepository?(): void;
@@ -35,7 +35,7 @@ interface ConnectRepositoryDialogProps {
 
 export const GitHubConnectionForm = ( {
 	repository,
-	account,
+	installation,
 	ctaLabel,
 	initialValues = { branch: repository.default_branch, destPath: '/', isAutomated: false },
 	changeRepository,
@@ -46,7 +46,7 @@ export const GitHubConnectionForm = ( {
 	const [ isAutoDeploy, setIsAutoDeploy ] = useState( initialValues.isAutomated );
 
 	const { data: branches = [ branch ], isLoading: isFetchingBranches } =
-		useGithubRepositoryBranchesQuery( account.external_id, repository.owner, repository.name );
+		useGithubRepositoryBranchesQuery( installation.external_id, repository.owner, repository.name );
 
 	const branchList = branches.length > 0 ? branches : [ branch ];
 	const branchOptions = branchList.map( ( branch ) => ( { value: branch, label: branch } ) );
@@ -66,7 +66,7 @@ export const GitHubConnectionForm = ( {
 						externalRepositoryId: repository.id,
 						branchName: branch,
 						targetDir: destPath,
-						installationId: account.external_id,
+						installationId: installation.external_id,
 						isAutomated: isAutoDeploy,
 					} );
 				} finally {

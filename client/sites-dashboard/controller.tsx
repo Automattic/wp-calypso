@@ -113,7 +113,7 @@ function hostingFlowForkingPage( context: PageJSContext, next: () => void ) {
 function sitesDashboard( context: PageJSContext, next: () => void ) {
 	let sitesDashboardGlobalStyles = css`
 		body.is-group-sites-dashboard {
-			background: #fdfdfd;
+			background: #ffffff;
 
 			.layout__content {
 				// The page header background extends all the way to the edge of the screen

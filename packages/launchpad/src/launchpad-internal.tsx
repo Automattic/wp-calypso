@@ -14,8 +14,7 @@ interface Props {
 	taskFilter?: ( tasks: Task[] ) => Task[];
 	useLaunchpadOptions?: UseLaunchpadOptions;
 	launchpadContext: string;
-	// Temporary flag to control the auto tracking of click events
-	enableAutoTracking?: boolean;
+	flow?: string;
 }
 
 /**
@@ -23,6 +22,7 @@ interface Props {
  * Please use the main Launchpad component whenever possible.
  */
 const LaunchpadInternal: FC< Props > = ( {
+	flow,
 	site,
 	siteSlug,
 	checklistSlug,
@@ -30,7 +30,6 @@ const LaunchpadInternal: FC< Props > = ( {
 	makeLastTaskPrimaryAction,
 	useLaunchpadOptions = {},
 	launchpadContext,
-	enableAutoTracking = false,
 } ) => {
 	const launchpadData = useLaunchpad(
 		siteSlug || '',
@@ -56,12 +55,11 @@ const LaunchpadInternal: FC< Props > = ( {
 		checklistSlug,
 		site,
 		context: launchpadContext,
+		flow,
 	} );
 
 	const itemClickHandler = ( task: Task ) => {
-		if ( enableAutoTracking ) {
-			trackTaskClick( task );
-		}
+		trackTaskClick( task );
 		task?.actionDispatch?.();
 	};
 

@@ -7,7 +7,7 @@ import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { useDispatch, useSelector } from '../../../state';
 import { GitHubLoadingPlaceholder } from '../components/loading-placeholder';
 import { CodeDeploymentData } from '../deployments/use-code-deployments-query';
-import { useGithubAccountsQuery } from '../use-github-accounts-query';
+import { useGithubInstallationsQuery } from '../use-github-installations-query';
 import { useGithubRepositoriesQuery } from '../use-github-repositories-query';
 import { useUpdateCodeDeployment } from './use-update-code-deployment';
 
@@ -24,7 +24,7 @@ export const GitHubDeploymentManagementForm = ( {
 	codeDeployment,
 	onUpdated,
 }: GitHubDeploymentManagementFormProps ) => {
-	const installation = useGithubAccountsQuery().data?.find(
+	const installation = useGithubInstallationsQuery().data?.find(
 		( installation ) => installation.external_id === codeDeployment?.installation_id
 	);
 	const dispatch = useDispatch();
@@ -74,7 +74,7 @@ export const GitHubDeploymentManagementForm = ( {
 
 	return (
 		<GitHubConnectionForm
-			account={ installation }
+			installation={ installation }
 			ctaLabel={ __( 'Update connection' ) }
 			repository={ repository }
 			initialValues={ initialValues }

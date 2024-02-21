@@ -1,3 +1,4 @@
+@import "@wordpress/base-styles/variables";
 @import "@automattic/typography/styles/variables";
 $brand-text: "SF Pro Text", $sans;
 .global-sidebar {
@@ -27,7 +28,7 @@ $brand-text: "SF Pro Text", $sans;
 			color: var(--studio-black);
 			content: attr(data-tooltip);
 			display: none;
-			font-size: 14px; /* stylelint-disable-line declaration-property-unit-allowed-list */
+			font-size: $font-body-small;
 			padding: 6px 10px;
 			position: absolute;
 			right: 0;
@@ -40,12 +41,13 @@ $brand-text: "SF Pro Text", $sans;
 		}
 	}
 
-	.tooltip-bottom {
+	.tooltip-bottom-left {
 		&::after {
 			left: 0;
 			right: unset;
 		}
 	}
+
 	.tooltip-top {
 		&::after {
 			right: unset;
@@ -87,7 +89,12 @@ $brand-text: "SF Pro Text", $sans;
 		}
 
 		.sidebar__item-search {
+			justify-content: center;
+			align-items: center;
 			cursor: pointer;
+			svg {
+				fill: var(--studio-white);
+			}
 		}
 	}
 
@@ -104,7 +111,6 @@ $brand-text: "SF Pro Text", $sans;
 		.sidebar__menu:not(.is-togglable) {
 			display: flex;
 			min-height: unset;
-			gap: 6px;
 			flex-direction: column;
 		}
 
@@ -167,7 +173,7 @@ $brand-text: "SF Pro Text", $sans;
 			align-items: center;
 			height: 16px;
 			padding: 8px 0;
-			font-size: 14px;  /* stylelint-disable-line declaration-property-unit-allowed-list */
+			font-size: $font-body-small;
 
 			svg {
 				&.wpicon {
@@ -231,7 +237,7 @@ $brand-text: "SF Pro Text", $sans;
 		}
 
 		.sidebar__back-link-text {
-			font-size: 13px; /* stylelint-disable-line declaration-property-unit-allowed-list */
+			font-size: $default-font-size;
 			vertical-align: text-bottom;
 		}
 	}
@@ -255,11 +261,14 @@ $brand-text: "SF Pro Text", $sans;
 			}
 		}
 	}
+}
 
-	.sidebar__item-search {
-		svg {
-			fill: var(--studio-white);
-		}
+.accessible-focus .global-sidebar {
+	*:focus {
+		outline-style: solid;
+		outline-color: var(--color-sidebar-menu-selected-background);
+		outline-width: 2px;
+		outline-offset: 2px;
 	}
 }
 

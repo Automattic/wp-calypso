@@ -5,7 +5,7 @@ import ActionPanel from '../../../components/action-panel';
 import HeaderCake from '../../../components/header-cake';
 import { useSelector } from '../../../state';
 import { GitHubLoadingPlaceholder } from '../components/loading-placeholder';
-import { PageShell } from '../components/page-shell';
+import { PageShell } from '../components/page-shell/page-shell';
 import { indexPage } from '../routes';
 import { GitHubDeploymentManagementForm } from './deployment-management-form';
 import { useCodeDeploymentQuery } from './use-code-deployment-query';

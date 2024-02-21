@@ -8,6 +8,7 @@ import {
 	STATE_SELECT_TEXT,
 } from 'calypso/components/domains/contact-details-form-fields/custom-form-fieldsets/utils';
 import { StateSelect } from 'calypso/my-sites/domains/components/form';
+import { useCachedContactDetails } from '../hooks/use-cached-domain-contact-details';
 import type { PaymentMethod, ProcessPayment } from '@automattic/composite-checkout';
 
 // We currently only show Pix for Brazil so we hard-code the country to avoid
@@ -44,8 +45,11 @@ class PixPaymentMethodState {
 
 	subscribers: StateSubscriber[] = [];
 
+	isTouched: boolean = false;
+
 	change = ( field: PixPaymentMethodKey, newValue: string ): void => {
 		this.data[ field ] = newValue;
+		this.isTouched = true;
 		this.notifySubscribers();
 	};
 
@@ -87,6 +91,50 @@ function useSubscribeToEventEmitter( state: PixPaymentMethodState ) {
 	}, [ state ] );
 }
 
+function usePrefillState( state: PixPaymentMethodState ): void {
+	const contactDetails = useCachedContactDetails();
+	// Don't try to pre-fill if the form has been edited. (Also prevents
+	// infinite loops.)
+	if ( state.isTouched ) {
+		return;
+	}
+
+	if ( ! contactDetails ) {
+		return;
+	}
+	if ( contactDetails.postalCode ) {
+		state.change( 'postalCode', contactDetails.postalCode );
+	}
+	if ( contactDetails.city ) {
+		state.change( 'city', contactDetails.city );
+	}
+	if ( contactDetails.state ) {
+		state.change( 'state', contactDetails.state );
+	}
+	if ( contactDetails.phone ) {
+		state.change( 'phoneNumber', contactDetails.phone );
+	}
+
+	// Street number and address are separate in the Pix form but joined
+	// together in the tax form (where `contactDetails` comes from), so this
+	// attempts to split out the street number so we can prefill both fields.
+	// Street numbers in Brazil seem to mostly follow the street name (eg: "Av.
+	// Foo, 1098"), so we look for a number at the end of the address. If this
+	// fails, we just fill the address field and leave the street number field
+	// blank. Other possible examples of entries: "Av. Xavier da Foo, 1773, apt
+	// 1000", or "Est. Terra Foo 700 c 4", or "rua Foo Bar 1975".
+	if ( contactDetails.address1 ) {
+		const regexpForStreetNumber = /^(\D+?)[,\s]+(\d+|\d+[,\s]+\w+\s+\d+)$/;
+		const streetNumberSearch = contactDetails.address1.match( regexpForStreetNumber );
+		if ( streetNumberSearch && streetNumberSearch[ 1 ] && streetNumberSearch[ 2 ] ) {
+			state.change( 'address', streetNumberSearch[ 1 ] );
+			state.change( 'streetNumber', streetNumberSearch[ 2 ] );
+		} else {
+			state.change( 'address', contactDetails.address1 );
+		}
+	}
+}
+
 const PixFormWrapper = styled.div`
 	position: relative;
 	padding: 0 24px 24px 24px;
@@ -97,6 +145,7 @@ const PixFormWrapper = styled.div`
 
 function PixForm( { state }: { state: PixPaymentMethodState } ) {
 	useSubscribeToEventEmitter( state );
+	usePrefillState( state );
 	const { formStatus } = useFormStatus();
 	const translate = useTranslate();
 

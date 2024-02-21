@@ -7,6 +7,7 @@ import DocumentHead from 'calypso/components/data/document-head';
 import JetpackColophon from 'calypso/components/jetpack-colophon';
 import Main from 'calypso/components/main';
 import NavigationHeader from 'calypso/components/navigation-header';
+import { EmptyListView } from 'calypso/my-sites/subscribers/components/empty-list-view';
 import { SubscriberLaunchpad } from 'calypso/my-sites/subscribers/components/subscriber-launchpad';
 import { useSelector } from 'calypso/state';
 import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
@@ -61,7 +62,14 @@ const StatsSubscribersPage = ( { period }: StatsSubscribersPageProps ) => {
 	const hasNoSubscriberOtherThanAdmin =
 		! subscribersTotals?.total ||
 		( subscribersTotals?.total === 1 && subscribersTotals?.is_owner_subscribing );
-	const showLaunchpad = ! isLoading && ( isSimple || isAtomic ) && hasNoSubscriberOtherThanAdmin;
+	const showLaunchpad = ! isLoading && hasNoSubscriberOtherThanAdmin;
+
+	const emptyComponent =
+		isSimple || isAtomic ? (
+			<SubscriberLaunchpad launchpadContext="subscriber-stats" />
+		) : (
+			<EmptyListView />
+		);
 
 	// Track the last viewed tab.
 	// Necessary to properly configure the fixed navigation headers.
@@ -89,7 +97,7 @@ const StatsSubscribersPage = ( { period }: StatsSubscribersPageProps ) => {
 				{ isLoading && <StatsModulePlaceholder className="is-subscriber-page" isLoading /> }
 				{ ! isLoading &&
 					( showLaunchpad ? (
-						<SubscriberLaunchpad launchpadContext="subscriber-stats" />
+						emptyComponent
 					) : (
 						<>
 							<SubscribersHighlightSection siteId={ siteId } />

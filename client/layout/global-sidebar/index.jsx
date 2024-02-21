@@ -2,7 +2,7 @@ import { Spinner, Gridicon } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import { useSelector } from 'react-redux';
 import { useCurrentRoute } from 'calypso/components/route';
-import GlobalSidebarHeader from 'calypso/layout/global-sidebar/header';
+import { GlobalSidebarHeader } from 'calypso/layout/global-sidebar/header';
 import useSiteMenuItems from 'calypso/my-sites/sidebar/use-site-menu-items';
 import { getIsRequestingAdminMenu } from 'calypso/state/admin-menu/selectors';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';

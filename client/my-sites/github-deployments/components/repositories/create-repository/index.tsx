@@ -4,12 +4,12 @@ import { useI18n } from '@wordpress/react-i18n';
 import ActionPanel from 'calypso/components/action-panel';
 import ActionPanelBody from 'calypso/components/action-panel/body';
 import HeaderCake from 'calypso/components/header-cake';
-import Main from 'calypso/components/main';
-import { createPage, indexPage } from 'calypso/my-sites/github-deployments/routes';
+import { indexPage } from 'calypso/my-sites/github-deployments/routes';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { useDispatch, useSelector } from 'calypso/state/index';
 import { errorNotice, successNotice } from 'calypso/state/notices/actions';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors/index';
+import { PageShell } from '../../page-shell/page-shell';
 import { CreateRepositoryForm } from './create-repository-form';
 import {
 	MutationVariables,
@@ -26,7 +26,6 @@ export const CreateRepository = () => {
 	const { __ } = useI18n();
 	const siteId = useSelector( getSelectedSiteId );
 	const siteSlug = useSelector( getSelectedSiteSlug );
-	const createPath = createPage( siteSlug! );
 	const goToDeployments = () => {
 		page( indexPage( siteSlug! ) );
 	};
@@ -66,8 +65,8 @@ export const CreateRepository = () => {
 	}
 
 	return (
-		<Main fullWidthLayout>
-			<HeaderCake backHref={ createPath }>
+		<PageShell pageTitle={ __( 'Create repository' ) }>
+			<HeaderCake onClick={ () => history.back() } isCompact>
 				<h1>{ __( 'Create repository' ) }</h1>
 			</HeaderCake>
 			<ActionPanel>
@@ -78,6 +77,6 @@ export const CreateRepository = () => {
 					/>
 				</ActionPanelBody>
 			</ActionPanel>
-		</Main>
+		</PageShell>
 	);
 };

@@ -4,7 +4,7 @@ import { useSelector } from 'calypso/state';
 import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import ActionPanel from '../../../components/action-panel';
 import HeaderCake from '../../../components/header-cake';
-import { PageShell } from '../components/page-shell';
+import { PageShell } from '../components/page-shell/page-shell';
 import { GitHubBrowseRepositories } from '../components/repositories/browse-repositories';
 import { createDeploymentPage, indexPage } from '../routes';
 import { GitHubDeploymentCreationForm } from './deployment-creation-form';
