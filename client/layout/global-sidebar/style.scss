@@ -100,7 +100,7 @@ $brand-text: "SF Pro Text", $sans;
 		.sidebar__skip-navigation {
 			position: absolute;
 			left: -10000px;
-			z-index: 1;
+			z-index: z-index("root", ".sidebar__skip-navigation");
 			border-radius: 2px;
 
 			&:focus {
