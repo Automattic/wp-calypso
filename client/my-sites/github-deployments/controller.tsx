@@ -1,13 +1,15 @@
-import { isEnabled } from '@automattic/calypso-config';
 import { PageViewTracker } from 'calypso/lib/analytics/page-view-tracker';
 import { CreateRepository } from 'calypso/my-sites/github-deployments/components/repositories/create-repository/index';
-import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import { GitHubDeploymentCreation } from './deployment-creation';
 import { GitHubDeploymentManagement } from './deployment-management';
 import { GitHubDeployments } from './deployments';
 import { indexPage } from './routes';
+import {
+	GitHubDeploymentsAvailableResponse,
+	gitHubDeploymentsAvailableQueryOptions,
+} from './use-is-feature-available';
 import type { Callback } from '@automattic/calypso-router';
 
 export const deploymentsList: Callback = ( context, next ) => {
@@ -78,7 +80,7 @@ export const redirectHomeIfIneligible: Callback = ( context, next ) => {
 	const siteId = getSelectedSiteId( state );
 	const siteSlug = getSelectedSiteSlug( state );
 
-	if ( ! isEnabled( 'github-deployments' ) || ! isAtomicSite( state, siteId ) ) {
+	if ( ! siteId ) {
 		context.page.replace( `/home/${ siteSlug }` );
 		return;
 	}
@@ -88,5 +90,16 @@ export const redirectHomeIfIneligible: Callback = ( context, next ) => {
 		return;
 	}
 
-	next();
+	context.queryClient
+		.fetchQuery( gitHubDeploymentsAvailableQueryOptions( { siteId } ) )
+		.then( ( result: GitHubDeploymentsAvailableResponse ) => {
+			if ( result.available ) {
+				next();
+			} else {
+				context.page.replace( `/home/${ siteSlug }` );
+			}
+		} )
+		.catch( () => {
+			context.page.replace( `/home/${ siteSlug }` );
+		} );
 };
