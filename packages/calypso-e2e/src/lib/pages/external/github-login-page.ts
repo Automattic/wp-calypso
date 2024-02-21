@@ -23,7 +23,7 @@ export class GitHubLoginPage {
 	/**
 	 * Construct and instance of the GitHubLoginPage.
 	 *
-	 * @param {Page} page Handler for instance of the Google login page.
+	 * @param {Page} page Handler for instance of the GitHub login page.
 	 */
 	constructor( private page: Page ) {}
 
@@ -55,9 +55,9 @@ export class GitHubLoginPage {
 	}
 
 	/**
-	 * Fills the Apple ID username/email field.
+	 * Fills the GitHub username/email field.
 	 *
-	 * @param {string} email Username (Apple ID) of the user.
+	 * @param {string} email Username of the user.
 	 */
 	async enterEmail( email: string ): Promise< void > {
 		const locator = this.page.locator( selectors.emailInput );
@@ -90,17 +90,5 @@ export class GitHubLoginPage {
 		const buttonLocator = this.page.locator( selectors.authorizeFormButton );
 		await buttonLocator.waitFor( { timeout: 2000 } );
 		await buttonLocator.click();
-	}
-
-	/* 2FA */
-
-	/**
-	 * Fills the 2FA code.
-	 *
-	 * @param {string} code 2FA code for the user.
-	 */
-	async enter2FACode( code: string ): Promise< void > {
-		const locator = this.page.locator( selectors.otpInput ).first();
-		await locator.type( code, { delay: 150 } );
 	}
 }
