@@ -239,7 +239,7 @@ const SiteSettingPrivacyForm = ( {
 									onClick={ () => recordEvent( 'Clicked Partnership Radio Button' ) }
 								/>
 								<span>
-									{ translate( 'Prevent third-party data sharing for %(siteName)s', {
+									{ translate( 'Prevent third-party sharing for %(siteName)s', {
 										args: {
 											siteName: siteSlug || '',
 										},
@@ -247,7 +247,7 @@ const SiteSettingPrivacyForm = ( {
 								</span>
 								<FormSettingExplanation>
 									{ translate(
-										'This option will prevent this site’s content from being shared with our licensed network of data and research partners, including training AI models. {{a}}Learn more{{/a}}.',
+										'This option will prevent this site’s content from being shared with our licensed network of data and research partners, including those that train AI models. {{a}}Learn more{{/a}}.',
 										{
 											components: {
 												a: (
