@@ -14,14 +14,12 @@ import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { getCurrentUserId } from 'calypso/state/current-user/selectors';
 import ImportedUserItem from './imported-user-item';
 import { getRole } from './utils';
-import type { UsersQuery, Member } from '@automattic/data-stores';
+import type { UsersQuery, Member, SiteDetails } from '@automattic/data-stores';
 
 import './style.scss';
 
 interface Props {
-	site: {
-		ID: number;
-	};
+	site: SiteDetails;
 	onSubmit: () => void;
 }
 
