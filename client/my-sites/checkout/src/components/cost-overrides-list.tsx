@@ -200,7 +200,7 @@ function LineItemCostOverrideIntroOfferDueDate( { product }: { product: Response
 				} ) }
 			</div>
 			<div>
-				{ translate( 'Due %(dueDate)s: %(price)s', {
+				{ translate( 'Billed %(dueDate)s: %(price)s', {
 					args: {
 						dueDate: new Date( dueDate ).toLocaleDateString( undefined, {
 							dateStyle: 'long',
