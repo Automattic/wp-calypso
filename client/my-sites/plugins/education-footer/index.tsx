@@ -173,13 +173,13 @@ const EducationFooter = () => {
 						target="_blank"
 						title={
 							<CardText color="var(--studio-gray-100)">
-								{ __( 'How to Choose WordPress Plugins for Your Website (7 Tips)' ) }
+								{ __( 'How to Use WordPress Plugins: The Complete Beginner’s Guide' ) }
 							</CardText>
 						}
 						titleMarginBottom="16px"
 						cta={ <ReadMoreLink /> }
 						url={ localizeUrl(
-							'https://wordpress.com/go/customization/how-to-choose-wordpress-plugins-for-your-website-7-tips/'
+							'https://wordpress.com/go/website-building/how-to-use-wordpress-plugins/'
 						) }
 						border="var(--studio-gray-5)"
 						onClick={ () => onClickLinkCard( 'customization' ) }
