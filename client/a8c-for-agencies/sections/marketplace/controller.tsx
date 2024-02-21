@@ -1,10 +1,10 @@
 import { type Callback } from '@automattic/calypso-router';
 import MainSidebar from '../../components/sidebar-menu/main';
+import IssueLicense from './issue-license';
 
 export const marketplaceContext: Callback = ( context, next ) => {
-	context.header = <div>Header</div>;
+	const { site_id } = context.query;
 	context.secondary = <MainSidebar path={ context.path } />;
-	context.primary = <div>Marketplace</div>;
-
+	context.primary = <IssueLicense siteId={ site_id } />;
 	next();
 };
