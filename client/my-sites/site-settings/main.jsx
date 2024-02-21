@@ -1,3 +1,4 @@
+import { isEnabled } from '@automattic/calypso-config';
 import { localize, translate } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
@@ -51,7 +52,9 @@ const SiteSettingsComponent = ( {
 			<JetpackDevModeNotice />
 			<JetpackBackupCredsBanner event="settings-backup-credentials" />
 			<NavigationHeader
-				screenOptionsTab="options-general.php"
+				screenOptionsTab={
+					isEnabled( 'layout/dotcom-nav-redesign' ) && isClassicView ? false : 'options-general.php'
+				}
 				navigationItems={ [] }
 				title={ getTitle( isClassicView ) }
 				subtitle={ getSubtitle( isClassicView ) }
