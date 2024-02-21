@@ -7,6 +7,7 @@ export const CODE_DEPLOYMENTS_QUERY_KEY = 'code-deployments';
 
 export interface Workflows {
 	file_name: string;
+	workflow_path: string;
 }
 export type WorkFlowStates = 'loading' | 'success' | 'error';
 

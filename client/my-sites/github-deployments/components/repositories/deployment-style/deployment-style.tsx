@@ -31,7 +31,8 @@ interface DeploymentStyleProps {
 	installationId: number;
 	repository: GitHubRepositoryData;
 	branchName: string;
-	onChooseWorkflow?( workflowFilename: string ): void;
+	workflowPath?: string;
+	onChooseWorkflow?( workflowFilename: string | undefined ): void;
 	onValidationChange?( status: WorkFlowStates ): void;
 }
 interface WorkflowsValidationItem {
@@ -47,14 +48,18 @@ export const DeploymentStyle = ( {
 	installationId,
 	repository,
 	branchName,
+	workflowPath,
 	onChooseWorkflow,
 	onValidationChange,
 }: DeploymentStyleProps ) => {
 	const dispatch = useDispatch();
-	const [ deploymentStyle, setDeploymentStyle ] = useState< DeploymentStyle >( 'simple' );
-	const [ selectedWorkflow, setSelectedWorkflow ] = useState( 'none' );
+	const [ deploymentStyle, setDeploymentStyle ] = useState< DeploymentStyle >(
+		workflowPath ? 'custom' : 'simple'
+	);
+	const [ selectedWorkflow, setSelectedWorkflow ] = useState( workflowPath ?? 'none' );
 	const [ isCreatingNewWorkflow, setIsCreatingNewWorkflow ] = useState( false );
-	const [ validationTriggered, setValidationTriggered ] = useState( false );
+	// const [ validationTriggered, setValidationTriggered ] = useState( false );
+	const validationTriggered = false;
 	const [ errorMesseage, setErrorMesseage ] = useState( '' );
 
 	const { data: workflows, isLoading: isFetchingWorkflows } = useDeploymentWorkflowsQuery(
@@ -68,20 +73,26 @@ export const DeploymentStyle = ( {
 	const workflowsForRendering = useMemo( () => {
 		const mappedValues = [ { value: 'none', label: __( 'Deployment workflows' ) } ].concat(
 			workflows?.map( ( workflow ) => ( {
-				value: workflow.file_name,
+				value: workflow.workflow_path,
 				label: workflow.file_name,
 			} ) ) || []
 		);
 
-		return mappedValues.concat( { value: 'create-new', label: __( 'Create new workflow' ) } );
+		return mappedValues;
+		// return mappedValues.concat( { value: 'create-new', label: __( 'Create new workflow' ) } );
 	}, [ workflows ] );
 
-	const { isLoading: isCheckingWorkflowFile, data: workflowCheckResult } = useCheckWorkflowQuery(
+	const {
+		isLoading: isCheckingWorkflowFile,
+		data: workflowCheckResult,
+		refetch: refreshWorkflowValidation,
+		isRefetching: isRefreshingWorkflowValidation,
+	} = useCheckWorkflowQuery(
 		installationId,
 		repository.name,
 		repository.owner,
 		branchName,
-		selectedWorkflow
+		selectedWorkflow || ''
 	);
 
 	const noticeOptions = {
@@ -149,16 +160,15 @@ export const DeploymentStyle = ( {
 
 	const handleWorkflowChange = ( workflowFilename: string ) => {
 		setSelectedWorkflow( workflowFilename );
-		onChooseWorkflow?.( workflowFilename );
 	};
 
 	const handleVerifyWorkflow = () => {
-		alert( 'TODO: Verify workflow' );
+		refreshWorkflowValidation();
 	};
 
-	const fixWorfklow = () => {
-		alert( 'TODO: fixWorfklow' );
-	};
+	// const fixWorfklow = () => {
+	// 	alert( 'TODO: fixWorfklow' );
+	// };
 
 	const installWorkflow = async () => {
 		createDeployment( {
@@ -215,7 +225,17 @@ export const DeploymentStyle = ( {
 		if ( deploymentStyle === 'custom' ) {
 			setErrorMesseage( '' );
 		}
-	}, [ deploymentStyle, selectedWorkflow ] );
+
+		if (
+			selectedWorkflow === 'create-new' ||
+			selectedWorkflow === 'none' ||
+			deploymentStyle === 'simple'
+		) {
+			onChooseWorkflow?.( undefined );
+		} else {
+			onChooseWorkflow?.( selectedWorkflow );
+		}
+	}, [ onChooseWorkflow, deploymentStyle, selectedWorkflow ] );
 
 	return (
 		<div className="github-deployments-deployment-style">
@@ -259,6 +279,7 @@ export const DeploymentStyle = ( {
 			<FormFieldset>
 				{ deploymentStyle === 'custom' &&
 					selectedWorkflow !== 'none' &&
+					selectedWorkflow !== undefined &&
 					! isCreatingNewWorkflow && (
 						<>
 							<FormLabel>{ __( 'Workflow check' ) }</FormLabel>
@@ -279,7 +300,11 @@ export const DeploymentStyle = ( {
 									header={
 										<>
 											<RenderIcon
-												state={ isCheckingWorkflowFile ? 'loading' : validation.status }
+												state={
+													isCheckingWorkflowFile || isRefreshingWorkflowValidation
+														? 'loading'
+														: validation.status
+												}
 											/>
 											{ validation.label }
 										</>
@@ -320,14 +345,19 @@ export const DeploymentStyle = ( {
 				) }
 				{ deploymentStyle === 'custom' && selectedWorkflow !== 'none' && (
 					<div className="github-deployments-deployment-style__actions">
-						<Button type="button" className="button form-button" onClick={ handleVerifyWorkflow }>
+						<Button
+							type="button"
+							busy={ isCheckingWorkflowFile || isRefreshingWorkflowValidation }
+							className="button form-button"
+							onClick={ handleVerifyWorkflow }
+						>
 							{ __( 'Verify workflow' ) }
 						</Button>
-						{ workflowCheckResult?.conclusion === 'error' && (
+						{ /* { workflowCheckResult?.conclusion === 'error' && (
 							<Button type="button" className="button form-button" onClick={ fixWorfklow }>
 								{ __( 'Fix workflow for me' ) }
 							</Button>
-						) }
+						) } */ }
 						{ isCreatingNewWorkflow && (
 							<Button
 								type="button"

@@ -10,6 +10,7 @@ interface MutationVariables {
 	targetDir: string;
 	installationId: number;
 	isAutomated?: boolean;
+	workflowPath?: string;
 }
 
 interface MutationResponse {
@@ -34,6 +35,7 @@ export const useUpdateCodeDeployment = (
 			branchName,
 			installationId,
 			isAutomated,
+			workflowPath,
 		}: MutationVariables ) =>
 			wp.req.put(
 				{
@@ -46,6 +48,7 @@ export const useUpdateCodeDeployment = (
 					target_dir: targetDir,
 					installation_id: installationId,
 					is_automated: isAutomated,
+					workflow_path: workflowPath,
 				}
 			),
 		...options,
