@@ -238,7 +238,7 @@ export function WPOrderReviewLineItems( {
 }
 
 const DropdownWrapper = styled.span< { hasCheckoutVersion2: boolean } >`
-	${ ( props ) => ( props.hasCheckoutVersion2 ? `width: 100%; max-width: 200px` : null ) }
+	${ ( props ) => ( props.hasCheckoutVersion2 ? `width: 100%; max-width: 200px` : `width: 100%;` ) }
 `;
 
 function LineItemWrapper( {
