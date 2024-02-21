@@ -5,7 +5,6 @@ import {
 	SelectControl,
 	CheckboxControl,
 	__experimentalText as Text,
-	__experimentalVStack as VStack,
 	Flex,
 	FlexItem,
 	FlexBlock,
@@ -290,7 +289,7 @@ export const ScheduleForm = () => {
 				</FlexItem>
 				<FlexItem>
 					<div className="form-field">
-						<label htmlFor="select-all">Select plugins</label>
+						<label htmlFor="plugins">Select plugins</label>
 						<span className="plugin-select-stats">10/10</span>
 						<Text className="info-msg">
 							Plugins not listed below are managed by WordPress.com and update automatically.
@@ -299,35 +298,52 @@ export const ScheduleForm = () => {
 							<Icon className="icon-info" icon={ info } size={ 16 } />
 							Please pick another time for optimal performance, as this slot is already taken.
 						</Text>
-						<VStack className="checkbox-options">
-							<SearchControl onChange={ function noRefCheck() {} } />
-							<CheckboxControl
-								id="select-all"
-								__nextHasNoMarginBottom
-								label="Select all"
-								onChange={ function noRefCheck() {} }
-							/>
-							<CheckboxControl
-								__nextHasNoMarginBottom
-								label="Move to WordPress.com"
-								onChange={ function noRefCheck() {} }
-							/>
-							<CheckboxControl
-								__nextHasNoMarginBottom
-								label="Akismet"
-								onChange={ function noRefCheck() {} }
-							/>
-							<CheckboxControl
-								__nextHasNoMarginBottom
-								label="Advance custom fields"
-								onChange={ function noRefCheck() {} }
-							/>
-							<CheckboxControl
-								__nextHasNoMarginBottom
-								label="Gravity forms"
-								onChange={ function noRefCheck() {} }
-							/>
-						</VStack>
+						<div className="checkbox-options">
+							<SearchControl id="plugins" onChange={ function noRefCheck() {} } />
+							<div className="checkbox-options-container">
+								<CheckboxControl
+									indeterminate
+									label="Select all"
+									onChange={ function noRefCheck() {} }
+								/>
+								<CheckboxControl label="Akismet" onChange={ function noRefCheck() {} } />
+								<CheckboxControl
+									label="Appointments plugin PRO"
+									onChange={ function noRefCheck() {} }
+								/>
+								<CheckboxControl label="Crowdsignal Forms" onChange={ function noRefCheck() {} } />
+								<CheckboxControl
+									label="Gravity forms"
+									onChange={ function noRefCheck() {} }
+									checked
+								/>
+								<CheckboxControl
+									className="disabled"
+									disabled
+									label="Menu items"
+									onChange={ function noRefCheck() {} }
+								/>
+								<CheckboxControl
+									label="Move to WordPres.com"
+									onChange={ function noRefCheck() {} }
+								/>
+								<CheckboxControl label="PRO Calendar" onChange={ function noRefCheck() {} } />
+								<CheckboxControl
+									label="Shipping very far away"
+									onChange={ function noRefCheck() {} }
+								/>
+								<CheckboxControl label="Weather PRO" onChange={ function noRefCheck() {} } />
+								<CheckboxControl label="Yoast" onChange={ function noRefCheck() {} } />
+
+								<CheckboxControl label="PRO Calendar" onChange={ function noRefCheck() {} } />
+								<CheckboxControl
+									label="Shipping very far away"
+									onChange={ function noRefCheck() {} }
+								/>
+								<CheckboxControl label="Weather PRO" onChange={ function noRefCheck() {} } />
+								<CheckboxControl label="Yoast" onChange={ function noRefCheck() {} } />
+							</div>
+						</div>
 					</div>
 				</FlexItem>
 			</Flex>
