@@ -8,13 +8,13 @@ export const GlobalSidebarHeader = () => {
 		<div className="sidebar__header">
 			<a
 				href="/sites"
-				className="link-logo tooltip tooltip-bottom"
+				className="link-logo tooltip tooltip-bottom-left"
 				data-tooltip={ translate( 'View all sites' ) }
 			>
 				<span className="dotcom"></span>
 			</a>
 			<span className="gap"></span>
-			<SidebarSearch tooltip={ translate( 'Jump to...' ) } />
+			<SidebarSearch tooltip={ translate( 'Jump to…' ) } />
 			<SidebarNotifications
 				isShowing={ false }
 				isActive={ true }

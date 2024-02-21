@@ -5,6 +5,8 @@ import InlineSupportLink from 'calypso/components/inline-support-link';
 import Main from 'calypso/components/main';
 import NavigationHeader from 'calypso/components/navigation-header';
 
+import './style.scss';
+
 interface GitHubDeploymentsProps {
 	topRightButton?: ReactNode;
 	pageTitle: string;
@@ -17,6 +19,7 @@ export function PageShell( { topRightButton, pageTitle, children }: GitHubDeploy
 			<DocumentHead title={ pageTitle } />
 			<NavigationHeader
 				compactBreadcrumb
+				css={ { paddingBottom: '40px !important' } }
 				title={ translate( 'GitHub Deployments' ) }
 				subtitle={ translate(
 					"Changes pushed to the selected branch's repos will be automatically deployed. {{learnMoreLink}}Learn more{{/learnMoreLink}}.",

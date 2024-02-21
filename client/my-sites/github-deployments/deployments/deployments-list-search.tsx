@@ -14,7 +14,7 @@ export const SearchDeployments = ( { value, onChange }: SearchDeploymentsProps )
 			query={ value }
 			id="deployments"
 			className="github-deployments__search"
-			placeholder={ __( 'Start typing a repository…' ) }
+			placeholder={ __( 'Search by repository name…' ) }
 			options={ [] }
 			isSearching={ false }
 			onChange={ ( query ) => {

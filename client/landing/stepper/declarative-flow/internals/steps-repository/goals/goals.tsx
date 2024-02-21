@@ -69,7 +69,7 @@ export const useGoals = (): Goal[] => {
 		},
 		{
 			key: SiteGoal.Import,
-			title: translate( 'Import my existing website content' ),
+			title: translate( 'Import or migrate my existing website' ),
 		},
 		{
 			key: SiteGoal.Other,

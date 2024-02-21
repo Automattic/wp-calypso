@@ -4,8 +4,8 @@ import { useI18n } from '@wordpress/react-i18n';
 import { ChangeEvent, useEffect, useState } from 'react';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormTextInput from 'calypso/components/forms/form-text-input';
-import { GitHubAccountsDropdown } from 'calypso/my-sites/github-deployments/components/accounts-dropdown/index';
-import { useLiveAccounts } from 'calypso/my-sites/github-deployments/components/accounts-dropdown/use-live-accounts';
+import { GitHubInstallationsDropdown } from 'calypso/my-sites/github-deployments/components/installations-dropdown';
+import { useLiveInstallations } from 'calypso/my-sites/github-deployments/components/installations-dropdown/use-live-installations';
 import { DeploymentStyle } from '../deployment-style/deployment-style';
 import {
 	FormRadioWithTemplateSelect,
@@ -28,12 +28,12 @@ export const CreateRepositoryForm = ( {
 }: CreateRepositoryFormProps ) => {
 	const { __ } = useI18n();
 	const {
-		account,
-		setAccount,
-		accounts = [],
+		installation,
+		setInstallation,
+		installations = [],
 		onNewInstallationRequest,
-		isLoadingAccounts,
-	} = useLiveAccounts( {} );
+		isLoadingInstallations,
+	} = useLiveInstallations();
 	const [ repositoryName, setRepositoryName ] = useState( '' );
 	const [ targetDir, setTargetDir ] = useState( '/' );
 	const [ projectType, setProjectType ] = useState< ProjectType >( 'plugin' );
@@ -43,14 +43,17 @@ export const CreateRepositoryForm = ( {
 		repositoryTemplates.plugin[ 0 ]
 	);
 
-	const isFormValid = repositoryName.trim() && ! isLoadingAccounts;
+	const isFormValid = repositoryName.trim() && ! isLoadingInstallations;
 
 	const handleCreateRepository = () => {
-		const repositoryAccount = account || accounts[ 0 ];
+		if ( ! installation ) {
+			return;
+		}
+
 		onRepositoryCreated( {
-			installationId: repositoryAccount.external_id,
+			installationId: installation.external_id,
 			template: template.value,
-			accountName: repositoryAccount.account_name,
+			accountName: installation.account_name,
 			repositoryName,
 			targetDir,
 			isPrivate,
@@ -77,15 +80,15 @@ export const CreateRepositoryForm = ( {
 			<form style={ { width: '100%', flex: 1 } }>
 				<div className="repository-name-formfieldset">
 					<FormFieldset style={ { flex: 0.5 } }>
-						<FormLabel htmlFor="githubAccount">{ __( 'Github account' ) }</FormLabel>
-						{ isLoadingAccounts ? (
+						<FormLabel htmlFor="githubInstallation">{ __( 'Github installation' ) }</FormLabel>
+						{ isLoadingInstallations ? (
 							<Spinner />
 						) : (
-							<GitHubAccountsDropdown
-								onAddAccount={ onNewInstallationRequest }
-								accounts={ accounts }
-								value={ account || accounts[ 0 ] }
-								onChange={ setAccount }
+							<GitHubInstallationsDropdown
+								onAddInstallation={ onNewInstallationRequest }
+								installations={ installations }
+								value={ installation }
+								onChange={ setInstallation }
 							/>
 						) }
 					</FormFieldset>
@@ -176,7 +179,9 @@ export const CreateRepositoryForm = ( {
 					{ __( 'Create repository' ) }
 				</Button>
 			</form>
-			<DeploymentStyle />
+			<div className="github-deployments-create-repository__deployment-style">
+				<DeploymentStyle />
+			</div>
 		</div>
 	);
 };

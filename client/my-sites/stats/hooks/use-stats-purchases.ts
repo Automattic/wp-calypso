@@ -8,7 +8,11 @@ import {
 } from '@automattic/calypso-products';
 import { useMemo } from 'react';
 import { useSelector } from 'calypso/state';
-import { isFetchingSitePurchases, getSitePurchases } from 'calypso/state/purchases/selectors';
+import {
+	isFetchingSitePurchases,
+	getSitePurchases,
+	hasLoadedSitePurchasesFromServer,
+} from 'calypso/state/purchases/selectors';
 import type { Purchase } from 'calypso/lib/purchases/types';
 
 const JETPACK_STATS_TIERED_BILLING_LIVE_DATE_2024_01_04 = '2024-01-04T05:30:00+00:00';
@@ -31,6 +35,7 @@ const isProductOwned = ( ownedPurchases: Purchase[], searchedProduct: string ) =
 export default function useStatsPurchases( siteId: number | null ) {
 	const sitePurchases = useSelector( ( state ) => getSitePurchases( state, siteId ) );
 	const isRequestingSitePurchases = useSelector( isFetchingSitePurchases );
+	const hasLoadedSitePurchases = useSelector( hasLoadedSitePurchasesFromServer );
 
 	// Determine whether a product is owned.
 	// TODO we need to do plan check as well, because Stats products would be built into other plans.
@@ -77,5 +82,6 @@ export default function useStatsPurchases( siteId: number | null ) {
 		isCommercialOwned,
 		supportCommercialUse,
 		isLegacyCommercialLicense,
+		hasLoadedSitePurchases,
 	};
 }

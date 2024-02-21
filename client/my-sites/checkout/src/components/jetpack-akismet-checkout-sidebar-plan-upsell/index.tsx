@@ -120,6 +120,12 @@ const useCalculatedDiscounts = () => {
 				isIntroductoryOffer: true,
 			} );
 		}
+	} else {
+		priceBreakdown.push( {
+			label: __( 'Multi-year discount*' ),
+			priceInteger: originalPrice - biennial.priceInteger,
+			isDiscount: true,
+		} );
 	}
 
 	// Coupon discount is added on top of other discounts

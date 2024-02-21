@@ -40,12 +40,13 @@ $brand-text: "SF Pro Text", $sans;
 		}
 	}
 
-	.tooltip-bottom {
+	.tooltip-bottom-left {
 		&::after {
 			left: 0;
 			right: unset;
 		}
 	}
+
 	.tooltip-top {
 		&::after {
 			right: unset;
@@ -134,7 +135,7 @@ $brand-text: "SF Pro Text", $sans;
 		gap: 8px;
 		align-items: center;
 		padding: 16px 24px 16px 24px;
-		border-color: var(--studio-gray-90);
+		border-color: var(--studio-gray-80);
 		border-top-style: solid;
 		border-top-width: 1px;
 		.sidebar__menu-icon {
@@ -260,6 +261,15 @@ $brand-text: "SF Pro Text", $sans;
 		svg {
 			fill: var(--studio-white);
 		}
+	}
+}
+
+.accessible-focus .global-sidebar {
+	*:focus {
+		outline-style: solid;
+		outline-color: var(--color-sidebar-menu-selected-background);
+		outline-width: 2px;
+		outline-offset: 2px;
 	}
 }
 
