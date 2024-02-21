@@ -130,7 +130,7 @@ function sitesDashboard( context: PageJSContext, next: () => void ) {
 	if ( isEnabled( 'layout/dotcom-nav-redesign' ) ) {
 		sitesDashboardGlobalStyles = css`
 			${ sitesDashboardGlobalStyles }
-			@media only screen and ( min-width: 783px ) {
+			@media only screen and ( min-width: 782px ) {
 				div.layout.is-global-sidebar-visible {
 					.layout__primary {
 						margin-left: var( --sidebar-width-max );
