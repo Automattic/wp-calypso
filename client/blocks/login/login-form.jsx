@@ -3,7 +3,7 @@ import page from '@automattic/calypso-router';
 import { Button, Card, FormInputValidation, FormLabel, Gridicon } from '@automattic/components';
 import { alert } from '@automattic/components/src/icons';
 import { localizeUrl } from '@automattic/i18n-utils';
-import { Spinner } from '@wordpress/components';
+import { Spinner, VisuallyHidden } from '@wordpress/components';
 import { Icon } from '@wordpress/icons';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
@@ -543,9 +543,19 @@ export class LoginForm extends Component {
 			return this.props.translate( 'Your email address or username' );
 		}
 
-		return this.isPasswordView()
-			? this.renderChangeUsername()
-			: this.props.translate( 'Email Address or Username' );
+		return this.isPasswordView() ? (
+			this.renderChangeUsername()
+		) : (
+			// Since the input receives focus on page load, screen reader users don't have any context
+			// for what credentials to use. Unlike other users, they won't have seen the informative
+			// text above the form. We therefore need to clarity the must use WordPress.com credentials.
+			<>
+				<VisuallyHidden as="span">
+					{ this.props.translate( 'WordPress.com Email Address or Username' ) }
+				</VisuallyHidden>
+				<span aria-hidden="true">{ this.props.translate( 'Email Address or Username' ) }</span>
+			</>
+		);
 	}
 
 	renderLostPasswordLink() {
