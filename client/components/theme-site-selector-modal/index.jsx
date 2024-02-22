@@ -6,6 +6,8 @@ import { navigate } from 'calypso/lib/navigate';
 import { addSiteFragment } from 'calypso/lib/route';
 import { useSelector, useStore } from 'calypso/state';
 import getCurrentRoute from 'calypso/state/selectors/get-current-route';
+import getSitesItems from 'calypso/state/selectors/get-sites-items';
+import getVisibleSites from 'calypso/state/selectors/get-visible-sites';
 import { getSiteSlug, getSiteTitle } from 'calypso/state/sites/selectors';
 
 export default function ThemeSiteSelectorModal( { isOpen, onClose } ) {
@@ -13,6 +15,9 @@ export default function ThemeSiteSelectorModal( { isOpen, onClose } ) {
 	const translate = useTranslate();
 
 	const currentRoute = useSelector( getCurrentRoute );
+	const sites = useSelector( ( state ) => getSitesItems( state ) );
+	const visibleSites = useSelector( ( state ) => getVisibleSites( state ) );
+	const hasNonVisibleSites = Object.keys( sites ).length !== visibleSites.length;
 
 	const onSiteSelect = ( siteId ) => {
 		const state = store.getState();
@@ -39,7 +44,7 @@ export default function ThemeSiteSelectorModal( { isOpen, onClose } ) {
 			} ) }
 		>
 			<div className="theme-site-selector-modal__content">
-				<p>{ translate( 'Some unsupported sites may be hidden.' ) }</p>
+				{ hasNonVisibleSites && <p>{ translate( 'Some unsupported sites are hidden.' ) }</p> }
 				{ /* eslint-disable-next-line jsx-a11y/no-autofocus */ }
 				<SiteSelector autoFocus onSiteSelect={ onSiteSelect } isReskinned />
 			</div>
