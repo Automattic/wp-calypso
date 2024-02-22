@@ -481,7 +481,7 @@ class StatsSite extends Component {
 						// - May have to move from grid to flexbox.
 					 }
 					{ config.isEnabled( 'stats/utm-module' ) && (
-						<StatsModuleUTM period={ this.props.period } query={ query } />
+						<StatsModuleUTM siteId={ siteId } period={ this.props.period } query={ query } />
 					) }
 				</div>
 				{ supportsPlanUsage && (
