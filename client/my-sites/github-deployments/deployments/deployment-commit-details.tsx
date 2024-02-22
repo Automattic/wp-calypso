@@ -27,7 +27,12 @@ export const DeploymentCommitDetails = ( { run, deployment }: DeploymentCommitDe
 		<div className="github-deployments-list__commit-details">
 			{ message }
 			<div>
-				<a href={ `https://github.com/${ account }/${ repo }/commit/${ sha }` }>{ shaShort }</a>
+				<a
+					onClick={ ( e ) => e.stopPropagation() }
+					href={ `https://github.com/${ account }/${ repo }/commit/${ sha }` }
+				>
+					{ shaShort }
+				</a>
 				<span>
 					<svg
 						width="16"

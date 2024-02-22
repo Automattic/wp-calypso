@@ -32,16 +32,6 @@ table.github-deployments-logs {
 td.github-deployments-logs-content {
 	text-align: left !important;
 
-	pre {
-		max-height: 400px;
-		overflow-y: auto;
-		white-space: pre-wrap;
-
-		.github-deployments-logs-content__empty {
-			text-align: center;
-			margin: 0;
-		}
-	}
 
 	.github-deployments-loading-placeholder {
 		margin-bottom: 0;
