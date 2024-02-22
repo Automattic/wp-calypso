@@ -18,7 +18,7 @@ const siteMigration: Flow = {
 
 	useSteps() {
 		return [
-			STEPS.SITE_MIGRATION_SOURCE,
+			STEPS.SITE_MIGRATION_IMPORT_OR_MIGRATE,
 			STEPS.SITE_MIGRATION_PLUGIN_INSTALL,
 			STEPS.PROCESSING,
 			STEPS.SITE_MIGRATION_UPGRADE_PLAN,
@@ -137,7 +137,24 @@ const siteMigration: Flow = {
 			const siteId = getSiteIdBySlug( siteSlug );
 
 			switch ( currentStep ) {
-				case STEPS.SITE_MIGRATION_SOURCE.slug: {
+				case STEPS.SITE_MIGRATION_IMPORT_OR_MIGRATE.slug: {
+					// Switch to the normal Import flow.
+					if ( providedDependencies?.destination === 'import' ) {
+						return exitFlow(
+							`/setup/site-setup/importList?siteSlug=${ siteSlug }&siteId=${ siteId }`
+						);
+					}
+
+					// Take the user to the upgrade plan step.
+					if ( providedDependencies?.destination === 'upgrade' ) {
+						// TODO - Once the upgrade plan step is available, we'll want to change this to use the slug constant.
+						return navigate( 'site-migration-upgrade-plan', {
+							siteId,
+							siteSlug,
+						} );
+					}
+
+					// Continue with the migration flow.
 					return navigate( STEPS.SITE_MIGRATION_PLUGIN_INSTALL.slug, {
 						siteId,
 						siteSlug,
