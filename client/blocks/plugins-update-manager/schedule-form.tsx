@@ -37,6 +37,7 @@ export const ScheduleForm = () => {
 							onChange={ setName }
 							__next40pxDefaultSize
 							placeholder="Example: Security plugins"
+							autoComplete="off"
 						/>
 						<Text className="validation-msg">
 							<Icon className="icon-info" icon={ info } size={ 16 } />
@@ -61,7 +62,6 @@ export const ScheduleForm = () => {
 								<Flex gap={ 6 }>
 									<FlexBlock>
 										<div className="form-field">
-											<label htmlFor="time">What time?</label>
 											<div className="time-controls">
 												<SelectControl
 													name="time"
@@ -157,7 +157,6 @@ export const ScheduleForm = () => {
 								<Flex gap={ 6 }>
 									<FlexItem>
 										<div className="form-field">
-											<label htmlFor="day">What day?</label>
 											<SelectControl
 												name="day"
 												__next40pxDefaultSize
@@ -199,7 +198,6 @@ export const ScheduleForm = () => {
 									</FlexItem>
 									<FlexBlock>
 										<div className="form-field">
-											<label htmlFor="time">What time?</label>
 											<div className="time-controls">
 												<SelectControl
 													name="time"
