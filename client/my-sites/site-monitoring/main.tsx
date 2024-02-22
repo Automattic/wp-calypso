@@ -1,14 +1,13 @@
 import { isEnabled } from '@automattic/calypso-config';
 import { translate } from 'i18n-calypso';
-import { connect } from 'react-redux';
 import DocumentHead from 'calypso/components/data/document-head';
 import FormattedHeader from 'calypso/components/formatted-header';
 import InlineSupportLink from 'calypso/components/inline-support-link';
 import Main from 'calypso/components/main';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
+import { useSelector } from 'calypso/state';
 import { getSiteOption } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
-import { AppState } from 'calypso/types';
 import { SiteMonitoringTabPanel } from './components/site-monitoring-tab-panel';
 import { LogsTab } from './logs-tab';
 import { MetricsTab } from './metrics-tab';
@@ -18,18 +17,18 @@ import './style.scss';
 
 interface SiteMetricsProps {
 	tab: SiteMonitoringTab;
-	isClassicView: boolean;
 }
 
-const getTitle = ( isClassicView: boolean ) => {
-	if ( isEnabled( 'layout/dotcom-nav-redesign' ) && isClassicView ) {
-		return translate( 'Monitoring' );
-	}
-	return translate( 'Site Monitoring' );
-};
+export function SiteMetrics( { tab = 'metrics' }: SiteMetricsProps ) {
+	const siteId = useSelector( ( state ) => getSelectedSiteId( state ) );
+	const adminInterface = useSelector( ( state ) =>
+		getSiteOption( state, siteId, 'wpcom_admin_interface' )
+	);
 
-const Metrics = ( { tab = 'metrics', isClassicView }: SiteMetricsProps ) => {
-	const titleHeader = getTitle( isClassicView );
+	const titleHeader =
+		isEnabled( 'layout/dotcom-nav-redesign' ) && adminInterface === 'wp-admin'
+			? translate( 'Monitoring' )
+			: translate( 'Site Monitoring' );
 
 	return (
 		<Main className="site-monitoring" fullWidthLayout>
@@ -61,14 +60,4 @@ const Metrics = ( { tab = 'metrics', isClassicView }: SiteMetricsProps ) => {
 			</div>
 		</Main>
 	);
-};
-
-const mapStateToProps = ( state: AppState ) => {
-	const siteId = getSelectedSiteId( state );
-	return {
-		siteId,
-		isClassicView: getSiteOption( state, siteId, 'wpcom_admin_interface' ) === 'wp-admin',
-	};
-};
-
-export const SiteMetrics = connect( mapStateToProps )( Metrics );
+}
