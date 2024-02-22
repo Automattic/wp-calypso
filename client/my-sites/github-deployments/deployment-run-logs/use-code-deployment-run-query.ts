@@ -26,6 +26,7 @@ export const useCodeDeploymentsRunsQuery = (
 		meta: {
 			persist: false,
 		},
+		refetchInterval: 5000,
 		...options,
 	} );
 };
