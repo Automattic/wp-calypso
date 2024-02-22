@@ -1,10 +1,14 @@
+import { useLocale } from '@automattic/i18n-utils';
 import DocumentHead from 'calypso/components/data/document-head';
 import Main from 'calypso/components/main';
-import type { Pattern } from 'calypso/landing/stepper/declarative-flow/internals/steps-repository/pattern-assembler/types';
+import { usePatternLibrary } from './use-pattern-library';
 
 import './style.scss';
 
-export default ( { patterns }: { patterns: Pattern[] } ) => {
+export default () => {
+	const locale = useLocale();
+	const { data: patterns } = usePatternLibrary( locale );
+
 	return (
 		<Main isLoggedOut fullWidthLayout>
 			<DocumentHead title="WordPress Patterns" />
@@ -12,7 +16,7 @@ export default ( { patterns }: { patterns: Pattern[] } ) => {
 			<h1>Build your perfect site with patterns</h1>
 
 			<ul className="patterns">
-				{ patterns.map( ( pattern ) => (
+				{ patterns?.map( ( pattern ) => (
 					<li key={ pattern.ID }>
 						<iframe srcDoc={ pattern?.html } title={ pattern.title } />
 					</li>
