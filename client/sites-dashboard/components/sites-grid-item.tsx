@@ -20,6 +20,7 @@ import {
 } from '../utils';
 import { SitesEllipsisMenu } from './sites-ellipsis-menu';
 import { SitesGridActionRenew } from './sites-grid-action-renew';
+import { SitesGridActions } from './sites-grid-actions';
 import { SitesGridTile } from './sites-grid-tile';
 import SitesLaunchStatusBadge from './sites-launch-status-badge';
 import SitesP2Badge from './sites-p2-badge';
@@ -68,6 +69,10 @@ const selectAction = css( {
 	},
 } );
 
+const ThumbnailDiv = styled.div( {
+	position: 'relative',
+} );
+
 export const siteThumbnail = css( {
 	aspectRatio: '16 / 11',
 	width: '100%',
@@ -113,7 +118,7 @@ export const SitesGridItem = memo( ( props: SitesGridItemProps ) => {
 		site,
 		showLaunchNag = true,
 		showBadgeSection = true,
-		showThumbnailLink = ! isEnabled( 'layout/dotcom-nav-redesign' ),
+		showThumbnailLink = true,
 		showSiteRenewLink = true,
 		onSiteSelectBtnClick,
 	} = props;
@@ -125,20 +130,24 @@ export const SitesGridItem = memo( ( props: SitesGridItemProps ) => {
 	const isAtomicSite = useSelector( ( state ) => isSiteAutomatedTransfer( state, site.ID ) );
 	const wpAdminUrl = getSiteWpAdminUrl( site );
 	const { ref, inView } = useInView( { triggerOnce: true } );
+	const showSiteActions =
+		isAtomicSite &&
+		siteDefaultInterface( site ) === 'wp-admin' &&
+		isEnabled( 'layout/dotcom-nav-redesign' );
+	const ThumbnailWrapper = showThumbnailLink && ! showSiteActions ? ThumbnailLink : ThumbnailDiv;
 
-	const ThumbnailWrapper = showThumbnailLink ? ThumbnailLink : 'div';
-
-	const siteDashboardUrlProps = showThumbnailLink
-		? {
-				href:
-					isAtomicSite &&
-					siteDefaultInterface( site ) === 'wp-admin' &&
-					! isEnabled( 'layout/dotcom-nav-redesign' )
-						? wpAdminUrl || getDashboardUrl( site.slug )
-						: getDashboardUrl( site.slug ),
-				title: __( 'Visit Dashboard' ),
-		  }
-		: {};
+	const siteDashboardUrlProps =
+		showThumbnailLink && ! showSiteActions
+			? {
+					href:
+						isAtomicSite &&
+						siteDefaultInterface( site ) === 'wp-admin' &&
+						! isEnabled( 'layout/dotcom-nav-redesign' )
+							? wpAdminUrl || getDashboardUrl( site.slug )
+							: getDashboardUrl( site.slug ),
+					title: __( 'Visit Dashboard' ),
+			  }
+			: {};
 
 	let siteUrl = site.URL;
 	if ( site.options?.is_redirect && site.options?.unmapped_url ) {
@@ -159,6 +168,7 @@ export const SitesGridItem = memo( ( props: SitesGridItemProps ) => {
 							height={ THUMBNAIL_DIMENSION.height }
 							sizesAttr={ SIZES_ATTR }
 						/>
+						{ showSiteActions && <SitesGridActions site={ site } /> }
 					</ThumbnailWrapper>
 					{ showSiteRenewLink && site.plan?.expired && (
 						<SitesGridActionRenew site={ site } isUpgradeable={ isTrialSitePlan } />
