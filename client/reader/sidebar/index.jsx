@@ -60,7 +60,6 @@ export class ReaderSidebar extends Component {
 	handleClick = ( event ) => {
 		if ( ! event.isDefaultPrevented() && closest( event.target, 'a,span' ) ) {
 			this.props.setNextLayoutFocus( 'content' );
-			window.scrollTo( 0, 0 );
 		}
 	};
 
