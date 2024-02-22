@@ -26,7 +26,7 @@ interface InitialValues {
 	workflowPath?: string;
 }
 
-interface ConnectRepositoryDialogProps {
+interface GitHubConnectionFormProps {
 	repository: GitHubRepositoryData;
 	installation: GitHubInstallationData;
 	ctaLabel: string;
@@ -47,7 +47,7 @@ export const GitHubConnectionForm = ( {
 	},
 	changeRepository,
 	onSubmit,
-}: ConnectRepositoryDialogProps ) => {
+}: GitHubConnectionFormProps ) => {
 	const [ branch, setBranch ] = useState( initialValues.branch );
 	const [ destPath, setDestPath ] = useState( initialValues.destPath );
 	const [ isAutoDeploy, setIsAutoDeploy ] = useState( initialValues.isAutomated );

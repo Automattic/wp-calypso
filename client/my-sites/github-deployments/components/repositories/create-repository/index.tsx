@@ -9,7 +9,7 @@ import { useDispatch, useSelector } from 'calypso/state/index';
 import { errorNotice, successNotice } from 'calypso/state/notices/actions';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors/index';
 import { useCreateCodeDeployment } from '../../../deployment-creation/use-create-code-deployment';
-import { PageShell } from '../../page-shell/page-shell';
+import { PageShell } from '../../page-shell';
 import { CreateRepositoryForm, OnRepositoryCreatedParams } from './create-repository-form';
 import { useCreateRepository } from './use-create-repository';
 
