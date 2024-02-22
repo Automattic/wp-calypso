@@ -69,7 +69,7 @@ Session Storage:
 - `window.sessionStorage.setItem( 'flags', 'flag1,-flag2' );`: Enable feature `flag1` and disable feature `flag2`.
 - `window.sessionStorage.removeItem( 'flags' );`: Reset flags session item to config values.
 
-Note: the `flags` query argument, cookie and sessionStorage won't work for feature flags used by the Node.js
+Note: the `flags` query argument, cookie, and sessionStorage won't work for feature flags used by Node.js
 server. For this case, you can use the
 [`ENABLE_FEATURES` and/or `DISABLE_FEATURES`](../../config/README.md#feature-flags)
 environment variables instead.
