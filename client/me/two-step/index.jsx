@@ -102,9 +102,8 @@ class TwoStep extends Component {
 	};
 
 	render() {
-		const { path, translate, userSettings } = this.props;
+		const { path, translate } = this.props;
 		const useCheckupMenu = isEnabled( 'security/security-checkup' );
-		const useEnhancedSecurity = isEnabled( 'two-step/enhanced-security' );
 
 		return (
 			<Main wideLayout className="security two-step">
@@ -128,9 +127,7 @@ class TwoStep extends Component {
 
 				{ this.renderEnhancedSecuritySetting() }
 				{ this.render2faKey() }
-				{ ! useEnhancedSecurity && ! userSettings?.two_step_enhanced_security
-					? this.renderBackupCodes()
-					: null }
+				{ this.renderBackupCodes() }
 				{ this.renderApplicationPasswords() }
 			</Main>
 		);

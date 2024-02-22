@@ -25,8 +25,8 @@ const reblogging: Flow = {
 			{ slug: 'domains', asyncComponent: () => import( './internals/steps-repository/domains' ) },
 			{ slug: 'plans', asyncComponent: () => import( './internals/steps-repository/plans' ) },
 			{
-				slug: 'siteCreationStep',
-				asyncComponent: () => import( './internals/steps-repository/site-creation-step' ),
+				slug: 'createSite',
+				asyncComponent: () => import( './internals/steps-repository/create-site' ),
 			},
 			{
 				slug: 'processing',
@@ -48,9 +48,9 @@ const reblogging: Flow = {
 					return navigate( 'plans' );
 
 				case 'plans':
-					return navigate( 'siteCreationStep' );
+					return navigate( 'createSite' );
 
-				case 'siteCreationStep':
+				case 'createSite':
 					return navigate( 'processing' );
 
 				case 'processing': {

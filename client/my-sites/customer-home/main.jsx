@@ -1,4 +1,4 @@
-import { isFreePlanProduct } from '@automattic/calypso-products/src';
+import config from '@automattic/calypso-config';
 import { Button } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { useQueryClient } from '@tanstack/react-query';
@@ -19,10 +19,8 @@ import NoticeAction from 'calypso/components/notice/notice-action';
 import useDomainDiagnosticsQuery from 'calypso/data/domains/diagnostics/use-domain-diagnostics-query';
 import { useGetDomainsQuery } from 'calypso/data/domains/use-get-domains-query';
 import useHomeLayoutQuery, { getCacheKey } from 'calypso/data/home/use-home-layout-query';
-import { addHotJarScript } from 'calypso/lib/analytics/hotjar';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import TrackComponentView from 'calypso/lib/analytics/track-component-view';
-import withTrackingTool from 'calypso/lib/analytics/with-tracking-tool';
 import { setDomainNotice } from 'calypso/lib/domains/set-domain-notice';
 import { preventWidows } from 'calypso/lib/formatting';
 import { getQueryArgs } from 'calypso/lib/query-args';
@@ -33,7 +31,6 @@ import Tertiary from 'calypso/my-sites/customer-home/locations/tertiary';
 import WooCommerceHomePlaceholder from 'calypso/my-sites/customer-home/wc-home-placeholder';
 import { domainManagementEdit } from 'calypso/my-sites/domains/paths';
 import { bumpStat, composeAnalytics, recordTracksEvent } from 'calypso/state/analytics/actions';
-import { getCurrentUserCountryCode } from 'calypso/state/current-user/selectors';
 import { verifyIcannEmail } from 'calypso/state/domains/management/actions';
 import { withJetpackConnectionProblem } from 'calypso/state/jetpack-connection-health/selectors/is-jetpack-connection-problem';
 import {
@@ -69,8 +66,7 @@ const Home = ( {
 	site,
 	siteId,
 	trackViewSiteAction,
-	sitePlan,
-	isNew7DUser,
+	trackOpenWPAdminAction,
 	isSiteWooExpressEcommerceTrial,
 	ssoModuleActive,
 	fetchingJetpackModules,
@@ -86,8 +82,6 @@ const Home = ( {
 	const { data: allDomains = [], isSuccess } = useGetDomainsQuery( site?.ID ?? null, {
 		retry: false,
 	} );
-
-	const detectedCountryCode = useSelector( getCurrentUserCountryCode );
 
 	const siteDomains = useSelector( ( state ) => getDomainsBySiteId( state, siteId ) );
 	const customDomains = siteDomains?.filter( ( domain ) => ! domain.isWPCOMDomain );
@@ -105,26 +99,6 @@ const Home = ( {
 	} );
 	const emailDnsDiagnostics = domainDiagnosticData?.email_dns_records;
 	const [ dismissedEmailDnsDiagnostics, setDismissedEmailDnsDiagnostics ] = useState( false );
-
-	useEffect( () => {
-		if ( ! isFreePlanProduct( sitePlan ) ) {
-			return;
-		}
-
-		if ( ! [ 'US', 'GB', 'AU', 'JP' ].includes( detectedCountryCode ) ) {
-			return;
-		}
-
-		if ( isNew7DUser ) {
-			return;
-		}
-
-		addHotJarScript();
-
-		if ( window && window.hj ) {
-			window.hj( 'trigger', 'pnp_survey_1' );
-		}
-	}, [ detectedCountryCode, sitePlan, isNew7DUser ] );
 
 	useEffect( () => {
 		if ( getQueryArgs().celebrateLaunch === 'true' && isSuccess ) {
@@ -171,6 +145,24 @@ const Home = ( {
 		return <WooCommerceHomePlaceholder />;
 	}
 
+	const headerActions =
+		config.isEnabled( 'layout/dotcom-nav-redesign' ) &&
+		'wp-admin' === site?.options?.wpcom_admin_interface ? (
+			<>
+				<Button href={ site.URL } onClick={ trackViewSiteAction } target="_blank">
+					{ translate( 'View site' ) }
+				</Button>
+				<Button href={ site.URL + '/wp-admin' } onClick={ trackOpenWPAdminAction } primary>
+					{ translate( 'Open WP Admin' ) }
+				</Button>
+			</>
+		) : (
+			<>
+				<Button href={ site.URL } onClick={ trackViewSiteAction } target="_blank">
+					{ translate( 'Visit site' ) }
+				</Button>
+			</>
+		);
 	const header = (
 		<div className="customer-home__heading">
 			<NavigationHeader
@@ -180,9 +172,7 @@ const Home = ( {
 				title={ translate( 'My Home' ) }
 				subtitle={ translate( 'Your hub for posting, editing, and growing your site.' ) }
 			>
-				<Button href={ site.URL } onClick={ trackViewSiteAction } target="_blank">
-					{ translate( 'Visit site' ) }
-				</Button>
+				{ headerActions }
 			</NavigationHeader>
 
 			<div className="customer-home__site-content">
@@ -343,9 +333,16 @@ const trackViewSiteAction = ( isStaticHomePage ) =>
 		bumpStat( 'calypso_customer_home', 'my_site_view_site' )
 	);
 
+const trackOpenWPAdminAction = () =>
+	composeAnalytics(
+		recordTracksEvent( 'calypso_customer_home_my_site_open_wpadmin_click', {} ),
+		bumpStat( 'calypso_customer_home', 'my_site_open_wpadmin' )
+	);
+
 const mapDispatchToProps = {
 	trackViewSiteAction,
 	verifyIcannEmail,
+	trackOpenWPAdminAction,
 };
 
 const mergeProps = ( stateProps, dispatchProps, ownProps ) => {
@@ -354,10 +351,11 @@ const mergeProps = ( stateProps, dispatchProps, ownProps ) => {
 		...ownProps,
 		...stateProps,
 		trackViewSiteAction: () => dispatchProps.trackViewSiteAction( isStaticHomePage ),
+		trackOpenWPAdminAction: () => dispatchProps.trackOpenWPAdminAction(),
 		handleVerifyIcannEmail: dispatchProps.verifyIcannEmail,
 	};
 };
 
 const connectHome = connect( mapStateToProps, mapDispatchToProps, mergeProps );
 
-export default connectHome( withJetpackConnectionProblem( withTrackingTool( 'HotJar' )( Home ) ) );
+export default connectHome( withJetpackConnectionProblem( Home ) );

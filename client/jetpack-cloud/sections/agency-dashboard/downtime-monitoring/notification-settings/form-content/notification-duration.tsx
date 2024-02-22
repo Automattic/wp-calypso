@@ -1,8 +1,8 @@
 import { isEnabled } from '@automattic/calypso-config';
+import { SelectDropdown } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import { useMemo } from 'react';
 import clockIcon from 'calypso/assets/images/jetpack/clock-icon.svg';
-import SelectDropdown from 'calypso/components/select-dropdown';
 import useNotificationDurations from '../../../sites-overview/hooks/use-notification-durations';
 import FeatureRestrictionBadge from '../../feature-restriction-badge';
 import UpgradeLink from '../../upgrade-link';

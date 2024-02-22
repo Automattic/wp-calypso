@@ -1,4 +1,3 @@
-import { JETPACK_SEARCH_PRODUCTS } from '@automattic/calypso-products';
 import { useRazorpay } from '@automattic/calypso-razorpay';
 import { useStripe } from '@automattic/calypso-stripe';
 import colorStudio from '@automattic/color-studio';
@@ -9,14 +8,6 @@ import { useSelect } from '@wordpress/data';
 import debugFactory from 'debug';
 import { useTranslate } from 'i18n-calypso';
 import { Fragment, useCallback, useMemo } from 'react';
-import QueryContactDetailsCache from 'calypso/components/data/query-contact-details-cache';
-import QueryJetpackSaleCoupon from 'calypso/components/data/query-jetpack-sale-coupon';
-import QueryPlans from 'calypso/components/data/query-plans';
-import QueryPostCounts from 'calypso/components/data/query-post-counts';
-import QueryProducts from 'calypso/components/data/query-products-list';
-import QuerySitePlans from 'calypso/components/data/query-site-plans';
-import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
-import QueryUserPurchases from 'calypso/components/data/query-user-purchases';
 import { recordAddEvent } from 'calypso/lib/analytics/cart';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import useSiteDomains from 'calypso/my-sites/checkout/src/hooks/use-site-domains';
@@ -52,6 +43,7 @@ import genericRedirectProcessor from '../lib/generic-redirect-processor';
 import getContactDetailsType from '../lib/get-contact-details-type';
 import multiPartnerCardProcessor from '../lib/multi-partner-card-processor';
 import payPalProcessor from '../lib/paypal-express-processor';
+import { pixProcessor } from '../lib/pix-processor';
 import razorpayProcessor from '../lib/razorpay-processor';
 import { translateResponseCartToWPCOMCart } from '../lib/translate-cart';
 import weChatProcessor from '../lib/we-chat-processor';
@@ -60,6 +52,7 @@ import { CHECKOUT_STORE } from '../lib/wpcom-store';
 import { CheckoutLoadingPlaceholder } from './checkout-loading-placeholder';
 import { OnChangeItemVariant } from './item-variation-picker';
 import JetpackProRedirectModal from './jetpack-pro-redirect-modal';
+import PrePurchaseNotices from './prepurchase-notices';
 import WPCheckout from './wp-checkout';
 import type { PaymentProcessorOptions } from '../types/payment-processors';
 import type {
@@ -92,7 +85,6 @@ export interface CheckoutMainProps {
 	isNoSiteCart?: boolean;
 	isGiftPurchase?: boolean;
 	isInModal?: boolean;
-	infoMessage?: JSX.Element;
 	// IMPORTANT NOTE: This will not be called for redirect payment methods like
 	// PayPal. They will redirect directly to the post-checkout page decided by
 	// `getThankYouUrl`.
@@ -132,7 +124,6 @@ export default function CheckoutMain( {
 	isLoggedOutCart,
 	isNoSiteCart,
 	isGiftPurchase,
-	infoMessage,
 	isInModal,
 	onAfterPaymentComplete,
 	disabledThankYouPage,
@@ -447,6 +438,9 @@ export default function CheckoutMain( {
 		[ addProductsToCart ]
 	);
 
+	const isAkismetSitelessCheckout = responseCart.products.some(
+		( product ) => product.extra.isAkismetSitelessCheckout
+	);
 	const includeDomainDetails = contactDetailsType === 'domain';
 	const includeGSuiteDetails = contactDetailsType === 'gsuite';
 	const dataForProcessor: PaymentProcessorOptions = useMemo(
@@ -465,6 +459,8 @@ export default function CheckoutMain( {
 			razorpayConfiguration,
 			recaptchaClientId,
 			fromSiteSlug,
+			isJetpackNotAtomic,
+			isAkismetSitelessCheckout,
 		} ),
 		[
 			contactDetails,
@@ -481,6 +477,8 @@ export default function CheckoutMain( {
 			updatedSiteSlug,
 			recaptchaClientId,
 			fromSiteSlug,
+			isJetpackNotAtomic,
+			isAkismetSitelessCheckout,
 		]
 	);
 
@@ -495,6 +493,8 @@ export default function CheckoutMain( {
 				multiPartnerCardProcessor( transactionData, dataForProcessor, {
 					translate,
 				} ),
+			pix: ( transactionData: unknown ) =>
+				pixProcessor( transactionData, dataForProcessor, translate ),
 			alipay: ( transactionData: unknown ) =>
 				genericRedirectProcessor( 'alipay', transactionData, dataForProcessor ),
 			p24: ( transactionData: unknown ) =>
@@ -724,26 +724,8 @@ export default function CheckoutMain( {
 		reduxDispatch( infoNotice( translate( 'Redirecting to payment partner…' ) ) );
 	}, [ reduxDispatch, translate ] );
 
-	const cartHasSearchProduct = useMemo(
-		() =>
-			responseCart.products.some( ( { product_slug } ) =>
-				JETPACK_SEARCH_PRODUCTS.includes(
-					product_slug as ( typeof JETPACK_SEARCH_PRODUCTS )[ number ]
-				)
-			),
-		[ responseCart.products ]
-	);
-
 	return (
 		<Fragment>
-			<QueryJetpackSaleCoupon />
-			<QuerySitePlans siteId={ updatedSiteId } />
-			<QuerySitePurchases siteId={ updatedSiteId } />
-			{ isSiteless && <QueryUserPurchases /> }
-			<QueryPlans />
-			<QueryProducts />
-			<QueryContactDetailsCache />
-			{ cartHasSearchProduct && <QueryPostCounts siteId={ updatedSiteId || -1 } type="post" /> }
 			<PageViewTracker
 				path={ analyticsPath }
 				title="Checkout"
@@ -779,7 +761,7 @@ export default function CheckoutMain( {
 					changeSelection={ changeSelection }
 					countriesList={ countriesList }
 					createUserAndSiteBeforeTransaction={ createUserAndSiteBeforeTransaction }
-					infoMessage={ infoMessage }
+					infoMessage={ <PrePurchaseNotices siteId={ updatedSiteId } isSiteless={ isSiteless } /> }
 					isLoggedOutCart={ !! isLoggedOutCart }
 					onPageLoadError={ onPageLoadError }
 					removeProductFromCart={ removeProductFromCartAndMaybeRedirect }

@@ -148,11 +148,7 @@ const ImportContentOnly: React.FunctionComponent< Props > = ( props ) => {
 				'import__error-message': renderState === 'error',
 			} ) }
 		>
-			{ renderState === 'progress' && (
-				<div className="import-layout__center">
-					<ProgressScreen job={ job } />
-				</div>
-			) }
+			{ renderState === 'progress' && <ProgressScreen job={ job } /> }
 
 			{ renderState === 'error' && (
 				<ErrorMessage

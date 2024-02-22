@@ -1,0 +1,128 @@
+// custom properties for a8c-for-agencies
+:root {
+	// border-radius
+	--a4a-corners-sharp: 0;
+	--a4a-corners-soft: 4px;
+}
+
+.theme-a8c-for-agencies {
+	// Masterbar
+	@media only screen and ( min-width: 782px ) {
+		--masterbar-height: 46px;
+	}
+
+	.main {
+		box-sizing: border-box;
+		padding-inline-start: 16px;
+		padding-inline-end: 16px;
+	}
+}
+
+// New navigation will not include a masterbar
+.theme-a8c-for-agencies .layout.has-no-masterbar {
+	--masterbar-height: 0;
+
+	// By default, there's 32px of top padding on the layout component.
+	// On mobile views this accommodates the masterbar, but we don't have one;
+	// so, we can remove it by default and re-add it when our width is >660px.
+	.layout__content {
+		padding-block-start: initial;
+	}
+
+	@include breakpoint-deprecated( ">660px" ) {
+		padding-block-start: 32px;
+	}
+}
+
+.theme-a8c-for-agencies .layout__secondary {
+	border-inline-end: initial;
+
+	// Allow visible overflow, so the profile dropdown menu can be displayed
+	overflow: initial;
+
+	// Make the selected-site navigation full-height
+	.my-sites__navigation {
+		height: 100%;
+	}
+
+	.site-selector {
+		top: 80px;
+
+		.site-selector__sites {
+			border-top: initial;
+		}
+
+		.all-sites {
+			border-bottom: initial;
+
+			// Remove the long-content fade if All Sites is selected
+			.all-sites__title::after {
+				display: none;
+			}
+		}
+
+		.all-sites,
+		.site {
+			margin: 4px 4px 0 4px;
+
+			&.is-selected,
+			&:hover {
+				border-radius: 4px;
+			}
+		}
+	}
+}
+
+// Universal Text Styles
+html {
+	h2 {
+		font-size: $font-title-small;
+		font-weight: 600;
+		line-height: 32px;
+
+		@include breakpoint-deprecated( ">660px" ) {
+			font-size: $font-headline-small;
+			line-height: 40px;
+		}
+	}
+
+	h3 {
+		font-size: $font-body;
+		font-weight: 600;
+		line-height: 23px;
+
+		@include breakpoint-deprecated( ">660px" ) {
+			font-size: $font-title-small;
+			line-height: 23px;
+		}
+	}
+
+	p {
+		font-size: $font-body;
+		line-height: 24px;
+
+		@include breakpoint-deprecated( ">660px" ) {
+			font-size: $font-title-small;
+			line-height: 24px;
+		}
+	}
+}
+
+.layout__secondary {
+	border-inline-end: 1px solid var(--color-sidebar-border);
+}
+
+.layout.focus-content .layout__secondary {
+	@media only screen and ( max-width: 782px ) and ( min-width: 660px ) {
+		transform: none;
+		padding: 0;
+	}
+}
+
+.masterbar {
+	font-size: $font-body;
+}
+
+.site-selector .site-selector__actions {
+	padding: 16px;
+}

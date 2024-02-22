@@ -1,4 +1,4 @@
-import { Card } from '@automattic/components';
+import { Card, FormLabel } from '@automattic/components';
 import { ToggleControl } from '@wordpress/components';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
@@ -6,7 +6,6 @@ import { Component } from 'react';
 import { connect } from 'react-redux';
 import QueryJetpackConnection from 'calypso/components/data/query-jetpack-connection';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
-import FormLabel from 'calypso/components/forms/form-label';
 import FormSelect from 'calypso/components/forms/form-select';
 import SupportInfo from 'calypso/components/support-info';
 import JetpackModuleToggle from 'calypso/my-sites/site-settings/jetpack-module-toggle';

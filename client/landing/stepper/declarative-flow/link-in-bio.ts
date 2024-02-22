@@ -38,8 +38,8 @@ const linkInBio: Flow = {
 				asyncComponent: () => import( './internals/steps-repository/design-carousel' ),
 			},
 			{
-				slug: 'siteCreationStep',
-				asyncComponent: () => import( './internals/steps-repository/site-creation-step' ),
+				slug: 'createSite',
+				asyncComponent: () => import( './internals/steps-repository/create-site' ),
 			},
 			{
 				slug: 'processing',
@@ -98,9 +98,9 @@ const linkInBio: Flow = {
 					return navigate( 'plans' );
 
 				case 'plans':
-					return navigate( 'siteCreationStep' );
+					return navigate( 'createSite' );
 
-				case 'siteCreationStep':
+				case 'createSite':
 					return navigate( 'processing' );
 
 				case 'processing':

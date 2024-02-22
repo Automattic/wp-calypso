@@ -58,6 +58,21 @@ class SocialSignupForm extends Component {
 		} );
 	};
 
+	handleGitHubResponse = ( { access_token }, triggeredByUser = true ) => {
+		if ( ! triggeredByUser && this.props.socialService !== 'github' ) {
+			return;
+		}
+
+		this.props.recordTracksEvent( 'calypso_signup_social_button_success', {
+			social_account_type: 'github',
+		} );
+
+		this.props.handleResponse( 'github', access_token, null, {
+			// Make accounts signed up via GitHub as dev accounts
+			is_dev_account: true,
+		} );
+	};
+
 	trackSocialSignup = ( service ) => {
 		this.props.recordTracksEvent( 'calypso_signup_social_button_click', {
 			social_account_type: service,
@@ -103,6 +118,7 @@ class SocialSignupForm extends Component {
 			<SocialAuthenticationForm
 				compact={ this.props.compact }
 				handleGoogleResponse={ this.handleGoogleResponse }
+				handleGitHubResponse={ this.handleGitHubResponse }
 				handleAppleResponse={ this.handleAppleResponse }
 				getRedirectUri={ this.getRedirectUri }
 				trackLoginAndRememberRedirect={ this.trackLoginAndRememberRedirect }

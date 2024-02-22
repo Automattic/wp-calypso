@@ -5,7 +5,6 @@ import {
 	PaymentProcessorResponseData,
 	PaymentProcessorSuccess,
 	PaymentProcessorRedirect,
-	PaymentProcessorManual,
 	PaymentProcessorError,
 	PaymentProcessorResponseType,
 } from '../types';
@@ -45,8 +44,4 @@ export function makeSuccessResponse(
 
 export function makeRedirectResponse( url: string ): PaymentProcessorRedirect {
 	return { type: PaymentProcessorResponseType.REDIRECT, payload: url };
-}
-
-export function makeManualResponse( payload: unknown ): PaymentProcessorManual {
-	return { type: PaymentProcessorResponseType.MANUAL, payload };
 }

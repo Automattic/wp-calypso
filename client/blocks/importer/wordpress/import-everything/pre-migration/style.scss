@@ -8,6 +8,7 @@
 	padding: 0 rem(20px);
 	max-width: 100%;
 
+
 	.pre-migration__form-container {
 		display: flex;
 		flex-wrap: wrap;
@@ -149,13 +150,37 @@
 		text-align: center;
 	}
 
+	.pre-migration__main-content {
+		text-align: center;
+		margin-top: rem(-44px);
+		margin-bottom: rem(40px);
+		line-height: 24px;
+		color: var(--gray-gray-50, #646970);
+
+		&-primary-text {
+			margin-bottom: rem(24px);
+			& br {
+				display: none;
+				@include break-medium {
+					display: inline;
+				}
+			}
+		}
+	}
+
 	.pre-migration__credentials {
 		text-align: center;
+		margin-top: rem(16px);
 		margin-bottom: rem(40px);
+		color: var(--gray-gray-50, #646970);
+		font-size: 0.75rem;
 
 		button {
 			vertical-align: baseline;
-			font-size: 1rem;
+			color: var(--gray-gray-50, #646970);
+			font-size: 0.75rem;
+			padding: 0;
+			font-weight: 400;
 		}
 	}
 
@@ -197,6 +222,18 @@
 
 		.credentials-form__support-info {
 			margin-bottom: rem(8px);
+		}
+	}
+
+	.pre-migration__footer-jetpack-powered {
+		margin-top: rem(420px);
+		margin-bottom: rem(40px);
+		display: flex;
+		font-size: 0.75rem;
+		justify-content: center;
+
+		& svg.jetpack-logo {
+			margin-right: 0.5rem;
 		}
 	}
 }

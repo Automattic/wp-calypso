@@ -4,7 +4,7 @@ import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import { useContext, useState } from 'react';
 import { useSelector } from 'calypso/state';
-import getJetpackAdminUrl from 'calypso/state/sites/selectors/get-jetpack-admin-url';
+import { getJetpackAdminUrl } from 'calypso/state/sites/selectors';
 import { useJetpackAgencyDashboardRecordTrackEvent } from '../../../hooks';
 import DashboardDataContext from '../../dashboard-data-context';
 import { getBoostRating, getBoostRatingClass } from '../../lib/boost';

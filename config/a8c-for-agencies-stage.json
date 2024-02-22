@@ -1,0 +1,24 @@
+{
+	"env": "production",
+	"env_id": "a8c-for-agencies-stage",
+	"favicon_url": "/calypso/images/favicons/favicon-a4a-prod.ico",
+	"client_slug": "browser",
+	"protocol": "http",
+	"hostname": "agencies.automattic.com",
+	"i18n_default_locale_slug": "en",
+	"site_name": "Automattic For Agencies",
+	"oauth_client_id": 95931,
+	"features": {
+		"a8c-for-agencies": true,
+		"oauth": true
+	},
+	"enable_all_sections": false,
+	"sections": {
+		"a8c-for-agencies": true
+	},
+	"site_filter": [],
+	"theme": "a8c-for-agencies",
+	"restricted_me_access": false,
+	"theme_color": "#2fb41f",
+	"hotjar_enabled": true
+}

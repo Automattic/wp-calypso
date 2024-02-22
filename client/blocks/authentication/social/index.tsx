@@ -21,6 +21,7 @@ interface SocialAuthenticationFormProps {
 	compact?: boolean;
 	handleGoogleResponse: ( response: any ) => void;
 	handleAppleResponse: ( response: any ) => void;
+	handleGitHubResponse: ( response: any ) => void;
 	getRedirectUri: ( service: string ) => string;
 	trackLoginAndRememberRedirect: ( service: string ) => void;
 	socialService: string;
@@ -35,6 +36,7 @@ interface SocialAuthenticationFormProps {
 const SocialAuthenticationForm = ( {
 	compact,
 	handleGoogleResponse,
+	handleGitHubResponse,
 	handleAppleResponse,
 	getRedirectUri,
 	trackLoginAndRememberRedirect,
@@ -128,7 +130,16 @@ const SocialAuthenticationForm = ( {
 							}
 						/>
 
-						{ config.isEnabled( 'login/github' ) ? <GithubSocialButton /> : null }
+						{ config.isEnabled( 'login/github' ) ? (
+							<GithubSocialButton
+								socialServiceResponse={ socialService === 'github' ? socialServiceResponse : null }
+								redirectUri={ getRedirectUri( 'github' ) }
+								responseHandler={ handleGitHubResponse }
+								onClick={ () => {
+									trackLoginAndRememberRedirect( 'github' );
+								} }
+							/>
+						) : null }
 
 						{ children }
 					</div>

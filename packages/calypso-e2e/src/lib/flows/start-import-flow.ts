@@ -121,7 +121,7 @@ export class StartImportFlow {
 	 * Validates that we've landed on the migration ready page.
 	 */
 	async validateMigrationReadyPage(): Promise< void > {
-		await this.page.getByText( 'You are ready to migrate' ).waitFor();
+		await this.page.getByText( 'Your site is ready for its brand new home' ).waitFor();
 	}
 
 	/**

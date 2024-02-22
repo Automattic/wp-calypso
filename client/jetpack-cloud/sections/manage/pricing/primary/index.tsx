@@ -7,10 +7,10 @@ import JetpackComFooter from 'calypso/jetpack-cloud/sections/pricing/jpcom-foote
 import JetpackComMasterbar, {
 	MAIN_CONTENT_ID,
 } from 'calypso/jetpack-cloud/sections/pricing/jpcom-masterbar';
-import StoreFooter from 'calypso/jetpack-connect/store-footer';
 import { Recommendations } from 'calypso/my-sites/plans/jetpack-plans/product-store/recommendations';
-import { useDispatch } from 'calypso/state';
+import { useDispatch, useSelector } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import getCurrentRoute from 'calypso/state/selectors/get-current-route';
 import Header from '../header';
 import { LicenseProductsList } from '../license-products-list';
 import 'calypso/my-sites/plans/jetpack-plans/product-store/style.scss';
@@ -25,10 +25,15 @@ export default function ManagePricingPage() {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 	const [ selectedSize, setSelectedSize ] = useState< number >( DEFAULT_SELECTED_BUNDLE_SIZE );
+	const currentRoute = useSelector( getCurrentRoute );
 
 	useEffect( () => {
-		dispatch( recordTracksEvent( 'calypso_jetpack_manage_pricing_visit' ) );
-	}, [ dispatch ] );
+		dispatch(
+			recordTracksEvent( 'calypso_jetpack_manage_pricing_page_visit', {
+				path: currentRoute,
+			} )
+		);
+	}, [ dispatch, currentRoute ] );
 
 	return (
 		<>
@@ -52,7 +57,6 @@ export default function ManagePricingPage() {
 					<LicenseProductsList bundleSize={ selectedSize } />
 					<PricingNeedMoreInfo />
 					<Recommendations />
-					<StoreFooter />
 				</div>
 			</Main>
 			<JetpackComFooter />

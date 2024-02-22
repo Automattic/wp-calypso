@@ -213,7 +213,7 @@ describe( 'PreMigration', () => {
 		// @ts-ignore
 		isFetchingUserSettings.mockReturnValue( false );
 
-		expect( screen.getByText( 'You are ready to migrate' ) ).toBeInTheDocument();
+		expect( screen.getByText( 'Your site is ready for its brand new home' ) ).toBeInTheDocument();
 
 		const provideCredentialsBtn = screen.getByText( 'Provide the server credentials' );
 		expect( provideCredentialsBtn ).toBeInTheDocument();

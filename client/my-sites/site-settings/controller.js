@@ -1,6 +1,7 @@
 import page from '@automattic/calypso-router';
 import { billingHistory } from 'calypso/me/purchases/paths';
 import SiteSettingsMain from 'calypso/my-sites/site-settings/main';
+import WpcomSiteTools from 'calypso/my-sites/site-settings/wpcom-site-tools';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import canCurrentUserStartSiteOwnerTransfer from 'calypso/state/selectors/can-current-user-start-site-owner-transfer';
@@ -15,7 +16,9 @@ import DeleteSite from './delete-site';
 import DisconnectSite from './disconnect-site';
 import ConfirmDisconnection from './disconnect-site/confirm';
 import ManageConnection from './manage-connection';
+import { AcceptSiteTransfer } from './site-owner-transfer/accept-site-transfer';
 import SiteOwnerTransfer from './site-owner-transfer/site-owner-transfer';
+import SiteTransferred from './site-owner-transfer/site-transferred';
 import StartOver from './start-over';
 
 function canDeleteSite( state, siteId ) {
@@ -66,6 +69,11 @@ export function general( context, next ) {
 	next();
 }
 
+export function wpcomSiteTools( context, next ) {
+	context.primary = <WpcomSiteTools />;
+	next();
+}
+
 export function deleteSite( context, next ) {
 	const state = context.store.getState();
 	const siteId = getSelectedSiteId( state );
@@ -108,6 +116,23 @@ export function manageConnection( context, next ) {
 
 export function startSiteOwnerTransfer( context, next ) {
 	context.primary = <SiteOwnerTransfer />;
+	next();
+}
+
+export function renderSiteTransferredScreen( context, next ) {
+	context.primary = <SiteTransferred />;
+	next();
+}
+
+export function acceptSiteTransfer( context, next ) {
+	context.primary = (
+		<AcceptSiteTransfer
+			siteId={ context.params.site_id }
+			inviteKey={ context.params.invitation_key }
+			redirectTo={ context.query.nextStep }
+			dispatch={ context.store.dispatch }
+		/>
+	);
 	next();
 }
 

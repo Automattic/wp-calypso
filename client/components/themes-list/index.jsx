@@ -271,7 +271,7 @@ ThemesList.propTypes = {
 	] ),
 	siteId: PropTypes.number,
 	searchTerm: PropTypes.string,
-	tier: PropTypes.oneOf( [ '', 'free', 'premium', 'marketplace' ] ),
+	tier: PropTypes.string,
 	upsellCardDisplayed: PropTypes.func,
 	children: PropTypes.node,
 };

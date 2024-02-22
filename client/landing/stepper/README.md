@@ -114,6 +114,10 @@ To maintain the reusability and simplicity of this framework it is important tha
 
 And each step should only get flow-level state from a store (not props).
 
+## Renaming Steps
+
+There may be a time when a step needs to be renamed. In order to preserve Tracks data and funnels, we recommend adding a new entry to `getStepOldSlug` in the `FlowRenderer` component. This ensures that tracks events will fire with both the new step slug and the old step slug.
+
 ## State management
 
 Steps shouldn't have any props other than the `navigation` prop which contains the return value of `useStepNavigation`. This object (`navigation`) allows the step to `submit` when done or to move to other steps or to `goNext`, `goBack`, etc..

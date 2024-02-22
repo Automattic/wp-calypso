@@ -1,9 +1,8 @@
-import { FormInputValidation, Spinner } from '@automattic/components';
+import { FormInputValidation, FormLabel, Spinner } from '@automattic/components';
 import styled from '@emotion/styled';
 import { useTranslate } from 'i18n-calypso';
 import { useState, FormEvent, ChangeEvent, useEffect } from 'react';
 import FormsButton from 'calypso/components/forms/form-button';
-import FormLabel from 'calypso/components/forms/form-label';
 import FormTextInput from 'calypso/components/forms/form-text-input';
 
 interface Props {

@@ -1,6 +1,6 @@
 import { isFreePlanProduct } from '@automattic/calypso-products';
 import page from '@automattic/calypso-router';
-import { Button, Dialog, Gridicon } from '@automattic/components';
+import { Button, Dialog, FormLabel, Gridicon } from '@automattic/components';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
@@ -11,7 +11,6 @@ import ActionPanelFigure from 'calypso/components/action-panel/figure';
 import ActionPanelFooter from 'calypso/components/action-panel/footer';
 import ActionPanelTitle from 'calypso/components/action-panel/title';
 import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
-import FormLabel from 'calypso/components/forms/form-label';
 import FormTextInput from 'calypso/components/forms/form-text-input';
 import HeaderCake from 'calypso/components/header-cake';
 import Notice from 'calypso/components/notice';
@@ -25,6 +24,7 @@ import { getSite, getSiteDomain } from 'calypso/state/sites/selectors';
 import { hasSitesAsLandingPage } from 'calypso/state/sites/selectors/has-sites-as-landing-page';
 import { setSelectedSiteId } from 'calypso/state/ui/actions';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
+import { getSettingsSource } from '../site-tools/utils';
 
 import './style.scss';
 
@@ -92,7 +92,8 @@ class DeleteSite extends Component {
 
 	_goBack = () => {
 		const { siteSlug } = this.props;
-		page( '/settings/general/' + siteSlug );
+		const source = getSettingsSource();
+		page( `${ source }/${ siteSlug }` );
 	};
 
 	componentDidUpdate( prevProps ) {

@@ -14,9 +14,9 @@ import {
 import { useSiteCopy } from '../hooks/use-site-copy';
 import { recordSubmitStep } from './internals/analytics/record-submit-step';
 import AutomatedCopySite from './internals/steps-repository/automated-copy-site';
+import CreateSite from './internals/steps-repository/create-site';
 import DomainsStep from './internals/steps-repository/domains';
 import ProcessingStep from './internals/steps-repository/processing-step';
-import SiteCreationStep from './internals/steps-repository/site-creation-step';
 import {
 	AssertConditionResult,
 	AssertConditionState,
@@ -79,7 +79,7 @@ const copySite: Flow = {
 	useSteps() {
 		return [
 			{ slug: 'domains', component: DomainsStep },
-			{ slug: 'site-creation-step', component: SiteCreationStep },
+			{ slug: 'create-site', component: CreateSite },
 			{ slug: 'processing', component: ProcessingStep },
 			{ slug: 'automated-copy', component: AutomatedCopySite },
 			{
@@ -107,12 +107,12 @@ const copySite: Flow = {
 
 			switch ( _currentStepSlug ) {
 				case 'domains': {
-					return navigate( 'site-creation-step', {
+					return navigate( 'create-site', {
 						sourceSlug: urlQueryParams.get( 'sourceSlug' ),
 					} );
 				}
 
-				case 'site-creation-step': {
+				case 'create-site': {
 					return navigate( 'processing' );
 				}
 

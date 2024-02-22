@@ -43,6 +43,7 @@ export const LivePreviewUpgradeNotice: FC< {
 								label: __( 'Back to themes', 'wpcom-live-preview' ),
 								url: dashboardLink,
 								variant: 'secondary',
+								className: 'wpcom-live-preview-action',
 							},
 					  ]
 					: [] ),

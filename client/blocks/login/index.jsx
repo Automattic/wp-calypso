@@ -8,6 +8,7 @@ import { capitalize, get, isEmpty, startsWith } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
+import A4APlusWpComLogo from 'calypso/a8c-for-agencies/components/a4a-plus-wpcom-logo';
 import VisitSite from 'calypso/blocks/visit-site';
 import AsyncLoad from 'calypso/components/async-load';
 import JetpackPlusWpComLogo from 'calypso/components/jetpack-plus-wpcom-logo';
@@ -19,6 +20,7 @@ import { getSignupUrl, isReactLostPasswordScreenEnabled } from 'calypso/lib/logi
 import {
 	isCrowdsignalOAuth2Client,
 	isJetpackCloudOAuth2Client,
+	isA4AOAuth2Client,
 	isWooOAuth2Client,
 } from 'calypso/lib/oauth2-clients';
 import { login } from 'calypso/lib/paths';
@@ -46,12 +48,14 @@ import getCurrentQueryArguments from 'calypso/state/selectors/get-current-query-
 import getCurrentRoute from 'calypso/state/selectors/get-current-route';
 import getInitialQueryArguments from 'calypso/state/selectors/get-initial-query-arguments';
 import getPartnerSlugFromQuery from 'calypso/state/selectors/get-partner-slug-from-query';
+import getWccomFrom from 'calypso/state/selectors/get-wccom-from';
 import isFetchingMagicLoginEmail from 'calypso/state/selectors/is-fetching-magic-login-email';
 import isMagicLoginEmailRequested from 'calypso/state/selectors/is-magic-login-email-requested';
 import isWooCommerceCoreProfilerFlow from 'calypso/state/selectors/is-woocommerce-core-profiler-flow';
 import ContinueAsUser from './continue-as-user';
 import ErrorNotice from './error-notice';
 import LoginForm from './login-form';
+
 import './style.scss';
 
 /*
@@ -420,9 +424,12 @@ class Login extends Component {
 				} else {
 					headerText = <h3>{ translate( "Let's get started" ) }</h3>;
 					const poweredByWpCom =
-						wccomFrom === 'nux'
-							? translate( 'All Woo Express stores are powered by WordPress.com!' )
-							: translate( 'All Woo stores are powered by WordPress.com!' );
+						wccomFrom === 'nux' ? (
+							<>
+								{ translate( 'All Woo Express stores are powered by WordPress.com!' ) }
+								<br />
+							</>
+						) : null;
 					const accountSelectionOrLoginToContinue = this.showContinueAsUser()
 						? translate( "First, select the account you'd like to use." )
 						: translate(
@@ -437,7 +444,6 @@ class Login extends Component {
 					postHeader = (
 						<p className="login__header-subtitle">
 							{ poweredByWpCom }
-							<br />
 							{ accountSelectionOrLoginToContinue }
 						</p>
 					);
@@ -447,11 +453,24 @@ class Login extends Component {
 			if ( isJetpackCloudOAuth2Client( oauth2Client ) ) {
 				headerText = translate( 'Howdy! Log in to Jetpack.com with your WordPress.com account.' );
 				preHeader = (
-					<div className="login__jetpack-cloud-wrapper">
+					<div>
 						<JetpackPlusWpComLogo className="login__jetpack-plus-wpcom-logo" size={ 24 } />
 					</div>
 				);
+			}
 
+			if ( isA4AOAuth2Client( oauth2Client ) ) {
+				headerText = translate(
+					'Howdy! Log in to Automattic for Agencies with your WordPress.com account.'
+				);
+				preHeader = (
+					<div>
+						<A4APlusWpComLogo className="login__a4a-plus-wpcom-logo" size={ 32 } />
+					</div>
+				);
+			}
+
+			if ( isJetpackCloudOAuth2Client( oauth2Client ) || isA4AOAuth2Client( oauth2Client ) ) {
 				// If users arrived here from the lost password flow, show them a specific message about it
 				postHeader = currentQuery.lostpassword_flow && (
 					<p className="login__form-post-header">
@@ -819,18 +838,20 @@ class Login extends Component {
 	}
 
 	render() {
-		const { isJetpack, oauth2Client, locale } = this.props;
+		const { isJetpack, oauth2Client, locale, isWoo } = this.props;
 
 		return (
 			<div
 				className={ classNames( 'login', {
 					'is-jetpack': isJetpack,
 					'is-jetpack-cloud': isJetpackCloudOAuth2Client( oauth2Client ),
+					'is-a4a': isA4AOAuth2Client( oauth2Client ),
 				} ) }
 			>
 				{ this.renderHeader() }
 
-				<ErrorNotice locale={ locale } />
+				{ /* For Woo, we render the ErrrorNotice component in login-form.jsx */ }
+				{ ! isWoo && <ErrorNotice locale={ locale } /> }
 
 				{ this.renderNotice() }
 
@@ -863,7 +884,7 @@ export default connect(
 		isJetpackWooCommerceFlow:
 			'woocommerce-onboarding' === get( getCurrentQueryArguments( state ), 'from' ),
 		isWooCoreProfilerFlow: isWooCommerceCoreProfilerFlow( state ),
-		wccomFrom: get( getCurrentQueryArguments( state ), 'wccom-from' ),
+		wccomFrom: getWccomFrom( state ),
 		isAnchorFmSignup: getIsAnchorFmSignup(
 			get( getCurrentQueryArguments( state ), 'redirect_to' )
 		),

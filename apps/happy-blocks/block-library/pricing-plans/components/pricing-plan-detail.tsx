@@ -34,12 +34,19 @@ const PricingPlanDetail: FunctionComponent< BlockSaveProps< BlockAttributes > & 
 		recordTracksEvent( 'calypso_happyblocks_upgrade_plan_click', {
 			plan: currentPlan.productSlug,
 			domain: attributes.domain,
+			affiliateLink: attributes.affiliateLink,
 		} );
 	};
 
-	const CtaLink = attributes.domain
-		? `${ CHECKOUT_URL }/${ attributes.domain }/${ currentPlan.pathSlug }`
-		: PLANS_URL;
+	let CtaLink = PLANS_URL;
+
+	if ( attributes.domain ) {
+		CtaLink = `${ CHECKOUT_URL }/${ attributes.domain }/${ currentPlan.pathSlug }`;
+	}
+
+	if ( attributes.affiliateLink ) {
+		CtaLink = attributes.affiliateLink;
+	}
 
 	return (
 		<section className="hb-pricing-plans-embed__detail">

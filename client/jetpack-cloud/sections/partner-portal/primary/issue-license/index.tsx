@@ -43,8 +43,6 @@ export default function IssueLicense( { selectedSite, suggestedProduct }: Assign
 		?.toString()
 		.split( ',' );
 
-	const { isReady } = useSubmitForm( selectedSite, suggestedProductSlugs );
-
 	const [ selectedLicenses, setSelectedLicenses ] = useState< SelectedLicenseProp[] >( [] );
 	const [ showReviewLicenses, setShowReviewLicenses ] = useState< boolean >( false );
 
@@ -87,21 +85,18 @@ export default function IssueLicense( { selectedSite, suggestedProduct }: Assign
 
 	// If URL params are present, use them to open the review licenses modal directly.
 	useEffect( () => {
-		if (
-			getQueryArg( window.location.href, 'source' ) === 'manage-pricing-page' &&
-			getQueryArg( window.location.href, 'product_slug' ) !== 'jetpack-backup-t2' &&
-			getQueryArg( window.location.href, 'product_slug' ) !== 'jetpack-security-t2'
-		) {
+		if ( getQueryArg( window.location.href, 'source' ) === 'manage-pricing-page' ) {
 			getGroupedLicenses();
 			setShowReviewLicenses( true );
 			dispatch(
 				recordTracksEvent( 'calypso_jetpack_manage_pricing_issue_license_review_licenses_show', {
 					total_licenses: getQueryArg( window.location.href, 'bundle_size' ),
-					product: getQueryArg( window.location.href, 'product_slug' ),
+					product: getQueryArg( window.location.href, 'products' ),
 				} )
 			);
 		}
-	}, [ dispatch, getGroupedLicenses ] );
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [] ); // Intentionally leaving the array empty and disabling the eslint warning, as we want this to run only once.
 
 	const currentStep = showReviewLicenses ? 'reviewLicense' : 'issueLicense';
 
@@ -167,6 +162,8 @@ export default function IssueLicense( { selectedSite, suggestedProduct }: Assign
 			? translate( 'Select single product licenses or save when you issue in bulk' )
 			: translate( 'Select the Jetpack products you would like to issue a new license for:' );
 	}, [ selectedSite?.domain, showBundle, translate ] );
+
+	const { isReady, submitForm } = useSubmitForm( selectedSite, suggestedProductSlugs );
 
 	return (
 		<>
@@ -238,6 +235,8 @@ export default function IssueLicense( { selectedSite, suggestedProduct }: Assign
 					onClose={ onDismissReviewLicensesModal }
 					selectedLicenses={ getGroupedLicenses() }
 					selectedSite={ selectedSite }
+					isFormReady={ isReady }
+					submitForm={ submitForm }
 				/>
 			) }
 		</>

@@ -21,7 +21,9 @@ export default function DescriptionSupportLink( {
 	// This was cooked up to only apply the link in the BlockEditor sidebar.
 	// Since there was no identifier in the environment to differentiate.
 	const [ ref, setRef ] = useState< Element | null >();
-	const { setShowHelpCenter, setShowSupportDoc } = useDispatch( 'automattic/help-center' );
+	const helpCenterDispatch = useDispatch( 'automattic/help-center' );
+	const setShowHelpCenter = helpCenterDispatch?.setShowHelpCenter;
+	const setShowSupportDoc = helpCenterDispatch?.setShowSupportDoc;
 
 	if ( ref && ! ref?.closest( '.block-editor-block-inspector' ) ) {
 		return children as JSX.Element;

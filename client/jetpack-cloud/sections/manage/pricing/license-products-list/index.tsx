@@ -14,18 +14,9 @@ export const LicenseProductsList = ( { bundleSize }: ProductsListProps ) => {
 	const selectedSite = null;
 	const usePublicQuery = true;
 
-	const { plans, products } = useProductAndPlans( {
+	const { plans, products, backupAddons, wooExtensions } = useProductAndPlans( {
 		selectedSite,
 		selectedProductFilter,
-		selectedBundleSize: bundleSize,
-		productSearchQuery,
-		usePublicQuery,
-	} );
-
-	const { backupAddons, wooExtensions } = useProductAndPlans( {
-		selectedSite,
-		selectedProductFilter,
-		selectedBundleSize: 1,
 		productSearchQuery,
 		usePublicQuery,
 	} );

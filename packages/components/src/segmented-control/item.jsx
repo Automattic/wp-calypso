@@ -1,14 +1,6 @@
 import classNames from 'classnames';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
-import { Link } from 'react-router-dom';
-
-const ConditionalLink = ( { active, ...props } ) => {
-	if ( active ) {
-		return <Link to={ props.href } { ...props } />;
-	}
-	return <a { ...props }></a>;
-};
 
 class SegmentedControlItem extends Component {
 	static propTypes = {
@@ -19,12 +11,10 @@ class SegmentedControlItem extends Component {
 		value: PropTypes.string,
 		onClick: PropTypes.func,
 		index: PropTypes.number,
-		isPlansInsideStepper: PropTypes.bool,
 	};
 
 	static defaultProps = {
 		selected: false,
-		isPlansInsideStepper: false,
 	};
 
 	handleKeyEvent = ( event ) => {
@@ -49,8 +39,7 @@ class SegmentedControlItem extends Component {
 
 		return (
 			<li className={ itemClassName } role="none">
-				<ConditionalLink
-					active={ this.props.isPlansInsideStepper }
+				<a
 					href={ this.props.path }
 					className={ linkClassName }
 					onClick={ this.props.onClick }
@@ -62,7 +51,7 @@ class SegmentedControlItem extends Component {
 					onKeyDown={ this.handleKeyEvent }
 				>
 					<span className="segmented-control__text">{ this.props.children }</span>
-				</ConditionalLink>
+				</a>
 			</li>
 		);
 	}

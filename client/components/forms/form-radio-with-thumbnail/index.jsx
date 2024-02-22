@@ -1,6 +1,6 @@
+import { FormLabel } from '@automattic/components';
 import classnames from 'classnames';
 import PropTypes from 'prop-types';
-import FormLabel from 'calypso/components/forms/form-label';
 import FormRadio from 'calypso/components/forms/form-radio';
 import TranslatableString from 'calypso/components/translatable/proptype';
 

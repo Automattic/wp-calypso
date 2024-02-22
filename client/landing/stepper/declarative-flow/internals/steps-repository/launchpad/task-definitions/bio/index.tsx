@@ -4,24 +4,22 @@ import { dispatch } from '@wordpress/data';
 import { __ } from '@wordpress/i18n';
 import { addQueryArgs } from '@wordpress/url';
 import { ONBOARD_STORE } from 'calypso/landing/stepper/stores';
-import { recordTaskClickTracksEvent } from '../../tracking';
+import { getSiteIdOrSlug } from '../../task-helper';
 import { type TaskAction } from '../../types';
 
 export const getSetupLinkInBioTask: TaskAction = ( task, flow, context ) => {
-	const { siteInfoQueryArgs } = context;
+	const { site, siteSlug } = context;
 
 	return {
 		...task,
-		actionDispatch: () => recordTaskClickTracksEvent( task, flow, context ),
-		calypso_path: addQueryArgs(
-			`/setup/link-in-bio-post-setup/linkInBioPostSetup`,
-			siteInfoQueryArgs
-		),
+		calypso_path: addQueryArgs( `/setup/link-in-bio-post-setup/linkInBioPostSetup`, {
+			...getSiteIdOrSlug( flow, site, siteSlug ),
+		} ),
 		useCalypsoPath: true,
 	};
 };
 
-export const getLinkInBioLaunchedTask: TaskAction = ( task, flow, context ) => {
+export const getLinkInBioLaunchedTask: TaskAction = ( task, _, context ) => {
 	const { siteSlug, site, submit } = context;
 	return {
 		...task,
@@ -37,7 +35,6 @@ export const getLinkInBioLaunchedTask: TaskAction = ( task, flow, context ) => {
 
 					// Waits for half a second so that the loading screen doesn't flash away too quickly
 					await new Promise( ( res ) => setTimeout( res, 500 ) );
-					recordTaskClickTracksEvent( task, flow, context );
 					return { goToHome: true, siteSlug };
 				} );
 
@@ -47,10 +44,9 @@ export const getLinkInBioLaunchedTask: TaskAction = ( task, flow, context ) => {
 	};
 };
 
-export const getLinksAddedTask: TaskAction = ( task, flow, context ) => {
+export const getLinksAddedTask: TaskAction = ( task ) => {
 	return {
 		...task,
-		actionDispatch: () => recordTaskClickTracksEvent( task, flow, context ),
 		calyso_path: addQueryArgs( task.calypso_path, { canvas: 'edit' } ),
 		useCalypsoPath: true,
 	};

@@ -1,4 +1,3 @@
-import { isEnabled } from '@automattic/calypso-config';
 import {
 	FEATURE_SFTP,
 	FEATURE_SFTP_DATABASE,
@@ -11,8 +10,6 @@ import { Fragment, useState, useCallback } from 'react';
 import { connect } from 'react-redux';
 import DocumentHead from 'calypso/components/data/document-head';
 import QueryJetpackModules from 'calypso/components/data/query-jetpack-modules';
-import QueryKeyringConnections from 'calypso/components/data/query-keyring-connections';
-import QueryKeyringServices from 'calypso/components/data/query-keyring-services';
 import QueryReaderTeams from 'calypso/components/data/query-reader-teams';
 import QuerySites from 'calypso/components/data/query-sites';
 import FeatureExample from 'calypso/components/feature-example';
@@ -25,9 +22,7 @@ import NoticeAction from 'calypso/components/notice/notice-action';
 import { ScrollToAnchorOnMount } from 'calypso/components/scroll-to-anchor-on-mount';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import TrackComponentView from 'calypso/lib/analytics/track-component-view';
-import { GitHubCard } from 'calypso/my-sites/hosting/github';
 import TrialBanner from 'calypso/my-sites/plans/trials/trial-banner';
-import { isAutomatticTeamMember } from 'calypso/reader/lib/teams';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { fetchAutomatedTransferStatus } from 'calypso/state/automated-transfer/actions';
 import { transferStates } from 'calypso/state/automated-transfer/constants';
@@ -92,7 +87,6 @@ const MainCards = ( {
 	hasStagingSitesFeature,
 	isAdvancedHostingDisabled,
 	isBasicHostingDisabled,
-	isGithubIntegrationEnabled,
 	isWpcomStagingSite,
 	isBusinessTrial,
 	siteId,
@@ -121,13 +115,6 @@ const MainCards = ( {
 					content: (
 						<StagingSiteProductionCard siteId={ siteId } disabled={ isAdvancedHostingDisabled } />
 					),
-					type: 'advanced',
-			  }
-			: null,
-		isGithubIntegrationEnabled
-			? {
-					feature: 'github',
-					content: <GitHubCard />,
 					type: 'advanced',
 			  }
 			: null,
@@ -187,7 +174,6 @@ const SidebarCards = ( { isBasicHostingDisabled } ) => {
 
 const Hosting = ( props ) => {
 	const {
-		teams,
 		clickActivate,
 		isECommerceTrial,
 		isBusinessTrial,
@@ -293,20 +279,12 @@ const Hosting = ( props ) => {
 	};
 
 	const getContent = () => {
-		const isGithubIntegrationEnabled =
-			isEnabled( 'github-integration-i1' ) && isAutomatticTeamMember( teams );
 		const WrapperComponent = ! isSiteAtomic ? FeatureExample : Fragment;
 
 		return (
 			<>
 				{ isSiteAtomic && <QuerySites siteId={ siteId } /> }
 				{ isJetpack && <QueryJetpackModules siteId={ siteId } /> }
-				{ isGithubIntegrationEnabled && (
-					<>
-						<QueryKeyringServices />
-						<QueryKeyringConnections />
-					</>
-				) }
 				<WrapperComponent>
 					<Layout className="hosting__layout">
 						<Column type="main" className="hosting__main-layout-col">
@@ -314,7 +292,6 @@ const Hosting = ( props ) => {
 								hasStagingSitesFeature={ hasStagingSitesFeature }
 								isAdvancedHostingDisabled={ ! hasSftpFeature || ! isSiteAtomic }
 								isBasicHostingDisabled={ ! hasAtomicFeature || ! isSiteAtomic }
-								isGithubIntegrationEnabled={ isGithubIntegrationEnabled }
 								isWpcomStagingSite={ isWpcomStagingSite }
 								isBusinessTrial={ isBusinessTrial && ! hasTransfer }
 								siteId={ siteId }

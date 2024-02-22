@@ -9,6 +9,8 @@ import type { CalypsoDispatch } from 'calypso/state/types';
 export interface PaymentProcessorOptions {
 	includeDomainDetails: boolean;
 	includeGSuiteDetails: boolean;
+	isAkismetSitelessCheckout: boolean;
+	isJetpackNotAtomic: boolean;
 	createUserAndSiteBeforeTransaction: boolean;
 	stripe: Stripe | null;
 	stripeConfiguration: StripeConfiguration | null;

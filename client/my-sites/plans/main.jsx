@@ -33,7 +33,6 @@ import Main from 'calypso/components/main';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import TrackComponentView from 'calypso/lib/analytics/track-component-view';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
-import withTrackingTool from 'calypso/lib/analytics/with-tracking-tool';
 import { getDomainRegistrations } from 'calypso/lib/cart-values/cart-items';
 import { PerformanceTrackerStop } from 'calypso/lib/performance-tracking';
 import PlansNavigation from 'calypso/my-sites/plans/navigation';
@@ -47,6 +46,7 @@ import getDomainFromHomeUpsellInQuery from 'calypso/state/selectors/get-domain-f
 import isEligibleForWpComMonthlyPlan from 'calypso/state/selectors/is-eligible-for-wpcom-monthly-plan';
 import isSiteWPForTeams from 'calypso/state/selectors/is-site-wpforteams';
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
+import { fetchSitePlans } from 'calypso/state/sites/plans/actions';
 import { getCurrentPlan } from 'calypso/state/sites/plans/selectors';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
 import { getSelectedSite, getSelectedSiteId } from 'calypso/state/ui/selectors';
@@ -167,7 +167,11 @@ class Plans extends Component {
 	};
 
 	componentDidMount() {
+		const { currentPlan, selectedSite } = this.props;
 		this.redirectIfInvalidPlanInterval();
+		if ( ! currentPlan && selectedSite ) {
+			this.props.fetchSitePlans( selectedSite.ID );
+		}
 
 		if ( this.props.isDomainAndPlanPackageFlow ) {
 			document.body.classList.add( 'is-domain-plan-package-flow' );
@@ -474,33 +478,40 @@ class Plans extends Component {
 	}
 }
 
-const ConnectedPlans = connect( ( state ) => {
-	const selectedSiteId = getSelectedSiteId( state );
-	const currentPlan = getCurrentPlan( state, selectedSiteId );
-	const currentPlanIntervalType = getIntervalTypeForTerm(
-		getPlan( currentPlan?.productSlug )?.term
-	);
+const ConnectedPlans = connect(
+	( state ) => {
+		const selectedSiteId = getSelectedSiteId( state );
+		const currentPlan = getCurrentPlan( state, selectedSiteId );
+		const currentPlanIntervalType = getIntervalTypeForTerm(
+			getPlan( currentPlan?.productSlug )?.term
+		);
 
-	return {
-		currentPlan,
-		currentPlanIntervalType,
-		purchase: currentPlan ? getByPurchaseId( state, currentPlan.id ) : null,
-		selectedSite: getSelectedSite( state ),
-		canAccessPlans: canCurrentUser( state, getSelectedSiteId( state ), 'manage_options' ),
-		isWPForTeamsSite: isSiteWPForTeams( state, selectedSiteId ),
-		isSiteEligibleForMonthlyPlan: isEligibleForWpComMonthlyPlan( state, selectedSiteId ),
-		plansLoaded: Boolean( getPlanSlug( state, getPlan( PLAN_FREE )?.getProductId() || 0 ) ),
-		isDomainAndPlanPackageFlow: !! getCurrentQueryArguments( state )?.domainAndPlanPackage,
-		isJetpackNotAtomic: isJetpackSite( state, selectedSiteId, { treatAtomicAsJetpackSite: false } ),
-		isDomainUpsell:
-			!! getCurrentQueryArguments( state )?.domainAndPlanPackage &&
-			!! getCurrentQueryArguments( state )?.domain,
-		isDomainUpsellSuggested: getCurrentQueryArguments( state )?.domain === 'true',
-		isFreePlan: isFreePlanProduct( currentPlan ),
-		domainFromHomeUpsellFlow: getDomainFromHomeUpsellInQuery( state ),
-		siteHasLegacyStorage: siteHasFeature( state, selectedSiteId, FEATURE_LEGACY_STORAGE_200GB ),
-	};
-} )( withCartKey( withShoppingCart( localize( withTrackingTool( 'HotJar' )( Plans ) ) ) ) );
+		return {
+			currentPlan,
+			currentPlanIntervalType,
+			purchase: currentPlan ? getByPurchaseId( state, currentPlan.id ) : null,
+			selectedSite: getSelectedSite( state ),
+			canAccessPlans: canCurrentUser( state, getSelectedSiteId( state ), 'manage_options' ),
+			isWPForTeamsSite: isSiteWPForTeams( state, selectedSiteId ),
+			isSiteEligibleForMonthlyPlan: isEligibleForWpComMonthlyPlan( state, selectedSiteId ),
+			plansLoaded: Boolean( getPlanSlug( state, getPlan( PLAN_FREE )?.getProductId() || 0 ) ),
+			isDomainAndPlanPackageFlow: !! getCurrentQueryArguments( state )?.domainAndPlanPackage,
+			isJetpackNotAtomic: isJetpackSite( state, selectedSiteId, {
+				treatAtomicAsJetpackSite: false,
+			} ),
+			isDomainUpsell:
+				!! getCurrentQueryArguments( state )?.domainAndPlanPackage &&
+				!! getCurrentQueryArguments( state )?.domain,
+			isDomainUpsellSuggested: getCurrentQueryArguments( state )?.domain === 'true',
+			isFreePlan: isFreePlanProduct( currentPlan ),
+			domainFromHomeUpsellFlow: getDomainFromHomeUpsellInQuery( state ),
+			siteHasLegacyStorage: siteHasFeature( state, selectedSiteId, FEATURE_LEGACY_STORAGE_200GB ),
+		};
+	},
+	( dispatch ) => ( {
+		fetchSitePlans: ( siteId ) => dispatch( fetchSitePlans( siteId ) ),
+	} )
+)( withCartKey( withShoppingCart( localize( Plans ) ) ) );
 
 export default function PlansWrapper( props ) {
 	return (

@@ -16,6 +16,7 @@ import {
 	isGravatarOAuth2Client,
 	isWPJobManagerOAuth2Client,
 	isGravPoweredOAuth2Client,
+	isWooOAuth2Client,
 } from 'calypso/lib/oauth2-clients';
 import { login } from 'calypso/lib/paths';
 import {
@@ -190,6 +191,10 @@ class MagicLogin extends Component {
 	}
 
 	renderGutenboardingLogo() {
+		if ( this.props.isWoo ) {
+			return null;
+		}
+
 		return (
 			<div className="magic-login__gutenboarding-wordpress-logo">
 				<svg
@@ -508,6 +513,7 @@ const mapState = ( state ) => ( {
 		getCurrentQueryArguments( state ).email_address ||
 		getInitialQueryArguments( state ).email_address,
 	localeSuggestions: getLocaleSuggestions( state ),
+	isWoo: isWooOAuth2Client( getCurrentOAuth2Client( state ) ),
 } );
 
 const mapDispatch = {

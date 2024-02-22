@@ -18,7 +18,6 @@ import {
 	isPlan,
 	isWpComPremiumPlan,
 	isTitanMail,
-	isDomainRegistration,
 	is100Year,
 } from '@automattic/calypso-products';
 import {
@@ -357,12 +356,10 @@ export default function getThankYouPageUrl( {
 	// signup flow that is not only for domain registrations and the cookie
 	// post-checkout URL is not the signup "intent" flow.
 	const signupFlowName = getSignupCompleteFlowName();
-	const isDomainOnly =
-		siteSlug === 'no-site' && getAllCartItems( cart ).every( isDomainRegistration );
+
 	if (
 		( [ 'no-user', 'no-site' ].includes( String( cart?.cart_key ?? '' ) ) ||
 			signupFlowName === 'domain' ) &&
-		! isDomainOnly &&
 		urlFromCookie &&
 		receiptIdOrPlaceholder &&
 		! urlFromCookie.includes( '/start/setup-site' )
@@ -384,7 +381,6 @@ export default function getThankYouPageUrl( {
 					siteSlug,
 					hideUpsell: Boolean( hideNudge ),
 					domains,
-					isDomainOnly,
 			  } )
 			: undefined;
 
@@ -671,14 +667,12 @@ function getRedirectUrlForPostCheckoutUpsell( {
 	siteSlug,
 	hideUpsell,
 	domains,
-	isDomainOnly,
 }: {
 	receiptId: ReceiptId | ReceiptIdPlaceholder;
 	cart: ResponseCart | undefined;
 	siteSlug: string | undefined;
 	hideUpsell: boolean;
 	domains: ResponseDomain[] | undefined;
-	isDomainOnly?: boolean;
 } ): string | undefined {
 	if ( hideUpsell ) {
 		return;
@@ -688,7 +682,6 @@ function getRedirectUrlForPostCheckoutUpsell( {
 		cart,
 		siteSlug,
 		domains,
-		isDomainOnly,
 	} );
 
 	if ( professionalEmailUpsellUrl ) {
@@ -728,7 +721,6 @@ function getProfessionalEmailUpsellUrl( {
 	cart: ResponseCart | undefined;
 	siteSlug: string | undefined;
 	domains: ResponseDomain[] | undefined;
-	isDomainOnly?: boolean;
 } ): string | undefined {
 	if ( ! cart ) {
 		return;

@@ -15,7 +15,9 @@ export const SitePreviewEllipsisMenu = () => {
 	const moreButtonRef = useRef( null );
 	const [ isShowingPopover, setIsShowingPopover ] = useState( false );
 
-	const classes = classNames( 'theme__more-button', { 'is-open': isShowingPopover } );
+	const classes = classNames( 'home-site-preview__ellipses-button', {
+		'is-open': isShowingPopover,
+	} );
 	const selectedSite = useSelector( getSelectedSite );
 
 	return (

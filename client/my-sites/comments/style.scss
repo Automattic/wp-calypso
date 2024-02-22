@@ -9,10 +9,8 @@
 		}
 
 		.comment-navigation__open-bulk {
-			padding-top: 9px;
-			position: absolute;
-			right: 0;
-			top: 0;
+			justify-content: center;
+			padding-top: 0;
 		}
 	}
 }
@@ -71,6 +69,14 @@
 		.gridicon {
 			top: 4px;
 		}
+	}
+}
+
+.comment-navigation__unreplied-comments.form-fieldset {
+	margin: 12px;
+
+	.form-label {
+		margin: 0;
 	}
 }
 

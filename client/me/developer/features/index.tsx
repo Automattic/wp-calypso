@@ -1,13 +1,14 @@
 import { Card } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
-import { handleClickLink } from './handle-click-link';
 import { useFeaturesList } from './use-features-list';
+import { useHandleClickLink } from './use-handle-click-link';
 
 import './style.scss';
 
 export const DeveloperFeatures = () => {
 	const translate = useTranslate();
 	const features = useFeaturesList();
+	const handleClickLink = useHandleClickLink();
 
 	return (
 		<>

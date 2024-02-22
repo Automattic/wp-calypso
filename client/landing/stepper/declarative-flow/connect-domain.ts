@@ -100,8 +100,8 @@ const connectDomain: Flow = {
 		return [
 			{ slug: 'plans', asyncComponent: () => import( './internals/steps-repository/plans' ) },
 			{
-				slug: 'siteCreationStep',
-				asyncComponent: () => import( './internals/steps-repository/site-creation-step' ),
+				slug: 'createSite',
+				asyncComponent: () => import( './internals/steps-repository/create-site' ),
 			},
 			{
 				slug: 'processing',
@@ -124,9 +124,9 @@ const connectDomain: Flow = {
 			switch ( _currentStepSlug ) {
 				case 'plans':
 					clearSignupDestinationCookie();
-					return navigate( 'siteCreationStep' );
+					return navigate( 'createSite' );
 
-				case 'siteCreationStep':
+				case 'createSite':
 					return navigate( 'processing' );
 
 				case 'processing': {

@@ -3,6 +3,7 @@ import { useTranslate } from 'i18n-calypso';
 import { type ReactNode } from 'react';
 import { useSelector } from 'react-redux';
 import illustration404 from 'calypso/assets/images/illustrations/illustration-404.svg';
+import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
 import EmptyContent from 'calypso/components/empty-content';
 import { recordTracksEvent, withAnalytics } from 'calypso/state/analytics/actions';
 import { activateModule } from 'calypso/state/jetpack/modules/actions';
@@ -99,5 +100,10 @@ export default function LoadStatsPage( { children }: AsyncLoadProps ) {
 		return <EnableStatsModuleNotice siteId={ siteId } path={ path } />;
 	}
 
-	return <StatsRedirectFlow>{ children }</StatsRedirectFlow>;
+	return (
+		<>
+			<QuerySitePurchases siteId={ siteId } />
+			<StatsRedirectFlow>{ children }</StatsRedirectFlow>
+		</>
+	);
 }

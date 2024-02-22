@@ -9,7 +9,7 @@ export function isObject( x: unknown ): x is Record< string, unknown > {
  * @param name The data to test
  */
 export function isName( name: unknown ): name is string {
-	return typeof name === 'string' && name !== '';
+	return typeof name === 'string' && name !== '' && /^[a-z0-9_]*$/.test( name );
 }
 
 /**

@@ -31,7 +31,9 @@ export const injectCategoryToPattern = (
 };
 
 export const isPriorityPattern = ( { categories, tags: { assembler_priority } }: Pattern ) =>
-	isEnabled( 'pattern-assembler/v2' ) ? categories.featured : Boolean( assembler_priority );
+	isEnabled( 'pattern-assembler/v2' )
+		? categories.featured || categories.footer || categories.header
+		: Boolean( assembler_priority );
 
 export const isPagePattern = ( { categories, tags: { assembler_page } }: Pattern ) =>
 	Boolean( isEnabled( 'pattern-assembler/v2' ) ? categories.page : assembler_page );

@@ -386,7 +386,7 @@ describe( 'site linking ctas', () => {
 		fireEvent.click( domainActionsButton );
 
 		await waitFor( () => {
-			const connectAction = screen.getByText( 'Connect to an existing site' );
+			const connectAction = screen.getByText( 'Attach to an existing site' );
 
 			// The link itself is wrapped with a span element.
 			expect( connectAction.closest( '[role=menuitem]' ) ).toHaveAttribute(

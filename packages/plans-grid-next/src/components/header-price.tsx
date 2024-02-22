@@ -144,10 +144,16 @@ const PlanFeatures2023GridHeaderPrice = ( {
 	} = gridPlansIndex[ planSlug ];
 	const isPricedPlan = null !== originalPrice.monthly;
 
-	const isGridPlanDiscounted = Boolean( discountedPrice.monthly );
-	const isAnyVisibleGridPlanDiscounted = visibleGridPlans.some(
-		( { pricing } ) => pricing.discountedPrice.monthly
-	);
+	/**
+	 * If this discount is related to a `Plan upgrade credit`
+	 * then we do not show any discount messaging as per Automattic/martech#1927
+	 * We currently only support the `One time discount` in some currencies
+	 */
+	const isGridPlanOneTimeDiscounted =
+		Boolean( discountedPrice.monthly ) && ! planUpgradeCreditsApplicable;
+	const isAnyVisibleGridPlanOneTimeDiscounted =
+		visibleGridPlans.some( ( { pricing } ) => pricing.discountedPrice.monthly ) &&
+		! planUpgradeCreditsApplicable;
 
 	const isGridPlanOnIntroOffer = introOffer && ! introOffer.isOfferComplete;
 	const isAnyVisibleGridPlanOnIntroOffer = visibleGridPlans.some(
@@ -209,13 +215,11 @@ const PlanFeatures2023GridHeaderPrice = ( {
 		);
 	}
 
-	if ( isGridPlanDiscounted ) {
+	if ( isGridPlanOneTimeDiscounted ) {
 		return (
 			<HeaderPriceContainer>
 				<Badge className="plan-features-2023-grid__badge">
-					{ planUpgradeCreditsApplicable
-						? translate( 'Credit applied' )
-						: translate( 'One time discount' ) }
+					{ translate( 'One time discount' ) }
 				</Badge>
 				<PricesGroup isLargeCurrency={ isLargeCurrency }>
 					<PlanPrice
@@ -241,7 +245,7 @@ const PlanFeatures2023GridHeaderPrice = ( {
 		);
 	}
 
-	if ( isAnyVisibleGridPlanDiscounted || isAnyVisibleGridPlanOnIntroOffer ) {
+	if ( isAnyVisibleGridPlanOneTimeDiscounted || isAnyVisibleGridPlanOnIntroOffer ) {
 		return (
 			<HeaderPriceContainer>
 				<Badge className="plan-features-2023-grid__badge" isHidden={ true }>

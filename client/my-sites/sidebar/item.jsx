@@ -6,6 +6,7 @@
  * These two cases might be to be split up?
  */
 
+import classnames from 'classnames';
 import PropTypes from 'prop-types';
 import { memo } from 'react';
 import { useDispatch } from 'react-redux';
@@ -23,6 +24,7 @@ export const MySitesSidebarUnifiedItem = ( {
 	slug,
 	title,
 	url,
+	className = '',
 	shouldOpenExternalLinksInCurrentTab,
 	trackClickEvent,
 } ) => {
@@ -47,7 +49,10 @@ export const MySitesSidebarUnifiedItem = ( {
 			selected={ selected }
 			customIcon={ <SidebarCustomIcon icon={ icon } /> }
 			forceInternalLink={ shouldOpenExternalLinksInCurrentTab }
-			className={ isSubItem ? 'sidebar__menu-item--child' : 'sidebar__menu-item-parent' }
+			className={ classnames(
+				isSubItem ? 'sidebar__menu-item--child' : 'sidebar__menu-item-parent',
+				className
+			) }
 		>
 			<MySitesSidebarUnifiedStatsSparkline slug={ slug } />
 		</SidebarItem>

@@ -78,9 +78,9 @@ const free: Flow = {
 
 			switch ( _currentStep ) {
 				case 'freeSetup':
-					return navigate( 'site-creation-step' );
+					return navigate( 'create-site' );
 
-				case 'site-creation-step':
+				case 'create-site':
 					return navigate( 'processing' );
 
 				case 'processing':

@@ -32,7 +32,8 @@ export const ItemPrice = ( { item, bundleSize }: ItemPriceProps ) => {
 	const currencyCode = useSelector( getCurrentUserCurrencyCode );
 	const translate = useTranslate();
 	const { containerRef, isCompact } = useItemPriceCompact();
-	const saveAmount = bundleSize > 1 && (
+
+	const customTimeFrameSavings = bundleSize > 1 && (
 		<span className="product-license-price-with-discount__price-discount">
 			{ translate( 'Save %(discountPercent)s%', {
 				args: {
@@ -42,15 +43,12 @@ export const ItemPrice = ( { item, bundleSize }: ItemPriceProps ) => {
 		</span>
 	);
 
-	const customTimeFrame = (
-		<>
-			{ saveAmount }
-			<span className="product-license-price-with-discount__price-interval">
-				{ bundleSize > 1
-					? translate( ' per bundle per month' )
-					: translate( ' per license per month' ) }
-			</span>
-		</>
+	const customTimeFrameBillingTerms = (
+		<span className="product-license-price-with-discount__price-interval">
+			{ bundleSize > 1
+				? translate( ' per bundle per month' )
+				: translate( ' per license per month' ) }
+		</span>
 	);
 
 	const title = getProductShortTitle( item, false );
@@ -67,7 +65,8 @@ export const ItemPrice = ( { item, bundleSize }: ItemPriceProps ) => {
 				pricesAreFetching={ false }
 				billingTerm={ TERM_MONTHLY }
 				productName={ title }
-				customTimeFrame={ customTimeFrame }
+				customTimeFrameSavings={ customTimeFrameSavings }
+				customTimeFrameBillingTerms={ customTimeFrameBillingTerms }
 			/>
 		</div>
 	);

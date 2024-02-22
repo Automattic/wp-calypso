@@ -2,6 +2,7 @@ import { recordTracksEvent } from '@automattic/calypso-analytics';
 import config from '@automattic/calypso-config';
 import { FEATURE_INSTALL_THEMES } from '@automattic/calypso-products';
 import page from '@automattic/calypso-router';
+import { SelectDropdown } from '@automattic/components';
 import { isAssemblerSupported } from '@automattic/design-picker';
 import classNames from 'classnames';
 import { localize, translate } from 'i18n-calypso';
@@ -15,7 +16,6 @@ import QuerySitePlans from 'calypso/components/data/query-site-plans';
 import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
 import QueryThemeFilters from 'calypso/components/data/query-theme-filters';
 import { SearchThemes, SearchThemesV2 } from 'calypso/components/search-themes';
-import SelectDropdown from 'calypso/components/select-dropdown';
 import { THEME_TIERS } from 'calypso/components/theme-tier/constants';
 import getSiteAssemblerUrl from 'calypso/components/themes-list/get-site-assembler-url';
 import { getOptionLabel } from 'calypso/landing/subscriptions/helpers';
@@ -201,13 +201,20 @@ class ThemeShowcase extends Component {
 		const { isSiteWooExpressOrEcomFreeTrial, themeTiers } = this.props;
 
 		if ( config.isEnabled( 'themes/tiers' ) ) {
-			return [
-				{ value: 'all', label: translate( 'All' ) },
-				...Object.keys( themeTiers ).map( ( tier ) => ( {
-					value: tier,
-					label: THEME_TIERS[ tier ]?.label || tier,
-				} ) ),
-			];
+			const tiers = Object.keys( themeTiers ).reduce( ( availableTiers, tier ) => {
+				if ( ! THEME_TIERS[ tier ]?.isFilterable ) {
+					return availableTiers;
+				}
+				return [
+					...availableTiers,
+					{
+						value: tier,
+						label: THEME_TIERS[ tier ].label,
+					},
+				];
+			}, [] );
+
+			return [ { value: 'all', label: translate( 'All' ) }, ...tiers ];
 		}
 
 		const tiers = [

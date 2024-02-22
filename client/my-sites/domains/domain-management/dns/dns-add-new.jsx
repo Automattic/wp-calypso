@@ -1,4 +1,5 @@
 import page from '@automattic/calypso-router';
+import { FormLabel } from '@automattic/components';
 import { localize } from 'i18n-calypso';
 import { includes, find, flatMap } from 'lodash';
 import PropTypes from 'prop-types';
@@ -6,7 +7,6 @@ import * as React from 'react';
 import { connect } from 'react-redux';
 import FormButton from 'calypso/components/forms/form-button';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
-import FormLabel from 'calypso/components/forms/form-label';
 import FormSelect from 'calypso/components/forms/form-select';
 import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
 import formState from 'calypso/lib/form-state';

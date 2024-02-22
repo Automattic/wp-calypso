@@ -1,4 +1,5 @@
 import { Button } from '@automattic/components';
+import { localizeUrl } from '@automattic/i18n-utils';
 import { useTranslate } from 'i18n-calypso';
 
 import './style.scss';
@@ -6,7 +7,7 @@ import './style.scss';
 export default function PricingNeedMoreInfo() {
 	const translate = useTranslate();
 
-	const href = 'http://jetpack.com/manage';
+	const href = localizeUrl( 'http://jetpack.com/manage' );
 
 	return (
 		<div className="pricing-need-more-info">

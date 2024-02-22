@@ -69,8 +69,8 @@ const ecommerceFlow: Flow = {
 				asyncComponent: () => import( './internals/steps-repository/design-carousel' ),
 			},
 			{
-				slug: 'siteCreationStep',
-				asyncComponent: () => import( './internals/steps-repository/site-creation-step' ),
+				slug: 'createSite',
+				asyncComponent: () => import( './internals/steps-repository/create-site' ),
 			},
 			{
 				slug: 'processing',
@@ -226,9 +226,9 @@ const ecommerceFlow: Flow = {
 						] );
 						resetStorageAddonSlug();
 					}
-					return navigate( 'siteCreationStep' );
+					return navigate( 'createSite' );
 
-				case 'siteCreationStep':
+				case 'createSite':
 					return navigate( 'processing' );
 
 				case 'processing':

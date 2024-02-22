@@ -18,6 +18,7 @@ import {
 	getPartnerCoupon,
 	hasCheckoutVersion,
 	filterAndGroupCostOverridesForDisplay,
+	filterCostOverridesForLineItem,
 } from '@automattic/wpcom-checkout';
 import styled from '@emotion/styled';
 import { useTranslate } from 'i18n-calypso';
@@ -29,11 +30,10 @@ import { getSignupCompleteFlowName } from 'calypso/signup/storageUtils';
 import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { AkismetProQuantityDropDown } from './akismet-pro-quantity-dropdown';
-import { CostOverridesList } from './cost-overrides-list';
+import { CostOverridesList, LineItemCostOverrides } from './cost-overrides-list';
 import { ItemVariationPicker } from './item-variation-picker';
 import type { OnChangeAkProQuantity } from './akismet-pro-quantity-dropdown';
 import type { OnChangeItemVariant } from './item-variation-picker';
-import type { Theme } from '@automattic/composite-checkout';
 import type {
 	ResponseCart,
 	RemoveProductFromCart,
@@ -43,9 +43,9 @@ import type {
 } from '@automattic/shopping-cart';
 import type { PropsWithChildren } from 'react';
 
-const WPOrderReviewList = styled.ul< { theme?: Theme } >`
+const WPOrderReviewList = styled.ul< { hasCheckoutVersion2: boolean } >`
 	box-sizing: border-box;
-	margin: 24px 0;
+	${ ( props ) => ( props.hasCheckoutVersion2 ? 'margin: 24px 0 0 0;' : 'margin: 24px 0;' ) }
 	padding: 0;
 `;
 
@@ -171,7 +171,10 @@ export function WPOrderReviewLineItems( {
 	);
 
 	return (
-		<WPOrderReviewList className={ joinClasses( [ className, 'order-review-line-items' ] ) }>
+		<WPOrderReviewList
+			className={ joinClasses( [ className, 'order-review-line-items' ] ) }
+			hasCheckoutVersion2={ hasCheckoutVersion( '2' ) }
+		>
 			{ responseCart.products.map( ( product ) => (
 				<LineItemWrapper
 					key={ product.uuid }
@@ -230,11 +233,16 @@ export function WPOrderReviewLineItems( {
 					currency={ responseCart.currency }
 					removeCoupon={ removeCoupon }
 					couponCode={ responseCart.coupon }
+					showOnlyCoupons
 				/>
 			) }
 		</WPOrderReviewList>
 	);
 }
+
+const DropdownWrapper = styled.span< { hasCheckoutVersion2: boolean } >`
+	${ ( props ) => ( props.hasCheckoutVersion2 ? `width: 100%; max-width: 200px` : `width: 100%;` ) }
+`;
 
 function LineItemWrapper( {
 	product,
@@ -336,6 +344,13 @@ function LineItemWrapper( {
 
 	const areThereVariants = variants.length > 1;
 
+	const translate = useTranslate();
+
+	const costOverridesList = filterCostOverridesForLineItem( product, translate );
+
+	const finalShouldShowVariantSelector =
+		areThereVariants && shouldShowVariantSelector && onChangeSelection;
+
 	return (
 		<WPOrderReviewListItem key={ product.uuid }>
 			<LineItem
@@ -350,27 +365,33 @@ function LineItemWrapper( {
 				onRemoveProductClick={ onRemoveProductClick }
 				onRemoveProductCancel={ onRemoveProductCancel }
 				isAkPro500Cart={ isAkPro500Cart }
+				shouldShowBillingInterval={ ! finalShouldShowVariantSelector }
 			>
-				{ areThereVariants && shouldShowVariantSelector && onChangeSelection && (
-					<ItemVariationPicker
-						id={ product.uuid }
-						selectedItem={ product }
-						onChangeItemVariant={ onChangeSelection }
-						isDisabled={ isDisabled }
-						variants={ variants }
-						toggle={ toggleVariantSelector }
-						isOpen={ variantOpenId === product.uuid }
-					/>
-				) }
-				{ isAkPro500Cart && (
-					<AkismetProQuantityDropDown
-						id={ product.uuid }
-						responseCart={ responseCart }
-						setForceShowAkQuantityDropdown={ setForceShowAkQuantityDropdown }
-						onChangeAkProQuantity={ onChangeAkProQuantity }
-						toggle={ toggleAkQuantityDropdown }
-						isOpen={ akQuantityOpenId === product.uuid }
-					/>
+				<DropdownWrapper hasCheckoutVersion2={ hasCheckoutVersion( '2' ) }>
+					{ finalShouldShowVariantSelector && (
+						<ItemVariationPicker
+							id={ product.uuid }
+							selectedItem={ product }
+							onChangeItemVariant={ onChangeSelection }
+							isDisabled={ isDisabled }
+							variants={ variants }
+							toggle={ toggleVariantSelector }
+							isOpen={ variantOpenId === product.uuid }
+						/>
+					) }
+					{ isAkPro500Cart && (
+						<AkismetProQuantityDropDown
+							id={ product.uuid }
+							responseCart={ responseCart }
+							setForceShowAkQuantityDropdown={ setForceShowAkQuantityDropdown }
+							onChangeAkProQuantity={ onChangeAkProQuantity }
+							toggle={ toggleAkQuantityDropdown }
+							isOpen={ akQuantityOpenId === product.uuid }
+						/>
+					) }
+				</DropdownWrapper>
+				{ hasCheckoutVersion( '2' ) && (
+					<LineItemCostOverrides product={ product } costOverridesList={ costOverridesList } />
 				) }
 			</LineItem>
 		</WPOrderReviewListItem>

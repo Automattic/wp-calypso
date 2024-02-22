@@ -1,6 +1,7 @@
 import { resolveDeviceTypeByViewPort } from '@automattic/viewport';
 import { reduce, snakeCase } from 'lodash';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
+import { getStepOldSlug } from '../index';
 import { ProvidedDependencies } from '../types';
 
 export function recordSubmitStep(
@@ -66,4 +67,17 @@ export function recordSubmitStep(
 		...inputs,
 		...additionalInputs,
 	} );
+
+	const stepOldSlug = getStepOldSlug( step );
+	if ( stepOldSlug ) {
+		recordTracksEvent( 'calypso_signup_actions_submit_step', {
+			device,
+			flow,
+			variant,
+			step: stepOldSlug,
+			intent,
+			...inputs,
+			...additionalInputs,
+		} );
+	}
 }

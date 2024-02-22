@@ -1,6 +1,8 @@
 import {
 	getPlan,
 	getYearlyPlanByMonthly,
+	isChargeback,
+	isCredits,
 	isDomainProduct,
 	isDomainTransfer,
 	isGoogleWorkspace,
@@ -37,14 +39,13 @@ import {
 	getSubtotalWithoutDiscounts,
 	filterAndGroupCostOverridesForDisplay,
 	getCreditsLineItemFromCart,
-	hasIntroductoryDiscount,
 } from '@automattic/wpcom-checkout';
 import { keyframes } from '@emotion/react';
 import styled from '@emotion/styled';
+import { Icon, reusableBlock } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import * as React from 'react';
 import { hasFreeCouponTransfersOnly } from 'calypso/lib/cart-values/cart-items';
-import { preventWidows } from 'calypso/lib/formatting';
 import { isWcMobileApp } from 'calypso/lib/mobile-app';
 import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
 import { getSignupCompleteFlowName } from 'calypso/signup/storageUtils';
@@ -62,6 +63,16 @@ import type { TranslateResult } from 'i18n-calypso';
 
 // This will make converting to TS less noisy. The order of components can be reorganized later
 /* eslint-disable @typescript-eslint/no-use-before-define */
+
+const StyledIcon = styled( Icon )`
+	fill: '#1E1E1E';
+	margin-right: 0.3em;
+
+	.rtl & {
+		margin-right: 0;
+		margin-left: 0.3em;
+	}
+`;
 
 export function WPCheckoutOrderSummary( {
 	siteId,
@@ -115,6 +126,12 @@ export function CheckoutSummaryFeaturedList( {
 	) => void;
 } ) {
 	const translate = useTranslate();
+
+	// Return early if the cart is only Chargebacks fees
+	if ( responseCart.products.every( isChargeback || isCredits ) ) {
+		return null;
+	}
+
 	const hasRenewalInCart = responseCart.products.some(
 		( product ) => product.extra.purchaseType === 'renewal'
 	);
@@ -146,7 +163,6 @@ export function CheckoutSummaryFeaturedList( {
 		</>
 	);
 }
-
 function CheckoutSummaryPriceList() {
 	const cartKey = useCartKey();
 	const { responseCart } = useShoppingCart( cartKey );
@@ -179,41 +195,36 @@ function CheckoutSummaryPriceList() {
 				/>
 			) }
 			<CheckoutSummaryAmountWrapper>
-				<CheckoutSummaryLineItem key="checkout-summary-line-item-subtotal">
-					<span>{ translate( 'Subtotal' ) }</span>
-					<span>
-						{ formatCurrency( responseCart.sub_total_integer, responseCart.currency, {
-							isSmallestUnit: true,
-							stripZeros: true,
-						} ) }
-					</span>
-				</CheckoutSummaryLineItem>
-				{ taxLineItems.map( ( taxLineItem ) => (
-					<CheckoutSummaryLineItem key={ 'checkout-summary-line-item-' + taxLineItem.id }>
-						<span>{ taxLineItem.label }</span>
-						<span>{ taxLineItem.formattedAmount }</span>
+				<CheckoutSubtotalSection>
+					<CheckoutSummaryLineItem key="checkout-summary-line-item-subtotal">
+						<span>{ translate( 'Subtotal' ) }</span>
+						<span>
+							{ formatCurrency( responseCart.sub_total_integer, responseCart.currency, {
+								isSmallestUnit: true,
+								stripZeros: true,
+							} ) }
+						</span>
 					</CheckoutSummaryLineItem>
-				) ) }
-				{ creditsLineItem && responseCart.sub_total_integer > 0 && (
-					<CheckoutSummaryLineItem key={ 'checkout-summary-line-item-' + creditsLineItem.id }>
-						<span>{ creditsLineItem.label }</span>
-						<span>{ creditsLineItem.formattedAmount }</span>
-					</CheckoutSummaryLineItem>
-				) }
+					{ taxLineItems.map( ( taxLineItem ) => (
+						<CheckoutSummaryLineItem key={ 'checkout-summary-line-item-' + taxLineItem.id }>
+							<span>{ taxLineItem.label }</span>
+							<span>{ taxLineItem.formattedAmount }</span>
+						</CheckoutSummaryLineItem>
+					) ) }
+					{ creditsLineItem && responseCart.sub_total_integer > 0 && (
+						<CheckoutSummaryLineItem key={ 'checkout-summary-line-item-' + creditsLineItem.id }>
+							<span>{ creditsLineItem.label }</span>
+							<span>{ creditsLineItem.formattedAmount }</span>
+						</CheckoutSummaryLineItem>
+					) }
+				</CheckoutSubtotalSection>
 
 				<CheckoutSummaryTotal>
-					<span>{ translate( 'Total' ) }</span>
+					<span className="wp-checkout-order-summary__label">{ translate( 'Total' ) }</span>
 					<span className="wp-checkout-order-summary__total-price">
 						{ totalLineItem.formattedAmount }
 					</span>
 				</CheckoutSummaryTotal>
-				{ hasIntroductoryDiscount( responseCart ) && (
-					<CheckoutSummaryExplanation>
-						{ preventWidows(
-							translate( '*Introductory offer first term only, renews at regular rate.' )
-						) }
-					</CheckoutSummaryExplanation>
-				) }
 			</CheckoutSummaryAmountWrapper>
 		</>
 	);
@@ -306,9 +317,11 @@ function CheckoutSummaryGiftFeaturesList( { siteSlug }: { siteSlug: string } ) {
 export function CheckoutSummaryRefundWindows( {
 	cart,
 	highlight = false,
+	includeRefundIcon,
 }: {
 	cart: ResponseCart;
 	highlight?: boolean;
+	includeRefundIcon?: boolean;
 } ) {
 	const translate = useTranslate();
 
@@ -404,10 +417,13 @@ export function CheckoutSummaryRefundWindows( {
 	}
 
 	return (
-		<CheckoutSummaryFeaturesListItem>
-			<WPCheckoutCheckIcon id="features-list-refund-text" />
-			{ highlight ? <strong>{ text }</strong> : text }
-		</CheckoutSummaryFeaturesListItem>
+		<>
+			{ includeRefundIcon && <StyledIcon icon={ reusableBlock } size={ 24 } /> }
+			<CheckoutSummaryFeaturesListItem>
+				<WPCheckoutCheckIcon id="features-list-refund-text" />
+				{ highlight ? <strong>{ text }</strong> : text }
+			</CheckoutSummaryFeaturesListItem>
+		</>
 	);
 }
 
@@ -816,10 +832,16 @@ const pulse = keyframes`
 
 const CheckoutSummaryCard = styled.div`
 	border-bottom: none 0;
+	${ hasCheckoutVersion( '2' ) && `grid-area: summary` }
 `;
 
 const CheckoutSummaryFeatures = styled.div`
 	padding: 24px 0;
+	${ hasCheckoutVersion( '2' ) && `grid-area: features; justify-self: flex-start;` }
+
+	@media ( ${ ( props ) => props.theme.breakpoints.tabletUp } ) {
+		${ hasCheckoutVersion( '2' ) ? ` padding: 0 0 24px` : `padding: 24px 0;` }
+	}
 
 	@media ( ${ ( props ) => props.theme.breakpoints.desktopUp } ) {
 		padding: 24px 0;
@@ -904,9 +926,16 @@ CheckoutSummaryFeaturesListItem.defaultProps = {
 	isSupported: true,
 };
 
+const CheckoutSubtotalSection = styled.div`
+	border-bottom: 1px solid ${ ( props ) => props.theme.colors.borderColorLight };
+	margin-bottom: 20px;
+	padding-bottom: 20px;
+`;
+
 const CheckoutSummaryAmountWrapper = styled.div`
 	border-top: 1px solid ${ ( props ) => props.theme.colors.borderColorLight };
 	padding: 20px 0;
+	margin-top: 20px;
 `;
 
 const CheckoutFirstSubtotalLineItem = styled.div`
@@ -916,12 +945,6 @@ const CheckoutFirstSubtotalLineItem = styled.div`
 	justify-content: space-between;
 	line-height: 20px;
 	margin-bottom: 16px;
-
-	&:nth-last-of-type( 2 ) {
-		border-bottom: 1px solid ${ ( props ) => props.theme.colors.borderColorLight };
-		margin-bottom: 20px;
-		padding-bottom: 20px;
-	}
 
 	.is-loading & {
 		animation: ${ pulse } 1.5s ease-in-out infinite;
@@ -938,12 +961,6 @@ const CheckoutSummaryLineItem = styled.div< { isDiscount?: boolean } >`
 
 	color: ${ ( props ) => ( props.isDiscount ? props.theme.colors.discount : 'inherit' ) };
 
-	&:nth-last-of-type( 3 ) {
-		border-bottom: 1px solid ${ ( props ) => props.theme.colors.borderColorLight };
-		margin-bottom: 20px;
-		padding-bottom: 20px;
-	}
-
 	.is-loading & {
 		animation: ${ pulse } 1.5s ease-in-out infinite;
 	}
@@ -951,18 +968,22 @@ const CheckoutSummaryLineItem = styled.div< { isDiscount?: boolean } >`
 
 const CheckoutSummaryTotal = styled( CheckoutSummaryLineItem )`
 	color: ${ ( props ) => props.theme.colors.textColorDark };
-	font-size: 20px;
 	font-weight: ${ ( props ) => props.theme.weights.bold };
 	line-height: 26px;
-	margin-bottom: 16px;
-`;
+	${ hasCheckoutVersion( '2' ) ? `margin-bottom: 0px;` : `margin-bottom: 16px;` }
+	font-size: 20px;
 
-const CheckoutSummaryExplanation = styled( CheckoutSummaryLineItem )`
-	color: ${ ( props ) => props.theme.colors.textColorLight };
-	font-size: 12px;
-	font-weight: ${ ( props ) => props.theme.weights.normal };
-	font-style: italic;
-	line-height: 16px;
+	& span {
+		${ hasCheckoutVersion( '2' ) ? `font-family: 'Recoleta', sans-serif;` : null }
+	}
+
+	& .wp-checkout-order-summary__label {
+		${ hasCheckoutVersion( '2' ) && 'font-size: 28px; line-height: 40px; ' }
+	}
+
+	& .wp-checkout-order-summary__total-price {
+		${ hasCheckoutVersion( '2' ) && 'font-size: 40px; line-height: 44px;' }
+	}
 `;
 
 const LoadingCopy = styled.p`

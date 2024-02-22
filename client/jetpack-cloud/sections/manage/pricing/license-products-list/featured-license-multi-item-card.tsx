@@ -1,5 +1,4 @@
 import page from '@automattic/calypso-router';
-import { Button } from '@automattic/components';
 import { addQueryArgs } from '@wordpress/url';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback, useState } from 'react';
@@ -12,6 +11,7 @@ import getProductShortTitle from 'calypso/jetpack-cloud/sections/partner-portal/
 import getProductVariantShortTitle from 'calypso/jetpack-cloud/sections/partner-portal/lib/get-product-variant-short-title';
 import LicenseLightbox from 'calypso/jetpack-cloud/sections/partner-portal/license-lightbox/index';
 import LicenseLightboxLink from 'calypso/jetpack-cloud/sections/partner-portal/license-lightbox-link/index';
+import { FeaturedItemCard } from 'calypso/my-sites/plans/jetpack-plans/product-store/featured-item-card';
 import { HeroImageAPIFamily } from 'calypso/my-sites/plans/jetpack-plans/product-store/hero-image';
 import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
@@ -30,7 +30,6 @@ type FeaturedLicenseMultiItemCardProps = {
 	isCondensedVersion?: boolean;
 	isCtaDisabled?: boolean;
 	isCtaExternal?: boolean;
-	onClickCta?: VoidFunction;
 };
 
 export const FeaturedLicenseMultiItemCard = ( {
@@ -39,7 +38,6 @@ export const FeaturedLicenseMultiItemCard = ( {
 	ctaAsPrimary,
 	isCtaDisabled,
 	isCtaExternal,
-	onClickCta,
 }: FeaturedLicenseMultiItemCardProps ) => {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
@@ -67,7 +65,7 @@ export const FeaturedLicenseMultiItemCard = ( {
 
 			setVariant( selectedProduct );
 			dispatch(
-				recordTracksEvent( 'calypso_jp_manage_pricing_page_variant_option_click', {
+				recordTracksEvent( 'calypso_jetpack_manage_pricing_page_variant_option_click', {
 					product: selectedProductSlug,
 				} )
 			);
@@ -104,13 +102,13 @@ export const FeaturedLicenseMultiItemCard = ( {
 		( variantSlug: string, bundleSize: number | undefined ) => {
 			if ( isLoggedIn && ! isAgency ) {
 				return addQueryArgs( `/manage/signup/`, {
-					product_slug: variantSlug,
+					products: `${ variantSlug }:${ bundleSize }`,
 					source: 'manage-pricing-page',
 					bundle_size: bundleSize,
 				} );
 			}
 			return addQueryArgs( `/partner-portal/issue-license/`, {
-				product_slug: variantSlug,
+				products: `${ variantSlug }:${ bundleSize }`,
 				source: 'manage-pricing-page',
 				bundle_size: bundleSize,
 			} );
@@ -119,8 +117,14 @@ export const FeaturedLicenseMultiItemCard = ( {
 	);
 
 	const onSelectProduct = useCallback( () => {
-		page( getIssueLicenseURL( variantSlug, bundleSize ) );
-	}, [ bundleSize, getIssueLicenseURL, variantSlug ] );
+		page.replace( getIssueLicenseURL( variantSlug, bundleSize ) );
+		dispatch(
+			recordTracksEvent( 'calypso_jetpack_manage_on_select_product_button_click', {
+				product: variantSlug,
+				bundle_size: bundleSize,
+			} )
+		);
+	}, [ bundleSize, dispatch, getIssueLicenseURL, variantSlug ] );
 
 	const onHideLightbox = useCallback( () => {
 		resetParams( [ LICENSE_INFO_MODAL_ID ] );
@@ -131,44 +135,38 @@ export const FeaturedLicenseMultiItemCard = ( {
 
 	return (
 		<>
-			<div className="featured-item-card">
-				<div className="featured-item-card--hero">{ hero }</div>
-
-				<div className="featured-item-card--body">
-					<div>
-						<h3 className="featured-item-card--title">{ title }</h3>
-						<MultipleChoiceQuestion
-							name={ `${ variant.family_slug }-variant-options` }
-							question={ translate( 'Select variant:' ) }
-							answers={ variantOptions }
-							selectedAnswerId={ variant.slug }
-							onAnswerChange={ onChangeOption }
-							shouldShuffleAnswers={ false }
-						/>
-						<div className="featured-item-card--price">{ price }</div>
-						<div className="featured-item-card--desc">{ productDescription }</div>
+			<FeaturedItemCard
+				hero={ hero }
+				title={ title }
+				description={
+					<>
+						{ productDescription }
 						{ moreInfoLink }
-					</div>
-					<div className="featured-item-card--footer">
-						<Button
-							className="featured-item-card--cta"
-							primary={ ctaAsPrimary }
-							onClick={ onClickCta }
-							disabled={ isCtaDisabled }
-							target={ isCtaExternal ? '_blank' : undefined }
-							href={ isCtaDisabled ? '#' : getIssueLicenseURL( variantSlug, bundleSize ) }
-							aria-label={ ctaAriaLabel }
-						>
-							{ ctaLabel }
-						</Button>
-					</div>
-				</div>
-			</div>
+					</>
+				}
+				price={ price }
+				ctaAsPrimary={ ctaAsPrimary }
+				onClickCta={ onSelectProduct }
+				isCtaDisabled={ isCtaDisabled }
+				isCtaExternal={ isCtaExternal }
+				ctaAriaLabel={ ctaAriaLabel }
+				ctaLabel={ ctaLabel }
+				variant={
+					<MultipleChoiceQuestion
+						name={ `${ variant.family_slug }-variant-options` }
+						question={ translate( 'Select variant:' ) }
+						answers={ variantOptions }
+						selectedAnswerId={ variant.slug }
+						onAnswerChange={ onChangeOption }
+						shouldShuffleAnswers={ false }
+					/>
+				}
+			/>
 			{ showLightbox && (
 				<LicenseLightbox
 					product={ variant }
 					quantity={ bundleSize }
-					ctaLabel={ translate( 'Select License' ) }
+					ctaLabel={ translate( 'Select license' ) }
 					isCTAExternalLink={ false }
 					isCTAPrimary={ true }
 					isDisabled={ false }

@@ -145,6 +145,7 @@ describe( 'utils', () => {
 						{ slug: 'two-columns', name: 'Two Columns' },
 					],
 				},
+				theme_tier: { slug: 'community' },
 			} );
 		} );
 	} );

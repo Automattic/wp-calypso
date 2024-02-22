@@ -167,6 +167,7 @@ export class ImportEverything extends SectionMigrate {
 		if ( targetSite && targetSite.is_wpcom_staging_site ) {
 			return (
 				<NotAuthorized
+					type="target-site-staging"
 					onStartBuilding={ () => {
 						recordTracksEvent( 'calypso_site_importer_skip_to_dashboard', {
 							from: 'target-staging',
@@ -191,12 +192,6 @@ export class ImportEverything extends SectionMigrate {
 					startImport={ this.startMigration }
 					navigateToVerifyEmailStep={ () => stepNavigator.goToVerifyEmailPage?.() }
 					onContentOnlyClick={ onContentOnlySelection }
-					onNotAuthorizedClick={ () => {
-						recordTracksEvent( 'calypso_site_importer_skip_to_dashboard', {
-							from: 'pre-migration',
-						} );
-						stepNavigator?.goToDashboardPage();
-					} }
 				/>
 			</>
 		);

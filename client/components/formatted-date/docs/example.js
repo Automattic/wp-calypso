@@ -1,7 +1,7 @@
+import { FormLabel } from '@automattic/components';
 import moment from 'moment';
 import { PureComponent } from 'react';
 import { connect } from 'react-redux';
-import FormLabel from 'calypso/components/forms/form-label';
 import FormTextInput from 'calypso/components/forms/form-text-input';
 import getCurrentLocaleSlug from 'calypso/state/selectors/get-current-locale-slug';
 import { setLocale } from 'calypso/state/ui/language/actions';

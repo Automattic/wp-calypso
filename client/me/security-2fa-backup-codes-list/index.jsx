@@ -1,4 +1,4 @@
-import { Button, Gridicon, Tooltip } from '@automattic/components';
+import { Button, Gridicon, FormLabel, Tooltip } from '@automattic/components';
 import { saveAs } from 'browser-filesaver';
 import Clipboard from 'clipboard';
 import { localize } from 'i18n-calypso';
@@ -10,7 +10,6 @@ import { connect } from 'react-redux';
 import ButtonGroup from 'calypso/components/button-group';
 import FormButton from 'calypso/components/forms/form-button';
 import FormCheckbox from 'calypso/components/forms/form-checkbox';
-import FormLabel from 'calypso/components/forms/form-label';
 import { withLocalizedMoment } from 'calypso/components/localized-moment';
 import Notice from 'calypso/components/notice';
 import { recordGoogleEvent } from 'calypso/state/analytics/actions';

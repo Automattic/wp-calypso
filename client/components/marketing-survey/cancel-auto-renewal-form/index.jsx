@@ -1,12 +1,11 @@
 import { isDomainRegistration, isPlan } from '@automattic/calypso-products';
-import { Dialog } from '@automattic/components';
+import { Dialog, FormLabel } from '@automattic/components';
 import { localize } from 'i18n-calypso';
 import { shuffle } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
-import FormLabel from 'calypso/components/forms/form-label';
 import FormRadio from 'calypso/components/forms/form-radio';
 import FormSectionHeading from 'calypso/components/forms/form-section-heading';
 import enrichedSurveyData from 'calypso/components/marketing-survey/cancel-purchase-form/enriched-survey-data';
