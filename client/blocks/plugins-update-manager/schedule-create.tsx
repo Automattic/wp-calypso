@@ -14,7 +14,7 @@ import './styles.scss';
 interface Props {
 	onNavBack?: () => void;
 }
-export const Create = ( props: Props ) => {
+export const ScheduleCreate = ( props: Props ) => {
 	const { onNavBack } = props;
 
 	return (
