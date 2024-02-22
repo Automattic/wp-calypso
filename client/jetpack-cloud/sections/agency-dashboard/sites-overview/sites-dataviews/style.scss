@@ -32,6 +32,23 @@
 			border-bottom: 1px solid var(--studio-gray-5);
 			vertical-align: middle;
 		}
+
+		.site-sort__clickable {
+			display: block;
+			cursor: pointer;
+
+			.sort-hover-text {
+				display: none;
+			}
+
+			&:hover {
+				.sort-hover-text {
+					display: inline-block;
+					font-size: $font-body-extra-small;
+					padding-left: 1rem;
+				}
+			}
+		}
 	}
 }
 
