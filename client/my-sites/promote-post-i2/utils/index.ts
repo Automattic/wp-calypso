@@ -125,6 +125,22 @@ export const getCampaignDurationFormatted = ( start_date?: string, end_date?: st
 	return durationFormatted;
 };
 
+export const getCampaignActiveDays = ( start_date: string, end_date: string, duration: number ) => {
+	const dateStart = new Date( start_date );
+	const dateEnd = new Date( end_date );
+	const now = new Date();
+	const diffTime = Math.abs( now.getTime() - dateStart.getTime() );
+	const diffTimeEnd = Math.abs( dateEnd.getTime() - now.getTime() );
+	const days = Math.round( diffTime / ( 1000 * 60 * 60 * 24 ) );
+	const daysEnd = Math.round( diffTimeEnd / ( 1000 * 60 * 60 * 24 ) );
+
+	if ( days > duration ) {
+		return duration;
+	}
+
+	return days > 0 ? days : daysEnd;
+};
+
 export const getCampaignBudgetData = (
 	budget_cents: number,
 	start_date: string,

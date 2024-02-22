@@ -10,6 +10,12 @@ body.is-section-promote-post-i2 .layout__content .campaign-item-details.main {
 	}
 }
 
+@mixin campaign-data-row-font-mobile {
+	font-size: 1.5rem;
+	font-weight: 400;
+	line-height: 1.5;
+}
+
 .campaign-item__container {
 	width: 100%;
 
@@ -228,8 +234,9 @@ body.is-section-promote-post-i2 .layout__content .campaign-item-details.main {
 
 		.campaign-item-details__main-stats-row-top {
 			display: flex;
-			flex-direction: row;
 			flex-grow: 1;
+			justify-content: space-between;
+
 			> div {
 				display: flex;
 				flex-direction: column;
@@ -282,6 +289,15 @@ body.is-section-promote-post-i2 .layout__content .campaign-item-details.main {
 					}
 				}
 
+			}
+
+			.campaign-item-conversion-value__info-button,
+			.campaign-item-conversions__info-button,
+			.campaign-item-conversion-rate__info-button {
+				height: 20px;
+				display: inline-block;
+				vertical-align: bottom;
+				margin-left: 4px;
 			}
 		}
 
@@ -682,6 +698,20 @@ body.is-section-promote-post-i2 .layout__content .campaign-item-details.main {
 
 		.campaign-item-details .campaign-item-details__notice {
 			margin-bottom: 32px;
+		}
+	}
+
+	.campaign-item__container .campaign-item-details__wrapper .campaign-item-details__main-stats-row {
+		display: flex;
+		flex-direction: column;
+		flex-grow: 1;
+		justify-content: space-between;
+		.campaign-item-details__label {
+			font-size: 0.875rem;
+		}
+
+		.campaign-item-details__text {
+			@include campaign-data-row-font-mobile;
 		}
 	}
 }

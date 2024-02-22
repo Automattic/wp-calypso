@@ -36,6 +36,10 @@ export type CampaignResponse = {
 		views_organic: number;
 		views_organic_rate: number;
 		views_ad_rate: number;
+		conversions_total?: number;
+		conversion_rate?: number;
+		conversion_value?: Record< string, number >;
+		conversion_last_currency_found?: string;
 	};
 	billing_data: {
 		payment_method: string;
