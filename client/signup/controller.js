@@ -247,12 +247,12 @@ export default {
 			const experiment = await loadExperimentAssignment(
 				'calypso_signup_onboarding_site_goals_survey'
 			);
+			initialContext.isSignupSurveyActive = experiment.variationName === 'treatment';
+		}
 
-			/**
-			 * TODO: DISABLE BEFORE SHIPPING !!!!!!
-			 * ==============================================================================> \_/ SHORT CIRCUITING NOW TO MAKE TESTING EASIER
-			 */
-			initialContext.isSignupSurveyActive = experiment.variationName === 'treatment' || true;
+		if ( config.isEnabled( 'onboarding/new-user-survey' ) ) {
+			// Force display of the interval dropdown for the onboarding flow
+			initialContext.isSignupSurveyActive = true;
 		}
 		next();
 	},
