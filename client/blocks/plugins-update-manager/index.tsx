@@ -41,13 +41,15 @@ export const PluginsUpdateManager = ( props: Props ) => {
 			</ConfirmDialog>
 			<Card className="plugins-update-manager">
 				<CardHeader size="extraSmall">
-					{ onNavBack && (
-						<Button icon={ arrowLeft } onClick={ onNavBack }>
-							Back
-						</Button>
-					) }
+					<div className="ch-placeholder">
+						{ onNavBack && (
+							<Button icon={ arrowLeft } onClick={ onNavBack }>
+								Back
+							</Button>
+						) }
+					</div>
 					<Text>Schedules</Text>
-					<div className="placeholder"></div>
+					<div className="ch-placeholder"></div>
 				</CardHeader>
 				<CardBody>
 					<div className="empty-state">

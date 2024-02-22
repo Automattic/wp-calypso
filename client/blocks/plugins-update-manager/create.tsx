@@ -20,13 +20,15 @@ export const Create = ( props: Props ) => {
 	return (
 		<Card className="plugins-update-manager">
 			<CardHeader size="extraSmall">
-				{ onNavBack && (
-					<Button icon={ arrowLeft } onClick={ onNavBack }>
-						Back
-					</Button>
-				) }
+				<div className="ch-placeholder">
+					{ onNavBack && (
+						<Button icon={ arrowLeft } onClick={ onNavBack }>
+							Back
+						</Button>
+					) }
+				</div>
 				<Text>New Schedule</Text>
-				<div className="placeholder"></div>
+				<div className="ch-placeholder"></div>
 			</CardHeader>
 			<CardBody>
 				<ScheduleForm />
