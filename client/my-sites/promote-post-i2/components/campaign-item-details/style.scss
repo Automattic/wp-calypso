@@ -32,6 +32,25 @@ body.is-section-promote-post-i2 .layout__content .campaign-item-details.main {
 				font-weight: 600;
 			}
 		}
+
+		.campaign-item-details-back-button {
+			display: flex;
+			justify-content: left;
+			font-size: 0.875rem;
+			color: $studio-gray-40;
+			border: none;
+			text-decoration: none;
+
+			>svg {
+				margin-right: 6px;
+			}
+
+			&:hover {
+				border: none;
+				color: $studio-gray-40;
+				background-color: transparent;
+			}
+		}
 	}
 
 	.campaign-item-header {

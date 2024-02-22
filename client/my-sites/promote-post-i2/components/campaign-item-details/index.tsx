@@ -3,11 +3,12 @@ import './style.scss';
 import { Badge, Button, Dialog } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { useBreakpoint } from '@automattic/viewport-react';
-import { __ } from '@wordpress/i18n';
+import { Button as WPButton } from '@wordpress/components';
+import { __, _n, sprintf } from '@wordpress/i18n';
+import { Icon, chevronLeft } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import moment from 'moment/moment';
 import { useState } from 'react';
-import Breadcrumb, { Item } from 'calypso/components/breadcrumb';
 import InfoPopover from 'calypso/components/info-popover';
 import InlineSupportLink from 'calypso/components/inline-support-link';
 import Main from 'calypso/components/main';
@@ -20,11 +21,9 @@ import useOpenPromoteWidget from 'calypso/my-sites/promote-post-i2/hooks/use-ope
 import {
 	canCancelCampaign,
 	canPromoteCampaignAgain,
-	getAdvertisingDashboardPath,
 	getCampaignActiveDays,
+	getCampaignDurationFormatted,
 } from 'calypso/my-sites/promote-post-i2/utils';
-import { useSelector } from 'calypso/state';
-import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import {
 	formatCents,
 	formatNumber,
@@ -66,11 +65,22 @@ const getExternalLinkIcon = ( fillColor?: string ) => (
 	</svg>
 );
 
+const getExternalTabletIcon = () => (
+	<span className="campaign-item-details__tablet-icon">
+		<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
+			<path d="M14 16L10 16V17.5H14V16Z" fill="#A7AAAD" />
+			<path
+				fill-rule="evenodd"
+				clip-rule="evenodd"
+				d="M5 6C5 4.89543 5.89543 4 7 4L17 4C18.1046 4 19 4.89543 19 6V18C19 19.1046 18.1046 20 17 20H7C5.89543 20 5 19.1046 5 18L5 6ZM7 5.5L17 5.5C17.2761 5.5 17.5 5.72386 17.5 6V18C17.5 18.2761 17.2761 18.5 17 18.5H7C6.72386 18.5 6.5 18.2761 6.5 18L6.5 6C6.5 5.72386 6.72386 5.5 7 5.5Z"
+				fill="#A7AAAD"
+			/>
+		</svg>
+	</span>
+);
+
 export default function CampaignItemDetails( props: Props ) {
 	const isRunningInJetpack = config.isEnabled( 'is_running_in_jetpack_site' );
-
-	const selectedSiteSlug = useSelector( getSelectedSiteSlug );
-
 	const translate = useTranslate();
 	const [ showDeleteDialog, setShowDeleteDialog ] = useState( false );
 	const [ showErrorDialog, setShowErrorDialog ] = useState( false );
@@ -97,6 +107,7 @@ export default function CampaignItemDetails( props: Props ) {
 		target_urn,
 		created_at,
 		format,
+		budget_cents,
 	} = campaign || {};
 
 	const {
@@ -131,14 +142,13 @@ export default function CampaignItemDetails( props: Props ) {
 	const totalBudgetFormatted = `$${ formatCents( total_budget || 0 ) }`;
 	const overallSpendingPercentage =
 		total_budget_used && total_budget
-			? `${ ( ( total_budget_used / total_budget ) * 100 ).toFixed( 0 ) }% ${ __(
-					'of total budget'
-			  ) }`
-			: '';
+			? `${ ( ( total_budget_used / total_budget ) * 100 ).toFixed( 0 ) }%`
+			: '0%';
 	const overallSpendingFormatted = `$${ formatCents( total_budget_used || 0 ) }`;
 	const deliveryEstimateFormatted = getCampaignEstimatedImpressions( display_delivery_estimate );
 	const campaignTitleFormatted = title || __( 'Untitled' );
 	const campaignCreatedFormatted = moment.utc( created_at ).format( 'MMMM DD, YYYY' );
+	const durationFormatted = getCampaignDurationFormatted( start_date, end_date );
 	const languagesListFormatted = languagesList
 		? `${ languagesList }`
 		: translate( 'All languages' );
@@ -146,8 +156,7 @@ export default function CampaignItemDetails( props: Props ) {
 	const impressionsTotal = formatNumber( impressions_total );
 	const creditsFormatted = `$${ formatCents( credits || 0 ) }`;
 	const totalFormatted = `$${ formatCents( total || 0 ) }`;
-	const dailyAverageSpending =
-		total_budget && duration_days ? ( total_budget / duration_days ).toFixed( 2 ) : undefined;
+	const dailyAverageSpending = budget_cents ? `${ ( budget_cents / 100 ).toFixed( 2 ) }` : '';
 	const conversionsTotalFormatted = conversions_total ? conversions_total : '-';
 	const conversionValueFormatted: string =
 		conversion_last_currency_found && conversion_value
@@ -162,19 +171,12 @@ export default function CampaignItemDetails( props: Props ) {
 		start_date && end_date && duration_days
 			? getCampaignActiveDays( start_date, end_date, duration_days )
 			: 0;
-	const daysLeft =
-		duration_days && status === 'active' ? `${ duration_days - activeDays } ${ __( 'left' ) }` : '';
-
-	const navigationItems = [
-		{
-			label: translate( 'Go Back' ),
-			href: getAdvertisingDashboardPath( `/campaigns/${ selectedSiteSlug }` ),
-		},
-		{
-			label: campaignTitleFormatted || '',
-			href: getAdvertisingDashboardPath( `/campaigns/${ campaignId }/${ selectedSiteSlug }` ),
-		},
-	];
+	const daysLeft = duration_days ? duration_days - activeDays : 0;
+	const daysLeftformatted =
+		status === 'active'
+			? /*translators: %s is the number of days left */
+			  sprintf( _n( '%s day left', '%s days left', daysLeft ), formatNumber( daysLeft, true ) )
+			: '';
 
 	const adPreviewLabel =
 		// maybe we will need to edit this condition when we add more templates
@@ -202,26 +204,6 @@ export default function CampaignItemDetails( props: Props ) {
 					clipRule="evenodd"
 					d="M8 16.3193C12.4183 16.3193 16 12.7376 16 8.31934C16 3.90106 12.4183 0.319336 8 0.319336C3.58172 0.319336 0 3.90106 0 8.31934C0 12.7376 3.58172 16.3193 8 16.3193ZM13.375 11.9755C14.085 10.9338 14.5 9.67502 14.5 8.31934C14.5 7.08407 14.1554 5.92928 13.5571 4.94585L12.2953 5.75845C12.7428 6.50748 13 7.38337 13 8.31934C13 9.37572 12.6724 10.3556 12.1132 11.1629L13.375 11.9755ZM11.4245 13.8451L10.6121 12.5836C9.85194 13.0503 8.95739 13.3193 8 13.3193C7.04263 13.3193 6.1481 13.0503 5.38791 12.5836L4.57552 13.8451C5.56993 14.4627 6.74332 14.8193 8 14.8193C9.2567 14.8193 10.4301 14.4627 11.4245 13.8451ZM2.62498 11.9755C1.91504 10.9338 1.5 9.67503 1.5 8.31934C1.5 7.08405 1.84458 5.92926 2.44287 4.94582L3.70473 5.75842C3.25718 6.50745 3 7.38336 3 8.31934C3 9.37573 3.32761 10.3556 3.88678 11.1629L2.62498 11.9755ZM5.20588 4.17229C6.00361 3.63376 6.96508 3.31934 8 3.31934C9.03494 3.31934 9.99643 3.63377 10.7942 4.17232L11.6065 2.91084C10.5746 2.22134 9.33424 1.81934 8 1.81934C6.66578 1.81934 5.42544 2.22133 4.39351 2.91081L5.20588 4.17229ZM8 11.8193C9.933 11.8193 11.5 10.2523 11.5 8.31934C11.5 6.38634 9.933 4.81934 8 4.81934C6.067 4.81934 4.5 6.38634 4.5 8.31934C4.5 10.2523 6.067 11.8193 8 11.8193Z"
 					fill="#1E1E1E"
-				/>
-			</svg>
-		</span>
-	);
-
-	const tabletIcon = (
-		<span className="campaign-item-details__tablet-icon">
-			<svg
-				xmlns="http://www.w3.org/2000/svg"
-				width="24"
-				height="24"
-				viewBox="0 0 24 24"
-				fill="none"
-			>
-				<path d="M14 16L10 16V17.5H14V16Z" fill="#A7AAAD" />
-				<path
-					fill-rule="evenodd"
-					clip-rule="evenodd"
-					d="M5 6C5 4.89543 5.89543 4 7 4L17 4C18.1046 4 19 4.89543 19 6V18C19 19.1046 18.1046 20 17 20H7C5.89543 20 5 19.1046 5 18L5 6ZM7 5.5L17 5.5C17.2761 5.5 17.5 5.72386 17.5 6V18C17.5 18.2761 17.2761 18.5 17 18.5H7C6.72386 18.5 6.5 18.2761 6.5 18L6.5 6C6.5 5.72386 6.72386 5.5 7 5.5Z"
-					fill="#A7AAAD"
 				/>
 			</svg>
 		</span>
@@ -297,11 +279,15 @@ export default function CampaignItemDetails( props: Props ) {
 				<div>
 					<div className="campaign-item-breadcrumb">
 						{ ! isLoading ? (
-							<Breadcrumb
-								items={ navigationItems as Item[] }
-								compact={ isSmallScreen }
-								singleButton={ true }
-							/>
+							<WPButton
+								className="campaign-item-details-back-button"
+								onClick={ () => window.history.back() }
+								target="_blank"
+								variant="link"
+							>
+								<Icon icon={ chevronLeft } size={ 16 } />
+								{ translate( 'Go Back' ) }
+							</WPButton>
 						) : (
 							<FlexibleSkeleton />
 						) }
@@ -414,10 +400,16 @@ export default function CampaignItemDetails( props: Props ) {
 							<div className="campaign-item-details__main-stats-row">
 								<div>
 									<span className="campaign-item-details__label">{ translate( 'Duration' ) }</span>
-
+									<span className="campaign-item-details__text wp-brand-font">
+										{ ! isLoading ? durationFormatted : <FlexibleSkeleton /> }
+									</span>
 									<span className="campaign-item-details__details">
-										{ ! isLoading ? (
-											`${ duration_days } ${ translate( 'days' ) }`
+										{ ! isLoading && duration_days ? (
+											sprintf(
+												/* translators: %s is the duration in days */
+												_n( '%s day', '%s days', duration_days ),
+												formatNumber( duration_days, true )
+											)
 										) : (
 											<FlexibleSkeleton />
 										) }
@@ -429,13 +421,17 @@ export default function CampaignItemDetails( props: Props ) {
 									</span>
 									<span className="campaign-item-details__text wp-brand-font">
 										{ ! isLoading ? (
-											`${ activeDays } ${ translate( 'days' ) }`
+											sprintf(
+												/* translators: %s is the number of active days */
+												_n( '%s day', '%s days', activeDays ),
+												formatNumber( activeDays, true )
+											)
 										) : (
 											<FlexibleSkeleton />
 										) }
 									</span>
 									<span className="campaign-item-details__details">
-										{ ! isLoading ? daysLeft : <FlexibleSkeleton /> }
+										{ ! isLoading ? daysLeftformatted : <FlexibleSkeleton /> }
 									</span>
 								</div>
 								<div>
@@ -446,7 +442,12 @@ export default function CampaignItemDetails( props: Props ) {
 										{ ! isLoading ? overallSpendingFormatted : <FlexibleSkeleton /> }
 									</span>
 									<span className="campaign-item-details__details">
-										{ ! isLoading ? overallSpendingPercentage : <FlexibleSkeleton /> }
+										{ ! isLoading ? (
+											/* translators: %s is the percentage of the total budget used */
+											__( `%s of total budget`, overallSpendingPercentage )
+										) : (
+											<FlexibleSkeleton />
+										) }
 									</span>
 								</div>
 							</div>
@@ -495,7 +496,7 @@ export default function CampaignItemDetails( props: Props ) {
 										</div>
 									</div>
 
-									{ isWooStore && (
+									{ isWooStore && status !== 'created' && (
 										<div className="campaign-item-details__main-stats-row-bottom">
 											<div>
 												<span className="campaign-item-details__label">
@@ -571,9 +572,9 @@ export default function CampaignItemDetails( props: Props ) {
 											{ ! isLoading ? totalBudgetFormatted : <FlexibleSkeleton /> }
 										</span>
 										<span className="campaign-item-details__details">
-											{ ! isLoading && dailyAverageSpending ? (
-												/* translators: Daily average spend: the current budget divided by the amount of days of the campaign */
-												`${ translate( 'Daily av. spend' ) } $${ dailyAverageSpending }`
+											{ ! isLoading ? (
+												/* translators: Daily average spend. %s is the budget */
+												__( `Daily av. spend: $%s`, dailyAverageSpending )
 											) : (
 												<FlexibleSkeleton />
 											) }
@@ -600,9 +601,6 @@ export default function CampaignItemDetails( props: Props ) {
 										<span className="campaign-item-details__details">
 											{ ! isLoading ? languagesListFormatted : <FlexibleSkeleton /> }
 										</span>
-										{
-											// TODO: Add CTA button div here.
-										 }
 									</div>
 									<div className="campaign-item-details__second-column">
 										<span className="campaign-item-details__label">
@@ -693,6 +691,14 @@ export default function CampaignItemDetails( props: Props ) {
 					</div>
 					<div className="campaign-item-details__preview">
 						<div className="campaign-item-details__preview-container">
+							<div className="campaign-item-details__preview-header">
+								<div className="campaign-item-details__preview-header-title">
+									{ translate( 'This ad is responsive' ) }
+								</div>
+								<div className="campaign-item-details__preview-header-label">
+									{ ! isLoading ? <>{ adPreviewLabel }</> : <FlexibleSkeleton /> }
+								</div>
+							</div>
 							{ isSmallScreen && <hr className="campaign-item-ad-header-line" /> }
 							<AdPreview
 								isLoading={ isLoading }
@@ -700,18 +706,10 @@ export default function CampaignItemDetails( props: Props ) {
 								templateFormat={ format || '' }
 								width={ format === 'html5_v2' ? '100%' : '300px' }
 							/>
-							<div className="campaign-item-details__preview-header">
-								<div className="campaign-item-details__preview-header-title">
-									{ translate( 'Ad preview' ) }
-								</div>
-								<div className="campaign-item-details__preview-header-label">
-									{ ! isLoading ? <>{ adPreviewLabel }</> : <FlexibleSkeleton /> }
-								</div>
-							</div>
 							<div className="campaign-item-details__preview-disclosure">
-								{ tabletIcon }
+								{ getExternalTabletIcon() }
 								{ translate(
-									'Depending on the platform, the ad may seem differently from the preview.'
+									'Depending on the platform, the ad may look different from the preview.'
 								) }
 							</div>
 						</div>
