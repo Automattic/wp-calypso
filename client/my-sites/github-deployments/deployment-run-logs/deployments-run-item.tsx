@@ -1,3 +1,4 @@
+/* eslint-disable no-nested-ternary */
 import { Button } from '@automattic/components';
 import { useLocale } from '@automattic/i18n-utils';
 import { useState } from '@wordpress/element';
@@ -14,6 +15,7 @@ import {
 import { formatDate } from 'calypso/my-sites/github-deployments/utils/dates';
 import { useSelector } from 'calypso/state/index';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors/index';
+import { DeploymentRunLogs } from './deployment-run-logs';
 import { DeploymentRun } from './use-code-deployment-run-query';
 
 interface DeploymentsListItemProps {
@@ -37,8 +39,6 @@ export const DeploymentsRunItem = ( { run }: DeploymentsListItemProps ) => {
 	);
 
 	const handleToggleExpanded = () => setExpanded( ! expanded );
-
-	const noLogsAvailable = expanded && ! isFetchingLogs && logEntries.length === 0;
 
 	return (
 		<>
@@ -64,21 +64,15 @@ export const DeploymentsRunItem = ( { run }: DeploymentsListItemProps ) => {
 			{ expanded && (
 				<tr>
 					<td className="github-deployments-logs-content" colSpan={ 5 }>
-						<pre>
-							{ isFetchingLogs && <GitHubLoadingPlaceholder /> }
-
-							{ logEntries.map( ( entry, id ) => (
-								<div key={ id }>
-									{ entry.timestamp } { entry.level.toUpperCase() } { entry.message }
-								</div>
-							) ) }
-
-							{ noLogsAvailable && (
-								<p className="github-deployments-logs-content__empty">
-									{ __( 'No logs available for this deployment run.' ) }
-								</p>
-							) }
-						</pre>
+						{ isFetchingLogs ? (
+							<pre>
+								<GitHubLoadingPlaceholder />
+							</pre>
+						) : logEntries.length === 0 ? (
+							<p>{ __( 'No logs available for this deployment run.' ) }</p>
+						) : (
+							<DeploymentRunLogs logEntries={ logEntries } />
+						) }
 					</td>
 				</tr>
 			) }
