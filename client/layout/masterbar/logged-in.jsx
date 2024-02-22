@@ -10,7 +10,6 @@ import { Component } from 'react';
 import { connect } from 'react-redux';
 import AsyncLoad from 'calypso/components/async-load';
 import Gravatar from 'calypso/components/gravatar';
-import { useGlobalSidebar } from 'calypso/layout/global-sidebar/hooks/use-global-sidebar';
 import { getStatsPathForTab } from 'calypso/lib/route';
 import wpcom from 'calypso/lib/wp';
 import { domainManagementList } from 'calypso/my-sites/domains/paths';
@@ -21,6 +20,7 @@ import {
 	getCurrentUserDate,
 	getCurrentUserSiteCount,
 } from 'calypso/state/current-user/selectors';
+import { getShouldShowGlobalSidebar } from 'calypso/state/global-sidebar/selectors';
 import { savePreference } from 'calypso/state/preferences/actions';
 import { getPreference, isFetchingPreferences } from 'calypso/state/preferences/selectors';
 import getCurrentRoute from 'calypso/state/selectors/get-current-route';
@@ -639,7 +639,7 @@ export default connect(
 			isSiteMigrationActiveRoute( state );
 
 		const siteCount = getCurrentUserSiteCount( state ) ?? 0;
-		const { shouldShowGlobalSidebar } = useGlobalSidebar( siteId, sectionGroup );
+		const shouldShowGlobalSidebar = getShouldShowGlobalSidebar( state, siteId, sectionGroup );
 
 		return {
 			isCustomerHomeEnabled: canCurrentUserUseCustomerHome( state, siteId ),
