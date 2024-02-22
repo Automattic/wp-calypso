@@ -1,5 +1,0 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
-
-exports[`Patterns renders server-side with a test pattern correctly 1`] = `"<main class=\\"main is-full-width-layout is-logged-out\\" role=\\"main\\"><h1>Build your perfect site with patterns</h1><ul class=\\"patterns\\"><li><iframe srcDoc=\\"&lt;div&gt;Test pattern&lt;/div&gt;\\" title=\\"Test pattern\\"></iframe></li></ul></main>"`;
-
-exports[`Patterns renders server-side with empty patterns correctly 1`] = `"<main class=\\"main is-full-width-layout is-logged-out\\" role=\\"main\\"><h1>Build your perfect site with patterns</h1><ul class=\\"patterns\\"></ul></main>"`;
