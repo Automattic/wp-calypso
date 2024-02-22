@@ -34,6 +34,7 @@ import type { SiteExcerptData } from 'calypso/data/sites/site-excerpt-types';
 
 const importFlow: Flow = {
 	name: IMPORT_FOCUSED_FLOW,
+	isSignupFlow: true,
 
 	useSteps() {
 		return [

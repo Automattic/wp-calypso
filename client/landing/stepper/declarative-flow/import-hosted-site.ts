@@ -24,6 +24,7 @@ import type { UserSelect } from '@automattic/data-stores';
 
 const importHostedSiteFlow: Flow = {
 	name: IMPORT_HOSTED_SITE_FLOW,
+	isSignupFlow: true,
 
 	useSteps() {
 		const { resetOnboardStore } = useDispatch( ONBOARD_STORE );

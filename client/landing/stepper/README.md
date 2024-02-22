@@ -38,6 +38,8 @@ To create a flow, you only have to implement `useSteps` and `useStepNavigation`.
 
 There is also an optional `useSideEffect` hook. You can implement this hook to run any side-effects to the flow. You can prefetch information, send track events when something changes, etc...
 
+There is an optional `isSignupFlow` flag that _MUST be implemented for signup flows_ (generally where a new site may be created), as well as an optional `useSignupStartEventProps()` hook. The `isSignupFlow` flag controls whether we'll trigger a `calypso_signup_start` Tracks event when the flow starts, while the `useSignupStartEventProps()` hook makes it possible to add custom field to the event that will get logged.
+
 ```tsx
 // prettier-ignore
 /**

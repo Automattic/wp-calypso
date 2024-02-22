@@ -102,6 +102,12 @@ export type Flow = {
 	variantSlug?: string;
 	title?: string;
 	classnames?: string | [ string ];
+	/**
+	 * Optional flag to indicate if the flow is a signup flow.
+	 * Thus MUST be implemented for signup flows.
+	 */
+	isSignupFlow?: boolean;
+	useSignupStartEventProps?: () => Record< string, string | number >;
 	useSteps: UseStepsHook;
 	useStepNavigation: UseStepNavigationHook< ReturnType< Flow[ 'useSteps' ] > >;
 	useAssertConditions?: UseAssertConditionsHook< ReturnType< Flow[ 'useSteps' ] > >;
