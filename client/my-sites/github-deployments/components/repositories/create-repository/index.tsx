@@ -6,8 +6,7 @@ import ActionPanelBody from 'calypso/components/action-panel/body';
 import HeaderCake from 'calypso/components/header-cake';
 import { indexPage } from 'calypso/my-sites/github-deployments/routes';
 import { useDispatch, useSelector } from 'calypso/state/index';
-import { errorNotice, successNotice, warningNotice } from 'calypso/state/notices/actions';
-import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
+import { errorNotice, successNotice } from 'calypso/state/notices/actions';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors/index';
 import { useCreateCodeDeployment } from '../../../deployment-creation/use-create-code-deployment';
 import { PageShell } from '../../page-shell/page-shell';
@@ -27,10 +26,6 @@ export const CreateRepository = () => {
 	const goToDeployments = () => {
 		page( indexPage( siteSlug! ) );
 	};
-
-	const canUserCreateDeployment = useSelector( ( state ) =>
-		canCurrentUser( state, siteId, 'manage_options' )
-	);
 
 	const dispatch = useDispatch();
 
@@ -67,19 +62,7 @@ export const CreateRepository = () => {
 		},
 	} );
 
-	if ( ! canUserCreateDeployment ) {
-		dispatch(
-			warningNotice( __( 'You do not have permissions to create a repository to this site.' ), {
-				isPersistent: true,
-			} )
-		);
-	}
-
 	const handleCreateRepository = ( args: OnRepositoryCreatedParams ) => {
-		if ( ! canUserCreateDeployment ) {
-			return;
-		}
-
 		createRepository( args ).then( ( response ) => {
 			createDeployment( {
 				installationId: args.installationId,
@@ -101,7 +84,6 @@ export const CreateRepository = () => {
 					<CreateRepositoryForm
 						onRepositoryCreated={ handleCreateRepository }
 						isPending={ isPending || isDeploying }
-						isDisabled={ ! canUserCreateDeployment }
 					/>
 				</ActionPanelBody>
 			</ActionPanel>
