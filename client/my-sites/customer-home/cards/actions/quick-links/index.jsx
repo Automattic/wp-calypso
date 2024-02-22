@@ -86,6 +86,15 @@ export const QuickLinks = ( {
 	const hasBackups = getAllFeaturesForPlan( currentSitePlanSlug ).includes( 'backups' );
 	const hasBoost = site?.options?.jetpack_connection_active_plugins?.includes( 'jetpack-boost' );
 	const [ isAILogoGeneratorOpen, setIsAILogoGeneratorOpen ] = useState( false );
+	const selectedSiteSlug = useSelector( getSelectedSiteSlug );
+	const adminInterface = useSelector( ( state ) =>
+		getSiteOption( state, siteId, 'wpcom_admin_interface' )
+	);
+
+	const advertisingUrl =
+		adminInterface === 'wp-admin'
+			? `https://${ selectedSiteSlug }/wp-admin/tools.php?page=advertising`
+			: `/advertising/${ selectedSiteSlug }`;
 
 	const addNewDomain = () => {
 		trackAddDomainAction();
@@ -124,7 +133,7 @@ export const QuickLinks = ( {
 			/>
 			{ isPromotePostActive && ! isWpcomStagingSite && (
 				<ActionBox
-					href={ `/advertising/${ siteSlug }` }
+					href={ advertisingUrl }
 					hideLinkIndicator
 					onClick={ trackPromotePostAction }
 					label={ translate( 'Promote with Blaze' ) }
