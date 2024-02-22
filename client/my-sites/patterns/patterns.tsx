@@ -1,13 +1,14 @@
 import { useLocale } from '@automattic/i18n-utils';
 import DocumentHead from 'calypso/components/data/document-head';
 import Main from 'calypso/components/main';
-import { usePatternLibrary } from './use-pattern-library';
+import { usePatterns } from 'calypso/my-sites/patterns/hooks/use-patterns';
 
 import './style.scss';
 
-export default () => {
+export default ( { category }: { category: string } ) => {
 	const locale = useLocale();
-	const { data: patterns } = usePatternLibrary( locale );
+
+	const { data: patterns } = usePatterns( locale, category );
 
 	return (
 		<Main isLoggedOut fullWidthLayout>
