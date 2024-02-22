@@ -31,7 +31,7 @@
 				font-weight: 500;
 				font-size: rem(32px);
 				line-height: 32px;
-				color: #000;
+				color: var(--studio-black);
 				margin-bottom: 4px;
 			}
 
@@ -42,7 +42,7 @@
 					align-items: center;
 					font-size: rem(18px);
 					font-weight: 400;
-					color: #3c434a;
+					color: var(--studio-gray-70);
 					line-height: 26px;
 					width: fit-content;
 
