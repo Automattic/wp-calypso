@@ -5,7 +5,7 @@ import { redirectLoggedOut } from 'calypso/controller';
 import { gaRecordEvent } from 'calypso/lib/analytics/ga';
 import { getSiteFragment, sectionify } from 'calypso/lib/route';
 import { navigation } from 'calypso/my-sites/controller';
-import { UpdatesManager } from 'calypso/my-sites/plugins/updates-manager';
+import { UpdatesManager, UpdatesManagerCreate } from 'calypso/my-sites/plugins/updates-manager';
 import { isUserLoggedIn, getCurrentUserSiteCount } from 'calypso/state/current-user/selectors';
 import getSelectedOrAllSitesWithPlugins from 'calypso/state/selectors/get-selected-or-all-sites-with-plugins';
 import { fetchSitePlans } from 'calypso/state/sites/plans/actions';
@@ -103,11 +103,6 @@ export function renderProvisionPlugins( context, next ) {
 	next();
 }
 
-export function renderUpdatesManager( context, next ) {
-	context.primary = createElement( UpdatesManager, { siteSlug: context?.params?.site_id } );
-	next();
-}
-
 export function plugins( context, next ) {
 	const { pluginFilter: filter = 'all' } = context.params;
 	const basePath = sectionify( context.path ).replace( '/' + filter, '' );
@@ -118,7 +113,21 @@ export function plugins( context, next ) {
 }
 
 export function updatesManager( context, next ) {
-	renderUpdatesManager( context, next );
+	const siteSlug = context?.params?.site_slug;
+
+	switch ( context.params.action ) {
+		case 'create':
+			context.primary = createElement( UpdatesManagerCreate, {
+				siteSlug,
+			} );
+			break;
+
+		case 'list':
+		default:
+			context.primary = createElement( UpdatesManager, { siteSlug } );
+			break;
+	}
+
 	next();
 }
 

@@ -140,7 +140,10 @@ export default function ( router ) {
 	);
 
 	router(
-		`/${ langParam }/plugins/update-manager/:site_id?`,
+		[
+			`/${ langParam }/plugins/update-manager/:site_slug?`,
+			`/${ langParam }/plugins/update-manager/:action/:site_slug?`,
+		],
 		redirectLoggedOut,
 		siteSelection,
 		navigation,
