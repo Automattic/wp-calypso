@@ -170,12 +170,12 @@ class Layout extends Component {
 	constructor( props ) {
 		super( props );
 		this.state = {
-			isDesktop: isWithinBreakpoint( '>782px' ),
+			isDesktop: isWithinBreakpoint( '>781px' ),
 		};
 	}
 
 	componentDidMount() {
-		this.unsubscribe = subscribeIsWithinBreakpoint( '>782px', ( isDesktop ) => {
+		this.unsubscribe = subscribeIsWithinBreakpoint( '>781px', ( isDesktop ) => {
 			this.setState( { isDesktop } );
 		} );
 
