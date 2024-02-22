@@ -1,14 +1,14 @@
 import { Card } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import { useFeaturesList } from './use-features-list';
-import { useHandleClickLink } from './use-handle-click-link';
+import { useRecordTracksEventWithUserIsDevAccount } from './use-record-tracks-event-with-user-is-dev-account';
 
 import './style.scss';
 
 export const DeveloperFeatures = () => {
 	const translate = useTranslate();
 	const features = useFeaturesList();
-	const handleClickLink = useHandleClickLink();
+	const recordTracksEventWithUserIsDevAccount = useRecordTracksEventWithUserIsDevAccount();
 
 	return (
 		<>
@@ -23,7 +23,11 @@ export const DeveloperFeatures = () => {
 									href={ linkLearnMore }
 									target="_blank"
 									rel="noopener noreferrer"
-									onClick={ handleClickLink }
+									onClick={ () =>
+										recordTracksEventWithUserIsDevAccount( 'calypso_me_developer_learn_more', {
+											feature: id,
+										} )
+									}
 								>
 									{ translate( 'Learn more' ) }
 								</a>

@@ -1,13 +1,20 @@
 import { localizeUrl } from '@automattic/i18n-utils';
 import { useTranslate } from 'i18n-calypso';
-import { useHandleClickLink } from './use-handle-click-link';
+import { useRecordTracksEventWithUserIsDevAccount } from './use-record-tracks-event-with-user-is-dev-account';
 
 export const useFeaturesList = () => {
 	const translate = useTranslate();
-	const handleClickLink = useHandleClickLink();
+	const recordTracksEventWithUserIsDevAccount = useRecordTracksEventWithUserIsDevAccount();
+
+	const handleClick = ( feature ) => {
+		recordTracksEventWithUserIsDevAccount( 'calypso_me_developer_learn_more', {
+			feature,
+		} );
+	};
+
 	return [
 		{
-			id: 'sftp-ssh-wp-cli',
+			id: 'connect-to-ssh-on-wordpress-com',
 			title: translate( 'SFTP, SSH, and WP-CLI', {
 				comment: 'Feature title',
 			} ),
@@ -20,7 +27,7 @@ export const useFeaturesList = () => {
 			linkLearnMore: localizeUrl( 'https://wordpress.com/support/connect-to-ssh-on-wordpress-com' ),
 		},
 		{
-			id: 'staging-sites',
+			id: 'how-to-create-a-staging-site',
 			title: translate( 'Staging sites', {
 				comment: 'Feature title',
 			} ),
@@ -33,7 +40,7 @@ export const useFeaturesList = () => {
 			linkLearnMore: localizeUrl( 'https://wordpress.com/support/how-to-create-a-staging-site/' ),
 		},
 		{
-			id: 'custom-code',
+			id: 'code',
 			title: translate( 'Custom code', {
 				comment: 'Feature title',
 			} ),
@@ -46,7 +53,7 @@ export const useFeaturesList = () => {
 			linkLearnMore: localizeUrl( 'https://wordpress.com/support/code' ),
 		},
 		{
-			id: 'free-ssl-certificates',
+			id: 'https-ssl',
 			title: translate( 'Free SSL certificates', {
 				comment: 'Feature title',
 			} ),
@@ -59,7 +66,7 @@ export const useFeaturesList = () => {
 			linkLearnMore: localizeUrl( 'https://wordpress.com/support/domains/https-ssl' ),
 		},
 		{
-			id: 'expert-support',
+			id: 'help-support-options',
 			title: translate( '24/7 expert support', {
 				comment: 'Feature title',
 			} ),
@@ -72,7 +79,7 @@ export const useFeaturesList = () => {
 			linkLearnMore: localizeUrl( 'https://wordpress.com/support/help-support-options' ),
 		},
 		{
-			id: 'malware-scanning-removal',
+			id: 'malware-and-site-security',
 			title: translate( 'Malware scanning and removal', {
 				comment: 'Feature title',
 			} ),
@@ -86,7 +93,7 @@ export const useFeaturesList = () => {
 								href={ localizeUrl( 'https://wordpress.com/support/restore' ) }
 								target="_blank"
 								rel="noopener noreferrer"
-								onClick={ handleClickLink }
+								onClick={ () => handleClick( 'restore' ) }
 							/>
 						),
 						malwareScanningLink: (
@@ -94,7 +101,7 @@ export const useFeaturesList = () => {
 								href={ localizeUrl( 'https://wordpress.com/support/malware-and-site-security' ) }
 								target="_blank"
 								rel="noopener noreferrer"
-								onClick={ handleClickLink }
+								onClick={ () => handleClick( 'malware-and-site-security' ) }
 							/>
 						),
 						siteMonitoringLink: (
@@ -102,7 +109,7 @@ export const useFeaturesList = () => {
 								href={ localizeUrl( 'https://wordpress.com/support/site-monitoring' ) }
 								target="_blank"
 								rel="noopener noreferrer"
-								onClick={ handleClickLink }
+								onClick={ () => handleClick( 'site-monitoring' ) }
 							/>
 						),
 					},
