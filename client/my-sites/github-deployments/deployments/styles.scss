@@ -59,7 +59,7 @@
 		padding: 21px 0;
 		span {
 			color: var(--Gray-Gray-40, #787c82);
-			font-size: $font-body-small;
+			font-size: $font-body-extra-small;
 		}
 	}
 
@@ -67,9 +67,14 @@
 		display: flex;
 		flex-direction: column;
 		> div {
-			display: flex;
+			display: inline-flex;
 			gap: 8px;
-			font-size: $font-body-small;
+			font-size: $font-body-extra-small;
+			font-family: monospace;
+			span {
+				display: inline-flex;
+				align-items: center;
+			}
 		}
 	}
 
