@@ -2,20 +2,19 @@ import { useMutation, UseMutationOptions, useQueryClient } from '@tanstack/react
 import { useCallback } from 'react';
 import wp from 'calypso/lib/wp';
 import { GITHUB_DEPLOYMENTS_QUERY_KEY } from 'calypso/my-sites/github-deployments/constants';
-import { CODE_DEPLOYMENTS_QUERY_KEY } from 'calypso/my-sites/github-deployments/deployments/use-code-deployments-query';
 
 export interface MutationVariables {
-	installationId: number;
-	template: string;
 	accountName: string;
 	repositoryName: string;
-	targetDir: string;
-	isPrivate?: boolean;
-	isAutomated?: boolean;
+	isPrivate: boolean;
+	template: string;
 }
 
-interface MutationResponse {
-	message: string;
+export interface MutationResponse {
+	external_id: number;
+	account_name: string;
+	repository_name: string;
+	default_branch: string;
 }
 
 interface MutationError {
@@ -23,21 +22,14 @@ interface MutationError {
 	message: string;
 }
 
-export const useCreateCodeDeploymentAndRepository = (
-	siteId: number,
+const GITHUB_REPOSITORIES_MUATION_KEY = 'github-repositories-mutation';
+
+export const useCreateRepository = (
 	options: UseMutationOptions< MutationResponse, MutationError, MutationVariables > = {}
 ) => {
 	const queryClient = useQueryClient();
 	const mutation = useMutation( {
-		mutationFn: async ( {
-			template,
-			installationId,
-			accountName,
-			repositoryName,
-			targetDir,
-			isPrivate,
-			isAutomated,
-		}: MutationVariables ) =>
+		mutationFn: async ( { template, accountName, repositoryName, isPrivate }: MutationVariables ) =>
 			wp.req.post(
 				{
 					path: `/hosting/github/repositories`,
@@ -45,19 +37,15 @@ export const useCreateCodeDeploymentAndRepository = (
 				},
 				{
 					template,
-					installation_id: installationId,
 					account_name: accountName,
 					repository_name: repositoryName,
 					is_private: isPrivate,
-					is_automated: isAutomated,
-					blog_id: siteId,
-					target_dir: targetDir,
 				}
 			),
 		...options,
 		onSuccess: async ( ...args ) => {
 			await queryClient.invalidateQueries( {
-				queryKey: [ GITHUB_DEPLOYMENTS_QUERY_KEY, CODE_DEPLOYMENTS_QUERY_KEY, siteId ],
+				queryKey: [ GITHUB_DEPLOYMENTS_QUERY_KEY, GITHUB_REPOSITORIES_MUATION_KEY ],
 			} );
 			options.onSuccess?.( ...args );
 		},
@@ -65,10 +53,10 @@ export const useCreateCodeDeploymentAndRepository = (
 
 	const { mutateAsync, isPending } = mutation;
 
-	const createDeploymentAndRepository = useCallback(
+	const createRepository = useCallback(
 		( args: MutationVariables ) => mutateAsync( args ),
 		[ mutateAsync ]
 	);
 
-	return { createDeploymentAndRepository, isPending };
+	return { createRepository, isPending };
 };

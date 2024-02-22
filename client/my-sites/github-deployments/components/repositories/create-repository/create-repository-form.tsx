@@ -7,6 +7,7 @@ import FormTextInput from 'calypso/components/forms/form-text-input';
 import { GitHubInstallationsDropdown } from 'calypso/my-sites/github-deployments/components/installations-dropdown';
 import { useLiveInstallations } from 'calypso/my-sites/github-deployments/components/installations-dropdown/use-live-installations';
 import { GitHubRepositoryData } from 'calypso/my-sites/github-deployments/use-github-repositories-query';
+import { MutationVariables as CreateDeploymentMutationVariables } from '../../../deployment-creation/use-create-code-deployment';
 import { DeploymentStyle } from '../deployment-style/deployment-style';
 import {
 	FormRadioWithTemplateSelect,
@@ -14,18 +15,23 @@ import {
 	RepositoryTemplate,
 } from './form-radio-with-template-select';
 import { repositoryTemplates } from './templates';
-import { MutationVariables } from './use-create-code-deployment-and-repository';
+import { MutationVariables as CreateRepositoryMutationVariables } from './use-create-repository';
 
 import './style.scss';
 
+export type OnRepositoryCreatedParams = CreateRepositoryMutationVariables &
+	Omit< CreateDeploymentMutationVariables, 'externalRepositoryId' | 'branchName' >;
+
 type CreateRepositoryFormProps = {
-	onRepositoryCreated( args: MutationVariables ): void;
+	onRepositoryCreated( args: OnRepositoryCreatedParams ): void;
 	isPending?: boolean;
+	isDisabled?: boolean;
 };
 
 export const CreateRepositoryForm = ( {
 	onRepositoryCreated,
 	isPending,
+	isDisabled,
 }: CreateRepositoryFormProps ) => {
 	const { __ } = useI18n();
 	const {
@@ -189,7 +195,7 @@ export const CreateRepositoryForm = ( {
 				<Button
 					primary
 					busy={ isPending }
-					disabled={ ! isFormValid }
+					disabled={ ! isFormValid || isDisabled }
 					onClick={ handleCreateRepository }
 				>
 					{ __( 'Create repository' ) }
