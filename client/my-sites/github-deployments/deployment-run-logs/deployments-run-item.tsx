@@ -42,7 +42,7 @@ export const DeploymentsRunItem = ( { run }: DeploymentsListItemProps ) => {
 
 	return (
 		<>
-			<tr data-expanded={ expanded }>
+			<tr data-expanded={ expanded } onClick={ handleToggleExpanded } css={ { cursor: 'pointer' } }>
 				<td>
 					<DeploymentCommitDetails run={ run } deployment={ deployment } />
 				</td>
