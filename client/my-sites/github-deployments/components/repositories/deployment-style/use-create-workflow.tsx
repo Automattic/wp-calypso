@@ -3,11 +3,12 @@ import { useCallback } from 'react';
 import wp from 'calypso/lib/wp';
 import { GITHUB_DEPLOYMENTS_QUERY_KEY } from 'calypso/my-sites/github-deployments/constants';
 import { CODE_DEPLOYMENTS_QUERY_KEY } from 'calypso/my-sites/github-deployments/deployments/use-code-deployments-query';
+import { GitHubRepositoryData } from 'calypso/my-sites/github-deployments/use-github-repositories-query';
 
 interface MutationVariables {
 	repositoryId: number;
 	branchName: string;
-	installationId: number;
+	repository: GitHubRepositoryData;
 	fileName: string;
 	fileContent: string;
 }
@@ -30,7 +31,7 @@ export const useCreateWorkflow = (
 		mutationFn: async ( {
 			repositoryId,
 			branchName,
-			installationId,
+			repository,
 			fileName,
 			fileContent,
 		}: MutationVariables ) =>
@@ -42,7 +43,8 @@ export const useCreateWorkflow = (
 				{
 					repository_id: repositoryId,
 					branch_name: branchName,
-					installation_id: installationId,
+					repository_name: repository.name,
+					repository_owner: repository.owner,
 					file_name: fileName,
 					file_content: fileContent,
 				}

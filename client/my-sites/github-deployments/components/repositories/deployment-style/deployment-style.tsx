@@ -17,7 +17,6 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormRadiosBar from 'calypso/components/forms/form-radios-bar';
 import SupportInfo from 'calypso/components/support-info';
-import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { GitHubRepositoryData } from 'calypso/my-sites/github-deployments/use-github-repositories-query';
 import { useDispatch } from 'calypso/state';
 import { errorNotice, successNotice } from 'calypso/state/notices/actions';
@@ -59,6 +58,7 @@ export const DeploymentStyle = ( {
 	onChooseWorkflow,
 	onValidationChange,
 }: DeploymentStyleProps ) => {
+	const defaultWorkflowFilepath = '.github/workflows/wpcom.yml';
 	const dispatch = useDispatch();
 	const [ deploymentStyle, setDeploymentStyle ] = useState< DeploymentStyle >(
 		workflowPath ? 'custom' : 'simple'
@@ -75,6 +75,7 @@ export const DeploymentStyle = ( {
 		data: workflows,
 		isLoading: isFetchingWorkflows,
 		isRefetching: isRefreshingWorkflows,
+		refetch: refetchWorkflows,
 	} = useDeploymentWorkflowsQuery( installationId, repository, branchName, deploymentStyle );
 
 	const workflowsForRendering = useMemo( () => {
@@ -91,8 +92,8 @@ export const DeploymentStyle = ( {
 	const {
 		isLoading: isCheckingWorkflowFile,
 		data: workflowCheckResult,
-		refetch: refreshWorkflowValidation,
-		isRefetching: isRefreshingWorkflowValidation,
+		refetch: refetchWorkflowValidation,
+		isRefetching: isRefetchingWorkflowValidation,
 	} = useCheckWorkflowQuery(
 		installationId,
 		repository,
@@ -107,24 +108,19 @@ export const DeploymentStyle = ( {
 
 	const { createDeployment, isPending: isInstallingWorkflow } = useCreateWorkflow( {
 		onSuccess: () => {
-			dispatch( successNotice( __( 'Workflow created.' ), noticeOptions ) );
+			refetchWorkflows();
+			setSelectedWorkflow( defaultWorkflowFilepath );
+			dispatch( successNotice( __( 'Workflow created' ), noticeOptions ) );
 		},
 		onError: ( error ) => {
 			dispatch(
 				errorNotice(
-					// translators: "reason" is why connecting the branch failed.
+					// translators: "reason" is why creating a workflow failed.
 					sprintf( __( 'Failed to create workflow: %(reason)s' ), { reason: error.message } ),
 					{
 						...noticeOptions,
 					}
 				)
-			);
-		},
-		onSettled: ( _, error ) => {
-			dispatch(
-				recordTracksEvent( 'calypso_hosting_github_create_workflow_success', {
-					connected: ! error,
-				} )
 			);
 		},
 	} );
@@ -190,7 +186,7 @@ export const DeploymentStyle = ( {
 	};
 
 	const handleVerifyWorkflow = () => {
-		refreshWorkflowValidation();
+		refetchWorkflowValidation();
 	};
 
 	// const fixWorfklow = () => {
@@ -201,8 +197,8 @@ export const DeploymentStyle = ( {
 		createDeployment( {
 			repositoryId: repository.id,
 			branchName: branchName,
-			installationId,
-			fileName: '.github/workflows/wpcom.yml',
+			repository: repository,
+			fileName: defaultWorkflowFilepath,
 			fileContent: NewWorkflowExample( repository.default_branch ),
 		} );
 	};
@@ -285,7 +281,7 @@ export const DeploymentStyle = ( {
 		if ( ! isYamlValid ) {
 			return <RenderIcon state="error" />;
 		}
-		if ( isCheckingWorkflowFile || isRefreshingWorkflowValidation ) {
+		if ( isCheckingWorkflowFile || isRefetchingWorkflowValidation ) {
 			return <RenderIcon state="loading" />;
 		}
 
@@ -409,7 +405,7 @@ export const DeploymentStyle = ( {
 							{ ! isCreatingNewWorkflow && (
 								<Button
 									type="button"
-									busy={ isCheckingWorkflowFile || isRefreshingWorkflowValidation }
+									busy={ isCheckingWorkflowFile || isRefetchingWorkflowValidation }
 									className="button form-button"
 									onClick={ handleVerifyWorkflow }
 								>

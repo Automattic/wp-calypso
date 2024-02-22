@@ -5,11 +5,9 @@ name: Publish Website
 on:
   push:
     branches:
-      - ${
-				default_branch
-				// eslint-disable-next-line inclusive-language/use-inclusive-words
-			}
+      - ${ default_branch }
   workflow_dispatch:
+
 jobs:
   Build-Artifact-Action:
     name: Build-Artifact-Action
@@ -18,10 +16,10 @@ jobs:
     - uses: actions/checkout@master
 
     - name: Upload the artifact
-        uses: actions/upload-artifact@v4
-        with:
-            name: wpcom
-            path: .
+      uses: actions/upload-artifact@v4
+      with:
+        name: wpcom
+        path: .
 
 `;
 };
