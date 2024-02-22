@@ -314,10 +314,12 @@ export default function SitesDashboardV2() {
 					</div>
 				) }
 			</div>
-			<SitePreviewPane
-				selectedSite={ sitesViewState.selectedSite }
-				closeSitePreviewPane={ closeSitePreviewPane }
-			/>
+			{ sitesViewState.selectedSite && (
+				<SitePreviewPane
+					selectedSite={ sitesViewState.selectedSite }
+					closeSitePreviewPane={ closeSitePreviewPane }
+				/>
+			) }
 		</div>
 	);
 }

@@ -15,7 +15,9 @@ export default function SitePreviewPane( { selectedSite, closeSitePreviewPane }:
 	return (
 		<div className="site-preview__pane">
 			<SitePreviewPaneHeader
-				selectedSite={ selectedSite }
+				title={ selectedSite.blogname }
+				url={ selectedSite.url }
+				urlWithScheme={ selectedSite.url_with_scheme }
 				closeSitePreviewPane={ closeSitePreviewPane }
 			/>
 			<SitePreviewPaneTabs />
