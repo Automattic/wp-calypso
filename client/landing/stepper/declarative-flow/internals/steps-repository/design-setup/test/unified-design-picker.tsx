@@ -78,6 +78,10 @@ jest.mock( 'calypso/components/data/query-products-list', () => ( {
 	},
 } ) );
 
+jest.mock( 'calypso/state/themes/hooks/use-is-theme-allowed-on-site', () => ( {
+	useIsThemeAllowedOnSite: () => false,
+} ) );
+
 jest.mock( 'calypso/state/themes/selectors', () => ( {
 	isMarketplaceThemeSubscribed: () => {
 		return;
