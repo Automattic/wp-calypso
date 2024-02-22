@@ -3,6 +3,10 @@
 		width: 100%;
 	}
 
+	.components-text-control__input {
+		border-color: var(--studio-gray-10);
+	}
+
 	.components-radio-control__input {
 		padding: 0;
 		background: transparent;
@@ -23,7 +27,7 @@
 
 		&.disabled {
 			.components-checkbox-control__input {
-				border-color: var(--studio-gray-20);
+				border-color: var(--studio-gray-10);
 			}
 
 			label {
@@ -33,21 +37,21 @@
 	}
 
 	.components-checkbox-control__input {
-		border-color: var(--studio-gray-50);
+		border-color: var(--studio-gray-20);
 	}
 
 	.components-search-control {
 		margin-bottom: 1.5rem;
 
 		.components-input-control__container {
-			border: solid 1px #949494;
+			border: solid 1px var(--studio-gray-10);
 			background-color: var(--studio-white);
 		}
 	}
 
 	.checkbox-options {
 		padding: 1.5rem;
-		border: solid 1px var(--color-border);
+		border: solid 1px var(--studio-gray-10);
 		border-radius: 2px;
 	}
 
