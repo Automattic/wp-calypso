@@ -81,7 +81,6 @@ const SitesDataViews = ( {
 							<span className="sites-dataview__site-header">
 								{ translate( 'Site' ).toUpperCase() }
 							</span>
-							<span className="sort-hover-text">{ translate( 'Sort by URL' ) }</span>
 						</SiteSort>
 					</>
 				),

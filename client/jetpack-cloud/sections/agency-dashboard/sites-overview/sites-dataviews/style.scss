@@ -34,20 +34,9 @@
 		}
 
 		.site-sort__clickable {
-			display: block;
 			cursor: pointer;
+			padding-left: 1rem;
 
-			.sort-hover-text {
-				display: none;
-			}
-
-			&:hover {
-				.sort-hover-text {
-					display: inline-block;
-					font-size: $font-body-extra-small;
-					padding-left: 1rem;
-				}
-			}
 		}
 	}
 }
