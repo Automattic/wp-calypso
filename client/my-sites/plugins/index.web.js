@@ -140,7 +140,7 @@ export default function ( router ) {
 	);
 
 	router(
-		`/${ langParam }/plugins/updates-manager/:site_id?`,
+		`/${ langParam }/plugins/update-manager/:site_id?`,
 		redirectLoggedOut,
 		siteSelection,
 		navigation,

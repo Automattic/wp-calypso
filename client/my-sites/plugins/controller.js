@@ -104,7 +104,7 @@ export function renderProvisionPlugins( context, next ) {
 }
 
 export function renderUpdatesManager( context, next ) {
-	context.primary = createElement( UpdatesManager, {} );
+	context.primary = createElement( UpdatesManager, { siteSlug: context?.params?.site_id } );
 	next();
 }
 
