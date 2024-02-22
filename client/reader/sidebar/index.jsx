@@ -2,13 +2,15 @@ import { isEnabled } from '@automattic/calypso-config';
 import page from '@automattic/calypso-router';
 import { hasTranslation } from '@wordpress/i18n';
 import closest from 'component-closest';
-import { localize } from 'i18n-calypso';
+import i18n, { localize } from 'i18n-calypso';
 import { defer, startsWith } from 'lodash';
 import { Component } from 'react';
 import { connect } from 'react-redux';
 import QueryReaderLists from 'calypso/components/data/query-reader-lists';
 import QueryReaderOrganizations from 'calypso/components/data/query-reader-organizations';
 import QueryReaderTeams from 'calypso/components/data/query-reader-teams';
+import { withCurrentRoute } from 'calypso/components/route';
+import GlobalSidebar from 'calypso/layout/global-sidebar';
 import Sidebar from 'calypso/layout/sidebar';
 import SidebarFooter from 'calypso/layout/sidebar/footer';
 import SidebarItem from 'calypso/layout/sidebar/item';
@@ -26,6 +28,7 @@ import ReaderSearchIcon from 'calypso/reader/components/icons/search-icon';
 import { isAutomatticTeamMember } from 'calypso/reader/lib/teams';
 import { getTagStreamUrl } from 'calypso/reader/route';
 import { recordAction, recordGaEvent } from 'calypso/reader/stats';
+import { getShouldShowGlobalSidebar } from 'calypso/state/global-sidebar/selectors';
 import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions';
 import { getSubscribedLists } from 'calypso/state/reader/lists/selectors';
 import { getReaderOrganizations } from 'calypso/state/reader/organizations/selectors';
@@ -36,6 +39,7 @@ import {
 import { isListsOpen, isTagsOpen } from 'calypso/state/reader-ui/sidebar/selectors';
 import { getReaderTeams } from 'calypso/state/teams/selectors';
 import { setNextLayoutFocus } from 'calypso/state/ui/layout-focus/actions';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import ReaderSidebarHelper from './helper';
 import ReaderSidebarPromo from './promo';
 import ReaderSidebarLists from './reader-sidebar-lists';
@@ -145,7 +149,7 @@ export class ReaderSidebar extends Component {
 		this.props.recordReaderTracksEvent( 'calypso_reader_sidebar_manage_subscriptions_clicked' );
 	};
 
-	renderSidebar() {
+	renderSidebarMenu() {
 		const { path, translate, teams, locale } = this.props;
 		const recentLabelTranslationReady = hasTranslation( 'Recent' ) || locale.startsWith( 'en' );
 		return (
@@ -153,8 +157,6 @@ export class ReaderSidebar extends Component {
 				<QueryReaderLists />
 				<QueryReaderTeams />
 				<QueryReaderOrganizations />
-
-				<SidebarSeparator />
 
 				<SidebarItem
 					label={ translate( 'Search' ) }
@@ -269,12 +271,28 @@ export class ReaderSidebar extends Component {
 		);
 	}
 
-	render() {
+	renderGlobalSidebar() {
+		const props = {
+			path: this.props.path,
+			onClick: this.handleClick,
+			requireBackLink: true,
+			backLinkText: i18n.translate( 'All sites' ),
+		};
+		return (
+			<GlobalSidebar { ...props }>
+				<ReaderSidebarNudges />
+				{ this.renderSidebarMenu() }
+				<ReaderSidebarPromo />
+			</GlobalSidebar>
+		);
+	}
+
+	renderSidebar() {
 		return (
 			<Sidebar onClick={ this.handleClick }>
 				<SidebarRegion>
 					<ReaderSidebarNudges />
-					{ this.renderSidebar() }
+					{ this.renderSidebarMenu() }
 				</SidebarRegion>
 
 				<ReaderSidebarPromo />
@@ -283,22 +301,35 @@ export class ReaderSidebar extends Component {
 			</Sidebar>
 		);
 	}
+
+	render() {
+		if ( this.props.shouldShowGlobalSidebar ) {
+			return this.renderGlobalSidebar();
+		}
+		return this.renderSidebar();
+	}
 }
 
-export default connect(
-	( state ) => {
-		return {
-			isListsOpen: isListsOpen( state ),
-			isTagsOpen: isTagsOpen( state ),
-			subscribedLists: getSubscribedLists( state ),
-			teams: getReaderTeams( state ),
-			organizations: getReaderOrganizations( state ),
-		};
-	},
-	{
-		recordReaderTracksEvent,
-		setNextLayoutFocus,
-		toggleListsVisibility: toggleReaderSidebarLists,
-		toggleTagsVisibility: toggleReaderSidebarTags,
-	}
-)( localize( ReaderSidebar ) );
+export default withCurrentRoute(
+	connect(
+		( state, { currentSection } ) => {
+			const sectionGroup = currentSection?.group ?? null;
+			const siteId = getSelectedSiteId( state );
+			const shouldShowGlobalSidebar = getShouldShowGlobalSidebar( state, siteId, sectionGroup );
+			return {
+				isListsOpen: isListsOpen( state ),
+				isTagsOpen: isTagsOpen( state ),
+				subscribedLists: getSubscribedLists( state ),
+				teams: getReaderTeams( state ),
+				organizations: getReaderOrganizations( state ),
+				shouldShowGlobalSidebar,
+			};
+		},
+		{
+			recordReaderTracksEvent,
+			setNextLayoutFocus,
+			toggleListsVisibility: toggleReaderSidebarLists,
+			toggleTagsVisibility: toggleReaderSidebarTags,
+		}
+	)( localize( ReaderSidebar ) )
+);

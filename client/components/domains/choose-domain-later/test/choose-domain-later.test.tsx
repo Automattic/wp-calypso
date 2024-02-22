@@ -14,18 +14,14 @@ jest.mock( 'calypso/lib/explat', () => ( {
 } ) );
 
 describe( 'ChooseDomainLater', () => {
-	test( 'Renders treatment_type when that treatment is active', () => {
+	test( 'Renders treatment_type when showEscapeHatchAfterSearch and hasSearchedDomains are true', () => {
 		useExperimentMock.mockImplementation( () => [ false, { variationName: 'treatment_type' } ] );
 
 		const { getByText } = render(
 			<ChooseDomainLater
 				flowName="onboarding"
-				step={ {
-					domainForm: {
-						loadingResults: false,
-						searchResults: Array( 5 ).fill( {} ),
-					},
-				} }
+				showEscapeHatchAfterSearch={ true }
+				hasSearchedDomains={ true }
 				handleDomainExplainerClick={ () => {} }
 			/>
 		);
@@ -33,37 +29,14 @@ describe( 'ChooseDomainLater', () => {
 		expect( getByText( 'Not ready to choose a domain just yet?' ) ).toBeTruthy();
 	} );
 
-	test( 'Renders treatment_search when that treatment is active', () => {
-		useExperimentMock.mockImplementation( () => [ false, { variationName: 'treatment_search' } ] );
-
-		const { getByText } = render(
-			<ChooseDomainLater
-				flowName="onboarding"
-				step={ {
-					domainForm: {
-						loadingResults: false,
-						searchResults: Array( 5 ).fill( {} ),
-					},
-				} }
-				handleDomainExplainerClick={ () => {} }
-			/>
-		);
-
-		expect( getByText( 'Get a free domain with select paid plans' ) ).toBeTruthy();
-	} );
-
-	test( 'Renders control when that control is active', () => {
+	test( 'Renders the standard domain explainer control', () => {
 		useExperimentMock.mockImplementation( () => [ false, { variationName: 'control' } ] );
 
 		const { container } = render(
 			<ChooseDomainLater
 				flowName="onboarding"
-				step={ {
-					domainForm: {
-						loadingResults: false,
-						searchResults: Array( 5 ).fill( {} ),
-					},
-				} }
+				showEscapeHatchAfterSearch={ false }
+				hasSearchedDomains={ false }
 				handleDomainExplainerClick={ () => {} }
 			/>
 		);
@@ -73,55 +46,13 @@ describe( 'ChooseDomainLater', () => {
 		);
 	} );
 
-	test( 'Does not render if treatment_search and domain results not loaded', () => {
-		useExperimentMock.mockImplementation( () => [ false, { variationName: 'treatment_search' } ] );
-
-		const { queryByText } = render(
-			<ChooseDomainLater
-				flowName="onboarding"
-				step={ {
-					domainForm: {
-						loadingResults: true,
-						searchResults: [],
-					},
-				} }
-				handleDomainExplainerClick={ () => {} }
-			/>
-		);
-
-		expect( queryByText( 'Get a free domain with select paid plans' ) ).toBeFalsy();
-	} );
-
-	test( 'Does not render if treatment_type and domain results not loaded', () => {
-		useExperimentMock.mockImplementation( () => [ false, { variationName: 'treatment_type' } ] );
-
-		const { queryByText } = render(
-			<ChooseDomainLater
-				flowName="onboarding"
-				step={ {
-					domainForm: {
-						loadingResults: true,
-						searchResults: [],
-					},
-				} }
-				handleDomainExplainerClick={ () => {} }
-			/>
-		);
-
-		expect( queryByText( 'Not ready to choose a domain just yet?' ) ).toBeFalsy();
-	} );
-
-	test( 'Does not render anything if experiment is still loading', () => {
+	test( 'Does not render anything if domains have not been searched while the escape hatch should be rendered after', () => {
 		useExperimentMock.mockImplementation( () => [ true, null ] );
 		const { container } = render(
 			<ChooseDomainLater
 				flowName="onboarding"
-				step={ {
-					domainForm: {
-						loadingResults: false,
-						searchResults: [],
-					},
-				} }
+				hasSearchedDomains={ false }
+				showEscapeHatchAfterSearch={ true }
 				handleDomainExplainerClick={ () => {} }
 			/>
 		);

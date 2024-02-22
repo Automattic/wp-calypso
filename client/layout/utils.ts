@@ -140,3 +140,21 @@ export const handleScroll = ( event: React.UIEvent< HTMLElement > ): void => {
 		ticking = true;
 	}
 };
+
+export const handleScrollGlobalSidebar = ( event: Event ): void => {
+	const globalSidebarBodyEl = document.querySelector( '.global-sidebar .sidebar__body' );
+	if ( ! globalSidebarBodyEl ) {
+		return;
+	}
+
+	if ( ! globalSidebarBodyEl.hasAttribute( 'data-scroll-initialized' ) ) {
+		globalSidebarBodyEl.setAttribute( 'data-scroll-initialized', 'true' );
+		globalSidebarBodyEl.addEventListener( 'scroll', handleScrollGlobalSidebar );
+	}
+
+	if ( event.currentTarget === globalSidebarBodyEl ) {
+		document.documentElement.scrollTop = globalSidebarBodyEl.scrollTop;
+	} else {
+		globalSidebarBodyEl.scrollTop = scrollY;
+	}
+};

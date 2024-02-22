@@ -431,7 +431,8 @@
 	}
 }
 
-.jetpack-cloud {
+.jetpack-cloud,
+.a8c-for-agencies {
 	background: var(--studio-gray-0);
 	min-height: 100%;
 
@@ -440,32 +441,41 @@
 		fill: var(--studio-jetpack-green-40);
 	}
 
+	.a4a-logo {
+		width: 200px;
+		height: 28px;
+	}
+
 	.step-wrapper .formatted-header {
 		margin-top: 0;
 	}
 
-	.login.is-jetpack-cloud {
-		width: 100%;
-		display: flex;
-		flex-direction: column;
-		align-items: center;
-
-		form {
+	.login {
+		&.is-jetpack-cloud,
+		&.is-a4a {
 			width: 100%;
+			display: flex;
+			flex-direction: column;
+			align-items: center;
+
+			form {
+				width: 100%;
+			}
+
+			> :last-child:not(.wp-login__links) {
+				margin-bottom: 64px;
+			}
 		}
 
-		> :last-child:not(.wp-login__links) {
-			margin-bottom: 64px;
-		}
 	}
 
 	// primary text rules
 	.login__form-header,
-	.signup-form__jetpack-cloud-wrapper h3 {
+	.signup-form__wrapper h3 {
 		font-weight: 600;
 		font-size: $font-title-small;
 		line-height: 32px;
-		margin-bottom: 8px;
+		margin-block: 8px;
 		text-align: center;
 	}
 
@@ -479,7 +489,7 @@
 	}
 
 	.login__form-header-wrapper,
-	.signup-form__jetpack-cloud-wrapper {
+	.signup-form__wrapper {
 		padding: 32px 0 0;
 		display: flex;
 		align-items: center;

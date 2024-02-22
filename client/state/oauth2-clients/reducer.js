@@ -75,6 +75,21 @@ export const initialClientsData = {
 		name: 'jetpack-cloud',
 		title: 'Jetpack Cloud',
 	},
+	95928: {
+		id: 95928,
+		name: 'a8c-for-agencies',
+		title: 'A8C for Agencies',
+	},
+	95931: {
+		id: 95931,
+		name: 'a8c-for-agencies',
+		title: 'A8C for Agencies',
+	},
+	95932: {
+		id: 95932,
+		name: 'a8c-for-agencies',
+		title: 'A8C for Agencies',
+	},
 };
 
 export function clients( state = initialClientsData, action ) {

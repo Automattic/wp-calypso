@@ -139,6 +139,9 @@ $mobile-card-max-width: 440px;
 		}
 
 		.components-custom-select-control {
+			.storage-add-on-dropdown-option__title {
+				font-size: 0.875rem;
+			}
 			.components-custom-select-control__button {
 				height: 40px;
 			}
@@ -183,6 +186,11 @@ $mobile-card-max-width: 440px;
 	margin: 0 auto;
 	border-spacing: 0;
 	width: 100%;
+
+	&.has-highlighted-plan {
+		// margin (not padding) to not break internal borders/layout
+		margin-top: 35px; // enough to cover `plans-grid__popular-badge` repositioning (top: -35px)
+	}
 
 	&.has-1-cols {
 		max-width: $table-cell-max-width;
@@ -490,6 +498,11 @@ $mobile-card-max-width: 440px;
  * TODO clk consolidate with the rest above
  */
 .plans-grid-next {
+	// insignificant padding important to prevent parent/child margins from collapsing
+	// creates a barrier between parent/child elements
+	// the alternative (oveflow: auto) would break the sticky behavior on the headers
+	padding: 1px;
+
 	.plan-features-2023-grid__table-item {
 		border-right: none;
 		background-color: transparent;
@@ -656,6 +669,8 @@ $mobile-card-max-width: 440px;
 		}
 	}
 
+	// test
+
 	.components-custom-select-control {
 		line-height: 0px;
 		font-size: 0.75rem;
@@ -693,6 +708,12 @@ $mobile-card-max-width: 440px;
 }
 
 .plan-comparison-grid {
+	&.has-highlighted-plan {
+		@include plans-grid-medium-large {
+			padding-top: 43px; // enough to cover `plans-grid__popular-badge` repositioning (top: -43px)
+		}
+	}
+
 	.plan-comparison-grid__feature-group-row.is-storage-feature {
 		align-items: flex-start;
 	}

@@ -1,5 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
 import wpcom from 'calypso/lib/wp';
+import getDefaultQueryParams from 'calypso/my-sites/stats/hooks/default-query-params';
 import { parseChartData } from 'calypso/state/stats/lists/utils';
 import { Unit } from '../typings';
 
@@ -22,6 +23,7 @@ export default function useVisitsQuery(
 	fields = [ 'views', 'visitors' ]
 ) {
 	return useQuery( {
+		...getDefaultQueryParams< Array< object > >(),
 		queryKey: [ 'stats-widget', 'visits', siteId, unit, quantity, date, fields ],
 		queryFn: () =>
 			queryStatsVisits( siteId, { unit, quantity, date, stat_fields: fields.join( ',' ) } ),

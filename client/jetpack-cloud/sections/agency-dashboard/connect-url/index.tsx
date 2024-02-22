@@ -1,23 +1,65 @@
 import { Card } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
-import { useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
+import useCreateUrlOnlySiteMutation from 'calypso/components/data/query-jetpack-manage-add-site-url/use-create-url-only-site-mutation';
+import CreateSites, { Site } from './create-sites';
 import SitesInput from './sites-input';
-import ValidateSites from './validate-sites';
 import './style.scss';
 
 export default function ConnectUrl() {
 	const translate = useTranslate();
 
-	const [ detectedSites, setDetectedSites ] = useState( [] as string[] );
-	const [ detectedFilename, setDetectedFilename ] = useState( '' );
-	const [ validating, setValidating ] = useState( false );
+	const [ queue, setQueue ] = useState( [] as Site[] );
+	const [ processed, setProcessed ] = useState( [] as Site[] );
+	const [ csvConfirmed, setCsvConfirmed ] = useState( false );
+	const isProcessing = queue.length > 0;
+	const createUrlOnlySiteMutation = useCreateUrlOnlySiteMutation();
 
-	const handleValidate = () => {
-		setValidating( true );
-	};
+	const shiftQueue = useCallback(
+		( success: boolean ) => {
+			// Cheeky immutable Array.shift through destructuring.
+			const [ shift, ...rest ] = queue;
 
-	const pageTitle = validating ? translate( 'Adding sites' ) : translate( 'Add sites by URL' );
-	const pageSubtitle = validating
+			shift.status = success ? 'success' : 'error';
+			setProcessed( [ ...processed, shift ] );
+			setQueue( rest );
+			return shift;
+		},
+		[ queue, setQueue ]
+	);
+
+	const onCreateSiteSuccess = useCallback( () => {
+		shiftQueue( true );
+	}, [ shiftQueue, setQueue ] );
+
+	const onCreateSiteError = useCallback( () => {
+		shiftQueue( false );
+	}, [ shiftQueue, setQueue ] );
+
+	const onConfirm = useCallback(
+		( sites: string[] ) => {
+			setCsvConfirmed( true );
+			setQueue( sites.map( ( site ) => ( { url: site || '', status: 'pending' } ) ) );
+		},
+		[ setCsvConfirmed, setQueue ]
+	);
+
+	useEffect( () => {
+		if ( queue.length < 1 ) {
+			return;
+		}
+
+		createUrlOnlySiteMutation.mutate(
+			{ url: queue[ 0 ].url },
+			{
+				onSuccess: onCreateSiteSuccess,
+				onError: onCreateSiteError,
+			}
+		);
+	}, [ queue, createUrlOnlySiteMutation.mutate ] );
+
+	const pageTitle = isProcessing ? translate( 'Adding sites' ) : translate( 'Add sites by URL' );
+	const pageSubtitle = isProcessing
 		? translate( 'Please wait while we add all sites to your account.' )
 		: translate( 'Add one or multiple sites at once by entering their address below.' );
 
@@ -26,18 +68,10 @@ export default function ConnectUrl() {
 			<h2 className="connect-url__page-title">{ pageTitle }</h2>
 			<div className="connect-url__page-subtitle">{ pageSubtitle }</div>
 			<Card>
-				{ ! validating ? (
-					<SitesInput
-						{ ...{
-							detectedSites,
-							setDetectedSites,
-							detectedFilename,
-							setDetectedFilename,
-							handleValidate,
-						} }
-					/>
+				{ ! csvConfirmed ? (
+					<SitesInput onConfirm={ onConfirm } />
 				) : (
-					<ValidateSites { ...{ detectedSites } } />
+					<CreateSites processed={ processed } queue={ queue } />
 				) }
 			</Card>
 		</div>

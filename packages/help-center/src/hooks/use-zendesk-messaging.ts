@@ -50,6 +50,7 @@ export default function useZendeskMessaging(
 	}, [ setMessagingScriptLoaded, enabled, zendeskKey, isMessagingScriptLoaded ] );
 
 	if (
+		document &&
 		document.getElementById( ZENDESK_SCRIPT_ID ) &&
 		enabled &&
 		typeof window.zE === 'function' &&

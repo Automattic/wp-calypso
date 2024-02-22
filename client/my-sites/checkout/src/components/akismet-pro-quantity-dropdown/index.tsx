@@ -6,6 +6,7 @@ import {
 import { Gridicon } from '@automattic/components';
 import formatCurrency from '@automattic/format-currency';
 import { isMobile } from '@automattic/viewport';
+import { hasCheckoutVersion } from '@automattic/wpcom-checkout';
 import { css } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useTranslate } from 'i18n-calypso';
@@ -117,6 +118,8 @@ const CurrentOptionContainer = styled.div`
 	width: 100%;
 	column-gap: 20px;
 	text-align: left;
+
+	${ hasCheckoutVersion( '2' ) ? `flex-direction: column; align-items: flex-start;` : null }
 `;
 
 const Price = styled.span`
@@ -126,6 +129,8 @@ const Price = styled.span`
 	> span {
 		font-size: calc( ${ ( props ) => props.theme.fontSize.small } - 1px );
 	}
+
+	${ hasCheckoutVersion( '2' ) ? `text-align: initial;` : `text-align: right;` }
 `;
 
 export const AkismetProQuantityDropDown: FunctionComponent< AkismetProQuantityDropDownProps > = ( {

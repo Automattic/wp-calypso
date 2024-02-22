@@ -36,7 +36,6 @@ import {
 	getFixedDomainSearch,
 } from 'calypso/lib/domains';
 import { getSuggestionsVendor } from 'calypso/lib/domains/suggestions';
-import { useExperiment } from 'calypso/lib/explat';
 import { triggerGuidesForStep } from 'calypso/lib/guides/trigger-guides-for-step';
 import { getSitePropertyDefaults } from 'calypso/lib/signup/site-properties';
 import { maybeExcludeEmailsStep } from 'calypso/lib/signup/step-actions';
@@ -921,7 +920,7 @@ export class RenderDomainsStep extends Component {
 						temporaryCart={ this.state.temporaryCart }
 						domainRemovalQueue={ this.state.domainRemovalQueue }
 						cartIsLoading={ cartIsLoading }
-						flowName={ this.props.flowName }
+						flowName={ flowName }
 						removeDomainClickHandler={ this.removeDomainClickHandler }
 						isMiniCartContinueButtonBusy={ this.state.isMiniCartContinueButtonBusy }
 						goToNext={ this.goToNext }
@@ -933,9 +932,12 @@ export class RenderDomainsStep extends Component {
 					! this.shouldHideDomainExplainer() &&
 					this.props.isPlanSelectionAvailableLaterInFlow && (
 						<ChooseDomainLater
-							step={ this.props.step }
-							flowName={ this.props.flowName }
+							hasSearchedDomains={ Array.isArray( this.props.step?.domainForm?.searchResults ) }
+							flowName={ flowName }
 							handleDomainExplainerClick={ this.handleDomainExplainerClick }
+							showEscapeHatchAfterSearch={
+								flowName === 'onboarding' || flowName === 'onboarding-pm'
+							}
 						/>
 					)
 				) }
@@ -1466,12 +1468,10 @@ const RenderDomainsStepConnect = connect(
 )( withCartKey( withShoppingCart( localize( RenderDomainsStep ) ) ) );
 
 export default function DomainsStep( props ) {
-	const [ isSideContentExperimentLoading ] = useExperiment(
-		'calypso_gf_signup_onboarding_escape_hatch',
-		{
-			isEligible: props.flowName === 'onboarding',
-		}
-	);
+	// this is kept since there will likely be more experiments to come.
+	// See peP6yB-1Np-p2
+	const isSideContentExperimentLoading = false;
+
 	return (
 		<CalypsoShoppingCartProvider>
 			<RenderDomainsStepConnect

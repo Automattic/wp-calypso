@@ -51,3 +51,4 @@ export const pluginsPath = ( siteSlug?: string | null, query = {} ): string => {
 };
 
 export const dashboardPath = () => '/dashboard';
+export const sitesPath = () => '/sites';

@@ -61,7 +61,6 @@ import { errorNotice, removeNotice } from 'calypso/state/notices/actions';
 import { isMarketplaceProduct } from 'calypso/state/products-list/selectors';
 import getPreviousRoute from 'calypso/state/selectors/get-previous-route';
 import useCouponFieldState from '../hooks/use-coupon-field-state';
-import { useToSFoldableCard } from '../hooks/use-tos-foldable-card';
 import { validateContactDetails } from '../lib/contact-validation';
 import getContactDetailsType from '../lib/get-contact-details-type';
 import { updateCartContactDetailsForCheckout } from '../lib/update-cart-contact-details-for-checkout';
@@ -349,7 +348,6 @@ export default function WPCheckout( {
 
 	const { transactionStatus } = useTransactionStatus();
 	const paymentMethod = usePaymentMethod();
-	const showToSFoldableCard = useToSFoldableCard();
 
 	const hasMarketplaceProduct =
 		useDoesCartHaveMarketplaceProductRequiringConfirmation( responseCart );
@@ -658,13 +656,11 @@ export default function WPCheckout( {
 						validateForm={ validateForm }
 						submitButtonHeader={ <SubmitButtonHeader /> }
 						submitButtonFooter={
-							// Temporarily disabling this lint rule until hasCheckoutVersion is removed
-							// eslint-disable-next-line no-nested-ternary
 							hasCartJetpackProductsOnly ? (
 								<JetpackCheckoutSeals />
-							) : hasCheckoutVersion( '2' ) || showToSFoldableCard ? (
+							) : (
 								<CheckoutMoneyBackGuarantee cart={ responseCart } />
-							) : null
+							)
 						}
 					/>
 				</CheckoutStepGroup>
@@ -772,27 +768,72 @@ const CheckoutSummaryTitlePrice = styled.span`
 
 const CheckoutSummaryBody = styled.div`
 	box-sizing: border-box;
-	display: none;
 	margin: 0 auto;
 	max-width: 600px;
 	width: 100%;
-	padding: 24px;
+	display: none;
+
+	${ hasCheckoutVersion( '2' ) ? `padding: 32px 24px 24px 24px;` : 'padding: 24px;' }
 
 	.is-visible & {
-		display: block;
+		${ hasCheckoutVersion( '2' )
+			? ` display: grid;
+			grid-template-areas:
+			"preview"
+			"review"
+			"summary"
+			"nudge"
+			"features";`
+			: `display: block;` };
+	}
+
+	& .checkout-site-preview {
+		grid-area: preview;
+		display: none;
+	}
+
+	& .checkout-review-order {
+		grid-area: review;
 	}
 
 	@media ( ${ ( props ) => props.theme.breakpoints.tabletUp } ) {
-		padding: 24px;
+		${ hasCheckoutVersion( '2' ) ? `padding: 50px 24px 24px 24px;` : 'padding: 24px;' }
+
+		.is-visible & {
+			${ hasCheckoutVersion( '2' ) &&
+			`grid-template-areas:
+			"preview preview"
+			"review review"
+			"summary summary"
+			"features nudge"
+			` };
+		}
 	}
 
 	@media ( ${ ( props ) => props.theme.breakpoints.desktopUp } ) {
-		display: block;
 		max-width: 328px;
 		padding: 0;
 
+		.is-visible &,
+		& {
+			${ hasCheckoutVersion( '2' )
+				? `grid-template-areas:
+					"preview"
+					"review"
+					"summary"
+					"nudge"
+					"features";
+					display: grid;
+			`
+				: `display: block;` };
+		}
+
 		& .card {
 			box-shadow: none;
+		}
+
+		& .checkout-site-preview {
+			display: block;
 		}
 	}
 `;
@@ -800,6 +841,7 @@ const CheckoutSummaryBody = styled.div`
 const CheckoutSidebarNudgeWrapper = styled.div`
 	display: flex;
 	flex-direction: column;
+	${ hasCheckoutVersion( '2' ) && `grid-area: nudge` };
 
 	& > * {
 		max-width: 288px;

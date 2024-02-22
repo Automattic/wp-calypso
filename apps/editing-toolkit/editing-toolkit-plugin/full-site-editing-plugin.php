@@ -304,9 +304,9 @@ function load_help_center() {
 			require_once ABSPATH . 'wp-admin/includes/plugin.php';
 		}
 
-		// This doesn't work if Jetpack is an mu-plugin.
+		// This should still work if Jetpack is an mu-plugin.
 		// Since this isn't running in WPCOM this shouldn't matter.
-		if ( ! is_plugin_active( 'jetpack/jetpack.php' ) ) {
+		if ( ! defined( 'JETPACK__VERSION' ) ) {
 			return false;
 		}
 	}

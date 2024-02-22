@@ -237,6 +237,8 @@ interface CommandPaletteProps {
 	wpcom: WPCOM;
 	currentRoute: string | null;
 	singleSiteMode: boolean;
+	isOpenGlobal?: boolean;
+	onClose?: () => void;
 }
 
 const NotFoundMessage = ( {
@@ -269,21 +271,26 @@ const CommandPalette = ( {
 	useCommands,
 	wpcom,
 	currentRoute,
+	isOpenGlobal,
+	onClose = () => {},
 }: CommandPaletteProps ) => {
 	const [ placeHolderOverride, setPlaceholderOverride ] = useState( '' );
 	const [ search, setSearch ] = useState( '' );
 	const [ selectedCommandName, setSelectedCommandName ] = useState( '' );
-	const [ isOpen, setIsOpen ] = useState( false );
+	const [ isOpenLocal, setIsOpenLocal ] = useState( false );
+	const isOpen = isOpenLocal || isOpenGlobal;
 	const [ footerMessage, setFooterMessage ] = useState( '' );
 	const [ emptyListNotice, setEmptyListNotice ] = useState( '' );
 	const open = useCallback( () => {
-		setIsOpen( true );
+		setIsOpenLocal( true );
 		recordTracksEvent( 'calypso_hosting_command_palette_open', {
 			current_route: currentRoute,
 		} );
 	}, [ currentRoute ] );
 	const close = useCallback< CommandMenuGroupProps[ 'close' ] >(
 		( commandName = '', isExecuted = false ) => {
+			setIsOpenLocal( false );
+			onClose();
 			recordTracksEvent( 'calypso_hosting_command_palette_close', {
 				// For nested commands the command.name would be the siteId
 				// For root commands the selectedCommandName would be empty
@@ -292,9 +299,8 @@ const CommandPalette = ( {
 				search_text: search,
 				is_executed: isExecuted,
 			} );
-			setIsOpen( false );
 		},
-		[ currentRoute, search, selectedCommandName ]
+		[ currentRoute, onClose, search, selectedCommandName ]
 	);
 	const toggle = useCallback( () => ( isOpen ? close() : open() ), [ isOpen, close, open ] );
 	const commandFilter = useCommandFilter();

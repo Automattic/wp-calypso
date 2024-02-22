@@ -4,8 +4,28 @@
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { act, fireEvent, render, screen } from '@testing-library/react';
 import React from 'react';
-import CommandPalette from '../src/index';
-import { useCommandPalette } from '../src/use-command-palette';
+import { Provider } from 'react-redux';
+import configureStore from 'redux-mock-store';
+import { isCommandPaletteOpen } from '../../../state/command-palette/selectors';
+import { getCurrentRoutePattern } from '../../../state/selectors/get-current-route-pattern';
+import CommandPalette from '../index';
+import { useCommandPalette } from '../use-command-palette';
+
+const INITIAL_STATE = {
+	sites: {
+		items: {},
+	},
+	currentUser: {
+		capabilities: {
+			[ 1 ]: {
+				manage_options: true,
+			},
+		},
+	},
+	ui: {
+		selectedSiteId: 1,
+	},
+};
 
 const commands = [
 	{
@@ -40,7 +60,9 @@ const commands = [
 ];
 const queryClient = new QueryClient();
 
-jest.mock( '../src/use-command-palette' );
+jest.mock( '../../../state/selectors/get-current-route-pattern' );
+jest.mock( '../../../state/command-palette/selectors' );
+jest.mock( '../use-command-palette' );
 
 window.ResizeObserver = jest.fn( () => ( {
 	observe: jest.fn(),
@@ -49,6 +71,9 @@ window.ResizeObserver = jest.fn( () => ( {
 } ) );
 
 describe( 'CommandPalette', () => {
+	( getCurrentRoutePattern as jest.Mock ).mockReturnValue( '/sites' );
+	( isCommandPaletteOpen as jest.Mock ).mockReturnValue( false );
+
 	const renderCommandPalette = () => {
 		( useCommandPalette as jest.Mock ).mockReturnValue( {
 			commands: commands,
