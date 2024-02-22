@@ -47,7 +47,6 @@ import PremiumGlobalStylesUpgradeModal from 'calypso/components/premium-global-s
 import SectionHeader from 'calypso/components/section-header';
 import { THEME_TIERS } from 'calypso/components/theme-tier/constants';
 import ThemeTierBadge from 'calypso/components/theme-tier/theme-tier-badge';
-import ThemeTypeBadge from 'calypso/components/theme-type-badge';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { decodeEntities, preventWidows } from 'calypso/lib/formatting';
 import { PerformanceTrackerStop } from 'calypso/lib/performance-tracking';
@@ -719,7 +718,7 @@ class ThemeSheet extends Component {
 	};
 
 	renderThemeBadge = () => {
-		const { siteId, siteSlug, themeId, themeTier, themeType } = this.props;
+		const { themeId, themeTier, themeType } = this.props;
 
 		const isCommunityTheme = themeType === DOT_ORG_THEME;
 		const isPartnerTheme = themeTier.slug === 'partner';
@@ -729,17 +728,10 @@ class ThemeSheet extends Component {
 			return null;
 		}
 
-		return config.isEnabled( 'themes/tiers' ) ? (
+		return (
 			<ThemeTierBadge
 				className="theme__sheet-main-info-type"
 				showUpgradeBadge={ false }
-				themeId={ themeId }
-			/>
-		) : (
-			<ThemeTypeBadge
-				className="theme__sheet-main-info-type"
-				siteId={ siteId }
-				siteSlug={ siteSlug }
 				themeId={ themeId }
 			/>
 		);
@@ -914,10 +906,9 @@ class ThemeSheet extends Component {
 	};
 
 	renderOverviewTab = () => {
-		const { download, isWpcomTheme, siteSlug, taxonomies, isPremium, themeTier } = this.props;
+		const { download, isWpcomTheme, siteSlug, taxonomies, themeTier } = this.props;
 
-		const showDownloadCard =
-			download && ( config.isEnabled( 'themes/tiers' ) ? 'free' === themeTier?.slug : ! isPremium );
+		const showDownloadCard = download && 'free' === themeTier?.slug;
 
 		return (
 			<div>
@@ -1468,9 +1459,7 @@ class ThemeSheet extends Component {
 				upsellNudgePlan =
 					isExternallyManagedTheme || isBundledSoftwareSet ? PLAN_BUSINESS : PLAN_PREMIUM;
 			}
-			const upsellNudgeFeature = config.isEnabled( 'themes/tiers' )
-				? themeTier?.feature
-				: WPCOM_FEATURES_PREMIUM_THEMES_UNLIMITED;
+			const upsellNudgeFeature = themeTier?.feature;
 
 			pageUpsellBanner = (
 				<UpsellNudge

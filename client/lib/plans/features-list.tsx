@@ -1,4 +1,4 @@
-import config, { isEnabled } from '@automattic/calypso-config';
+import { isEnabled } from '@automattic/calypso-config';
 import {
 	FEATURE_SPAM_10K_PER_MONTH,
 	FEATURE_13GB_STORAGE,
@@ -527,7 +527,7 @@ export const FEATURES_LIST: FeatureList = {
 			if ( ! planSlug ) {
 				return '';
 			}
-			if ( config.isEnabled( 'themes/tiers' ) && isPersonalPlan( planSlug ) ) {
+			if ( isPersonalPlan( planSlug ) ) {
 				return i18n.translate( 'Dozens of premium themes' );
 			}
 			if (
