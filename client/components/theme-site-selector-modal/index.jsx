@@ -1,3 +1,4 @@
+import './style.scss';
 import { Modal } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import SiteSelector from 'calypso/components/site-selector';
