@@ -10,6 +10,7 @@ import {
 	GitHubRepositoryData,
 	useGithubRepositoriesQuery,
 } from '../../use-github-repositories-query';
+import { NoResults } from './no-results';
 import { GitHubRepositoryListTable } from './repository-list-table';
 
 const pageSize = 10;
@@ -51,11 +52,11 @@ export const GitHubBrowseRepositoriesList = ( {
 	);
 
 	if ( isLoadingRepositories ) {
-		return (
-			<div className="github-deployments-repositories__spinner-container">
-				<Spinner />
-			</div>
-		);
+		return <Spinner />;
+	}
+
+	if ( currentPage.length === 0 ) {
+		return <NoResults />;
 	}
 
 	return (
