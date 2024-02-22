@@ -2,32 +2,29 @@ name: 'Notify on High Priority Triaged Items'
 on:
   issues:
     types: [labeled]
-  # This commented out section is useful for testing the workflow in the context of a pull request before merging.
-  # pull_request:
-  #   types: [labeled]
 
 jobs:
   notify-on-label:
     runs-on: ubuntu-latest
     if: >
-      ( github.event.label.name == '[Pri] High' ||
-      github.event.label.name == '[Pri] Blocker' ||
-      github.event.label.name == 'Triaged' )
+      (
+        github.event.label.name == '[Pri] High' ||
+        github.event.label.name == '[Pri] Blocker' ||
+        github.event.label.name == 'Triaged'
+      ) &&
+      contains(github.event.issue.labels.*.name, 'Triaged') &&
+      (
+        contains(github.event.issue.labels.*.name, '[Pri] High') ||
+        contains(github.event.issue.labels.*.name, '[Pri] Blocker')
+      )
     steps:
       - name: Set variables based on event type
         id: set-vars
         run: |
-          if [ "${{ github.event_name }}" = "issues" ]; then
-            echo "::set-output name=item_type::Issue"
-            echo "::set-output name=item_url::https://github.com/${{ github.repository }}/issues/${{ github.event.issue.number }}"
-            echo "::set-output name=item_title::${{ github.event.issue.title }}"
-            echo "::set-output name=item_number::${{ github.event.issue.number }}"
-          else
-            echo "::set-output name=item_type::PR"
-            echo "::set-output name=item_url::https://github.com/${{ github.repository }}/pull/${{ github.event.pull_request.number }}"
-            echo "::set-output name=item_title::${{ github.event.pull_request.title }}"
-            echo "::set-output name=item_number::${{ github.event.pull_request.number }}"
-          fi
+          echo "::set-output name=item_type::Issue"
+          echo "::set-output name=item_url::https://github.com/${{ github.repository }}/issues/${{ github.event.issue.number }}"
+          echo "::set-output name=item_title::${{ github.event.issue.title }}"
+          echo "::set-output name=item_number::${{ github.event.issue.number }}"
       - name: Notify Slack
         uses: slackapi/slack-github-action@v1.24.0
         with:
@@ -39,7 +36,7 @@ jobs:
                   "type": "section",
                   "text": {
                     "type": "mrkdwn",
-                    "text": "A high priority ${{ steps.set-vars.outputs.item_type }} labeled '${{ github.event.label.name }}' has been triaged and needs attention:\n*<${{ steps.set-vars.outputs.item_url }}|${{ steps.set-vars.outputs.item_type }} #${{ steps.set-vars.outputs.item_number }}: ${{ steps.set-vars.outputs.item_title }}>*"
+                    "text": "A high priority ${{ steps.set-vars.outputs.item_type }} has been triaged and needs attention:\n*<${{ steps.set-vars.outputs.item_url }}|${{ steps.set-vars.outputs.item_type }} #${{ steps.set-vars.outputs.item_number }}: ${{ steps.set-vars.outputs.item_title }}>*"
                   }
                 }
               ],
