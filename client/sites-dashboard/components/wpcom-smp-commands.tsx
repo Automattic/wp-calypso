@@ -14,6 +14,7 @@ import {
 	edit as editIcon,
 	globe as domainsIcon,
 	seen as seenIcon,
+	home as dashboardIcon,
 	key as keyIcon,
 	media as mediaIcon,
 	page as pageIcon,
@@ -24,6 +25,7 @@ import {
 	postComments as postCommentsIcon,
 	settings as settingsIcon,
 	tool as toolIcon,
+	wordpress as wordpressIcon,
 	reusableBlock as cacheIcon,
 	help as helpIcon,
 	comment as feedbackIcon,
@@ -274,6 +276,17 @@ export const useCommandsArrayWpcom = ( {
 
 	const commands: Command[] = [
 		{
+			name: 'viewMySites',
+			label: __( 'View my sites' ),
+			searchLabel: [
+				_x( 'view my sites', 'Keyword for the View my sites command' ),
+				_x( 'manage sites', 'Keyword for the View my sites command' ),
+				_x( 'sites dashboard', 'Keyword for the View my sites command' ),
+			].join( ' ' ),
+			callback: commandNavigation( `/sites` ),
+			icon: wordpressIcon,
+		},
+		{
 			name: 'getHelp',
 			label: __( 'Get help' ),
 			searchLabel: [
@@ -286,6 +299,21 @@ export const useCommandsArrayWpcom = ( {
 				setShowHelpCenter( true );
 			},
 			icon: helpIcon,
+		},
+		{
+			name: 'openSiteDashboard',
+			label: __( 'Open site dashboard' ),
+			searchLabel: [
+				_x( 'open site dashboard', 'Keyword for the Open site dashboard command' ),
+				_x( 'admin', 'Keyword for the Open site dashboard command' ),
+				_x( 'wp-admin', 'Keyword for the Open site dashboard command' ),
+			].join( ' ' ),
+			context: [ '/sites' ],
+			callback: setStateCallback( 'openSiteDashboard', __( 'Select site to open dashboard' ) ),
+			siteFunctions: {
+				onClick: ( param ) => commandNavigation( `/home/${ param.site.slug }` )( param ),
+			},
+			icon: dashboardIcon,
 		},
 		{
 			name: 'clearCache',

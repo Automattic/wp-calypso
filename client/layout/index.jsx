@@ -346,7 +346,7 @@ class Layout extends Component {
 						placeholder={ null }
 						currentSiteId={ this.props.siteId }
 						navigate={ navigate }
-						useExtraCommands={ useCommandsArrayWpcom }
+						useCommands={ useCommandsArrayWpcom }
 						wpcom={ wpcom }
 						currentRoute={ this.props.currentRoutePattern }
 					/>

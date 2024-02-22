@@ -1,42 +1,72 @@
-import CommandPalette from '@automattic/command-palette';
+import CommandPalette, {
+	useAtomicCommands,
+	useAtomicLimitedCommands,
+	useWpcomSimpleSiteLimitedCommands,
+	useWpcomSimpleSiteCommands,
+} from '@automattic/command-palette';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import domReady from '@wordpress/dom-ready';
 import { render } from 'react-dom';
 import WPCOM from 'wpcom';
 import proxyRequest from 'wpcom-proxy-request';
 
-function wpcomInitCommandPalette() {
+function CommandPaletteApp() {
 	const wpcom = new WPCOM( proxyRequest );
 	wpcom.request( { metaAPI: { accessAllUsersBlogs: true } } );
 
-	// TODO: Find a way to get the current site ID.
-	const currentSiteId = window?.commandPaletteConfig?.siteId || null;
+	if ( ! window.commandPaletteConfig ) {
+		// Can't load the command palette without a config.
+		return null;
+	}
+
 	const currentRoute = window.location.pathname;
+	const siteHostname = window.location.hostname;
 
 	const navigate = ( path, openInNewTab ) => {
-		window.open(
-			path.startsWith( '/' ) ? `https://wordpress.com${ path }` : path,
-			openInNewTab ? '_blank' : '_self'
-		);
+		if ( path.startsWith( '/' ) && ! path.startsWith( '/wp-admin' ) ) {
+			path = `https://wordpress.com${ path }/${ siteHostname }`;
+		}
+
+		window.open( path, openInNewTab ? '_blank' : '_self' );
 	};
 
-	const commandPaletteContainer = document.createElement( 'div' );
-	document.body.appendChild( commandPaletteContainer );
+	const {
+		isAdmin = false,
+		isAtomic = false,
+		isSelfHosted = false,
+		isSimple = false,
+	} = window?.commandPaletteConfig || {};
 
-	const queryClient = new QueryClient();
+	let useCommands;
+	if ( isAtomic && ! isSelfHosted ) {
+		useCommands = isAdmin ? useAtomicCommands : useAtomicLimitedCommands;
+	}
 
-	render(
-		<QueryClientProvider client={ queryClient }>
+	if ( isSimple ) {
+		useCommands = isAdmin ? useWpcomSimpleSiteCommands : useWpcomSimpleSiteLimitedCommands;
+	}
+
+	return (
+		<QueryClientProvider client={ new QueryClient() }>
 			<CommandPalette
-				currentSiteId={ currentSiteId }
-				singleSiteMode={ true }
+				{ ...window.commandPaletteConfig }
 				navigate={ navigate }
 				wpcom={ wpcom }
 				currentRoute={ currentRoute }
+				useCommands={ useCommands }
+				{ ...( window?.commandPaletteConfig
+					? { commandPaletteConfig: window.commandPaletteConfig }
+					: {} ) }
 			/>
-		</QueryClientProvider>,
-		commandPaletteContainer
+		</QueryClientProvider>
 	);
+}
+
+function wpcomInitCommandPalette() {
+	const commandPaletteContainer = document.createElement( 'div' );
+	document.body.appendChild( commandPaletteContainer );
+
+	render( <CommandPaletteApp />, commandPaletteContainer );
 }
 
 domReady( wpcomInitCommandPalette );

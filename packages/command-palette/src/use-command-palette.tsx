@@ -5,7 +5,7 @@ import styled from '@emotion/styled';
 import { __ } from '@wordpress/i18n';
 import { useCommandState } from 'cmdk';
 import { useCallback } from 'react';
-import { useCommands } from './use-commands';
+import { useCommandsParams } from './commands/types';
 import { SiteData, useSites } from './use-sites';
 import { useSitesSortingQuery } from './use-sites-sorting-query';
 import { isCustomDomain } from './utils';
@@ -78,10 +78,9 @@ interface useCommandPaletteOptions {
 	setSelectedCommandName: ( name: string ) => void;
 	search: string;
 	navigate: ( path: string, openInNewTab: boolean ) => void;
-	useExtraCommands?: ( options: useExtraCommandsParams ) => Command[];
+	useCommands: ( options: useCommandsParams ) => Command[];
 	wpcom: WPCOM;
 	currentRoute: string | null;
-	singleSiteMode: boolean;
 }
 
 interface SiteToActionParameters {
@@ -150,10 +149,9 @@ export const useCommandPalette = ( {
 	setSelectedCommandName,
 	search,
 	navigate,
-	useExtraCommands,
+	useCommands,
 	wpcom,
 	currentRoute,
-	singleSiteMode = false,
 }: useCommandPaletteOptions ): {
 	commands: Command[];
 	filterNotice: string | undefined;
@@ -169,19 +167,11 @@ export const useCommandPalette = ( {
 	const sortedSites = useSitesListSorting( allSites, sitesSorting );
 
 	// Call the generateCommandsArray function to get the commands array
-	const defaultCommands = useCommands( {
+	const commands = useCommands( {
 		setSelectedCommandName,
 		navigate,
 		currentRoute,
-		singleSiteMode,
 	} ) as Command[];
-
-	// TODO: Remove after porting all commands.
-	if ( ! useExtraCommands ) {
-		useExtraCommands = () => [];
-	}
-	const extraCommands = useExtraCommands( { setSelectedCommandName } );
-	const commands = defaultCommands.concat( extraCommands );
 
 	const userCapabilities: { [ key: number ]: { [ key: string ]: boolean }[] } = {};
 	// @ts-expect-error TODO

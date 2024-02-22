@@ -1,22 +1,25 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import styled from '@emotion/styled';
-import { Modal, TextHighlight, __experimentalHStack as HStack } from '@wordpress/components';
+import { __experimentalHStack as HStack, Modal, TextHighlight } from '@wordpress/components';
 import { useDebounce } from '@wordpress/compose';
 import { __ } from '@wordpress/i18n';
-import { Icon, search as inputIcon, chevronLeft as backIcon } from '@wordpress/icons';
+import { chevronLeft as backIcon, Icon, search as inputIcon } from '@wordpress/icons';
 import { cleanForSlug } from '@wordpress/url';
 import classnames from 'classnames';
 import { Command, useCommandState } from 'cmdk';
-import { useEffect, useState, useRef, useMemo, useCallback } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { useCommandsParams } from './commands/types';
+import useAtomicCommands from './commands/use-atomic-commands';
+import useAtomicLimitedCommands from './commands/use-atomic-limited-commands';
+import useWpcomSimpleSiteCommands from './commands/use-wpcom-simple-site-commands';
+import useWpcomSimpleSiteLimitedCommands from './commands/use-wpcom-simple-site-limited-commands';
 import { COMMAND_SEPARATOR, useCommandFilter } from './use-command-filter';
 import {
-	Command as CommandType,
+	Command as PaletteCommand,
 	CommandCallBackParams,
 	useCommandPalette,
-	useExtraCommandsParams,
 } from './use-command-palette';
 import type { WPCOM } from 'wpcom';
-
 import '@wordpress/commands/build-style/style.css';
 
 interface CommandMenuGroupProps
@@ -28,10 +31,9 @@ interface CommandMenuGroupProps
 	setFooterMessage?: ( message: string ) => void;
 	setEmptyListNotice?: ( message: string ) => void;
 	navigate: ( path: string, openInNewTab: boolean ) => void;
-	useExtraCommands?: ( options: useExtraCommandsParams ) => CommandType[];
+	useCommands: ( options: useCommandsParams ) => PaletteCommand[];
 	wpcom: WPCOM;
 	currentRoute: string | null;
-	singleSiteMode: boolean;
 }
 
 const StyledCommandsMenuContainer = styled.div( {
@@ -106,10 +108,9 @@ export function CommandMenuGroup( {
 	setFooterMessage,
 	setEmptyListNotice,
 	navigate,
-	useExtraCommands,
+	useCommands,
 	wpcom,
 	currentRoute,
-	singleSiteMode,
 }: CommandMenuGroupProps ) {
 	const { commands, filterNotice, emptyListNotice } = useCommandPalette( {
 		currentSiteId,
@@ -117,10 +118,9 @@ export function CommandMenuGroup( {
 		setSelectedCommandName,
 		search,
 		navigate,
-		useExtraCommands,
+		useCommands,
 		wpcom,
 		currentRoute,
-		singleSiteMode,
 	} );
 
 	useEffect( () => {
@@ -233,7 +233,7 @@ interface NotFoundMessageProps {
 interface CommandPaletteProps {
 	currentSiteId: number | null;
 	navigate: ( path: string, openInNewTab: boolean ) => void;
-	useExtraCommands?: ( options: useExtraCommandsParams ) => CommandType[];
+	useCommands: ( options: useCommandsParams ) => PaletteCommand[];
 	wpcom: WPCOM;
 	currentRoute: string | null;
 	singleSiteMode: boolean;
@@ -266,10 +266,9 @@ const NotFoundMessage = ( {
 const CommandPalette = ( {
 	currentSiteId,
 	navigate,
-	useExtraCommands,
+	useCommands,
 	wpcom,
 	currentRoute,
-	singleSiteMode = false,
 }: CommandPaletteProps ) => {
 	const [ placeHolderOverride, setPlaceholderOverride ] = useState( '' );
 	const [ search, setSearch ] = useState( '' );
@@ -421,10 +420,9 @@ const CommandPalette = ( {
 							setFooterMessage={ setFooterMessage }
 							setEmptyListNotice={ setEmptyListNotice }
 							navigate={ navigate }
-							useExtraCommands={ useExtraCommands }
+							useCommands={ useCommands }
 							wpcom={ wpcom }
 							currentRoute={ currentRoute }
-							singleSiteMode={ singleSiteMode }
 						/>
 					</Command.List>
 				</Command>
@@ -436,3 +434,9 @@ const CommandPalette = ( {
 
 export default CommandPalette;
 export type { Command, CommandCallBackParams } from './use-command-palette';
+export {
+	useAtomicCommands,
+	useAtomicLimitedCommands,
+	useWpcomSimpleSiteCommands,
+	useWpcomSimpleSiteLimitedCommands,
+};
