@@ -354,7 +354,6 @@ export class UserStep extends Component {
 		} else if ( data.queryArgs.redirect_to ) {
 			dependencies.redirect = data.queryArgs.redirect_to;
 		}
-
 		this.props.submitSignupStep(
 			{
 				flowName,
@@ -435,7 +434,6 @@ export class UserStep extends Component {
 			query.redirect_to = window.sessionStorage.getItem( 'signup_redirect_to' );
 			window.sessionStorage.removeItem( 'signup_redirect_to' );
 		}
-
 		this.submit( {
 			service,
 			access_token,

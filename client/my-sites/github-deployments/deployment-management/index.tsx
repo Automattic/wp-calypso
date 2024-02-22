@@ -5,18 +5,20 @@ import ActionPanel from '../../../components/action-panel';
 import HeaderCake from '../../../components/header-cake';
 import { useSelector } from '../../../state';
 import { GitHubLoadingPlaceholder } from '../components/loading-placeholder';
-import { PageShell } from '../components/page-shell/page-shell';
+import { PageShell } from '../components/page-shell';
 import { indexPage } from '../routes';
 import { GitHubDeploymentManagementForm } from './deployment-management-form';
 import { useCodeDeploymentQuery } from './use-code-deployment-query';
 
 import './style.scss';
 
-interface GitHubConnectedProps {
+interface GitHubDeploymentManagementProps {
 	codeDeploymentId: number;
 }
 
-export const GitHubDeploymentManagement = ( { codeDeploymentId }: GitHubConnectedProps ) => {
+export const GitHubDeploymentManagement = ( {
+	codeDeploymentId,
+}: GitHubDeploymentManagementProps ) => {
 	const siteId = useSelector( getSelectedSiteId );
 	const siteSlug = useSelector( getSelectedSiteSlug );
 	const { data: codeDeployment } = useCodeDeploymentQuery( siteId, codeDeploymentId );

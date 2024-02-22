@@ -1,0 +1,19 @@
+@import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/mixins";
+
+.issue-license .assign-license-step-progress {
+	margin-block-start: 16px;
+	margin-block-end: 32px;
+
+	.step-current .assign-license-step-progress__step-circle {
+		background-color: var(--color-primary-50);
+		border: 2px solid var(--color-primary-50);
+		color: var(--color-text-inverted);
+	}
+}
+
+.issue-license.without-bundle {
+	.a4a-layout__header-subtitle {
+		padding-block-end: 16px;
+	}
+}

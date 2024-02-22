@@ -4,14 +4,11 @@ import wp from 'calypso/lib/wp';
 import { GITHUB_DEPLOYMENTS_QUERY_KEY } from 'calypso/my-sites/github-deployments/constants';
 import { CODE_DEPLOYMENTS_QUERY_KEY } from 'calypso/my-sites/github-deployments/deployments/use-code-deployments-query';
 
-export interface MutationVariables {
+interface MutationVariables {
+	repositoryId: number;
+	branchName: string;
 	installationId: number;
-	template: string;
-	accountName: string;
-	repositoryName: string;
-	targetDir: string;
-	isPrivate?: boolean;
-	isAutomated?: boolean;
+	fileName: string;
 }
 
 interface MutationResponse {
@@ -23,41 +20,34 @@ interface MutationError {
 	message: string;
 }
 
-export const useCreateCodeDeploymentAndRepository = (
-	siteId: number,
+export const useCreateWorkflow = (
 	options: UseMutationOptions< MutationResponse, MutationError, MutationVariables > = {}
 ) => {
 	const queryClient = useQueryClient();
+	const path = `/hosting/github/workflows`;
 	const mutation = useMutation( {
 		mutationFn: async ( {
-			template,
+			repositoryId,
+			branchName,
 			installationId,
-			accountName,
-			repositoryName,
-			targetDir,
-			isPrivate,
-			isAutomated,
+			fileName,
 		}: MutationVariables ) =>
 			wp.req.post(
 				{
-					path: `/hosting/github/repositories`,
+					path,
 					apiNamespace: 'wpcom/v2',
 				},
 				{
-					template,
+					repository_id: repositoryId,
+					branch_name: branchName,
 					installation_id: installationId,
-					account_name: accountName,
-					repository_name: repositoryName,
-					is_private: isPrivate,
-					is_automated: isAutomated,
-					blog_id: siteId,
-					target_dir: targetDir,
+					file_name: fileName,
 				}
 			),
 		...options,
 		onSuccess: async ( ...args ) => {
 			await queryClient.invalidateQueries( {
-				queryKey: [ GITHUB_DEPLOYMENTS_QUERY_KEY, CODE_DEPLOYMENTS_QUERY_KEY, siteId ],
+				queryKey: [ GITHUB_DEPLOYMENTS_QUERY_KEY, CODE_DEPLOYMENTS_QUERY_KEY, path ],
 			} );
 			options.onSuccess?.( ...args );
 		},
@@ -65,10 +55,10 @@ export const useCreateCodeDeploymentAndRepository = (
 
 	const { mutateAsync, isPending } = mutation;
 
-	const createDeploymentAndRepository = useCallback(
+	const createDeployment = useCallback(
 		( args: MutationVariables ) => mutateAsync( args ),
 		[ mutateAsync ]
 	);
 
-	return { createDeploymentAndRepository, isPending };
+	return { createDeployment, isPending };
 };

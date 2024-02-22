@@ -1,5 +1,7 @@
+import config from '@automattic/calypso-config';
 import { Onboard } from '@automattic/data-stores';
 import { useLocale, englishLocales } from '@automattic/i18n-utils';
+import { useI18n } from '@wordpress/react-i18n';
 import { useTranslate } from 'i18n-calypso';
 import type { Goal } from './types';
 
@@ -46,8 +48,23 @@ const useBBEGoal = () => {
 
 export const useGoals = (): Goal[] => {
 	const translate = useTranslate();
+	const { hasTranslation } = useI18n();
 	const locale = useLocale();
 	const builtByExpressGoalDisplayText = useBBEGoal();
+
+	const importDisplayText = () => {
+		// New copy waiting on translation.
+		if (
+			config.isEnabled( 'onboarding/new-migration-flow' ) &&
+			( englishLocales.includes( translate?.localeSlug || '' ) ||
+				hasTranslation( 'Import existing content or website' ) )
+		) {
+			return translate( 'Import existing content or website' );
+		}
+
+		// Original copy
+		return translate( 'Import my existing website content' );
+	};
 
 	const goals = [
 		{
@@ -69,7 +86,7 @@ export const useGoals = (): Goal[] => {
 		},
 		{
 			key: SiteGoal.Import,
-			title: translate( 'Import or migrate my existing website' ),
+			title: importDisplayText(),
 		},
 		{
 			key: SiteGoal.Other,

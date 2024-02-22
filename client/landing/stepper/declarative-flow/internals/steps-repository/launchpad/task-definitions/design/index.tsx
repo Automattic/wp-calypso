@@ -1,7 +1,6 @@
 import { Task } from '@automattic/launchpad';
 import { addQueryArgs } from '@wordpress/url';
 import { getSiteIdOrSlug } from '../../task-helper';
-import { recordTaskClickTracksEvent } from '../../tracking';
 import { TaskAction } from '../../types';
 
 export const getDesignSelectedTask: TaskAction = ( task, flow, context ): Task => {
@@ -9,7 +8,6 @@ export const getDesignSelectedTask: TaskAction = ( task, flow, context ): Task =
 
 	return {
 		...task,
-		actionDispatch: () => recordTaskClickTracksEvent( task, flow, context ),
 		calypso_path: addQueryArgs( task.calypso_path, {
 			...getSiteIdOrSlug( flow, site, siteSlug ),
 			flowToReturnTo: flow,
@@ -22,10 +20,9 @@ export const getDesignCompletedTask = getDesignSelectedTask;
 
 export const getDesignEditedTask: TaskAction = ( task, flow, context ) => {
 	const { site, siteSlug } = context;
-  
+
 	return {
 		...task,
-		actionDispatch: () => recordTaskClickTracksEvent( task, flow, context ),
 		calypso_path: addQueryArgs( task.calypso_path, {
 			...getSiteIdOrSlug( flow, site, siteSlug ),
 			canvas: 'edit',
