@@ -5,7 +5,6 @@ import { useHandleClickLink } from './use-handle-click-link';
 export const useFeaturesList = () => {
 	const translate = useTranslate();
 	const handleClickLink = useHandleClickLink();
-
 	return [
 		{
 			id: 'sftp-ssh-wp-cli',
