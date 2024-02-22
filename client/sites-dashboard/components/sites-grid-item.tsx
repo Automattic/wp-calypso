@@ -210,7 +210,7 @@ export const SitesGridItem = memo( ( props: SitesGridItemProps ) => {
 								return <TransferNoticeWrapper { ...result } />;
 							} else if ( showLaunchNag && 'unlaunched' === site.launch_status ) {
 								return <SiteLaunchNag site={ site } />;
-							} else if ( site.is_wpcom_atomic ) {
+							} else if ( site.is_wpcom_atomic && ! isEnabled( 'layout/dotcom-nav-redesign' ) ) {
 								return (
 									<a
 										href={ wpAdminUrl }
