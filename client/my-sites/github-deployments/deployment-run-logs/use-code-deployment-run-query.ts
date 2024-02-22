@@ -19,9 +19,9 @@ export type DeploymentRunStatus =
 export interface DeploymentRun {
 	id: number;
 	code_deployment_id: number;
-	created_on: string;
-	started_on: string;
-	completed_on: string;
+	created_on: number;
+	started_on: number;
+	completed_on: number;
 	status: DeploymentRunStatus;
 	failure_code: string;
 	triggered_by_user_id: number;

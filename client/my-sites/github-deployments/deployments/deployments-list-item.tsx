@@ -72,6 +72,33 @@ export const DeploymentsListItem = ( { deployment }: DeploymentsListItemProps ) 
 	const run = deployment.current_deployment_run;
 	const [ installation, repo ] = deployment.repository_name.split( '/' );
 
+	const getStarterMessage = () => {
+		if ( deployment.is_automated ) {
+			// Translators: %(branch)s is the branch name of the repository, %(repo)s is the repository name
+			return sprintf( __( 'Push something to the ‘%(branch)s’ branch of ‘%(repo)s’' ), {
+				branch: deployment.branch_name,
+				repo: deployment.repository_name,
+			} );
+		}
+
+		return __( 'Whenever you are ready, trigger a deployment from the ellipsis menu' );
+	};
+
+	const columns = run ? (
+		<>
+			<td>{ run && <DeploymentCommitDetails run={ run } deployment={ deployment } /> }</td>
+			<td>{ run && <DeploymentStatus status={ run.status as DeploymentStatusValue } /> }</td>
+			<td>
+				<span>{ formatDate( locale, new Date( run.created_on * 1000 ) ) }</span>
+			</td>
+			<td>{ run && <DeploymentDuration run={ run } /> }</td>
+		</>
+	) : (
+		<td colSpan={ 4 }>
+			<i css={ { color: 'var(--Gray-Gray-40, #50575E)' } }>{ getStarterMessage() }</i>
+		</td>
+	);
+
 	return (
 		<>
 			<tr>
@@ -81,12 +108,7 @@ export const DeploymentsListItem = ( { deployment }: DeploymentsListItemProps ) 
 						<span>{ installation }</span>
 					</div>
 				</td>
-				<td>{ run && <DeploymentCommitDetails run={ run } deployment={ deployment } /> }</td>
-				<td>{ run && <DeploymentStatus status={ run.status as DeploymentStatusValue } /> }</td>
-				<td>
-					<span>{ formatDate( locale, new Date( deployment.updated_on ) ) }</span>
-				</td>
-				<td>{ run && <DeploymentDuration run={ run } /> }</td>
+				{ columns }
 				<td>
 					{ isTriggeringDeployment ? (
 						<Spinner />
@@ -103,14 +125,16 @@ export const DeploymentsListItem = ( { deployment }: DeploymentsListItemProps ) 
 										>
 											{ __( 'Trigger manual deploy' ) }
 										</MenuItem>
-										<MenuItem
-											onClick={ () => {
-												page( viewDeploymentLogs( siteSlug!, deployment.id ) );
-												onClose();
-											} }
-										>
-											{ __( 'Open deployment list' ) }
-										</MenuItem>
+										{ run && (
+											<MenuItem
+												onClick={ () => {
+													page( viewDeploymentLogs( siteSlug!, deployment.id ) );
+													onClose();
+												} }
+											>
+												{ __( 'See deployment runs' ) }
+											</MenuItem>
+										) }
 										<MenuItem
 											onClick={ () => {
 												page( manageDeploymentPage( siteSlug!, deployment.id ) );
