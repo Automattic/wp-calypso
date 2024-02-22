@@ -18,9 +18,9 @@ export default function SitePreviewPane( { selectedSite, closeSitePreviewPane }:
 				selectedSite={ selectedSite }
 				closeSitePreviewPane={ closeSitePreviewPane }
 			/>
-			<SitePreviewPaneTabs selectedSite={ selectedSite } />
-			<SitePreviewPaneContent selectedSite={ selectedSite } />
-			<SitePreviewPaneFooter selectedSite={ selectedSite } />
+			<SitePreviewPaneTabs />
+			<SitePreviewPaneContent />
+			<SitePreviewPaneFooter />
 		</div>
 	);
 }
