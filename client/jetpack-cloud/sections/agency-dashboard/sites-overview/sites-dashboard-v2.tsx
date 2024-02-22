@@ -60,6 +60,16 @@ export default function SitesDashboardV2() {
 		? selectedSiteLicenses.reduce( ( acc, { products } ) => acc + products.length, 0 )
 		: selectedLicenses?.length;
 
+	const filtersMap: AgencyDashboardFilterMap[] = [
+		{ filterType: 'all_issues', ref: 1 },
+		{ filterType: 'backup_failed', ref: 2 },
+		{ filterType: 'backup_warning', ref: 3 },
+		{ filterType: 'threats_found', ref: 4 },
+		{ filterType: 'site_disconnected', ref: 5 },
+		{ filterType: 'site_down', ref: 6 },
+		{ filterType: 'plugin_updates', ref: 7 },
+	];
+
 	const {
 		search,
 		currentPage,
@@ -80,7 +90,14 @@ export default function SitesDashboardV2() {
 			direction: 'desc',
 		},
 		search: search,
-		filters: [],
+		filters:
+			filter?.issueTypes?.map( ( issueType ) => {
+				return {
+					field: 'status',
+					operator: 'in',
+					value: filtersMap.find( ( filterMap ) => filterMap.filterType === issueType )?.ref || 1,
+				};
+			} ) || [],
 		hiddenFields: [ 'status' ],
 		layout: {},
 		selectedSite: undefined,
@@ -102,18 +119,15 @@ export default function SitesDashboardV2() {
 	);
 
 	useEffect( () => {
-		const filtersMap: AgencyDashboardFilterMap = {
-			1: 'all_issues',
-			2: 'backup_failed',
-			3: 'backup_warning',
-			4: 'threats_found',
-			5: 'site_disconnected',
-			6: 'site_down',
-			7: 'plugin_updates',
-		};
-		const filtersSelected = sitesViewState.filters.map( ( filter ) => filtersMap[ filter.value ] );
+		const filtersSelected = sitesViewState.filters.map( ( filter ) => {
+			const filterType =
+				filtersMap.find( ( filterMap ) => filterMap.ref === filter.value )?.filterType ||
+				'all_issues';
 
-		updateDashboardURLQueryArgs( { filter: filtersSelected } );
+			return filterType;
+		} );
+
+		updateDashboardURLQueryArgs( { filter: filtersSelected || [] } );
 	}, [ sitesViewState.filters ] );
 
 	useEffect( () => {

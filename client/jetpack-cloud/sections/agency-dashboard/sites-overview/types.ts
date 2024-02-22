@@ -252,7 +252,8 @@ export type AgencyDashboardFilterOption =
 	| 'plugin_updates';
 
 export interface AgencyDashboardFilterMap {
-	[ key: number ]: AgencyDashboardFilterOption;
+	filterType: AgencyDashboardFilterOption;
+	ref: number;
 }
 
 export type AgencyDashboardFilter = {
