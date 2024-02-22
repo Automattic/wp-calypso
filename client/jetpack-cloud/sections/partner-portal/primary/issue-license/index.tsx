@@ -43,8 +43,6 @@ export default function IssueLicense( { selectedSite, suggestedProduct }: Assign
 		?.toString()
 		.split( ',' );
 
-	const { isReady } = useSubmitForm( selectedSite, suggestedProductSlugs );
-
 	const [ selectedLicenses, setSelectedLicenses ] = useState< SelectedLicenseProp[] >( [] );
 	const [ showReviewLicenses, setShowReviewLicenses ] = useState< boolean >( false );
 
@@ -165,6 +163,8 @@ export default function IssueLicense( { selectedSite, suggestedProduct }: Assign
 			: translate( 'Select the Jetpack products you would like to issue a new license for:' );
 	}, [ selectedSite?.domain, showBundle, translate ] );
 
+	const { isReady, submitForm } = useSubmitForm( selectedSite, suggestedProductSlugs );
+
 	return (
 		<>
 			<Layout
@@ -235,6 +235,8 @@ export default function IssueLicense( { selectedSite, suggestedProduct }: Assign
 					onClose={ onDismissReviewLicensesModal }
 					selectedLicenses={ getGroupedLicenses() }
 					selectedSite={ selectedSite }
+					isFormReady={ isReady }
+					submitForm={ submitForm }
 				/>
 			) }
 		</>
