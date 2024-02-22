@@ -113,7 +113,7 @@ export const SitesGridItem = memo( ( props: SitesGridItemProps ) => {
 		site,
 		showLaunchNag = true,
 		showBadgeSection = true,
-		showThumbnailLink = true,
+		showThumbnailLink = ! isEnabled( 'layout/dotcom-nav-redesign' ),
 		showSiteRenewLink = true,
 		onSiteSelectBtnClick,
 	} = props;
