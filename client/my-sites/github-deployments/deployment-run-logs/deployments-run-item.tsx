@@ -14,13 +14,11 @@ import {
 import { formatDate } from 'calypso/my-sites/github-deployments/utils/dates';
 import { useSelector } from 'calypso/state/index';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors/index';
-import { DeploymentRun, DeploymentRunStatus } from './use-code-deployment-run-query';
+import { DeploymentRun } from './use-code-deployment-run-query';
 
 interface DeploymentsListItemProps {
 	run: DeploymentRun;
 }
-
-const RUN_ENDED_STATUSES: DeploymentRunStatus[] = [ 'success', 'failed', 'warnings' ];
 
 export const DeploymentsRunItem = ( { run }: DeploymentsListItemProps ) => {
 	const locale = useLocale();
@@ -34,7 +32,7 @@ export const DeploymentsRunItem = ( { run }: DeploymentsListItemProps ) => {
 		run.id,
 		{
 			enabled: expanded,
-			refetchInterval: ! RUN_ENDED_STATUSES.includes( run.status ) ? 1000 : undefined,
+			refetchInterval: 5000,
 		}
 	);
 
