@@ -25,4 +25,11 @@ export class SignupDomainPage {
 			this.page.getByRole( 'button', { name: 'Choose my domain later', exact: true } ).click(),
 		] );
 	}
+
+	/**
+	 * Search for domains with the query string "foo".
+	 */
+	async searchForFooDomains(): Promise< void > {
+		await this.domainSearchComponent.search( 'foo' );
+	}
 }
