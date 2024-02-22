@@ -380,7 +380,7 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 			: false
 	);
 
-	const canSiteActivateTheme = useIsThemeAllowedOnSite( site.ID, selectedDesignThemeId );
+	const canSiteActivateTheme = useIsThemeAllowedOnSite( site?.ID ?? null, selectedDesignThemeId );
 
 	const isMarketplaceThemeSubscribed = useSelector(
 		( state ) =>
