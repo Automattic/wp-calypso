@@ -1,6 +1,6 @@
 import { Card, FormLabel } from '@automattic/components';
 import styled from '@emotion/styled';
-import { ReactNode } from 'react';
+import { ReactNode, useMemo } from 'react';
 import FormTextInput from 'calypso/components/forms/form-text-input';
 
 export type Viewport = 'desktop' | 'mobile' | 'tablet';
@@ -19,7 +19,7 @@ export const StyledCard = styled( Card )`
 	width: ${ ( props: PropsWithViewport ) =>
 		props.currentViewport === 'mobile' ? '100%' : 'fit-content' };
 	min-width: ${ ( props: PropsWithViewport ) =>
-		props.currentViewport === 'mobile' ? 'unset' : '452px' };
+		props.currentViewport === 'mobile' ? 'unset' : '459px' };
 	&&&&& {
 		margin-bottom: 15px;
 	}
@@ -60,7 +60,13 @@ export const ButtonContainer = styled.div`
  */
 export const Shuffle = ( props: { children: Array< ReactNode > } ) => {
 	const { children } = props;
-	const clonedChildren = [ ...children ];
-	clonedChildren.sort( () => Math.random() - Math.random() );
-	return clonedChildren;
+
+	const shuffledChildren = useMemo( () => {
+		const clonedChildren = [ ...children ];
+		clonedChildren.sort( () => Math.random() - Math.random() );
+		return clonedChildren;
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [ children.length ] );
+
+	return shuffledChildren;
 };

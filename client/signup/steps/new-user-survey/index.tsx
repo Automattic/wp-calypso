@@ -19,21 +19,21 @@ import {
 } from './components';
 
 const defaultFormState = {
-	survey_goals_blogging: false,
-	survey_goals_website_building: false,
-	survey_goals_wordpress_hosting: false,
-	survey_goals_custom_check: false,
+	survey_goals_blogging: null,
+	survey_goals_website_building: null,
+	survey_goals_wordpress_hosting: null,
+	survey_goals_custom_check: null,
 	survey_goals_custom_text: '',
-	survey_describe_yourself_creator: false,
-	survey_describe_yourself_business: false,
-	survey_describe_yourself_ecommerce: false,
-	survey_describe_yourself_enterprise: false,
-	survey_describe_yourself_developer: false,
-	survey_describe_yourself_agency: false,
-	survey_describe_yourself_custom_check: false,
+	survey_describe_yourself_creator: null,
+	survey_describe_yourself_business: null,
+	survey_describe_yourself_ecommerce: null,
+	survey_describe_yourself_enterprise: null,
+	survey_describe_yourself_developer: null,
+	survey_describe_yourself_agency: null,
+	survey_describe_yourself_custom_check: null,
 	survey_describe_yourself_custom_text: '',
 };
-type FormState = typeof defaultFormState;
+type FormState = Record< keyof typeof defaultFormState, null | undefined | string | boolean >;
 
 type SubmitSignupStepType = (
 	step: { stepName: string; wasSkipped?: boolean },
@@ -111,7 +111,7 @@ function SurveyForm( props: Props ) {
 	const placeholder =
 		currentViewport === 'mobile'
 			? translate( 'Please fill in your own answer' )
-			: translate( 'None of the above (Please fill in your own answer)' );
+			: translate( 'None of the above? (Please fill in your own answer)' );
 
 	return (
 		<SurveyFormContainer currentViewport={ currentViewport }>
@@ -133,11 +133,7 @@ function SurveyForm( props: Props ) {
 						<OptionsContainer>
 							<Shuffle>
 								<StyledLabel>
-									<FormInputCheckbox
-										checked={ formState.survey_goals_blogging }
-										name="survey_goals_blogging"
-										onChange={ handleChange }
-									/>
+									<FormInputCheckbox name="survey_goals_blogging" onChange={ handleChange } />
 									<span>{ translate( 'Blogging' ) }</span>
 								</StyledLabel>
 								<StyledLabel>
@@ -156,11 +152,7 @@ function SurveyForm( props: Props ) {
 								</StyledLabel>
 							</Shuffle>
 							<StyledLabel>
-								<FormInputCheckbox
-									checked={ formState.survey_goals_custom_check }
-									name="survey_goals_custom_check"
-									onChange={ handleChange }
-								/>
+								<FormInputCheckbox name="survey_goals_custom_check" onChange={ handleChange } />
 								<StyledFormTextInput
 									name="survey_goals_custom_text"
 									value={ formState.survey_goals_custom_text }
@@ -218,20 +210,19 @@ function SurveyForm( props: Props ) {
 									/>
 									<span>{ translate( 'Agency' ) }</span>
 								</StyledLabel>
-								<StyledLabel>
-									<FormInputCheckbox
-										onChange={ handleChange }
-										checked={ formState.survey_describe_yourself_custom_check }
-										name="survey_describe_yourself_custom_check"
-									/>
-									<StyledFormTextInput
-										name="survey_describe_yourself_custom_text"
-										onChange={ handleChange }
-										value={ formState.survey_describe_yourself_custom_text }
-										placeholder={ placeholder }
-									/>
-								</StyledLabel>
 							</Shuffle>
+							<StyledLabel>
+								<FormInputCheckbox
+									onChange={ handleChange }
+									name="survey_describe_yourself_custom_check"
+								/>
+								<StyledFormTextInput
+									name="survey_describe_yourself_custom_text"
+									onChange={ handleChange }
+									value={ formState.survey_describe_yourself_custom_text }
+									placeholder={ placeholder }
+								/>
+							</StyledLabel>
 						</OptionsContainer>
 					</FormFieldset>
 					<ButtonContainer>
