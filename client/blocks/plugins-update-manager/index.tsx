@@ -7,12 +7,10 @@ import {
 	CardHeader,
 	DropdownMenu,
 	Tooltip,
-	Modal,
 } from '@wordpress/components';
 import { createInterpolateElement } from '@wordpress/element';
 import { Icon, arrowLeft, info } from '@wordpress/icons';
 import { useState } from 'react';
-import { ScheduleForm } from './schedule-form';
 
 import './styles.scss';
 
@@ -29,7 +27,6 @@ const ellipsis = (
 
 export const PluginsUpdateManager = () => {
 	const [ isConfirmOpen, setIsConfirmOpen ] = useState( false );
-	const [ isModalOpen, setIsModalOpen ] = useState( false );
 
 	const closeConfirm = () => {
 		setIsConfirmOpen( false );
@@ -45,11 +42,6 @@ export const PluginsUpdateManager = () => {
 
 	return (
 		<>
-			{ isModalOpen && (
-				<Modal title="Schedule a new update set" onRequestClose={ () => setIsModalOpen( false ) }>
-					<ScheduleForm />
-				</Modal>
-			) }
 			<ConfirmDialog isOpen={ isConfirmOpen } onConfirm={ closeConfirm } onCancel={ closeConfirm }>
 				Are you sure you want to delete this schedule?
 			</ConfirmDialog>
