@@ -20,6 +20,21 @@
 		}
 		&__content {
 			background-color: var(--studio-gray-0);
+
+			p {
+				margin: 0;
+			}
+			pre {
+				margin: 0;
+				padding: 0;
+				background: transparent;
+			}
+			.language-yaml {
+				color: var(--studio-wordpress-blue-60) !important;
+			}
+			.token.key.atrule {
+				color: var(--studio-green) !important;
+			}
 		}
 	}
 

@@ -363,7 +363,7 @@ $font-size: rem(14px);
 		.sidebar__menu.is-togglable .sidebar__heading {
 			padding: 12px 10px;
 			margin: 0 12px;
-			border-radius: 4px;
+			border-radius: 2px;
 		}
 
 		.sidebar__heading:not([tabindex="-1"]),
@@ -418,6 +418,18 @@ $font-size: rem(14px);
 			}
 		}
 
+		.sidebar__menu {
+			// Is toggled open and selected
+			&.sidebar__menu--selected .sidebar__heading {
+				background: var(--color-sidebar-menu-selected-background);
+				color: var(--color-sidebar-menu-selected-text);
+
+				&:hover {
+					background-color: var(--color-sidebar-menu-selected-background);
+				}
+			}
+		}
+
 		.sidebar__expandable-content {
 			border-radius: 4px;
 			margin: 0 12px;
@@ -426,6 +438,13 @@ $font-size: rem(14px);
 		.sidebar__expandable-title {
 			padding: 0;
 			margin: 0;
+		}
+
+		.sidebar__heading,
+		.sidebar__menu-link {
+			&::after {
+				border: none;
+			}
 		}
 
 		.selected .sidebar__menu-link {

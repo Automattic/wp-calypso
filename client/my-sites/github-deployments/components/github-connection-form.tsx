@@ -16,15 +16,17 @@ interface CodeDeploymentData {
 	targetDir: string;
 	installationId: number;
 	isAutomated: boolean;
+	workflowPath?: string;
 }
 
 interface InitialValues {
 	branch: string;
 	destPath: string;
 	isAutomated: boolean;
+	workflowPath?: string;
 }
 
-interface ConnectRepositoryDialogProps {
+interface GitHubConnectionFormProps {
 	repository: GitHubRepositoryData;
 	installation: GitHubInstallationData;
 	ctaLabel: string;
@@ -37,13 +39,21 @@ export const GitHubConnectionForm = ( {
 	repository,
 	installation,
 	ctaLabel,
-	initialValues = { branch: repository.default_branch, destPath: '/', isAutomated: false },
+	initialValues = {
+		branch: repository.default_branch,
+		destPath: '/',
+		isAutomated: false,
+		workflowPath: undefined,
+	},
 	changeRepository,
 	onSubmit,
-}: ConnectRepositoryDialogProps ) => {
+}: GitHubConnectionFormProps ) => {
 	const [ branch, setBranch ] = useState( initialValues.branch );
 	const [ destPath, setDestPath ] = useState( initialValues.destPath );
 	const [ isAutoDeploy, setIsAutoDeploy ] = useState( initialValues.isAutomated );
+	const [ workflowPath, setWorkflowPath ] = useState< string | undefined >(
+		initialValues.workflowPath
+	);
 
 	const { data: branches = [ branch ], isLoading: isFetchingBranches } =
 		useGithubRepositoryBranchesQuery( installation.external_id, repository.owner, repository.name );
@@ -68,6 +78,7 @@ export const GitHubConnectionForm = ( {
 						targetDir: destPath,
 						installationId: installation.external_id,
 						isAutomated: isAutoDeploy,
+						workflowPath: workflowPath,
 					} );
 				} finally {
 					setIsPending( false );
@@ -119,6 +130,11 @@ export const GitHubConnectionForm = ( {
 			<div className="github-deployments-connect-repository__deployment-style">
 				<FormFieldset>
 					<DeploymentStyle
+						branchName={ branch }
+						installationId={ installation.external_id }
+						repository={ repository }
+						workflowPath={ workflowPath }
+						onChooseWorkflow={ ( filePath ) => setWorkflowPath( filePath ) }
 						onValidationChange={ ( status ) => {
 							if ( status === 'success' ) {
 								setSubmitDisabled( false );

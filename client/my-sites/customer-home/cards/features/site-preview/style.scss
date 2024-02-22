@@ -74,13 +74,26 @@
 			max-width: calc(100% - 24px);
 
 			.home-site-preview__info-title {
-				color: var(--color-neutral-80);
+				color: var(--color-text);
 				flex: 1 1 auto;
 				font-family: inherit;
 				font-size: $font-body;
 				font-weight: 500;
 				line-height: 24px;
 			}
+		}
+	}
+
+	.home-site-preview__ellipses-button {
+		margin: auto 0;
+
+		.gridicon {
+			cursor: pointer;
+			fill: var(--color-text-subtle);
+		}
+
+		&.is-open .gridicon {
+			transform: rotate(90deg);
 		}
 	}
 }

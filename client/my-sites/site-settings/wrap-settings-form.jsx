@@ -103,6 +103,7 @@ const wrapSettingsForm = ( getFormSettings ) => ( SettingsForm ) => {
 					this.props.errorNotice( text, noticeSettings );
 				}
 			} else if (
+				! this.props.isSavingSettings &&
 				this.props.siteIsJetpack &&
 				this.props.saveInstantSearchRequest?.status === 'success' &&
 				( typeof prevProps.saveInstantSearchRequest?.lastUpdated === 'undefined' ||
@@ -231,7 +232,7 @@ const wrapSettingsForm = ( getFormSettings ) => ( SettingsForm ) => {
 			this.props.removeNotice( 'site-settings-save' );
 			debug( 'submitForm', { fields, settingsFields } );
 
-			if ( siteIsJetpack ) {
+			if ( siteIsJetpack && Object.keys( jetpackFieldsToUpdate ).length > 0 ) {
 				this.props.saveJetpackSettings( siteId, jetpackFieldsToUpdate );
 			}
 

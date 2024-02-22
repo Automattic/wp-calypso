@@ -1,3 +1,4 @@
+import config from '@automattic/calypso-config';
 import { Onboard } from '@automattic/data-stores';
 import { useLocale, englishLocales } from '@automattic/i18n-utils';
 import { useI18n } from '@wordpress/react-i18n';
@@ -54,8 +55,9 @@ export const useGoals = (): Goal[] => {
 	const importDisplayText = () => {
 		// New copy waiting on translation.
 		if (
-			englishLocales.includes( translate?.localeSlug || '' ) ||
-			hasTranslation( 'Import existing content or website' )
+			config.isEnabled( 'onboarding/new-migration-flow' ) &&
+			( englishLocales.includes( translate?.localeSlug || '' ) ||
+				hasTranslation( 'Import existing content or website' ) )
 		) {
 			return translate( 'Import existing content or website' );
 		}

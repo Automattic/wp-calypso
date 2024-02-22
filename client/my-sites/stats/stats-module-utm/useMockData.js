@@ -40,26 +40,50 @@ const mockUTMData = [
 	},
 ];
 
-async function fetchMockDataAsync() {
-	const fetchDelay = 4000;
+const mockUTMDataSinglePost = [
+	{
+		source: 'google',
+		medium: 'cpc',
+		label: 'google / cpc',
+		value: 100,
+	},
+	{
+		source: 'bing',
+		medium: 'organic',
+		label: 'bing / organic',
+		value: 50,
+	},
+	{
+		source: 'yahoo',
+		medium: 'organic',
+		label: 'yahoo / organic',
+		value: 25,
+	},
+];
+
+async function fetchMockDataAsync( postId = undefined ) {
+	const fetchDelay = 3000;
 	// Simulate an API request so we can see the loading state.
 	await new Promise( ( r ) => setTimeout( r, fetchDelay ) );
+	if ( postId !== undefined ) {
+		return mockUTMDataSinglePost;
+	}
 	return mockUTMData;
 }
 
-export function useMockData() {
+export function useMockData( postId ) {
 	const [ data, setData ] = useState( null );
 	const [ isRequestingData, setIsRequestingData ] = useState( false );
 
 	useEffect( () => {
 		async function fetchMockData() {
-			const fetchedData = await fetchMockDataAsync();
+			const fetchedData = await fetchMockDataAsync( postId );
 			setIsRequestingData( false );
 			setData( fetchedData );
 		}
 		setIsRequestingData( true );
 		fetchMockData();
-	}, [] );
+	}, [ postId ] );
 
 	return { isRequestingData, data };
 }

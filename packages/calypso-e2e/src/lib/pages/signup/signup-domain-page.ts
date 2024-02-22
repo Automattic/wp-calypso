@@ -23,6 +23,14 @@ export class SignupDomainPage {
 		await Promise.race( [
 			this.page.getByRole( 'button', { name: 'Skip Purchase', exact: true } ).click(),
 			this.page.getByRole( 'button', { name: 'Choose my domain later', exact: true } ).click(),
+			this.page.getByRole( 'button', { name: 'Check paid plans »', exact: true } ).click(),
 		] );
+	}
+
+	/**
+	 * Search for domains with the query string "foo".
+	 */
+	async searchForFooDomains(): Promise< void > {
+		await this.domainSearchComponent.search( 'foo' );
 	}
 }
