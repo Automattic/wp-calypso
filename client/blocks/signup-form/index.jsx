@@ -50,12 +50,14 @@ import { login, lostPassword } from 'calypso/lib/paths';
 import { addQueryArgs } from 'calypso/lib/url';
 import wpcom from 'calypso/lib/wp';
 import { isP2Flow } from 'calypso/signup/is-flow';
+import ValidationFieldset from 'calypso/signup/validation-fieldset';
 import { recordTracksEventWithClientId } from 'calypso/state/analytics/actions';
 import { redirectToLogout } from 'calypso/state/current-user/actions';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
 import { createSocialUserFailed } from 'calypso/state/login/actions';
 import { getCurrentOAuth2Client } from 'calypso/state/oauth2-clients/ui/selectors';
 import getCurrentQueryArguments from 'calypso/state/selectors/get-current-query-arguments';
+import getWccomFrom from 'calypso/state/selectors/get-wccom-from';
 import isWooCommerceCoreProfilerFlow from 'calypso/state/selectors/is-woocommerce-core-profiler-flow';
 import { resetSignup } from 'calypso/state/signup/actions';
 import { getSectionName } from 'calypso/state/ui/selectors';
@@ -167,6 +169,7 @@ class SignupForm extends Component {
 			},
 			form: stateWithFilledUsername,
 			validationInitialized: false,
+			emailErrorMessage: '',
 		};
 	}
 
@@ -284,7 +287,7 @@ class SignupForm extends Component {
 	validate = ( fields, onComplete ) => {
 		const fieldsForValidation = filter( [
 			'email',
-			'password',
+			this.props.isPasswordless === false && 'password', // Remove password from validation if passwordless
 			this.props.displayUsernameInput && 'username',
 			this.props.displayNameInput && 'firstName',
 			this.props.displayNameInput && 'lastName',
@@ -762,6 +765,16 @@ class SignupForm extends Component {
 		this.handleSubmit( event );
 	};
 
+	handlePasswordlessSubmit = ( passwordLessData ) => {
+		this.formStateController.handleSubmit( ( hasErrors ) => {
+			if ( hasErrors ) {
+				this.setState( { submitting: false } );
+				return;
+			}
+			this.props.submitForm( this.state.form, passwordLessData );
+		} );
+	};
+
 	renderWooCommerce() {
 		return (
 			<div>
@@ -1214,6 +1227,7 @@ class SignupForm extends Component {
 		}
 
 		const isGravatar = this.props.isGravatar;
+		const emailErrorMessage = this.getErrorMessagesWithLogin( 'email' );
 		const showSeparator =
 			! config.isEnabled( 'desktop' ) && this.isHorizontal() && ! this.userCreationComplete();
 
@@ -1239,17 +1253,23 @@ class SignupForm extends Component {
 						flowName={ this.props.flowName }
 						goToNextStep={ this.props.goToNextStep }
 						renderTerms={ this.termsOfServiceLink }
-						submitForm={ this.props.submitForm }
+						submitForm={ this.handlePasswordlessSubmit }
 						logInUrl={ logInUrl }
 						disabled={ this.props.disabled }
-						disableSubmitButton={ this.props.disableSubmitButton }
+						disableSubmitButton={ this.props.disableSubmitButton || emailErrorMessage }
 						queryArgs={ this.props.queryArgs }
 						userEmail={ this.getEmailValue() }
 						{ ...gravatarProps }
 						submitButtonLabel={ this.props.submitButtonLabel }
 						isInviteLoggedOutForm={ this.props.isInviteLoggedOutForm }
 						labelText={ this.props.labelText }
-					/>
+						onInputBlur={ this.handleBlur }
+						onInputChange={ this.handleChangeEvent }
+					>
+						{ emailErrorMessage && (
+							<ValidationFieldset errorMessages={ [ emailErrorMessage ] }></ValidationFieldset>
+						) }
+					</PasswordlessSignupForm>
 
 					{ ! isGravatar && (
 						<>
@@ -1333,7 +1353,7 @@ export default connect(
 				'woocommerce-onboarding' === get( getCurrentQueryArguments( state ), 'from' ),
 			isJetpackWooDnaFlow: wooDnaConfig( getCurrentQueryArguments( state ) ).isWooDnaFlow(),
 			from: get( getCurrentQueryArguments( state ), 'from' ),
-			wccomFrom: get( getCurrentQueryArguments( state ), 'wccom-from' ),
+			wccomFrom: getWccomFrom( state ),
 			isWoo: isWooOAuth2Client( oauth2Client ) || isWooCoreProfilerFlow,
 			isWooCoreProfilerFlow,
 			isP2Flow:

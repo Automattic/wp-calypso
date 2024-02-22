@@ -1,79 +1,83 @@
-import { Button } from '@automattic/components';
-import { Icon } from '@wordpress/components';
-import { __ } from '@wordpress/i18n';
-import { chevronDown, chevronUp } from '@wordpress/icons';
-import { CodeDeploymentData } from 'calypso/my-sites/github-deployments/use-code-deployments-query';
-import { DeploymentsListItem } from './deployments-list-item';
-import { SortOption } from './index';
+import { useState } from 'react';
+import { SortDirection, useSort } from '../components/sort-button/use-sort';
+import { SearchDeployments } from './deployments-list-search';
+import { DeploymentsListTable } from './deployments-list-table';
+import { CodeDeploymentData } from './use-code-deployments-query';
 
-interface DeploymentsListProps {
+import './styles.scss';
+
+interface GitHubDeploymentsListProps {
 	deployments: CodeDeploymentData[];
-	sortKey: SortOption;
-	onSortChange( sort: SortOption ): void;
 }
 
-type SortPair = [ SortOption, SortOption ];
+function applySort( deployments: CodeDeploymentData[], key: string, direction: SortDirection ) {
+	switch ( key ) {
+		case 'name':
+			if ( direction === 'asc' ) {
+				return deployments.sort( ( left, right ) => {
+					return left.repository_name.localeCompare( right.repository_name );
+				} );
+			}
+			return deployments.sort( ( left, right ) => {
+				return left.repository_name.localeCompare( right.repository_name ) * -1;
+			} );
 
-const nameSorts: SortPair = [ 'name_asc', 'name_desc' ];
-const dateSorts: SortPair = [ 'date_asc', 'date_desc' ];
-const statusSorts: SortPair = [ 'status_asc', 'status_desc' ];
-const durationSorts: SortPair = [ 'duration_asc', 'duration_desc' ];
+		case 'date':
+			if ( direction === 'asc' ) {
+				return deployments.sort( ( left, right ) => {
+					return left.updated_on.localeCompare( right.updated_on );
+				} );
+			}
+			return deployments.sort( ( left, right ) => {
+				return left.updated_on.localeCompare( right.updated_on ) * -1;
+			} );
 
-export const DeploymentsList = ( { deployments, sortKey, onSortChange }: DeploymentsListProps ) => {
-	function getSortIcon( pair: SortPair ) {
-		if ( sortKey === pair[ 0 ] ) {
-			return <Icon size={ 16 } icon={ chevronDown } />;
-		} else if ( sortKey === pair[ 1 ] ) {
-			return <Icon size={ 16 } icon={ chevronUp } />;
-		}
+		case 'status':
+			if ( direction === 'asc' ) {
+				return deployments.sort( ( left, right ) => {
+					const leftRun = left.current_deployed_run;
+					const rightRun = right.current_deployed_run;
+					if ( leftRun && rightRun ) {
+						return leftRun?.status.localeCompare( rightRun.status );
+					} else if ( leftRun ) {
+						return 1;
+					}
+					return -1;
+				} );
+			}
+			return deployments.sort( ( left, right ) => {
+				const leftRun = left.current_deployed_run;
+				const rightRun = right.current_deployed_run;
+				if ( leftRun && rightRun ) {
+					return leftRun?.status.localeCompare( rightRun.status );
+				} else if ( leftRun ) {
+					return -1;
+				}
+				return 1;
+			} );
+
+		default:
+			return deployments;
 	}
+}
 
-	function handleChangeSort( pair: SortPair ) {
-		if ( sortKey === pair[ 0 ] ) {
-			return pair[ 1 ];
-		}
-		return pair[ 0 ];
-	}
+export const GitHubDeploymentsList = ( { deployments }: GitHubDeploymentsListProps ) => {
+	const { key, direction, handleSortChange } = useSort( 'name' );
+	const [ query, setQuery ] = useState( '' );
 
 	return (
-		<table>
-			<thead>
-				<tr>
-					<th>
-						<Button plain onClick={ () => onSortChange( handleChangeSort( nameSorts ) ) }>
-							<span>{ __( 'Repository' ) }</span>
-							{ getSortIcon( nameSorts ) }
-						</Button>
-					</th>
-					<th>
-						<span>{ __( 'Last commit' ) }</span>
-					</th>
-					<th>
-						<Button plain onClick={ () => onSortChange( handleChangeSort( statusSorts ) ) }>
-							<span>{ __( 'Status ' ) }</span>
-							{ getSortIcon( statusSorts ) }
-						</Button>
-					</th>
-					<th>
-						<Button plain onClick={ () => onSortChange( handleChangeSort( dateSorts ) ) }>
-							<span>{ __( 'Date ' ) }</span>
-							{ getSortIcon( dateSorts ) }
-						</Button>
-					</th>
-					<th>
-						<Button plain onClick={ () => onSortChange( handleChangeSort( durationSorts ) ) }>
-							<span>{ __( 'Duration ' ) }</span>
-							{ getSortIcon( durationSorts ) }
-						</Button>
-					</th>
-					<th> </th>
-				</tr>
-			</thead>
-			<tbody>
-				{ deployments.map( ( deployment, index ) => (
-					<DeploymentsListItem key={ index } deployment={ deployment } />
-				) ) }
-			</tbody>
-		</table>
+		<div className="github-deployments-list">
+			<div className="github-deployments-list__header">
+				<SearchDeployments value={ query } onChange={ setQuery } />
+			</div>
+			<div className="github-deployments__body">
+				<DeploymentsListTable
+					deployments={ applySort( deployments, key, direction ) }
+					sortKey={ key }
+					sortDirection={ direction }
+					onSortChange={ handleSortChange }
+				/>
+			</div>
+		</div>
 	);
 };

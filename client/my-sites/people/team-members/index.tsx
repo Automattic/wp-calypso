@@ -15,10 +15,11 @@ interface Props {
 	search?: string;
 	usersQuery: UsersQuery;
 	showAddTeamMembersBtn?: boolean;
+	showHeader?: boolean;
 }
 function TeamMembers( props: Props ) {
 	const translate = useTranslate();
-	const { search, usersQuery, showAddTeamMembersBtn = true } = props;
+	const { search, usersQuery, showAddTeamMembersBtn = true, showHeader = true } = props;
 	const site = useSelector( getSelectedSite );
 
 	const listKey = [ 'team-members', site?.ID, search ].join( '-' );
@@ -78,13 +79,15 @@ function TeamMembers( props: Props ) {
 		case 'loading':
 			return (
 				<>
-					<PeopleListSectionHeader isPlaceholder={ isLoading } label={ getHeaderLabel() }>
-						{ showAddTeamMembersBtn && (
-							<Button compact primary href={ addTeamMemberLink }>
-								{ translate( 'Add a team member' ) }
-							</Button>
-						) }
-					</PeopleListSectionHeader>
+					{ showHeader && (
+						<PeopleListSectionHeader isPlaceholder={ isLoading } label={ getHeaderLabel() }>
+							{ showAddTeamMembersBtn && (
+								<Button compact primary href={ addTeamMemberLink }>
+									{ translate( 'Add a team member' ) }
+								</Button>
+							) }
+						</PeopleListSectionHeader>
+					) }
 					<Card className="people-team-members-list">
 						{ isLoading && renderLoadingPeople() }
 						<InfiniteList

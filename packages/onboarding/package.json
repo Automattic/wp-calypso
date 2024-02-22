@@ -31,7 +31,7 @@
 	"dependencies": {
 		"@automattic/components": "workspace:^",
 		"@automattic/data-stores": "workspace:^",
-		"@wordpress/components": "^26.0.0",
+		"@wordpress/components": "^26.0.1",
 		"@wordpress/data": "^9.21.0",
 		"@wordpress/icons": "^9.42.0",
 		"@wordpress/react-i18n": "^3.49.0",

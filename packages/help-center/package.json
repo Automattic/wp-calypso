@@ -39,7 +39,7 @@
 		"@popperjs/core": "^2.11.8",
 		"@tanstack/react-query": "^5.15.5",
 		"@wordpress/base-styles": "^4.42.0",
-		"@wordpress/components": "^26.0.0",
+		"@wordpress/components": "^26.0.1",
 		"@wordpress/i18n": "^4.51.0",
 		"@wordpress/icons": "^9.42.0",
 		"@wordpress/primitives": "^3.49.0",

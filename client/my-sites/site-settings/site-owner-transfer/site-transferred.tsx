@@ -1,5 +1,5 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
-import { PLAN_BUSINESS, PLAN_FREE } from '@automattic/calypso-products';
+import { PLAN_BUSINESS, isFreePlan, isBusinessTrial } from '@automattic/calypso-products';
 import { Button } from '@automattic/components';
 import { Global, css } from '@emotion/react';
 import styled from '@emotion/styled';
@@ -41,7 +41,8 @@ const SiteTransferred = () => {
 		siteId ? isSiteComingSoon( state, siteId ) : true
 	);
 	const isPrivateOrComingSoon = isPrivate || isComingSoon;
-	const hasBillingPlan = sitePlanSlug !== PLAN_FREE;
+	const shouldBuyBusinessPlan = isBusinessTrial( sitePlanSlug );
+	const hasNoPlan = isFreePlan( sitePlanSlug );
 	const { width } = useWindowDimensions();
 	const mShotParams: MShotParams = {
 		scale: 2,
@@ -85,33 +86,44 @@ const SiteTransferred = () => {
 		);
 	}
 
-	const thankYouHeaderAction = (
+	const thankYouHeaderAction = hasNoPlan ? (
+		<Button
+			primary
+			href={ `/home/${ siteSlug }` }
+			onClick={ () => {
+				sendTrackEvent( 'calypso_transferred_site_next_step_click_no_plan' );
+			} }
+		>
+			{ translate( 'Continue' ) }
+		</Button>
+	) : (
 		<Button
 			primary
 			href={
-				hasBillingPlan
-					? getAddNewPaymentMethodUrlFor( siteSlug )
-					: `/checkout/${ siteSlug }/${ PLAN_BUSINESS }`
+				shouldBuyBusinessPlan
+					? `/checkout/${ siteSlug }/${ PLAN_BUSINESS }`
+					: getAddNewPaymentMethodUrlFor( siteSlug )
 			}
 			onClick={ () => {
 				sendTrackEvent( 'calypso_transferred_site_next_step_click' );
 			} }
 		>
-			{ hasBillingPlan
-				? translate( 'Update billing details' )
-				: translate( 'Proceed to Checkout' ) }
+			{ shouldBuyBusinessPlan
+				? translate( 'Proceed to Checkout' )
+				: translate( 'Update billing details' ) }
 		</Button>
 	);
-	const title = hasBillingPlan
-		? translate( "You're now in charge." )
-		: translate( 'Your site is not on a plan.' );
 
-	const subtitle = hasBillingPlan
+	const title = shouldBuyBusinessPlan
+		? translate( 'Your site is on a free trial.' )
+		: translate( "You're now in charge." );
+
+	const subtitle = shouldBuyBusinessPlan
 		? translate(
-				"Continue to full ownership by signing up for our exclusive plan. Enter your billing details and maintain your site's momentum!"
+				'To keep your site active and access all features, please upgrade your plan in the next step and enjoy the full experience of your site.'
 		  )
 		: translate(
-				'To keep your site active and access all features, please upgrade your plan in the next step and enjoy the full experience of your site.'
+				"Continue to full ownership by signing up for our exclusive plan. Enter your billing details and maintain your site's momentum!"
 		  );
 
 	return (
@@ -128,7 +140,11 @@ const SiteTransferred = () => {
 			/>
 			<MasterbarStyled canGoBack={ false } />
 			<MainStyled>
-				<ThankYouV2 title={ title } subtitle={ subtitle } headerButtons={ thankYouHeaderAction } />
+				<ThankYouV2
+					title={ title }
+					subtitle={ hasNoPlan ? '' : subtitle }
+					headerButtons={ thankYouHeaderAction }
+				/>
 				{ ! isPrivateOrComingSoon && mShotUrl && (
 					<Preview src={ mShotUrl } alt="Website screenshot preview" />
 				) }

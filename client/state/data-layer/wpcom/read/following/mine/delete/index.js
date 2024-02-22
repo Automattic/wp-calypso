@@ -46,7 +46,7 @@ export const unfollowError = ( action ) => ( dispatch, getState ) => {
 
 	dispatch(
 		errorNotice(
-			translate( 'Sorry, there was a problem unfollowing %(siteTitle)s. Please try again.', {
+			translate( 'Sorry, there was a problem unsubscribing %(siteTitle)s. Please try again.', {
 				args: {
 					siteTitle,
 				},

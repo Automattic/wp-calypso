@@ -27,11 +27,11 @@ const ECommerceTrialIncluded: FunctionComponent< Props > = ( props ) => {
 			buttonText: translate( 'Ask a question' ),
 		},
 		{
-			title: translate( 'Premium themes' ),
+			title: translate( 'Beautiful themes' ),
 			text: translate( 'Choose from a wide selection of beautifully designed themes.' ),
 			illustration: premiumThemes,
 			showButton: true,
-			buttonText: translate( 'Browse premium themes' ),
+			buttonText: translate( 'Browse beautiful themes' ),
 		},
 		{
 			title: translate( 'Simple customization' ),

@@ -55,7 +55,7 @@ $grid-vertical-gutters: 32px;
 		display: none;
 	}
 
-	&.is-odyssey-stats {
+	&.is-email-stats-unavailable {
 		@include stats-desktop-grid(
 			"followers followers followers followers followers followers followers followers followers followers followers followers",
 			1
@@ -335,6 +335,11 @@ $grid-vertical-gutters: 32px;
 		grid-area: country;
 	}
 
+	.stats__module-wrapper--utm,
+	.list-utm {
+		grid-area: utm;
+	}
+
 	.stats__module-wrapper--authors,
 	.list-authors {
 		grid-area: authors;
@@ -373,4 +378,8 @@ $grid-vertical-gutters: 32px;
 	.list-emails {
 		grid-area: emails;
 	}
+}
+
+.stats-module-utm {
+	margin-bottom: 32px;
 }

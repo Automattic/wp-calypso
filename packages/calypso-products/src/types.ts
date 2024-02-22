@@ -9,6 +9,8 @@ import type {
 	PLAN_JETPACK_FREE,
 	JETPACK_PRODUCTS_LIST,
 	JETPACK_LEGACY_PLANS,
+	JETPACK_MONTHLY_LEGACY_PLANS,
+	JETPACK_YEARLY_LEGACY_PLANS,
 	JETPACK_RESET_PLANS,
 	TERMS_LIST,
 	PERIOD_LIST,
@@ -36,11 +38,11 @@ export type Feature = string;
 
 export type FeatureObject = {
 	getSlug: () => string;
-	getTitle: ( domainName?: string ) => TranslateResult;
+	getTitle: ( params?: { domainName?: string; planSlug?: string } ) => TranslateResult;
 	getAlternativeTitle?: () => TranslateResult;
 	getConditionalTitle?: ( planSlug?: string ) => TranslateResult;
 	getHeader?: () => TranslateResult;
-	getDescription?: ( domainName?: string ) => TranslateResult;
+	getDescription?: ( params?: { domainName?: string; planSlug?: string } ) => TranslateResult;
 	getStoreSlug?: () => string;
 	getCompareTitle?: () => TranslateResult;
 	getCompareSubtitle?: () => TranslateResult;
@@ -106,6 +108,8 @@ export type IncompleteWPcomPlan = Partial< WPComPlan > &
 // Jetpack
 export type JetpackProductSlug = ( typeof JETPACK_PRODUCTS_LIST )[ number ];
 export type JetpackLegacyPlanSlug = ( typeof JETPACK_LEGACY_PLANS )[ number ];
+export type JetpackYearlyLegacyPlanSlug = ( typeof JETPACK_YEARLY_LEGACY_PLANS )[ number ];
+export type JetpackMonthlyLegacyPlanSlug = ( typeof JETPACK_MONTHLY_LEGACY_PLANS )[ number ];
 export type JetpackResetPlanSlug = ( typeof JETPACK_RESET_PLANS )[ number ];
 export type JetpackPlanSlug =
 	| typeof PLAN_JETPACK_FREE

@@ -10,6 +10,7 @@ import Main from 'calypso/components/main';
 import NavigationHeader from 'calypso/components/navigation-header';
 import Notice from 'calypso/components/notice';
 import AppleIcon from 'calypso/components/social-icons/apple';
+import GitHubIcon from 'calypso/components/social-icons/github';
 import GoogleIcon from 'calypso/components/social-icons/google';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import twoStepAuthorization from 'calypso/lib/two-step-authorization';
@@ -60,6 +61,17 @@ class SocialLogin extends Component {
 						redirectUri={ redirectUri }
 						socialServiceResponse={
 							this.props.socialService === 'apple' ? this.props.socialServiceResponse : null
+						}
+					/>
+				) }
+
+				{ config.isEnabled( 'login/github' ) && (
+					<SocialLoginService
+						service="github"
+						icon={ <GitHubIcon /> }
+						redirectUri={ redirectUri }
+						socialServiceResponse={
+							this.props.socialService === 'github' ? this.props.socialServiceResponse : null
 						}
 					/>
 				) }

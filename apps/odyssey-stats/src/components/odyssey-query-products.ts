@@ -2,6 +2,7 @@ import { useQuery } from '@tanstack/react-query';
 import { isError } from 'lodash';
 import { useEffect } from 'react';
 import { useDispatch } from 'react-redux';
+import getDefaultQueryParams from 'calypso/my-sites/stats/hooks/default-query-params';
 import { PRODUCTS_LIST_REQUEST, PRODUCTS_LIST_REQUEST_FAILURE } from 'calypso/state/action-types';
 import { receiveProductsList } from 'calypso/state/products-list/actions';
 
@@ -17,13 +18,11 @@ function queryProductsList( currency = '', type = 'jetpack' ) {
 }
 function useQueryProductsList( currency = '', type = 'jetpack' ) {
 	return useQuery( {
+		...getDefaultQueryParams(),
 		queryKey: [ 'odyssey-stats', 'products', currency, type ],
 		queryFn: () => queryProductsList( currency, type ),
-		staleTime: 10 * 1000,
 		// If the module is not active, we don't want to retry the query.
 		retry: false,
-		retryOnMount: false,
-		refetchOnWindowFocus: false,
 	} );
 }
 
