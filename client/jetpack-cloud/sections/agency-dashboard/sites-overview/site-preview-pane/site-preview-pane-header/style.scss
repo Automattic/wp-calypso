@@ -30,7 +30,7 @@
 				font-family: "SF Pro Text", sans-serif;
 				font-style: normal;
 				font-weight: 500;
-				font-size: 32px; /* stylelint-disable-line declaration-property-unit-allowed-list */
+				font-size: rem(32px);
 				line-height: 32px;
 				color: #000;
 				margin-bottom: 4px;
@@ -42,7 +42,7 @@
 					display: flex;
 					align-items: center;
 					font-family: "SF Pro Text", sans-serif;
-					font-size: 18px; /* stylelint-disable-line declaration-property-unit-allowed-list */
+					font-size: rem(18px);
 					font-weight: 400;
 					color: #3c434a;
 					line-height: 26px;
