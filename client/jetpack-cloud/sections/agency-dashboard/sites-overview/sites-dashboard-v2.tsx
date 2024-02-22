@@ -70,16 +70,7 @@ export default function SitesDashboardV2() {
 		{ filterType: 'plugin_updates', ref: 7 },
 	];
 
-	const {
-		search,
-		currentPage,
-		filter,
-		sort,
-		// TODO - These props will be used when we implement the bulk management:
-		// selectedSites,
-		// setSelectedSites,
-		// setIsBulkManagementActive,
-	} = useContext( SitesOverviewContext );
+	const { search, currentPage, filter, sort } = useContext( SitesOverviewContext );
 
 	const [ sitesViewState, setSitesViewState ] = useState< SitesViewState >( {
 		type: 'table',
@@ -119,13 +110,14 @@ export default function SitesDashboardV2() {
 	);
 
 	useEffect( () => {
-		const filtersSelected = sitesViewState.filters.map( ( filter ) => {
-			const filterType =
-				filtersMap.find( ( filterMap ) => filterMap.ref === filter.value )?.filterType ||
-				'all_issues';
+		const filtersSelected =
+			sitesViewState.filters?.map( ( filter ) => {
+				const filterType =
+					filtersMap.find( ( filterMap ) => filterMap.ref === filter.value )?.filterType ||
+					'all_issues';
 
-			return filterType;
-		} );
+				return filterType;
+			} ) || [];
 
 		updateDashboardURLQueryArgs( { filter: filtersSelected || [] } );
 	}, [ sitesViewState.filters ] );
@@ -273,7 +265,6 @@ export default function SitesDashboardV2() {
 		}
 	}, [ sitesViewState, setSitesViewState ] );
 
-	// TODO: the style element is injected temporary here only to not interfere with the styles in production.
 	return (
 		<div
 			className={ classNames(
