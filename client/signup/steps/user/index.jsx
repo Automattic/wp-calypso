@@ -346,7 +346,7 @@ export class UserStep extends Component {
 		} );
 	};
 
-	submit = async ( data ) => {
+	submit = ( data ) => {
 		const { flowName, stepName, oauth2Signup } = this.props;
 		const dependencies = {};
 		if ( oauth2Signup ) {

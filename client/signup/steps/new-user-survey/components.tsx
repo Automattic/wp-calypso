@@ -1,5 +1,6 @@
 import { Card, FormLabel } from '@automattic/components';
 import styled from '@emotion/styled';
+import { ReactNode } from 'react';
 import FormTextInput from 'calypso/components/forms/form-text-input';
 
 export type Viewport = 'desktop' | 'mobile' | 'tablet';
@@ -53,3 +54,13 @@ export const ButtonContainer = styled.div`
 	padding-bottom: 10px;
 	padding-top: 10px;
 `;
+
+/**
+ *	Shuffle the children so that element order is randomized
+ */
+export const Shuffle = ( props: { children: Array< ReactNode > } ) => {
+	const { children } = props;
+	const clonedChildren = [ ...children ];
+	clonedChildren.sort( () => Math.random() - Math.random() );
+	return clonedChildren;
+};

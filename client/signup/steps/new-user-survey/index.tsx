@@ -10,6 +10,7 @@ import {
 	ButtonContainer,
 	CardContent,
 	OptionsContainer,
+	Shuffle,
 	StyledCard,
 	StyledFormTextInput,
 	StyledLabel,
@@ -46,6 +47,7 @@ interface Props {
 	flowName: string;
 	stepName: string;
 }
+
 function SurveyForm( props: Props ) {
 	const [ formState, setFormState ] = useState< FormState >( defaultFormState );
 	const translate = useTranslate();
@@ -129,22 +131,30 @@ function SurveyForm( props: Props ) {
 								  ) }
 						</CardHeading>
 						<OptionsContainer>
-							<StyledLabel>
-								<FormInputCheckbox
-									checked={ formState.survey_goals_blogging }
-									name="survey_goals_blogging"
-									onChange={ handleChange }
-								/>
-								<span>{ translate( 'Blogging' ) }</span>
-							</StyledLabel>
-							<StyledLabel>
-								<FormInputCheckbox name="survey_goals_website_building" onChange={ handleChange } />
-								<span>{ translate( 'Website building' ) }</span>
-							</StyledLabel>
-							<StyledLabel>
-								<FormInputCheckbox name="survey_goals_website_hosting" onChange={ handleChange } />
-								<span>{ translate( 'WordPress hosting' ) }</span>
-							</StyledLabel>
+							<Shuffle>
+								<StyledLabel>
+									<FormInputCheckbox
+										checked={ formState.survey_goals_blogging }
+										name="survey_goals_blogging"
+										onChange={ handleChange }
+									/>
+									<span>{ translate( 'Blogging' ) }</span>
+								</StyledLabel>
+								<StyledLabel>
+									<FormInputCheckbox
+										name="survey_goals_website_building"
+										onChange={ handleChange }
+									/>
+									<span>{ translate( 'Website building' ) }</span>
+								</StyledLabel>
+								<StyledLabel>
+									<FormInputCheckbox
+										name="survey_goals_website_hosting"
+										onChange={ handleChange }
+									/>
+									<span>{ translate( 'WordPress hosting' ) }</span>
+								</StyledLabel>
+							</Shuffle>
 							<StyledLabel>
 								<FormInputCheckbox
 									checked={ formState.survey_goals_custom_check }
@@ -165,61 +175,63 @@ function SurveyForm( props: Props ) {
 							{ translate( 'What best describes you?' ) }
 						</CardHeading>
 						<OptionsContainer>
-							<StyledLabel>
-								<FormInputCheckbox
-									name="survey_describe_yourself_creator"
-									onChange={ handleChange }
-								/>
-								<span>{ translate( 'Personal site creator' ) }</span>
-							</StyledLabel>
-							<StyledLabel>
-								<FormInputCheckbox
-									name="survey_describe_yourself_business"
-									onChange={ handleChange }
-								/>
-								<span>{ translate( 'Business' ) }</span>
-							</StyledLabel>
-							<StyledLabel>
-								<FormInputCheckbox
-									name="survey_describe_yourself_ecommerce"
-									onChange={ handleChange }
-								/>
-								<span>{ translate( 'eCommerce store' ) }</span>
-							</StyledLabel>
-							<StyledLabel>
-								<FormInputCheckbox
-									name="survey_describe_yourself_enterprise"
-									onChange={ handleChange }
-								/>
-								<span>{ translate( 'Enterprise' ) }</span>
-							</StyledLabel>
-							<StyledLabel>
-								<FormInputCheckbox
-									name="survey_describe_yourself_developer"
-									onChange={ handleChange }
-								/>
-								<span>{ translate( 'Developer' ) }</span>
-							</StyledLabel>
-							<StyledLabel>
-								<FormInputCheckbox
-									name="survey_describe_yourself_agency"
-									onChange={ handleChange }
-								/>
-								<span>{ translate( 'Agency' ) }</span>
-							</StyledLabel>
-							<StyledLabel>
-								<FormInputCheckbox
-									onChange={ handleChange }
-									checked={ formState.survey_describe_yourself_custom_check }
-									name="survey_describe_yourself_custom_check"
-								/>
-								<StyledFormTextInput
-									name="survey_describe_yourself_custom_text"
-									onChange={ handleChange }
-									value={ formState.survey_describe_yourself_custom_text }
-									placeholder={ placeholder }
-								/>
-							</StyledLabel>
+							<Shuffle>
+								<StyledLabel>
+									<FormInputCheckbox
+										name="survey_describe_yourself_creator"
+										onChange={ handleChange }
+									/>
+									<span>{ translate( 'Personal site creator' ) }</span>
+								</StyledLabel>
+								<StyledLabel>
+									<FormInputCheckbox
+										name="survey_describe_yourself_business"
+										onChange={ handleChange }
+									/>
+									<span>{ translate( 'Business' ) }</span>
+								</StyledLabel>
+								<StyledLabel>
+									<FormInputCheckbox
+										name="survey_describe_yourself_ecommerce"
+										onChange={ handleChange }
+									/>
+									<span>{ translate( 'eCommerce store' ) }</span>
+								</StyledLabel>
+								<StyledLabel>
+									<FormInputCheckbox
+										name="survey_describe_yourself_enterprise"
+										onChange={ handleChange }
+									/>
+									<span>{ translate( 'Enterprise' ) }</span>
+								</StyledLabel>
+								<StyledLabel>
+									<FormInputCheckbox
+										name="survey_describe_yourself_developer"
+										onChange={ handleChange }
+									/>
+									<span>{ translate( 'Developer' ) }</span>
+								</StyledLabel>
+								<StyledLabel>
+									<FormInputCheckbox
+										name="survey_describe_yourself_agency"
+										onChange={ handleChange }
+									/>
+									<span>{ translate( 'Agency' ) }</span>
+								</StyledLabel>
+								<StyledLabel>
+									<FormInputCheckbox
+										onChange={ handleChange }
+										checked={ formState.survey_describe_yourself_custom_check }
+										name="survey_describe_yourself_custom_check"
+									/>
+									<StyledFormTextInput
+										name="survey_describe_yourself_custom_text"
+										onChange={ handleChange }
+										value={ formState.survey_describe_yourself_custom_text }
+										placeholder={ placeholder }
+									/>
+								</StyledLabel>
+							</Shuffle>
 						</OptionsContainer>
 					</FormFieldset>
 					<ButtonContainer>
