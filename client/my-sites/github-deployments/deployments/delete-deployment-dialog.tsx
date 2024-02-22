@@ -59,7 +59,7 @@ export const DeleteDeploymentDialog = ( {
 				<p css={ { marginTop: '24px' } }>
 					{ createInterpolateElement(
 						sprintf(
-							/* translators: the colorsNum could be any number from 0 to about ~10 */
+							/* translators: name of repository in the format repository-owner/repository-name */
 							__( 'You are about to disconnect your repository <a>%(repositoryName)s</a>' ),
 							{ repositoryName: deployment.repository_name }
 						),

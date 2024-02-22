@@ -3,10 +3,19 @@ import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
+import { connect } from 'react-redux';
 import FormattedHeader from 'calypso/components/formatted-header';
+import { usePresalesChat } from 'calypso/lib/presales-chat';
+import flows from 'calypso/signup/config/flows';
 import NavigationLink from 'calypso/signup/navigation-link';
+import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { isReskinnedFlow } from '../is-flow';
 import './style.scss';
+
+function PresalesChat() {
+	usePresalesChat( 'wpcom' );
+	return null;
+}
 
 class StepWrapper extends Component {
 	static propTypes = {
@@ -34,6 +43,7 @@ class StepWrapper extends Component {
 		isHorizontalLayout: PropTypes.bool,
 		queryParams: PropTypes.object,
 		customizedActionButtons: PropTypes.element,
+		userLoggedIn: PropTypes.bool,
 	};
 
 	static defaultProps = {
@@ -198,6 +208,7 @@ class StepWrapper extends Component {
 			'is-large-skip-layout': isLargeSkipLayout,
 			'has-navigation': hasNavigation,
 		} );
+		const enablePresales = flows.getFlow( flowName, this.props.userLoggedIn )?.enablePresales;
 
 		let sticky = false;
 		if ( isSticky !== undefined ) {
@@ -247,9 +258,14 @@ class StepWrapper extends Component {
 						</div>
 					) }
 				</div>
+				{ enablePresales && <PresalesChat /> }
 			</>
 		);
 	}
 }
 
-export default localize( StepWrapper );
+export default connect( ( state ) => {
+	return {
+		userLoggedIn: isUserLoggedIn( state ),
+	};
+} )( localize( StepWrapper ) );
