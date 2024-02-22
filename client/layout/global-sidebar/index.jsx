@@ -1,5 +1,6 @@
 import { Spinner, Gridicon } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
+import { useCallback, useEffect, useRef } from 'react';
 import { useSelector } from 'react-redux';
 import { useCurrentRoute } from 'calypso/components/route';
 import { GlobalSidebarHeader } from 'calypso/layout/global-sidebar/header';
@@ -13,6 +14,8 @@ import { GlobalSidebarFooter, GlobalSiteSidebarFooter } from './footer';
 import './style.scss';
 
 const GlobalSidebar = ( { children, onClick = undefined, className = '', ...props } ) => {
+	const wrapperRef = useRef( null );
+	const bodyRef = useRef( null );
 	const menuItems = useSiteMenuItems();
 	const isRequestingMenu = useSelector( getIsRequestingAdminMenu );
 	const translate = useTranslate();
@@ -23,6 +26,24 @@ const GlobalSidebar = ( { children, onClick = undefined, className = '', ...prop
 	const shouldShowGlobalSiteSidebar = useSelector( ( state ) => {
 		return getShouldShowGlobalSiteSidebar( state, selectedSiteId, currentSection?.group );
 	} );
+
+	const handleWheel = useCallback( ( event ) => {
+		if ( bodyRef.current?.contains( event.target ) ) {
+			event.preventDefault();
+			bodyRef.current.scrollTop += event.deltaY;
+		}
+	}, [] );
+
+	useEffect( () => {
+		if ( ! wrapperRef.current ) {
+			return;
+		}
+
+		wrapperRef.current.addEventListener( 'wheel', handleWheel, { passive: false } );
+		return () => {
+			wrapperRef.current.removeEventListener( 'wheel', handleWheel );
+		};
+	}, [ handleWheel ] );
 
 	/**
 	 * If there are no menu items and we are currently requesting some,
@@ -38,9 +59,9 @@ const GlobalSidebar = ( { children, onClick = undefined, className = '', ...prop
 	const sidebarBackLinkText = backLinkText ?? translate( 'Back' );
 
 	return (
-		<div className="global-sidebar">
+		<div className="global-sidebar" ref={ wrapperRef }>
 			<GlobalSidebarHeader />
-			<div className="sidebar__body">
+			<div className="sidebar__body" ref={ bodyRef }>
 				<Sidebar className={ className } { ...sidebarProps } onClick={ onClick }>
 					{ requireBackLink && (
 						<div className="sidebar__back-link">

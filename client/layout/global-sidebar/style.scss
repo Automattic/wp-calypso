@@ -4,13 +4,10 @@
 $brand-text: "SF Pro Text", $sans;
 .global-sidebar {
 	bottom: 0;
-	contain: content;
 	display: flex;
 	flex-direction: column;
 	left: 0;
 	height: 100%;
-	overflow-y: auto;
-	overscroll-behavior: contain;
 	position: relative;
 	top: 0;
 	transition: all 220ms ease-out;
@@ -106,6 +103,7 @@ $brand-text: "SF Pro Text", $sans;
 		@include custom-scrollbars-on-hover(transparent, $gray-600);
 		flex: 1;
 		overflow-y: auto;
+
 
 		.sidebar,
 		.sidebar__menu:not(.is-togglable) {
