@@ -39,7 +39,8 @@ export default function ThemeSiteSelectorModal( { isOpen, onClose } ) {
 		>
 			<div className="theme-site-selector-modal__content">
 				<p>{ translate( 'Some unsupported sites may be hidden.' ) }</p>
-				<SiteSelector onSiteSelect={ onSiteSelect } isReskinned />
+				{ /* eslint-disable-next-line jsx-a11y/no-autofocus */ }
+				<SiteSelector autoFocus onSiteSelect={ onSiteSelect } isReskinned />
 			</div>
 		</Modal>
 	);
