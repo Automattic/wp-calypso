@@ -98,7 +98,6 @@ export interface APILicense {
 export interface APIProductFamilyProductBundlePrice {
 	quantity: number;
 	amount: string;
-	price_per_unit_float: number;
 }
 
 export interface APIProductFamilyProduct {
