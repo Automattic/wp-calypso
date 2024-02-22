@@ -1,7 +1,5 @@
-import {
-	CodeDeploymentData,
-	DeploymentRun,
-} from 'calypso/my-sites/github-deployments/deployments/use-code-deployments-query';
+import { CodeDeploymentData } from 'calypso/my-sites/github-deployments/deployments/use-code-deployments-query';
+import { DeploymentRun } from '../deployment-run-logs/use-code-deployment-run-query';
 
 interface DeploymentCommitDetailsProps {
 	run: DeploymentRun;

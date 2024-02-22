@@ -11,29 +11,31 @@ import {
 	DeploymentStatus,
 	DeploymentStatusValue,
 } from 'calypso/my-sites/github-deployments/deployments/deployment-status';
-import {
-	CodeDeploymentData,
-	DeploymentRun,
-} from 'calypso/my-sites/github-deployments/deployments/use-code-deployments-query';
 import { formatDate } from 'calypso/my-sites/github-deployments/utils/dates';
 import { useSelector } from 'calypso/state/index';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors/index';
+import { DeploymentRun, DeploymentRunStatus } from './use-code-deployment-run-query';
 
 interface DeploymentsListItemProps {
 	run: DeploymentRun;
 }
 
+const RUN_ENDED_STATUSES: DeploymentRunStatus[] = [ 'success', 'failed', 'warnings' ];
+
 export const DeploymentsRunItem = ( { run }: DeploymentsListItemProps ) => {
 	const locale = useLocale();
 	const siteId = useSelector( getSelectedSiteId );
-	const deployment = run.code_deployment as CodeDeploymentData;
+	const deployment = run.code_deployment!;
 	const [ expanded, setExpanded ] = useState( false );
 	const icon = expanded ? chevronUp : chevronDown;
 	const { data: logEntries = [], isLoading: isFetchingLogs } = useCodeDeploymentsRunLogQuery(
 		siteId,
 		deployment.id,
 		run.id,
-		{ enabled: expanded }
+		{
+			enabled: expanded,
+			refetchInterval: ! RUN_ENDED_STATUSES.includes( run.status ) ? 1000 : undefined,
+		}
 	);
 
 	const handleToggleExpanded = () => setExpanded( ! expanded );
