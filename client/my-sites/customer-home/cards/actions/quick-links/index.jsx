@@ -1,4 +1,4 @@
-import config from '@automattic/calypso-config';
+import config, { isEnabled } from '@automattic/calypso-config';
 import { getAllFeaturesForPlan } from '@automattic/calypso-products/';
 import { JetpackLogo, FoldableCard } from '@automattic/components';
 import { GeneratorModal } from '@automattic/jetpack-ai-calypso';
@@ -92,7 +92,7 @@ export const QuickLinks = ( {
 	);
 
 	const advertisingUrl =
-		adminInterface === 'wp-admin'
+		adminInterface === 'wp-admin' && isEnabled( 'layout/dotcom-nav-redesign' )
 			? `https://${ selectedSiteSlug }/wp-admin/tools.php?page=advertising`
 			: `/advertising/${ selectedSiteSlug }`;
 

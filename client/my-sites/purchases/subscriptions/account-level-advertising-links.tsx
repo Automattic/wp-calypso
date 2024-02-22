@@ -1,3 +1,4 @@
+import { isEnabled } from '@automattic/calypso-config';
 import { CompactCard } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import { PromoteWidgetStatus, usePromoteWidget } from 'calypso/lib/promote-post';
@@ -19,7 +20,7 @@ export default function AccountLevelAdvertisingLinks() {
 	}
 
 	const advertisingUrl =
-		adminInterface === 'wp-admin'
+		adminInterface === 'wp-admin' && isEnabled( 'layout/dotcom-nav-redesign' )
 			? `https://${ selectedSiteSlug }/wp-admin/tools.php?page=advertising`
 			: `/advertising/${ selectedSiteSlug }`;
 

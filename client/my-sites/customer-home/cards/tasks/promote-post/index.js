@@ -1,3 +1,4 @@
+import { isEnabled } from '@automattic/calypso-config';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
@@ -23,7 +24,7 @@ const PromotePost = () => {
 		getSiteOption( state, siteId, 'wpcom_admin_interface' )
 	);
 	const advertisingUrl =
-		adminInterface === 'wp-admin'
+		adminInterface === 'wp-admin' && isEnabled( 'layout/dotcom-nav-redesign' )
 			? `https://${ selectedSiteSlug }/wp-admin/tools.php?page=advertising`
 			: `/advertising/${ selectedSiteSlug }`;
 	const trackDspAction = async () => {
