@@ -35,13 +35,9 @@ const GlobalSidebar = ( { children, onClick = undefined, className = '', ...prop
 	}, [] );
 
 	useEffect( () => {
-		if ( ! wrapperRef.current ) {
-			return;
-		}
-
-		wrapperRef.current.addEventListener( 'wheel', handleWheel, { passive: false } );
+		wrapperRef.current?.addEventListener( 'wheel', handleWheel, { passive: false } );
 		return () => {
-			wrapperRef.current.removeEventListener( 'wheel', handleWheel );
+			wrapperRef.current?.removeEventListener( 'wheel', handleWheel );
 		};
 	}, [ handleWheel ] );
 
