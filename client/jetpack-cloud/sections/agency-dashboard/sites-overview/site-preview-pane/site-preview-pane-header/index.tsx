@@ -18,9 +18,6 @@ export default function SitePreviewPaneHeader( { selectedSite, closeSitePreviewP
 		return null;
 	}
 
-	// eslint-disable-next-line no-console
-	console.log( selectedSite );
-
 	return (
 		<div className="site-preview__header">
 			<div className="site-preview__header-bg"></div>
