@@ -119,12 +119,16 @@ export function updatesManager( context, next ) {
 		case 'create':
 			context.primary = createElement( UpdatesManagerCreate, {
 				siteSlug,
+				onNavBack: () => page.redirect( `/plugins/update-manager/${ siteSlug }` ),
 			} );
 			break;
 
 		case 'list':
 		default:
-			context.primary = createElement( UpdatesManager, { siteSlug } );
+			context.primary = createElement( UpdatesManager, {
+				siteSlug,
+				onCreateNewSchedule: () => page.redirect( `/plugins/update-manager/create/${ siteSlug }` ),
+			} );
 			break;
 	}
 

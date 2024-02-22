@@ -15,7 +15,11 @@ import { ellipsis } from './icons';
 
 import './styles.scss';
 
-export const PluginsUpdateManager = () => {
+interface Props {
+	onNavBack?: () => void;
+}
+export const PluginsUpdateManager = ( props: Props ) => {
+	const { onNavBack } = props;
 	const [ isConfirmOpen, setIsConfirmOpen ] = useState( false );
 
 	const closeConfirm = () => {
@@ -37,7 +41,11 @@ export const PluginsUpdateManager = () => {
 			</ConfirmDialog>
 			<Card className="plugins-update-manager">
 				<CardHeader size="extraSmall">
-					<Button icon={ arrowLeft }>Back</Button>
+					{ onNavBack && (
+						<Button icon={ arrowLeft } onClick={ onNavBack }>
+							Back
+						</Button>
+					) }
 					<Text>Schedules</Text>
 					<div className="placeholder"></div>
 				</CardHeader>

@@ -5,7 +5,14 @@ import { Create } from 'calypso/blocks/plugins-update-manager/create';
 import MainComponent from 'calypso/components/main';
 import NavigationHeader from 'calypso/components/navigation-header';
 
-export const UpdatesManager = () => {
+interface ListProps {
+	siteSlug: string;
+	onNavBack?: () => void;
+	onCreateNewSchedule?: () => void;
+}
+export const UpdatesManager = ( props: ListProps ) => {
+	const { onNavBack, onCreateNewSchedule } = props;
+
 	return (
 		<MainComponent wideLayout>
 			<NavigationHeader
@@ -13,17 +20,30 @@ export const UpdatesManager = () => {
 				title="Plugin updates manager"
 				subtitle="Effortlessly schedule plugin auto-updates with built-in rollback logic."
 			>
-				<Button __next40pxDefaultSize icon={ plus } variant="primary">
-					Create a new schedule
-				</Button>
+				{ onCreateNewSchedule && (
+					<Button
+						__next40pxDefaultSize
+						icon={ plus }
+						variant="primary"
+						onClick={ onCreateNewSchedule }
+					>
+						Create a new schedule
+					</Button>
+				) }
 			</NavigationHeader>
 
-			<PluginsUpdateManager />
+			<PluginsUpdateManager onNavBack={ onNavBack } />
 		</MainComponent>
 	);
 };
 
-export const UpdatesManagerCreate = () => {
+interface CreateProps {
+	siteSlug: string;
+	onNavBack?: () => void;
+}
+export const UpdatesManagerCreate = ( props: CreateProps ) => {
+	const { onNavBack } = props;
+
 	return (
 		<MainComponent wideLayout>
 			<NavigationHeader
@@ -31,8 +51,7 @@ export const UpdatesManagerCreate = () => {
 				title="Plugin updates manager"
 				subtitle="Effortlessly schedule plugin auto-update with built-in rollback logic"
 			></NavigationHeader>
-
-			<Create />
+			<Create onNavBack={ onNavBack } />
 		</MainComponent>
 	);
 };
