@@ -27,7 +27,11 @@ import {
 	useCheckWorkflowQuery,
 	useDeploymentWorkflowsQuery,
 } from './use-deployment-workflows-query';
-
+import {
+	CodePushExample,
+	NewWorkflowExample,
+	UploadArtifactExample,
+} from './workflow-yaml-examples';
 import './style.scss';
 
 interface DeploymentStyleProps {
@@ -80,8 +84,7 @@ export const DeploymentStyle = ( {
 			} ) ) || []
 		);
 
-		return mappedValues;
-		// return mappedValues.concat( { value: 'create-new', label: __( 'Create new workflow' ) } );
+		return mappedValues.concat( { value: 'create-new', label: __( 'Create new workflow' ) } );
 	}, [ workflows ] );
 
 	const {
@@ -134,12 +137,7 @@ export const DeploymentStyle = ( {
 					<p>{ __( 'Ensure that your workflow triggers on code push.' ) }</p>
 					<pre>
 						<code ref={ yamlCodeRef } className="language-yaml">
-							{ `
-on:
-  push:
-    branches:
-      - ${ repository.default_branch }
-        ` }
+							{ CodePushExample( repository.default_branch ) }
 						</code>
 					</pre>
 				</div>
@@ -154,13 +152,7 @@ on:
 					<p>{ __( "Ensure that your workflow generates an artifact named 'wpcom'." ) }</p>
 					<pre>
 						<code ref={ yamlCodeRef } className="language-yaml">
-							{ `
-
-    - name: Upload the artifact
-      uses: actions/upload-artifact@v4
-      with:
-        name: wpcom
-        ` }
+							{ UploadArtifactExample() }
 						</code>
 					</pre>
 				</div>
@@ -188,9 +180,10 @@ on:
 	const installWorkflow = async () => {
 		createDeployment( {
 			repositoryId: repository.id,
-			branchName: 'main',
+			branchName: branchName,
 			installationId,
 			fileName: '.github/workflows/wpcom.yml',
+			fileContent: NewWorkflowExample( repository.default_branch ),
 		} );
 	};
 
@@ -358,32 +351,7 @@ on:
 								<div>
 									<pre>
 										<code ref={ yamlCodeRef } className="language-yaml">
-											{
-												// eslint-disable-next-line inclusive-language/use-inclusive-words
-												`
-name: Publish Website
-
-on:
-  push:
-    branches:
-      - trunk
-  workflow_dispatch:
-
-  jobs:
-    name: Build-Artifact-Action
-    runs-on: ubuntu-latest
-    steps:
-
-	- uses: actions/checkout@master
-
-    - name: Upload the artifact
-      uses: actions/upload-artifact@v4
-      with:
-        name: wpcom
-        path: .
-
-`
-											}
+											{ NewWorkflowExample( repository.default_branch ) }
 										</code>
 									</pre>
 								</div>
@@ -395,14 +363,16 @@ on:
 					) }
 					{ deploymentStyle === 'custom' && selectedWorkflow !== 'none' && (
 						<div className="github-deployments-deployment-style__actions">
-							<Button
-								type="button"
-								busy={ isCheckingWorkflowFile || isRefreshingWorkflowValidation }
-								className="button form-button"
-								onClick={ handleVerifyWorkflow }
-							>
-								{ __( 'Verify workflow' ) }
-							</Button>
+							{ ! isCreatingNewWorkflow && (
+								<Button
+									type="button"
+									busy={ isCheckingWorkflowFile || isRefreshingWorkflowValidation }
+									className="button form-button"
+									onClick={ handleVerifyWorkflow }
+								>
+									{ __( 'Verify workflow' ) }
+								</Button>
+							) }
 							{ /* { workflowCheckResult?.conclusion === 'error' && (
 							<Button type="button" className="button form-button" onClick={ fixWorfklow }>
 								{ __( 'Fix workflow for me' ) }

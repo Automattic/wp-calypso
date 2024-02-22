@@ -9,6 +9,7 @@ interface MutationVariables {
 	branchName: string;
 	installationId: number;
 	fileName: string;
+	fileContent: string;
 }
 
 interface MutationResponse {
@@ -31,6 +32,7 @@ export const useCreateWorkflow = (
 			branchName,
 			installationId,
 			fileName,
+			fileContent,
 		}: MutationVariables ) =>
 			wp.req.post(
 				{
@@ -42,6 +44,7 @@ export const useCreateWorkflow = (
 					branch_name: branchName,
 					installation_id: installationId,
 					file_name: fileName,
+					file_content: fileContent,
 				}
 			),
 		...options,
