@@ -9,7 +9,7 @@ import {
 	Tooltip,
 } from '@wordpress/components';
 import { createInterpolateElement } from '@wordpress/element';
-import { Icon, arrowLeft, info } from '@wordpress/icons';
+import { Icon, arrowLeft, info, plus } from '@wordpress/icons';
 import { useState } from 'react';
 import { ellipsis } from './icons';
 
@@ -41,6 +41,16 @@ export const PluginsUpdateManager = () => {
 					<Text>Schedules</Text>
 					<div className="placeholder"></div>
 				</CardHeader>
+				<CardBody>
+					<div className="empty-state">
+						<Text as="p" align="center">
+							Set up plugin update schedules to ensure your site runs smoothly.
+						</Text>
+						<Button __next40pxDefaultSize icon={ plus } variant="primary">
+							Create a new schedule
+						</Button>
+					</div>
+				</CardBody>
 				<CardBody>
 					<table>
 						<thead>
