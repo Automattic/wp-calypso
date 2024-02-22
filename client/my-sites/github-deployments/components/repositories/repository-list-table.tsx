@@ -59,7 +59,7 @@ export const GitHubRepositoryListTable = ( {
 				</tbody>
 			</table>
 			<p className="github-deployments-adjust-permissions">
-				{ __( 'Missing some repositories?' ) }{ ' ' }
+				{ __( 'Missing GitHub repositories?' ) }{ ' ' }
 				<ExternalLink href="#"> { __( 'Adjust permissions on GitHub' ) } </ExternalLink>
 			</p>
 		</div>
