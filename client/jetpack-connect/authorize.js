@@ -1155,6 +1155,14 @@ export class JetpackAuthorize extends Component {
 		);
 	}
 
+	renderLiveRegion() {
+		return (
+			<div className="screen-reader-text" aria-live="assertive">
+				{ this.isAuthorizing() ? this.getButtonText() : '' }
+			</div>
+		);
+	}
+
 	render() {
 		const { translate } = this.props;
 		const wooDna = this.getWooDnaConfig();
@@ -1207,6 +1215,7 @@ export class JetpackAuthorize extends Component {
 						{ this.renderFooterLinks() }
 					</div>
 				</div>
+				{ this.renderLiveRegion() }
 			</MainWrapper>
 		);
 	}
