@@ -1,8 +1,8 @@
 import { __ } from '@wordpress/i18n';
 import { SortButton } from 'calypso/my-sites/github-deployments/components/sort-button/sort-button';
 import { SortDirection } from 'calypso/my-sites/github-deployments/components/sort-button/use-sort';
-import { DeploymentRun } from 'calypso/my-sites/github-deployments/deployments/use-code-deployments-query';
 import { DeploymentsRunItem } from './deployments-run-item';
+import { DeploymentRun } from './use-code-deployment-run-query';
 
 interface DeploymentsRunsTableProps {
 	deploymentsRuns: DeploymentRun[];

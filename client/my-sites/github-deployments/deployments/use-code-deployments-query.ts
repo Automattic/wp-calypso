@@ -1,6 +1,7 @@
 import { useQuery, UseQueryOptions } from '@tanstack/react-query';
 import wp from 'calypso/lib/wp';
 import { GITHUB_DEPLOYMENTS_QUERY_KEY } from '../constants';
+import type { DeploymentRun } from '../deployment-run-logs/use-code-deployment-run-query';
 
 export const CODE_DEPLOYMENTS_QUERY_KEY = 'code-deployments';
 
@@ -25,25 +26,6 @@ export interface CodeDeploymentData {
 export interface CreatedBy {
 	id: number;
 	name: string;
-}
-
-export interface DeploymentRun {
-	id: number;
-	code_deployment_id: number;
-	created_on: string;
-	started_on: string;
-	completed_on: string;
-	status: string;
-	failure_code: string;
-	triggered_by_user_id: number;
-	metadata: Metadata;
-	code_deployment?: CodeDeploymentData;
-}
-
-export interface Metadata {
-	commit_message: string;
-	commit_sha: string;
-	job_id: number;
 }
 
 export const useCodeDeploymentsQuery = (
