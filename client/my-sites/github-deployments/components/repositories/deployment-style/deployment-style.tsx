@@ -66,8 +66,9 @@ export const DeploymentStyle = ( {
 	const [ selectedWorkflow, setSelectedWorkflow ] = useState( workflowPath ?? 'none' );
 	const [ isCreatingNewWorkflow, setIsCreatingNewWorkflow ] = useState( false );
 	// const [ validationTriggered, setValidationTriggered ] = useState( false );
+	const [ isYamlValid, setIsYamlValid ] = useState( true );
 	const validationTriggered = false;
-	const [ errorMesseage, setErrorMesseage ] = useState( '' );
+	const [ errorMessage, setErrorMessage ] = useState( '' );
 	const isTemplateRepository = repository.owner === 'Automattic';
 	const yamlCodeRef = useRef( null );
 	const {
@@ -129,6 +130,25 @@ export const DeploymentStyle = ( {
 	} );
 
 	const [ workflowsValidations, setWorkflowValidations ] = useState< WorkflowsValidationItem[] >( [
+		{
+			label: __( 'The workflow file is a valid YAML' ),
+			key: 'valid_yaml_file',
+			item: (
+				<div>
+					<p>
+						{ __(
+							"Ensure that your workflow file contains a valid YAML structure. Here's an example:"
+						) }
+					</p>
+					<pre>
+						<code ref={ yamlCodeRef } className="language-yaml">
+							{ NewWorkflowExample( repository.default_branch ) }
+						</code>
+					</pre>
+				</div>
+			),
+			status: 'loading',
+		},
 		{
 			label: __( 'The workflow is triggered on push' ),
 			key: 'triggered_on_push',
@@ -197,6 +217,16 @@ export const DeploymentStyle = ( {
 	};
 
 	useEffect( () => {
+		const invalidYaml = workflowCheckResult?.checked_items?.find( ( checkedItem ) => {
+			return checkedItem.validation_name === 'valid_yaml_file' && checkedItem.status === 'error';
+		} );
+
+		if ( invalidYaml ) {
+			setIsYamlValid( false );
+		} else {
+			setIsYamlValid( true );
+		}
+
 		const workflowsValidationsChanged = workflowsValidations.map( ( validation ) => {
 			const item = workflowCheckResult?.checked_items?.find( ( checkedItem ) => {
 				return checkedItem.validation_name === validation.key;
@@ -231,7 +261,7 @@ export const DeploymentStyle = ( {
 		}
 
 		if ( deploymentStyle === 'custom' ) {
-			setErrorMesseage( '' );
+			setErrorMessage( '' );
 		}
 
 		if (
@@ -250,6 +280,24 @@ export const DeploymentStyle = ( {
 			Prism.highlightElement( yamlCodeRef.current );
 		}
 	}, [ workflowsValidations ] );
+
+	const RenderValidationIcon = ( { validationStatus }: { validationStatus: WorkFlowStates } ) => {
+		if ( ! isYamlValid ) {
+			return <RenderIcon state="error" />;
+		}
+		if ( isCheckingWorkflowFile || isRefreshingWorkflowValidation ) {
+			return <RenderIcon state="loading" />;
+		}
+
+		return <RenderIcon state={ validationStatus } />;
+	};
+
+	const shouldExpand = ( validation: WorkflowsValidationItem ) => {
+		return (
+			( isYamlValid && validation.status === 'error' ) ||
+			( ! isYamlValid && validation.key === 'valid_yaml_file' )
+		);
+	};
 
 	return (
 		<div className="github-deployments-deployment-style">
@@ -309,20 +357,15 @@ export const DeploymentStyle = ( {
 
 								{ workflowsValidations.map( ( validation ) => (
 									<FoldableCard
+										disabled={ validation.key !== 'valid_yaml_file' && ! isYamlValid }
 										key={ validation.key }
 										className={
 											validation.status === 'error' && validationTriggered ? 'error' : ''
 										}
-										expanded={ validation.status === 'error' }
+										expanded={ shouldExpand( validation ) }
 										header={
 											<>
-												<RenderIcon
-													state={
-														isCheckingWorkflowFile || isRefreshingWorkflowValidation
-															? 'loading'
-															: validation.status
-													}
-												/>
+												<RenderValidationIcon validationStatus={ validation.status } />
 												{ validation.label }
 											</>
 										}
@@ -358,8 +401,8 @@ export const DeploymentStyle = ( {
 							</FoldableCard>
 						</>
 					) }
-					{ deploymentStyle === 'custom' && errorMesseage && (
-						<FormInputValidation isError={ true } text={ errorMesseage } />
+					{ deploymentStyle === 'custom' && errorMessage && (
+						<FormInputValidation isError={ true } text={ errorMessage } />
 					) }
 					{ deploymentStyle === 'custom' && selectedWorkflow !== 'none' && (
 						<div className="github-deployments-deployment-style__actions">
