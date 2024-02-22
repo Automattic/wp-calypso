@@ -10,7 +10,10 @@ import { sprintf, __ } from '@wordpress/i18n';
 import { check, closeSmall } from '@wordpress/icons';
 import classNames from 'classnames';
 import { translate } from 'i18n-calypso';
-import { useEffect, useMemo, useState } from 'react';
+import Prism from 'prismjs';
+import 'prismjs/themes/prism.css';
+import 'prismjs/components/prism-yaml';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormRadiosBar from 'calypso/components/forms/form-radios-bar';
 import SupportInfo from 'calypso/components/support-info';
@@ -62,7 +65,7 @@ export const DeploymentStyle = ( {
 	const validationTriggered = false;
 	const [ errorMesseage, setErrorMesseage ] = useState( '' );
 	const isTemplateRepository = repository.owner === 'Automattic';
-
+	const yamlCodeRef = useRef( null );
 	const {
 		data: workflows,
 		isLoading: isFetchingWorkflows,
@@ -128,11 +131,17 @@ export const DeploymentStyle = ( {
 			key: 'triggered_on_push',
 			item: (
 				<div>
-					<p>{ __( "Ensure that your workflow generates an artifact named 'wpcom'." ) }</p>
-					<p>
-						- name: Upload the artifact <br></br>uses: actions/upload-artifact@v4 <br></br>
-						with: name: wpcom
-					</p>
+					<p>{ __( 'Ensure that your workflow triggers on code push.' ) }</p>
+					<pre>
+						<code ref={ yamlCodeRef } className="language-yaml">
+							{ `
+on:
+  push:
+    branches:
+      - trunk
+        ` }
+						</code>
+					</pre>
 				</div>
 			),
 			status: 'loading',
@@ -143,10 +152,17 @@ export const DeploymentStyle = ( {
 			item: (
 				<div>
 					<p>{ __( "Ensure that your workflow generates an artifact named 'wpcom'." ) }</p>
-					<p>
-						- name: Upload the artifact <br></br>uses: actions/upload-artifact@v4 <br></br>
-						with: name: wpcom
-					</p>
+					<pre>
+						<code ref={ yamlCodeRef } className="language-yaml">
+							{ `
+
+    - name: Upload the artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: wpcom
+        ` }
+						</code>
+					</pre>
 				</div>
 			),
 			status: 'loading',
@@ -235,6 +251,12 @@ export const DeploymentStyle = ( {
 			onChooseWorkflow?.( selectedWorkflow );
 		}
 	}, [ onChooseWorkflow, deploymentStyle, selectedWorkflow ] );
+
+	useEffect( () => {
+		if ( yamlCodeRef.current ) {
+			Prism.highlightElement( yamlCodeRef.current );
+		}
+	}, [ workflowsValidations ] );
 
 	return (
 		<div className="github-deployments-deployment-style">
@@ -334,10 +356,36 @@ export const DeploymentStyle = ( {
 								screenReaderText="More"
 							>
 								<div>
-									<p>
-										- name: Upload the artifact <br></br>uses: actions/upload-artifact@v4 <br></br>
-										with: name: wpcom
-									</p>
+									<pre>
+										<code ref={ yamlCodeRef } className="language-yaml">
+											{
+												// eslint-disable-next-line inclusive-language/use-inclusive-words
+												`
+name: Publish Website
+
+on:
+  push:
+    branches:
+      - trunk
+  workflow_dispatch:
+
+  jobs:
+    name: Build-Artifact-Action
+    runs-on: ubuntu-latest
+    steps:
+
+	- uses: actions/checkout@master
+
+    - name: Upload the artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: wpcom
+        path: .
+
+`
+											}
+										</code>
+									</pre>
 								</div>
 							</FoldableCard>
 						</>
