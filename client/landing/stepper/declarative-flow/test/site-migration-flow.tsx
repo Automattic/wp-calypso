@@ -11,7 +11,7 @@ describe( 'Site Migration Flow', () => {
 			const { runUseStepNavigationSubmit } = renderFlow( siteMigrationFlow );
 
 			runUseStepNavigationSubmit( {
-				currentStep: STEPS.SITE_MIGRATION_SOURCE.slug,
+				currentStep: STEPS.SITE_MIGRATION_IMPORT_OR_MIGRATE.slug,
 				dependencies: {
 					destination: 'migrate',
 				},
@@ -27,7 +27,7 @@ describe( 'Site Migration Flow', () => {
 			const { runUseStepNavigationSubmit } = renderFlow( siteMigrationFlow );
 
 			runUseStepNavigationSubmit( {
-				currentStep: STEPS.SITE_MIGRATION_SOURCE.slug,
+				currentStep: STEPS.SITE_MIGRATION_IMPORT_OR_MIGRATE.slug,
 				dependencies: {
 					destination: 'upgrade',
 				},

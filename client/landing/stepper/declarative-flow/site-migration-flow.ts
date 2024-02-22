@@ -16,7 +16,7 @@ const siteMigration: Flow = {
 
 	useSteps() {
 		return [
-			STEPS.SITE_MIGRATION_SOURCE,
+			STEPS.SITE_MIGRATION_IMPORT_OR_MIGRATE,
 			STEPS.SITE_MIGRATION_PLUGIN_INSTALL,
 			STEPS.PROCESSING,
 			STEPS.WAIT_FOR_ATOMIC,
@@ -134,7 +134,7 @@ const siteMigration: Flow = {
 			const siteId = getSiteIdBySlug( siteSlug );
 
 			switch ( currentStep ) {
-				case STEPS.SITE_MIGRATION_SOURCE.slug: {
+				case STEPS.SITE_MIGRATION_IMPORT_OR_MIGRATE.slug: {
 					// Switch to the normal Import flow.
 					if ( providedDependencies?.destination === 'import' ) {
 						return exitFlow(

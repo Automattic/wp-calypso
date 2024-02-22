@@ -8,7 +8,7 @@ import './style.scss';
 
 type SubmitDestination = 'import' | 'migrate' | 'upgrade';
 
-const SiteMigrationSource: Step = function ( { navigation } ) {
+const SiteMigrationImportOrMigrate: Step = function ( { navigation } ) {
 	const translate = useTranslate();
 	const site = useSite();
 	const canInstallPlugins = site?.plan?.features?.active.find(
@@ -58,4 +58,4 @@ const SiteMigrationSource: Step = function ( { navigation } ) {
 	);
 };
 
-export default SiteMigrationSource;
+export default SiteMigrationImportOrMigrate;
