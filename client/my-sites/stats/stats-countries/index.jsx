@@ -14,10 +14,11 @@ class StatCountries extends Component {
 		period: PropTypes.object,
 		date: PropTypes.string,
 		listItemClassName: PropTypes.string,
+		className: PropTypes.string,
 	};
 
 	render() {
-		const { summary, query, period, listItemClassName } = this.props;
+		const { summary, query, period, listItemClassName, className } = this.props;
 		const moduleStrings = statsStrings();
 
 		return (
@@ -31,6 +32,7 @@ class StatCountries extends Component {
 				moduleStrings={ moduleStrings.countries }
 				statType="statsCountryViews"
 				listItemClassName={ listItemClassName }
+				className={ className }
 			>
 				<Geochart query={ query } />
 			</StatsModule>
