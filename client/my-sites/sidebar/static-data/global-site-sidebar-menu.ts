@@ -33,7 +33,10 @@ export default function globalSiteSidebarMenu( {
 			type: 'menu-item',
 			url: `https://${ selectedSiteSlug }/wp-admin`,
 			className: 'sidebar__menu-item-wp-admin',
-			forceExternalLink: true,
+			forceShowExternalIcon: true,
+		},
+		{
+			type: 'separator',
 		},
 		{
 			slug: 'upgrades',
