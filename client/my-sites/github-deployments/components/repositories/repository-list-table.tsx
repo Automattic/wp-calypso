@@ -42,7 +42,7 @@ export const GitHubRepositoryListTable = ( {
 								direction={ sortDirection }
 								onChange={ onSortChange }
 							>
-								<span>{ __( 'Last update' ) }</span>
+								<span>{ __( 'Last updated' ) }</span>
 							</SortButton>
 						</th>
 						<th> </th>

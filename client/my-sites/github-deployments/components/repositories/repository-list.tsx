@@ -1,3 +1,4 @@
+import { Spinner } from '@wordpress/components';
 import { useLayoutEffect, useState } from 'react';
 import Pagination from 'calypso/components/pagination';
 import {
@@ -9,7 +10,6 @@ import {
 	GitHubRepositoryData,
 	useGithubRepositoriesQuery,
 } from '../../use-github-repositories-query';
-import { GitHubLoadingPlaceholder } from '../loading-placeholder';
 import { GitHubRepositoryListTable } from './repository-list-table';
 
 const pageSize = 10;
@@ -51,7 +51,11 @@ export const GitHubBrowseRepositoriesList = ( {
 	);
 
 	if ( isLoadingRepositories ) {
-		return <GitHubLoadingPlaceholder />;
+		return (
+			<div className="github-deployments-repositories__spinner-container">
+				<Spinner />
+			</div>
+		);
 	}
 
 	return (

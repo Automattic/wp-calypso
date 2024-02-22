@@ -1,7 +1,11 @@
+.card.action-panel {
+	padding: 24px;
+}
+
 .github-deployments-repositories {
 	display: flex;
 	flex-direction: column;
-	gap: 24px;
+	gap: 16px;
 
 	&__search-bar {
 		display: flex;
@@ -13,6 +17,18 @@
 		input {
 			max-width: 400px;
 			height: 43px;
+			font-size: $font-body-small !important;
+		}
+	}
+
+	&__spinner-container {
+		display: flex;
+		justify-content: center;
+		padding: 32px 24px;
+
+		.components-spinner {
+			margin-left: auto;
+			margin-right: auto;
 		}
 	}
 }
@@ -21,6 +37,7 @@
 
 	table {
 		border-collapse: collapse;
+		margin-bottom: 8px;
 	}
 
 	th,
@@ -30,7 +47,7 @@
 	}
 
 	th:first-child {
-		width: 350px;
+		width: 285px;
 	}
 
 	tbody tr:not(:last-of-type) {
@@ -44,10 +61,8 @@
 	&__name {
 		display: flex;
 		align-items: center;
-		span {
-			color: var(--Gray-Gray-40, #787c82);
-			font-size: $font-body-small;
-		}
+		color: var(--Gray-Gray-40, #787c82);
+		font-weight: 500 !important;
 	}
 
 	tr td:last-child {
@@ -56,6 +71,5 @@
 }
 
 .github-deployments-adjust-permissions {
-	font-size: $font-body-small;
-	margin-bottom: 0;
+	margin-bottom: 16px;
 }
