@@ -20,7 +20,10 @@ import {
 	getCurrentUserDate,
 	getCurrentUserSiteCount,
 } from 'calypso/state/current-user/selectors';
-import { getShouldShowGlobalSidebar } from 'calypso/state/global-sidebar/selectors';
+import {
+	getShouldShowGlobalSidebar,
+	getShouldShowGlobalSiteSidebar,
+} from 'calypso/state/global-sidebar/selectors';
 import { savePreference } from 'calypso/state/preferences/actions';
 import { getPreference, isFetchingPreferences } from 'calypso/state/preferences/selectors';
 import getCurrentRoute from 'calypso/state/selectors/get-current-route';
@@ -77,6 +80,7 @@ class MasterbarLoggedIn extends Component {
 		hasDismissedThePopover: PropTypes.bool,
 		isUserNewerThanNewNavigation: PropTypes.bool,
 		loadHelpCenterIcon: PropTypes.bool,
+		shouldShowGlobalSiteSidebar: PropTypes.bool,
 	};
 
 	subscribeToViewPortChanges() {
@@ -123,8 +127,25 @@ class MasterbarLoggedIn extends Component {
 		this.unsubscribeResponsiveMenuViewPortChanges?.();
 	}
 
+	handleToggleMobileMenu = () => {
+		this.props.recordTracksEvent( 'calypso_masterbar_menu_clicked' );
+		// this.handleLayoutFocus( 'sites' );
+		if ( 'sidebar' === this.props.currentLayoutFocus ) {
+			this.props.setNextLayoutFocus( 'content' );
+		} else {
+			this.props.setNextLayoutFocus( 'sidebar' );
+		}
+		this.props.activateNextLayoutFocus();
+	};
+
 	clickMySites = () => {
 		this.props.recordTracksEvent( 'calypso_masterbar_my_sites_clicked' );
+
+		if ( this.props.isMobileGlobalNavVisible ) {
+			// Fall through to navigate to /sites
+			return;
+		}
+
 		this.handleLayoutFocus( 'sites' );
 		this.props.activateNextLayoutFocus();
 
@@ -202,6 +223,10 @@ class MasterbarLoggedIn extends Component {
 		return section === this.props.section && ! this.props.isNotificationsShowing;
 	};
 
+	isSidebarOpen = () => {
+		return 'sidebar' === this.props.currentLayoutFocus;
+	};
+
 	wordpressIcon = () => {
 		// WP icon replacement for "horizon" environment
 		if ( config( 'hostname' ) === 'horizon.wordpress.com' ) {
@@ -211,21 +236,40 @@ class MasterbarLoggedIn extends Component {
 		return 'my-sites';
 	};
 
+	/**
+	 * Hamburger menu used by the global nav.
+	 * In nav unification, the menu is openned with the Sites button
+	 */
+	renderSidebarMobileMenu() {
+		const { isResponsiveMenu } = this.state;
+		const { translate } = this.props;
+
+		if ( isResponsiveMenu ) {
+			return (
+				<Item
+					tipTarget="Menu"
+					icon="menu"
+					onClick={ this.handleToggleMobileMenu }
+					isActive={ this.isSidebarOpen() }
+					className="masterbar__item-menu"
+					tooltip={ translate( 'Menu' ) }
+				/>
+			);
+		}
+		return null;
+	}
+
 	renderGlobalMySites() {
-		const { siteSlug, translate, section } = this.props;
-		const { isMenuOpen, isResponsiveMenu } = this.state;
+		const { translate, section } = this.props;
+		const { isResponsiveMenu } = this.state;
 
 		let mySitesUrl = '/sites';
 
 		const icon =
 			this.state.isMobile && this.props.isInEditor ? 'chevron-left' : this.wordpressIcon();
 
-		if ( 'sites' === section && isResponsiveMenu ) {
+		if ( 'sites-dashboard' === section && isResponsiveMenu ) {
 			mySitesUrl = '';
-		}
-		if ( ! siteSlug && section === 'sites-dashboard' ) {
-			// we are the /sites page but there is no site. Disable the home link
-			return <Item icon={ icon } disabled />;
 		}
 
 		return (
@@ -234,7 +278,7 @@ class MasterbarLoggedIn extends Component {
 				tipTarget="my-sites"
 				icon={ icon }
 				onClick={ this.clickMySites }
-				isActive={ this.isActive( 'sites' ) && ! isMenuOpen }
+				isActive={ this.isActive( 'sites-dashboard' ) && ! this.isSidebarOpen() }
 				tooltip={ translate( 'Manage your sites' ) }
 			/>
 		);
@@ -445,7 +489,7 @@ class MasterbarLoggedIn extends Component {
 		const { translate } = this.props;
 		return (
 			<Notifications
-				isShowing={ this.props.isNotificationsShowing }
+				isShowing={ true }
 				isActive={ this.isActive( 'notifications' ) }
 				className="masterbar__item-notifications"
 				tooltip={ translate( 'Manage your notifications' ) }
@@ -555,12 +599,18 @@ class MasterbarLoggedIn extends Component {
 			return this.renderCheckout();
 		}
 
-		if ( this.props.shouldShowGlobalSidebar ) {
+		if ( this.props.isMobileGlobalNavVisible ) {
 			return (
 				<>
 					<Masterbar>
 						<div className="masterbar__section masterbar__section--left">
+							{ this.renderSidebarMobileMenu() }
 							{ this.renderGlobalMySites() }
+						</div>
+						<div className="masterbar__section masterbar__section--right">
+							{ this.renderSearch() }
+							{ this.renderCart() }
+							{ this.renderNotifications() }
 						</div>
 					</Masterbar>
 				</>
@@ -575,7 +625,8 @@ class MasterbarLoggedIn extends Component {
 							{ this.renderMySites() }
 						</div>
 						<div className="masterbar__section masterbar__section--right">
-							{ this.renderHelpCenter() }
+							{ this.renderCart() }
+							{ this.renderNotifications() }
 						</div>
 					</Masterbar>
 				);
@@ -639,8 +690,17 @@ export default connect(
 			isSiteMigrationActiveRoute( state );
 
 		const siteCount = getCurrentUserSiteCount( state ) ?? 0;
-		const shouldShowGlobalSidebar = getShouldShowGlobalSidebar( state, siteId, sectionGroup );
-
+		const shouldShowGlobalSidebar = getShouldShowGlobalSidebar(
+			state,
+			currentSelectedSiteId,
+			sectionGroup
+		);
+		const shouldShowGlobalSiteSidebar = getShouldShowGlobalSiteSidebar(
+			state,
+			currentSelectedSiteId,
+			sectionGroup
+		);
+		const isDesktop = isWithinBreakpoint( '>782px' );
 		return {
 			isCustomerHomeEnabled: canCurrentUserUseCustomerHome( state, siteId ),
 			isNotificationsShowing: isNotificationsOpen( state ),
@@ -671,7 +731,8 @@ export default connect(
 				new Date( getCurrentUserDate( state ) ).getTime() > NEW_MASTERBAR_SHIPPING_DATE,
 			currentRoute: getCurrentRoute( state ),
 			isSiteTrialExpired: isTrialExpired( state, siteId ),
-			shouldShowGlobalSidebar,
+			isMobileGlobalNavVisible:
+				( shouldShowGlobalSidebar || shouldShowGlobalSiteSidebar ) && ! isDesktop,
 		};
 	},
 	{
