@@ -25,10 +25,7 @@ export const gitHubDeploymentsAvailableQueryOptions = ( {
 	queryFn: () => fetchFeatureAvailability( { siteId } ),
 	retry: false,
 	retryOnMount: false,
-	refetchOnMount: false,
-	meta: {
-		persist: ( data: GitHubDeploymentsAvailableResponse | undefined ) => data?.available,
-	},
+	refetchOnMount: true,
 } );
 
 export const useIsGitHubDeploymentsAvailableQuery = ( {
