@@ -110,6 +110,7 @@ export default function SitesDashboardV2() {
 		[ setSitesViewState ]
 	);
 
+	// Filter selection
 	useEffect( () => {
 		const filtersSelected =
 			sitesViewState.filters?.map( ( filter ) => {
@@ -123,6 +124,7 @@ export default function SitesDashboardV2() {
 		updateDashboardURLQueryArgs( { filter: filtersSelected || [] } );
 	}, [ sitesViewState.filters ] );
 
+	// Search query
 	useEffect( () => {
 		updateDashboardURLQueryArgs( { search: sitesViewState.search } );
 	}, [ sitesViewState.search ] );
