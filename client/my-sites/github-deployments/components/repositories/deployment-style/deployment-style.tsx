@@ -303,7 +303,7 @@ export const DeploymentStyle = ( {
 			<FormRadiosBar
 				items={ [
 					{ label: __( 'Simple' ), value: 'simple' },
-					{ label: __( 'Customizable' ), value: 'custom' },
+					{ label: __( 'Advanced' ), value: 'custom' },
 				] }
 				checked={ deploymentStyle }
 				onChange={ ( event ) => handleDeploymentStyleChange( event.currentTarget.value ) }

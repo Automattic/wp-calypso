@@ -21,9 +21,19 @@
 		border: 1px solid var(--color-neutral-10);
 		border-radius: 2px;
 		background-color: #fff;
+		margin-bottom: 4px;
+	}
+
+	&__destination-directory {
+		margin-bottom: 24px;
 	}
 
 	&__automatic-deploys {
+		margin-top: 24px !important;
+		margin-bottom: 32px !important;
+	}
+
+	&__automatic-deploys-switch {
 		display: flex;
 		align-items: center;
 		gap: 8px;
