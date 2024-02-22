@@ -100,7 +100,8 @@ export function userSettingsSaveFailure( { settingsOverride }, error ) {
 
 	// If every property in settingsOverride is to be suppressed, don't show a notification
 	if (
-		Object.keys( settingsOverride ).every( ( key ) =>
+		settingsOverride &&
+		Object.keys( settingsOverride || {} ).every( ( key ) =>
 			PROPERTIES_TO_SUPRESS_NOTIFICATIONS.has( key )
 		)
 	) {
@@ -137,6 +138,7 @@ export const userSettingsSaveSuccess =
 
 		// If every property in settingsOverride is to be suppressed, don't show a notification
 		if (
+			settingsOverride &&
 			Object.keys( settingsOverride ).every( ( key ) =>
 				PROPERTIES_TO_SUPRESS_NOTIFICATIONS.has( key )
 			)
