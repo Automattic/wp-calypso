@@ -9,9 +9,12 @@ export const getProductPricingInfo = (
 	quantity: number
 ) => {
 	const bundle = product?.supported_bundles?.find( ( bundle ) => bundle.quantity === quantity );
-	const productBundleCost = bundle
-		? parseFloat( bundle.amount )
-		: parseFloat( product?.amount ) || 0;
+	const bundleAmount =
+		bundle && bundle.price_per_unit_float && bundle.quantity
+			? bundle.price_per_unit_float * bundle.quantity
+			: 0;
+
+	const productBundleCost = bundle ? bundleAmount : parseFloat( product?.amount ) || 0;
 
 	const isDailyPricing = product.price_interval === 'day';
 
