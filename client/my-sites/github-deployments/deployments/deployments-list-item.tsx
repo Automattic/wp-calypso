@@ -1,7 +1,7 @@
 import page from '@automattic/calypso-router';
 import { Gridicon } from '@automattic/components';
 import { useLocale } from '@automattic/i18n-utils';
-import { DropdownMenu, ExternalLink, MenuGroup, MenuItem, Spinner } from '@wordpress/components';
+import { DropdownMenu, MenuGroup, MenuItem, Spinner } from '@wordpress/components';
 import { Fragment, useState } from '@wordpress/element';
 import { sprintf } from '@wordpress/i18n';
 import { Icon, linkOff } from '@wordpress/icons';
@@ -69,7 +69,7 @@ export const DeploymentsListItem = ( { deployment }: DeploymentsListItemProps ) 
 	const [ isDisconnectRepositoryDialogVisible, setDisconnectRepositoryDialogVisibility ] =
 		useState( false );
 
-	const run = deployment.current_deployed_run;
+	const run = deployment.current_deployment_run;
 	const [ installation, repo ] = deployment.repository_name.split( '/' );
 
 	return (
@@ -110,13 +110,6 @@ export const DeploymentsListItem = ( { deployment }: DeploymentsListItemProps ) 
 											} }
 										>
 											{ __( 'Open deployment list' ) }
-										</MenuItem>
-										<MenuItem onClick={ onClose }>
-											<ExternalLink
-												href={ `https://github.com/${ deployment.repository_name }/commits/${ deployment.branch_name }` }
-											>
-												{ __( 'Read logs on GitHub' ) }
-											</ExternalLink>
 										</MenuItem>
 										<MenuItem
 											onClick={ () => {

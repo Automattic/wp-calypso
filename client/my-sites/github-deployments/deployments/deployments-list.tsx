@@ -35,8 +35,8 @@ function applySort( deployments: CodeDeploymentData[], key: string, direction: S
 		case 'status':
 			if ( direction === 'asc' ) {
 				return deployments.sort( ( left, right ) => {
-					const leftRun = left.current_deployed_run;
-					const rightRun = right.current_deployed_run;
+					const leftRun = left.current_deployment_run;
+					const rightRun = right.current_deployment_run;
 					if ( leftRun && rightRun ) {
 						return leftRun?.status.localeCompare( rightRun.status );
 					} else if ( leftRun ) {
@@ -46,8 +46,8 @@ function applySort( deployments: CodeDeploymentData[], key: string, direction: S
 				} );
 			}
 			return deployments.sort( ( left, right ) => {
-				const leftRun = left.current_deployed_run;
-				const rightRun = right.current_deployed_run;
+				const leftRun = left.current_deployment_run;
+				const rightRun = right.current_deployment_run;
 				if ( leftRun && rightRun ) {
 					return leftRun?.status.localeCompare( rightRun.status );
 				} else if ( leftRun ) {
