@@ -404,28 +404,28 @@ $grid-vertical-gutters: 32px;
 
 			/* Half row */
 			.stats__flexible-grid-item--half {
-				flex: 0 1 calc(50% - $grid-horizontal-gutters / 2);
+				flex: 0 1 auto;
 				box-sizing: border-box;
 				max-width: calc(50% - $grid-horizontal-gutters / 2);
 			}
 
 			/* Third row - two blocks */
 			.stats__flexible-grid-item--one-third--once-space {
-				flex: 0 1 calc(33.33% - #{gutter-offset(2, 1)});
+				flex: 0 1 auto;
 				box-sizing: border-box;
 				max-width: calc(33.33% - #{gutter-offset(2, 1)}); // at certain breakpints the container doesn't want to shrink without max-width
 			}
 
 			/* Third row - three blocks */
 			.stats__flexible-grid-item--one-third--two-spaces {
-				flex: 0 1 calc(33.33% - #{gutter-offset(3, 2)});
+				flex: 0 1 auto;
 				box-sizing: border-box;
 				max-width: calc(33.33% - #{gutter-offset(3, 2)});
 			}
 
 			/* Third row - two blocks */
 			.stats__flexible-grid-item--two-thirds {
-				flex: 0 1 calc(66.66% - #{gutter-offset(2, 1)});
+				flex: 0 1 auto;
 				box-sizing: border-box;
 				max-width: calc(66.66% - #{gutter-offset(2, 1)});
 			}
@@ -440,7 +440,7 @@ $grid-vertical-gutters: 32px;
 
 				// move 1/3 to 1/2
 				.stats__flexible-grid-item--half--large {
-					flex: 0 1 calc(50% - $grid-horizontal-gutters / 2);
+					flex: 0 1 auto;
 					box-sizing: border-box;
 					max-width: calc(50% - $grid-horizontal-gutters / 2);
 				}

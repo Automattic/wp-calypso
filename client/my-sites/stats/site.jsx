@@ -502,6 +502,7 @@ class StatsSite extends Component {
 										'stats__flexible-grid-item--half': ! this.isModuleHidden( 'videos' ),
 										'stats__flexible-grid-item--full': this.isModuleHidden( 'videos' ),
 									},
+									'stats__flexible-grid-item--full--large',
 									'stats__flexible-grid-item--full--medium'
 								) }
 							/>
@@ -519,7 +520,10 @@ class StatsSite extends Component {
 									statType="statsFileDownloads"
 									showSummaryLink
 									useShortLabel={ true }
-									className={ classNames( 'stats__flexible-grid-item--half' ) }
+									className={ classNames(
+										'stats__flexible-grid-item--half',
+										'stats__flexible-grid-item--full--large'
+									) }
 								/>
 							)
 						}
