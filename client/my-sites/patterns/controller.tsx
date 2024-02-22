@@ -1,4 +1,4 @@
-import { getPatternsQueryOptions } from 'calypso/my-sites/patterns/lib/get-patterns-query-options';
+import { getPatternsQueryOptions } from 'calypso/my-sites/patterns/hooks/use-patterns';
 import Patterns from 'calypso/my-sites/patterns/patterns';
 import { getCurrentUserLocale } from 'calypso/state/current-user/selectors';
 import type { Context as PageJSContext } from '@automattic/calypso-router';
