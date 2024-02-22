@@ -41,7 +41,7 @@ export const PluginsUpdateManager = () => {
 			div: <div className="tooltip--selected-plugins" />,
 			br: <br />,
 		}
-	) as string;
+	);
 
 	return (
 		<>
@@ -107,8 +107,7 @@ export const PluginsUpdateManager = () => {
 								<td>
 									3
 									<Tooltip
-										className="selected-plugins"
-										text={ toolbarPluginsText }
+										text={ toolbarPluginsText as unknown as string }
 										position="middle right"
 										delay={ 0 }
 										hideOnClick={ false }
