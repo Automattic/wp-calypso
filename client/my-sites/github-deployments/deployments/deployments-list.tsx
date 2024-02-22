@@ -25,11 +25,11 @@ function applySort( deployments: CodeDeploymentData[], key: string, direction: S
 		case 'date':
 			if ( direction === 'asc' ) {
 				return deployments.sort( ( left, right ) => {
-					return left.updated_on.localeCompare( right.updated_on );
+					return left.updated_on - right.updated_on;
 				} );
 			}
 			return deployments.sort( ( left, right ) => {
-				return left.updated_on.localeCompare( right.updated_on ) * -1;
+				return right.updated_on - left.updated_on;
 			} );
 
 		case 'status':

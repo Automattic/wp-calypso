@@ -50,7 +50,7 @@ export const DeploymentsRunItem = ( { run }: DeploymentsListItemProps ) => {
 					<DeploymentStatus status={ run.status as DeploymentStatusValue } />
 				</td>
 				<td>
-					<span>{ formatDate( locale, new Date( deployment.updated_on ) ) }</span>
+					<span>{ formatDate( locale, new Date( deployment.updated_on * 1000 ) ) }</span>
 				</td>
 				<td>
 					<DeploymentDuration run={ run } />
