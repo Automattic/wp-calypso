@@ -2,8 +2,10 @@ import { useLocale } from '@automattic/i18n-utils';
 import { useSelect, useDispatch } from '@wordpress/data';
 import { useEffect } from 'react';
 import { getLocaleFromQueryParam, getLocaleFromPathname } from 'calypso/boot/locale';
+import { addQueryArgs } from 'calypso/lib/url';
 import { useSiteSlugParam } from '../hooks/use-site-slug-param';
 import { USER_STORE, ONBOARD_STORE, SITE_STORE } from '../stores';
+import { goToCheckout } from '../utils/checkout';
 import { getLoginUrl } from '../utils/path';
 import { recordSubmitStep } from './internals/analytics/record-submit-step';
 import { STEPS } from './internals/steps';
@@ -19,6 +21,7 @@ const siteMigration: Flow = {
 			STEPS.SITE_MIGRATION_SOURCE,
 			STEPS.SITE_MIGRATION_PLUGIN_INSTALL,
 			STEPS.PROCESSING,
+			STEPS.SITE_MIGRATION_UPGRADE_PLAN,
 			STEPS.WAIT_FOR_ATOMIC,
 			STEPS.WAIT_FOR_PLUGIN_INSTALL,
 			STEPS.SITE_MIGRATION_INSTRUCTIONS,
@@ -167,6 +170,30 @@ const siteMigration: Flow = {
 					return navigate( STEPS.PROCESSING.slug, {
 						currentStep,
 					} );
+				}
+
+				case STEPS.SITE_MIGRATION_UPGRADE_PLAN.slug: {
+					if ( providedDependencies?.goToCheckout ) {
+						const destination = addQueryArgs(
+							{
+								flags: 'onboarding/new-migration-flow',
+								siteSlug,
+							},
+							'/setup/site-migration/site-migration-instructions'
+						);
+						goToCheckout( {
+							flowName: 'site-migration',
+							stepName: 'site-migration-upgrade-plan',
+							siteSlug: siteSlug,
+							destination: destination,
+							plan: providedDependencies.plan as string,
+						} );
+						return;
+					}
+					if ( providedDependencies?.verifyEmail ) {
+						// not yet implemented
+						return;
+					}
 				}
 
 				case STEPS.WAIT_FOR_PLUGIN_INSTALL.slug: {
