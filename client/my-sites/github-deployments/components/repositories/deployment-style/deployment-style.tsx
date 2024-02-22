@@ -138,7 +138,7 @@ export const DeploymentStyle = ( {
 on:
   push:
     branches:
-      - trunk
+      - ${ repository.default_branch }
         ` }
 						</code>
 					</pre>
