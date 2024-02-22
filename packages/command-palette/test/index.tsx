@@ -9,22 +9,6 @@ import { getCurrentRoutePattern } from '../../../state/selectors/get-current-rou
 import CommandPalette from '../index';
 import { useCommandPalette } from '../use-command-palette';
 
-const INITIAL_STATE = {
-	sites: {
-		items: {},
-	},
-	currentUser: {
-		capabilities: {
-			[ 1 ]: {
-				manage_options: true,
-			},
-		},
-	},
-	ui: {
-		selectedSiteId: 1,
-	},
-};
-
 const commands = [
 	{
 		name: 'getHelp',
