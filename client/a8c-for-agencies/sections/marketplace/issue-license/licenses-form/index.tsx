@@ -176,7 +176,7 @@ export default function LicensesForm( {
 		[ dispatch, handleSelectBundleLicense, quantity, selectedLicenses, setSelectedLicenses ]
 	);
 
-	const isReady = true;
+	const isReady = true; // FIXME: Fix this with actual form ready state
 
 	const isSelected = useCallback(
 		( slug: string | string[] ) =>
@@ -257,7 +257,7 @@ export default function LicensesForm( {
 					title={ translate( 'Plans' ) }
 					description={ translate(
 						'Save big with comprehensive bundles of Jetpack security, performance, and growth tools.'
-					) }
+					) } // FIXME: Add proper description for A4A
 					isTwoColumns
 				>
 					{ getProductCards( plans ) }

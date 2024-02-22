@@ -1,11 +1,13 @@
 // FIXME: Lets decide later if we need to move the calypso/jetpack-cloud imports to a shared common folder.
+import { Button } from '@automattic/components';
 import { useBreakpoint } from '@automattic/viewport-react';
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
-import { useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import Layout from 'calypso/a8c-for-agencies/components/layout';
 import LayoutBody from 'calypso/a8c-for-agencies/components/layout/body';
 import LayoutHeader, {
+	LayoutHeaderActions as Actions,
 	LayoutHeaderSubtitle as Subtitle,
 	LayoutHeaderTitle as Title,
 } from 'calypso/a8c-for-agencies/components/layout/header';
@@ -15,6 +17,8 @@ import LayoutNavigation, {
 import LayoutTop from 'calypso/a8c-for-agencies/components/layout/top';
 import MobileSidebarNavigation from 'calypso/a8c-for-agencies/components/sidebar/mobile-sidebar-navigation';
 import { useProductBundleSize } from 'calypso/jetpack-cloud/sections/partner-portal/primary/issue-license/hooks/use-product-bundle-size';
+import ReviewLicenses from 'calypso/jetpack-cloud/sections/partner-portal/primary/issue-license/review-licenses';
+import TotalCost from 'calypso/jetpack-cloud/sections/partner-portal/primary/issue-license/total-cost';
 import { useDispatch, useSelector } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import getSites from 'calypso/state/selectors/get-sites';
@@ -31,12 +35,33 @@ export default function IssueLicense( { siteId, suggestedProduct }: AssignLicenc
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 
-	const { selectedSize, setSelectedSize, availableSizes } = useProductBundleSize( true );
-
 	const [ selectedLicenses, setSelectedLicenses ] = useState< SelectedLicenseProp[] >( [] );
-	const [ showReviewLicenses ] = useState< boolean >( false );
-
 	const [ selectedSite, setSelectedSite ] = useState< SiteDetails | null | undefined >( null );
+	const [ showReviewLicenses, setShowReviewLicenses ] = useState< boolean >( false );
+
+	const selectedLicenseCount = selectedLicenses
+		.map( ( license ) => license.quantity )
+		.reduce( ( a, b ) => a + b, 0 );
+
+	const { selectedSize, setSelectedSize, availableSizes } = useProductBundleSize( true );
+	const isReady = true; // FIXME: Fix this with actual form ready state
+
+	const onShowReviewLicensesModal = useCallback( () => {
+		setShowReviewLicenses( true );
+		dispatch(
+			recordTracksEvent( 'calypso_a4a_issue_license_review_licenses_show', {
+				total_licenses: selectedLicenseCount,
+				items: selectedLicenses
+					?.map( ( license ) => `${ license.slug } x ${ license.quantity }` )
+					.join( ',' ),
+			} )
+		);
+	}, [ dispatch, selectedLicenseCount, selectedLicenses ] );
+
+	const onDismissReviewLicensesModal = useCallback( () => {
+		setShowReviewLicenses( false );
+		dispatch( recordTracksEvent( 'calypso_a4a_issue_license_review_licenses_dimiss' ) );
+	}, [ dispatch ] );
 
 	const sites = useSelector( getSites );
 
@@ -73,6 +98,8 @@ export default function IssueLicense( { siteId, suggestedProduct }: AssignLicenc
 	const selectedCount = selectedLicenses.filter( ( license ) => license.quantity === selectedSize )
 		?.length;
 
+	const showBundle = ! selectedSite && availableSizes.length > 1;
+
 	const navItems = availableSizes.map( ( size ) => {
 		const count = selectedLicenses.filter( ( license ) => license.quantity === size ).length;
 		return {
@@ -100,40 +127,94 @@ export default function IssueLicense( { siteId, suggestedProduct }: AssignLicenc
 		...( selectedCount && { selectedCount } ),
 	};
 
+	// Group licenses by slug and sort them by quantity
+	const getGroupedLicenses = useCallback( () => {
+		return Object.values(
+			selectedLicenses.reduce(
+				( acc: Record< string, SelectedLicenseProp[] >, license ) => (
+					( acc[ license.slug ] = ( acc[ license.slug ] || [] ).concat( license ) ), acc
+				),
+				{}
+			)
+		)
+			.map( ( group ) => group.sort( ( a, b ) => a.quantity - b.quantity ) )
+			.flat();
+	}, [ selectedLicenses ] );
+
 	return (
-		<Layout
-			className={ classNames( 'issue-license' ) }
-			title={ translate( 'Issue a new License' ) }
-			wide
-			withBorder
-			sidebarNavigation={ <MobileSidebarNavigation /> }
-		>
-			<LayoutTop>
-				<AssignLicenseStepProgress
-					currentStep={ currentStep }
-					selectedSite={ selectedSite }
-					isBundleLicensing
-				/>
-
-				<LayoutHeader showStickyContent={ showStickyContent }>
-					<Title>{ translate( 'Issue product licenses' ) } </Title>
-					<Subtitle>{ subtitle }</Subtitle>
-				</LayoutHeader>
-
-				<LayoutNavigation { ...selectedItemProps }>
-					<LayoutNavigationTabs { ...selectedItemProps } items={ navItems } />
-				</LayoutNavigation>
-			</LayoutTop>
-
-			<LayoutBody>
-				<IssueLicenseContext.Provider value={ { setSelectedLicenses, selectedLicenses } }>
-					<LicensesForm
+		<>
+			<Layout
+				className={ classNames( 'issue-license' ) }
+				title={ translate( 'Issue a new License' ) }
+				wide
+				withBorder
+				sidebarNavigation={ <MobileSidebarNavigation /> }
+			>
+				<LayoutTop>
+					<AssignLicenseStepProgress
+						currentStep={ currentStep }
 						selectedSite={ selectedSite }
-						suggestedProduct={ suggestedProduct }
-						quantity={ selectedSize }
+						isBundleLicensing
 					/>
-				</IssueLicenseContext.Provider>
-			</LayoutBody>
-		</Layout>
+
+					<LayoutHeader showStickyContent={ showStickyContent }>
+						<Title>{ translate( 'Issue product licenses' ) } </Title>
+						<Subtitle>{ subtitle }</Subtitle>
+						{ selectedLicenses.length > 0 && (
+							<Actions>
+								<div className="issue-license__controls">
+									<div className="issue-license__actions">
+										<TotalCost selectedLicenses={ selectedLicenses } />
+										<Button
+											primary
+											className="issue-license__select-license"
+											busy={ ! isReady }
+											onClick={ onShowReviewLicensesModal }
+										>
+											{ translate(
+												'Review %(numLicenses)d license',
+												'Review %(numLicenses)d licenses',
+												{
+													context: 'button label',
+													count: selectedLicenseCount,
+													args: {
+														numLicenses: selectedLicenseCount,
+													},
+												}
+											) }
+										</Button>
+									</div>
+								</div>
+							</Actions>
+						) }
+					</LayoutHeader>
+
+					{ showBundle && (
+						<LayoutNavigation { ...selectedItemProps }>
+							<LayoutNavigationTabs { ...selectedItemProps } items={ navItems } />
+						</LayoutNavigation>
+					) }
+				</LayoutTop>
+
+				<LayoutBody>
+					<IssueLicenseContext.Provider value={ { setSelectedLicenses, selectedLicenses } }>
+						<LicensesForm
+							selectedSite={ selectedSite }
+							suggestedProduct={ suggestedProduct }
+							quantity={ selectedSize }
+						/>
+					</IssueLicenseContext.Provider>
+				</LayoutBody>
+			</Layout>
+			{ showReviewLicenses && (
+				<ReviewLicenses
+					onClose={ onDismissReviewLicensesModal }
+					selectedLicenses={ getGroupedLicenses() }
+					selectedSite={ selectedSite }
+					isFormReady={ true } // FIXME: Fix this with actual form ready state
+					submitForm={ () => {} } // FIXME: Fix this with actual form submit
+				/>
+			) }
+		</>
 	);
 }
