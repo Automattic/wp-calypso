@@ -7,15 +7,11 @@ import SitePreviewPaneTabs from './site-preview-pane-tabs';
 import './style.scss';
 
 interface Props {
-	selectedSite?: Site | undefined;
+	selectedSite: Site;
 	closeSitePreviewPane: () => void;
 }
 
 export default function SitePreviewPane( { selectedSite, closeSitePreviewPane }: Props ) {
-	if ( ! selectedSite ) {
-		return null;
-	}
-
 	return (
 		<div className="site-preview__pane">
 			<SitePreviewPaneHeader
