@@ -77,7 +77,7 @@ export const GitHubDeploymentManagementForm = ( {
 	return (
 		<>
 			<div css={ { marginBottom: '16px' } }>
-				<Notice isCompact status="is-transparent-info">
+				<Notice isCompact>
 					{ __( 'Changes to an existing connection will be applied in the next deployment run.' ) }
 				</Notice>
 			</div>
