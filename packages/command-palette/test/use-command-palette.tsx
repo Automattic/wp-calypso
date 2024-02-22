@@ -4,8 +4,8 @@
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { renderHook } from '@testing-library/react';
 import React from 'react';
+import useAtomicCommands from '../src/commands/use-atomic-commands';
 import { useCommandPalette } from '../src/use-command-palette';
-import { useCommands } from '../src/use-commands';
 import { useSites } from '../src/use-sites';
 import { useSitesSortingQuery } from '../src/use-sites-sorting-query';
 
@@ -117,7 +117,7 @@ jest.mock( 'cmdk', () => ( {
 	useCommandState: jest.fn(),
 } ) );
 jest.mock( '../src/use-commands', () => ( {
-	useCommands: jest.fn(),
+	useAtomicCommands: jest.fn(),
 } ) );
 jest.mock( '../src/use-sites-sorting-query', () => ( {
 	useSitesSortingQuery: jest.fn(),
@@ -163,7 +163,7 @@ describe( 'useCommandPalette', () => {
 			}
 		);
 	it( 'should return the commands in the order that they are added to the commands array with no change', () => {
-		( useCommands as jest.Mock ).mockReturnValue( commands );
+		( useAtomicCommands as jest.Mock ).mockReturnValue( commands );
 		const { result } = renderUseCommandPalette();
 		expect( result.current.commands.map( ( { name, label } ) => ( { name, label } ) ) ).toEqual(
 			commands
@@ -171,7 +171,7 @@ describe( 'useCommandPalette', () => {
 	} );
 
 	it( 'should return the View My Sites command first before other commands from commandsWithViewMySite array when no context is specified', () => {
-		( useCommands as jest.Mock ).mockReturnValue( commandsWithViewMySite );
+		( useAtomicCommands as jest.Mock ).mockReturnValue( commandsWithViewMySite );
 		const { result } = renderUseCommandPalette();
 
 		expect( result.current.commands.map( ( { name, label } ) => ( { name, label } ) ) ).toEqual(
@@ -180,7 +180,7 @@ describe( 'useCommandPalette', () => {
 	} );
 
 	it( 'should return all the commands in the order they are added to commandsWithViewMySiteOnSite; View My Site should be hidden in /sites context', () => {
-		( useCommands as jest.Mock ).mockReturnValue( commandsWithViewMySite );
+		( useAtomicCommands as jest.Mock ).mockReturnValue( commandsWithViewMySite );
 		const { result } = renderUseCommandPalette( '/sites' );
 
 		expect( result.current.commands.map( ( { name, label } ) => ( { name, label } ) ) ).toEqual(
@@ -189,7 +189,7 @@ describe( 'useCommandPalette', () => {
 	} );
 
 	it( 'should return Enable Edge Cache command first as it matches the context; all other commands should follow in the order they are added to commandsWithContext array', () => {
-		( useCommands as jest.Mock ).mockReturnValue( commandsWithContext );
+		( useAtomicCommands as jest.Mock ).mockReturnValue( commandsWithContext );
 
 		const { result } = renderUseCommandPalette( '/settings' );
 		expect(
