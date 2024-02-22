@@ -1,7 +1,7 @@
 // FIXME: Lets decide later if we need to move the calypso/jetpack-cloud imports to a shared common folder.
 import { getQueryArg } from '@wordpress/url';
 import { useTranslate } from 'i18n-calypso';
-import { useCallback, useContext, useEffect, useMemo, useRef } from 'react';
+import { useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
 import QueryProductsList from 'calypso/components/data/query-products-list';
 import { parseQueryStringProducts } from 'calypso/jetpack-cloud/sections/partner-portal/lib/querystring-products';
 import LicenseMultiProductCard from 'calypso/jetpack-cloud/sections/partner-portal/license-multi-product-card';
@@ -15,13 +15,15 @@ import useProductAndPlans from 'calypso/jetpack-cloud/sections/partner-portal/pr
 import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import IssueLicenseContext from '../context';
+import { PRODUCT_FILTER_ALL } from './constants';
+import ProductFilterSearch from './product-filter-search';
+import ProductFilterSelect from './product-filter-select';
 import LicensesFormSection from './sections';
 import type { SelectedLicenseProp } from '../types';
 import type { SiteDetails } from '@automattic/data-stores';
 import type { APIProductFamilyProduct } from 'calypso/state/partner-portal/types';
 
 import './style.scss';
-
 interface LicensesFormProps {
 	selectedSite?: SiteDetails | null;
 	suggestedProduct?: string;
@@ -38,6 +40,12 @@ export default function LicensesForm( {
 
 	const { selectedLicenses, setSelectedLicenses } = useContext( IssueLicenseContext );
 
+	const [ productSearchQuery, setProductSearchQuery ] = useState< string >( '' );
+
+	const [ selectedProductFilter, setSelectedProductFilter ] = useState< string | null >(
+		PRODUCT_FILTER_ALL
+	);
+
 	const {
 		filteredProductsAndBundles,
 		isLoadingProducts,
@@ -48,7 +56,9 @@ export default function LicensesForm( {
 		data,
 	} = useProductAndPlans( {
 		selectedSite,
+		selectedProductFilter,
 		selectedBundleSize: quantity,
+		productSearchQuery,
 		usePublicQuery: true, // FIXME: Fix this when we have the API endpoint for A4A
 	} );
 
@@ -188,6 +198,26 @@ export default function LicensesForm( {
 		[ quantity, selectedLicenses ]
 	);
 
+	const onProductFilterSelect = useCallback(
+		( value: string | null ) => {
+			setSelectedProductFilter( value );
+			dispatch(
+				recordTracksEvent( 'calypso_a4a_marketplace_issue_license_filter_submit', { value } )
+			);
+		},
+		[ dispatch ]
+	);
+
+	const onProductSearch = useCallback(
+		( value: string ) => {
+			setProductSearchQuery( value );
+			dispatch(
+				recordTracksEvent( 'calypso_a4a_marketplace_issue_license_search_submit', { value } )
+			);
+		},
+		[ dispatch ]
+	);
+
 	const onClickVariantOption = useCallback(
 		( product: APIProductFamilyProduct ) => {
 			dispatch(
@@ -196,6 +226,12 @@ export default function LicensesForm( {
 				} )
 			);
 		},
+		[ dispatch ]
+	);
+
+	const trackClickCallback = useCallback(
+		( component: string ) => () =>
+			dispatch( recordTracksEvent( `calypso_a4a_marketplace_issue_license_${ component }_click` ) ),
 		[ dispatch ]
 	);
 
@@ -251,6 +287,19 @@ export default function LicensesForm( {
 	return (
 		<div className="licenses-form">
 			<QueryProductsList currency="USD" />
+
+			<div className="licenses-form__actions">
+				<ProductFilterSearch
+					onProductSearch={ onProductSearch }
+					onClick={ trackClickCallback( 'search' ) }
+				/>
+				<ProductFilterSelect
+					selectedProductFilter={ selectedProductFilter }
+					onProductFilterSelect={ onProductFilterSelect }
+					onClick={ trackClickCallback( 'filter' ) }
+					isSingleLicense={ isSingleLicenseView }
+				/>
+			</div>
 
 			{ plans.length > 0 && (
 				<LicensesFormSection
