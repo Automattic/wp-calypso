@@ -2,8 +2,10 @@ import { PRODUCT_1GB_SPACE } from '@automattic/calypso-products';
 import { Badge, Button, Gridicon, Spinner } from '@automattic/components';
 import styled from '@emotion/styled';
 import { Card, CardBody, CardFooter, CardHeader } from '@wordpress/components';
+import { useSelector } from '@wordpress/element';
 import { Icon } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import type { AddOnMeta } from '@automattic/data-stores';
 
 export interface Props {
@@ -15,7 +17,13 @@ export interface Props {
 		text: string;
 		handler: ( productSlug: string ) => void;
 	};
-	useAddOnAvailabilityStatus?: ( addOnMeta: AddOnMeta ) => {
+	useAddOnAvailabilityStatus?: ( {
+		selectedSiteId,
+		addOnMeta,
+	}: {
+		selectedSiteId?: number | null | undefined;
+		addOnMeta: AddOnMeta;
+	} ) => {
 		available: boolean;
 		text?: string;
 	};
@@ -96,7 +104,8 @@ const AddOnCard = ( {
 	highlightFeatured,
 }: Props ) => {
 	const translate = useTranslate();
-	const availabilityStatus = useAddOnAvailabilityStatus?.( addOnMeta );
+	const selectedSiteId = useSelector( getSelectedSiteId );
+	const availabilityStatus = useAddOnAvailabilityStatus?.( { selectedSiteId, addOnMeta } );
 
 	const onActionPrimary = () => {
 		actionPrimary?.handler( addOnMeta.productSlug, addOnMeta.quantity );
