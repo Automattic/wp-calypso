@@ -1,7 +1,7 @@
 import config from '@automattic/calypso-config';
 import { HelpCenter } from '@automattic/data-stores';
 import { shouldLoadInlineHelp } from '@automattic/help-center';
-import { isWithinBreakpoint } from '@automattic/viewport';
+import { isWithinBreakpoint, subscribeIsWithinBreakpoint } from '@automattic/viewport';
 import { useBreakpoint } from '@automattic/viewport-react';
 import { useDispatch } from '@wordpress/data';
 import classnames from 'classnames';
@@ -167,10 +167,22 @@ class Layout extends Component {
 		colorSchemePreference: PropTypes.string,
 	};
 
+	constructor( props ) {
+		super( props );
+		this.state = {
+			isDesktop: isWithinBreakpoint( '>782px' ),
+		};
+	}
+
 	componentDidMount() {
+		this.unsubscribe = subscribeIsWithinBreakpoint( '>782px', ( isDesktop ) => {
+			this.setState( { isDesktop } );
+		} );
+
 		if ( ! config.isEnabled( 'me/account/color-scheme-picker' ) ) {
 			return;
 		}
+
 		if ( typeof document !== 'undefined' ) {
 			if ( this.props.colorSchemePreference ) {
 				document
@@ -216,7 +228,10 @@ class Layout extends Component {
 	}
 
 	renderMasterbar( loadHelpCenterIcon ) {
-		if ( this.props.masterbarIsHidden ) {
+		const globalSidebarDesktop =
+			this.state.isDesktop &&
+			( this.props.isGlobalSidebarVisible || this.props.isGlobalSiteSidebarVisible );
+		if ( this.props.masterbarIsHidden || globalSidebarDesktop ) {
 			return <EmptyMasterbar />;
 		}
 		if ( this.props.isWooCoreProfilerFlow ) {
@@ -243,12 +258,15 @@ class Layout extends Component {
 	}
 
 	render() {
+		const globalSidebarDesktop =
+			this.state.isDesktop &&
+			( this.props.isGlobalSidebarVisible || this.props.isGlobalSiteSidebarVisible );
 		const sectionClass = classnames( 'layout', `focus-${ this.props.currentLayoutFocus }`, {
 			[ 'is-group-' + this.props.sectionGroup ]: this.props.sectionGroup,
 			[ 'is-section-' + this.props.sectionName ]: this.props.sectionName,
 			'is-support-session': this.props.isSupportSession,
 			'has-no-sidebar': this.props.sidebarIsHidden,
-			'has-no-masterbar': this.props.masterbarIsHidden,
+			'has-no-masterbar': this.props.masterbarIsHidden || globalSidebarDesktop,
 			'is-logged-in': this.props.isLoggedIn,
 			'is-jetpack-login': this.props.isJetpackLogin,
 			'is-jetpack-site': this.props.isJetpack,
@@ -403,14 +421,12 @@ export default withCurrentRoute(
 				// hide the masterBar until the section is loaded. To flicker the masterBar in, is better than to flicker it out.
 				! sectionName ||
 				( ! isWooCoreProfilerFlow && [ 'signup', 'jetpack-connect' ].includes( sectionName ) );
-			const isDesktop = isWithinBreakpoint( '>782px' );
 			const masterbarIsHidden =
 				! masterbarIsVisible( state ) ||
 				noMasterbarForSection ||
 				noMasterbarForRoute ||
 				isWpMobileApp() ||
 				isWcMobileApp() ||
-				( ( shouldShowGlobalSidebar || shouldShowGlobalSiteSidebar ) && isDesktop ) ||
 				isJetpackCloud() ||
 				config.isEnabled( 'a8c-for-agencies' );
 			const isJetpackMobileFlow = 'jetpack-connect' === sectionName && !! retrieveMobileRedirect();
