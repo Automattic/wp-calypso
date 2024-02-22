@@ -1,4 +1,4 @@
-import { DeploymentRun } from 'calypso/my-sites/github-deployments/deployments/use-code-deployments-query';
+import { DeploymentRun } from '../deployment-run-logs/use-code-deployment-run-query';
 
 function formatDuration( run: DeploymentRun ) {
 	if ( ! run.completed_on ) {
