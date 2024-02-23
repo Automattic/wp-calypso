@@ -301,21 +301,6 @@ export const useCommandsArrayWpcom = ( {
 			icon: helpIcon,
 		},
 		{
-			name: 'openSiteDashboard',
-			label: __( 'Open site dashboard' ),
-			searchLabel: [
-				_x( 'open site dashboard', 'Keyword for the Open site dashboard command' ),
-				_x( 'admin', 'Keyword for the Open site dashboard command' ),
-				_x( 'wp-admin', 'Keyword for the Open site dashboard command' ),
-			].join( ' ' ),
-			context: [ '/sites' ],
-			callback: setStateCallback( 'openSiteDashboard', __( 'Select site to open dashboard' ) ),
-			siteFunctions: {
-				onClick: ( param ) => commandNavigation( `/home/${ param.site.slug }` )( param ),
-			},
-			icon: dashboardIcon,
-		},
-		{
 			name: 'clearCache',
 			label: __( 'Clear cache' ),
 			callback: setStateCallback( 'clearCache', __( 'Select a site to clear cache' ) ),
@@ -391,6 +376,21 @@ export const useCommandsArrayWpcom = ( {
 				onClick: ( param ) => commandNavigation( param.site.URL, { openInNewTab: true } )( param ),
 			},
 			icon: seenIcon,
+		},
+		{
+			name: 'openSiteDashboard',
+			label: __( 'Open site dashboard' ),
+			searchLabel: [
+				_x( 'open site dashboard', 'Keyword for the Open site dashboard command' ),
+				_x( 'admin', 'Keyword for the Open site dashboard command' ),
+				_x( 'wp-admin', 'Keyword for the Open site dashboard command' ),
+			].join( ' ' ),
+			context: [ '/sites' ],
+			callback: setStateCallback( 'openSiteDashboard', __( 'Select site to open dashboard' ) ),
+			siteFunctions: {
+				onClick: ( param ) => commandNavigation( `/home/${ param.site.slug }` )( param ),
+			},
+			icon: dashboardIcon,
 		},
 		{
 			name: 'openHostingConfiguration',
