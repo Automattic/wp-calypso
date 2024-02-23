@@ -1,7 +1,7 @@
 import config from '@automattic/calypso-config';
 import { HelpCenter } from '@automattic/data-stores';
 import { shouldLoadInlineHelp } from '@automattic/help-center';
-import { isWithinBreakpoint } from '@automattic/viewport';
+import { isWithinBreakpoint, subscribeIsWithinBreakpoint } from '@automattic/viewport';
 import { useBreakpoint } from '@automattic/viewport-react';
 import { useDispatch } from '@wordpress/data';
 import classnames from 'classnames';
@@ -19,7 +19,6 @@ import { withCurrentRoute } from 'calypso/components/route';
 import SympathyDevWarning from 'calypso/components/sympathy-dev-warning';
 import { retrieveMobileRedirect } from 'calypso/jetpack-connect/persistence-utils';
 import wooDnaConfig from 'calypso/jetpack-connect/woo-dna-config';
-import { useGlobalSidebar } from 'calypso/layout/global-sidebar/hooks/use-global-sidebar';
 import HtmlIsIframeClassname from 'calypso/layout/html-is-iframe-classname';
 import EmptyMasterbar from 'calypso/layout/masterbar/empty';
 import MasterbarLoggedIn from 'calypso/layout/masterbar/logged-in';
@@ -31,13 +30,19 @@ import isReaderTagEmbedPage from 'calypso/lib/reader/is-reader-tag-embed-page';
 import { getMessagePathForJITM } from 'calypso/lib/route';
 import UserVerificationChecker from 'calypso/lib/user/verification-checker';
 import { isOffline } from 'calypso/state/application/selectors';
+import { closeCommandPalette } from 'calypso/state/command-palette/actions';
+import { isCommandPaletteOpen as getIsCommandPaletteOpen } from 'calypso/state/command-palette/selectors';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
+import {
+	getShouldShowGlobalSidebar,
+	getShouldShowGlobalSiteSidebar,
+} from 'calypso/state/global-sidebar/selectors';
 import { getCurrentOAuth2Client } from 'calypso/state/oauth2-clients/ui/selectors';
 import { getPreference } from 'calypso/state/preferences/selectors';
 import getCurrentQueryArguments from 'calypso/state/selectors/get-current-query-arguments';
 import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
 import isWooCommerceCoreProfilerFlow from 'calypso/state/selectors/is-woocommerce-core-profiler-flow';
-import { getSiteOption, isJetpackSite } from 'calypso/state/sites/selectors';
+import { isJetpackSite } from 'calypso/state/sites/selectors';
 import { isSupportSession } from 'calypso/state/support/selectors';
 import { getCurrentLayoutFocus } from 'calypso/state/ui/layout-focus/selectors';
 import {
@@ -47,7 +52,7 @@ import {
 } from 'calypso/state/ui/selectors';
 import BodySectionCssClass from './body-section-css-class';
 import LayoutLoader from './loader';
-import { handleScroll } from './utils';
+import { handleScroll, handleScrollGlobalSidebar } from './utils';
 
 // goofy import for environment badge, which is SSR'd
 import 'calypso/components/environment-badge/style.scss';
@@ -63,30 +68,35 @@ import './style.scss';
 
 const HELP_CENTER_STORE = HelpCenter.register();
 
-function SidebarScrollSynchronizer() {
+function SidebarScrollSynchronizer( { isGlobalSidebarOrGlobalSiteSidebar } ) {
 	const isNarrow = useBreakpoint( '<660px' );
-	const active =
-		! isNarrow &&
-		! config.isEnabled( 'jetpack-cloud' ) && // Jetpack cloud hasn't yet aligned with WPCOM.
-		! config.isEnabled( 'layout/dotcom-nav-redesign' ); // Dotcom nav redesign is not yet aligned with WPCOM - the handleScroll function is not yet compatible with the new layout.
+	const active = ! isNarrow && ! config.isEnabled( 'jetpack-cloud' ); // Jetpack cloud hasn't yet aligned with WPCOM.
 
 	useEffect( () => {
 		if ( active ) {
-			window.addEventListener( 'scroll', handleScroll );
-			window.addEventListener( 'resize', handleScroll );
+			if ( isGlobalSidebarOrGlobalSiteSidebar ) {
+				window.addEventListener( 'scroll', handleScrollGlobalSidebar );
+			} else {
+				window.addEventListener( 'scroll', handleScroll );
+				window.addEventListener( 'resize', handleScroll );
+			}
 		}
 
 		return () => {
 			if ( active ) {
-				window.removeEventListener( 'scroll', handleScroll );
-				window.removeEventListener( 'resize', handleScroll );
+				if ( isGlobalSidebarOrGlobalSiteSidebar ) {
+					window.removeEventListener( 'scroll', handleScrollGlobalSidebar );
+				} else {
+					window.removeEventListener( 'scroll', handleScroll );
+					window.removeEventListener( 'resize', handleScroll );
+				}
 
 				// remove style attributes added by `handleScroll`
 				document.getElementById( 'content' )?.removeAttribute( 'style' );
 				document.getElementById( 'secondary' )?.removeAttribute( 'style' );
 			}
 		};
-	}, [ active ] );
+	}, [ active, isGlobalSidebarOrGlobalSiteSidebar ] );
 
 	return null;
 }
@@ -157,10 +167,22 @@ class Layout extends Component {
 		colorSchemePreference: PropTypes.string,
 	};
 
+	constructor( props ) {
+		super( props );
+		this.state = {
+			isDesktop: isWithinBreakpoint( '>=782px' ),
+		};
+	}
+
 	componentDidMount() {
+		this.unsubscribe = subscribeIsWithinBreakpoint( '>=782px', ( isDesktop ) => {
+			this.setState( { isDesktop } );
+		} );
+
 		if ( ! config.isEnabled( 'me/account/color-scheme-picker' ) ) {
 			return;
 		}
+
 		if ( typeof document !== 'undefined' ) {
 			if ( this.props.colorSchemePreference ) {
 				document
@@ -206,7 +228,10 @@ class Layout extends Component {
 	}
 
 	renderMasterbar( loadHelpCenterIcon ) {
-		if ( this.props.masterbarIsHidden ) {
+		const globalSidebarDesktop =
+			this.state.isDesktop &&
+			( this.props.isGlobalSidebarVisible || this.props.isGlobalSiteSidebarVisible );
+		if ( this.props.masterbarIsHidden || globalSidebarDesktop ) {
 			return <EmptyMasterbar />;
 		}
 		if ( this.props.isWooCoreProfilerFlow ) {
@@ -233,12 +258,15 @@ class Layout extends Component {
 	}
 
 	render() {
+		const globalSidebarDesktop =
+			this.state.isDesktop &&
+			( this.props.isGlobalSidebarVisible || this.props.isGlobalSiteSidebarVisible );
 		const sectionClass = classnames( 'layout', `focus-${ this.props.currentLayoutFocus }`, {
 			[ 'is-group-' + this.props.sectionGroup ]: this.props.sectionGroup,
 			[ 'is-section-' + this.props.sectionName ]: this.props.sectionName,
 			'is-support-session': this.props.isSupportSession,
 			'has-no-sidebar': this.props.sidebarIsHidden,
-			'has-no-masterbar': this.props.masterbarIsHidden,
+			'has-no-masterbar': this.props.masterbarIsHidden || globalSidebarDesktop,
 			'is-logged-in': this.props.isLoggedIn,
 			'is-jetpack-login': this.props.isJetpackLogin,
 			'is-jetpack-site': this.props.isJetpack,
@@ -276,7 +304,12 @@ class Layout extends Component {
 					loadHelpCenter={ loadHelpCenter }
 					currentRoute={ this.props.currentRoute }
 				/>
-				<SidebarScrollSynchronizer layoutFocus={ this.props.currentLayoutFocus } />
+				<SidebarScrollSynchronizer
+					layoutFocus={ this.props.currentLayoutFocus }
+					isGlobalSidebarOrGlobalSiteSidebar={
+						this.props.isGlobalSidebarVisible || this.props.isGlobalSiteSidebarVisible
+					}
+				/>
 				<SidebarOverflowDelay layoutFocus={ this.props.currentLayoutFocus } />
 				<BodySectionCssClass
 					layoutFocus={ this.props.currentLayoutFocus }
@@ -346,7 +379,12 @@ class Layout extends Component {
 					<AsyncLoad require="calypso/blocks/legal-updates-banner" placeholder={ null } />
 				) }
 				{ config.isEnabled( 'yolo/command-palette' ) && (
-					<AsyncLoad require="calypso/components/command-palette" placeholder={ null } />
+					<AsyncLoad
+						require="calypso/components/command-palette"
+						placeholder={ null }
+						isOpenGlobal={ this.props.isCommandPaletteOpen }
+						onClose={ this.props.closeCommandPalette }
+					/>
 				) }
 			</div>
 		);
@@ -354,96 +392,100 @@ class Layout extends Component {
 }
 
 export default withCurrentRoute(
-	connect( ( state, { currentSection, currentRoute, currentQuery, secondary } ) => {
-		const sectionGroup = currentSection?.group ?? null;
-		const sectionName = currentSection?.name ?? null;
-		const siteId = getSelectedSiteId( state );
-		const sectionJitmPath = getMessagePathForJITM( currentRoute );
-		const isJetpackLogin = currentRoute.startsWith( '/log-in/jetpack' );
-		const isDomainAndPlanPackageFlow = !! getCurrentQueryArguments( state )?.domainAndPlanPackage;
-		const isJetpack =
-			( isJetpackSite( state, siteId ) && ! isAtomicSite( state, siteId ) ) ||
-			currentRoute.startsWith( '/checkout/jetpack' );
-		const isWooCoreProfilerFlow =
-			[ 'jetpack-connect', 'login' ].includes( sectionName ) &&
-			isWooCommerceCoreProfilerFlow( state );
-		const adminInterface = getSiteOption( state, siteId, 'wpcom_admin_interface' );
-		const { shouldShowGlobalSidebar, shouldShowGlobalSiteSidebar } = useGlobalSidebar(
-			siteId,
-			sectionGroup
-		);
-		const noMasterbarForRoute =
-			isJetpackLogin ||
-			currentRoute === '/me/account/closed' ||
-			isDomainAndPlanPackageFlow ||
-			isReaderTagEmbedPage( window?.location );
-		const noMasterbarForSection =
-			// hide the masterBar until the section is loaded. To flicker the masterBar in, is better than to flicker it out.
-			! sectionName ||
-			( ! isWooCoreProfilerFlow && [ 'signup', 'jetpack-connect' ].includes( sectionName ) );
-		const masterbarIsHidden =
-			! masterbarIsVisible( state ) ||
-			noMasterbarForSection ||
-			noMasterbarForRoute ||
-			isWpMobileApp() ||
-			isWcMobileApp() ||
-			shouldShowGlobalSidebar ||
-			isJetpackCloud() ||
-			config.isEnabled( 'a8c-for-agencies' );
-		const isJetpackMobileFlow = 'jetpack-connect' === sectionName && !! retrieveMobileRedirect();
-		const isJetpackWooCommerceFlow =
-			[ 'jetpack-connect', 'login' ].includes( sectionName ) &&
-			'woocommerce-onboarding' === currentQuery?.from;
-		const isJetpackWooDnaFlow =
-			[ 'jetpack-connect', 'login' ].includes( sectionName ) &&
-			wooDnaConfig( currentQuery ).isWooDnaFlow();
-		const oauth2Client = getCurrentOAuth2Client( state );
-		const wccomFrom = currentQuery?.[ 'wccom-from' ];
-		const isEligibleForJITM = [
-			'home',
-			'stats',
-			'plans',
-			'themes',
-			'plugins',
-			'comments',
-		].includes( sectionName );
-		const sidebarIsHidden = ! secondary || isWcMobileApp() || isDomainAndPlanPackageFlow;
-
-		const userAllowedToHelpCenter = config.isEnabled( 'calypso/help-center' );
-
-		return {
-			masterbarIsHidden,
-			sidebarIsHidden,
-			isJetpack,
-			isJetpackLogin,
-			isJetpackWooCommerceFlow,
-			isJetpackWooDnaFlow,
-			isJetpackMobileFlow,
-			isWooCoreProfilerFlow,
-			isEligibleForJITM,
-			oauth2Client,
-			wccomFrom,
-			isLoggedIn: isUserLoggedIn( state ),
-			isSupportSession: isSupportSession( state ),
-			sectionGroup,
-			sectionName,
-			sectionJitmPath,
-			isOffline: isOffline( state ),
-			currentLayoutFocus: getCurrentLayoutFocus( state ),
-			colorSchemePreference: getPreference( state, 'colorScheme' ),
-			siteId,
-			// We avoid requesting sites in the Jetpack Connect authorization step, because this would
-			// request all sites before authorization has finished. That would cause the "all sites"
-			// request to lack the newly authorized site, and when the request finishes after
-			// authorization, it would remove the newly connected site that has been fetched separately.
-			// See https://github.com/Automattic/wp-calypso/pull/31277 for more details.
-			shouldQueryAllSites: currentRoute && currentRoute !== '/jetpack/connect/authorize',
-			sidebarIsCollapsed: sectionName !== 'reader' && getSidebarIsCollapsed( state ),
-			userAllowedToHelpCenter,
-			currentRoute,
-			isGlobalSidebarVisible: shouldShowGlobalSidebar,
-			// Global Site View should be limited to classic interface users only for now.
-			isGlobalSiteSidebarVisible: shouldShowGlobalSiteSidebar && adminInterface === 'wp-admin',
-		};
-	} )( Layout )
+	connect(
+		( state, { currentSection, currentRoute, currentQuery, secondary } ) => {
+			const sectionGroup = currentSection?.group ?? null;
+			const sectionName = currentSection?.name ?? null;
+			const siteId = getSelectedSiteId( state );
+			const sectionJitmPath = getMessagePathForJITM( currentRoute );
+			const isJetpackLogin = currentRoute.startsWith( '/log-in/jetpack' );
+			const isDomainAndPlanPackageFlow = !! getCurrentQueryArguments( state )?.domainAndPlanPackage;
+			const isJetpack =
+				( isJetpackSite( state, siteId ) && ! isAtomicSite( state, siteId ) ) ||
+				currentRoute.startsWith( '/checkout/jetpack' );
+			const isWooCoreProfilerFlow =
+				[ 'jetpack-connect', 'login' ].includes( sectionName ) &&
+				isWooCommerceCoreProfilerFlow( state );
+			const shouldShowGlobalSidebar = getShouldShowGlobalSidebar( state, siteId, sectionGroup );
+			const shouldShowGlobalSiteSidebar = getShouldShowGlobalSiteSidebar(
+				state,
+				siteId,
+				sectionGroup
+			);
+			const noMasterbarForRoute =
+				isJetpackLogin ||
+				currentRoute === '/me/account/closed' ||
+				isDomainAndPlanPackageFlow ||
+				isReaderTagEmbedPage( window?.location );
+			const noMasterbarForSection =
+				// hide the masterBar until the section is loaded. To flicker the masterBar in, is better than to flicker it out.
+				! sectionName ||
+				( ! isWooCoreProfilerFlow && [ 'signup', 'jetpack-connect' ].includes( sectionName ) );
+			const masterbarIsHidden =
+				! masterbarIsVisible( state ) ||
+				noMasterbarForSection ||
+				noMasterbarForRoute ||
+				isWpMobileApp() ||
+				isWcMobileApp() ||
+				isJetpackCloud() ||
+				config.isEnabled( 'a8c-for-agencies' );
+			const isJetpackMobileFlow = 'jetpack-connect' === sectionName && !! retrieveMobileRedirect();
+			const isJetpackWooCommerceFlow =
+				[ 'jetpack-connect', 'login' ].includes( sectionName ) &&
+				'woocommerce-onboarding' === currentQuery?.from;
+			const isJetpackWooDnaFlow =
+				[ 'jetpack-connect', 'login' ].includes( sectionName ) &&
+				wooDnaConfig( currentQuery ).isWooDnaFlow();
+			const oauth2Client = getCurrentOAuth2Client( state );
+			const wccomFrom = currentQuery?.[ 'wccom-from' ];
+			const isEligibleForJITM = [
+				'home',
+				'stats',
+				'plans',
+				'themes',
+				'plugins',
+				'comments',
+			].includes( sectionName );
+			const sidebarIsHidden = ! secondary || isWcMobileApp() || isDomainAndPlanPackageFlow;
+			const userAllowedToHelpCenter = config.isEnabled( 'calypso/help-center' );
+			const isCommandPaletteOpen = getIsCommandPaletteOpen( state );
+			return {
+				masterbarIsHidden,
+				sidebarIsHidden,
+				isCommandPaletteOpen,
+				isJetpack,
+				isJetpackLogin,
+				isJetpackWooCommerceFlow,
+				isJetpackWooDnaFlow,
+				isJetpackMobileFlow,
+				isWooCoreProfilerFlow,
+				isEligibleForJITM,
+				oauth2Client,
+				wccomFrom,
+				isLoggedIn: isUserLoggedIn( state ),
+				isSupportSession: isSupportSession( state ),
+				sectionGroup,
+				sectionName,
+				sectionJitmPath,
+				isOffline: isOffline( state ),
+				currentLayoutFocus: getCurrentLayoutFocus( state ),
+				colorSchemePreference: getPreference( state, 'colorScheme' ),
+				siteId,
+				// We avoid requesting sites in the Jetpack Connect authorization step, because this would
+				// request all sites before authorization has finished. That would cause the "all sites"
+				// request to lack the newly authorized site, and when the request finishes after
+				// authorization, it would remove the newly connected site that has been fetched separately.
+				// See https://github.com/Automattic/wp-calypso/pull/31277 for more details.
+				shouldQueryAllSites: currentRoute && currentRoute !== '/jetpack/connect/authorize',
+				sidebarIsCollapsed: sectionName !== 'reader' && getSidebarIsCollapsed( state ),
+				userAllowedToHelpCenter,
+				currentRoute,
+				isGlobalSidebarVisible: shouldShowGlobalSidebar,
+				isGlobalSiteSidebarVisible: shouldShowGlobalSiteSidebar,
+			};
+		},
+		{
+			closeCommandPalette,
+		}
+	)( Layout )
 );

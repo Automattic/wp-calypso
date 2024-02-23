@@ -5,8 +5,8 @@ import { ComponentProps, useState } from 'react';
 import { createRepositoryPage } from 'calypso/my-sites/github-deployments/routes';
 import { useSelector } from 'calypso/state/index';
 import { getSelectedSiteSlug } from 'calypso/state/ui/selectors/index';
-import { GitHubAccountsDropdown } from '../accounts-dropdown';
-import { useLiveAccounts } from '../accounts-dropdown/use-live-accounts';
+import { GitHubInstallationsDropdown } from '../installations-dropdown';
+import { useLiveInstallations } from '../installations-dropdown/use-live-installations';
 import { GitHubLoadingPlaceholder } from '../loading-placeholder';
 import { GitHubBrowseRepositoriesList } from './repository-list';
 import { SearchRepos } from './search-repos';
@@ -24,9 +24,10 @@ export const GitHubBrowseRepositories = ( {
 	const siteSlug = useSelector( getSelectedSiteSlug );
 
 	const { __ } = useI18n();
-	const { account, setAccount, accounts, onNewInstallationRequest } = useLiveAccounts( {
-		initialAccountId: initialInstallationId,
-	} );
+	const { installation, setInstallation, installations, onNewInstallationRequest } =
+		useLiveInstallations( {
+			initialInstallationId: initialInstallationId,
+		} );
 
 	const [ query, setQuery ] = useState( '' );
 
@@ -39,14 +40,14 @@ export const GitHubBrowseRepositories = ( {
 	}
 
 	const renderContent = () => {
-		if ( ! accounts ) {
+		if ( ! installations ) {
 			return <GitHubLoadingPlaceholder />;
 		}
 
-		if ( ! account ) {
+		if ( ! installation ) {
 			return (
 				<Card css={ { display: 'flex', flexDirection: 'column', alignItems: 'center', margin: 0 } }>
-					<span>{ __( 'Add a GitHub account to import an existing repository.' ) }</span>
+					<span>{ __( 'Add a GitHub installation to import an existing repository.' ) }</span>
 				</Card>
 			);
 		}
@@ -54,7 +55,7 @@ export const GitHubBrowseRepositories = ( {
 		return (
 			<GitHubBrowseRepositoriesList
 				onSelectRepository={ onSelectRepository }
-				account={ account }
+				installation={ installation }
 				query={ query }
 			/>
 		);
@@ -63,11 +64,11 @@ export const GitHubBrowseRepositories = ( {
 	return (
 		<div className="github-deployments-repositories">
 			<div className="github-deployments-repositories__search-bar">
-				<GitHubAccountsDropdown
-					onAddAccount={ onNewInstallationRequest }
-					accounts={ accounts }
-					value={ account }
-					onChange={ setAccount }
+				<GitHubInstallationsDropdown
+					onAddInstallation={ onNewInstallationRequest }
+					installations={ installations }
+					value={ installation }
+					onChange={ setInstallation }
 				/>
 				<SearchRepos value={ query } onChange={ handleQueryChange } />
 				<Button onClick={ handleCreateRepository } css={ { marginLeft: 'auto' } }>

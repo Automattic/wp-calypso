@@ -1,8 +1,13 @@
-import { category, home, plugins } from '@wordpress/icons';
+import { category, home, plugins, tag } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { useMemo } from 'react';
 import Sidebar from '../sidebar';
-import { A4A_OVERVIEW_LINK, A4A_PLUGINS_LINK, A4A_SITES_LINK } from './lib/constants';
+import {
+	A4A_OVERVIEW_LINK,
+	A4A_PLUGINS_LINK,
+	A4A_SITES_LINK,
+	A4A_MARKETPLACE_LINK,
+} from './lib/constants';
 import { createItem } from './lib/utils';
 
 type Props = {
@@ -39,6 +44,15 @@ export default function ( { path }: Props ) {
 				title: translate( 'Plugins' ),
 				trackEventProps: {
 					menu_item: 'Automattic for Agencies / Plugins',
+				},
+			},
+			{
+				icon: tag,
+				path: '/',
+				link: A4A_MARKETPLACE_LINK,
+				title: translate( 'Marketplace' ),
+				trackEventProps: {
+					menu_item: 'Automattic for Agencies / Marketplace',
 				},
 			},
 		].map( ( item ) => createItem( item, path ) );

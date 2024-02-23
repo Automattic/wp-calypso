@@ -32,7 +32,7 @@ const WpcomSiteTools = ( { isJetpack, isPossibleJetpackConnectionProblem, siteId
 				title={ translate( 'Site Tools' ) }
 				subtitle={ translate( 'Manage your site settings, including site visibility, and more.' ) }
 			/>
-			<WpcomSiteToolsSettings isJetpack={ isJetpack } />
+			<WpcomSiteToolsSettings />
 		</Main>
 	);
 };

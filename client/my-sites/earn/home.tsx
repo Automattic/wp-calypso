@@ -17,6 +17,7 @@ import ClipboardButtonInput from 'calypso/components/clipboard-button-input';
 import QueryMembershipProducts from 'calypso/components/data/query-memberships';
 import QueryMembershipsEarnings from 'calypso/components/data/query-memberships-earnings';
 import QueryMembershipsSettings from 'calypso/components/data/query-memberships-settings';
+import QuerySitePlans from 'calypso/components/data/query-site-plans';
 import EmptyContent from 'calypso/components/empty-content';
 import PromoSection, {
 	Props as PromoSectionProps,
@@ -464,6 +465,7 @@ const Home = () => {
 			<QueryMembershipsEarnings siteId={ site?.ID ?? 0 } />
 			<QueryMembershipsSettings siteId={ site?.ID ?? 0 } />
 			<QueryMembershipProducts siteId={ site?.ID ?? 0 } />
+			<QuerySitePlans siteId={ site?.ID ?? 0 } />
 			{ isLoading && (
 				<div className="earn__placeholder-promo-card">
 					<PromoSection promos={ [ getPlaceholderPromoCard(), getPlaceholderPromoCard() ] } />

@@ -321,11 +321,11 @@ function StatsBenefitsListing( {
 				</li>
 				{ subscriptionValue >= defaultStartingValue ? (
 					<li className={ `${ COMPONENT_CLASS_NAME }__benefits-item--included` }>
-						{ translate( 'Priority support' ) }
+						{ translate( 'Email support' ) }
 					</li>
 				) : (
 					<li className={ `${ COMPONENT_CLASS_NAME }__benefits-item--not-included` }>
-						{ translate( 'No priority support' ) }
+						{ translate( 'No Email support' ) }
 					</li>
 				) }
 				<li className={ `${ COMPONENT_CLASS_NAME }__benefits-item--not-included` }>

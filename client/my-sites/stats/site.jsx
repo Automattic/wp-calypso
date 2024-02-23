@@ -53,6 +53,7 @@ import Countries from './stats-countries';
 import DatePicker from './stats-date-picker';
 import StatsModule from './stats-module';
 import StatsModuleEmails from './stats-module-emails';
+import StatsModuleUTM from './stats-module-utm';
 import StatsNotices from './stats-notices';
 import PageViewTracker from './stats-page-view-tracker';
 import StatsPeriodHeader from './stats-period-header';
@@ -471,6 +472,17 @@ class StatsSite extends Component {
 							)
 						}
 					</div>
+
+					{
+						// TODO: Move this under the Countries module.
+						// - Will require some reworking of the CSS to work correctly though.
+						// - Because of the visibility toggles for Authors and Videos, we require multiple
+						// copies of the Grid CSS.
+						// - May have to move from grid to flexbox.
+					 }
+					{ config.isEnabled( 'stats/utm-module' ) && (
+						<StatsModuleUTM period={ this.props.period } query={ query } />
+					) }
 				</div>
 				{ supportsPlanUsage && (
 					<StatsPlanUsage siteId={ siteId } isOdysseyStats={ isOdysseyStats } />

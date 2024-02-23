@@ -7,7 +7,7 @@ import { useDispatch, useSelector } from '../../../state';
 import { GitHubConnectionForm } from '../components/github-connection-form';
 import { GitHubLoadingPlaceholder } from '../components/loading-placeholder';
 import { createDeploymentPage } from '../routes';
-import { useGithubAccountsQuery } from '../use-github-accounts-query';
+import { useGithubInstallationsQuery } from '../use-github-installations-query';
 import { useGithubRepositoriesQuery } from '../use-github-repositories-query';
 import { useCreateCodeDeployment } from './use-create-code-deployment';
 
@@ -26,7 +26,7 @@ export const GitHubDeploymentCreationForm = ( {
 	repositoryId,
 	onConnected,
 }: GitHubDeploymentCreationFormProps ) => {
-	const installation = useGithubAccountsQuery().data?.find(
+	const installation = useGithubInstallationsQuery().data?.find(
 		( installation ) => installation.external_id === installationId
 	);
 	const dispatch = useDispatch();
@@ -70,7 +70,7 @@ export const GitHubDeploymentCreationForm = ( {
 	return (
 		<GitHubConnectionForm
 			ctaLabel={ __( 'Connect repository' ) }
-			account={ installation }
+			installation={ installation }
 			repository={ repository }
 			changeRepository={ () => {
 				page.replace( createDeploymentPage( siteSlug!, { installationId } ) );

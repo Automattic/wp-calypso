@@ -4,17 +4,14 @@ import { useI18n } from '@wordpress/react-i18n';
 import ActionPanel from 'calypso/components/action-panel';
 import ActionPanelBody from 'calypso/components/action-panel/body';
 import HeaderCake from 'calypso/components/header-cake';
-import Main from 'calypso/components/main';
-import { createPage, indexPage } from 'calypso/my-sites/github-deployments/routes';
-import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import { indexPage } from 'calypso/my-sites/github-deployments/routes';
 import { useDispatch, useSelector } from 'calypso/state/index';
 import { errorNotice, successNotice } from 'calypso/state/notices/actions';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors/index';
-import { CreateRepositoryForm } from './create-repository-form';
-import {
-	MutationVariables,
-	useCreateCodeDeploymentAndRepository,
-} from './use-create-code-deployment-and-repository';
+import { useCreateCodeDeployment } from '../../../deployment-creation/use-create-code-deployment';
+import { PageShell } from '../../page-shell';
+import { CreateRepositoryForm, OnRepositoryCreatedParams } from './create-repository-form';
+import { useCreateRepository } from './use-create-repository';
 
 import './style.scss';
 
@@ -26,58 +23,70 @@ export const CreateRepository = () => {
 	const { __ } = useI18n();
 	const siteId = useSelector( getSelectedSiteId );
 	const siteSlug = useSelector( getSelectedSiteSlug );
-	const createPath = createPage( siteSlug! );
 	const goToDeployments = () => {
 		page( indexPage( siteSlug! ) );
 	};
 
 	const dispatch = useDispatch();
 
-	const { createDeploymentAndRepository, isPending } = useCreateCodeDeploymentAndRepository(
-		siteId as number,
-		{
-			onSuccess: () => {
-				goToDeployments();
-				dispatch( successNotice( __( 'Deployment created.' ), noticeOptions ) );
-			},
-			onError: ( error ) => {
-				dispatch(
-					errorNotice(
-						// translators: "reason" is why connecting the branch failed.
-						sprintf( __( 'Failed to create repository: %(reason)s' ), { reason: error.message } ),
-						{
-							...noticeOptions,
-						}
-					)
-				);
-			},
-			onSettled: ( _, error ) => {
-				dispatch(
-					recordTracksEvent( 'calypso_hosting_github_create_repository_success', {
-						connected: ! error,
-					} )
-				);
-			},
-		}
-	);
+	const { createRepository, isPending } = useCreateRepository( {
+		onError: ( error ) => {
+			dispatch(
+				errorNotice(
+					// translators: "reason" is why creating the repository failed.
+					sprintf( __( 'Failed to create repository: %(reason)s' ), { reason: error.message } ),
+					{
+						...noticeOptions,
+					}
+				)
+			);
+		},
+	} );
+	const { createDeployment, isPending: isDeploying } = useCreateCodeDeployment( siteId as number, {
+		onSuccess: () => {
+			goToDeployments();
+			dispatch( successNotice( __( 'Repository connected' ), noticeOptions ) );
+		},
+		onError: ( error ) => {
+			dispatch(
+				errorNotice(
+					// translators: "reason" is why creating the repository failed.
+					sprintf( __( 'Failed to connect repository: %(reason)s' ), {
+						reason: error.message,
+					} ),
+					{
+						...noticeOptions,
+					}
+				)
+			);
+		},
+	} );
 
-	function handleCreateRepository( args: MutationVariables ) {
-		createDeploymentAndRepository( args );
-	}
+	const handleCreateRepository = ( args: OnRepositoryCreatedParams ) => {
+		createRepository( args ).then( ( response ) => {
+			createDeployment( {
+				installationId: args.installationId,
+				externalRepositoryId: response.external_id,
+				branchName: response.default_branch,
+				targetDir: args.targetDir,
+				isAutomated: args.isAutomated,
+			} );
+		} );
+	};
 
 	return (
-		<Main fullWidthLayout>
-			<HeaderCake backHref={ createPath }>
+		<PageShell pageTitle={ __( 'Create repository' ) }>
+			<HeaderCake onClick={ () => history.back() } isCompact>
 				<h1>{ __( 'Create repository' ) }</h1>
 			</HeaderCake>
 			<ActionPanel>
 				<ActionPanelBody>
 					<CreateRepositoryForm
 						onRepositoryCreated={ handleCreateRepository }
-						isPending={ isPending }
+						isPending={ isPending || isDeploying }
 					/>
 				</ActionPanelBody>
 			</ActionPanel>
-		</Main>
+		</PageShell>
 	);
 };
