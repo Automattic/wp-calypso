@@ -1,4 +1,3 @@
-import { setThemeOnSite } from '@automattic/onboarding';
 import { __ } from '@wordpress/i18n';
 import { useMemo } from 'react';
 import DocumentHead from 'calypso/components/data/document-head';
@@ -8,6 +7,7 @@ import { useSelector } from 'calypso/state';
 import getSiteSlug from 'calypso/state/sites/selectors/get-site-slug';
 import { SenseiStepContainer } from '../components/sensei-step-container';
 import { Progress, SenseiStepProgress } from '../components/sensei-step-progress';
+import { useCreateSenseiSite } from '../sensei-plan/create-sensei-site';
 import {
 	getSelectedPlugins,
 	saveSelectedPurposesAsSenseiSiteSettings,
@@ -28,6 +28,7 @@ const SenseiLaunch: Step = ( { navigation: { submit } } ) => {
 	const { pollPlugins, isPluginInstalled, queuePlugin } = useAtomicSitePlugins();
 	const { requestChecklist, isSenseiIncluded } = useAtomicSiteChecklist();
 	const additionalPlugins = useMemo( () => getSelectedPlugins(), [] );
+	const { setCourseThemeAndVariation } = useCreateSenseiSite();
 
 	const allPlugins = useMemo(
 		() => [ SENSEI_PRO_PLUGIN_SLUG, ...additionalPlugins.map( ( p ) => p.slug ) ],
@@ -66,9 +67,7 @@ const SenseiLaunch: Step = ( { navigation: { submit } } ) => {
 				return true;
 			},
 			async function refreshThemeOnAtomic() {
-				await wait( 1200 );
-				await setThemeOnSite( siteId.toString(), 'pub/twentytwentytwo' );
-				await setThemeOnSite( siteId.toString(), 'pub/course' );
+				await setCourseThemeAndVariation( siteId );
 				return true;
 			},
 			async function done() {
