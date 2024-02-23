@@ -6,23 +6,19 @@ import {
 } from '../deployment-run-logs/use-code-deployment-run-query';
 
 function formatDuration( run: DeploymentRun ) {
-	const completedOn = run.completed_on
-		? new Date( run.completed_on * 1000 ).valueOf()
-		: new Date().valueOf();
-
-	const milliseconds = completedOn - new Date( run.started_on * 1000 ).valueOf();
-
-	const totalSeconds = milliseconds / 1000;
-	const minutes = Math.floor( totalSeconds / 60 );
-	const seconds = Math.ceil( totalSeconds % 60 );
-
-	if ( minutes > 0 ) {
-		if ( seconds > 0 ) {
-			return `${ minutes }m ${ seconds }s`;
-		}
-		return `${ minutes }m`;
+	// If deployment has not yet started, we don't have a date to calculate the duration from.
+	if ( ! run.started_on ) {
+		return '-';
 	}
-	return `${ seconds }s`;
+	const startedOn = new Date( run.started_on ).valueOf();
+	const completedOn = run.completed_on
+		? new Date( run.completed_on ).valueOf()
+		: new Date().valueOf();
+	const totalSeconds = Math.ceil( ( completedOn - startedOn ) / 1000 );
+	const minutes = Math.floor( totalSeconds / 60 );
+	const seconds = totalSeconds % 60;
+
+	return `${ minutes > 0 ? `${ minutes }m ` : '' }${ seconds }s`;
 }
 
 interface DeploymentDurationProps {
