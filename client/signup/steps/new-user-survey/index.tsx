@@ -1,7 +1,7 @@
 import { Button } from '@automattic/components';
 import { useDesktopBreakpoint, useMobileBreakpoint } from '@automattic/viewport-react';
 import { useTranslate } from 'i18n-calypso';
-import { ChangeEvent, useState } from 'react';
+import { ChangeEvent, useEffect, useRef, useState } from 'react';
 import CardHeading from 'calypso/components/card-heading';
 import FormInputCheckbox from 'calypso/components/forms/form-checkbox';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
@@ -46,6 +46,26 @@ interface Props {
 	goToStep: ( stepName: string ) => void;
 	flowName: string;
 	stepName: string;
+}
+
+function ControlledCheckbox( props: {
+	name: string;
+	value: string | boolean | null | undefined;
+	onChange: ( e: ChangeEvent< HTMLInputElement > ) => void;
+} ) {
+	const inputRef = useRef< HTMLInputElement >( null );
+
+	useEffect( () => {
+		if ( inputRef.current ) {
+			if ( props.value ) {
+				inputRef.current.checked = true;
+			} else {
+				inputRef.current.checked = false;
+			}
+		}
+	}, [ props.value ] );
+
+	return <FormInputCheckbox onChange={ props.onChange } name={ props.name } ref={ inputRef } />;
 }
 
 function SurveyForm( props: Props ) {
@@ -152,7 +172,11 @@ function SurveyForm( props: Props ) {
 								</StyledLabel>
 							</Shuffle>
 							<StyledLabel>
-								<FormInputCheckbox name="survey_goals_custom_check" onChange={ handleChange } />
+								<ControlledCheckbox
+									name="survey_goals_custom_check"
+									onChange={ handleChange }
+									value={ formState.survey_goals_custom_check }
+								/>
 								<StyledFormTextInput
 									name="survey_goals_custom_text"
 									value={ formState.survey_goals_custom_text }
@@ -212,9 +236,10 @@ function SurveyForm( props: Props ) {
 								</StyledLabel>
 							</Shuffle>
 							<StyledLabel>
-								<FormInputCheckbox
+								<ControlledCheckbox
 									onChange={ handleChange }
 									name="survey_describe_yourself_custom_check"
+									value={ formState.survey_describe_yourself_custom_check }
 								/>
 								<StyledFormTextInput
 									name="survey_describe_yourself_custom_text"
