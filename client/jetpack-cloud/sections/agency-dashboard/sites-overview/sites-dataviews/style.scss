@@ -18,6 +18,10 @@
 
 		&:hover {
 			background: var(--studio-gray-0);
+
+			.site-set-favorite__favorite-icon {
+				visibility: visible;
+			}
 		}
 
 		th {
