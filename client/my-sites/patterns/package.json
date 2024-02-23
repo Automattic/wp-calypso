@@ -1,4 +1,4 @@
 {
-	"main": "index.node.ts",
-	"browser": "index.web.ts"
+	"main": "index.node.tsx",
+	"browser": "index.web.tsx"
 }

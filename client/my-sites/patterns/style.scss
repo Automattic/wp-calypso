@@ -3,6 +3,21 @@
 }
 
 .patterns {
-	list-style-type: none;
-	padding: 20px;
+	display: grid;
+	padding: 20px 0;
+}
+.patterns_grid {
+	gap: 20px;
+	grid-template-columns: repeat(4, 1fr);
+}
+.patterns__item {
+	display: flex;
+	flex-direction: column;
+	justify-content: space-between;
+}
+.patterns__preview {
+	aspect-ratio: 7 / 3;
+}
+.patterns__title {
+	min-height: 3rem;
 }
