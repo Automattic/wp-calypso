@@ -14,9 +14,12 @@
 
 	&__search {
 		flex-grow: 1;
+		height: 40px;
+		.gridicons-search {
+			top: 8px !important;
+		}
 		input {
 			max-width: 400px;
-			height: 43px;
 		}
 	}
 	.components-spinner {
@@ -76,12 +79,6 @@
 	tr th {
 		font-weight: 500;
 		color: var(--studio-gray-60, #50575e);
-	}
-
-	&__name {
-		display: flex;
-		align-items: center;
-		font-weight: 500 !important;
 	}
 
 	tr td:last-child {
