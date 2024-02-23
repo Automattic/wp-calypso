@@ -6,7 +6,6 @@ import { Component } from 'react';
 import { connect } from 'react-redux';
 import { withCurrentRoute } from 'calypso/components/route';
 import GlobalSidebar from 'calypso/layout/global-sidebar';
-import { useGlobalSidebar } from 'calypso/layout/global-sidebar/hooks/use-global-sidebar';
 import Sidebar from 'calypso/layout/sidebar';
 import CollapseSidebar from 'calypso/layout/sidebar/collapse-sidebar';
 import SidebarFooter from 'calypso/layout/sidebar/footer';
@@ -20,6 +19,7 @@ import { itemLinkMatches } from 'calypso/my-sites/sidebar/utils';
 import { recordGoogleEvent } from 'calypso/state/analytics/actions';
 import { redirectToLogout } from 'calypso/state/current-user/actions';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
+import { getShouldShowGlobalSidebar } from 'calypso/state/global-sidebar/selectors';
 import { logoutUser } from 'calypso/state/logout/actions';
 import { setNextLayoutFocus } from 'calypso/state/ui/layout-focus/actions';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
@@ -223,7 +223,7 @@ export default withCurrentRoute(
 		( state, { currentSection } ) => {
 			const sectionGroup = currentSection?.group ?? null;
 			const siteId = getSelectedSiteId( state );
-			const { shouldShowGlobalSidebar } = useGlobalSidebar( siteId, sectionGroup );
+			const shouldShowGlobalSidebar = getShouldShowGlobalSidebar( state, siteId, sectionGroup );
 			return {
 				currentUser: getCurrentUser( state ),
 				shouldShowGlobalSidebar,

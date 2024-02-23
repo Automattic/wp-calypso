@@ -11,7 +11,6 @@ import QueryReaderOrganizations from 'calypso/components/data/query-reader-organ
 import QueryReaderTeams from 'calypso/components/data/query-reader-teams';
 import { withCurrentRoute } from 'calypso/components/route';
 import GlobalSidebar from 'calypso/layout/global-sidebar';
-import { useGlobalSidebar } from 'calypso/layout/global-sidebar/hooks/use-global-sidebar';
 import Sidebar from 'calypso/layout/sidebar';
 import SidebarFooter from 'calypso/layout/sidebar/footer';
 import SidebarItem from 'calypso/layout/sidebar/item';
@@ -29,6 +28,7 @@ import ReaderSearchIcon from 'calypso/reader/components/icons/search-icon';
 import { isAutomatticTeamMember } from 'calypso/reader/lib/teams';
 import { getTagStreamUrl } from 'calypso/reader/route';
 import { recordAction, recordGaEvent } from 'calypso/reader/stats';
+import { getShouldShowGlobalSidebar } from 'calypso/state/global-sidebar/selectors';
 import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions';
 import { getSubscribedLists } from 'calypso/state/reader/lists/selectors';
 import { getReaderOrganizations } from 'calypso/state/reader/organizations/selectors';
@@ -60,7 +60,6 @@ export class ReaderSidebar extends Component {
 	handleClick = ( event ) => {
 		if ( ! event.isDefaultPrevented() && closest( event.target, 'a,span' ) ) {
 			this.props.setNextLayoutFocus( 'content' );
-			window.scrollTo( 0, 0 );
 		}
 	};
 
@@ -315,7 +314,7 @@ export default withCurrentRoute(
 		( state, { currentSection } ) => {
 			const sectionGroup = currentSection?.group ?? null;
 			const siteId = getSelectedSiteId( state );
-			const { shouldShowGlobalSidebar } = useGlobalSidebar( siteId, sectionGroup );
+			const shouldShowGlobalSidebar = getShouldShowGlobalSidebar( state, siteId, sectionGroup );
 			return {
 				isListsOpen: isListsOpen( state ),
 				isTagsOpen: isTagsOpen( state ),

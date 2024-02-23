@@ -25,18 +25,18 @@ function applySort( deployments: CodeDeploymentData[], key: string, direction: S
 		case 'date':
 			if ( direction === 'asc' ) {
 				return deployments.sort( ( left, right ) => {
-					return left.updated_on.localeCompare( right.updated_on );
+					return left.updated_on - right.updated_on;
 				} );
 			}
 			return deployments.sort( ( left, right ) => {
-				return left.updated_on.localeCompare( right.updated_on ) * -1;
+				return right.updated_on - left.updated_on;
 			} );
 
 		case 'status':
 			if ( direction === 'asc' ) {
 				return deployments.sort( ( left, right ) => {
-					const leftRun = left.current_deployed_run;
-					const rightRun = right.current_deployed_run;
+					const leftRun = left.current_deployment_run;
+					const rightRun = right.current_deployment_run;
 					if ( leftRun && rightRun ) {
 						return leftRun?.status.localeCompare( rightRun.status );
 					} else if ( leftRun ) {
@@ -46,8 +46,8 @@ function applySort( deployments: CodeDeploymentData[], key: string, direction: S
 				} );
 			}
 			return deployments.sort( ( left, right ) => {
-				const leftRun = left.current_deployed_run;
-				const rightRun = right.current_deployed_run;
+				const leftRun = left.current_deployment_run;
+				const rightRun = right.current_deployment_run;
 				if ( leftRun && rightRun ) {
 					return leftRun?.status.localeCompare( rightRun.status );
 				} else if ( leftRun ) {

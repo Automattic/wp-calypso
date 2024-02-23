@@ -1,4 +1,3 @@
-import { isEnabled } from '@automattic/calypso-config';
 import { WPCOM_FEATURES_SITE_PREVIEW_LINKS } from '@automattic/calypso-products';
 import { FormLabel } from '@automattic/components';
 import classnames from 'classnames';
@@ -12,7 +11,6 @@ import { useDispatch, useSelector } from 'calypso/state';
 import { recordGoogleEvent } from 'calypso/state/analytics/actions';
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import { useSiteGlobalStylesStatus } from 'calypso/state/sites/hooks/use-site-global-styles-status';
-import { getSiteOption } from 'calypso/state/sites/selectors';
 import {
 	getSelectedSite,
 	getSelectedSiteId,
@@ -53,9 +51,6 @@ const SiteSettingPrivacyForm = ( {
 	const selectedSite = useSelector( getSelectedSite );
 	const siteId = useSelector( getSelectedSiteId ) || -1;
 	const siteSlug = useSelector( getSelectedSiteSlug );
-	const isClassicView = useSelector(
-		( state ) => getSiteOption( state, siteId, 'wpcom_admin_interface' ) === 'wp-admin'
-	);
 	const hasSitePreviewLink = useSelector( ( state ) =>
 		siteHasFeature( state, siteId, WPCOM_FEATURES_SITE_PREVIEW_LINKS )
 	);
@@ -177,39 +172,38 @@ const SiteSettingPrivacyForm = ( {
 					</>
 				) }
 
-				{ ! isWpcomStagingSite &&
-					! ( isEnabled( 'layout/dotcom-nav-redesign' ) && isClassicView ) && (
-						<>
-							<FormLabel className="site-settings__visibility-label is-checkbox is-hidden">
-								<FormInputCheckbox
-									name="blog_public"
-									value="0"
-									checked={
-										( wpcomPublicComingSoon && blogPublic === 0 && isComingSoonDisabled ) ||
-										( 0 === blogPublic && ! wpcomPublicComingSoon )
-									}
-									onChange={ () =>
-										handleVisibilityOptionChange( {
-											blog_public:
-												wpcomPublicComingSoon || blogPublic === -1 || blogPublic === 1 ? 0 : 1,
-											wpcom_coming_soon: 0,
-											wpcom_public_coming_soon: 0,
-										} )
-									}
-									disabled={ isRequestingSettings }
-									onClick={ () => {
-										recordEvent( 'Clicked Site Visibility Radio Button' );
-									} }
-								/>
-								<span>{ translate( 'Discourage search engines from indexing this site' ) }</span>
-								<FormSettingExplanation>
-									{ translate(
-										'This option does not block access to your site — it is up to search engines to honor your request.'
-									) }
-								</FormSettingExplanation>
-							</FormLabel>
-						</>
-					) }
+				{ ! isWpcomStagingSite && (
+					<>
+						<FormLabel className="site-settings__visibility-label is-checkbox is-hidden">
+							<FormInputCheckbox
+								name="blog_public"
+								value="0"
+								checked={
+									( wpcomPublicComingSoon && blogPublic === 0 && isComingSoonDisabled ) ||
+									( 0 === blogPublic && ! wpcomPublicComingSoon )
+								}
+								onChange={ () =>
+									handleVisibilityOptionChange( {
+										blog_public:
+											wpcomPublicComingSoon || blogPublic === -1 || blogPublic === 1 ? 0 : 1,
+										wpcom_coming_soon: 0,
+										wpcom_public_coming_soon: 0,
+									} )
+								}
+								disabled={ isRequestingSettings }
+								onClick={ () => {
+									recordEvent( 'Clicked Site Visibility Radio Button' );
+								} }
+							/>
+							<span>{ translate( 'Discourage search engines from indexing this site' ) }</span>
+							<FormSettingExplanation>
+								{ translate(
+									'This option does not block access to your site — it is up to search engines to honor your request.'
+								) }
+							</FormSettingExplanation>
+						</FormLabel>
+					</>
+				) }
 				{ ! isNonAtomicJetpackSite && (
 					<>
 						<FormLabel className="site-settings__visibility-label is-private">

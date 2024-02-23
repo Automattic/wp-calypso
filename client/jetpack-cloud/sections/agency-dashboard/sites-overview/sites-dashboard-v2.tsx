@@ -31,6 +31,7 @@ import { DASHBOARD_PRODUCT_SLUGS_BY_TYPE } from './lib/constants';
 import SiteAddLicenseNotification from './site-add-license-notification';
 import SiteContentHeader from './site-content-header';
 import SiteNotifications from './site-notifications';
+import SitePreviewPane from './site-preview-pane';
 import SiteTopHeaderButtons from './site-top-header-buttons';
 import SitesDataViews from './sites-dataviews';
 import { SitesViewState } from './sites-dataviews/interfaces';
@@ -313,16 +314,12 @@ export default function SitesDashboardV2() {
 					</div>
 				) }
 			</div>
-			<div className="site-preview__pane">
-				<div className="site-preview__header">
-					<h2>{ sitesViewState.selectedSite?.blogname }</h2>
-					<div>{ sitesViewState.selectedSite?.url }</div>
-					<hr />
-					<Button onClick={ closeSitePreviewPane } borderless>
-						<b>Close the Preview Pane</b>
-					</Button>
-				</div>
-			</div>
+			{ sitesViewState.selectedSite && (
+				<SitePreviewPane
+					selectedSite={ sitesViewState.selectedSite }
+					closeSitePreviewPane={ closeSitePreviewPane }
+				/>
+			) }
 		</div>
 	);
 }

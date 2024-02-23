@@ -27,15 +27,10 @@
 	.site-preview__pane {
 		flex-grow: 1;
 		width: auto;
-		padding: 48px 48px;
 		transition: flex-grow 0.2s;
 		background: var(--studio-white);
 		overflow: hidden;
 		border-radius: 8px; /* stylelint-disable-line scales/radii */
-	}
-
-	.site-preview__header {
-		text-align: center;
 	}
 
 	&.preview-hidden {
