@@ -1,4 +1,4 @@
-import config, { isEnabled } from '@automattic/calypso-config';
+import config from '@automattic/calypso-config';
 import { getAllFeaturesForPlan } from '@automattic/calypso-products/';
 import { JetpackLogo, FoldableCard } from '@automattic/components';
 import { GeneratorModal } from '@automattic/jetpack-ai-calypso';
@@ -16,6 +16,7 @@ import {
 	usePromoteWidget,
 	PromoteWidgetStatus,
 } from 'calypso/lib/promote-post';
+import useAdvertisingUrl from 'calypso/my-sites/advertising/useAdvertisingUrl';
 import { bumpStat, composeAnalytics, recordTracksEvent } from 'calypso/state/analytics/actions';
 import { savePreference } from 'calypso/state/preferences/actions';
 import { getPreference } from 'calypso/state/preferences/selectors';
@@ -86,15 +87,7 @@ export const QuickLinks = ( {
 	const hasBackups = getAllFeaturesForPlan( currentSitePlanSlug ).includes( 'backups' );
 	const hasBoost = site?.options?.jetpack_connection_active_plugins?.includes( 'jetpack-boost' );
 	const [ isAILogoGeneratorOpen, setIsAILogoGeneratorOpen ] = useState( false );
-	const selectedSiteSlug = useSelector( getSelectedSiteSlug );
-	const adminInterface = useSelector( ( state ) =>
-		getSiteOption( state, siteId, 'wpcom_admin_interface' )
-	);
-
-	const advertisingUrl =
-		adminInterface === 'wp-admin' && isEnabled( 'layout/dotcom-nav-redesign' )
-			? `https://${ selectedSiteSlug }/wp-admin/tools.php?page=advertising`
-			: `/advertising/${ selectedSiteSlug }`;
+	const advertisingUrl = useAdvertisingUrl();
 
 	const addNewDomain = () => {
 		trackAddDomainAction();
