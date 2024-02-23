@@ -439,6 +439,7 @@ const CommandPalette = ( {
 
 export default CommandPalette;
 export type { Command, CommandCallBackParams } from './use-command-palette';
+export type { useCommandsParams } from './commands/types';
 export {
 	useAtomicCommands,
 	useAtomicLimitedCommands,
