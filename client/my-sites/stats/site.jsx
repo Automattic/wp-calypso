@@ -300,6 +300,9 @@ class StatsSite extends Component {
 			{
 				'stats__module-list--traffic-no-authors': this.isModuleHidden( 'authors' ),
 				'stats__module-list--traffic-no-videos': this.isModuleHidden( 'videos' ),
+			},
+			{
+				'stats__flexible-grid-container': config.isEnabled( 'stats/flexible-grid' ),
 			}
 		);
 
@@ -396,6 +399,11 @@ class StatsSite extends Component {
 							query={ query }
 							statType="statsTopPosts"
 							showSummaryLink
+							className={ classNames(
+								'stats__flexible-grid-item--two-thirds',
+								'stats__flexible-grid-item--full--large',
+								'stats__flexible-grid-item--full--medium'
+							) }
 						/>
 						<StatsModule
 							path="referrers"
@@ -404,6 +412,11 @@ class StatsSite extends Component {
 							query={ query }
 							statType="statsReferrers"
 							showSummaryLink
+							className={ classNames(
+								'stats__flexible-grid-item--one-third--once-space',
+								'stats__flexible-grid-item--full--large',
+								'stats__flexible-grid-item--full--medium'
+							) }
 						/>
 
 						<Countries
@@ -411,6 +424,7 @@ class StatsSite extends Component {
 							period={ this.props.period }
 							query={ query }
 							summary={ false }
+							className={ classNames( 'stats__flexible-grid-item--full' ) }
 						/>
 
 						{ ! this.isModuleHidden( 'authors' ) && (
@@ -420,7 +434,12 @@ class StatsSite extends Component {
 								period={ this.props.period }
 								query={ query }
 								statType="statsTopAuthors"
-								className="stats__author-views"
+								className={ classNames(
+									'stats__author-views',
+									'stats__flexible-grid-item--one-third--two-spaces',
+									'stats__flexible-grid-item--half--large',
+									'stats__flexible-grid-item--full--medium'
+								) }
 								showSummaryLink
 							/>
 						) }
@@ -432,6 +451,15 @@ class StatsSite extends Component {
 							query={ query }
 							statType="statsSearchTerms"
 							showSummaryLink
+							className={ classNames(
+								{
+									'stats__flexible-grid-item--one-third--two-spaces':
+										! this.isModuleHidden( 'authors' ),
+									'stats__flexible-grid-item--half--large': ! this.isModuleHidden( 'authors' ),
+									'stats__flexible-grid-item--half': this.isModuleHidden( 'authors' ),
+								},
+								'stats__flexible-grid-item--full--medium'
+							) }
 						/>
 
 						<StatsModule
@@ -441,6 +469,15 @@ class StatsSite extends Component {
 							query={ query }
 							statType="statsClicks"
 							showSummaryLink
+							className={ classNames(
+								{
+									'stats__flexible-grid-item--one-third--two-spaces':
+										! this.isModuleHidden( 'authors' ),
+									'stats__flexible-grid-item--half--large': ! this.isModuleHidden( 'authors' ),
+									'stats__flexible-grid-item--half': this.isModuleHidden( 'authors' ),
+								},
+								'stats__flexible-grid-item--full--medium'
+							) }
 						/>
 						{ ! this.isModuleHidden( 'videos' ) && (
 							<StatsModule
@@ -450,10 +487,25 @@ class StatsSite extends Component {
 								query={ query }
 								statType="statsVideoPlays"
 								showSummaryLink
+								className={ classNames(
+									'stats__flexible-grid-item--half',
+									'stats__flexible-grid-item--full--medium'
+								) }
 							/>
 						) }
 						{ supportsEmailStats && (
-							<StatsModuleEmails period={ this.props.period } query={ query } />
+							<StatsModuleEmails
+								period={ this.props.period }
+								query={ query }
+								className={ classNames(
+									{
+										'stats__flexible-grid-item--half': ! this.isModuleHidden( 'videos' ),
+										'stats__flexible-grid-item--full': this.isModuleHidden( 'videos' ),
+									},
+									'stats__flexible-grid-item--full--large',
+									'stats__flexible-grid-item--full--medium'
+								) }
+							/>
 						) }
 						{
 							// File downloads are not yet supported in Jetpack Stats
@@ -468,6 +520,10 @@ class StatsSite extends Component {
 									statType="statsFileDownloads"
 									showSummaryLink
 									useShortLabel={ true }
+									className={ classNames(
+										'stats__flexible-grid-item--half',
+										'stats__flexible-grid-item--full--large'
+									) }
 								/>
 							)
 						}

@@ -1,6 +1,7 @@
 import { useQuery, UseQueryOptions } from '@tanstack/react-query';
 import wp from 'calypso/lib/wp';
 import { GITHUB_DEPLOYMENTS_QUERY_KEY } from '../constants';
+import type { DeploymentRun } from '../deployment-run-logs/use-code-deployment-run-query';
 
 export const CODE_DEPLOYMENTS_QUERY_KEY = 'code-deployments';
 
@@ -17,6 +18,9 @@ export interface CodeDeploymentData {
 	is_automated: boolean;
 	installation_id: number;
 	created_by: CreatedBy;
+	current_deployed_run?: DeploymentRun;
+	current_deployment_run?: DeploymentRun;
+	workflow_path: string;
 }
 
 export interface CreatedBy {
@@ -39,6 +43,7 @@ export const useCodeDeploymentsQuery = (
 		meta: {
 			persist: false,
 		},
+		refetchInterval: 5000,
 		...options,
 	} );
 };

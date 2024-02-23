@@ -1,9 +1,8 @@
-import { Dialog } from '@automattic/components';
+import { Dialog, BaseButton } from '@automattic/components';
 import { ExternalLink, ToggleControl } from '@wordpress/components';
 import { createInterpolateElement, useMemo, useState } from '@wordpress/element';
 import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
-import { ComponentProps } from 'react';
 import { CodeDeploymentData } from './use-code-deployments-query';
 import { useDeleteCodeDeployment } from './use-delete-code-deployment';
 
@@ -28,7 +27,7 @@ export const DeleteDeploymentDialog = ( {
 	);
 
 	const dialogActions = useMemo( () => {
-		const actions: ComponentProps< typeof Dialog >[ 'buttons' ] = [
+		const actions: BaseButton[] = [
 			{
 				busy: isPending,
 				disabled: isPending,
@@ -60,7 +59,7 @@ export const DeleteDeploymentDialog = ( {
 				<p css={ { marginTop: '24px' } }>
 					{ createInterpolateElement(
 						sprintf(
-							/* translators: the colorsNum could be any number from 0 to about ~10 */
+							/* translators: name of repository in the format repository-owner/repository-name */
 							__( 'You are about to disconnect your repository <a>%(repositoryName)s</a>' ),
 							{ repositoryName: deployment.repository_name }
 						),

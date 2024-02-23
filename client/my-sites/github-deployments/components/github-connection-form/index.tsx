@@ -1,14 +1,15 @@
-import { Button, FormLabel } from '@automattic/components';
-import { ExternalLink, FormToggle, SelectControl, Spinner } from '@wordpress/components';
+import { Button, FormLabel, SelectDropdown } from '@automattic/components';
+import { ExternalLink, FormToggle } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
-import { ChangeEvent, useState } from 'react';
+import { ChangeEvent, useMemo, useState } from 'react';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormTextInput from 'calypso/components/forms/form-text-input';
 import { GitHubInstallationData } from 'calypso/my-sites/github-deployments/use-github-installations-query';
 import { useGithubRepositoryBranchesQuery } from 'calypso/my-sites/github-deployments/use-github-repository-branches-query';
-import { GitHubRepositoryData } from '../use-github-repositories-query';
-import { DeploymentStyle } from './repositories/deployment-style/deployment-style';
-import '../components/repositories/style.scss';
+import { GitHubRepositoryData } from '../../use-github-repositories-query';
+import { DeploymentStyle } from '../repositories/deployment-style/deployment-style';
+
+import './style.scss';
 
 interface CodeDeploymentData {
 	externalRepositoryId: number;
@@ -16,15 +17,17 @@ interface CodeDeploymentData {
 	targetDir: string;
 	installationId: number;
 	isAutomated: boolean;
+	workflowPath?: string;
 }
 
 interface InitialValues {
 	branch: string;
 	destPath: string;
 	isAutomated: boolean;
+	workflowPath?: string;
 }
 
-interface ConnectRepositoryDialogProps {
+interface GitHubConnectionFormProps {
 	repository: GitHubRepositoryData;
 	installation: GitHubInstallationData;
 	ctaLabel: string;
@@ -37,19 +40,38 @@ export const GitHubConnectionForm = ( {
 	repository,
 	installation,
 	ctaLabel,
-	initialValues = { branch: repository.default_branch, destPath: '/', isAutomated: false },
+	initialValues = {
+		branch: repository.default_branch,
+		destPath: '/',
+		isAutomated: false,
+		workflowPath: undefined,
+	},
 	changeRepository,
 	onSubmit,
-}: ConnectRepositoryDialogProps ) => {
+}: GitHubConnectionFormProps ) => {
 	const [ branch, setBranch ] = useState( initialValues.branch );
 	const [ destPath, setDestPath ] = useState( initialValues.destPath );
 	const [ isAutoDeploy, setIsAutoDeploy ] = useState( initialValues.isAutomated );
+	const [ workflowPath, setWorkflowPath ] = useState< string | undefined >(
+		initialValues.workflowPath
+	);
 
-	const { data: branches = [ branch ], isLoading: isFetchingBranches } =
-		useGithubRepositoryBranchesQuery( installation.external_id, repository.owner, repository.name );
+	const { data: branches, isLoading: isFetchingBranches } = useGithubRepositoryBranchesQuery(
+		installation.external_id,
+		repository.owner,
+		repository.name
+	);
 
-	const branchList = branches.length > 0 ? branches : [ branch ];
-	const branchOptions = branchList.map( ( branch ) => ( { value: branch, label: branch } ) );
+	const branchOptions = useMemo( () => {
+		if ( ! branches?.length ) {
+			return [ initialValues.branch ];
+		}
+
+		return [
+			repository.default_branch,
+			...branches.filter( ( branch ) => branch !== repository.default_branch ),
+		];
+	}, [ branches, initialValues.branch, repository.default_branch ] );
 	const [ isPending, setIsPending ] = useState( false );
 	const [ submitDisabled, setSubmitDisabled ] = useState( false );
 
@@ -68,6 +90,7 @@ export const GitHubConnectionForm = ( {
 						targetDir: destPath,
 						installationId: installation.external_id,
 						isAutomated: isAutoDeploy,
+						workflowPath: workflowPath,
 					} );
 				} finally {
 					setIsPending( false );
@@ -90,8 +113,21 @@ export const GitHubConnectionForm = ( {
 				</FormFieldset>
 				<FormFieldset>
 					<FormLabel>{ __( 'Deployment branch' ) }</FormLabel>
-					<SelectControl value={ branch } options={ branchOptions } onChange={ setBranch } />
-					{ isFetchingBranches && <Spinner /> }
+					<SelectDropdown
+						className="github-deployments-branch-select"
+						selectedText={ branch }
+						isLoading={ isFetchingBranches }
+					>
+						{ branchOptions.map( ( branchOption ) => (
+							<SelectDropdown.Item
+								key={ branchOption }
+								selected={ branch === branchOption }
+								onClick={ () => setBranch( branchOption ) }
+							>
+								{ branchOption }
+							</SelectDropdown.Item>
+						) ) }
+					</SelectDropdown>
 				</FormFieldset>
 				<FormFieldset>
 					<FormLabel>{ __( 'Destination directory' ) }</FormLabel>
@@ -119,6 +155,11 @@ export const GitHubConnectionForm = ( {
 			<div className="github-deployments-connect-repository__deployment-style">
 				<FormFieldset>
 					<DeploymentStyle
+						branchName={ branch }
+						installationId={ installation.external_id }
+						repository={ repository }
+						workflowPath={ workflowPath }
+						onChooseWorkflow={ ( filePath ) => setWorkflowPath( filePath ) }
 						onValidationChange={ ( status ) => {
 							if ( status === 'success' ) {
 								setSubmitDisabled( false );

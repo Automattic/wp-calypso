@@ -249,7 +249,7 @@ const sections = [
 	},
 	{
 		name: 'patterns',
-		paths: [ '/patterns' ],
+		paths: [ '/patterns', '/([a-z]{2,3}|[a-z]{2}-[a-z]{2})/patterns' ],
 		module: 'calypso/my-sites/patterns',
 		enableLoggedOut: true,
 		isomorphic: true,
@@ -723,7 +723,7 @@ const sections = [
 	},
 	{
 		name: 'a8c-for-agencies-marketplace',
-		paths: [ '/marketplace' ],
+		paths: [ '/marketplace', '/marketplace/assign-license' ],
 		module: 'calypso/a8c-for-agencies/sections/marketplace',
 		group: 'a8c-for-agencies',
 		enableLoggedOut: true,

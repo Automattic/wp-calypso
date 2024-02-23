@@ -170,7 +170,7 @@ const Home = ( {
 				navigationItems={ [] }
 				mobileItem={ null }
 				title={ translate( 'My Home' ) }
-				subtitle={ translate( 'Your hub for posting, editing, and growing your site.' ) }
+				subtitle={ translate( 'Your hub for next steps, support center, and quick links.' ) }
 			>
 				{ headerActions }
 			</NavigationHeader>

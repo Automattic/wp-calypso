@@ -12,7 +12,6 @@ import { parse } from 'qs';
 import { Component } from 'react';
 import { connect } from 'react-redux';
 import QueryProductsList from 'calypso/components/data/query-products-list';
-import ChooseDomainLater from 'calypso/components/domains/choose-domain-later';
 import { useMyDomainInputMode as inputMode } from 'calypso/components/domains/connect-domain-step/constants';
 import RegisterDomainStep from 'calypso/components/domains/register-domain-step';
 import { recordUseYourDomainButtonClick } from 'calypso/components/domains/register-domain-step/analytics';
@@ -36,7 +35,6 @@ import {
 	getFixedDomainSearch,
 } from 'calypso/lib/domains';
 import { getSuggestionsVendor } from 'calypso/lib/domains/suggestions';
-import { useExperiment } from 'calypso/lib/explat';
 import { triggerGuidesForStep } from 'calypso/lib/guides/trigger-guides-for-step';
 import { getSitePropertyDefaults } from 'calypso/lib/signup/site-properties';
 import { maybeExcludeEmailsStep } from 'calypso/lib/signup/step-actions';
@@ -555,19 +553,7 @@ export class RenderDomainsStep extends Component {
 	}
 
 	shouldHideDomainExplainer = () => {
-		const { flowName } = this.props;
-		return [
-			'free',
-			'personal',
-			'personal-monthly',
-			'premium',
-			'premium-monthly',
-			'business',
-			'business-monthly',
-			'ecommerce',
-			'ecommerce-monthly',
-			'domain',
-		].includes( flowName );
+		return this.props.flowName === 'domain';
 	};
 
 	shouldHideUseYourDomain = () => {
@@ -913,6 +899,8 @@ export class RenderDomainsStep extends Component {
 			</div>
 		) : null;
 
+		const hasSearchedDomains = Array.isArray( this.props.step?.domainForm?.searchResults );
+
 		return (
 			<div className="domains__domain-side-content-container">
 				{ domainsInCart.length > 0 || this.state.wpcomSubdomainSelected ? (
@@ -921,7 +909,7 @@ export class RenderDomainsStep extends Component {
 						temporaryCart={ this.state.temporaryCart }
 						domainRemovalQueue={ this.state.domainRemovalQueue }
 						cartIsLoading={ cartIsLoading }
-						flowName={ this.props.flowName }
+						flowName={ flowName }
 						removeDomainClickHandler={ this.removeDomainClickHandler }
 						isMiniCartContinueButtonBusy={ this.state.isMiniCartContinueButtonBusy }
 						goToNext={ this.goToNext }
@@ -931,12 +919,18 @@ export class RenderDomainsStep extends Component {
 					/>
 				) : (
 					! this.shouldHideDomainExplainer() &&
-					this.props.isPlanSelectionAvailableLaterInFlow && (
-						<ChooseDomainLater
-							step={ this.props.step }
-							flowName={ this.props.flowName }
-							handleDomainExplainerClick={ this.handleDomainExplainerClick }
-						/>
+					hasSearchedDomains && (
+						<div className="domains__domain-side-content domains__free-domain">
+							<ReskinSideExplainer
+								onClick={ this.handleDomainExplainerClick }
+								type={
+									this.props.isPlanSelectionAvailableLaterInFlow
+										? 'free-domain-explainer-check-paid-plans'
+										: 'free-domain-explainer'
+								}
+								flowName={ flowName }
+							/>
+						</div>
 					)
 				) }
 				{ useYourDomain }
@@ -1466,12 +1460,10 @@ const RenderDomainsStepConnect = connect(
 )( withCartKey( withShoppingCart( localize( RenderDomainsStep ) ) ) );
 
 export default function DomainsStep( props ) {
-	const [ isSideContentExperimentLoading ] = useExperiment(
-		'calypso_gf_signup_onboarding_escape_hatch',
-		{
-			isEligible: props.flowName === 'onboarding',
-		}
-	);
+	// this is kept since there will likely be more experiments to come.
+	// See peP6yB-1Np-p2
+	const isSideContentExperimentLoading = false;
+
 	return (
 		<CalypsoShoppingCartProvider>
 			<RenderDomainsStepConnect

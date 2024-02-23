@@ -7,6 +7,7 @@ export { default as FoldableCard } from './foldable-card';
 export { default as Count } from './count';
 export * from './device-switcher';
 export { default as Dialog } from './dialog';
+export type { BaseButton } from './dialog/button-bar';
 export * from './forms';
 export { default as Gridicon } from './gridicon';
 export { default as Popover } from './popover';
