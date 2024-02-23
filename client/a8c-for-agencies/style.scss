@@ -3,6 +3,17 @@
 	// border-radius
 	--a4a-corners-sharp: 0;
 	--a4a-corners-soft: 4px;
+
+	// FIXME: Remove this when we have a proper color scheme
+	--color-sidebar-background: #021a23;
+	--color-sidebar-menu-hover-background: #02395c;
+	--color-sidebar-menu-hover-text: #fff;
+	--color-sidebar-menu-selected-background: #02395c;
+	--color-sidebar-menu-selected-text: #fff;
+	--color-sidebar-text: #fff;
+	--color-sidebar-text-alternative: #bbe0fa;
+	--color-sidebar-gridicon-fill: #bbe0fa;
+
 }
 
 .theme-a8c-for-agencies {
