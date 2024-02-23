@@ -6,7 +6,8 @@ import { GITHUB_DEPLOYMENTS_QUERY_KEY } from './constants';
 export const GITHUB_REPOSITORIES_QUERY_KEY = 'github-repositories';
 
 export interface GitHubRepositoryData {
-	full_name: string;
+	owner: string;
+	name: string;
 	id: number;
 	private: boolean;
 	default_branch: string;
@@ -17,17 +18,18 @@ export const useGithubRepositoriesQuery = (
 	installationId: number,
 	options?: UseQueryOptions< GitHubRepositoryData[] >
 ) => {
-	const path = addQueryArgs( '/hosting/github/repositories', {
-		installation_id: installationId,
-	} );
-
 	return useQuery< GitHubRepositoryData[] >( {
 		queryKey: [ GITHUB_DEPLOYMENTS_QUERY_KEY, GITHUB_REPOSITORIES_QUERY_KEY, installationId ],
-		queryFn: (): GitHubRepositoryData[] =>
-			wp.req.get( {
+		queryFn: (): GitHubRepositoryData[] => {
+			const path = addQueryArgs( '/hosting/github/repositories', {
+				installation_id: installationId,
+			} );
+
+			return wp.req.get( {
 				path,
 				apiNamespace: 'wpcom/v2',
-			} ),
+			} );
+		},
 		meta: {
 			persist: false,
 		},

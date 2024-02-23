@@ -16,6 +16,7 @@ import { useSelector, useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { NON_PRIMARY_DOMAINS_TO_FREE_USERS } from 'calypso/state/current-user/constants';
 import { currentUserHasFlag, getCurrentUser } from 'calypso/state/current-user/selectors';
+import { getWpComDomainBySiteId } from 'calypso/state/sites/domains/selectors';
 import getSelectedSite from 'calypso/state/ui/selectors/get-selected-site';
 import Coupon from './coupon';
 import { WPOrderReviewLineItems, WPOrderReviewSection } from './wp-order-review-line-items';
@@ -45,11 +46,11 @@ const SiteSummary = styled.div`
 `;
 
 const CouponLinkWrapper = styled.div`
-	font-size: 14px;
+	${ hasCheckoutVersion( '2' ) ? `font-size: 12px;` : `font-size: 14px;` }
 `;
 
 const CouponAreaWrapper = styled.div`
-	padding-bottom: ${ hasCheckoutVersion( '2' ) ? '24px' : 'inherit' };
+	padding-bottom: ${ hasCheckoutVersion( '2' ) ? '12px' : 'inherit' };
 `;
 
 const CouponField = styled( Coupon )``;
@@ -58,8 +59,10 @@ const CouponEnableButton = styled.button`
 	cursor: pointer;
 	text-decoration: underline;
 	color: ${ ( props ) => props.theme.colors.highlight };
-	font-size: 14px;
 
+	&.wp-checkout-order-review__show-coupon-field-button {
+		${ hasCheckoutVersion( '2' ) ? `font-size: 12px` : `font-size: 14px;` }
+	}
 	:hover {
 		text-decoration: none;
 	}
@@ -146,6 +149,11 @@ export default function WPCheckoutOrderReview( {
 	);
 
 	const selectedSiteData = useSelector( getSelectedSite );
+	const wpcomDomain = useSelector( ( state ) =>
+		getWpComDomainBySiteId( state, selectedSiteData?.ID )
+	);
+	const searchParams = new URLSearchParams( window.location.search );
+	const isSignupCheckout = searchParams.get( 'signup' ) === '1';
 
 	// This is what will be displayed at the top of checkout prefixed by "Site: ".
 	const domainUrl = getDomainToDisplayInCheckoutHeader( responseCart, selectedSiteData, siteUrl );
@@ -165,7 +173,8 @@ export default function WPCheckoutOrderReview( {
 
 	return (
 		<>
-			{ hasCheckoutVersion( '2' ) && (
+			{ /** Only show the site preview for WPCOM domains that have a site connected to the site id **/ }
+			{ hasCheckoutVersion( '2' ) && selectedSiteData && wpcomDomain && ! isSignupCheckout && (
 				<div className="checkout-site-preview">
 					<SitePreviewWrapper>
 						<SitePreview showEditSite={ false } showSiteDetails={ false } />

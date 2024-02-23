@@ -22,15 +22,13 @@ const Table = styled.table`
 `;
 
 const THead = styled.thead< { blockOffset: number } >( ( { blockOffset } ) => ( {
-	[ MEDIA_QUERIES.mediumOrSmaller ]: {
+	[ MEDIA_QUERIES.hideTableRows ]: {
 		display: 'none',
 	},
 
 	position: 'sticky',
 	zIndex: 3,
 	insetBlockStart: `${ blockOffset }px`,
-
-	background: '#fdfdfd',
 } ) );
 
 const headerShadow: React.CSSProperties = {

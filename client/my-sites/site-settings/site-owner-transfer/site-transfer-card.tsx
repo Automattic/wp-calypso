@@ -32,7 +32,7 @@ export function SiteTransferCard( {
 				navigationItems={ [] }
 				title={ translate( 'Site Transfer' ) }
 				subtitle={ translate(
-					'Transfer your site to another WordPress.com user. {{a}}Learn more.{{/a}}',
+					'Transfer this site to a new or existing site member with just a few clicks. {{a}}Learn more.{{/a}}',
 					{
 						components: {
 							a: <InlineSupportLink supportContext="site-transfer" showIcon={ false } />,

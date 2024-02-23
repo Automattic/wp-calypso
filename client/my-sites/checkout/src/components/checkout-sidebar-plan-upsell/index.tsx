@@ -43,6 +43,7 @@ export function CheckoutSidebarPlanUpsell() {
 		border-radius: 4px;
 		font-size: 12px;
 		font-weight: 500;
+		align-self: flex-end;
 
 		p {
 			margin: 0;

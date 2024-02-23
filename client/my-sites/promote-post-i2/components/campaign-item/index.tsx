@@ -1,9 +1,10 @@
+import config from '@automattic/calypso-config';
 import page from '@automattic/calypso-router';
 import { safeImageUrl } from '@automattic/calypso-url';
 import { Badge } from '@automattic/components';
 import { Button } from '@wordpress/components';
 import { __, _n, sprintf } from '@wordpress/i18n';
-import { chevronRight } from '@wordpress/icons';
+import { translate } from 'i18n-calypso';
 import { Moment } from 'moment';
 import { Fragment, useMemo } from 'react';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
@@ -44,17 +45,23 @@ export default function CampaignItem( props: Props ) {
 	const {
 		name,
 		content_config,
-		display_name,
 		ui_status,
 		end_date,
 		budget_cents,
 		start_date,
 		campaign_stats,
+		type,
 	} = campaign;
 
 	const clicks_total = campaign_stats?.clicks_total ?? 0;
 	const spent_budget_cents = campaign_stats?.spent_budget_cents ?? 0;
 	const impressions_total = campaign_stats?.impressions_total ?? 0;
+	const conversion_rate_percentage = campaign_stats?.conversion_rate
+		? campaign_stats.conversion_rate * 100
+		: 0;
+	const conversion_rate = campaign_stats?.conversion_rate
+		? `${ conversion_rate_percentage.toFixed( 2 ) }%`
+		: '-';
 
 	const moment = useLocalizedMoment();
 	const selectedSiteSlug = useSelector( getSelectedSiteSlug );
@@ -67,9 +74,23 @@ export default function CampaignItem( props: Props ) {
 		[ budget_cents, end_date, spent_budget_cents, start_date ]
 	);
 
-	const totalBudgetLeftString = `($${ formatCents( totalBudgetLeft || 0 ) } ${ __( 'left' ) })`;
-	const budgetString = campaignDays ? `$${ totalBudget } ${ totalBudgetLeftString }` : '-';
+	const budgetString =
+		campaignDays && totalBudgetLeft ? `$${ formatCents( totalBudgetLeft ) } ` : '-';
 	const budgetStringMobile = campaignDays ? `$${ totalBudget } budget` : null;
+	const isWooStore = config.isEnabled( 'is_running_in_woo_site' );
+
+	const getPostType = ( type: string ) => {
+		switch ( type ) {
+			case 'post':
+				return translate( 'Post' );
+			case 'page':
+				return translate( 'Page' );
+			case 'product':
+				return translate( 'Product' );
+			default:
+				return translate( 'Post' );
+		}
+	};
 
 	const statusBadge = (
 		<Badge type={ getCampaignStatusBadgeColor( ui_status ) }>
@@ -133,7 +154,9 @@ export default function CampaignItem( props: Props ) {
 							></div>
 						) }
 						<div className="campaign-item__title-row">
+							<div className="campaign-item__post-type-mobile">{ getPostType( type ) }</div>
 							<div className="campaign-item__title">{ name }</div>
+							<div className="campaign-item__post-type">{ getPostType( type ) }</div>
 							<div className="campaign-item__status-mobile">{ statusBadge }</div>
 						</div>
 					</div>
@@ -143,16 +166,13 @@ export default function CampaignItem( props: Props ) {
 					<div className="campaign-item__actions-mobile">
 						<Button
 							onClick={ navigateToDetailsPage }
-							variant="link"
+							variant="primary"
 							className="campaign-item__view-link"
 						>
-							{ __( 'Open details' ) }
+							{ __( 'Details' ) }
 						</Button>
 					</div>
 				</div>
-			</td>
-			<td className="campaign-item__user">
-				<div>{ display_name }</div>
 			</td>
 			<td className="campaign-item__status">
 				<div>{ statusBadge }</div>
@@ -169,8 +189,22 @@ export default function CampaignItem( props: Props ) {
 			<td className="campaign-item__clicks">
 				<div>{ formatNumber( clicks_total ) }</div>
 			</td>
+			{ isWooStore && (
+				<td className="campaign-item__conversion">
+					<div>{ conversion_rate } </div>
+				</td>
+			) }
+
 			<td className="campaign-item__action">
-				<Button onClick={ navigateToDetailsPage } variant="link" icon={ chevronRight } />
+				<Button
+					variant="secondary"
+					isBusy={ false }
+					disabled={ false }
+					onClick={ navigateToDetailsPage }
+					className="campaign-item__post-details-button"
+				>
+					{ __( 'Details' ) }
+				</Button>
 			</td>
 		</tr>
 	);

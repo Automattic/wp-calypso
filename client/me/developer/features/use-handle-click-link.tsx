@@ -13,7 +13,7 @@ export const useHandleClickLink = () => {
 			if ( pathIndex !== -1 ) {
 				featureSlug = featureSlug.substring( pathIndex + prefixToRemove.length );
 			}
-
+			featureSlug = featureSlug.replace( /^\/|\/$/g, '' );
 			recordTracksEventWithUserIsDevAccount( 'calypso_me_developer_learn_more', {
 				feature: featureSlug,
 			} );

@@ -1,6 +1,7 @@
 import { useQuery, UseQueryResult } from '@tanstack/react-query';
 import wpcom from 'calypso/lib/wp';
 import { PriceTierListItemProps } from '../stats-purchase/types';
+import getDefaultQueryParams from './default-query-params';
 
 interface PeriodUsage {
 	current_start: string | null;
@@ -32,9 +33,10 @@ export default function usePlanUsageQuery(
 	siteId: number | null
 ): UseQueryResult< PlanUsage, unknown > {
 	return useQuery( {
+		...getDefaultQueryParams< PlanUsage >(),
 		queryKey: [ 'stats', 'usage', siteId ],
 		queryFn: () => queryPlanUsage( siteId ),
 		select: selectPlanUsage,
-		// staleTime: 1000 * 60 * 5, // 5 minutes
+		staleTime: 5 * 1000, // 5 seconds
 	} );
 }

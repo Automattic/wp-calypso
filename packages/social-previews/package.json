@@ -1,6 +1,6 @@
 {
 	"name": "@automattic/social-previews",
-	"version": "2.0.1-beta.10",
+	"version": "2.0.1-beta.12",
 	"description": "A suite of components to generate previews for a post for both social and search engines.",
 	"main": "dist/cjs/index.js",
 	"module": "dist/esm/index.js",
@@ -41,7 +41,7 @@
 	},
 	"dependencies": {
 		"@emotion/react": "^11.11.1",
-		"@wordpress/components": "^26.0.0",
+		"@wordpress/components": "^26.0.1",
 		"@wordpress/element": "^5.28.0",
 		"@wordpress/i18n": "^4.51.0",
 		"classnames": "^2.3.2",

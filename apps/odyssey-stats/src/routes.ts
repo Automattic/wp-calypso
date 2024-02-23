@@ -13,6 +13,8 @@ import {
 	redirectToDefaultModulePage,
 	redirectToDefaultWordAdsPeriod,
 	purchase,
+	emailStats,
+	emailSummary,
 } from 'calypso/my-sites/stats/controller';
 import {
 	SITE_REQUEST,
@@ -66,6 +68,7 @@ const redirectToSiteTrafficPage = () => {
 
 export default function ( pageBase = '/' ) {
 	const validPeriods = [ 'day', 'week', 'month', 'year' ].join( '|' );
+	const validEmailPeriods = [ 'hour', 'day' ].join( '|' );
 
 	const validModules = [
 		'posts',
@@ -121,6 +124,10 @@ export default function ( pageBase = '/' ) {
 
 	// Stat Purchase Page
 	statsPage( '/stats/purchase/:site', purchase );
+
+	// Email stats Pages
+	statsPage( `/stats/email/:statType/:period(${ validEmailPeriods })/:email_id/:site`, emailStats );
+	statsPage( `/stats/day/emails/:site`, emailSummary );
 
 	// Anything else should redirect to default stats page
 	statsPage( '*', redirectToSiteTrafficPage );

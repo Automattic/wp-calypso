@@ -786,7 +786,6 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 		// If the user fills out the site title and/or tagline with write or sell intent, we show it on the design preview
 		const shouldCustomizeText = intent === SiteIntent.Write || intent === SiteIntent.Sell;
 		const previewUrl = getDesignPreviewUrl( selectedDesign, {
-			language: locale,
 			site_title: shouldCustomizeText ? siteTitle : undefined,
 			site_tagline: shouldCustomizeText ? siteDescription : undefined,
 		} );
