@@ -9,10 +9,6 @@ import classnames from 'classnames';
 import { Command, useCommandState } from 'cmdk';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useCommandsParams } from './commands/types';
-import useAtomicCommands from './commands/use-atomic-commands';
-import useAtomicLimitedCommands from './commands/use-atomic-limited-commands';
-import useWpcomSimpleSiteCommands from './commands/use-wpcom-simple-site-commands';
-import useWpcomSimpleSiteLimitedCommands from './commands/use-wpcom-simple-site-limited-commands';
 import { COMMAND_SEPARATOR, useCommandFilter } from './use-command-filter';
 import {
 	Command as PaletteCommand,
@@ -440,9 +436,3 @@ const CommandPalette = ( {
 export default CommandPalette;
 export type { Command, CommandCallBackParams } from './use-command-palette';
 export type { useCommandsParams } from './commands/types';
-export {
-	useAtomicCommands,
-	useAtomicLimitedCommands,
-	useWpcomSimpleSiteCommands,
-	useWpcomSimpleSiteLimitedCommands,
-};
