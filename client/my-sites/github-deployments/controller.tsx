@@ -1,7 +1,11 @@
+import { __ } from '@wordpress/i18n';
 import { PageViewTracker } from 'calypso/lib/analytics/page-view-tracker';
 import { CreateRepository } from 'calypso/my-sites/github-deployments/components/repositories/create-repository/index';
+import { DeploymentRunsLogs } from 'calypso/my-sites/github-deployments/deployment-run-logs/index';
+import { errorNotice } from 'calypso/state/notices/actions';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
+import { canCurrentUser } from '../../state/selectors/can-current-user';
 import { GitHubDeploymentCreation } from './deployment-creation';
 import { GitHubDeploymentManagement } from './deployment-management';
 import { GitHubDeployments } from './deployments';
@@ -75,6 +79,28 @@ export const createNewRepository: Callback = ( context, next ) => {
 	next();
 };
 
+export const deploymentRunLogs: Callback = ( context, next ) => {
+	const codeDeploymentId = parseInt( context.params.deploymentId, 10 ) || null;
+	const state = context.store.getState();
+	const siteSlug = getSelectedSiteSlug( state );
+
+	if ( ! codeDeploymentId ) {
+		return context.page.replace( indexPage( siteSlug! ) );
+	}
+
+	context.primary = (
+		<>
+			<PageViewTracker
+				path="/github-deployments/:site/logs/:deploymentId"
+				title="GitHub Deployments"
+				delay={ 500 }
+			/>
+			<DeploymentRunsLogs codeDeploymentId={ codeDeploymentId } />
+		</>
+	);
+	next();
+};
+
 export const redirectHomeIfIneligible: Callback = ( context, next ) => {
 	const state = context.store.getState();
 	const siteId = getSelectedSiteId( state );
@@ -87,6 +113,18 @@ export const redirectHomeIfIneligible: Callback = ( context, next ) => {
 
 	if ( isJetpackSite( state, siteId, { treatAtomicAsJetpackSite: false } ) ) {
 		context.page.replace( `/stats/day/${ siteSlug }` );
+		return;
+	}
+
+	const canManageOptions = canCurrentUser( state, siteId, 'manage_options' );
+
+	if ( ! canManageOptions ) {
+		context.store.dispatch(
+			errorNotice( __( 'You are not authorized to manage GitHub Deployments for this site.' ), {
+				displayOnNextPage: true,
+			} )
+		);
+		context.page.replace( `/home/${ siteSlug }` );
 		return;
 	}
 

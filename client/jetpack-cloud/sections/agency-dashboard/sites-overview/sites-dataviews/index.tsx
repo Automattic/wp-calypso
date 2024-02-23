@@ -12,7 +12,6 @@ import SiteSetFavorite from '../site-set-favorite';
 import SiteSort from '../site-sort';
 import { AllowedTypes, Site, SiteData } from '../types';
 import { SitesDataViewsProps } from './interfaces';
-
 import './style.scss';
 
 const SitesDataViews = ( {
@@ -61,15 +60,23 @@ const SitesDataViews = ( {
 		() => [
 			{
 				id: 'status',
-				header: '',
+				header: translate( 'Status' ),
 				getValue: ( { item }: { item: SiteData } ) =>
 					item.site.error || item.scan.status === 'critical',
 				render: () => {},
 				type: 'enumeration',
 				elements: [
-					{ value: 1, label: 'Needs attention' },
-					{ value: 2, label: 'Favorite' },
+					{ value: 1, label: 'Needs Attention' },
+					{ value: 2, label: 'Backup Failed' },
+					{ value: 3, label: 'Backup Warning' },
+					{ value: 4, label: 'Threat Found' },
+					{ value: 5, label: 'Site Disconnected' },
+					{ value: 6, label: 'Site Down' },
+					{ value: 7, label: 'Plugins Needing Updates' },
 				],
+				filterBy: {
+					operators: [ 'in' ],
+				},
 				enableHiding: false,
 				enableSorting: false,
 			},

@@ -52,6 +52,7 @@ describe(
 
 			it( 'Skip domain selection', async function () {
 				const signupDomainPage = new SignupDomainPage( page );
+				await signupDomainPage.searchForFooDomains();
 				await signupDomainPage.skipDomainSelection();
 			} );
 

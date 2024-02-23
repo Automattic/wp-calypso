@@ -935,6 +935,7 @@ const CheckoutSubtotalSection = styled.div`
 const CheckoutSummaryAmountWrapper = styled.div`
 	border-top: 1px solid ${ ( props ) => props.theme.colors.borderColorLight };
 	padding: 20px 0;
+	margin-top: 20px;
 `;
 
 const CheckoutFirstSubtotalLineItem = styled.div`

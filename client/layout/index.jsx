@@ -1,7 +1,7 @@
 import config from '@automattic/calypso-config';
 import { HelpCenter } from '@automattic/data-stores';
 import { shouldLoadInlineHelp } from '@automattic/help-center';
-import { isWithinBreakpoint } from '@automattic/viewport';
+import { isWithinBreakpoint, subscribeIsWithinBreakpoint } from '@automattic/viewport';
 import { useBreakpoint } from '@automattic/viewport-react';
 import { useDispatch } from '@wordpress/data';
 import classnames from 'classnames';
@@ -52,7 +52,7 @@ import {
 } from 'calypso/state/ui/selectors';
 import BodySectionCssClass from './body-section-css-class';
 import LayoutLoader from './loader';
-import { handleScroll, handleScrollGlobalSidebar } from './utils';
+import { handleScroll } from './utils';
 
 // goofy import for environment badge, which is SSR'd
 import 'calypso/components/environment-badge/style.scss';
@@ -68,35 +68,27 @@ import './style.scss';
 
 const HELP_CENTER_STORE = HelpCenter.register();
 
-function SidebarScrollSynchronizer( { isGlobalSidebarOrGlobalSiteSidebar } ) {
+function SidebarScrollSynchronizer() {
 	const isNarrow = useBreakpoint( '<660px' );
 	const active = ! isNarrow && ! config.isEnabled( 'jetpack-cloud' ); // Jetpack cloud hasn't yet aligned with WPCOM.
 
 	useEffect( () => {
 		if ( active ) {
-			if ( isGlobalSidebarOrGlobalSiteSidebar ) {
-				window.addEventListener( 'scroll', handleScrollGlobalSidebar );
-			} else {
-				window.addEventListener( 'scroll', handleScroll );
-				window.addEventListener( 'resize', handleScroll );
-			}
+			window.addEventListener( 'scroll', handleScroll );
+			window.addEventListener( 'resize', handleScroll );
 		}
 
 		return () => {
 			if ( active ) {
-				if ( isGlobalSidebarOrGlobalSiteSidebar ) {
-					window.removeEventListener( 'scroll', handleScrollGlobalSidebar );
-				} else {
-					window.removeEventListener( 'scroll', handleScroll );
-					window.removeEventListener( 'resize', handleScroll );
-				}
+				window.removeEventListener( 'scroll', handleScroll );
+				window.removeEventListener( 'resize', handleScroll );
 
 				// remove style attributes added by `handleScroll`
 				document.getElementById( 'content' )?.removeAttribute( 'style' );
 				document.getElementById( 'secondary' )?.removeAttribute( 'style' );
 			}
 		};
-	}, [ active, isGlobalSidebarOrGlobalSiteSidebar ] );
+	}, [ active ] );
 
 	return null;
 }
@@ -167,10 +159,22 @@ class Layout extends Component {
 		colorSchemePreference: PropTypes.string,
 	};
 
+	constructor( props ) {
+		super( props );
+		this.state = {
+			isDesktop: isWithinBreakpoint( '>=782px' ),
+		};
+	}
+
 	componentDidMount() {
+		this.unsubscribe = subscribeIsWithinBreakpoint( '>=782px', ( isDesktop ) => {
+			this.setState( { isDesktop } );
+		} );
+
 		if ( ! config.isEnabled( 'me/account/color-scheme-picker' ) ) {
 			return;
 		}
+
 		if ( typeof document !== 'undefined' ) {
 			if ( this.props.colorSchemePreference ) {
 				document
@@ -216,7 +220,10 @@ class Layout extends Component {
 	}
 
 	renderMasterbar( loadHelpCenterIcon ) {
-		if ( this.props.masterbarIsHidden ) {
+		const globalSidebarDesktop =
+			this.state.isDesktop &&
+			( this.props.isGlobalSidebarVisible || this.props.isGlobalSiteSidebarVisible );
+		if ( this.props.masterbarIsHidden || globalSidebarDesktop ) {
 			return <EmptyMasterbar />;
 		}
 		if ( this.props.isWooCoreProfilerFlow ) {
@@ -243,12 +250,15 @@ class Layout extends Component {
 	}
 
 	render() {
+		const globalSidebarDesktop =
+			this.state.isDesktop &&
+			( this.props.isGlobalSidebarVisible || this.props.isGlobalSiteSidebarVisible );
 		const sectionClass = classnames( 'layout', `focus-${ this.props.currentLayoutFocus }`, {
 			[ 'is-group-' + this.props.sectionGroup ]: this.props.sectionGroup,
 			[ 'is-section-' + this.props.sectionName ]: this.props.sectionName,
 			'is-support-session': this.props.isSupportSession,
 			'has-no-sidebar': this.props.sidebarIsHidden,
-			'has-no-masterbar': this.props.masterbarIsHidden,
+			'has-no-masterbar': this.props.masterbarIsHidden || globalSidebarDesktop,
 			'is-logged-in': this.props.isLoggedIn,
 			'is-jetpack-login': this.props.isJetpackLogin,
 			'is-jetpack-site': this.props.isJetpack,
@@ -279,6 +289,9 @@ class Layout extends Component {
 				shouldLoadInlineHelp( this.props.sectionName, this.props.currentRoute ) ) &&
 			this.props.userAllowedToHelpCenter;
 
+		const shouldDisableSidebarScrollSynchronizer =
+			this.props.isGlobalSidebarVisible || this.props.isGlobalSiteSidebarVisible;
+
 		return (
 			<div className={ sectionClass }>
 				<HelpCenterLoader
@@ -286,12 +299,9 @@ class Layout extends Component {
 					loadHelpCenter={ loadHelpCenter }
 					currentRoute={ this.props.currentRoute }
 				/>
-				<SidebarScrollSynchronizer
-					layoutFocus={ this.props.currentLayoutFocus }
-					isGlobalSidebarOrGlobalSiteSidebar={
-						this.props.isGlobalSidebarVisible || this.props.isGlobalSiteSidebarVisible
-					}
-				/>
+				{ ! shouldDisableSidebarScrollSynchronizer && (
+					<SidebarScrollSynchronizer layoutFocus={ this.props.currentLayoutFocus } />
+				) }
 				<SidebarOverflowDelay layoutFocus={ this.props.currentLayoutFocus } />
 				<BodySectionCssClass
 					layoutFocus={ this.props.currentLayoutFocus }
@@ -409,8 +419,6 @@ export default withCurrentRoute(
 				noMasterbarForRoute ||
 				isWpMobileApp() ||
 				isWcMobileApp() ||
-				shouldShowGlobalSidebar ||
-				shouldShowGlobalSiteSidebar ||
 				isJetpackCloud() ||
 				config.isEnabled( 'a8c-for-agencies' );
 			const isJetpackMobileFlow = 'jetpack-connect' === sectionName && !! retrieveMobileRedirect();
@@ -431,11 +439,8 @@ export default withCurrentRoute(
 				'comments',
 			].includes( sectionName );
 			const sidebarIsHidden = ! secondary || isWcMobileApp() || isDomainAndPlanPackageFlow;
-
 			const userAllowedToHelpCenter = config.isEnabled( 'calypso/help-center' );
-
 			const isCommandPaletteOpen = getIsCommandPaletteOpen( state );
-
 			return {
 				masterbarIsHidden,
 				sidebarIsHidden,

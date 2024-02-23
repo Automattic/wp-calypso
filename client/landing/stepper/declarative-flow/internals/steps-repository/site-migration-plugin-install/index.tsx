@@ -1,60 +1,60 @@
 import { StepContainer } from '@automattic/onboarding';
 import { useI18n } from '@wordpress/react-i18n';
-import { useEffect } from 'react';
-import wpcomRequest from 'wpcom-proxy-request';
+import { useEffect, useCallback } from 'react';
 import DocumentHead from 'calypso/components/data/document-head';
 import { LoadingEllipsis } from 'calypso/components/loading-ellipsis';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
+import wpcom from 'calypso/lib/wp';
+import { useSiteIdParam } from '../../../../hooks/use-site-id-param';
 import type { Step } from '../../types';
 
-const SiteMigrationPluginInstall: Step = function SiteMigrationPluginInstall( {
-	navigation,
-	data,
-} ) {
+const SiteMigrationPluginInstall: Step = function SiteMigrationPluginInstall( { navigation } ) {
 	const { submit } = navigation;
-	const siteId = data?.siteId;
-	const siteSlug = data?.siteSlug;
+
+	const siteId = useSiteIdParam();
 	const { __ } = useI18n();
 
-	useEffect( () => {
-		if ( ! siteId || ! siteSlug ) {
+	const installSiteMigrationPlugins = useCallback( async () => {
+		if ( ! siteId ) {
 			return;
 		}
 
-		const installSiteMigrationPlugins = async () => {
-			try {
-				await wpcomRequest( {
-					path: `/sites/${ siteId }/plugins/install`,
-					method: 'POST',
+		try {
+			await wpcom.req.post(
+				`/sites/${ siteId }/plugins/install`,
+				{
 					apiVersion: '1.2',
-					body: {
-						slug: 'migrate-guru',
-					},
-				} );
-			} catch ( error ) {
-				submit?.( { error } );
-				return;
-			}
+				},
+				{
+					slug: 'migrate-guru',
+				}
+			);
+		} catch ( error ) {
+			submit?.( { error } );
+			return;
+		}
 
-			try {
-				await wpcomRequest( {
-					path: `/sites/${ siteId }/plugins/migrate-guru%2fmigrateguru`,
-					method: 'POST',
+		try {
+			await wpcom.req.post(
+				`/sites/${ siteId }/plugins/migrate-guru%2fmigrateguru`,
+				{
 					apiVersion: '1.2',
-					body: {
-						active: true,
-					},
-				} );
-			} catch ( error ) {
-				submit?.( { error } );
-				return;
-			}
+				},
+				{
+					active: true,
+				}
+			);
+		} catch ( error ) {
+			submit?.( { error } );
+			return;
+		}
 
-			submit?.();
-		};
+		submit?.();
+	}, [ siteId, submit ] );
 
+	useEffect( () => {
 		installSiteMigrationPlugins();
-	}, [ siteId, siteSlug, submit ] );
+	}, [ installSiteMigrationPlugins ] );
 
 	return (
 		<>

@@ -211,13 +211,18 @@ export const STEPS = {
 		asyncComponent: () => import( './steps-repository/site-migration-instructions' ),
 	},
 
-	SITE_MIGRATION_SOURCE: {
-		slug: 'site-migration-import-from',
-		asyncComponent: () => import( './steps-repository/site-migration-source-site' ),
+	SITE_MIGRATION_IMPORT_OR_MIGRATE: {
+		slug: 'site-migration-import-or-migrate',
+		asyncComponent: () => import( './steps-repository/site-migration-import-or-migrate' ),
 	},
 
 	SITE_MIGRATION_PLUGIN_INSTALL: {
 		slug: 'site-migration-plugin-install',
 		asyncComponent: () => import( './steps-repository/site-migration-plugin-install' ),
+	},
+
+	SITE_MIGRATION_UPGRADE_PLAN: {
+		slug: 'site-migration-upgrade-plan',
+		asyncComponent: () => import( './steps-repository/site-migration-upgrade-plan' ),
 	},
 };

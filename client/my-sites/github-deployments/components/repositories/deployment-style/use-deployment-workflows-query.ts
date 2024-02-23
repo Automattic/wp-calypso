@@ -2,6 +2,7 @@ import { UseQueryOptions, useQuery } from '@tanstack/react-query';
 import { addQueryArgs } from '@wordpress/url';
 import wp from 'calypso/lib/wp';
 import { GITHUB_DEPLOYMENTS_QUERY_KEY } from 'calypso/my-sites/github-deployments/constants';
+import { GitHubRepositoryData } from 'calypso/my-sites/github-deployments/use-github-repositories-query';
 
 export const CODE_DEPLOYMENTS_QUERY_KEY = 'code-deployments';
 
@@ -23,16 +24,15 @@ export interface WorkflowsValidation {
 
 export const useDeploymentWorkflowsQuery = (
 	installationId: number,
-	repositoryName: string,
-	repositoryOwner: string,
+	repository: GitHubRepositoryData,
 	branchName: string,
 	deploymentStyle: string,
 	options?: Partial< UseQueryOptions< Workflows[] > >
 ) => {
 	const path = addQueryArgs( '/hosting/github/workflows', {
 		installation_id: installationId,
-		repository_name: repositoryName,
-		repository_owner: repositoryOwner,
+		repository_name: repository.name,
+		repository_owner: repository.owner,
 		branch_name: branchName,
 	} );
 
@@ -53,23 +53,23 @@ export const useDeploymentWorkflowsQuery = (
 
 export const useCheckWorkflowQuery = (
 	installationId: number,
-	repositoryName: string,
-	repositoryOwner: string,
+	repository: GitHubRepositoryData,
 	branchName: string,
-	workflowFilename: string
+	workflowFilename: string,
+	isTemplateRepository: boolean
 ) => {
 	const invalidFilenames = [ 'none', 'create-new' ];
 	const path = addQueryArgs( '/hosting/github/workflows/checks', {
 		installation_id: installationId,
-		repository_name: repositoryName,
-		repository_owner: repositoryOwner,
+		repository_name: repository.name,
+		repository_owner: repository.owner,
 		branch_name: branchName,
 		workflow_filename: workflowFilename,
 	} );
 
 	return useQuery< WorkflowsValidation >( {
 		queryKey: [ GITHUB_DEPLOYMENTS_QUERY_KEY, CODE_DEPLOYMENTS_QUERY_KEY, path ],
-		enabled: ! invalidFilenames.includes( workflowFilename ),
+		enabled: ! invalidFilenames.includes( workflowFilename ) && ! isTemplateRepository,
 		queryFn: (): WorkflowsValidation =>
 			wp.req.get( {
 				path,
