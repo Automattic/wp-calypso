@@ -41,7 +41,7 @@ import SitesDataViews from './sites-dataviews';
 import { SitesViewState } from './sites-dataviews/interfaces';
 
 import './style.scss';
-import './sites-dashboard-v2.scss';
+import './style-dashboard-v2.scss';
 
 const QUERY_PARAM_PROVISIONING = 'provisioning';
 
