@@ -1,5 +1,5 @@
+import { isWithinBreakpoint } from '@automattic/viewport';
 import { translate } from 'i18n-calypso';
-
 /**
  * Menu items for the Global Site View sidebar.
  */
@@ -16,6 +16,8 @@ export default function globalSiteSidebarMenu( {
 	selectedSiteSlug: string;
 	isStagingSite: boolean;
 } ) {
+	const isDesktop = isWithinBreakpoint( '>782px' );
+
 	return [
 		{
 			icon: 'dashicons-arrow-left-alt2',
@@ -25,10 +27,14 @@ export default function globalSiteSidebarMenu( {
 			url: `/sites`,
 			className: 'sidebar__menu-item-all-sites',
 		},
-		{
-			type: 'current-site',
-			url: `/home/${ siteDomain }`,
-		},
+		...( isDesktop
+			? [
+					{
+						type: 'current-site',
+						url: `/home/${ siteDomain }`,
+					},
+			  ]
+			: [] ),
 		{
 			slug: 'wp-admin',
 			title: translate( 'WP Admin' ),
@@ -40,6 +46,16 @@ export default function globalSiteSidebarMenu( {
 		{
 			type: 'separator',
 		},
+		...( isDesktop
+			? []
+			: [
+					{
+						slug: 'home',
+						title: translate( 'My Home' ),
+						type: 'menu-item',
+						url: `/home/${ siteDomain }`,
+					},
+			  ] ),
 		{
 			slug: 'upgrades',
 			title: translate( 'Plans' ),
