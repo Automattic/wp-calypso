@@ -238,7 +238,7 @@ function CheckoutSidebarNudge( { responseCart }: { responseCart: ResponseCart } 
 	}
 	return null;
 }
-export default function WPCheckout( {
+export default function CheckoutMainContent( {
 	addItemToCart,
 	changeSelection,
 	countriesList,
