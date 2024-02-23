@@ -2,7 +2,6 @@ import config from '@automattic/calypso-config';
 import './style.scss';
 import { Badge, Button, Dialog } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
-import { useBreakpoint } from '@automattic/viewport-react';
 import { Button as WPButton } from '@wordpress/components';
 import { __, _n, sprintf } from '@wordpress/i18n';
 import { Icon, chevronLeft } from '@wordpress/icons';
@@ -85,7 +84,6 @@ export default function CampaignItemDetails( props: Props ) {
 	const [ showDeleteDialog, setShowDeleteDialog ] = useState( false );
 	const [ showErrorDialog, setShowErrorDialog ] = useState( false );
 	const { cancelCampaign } = useCancelCampaignMutation( () => setShowErrorDialog( true ) );
-	const isSmallScreen = useBreakpoint( '<660px' );
 	const { campaign, isLoading, siteId } = props;
 	const campaignId = campaign?.campaign_id;
 	const isWooStore = config.isEnabled( 'is_running_in_woo_site' );
@@ -343,13 +341,17 @@ export default function CampaignItemDetails( props: Props ) {
 								</Button>
 
 								{ canPromoteCampaignAgain( status ) && (
-									<Button primary onClick={ onClickPromote }>
+									<Button primary className="promote-again-button" onClick={ onClickPromote }>
 										{ translate( 'Promote Again' ) }
 									</Button>
 								) }
 
 								{ canCancelCampaign( status ) && (
-									<Button scary onClick={ () => setShowDeleteDialog( true ) }>
+									<Button
+										scary
+										className="cancel-campaign-button"
+										onClick={ () => setShowDeleteDialog( true ) }
+									>
 										{ cancelCampaignButtonText }
 									</Button>
 								) }
@@ -443,8 +445,10 @@ export default function CampaignItemDetails( props: Props ) {
 									</span>
 									<span className="campaign-item-details__details">
 										{ ! isLoading ? (
-											/* translators: %s is the percentage of the total budget used */
-											__( `%s of total budget`, overallSpendingPercentage )
+											/* translators: overallSpendingPercentage is the percentage of the total budget used */
+											translate( '%(overallSpendingPercentage) of total budget', {
+												args: { overallSpendingPercentage: overallSpendingPercentage },
+											} )
 										) : (
 											<FlexibleSkeleton />
 										) }
@@ -573,8 +577,10 @@ export default function CampaignItemDetails( props: Props ) {
 										</span>
 										<span className="campaign-item-details__details">
 											{ ! isLoading ? (
-												/* translators: Daily average spend. %s is the budget */
-												__( `Daily av. spend: $%s`, dailyAverageSpending )
+												/* translators: Daily average spend. dailyAverageSpending is the budget */
+												translate( 'Daily av. spend: $%(dailyAverageSpending)', {
+													args: { dailyAverageSpending: dailyAverageSpending },
+												} )
 											) : (
 												<FlexibleSkeleton />
 											) }
@@ -592,33 +598,57 @@ export default function CampaignItemDetails( props: Props ) {
 										</span>
 									</div>
 								</div>
-
-								<div className="campaign-item-details__secondary-stats-row">
-									<div>
-										<span className="campaign-item-details__label">
-											{ translate( 'Languages' ) }
-										</span>
-										<span className="campaign-item-details__details">
-											{ ! isLoading ? languagesListFormatted : <FlexibleSkeleton /> }
-										</span>
-									</div>
-									<div className="campaign-item-details__second-column">
+								<div className="campaign-item-details__secondary-stats-interests-mobile">
+									<>
 										<span className="campaign-item-details__label">
 											{ translate( 'Interests' ) }
 										</span>
 										<span className="campaign-item-details__details">
 											{ ! isLoading ? topicsListFormatted : <FlexibleSkeleton /> }
 										</span>
-										<span className="campaign-item-details__label">
-											{ translate( 'Location' ) }
-										</span>
-										<span className="campaign-item-details__details campaign-item-details__locations">
-											{ ! isLoading ? (
-												<TargetLocations audienceList={ audience_list } />
-											) : (
-												<FlexibleSkeleton />
-											) }
-										</span>
+									</>
+								</div>
+
+								<div className="campaign-item-details__secondary-stats-row">
+									<div className="campaign-item-details__secondary-stats-row-left">
+										<>
+											<span className="campaign-item-details__label">
+												{ translate( 'Languages' ) }
+											</span>
+											<span className="campaign-item-details__details">
+												{ ! isLoading ? languagesListFormatted : <FlexibleSkeleton /> }
+											</span>
+										</>
+									</div>
+									<div className="campaign-item-details__second-column">
+										<div className="campaign-item-details__second-column-languages">
+											<span className="campaign-item-details__label">
+												{ translate( 'Languages' ) }
+											</span>
+											<span className="campaign-item-details__details">
+												{ ! isLoading ? languagesListFormatted : <FlexibleSkeleton /> }
+											</span>
+										</div>
+										<div className="campaign-item-details__second-column-interests">
+											<span className="campaign-item-details__label">
+												{ translate( 'Interests' ) }
+											</span>
+											<span className="campaign-item-details__details">
+												{ ! isLoading ? topicsListFormatted : <FlexibleSkeleton /> }
+											</span>
+										</div>
+										<div>
+											<span className="campaign-item-details__label">
+												{ translate( 'Location' ) }
+											</span>
+											<span className="campaign-item-details__details campaign-item-details__locations">
+												{ ! isLoading ? (
+													<TargetLocations audienceList={ audience_list } />
+												) : (
+													<FlexibleSkeleton />
+												) }
+											</span>
+										</div>
 										<div className="campaign-item-details__ad-destination">
 											<span className="campaign-item-details__label">
 												{ translate( 'Destination' ) }
@@ -699,7 +729,6 @@ export default function CampaignItemDetails( props: Props ) {
 									{ ! isLoading ? <>{ adPreviewLabel }</> : <FlexibleSkeleton /> }
 								</div>
 							</div>
-							{ isSmallScreen && <hr className="campaign-item-ad-header-line" /> }
 							<AdPreview
 								isLoading={ isLoading }
 								htmlCode={ creative_html || '' }
@@ -715,6 +744,32 @@ export default function CampaignItemDetails( props: Props ) {
 						</div>
 
 						<div className="campaign-item-details__support-buttons-container">
+							<div className="campaign-item-details__support-buttons-mobile">
+								{ ! isLoading && status ? (
+									<>
+										<Button
+											className="contact-support-button"
+											href={ localizeUrl( 'https://wordpress.com/help/contact' ) }
+											target="_blank"
+										>
+											{ icon }
+											{ translate( 'Contact Support' ) }
+										</Button>
+
+										{ canCancelCampaign( status ) && (
+											<Button
+												scary
+												className="cancel-campaign-button"
+												onClick={ () => setShowDeleteDialog( true ) }
+											>
+												{ cancelCampaignButtonText }
+											</Button>
+										) }
+									</>
+								) : (
+									<FlexibleSkeleton />
+								) }
+							</div>
 							<div className="campaign-item-details__support-articles-wrapper">
 								<div className="campaign-item-details__support-heading">
 									{ translate( 'Support articles' ) }
@@ -736,7 +791,11 @@ export default function CampaignItemDetails( props: Props ) {
 									{ getExternalLinkIcon() }
 								</InlineSupportLink>
 								<div className="campaign-item-details__powered-by">
-									<span>{ translate( 'Blaze - Powered by Jetpack' ) }</span>
+									{ isWooStore ? (
+										<span>{ translate( 'Woo Blaze - Powered by Jetpack' ) }</span>
+									) : (
+										<span>{ translate( 'Blaze - Powered by Jetpack' ) }</span>
+									) }
 								</div>
 							</div>
 						</div>

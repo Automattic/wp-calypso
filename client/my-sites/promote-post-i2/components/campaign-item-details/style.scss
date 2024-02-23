@@ -384,6 +384,14 @@ body.is-section-promote-post-i2 .layout__content .campaign-item-details.main {
 					@media (min-width: calc($break-medium + 1px)) {
 						padding-top: 24px;
 					}
+
+					.campaign-item-details__second-column-languages {
+						display: none;
+					}
+					.campaign-item-details__second-column-interests {
+						display: flex;
+						flex-direction: column;
+					}
 				}
 
 				@media (min-width: $break-medium) {
@@ -425,6 +433,9 @@ body.is-section-promote-post-i2 .layout__content .campaign-item-details.main {
 			}
 		}
 
+		.campaign-item-details__secondary-stats-interests-mobile {
+			display: none;
+		}
 		.campaign-item-details__secondary-payment-row {
 			display: flex;
 			margin: 0 0 24px;
@@ -597,6 +608,10 @@ body.is-section-promote-post-i2 .layout__content .campaign-item-details.main {
 			margin-right: 16px;
 		}
 
+		.campaign-item-details__support-buttons-mobile {
+			display: none;
+		}
+
 		.campaign-item-details__support-buttons {
 			button:first-child {
 				margin-top: 10px;
@@ -711,6 +726,10 @@ body.is-section-promote-post-i2 .layout__content .campaign-item-details.main {
 
 @mixin blazepress-campaign-details-mobile {
 	.campaign-item__container {
+		.campaign-item-header .campaign-item__header-status .campaign-item__header-status-item {
+			height: auto;
+		}
+
 		.campaign-item-details-header-line {
 			margin-bottom: 32px;
 		}
@@ -718,13 +737,91 @@ body.is-section-promote-post-i2 .layout__content .campaign-item-details.main {
 		.campaign-item-details .campaign-item-details__notice {
 			margin-bottom: 32px;
 		}
+
+		.campaign-item-details__secondary-stats-interests-mobile {
+			display: flex;
+			flex-direction: column;
+			width: 100%;
+			margin: 16px;
+			justify-content: space-between;
+		}
+
+		.campaign-item-details__secondary-stats-row-left {
+			display: none;
+		}
+
+		.campaign-item-details__support-buttons-container {
+			.campaign-item-details__support-buttons-mobile {
+				display: flex;
+				flex-direction: column;
+				justify-content: center;
+				margin: 24px;
+
+				button:first-child {
+					margin-top: 10px;
+				}
+
+				button,
+				a {
+					align-items: center;
+					display: inline-flex;
+					line-height: unset;
+					justify-content: center;
+				}
+
+				.campaign-item-details__support-buttons-icon {
+					display: inline-block;
+					margin-right: 9px;
+					height: 16px;
+					vertical-align: text-top;
+				}
+				.contact-support-button {
+					margin-bottom: 12px;
+				}
+				.cancel-campaign-button {
+					display: flex;
+				}
+			}
+			margin: 32px 0 0;
+			.campaign-item-details__support-buttons {
+				display: flex;
+				width: 100%;
+				button,
+				a {
+					align-items: center;
+					display: flex;
+					line-height: unset;
+					justify-content: center;
+				}
+				.contact-support-button {
+					display: none;
+				}
+				.promote-again-button {
+					width: 100%;
+					text-align: center;
+				}
+				.cancel-campaign-button {
+					display: none;
+				}
+			}
+		}
 	}
 
-	.campaign-item__container .campaign-item-details__wrapper .campaign-item-details__main-stats-row {
+	.campaign-item-details__main-stats-row,
+	.campaign-item-details__main-stats-row-top,
+	.campaign-item-details__main-stats-row-bottom,
+	.campaign-item-details__secondary-stats-row,
+	.campaign-item-details__second-column {
 		display: flex;
-		flex-direction: column;
+		flex-direction: row;
+		flex-wrap: wrap;
 		flex-grow: 1;
 		justify-content: space-between;
+
+		> div {
+			flex: 1;
+			flex-basis: 40%;
+		}
 		.campaign-item-details__label {
 			font-size: 0.875rem;
 		}
@@ -732,6 +829,44 @@ body.is-section-promote-post-i2 .layout__content .campaign-item-details.main {
 		.campaign-item-details__text {
 			@include campaign-data-row-font-mobile;
 		}
+	}
+
+	.campaign-item__container .campaign-item-details__wrapper
+	.campaign-item-details__secondary-stats-row > div:not(.campaign-item-details__ad-destination).campaign-item-details__second-column
+	.campaign-item-details__second-column-languages {
+		display: flex;
+		flex-direction: column;
+	}
+
+	.campaign-item__container .campaign-item-details__wrapper .campaign-item-details__secondary-stats-row > div:not(.campaign-item-details__ad-destination).campaign-item-details__second-column .campaign-item-details__second-column-interests {
+		display: none;
+	}
+
+	.campaign-item__container .campaign-item-details__preview-header {
+		margin: 24px;
+	}
+
+	.campaign-item__container .campaign-item-details__preview-container {
+		background: linear-gradient(to bottom, #f6f7f7, #ffff);
+	}
+
+	.campaign-item-details__preview-disclosure {
+		margin: 14px;
+		text-align: left;
+		display: flex;
+		justify-content: center;
+
+		.campaign-item-details__tablet-icon {
+			margin-right: 8px;
+			margin-top: 8px;
+			height: 24px;
+			width: 24px;
+			vertical-align: middle;
+		}
+	}
+
+	.campaign-item__container .campaign-item-details__support-buttons-container .campaign-item-details__support-articles-wrapper {
+		margin: 24px;
 	}
 }
 
