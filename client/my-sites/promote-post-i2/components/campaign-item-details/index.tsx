@@ -1,4 +1,5 @@
 import config from '@automattic/calypso-config';
+import page from '@automattic/calypso-router';
 import './style.scss';
 import { Badge, Button, Dialog } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
@@ -19,10 +20,13 @@ import AdPreviewModal from 'calypso/my-sites/promote-post-i2/components/campaign
 import useOpenPromoteWidget from 'calypso/my-sites/promote-post-i2/hooks/use-open-promote-widget';
 import {
 	canCancelCampaign,
-	canPromoteCampaignAgain,
+	formatAmount,
+	getAdvertisingDashboardPath,
 	getCampaignActiveDays,
 	getCampaignDurationFormatted,
 } from 'calypso/my-sites/promote-post-i2/utils';
+import { useSelector } from 'calypso/state';
+import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import {
 	formatCents,
 	formatNumber,
@@ -64,15 +68,15 @@ const getExternalLinkIcon = ( fillColor?: string ) => (
 	</svg>
 );
 
-const getExternalTabletIcon = () => (
+const getExternalTabletIcon = ( fillColor = '#A7AAAD' ) => (
 	<span className="campaign-item-details__tablet-icon">
-		<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
-			<path d="M14 16L10 16V17.5H14V16Z" fill="#A7AAAD" />
+		<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+			<path d="M14 16L10 16V17.5H14V16Z" fill={ fillColor } />
 			<path
-				fill-rule="evenodd"
-				clip-rule="evenodd"
+				fillRule="evenodd"
+				clipRule="evenodd"
 				d="M5 6C5 4.89543 5.89543 4 7 4L17 4C18.1046 4 19 4.89543 19 6V18C19 19.1046 18.1046 20 17 20H7C5.89543 20 5 19.1046 5 18L5 6ZM7 5.5L17 5.5C17.2761 5.5 17.5 5.72386 17.5 6V18C17.5 18.2761 17.2761 18.5 17 18.5H7C6.72386 18.5 6.5 18.2761 6.5 18L6.5 6C6.5 5.72386 6.72386 5.5 7 5.5Z"
-				fill="#A7AAAD"
+				fill={ fillColor }
 			/>
 		</svg>
 	</span>
@@ -84,6 +88,7 @@ export default function CampaignItemDetails( props: Props ) {
 	const [ showDeleteDialog, setShowDeleteDialog ] = useState( false );
 	const [ showErrorDialog, setShowErrorDialog ] = useState( false );
 	const { cancelCampaign } = useCancelCampaignMutation( () => setShowErrorDialog( true ) );
+	const selectedSiteSlug = useSelector( getSelectedSiteSlug );
 	const { campaign, isLoading, siteId } = props;
 	const campaignId = campaign?.campaign_id;
 	const isWooStore = config.isEnabled( 'is_running_in_woo_site' );
@@ -106,6 +111,7 @@ export default function CampaignItemDetails( props: Props ) {
 		created_at,
 		format,
 		budget_cents,
+		type,
 	} = campaign || {};
 
 	const {
@@ -133,48 +139,74 @@ export default function CampaignItemDetails( props: Props ) {
 	} );
 
 	// Target block
-	const { topics: topicsList, languages: languagesList } = audience_list || {};
+	const {
+		devices: devicesList,
+		topics: topicsList,
+		languages: languagesList,
+	} = audience_list || {};
 
 	// Formatted labels
 	const ctrFormatted = clickthrough_rate ? `${ clickthrough_rate.toFixed( 2 ) }%` : '-';
-	const totalBudgetFormatted = `$${ formatCents( total_budget || 0 ) }`;
+	const totalBudgetFormatted = `$${ formatCents( total_budget || 0, 2 ) }`;
 	const overallSpendingPercentage =
 		total_budget_used && total_budget
 			? `${ ( ( total_budget_used / total_budget ) * 100 ).toFixed( 0 ) }%`
 			: '0%';
-	const overallSpendingFormatted = `$${ formatCents( total_budget_used || 0 ) }`;
 	const deliveryEstimateFormatted = getCampaignEstimatedImpressions( display_delivery_estimate );
 	const campaignTitleFormatted = title || __( 'Untitled' );
 	const campaignCreatedFormatted = moment.utc( created_at ).format( 'MMMM DD, YYYY' );
-	const durationFormatted = getCampaignDurationFormatted( start_date, end_date );
+	const devicesListFormatted = devicesList ? `${ devicesList }` : __( 'All' );
+	const durationDateFormatted = getCampaignDurationFormatted( start_date, end_date );
+	const durationFormatted = duration_days
+		? sprintf(
+				/* translators: %s is the duration in days */
+				_n( '%s day', '%s days', duration_days ),
+				formatNumber( duration_days, true )
+		  )
+		: '';
 	const languagesListFormatted = languagesList
 		? `${ languagesList }`
 		: translate( 'All languages' );
 	const topicsListFormatted = topicsList ? `${ topicsList }` : __( 'All' );
 	const impressionsTotal = formatNumber( impressions_total );
 	const creditsFormatted = `$${ formatCents( credits || 0 ) }`;
-	const totalFormatted = `$${ formatCents( total || 0 ) }`;
+	const totalFormatted = `$${ formatCents( total || 0, 2 ) }`;
 	const dailyAverageSpending = budget_cents ? `${ ( budget_cents / 100 ).toFixed( 2 ) }` : '';
 	const conversionsTotalFormatted = conversions_total ? conversions_total : '-';
-	const conversionValueFormatted: string =
+	const conversionValueFormatted =
 		conversion_last_currency_found && conversion_value
-			? `${ conversion_value[ conversion_last_currency_found ].toFixed(
-					2
-			  ) } ${ conversion_last_currency_found }`
+			? formatAmount(
+					conversion_value[ conversion_last_currency_found ],
+					conversion_last_currency_found
+			  )
 			: '-';
 	const conversionsRateFormatted = conversion_rate
 		? `${ ( conversion_rate * 100 ).toFixed( 2 ) }%`
 		: '-';
-	const activeDays =
-		start_date && end_date && duration_days
-			? getCampaignActiveDays( start_date, end_date, duration_days )
-			: 0;
+
+	const activeDays = getCampaignActiveDays( start_date, end_date );
+	const activeDaysFormatted = activeDays
+		? sprintf(
+				/* translators: %s is the duration in days */
+				_n( '%s day', '%s days', activeDays ),
+				formatNumber( activeDays, true )
+		  )
+		: '- ';
 	const daysLeft = duration_days ? duration_days - activeDays : 0;
-	const daysLeftformatted =
-		status === 'active'
+	const daysLeftFormatted =
+		status === 'active' && daysLeft
 			? /*translators: %s is the number of days left */
-			  sprintf( _n( '%s day left', '%s days left', daysLeft ), formatNumber( daysLeft, true ) )
+			  sprintf( _n( '%s left', '%s left', daysLeft ), formatNumber( daysLeft, true ) )
 			: '';
+	const overallSpendingFormatted = activeDays
+		? `$${ formatCents( total_budget_used || 0, 2 ) }`
+		: '- ';
+	const overallSpendingPercentageFormatted = activeDays
+		? /* translators: overallSpendingPercentage is the percentage of the total budget used */
+		  translate( '%(overallSpendingPercentage)s of total budget', {
+				args: { overallSpendingPercentage: overallSpendingPercentage },
+		  } )
+		: '';
 
 	const adPreviewLabel =
 		// maybe we will need to edit this condition when we add more templates
@@ -187,6 +219,19 @@ export default function CampaignItemDetails( props: Props ) {
 				<AdPreviewModal templateFormat={ format || '' } htmlCode={ creative_html || '' } />
 			</div>
 		);
+
+	const getDestinationLabel = () => {
+		switch ( type ) {
+			case 'post':
+				return translate( 'Post page' );
+			case 'page':
+				return translate( 'Page' );
+			case 'product':
+				return translate( 'Product page' );
+			default:
+				return translate( 'Post page' );
+		}
+	};
 
 	const icon = (
 		<span className="campaign-item-details__support-buttons-icon">
@@ -279,7 +324,9 @@ export default function CampaignItemDetails( props: Props ) {
 						{ ! isLoading ? (
 							<WPButton
 								className="campaign-item-details-back-button"
-								onClick={ () => window.history.back() }
+								onClick={ () =>
+									page.show( getAdvertisingDashboardPath( `/campaigns/${ selectedSiteSlug }` ) )
+								}
 								target="_blank"
 								variant="link"
 							>
@@ -327,40 +374,42 @@ export default function CampaignItemDetails( props: Props ) {
 					</div>
 				</div>
 
-				<div className="campaign-item-details__support-buttons-container">
-					<div className="campaign-item-details__support-buttons">
-						{ ! isLoading && status ? (
-							<>
-								<Button
-									className="contact-support-button"
-									href={ localizeUrl( 'https://wordpress.com/help/contact' ) }
-									target="_blank"
-								>
-									{ icon }
-									{ translate( 'Contact Support' ) }
-								</Button>
-
-								{ canPromoteCampaignAgain( status ) && (
-									<Button primary className="promote-again-button" onClick={ onClickPromote }>
-										{ translate( 'Promote Again' ) }
-									</Button>
-								) }
-
-								{ canCancelCampaign( status ) && (
+				{ ! isLoading && status && (
+					<div className="campaign-item-details__support-buttons-container">
+						<div className="campaign-item-details__support-buttons">
+							{ ! isLoading && status ? (
+								<>
 									<Button
-										scary
-										className="cancel-campaign-button"
-										onClick={ () => setShowDeleteDialog( true ) }
+										className="contact-support-button"
+										href={ localizeUrl( 'https://wordpress.com/help/contact' ) }
+										target="_blank"
 									>
-										{ cancelCampaignButtonText }
+										{ icon }
+										{ translate( 'Contact Support' ) }
 									</Button>
-								) }
-							</>
-						) : (
-							<FlexibleSkeleton />
-						) }
+
+									{ ! canCancelCampaign( status ) && (
+										<Button primary className="promote-again-button" onClick={ onClickPromote }>
+											{ translate( 'Promote Again' ) }
+										</Button>
+									) }
+
+									{ canCancelCampaign( status ) && (
+										<Button
+											scary
+											className="cancel-campaign-button"
+											onClick={ () => setShowDeleteDialog( true ) }
+										>
+											{ cancelCampaignButtonText }
+										</Button>
+									) }
+								</>
+							) : (
+								<FlexibleSkeleton />
+							) }
+						</div>
 					</div>
-				</div>
+				) }
 			</header>
 			<hr className="campaign-item-details-header-line" />
 			<Main wideLayout className="campaign-item-details">
@@ -403,18 +452,10 @@ export default function CampaignItemDetails( props: Props ) {
 								<div>
 									<span className="campaign-item-details__label">{ translate( 'Duration' ) }</span>
 									<span className="campaign-item-details__text wp-brand-font">
-										{ ! isLoading ? durationFormatted : <FlexibleSkeleton /> }
+										{ ! isLoading ? durationDateFormatted : <FlexibleSkeleton /> }
 									</span>
 									<span className="campaign-item-details__details">
-										{ ! isLoading && duration_days ? (
-											sprintf(
-												/* translators: %s is the duration in days */
-												_n( '%s day', '%s days', duration_days ),
-												formatNumber( duration_days, true )
-											)
-										) : (
-											<FlexibleSkeleton />
-										) }
+										{ ! isLoading ? durationFormatted : <FlexibleSkeleton /> }
 									</span>
 								</div>
 								<div>
@@ -422,18 +463,10 @@ export default function CampaignItemDetails( props: Props ) {
 										{ translate( 'Active for' ) }
 									</span>
 									<span className="campaign-item-details__text wp-brand-font">
-										{ ! isLoading ? (
-											sprintf(
-												/* translators: %s is the number of active days */
-												_n( '%s day', '%s days', activeDays ),
-												formatNumber( activeDays, true )
-											)
-										) : (
-											<FlexibleSkeleton />
-										) }
+										{ ! isLoading ? activeDaysFormatted : <FlexibleSkeleton /> }
 									</span>
 									<span className="campaign-item-details__details">
-										{ ! isLoading ? daysLeftformatted : <FlexibleSkeleton /> }
+										{ ! isLoading ? daysLeftFormatted : <FlexibleSkeleton /> }
 									</span>
 								</div>
 								<div>
@@ -444,14 +477,7 @@ export default function CampaignItemDetails( props: Props ) {
 										{ ! isLoading ? overallSpendingFormatted : <FlexibleSkeleton /> }
 									</span>
 									<span className="campaign-item-details__details">
-										{ ! isLoading ? (
-											/* translators: overallSpendingPercentage is the percentage of the total budget used */
-											translate( '%(overallSpendingPercentage) of total budget', {
-												args: { overallSpendingPercentage: overallSpendingPercentage },
-											} )
-										) : (
-											<FlexibleSkeleton />
-										) }
+										{ ! isLoading ? overallSpendingPercentageFormatted : <FlexibleSkeleton /> }
 									</span>
 								</div>
 							</div>
@@ -578,7 +604,7 @@ export default function CampaignItemDetails( props: Props ) {
 										<span className="campaign-item-details__details">
 											{ ! isLoading ? (
 												/* translators: Daily average spend. dailyAverageSpending is the budget */
-												translate( 'Daily av. spend: $%(dailyAverageSpending)', {
+												translate( 'Daily av. spend: $%(dailyAverageSpending)s', {
 													args: { dailyAverageSpending: dailyAverageSpending },
 												} )
 											) : (
@@ -611,14 +637,18 @@ export default function CampaignItemDetails( props: Props ) {
 
 								<div className="campaign-item-details__secondary-stats-row">
 									<div className="campaign-item-details__secondary-stats-row-left">
-										<>
-											<span className="campaign-item-details__label">
-												{ translate( 'Languages' ) }
-											</span>
-											<span className="campaign-item-details__details">
-												{ ! isLoading ? languagesListFormatted : <FlexibleSkeleton /> }
-											</span>
-										</>
+										<span className="campaign-item-details__label">
+											{ translate( 'Languages' ) }
+										</span>
+										<span className="campaign-item-details__details">
+											{ ! isLoading ? languagesListFormatted : <FlexibleSkeleton /> }
+										</span>
+										<span className="campaign-item-details__label">
+											{ translate( 'Audience' ) }
+										</span>
+										<span className="campaign-item-details__details">
+											{ ! isLoading ? devicesListFormatted : <FlexibleSkeleton /> }
+										</span>
 									</div>
 									<div className="campaign-item-details__second-column">
 										<div className="campaign-item-details__second-column-languages">
@@ -660,7 +690,7 @@ export default function CampaignItemDetails( props: Props ) {
 														href={ clickUrl }
 														target="_blank"
 													>
-														{ isWooStore ? translate( 'Product page' ) : translate( 'Post page' ) }
+														{ getDestinationLabel() }
 														{ getExternalLinkIcon() }
 													</Button>
 												) : (

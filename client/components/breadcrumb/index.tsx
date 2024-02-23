@@ -90,7 +90,6 @@ interface Props {
 	items: Item[];
 	mobileItem?: Item;
 	compact?: boolean;
-	singleButton?: boolean;
 	hideWhenOnlyOneLevel?: boolean;
 }
 
