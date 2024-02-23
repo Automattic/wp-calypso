@@ -8,7 +8,7 @@ export function useCheckoutV2(): 'loading' | 'treatment' | 'control' {
 
 	const [ isLoadingExperimentAssignment, experimentAssignment ] = useExperiment(
 		'calypso_launch_checkout_v2',
-		{ isEligible: isCheckoutSection }
+		{ isEligible: isCheckoutSection && ! hasCheckoutVersion( '2' ) }
 	);
 
 	// Is loading experiment assignment
