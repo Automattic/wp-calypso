@@ -41,9 +41,7 @@ export default function SiteTopHeaderButtons() {
 				disabled={ ! partnerCanIssueLicense }
 				onClick={ onIssueNewLicenseClick }
 			>
-				<span className="sites-overview__issue-license-button-caption">
-					{ translate( 'Issue License', { context: 'button label' } ) }
-				</span>
+				{ translate( 'Issue License', { context: 'button label' } ) }
 			</Button>
 
 			{ isWPCOMAtomicSiteCreationEnabled ? (
