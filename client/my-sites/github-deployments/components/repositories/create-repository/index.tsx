@@ -80,7 +80,7 @@ export const CreateRepository = () => {
 				<h1>{ __( 'Create repository' ) }</h1>
 			</HeaderCake>
 			<ActionPanel>
-				<ActionPanelBody>
+				<ActionPanelBody css={ { overflow: 'visible !important' } }>
 					<CreateRepositoryForm
 						onRepositoryCreated={ handleCreateRepository }
 						isPending={ isPending || isDeploying }

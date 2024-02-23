@@ -40,10 +40,14 @@
 		margin-bottom: 4px;
 	}
 
-	&__default-path-hint {
-		padding-top: 4px;
-		font-style: italic;
-		color: var(--Gray-Gray-60, #50575e);
+	&__branch-select {
+		display: flex;
+		gap: 16px;
+		align-items: center;
+
+		.form-select {
+			flex: 1;
+		}
 	}
 
 	&__automatic-deploys-switch {
@@ -54,15 +58,5 @@
 		.components-form-toggle {
 			line-height: 1;
 		}
-	}
-}
-
-.github-deployments-deployment-branch-select {
-	display: flex;
-	gap: 16px;
-	align-items: center;
-
-	.form-select {
-		flex: 1;
 	}
 }

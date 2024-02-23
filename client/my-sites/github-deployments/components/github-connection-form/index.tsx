@@ -115,7 +115,7 @@ export const GitHubConnectionForm = ( {
 				</FormFieldset>
 				<FormFieldset>
 					<FormLabel htmlFor="branch">{ __( 'Deployment branch' ) }</FormLabel>
-					<div className="github-deployments-deployment-branch-select">
+					<div className="github-deployments-connect-repository__branch-select">
 						<FormSelect
 							id="branch"
 							disabled={ isFetchingBranches }
