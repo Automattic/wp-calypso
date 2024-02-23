@@ -10,9 +10,13 @@ import Notice from 'calypso/components/notice';
 import SidebarNavigation from 'calypso/components/sidebar-navigation';
 import useFetchDashboardSites from 'calypso/data/agency-dashboard/use-fetch-dashboard-sites';
 import useFetchMonitorVerfiedContacts from 'calypso/data/agency-dashboard/use-fetch-monitor-verified-contacts';
+import { AgencyDashboardFilterMap } from 'calypso/jetpack-cloud/sections/agency-dashboard/sites-overview/types';
 import { useDispatch, useSelector } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
-import { resetSite } from 'calypso/state/jetpack-agency-dashboard/actions';
+import {
+	resetSite,
+	updateDashboardURLQueryArgs,
+} from 'calypso/state/jetpack-agency-dashboard/actions';
 import {
 	checkIfJetpackSiteGotDisconnected,
 	getSelectedLicenses,
@@ -57,27 +61,35 @@ export default function SitesDashboardV2() {
 		? selectedSiteLicenses.reduce( ( acc, { products } ) => acc + products.length, 0 )
 		: selectedLicenses?.length;
 
-	const {
-		search,
-		currentPage,
-		filter,
-		sort,
-		// TODO - These props will be used when we implement the bulk management:
-		// selectedSites,
-		// setSelectedSites,
-		// setIsBulkManagementActive,
-	} = useContext( SitesOverviewContext );
+	const filtersMap: AgencyDashboardFilterMap[] = [
+		{ filterType: 'all_issues', ref: 1 },
+		{ filterType: 'backup_failed', ref: 2 },
+		{ filterType: 'backup_warning', ref: 3 },
+		{ filterType: 'threats_found', ref: 4 },
+		{ filterType: 'site_disconnected', ref: 5 },
+		{ filterType: 'site_down', ref: 6 },
+		{ filterType: 'plugin_updates', ref: 7 },
+	];
+
+	const { search, currentPage, filter, sort } = useContext( SitesOverviewContext );
 
 	const [ sitesViewState, setSitesViewState ] = useState< SitesViewState >( {
 		type: 'table',
 		perPage: 50,
 		page: currentPage,
 		sort: {
-			field: 'site',
+			field: 'url',
 			direction: 'desc',
 		},
 		search: search,
-		filters: [],
+		filters:
+			filter?.issueTypes?.map( ( issueType ) => {
+				return {
+					field: 'status',
+					operator: 'in',
+					value: filtersMap.find( ( filterMap ) => filterMap.filterType === issueType )?.ref || 1,
+				};
+			} ) || [],
 		hiddenFields: [ 'status' ],
 		layout: {},
 		selectedSite: undefined,
@@ -97,6 +109,25 @@ export default function SitesDashboardV2() {
 		},
 		[ setSitesViewState ]
 	);
+
+	// Filter selection
+	useEffect( () => {
+		const filtersSelected =
+			sitesViewState.filters?.map( ( filter ) => {
+				const filterType =
+					filtersMap.find( ( filterMap ) => filterMap.ref === filter.value )?.filterType ||
+					'all_issues';
+
+				return filterType;
+			} ) || [];
+
+		updateDashboardURLQueryArgs( { filter: filtersSelected || [] } );
+	}, [ sitesViewState.filters ] );
+
+	// Search query
+	useEffect( () => {
+		updateDashboardURLQueryArgs( { search: sitesViewState.search } );
+	}, [ sitesViewState.search ] );
 
 	useEffect( () => {
 		if ( jetpackSiteDisconnected ) {
@@ -237,7 +268,6 @@ export default function SitesDashboardV2() {
 		}
 	}, [ sitesViewState, setSitesViewState ] );
 
-	// TODO: the style element is injected temporary here only to not interfere with the styles in production.
 	return (
 		<div
 			className={ classNames(
