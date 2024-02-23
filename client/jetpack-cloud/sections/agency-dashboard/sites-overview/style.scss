@@ -1,53 +1,6 @@
 @import "@wordpress/base-styles/breakpoints";
 @import "@wordpress/base-styles/mixins";
 
-.sites-dashboard__layout {
-	display: flex;
-	flex-wrap: nowrap;
-	gap: 16px;
-
-	.sites-overview {
-		width: 400px;
-		flex-shrink: 0;
-		overflow-y: auto;
-		transition: all 0.2s;
-		background: var(--studio-white);
-		padding: 24px 18px;
-		border-radius: 8px; /* stylelint-disable-line scales/radii */
-	}
-
-	.sites-overview__container {
-		min-height: calc(100vh - 90px);
-	}
-
-	.sites-overview__page-title {
-		font-size: rem(24px);
-	}
-
-	.site-preview__pane {
-		flex-grow: 1;
-		width: auto;
-		transition: flex-grow 0.2s;
-		background: var(--studio-white);
-		overflow: hidden;
-		border-radius: 8px; /* stylelint-disable-line scales/radii */
-	}
-
-	&.preview-hidden {
-		.sites-overview {
-			flex-grow: 1;
-			padding: 48px 64px 0;
-			margin-right: -14px;
-			transition: flex-grow 0.2s;
-		}
-
-		.site-preview__pane {
-			max-width: 0;
-			padding: 0;
-		}
-	}
-}
-
 .sites-overview {
 	.current-section {
 		padding: 0 16px;
