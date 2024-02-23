@@ -8,6 +8,7 @@ import PropTypes from 'prop-types';
 import { parse } from 'qs';
 import { Component } from 'react';
 import { connect } from 'react-redux';
+import Site from 'calypso/blocks/site';
 import AsyncLoad from 'calypso/components/async-load';
 import Gravatar from 'calypso/components/gravatar';
 import { getStatsPathForTab } from 'calypso/lib/route';
@@ -284,6 +285,16 @@ class MasterbarLoggedIn extends Component {
 		);
 	}
 
+	getHomeUrl() {
+		const { hasNoSites, siteSlug, isCustomerHomeEnabled, isSiteTrialExpired } = this.props;
+		// eslint-disable-next-line no-nested-ternary
+		return hasNoSites || isSiteTrialExpired
+			? '/sites'
+			: isCustomerHomeEnabled
+			? `/home/${ siteSlug }`
+			: getStatsPathForTab( 'day', siteSlug );
+	}
+
 	// will render as back button on mobile and in editor
 	renderMySites() {
 		const {
@@ -292,20 +303,12 @@ class MasterbarLoggedIn extends Component {
 			hasMoreThanOneSite,
 			siteSlug,
 			translate,
-			isCustomerHomeEnabled,
 			section,
 			currentRoute,
-			isSiteTrialExpired,
 		} = this.props;
 		const { isMenuOpen, isResponsiveMenu } = this.state;
 
-		const homeUrl =
-			// eslint-disable-next-line no-nested-ternary
-			hasNoSites || isSiteTrialExpired
-				? '/sites'
-				: isCustomerHomeEnabled
-				? `/home/${ siteSlug }`
-				: getStatsPathForTab( 'day', siteSlug );
+		const homeUrl = this.getHomeUrl();
 
 		let mySitesUrl = domainOnlySite
 			? domainManagementList( siteSlug, currentRoute, true )
@@ -591,8 +594,16 @@ class MasterbarLoggedIn extends Component {
 	}
 
 	render() {
-		const { isInEditor, isCheckout, isCheckoutPending, isCheckoutFailed, loadHelpCenterIcon } =
-			this.props;
+		const {
+			isInEditor,
+			isCheckout,
+			isCheckoutPending,
+			isCheckoutFailed,
+			loadHelpCenterIcon,
+			currentSelectedSiteId,
+			isGlobalSiteView,
+			isGlobalView,
+		} = this.props;
 		const { isMobile } = this.state;
 
 		if ( isCheckout || isCheckoutPending || isCheckoutFailed ) {
@@ -602,10 +613,17 @@ class MasterbarLoggedIn extends Component {
 		if ( this.props.isMobileGlobalNavVisible ) {
 			return (
 				<>
-					<Masterbar>
+					<Masterbar className="masterbar__global-nav">
 						<div className="masterbar__section masterbar__section--left">
 							{ this.renderSidebarMobileMenu() }
-							{ this.renderGlobalMySites() }
+							{ isGlobalView && this.renderGlobalMySites() }
+							{ isGlobalSiteView && currentSelectedSiteId && (
+								<Site
+									siteId={ currentSelectedSiteId }
+									href={ this.getHomeUrl() }
+									isSelected={ true }
+								/>
+							) }
 						</div>
 						<div className="masterbar__section masterbar__section--right">
 							{ this.renderSearch() }
@@ -733,6 +751,8 @@ export default connect(
 			isSiteTrialExpired: isTrialExpired( state, siteId ),
 			isMobileGlobalNavVisible:
 				( shouldShowGlobalSidebar || shouldShowGlobalSiteSidebar ) && ! isDesktop,
+			isGlobalView: shouldShowGlobalSidebar,
+			isGlobalSiteView: shouldShowGlobalSiteSidebar,
 		};
 	},
 	{
