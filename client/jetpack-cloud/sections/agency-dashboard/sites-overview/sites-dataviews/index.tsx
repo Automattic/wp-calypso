@@ -9,6 +9,7 @@ import SiteStatusContent from 'calypso/jetpack-cloud/sections/agency-dashboard/s
 import SiteDataField from 'calypso/jetpack-cloud/sections/agency-dashboard/sites-overview/sites-dataviews/site-data-field';
 import TextPlaceholder from 'calypso/jetpack-cloud/sections/partner-portal/text-placeholder';
 import SiteSetFavorite from '../site-set-favorite';
+import SiteSort from '../site-sort';
 import { AllowedTypes, Site, SiteData } from '../types';
 import { SitesDataViewsProps } from './interfaces';
 import './style.scss';
@@ -76,13 +77,19 @@ const SitesDataViews = ( {
 				filterBy: {
 					operators: [ 'in' ],
 				},
-				enableHiding: true,
-				enableSorting: true,
+				enableHiding: false,
+				enableSorting: false,
 			},
 			{
 				id: 'site',
 				header: (
-					<span className="sites-dataview__site-header">{ translate( 'Site' ).toUpperCase() }</span>
+					<>
+						<SiteSort isSortable={ true } columnKey="site">
+							<span className="sites-dataview__site-header">
+								{ translate( 'Site' ).toUpperCase() }
+							</span>
+						</SiteSort>
+					</>
 				),
 				getValue: ( { item }: { item: SiteData } ) => item.site.value.url,
 				render: ( { item }: { item: SiteData } ) => {
@@ -99,7 +106,7 @@ const SitesDataViews = ( {
 					);
 				},
 				enableHiding: false,
-				enableSorting: true,
+				enableSorting: false,
 			},
 			{
 				id: 'stats',
