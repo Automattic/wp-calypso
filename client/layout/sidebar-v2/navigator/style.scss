@@ -21,6 +21,10 @@
 	margin: 0;
 }
 
+.sidebar-v2__navigator-sub-menu ul li:not(:last-child) {
+	margin-block-end: 2px;
+}
+
 .sidebar-v2__navigator-sub-menu-header {
 	display: flex;
 	align-items: center;
