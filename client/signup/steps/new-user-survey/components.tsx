@@ -27,7 +27,7 @@ export const StyledCard = styled( Card )`
 
 export const StyledLabel = styled( FormLabel )`
 	&.form-label.form-label {
-		min-height: 30px;
+		min-height: 32px;
 		display: flex;
 		align-items: center;
 	}
@@ -36,8 +36,8 @@ export const StyledLabel = styled( FormLabel )`
 export const StyledFormTextInput = styled< any >( FormTextInput )`
 	&.form-text-input.form-text-input {
 		margin-left: 24px;
-		font-size: 0.75rem;
-		max-width: 311px;
+		max-width: 385px;
+		font-size: 100%;
 	}
 `;
 
