@@ -81,12 +81,18 @@
 		margin-bottom: 0;
 	}
 
-	.form-fieldset .form-label {
-		display: inline-flex;
-		margin-top: 16px;
-		font-weight: 500;
-		margin-bottom: 0;
-		color: var(--studio-black);
+	.form-fieldset {
+		>.spinner {
+			margin-bottom: 1.5em;
+		}
+
+		.form-label {
+			display: inline-flex;
+			margin-top: 16px;
+			font-weight: 500;
+			margin-bottom: 0;
+			color: var(--studio-black);
+		}
 	}
 
 	.support-info {

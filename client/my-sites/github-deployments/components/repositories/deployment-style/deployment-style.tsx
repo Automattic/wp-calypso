@@ -320,18 +320,26 @@ export const DeploymentStyle = ( {
 		} );
 
 		if ( hasAnyError ) {
-			return translate( 'Please edit {{filename/}} and fix the problems we found:', {
-				components: {
-					filename: <ExternalLink href={ workflowFileUrl }>{ workflowFileName }</ExternalLink>,
-				},
-			} );
+			return (
+				<p>
+					{ translate( 'Please edit {{filename/}} and fix the problems we found:', {
+						components: {
+							filename: <ExternalLink href={ workflowFileUrl }>{ workflowFileName }</ExternalLink>,
+						},
+					} ) }
+				</p>
+			);
 		}
 
-		return translate( 'Your workflow {{filename/}} is good to go!', {
-			components: {
-				filename: <ExternalLink href={ workflowFileUrl }>{ workflowFileName }</ExternalLink>,
-			},
-		} );
+		return (
+			<p>
+				{ translate( 'Your workflow {{filename/}} is good to go!', {
+					components: {
+						filename: <ExternalLink href={ workflowFileUrl }>{ workflowFileName }</ExternalLink>,
+					},
+				} ) }
+			</p>
+		);
 	};
 
 	return (
@@ -396,12 +404,9 @@ export const DeploymentStyle = ( {
 						! isCreatingNewWorkflow && (
 							<>
 								<FormLabel>{ __( 'Workflow check' ) }</FormLabel>
-								<p>
-									<ExternalWorkflowLink />
-								</p>
-
+								<ExternalWorkflowLink />
 								{ workflowsValidations.map( ( validation ) => (
-									<>
+									<div key={ validation.key }>
 										<FoldableCard
 											disabled={ validation.key !== 'valid_yaml_file' && ! isYamlValid }
 											key={ validation.key }
@@ -420,7 +425,7 @@ export const DeploymentStyle = ( {
 										{ validation.status === 'error' && (
 											<FormInputValidation isError text={ translate( 'Please fix this error' ) } />
 										) }
-									</>
+									</div>
 								) ) }
 							</>
 						) }
