@@ -2,8 +2,10 @@ import { useLocale } from '@automattic/i18n-utils';
 import { useSelect, useDispatch } from '@wordpress/data';
 import { useEffect } from 'react';
 import { getLocaleFromQueryParam, getLocaleFromPathname } from 'calypso/boot/locale';
+import { addQueryArgs } from 'calypso/lib/url';
 import { useSiteSlugParam } from '../hooks/use-site-slug-param';
 import { USER_STORE, ONBOARD_STORE, SITE_STORE } from '../stores';
+import { goToCheckout } from '../utils/checkout';
 import { getLoginUrl } from '../utils/path';
 import { recordSubmitStep } from './internals/analytics/record-submit-step';
 import { STEPS } from './internals/steps';
@@ -16,9 +18,10 @@ const siteMigration: Flow = {
 
 	useSteps() {
 		return [
-			STEPS.SITE_MIGRATION_SOURCE,
+			STEPS.SITE_MIGRATION_IMPORT_OR_MIGRATE,
 			STEPS.SITE_MIGRATION_PLUGIN_INSTALL,
 			STEPS.PROCESSING,
+			STEPS.SITE_MIGRATION_UPGRADE_PLAN,
 			STEPS.WAIT_FOR_ATOMIC,
 			STEPS.WAIT_FOR_PLUGIN_INSTALL,
 			STEPS.SITE_MIGRATION_INSTRUCTIONS,
@@ -134,7 +137,24 @@ const siteMigration: Flow = {
 			const siteId = getSiteIdBySlug( siteSlug );
 
 			switch ( currentStep ) {
-				case STEPS.SITE_MIGRATION_SOURCE.slug: {
+				case STEPS.SITE_MIGRATION_IMPORT_OR_MIGRATE.slug: {
+					// Switch to the normal Import flow.
+					if ( providedDependencies?.destination === 'import' ) {
+						return exitFlow(
+							`/setup/site-setup/importList?siteSlug=${ siteSlug }&siteId=${ siteId }`
+						);
+					}
+
+					// Take the user to the upgrade plan step.
+					if ( providedDependencies?.destination === 'upgrade' ) {
+						// TODO - Once the upgrade plan step is available, we'll want to change this to use the slug constant.
+						return navigate( 'site-migration-upgrade-plan', {
+							siteId,
+							siteSlug,
+						} );
+					}
+
+					// Continue with the migration flow.
 					return navigate( STEPS.SITE_MIGRATION_PLUGIN_INSTALL.slug, {
 						siteId,
 						siteSlug,
@@ -167,6 +187,30 @@ const siteMigration: Flow = {
 					return navigate( STEPS.PROCESSING.slug, {
 						currentStep,
 					} );
+				}
+
+				case STEPS.SITE_MIGRATION_UPGRADE_PLAN.slug: {
+					if ( providedDependencies?.goToCheckout ) {
+						const destination = addQueryArgs(
+							{
+								flags: 'onboarding/new-migration-flow',
+								siteSlug,
+							},
+							'/setup/site-migration/site-migration-instructions'
+						);
+						goToCheckout( {
+							flowName: 'site-migration',
+							stepName: 'site-migration-upgrade-plan',
+							siteSlug: siteSlug,
+							destination: destination,
+							plan: providedDependencies.plan as string,
+						} );
+						return;
+					}
+					if ( providedDependencies?.verifyEmail ) {
+						// not yet implemented
+						return;
+					}
 				}
 
 				case STEPS.WAIT_FOR_PLUGIN_INSTALL.slug: {
