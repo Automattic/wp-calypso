@@ -133,7 +133,7 @@ const useMenuItems = ( {
 					isSelected: itemLinkMatches( path, `${ JETPACK_CLOUD_SOCIAL_LINK }/${ siteSlug }` ),
 				},
 				{
-					icon: <JetpackIcons icon="wordpress" size={ 24 } />,
+					icon: <JetpackIcons icon="subscribers" size={ 24 } />,
 					path: '/',
 					link: `${ JETPACK_CLOUD_SUBSCRIBERS_LINK }/${ siteSlug }`,
 					title: translate( 'Subscribers' ),
