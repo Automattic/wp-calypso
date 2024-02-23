@@ -60,7 +60,7 @@ export const GitHubInstallationsDropdown = ( {
 			onClick={ onAddInstallation }
 			key="add"
 		>
-			{ __( 'Add GitHub installation' ) }
+			{ __( 'Add GitHub account' ) }
 		</Button>
 	);
 };

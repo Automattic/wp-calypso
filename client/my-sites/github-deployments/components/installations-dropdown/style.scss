@@ -1,4 +1,8 @@
 .github-deployments-installations-select {
+	.select-dropdown__header {
+		height: 40px !important;
+	}
+
 	.select-dropdown__header-text {
 		font-size: $font-body;
 		font-weight: normal;
