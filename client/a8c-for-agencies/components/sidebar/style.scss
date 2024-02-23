@@ -1,0 +1,71 @@
+@import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/mixins";
+
+// This file is meant to house style rules that all implementations of the base
+// sidebar will implement by default.
+.a4a-sidebar {
+	background-color: var(--color-sidebar-background);
+
+	.a4a-sidebar__site-selector {
+		background-color: var(--color-sidebar-background);
+	}
+
+	.sidebar-v2__menu-item {
+		svg {
+			color: var(--color-sidebar-text);
+		}
+		&.is-active {
+			background: var(--color-sidebar-menu-selected-background);
+			color: var(--color-sidebar-menu-selected-text);
+
+			svg {
+				color: var(--color-sidebar-menu-selected-text);
+			}
+		}
+	}
+
+	.sidebar__menu-icon {
+		margin: 0;
+	}
+}
+
+.a4a-sidebar__header {
+	display: flex;
+	align-items: center;
+	padding: 16px 8px;
+	gap: 12px;
+	min-height: 48px;
+
+	.all-sites:hover {
+		background-color: unset;
+	}
+
+	.all-sites .all-sites__content,
+	.site .site__content {
+		padding: initial;
+		align-items: center;
+
+		cursor: pointer;
+
+		.all-sites__icon-container,
+		.site-icon {
+			border-radius: 2px;
+			margin-inline-end: 12px;
+		}
+	}
+
+	.site__domain {
+		display: none;
+	}
+
+	.site__title {
+		// TODO: Value taken directly from designs;
+		// confirm this weight is correct and refactor as necessary
+		font-weight: 500;
+	}
+}
+
+.a4a-sidebar__footer ul {
+	list-style: none;
+	margin: 0;
+}

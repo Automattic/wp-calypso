@@ -6,7 +6,7 @@ import { Icon, search as inputIcon, chevronLeft as backIcon } from '@wordpress/i
 import { cleanForSlug } from '@wordpress/url';
 import classnames from 'classnames';
 import { Command, useCommandState } from 'cmdk';
-import { useEffect, useState, useRef, useMemo, useCallback } from 'react';
+import { useEffect, useState, useRef, useMemo, useCallback, FC } from 'react';
 import { useDispatch, useSelector } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getCurrentRoutePattern } from 'calypso/state/selectors/get-current-route-pattern';
@@ -235,17 +235,21 @@ const NotFoundMessage = ( {
 	return <>{ emptyListNotice || __( 'No results found.' ) }</>;
 };
 
-const CommandPalette = () => {
+const CommandPalette: FC< {
+	isOpenGlobal?: boolean;
+	onClose?: () => void;
+} > = ( { isOpenGlobal, onClose = () => {} } ) => {
 	const [ placeHolderOverride, setPlaceholderOverride ] = useState( '' );
 	const [ search, setSearch ] = useState( '' );
 	const [ selectedCommandName, setSelectedCommandName ] = useState( '' );
-	const [ isOpen, setIsOpen ] = useState( false );
+	const [ isOpenLocal, setIsOpenLocal ] = useState( false );
+	const isOpen = isOpenLocal || isOpenGlobal;
 	const [ footerMessage, setFooterMessage ] = useState( '' );
 	const [ emptyListNotice, setEmptyListNotice ] = useState( '' );
 	const currentRoute = useSelector( ( state: object ) => getCurrentRoutePattern( state ) );
 	const dispatch = useDispatch();
 	const open = useCallback( () => {
-		setIsOpen( true );
+		setIsOpenLocal( true );
 		dispatch(
 			recordTracksEvent( 'calypso_hosting_command_palette_open', {
 				current_route: currentRoute,
@@ -254,6 +258,8 @@ const CommandPalette = () => {
 	}, [ dispatch, currentRoute ] );
 	const close = useCallback< CommandMenuGroupProps[ 'close' ] >(
 		( commandName = '', isExecuted = false ) => {
+			setIsOpenLocal( false );
+			onClose();
 			dispatch(
 				recordTracksEvent( 'calypso_hosting_command_palette_close', {
 					// For nested commands the command.name would be the siteId
@@ -264,9 +270,8 @@ const CommandPalette = () => {
 					is_executed: isExecuted,
 				} )
 			);
-			setIsOpen( false );
 		},
-		[ currentRoute, dispatch, search, selectedCommandName ]
+		[ currentRoute, dispatch, onClose, search, selectedCommandName ]
 	);
 	const toggle = useCallback( () => ( isOpen ? close() : open() ), [ isOpen, close, open ] );
 	const commandFilter = useCommandFilter();

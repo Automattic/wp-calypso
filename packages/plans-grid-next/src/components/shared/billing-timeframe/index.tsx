@@ -280,7 +280,7 @@ const RefundNotice = ( { planSlug, showRefundPeriod, billingPeriod }: RefundNoti
 			<br />
 			{ translate( 'Refundable within %(dayCount)s days. No questions asked.', {
 				args: {
-					dayCount: billingPeriod === 365 ? 14 : 7,
+					dayCount: billingPeriod === 31 ? 7 : 14,
 				},
 			} ) }
 		</>

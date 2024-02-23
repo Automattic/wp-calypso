@@ -27,7 +27,6 @@ import JetpackColophon from 'calypso/components/jetpack-colophon';
 import Main from 'calypso/components/main';
 import NavigationHeader from 'calypso/components/navigation-header';
 import memoizeLast from 'calypso/lib/memoize-last';
-import version_compare from 'calypso/lib/version-compare';
 import {
 	recordGoogleEvent,
 	recordTracksEvent,
@@ -40,6 +39,7 @@ import isJetpackModuleActive from 'calypso/state/selectors/is-jetpack-module-act
 import isPrivateSite from 'calypso/state/selectors/is-private-site';
 import isAtomicSite from 'calypso/state/selectors/is-site-wpcom-atomic';
 import { getJetpackStatsAdminVersion, isJetpackSite } from 'calypso/state/sites/selectors';
+import getEnvStatsFeatureSupportChecks from 'calypso/state/sites/selectors/get-env-stats-feature-supports';
 import { requestModuleSettings } from 'calypso/state/stats/module-settings/actions';
 import { getModuleSettings } from 'calypso/state/stats/module-settings/selectors';
 import { getModuleToggles } from 'calypso/state/stats/module-toggles/selectors';
@@ -53,6 +53,7 @@ import Countries from './stats-countries';
 import DatePicker from './stats-date-picker';
 import StatsModule from './stats-module';
 import StatsModuleEmails from './stats-module-emails';
+import StatsModuleUTM from './stats-module-utm';
 import StatsNotices from './stats-notices';
 import PageViewTracker from './stats-page-view-tracker';
 import StatsPeriodHeader from './stats-period-header';
@@ -206,7 +207,8 @@ class StatsSite extends Component {
 			isOdysseyStats,
 			context,
 			moduleSettings,
-			statsAdminVersion,
+			supportsPlanUsage,
+			supportsEmailStats,
 		} = this.props;
 
 		let defaultPeriod = PAST_SEVEN_DAYS;
@@ -298,14 +300,10 @@ class StatsSite extends Component {
 			{
 				'stats__module-list--traffic-no-authors': this.isModuleHidden( 'authors' ),
 				'stats__module-list--traffic-no-videos': this.isModuleHidden( 'videos' ),
+			},
+			{
+				'stats__flexible-grid-container': config.isEnabled( 'stats/flexible-grid' ),
 			}
-		);
-
-		// The Plan Usage API endpoint would not be available for Odyssey Stats before Jetpack version `0.15.0-alpha`.
-		const isPlanUsageEnabled = !! (
-			config.isEnabled( 'stats/plan-usage' ) &&
-			( ! isOdysseyStats ||
-				( statsAdminVersion && version_compare( statsAdminVersion, '0.15.0-alpha', '>=' ) ) )
 		);
 
 		return (
@@ -401,6 +399,11 @@ class StatsSite extends Component {
 							query={ query }
 							statType="statsTopPosts"
 							showSummaryLink
+							className={ classNames(
+								'stats__flexible-grid-item--two-thirds',
+								'stats__flexible-grid-item--full--large',
+								'stats__flexible-grid-item--full--medium'
+							) }
 						/>
 						<StatsModule
 							path="referrers"
@@ -409,6 +412,11 @@ class StatsSite extends Component {
 							query={ query }
 							statType="statsReferrers"
 							showSummaryLink
+							className={ classNames(
+								'stats__flexible-grid-item--one-third--once-space',
+								'stats__flexible-grid-item--full--large',
+								'stats__flexible-grid-item--full--medium'
+							) }
 						/>
 
 						<Countries
@@ -416,6 +424,7 @@ class StatsSite extends Component {
 							period={ this.props.period }
 							query={ query }
 							summary={ false }
+							className={ classNames( 'stats__flexible-grid-item--full' ) }
 						/>
 
 						{ ! this.isModuleHidden( 'authors' ) && (
@@ -425,7 +434,12 @@ class StatsSite extends Component {
 								period={ this.props.period }
 								query={ query }
 								statType="statsTopAuthors"
-								className="stats__author-views"
+								className={ classNames(
+									'stats__author-views',
+									'stats__flexible-grid-item--one-third--two-spaces',
+									'stats__flexible-grid-item--half--large',
+									'stats__flexible-grid-item--full--medium'
+								) }
 								showSummaryLink
 							/>
 						) }
@@ -437,6 +451,15 @@ class StatsSite extends Component {
 							query={ query }
 							statType="statsSearchTerms"
 							showSummaryLink
+							className={ classNames(
+								{
+									'stats__flexible-grid-item--one-third--two-spaces':
+										! this.isModuleHidden( 'authors' ),
+									'stats__flexible-grid-item--half--large': ! this.isModuleHidden( 'authors' ),
+									'stats__flexible-grid-item--half': this.isModuleHidden( 'authors' ),
+								},
+								'stats__flexible-grid-item--full--medium'
+							) }
 						/>
 
 						<StatsModule
@@ -446,6 +469,15 @@ class StatsSite extends Component {
 							query={ query }
 							statType="statsClicks"
 							showSummaryLink
+							className={ classNames(
+								{
+									'stats__flexible-grid-item--one-third--two-spaces':
+										! this.isModuleHidden( 'authors' ),
+									'stats__flexible-grid-item--half--large': ! this.isModuleHidden( 'authors' ),
+									'stats__flexible-grid-item--half': this.isModuleHidden( 'authors' ),
+								},
+								'stats__flexible-grid-item--full--medium'
+							) }
 						/>
 						{ ! this.isModuleHidden( 'videos' ) && (
 							<StatsModule
@@ -455,10 +487,25 @@ class StatsSite extends Component {
 								query={ query }
 								statType="statsVideoPlays"
 								showSummaryLink
+								className={ classNames(
+									'stats__flexible-grid-item--half',
+									'stats__flexible-grid-item--full--medium'
+								) }
 							/>
 						) }
-						{ ! isOdysseyStats && (
-							<StatsModuleEmails period={ this.props.period } query={ query } />
+						{ supportsEmailStats && (
+							<StatsModuleEmails
+								period={ this.props.period }
+								query={ query }
+								className={ classNames(
+									{
+										'stats__flexible-grid-item--half': ! this.isModuleHidden( 'videos' ),
+										'stats__flexible-grid-item--full': this.isModuleHidden( 'videos' ),
+									},
+									'stats__flexible-grid-item--full--large',
+									'stats__flexible-grid-item--full--medium'
+								) }
+							/>
 						) }
 						{
 							// File downloads are not yet supported in Jetpack Stats
@@ -473,12 +520,27 @@ class StatsSite extends Component {
 									statType="statsFileDownloads"
 									showSummaryLink
 									useShortLabel={ true }
+									className={ classNames(
+										'stats__flexible-grid-item--half',
+										'stats__flexible-grid-item--full--large'
+									) }
 								/>
 							)
 						}
 					</div>
+
+					{
+						// TODO: Move this under the Countries module.
+						// - Will require some reworking of the CSS to work correctly though.
+						// - Because of the visibility toggles for Authors and Videos, we require multiple
+						// copies of the Grid CSS.
+						// - May have to move from grid to flexbox.
+					 }
+					{ config.isEnabled( 'stats/utm-module' ) && (
+						<StatsModuleUTM period={ this.props.period } query={ query } />
+					) }
 				</div>
-				{ isPlanUsageEnabled && (
+				{ supportsPlanUsage && (
 					<StatsPlanUsage siteId={ siteId } isOdysseyStats={ isOdysseyStats } />
 				) }
 				{ /* Only load Jetpack Upsell Section for Odyssey Stats excluding Atomic */ }
@@ -617,6 +679,10 @@ export default connect(
 		const slug = getSelectedSiteSlug( state );
 		const upsellModalView =
 			config.isEnabled( 'stats/paid-wpcom-v2' ) && getUpsellModalView( state, siteId );
+		const { supportsPlanUsage, supportsEmailStats } = getEnvStatsFeatureSupportChecks(
+			state,
+			siteId
+		);
 
 		return {
 			canUserViewStats,
@@ -632,6 +698,8 @@ export default connect(
 			moduleToggles: getModuleToggles( state, siteId, 'traffic' ),
 			upsellModalView,
 			statsAdminVersion,
+			supportsEmailStats,
+			supportsPlanUsage,
 		};
 	},
 	{

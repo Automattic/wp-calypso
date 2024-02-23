@@ -18,7 +18,7 @@ export const GitHubRepositoryListItem = ( {
 	return (
 		<tr>
 			<td>
-				<div className="github-deployments-repository-list__account">
+				<div className="github-deployments-repository-list__name">
 					{ repository.name } { repository.private && <Icon icon={ lock } size={ 16 } /> }
 				</div>
 			</td>

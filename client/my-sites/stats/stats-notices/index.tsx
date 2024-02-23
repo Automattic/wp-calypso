@@ -1,6 +1,5 @@
 import { FEATURE_STATS_PAID } from '@automattic/calypso-products';
 import { useState, useEffect } from 'react';
-import version_compare from 'calypso/lib/version-compare';
 import {
 	DEFAULT_NOTICES_VISIBILITY,
 	Notices,
@@ -15,7 +14,7 @@ import isSiteWPForTeams from 'calypso/state/selectors/is-site-wpforteams';
 import isVipSite from 'calypso/state/selectors/is-vip-site';
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import { hasLoadedSitePlansFromServer } from 'calypso/state/sites/plans/selectors';
-import getJetpackStatsAdminVersion from 'calypso/state/sites/selectors/get-jetpack-stats-admin-version';
+import getEnvStatsFeatureSupportChecks from 'calypso/state/sites/selectors/get-env-stats-feature-supports';
 import getSiteOption from 'calypso/state/sites/selectors/get-site-option';
 import hasSiteProductJetpackStatsFree from 'calypso/state/sites/selectors/has-site-product-jetpack-stats-free';
 import hasSiteProductJetpackStatsPaid from 'calypso/state/sites/selectors/has-site-product-jetpack-stats-paid';
@@ -24,7 +23,6 @@ import getSelectedSite from 'calypso/state/ui/selectors/get-selected-site';
 import useStatsPurchases from '../hooks/use-stats-purchases';
 import ALL_STATS_NOTICES from './all-notice-definitions';
 import { StatsNoticeProps, StatsNoticesProps } from './types';
-
 import './style.scss';
 
 const TEAM51_OWNER_ID = 70055110;
@@ -150,15 +148,11 @@ export default function StatsNotices( {
 	isOdysseyStats,
 	statsPurchaseSuccess,
 }: StatsNoticesProps ) {
-	const statsAdminVersion = useSelector( ( state: object ) =>
-		getJetpackStatsAdminVersion( state, siteId )
+	const { supportsNewStatsNotices } = useSelector( ( state ) =>
+		getEnvStatsFeatureSupportChecks( state, siteId )
 	);
 
-	const supportNewStatsNotices =
-		! isOdysseyStats ||
-		!! ( statsAdminVersion && version_compare( statsAdminVersion, '0.10.0-alpha', '>=' ) );
-
-	if ( ! supportNewStatsNotices ) {
+	if ( ! supportsNewStatsNotices ) {
 		return null;
 	}
 

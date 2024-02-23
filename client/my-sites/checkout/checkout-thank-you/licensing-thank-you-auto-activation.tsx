@@ -108,17 +108,13 @@ const LicensingActivationThankYou: FC< Props > = ( {
 		);
 	}, [ jetpackTemporarySiteId, productSlug, source, receiptId ] );
 
-	const onContinue = useCallback(
-		( e: React.MouseEvent ) => {
-			e.preventDefault();
+	const handleAutoActivate = useCallback(
+		( siteUrl: string ) => {
 			setError( false );
-			if ( selectedSite === 'activate-license-manually' ) {
-				return page( manualActivationUrl );
-			}
 			dispatch(
 				recordTracksEvent( 'calypso_siteless_checkout_submit_website_address', {
 					product_slug: productSlug,
-					site_url: selectedSite,
+					site_url: siteUrl,
 					receipt_id: receiptId,
 				} )
 			);
@@ -126,23 +122,35 @@ const LicensingActivationThankYou: FC< Props > = ( {
 			// transfer the temporary-site subscription to the user's selectedSite.
 			dispatch(
 				requestUpdateJetpackCheckoutSupportTicket(
-					selectedSite,
+					siteUrl,
 					receiptId,
 					source,
 					jetpackTemporarySiteId
 				)
 			);
 		},
-		[
-			dispatch,
-			manualActivationUrl,
-			jetpackTemporarySiteId,
-			productSlug,
-			receiptId,
-			selectedSite,
-			source,
-		]
+		[ dispatch, jetpackTemporarySiteId, productSlug, receiptId, source ]
 	);
+
+	const onContinue = useCallback(
+		( e: React.MouseEvent ) => {
+			e.preventDefault();
+			if ( selectedSite === 'activate-license-manually' ) {
+				return page( manualActivationUrl );
+			}
+			handleAutoActivate( selectedSite );
+		},
+		[ selectedSite, handleAutoActivate, manualActivationUrl ]
+	);
+
+	// Prevent auto-activation if it will fail at the initial attempt.
+	const [ attemptAutoActivate, setAttemptAutoActivate ] = useState( true );
+	useEffect( () => {
+		if ( attemptAutoActivate && fromSiteSlug && initialSelectedSite.includes( fromSiteSlug ) ) {
+			setAttemptAutoActivate( false );
+			handleAutoActivate( initialSelectedSite );
+		}
+	}, [ attemptAutoActivate, fromSiteSlug, handleAutoActivate, initialSelectedSite ] );
 
 	useEffect( () => {
 		if ( error || supportTicketRequestStatus === undefined ) {
@@ -224,8 +232,9 @@ const LicensingActivationThankYou: FC< Props > = ( {
 			.filter( ( site ) => ! site.is_wpcom_atomic )
 			.filter(
 				( site ) =>
-					! site.products.some( isProductActivatedOnSite ) &&
-					! isProductActivatedOnSite( site.plan )
+					( ! site.products.some( isProductActivatedOnSite ) &&
+						! isProductActivatedOnSite( site.plan ) ) ||
+					site.URL === initialSelectedSite
 			)
 			.map( ( site ) => ( {
 				value: site?.URL,
@@ -239,7 +248,7 @@ const LicensingActivationThankYou: FC< Props > = ( {
 					},
 				},
 			} ) );
-	}, [ jetpackSites, selectedSite, productSlug ] );
+	}, [ jetpackSites, productSlug, initialSelectedSite, selectedSite ] );
 
 	const lastSelectOption = {
 		value: 'activate-license-manually',

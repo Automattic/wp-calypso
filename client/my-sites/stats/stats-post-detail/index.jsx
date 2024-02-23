@@ -1,3 +1,4 @@
+import config from '@automattic/calypso-config';
 import { Button } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { localize } from 'i18n-calypso';
@@ -22,6 +23,7 @@ import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import PostDetailHighlightsSection from '../post-detail-highlights-section';
 import PostDetailTableSection from '../post-detail-table-section';
 import StatsPlaceholder from '../stats-module/placeholder';
+import StatsModuleUTM from '../stats-module-utm';
 import PageViewTracker from '../stats-page-view-tracker';
 import PostSummary from '../stats-post-summary';
 
@@ -210,6 +212,12 @@ class StatsPostDetail extends Component {
 							<PostSummary siteId={ siteId } postId={ postId } />
 							<PostDetailTableSection siteId={ siteId } postId={ postId } />
 						</>
+					) }
+
+					{ config.isEnabled( 'stats/utm-module' ) && (
+						<div className="stats-module-utm__post-detail">
+							<StatsModuleUTM postId={ postId } />
+						</div>
 					) }
 
 					<JetpackColophon />

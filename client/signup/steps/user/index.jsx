@@ -44,6 +44,7 @@ import { errorNotice } from 'calypso/state/notices/actions';
 import { fetchOAuth2ClientData } from 'calypso/state/oauth2-clients/actions';
 import { getCurrentOAuth2Client } from 'calypso/state/oauth2-clients/ui/selectors';
 import getCurrentQueryArguments from 'calypso/state/selectors/get-current-query-arguments';
+import getWccomFrom from 'calypso/state/selectors/get-wccom-from';
 import { getSuggestedUsername } from 'calypso/state/signup/optional-dependencies/selectors';
 import { saveSignupStep, submitSignupStep } from 'calypso/state/signup/progress/actions';
 
@@ -220,7 +221,7 @@ export class UserStep extends Component {
 						break;
 					default:
 						subHeaderText = translate(
-							'All Woo stores are powered by WordPress.com!{{br/}}Please create an account to continue. Already registered? {{a}}Log in{{/a}}',
+							'Please create an account to continue. Already registered? {{a}}Log in{{/a}}',
 							{
 								components: {
 									a: <a href={ loginUrl } />,
@@ -233,7 +234,7 @@ export class UserStep extends Component {
 				}
 			} else if ( isWooOAuth2Client( oauth2Client ) && ! wccomFrom ) {
 				subHeaderText = translate(
-					'All Woo stores are powered by WordPress.com!{{br/}}Please create an account to continue. Already registered? {{a}}Log in{{/a}}',
+					'Please create an account to continue. Already registered? {{a}}Log in{{/a}}',
 					{
 						components: {
 							a: <a href={ loginUrl } />,
@@ -353,7 +354,6 @@ export class UserStep extends Component {
 		} else if ( data.queryArgs.redirect_to ) {
 			dependencies.redirect = data.queryArgs.redirect_to;
 		}
-
 		this.props.submitSignupStep(
 			{
 				flowName,
@@ -434,7 +434,6 @@ export class UserStep extends Component {
 			query.redirect_to = window.sessionStorage.getItem( 'signup_redirect_to' );
 			window.sessionStorage.removeItem( 'signup_redirect_to' );
 		}
-
 		this.submit( {
 			service,
 			access_token,
@@ -730,19 +729,10 @@ export class UserStep extends Component {
 
 const ConnectedUser = connect(
 	( state ) => {
-		const queryOauth2Redirect = getCurrentQueryArguments( state ).oauth2_redirect;
-		let wccomFrom = null;
-		try {
-			const oauth2RedirectUrl = new URL( queryOauth2Redirect );
-			wccomFrom = oauth2RedirectUrl.searchParams.get( 'wccom-from' );
-		} catch ( e ) {
-			// Do nothing
-		}
-
 		return {
 			oauth2Client: getCurrentOAuth2Client( state ),
 			suggestedUsername: getSuggestedUsername( state ),
-			wccomFrom: wccomFrom,
+			wccomFrom: getWccomFrom( state ),
 			from: get( getCurrentQueryArguments( state ), 'from' ),
 			userLoggedIn: isUserLoggedIn( state ),
 		};

@@ -2,7 +2,7 @@
  * @jest-environment jsdom
  */
 import { convertResponseCartToRequestCart } from '@automattic/shopping-cart';
-import { render, screen } from '@testing-library/react';
+import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { dispatch } from '@wordpress/data';
 import nock from 'nock';
@@ -180,7 +180,9 @@ describe( 'Checkout contact step VAT form', () => {
 		await screen.findByLabelText( 'Continue with the entered contact details' );
 		const countryField = await screen.findByLabelText( 'Country' );
 
-		expect( countryField.selectedOptions[ 0 ].value ).toBe( 'GB' );
+		await waitFor( () => {
+			expect( countryField.selectedOptions[ 0 ].value ).toBe( 'GB' );
+		} );
 		expect( await screen.findByLabelText( 'Add VAT details' ) ).toBeChecked();
 		expect( await screen.findByLabelText( 'VAT ID' ) ).toBeInTheDocument();
 	} );
@@ -208,7 +210,9 @@ describe( 'Checkout contact step VAT form', () => {
 		await screen.findByLabelText( 'Continue with the entered contact details' );
 		const countryField = await screen.findByLabelText( 'Country' );
 
-		expect( countryField.selectedOptions[ 0 ].value ).toBe( 'GB' );
+		await waitFor( () => {
+			expect( countryField.selectedOptions[ 0 ].value ).toBe( 'GB' );
+		} );
 		expect( await screen.findByLabelText( 'VAT ID' ) ).toHaveValue( '12345' );
 		expect( await screen.findByLabelText( 'Organization for VAT' ) ).toHaveValue( 'Test company' );
 		expect( await screen.findByLabelText( 'Address for VAT' ) ).toHaveValue( '123 Main Street' );
@@ -237,7 +241,9 @@ describe( 'Checkout contact step VAT form', () => {
 		await screen.findByLabelText( 'Continue with the entered contact details' );
 		const countryField = await screen.findByLabelText( 'Country' );
 
-		expect( countryField.selectedOptions[ 0 ].value ).toBe( 'GB' );
+		await waitFor( () => {
+			expect( countryField.selectedOptions[ 0 ].value ).toBe( 'GB' );
+		} );
 		expect( await screen.findByLabelText( 'Is VAT for Northern Ireland?' ) ).toBeChecked();
 	} );
 
@@ -265,7 +271,9 @@ describe( 'Checkout contact step VAT form', () => {
 		await screen.findByLabelText( 'Continue with the entered contact details' );
 		const countryField = await screen.findByLabelText( 'Country' );
 
-		expect( countryField.selectedOptions[ 0 ].value ).toBe( 'GB' );
+		await waitFor( () => {
+			expect( countryField.selectedOptions[ 0 ].value ).toBe( 'GB' );
+		} );
 		expect( await screen.findByLabelText( 'Add VAT details' ) ).toBeChecked();
 		expect( await screen.findByLabelText( 'Add VAT details' ) ).toBeDisabled();
 
@@ -524,7 +532,9 @@ describe( 'Checkout contact step VAT form', () => {
 		const countryField = await screen.findByLabelText( 'Country' );
 
 		// Make sure the form has the autocompleted data.
-		expect( countryField.selectedOptions[ 0 ].value ).toBe( cachedContactCountry );
+		await waitFor( () => {
+			expect( countryField.selectedOptions[ 0 ].value ).toBe( cachedContactCountry );
+		} );
 		expect( await screen.findByLabelText( 'Add VAT details' ) ).toBeChecked();
 		expect( await screen.findByLabelText( 'VAT ID' ) ).toHaveValue( vatId );
 		expect( await screen.findByLabelText( 'Organization for VAT' ) ).toHaveValue( vatName );

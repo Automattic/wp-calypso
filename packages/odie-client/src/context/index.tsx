@@ -1,5 +1,10 @@
 import { createContext, useCallback, useContext, useEffect, useState } from 'react';
-import { clearOdieStorage, useOdieStorage } from '../data';
+import {
+	broadcastChatClearance,
+	clearOdieStorage,
+	useOdieBroadcastWithCallbacks,
+	useOdieStorage,
+} from '../data';
 import { getOdieInitialMessage } from './get-odie-initial-message';
 import { useLoadPreviousChat } from './use-load-previous-chat';
 import type { Chat, Context, Message, Nudge, OdieAllowedBots } from '../types';
@@ -27,6 +32,7 @@ type OdieAssistantContextInterface = {
 	isVisible: boolean;
 	extraContactOptions?: ReactNode;
 	lastNudge: Nudge | null;
+	odieClientId: string;
 	sendNudge: ( nudge: Nudge ) => void;
 	setChat: ( chat: Chat ) => void;
 	setIsLoadingChat: ( isLoadingChat: boolean ) => void;
@@ -52,6 +58,7 @@ const defaultContextInterfaceValues = {
 	isNudging: false,
 	isVisible: false,
 	lastNudge: null,
+	odieClientId: '',
 	sendNudge: noop,
 	setChat: noop,
 	setIsLoadingChat: noop,
@@ -71,6 +78,9 @@ const OdieAssistantContext = createContext< OdieAssistantContextInterface >(
 
 // Custom hook to access the OdieAssistantContext
 const useOdieAssistantContext = () => useContext( OdieAssistantContext );
+
+// Generate random client id
+export const odieClientId = Math.random().toString( 36 ).substring( 2, 15 );
 
 type OdieAssistantProviderProps = {
 	botName?: string;
@@ -99,7 +109,6 @@ const OdieAssistantProvider: FC< OdieAssistantProviderProps > = ( {
 	const [ isLoading, setIsLoading ] = useState( false );
 	const [ isNudging, setIsNudging ] = useState( false );
 	const [ lastNudge, setLastNudge ] = useState< Nudge | null >( null );
-
 	const existingChatIdString = useOdieStorage( 'chat_id' );
 	const existingChatId = existingChatIdString ? parseInt( existingChatIdString, 10 ) : null;
 	const existingChat = useLoadPreviousChat( botNameSlug, existingChatId );
@@ -131,6 +140,7 @@ const OdieAssistantProvider: FC< OdieAssistantProviderProps > = ( {
 			messages: [ getOdieInitialMessage( botNameSlug ) ],
 		} );
 		trackEvent( 'chat_cleared', {} );
+		broadcastChatClearance( odieClientId );
 	}, [ botNameSlug, trackEvent ] );
 
 	const setMessageLikedStatus = ( message: Message, liked: boolean ) => {
@@ -150,42 +160,47 @@ const OdieAssistantProvider: FC< OdieAssistantProviderProps > = ( {
 
 	// This might need a rework in the future, like connecting messages to a client_chat_id and
 	// Update it to be a message.type = 'message' in order to keep simplicity.
-	const addMessage = ( message: Message | Message[] ) => {
-		setChat( ( prevChat ) => {
-			// Normalize message to always be an array
-			const newMessages = Array.isArray( message ) ? message : [ message ];
+	const addMessage = useCallback(
+		( message: Message | Message[] ) => {
+			setChat( ( prevChat ) => {
+				// Normalize message to always be an array
+				const newMessages = Array.isArray( message ) ? message : [ message ];
 
-			// Check if the new message is of type 'dislike-feedback'
-			const isNewMessageDislikeFeedback = newMessages.some(
-				( msg ) => msg.type === 'dislike-feedback'
-			);
+				// Check if the new message is of type 'dislike-feedback'
+				const isNewMessageDislikeFeedback = newMessages.some(
+					( msg ) => msg.type === 'dislike-feedback'
+				);
 
-			const filteredMessages = ! isNewMessageDislikeFeedback
-				? prevChat.messages.filter( ( msg ) => msg.type !== 'placeholder' )
-				: prevChat.messages;
+				const filteredMessages = ! isNewMessageDislikeFeedback
+					? prevChat.messages.filter( ( msg ) => msg.type !== 'placeholder' )
+					: prevChat.messages;
 
-			// If the new message is 'dislike-feedback' and there's a placeholder, insert it before the placeholder
-			if ( isNewMessageDislikeFeedback ) {
-				const lastPlaceholderIndex = prevChat.messages
-					.map( ( msg ) => msg.type )
-					.lastIndexOf( 'placeholder' );
+				// If the new message is 'dislike-feedback' and there's a placeholder, insert it before the placeholder
+				if ( isNewMessageDislikeFeedback ) {
+					const lastPlaceholderIndex = prevChat.messages
+						.map( ( msg ) => msg.type )
+						.lastIndexOf( 'placeholder' );
+					return {
+						chat_id: prevChat.chat_id,
+						messages: [
+							...prevChat.messages.slice( 0, lastPlaceholderIndex ), // Take all messages before the last placeholder
+							...newMessages, // Insert new 'dislike-feedback' messages
+							...prevChat.messages.slice( lastPlaceholderIndex ), // Add back the placeholder and any messages after it
+						],
+					};
+				}
+
+				// For all other cases, append new messages at the end, without placeholders if not 'dislike-feedback'
 				return {
 					chat_id: prevChat.chat_id,
-					messages: [
-						...prevChat.messages.slice( 0, lastPlaceholderIndex ), // Take all messages before the last placeholder
-						...newMessages, // Insert new 'dislike-feedback' messages
-						...prevChat.messages.slice( lastPlaceholderIndex ), // Add back the placeholder and any messages after it
-					],
+					messages: [ ...filteredMessages, ...newMessages ],
 				};
-			}
+			} );
+		},
+		[ setChat ]
+	);
 
-			// For all other cases, append new messages at the end, without placeholders if not 'dislike-feedback'
-			return {
-				chat_id: prevChat.chat_id,
-				messages: [ ...filteredMessages, ...newMessages ],
-			};
-		} );
-	};
+	useOdieBroadcastWithCallbacks( { addMessage, clearChat }, odieClientId );
 
 	const updateMessage = ( message: Partial< Message > ) => {
 		setChat( ( prevChat ) => {
@@ -220,6 +235,7 @@ const OdieAssistantProvider: FC< OdieAssistantProviderProps > = ( {
 				isNudging,
 				isVisible,
 				lastNudge,
+				odieClientId,
 				sendNudge: setLastNudge,
 				setChat,
 				setIsLoadingChat: noop,

@@ -1,4 +1,3 @@
-import config from '@automattic/calypso-config';
 import page from '@automattic/calypso-router';
 import { getUrlParts } from '@automattic/calypso-url';
 import { CheckoutErrorBoundary } from '@automattic/composite-checkout';
@@ -9,7 +8,6 @@ import React, { useState, useEffect, useRef } from 'react';
 import { LoadingEllipsis } from 'calypso/components/loading-ellipsis';
 import Main from 'calypso/components/main';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
-import { logToLogstash } from 'calypso/lib/logstash';
 import { AUTO_RENEWAL } from 'calypso/lib/url/support';
 import CalypsoShoppingCartProvider from 'calypso/my-sites/checkout/calypso-shopping-cart-provider';
 import { getRedirectFromPendingPage } from 'calypso/my-sites/checkout/src/lib/pending-page';
@@ -22,7 +20,7 @@ import { fetchReceipt } from 'calypso/state/receipts/actions';
 import { getReceiptById } from 'calypso/state/receipts/selectors';
 import getOrderTransactionError from 'calypso/state/selectors/get-order-transaction-error';
 import usePurchaseOrder from '../../src/hooks/use-purchase-order';
-import { convertErrorToString } from '../../src/lib/analytics';
+import { logStashLoadErrorEvent } from '../../src/lib/analytics';
 import type { RedirectInstructions } from 'calypso/my-sites/checkout/src/lib/pending-page';
 import type { ReceiptState } from 'calypso/state/receipts/types';
 import type {
@@ -407,16 +405,7 @@ function displayRenewalSuccessNotice( {
 }
 
 const logCheckoutError = ( error: Error ) => {
-	logToLogstash( {
-		feature: 'calypso_client',
-		message: 'checkout pending load error',
-		severity: config( 'env_id' ) === 'production' ? 'error' : 'debug',
-		extra: {
-			env: config( 'env_id' ),
-			type: 'checkout_pending',
-			message: convertErrorToString( error ),
-		},
-	} );
+	logStashLoadErrorEvent( 'checkout_pending', error );
 };
 
 export default function CheckoutPendingWrapper( props: CheckoutPendingProps ) {

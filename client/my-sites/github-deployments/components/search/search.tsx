@@ -20,7 +20,6 @@ export const Search = ( {
 	onSelect,
 	onChange,
 	disabled,
-	isSearching,
 	query,
 }: SearchProps ) => {
 	return (
@@ -29,8 +28,8 @@ export const Search = ( {
 			className={ className }
 			placeholder={ placeholder }
 			disabled={ disabled }
-			showIcon={ isSearching }
-			isSearching={ isSearching }
+			showIcon
+			isSearching={ false }
 			onChange={ ( query: string, selected: boolean ) => {
 				if ( selected && onSelect ) {
 					return onSelect( query );

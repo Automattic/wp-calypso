@@ -445,6 +445,19 @@ export const JETPACK_LEGACY_PLANS = < const >[
 	PLAN_JETPACK_PREMIUM,
 	PLAN_JETPACK_PREMIUM_MONTHLY,
 ];
+
+export const JETPACK_MONTHLY_LEGACY_PLANS = < const >[
+	PLAN_JETPACK_PERSONAL_MONTHLY,
+	PLAN_JETPACK_BUSINESS_MONTHLY,
+	PLAN_JETPACK_PREMIUM_MONTHLY,
+];
+
+export const JETPACK_YEARLY_LEGACY_PLANS = < const >[
+	PLAN_JETPACK_PERSONAL,
+	PLAN_JETPACK_BUSINESS,
+	PLAN_JETPACK_PREMIUM,
+];
+
 export const JETPACK_LEGACY_PLANS_MAX_PLUGIN_VERSION = '8.9.1'; // Jetpack versions prior to this one are not fully compatible with new plans
 
 // Security

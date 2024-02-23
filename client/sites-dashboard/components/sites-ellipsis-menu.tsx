@@ -1,4 +1,3 @@
-import { isEnabled } from '@automattic/calypso-config';
 import {
 	getPlan,
 	FEATURE_SFTP,
@@ -21,18 +20,16 @@ import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
 import { addQueryArgs } from '@wordpress/url';
 import { ComponentType, useEffect, useMemo, useState } from 'react';
-import { useQueryReaderTeams } from 'calypso/components/data/query-reader-teams';
 import SitePreviewLink from 'calypso/components/site-preview-link';
 import { useSiteCopy } from 'calypso/landing/stepper/hooks/use-site-copy';
 import TrackComponentView from 'calypso/lib/analytics/track-component-view';
-import { isAutomatticTeamMember } from 'calypso/reader/lib/teams';
 import { useDispatch as useReduxDispatch, useSelector } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import isSiteWpcomStaging from 'calypso/state/selectors/is-site-wpcom-staging';
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import { fetchSiteFeatures } from 'calypso/state/sites/features/actions';
 import { launchSiteOrRedirectToLaunchSignupFlow } from 'calypso/state/sites/launch/actions';
-import { getReaderTeams } from 'calypso/state/teams/selectors';
+import { useIsGitHubDeploymentsAvailableQuery } from '../../my-sites/github-deployments/use-is-feature-available';
 import {
 	getHostingConfigUrl,
 	getManagePluginsUrl,
@@ -276,9 +273,9 @@ function useSubmenuItems( site: SiteExcerptData ) {
 	const { __ } = useI18n();
 	const siteSlug = site.slug;
 	const hasStagingSitesFeature = useSafeSiteHasFeature( site.ID, FEATURE_SITE_STAGING_SITES );
-
-	useQueryReaderTeams();
-	const isA12n = useSelector( ( state ) => isAutomatticTeamMember( getReaderTeams( state ) ) );
+	const { data: githubDeploymentsFeature } = useIsGitHubDeploymentsAvailableQuery( {
+		siteId: site.ID,
+	} );
 
 	return useMemo< { label: string; href: string; sectionName: string }[] >( () => {
 		return [
@@ -299,7 +296,7 @@ function useSubmenuItems( site: SiteExcerptData ) {
 				sectionName: 'staging_site',
 			},
 			{
-				condition: isEnabled( 'github-deployments' ) && isA12n,
+				condition: githubDeploymentsFeature?.available,
 				label: __( 'Deploy from GitHub' ),
 				href: `/github-deployments/${ siteSlug }`,
 				sectionName: 'connect_github',
@@ -320,7 +317,7 @@ function useSubmenuItems( site: SiteExcerptData ) {
 				sectionName: 'admin-interface-style',
 			},
 		].filter( ( { condition } ) => condition ?? true );
-	}, [ __, siteSlug, hasStagingSitesFeature, isA12n ] );
+	}, [ __, siteSlug, hasStagingSitesFeature, githubDeploymentsFeature ] );
 }
 
 function HostingConfigurationSubmenu( { site, recordTracks }: SitesMenuItemProps ) {

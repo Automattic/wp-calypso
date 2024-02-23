@@ -2,8 +2,8 @@
 
 .github-deployments-create-repository {
 	display: flex;
-	gap: 24px;
-	color: var(--color-primary);
+	gap: 34px;
+	color: var(--studio-gray-90);
 
 	.form-label {
 		font-weight: 500;
@@ -81,13 +81,13 @@
 		margin-top: 1px;
 	}
 
-	.deployment-style {
+	&__deployment-style {
 		flex: 1;
 		border: 1px solid var(--studio-gray-5);
 		box-sizing: border-box;
 		padding: 24px;
 		border-radius: 2px;
-		max-height: 136px;
 		background-color: var(--studio-gray-0);
+		height: fit-content;
 	}
 }

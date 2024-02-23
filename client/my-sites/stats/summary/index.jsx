@@ -18,6 +18,7 @@ import Countries from '../stats-countries';
 import DownloadCsv from '../stats-download-csv';
 import StatsModule from '../stats-module';
 import AllTimeNav from '../stats-module/all-time-nav';
+import StatsModuleUTM from '../stats-module-utm';
 import PageViewTracker from '../stats-page-view-tracker';
 import statsStringsFactory from '../stats-strings';
 import StatsUpsellModal from '../stats-upsell-modal';
@@ -325,6 +326,22 @@ class StatsSummary extends Component {
 				backLink = `/stats/insights/`;
 				summaryView = <AnnualSiteStats key="annualstats" />;
 				break;
+			case 'utm': {
+				title = translate( 'UTM insights' );
+				backLabel = localizedTabNames.traffic;
+				backLink = `/stats/traffic/`;
+				path = 'utm';
+				statType = 'statsUTM';
+				summaryView = isEnabled( 'stats/utm-module' ) ? (
+					<>
+						{ this.renderSummaryHeader( path, statType, false, moduleQuery ) }
+						<StatsModuleUTM period={ this.props.period } query={ moduleQuery } summary />
+					</>
+				) : (
+					<div>This path is not available.</div>
+				);
+				break;
+			}
 		}
 
 		summaryViews.push( summaryView );

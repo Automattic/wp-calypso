@@ -9213,6 +9213,28 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@wordpress/dataviews@npm:^0.4.1":
+  version: 0.4.1
+  resolution: "@wordpress/dataviews@npm:0.4.1"
+  dependencies:
+    "@babel/runtime": "npm:^7.16.0"
+    "@wordpress/a11y": "npm:^3.50.0"
+    "@wordpress/components": "npm:^25.16.0"
+    "@wordpress/compose": "npm:^6.27.0"
+    "@wordpress/element": "npm:^5.27.0"
+    "@wordpress/i18n": "npm:^4.50.0"
+    "@wordpress/icons": "npm:^9.41.0"
+    "@wordpress/keycodes": "npm:^3.50.0"
+    "@wordpress/primitives": "npm:^3.48.0"
+    "@wordpress/private-apis": "npm:^0.32.0"
+    classnames: "npm:^2.3.1"
+    remove-accents: "npm:^0.5.0"
+  peerDependencies:
+    react: ^18.0.0
+  checksum: 00f5be7dc18de659bb52587380d5d88f0eda5fa99309bcc16bb02b9a4a7a51c82654bbf69aa0f7831e8f64df3e5c378d121874b795b7d3d60155d73a0f5adc1b
+  languageName: node
+  linkType: hard
+
 "@wordpress/dataviews@npm:^0.5.1":
   version: 0.5.1
   resolution: "@wordpress/dataviews@npm:0.5.1"
@@ -12114,6 +12136,7 @@ __metadata:
     "@wordpress/components": "npm:^26.0.1"
     "@wordpress/compose": "npm:^6.28.0"
     "@wordpress/data": "npm:^9.21.0"
+    "@wordpress/dataviews": "npm:^0.4.1"
     "@wordpress/dom": "npm:^3.51.0"
     "@wordpress/edit-post": "npm:^7.28.1"
     "@wordpress/element": "npm:^5.28.0"

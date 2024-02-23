@@ -6,6 +6,7 @@ import { PaidPlanPurchaseSuccessJetpackStatsNoticeProps } from './types';
 
 const PaidPlanPurchaseSuccessJetpackStatsNotice = ( {
 	isOdysseyStats,
+	isCommercial = false,
 }: PaidPlanPurchaseSuccessJetpackStatsNoticeProps ) => {
 	const translate = useTranslate();
 	const [ noticeDismissed, setNoticeDismissed ] = useState( false );
@@ -39,14 +40,23 @@ const PaidPlanPurchaseSuccessJetpackStatsNotice = ( {
 				title={ translate( 'Thank you for supporting Jetpack Stats!' ) }
 				onClose={ dismissNotice }
 			>
-				{ translate(
-					"{{p}}You'll now get instant access to upcoming features and priority support if applicable.{{/p}}",
-					{
-						components: {
-							p: <p />,
-						},
-					}
-				) }
+				{ isCommercial
+					? translate(
+							"{{p}}You'll now get instant access to upcoming features and priority support.{{/p}}",
+							{
+								components: {
+									p: <p />,
+								},
+							}
+					  )
+					: translate(
+							"{{p}}You'll stop seeing the upgrade banners and get Email support if applicable.{{/p}}",
+							{
+								components: {
+									p: <p />,
+								},
+							}
+					  ) }
 			</NoticeBanner>
 		</div>
 	);
