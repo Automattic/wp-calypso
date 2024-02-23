@@ -34,7 +34,7 @@ export const DeploymentsRunsTable = ( {
 					<th>
 						<span>{ __( 'Author' ) }</span>
 					</th>
-					<th>
+					<th style={ { width: '100%' } }>
 						<span>{ __( 'Commit' ) }</span>
 					</th>
 					<th>
