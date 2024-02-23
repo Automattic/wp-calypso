@@ -80,6 +80,7 @@ export const DeploymentStyle = ( {
 	} );
 	const [ isCreatingNewWorkflow, setIsCreatingNewWorkflow ] = useState( false );
 	const [ isYamlValid, setIsYamlValid ] = useState( true );
+	const [ advancedOptionsDisabled, setAdvancedOptionsDisabled ] = useState( false );
 	const validationTriggered = false;
 	const isTemplateRepository = repository.owner === 'Automattic';
 	const yamlCodeRef = useRef( null );
@@ -88,7 +89,13 @@ export const DeploymentStyle = ( {
 		isLoading: isFetchingWorkflows,
 		isRefetching: isRefreshingWorkflows,
 		refetch: refetchWorkflows,
-	} = useDeploymentWorkflowsQuery( installationId, repository, branchName, deploymentStyle );
+	} = useDeploymentWorkflowsQuery(
+		installationId,
+		repository,
+		branchName,
+		deploymentStyle,
+		isTemplateRepository
+	);
 
 	const workflowsForRendering = useMemo( () => {
 		const mappedValues = [ { workflow_path: 'none', file_name: __( 'Select workflow' ) } ].concat(
@@ -300,6 +307,10 @@ export const DeploymentStyle = ( {
 		}
 	}, [ workflowsValidations ] );
 
+	useEffect( () => {
+		setAdvancedOptionsDisabled( workflows?.length === 0 && isTemplateRepository );
+	}, [ workflows, isTemplateRepository ] );
+
 	const RenderValidationIcon = ( { validationStatus }: { validationStatus: WorkFlowStates } ) => {
 		if ( ! isYamlValid ) {
 			return <RenderIcon state="error" />;
@@ -357,15 +368,19 @@ export const DeploymentStyle = ( {
 			</h3>
 			<FormRadiosBar
 				items={ [
-					{ label: __( 'Simple' ), value: 'simple' },
-					{ label: __( 'Advanced' ), value: 'custom' },
+					{
+						label: __( 'Simple' ),
+						value: 'simple',
+						checked: advancedOptionsDisabled || deploymentStyle === 'simple',
+					},
+					{ label: __( 'Advanced' ), value: 'custom', disabled: advancedOptionsDisabled },
 				] }
 				checked={ deploymentStyle }
 				onChange={ ( event ) => handleDeploymentStyleChange( event.currentTarget.value ) }
 				disabled={ false }
 			/>
 
-			{ deploymentStyle === 'custom' && (
+			{ deploymentStyle === 'custom' && ! advancedOptionsDisabled && (
 				<FormFieldset style={ { marginBottom: '0px' } }>
 					<FormLabel>
 						{ __( 'Select deployment workflow' ) }
@@ -402,6 +417,13 @@ export const DeploymentStyle = ( {
 						) }
 					</div>
 				</FormFieldset>
+			) }
+
+			{ advancedOptionsDisabled && (
+				<FormInputValidation
+					isError
+					text={ translate( "This repository template doesn't have workflows." ) }
+				/>
 			) }
 
 			{ ! isTemplateRepository && deploymentStyle === 'custom' && ! isWorkflowInvalid && (

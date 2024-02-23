@@ -27,6 +27,7 @@ export const useDeploymentWorkflowsQuery = (
 	repository: GitHubRepositoryData,
 	branchName: string,
 	deploymentStyle: string,
+	isTemplateRepository: boolean,
 	options?: Partial< UseQueryOptions< Workflows[] > >
 ) => {
 	const path = addQueryArgs( '/hosting/github/workflows', {
@@ -38,7 +39,7 @@ export const useDeploymentWorkflowsQuery = (
 
 	return useQuery< Workflows[] >( {
 		queryKey: [ GITHUB_DEPLOYMENTS_QUERY_KEY, CODE_DEPLOYMENTS_QUERY_KEY, path ],
-		enabled: !! installationId && deploymentStyle !== 'simple',
+		enabled: !! installationId && ( deploymentStyle !== 'simple' || isTemplateRepository ),
 		queryFn: (): Workflows[] =>
 			wp.req.get( {
 				path,
