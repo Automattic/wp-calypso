@@ -138,7 +138,7 @@ export const CreateRepositoryForm = ( {
 					</div>
 				</FormFieldset>
 				<FormFieldset>
-					<FormLabel>{ __( 'What are you building ' ) }</FormLabel>
+					<FormLabel>{ __( 'What are you building' ) }</FormLabel>
 					<div className="github-deployments-create-repository__project-type">
 						<FormRadioWithTemplateSelect
 							label={ __( 'A theme' ) }
