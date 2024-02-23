@@ -46,6 +46,11 @@ const noop = () => {
 	return;
 };
 
+const isResultFromDeveloperWordpress = ( url: string ) => {
+	const developerSiteRegex: RegExp = /developer\.wordpress\.com/;
+	return developerSiteRegex.test( url );
+};
+
 function debounceSpeak( { message = '', priority = 'polite', timeout = 800 } ) {
 	return debounce( () => {
 		speak( message, priority );
@@ -224,6 +229,19 @@ function HelpSearchResults( {
 			return <Icon icon={ pageIcon } />;
 		};
 
+		const DeveloperBadge = () => {
+			return (
+				<div className="help-center-search-results__content">
+					{ isResultFromDeveloperWordpress( result.link ) && (
+						<span className="help-center-search-results__badge">
+							{ __( 'DEV', __i18n_text_domain__ ) }
+						</span>
+					) }
+					<span>{ preventWidows( decodeEntities( title ) ) }</span>
+				</div>
+			);
+		};
+
 		return (
 			<Fragment key={ `${ result.post_id ?? link ?? title }-${ index }` }>
 				<li className="help-center-search-results__item">
@@ -242,7 +260,7 @@ function HelpSearchResults( {
 							} ) }
 						>
 							<LinkIcon />
-							<span>{ preventWidows( decodeEntities( title ) ) }</span>
+							<DeveloperBadge />
 							<Icon
 								width={ 20 }
 								height={ 20 }
