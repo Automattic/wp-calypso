@@ -139,7 +139,7 @@
 
 	.dataviews-wrapper {
 		.components-button:focus:not(:disabled) {
-			box-shadow: none;
+			box-shadow: 0 0 0 2px var(--color-primary-light);
 		}
 	}
 
