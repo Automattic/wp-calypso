@@ -81,7 +81,6 @@ export const DeploymentStyle = ( {
 	const [ isCreatingNewWorkflow, setIsCreatingNewWorkflow ] = useState( false );
 	const [ isYamlValid, setIsYamlValid ] = useState( true );
 	const validationTriggered = false;
-	const [ errorMessage, setErrorMessage ] = useState( '' );
 	const isTemplateRepository = repository.owner === 'Automattic';
 	const yamlCodeRef = useRef( null );
 	const {
@@ -276,10 +275,6 @@ export const DeploymentStyle = ( {
 			setIsCreatingNewWorkflow( false );
 		}
 
-		if ( deploymentStyle === 'custom' ) {
-			setErrorMessage( '' );
-		}
-
 		if (
 			selectedWorkflow.workflow_path === 'create-new' ||
 			selectedWorkflow.workflow_path === 'none' ||
@@ -315,6 +310,30 @@ export const DeploymentStyle = ( {
 		);
 	};
 
+	const ExternalWorkflowLink = () => {
+		if ( isCheckingWorkflowFile || isRefetchingWorkflowValidation ) {
+			return <Spinner />;
+		}
+
+		const hasAnyError = workflowCheckResult?.checked_items?.find( ( checkedItem ) => {
+			return checkedItem.status === 'error';
+		} );
+
+		if ( hasAnyError ) {
+			return translate( 'Please edit {{filename/}} and fix the problems we found:', {
+				components: {
+					filename: <ExternalLink href={ workflowFileUrl }>{ workflowFileName }</ExternalLink>,
+				},
+			} );
+		}
+
+		return translate( 'Your workflow {{filename/}} is good to go!', {
+			components: {
+				filename: <ExternalLink href={ workflowFileUrl }>{ workflowFileName }</ExternalLink>,
+			},
+		} );
+	};
+
 	return (
 		<div className="github-deployments-deployment-style">
 			<h3 style={ { fontSize: '16px', marginBottom: '16px' } }>
@@ -343,7 +362,7 @@ export const DeploymentStyle = ( {
 							privacyLink={ false }
 						/>
 					</FormLabel>
-					<div className="github-deployments-connect-repository__automatic-deploys">
+					<div className="github-deployments-deployment-style__workflow-selection">
 						<SelectDropdown
 							className="github-deployments-branch-select"
 							selectedText={ selectedWorkflow.file_name }
@@ -359,7 +378,6 @@ export const DeploymentStyle = ( {
 								</SelectDropdown.Item>
 							) ) }
 						</SelectDropdown>
-						{ ( isFetchingWorkflows || isRefreshingWorkflows ) && <Spinner /> }
 						{ isWorkflowInvalid && (
 							<FormInputValidation
 								isError
@@ -379,13 +397,7 @@ export const DeploymentStyle = ( {
 							<>
 								<FormLabel>{ __( 'Workflow check' ) }</FormLabel>
 								<p>
-									{ translate( 'Please edit {{filename/}} and fix the problems we found:', {
-										components: {
-											filename: (
-												<ExternalLink href={ workflowFileUrl }>{ workflowFileName }</ExternalLink>
-											),
-										},
-									} ) }
+									<ExternalWorkflowLink />
 								</p>
 
 								{ workflowsValidations.map( ( validation ) => (
@@ -436,9 +448,6 @@ export const DeploymentStyle = ( {
 								</div>
 							</FoldableCard>
 						</>
-					) }
-					{ deploymentStyle === 'custom' && errorMessage && (
-						<FormInputValidation isError={ true } text={ errorMessage } />
 					) }
 					{ deploymentStyle === 'custom' && selectedWorkflow.workflow_path !== 'none' && (
 						<div className="github-deployments-deployment-style__actions">
