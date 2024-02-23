@@ -1,5 +1,3 @@
-import { Button, Gridicon } from '@automattic/components';
-import classNames from 'classnames';
 import { translate } from 'i18n-calypso';
 import { useDispatch } from 'react-redux';
 import { preventWidows } from 'calypso/lib/formatting';
@@ -11,6 +9,7 @@ import {
 	STAT_TYPE_SEARCH_TERMS,
 	STAT_TYPE_TOP_AUTHORS,
 } from '../constants';
+import StatsCardUpsellOverlay from './stats-card-upsell-overlay';
 
 import './style.scss';
 
@@ -18,6 +17,7 @@ interface Props {
 	className: string;
 	statType: string;
 	siteId: number;
+	buttonLabel?: string;
 }
 
 const getUpsellCopy = ( statType: string ) => {
@@ -41,7 +41,7 @@ const getUpsellCopy = ( statType: string ) => {
 	}
 };
 
-const StatsCardUpsell: React.FC< Props > = ( { className, statType, siteId } ) => {
+const StatsCardUpsell: React.FC< Props > = ( { className, statType, siteId, buttonLabel } ) => {
 	const dispatch = useDispatch();
 
 	const onClick = ( event: React.MouseEvent< HTMLButtonElement, MouseEvent > ) => {
@@ -50,17 +50,12 @@ const StatsCardUpsell: React.FC< Props > = ( { className, statType, siteId } ) =
 	};
 
 	return (
-		<div className={ classNames( 'stats-card-upsell', className ) }>
-			<div className="stats-card-upsell__content">
-				<div className="stats-card-upsell__lock">
-					<Gridicon icon="lock" />
-				</div>
-				<p className="stats-card-upsell__text">{ preventWidows( getUpsellCopy( statType ) ) }</p>
-				<Button primary className="stats-card-upsell__button" onClick={ onClick }>
-					Unlock
-				</Button>
-			</div>
-		</div>
+		<StatsCardUpsellOverlay
+			className={ className }
+			onClick={ onClick }
+			copyText={ preventWidows( getUpsellCopy( statType ) ) }
+			buttonLabel={ buttonLabel }
+		/>
 	);
 };
 

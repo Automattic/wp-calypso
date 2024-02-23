@@ -14,7 +14,6 @@ const StatsModuleUTM = ( { period, postId, query, summary } ) => {
 		<StatsModuleDataQuery
 			data={ data }
 			path="utm"
-			statType="statsUTM"
 			className="stats-module-utm"
 			moduleStrings={ moduleStrings.utm }
 			period={ period }
