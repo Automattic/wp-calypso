@@ -8,11 +8,13 @@ export default function globalSiteSidebarMenu( {
 	showSiteMonitoring,
 	siteDomain,
 	selectedSiteSlug,
+	isStagingSite,
 }: {
 	shouldShowAddOns: boolean;
 	showSiteMonitoring: boolean;
 	siteDomain: string;
 	selectedSiteSlug: string;
+	isStagingSite: boolean;
 } ) {
 	return [
 		{
@@ -43,35 +45,36 @@ export default function globalSiteSidebarMenu( {
 			title: translate( 'Plans' ),
 			type: 'menu-item',
 			url: `/plans/${ siteDomain }`,
+			shouldHide: isStagingSite,
 		},
-		...( shouldShowAddOns
-			? [
-					{
-						slug: 'Add-Ons',
-						title: translate( 'Add-Ons' ),
-						type: 'menu-item',
-						url: `/add-ons/${ siteDomain }`,
-					},
-			  ]
-			: [] ),
+		{
+			slug: 'Add-Ons',
+			title: translate( 'Add-Ons' ),
+			type: 'menu-item',
+			url: `/add-ons/${ siteDomain }`,
+			shouldHide: ! shouldShowAddOns,
+		},
 		{
 			slug: 'domains',
 			title: translate( 'Domains' ),
 			navigationLabel: translate( 'Manage all domains' ),
 			type: 'menu-item',
 			url: `/domains/manage/${ siteDomain }`,
+			shouldHide: isStagingSite,
 		},
 		{
 			slug: 'Emails',
 			title: translate( 'Emails' ),
 			type: 'menu-item',
 			url: `/email/${ siteDomain }`,
+			shouldHide: isStagingSite,
 		},
 		{
 			slug: 'Purchases',
 			title: translate( 'Purchases' ),
 			type: 'menu-item',
 			url: `/purchases/subscriptions/${ siteDomain }`,
+			shouldHide: isStagingSite,
 		},
 		{
 			slug: 'options-hosting-configuration-php',
@@ -79,16 +82,13 @@ export default function globalSiteSidebarMenu( {
 			type: 'menu-item',
 			url: `/hosting-config/${ siteDomain }`,
 		},
-		...( showSiteMonitoring
-			? [
-					{
-						slug: 'tools-site-monitoring',
-						title: translate( 'Monitoring' ),
-						type: 'menu-item',
-						url: `/site-monitoring/${ siteDomain }`,
-					},
-			  ]
-			: [] ),
+		{
+			slug: 'tools-site-monitoring',
+			title: translate( 'Monitoring' ),
+			type: 'menu-item',
+			url: `/site-monitoring/${ siteDomain }`,
+			shouldHide: ! showSiteMonitoring,
+		},
 		{
 			slug: 'tools-earn',
 			title: translate( 'Monetize' ),
@@ -113,5 +113,5 @@ export default function globalSiteSidebarMenu( {
 			type: 'menu-item',
 			url: `/settings/general/${ siteDomain }`,
 		},
-	];
+	].filter( ( { shouldHide } ) => ! shouldHide );
 }
