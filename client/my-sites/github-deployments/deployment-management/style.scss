@@ -24,8 +24,14 @@
 		margin-bottom: 4px;
 	}
 
-	&__destination-directory {
-		margin-bottom: 24px;
+	&__destination-directory-input {
+		margin-bottom: 4px !important;
+	}
+
+	&__default-path-hint {
+		padding-top: 4px;
+		font-style: italic;
+		color: var(--Gray-Gray-60, #50575e);
 	}
 
 	&__automatic-deploys {

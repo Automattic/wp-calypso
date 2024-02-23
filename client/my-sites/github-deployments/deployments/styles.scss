@@ -44,7 +44,7 @@
 	}
 
 	tr th {
-		padding: 8px 0 16px 0;
+		padding: 8px 0 20px 0;
 		font-weight: 500;
 		color: var(--studio-gray-60, #50575e);
 	}
@@ -57,9 +57,11 @@
 		display: flex;
 		flex-direction: column;
 		padding: 21px 0;
+		font-weight: 500;
 		span {
 			color: var(--Gray-Gray-40, #787c82);
 			font-size: $font-body-extra-small;
+			font-weight: 400;
 		}
 	}
 
