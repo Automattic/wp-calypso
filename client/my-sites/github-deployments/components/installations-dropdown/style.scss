@@ -5,4 +5,11 @@
 	.select-dropdown__header-text {
 		font-weight: normal;
 	}
+
+	&__add-installation {
+		display: inline-flex !important;
+		align-items: center;
+		gap: 16px;
+		height: 36px !important;
+	}
 }

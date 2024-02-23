@@ -1,4 +1,4 @@
-import { PRODUCT_JETPACK_STATS_YEARLY } from '@automattic/calypso-products';
+import { PRODUCT_JETPACK_STATS_YEARLY, PriceTierEntry } from '@automattic/calypso-products';
 import { ProductsList } from '@automattic/data-stores';
 import formatCurrency from '@automattic/format-currency';
 import {
@@ -7,7 +7,7 @@ import {
 } from 'calypso/my-sites/stats/hooks/use-plan-usage-query';
 import { useSelector } from 'calypso/state';
 import { getProductBySlug } from 'calypso/state/products-list/selectors';
-import { PriceTierListItemProps, StatsPlanTierUI } from './types';
+import { StatsPlanTierUI } from './types';
 
 // Special case for per-unit fees over the max tier.
 export const EXTENSION_THRESHOLD_IN_MILLION = 2;
@@ -133,7 +133,7 @@ function useAvailableUpgradeTiers(
 	// 1. Get the tiers. Default to yearly pricing.
 	const commercialProduct = useSelector( ( state ) =>
 		getProductBySlug( state, PRODUCT_JETPACK_STATS_YEARLY )
-	) as ProductsList.ProductsListItem | null;
+	) as ProductsList.RawAPIProduct | null;
 	// TODO: Add the loading state of the plan usage query to avoid redundant re-rendering.
 	const { data: usageData } = usePlanUsageQuery( siteId );
 
@@ -143,7 +143,7 @@ function useAvailableUpgradeTiers(
 
 	const currentTierPrice = usageData?.current_tier?.minimum_price;
 	let tiersForUi = commercialProduct.price_tier_list.map(
-		( tier: PriceTierListItemProps ): StatsPlanTierUI => {
+		( tier: PriceTierEntry ): StatsPlanTierUI => {
 			// TODO: Some description of transform logic here.
 			// So as to clarify what we should expect from the API.
 			let tierUpgradePrice = 0;
@@ -159,19 +159,19 @@ function useAvailableUpgradeTiers(
 				return {
 					minimum_price: tier.minimum_price,
 					upgrade_price: tierUpgradePrice,
-					price: tier.minimum_price_monthly_display,
+					price: tier.minimum_price_monthly_display ?? undefined,
 					views: EXTENSION_THRESHOLD_IN_MILLION * ( tier.transform_quantity_divide_by || 1 ),
 					extension: true,
 					transform_quantity_divide_by: tier.transform_quantity_divide_by,
-					per_unit_fee: tier.per_unit_fee,
+					per_unit_fee: tier.per_unit_fee ?? undefined,
 				};
 			}
 
 			return {
 				minimum_price: tier.minimum_price,
 				upgrade_price: tierUpgradePrice,
-				price: tier.minimum_price_monthly_display,
-				views: tier.maximum_units,
+				price: tier.minimum_price_monthly_display ?? undefined,
+				views: tier.maximum_units ?? null,
 			};
 		}
 	);

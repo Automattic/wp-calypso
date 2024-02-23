@@ -4,12 +4,12 @@ import wpcomRequest from 'wpcom-proxy-request';
 import { PATTERN_CATEGORIES, getPatternSourceSiteID } from '../constants';
 import type { Pattern } from '../types';
 
-const useDotcomPatterns = (
+const useAssemblerPatterns = (
 	lang?: string,
 	queryOptions: Omit< UseQueryOptions< any, unknown, Pattern[] >, 'queryKey' > = {}
 ): Pattern[] => {
 	const { data } = useQuery< any, unknown, Pattern[] >( {
-		queryKey: [ lang, 'patterns' ],
+		queryKey: [ 'patterns', 'assembler', lang ],
 		queryFn: () => {
 			return wpcomRequest( {
 				path: `/ptk/patterns/${ lang }`,
@@ -44,4 +44,4 @@ const useDotcomPatterns = (
 	return data ?? [];
 };
 
-export default useDotcomPatterns;
+export default useAssemblerPatterns;

@@ -16,9 +16,10 @@ import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import { getCurrentRoute } from 'calypso/state/selectors/get-current-route';
 import isDomainOnlySite from 'calypso/state/selectors/is-domain-only-site';
 import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
+import isSiteWpcomStaging from 'calypso/state/selectors/is-site-wpcom-staging';
 import isSiteWPForTeams from 'calypso/state/selectors/is-site-wpforteams';
 import { getSiteDomain, isJetpackSite } from 'calypso/state/sites/selectors';
-import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import { requestAdminMenu } from '../../state/admin-menu/actions';
 import allSitesMenu from './static-data/all-sites-menu';
 import buildFallbackResponse from './static-data/fallback-menu';
@@ -31,10 +32,12 @@ const useSiteMenuItems = () => {
 	const dispatch = useDispatch();
 	const currentRoute = useSelector( ( state ) => getCurrentRoute( state ) );
 	const selectedSiteId = useSelector( getSelectedSiteId );
+	const selectedSiteSlug = useSelector( ( state ) => getSelectedSiteSlug( state ) );
 	const siteDomain = useSelector( ( state ) => getSiteDomain( state, selectedSiteId ) );
 	const menuItems = useSelector( ( state ) => getAdminMenu( state, selectedSiteId ) );
 	const isJetpack = useSelector( ( state ) => isJetpackSite( state, selectedSiteId ) );
 	const isAtomic = useSelector( ( state ) => isAtomicSite( state, selectedSiteId ) );
+	const isStagingSite = useSelector( ( state ) => isSiteWpcomStaging( state, selectedSiteId ) );
 	const locale = useLocale();
 	const isAllDomainsView = '/domains/manage' === currentRoute;
 	const { currentSection } = useCurrentRoute();
@@ -120,6 +123,8 @@ const useSiteMenuItems = () => {
 			siteDomain,
 			shouldShowAddOns: shouldShowAddOnsInFallbackMenu,
 			showSiteMonitoring: isAtomic,
+			selectedSiteSlug,
+			isStagingSite,
 		} );
 	}
 

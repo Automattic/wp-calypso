@@ -44,7 +44,7 @@
 	}
 
 	tr th {
-		padding: 8px 0 16px 0;
+		padding: 8px 0 20px 0;
 		font-weight: 500;
 		color: var(--studio-gray-60, #50575e);
 	}
@@ -57,9 +57,11 @@
 		display: flex;
 		flex-direction: column;
 		padding: 21px 0;
+		font-weight: 500;
 		span {
 			color: var(--Gray-Gray-40, #787c82);
-			font-size: $font-body-small;
+			font-size: $font-body-extra-small;
+			font-weight: 400;
 		}
 	}
 
@@ -67,9 +69,14 @@
 		display: flex;
 		flex-direction: column;
 		> div {
-			display: flex;
+			display: inline-flex;
 			gap: 8px;
-			font-size: $font-body-small;
+			font-size: $font-body-extra-small;
+			font-family: monospace;
+			span {
+				display: inline-flex;
+				align-items: center;
+			}
 		}
 	}
 
@@ -90,32 +97,32 @@
 	/* stylelint-disable-next-line scales/radii */
 	border-radius: 12px;
 
-	&__pending {
-		background-color: var(--Green-Green-5, #b8e6bf);
-	}
-
+	&__pending,
 	&__queued {
-		background-color: var(--Yellow-Yellow-5, #f5e6b3);
-	}
-
-	&__running {
-		background-color: var(--Green-Green-5, #b8e6bf);
+		border: 1px solid var(--Gray-Gray-10, #c3c4c7);
+		color: var(--Gray-Gray-60, #50575e);
+		background-color: var(--studio-white);
 	}
 
 	&__success {
 		background-color: var(--Green-Green-5, #b8e6bf);
+		color: var(--Green-Green-80, #00450c);
 	}
 
 	&__failed {
 		background-color: var(--Red-Red-5, #facfd2);
+		color: var(--Red-Red-80, #691c1c);
 	}
 
+	&__running,
 	&__building {
 		background-color: var(--Blue-Blue-5, #bbe0fa);
+		color: var(--Blue-Blue-80, #02395c);
 	}
 
 	&__warnings {
 		background-color: var(--Yellow-Yellow-5, #f5c4a1);
+		color: var(--Yellow-Yellow-80, #4f3500);
 	}
 
 	span {

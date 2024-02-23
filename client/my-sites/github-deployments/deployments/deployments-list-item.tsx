@@ -89,7 +89,7 @@ export const DeploymentsListItem = ( { deployment }: DeploymentsListItemProps ) 
 			<td>{ run && <DeploymentCommitDetails run={ run } deployment={ deployment } /> }</td>
 			<td>{ run && <DeploymentStatus status={ run.status as DeploymentStatusValue } /> }</td>
 			<td>
-				<span>{ formatDate( locale, new Date( run.created_on * 1000 ) ) }</span>
+				<span>{ formatDate( locale, new Date( run.created_on ) ) }</span>
 			</td>
 			<td>{ run && <DeploymentDuration run={ run } /> }</td>
 		</>

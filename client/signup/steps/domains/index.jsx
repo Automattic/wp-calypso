@@ -12,7 +12,6 @@ import { parse } from 'qs';
 import { Component } from 'react';
 import { connect } from 'react-redux';
 import QueryProductsList from 'calypso/components/data/query-products-list';
-import ChooseDomainLater from 'calypso/components/domains/choose-domain-later';
 import { useMyDomainInputMode as inputMode } from 'calypso/components/domains/connect-domain-step/constants';
 import RegisterDomainStep from 'calypso/components/domains/register-domain-step';
 import { recordUseYourDomainButtonClick } from 'calypso/components/domains/register-domain-step/analytics';
@@ -554,19 +553,7 @@ export class RenderDomainsStep extends Component {
 	}
 
 	shouldHideDomainExplainer = () => {
-		const { flowName } = this.props;
-		return [
-			'free',
-			'personal',
-			'personal-monthly',
-			'premium',
-			'premium-monthly',
-			'business',
-			'business-monthly',
-			'ecommerce',
-			'ecommerce-monthly',
-			'domain',
-		].includes( flowName );
+		return this.props.flowName === 'domain';
 	};
 
 	shouldHideUseYourDomain = () => {
@@ -912,6 +899,8 @@ export class RenderDomainsStep extends Component {
 			</div>
 		) : null;
 
+		const hasSearchedDomains = Array.isArray( this.props.step?.domainForm?.searchResults );
+
 		return (
 			<div className="domains__domain-side-content-container">
 				{ domainsInCart.length > 0 || this.state.wpcomSubdomainSelected ? (
@@ -930,15 +919,18 @@ export class RenderDomainsStep extends Component {
 					/>
 				) : (
 					! this.shouldHideDomainExplainer() &&
-					this.props.isPlanSelectionAvailableLaterInFlow && (
-						<ChooseDomainLater
-							hasSearchedDomains={ Array.isArray( this.props.step?.domainForm?.searchResults ) }
-							flowName={ flowName }
-							handleDomainExplainerClick={ this.handleDomainExplainerClick }
-							showEscapeHatchAfterSearch={
-								flowName === 'onboarding' || flowName === 'onboarding-pm'
-							}
-						/>
+					hasSearchedDomains && (
+						<div className="domains__domain-side-content domains__free-domain">
+							<ReskinSideExplainer
+								onClick={ this.handleDomainExplainerClick }
+								type={
+									this.props.isPlanSelectionAvailableLaterInFlow
+										? 'free-domain-explainer-check-paid-plans'
+										: 'free-domain-explainer'
+								}
+								flowName={ flowName }
+							/>
+						</div>
 					)
 				) }
 				{ useYourDomain }

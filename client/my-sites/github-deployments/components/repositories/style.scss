@@ -1,7 +1,11 @@
+.card.action-panel {
+	padding: 24px;
+}
+
 .github-deployments-repositories {
 	display: flex;
 	flex-direction: column;
-	gap: 24px;
+	gap: 16px;
 
 	&__search-bar {
 		display: flex;
@@ -13,6 +17,30 @@
 		input {
 			max-width: 400px;
 			height: 43px;
+			font-size: $font-body-small !important;
+		}
+	}
+	.components-spinner {
+		margin-left: auto;
+		margin-right: auto;
+		padding: 32px 24px;
+	}
+
+	&__no-results {
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		width: 517px;
+		margin: 64px auto;
+		text-align: center;
+		p:first-child {
+			line-height: 24px;
+			font-size: $font-body;
+			font-weight: 500;
+			margin-bottom: 8px;
+		}
+		p:last-of-type {
+			line-height: 20px;
 		}
 	}
 }
@@ -21,6 +49,7 @@
 
 	table {
 		border-collapse: collapse;
+		margin-bottom: 8px;
 	}
 
 	th,
@@ -30,7 +59,7 @@
 	}
 
 	th:first-child {
-		width: 350px;
+		width: 285px;
 	}
 
 	tbody tr:not(:last-of-type) {
@@ -44,10 +73,7 @@
 	&__name {
 		display: flex;
 		align-items: center;
-		span {
-			color: var(--Gray-Gray-40, #787c82);
-			font-size: $font-body-small;
-		}
+		font-weight: 500 !important;
 	}
 
 	tr td:last-child {
@@ -56,6 +82,5 @@
 }
 
 .github-deployments-adjust-permissions {
-	font-size: $font-body-small;
-	margin-bottom: 0;
+	margin-bottom: 16px;
 }

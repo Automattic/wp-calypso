@@ -7,7 +7,7 @@ import type { Pattern, Category, CustomPageTitle } from '../types';
 const usePatternPages = (
 	pageCategoryPatternsMap: Record< string, Pattern[] >,
 	categories: Category[],
-	dotcomPatterns: Pattern[]
+	assemblerPatterns: Pattern[]
 ): {
 	pages: Pattern[];
 	pageSlugs: string[];
@@ -39,7 +39,7 @@ const usePatternPages = (
 	// Pairs of page title and pattern id can be passed in the URL from AI flow.
 	if ( mockedPages.length > 0 ) {
 		mockedPages.forEach( ( { ID, title, selected }: CustomPageTitle ) => {
-			const patterns = dotcomPatterns.filter( ( pattern: Pattern ) => pattern.ID === ID );
+			const patterns = assemblerPatterns.filter( ( pattern: Pattern ) => pattern.ID === ID );
 			if ( patterns.length === 0 ) {
 				return;
 			}
@@ -61,7 +61,7 @@ const usePatternPages = (
 			setSearchParams(
 				( currentSearchParams ) => {
 					const newMockedPages = mockedPages.map( ( page: CustomPageTitle ) => {
-						const patterns = dotcomPatterns.filter(
+						const patterns = assemblerPatterns.filter(
 							( pattern: Pattern ) => pattern.ID === page.ID
 						);
 						page.selected = slugs.includes( patterns[ 0 ].name );

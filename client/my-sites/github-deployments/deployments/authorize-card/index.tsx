@@ -6,8 +6,10 @@ import './style.scss';
 
 export const GitHubAuthorizeCard = () => {
 	return (
-		<Card css={ { display: 'flex', flexDirection: 'column', alignItems: 'center' } }>
-			<p>{ __( 'To create or connect repositories, begin by authorizing GitHub.' ) }</p>
+		<Card css={ { display: 'flex', flexDirection: 'column', alignItems: 'center', padding: 32 } }>
+			<p css={ { marginBottom: 28 } }>
+				{ __( 'Authorize GitHub to connect an existing repository or create a new one.' ) }
+			</p>
 			<GitHubAuthorizeButton />
 		</Card>
 	);

@@ -206,3 +206,7 @@ export function constructThemeShowcaseUrl( {
 
 	return buildRelativeSearchUrl( url, search );
 }
+
+export function shouldSelectSite( { isLoggedIn, siteCount, siteId } ) {
+	return isLoggedIn && ! siteId && siteCount > 1;
+}
