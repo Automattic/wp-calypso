@@ -89,6 +89,7 @@ import {
 	retrieveSource,
 	clearSource,
 } from './persistence-utils';
+import AuthorizationScreenReaderIndicator from './screen-reader-indicator';
 import { authQueryPropTypes, getRoleFromScope } from './utils';
 import wooDnaConfig from './woo-dna-config';
 import WooInstallExtSuccessNotice from './woo-install-ext-success-notice';
@@ -722,6 +723,8 @@ export class JetpackAuthorize extends Component {
 	}
 
 	getButtonText() {
+		// Update getScreenReaderAuthMessage if you change this function.
+		// TODO: extract actual status messages from button labels so getScreenReaderAuthMessage can use them.
 		const { translate } = this.props;
 		const { authorizeError, authorizeSuccess, isAuthorizing } = this.props.authorizationData;
 		const { alreadyAuthorized } = this.props.authQuery;
@@ -771,6 +774,48 @@ export class JetpackAuthorize extends Component {
 
 		if ( ! this.retryingAuth ) {
 			return translate( 'Approve' );
+		}
+	}
+
+	getScreenReaderAuthMessage() {
+		// Copied from getButtonText. Buttons labels have been removed and actual status messages kept.
+		const { translate } = this.props;
+		const { authorizeError, authorizeSuccess, isAuthorizing } = this.props.authorizationData;
+		const { alreadyAuthorized } = this.props.authQuery;
+
+		if ( this.isFromMigrationPlugin() ) {
+			if ( this.props.isFetchingAuthorizationSite ) {
+				return translate( 'Preparing authorization' );
+			}
+
+			return;
+		}
+
+		if ( ! this.props.isAlreadyOnSitesList && ! this.props.isFetchingSites && alreadyAuthorized ) {
+			return;
+		}
+
+		if ( authorizeError && ! this.retryingAuth ) {
+			return;
+		}
+
+		if ( this.props.isFetchingAuthorizationSite ) {
+			return translate( 'Preparing authorization' );
+		}
+
+		if ( authorizeSuccess && this.redirecting ) {
+			return;
+		}
+
+		if ( authorizeSuccess ) {
+			return translate( 'Finishing up!', {
+				context:
+					'Shown during a jetpack authorization process, while we retrieve the info we need to show the last page',
+			} );
+		}
+
+		if ( isAuthorizing || this.retryingAuth ) {
+			return translate( 'Authorizing your connection' );
 		}
 	}
 
@@ -1155,14 +1200,6 @@ export class JetpackAuthorize extends Component {
 		);
 	}
 
-	renderLiveRegion() {
-		return (
-			<div className="screen-reader-text" aria-live="assertive">
-				{ this.isAuthorizing() ? this.getButtonText() : '' }
-			</div>
-		);
-	}
-
 	render() {
 		const { translate } = this.props;
 		const wooDna = this.getWooDnaConfig();
@@ -1215,7 +1252,7 @@ export class JetpackAuthorize extends Component {
 						{ this.renderFooterLinks() }
 					</div>
 				</div>
-				{ this.renderLiveRegion() }
+				<AuthorizationScreenReaderIndicator message={ this.getScreenReaderAuthMessage() } />
 			</MainWrapper>
 		);
 	}
