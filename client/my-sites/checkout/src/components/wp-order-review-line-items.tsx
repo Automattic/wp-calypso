@@ -370,8 +370,6 @@ function LineItemWrapper( {
 				onRemoveProductCancel={ onRemoveProductCancel }
 				isAkPro500Cart={ isAkPro500Cart }
 				shouldShowBillingInterval={ ! finalShouldShowVariantSelector }
-				areThereVariants={ areThereVariants }
-				shouldShowVariantSelector={ shouldShowVariantSelector }
 				shouldUseCheckoutV2={ shouldUseCheckoutV2 }
 			>
 				<DropdownWrapper hasCheckoutVersion2={ hasCheckoutVersion( '2' ) }>

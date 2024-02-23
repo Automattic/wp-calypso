@@ -210,10 +210,11 @@ const LineItemTitle = styled.div< {
 `;
 
 const LineItemPriceWrapper = styled.span< {
-	theme?: Theme;
-	isSummary?: boolean;
 	shouldUseCheckoutV2?: boolean;
 } >`
+	display: flex;
+	gap: 4px;
+
 	${ ( shouldUseCheckoutV2 ) =>
 		hasCheckoutVersion2 || shouldUseCheckoutV2
 			? `margin-left: 0px;
@@ -1284,6 +1285,7 @@ const DesktopGiftWrapper = styled.div`
 `;
 
 function CheckoutLineItem( {
+	children,
 	product,
 	className,
 	hasDeleteButton,
@@ -1312,8 +1314,6 @@ function CheckoutLineItem( {
 	onRemoveProductCancel?: ( label: string ) => void;
 	isAkPro500Cart?: boolean;
 	shouldShowBillingInterval?: boolean;
-	areThereVariants?: boolean;
-	shouldShowVariantSelector?: boolean;
 	shouldUseCheckoutV2?: boolean;
 } > ) {
 	const id = product.uuid;
@@ -1495,6 +1495,8 @@ function CheckoutLineItem( {
 			{ ! ( hasCheckoutVersion2 || shouldUseCheckoutV2 ) && isEmail && (
 				<EmailMeta product={ product } isRenewal={ isRenewal } />
 			) }
+
+			{ children }
 
 			{ hasDeleteButton && removeProductFromCart && (
 				<>

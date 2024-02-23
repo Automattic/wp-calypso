@@ -53,7 +53,7 @@ const CouponLinkWrapper = styled.div< { shouldUseCheckoutV2: boolean } >`
 
 const CouponAreaWrapper = styled.div< { shouldUseCheckoutV2: boolean } >`
 	padding-bottom: ${ ( shouldUseCheckoutV2 ) =>
-		hasCheckoutVersion( '2' ) || shouldUseCheckoutV2 ? '24px' : 'inherit' };
+		hasCheckoutVersion( '2' ) || shouldUseCheckoutV2 ? '12px' : 'inherit' };
 `;
 
 const CouponField = styled( Coupon )``;
