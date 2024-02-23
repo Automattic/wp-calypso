@@ -3,6 +3,7 @@ import { safeImageUrl } from '@automattic/calypso-url';
 import './style.scss';
 import { Button } from '@wordpress/components';
 import { __, _n, sprintf } from '@wordpress/i18n';
+import InfoPopover from 'calypso/components/info-popover';
 import { BlazablePost } from 'calypso/data/promote-post/types';
 import resizeImageUrl from 'calypso/lib/resize-image-url';
 import useOpenPromoteWidget from '../../hooks/use-open-promote-widget';
@@ -30,7 +31,7 @@ export default function PostItem( {
 	const viewCount = post?.monthly_view_count ?? 0;
 	const likeCount = post?.like_count ?? 0;
 	const commentCount = post?.comment_count ?? 0;
-	const productPrice = post?.price ?? '-';
+	const productPrice = post?.price || '-';
 	const isWooProduct = isRunningInWooStore && filterType === 'product';
 
 	const mobileStatsSeparator = <span className="blazepress-mobile-stats-mid-dot">&#183;</span>;
@@ -74,7 +75,15 @@ export default function PostItem( {
 					<div className="post-item__post-title">
 						<div className="post-item__post-subheading-mobile">
 							{ isWooProduct ? (
-								<>{ post.sku || '-' }</>
+								<>
+									{ post.sku
+										? sprintf(
+												/* translators: %s its an unique alphanumeric code for a product */
+												__( 'SKU: %s' ),
+												post.sku
+										  )
+										: '-' }
+								</>
 							) : (
 								<>
 									{ sprintf(
@@ -93,20 +102,23 @@ export default function PostItem( {
 						</div>
 						<div className="post-item__post-title-content">
 							<span>{ titleShortened || __( 'Untitled' ) }</span>
+							{ titleIsLong && (
+								<InfoPopover position="bottom right">
+									{ __( 'Title: ' ) }
+									<br />
+									<span className="popover-title">{ post?.title }</span>
+								</InfoPopover>
+							) }
 						</div>
-						{ isWooProduct ? (
-							<div className="post-item__post-subtitle-mobile">
-								{ productPrice }
-								{ mobileStatsSeparator }
-								{ postDate }
-							</div>
-						) : (
-							<div className="post-item__post-subtitle-mobile">
-								{ getPostType( post.type ) }
-								{ mobileStatsSeparator }
-								{ postDate }
-							</div>
-						) }
+						<div className="post-item__post-subtitle-mobile">
+							{ isWooProduct ? productPrice : getPostType( post.type ) }
+							{ mobileStatsSeparator }
+							{ sprintf(
+								/* translators: %s the post's published date */
+								__( 'Published: %s' ),
+								postDate
+							) }
+						</div>
 					</div>
 				</div>
 				<div className="post-item__post-data-row post-item__post-data-row-mobile">
@@ -143,7 +155,7 @@ export default function PostItem( {
 			{ isWooProduct && (
 				<>
 					<td className="post-item__post-sku">{ post.sku || '-' }</td>
-					<td className="post-item__post-price">{ post.price ?? '-' }</td>
+					<td className="post-item__post-price">{ post.price || '-' }</td>
 				</>
 			) }
 			<td className="post-item__post-publish-date">{ postDate }</td>
