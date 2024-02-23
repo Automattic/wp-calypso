@@ -1,0 +1,16 @@
+.site-favicon {
+	margin-right: 16px;
+
+	.site-icon {
+		border-radius: 10px; /* stylelint-disable-line scales/radii */
+		&.is-blank {
+			background: transparent;
+			.wpcom-favicon {
+				fill: var(--studio-blue-50);
+			}
+		}
+		&:has(.no-favicon) {
+			background: linear-gradient(45deg, #ff0056, #ff8a78, #57b7ff, #9c00d4);
+		}
+	}
+}
