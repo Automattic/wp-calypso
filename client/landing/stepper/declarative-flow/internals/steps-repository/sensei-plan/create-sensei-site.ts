@@ -39,7 +39,12 @@ const updateGlobalStyles = (
 		body: styleVariation,
 	} );
 
-const COURSE_THEME = 'pub/course';
+const installCourseTheme = ( siteId: number ) =>
+	wpcom.req.post( {
+		path: `/sites/${ siteId }/themes/course/install`,
+	} );
+
+const COURSE_THEME = 'course';
 
 export const useCreateSenseiSite = () => {
 	const { getNewSite } = useSelect( ( select ) => select( SITE_STORE ) as SiteSelect, [] );
@@ -67,6 +72,28 @@ export const useCreateSenseiSite = () => {
 		title: siteProgressTitle,
 	} );
 
+	const setCourseThemeAndVariation = async ( siteId: number ) => {
+		if ( siteId ) {
+			await installCourseTheme( siteId );
+			await setThemeOnSite( siteId.toString(), 'pub/' + COURSE_THEME );
+			const selectedStyleVariationTitle = getSelectedStyleVariation() ?? '';
+			const [ styleVariations, theme ]: [ StyleVariation[], Theme ] = await Promise.all( [
+				getStyleVariations( siteId, COURSE_THEME ),
+				getSiteTheme( siteId, COURSE_THEME ),
+			] );
+			const userGlobalStylesLink: string =
+				theme?._links?.[ 'wp:user-global-styles' ]?.[ 0 ]?.href || '';
+			const userGlobalStylesId = parseInt( userGlobalStylesLink.split( '/' ).pop() || '', 10 );
+			const styleVariation = styleVariations.find(
+				( variation ) => variation.title === selectedStyleVariationTitle
+			);
+
+			if ( styleVariation && userGlobalStylesId ) {
+				await updateGlobalStyles( siteId, userGlobalStylesId, styleVariation );
+			}
+		}
+	};
+
 	const createAndConfigureSite = useCallback( async () => {
 		setProgress( {
 			percentage: 25,
@@ -93,29 +120,6 @@ export const useCreateSenseiSite = () => {
 		] );
 
 		setProgress( {
-			percentage: 75,
-			title: styleProgressTitle,
-		} );
-
-		if ( siteId ) {
-			await setThemeOnSite( siteId.toString(), COURSE_THEME );
-			wait( 1200 );
-			const selectedStyleVariationTitle = getSelectedStyleVariation()?.title;
-			const [ styleVariations, theme ]: [ StyleVariation[], Theme ] = await Promise.all( [
-				getStyleVariations( siteId, COURSE_THEME ),
-				getSiteTheme( siteId, COURSE_THEME ),
-			] );
-			const userGlobalStylesLink: string =
-				theme?._links?.[ 'wp:user-global-styles' ]?.[ 0 ]?.href || '';
-			const userGlobalStylesId = parseInt( userGlobalStylesLink.split( '/' ).pop() || '', 10 );
-			const styleVariation = styleVariations.find(
-				( variation ) => variation.title === selectedStyleVariationTitle
-			);
-			if ( styleVariation && userGlobalStylesId ) {
-				await updateGlobalStyles( siteId, userGlobalStylesId, styleVariation );
-			}
-		}
-		setProgress( {
 			percentage: 100,
 			title: styleProgressTitle,
 		} );
@@ -136,5 +140,5 @@ export const useCreateSenseiSite = () => {
 		styleProgressTitle,
 	] );
 
-	return { createAndConfigureSite, progress };
+	return { createAndConfigureSite, progress, setCourseThemeAndVariation };
 };
