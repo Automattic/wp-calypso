@@ -137,6 +137,12 @@
 	flex-wrap: nowrap;
 	gap: 16px;
 
+	.dataviews-wrapper {
+		.components-button:focus:not(:disabled) {
+			box-shadow: none;
+		}
+	}
+
 	.sites-overview {
 		width: 400px;
 		flex-shrink: 0;
