@@ -3,10 +3,10 @@ import apiFetch from '@wordpress/api-fetch';
 import { canAccessWpcomApis } from 'wpcom-proxy-request';
 // eslint-disable-next-line no-restricted-imports
 import wpcom from 'calypso/lib/wp';
-import { WAPUU_ERROR_MESSAGE, ODIE_THUMBS_DOWN_RATING_VALUE } from '..';
+import { WAPUU_ERROR_MESSAGE } from '..';
 import { useOdieAssistantContext } from '../context';
 import { broadcastOdieMessage, setOdieStorage } from '../data';
-import type { Chat, Message, MessageRole, MessageType, OdieAllowedBots } from '../types';
+import type { Chat, Message, OdieAllowedBots } from '../types';
 
 // Either we use wpcom or apiFetch for the request for accessing odie endpoint for atomic or wpcom sites
 const buildSendChatMessage = async (
@@ -197,34 +197,6 @@ export const useOdieGetChat = (
 		queryFn: () => buildGetChatMessage( botNameSlug, chatId, page, perPage, includeFeedback ),
 		refetchOnWindowFocus: false,
 		enabled: !! chatId && ! chat.chat_id,
-		select: ( data ) => {
-			const modifiedMessages: Message[] = [];
-
-			data.messages.forEach( ( message ) => {
-				modifiedMessages.push( message );
-
-				// Check if the message has negative feedback
-				if (
-					message.rating_value &&
-					message.rating_value === ODIE_THUMBS_DOWN_RATING_VALUE &&
-					! message.context?.flags?.forward_to_human_support
-				) {
-					// Add a new 'dislike-feedback' message right after the current message
-					const dislikeFeedbackMessage = {
-						content: '...',
-						role: 'bot' as MessageRole,
-						type: 'dislike-feedback' as MessageType,
-						simulateTyping: false,
-					};
-					modifiedMessages.push( dislikeFeedbackMessage );
-				}
-			} );
-
-			return {
-				...data,
-				messages: modifiedMessages,
-			};
-		},
 	} );
 };
 
