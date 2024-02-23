@@ -16,6 +16,7 @@ import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import { getCurrentRoute } from 'calypso/state/selectors/get-current-route';
 import isDomainOnlySite from 'calypso/state/selectors/is-domain-only-site';
 import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
+import isSiteWpcomStaging from 'calypso/state/selectors/is-site-wpcom-staging';
 import isSiteWPForTeams from 'calypso/state/selectors/is-site-wpforteams';
 import { getSiteDomain, isJetpackSite } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
@@ -36,6 +37,7 @@ const useSiteMenuItems = () => {
 	const menuItems = useSelector( ( state ) => getAdminMenu( state, selectedSiteId ) );
 	const isJetpack = useSelector( ( state ) => isJetpackSite( state, selectedSiteId ) );
 	const isAtomic = useSelector( ( state ) => isAtomicSite( state, selectedSiteId ) );
+	const isStagingSite = useSelector( ( state ) => isSiteWpcomStaging( state, selectedSiteId ) );
 	const locale = useLocale();
 	const isAllDomainsView = '/domains/manage' === currentRoute;
 	const { currentSection } = useCurrentRoute();
@@ -122,6 +124,7 @@ const useSiteMenuItems = () => {
 			shouldShowAddOns: shouldShowAddOnsInFallbackMenu,
 			showSiteMonitoring: isAtomic,
 			selectedSiteSlug,
+			isStagingSite,
 		} );
 	}
 
