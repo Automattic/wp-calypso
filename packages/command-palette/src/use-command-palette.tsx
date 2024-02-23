@@ -77,7 +77,7 @@ interface useCommandPaletteOptions {
 	selectedCommandName: string;
 	setSelectedCommandName: ( name: string ) => void;
 	search: string;
-	navigate: ( path: string, openInNewTab: boolean ) => void;
+	navigate: ( path: string, openInNewTab?: boolean ) => void;
 	useCommands: ( options: useCommandsParams ) => Command[];
 	wpcom: WPCOM;
 	currentRoute: string | null;

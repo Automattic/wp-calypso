@@ -59,7 +59,7 @@ function useCommandNavigation( {
 	navigate,
 	currentRoute,
 }: {
-	navigate: ( path: string, openInNewTab: boolean ) => void;
+	navigate: ( path: string, openInNewTab?: boolean ) => void;
 	currentRoute: string | null;
 } ) {
 	const dispatch = useDispatch();
