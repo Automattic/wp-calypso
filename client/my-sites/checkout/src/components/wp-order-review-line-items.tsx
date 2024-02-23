@@ -29,6 +29,7 @@ import { useGetProductVariants } from 'calypso/my-sites/checkout/src/hooks/produ
 import { getSignupCompleteFlowName } from 'calypso/signup/storageUtils';
 import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import { useCheckoutV2 } from '../hooks/use-checkout-v2';
 import { AkismetProQuantityDropDown } from './akismet-pro-quantity-dropdown';
 import { CostOverridesList, LineItemCostOverrides } from './cost-overrides-list';
 import { ItemVariationPicker } from './item-variation-picker';
@@ -101,7 +102,7 @@ export function WPOrderReviewLineItems( {
 	const hasPartnerCoupon = getPartnerCoupon( {
 		coupon: responseCart.coupon,
 	} );
-
+	const shouldUseCheckoutV2 = useCheckoutV2() === 'treatment';
 	const [ initialProducts ] = useState( () => responseCart.products );
 	const [ forceShowAkQuantityDropdown, setForceShowAkQuantityDropdown ] = useState( false );
 
@@ -206,7 +207,7 @@ export function WPOrderReviewLineItems( {
 					akQuantityOpenId={ akQuantityOpenId }
 				/>
 			) ) }
-			{ ! hasCheckoutVersion( '2' ) && couponLineItem && (
+			{ ! ( hasCheckoutVersion( '2' ) || shouldUseCheckoutV2 ) && couponLineItem && (
 				<WPOrderReviewListItem key={ couponLineItem.id }>
 					<CouponLineItem
 						lineItem={ couponLineItem }
@@ -219,15 +220,17 @@ export function WPOrderReviewLineItems( {
 					/>
 				</WPOrderReviewListItem>
 			) }
-			{ ! hasCheckoutVersion( '2' ) && creditsLineItem && responseCart.sub_total_integer > 0 && (
-				<NonProductLineItem
-					subtotal
-					lineItem={ creditsLineItem }
-					isSummary={ isSummary }
-					isPwpoUser={ isPwpoUser }
-				/>
-			) }
-			{ hasCheckoutVersion( '2' ) && costOverridesList.length > 0 && (
+			{ ! ( hasCheckoutVersion( '2' ) || shouldUseCheckoutV2 ) &&
+				creditsLineItem &&
+				responseCart.sub_total_integer > 0 && (
+					<NonProductLineItem
+						subtotal
+						lineItem={ creditsLineItem }
+						isSummary={ isSummary }
+						isPwpoUser={ isPwpoUser }
+					/>
+				) }
+			{ ( hasCheckoutVersion( '2' ) || shouldUseCheckoutV2 ) && costOverridesList.length > 0 && (
 				<CostOverridesList
 					costOverridesList={ costOverridesList }
 					currency={ responseCart.currency }
@@ -291,6 +294,7 @@ function LineItemWrapper( {
 	const isWooMobile = isWcMobileApp();
 	let isDeletable = canItemBeRemovedFromCart( product, responseCart ) && ! isWooMobile;
 	const has100YearPlanProduct = has100YearPlan( responseCart );
+	const shouldUseCheckoutV2 = useCheckoutV2() === 'treatment';
 
 	const signupFlowName = getSignupCompleteFlowName();
 	if ( isCopySiteFlow( signupFlowName ) && ! product.is_domain_registration ) {
@@ -366,6 +370,9 @@ function LineItemWrapper( {
 				onRemoveProductCancel={ onRemoveProductCancel }
 				isAkPro500Cart={ isAkPro500Cart }
 				shouldShowBillingInterval={ ! finalShouldShowVariantSelector }
+				areThereVariants={ areThereVariants }
+				shouldShowVariantSelector={ shouldShowVariantSelector }
+				shouldUseCheckoutV2={ shouldUseCheckoutV2 }
 			>
 				<DropdownWrapper hasCheckoutVersion2={ hasCheckoutVersion( '2' ) }>
 					{ finalShouldShowVariantSelector && (

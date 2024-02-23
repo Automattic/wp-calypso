@@ -60,6 +60,7 @@ import { saveContactDetailsCache } from 'calypso/state/domains/management/action
 import { errorNotice, removeNotice } from 'calypso/state/notices/actions';
 import { isMarketplaceProduct } from 'calypso/state/products-list/selectors';
 import getPreviousRoute from 'calypso/state/selectors/get-previous-route';
+import { useCheckoutV2 } from '../hooks/use-checkout-v2';
 import useCouponFieldState from '../hooks/use-coupon-field-state';
 import { validateContactDetails } from '../lib/contact-validation';
 import getContactDetailsType from '../lib/get-contact-details-type';
@@ -308,6 +309,8 @@ export default function CheckoutMainContent( {
 	const [ shouldShowContactDetailsValidationErrors, setShouldShowContactDetailsValidationErrors ] =
 		useState( true );
 
+	const shouldUseCheckoutV2 = useCheckoutV2() === 'treatment';
+
 	// The "Summary" view is displayed in the sidebar at desktop (wide) widths
 	// and before the first step at mobile (smaller) widths. At smaller widths it
 	// starts collapsed and can be expanded; at wider widths (as a sidebar) it is
@@ -462,8 +465,11 @@ export default function CheckoutMainContent( {
 									</CheckoutSummaryTitlePrice>
 								</CheckoutSummaryTitleContent>
 							</CheckoutSummaryTitleLink>
-							<CheckoutSummaryBody className="checkout__summary-body">
-								{ hasCheckoutVersion( '2' ) && (
+							<CheckoutSummaryBody
+								className="checkout__summary-body"
+								shouldUseCheckoutV2={ shouldUseCheckoutV2 }
+							>
+								{ ( hasCheckoutVersion( '2' ) || shouldUseCheckoutV2 ) && (
 									<WPCheckoutOrderReview
 										removeProductFromCart={ removeProductFromCart }
 										couponFieldStateProps={ couponFieldStateProps }
@@ -475,7 +481,7 @@ export default function CheckoutMainContent( {
 
 								<WPCheckoutOrderSummary siteId={ siteId } onChangeSelection={ changeSelection } />
 								<CheckoutSidebarNudge responseCart={ responseCart } />
-								{ hasCheckoutVersion( '2' ) && (
+								{ ( hasCheckoutVersion( '2' ) || shouldUseCheckoutV2 ) && (
 									<CheckoutSummaryFeaturedList
 										responseCart={ responseCart }
 										siteId={ siteId }
@@ -501,7 +507,7 @@ export default function CheckoutMainContent( {
 				<CheckoutStepGroup loadingHeader={ loadingHeader } onStepChanged={ onStepChanged }>
 					<PerformanceTrackerStop />
 					{ infoMessage }
-					{ ! hasCheckoutVersion( '2' ) && (
+					{ ! ( hasCheckoutVersion( '2' ) || shouldUseCheckoutV2 ) && (
 						<CheckoutStepBody
 							onError={ onReviewError }
 							className="wp-checkout__review-order-step"
@@ -766,25 +772,29 @@ const CheckoutSummaryTitlePrice = styled.span`
 	}
 `;
 
-const CheckoutSummaryBody = styled.div`
+const CheckoutSummaryBody = styled.div< { shouldUseCheckoutV2: boolean } >`
 	box-sizing: border-box;
 	margin: 0 auto;
 	max-width: 600px;
 	width: 100%;
 	display: none;
 
-	${ hasCheckoutVersion( '2' ) ? `padding: 32px 24px 24px 24px;` : 'padding: 24px;' }
+	${ ( shouldUseCheckoutV2 ) =>
+		hasCheckoutVersion( '2' ) || shouldUseCheckoutV2
+			? `padding: 32px 24px 24px 24px;`
+			: 'padding: 24px;' }
 
 	.is-visible & {
-		${ hasCheckoutVersion( '2' )
-			? ` display: grid;
+		${ ( shouldUseCheckoutV2 ) =>
+			hasCheckoutVersion( '2' ) || shouldUseCheckoutV2
+				? ` display: grid;
 			grid-template-areas:
 			"preview"
 			"review"
 			"summary"
 			"nudge"
 			"features";`
-			: `display: block;` };
+				: `display: block;` };
 	}
 
 	& .checkout-site-preview {
@@ -797,11 +807,15 @@ const CheckoutSummaryBody = styled.div`
 	}
 
 	@media ( ${ ( props ) => props.theme.breakpoints.tabletUp } ) {
-		${ hasCheckoutVersion( '2' ) ? `padding: 50px 24px 24px 24px;` : 'padding: 24px;' }
+		${ ( shouldUseCheckoutV2 ) =>
+			hasCheckoutVersion( '2' ) || shouldUseCheckoutV2
+				? `padding: 50px 24px 24px 24px;`
+				: 'padding: 24px;' }
 
 		.is-visible & {
-			${ hasCheckoutVersion( '2' ) &&
-			`grid-template-areas:
+			${ ( shouldUseCheckoutV2 ) =>
+				( hasCheckoutVersion( '2' ) || shouldUseCheckoutV2 ) &&
+				`grid-template-areas:
 			"preview preview"
 			"review review"
 			"summary summary"
@@ -816,8 +830,9 @@ const CheckoutSummaryBody = styled.div`
 
 		.is-visible &,
 		& {
-			${ hasCheckoutVersion( '2' )
-				? `grid-template-areas:
+			${ ( shouldUseCheckoutV2 ) =>
+				hasCheckoutVersion( '2' ) || shouldUseCheckoutV2
+					? `grid-template-areas:
 					"preview"
 					"review"
 					"summary"
@@ -825,7 +840,7 @@ const CheckoutSummaryBody = styled.div`
 					"features";
 					display: grid;
 			`
-				: `display: block;` };
+					: `display: block;` };
 		}
 
 		& .card {
@@ -841,7 +856,8 @@ const CheckoutSummaryBody = styled.div`
 const CheckoutSidebarNudgeWrapper = styled.div`
 	display: flex;
 	flex-direction: column;
-	${ hasCheckoutVersion( '2' ) && `grid-area: nudge` };
+	${ ( shouldUseCheckoutV2 ) =>
+		( hasCheckoutVersion( '2' ) || shouldUseCheckoutV2 ) && `grid-area: nudge` };
 
 	& > * {
 		max-width: 288px;

@@ -4,6 +4,7 @@ import { hasCheckoutVersion } from '@automattic/wpcom-checkout';
 import { useTranslate } from 'i18n-calypso';
 import { FunctionComponent } from 'react';
 import { preventWidows } from 'calypso/lib/formatting';
+import { useCheckoutV2 } from '../../hooks/use-checkout-v2';
 import {
 	Discount,
 	DoNotPayThis,
@@ -19,8 +20,9 @@ import type { WPCOMProductVariant } from './types';
 
 const DiscountPercentage: FunctionComponent< { percent: number } > = ( { percent } ) => {
 	const translate = useTranslate();
+	const shouldUseCheckoutV2 = useCheckoutV2() === 'treatment';
 	return (
-		<Discount>
+		<Discount shouldUseCheckoutV2={ shouldUseCheckoutV2 }>
 			{ translate( 'Save %(percent)s%%', {
 				args: {
 					percent,
@@ -61,6 +63,7 @@ export const ItemVariantDropDownPrice: FunctionComponent< {
 	const productBillingTermInMonths = variant.productBillingTermInMonths;
 	const isIntroductoryOffer = introCount > 0;
 	const translate = useTranslate();
+	const shouldUseCheckoutV2 = useCheckoutV2() === 'treatment';
 
 	const translatedIntroOfferDetails = () => {
 		const args = {
@@ -166,19 +169,21 @@ export const ItemVariantDropDownPrice: FunctionComponent< {
 	const canDisplayDiscountPercentage = ! isIntroductoryOffer;
 
 	return (
-		<Variant>
-			<Label>
+		<Variant shouldUseCheckoutV2={ shouldUseCheckoutV2 }>
+			<Label shouldUseCheckoutV2={ shouldUseCheckoutV2 }>
 				{ variant.variantLabel }
 				{ hasDiscount && isMobile && <DiscountPercentage percent={ discountPercentage } /> }
 			</Label>
-			<PriceTextContainer>
+			<PriceTextContainer shouldUseCheckoutV2={ shouldUseCheckoutV2 }>
 				{ hasDiscount && ! isMobile && canDisplayDiscountPercentage && (
 					<DiscountPercentage percent={ discountPercentage } />
 				) }
-				{ ! hasCheckoutVersion( '2' ) && hasDiscount && ! isIntroductoryOffer && (
-					<DoNotPayThis>{ formattedCompareToPriceForVariantTerm }</DoNotPayThis>
-				) }
-				{ ! hasCheckoutVersion( '2' ) && (
+				{ ! ( hasCheckoutVersion( '2' ) || shouldUseCheckoutV2 ) &&
+					hasDiscount &&
+					! isIntroductoryOffer && (
+						<DoNotPayThis>{ formattedCompareToPriceForVariantTerm }</DoNotPayThis>
+					) }
+				{ ! ( hasCheckoutVersion( '2' ) || shouldUseCheckoutV2 ) && (
 					<Price aria-hidden={ isIntroductoryOffer }>{ formattedCurrentPrice }</Price>
 				) }
 				<IntroPricing>

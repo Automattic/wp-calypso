@@ -51,6 +51,7 @@ import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
 import { getSignupCompleteFlowName } from 'calypso/signup/storageUtils';
 import { useSelector } from 'calypso/state';
 import { getCurrentPlan } from 'calypso/state/sites/plans/selectors';
+import { useCheckoutV2 } from '../hooks/use-checkout-v2';
 import getAkismetProductFeatures from '../lib/get-akismet-product-features';
 import getFlowPlanFeatures from '../lib/get-flow-plan-features';
 import getJetpackProductFeatures from '../lib/get-jetpack-product-features';
@@ -90,13 +91,14 @@ export function WPCheckoutOrderSummary( {
 	const cartKey = useCartKey();
 	const { responseCart } = useShoppingCart( cartKey );
 	const isCartUpdating = FormStatus.VALIDATING === formStatus;
+	const shouldUseCheckoutV2 = useCheckoutV2() === 'treatment';
 
 	return (
 		<CheckoutSummaryCard
 			className={ isCartUpdating ? 'is-loading' : '' }
 			data-e2e-cart-is-loading={ isCartUpdating }
 		>
-			{ ! hasCheckoutVersion( '2' ) && (
+			{ ! ( hasCheckoutVersion( '2' ) || shouldUseCheckoutV2 ) && (
 				<CheckoutSummaryFeaturedList
 					responseCart={ responseCart }
 					siteId={ siteId }
@@ -126,6 +128,7 @@ export function CheckoutSummaryFeaturedList( {
 	) => void;
 } ) {
 	const translate = useTranslate();
+	const shouldUseCheckoutV2 = useCheckoutV2() === 'treatment';
 
 	// Return early if the cart is only Chargebacks fees
 	if ( responseCart.products.every( isChargeback || isCredits ) ) {
@@ -140,9 +143,10 @@ export function CheckoutSummaryFeaturedList( {
 
 	const plan = responseCart.products.find( ( product ) => isPlan( product ) );
 	const hasMonthlyPlanInCart = Boolean( plan && isMonthly( plan?.product_slug ) );
+
 	return (
 		<>
-			<CheckoutSummaryFeatures>
+			<CheckoutSummaryFeatures shouldUseCheckoutV2={ shouldUseCheckoutV2 }>
 				<CheckoutSummaryFeaturesTitle>
 					{ responseCart.is_gift_purchase
 						? translate( 'WordPress.com Gift Subscription' )
@@ -173,10 +177,11 @@ function CheckoutSummaryPriceList() {
 	const costOverridesList = filterAndGroupCostOverridesForDisplay( responseCart, translate );
 
 	const subtotalBeforeDiscounts = getSubtotalWithoutDiscounts( responseCart );
+	const shouldUseCheckoutV2 = useCheckoutV2() === 'treatment';
 
 	return (
 		<>
-			{ ! hasCheckoutVersion( '2' ) && costOverridesList.length > 0 && (
+			{ ! ( hasCheckoutVersion( '2' ) || shouldUseCheckoutV2 ) && costOverridesList.length > 0 && (
 				<CheckoutFirstSubtotalLineItem key="checkout-summary-line-item-subtotal-one">
 					<span>{ translate( 'Subtotal before discounts' ) }</span>
 					<span>
@@ -187,7 +192,7 @@ function CheckoutSummaryPriceList() {
 					</span>
 				</CheckoutFirstSubtotalLineItem>
 			) }
-			{ ! hasCheckoutVersion( '2' ) && costOverridesList.length > 0 && (
+			{ ! ( hasCheckoutVersion( '2' ) || shouldUseCheckoutV2 ) && costOverridesList.length > 0 && (
 				<CostOverridesList
 					costOverridesList={ costOverridesList }
 					currency={ responseCart.currency }
@@ -219,7 +224,7 @@ function CheckoutSummaryPriceList() {
 					) }
 				</CheckoutSubtotalSection>
 
-				<CheckoutSummaryTotal>
+				<CheckoutSummaryTotal shouldUseCheckoutV2={ shouldUseCheckoutV2 }>
 					<span className="wp-checkout-order-summary__label">{ translate( 'Total' ) }</span>
 					<span className="wp-checkout-order-summary__total-price">
 						{ totalLineItem.formattedAmount }
@@ -784,7 +789,7 @@ function CheckoutSummaryAnnualUpsell( props: {
 } ) {
 	const translate = useTranslate();
 	const productSlug = props.plan?.product_slug;
-
+	const shouldUseCheckoutV2 = useCheckoutV2() === 'treatment';
 	if ( ! productSlug || ! isWpComPlan( productSlug ) ) {
 		return null;
 	}
@@ -795,7 +800,7 @@ function CheckoutSummaryAnnualUpsell( props: {
 	);
 
 	return (
-		<CheckoutSummaryFeaturesUpsell>
+		<CheckoutSummaryFeaturesUpsell shouldUseCheckoutV2={ shouldUseCheckoutV2 }>
 			<CheckoutSummaryFeaturesTitle>
 				<SwitchToAnnualPlan
 					plan={ props.plan }
@@ -830,17 +835,21 @@ const pulse = keyframes`
 	100% { opacity: 1; }
 `;
 
-const CheckoutSummaryCard = styled.div`
+const CheckoutSummaryCard = styled.div< { shouldUseCheckoutV2?: boolean } >`
 	border-bottom: none 0;
-	${ hasCheckoutVersion( '2' ) && `grid-area: summary` }
+	${ ( shouldUseCheckoutV2 ) =>
+		( hasCheckoutVersion( '2' ) || shouldUseCheckoutV2 ) && `grid-area: summary` }
 `;
 
-const CheckoutSummaryFeatures = styled.div`
+const CheckoutSummaryFeatures = styled.div< { shouldUseCheckoutV2: boolean } >`
 	padding: 24px 0;
-	${ hasCheckoutVersion( '2' ) && `grid-area: features; justify-self: flex-start;` }
+	${ ( shouldUseCheckoutV2 ) =>
+		( hasCheckoutVersion( '2' ) || shouldUseCheckoutV2 ) &&
+		`grid-area: features; justify-self: flex-start;` }
 
 	@media ( ${ ( props ) => props.theme.breakpoints.tabletUp } ) {
-		${ hasCheckoutVersion( '2' ) ? ` padding: 0 0 24px` : `padding: 24px 0;` }
+		${ ( shouldUseCheckoutV2 ) =>
+			hasCheckoutVersion( '2' ) || shouldUseCheckoutV2 ? ` padding: 0 0 24px` : `padding: 24px 0;` }
 	}
 
 	@media ( ${ ( props ) => props.theme.breakpoints.desktopUp } ) {
@@ -966,23 +975,33 @@ const CheckoutSummaryLineItem = styled.div< { isDiscount?: boolean } >`
 	}
 `;
 
-const CheckoutSummaryTotal = styled( CheckoutSummaryLineItem )`
+const CheckoutSummaryTotal = styled( CheckoutSummaryLineItem )< { shouldUseCheckoutV2: boolean } >`
 	color: ${ ( props ) => props.theme.colors.textColorDark };
 	font-weight: ${ ( props ) => props.theme.weights.bold };
 	line-height: 26px;
-	${ hasCheckoutVersion( '2' ) ? `margin-bottom: 0px;` : `margin-bottom: 16px;` }
+	${ ( shouldUseCheckoutV2 ) =>
+		hasCheckoutVersion( '2' ) || shouldUseCheckoutV2
+			? `margin-bottom: 0px;`
+			: `margin-bottom: 16px;` }
 	font-size: 20px;
 
 	& span {
-		${ hasCheckoutVersion( '2' ) ? `font-family: 'Recoleta', sans-serif;` : null }
+		${ ( shouldUseCheckoutV2 ) =>
+			hasCheckoutVersion( '2' ) || shouldUseCheckoutV2
+				? `font-family: 'Recoleta', sans-serif;`
+				: null }
 	}
 
 	& .wp-checkout-order-summary__label {
-		${ hasCheckoutVersion( '2' ) && 'font-size: 28px; line-height: 40px; ' }
+		${ ( shouldUseCheckoutV2 ) =>
+			( hasCheckoutVersion( '2' ) || shouldUseCheckoutV2 ) &&
+			'font-size: 28px; line-height: 40px; ' }
 	}
 
 	& .wp-checkout-order-summary__total-price {
-		${ hasCheckoutVersion( '2' ) && 'font-size: 40px; line-height: 44px;' }
+		${ ( shouldUseCheckoutV2 ) =>
+			( hasCheckoutVersion( '2' ) || shouldUseCheckoutV2 ) &&
+			'font-size: 40px; line-height: 44px;' }
 	}
 `;
 

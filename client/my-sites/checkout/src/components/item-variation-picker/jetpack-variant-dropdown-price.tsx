@@ -2,6 +2,7 @@ import formatCurrency from '@automattic/format-currency';
 import { useMobileBreakpoint } from '@automattic/viewport-react';
 import { hasCheckoutVersion } from '@automattic/wpcom-checkout';
 import { useTranslate } from 'i18n-calypso';
+import { useCheckoutV2 } from '../../hooks/use-checkout-v2';
 import { Discount, Label, Price, PriceTextContainer, Variant } from './styles';
 import type { WPCOMProductVariant } from './types';
 import type { FunctionComponent } from 'react';
@@ -19,13 +20,17 @@ const JetpackDiscountDisplay: FunctionComponent< {
 	currency: string;
 } > = ( { finalPriceInteger, isFirstMonthTrial, showIntroOffer, discountInteger, currency } ) => {
 	const translate = useTranslate();
-
+	const shouldUseCheckoutV2 = useCheckoutV2() === 'treatment';
 	if ( isFirstMonthTrial && 0 === finalPriceInteger ) {
-		return <Discount>{ translate( 'One month free trial' ) }</Discount>;
+		return (
+			<Discount shouldUseCheckoutV2={ shouldUseCheckoutV2 }>
+				{ translate( 'One month free trial' ) }
+			</Discount>
+		);
 	}
 
 	return (
-		<Discount>
+		<Discount shouldUseCheckoutV2={ shouldUseCheckoutV2 }>
 			{ showIntroOffer && translate( 'Introductory offer: ' ) }
 			{ translate( 'Save %(price)s', {
 				args: {
@@ -44,6 +49,7 @@ export const JetpackItemVariantDropDownPrice: FunctionComponent< {
 	allVariants: WPCOMProductVariant[];
 } > = ( { variant, allVariants } ) => {
 	const isMobile = useMobileBreakpoint();
+	const shouldUseCheckoutV2 = useCheckoutV2() === 'treatment';
 
 	// We offer a free month trial for selected yearly plans (for now, only Social Advanced)
 
@@ -60,8 +66,8 @@ export const JetpackItemVariantDropDownPrice: FunctionComponent< {
 	const showIntroOffer = variant.introductoryInterval > 0 && variant.termIntervalInMonths === 12;
 
 	return (
-		<Variant>
-			<Label>
+		<Variant shouldUseCheckoutV2={ shouldUseCheckoutV2 }>
+			<Label shouldUseCheckoutV2={ shouldUseCheckoutV2 }>
 				{ variant.variantLabel }
 				{ isMobile && discountInteger > 0 && (
 					<JetpackDiscountDisplay
@@ -71,7 +77,7 @@ export const JetpackItemVariantDropDownPrice: FunctionComponent< {
 					/>
 				) }
 			</Label>
-			<PriceTextContainer>
+			<PriceTextContainer shouldUseCheckoutV2={ shouldUseCheckoutV2 }>
 				{ ! isMobile && discountInteger > 0 && (
 					<JetpackDiscountDisplay
 						finalPriceInteger={ variant.priceInteger }
@@ -81,7 +87,7 @@ export const JetpackItemVariantDropDownPrice: FunctionComponent< {
 						isFirstMonthTrial={ isFirstMonthTrial( variant ) }
 					/>
 				) }
-				{ ! hasCheckoutVersion( '2' ) && (
+				{ ! ( hasCheckoutVersion( '2' ) || shouldUseCheckoutV2 ) && (
 					<Price aria-hidden={ variant.introductoryInterval > 0 }>
 						{ formatCurrency( variant.priceInteger, variant.currency, {
 							stripZeros: true,

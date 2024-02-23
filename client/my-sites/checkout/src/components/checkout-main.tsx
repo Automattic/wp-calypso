@@ -25,6 +25,7 @@ import { isJetpackSite } from 'calypso/state/sites/selectors';
 import useActOnceOnStrings from '../hooks/use-act-once-on-strings';
 import useAddProductsFromUrl from '../hooks/use-add-products-from-url';
 import useCheckoutFlowTrackKey from '../hooks/use-checkout-flow-track-key';
+import { useCheckoutV2 } from '../hooks/use-checkout-v2';
 import useCountryList from '../hooks/use-country-list';
 import useCreatePaymentCompleteCallback from '../hooks/use-create-payment-complete-callback';
 import useCreatePaymentMethods from '../hooks/use-create-payment-methods';
@@ -538,6 +539,8 @@ export default function CheckoutMain( {
 		: {};
 	const theme = { ...checkoutTheme, colors: { ...checkoutTheme.colors, ...jetpackColors } };
 
+	const isCheckoutV2ExperimentLoading = useCheckoutV2() === 'loading';
+
 	// This variable determines if we see the loading page or if checkout can
 	// render its steps.
 	//
@@ -561,6 +564,7 @@ export default function CheckoutMain( {
 			isLoading: responseCart.products.length < 1,
 		},
 		{ name: translate( 'Loading countries list' ), isLoading: countriesList.length < 1 },
+		{ name: translate( 'Loading Site' ), isLoading: isCheckoutV2ExperimentLoading },
 	];
 	const isCheckoutPageLoading: boolean = checkoutLoadingConditions.some(
 		( condition ) => condition.isLoading

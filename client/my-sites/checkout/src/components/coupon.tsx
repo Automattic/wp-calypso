@@ -3,6 +3,7 @@ import { Field, styled, joinClasses, hasCheckoutVersion } from '@automattic/wpco
 import { keyframes } from '@emotion/react';
 import i18n, { getLocaleSlug, useTranslate } from 'i18n-calypso';
 import PropTypes from 'prop-types';
+import { useCheckoutV2 } from '../hooks/use-checkout-v2';
 import type { CouponFieldStateProps } from '../hooks/use-coupon-field-state';
 import type { CouponStatus } from '@automattic/shopping-cart';
 
@@ -36,6 +37,8 @@ export default function Coupon( {
 
 	const errorMessage = getCouponErrorMessageFromStatus( translate, couponStatus, isFreshOrEdited );
 
+	const shouldUseCheckoutV2 = useCheckoutV2() === 'treatment';
+
 	return (
 		<CouponWrapper
 			className={ joinClasses( [ className, 'coupon' ] ) }
@@ -44,8 +47,9 @@ export default function Coupon( {
 				setIsFreshOrEdited( false );
 				handleCouponSubmit();
 			} }
+			shouldUseCheckoutV2={ shouldUseCheckoutV2 }
 		>
-			{ hasCheckoutVersion( '2' ) ? (
+			{ hasCheckoutVersion( '2' ) || shouldUseCheckoutV2 ? (
 				<>
 					<CouponLabel>{ translate( 'Coupon code' ) }</CouponLabel>
 					<CouponField
@@ -79,7 +83,11 @@ export default function Coupon( {
 			) }
 
 			{ isApplyButtonActive && (
-				<ApplyButton disabled={ isPending } buttonType="secondary">
+				<ApplyButton
+					disabled={ isPending }
+					buttonType="secondary"
+					shouldUseCheckoutV2={ shouldUseCheckoutV2 }
+				>
 					{ isPending ? translate( 'Processing…' ) : translate( 'Apply' ) }
 				</ApplyButton>
 			) }
@@ -117,13 +125,14 @@ const animateInRTL = keyframes`
   }
 `;
 
-const CouponWrapper = styled.form`
+const CouponWrapper = styled.form< { shouldUseCheckoutV2: boolean } >`
 	margin: 0;
 	padding-top: 0;
 	position: relative;
 
-	${ hasCheckoutVersion( '2' )
-		? `display: grid; 
+	${ ( shouldUseCheckoutV2 ) =>
+		hasCheckoutVersion( '2' ) || shouldUseCheckoutV2
+			? `display: grid;
 		align-items: center; 
 		justify-content: space-between; 
 		grid-template-columns: 1fr max-content; 
@@ -131,7 +140,7 @@ const CouponWrapper = styled.form`
 		'label     .  '
 		'field  button';
 		gap: .5em;`
-		: null }
+			: null }
 `;
 
 const CouponLabel = styled.label`
@@ -144,14 +153,15 @@ const CouponField = styled( Field )`
 	grid-area: field;
 `;
 
-const ApplyButton = styled( Button )`
+const ApplyButton = styled( Button )< { shouldUseCheckoutV2: boolean } >`
 	animation: ${ animateIn } 0.2s ease-out;
 	animation-fill-mode: backwards;
 	margin: 0;
 
-	${ hasCheckoutVersion( '2' )
-		? `position: relative; font-size: 14px; min-width: 70px; height: 37px; padding: 0 8px; grid-area: button; align-self: flex-start;`
-		: `position: absolute; padding: 8px;
+	${ ( shouldUseCheckoutV2 ) =>
+		hasCheckoutVersion( '2' ) || shouldUseCheckoutV2
+			? `position: relative; font-size: 14px; min-width: 70px; height: 37px; padding: 0 8px; grid-area: button; align-self: flex-start;`
+			: `position: absolute; padding: 8px;
 	top: 3px;
 	right: 3px;` }
 

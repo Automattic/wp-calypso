@@ -15,6 +15,7 @@ import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
 import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { useGetProductVariants } from '../../hooks/product-variants';
+import { useCheckoutV2 } from '../../hooks/use-checkout-v2';
 import {
 	getItemVariantCompareToPrice,
 	getItemVariantDiscountPercentage,
@@ -36,6 +37,7 @@ export function CheckoutSidebarPlanUpsell() {
 	);
 	const variants = useGetProductVariants( plan );
 	const translate = useTranslate();
+	const shouldUseCheckoutV2 = useCheckoutV2() === 'treatment';
 
 	const PromoCardV2 = styled.div`
 		position: relative;
@@ -160,10 +162,9 @@ export function CheckoutSidebarPlanUpsell() {
 		),
 		{ strong: createElement( 'strong' ) }
 	);
-
 	return (
 		<>
-			{ plan && hasCheckoutVersion( '2' ) ? (
+			{ plan && ( hasCheckoutVersion( '2' ) || shouldUseCheckoutV2 ) ? (
 				<PromoCardV2>
 					<div className="checkout-sidebar-plan-upsell__v2-wrapper">
 						<p>
