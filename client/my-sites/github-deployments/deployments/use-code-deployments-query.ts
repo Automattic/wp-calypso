@@ -9,8 +9,8 @@ export interface CodeDeploymentData {
 	id: number;
 	blog_id: number;
 	created_by_user_id: number;
-	created_on: number;
-	updated_on: number;
+	created_on: string;
+	updated_on: string;
 	external_repository_id: number;
 	repository_name: string;
 	branch_name: string;
