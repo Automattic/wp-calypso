@@ -196,8 +196,9 @@
 		z-index: 23;
 	}
 
-	@include breakpoint-deprecated( ">960px" ) {
+	@include breakpoint-deprecated( ">1040px" ) {
 		margin-block-start: 32px;
+		margin-inline: -16px;
 	}
 }
 
