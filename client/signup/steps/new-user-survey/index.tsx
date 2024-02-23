@@ -128,10 +128,7 @@ function SurveyForm( props: Props ) {
 		currentViewport = 'desktop';
 	}
 
-	const placeholder =
-		currentViewport === 'mobile'
-			? translate( 'Please fill in your own answer' )
-			: translate( 'None of the above? (Please fill in your own answer)' );
+	const placeholder = translate( 'Something else?' );
 
 	return (
 		<SurveyFormContainer currentViewport={ currentViewport }>
