@@ -1,6 +1,5 @@
 import formatCurrency from '@automattic/format-currency';
 import { useMobileBreakpoint } from '@automattic/viewport-react';
-import { hasCheckoutVersion } from '@automattic/wpcom-checkout';
 import { useTranslate } from 'i18n-calypso';
 import { FunctionComponent } from 'react';
 import { preventWidows } from 'calypso/lib/formatting';
@@ -178,12 +177,10 @@ export const ItemVariantDropDownPrice: FunctionComponent< {
 				{ hasDiscount && ! isMobile && canDisplayDiscountPercentage && (
 					<DiscountPercentage percent={ discountPercentage } />
 				) }
-				{ ! ( hasCheckoutVersion( '2' ) || shouldUseCheckoutV2 ) &&
-					hasDiscount &&
-					! isIntroductoryOffer && (
-						<DoNotPayThis>{ formattedCompareToPriceForVariantTerm }</DoNotPayThis>
-					) }
-				{ ! ( hasCheckoutVersion( '2' ) || shouldUseCheckoutV2 ) && (
+				{ ! shouldUseCheckoutV2 && hasDiscount && ! isIntroductoryOffer && (
+					<DoNotPayThis>{ formattedCompareToPriceForVariantTerm }</DoNotPayThis>
+				) }
+				{ ! shouldUseCheckoutV2 && (
 					<Price aria-hidden={ isIntroductoryOffer }>{ formattedCurrentPrice }</Price>
 				) }
 				<IntroPricing>

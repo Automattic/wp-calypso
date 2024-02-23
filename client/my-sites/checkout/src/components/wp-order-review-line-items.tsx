@@ -16,7 +16,6 @@ import {
 	NonProductLineItem,
 	LineItem,
 	getPartnerCoupon,
-	hasCheckoutVersion,
 	filterAndGroupCostOverridesForDisplay,
 	filterCostOverridesForLineItem,
 } from '@automattic/wpcom-checkout';
@@ -45,14 +44,10 @@ import type {
 import type { PropsWithChildren } from 'react';
 
 const WPOrderReviewList = styled.ul< {
-	hasCheckoutVersion2: boolean;
 	shouldUseCheckoutV2?: boolean;
 } >`
 	box-sizing: border-box;
-	${ ( props ) =>
-		props.hasCheckoutVersion2 || props.shouldUseCheckoutV2
-			? 'margin: 24px 0 0 0;'
-			: 'margin: 24px 0;' }
+	${ ( props ) => ( props.shouldUseCheckoutV2 ? 'margin: 24px 0 0 0;' : 'margin: 24px 0;' ) }
 	padding: 0;
 `;
 
@@ -180,7 +175,6 @@ export function WPOrderReviewLineItems( {
 	return (
 		<WPOrderReviewList
 			className={ joinClasses( [ className, 'order-review-line-items' ] ) }
-			hasCheckoutVersion2={ hasCheckoutVersion( '2' ) }
 			shouldUseCheckoutV2={ shouldUseCheckoutV2 }
 		>
 			{ responseCart.products.map( ( product ) => (
@@ -214,7 +208,7 @@ export function WPOrderReviewLineItems( {
 					akQuantityOpenId={ akQuantityOpenId }
 				/>
 			) ) }
-			{ ! ( hasCheckoutVersion( '2' ) || shouldUseCheckoutV2 ) && couponLineItem && (
+			{ ! shouldUseCheckoutV2 && couponLineItem && (
 				<WPOrderReviewListItem key={ couponLineItem.id }>
 					<CouponLineItem
 						lineItem={ couponLineItem }
@@ -227,17 +221,15 @@ export function WPOrderReviewLineItems( {
 					/>
 				</WPOrderReviewListItem>
 			) }
-			{ ! ( hasCheckoutVersion( '2' ) || shouldUseCheckoutV2 ) &&
-				creditsLineItem &&
-				responseCart.sub_total_integer > 0 && (
-					<NonProductLineItem
-						subtotal
-						lineItem={ creditsLineItem }
-						isSummary={ isSummary }
-						isPwpoUser={ isPwpoUser }
-					/>
-				) }
-			{ ( hasCheckoutVersion( '2' ) || shouldUseCheckoutV2 ) && costOverridesList.length > 0 && (
+			{ ! shouldUseCheckoutV2 && creditsLineItem && responseCart.sub_total_integer > 0 && (
+				<NonProductLineItem
+					subtotal
+					lineItem={ creditsLineItem }
+					isSummary={ isSummary }
+					isPwpoUser={ isPwpoUser }
+				/>
+			) }
+			{ shouldUseCheckoutV2 && costOverridesList.length > 0 && (
 				<CostOverridesList
 					costOverridesList={ costOverridesList }
 					currency={ responseCart.currency }
@@ -251,13 +243,9 @@ export function WPOrderReviewLineItems( {
 }
 
 const DropdownWrapper = styled.span< {
-	hasCheckoutVersion2: boolean;
 	shouldUseCheckoutV2?: boolean;
 } >`
-	${ ( props ) =>
-		props.hasCheckoutVersion2 || props.shouldUseCheckoutV2
-			? `width: 100%; max-width: 200px`
-			: `width: 100%;` }
+	${ ( props ) => ( props.shouldUseCheckoutV2 ? `width: 100%; max-width: 200px` : `width: 100%;` ) }
 `;
 
 function LineItemWrapper( {
@@ -385,10 +373,7 @@ function LineItemWrapper( {
 				shouldShowBillingInterval={ ! finalShouldShowVariantSelector }
 				shouldUseCheckoutV2={ shouldUseCheckoutV2 }
 			>
-				<DropdownWrapper
-					hasCheckoutVersion2={ hasCheckoutVersion( '2' ) }
-					shouldUseCheckoutV2={ shouldUseCheckoutV2 }
-				>
+				<DropdownWrapper shouldUseCheckoutV2={ shouldUseCheckoutV2 }>
 					{ finalShouldShowVariantSelector && (
 						<ItemVariationPicker
 							id={ product.uuid }
@@ -411,7 +396,7 @@ function LineItemWrapper( {
 						/>
 					) }
 				</DropdownWrapper>
-				{ ( hasCheckoutVersion( '2' ) || shouldUseCheckoutV2 ) && (
+				{ shouldUseCheckoutV2 && (
 					<LineItemCostOverrides product={ product } costOverridesList={ costOverridesList } />
 				) }
 			</LineItem>

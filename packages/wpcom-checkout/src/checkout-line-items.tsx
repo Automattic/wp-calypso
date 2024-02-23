@@ -32,7 +32,6 @@ import styled from '@emotion/styled';
 import { useTranslate } from 'i18n-calypso';
 import { useState, PropsWithChildren, useRef } from 'react';
 import { getLabel, DefaultLineItemSublabel } from './checkout-labels';
-import { hasCheckoutVersion } from './checkout-version-checker';
 import {
 	getIntroductoryOfferIntervalDisplay,
 	getItemIntroductoryOfferDisplay,
@@ -53,8 +52,6 @@ import type {
 	ResponseCartProduct,
 	TitanProductUser,
 } from '@automattic/shopping-cart';
-
-const hasCheckoutVersion2 = hasCheckoutVersion( '2' );
 
 export const NonProductLineItem = styled( WPNonProductLineItem )< {
 	theme?: Theme;
@@ -89,8 +86,8 @@ export const LineItem = styled( CheckoutLineItem )< {
 	theme?: Theme;
 	shouldUseCheckoutV2?: boolean;
 } >`
-	${ ( shouldUseCheckoutV2 ) =>
-		hasCheckoutVersion2 || shouldUseCheckoutV2
+	${ ( props ) =>
+		props.shouldUseCheckoutV2
 			? `display: grid;
 	grid-template-columns: 1fr min-content;
 	grid-template-rows: auto;
@@ -151,8 +148,8 @@ const LineItemMeta = styled.div< { theme?: Theme; shouldUseCheckoutV2?: boolean 
 	flex-wrap: wrap;
 	overflow-wrap: anywhere;
 
-	${ ( shouldUseCheckoutV2 ) =>
-		hasCheckoutVersion2 || shouldUseCheckoutV2
+	${ ( props ) =>
+		props.shouldUseCheckoutV2
 			? `grid-area: meta; flex-direction: column; align-content: flex-start; `
 			: 'flex-direction: row; align-content: center; gap: 2px 10px;' }
 `;
@@ -198,8 +195,8 @@ const LineItemTitle = styled.div< {
 	word-break: break-word;
 	font-weight: ${ ( { theme } ) => theme.weights.bold };
 
-	${ ( shouldUseCheckoutV2 ) =>
-		hasCheckoutVersion2 || shouldUseCheckoutV2
+	${ ( props ) =>
+		props.shouldUseCheckoutV2
 			? `grid-area: label;
 		   font-size: 14px;
 		   align-self: center;`
@@ -215,8 +212,8 @@ const LineItemPriceWrapper = styled.span< {
 	display: flex;
 	gap: 4px;
 
-	${ ( shouldUseCheckoutV2 ) =>
-		hasCheckoutVersion2 || shouldUseCheckoutV2
+	${ ( props ) =>
+		props.shouldUseCheckoutV2
 			? `margin-left: 0px;
 		   font-size: 14px;
 		   grid-area: price;
@@ -246,8 +243,8 @@ const BillingInterval = styled.div< { theme?: Theme } >`
 const DeleteButtonWrapper = styled.div< { shouldUseCheckoutV2?: boolean } >`
 	width: 100%;
 
-	${ ( shouldUseCheckoutV2 ) =>
-		hasCheckoutVersion2 || shouldUseCheckoutV2
+	${ ( props ) =>
+		props.shouldUseCheckoutV2
 			? `
 	grid-area: remove;
 	display: grid;
@@ -260,8 +257,7 @@ const DeleteButtonWrapper = styled.div< { shouldUseCheckoutV2?: boolean } >`
 
 const DeleteButton = styled( Button )< { theme?: Theme; shouldUseCheckoutV2?: boolean } >`
 	width: auto;
-	${ ( shouldUseCheckoutV2 ) =>
-		hasCheckoutVersion2 || shouldUseCheckoutV2 ? `font-size:  12px;` : `font-size: 0.75rem` };
+	${ ( props ) => ( props.shouldUseCheckoutV2 ? `font-size:  12px;` : `font-size: 0.75rem` ) };
 	color: ${ ( props ) => props.theme.colors.textColorLight };
 `;
 
@@ -331,7 +327,7 @@ function WPNonProductLineItem( {
 				{ label }
 			</LineItemTitle>
 
-			{ hasCheckoutVersion2 || shouldUseCheckoutV2 ? (
+			{ shouldUseCheckoutV2 ? (
 				<LineItemPrice aria-labelledby={ itemSpanId } actualAmount={ actualAmountDisplay } />
 			) : (
 				<span aria-labelledby={ itemSpanId } className="checkout-line-item__price">
@@ -355,9 +351,7 @@ function WPNonProductLineItem( {
 							} }
 							shouldUseCheckoutV2={ shouldUseCheckoutV2 }
 						>
-							{ hasCheckoutVersion2 || shouldUseCheckoutV2
-								? translate( 'Remove' )
-								: translate( 'Remove from cart' ) }
+							{ shouldUseCheckoutV2 ? translate( 'Remove' ) : translate( 'Remove from cart' ) }
 						</DeleteButton>
 					</DeleteButtonWrapper>
 
@@ -1410,16 +1404,14 @@ function CheckoutLineItem( {
 				isSummary={ isSummary }
 				shouldUseCheckoutV2={ shouldUseCheckoutV2 }
 			>
-				{ ( hasCheckoutVersion2 || shouldUseCheckoutV2 ) && isRenewal
-					? `${ label } Renewal`
-					: label }
+				{ shouldUseCheckoutV2 && isRenewal ? `${ label } Renewal` : label }
 				{ responseCart.is_gift_purchase && (
 					<DesktopGiftWrapper>
 						<GiftBadgeWithText />
 					</DesktopGiftWrapper>
 				) }
 			</LineItemTitle>
-			{ hasCheckoutVersion2 || shouldUseCheckoutV2 ? (
+			{ shouldUseCheckoutV2 ? (
 				<LineItemPrice
 					actualAmount={
 						isIntroductoryOfferWithDifferentLength
@@ -1449,7 +1441,7 @@ function CheckoutLineItem( {
 
 			{ ! containsPartnerCoupon && (
 				<>
-					{ hasCheckoutVersion2 || shouldUseCheckoutV2 ? (
+					{ shouldUseCheckoutV2 ? (
 						<>
 							{ shouldShowBillingInterval && (
 								<BillingInterval>
@@ -1480,7 +1472,7 @@ function CheckoutLineItem( {
 
 			{ containsPartnerCoupon && (
 				<LineItemMeta shouldUseCheckoutV2={ shouldUseCheckoutV2 }>
-					{ hasCheckoutVersion2 || shouldUseCheckoutV2 ? (
+					{ shouldUseCheckoutV2 ? (
 						<LineItemBillingInterval product={ product } />
 					) : (
 						<LineItemSublabelAndPrice product={ product } />
@@ -1488,11 +1480,11 @@ function CheckoutLineItem( {
 				</LineItemMeta>
 			) }
 
-			{ ! ( hasCheckoutVersion2 || shouldUseCheckoutV2 ) && isJetpackSearch( product ) && (
+			{ ! shouldUseCheckoutV2 && isJetpackSearch( product ) && (
 				<JetpackSearchMeta product={ product } />
 			) }
 
-			{ ! ( hasCheckoutVersion2 || shouldUseCheckoutV2 ) && isEmail && (
+			{ ! shouldUseCheckoutV2 && isEmail && (
 				<EmailMeta product={ product } isRenewal={ isRenewal } />
 			) }
 
@@ -1516,9 +1508,7 @@ function CheckoutLineItem( {
 							} }
 							shouldUseCheckoutV2={ shouldUseCheckoutV2 }
 						>
-							{ hasCheckoutVersion2 || shouldUseCheckoutV2
-								? translate( 'Remove' )
-								: translate( 'Remove from cart' ) }
+							{ shouldUseCheckoutV2 ? translate( 'Remove' ) : translate( 'Remove from cart' ) }
 						</DeleteButton>
 					</DeleteButtonWrapper>
 

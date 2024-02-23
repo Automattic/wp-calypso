@@ -15,7 +15,7 @@ import {
 	TERM_NOVENNIALLY,
 	TERM_DECENNIALLY,
 } from '@automattic/calypso-products';
-import { isValueTruthy, hasCheckoutVersion } from '@automattic/wpcom-checkout';
+import { isValueTruthy } from '@automattic/wpcom-checkout';
 import debugFactory from 'debug';
 import { useTranslate } from 'i18n-calypso';
 import { useMemo } from 'react';
@@ -160,79 +160,57 @@ function getTermText(
 	switch ( term ) {
 		case TERM_DECENNIALLY:
 			return String(
-				! hasCheckoutVersion( '2' ) || ! shouldUseCheckoutV2
-					? translate( 'Ten years' )
-					: translate( 'Billed every ten years' )
+				shouldUseCheckoutV2 ? translate( 'Ten years' ) : translate( 'Billed every ten years' )
 			);
 
 		case TERM_NOVENNIALLY:
 			return String(
-				! hasCheckoutVersion( '2' ) || ! shouldUseCheckoutV2
-					? translate( 'Nine years' )
-					: translate( 'Billed every nine years' )
+				shouldUseCheckoutV2 ? translate( 'Nine years' ) : translate( 'Billed every nine years' )
 			);
 
 		case TERM_OCTENNIALLY:
 			return String(
-				! hasCheckoutVersion( '2' ) || ! shouldUseCheckoutV2
-					? translate( 'Eight years' )
-					: translate( 'Billed every eight years' )
+				shouldUseCheckoutV2 ? translate( 'Eight years' ) : translate( 'Billed every eight years' )
 			);
 
 		case TERM_SEPTENNIALLY:
 			return String(
-				! hasCheckoutVersion( '2' ) || ! shouldUseCheckoutV2
-					? translate( 'Seven years' )
-					: translate( 'Billed every seven years' )
+				shouldUseCheckoutV2 ? translate( 'Seven years' ) : translate( 'Billed every seven years' )
 			);
 
 		case TERM_SEXENNIALLY:
 			return String(
-				! hasCheckoutVersion( '2' ) || ! shouldUseCheckoutV2
-					? translate( 'Six years' )
-					: translate( 'Billed every six years' )
+				shouldUseCheckoutV2 ? translate( 'Six years' ) : translate( 'Billed every six years' )
 			);
 
 		case TERM_QUINQUENNIALLY:
 			return String(
-				! hasCheckoutVersion( '2' ) || ! shouldUseCheckoutV2
-					? translate( 'Five years' )
-					: translate( 'Billed every five years' )
+				shouldUseCheckoutV2 ? translate( 'Five years' ) : translate( 'Billed every five years' )
 			);
 
 		case TERM_QUADRENNIALLY:
 			return String(
-				! hasCheckoutVersion( '2' ) || ! shouldUseCheckoutV2
-					? translate( 'Four years' )
-					: translate( 'Billed every four years' )
+				shouldUseCheckoutV2 ? translate( 'Four years' ) : translate( 'Billed every four years' )
 			);
 
 		case TERM_TRIENNIALLY:
 			return String(
-				! hasCheckoutVersion( '2' ) || ! shouldUseCheckoutV2
-					? translate( 'Three years' )
-					: translate( 'Billed every three years' )
+				shouldUseCheckoutV2 ? translate( 'Three years' ) : translate( 'Billed every three years' )
 			);
 
 		case TERM_BIENNIALLY:
 			return String(
-				! hasCheckoutVersion( '2' ) || ! shouldUseCheckoutV2
-					? translate( 'Two years' )
-					: translate( 'Billed every two years' )
+				shouldUseCheckoutV2 ? translate( 'Two years' ) : translate( 'Billed every two years' )
 			);
 
 		case TERM_ANNUALLY:
 			return String(
-				! hasCheckoutVersion( '2' ) || ! shouldUseCheckoutV2
-					? translate( 'One year' )
-					: translate( 'Billed every one year' )
+				shouldUseCheckoutV2 ? translate( 'One year' ) : translate( 'Billed every one year' )
 			);
 
 		case TERM_MONTHLY:
 			return String(
-				! hasCheckoutVersion( '2' ) || ! shouldUseCheckoutV2
-					? translate( 'One month' )
-					: translate( 'Billed every month' )
+				shouldUseCheckoutV2 ? translate( 'One month' ) : translate( 'Billed every month' )
 			);
 
 		default:

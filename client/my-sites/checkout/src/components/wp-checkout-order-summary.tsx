@@ -35,7 +35,6 @@ import { useShoppingCart } from '@automattic/shopping-cart';
 import {
 	getTaxBreakdownLineItemsFromCart,
 	getTotalLineItemFromCart,
-	hasCheckoutVersion,
 	getSubtotalWithoutDiscounts,
 	filterAndGroupCostOverridesForDisplay,
 	getCreditsLineItemFromCart,
@@ -97,8 +96,9 @@ export function WPCheckoutOrderSummary( {
 		<CheckoutSummaryCard
 			className={ isCartUpdating ? 'is-loading' : '' }
 			data-e2e-cart-is-loading={ isCartUpdating }
+			shouldUseCheckoutV2={ shouldUseCheckoutV2 }
 		>
-			{ ! ( hasCheckoutVersion( '2' ) || shouldUseCheckoutV2 ) && (
+			{ ! shouldUseCheckoutV2 && (
 				<CheckoutSummaryFeaturedList
 					responseCart={ responseCart }
 					siteId={ siteId }
@@ -181,7 +181,7 @@ function CheckoutSummaryPriceList() {
 
 	return (
 		<>
-			{ ! ( hasCheckoutVersion( '2' ) || shouldUseCheckoutV2 ) && costOverridesList.length > 0 && (
+			{ ! shouldUseCheckoutV2 && costOverridesList.length > 0 && (
 				<CheckoutFirstSubtotalLineItem key="checkout-summary-line-item-subtotal-one">
 					<span>{ translate( 'Subtotal before discounts' ) }</span>
 					<span>
@@ -192,7 +192,7 @@ function CheckoutSummaryPriceList() {
 					</span>
 				</CheckoutFirstSubtotalLineItem>
 			) }
-			{ ! ( hasCheckoutVersion( '2' ) || shouldUseCheckoutV2 ) && costOverridesList.length > 0 && (
+			{ ! shouldUseCheckoutV2 && costOverridesList.length > 0 && (
 				<CostOverridesList
 					costOverridesList={ costOverridesList }
 					currency={ responseCart.currency }
@@ -837,19 +837,15 @@ const pulse = keyframes`
 
 const CheckoutSummaryCard = styled.div< { shouldUseCheckoutV2?: boolean } >`
 	border-bottom: none 0;
-	${ ( shouldUseCheckoutV2 ) =>
-		( hasCheckoutVersion( '2' ) || shouldUseCheckoutV2 ) && `grid-area: summary` }
+	${ ( props ) => props.shouldUseCheckoutV2 && `grid-area: summary` }
 `;
 
 const CheckoutSummaryFeatures = styled.div< { shouldUseCheckoutV2: boolean } >`
 	padding: 24px 0;
-	${ ( shouldUseCheckoutV2 ) =>
-		( hasCheckoutVersion( '2' ) || shouldUseCheckoutV2 ) &&
-		`grid-area: features; justify-self: flex-start;` }
+	${ ( props ) => props.shouldUseCheckoutV2 && `grid-area: features; justify-self: flex-start;` }
 
 	@media ( ${ ( props ) => props.theme.breakpoints.tabletUp } ) {
-		${ ( shouldUseCheckoutV2 ) =>
-			hasCheckoutVersion( '2' ) || shouldUseCheckoutV2 ? ` padding: 0 0 24px` : `padding: 24px 0;` }
+		${ ( props ) => ( props.shouldUseCheckoutV2 ? ` padding: 0 0 24px` : `padding: 24px 0;` ) }
 	}
 
 	@media ( ${ ( props ) => props.theme.breakpoints.desktopUp } ) {
@@ -979,29 +975,19 @@ const CheckoutSummaryTotal = styled( CheckoutSummaryLineItem )< { shouldUseCheck
 	color: ${ ( props ) => props.theme.colors.textColorDark };
 	font-weight: ${ ( props ) => props.theme.weights.bold };
 	line-height: 26px;
-	${ ( shouldUseCheckoutV2 ) =>
-		hasCheckoutVersion( '2' ) || shouldUseCheckoutV2
-			? `margin-bottom: 0px;`
-			: `margin-bottom: 16px;` }
+	${ ( props ) => ( props.shouldUseCheckoutV2 ? `margin-bottom: 0px;` : `margin-bottom: 16px;` ) }
 	font-size: 20px;
 
 	& span {
-		${ ( shouldUseCheckoutV2 ) =>
-			hasCheckoutVersion( '2' ) || shouldUseCheckoutV2
-				? `font-family: 'Recoleta', sans-serif;`
-				: null }
+		${ ( props ) => ( props.shouldUseCheckoutV2 ? `font-family: 'Recoleta', sans-serif;` : null ) }
 	}
 
 	& .wp-checkout-order-summary__label {
-		${ ( shouldUseCheckoutV2 ) =>
-			( hasCheckoutVersion( '2' ) || shouldUseCheckoutV2 ) &&
-			'font-size: 28px; line-height: 40px; ' }
+		${ ( props ) => props.shouldUseCheckoutV2 && 'font-size: 28px; line-height: 40px; ' }
 	}
 
 	& .wp-checkout-order-summary__total-price {
-		${ ( shouldUseCheckoutV2 ) =>
-			( hasCheckoutVersion( '2' ) || shouldUseCheckoutV2 ) &&
-			'font-size: 40px; line-height: 44px;' }
+		${ ( props ) => props.shouldUseCheckoutV2 && 'font-size: 40px; line-height: 44px;' }
 	}
 `;
 

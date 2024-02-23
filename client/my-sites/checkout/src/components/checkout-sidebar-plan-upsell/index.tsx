@@ -2,7 +2,6 @@ import { isPlan, isJetpackPlan } from '@automattic/calypso-products';
 import { FormStatus, useFormStatus } from '@automattic/composite-checkout';
 import formatCurrency from '@automattic/format-currency';
 import { useShoppingCart } from '@automattic/shopping-cart';
-import { hasCheckoutVersion } from '@automattic/wpcom-checkout';
 import styled from '@emotion/styled';
 import { createElement, createInterpolateElement, useState } from '@wordpress/element';
 import { sprintf } from '@wordpress/i18n';
@@ -164,7 +163,7 @@ export function CheckoutSidebarPlanUpsell() {
 	);
 	return (
 		<>
-			{ plan && ( hasCheckoutVersion( '2' ) || shouldUseCheckoutV2 ) ? (
+			{ plan && shouldUseCheckoutV2 ? (
 				<PromoCardV2>
 					<div className="checkout-sidebar-plan-upsell__v2-wrapper">
 						<p>

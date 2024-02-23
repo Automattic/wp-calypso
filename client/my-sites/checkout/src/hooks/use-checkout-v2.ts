@@ -1,3 +1,4 @@
+import { hasCheckoutVersion } from '@automattic/wpcom-checkout';
 import { useExperiment } from 'calypso/lib/explat';
 import { useSelector } from 'calypso/state';
 import { getSectionName } from 'calypso/state/ui/selectors';
@@ -15,7 +16,7 @@ export function useCheckoutV2(): 'loading' | 'treatment' | 'control' {
 		return 'loading';
 	}
 	// Done loading experiment assignment, and treatment assignment found
-	if ( experimentAssignment?.variationName === 'treatment' ) {
+	if ( experimentAssignment?.variationName === 'treatment' || hasCheckoutVersion( '2' ) ) {
 		return 'treatment';
 	}
 	// Done loading experiment assignment, and control or null assignment found

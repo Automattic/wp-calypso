@@ -25,7 +25,7 @@ import {
 import { formatCurrency } from '@automattic/format-currency';
 import { useLocale } from '@automattic/i18n-utils';
 import { useShoppingCart } from '@automattic/shopping-cart';
-import { styled, joinClasses, hasCheckoutVersion } from '@automattic/wpcom-checkout';
+import { styled, joinClasses } from '@automattic/wpcom-checkout';
 import { keyframes } from '@emotion/react';
 import { useSelect, useDispatch } from '@wordpress/data';
 import debugFactory from 'debug';
@@ -228,10 +228,11 @@ function CheckoutSidebarNudge( { responseCart }: { responseCart: ResponseCart } 
 	const isWcMobile = isWcMobileApp();
 	const isDIFMInCart = hasDIFMProduct( responseCart );
 	const hasMonthlyProduct = responseCart?.products?.some( isMonthlyProduct );
+	const shouldUseCheckoutV2 = useCheckoutV2() === 'treatment';
 
 	if ( ! isWcMobile && ! isDIFMInCart && ! hasMonthlyProduct ) {
 		return (
-			<CheckoutSidebarNudgeWrapper>
+			<CheckoutSidebarNudgeWrapper shouldUseCheckoutV2={ shouldUseCheckoutV2 }>
 				<CheckoutSidebarPlanUpsell />
 				<JetpackAkismetCheckoutSidebarPlanUpsell />
 			</CheckoutSidebarNudgeWrapper>
@@ -469,7 +470,7 @@ export default function CheckoutMainContent( {
 								className="checkout__summary-body"
 								shouldUseCheckoutV2={ shouldUseCheckoutV2 }
 							>
-								{ ( hasCheckoutVersion( '2' ) || shouldUseCheckoutV2 ) && (
+								{ shouldUseCheckoutV2 && (
 									<WPCheckoutOrderReview
 										removeProductFromCart={ removeProductFromCart }
 										couponFieldStateProps={ couponFieldStateProps }
@@ -481,7 +482,7 @@ export default function CheckoutMainContent( {
 
 								<WPCheckoutOrderSummary siteId={ siteId } onChangeSelection={ changeSelection } />
 								<CheckoutSidebarNudge responseCart={ responseCart } />
-								{ ( hasCheckoutVersion( '2' ) || shouldUseCheckoutV2 ) && (
+								{ shouldUseCheckoutV2 && (
 									<CheckoutSummaryFeaturedList
 										responseCart={ responseCart }
 										siteId={ siteId }
@@ -507,7 +508,7 @@ export default function CheckoutMainContent( {
 				<CheckoutStepGroup loadingHeader={ loadingHeader } onStepChanged={ onStepChanged }>
 					<PerformanceTrackerStop />
 					{ infoMessage }
-					{ ! ( hasCheckoutVersion( '2' ) || shouldUseCheckoutV2 ) && (
+					{ ! shouldUseCheckoutV2 && (
 						<CheckoutStepBody
 							onError={ onReviewError }
 							className="wp-checkout__review-order-step"
@@ -779,14 +780,12 @@ const CheckoutSummaryBody = styled.div< { shouldUseCheckoutV2: boolean } >`
 	width: 100%;
 	display: none;
 
-	${ ( shouldUseCheckoutV2 ) =>
-		hasCheckoutVersion( '2' ) || shouldUseCheckoutV2
-			? `padding: 32px 24px 24px 24px;`
-			: 'padding: 24px;' }
+	${ ( props ) =>
+		props.shouldUseCheckoutV2 ? `padding: 32px 24px 24px 24px;` : 'padding: 24px;' }
 
 	.is-visible & {
-		${ ( shouldUseCheckoutV2 ) =>
-			hasCheckoutVersion( '2' ) || shouldUseCheckoutV2
+		${ ( props ) =>
+			props.shouldUseCheckoutV2
 				? ` display: grid;
 			grid-template-areas:
 			"preview"
@@ -807,14 +806,12 @@ const CheckoutSummaryBody = styled.div< { shouldUseCheckoutV2: boolean } >`
 	}
 
 	@media ( ${ ( props ) => props.theme.breakpoints.tabletUp } ) {
-		${ ( shouldUseCheckoutV2 ) =>
-			hasCheckoutVersion( '2' ) || shouldUseCheckoutV2
-				? `padding: 50px 24px 24px 24px;`
-				: 'padding: 24px;' }
+		${ ( props ) =>
+			props.shouldUseCheckoutV2 ? `padding: 50px 24px 24px 24px;` : 'padding: 24px;' }
 
 		.is-visible & {
-			${ ( shouldUseCheckoutV2 ) =>
-				( hasCheckoutVersion( '2' ) || shouldUseCheckoutV2 ) &&
+			${ ( props ) =>
+				props.shouldUseCheckoutV2 &&
 				`grid-template-areas:
 			"preview preview"
 			"review review"
@@ -830,8 +827,8 @@ const CheckoutSummaryBody = styled.div< { shouldUseCheckoutV2: boolean } >`
 
 		.is-visible &,
 		& {
-			${ ( shouldUseCheckoutV2 ) =>
-				hasCheckoutVersion( '2' ) || shouldUseCheckoutV2
+			${ ( props ) =>
+				props.shouldUseCheckoutV2
 					? `grid-template-areas:
 					"preview"
 					"review"
@@ -853,11 +850,10 @@ const CheckoutSummaryBody = styled.div< { shouldUseCheckoutV2: boolean } >`
 	}
 `;
 
-const CheckoutSidebarNudgeWrapper = styled.div`
+const CheckoutSidebarNudgeWrapper = styled.div< { shouldUseCheckoutV2: boolean } >`
 	display: flex;
 	flex-direction: column;
-	${ ( shouldUseCheckoutV2 ) =>
-		( hasCheckoutVersion( '2' ) || shouldUseCheckoutV2 ) && `grid-area: nudge` };
+	${ ( props ) => props.shouldUseCheckoutV2 && `grid-area: nudge` };
 
 	& > * {
 		max-width: 288px;

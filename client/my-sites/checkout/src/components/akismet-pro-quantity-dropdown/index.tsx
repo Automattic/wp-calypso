@@ -6,7 +6,6 @@ import {
 import { Gridicon } from '@automattic/components';
 import formatCurrency from '@automattic/format-currency';
 import { isMobile } from '@automattic/viewport';
-import { hasCheckoutVersion } from '@automattic/wpcom-checkout';
 import { css } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useTranslate } from 'i18n-calypso';
@@ -120,13 +119,11 @@ const CurrentOptionContainer = styled.div< { shouldUseCheckoutV2: boolean } >`
 	column-gap: 20px;
 	text-align: left;
 
-	${ ( shouldUseCheckoutV2 ) =>
-		hasCheckoutVersion( '2' ) || shouldUseCheckoutV2
-			? `flex-direction: column; align-items: flex-start;`
-			: null }
+	${ ( props ) =>
+		props.shouldUseCheckoutV2 ? `flex-direction: column; align-items: flex-start;` : null }
 `;
 
-const Price = styled.span`
+const Price = styled.span< { shouldUseCheckoutV2: boolean } >`
 	flex: 1 0 auto;
 	text-align: right;
 	color: #646970;
@@ -134,10 +131,7 @@ const Price = styled.span`
 		font-size: calc( ${ ( props ) => props.theme.fontSize.small } - 1px );
 	}
 
-	${ ( shouldUseCheckoutV2 ) =>
-		hasCheckoutVersion( '2' ) || shouldUseCheckoutV2
-			? `text-align: initial;`
-			: `text-align: right;` }
+	${ ( props ) => ( props.shouldUseCheckoutV2 ? `text-align: initial;` : `text-align: right;` ) }
 `;
 
 export const AkismetProQuantityDropDown: FunctionComponent< AkismetProQuantityDropDownProps > = ( {
@@ -414,7 +408,9 @@ export const AkismetProQuantityDropDown: FunctionComponent< AkismetProQuantityDr
 				>
 					<CurrentOptionContainer shouldUseCheckoutV2={ shouldUseCheckoutV2 }>
 						<span>{ dropdownOptions[ selectedQuantity - 1 ] }</span>
-						<Price>{ getCurrentOptionPriceDisplay() }</Price>
+						<Price shouldUseCheckoutV2={ shouldUseCheckoutV2 }>
+							{ getCurrentOptionPriceDisplay() }
+						</Price>
 					</CurrentOptionContainer>
 					<Gridicon icon={ isOpen ? 'chevron-up' : 'chevron-down' } />
 				</CurrentOption>

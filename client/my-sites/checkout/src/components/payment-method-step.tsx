@@ -5,7 +5,6 @@ import {
 	getTaxBreakdownLineItemsFromCart,
 	getCreditsLineItemFromCart,
 	NonProductLineItem,
-	hasCheckoutVersion,
 	LineItemType,
 	getSubtotalWithoutDiscounts,
 	getTotalDiscountsWithoutCredits,
@@ -121,7 +120,7 @@ export default function BeforeSubmitCheckoutHeader() {
 				<CheckoutTerms cart={ responseCart } />
 			</CheckoutTermsWrapper>
 
-			{ ! ( hasCheckoutVersion( '2' ) || shouldUseCheckoutV2 ) && (
+			{ ! shouldUseCheckoutV2 && (
 				<WPOrderReviewSection>
 					<NonTotalPrices>
 						<NonProductLineItem subtotal lineItem={ subTotalLineItemWithoutCoupon } />

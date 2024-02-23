@@ -1,6 +1,5 @@
 import formatCurrency from '@automattic/format-currency';
 import { useMobileBreakpoint } from '@automattic/viewport-react';
-import { hasCheckoutVersion } from '@automattic/wpcom-checkout';
 import { useTranslate } from 'i18n-calypso';
 import { useCheckoutV2 } from '../../hooks/use-checkout-v2';
 import { Discount, Label, Price, PriceTextContainer, Variant } from './styles';
@@ -87,7 +86,7 @@ export const JetpackItemVariantDropDownPrice: FunctionComponent< {
 						isFirstMonthTrial={ isFirstMonthTrial( variant ) }
 					/>
 				) }
-				{ ! ( hasCheckoutVersion( '2' ) || shouldUseCheckoutV2 ) && (
+				{ ! shouldUseCheckoutV2 && (
 					<Price aria-hidden={ variant.introductoryInterval > 0 }>
 						{ formatCurrency( variant.priceInteger, variant.currency, {
 							stripZeros: true,

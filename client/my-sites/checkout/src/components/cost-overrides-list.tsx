@@ -9,7 +9,6 @@ import {
 import {
 	LineItemBillingInterval,
 	doesIntroductoryOfferHaveDifferentTermLengthThanProduct,
-	hasCheckoutVersion,
 } from '@automattic/wpcom-checkout';
 import styled from '@emotion/styled';
 import { useTranslate } from 'i18n-calypso';
@@ -66,8 +65,7 @@ const CostOverridesListStyle = styled.div`
 
 const DeleteButton = styled( Button )< { theme?: Theme; shouldUseCheckoutV2: boolean } >`
 	width: auto;
-	font-size: ${ ( shouldUseCheckoutV2 ) =>
-		hasCheckoutVersion( '2' ) || shouldUseCheckoutV2 ? '12px' : 'inherit' };
+	font-size: ${ ( props ) => ( props.shouldUseCheckoutV2 ? '12px' : 'inherit' ) };
 	color: ${ ( props ) => props.theme.colors.textColorLight };
 `;
 

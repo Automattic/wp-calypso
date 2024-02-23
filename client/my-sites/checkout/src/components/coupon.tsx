@@ -1,5 +1,5 @@
 import { Button } from '@automattic/composite-checkout';
-import { Field, styled, joinClasses, hasCheckoutVersion } from '@automattic/wpcom-checkout';
+import { Field, styled, joinClasses } from '@automattic/wpcom-checkout';
 import { keyframes } from '@emotion/react';
 import i18n, { getLocaleSlug, useTranslate } from 'i18n-calypso';
 import PropTypes from 'prop-types';
@@ -49,7 +49,7 @@ export default function Coupon( {
 			} }
 			shouldUseCheckoutV2={ shouldUseCheckoutV2 }
 		>
-			{ hasCheckoutVersion( '2' ) || shouldUseCheckoutV2 ? (
+			{ shouldUseCheckoutV2 ? (
 				<>
 					<CouponLabel>{ translate( 'Coupon code' ) }</CouponLabel>
 					<CouponField
@@ -64,6 +64,7 @@ export default function Coupon( {
 							setIsFreshOrEdited( true );
 							setCouponFieldValue( input );
 						} }
+						shouldUseCheckoutV2={ shouldUseCheckoutV2 }
 					/>
 				</>
 			) : (
@@ -130,8 +131,8 @@ const CouponWrapper = styled.form< { shouldUseCheckoutV2: boolean } >`
 	padding-top: 0;
 	position: relative;
 
-	${ ( shouldUseCheckoutV2 ) =>
-		hasCheckoutVersion( '2' ) || shouldUseCheckoutV2
+	${ ( props ) =>
+		props.shouldUseCheckoutV2
 			? `display: grid;
 		align-items: center; 
 		justify-content: space-between; 
@@ -158,8 +159,8 @@ const ApplyButton = styled( Button )< { shouldUseCheckoutV2: boolean } >`
 	animation-fill-mode: backwards;
 	margin: 0;
 
-	${ ( shouldUseCheckoutV2 ) =>
-		hasCheckoutVersion( '2' ) || shouldUseCheckoutV2
+	${ ( props ) =>
+		props.shouldUseCheckoutV2
 			? `position: relative; font-size: 14px; min-width: 70px; height: 37px; padding: 0 8px; grid-area: button; align-self: flex-start;`
 			: `position: absolute; padding: 8px;
 	top: 3px;

@@ -5,7 +5,7 @@ import {
 } from '@automattic/calypso-products';
 import { FormStatus, useFormStatus } from '@automattic/composite-checkout';
 import { useShoppingCart } from '@automattic/shopping-cart';
-import { styled, joinClasses, hasCheckoutVersion } from '@automattic/wpcom-checkout';
+import { styled, joinClasses } from '@automattic/wpcom-checkout';
 import { useTranslate } from 'i18n-calypso';
 import { useState, useEffect, useCallback } from 'react';
 import isAkismetCheckout from 'calypso/lib/akismet/is-akismet-checkout';
@@ -47,13 +47,11 @@ const SiteSummary = styled.div`
 `;
 
 const CouponLinkWrapper = styled.div< { shouldUseCheckoutV2: boolean } >`
-	${ ( shouldUseCheckoutV2 ) =>
-		hasCheckoutVersion( '2' ) || shouldUseCheckoutV2 ? `font-size: 12px;` : `font-size: 14px;` }
+	${ ( props ) => ( props.shouldUseCheckoutV2 ? `font-size: 12px;` : `font-size: 14px;` ) }
 `;
 
 const CouponAreaWrapper = styled.div< { shouldUseCheckoutV2: boolean } >`
-	padding-bottom: ${ ( shouldUseCheckoutV2 ) =>
-		hasCheckoutVersion( '2' ) || shouldUseCheckoutV2 ? '12px' : 'inherit' };
+	padding-bottom: ${ ( props ) => ( props.shouldUseCheckoutV2 ? '12px' : 'inherit' ) };
 `;
 
 const CouponField = styled( Coupon )``;
@@ -64,8 +62,7 @@ const CouponEnableButton = styled.button< { shouldUseCheckoutV2: boolean } >`
 	color: ${ ( props ) => props.theme.colors.highlight };
 
 	&.wp-checkout-order-review__show-coupon-field-button {
-		${ ( shouldUseCheckoutV2 ) =>
-			hasCheckoutVersion( '2' ) || shouldUseCheckoutV2 ? `font-size: 12px` : `font-size: 14px;` }
+		${ ( props ) => ( props.shouldUseCheckoutV2 ? `font-size: 12px` : `font-size: 14px;` ) }
 	}
 	:hover {
 		text-decoration: none;
@@ -181,16 +178,13 @@ export default function WPCheckoutOrderReview( {
 			{ /*
 			 * Only show the site preview for WPCOM domains that have a site connected to the site id
 			 * */ }
-			{ ( hasCheckoutVersion( '2' ) || shouldUseCheckoutV2 ) &&
-				selectedSiteData &&
-				wpcomDomain &&
-				! isSignupCheckout && (
-					<div className="checkout-site-preview">
-						<SitePreviewWrapper>
-							<SitePreview showEditSite={ false } showSiteDetails={ false } />
-						</SitePreviewWrapper>
-					</div>
-				) }
+			{ shouldUseCheckoutV2 && selectedSiteData && wpcomDomain && ! isSignupCheckout && (
+				<div className="checkout-site-preview">
+					<SitePreviewWrapper>
+						<SitePreview showEditSite={ false } showSiteDetails={ false } />
+					</SitePreviewWrapper>
+				</div>
+			) }
 			<div
 				className={ joinClasses( [
 					className,
