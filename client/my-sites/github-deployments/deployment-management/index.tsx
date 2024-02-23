@@ -10,8 +10,6 @@ import { indexPage } from '../routes';
 import { GitHubDeploymentManagementForm } from './deployment-management-form';
 import { useCodeDeploymentQuery } from './use-code-deployment-query';
 
-import './style.scss';
-
 interface GitHubDeploymentManagementProps {
 	codeDeploymentId: number;
 }

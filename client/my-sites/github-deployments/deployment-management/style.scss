@@ -30,17 +30,6 @@
 		margin-bottom: 4px;
 	}
 
-	&__default-path-hint {
-		padding-top: 4px;
-		font-style: italic;
-		color: var(--Gray-Gray-60, #50575e);
-	}
-
-	&__automatic-deploys {
-		margin-top: 24px !important;
-		margin-bottom: 32px !important;
-	}
-
 	&__automatic-deploys-switch {
 		display: flex;
 		align-items: center;
