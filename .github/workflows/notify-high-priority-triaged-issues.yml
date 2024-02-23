@@ -18,6 +18,11 @@ jobs:
         contains(github.event.issue.labels.*.name, '[Pri] Blocker')
       )
     steps:
+      - name: Dump GitHub context
+        env:
+          GITHUB_CONTEXT: ${{ toJson(github.event) }}
+        run: |
+          echo "$GITHUB_CONTEXT"
       - name: Set variables based on event type
         id: set-vars
         run: |
