@@ -12,7 +12,7 @@ export function getCommitDetails( deployment: CodeDeploymentData, run?: Deployme
 	let shaShort = '';
 	let path = '';
 	if ( run ) {
-		sha = run.metadata.commit_sha;
+		sha = run.metadata.commit_sha ?? '';
 		shaShort = sha.substring( sha.length - 7 );
 		message = run.metadata.commit_message;
 		const fullPath = deployment.target_dir ?? '';
