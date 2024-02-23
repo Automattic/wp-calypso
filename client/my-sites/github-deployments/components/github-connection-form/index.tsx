@@ -4,7 +4,8 @@ import { __ } from '@wordpress/i18n';
 import { ChangeEvent, useMemo, useState } from 'react';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormSelect from 'calypso/components/forms/form-select';
-import FormTextInputWithAffixes from 'calypso/components/forms/form-text-input-with-affixes';
+import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
+import FormTextInput from 'calypso/components/forms/form-text-input';
 import { GitHubInstallationData } from 'calypso/my-sites/github-deployments/use-github-installations-query';
 import { useGithubRepositoryBranchesQuery } from 'calypso/my-sites/github-deployments/use-github-repository-branches-query';
 import { GitHubRepositoryData } from '../../use-github-repositories-query';
@@ -134,8 +135,7 @@ export const GitHubConnectionForm = ( {
 				</FormFieldset>
 				<FormFieldset>
 					<FormLabel htmlFor="target">{ __( 'Destination directory' ) }</FormLabel>
-					<FormTextInputWithAffixes
-						prefix="/srv/htdocs"
+					<FormTextInput
 						id="target"
 						value={ destPath }
 						onChange={ ( event: ChangeEvent< HTMLInputElement > ) => {
@@ -145,6 +145,9 @@ export const GitHubConnectionForm = ( {
 							setDestPath( targetDir );
 						} }
 					/>
+					<FormSettingExplanation>
+						{ __( 'This path is relative to the server root' ) }
+					</FormSettingExplanation>
 				</FormFieldset>
 				<FormFieldset className="github-deployments-connect-repository__automatic-deploys">
 					<FormLabel htmlFor="is-automated">{ __( 'Automatic deploys' ) }</FormLabel>
