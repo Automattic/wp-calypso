@@ -236,7 +236,6 @@ interface CommandPaletteProps {
 	useCommands: ( options: useCommandsParams ) => PaletteCommand[];
 	wpcom: WPCOM;
 	currentRoute: string | null;
-	singleSiteMode: boolean;
 	isOpenGlobal?: boolean;
 	onClose?: () => void;
 }
