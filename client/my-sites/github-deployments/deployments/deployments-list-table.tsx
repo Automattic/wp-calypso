@@ -31,7 +31,7 @@ export const DeploymentsListTable = ( {
 							<span>{ __( 'Repository' ) }</span>
 						</SortButton>
 					</th>
-					<th>
+					<th style={ { width: '100%' } }>
 						<span>{ __( 'Last commit' ) }</span>
 					</th>
 					<th>

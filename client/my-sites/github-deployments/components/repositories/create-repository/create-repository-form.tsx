@@ -1,8 +1,9 @@
-import { Button, FormLabel } from '@automattic/components';
+import { Button, FormInputValidation, FormLabel } from '@automattic/components';
 import { FormToggle, Spinner } from '@wordpress/components';
 import { useI18n } from '@wordpress/react-i18n';
-import { ChangeEvent, useEffect, useState } from 'react';
+import { ChangeEvent, FormEventHandler, useEffect, useState } from 'react';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
+import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
 import FormTextInput from 'calypso/components/forms/form-text-input';
 import { GitHubInstallationsDropdown } from 'calypso/my-sites/github-deployments/components/installations-dropdown';
 import { useLiveInstallations } from 'calypso/my-sites/github-deployments/components/installations-dropdown/use-live-installations';
@@ -24,14 +25,12 @@ export type OnRepositoryCreatedParams = CreateRepositoryMutationVariables &
 
 type CreateRepositoryFormProps = {
 	onRepositoryCreated( args: OnRepositoryCreatedParams ): void;
-	isPending?: boolean;
-	isDisabled?: boolean;
+	isPending: boolean;
 };
 
 export const CreateRepositoryForm = ( {
 	onRepositoryCreated,
 	isPending,
-	isDisabled,
 }: CreateRepositoryFormProps ) => {
 	const { __ } = useI18n();
 	const {
@@ -53,10 +52,14 @@ export const CreateRepositoryForm = ( {
 		{} as GitHubRepositoryData
 	);
 
-	const isFormValid = repositoryName.trim() && ! isLoadingInstallations;
+	const [ isSubmitted, setSubmitted ] = useState( false );
 
-	const handleCreateRepository = () => {
-		if ( ! installation ) {
+	const handleCreateRepository: FormEventHandler = ( e ) => {
+		e.preventDefault();
+
+		setSubmitted( true );
+
+		if ( ! installation || ! repositoryName ) {
 			return;
 		}
 
@@ -98,34 +101,50 @@ export const CreateRepositoryForm = ( {
 
 	return (
 		<div className="github-deployments-create-repository">
-			<form className="github-deployments-create-repository__configuration">
-				<div className="github-deployments-create-repository__repository">
-					<FormFieldset style={ { flex: 0.5 } }>
-						<FormLabel htmlFor="githubInstallation">{ __( 'GitHub account' ) }</FormLabel>
-						{ isLoadingInstallations ? (
-							<Spinner />
-						) : (
-							<GitHubInstallationsDropdown
-								onAddInstallation={ onNewInstallationRequest }
-								installations={ installations }
-								value={ installation }
-								onChange={ setInstallation }
+			<form
+				className="github-deployments-create-repository__configuration"
+				onSubmit={ handleCreateRepository }
+			>
+				<FormFieldset>
+					<div className="github-deployments-create-repository__repository">
+						<div>
+							<FormLabel htmlFor="githubInstallation">{ __( 'GitHub account' ) }</FormLabel>
+							{ isLoadingInstallations ? (
+								<Spinner />
+							) : (
+								<GitHubInstallationsDropdown
+									onAddInstallation={ onNewInstallationRequest }
+									installations={ installations }
+									value={ installation }
+									onChange={ setInstallation }
+								/>
+							) }
+						</div>
+						<div css={ { flex: '1' } }>
+							<FormLabel htmlFor="repoName">{ __( 'Repository name' ) }</FormLabel>
+							<FormTextInput
+								id="repoName"
+								placeholder={ __( 'my-amazing-repository' ) }
+								placehlder={ __( 'Repository name' ) }
+								value={ repositoryName }
+								onChange={ async ( event: ChangeEvent< HTMLInputElement > ) => {
+									setRepositoryName( event.currentTarget.value.trim() );
+								} }
 							/>
-						) }
-					</FormFieldset>
-					<FormFieldset style={ { flex: 1 } }>
-						<FormLabel htmlFor="repoName">{ __( 'Repository name' ) }</FormLabel>
-						<FormTextInput
-							id="repoName"
-							placeholder={ __( 'my-amazing-repository' ) }
-							placehlder={ __( 'Repository name' ) }
-							value={ repositoryName }
-							onChange={ async ( event: ChangeEvent< HTMLInputElement > ) => {
-								setRepositoryName( event.currentTarget.value );
-							} }
+						</div>
+					</div>
+					{ isSubmitted && ( ! installation || ! repositoryName ) && (
+						<FormInputValidation
+							css={ { paddingBottom: '0 !important' } }
+							isError
+							text={
+								! installation
+									? __( 'Please select an account' )
+									: __( 'Please type the name of the repository' )
+							}
 						/>
-					</FormFieldset>
-				</div>
+					) }
+				</FormFieldset>
 				<FormFieldset>
 					<FormLabel htmlFor="is-private">{ __( 'Privacy' ) }</FormLabel>
 					<div className="github-deployments-create-repository__switch">
@@ -182,6 +201,9 @@ export const CreateRepositoryForm = ( {
 							setTargetDir( event.currentTarget.value )
 						}
 					/>
+					<FormSettingExplanation css={ { marginBottom: '0 !important' } }>
+						{ __( 'This path is relative to the server root' ) }
+					</FormSettingExplanation>
 				</FormFieldset>
 				<FormFieldset>
 					<FormLabel htmlFor="is-automated">{ __( 'Automatic deploys' ) }</FormLabel>
@@ -194,13 +216,7 @@ export const CreateRepositoryForm = ( {
 						{ __( 'Deploy changes on push' ) }
 					</div>
 				</FormFieldset>
-				<Button
-					primary
-					type="submit"
-					busy={ isPending }
-					disabled={ ! isFormValid || isDisabled }
-					onClick={ handleCreateRepository }
-				>
+				<Button primary type="submit" busy={ isPending } disabled={ isPending }>
 					{ __( 'Create repository' ) }
 				</Button>
 			</form>

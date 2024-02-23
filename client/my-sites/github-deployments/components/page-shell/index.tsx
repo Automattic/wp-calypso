@@ -26,7 +26,7 @@ export function PageShell( { topRightButton, pageTitle, children }: GitHubDeploy
 					{
 						components: {
 							learnMoreLink: (
-								<InlineSupportLink supportContext="site-monitoring" showIcon={ false } />
+								<InlineSupportLink supportContext="github-deployments" showIcon={ false } />
 							),
 						},
 					}
