@@ -9,15 +9,8 @@ import { fetchPatterns, renderPatterns } from 'calypso/my-sites/patterns/control
 
 export default function ( router: typeof clientRouter ) {
 	const langParam = getLanguageRouteParam();
+	const middleware = [ fetchPatterns, renderPatterns, makeLayout, clientRender ];
 
-	router(
-		`/${ langParam }/patterns`,
-		redirectWithoutLocaleParamInFrontIfLoggedIn,
-		fetchPatterns,
-		renderPatterns,
-		makeLayout,
-		clientRender
-	);
-
-	router( '/patterns', fetchPatterns, renderPatterns, makeLayout, clientRender );
+	router( `/${ langParam }/patterns`, redirectWithoutLocaleParamInFrontIfLoggedIn, ...middleware );
+	router( '/patterns', ...middleware );
 }
