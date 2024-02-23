@@ -619,9 +619,6 @@ export default function CampaignItemDetails( props: Props ) {
 										<span className="campaign-item-details__text wp-brand-font">
 											{ ! isLoading ? deliveryEstimateFormatted : <FlexibleSkeleton /> }
 										</span>
-										<span className="campaign-item-details__details">
-											{ translate( 'Impressions are estimated' ) }
-										</span>
 									</div>
 								</div>
 								<div className="campaign-item-details__secondary-stats-interests-mobile">
