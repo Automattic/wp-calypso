@@ -7,6 +7,7 @@ import AsyncLoad from 'calypso/components/async-load';
 import TranslatableString from 'calypso/components/translatable/proptype';
 import SidebarMenuItem from 'calypso/layout/global-sidebar/menu-items/menu-item';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import { getNotificationsToggleSource } from 'calypso/state/selectors/get-notifications-toggle-source';
 import hasUnseenNotifications from 'calypso/state/selectors/has-unseen-notifications';
 import isNotificationsOpen from 'calypso/state/selectors/is-notifications-open';
 import { toggleNotificationsPanel } from 'calypso/state/ui/actions';
@@ -27,6 +28,7 @@ class SidebarNotifications extends Component {
 
 	notificationLink = createRef();
 	notificationPanel = createRef();
+	toggleSource = 'Sidebar';
 
 	state = {
 		animationState: 0,
@@ -52,22 +54,29 @@ class SidebarNotifications extends Component {
 	checkToggleNotes = ( event, forceToggle ) => {
 		const target = event ? event.target : false;
 
+		console.log( 'checkToggleNotes sidebar', { target, event, forceToggle }, this.notificationPanel );
+
 		// Ignore clicks or other events which occur inside of the notification panel.
 		if (
 			target &&
 			( this.notificationLink.current.contains( target ) ||
 				this.notificationPanel.current.contains( target ) )
 		) {
+			console.log( 'checkToggleNotes sidebar exit' );
 			return;
 		}
 
-		if ( this.props.isNotificationsOpen || forceToggle === true ) {
+		console.log( 'checkToggleNotes sidebar ' + this.props.toggleSource );
+
+		if ( ( this.toggleSource === this.props.toggleSource && this.props.isNotificationsOpen ) || forceToggle === true ) {
+			console.log( 'checkToggleNotes sidebar toggle' );
 			this.toggleNotesFrame( event );
 		}
 	};
 
 	toggleNotesFrame = ( event ) => {
 		if ( event ) {
+			console.log( 'checkToggleNotes sidebar stop propagation' );
 			event.preventDefault && event.preventDefault();
 			event.stopPropagation && event.stopPropagation();
 		}
@@ -77,7 +86,7 @@ class SidebarNotifications extends Component {
 			return;
 		}
 
-		this.props.toggleNotificationsPanel();
+		this.props.toggleNotificationsPanel( this.toggleSource );
 	};
 
 	/**
@@ -145,6 +154,7 @@ class SidebarNotifications extends Component {
 const mapStateToProps = ( state ) => {
 	return {
 		isNotificationsOpen: isNotificationsOpen( state ),
+		toggleSource: getNotificationsToggleSource( state ),
 		hasUnseenNotifications: hasUnseenNotifications( state ),
 	};
 };

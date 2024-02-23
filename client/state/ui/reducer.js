@@ -55,6 +55,12 @@ export function isSectionLoading( state = false, action ) {
 	return state;
 }
 
+// Define an initial state object
+const initialNotificationsState = {
+	isOpen: false, // Tracks the open/closed state
+	toggleSource: null, // Tracks the source of the last toggle
+};
+
 /**
  * Tracks if the notifications panel is open
  * @param   {Object} state       Current state
@@ -62,9 +68,13 @@ export function isSectionLoading( state = false, action ) {
  * @param   {string} action.type The action type identifier. In this case it's looking for NOTIFICATIONS_PANEL_TOGGLE
  * @returns {Object}             Updated state
  */
-export function isNotificationsOpen( state = false, { type } ) {
+export function isNotificationsOpen( state = initialNotificationsState, { type, source } ) {
 	if ( type === NOTIFICATIONS_PANEL_TOGGLE ) {
-		return ! state;
+		return {
+			...state,
+			isOpen: ! state.isOpen,
+			toggleSource: source || 'unknown', // Default to 'unknown' if source is not provided
+		};
 	}
 	return state;
 }

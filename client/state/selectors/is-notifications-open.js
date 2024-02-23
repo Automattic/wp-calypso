@@ -8,5 +8,5 @@ import 'calypso/state/ui/init';
  * @returns {boolean} true  - if notifications is open.
  */
 export default function isNotificationsOpen( state ) {
-	return get( state, 'ui.isNotificationsOpen', false );
+	return get( state, 'ui.isNotificationsOpen.isOpen', false );
 }
