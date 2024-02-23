@@ -132,15 +132,21 @@ export const GitHubConnectionForm = ( {
 				<FormFieldset>
 					<FormLabel>{ __( 'Destination directory' ) }</FormLabel>
 					<FormTextInput
+						className="github-deployments-connect-repository__destination-directory-input"
 						value={ destPath }
 						onChange={ ( event: ChangeEvent< HTMLInputElement > ) =>
 							setDestPath( event.currentTarget.value )
 						}
 					/>
+					<span className="github-deployments-connect-repository__default-path-hint">
+						{ __(
+							"If this field is empty, we'll place the files in the root directory of your site"
+						) }
+					</span>
 				</FormFieldset>
-				<FormFieldset>
+				<FormFieldset className="github-deployments-connect-repository__automatic-deploys">
 					<FormLabel>{ __( 'Automatic deploys' ) }</FormLabel>
-					<div className="github-deployments-connect-repository__automatic-deploys">
+					<div className="github-deployments-connect-repository__automatic-deploys-switch">
 						<FormToggle
 							checked={ isAutoDeploy }
 							onChange={ () => setIsAutoDeploy( ! isAutoDeploy ) }

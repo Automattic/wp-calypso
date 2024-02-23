@@ -75,13 +75,21 @@ export const GitHubDeploymentCreationForm = ( {
 			changeRepository={ () => {
 				page.replace( createDeploymentPage( siteSlug!, { installationId } ) );
 			} }
-			onSubmit={ ( { externalRepositoryId, branchName, targetDir, installationId, isAutomated } ) =>
+			onSubmit={ ( {
+				externalRepositoryId,
+				branchName,
+				targetDir,
+				installationId,
+				isAutomated,
+				workflowPath,
+			} ) =>
 				createDeployment( {
 					externalRepositoryId,
 					branchName,
 					targetDir,
 					installationId,
 					isAutomated,
+					workflowPath,
 				} )
 			}
 		/>

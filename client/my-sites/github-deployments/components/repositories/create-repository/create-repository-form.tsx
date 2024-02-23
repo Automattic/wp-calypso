@@ -1,4 +1,4 @@
-import { FormLabel, Button } from '@automattic/components';
+import { Button, FormLabel } from '@automattic/components';
 import { FormToggle, Spinner } from '@wordpress/components';
 import { useI18n } from '@wordpress/react-i18n';
 import { ChangeEvent, useEffect, useState } from 'react';
@@ -49,7 +49,6 @@ export const CreateRepositoryForm = ( {
 	const [ template, setTemplate ] = useState< RepositoryTemplate >(
 		repositoryTemplates.plugin[ 0 ]
 	);
-	const [ workflowPath, setWorkflowPath ] = useState< string | undefined >( undefined );
 	const [ repository, setRepository ] = useState< GitHubRepositoryData >(
 		{} as GitHubRepositoryData
 	);
@@ -207,8 +206,6 @@ export const CreateRepositoryForm = ( {
 						branchName="main"
 						installationId={ installation.external_id }
 						repository={ repository }
-						onChooseWorkflow={ ( filePath ) => setWorkflowPath( filePath ) }
-						onValidationChange={ ( status ) => {} }
 					/>
 				</div>
 			) }

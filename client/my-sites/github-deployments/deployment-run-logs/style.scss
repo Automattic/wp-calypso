@@ -12,7 +12,7 @@ table.github-deployments-logs {
 	}
 
 	th:first-child {
-		width: 350px;
+		width: 160px;
 	}
 
 	tbody tr:not(:last-of-type) {
@@ -32,9 +32,20 @@ table.github-deployments-logs {
 td.github-deployments-logs-content {
 	text-align: left !important;
 
-
 	.github-deployments-loading-placeholder {
 		margin-bottom: 0;
 	}
 }
 
+
+.github-deployments-commit-author {
+	display: inline-flex;
+	gap: 8px;
+	align-items: center;
+	img {
+		width: 40px;
+		height: 40px;
+		flex-shrink: 0;
+		border-radius: 50%;
+	}
+}

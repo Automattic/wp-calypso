@@ -33,6 +33,12 @@ export interface Metadata {
 	commit_message: string;
 	commit_sha: string;
 	job_id: number;
+	author: {
+		avatar_url: string;
+		id: number;
+		name: string;
+		profile_url: string;
+	};
 }
 
 export const useCodeDeploymentsRunsQuery = (
