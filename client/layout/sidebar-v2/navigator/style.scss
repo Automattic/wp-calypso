@@ -21,7 +21,7 @@
 	margin: 0;
 }
 
-.sidebar-v2__navigator-sub-menu ul li:not(:last-child) {
+.sidebar-v2__navigator-sub-menu li:not(:last-child) .sidebar-v2__menu-item {
 	margin-block-end: 2px;
 }
 

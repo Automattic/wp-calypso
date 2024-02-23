@@ -16,7 +16,7 @@
 
 .a4a-layout__container {
 	max-width: 100%;
-	min-height: calc(100vh - 123px);
+	min-height: calc(100vh - 80px);
 	display: flex;
 	flex-direction: column;
 	margin: auto;
@@ -34,9 +34,13 @@
 	margin-inline: 0;
 
 	> * {
-		max-width: 1500px;
-		margin-inline: auto !important;
-		padding-inline: 64px;
+		padding-inline: 16px;
+
+		@include breakpoint-deprecated( ">660px" ) {
+			max-width: 1500px;
+			margin-inline: auto !important;
+			padding-inline: 64px;
+		}
 	}
 }
 
