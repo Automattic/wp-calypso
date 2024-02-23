@@ -27,6 +27,7 @@ const write: Flow = {
 	get title() {
 		return translate( 'Write' );
 	},
+	isSignupFlow: false,
 	useSteps() {
 		return [
 			{ slug: 'launchpad', component: LaunchPad },
