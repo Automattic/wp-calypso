@@ -6,13 +6,15 @@ import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selecto
 const useAdvertisingUrl = () => {
 	const selectedSiteSlug = useSelector( getSelectedSiteSlug );
 	const siteId = useSelector( ( state ) => getSelectedSiteId( state ) );
-	const siteAdminUrl = useSelector( ( state ) => getSiteAdminUrl( state, siteId ) );
+	const siteAdminUrl = useSelector( ( state ) =>
+		getSiteAdminUrl( state, siteId, 'tools.php?page=advertising' )
+	);
 	const adminInterface = useSelector( ( state ) =>
 		getSiteOption( state, siteId, 'wpcom_admin_interface' )
 	);
 
 	return adminInterface === 'wp-admin' && isEnabled( 'layout/dotcom-nav-redesign' )
-		? `${ siteAdminUrl }tools.php?page=advertising`
+		? siteAdminUrl
 		: `/advertising/${ selectedSiteSlug }`;
 };
 
