@@ -98,6 +98,10 @@ export const DeploymentStyle = ( {
 			} ) ) || []
 		);
 
+		if ( isTemplateRepository ) {
+			return mappedValues;
+		}
+
 		return mappedValues.concat( {
 			workflow_path: 'create-new',
 			file_name: __( 'Create new workflow' ),
@@ -259,7 +263,10 @@ export const DeploymentStyle = ( {
 	}, [ workflowCheckResult ] );
 
 	useEffect( () => {
-		if ( deploymentStyle === 'simple' || isTemplateRepository ) {
+		if (
+			deploymentStyle === 'simple' ||
+			( isTemplateRepository && selectedWorkflow.workflow_path !== 'none' )
+		) {
 			onValidationChange?.( 'success' );
 		} else {
 			onValidationChange?.( workflowCheckResult?.conclusion || 'loading' );

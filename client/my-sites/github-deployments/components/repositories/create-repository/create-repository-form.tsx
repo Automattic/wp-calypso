@@ -51,6 +51,7 @@ export const CreateRepositoryForm = ( {
 	const [ repository, setRepository ] = useState< GitHubRepositoryData >(
 		{} as GitHubRepositoryData
 	);
+	const [ workflowPath, setWorkflowPath ] = useState< string | undefined >();
 
 	const [ isSubmitted, setSubmitted ] = useState( false );
 
@@ -71,6 +72,7 @@ export const CreateRepositoryForm = ( {
 			targetDir,
 			isPrivate,
 			isAutomated,
+			workflowPath,
 		} );
 	};
 
@@ -216,7 +218,13 @@ export const CreateRepositoryForm = ( {
 						{ __( 'Deploy changes on push' ) }
 					</div>
 				</FormFieldset>
-				<Button primary type="submit" busy={ isPending } disabled={ isPending }>
+				<Button
+					primary
+					type="submit"
+					busy={ isPending }
+					disabled={ isPending }
+					onClick={ handleCreateRepository }
+				>
 					{ __( 'Create repository' ) }
 				</Button>
 			</form>
@@ -226,6 +234,14 @@ export const CreateRepositoryForm = ( {
 						branchName="main"
 						installationId={ installation.external_id }
 						repository={ repository }
+						onChooseWorkflow={ ( filePath ) => setWorkflowPath( filePath ) }
+						onValidationChange={ ( status ) => {
+							// if ( status === 'success' ) {
+							// 	setSubmitDisabled( false );
+							// } else {
+							// 	setSubmitDisabled( true );
+							// }
+						} }
 					/>
 				</div>
 			) }

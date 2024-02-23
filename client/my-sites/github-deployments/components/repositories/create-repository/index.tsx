@@ -70,6 +70,7 @@ export const CreateRepository = () => {
 				branchName: response.default_branch,
 				targetDir: args.targetDir,
 				isAutomated: args.isAutomated,
+				workflowPath: args.workflowPath,
 			} );
 		} );
 	};
