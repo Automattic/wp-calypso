@@ -210,10 +210,6 @@ exports[`JetpackAuthorize renders as expected 1`] = `
         </div>
       </div>
     </div>
-    <div
-      aria-live="assertive"
-      class="screen-reader-text"
-    />
   </main>
 </div>
 `;
