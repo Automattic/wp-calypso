@@ -1,6 +1,6 @@
 export const DeployStatus = {
 	STATUS_PENDING: 'pending',
-	STATUS_QUEUED: 'queue',
+	STATUS_QUEUED: 'queued	',
 	STATUS_RUNNING: 'running',
 	STATUS_SUCCESS: 'success',
 	STATUS_FAILED: 'failed',

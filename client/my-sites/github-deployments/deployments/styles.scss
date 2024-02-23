@@ -102,7 +102,8 @@
 	}
 
 	&__queued {
-		background-color: var(--Yellow-Yellow-5, #f5e6b3);
+		border: 1px solid var(--Gray-Gray-10, #c3c4c7);
+		background-color: var(--studio-white);
 	}
 
 	&__running {
