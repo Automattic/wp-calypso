@@ -6,11 +6,11 @@ import nock from 'nock';
 import React from 'react';
 import SiteMigrationPluginInstall from '../';
 import { StepProps } from '../../../types';
-import { renderStep, mockStepProps } from '../../test/helpers';
+import { renderStep, mockStepProps, RenderStepOptions } from '../../test/helpers';
 
 const mockApi = () => nock( 'https://public-api.wordpress.com:443' );
 
-const render = ( props?: Partial< StepProps >, renderOptions: RenderStepOptions ) => {
+const render = ( props?: Partial< StepProps >, renderOptions?: RenderStepOptions ) => {
 	const combinedProps = { ...mockStepProps( props ) };
 	return renderStep( <SiteMigrationPluginInstall { ...combinedProps } />, renderOptions );
 };

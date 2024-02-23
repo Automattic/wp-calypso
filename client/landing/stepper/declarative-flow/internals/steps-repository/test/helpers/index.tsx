@@ -8,13 +8,13 @@ import { renderWithProvider } from 'calypso/test-helpers/testing-library';
 import { Step, StepProps } from '../../../types';
 import type { Reducer } from 'redux';
 
-interface RenderStepOptions {
+export interface RenderStepOptions {
 	initialEntry?: string;
 	reducers: Record< string, Reducer >;
 }
 
 /** Utility to render a step for testing purposes */
-export const renderStep = ( step: ReactElement< Step >, options: RenderStepOptions ) => {
+export const renderStep = ( step: ReactElement< Step >, options?: RenderStepOptions ) => {
 	const { initialEntry = '/some-path?siteId=123', reducers = [] } = options ?? {};
 
 	return renderWithProvider(
