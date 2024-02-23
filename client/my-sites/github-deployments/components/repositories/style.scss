@@ -5,11 +5,11 @@
 .github-deployments-repositories {
 	display: flex;
 	flex-direction: column;
-	gap: 16px;
 
 	&__search-bar {
 		display: flex;
 		gap: 16px;
+		margin-bottom: 16px;
 	}
 
 	&__search {
@@ -17,7 +17,6 @@
 		input {
 			max-width: 400px;
 			height: 43px;
-			font-size: $font-body-small !important;
 		}
 	}
 	.components-spinner {
@@ -45,12 +44,15 @@
 	}
 }
 
-.github-deployments-repository-list {
-
-	table {
-		border-collapse: collapse;
-		margin-bottom: 8px;
+.github-repositories-list {
+	.pagination {
+		margin-top: 32px;
 	}
+}
+
+.github-deployments-repository-list-table {
+	border-collapse: collapse;
+	margin-bottom: 8px;
 
 	th,
 	td {
@@ -62,12 +64,18 @@
 		width: 285px;
 	}
 
+	thead tr,
 	tbody tr:not(:last-of-type) {
 		border-bottom: 1px solid var(--color-border-subtle);
 	}
 
 	td {
 		vertical-align: middle !important;
+	}
+
+	tr th {
+		font-weight: 500;
+		color: var(--studio-gray-60, #50575e);
 	}
 
 	&__name {
@@ -79,8 +87,4 @@
 	tr td:last-child {
 		text-align: right;
 	}
-}
-
-.github-deployments-adjust-permissions {
-	margin-bottom: 16px;
 }
