@@ -5,6 +5,8 @@
 	--a4a-corners-soft: 4px;
 
 	// FIXME: Remove this when we have a proper color scheme
+	--color-surface-backdrop: #021a23;
+
 	--color-sidebar-background: #021a23;
 	--color-sidebar-menu-hover-background: #02395c;
 	--color-sidebar-menu-hover-text: #fff;
@@ -21,27 +23,22 @@
 	@media only screen and ( min-width: 782px ) {
 		--masterbar-height: 46px;
 	}
-
-	.main {
-		box-sizing: border-box;
-		padding-inline-start: 16px;
-		padding-inline-end: 16px;
-	}
 }
 
 // New navigation will not include a masterbar
 .theme-a8c-for-agencies .layout.has-no-masterbar {
 	--masterbar-height: 0;
 
-	// By default, there's 32px of top padding on the layout component.
-	// On mobile views this accommodates the masterbar, but we don't have one;
-	// so, we can remove it by default and re-add it when our width is >660px.
 	.layout__content {
-		padding-block-start: initial;
+		padding: 16px;
 	}
 
 	@include breakpoint-deprecated( ">660px" ) {
-		padding-block-start: 32px;
+		padding-block-start: 0;
+
+		.layout__content {
+			padding: 16px 16px 16px calc(var(--sidebar-width-max));
+		}
 	}
 }
 
@@ -82,6 +79,10 @@
 			}
 		}
 	}
+}
+
+.theme-a8c-for-agencies .current-section {
+	margin: -32px 0 0;
 }
 
 // Universal Text Styles
