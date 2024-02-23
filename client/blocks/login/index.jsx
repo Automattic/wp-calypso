@@ -14,6 +14,7 @@ import AsyncLoad from 'calypso/components/async-load';
 import JetpackPlusWpComLogo from 'calypso/components/jetpack-plus-wpcom-logo';
 import Notice from 'calypso/components/notice';
 import WooCommerceConnectCartHeader from 'calypso/components/woocommerce-connect-cart-header';
+import WordPressLogo from 'calypso/components/wordpress-logo';
 import wooDnaConfig from 'calypso/jetpack-connect/woo-dna-config';
 import { preventWidows } from 'calypso/lib/formatting';
 import { getSignupUrl, isReactLostPasswordScreenEnabled } from 'calypso/lib/login';
@@ -41,6 +42,7 @@ import {
 	isTwoFactorAuthTypeSupported,
 	getSocialAccountIsLinking,
 	getSocialAccountLinkService,
+	isFormDisabled as isFormDisabledSelector,
 } from 'calypso/state/login/selectors';
 import { isPasswordlessAccount, isPartnerSignupQuery } from 'calypso/state/login/utils';
 import { getCurrentOAuth2Client } from 'calypso/state/oauth2-clients/ui/selectors';
@@ -838,7 +840,11 @@ class Login extends Component {
 	}
 
 	render() {
-		const { isJetpack, oauth2Client, locale, isWoo } = this.props;
+		const { isJetpack, oauth2Client, locale, isWoo, isFormDisabled } = this.props;
+
+		if ( isFormDisabled ) {
+			return <WordPressLogo className="wpcom-site__logo" />;
+		}
 
 		return (
 			<div
@@ -905,6 +911,7 @@ export default connect(
 		requestError: getRequestError( state ),
 		isSendingEmail: isFetchingMagicLoginEmail( state ),
 		emailRequested: isMagicLoginEmailRequested( state ),
+		isFormDisabled: isFormDisabledSelector( state ),
 	} ),
 	{
 		rebootAfterLogin,
