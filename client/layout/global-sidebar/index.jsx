@@ -28,9 +28,10 @@ const GlobalSidebar = ( { children, onClick = undefined, className = '', ...prop
 	} );
 
 	const handleWheel = useCallback( ( event ) => {
-		if ( bodyRef.current?.contains( event.target ) ) {
+		const bodyEl = bodyRef.current;
+		if ( bodyEl && bodyEl.contains( event.target ) && bodyEl.scrollHeight > bodyEl.clientHeight ) {
 			event.preventDefault();
-			bodyRef.current.scrollTop += event.deltaY;
+			bodyEl.scrollTop += event.deltaY;
 		}
 	}, [] );
 
