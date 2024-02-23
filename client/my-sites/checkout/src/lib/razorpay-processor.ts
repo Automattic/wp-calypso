@@ -172,8 +172,11 @@ function combineRazorpayOptions(
 	const options = razorpayConfiguration.options;
 	options.order_id = txnResponse.razorpay_order_id;
 	options.customer_id = txnResponse.razorpay_customer_id;
-	options.handler = handler;
+	if ( txnResponse.razorpay_option_recurring ) {
+		options.recurring = '1';
+	}
 
+	options.handler = handler;
 	const modal = options.modal ?? {};
 	modal.ondismiss = handler;
 	options.modal = modal;
