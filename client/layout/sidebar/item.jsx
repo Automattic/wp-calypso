@@ -77,7 +77,9 @@ export default function SidebarItem( props ) {
 						</Badge>
 					) }
 				</span>
-				{ showAsExternal && ! sidebarIsCollapsed && <Gridicon icon="external" size={ 24 } /> }
+				{ ( showAsExternal || props.forceShowExternalIcon ) && ! sidebarIsCollapsed && (
+					<Gridicon icon="external" size={ 24 } />
+				) }
 				{ props.children }
 			</a>
 		</li>
@@ -98,6 +100,7 @@ SidebarItem.propTypes = {
 	preloadSectionName: PropTypes.string,
 	forceExternalLink: PropTypes.bool,
 	forceInternalLink: PropTypes.bool,
+	forceShowExternalIcon: PropTypes.bool,
 	testTarget: PropTypes.string,
 	tipTarget: PropTypes.string,
 	count: PropTypes.number,

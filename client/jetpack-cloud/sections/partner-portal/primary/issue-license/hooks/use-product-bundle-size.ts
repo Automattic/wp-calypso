@@ -24,8 +24,8 @@ export const getSupportedBundleSizes = ( products?: APIProductFamilyProduct[] ) 
 	return [ ...supported ];
 };
 
-export function useProductBundleSize() {
-	const { data: products } = useProductsQuery();
+export function useProductBundleSize( isPublicFacing = false ) {
+	const { data: products } = useProductsQuery( isPublicFacing );
 
 	const supportedBundleSizes = getSupportedBundleSizes( products );
 

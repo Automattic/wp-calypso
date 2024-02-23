@@ -3,37 +3,44 @@ import { FormToggle, Spinner } from '@wordpress/components';
 import { useI18n } from '@wordpress/react-i18n';
 import { ChangeEvent, useEffect, useState } from 'react';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
-import FormRadiosBar from 'calypso/components/forms/form-radios-bar';
 import FormTextInput from 'calypso/components/forms/form-text-input';
-import { GitHubAccountsDropdown } from 'calypso/my-sites/github-deployments/components/accounts-dropdown/index';
-import { useLiveAccounts } from 'calypso/my-sites/github-deployments/components/accounts-dropdown/use-live-accounts';
+import { GitHubInstallationsDropdown } from 'calypso/my-sites/github-deployments/components/installations-dropdown';
+import { useLiveInstallations } from 'calypso/my-sites/github-deployments/components/installations-dropdown/use-live-installations';
+import { GitHubRepositoryData } from 'calypso/my-sites/github-deployments/use-github-repositories-query';
+import { MutationVariables as CreateDeploymentMutationVariables } from '../../../deployment-creation/use-create-code-deployment';
+import { DeploymentStyle } from '../deployment-style/deployment-style';
 import {
 	FormRadioWithTemplateSelect,
 	ProjectType,
 	RepositoryTemplate,
 } from './form-radio-with-template-select';
 import { repositoryTemplates } from './templates';
-import { MutationVariables } from './use-create-code-deployment-and-repository';
+import { MutationVariables as CreateRepositoryMutationVariables } from './use-create-repository';
 
 import './style.scss';
 
+export type OnRepositoryCreatedParams = CreateRepositoryMutationVariables &
+	Omit< CreateDeploymentMutationVariables, 'externalRepositoryId' | 'branchName' >;
+
 type CreateRepositoryFormProps = {
-	onRepositoryCreated( args: MutationVariables ): void;
+	onRepositoryCreated( args: OnRepositoryCreatedParams ): void;
 	isPending?: boolean;
+	isDisabled?: boolean;
 };
 
 export const CreateRepositoryForm = ( {
 	onRepositoryCreated,
 	isPending,
+	isDisabled,
 }: CreateRepositoryFormProps ) => {
 	const { __ } = useI18n();
 	const {
-		account,
-		setAccount,
-		accounts = [],
+		installation,
+		setInstallation,
+		installations = [],
 		onNewInstallationRequest,
-		isLoadingAccounts,
-	} = useLiveAccounts( {} );
+		isLoadingInstallations,
+	} = useLiveInstallations();
 	const [ repositoryName, setRepositoryName ] = useState( '' );
 	const [ targetDir, setTargetDir ] = useState( '/' );
 	const [ projectType, setProjectType ] = useState< ProjectType >( 'plugin' );
@@ -42,15 +49,22 @@ export const CreateRepositoryForm = ( {
 	const [ template, setTemplate ] = useState< RepositoryTemplate >(
 		repositoryTemplates.plugin[ 0 ]
 	);
+	const [ workflowPath, setWorkflowPath ] = useState< string | undefined >( undefined );
+	const [ repository, setRepository ] = useState< GitHubRepositoryData >(
+		{} as GitHubRepositoryData
+	);
 
-	const isFormValid = repositoryName.trim() && ! isLoadingAccounts;
+	const isFormValid = repositoryName.trim() && ! isLoadingInstallations;
 
 	const handleCreateRepository = () => {
-		const repositoryAccount = account || accounts[ 0 ];
+		if ( ! installation ) {
+			return;
+		}
+
 		onRepositoryCreated( {
-			installationId: repositoryAccount.external_id,
+			installationId: installation.external_id,
 			template: template.value,
-			accountName: repositoryAccount.account_name,
+			accountName: installation.account_name,
 			repositoryName,
 			targetDir,
 			isPrivate,
@@ -72,20 +86,31 @@ export const CreateRepositoryForm = ( {
 		}
 	}, [ projectType, repositoryName ] );
 
+	useEffect( () => {
+		setRepository( {
+			id: 0,
+			private: false,
+			updated_at: '',
+			name: template.value,
+			owner: 'Automattic',
+			default_branch: 'trunk',
+		} );
+	}, [ template ] );
+
 	return (
 		<div className="github-deployments-create-repository">
 			<form style={ { width: '100%', flex: 1 } }>
 				<div className="repository-name-formfieldset">
 					<FormFieldset style={ { flex: 0.5 } }>
-						<FormLabel htmlFor="githubAccount">{ __( 'Github account' ) }</FormLabel>
-						{ isLoadingAccounts ? (
+						<FormLabel htmlFor="githubInstallation">{ __( 'Github installation' ) }</FormLabel>
+						{ isLoadingInstallations ? (
 							<Spinner />
 						) : (
-							<GitHubAccountsDropdown
-								onAddAccount={ onNewInstallationRequest }
-								accounts={ accounts }
-								value={ account || accounts[ 0 ] }
-								onChange={ setAccount }
+							<GitHubInstallationsDropdown
+								onAddInstallation={ onNewInstallationRequest }
+								installations={ installations }
+								value={ installation }
+								onChange={ setInstallation }
 							/>
 						) }
 					</FormFieldset>
@@ -170,26 +195,23 @@ export const CreateRepositoryForm = ( {
 				<Button
 					primary
 					busy={ isPending }
-					disabled={ ! isFormValid }
+					disabled={ ! isFormValid || isDisabled }
 					onClick={ handleCreateRepository }
 				>
 					{ __( 'Create repository' ) }
 				</Button>
 			</form>
-			<div className="deployment-style">
-				<h3 style={ { fontSize: '16px', marginBottom: '16px' } }>
-					{ __( 'Pick your deployment style' ) }
-				</h3>
-				<FormRadiosBar
-					items={ [
-						{ label: __( 'Simple' ), value: 'simple' },
-						{ label: __( 'Customizable' ), value: 'custom' },
-					] }
-					checked="simple"
-					onChange={ () => {} }
-					disabled={ false }
-				/>
-			</div>
+			{ installation && (
+				<div className="github-deployments-create-repository__deployment-style">
+					<DeploymentStyle
+						branchName="main"
+						installationId={ installation.external_id }
+						repository={ repository }
+						onChooseWorkflow={ ( filePath ) => setWorkflowPath( filePath ) }
+						onValidationChange={ ( status ) => {} }
+					/>
+				</div>
+			) }
 		</div>
 	);
 };

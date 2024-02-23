@@ -7,10 +7,14 @@ export default function globalSiteSidebarMenu( {
 	shouldShowAddOns,
 	showSiteMonitoring,
 	siteDomain,
+	selectedSiteSlug,
+	isStagingSite,
 }: {
 	shouldShowAddOns: boolean;
 	showSiteMonitoring: boolean;
 	siteDomain: string;
+	selectedSiteSlug: string;
+	isStagingSite: boolean;
 } ) {
 	return [
 		{
@@ -19,45 +23,58 @@ export default function globalSiteSidebarMenu( {
 			title: translate( 'All sites' ),
 			type: 'menu-item',
 			url: `/sites`,
+			className: 'sidebar__menu-item-all-sites',
 		},
 		{
 			type: 'current-site',
 			url: `/home/${ siteDomain }`,
 		},
 		{
+			slug: 'wp-admin',
+			title: translate( 'WP Admin' ),
+			type: 'menu-item',
+			url: `https://${ selectedSiteSlug }/wp-admin`,
+			className: 'sidebar__menu-item-wp-admin',
+			forceShowExternalIcon: true,
+		},
+		{
+			type: 'separator',
+		},
+		{
 			slug: 'upgrades',
 			title: translate( 'Plans' ),
 			type: 'menu-item',
 			url: `/plans/${ siteDomain }`,
+			shouldHide: isStagingSite,
 		},
-		...( shouldShowAddOns
-			? [
-					{
-						slug: 'Add-Ons',
-						title: translate( 'Add-Ons' ),
-						type: 'menu-item',
-						url: `/add-ons/${ siteDomain }`,
-					},
-			  ]
-			: [] ),
+		{
+			slug: 'Add-Ons',
+			title: translate( 'Add-Ons' ),
+			type: 'menu-item',
+			url: `/add-ons/${ siteDomain }`,
+			shouldHide: ! shouldShowAddOns,
+		},
 		{
 			slug: 'domains',
 			title: translate( 'Domains' ),
 			navigationLabel: translate( 'Manage all domains' ),
 			type: 'menu-item',
 			url: `/domains/manage/${ siteDomain }`,
+			shouldHide: isStagingSite,
 		},
 		{
 			slug: 'Emails',
 			title: translate( 'Emails' ),
 			type: 'menu-item',
 			url: `/email/${ siteDomain }`,
+			shouldHide: isStagingSite,
 		},
 		{
 			slug: 'Purchases',
 			title: translate( 'Purchases' ),
 			type: 'menu-item',
 			url: `/purchases/subscriptions/${ siteDomain }`,
+			shouldHide: isStagingSite,
 		},
 		{
 			slug: 'options-hosting-configuration-php',
@@ -66,21 +83,12 @@ export default function globalSiteSidebarMenu( {
 			url: `/hosting-config/${ siteDomain }`,
 		},
 		{
-			slug: 'settings-site-tools',
-			title: translate( 'Tools' ),
+			slug: 'tools-site-monitoring',
+			title: translate( 'Monitoring' ),
 			type: 'menu-item',
-			url: `/settings/site-tools/${ siteDomain }`,
+			url: `/site-monitoring/${ siteDomain }`,
+			shouldHide: ! showSiteMonitoring,
 		},
-		...( showSiteMonitoring
-			? [
-					{
-						slug: 'tools-site-monitoring',
-						title: translate( 'Monitoring' ),
-						type: 'menu-item',
-						url: `/site-monitoring/${ siteDomain }`,
-					},
-			  ]
-			: [] ),
 		{
 			slug: 'tools-earn',
 			title: translate( 'Monetize' ),
@@ -99,5 +107,11 @@ export default function globalSiteSidebarMenu( {
 			type: 'menu-item',
 			url: `/subscribers/${ siteDomain }`,
 		},
-	];
+		{
+			slug: 'settings-site',
+			title: translate( 'Settings' ),
+			type: 'menu-item',
+			url: `/settings/general/${ siteDomain }`,
+		},
+	].filter( ( { shouldHide } ) => ! shouldHide );
 }

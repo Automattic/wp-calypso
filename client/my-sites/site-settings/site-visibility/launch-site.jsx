@@ -1,11 +1,10 @@
 import { WPCOM_FEATURES_SITE_PREVIEW_LINKS } from '@automattic/calypso-products';
 import { Card, CompactCard, Button } from '@automattic/components';
-import { dispatch } from '@wordpress/data';
 import classNames from 'classnames';
 import { translate } from 'i18n-calypso';
 import QuerySiteDomains from 'calypso/components/data/query-site-domains';
 import SitePreviewLink from 'calypso/components/site-preview-link';
-import { useSelector } from 'calypso/state';
+import { useSelector, useDispatch } from 'calypso/state';
 import isSiteComingSoon from 'calypso/state/selectors/is-site-coming-soon';
 import getIsUnlaunchedSite from 'calypso/state/selectors/is-unlaunched-site';
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
@@ -28,6 +27,7 @@ import { LaunchSiteTrialUpsellNotice } from './launch-site-trial-notice';
 import './styles.scss';
 
 const LaunchSite = () => {
+	const dispatch = useDispatch();
 	const site = useSelector( ( state ) => getSelectedSite( state ) );
 	const siteId = useSelector( ( state ) => getSelectedSiteId( state ) );
 	const siteSettings = useSelector( ( state ) => getSiteSettings( state, siteId ) );

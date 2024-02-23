@@ -247,6 +247,13 @@ const sections = [
 		module: 'calypso/my-sites/google-my-business',
 		group: 'sites',
 	},
+	{
+		name: 'patterns',
+		paths: [ '/patterns', '/([a-z]{2,3}|[a-z]{2}-[a-z]{2})/patterns' ],
+		module: 'calypso/my-sites/patterns',
+		enableLoggedOut: true,
+		isomorphic: true,
+	},
 	// Since we're using find() and startsWith() on paths, 'themes' needs to go before 'theme',
 	// or it'll be falsely associated with the latter section.
 	{
@@ -620,6 +627,12 @@ const sections = [
 		group: 'jetpack-cloud',
 	},
 	{
+		name: 'jetpack-cloud-agency-sites-v2',
+		paths: [ '/sites' ],
+		module: 'calypso/jetpack-cloud/sections/agency-dashboard',
+		group: 'jetpack-cloud',
+	},
+	{
 		name: 'jetpack-cloud-partner-portal',
 		paths: [ '/partner-portal' ],
 		module: 'calypso/jetpack-cloud/sections/partner-portal',
@@ -684,6 +697,34 @@ const sections = [
 		name: 'a8c-for-agencies-auth',
 		paths: [ '/connect', '/connect/oauth/token' ],
 		module: 'calypso/a8c-for-agencies/sections/auth',
+		group: 'a8c-for-agencies',
+		enableLoggedOut: true,
+	},
+	{
+		name: 'a8c-for-agencies-overview',
+		paths: [ '/overview' ],
+		module: 'calypso/a8c-for-agencies/sections/overview',
+		group: 'a8c-for-agencies',
+		enableLoggedOut: true,
+	},
+	{
+		name: 'a8c-for-agencies-sites',
+		paths: [ '/sites', 'sites/favorite' ],
+		module: 'calypso/a8c-for-agencies/sections/sites',
+		group: 'a8c-for-agencies',
+		enableLoggedOut: true,
+	},
+	{
+		name: 'a8c-for-agencies-plugins',
+		paths: [ '/plugins' ],
+		module: 'calypso/a8c-for-agencies/sections/plugins',
+		group: 'a8c-for-agencies',
+		enableLoggedOut: true,
+	},
+	{
+		name: 'a8c-for-agencies-marketplace',
+		paths: [ '/marketplace', '/marketplace/assign-license' ],
+		module: 'calypso/a8c-for-agencies/sections/marketplace',
 		group: 'a8c-for-agencies',
 		enableLoggedOut: true,
 	},

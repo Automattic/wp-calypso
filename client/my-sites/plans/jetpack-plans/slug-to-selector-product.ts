@@ -1,7 +1,6 @@
 import {
 	getJetpackProductDisplayName,
 	getJetpackProductTagline,
-	getJetpackProductCallToAction,
 	getJetpackProductDescription,
 	getJetpackProductShortDescription,
 	getJetpackProductFeaturedDescription,
@@ -170,7 +169,6 @@ function itemToSelectorProduct(
 			shortDescription: getJetpackProductShortDescription( item ),
 			featuredDescription: getFeaturedProductDescription( item ),
 			lightboxDescription: getLightboxProductDescription( item ),
-			buttonLabel: getJetpackProductCallToAction( item ),
 			whatIsIncluded: getJetpackProductWhatIsIncluded( item ),
 			whatIsIncludedComingSoon: getJetpackProductWhatIsIncludedComingSoon( item ),
 			benefits: getJetpackProductBenefits( item ),

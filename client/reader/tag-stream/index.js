@@ -6,7 +6,7 @@ import {
 	makeLayout,
 	redirectLoggedOutToSignup,
 	redirectInvalidLanguage,
-	redirectLoggedInUrl,
+	redirectWithoutLocaleParamInFrontIfLoggedIn,
 	render as clientRender,
 } from 'calypso/controller';
 import { setLocaleMiddleware } from 'calypso/controller/shared';
@@ -51,7 +51,7 @@ export default function () {
 
 	page(
 		[ '/tag/:tag', `/${ langParam }/tag/:tag` ],
-		redirectLoggedInUrl,
+		redirectWithoutLocaleParamInFrontIfLoggedIn,
 		setLocaleMiddleware(),
 		redirectToSignup,
 		updateLastRoute,

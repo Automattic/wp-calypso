@@ -41,6 +41,10 @@ import { isWpComProductRenewal } from './is-wpcom-product-renewal';
 import { joinClasses } from './join-classes';
 import { getPartnerCoupon } from './partner-coupon';
 import IonosLogo from './partner-logo-ionos';
+import {
+	doesIntroductoryOfferHaveDifferentTermLengthThanProduct,
+	getSubtotalWithoutDiscountsForProduct,
+} from './transformations';
 import type { LineItemType } from './types';
 import type {
 	GSuiteProductUser,
@@ -91,7 +95,8 @@ export const LineItem = styled( CheckoutLineItem )< {
 	grid-template-areas:
 		'label price'
 		'term remove'
-		'meta   meta';
+		'meta meta'
+		'discounts discounts';
 	gap: 6px 4px;
 	margin-bottom: 8px;
 	padding: 10px 0;`
@@ -196,7 +201,10 @@ const LineItemTitle = styled.div< { theme?: Theme; isSummary?: boolean } >`
 		   font-size: inherit;` }
 `;
 
-const LineItemPriceWrapper = styled.span< { theme?: Theme; isSummary?: boolean } >`
+const LineItemPriceWrapper = styled.span`
+	display: flex;
+	gap: 4px;
+
 	${ hasCheckoutVersion2
 		? `margin-left: 0px;
 		   font-size: 14px;
@@ -223,9 +231,6 @@ const BillingInterval = styled.div< { theme?: Theme } >`
 	flex-direction: column;
 	align-content: flex-start;
 `;
-const DropdownWrapper = styled.span`
-	${ hasCheckoutVersion2 ? `width: 100%; max-width: 200px` : null }
-`;
 
 const DeleteButtonWrapper = styled.div`
 	width: 100%;
@@ -243,30 +248,21 @@ const DeleteButtonWrapper = styled.div`
 
 const DeleteButton = styled( Button )< { theme?: Theme } >`
 	width: auto;
-	${ hasCheckoutVersion2 ? `font-size:  14px;` : `font-size: 0.75rem` };
+	${ hasCheckoutVersion2 ? `font-size:  12px;` : `font-size: 0.75rem` };
 	color: ${ ( props ) => props.theme.colors.textColorLight };
 `;
 
 function LineItemPrice( {
-	isDiscounted,
 	actualAmount,
-	originalAmount,
-	isSummary,
+	crossedOutAmount,
 }: {
-	isDiscounted?: boolean;
-	actualAmount: string;
-	originalAmount?: string;
-	isSummary?: boolean;
+	actualAmount?: string;
+	crossedOutAmount?: string;
 } ) {
 	return (
-		<LineItemPriceWrapper isSummary={ isSummary }>
-			{ isDiscounted && originalAmount ? (
-				<>
-					<s>{ originalAmount }</s> { actualAmount }
-				</>
-			) : (
-				actualAmount
-			) }
+		<LineItemPriceWrapper>
+			{ crossedOutAmount && <s>{ crossedOutAmount }</s> }
+			<span>{ actualAmount }</span>
 		</LineItemPriceWrapper>
 	);
 }
@@ -314,14 +310,10 @@ function WPNonProductLineItem( {
 				{ label }
 			</LineItemTitle>
 			{ hasCheckoutVersion2 ? (
-				<LineItemPrice
-					aria-labelledby={ itemSpanId }
-					actualAmount={ actualAmountDisplay }
-					isSummary={ isSummary }
-				/>
+				<LineItemPrice aria-labelledby={ itemSpanId } actualAmount={ actualAmountDisplay } />
 			) : (
 				<span aria-labelledby={ itemSpanId } className="checkout-line-item__price">
-					<LineItemPrice actualAmount={ actualAmountDisplay } isSummary={ isSummary } />
+					<LineItemPrice actualAmount={ actualAmountDisplay } />
 				</span>
 			) }
 			{ hasDeleteButton && removeProductFromCart && (
@@ -1244,27 +1236,6 @@ const DesktopGiftWrapper = styled.div`
 	}
 `;
 
-/**
- * Note that this function returns the cost in the currency's smallest unit.
- */
-function getCostBeforeDiscounts( product: ResponseCartProduct ): number {
-	const originalCostOverrides =
-		product.cost_overrides?.filter( ( override ) => override.does_override_original_cost ) ?? [];
-	if ( originalCostOverrides.length > 0 ) {
-		const lastOriginalCostOverride = originalCostOverrides.pop();
-		if ( lastOriginalCostOverride ) {
-			return lastOriginalCostOverride.new_subtotal_integer;
-		}
-	}
-	if ( product.cost_overrides && product.cost_overrides.length > 0 ) {
-		const firstOverride = product.cost_overrides[ 0 ];
-		if ( firstOverride ) {
-			return firstOverride.old_subtotal_integer;
-		}
-	}
-	return product.item_subtotal_integer;
-}
-
 function CheckoutLineItem( {
 	children,
 	product,
@@ -1279,8 +1250,7 @@ function CheckoutLineItem( {
 	onRemoveProductClick,
 	onRemoveProductCancel,
 	isAkPro500Cart,
-	areThereVariants,
-	shouldShowVariantSelector,
+	shouldShowBillingInterval,
 }: PropsWithChildren< {
 	product: ResponseCartProduct;
 	className?: string;
@@ -1294,8 +1264,7 @@ function CheckoutLineItem( {
 	onRemoveProductClick?: ( label: string ) => void;
 	onRemoveProductCancel?: ( label: string ) => void;
 	isAkPro500Cart?: boolean;
-	areThereVariants?: boolean;
-	shouldShowVariantSelector?: boolean;
+	shouldShowBillingInterval?: boolean;
 } > ) {
 	const id = product.uuid;
 	const translate = useTranslate();
@@ -1340,10 +1309,7 @@ function CheckoutLineItem( {
 			? product.item_subtotal_integer / product.quantity
 			: product.item_subtotal_integer;
 
-	// Introductory offers have their renewal price returned as the original
-	// cost property, and we don't want to show that as the item's cost before
-	// discounts, so we calculate that separately here.
-	const costBeforeDiscounts = getCostBeforeDiscounts( product );
+	const costBeforeDiscounts = getSubtotalWithoutDiscountsForProduct( product );
 
 	const actualAmountDisplay = formatCurrency( itemSubtotalInteger, product.currency, {
 		isSmallestUnit: true,
@@ -1362,7 +1328,22 @@ function CheckoutLineItem( {
 		coupon: responseCart.coupon,
 	} );
 
-	/* eslint-disable wpcalypso/jsx-classname-namespace */
+	const isIntroductoryOfferWithDifferentLength =
+		doesIntroductoryOfferHaveDifferentTermLengthThanProduct( product );
+	const amountWithIntroductoryOfferOnly = product.cost_overrides?.reduce(
+		( total, costOverride ) =>
+			costOverride.override_code === 'introductory-offer'
+				? total + costOverride.new_subtotal_integer
+				: total,
+		0
+	);
+	const formattedAmountWithIntroductoryOfferOnly = amountWithIntroductoryOfferOnly
+		? formatCurrency( amountWithIntroductoryOfferOnly, product.currency, {
+				isSmallestUnit: true,
+				stripZeros: true,
+		  } )
+		: undefined;
+
 	return (
 		<div
 			className={ joinClasses( [ className, 'checkout-line-item' ] ) }
@@ -1384,34 +1365,41 @@ function CheckoutLineItem( {
 			</LineItemTitle>
 			{ hasCheckoutVersion2 ? (
 				<LineItemPrice
-					actualAmount={ formatCurrency( costBeforeDiscounts, product.currency, {
-						isSmallestUnit: true,
-						stripZeros: true,
-					} ) }
-					isSummary={ isSummary }
+					actualAmount={
+						isIntroductoryOfferWithDifferentLength
+							? formattedAmountWithIntroductoryOfferOnly
+							: formatCurrency( costBeforeDiscounts, product.currency, {
+									isSmallestUnit: true,
+									stripZeros: true,
+							  } )
+					}
+					crossedOutAmount={
+						isIntroductoryOfferWithDifferentLength
+							? formatCurrency( costBeforeDiscounts, product.currency, {
+									isSmallestUnit: true,
+									stripZeros: true,
+							  } )
+							: undefined
+					}
 				/>
 			) : (
 				<span aria-labelledby={ itemSpanId } className="checkout-line-item__price">
 					<LineItemPrice
-						isDiscounted={ isDiscounted }
 						actualAmount={ actualAmountDisplay }
-						originalAmount={ originalAmountDisplay }
-						isSummary={ isSummary }
+						crossedOutAmount={ isDiscounted ? originalAmountDisplay : undefined }
 					/>
 				</span>
 			) }
 
-			{ product && ! containsPartnerCoupon && (
+			{ ! containsPartnerCoupon && (
 				<>
 					{ hasCheckoutVersion2 ? (
 						<>
-							<BillingInterval>
-								{ areThereVariants && shouldShowVariantSelector ? (
-									<DropdownWrapper>{ children }</DropdownWrapper>
-								) : (
+							{ shouldShowBillingInterval && (
+								<BillingInterval>
 									<LineItemBillingIntervalWrapper product={ product } />
-								) }
-							</BillingInterval>
+								</BillingInterval>
+							) }
 							<LineItemMeta>
 								<LineItemMetaInfoWrapper product={ product } />
 								{ isJetpackSearch( product ) && <JetpackSearchMeta product={ product } /> }
@@ -1434,7 +1422,7 @@ function CheckoutLineItem( {
 				</>
 			) }
 
-			{ product && containsPartnerCoupon && (
+			{ containsPartnerCoupon && (
 				<LineItemMeta>
 					{ hasCheckoutVersion2 ? (
 						<LineItemBillingInterval product={ product } />
@@ -1452,7 +1440,8 @@ function CheckoutLineItem( {
 				<EmailMeta product={ product } isRenewal={ isRenewal } />
 			) }
 
-			{ ! hasCheckoutVersion2 && ! isEmail && <>{ children }</> }
+			{ children }
+
 			{ hasDeleteButton && removeProductFromCart && (
 				<>
 					<DeleteButtonWrapper>
@@ -1513,5 +1502,4 @@ function CheckoutLineItem( {
 			) }
 		</div>
 	);
-	/* eslint-enable wpcalypso/jsx-classname-namespace */
 }

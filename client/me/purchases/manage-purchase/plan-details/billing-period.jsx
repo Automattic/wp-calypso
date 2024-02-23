@@ -40,7 +40,9 @@ export class PlanBillingPeriod extends Component {
 				'/checkout/' +
 				purchase.domain +
 				'/' +
-				yearlyPlanSlug
+				yearlyPlanSlug +
+				'?upgrade_from=' +
+				purchase.productSlug
 		);
 	};
 

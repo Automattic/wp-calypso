@@ -1,6 +1,8 @@
+import { englishLocales } from '@automattic/i18n-utils';
 import { StepContainer } from '@automattic/onboarding';
 import styled from '@emotion/styled';
 import { useI18n } from '@wordpress/react-i18n';
+import { useTranslate } from 'i18n-calypso';
 import FormattedHeader from 'calypso/components/formatted-header';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { useSiteDomains } from '../../../../hooks/use-site-domains';
@@ -15,7 +17,8 @@ const WarningsOrHoldsSection = styled.div`
 
 const ErrorStep: Step = function ErrorStep( { navigation } ) {
 	const { goBack, goNext } = navigation;
-	const { __ } = useI18n();
+	const translate = useTranslate();
+	const { __, hasTranslation } = useI18n();
 	const siteDomains = useSiteDomains();
 	const siteSetupError = useSiteSetupError();
 
@@ -25,12 +28,27 @@ const ErrorStep: Step = function ErrorStep( { navigation } ) {
 		domain = siteDomains[ 0 ].domain;
 	}
 
-	const defaultBodyText = __(
-		'It looks like something went wrong while setting up your store. Please contact support so that we can help you out.'
-	);
+	const messageCopy = () => {
+		// New copy waiting on translation.
+		if (
+			englishLocales.includes( translate?.localeSlug || '' ) ||
+			hasTranslation(
+				'It looks like something went wrong while setting up your site. Please contact support so that we can help you out.'
+			)
+		) {
+			return __(
+				'It looks like something went wrong while setting up your site. Please contact support so that we can help you out.'
+			);
+		}
+
+		// Original copy
+		return __(
+			'It looks like something went wrong while setting up your store. Please contact support so that we can help you out.'
+		);
+	};
 
 	const headerText = siteSetupError?.error || __( "We've hit a snag" );
-	const bodyText = siteSetupError?.message || defaultBodyText;
+	const bodyText = siteSetupError?.message || messageCopy();
 
 	const getContent = () => {
 		return (

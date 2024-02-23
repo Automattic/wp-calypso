@@ -29,9 +29,10 @@ type Followers = {
 	subscribers: Array< object >;
 	total_email: number;
 	total_wpcom: number;
+	total: number;
 };
 
-const FOLLOWERS_QUERY = { type: 'wpcom', max: 0 };
+const FOLLOWERS_QUERY = { type: 'all', max: 0 };
 
 // Meant to replace annual-site-stats section
 export default function AnnualHighlightsSection( { siteId }: { siteId: number } ) {
@@ -56,7 +57,7 @@ export default function AnnualHighlightsSection( { siteId }: { siteId: number } 
 			likes: currentYearData?.total_likes ?? ( hasYearsData ? 0 : null ),
 			posts: currentYearData?.total_posts ?? ( hasYearsData ? 0 : null ),
 			words: currentYearData?.total_words ?? ( hasYearsData ? 0 : null ),
-			followers: year === currentYear ? followers?.total_wpcom ?? null : null,
+			followers: year === currentYear ? followers?.total ?? null : null,
 		};
 	}, [ year, followers, insights, currentYear ] );
 

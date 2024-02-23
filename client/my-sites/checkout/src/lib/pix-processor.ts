@@ -1,11 +1,6 @@
-import {
-	makeRedirectResponse,
-	makeErrorResponse,
-	makeSuccessResponse,
-} from '@automattic/composite-checkout';
+import { makeErrorResponse, makeSuccessResponse } from '@automattic/composite-checkout';
 import { createElement } from 'react';
 import { Root, createRoot } from 'react-dom/client';
-import userAgent from 'calypso/lib/user-agent';
 import { PurchaseOrderStatus, fetchPurchaseOrder } from '../hooks/use-purchase-order';
 import { recordTransactionBeginAnalytics } from '../lib/analytics';
 import getDomainDetails from '../lib/get-domain-details';
@@ -117,10 +112,6 @@ export async function pixProcessor(
 				throw new Error( genericErrorMessage );
 			}
 
-			if ( userAgent.isMobile && response.redirect_url ) {
-				return makeRedirectResponse( response?.redirect_url );
-			}
-
 			if ( ! response.order_id ) {
 				// eslint-disable-next-line no-console
 				console.error( 'Transaction response was missing required order ID' );
@@ -131,7 +122,6 @@ export async function pixProcessor(
 			let explicitClosureMessage: string | undefined;
 			displayModal( {
 				root,
-				redirectUrl: response.redirect_url,
 				qrCode: response.qr_code,
 				priceInteger: responseCart.total_cost_integer,
 				priceCurrency: responseCart.currency,
@@ -203,7 +193,6 @@ function hideModal( root: Root ): void {
 
 function displayModal( {
 	root,
-	redirectUrl,
 	qrCode,
 	priceInteger,
 	priceCurrency,
@@ -213,7 +202,6 @@ function displayModal( {
 	isJetpackNotAtomic,
 }: {
 	root: Root;
-	redirectUrl: string;
 	qrCode: string;
 	priceInteger: number;
 	priceCurrency: string;
@@ -224,7 +212,6 @@ function displayModal( {
 } ) {
 	root.render(
 		createElement( PixConfirmation, {
-			redirectUrl,
 			qrCode,
 			priceInteger,
 			priceCurrency,

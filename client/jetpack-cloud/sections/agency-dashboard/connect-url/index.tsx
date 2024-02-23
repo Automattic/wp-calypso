@@ -9,11 +9,10 @@ import './style.scss';
 export default function ConnectUrl() {
 	const translate = useTranslate();
 
-	const [ filename, setFilename ] = useState( '' );
-	const [ sites, setSites ] = useState( [] as string[][] );
-	const [ csvColumns, setCSVColumns ] = useState( [] as string[] );
 	const [ queue, setQueue ] = useState( [] as Site[] );
 	const [ processed, setProcessed ] = useState( [] as Site[] );
+	const [ csvConfirmed, setCsvConfirmed ] = useState( false );
+	const isProcessing = queue.length > 0;
 	const createUrlOnlySiteMutation = useCreateUrlOnlySiteMutation();
 
 	const shiftQueue = useCallback(
@@ -37,6 +36,14 @@ export default function ConnectUrl() {
 		shiftQueue( false );
 	}, [ shiftQueue, setQueue ] );
 
+	const onConfirm = useCallback(
+		( sites: string[] ) => {
+			setCsvConfirmed( true );
+			setQueue( sites.map( ( site ) => ( { url: site || '', status: 'pending' } ) ) );
+		},
+		[ setCsvConfirmed, setQueue ]
+	);
+
 	useEffect( () => {
 		if ( queue.length < 1 ) {
 			return;
@@ -51,36 +58,6 @@ export default function ConnectUrl() {
 		);
 	}, [ queue, createUrlOnlySiteMutation.mutate ] );
 
-	const [ selectedColumn, setSelectedColumn ] = useState( '' );
-	const [ csvConfirmed, setCSVConfirmed ] = useState( false );
-	const isProcessing = queue.length > 0;
-
-	const handleCSVLoadConfirmation = useCallback(
-		( column: string ) => {
-			const index = csvColumns.indexOf( column );
-
-			if ( index === -1 ) {
-				return;
-			}
-
-			setSelectedColumn( column );
-			setCSVConfirmed( true );
-			setQueue( sites.map( ( site ) => ( { url: site[ index ] || '', status: 'pending' } ) ) );
-		},
-		[ sites, selectedColumn ]
-	);
-
-	const onCSVLoad = useCallback(
-		( lines: string[][] ) => {
-			if ( lines.length < 2 ) {
-				return;
-			}
-			setCSVColumns( lines[ 0 ] );
-			setSites( lines.slice( 1 ) );
-		},
-		[ setCSVColumns, setSites ]
-	);
-
 	const pageTitle = isProcessing ? translate( 'Adding sites' ) : translate( 'Add sites by URL' );
 	const pageSubtitle = isProcessing
 		? translate( 'Please wait while we add all sites to your account.' )
@@ -90,27 +67,13 @@ export default function ConnectUrl() {
 		<div className="connect-url">
 			<h2 className="connect-url__page-title">{ pageTitle }</h2>
 			<div className="connect-url__page-subtitle">{ pageSubtitle }</div>
-			{ ! csvConfirmed ? (
-				<>
-					<Card>
-						<SitesInput
-							{ ...{
-								sites: sites,
-								setSites: setSites,
-								filename: filename,
-								setFilename: setFilename,
-								csvColumns,
-								onCSVLoad,
-							} }
-							onCSVLoadConfirmation={ handleCSVLoadConfirmation }
-						/>
-					</Card>
-				</>
-			) : (
-				<Card>
+			<Card>
+				{ ! csvConfirmed ? (
+					<SitesInput onConfirm={ onConfirm } />
+				) : (
 					<CreateSites processed={ processed } queue={ queue } />
-				</Card>
-			) }
+				) }
+			</Card>
 		</div>
 	);
 }

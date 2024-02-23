@@ -4,10 +4,11 @@ import { GitHubConnectionForm } from 'calypso/my-sites/github-deployments/compon
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { errorNotice, successNotice } from 'calypso/state/notices/actions';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import Notice from '../../../components/notice';
 import { useDispatch, useSelector } from '../../../state';
 import { GitHubLoadingPlaceholder } from '../components/loading-placeholder';
 import { CodeDeploymentData } from '../deployments/use-code-deployments-query';
-import { useGithubAccountsQuery } from '../use-github-accounts-query';
+import { useGithubInstallationsQuery } from '../use-github-installations-query';
 import { useGithubRepositoriesQuery } from '../use-github-repositories-query';
 import { useUpdateCodeDeployment } from './use-update-code-deployment';
 
@@ -24,7 +25,7 @@ export const GitHubDeploymentManagementForm = ( {
 	codeDeployment,
 	onUpdated,
 }: GitHubDeploymentManagementFormProps ) => {
-	const installation = useGithubAccountsQuery().data?.find(
+	const installation = useGithubInstallationsQuery().data?.find(
 		( installation ) => installation.external_id === codeDeployment?.installation_id
 	);
 	const dispatch = useDispatch();
@@ -65,6 +66,7 @@ export const GitHubDeploymentManagementForm = ( {
 			branch: codeDeployment.branch_name,
 			destPath: codeDeployment.target_dir,
 			isAutomated: codeDeployment.is_automated,
+			workflowPath: codeDeployment.workflow_path,
 		};
 	}, [ codeDeployment ] );
 
@@ -73,20 +75,36 @@ export const GitHubDeploymentManagementForm = ( {
 	}
 
 	return (
-		<GitHubConnectionForm
-			account={ installation }
-			ctaLabel={ __( 'Update connection' ) }
-			repository={ repository }
-			initialValues={ initialValues }
-			onSubmit={ ( { externalRepositoryId, branchName, targetDir, installationId, isAutomated } ) =>
-				updateDeployment( {
+		<>
+			<div css={ { marginBottom: '16px' } }>
+				<Notice isCompact>
+					{ __( 'Changes to an existing connection will be applied in the next deployment run.' ) }
+				</Notice>
+			</div>
+
+			<GitHubConnectionForm
+				installation={ installation }
+				ctaLabel={ __( 'Update connection' ) }
+				repository={ repository }
+				initialValues={ initialValues }
+				onSubmit={ ( {
 					externalRepositoryId,
 					branchName,
 					targetDir,
 					installationId,
 					isAutomated,
-				} )
-			}
-		/>
+					workflowPath,
+				} ) =>
+					updateDeployment( {
+						externalRepositoryId,
+						branchName,
+						targetDir,
+						installationId,
+						isAutomated,
+						workflowPath,
+					} )
+				}
+			/>
+		</>
 	);
 };

@@ -23,20 +23,26 @@ class PlansNavigation extends Component {
 		isTrial: PropTypes.bool,
 	};
 
+	static planPaths = [
+		'/plans',
+		'/plans/monthly',
+		'/plans/yearly',
+		'/plans/2yearly',
+		'/plans/3yearly',
+	];
+
 	getSectionTitle( path ) {
-		switch ( path ) {
-			case '/plans/my-plan':
-				return 'My Plan';
+		const { translate } = this.props;
 
-			case '/plans':
-			case '/plans/monthly':
-			case '/plans/yearly':
-			case '/plans/2yearly':
-				return 'Plans';
-
-			default:
-				return path.split( '?' )[ 0 ].replace( /\//g, ' ' );
+		if ( path === '/plans/my-plan' ) {
+			return translate( 'My Plan' );
 		}
+
+		if ( PlansNavigation.planPaths.includes( path ) ) {
+			return translate( 'Plans' );
+		}
+
+		return path.split( '?' )[ 0 ].replace( /\//g, ' ' );
 	}
 
 	isSiteOn100YearPlan() {
@@ -51,35 +57,31 @@ class PlansNavigation extends Component {
 		const hasPinnedItems = Boolean( site ) && isMobile();
 		const myPlanItemTitle = isTrial ? translate( 'Free trial' ) : translate( 'My Plan' );
 
+		if ( ! site || ! shouldShowNavigation ) {
+			return;
+		}
+
 		return (
-			site &&
-			shouldShowNavigation && (
-				<div className="navigation">
-					<SectionNav hasPinnedItems={ hasPinnedItems } selectedText={ sectionTitle }>
-						<NavTabs label="Section" selectedText={ sectionTitle }>
+			<div className="navigation">
+				<SectionNav hasPinnedItems={ hasPinnedItems } selectedText={ sectionTitle }>
+					<NavTabs label={ translate( 'Section' ) } selectedText={ sectionTitle }>
+						<NavItem
+							path={ `/plans/my-plan/${ site.slug }` }
+							selected={ path === '/plans/my-plan' }
+						>
+							{ myPlanItemTitle }
+						</NavItem>
+						{ ! this.isSiteOn100YearPlan() && (
 							<NavItem
-								path={ `/plans/my-plan/${ site.slug }` }
-								selected={ path === '/plans/my-plan' }
+								path={ `/plans/${ site.slug }` }
+								selected={ PlansNavigation.planPaths.includes( path ) }
 							>
-								{ myPlanItemTitle }
+								{ translate( 'Plans' ) }
 							</NavItem>
-							{ ! this.isSiteOn100YearPlan() && (
-								<NavItem
-									path={ `/plans/${ site.slug }` }
-									selected={
-										path === '/plans' ||
-										path === '/plans/monthly' ||
-										path === '/plans/yearly' ||
-										path === '/plans/2yearly'
-									}
-								>
-									{ translate( 'Plans' ) }
-								</NavItem>
-							) }
-						</NavTabs>
-					</SectionNav>
-				</div>
-			)
+						) }
+					</NavTabs>
+				</SectionNav>
+			</div>
 		);
 	}
 }
