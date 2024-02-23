@@ -30,6 +30,8 @@ import type {
 	FEATURE_GROUP_SHIPPING,
 	WOOCOMMERCE_PRODUCTS,
 	TYPES_LIST,
+	WPCOM_SPACE_UPGRADE_PRODUCTS,
+	WPCOM_OTHER_PRODUCTS,
 } from './constants';
 import type { TranslateResult } from 'i18n-calypso';
 import type { ReactElement, MemoExoticComponent } from 'react';
@@ -57,11 +59,20 @@ export type FeatureList = {
 	[ key: string ]: FeatureObject;
 };
 
-// WPCom
+/**
+ * WPCOM
+ */
 export type WPComProductSlug = ( typeof WPCOM_PRODUCTS )[ number ];
 export type WPComPlanSlug = ( typeof WPCOM_PLANS )[ number ];
 export type WPComPurchasableItemSlug = WPComProductSlug | WPComPlanSlug;
 export type WPComStorageAddOnSlug = ( typeof WPCOM_STORAGE_ADD_ONS )[ number ];
+// WPCOM Space Upgrade Products
+// - Special products that do not yet map to the exported `PRODUCTS_LIST` in @automattic/calypso-products
+export type WPComSpaceUpgradeProductSlug = ( typeof WPCOM_SPACE_UPGRADE_PRODUCTS )[ number ];
+
+// WPCOM Other Products
+// - Special products that do not yet map to the exported `PRODUCTS_LIST` in @automattic/calypso-products
+export type WPComOtherProductSlug = ( typeof WPCOM_OTHER_PRODUCTS )[ number ];
 
 export interface WPComPlan extends Plan {
 	getAudience?: () => TranslateResult;
@@ -105,7 +116,9 @@ export type IncompleteWPcomPlan = Partial< WPComPlan > &
 		'group' | 'type' | 'getTitle' | 'getDescription' | 'getPlanCancellationDescription'
 	>;
 
-// Jetpack
+/**
+ * Jetpack
+ */
 export type JetpackProductSlug = ( typeof JETPACK_PRODUCTS_LIST )[ number ];
 export type JetpackLegacyPlanSlug = ( typeof JETPACK_LEGACY_PLANS )[ number ];
 export type JetpackYearlyLegacyPlanSlug = ( typeof JETPACK_YEARLY_LEGACY_PLANS )[ number ];
@@ -119,7 +132,9 @@ export type JetpackPurchasableItemSlug =
 	| JetpackProductSlug
 	| Exclude< JetpackPlanSlug, typeof PLAN_JETPACK_FREE >;
 
-// WooCommerce
+/**
+ * WooCommerce
+ */
 export type WooCommerceProductSlug = ( typeof WOOCOMMERCE_PRODUCTS )[ number ];
 
 export type SelectorProductFeaturesItem = {
