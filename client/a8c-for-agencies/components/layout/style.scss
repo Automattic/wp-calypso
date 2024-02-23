@@ -26,10 +26,11 @@
 .a4a-layout__body {
 	width: 100%;
 	flex: 1 1 100%;
+	padding-block-start: 16px;
 }
 
 .a4a-layout__top-wrapper,
-.a4a-layout__body-wrapper {
+.a4a-layout__body {
 	margin-inline: 0;
 
 	> * {
@@ -38,14 +39,11 @@
 		padding-inline: 64px;
 	}
 }
+
 .main.a4a-layout.is-with-border {
 	@include breakpoint-deprecated( ">660px" ) {
 		.a4a-layout__top-wrapper {
 			border-block-end: 1px solid var(--color-neutral-5);
-		}
-
-		.a4a-layout__body {
-			padding-block-start: 16px;
 		}
 	}
 }
