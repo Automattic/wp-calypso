@@ -46,6 +46,11 @@ function CommandPaletteApp() {
 		useCommands = isAdmin ? useWpcomSimpleSiteCommands : useWpcomSimpleSiteLimitedCommands;
 	}
 
+	if ( ! useCommands ) {
+		// Can't load the command palette without a valid commands provider function.
+		return null;
+	}
+
 	return (
 		<QueryClientProvider client={ new QueryClient() }>
 			<CommandPalette
