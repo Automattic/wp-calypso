@@ -6,6 +6,8 @@ import FormRadio from 'calypso/components/forms/form-radio';
 import FormSelect from 'calypso/components/forms/form-select';
 import { getRepositoryTemplate } from './templates';
 
+import './style.scss';
+
 export type ProjectType = 'theme' | 'plugin' | 'site';
 
 type FormRadioWithTemplateSelectProps = {
@@ -54,22 +56,26 @@ export const FormRadioWithTemplateSelect = ( {
 	};
 
 	return (
-		<div
-			className={ classNames( 'form-radio__container', {
+		<label
+			className={ classNames( 'form-radio-with-template-select', {
 				checked: checked,
 			} ) }
+			htmlFor={ label }
 		>
-			<FormRadio
-				checked={ checked }
-				label={ label }
-				onChange={ () => {
-					setChecked( ! checked );
-					onChange?.();
-				} }
-				className="form-radio-bar"
-			/>
 			<div>
-				{ checked && (
+				<FormRadio
+					id={ label }
+					checked={ checked }
+					label={ label }
+					onChange={ () => {
+						setChecked( ! checked );
+						onChange?.();
+					} }
+					className="form-radio-bar"
+				/>
+			</div>
+			{ checked && (
+				<div>
 					<FormSelect
 						onChange={ handleTemplateChange }
 						value={ selectedTemplate?.value ?? 'Select template' }
@@ -83,19 +89,19 @@ export const FormRadioWithTemplateSelect = ( {
 							</option>
 						) ) }
 					</FormSelect>
-				) }
-				{ checked && selectedTemplate && (
-					<small style={ { marginTop: '12px' } }>
-						{ createInterpolateElement( __( 'Learn more about the <link/> template' ), {
-							link: (
-								<ExternalLink href={ selectedTemplate?.link }>
-									{ selectedTemplate?.name }
-								</ExternalLink>
-							),
-						} ) }
-					</small>
-				) }
-			</div>
-		</div>
+					{ selectedTemplate && (
+						<small style={ { marginTop: '12px' } }>
+							{ createInterpolateElement( __( 'Learn more about the <link/> template' ), {
+								link: (
+									<ExternalLink href={ selectedTemplate?.link }>
+										{ selectedTemplate?.name }
+									</ExternalLink>
+								),
+							} ) }
+						</small>
+					) }
+				</div>
+			) }
+		</label>
 	);
 };

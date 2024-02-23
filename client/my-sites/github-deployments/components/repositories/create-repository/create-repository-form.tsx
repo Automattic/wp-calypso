@@ -8,13 +8,13 @@ import { GitHubInstallationsDropdown } from 'calypso/my-sites/github-deployments
 import { useLiveInstallations } from 'calypso/my-sites/github-deployments/components/installations-dropdown/use-live-installations';
 import { GitHubRepositoryData } from 'calypso/my-sites/github-deployments/use-github-repositories-query';
 import { MutationVariables as CreateDeploymentMutationVariables } from '../../../deployment-creation/use-create-code-deployment';
-import { DeploymentStyle } from '../deployment-style/deployment-style';
 import {
 	FormRadioWithTemplateSelect,
 	ProjectType,
 	RepositoryTemplate,
-} from './form-radio-with-template-select';
-import { repositoryTemplates } from './templates';
+} from '../../form-radio-with-template-select';
+import { repositoryTemplates } from '../../form-radio-with-template-select/templates';
+import { DeploymentStyle } from '../deployment-style/deployment-style';
 import { MutationVariables as CreateRepositoryMutationVariables } from './use-create-repository';
 
 import './style.scss';
@@ -98,10 +98,10 @@ export const CreateRepositoryForm = ( {
 
 	return (
 		<div className="github-deployments-create-repository">
-			<form style={ { width: '100%', flex: 1 } }>
-				<div className="repository-name-formfieldset">
+			<form className="github-deployments-create-repository__configuration">
+				<div className="github-deployments-create-repository__repository">
 					<FormFieldset style={ { flex: 0.5 } }>
-						<FormLabel htmlFor="githubInstallation">{ __( 'Github installation' ) }</FormLabel>
+						<FormLabel htmlFor="githubInstallation">{ __( 'GitHub account' ) }</FormLabel>
 						{ isLoadingInstallations ? (
 							<Spinner />
 						) : (
@@ -117,6 +117,7 @@ export const CreateRepositoryForm = ( {
 						<FormLabel htmlFor="repoName">{ __( 'Repository name' ) }</FormLabel>
 						<FormTextInput
 							id="repoName"
+							placeholder={ __( 'my-amazing-repository' ) }
 							placehlder={ __( 'Repository name' ) }
 							value={ repositoryName }
 							onChange={ async ( event: ChangeEvent< HTMLInputElement > ) => {
@@ -126,50 +127,52 @@ export const CreateRepositoryForm = ( {
 					</FormFieldset>
 				</div>
 				<FormFieldset>
-					<FormLabel htmlFor="deploy">{ __( 'Privacy' ) }</FormLabel>
-					<div className="deploy-toggle">
+					<FormLabel htmlFor="is-private">{ __( 'Privacy' ) }</FormLabel>
+					<div className="github-deployments-create-repository__switch">
 						<FormToggle
-							id="deploy"
+							id="is-private"
 							checked={ isPrivate }
 							onChange={ () => setIsPrivate( ! isPrivate ) }
 						/>
-						<p style={ { margin: '0', marginLeft: '8px' } }>
-							{ __( 'Create private repository' ) }
-						</p>
+						{ __( 'Create private repository' ) }
 					</div>
 				</FormFieldset>
-				<FormFieldset className="github-deployments-create-repository__project-type">
+				<FormFieldset>
 					<FormLabel>{ __( 'What are you building ' ) }</FormLabel>
-					<FormRadioWithTemplateSelect
-						label={ __( 'A theme' ) }
-						projectType="theme"
-						isChecked={ projectType === 'theme' }
-						onChange={ () => {
-							setProjectType( 'theme' );
-						} }
-						onTemplateSelected={ setTemplate }
-						template={ template }
-					/>
-					<FormRadioWithTemplateSelect
-						label={ __( 'A plugin' ) }
-						projectType="plugin"
-						isChecked={ projectType === 'plugin' }
-						onChange={ () => {
-							setProjectType( 'plugin' );
-						} }
-						onTemplateSelected={ setTemplate }
-						template={ template }
-					/>
-					<FormRadioWithTemplateSelect
-						label={ __( 'A site' ) }
-						projectType="site"
-						isChecked={ projectType === 'site' }
-						onChange={ () => {
-							setProjectType( 'site' );
-						} }
-						onTemplateSelected={ setTemplate }
-						template={ template }
-					/>
+					<div className="github-deployments-create-repository__project-type">
+						<FormRadioWithTemplateSelect
+							label={ __( 'A theme' ) }
+							projectType="theme"
+							isChecked={ projectType === 'theme' }
+							onChange={ () => {
+								setProjectType( 'theme' );
+							} }
+							onTemplateSelected={ setTemplate }
+							template={ template }
+						/>
+						<FormRadioWithTemplateSelect
+							label={ __( 'A plugin' ) }
+							projectType="plugin"
+							isChecked={ projectType === 'plugin' }
+							onChange={ () => {
+								setProjectType( 'plugin' );
+							} }
+							onTemplateSelected={ setTemplate }
+							template={ template }
+						/>
+						<FormRadioWithTemplateSelect
+							label={ __( 'A site' ) }
+							projectType="site"
+							isChecked={ projectType === 'site' }
+							onChange={ () => {
+								setProjectType( 'site' );
+							} }
+							onTemplateSelected={ setTemplate }
+							template={ template }
+						/>
+					</div>
+				</FormFieldset>
+				<FormFieldset>
 					<FormLabel htmlFor="targetDir">{ __( 'Destination directory' ) }</FormLabel>
 					<FormTextInput
 						id="targetDir"
@@ -181,18 +184,19 @@ export const CreateRepositoryForm = ( {
 					/>
 				</FormFieldset>
 				<FormFieldset>
-					<FormLabel htmlFor="deploy">{ __( 'Automatic deploys' ) }</FormLabel>
-					<div className="deploy-toggle">
+					<FormLabel htmlFor="is-automated">{ __( 'Automatic deploys' ) }</FormLabel>
+					<div className="github-deployments-create-repository__switch">
 						<FormToggle
-							id="deploy"
+							id="is-automated"
 							checked={ isAutomated }
 							onChange={ () => setIsAutomated( ! isAutomated ) }
 						/>
-						<p style={ { margin: '0', marginLeft: '8px' } }>{ __( 'Deploy changes on push ' ) }</p>
+						{ __( 'Deploy changes on push' ) }
 					</div>
 				</FormFieldset>
 				<Button
 					primary
+					type="submit"
 					busy={ isPending }
 					disabled={ ! isFormValid || isDisabled }
 					onClick={ handleCreateRepository }

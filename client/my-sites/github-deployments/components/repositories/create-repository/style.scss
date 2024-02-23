@@ -13,77 +13,38 @@
 
 	.form-label {
 		font-weight: 500;
-
-		&[for="targetDir"] {
-			margin-top: 24px;
-		}
 	}
 
-	.repository-name-formfieldset {
+	&__repository {
 		display: flex;
 		flex-direction: row;
 		align-items: flex-start;
 		gap: 16px;
 	}
 
-	.card.header-cake {
-		margin-bottom: 0;
-		border-bottom: none;
-	}
-
-	.select-dropdown__header {
-		height: 40px;
-	}
-
-	.select-dropdown__container {
-		width: 100%;
-	}
-
-	.form-radio__container.checked .form-radio {
-		border: 1px solid var(--color-accent);
-		color: var(--color-accent);
-	}
-
 	&__project-type {
-		.form-radio__container:not(:first-child) {
-			margin-top: 8px;
+		display: flex;
+		flex-direction: column;
+		gap: 8px;
+	}
+
+	&__configuration {
+		.form-fieldset {
+			margin-bottom: 24px;
+		}
+
+		button[type="submit"] {
+			margin-top: 16px;
 		}
 	}
 
-	.form-radio__container {
-		border: 1px solid var(--color-neutral-10);
-		box-sizing: border-box;
-		padding: 12px 12px;
-		border-radius: 2px;
-		white-space: nowrap;
-
-		&.checked {
-			border: 1px solid var(--color-accent);
-		}
-
-		.form-radio:checked::before {
-			background: var(--color-accent);
-		}
-
-		small {
-			display: block;
-			font-size: 0.75rem;
-			font-style: italic;
-		}
-	}
-
-	.form-select {
-		margin-top: 12px;
-		width: 100%;
-	}
-
-	.deploy-toggle {
+	&__switch {
 		display: flex;
 		align-items: center;
-	}
+		gap: 8px;
 
-	.components-form-toggle {
-		margin-left: 5px;
-		margin-top: 1px;
+		.components-form-toggle {
+			line-height: 1;
+		}
 	}
 }
