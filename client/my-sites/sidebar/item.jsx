@@ -26,6 +26,8 @@ export const MySitesSidebarUnifiedItem = ( {
 	url,
 	className = '',
 	shouldOpenExternalLinksInCurrentTab,
+	forceExternalLink = false,
+	forceShowExternalIcon = false,
 	trackClickEvent,
 } ) => {
 	const reduxDispatch = useDispatch();
@@ -49,6 +51,8 @@ export const MySitesSidebarUnifiedItem = ( {
 			selected={ selected }
 			customIcon={ <SidebarCustomIcon icon={ icon } /> }
 			forceInternalLink={ shouldOpenExternalLinksInCurrentTab }
+			forceExternalLink={ forceExternalLink }
+			forceShowExternalIcon={ forceShowExternalIcon }
 			className={ classnames(
 				isSubItem ? 'sidebar__menu-item--child' : 'sidebar__menu-item-parent',
 				className
@@ -68,6 +72,8 @@ MySitesSidebarUnifiedItem.propTypes = {
 	title: PropTypes.string,
 	url: PropTypes.string,
 	shouldOpenExternalLinksInCurrentTab: PropTypes.bool.isRequired,
+	forceExternalLink: PropTypes.bool,
+	forceShowExternalIcon: PropTypes.bool,
 	trackClickEvent: PropTypes.func,
 };
 

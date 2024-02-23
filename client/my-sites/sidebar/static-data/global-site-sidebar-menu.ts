@@ -7,10 +7,12 @@ export default function globalSiteSidebarMenu( {
 	shouldShowAddOns,
 	showSiteMonitoring,
 	siteDomain,
+	selectedSiteSlug,
 }: {
 	shouldShowAddOns: boolean;
 	showSiteMonitoring: boolean;
 	siteDomain: string;
+	selectedSiteSlug: string;
 } ) {
 	return [
 		{
@@ -24,6 +26,17 @@ export default function globalSiteSidebarMenu( {
 		{
 			type: 'current-site',
 			url: `/home/${ siteDomain }`,
+		},
+		{
+			slug: 'wp-admin',
+			title: translate( 'WP Admin' ),
+			type: 'menu-item',
+			url: `https://${ selectedSiteSlug }/wp-admin`,
+			className: 'sidebar__menu-item-wp-admin',
+			forceShowExternalIcon: true,
+		},
+		{
+			type: 'separator',
 		},
 		{
 			slug: 'upgrades',
