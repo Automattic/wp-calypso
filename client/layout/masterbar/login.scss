@@ -42,26 +42,3 @@
 	}
 }
 
-.masterbar__global-nav {
-	background: var(--studio-black);
-	border-bottom: 1 px solid var(--studio-black);
-
-	.masterbar__item.is-active {
-		background-color: var(--studio-black);
-	}
-
-	.masterbar__item,
-	.site {
-		&:hover {
-			background-color: var(--color-sidebar-menu-hover-background);
-		}
-	}
-
-	.site {
-		.site__title,
-		.site__domain {
-			color: var(--color-sidebar-text);
-		}
-	}
-}
-
