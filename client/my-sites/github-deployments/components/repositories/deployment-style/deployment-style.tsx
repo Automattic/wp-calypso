@@ -299,9 +299,9 @@ export const DeploymentStyle = ( {
 
 	return (
 		<div className="github-deployments-deployment-style">
-			<h3 style={ { fontSize: '16px', marginBottom: '16px' } }>
-				{ __( 'Pick your deployment style' ) }
-			</h3>
+			<strong css={ { display: 'block', fontSize: '16px', marginBottom: '16px' } }>
+				{ __( 'Pick a deployment mode' ) }
+			</strong>
 			<FormRadiosBar
 				items={ [
 					{ label: __( 'Simple' ), value: 'simple' },

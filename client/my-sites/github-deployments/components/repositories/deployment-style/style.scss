@@ -1,4 +1,11 @@
 .github-deployments-deployment-style {
+	border: 1px solid var(--studio-gray-5);
+	box-sizing: border-box;
+	padding: 24px;
+	border-radius: 2px;
+	background-color: var(--studio-gray-0);
+	height: fit-content;
+
 	&__repository {
 		label {
 			margin-bottom: 0;

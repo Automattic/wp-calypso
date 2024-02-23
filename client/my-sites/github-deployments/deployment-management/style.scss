@@ -1,6 +1,11 @@
 .github-deployments-connect-repository {
-	padding-bottom: 32px;
 	display: flex;
+	justify-content: space-between;
+	gap: 58px;
+
+	> * {
+		flex: 1;
+	}
 
 	.form-label {
 		font-weight: 500;
@@ -17,15 +22,12 @@
 		display: flex;
 		align-items: center;
 		justify-content: space-between;
-		padding: 8px;
+		padding: 7px 7px 7px 14px;
+		font-size: $font-body;
 		border: 1px solid var(--color-neutral-10);
 		border-radius: 2px;
 		background-color: #fff;
 		margin-bottom: 4px;
-	}
-
-	&__destination-directory-input {
-		margin-bottom: 4px !important;
 	}
 
 	&__default-path-hint {
@@ -43,17 +45,9 @@
 		display: flex;
 		align-items: center;
 		gap: 8px;
-		font-size: smaller;
-	}
 
-	&__configs {
-		width: 45%;
-		margin-right: 5%;
-	}
-
-	&__deployment-style {
-		background-color: var(--studio-gray-0);
-		padding: 24px;
-		width: 50%;
+		.components-form-toggle {
+			line-height: 1;
+		}
 	}
 }

@@ -1,10 +1,9 @@
-.github-deployments-branch-select {
-	&,
-	.select-dropdown__container {
-		width: 100%;
-	}
+.github-deployments-deployment-branch-select {
+	display: flex;
+	gap: 16px;
+	align-items: center;
 
-	.select-dropdown__header {
-		font-weight: normal;
+	.form-select {
+		flex: 1;
 	}
 }
