@@ -309,6 +309,17 @@ export const DeploymentStyle = ( {
 
 	useEffect( () => {
 		setAdvancedOptionsDisabled( workflows?.length === 0 && isTemplateRepository );
+
+		if ( isTemplateRepository && workflows?.length && workflows?.length > 0 ) {
+			const dotcomBuildArtefact = workflows.find( ( workflow ) => {
+				return workflow.file_name === 'dotcom-build-artifact.yml';
+			} );
+
+			if ( dotcomBuildArtefact ) {
+				setDeploymentStyle( 'custom' );
+				setSelectedWorkflow( dotcomBuildArtefact );
+			}
+		}
 	}, [ workflows, isTemplateRepository ] );
 
 	const RenderValidationIcon = ( { validationStatus }: { validationStatus: WorkFlowStates } ) => {
