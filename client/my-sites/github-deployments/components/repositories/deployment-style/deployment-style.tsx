@@ -5,7 +5,7 @@ import {
 	FormLabel,
 	Spinner,
 } from '@automattic/components';
-import { Icon, SelectControl } from '@wordpress/components';
+import { ExternalLink, Icon, SelectControl } from '@wordpress/components';
 import { sprintf, __ } from '@wordpress/i18n';
 import { check, closeSmall } from '@wordpress/icons';
 import classNames from 'classnames';
@@ -13,7 +13,7 @@ import { translate } from 'i18n-calypso';
 import Prism from 'prismjs';
 import 'prismjs/themes/prism.css';
 import 'prismjs/components/prism-yaml';
-import { useEffect, useMemo, useRef, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormRadiosBar from 'calypso/components/forms/form-radios-bar';
 import SupportInfo from 'calypso/components/support-info';
@@ -50,6 +50,10 @@ interface WorkflowsValidationItem {
 
 type DeploymentStyle = 'simple' | 'custom';
 
+const noticeOptions = {
+	duration: 3000,
+};
+
 export const DeploymentStyle = ( {
 	installationId,
 	repository,
@@ -65,7 +69,6 @@ export const DeploymentStyle = ( {
 	);
 	const [ selectedWorkflow, setSelectedWorkflow ] = useState( workflowPath ?? 'none' );
 	const [ isCreatingNewWorkflow, setIsCreatingNewWorkflow ] = useState( false );
-	// const [ validationTriggered, setValidationTriggered ] = useState( false );
 	const [ isYamlValid, setIsYamlValid ] = useState( true );
 	const validationTriggered = false;
 	const [ errorMessage, setErrorMessage ] = useState( '' );
@@ -102,9 +105,12 @@ export const DeploymentStyle = ( {
 		isTemplateRepository
 	);
 
-	const noticeOptions = {
-		duration: 3000,
-	};
+	const isWorkflowInvalid =
+		! ( isFetchingWorkflows || isRefreshingWorkflows ) && selectedWorkflow === 'none';
+	const workflowFileName = workflowPath
+		? workflowPath.substring( workflowPath.lastIndexOf( '/' ) + 1 )
+		: '';
+	const workflowFileUrl = `https://www.github.com/${ repository.owner }/${ repository.name }/blob/${ branchName }/${ workflowPath }`;
 
 	const { createDeployment, isPending: isInstallingWorkflow } = useCreateWorkflow( {
 		onSuccess: () => {
@@ -188,10 +194,6 @@ export const DeploymentStyle = ( {
 	const handleVerifyWorkflow = () => {
 		refetchWorkflowValidation();
 	};
-
-	// const fixWorfklow = () => {
-	// 	alert( 'TODO: fixWorfklow' );
-	// };
 
 	const installWorkflow = async () => {
 		createDeployment( {
@@ -323,19 +325,26 @@ export const DeploymentStyle = ( {
 							privacyLink={ false }
 						/>
 					</FormLabel>
-					<div className="github-deployments-connect-repository__automatic-deploys">
+					<div className="github-deployments-deployment-style__workflow-select">
 						<SelectControl
 							value={ selectedWorkflow }
 							options={ workflowsForRendering }
 							onChange={ handleWorkflowChange }
+							className={ isWorkflowInvalid ? 'is-error' : undefined }
 						/>
 						{ ( isFetchingWorkflows || isRefreshingWorkflows ) && <Spinner /> }
+						{ isWorkflowInvalid && (
+							<FormInputValidation
+								isError
+								text={ translate( 'Please select a deployment workflow' ) }
+							/>
+						) }
 					</div>
 				</FormFieldset>
 			) }
 
 			{ ! isTemplateRepository && (
-				<FormFieldset>
+				<FormFieldset className="github-deployments-deployment-style__workflow-checks">
 					{ deploymentStyle === 'custom' &&
 						selectedWorkflow !== 'none' &&
 						selectedWorkflow !== undefined &&
@@ -343,32 +352,36 @@ export const DeploymentStyle = ( {
 							<>
 								<FormLabel>{ __( 'Workflow check' ) }</FormLabel>
 								<p>
-									{ translate(
-										'Please edit {{filename}}{{/filename}} and fix the problems we found:',
-										{
-											components: { filename: <span>deploy-live.yml</span> },
-										}
-									) }
+									{ translate( 'Please edit {{filename/}} and fix the problems we found:', {
+										components: {
+											filename: (
+												<ExternalLink href={ workflowFileUrl }>{ workflowFileName }</ExternalLink>
+											),
+										},
+									} ) }
 								</p>
 
 								{ workflowsValidations.map( ( validation ) => (
-									<FoldableCard
-										disabled={ validation.key !== 'valid_yaml_file' && ! isYamlValid }
-										key={ validation.key }
-										className={
-											validation.status === 'error' && validationTriggered ? 'error' : ''
-										}
-										expanded={ shouldExpand( validation ) }
-										header={
-											<>
-												<RenderValidationIcon validationStatus={ validation.status } />
-												{ validation.label }
-											</>
-										}
-										screenReaderText="More"
-									>
-										{ validation.item }
-									</FoldableCard>
+									<>
+										<FoldableCard
+											disabled={ validation.key !== 'valid_yaml_file' && ! isYamlValid }
+											key={ validation.key }
+											className={ validation.status === 'error' ? 'is-error' : '' }
+											expanded={ shouldExpand( validation ) }
+											header={
+												<>
+													<RenderValidationIcon validationStatus={ validation.status } />
+													{ validation.label }
+												</>
+											}
+											screenReaderText="More"
+										>
+											{ validation.item }
+										</FoldableCard>
+										{ validation.status === 'error' && (
+											<FormInputValidation isError text={ translate( 'Please fix this error' ) } />
+										) }
+									</>
 								) ) }
 							</>
 						) }
