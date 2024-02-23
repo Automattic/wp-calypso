@@ -52,6 +52,7 @@ export const CreateRepositoryForm = ( {
 		{} as GitHubRepositoryData
 	);
 	const [ workflowPath, setWorkflowPath ] = useState< string | undefined >();
+	const [ deploymentModeStatus, setDeploymentModeStatus ] = useState( 'loading' );
 
 	const [ isSubmitted, setSubmitted ] = useState( false );
 
@@ -60,7 +61,7 @@ export const CreateRepositoryForm = ( {
 
 		setSubmitted( true );
 
-		if ( ! installation || ! repositoryName ) {
+		if ( ! installation || ! repositoryName || deploymentModeStatus !== 'success' ) {
 			return;
 		}
 
@@ -235,13 +236,7 @@ export const CreateRepositoryForm = ( {
 						installationId={ installation.external_id }
 						repository={ repository }
 						onChooseWorkflow={ ( filePath ) => setWorkflowPath( filePath ) }
-						onValidationChange={ ( status ) => {
-							// if ( status === 'success' ) {
-							// 	setSubmitDisabled( false );
-							// } else {
-							// 	setSubmitDisabled( true );
-							// }
-						} }
+						onValidationChange={ ( status ) => setDeploymentModeStatus( status ) }
 					/>
 				</div>
 			) }
