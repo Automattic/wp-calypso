@@ -203,8 +203,8 @@
 }
 
 .license-product-card.selected .license-product-card__select-button {
-	border: 2px solid var(--studio-jetpack-green-50);
-	background: var(--studio-jetpack-green-50);
+	border: 2px solid  var(--color-link);
+	background: var(--color-link);
 }
 
 @mixin license-product-card-block__pricing {
@@ -268,7 +268,7 @@
 	}
 
 	.form-radio:checked::before {
-		background: var(--studio-green-50);
+		background: var(--color-link);
 	}
 }
 

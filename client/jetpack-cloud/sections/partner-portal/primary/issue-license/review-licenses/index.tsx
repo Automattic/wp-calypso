@@ -15,9 +15,17 @@ interface Props {
 	onClose: () => void;
 	selectedLicenses: SelectedLicenseProp[];
 	selectedSite?: SiteDetails | null;
+	isFormReady: boolean;
+	submitForm: ( selectedLicenses: SelectedLicenseProp[] ) => void;
 }
 
-export default function ReviewLicenses( { onClose, selectedLicenses, selectedSite }: Props ) {
+export default function ReviewLicenses( {
+	onClose,
+	selectedLicenses,
+	selectedSite,
+	isFormReady,
+	submitForm,
+}: Props ) {
 	const translate = useTranslate();
 
 	const { sidebarRef, mainRef, initMobileSidebar } = useMobileSidebar();
@@ -48,7 +56,12 @@ export default function ReviewLicenses( { onClose, selectedLicenses, selectedSit
 			</JetpackLightboxMain>
 
 			<JetpackLightboxAside ref={ sidebarRef }>
-				<PricingSummary selectedLicenses={ selectedLicenses } selectedSite={ selectedSite } />
+				<PricingSummary
+					selectedLicenses={ selectedLicenses }
+					selectedSite={ selectedSite }
+					isFormReady={ isFormReady }
+					submitForm={ submitForm }
+				/>
 			</JetpackLightboxAside>
 		</JetpackLightbox>
 	);

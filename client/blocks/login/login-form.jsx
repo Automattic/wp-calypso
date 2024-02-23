@@ -834,6 +834,7 @@ export class LoginForm extends Component {
 							className={ classNames( 'login__form-password', {
 								'is-hidden': isPasswordHidden,
 							} ) }
+							aria-hidden={ isPasswordHidden }
 						>
 							<FormLabel htmlFor="password">
 								{ this.props.isWoo && ! this.props.isPartnerSignup

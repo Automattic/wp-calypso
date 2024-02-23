@@ -47,10 +47,6 @@ const THUMBNAIL_DIMENSION = {
 	height: 401 / ASPECT_RATIO,
 };
 
-const wpAdminCss = css( {
-	whiteSpace: 'nowrap',
-} );
-
 const badges = css( {
 	display: 'flex',
 	gap: '8px',
@@ -210,18 +206,6 @@ export const SitesGridItem = memo( ( props: SitesGridItemProps ) => {
 								return <TransferNoticeWrapper { ...result } />;
 							} else if ( showLaunchNag && 'unlaunched' === site.launch_status ) {
 								return <SiteLaunchNag site={ site } />;
-							} else if ( site.is_wpcom_atomic ) {
-								return (
-									<a
-										href={ wpAdminUrl }
-										title={ __( 'Visit Wordpress Admin Dashboard' ) }
-										target="_blank"
-										rel="noreferrer"
-										className={ wpAdminCss }
-									>
-										{ __( 'WP Admin' ) }
-									</a>
-								);
 							}
 							return <></>;
 						} }
