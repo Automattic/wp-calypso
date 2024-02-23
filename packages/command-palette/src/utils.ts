@@ -4,7 +4,7 @@ import {
 	PLAN_HOSTING_TRIAL_MONTHLY,
 } from '@automattic/calypso-products';
 import { Falsy } from 'utility-types';
-import type { SiteNetworkData } from './use-sites';
+import type { SiteData, SiteNetworkData } from './use-sites';
 
 export function isCustomDomain( siteSlug: string | null | undefined ): boolean {
 	if ( ! siteSlug ) {
@@ -38,13 +38,12 @@ export const isTrialSite = ( site: SiteNetworkData ) => {
  * @param {Object} site Site object
  * @returns {?string} WordPress.com URL
  */
-// @ts-expect-error TODO
-export function getUnmappedUrl( site ) {
+export function getUnmappedUrl( site: SiteData ): string | null {
 	if ( ! site || ! site.options ) {
 		return null;
 	}
 
-	return site.options.main_network_site || site.options.unmapped_url;
+	return site.options.unmapped_url ?? null;
 }
 
 /**
@@ -53,21 +52,17 @@ export function getUnmappedUrl( site ) {
  * @param {Array} siteList Array of site objects
  * @returns {number[]} Array of site IDs with URL collisions
  */
-// @ts-expect-error TODO
-export function getJetpackSiteCollisions( siteList ) {
-	// @ts-expect-error TODO
+export function getJetpackSiteCollisions( siteList: SiteData[] ): number[] {
 	const jetpackSites = siteList.filter( ( siteItem ) => {
 		const siteUrlSansProtocol = withoutHttp( siteItem.URL );
 		return (
 			! siteItem.jetpack &&
 			siteList.some(
-				// @ts-expect-error TODO
 				( jetpackSite ) =>
 					jetpackSite.jetpack && siteUrlSansProtocol === withoutHttp( jetpackSite.URL )
 			)
 		);
 	} );
-	// @ts-expect-error TODO
 	return jetpackSites.map( ( siteItem ) => siteItem.ID );
 }
 

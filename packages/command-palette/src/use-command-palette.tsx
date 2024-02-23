@@ -164,7 +164,7 @@ export const useCommandPalette = ( {
 
 	// Sort sites in the nested commands to be consistent with site switcher and /sites page
 	const { data: sitesSorting } = useSitesSortingQuery( wpcom );
-	const sortedSites = useSitesListSorting( allSites, sitesSorting );
+	const sortedSites = useSitesListSorting( allSites, sitesSorting ) as SiteData[];
 
 	// Call the generateCommandsArray function to get the commands array
 	const commands = useCommands( {
@@ -173,9 +173,8 @@ export const useCommandPalette = ( {
 		currentRoute,
 	} ) as Command[];
 
-	const userCapabilities: { [ key: number ]: { [ key: string ]: boolean }[] } = {};
-	// @ts-expect-error TODO
-	allSites.forEach( ( site ) => {
+	const userCapabilities: { [ key: number ]: { [ key: string ]: boolean } } = {};
+	allSites.forEach( ( site: SiteData ) => {
 		userCapabilities[ site.ID ] = site.capabilities;
 	} );
 
@@ -187,12 +186,10 @@ export const useCommandPalette = ( {
 		let emptyListNotice = undefined;
 		if ( selectedCommand?.siteFunctions ) {
 			const { capabilityFilter, onClick, filter } = selectedCommand.siteFunctions;
-			// @ts-expect-error TODO
 			let filteredSites = filter ? sortedSites.filter( filter ) : sortedSites;
 			if ( capabilityFilter ) {
 				filteredSites = filteredSites.filter( ( site ) => {
 					const siteCapabilities = userCapabilities[ site.ID ];
-					// @ts-expect-error TODO
 					return siteCapabilities?.[ capabilityFilter ];
 				} );
 			}
@@ -207,16 +204,12 @@ export const useCommandPalette = ( {
 			}
 
 			if ( currentSiteId ) {
-				// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-				// @ts-ignore TODO
 				const currentSite = filteredSites.find( ( site ) => site.ID === currentSiteId );
 
 				if ( currentSite ) {
 					// Move current site to the top of the list
 					filteredSites = [
 						currentSite,
-						// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-						// @ts-ignore TODO
 						...filteredSites.filter( ( site ) => site.ID !== currentSiteId ),
 					];
 				}
@@ -224,8 +217,6 @@ export const useCommandPalette = ( {
 
 			// Map filtered sites to actions using the onClick function
 			sitesToPick = filteredSites.map(
-				// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-				// @ts-ignore TODO
 				siteToAction( onClick, {
 					selectedCommand,
 					filteredSitesLength: filteredSites.length,
