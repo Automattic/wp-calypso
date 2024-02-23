@@ -2,6 +2,10 @@ import config from '@automattic/calypso-config';
 import page from '@automattic/calypso-router';
 import { Button, Card, FormLabel } from '@automattic/components';
 import { formatCurrency } from '@automattic/format-currency';
+import {
+	LineItemCostOverrideForDisplay,
+	isUserVisibleCostOverride,
+} from '@automattic/wpcom-checkout';
 import classNames from 'classnames';
 import { localize, useTranslate } from 'i18n-calypso';
 import { Component, useState, useCallback } from 'react';
@@ -281,6 +285,20 @@ function VatDetails( { transaction }: { transaction: BillingTransaction } ) {
 	);
 }
 
+function filterCostOverridesForReceiptItem(
+	item: BillingTransactionItem
+): LineItemCostOverrideForDisplay[] {
+	return item.cost_overrides
+		.filter( ( costOverride ) => isUserVisibleCostOverride( costOverride ) )
+		.map( ( costOverride ) => {
+			return {
+				humanReadableReason: costOverride.human_readable_reason,
+				overrideCode: costOverride.override_code,
+				discountAmount: costOverride.old_price_integer - costOverride.new_price_integer,
+			};
+		} );
+}
+
 function areReceiptItemDiscountsAccurate( receiptDate: string ): boolean {
 	const date = new Date( receiptDate );
 	const receiptDateUnix = date.getTime() / 1000;
@@ -301,22 +319,21 @@ function ReceiptItemDiscounts( {
 	const shouldShowDiscount = areReceiptItemDiscountsAccurate( receiptDate );
 	return (
 		<ul className="billing-history__receipt-item-discounts-list">
-			{ item.cost_overrides
-				.filter( ( discount ) => ! discount.does_override_original_cost )
-				.map( ( discount ) => {
-					const discountAmount = discount.old_price - discount.new_price;
-					const formattedDiscountAmount = shouldShowDiscount
-						? formatCurrency( -discountAmount, item.currency, {
+			{ filterCostOverridesForReceiptItem( item ).map( ( costOverride ) => {
+				const formattedDiscountAmount =
+					shouldShowDiscount && costOverride.discountAmount
+						? formatCurrency( -costOverride.discountAmount, item.currency, {
+								isSmallestUnit: true,
 								stripZeros: true,
 						  } )
 						: '';
-					return (
-						<li key={ discount.id }>
-							<span>{ discount.human_readable_reason }</span>
-							<span>{ formattedDiscountAmount }</span>
-						</li>
-					);
-				} ) }
+				return (
+					<li key={ costOverride.humanReadableReason }>
+						<span>{ costOverride.humanReadableReason }</span>
+						<span>{ formattedDiscountAmount }</span>
+					</li>
+				);
+			} ) }
 		</ul>
 	);
 }
@@ -324,10 +341,12 @@ function ReceiptItemDiscounts( {
 /**
  * Calculate the original cost for a receipt item by looking at any cost
  * overrides.
+ *
+ * Returns the number in the currency's smallest unit.
  */
 function getReceiptItemOriginalCost( item: BillingTransactionItem ): number {
 	if ( item.type === 'refund' ) {
-		return item.raw_amount;
+		return item.subtotal_integer;
 	}
 	const originalCostOverrides = item.cost_overrides.filter(
 		( override ) => override.does_override_original_cost
@@ -335,16 +354,16 @@ function getReceiptItemOriginalCost( item: BillingTransactionItem ): number {
 	if ( originalCostOverrides.length > 0 ) {
 		const lastOriginalCostOverride = originalCostOverrides.pop();
 		if ( lastOriginalCostOverride ) {
-			return lastOriginalCostOverride.new_price;
+			return lastOriginalCostOverride.new_price_integer;
 		}
 	}
 	if ( item.cost_overrides.length > 0 ) {
 		const firstOverride = item.cost_overrides[ 0 ];
 		if ( firstOverride ) {
-			return firstOverride.old_price;
+			return firstOverride.old_price_integer;
 		}
 	}
-	return item.raw_subtotal;
+	return item.subtotal_integer;
 }
 
 function ReceiptItemTaxes( { transaction }: { transaction: BillingTransaction } ) {
@@ -389,9 +408,10 @@ function ReceiptLineItems( { transaction }: { transaction: BillingTransaction } 
 					</td>
 					<td className="billing-history__receipt-amount">
 						{ formatCurrency(
-							shouldShowDiscount ? getReceiptItemOriginalCost( item ) : item.raw_subtotal,
+							shouldShowDiscount ? getReceiptItemOriginalCost( item ) : item.subtotal_integer,
 							item.currency,
 							{
+								isSmallestUnit: true,
 								stripZeros: true,
 							}
 						) }

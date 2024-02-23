@@ -157,16 +157,16 @@ export interface ReceiptCostOverride {
 	does_override_original_cost: boolean;
 
 	/**
-	 * The price as it was before this price change was applied. It is a float
-	 * in the currency's standard unit (eg: dollars in USD).
+	 * The price as it was before this price change was applied. It is a number
+	 * in the curreny's smallest unit.
 	 */
-	old_price: number;
+	old_price_integer: number;
 
 	/**
-	 * The price as it was after this price change was applied. It is a float
-	 * in the currency's standard unit (eg: dollars in USD).
+	 * The price as it was after this price change was applied. It is a number
+	 * in the currency's smallest unit.
 	 */
-	new_price: number;
+	new_price_integer: number;
 }
 
 export interface UpcomingCharge {

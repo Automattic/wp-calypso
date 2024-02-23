@@ -181,7 +181,10 @@ export interface LineItemCostOverrideForDisplay {
 	discountAmount?: number;
 }
 
-function isUserVisibleCostOverride( costOverride: ResponseCartCostOverride ): boolean {
+export function isUserVisibleCostOverride( costOverride: {
+	does_override_original_cost: boolean;
+	override_code: string;
+} ): boolean {
 	if ( costOverride.does_override_original_cost ) {
 		// We won't display original cost overrides since they are
 		// included in the original cost that's being displayed. They
