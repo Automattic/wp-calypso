@@ -957,11 +957,11 @@ a.masterbar__quick-language-switcher {
 }
 
 .masterbar__global-nav {
-	background: var(--studio-black);
-	border-bottom: 1 px solid var(--studio-black);
+	background: var(--color-sidebar-background);
+	border-bottom: 1 px solid var(--color-sidebar-background);
 
 	.masterbar__item.is-active {
-		background-color: var(--studio-black);
+		background-color: var(--color-sidebar-background);
 	}
 
 	.masterbar__item,
