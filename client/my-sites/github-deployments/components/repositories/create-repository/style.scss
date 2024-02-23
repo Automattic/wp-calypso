@@ -44,7 +44,12 @@
 		gap: 8px;
 
 		.components-form-toggle {
-			line-height: 1;
+			margin-left: 5px;
+			margin-top: 1px;
 		}
+	}
+
+	&__deployment-style {
+		flex: 1;
 	}
 }

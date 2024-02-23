@@ -14,7 +14,7 @@ import { translate } from 'i18n-calypso';
 import Prism from 'prismjs';
 import 'prismjs/themes/prism.css';
 import 'prismjs/components/prism-yaml';
-import React, { useEffect, useMemo, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormRadiosBar from 'calypso/components/forms/form-radios-bar';
 import SupportInfo from 'calypso/components/support-info';
@@ -75,11 +75,12 @@ export const DeploymentStyle = ( {
 	);
 
 	const [ selectedWorkflow, setSelectedWorkflow ] = useState< Workflows >( {
-		file_name: workflowPath ? getWorkflowNameFromFilepath( workflowPath ) : 'none',
+		file_name: workflowPath ? getWorkflowNameFromFilepath( workflowPath ) : __( 'Select workflow' ),
 		workflow_path: workflowPath || 'none',
 	} );
 	const [ isCreatingNewWorkflow, setIsCreatingNewWorkflow ] = useState( false );
 	const [ isYamlValid, setIsYamlValid ] = useState( true );
+	const [ advancedOptionsDisabled, setAdvancedOptionsDisabled ] = useState( false );
 	const validationTriggered = false;
 	const isTemplateRepository = repository.owner === 'Automattic';
 	const yamlCodeRef = useRef( null );
@@ -88,17 +89,25 @@ export const DeploymentStyle = ( {
 		isLoading: isFetchingWorkflows,
 		isRefetching: isRefreshingWorkflows,
 		refetch: refetchWorkflows,
-	} = useDeploymentWorkflowsQuery( installationId, repository, branchName, deploymentStyle );
+	} = useDeploymentWorkflowsQuery(
+		installationId,
+		repository,
+		branchName,
+		deploymentStyle,
+		isTemplateRepository
+	);
 
 	const workflowsForRendering = useMemo( () => {
-		const mappedValues = [
-			{ workflow_path: 'none', file_name: __( 'Deployment workflows' ) },
-		].concat(
+		const mappedValues = [ { workflow_path: 'none', file_name: __( 'Select workflow' ) } ].concat(
 			workflows?.map( ( workflow ) => ( {
 				workflow_path: workflow.workflow_path,
 				file_name: workflow.file_name,
 			} ) ) || []
 		);
+
+		if ( isTemplateRepository ) {
+			return mappedValues;
+		}
 
 		return mappedValues.concat( {
 			workflow_path: 'create-new',
@@ -120,7 +129,7 @@ export const DeploymentStyle = ( {
 	);
 
 	const isWorkflowInvalid =
-		! ( isFetchingWorkflows || isRefreshingWorkflows ) && selectedWorkflow.file_name === 'none';
+		! ( isFetchingWorkflows || isRefreshingWorkflows ) && selectedWorkflow.workflow_path === 'none';
 	const workflowFileName = workflowPath
 		? workflowPath.substring( workflowPath.lastIndexOf( '/' ) + 1 )
 		: '';
@@ -261,7 +270,10 @@ export const DeploymentStyle = ( {
 	}, [ workflowCheckResult ] );
 
 	useEffect( () => {
-		if ( deploymentStyle === 'simple' || isTemplateRepository ) {
+		if (
+			deploymentStyle === 'simple' ||
+			( isTemplateRepository && selectedWorkflow.workflow_path !== 'none' )
+		) {
 			onValidationChange?.( 'success' );
 		} else {
 			onValidationChange?.( workflowCheckResult?.conclusion || 'loading' );
@@ -284,6 +296,9 @@ export const DeploymentStyle = ( {
 		} else {
 			onChooseWorkflow?.( selectedWorkflow.workflow_path );
 		}
+		if ( yamlCodeRef.current ) {
+			Prism.highlightElement( yamlCodeRef.current );
+		}
 	}, [ onChooseWorkflow, deploymentStyle, selectedWorkflow ] );
 
 	useEffect( () => {
@@ -291,6 +306,21 @@ export const DeploymentStyle = ( {
 			Prism.highlightElement( yamlCodeRef.current );
 		}
 	}, [ workflowsValidations ] );
+
+	useEffect( () => {
+		setAdvancedOptionsDisabled( workflows?.length === 0 && isTemplateRepository );
+
+		if ( isTemplateRepository && workflows?.length && workflows?.length > 0 ) {
+			const dotcomBuildArtefact = workflows.find( ( workflow ) => {
+				return workflow.file_name === 'dotcom-build-artifact.yml';
+			} );
+
+			if ( dotcomBuildArtefact ) {
+				setDeploymentStyle( 'custom' );
+				setSelectedWorkflow( dotcomBuildArtefact );
+			}
+		}
+	}, [ workflows, isTemplateRepository ] );
 
 	const RenderValidationIcon = ( { validationStatus }: { validationStatus: WorkFlowStates } ) => {
 		if ( ! isYamlValid ) {
@@ -344,21 +374,25 @@ export const DeploymentStyle = ( {
 
 	return (
 		<div className="github-deployments-deployment-style">
-			<strong css={ { display: 'block', fontSize: '16px', marginBottom: '16px' } }>
-				{ __( 'Pick a deployment mode' ) }
-			</strong>
+			<h3 className="github-deployments-deployment-style__header">
+				{ __( 'Pick your deployment mode' ) }
+			</h3>
 			<FormRadiosBar
 				items={ [
-					{ label: __( 'Simple' ), value: 'simple' },
-					{ label: __( 'Advanced' ), value: 'custom' },
+					{
+						label: __( 'Simple' ),
+						value: 'simple',
+						checked: advancedOptionsDisabled || deploymentStyle === 'simple',
+					},
+					{ label: __( 'Advanced' ), value: 'custom', disabled: advancedOptionsDisabled },
 				] }
 				checked={ deploymentStyle }
 				onChange={ ( event ) => handleDeploymentStyleChange( event.currentTarget.value ) }
 				disabled={ false }
 			/>
 
-			{ deploymentStyle === 'custom' && (
-				<FormFieldset>
+			{ deploymentStyle === 'custom' && ! advancedOptionsDisabled && (
+				<FormFieldset style={ { marginBottom: '0px' } }>
 					<FormLabel>
 						{ __( 'Select deployment workflow' ) }
 
@@ -396,7 +430,14 @@ export const DeploymentStyle = ( {
 				</FormFieldset>
 			) }
 
-			{ ! isTemplateRepository && (
+			{ advancedOptionsDisabled && (
+				<FormInputValidation
+					isError
+					text={ translate( "This repository template doesn't have workflows." ) }
+				/>
+			) }
+
+			{ ! isTemplateRepository && deploymentStyle === 'custom' && ! isWorkflowInvalid && (
 				<FormFieldset className="github-deployments-deployment-style__workflow-checks">
 					{ deploymentStyle === 'custom' &&
 						selectedWorkflow.workflow_path !== 'none' &&
@@ -429,8 +470,8 @@ export const DeploymentStyle = ( {
 								) ) }
 							</>
 						) }
-					{ deploymentStyle === 'custom' && isCreatingNewWorkflow && (
-						<>
+					{ deploymentStyle === 'custom' && (
+						<div className={ isCreatingNewWorkflow ? '' : 'hide-new-workflow' }>
 							<FormLabel>{ __( 'Custom workflow' ) }</FormLabel>
 							<p>
 								{ __(
@@ -452,7 +493,7 @@ export const DeploymentStyle = ( {
 									</pre>
 								</div>
 							</FoldableCard>
-						</>
+						</div>
 					) }
 					{ deploymentStyle === 'custom' && selectedWorkflow.workflow_path !== 'none' && (
 						<div className="github-deployments-deployment-style__actions">
