@@ -45,7 +45,7 @@ export const stripHtmlTags: Formatter< Array< string > > = ( description, allowe
  * @param description The post description.
  * @returns The first 50 characters of the description.
  */
-export const getNoteTitle = ( description: string ): string => {
+export const getTitleFromDescription = ( description: string ): string => {
 	return stripHtmlTags( description ).substring( 0, 50 );
 };
 

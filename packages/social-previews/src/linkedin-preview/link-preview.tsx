@@ -1,4 +1,4 @@
-import { getNoteTitle } from '../helpers';
+import { getTitleFromDescription } from '../helpers';
 import { LinkedInPostPreview } from './post-preview';
 import { LinkedInPreviewProps } from './types';
 
@@ -16,7 +16,7 @@ export function LinkedInLinkPreview( props: LinkedInLinkPreviewProps ) {
 			// Override the props that are irrelevant to link preview
 			description=""
 			media={ undefined }
-			title={ props.title || getNoteTitle( props.description ) }
+			title={ props.title || getTitleFromDescription( props.description ) }
 		/>
 	);
 }

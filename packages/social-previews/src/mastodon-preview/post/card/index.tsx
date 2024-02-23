@@ -1,5 +1,5 @@
 import { __ } from '@wordpress/i18n';
-import { baseDomain, getNoteTitle } from '../../../helpers';
+import { baseDomain, getTitleFromDescription } from '../../../helpers';
 import { mastodonTitle } from '../../helpers';
 import { MastodonPreviewProps } from '../../types';
 
@@ -25,7 +25,7 @@ const MastodonPostCard: React.FC< MastodonPreviewProps > = ( {
 			</div>
 			<div className="mastodon-preview__card-text">
 				<span className="mastodon-preview__card-title">
-					{ mastodonTitle( title ) || getNoteTitle( description ) }
+					{ mastodonTitle( title ) || getTitleFromDescription( description ) }
 				</span>
 				<span className="mastodon-preview__card-site">{ siteName || baseDomain( url ) }</span>
 			</div>
