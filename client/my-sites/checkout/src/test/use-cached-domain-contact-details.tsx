@@ -71,7 +71,10 @@ function MyTestContent( { countries }: { countries: CountryListItem[] } ) {
 	const { responseCart, reloadFromServer, updateLocation } = useShoppingCart(
 		initialCart.cart_key
 	);
-	useCachedDomainContactDetails( () => null, countries );
+	useCachedDomainContactDetails( {
+		setShouldShowContactDetailsValidationErrors: () => null,
+		overrideCountriesList: countries,
+	} );
 	const contactInfo = useSelect( ( select ) => select( CHECKOUT_STORE ).getContactInfo(), [] );
 	const [ localLocation, setLocation ] = useState( { countryCode: '', postalCode: '' } );
 	const onChangeCountry = ( evt ) => {

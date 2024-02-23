@@ -47,7 +47,11 @@ export default function WPContactForm( {
 	const isStepActive = useIsStepActive();
 	const isDisabled = ! isStepActive || formStatus !== FormStatus.READY;
 
-	useCachedDomainContactDetails( setShouldShowContactDetailsValidationErrors, countriesList );
+	useCachedDomainContactDetails( {
+		setShouldShowContactDetailsValidationErrors,
+		isLoggedOut: isLoggedOutCart,
+		overrideCountryList: countriesList,
+	} );
 
 	return (
 		<BillingFormFields>
