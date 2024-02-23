@@ -1,4 +1,3 @@
-import type { StorybookConfig } from '@storybook/react-webpack5';
 import storybookDefaultConfig from '@automattic/calypso-storybook';
 const config = storybookDefaultConfig();
 
@@ -8,6 +7,10 @@ export default {
 	typescript: {
 		...config.typescript,
 		reactDocgen: 'react-docgen-typescript',
+	},
+	core: {
+		...config.core,
+		disableTelemetry: true,
 	},
 	addons: [ ...( config.addons ?? [] ), '@storybook/addon-a11y' ],
 };
