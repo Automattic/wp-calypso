@@ -46,7 +46,7 @@ export function PageShell( { topRightButton, pageTitle, children }: GitHubDeploy
 				className="hosting__activating-notice"
 				status="is-info"
 				showDismiss={ false }
-				text={ translate( 'Please activate the hosting access to begin using these features.' ) }
+				text={ translate( 'Please activate hosting access to begin using this feature.' ) }
 				icon="globe"
 			>
 				<NoticeAction onClick={ clickActivate }>{ translate( 'Activate' ) }</NoticeAction>
