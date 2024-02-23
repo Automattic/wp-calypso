@@ -1,4 +1,5 @@
-import { Spinner } from '@wordpress/components';
+import { ExternalLink, Spinner } from '@wordpress/components';
+import { useI18n } from '@wordpress/react-i18n';
 import { useLayoutEffect, useState } from 'react';
 import Pagination from 'calypso/components/pagination';
 import {
@@ -12,6 +13,8 @@ import {
 } from '../../use-github-repositories-query';
 import { NoResults } from './no-results';
 import { GitHubRepositoryListTable } from './repository-list-table';
+
+import './style.scss';
 
 const pageSize = 10;
 
@@ -29,6 +32,7 @@ export const GitHubBrowseRepositoriesList = ( {
 	query,
 	onSelectRepository,
 }: RepositoriesListProps ) => {
+	const { __ } = useI18n();
 	const { key, direction, handleSortChange } = useSort( 'name' );
 	const [ page, setPage ] = useState( 1 );
 
@@ -56,11 +60,11 @@ export const GitHubBrowseRepositoriesList = ( {
 	}
 
 	if ( currentPage.length === 0 ) {
-		return <NoResults />;
+		return <NoResults manageInstallationUrl={ installation.management_url } />;
 	}
 
 	return (
-		<>
+		<div className="github-repositories-list">
 			<GitHubRepositoryListTable
 				repositories={ currentPage }
 				onSelect={ ( repository ) => onSelectRepository( installation, repository ) }
@@ -68,13 +72,19 @@ export const GitHubBrowseRepositoriesList = ( {
 				sortDirection={ direction }
 				onSortChange={ handleSortChange }
 			/>
+			<p css={ { marginBottom: 0 } }>
+				{ __( 'Missing GitHub repositories?' ) }{ ' ' }
+				<ExternalLink href={ installation.management_url }>
+					{ __( 'Adjust permissions on GitHub' ) }
+				</ExternalLink>
+			</p>
 			<Pagination
 				page={ page }
 				perPage={ pageSize }
 				total={ filteredRepositories.length }
 				pageClick={ setPage }
 			/>
-		</>
+		</div>
 	);
 };
 
