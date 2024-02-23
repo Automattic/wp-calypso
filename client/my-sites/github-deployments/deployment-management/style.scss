@@ -34,9 +34,18 @@
 		display: flex;
 		align-items: center;
 		gap: 8px;
+	}
 
-		.components-form-toggle {
-			line-height: 1;
-		}
+	.components-form-toggle {
+		line-height: 1;
+	}
+
+	&__configs {
+		width: 45%;
+		margin-right: 5%;
+	}
+
+	&__deployment-style {
+		width: 50%;
 	}
 }

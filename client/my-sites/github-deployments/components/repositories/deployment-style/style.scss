@@ -4,7 +4,15 @@
 	padding: 24px;
 	border-radius: 2px;
 	background-color: var(--studio-gray-0);
+	width: 100%;
 	height: fit-content;
+
+	&__header {
+		font-weight: 500;
+		font-size: 1rem;
+		margin-bottom: 16px;
+		line-height: 24px;
+	}
 
 	&__repository {
 		label {
@@ -27,7 +35,6 @@
 		}
 		&__content {
 			background-color: var(--studio-gray-0);
-
 			p {
 				margin: 0;
 			}
@@ -47,7 +54,6 @@
 
 	.card,
 	.foldable-card {
-
 		border-radius: 4px;
 
 		.foldable-card__main svg {
@@ -88,8 +94,13 @@
 		margin-bottom: 0;
 	}
 
+	.form-radios-bar .form-label {
+		font-size: 0.875rem;
+		font-weight: 400;
+	}
+
 	.form-fieldset {
-		>.spinner {
+		> .spinner {
 			margin-bottom: 1.5em;
 		}
 
@@ -128,10 +139,22 @@
 		}
 	}
 
+	.hide-new-workflow {
+		display: none;
+	}
+
 	&__workflow-checks {
 		.form-input-validation.is-error {
 			margin-top: -8px;
 			margin-bottom: 16px;
+		}
+
+		&.form-fieldset {
+			margin-top: 24px;
+		}
+
+		&.form-fieldset .form-label {
+			margin-top: 0;
 		}
 	}
 

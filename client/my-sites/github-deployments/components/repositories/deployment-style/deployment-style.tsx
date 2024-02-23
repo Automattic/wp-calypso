@@ -14,7 +14,7 @@ import { translate } from 'i18n-calypso';
 import Prism from 'prismjs';
 import 'prismjs/themes/prism.css';
 import 'prismjs/components/prism-yaml';
-import React, { useEffect, useMemo, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormRadiosBar from 'calypso/components/forms/form-radios-bar';
 import SupportInfo from 'calypso/components/support-info';
@@ -75,7 +75,7 @@ export const DeploymentStyle = ( {
 	);
 
 	const [ selectedWorkflow, setSelectedWorkflow ] = useState< Workflows >( {
-		file_name: workflowPath ? getWorkflowNameFromFilepath( workflowPath ) : 'none',
+		file_name: workflowPath ? getWorkflowNameFromFilepath( workflowPath ) : __( 'Select workflow' ),
 		workflow_path: workflowPath || 'none',
 	} );
 	const [ isCreatingNewWorkflow, setIsCreatingNewWorkflow ] = useState( false );
@@ -91,9 +91,7 @@ export const DeploymentStyle = ( {
 	} = useDeploymentWorkflowsQuery( installationId, repository, branchName, deploymentStyle );
 
 	const workflowsForRendering = useMemo( () => {
-		const mappedValues = [
-			{ workflow_path: 'none', file_name: __( 'Deployment workflows' ) },
-		].concat(
+		const mappedValues = [ { workflow_path: 'none', file_name: __( 'Select workflow' ) } ].concat(
 			workflows?.map( ( workflow ) => ( {
 				workflow_path: workflow.workflow_path,
 				file_name: workflow.file_name,
@@ -120,7 +118,7 @@ export const DeploymentStyle = ( {
 	);
 
 	const isWorkflowInvalid =
-		! ( isFetchingWorkflows || isRefreshingWorkflows ) && selectedWorkflow.file_name === 'none';
+		! ( isFetchingWorkflows || isRefreshingWorkflows ) && selectedWorkflow.workflow_path === 'none';
 	const workflowFileName = workflowPath
 		? workflowPath.substring( workflowPath.lastIndexOf( '/' ) + 1 )
 		: '';
@@ -284,6 +282,9 @@ export const DeploymentStyle = ( {
 		} else {
 			onChooseWorkflow?.( selectedWorkflow.workflow_path );
 		}
+		if ( yamlCodeRef.current ) {
+			Prism.highlightElement( yamlCodeRef.current );
+		}
 	}, [ onChooseWorkflow, deploymentStyle, selectedWorkflow ] );
 
 	useEffect( () => {
@@ -344,9 +345,9 @@ export const DeploymentStyle = ( {
 
 	return (
 		<div className="github-deployments-deployment-style">
-			<strong css={ { display: 'block', fontSize: '16px', marginBottom: '16px' } }>
-				{ __( 'Pick a deployment mode' ) }
-			</strong>
+			<h3 className="github-deployments-deployment-style__header">
+				{ __( 'Pick your deployment mode' ) }
+			</h3>
 			<FormRadiosBar
 				items={ [
 					{ label: __( 'Simple' ), value: 'simple' },
@@ -358,7 +359,7 @@ export const DeploymentStyle = ( {
 			/>
 
 			{ deploymentStyle === 'custom' && (
-				<FormFieldset>
+				<FormFieldset style={ { marginBottom: '0px' } }>
 					<FormLabel>
 						{ __( 'Select deployment workflow' ) }
 
@@ -396,7 +397,7 @@ export const DeploymentStyle = ( {
 				</FormFieldset>
 			) }
 
-			{ ! isTemplateRepository && (
+			{ ! isTemplateRepository && deploymentStyle === 'custom' && ! isWorkflowInvalid && (
 				<FormFieldset className="github-deployments-deployment-style__workflow-checks">
 					{ deploymentStyle === 'custom' &&
 						selectedWorkflow.workflow_path !== 'none' &&
@@ -429,8 +430,8 @@ export const DeploymentStyle = ( {
 								) ) }
 							</>
 						) }
-					{ deploymentStyle === 'custom' && isCreatingNewWorkflow && (
-						<>
+					{ deploymentStyle === 'custom' && (
+						<div className={ isCreatingNewWorkflow ? '' : 'hide-new-workflow' }>
 							<FormLabel>{ __( 'Custom workflow' ) }</FormLabel>
 							<p>
 								{ __(
@@ -452,7 +453,7 @@ export const DeploymentStyle = ( {
 									</pre>
 								</div>
 							</FoldableCard>
-						</>
+						</div>
 					) }
 					{ deploymentStyle === 'custom' && selectedWorkflow.workflow_path !== 'none' && (
 						<div className="github-deployments-deployment-style__actions">
