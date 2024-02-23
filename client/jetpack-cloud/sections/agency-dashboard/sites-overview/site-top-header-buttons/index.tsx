@@ -1,5 +1,5 @@
 import { isEnabled } from '@automattic/calypso-config';
-import { Button, Gridicon } from '@automattic/components';
+import { Button } from '@automattic/components';
 import { useMobileBreakpoint } from '@automattic/viewport-react';
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
@@ -44,7 +44,6 @@ export default function SiteTopHeaderButtons() {
 				<span className="sites-overview__issue-license-button-caption">
 					{ translate( 'Issue License', { context: 'button label' } ) }
 				</span>
-				<Gridicon icon="plus-small" size={ 12 } />
 			</Button>
 
 			{ isWPCOMAtomicSiteCreationEnabled ? (
