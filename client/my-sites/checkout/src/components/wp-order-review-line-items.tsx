@@ -44,9 +44,15 @@ import type {
 } from '@automattic/shopping-cart';
 import type { PropsWithChildren } from 'react';
 
-const WPOrderReviewList = styled.ul< { hasCheckoutVersion2: boolean } >`
+const WPOrderReviewList = styled.ul< {
+	hasCheckoutVersion2: boolean;
+	shouldUseCheckoutV2?: boolean;
+} >`
 	box-sizing: border-box;
-	${ ( props ) => ( props.hasCheckoutVersion2 ? 'margin: 24px 0 0 0;' : 'margin: 24px 0;' ) }
+	${ ( props ) =>
+		props.hasCheckoutVersion2 || props.shouldUseCheckoutV2
+			? 'margin: 24px 0 0 0;'
+			: 'margin: 24px 0;' }
 	padding: 0;
 `;
 
@@ -175,6 +181,7 @@ export function WPOrderReviewLineItems( {
 		<WPOrderReviewList
 			className={ joinClasses( [ className, 'order-review-line-items' ] ) }
 			hasCheckoutVersion2={ hasCheckoutVersion( '2' ) }
+			shouldUseCheckoutV2={ shouldUseCheckoutV2 }
 		>
 			{ responseCart.products.map( ( product ) => (
 				<LineItemWrapper
@@ -243,8 +250,14 @@ export function WPOrderReviewLineItems( {
 	);
 }
 
-const DropdownWrapper = styled.span< { hasCheckoutVersion2: boolean } >`
-	${ ( props ) => ( props.hasCheckoutVersion2 ? `width: 100%; max-width: 200px` : `width: 100%;` ) }
+const DropdownWrapper = styled.span< {
+	hasCheckoutVersion2: boolean;
+	shouldUseCheckoutV2?: boolean;
+} >`
+	${ ( props ) =>
+		props.hasCheckoutVersion2 || props.shouldUseCheckoutV2
+			? `width: 100%; max-width: 200px`
+			: `width: 100%;` }
 `;
 
 function LineItemWrapper( {
@@ -372,7 +385,10 @@ function LineItemWrapper( {
 				shouldShowBillingInterval={ ! finalShouldShowVariantSelector }
 				shouldUseCheckoutV2={ shouldUseCheckoutV2 }
 			>
-				<DropdownWrapper hasCheckoutVersion2={ hasCheckoutVersion( '2' ) }>
+				<DropdownWrapper
+					hasCheckoutVersion2={ hasCheckoutVersion( '2' ) }
+					shouldUseCheckoutV2={ shouldUseCheckoutV2 }
+				>
 					{ finalShouldShowVariantSelector && (
 						<ItemVariationPicker
 							id={ product.uuid }
@@ -395,7 +411,7 @@ function LineItemWrapper( {
 						/>
 					) }
 				</DropdownWrapper>
-				{ hasCheckoutVersion( '2' ) && (
+				{ ( hasCheckoutVersion( '2' ) || shouldUseCheckoutV2 ) && (
 					<LineItemCostOverrides product={ product } costOverridesList={ costOverridesList } />
 				) }
 			</LineItem>
