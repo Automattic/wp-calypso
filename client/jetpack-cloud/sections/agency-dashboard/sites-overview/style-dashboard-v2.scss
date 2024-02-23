@@ -27,7 +27,7 @@
 	.sites-dashboard__layout:not(.preview-hidden) {
 
 		.sites-overview {
-			padding: 16px 24px;
+			padding: 16px 24px 32px;
 			overflow: hidden;
 		}
 
@@ -174,7 +174,6 @@
 		.sites-overview {
 			flex-grow: 1;
 			padding: 48px 64px 0;
-			margin-right: -14px;
 			transition: flex-grow 0.2s;
 		}
 
