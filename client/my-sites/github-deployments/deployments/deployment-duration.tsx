@@ -29,8 +29,8 @@ const IDLE_STATUSES: DeploymentRunStatus[] = [ 'dispatched', 'queued', 'building
 
 export const DeploymentDuration = ( { run }: DeploymentDurationProps ) => {
 	const [ , setState ] = useState( 0 );
-
-	useInterval( () => setState( ( i ) => i + 1 ), 1000 );
+	const isRunCompleted = run.completed_on !== null;
+	useInterval( () => setState( ( i ) => i + 1 ), isRunCompleted ? null : 1000 );
 
 	if ( IDLE_STATUSES.includes( run.status ) ) {
 		return '0s';
