@@ -10,6 +10,7 @@ import { GitHubInstallationData } from 'calypso/my-sites/github-deployments/use-
 import { useGithubRepositoryBranchesQuery } from 'calypso/my-sites/github-deployments/use-github-repository-branches-query';
 import { GitHubRepositoryData } from '../../use-github-repositories-query';
 import { DeploymentStyle } from '../deployment-style';
+import { useCheckWorkflowQuery } from '../deployment-style/use-check-workflow-query';
 
 import './style.scss';
 
@@ -75,7 +76,25 @@ export const GitHubConnectionForm = ( {
 		];
 	}, [ branches, initialValues.branch, repository.default_branch ] );
 	const [ isPending, setIsPending ] = useState( false );
-	const [ submitDisabled, setSubmitDisabled ] = useState( false );
+
+	const {
+		data: workflowCheckResult,
+		isFetching: isCheckingWorkflow,
+		refetch: checkWorkflow,
+	} = useCheckWorkflowQuery(
+		{
+			installationId: installation.external_id,
+			repository,
+			branchName: branch,
+			workflowFilename: workflowPath,
+		},
+		{
+			enabled: !! workflowPath,
+			refetchOnWindowFocus: false,
+		}
+	);
+
+	const submitDisabled = !! workflowPath && workflowCheckResult?.conclusion !== 'success';
 
 	return (
 		<form
@@ -165,18 +184,15 @@ export const GitHubConnectionForm = ( {
 				</Button>
 			</div>
 			<DeploymentStyle
+				isDisabled={ isFetchingBranches }
 				branchName={ branch }
 				installationId={ installation.external_id }
 				repository={ repository }
 				workflowPath={ workflowPath }
 				onChooseWorkflow={ ( filePath ) => setWorkflowPath( filePath ) }
-				onValidationChange={ ( status ) => {
-					if ( status === 'success' ) {
-						setSubmitDisabled( false );
-					} else {
-						setSubmitDisabled( true );
-					}
-				} }
+				workflowCheckResult={ workflowCheckResult }
+				isCheckingWorkflow={ isCheckingWorkflow }
+				onWorkflowVerify={ checkWorkflow }
 			/>
 		</form>
 	);

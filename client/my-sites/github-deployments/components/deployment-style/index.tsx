@@ -1,396 +1,49 @@
-import {
-	Button,
-	FoldableCard,
-	FormInputValidation,
-	FormLabel,
-	SelectDropdown,
-	Spinner,
-} from '@automattic/components';
-import { ExternalLink, Icon } from '@wordpress/components';
-import { sprintf, __ } from '@wordpress/i18n';
-import { check, closeSmall } from '@wordpress/icons';
-import classNames from 'classnames';
-import { translate } from 'i18n-calypso';
-import Prism from 'prismjs';
-import 'prismjs/themes/prism.css';
-import 'prismjs/components/prism-yaml';
-import { useEffect, useMemo, useRef, useState } from 'react';
-import FormFieldset from 'calypso/components/forms/form-fieldset';
+import { sprintf } from '@wordpress/i18n';
+import { useI18n } from '@wordpress/react-i18n';
 import FormRadiosBar from 'calypso/components/forms/form-radios-bar';
-import SupportInfo from 'calypso/components/support-info';
 import { GitHubRepositoryData } from 'calypso/my-sites/github-deployments/use-github-repositories-query';
 import { useDispatch } from 'calypso/state';
-import { errorNotice, successNotice } from 'calypso/state/notices/actions';
-import { useCreateWorkflow } from './use-create-workflow';
-import {
-	WorkFlowStates,
-	Workflows,
-	useCheckWorkflowQuery,
-	useDeploymentWorkflowsQuery,
-} from './use-deployment-workflows-query';
-import { useGetWorkflowContents } from './use-get-workflow-contents-query';
-import {
-	CodePushExample,
-	NewWorkflowExample,
-	UploadArtifactExample,
-} from './workflow-yaml-examples';
+import { errorNotice } from 'calypso/state/notices/actions';
+import { AdvancedWorkflowStyle } from './advanced-workflow-style';
+import { DeploymentStyleContext, DeploymentStyleContextProps } from './context';
+import { useDeploymentWorkflowsQuery } from './use-deployment-workflows-query';
+import { CREATE_WORKFLOW_OPTION } from './workflow-picker';
 
 import './style.scss';
 
-interface DeploymentStyleProps {
+type DeploymentStyleProps = {
+	isDisabled: boolean;
 	installationId: number;
 	repository: GitHubRepositoryData;
 	branchName: string;
 	workflowPath?: string;
-	onChooseWorkflow?( workflowFilename: string | undefined ): void;
-	onValidationChange?( status: WorkFlowStates ): void;
-}
-interface WorkflowsValidationItem {
-	label: string;
-	key: string;
-	item: JSX.Element;
-	status: WorkFlowStates;
-}
+	onChooseWorkflow( workflowFilename: string | undefined ): void;
+} & DeploymentStyleContextProps;
 
-type DeploymentStyle = 'simple' | 'custom';
-
-const noticeOptions = {
-	duration: 3000,
-};
+type DeploymentStyle = 'simple' | 'advanced';
 
 export const DeploymentStyle = ( {
+	isDisabled,
 	installationId,
 	repository,
 	branchName,
 	workflowPath,
 	onChooseWorkflow,
-	onValidationChange,
+	isCheckingWorkflow,
+	onWorkflowVerify,
+	workflowCheckResult,
 }: DeploymentStyleProps ) => {
-	const defaultWorkflowFilepath = '.github/workflows/wpcom.yml';
-	const getWorkflowNameFromFilepath = ( filepath: string ) => {
-		return filepath.split( '/' ).pop() || filepath;
-	};
-
+	const { __ } = useI18n();
 	const dispatch = useDispatch();
-	const [ deploymentStyle, setDeploymentStyle ] = useState< DeploymentStyle >(
-		workflowPath ? 'custom' : 'simple'
-	);
 
-	const [ selectedWorkflow, setSelectedWorkflow ] = useState< Workflows >( {
-		file_name: workflowPath ? getWorkflowNameFromFilepath( workflowPath ) : __( 'Select workflow' ),
-		workflow_path: workflowPath || 'none',
-	} );
-	const [ isCreatingNewWorkflow, setIsCreatingNewWorkflow ] = useState( false );
-	const [ isYamlValid, setIsYamlValid ] = useState( true );
-	const [ advancedOptionsDisabled, setAdvancedOptionsDisabled ] = useState( false );
-	const validationTriggered = false;
-	const isTemplateRepository = repository.owner === 'Automattic';
-	const yamlCodeRef = useRef( null );
 	const {
 		data: workflows,
-		isLoading: isFetchingWorkflows,
-		isRefetching: isRefreshingWorkflows,
-		refetch: refetchWorkflows,
-	} = useDeploymentWorkflowsQuery(
-		installationId,
-		repository,
-		branchName,
-		deploymentStyle,
-		isTemplateRepository
-	);
-
-	const { data: contents, isLoading: isLoadingContents } = useGetWorkflowContents(
-		{
-			repositoryOwner: repository.owner,
-			repositoryName: repository.name,
-			branchName,
-			workflowFilename: selectedWorkflow.workflow_path,
-		},
-		{
-			enabled: !! selectedWorkflow.workflow_path,
-		}
-	);
-
-	const workflowsForRendering = useMemo( () => {
-		const mappedValues = [ { workflow_path: 'none', file_name: __( 'Select workflow' ) } ].concat(
-			workflows?.map( ( workflow ) => ( {
-				workflow_path: workflow.workflow_path,
-				file_name: workflow.file_name,
-			} ) ) || []
-		);
-
-		if ( isTemplateRepository ) {
-			return mappedValues;
-		}
-
-		return mappedValues.concat( {
-			workflow_path: 'create-new',
-			file_name: __( 'Create new workflow' ),
-		} );
-	}, [ workflows ] );
-
-	const {
-		isLoading: isCheckingWorkflowFile,
-		data: workflowCheckResult,
-		refetch: refetchWorkflowValidation,
-		isRefetching: isRefetchingWorkflowValidation,
-	} = useCheckWorkflowQuery(
-		installationId,
-		repository,
-		branchName,
-		selectedWorkflow.workflow_path || '',
-		isTemplateRepository
-	);
-
-	const isWorkflowInvalid =
-		! ( isFetchingWorkflows || isRefreshingWorkflows ) && selectedWorkflow.workflow_path === 'none';
-	const workflowFileName = workflowPath
-		? workflowPath.substring( workflowPath.lastIndexOf( '/' ) + 1 )
-		: '';
-	const workflowFileUrl = `https://www.github.com/${ repository.owner }/${ repository.name }/blob/${ branchName }/${ workflowPath }`;
-
-	const { createDeployment, isPending: isInstallingWorkflow } = useCreateWorkflow( {
-		onSuccess: () => {
-			refetchWorkflows();
-			setSelectedWorkflow( {
-				file_name: getWorkflowNameFromFilepath( defaultWorkflowFilepath ),
-				workflow_path: defaultWorkflowFilepath,
-			} );
-			dispatch( successNotice( __( 'Workflow created' ), noticeOptions ) );
-		},
-		onError: ( error ) => {
-			dispatch(
-				errorNotice(
-					// translators: "reason" is why creating a workflow failed.
-					sprintf( __( 'Failed to create workflow: %(reason)s' ), { reason: error.message } ),
-					{
-						...noticeOptions,
-					}
-				)
-			);
-		},
+		isLoading,
+		isFetching,
+		refetch,
+	} = useDeploymentWorkflowsQuery( installationId, repository, branchName, {
+		refetchOnWindowFocus: false,
 	} );
-
-	const [ workflowsValidations, setWorkflowValidations ] = useState< WorkflowsValidationItem[] >( [
-		{
-			label: __( 'The workflow file is a valid YAML' ),
-			key: 'valid_yaml_file',
-			item: (
-				<div>
-					<p>
-						{ __(
-							"Ensure that your workflow file contains a valid YAML structure. Here's an example:"
-						) }
-					</p>
-					<pre>
-						<code ref={ yamlCodeRef } className="language-yaml">
-							{ NewWorkflowExample( repository.default_branch ) }
-						</code>
-					</pre>
-				</div>
-			),
-			status: 'loading',
-		},
-		{
-			label: __( 'The workflow is triggered on push' ),
-			key: 'triggered_on_push',
-			item: (
-				<div>
-					<p>{ __( 'Ensure that your workflow triggers on code push.' ) }</p>
-					<pre>
-						<code ref={ yamlCodeRef } className="language-yaml">
-							{ CodePushExample( repository.default_branch ) }
-						</code>
-					</pre>
-				</div>
-			),
-			status: 'loading',
-		},
-		{
-			label: __( 'The upload artifact has the required name' ),
-			key: 'upload_artifact_with_required_name',
-			item: (
-				<div>
-					<p>{ __( "Ensure that your workflow generates an artifact named 'wpcom'." ) }</p>
-					<pre>
-						<code ref={ yamlCodeRef } className="language-yaml">
-							{ UploadArtifactExample() }
-						</code>
-					</pre>
-				</div>
-			),
-			status: 'loading',
-		},
-	] );
-
-	const handleDeploymentStyleChange = ( value: DeploymentStyle ) => {
-		setDeploymentStyle( value );
-	};
-
-	const handleWorkflowChange = ( workflowFilename: Workflows ) => {
-		setSelectedWorkflow( workflowFilename );
-	};
-
-	const handleVerifyWorkflow = () => {
-		refetchWorkflowValidation();
-	};
-
-	const installWorkflow = async () => {
-		createDeployment( {
-			repositoryId: repository.id,
-			branchName: branchName,
-			repository: repository,
-			fileName: defaultWorkflowFilepath,
-			fileContent: NewWorkflowExample( repository.default_branch ),
-		} );
-	};
-
-	const RenderIcon = ( { state }: { state: WorkFlowStates } ) => {
-		if ( state === 'loading' ) {
-			return <Spinner className="custom-icons" />;
-		}
-
-		const icon = state === 'success' ? check : closeSmall;
-		return <Icon size={ 20 } icon={ icon } className={ classNames( 'custom-icons', state ) } />;
-	};
-
-	useEffect( () => {
-		const invalidYaml = workflowCheckResult?.checked_items?.find( ( checkedItem ) => {
-			return checkedItem.validation_name === 'valid_yaml_file' && checkedItem.status === 'error';
-		} );
-
-		if ( invalidYaml ) {
-			setIsYamlValid( false );
-		} else {
-			setIsYamlValid( true );
-		}
-
-		const workflowsValidationsChanged = workflowsValidations.map( ( validation ) => {
-			const item = workflowCheckResult?.checked_items?.find( ( checkedItem ) => {
-				return checkedItem.validation_name === validation.key;
-			} );
-
-			if ( validation.key === item?.validation_name ) {
-				return {
-					...validation,
-					status: item.status,
-				};
-			}
-
-			return validation;
-		} );
-
-		setWorkflowValidations( [ ...workflowsValidationsChanged ] );
-	}, [ workflowCheckResult ] );
-
-	useEffect( () => {
-		if (
-			deploymentStyle === 'simple' ||
-			( isTemplateRepository && selectedWorkflow.workflow_path !== 'none' )
-		) {
-			onValidationChange?.( 'success' );
-		} else {
-			onValidationChange?.( workflowCheckResult?.conclusion || 'loading' );
-		}
-	}, [ onValidationChange, deploymentStyle, workflowCheckResult ] );
-
-	useEffect( () => {
-		if ( deploymentStyle === 'custom' && selectedWorkflow.workflow_path === 'create-new' ) {
-			setIsCreatingNewWorkflow( true );
-		} else {
-			setIsCreatingNewWorkflow( false );
-		}
-
-		if (
-			selectedWorkflow.workflow_path === 'create-new' ||
-			selectedWorkflow.workflow_path === 'none' ||
-			deploymentStyle === 'simple'
-		) {
-			onChooseWorkflow?.( undefined );
-		} else {
-			onChooseWorkflow?.( selectedWorkflow.workflow_path );
-		}
-		if ( yamlCodeRef.current ) {
-			Prism.highlightElement( yamlCodeRef.current );
-		}
-	}, [ onChooseWorkflow, deploymentStyle, selectedWorkflow ] );
-
-	useEffect( () => {
-		if ( yamlCodeRef.current ) {
-			Prism.highlightElement( yamlCodeRef.current );
-		}
-	}, [ workflowsValidations ] );
-
-	useEffect( () => {
-		setAdvancedOptionsDisabled( workflows?.length === 0 && isTemplateRepository );
-
-		if ( isTemplateRepository && workflows?.length && workflows?.length > 0 ) {
-			const dotcomBuildArtefact = workflows.find( ( workflow ) => {
-				return workflow.file_name === 'dotcom-build-artifact.yml';
-			} );
-
-			if ( dotcomBuildArtefact ) {
-				setDeploymentStyle( 'custom' );
-				setSelectedWorkflow( dotcomBuildArtefact );
-			}
-		}
-	}, [ workflows, isTemplateRepository ] );
-
-	useEffect( () => {
-		if ( yamlCodeRef.current ) {
-			Prism.highlightElement( yamlCodeRef.current );
-		}
-	}, [ contents ] );
-
-	const RenderValidationIcon = ( { validationStatus }: { validationStatus: WorkFlowStates } ) => {
-		if ( ! isYamlValid ) {
-			return <RenderIcon state="error" />;
-		}
-		if ( isCheckingWorkflowFile || isRefetchingWorkflowValidation ) {
-			return <RenderIcon state="loading" />;
-		}
-
-		return <RenderIcon state={ validationStatus } />;
-	};
-
-	const shouldExpand = ( validation: WorkflowsValidationItem ) => {
-		return (
-			( isYamlValid && validation.status === 'error' ) ||
-			( ! isYamlValid && validation.key === 'valid_yaml_file' )
-		);
-	};
-
-	const ExternalWorkflowLink = () => {
-		if ( isCheckingWorkflowFile || isRefetchingWorkflowValidation ) {
-			return <Spinner />;
-		}
-
-		const hasAnyError = workflowCheckResult?.checked_items?.find( ( checkedItem ) => {
-			return checkedItem.status === 'error';
-		} );
-
-		if ( hasAnyError ) {
-			return (
-				<p>
-					{ translate( 'Please edit {{filename/}} and fix the problems we found:', {
-						components: {
-							filename: <ExternalLink href={ workflowFileUrl }>{ workflowFileName }</ExternalLink>,
-						},
-					} ) }
-				</p>
-			);
-		}
-
-		return (
-			<p>
-				{ translate( 'Your workflow {{filename/}} is good to go!', {
-					components: {
-						filename: <ExternalLink href={ workflowFileUrl }>{ workflowFileName }</ExternalLink>,
-					},
-				} ) }
-			</p>
-		);
-	};
 
 	return (
 		<div className="github-deployments-deployment-style">
@@ -398,174 +51,67 @@ export const DeploymentStyle = ( {
 				{ __( 'Pick your deployment mode' ) }
 			</h3>
 			<FormRadiosBar
+				disabled={ isDisabled }
 				items={ [
 					{
 						label: __( 'Simple' ),
 						value: 'simple',
-						checked: advancedOptionsDisabled || deploymentStyle === 'simple',
 					},
-					{ label: __( 'Advanced' ), value: 'custom', disabled: advancedOptionsDisabled },
+					{ label: __( 'Advanced' ), value: 'advanced' },
 				] }
-				checked={ deploymentStyle }
-				onChange={ ( event ) => handleDeploymentStyleChange( event.currentTarget.value ) }
-				disabled={ false }
+				checked={ workflowPath ? 'advanced' : 'simple' }
+				onChange={ ( event ) => {
+					if ( event.target.value === 'simple' ) {
+						onChooseWorkflow( undefined );
+					} else {
+						onChooseWorkflow( workflows?.[ 0 ]?.workflow_path ?? CREATE_WORKFLOW_OPTION );
+					}
+				} }
 			/>
 
-			{ deploymentStyle === 'custom' && ! advancedOptionsDisabled && (
-				<FormFieldset style={ { marginBottom: '0px' } }>
-					<FormLabel>
-						{ __( 'Select deployment workflow' ) }
+			{ workflowPath && (
+				<DeploymentStyleContext.Provider
+					value={ {
+						isCheckingWorkflow,
+						onWorkflowVerify,
+						workflowCheckResult,
+					} }
+				>
+					<AdvancedWorkflowStyle
+						installationId={ installationId }
+						repository={ repository }
+						branchName={ branchName }
+						workflowPath={ workflowPath }
+						onNewWorkflowVerification={ async ( path: string ) => {
+							const { data: newWorkflows } = await refetch();
 
-						<SupportInfo
-							text={ __(
-								'A workflow is a configurable automated process that will run one or more jobs. Workflows are defined by a YAML file checked into your repository and will run when triggered by an event in your repository, or they can be triggered manually or at a defined schedule.'
-							) }
-							link="https://docs.github.com/en/actions/using-workflows"
-							privacyLink={ false }
-						/>
-					</FormLabel>
-					<div className="github-deployments-deployment-style__workflow-selection">
-						<SelectDropdown
-							className="github-deployments-branch-select"
-							selectedText={ selectedWorkflow.file_name }
-							isLoading={ isFetchingWorkflows || isRefreshingWorkflows }
-						>
-							{ workflowsForRendering.map( ( workflowOption ) => (
-								<SelectDropdown.Item
-									key={ workflowOption.workflow_path }
-									selected={ selectedWorkflow === workflowOption }
-									onClick={ () => handleWorkflowChange( workflowOption ) }
-								>
-									{ workflowOption.file_name }
-								</SelectDropdown.Item>
-							) ) }
-						</SelectDropdown>
-						{ isWorkflowInvalid && (
-							<FormInputValidation
-								isError
-								text={ translate( 'Please select a deployment workflow' ) }
-							/>
-						) }
-					</div>
-				</FormFieldset>
-			) }
+							if ( ! newWorkflows?.find( ( workflow ) => workflow.workflow_path === path ) ) {
+								dispatch(
+									errorNotice(
+										// translators: workflowPath is the GitHub repo workflow path
+										sprintf( __( 'Could not find workflow with path %(workflowPath)s' ), {
+											workflowPath: path,
+										} ),
+										{
+											duration: 5000,
+										}
+									)
+								);
+								return;
+							}
 
-			{ advancedOptionsDisabled && (
-				<FormInputValidation
-					className="advanced-options-error"
-					isError
-					text={ translate( 'The selected template does not support advance deployment.' ) }
-				/>
-			) }
-
-			{ isTemplateRepository && selectedWorkflow.workflow_path !== 'none' && (
-				<FormFieldset className="github-deployments-deployment-style__workflow-checks workflow-content">
-					<FoldableCard
-						expanded={ true }
-						header={ selectedWorkflow.workflow_path }
-						screenReaderText="More"
-					>
-						{ isLoadingContents ? (
-							<Spinner />
-						) : (
-							<pre>
-								<code ref={ yamlCodeRef } className="language-yaml">
-									{ contents?.content }
-								</code>
-							</pre>
-						) }
-					</FoldableCard>
-				</FormFieldset>
-			) }
-
-			{ ! isTemplateRepository && deploymentStyle === 'custom' && ! isWorkflowInvalid && (
-				<FormFieldset className="github-deployments-deployment-style__workflow-checks">
-					{ deploymentStyle === 'custom' &&
-						selectedWorkflow.workflow_path !== 'none' &&
-						selectedWorkflow !== undefined &&
-						! isCreatingNewWorkflow && (
-							<>
-								<FormLabel>{ __( 'Workflow check' ) }</FormLabel>
-								<ExternalWorkflowLink />
-								{ workflowsValidations.map( ( validation ) => (
-									<div key={ validation.key }>
-										<FoldableCard
-											disabled={ validation.key !== 'valid_yaml_file' && ! isYamlValid }
-											key={ validation.key }
-											className={ validation.status === 'error' ? 'is-error' : '' }
-											expanded={ shouldExpand( validation ) }
-											header={
-												<>
-													<RenderValidationIcon validationStatus={ validation.status } />
-													{ validation.label }
-												</>
-											}
-											screenReaderText="More"
-										>
-											{ validation.item }
-										</FoldableCard>
-										{ validation.status === 'error' && (
-											<FormInputValidation isError text={ translate( 'Please fix this error' ) } />
-										) }
-									</div>
-								) ) }
-							</>
-						) }
-					{ deploymentStyle === 'custom' && (
-						<div className={ isCreatingNewWorkflow ? '' : 'hide-new-workflow' }>
-							<FormLabel>{ __( 'Custom workflow' ) }</FormLabel>
-							<p>
-								{ __(
-									'Create a new workflow file in your repository with the following content and then click ‘Verify workflow’ or let us install it for you.'
-								) }
-							</p>
-
-							<FoldableCard
-								className={ validationTriggered ? 'error' : '' }
-								expanded={ true }
-								header={ <div>.github/workflows/wpcom.yml</div> }
-								screenReaderText="More"
-							>
-								<div>
-									<pre>
-										<code ref={ yamlCodeRef } className="language-yaml">
-											{ NewWorkflowExample( repository.default_branch ) }
-										</code>
-									</pre>
-								</div>
-							</FoldableCard>
-						</div>
-					) }
-					{ deploymentStyle === 'custom' && selectedWorkflow.workflow_path !== 'none' && (
-						<div className="github-deployments-deployment-style__actions">
-							{ ! isCreatingNewWorkflow && (
-								<Button
-									type="button"
-									busy={ isCheckingWorkflowFile || isRefetchingWorkflowValidation }
-									className="button form-button"
-									onClick={ handleVerifyWorkflow }
-								>
-									{ __( 'Verify workflow' ) }
-								</Button>
-							) }
-							{ /* { workflowCheckResult?.conclusion === 'error' && (
-							<Button type="button" className="button form-button" onClick={ fixWorfklow }>
-								{ __( 'Fix workflow for me' ) }
-							</Button>
-						) } */ }
-							{ isCreatingNewWorkflow && (
-								<Button
-									type="button"
-									busy={ isInstallingWorkflow }
-									className="button form-button"
-									onClick={ installWorkflow }
-								>
-									{ __( 'Install workflow for me' ) }
-								</Button>
-							) }
-						</div>
-					) }
-				</FormFieldset>
+							onChooseWorkflow( path );
+						} }
+						onWorkflowCreation={ async ( path ) => {
+							await refetch();
+							onChooseWorkflow( path );
+						} }
+						onChooseWorkflow={ onChooseWorkflow }
+						workflows={ workflows }
+						isLoading={ isLoading }
+						isFetching={ isFetching }
+					/>
+				</DeploymentStyleContext.Provider>
 			) }
 		</div>
 	);

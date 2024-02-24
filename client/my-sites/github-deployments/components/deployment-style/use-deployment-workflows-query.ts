@@ -6,29 +6,16 @@ import { GitHubRepositoryData } from 'calypso/my-sites/github-deployments/use-gi
 
 export const CODE_DEPLOYMENTS_QUERY_KEY = 'code-deployments';
 
-export interface Workflows {
+export interface Workflow {
 	file_name: string;
 	workflow_path: string;
-}
-export type WorkFlowStates = 'loading' | 'success' | 'error';
-
-export interface WorkflowsValidationItem {
-	validation_name: string;
-	status: WorkFlowStates;
-}
-
-export interface WorkflowsValidation {
-	conclusion: WorkFlowStates;
-	checked_items: WorkflowsValidationItem[];
 }
 
 export const useDeploymentWorkflowsQuery = (
 	installationId: number,
 	repository: GitHubRepositoryData,
 	branchName: string,
-	deploymentStyle: string,
-	isTemplateRepository: boolean,
-	options?: Partial< UseQueryOptions< Workflows[] > >
+	options?: Partial< UseQueryOptions< Workflow[] > >
 ) => {
 	const path = addQueryArgs( '/hosting/github/workflows', {
 		installation_id: installationId,
@@ -37,10 +24,10 @@ export const useDeploymentWorkflowsQuery = (
 		branch_name: branchName,
 	} );
 
-	return useQuery< Workflows[] >( {
+	return useQuery< Workflow[] >( {
 		queryKey: [ GITHUB_DEPLOYMENTS_QUERY_KEY, CODE_DEPLOYMENTS_QUERY_KEY, path ],
-		enabled: !! installationId && ( deploymentStyle !== 'simple' || isTemplateRepository ),
-		queryFn: (): Workflows[] =>
+		enabled: !! installationId,
+		queryFn: (): Workflow[] =>
 			wp.req.get( {
 				path,
 				apiNamespace: 'wpcom/v2',
@@ -49,35 +36,5 @@ export const useDeploymentWorkflowsQuery = (
 			persist: false,
 		},
 		...options,
-	} );
-};
-
-export const useCheckWorkflowQuery = (
-	installationId: number,
-	repository: GitHubRepositoryData,
-	branchName: string,
-	workflowFilename: string,
-	isTemplateRepository: boolean
-) => {
-	const invalidFilenames = [ 'none', 'create-new' ];
-	const path = addQueryArgs( '/hosting/github/workflows/checks', {
-		installation_id: installationId,
-		repository_name: repository.name,
-		repository_owner: repository.owner,
-		branch_name: branchName,
-		workflow_filename: workflowFilename,
-	} );
-
-	return useQuery< WorkflowsValidation >( {
-		queryKey: [ GITHUB_DEPLOYMENTS_QUERY_KEY, CODE_DEPLOYMENTS_QUERY_KEY, path ],
-		enabled: ! invalidFilenames.includes( workflowFilename ) && ! isTemplateRepository,
-		queryFn: (): WorkflowsValidation =>
-			wp.req.get( {
-				path,
-				apiNamespace: 'wpcom/v2',
-			} ),
-		meta: {
-			persist: false,
-		},
 	} );
 };

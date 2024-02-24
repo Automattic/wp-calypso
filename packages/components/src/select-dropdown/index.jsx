@@ -76,6 +76,16 @@ class SelectDropdown extends Component {
 		window.removeEventListener( 'click', this.handleOutsideClick );
 	}
 
+	static getDerivedStateFromProps( nextProps, prevState ) {
+		if ( nextProps.selected !== undefined && nextProps.selected !== prevState.selected ) {
+			return {
+				selected: nextProps.selected,
+			};
+		}
+
+		return null;
+	}
+
 	componentDidUpdate( prevProps, prevState ) {
 		if ( this.state.isOpen ) {
 			window.addEventListener( 'click', this.handleOutsideClick );

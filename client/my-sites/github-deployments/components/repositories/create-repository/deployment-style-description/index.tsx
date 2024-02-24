@@ -1,9 +1,6 @@
 import { Spinner } from '@automattic/components';
 import { useI18n } from '@wordpress/react-i18n';
-import Prism from 'prismjs';
-import 'prismjs/themes/prism.css';
-import 'prismjs/components/prism-yaml';
-import { useEffect, useRef } from 'react';
+import { CodeHighlighter } from '../../../code-highlighter';
 import { useGetWorkflowContents } from '../../../deployment-style/use-get-workflow-contents-query';
 
 import './style.scss';
@@ -33,27 +30,15 @@ export const DeploymentStyleDescription = ( {
 		}
 	);
 
-	const yamlCodeRef = useRef< HTMLElement | null >( null );
-
-	useEffect( () => {
-		if ( yamlCodeRef.current ) {
-			Prism.highlightElement( yamlCodeRef.current );
-		}
-	}, [ data?.content ] );
-
 	const renderContent = () => {
 		if ( ! data?.content ) {
 			return <span>{ __( 'The selected template does not require file processing' ) }</span>;
 		}
 
 		return (
-			<div>
+			<div className="deployment-style-description__workflow">
 				<p>{ __( 'The following workflow file is included with this template:' ) }</p>
-				<pre>
-					<code ref={ yamlCodeRef } className="language-yaml">
-						{ data.content }
-					</code>
-				</pre>
+				<CodeHighlighter content={ data.content } />
 			</div>
 		);
 	};
