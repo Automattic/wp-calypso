@@ -161,6 +161,14 @@ export default memo( function SitesTableRow( { site }: SiteTableRowProps ) {
 		return siteId && hasSiteStatsQueryFailed( state, siteId, statType, query );
 	} );
 
+	const computeDashboardUrl = ( site, isAtomicSite ) => {
+		if ( isAtomicSite && siteDefaultInterface( site ) === 'wp-admin' ) {
+			return getSiteWpAdminUrl( site ) || getDashboardUrl( site.slug );
+		}
+		return getDashboardUrl( site.slug );
+	};
+	const dashboardUrl = computeDashboardUrl( site, isAtomicSite );
+
 	let siteUrl = site.URL;
 	if ( site.options?.is_redirect && site.options?.unmapped_url ) {
 		siteUrl = site.options?.unmapped_url;
@@ -174,27 +182,13 @@ export default memo( function SitesTableRow( { site }: SiteTableRowProps ) {
 						min-width: 0;
 					` }
 					leading={
-						<ListTileLeading
-							href={
-								isAtomicSite && siteDefaultInterface( site ) === 'wp-admin'
-									? getSiteWpAdminUrl( site ) || getDashboardUrl( site.slug )
-									: getDashboardUrl( site.slug )
-							}
-							title={ __( 'Visit Dashboard' ) }
-						>
+						<ListTileLeading href={ dashboardUrl } title={ __( 'Visit Dashboard' ) }>
 							<SiteItemThumbnail displayMode="list" showPlaceholder={ ! inView } site={ site } />
 						</ListTileLeading>
 					}
 					title={
 						<ListTileTitle>
-							<SiteName
-								href={
-									isAtomicSite && siteDefaultInterface( site ) === 'wp-admin'
-										? getSiteWpAdminUrl( site ) || getDashboardUrl( site.slug )
-										: getDashboardUrl( site.slug )
-								}
-								title={ __( 'Visit Dashboard' ) }
-							>
+							<SiteName href={ dashboardUrl } title={ __( 'Visit Dashboard' ) }>
 								{ site.title }
 							</SiteName>
 							{ isP2Site && <SitesP2Badge>P2</SitesP2Badge> }
