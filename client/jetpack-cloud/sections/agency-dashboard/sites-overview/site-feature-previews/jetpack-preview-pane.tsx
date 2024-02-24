@@ -18,7 +18,7 @@ export function JetpackPreviewPane( { site, closeSitePreviewPane }: SitePreviewP
 			{
 				id: 'jetpack_boost',
 				tab: {
-					label: translate( 'Boost' ),
+					label: 'Boost',
 					selected: selectedFeatureId === 'jetpack_boost',
 					onTabClick: () => setSelectedFeatureId( 'jetpack_boost' ),
 				},
@@ -27,7 +27,7 @@ export function JetpackPreviewPane( { site, closeSitePreviewPane }: SitePreviewP
 			{
 				id: 'jetpack_backup',
 				tab: {
-					label: translate( 'Backup' ),
+					label: 'Backup',
 					selected: selectedFeatureId === 'jetpack_backup',
 					onTabClick: () => setSelectedFeatureId( 'jetpack_backup' ),
 				},
@@ -36,7 +36,7 @@ export function JetpackPreviewPane( { site, closeSitePreviewPane }: SitePreviewP
 			{
 				id: 'jetpack_monitor',
 				tab: {
-					label: translate( 'Monitor' ),
+					label: 'Monitor',
 					selected: selectedFeatureId === 'jetpack_monitor',
 					onTabClick: () => setSelectedFeatureId( 'jetpack_monitor' ),
 				},
@@ -45,7 +45,7 @@ export function JetpackPreviewPane( { site, closeSitePreviewPane }: SitePreviewP
 			{
 				id: 'jetpack_stats',
 				tab: {
-					label: translate( 'Stats' ),
+					label: 'Stats',
 					selected: selectedFeatureId === 'jetpack_stats',
 					onTabClick: () => setSelectedFeatureId( 'jetpack_stats' ),
 				},
