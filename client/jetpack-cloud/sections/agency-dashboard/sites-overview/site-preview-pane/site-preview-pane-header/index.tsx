@@ -11,7 +11,7 @@ interface Props {
 	title: string;
 	url: string;
 	urlWithScheme: string;
-	closeSitePreviewPane: () => void;
+	closeSitePreviewPane?: () => void;
 }
 
 export default function SitePreviewPaneHeader( {
