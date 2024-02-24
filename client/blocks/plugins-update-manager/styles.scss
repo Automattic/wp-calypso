@@ -1,8 +1,14 @@
+@import "@wordpress/base-styles/breakpoints";
+
 .tooltip--selected-plugins {
 	text-align: left;
 }
 
 .plugins-update-manager {
+	@media screen and (max-width: $break-small) {
+		margin: 0 1rem;
+	}
+
 	.ch-placeholder {
 		min-width: 60px;
 		min-height: 2.25rem;
@@ -60,6 +66,36 @@
 				font-weight: 500;
 				color: var(--studio-gray-100);
 			}
+		}
+	}
+
+	.schedule-list--card {
+		margin-bottom: 1rem;
+		border-bottom: solid 1px var(--studio-gray-5);
+		position: relative;
+	}
+
+	.schedule-list--card-actions {
+		position: absolute;
+		top: 0;
+		right: -10px;
+
+		svg {
+			transform: rotate(90deg);
+		}
+	}
+
+	.schedule-list--card-label {
+		font-size: 0.875rem;
+		margin-bottom: 0.75rem;
+
+		label {
+			display: block;
+			color: var(--studio-gray-40);
+		}
+
+		strong {
+			font-weight: 500;
 		}
 	}
 }
