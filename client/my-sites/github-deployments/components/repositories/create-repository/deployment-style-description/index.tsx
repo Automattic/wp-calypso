@@ -4,7 +4,7 @@ import Prism from 'prismjs';
 import 'prismjs/themes/prism.css';
 import 'prismjs/components/prism-yaml';
 import { useEffect, useRef } from 'react';
-import { useGetWorkflowContents } from './use-get-workflow-content-query';
+import { useGetWorkflowContents } from '../../../deployment-style/use-get-workflow-contents-query';
 
 import './style.scss';
 

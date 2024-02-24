@@ -27,13 +27,14 @@ import {
 	Workflows,
 	useCheckWorkflowQuery,
 	useDeploymentWorkflowsQuery,
-	useGetWorkflowContents,
 } from './use-deployment-workflows-query';
+import { useGetWorkflowContents } from './use-get-workflow-contents-query';
 import {
 	CodePushExample,
 	NewWorkflowExample,
 	UploadArtifactExample,
 } from './workflow-yaml-examples';
+
 import './style.scss';
 
 interface DeploymentStyleProps {
@@ -99,11 +100,15 @@ export const DeploymentStyle = ( {
 	);
 
 	const { data: contents, isLoading: isLoadingContents } = useGetWorkflowContents(
-		installationId,
-		repository,
-		repository.default_branch,
-		selectedWorkflow.workflow_path !== 'none' ? selectedWorkflow.workflow_path : '',
-		isTemplateRepository
+		{
+			repositoryOwner: repository.owner,
+			repositoryName: repository.name,
+			branchName,
+			workflowFilename: selectedWorkflow.workflow_path,
+		},
+		{
+			enabled: !! selectedWorkflow.workflow_path,
+		}
 	);
 
 	const workflowsForRendering = useMemo( () => {
