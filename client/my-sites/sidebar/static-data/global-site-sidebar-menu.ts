@@ -19,23 +19,14 @@ export default function globalSiteSidebarMenu( {
 	return [
 		{
 			icon: 'dashicons-arrow-left-alt2',
-			slug: 'all-sites',
-			title: translate( 'All sites' ),
-			type: 'menu-item',
-			url: `/sites`,
-			className: 'sidebar__menu-item-all-sites',
+			slug: 'wp-admin',
+			title: translate( 'WP Admin' ),
+			url: `https://${ selectedSiteSlug }/wp-admin`,
+			className: 'sidebar__menu-item-wp-admin',
 		},
 		{
 			type: 'current-site',
 			url: `/home/${ siteDomain }`,
-		},
-		{
-			slug: 'wp-admin',
-			title: translate( 'WP Admin' ),
-			type: 'menu-item',
-			url: `https://${ selectedSiteSlug }/wp-admin`,
-			className: 'sidebar__menu-item-wp-admin',
-			forceShowExternalIcon: true,
 		},
 		{
 			type: 'separator',
