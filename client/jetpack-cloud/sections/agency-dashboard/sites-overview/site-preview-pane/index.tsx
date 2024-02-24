@@ -6,7 +6,6 @@ import './style.scss';
 
 export default function SitePreviewPane( {
 	site,
-	selectedFeatureId,
 	features,
 	closeSitePreviewPane,
 }: SitePreviewPaneProps ) {
@@ -16,9 +15,7 @@ export default function SitePreviewPane( {
 	}
 
 	// Find the selected feature or default to the first feature
-	const selectedFeature = selectedFeatureId
-		? features.find( ( feature ) => feature.id === selectedFeatureId )
-		: features[ 0 ];
+	const selectedFeature = features.find( ( feature ) => feature.tab.selected ) || features[ 0 ];
 
 	// Ensure we have a valid feature
 	if ( ! selectedFeature ) {
