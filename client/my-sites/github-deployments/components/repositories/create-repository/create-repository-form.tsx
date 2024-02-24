@@ -148,30 +148,30 @@ export const CreateRepositoryForm = ( {
 							label={ __( 'A theme' ) }
 							projectType="theme"
 							isChecked={ projectType === 'theme' }
-							onChange={ () => {
+							onTemplateSelected={ ( template ) => {
 								setProjectType( 'theme' );
+								setTemplate( template );
 							} }
-							onTemplateSelected={ setTemplate }
 							template={ template }
 						/>
 						<FormRadioWithTemplateSelect
 							label={ __( 'A plugin' ) }
 							projectType="plugin"
 							isChecked={ projectType === 'plugin' }
-							onChange={ () => {
+							onTemplateSelected={ ( template ) => {
 								setProjectType( 'plugin' );
+								setTemplate( template );
 							} }
-							onTemplateSelected={ setTemplate }
 							template={ template }
 						/>
 						<FormRadioWithTemplateSelect
 							label={ __( 'A site' ) }
 							projectType="site"
 							isChecked={ projectType === 'site' }
-							onChange={ () => {
+							onTemplateSelected={ ( template ) => {
 								setProjectType( 'site' );
+								setTemplate( template );
 							} }
-							onTemplateSelected={ setTemplate }
 							template={ template }
 						/>
 					</div>

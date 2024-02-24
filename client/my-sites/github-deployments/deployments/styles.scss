@@ -62,6 +62,15 @@
 		flex-direction: column;
 		padding: 21px 0;
 		font-weight: 500;
+
+		a {
+			color: var(--studio-gray-100, #101517);
+
+			&:hover {
+				text-decoration: underline;
+			}
+		}
+
 		span {
 			color: var(--Gray-Gray-40, #787c82);
 			font-size: $font-body-extra-small;

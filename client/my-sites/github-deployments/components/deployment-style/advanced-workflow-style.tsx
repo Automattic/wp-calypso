@@ -5,7 +5,6 @@ import { WorkflowPicker } from './workflow-picker';
 import { WorkflowValidationWizard } from './workflow-validation-wizard';
 
 type AdvancedWorkflowStyleProps = {
-	installationId: number;
 	repository: GitHubRepositoryData;
 	branchName: string;
 	workflowPath?: string;
@@ -47,7 +46,7 @@ export const AdvancedWorkflowStyle = ( {
 		return (
 			<WorkflowValidationWizard
 				repository={ repository }
-				branchName={ repository.default_branch }
+				branchName={ branchName }
 				workflow={ workflow }
 			/>
 		);

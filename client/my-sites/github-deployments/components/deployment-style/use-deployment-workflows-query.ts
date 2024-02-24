@@ -12,13 +12,11 @@ export interface Workflow {
 }
 
 export const useDeploymentWorkflowsQuery = (
-	installationId: number,
 	repository: GitHubRepositoryData,
 	branchName: string,
 	options?: Partial< UseQueryOptions< Workflow[] > >
 ) => {
 	const path = addQueryArgs( '/hosting/github/workflows', {
-		installation_id: installationId,
 		repository_name: repository.name,
 		repository_owner: repository.owner,
 		branch_name: branchName,
@@ -26,7 +24,6 @@ export const useDeploymentWorkflowsQuery = (
 
 	return useQuery< Workflow[] >( {
 		queryKey: [ GITHUB_DEPLOYMENTS_QUERY_KEY, CODE_DEPLOYMENTS_QUERY_KEY, path ],
-		enabled: !! installationId,
 		queryFn: (): Workflow[] =>
 			wp.req.get( {
 				path,

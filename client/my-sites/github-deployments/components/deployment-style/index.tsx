@@ -13,7 +13,6 @@ import './style.scss';
 
 type DeploymentStyleProps = {
 	isDisabled: boolean;
-	installationId: number;
 	repository: GitHubRepositoryData;
 	branchName: string;
 	workflowPath?: string;
@@ -24,7 +23,6 @@ type DeploymentStyle = 'simple' | 'advanced';
 
 export const DeploymentStyle = ( {
 	isDisabled,
-	installationId,
 	repository,
 	branchName,
 	workflowPath,
@@ -41,7 +39,7 @@ export const DeploymentStyle = ( {
 		isLoading,
 		isFetching,
 		refetch,
-	} = useDeploymentWorkflowsQuery( installationId, repository, branchName, {
+	} = useDeploymentWorkflowsQuery( repository, branchName, {
 		refetchOnWindowFocus: false,
 	} );
 
@@ -78,7 +76,6 @@ export const DeploymentStyle = ( {
 					} }
 				>
 					<AdvancedWorkflowStyle
-						installationId={ installationId }
 						repository={ repository }
 						branchName={ branchName }
 						workflowPath={ workflowPath }

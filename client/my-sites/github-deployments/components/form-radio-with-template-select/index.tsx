@@ -1,5 +1,5 @@
 import { ExternalLink } from '@wordpress/components';
-import { createInterpolateElement, useEffect, useState } from '@wordpress/element';
+import { createInterpolateElement, useMemo } from '@wordpress/element';
 import { useI18n } from '@wordpress/react-i18n';
 import classNames from 'classnames';
 import FormRadio from 'calypso/components/forms/form-radio';
@@ -14,7 +14,6 @@ type FormRadioWithTemplateSelectProps = {
 	isChecked?: boolean;
 	label: string;
 	projectType: ProjectType;
-	onChange?: () => void;
 	onTemplateSelected: ( template: RepositoryTemplate ) => void;
 	template: RepositoryTemplate;
 	rest?: [ string, string ];
@@ -25,26 +24,18 @@ export const FormRadioWithTemplateSelect = ( {
 	label,
 	projectType,
 	onTemplateSelected,
-	onChange,
 	template,
 }: FormRadioWithTemplateSelectProps ) => {
 	const { __ } = useI18n();
-
-	const [ checked, setChecked ] = useState< boolean >( isChecked );
-	const [ selectedTemplate, setSelectedTemplate ] = useState< RepositoryTemplate >( template );
-
-	useEffect( () => {
-		setChecked( isChecked );
-	}, [ isChecked ] );
+	const templates = useMemo( () => getRepositoryTemplate( projectType ), [ projectType ] );
 
 	const handleTemplateChange = ( event: React.ChangeEvent< HTMLSelectElement > ) => {
 		const selectedValue = event.currentTarget.value;
-		const templates = getRepositoryTemplate( projectType );
 		const selectedTemplate = templates?.find(
 			( template ) => template.repositoryName === selectedValue
 		);
+
 		if ( selectedTemplate ) {
-			setSelectedTemplate( selectedTemplate );
 			onTemplateSelected( selectedTemplate );
 		}
 	};
@@ -52,45 +43,34 @@ export const FormRadioWithTemplateSelect = ( {
 	return (
 		<label
 			className={ classNames( 'form-radio-with-template-select', {
-				checked: checked,
+				checked: isChecked,
 			} ) }
 			htmlFor={ label }
 		>
 			<div>
 				<FormRadio
 					id={ label }
-					checked={ checked }
+					checked={ isChecked }
 					label={ label }
 					onChange={ () => {
-						setChecked( ! checked );
-						onChange?.();
+						onTemplateSelected( templates[ 0 ] );
 					} }
 					className="form-radio-bar"
 				/>
 			</div>
-			{ checked && (
+			{ isChecked && (
 				<div>
-					<FormSelect
-						onChange={ handleTemplateChange }
-						value={ selectedTemplate?.repositoryName ?? 'Select template' }
-					>
-						<option value="Select template" disabled>
-							{ __( 'Select template' ) }
-						</option>
-						{ getRepositoryTemplate( projectType ).map( ( template ) => (
+					<FormSelect onChange={ handleTemplateChange } value={ template.repositoryName }>
+						{ templates.map( ( template ) => (
 							<option key={ template.repositoryName } value={ template.repositoryName }>
 								{ template.name }
 							</option>
 						) ) }
 					</FormSelect>
-					{ selectedTemplate && (
+					{ template && (
 						<small style={ { marginTop: '12px' } }>
 							{ createInterpolateElement( __( 'Learn more about the <link/> template' ), {
-								link: (
-									<ExternalLink href={ selectedTemplate?.link }>
-										{ selectedTemplate?.name }
-									</ExternalLink>
-								),
+								link: <ExternalLink href={ template.link }>{ template.name }</ExternalLink>,
 							} ) }
 						</small>
 					) }
