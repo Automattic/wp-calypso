@@ -1,7 +1,7 @@
 import config from '@automattic/calypso-config';
 import { useSetStepComplete } from '@automattic/composite-checkout';
 import { getCountryPostalCodeSupport } from '@automattic/wpcom-checkout';
-import { useQuery } from '@tanstack/react-query';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useDispatch as useWordPressDataDispatch } from '@wordpress/data';
 import debugFactory from 'debug';
 import { useEffect, useRef, useState } from 'react';
@@ -16,6 +16,7 @@ import type {
 	PossiblyCompleteDomainContactDetails,
 	CountryListItem,
 	RawCachedDomainContactDetails,
+	DomainContactValidationRequest,
 } from '@automattic/wpcom-checkout';
 
 const debug = debugFactory( 'calypso:use-cached-domain-contact-details' );
@@ -25,6 +26,10 @@ async function fetchCachedContactDetails(): Promise< PossiblyCompleteDomainConta
 		'/me/domain-contact-information'
 	);
 	return transformCachedContactDetailsToCamelCase( rawData );
+}
+
+async function setCachedContactDetails( rawData: DomainContactValidationRequest ): Promise< void > {
+	wpcom.req.post( '/me/domain-contact-information', rawData );
 }
 
 function transformCachedContactDetailsToCamelCase(
@@ -46,18 +51,35 @@ function transformCachedContactDetailsToCamelCase(
 	};
 }
 
+const cachedContactDetailsQueryKey = [ 'user-cached-contact-details' ];
+
 export function useCachedContactDetails( {
 	isLoggedOut,
 }: {
 	isLoggedOut?: boolean;
 } ): PossiblyCompleteDomainContactDetails | null {
-	const queryKey = [ 'user-cached-contact-details' ];
 	const result = useQuery( {
-		queryKey,
+		queryKey: cachedContactDetailsQueryKey,
 		queryFn: fetchCachedContactDetails,
 		enabled: ! isLoggedOut,
 	} );
 	return result.data ?? null;
+}
+
+export function useUpdateCachedContactDetails(): (
+	updatedData: DomainContactValidationRequest
+) => void {
+	const queryClient = useQueryClient();
+	const mutation = useMutation< void, Error, DomainContactValidationRequest >( {
+		mutationFn: setCachedContactDetails,
+		onSuccess: () => {
+			queryClient.invalidateQueries( {
+				queryKey: cachedContactDetailsQueryKey,
+			} );
+		},
+	} );
+
+	return mutation.mutate;
 }
 
 function useCachedContactDetailsForCheckoutForm(
