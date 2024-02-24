@@ -56,10 +56,10 @@ import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
 import useOneDollarOfferTrack from 'calypso/my-sites/plans/hooks/use-onedollar-offer-track';
 import { useDispatch as useReduxDispatch, useSelector } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
-import { saveContactDetailsCache } from 'calypso/state/domains/management/actions';
 import { errorNotice, removeNotice } from 'calypso/state/notices/actions';
 import { isMarketplaceProduct } from 'calypso/state/products-list/selectors';
 import getPreviousRoute from 'calypso/state/selectors/get-previous-route';
+import { useUpdateCachedContactDetails } from '../hooks/use-cached-domain-contact-details';
 import { useCheckoutV2 } from '../hooks/use-checkout-v2';
 import useCouponFieldState from '../hooks/use-coupon-field-state';
 import { validateContactDetails } from '../lib/contact-validation';
@@ -362,6 +362,8 @@ export default function CheckoutMainContent( {
 	const [ is100YearPlanTermsAccepted, setIs100YearPlanTermsAccepted ] = useState( false );
 	const [ isSubmitted, setIsSubmitted ] = useState( false );
 
+	const updateCachedContactDetails = useUpdateCachedContactDetails();
+
 	const validateForm = async () => {
 		setIsSubmitted( true );
 		if ( hasMarketplaceProduct && ! is3PDAccountConsentAccepted ) {
@@ -588,8 +590,8 @@ export default function CheckoutMainContent( {
 									// the server. This can fail if validation fails but we will silently
 									// ignore failures here because the validation call will handle them better
 									// than this will.
-									reduxDispatch(
-										saveContactDetailsCache( prepareDomainContactValidationRequest( contactInfo ) )
+									updateCachedContactDetails(
+										prepareDomainContactValidationRequest( contactInfo )
 									);
 
 									reduxDispatch(
