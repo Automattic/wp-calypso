@@ -9,7 +9,7 @@ import FormTextInput from 'calypso/components/forms/form-text-input';
 import { GitHubInstallationData } from 'calypso/my-sites/github-deployments/use-github-installations-query';
 import { useGithubRepositoryBranchesQuery } from 'calypso/my-sites/github-deployments/use-github-repository-branches-query';
 import { GitHubRepositoryData } from '../../use-github-repositories-query';
-import { DeploymentStyle } from '../repositories/deployment-style/deployment-style';
+import { DeploymentStyle } from '../deployment-style';
 
 import './style.scss';
 
