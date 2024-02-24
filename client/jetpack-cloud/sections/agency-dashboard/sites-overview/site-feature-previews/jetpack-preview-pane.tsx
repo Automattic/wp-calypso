@@ -22,6 +22,7 @@ export function JetpackPreviewPane( { site, closeSitePreviewPane }: SitePreviewP
 					selected: selectedFeatureId === 'jetpack_boost',
 					onTabClick: () => setSelectedFeatureId( 'jetpack_boost' ),
 				},
+				enabled: true,
 				preview: <JetpackBoostPreview site={ site } />,
 			},
 			{
@@ -31,6 +32,7 @@ export function JetpackPreviewPane( { site, closeSitePreviewPane }: SitePreviewP
 					selected: selectedFeatureId === 'jetpack_backup',
 					onTabClick: () => setSelectedFeatureId( 'jetpack_backup' ),
 				},
+				enabled: true,
 				preview: <JetpackBackupPreview site={ site } />,
 			},
 			{
@@ -40,6 +42,7 @@ export function JetpackPreviewPane( { site, closeSitePreviewPane }: SitePreviewP
 					selected: selectedFeatureId === 'jetpack_monitor',
 					onTabClick: () => setSelectedFeatureId( 'jetpack_monitor' ),
 				},
+				enabled: true,
 				preview: <JetpackMonitorPreview site={ site } />,
 			},
 			{
@@ -49,6 +52,7 @@ export function JetpackPreviewPane( { site, closeSitePreviewPane }: SitePreviewP
 					selected: selectedFeatureId === 'jetpack_stats',
 					onTabClick: () => setSelectedFeatureId( 'jetpack_stats' ),
 				},
+				enabled: true,
 				preview: <JetpackStatsPreview site={ site } />,
 			},
 		],

@@ -5,6 +5,7 @@ export interface FeaturePreviewInterface {
 	id: string;
 	tab: FeatureTabInterface;
 	preview?: React.ReactNode;
+	enabled?: boolean;
 }
 
 export interface FeatureTabInterface {
@@ -12,7 +13,6 @@ export interface FeatureTabInterface {
 	countValue?: number;
 	countColor?: string;
 	selected?: boolean;
-	enabled?: boolean;
 	onTabClick?: () => void;
 }
 
