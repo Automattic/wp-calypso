@@ -1,3 +1,4 @@
+import { useMobileBreakpoint } from '@automattic/viewport-react';
 import {
 	__experimentalText as Text,
 	__experimentalConfirmDialog as ConfirmDialog,
@@ -5,13 +6,12 @@ import {
 	Card,
 	CardBody,
 	CardHeader,
-	DropdownMenu,
-	Tooltip,
 } from '@wordpress/components';
-import { createInterpolateElement } from '@wordpress/element';
-import { Icon, arrowLeft, info, plus } from '@wordpress/icons';
+import { Icon, arrowLeft, info } from '@wordpress/icons';
 import { useState } from 'react';
-import { ellipsis } from './icons';
+import { ScheduleListCards } from './schedule-list-cards';
+import { ScheduleListEmpty } from './schedule-list-empty';
+import { ScheduleListTable } from './schedule-list-table';
 
 import './styles.scss';
 
@@ -21,19 +21,12 @@ interface Props {
 }
 export const ScheduleList = ( props: Props ) => {
 	const { onNavBack, onCreateNewSchedule } = props;
+	const isMobile = useMobileBreakpoint();
 	const [ isConfirmOpen, setIsConfirmOpen ] = useState( false );
 
 	const closeConfirm = () => {
 		setIsConfirmOpen( false );
 	};
-
-	const toolbarPluginsText = createInterpolateElement(
-		'<div>Move to WordPress.com<br />Akismet<br />Gravity Forms</div>',
-		{
-			div: <div className="tooltip--selected-plugins" />,
-			br: <br />,
-		}
-	);
 
 	return (
 		<>
@@ -53,94 +46,15 @@ export const ScheduleList = ( props: Props ) => {
 					<div className="ch-placeholder"></div>
 				</CardHeader>
 				<CardBody>
-					<div className="empty-state">
-						<Text as="p" align="center">
-							Set up plugin update schedules to ensure your site runs smoothly.
-						</Text>
-						{ onCreateNewSchedule && (
-							<Button
-								__next40pxDefaultSize
-								icon={ plus }
-								variant="primary"
-								onClick={ onCreateNewSchedule }
-							>
-								Create a new schedule
-							</Button>
-						) }
-					</div>
+					<ScheduleListEmpty onCreateNewSchedule={ onCreateNewSchedule } />
 				</CardBody>
 				<CardBody>
-					<table>
-						<thead>
-							<tr>
-								<th>Name</th>
-								<th>Next Update</th>
-								<th>Frequency</th>
-								<th>Plugins</th>
-								<th></th>
-							</tr>
-						</thead>
-						<tbody>
-							<tr>
-								<td className="name">Move to WordPress.com plugin</td>
-								<td>Feb 28 2023 7:00 PM UTC</td>
-								<td>Daily</td>
-								<td>
-									1
-									<Tooltip
-										text="Move to WordPress.com plugin"
-										position="middle right"
-										delay={ 0 }
-										hideOnClick={ false }
-									>
-										<Icon className="icon-info" icon={ info } size={ 16 } />
-									</Tooltip>
-								</td>
-								<td style={ { textAlign: 'end' } }>
-									<DropdownMenu
-										popoverProps={ { position: 'bottom left' } }
-										controls={ [
-											{
-												title: 'Remove',
-												onClick: () => setIsConfirmOpen( true ),
-											},
-										] }
-										icon={ ellipsis }
-										label="More"
-									/>
-								</td>
-							</tr>
-							<tr>
-								<td className="name">Security plugins</td>
-								<td>Feb 28 2023 7:00 PM UTC</td>
-								<td>Daily</td>
-								<td>
-									3
-									<Tooltip
-										text={ toolbarPluginsText as unknown as string }
-										position="middle right"
-										delay={ 0 }
-										hideOnClick={ false }
-									>
-										<Icon className="icon-info" icon={ info } size={ 16 } />
-									</Tooltip>
-								</td>
-								<td style={ { textAlign: 'end' } }>
-									<DropdownMenu
-										popoverProps={ { position: 'bottom left' } }
-										controls={ [
-											{
-												title: 'Remove',
-												onClick: () => setIsConfirmOpen( true ),
-											},
-										] }
-										icon={ ellipsis }
-										label="More"
-									/>
-								</td>
-							</tr>
-						</tbody>
-					</table>
+					{ isMobile ? (
+						<ScheduleListCards onRemoveClick={ () => setIsConfirmOpen( true ) } />
+					) : (
+						<ScheduleListTable onRemoveClick={ () => setIsConfirmOpen( true ) } />
+					) }
+
 					<Text as="p">
 						<Icon className="icon-info" icon={ info } size={ 16 } />
 						The current feature implementation only allows to set up two schedules.
