@@ -30,12 +30,12 @@ export const useWorkflowValidations = ( { branchName }: UseWorkflowValidationsPa
 			},
 			triggered_on_push: {
 				label: __( 'The workflow is triggered on push' ),
-				description: __( 'Ensure that your workflow triggers on code push.' ),
+				description: __( 'Ensure that your workflow triggers on code push:' ),
 				content: CodePushExample( branchName ),
 			},
 			upload_artifact_with_required_name: {
 				label: __( 'The upload artifact has the required name' ),
-				description: __( "Ensure that your workflow generates an artifact named 'wpcom'." ),
+				description: __( "Ensure that your workflow uploads an artifact named 'wpcom'. Example:" ),
 				content: UploadArtifactExample(),
 			},
 		};
