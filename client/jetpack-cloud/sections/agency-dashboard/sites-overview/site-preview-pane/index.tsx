@@ -1,28 +1,43 @@
-import { Site } from '../types';
-import SitePreviewPaneContent from './site-preview-pane-content';
-import SitePreviewPaneFooter from './site-preview-pane-footer';
 import SitePreviewPaneHeader from './site-preview-pane-header';
 import SitePreviewPaneTabs from './site-preview-pane-tabs';
+import { SitePreviewPaneProps } from './types';
 
 import './style.scss';
 
-interface Props {
-	selectedSite: Site;
-	closeSitePreviewPane: () => void;
-}
+export default function SitePreviewPane( {
+	site,
+	selectedFeatureId,
+	features,
+	closeSitePreviewPane,
+}: SitePreviewPaneProps ) {
+	// Ensure we have features
+	if ( ! features || ! features.length ) {
+		return null;
+	}
 
-export default function SitePreviewPane( { selectedSite, closeSitePreviewPane }: Props ) {
+	// Find the selected feature or default to the first feature
+	const selectedFeature = selectedFeatureId
+		? features.find( ( feature ) => feature.id === selectedFeatureId )
+		: features[ 0 ];
+
+	// Ensure we have a valid feature
+	if ( ! selectedFeature ) {
+		return null;
+	}
+
+	// Extract the tabs from the features
+	const featureTabs = features.map( ( feature ) => feature.tab );
+
 	return (
 		<div className="site-preview__pane">
 			<SitePreviewPaneHeader
-				title={ selectedSite.blogname }
-				url={ selectedSite.url }
-				urlWithScheme={ selectedSite.url_with_scheme }
+				title={ site.blogname }
+				url={ site.url }
+				urlWithScheme={ site.url_with_scheme }
 				closeSitePreviewPane={ closeSitePreviewPane }
 			/>
-			<SitePreviewPaneTabs />
-			<SitePreviewPaneContent />
-			<SitePreviewPaneFooter />
+			<SitePreviewPaneTabs featureTabs={ featureTabs } />
+			{ selectedFeature.preview }
 		</div>
 	);
 }
