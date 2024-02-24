@@ -19,9 +19,8 @@ import type { WPCOMProductVariant } from './types';
 
 const DiscountPercentage: FunctionComponent< { percent: number } > = ( { percent } ) => {
 	const translate = useTranslate();
-	const shouldUseCheckoutV2 = useCheckoutV2() === 'treatment';
 	return (
-		<Discount shouldUseCheckoutV2={ shouldUseCheckoutV2 }>
+		<Discount>
 			{ translate( 'Save %(percent)s%%', {
 				args: {
 					percent,

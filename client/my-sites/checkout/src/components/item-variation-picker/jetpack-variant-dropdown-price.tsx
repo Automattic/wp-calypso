@@ -19,17 +19,12 @@ const JetpackDiscountDisplay: FunctionComponent< {
 	currency: string;
 } > = ( { finalPriceInteger, isFirstMonthTrial, showIntroOffer, discountInteger, currency } ) => {
 	const translate = useTranslate();
-	const shouldUseCheckoutV2 = useCheckoutV2() === 'treatment';
 	if ( isFirstMonthTrial && 0 === finalPriceInteger ) {
-		return (
-			<Discount shouldUseCheckoutV2={ shouldUseCheckoutV2 }>
-				{ translate( 'One month free trial' ) }
-			</Discount>
-		);
+		return <Discount>{ translate( 'One month free trial' ) }</Discount>;
 	}
 
 	return (
-		<Discount shouldUseCheckoutV2={ shouldUseCheckoutV2 }>
+		<Discount>
 			{ showIntroOffer && translate( 'Introductory offer: ' ) }
 			{ translate( 'Save %(price)s', {
 				args: {

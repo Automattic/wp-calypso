@@ -82,13 +82,10 @@ export const OptionList = styled.ul`
 	}
 `;
 
-export const Discount = styled.span< { shouldUseCheckoutV2: boolean } >`
+export const Discount = styled.span`
 	color: ${ ( props ) => props.theme.colors.discount };
 	margin-right: 8px;
-	${ ( props ) =>
-		props.shouldUseCheckoutV2
-			? `align-items: left; font-size: 14px;`
-			: `align-items: center; font-size: 100%;` }
+	font-size: 100%;
 
 	.rtl & {
 		margin-right: 0;
