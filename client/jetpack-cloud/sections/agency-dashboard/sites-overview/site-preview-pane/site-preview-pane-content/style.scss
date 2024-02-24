@@ -1,4 +1,6 @@
 .site-preview__content {
 	flex-grow: 1;
-	background-color: #fff;
+	background-color: var(--studio-white);
+	padding: 48px;
+	text-align: center;
 }

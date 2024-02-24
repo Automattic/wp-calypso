@@ -1,5 +1,11 @@
+import { ReactNode } from 'react';
+
 import './style.scss';
 
-export default function SitePreviewPaneContent() {
-	return <div className="site-preview__content">Content goes here</div>;
+type Props = {
+	children?: ReactNode;
+};
+
+export default function SitePreviewPaneContent( { children }: Props ) {
+	return <div className="site-preview__content">{ children }</div>;
 }
