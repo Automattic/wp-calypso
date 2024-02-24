@@ -59,6 +59,7 @@ export const NonProductLineItem = styled( WPNonProductLineItem )< {
 	tax?: boolean;
 	coupon?: boolean;
 	subtotal?: boolean;
+	shouldUseCheckoutV2?: boolean;
 } >`
 	display: flex;
 	flex-wrap: wrap;
@@ -328,7 +329,11 @@ function WPNonProductLineItem( {
 			</LineItemTitle>
 
 			{ shouldUseCheckoutV2 ? (
-				<LineItemPrice aria-labelledby={ itemSpanId } actualAmount={ actualAmountDisplay } />
+				<LineItemPrice
+					aria-labelledby={ itemSpanId }
+					actualAmount={ actualAmountDisplay }
+					shouldUseCheckoutV2={ shouldUseCheckoutV2 }
+				/>
 			) : (
 				<span aria-labelledby={ itemSpanId } className="checkout-line-item__price">
 					<LineItemPrice actualAmount={ actualAmountDisplay } />
@@ -1429,6 +1434,7 @@ function CheckoutLineItem( {
 							  } )
 							: undefined
 					}
+					shouldUseCheckoutV2={ shouldUseCheckoutV2 }
 				/>
 			) : (
 				<span aria-labelledby={ itemSpanId } className="checkout-line-item__price">

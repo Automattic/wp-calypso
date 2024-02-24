@@ -227,6 +227,7 @@ export function WPOrderReviewLineItems( {
 					lineItem={ creditsLineItem }
 					isSummary={ isSummary }
 					isPwpoUser={ isPwpoUser }
+					shouldUseCheckoutV2={ shouldUseCheckoutV2 }
 				/>
 			) }
 			{ shouldUseCheckoutV2 && costOverridesList.length > 0 && (
