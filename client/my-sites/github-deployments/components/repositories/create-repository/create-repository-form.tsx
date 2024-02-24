@@ -7,15 +7,13 @@ import FormSettingExplanation from 'calypso/components/forms/form-setting-explan
 import FormTextInput from 'calypso/components/forms/form-text-input';
 import { GitHubInstallationsDropdown } from 'calypso/my-sites/github-deployments/components/installations-dropdown';
 import { useLiveInstallations } from 'calypso/my-sites/github-deployments/components/installations-dropdown/use-live-installations';
-import { GitHubRepositoryData } from 'calypso/my-sites/github-deployments/use-github-repositories-query';
 import { MutationVariables as CreateDeploymentMutationVariables } from '../../../deployment-creation/use-create-code-deployment';
+import { FormRadioWithTemplateSelect, ProjectType } from '../../form-radio-with-template-select';
 import {
-	FormRadioWithTemplateSelect,
-	ProjectType,
 	RepositoryTemplate,
-} from '../../form-radio-with-template-select';
-import { repositoryTemplates } from '../../form-radio-with-template-select/templates';
-import { DeploymentStyle } from '../deployment-style/deployment-style';
+	repositoryTemplates,
+} from '../../form-radio-with-template-select/templates';
+import { DeploymentStyleDescription } from './deployment-style-description';
 import { MutationVariables as CreateRepositoryMutationVariables } from './use-create-repository';
 
 import './style.scss';
@@ -48,11 +46,6 @@ export const CreateRepositoryForm = ( {
 	const [ template, setTemplate ] = useState< RepositoryTemplate >(
 		repositoryTemplates.plugin[ 0 ]
 	);
-	const [ repository, setRepository ] = useState< GitHubRepositoryData >(
-		{} as GitHubRepositoryData
-	);
-	const [ workflowPath, setWorkflowPath ] = useState< string | undefined >();
-	const [ deploymentModeStatus, setDeploymentModeStatus ] = useState( 'loading' );
 
 	const [ isSubmitted, setSubmitted ] = useState( false );
 
@@ -61,19 +54,19 @@ export const CreateRepositoryForm = ( {
 
 		setSubmitted( true );
 
-		if ( ! installation || ! repositoryName || deploymentModeStatus !== 'success' ) {
+		if ( ! installation || ! repositoryName ) {
 			return;
 		}
 
 		onRepositoryCreated( {
 			installationId: installation.external_id,
-			template: template.value,
+			template: template.repositoryName,
 			accountName: installation.account_name,
 			repositoryName,
 			targetDir,
 			isPrivate,
 			isAutomated,
-			workflowPath,
+			workflowPath: template.workflowFilename,
 		} );
 	};
 
@@ -90,17 +83,6 @@ export const CreateRepositoryForm = ( {
 				break;
 		}
 	}, [ projectType, repositoryName ] );
-
-	useEffect( () => {
-		setRepository( {
-			id: 0,
-			private: false,
-			updated_at: '',
-			name: template.value,
-			owner: 'Automattic',
-			default_branch: 'trunk',
-		} );
-	}, [ template ] );
 
 	return (
 		<div className="github-deployments-create-repository">
@@ -229,17 +211,13 @@ export const CreateRepositoryForm = ( {
 					{ __( 'Create repository' ) }
 				</Button>
 			</form>
-			{ installation && (
-				<div className="github-deployments-create-repository__deployment-style">
-					<DeploymentStyle
-						branchName="main"
-						installationId={ installation.external_id }
-						repository={ repository }
-						onChooseWorkflow={ ( filePath ) => setWorkflowPath( filePath ) }
-						onValidationChange={ ( status ) => setDeploymentModeStatus( status ) }
-					/>
-				</div>
-			) }
+			<div className="github-deployments-create-repository__deployment-style">
+				<DeploymentStyleDescription
+					repositoryName={ template.repositoryName }
+					branchName="trunk"
+					workflowFilename={ template.workflowFilename }
+				/>
+			</div>
 		</div>
 	);
 };

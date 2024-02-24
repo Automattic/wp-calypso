@@ -28,11 +28,13 @@ import {
 	useCheckWorkflowQuery,
 	useDeploymentWorkflowsQuery,
 } from './use-deployment-workflows-query';
+import { useGetWorkflowContents } from './use-get-workflow-contents-query';
 import {
 	CodePushExample,
 	NewWorkflowExample,
 	UploadArtifactExample,
 } from './workflow-yaml-examples';
+
 import './style.scss';
 
 interface DeploymentStyleProps {
@@ -95,6 +97,18 @@ export const DeploymentStyle = ( {
 		branchName,
 		deploymentStyle,
 		isTemplateRepository
+	);
+
+	const { data: contents, isLoading: isLoadingContents } = useGetWorkflowContents(
+		{
+			repositoryOwner: repository.owner,
+			repositoryName: repository.name,
+			branchName,
+			workflowFilename: selectedWorkflow.workflow_path,
+		},
+		{
+			enabled: !! selectedWorkflow.workflow_path,
+		}
 	);
 
 	const workflowsForRendering = useMemo( () => {
@@ -322,6 +336,12 @@ export const DeploymentStyle = ( {
 		}
 	}, [ workflows, isTemplateRepository ] );
 
+	useEffect( () => {
+		if ( yamlCodeRef.current ) {
+			Prism.highlightElement( yamlCodeRef.current );
+		}
+	}, [ contents ] );
+
 	const RenderValidationIcon = ( { validationStatus }: { validationStatus: WorkFlowStates } ) => {
 		if ( ! isYamlValid ) {
 			return <RenderIcon state="error" />;
@@ -432,9 +452,30 @@ export const DeploymentStyle = ( {
 
 			{ advancedOptionsDisabled && (
 				<FormInputValidation
+					className="advanced-options-error"
 					isError
-					text={ translate( "This repository template doesn't have workflows." ) }
+					text={ translate( 'The selected template does not support advance deployment.' ) }
 				/>
+			) }
+
+			{ isTemplateRepository && selectedWorkflow.workflow_path !== 'none' && (
+				<FormFieldset className="github-deployments-deployment-style__workflow-checks workflow-content">
+					<FoldableCard
+						expanded={ true }
+						header={ selectedWorkflow.workflow_path }
+						screenReaderText="More"
+					>
+						{ isLoadingContents ? (
+							<Spinner />
+						) : (
+							<pre>
+								<code ref={ yamlCodeRef } className="language-yaml">
+									{ contents?.content }
+								</code>
+							</pre>
+						) }
+					</FoldableCard>
+				</FormFieldset>
 			) }
 
 			{ ! isTemplateRepository && deploymentStyle === 'custom' && ! isWorkflowInvalid && (

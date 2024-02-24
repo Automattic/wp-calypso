@@ -4,7 +4,7 @@ import { useI18n } from '@wordpress/react-i18n';
 import classNames from 'classnames';
 import FormRadio from 'calypso/components/forms/form-radio';
 import FormSelect from 'calypso/components/forms/form-select';
-import { getRepositoryTemplate } from './templates';
+import { getRepositoryTemplate, RepositoryTemplate } from './templates';
 
 import './style.scss';
 
@@ -19,12 +19,6 @@ type FormRadioWithTemplateSelectProps = {
 	template: RepositoryTemplate;
 	rest?: [ string, string ];
 } & React.HTMLProps< HTMLDivElement >;
-
-export type RepositoryTemplate = {
-	name: string;
-	value: string;
-	link: string;
-};
 
 export const FormRadioWithTemplateSelect = ( {
 	isChecked = false,
@@ -47,7 +41,7 @@ export const FormRadioWithTemplateSelect = ( {
 		const selectedValue = event.currentTarget.value;
 		const templates = getRepositoryTemplate( projectType );
 		const selectedTemplate = templates?.find(
-			( template: { value: string } ) => template.value === selectedValue
+			( template ) => template.repositoryName === selectedValue
 		);
 		if ( selectedTemplate ) {
 			setSelectedTemplate( selectedTemplate );
@@ -78,13 +72,13 @@ export const FormRadioWithTemplateSelect = ( {
 				<div>
 					<FormSelect
 						onChange={ handleTemplateChange }
-						value={ selectedTemplate?.value ?? 'Select template' }
+						value={ selectedTemplate?.repositoryName ?? 'Select template' }
 					>
 						<option value="Select template" disabled>
 							{ __( 'Select template' ) }
 						</option>
 						{ getRepositoryTemplate( projectType ).map( ( template ) => (
-							<option key={ template.value } value={ template.value }>
+							<option key={ template.repositoryName } value={ template.repositoryName }>
 								{ template.name }
 							</option>
 						) ) }
