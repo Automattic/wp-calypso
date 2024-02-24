@@ -211,9 +211,9 @@ export interface RawCachedDomainContactDetails {
 	extra?: DomainContactValidationRequestExtraFields;
 }
 
-// The data model used in ContactDetailsFormFields and related components.
-// This is the data returned by the redux state, where the fields could have a
-// null value.
+/**
+ * The data model used in ContactDetailsFormFields and related components.
+ */
 export type PossiblyCompleteDomainContactDetails = {
 	firstName: string | null;
 	lastName: string | null;
@@ -227,6 +227,7 @@ export type PossiblyCompleteDomainContactDetails = {
 	postalCode: string | null;
 	countryCode: string | null;
 	fax: string | null;
+	extra?: ManagedContactDetailsTldExtraFieldsShape< string | null >;
 };
 
 export type DomainContactDetailsErrors = {

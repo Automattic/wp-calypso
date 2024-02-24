@@ -17,6 +17,8 @@ import type {
 	CountryListItem,
 	RawCachedDomainContactDetails,
 	DomainContactValidationRequest,
+	ManagedContactDetailsTldExtraFieldsShape,
+	DomainContactValidationRequestExtraFields,
 } from '@automattic/wpcom-checkout';
 
 const debug = debugFactory( 'calypso:use-cached-domain-contact-details' );
@@ -48,6 +50,34 @@ function transformCachedContactDetailsToCamelCase(
 		postalCode: rawData.postal_code ?? null,
 		countryCode: rawData.country_code ?? null,
 		fax: rawData.fax ?? null,
+		extra: transformCachedContactDetailsExtraToCamelCase( rawData.extra ),
+	};
+}
+
+function transformCachedContactDetailsExtraToCamelCase(
+	extra: DomainContactValidationRequestExtraFields | undefined
+): ManagedContactDetailsTldExtraFieldsShape< string | null > | undefined {
+	if ( ! extra ) {
+		return undefined;
+	}
+	return {
+		ca: {
+			lang: extra.ca?.lang,
+			legalType: extra.ca?.legal_type,
+			ciraAgreementAccepted: extra.ca?.cira_agreement_accepted
+				? String( extra.ca.cira_agreement_accepted )
+				: undefined,
+		},
+		uk: {
+			registrantType: extra.uk?.registrant_type,
+			registrationNumber: extra.uk?.registration_number,
+			tradingName: extra.uk?.trading_name,
+		},
+		fr: {
+			registrantType: extra.fr?.registrant_type,
+			trademarkNumber: extra.fr?.trademark_number,
+			sirenSiret: extra.fr?.siren_siret,
+		},
 	};
 }
 
