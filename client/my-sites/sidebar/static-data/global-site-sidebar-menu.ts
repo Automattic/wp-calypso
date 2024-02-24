@@ -29,9 +29,6 @@ export default function globalSiteSidebarMenu( {
 			url: `/home/${ siteDomain }`,
 		},
 		{
-			type: 'separator',
-		},
-		{
 			slug: 'upgrades',
 			title: translate( 'Plans' ),
 			type: 'menu-item',
