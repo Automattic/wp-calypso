@@ -5,7 +5,7 @@ import {
 } from '@automattic/calypso-products';
 import { FormStatus, useFormStatus } from '@automattic/composite-checkout';
 import { useShoppingCart } from '@automattic/shopping-cart';
-import { styled, joinClasses, hasCheckoutVersion } from '@automattic/wpcom-checkout';
+import { styled, joinClasses } from '@automattic/wpcom-checkout';
 import { useTranslate } from 'i18n-calypso';
 import { useState, useEffect, useCallback } from 'react';
 import isAkismetCheckout from 'calypso/lib/akismet/is-akismet-checkout';
@@ -18,6 +18,7 @@ import { NON_PRIMARY_DOMAINS_TO_FREE_USERS } from 'calypso/state/current-user/co
 import { currentUserHasFlag, getCurrentUser } from 'calypso/state/current-user/selectors';
 import { getWpComDomainBySiteId } from 'calypso/state/sites/domains/selectors';
 import getSelectedSite from 'calypso/state/ui/selectors/get-selected-site';
+import { useCheckoutV2 } from '../hooks/use-checkout-v2';
 import Coupon from './coupon';
 import { WPOrderReviewLineItems, WPOrderReviewSection } from './wp-order-review-line-items';
 import type { OnChangeItemVariant } from './item-variation-picker';
@@ -45,23 +46,23 @@ const SiteSummary = styled.div`
 	}
 `;
 
-const CouponLinkWrapper = styled.div`
-	${ hasCheckoutVersion( '2' ) ? `font-size: 12px;` : `font-size: 14px;` }
+const CouponLinkWrapper = styled.div< { shouldUseCheckoutV2: boolean } >`
+	${ ( props ) => ( props.shouldUseCheckoutV2 ? `font-size: 12px;` : `font-size: 14px;` ) }
 `;
 
-const CouponAreaWrapper = styled.div`
-	padding-bottom: ${ hasCheckoutVersion( '2' ) ? '12px' : 'inherit' };
+const CouponAreaWrapper = styled.div< { shouldUseCheckoutV2: boolean } >`
+	padding-bottom: ${ ( props ) => ( props.shouldUseCheckoutV2 ? '12px' : 'inherit' ) };
 `;
 
 const CouponField = styled( Coupon )``;
 
-const CouponEnableButton = styled.button`
+const CouponEnableButton = styled.button< { shouldUseCheckoutV2: boolean } >`
 	cursor: pointer;
 	text-decoration: underline;
 	color: ${ ( props ) => props.theme.colors.highlight };
 
 	&.wp-checkout-order-review__show-coupon-field-button {
-		${ hasCheckoutVersion( '2' ) ? `font-size: 12px` : `font-size: 14px;` }
+		${ ( props ) => ( props.shouldUseCheckoutV2 ? `font-size: 12px` : `font-size: 14px;` ) }
 	}
 	:hover {
 		text-decoration: none;
@@ -123,6 +124,7 @@ export default function WPCheckoutOrderReview( {
 	const { responseCart, removeCoupon, couponStatus } = useShoppingCart( cartKey );
 	const isPurchaseFree = responseCart.total_cost_integer === 0;
 	const reduxDispatch = useDispatch();
+	const shouldUseCheckoutV2 = useCheckoutV2() === 'treatment';
 
 	const onRemoveProductCancel = useCallback( () => {
 		reduxDispatch( recordTracksEvent( 'calypso_checkout_composite_cancel_delete_product' ) );
@@ -173,8 +175,10 @@ export default function WPCheckoutOrderReview( {
 
 	return (
 		<>
-			{ /** Only show the site preview for WPCOM domains that have a site connected to the site id **/ }
-			{ hasCheckoutVersion( '2' ) && selectedSiteData && wpcomDomain && ! isSignupCheckout && (
+			{ /*
+			 * Only show the site preview for WPCOM domains that have a site connected to the site id
+			 * */ }
+			{ shouldUseCheckoutV2 && selectedSiteData && wpcomDomain && ! isSignupCheckout && (
 				<div className="checkout-site-preview">
 					<SitePreviewWrapper>
 						<SitePreview showEditSite={ false } showSiteDetails={ false } />
@@ -246,6 +250,7 @@ function CouponFieldArea( {
 	const { formStatus } = useFormStatus();
 	const translate = useTranslate();
 	const { setCouponFieldValue } = couponFieldStateProps;
+	const shouldUseCheckoutV2 = useCheckoutV2() === 'treatment';
 
 	useEffect( () => {
 		if ( couponStatus === 'applied' ) {
@@ -260,7 +265,7 @@ function CouponFieldArea( {
 
 	if ( isCouponFieldVisible ) {
 		return (
-			<CouponAreaWrapper>
+			<CouponAreaWrapper shouldUseCheckoutV2={ shouldUseCheckoutV2 }>
 				<CouponField
 					id="order-review-coupon"
 					disabled={ formStatus !== FormStatus.READY }
@@ -272,12 +277,13 @@ function CouponFieldArea( {
 	}
 
 	return (
-		<CouponAreaWrapper>
-			<CouponLinkWrapper>
+		<CouponAreaWrapper shouldUseCheckoutV2={ shouldUseCheckoutV2 }>
+			<CouponLinkWrapper shouldUseCheckoutV2={ shouldUseCheckoutV2 }>
 				{ translate( 'Have a coupon? ' ) }{ ' ' }
 				<CouponEnableButton
 					className="wp-checkout-order-review__show-coupon-field-button"
 					onClick={ () => setCouponFieldVisible( true ) }
+					shouldUseCheckoutV2={ shouldUseCheckoutV2 }
 				>
 					{ translate( 'Add a coupon code' ) }
 				</CouponEnableButton>
