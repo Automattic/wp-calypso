@@ -60,10 +60,10 @@ export const useCreateWorkflow = (
 
 	const { mutateAsync, isPending } = mutation;
 
-	const createDeployment = useCallback(
+	const createWorkflow = useCallback(
 		( args: MutationVariables ) => mutateAsync( args ),
 		[ mutateAsync ]
 	);
 
-	return { createDeployment, isPending };
+	return { createWorkflow, isPending };
 };

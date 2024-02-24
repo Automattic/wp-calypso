@@ -21,6 +21,8 @@
 	}
 
 	.foldable-card {
+		overflow: hidden;
+
 		&__header {
 			min-height: auto !important;
 			padding: 12px;
@@ -35,9 +37,6 @@
 		}
 		&__content {
 			background-color: var(--studio-gray-0);
-			p {
-				margin: 0;
-			}
 			pre {
 				margin: 0;
 				padding: 0;
@@ -119,7 +118,6 @@
 			display: inline-flex;
 			margin-top: 16px;
 			font-weight: 500;
-			margin-bottom: 0;
 			color: var(--studio-black);
 		}
 	}
@@ -179,6 +177,18 @@
 	}
 
 	&__workflow-selection {
-		margin-top: 8px;
+		.select-dropdown__container {
+			width: 100%;
+		}
+
+		.select-dropdown__header {
+			font-weight: normal;
+		}
+	}
+}
+
+.github-deployments-new-workflow-wizard {
+	.code-highlighter {
+		border: 1px solid var(--gray-gray-5, #dcdcde);
 	}
 }

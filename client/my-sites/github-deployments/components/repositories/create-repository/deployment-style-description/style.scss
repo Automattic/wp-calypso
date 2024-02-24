@@ -15,20 +15,9 @@
 		line-height: 24px;
 	}
 
-	pre {
-		font-size: $font-body-small;
-		border: 1px solid var(--gray-gray-5, #dcdcde);
-		max-height: 20lh; /* stylelint-disable-line unit-allowed-list */
-		border-radius: 4px;
-		background: #fff;
-	}
-
-	.language-yaml {
-		color: var(--studio-wordpress-blue-60) !important;
-		text-wrap: pretty;
-	}
-
-	.token.key.atrule {
-		color: var(--studio-green) !important;
+	&__workflow {
+		.code-highlighter {
+			border: 1px solid var(--gray-gray-5, #dcdcde);
+		}
 	}
 }
