@@ -1,13 +1,7 @@
-import { mapRecordKeysRecursively, snakeToCamelCase } from '@automattic/js-utils';
 import { translate } from 'i18n-calypso';
 import { resendIcannVerification } from 'calypso/lib/domains';
 import wpcom from 'calypso/lib/wp';
 import {
-	DOMAIN_MANAGEMENT_CONTACT_DETAILS_CACHE_RECEIVE,
-	DOMAIN_MANAGEMENT_CONTACT_DETAILS_CACHE_REQUEST,
-	DOMAIN_MANAGEMENT_CONTACT_DETAILS_CACHE_REQUEST_FAILURE,
-	DOMAIN_MANAGEMENT_CONTACT_DETAILS_CACHE_REQUEST_SUCCESS,
-	DOMAIN_MANAGEMENT_CONTACT_DETAILS_CACHE_UPDATE,
 	DOMAIN_MANAGEMENT_WHOIS_RECEIVE,
 	DOMAIN_MANAGEMENT_WHOIS_REQUEST,
 	DOMAIN_MANAGEMENT_WHOIS_REQUEST_FAILURE,
@@ -24,96 +18,9 @@ import {
 	successNotice,
 } from 'calypso/state/notices/actions';
 import type { WhoisData } from './types';
-import type {
-	ContactValidationResponseMessages,
-	DomainContactValidationRequest,
-	PossiblyCompleteDomainContactDetails,
-} from '@automattic/wpcom-checkout';
 import type { CalypsoDispatch } from 'calypso/state/types';
 
 import 'calypso/state/domains/init';
-
-/**
- * Returns an action object to be used in signalling that a cached domains
- * contact details object has been received.
- */
-export function receiveContactDetailsCache( data: PossiblyCompleteDomainContactDetails ) {
-	return {
-		type: DOMAIN_MANAGEMENT_CONTACT_DETAILS_CACHE_RECEIVE,
-		data,
-	};
-}
-
-/**
- * Triggers a network request to query domain contact details
- * cached data (originated from last domain purchase)
- */
-export function requestContactDetailsCache() {
-	return ( dispatch: CalypsoDispatch ) => {
-		dispatch( {
-			type: DOMAIN_MANAGEMENT_CONTACT_DETAILS_CACHE_REQUEST,
-		} );
-
-		wpcom.req
-			.get( '/me/domain-contact-information' )
-			.then( ( data: ContactValidationResponseMessages ) => {
-				dispatch(
-					receiveContactDetailsCache(
-						mapRecordKeysRecursively(
-							data,
-							snakeToCamelCase
-						) as PossiblyCompleteDomainContactDetails
-					)
-				);
-				dispatch( {
-					type: DOMAIN_MANAGEMENT_CONTACT_DETAILS_CACHE_REQUEST_SUCCESS,
-				} );
-			} )
-			.catch( ( error: Error ) => {
-				dispatch( {
-					type: DOMAIN_MANAGEMENT_CONTACT_DETAILS_CACHE_REQUEST_FAILURE,
-					error,
-				} );
-			} );
-	};
-}
-
-export function saveContactDetailsCache( contactInformation: DomainContactValidationRequest ) {
-	return ( dispatch: CalypsoDispatch ) => {
-		dispatch( {
-			type: DOMAIN_MANAGEMENT_CONTACT_DETAILS_CACHE_REQUEST,
-		} );
-
-		wpcom.req
-			.post( '/me/domain-contact-information', contactInformation )
-			.then( ( data: ContactValidationResponseMessages ) => {
-				dispatch(
-					receiveContactDetailsCache(
-						mapRecordKeysRecursively(
-							data,
-							snakeToCamelCase
-						) as PossiblyCompleteDomainContactDetails
-					)
-				);
-				dispatch( {
-					type: DOMAIN_MANAGEMENT_CONTACT_DETAILS_CACHE_REQUEST_SUCCESS,
-				} );
-			} )
-			.catch( ( error: Error ) => {
-				dispatch( {
-					type: DOMAIN_MANAGEMENT_CONTACT_DETAILS_CACHE_REQUEST_FAILURE,
-					error,
-				} );
-			} );
-	};
-}
-
-export function updateContactDetailsCache( data: PossiblyCompleteDomainContactDetails ) {
-	return {
-		type: DOMAIN_MANAGEMENT_CONTACT_DETAILS_CACHE_UPDATE,
-		data,
-	};
-}
 
 /**
  * Returns an action object to be used in signalling that a WHOIS details
