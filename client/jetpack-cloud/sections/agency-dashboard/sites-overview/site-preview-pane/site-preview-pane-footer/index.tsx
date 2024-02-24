@@ -1,5 +1,13 @@
 import './style.scss';
 
-export default function SitePreviewPaneFooter() {
-	return <div className="site-preview__footer">Footer goes here</div>;
+type Props = {
+	children?: React.ReactNode;
+};
+
+export default function SitePreviewPaneFooter( { children }: Props ) {
+	return (
+		<>
+			<div className="site-preview__footer">{ children }</div>
+		</>
+	);
 }
