@@ -27,6 +27,7 @@ import {
 	Workflows,
 	useCheckWorkflowQuery,
 	useDeploymentWorkflowsQuery,
+	useGetWorkflowContents,
 } from './use-deployment-workflows-query';
 import {
 	CodePushExample,
@@ -94,6 +95,14 @@ export const DeploymentStyle = ( {
 		repository,
 		branchName,
 		deploymentStyle,
+		isTemplateRepository
+	);
+
+	const { data: contents, isLoading: isLoadingContents } = useGetWorkflowContents(
+		installationId,
+		repository,
+		repository.default_branch,
+		selectedWorkflow.workflow_path !== 'none' ? selectedWorkflow.workflow_path : '',
 		isTemplateRepository
 	);
 
@@ -322,6 +331,12 @@ export const DeploymentStyle = ( {
 		}
 	}, [ workflows, isTemplateRepository ] );
 
+	useEffect( () => {
+		if ( yamlCodeRef.current ) {
+			Prism.highlightElement( yamlCodeRef.current );
+		}
+	}, [ contents ] );
+
 	const RenderValidationIcon = ( { validationStatus }: { validationStatus: WorkFlowStates } ) => {
 		if ( ! isYamlValid ) {
 			return <RenderIcon state="error" />;
@@ -432,9 +447,30 @@ export const DeploymentStyle = ( {
 
 			{ advancedOptionsDisabled && (
 				<FormInputValidation
+					className="advanced-options-error"
 					isError
-					text={ translate( "This repository template doesn't have workflows." ) }
+					text={ translate( 'The selected template does not support advance deployment.' ) }
 				/>
+			) }
+
+			{ isTemplateRepository && selectedWorkflow.workflow_path !== 'none' && (
+				<FormFieldset className="github-deployments-deployment-style__workflow-checks workflow-content">
+					<FoldableCard
+						expanded={ true }
+						header={ selectedWorkflow.workflow_path }
+						screenReaderText="More"
+					>
+						{ isLoadingContents ? (
+							<Spinner />
+						) : (
+							<pre>
+								<code ref={ yamlCodeRef } className="language-yaml">
+									{ contents?.content }
+								</code>
+							</pre>
+						) }
+					</FoldableCard>
+				</FormFieldset>
 			) }
 
 			{ ! isTemplateRepository && deploymentStyle === 'custom' && ! isWorkflowInvalid && (

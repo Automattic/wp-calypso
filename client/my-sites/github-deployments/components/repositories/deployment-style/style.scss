@@ -1,7 +1,4 @@
 .github-deployments-deployment-style {
-	/** Temporary **/
-	display: none !important;
-	/** End Temporary **/
 	border: 1px solid var(--studio-gray-5);
 	box-sizing: border-box;
 	padding: 24px;
@@ -48,11 +45,16 @@
 			}
 			.language-yaml {
 				color: var(--studio-wordpress-blue-60) !important;
+				text-wrap: pretty;
 			}
 			.token.key.atrule {
 				color: var(--studio-green) !important;
 			}
 		}
+	}
+
+	.advanced-option-error {
+		margin-left: -2px;
 	}
 
 	.card,
@@ -91,6 +93,12 @@
 
 	&__actions {
 		margin-top: 16px;
+	}
+
+	.form-radio:disabled {
+		opacity: 0.1;
+		background: transparent;
+		border-color: var(--studio-black);
 	}
 
 	.form-radios-bar .form-label:last-of-type {
@@ -158,6 +166,15 @@
 
 		&.form-fieldset .form-label {
 			margin-top: 0;
+		}
+
+		&.workflow-content pre {
+			overflow: auto;
+			max-height: 660px;
+
+			::-webkit-scrollbar {
+				width: 0.1rem !important;
+			}
 		}
 	}
 
