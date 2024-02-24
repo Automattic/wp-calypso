@@ -52,6 +52,37 @@ export const useDeploymentWorkflowsQuery = (
 	} );
 };
 
+export const useGetWorkflowContents = (
+	installationId: number,
+	repository: GitHubRepositoryData,
+	branchName: string,
+	workflowFilename: string,
+	isTemplateRepository: boolean,
+	options?: Partial< UseQueryOptions< { content: string } > >
+) => {
+	const path = addQueryArgs( '/hosting/github/workflows/content', {
+		installation_id: installationId,
+		repository_name: repository.name,
+		repository_owner: repository.owner,
+		branch_name: branchName,
+		workflow_filename: workflowFilename,
+	} );
+
+	return useQuery< { content: string } >( {
+		queryKey: [ GITHUB_DEPLOYMENTS_QUERY_KEY, CODE_DEPLOYMENTS_QUERY_KEY, path ],
+		enabled: !! installationId && workflowFilename.length > 0 && isTemplateRepository,
+		queryFn: (): { content: string } =>
+			wp.req.get( {
+				path,
+				apiNamespace: 'wpcom/v2',
+			} ),
+		meta: {
+			persist: false,
+		},
+		...options,
+	} );
+};
+
 export const useCheckWorkflowQuery = (
 	installationId: number,
 	repository: GitHubRepositoryData,
