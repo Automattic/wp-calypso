@@ -8,8 +8,8 @@ import { indexPage } from 'calypso/my-sites/github-deployments/routes';
 import { useDispatch, useSelector } from 'calypso/state/index';
 import { errorNotice, successNotice } from 'calypso/state/notices/actions';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors/index';
-import { useCreateCodeDeployment } from '../../../deployment-creation/use-create-code-deployment';
-import { PageShell } from '../../page-shell';
+import { PageShell } from '../components/page-shell';
+import { useCreateCodeDeployment } from '../deployment-creation/use-create-code-deployment';
 import { CreateRepositoryForm, OnRepositoryCreatedParams } from './create-repository-form';
 import { useCreateRepository } from './use-create-repository';
 
