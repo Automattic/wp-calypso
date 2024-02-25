@@ -12,12 +12,22 @@ import {
 import { Icon, info } from '@wordpress/icons';
 import classnames from 'classnames';
 import { useState } from 'react';
+import { useSitePluginsQuery } from 'calypso/data/plugins/use-site-plugins-query';
+import { SiteSlug } from 'calypso/types';
 
 import './schedule-form.scss';
 
-export const ScheduleForm = () => {
+interface Props {
+	siteSlug: SiteSlug;
+}
+export const ScheduleForm = ( props: Props ) => {
+	const { siteSlug } = props;
+
+	const { data } = useSitePluginsQuery( siteSlug );
+
 	const [ name, setName ] = useState( '' );
 	const [ frequency, setFrequency ] = useState( 'daily' );
+	const [ pluginSearchTerm, setPluginSearchTerm ] = useState( '' );
 
 	return (
 		<form>
@@ -297,49 +307,26 @@ export const ScheduleForm = () => {
 							Please pick another time for optimal performance, as this slot is already taken.
 						</Text>
 						<div className="checkbox-options">
-							<SearchControl id="plugins" onChange={ function noRefCheck() {} } />
+							<SearchControl id="plugins" onChange={ setPluginSearchTerm } />
 							<div className="checkbox-options-container">
 								<CheckboxControl
 									indeterminate
 									label="Select all"
 									onChange={ function noRefCheck() {} }
 								/>
-								<CheckboxControl label="Akismet" onChange={ function noRefCheck() {} } />
-								<CheckboxControl
-									label="Appointments plugin PRO"
-									onChange={ function noRefCheck() {} }
-								/>
-								<CheckboxControl label="Crowdsignal Forms" onChange={ function noRefCheck() {} } />
-								<CheckboxControl
-									label="Gravity forms"
-									onChange={ function noRefCheck() {} }
-									checked
-								/>
-								<CheckboxControl
-									className="disabled"
-									disabled
-									label="Menu items"
-									onChange={ function noRefCheck() {} }
-								/>
-								<CheckboxControl
-									label="Move to WordPres.com"
-									onChange={ function noRefCheck() {} }
-								/>
-								<CheckboxControl label="PRO Calendar" onChange={ function noRefCheck() {} } />
-								<CheckboxControl
-									label="Shipping very far away"
-									onChange={ function noRefCheck() {} }
-								/>
-								<CheckboxControl label="Weather PRO" onChange={ function noRefCheck() {} } />
-								<CheckboxControl label="Yoast" onChange={ function noRefCheck() {} } />
-
-								<CheckboxControl label="PRO Calendar" onChange={ function noRefCheck() {} } />
-								<CheckboxControl
-									label="Shipping very far away"
-									onChange={ function noRefCheck() {} }
-								/>
-								<CheckboxControl label="Weather PRO" onChange={ function noRefCheck() {} } />
-								<CheckboxControl label="Yoast" onChange={ function noRefCheck() {} } />
+								{ data?.plugins.map( ( plugin ) => (
+									<>
+										{ plugin.display_name
+											.toLowerCase()
+											.includes( pluginSearchTerm.toLowerCase() ) && (
+											<CheckboxControl
+												key={ plugin.slug }
+												label={ plugin.display_name }
+												onChange={ function noRefCheck() {} }
+											/>
+										) }
+									</>
+								) ) }
 							</div>
 						</div>
 					</div>
