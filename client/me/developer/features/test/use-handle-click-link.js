@@ -1,7 +1,11 @@
 /**
  * @jest-environment jsdom
  */
+
+/* eslint-disable jest/no-conditional-expect */
+
 import { act, renderHook } from '@testing-library/react';
+import { useFeaturesList } from '../use-features-list';
 import { useHandleClickLink } from '../use-handle-click-link';
 import { useRecordTracksEventWithUserIsDevAccount } from '../use-record-tracks-event-with-user-is-dev-account';
 
@@ -21,7 +25,7 @@ describe( 'useHandleClickLink', () => {
 		);
 	} );
 
-	test( 'should ensure analytics are correct for support links', () => {
+	test( 'ensure useHandleClickLink handles support links as expected', () => {
 		const { result } = renderHook( () => useHandleClickLink() );
 
 		const event = {
@@ -39,21 +43,35 @@ describe( 'useHandleClickLink', () => {
 		} );
 	} );
 
-	test( 'should ensure analytics are correct for support links with different structures', () => {
+	test( 'ensure analytics are correct for each support link in useFeaturesList', () => {
 		const { result } = renderHook( () => useHandleClickLink() );
+		const { result: featuresResult } = renderHook( () => useFeaturesList() );
 
-		const event = {
-			currentTarget: {
-				href: 'https://wordpress.com/support/domains/https-ssl/',
-			},
-		};
+		featuresResult.current.forEach( ( feature ) => {
+			if ( feature.linkLearnMore ) {
+				const event = {
+					currentTarget: {
+						href: feature.linkLearnMore,
+					},
+				};
 
-		act( () => {
-			result.current( event );
-		} );
+				act( () => {
+					result.current( event );
+				} );
 
-		expect( mockRecordTracksEventWithUserIsDevAccount ).toHaveBeenCalledWith( tracksHandle, {
-			feature: 'domains/https-ssl',
+				// Logic from useHandleClickLink to extract the slug
+				const prefixToRemove = '/support/';
+				const pathIndex = event.currentTarget.href.indexOf( prefixToRemove );
+				let expectedSlug = event.currentTarget.href;
+				if ( pathIndex !== -1 ) {
+					expectedSlug = expectedSlug.substring( pathIndex + prefixToRemove.length );
+				}
+				expectedSlug = expectedSlug.replace( /^\/|\/$/g, '' );
+
+				expect( mockRecordTracksEventWithUserIsDevAccount ).toHaveBeenCalledWith( tracksHandle, {
+					feature: expectedSlug,
+				} );
+			}
 		} );
 	} );
 } );
