@@ -15,21 +15,11 @@ export const GitHubRepositoryListItem = ( {
 	onSelect,
 }: GitHubRepositoryListItemProps ) => {
 	const locale = useLocale();
-
-	const repoUrl = `https://github.com/${ repository.owner }/${ repository.name }`;
-
 	return (
 		<tr>
 			<td>
 				<span css={ { fontWeight: 500 } }>
-					<a
-						className="github-deployments-repository-list-table__repo-name"
-						href={ repoUrl }
-						target="_blank"
-						rel="noopener noreferrer"
-					>
-						{ repository.name }
-					</a>{ ' ' }
+					{ repository.name }{ ' ' }
 					{ repository.private && (
 						<Icon icon={ lock } size={ 16 } css={ { verticalAlign: 'middle' } } />
 					) }
