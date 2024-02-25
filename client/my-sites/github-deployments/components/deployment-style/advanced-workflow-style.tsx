@@ -13,7 +13,7 @@ type AdvancedWorkflowStyleProps = {
 	isFetching: boolean;
 	onWorkflowCreation( path: string ): void;
 	onNewWorkflowVerification( path: string ): void;
-	onChooseWorkflow( path: string, isNew: boolean ): void;
+	onChooseWorkflow( path: string ): void;
 };
 
 export const AdvancedWorkflowStyle = ( {
