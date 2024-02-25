@@ -1,23 +1,14 @@
-import { useEffect } from 'react';
-import { useDispatch, useSelector } from 'calypso/state';
-import { requestMetrics } from 'calypso/state/stats/utm-metrics/actions';
-import { getMetrics, isLoading } from 'calypso/state/stats/utm-metrics/selectors';
+import useUtmMetricsQuery from '../hooks/use-utm-metrics-query';
 import StatsModuleDataQuery from '../stats-module/stats-module-data-query';
 import statsStrings from '../stats-strings';
 
 const StatsModuleUTM = ( { siteId, period, postId, query, summary } ) => {
-	const dispatch = useDispatch();
 	const moduleStrings = statsStrings();
 
-	useEffect( () => {
-		// Fetch UTM metrics with selected UTM parameters.
-		dispatch( requestMetrics( siteId, 'utm_source,utm_medium' ) );
-	}, [ dispatch, siteId ] );
+	// Fetch UTM metrics with switched UTM parameters.
+	const { isFetchingMetrics, metrics } = useUtmMetricsQuery( siteId, 'utm_source,utm_medium' );
 
 	const hideSummaryLink = postId !== undefined || summary === true;
-
-	const isFetchingMetrics = useSelector( ( state ) => isLoading( state, siteId ) );
-	const metrics = useSelector( ( state ) => getMetrics( state, siteId ) );
 
 	return (
 		<StatsModuleDataQuery
