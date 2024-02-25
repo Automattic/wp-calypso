@@ -29,7 +29,7 @@ export const WorkflowValidationWizard = ( {
 			return;
 		}
 
-		const workflowPath = `https://github.com/${ repository.owner }/${ repository.name }/blob/${ repository.default_branch }/${ workflow.workflow_path }`;
+		const workflowPath = `https://github.com/${ repository.owner }/${ repository.name }/blob/${ branchName }/${ workflow.workflow_path }`;
 
 		if ( workflowCheckResult.conclusion === 'error' ) {
 			return (

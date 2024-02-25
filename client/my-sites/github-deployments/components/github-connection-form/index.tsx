@@ -67,14 +67,11 @@ export const GitHubConnectionForm = ( {
 
 	const branchOptions = useMemo( () => {
 		if ( ! branches?.length ) {
-			return [ initialValues.branch ];
+			return [ branch ];
 		}
 
-		return [
-			repository.default_branch,
-			...branches.filter( ( branch ) => branch !== repository.default_branch ),
-		];
-	}, [ branches, initialValues.branch, repository.default_branch ] );
+		return [ branch, ...branches.filter( ( remoteBranch ) => remoteBranch !== branch ) ];
+	}, [ branches, branch ] );
 	const [ isPending, setIsPending ] = useState( false );
 
 	const {
@@ -83,7 +80,6 @@ export const GitHubConnectionForm = ( {
 		refetch: checkWorkflow,
 	} = useCheckWorkflowQuery(
 		{
-			installationId: installation.external_id,
 			repository,
 			branchName: branch,
 			workflowFilename: workflowPath,
@@ -186,7 +182,6 @@ export const GitHubConnectionForm = ( {
 			<DeploymentStyle
 				isDisabled={ isFetchingBranches }
 				branchName={ branch }
-				installationId={ installation.external_id }
 				repository={ repository }
 				workflowPath={ workflowPath }
 				onChooseWorkflow={ ( filePath ) => setWorkflowPath( filePath ) }
