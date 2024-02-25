@@ -7,12 +7,15 @@ import FormSettingExplanation from 'calypso/components/forms/form-setting-explan
 import FormTextInput from 'calypso/components/forms/form-text-input';
 import { GitHubInstallationsDropdown } from 'calypso/my-sites/github-deployments/components/installations-dropdown';
 import { useLiveInstallations } from 'calypso/my-sites/github-deployments/components/installations-dropdown/use-live-installations';
-import { MutationVariables as CreateDeploymentMutationVariables } from '../../../deployment-creation/use-create-code-deployment';
-import { FormRadioWithTemplateSelect, ProjectType } from '../../form-radio-with-template-select';
+import {
+	FormRadioWithTemplateSelect,
+	ProjectType,
+} from '../components/form-radio-with-template-select';
 import {
 	RepositoryTemplate,
 	repositoryTemplates,
-} from '../../form-radio-with-template-select/templates';
+} from '../components/form-radio-with-template-select/templates';
+import { MutationVariables as CreateDeploymentMutationVariables } from '../deployment-creation/use-create-code-deployment';
 import { DeploymentStyleDescription } from './deployment-style-description';
 import { MutationVariables as CreateRepositoryMutationVariables } from './use-create-repository';
 

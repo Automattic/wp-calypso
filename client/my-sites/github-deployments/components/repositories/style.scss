@@ -84,4 +84,12 @@
 	tr td:last-child {
 		text-align: right;
 	}
+
+	&__repo-name {
+		color: inherit !important;
+
+		&:hover {
+			text-decoration: underline;
+		}
+	}
 }
