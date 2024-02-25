@@ -1,7 +1,7 @@
 import { Spinner } from '@automattic/components';
 import { useI18n } from '@wordpress/react-i18n';
-import { CodeHighlighter } from '../../components/code-highlighter';
-import { useGetWorkflowContents } from '../../components/deployment-style/use-get-workflow-contents-query';
+import { CodeHighlighter } from '../../../code-highlighter';
+import { useGetWorkflowContents } from '../../../deployment-style/use-get-workflow-contents-query';
 
 import './style.scss';
 

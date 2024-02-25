@@ -71,7 +71,7 @@ export const GitHubBrowseRepositories = ( {
 					onChange={ setInstallation }
 				/>
 				<SearchRepos value={ query } onChange={ handleQueryChange } />
-				<Button onClick={ handleCreateRepository } css={ { height: '100%', marginLeft: 'auto' } }>
+				<Button onClick={ handleCreateRepository } css={ { marginLeft: 'auto' } }>
 					{ __( 'Create new repository' ) }
 				</Button>
 			</div>
