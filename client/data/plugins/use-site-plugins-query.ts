@@ -1,12 +1,37 @@
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, UseQueryResult } from '@tanstack/react-query';
 import wpcomRequest from 'wpcom-proxy-request';
 import type { SiteId, SiteSlug } from 'calypso/types';
+
+export type SitePlugin = {
+	active: boolean;
+	author: string;
+	author_url: string;
+	autoupdate: boolean;
+	description: string;
+	display_name: string;
+	name: string;
+	network: boolean;
+	plugin_url: string;
+	slug: string;
+	uninstallable: boolean;
+	version: string;
+};
+
+export type SitePluginsResponse = {
+	file_mod_capabilities: {
+		modify_files: boolean;
+		autoupdate_files: boolean;
+	};
+	plugins: SitePlugin[];
+};
 
 /**
  * Fetches the plugins for a given site
  * @param siteIdOrSlug The site ID or slug
  */
-export const useSitePlugins = ( siteIdOrSlug: SiteId | SiteSlug | undefined ) => {
+export const useSitePluginsQuery = (
+	siteIdOrSlug: SiteId | SiteSlug | undefined
+): UseQueryResult< SitePluginsResponse > => {
 	return useQuery( {
 		queryKey: [ 'site-plugins', siteIdOrSlug ],
 		queryFn: () => {
