@@ -1,9 +1,6 @@
 /**
  * @jest-environment jsdom
  */
-
-/* eslint-disable jest/no-conditional-expect */
-
 import { act, renderHook } from '@testing-library/react';
 import { useFeaturesList } from '../use-features-list';
 import { useHandleClickLink } from '../use-handle-click-link';
@@ -47,8 +44,9 @@ describe( 'useHandleClickLink', () => {
 		const { result } = renderHook( () => useHandleClickLink() );
 		const { result: featuresResult } = renderHook( () => useFeaturesList() );
 
-		featuresResult.current.forEach( ( feature ) => {
-			if ( feature.linkLearnMore ) {
+		featuresResult.current
+			.filter( ( feature ) => feature.linkLearnMore )
+			.forEach( ( feature ) => {
 				const event = {
 					currentTarget: {
 						href: feature.linkLearnMore,
@@ -71,7 +69,6 @@ describe( 'useHandleClickLink', () => {
 				expect( mockRecordTracksEventWithUserIsDevAccount ).toHaveBeenCalledWith( tracksHandle, {
 					feature: expectedSlug,
 				} );
-			}
-		} );
+			} );
 	} );
 } );
