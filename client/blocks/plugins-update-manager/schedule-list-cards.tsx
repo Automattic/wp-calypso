@@ -1,5 +1,6 @@
 import { DropdownMenu, Tooltip } from '@wordpress/components';
 import { Icon, info } from '@wordpress/icons';
+import { Badge } from 'calypso/blocks/plugins-update-manager/badge';
 import { ellipsis } from 'calypso/blocks/plugins-update-manager/icons';
 
 interface Props {
@@ -26,6 +27,14 @@ export const ScheduleListCards = ( props: Props ) => {
 				<div className="schedule-list--card-label">
 					<label htmlFor="name">Name</label>
 					<strong id="name">Move to WordPress.com plugin</strong>
+				</div>
+
+				<div className="schedule-list--card-label">
+					<label htmlFor="last-update">Last Update</label>
+					<span id="last-update">
+						Feb 28 7:00 PM UTC
+						<Badge type="success" />
+					</span>
 				</div>
 
 				<div className="schedule-list--card-label">

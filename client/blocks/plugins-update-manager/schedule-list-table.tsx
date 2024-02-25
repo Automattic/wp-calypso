@@ -1,6 +1,7 @@
 import { DropdownMenu, Tooltip } from '@wordpress/components';
 import { createInterpolateElement } from '@wordpress/element';
 import { Icon, info } from '@wordpress/icons';
+import { Badge } from './badge';
 import { ellipsis } from './icons';
 
 interface Props {
@@ -16,11 +17,16 @@ export const ScheduleListTable = ( props: Props ) => {
 		}
 	);
 
+	/**
+	 * NOTE: If you update the table structure,
+	 * make sure to update the ScheduleListCards component as well
+	 */
 	return (
 		<table>
 			<thead>
 				<tr>
 					<th>Name</th>
+					<th>Last Update</th>
 					<th>Next Update</th>
 					<th>Frequency</th>
 					<th>Plugins</th>
@@ -30,7 +36,11 @@ export const ScheduleListTable = ( props: Props ) => {
 			<tbody>
 				<tr>
 					<td className="name">Move to WordPress.com plugin</td>
-					<td>Feb 28 2023 7:00 PM UTC</td>
+					<td>
+						<Badge type="success" />
+						Feb 27 7:00 PM UTC
+					</td>
+					<td>Feb 28 7:00 PM UTC</td>
 					<td>Daily</td>
 					<td>
 						1
@@ -59,8 +69,12 @@ export const ScheduleListTable = ( props: Props ) => {
 				</tr>
 				<tr>
 					<td className="name">Security plugins</td>
-					<td>Feb 28 2023 7:00 PM UTC</td>
-					<td>Daily</td>
+					<td>
+						<Badge type="failed" />
+						Feb 21 7:00 PM UTC
+					</td>
+					<td>Feb 28 7:00 PM UTC</td>
+					<td>Weekly</td>
 					<td>
 						3
 						<Tooltip
