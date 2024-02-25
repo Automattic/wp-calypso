@@ -1,3 +1,5 @@
+/* eslint-disable inclusive-language/use-inclusive-words */
+
 export const newWorkflowExample = ( branch: string ) => {
 	return `
 name: Publish Website
