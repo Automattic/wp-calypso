@@ -1,5 +1,6 @@
 import formatNumber from '@automattic/components/src/number-formatters/lib/format-number';
 import { addLocaleToPathLocaleInFront } from '@automattic/i18n-utils';
+import { getLocaleSlug } from 'i18n-calypso';
 import titlecase from 'to-title-case';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { TagResult } from './controller';
@@ -27,7 +28,9 @@ const TagRow = ( props: TagRowProps ) => {
 		<div className="trending-tags__column" key={ props.slug }>
 			<a href={ path } onClick={ trackTagClick.bind( null, props.slug ) }>
 				<span className="trending-tags__title">{ titlecase( props.title ) }</span>
-				<span className="trending-tags__count">{ formatNumber( props.count ) }</span>
+				<span className="trending-tags__count">
+					{ formatNumber( props.count, getLocaleSlug() ) }
+				</span>
 			</a>
 		</div>
 	);

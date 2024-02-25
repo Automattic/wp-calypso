@@ -1,7 +1,7 @@
 import { Button } from '@automattic/components';
 import formatNumber from '@automattic/components/src/number-formatters/lib/format-number';
 import { addLocaleToPathLocaleInFront } from '@automattic/i18n-utils';
-import { useTranslate } from 'i18n-calypso';
+import { getLocaleSlug, useTranslate } from 'i18n-calypso';
 import moment from 'moment';
 import { connect, useDispatch, useSelector } from 'react-redux';
 import FollowButton from 'calypso/blocks/follow-button/button';
@@ -33,6 +33,7 @@ const ReaderTagSidebar = ( {
 	const dispatch = useDispatch();
 	const isFollowing = useSelector( ( state ) => getReaderTagBySlug( state, tag )?.isFollowing );
 	const isLoggedIn = useSelector( isUserLoggedIn );
+	const localeSlug = getLocaleSlug();
 
 	const today = moment().subtract( 10, 'd' ).format( '--MM-DD' );
 	const { data: prompts } = useBloggingPrompts( primarySiteId, today, 10 );
@@ -114,13 +115,13 @@ const ReaderTagSidebar = ( {
 				<div className="reader-tag-sidebar-stats">
 					<div className="reader-tag-sidebar-stats__item">
 						<span className="reader-tag-sidebar-stats__count">
-							{ formatNumber( tagStats?.data?.total_posts ) }
+							{ formatNumber( tagStats?.data?.total_posts, localeSlug ) }
 						</span>
 						<span className="reader-tag-sidebar-stats__title">{ translate( 'Posts' ) }</span>
 					</div>
 					<div className="reader-tag-sidebar-stats__item">
 						<span className="reader-tag-sidebar-stats__count">
-							{ formatNumber( tagStats?.data?.total_sites ) }
+							{ formatNumber( tagStats?.data?.total_sites, localeSlug ) }
 						</span>
 						<span className="reader-tag-sidebar-stats__title">{ translate( 'Sites' ) }</span>
 					</div>
