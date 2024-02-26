@@ -30,7 +30,7 @@ interface CommandMenuGroupProps
 	setSelectedCommandName: ( name: string ) => void;
 	setFooterMessage?: ( message: string ) => void;
 	setEmptyListNotice?: ( message: string ) => void;
-	navigate: ( path: string, openInNewTab: boolean ) => void;
+	navigate: ( path: string, openInNewTab?: boolean ) => void;
 	useCommands: ( options: useCommandsParams ) => PaletteCommand[];
 	wpcom: WPCOM;
 	currentRoute: string | null;
@@ -232,11 +232,10 @@ interface NotFoundMessageProps {
 
 interface CommandPaletteProps {
 	currentSiteId: number | null;
-	navigate: ( path: string, openInNewTab: boolean ) => void;
+	navigate: ( path: string, openInNewTab?: boolean ) => void;
 	useCommands: ( options: useCommandsParams ) => PaletteCommand[];
 	wpcom: WPCOM;
 	currentRoute: string | null;
-	singleSiteMode: boolean;
 	isOpenGlobal?: boolean;
 	onClose?: () => void;
 }
@@ -440,6 +439,7 @@ const CommandPalette = ( {
 
 export default CommandPalette;
 export type { Command, CommandCallBackParams } from './use-command-palette';
+export type { useCommandsParams } from './commands/types';
 export {
 	useAtomicCommands,
 	useAtomicLimitedCommands,

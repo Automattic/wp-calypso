@@ -52,6 +52,7 @@ export type SiteData = Pick<
 > & {
 	title: string;
 	options?: Pick< SiteDetailsOptions, ( typeof SITE_REQUEST_OPTIONS )[ number ] >;
+	capabilities: { [ key: string ]: boolean };
 };
 
 export const useSites = ( wpcom: WPCOM ) =>
@@ -71,25 +72,19 @@ export const useSites = ( wpcom: WPCOM ) =>
 					include_domain_only: 'false',
 				}
 			),
-		select: ( data ) => {
-			// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-			// @ts-ignore TODO
+		select: ( data: { sites: SiteData[] } ) => {
 			const conflictingSites = getJetpackSiteCollisions( data.sites );
-			// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-			// @ts-ignore TODO
 			return data.sites.map( ( site ) => computeFields( site, conflictingSites ) );
 		},
 	} );
 
 // Gets the slug for a site, it also considers the unmapped URL,
 // if the site is a redirect or the domain has a jetpack collision.
-// @ts-expect-error TODO
-function getSiteSlug( site, conflictingSites = [] ) {
+function getSiteSlug( site: SiteData, conflictingSites: number[] = [] ) {
 	if ( ! site ) {
 		return '';
 	}
 
-	// @ts-expect-error TODO
 	const isSiteConflicting = conflictingSites.includes( site.ID );
 
 	if ( site.options?.is_redirect || isSiteConflicting ) {
@@ -99,8 +94,7 @@ function getSiteSlug( site, conflictingSites = [] ) {
 	return urlToSlug( site.URL );
 }
 
-// @ts-expect-error TODO
-function computeFields( site, conflictingSites ) {
+function computeFields( site: SiteData, conflictingSites: number[] ) {
 	const trimmedName = site.name?.trim() ?? '';
 	const slug = getSiteSlug( site, conflictingSites );
 

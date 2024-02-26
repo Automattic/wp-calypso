@@ -43,6 +43,7 @@ import {
 import { getCurrentOAuth2Client } from 'calypso/state/oauth2-clients/ui/selectors';
 import { getPreference } from 'calypso/state/preferences/selectors';
 import getCurrentQueryArguments from 'calypso/state/selectors/get-current-query-arguments';
+import { getCurrentRoutePattern } from 'calypso/state/selectors/get-current-route-pattern';
 import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
 import isWooCommerceCoreProfilerFlow from 'calypso/state/selectors/is-woocommerce-core-profiler-flow';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
@@ -490,6 +491,7 @@ export default withCurrentRoute(
 				currentRoute,
 				isGlobalSidebarVisible: shouldShowGlobalSidebar,
 				isGlobalSiteSidebarVisible: shouldShowGlobalSiteSidebar,
+				currentRoutePattern: getCurrentRoutePattern( state ),
 			};
 		},
 		{
