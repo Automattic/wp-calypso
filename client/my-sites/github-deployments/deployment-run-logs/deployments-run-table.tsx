@@ -1,4 +1,4 @@
-import { __ } from '@wordpress/i18n';
+import { useI18n } from '@wordpress/react-i18n';
 import { SortButton } from 'calypso/my-sites/github-deployments/components/sort-button/sort-button';
 import { SortDirection } from 'calypso/my-sites/github-deployments/components/sort-button/use-sort';
 import { DeploymentsRunItem } from './deployments-run-item';
@@ -17,11 +17,24 @@ export const DeploymentsRunsTable = ( {
 	sortDirection,
 	onSortChange,
 }: DeploymentsRunsTableProps ) => {
+	const { __ } = useI18n();
+
+	if ( deploymentsRuns.length === 0 ) {
+		return (
+			<i css={ { color: 'var(--Gray-Gray-40, #50575E)' } }>
+				{ __( 'This connection has no deployment runs yet.' ) }
+			</i>
+		);
+	}
+
 	return (
 		<table className="github-deployments-logs">
 			<thead>
 				<tr>
 					<th>
+						<span>{ __( 'Author' ) }</span>
+					</th>
+					<th style={ { width: '100%' } }>
 						<span>{ __( 'Commit' ) }</span>
 					</th>
 					<th>

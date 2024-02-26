@@ -1,6 +1,8 @@
+import { __ } from '@wordpress/i18n';
+
 export const DeployStatus = {
 	STATUS_PENDING: 'pending',
-	STATUS_QUEUED: 'queue',
+	STATUS_QUEUED: 'queued',
 	STATUS_RUNNING: 'running',
 	STATUS_SUCCESS: 'success',
 	STATUS_FAILED: 'failed',
@@ -15,10 +17,29 @@ interface DeploymentStatusProps {
 	status: DeploymentStatusValue;
 }
 
+function getText( status: DeploymentStatusValue ) {
+	switch ( status ) {
+		case 'pending':
+			return __( 'Pending' );
+		case 'queued':
+			return __( 'Queued' );
+		case 'running':
+			return __( 'Running' );
+		case 'success':
+			return __( 'Deployed' );
+		case 'warnings':
+			return __( 'Warnings' );
+		case 'failed':
+			return __( 'Error' );
+		default:
+			return status;
+	}
+}
+
 export const DeploymentStatus = ( { status }: DeploymentStatusProps ) => {
 	return (
 		<div className={ `github-deployments-status github-deployments-status__${ status }` }>
-			<span>{ status }</span>
+			<span>{ getText( status ) }</span>
 		</div>
 	);
 };

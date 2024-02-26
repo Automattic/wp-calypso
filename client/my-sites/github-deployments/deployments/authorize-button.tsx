@@ -50,7 +50,13 @@ export const GitHubAuthorizeButton = () => {
 				return saveGitHubCredentials( { accessToken: response.body.data.access_token } );
 			} )
 			.then( () => refetch() )
-			.catch( () => dispatch( errorNotice( 'Failed to authorize GitHub. Please try again.' ) ) )
+			.catch( () =>
+				dispatch(
+					errorNotice( 'Failed to authorize GitHub. Please try again.', {
+						duration: 3000,
+					} )
+				)
+			)
 			.finally( () => setIsAuthorizing( false ) );
 	};
 

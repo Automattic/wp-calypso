@@ -9,9 +9,9 @@ import SiteStatusContent from 'calypso/jetpack-cloud/sections/agency-dashboard/s
 import SiteDataField from 'calypso/jetpack-cloud/sections/agency-dashboard/sites-overview/sites-dataviews/site-data-field';
 import TextPlaceholder from 'calypso/jetpack-cloud/sections/partner-portal/text-placeholder';
 import SiteSetFavorite from '../site-set-favorite';
+import SiteSort from '../site-sort';
 import { AllowedTypes, Site, SiteData } from '../types';
 import { SitesDataViewsProps } from './interfaces';
-
 import './style.scss';
 
 const SitesDataViews = ( {
@@ -60,22 +60,36 @@ const SitesDataViews = ( {
 		() => [
 			{
 				id: 'status',
-				header: '',
+				header: translate( 'Status' ),
 				getValue: ( { item }: { item: SiteData } ) =>
 					item.site.error || item.scan.status === 'critical',
 				render: () => {},
 				type: 'enumeration',
 				elements: [
-					{ value: 1, label: 'Needs attention' },
-					{ value: 2, label: 'Favorite' },
+					{ value: 1, label: 'Needs Attention' },
+					{ value: 2, label: 'Backup Failed' },
+					{ value: 3, label: 'Backup Warning' },
+					{ value: 4, label: 'Threat Found' },
+					{ value: 5, label: 'Site Disconnected' },
+					{ value: 6, label: 'Site Down' },
+					{ value: 7, label: 'Plugins Needing Updates' },
 				],
-				enableHiding: true,
-				enableSorting: true,
+				filterBy: {
+					operators: [ 'in' ],
+				},
+				enableHiding: false,
+				enableSorting: false,
 			},
 			{
 				id: 'site',
 				header: (
-					<span className="sites-dataview__site-header">{ translate( 'Site' ).toUpperCase() }</span>
+					<>
+						<SiteSort isSortable={ true } columnKey="site">
+							<span className="sites-dataview__site-header">
+								{ translate( 'Site' ).toUpperCase() }
+							</span>
+						</SiteSort>
+					</>
 				),
 				getValue: ( { item }: { item: SiteData } ) => item.site.value.url,
 				render: ( { item }: { item: SiteData } ) => {
@@ -92,7 +106,7 @@ const SitesDataViews = ( {
 					);
 				},
 				enableHiding: false,
-				enableSorting: true,
+				enableSorting: false,
 			},
 			{
 				id: 'stats',
@@ -171,7 +185,6 @@ const SitesDataViews = ( {
 			},
 			{
 				id: 'actions',
-				header: <span className="sites-dataview__actions-header">{ translate( 'ACTIONS' ) }</span>,
 				getValue: ( { item }: { item: SiteData } ) => item.isFavorite,
 				render: ( { item }: { item: SiteData } ) => {
 					if ( isLoading ) {

@@ -1,0 +1,194 @@
+.github-deployments-deployment-style {
+	border: 1px solid var(--studio-gray-5);
+	box-sizing: border-box;
+	padding: 24px;
+	border-radius: 2px;
+	background-color: var(--studio-gray-0);
+	width: 100%;
+	height: fit-content;
+
+	&__header {
+		font-weight: 500;
+		font-size: 1rem;
+		margin-bottom: 16px;
+		line-height: 24px;
+	}
+
+	&__repository {
+		label {
+			margin-bottom: 0;
+		}
+	}
+
+	.foldable-card {
+		overflow: hidden;
+
+		&__header {
+			min-height: auto !important;
+			padding: 12px;
+			display: flex;
+			align-items: center;
+		}
+		&__main {
+			flex: none;
+		}
+		&__action {
+			display: none;
+		}
+		&__content {
+			background-color: var(--studio-gray-0);
+			pre {
+				margin: 0;
+				padding: 0;
+				background: transparent;
+			}
+			.language-yaml {
+				color: var(--studio-wordpress-blue-60) !important;
+				text-wrap: pretty;
+			}
+			.token.key.atrule {
+				color: var(--studio-green) !important;
+			}
+		}
+	}
+
+	.advanced-option-error {
+		margin-left: -2px;
+	}
+
+	.card,
+	.foldable-card {
+		border-radius: 4px;
+
+		.foldable-card__main svg {
+			margin-right: 8px;
+		}
+
+		&.is-error {
+			box-shadow: 0 0 0 1px var(--color-error);
+			border: none;
+		}
+
+		&.is-error.is-expanded {
+			.foldable-card__header {
+				border-bottom: 1px solid var(--color-error);
+			}
+		}
+
+		.custom-icons {
+			margin-right: 6px;
+			border-radius: 50%;
+			color: #fff;
+			fill: #fff;
+
+			&.success {
+				background: var(--studio-green);
+			}
+			&.error {
+				background: var(--studio-red);
+			}
+		}
+	}
+
+	&__actions {
+		margin-top: 16px;
+	}
+
+	.form-radio:disabled {
+		opacity: 0.1;
+		background: transparent;
+		border-color: var(--studio-black);
+	}
+
+	.form-radios-bar .form-label:last-of-type {
+		margin-bottom: 0;
+	}
+
+	.form-radios-bar .form-label {
+		font-size: 0.875rem;
+		font-weight: 400;
+	}
+
+	.form-fieldset {
+		> .spinner {
+			margin-bottom: 1.5em;
+		}
+
+		.form-label {
+			display: inline-flex;
+			margin-top: 16px;
+			font-weight: 500;
+			color: var(--studio-black);
+		}
+	}
+
+	.support-info {
+		float: none;
+		display: inline-block;
+		margin-left: 4px;
+	}
+
+	&__workflow-select {
+		margin-top: 8px;
+	}
+
+	.form-input-validation.is-error {
+		padding: 0;
+		padding-top: 8px;
+		svg {
+			margin-left: 0;
+			margin-right: 5px;
+			transform: scale(1, -1);
+		}
+	}
+
+	.components-select-control.is-error {
+		.components-input-control__backdrop {
+			border-color: var(--color-error);
+		}
+	}
+
+	.hide-new-workflow {
+		display: none;
+	}
+
+	&__workflow-checks {
+		.form-input-validation.is-error {
+			margin-top: -8px;
+			margin-bottom: 16px;
+		}
+
+		&.form-fieldset {
+			margin-top: 24px;
+		}
+
+		&.form-fieldset .form-label {
+			margin-top: 0;
+		}
+
+		&.workflow-content pre {
+			overflow: auto;
+			max-height: 660px;
+
+			::-webkit-scrollbar {
+				width: 0.1rem !important;
+			}
+		}
+	}
+
+	&__workflow-selection {
+		.select-dropdown__container {
+			width: 100%;
+		}
+
+		.select-dropdown__header {
+			font-weight: normal;
+		}
+	}
+}
+
+.github-deployments-new-workflow-wizard {
+	.code-highlighter {
+		border: 1px solid var(--gray-gray-5, #dcdcde);
+	}
+}

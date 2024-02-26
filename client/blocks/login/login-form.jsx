@@ -3,7 +3,7 @@ import page from '@automattic/calypso-router';
 import { Button, Card, FormInputValidation, FormLabel, Gridicon } from '@automattic/components';
 import { alert } from '@automattic/components/src/icons';
 import { localizeUrl } from '@automattic/i18n-utils';
-import { Spinner, VisuallyHidden } from '@wordpress/components';
+import { Spinner } from '@wordpress/components';
 import { Icon } from '@wordpress/icons';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
@@ -550,9 +550,9 @@ export class LoginForm extends Component {
 			// for what credentials to use. Unlike other users, they won't have seen the informative
 			// text above the form. We therefore need to clarity the must use WordPress.com credentials.
 			<>
-				<VisuallyHidden as="span">
+				<span className="screen-reader-text">
 					{ this.props.translate( 'WordPress.com Email Address or Username' ) }
-				</VisuallyHidden>
+				</span>
 				<span aria-hidden="true">{ this.props.translate( 'Email Address or Username' ) }</span>
 			</>
 		);
