@@ -1,3 +1,4 @@
+import { isEnabled } from '@automattic/calypso-config';
 import page from '@automattic/calypso-router';
 import { useSiteDomainsQuery } from '@automattic/data-stores';
 import { DomainsTable, ResponseDomain, useDomainsTable } from '@automattic/domains-table';
@@ -82,6 +83,7 @@ export default function BulkSiteDomains( props: BulkSiteDomainsProps ) {
 	// If user has more than 1 domain on more than 1 site, show manage all domains CTA.
 	const { domains: allDomains } = useDomainsTable( fetchAllDomains );
 	const showManageAllDomainsCTA =
+		! isEnabled( 'layout/dotcom-nav-redesign' ) &&
 		( allDomains || [] ).length > 1 &&
 		[ ...new Set( ( allDomains || [] ).map( ( domain ) => domain.blog_id ) ) ].length > 1;
 
