@@ -28,7 +28,6 @@ export default function globalSiteSidebarMenu( {
 			url: `/home/${ siteDomain }`,
 			shouldHide: ! isDesktop,
 		},
-
 		{
 			slug: 'home',
 			title: translate( 'My Home' ),
@@ -36,7 +35,6 @@ export default function globalSiteSidebarMenu( {
 			url: `/home/${ siteDomain }`,
 			shouldHide: isDesktop,
 		},
-
 		{
 			slug: 'upgrades',
 			title: translate( 'Plans' ),
