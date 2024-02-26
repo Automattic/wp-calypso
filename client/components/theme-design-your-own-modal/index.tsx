@@ -1,20 +1,14 @@
+import './style.scss';
 import { Button, Modal } from '@wordpress/components';
 import { translate } from 'i18n-calypso';
 import { FC } from 'react';
 
 const ThemeDesignYourOwnModal: FC< {
+	handleCreateNewSite: () => void;
 	handleOpenSiteSelector: () => void;
 	isOpen: boolean;
 	onClose: () => void;
-} > = ( { handleOpenSiteSelector, isOpen, onClose } ) => {
-	// const handleCreateSite = () => {
-	// 	// Logic for creating a new site
-	// };
-
-	// const handleCloseModal = () => {
-	// 	setShowModal( false );
-	// };
-
+} > = ( { handleCreateNewSite, handleOpenSiteSelector, isOpen, onClose } ) => {
 	if ( ! isOpen ) {
 		return null;
 	}
@@ -29,14 +23,22 @@ const ThemeDesignYourOwnModal: FC< {
 				textOnly: true,
 			} ) }
 		>
-			<p>Choose the site you want to design a theme for.</p>
+			<p>
+				{ translate( 'Choose the site you want to design a theme for.', {
+					comment: 'TODO',
+				} ) }
+			</p>
 
-			<div>
-				<Button variant="primary" onClick={ () => {} }>
-					Create a new site
+			<div className="theme-design-your-own-modal__footer">
+				<Button variant="primary" onClick={ handleCreateNewSite }>
+					{ translate( 'Create a new site', {
+						comment: 'TODO',
+					} ) }
 				</Button>
 				<Button variant="secondary" onClick={ handleOpenSiteSelector }>
-					Select one of my sites
+					{ translate( 'Select one of my sites', {
+						comment: 'TODO',
+					} ) }
 				</Button>
 			</div>
 		</Modal>

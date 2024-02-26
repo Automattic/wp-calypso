@@ -647,6 +647,7 @@ class ThemeShowcase extends Component {
 					} }
 				/>
 				<ThemeDesignYourOwnModal
+					handleCreateNewSite={ this.redirectToSiteAssembler }
 					handleOpenSiteSelector={ () => {
 						this.setState( { isDesignThemeModalVisible: false, isSiteSelectorModalVisible: true } );
 					} }
