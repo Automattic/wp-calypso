@@ -473,19 +473,16 @@
 	}
 }
 
-.empty-content {
-	display: flex;
-	flex-direction: column;
-	row-gap: 32px;
-	max-width: 700px;
+.is-section-email {
+	.empty-content {
+		.empty-content__illustration {
+			margin-top: 100px;
+		}
 
-	.empty-content__action,
-	.empty-content__illustration {
-		width: auto;
-		margin: 0 auto;
-	}
-
-	.empty-content__illustration {
-		margin-top: 100px;
+		.empty-content__title,
+		.empty-content__line,
+		.empty-content__action {
+			margin-top: 32px;
+		}
 	}
 }
