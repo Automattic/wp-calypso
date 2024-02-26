@@ -340,14 +340,6 @@ class PodcastingDetails extends Component {
 					key: 'podcasting_copyright',
 					label: translate( 'Copyright' ),
 				} ) }
-				{ this.renderTextField( {
-					key: 'podcasting_keywords',
-					label: translate( 'Keywords' ),
-					explanation: translate(
-						'The keywords setting has been deprecated. This field is for reference only.'
-					),
-					isDisabled: true,
-				} ) }
 				{ isPodcastingEnabled && this.renderSaveButton( true ) }
 			</Fragment>
 		);
@@ -428,7 +420,6 @@ const getFormSettings = ( settings ) => {
 		'podcasting_copyright',
 		'podcasting_explicit',
 		'podcasting_image',
-		'podcasting_keywords',
 		'podcasting_category_1',
 		'podcasting_category_2',
 		'podcasting_category_3',
