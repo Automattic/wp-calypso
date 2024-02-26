@@ -83,13 +83,18 @@
 
 	&.inline-badges .site__domain-and-badges {
 		display: flex;
+		align-items: flex-start;
 
 		.site__badge {
-			margin-top: 0px;
+			margin: -2px 0 0 5px;
+			padding: 0;
 			background: inherit;
 			color: var(--color-sidebar-menu-selected-background);
-			display: list-item;
-			margin-left: 1em;
+			text-wrap: nowrap;
+
+			&::before {
+				content: "•";
+			}
 		}
 	}
 }
