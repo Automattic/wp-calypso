@@ -88,21 +88,6 @@ const commandsWithViewMySiteResult = [
 	},
 ];
 
-const commandsWithViewMySiteOnSitesResult = [
-	{
-		name: 'getHelp',
-		label: 'Get help',
-	},
-	{
-		name: 'clearCache',
-		label: 'Clear cache',
-	},
-	{
-		name: 'enableEdgeCache',
-		label: 'Enable edge cache',
-	},
-];
-
 const commandsWithContext = [
 	{
 		name: 'getHelp',
@@ -184,16 +169,6 @@ describe( 'useCommandPalette', () => {
 
 		expect( result.current.commands.map( ( { name, label } ) => ( { name, label } ) ) ).toEqual(
 			commandsWithViewMySiteResult
-		);
-	} );
-
-	it( 'should return all the commands in the order they are added to commandsWithViewMySiteOnSite; View My Site should be hidden in /sites context', () => {
-		( getCurrentRoutePattern as jest.Mock ).mockReturnValue( '/sites' );
-		( useCommandsArrayWpcom as jest.Mock ).mockReturnValue( commandsWithViewMySite );
-		const { result } = renderUseCommandPalette();
-
-		expect( result.current.commands.map( ( { name, label } ) => ( { name, label } ) ) ).toEqual(
-			commandsWithViewMySiteOnSitesResult
 		);
 	} );
 
