@@ -276,7 +276,7 @@ const CommandPalette = ( {
 	isOpenGlobal,
 	onClose = () => {},
 	useSites = () => [],
-	userCapabilities,
+	userCapabilities = {},
 }: CommandPaletteProps ) => {
 	const [ placeHolderOverride, setPlaceholderOverride ] = useState( '' );
 	const [ search, setSearch ] = useState( '' );
