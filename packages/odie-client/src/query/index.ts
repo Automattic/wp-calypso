@@ -1,5 +1,6 @@
-import { useMutation, UseMutationResult, useQuery } from '@tanstack/react-query';
+import { useMutation, UseMutationResult, useQuery, useQueryClient } from '@tanstack/react-query';
 import apiFetch from '@wordpress/api-fetch';
+import { useRef } from 'react';
 import { canAccessWpcomApis } from 'wpcom-proxy-request';
 // eslint-disable-next-line no-restricted-imports
 import wpcom from 'calypso/lib/wp';
@@ -70,6 +71,9 @@ export const useOdieSendMessage = (): UseMutationResult<
 > => {
 	const { chat, botNameSlug, setIsLoading, addMessage, updateMessage, odieClientId } =
 		useOdieAssistantContext();
+	const queryClient = useQueryClient();
+	const userMessage = useRef< Message | null >( null );
+
 	return useMutation<
 		{ chat_id: string; messages: Message[] },
 		unknown,
@@ -92,6 +96,8 @@ export const useOdieSendMessage = (): UseMutationResult<
 				},
 			] );
 			setIsLoading( true );
+			userMessage.current = message;
+
 			return { internal_message_id };
 		},
 		onSuccess: ( data, _, context ) => {
@@ -126,6 +132,25 @@ export const useOdieSendMessage = (): UseMutationResult<
 
 			broadcastOdieMessage( message, odieClientId );
 			setOdieStorage( 'chat_id', data.chat_id );
+			const queryKey = [ 'chat', botNameSlug, data.chat_id, 1, 30, true ];
+
+			queryClient.setQueryData( queryKey, ( currentChatCache: Chat ) => {
+				if ( ! currentChatCache ) {
+					return {
+						chat_id: data.chat_id,
+						messages: [ userMessage.current, message ],
+					};
+				}
+
+				return {
+					...currentChatCache,
+					messages: [
+						...currentChatCache.messages,
+						userMessage.current,
+						{ ...message, simulateTyping: false },
+					],
+				};
+			} );
 		},
 		onSettled: () => {
 			setIsLoading( false );
@@ -229,6 +254,7 @@ export const useOdieSendMessageFeedback = (): UseMutationResult<
 	{ rating_value: number; message: Message }
 > => {
 	const { chat, botNameSlug } = useOdieAssistantContext();
+	const queryClient = useQueryClient();
 
 	return useMutation( {
 		mutationFn: ( { rating_value, message }: { rating_value: number; message: Message } ) => {
@@ -238,6 +264,22 @@ export const useOdieSendMessageFeedback = (): UseMutationResult<
 				message.message_id || 0,
 				rating_value
 			);
+		},
+		onSuccess: ( _, { rating_value, message } ) => {
+			const queryKey = [ 'chat', botNameSlug, chat.chat_id, 1, 30, true ];
+
+			queryClient.setQueryData( queryKey, ( currentChatCache: Chat ) => {
+				if ( ! currentChatCache ) {
+					return;
+				}
+
+				return {
+					...old,
+					messages: currentChatCache.messages.map( ( m ) =>
+						m.internal_message_id === message.internal_message_id ? { ...m, rating_value } : m
+					),
+				};
+			} );
 		},
 	} );
 };
