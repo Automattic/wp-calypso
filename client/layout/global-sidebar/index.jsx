@@ -1,4 +1,5 @@
 import { Spinner, Gridicon } from '@automattic/components';
+import { useBreakpoint } from '@automattic/viewport-react';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback, useEffect, useRef } from 'react';
 import { useSelector } from 'react-redux';
@@ -17,6 +18,7 @@ const GlobalSidebar = ( { children, onClick = undefined, className = '', ...prop
 	const isRequestingMenu = useSelector( getIsRequestingAdminMenu );
 	const translate = useTranslate();
 	const currentUser = useSelector( getCurrentUser );
+	const isDesktop = useBreakpoint( '>782px' );
 
 	const handleWheel = useCallback( ( event ) => {
 		const bodyEl = bodyRef.current;
@@ -48,7 +50,7 @@ const GlobalSidebar = ( { children, onClick = undefined, className = '', ...prop
 
 	return (
 		<div className="global-sidebar" ref={ wrapperRef }>
-			<GlobalSidebarHeader />
+			{ isDesktop && <GlobalSidebarHeader /> }
 			<div className="sidebar__body" ref={ bodyRef }>
 				<Sidebar className={ className } { ...sidebarProps } onClick={ onClick }>
 					{ requireBackLink && (
