@@ -35,7 +35,7 @@ export default function globalSiteSidebarMenu( {
 		},
 		{
 			slug: 'Add-Ons',
-			title: translate( 'Add-Ons' ),
+			title: translate( 'Add-ons' ),
 			type: 'menu-item',
 			url: `/add-ons/${ siteDomain }`,
 			shouldHide: isStagingSite,
