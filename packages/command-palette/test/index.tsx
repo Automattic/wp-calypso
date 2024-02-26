@@ -56,12 +56,6 @@ describe( 'CommandPalette', () => {
 			emptyListNotice: 'No results found',
 		} );
 
-		const wpcom = {
-			req: {
-				get: () => {},
-			},
-		};
-
 		render(
 			<QueryClientProvider client={ queryClient }>
 				<CommandPalette
@@ -69,7 +63,6 @@ describe( 'CommandPalette', () => {
 					currentSiteId={ null }
 					navigate={ () => {} }
 					useCommands={ () => commands }
-					wpcom={ wpcom }
 				/>
 			</QueryClientProvider>
 		);

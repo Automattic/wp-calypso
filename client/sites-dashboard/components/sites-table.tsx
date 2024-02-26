@@ -5,7 +5,7 @@ import JetpackLogo from 'calypso/components/jetpack-logo';
 import { MEDIA_QUERIES } from '../utils';
 import SitesTableRow from './sites-table-row';
 import SitesTableRowLoading from './sites-table-row-loading';
-import type { SiteExcerptData } from 'calypso/data/sites/site-excerpt-types';
+import type { SiteExcerptData } from '@automattic/sites';
 
 const N_LOADING_ROWS = 3;
 

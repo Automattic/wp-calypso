@@ -7,13 +7,8 @@ import CommandPalette, {
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import domReady from '@wordpress/dom-ready';
 import { render } from 'react-dom';
-import WPCOM from 'wpcom';
-import proxyRequest from 'wpcom-proxy-request';
 
 function CommandPaletteApp() {
-	const wpcom = new WPCOM( proxyRequest );
-	wpcom.request( { metaAPI: { accessAllUsersBlogs: true } } );
-
 	if ( ! window.commandPaletteConfig ) {
 		// Can't load the command palette without a config.
 		return null;
@@ -56,7 +51,6 @@ function CommandPaletteApp() {
 		<QueryClientProvider client={ new QueryClient() }>
 			<CommandPalette
 				navigate={ navigate }
-				wpcom={ wpcom }
 				currentRoute={ currentRoute }
 				useCommands={ useCommands }
 				currentSiteId={ siteId }

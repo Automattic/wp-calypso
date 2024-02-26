@@ -32,7 +32,7 @@ import SitesStagingBadge from './sites-staging-badge';
 import TransferNoticeWrapper from './sites-transfer-notice-wrapper';
 import { ThumbnailLink } from './thumbnail-link';
 import { WithAtomicTransfer } from './with-atomic-transfer';
-import type { SiteExcerptData } from 'calypso/data/sites/site-excerpt-types';
+import type { SiteExcerptData } from '@automattic/sites';
 
 interface SiteTableRowProps {
 	site: SiteExcerptData;
