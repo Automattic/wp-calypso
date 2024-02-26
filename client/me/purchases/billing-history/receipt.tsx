@@ -5,6 +5,7 @@ import { formatCurrency } from '@automattic/format-currency';
 import { IntroductoryOfferTerms } from '@automattic/shopping-cart';
 import {
 	LineItemCostOverrideForDisplay,
+	doesIntroductoryOfferHaveDifferentTermLengthThanProduct,
 	getIntroductoryOfferIntervalDisplay,
 	isUserVisibleCostOverride,
 } from '@automattic/wpcom-checkout';
@@ -335,6 +336,23 @@ function filterCostOverridesForReceiptItem(
 			makeIntroductoryOfferCostOverrideUnique( costOverride, item, translate )
 		)
 		.map( ( costOverride ) => {
+			// Introductory offer discounts with term lengths that differ from
+			// the term length of the product (eg: a 3 month discount for an
+			// annual plan) need to be displayed differently because the
+			// discount is only temporary and the user will still be charged
+			// the remainder before the next renewal.
+			if (
+				doesIntroductoryOfferHaveDifferentTermLengthThanProduct(
+					item.cost_overrides,
+					item.introductory_offer_terms,
+					item.months_per_renewal_interval
+				)
+			) {
+				return {
+					humanReadableReason: costOverride.human_readable_reason,
+					overrideCode: costOverride.override_code,
+				};
+			}
 			return {
 				humanReadableReason: costOverride.human_readable_reason,
 				overrideCode: costOverride.override_code,
