@@ -75,7 +75,7 @@ export const ScheduleForm = ( props: Props ) => {
 	);
 
 	const validateName = useCallback( () => {
-		let error;
+		let error = '';
 		if ( ! name ) {
 			error = 'Please provide a name to this plugin update schedule.';
 		} else if ( name.length > 120 ) {
