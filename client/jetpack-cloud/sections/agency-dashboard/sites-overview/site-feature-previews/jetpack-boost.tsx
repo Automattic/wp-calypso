@@ -1,3 +1,4 @@
+import BoostSitePerformance from '../site-expanded-content/boost-site-performance';
 import SitePreviewPaneContent from '../site-preview-pane/site-preview-pane-content';
 import SitePreviewPaneFooter from '../site-preview-pane/site-preview-pane-footer';
 import { Site } from '../types';
@@ -10,11 +11,7 @@ export function JetpackBoostPreview( { site }: Props ) {
 	return (
 		<>
 			<SitePreviewPaneContent>
-				<div>
-					<b>Boost Pane</b>
-					<br />
-					{ site.url }
-				</div>
+				<BoostSitePerformance site={ site } trackEvent={ () => {} } hasError={ false } />
 			</SitePreviewPaneContent>
 			<SitePreviewPaneFooter />
 		</>

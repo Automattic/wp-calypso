@@ -1,3 +1,4 @@
+import InsightsStats from 'calypso/jetpack-cloud/sections/agency-dashboard/sites-overview/site-expanded-content/insights-stats';
 import SitePreviewPaneContent from '../site-preview-pane/site-preview-pane-content';
 import SitePreviewPaneFooter from '../site-preview-pane/site-preview-pane-footer';
 import { Site } from '../types';
@@ -10,11 +11,11 @@ export function JetpackStatsPreview( { site }: Props ) {
 	return (
 		<>
 			<SitePreviewPaneContent>
-				<div>
-					<b>Stats Pane</b>
-					<br />
-					{ site.url }
-				</div>
+				<InsightsStats
+					stats={ site.site_stats }
+					siteUrlWithScheme={ site.url_with_scheme }
+					trackEvent={ () => {} }
+				/>
 			</SitePreviewPaneContent>
 			<SitePreviewPaneFooter />
 		</>

@@ -1,3 +1,4 @@
+import BackupStorage from '../site-expanded-content/backup-storage';
 import SitePreviewPaneContent from '../site-preview-pane/site-preview-pane-content';
 import SitePreviewPaneFooter from '../site-preview-pane/site-preview-pane-footer';
 import { Site } from '../types';
@@ -10,11 +11,7 @@ export function JetpackBackupPreview( { site }: Props ) {
 	return (
 		<>
 			<SitePreviewPaneContent>
-				<div>
-					<b>Backup Pane</b>
-					<br />
-					{ site.url }
-				</div>
+				<BackupStorage site={ site } trackEvent={ () => {} } hasError={ false } />
 			</SitePreviewPaneContent>
 			<SitePreviewPaneFooter />
 		</>
