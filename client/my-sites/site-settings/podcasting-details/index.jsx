@@ -317,8 +317,9 @@ class PodcastingDetails extends Component {
 						label: translate( 'Title' ),
 					} ) }
 					{ this.renderTextField( {
-						key: 'podcasting_subtitle',
-						label: translate( 'Subtitle' ),
+						FormComponent: FormTextarea,
+						key: 'podcasting_summary',
+						label: translate( 'Summary/Description' ),
 					} ) }
 				</div>
 				{ this.renderTopics() }
@@ -326,11 +327,6 @@ class PodcastingDetails extends Component {
 				{ this.renderTextField( {
 					key: 'podcasting_talent_name',
 					label: translate( 'Hosts/Artist/Producer' ),
-				} ) }
-				{ this.renderTextField( {
-					FormComponent: FormTextarea,
-					key: 'podcasting_summary',
-					label: translate( 'Summary' ),
 				} ) }
 				{ this.renderTextField( {
 					key: 'podcasting_email',
@@ -342,14 +338,6 @@ class PodcastingDetails extends Component {
 				{ this.renderTextField( {
 					key: 'podcasting_copyright',
 					label: translate( 'Copyright' ),
-				} ) }
-				{ this.renderTextField( {
-					key: 'podcasting_keywords',
-					label: translate( 'Keywords' ),
-					explanation: translate(
-						'The keywords setting has been deprecated. This field is for reference only.'
-					),
-					isDisabled: true,
 				} ) }
 				{ isPodcastingEnabled && this.renderSaveButton( true ) }
 			</Fragment>
@@ -386,11 +374,6 @@ class PodcastingDetails extends Component {
 			// use the site title.
 			if ( ! fields.podcasting_title ) {
 				fieldsToUpdate.podcasting_title = settings.blogname;
-			}
-			// If we are newly enabling podcasting, and no podcast subtitle is set,
-			// use the site description.
-			if ( ! fields.podcasting_subtitle ) {
-				fieldsToUpdate.podcasting_subtitle = settings.blogdescription;
 			}
 		}
 
@@ -431,13 +414,11 @@ const getFormSettings = ( settings ) => {
 	return pick( settings, [
 		'podcasting_category_id',
 		'podcasting_title',
-		'podcasting_subtitle',
 		'podcasting_talent_name',
 		'podcasting_summary',
 		'podcasting_copyright',
 		'podcasting_explicit',
 		'podcasting_image',
-		'podcasting_keywords',
 		'podcasting_category_1',
 		'podcasting_category_2',
 		'podcasting_category_3',
