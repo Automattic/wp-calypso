@@ -42,7 +42,7 @@ object WPComPlugins : Project({
 					"wpcom-block-editor-release-build",
 					"o2-blocks-release-build",
 					"happy-blocks-release-build",
-					"command-palette-wp-admin-release-build",
+					"command-palette-release-build",
 				)
 			}
 			dataToKeep = everything()
