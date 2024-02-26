@@ -16,6 +16,7 @@ import QuerySitePlans from 'calypso/components/data/query-site-plans';
 import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
 import QueryThemeFilters from 'calypso/components/data/query-theme-filters';
 import { SearchThemes, SearchThemesV2 } from 'calypso/components/search-themes';
+import ThemeDesignYourOwnModal from 'calypso/components/theme-design-your-own-modal';
 import ThemeSiteSelectorModal from 'calypso/components/theme-site-selector-modal';
 import { THEME_TIERS } from 'calypso/components/theme-tier/constants';
 import getSiteAssemblerUrl from 'calypso/components/themes-list/get-site-assembler-url';
@@ -92,6 +93,7 @@ const defaultStaticFilter = Object.values( staticFilters ).find(
 
 class ThemeShowcase extends Component {
 	state = {
+		isDesignThemeModalVisible: false,
 		isSiteSelectorModalVisible: false,
 	};
 
@@ -376,7 +378,7 @@ class ThemeShowcase extends Component {
 		} );
 
 		if ( shouldSelectSite( { isLoggedIn, siteCount, siteId } ) ) {
-			this.setState( { isSiteSelectorModalVisible: true } );
+			this.setState( { isDesignThemeModalVisible: true } );
 		} else {
 			this.redirectToSiteAssembler();
 		}
@@ -642,6 +644,15 @@ class ThemeShowcase extends Component {
 								}
 							);
 						}
+					} }
+				/>
+				<ThemeDesignYourOwnModal
+					handleOpenSiteSelector={ () => {
+						this.setState( { isDesignThemeModalVisible: false, isSiteSelectorModalVisible: true } );
+					} }
+					isOpen={ this.state.isDesignThemeModalVisible }
+					onClose={ () => {
+						this.setState( { isDesignThemeModalVisible: false } );
 					} }
 				/>
 				{ isLoggedIn && (
