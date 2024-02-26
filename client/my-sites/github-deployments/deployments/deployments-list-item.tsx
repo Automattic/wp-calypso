@@ -20,6 +20,7 @@ import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import { useDispatch, useSelector } from '../../../state';
 import { manageDeploymentPage, viewDeploymentLogs } from '../routes';
 import { DeleteDeploymentDialog } from './delete-deployment-dialog';
+import { DeploymentStarterMessage } from './deployment-starter-message';
 import { CodeDeploymentData } from './use-code-deployments-query';
 
 const noticeOptions = {
@@ -72,18 +73,6 @@ export const DeploymentsListItem = ( { deployment }: DeploymentsListItemProps ) 
 	const run = deployment.current_deployment_run;
 	const [ installation, repo ] = deployment.repository_name.split( '/' );
 
-	const getStarterMessage = () => {
-		if ( deployment.is_automated ) {
-			// Translators: %(branch)s is the branch name of the repository, %(repo)s is the repository name
-			return sprintf( __( 'Push something to the ‘%(branch)s’ branch of ‘%(repo)s’' ), {
-				branch: deployment.branch_name,
-				repo: deployment.repository_name,
-			} );
-		}
-
-		return __( 'Whenever you are ready, trigger a deployment from the ellipsis menu' );
-	};
-
 	const columns = run ? (
 		<>
 			<td>{ run && <DeploymentCommitDetails run={ run } deployment={ deployment } /> }</td>
@@ -94,9 +83,7 @@ export const DeploymentsListItem = ( { deployment }: DeploymentsListItemProps ) 
 			<td>{ run && <DeploymentDuration run={ run } /> }</td>
 		</>
 	) : (
-		<td colSpan={ 4 }>
-			<i css={ { color: 'var(--Gray-Gray-40, #50575E)' } }>{ getStarterMessage() }</i>
-		</td>
+		<DeploymentStarterMessage deployment={ deployment } />
 	);
 
 	return (
