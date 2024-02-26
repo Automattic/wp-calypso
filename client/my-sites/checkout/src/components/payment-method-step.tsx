@@ -5,7 +5,6 @@ import {
 	getTaxBreakdownLineItemsFromCart,
 	getCreditsLineItemFromCart,
 	NonProductLineItem,
-	hasCheckoutVersion,
 	LineItemType,
 	getSubtotalWithoutDiscounts,
 	getTotalDiscountsWithoutCredits,
@@ -15,6 +14,7 @@ import styled from '@emotion/styled';
 import { useTranslate } from 'i18n-calypso';
 import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
 import CheckoutTerms from '../components/checkout-terms';
+import { useCheckoutV2 } from '../hooks/use-checkout-v2';
 import { WPOrderReviewSection } from './wp-order-review-line-items';
 
 const CheckoutTermsWrapper = styled.div`
@@ -112,13 +112,15 @@ export default function BeforeSubmitCheckoutHeader() {
 		} ),
 	};
 
+	const shouldUseCheckoutV2 = useCheckoutV2() === 'treatment';
+
 	return (
 		<>
 			<CheckoutTermsWrapper>
 				<CheckoutTerms cart={ responseCart } />
 			</CheckoutTermsWrapper>
 
-			{ ! hasCheckoutVersion( '2' ) && (
+			{ ! shouldUseCheckoutV2 && (
 				<WPOrderReviewSection>
 					<NonTotalPrices>
 						<NonProductLineItem subtotal lineItem={ subTotalLineItemWithoutCoupon } />

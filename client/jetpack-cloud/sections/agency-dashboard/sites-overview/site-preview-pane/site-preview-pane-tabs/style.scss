@@ -1,4 +1,26 @@
 .site-preview__tabs {
+	display: flex;
+	justify-content: flex-start;
+	align-items: center;
 	height: 48px;
-	background-color: #add8e6;
+	padding: 0 32px;
+	border-bottom: 1px solid var(--studio-gray-0);
+
+	.button.is-borderless {
+		display: flex;
+		flex-direction: row;
+		align-items: center;
+		gap: 8px;
+		padding: 0 16px;
+		height: 100%;
+		font-size: rem(14px);
+		font-weight: 500;
+		color: var(--studio-black);
+		border-radius: 0;
+
+		&.is-selected {
+			border-bottom: 1px solid var(--studio-black);
+		}
+	}
 }
+

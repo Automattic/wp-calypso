@@ -1,6 +1,7 @@
 import { Gridicon } from '@automattic/components';
 import { Button } from '@wordpress/components';
 import { Icon, external } from '@wordpress/icons';
+import classNames from 'classnames';
 import { translate } from 'i18n-calypso';
 
 import './style.scss';
@@ -11,7 +12,8 @@ interface Props {
 	title: string;
 	url: string;
 	urlWithScheme: string;
-	closeSitePreviewPane: () => void;
+	closeSitePreviewPane?: () => void;
+	className?: string;
 }
 
 export default function SitePreviewPaneHeader( {
@@ -19,9 +21,10 @@ export default function SitePreviewPaneHeader( {
 	url,
 	urlWithScheme,
 	closeSitePreviewPane,
+	className,
 }: Props ) {
 	return (
-		<div className="site-preview__header">
+		<div className={ classNames( 'site-preview__header', className ) }>
 			<div className="site-preview__header-bg"></div>
 			<div className="sites-dataviews__site-favicon site-preview__header-favicon"></div>
 			<div className="site-preview__header-content">
