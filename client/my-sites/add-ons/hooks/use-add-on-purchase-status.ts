@@ -1,8 +1,7 @@
+import { Purchases, type AddOnMeta } from '@automattic/data-stores';
 import { useTranslate } from 'i18n-calypso';
 import { useSelector } from 'calypso/state';
-import { getSitePurchases } from 'calypso/state/purchases/selectors/get-site-purchases';
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
-import type { AddOnMeta } from '@automattic/data-stores';
 
 interface Props {
 	addOnMeta: AddOnMeta;
@@ -14,10 +13,10 @@ interface Props {
  */
 const useAddOnPurchaseStatus = ( { addOnMeta, selectedSiteId }: Props ) => {
 	const translate = useTranslate();
-	const sitePurchases = useSelector( ( state ) => getSitePurchases( state, selectedSiteId ) );
-	const purchased = sitePurchases.find(
-		( product ) => product.productSlug === addOnMeta.productSlug
-	);
+	const matchingPurchases = Purchases.useSitePurchasesByQuery( {
+		siteId: selectedSiteId,
+		query: { productSlug: addOnMeta.productSlug },
+	} );
 	const isSiteFeature = useSelector(
 		( state ) =>
 			selectedSiteId &&
@@ -31,7 +30,7 @@ const useAddOnPurchaseStatus = ( { addOnMeta, selectedSiteId }: Props ) => {
 	 * Reason: `siteHasFeature` involves both purchases and plan features.
 	 */
 
-	if ( purchased ) {
+	if ( matchingPurchases ) {
 		return { available: false, text: translate( 'Purchased' ) };
 	}
 
