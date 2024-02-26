@@ -14,7 +14,7 @@ This differences were highlighted in <https://github.com/WordPress/gutenberg/iss
 
 ## Add a command
 
-In order to add a new command to the palette, you can include the command object in `useCommandsArrayWpcom` or create a new hook and include it to `useCommandPalette` hooks.
+In order to add a new command to the palette, you can include the command object in `useCommands` or create a new hook and include it to `useCommandPalette` hooks.
 
 ### Command properties
 
