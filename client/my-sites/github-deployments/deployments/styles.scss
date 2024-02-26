@@ -49,6 +49,10 @@
 			white-space: nowrap;
 		}
 
+		.github-deployments-list__repository-details {
+			white-space: normal;
+		}
+
 		&:last-child {
 			padding-left: 32px;
 			padding-right: 0;
@@ -63,11 +67,15 @@
 		padding: 21px 0;
 		font-weight: 500;
 
-		a {
+		button {
+			text-align: left;
+			padding: 0;
+			border: none;
 			color: var(--studio-gray-100, #101517);
 
 			&:hover {
 				text-decoration: underline;
+				color: var(--studio-gray-100, #101517);
 			}
 		}
 

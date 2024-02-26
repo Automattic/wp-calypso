@@ -187,7 +187,6 @@ export const useCommandPalette = ( {
 		if ( selectedCommand?.siteFunctions ) {
 			const { capabilityFilter, onClick, filter } = selectedCommand.siteFunctions;
 			let filteredSites = filter ? sortedSites.filter( filter ) : sortedSites;
-			// @TODO rorto capability filter is here.
 			if ( capabilityFilter ) {
 				filteredSites = filteredSites.filter( ( site ) => {
 					const siteCapabilities = userCapabilities[ site.ID ];

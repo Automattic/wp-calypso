@@ -1,4 +1,8 @@
-import { STATS_UTM_METRICS_REQUEST, STATS_UTM_METRICS_RECEIVE } from 'calypso/state/action-types';
+import {
+	STATS_UTM_METRICS_REQUEST,
+	STATS_UTM_METRICS_RECEIVE,
+	STATS_UTM_METRICS_REQUEST_FAILURE,
+} from 'calypso/state/action-types';
 import 'calypso/state/data-layer/wpcom/sites/stats/utm-metrics';
 import 'calypso/state/stats/init';
 
@@ -14,6 +18,13 @@ export function requestMetrics( siteId: number, utmParam: string ) {
 		type: STATS_UTM_METRICS_REQUEST,
 		siteId,
 		utmParam,
+	};
+}
+
+export function requestMetricsFail( siteId: number ) {
+	return {
+		type: STATS_UTM_METRICS_REQUEST_FAILURE,
+		siteId,
 	};
 }
 
