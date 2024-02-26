@@ -161,7 +161,7 @@ export default memo( function SitesTableRow( { site }: SiteTableRowProps ) {
 		return siteId && hasSiteStatsQueryFailed( state, siteId, statType, query );
 	} );
 
-	const computeDashboardUrl = ( site, isAtomicSite ) => {
+	const computeDashboardUrl = ( site: SiteExcerptData, isAtomicSite: boolean | null ) => {
 		if ( isAtomicSite && siteDefaultInterface( site ) === 'wp-admin' ) {
 			return getSiteWpAdminUrl( site ) || getDashboardUrl( site.slug );
 		}
