@@ -93,6 +93,20 @@ function SidebarScrollSynchronizer() {
 	return null;
 }
 
+function WhatsNewLoader( { loadWhatsNew } ) {
+	const { setShowWhatsNewModal } = useDispatch( HELP_CENTER_STORE );
+	// todo: only show if the user hasn't seen critical notifications yet.
+	setShowWhatsNewModal( true );
+
+	const handleClose = useCallback( () => {
+		setShowWhatsNewModal( false );
+	}, [ setShowWhatsNewModal ] );
+	if ( ! loadWhatsNew ) {
+		return null;
+	}
+	return <AsyncLoad require="@automattic/whats-new" onClose={ handleClose } />;
+}
+
 function HelpCenterLoader( { sectionName, loadHelpCenter, currentRoute } ) {
 	const { setShowHelpCenter } = useDispatch( HELP_CENTER_STORE );
 	const isDesktop = useBreakpoint( '>782px' );
@@ -294,6 +308,7 @@ class Layout extends Component {
 
 		return (
 			<div className={ sectionClass }>
+				<WhatsNewLoader loadWhatsNew={ loadHelpCenter } />
 				<HelpCenterLoader
 					sectionName={ this.props.sectionName }
 					loadHelpCenter={ loadHelpCenter }

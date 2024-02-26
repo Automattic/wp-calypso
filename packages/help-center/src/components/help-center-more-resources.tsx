@@ -3,10 +3,8 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { isWpComBusinessPlan, isWpComEcommercePlan } from '@automattic/calypso-products';
 import { localizeUrl } from '@automattic/i18n-utils';
-import WhatsNewGuide from '@automattic/whats-new';
 import { Button, SVG, Circle } from '@wordpress/components';
 import { useSelect, useDispatch } from '@wordpress/data';
-import { useState } from '@wordpress/element';
 import { Icon, captureVideo, formatListNumbered, external, institution } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
 import { useSelector } from 'react-redux';
@@ -36,6 +34,9 @@ export const HelpCenterMoreResources = () => {
 		( purchaseSlugs.some( isWpComBusinessPlan ) || purchaseSlugs.some( isWpComEcommercePlan ) )
 	);
 
+	// whats new modal is loaded in client/layout/index.jsx
+	const { setShowWhatsNewModal } = useDispatch( HELP_CENTER_STORE );
+
 	const { hasSeenWhatsNewModal, doneLoading } = useSelect(
 		( select ) => ( {
 			hasSeenWhatsNewModal: (
@@ -53,8 +54,6 @@ export const HelpCenterMoreResources = () => {
 	const { setHasSeenWhatsNewModal } = useDispatch( HELP_CENTER_STORE );
 
 	const showWhatsNewDot = doneLoading && ! hasSeenWhatsNewModal;
-
-	const [ showGuide, setShowGuide ] = useState( false );
 
 	const trackMoreResourcesButtonClick = ( resource: string ) => {
 		recordTracksEvent( 'calypso_help_moreresources_click', {
@@ -80,7 +79,8 @@ export const HelpCenterMoreResources = () => {
 		if ( ! hasSeenWhatsNewModal ) {
 			setHasSeenWhatsNewModal( true );
 		}
-		setShowGuide( true );
+		setShowWhatsNewModal( true );
+
 		trackMoreResourcesButtonClick( 'whats-new' );
 	};
 
@@ -151,7 +151,6 @@ export const HelpCenterMoreResources = () => {
 					</div>
 				</li>
 			</ul>
-			{ showGuide && <WhatsNewGuide onClose={ () => setShowGuide( false ) } /> }
 		</>
 	);
 };

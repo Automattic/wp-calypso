@@ -86,6 +86,13 @@ export const setShowHelpCenter = function* ( show: boolean ) {
 	} as const;
 };
 
+export const setShowWhatsNewModal = function ( show: boolean ) {
+	return {
+		type: 'HELP_CENTER_SET_SHOW_WHATS_NEW_MODAL',
+		show,
+	} as const;
+};
+
 export const setSubject = ( subject: string ) =>
 	( {
 		type: 'HELP_CENTER_SET_SUBJECT',
@@ -153,5 +160,6 @@ export type HelpCenterAction =
 			| typeof setUnreadCount
 			| typeof setIsMinimized
 			| typeof setInitialRoute
+			| typeof setShowWhatsNewModal
 	  >
 	| GeneratorReturnType< typeof setShowHelpCenter | typeof setHasSeenWhatsNewModal >;

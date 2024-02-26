@@ -1,6 +1,7 @@
 import type { State } from './reducer';
 
 export const isHelpCenterShown = ( state: State ) => state.showHelpCenter;
+export const isWhatsNewModalShown = ( state: State ) => state.showWhatsNewModal;
 export const isMessagingLauncherShown = ( state: State ) => state.showMessagingLauncher;
 export const isMessagingWidgetShown = ( state: State ) => state.showMessagingWidget;
 export const getSite = ( state: State ) => state.site;

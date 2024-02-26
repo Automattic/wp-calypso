@@ -1,11 +1,15 @@
 /* eslint-disable no-restricted-imports */
+import { HelpCenter, HelpCenterSelect } from '@automattic/data-stores';
 import { useLocale } from '@automattic/i18n-utils';
 import { useQuery } from '@tanstack/react-query';
 import apiFetch from '@wordpress/api-fetch';
+import { useSelect } from '@wordpress/data';
 import wpcomRequest, { canAccessWpcomApis } from 'wpcom-proxy-request';
 import Guide from './components/guide';
 import WhatsNewPage from './whats-new-page';
 import './style.scss';
+
+export const HELP_CENTER_STORE = HelpCenter.register();
 
 interface Props {
 	onClose: () => void;
@@ -29,6 +33,11 @@ interface APIFetchOptions {
 const WhatsNewGuide: React.FC< Props > = ( { onClose } ) => {
 	const locale = useLocale();
 
+	const isWhatsNewModalShown = useSelect( ( select ) => {
+		const helpCenterSelect: HelpCenterSelect = select( HELP_CENTER_STORE );
+		return helpCenterSelect.isWhatsNewModalShown();
+	}, [] );
+
 	const { data, isLoading } = useQuery< WhatsNewAnnouncement[] >( {
 		queryKey: [ 'WhatsNewAnnouncements' ],
 		queryFn: async () =>
@@ -44,7 +53,7 @@ const WhatsNewGuide: React.FC< Props > = ( { onClose } ) => {
 		refetchOnWindowFocus: false,
 	} );
 
-	if ( ! data || isLoading ) {
+	if ( ! isWhatsNewModalShown || ! data || isLoading ) {
 		return null;
 	}
 
