@@ -626,13 +626,13 @@ class ThemeShowcase extends Component {
 				<ThemeSiteSelectorModal
 					isOpen={ this.state.isSiteSelectorModalVisible }
 					navigateOnClose={ ! this.state.isDesignThemeFlow }
-					onClose={ ( { siteSlug, siteTitle } ) => {
-						if ( siteSlug && this.state.isDesignThemeFlow ) {
-							this.redirectToSiteAssembler( { slug: siteSlug } );
-						} else if ( siteTitle ) {
+					onClose={ ( args ) => {
+						if ( args?.siteSlug && this.state.isDesignThemeFlow ) {
+							this.redirectToSiteAssembler( { slug: args.siteSlug } );
+						} else if ( args?.siteTitle ) {
 							showSuccessNotice(
 								translate( 'You have selected the site {{strong}}%(siteTitle)s{{/strong}}.', {
-									args: { siteTitle },
+									args: { siteTitle: args.siteTitle },
 									components: { strong: <strong /> },
 									comment:
 										'On the themes page, notification shown to the user after they choose one of their sites to browse the themes',
