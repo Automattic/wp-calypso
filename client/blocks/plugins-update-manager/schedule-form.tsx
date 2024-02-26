@@ -177,7 +177,7 @@ export const ScheduleForm = ( props: Props ) => {
 						</div>
 						<Text className="validation-msg">
 							<Icon className="icon-info" icon={ info } size={ 16 } />
-							The current feature implementation only allows to set up two schedules.
+							Please pick another time for optimal performance, as this slot is already taken.
 						</Text>
 					</div>
 				</FlexItem>
@@ -192,7 +192,7 @@ export const ScheduleForm = ( props: Props ) => {
 						</Text>
 						<Text className="validation-msg">
 							<Icon className="icon-info" icon={ info } size={ 16 } />
-							Please pick another time for optimal performance, as this slot is already taken.
+							Please select a different set of plugins, as this one has already been chosen.
 						</Text>
 						<div className="checkbox-options">
 							<SearchControl
