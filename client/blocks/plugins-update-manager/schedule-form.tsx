@@ -36,8 +36,8 @@ export const ScheduleForm = ( props: Props ) => {
 	const [ name, setName ] = useState( '' );
 	const [ frequency, setFrequency ] = useState( 'daily' );
 	const [ selectedPlugins, setSelectedPlugins ] = useState< string[] >( [] );
-	const [ hour, setHour ] = useState< number >( 6 );
-	const [ period, setPeriod ] = useState< 'am' | 'pm' >( 'am' );
+	const [ hour, setHour ] = useState< string >( '6' );
+	const [ period, setPeriod ] = useState< string >( 'am' );
 	const [ pluginSearchTerm, setPluginSearchTerm ] = useState( '' );
 	const [ validationErrors, setValidationErrors ] = useState< Record< string, string > >( {} );
 	const [ fieldTouched, setFieldTouched ] = useState< Record< string, boolean > >( {} );
