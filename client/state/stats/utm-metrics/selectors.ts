@@ -1,8 +1,8 @@
 import { get } from 'lodash';
-
 import 'calypso/state/stats/init';
+import { UTMMetricItem } from 'calypso/state/stats/utm-metrics/types';
 
-const EMPTY_RESULT = {};
+const EMPTY_RESULT = [] as UTMMetricItem[];
 
 /**
  * Returns UTM metrics for a given site
