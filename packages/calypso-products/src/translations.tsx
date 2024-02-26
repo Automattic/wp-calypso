@@ -1009,20 +1009,18 @@ export const getJetpackProductsWhatIsIncluded = (): Record< string, Array< Trans
 
 	// Intl.ListFormat is not available in Mac OS Safari before Big Sur, so we
 	// provide a fallback.
-	let socialNetworksList = translate(
-		'Facebook, Instagram, LinkedIn, Nextdoor, Mastodon & Tumblr'
-	);
+	const socialNetworksForSharing = [
+		translate( 'Facebook' ),
+		translate( 'Instagram' ),
+		translate( 'LinkedIn' ),
+		translate( 'Mastodon' ),
+		translate( 'Tumblr' ),
+		translate( 'Nextdoor' ),
+	];
+	let socialNetworksList = socialNetworksForSharing.join( ', ' );
 	if ( 'ListFormat' in Intl ) {
 		const listFormatter = new Intl.ListFormat( getLocaleSlug() || 'en' );
-
-		socialNetworksList = listFormatter.format( [
-			translate( 'Facebook' ),
-			translate( 'Instagram' ),
-			translate( 'LinkedIn' ),
-			translate( 'Mastodon' ),
-			translate( 'Tumblr' ),
-			translate( 'Nextdoor' ),
-		] );
+		socialNetworksList = listFormatter.format( socialNetworksForSharing );
 	}
 
 	const socialBasicIncludesInfo = [
