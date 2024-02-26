@@ -71,7 +71,7 @@ export default function SitesDashboardV2() {
 		{ filterType: 'plugin_updates', ref: 7 },
 	];
 
-	const { search, currentPage, filter, sort } = useContext( SitesOverviewContext );
+	const { path, search, currentPage, filter, sort } = useContext( SitesOverviewContext );
 
 	const [ sitesViewState, setSitesViewState ] = useState< SitesViewState >( {
 		type: 'table',
@@ -128,6 +128,22 @@ export default function SitesDashboardV2() {
 	useEffect( () => {
 		updateDashboardURLQueryArgs( { search: sitesViewState.search } );
 	}, [ sitesViewState.search ] );
+
+	// Set or clear filter depending on sites submenu path selected
+	useEffect( () => {
+		if ( path === '/sites' ) {
+			setSitesViewState( { ...sitesViewState, filters: [] } );
+		}
+		if ( path === '/sites/favorites' ) {
+			setSitesViewState( { ...sitesViewState, filters: [] } );
+		}
+		if ( path === '/sites?issue_types=all_issues' ) {
+			setSitesViewState( {
+				...sitesViewState,
+				filters: [ { field: 'status', operator: 'in', value: 1 } ],
+			} );
+		}
+	}, [ path ] );
 
 	useEffect( () => {
 		if ( jetpackSiteDisconnected ) {
