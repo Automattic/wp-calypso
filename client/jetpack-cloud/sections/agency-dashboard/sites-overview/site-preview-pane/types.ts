@@ -13,6 +13,7 @@ export interface FeatureTabInterface {
 	countValue?: number;
 	countColor?: string;
 	selected?: boolean;
+	visible?: boolean;
 	onTabClick?: () => void;
 }
 
@@ -21,4 +22,5 @@ export interface SitePreviewPaneProps {
 	closeSitePreviewPane?: () => void;
 	selectedFeatureId?: string;
 	features?: FeaturePreviewInterface[];
+	className?: string;
 }
