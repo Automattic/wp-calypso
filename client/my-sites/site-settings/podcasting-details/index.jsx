@@ -317,17 +317,17 @@ class PodcastingDetails extends Component {
 						key: 'podcasting_title',
 						label: translate( 'Title' ),
 					} ) }
+					{ this.renderTextField( {
+						FormComponent: FormTextarea,
+						key: 'podcasting_summary',
+						label: translate( 'Summary/Description' ),
+					} ) }
 				</div>
 				{ this.renderTopics() }
 				{ this.renderExplicitContent() }
 				{ this.renderTextField( {
 					key: 'podcasting_talent_name',
 					label: translate( 'Hosts/Artist/Producer' ),
-				} ) }
-				{ this.renderTextField( {
-					FormComponent: FormTextarea,
-					key: 'podcasting_summary',
-					label: translate( 'Summary/Description' ),
 				} ) }
 				{ this.renderTextField( {
 					key: 'podcasting_email',
