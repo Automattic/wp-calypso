@@ -138,6 +138,7 @@ export default function SitesDashboardV2() {
 			setSitesViewState( {
 				...sitesViewState,
 				filters: [ { field: 'status', operator: 'in', value: 1 } ],
+				search: '',
 			} );
 		}
 	}, [ path ] );
