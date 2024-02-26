@@ -81,6 +81,7 @@ export default function ( pageBase = '/' ) {
 		'filedownloads',
 		'searchterms',
 		'annualstats',
+		'utm',
 	].join( '|' );
 
 	page.base( pageBase );
