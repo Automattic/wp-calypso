@@ -115,6 +115,7 @@ const contextLinks = {
 	'hosting-mysql': {
 		link: 'https://developer.wordpress.com/docs/developer-tools/database-access/',
 		post_id: 99378,
+		blog_id: DEVELOPER_WORDPRESS_BLOG_ID,
 	},
 	import: {
 		link: 'https://wordpress.com/support/import/',

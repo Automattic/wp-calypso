@@ -7,7 +7,6 @@ import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
-import { DEVELOPER_WORDPRESS_BLOG_ID } from 'calypso/blocks/inline-help/constants';
 import ExternalLink from 'calypso/components/external-link';
 import { bumpStat, composeAnalytics, recordTracksEvent } from 'calypso/state/analytics/actions';
 
@@ -61,13 +60,12 @@ class InlineSupportLink extends Component {
 		}
 	}
 
-	onSupportLinkClick( event, supportPostId, url ) {
+	onSupportLinkClick( event, supportPostId, url, blogId ) {
 		const { showSupportModal, openDialog } = this.props;
 		if ( ! showSupportModal ) {
 			return;
 		}
-
-		openDialog( event, supportPostId, url );
+		openDialog( event, supportPostId, url, blogId );
 	}
 
 	render() {
@@ -75,9 +73,11 @@ class InlineSupportLink extends Component {
 			this.props;
 
 		let { supportPostId, supportLink } = this.props;
+		let blogId; // support.wordpress is the default blog used for support links
 		if ( this.state.supportDataFromContext ) {
 			supportPostId = this.state.supportDataFromContext.post_id;
 			supportLink = this.state.supportDataFromContext.link;
+			blogId = this.state.supportDataFromContext.blog_id;
 		}
 
 		if ( ! supportPostId && ! supportLink ) {
@@ -112,7 +112,7 @@ class InlineSupportLink extends Component {
 			<LinkComponent
 				className={ classnames( 'inline-support-link', className ) }
 				href={ url }
-				onClick={ ( event ) => this.onSupportLinkClick( event, supportPostId, url ) }
+				onClick={ ( event ) => this.onSupportLinkClick( event, supportPostId, url, blogId ) }
 				target="_blank"
 				rel="noopener noreferrer"
 				title={ linkTitle }
@@ -127,7 +127,7 @@ class InlineSupportLink extends Component {
 const mapDispatchToProps = ( dispatch, ownProps ) => {
 	const { tracksEvent, tracksOptions, statsGroup, statsName, supportContext } = ownProps;
 	return {
-		openDialog: ( event, supportPostId, supportLink ) => {
+		openDialog: ( event, supportPostId, supportLink, blogId ) => {
 			if ( ! supportPostId ) {
 				return;
 			}
@@ -149,7 +149,7 @@ const mapDispatchToProps = ( dispatch, ownProps ) => {
 			dataStoreDispatch( HELP_CENTER_STORE ).setShowSupportDoc(
 				supportLink,
 				supportPostId,
-				DEVELOPER_WORDPRESS_BLOG_ID
+				blogId
 			);
 		},
 	};
