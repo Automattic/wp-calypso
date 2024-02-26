@@ -36,6 +36,8 @@ export const ScheduleForm = ( props: Props ) => {
 	const [ name, setName ] = useState( '' );
 	const [ frequency, setFrequency ] = useState( 'daily' );
 	const [ selectedPlugins, setSelectedPlugins ] = useState< string[] >( [] );
+	const [ hour, setHour ] = useState< number >( 6 );
+	const [ period, setPeriod ] = useState< 'am' | 'pm' >( 'am' );
 	const [ pluginSearchTerm, setPluginSearchTerm ] = useState( '' );
 	const [ validationErrors, setValidationErrors ] = useState< Record< string, string > >( {} );
 	const [ fieldTouched, setFieldTouched ] = useState< Record< string, boolean > >( {} );
@@ -127,18 +129,18 @@ export const ScheduleForm = ( props: Props ) => {
 										<div className="form-field">
 											<div className="time-controls">
 												<SelectControl
-													name="time"
 													__next40pxDefaultSize
-													onChange={ function noRefCheck() {} }
+													name="hour"
+													value={ hour }
 													options={ HOUR_OPTIONS }
+													onChange={ setHour }
 												/>
 												<SelectControl
-													name="period"
 													__next40pxDefaultSize
-													onBlur={ function noRefCheck() {} }
-													onChange={ function noRefCheck() {} }
-													onFocus={ function noRefCheck() {} }
+													name="period"
+													value={ period }
 													options={ PERIOD_OPTIONS }
+													onChange={ setPeriod }
 												/>
 											</div>
 										</div>
@@ -171,20 +173,18 @@ export const ScheduleForm = ( props: Props ) => {
 										<div className="form-field">
 											<div className="time-controls">
 												<SelectControl
-													name="time"
 													__next40pxDefaultSize
-													onBlur={ function noRefCheck() {} }
-													onChange={ function noRefCheck() {} }
-													onFocus={ function noRefCheck() {} }
+													name="hour"
+													value={ hour }
 													options={ HOUR_OPTIONS }
+													onChange={ setHour }
 												/>
 												<SelectControl
-													name="period"
 													__next40pxDefaultSize
-													onBlur={ function noRefCheck() {} }
-													onChange={ function noRefCheck() {} }
-													onFocus={ function noRefCheck() {} }
+													name="period"
+													value={ period }
 													options={ PERIOD_OPTIONS }
+													onChange={ setPeriod }
 												/>
 											</div>
 										</div>
