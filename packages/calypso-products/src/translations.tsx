@@ -1009,7 +1009,9 @@ export const getJetpackProductsWhatIsIncluded = (): Record< string, Array< Trans
 
 	// Intl.ListFormat is not available in Mac OS Safari before Big Sur, so we
 	// provide a fallback.
-	let socialNetworksList = translate( 'Facebook, Instagram, LinkedIn, Mastodon & Tumblr' );
+	let socialNetworksList = translate(
+		'Facebook, Instagram, LinkedIn, Nextdoor, Mastodon & Tumblr'
+	);
 	if ( 'ListFormat' in Intl ) {
 		const listFormatter = new Intl.ListFormat( getLocaleSlug() || 'en' );
 
