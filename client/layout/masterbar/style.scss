@@ -972,6 +972,9 @@ a.masterbar__quick-language-switcher {
 	}
 
 	.site {
+		.site-icon {
+			align-self: center;
+		}
 		.site__title,
 		.site__domain {
 			color: var(--color-sidebar-text);
