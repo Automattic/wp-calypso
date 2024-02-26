@@ -207,6 +207,9 @@ describe( 'ChangePaymentMethod', () => {
 		const queryClient = new QueryClient();
 
 		const paymentMethods: Partial< StoredPaymentMethod >[] = [ storedCard1 ];
+		const hasExistingCardMethods = paymentMethods.length > 0;
+		let labelText = 'Credit or debit card';
+
 		nock( 'https://public-api.wordpress.com' )
 			.get( '/rest/v1.2/me/payment-methods?type=card&expired=exclude' )
 			.reply( 200, paymentMethods );
@@ -229,7 +232,11 @@ describe( 'ChangePaymentMethod', () => {
 			</ReduxProvider>
 		);
 
-		expect( await screen.findByLabelText( 'Credit or debit card' ) ).toBeInTheDocument();
+		if ( hasExistingCardMethods ) {
+			labelText = 'New credit or debit card';
+		}
+
+		expect( await screen.findByLabelText( labelText ) ).toBeInTheDocument();
 	} );
 
 	it( 'renders a PayPal payment method', async () => {
