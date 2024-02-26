@@ -11,7 +11,7 @@ import {
 } from '@wordpress/components';
 import { Icon, info } from '@wordpress/icons';
 import classnames from 'classnames';
-import { Fragment, useState, useCallback } from 'react';
+import { Fragment, useState, useCallback, useEffect } from 'react';
 import { useSitePluginsQuery, type SitePlugin } from 'calypso/data/plugins/use-site-plugins-query';
 import { SiteSlug } from 'calypso/types';
 import {
@@ -37,6 +37,8 @@ export const ScheduleForm = ( props: Props ) => {
 	const [ frequency, setFrequency ] = useState( 'daily' );
 	const [ selectedPlugins, setSelectedPlugins ] = useState< string[] >( [] );
 	const [ pluginSearchTerm, setPluginSearchTerm ] = useState( '' );
+	const [ validationErrors, setValidationErrors ] = useState< Record< string, string > >( {} );
+	const [ fieldTouched, setFieldTouched ] = useState< Record< string, boolean > >( {} );
 
 	const onPluginSelectionChange = useCallback(
 		( plugin: SitePlugin, isChecked: boolean ) => {
@@ -70,6 +72,18 @@ export const ScheduleForm = ( props: Props ) => {
 		[ selectedPlugins, MAX_SELECTABLE_PLUGINS ]
 	);
 
+	const validateName = useCallback( () => {
+		let error;
+		if ( ! name ) {
+			error = 'Please provide a name to this plugin update schedule.';
+		} else if ( name.length > 120 ) {
+			error = 'Please provide a shorter name.';
+		}
+		setValidationErrors( { ...validationErrors, name: error } );
+	}, [ name ] );
+
+	useEffect( validateName, [ validateName ] );
+
 	return (
 		<form>
 			<Flex
@@ -85,15 +99,18 @@ export const ScheduleForm = ( props: Props ) => {
 						<TextControl
 							id="name"
 							value={ name }
+							onBlur={ () => setFieldTouched( { ...fieldTouched, name: true } ) }
 							onChange={ setName }
 							__next40pxDefaultSize
 							placeholder="Example: Security plugins"
 							autoComplete="off"
 						/>
-						<Text className="validation-msg">
-							<Icon className="icon-info" icon={ info } size={ 16 } />
-							Please provide a name to this plugin update schedule.
-						</Text>
+						{ fieldTouched?.name && validationErrors?.name && (
+							<Text className="validation-msg">
+								<Icon className="icon-info" icon={ info } size={ 16 } />
+								{ validationErrors.name }
+							</Text>
+						) }
 					</div>
 					<div className="form-field">
 						<label htmlFor="frequency">Update every</label>
