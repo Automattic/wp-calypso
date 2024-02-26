@@ -147,6 +147,7 @@ export default function CampaignItemDetails( props: Props ) {
 
 	// Formatted labels
 	const ctrFormatted = clickthrough_rate ? `${ clickthrough_rate.toFixed( 2 ) }%` : '-';
+	const clicksFormatted = clicks_total && clicks_total > 0 ? clicks_total : '-';
 	const totalBudgetFormatted = `$${ formatCents( total_budget || 0, 2 ) }`;
 	const overallSpendingPercentage =
 		total_budget_used && total_budget
@@ -499,7 +500,7 @@ export default function CampaignItemDetails( props: Props ) {
 												{ translate( 'Clicks' ) }
 											</span>
 											<span className="campaign-item-details__text wp-brand-font">
-												{ ! isLoading ? clicks_total : <FlexibleSkeleton /> }
+												{ ! isLoading ? clicksFormatted : <FlexibleSkeleton /> }
 											</span>
 										</div>
 										<div>
@@ -764,9 +765,11 @@ export default function CampaignItemDetails( props: Props ) {
 							/>
 							<div className="campaign-item-details__preview-disclosure">
 								{ getExternalTabletIcon() }
-								{ translate(
-									'Depending on the platform, the ad may look different from the preview.'
-								) }
+								<span className="preview-disclosure-text">
+									{ translate(
+										'Depending on the platform, the ad may look different from the preview.'
+									) }
+								</span>
 							</div>
 						</div>
 
