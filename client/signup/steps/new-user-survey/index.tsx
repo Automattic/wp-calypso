@@ -110,7 +110,7 @@ function SurveyForm( props: Props ) {
 		} else {
 			setFormState( ( prev: FormState ) => ( {
 				...prev,
-				[ name ]: ! formState[ name ],
+				[ name ]: ! prev[ name ],
 			} ) );
 		}
 	};
@@ -129,7 +129,6 @@ function SurveyForm( props: Props ) {
 	}
 
 	const placeholder = translate( 'Something else?' );
-
 	return (
 		<SurveyFormContainer currentViewport={ currentViewport }>
 			<StyledCard currentViewport={ currentViewport }>
