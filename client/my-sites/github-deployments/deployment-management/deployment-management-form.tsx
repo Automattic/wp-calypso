@@ -4,6 +4,7 @@ import { GitHubConnectionForm } from 'calypso/my-sites/github-deployments/compon
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { errorNotice, successNotice } from 'calypso/state/notices/actions';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import Notice from '../../../components/notice';
 import { useDispatch, useSelector } from '../../../state';
 import { GitHubLoadingPlaceholder } from '../components/loading-placeholder';
 import { CodeDeploymentData } from '../deployments/use-code-deployments-query';
@@ -74,28 +75,36 @@ export const GitHubDeploymentManagementForm = ( {
 	}
 
 	return (
-		<GitHubConnectionForm
-			installation={ installation }
-			ctaLabel={ __( 'Update connection' ) }
-			repository={ repository }
-			initialValues={ initialValues }
-			onSubmit={ ( {
-				externalRepositoryId,
-				branchName,
-				targetDir,
-				installationId,
-				isAutomated,
-				workflowPath,
-			} ) =>
-				updateDeployment( {
+		<>
+			<div css={ { marginBottom: '16px' } }>
+				<Notice isCompact>
+					{ __( 'Changes to an existing connection will be applied in the next deployment run.' ) }
+				</Notice>
+			</div>
+
+			<GitHubConnectionForm
+				installation={ installation }
+				ctaLabel={ __( 'Update connection' ) }
+				repository={ repository }
+				initialValues={ initialValues }
+				onSubmit={ ( {
 					externalRepositoryId,
 					branchName,
 					targetDir,
 					installationId,
 					isAutomated,
 					workflowPath,
-				} )
-			}
-		/>
+				} ) =>
+					updateDeployment( {
+						externalRepositoryId,
+						branchName,
+						targetDir,
+						installationId,
+						isAutomated,
+						workflowPath,
+					} )
+				}
+			/>
+		</>
 	);
 };

@@ -56,7 +56,7 @@ import {
 } from 'calypso/state/ui/selectors';
 import BodySectionCssClass from './body-section-css-class';
 import LayoutLoader from './loader';
-import { handleScroll, handleScrollGlobalSidebar } from './utils';
+import { handleScroll } from './utils';
 
 // goofy import for environment badge, which is SSR'd
 import 'calypso/components/environment-badge/style.scss';
@@ -72,35 +72,27 @@ import './style.scss';
 
 const HELP_CENTER_STORE = HelpCenter.register();
 
-function SidebarScrollSynchronizer( { isGlobalSidebarOrGlobalSiteSidebar } ) {
+function SidebarScrollSynchronizer() {
 	const isNarrow = useBreakpoint( '<660px' );
 	const active = ! isNarrow && ! config.isEnabled( 'jetpack-cloud' ); // Jetpack cloud hasn't yet aligned with WPCOM.
 
 	useEffect( () => {
 		if ( active ) {
-			if ( isGlobalSidebarOrGlobalSiteSidebar ) {
-				window.addEventListener( 'scroll', handleScrollGlobalSidebar );
-			} else {
-				window.addEventListener( 'scroll', handleScroll );
-				window.addEventListener( 'resize', handleScroll );
-			}
+			window.addEventListener( 'scroll', handleScroll );
+			window.addEventListener( 'resize', handleScroll );
 		}
 
 		return () => {
 			if ( active ) {
-				if ( isGlobalSidebarOrGlobalSiteSidebar ) {
-					window.removeEventListener( 'scroll', handleScrollGlobalSidebar );
-				} else {
-					window.removeEventListener( 'scroll', handleScroll );
-					window.removeEventListener( 'resize', handleScroll );
-				}
+				window.removeEventListener( 'scroll', handleScroll );
+				window.removeEventListener( 'resize', handleScroll );
 
 				// remove style attributes added by `handleScroll`
 				document.getElementById( 'content' )?.removeAttribute( 'style' );
 				document.getElementById( 'secondary' )?.removeAttribute( 'style' );
 			}
 		};
-	}, [ active, isGlobalSidebarOrGlobalSiteSidebar ] );
+	}, [ active ] );
 
 	return null;
 }
@@ -301,6 +293,9 @@ class Layout extends Component {
 				shouldLoadInlineHelp( this.props.sectionName, this.props.currentRoute ) ) &&
 			this.props.userAllowedToHelpCenter;
 
+		const shouldDisableSidebarScrollSynchronizer =
+			this.props.isGlobalSidebarVisible || this.props.isGlobalSiteSidebarVisible;
+
 		return (
 			<div className={ sectionClass }>
 				<HelpCenterLoader
@@ -308,12 +303,9 @@ class Layout extends Component {
 					loadHelpCenter={ loadHelpCenter }
 					currentRoute={ this.props.currentRoute }
 				/>
-				<SidebarScrollSynchronizer
-					layoutFocus={ this.props.currentLayoutFocus }
-					isGlobalSidebarOrGlobalSiteSidebar={
-						this.props.isGlobalSidebarVisible || this.props.isGlobalSiteSidebarVisible
-					}
-				/>
+				{ ! shouldDisableSidebarScrollSynchronizer && (
+					<SidebarScrollSynchronizer layoutFocus={ this.props.currentLayoutFocus } />
+				) }
 				<SidebarOverflowDelay layoutFocus={ this.props.currentLayoutFocus } />
 				<BodySectionCssClass
 					layoutFocus={ this.props.currentLayoutFocus }

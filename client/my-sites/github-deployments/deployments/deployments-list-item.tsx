@@ -1,7 +1,7 @@
 import page from '@automattic/calypso-router';
-import { Gridicon } from '@automattic/components';
+import { Button, Gridicon } from '@automattic/components';
 import { useLocale } from '@automattic/i18n-utils';
-import { DropdownMenu, ExternalLink, MenuGroup, MenuItem, Spinner } from '@wordpress/components';
+import { DropdownMenu, MenuGroup, MenuItem, Spinner } from '@wordpress/components';
 import { Fragment, useState } from '@wordpress/element';
 import { sprintf } from '@wordpress/i18n';
 import { Icon, linkOff } from '@wordpress/icons';
@@ -69,24 +69,52 @@ export const DeploymentsListItem = ( { deployment }: DeploymentsListItemProps ) 
 	const [ isDisconnectRepositoryDialogVisible, setDisconnectRepositoryDialogVisibility ] =
 		useState( false );
 
-	const run = deployment.current_deployed_run;
+	const run = deployment.current_deployment_run;
 	const [ installation, repo ] = deployment.repository_name.split( '/' );
+
+	const getStarterMessage = () => {
+		if ( deployment.is_automated ) {
+			// Translators: %(branch)s is the branch name of the repository, %(repo)s is the repository name
+			return sprintf( __( 'Push something to the ‘%(branch)s’ branch of ‘%(repo)s’' ), {
+				branch: deployment.branch_name,
+				repo: deployment.repository_name,
+			} );
+		}
+
+		return __( 'Whenever you are ready, trigger a deployment from the ellipsis menu' );
+	};
+
+	const columns = run ? (
+		<>
+			<td>{ run && <DeploymentCommitDetails run={ run } deployment={ deployment } /> }</td>
+			<td>{ run && <DeploymentStatus status={ run.status as DeploymentStatusValue } /> }</td>
+			<td>
+				<span>{ formatDate( locale, new Date( run.created_on ) ) }</span>
+			</td>
+			<td>{ run && <DeploymentDuration run={ run } /> }</td>
+		</>
+	) : (
+		<td colSpan={ 4 }>
+			<i css={ { color: 'var(--Gray-Gray-40, #50575E)' } }>{ getStarterMessage() }</i>
+		</td>
+	);
 
 	return (
 		<>
 			<tr>
 				<td>
 					<div className="github-deployments-list__repository-details">
-						{ repo }
+						<Button
+							onClick={ () => {
+								page( manageDeploymentPage( siteSlug!, deployment.id ) );
+							} }
+						>
+							{ repo }
+						</Button>
 						<span>{ installation }</span>
 					</div>
 				</td>
-				<td>{ run && <DeploymentCommitDetails run={ run } deployment={ deployment } /> }</td>
-				<td>{ run && <DeploymentStatus status={ run.status as DeploymentStatusValue } /> }</td>
-				<td>
-					<span>{ formatDate( locale, new Date( deployment.updated_on ) ) }</span>
-				</td>
-				<td>{ run && <DeploymentDuration run={ run } /> }</td>
+				{ columns }
 				<td>
 					{ isTriggeringDeployment ? (
 						<Spinner />
@@ -103,21 +131,16 @@ export const DeploymentsListItem = ( { deployment }: DeploymentsListItemProps ) 
 										>
 											{ __( 'Trigger manual deploy' ) }
 										</MenuItem>
-										<MenuItem
-											onClick={ () => {
-												page( viewDeploymentLogs( siteSlug!, deployment.id ) );
-												onClose();
-											} }
-										>
-											{ __( 'Open deployment list' ) }
-										</MenuItem>
-										<MenuItem onClick={ onClose }>
-											<ExternalLink
-												href={ `https://github.com/${ deployment.repository_name }/commits/${ deployment.branch_name }` }
+										{ run && (
+											<MenuItem
+												onClick={ () => {
+													page( viewDeploymentLogs( siteSlug!, deployment.id ) );
+													onClose();
+												} }
 											>
-												{ __( 'Read logs on GitHub' ) }
-											</ExternalLink>
-										</MenuItem>
+												{ __( 'See deployment runs' ) }
+											</MenuItem>
+										) }
 										<MenuItem
 											onClick={ () => {
 												page( manageDeploymentPage( siteSlug!, deployment.id ) );

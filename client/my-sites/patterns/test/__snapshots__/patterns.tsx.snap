@@ -1,3 +1,0 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
-
-exports[`Patterns renders server-side correctly 1`] = `"<main class=\\"main is-full-width-layout is-logged-out\\" role=\\"main\\"><h1>Build your perfect site with patterns</h1><p>Trending</p></main>"`;

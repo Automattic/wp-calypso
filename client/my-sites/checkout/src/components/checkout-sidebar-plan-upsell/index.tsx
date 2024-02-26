@@ -2,7 +2,6 @@ import { isPlan, isJetpackPlan } from '@automattic/calypso-products';
 import { FormStatus, useFormStatus } from '@automattic/composite-checkout';
 import formatCurrency from '@automattic/format-currency';
 import { useShoppingCart } from '@automattic/shopping-cart';
-import { hasCheckoutVersion } from '@automattic/wpcom-checkout';
 import styled from '@emotion/styled';
 import { createElement, createInterpolateElement, useState } from '@wordpress/element';
 import { sprintf } from '@wordpress/i18n';
@@ -15,6 +14,7 @@ import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
 import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { useGetProductVariants } from '../../hooks/product-variants';
+import { useCheckoutV2 } from '../../hooks/use-checkout-v2';
 import {
 	getItemVariantCompareToPrice,
 	getItemVariantDiscountPercentage,
@@ -36,6 +36,7 @@ export function CheckoutSidebarPlanUpsell() {
 	);
 	const variants = useGetProductVariants( plan );
 	const translate = useTranslate();
+	const shouldUseCheckoutV2 = useCheckoutV2() === 'treatment';
 
 	const PromoCardV2 = styled.div`
 		position: relative;
@@ -160,10 +161,9 @@ export function CheckoutSidebarPlanUpsell() {
 		),
 		{ strong: createElement( 'strong' ) }
 	);
-
 	return (
 		<>
-			{ plan && hasCheckoutVersion( '2' ) ? (
+			{ plan && shouldUseCheckoutV2 ? (
 				<PromoCardV2>
 					<div className="checkout-sidebar-plan-upsell__v2-wrapper">
 						<p>

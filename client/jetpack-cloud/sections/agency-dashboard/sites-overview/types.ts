@@ -211,6 +211,7 @@ export interface DashboardSortInterface {
 	direction: 'asc' | 'desc' | '';
 }
 export interface DashboardOverviewContextInterface {
+	path: string;
 	search: string;
 	currentPage: number;
 	filter: { issueTypes: Array< AgencyDashboardFilterOption >; showOnlyFavorites: boolean };
@@ -243,12 +244,18 @@ export interface DashboardDataContextInterface {
 }
 
 export type AgencyDashboardFilterOption =
+	| 'all_issues'
 	| 'backup_failed'
 	| 'backup_warning'
 	| 'threats_found'
 	| 'site_disconnected'
 	| 'site_down'
 	| 'plugin_updates';
+
+export interface AgencyDashboardFilterMap {
+	filterType: AgencyDashboardFilterOption;
+	ref: number;
+}
 
 export type AgencyDashboardFilter = {
 	issueTypes: Array< AgencyDashboardFilterOption >;

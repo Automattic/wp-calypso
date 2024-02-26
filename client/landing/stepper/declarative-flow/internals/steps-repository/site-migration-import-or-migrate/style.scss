@@ -1,0 +1,15 @@
+/* stylelint-disable-next-line scss/at-import-no-partial-leading-underscore */
+@import "calypso/assets/stylesheets/shared/_loading";
+@import "@automattic/onboarding/styles/mixins";
+
+.site-migration-import-or-migrate {
+	.migration-info {
+		display: flex;
+		flex-direction: row;
+
+		.migration-info-column {
+			width: 45%;
+			margin-right: 1rem;
+		}
+	}
+}

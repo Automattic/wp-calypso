@@ -18,6 +18,10 @@
 
 		&:hover {
 			background: var(--studio-gray-0);
+
+			.site-set-favorite__favorite-icon {
+				visibility: visible;
+			}
 		}
 
 		th {
@@ -32,6 +36,15 @@
 			border-bottom: 1px solid var(--studio-gray-5);
 			vertical-align: middle;
 		}
+
+		.site-sort__clickable {
+			cursor: pointer;
+			padding-left: 1rem;
+
+		}
+	}
+	ul.dataviews-view-list li:hover {
+		background-color: var(--studio-gray-0);
 	}
 }
 

@@ -1,3 +1,5 @@
+import { useFuzzySearch } from '@automattic/search';
+import { useI18n } from '@wordpress/react-i18n';
 import { useState } from 'react';
 import { SortDirection, useSort } from '../components/sort-button/use-sort';
 import { SearchDeployments } from './deployments-list-search';
@@ -35,8 +37,8 @@ function applySort( deployments: CodeDeploymentData[], key: string, direction: S
 		case 'status':
 			if ( direction === 'asc' ) {
 				return deployments.sort( ( left, right ) => {
-					const leftRun = left.current_deployed_run;
-					const rightRun = right.current_deployed_run;
+					const leftRun = left.current_deployment_run;
+					const rightRun = right.current_deployment_run;
 					if ( leftRun && rightRun ) {
 						return leftRun?.status.localeCompare( rightRun.status );
 					} else if ( leftRun ) {
@@ -46,8 +48,8 @@ function applySort( deployments: CodeDeploymentData[], key: string, direction: S
 				} );
 			}
 			return deployments.sort( ( left, right ) => {
-				const leftRun = left.current_deployed_run;
-				const rightRun = right.current_deployed_run;
+				const leftRun = left.current_deployment_run;
+				const rightRun = right.current_deployment_run;
 				if ( leftRun && rightRun ) {
 					return leftRun?.status.localeCompare( rightRun.status );
 				} else if ( leftRun ) {
@@ -64,20 +66,35 @@ function applySort( deployments: CodeDeploymentData[], key: string, direction: S
 export const GitHubDeploymentsList = ( { deployments }: GitHubDeploymentsListProps ) => {
 	const { key, direction, handleSortChange } = useSort( 'name' );
 	const [ query, setQuery ] = useState( '' );
+	const { __ } = useI18n();
+
+	const filteredDeployments = useFuzzySearch( {
+		data: deployments,
+		keys: [ 'repository_name' ],
+		query,
+	} );
+
+	const getContent = () => {
+		if ( filteredDeployments.length === 0 ) {
+			<i css={ { color: 'var(--Gray-Gray-40, #50575E)' } }>{ __( 'No results.' ) }</i>;
+		}
+
+		return (
+			<DeploymentsListTable
+				deployments={ applySort( filteredDeployments, key, direction ) }
+				sortKey={ key }
+				sortDirection={ direction }
+				onSortChange={ handleSortChange }
+			/>
+		);
+	};
 
 	return (
 		<div className="github-deployments-list">
 			<div className="github-deployments-list__header">
 				<SearchDeployments value={ query } onChange={ setQuery } />
 			</div>
-			<div className="github-deployments__body">
-				<DeploymentsListTable
-					deployments={ applySort( deployments, key, direction ) }
-					sortKey={ key }
-					sortDirection={ direction }
-					onSortChange={ handleSortChange }
-				/>
-			</div>
+			<div className="github-deployments__body">{ getContent() }</div>
 		</div>
 	);
 };

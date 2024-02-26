@@ -1,6 +1,6 @@
 /* eslint-disable no-restricted-imports */
 import page from '@automattic/calypso-router';
-import { Gridicon } from '@automattic/components';
+import { Gridicon, Badge } from '@automattic/components';
 import {
 	getContextResults,
 	LinksForSection,
@@ -44,6 +44,11 @@ interface SearchResultsSectionProps {
 
 const noop = () => {
 	return;
+};
+
+const isResultFromDeveloperWordpress = ( url: string ) => {
+	const developerSiteRegex: RegExp = /developer\.wordpress\.com/;
+	return developerSiteRegex.test( url );
 };
 
 function debounceSpeak( { message = '', priority = 'polite', timeout = 800 } ) {
@@ -224,6 +229,20 @@ function HelpSearchResults( {
 			return <Icon icon={ pageIcon } />;
 		};
 
+		const DeveloperBadge = () => {
+			return (
+				<div className="help-center-search-results__content">
+					{ isResultFromDeveloperWordpress( result.link ) && (
+						<Badge type="info" className="help-center-search-results__badge">
+							{ /* translators: Dev is an acronym of Developers */ }
+							{ __( 'Dev', __i18n_text_domain__ ) }
+						</Badge>
+					) }
+					<span>{ preventWidows( decodeEntities( title ) ) }</span>
+				</div>
+			);
+		};
+
 		return (
 			<Fragment key={ `${ result.post_id ?? link ?? title }-${ index }` }>
 				<li className="help-center-search-results__item">
@@ -242,7 +261,7 @@ function HelpSearchResults( {
 							} ) }
 						>
 							<LinkIcon />
-							<span>{ preventWidows( decodeEntities( title ) ) }</span>
+							<DeveloperBadge />
 							<Icon
 								width={ 20 }
 								height={ 20 }

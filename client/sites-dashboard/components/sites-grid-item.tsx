@@ -1,4 +1,3 @@
-import { isEnabled } from '@automattic/calypso-config';
 import { Button } from '@automattic/components';
 import { useSiteLaunchStatusLabel, getSiteLaunchStatus } from '@automattic/sites';
 import { css } from '@emotion/css';
@@ -46,10 +45,6 @@ const THUMBNAIL_DIMENSION = {
 	width: 401,
 	height: 401 / ASPECT_RATIO,
 };
-
-const wpAdminCss = css( {
-	whiteSpace: 'nowrap',
-} );
 
 const badges = css( {
 	display: 'flex',
@@ -131,9 +126,7 @@ export const SitesGridItem = memo( ( props: SitesGridItemProps ) => {
 	const siteDashboardUrlProps = showThumbnailLink
 		? {
 				href:
-					isAtomicSite &&
-					siteDefaultInterface( site ) === 'wp-admin' &&
-					! isEnabled( 'layout/dotcom-nav-redesign' )
+					isAtomicSite && siteDefaultInterface( site ) === 'wp-admin'
 						? wpAdminUrl || getDashboardUrl( site.slug )
 						: getDashboardUrl( site.slug ),
 				title: __( 'Visit Dashboard' ),
@@ -210,18 +203,6 @@ export const SitesGridItem = memo( ( props: SitesGridItemProps ) => {
 								return <TransferNoticeWrapper { ...result } />;
 							} else if ( showLaunchNag && 'unlaunched' === site.launch_status ) {
 								return <SiteLaunchNag site={ site } />;
-							} else if ( site.is_wpcom_atomic ) {
-								return (
-									<a
-										href={ wpAdminUrl }
-										title={ __( 'Visit Wordpress Admin Dashboard' ) }
-										target="_blank"
-										rel="noreferrer"
-										className={ wpAdminCss }
-									>
-										{ __( 'WP Admin' ) }
-									</a>
-								);
 							}
 							return <></>;
 						} }

@@ -1,9 +1,11 @@
+/* eslint-disable no-nested-ternary */
 import { Button } from '@automattic/components';
 import { useLocale } from '@automattic/i18n-utils';
 import { useState } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { chevronDown, chevronUp, Icon } from '@wordpress/icons';
 import { GitHubLoadingPlaceholder } from 'calypso/my-sites/github-deployments/components/loading-placeholder/index';
+import { DeploymentAuthor } from 'calypso/my-sites/github-deployments/deployment-run-logs/deployment-author';
 import { useCodeDeploymentsRunLogQuery } from 'calypso/my-sites/github-deployments/deployment-run-logs/use-code-deployment-run-log-query';
 import { DeploymentCommitDetails } from 'calypso/my-sites/github-deployments/deployments/deployment-commit-details';
 import { DeploymentDuration } from 'calypso/my-sites/github-deployments/deployments/deployment-duration';
@@ -14,13 +16,12 @@ import {
 import { formatDate } from 'calypso/my-sites/github-deployments/utils/dates';
 import { useSelector } from 'calypso/state/index';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors/index';
-import { DeploymentRun, DeploymentRunStatus } from './use-code-deployment-run-query';
+import { DeploymentRunLogs } from './deployment-run-logs';
+import { DeploymentRun } from './use-code-deployment-run-query';
 
 interface DeploymentsListItemProps {
 	run: DeploymentRun;
 }
-
-const RUN_ENDED_STATUSES: DeploymentRunStatus[] = [ 'success', 'failed', 'warnings' ];
 
 export const DeploymentsRunItem = ( { run }: DeploymentsListItemProps ) => {
 	const locale = useLocale();
@@ -34,17 +35,23 @@ export const DeploymentsRunItem = ( { run }: DeploymentsListItemProps ) => {
 		run.id,
 		{
 			enabled: expanded,
-			refetchInterval: ! RUN_ENDED_STATUSES.includes( run.status ) ? 1000 : undefined,
+			refetchInterval: 5000,
 		}
 	);
+	const { author } = run.metadata;
 
 	const handleToggleExpanded = () => setExpanded( ! expanded );
 
-	const noLogsAvailable = expanded && ! isFetchingLogs && logEntries.length === 0;
-
 	return (
 		<>
-			<tr data-expanded={ expanded }>
+			<tr
+				data-expanded={ expanded }
+				onClick={ handleToggleExpanded }
+				className="github-deployments-run-item"
+			>
+				<td>
+					{ author && <DeploymentAuthor name={ author.name } avatarUrl={ author.avatar_url } /> }
+				</td>
 				<td>
 					<DeploymentCommitDetails run={ run } deployment={ deployment } />
 				</td>
@@ -65,22 +72,16 @@ export const DeploymentsRunItem = ( { run }: DeploymentsListItemProps ) => {
 			</tr>
 			{ expanded && (
 				<tr>
-					<td className="github-deployments-logs-content" colSpan={ 5 }>
-						<pre>
-							{ isFetchingLogs && <GitHubLoadingPlaceholder /> }
-
-							{ logEntries.map( ( entry, id ) => (
-								<div key={ id }>
-									{ entry.timestamp } { entry.level.toUpperCase() } { entry.message }
-								</div>
-							) ) }
-
-							{ noLogsAvailable && (
-								<p className="github-deployments-logs-content__empty">
-									{ __( 'No logs available for this deployment run.' ) }
-								</p>
-							) }
-						</pre>
+					<td className="github-deployments-logs-content" colSpan={ 6 }>
+						{ isFetchingLogs ? (
+							<pre>
+								<GitHubLoadingPlaceholder />
+							</pre>
+						) : logEntries.length === 0 ? (
+							<p>{ __( 'No logs available for this deployment run.' ) }</p>
+						) : (
+							<DeploymentRunLogs logEntries={ logEntries } />
+						) }
 					</td>
 				</tr>
 			) }

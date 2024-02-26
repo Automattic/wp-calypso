@@ -26,6 +26,7 @@ const THead = styled.thead< { blockOffset: number } >( ( { blockOffset } ) => ( 
 		display: 'none',
 	},
 
+	backgroundColor: 'inherit',
 	position: 'sticky',
 	zIndex: 3,
 	insetBlockStart: `${ blockOffset }px`,
