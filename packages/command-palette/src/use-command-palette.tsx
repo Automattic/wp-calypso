@@ -5,6 +5,7 @@ import { __ } from '@wordpress/i18n';
 import { useCommandState } from 'cmdk';
 import { useCallback } from 'react';
 import { useCommandsParams } from './commands/types';
+import { isCustomDomain } from './utils';
 import type { SiteExcerptData } from '@automattic/sites';
 
 const FillDefaultIconWhite = styled.div( {
@@ -88,13 +89,6 @@ interface SiteToActionParameters {
 		listVisibleCount: number;
 		search: string;
 	};
-}
-
-function isCustomDomain( siteSlug: string | null | undefined ): boolean {
-	if ( ! siteSlug ) {
-		return false;
-	}
-	return ! siteSlug.endsWith( '.wordpress.com' ) && ! siteSlug.endsWith( '.wpcomstaging.com' );
 }
 
 const useSiteToAction = ( { currentRoute }: { currentRoute: string | null } ) => {
