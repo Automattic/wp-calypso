@@ -34,8 +34,8 @@ import useQueryProvisioningBlogIds from './hooks/use-query-provisioning-blog-ids
 import { DASHBOARD_PRODUCT_SLUGS_BY_TYPE } from './lib/constants';
 import SiteAddLicenseNotification from './site-add-license-notification';
 import SiteContentHeader from './site-content-header';
+import { JetpackPreviewPane } from './site-feature-previews/jetpack-preview-pane';
 import SiteNotifications from './site-notifications';
-import SitePreviewPane from './site-preview-pane';
 import SiteTopHeaderButtons from './site-top-header-buttons';
 import SitesDataViews from './sites-dataviews';
 import { SitesViewState } from './sites-dataviews/interfaces';
@@ -359,9 +359,11 @@ export default function SitesDashboardV2() {
 				) }
 			</div>
 			{ sitesViewState.selectedSite && (
-				<SitePreviewPane
-					selectedSite={ sitesViewState.selectedSite }
+				<JetpackPreviewPane
+					site={ sitesViewState.selectedSite }
 					closeSitePreviewPane={ closeSitePreviewPane }
+					isSmallScreen={ ! isLargeScreen }
+					hasError={ isError }
 				/>
 			) }
 		</div>
