@@ -1,19 +1,13 @@
 {
-	"env": "development",
-	"env_id": "a8c-for-agencies-development",
-	"favicon_url": "/calypso/images/favicons/favicon-a4a-dev.ico",
+	"env": "production",
+	"env_id": "a8c-for-agencies-horizon",
+	"favicon_url": "/calypso/images/favicons/favicon-a4a-stage.ico",
 	"client_slug": "browser",
-	"protocol": "http",
-	"hostname": "agencies.localhost",
+	"hostname": "agencies.automattic.com",
 	"i18n_default_locale_slug": "en",
-	"port": 3000,
 	"site_name": "Automattic For Agencies",
-	"oauth_client_id": 95928,
 	"features": {
 		"a8c-for-agencies": true,
-		"always_use_logout_url": true,
-		"dev/auth-helper": true,
-		"dev/preferences-helper": true,
 		"oauth": true
 	},
 	"enable_all_sections": false,
