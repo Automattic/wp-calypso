@@ -1,10 +1,9 @@
 import page from '@automattic/calypso-router';
-import { Button, Gridicon } from '@automattic/components';
+import { Button } from '@automattic/components';
 import { useLocale } from '@automattic/i18n-utils';
-import { DropdownMenu, MenuGroup, MenuItem, Spinner } from '@wordpress/components';
-import { Fragment, useState } from '@wordpress/element';
+import { Spinner } from '@wordpress/components';
+import { useState } from '@wordpress/element';
 import { sprintf } from '@wordpress/i18n';
-import { Icon, linkOff } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
 import { DeploymentCommitDetails } from 'calypso/my-sites/github-deployments/deployments/deployment-commit-details';
 import { DeploymentDuration } from 'calypso/my-sites/github-deployments/deployments/deployment-duration';
@@ -18,9 +17,10 @@ import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { errorNotice, successNotice } from 'calypso/state/notices/actions';
 import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import { useDispatch, useSelector } from '../../../state';
-import { manageDeploymentPage, viewDeploymentLogs } from '../routes';
+import { manageDeploymentPage } from '../routes';
 import { DeleteDeploymentDialog } from './delete-deployment-dialog';
 import { DeploymentStarterMessage } from './deployment-starter-message';
+import { DeploymentsListItemActions } from './deployments-list-item-actions';
 import { CodeDeploymentData } from './use-code-deployments-query';
 
 const noticeOptions = {
@@ -86,9 +86,6 @@ export const DeploymentsListItem = ( { deployment }: DeploymentsListItemProps ) 
 		<DeploymentStarterMessage deployment={ deployment } />
 	);
 
-	const canManualDeploy =
-		! deployment.workflow_path || deployment.workflow_run_status === 'eligible';
-
 	return (
 		<>
 			<tr>
@@ -109,55 +106,12 @@ export const DeploymentsListItem = ( { deployment }: DeploymentsListItemProps ) 
 					{ isTriggeringDeployment ? (
 						<Spinner />
 					) : (
-						<DropdownMenu
-							icon={ <Gridicon icon="ellipsis" /> }
-							label={ __( 'Deployment actions' ) }
-						>
-							{ ( { onClose } ) => (
-								<Fragment>
-									<MenuGroup>
-										<MenuItem
-											disabled={ ! canManualDeploy }
-											onClick={ () => {
-												triggerManualDeployment();
-												onClose();
-											} }
-										>
-											{ __( 'Trigger manual deploy' ) }
-										</MenuItem>
-										<MenuItem
-											disabled={ ! run }
-											onClick={ () => {
-												page( viewDeploymentLogs( siteSlug!, deployment.id ) );
-												onClose();
-											} }
-										>
-											{ __( 'See deployment runs' ) }
-										</MenuItem>
-										<MenuItem
-											onClick={ () => {
-												page( manageDeploymentPage( siteSlug!, deployment.id ) );
-												onClose();
-											} }
-										>
-											{ __( 'Configure repository' ) }
-										</MenuItem>
-									</MenuGroup>
-									<MenuGroup>
-										<MenuItem
-											className="github-deployments-list__menu-item-danger"
-											onClick={ () => {
-												setDisconnectRepositoryDialogVisibility( true );
-												onClose();
-											} }
-										>
-											<Icon icon={ linkOff } />
-											{ __( 'Disconnect repository' ) }
-										</MenuItem>
-									</MenuGroup>
-								</Fragment>
-							) }
-						</DropdownMenu>
+						<DeploymentsListItemActions
+							siteSlug={ siteSlug! }
+							deployment={ deployment }
+							onManualDeployment={ triggerManualDeployment }
+							onDisconnectRepository={ () => setDisconnectRepositoryDialogVisibility( true ) }
+						/>
 					) }
 				</td>
 			</tr>
