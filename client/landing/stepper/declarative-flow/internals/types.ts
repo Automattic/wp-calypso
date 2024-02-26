@@ -103,8 +103,7 @@ export type Flow = {
 	title?: string;
 	classnames?: string | [ string ];
 	/**
-	 * Optional flag to indicate if the flow is a signup flow.
-	 * Thus MUST be implemented for signup flows.
+	 * Required flag to indicate if the flow is a signup flow.
 	 */
 	isSignupFlow: boolean;
 	useSignupStartEventProps?: () => Record< string, string | number >;
