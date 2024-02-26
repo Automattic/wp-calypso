@@ -1,5 +1,3 @@
-/** @jsxImportSource react */
-
 import {
 	Button,
 	Card,
@@ -22,7 +20,7 @@ const CardExample = () => (
 
 		<CardBody>...</CardBody>
 
-		<CardDivider className="card-example" />
+		<CardDivider className="card-example" css="" />
 
 		<CardBody>...</CardBody>
 
