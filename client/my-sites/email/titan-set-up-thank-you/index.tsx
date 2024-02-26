@@ -1,5 +1,6 @@
 import { useTranslate } from 'i18n-calypso';
 import ThankYouV2 from 'calypso/components/thank-you-v2';
+import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { TITAN_CONTROL_PANEL_CONTEXT_GET_MOBILE_APP } from 'calypso/lib/titan/constants';
 import { ThankYouTitanProduct } from 'calypso/my-sites/checkout/checkout-thank-you/redesign-v2/products/titan-product';
 import { recordEmailAppLaunchEvent } from 'calypso/my-sites/email/email-management/home/utils';
@@ -55,6 +56,9 @@ const TitanSetUpThankYou = ( {
 					app: 'app',
 					context: 'checkout-thank-you',
 				} );
+				recordTracksEvent( 'calypso_thank_you_footer_link_click', {
+					type: 'footer-manage-email',
+				} );
 			},
 		},
 		{
@@ -65,6 +69,11 @@ const TitanSetUpThankYou = ( {
 			),
 			buttonText: translate( 'Email support resources' ),
 			buttonHref: '/support/category/domains-and-email/email/',
+			buttonOnClick: () => {
+				recordTracksEvent( 'calypso_thank_you_footer_link_click', {
+					type: 'footer-questions-email',
+				} );
+			},
 		},
 	];
 
