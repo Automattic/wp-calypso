@@ -152,10 +152,7 @@
 						width: 100%;
 						.help-center-search-results__badge {
 							font-size: $font-body-extra-small;
-							color: #fff;
-							background: var(--studio-gray-10);
-							width: 35px;
-							border-radius: 4px;
+							text-transform: uppercase;
 							text-align: center;
 						}
 					}

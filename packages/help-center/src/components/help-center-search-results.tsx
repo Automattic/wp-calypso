@@ -1,6 +1,6 @@
 /* eslint-disable no-restricted-imports */
 import page from '@automattic/calypso-router';
-import { Gridicon } from '@automattic/components';
+import { Gridicon, Badge } from '@automattic/components';
 import {
 	getContextResults,
 	LinksForSection,
@@ -233,9 +233,10 @@ function HelpSearchResults( {
 			return (
 				<div className="help-center-search-results__content">
 					{ isResultFromDeveloperWordpress( result.link ) && (
-						<span className="help-center-search-results__badge">
-							{ __( 'DEV', __i18n_text_domain__ ) }
-						</span>
+						<Badge type="info" className="help-center-search-results__badge">
+							{ /* translators: Dev is an acronym of Developers */ }
+							{ __( 'Dev', __i18n_text_domain__ ) }
+						</Badge>
 					) }
 					<span>{ preventWidows( decodeEntities( title ) ) }</span>
 				</div>
