@@ -335,7 +335,12 @@ class StatsSummary extends Component {
 				summaryView = isEnabled( 'stats/utm-module' ) ? (
 					<>
 						{ this.renderSummaryHeader( path, statType, false, moduleQuery ) }
-						<StatsModuleUTM period={ this.props.period } query={ moduleQuery } summary />
+						<StatsModuleUTM
+							siteId={ siteId }
+							period={ this.props.period }
+							query={ moduleQuery }
+							summary
+						/>
 					</>
 				) : (
 					<div>This path is not available.</div>
