@@ -43,6 +43,9 @@
 
 		}
 	}
+	ul.dataviews-view-list li:hover {
+		background-color: var(--studio-gray-0);
+	}
 }
 
 .components-search-control input[type="search"].components-search-control__input {
