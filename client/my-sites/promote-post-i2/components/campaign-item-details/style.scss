@@ -58,13 +58,45 @@ body.is-section-promote-post-i2 .layout__content .campaign-item-details.main {
 		padding-bottom: 24px;
 		min-height: 85px;
 		display: flex;
+		flex-direction: row;
 		justify-content: space-between;
 
 		@media (max-width: $break-medium) {
+			margin: 0 64px;
 			padding-bottom: 24px;
-			margin-left: 16px;
-			margin-right: 16px;
 			flex-direction: column;
+		}
+
+		@media (max-width: ($break-medium + 410)) {
+			flex-direction: column;
+			> div {
+				&:first-child {
+					width: 100%;
+				}
+			}
+
+			button,
+			a {
+				align-items: center;
+				display: flex;
+				line-height: unset;
+				justify-content: center;
+			}
+
+			.campaign-item-details__support-buttons-container .campaign-item-details__support-buttons {
+				margin-top: 24px;
+				.contact-support-button {
+					display: none;
+				}
+				.promote-again-button {
+					width: 100%;
+					text-align: center;
+				}
+
+				.cancel-campaign-button {
+					display: none;
+				}
+			}
 		}
 	}
 
@@ -603,11 +635,6 @@ body.is-section-promote-post-i2 .layout__content .campaign-item-details.main {
 		flex-direction: column;
 		justify-content: center;
 
-		@media (max-width: $break-medium) {
-			margin-left: 16px;
-			margin-right: 16px;
-		}
-
 		.campaign-item-details__support-buttons-mobile {
 			display: none;
 		}
@@ -730,6 +757,12 @@ body.is-section-promote-post-i2 .layout__content .campaign-item-details.main {
 			height: auto;
 		}
 
+		.campaign-item-header {
+			@media (max-width: $break-medium) {
+				margin: 0 12px;
+			}
+		}
+
 		.campaign-item-details-header-line {
 			margin-bottom: 32px;
 		}
@@ -755,7 +788,6 @@ body.is-section-promote-post-i2 .layout__content .campaign-item-details.main {
 				display: flex;
 				flex-direction: column;
 				justify-content: center;
-				margin: 24px;
 
 				button:first-child {
 					margin-top: 10px;
@@ -782,7 +814,6 @@ body.is-section-promote-post-i2 .layout__content .campaign-item-details.main {
 					display: flex;
 				}
 			}
-			margin: 32px 0 0;
 			.campaign-item-details__support-buttons {
 				display: flex;
 				width: 100%;
@@ -863,10 +894,6 @@ body.is-section-promote-post-i2 .layout__content .campaign-item-details.main {
 			width: 24px;
 			vertical-align: middle;
 		}
-	}
-
-	.campaign-item__container .campaign-item-details__support-buttons-container .campaign-item-details__support-articles-wrapper {
-		margin: 24px;
 	}
 }
 
