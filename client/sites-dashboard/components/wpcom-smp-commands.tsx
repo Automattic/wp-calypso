@@ -32,10 +32,6 @@ import {
 } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
 import { useCallback } from 'react';
-import {
-	Command,
-	CommandCallBackParams,
-} from 'calypso/components/command-palette/use-command-palette';
 import WooCommerceLogo from 'calypso/components/woocommerce-logo';
 import {
 	EDGE_CACHE_ENABLE_DISABLE_NOTICE_ID,
@@ -44,25 +40,29 @@ import {
 	purgeEdgeCache,
 } from 'calypso/data/hosting/use-cache';
 import { SiteExcerptData } from 'calypso/data/sites/site-excerpt-types';
-import { navigate } from 'calypso/lib/navigate';
 import { useAddNewSiteUrl } from 'calypso/lib/paths/use-add-new-site-url';
 import wpcom from 'calypso/lib/wp';
 import { useOpenPhpMyAdmin } from 'calypso/my-sites/hosting/phpmyadmin-card';
-import { useDispatch, useSelector } from 'calypso/state';
+import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { clearWordPressCache } from 'calypso/state/hosting/actions';
 import { createNotice, removeNotice } from 'calypso/state/notices/actions';
 import { NoticeStatus } from 'calypso/state/notices/types';
-import getCurrentRoutePattern from 'calypso/state/selectors/get-current-route-pattern';
 import { generateSiteInterfaceLink, isCustomDomain, isNotAtomicJetpack, isP2Site } from '../utils';
+import type {
+	Command,
+	CommandCallBackParams,
+	useCommandsParams,
+} from '@automattic/command-palette';
 
-interface useCommandsArrayWpcomOptions {
-	setSelectedCommandName: ( name: string ) => void;
-}
-
-function useCommandNavigation() {
+function useCommandNavigation( {
+	navigate,
+	currentRoute,
+}: {
+	navigate: ( path: string, openInNewTab?: boolean ) => void;
+	currentRoute: string | null;
+} ) {
 	const dispatch = useDispatch();
-	const currentRoute = useSelector( getCurrentRoutePattern );
 	// Callback to navigate to a command's destination
 	// used on command callback or siteFunctions onClick
 	const commandNavigation = useCallback(
@@ -79,14 +79,16 @@ function useCommandNavigation() {
 				close();
 				navigate( url, openInNewTab );
 			},
-		[ currentRoute, dispatch ]
+		[ navigate, currentRoute, dispatch ]
 	);
 	return commandNavigation;
 }
 
 export const useCommandsArrayWpcom = ( {
 	setSelectedCommandName,
-}: useCommandsArrayWpcomOptions ) => {
+	navigate,
+	currentRoute,
+}: useCommandsParams ) => {
 	const { __, _x } = useI18n();
 	const setStateCallback =
 		( actionName: string, placeholder: string = __( 'Select a site' ) ) =>
@@ -96,7 +98,7 @@ export const useCommandsArrayWpcom = ( {
 			setPlaceholderOverride( placeholder );
 		};
 
-	const commandNavigation = useCommandNavigation();
+	const commandNavigation = useCommandNavigation( { navigate, currentRoute } );
 	const dispatch = useDispatch();
 
 	const { setEdgeCache } = useSetEdgeCacheMutation();
