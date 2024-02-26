@@ -4,14 +4,8 @@ import { useI18n } from '@wordpress/react-i18n';
 import { addQueryArgs } from '@wordpress/url';
 import { CodeDeploymentData } from './use-code-deployments-query';
 
-type WorkflowRunStatus = 'in_progress' | 'eligible' | 'error';
-
-interface WithWorkflowRunStatus {
-	workflow_run_status?: WorkflowRunStatus;
-}
-
 interface DeploymentStarterMessageProps {
-	deployment: CodeDeploymentData & WithWorkflowRunStatus;
+	deployment: CodeDeploymentData;
 }
 
 export const DeploymentStarterMessage = ( { deployment }: DeploymentStarterMessageProps ) => {

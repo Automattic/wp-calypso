@@ -5,6 +5,8 @@ import type { DeploymentRun } from '../deployment-run-logs/use-code-deployment-r
 
 export const CODE_DEPLOYMENTS_QUERY_KEY = 'code-deployments';
 
+type WorkflowRunStatus = 'in_progress' | 'eligible' | 'error';
+
 export interface CodeDeploymentData {
 	id: number;
 	blog_id: number;
@@ -21,6 +23,7 @@ export interface CodeDeploymentData {
 	current_deployed_run?: DeploymentRun;
 	current_deployment_run?: DeploymentRun;
 	workflow_path: string;
+	workflow_run_status?: WorkflowRunStatus;
 }
 
 export interface CreatedBy {

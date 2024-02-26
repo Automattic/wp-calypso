@@ -86,6 +86,9 @@ export const DeploymentsListItem = ( { deployment }: DeploymentsListItemProps ) 
 		<DeploymentStarterMessage deployment={ deployment } />
 	);
 
+	const canManualDeploy =
+		! deployment.workflow_path || deployment.workflow_run_status === 'eligible';
+
 	return (
 		<>
 			<tr>
@@ -111,6 +114,7 @@ export const DeploymentsListItem = ( { deployment }: DeploymentsListItemProps ) 
 								<Fragment>
 									<MenuGroup>
 										<MenuItem
+											disabled={ ! canManualDeploy }
 											onClick={ () => {
 												triggerManualDeployment();
 												onClose();
@@ -118,16 +122,15 @@ export const DeploymentsListItem = ( { deployment }: DeploymentsListItemProps ) 
 										>
 											{ __( 'Trigger manual deploy' ) }
 										</MenuItem>
-										{ run && (
-											<MenuItem
-												onClick={ () => {
-													page( viewDeploymentLogs( siteSlug!, deployment.id ) );
-													onClose();
-												} }
-											>
-												{ __( 'See deployment runs' ) }
-											</MenuItem>
-										) }
+										<MenuItem
+											disabled={ ! run }
+											onClick={ () => {
+												page( viewDeploymentLogs( siteSlug!, deployment.id ) );
+												onClose();
+											} }
+										>
+											{ __( 'See deployment runs' ) }
+										</MenuItem>
 										<MenuItem
 											onClick={ () => {
 												page( manageDeploymentPage( siteSlug!, deployment.id ) );
