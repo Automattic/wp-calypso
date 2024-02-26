@@ -1,6 +1,6 @@
 import { Button, FormLabel, Spinner } from '@automattic/components';
 import { ExternalLink, FormToggle } from '@wordpress/components';
-import { __ } from '@wordpress/i18n';
+import { __, sprintf } from '@wordpress/i18n';
 import { ChangeEvent, useMemo, useState } from 'react';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormSelect from 'calypso/components/forms/form-select';
@@ -172,7 +172,12 @@ export const GitHubConnectionForm = ( {
 							checked={ isAutoDeploy }
 							onChange={ () => setIsAutoDeploy( ! isAutoDeploy ) }
 						/>
-						<span>{ __( 'Deploy changes on push' ) }</span>
+						{
+							// Translators: %(condition)s is the when we are going to deploy the changes
+							sprintf( __( 'Deploy changes on %(condition)s' ), {
+								condition: workflowPath ? __( 'workflow run' ) : __( 'push' ),
+							} )
+						}
 					</div>
 				</FormFieldset>
 				<Button type="submit" primary busy={ isPending } disabled={ isPending || submitDisabled }>

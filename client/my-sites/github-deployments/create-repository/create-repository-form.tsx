@@ -1,5 +1,6 @@
 import { Button, FormInputValidation, FormLabel } from '@automattic/components';
 import { FormToggle, Spinner } from '@wordpress/components';
+import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
 import { ChangeEvent, FormEventHandler, useEffect, useState } from 'react';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
@@ -201,7 +202,12 @@ export const CreateRepositoryForm = ( {
 							checked={ isAutomated }
 							onChange={ () => setIsAutomated( ! isAutomated ) }
 						/>
-						{ __( 'Deploy changes on push' ) }
+						{
+							// Translators: %(condition)s is the when we are going to deploy the changes
+							sprintf( __( 'Deploy changes on %(condition)s' ), {
+								condition: template.workflowFilename ? __( 'workflow run' ) : __( 'push' ),
+							} )
+						}
 					</div>
 				</FormFieldset>
 				<Button
