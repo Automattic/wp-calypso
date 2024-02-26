@@ -251,7 +251,7 @@ export default {
 		}
 
 		if ( config.isEnabled( 'onboarding/new-user-survey' ) ) {
-			// Force display of the interval dropdown for the onboarding flow
+			// Force display of the new user survey for the onboarding flow
 			initialContext.isSignupSurveyActive = true;
 		}
 		next();
