@@ -66,7 +66,7 @@
 		"@storybook/addon-actions": "^7.6.12",
 		"@storybook/react": "^7.6.12",
 		"@testing-library/dom": "^9.3.4",
-		"@testing-library/jest-dom": "^6.4.1",
+		"@testing-library/jest-dom": "^6.4.2",
 		"@testing-library/react": "^14.2.1",
 		"@testing-library/user-event": "^14.5.2",
 		"resize-observer-polyfill": "^1.5.1",
