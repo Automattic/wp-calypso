@@ -211,6 +211,7 @@ export interface DashboardSortInterface {
 	direction: 'asc' | 'desc' | '';
 }
 export interface DashboardOverviewContextInterface {
+	path: string;
 	search: string;
 	currentPage: number;
 	filter: { issueTypes: Array< AgencyDashboardFilterOption >; showOnlyFavorites: boolean };

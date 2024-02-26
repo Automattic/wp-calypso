@@ -1,5 +1,13 @@
+import classNames from 'classnames';
+import { ReactNode } from 'react';
+
 import './style.scss';
 
-export default function SitePreviewPaneContent() {
-	return <div className="site-preview__content">Content goes here</div>;
+type Props = {
+	children?: ReactNode;
+	className?: string;
+};
+
+export default function SitePreviewPaneContent( { children, className }: Props ) {
+	return <div className={ classNames( 'site-preview__content', className ) }>{ children }</div>;
 }

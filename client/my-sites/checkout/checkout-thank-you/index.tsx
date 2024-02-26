@@ -102,7 +102,13 @@ import SiteRedirectDetails from './site-redirect-details';
 import StarterPlanDetails from './starter-plan-details';
 import TransferPending from './transfer-pending';
 import './style.scss';
-import { getDomainPurchaseTypeAndPredicate, isBulkDomainTransfer, isDomainOnly } from './utils';
+import {
+	getDomainPurchase,
+	getDomainPurchaseTypeAndPredicate,
+	isBulkDomainTransfer,
+	isDomainOnly,
+	isTitanWithoutMailboxes,
+} from './utils';
 import type { FindPredicate } from './utils';
 import type { SitesPlansResult } from '../src/hooks/product-variants';
 import type { OnboardActions, SiteDetails } from '@automattic/data-stores';
@@ -569,6 +575,7 @@ export class CheckoutThankYou extends Component<
 
 		if ( isRefactoredForThankYouV2( this.props ) ) {
 			let pageContent = null;
+			const domainPurchase = getDomainPurchase( purchases );
 
 			if ( wasBulkDomainTransfer ) {
 				pageContent = (
@@ -581,6 +588,26 @@ export class CheckoutThankYou extends Component<
 				pageContent = <DomainOnlyThankYou purchases={ purchases } receiptId={ receiptId } />;
 			} else if ( purchases.length === 1 && isPlan( purchases[ 0 ] ) ) {
 				pageContent = <PlanOnlyThankYou primaryPurchase={ purchases[ 0 ] } />;
+			} else if ( wasTitanEmailOnlyProduct ) {
+				const titanPurchase = purchases.find( ( purchase ) => isTitanMail( purchase ) );
+
+				pageContent = (
+					<TitanSetUpThankYou
+						domainName={ purchases[ 0 ].meta }
+						numberOfMailboxesPurchased={ titanPurchase?.newQuantity }
+						emailAddress={ email }
+						isDomainOnlySite={ this.props.domainOnlySiteFlow }
+					/>
+				);
+			} else if ( isTitanWithoutMailboxes( selectedFeature ) && domainPurchase ) {
+				// Users may purchase Titan subscription without specifying the mailbox name using
+				// the onboard with email flow (https://wordpress.com/start/onboarding-with-email/mailbox-domain)
+				pageContent = (
+					<TitanSetUpThankYou
+						domainName={ domainPurchase.meta }
+						isDomainOnlySite={ this.props.domainOnlySiteFlow }
+					/>
+				);
 			}
 
 			if ( pageContent ) {
@@ -607,7 +634,6 @@ export class CheckoutThankYou extends Component<
 		}
 
 		/** LEGACY - The ultimate goal is to remove everything below */
-
 		if ( wasEcommercePlanPurchased ) {
 			// Continue to show the TransferPending progress bar until both the Atomic transfer is complete _and_ we've verified WooCommerce is finished installed.
 			if ( ! this.props.transferComplete || ! this.props.isWooCommerceInstalled ) {
@@ -654,18 +680,6 @@ export class CheckoutThankYou extends Component<
 			const [ purchaseType, predicate ] = getDomainPurchaseTypeAndPredicate( purchases );
 			const [ domainPurchase, domainName ] = findPurchaseAndDomain( purchases, predicate );
 
-			if ( selectedFeature === 'email-license' && domainName ) {
-				return (
-					<TitanSetUpThankYou
-						domainName={ domainName }
-						emailNeedsSetup
-						isDomainOnlySite={ this.props.domainOnlySiteFlow }
-						subtitle={ translate( 'You will receive an email confirmation shortly.' ) }
-						title={ translate( 'Congratulations on your purchase!' ) }
-					/>
-				);
-			}
-
 			const professionalEmailPurchase = this.getProfessionalEmailPurchaseFromPurchases(
 				predicate,
 				purchases
@@ -686,16 +700,6 @@ export class CheckoutThankYou extends Component<
 					isDomainOnly={ this.props.domainOnlySiteFlow }
 					selectedSiteId={ this.props.domainOnlySiteFlow ? domainPurchase?.blogId : undefined }
 					type={ purchaseType as DomainThankYouType }
-				/>
-			);
-		} else if ( wasTitanEmailOnlyProduct ) {
-			return (
-				<TitanSetUpThankYou
-					domainName={ purchases[ 0 ].meta }
-					emailAddress={ email }
-					isDomainOnlySite={ this.props.domainOnlySiteFlow }
-					subtitle={ translate( 'You will receive an email confirmation shortly.' ) }
-					title={ translate( 'Congratulations on your purchase!' ) }
 				/>
 			);
 		}
