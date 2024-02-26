@@ -11,8 +11,8 @@ import {
 } from '@wordpress/components';
 import { Icon, info } from '@wordpress/icons';
 import classnames from 'classnames';
-import { useState } from 'react';
-import { useSitePluginsQuery } from 'calypso/data/plugins/use-site-plugins-query';
+import { Fragment, useState, useCallback } from 'react';
+import { useSitePluginsQuery, type SitePlugin } from 'calypso/data/plugins/use-site-plugins-query';
 import { SiteSlug } from 'calypso/types';
 import {
 	DAILY_OPTION,
@@ -20,6 +20,7 @@ import {
 	HOUR_OPTIONS,
 	PERIOD_OPTIONS,
 	WEEKLY_OPTION,
+	MAX_SELECTABLE_PLUGINS,
 } from './schedule-form.helper';
 
 import './schedule-form.scss';
@@ -29,12 +30,35 @@ interface Props {
 }
 export const ScheduleForm = ( props: Props ) => {
 	const { siteSlug } = props;
-	const MAX_SELECTABLE_PLUGINS = 10;
 	const { data } = useSitePluginsQuery( siteSlug );
 
 	const [ name, setName ] = useState( '' );
 	const [ frequency, setFrequency ] = useState( 'daily' );
+	const [ selectedPlugins, setSelectedPlugins ] = useState< string[] >( [] );
 	const [ pluginSearchTerm, setPluginSearchTerm ] = useState( '' );
+
+	const onPluginSelectionChange = useCallback(
+		( plugin: SitePlugin, isChecked: boolean ) => {
+			if ( isChecked ) {
+				const _plugins: string[] = [ ...selectedPlugins ];
+				_plugins.push( plugin.name );
+				setSelectedPlugins( _plugins );
+			} else {
+				setSelectedPlugins( selectedPlugins.filter( ( name ) => name !== plugin.name ) );
+			}
+		},
+		[ selectedPlugins ]
+	);
+
+	const isPluginSelectionDisabled = useCallback(
+		( plugin: SitePlugin ) => {
+			return (
+				selectedPlugins.length >= MAX_SELECTABLE_PLUGINS &&
+				! selectedPlugins.includes( plugin.name )
+			);
+		},
+		[ selectedPlugins, MAX_SELECTABLE_PLUGINS ]
+	);
 
 	return (
 		<form>
@@ -150,7 +174,9 @@ export const ScheduleForm = ( props: Props ) => {
 				<FlexItem>
 					<div className="form-field">
 						<label htmlFor="plugins">Select plugins</label>
-						<span className="plugin-select-stats">10/10</span>
+						<span className="plugin-select-stats">
+							{ selectedPlugins.length }/{ MAX_SELECTABLE_PLUGINS }
+						</span>
 						<Text className="info-msg">
 							Plugins not listed below are managed by WordPress.com and update automatically.
 						</Text>
@@ -159,7 +185,11 @@ export const ScheduleForm = ( props: Props ) => {
 							Please pick another time for optimal performance, as this slot is already taken.
 						</Text>
 						<div className="checkbox-options">
-							<SearchControl id="plugins" onChange={ setPluginSearchTerm } />
+							<SearchControl
+								id="plugins"
+								onChange={ setPluginSearchTerm }
+								value={ pluginSearchTerm }
+							/>
 							<div className="checkbox-options-container">
 								{ data && data.plugins.length <= MAX_SELECTABLE_PLUGINS && (
 									<CheckboxControl
@@ -169,17 +199,22 @@ export const ScheduleForm = ( props: Props ) => {
 									/>
 								) }
 								{ data?.plugins.map( ( plugin ) => (
-									<>
+									<Fragment key={ plugin.name }>
 										{ plugin.display_name
 											.toLowerCase()
 											.includes( pluginSearchTerm.toLowerCase() ) && (
 											<CheckboxControl
-												key={ plugin.slug }
+												key={ plugin.name }
 												label={ plugin.display_name }
-												onChange={ function noRefCheck() {} }
+												checked={ selectedPlugins.includes( plugin.name ) }
+												disabled={ isPluginSelectionDisabled( plugin ) }
+												className={ classnames( {
+													disabled: isPluginSelectionDisabled( plugin ),
+												} ) }
+												onChange={ ( isChecked ) => onPluginSelectionChange( plugin, isChecked ) }
 											/>
 										) }
-									</>
+									</Fragment>
 								) ) }
 							</div>
 						</div>
