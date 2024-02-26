@@ -20,7 +20,7 @@ const CardExample = () => (
 
 		<CardBody>...</CardBody>
 
-		<CardDivider className="card-example" css="" />
+		<CardDivider className="card-example" />
 
 		<CardBody>...</CardBody>
 
