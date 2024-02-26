@@ -6,7 +6,7 @@ import {
 } from '@automattic/calypso-products';
 import { useTranslate } from 'i18n-calypso';
 import { GridPlan } from '../../types';
-import { PlanFeaturesItem } from '../item';
+import { FeaturesItem } from './features-item';
 
 type MobileFreeDomainProps = {
 	gridPlan: GridPlan;
@@ -38,12 +38,10 @@ const MobileFreeDomain = ( {
 		: translate( 'Free domain for one year' );
 
 	return (
-		<div className="plan-features-2023-grid__highlighted-feature">
-			<PlanFeaturesItem>
-				<span className="plan-features-2023-grid__item-info is-annual-plan-feature is-available">
-					<span className="plan-features-2023-grid__item-title is-bold">{ displayText }</span>
-				</span>
-			</PlanFeaturesItem>
+		<div className="features-grid__highlighted-feature">
+			<FeaturesItem isAnnualPlanFeature isAvailable>
+				<span className="features-grid__features-item-title is-bold">{ displayText }</span>
+			</FeaturesItem>
 		</div>
 	);
 };

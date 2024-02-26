@@ -4,7 +4,7 @@ import { useTranslate } from 'i18n-calypso';
 import { DataResponse, GridPlan, PlanActionOverrides } from '../../types';
 import { StickyContainer } from '../sticky-container';
 import BillingTimeframes from './billing-timeframes';
-import PlanFeaturesList from './plan-features-list';
+import FeaturesList from './features-list';
 import PlanHeaders from './plan-headers';
 import PlanLogos from './plan-logos';
 import PlanPrice from './plan-price';
@@ -139,7 +139,7 @@ const Table = ( {
 					/>
 				</tr>
 				<tr>
-					<PlanFeaturesList
+					<FeaturesList
 						renderedGridPlans={ gridPlansWithoutSpotlight }
 						options={ { isTableCell: true } }
 						paidDomainName={ paidDomainName }
