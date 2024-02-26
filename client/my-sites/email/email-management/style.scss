@@ -472,3 +472,20 @@
 		}
 	}
 }
+
+.empty-content {
+	display: flex;
+	flex-direction: column;
+	row-gap: 32px;
+	max-width: 700px;
+
+	.empty-content__action,
+	.empty-content__illustration {
+		width: auto;
+		margin: 0 auto;
+	}
+
+	.empty-content__illustration {
+		margin-top: 100px;
+	}
+}
