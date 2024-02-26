@@ -2,8 +2,10 @@ import config from '@automattic/calypso-config';
 import page from '@automattic/calypso-router';
 import { Button, Card, FormLabel } from '@automattic/components';
 import { formatCurrency } from '@automattic/format-currency';
+import { IntroductoryOfferTerms } from '@automattic/shopping-cart';
 import {
 	LineItemCostOverrideForDisplay,
+	getIntroductoryOfferIntervalDisplay,
 	isUserVisibleCostOverride,
 } from '@automattic/wpcom-checkout';
 import classNames from 'classnames';
@@ -42,6 +44,7 @@ import { VatVendorDetails } from './vat-vendor-details';
 import type {
 	BillingTransaction,
 	BillingTransactionItem,
+	ReceiptCostOverride,
 } from 'calypso/state/billing-transactions/types';
 import type { IAppState } from 'calypso/state/types';
 import type { LocalizeProps } from 'i18n-calypso';
@@ -285,11 +288,52 @@ function VatDetails( { transaction }: { transaction: BillingTransaction } ) {
 	);
 }
 
+function getDiscountReasonForIntroductoryOffer(
+	product: BillingTransactionItem,
+	terms: IntroductoryOfferTerms,
+	translate: ReturnType< typeof useTranslate >,
+	allowFreeText: boolean
+): string {
+	return getIntroductoryOfferIntervalDisplay(
+		translate,
+		terms.interval_unit,
+		terms.interval_count,
+		product.amount_integer === 0 && allowFreeText,
+		'checkout',
+		terms.transition_after_renewal_count
+	);
+}
+
+function makeIntroductoryOfferCostOverrideUnique(
+	costOverride: ReceiptCostOverride,
+	product: BillingTransactionItem,
+	translate: ReturnType< typeof useTranslate >
+): ReceiptCostOverride {
+	// Replace introductory offer cost override text with wording specific to
+	// that offer.
+	if ( 'introductory-offer' === costOverride.override_code && product.introductory_offer_terms ) {
+		return {
+			...costOverride,
+			human_readable_reason: getDiscountReasonForIntroductoryOffer(
+				product,
+				product.introductory_offer_terms,
+				translate,
+				true
+			),
+		};
+	}
+	return costOverride;
+}
+
 function filterCostOverridesForReceiptItem(
-	item: BillingTransactionItem
+	item: BillingTransactionItem,
+	translate: ReturnType< typeof useTranslate >
 ): LineItemCostOverrideForDisplay[] {
 	return item.cost_overrides
 		.filter( ( costOverride ) => isUserVisibleCostOverride( costOverride ) )
+		.filter( ( costOverride ) =>
+			makeIntroductoryOfferCostOverrideUnique( costOverride, item, translate )
+		)
 		.map( ( costOverride ) => {
 			return {
 				humanReadableReason: costOverride.human_readable_reason,
@@ -317,9 +361,10 @@ function ReceiptItemDiscounts( {
 	receiptDate: string;
 } ) {
 	const shouldShowDiscount = areReceiptItemDiscountsAccurate( receiptDate );
+	const translate = useTranslate();
 	return (
 		<ul className="billing-history__receipt-item-discounts-list">
-			{ filterCostOverridesForReceiptItem( item ).map( ( costOverride ) => {
+			{ filterCostOverridesForReceiptItem( item, translate ).map( ( costOverride ) => {
 				const formattedDiscountAmount =
 					shouldShowDiscount && costOverride.discountAmount
 						? formatCurrency( -costOverride.discountAmount, item.currency, {

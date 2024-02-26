@@ -1,3 +1,4 @@
+import type { IntroductoryOfferTerms } from '@automattic/shopping-cart';
 import type { Purchase, TaxVendorInfo } from '@automattic/wpcom-checkout';
 
 export interface IndividualReceipt {
@@ -133,6 +134,15 @@ export interface BillingTransactionItem {
 	 * receipt items made after October 2023.
 	 */
 	cost_overrides: ReceiptCostOverride[];
+
+	/**
+	 * The details of any introductory offer that was applied to this receipt,
+	 * assuming we have that data stored. Will only be available for receipts
+	 * made after `cost_overrides` became available on receipt items and after
+	 * we began using cost overrides for introductory offers in D134600-code
+	 * (February 2024).
+	 */
+	introductory_offer_terms: IntroductoryOfferTerms;
 
 	currency: string;
 	licensed_quantity: number | null;
