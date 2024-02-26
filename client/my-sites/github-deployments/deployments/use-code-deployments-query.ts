@@ -22,7 +22,7 @@ export interface CodeDeploymentData {
 	created_by: CreatedBy;
 	current_deployed_run?: DeploymentRun;
 	current_deployment_run?: DeploymentRun;
-	workflow_path: string;
+	workflow_path?: string; // @todo The actual value here is string | null
 	workflow_run_status?: WorkflowRunStatus;
 }
 
