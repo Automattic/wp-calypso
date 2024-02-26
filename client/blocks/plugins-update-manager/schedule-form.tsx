@@ -309,7 +309,7 @@ export const ScheduleForm = ( props: Props ) => {
 						<div className="checkbox-options">
 							<SearchControl id="plugins" onChange={ setPluginSearchTerm } />
 							<div className="checkbox-options-container">
-								{ data?.plugins.length <= MAX_SELECTABLE_PLUGINS && (
+								{ data && data.plugins.length <= MAX_SELECTABLE_PLUGINS && (
 									<CheckboxControl
 										indeterminate
 										label="Select all"
