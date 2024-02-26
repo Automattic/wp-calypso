@@ -44,7 +44,11 @@ export const DeploymentsRunItem = ( { run }: DeploymentsListItemProps ) => {
 
 	return (
 		<>
-			<tr data-expanded={ expanded } onClick={ handleToggleExpanded } css={ { cursor: 'pointer' } }>
+			<tr
+				data-expanded={ expanded }
+				onClick={ handleToggleExpanded }
+				className="github-deployments-run-item"
+			>
 				<td>
 					{ author && <DeploymentAuthor name={ author.name } avatarUrl={ author.avatar_url } /> }
 				</td>
@@ -68,7 +72,7 @@ export const DeploymentsRunItem = ( { run }: DeploymentsListItemProps ) => {
 			</tr>
 			{ expanded && (
 				<tr>
-					<td className="github-deployments-logs-content" colSpan={ 5 }>
+					<td className="github-deployments-logs-content" colSpan={ 6 }>
 						{ isFetchingLogs ? (
 							<pre>
 								<GitHubLoadingPlaceholder />

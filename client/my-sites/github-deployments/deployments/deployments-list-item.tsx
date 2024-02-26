@@ -1,5 +1,5 @@
 import page from '@automattic/calypso-router';
-import { Gridicon } from '@automattic/components';
+import { Button, Gridicon } from '@automattic/components';
 import { useLocale } from '@automattic/i18n-utils';
 import { DropdownMenu, MenuGroup, MenuItem, Spinner } from '@wordpress/components';
 import { Fragment, useState } from '@wordpress/element';
@@ -104,7 +104,13 @@ export const DeploymentsListItem = ( { deployment }: DeploymentsListItemProps ) 
 			<tr>
 				<td>
 					<div className="github-deployments-list__repository-details">
-						{ repo }
+						<Button
+							onClick={ () => {
+								page( manageDeploymentPage( siteSlug!, deployment.id ) );
+							} }
+						>
+							{ repo }
+						</Button>
 						<span>{ installation }</span>
 					</div>
 				</td>

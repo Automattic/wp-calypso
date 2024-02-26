@@ -185,7 +185,6 @@ const SitesDataViews = ( {
 			},
 			{
 				id: 'actions',
-				header: <span className="sites-dataview__actions-header">{ translate( 'ACTIONS' ) }</span>,
 				getValue: ( { item }: { item: SiteData } ) => item.isFavorite,
 				render: ( { item }: { item: SiteData } ) => {
 					if ( isLoading ) {

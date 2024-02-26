@@ -90,6 +90,7 @@ const DashboardHeading = styled.h1( {
 } );
 
 const sitesMarginTable = css( {
+	backgroundColor: 'var( --studio-white )',
 	marginBlockStart: '14px',
 	marginInline: 0,
 	marginBlockEnd: '1.5em',

@@ -1,13 +1,13 @@
 import { __ } from '@wordpress/i18n';
 import { PageViewTracker } from 'calypso/lib/analytics/page-view-tracker';
-import { CreateRepository } from 'calypso/my-sites/github-deployments/components/repositories/create-repository/index';
-import { DeploymentRunsLogs } from 'calypso/my-sites/github-deployments/deployment-run-logs/index';
 import { errorNotice } from 'calypso/state/notices/actions';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import { canCurrentUser } from '../../state/selectors/can-current-user';
+import { CreateRepository } from './create-repository';
 import { GitHubDeploymentCreation } from './deployment-creation';
 import { GitHubDeploymentManagement } from './deployment-management';
+import { DeploymentRunsLogs } from './deployment-run-logs';
 import { GitHubDeployments } from './deployments';
 import { indexPage } from './routes';
 import {

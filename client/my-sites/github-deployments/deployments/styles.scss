@@ -30,34 +30,55 @@
 		font-weight: normal;
 	}
 
-	th:first-child {
-		width: 350px;
-	}
-
 	thead tr,
 	tbody tr:not(:last-of-type) {
 		border-bottom: 1px solid var(--color-border-subtle);
 	}
 
-	td {
-		vertical-align: middle !important;
-	}
-
 	tr th {
-		padding: 8px 0 20px 0;
+		padding: 8px 0 16px 0;
 		font-weight: 500;
 		color: var(--studio-gray-60, #50575e);
 	}
 
-	tr td:last-child {
-		text-align: right;
+	td {
+		vertical-align: middle !important;
+		padding-right: 32px;
+
+		> * {
+			white-space: nowrap;
+		}
+
+		.github-deployments-list__repository-details {
+			white-space: normal;
+		}
+
+		&:last-child {
+			padding-left: 32px;
+			padding-right: 0;
+			text-align: right;
+		}
 	}
 
 	&__repository-details {
+		width: 200px;
 		display: flex;
 		flex-direction: column;
 		padding: 21px 0;
 		font-weight: 500;
+
+		button {
+			text-align: left;
+			padding: 0;
+			border: none;
+			color: var(--studio-gray-100, #101517);
+
+			&:hover {
+				text-decoration: underline;
+				color: var(--studio-gray-100, #101517);
+			}
+		}
+
 		span {
 			color: var(--Gray-Gray-40, #787c82);
 			font-size: $font-body-extra-small;
@@ -150,5 +171,11 @@
 	.components-form-toggle,
 	.components-toggle-control__label {
 		line-height: 1;
+	}
+}
+
+.github-deployments-commit-details-popover {
+	.popover__inner {
+		padding: 16px;
 	}
 }

@@ -1,4 +1,3 @@
-import { isEnabled } from '@automattic/calypso-config';
 import { Card, Button, Gridicon } from '@automattic/components';
 import {
 	DesignPreviewImage,
@@ -14,16 +13,12 @@ import PropTypes from 'prop-types';
 import { Component, createRef } from 'react';
 import { connect } from 'react-redux';
 import ThemeTierBadge from 'calypso/components/theme-tier/theme-tier-badge';
-import ThemeTypeBadge from 'calypso/components/theme-type-badge';
 import { decodeEntities } from 'calypso/lib/formatting';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { useSiteGlobalStylesStatus } from 'calypso/state/sites/hooks/use-site-global-styles-status';
 import { getSiteSlug } from 'calypso/state/sites/selectors';
 import { updateThemes } from 'calypso/state/themes/actions/theme-update';
-import {
-	isExternallyManagedTheme as getIsExternallyManagedTheme,
-	getThemeType,
-} from 'calypso/state/themes/selectors';
+import { isExternallyManagedTheme as getIsExternallyManagedTheme } from 'calypso/state/themes/selectors';
 import { setThemesBookmark } from 'calypso/state/themes/themes-ui/actions';
 import ThemeMoreButton from './more-button';
 
@@ -92,7 +87,6 @@ export class Theme extends Component {
 		softLaunched: PropTypes.bool,
 		selectedStyleVariation: PropTypes.object,
 		shouldLimitGlobalStyles: PropTypes.bool,
-		themeType: PropTypes.string,
 	};
 
 	static defaultProps = {
@@ -301,15 +295,13 @@ export class Theme extends Component {
 	renderMoreButton = () => {
 		const { active, buttonContents, index, theme, siteId } = this.props;
 
-		let moreOptions = buttonContents;
-		if ( isEnabled( 'themes/tiers' ) ) {
-			if ( active && buttonContents.info ) {
-				moreOptions = { info: buttonContents.info };
-			} else if ( buttonContents.deleteTheme ) {
-				moreOptions = { deleteTheme: buttonContents.deleteTheme };
-			} else {
-				moreOptions = {};
-			}
+		let moreOptions;
+		if ( active && buttonContents.info ) {
+			moreOptions = { info: buttonContents.info };
+		} else if ( buttonContents.deleteTheme ) {
+			moreOptions = { deleteTheme: buttonContents.deleteTheme };
+		} else {
+			moreOptions = {};
 		}
 
 		if ( isEmpty( moreOptions ) ) {
@@ -332,12 +324,9 @@ export class Theme extends Component {
 	};
 
 	renderBadge = () => {
-		const { selectedStyleVariation, shouldLimitGlobalStyles, siteId, siteSlug, theme, themeType } =
-			this.props;
+		const { selectedStyleVariation, shouldLimitGlobalStyles, theme } = this.props;
 
-		const isPremiumTheme = isEnabled( 'themes/tiers' )
-			? theme.theme_tier?.slug === PREMIUM_THEME
-			: themeType === PREMIUM_THEME;
+		const isPremiumTheme = theme.theme_tier?.slug === PREMIUM_THEME;
 
 		const isLocked = isLockedStyleVariation( {
 			isPremiumTheme,
@@ -345,17 +334,7 @@ export class Theme extends Component {
 			shouldLimitGlobalStyles,
 		} );
 
-		if ( isEnabled( 'themes/tiers' ) ) {
-			return <ThemeTierBadge themeId={ theme.id } isLockedStyleVariation={ isLocked } />;
-		}
-		return (
-			<ThemeTypeBadge
-				siteId={ siteId }
-				siteSlug={ siteSlug }
-				themeId={ theme.id }
-				isLockedStyleVariation={ isLocked }
-			/>
-		);
+		return <ThemeTierBadge themeId={ theme.id } isLockedStyleVariation={ isLocked } />;
 	};
 
 	render() {
@@ -407,7 +386,6 @@ const ConnectedTheme = connect(
 			isUpdated: themesUpdated && themesUpdated.indexOf( theme.id ) > -1,
 			isExternallyManagedTheme,
 			siteSlug: getSiteSlug( state, siteId ),
-			themeType: getThemeType( state, theme.id ),
 		};
 	},
 	{ recordTracksEvent, setThemesBookmark, updateThemes }
