@@ -116,9 +116,6 @@ function sitesDashboard( context: PageJSContext, next: () => void ) {
 			background: #ffffff;
 
 			.layout__content {
-				// The page header background extends all the way to the edge of the screen
-				padding-inline: 0;
-
 				// Prevents the status dropdown from being clipped when the page content
 				// isn't tall enough
 				overflow: inherit;
