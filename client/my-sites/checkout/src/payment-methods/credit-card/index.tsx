@@ -21,43 +21,6 @@ import type { ReactNode } from 'react';
 
 export { createCreditCardPaymentMethodStore } from './store';
 
-export function createCreditCardMethod( {
-	store,
-	shouldUseEbanx,
-	shouldShowTaxFields,
-	submitButtonContent,
-	allowUseForAllSubscriptions,
-}: {
-	store: CardStoreType;
-	shouldUseEbanx?: boolean;
-	shouldShowTaxFields?: boolean;
-	submitButtonContent: ReactNode;
-	allowUseForAllSubscriptions?: boolean;
-} ): PaymentMethod {
-	return {
-		id: 'card',
-		paymentProcessorId: 'card',
-		label: <CreditCardLabel />,
-		hasRequiredFields: true,
-		activeContent: (
-			<CreditCardFields
-				shouldUseEbanx={ shouldUseEbanx }
-				shouldShowTaxFields={ shouldShowTaxFields }
-				allowUseForAllSubscriptions={ allowUseForAllSubscriptions }
-			/>
-		),
-		submitButton: (
-			<CreditCardPayButton
-				store={ store }
-				shouldUseEbanx={ shouldUseEbanx }
-				submitButtonContent={ submitButtonContent }
-			/>
-		),
-		inactiveContent: <CreditCardSummary />,
-		getAriaLabel: ( __: ( text: string ) => string ) => __( 'Credit Card' ),
-	};
-}
-
 function CreditCardSummary() {
 	const fields: CardFieldState = useSelect(
 		( select ) => ( select( 'wpcom-credit-card' ) as WpcomCreditCardSelectors ).getFields(),
@@ -79,15 +42,21 @@ function CreditCardSummary() {
 	);
 }
 
-function CreditCardLabel() {
+const CreditCardLabel: React.FC< { hasExistingCardMethods: boolean | undefined } > = ( {
+	hasExistingCardMethods,
+} ) => {
 	const { __ } = useI18n();
 	return (
 		<Fragment>
-			<span>{ __( 'Credit or debit card' ) }</span>
+			{ hasExistingCardMethods ? (
+				<span>{ __( 'New credit or debit card' ) }</span>
+			) : (
+				<span>{ __( 'Credit or debit card' ) }</span>
+			) }
 			<CreditCardLogos />
 		</Fragment>
 	);
-}
+};
 
 function CreditCardLogos() {
 	return (
@@ -97,4 +66,44 @@ function CreditCardLogos() {
 			<AmexLogo />
 		</PaymentMethodLogos>
 	);
+}
+
+export function createCreditCardMethod( {
+	store,
+	shouldUseEbanx,
+	shouldShowTaxFields,
+	submitButtonContent,
+	allowUseForAllSubscriptions,
+	existingCardMethods,
+}: {
+	store: CardStoreType;
+	shouldUseEbanx?: boolean;
+	shouldShowTaxFields?: boolean;
+	submitButtonContent: ReactNode;
+	allowUseForAllSubscriptions?: boolean;
+	existingCardMethods?: PaymentMethod[];
+} ): PaymentMethod {
+	const hasExistingCardMethods = existingCardMethods && existingCardMethods.length > 0;
+	return {
+		id: 'card',
+		paymentProcessorId: 'card',
+		label: <CreditCardLabel hasExistingCardMethods={ hasExistingCardMethods } />,
+		hasRequiredFields: true,
+		activeContent: (
+			<CreditCardFields
+				shouldUseEbanx={ shouldUseEbanx }
+				shouldShowTaxFields={ shouldShowTaxFields }
+				allowUseForAllSubscriptions={ allowUseForAllSubscriptions }
+			/>
+		),
+		submitButton: (
+			<CreditCardPayButton
+				store={ store }
+				shouldUseEbanx={ shouldUseEbanx }
+				submitButtonContent={ submitButtonContent }
+			/>
+		),
+		inactiveContent: <CreditCardSummary />,
+		getAriaLabel: ( __: ( text: string ) => string ) => __( 'Credit Card' ),
+	};
 }
