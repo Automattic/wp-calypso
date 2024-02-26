@@ -104,7 +104,13 @@ export const DeploymentsListItem = ( { deployment }: DeploymentsListItemProps ) 
 			<tr>
 				<td>
 					<div className="github-deployments-list__repository-details">
-						{ repo }
+						<a
+							target="_blank"
+							rel="noopener noreferrer"
+							href={ `https://github.com/${ deployment.repository_name }` }
+						>
+							{ repo }
+						</a>
 						<span>{ installation }</span>
 					</div>
 				</td>

@@ -35,17 +35,17 @@ import { recordSelectedDesign, getAssemblerSource } from '../../analytics/record
 import { SITE_TAGLINE, NAVIGATOR_PATHS, INITIAL_SCREEN } from './constants';
 import { PATTERN_ASSEMBLER_EVENTS } from './events';
 import {
+	useAssemblerPatterns,
 	useCategoryPatternsMap,
 	useCurrentScreen,
 	useCustomStyles,
-	useDotcomPatterns,
 	useGlobalStylesUpgradeProps,
 	useInitialPath,
+	useIsNewSite,
 	usePatternCategories,
 	usePatternPages,
 	useRecipe,
 	useSyncNavigatorScreen,
-	useIsNewSite,
 } from './hooks';
 import useAIAssembler from './hooks/use-ai-assembler';
 import withNotices, { NoticesProps } from './notices/notices';
@@ -104,10 +104,13 @@ const PatternAssembler = ( props: StepProps & NoticesProps ) => {
 
 	// The categories api triggers the ETK plugin before the PTK api request
 	const categories = usePatternCategories( site?.ID );
+
 	// Fetching curated patterns and categories from PTK api
-	const dotcomPatterns = useDotcomPatterns( locale );
+	const assemblerPatterns = useAssemblerPatterns( locale );
+
 	const { allCategoryPatternsMap, layoutCategoryPatternsMap, pageCategoryPatternsMap } =
-		useCategoryPatternsMap( dotcomPatterns );
+		useCategoryPatternsMap( assemblerPatterns );
+
 	const {
 		header,
 		footer,
@@ -120,7 +123,7 @@ const PatternAssembler = ( props: StepProps & NoticesProps ) => {
 		setColorVariation,
 		setFontVariation,
 		resetRecipe,
-	} = useRecipe( site?.ID, dotcomPatterns, categories );
+	} = useRecipe( site?.ID, assemblerPatterns, categories );
 
 	const { shouldUnlockGlobalStyles, numOfSelectedGlobalStyles } = useCustomStyles( {
 		siteID: site?.ID,
@@ -131,7 +134,7 @@ const PatternAssembler = ( props: StepProps & NoticesProps ) => {
 	const { pages, pageSlugs, setPageSlugs, pagesToShow } = usePatternPages(
 		pageCategoryPatternsMap,
 		categories,
-		dotcomPatterns
+		assemblerPatterns
 	);
 
 	const currentScreen = useCurrentScreen( { shouldUnlockGlobalStyles } );

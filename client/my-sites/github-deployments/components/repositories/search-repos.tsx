@@ -14,7 +14,7 @@ export const SearchRepos = ( { value, onChange }: SearchReposProps ) => {
 			query={ value }
 			id="repository"
 			className="github-deployments-repositories__search"
-			placeholder={ __( 'Start typing a repo…' ) }
+			placeholder={ __( 'Search repositories' ) }
 			options={ [] }
 			isSearching={ false }
 			onChange={ ( query ) => {

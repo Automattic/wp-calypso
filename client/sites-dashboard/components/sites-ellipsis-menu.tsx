@@ -1,3 +1,4 @@
+import { isEnabled } from '@automattic/calypso-config';
 import {
 	getPlan,
 	FEATURE_SFTP,
@@ -29,6 +30,7 @@ import isSiteWpcomStaging from 'calypso/state/selectors/is-site-wpcom-staging';
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import { fetchSiteFeatures } from 'calypso/state/sites/features/actions';
 import { launchSiteOrRedirectToLaunchSignupFlow } from 'calypso/state/sites/launch/actions';
+import { getSiteOption, getSiteAdminUrl } from 'calypso/state/sites/selectors';
 import { useIsGitHubDeploymentsAvailableQuery } from '../../my-sites/github-deployments/use-is-feature-available';
 import {
 	getHostingConfigUrl,
@@ -44,6 +46,8 @@ import type { SiteExcerptData } from 'calypso/data/sites/site-excerpt-types';
 
 interface SitesMenuItemProps {
 	site: SiteExcerptData;
+	isWpAdminInterface: boolean;
+	wpAdminUrl: string;
 	// eslint-disable-next-line @typescript-eslint/no-explicit-any
 	recordTracks: ( eventName: string, extraProps?: Record< string, any > ) => void;
 	onClick?: () => void;
@@ -95,7 +99,7 @@ const SettingsItem = ( { site, recordTracks }: SitesMenuItemProps ) => {
 	);
 };
 
-const SiteMonitoringItem = ( { site, recordTracks }: SitesMenuItemProps ) => {
+const SiteMonitoringItem = ( { site, isWpAdminInterface, recordTracks }: SitesMenuItemProps ) => {
 	const { __ } = useI18n();
 
 	return (
@@ -103,12 +107,17 @@ const SiteMonitoringItem = ( { site, recordTracks }: SitesMenuItemProps ) => {
 			href={ getSiteMonitoringUrl( site.slug ) }
 			onClick={ () => recordTracks( 'calypso_sites_dashboard_site_action_site_monitoring_click' ) }
 		>
-			{ __( 'Site monitoring' ) }
+			{ isWpAdminInterface ? __( 'Monitoring' ) : __( 'Site monitoring' ) }
 		</MenuItemLink>
 	);
 };
 
-const ManagePluginsItem = ( { site, recordTracks }: SitesMenuItemProps ) => {
+const ManagePluginsItem = ( {
+	site,
+	isWpAdminInterface,
+	wpAdminUrl,
+	recordTracks,
+}: SitesMenuItemProps ) => {
 	const { __ } = useI18n();
 	const hasManagePluginsFeature =
 		useSelector( ( state ) => siteHasFeature( state, site.ID, WPCOM_FEATURES_MANAGE_PLUGINS ) ) ||
@@ -116,7 +125,10 @@ const ManagePluginsItem = ( { site, recordTracks }: SitesMenuItemProps ) => {
 	// If the site can't manage plugins then go to the main plugins page instead
 	// because it shows an upsell message.
 	const [ href, label ] = hasManagePluginsFeature
-		? [ getManagePluginsUrl( site.slug ), __( 'Manage plugins' ) ]
+		? [
+				isWpAdminInterface ? `${ wpAdminUrl }plugins.php` : getManagePluginsUrl( site.slug ),
+				__( 'Manage plugins' ),
+		  ]
 		: [ getPluginsUrl( site.slug ), __( 'Plugins' ) ];
 	const upsellPlanName = getPlan( PLAN_BUSINESS )?.getTitle() ?? '';
 
@@ -239,7 +251,7 @@ const WpAdminItem = ( { site, recordTracks }: SitesMenuItemProps ) => {
 			href={ site.options?.admin_url }
 			onClick={ () => recordTracks( 'calypso_sites_dashboard_site_action_wpadmin_click' ) }
 		>
-			{ __( 'Visit WP Admin' ) } <MenuItemGridIcon icon="external" size={ 18 } />
+			{ __( 'Open WP Admin' ) } <MenuItemGridIcon icon="external" size={ 18 } />
 		</MenuItemLink>
 	);
 };
@@ -354,7 +366,7 @@ function HostingConfigurationSubmenu( { site, recordTracks }: SitesMenuItemProps
 						: undefined
 				}
 			>
-				{ __( 'Hosting configuration' ) } <MenuItemGridIcon icon="chevron-right" size={ 18 } />
+				{ __( 'Hosting' ) } <MenuItemGridIcon icon="chevron-right" size={ 18 } />
 			</MenuItemLink>
 			<SubmenuPopover
 				{ ...submenuProps.submenu }
@@ -421,8 +433,19 @@ export const SitesEllipsisMenu = ( {
 	function recordTracks( eventName: string, extraProps = {} ) {
 		dispatch( recordTracksEvent( eventName, extraProps ) );
 	}
+
+	const wpAdminUrl = useSelector( ( state ) => getSiteAdminUrl( state, site.ID ) ?? '' );
+	const adminInterface = useSelector( ( state ) =>
+		getSiteOption( state, site.ID, 'wpcom_admin_interface' )
+	);
+
+	const isWpAdminInterface =
+		isEnabled( 'layout/dotcom-nav-redesign' ) && adminInterface === 'wp-admin';
+
 	const props: SitesMenuItemProps = {
 		site,
+		isWpAdminInterface,
+		wpAdminUrl,
 		recordTracks,
 	};
 
@@ -450,7 +473,11 @@ export const SitesEllipsisMenu = ( {
 						<CopySiteItem { ...props } onClick={ startSiteCopy } />
 					) }
 					<MenuItemLink
-						href={ `/settings/performance/${ site.slug }` }
+						href={
+							isWpAdminInterface
+								? `${ wpAdminUrl }options-general.php?page=page-optimize`
+								: `/settings/performance/${ site.slug }`
+						}
 						onClick={ () =>
 							recordTracks( 'calypso_sites_dashboard_site_action_performance_settings_click' )
 						}

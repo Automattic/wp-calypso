@@ -5,6 +5,7 @@ import { useState } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { chevronDown, chevronUp, Icon } from '@wordpress/icons';
 import { GitHubLoadingPlaceholder } from 'calypso/my-sites/github-deployments/components/loading-placeholder/index';
+import { DeploymentAuthor } from 'calypso/my-sites/github-deployments/deployment-run-logs/deployment-author';
 import { useCodeDeploymentsRunLogQuery } from 'calypso/my-sites/github-deployments/deployment-run-logs/use-code-deployment-run-log-query';
 import { DeploymentCommitDetails } from 'calypso/my-sites/github-deployments/deployments/deployment-commit-details';
 import { DeploymentDuration } from 'calypso/my-sites/github-deployments/deployments/deployment-duration';
@@ -37,12 +38,20 @@ export const DeploymentsRunItem = ( { run }: DeploymentsListItemProps ) => {
 			refetchInterval: 5000,
 		}
 	);
+	const { author } = run.metadata;
 
 	const handleToggleExpanded = () => setExpanded( ! expanded );
 
 	return (
 		<>
-			<tr data-expanded={ expanded } onClick={ handleToggleExpanded } css={ { cursor: 'pointer' } }>
+			<tr
+				data-expanded={ expanded }
+				onClick={ handleToggleExpanded }
+				className="github-deployments-run-item"
+			>
+				<td>
+					{ author && <DeploymentAuthor name={ author.name } avatarUrl={ author.avatar_url } /> }
+				</td>
 				<td>
 					<DeploymentCommitDetails run={ run } deployment={ deployment } />
 				</td>
@@ -63,7 +72,7 @@ export const DeploymentsRunItem = ( { run }: DeploymentsListItemProps ) => {
 			</tr>
 			{ expanded && (
 				<tr>
-					<td className="github-deployments-logs-content" colSpan={ 5 }>
+					<td className="github-deployments-logs-content" colSpan={ 6 }>
 						{ isFetchingLogs ? (
 							<pre>
 								<GitHubLoadingPlaceholder />
