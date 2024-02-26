@@ -348,6 +348,8 @@ export default function SitesDashboardV2() {
 				<JetpackPreviewPane
 					site={ sitesViewState.selectedSite }
 					closeSitePreviewPane={ closeSitePreviewPane }
+					isSmallScreen={ ! isLargeScreen }
+					hasError={ isError }
 				/>
 			) }
 		</div>

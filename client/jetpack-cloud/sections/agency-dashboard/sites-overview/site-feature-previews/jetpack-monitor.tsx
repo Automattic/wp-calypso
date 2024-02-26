@@ -5,17 +5,19 @@ import { Site } from '../types';
 
 type Props = {
 	site: Site;
+	trackEvent: ( eventName: string ) => void;
+	hasError?: boolean;
 };
 
-export function JetpackMonitorPreview( { site }: Props ) {
+export function JetpackMonitorPreview( { site, trackEvent, hasError = false }: Props ) {
 	return (
 		<>
 			<SitePreviewPaneContent>
 				<MonitorActivity
 					hasMonitor={ site.monitor_settings.monitor_active }
 					site={ site }
-					trackEvent={ () => {} }
-					hasError={ false }
+					trackEvent={ trackEvent }
+					hasError={ hasError }
 				/>
 			</SitePreviewPaneContent>
 			<SitePreviewPaneFooter />

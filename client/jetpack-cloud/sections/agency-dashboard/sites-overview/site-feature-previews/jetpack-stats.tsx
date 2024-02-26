@@ -5,16 +5,17 @@ import { Site } from '../types';
 
 type Props = {
 	site: Site;
+	trackEvent: ( eventName: string ) => void;
 };
 
-export function JetpackStatsPreview( { site }: Props ) {
+export function JetpackStatsPreview( { site, trackEvent }: Props ) {
 	return (
 		<>
 			<SitePreviewPaneContent>
 				<InsightsStats
 					stats={ site.site_stats }
 					siteUrlWithScheme={ site.url_with_scheme }
-					trackEvent={ () => {} }
+					trackEvent={ trackEvent }
 				/>
 			</SitePreviewPaneContent>
 			<SitePreviewPaneFooter />

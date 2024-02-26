@@ -5,13 +5,15 @@ import { Site } from '../types';
 
 type Props = {
 	site: Site;
+	trackEvent: ( eventName: string ) => void;
+	hasError?: boolean;
 };
 
-export function JetpackBackupPreview( { site }: Props ) {
+export function JetpackBackupPreview( { site, trackEvent, hasError = false }: Props ) {
 	return (
 		<>
 			<SitePreviewPaneContent>
-				<BackupStorage site={ site } trackEvent={ () => {} } hasError={ false } />
+				<BackupStorage site={ site } trackEvent={ trackEvent } hasError={ hasError } />
 			</SitePreviewPaneContent>
 			<SitePreviewPaneFooter />
 		</>

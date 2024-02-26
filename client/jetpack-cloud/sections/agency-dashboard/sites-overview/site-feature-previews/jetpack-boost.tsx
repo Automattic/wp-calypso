@@ -5,13 +5,15 @@ import { Site } from '../types';
 
 type Props = {
 	site: Site;
+	trackEvent: ( eventName: string ) => void;
+	hasError?: boolean;
 };
 
-export function JetpackBoostPreview( { site }: Props ) {
+export function JetpackBoostPreview( { site, trackEvent, hasError = false }: Props ) {
 	return (
 		<>
 			<SitePreviewPaneContent>
-				<BoostSitePerformance site={ site } trackEvent={ () => {} } hasError={ false } />
+				<BoostSitePerformance site={ site } trackEvent={ trackEvent } hasError={ hasError } />
 			</SitePreviewPaneContent>
 			<SitePreviewPaneFooter />
 		</>
