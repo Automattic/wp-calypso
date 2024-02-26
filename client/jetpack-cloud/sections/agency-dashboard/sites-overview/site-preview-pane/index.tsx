@@ -1,13 +1,37 @@
+import classNames from 'classnames';
+import React from 'react';
 import SitePreviewPaneHeader from './site-preview-pane-header';
 import SitePreviewPaneTabs from './site-preview-pane-tabs';
-import { SitePreviewPaneProps } from './types';
+import { FeaturePreviewInterface, SitePreviewPaneProps } from './types';
 
 import './style.scss';
+
+export const createFeaturePreview = (
+	id: string,
+	label: string,
+	enabled: boolean,
+	selectedFeatureId: string,
+	setSelectedFeatureId: ( id: string ) => void,
+	preview: React.ReactNode
+): FeaturePreviewInterface => {
+	return {
+		id,
+		tab: {
+			label,
+			visible: enabled,
+			selected: enabled && selectedFeatureId === id,
+			onTabClick: () => enabled && setSelectedFeatureId( id ),
+		},
+		enabled,
+		preview: enabled ? preview : null,
+	};
+};
 
 export default function SitePreviewPane( {
 	site,
 	features,
 	closeSitePreviewPane,
+	className,
 }: SitePreviewPaneProps ) {
 	// Ensure we have features
 	if ( ! features || ! features.length ) {
@@ -26,7 +50,7 @@ export default function SitePreviewPane( {
 	const featureTabs = features.map( ( feature ) => feature.tab );
 
 	return (
-		<div className="site-preview__pane">
+		<div className={ classNames( 'site-preview__pane', className ) }>
 			<SitePreviewPaneHeader
 				title={ site.blogname }
 				url={ site.url }
