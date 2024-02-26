@@ -432,47 +432,54 @@ function ReceiptItemTaxes( { transaction }: { transaction: BillingTransaction } 
 	);
 }
 
+function ReceiptLineItem( {
+	item,
+	transaction,
+}: {
+	item: BillingTransactionItem;
+	transaction: BillingTransaction;
+} ) {
+	const translate = useTranslate();
+	const termLabel = getTransactionTermLabel( item, translate );
+	const shouldShowDiscount = areReceiptItemDiscountsAccurate( transaction.date );
+	return (
+		<>
+			<tr>
+				<td className="billing-history__receipt-item-name">
+					<span>{ item.variation }</span>
+					<small>({ item.type_localized })</small>
+					{ termLabel && <em>{ termLabel }</em> }
+					{ item.domain && <em>{ item.domain }</em> }
+					{ item.licensed_quantity && (
+						<em>{ renderTransactionQuantitySummary( item, translate ) }</em>
+					) }
+				</td>
+				<td className="billing-history__receipt-amount">
+					{ formatCurrency(
+						shouldShowDiscount ? getReceiptItemOriginalCost( item ) : item.subtotal_integer,
+						item.currency,
+						{
+							isSmallestUnit: true,
+							stripZeros: true,
+						}
+					) }
+					{ transaction.credit && (
+						<span className="billing-history__credit-badge">{ translate( 'Refund' ) }</span>
+					) }
+				</td>
+			</tr>
+			<tr>
+				<td className="billing-history__receipt-item-discounts" colSpan={ 2 }>
+					<ReceiptItemDiscounts item={ item } receiptDate={ transaction.date } />
+				</td>
+			</tr>
+		</>
+	);
+}
+
 function ReceiptLineItems( { transaction }: { transaction: BillingTransaction } ) {
 	const translate = useTranslate();
 	const groupedTransactionItems = groupDomainProducts( transaction.items, translate );
-	const shouldShowDiscount = areReceiptItemDiscountsAccurate( transaction.date );
-
-	const items = groupedTransactionItems.map( ( item ) => {
-		const termLabel = getTransactionTermLabel( item, translate );
-		return (
-			<>
-				<tr key={ item.id }>
-					<td className="billing-history__receipt-item-name">
-						<span>{ item.variation }</span>
-						<small>({ item.type_localized })</small>
-						{ termLabel && <em>{ termLabel }</em> }
-						{ item.domain && <em>{ item.domain }</em> }
-						{ item.licensed_quantity && (
-							<em>{ renderTransactionQuantitySummary( item, translate ) }</em>
-						) }
-					</td>
-					<td className="billing-history__receipt-amount">
-						{ formatCurrency(
-							shouldShowDiscount ? getReceiptItemOriginalCost( item ) : item.subtotal_integer,
-							item.currency,
-							{
-								isSmallestUnit: true,
-								stripZeros: true,
-							}
-						) }
-						{ transaction.credit && (
-							<span className="billing-history__credit-badge">{ translate( 'Refund' ) }</span>
-						) }
-					</td>
-				</tr>
-				<tr>
-					<td className="billing-history__receipt-item-discounts" colSpan={ 2 }>
-						<ReceiptItemDiscounts item={ item } receiptDate={ transaction.date } />
-					</td>
-				</tr>
-			</>
-		);
-	} );
 
 	return (
 		<div className="billing-history__receipt">
@@ -485,7 +492,9 @@ function ReceiptLineItems( { transaction }: { transaction: BillingTransaction } 
 					</tr>
 				</thead>
 				<tbody>
-					{ items }
+					{ groupedTransactionItems.map( ( item ) => (
+						<ReceiptLineItem key={ item.id } transaction={ transaction } item={ item } />
+					) ) }
 					<tr>
 						<td colSpan={ 2 }>
 							<ReceiptItemTaxes transaction={ transaction } />
