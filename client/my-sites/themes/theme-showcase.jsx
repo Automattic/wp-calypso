@@ -94,6 +94,7 @@ const defaultStaticFilter = Object.values( staticFilters ).find(
 class ThemeShowcase extends Component {
 	state = {
 		isDesignThemeModalVisible: false,
+		isDesignThemeFlow: false,
 		isSiteSelectorModalVisible: false,
 	};
 
@@ -378,14 +379,14 @@ class ThemeShowcase extends Component {
 		} );
 
 		if ( shouldSelectSite( { isLoggedIn, siteCount, siteId } ) ) {
-			this.setState( { isDesignThemeModalVisible: true } );
+			this.setState( { isDesignThemeFlow: true, isDesignThemeModalVisible: true } );
 		} else {
-			this.redirectToSiteAssembler();
+			this.redirectToSiteAssembler( this.props.site );
 		}
 	};
 
-	redirectToSiteAssembler = () => {
-		const { isLoggedIn, site: selectedSite, siteEditorUrl } = this.props;
+	redirectToSiteAssembler = ( selectedSite ) => {
+		const { isLoggedIn, siteEditorUrl } = this.props;
 		const shouldGoToAssemblerStep = isAssemblerSupported();
 
 		const destinationUrl = getSiteAssemblerUrl( {
@@ -624,10 +625,11 @@ class ThemeShowcase extends Component {
 				/>
 				<ThemeSiteSelectorModal
 					isOpen={ this.state.isSiteSelectorModalVisible }
-					onClose={ ( { siteTitle } ) => {
-						this.setState( { isSiteSelectorModalVisible: false } );
-
-						if ( siteTitle ) {
+					navigateOnClose={ ! this.state.isDesignThemeFlow }
+					onClose={ ( { siteSlug, siteTitle } ) => {
+						if ( siteSlug && this.state.isDesignThemeFlow ) {
+							this.redirectToSiteAssembler( { slug: siteSlug } );
+						} else if ( siteTitle ) {
 							showSuccessNotice(
 								translate( 'You have selected the site {{strong}}%(siteTitle)s{{/strong}}.', {
 									args: { siteTitle },
@@ -644,16 +646,20 @@ class ThemeShowcase extends Component {
 								}
 							);
 						}
+
+						this.setState( { isDesignThemeFlow: false, isSiteSelectorModalVisible: false } );
 					} }
 				/>
 				<ThemeDesignYourOwnModal
-					handleCreateNewSite={ this.redirectToSiteAssembler }
+					handleCreateNewSite={ () => {
+						this.redirectToSiteAssembler( this.props.site );
+					} }
 					handleOpenSiteSelector={ () => {
 						this.setState( { isDesignThemeModalVisible: false, isSiteSelectorModalVisible: true } );
 					} }
 					isOpen={ this.state.isDesignThemeModalVisible }
 					onClose={ () => {
-						this.setState( { isDesignThemeModalVisible: false } );
+						this.setState( { isDesignThemeFlow: false, isDesignThemeModalVisible: false } );
 					} }
 				/>
 				{ isLoggedIn && (
