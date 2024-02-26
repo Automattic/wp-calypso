@@ -11,10 +11,10 @@ import SitesSidebar from '../../components/sidebar-menu/sites';
 export const sitesContext: Callback = ( context, next ) => {
 	context.secondary = <SitesSidebar path={ context.path } />;
 	context.primary = (
-		<Layout title="Overview" wide sidebarNavigation={ <MobileSidebarNavigation /> }>
+		<Layout title="Sites" wide sidebarNavigation={ <MobileSidebarNavigation /> }>
 			<LayoutTop>
 				<LayoutHeader>
-					<Title>sites</Title>
+					<Title>Sites</Title>
 				</LayoutHeader>
 			</LayoutTop>
 			<LayoutBody>
@@ -29,10 +29,10 @@ export const sitesContext: Callback = ( context, next ) => {
 export const sitesFavoriteContext: Callback = ( context, next ) => {
 	context.secondary = <SitesSidebar path={ context.path } />;
 	context.primary = (
-		<Layout title="Overview" wide sidebarNavigation={ <MobileSidebarNavigation /> }>
+		<Layout title="Sites favorites" wide sidebarNavigation={ <MobileSidebarNavigation /> }>
 			<LayoutTop>
 				<LayoutHeader>
-					<Title>sites favorite</Title>
+					<Title>Sites favorites</Title>
 				</LayoutHeader>
 			</LayoutTop>
 			<LayoutBody>

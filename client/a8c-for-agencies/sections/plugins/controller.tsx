@@ -12,10 +12,10 @@ import MainSidebar from '../../components/sidebar-menu/main';
 export const pluginsContext: Callback = ( context, next ) => {
 	context.secondary = <MainSidebar path={ context.path } />;
 	context.primary = (
-		<Layout title="Overview" wide sidebarNavigation={ <MobileSidebarNavigation /> }>
+		<Layout title="Plugins" wide sidebarNavigation={ <MobileSidebarNavigation /> }>
 			<LayoutTop>
 				<LayoutHeader>
-					<Title>plugins</Title>
+					<Title>Plugins</Title>
 					<Subtitle>plugins of your agency</Subtitle>
 				</LayoutHeader>
 			</LayoutTop>
