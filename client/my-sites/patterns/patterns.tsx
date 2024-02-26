@@ -15,6 +15,8 @@ import type { Pattern } from 'calypso/landing/stepper/declarative-flow/internals
 
 import './style.scss';
 
+const DESKTOP_VIEWPORT_WIDTH = 1200;
+
 type PatternPreviewProps = {
 	isGridView?: boolean;
 	pattern: Pattern;
@@ -32,7 +34,10 @@ function PatternPreview( { isGridView, pattern }: PatternPreviewProps ) {
 			} ) }
 		>
 			<div className="patterns__preview">
-				<PatternRenderer patternId={ patternId } viewportWidth={ isGridView ? 1200 : undefined } />
+				<PatternRenderer
+					patternId={ patternId }
+					viewportWidth={ isGridView ? DESKTOP_VIEWPORT_WIDTH : undefined }
+				/>
 			</div>
 
 			<div className="patterns__title">{ pattern.title }</div>
