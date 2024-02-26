@@ -12,7 +12,7 @@ interface Props {
 	onCreateNewSchedule?: () => void;
 }
 export const PluginsUpdateManager = ( props: Props ) => {
-	const { context, onNavBack, onCreateNewSchedule } = props;
+	const { siteSlug, context, onNavBack, onCreateNewSchedule } = props;
 
 	return (
 		<MainComponent wideLayout>
@@ -36,7 +36,7 @@ export const PluginsUpdateManager = ( props: Props ) => {
 			{ context === 'list' && (
 				<ScheduleList onNavBack={ onNavBack } onCreateNewSchedule={ onCreateNewSchedule } />
 			) }
-			{ context === 'create' && <ScheduleCreate onNavBack={ onNavBack } /> }
+			{ context === 'create' && <ScheduleCreate siteSlug={ siteSlug } onNavBack={ onNavBack } /> }
 		</MainComponent>
 	);
 };

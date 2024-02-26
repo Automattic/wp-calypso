@@ -11,13 +11,64 @@ import {
 } from '@wordpress/components';
 import { Icon, info } from '@wordpress/icons';
 import classnames from 'classnames';
-import { useState } from 'react';
+import { Fragment, useState, useCallback } from 'react';
+import { useSitePluginsQuery, type SitePlugin } from 'calypso/data/plugins/use-site-plugins-query';
+import { SiteSlug } from 'calypso/types';
+import {
+	DAILY_OPTION,
+	DAY_OPTIONS,
+	HOUR_OPTIONS,
+	PERIOD_OPTIONS,
+	WEEKLY_OPTION,
+	MAX_SELECTABLE_PLUGINS,
+} from './schedule-form.helper';
 
 import './schedule-form.scss';
 
-export const ScheduleForm = () => {
+interface Props {
+	siteSlug: SiteSlug;
+}
+export const ScheduleForm = ( props: Props ) => {
+	const { siteSlug } = props;
+	const { data } = useSitePluginsQuery( siteSlug );
+	const { plugins = [] } = data ?? {};
+
 	const [ name, setName ] = useState( '' );
 	const [ frequency, setFrequency ] = useState( 'daily' );
+	const [ selectedPlugins, setSelectedPlugins ] = useState< string[] >( [] );
+	const [ pluginSearchTerm, setPluginSearchTerm ] = useState( '' );
+
+	const onPluginSelectionChange = useCallback(
+		( plugin: SitePlugin, isChecked: boolean ) => {
+			if ( isChecked ) {
+				const _plugins: string[] = [ ...selectedPlugins ];
+				_plugins.push( plugin.name );
+				setSelectedPlugins( _plugins );
+			} else {
+				setSelectedPlugins( selectedPlugins.filter( ( name ) => name !== plugin.name ) );
+			}
+		},
+		[ selectedPlugins ]
+	);
+
+	const onPluginSelectAllChange = useCallback(
+		( isChecked: boolean ) => {
+			isChecked
+				? setSelectedPlugins( plugins.map( ( plugin ) => plugin.name ) ?? [] )
+				: setSelectedPlugins( [] );
+		},
+		[ plugins ]
+	);
+
+	const isPluginSelectionDisabled = useCallback(
+		( plugin: SitePlugin ) => {
+			return (
+				selectedPlugins.length >= MAX_SELECTABLE_PLUGINS &&
+				! selectedPlugins.includes( plugin.name )
+			);
+		},
+		[ selectedPlugins, MAX_SELECTABLE_PLUGINS ]
+	);
 
 	return (
 		<form>
@@ -50,12 +101,7 @@ export const ScheduleForm = () => {
 							<RadioControl
 								name="frequency"
 								onChange={ setFrequency }
-								options={ [
-									{
-										label: 'Daily',
-										value: 'daily',
-									},
-								] }
+								options={ [ DAILY_OPTION ] }
 								selected={ frequency }
 							></RadioControl>
 							{ frequency === 'daily' && (
@@ -67,56 +113,7 @@ export const ScheduleForm = () => {
 													name="time"
 													__next40pxDefaultSize
 													onChange={ function noRefCheck() {} }
-													options={ [
-														{
-															label: '00',
-															value: '0',
-														},
-														{
-															label: '01',
-															value: '1',
-														},
-														{
-															label: '02',
-															value: '3',
-														},
-														{
-															label: '03',
-															value: '3',
-														},
-														{
-															label: '04',
-															value: '4',
-														},
-														{
-															label: '05',
-															value: '5',
-														},
-														{
-															label: '06',
-															value: '6',
-														},
-														{
-															label: '07',
-															value: '7',
-														},
-														{
-															label: '08',
-															value: '8',
-														},
-														{
-															label: '09',
-															value: '9',
-														},
-														{
-															label: '10',
-															value: '10',
-														},
-														{
-															label: '11',
-															value: '11',
-														},
-													] }
+													options={ HOUR_OPTIONS }
 												/>
 												<SelectControl
 													name="period"
@@ -124,16 +121,7 @@ export const ScheduleForm = () => {
 													onBlur={ function noRefCheck() {} }
 													onChange={ function noRefCheck() {} }
 													onFocus={ function noRefCheck() {} }
-													options={ [
-														{
-															label: 'AM',
-															value: 'am',
-														},
-														{
-															label: 'PM',
-															value: 'pm',
-														},
-													] }
+													options={ PERIOD_OPTIONS }
 												/>
 											</div>
 										</div>
@@ -145,12 +133,7 @@ export const ScheduleForm = () => {
 							<RadioControl
 								name="frequency"
 								onChange={ setFrequency }
-								options={ [
-									{
-										label: 'Weekly',
-										value: 'weekly',
-									},
-								] }
+								options={ [ WEEKLY_OPTION ] }
 								selected={ frequency }
 							></RadioControl>
 							{ frequency === 'weekly' && (
@@ -163,36 +146,7 @@ export const ScheduleForm = () => {
 												onBlur={ function noRefCheck() {} }
 												onChange={ function noRefCheck() {} }
 												onFocus={ function noRefCheck() {} }
-												options={ [
-													{
-														label: 'Monday',
-														value: 'a',
-													},
-													{
-														label: 'Tuesday',
-														value: 'b',
-													},
-													{
-														label: 'Wednesday',
-														value: 'c',
-													},
-													{
-														label: 'Thursday',
-														value: 'd',
-													},
-													{
-														label: 'Friday',
-														value: 'e',
-													},
-													{
-														label: 'Saturday',
-														value: 'f',
-													},
-													{
-														label: 'Sunday',
-														value: 'g',
-													},
-												] }
+												options={ DAY_OPTIONS }
 											/>
 										</div>
 									</FlexItem>
@@ -205,56 +159,7 @@ export const ScheduleForm = () => {
 													onBlur={ function noRefCheck() {} }
 													onChange={ function noRefCheck() {} }
 													onFocus={ function noRefCheck() {} }
-													options={ [
-														{
-															label: '00',
-															value: '0',
-														},
-														{
-															label: '01',
-															value: '1',
-														},
-														{
-															label: '02',
-															value: '3',
-														},
-														{
-															label: '03',
-															value: '3',
-														},
-														{
-															label: '04',
-															value: '4',
-														},
-														{
-															label: '05',
-															value: '5',
-														},
-														{
-															label: '06',
-															value: '6',
-														},
-														{
-															label: '07',
-															value: '7',
-														},
-														{
-															label: '08',
-															value: '8',
-														},
-														{
-															label: '09',
-															value: '9',
-														},
-														{
-															label: '10',
-															value: '10',
-														},
-														{
-															label: '11',
-															value: '11',
-														},
-													] }
+													options={ HOUR_OPTIONS }
 												/>
 												<SelectControl
 													name="period"
@@ -262,16 +167,7 @@ export const ScheduleForm = () => {
 													onBlur={ function noRefCheck() {} }
 													onChange={ function noRefCheck() {} }
 													onFocus={ function noRefCheck() {} }
-													options={ [
-														{
-															label: 'AM',
-															value: 'am',
-														},
-														{
-															label: 'PM',
-															value: 'pm',
-														},
-													] }
+													options={ PERIOD_OPTIONS }
 												/>
 											</div>
 										</div>
@@ -281,65 +177,58 @@ export const ScheduleForm = () => {
 						</div>
 						<Text className="validation-msg">
 							<Icon className="icon-info" icon={ info } size={ 16 } />
-							The current feature implementation only allows to set up two schedules.
+							Please pick another time for optimal performance, as this slot is already taken.
 						</Text>
 					</div>
 				</FlexItem>
 				<FlexItem>
 					<div className="form-field">
 						<label htmlFor="plugins">Select plugins</label>
-						<span className="plugin-select-stats">10/10</span>
+						<span className="plugin-select-stats">
+							{ selectedPlugins.length }/{ MAX_SELECTABLE_PLUGINS }
+						</span>
 						<Text className="info-msg">
 							Plugins not listed below are managed by WordPress.com and update automatically.
 						</Text>
 						<Text className="validation-msg">
 							<Icon className="icon-info" icon={ info } size={ 16 } />
-							Please pick another time for optimal performance, as this slot is already taken.
+							Please select a different set of plugins, as this one has already been chosen.
 						</Text>
 						<div className="checkbox-options">
-							<SearchControl id="plugins" onChange={ function noRefCheck() {} } />
+							<SearchControl
+								id="plugins"
+								onChange={ setPluginSearchTerm }
+								value={ pluginSearchTerm }
+							/>
 							<div className="checkbox-options-container">
-								<CheckboxControl
-									indeterminate
-									label="Select all"
-									onChange={ function noRefCheck() {} }
-								/>
-								<CheckboxControl label="Akismet" onChange={ function noRefCheck() {} } />
-								<CheckboxControl
-									label="Appointments plugin PRO"
-									onChange={ function noRefCheck() {} }
-								/>
-								<CheckboxControl label="Crowdsignal Forms" onChange={ function noRefCheck() {} } />
-								<CheckboxControl
-									label="Gravity forms"
-									onChange={ function noRefCheck() {} }
-									checked
-								/>
-								<CheckboxControl
-									className="disabled"
-									disabled
-									label="Menu items"
-									onChange={ function noRefCheck() {} }
-								/>
-								<CheckboxControl
-									label="Move to WordPres.com"
-									onChange={ function noRefCheck() {} }
-								/>
-								<CheckboxControl label="PRO Calendar" onChange={ function noRefCheck() {} } />
-								<CheckboxControl
-									label="Shipping very far away"
-									onChange={ function noRefCheck() {} }
-								/>
-								<CheckboxControl label="Weather PRO" onChange={ function noRefCheck() {} } />
-								<CheckboxControl label="Yoast" onChange={ function noRefCheck() {} } />
-
-								<CheckboxControl label="PRO Calendar" onChange={ function noRefCheck() {} } />
-								<CheckboxControl
-									label="Shipping very far away"
-									onChange={ function noRefCheck() {} }
-								/>
-								<CheckboxControl label="Weather PRO" onChange={ function noRefCheck() {} } />
-								<CheckboxControl label="Yoast" onChange={ function noRefCheck() {} } />
+								{ plugins.length <= MAX_SELECTABLE_PLUGINS && (
+									<CheckboxControl
+										label="Select all"
+										indeterminate={
+											selectedPlugins.length > 0 && selectedPlugins.length < plugins.length
+										}
+										checked={ selectedPlugins.length === plugins.length }
+										onChange={ onPluginSelectAllChange }
+									/>
+								) }
+								{ plugins.map( ( plugin ) => (
+									<Fragment key={ plugin.name }>
+										{ plugin.display_name
+											.toLowerCase()
+											.includes( pluginSearchTerm.toLowerCase() ) && (
+											<CheckboxControl
+												key={ plugin.name }
+												label={ plugin.display_name }
+												checked={ selectedPlugins.includes( plugin.name ) }
+												disabled={ isPluginSelectionDisabled( plugin ) }
+												className={ classnames( {
+													disabled: isPluginSelectionDisabled( plugin ),
+												} ) }
+												onChange={ ( isChecked ) => onPluginSelectionChange( plugin, isChecked ) }
+											/>
+										) }
+									</Fragment>
+								) ) }
 							</div>
 						</div>
 					</div>
