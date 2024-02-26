@@ -31,6 +31,7 @@ function CommandPaletteApp() {
 	};
 
 	const {
+		siteId,
 		isAdmin = false,
 		isAtomic = false,
 		isSelfHosted = false,
@@ -58,6 +59,7 @@ function CommandPaletteApp() {
 				wpcom={ wpcom }
 				currentRoute={ currentRoute }
 				useCommands={ useCommands }
+				currentSiteId={ siteId }
 			/>
 		</QueryClientProvider>
 	);
