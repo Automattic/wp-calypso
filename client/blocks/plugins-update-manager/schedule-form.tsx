@@ -31,6 +31,7 @@ interface Props {
 export const ScheduleForm = ( props: Props ) => {
 	const { siteSlug } = props;
 	const { data } = useSitePluginsQuery( siteSlug );
+	const { plugins = [] } = data ?? {};
 
 	const [ name, setName ] = useState( '' );
 	const [ frequency, setFrequency ] = useState( 'daily' );
@@ -48,6 +49,15 @@ export const ScheduleForm = ( props: Props ) => {
 			}
 		},
 		[ selectedPlugins ]
+	);
+
+	const onPluginSelectAllChange = useCallback(
+		( isChecked: boolean ) => {
+			isChecked
+				? setSelectedPlugins( plugins.map( ( plugin ) => plugin.name ) ?? [] )
+				: setSelectedPlugins( [] );
+		},
+		[ plugins ]
 	);
 
 	const isPluginSelectionDisabled = useCallback(
@@ -191,14 +201,17 @@ export const ScheduleForm = ( props: Props ) => {
 								value={ pluginSearchTerm }
 							/>
 							<div className="checkbox-options-container">
-								{ data && data.plugins.length <= MAX_SELECTABLE_PLUGINS && (
+								{ plugins.length <= MAX_SELECTABLE_PLUGINS && (
 									<CheckboxControl
-										indeterminate
 										label="Select all"
-										onChange={ function noRefCheck() {} }
+										indeterminate={
+											selectedPlugins.length > 0 && selectedPlugins.length < plugins.length
+										}
+										checked={ selectedPlugins.length === plugins.length }
+										onChange={ onPluginSelectAllChange }
 									/>
 								) }
-								{ data?.plugins.map( ( plugin ) => (
+								{ plugins.map( ( plugin ) => (
 									<Fragment key={ plugin.name }>
 										{ plugin.display_name
 											.toLowerCase()
