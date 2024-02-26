@@ -332,6 +332,7 @@ export default function SitesDashboardV2() {
 							<SitesDataViews
 								data={ data }
 								isLoading={ isLoading }
+								isLargeScreen={ isLargeScreen }
 								onSitesViewChange={ onSitesViewChange }
 								sitesViewState={ sitesViewState }
 							/>
