@@ -14,6 +14,13 @@ import classnames from 'classnames';
 import { useState } from 'react';
 import { useSitePluginsQuery } from 'calypso/data/plugins/use-site-plugins-query';
 import { SiteSlug } from 'calypso/types';
+import {
+	DAILY_OPTION,
+	DAY_OPTIONS,
+	HOUR_OPTIONS,
+	PERIOD_OPTIONS,
+	WEEKLY_OPTION,
+} from './schedule-form.helper';
 
 import './schedule-form.scss';
 
@@ -60,12 +67,7 @@ export const ScheduleForm = ( props: Props ) => {
 							<RadioControl
 								name="frequency"
 								onChange={ setFrequency }
-								options={ [
-									{
-										label: 'Daily',
-										value: 'daily',
-									},
-								] }
+								options={ [ DAILY_OPTION ] }
 								selected={ frequency }
 							></RadioControl>
 							{ frequency === 'daily' && (
@@ -77,56 +79,7 @@ export const ScheduleForm = ( props: Props ) => {
 													name="time"
 													__next40pxDefaultSize
 													onChange={ function noRefCheck() {} }
-													options={ [
-														{
-															label: '00',
-															value: '0',
-														},
-														{
-															label: '01',
-															value: '1',
-														},
-														{
-															label: '02',
-															value: '3',
-														},
-														{
-															label: '03',
-															value: '3',
-														},
-														{
-															label: '04',
-															value: '4',
-														},
-														{
-															label: '05',
-															value: '5',
-														},
-														{
-															label: '06',
-															value: '6',
-														},
-														{
-															label: '07',
-															value: '7',
-														},
-														{
-															label: '08',
-															value: '8',
-														},
-														{
-															label: '09',
-															value: '9',
-														},
-														{
-															label: '10',
-															value: '10',
-														},
-														{
-															label: '11',
-															value: '11',
-														},
-													] }
+													options={ HOUR_OPTIONS }
 												/>
 												<SelectControl
 													name="period"
@@ -134,16 +87,7 @@ export const ScheduleForm = ( props: Props ) => {
 													onBlur={ function noRefCheck() {} }
 													onChange={ function noRefCheck() {} }
 													onFocus={ function noRefCheck() {} }
-													options={ [
-														{
-															label: 'AM',
-															value: 'am',
-														},
-														{
-															label: 'PM',
-															value: 'pm',
-														},
-													] }
+													options={ PERIOD_OPTIONS }
 												/>
 											</div>
 										</div>
@@ -155,12 +99,7 @@ export const ScheduleForm = ( props: Props ) => {
 							<RadioControl
 								name="frequency"
 								onChange={ setFrequency }
-								options={ [
-									{
-										label: 'Weekly',
-										value: 'weekly',
-									},
-								] }
+								options={ [ WEEKLY_OPTION ] }
 								selected={ frequency }
 							></RadioControl>
 							{ frequency === 'weekly' && (
@@ -173,36 +112,7 @@ export const ScheduleForm = ( props: Props ) => {
 												onBlur={ function noRefCheck() {} }
 												onChange={ function noRefCheck() {} }
 												onFocus={ function noRefCheck() {} }
-												options={ [
-													{
-														label: 'Monday',
-														value: 'a',
-													},
-													{
-														label: 'Tuesday',
-														value: 'b',
-													},
-													{
-														label: 'Wednesday',
-														value: 'c',
-													},
-													{
-														label: 'Thursday',
-														value: 'd',
-													},
-													{
-														label: 'Friday',
-														value: 'e',
-													},
-													{
-														label: 'Saturday',
-														value: 'f',
-													},
-													{
-														label: 'Sunday',
-														value: 'g',
-													},
-												] }
+												options={ DAY_OPTIONS }
 											/>
 										</div>
 									</FlexItem>
@@ -215,56 +125,7 @@ export const ScheduleForm = ( props: Props ) => {
 													onBlur={ function noRefCheck() {} }
 													onChange={ function noRefCheck() {} }
 													onFocus={ function noRefCheck() {} }
-													options={ [
-														{
-															label: '00',
-															value: '0',
-														},
-														{
-															label: '01',
-															value: '1',
-														},
-														{
-															label: '02',
-															value: '3',
-														},
-														{
-															label: '03',
-															value: '3',
-														},
-														{
-															label: '04',
-															value: '4',
-														},
-														{
-															label: '05',
-															value: '5',
-														},
-														{
-															label: '06',
-															value: '6',
-														},
-														{
-															label: '07',
-															value: '7',
-														},
-														{
-															label: '08',
-															value: '8',
-														},
-														{
-															label: '09',
-															value: '9',
-														},
-														{
-															label: '10',
-															value: '10',
-														},
-														{
-															label: '11',
-															value: '11',
-														},
-													] }
+													options={ HOUR_OPTIONS }
 												/>
 												<SelectControl
 													name="period"
@@ -272,16 +133,7 @@ export const ScheduleForm = ( props: Props ) => {
 													onBlur={ function noRefCheck() {} }
 													onChange={ function noRefCheck() {} }
 													onFocus={ function noRefCheck() {} }
-													options={ [
-														{
-															label: 'AM',
-															value: 'am',
-														},
-														{
-															label: 'PM',
-															value: 'pm',
-														},
-													] }
+													options={ PERIOD_OPTIONS }
 												/>
 											</div>
 										</div>
