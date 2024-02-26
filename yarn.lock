@@ -9211,7 +9211,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@wordpress/dataviews@npm:^0.4.1":
+"@wordpress/dataviews@npm:0.4.1":
   version: 0.4.1
   resolution: "@wordpress/dataviews@npm:0.4.1"
   dependencies:
@@ -12135,7 +12135,7 @@ __metadata:
     "@wordpress/components": "npm:^27.0.0"
     "@wordpress/compose": "npm:^6.29.0"
     "@wordpress/data": "npm:^9.22.0"
-    "@wordpress/dataviews": "npm:^0.4.1"
+    "@wordpress/dataviews": "npm:0.4.1"
     "@wordpress/dom": "npm:^3.52.0"
     "@wordpress/edit-post": "npm:^7.29.0"
     "@wordpress/element": "npm:^5.29.0"
