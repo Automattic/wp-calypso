@@ -23,7 +23,7 @@ export default function PatternsSSR( { category, isGridView }: Props ) {
 
 			<div className={ classNames( 'patterns', { patterns_grid: isGridView } ) }>
 				{ patterns?.map( ( pattern ) => (
-					<div className="patterns__item" key={ pattern.ID }>
+					<div className="patterns__item patterns__item_loading" key={ pattern.ID }>
 						<div className="patterns__preview">Loading…</div>
 						<div className="patterns__title">{ pattern.title }</div>
 					</div>

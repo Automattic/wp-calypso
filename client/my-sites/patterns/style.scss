@@ -4,19 +4,29 @@
 
 .patterns {
 	display: grid;
-	padding: 20px 0;
+	padding: 24px 0;
 }
 .patterns_grid {
-	gap: 20px;
+	gap: 24px;
 	grid-template-columns: repeat(4, 1fr);
 }
 .patterns__item {
 	display: flex;
 	flex-direction: column;
+	gap: 16px;
 	justify-content: space-between;
 }
 .patterns__preview {
-	aspect-ratio: 7 / 3;
+	background: var(--color-surface);
+	border-radius: 3px;
+	box-shadow: 0 0 8px hsla(0, 0%, 0%, 0.08);
+	display: grid;
+	flex: 1;
+	overflow: hidden;
+
+	.patterns__item_loading & {
+		aspect-ratio: 7 / 3;
+	}
 }
 .patterns__title {
 	min-height: 3rem;
