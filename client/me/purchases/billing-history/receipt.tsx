@@ -371,6 +371,35 @@ function areReceiptItemDiscountsAccurate( receiptDate: string ): boolean {
 	return receiptDateUnix > receiptTagsAccurateAsOf;
 }
 
+function ReceiptItemDiscountIntroductoryOfferDate( { item }: { item: BillingTransactionItem } ) {
+	const translate = useTranslate();
+	if ( ! item.introductory_offer_terms?.enabled ) {
+		return null;
+	}
+	if (
+		! doesIntroductoryOfferHaveDifferentTermLengthThanProduct(
+			item.cost_overrides,
+			item.introductory_offer_terms,
+			item.months_per_renewal_interval
+		)
+	) {
+		return null;
+	}
+
+	return (
+		<div>
+			{ translate( 'Amount paid in transaction: %(price)s', {
+				args: {
+					price: formatCurrency( item.amount_integer, item.currency, {
+						isSmallestUnit: true,
+						stripZeros: true,
+					} ),
+				},
+			} ) }
+		</div>
+	);
+}
+
 function ReceiptItemDiscounts( {
 	item,
 	receiptDate,
@@ -390,8 +419,28 @@ function ReceiptItemDiscounts( {
 								stripZeros: true,
 						  } )
 						: '';
+				if (
+					doesIntroductoryOfferHaveDifferentTermLengthThanProduct(
+						item.cost_overrides,
+						item.introductory_offer_terms,
+						item.months_per_renewal_interval
+					)
+				) {
+					return (
+						<li
+							key={ costOverride.humanReadableReason }
+							className="billing-history__receipt-item-discount billing-history__receipt-item-discount--different-term"
+						>
+							<div>{ costOverride.humanReadableReason }</div>
+							<ReceiptItemDiscountIntroductoryOfferDate item={ item } />
+						</li>
+					);
+				}
 				return (
-					<li key={ costOverride.humanReadableReason }>
+					<li
+						key={ costOverride.humanReadableReason }
+						className="billing-history__receipt-item-discount"
+					>
 						<span>{ costOverride.humanReadableReason }</span>
 						<span>{ formattedDiscountAmount }</span>
 					</li>
@@ -460,6 +509,14 @@ function ReceiptLineItem( {
 	const translate = useTranslate();
 	const termLabel = getTransactionTermLabel( item, translate );
 	const shouldShowDiscount = areReceiptItemDiscountsAccurate( transaction.date );
+	const formattedAmount = formatCurrency(
+		shouldShowDiscount ? getReceiptItemOriginalCost( item ) : item.subtotal_integer,
+		item.currency,
+		{
+			isSmallestUnit: true,
+			stripZeros: true,
+		}
+	);
 	return (
 		<>
 			<tr>
@@ -473,13 +530,14 @@ function ReceiptLineItem( {
 					) }
 				</td>
 				<td className="billing-history__receipt-amount">
-					{ formatCurrency(
-						shouldShowDiscount ? getReceiptItemOriginalCost( item ) : item.subtotal_integer,
-						item.currency,
-						{
-							isSmallestUnit: true,
-							stripZeros: true,
-						}
+					{ doesIntroductoryOfferHaveDifferentTermLengthThanProduct(
+						item.cost_overrides,
+						item.introductory_offer_terms,
+						item.months_per_renewal_interval
+					) ? (
+						<s>{ formattedAmount }</s>
+					) : (
+						formattedAmount
 					) }
 					{ transaction.credit && (
 						<span className="billing-history__credit-badge">{ translate( 'Refund' ) }</span>

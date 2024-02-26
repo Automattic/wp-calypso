@@ -386,9 +386,13 @@ ul.billing-history__receipt-item-discounts-list {
 	font-size: $font-body-small;
 }
 
-ul.billing-history__receipt-item-discounts-list li {
+li.billing-history__receipt-item-discount {
 	display: flex;
 	justify-content: space-between;
+}
+
+li.billing-history__receipt-item-discount--different-term {
+	display: block;
 }
 
 .billing-history__receipt-links {
