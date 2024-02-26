@@ -1,4 +1,10 @@
-import { STATS_UTM_METRICS_REQUEST, STATS_UTM_METRICS_RECEIVE } from 'calypso/state/action-types';
+import {
+	STATS_UTM_METRICS_REQUEST,
+	STATS_UTM_METRICS_RECEIVE,
+	STATS_UTM_TOP_POSTS_REQUEST,
+	STATS_UTM_TOP_POSTS_RECEIVE,
+} from 'calypso/state/action-types';
+import { UTMMetricItem, UTMMetricItemTopPost } from 'calypso/state/stats/utm-metrics/types';
 import {
 	combineReducers,
 	keyedReducer,
@@ -18,19 +24,45 @@ const dataReducer = ( state = {}, action: AnyAction ) => {
 	switch ( action.type ) {
 		case STATS_UTM_METRICS_RECEIVE: {
 			const data = action.data.top_utm_values;
-			const utmKeys = Object.keys( data );
+			const UTMMetricKeys = Object.keys( data );
 
-			return utmKeys.map( ( utmKey: any ) => {
-				const parsedUtmKey = JSON.parse( utmKey );
-				const value = data[ utmKey ];
+			return {
+				...state,
+				metrics: UTMMetricKeys.map( ( UTMMetricKey: string ) => {
+					const parsedKey = JSON.parse( UTMMetricKey );
+					const value = data[ UTMMetricKey ];
 
-				return {
-					source: parsedUtmKey[ 0 ],
-					medium: parsedUtmKey[ 1 ],
-					label: `${ parsedUtmKey[ 0 ] } / ${ parsedUtmKey[ 1 ] }`,
-					value,
-				};
-			} );
+					return {
+						source: parsedKey[ 0 ],
+						medium: parsedKey[ 1 ],
+						label: `${ parsedKey[ 0 ] } / ${ parsedKey[ 1 ] }`,
+						value,
+						paramValues: UTMMetricKey,
+					} as UTMMetricItem;
+				} ),
+			};
+		}
+
+		case STATS_UTM_TOP_POSTS_RECEIVE: {
+			const data = action.data.top_posts;
+			const { topPosts } = state as {
+				topPosts: { [ key: string ]: Array< UTMMetricItemTopPost > };
+			};
+
+			return {
+				...state,
+				topPosts: {
+					...topPosts,
+					[ action.paramValues ]: data.map( ( topPost: UTMMetricItemTopPost ) => {
+						return {
+							id: topPost.id,
+							label: topPost.title,
+							value: topPost.views,
+							href: topPost.href,
+						};
+					} ),
+				},
+			};
 		}
 	}
 
@@ -54,6 +86,12 @@ const isLoadingReducer = ( state = {}, action: AnyAction ) => {
 			return true;
 		}
 		case STATS_UTM_METRICS_RECEIVE: {
+			return false;
+		}
+		case STATS_UTM_TOP_POSTS_REQUEST: {
+			return true;
+		}
+		case STATS_UTM_TOP_POSTS_RECEIVE: {
 			return false;
 		}
 	}
