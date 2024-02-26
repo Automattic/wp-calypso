@@ -49,15 +49,16 @@ function getPlanFromRecurType( recurType: string ) {
 const ecommerceFlow: Flow = {
 	name: ECOMMERCE_FLOW,
 	isSignupFlow: true,
-	useSignupStartEventProps() {
-		const recur = useSelect(
+	useSteps() {
+		const recurType = useSelect(
 			( select ) => ( select( ONBOARD_STORE ) as OnboardSelect ).getEcommerceFlowRecurType(),
 			[]
 		);
 
-		return { recur };
-	},
-	useSteps() {
+		useEffect( () => {
+			recordTracksEvent( 'calypso_signup_start', { flow: this.name, recur: recurType } );
+		}, [] );
+
 		return [
 			{
 				slug: 'storeProfiler',
