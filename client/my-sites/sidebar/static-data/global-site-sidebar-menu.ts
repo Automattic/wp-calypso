@@ -82,12 +82,6 @@ export default function globalSiteSidebarMenu( {
 			url: `/earn/${ siteDomain }`,
 		},
 		{
-			slug: 'options-podcasting-php',
-			title: translate( 'Podcasting' ),
-			type: 'menu-item',
-			url: `/settings/podcasting/${ siteDomain }`,
-		},
-		{
 			slug: 'subscribers',
 			title: translate( 'Subscribers' ),
 			type: 'menu-item',
