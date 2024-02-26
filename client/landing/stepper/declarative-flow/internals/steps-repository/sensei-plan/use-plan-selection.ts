@@ -107,7 +107,7 @@ export const usePlanSelection = ( {
 			setStatus( Status.Bundling );
 		}
 
-		if ( ! isLoadingPlans ) {
+		if ( ! isLoadingPlans && status !== Status.Error ) {
 			onPlanSelect();
 		}
 	}, [ isLoadingPlans, status, setStatus, onPlanSelect ] );
