@@ -162,7 +162,7 @@ export default memo( function SitesTableRow( { site }: SiteTableRowProps ) {
 	} );
 
 	const computeDashboardUrl = ( site: SiteExcerptData, isAtomicSite: boolean | null ) => {
-		if ( isAtomicSite && siteDefaultInterface( site ) === 'wp-admin' ) {
+		if ( siteDefaultInterface( site ) === 'wp-admin' ) {
 			return getSiteWpAdminUrl( site ) || getDashboardUrl( site.slug );
 		}
 		return getDashboardUrl( site.slug );
