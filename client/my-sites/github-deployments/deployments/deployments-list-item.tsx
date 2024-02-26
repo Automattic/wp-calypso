@@ -109,7 +109,10 @@ export const DeploymentsListItem = ( { deployment }: DeploymentsListItemProps ) 
 					{ isTriggeringDeployment ? (
 						<Spinner />
 					) : (
-						<DropdownMenu icon={ <Gridicon icon="ellipsis" /> } label="Select a direction">
+						<DropdownMenu
+							icon={ <Gridicon icon="ellipsis" /> }
+							label={ __( 'Deployment actions' ) }
+						>
 							{ ( { onClose } ) => (
 								<Fragment>
 									<MenuGroup>
