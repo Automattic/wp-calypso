@@ -74,7 +74,7 @@ export function useCreateCreditCard( {
 	submitButtonContent,
 	initialUseForAllSubscriptions,
 	allowUseForAllSubscriptions,
-	existingCardMethods,
+	hasExistingCardMethods,
 }: {
 	isStripeLoading: boolean;
 	stripeLoadingError: StripeLoadingError;
@@ -83,7 +83,7 @@ export function useCreateCreditCard( {
 	submitButtonContent: ReactNode;
 	initialUseForAllSubscriptions?: boolean;
 	allowUseForAllSubscriptions?: boolean;
-	existingCardMethods?: PaymentMethod[];
+	hasExistingCardMethods?: boolean;
 } ): PaymentMethod | null {
 	const shouldLoadStripeMethod = ! isStripeLoading && ! stripeLoadingError;
 	const stripePaymentMethodStore = useMemo(
@@ -103,7 +103,7 @@ export function useCreateCreditCard( {
 						shouldShowTaxFields,
 						submitButtonContent,
 						allowUseForAllSubscriptions,
-						existingCardMethods,
+						hasExistingCardMethods,
 				  } )
 				: null,
 		[
@@ -113,7 +113,7 @@ export function useCreateCreditCard( {
 			shouldShowTaxFields,
 			submitButtonContent,
 			allowUseForAllSubscriptions,
-			existingCardMethods,
+			hasExistingCardMethods,
 		]
 	);
 	return stripeMethod;
@@ -476,6 +476,8 @@ export default function useCreatePaymentMethods( {
 		submitButtonContent: <CheckoutSubmitButtonContent />,
 	} );
 
+	const hasExistingCardMethods = existingCardMethods && existingCardMethods.length > 0;
+
 	const shouldUseEbanx = responseCart.allowed_payment_methods.includes(
 		translateCheckoutPaymentMethodToWpcomPaymentMethod( 'ebanx' ) ?? ''
 	);
@@ -491,7 +493,7 @@ export default function useCreatePaymentMethods( {
 		shouldUseEbanx,
 		allowUseForAllSubscriptions,
 		submitButtonContent: <CheckoutSubmitButtonContent />,
-		existingCardMethods,
+		hasExistingCardMethods,
 	} );
 
 	const freePaymentMethod = useCreateFree();

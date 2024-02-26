@@ -74,16 +74,15 @@ export function createCreditCardMethod( {
 	shouldShowTaxFields,
 	submitButtonContent,
 	allowUseForAllSubscriptions,
-	existingCardMethods,
+	hasExistingCardMethods,
 }: {
 	store: CardStoreType;
 	shouldUseEbanx?: boolean;
 	shouldShowTaxFields?: boolean;
 	submitButtonContent: ReactNode;
 	allowUseForAllSubscriptions?: boolean;
-	existingCardMethods?: PaymentMethod[];
+	hasExistingCardMethods?: boolean | undefined;
 } ): PaymentMethod {
-	const hasExistingCardMethods = existingCardMethods && existingCardMethods.length > 0;
 	return {
 		id: 'card',
 		paymentProcessorId: 'card',

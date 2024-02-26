@@ -45,7 +45,7 @@ export default function useCreateAssignablePaymentMethods(
 		allowEditingTaxInfo: true,
 		isTaxInfoRequired: true,
 	} );
-
+	const hasExistingCardMethods = existingCardMethods && existingCardMethods.length > 0;
 	const stripeMethod = useCreateCreditCard( {
 		isStripeLoading,
 		stripeLoadingError,
@@ -55,7 +55,7 @@ export default function useCreateAssignablePaymentMethods(
 			<PaymentMethodSelectorSubmitButtonContent text={ translate( 'Save card' ) } />
 		),
 		allowUseForAllSubscriptions: true,
-		existingCardMethods,
+		hasExistingCardMethods,
 	} );
 
 	const payPalMethod = useCreatePayPal( {
