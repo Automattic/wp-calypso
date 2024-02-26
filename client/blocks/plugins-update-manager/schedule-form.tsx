@@ -22,7 +22,7 @@ interface Props {
 }
 export const ScheduleForm = ( props: Props ) => {
 	const { siteSlug } = props;
-
+	const MAX_SELECTABLE_PLUGINS = 10;
 	const { data } = useSitePluginsQuery( siteSlug );
 
 	const [ name, setName ] = useState( '' );
@@ -309,11 +309,13 @@ export const ScheduleForm = ( props: Props ) => {
 						<div className="checkbox-options">
 							<SearchControl id="plugins" onChange={ setPluginSearchTerm } />
 							<div className="checkbox-options-container">
-								<CheckboxControl
-									indeterminate
-									label="Select all"
-									onChange={ function noRefCheck() {} }
-								/>
+								{ data?.plugins.length <= MAX_SELECTABLE_PLUGINS && (
+									<CheckboxControl
+										indeterminate
+										label="Select all"
+										onChange={ function noRefCheck() {} }
+									/>
+								) }
 								{ data?.plugins.map( ( plugin ) => (
 									<>
 										{ plugin.display_name
