@@ -369,16 +369,22 @@ class ThemeShowcase extends Component {
 	};
 
 	onDesignYourOwnClick = () => {
-		const { isLoggedIn, site: selectedSite, siteCount, siteEditorUrl, siteId } = this.props;
-		const shouldGoToAssemblerStep = isAssemblerSupported();
+		const { isLoggedIn, siteCount, siteId } = this.props;
+
 		recordTracksEvent( 'calypso_themeshowcase_pattern_assembler_top_button_click', {
 			is_logged_in: isLoggedIn,
 		} );
 
 		if ( shouldSelectSite( { isLoggedIn, siteCount, siteId } ) ) {
 			this.setState( { isSiteSelectorModalVisible: true } );
-			return;
+		} else {
+			this.redirectToSiteAssembler();
 		}
+	};
+
+	redirectToSiteAssembler = () => {
+		const { isLoggedIn, site: selectedSite, siteEditorUrl } = this.props;
+		const shouldGoToAssemblerStep = isAssemblerSupported();
 
 		const destinationUrl = getSiteAssemblerUrl( {
 			isLoggedIn,
