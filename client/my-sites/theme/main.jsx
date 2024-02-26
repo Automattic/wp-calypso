@@ -1598,13 +1598,13 @@ class ThemeSheet extends Component {
 				}
 				<ThemeSiteSelectorModal
 					isOpen={ this.state.isSiteSelectorModalVisible }
-					onClose={ ( { siteTitle } ) => {
+					onClose={ ( args ) => {
 						this.setState( { isSiteSelectorModalVisible: false } );
 
-						if ( siteTitle ) {
+						if ( args?.siteTitle ) {
 							showSuccessNotice(
 								translate( 'You have selected the site {{strong}}%(siteTitle)s{{/strong}}.', {
-									args: { siteTitle },
+									args: { siteTitle: args.siteTitle },
 									components: { strong: <strong /> },
 									comment:
 										'On the theme details page, notification shown to the user after they choose one of their sites to activate the selected theme',
