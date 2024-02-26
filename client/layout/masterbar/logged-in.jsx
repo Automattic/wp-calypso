@@ -622,6 +622,7 @@ class MasterbarLoggedIn extends Component {
 									siteId={ currentSelectedSiteId }
 									href={ this.getHomeUrl() }
 									isSelected={ true }
+									inlineBadges={ true }
 								/>
 							) }
 						</div>
