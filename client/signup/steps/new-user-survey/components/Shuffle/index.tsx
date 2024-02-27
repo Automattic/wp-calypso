@@ -37,6 +37,11 @@ type ShuffleProps = {
 	 * @returns {string} The key extracted from the child element.
 	 */
 	getChildKey: ( child: ReactNode ) => string;
+
+	/**
+	 * A boolean indicating whether the Shuffling of elements is active is active.
+	 */
+	isActive?: boolean;
 };
 /**
  * A controlled component which shuffles children by random order based on provided keys.
@@ -45,26 +50,28 @@ type ShuffleProps = {
  * @returns {ReactNode} The shuffled children.
  */
 const Shuffle = ( props: ShuffleProps ) => {
-	const { children, setChildOrder, childOrder, getChildKey } = props;
+	const { children, setChildOrder, childOrder, getChildKey, isActive } = props;
 
 	useEffect( () => {
-		setChildOrder( ( prevChildOrder ) => {
-			// If the previous child order is null, shuffle the children based on provided keys
-			if ( prevChildOrder === null || prevChildOrder.length !== Children.count( children ) ) {
-				const newChildOrder = Children.toArray( children ).map( ( child ) => {
-					return getChildKey( child );
-				} );
-				newChildOrder.sort( () => Math.random() - Math.random() );
-				return newChildOrder;
-			}
-			// If the previous child order exists, maintain it
-			return prevChildOrder;
-		} );
-	}, [ children, setChildOrder, getChildKey ] );
+		if ( isActive ) {
+			setChildOrder( ( prevChildOrder ) => {
+				// If the previous child order is null, shuffle the children based on provided keys
+				if ( prevChildOrder === null || prevChildOrder.length !== Children.count( children ) ) {
+					const newChildOrder = Children.toArray( children ).map( ( child ) => {
+						return getChildKey( child );
+					} );
+					newChildOrder.sort( () => Math.random() - Math.random() );
+					return newChildOrder;
+				}
+				// If the previous child order exists, maintain it
+				return prevChildOrder;
+			} );
+		}
+	}, [ children, setChildOrder, getChildKey, isActive ] );
 
 	// If a child order exists, sort the children based on that order
 	let sortedChildrenClone = children;
-	if ( childOrder !== null ) {
+	if ( isActive && childOrder !== null ) {
 		sortedChildrenClone = [ ...children ];
 		sortedChildrenClone.sort( ( child1, child2 ) => {
 			return (
