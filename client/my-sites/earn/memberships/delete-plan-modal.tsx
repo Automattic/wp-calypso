@@ -21,7 +21,7 @@ const RecurringPaymentsPlanDeleteModal = ( {
 	const translate = useTranslate();
 	const siteId = useSelector( getSelectedSiteId );
 	const dispatch = useDispatch();
-	const [ cancel, setCancel ] = useState( false );
+	const [ cancelSubscriptions, setCancelSubscriptions ] = useState( false );
 
 	const onClose = ( action?: string ) => {
 		if ( action === 'delete' ) {
@@ -30,7 +30,8 @@ const RecurringPaymentsPlanDeleteModal = ( {
 					siteId,
 					product,
 					annualProduct,
-					translate( '"%s" was deleted.', { args: product.title } )
+					translate( '"%s" was deleted.', { args: product.title } ),
+					cancelSubscriptions
 				)
 			);
 		}
@@ -70,7 +71,10 @@ const RecurringPaymentsPlanDeleteModal = ( {
 			</p>
 			<p>
 				<FormLabel htmlFor="toggle">
-					<FormInputCheckbox id="toggle" onClick={ () => setCancel( ! cancel ) } />
+					<FormInputCheckbox
+						id="toggle"
+						onClick={ () => setCancelSubscriptions( ! cancelSubscriptions ) }
+					/>
 					<span>{ translate( 'Cancel the subscription for existing subscribers' ) }</span>
 				</FormLabel>
 			</p>
