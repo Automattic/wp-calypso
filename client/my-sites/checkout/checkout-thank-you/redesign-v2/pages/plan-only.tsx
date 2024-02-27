@@ -56,7 +56,7 @@ export default function PlanOnlyThankYou( { primaryPurchase }: PlanOnlyThankYouP
 			buttonText: translate( 'Find your new theme' ),
 			buttonHref: `/themes/${ siteSlug }`,
 			buttonOnClick: () => {
-				recordTracksEvent( 'calypso_thank_you_footer_link_click', { type: 'footer-site-refresh' } );
+				recordTracksEvent( 'calypso_thank_you_footer_link_click', { type: 'site-refresh' } );
 			},
 		} );
 	}
