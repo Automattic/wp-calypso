@@ -30,7 +30,7 @@ import SitePickerStep from './internals/steps-repository/site-picker';
 import TrialAcknowledge from './internals/steps-repository/trial-acknowledge';
 import { Flow, ProvidedDependencies } from './internals/types';
 import type { OnboardSelect } from '@automattic/data-stores';
-import type { SiteExcerptData } from 'calypso/data/sites/site-excerpt-types';
+import type { SiteExcerptData } from '@automattic/sites';
 
 const importFlow: Flow = {
 	name: IMPORT_FOCUSED_FLOW,

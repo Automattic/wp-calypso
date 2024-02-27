@@ -19,7 +19,7 @@ import {
 	CommandCallBackParams,
 	useCommandPalette,
 } from './use-command-palette';
-import type { WPCOM } from 'wpcom';
+import type { SiteExcerptData } from '@automattic/sites';
 import '@wordpress/commands/build-style/style.css';
 
 interface CommandMenuGroupProps
@@ -32,8 +32,9 @@ interface CommandMenuGroupProps
 	setEmptyListNotice?: ( message: string ) => void;
 	navigate: ( path: string, openInNewTab?: boolean ) => void;
 	useCommands: ( options: useCommandsParams ) => PaletteCommand[];
-	wpcom: WPCOM;
 	currentRoute: string | null;
+	useSites: () => SiteExcerptData[];
+	userCapabilities: { [ key: number ]: { [ key: string ]: boolean } };
 }
 
 const StyledCommandsMenuContainer = styled.div( {
@@ -109,8 +110,9 @@ export function CommandMenuGroup( {
 	setEmptyListNotice,
 	navigate,
 	useCommands,
-	wpcom,
 	currentRoute,
+	useSites,
+	userCapabilities,
 }: CommandMenuGroupProps ) {
 	const { commands, filterNotice, emptyListNotice } = useCommandPalette( {
 		currentSiteId,
@@ -119,8 +121,9 @@ export function CommandMenuGroup( {
 		search,
 		navigate,
 		useCommands,
-		wpcom,
 		currentRoute,
+		useSites,
+		userCapabilities,
 	} );
 
 	useEffect( () => {
@@ -234,10 +237,11 @@ interface CommandPaletteProps {
 	currentSiteId: number | null;
 	navigate: ( path: string, openInNewTab?: boolean ) => void;
 	useCommands: ( options: useCommandsParams ) => PaletteCommand[];
-	wpcom: WPCOM;
 	currentRoute: string | null;
 	isOpenGlobal?: boolean;
 	onClose?: () => void;
+	useSites?: () => SiteExcerptData[];
+	userCapabilities: { [ key: number ]: { [ key: string ]: boolean } };
 }
 
 const NotFoundMessage = ( {
@@ -268,10 +272,11 @@ const CommandPalette = ( {
 	currentSiteId,
 	navigate,
 	useCommands,
-	wpcom,
 	currentRoute,
 	isOpenGlobal,
 	onClose = () => {},
+	useSites = () => [],
+	userCapabilities = {},
 }: CommandPaletteProps ) => {
 	const [ placeHolderOverride, setPlaceholderOverride ] = useState( '' );
 	const [ search, setSearch ] = useState( '' );
@@ -426,8 +431,9 @@ const CommandPalette = ( {
 							setEmptyListNotice={ setEmptyListNotice }
 							navigate={ navigate }
 							useCommands={ useCommands }
-							wpcom={ wpcom }
 							currentRoute={ currentRoute }
+							useSites={ useSites }
+							userCapabilities={ userCapabilities }
 						/>
 					</Command.List>
 				</Command>

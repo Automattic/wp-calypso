@@ -3,7 +3,7 @@ import classnames from 'classnames';
 import { MEDIA_QUERIES } from '../utils';
 import { SitesGridItem } from './sites-grid-item';
 import { SitesGridItemLoading } from './sites-grid-item-loading';
-import type { SiteExcerptData } from 'calypso/data/sites/site-excerpt-types';
+import type { SiteExcerptData } from '@automattic/sites';
 
 const N_LOADING_ROWS = 3;
 

@@ -3,7 +3,7 @@ import {
 	PLAN_ECOMMERCE_TRIAL_MONTHLY,
 	PLAN_HOSTING_TRIAL_MONTHLY,
 } from '@automattic/calypso-products';
-import { SiteExcerptData, SiteExcerptNetworkData } from 'calypso/data/sites/site-excerpt-types';
+import type { SiteExcerptData, SiteExcerptNetworkData } from '@automattic/sites';
 
 export const TRACK_SOURCE_NAME = 'sites-dashboard';
 
