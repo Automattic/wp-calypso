@@ -68,7 +68,7 @@ import { useIsPluginBundleEligible } from '../../../../hooks/use-is-plugin-bundl
 import { useQuery } from '../../../../hooks/use-query';
 import { useSiteData } from '../../../../hooks/use-site-data';
 import { ONBOARD_STORE, SITE_STORE } from '../../../../stores';
-import { getBusinessPlanByTerm, goToCheckout } from '../../../../utils/checkout';
+import { goToCheckout } from '../../../../utils/checkout';
 import {
 	getDesignEventProps,
 	getDesignTypeProps,
