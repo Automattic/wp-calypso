@@ -73,7 +73,7 @@ function SurveyForm( props: Props ) {
 	const [ isExperimentLoading, experimentAssignment ] = useExperiment(
 		'calypso_signup_onboarding_site_goals_survey'
 	);
-	const isScrambled = experimentAssignment?.variationName === 'treatment_scrambled';
+	const isScrambled = experimentAssignment?.variationName === 'treatment_scrambled' || true;
 
 	const [ formState, setFormState ] = useState< FormState >( defaultFormState );
 	const [ orderGoals, setOrderGoals ] = useState< string[] | null >( [] );
@@ -168,7 +168,7 @@ function SurveyForm( props: Props ) {
 						</CardHeading>
 						<OptionsContainer>
 							<Shuffle
-								isActive={ isScrambled }
+								isShuffleActive={ isScrambled }
 								getChildKey={ getCheckBoxKey }
 								childOrder={ orderGoals }
 								setChildOrder={ setOrderGoals }
@@ -213,7 +213,7 @@ function SurveyForm( props: Props ) {
 						</CardHeading>
 						<OptionsContainer>
 							<Shuffle
-								isActive={ isScrambled }
+								isShuffleActive={ isScrambled }
 								getChildKey={ getCheckBoxKey }
 								childOrder={ orderDescribeYourself }
 								setChildOrder={ setOrderDescribeYourself }
