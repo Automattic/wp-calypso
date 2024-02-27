@@ -45,6 +45,7 @@ import { fetchOAuth2ClientData } from 'calypso/state/oauth2-clients/actions';
 import { getCurrentOAuth2Client } from 'calypso/state/oauth2-clients/ui/selectors';
 import getCurrentQueryArguments from 'calypso/state/selectors/get-current-query-arguments';
 import getWccomFrom from 'calypso/state/selectors/get-wccom-from';
+import getWooPasswordless from 'calypso/state/selectors/get-woo-passwordless';
 import { getSuggestedUsername } from 'calypso/state/signup/optional-dependencies/selectors';
 import { saveSignupStep, submitSignupStep } from 'calypso/state/signup/progress/actions';
 
@@ -557,11 +558,13 @@ export class UserStep extends Component {
 	}
 
 	renderSignupForm() {
+		const isWooPasswordLess = this.props.wooPasswordless;
 		const { oauth2Client, isReskinned } = this.props;
 		const isPasswordless =
 			isMobile() ||
 			this.props.isPasswordless ||
-			isNewsletterFlow( this.props?.queryObject?.variationName );
+			isNewsletterFlow( this.props?.queryObject?.variationName ) ||
+			isWooPasswordLess;
 		let socialService;
 		let socialServiceResponse;
 		let isSocialSignupEnabled = this.props.isSocialSignupEnabled;
@@ -733,6 +736,7 @@ const ConnectedUser = connect(
 			oauth2Client: getCurrentOAuth2Client( state ),
 			suggestedUsername: getSuggestedUsername( state ),
 			wccomFrom: getWccomFrom( state ),
+			wooPasswordless: getWooPasswordless( state ),
 			from: get( getCurrentQueryArguments( state ), 'from' ),
 			userLoggedIn: isUserLoggedIn( state ),
 		};

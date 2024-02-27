@@ -91,6 +91,7 @@ import {
 } from './utils';
 import WpcomLoginForm from './wpcom-login-form';
 import './style.scss';
+import getWooPasswordless from 'calypso/state/selectors/get-woo-passwordless';
 
 const debug = debugModule( 'calypso:signup' );
 
@@ -897,7 +898,11 @@ class Signup extends Component {
 
 		return (
 			<>
-				<div className={ `signup is-${ kebabCase( this.props.flowName ) }` }>
+				<div
+					className={ `signup is-${ kebabCase( this.props.flowName ) } ${
+						this.props.isWooPasswordless ? 'is-woo-passwordless' : ''
+					}` }
+				>
 					<DocumentHead title={ this.props.pageTitle } />
 					{ showPageHeader && (
 						<SignupHeader
@@ -966,6 +971,7 @@ export default connect(
 			oauth2Client,
 			isGravatar: isGravatarOAuth2Client( oauth2Client ),
 			hostingFlow,
+			isWooPasswordless: getWooPasswordless( state ),
 		};
 	},
 	{
