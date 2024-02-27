@@ -139,11 +139,7 @@ export default function CampaignItemDetails( props: Props ) {
 	} );
 
 	// Target block
-	const {
-		devices: devicesList,
-		topics: topicsList,
-		languages: languagesList,
-	} = audience_list || {};
+	const { topics: topicsList, languages: languagesList } = audience_list || {};
 
 	// Formatted labels
 	const ctrFormatted = clickthrough_rate ? `${ clickthrough_rate.toFixed( 2 ) }%` : '-';
@@ -156,7 +152,6 @@ export default function CampaignItemDetails( props: Props ) {
 	const deliveryEstimateFormatted = getCampaignEstimatedImpressions( display_delivery_estimate );
 	const campaignTitleFormatted = title || __( 'Untitled' );
 	const campaignCreatedFormatted = moment.utc( created_at ).format( 'MMMM DD, YYYY' );
-	const devicesListFormatted = devicesList ? `${ devicesList }` : __( 'All' );
 	const durationDateFormatted = getCampaignDurationFormatted( start_date, end_date );
 	const durationFormatted = duration_days
 		? sprintf(
@@ -630,68 +625,52 @@ export default function CampaignItemDetails( props: Props ) {
 									</>
 								</div>
 
-								<div className="campaign-item-details__secondary-stats-row">
-									<div className="campaign-item-details__secondary-stats-row-left">
+								<div className="campaign-item-details__secondary-stats-row-bottom">
+									<div>
 										<span className="campaign-item-details__label">
 											{ translate( 'Languages' ) }
 										</span>
 										<span className="campaign-item-details__details">
 											{ ! isLoading ? languagesListFormatted : <FlexibleSkeleton /> }
 										</span>
+									</div>
+									<div className="campaign-item-details-interests">
 										<span className="campaign-item-details__label">
-											{ translate( 'Audience' ) }
+											{ translate( 'Interests' ) }
 										</span>
 										<span className="campaign-item-details__details">
-											{ ! isLoading ? devicesListFormatted : <FlexibleSkeleton /> }
+											{ ! isLoading ? topicsListFormatted : <FlexibleSkeleton /> }
 										</span>
 									</div>
-									<div className="campaign-item-details__second-column">
-										<div className="campaign-item-details__second-column-languages">
-											<span className="campaign-item-details__label">
-												{ translate( 'Languages' ) }
-											</span>
-											<span className="campaign-item-details__details">
-												{ ! isLoading ? languagesListFormatted : <FlexibleSkeleton /> }
-											</span>
-										</div>
-										<div className="campaign-item-details__second-column-interests">
-											<span className="campaign-item-details__label">
-												{ translate( 'Interests' ) }
-											</span>
-											<span className="campaign-item-details__details">
-												{ ! isLoading ? topicsListFormatted : <FlexibleSkeleton /> }
-											</span>
-										</div>
-										<div>
-											<span className="campaign-item-details__label">
-												{ translate( 'Location' ) }
-											</span>
-											<span className="campaign-item-details__details campaign-item-details__locations">
-												{ ! isLoading ? (
-													<TargetLocations audienceList={ audience_list } />
-												) : (
-													<FlexibleSkeleton />
-												) }
-											</span>
-										</div>
-										<div className="campaign-item-details__ad-destination">
-											<span className="campaign-item-details__label">
-												{ translate( 'Destination' ) }
-											</span>
-											<div className="campaign-item-details__ad-destination-url-container">
-												{ ! isLoading ? (
-													<Button
-														className="campaign-item-details__ad-destination-url-link"
-														href={ clickUrl }
-														target="_blank"
-													>
-														{ getDestinationLabel() }
-														{ getExternalLinkIcon() }
-													</Button>
-												) : (
-													<FlexibleSkeleton />
-												) }
-											</div>
+									<div>
+										<span className="campaign-item-details__label">
+											{ translate( 'Location' ) }
+										</span>
+										<span className="campaign-item-details__details campaign-item-details__locations">
+											{ ! isLoading ? (
+												<TargetLocations audienceList={ audience_list } />
+											) : (
+												<FlexibleSkeleton />
+											) }
+										</span>
+									</div>
+									<div>
+										<span className="campaign-item-details__label">
+											{ translate( 'Destination' ) }
+										</span>
+										<div className="campaign-item-details__ad-destination-url-container">
+											{ ! isLoading ? (
+												<Button
+													className="campaign-item-details__ad-destination-url-link"
+													href={ clickUrl }
+													target="_blank"
+												>
+													{ getDestinationLabel() }
+													{ getExternalLinkIcon() }
+												</Button>
+											) : (
+												<FlexibleSkeleton />
+											) }
 										</div>
 									</div>
 								</div>
@@ -702,17 +681,16 @@ export default function CampaignItemDetails( props: Props ) {
 								<div className="campaign-item-details__payment">
 									<div className="campaign-item-details__payment-row">
 										<div className="campaign-item-details__secondary-payment-row">
-											<div className="campaign-item-details__payment-method">
-												{ payment_method && card_name && (
-													<>
-														<span className="campaign-item-details__label">
-															{ translate( 'Payment method' ) }
-														</span>
-														<span>{ card_name }</span>
-														{ payment_method && <span>{ payment_method }</span> }
-													</>
-												) }
-											</div>
+											{ payment_method && card_name && (
+												<div className="campaign-item-details__payment-method">
+													<span className="campaign-item-details__label">
+														{ translate( 'Payment method' ) }
+													</span>
+													<span>{ card_name }</span>
+													{ payment_method && <span>{ payment_method }</span> }
+												</div>
+											) }
+											<hr className="campaign-item-details-footer-line" />
 											<div className="campaign-item-details__total">
 												{ credits ? (
 													<span className="campaign-item-details__label">
@@ -723,7 +701,7 @@ export default function CampaignItemDetails( props: Props ) {
 													[]
 												) }
 												{ ! isNaN( total || 0 ) ? (
-													<>
+													<div>
 														<span className="campaign-item-details__label">
 															<div>{ translate( 'Total' ) }</div>
 															<div className="amount">{ totalFormatted }</div>
@@ -731,7 +709,7 @@ export default function CampaignItemDetails( props: Props ) {
 														<p className="campaign-item-details__payment-charges-disclosure">
 															{ translate( 'All charges inclusive of VAT, if any.' ) }
 														</p>
-													</>
+													</div>
 												) : (
 													[]
 												) }
