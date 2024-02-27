@@ -71,7 +71,7 @@ const TitanSetUpThankYou = ( {
 			buttonHref: '/support/category/domains-and-email/email/',
 			buttonOnClick: () => {
 				recordTracksEvent( 'calypso_thank_you_footer_link_click', {
-					type: 'footer-questions-email',
+					type: 'questions-email',
 				} );
 			},
 		},
