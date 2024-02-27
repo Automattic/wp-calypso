@@ -1,3 +1,5 @@
+/* eslint-disable no-restricted-imports */
+import wpcom from 'calypso/lib/wp'; // Import restricted
 import { wpcomRequest } from '../wpcom-request-controls';
 import {
 	AddSubscribersResponse,
@@ -41,7 +43,7 @@ export function createActions() {
 		yield importCsvSubscribersStart( siteId, file, emails );
 
 		try {
-			const data: ImportSubscribersResponse = yield wpcomRequest( {
+			const data: ImportSubscribersResponse = yield wpcom.req.post( {
 				path: `/sites/${ encodeURIComponent( siteId ) }/subscribers/import`,
 				method: 'POST',
 				apiNamespace: 'wpcom/v2',
