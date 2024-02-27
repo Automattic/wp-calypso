@@ -270,6 +270,10 @@ body.is-section-promote-post-i2 .layout__content .campaign-item-details.main {
 				flex-direction: column;
 			}
 
+			@media (max-width: ($break-medium + 278)) {
+				grid-template-columns: repeat(2, 1fr);
+			}
+
 			> div {
 				display: flex;
 				flex-direction: column;
@@ -385,6 +389,10 @@ body.is-section-promote-post-i2 .layout__content .campaign-item-details.main {
 					display: flex;
 					align-items: center;
 				}
+			}
+
+			@media (max-width: ($break-medium + 278)) {
+				grid-template-columns: repeat(2, 1fr);
 			}
 		}
 
@@ -743,6 +751,10 @@ body.is-section-promote-post-i2 .layout__content .campaign-item-details.main {
 			flex-direction: column;
 		}
 
+		@media (max-width: ($break-medium + 278)) {
+			grid-template-columns: repeat(2, 1fr);
+		}
+
 		> div:not(.campaign-item-details__ad-destination) {
 			display: flex;
 			flex-direction: column;
@@ -890,6 +902,10 @@ body.is-section-promote-post-i2 .layout__content .campaign-item-details.main {
 		@media (max-width: $break-medium) {
 			display: flex;
 			flex-direction: column;
+		}
+
+		@media (max-width: ($break-medium + 278)) {
+			grid-template-columns: repeat(2, 1fr);
 		}
 	}
 
