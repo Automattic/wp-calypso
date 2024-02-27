@@ -59,12 +59,17 @@ Query argument examples:
 - `?flags=-flag2`: Disable feature `flag2`.
 - `?flags=+flag1,-flag2`: Enable feature `flag1` and disable feature `flag2`.
 
-You can use the same syntax in a cookie:
+You can use the same syntax in a cookie or via session storage
 
+Cookies:
 - `document.cookie = 'flags=+flag1,-flag2;max-age=1209600;path=/';`: Enable feature `flag1` and disable feature `flag2`.
 - `document.cookie = 'flags= ; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/;';`: Reset flags cookie to config values.
 
-Note: the `flags` query argument and cookie won't work for feature flags used by the Node.js
+Session Storage: 
+- `window.sessionStorage.setItem( 'flags', 'flag1,-flag2' );`: Enable feature `flag1` and disable feature `flag2`.
+- `window.sessionStorage.removeItem( 'flags' );`: Reset flags session item to config values.
+
+Note: the `flags` query argument, cookie, and sessionStorage won't work for feature flags used by Node.js
 server. For this case, you can use the
 [`ENABLE_FEATURES` and/or `DISABLE_FEATURES`](../../config/README.md#feature-flags)
 environment variables instead.

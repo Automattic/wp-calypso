@@ -537,7 +537,7 @@ class StatsSite extends Component {
 						// - May have to move from grid to flexbox.
 					 }
 					{ config.isEnabled( 'stats/utm-module' ) && (
-						<StatsModuleUTM period={ this.props.period } query={ query } />
+						<StatsModuleUTM siteId={ siteId } period={ this.props.period } query={ query } />
 					) }
 				</div>
 				{ supportsPlanUsage && (
@@ -623,7 +623,7 @@ class StatsSite extends Component {
 				{ config.isEnabled( 'stats/paid-wpcom-v2' ) && ! isOdysseyStats && (
 					<QuerySiteFeatures siteIds={ [ siteId ] } />
 				) }
-				{ /* Odyssey: Google My Business pages are currently unsupported. */ }
+				{ /* Odyssey: Google Business Profile pages are currently unsupported. */ }
 				{ ! isOdysseyStats && (
 					<>
 						<QueryKeyringConnections />

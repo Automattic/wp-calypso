@@ -103,6 +103,7 @@ export interface Site {
 	has_vulnerable_plugins: boolean;
 	latest_scan_has_threats_found: boolean;
 	active_paid_subscription_slugs: Array< string >;
+	site_color?: string;
 }
 export interface SiteNode {
 	value: Site;
@@ -211,6 +212,7 @@ export interface DashboardSortInterface {
 	direction: 'asc' | 'desc' | '';
 }
 export interface DashboardOverviewContextInterface {
+	path: string;
 	search: string;
 	currentPage: number;
 	filter: { issueTypes: Array< AgencyDashboardFilterOption >; showOnlyFavorites: boolean };

@@ -1,8 +1,20 @@
 .github-deployments-installations-select {
-	.select-dropdown__container {
-		min-width: 200px;
+	.select-dropdown__header {
+		height: 40px !important;
 	}
+
 	.select-dropdown__header-text {
+		font-size: $font-body;
 		font-weight: normal;
+	}
+
+	.select-dropdown__item-text {
+		font-weight: normal;
+	}
+
+	&__add-installation {
+		display: inline-flex !important;
+		align-items: center;
+		gap: 16px;
 	}
 }

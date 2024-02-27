@@ -32,7 +32,7 @@ import {
 import { useSitesDisplayMode } from './sites-display-mode-switcher';
 import { SitesGrid } from './sites-grid';
 import { SitesTable } from './sites-table';
-import type { SiteExcerptData } from 'calypso/data/sites/site-excerpt-types';
+import type { SiteExcerptData } from '@automattic/sites';
 
 interface SitesDashboardProps {
 	queryParams: SitesDashboardQueryParams;
@@ -90,6 +90,7 @@ const DashboardHeading = styled.h1( {
 } );
 
 const sitesMarginTable = css( {
+	backgroundColor: 'var( --studio-white )',
 	marginBlockStart: '14px',
 	marginInline: 0,
 	marginBlockEnd: '1.5em',

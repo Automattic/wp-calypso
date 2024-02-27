@@ -54,7 +54,6 @@ import {
 	getThemeTiers,
 	getThemeTier,
 	getThemeTierForTheme,
-	isThemeAllowedOnSite,
 } from '../selectors';
 
 const twentyfifteen = {
@@ -3473,51 +3472,5 @@ describe( '#getThemeTierForTheme', () => {
 		};
 		const themeTiers = getThemeTierForTheme( state, 'twentysixteen' );
 		expect( themeTiers ).toEqual( freeThemeTier );
-	} );
-} );
-describe( '#isThemeAllowedOnSite', () => {
-	test( 'returns true if the user has the required feature', () => {
-		const state = {
-			sites: {
-				features: {
-					1: {
-						data: {
-							active: [ FEATURE_WOOP ],
-						},
-					},
-				},
-			},
-			themes: {
-				queries: {
-					wpcom: new ThemeQueryManager( {
-						items: { twentysixteen },
-					} ),
-				},
-			},
-		};
-		const themeTiers = isThemeAllowedOnSite( state, 1, 'twentysixteen' );
-		expect( themeTiers ).toEqual( true );
-	} );
-	test( 'returns false if the user does not have the required feature', () => {
-		const state = {
-			sites: {
-				features: {
-					1: {
-						data: {
-							active: [],
-						},
-					},
-				},
-			},
-			themes: {
-				queries: {
-					wpcom: new ThemeQueryManager( {
-						items: { twentysixteen },
-					} ),
-				},
-			},
-		};
-		const themeTiers = isThemeAllowedOnSite( state, 1, 'twentysixteen' );
-		expect( themeTiers ).toEqual( false );
 	} );
 } );

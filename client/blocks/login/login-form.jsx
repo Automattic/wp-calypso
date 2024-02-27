@@ -543,9 +543,19 @@ export class LoginForm extends Component {
 			return this.props.translate( 'Your email address or username' );
 		}
 
-		return this.isPasswordView()
-			? this.renderChangeUsername()
-			: this.props.translate( 'Email Address or Username' );
+		return this.isPasswordView() ? (
+			this.renderChangeUsername()
+		) : (
+			// Since the input receives focus on page load, screen reader users don't have any context
+			// for what credentials to use. Unlike other users, they won't have seen the informative
+			// text above the form. We therefore need to clarity the must use WordPress.com credentials.
+			<>
+				<span className="screen-reader-text">
+					{ this.props.translate( 'WordPress.com Email Address or Username' ) }
+				</span>
+				<span aria-hidden="true">{ this.props.translate( 'Email Address or Username' ) }</span>
+			</>
+		);
 	}
 
 	renderLostPasswordLink() {

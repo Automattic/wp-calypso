@@ -1,44 +1,39 @@
 import { translate } from 'i18n-calypso';
-
 /**
  * Menu items for the Global Site View sidebar.
  */
 export default function globalSiteSidebarMenu( {
-	shouldShowAddOns,
 	showSiteMonitoring,
 	siteDomain,
 	selectedSiteSlug,
 	isStagingSite,
+	isDesktop,
 }: {
-	shouldShowAddOns: boolean;
 	showSiteMonitoring: boolean;
 	siteDomain: string;
 	selectedSiteSlug: string;
 	isStagingSite: boolean;
+	isDesktop: boolean;
 } ) {
 	return [
 		{
 			icon: 'dashicons-arrow-left-alt2',
-			slug: 'all-sites',
-			title: translate( 'All sites' ),
-			type: 'menu-item',
-			url: `/sites`,
-			className: 'sidebar__menu-item-all-sites',
+			slug: 'wp-admin',
+			title: translate( 'WP Admin' ),
+			url: `https://${ selectedSiteSlug }/wp-admin`,
+			className: 'sidebar__menu-item-wp-admin',
 		},
 		{
 			type: 'current-site',
 			url: `/home/${ siteDomain }`,
+			shouldHide: ! isDesktop,
 		},
 		{
-			slug: 'wp-admin',
-			title: translate( 'WP Admin' ),
+			slug: 'home',
+			title: translate( 'My Home' ),
 			type: 'menu-item',
-			url: `https://${ selectedSiteSlug }/wp-admin`,
-			className: 'sidebar__menu-item-wp-admin',
-			forceShowExternalIcon: true,
-		},
-		{
-			type: 'separator',
+			url: `/home/${ siteDomain }`,
+			shouldHide: isDesktop,
 		},
 		{
 			slug: 'upgrades',
@@ -49,10 +44,10 @@ export default function globalSiteSidebarMenu( {
 		},
 		{
 			slug: 'Add-Ons',
-			title: translate( 'Add-Ons' ),
+			title: translate( 'Add-ons' ),
 			type: 'menu-item',
 			url: `/add-ons/${ siteDomain }`,
-			shouldHide: ! shouldShowAddOns,
+			shouldHide: isStagingSite,
 		},
 		{
 			slug: 'domains',
@@ -78,7 +73,7 @@ export default function globalSiteSidebarMenu( {
 		},
 		{
 			slug: 'options-hosting-configuration-php',
-			title: translate( 'Hosting' ),
+			title: translate( 'Configuration' ),
 			type: 'menu-item',
 			url: `/hosting-config/${ siteDomain }`,
 		},
@@ -94,12 +89,6 @@ export default function globalSiteSidebarMenu( {
 			title: translate( 'Monetize' ),
 			type: 'menu-item',
 			url: `/earn/${ siteDomain }`,
-		},
-		{
-			slug: 'options-podcasting-php',
-			title: translate( 'Podcasting' ),
-			type: 'menu-item',
-			url: `/settings/podcasting/${ siteDomain }`,
 		},
 		{
 			slug: 'subscribers',

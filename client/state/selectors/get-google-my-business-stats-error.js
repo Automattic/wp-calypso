@@ -1,7 +1,7 @@
 import { get } from 'lodash';
 
 /**
- * Retrieves Google My Business stats error for the specified criteria.
+ * Retrieves Google Business Profile stats error for the specified criteria.
  * @param {Object} state - Global state tree
  * @param {number} siteId - Id of the site
  * @param {string} statType - Type of metrics (e.g. 'queries')

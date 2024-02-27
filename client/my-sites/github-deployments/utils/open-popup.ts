@@ -9,7 +9,17 @@ export const openPopup = < T = void >( { url, popupId, expectedEvent }: OpenPopu
 		let popup: Window | null;
 
 		try {
-			popup = window.open( url, popupId, 'height=600,width=700' );
+			const width = 700;
+			const height = 600;
+
+			const top = window.screen.height / 2 - height / 2;
+			const left = window.screen.width / 2 - width / 2;
+
+			popup = window.open(
+				url,
+				popupId,
+				`width=${ width },height=${ height },top=${ top },left=${ left }`
+			);
 		} catch {
 			return reject();
 		}

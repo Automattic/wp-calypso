@@ -129,3 +129,14 @@ export function getDomainPurchaseTypeAndPredicate(
 
 	return [ 'TRANSFER', isDomainTransfer ];
 }
+
+export const getDomainPurchase = ( purchases: ReceiptPurchase[] ) =>
+	purchases.find(
+		( purchase ) =>
+			isDomainMapping( purchase ) ||
+			isDomainTransfer( purchase ) ||
+			isDomainRegistration( purchase )
+	);
+
+export const isTitanWithoutMailboxes = ( selectedFeature: string ) =>
+	selectedFeature === 'email-license';

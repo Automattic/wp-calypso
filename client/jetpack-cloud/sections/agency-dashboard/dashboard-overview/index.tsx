@@ -16,6 +16,7 @@ import type { DashboardOverviewContextInterface, Site } from '../sites-overview/
 import '../style.scss';
 
 export default function DashboardOverview( {
+	path,
 	search,
 	currentPage,
 	filter,
@@ -54,6 +55,7 @@ export default function DashboardOverview( {
 
 	if ( hasFetched ) {
 		const context = {
+			path,
 			search,
 			currentPage,
 			filter,

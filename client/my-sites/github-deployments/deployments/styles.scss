@@ -30,17 +30,9 @@
 		font-weight: normal;
 	}
 
-	th:first-child {
-		width: 350px;
-	}
-
 	thead tr,
 	tbody tr:not(:last-of-type) {
 		border-bottom: 1px solid var(--color-border-subtle);
-	}
-
-	td {
-		vertical-align: middle !important;
 	}
 
 	tr th {
@@ -49,17 +41,48 @@
 		color: var(--studio-gray-60, #50575e);
 	}
 
-	tr td:last-child {
-		text-align: right;
+	td {
+		vertical-align: middle !important;
+		padding-right: 32px;
+
+		> * {
+			white-space: nowrap;
+		}
+
+		.github-deployments-list__repository-details {
+			white-space: normal;
+		}
+
+		&:last-child {
+			padding-left: 32px;
+			padding-right: 0;
+			text-align: right;
+		}
 	}
 
 	&__repository-details {
+		width: 200px;
 		display: flex;
 		flex-direction: column;
 		padding: 21px 0;
+		font-weight: 500;
+
+		button {
+			text-align: left;
+			padding: 0;
+			border: none;
+			color: var(--studio-gray-100, #101517);
+
+			&:hover {
+				text-decoration: underline;
+				color: var(--studio-gray-100, #101517);
+			}
+		}
+
 		span {
 			color: var(--Gray-Gray-40, #787c82);
-			font-size: $font-body-small;
+			font-size: $font-body-extra-small;
+			font-weight: 400;
 		}
 	}
 
@@ -67,9 +90,14 @@
 		display: flex;
 		flex-direction: column;
 		> div {
-			display: flex;
+			display: inline-flex;
 			gap: 8px;
-			font-size: $font-body-small;
+			font-size: $font-body-extra-small;
+			font-family: monospace;
+			span {
+				display: inline-flex;
+				align-items: center;
+			}
 		}
 	}
 
@@ -90,32 +118,32 @@
 	/* stylelint-disable-next-line scales/radii */
 	border-radius: 12px;
 
-	&__pending {
-		background-color: var(--Green-Green-5, #b8e6bf);
-	}
-
+	&__pending,
 	&__queued {
-		background-color: var(--Yellow-Yellow-5, #f5e6b3);
-	}
-
-	&__running {
-		background-color: var(--Green-Green-5, #b8e6bf);
+		border: 1px solid var(--Gray-Gray-10, #c3c4c7);
+		color: var(--Gray-Gray-60, #50575e);
+		background-color: var(--studio-white);
 	}
 
 	&__success {
 		background-color: var(--Green-Green-5, #b8e6bf);
+		color: var(--Green-Green-80, #00450c);
 	}
 
 	&__failed {
 		background-color: var(--Red-Red-5, #facfd2);
+		color: var(--Red-Red-80, #691c1c);
 	}
 
+	&__running,
 	&__building {
 		background-color: var(--Blue-Blue-5, #bbe0fa);
+		color: var(--Blue-Blue-80, #02395c);
 	}
 
 	&__warnings {
 		background-color: var(--Yellow-Yellow-5, #f5c4a1);
+		color: var(--Yellow-Yellow-80, #4f3500);
 	}
 
 	span {
@@ -143,5 +171,11 @@
 	.components-form-toggle,
 	.components-toggle-control__label {
 		line-height: 1;
+	}
+}
+
+.github-deployments-commit-details-popover {
+	.popover__inner {
+		padding: 16px;
 	}
 }
