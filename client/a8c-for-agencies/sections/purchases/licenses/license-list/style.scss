@@ -24,14 +24,14 @@
 		font-size: $font-body;
 
 		a {
-			color: var(--studio-gray-80);
+			color: var(--color-neutral-80);
 			text-decoration: underline;
 		}
 	}
 
 	.button {
 		margin-block: 1.75rem;
-		color: var(--color-accent);
+		color: var(--color-neutral);
 	}
 }
 

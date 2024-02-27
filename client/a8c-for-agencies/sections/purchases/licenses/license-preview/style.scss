@@ -6,7 +6,7 @@
 	font-size: 0.875rem;
 	/* stylelint-disable-next-line declaration-property-unit-allowed-list */
 	line-height: 1.25rem;
-	color: var(--studio-gray-70);
+	color: var(--color-neutral-70);
 	transition: margin 0.2s ease;
 
 	// Matching bottom margin of Card component.
@@ -44,7 +44,7 @@
 	font-weight: normal;
 	/* stylelint-disable-next-line declaration-property-unit-allowed-list */
 	line-height: 1.75rem;
-	color: var(--studio-gray-100);
+	color: var(--color-neutral-100);
 	overflow: hidden;
 	word-break: break-all;
 
@@ -71,7 +71,7 @@
 
 	&--is-just-issued,
 	&--is-assigned {
-		color: var(--studio-green-50);
+		color: var(--color-link);
 		opacity: 0;
 		animation: hide-just-issued-tag 5s linear;
 	}
@@ -81,7 +81,7 @@
 	}
 
 	&--is-revoked {
-		color: var(--studio-red-60);
+		color: var(--color-scary-60);
 	}
 
 	svg {
@@ -113,7 +113,7 @@
 .license-preview__copy-license-key {
 	&.button {
 		font-weight: 600;
-		color: var(--studio-gray-80);
+		color: var(--color-neutral-80);
 		border-color: var(--color-text-subtle);
 	}
 }
@@ -156,12 +156,12 @@ button {
 	&.license-actions__menu-item {
 		margin: 0 -1px;
 		border-style: solid;
-		border-color: var(--studio-gray-5);
+		border-color: var(--color-neutral-5);
 		border-width: 0 0 1px;
 		font-size: 0.875rem;
 		height: 40px;
 		box-sizing: border-box;
-		color: var(--studio-black);
+		color: var(--color-neutral);
 		display: flex;
 		align-items: center;
 		padding: 0 16px;
@@ -179,11 +179,11 @@ button {
 		&:hover,
 		&:focus {
 			border-style: solid;
-			border-color: var(--studio-gray-5);
+			border-color: var(--color-neutral-5);
 			border-width: 0 0 1px;
-			background: var(--studio-black);
+			background: var(--color-neutral);
 			cursor: pointer;
-			color: var(--studio-white);
+			color: var(--color-masterbar-item-hover-background);
 
 			&:last-child {
 				border-bottom-width: 0;
@@ -198,7 +198,7 @@ button {
 		}
 
 		&.is-destructive {
-			color: var(--studio-red-50);
+			color: var(--color-scary-50);
 		}
 	}
 }
@@ -259,10 +259,10 @@ button {
 	&,
 	&:hover,
 	&:focus {
-		color: var(--studio-red-50);
+		color: var(--color-scary-50);
 
 		.gridicon {
-			fill: var(--studio-red-50);
+			fill: var(--color-scary-50);
 		}
 	}
 }
