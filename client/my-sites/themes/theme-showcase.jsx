@@ -564,6 +564,7 @@ class ThemeShowcase extends Component {
 			isCollectionView,
 			lastNonEditorRoute,
 		} = this.props;
+		const { isDesignThemeModalVisible, isSiteSelectorModalVisible } = this.state;
 		const tier = this.props.tier || 'all';
 		const canonicalUrl = 'https://wordpress.com' + pathName;
 
@@ -621,7 +622,7 @@ class ThemeShowcase extends Component {
 					isSiteECommerceFreeTrial={ isSiteECommerceFreeTrial }
 				/>
 				<ThemeSiteSelectorModal
-					isOpen={ this.state.isSiteSelectorModalVisible }
+					isOpen={ isSiteSelectorModalVisible }
 					navigateOnClose={ false }
 					onClose={ ( args ) => {
 						if ( args?.siteSlug ) {
@@ -632,7 +633,7 @@ class ThemeShowcase extends Component {
 					} }
 				/>
 				<ThemeDesignYourOwnModal
-					isOpen={ this.state.isDesignThemeModalVisible }
+					isOpen={ isDesignThemeModalVisible }
 					onClose={ () => {
 						this.setState( { isDesignThemeModalVisible: false } );
 					} }
