@@ -30,7 +30,7 @@ const buildSendChatMessage = async (
 			: `${ wpcomBaseApiPath }${ botNameSlug }`;
 
 	return canAccessWpcomApis()
-		? odieWpcomSendSupportMessage( message, wpcomApiPathWithIds )
+		? odieWpcomSendSupportMessage( message, wpcomApiPathWithIds, version )
 		: apiFetch( {
 				path: apiPathWithIds,
 				method: 'POST',
