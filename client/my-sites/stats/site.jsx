@@ -400,7 +400,7 @@ class StatsSite extends Component {
 							statType="statsTopPosts"
 							showSummaryLink
 							className={ classNames(
-								'stats__flexible-grid-item--two-thirds',
+								'stats__flexible-grid-item--60',
 								'stats__flexible-grid-item--full--large',
 								'stats__flexible-grid-item--full--medium'
 							) }
@@ -413,7 +413,7 @@ class StatsSite extends Component {
 							statType="statsReferrers"
 							showSummaryLink
 							className={ classNames(
-								'stats__flexible-grid-item--one-third--once-space',
+								'stats__flexible-grid-item--40--once-space',
 								'stats__flexible-grid-item--full--large',
 								'stats__flexible-grid-item--full--medium'
 							) }
