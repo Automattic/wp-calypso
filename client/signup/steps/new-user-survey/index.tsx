@@ -10,14 +10,13 @@ import {
 	ButtonContainer,
 	CardContent,
 	OptionsContainer,
-	Shuffle,
 	StyledCard,
 	StyledFormTextInput,
 	StyledLabel,
 	SurveyFormContainer,
 	Viewport,
-	getCheckboxKey,
 } from './components';
+import Shuffle, { getCheckBoxKey } from './components/Shuffle';
 
 const defaultFormState = {
 	survey_goals_blogging: null,
@@ -159,7 +158,7 @@ function SurveyForm( props: Props ) {
 						</CardHeading>
 						<OptionsContainer>
 							<Shuffle
-								getChildKey={ getCheckboxKey }
+								getChildKey={ getCheckBoxKey }
 								childOrder={ orderGoals }
 								setChildOrder={ setOrderGoals }
 							>
@@ -203,7 +202,7 @@ function SurveyForm( props: Props ) {
 						</CardHeading>
 						<OptionsContainer>
 							<Shuffle
-								getChildKey={ getCheckboxKey }
+								getChildKey={ getCheckBoxKey }
 								childOrder={ orderDescribeYourself }
 								setChildOrder={ setOrderDescribeYourself }
 							>

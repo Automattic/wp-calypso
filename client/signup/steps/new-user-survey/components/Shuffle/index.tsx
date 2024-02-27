@@ -1,61 +1,6 @@
-import { Card, FormLabel } from '@automattic/components';
-import styled from '@emotion/styled';
-import { Children, ReactNode, isValidElement, useEffect } from 'react';
-import FormTextInput from 'calypso/components/forms/form-text-input';
+import React, { Children, ReactNode, isValidElement, useEffect } from 'react';
 
-export type Viewport = 'desktop' | 'mobile' | 'tablet';
-type PropsWithViewport = { currentViewport: Viewport };
-export const SurveyFormContainer = styled.div`
-	margin: 0
-		${ ( { currentViewport }: PropsWithViewport ) =>
-			currentViewport === 'desktop' ? 'auto' : '10px' };
-`;
-
-export const StyledCard = styled( Card )`
-	margin: 0 auto;
-	padding: 25px 30px;
-	display: flex;
-	justify-content: center;
-	width: ${ ( props: PropsWithViewport ) =>
-		props.currentViewport === 'mobile' ? '100%' : 'fit-content' };
-	min-width: ${ ( props: PropsWithViewport ) =>
-		props.currentViewport === 'mobile' ? 'unset' : '459px' };
-	&&&&& {
-		margin-bottom: 15px;
-	}
-`;
-
-export const StyledLabel = styled( FormLabel )`
-	&.form-label.form-label {
-		min-height: 32px;
-		display: flex;
-		align-items: center;
-	}
-`;
-
-export const StyledFormTextInput = styled< any >( FormTextInput )`
-	&.form-text-input.form-text-input {
-		margin-left: 24px;
-		max-width: 385px;
-		font-size: 100%;
-	}
-`;
-
-export const CardContent = styled.div`
-	width: 100%;
-`;
-
-export const OptionsContainer = styled.div`
-	padding: 0 20px;
-`;
-
-export const ButtonContainer = styled.div`
-	text-align: center;
-	padding-bottom: 10px;
-	padding-top: 10px;
-`;
-
-export const getCheckboxKey = ( child: ReactNode ): string => {
+export const getCheckBoxKey = ( child: ReactNode ): string => {
 	if ( ! isValidElement( child ) || ! child.props.children ) {
 		return '';
 	}
@@ -99,7 +44,7 @@ type ShuffleProps = {
  * @param {ShuffleProps} props - The props for the Shuffle component.
  * @returns {ReactNode} The shuffled children.
  */
-export const Shuffle = ( props: ShuffleProps ) => {
+const Shuffle = ( props: ShuffleProps ) => {
 	const { children, setChildOrder, childOrder, getChildKey } = props;
 
 	useEffect( () => {
@@ -126,6 +71,16 @@ export const Shuffle = ( props: ShuffleProps ) => {
 				childOrder.indexOf( getChildKey( child1 ) ) - childOrder.indexOf( getChildKey( child2 ) )
 			);
 		} );
+
+		sortedChildrenClone =
+			sortedChildrenClone.map( ( child, i ) => {
+				if ( isValidElement( child ) ) {
+					return React.cloneElement< any >( child, { ...child.props, 'data-testid': i + 1 } );
+				}
+				return child;
+			} ) ?? [];
 	}
 	return sortedChildrenClone;
 };
+
+export default Shuffle;
