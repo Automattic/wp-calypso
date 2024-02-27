@@ -34,14 +34,6 @@ export default function ( translate ) {
 			},
 		},
 		{
-			label: translate( 'Classic Dark' ),
-			value: 'classic-dark',
-			thumbnail: {
-				cssClass: 'is-classic-dark',
-				imageUrl: classicDarkImg,
-			},
-		},
-		{
 			label: translate( 'Aquatic' ),
 			value: 'aquatic',
 			thumbnail: {
@@ -71,6 +63,14 @@ export default function ( translate ) {
 			thumbnail: {
 				cssClass: 'is-classic-bright',
 				imageUrl: classicBrightImg,
+			},
+		},
+		{
+			label: translate( 'Classic Dark' ),
+			value: 'classic-dark',
+			thumbnail: {
+				cssClass: 'is-classic-dark',
+				imageUrl: classicDarkImg,
 			},
 		},
 		{
