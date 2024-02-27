@@ -266,10 +266,6 @@ body.is-section-promote-post-i2 .layout__content .campaign-item-details.main {
 				}
 			}
 
-			@media (max-width: $break-medium) {
-				flex-direction: column;
-			}
-
 			@media (max-width: ($break-medium + 278)) {
 				grid-template-columns: repeat(2, 1fr);
 			}
@@ -279,27 +275,10 @@ body.is-section-promote-post-i2 .layout__content .campaign-item-details.main {
 				flex-direction: column;
 				padding: 16px;
 			}
-		}
 
-		.campaign-item-details__main-stats-row-top {
-			display: grid;
-			grid-template-columns: 42% 29% 29%;
-			flex-grow: 1;
-			justify-content: space-between;
-
-			@media (max-width: ($break-medium + 278)) {
-				grid-template-columns: repeat(2, 1fr);
-			}
-
-			> div {
+			.campaign-item-details__label {
 				display: flex;
-				flex-direction: column;
-				padding: 16px;
-
-				> span {
-					display: flex;
-					align-items: center;
-				}
+				align-items: center;
 			}
 
 			.campaign-item-data__info-button {
@@ -328,7 +307,10 @@ body.is-section-promote-post-i2 .layout__content .campaign-item-details.main {
 						width: 44%;
 					}
 				}
+			}
 
+			@media (max-width: ($break-medium + 278)) {
+				grid-template-columns: repeat(2, 1fr);
 			}
 
 			.campaign-item-conversion-value__info-button,
@@ -746,11 +728,6 @@ body.is-section-promote-post-i2 .layout__content .campaign-item-details.main {
 		flex-grow: 1;
 		justify-content: space-between;
 
-
-		@media (max-width: $break-medium) {
-			flex-direction: column;
-		}
-
 		@media (max-width: ($break-medium + 278)) {
 			grid-template-columns: repeat(2, 1fr);
 		}
@@ -879,11 +856,7 @@ body.is-section-promote-post-i2 .layout__content .campaign-item-details.main {
 		}
 	}
 
-	.campaign-item-details__main-stats-row,
-	.campaign-item-details__main-stats-row-top,
-	.campaign-item-details__main-stats-row-bottom,
-	.campaign-item-details__secondary-stats-row,
-	.campaign-item-details__second-column {
+	.campaign-item-details__secondary-stats-row {
 		display: grid;
 		grid-template-columns: repeat(2, 1fr);
 		gap: 10px;
@@ -897,18 +870,6 @@ body.is-section-promote-post-i2 .layout__content .campaign-item-details.main {
 			@include campaign-data-row-font-mobile;
 		}
 	}
-
-	.campaign-item-details__secondary-stats-row {
-		@media (max-width: $break-medium) {
-			display: flex;
-			flex-direction: column;
-		}
-
-		@media (max-width: ($break-medium + 278)) {
-			grid-template-columns: repeat(2, 1fr);
-		}
-	}
-
 	.campaign-item__container .campaign-item-details__wrapper
 	.campaign-item-details__secondary-stats-row > div:not(.campaign-item-details__ad-destination).campaign-item-details__second-column
 	.campaign-item-details__second-column-languages {

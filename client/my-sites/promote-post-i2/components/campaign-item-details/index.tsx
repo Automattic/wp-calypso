@@ -481,7 +481,7 @@ export default function CampaignItemDetails( props: Props ) {
 						{ status !== 'created' && (
 							<div className="campaign-item-details__main-stats-container">
 								<div className="campaign-item-details__main-stats">
-									<div className="campaign-item-details__main-stats-row-top">
+									<div className="campaign-item-details__main-stats-row">
 										<div>
 											<span className="campaign-item-details__label">
 												{ translate( 'Impressions' ) }
@@ -625,7 +625,7 @@ export default function CampaignItemDetails( props: Props ) {
 									</>
 								</div>
 
-								<div className="campaign-item-details__secondary-stats-row-bottom">
+								<div className="campaign-item-details__secondary-stats-row">
 									<div>
 										<span className="campaign-item-details__label">
 											{ translate( 'Languages' ) }
@@ -682,15 +682,17 @@ export default function CampaignItemDetails( props: Props ) {
 									<div className="campaign-item-details__payment-row">
 										<div className="campaign-item-details__secondary-payment-row">
 											{ payment_method && card_name && (
-												<div className="campaign-item-details__payment-method">
-													<span className="campaign-item-details__label">
-														{ translate( 'Payment method' ) }
-													</span>
-													<span>{ card_name }</span>
-													{ payment_method && <span>{ payment_method }</span> }
-												</div>
+												<>
+													<div className="campaign-item-details__payment-method">
+														<span className="campaign-item-details__label">
+															{ translate( 'Payment method' ) }
+														</span>
+														<span>{ card_name }</span>
+														{ payment_method && <span>{ payment_method }</span> }
+													</div>
+													<hr className="campaign-item-details-footer-line" />
+												</>
 											) }
-											<hr className="campaign-item-details-footer-line" />
 											<div className="campaign-item-details__total">
 												{ credits ? (
 													<span className="campaign-item-details__label">
