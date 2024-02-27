@@ -2,7 +2,6 @@
  * @jest-environment jsdom
  */
 import { act, renderHook } from '@testing-library/react';
-import { useFeaturesList } from '../use-features-list';
 import { useHandleClickLink } from '../use-handle-click-link';
 import { useRecordTracksEventWithUserIsDevAccount } from '../use-record-tracks-event-with-user-is-dev-account';
 
@@ -22,53 +21,24 @@ describe( 'useHandleClickLink', () => {
 		);
 	} );
 
-	test( 'ensure useHandleClickLink handles support links as expected', () => {
-		const { result } = renderHook( () => useHandleClickLink() );
+	describe( 'ensure track events are recorded without the /support/ prefix', () => {
+		test.each( [
+			[ 'https://wordpress.com/support/feature', 'feature' ],
+			[ 'https://wordpress.com/support/category/feature', 'category/feature' ],
+			[ 'https://wordpress.com/support/feature-with-hyphens', 'feature-with-hyphens' ],
+			[ 'https://wordpress.com/support/supported/feature', 'supported/feature' ],
+		] )(
+			"for the URL %s a tracks event is recorded using the 'feature' value '%s'",
+			( href, feature ) => {
+				const { result } = renderHook( () => useHandleClickLink() );
+				const event = { currentTarget: { href } };
 
-		const event = {
-			currentTarget: {
-				href: 'https://wordpress.com/support/connect-to-ssh-on-wordpress-com',
-			},
-		};
-
-		act( () => {
-			result.current( event );
-		} );
-
-		expect( mockRecordTracksEventWithUserIsDevAccount ).toHaveBeenCalledWith( tracksHandle, {
-			feature: 'connect-to-ssh-on-wordpress-com',
-		} );
-	} );
-
-	test( 'ensure analytics are correct for each support link in useFeaturesList', () => {
-		const { result } = renderHook( () => useHandleClickLink() );
-		const { result: featuresResult } = renderHook( () => useFeaturesList() );
-
-		featuresResult.current
-			.filter( ( feature ) => feature.linkLearnMore )
-			.forEach( ( feature ) => {
-				const event = {
-					currentTarget: {
-						href: feature.linkLearnMore,
-					},
-				};
-
-				act( () => {
-					result.current( event );
-				} );
-
-				// Logic from useHandleClickLink to extract the slug
-				const prefixToRemove = '/support/';
-				const pathIndex = event.currentTarget.href.indexOf( prefixToRemove );
-				let expectedSlug = event.currentTarget.href;
-				if ( pathIndex !== -1 ) {
-					expectedSlug = expectedSlug.substring( pathIndex + prefixToRemove.length );
-				}
-				expectedSlug = expectedSlug.replace( /^\/|\/$/g, '' );
+				act( () => result.current( event ) );
 
 				expect( mockRecordTracksEventWithUserIsDevAccount ).toHaveBeenCalledWith( tracksHandle, {
-					feature: expectedSlug,
+					feature,
 				} );
-			} );
+			}
+		);
 	} );
 } );
