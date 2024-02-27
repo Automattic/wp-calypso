@@ -77,22 +77,22 @@ const useSingleSiteCommands = ( { navigate, currentRoute }: useCommandsParams ):
 	const commands: CapabilityCommand[] = [
 		{
 			name: 'viewMySites',
-			label: __( 'View my sites' ),
+			label: __( 'View my sites', __i18n_text_domain__ ),
 			searchLabel: [
-				_x( 'view my sites', 'Keyword for the View my sites command' ),
-				_x( 'manage sites', 'Keyword for the View my sites command' ),
-				_x( 'sites dashboard', 'Keyword for the View my sites command' ),
+				_x( 'view my sites', 'Keyword for the View my sites command', __i18n_text_domain__ ),
+				_x( 'manage sites', 'Keyword for the View my sites command', __i18n_text_domain__ ),
+				_x( 'sites dashboard', 'Keyword for the View my sites command', __i18n_text_domain__ ),
 			].join( ' ' ),
 			callback: commandNavigation( 'https://wordpress.com/sites' ),
 			icon: wordpressIcon,
 		},
 		{
 			name: 'getHelp',
-			label: __( 'Get help' ),
+			label: __( 'Get help', __i18n_text_domain__ ),
 			searchLabel: [
-				_x( 'get help', 'Keyword for the Get help command' ),
-				_x( 'contact support', 'Keyword for the Get help command' ),
-				_x( 'help center', 'Keyword for the Get help command' ),
+				_x( 'get help', 'Keyword for the Get help command', __i18n_text_domain__ ),
+				_x( 'contact support', 'Keyword for the Get help command', __i18n_text_domain__ ),
+				_x( 'help center', 'Keyword for the Get help command', __i18n_text_domain__ ),
 			].join( ' ' ),
 			// eslint-disable-next-line wpcalypso/i18n-unlocalized-url
 			callback: commandNavigation( 'https://wordpress.com/support' ),
@@ -100,7 +100,7 @@ const useSingleSiteCommands = ( { navigate, currentRoute }: useCommandsParams ):
 		},
 		{
 			name: 'clearCache',
-			label: __( 'Clear cache' ),
+			label: __( 'Clear cache', __i18n_text_domain__ ),
 			callback: commandNavigation( '/hosting-config/:site#cache' ),
 			capability: SiteCapabilities.MANAGE_OPTIONS,
 			siteType: SiteType.ATOMIC,
@@ -108,7 +108,7 @@ const useSingleSiteCommands = ( { navigate, currentRoute }: useCommandsParams ):
 		},
 		{
 			name: 'enableEdgeCache',
-			label: __( 'Enable edge cache' ),
+			label: __( 'Enable edge cache', __i18n_text_domain__ ),
 			callback: commandNavigation( '/hosting-config/:site#edge' ),
 			capability: SiteCapabilities.MANAGE_OPTIONS,
 			siteType: SiteType.ATOMIC,
@@ -116,7 +116,7 @@ const useSingleSiteCommands = ( { navigate, currentRoute }: useCommandsParams ):
 		},
 		{
 			name: 'disableEdgeCache',
-			label: __( 'Disable edge cache' ),
+			label: __( 'Disable edge cache', __i18n_text_domain__ ),
 			callback: commandNavigation( '/hosting-config/:site#edge' ),
 			capability: SiteCapabilities.MANAGE_OPTIONS,
 			siteType: SiteType.ATOMIC,
@@ -124,14 +124,26 @@ const useSingleSiteCommands = ( { navigate, currentRoute }: useCommandsParams ):
 		},
 		{
 			name: 'manageCacheSettings',
-			label: __( 'Manage cache settings' ),
+			label: __( 'Manage cache settings', __i18n_text_domain__ ),
 			searchLabel: [
-				_x( 'manage cache settings', 'Keyword for the Manage cache settings command' ),
-				_x( 'clear cache', 'Keyword for the Manage cache settings command' ),
-				_x( 'disable cache', 'Keyword for the Manage cache settings command' ),
-				_x( 'enable cache', 'Keyword for the Manage cache settings command' ),
-				_x( 'global edge cache', 'Keyword for the Manage cache settings command' ),
-				_x( 'purge cache', 'Keyword for the Manage cache settings command' ),
+				_x(
+					'manage cache settings',
+					'Keyword for the Manage cache settings command',
+					__i18n_text_domain__
+				),
+				_x( 'clear cache', 'Keyword for the Manage cache settings command', __i18n_text_domain__ ),
+				_x(
+					'disable cache',
+					'Keyword for the Manage cache settings command',
+					__i18n_text_domain__
+				),
+				_x( 'enable cache', 'Keyword for the Manage cache settings command', __i18n_text_domain__ ),
+				_x(
+					'global edge cache',
+					'Keyword for the Manage cache settings command',
+					__i18n_text_domain__
+				),
+				_x( 'purge cache', 'Keyword for the Manage cache settings command', __i18n_text_domain__ ),
 			].join( ' ' ),
 			callback: commandNavigation( '/hosting-config/:site#cache' ),
 			capability: SiteCapabilities.MANAGE_OPTIONS,
@@ -140,12 +152,16 @@ const useSingleSiteCommands = ( { navigate, currentRoute }: useCommandsParams ):
 		},
 		{
 			name: 'visitSite',
-			label: __( 'Visit site homepage' ),
+			label: __( 'Visit site homepage', __i18n_text_domain__ ),
 			searchLabel: [
-				_x( 'visit site homepage', 'Keyword for the Visit site dashboard command' ),
-				_x( 'visit site', 'Keyword for the Visit site dashboard command' ),
-				_x( 'see site', 'Keyword for the Visit site dashboard command' ),
-				_x( 'browse site', 'Keyword for the Visit site dashboard command' ),
+				_x(
+					'visit site homepage',
+					'Keyword for the Visit site dashboard command',
+					__i18n_text_domain__
+				),
+				_x( 'visit site', 'Keyword for the Visit site dashboard command', __i18n_text_domain__ ),
+				_x( 'see site', 'Keyword for the Visit site dashboard command', __i18n_text_domain__ ),
+				_x( 'browse site', 'Keyword for the Visit site dashboard command', __i18n_text_domain__ ),
 			].join( ' ' ),
 			context: [ '/:site' ],
 			callback: commandNavigation( ':site' ),
@@ -153,11 +169,15 @@ const useSingleSiteCommands = ( { navigate, currentRoute }: useCommandsParams ):
 		},
 		{
 			name: 'openSiteDashboard',
-			label: __( 'Open site dashboard' ),
+			label: __( 'Open site dashboard', __i18n_text_domain__ ),
 			searchLabel: [
-				_x( 'open site dashboard', 'Keyword for the Open site dashboard command' ),
-				_x( 'admin', 'Keyword for the Open site dashboard command' ),
-				_x( 'wp-admin', 'Keyword for the Open site dashboard command' ),
+				_x(
+					'open site dashboard',
+					'Keyword for the Open site dashboard command',
+					__i18n_text_domain__
+				),
+				_x( 'admin', 'Keyword for the Open site dashboard command', __i18n_text_domain__ ),
+				_x( 'wp-admin', 'Keyword for the Open site dashboard command', __i18n_text_domain__ ),
 			].join( ' ' ),
 			context: [ '/sites' ],
 			callback: commandNavigation( '/wp-admin' ),
@@ -165,19 +185,47 @@ const useSingleSiteCommands = ( { navigate, currentRoute }: useCommandsParams ):
 		},
 		{
 			name: 'openHostingConfiguration',
-			label: __( 'Open hosting configuration' ),
+			label: __( 'Open hosting configuration', __i18n_text_domain__ ),
 			searchLabel: [
-				_x( 'open hosting configuration', 'Keyword for the Open hosting configuration command' ),
-				_x( 'admin interface style', 'Keyword for the Open hosting configuration command' ),
-				_x( 'cache', 'Keyword for the Open hosting configuration command' ),
-				_x( 'database', 'Keyword for the Open hosting configuration command' ),
-				_x( 'global edge cache', 'Keyword for the Open hosting configuration command' ),
-				_x( 'hosting', 'Keyword for the Open hosting configuration command' ),
-				_x( 'mysql', 'Keyword for the Open hosting configuration command' ),
-				_x( 'phpmyadmin', 'Keyword for the Open hosting configuration command' ),
-				_x( 'php version', 'Keyword for the Open hosting configuration command' ),
-				_x( 'sftp/ssh credentials', 'Keyword for the Open hosting configuration command' ),
-				_x( 'wp-cli', 'Keyword for the Open hosting configuration command' ),
+				_x(
+					'open hosting configuration',
+					'Keyword for the Open hosting configuration command',
+					__i18n_text_domain__
+				),
+				_x(
+					'admin interface style',
+					'Keyword for the Open hosting configuration command',
+					__i18n_text_domain__
+				),
+				_x( 'cache', 'Keyword for the Open hosting configuration command', __i18n_text_domain__ ),
+				_x(
+					'database',
+					'Keyword for the Open hosting configuration command',
+					__i18n_text_domain__
+				),
+				_x(
+					'global edge cache',
+					'Keyword for the Open hosting configuration command',
+					__i18n_text_domain__
+				),
+				_x( 'hosting', 'Keyword for the Open hosting configuration command', __i18n_text_domain__ ),
+				_x( 'mysql', 'Keyword for the Open hosting configuration command', __i18n_text_domain__ ),
+				_x(
+					'phpmyadmin',
+					'Keyword for the Open hosting configuration command',
+					__i18n_text_domain__
+				),
+				_x(
+					'php version',
+					'Keyword for the Open hosting configuration command',
+					__i18n_text_domain__
+				),
+				_x(
+					'sftp/ssh credentials',
+					'Keyword for the Open hosting configuration command',
+					__i18n_text_domain__
+				),
+				_x( 'wp-cli', 'Keyword for the Open hosting configuration command', __i18n_text_domain__ ),
 			].join( ' ' ),
 			context: [ '/sites' ],
 			callback: commandNavigation( '/hosting-config/:site' ),
@@ -187,12 +235,24 @@ const useSingleSiteCommands = ( { navigate, currentRoute }: useCommandsParams ):
 		},
 		{
 			name: 'openPHPmyAdmin',
-			label: __( 'Open database in phpMyAdmin' ),
+			label: __( 'Open database in phpMyAdmin', __i18n_text_domain__ ),
 			searchLabel: [
-				_x( 'open database in phpmyadmin', 'Keyword for the Open database in phpMyAdmin command' ),
-				_x( 'database', 'Keyword for the Open database in phpMyAdmin command' ),
-				_x( 'mysql', 'Keyword for the Open database in phpMyAdmin command' ),
-				_x( 'phpmyadmin', 'Keyword for the Open database in phpMyAdmin command' ),
+				_x(
+					'open database in phpmyadmin',
+					'Keyword for the Open database in phpMyAdmin command',
+					__i18n_text_domain__
+				),
+				_x(
+					'database',
+					'Keyword for the Open database in phpMyAdmin command',
+					__i18n_text_domain__
+				),
+				_x( 'mysql', 'Keyword for the Open database in phpMyAdmin command', __i18n_text_domain__ ),
+				_x(
+					'phpmyadmin',
+					'Keyword for the Open database in phpMyAdmin command',
+					__i18n_text_domain__
+				),
 			].join( ' ' ),
 			context: [ '/sites' ],
 			callback: commandNavigation( '/hosting-config/:site#database-access' ),
@@ -202,12 +262,12 @@ const useSingleSiteCommands = ( { navigate, currentRoute }: useCommandsParams ):
 		},
 		{
 			name: 'openProfile',
-			label: __( 'Open my profile' ),
+			label: __( 'Open my profile', __i18n_text_domain__ ),
 			searchLabel: [
-				_x( 'open my profile', 'Keyword for the Open my profile command' ),
-				_x( 'account', 'Keyword for the Open my profile command' ),
-				_x( 'display name', 'Keyword for the Open my profile command' ),
-				_x( 'gravatar', 'Keyword for the Open my profile command' ),
+				_x( 'open my profile', 'Keyword for the Open my profile command', __i18n_text_domain__ ),
+				_x( 'account', 'Keyword for the Open my profile command', __i18n_text_domain__ ),
+				_x( 'display name', 'Keyword for the Open my profile command', __i18n_text_domain__ ),
+				_x( 'gravatar', 'Keyword for the Open my profile command', __i18n_text_domain__ ),
 			].join( ' ' ),
 			context: [ '/sites' ],
 			callback: commandNavigation( `/me` ),
@@ -215,23 +275,27 @@ const useSingleSiteCommands = ( { navigate, currentRoute }: useCommandsParams ):
 		},
 		{
 			name: 'viewDeveloperFeatures',
-			label: __( 'View developer features' ),
+			label: __( 'View developer features', __i18n_text_domain__ ),
 			searchLabel: [
-				_x( 'view developer features', 'Keyword for the View developer features command' ),
-				_x( 'profile', 'Keyword for the View developer features command' ),
+				_x(
+					'view developer features',
+					'Keyword for the View developer features command',
+					__i18n_text_domain__
+				),
+				_x( 'profile', 'Keyword for the View developer features command', __i18n_text_domain__ ),
 			].join( ' ' ),
 			callback: commandNavigation( `/me/developer` ),
 			icon: codeIcon,
 		},
 		{
 			name: 'openReader',
-			label: __( 'Open reader' ),
+			label: __( 'Open reader', __i18n_text_domain__ ),
 			callback: commandNavigation( `/read` ),
 			icon: <Gridicon icon="reader" />,
 		},
 		{
 			name: 'openJetpackSettings',
-			label: __( 'Open Jetpack settings' ),
+			label: __( 'Open Jetpack settings', __i18n_text_domain__ ),
 			callback: commandNavigation( `/wp-admin/admin.php?page=jetpack#/settings` ),
 			capability: SiteCapabilities.MANAGE_OPTIONS,
 			siteType: SiteType.ATOMIC,
@@ -239,7 +303,7 @@ const useSingleSiteCommands = ( { navigate, currentRoute }: useCommandsParams ):
 		},
 		{
 			name: 'openJetpackSettings',
-			label: __( 'Open Jetpack settings' ),
+			label: __( 'Open Jetpack settings', __i18n_text_domain__ ),
 			callback: commandNavigation( `INVESTIGATE IF WE NEED A SIMPLE SITE VERSION` ),
 			capability: SiteCapabilities.MANAGE_OPTIONS,
 			siteType: SiteType.SIMPLE,
@@ -247,7 +311,7 @@ const useSingleSiteCommands = ( { navigate, currentRoute }: useCommandsParams ):
 		},
 		{
 			name: 'manageJetpackModules',
-			label: __( 'Manage Jetpack modules' ),
+			label: __( 'Manage Jetpack modules', __i18n_text_domain__ ),
 			callback: commandNavigation( `/wp-admin/admin.php?page=jetpack_modules` ),
 			capability: SiteCapabilities.MANAGE_OPTIONS,
 			siteType: SiteType.ATOMIC,
@@ -255,20 +319,28 @@ const useSingleSiteCommands = ( { navigate, currentRoute }: useCommandsParams ):
 		},
 		{
 			name: 'importSite',
-			label: __( 'Import site to WordPress.com' ),
+			label: __( 'Import site to WordPress.com', __i18n_text_domain__ ),
 			searchLabel: [
-				_x( 'Import site to WordPress.com', 'Keyword for Import site to WordPress.com command' ),
-				_x( 'migrate site', 'Keyword for Import site to WordPress.com command' ),
+				_x(
+					'Import site to WordPress.com',
+					'Keyword for Import site to WordPress.com command',
+					__i18n_text_domain__
+				),
+				_x(
+					'migrate site',
+					'Keyword for Import site to WordPress.com command',
+					__i18n_text_domain__
+				),
 			].join( ' ' ),
 			callback: commandNavigation( `/start/import?ref=command-palette` ),
 			icon: downloadIcon,
 		},
 		{
 			name: 'addNewSite',
-			label: __( 'Add new site' ),
+			label: __( 'Add new site', __i18n_text_domain__ ),
 			searchLabel: [
-				_x( 'add new site', 'Keyword for the Add new site command' ),
-				_x( 'create site', 'Keyword for the Add new site command' ),
+				_x( 'add new site', 'Keyword for the Add new site command', __i18n_text_domain__ ),
+				_x( 'create site', 'Keyword for the Add new site command', __i18n_text_domain__ ),
 			].join( ' ' ),
 			context: [ '/sites' ],
 			callback: commandNavigation( 'https://wordpress.com/start/domains?source=command-palette' ),
@@ -276,27 +348,35 @@ const useSingleSiteCommands = ( { navigate, currentRoute }: useCommandsParams ):
 		},
 		{
 			name: 'openAccountSettings',
-			label: __( 'Open account settings' ),
+			label: __( 'Open account settings', __i18n_text_domain__ ),
 			searchLabel: [
-				_x( 'open account settings', 'Keyword for the Open account settings command' ),
-				_x( 'profile', 'Keyword for the Open account settings command' ),
-				_x( 'email', 'Keyword for the Open account settings command' ),
-				_x( 'language', 'Keyword for the Open account settings command' ),
+				_x(
+					'open account settings',
+					'Keyword for the Open account settings command',
+					__i18n_text_domain__
+				),
+				_x( 'profile', 'Keyword for the Open account settings command', __i18n_text_domain__ ),
+				_x( 'email', 'Keyword for the Open account settings command', __i18n_text_domain__ ),
+				_x( 'language', 'Keyword for the Open account settings command', __i18n_text_domain__ ),
 			].join( ' ' ),
 			callback: commandNavigation( `/me/account` ),
 			icon: profileIcon,
 		},
 		{
 			name: 'accessPurchases',
-			label: __( 'View my purchases' ),
+			label: __( 'View my purchases', __i18n_text_domain__ ),
 			searchLabel: [
-				_x( 'view my purchases', 'Keyword for the View my purchases command' ),
-				_x( 'manage purchases', 'Keyword for the View my purchases command' ),
-				_x( 'billing history', 'Keyword for the View my purchases command' ),
-				_x( 'credit card', 'Keyword for the View my purchases command' ),
-				_x( 'payment methods', 'Keyword for the View my purchases command' ),
-				_x( 'subscriptions', 'Keyword for the View my purchases command' ),
-				_x( 'upgrades', 'Keyword for the View my purchases command' ),
+				_x(
+					'view my purchases',
+					'Keyword for the View my purchases command',
+					__i18n_text_domain__
+				),
+				_x( 'manage purchases', 'Keyword for the View my purchases command', __i18n_text_domain__ ),
+				_x( 'billing history', 'Keyword for the View my purchases command', __i18n_text_domain__ ),
+				_x( 'credit card', 'Keyword for the View my purchases command', __i18n_text_domain__ ),
+				_x( 'payment methods', 'Keyword for the View my purchases command', __i18n_text_domain__ ),
+				_x( 'subscriptions', 'Keyword for the View my purchases command', __i18n_text_domain__ ),
+				_x( 'upgrades', 'Keyword for the View my purchases command', __i18n_text_domain__ ),
 			].join( ' ' ),
 			context: [ '/sites' ],
 			callback: commandNavigation( `/me/purchases` ),
@@ -304,24 +384,24 @@ const useSingleSiteCommands = ( { navigate, currentRoute }: useCommandsParams ):
 		},
 		{
 			name: 'registerDomain',
-			label: __( 'Register new domain' ),
+			label: __( 'Register new domain', __i18n_text_domain__ ),
 			context: [ '/sites' ],
 			callback: commandNavigation( `/start/domain/domain-only?ref=command-palette` ),
 			icon: domainsIcon,
 		},
 		{
 			name: 'manageDomains',
-			label: __( 'Manage domains' ),
+			label: __( 'Manage domains', __i18n_text_domain__ ),
 			searchLabel: [
-				_x( 'manage domains', 'Keyword for the Manage domains command' ),
-				_x( 'dns', 'Keyword for the Manage domains command' ),
-				_x( 'domain mapping', 'Keyword for the Manage domains command' ),
-				_x( 'domain registration', 'Keyword for the Manage domains command' ),
-				_x( 'domain transfer', 'Keyword for the Manage domains command' ),
-				_x( 'email forwarding', 'Keyword for the Manage domains command' ),
-				_x( 'nameservers', 'Keyword for the Manage domains command' ),
-				_x( 'subdomains', 'Keyword for the Manage domains command' ),
-				_x( 'whois', 'Keyword for the Manage domains command' ),
+				_x( 'manage domains', 'Keyword for the Manage domains command', __i18n_text_domain__ ),
+				_x( 'dns', 'Keyword for the Manage domains command', __i18n_text_domain__ ),
+				_x( 'domain mapping', 'Keyword for the Manage domains command', __i18n_text_domain__ ),
+				_x( 'domain registration', 'Keyword for the Manage domains command', __i18n_text_domain__ ),
+				_x( 'domain transfer', 'Keyword for the Manage domains command', __i18n_text_domain__ ),
+				_x( 'email forwarding', 'Keyword for the Manage domains command', __i18n_text_domain__ ),
+				_x( 'nameservers', 'Keyword for the Manage domains command', __i18n_text_domain__ ),
+				_x( 'subdomains', 'Keyword for the Manage domains command', __i18n_text_domain__ ),
+				_x( 'whois', 'Keyword for the Manage domains command', __i18n_text_domain__ ),
 			].join( ' ' ),
 			context: [ '/sites' ],
 			callback: commandNavigation( `/domains/manage` ),
@@ -329,12 +409,16 @@ const useSingleSiteCommands = ( { navigate, currentRoute }: useCommandsParams ):
 		},
 		{
 			name: 'manageDns',
-			label: __( 'Manage DNS records' ),
+			label: __( 'Manage DNS records', __i18n_text_domain__ ),
 			searchLabel: [
-				_x( 'manage dns records', 'Keyword for the Manage DNS records command' ),
-				_x( 'cname', 'Keyword for the Manage DNS records command' ),
-				_x( 'mx', 'Keyword for the Manage DNS records command' ),
-				_x( 'txt', 'Keyword for the Manage DNS records command' ),
+				_x(
+					'manage dns records',
+					'Keyword for the Manage DNS records command',
+					__i18n_text_domain__
+				),
+				_x( 'cname', 'Keyword for the Manage DNS records command', __i18n_text_domain__ ),
+				_x( 'mx', 'Keyword for the Manage DNS records command', __i18n_text_domain__ ),
+				_x( 'txt', 'Keyword for the Manage DNS records command', __i18n_text_domain__ ),
 			].join( ' ' ),
 			context: [ '/sites' ],
 			capability: SiteCapabilities.MANAGE_OPTIONS,
@@ -344,7 +428,7 @@ const useSingleSiteCommands = ( { navigate, currentRoute }: useCommandsParams ):
 		},
 		{
 			name: 'copySshConnectionString',
-			label: __( 'Copy SSH connection string' ),
+			label: __( 'Copy SSH connection string', __i18n_text_domain__ ),
 			callback: commandNavigation( '/hosting-config/:site#sftp-credentials' ),
 			capability: SiteCapabilities.MANAGE_OPTIONS,
 			siteType: SiteType.ATOMIC,
@@ -352,7 +436,7 @@ const useSingleSiteCommands = ( { navigate, currentRoute }: useCommandsParams ):
 		},
 		{
 			name: 'openSshCredentials',
-			label: __( 'Open SFTP/SSH credentials' ),
+			label: __( 'Open SFTP/SSH credentials', __i18n_text_domain__ ),
 			callback: commandNavigation( '/hosting-config/:site' ),
 			capability: SiteCapabilities.MANAGE_OPTIONS,
 			siteType: SiteType.ATOMIC,
@@ -360,7 +444,7 @@ const useSingleSiteCommands = ( { navigate, currentRoute }: useCommandsParams ):
 		},
 		{
 			name: 'resetSshSftpPassword',
-			label: __( 'Reset SFTP/SSH password' ),
+			label: __( 'Reset SFTP/SSH password', __i18n_text_domain__ ),
 			callback: commandNavigation( '/hosting-config/:site#sftp-credentials' ),
 			capability: SiteCapabilities.MANAGE_OPTIONS,
 			siteType: SiteType.ATOMIC,
@@ -368,17 +452,25 @@ const useSingleSiteCommands = ( { navigate, currentRoute }: useCommandsParams ):
 		},
 		{
 			name: 'openJetpackStats',
-			label: __( 'Open Jetpack Stats' ),
+			label: __( 'Open Jetpack Stats', __i18n_text_domain__ ),
 			callback: commandNavigation( '/stats/:site' ),
 			icon: statsIcon,
 		},
 		{
 			name: 'openActivityLog',
-			label: __( 'Open activity log' ),
+			label: __( 'Open activity log', __i18n_text_domain__ ),
 			searchLabel: [
-				_x( 'open activity log', 'Keyword for the Open activity log command' ),
-				_x( 'jetpack activity log', 'Keyword for the Open activity log command' ),
-				_x( 'audit log', 'Keyword for the Open activity log command' ),
+				_x(
+					'open activity log',
+					'Keyword for the Open activity log command',
+					__i18n_text_domain__
+				),
+				_x(
+					'jetpack activity log',
+					'Keyword for the Open activity log command',
+					__i18n_text_domain__
+				),
+				_x( 'audit log', 'Keyword for the Open activity log command', __i18n_text_domain__ ),
 			].join( ' ' ),
 			callback: commandNavigation( '/activity-log/:site' ),
 			// @TODO P2 filter
@@ -386,7 +478,7 @@ const useSingleSiteCommands = ( { navigate, currentRoute }: useCommandsParams ):
 		},
 		{
 			name: 'openJetpackBackup',
-			label: __( 'Open Jetpack Backup' ),
+			label: __( 'Open Jetpack Backup', __i18n_text_domain__ ),
 			callback: commandNavigation( '/backup/:site' ),
 			capability: SiteCapabilities.MANAGE_OPTIONS,
 			// @TODO P2 filter
@@ -394,7 +486,7 @@ const useSingleSiteCommands = ( { navigate, currentRoute }: useCommandsParams ):
 		},
 		{
 			name: 'viewSiteMonitoringMetrics',
-			label: __( 'View site monitoring metrics' ),
+			label: __( 'View site monitoring metrics', __i18n_text_domain__ ),
 			callback: commandNavigation( '/site-monitoring/:site' ),
 			capability: SiteCapabilities.MANAGE_OPTIONS,
 			siteType: SiteType.ATOMIC,
@@ -402,13 +494,13 @@ const useSingleSiteCommands = ( { navigate, currentRoute }: useCommandsParams ):
 		},
 		{
 			name: 'openPHPLogs',
-			label: __( 'Open PHP logs' ),
+			label: __( 'Open PHP logs', __i18n_text_domain__ ),
 			searchLabel: [
-				_x( 'open php logs', 'Keyword for the Open PHP logs command' ),
-				_x( 'error logs', 'Keyword for the Open PHP logs command' ),
-				_x( 'fatal errors', 'Keyword for the Open PHP logs command' ),
-				_x( 'php errors', 'Keyword for the Open PHP logs command' ),
-				_x( 'php warnings', 'Keyword for the Open PHP logs command' ),
+				_x( 'open php logs', 'Keyword for the Open PHP logs command', __i18n_text_domain__ ),
+				_x( 'error logs', 'Keyword for the Open PHP logs command', __i18n_text_domain__ ),
+				_x( 'fatal errors', 'Keyword for the Open PHP logs command', __i18n_text_domain__ ),
+				_x( 'php errors', 'Keyword for the Open PHP logs command', __i18n_text_domain__ ),
+				_x( 'php warnings', 'Keyword for the Open PHP logs command', __i18n_text_domain__ ),
 			].join( ' ' ),
 			callback: commandNavigation( '/site-monitoring/:site/php' ),
 			capability: SiteCapabilities.MANAGE_OPTIONS,
@@ -417,13 +509,17 @@ const useSingleSiteCommands = ( { navigate, currentRoute }: useCommandsParams ):
 		},
 		{
 			name: 'openWebServerLogs',
-			label: __( 'Open web server logs' ),
+			label: __( 'Open web server logs', __i18n_text_domain__ ),
 			searchLabel: [
-				_x( 'open web server logs', 'Keyword for the Open web server logs command' ),
-				_x( 'access logs', 'Keyword for the Open web server logs command' ),
-				_x( 'apache logs', 'Keyword for the Open web server logs command' ),
-				_x( 'nginx logs', 'Keyword for the Open web server logs command' ),
-				_x( 'request logs', 'Keyword for the Open web server logs command' ),
+				_x(
+					'open web server logs',
+					'Keyword for the Open web server logs command',
+					__i18n_text_domain__
+				),
+				_x( 'access logs', 'Keyword for the Open web server logs command', __i18n_text_domain__ ),
+				_x( 'apache logs', 'Keyword for the Open web server logs command', __i18n_text_domain__ ),
+				_x( 'nginx logs', 'Keyword for the Open web server logs command', __i18n_text_domain__ ),
+				_x( 'request logs', 'Keyword for the Open web server logs command', __i18n_text_domain__ ),
 			].join( ' ' ),
 			callback: commandNavigation( '/site-monitoring/:site/web' ),
 			capability: SiteCapabilities.MANAGE_OPTIONS,
@@ -432,14 +528,34 @@ const useSingleSiteCommands = ( { navigate, currentRoute }: useCommandsParams ):
 		},
 		{
 			name: 'manageStagingSites',
-			label: __( 'Manage staging sites' ),
+			label: __( 'Manage staging sites', __i18n_text_domain__ ),
 			context: [ '/hosting-config' ],
 			searchLabel: [
-				_x( 'manage staging sites', 'Keyword for the Manage staging sites command' ),
-				_x( 'add staging site', 'Keyword for the Manage staging sites command' ),
-				_x( 'create staging site', 'Keyword for the Manage staging sites command' ),
-				_x( 'delete staging site', 'Keyword for the Manage staging sites command' ),
-				_x( 'sync staging site', 'Keyword for the Manage staging sites command' ),
+				_x(
+					'manage staging sites',
+					'Keyword for the Manage staging sites command',
+					__i18n_text_domain__
+				),
+				_x(
+					'add staging site',
+					'Keyword for the Manage staging sites command',
+					__i18n_text_domain__
+				),
+				_x(
+					'create staging site',
+					'Keyword for the Manage staging sites command',
+					__i18n_text_domain__
+				),
+				_x(
+					'delete staging site',
+					'Keyword for the Manage staging sites command',
+					__i18n_text_domain__
+				),
+				_x(
+					'sync staging site',
+					'Keyword for the Manage staging sites command',
+					__i18n_text_domain__
+				),
 			].join( ' ' ),
 			callback: commandNavigation( '/hosting-config/:site#staging-site' ),
 			capability: SiteCapabilities.MANAGE_OPTIONS,
@@ -448,7 +564,7 @@ const useSingleSiteCommands = ( { navigate, currentRoute }: useCommandsParams ):
 		},
 		{
 			name: 'changePHPVersion',
-			label: __( 'Change PHP version' ),
+			label: __( 'Change PHP version', __i18n_text_domain__ ),
 			callback: commandNavigation( '/hosting-config/:site#web-server-settings' ),
 			capability: SiteCapabilities.MANAGE_OPTIONS,
 			siteType: SiteType.ATOMIC,
@@ -456,13 +572,18 @@ const useSingleSiteCommands = ( { navigate, currentRoute }: useCommandsParams ):
 		},
 		{
 			name: 'changeAdminInterfaceStyle',
-			label: __( 'Change admin interface style' ),
+			label: __( 'Change admin interface style', __i18n_text_domain__ ),
 			searchLabel: [
 				_x(
 					'change admin interface style',
-					'Keyword for the Change admin interface style command'
+					'Keyword for the Change admin interface style command',
+					__i18n_text_domain__
 				),
-				_x( 'wp-admin', 'Keyword for the Change admin interface style command' ),
+				_x(
+					'wp-admin',
+					'Keyword for the Change admin interface style command',
+					__i18n_text_domain__
+				),
 			].join( ' ' ),
 			callback: commandNavigation( '/hosting-config/:site#admin-interface-style' ),
 			capability: SiteCapabilities.MANAGE_OPTIONS,
@@ -471,11 +592,11 @@ const useSingleSiteCommands = ( { navigate, currentRoute }: useCommandsParams ):
 		},
 		{
 			name: 'addNewPost',
-			label: __( 'Add new post' ),
+			label: __( 'Add new post', __i18n_text_domain__ ),
 			searchLabel: [
-				_x( 'add new post', 'Keyword for the Add new post command' ),
-				_x( 'create post', 'Keyword for the Add new post command' ),
-				_x( 'write post', 'Keyword for the Add new post command' ),
+				_x( 'add new post', 'Keyword for the Add new post command', __i18n_text_domain__ ),
+				_x( 'create post', 'Keyword for the Add new post command', __i18n_text_domain__ ),
+				_x( 'write post', 'Keyword for the Add new post command', __i18n_text_domain__ ),
 			].join( ' ' ),
 			context: [ '/posts' ],
 			callback: commandNavigation( '/wp-admin/post-new.php' ),
@@ -484,10 +605,10 @@ const useSingleSiteCommands = ( { navigate, currentRoute }: useCommandsParams ):
 		},
 		{
 			name: 'managePosts',
-			label: __( 'Manage posts' ),
+			label: __( 'Manage posts', __i18n_text_domain__ ),
 			searchLabel: [
-				_x( 'manage posts', 'Keyword for the Manage posts command' ),
-				_x( 'edit posts', 'Keyword for the Manage posts command' ),
+				_x( 'manage posts', 'Keyword for the Manage posts command', __i18n_text_domain__ ),
+				_x( 'edit posts', 'Keyword for the Manage posts command', __i18n_text_domain__ ),
 			].join( ' ' ),
 			callback: commandNavigation( '/wp-admin/edit.php' ),
 			capability: SiteCapabilities.EDIT_POSTS,
@@ -495,10 +616,14 @@ const useSingleSiteCommands = ( { navigate, currentRoute }: useCommandsParams ):
 		},
 		{
 			name: 'viewMediaUploads',
-			label: __( 'View media uploads' ),
+			label: __( 'View media uploads', __i18n_text_domain__ ),
 			searchLabel: [
-				_x( 'view media uploads', 'Keyword for the View media uploads command' ),
-				_x( 'manage uploads', 'Keyword for the View media uploads command' ),
+				_x(
+					'view media uploads',
+					'Keyword for the View media uploads command',
+					__i18n_text_domain__
+				),
+				_x( 'manage uploads', 'Keyword for the View media uploads command', __i18n_text_domain__ ),
 			].join( ' ' ),
 			callback: commandNavigation( '/wp-admin/upload.php' ),
 			capability: SiteCapabilities.UPLOAD_FILES,
@@ -506,18 +631,18 @@ const useSingleSiteCommands = ( { navigate, currentRoute }: useCommandsParams ):
 		},
 		{
 			name: 'uploadMedia',
-			label: __( 'Upload media' ),
+			label: __( 'Upload media', __i18n_text_domain__ ),
 			callback: commandNavigation( '/wp-admin/media-new.php' ),
 			capability: SiteCapabilities.UPLOAD_FILES,
 			icon: mediaIcon,
 		},
 		{
 			name: 'managePages',
-			label: __( 'Manage pages' ),
+			label: __( 'Manage pages', __i18n_text_domain__ ),
 			searchLabel: [
-				_x( 'manage pages', 'Keyword for the Manage pages command' ),
-				_x( 'edit pages', 'Keyword for the Manage pages command' ),
-				_x( 'delete pages', 'Keyword for the Manage pages command' ),
+				_x( 'manage pages', 'Keyword for the Manage pages command', __i18n_text_domain__ ),
+				_x( 'edit pages', 'Keyword for the Manage pages command', __i18n_text_domain__ ),
+				_x( 'delete pages', 'Keyword for the Manage pages command', __i18n_text_domain__ ),
 			].join( ' ' ),
 			callback: commandNavigation( '/wp-admin/edit.php?post_type=page' ),
 			capability: SiteCapabilities.EDIT_PAGES,
@@ -525,11 +650,11 @@ const useSingleSiteCommands = ( { navigate, currentRoute }: useCommandsParams ):
 		},
 		{
 			name: 'addNewPage',
-			label: __( 'Add new page' ),
+			label: __( 'Add new page', __i18n_text_domain__ ),
 			searchLabel: [
-				_x( 'add new page', 'Keyword for the Add new page command' ),
-				_x( 'create page', 'Keyword for the Add new page command' ),
-				_x( 'write page', 'Keyword for the Add new page command' ),
+				_x( 'add new page', 'Keyword for the Add new page command', __i18n_text_domain__ ),
+				_x( 'create page', 'Keyword for the Add new page command', __i18n_text_domain__ ),
+				_x( 'write page', 'Keyword for the Add new page command', __i18n_text_domain__ ),
 			].join( ' ' ),
 			context: [ '/pages' ],
 			callback: commandNavigation( '/wp-admin/post-new.php?post_type=page' ),
@@ -538,11 +663,11 @@ const useSingleSiteCommands = ( { navigate, currentRoute }: useCommandsParams ):
 		},
 		{
 			name: 'manageComments',
-			label: __( 'Manage comments' ),
+			label: __( 'Manage comments', __i18n_text_domain__ ),
 			searchLabel: [
-				_x( 'manage comments', 'Keyword for the Manage comments command' ),
-				_x( 'edit comments', 'Keyword for the Manage comments command' ),
-				_x( 'delete comments', 'Keyword for the Manage comments command' ),
+				_x( 'manage comments', 'Keyword for the Manage comments command', __i18n_text_domain__ ),
+				_x( 'edit comments', 'Keyword for the Manage comments command', __i18n_text_domain__ ),
+				_x( 'delete comments', 'Keyword for the Manage comments command', __i18n_text_domain__ ),
 			].join( ' ' ),
 			callback: commandNavigation( '/wp-admin/edit-comments.php' ),
 			capability: SiteCapabilities.MODERATE_COMMENTS,
@@ -550,12 +675,12 @@ const useSingleSiteCommands = ( { navigate, currentRoute }: useCommandsParams ):
 		},
 		{
 			name: 'manageThemes',
-			label: __( 'Manage themes' ),
+			label: __( 'Manage themes', __i18n_text_domain__ ),
 			searchLabel: [
-				_x( 'manage themes', 'Keyword for the Manage themes command' ),
-				_x( 'activate theme', 'Keyword for the Manage themes command' ),
-				_x( 'install theme', 'Keyword for the Manage themes command' ),
-				_x( 'delete theme', 'Keyword for the Manage themes command' ),
+				_x( 'manage themes', 'Keyword for the Manage themes command', __i18n_text_domain__ ),
+				_x( 'activate theme', 'Keyword for the Manage themes command', __i18n_text_domain__ ),
+				_x( 'install theme', 'Keyword for the Manage themes command', __i18n_text_domain__ ),
+				_x( 'delete theme', 'Keyword for the Manage themes command', __i18n_text_domain__ ),
 			].join( ' ' ),
 			callback: commandNavigation( '/wp-admin/themes.php' ),
 			capability: SiteCapabilities.EDIT_THEME_OPTIONS,
@@ -563,11 +688,11 @@ const useSingleSiteCommands = ( { navigate, currentRoute }: useCommandsParams ):
 		},
 		{
 			name: 'installTheme',
-			label: __( 'Install theme' ),
+			label: __( 'Install theme', __i18n_text_domain__ ),
 			searchLabel: [
-				_x( 'install theme', 'Keyword for the Install theme command' ),
-				_x( 'add theme', 'Keyword for the Install theme command' ),
-				_x( 'upload theme', 'Keyword for the Install theme command' ),
+				_x( 'install theme', 'Keyword for the Install theme command', __i18n_text_domain__ ),
+				_x( 'add theme', 'Keyword for the Install theme command', __i18n_text_domain__ ),
+				_x( 'upload theme', 'Keyword for the Install theme command', __i18n_text_domain__ ),
 			].join( ' ' ),
 			callback: commandNavigation( '/wp-admin/theme-install.php' ),
 			capability: SiteCapabilities.EDIT_THEME_OPTIONS,
@@ -575,14 +700,14 @@ const useSingleSiteCommands = ( { navigate, currentRoute }: useCommandsParams ):
 		},
 		{
 			name: 'managePlugins',
-			label: __( 'Manage plugins' ),
+			label: __( 'Manage plugins', __i18n_text_domain__ ),
 			searchLabel: [
-				_x( 'manage plugins', 'Keyword for the Manage plugins command' ),
-				_x( 'activate plugin', 'Keyword for the Manage plugins command' ),
-				_x( 'deactivate plugin', 'Keyword for the Manage plugins command' ),
-				_x( 'install plugin', 'Keyword for the Manage plugins command' ),
-				_x( 'delete plugin', 'Keyword for the Manage plugins command' ),
-				_x( 'update plugin', 'Keyword for the Manage plugins command' ),
+				_x( 'manage plugins', 'Keyword for the Manage plugins command', __i18n_text_domain__ ),
+				_x( 'activate plugin', 'Keyword for the Manage plugins command', __i18n_text_domain__ ),
+				_x( 'deactivate plugin', 'Keyword for the Manage plugins command', __i18n_text_domain__ ),
+				_x( 'install plugin', 'Keyword for the Manage plugins command', __i18n_text_domain__ ),
+				_x( 'delete plugin', 'Keyword for the Manage plugins command', __i18n_text_domain__ ),
+				_x( 'update plugin', 'Keyword for the Manage plugins command', __i18n_text_domain__ ),
 			].join( ' ' ),
 			callback: commandNavigation( '/wp-admin/plugins.php' ),
 			capability: SiteCapabilities.ACTIVATE_PLUGINS,
@@ -590,11 +715,11 @@ const useSingleSiteCommands = ( { navigate, currentRoute }: useCommandsParams ):
 		},
 		{
 			name: 'installPlugin',
-			label: __( 'Install plugin' ),
+			label: __( 'Install plugin', __i18n_text_domain__ ),
 			searchLabel: [
-				_x( 'install plugin', 'Keyword for the Install plugin command' ),
-				_x( 'add plugin', 'Keyword for the Install plugin command' ),
-				_x( 'upload plugin', 'Keyword for the Install plugin command' ),
+				_x( 'install plugin', 'Keyword for the Install plugin command', __i18n_text_domain__ ),
+				_x( 'add plugin', 'Keyword for the Install plugin command', __i18n_text_domain__ ),
+				_x( 'upload plugin', 'Keyword for the Install plugin command', __i18n_text_domain__ ),
 			].join( ' ' ),
 			callback: commandNavigation( '/wp-admin/plugin-install.php' ),
 			capability: SiteCapabilities.ACTIVATE_PLUGINS,
@@ -602,11 +727,11 @@ const useSingleSiteCommands = ( { navigate, currentRoute }: useCommandsParams ):
 		},
 		{
 			name: 'changePlan',
-			label: __( 'Change site plan' ),
+			label: __( 'Change site plan', __i18n_text_domain__ ),
 			searchLabel: [
-				_x( 'upgrade plan', 'Keyword for the Change site plan command' ),
-				_x( 'change plan', 'Keyword for the Change site plan command' ),
-				_x( 'add plan', 'Keyword for the Change site plan command' ),
+				_x( 'upgrade plan', 'Keyword for the Change site plan command', __i18n_text_domain__ ),
+				_x( 'change plan', 'Keyword for the Change site plan command', __i18n_text_domain__ ),
+				_x( 'add plan', 'Keyword for the Change site plan command', __i18n_text_domain__ ),
 			].join( ' ' ),
 			context: [ '/sites' ],
 			callback: commandNavigation( '/plans/:site' ),
@@ -615,11 +740,11 @@ const useSingleSiteCommands = ( { navigate, currentRoute }: useCommandsParams ):
 		},
 		{
 			name: 'manageMyPlan',
-			label: __( 'Manage site plan' ),
+			label: __( 'Manage site plan', __i18n_text_domain__ ),
 			searchLabel: [
-				_x( 'upgrade plan', 'Keyword for the Manage site plan command' ),
-				_x( 'manage plan', 'Keyword for the Manage site plan command' ),
-				_x( 'plan features', 'Keyword for the Manage site plan command' ),
+				_x( 'upgrade plan', 'Keyword for the Manage site plan command', __i18n_text_domain__ ),
+				_x( 'manage plan', 'Keyword for the Manage site plan command', __i18n_text_domain__ ),
+				_x( 'plan features', 'Keyword for the Manage site plan command', __i18n_text_domain__ ),
 			].join( ' ' ),
 			callback: commandNavigation( '/plans/my-plan/:site' ),
 			capability: SiteCapabilities.MANAGE_OPTIONS,
@@ -627,14 +752,14 @@ const useSingleSiteCommands = ( { navigate, currentRoute }: useCommandsParams ):
 		},
 		{
 			name: 'manageUsers',
-			label: __( 'Manage users' ),
+			label: __( 'Manage users', __i18n_text_domain__ ),
 			searchLabel: [
-				_x( 'manage users', 'Keyword for the Manage users command' ),
-				_x( 'add user', 'Keyword for the Manage users command' ),
-				_x( 'delete user', 'Keyword for the Manage users command' ),
-				_x( 'edit user', 'Keyword for the Manage users command' ),
-				_x( 'remove user', 'Keyword for the Manage users command' ),
-				_x( 'update user', 'Keyword for the Manage users command' ),
+				_x( 'manage users', 'Keyword for the Manage users command', __i18n_text_domain__ ),
+				_x( 'add user', 'Keyword for the Manage users command', __i18n_text_domain__ ),
+				_x( 'delete user', 'Keyword for the Manage users command', __i18n_text_domain__ ),
+				_x( 'edit user', 'Keyword for the Manage users command', __i18n_text_domain__ ),
+				_x( 'remove user', 'Keyword for the Manage users command', __i18n_text_domain__ ),
+				_x( 'update user', 'Keyword for the Manage users command', __i18n_text_domain__ ),
 			].join( ' ' ),
 			callback: commandNavigation( '/wp-admin/users.php' ),
 			capability: SiteCapabilities.LIST_USERS,
@@ -642,11 +767,11 @@ const useSingleSiteCommands = ( { navigate, currentRoute }: useCommandsParams ):
 		},
 		{
 			name: 'addNewUser',
-			label: __( 'Add new user' ),
+			label: __( 'Add new user', __i18n_text_domain__ ),
 			searchLabel: [
-				_x( 'add new user', 'Keyword for the Add new user command' ),
-				_x( 'create user', 'Keyword for the Add new user command' ),
-				_x( 'invite user', 'Keyword for the Add new user command' ),
+				_x( 'add new user', 'Keyword for the Add new user command', __i18n_text_domain__ ),
+				_x( 'create user', 'Keyword for the Add new user command', __i18n_text_domain__ ),
+				_x( 'invite user', 'Keyword for the Add new user command', __i18n_text_domain__ ),
 			].join( ' ' ),
 			callback: commandNavigation( '/wp-admin/user-new.php' ),
 			capability: SiteCapabilities.LIST_USERS,
@@ -654,11 +779,11 @@ const useSingleSiteCommands = ( { navigate, currentRoute }: useCommandsParams ):
 		},
 		{
 			name: 'addSubscribers',
-			label: __( 'Add subscribers' ),
+			label: __( 'Add subscribers', __i18n_text_domain__ ),
 			searchLabel: [
-				_x( 'add subscribers', 'Keyword for the Add subscribers command' ),
-				_x( 'import subscribers', 'Keyword for the Add subscribers command' ),
-				_x( 'upload subscribers', 'Keyword for the Add subscribers command' ),
+				_x( 'add subscribers', 'Keyword for the Add subscribers command', __i18n_text_domain__ ),
+				_x( 'import subscribers', 'Keyword for the Add subscribers command', __i18n_text_domain__ ),
+				_x( 'upload subscribers', 'Keyword for the Add subscribers command', __i18n_text_domain__ ),
 			].join( ' ' ),
 			context: [ '/subscribers' ],
 			callback: commandNavigation( '/subscribers/:site#add-subscribers' ),
@@ -667,14 +792,14 @@ const useSingleSiteCommands = ( { navigate, currentRoute }: useCommandsParams ):
 		},
 		{
 			name: 'manageSubscribers',
-			label: __( 'Manage subscribers' ),
+			label: __( 'Manage subscribers', __i18n_text_domain__ ),
 			callback: commandNavigation( '/subscribers/:site' ),
 			capability: SiteCapabilities.MANAGE_OPTIONS,
 			icon: subscriberIcon,
 		},
 		{
 			name: 'downloadSubscribers',
-			label: __( 'Download subscribers as CSV' ),
+			label: __( 'Download subscribers as CSV', __i18n_text_domain__ ),
 			context: [ '/subscribers' ],
 			// @TODO This might not work since blog != blogId. We might need to implement a :siteId
 			callback: commandNavigation(
@@ -686,7 +811,7 @@ const useSingleSiteCommands = ( { navigate, currentRoute }: useCommandsParams ):
 		},
 		{
 			name: 'import',
-			label: __( 'Import content to the site' ),
+			label: __( 'Import content to the site', __i18n_text_domain__ ),
 			context: [ '/posts' ],
 			callback: commandNavigation( '/import/:site' ),
 			capability: SiteCapabilities.MANAGE_OPTIONS,
@@ -694,7 +819,7 @@ const useSingleSiteCommands = ( { navigate, currentRoute }: useCommandsParams ):
 		},
 		{
 			name: 'openWooCommerceSettings',
-			label: __( 'Open WooCommerce settings' ),
+			label: __( 'Open WooCommerce settings', __i18n_text_domain__ ),
 			// @TODO This doesn't work on atomic sites.
 			callback: commandNavigation( '/wp-admin/admin.php?page=wc-admin' ),
 			capability: SiteCapabilities.MANAGE_OPTIONS,
@@ -703,7 +828,7 @@ const useSingleSiteCommands = ( { navigate, currentRoute }: useCommandsParams ):
 		},
 		{
 			name: 'openWooCommerceSettings',
-			label: __( 'Open WooCommerce settings' ),
+			label: __( 'Open WooCommerce settings', __i18n_text_domain__ ),
 			// @TODO This doesn't work on atomic sites.
 			callback: commandNavigation( '/woocommerce-installation/:site' ),
 			capability: SiteCapabilities.MANAGE_OPTIONS,
@@ -712,7 +837,7 @@ const useSingleSiteCommands = ( { navigate, currentRoute }: useCommandsParams ):
 		},
 		{
 			name: 'manageSettingsGeneral',
-			label: __( 'Manage general settings' ),
+			label: __( 'Manage general settings', __i18n_text_domain__ ),
 			context: [ '/settings' ],
 			callback: commandNavigation( '/wp-admin/options-general.php' ),
 			capability: SiteCapabilities.MANAGE_OPTIONS,
@@ -720,7 +845,7 @@ const useSingleSiteCommands = ( { navigate, currentRoute }: useCommandsParams ):
 		},
 		{
 			name: 'manageSettingsWriting',
-			label: __( 'Manage writing settings' ),
+			label: __( 'Manage writing settings', __i18n_text_domain__ ),
 			context: [ '/settings' ],
 			callback: commandNavigation( '/wp-admin/options-general.php' ),
 			capability: SiteCapabilities.MANAGE_OPTIONS,
@@ -728,7 +853,7 @@ const useSingleSiteCommands = ( { navigate, currentRoute }: useCommandsParams ):
 		},
 		{
 			name: 'manageSettingsReading',
-			label: __( 'Manage reading settings' ),
+			label: __( 'Manage reading settings', __i18n_text_domain__ ),
 			context: [ '/settings' ],
 			callback: commandNavigation( '/wp-admin/options-reading.php' ),
 			capability: SiteCapabilities.MANAGE_OPTIONS,
@@ -736,7 +861,7 @@ const useSingleSiteCommands = ( { navigate, currentRoute }: useCommandsParams ):
 		},
 		{
 			name: 'manageSettingsDiscussion',
-			label: __( 'Manage discussion settings' ),
+			label: __( 'Manage discussion settings', __i18n_text_domain__ ),
 			context: [ '/settings' ],
 			callback: commandNavigation( '/wp-admin/options-discussion.php' ),
 			capability: SiteCapabilities.MANAGE_OPTIONS,
@@ -744,7 +869,7 @@ const useSingleSiteCommands = ( { navigate, currentRoute }: useCommandsParams ):
 		},
 		{
 			name: 'manageSettingsNewsletter',
-			label: __( 'Manage newsletter settings' ),
+			label: __( 'Manage newsletter settings', __i18n_text_domain__ ),
 			context: [ '/settings' ],
 			callback: commandNavigation( '/settings/newsletter/:site' ),
 			capability: SiteCapabilities.MANAGE_OPTIONS,
@@ -752,7 +877,7 @@ const useSingleSiteCommands = ( { navigate, currentRoute }: useCommandsParams ):
 		},
 		{
 			name: 'manageSettingsPodcast',
-			label: __( 'Manage podcast settings' ),
+			label: __( 'Manage podcast settings', __i18n_text_domain__ ),
 			context: [ '/settings' ],
 			callback: commandNavigation( '/settings/podcasting/:site' ),
 			capability: SiteCapabilities.MANAGE_OPTIONS,
