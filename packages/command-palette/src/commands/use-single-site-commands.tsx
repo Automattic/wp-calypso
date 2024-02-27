@@ -309,6 +309,24 @@ const useSingleSiteCommands = ( { navigate, currentRoute }: useCommandsParams ):
 			icon: <JetpackLogo className="gridicon" size={ 18 } />,
 		},
 		{
+			name: 'addJetpack',
+			label: __( 'Add Jetpack to a self-hosted site', __i18n_text_domain__ ),
+			searchLabel: [
+				_x(
+					'Add Jetpack to a self-hosted site',
+					'Keyword for Add Jetpack to a self-hosted site command',
+					__i18n_text_domain__
+				),
+				_x(
+					'connect jetpack',
+					'Keyword for Add Jetpack to a self-hosted site command',
+					__i18n_text_domain__
+				),
+			].join( ' ' ),
+			callback: commandNavigation( `/jetpack/connect?cta_from=command-palette` ),
+			icon: <JetpackLogo className="gridicon" size={ 18 } />,
+		},
+		{
 			name: 'manageJetpackModules',
 			label: __( 'Manage Jetpack modules', __i18n_text_domain__ ),
 			callback: commandNavigation( `/wp-admin/admin.php?page=jetpack_modules` ),
