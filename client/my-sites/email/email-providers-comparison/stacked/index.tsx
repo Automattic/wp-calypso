@@ -74,7 +74,7 @@ const EmailProvidersStackedComparison = ( {
 
 	const domains = useSelector( ( state ) => getDomainsBySiteId( state, selectedSite?.ID ) );
 	const hasLoadedDomains = useSelector( ( state ) =>
-		hasLoadedSiteDomains( state, selectedSite?.ID )
+		hasLoadedSiteDomains( state, selectedSite?.ID ?? null )
 	);
 
 	const domain = getSelectedDomain( { domains, selectedDomainName } );
