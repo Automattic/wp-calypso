@@ -13,9 +13,9 @@ interface Props {
  */
 const useAddOnPurchaseStatus = ( { addOnMeta, selectedSiteId }: Props ) => {
 	const translate = useTranslate();
-	const matchingPurchases = Purchases.useSitePurchasesByQuery( {
+	const matchingPurchases = Purchases.useSitePurchasesByProductSlug( {
 		siteId: selectedSiteId,
-		query: { productSlug: addOnMeta.productSlug },
+		productSlug: addOnMeta.productSlug,
 	} );
 	const isSiteFeature = useSelector(
 		( state ) =>
