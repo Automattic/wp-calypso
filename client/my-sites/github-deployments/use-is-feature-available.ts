@@ -14,7 +14,7 @@ const fetchFeatureAvailability = ( {
 	siteId,
 }: GitHubDeploymentsAvailableRequestParams ): GitHubDeploymentsAvailableResponse =>
 	wp.req.get( {
-		path: `/sites/${ siteId }/hosting/github/available`,
+		path: `/hosting/github/available?blog_id=${ siteId }`,
 		apiNamespace: 'wpcom/v2',
 	} );
 
