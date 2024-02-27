@@ -203,12 +203,39 @@ describe( 'ChangePaymentMethod', () => {
 		expect( await screen.findByLabelText( new RegExp( storedCard1.name ) ) ).toBeInTheDocument();
 	} );
 
-	it( 'renders a new credit card payment method', async () => {
+	it( 'renders a new credit card payment method that reads "Credit or debit card"', async () => {
 		const queryClient = new QueryClient();
 
 		const paymentMethods: Partial< StoredPaymentMethod >[] = [ storedCard1 ];
-		const hasExistingCardMethods = paymentMethods.length > 0;
-		let labelText = 'Credit or debit card';
+		nock( 'https://public-api.wordpress.com' )
+			.get( '/rest/v1.2/me/payment-methods?type=card&expired=exclude' )
+			.reply( 200, paymentMethods );
+		nock( 'https://public-api.wordpress.com' )
+			.get( '/rest/v1.1/me/stripe-configuration' )
+			.reply( 200, stripeConfiguration );
+
+		render(
+			<ReduxProvider store={ createTestReduxStore() }>
+				<QueryClientProvider client={ queryClient }>
+					<ChangePaymentMethod
+						getManagePurchaseUrlFor={ ( siteSlug: string, purchaseId: number ) =>
+							`/manage-purchase-url/${ siteSlug }/${ purchaseId }`
+						}
+						purchaseId={ 1 }
+						purchaseListUrl="purchase-list-url"
+						siteSlug="example.com"
+					/>
+				</QueryClientProvider>
+			</ReduxProvider>
+		);
+
+		expect( await screen.findByLabelText( 'New credit or debit card' ) ).toBeInTheDocument();
+	} );
+
+	it( 'renders a new credit card payment method that reads "New credit or debit card"', async () => {
+		const queryClient = new QueryClient();
+
+		const paymentMethods: Partial< StoredPaymentMethod >[] = [];
 
 		nock( 'https://public-api.wordpress.com' )
 			.get( '/rest/v1.2/me/payment-methods?type=card&expired=exclude' )
@@ -232,11 +259,7 @@ describe( 'ChangePaymentMethod', () => {
 			</ReduxProvider>
 		);
 
-		if ( hasExistingCardMethods ) {
-			labelText = 'New credit or debit card';
-		}
-
-		expect( await screen.findByLabelText( labelText ) ).toBeInTheDocument();
+		expect( await screen.findByLabelText( 'Credit or debit card' ) ).toBeInTheDocument();
 	} );
 
 	it( 'renders a PayPal payment method', async () => {
