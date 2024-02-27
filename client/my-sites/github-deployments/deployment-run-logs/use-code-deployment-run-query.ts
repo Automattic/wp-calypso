@@ -19,9 +19,9 @@ export type DeploymentRunStatus =
 export interface DeploymentRun {
 	id: number;
 	code_deployment_id: number;
-	created_on: number;
-	started_on: number;
-	completed_on: number;
+	created_on: string;
+	started_on: string;
+	completed_on: string;
 	status: DeploymentRunStatus;
 	failure_code: string;
 	triggered_by_user_id: number;
@@ -33,6 +33,12 @@ export interface Metadata {
 	commit_message: string;
 	commit_sha: string;
 	job_id: number;
+	author: {
+		avatar_url: string;
+		id: number;
+		name: string;
+		profile_url: string;
+	};
 }
 
 export const useCodeDeploymentsRunsQuery = (

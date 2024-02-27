@@ -66,7 +66,6 @@ const Home = ( {
 	site,
 	siteId,
 	trackViewSiteAction,
-	trackOpenWPAdminAction,
 	isSiteWooExpressEcommerceTrial,
 	ssoModuleActive,
 	fetchingJetpackModules,
@@ -145,24 +144,16 @@ const Home = ( {
 		return <WooCommerceHomePlaceholder />;
 	}
 
-	const headerActions =
-		config.isEnabled( 'layout/dotcom-nav-redesign' ) &&
-		'wp-admin' === site?.options?.wpcom_admin_interface ? (
-			<>
-				<Button href={ site.URL } onClick={ trackViewSiteAction } target="_blank">
-					{ translate( 'View site' ) }
-				</Button>
-				<Button href={ site.URL + '/wp-admin' } onClick={ trackOpenWPAdminAction } primary>
-					{ translate( 'Open WP Admin' ) }
-				</Button>
-			</>
-		) : (
-			<>
-				<Button href={ site.URL } onClick={ trackViewSiteAction } target="_blank">
-					{ translate( 'Visit site' ) }
-				</Button>
-			</>
-		);
+	const headerActions = (
+		<>
+			<Button href={ site.URL } onClick={ trackViewSiteAction } target="_blank">
+				{ config.isEnabled( 'layout/dotcom-nav-redesign' ) &&
+				'wp-admin' === site?.options?.wpcom_admin_interface
+					? translate( 'View site' )
+					: translate( 'Visit site' ) }
+			</Button>
+		</>
+	);
 	const header = (
 		<div className="customer-home__heading">
 			<NavigationHeader
@@ -333,16 +324,9 @@ const trackViewSiteAction = ( isStaticHomePage ) =>
 		bumpStat( 'calypso_customer_home', 'my_site_view_site' )
 	);
 
-const trackOpenWPAdminAction = () =>
-	composeAnalytics(
-		recordTracksEvent( 'calypso_customer_home_my_site_open_wpadmin_click', {} ),
-		bumpStat( 'calypso_customer_home', 'my_site_open_wpadmin' )
-	);
-
 const mapDispatchToProps = {
 	trackViewSiteAction,
 	verifyIcannEmail,
-	trackOpenWPAdminAction,
 };
 
 const mergeProps = ( stateProps, dispatchProps, ownProps ) => {
@@ -351,7 +335,6 @@ const mergeProps = ( stateProps, dispatchProps, ownProps ) => {
 		...ownProps,
 		...stateProps,
 		trackViewSiteAction: () => dispatchProps.trackViewSiteAction( isStaticHomePage ),
-		trackOpenWPAdminAction: () => dispatchProps.trackOpenWPAdminAction(),
 		handleVerifyIcannEmail: dispatchProps.verifyIcannEmail,
 	};
 };
