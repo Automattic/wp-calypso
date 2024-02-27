@@ -8,6 +8,7 @@ import {
 	isDomainTransfer,
 	isDomainMapping,
 	isDomainRegistration,
+	JETPACK_SCAN_PRODUCTS,
 } from '@automattic/calypso-products';
 import JetpackBackupPluginImage from 'calypso/assets/images/jetpack/jetpack-plugin-image-backup.svg';
 import JetpackBoostPluginImage from 'calypso/assets/images/jetpack/jetpack-plugin-image-boost.svg';
@@ -26,12 +27,13 @@ const buildKeyValuePairByProductSlugs = (
 	return productSlugs.reduce( ( map, productSlug ) => ( { ...map, [ productSlug ]: value } ), {} );
 };
 
-const WPORG_PLUGIN_SLUG_MAP: Record< string, string > = {
+export const WPORG_PLUGIN_SLUG_MAP: Record< string, string > = {
 	...buildKeyValuePairByProductSlugs( JETPACK_BACKUP_PRODUCTS, 'jetpack-backup' ),
 	...buildKeyValuePairByProductSlugs( JETPACK_BOOST_PRODUCTS, 'jetpack-boost' ),
 	...buildKeyValuePairByProductSlugs( JETPACK_SOCIAL_PRODUCTS, 'jetpack-social' ),
 	...buildKeyValuePairByProductSlugs( JETPACK_SEARCH_PRODUCTS, 'jetpack-search' ),
 	...buildKeyValuePairByProductSlugs( JETPACK_VIDEOPRESS_PRODUCTS, 'jetpack-videopress' ),
+	...buildKeyValuePairByProductSlugs( JETPACK_SCAN_PRODUCTS, 'jetpack-protect' ),
 };
 
 const JETPACK_PLUGIN_IMAGE_MAP: Record< string, string > = {
