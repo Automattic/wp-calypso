@@ -82,17 +82,21 @@ export const validateTimeSlot = ( newSchedule: TimeSlot, existingSchedules: Time
 
 /**
  * Validate plugins
- * compared with existing plugins
+ * compared with existing scheduled plugins
  */
 export const validatePlugins = ( plugins: string[], existingPlugins: Array< string[] > = [] ) => {
 	let error = '';
 
 	if ( plugins.length === 0 ) {
 		error = 'Please select at least one plugin to update.';
-	}
-	// TODO: Placeholder; Add a check for the same set of plugins
-	else if ( existingPlugins.length > 0 ) {
-		error = 'Please select a different set of plugins, as this one has already been chosen.';
+	} else if ( existingPlugins.length ) {
+		const _plugins = [ ...plugins ].sort();
+
+		existingPlugins.forEach( ( existing ) => {
+			if ( JSON.stringify( _plugins ) === JSON.stringify( [ ...existing ].sort() ) ) {
+				error = 'Please select a different set of plugins, as this one has already been chosen.';
+			}
+		} );
 	}
 
 	return error;
