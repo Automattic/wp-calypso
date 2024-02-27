@@ -1,9 +1,16 @@
+import { Card } from '@automattic/components';
 import {
 	MigrationStatus,
 	type MigrationStatusError,
 	type SiteDetails,
 } from '@automattic/data-stores';
 import { Hooray, SubTitle, Title } from '@automattic/onboarding';
+import {
+	CardBody,
+	FlexItem,
+	__experimentalHStack as HStack,
+	__experimentalVStack as VStack,
+} from '@wordpress/components';
 import { createElement, createInterpolateElement } from '@wordpress/element';
 import { localize } from 'i18n-calypso';
 import { get } from 'lodash';
@@ -248,13 +255,58 @@ export class ImportEverything extends SectionMigrate {
 				<SubTitle>
 					{ translate( 'Congratulations. Your content was successfully imported.' ) }
 				</SubTitle>
-				<DoneButton
-					label={ translate( 'View site' ) }
-					onSiteViewClick={ () => {
-						this.props.recordTracksEvent( 'calypso_site_importer_view_site' );
-						stepNavigator?.goToSiteViewPage?.();
-					} }
-				/>
+
+				<Card size="small">
+					<CardBody>
+						<HStack spacing={ 3 } justify="space-between">
+							{ /*<FlexBlock>thisismydomain.com</FlexBlock>*/ }
+							<FlexItem>
+								<p>thisismydomain.com</p>
+							</FlexItem>
+							<FlexItem>
+								<DoneButton
+									label={ translate( 'View site' ) }
+									onSiteViewClick={ () => {
+										this.props.recordTracksEvent( 'calypso_site_importer_view_site' );
+										stepNavigator?.goToSiteViewPage?.();
+									} }
+								/>
+								<DoneButton
+									isPrimary={ false }
+									label={ translate( 'Go to WP Admin' ) }
+									onSiteViewClick={ () => {
+										this.props.recordTracksEvent( 'calypso_site_importer_view_site' );
+										stepNavigator?.goToSiteViewPage?.();
+									} }
+								/>
+							</FlexItem>
+						</HStack>
+					</CardBody>
+				</Card>
+
+				<div style={ { display: 'flex', flexDirection: 'row' } }>
+					<VStack spacing="1" className="screen-confirmation__list-item-wrapper">
+						<strong className="screen-confirmation__list-item-title">
+							Manage your site from anywhere
+						</strong>
+						<p className="screen-confirmation__list-item-description">
+							The Jetpack mobile app for iOS and Android makes managing your email, domain, and
+							website even simpler.
+						</p>
+						<p>Get the app</p>
+					</VStack>
+
+					<VStack spacing="1" className="screen-confirmation__list-item-wrapper">
+						<strong className="screen-confirmation__list-item-title">
+							Migration questions? find answers
+						</strong>
+						<p className="screen-confirmation__list-item-description">
+							Explore our comprehensive support guides and find solutions to all your email
+							tinquiries.
+						</p>
+						<p>Migration support resources</p>
+					</VStack>
+				</div>
 			</div>
 		);
 	}
@@ -295,6 +347,7 @@ export class ImportEverything extends SectionMigrate {
 	}
 
 	render() {
+		// return this.renderMigrationComplete();
 		if ( this.props.forceError ) {
 			return this.renderMigrationError( this.props.forceError );
 		}
