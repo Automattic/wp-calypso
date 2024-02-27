@@ -54,8 +54,7 @@
 		"@wordpress/url": "^3.53.0",
 		"classnames": "^2.3.2",
 		"cmdk": "^0.2.0",
-		"utility-types": "^3.10.0",
-		"wpcom": "workspace:^"
+		"utility-types": "^3.10.0"
 	},
 	"peerDependencies": {
 		"@wordpress/data": "^9.22.0",

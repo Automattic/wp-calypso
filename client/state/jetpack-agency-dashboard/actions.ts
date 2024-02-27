@@ -46,7 +46,7 @@ export const updateDashboardURLQueryArgs = ( {
 	const sortField = sort ? sort.field : params.get( 'sort_field' );
 	const sortDirection = sort ? sort.direction : params.get( 'sort_direction' );
 
-	page(
+	page.replace(
 		addQueryArgs(
 			{
 				...( searchQuery && { s: searchQuery } ),

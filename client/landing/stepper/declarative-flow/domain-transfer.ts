@@ -25,6 +25,7 @@ const domainTransfer: Flow = {
 	get title() {
 		return translate( 'Bulk domain transfer' );
 	},
+	isSignupFlow: false,
 	useSteps() {
 		return [
 			{

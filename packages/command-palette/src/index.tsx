@@ -9,17 +9,14 @@ import classnames from 'classnames';
 import { Command, useCommandState } from 'cmdk';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useCommandsParams } from './commands/types';
-import useAtomicCommands from './commands/use-atomic-commands';
-import useAtomicLimitedCommands from './commands/use-atomic-limited-commands';
-import useWpcomSimpleSiteCommands from './commands/use-wpcom-simple-site-commands';
-import useWpcomSimpleSiteLimitedCommands from './commands/use-wpcom-simple-site-limited-commands';
+import useSingleSiteCommands from './commands/use-single-site-commands';
 import { COMMAND_SEPARATOR, useCommandFilter } from './use-command-filter';
 import {
 	Command as PaletteCommand,
 	CommandCallBackParams,
 	useCommandPalette,
 } from './use-command-palette';
-import type { WPCOM } from 'wpcom';
+import type { SiteExcerptData } from '@automattic/sites';
 import '@wordpress/commands/build-style/style.css';
 
 interface CommandMenuGroupProps
@@ -32,8 +29,9 @@ interface CommandMenuGroupProps
 	setEmptyListNotice?: ( message: string ) => void;
 	navigate: ( path: string, openInNewTab?: boolean ) => void;
 	useCommands: ( options: useCommandsParams ) => PaletteCommand[];
-	wpcom: WPCOM;
 	currentRoute: string | null;
+	useSites: () => SiteExcerptData[];
+	userCapabilities: { [ key: number ]: { [ key: string ]: boolean } };
 }
 
 const StyledCommandsMenuContainer = styled.div( {
@@ -109,8 +107,9 @@ export function CommandMenuGroup( {
 	setEmptyListNotice,
 	navigate,
 	useCommands,
-	wpcom,
 	currentRoute,
+	useSites,
+	userCapabilities,
 }: CommandMenuGroupProps ) {
 	const { commands, filterNotice, emptyListNotice } = useCommandPalette( {
 		currentSiteId,
@@ -119,8 +118,9 @@ export function CommandMenuGroup( {
 		search,
 		navigate,
 		useCommands,
-		wpcom,
 		currentRoute,
+		useSites,
+		userCapabilities,
 	} );
 
 	useEffect( () => {
@@ -234,10 +234,11 @@ interface CommandPaletteProps {
 	currentSiteId: number | null;
 	navigate: ( path: string, openInNewTab?: boolean ) => void;
 	useCommands: ( options: useCommandsParams ) => PaletteCommand[];
-	wpcom: WPCOM;
 	currentRoute: string | null;
 	isOpenGlobal?: boolean;
 	onClose?: () => void;
+	useSites?: () => SiteExcerptData[];
+	userCapabilities: { [ key: number ]: { [ key: string ]: boolean } };
 }
 
 const NotFoundMessage = ( {
@@ -268,10 +269,11 @@ const CommandPalette = ( {
 	currentSiteId,
 	navigate,
 	useCommands,
-	wpcom,
 	currentRoute,
 	isOpenGlobal,
 	onClose = () => {},
+	useSites = () => [],
+	userCapabilities = {},
 }: CommandPaletteProps ) => {
 	const [ placeHolderOverride, setPlaceholderOverride ] = useState( '' );
 	const [ search, setSearch ] = useState( '' );
@@ -426,8 +428,9 @@ const CommandPalette = ( {
 							setEmptyListNotice={ setEmptyListNotice }
 							navigate={ navigate }
 							useCommands={ useCommands }
-							wpcom={ wpcom }
 							currentRoute={ currentRoute }
+							useSites={ useSites }
+							userCapabilities={ userCapabilities }
 						/>
 					</Command.List>
 				</Command>
@@ -440,9 +443,4 @@ const CommandPalette = ( {
 export default CommandPalette;
 export type { Command, CommandCallBackParams } from './use-command-palette';
 export type { useCommandsParams } from './commands/types';
-export {
-	useAtomicCommands,
-	useAtomicLimitedCommands,
-	useWpcomSimpleSiteCommands,
-	useWpcomSimpleSiteLimitedCommands,
-};
+export { useSingleSiteCommands };

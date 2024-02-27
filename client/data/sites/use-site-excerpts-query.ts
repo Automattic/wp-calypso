@@ -1,15 +1,12 @@
 import config from '@automattic/calypso-config';
+import { SITE_EXCERPT_REQUEST_FIELDS, SITE_EXCERPT_REQUEST_OPTIONS } from '@automattic/sites';
 import { useQuery } from '@tanstack/react-query';
 import { getJetpackSiteCollisions, getUnmappedUrl } from 'calypso/lib/site/utils';
 import { urlToSlug, withoutHttp } from 'calypso/lib/url';
 import wpcom from 'calypso/lib/wp';
 import { useStore } from 'calypso/state';
 import getSites from 'calypso/state/selectors/get-sites';
-import {
-	SITE_EXCERPT_REQUEST_FIELDS,
-	SITE_EXCERPT_REQUEST_OPTIONS,
-} from './site-excerpt-constants';
-import { SiteExcerptData, SiteExcerptNetworkData } from './site-excerpt-types';
+import type { SiteExcerptData, SiteExcerptNetworkData } from '@automattic/sites';
 
 export const USE_SITE_EXCERPTS_QUERY_KEY = 'sites-dashboard-sites-data';
 

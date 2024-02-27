@@ -60,6 +60,24 @@
 		}
 	}
 
+	&__no-results {
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		width: 517px;
+		margin: 64px auto;
+		text-align: center;
+		p:first-child {
+			line-height: 24px;
+			font-size: $font-body;
+			font-weight: 500;
+			margin-bottom: 8px;
+		}
+		p:last-of-type {
+			line-height: 20px;
+		}
+	}
+
 	&__repository-details {
 		width: 200px;
 		display: flex;

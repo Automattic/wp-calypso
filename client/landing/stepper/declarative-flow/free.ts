@@ -33,6 +33,7 @@ const free: Flow = {
 	get title() {
 		return translate( 'Free' );
 	},
+	isSignupFlow: true,
 	useSteps() {
 		const { resetOnboardStore } = useDispatch( ONBOARD_STORE );
 
