@@ -69,6 +69,10 @@
 	&.is-warning {
 		border-left: 3px solid var(--color-warning-20);
 	}
+
+	&.is-primary {
+		border-left: 3px solid var(--color-accent);
+	}
 }
 
 // Clickable Card

@@ -44,6 +44,7 @@ import {
 import { TrialAcknowledgeModal } from '../plans/trials/trial-acknowledge/acknowlege-modal';
 import { WithOnclickTrialRequest } from '../plans/trials/trial-acknowledge/with-onclick-trial-request';
 import CacheCard from './cache-card';
+import { GitHubDeploymentsCard } from './github-deployments-card';
 import HostingActivateStatus from './hosting-activate-status';
 import { HostingUpsellNudge } from './hosting-upsell-nudge';
 import PhpMyAdminCard from './phpmyadmin-card';
@@ -92,6 +93,11 @@ const MainCards = ( {
 	siteId,
 } ) => {
 	const mainCards = [
+		{
+			feature: 'github-deployments',
+			content: <GitHubDeploymentsCard />,
+			type: 'advanced',
+		},
 		{
 			feature: 'sftp',
 			content: <SFTPCard disabled={ isAdvancedHostingDisabled } />,

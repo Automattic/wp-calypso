@@ -74,6 +74,16 @@
 					position: absolute;
 					left: 24px;
 				}
+
+				&.is-highlight {
+					padding-left: 69px;
+
+					> .card-icon,
+					> .material-icon,
+					> .gridicon {
+						left: 21px;
+					}
+				}
 			}
 		}
 	}
