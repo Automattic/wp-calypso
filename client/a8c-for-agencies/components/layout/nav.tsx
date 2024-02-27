@@ -57,18 +57,20 @@ export default function LayoutNavigation( {
 	children,
 }: LayoutNavigationProps ) {
 	return (
-		<SectionNav
-			className={ classNames( 'a4a-layout__navigation', className ) }
-			applyUpdatedStyles
-			selectedText={
-				<span>
-					{ selectedText }
-					{ Number.isInteger( selectedCount ) && <Count count={ selectedCount } compact /> }
-				</span>
-			}
-			selectedCount={ selectedCount }
-		>
-			{ children }
-		</SectionNav>
+		<div className="a4a-layout__navigation-wrapper">
+			<SectionNav
+				className={ classNames( 'a4a-layout__navigation', className ) }
+				applyUpdatedStyles
+				selectedText={
+					<span>
+						{ selectedText }
+						{ Number.isInteger( selectedCount ) && <Count count={ selectedCount } compact /> }
+					</span>
+				}
+				selectedCount={ selectedCount }
+			>
+				{ children }
+			</SectionNav>
+		</div>
 	);
 }
