@@ -42,7 +42,7 @@ function odieWpcomSendSupportMessage( message: Message, path: string, version?: 
 	return wpcom.req.post( {
 		path,
 		apiNamespace: 'wpcom/v2',
-		body: { message: message.content, version },
+		body: { message: message.content, version: version },
 	} );
 }
 
