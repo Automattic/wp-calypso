@@ -1,9 +1,16 @@
 import {
 	PLAN_BUSINESS,
 	PLAN_BUSINESS_MONTHLY,
+	PLAN_BUSINESS_2_YEARS,
+	PLAN_BUSINESS_3_YEARS,
 	PLAN_PERSONAL,
+	TERM_ANNUALLY,
+	TERM_BIENNIALLY,
+	TERM_MONTHLY,
+	TERM_TRIENNIALLY,
 	WPCOM_FEATURES_PREMIUM_THEMES_UNLIMITED,
-	isFreePlanProduct,
+	getPlan,
+	isFreePlan,
 } from '@automattic/calypso-products';
 import { Button } from '@automattic/components';
 import {
@@ -61,7 +68,7 @@ import { useIsPluginBundleEligible } from '../../../../hooks/use-is-plugin-bundl
 import { useQuery } from '../../../../hooks/use-query';
 import { useSiteData } from '../../../../hooks/use-site-data';
 import { ONBOARD_STORE, SITE_STORE } from '../../../../stores';
-import { goToCheckout } from '../../../../utils/checkout';
+import { getBusinessPlanByTerm, goToCheckout } from '../../../../utils/checkout';
 import {
 	getDesignEventProps,
 	getDesignTypeProps,
@@ -368,11 +375,11 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 		) || [];
 	const marketplaceProductSlug =
 		marketplaceThemeProducts.length !== 0
-			? getPreferredBillingCycleProductSlug(
-					marketplaceThemeProducts,
-					site?.plan && ! isFreePlanProduct( site?.plan ) ? site.plan : undefined
-			  )
+			? getPreferredBillingCycleProductSlug( marketplaceThemeProducts )
 			: null;
+	const currentPlanTerm = ! isFreePlan( site?.plan?.product_slug || '' )
+		? getPlan( site?.plan?.product_slug || '' )?.term || ''
+		: TERM_MONTHLY;
 
 	const selectedMarketplaceProduct =
 		marketplaceThemeProducts.find(
@@ -462,8 +469,7 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 		if ( themeHasBundle ) {
 			plan = 'business-bundle';
 		} else if ( selectedDesign?.is_externally_managed ) {
-			const businessPlan =
-				selectedMarketplaceProduct.product_term === 'year' ? PLAN_BUSINESS : PLAN_BUSINESS_MONTHLY;
+			const businessPlan = getBusinessPlanByTerm( currentPlanTerm );
 			plan = ! isExternallyManagedThemeAvailable ? businessPlan : '';
 		} else if ( selectedDesign?.design_tier === PERSONAL_THEME ) {
 			plan = PLAN_PERSONAL;
@@ -799,6 +805,7 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 					isMarketplacePlanSubscriptionNeeeded={ ! isExternallyManagedThemeAvailable }
 					isMarketplaceThemeSubscriptionNeeded={ isMarketplaceThemeSubscriptionNeeded }
 					marketplaceProduct={ selectedMarketplaceProduct }
+					currentPlanTerm={ currentPlanTerm }
 					closeModal={ closeUpgradeModal }
 					checkout={ handleCheckout }
 				/>
@@ -931,5 +938,19 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 		/>
 	);
 };
+
+function getBusinessPlanByTerm( term: string ) {
+	switch ( term ) {
+		case TERM_TRIENNIALLY:
+			return PLAN_BUSINESS_3_YEARS;
+		case TERM_BIENNIALLY:
+			return PLAN_BUSINESS_2_YEARS;
+		case TERM_ANNUALLY:
+			return PLAN_BUSINESS;
+		case TERM_MONTHLY:
+		default:
+			return PLAN_BUSINESS_MONTHLY;
+	}
+}
 
 export default UnifiedDesignPickerStep;
