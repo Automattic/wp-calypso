@@ -15,6 +15,8 @@ import wpcom from 'calypso/lib/wp';
 import { domainManagementList } from 'calypso/my-sites/domains/paths';
 import { preload } from 'calypso/sections-helper';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import { openCommandPalette } from 'calypso/state/command-palette/actions';
+import { isCommandPaletteOpen as getIsCommandPaletteOpen } from 'calypso/state/command-palette/selectors';
 import {
 	getCurrentUser,
 	getCurrentUserDate,
@@ -503,6 +505,23 @@ class MasterbarLoggedIn extends Component {
 		);
 	}
 
+	renderCommandPaletteSearch() {
+		const handleClick = () => {
+			this.props.recordTracksEvent( 'calypso_masterbar_command_palette_search_clicked' );
+			this.props.openCommandPalette();
+		};
+
+		return (
+			<Item
+				className="masterbar__item-menu"
+				icon="search"
+				tooltip={ this.props.translate( 'Jump to…' ) }
+				isActive={ this.props.isCommandPaletteOpen }
+				onClick={ handleClick }
+			/>
+		);
+	}
+
 	renderMenu() {
 		const { menuBtnRef } = this.state;
 		const { translate, hasDismissedThePopover, isFetchingPrefs, isUserNewerThanNewNavigation } =
@@ -610,6 +629,7 @@ class MasterbarLoggedIn extends Component {
 						<div className="masterbar__section masterbar__section--right">
 							{ this.renderSearch() }
 							{ this.renderCart() }
+							{ this.renderCommandPaletteSearch() }
 							{ this.renderNotifications() }
 						</div>
 					</Masterbar>
@@ -733,6 +753,7 @@ export default connect(
 			isSiteTrialExpired: isTrialExpired( state, siteId ),
 			isMobileGlobalNavVisible:
 				( shouldShowGlobalSidebar || shouldShowGlobalSiteSidebar ) && ! isDesktop,
+			isCommandPaletteOpen: getIsCommandPaletteOpen( state ),
 		};
 	},
 	{
@@ -741,5 +762,6 @@ export default connect(
 		updateSiteMigrationMeta,
 		activateNextLayoutFocus,
 		savePreference,
+		openCommandPalette,
 	}
 )( localize( MasterbarLoggedIn ) );

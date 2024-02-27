@@ -4,38 +4,11 @@
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { renderHook } from '@testing-library/react';
 import React from 'react';
-import { Provider } from 'react-redux';
-import configureStore from 'redux-mock-store';
-import { useCommandsArrayWpcom } from '../../../sites-dashboard/components/wpcom-smp-commands';
-import { getCurrentRoutePattern } from '../../../state/selectors/get-current-route-pattern';
-import { useCommandPalette } from '../use-command-palette';
-import { useCurrentSiteRankTop } from '../use-current-site-rank-top';
+import { useCommandPalette } from '../src/use-command-palette';
+import { useSites } from '../src/use-sites';
+import { useSitesSortingQuery } from '../src/use-sites-sorting-query';
 
-const INITIAL_STATE = {
-	sites: {
-		items: {},
-	},
-	currentUser: {
-		capabilities: {
-			[ 1 ]: {
-				manage_options: true,
-			},
-		},
-	},
-	preferences: {
-		remoteValues: {
-			'sites-sorting': 'alphabetically-asc',
-		},
-	},
-	ui: {
-		selectedSiteId: 1,
-	},
-};
-
-const mockStore = configureStore();
-const store = mockStore( INITIAL_STATE );
-
-const commands = [
+const defaultCommands = [
 	{
 		name: 'getHelp',
 		label: 'Get help',
@@ -74,6 +47,21 @@ const commandsWithViewMySiteResult = [
 		name: 'viewMySites',
 		label: 'View my sites',
 	},
+	{
+		name: 'getHelp',
+		label: 'Get help',
+	},
+	{
+		name: 'clearCache',
+		label: 'Clear cache',
+	},
+	{
+		name: 'enableEdgeCache',
+		label: 'Enable edge cache',
+	},
+];
+
+const commandsWithViewMySiteOnSitesResult = [
 	{
 		name: 'getHelp',
 		label: 'Get help',
@@ -127,45 +115,59 @@ const commandsWithContextResult = [
 jest.mock( 'cmdk', () => ( {
 	useCommandState: jest.fn(),
 } ) );
-jest.mock( '../../../sites-dashboard/components/wpcom-smp-commands', () => ( {
-	useCommandsArrayWpcom: jest.fn(),
+jest.mock( '../src/use-sites-sorting-query', () => ( {
+	useSitesSortingQuery: jest.fn(),
 } ) );
-jest.mock( '../../command-palette/use-current-site-rank-top' );
-jest.mock( '../../../state/selectors/get-current-route-pattern' );
+jest.mock( '../src/use-sites', () => ( {
+	useSites: jest.fn(),
+} ) );
 
 describe( 'useCommandPalette', () => {
 	const queryClient = new QueryClient();
-	( useCurrentSiteRankTop as jest.Mock ).mockReturnValue( {
-		currentSiteId: 1,
+	( useSitesSortingQuery as jest.Mock ).mockReturnValue( {
+		data: {
+			sortKey: 'alphabetically',
+			sortOrder: 'asc',
+		},
+	} );
+	( useSites as jest.Mock ).mockReturnValue( {
+		data: [],
 	} );
 
-	const renderUseCommandPalette = () =>
+	const wpcom = {
+		req: {
+			get: () => {},
+		},
+	};
+
+	const renderUseCommandPalette = ( { currentRoute = null, commands } ) =>
 		renderHook(
 			() =>
 				useCommandPalette( {
+					useCommands: () => commands,
+					currentSiteId: 1,
 					selectedCommandName: '',
 					setSelectedCommandName: () => {},
 					search: '',
+					navigate: () => {},
+					wpcom: wpcom,
+					currentRoute,
 				} ),
 			{
 				wrapper: ( { children } ) => (
-					<Provider store={ store }>
-						<QueryClientProvider client={ queryClient }>{ children }</QueryClientProvider>
-					</Provider>
+					<QueryClientProvider client={ queryClient }>{ children }</QueryClientProvider>
 				),
 			}
 		);
 	it( 'should return the commands in the order that they are added to the commands array with no change', () => {
-		( useCommandsArrayWpcom as jest.Mock ).mockReturnValue( commands );
-		const { result } = renderUseCommandPalette();
+		const { result } = renderUseCommandPalette( { commands: defaultCommands } );
 		expect( result.current.commands.map( ( { name, label } ) => ( { name, label } ) ) ).toEqual(
-			commands
+			defaultCommands
 		);
 	} );
 
 	it( 'should return the View My Sites command first before other commands from commandsWithViewMySite array when no context is specified', () => {
-		( useCommandsArrayWpcom as jest.Mock ).mockReturnValue( commandsWithViewMySite );
-		const { result } = renderUseCommandPalette();
+		const { result } = renderUseCommandPalette( { commands: commandsWithViewMySite } );
 
 		expect( result.current.commands.map( ( { name, label } ) => ( { name, label } ) ) ).toEqual(
 			commandsWithViewMySiteResult
@@ -173,10 +175,10 @@ describe( 'useCommandPalette', () => {
 	} );
 
 	it( 'should return Enable Edge Cache command first as it matches the context; all other commands should follow in the order they are added to commandsWithContext array', () => {
-		( getCurrentRoutePattern as jest.Mock ).mockReturnValue( '/settings' );
-		( useCommandsArrayWpcom as jest.Mock ).mockReturnValue( commandsWithContext );
-
-		const { result } = renderUseCommandPalette();
+		const { result } = renderUseCommandPalette( {
+			currentRoute: '/settings',
+			commands: commandsWithContext,
+		} );
 		expect(
 			result.current.commands.map( ( { name, label, context } ) => ( { name, label, context } ) )
 		).toEqual( commandsWithContextResult );

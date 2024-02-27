@@ -51,12 +51,7 @@ export default function SitePreviewPane( {
 
 	return (
 		<div className={ classNames( 'site-preview__pane', className ) }>
-			<SitePreviewPaneHeader
-				title={ site.blogname }
-				url={ site.url }
-				urlWithScheme={ site.url_with_scheme }
-				closeSitePreviewPane={ closeSitePreviewPane }
-			/>
+			<SitePreviewPaneHeader site={ site } closeSitePreviewPane={ closeSitePreviewPane } />
 			<SitePreviewPaneTabs featureTabs={ featureTabs } />
 			{ selectedFeature.preview }
 		</div>

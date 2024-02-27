@@ -64,7 +64,8 @@ $brand-text: "SF Pro Text", $sans;
 
 	.sidebar__header {
 		align-items: center;
-		display: flex;
+		// Hide the header when the masterbar is visible.
+		display: none;
 		gap: 8px;
 		padding: 30px 24px 29px;
 
@@ -122,7 +123,7 @@ $brand-text: "SF Pro Text", $sans;
 		@include custom-scrollbars-on-hover(transparent, $gray-600);
 		flex: 1;
 		overflow-y: auto;
-
+		padding-top: 12px;
 
 		.sidebar,
 		.sidebar__menu:not(.is-togglable) {
@@ -320,5 +321,15 @@ $brand-text: "SF Pro Text", $sans;
 		padding-top: 0;
 		margin-top: 0;
 		top: 0;
+	}
+
+	.global-sidebar {
+		.sidebar__header {
+			display: flex;
+		}
+
+		.sidebar__body {
+			padding-top: 0;
+		}
 	}
 }
