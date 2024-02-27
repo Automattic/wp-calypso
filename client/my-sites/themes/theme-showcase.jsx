@@ -29,7 +29,6 @@ import ThemeCollectionViewHeader from 'calypso/my-sites/themes/collections/theme
 import ThemeShowcaseSurvey, { SurveyType } from 'calypso/my-sites/themes/survey';
 import ThanksModal from 'calypso/my-sites/themes/thanks-modal';
 import { getCurrentUserSiteCount, isUserLoggedIn } from 'calypso/state/current-user/selectors';
-import { successNotice } from 'calypso/state/notices/actions';
 import getLastNonEditorRoute from 'calypso/state/selectors/get-last-non-editor-route';
 import getSiteEditorUrl from 'calypso/state/selectors/get-site-editor-url';
 import getSiteFeaturesById from 'calypso/state/selectors/get-site-features';
@@ -565,7 +564,6 @@ class ThemeShowcase extends Component {
 			isSiteWooExpress,
 			isCollectionView,
 			lastNonEditorRoute,
-			successNotice: showSuccessNotice,
 		} = this.props;
 		const tier = this.props.tier || 'all';
 		const canonicalUrl = 'https://wordpress.com' + pathName;
@@ -629,22 +627,6 @@ class ThemeShowcase extends Component {
 					onClose={ ( args ) => {
 						if ( args?.siteSlug && this.state.isDesignThemeFlow ) {
 							this.redirectToSiteAssembler( { slug: args.siteSlug } );
-						} else if ( args?.siteTitle ) {
-							showSuccessNotice(
-								translate( 'You have selected the site {{strong}}%(siteTitle)s{{/strong}}.', {
-									args: { siteTitle: args.siteTitle },
-									components: { strong: <strong /> },
-									comment:
-										'On the themes page, notification shown to the user after they choose one of their sites to browse the themes',
-								} ),
-								{
-									button: translate( 'Choose a different site', {
-										comment:
-											'On the themes page, notification shown to the user offering them the option to choose a different site for browsing themes',
-									} ),
-									onClick: () => this.setState( { isSiteSelectorModalVisible: true } ),
-								}
-							);
 						}
 
 						this.setState( { isDesignThemeFlow: false, isSiteSelectorModalVisible: false } );
@@ -785,6 +767,4 @@ const mapStateToProps = ( state, { siteId, filter } ) => {
 	};
 };
 
-export default connect( mapStateToProps, { setBackPath, successNotice } )(
-	localize( ThemeShowcase )
-);
+export default connect( mapStateToProps, { setBackPath } )( localize( ThemeShowcase ) );
