@@ -29,6 +29,7 @@ import {
 } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
 import { Command } from '../use-command-palette';
+import { isCustomDomain } from '../utils';
 import { useCommandsParams } from './types';
 import useCommandNavigation from './use-command-navigation';
 
@@ -40,6 +41,8 @@ enum SiteType {
 interface CapabilityCommand extends Command {
 	capability?: string;
 	siteType?: SiteType;
+	isCustomDomain?: boolean;
+	filterP2?: boolean;
 }
 
 interface CustomWindow {
@@ -49,8 +52,10 @@ interface CustomWindow {
 		isAtomic: boolean;
 		isSelfHosted: boolean;
 		isSimple: boolean;
-		capabilities: string[];
-		// Add other properties as needed
+		isP2: boolean;
+		capabilities: {
+			[ key: string ]: string;
+		};
 	};
 }
 
@@ -62,7 +67,8 @@ const useSingleSiteCommands = ( { navigate, currentRoute }: useCommandsParams ):
 		isAtomic = false,
 		isSelfHosted = false,
 		isSimple = false,
-		capabilities,
+		capabilities = {},
+		isP2 = false,
 	} = customWindow?.commandPaletteConfig || {};
 
 	let siteType: SiteType | null = null;
@@ -231,6 +237,7 @@ const useSingleSiteCommands = ( { navigate, currentRoute }: useCommandsParams ):
 			callback: commandNavigation( '/hosting-config/:site' ),
 			capability: SiteCapabilities.MANAGE_OPTIONS,
 			siteType: SiteType.ATOMIC,
+			filterP2: true,
 			icon: settingsIcon,
 		},
 		{
@@ -422,7 +429,7 @@ const useSingleSiteCommands = ( { navigate, currentRoute }: useCommandsParams ):
 			].join( ' ' ),
 			context: [ '/sites' ],
 			capability: SiteCapabilities.MANAGE_OPTIONS,
-			// @TODO Check for custom domain.
+			isCustomDomain: true,
 			callback: commandNavigation( `/domains/manage/:site/dns/:site` ),
 			icon: domainsIcon,
 		},
@@ -473,7 +480,7 @@ const useSingleSiteCommands = ( { navigate, currentRoute }: useCommandsParams ):
 				_x( 'audit log', 'Keyword for the Open activity log command', __i18n_text_domain__ ),
 			].join( ' ' ),
 			callback: commandNavigation( '/activity-log/:site' ),
-			// @TODO P2 filter
+			filterP2: true,
 			icon: acitvityLogIcon,
 		},
 		{
@@ -481,7 +488,7 @@ const useSingleSiteCommands = ( { navigate, currentRoute }: useCommandsParams ):
 			label: __( 'Open Jetpack Backup', __i18n_text_domain__ ),
 			callback: commandNavigation( '/backup/:site' ),
 			capability: SiteCapabilities.MANAGE_OPTIONS,
-			// @TODO P2 filter
+			filterP2: true,
 			icon: backupIcon,
 		},
 		{
@@ -684,6 +691,7 @@ const useSingleSiteCommands = ( { navigate, currentRoute }: useCommandsParams ):
 			].join( ' ' ),
 			callback: commandNavigation( '/wp-admin/themes.php' ),
 			capability: SiteCapabilities.EDIT_THEME_OPTIONS,
+			filterP2: true,
 			icon: brushIcon,
 		},
 		{
@@ -711,6 +719,7 @@ const useSingleSiteCommands = ( { navigate, currentRoute }: useCommandsParams ):
 			].join( ' ' ),
 			callback: commandNavigation( '/wp-admin/plugins.php' ),
 			capability: SiteCapabilities.ACTIVATE_PLUGINS,
+			filterP2: true,
 			icon: pluginsIcon,
 		},
 		{
@@ -736,6 +745,7 @@ const useSingleSiteCommands = ( { navigate, currentRoute }: useCommandsParams ):
 			context: [ '/sites' ],
 			callback: commandNavigation( '/plans/:site' ),
 			capability: SiteCapabilities.MANAGE_OPTIONS,
+			filterP2: true,
 			icon: creditCardIcon,
 		},
 		{
@@ -748,6 +758,7 @@ const useSingleSiteCommands = ( { navigate, currentRoute }: useCommandsParams ):
 			].join( ' ' ),
 			callback: commandNavigation( '/plans/my-plan/:site' ),
 			capability: SiteCapabilities.MANAGE_OPTIONS,
+			filterP2: true,
 			icon: creditCardIcon,
 		},
 		{
@@ -801,9 +812,8 @@ const useSingleSiteCommands = ( { navigate, currentRoute }: useCommandsParams ):
 			name: 'downloadSubscribers',
 			label: __( 'Download subscribers as CSV', __i18n_text_domain__ ),
 			context: [ '/subscribers' ],
-			// @TODO This might not work since blog != blogId. We might need to implement a :siteId
 			callback: commandNavigation(
-				'https://dashboard.wordpress.com/wp-admin/index.php?page=subscribers&blog=:site&blog_subscribers=csv&type=all',
+				'https://dashboard.wordpress.com/wp-admin/index.php?page=subscribers&blog=:siteId&blog_subscribers=csv&type=all',
 				{ openInNewTab: true }
 			),
 			capability: SiteCapabilities.MANAGE_OPTIONS,
@@ -820,19 +830,19 @@ const useSingleSiteCommands = ( { navigate, currentRoute }: useCommandsParams ):
 		{
 			name: 'openWooCommerceSettings',
 			label: __( 'Open WooCommerce settings', __i18n_text_domain__ ),
-			// @TODO This doesn't work on atomic sites.
 			callback: commandNavigation( '/wp-admin/admin.php?page=wc-admin' ),
 			capability: SiteCapabilities.MANAGE_OPTIONS,
 			siteType: SiteType.ATOMIC,
+			filterP2: true,
 			icon: <WooCommerceWooLogo className="woo-command-palette" />,
 		},
 		{
 			name: 'openWooCommerceSettings',
 			label: __( 'Open WooCommerce settings', __i18n_text_domain__ ),
-			// @TODO This doesn't work on atomic sites.
 			callback: commandNavigation( '/woocommerce-installation/:site' ),
 			capability: SiteCapabilities.MANAGE_OPTIONS,
 			siteType: SiteType.SIMPLE,
+			filterP2: true,
 			icon: <WooCommerceWooLogo className="woo-command-palette" />,
 		},
 		{
@@ -885,17 +895,33 @@ const useSingleSiteCommands = ( { navigate, currentRoute }: useCommandsParams ):
 		},
 	];
 
-	return commands.filter( ( command ) => {
-		if ( command?.capability && ! capabilities?.includes( command.capability ) ) {
-			return false;
-		}
+	return commands
+		.filter( ( command ) => {
+			if ( command?.capability && ! capabilities[ command.capability ] ) {
+				return false;
+			}
 
-		if ( command?.siteType && command.siteType !== siteType ) {
-			return false;
-		}
+			if ( command?.siteType && command.siteType !== siteType ) {
+				return false;
+			}
 
-		return true;
-	} );
+			if ( command?.isCustomDomain && ! isCustomDomain( window.location.host ) ) {
+				return false;
+			}
+
+			if ( command?.filterP2 && isP2 ) {
+				return false;
+			}
+
+			return true;
+		} )
+		.map( ( command ) => ( {
+			name: command.name,
+			label: command.label,
+			searchLabel: command.searchLabel,
+			callback: command.callback,
+			icon: command.icon,
+		} ) );
 };
 
 export default useSingleSiteCommands;

@@ -3,20 +3,6 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import domReady from '@wordpress/dom-ready';
 import { render } from 'react-dom';
 
-const navigate = ( path, openInNewTab ) => {
-	const siteHostname = window.location.hostname;
-	let url = path;
-	if ( path.startsWith( '/' ) && ! path.startsWith( '/wp-admin' ) ) {
-		url = `https://wordpress.com${ path }`;
-	}
-
-	if ( siteHostname ) {
-		url = path.replace( ':site', siteHostname );
-	}
-
-	window.open( url, openInNewTab ? '_blank' : '_self' );
-};
-
 function CommandPaletteApp() {
 	if ( ! window.commandPaletteConfig ) {
 		// Can't load the command palette without a config.
@@ -30,6 +16,24 @@ function CommandPaletteApp() {
 	}
 
 	const currentRoute = window.location.pathname;
+
+	const navigate = ( path, openInNewTab ) => {
+		const siteHostname = window.location.hostname;
+		let url = path;
+
+		if ( path.startsWith( '/' ) && ! path.startsWith( '/wp-admin' ) ) {
+			url = `https://wordpress.com${ path }`;
+		}
+
+		url = url.replace( ':site', siteHostname );
+		url = url.replace( ':siteId', siteId );
+
+		if ( url.startsWith( siteHostname ) ) {
+			url = url.replace( siteHostname, window.location.origin );
+		}
+
+		window.open( url, openInNewTab ? '_blank' : '_self' );
+	};
 
 	return (
 		<QueryClientProvider client={ new QueryClient() }>
