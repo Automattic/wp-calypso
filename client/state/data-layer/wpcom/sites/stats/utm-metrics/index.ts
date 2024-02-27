@@ -2,7 +2,7 @@ import { STATS_UTM_METRICS_REQUEST, STATS_UTM_TOP_POSTS_REQUEST } from 'calypso/
 import { registerHandlers } from 'calypso/state/data-layer/handler-registry';
 import { http } from 'calypso/state/data-layer/wpcom-http/actions';
 import { dispatchRequest } from 'calypso/state/data-layer/wpcom-http/utils';
-import { receiveMetrics, receiveTopPosts } from 'calypso/state/stats/utm-metrics/actions';
+import { receiveMetrics, requestMetricsFail, receiveTopPosts } from 'calypso/state/stats/utm-metrics/actions';
 import type { AnyAction } from 'redux';
 
 export const fetch = ( action: AnyAction ) => {
@@ -53,7 +53,7 @@ registerHandlers( 'state/data-layer/wpcom/sites/stats/utm-metrics/index.js', {
 		dispatchRequest( {
 			fetch,
 			onSuccess: ( { siteId }: AnyAction, data: object ) => receiveMetrics( siteId, data ),
-			onError: () => null,
+			onError: ( { siteId }: AnyAction ) => requestMetricsFail( siteId ),
 			// fromApi,
 		} ),
 	],

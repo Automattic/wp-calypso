@@ -5,6 +5,7 @@ export interface UTMMetricItem {
 	label: string;
 	value: number;
 }
+
 export interface UTMMetricItemTopPost {
 	id: number;
 	title: string;

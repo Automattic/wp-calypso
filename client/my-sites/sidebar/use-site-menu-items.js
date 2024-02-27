@@ -1,5 +1,6 @@
 import { isEnabled } from '@automattic/calypso-config';
 import { useLocale } from '@automattic/i18n-utils';
+import { useBreakpoint } from '@automattic/viewport-react';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect, useMemo } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
@@ -47,6 +48,7 @@ const useSiteMenuItems = () => {
 	const shouldShowGlobalSiteSidebar = useSelector( ( state ) => {
 		return getShouldShowGlobalSiteSidebar( state, selectedSiteId, currentSection?.group );
 	} );
+	const isDesktop = useBreakpoint( '>782px' );
 
 	useEffect( () => {
 		if ( selectedSiteId && siteDomain ) {
@@ -125,6 +127,7 @@ const useSiteMenuItems = () => {
 			showSiteMonitoring: isAtomic,
 			selectedSiteSlug,
 			isStagingSite,
+			isDesktop,
 		} );
 	}
 

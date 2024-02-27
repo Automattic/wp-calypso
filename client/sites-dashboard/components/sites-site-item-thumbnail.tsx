@@ -10,7 +10,7 @@ import Image from 'calypso/components/image';
 import { P2Thumbnail } from './p2-thumbnail';
 import { SiteComingSoon } from './sites-site-coming-soon';
 import type { SitesDisplayMode } from './sites-display-mode-switcher';
-import type { SiteExcerptData } from 'calypso/data/sites/site-excerpt-types';
+import type { SiteExcerptData } from '@automattic/sites';
 
 const NoIcon = styled.div( {
 	fontSize: 'xx-large',

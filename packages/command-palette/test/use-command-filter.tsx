@@ -1,4 +1,4 @@
-import { COMMAND_SEPARATOR, useCommandFilter } from '../use-command-filter';
+import { COMMAND_SEPARATOR, useCommandFilter } from '../src/use-command-filter';
 
 describe( 'useCommandFilter', () => {
 	const commandFilter = useCommandFilter();

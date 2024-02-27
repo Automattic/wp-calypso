@@ -1,25 +1,32 @@
-import { useSitesListSorting } from '@automattic/sites';
+import { recordTracksEvent } from '@automattic/calypso-analytics';
+import { Gridicon } from '@automattic/components';
 import styled from '@emotion/styled';
 import { __ } from '@wordpress/i18n';
 import { useCommandState } from 'cmdk';
 import { useCallback } from 'react';
-import SiteIcon from 'calypso/blocks/site-icon';
-import { SiteExcerptData } from 'calypso/data/sites/site-excerpt-types';
-import { useSiteExcerptsQuery } from 'calypso/data/sites/use-site-excerpts-query';
-import { useCommandsArrayWpcom } from 'calypso/sites-dashboard/components/wpcom-smp-commands';
-import { isCustomDomain } from 'calypso/sites-dashboard/utils';
-import { useDispatch, useSelector } from 'calypso/state';
-import { recordTracksEvent } from 'calypso/state/analytics/actions';
-import { getCurrentRoutePattern } from 'calypso/state/selectors/get-current-route-pattern';
-import { useSitesSorting } from 'calypso/state/sites/hooks/use-sites-sorting';
-import { useCurrentSiteRankTop } from './use-current-site-rank-top';
-import type { AppState } from 'calypso/types';
+import { useCommandsParams } from './commands/types';
+import { isCustomDomain } from './utils';
+import type { SiteExcerptData } from '@automattic/sites';
 
 const FillDefaultIconWhite = styled.div( {
 	flexShrink: 0,
 	'.commands-command-menu__container [cmdk-item] & svg': {
 		fill: '#fff',
 	},
+} );
+
+const SiteIcon = styled.img( {
+	width: '32px',
+	verticalAlign: 'middle',
+} );
+
+const EmptySiteIcon = styled.div( {
+	width: '32px',
+	height: '32px',
+	background: 'var(--color-neutral-10)',
+	display: 'flex',
+	justifyContent: 'center',
+	alignItems: 'center',
 } );
 
 type CloseFunction = ( commandName?: string, isExecuted?: boolean ) => void;
@@ -57,10 +64,21 @@ export interface Command {
 	image?: JSX.Element;
 	siteFunctions?: SiteFunctions;
 }
+
+export interface useExtraCommandsParams {
+	setSelectedCommandName: ( name: string ) => void;
+}
+
 interface useCommandPaletteOptions {
+	currentSiteId: number | null;
 	selectedCommandName: string;
 	setSelectedCommandName: ( name: string ) => void;
 	search: string;
+	navigate: ( path: string, openInNewTab?: boolean ) => void;
+	useCommands: ( options: useCommandsParams ) => Command[];
+	currentRoute: string | null;
+	useSites: () => SiteExcerptData[];
+	userCapabilities: { [ key: number ]: { [ key: string ]: boolean } };
 }
 
 interface SiteToActionParameters {
@@ -73,10 +91,7 @@ interface SiteToActionParameters {
 	};
 }
 
-const useSiteToAction = () => {
-	const dispatch = useDispatch();
-	const currentRoute = useSelector( ( state: object ) => getCurrentRoutePattern( state ) );
-
+const useSiteToAction = ( { currentRoute }: { currentRoute: string | null } ) => {
 	const siteToAction = useCallback(
 		(
 			onClickSite: SiteToActionParameters[ 'onClickSite' ],
@@ -95,66 +110,64 @@ const useSiteToAction = () => {
 					subLabel: `${ site.URL }`,
 					searchLabel: `${ site.ID } ${ siteName } ${ site.URL }`,
 					callback: ( { close } ) => {
-						dispatch(
-							recordTracksEvent( 'calypso_hosting_command_palette_site_select', {
-								command: selectedCommand.name,
-								list_count: filteredSitesLength,
-								list_visible_count: listVisibleCount,
-								current_route: currentRoute,
-								search_text: search,
-								command_site_id: site.ID,
-								command_site_has_custom_domain: isCustomDomain( site.slug ),
-								command_site_plan_id: site.plan?.product_id,
-							} )
-						);
+						recordTracksEvent( 'calypso_hosting_command_palette_site_select', {
+							command: selectedCommand.name,
+							list_count: filteredSitesLength,
+							list_visible_count: listVisibleCount,
+							current_route: currentRoute,
+							search_text: search,
+							command_site_id: site.ID,
+							command_site_has_custom_domain: isCustomDomain( site.slug ),
+							command_site_plan_id: site.plan?.product_id,
+						} );
 						onClickSite( { site, close, command: selectedCommand } );
 					},
 					image: (
 						<FillDefaultIconWhite>
-							<SiteIcon site={ site } size={ 32 } />
+							{ site.icon?.img ? (
+								<SiteIcon src={ site.icon.img } alt="" />
+							) : (
+								<EmptySiteIcon>
+									<Gridicon icon="globe" />
+								</EmptySiteIcon>
+							) }
 						</FillDefaultIconWhite>
 					),
 				};
 			},
-		[ currentRoute, dispatch ]
+		[ currentRoute ]
 	);
 
 	return siteToAction;
 };
 
 export const useCommandPalette = ( {
+	currentSiteId,
 	selectedCommandName,
 	setSelectedCommandName,
 	search,
+	navigate,
+	useCommands,
+	currentRoute,
+	useSites = () => [],
+	userCapabilities = {},
 }: useCommandPaletteOptions ): {
 	commands: Command[];
 	filterNotice: string | undefined;
 	emptyListNotice: string | undefined;
 } => {
-	const { data: allSites = [] } = useSiteExcerptsQuery(
-		[],
-		( site ) => ! site.options?.is_domain_only
-	);
-	const dispatch = useDispatch();
-	const siteToAction = useSiteToAction();
+	const siteToAction = useSiteToAction( { currentRoute } );
 
 	const listVisibleCount = useCommandState( ( state ) => state.filtered.count );
 
-	// Sort sites in the nested commands to be consistent with site switcher and /sites page
-	const { sitesSorting } = useSitesSorting();
-	const sortedSites = useSitesListSorting( allSites, sitesSorting );
-
-	// Get current site ID to rank it to the top of the sites list
-	const { currentSiteId } = useCurrentSiteRankTop();
+	const sites = useSites();
 
 	// Call the generateCommandsArray function to get the commands array
-	const commands = useCommandsArrayWpcom( {
+	const commands = useCommands( {
 		setSelectedCommandName,
+		navigate,
+		currentRoute,
 	} ) as Command[];
-
-	const currentRoute = useSelector( ( state: object ) => getCurrentRoutePattern( state ) );
-
-	const userCapabilities = useSelector( ( state: AppState ) => state.currentUser.capabilities );
 
 	// Logic for selected command (sites)
 	if ( selectedCommandName ) {
@@ -164,15 +177,15 @@ export const useCommandPalette = ( {
 		let emptyListNotice = undefined;
 		if ( selectedCommand?.siteFunctions ) {
 			const { capabilityFilter, onClick, filter } = selectedCommand.siteFunctions;
-			let filteredSites = filter ? sortedSites.filter( filter ) : sortedSites;
-			filteredSites = capabilityFilter
-				? filteredSites.filter( ( site ) => {
-						const siteCapabilities = userCapabilities[ site.ID ];
-						return siteCapabilities?.[ capabilityFilter ];
-				  } )
-				: filteredSites;
-			if ( sortedSites.length === 0 ) {
-				emptyListNotice = __( "You don't have any sites yet." );
+			let filteredSites = filter ? sites.filter( filter ) : sites;
+			if ( capabilityFilter ) {
+				filteredSites = filteredSites.filter( ( site ) => {
+					const siteCapabilities = userCapabilities[ site.ID ];
+					return siteCapabilities?.[ capabilityFilter ];
+				} );
+			}
+			if ( sites.length === 0 ) {
+				emptyListNotice = __( "You don't have any sites yet.", __i18n_text_domain__ );
 			} else if ( filteredSites.length === 0 ) {
 				emptyListNotice = selectedCommand.siteFunctions?.emptyListNotice;
 			}
@@ -234,16 +247,14 @@ export const useCommandPalette = ( {
 	const finalSortedCommands = sortedCommands.map( ( command ) => ( {
 		...command,
 		callback: ( params: CommandCallBackParams ) => {
-			dispatch(
-				recordTracksEvent( 'calypso_hosting_command_palette_command_select', {
-					command: command.name,
-					has_nested_commands: !! command.siteFunctions,
-					list_count: commands.length,
-					list_visible_count: listVisibleCount,
-					current_route: currentRoute,
-					search_text: search,
-				} )
-			);
+			recordTracksEvent( 'calypso_hosting_command_palette_command_select', {
+				command: command.name,
+				has_nested_commands: !! command.siteFunctions,
+				list_count: commands.length,
+				list_visible_count: listVisibleCount,
+				current_route: currentRoute,
+				search_text: search,
+			} );
 			command.callback( params );
 		},
 	} ) );

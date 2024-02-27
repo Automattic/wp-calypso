@@ -1,6 +1,7 @@
 import {
 	STATS_UTM_METRICS_REQUEST,
 	STATS_UTM_METRICS_RECEIVE,
+	STATS_UTM_METRICS_REQUEST_FAILURE,
 	STATS_UTM_TOP_POSTS_REQUEST,
 	STATS_UTM_TOP_POSTS_RECEIVE,
 } from 'calypso/state/action-types';
@@ -19,6 +20,13 @@ export function requestMetrics( siteId: number, utmParam: string ) {
 		type: STATS_UTM_METRICS_REQUEST,
 		siteId,
 		utmParam,
+	};
+}
+
+export function requestMetricsFail( siteId: number ) {
+	return {
+		type: STATS_UTM_METRICS_REQUEST_FAILURE,
+		siteId,
 	};
 }
 

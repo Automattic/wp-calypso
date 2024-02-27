@@ -1,5 +1,6 @@
 import {
 	STATS_UTM_METRICS_REQUEST,
+	STATS_UTM_METRICS_REQUEST_FAILURE,
 	STATS_UTM_METRICS_RECEIVE,
 	STATS_UTM_TOP_POSTS_REQUEST,
 	STATS_UTM_TOP_POSTS_RECEIVE,
@@ -84,6 +85,9 @@ const isLoadingReducer = ( state = {}, action: AnyAction ) => {
 	switch ( action.type ) {
 		case STATS_UTM_METRICS_REQUEST: {
 			return true;
+		}
+		case STATS_UTM_METRICS_REQUEST_FAILURE: {
+			return false;
 		}
 		case STATS_UTM_METRICS_RECEIVE: {
 			return false;

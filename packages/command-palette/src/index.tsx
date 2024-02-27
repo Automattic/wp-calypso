@@ -1,27 +1,40 @@
+import { recordTracksEvent } from '@automattic/calypso-analytics';
 import styled from '@emotion/styled';
-import { Modal, TextHighlight, __experimentalHStack as HStack } from '@wordpress/components';
+import { __experimentalHStack as HStack, Modal, TextHighlight } from '@wordpress/components';
 import { useDebounce } from '@wordpress/compose';
 import { __ } from '@wordpress/i18n';
-import { Icon, search as inputIcon, chevronLeft as backIcon } from '@wordpress/icons';
+import { chevronLeft as backIcon, Icon, search as inputIcon } from '@wordpress/icons';
 import { cleanForSlug } from '@wordpress/url';
 import classnames from 'classnames';
 import { Command, useCommandState } from 'cmdk';
-import { useEffect, useState, useRef, useMemo, useCallback, FC } from 'react';
-import { useDispatch, useSelector } from 'calypso/state';
-import { recordTracksEvent } from 'calypso/state/analytics/actions';
-import { getCurrentRoutePattern } from 'calypso/state/selectors/get-current-route-pattern';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { useCommandsParams } from './commands/types';
+import useAtomicCommands from './commands/use-atomic-commands';
+import useAtomicLimitedCommands from './commands/use-atomic-limited-commands';
+import useWpcomSimpleSiteCommands from './commands/use-wpcom-simple-site-commands';
+import useWpcomSimpleSiteLimitedCommands from './commands/use-wpcom-simple-site-limited-commands';
 import { COMMAND_SEPARATOR, useCommandFilter } from './use-command-filter';
-import { CommandCallBackParams, useCommandPalette } from './use-command-palette';
-
+import {
+	Command as PaletteCommand,
+	CommandCallBackParams,
+	useCommandPalette,
+} from './use-command-palette';
+import type { SiteExcerptData } from '@automattic/sites';
 import '@wordpress/commands/build-style/style.css';
 
 interface CommandMenuGroupProps
 	extends Pick< CommandCallBackParams, 'close' | 'setSearch' | 'setPlaceholderOverride' > {
+	currentSiteId: number | null;
 	search: string;
 	selectedCommandName: string;
 	setSelectedCommandName: ( name: string ) => void;
 	setFooterMessage?: ( message: string ) => void;
 	setEmptyListNotice?: ( message: string ) => void;
+	navigate: ( path: string, openInNewTab?: boolean ) => void;
+	useCommands: ( options: useCommandsParams ) => PaletteCommand[];
+	currentRoute: string | null;
+	useSites: () => SiteExcerptData[];
+	userCapabilities: { [ key: number ]: { [ key: string ]: boolean } };
 }
 
 const StyledCommandsMenuContainer = styled.div( {
@@ -86,6 +99,7 @@ const StyledCommandsFooter = styled.div( {
 } );
 
 export function CommandMenuGroup( {
+	currentSiteId,
 	search,
 	close,
 	setSearch,
@@ -94,11 +108,22 @@ export function CommandMenuGroup( {
 	setSelectedCommandName,
 	setFooterMessage,
 	setEmptyListNotice,
+	navigate,
+	useCommands,
+	currentRoute,
+	useSites,
+	userCapabilities,
 }: CommandMenuGroupProps ) {
 	const { commands, filterNotice, emptyListNotice } = useCommandPalette( {
+		currentSiteId,
 		selectedCommandName,
 		setSelectedCommandName,
 		search,
+		navigate,
+		useCommands,
+		currentRoute,
+		useSites,
+		userCapabilities,
 	} );
 
 	useEffect( () => {
@@ -195,7 +220,7 @@ function CommandInput( {
 			ref={ commandMenuInput }
 			value={ search }
 			onValueChange={ setSearch }
-			placeholder={ placeholder || __( 'Search for commands' ) }
+			placeholder={ placeholder || __( 'Search for commands', __i18n_text_domain__ ) }
 			aria-activedescendant={ itemId }
 		/>
 	);
@@ -208,20 +233,28 @@ interface NotFoundMessageProps {
 	currentRoute: string | null;
 }
 
+interface CommandPaletteProps {
+	currentSiteId: number | null;
+	navigate: ( path: string, openInNewTab?: boolean ) => void;
+	useCommands: ( options: useCommandsParams ) => PaletteCommand[];
+	currentRoute: string | null;
+	isOpenGlobal?: boolean;
+	onClose?: () => void;
+	useSites?: () => SiteExcerptData[];
+	userCapabilities: { [ key: number ]: { [ key: string ]: boolean } };
+}
+
 const NotFoundMessage = ( {
 	selectedCommandName,
 	search,
 	emptyListNotice,
 	currentRoute,
 }: NotFoundMessageProps ) => {
-	const dispatch = useDispatch();
 	const trackNotFoundDebounced = useDebounce( () => {
-		dispatch(
-			recordTracksEvent( 'calypso_hosting_command_palette_not_found', {
-				current_route: currentRoute,
-				search_text: search,
-			} )
-		);
+		recordTracksEvent( 'calypso_hosting_command_palette_not_found', {
+			current_route: currentRoute,
+			search_text: search,
+		} );
 	}, 600 );
 
 	useEffect( () => {
@@ -232,13 +265,19 @@ const NotFoundMessage = ( {
 		return trackNotFoundDebounced.cancel;
 	}, [ search, selectedCommandName, trackNotFoundDebounced ] );
 
-	return <>{ emptyListNotice || __( 'No results found.' ) }</>;
+	return <>{ emptyListNotice || __( 'No results found.', __i18n_text_domain__ ) }</>;
 };
 
-const CommandPalette: FC< {
-	isOpenGlobal?: boolean;
-	onClose?: () => void;
-} > = ( { isOpenGlobal, onClose = () => {} } ) => {
+const CommandPalette = ( {
+	currentSiteId,
+	navigate,
+	useCommands,
+	currentRoute,
+	isOpenGlobal,
+	onClose = () => {},
+	useSites = () => [],
+	userCapabilities = {},
+}: CommandPaletteProps ) => {
 	const [ placeHolderOverride, setPlaceholderOverride ] = useState( '' );
 	const [ search, setSearch ] = useState( '' );
 	const [ selectedCommandName, setSelectedCommandName ] = useState( '' );
@@ -246,32 +285,26 @@ const CommandPalette: FC< {
 	const isOpen = isOpenLocal || isOpenGlobal;
 	const [ footerMessage, setFooterMessage ] = useState( '' );
 	const [ emptyListNotice, setEmptyListNotice ] = useState( '' );
-	const currentRoute = useSelector( ( state: object ) => getCurrentRoutePattern( state ) );
-	const dispatch = useDispatch();
 	const open = useCallback( () => {
 		setIsOpenLocal( true );
-		dispatch(
-			recordTracksEvent( 'calypso_hosting_command_palette_open', {
-				current_route: currentRoute,
-			} )
-		);
-	}, [ dispatch, currentRoute ] );
+		recordTracksEvent( 'calypso_hosting_command_palette_open', {
+			current_route: currentRoute,
+		} );
+	}, [ currentRoute ] );
 	const close = useCallback< CommandMenuGroupProps[ 'close' ] >(
 		( commandName = '', isExecuted = false ) => {
 			setIsOpenLocal( false );
 			onClose();
-			dispatch(
-				recordTracksEvent( 'calypso_hosting_command_palette_close', {
-					// For nested commands the command.name would be the siteId
-					// For root commands the selectedCommandName would be empty
-					command: selectedCommandName || commandName,
-					current_route: currentRoute,
-					search_text: search,
-					is_executed: isExecuted,
-				} )
-			);
+			recordTracksEvent( 'calypso_hosting_command_palette_close', {
+				// For nested commands the command.name would be the siteId
+				// For root commands the selectedCommandName would be empty
+				command: selectedCommandName || commandName,
+				current_route: currentRoute,
+				search_text: search,
+				is_executed: isExecuted,
+			} );
 		},
-		[ currentRoute, dispatch, onClose, search, selectedCommandName ]
+		[ currentRoute, onClose, search, selectedCommandName ]
 	);
 	const toggle = useCallback( () => ( isOpen ? close() : open() ), [ isOpen, close, open ] );
 	const commandFilter = useCommandFilter();
@@ -308,14 +341,12 @@ const CommandPalette: FC< {
 	};
 
 	const goBackToRootCommands = ( fromKeyboard: boolean ) => {
-		dispatch(
-			recordTracksEvent( 'calypso_hosting_command_palette_back_to_root', {
-				command: selectedCommandName,
-				current_route: currentRoute,
-				search_text: search,
-				from_keyboard: fromKeyboard,
-			} )
-		);
+		recordTracksEvent( 'calypso_hosting_command_palette_back_to_root', {
+			command: selectedCommandName,
+			current_route: currentRoute,
+			search_text: search,
+			from_keyboard: fromKeyboard,
+		} );
 		reset();
 	};
 
@@ -351,13 +382,17 @@ const CommandPalette: FC< {
 			__experimentalHideHeader
 		>
 			<StyledCommandsMenuContainer className="commands-command-menu__container">
-				<Command label={ __( 'Command palette' ) } onKeyDown={ onKeyDown } filter={ commandFilter }>
+				<Command
+					label={ __( 'Command palette', __i18n_text_domain__ ) }
+					onKeyDown={ onKeyDown }
+					filter={ commandFilter }
+				>
 					<div className="commands-command-menu__header">
 						{ selectedCommandName ? (
 							<BackButton
 								type="button"
 								onClick={ () => goBackToRootCommands( false ) }
-								aria-label={ __( 'Go back to the previous screen' ) }
+								aria-label={ __( 'Go back to the previous screen', __i18n_text_domain__ ) }
 							>
 								<Icon icon={ backIcon } />
 							</BackButton>
@@ -382,6 +417,7 @@ const CommandPalette: FC< {
 							/>
 						</StyledCommandsEmpty>
 						<CommandMenuGroup
+							currentSiteId={ currentSiteId }
 							search={ search }
 							close={ ( commandName, isExecuted ) => {
 								close( commandName, isExecuted );
@@ -393,6 +429,11 @@ const CommandPalette: FC< {
 							setSelectedCommandName={ setSelectedCommandName }
 							setFooterMessage={ setFooterMessage }
 							setEmptyListNotice={ setEmptyListNotice }
+							navigate={ navigate }
+							useCommands={ useCommands }
+							currentRoute={ currentRoute }
+							useSites={ useSites }
+							userCapabilities={ userCapabilities }
 						/>
 					</Command.List>
 				</Command>
@@ -403,3 +444,11 @@ const CommandPalette: FC< {
 };
 
 export default CommandPalette;
+export type { Command, CommandCallBackParams } from './use-command-palette';
+export type { useCommandsParams } from './commands/types';
+export {
+	useAtomicCommands,
+	useAtomicLimitedCommands,
+	useWpcomSimpleSiteCommands,
+	useWpcomSimpleSiteLimitedCommands,
+};
