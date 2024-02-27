@@ -284,36 +284,35 @@ body.is-section-promote-post-i2 .layout__content .campaign-item-details.main {
 		}
 
 		.campaign-item-details__main-stats-row-top {
-			display: flex;
+			display: grid;
+			grid-template-columns: 40% 30% 30%;
 			flex-grow: 1;
 			justify-content: space-between;
+
+			@media (max-width: ($break-medium + 278)) {
+				grid-template-columns: repeat(2, 1fr);
+			}
 
 			> div {
 				display: flex;
 				flex-direction: column;
 				padding: 16px;
-
 				@media (min-width: $break-medium) {
 					padding: 24px;
-					width: 28%;
+					width: auto;
 				}
 
-				&:first-child {
-					@media (min-width: $break-medium) {
-						width: 44%;
-					}
+				@media (max-width: ($break-medium + 278)) {
+					width: auto;
+				}
+
+				> span {
+					display: flex;
+					align-items: center;
 				}
 			}
 
-			.campaign-item-clicks {
-				height: 20px;
-				display: flex;
-				flex-direction: row;
-				align-items: center;
-			}
-
-			.campaign-item-clicks__info-button {
-				height: 20px;
+			.campaign-item-data__info-button {
 				display: inline-block;
 				vertical-align: bottom;
 				margin-left: 4px;

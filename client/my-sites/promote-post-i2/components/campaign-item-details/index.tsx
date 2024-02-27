@@ -504,93 +504,86 @@ export default function CampaignItemDetails( props: Props ) {
 											</span>
 										</div>
 										<div>
-											<span className="campaign-item-clicks">
-												<span className="campaign-item-details__label">
-													{ __( 'Click-through rate' ) }
-													<InfoPopover
-														className="campaign-item-clicks__info-button"
-														position="bottom right"
-													>
-														{ __( 'Click-through rate:' ) }
-														<br />
-														<span className="popover-title">
-															{ __(
-																'a metric used to measure the ratio of users who click on your ad to the number of total users view it.'
-															) }
-														</span>
-													</InfoPopover>
-												</span>
+											<span className="campaign-item-details__label">
+												{ __( 'Click-through rate' ) }
+												<InfoPopover
+													className="campaign-item-data__info-button"
+													position="bottom right"
+												>
+													{ __( 'Click-through rate:' ) }
+													<br />
+													<span className="popover-title">
+														{ __(
+															'a metric used to measure the ratio of users who click on your ad to the number of total users view it.'
+														) }
+													</span>
+												</InfoPopover>
 											</span>
 											<span className="campaign-item-details__text wp-brand-font">
 												{ ! isLoading ? ctrFormatted : <FlexibleSkeleton /> }
 											</span>
 										</div>
-									</div>
-
-									{ isWooStore && status !== 'created' && (
-										<div className="campaign-item-details__main-stats-row-bottom">
-											<div>
-												<span className="campaign-item-details__label">
-													{ translate( 'Conversion Value' ) }
-													<InfoPopover
-														className="campaign-item-conversion-value__info-button"
-														position="bottom right"
-													>
-														{ __( 'Conversion Value:' ) }
-														<br />
-														<span className="popover-title">
-															{ __(
-																'assigns a monetary value associated with each conversion. Example: If each sale is worth $50, and you had 10 sales, your conversion value would be $500.'
-															) }
-														</span>
-													</InfoPopover>
-												</span>
-												<span className="campaign-item-details__text wp-brand-font">
-													{ ! isLoading ? conversionValueFormatted : <FlexibleSkeleton /> }
-												</span>
-											</div>
-											<div>
-												<span className="campaign-item-details__label">
-													{ translate( 'Conversions' ) }
-													<InfoPopover
-														className="campaign-item-conversions__info-button"
-														position="bottom right"
-													>
-														{ __( 'Conversions:' ) }
-														<br />
-														<span className="popover-title">
-															{ __(
-																'show how many people made a purchase or completed a specific goal that aligns with the objectives of the campaign.'
-															) }
-														</span>
-													</InfoPopover>
-												</span>
-												<span className="campaign-item-details__text wp-brand-font">
-													{ ! isLoading ? conversionsTotalFormatted : <FlexibleSkeleton /> }
-												</span>
-											</div>
-											<div>
-												<span className="campaign-item-details__label">
-													{ translate( 'Conversion Rate' ) }
-													<InfoPopover
-														className="campaign-item-conversion-rate__info-button"
-														position="bottom right"
-													>
-														{ __( 'Conversion Rate:' ) }
-														<br />
-														<span className="popover-title">
-															{ __(
-																'shows the percentage of users who made a purchase (or completed a specific goal that aligns with the objectives of the campaign) out of the total number of users who clicked on the ad. Example: If your ad receives 100 clicks, and 5 people make a purchase, your conversion rate would be 5%.'
-															) }
-														</span>
-													</InfoPopover>
-												</span>
-												<span className="campaign-item-details__text wp-brand-font">
-													{ ! isLoading ? conversionsRateFormatted : <FlexibleSkeleton /> }
-												</span>
-											</div>
+										<div>
+											<span className="campaign-item-details__label">
+												{ translate( 'Conversion Value' ) }
+												<InfoPopover
+													className="campaign-item-data__info-button"
+													position="bottom right"
+												>
+													{ __( 'Conversion Value:' ) }
+													<br />
+													<span className="popover-title">
+														{ __(
+															'assigns a monetary value associated with each conversion. Example: If each sale is worth $50, and you had 10 sales, your conversion value would be $500.'
+														) }
+													</span>
+												</InfoPopover>
+											</span>
+											<span className="campaign-item-details__text wp-brand-font">
+												{ ! isLoading ? conversionValueFormatted : <FlexibleSkeleton /> }
+											</span>
 										</div>
-									) }
+										<div>
+											<span className="campaign-item-details__label">
+												{ translate( 'Conversions' ) }
+												<InfoPopover
+													className="campaign-item-data__info-button"
+													position="bottom right"
+												>
+													{ __( 'Conversions:' ) }
+													<br />
+													<span className="popover-title">
+														{ __(
+															'show how many people made a purchase or completed a specific goal that aligns with the objectives of the campaign.'
+														) }
+													</span>
+												</InfoPopover>
+											</span>
+											<span className="campaign-item-details__text wp-brand-font">
+												{ ! isLoading ? conversionsTotalFormatted : <FlexibleSkeleton /> }
+											</span>
+										</div>
+										<div>
+											<span className="campaign-item-details__label">
+												{ translate( 'Conversion Rate' ) }
+												<InfoPopover
+													className="campaign-item-data__info-button"
+													position="bottom right"
+												>
+													{ __( 'Conversion Rate:' ) }
+													<br />
+													<span className="popover-title">
+														{ __(
+															'shows the percentage of users who made a purchase (or completed a specific goal that aligns with the objectives of the campaign) out of the total number of users who clicked on the ad. Example: If your ad receives 100 clicks, and 5 people make a purchase, your conversion rate would be 5%.'
+														) }
+													</span>
+												</InfoPopover>
+											</span>
+											<span className="campaign-item-details__text wp-brand-font">
+												{ ! isLoading ? conversionsRateFormatted : <FlexibleSkeleton /> }
+											</span>
+										</div>
+									</div>
 								</div>
 							</div>
 						) }
