@@ -16,6 +16,7 @@ import {
 	StyledLabel,
 	SurveyFormContainer,
 	Viewport,
+	getCheckboxKey,
 } from './components';
 
 const defaultFormState = {
@@ -70,6 +71,8 @@ function ControlledCheckbox( props: {
 
 function SurveyForm( props: Props ) {
 	const [ formState, setFormState ] = useState< FormState >( defaultFormState );
+	const [ orderGoals, setOrderGoals ] = useState< string[] | null >( [] );
+	const [ orderDescribeYourself, setOrderDescribeYourself ] = useState< string[] | null >( [] );
 	const translate = useTranslate();
 	const isMobileViewport = useMobileBreakpoint();
 	const isDesktopViewport = useDesktopBreakpoint();
@@ -117,7 +120,15 @@ function SurveyForm( props: Props ) {
 
 	const handleContinue = () => {
 		const { stepName, goToNextStep, submitSignupStep } = props;
-		submitSignupStep( { stepName }, {}, { ...formState } );
+		submitSignupStep(
+			{ stepName },
+			{},
+			{
+				...formState,
+				survey_field_order_goals: orderGoals?.join( ', ' ),
+				survey_field_order_describe_yourself: orderDescribeYourself?.join( ', ' ),
+			}
+		);
 		goToNextStep();
 	};
 
@@ -147,7 +158,11 @@ function SurveyForm( props: Props ) {
 								  ) }
 						</CardHeading>
 						<OptionsContainer>
-							<Shuffle>
+							<Shuffle
+								getChildKey={ getCheckboxKey }
+								childOrder={ orderGoals }
+								setChildOrder={ setOrderGoals }
+							>
 								<StyledLabel>
 									<FormInputCheckbox name="survey_goals_blogging" onChange={ handleChange } />
 									<span>{ translate( 'Blogging' ) }</span>
@@ -187,7 +202,11 @@ function SurveyForm( props: Props ) {
 							{ translate( 'What best describes you?' ) }
 						</CardHeading>
 						<OptionsContainer>
-							<Shuffle>
+							<Shuffle
+								getChildKey={ getCheckboxKey }
+								childOrder={ orderDescribeYourself }
+								setChildOrder={ setOrderDescribeYourself }
+							>
 								<StyledLabel>
 									<FormInputCheckbox
 										name="survey_describe_yourself_creator"
