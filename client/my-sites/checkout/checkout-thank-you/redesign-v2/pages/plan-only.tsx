@@ -42,7 +42,10 @@ export default function PlanOnlyThankYou( { primaryPurchase }: PlanOnlyThankYouP
 			buttonText: translate( 'Add members' ),
 			buttonHref: `/people/new/${ siteSlug }`,
 			buttonOnClick: () => {
-				recordTracksEvent( 'calypso_thank_you_footer_link_click', { type: 'add-members' } );
+				recordTracksEvent( 'calypso_thank_you_footer_link_click', {
+					context: 'plan-only',
+					type: 'add-members',
+				} );
 			},
 		} );
 	} else if ( isMonthsOld( 6, siteCreatedTimeStamp ) ) {
@@ -56,7 +59,10 @@ export default function PlanOnlyThankYou( { primaryPurchase }: PlanOnlyThankYouP
 			buttonText: translate( 'Find your new theme' ),
 			buttonHref: `/themes/${ siteSlug }`,
 			buttonOnClick: () => {
-				recordTracksEvent( 'calypso_thank_you_footer_link_click', { type: 'site-refresh' } );
+				recordTracksEvent( 'calypso_thank_you_footer_link_click', {
+					context: 'plan-only',
+					type: 'site-refresh',
+				} );
 			},
 		} );
 	}
@@ -68,7 +74,10 @@ export default function PlanOnlyThankYou( { primaryPurchase }: PlanOnlyThankYouP
 		buttonText: translate( 'Explore support resources' ),
 		buttonHref: '/support',
 		buttonOnClick: () => {
-			recordTracksEvent( 'calypso_thank_you_footer_link_click', { type: 'support' } );
+			recordTracksEvent( 'calypso_thank_you_footer_link_click', {
+				context: 'plan-only',
+				type: 'support',
+			} );
 		},
 	} );
 

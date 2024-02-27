@@ -57,6 +57,7 @@ const TitanSetUpThankYou = ( {
 					context: 'checkout-thank-you',
 				} );
 				recordTracksEvent( 'calypso_thank_you_footer_link_click', {
+					context: 'titan-setup',
 					type: 'manage-email',
 				} );
 			},
@@ -71,6 +72,7 @@ const TitanSetUpThankYou = ( {
 			buttonHref: '/support/category/domains-and-email/email/',
 			buttonOnClick: () => {
 				recordTracksEvent( 'calypso_thank_you_footer_link_click', {
+					context: 'titan-setup',
 					type: 'questions-email',
 				} );
 			},
