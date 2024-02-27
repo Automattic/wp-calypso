@@ -379,11 +379,11 @@ class ThemeShowcase extends Component {
 		if ( shouldSelectSite( { isLoggedIn, siteCount, siteId } ) ) {
 			this.setState( { isDesignThemeModalVisible: true } );
 		} else {
-			this.redirectToSiteAssembler( this.props.site );
+			this.redirectToSiteAssembler();
 		}
 	};
 
-	redirectToSiteAssembler = ( selectedSite ) => {
+	redirectToSiteAssembler = ( selectedSite = this.props.site ) => {
 		const { isLoggedIn, siteEditorUrl } = this.props;
 		const shouldGoToAssemblerStep = isAssemblerSupported();
 
@@ -637,7 +637,7 @@ class ThemeShowcase extends Component {
 						this.setState( { isDesignThemeModalVisible: false } );
 					} }
 					onCreateNewSite={ () => {
-						this.redirectToSiteAssembler( this.props.site );
+						this.redirectToSiteAssembler();
 					} }
 					onSelectSite={ () => {
 						this.setState( { isDesignThemeModalVisible: false, isSiteSelectorModalVisible: true } );
