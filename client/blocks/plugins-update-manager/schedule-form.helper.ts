@@ -26,3 +26,56 @@ export const prepareTimestamp = (
 	// return timestamp in seconds
 	return event.getTime() / 1000;
 };
+
+/**
+ * Validate name
+ * - required
+ * - max length 120
+ */
+export const validateName = ( name: string ) => {
+	let error = '';
+	if ( ! name ) {
+		error = 'Please provide a name to this plugin update schedule.';
+	} else if ( name.length > 120 ) {
+		error = 'Please provide a shorter name.';
+	}
+
+	return error;
+};
+
+type TimeSlot = {
+	frequency: string;
+	timestamp: number;
+};
+/**
+ * Validate time slot
+ * based on existing schedules in context of frequency
+ */
+export const validateTimeSlot = ( newSchedule: TimeSlot, existingSchedules: TimeSlot[] = [] ) => {
+	let error = '';
+	const newDate = new Date( newSchedule.timestamp * 1000 );
+
+	existingSchedules.forEach( ( schedule ) => {
+		if ( error ) {
+			return;
+		}
+
+		const existingDate = new Date( schedule.timestamp * 1000 );
+
+		if (
+			( newSchedule.frequency === 'daily' || schedule.frequency === 'daily' ) &&
+			existingDate.getHours() === newDate.getHours()
+		) {
+			error = 'Please pick another time for optimal performance, as this slot is already taken.';
+		} else if (
+			newSchedule.frequency === 'weekly' &&
+			schedule.frequency === 'weekly' &&
+			newDate.getDay() === existingDate.getDay() &&
+			newDate.getHours() === existingDate.getHours()
+		) {
+			error = 'Please pick another time for optimal performance, as this slot is already taken.';
+		}
+	} );
+
+	return error;
+};
