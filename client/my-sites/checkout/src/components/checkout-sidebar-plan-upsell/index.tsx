@@ -1,7 +1,7 @@
 import { isPlan, isJetpackPlan } from '@automattic/calypso-products';
 import { FormStatus, useFormStatus } from '@automattic/composite-checkout';
 import formatCurrency from '@automattic/format-currency';
-import { useShoppingCart } from '@automattic/shopping-cart';
+import { ResponseCart, useShoppingCart } from '@automattic/shopping-cart';
 import styled from '@emotion/styled';
 import { createElement, createInterpolateElement, useState } from '@wordpress/element';
 import { sprintf } from '@wordpress/i18n';
@@ -15,6 +15,7 @@ import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { useGetProductVariants } from '../../hooks/product-variants';
 import { useCheckoutV2 } from '../../hooks/use-checkout-v2';
+import { WPCOMProductVariant } from '../item-variation-picker/types';
 import {
 	getItemVariantCompareToPrice,
 	getItemVariantDiscountPercentage,
@@ -23,20 +24,17 @@ import './style.scss';
 
 const debug = debugFactory( 'calypso:checkout-sidebar-plan-upsell' );
 
-export function CheckoutSidebarPlanUpsell() {
-	const { formStatus } = useFormStatus();
-	const reduxDispatch = useDispatch();
-	const isFormLoading = FormStatus.READY !== formStatus;
-	const [ isClicked, setIsClicked ] = useState( false );
-	const { __ } = useI18n();
-	const cartKey = useCartKey();
-	const { responseCart, replaceProductInCart } = useShoppingCart( cartKey );
+const CheckoutPromoCard: React.FC< {
+	responseCart: ResponseCart;
+	variants: WPCOMProductVariant[];
+} > = ( { responseCart, variants } ) => {
+	const translate = useTranslate();
 	const plan = responseCart.products.find(
 		( product ) => isPlan( product ) && ! isJetpackPlan( product )
 	);
-	const variants = useGetProductVariants( plan );
-	const translate = useTranslate();
-	const shouldUseCheckoutV2 = useCheckoutV2() === 'treatment';
+	const hasDomainRegistration = responseCart.products.find(
+		( product ) => product.is_domain_registration
+	)?.is_domain_registration;
 
 	const PromoCardV2 = styled.div`
 		position: relative;
@@ -64,6 +62,68 @@ export function CheckoutSidebarPlanUpsell() {
 			width: 8px;
 		}
 	`;
+
+	const currentVariant = variants?.find( ( product ) => product.productId === plan?.product_id );
+
+	const isMonthly = currentVariant?.termIntervalInMonths === 1;
+	const isYearly = currentVariant?.termIntervalInMonths === 12;
+	const isBiennially = currentVariant?.termIntervalInMonths === 24;
+	const isTriennially = currentVariant?.termIntervalInMonths === 36;
+
+	let labelText = '';
+
+	if ( isMonthly ) {
+		if ( hasDomainRegistration ) {
+			labelText = translate(
+				'Save money with longer billing cycles and get [domain name] free for the first year with annual plans'
+			);
+		}
+
+		labelText = translate(
+			'Longer plan billing cycles save you money and include a custom domain for free for the first year.'
+		);
+	}
+
+	if ( isYearly ) {
+		labelText = translate(
+			'Longer plan billing cycles save you money and include a custom domain for free for the first year.'
+		);
+	}
+
+	if ( isBiennially ) {
+		labelText = translate(
+			'Longer plan billing cycles save you money and include a custom domain for free for the first year.'
+		);
+	}
+
+	if ( isTriennially ) {
+		labelText = translate(
+			'Longer plan billing cycles save you money and include a custom domain for free for the first year.'
+		);
+	}
+
+	return (
+		<PromoCardV2>
+			<div className="checkout-sidebar-plan-upsell__v2-wrapper">
+				<p>{ labelText }</p>
+			</div>
+		</PromoCardV2>
+	);
+};
+
+export function CheckoutSidebarPlanUpsell() {
+	const { formStatus } = useFormStatus();
+	const reduxDispatch = useDispatch();
+	const isFormLoading = FormStatus.READY !== formStatus;
+	const [ isClicked, setIsClicked ] = useState( false );
+	const { __ } = useI18n();
+	const cartKey = useCartKey();
+	const { responseCart, replaceProductInCart } = useShoppingCart( cartKey );
+	const plan = responseCart.products.find(
+		( product ) => isPlan( product ) && ! isJetpackPlan( product )
+	);
+	const variants = useGetProductVariants( plan );
+	const shouldUseCheckoutV2 = useCheckoutV2() === 'treatment';
 
 	function isBusy() {
 		// If the FormStatus is SUBMITTING and the user has not clicked this button, we want to return false for isBusy
@@ -164,15 +224,7 @@ export function CheckoutSidebarPlanUpsell() {
 	return (
 		<>
 			{ plan && shouldUseCheckoutV2 ? (
-				<PromoCardV2>
-					<div className="checkout-sidebar-plan-upsell__v2-wrapper">
-						<p>
-							{ translate(
-								'Longer plan billing cycles save you money and include a custom domain for free for the first year.'
-							) }
-						</p>
-					</div>
-				</PromoCardV2>
+				<CheckoutPromoCard responseCart={ responseCart } variants={ variants } />
 			) : (
 				<PromoCard title={ cardTitle } className="checkout-sidebar-plan-upsell">
 					<div className="checkout-sidebar-plan-upsell__plan-grid">

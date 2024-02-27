@@ -230,7 +230,10 @@ function CheckoutSidebarNudge( { responseCart }: { responseCart: ResponseCart } 
 	const hasMonthlyProduct = responseCart?.products?.some( isMonthlyProduct );
 	const shouldUseCheckoutV2 = useCheckoutV2() === 'treatment';
 
-	if ( ! isWcMobile && ! isDIFMInCart && ! hasMonthlyProduct ) {
+	if (
+		( ! isWcMobile && ! isDIFMInCart && ! hasMonthlyProduct ) ||
+		( shouldUseCheckoutV2 && ! isWcMobile && ! isDIFMInCart )
+	) {
 		return (
 			<CheckoutSidebarNudgeWrapper shouldUseCheckoutV2={ shouldUseCheckoutV2 }>
 				<CheckoutSidebarPlanUpsell />
@@ -240,6 +243,7 @@ function CheckoutSidebarNudge( { responseCart }: { responseCart: ResponseCart } 
 	}
 	return null;
 }
+
 export default function CheckoutMainContent( {
 	addItemToCart,
 	changeSelection,

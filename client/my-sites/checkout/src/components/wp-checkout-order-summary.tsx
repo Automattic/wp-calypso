@@ -161,9 +161,14 @@ export function CheckoutSummaryFeaturedList( {
 					/>
 				) }
 			</CheckoutSummaryFeatures>
-			{ ! isCartUpdating && ! hasRenewalInCart && ! isWcMobile && plan && hasMonthlyPlanInCart && (
-				<CheckoutSummaryAnnualUpsell plan={ plan } onChangeSelection={ onChangeSelection } />
-			) }
+			{ ! shouldUseCheckoutV2 &&
+				! isCartUpdating &&
+				! hasRenewalInCart &&
+				! isWcMobile &&
+				plan &&
+				hasMonthlyPlanInCart && (
+					<CheckoutSummaryAnnualUpsell plan={ plan } onChangeSelection={ onChangeSelection } />
+				) }
 		</>
 	);
 }
