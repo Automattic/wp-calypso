@@ -2,6 +2,7 @@ import config from '@automattic/calypso-config';
 import { WPCOM_FEATURES_BACKUPS, WPCOM_FEATURES_SCAN } from '@automattic/calypso-products';
 import page from '@automattic/calypso-router';
 import {
+	Icon,
 	chevronLeft,
 	cloud,
 	settings,
@@ -9,6 +10,7 @@ import {
 	plugins,
 	search,
 	shield,
+	people,
 } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { useMemo } from 'react';
@@ -133,7 +135,7 @@ const useMenuItems = ( {
 					isSelected: itemLinkMatches( path, `${ JETPACK_CLOUD_SOCIAL_LINK }/${ siteSlug }` ),
 				},
 				{
-					icon: <JetpackIcons icon="subscribers" size={ 24 } />,
+					icon: <Icon icon={ people } size={ 24 } />,
 					path: '/',
 					link: `${ JETPACK_CLOUD_SUBSCRIBERS_LINK }/${ siteSlug }`,
 					title: translate( 'Subscribers' ),
