@@ -23,12 +23,12 @@ const ThankYouFooterDetail = ( {
 }: ThankYouFooterDetailProps ) => {
 	let button = null;
 
-	if ( buttonText && buttonHref && buttonOnClick ) {
-		const isExternal = isOutsideCalypso( buttonHref );
+	if ( buttonText && ( buttonHref || buttonOnClick ) ) {
+		const isExternal = buttonHref && isOutsideCalypso( buttonHref );
 		button = (
 			<Button
 				className="thank-you__footer-detail-button"
-				href={ localizeUrl( buttonHref ) }
+				href={ buttonHref && localizeUrl( buttonHref ) }
 				onClick={ buttonOnClick }
 				target={ isExternal ? '_blank' : '_self' }
 				rel={ isExternal ? 'noreferrer noopener' : '' }

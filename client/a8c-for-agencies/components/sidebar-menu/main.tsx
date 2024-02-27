@@ -1,4 +1,4 @@
-import { category, home, plugins, tag } from '@wordpress/icons';
+import { category, home, plugins, tag, currencyDollar } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { useMemo } from 'react';
 import Sidebar from '../sidebar';
@@ -7,6 +7,8 @@ import {
 	A4A_PLUGINS_LINK,
 	A4A_SITES_LINK,
 	A4A_MARKETPLACE_LINK,
+	A4A_PURCHASES_LINK,
+	A4A_LICENSES_LINK,
 } from './lib/constants';
 import { createItem } from './lib/utils';
 
@@ -54,6 +56,16 @@ export default function ( { path }: Props ) {
 				trackEventProps: {
 					menu_item: 'Automattic for Agencies / Marketplace',
 				},
+			},
+			{
+				icon: currencyDollar,
+				path: A4A_PURCHASES_LINK,
+				link: A4A_LICENSES_LINK,
+				title: translate( 'Purchases' ),
+				trackEventProps: {
+					menu_item: 'Automattic for Agencies / Purchases',
+				},
+				withChevron: true,
 			},
 		].map( ( item ) => createItem( item, path ) );
 	}, [ path, translate ] );

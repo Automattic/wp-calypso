@@ -65,6 +65,7 @@ export const agencyDashboardContext: Callback = ( context, next ) => {
 	);
 	context.primary = (
 		<DashboardOverview
+			path={ context.path }
 			search={ search }
 			currentPage={ currentPage }
 			filter={ filter }

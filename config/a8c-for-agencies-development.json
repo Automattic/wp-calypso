@@ -23,11 +23,12 @@
 		"a8c-for-agencies-overview": true,
 		"a8c-for-agencies-plugins": true,
 		"a8c-for-agencies-sites": true,
-		"a8c-for-agencies-marketplace": true
+		"a8c-for-agencies-marketplace": true,
+		"a8c-for-agencies-purchases": true
 	},
 	"site_filter": [],
 	"theme": "a8c-for-agencies",
 	"restricted_me_access": false,
-	"theme_color": "#2fb41f",
+	"theme_color": "#029CD7",
 	"hotjar_enabled": true
 }
