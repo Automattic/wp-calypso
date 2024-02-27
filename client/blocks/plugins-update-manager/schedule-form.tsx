@@ -21,7 +21,8 @@ import {
 	PERIOD_OPTIONS,
 	WEEKLY_OPTION,
 	MAX_SELECTABLE_PLUGINS,
-} from './schedule-form.helper';
+} from './schedule-form.const';
+import { prepareTimestamp, validateName, validateTimeSlot } from './schedule-form.helper';
 
 import './schedule-form.scss';
 
@@ -30,14 +31,15 @@ interface Props {
 }
 export const ScheduleForm = ( props: Props ) => {
 	const { siteSlug } = props;
-	const { data } = useSitePluginsQuery( siteSlug );
-	const { plugins = [] } = data ?? {};
+	const { data: dataPlugins } = useSitePluginsQuery( siteSlug );
+	const { plugins = [] } = dataPlugins ?? {};
 
 	const [ name, setName ] = useState( '' );
 	const [ frequency, setFrequency ] = useState( 'daily' );
 	const [ selectedPlugins, setSelectedPlugins ] = useState< string[] >( [] );
 	const [ hour, setHour ] = useState< string >( '6' );
 	const [ period, setPeriod ] = useState< string >( 'am' );
+	const [ day, setDay ] = useState< string >( '1' );
 	const [ pluginSearchTerm, setPluginSearchTerm ] = useState( '' );
 	const [ validationErrors, setValidationErrors ] = useState< Record< string, string > >( {} );
 	const [ fieldTouched, setFieldTouched ] = useState< Record< string, boolean > >( {} );
@@ -74,20 +76,31 @@ export const ScheduleForm = ( props: Props ) => {
 		[ selectedPlugins, MAX_SELECTABLE_PLUGINS ]
 	);
 
-	const validateName = useCallback( () => {
-		let error = '';
-		if ( ! name ) {
-			error = 'Please provide a name to this plugin update schedule.';
-		} else if ( name.length > 120 ) {
-			error = 'Please provide a shorter name.';
-		}
-		setValidationErrors( { ...validationErrors, name: error } );
-	}, [ name ] );
+	const onFormSubmit = () => {};
 
-	useEffect( validateName, [ validateName ] );
+	// Name validation
+	useEffect(
+		() => setValidationErrors( { ...validationErrors, name: validateName( name ) } ),
+		[ name ]
+	);
+
+	// Timeslot validation
+	useEffect( () => {
+		const timestamp = prepareTimestamp( frequency, day, hour, period );
+		setValidationErrors( {
+			...validationErrors,
+			time: validateTimeSlot( { frequency, timestamp } ),
+		} );
+	}, [ frequency, day, hour, period ] );
 
 	return (
-		<form>
+		<form
+			id="schedule"
+			onSubmit={ ( e ) => {
+				e.preventDefault();
+				onFormSubmit();
+			} }
+		>
 			<Flex
 				className="schedule-form"
 				direction={ [ 'column', 'row' ] }
@@ -160,12 +173,11 @@ export const ScheduleForm = ( props: Props ) => {
 									<FlexItem>
 										<div className="form-field">
 											<SelectControl
-												name="day"
 												__next40pxDefaultSize
-												onBlur={ function noRefCheck() {} }
-												onChange={ function noRefCheck() {} }
-												onFocus={ function noRefCheck() {} }
+												name="day"
+												value={ day }
 												options={ DAY_OPTIONS }
+												onChange={ setDay }
 											/>
 										</div>
 									</FlexItem>

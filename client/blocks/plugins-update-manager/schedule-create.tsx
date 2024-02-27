@@ -36,7 +36,9 @@ export const ScheduleCreate = ( props: Props ) => {
 				<ScheduleForm siteSlug={ siteSlug } />
 			</CardBody>
 			<CardFooter>
-				<Button variant="primary">Create</Button>
+				<Button form="schedule" type="submit" variant="primary">
+					Create
+				</Button>
 			</CardFooter>
 		</Card>
 	);
