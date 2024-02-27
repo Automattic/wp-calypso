@@ -13,7 +13,8 @@ import type { Chat, Message, OdieAllowedBots } from '../types';
 const buildSendChatMessage = async (
 	message: Message,
 	botNameSlug: OdieAllowedBots,
-	chat_id?: number | null
+	chat_id?: number | null,
+	version?: string | null
 ) => {
 	const baseApiPath = '/help-center/odie/chat/';
 	const wpcomBaseApiPath = '/odie/chat/';
@@ -33,15 +34,15 @@ const buildSendChatMessage = async (
 		: apiFetch( {
 				path: apiPathWithIds,
 				method: 'POST',
-				data: { message },
+				data: { message, version },
 		  } );
 };
 
-function odieWpcomSendSupportMessage( message: Message, path: string ) {
+function odieWpcomSendSupportMessage( message: Message, path: string, version?: string | null ) {
 	return wpcom.req.post( {
 		path,
 		apiNamespace: 'wpcom/v2',
-		body: { message: message.content },
+		body: { message: message.content, version },
 	} );
 }
 
@@ -69,7 +70,7 @@ export const useOdieSendMessage = (): UseMutationResult<
 	{ message: Message },
 	{ internal_message_id: string }
 > => {
-	const { chat, botNameSlug, setIsLoading, addMessage, updateMessage, odieClientId } =
+	const { chat, botNameSlug, setIsLoading, addMessage, updateMessage, odieClientId, version } =
 		useOdieAssistantContext();
 	const queryClient = useQueryClient();
 	const userMessage = useRef< Message | null >( null );
@@ -82,7 +83,7 @@ export const useOdieSendMessage = (): UseMutationResult<
 	>( {
 		mutationFn: ( { message }: { message: Message } ) => {
 			broadcastOdieMessage( message, odieClientId );
-			return buildSendChatMessage( { ...message }, botNameSlug, chat.chat_id );
+			return buildSendChatMessage( { ...message }, botNameSlug, chat.chat_id, version );
 		},
 		onMutate: ( { message } ) => {
 			const internal_message_id = uuid();
