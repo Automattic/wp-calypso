@@ -19,25 +19,27 @@ const ThemeDesignYourOwnModal: FC< {
 			onRequestClose={ onClose }
 			size="medium"
 			title={ translate( 'Design your own theme', {
-				comment: 'TODO',
+				comment:
+					'Title for a modal dialog that allows the user to choose a site to design a theme for.',
 				textOnly: true,
 			} ) }
 		>
 			<p>
 				{ translate( 'Choose the site you want to design a theme for.', {
-					comment: 'TODO',
+					comment:
+						'Text for a modal dialog that allows the user to choose a site to design a theme for.',
 				} ) }
 			</p>
 
 			<div className="theme-design-your-own-modal__footer">
 				<Button variant="primary" onClick={ onCreateNewSite }>
 					{ translate( 'Create a new site', {
-						comment: 'TODO',
+						comment: 'Button label for creating a new site.',
 					} ) }
 				</Button>
 				<Button variant="secondary" onClick={ onSelectSite }>
 					{ translate( 'Select one of my sites', {
-						comment: 'TODO',
+						comment: "Button label for selecting one of the user's existing sites.",
 					} ) }
 				</Button>
 			</div>
