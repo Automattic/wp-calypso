@@ -35,11 +35,12 @@ export const ScheduleForm = ( props: Props ) => {
 	const { plugins = [] } = dataPlugins ?? {};
 
 	const [ name, setName ] = useState( '' );
-	const [ frequency, setFrequency ] = useState( 'daily' );
 	const [ selectedPlugins, setSelectedPlugins ] = useState< string[] >( [] );
-	const [ hour, setHour ] = useState< string >( '6' );
-	const [ period, setPeriod ] = useState< string >( 'am' );
+	const [ frequency, setFrequency ] = useState( 'daily' );
 	const [ day, setDay ] = useState< string >( '1' );
+	const [ hour, setHour ] = useState< string >( '6' );
+	const [ period, setPeriod ] = useState< string >( 'pm' );
+	const [ timestamp, setTimestamp ] = useState( prepareTimestamp( frequency, day, hour, period ) );
 	const [ pluginSearchTerm, setPluginSearchTerm ] = useState( '' );
 	const [ validationErrors, setValidationErrors ] = useState< Record< string, string > >( {} );
 	const [ fieldTouched, setFieldTouched ] = useState< Record< string, boolean > >( {} );
@@ -84,14 +85,21 @@ export const ScheduleForm = ( props: Props ) => {
 		[ name ]
 	);
 
-	// Timeslot validation
-	useEffect( () => {
-		const timestamp = prepareTimestamp( frequency, day, hour, period );
-		setValidationErrors( {
-			...validationErrors,
-			time: validateTimeSlot( { frequency, timestamp } ),
-		} );
-	}, [ frequency, day, hour, period ] );
+	// Time slot/timestamp validation
+	useEffect(
+		() =>
+			setValidationErrors( {
+				...validationErrors,
+				timestamp: validateTimeSlot( { frequency, timestamp } ),
+			} ),
+		[ timestamp ]
+	);
+
+	// Prepare timestamp on frequency, day, hour, period change
+	useEffect(
+		() => setTimestamp( prepareTimestamp( frequency, day, hour, period ) ),
+		[ frequency, day, hour, period ]
+	);
 
 	return (
 		<form
@@ -132,9 +140,10 @@ export const ScheduleForm = ( props: Props ) => {
 						<div className={ classnames( 'radio-option', { selected: frequency === 'daily' } ) }>
 							<RadioControl
 								name="frequency"
-								onChange={ setFrequency }
 								options={ [ DAILY_OPTION ] }
 								selected={ frequency }
+								onChange={ setFrequency }
+								onBlur={ () => setFieldTouched( { ...fieldTouched, timestamp: true } ) }
 							></RadioControl>
 							{ frequency === 'daily' && (
 								<Flex gap={ 6 }>
@@ -164,9 +173,10 @@ export const ScheduleForm = ( props: Props ) => {
 						<div className={ classnames( 'radio-option', { selected: frequency === 'weekly' } ) }>
 							<RadioControl
 								name="frequency"
-								onChange={ setFrequency }
 								options={ [ WEEKLY_OPTION ] }
 								selected={ frequency }
+								onChange={ setFrequency }
+								onBlur={ () => setFieldTouched( { ...fieldTouched, timestamp: true } ) }
 							></RadioControl>
 							{ frequency === 'weekly' && (
 								<Flex gap={ 6 }>
@@ -204,10 +214,12 @@ export const ScheduleForm = ( props: Props ) => {
 								</Flex>
 							) }
 						</div>
-						<Text className="validation-msg">
-							<Icon className="icon-info" icon={ info } size={ 16 } />
-							Please pick another time for optimal performance, as this slot is already taken.
-						</Text>
+						{ fieldTouched?.timestamp && validationErrors?.timestamp && (
+							<Text className="validation-msg">
+								<Icon className="icon-info" icon={ info } size={ 16 } />
+								{ validationErrors?.timestamp }
+							</Text>
+						) }
 					</div>
 				</FlexItem>
 				<FlexItem>
