@@ -10,7 +10,10 @@ import Notice from 'calypso/components/notice';
 import SidebarNavigation from 'calypso/components/sidebar-navigation';
 import useFetchDashboardSites from 'calypso/data/agency-dashboard/use-fetch-dashboard-sites';
 import useFetchMonitorVerfiedContacts from 'calypso/data/agency-dashboard/use-fetch-monitor-verified-contacts';
-import { AgencyDashboardFilterMap } from 'calypso/jetpack-cloud/sections/agency-dashboard/sites-overview/types';
+import {
+	AgencyDashboardFilterMap,
+	AgencyDashboardFilterOption,
+} from 'calypso/jetpack-cloud/sections/agency-dashboard/sites-overview/types';
 import { useDispatch, useSelector } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import {
@@ -73,23 +76,28 @@ export default function SitesDashboardV2() {
 
 	const { path, search, currentPage, filter, sort } = useContext( SitesOverviewContext );
 
+	const selectedFilters = filter?.issueTypes || [];
+
+	const [ prevFilter, setPrevFilter ] = useState< AgencyDashboardFilterOption[] >( [] );
+
 	const [ sitesViewState, setSitesViewState ] = useState< SitesViewState >( {
 		type: 'table',
 		perPage: 50,
 		page: currentPage,
 		sort: {
-			field: 'url',
+			field: 'site',
 			direction: 'desc',
 		},
 		search: search,
-		filters:
-			filter?.issueTypes?.map( ( issueType ) => {
-				return {
-					field: 'status',
-					operator: 'in',
-					value: filtersMap.find( ( filterMap ) => filterMap.filterType === issueType )?.ref || 1,
-				};
-			} ) || [],
+		filters: selectedFilters.map( ( issueType ) => {
+			const filterMapItem = filtersMap.find( ( filterMap ) => filterMap.filterType === issueType );
+			const value = filterMapItem ? filterMapItem.ref : 1; // Default value if filter type not found
+			return {
+				field: 'status',
+				operator: 'in',
+				value: value,
+			};
+		} ),
 		hiddenFields: [ 'status' ],
 		layout: {},
 		selectedSite: undefined,
@@ -110,6 +118,30 @@ export default function SitesDashboardV2() {
 		[ setSitesViewState ]
 	);
 
+	const handleMultiSelect = ( combinedFilters: Array< unknown > ) => {
+		const currentSelectedItem = document.body.querySelector(
+			'.dataviews-wrapper .dataviews-filters__view-actions button:nth-of-type(2)'
+		);
+		if ( combinedFilters.length > 1 && currentSelectedItem ) {
+			currentSelectedItem.classList.add( 'filter-multi-select-hide' );
+		} else if ( document.querySelector( '.filter-multi-select-hide' ) && currentSelectedItem ) {
+			currentSelectedItem.classList.remove( 'filter-multi-select-hide' );
+		}
+	};
+
+	const componentsDropdownMenu = document.querySelector( '.components-dropdown-menu' );
+
+	const removeMultiFilterClass = () => {
+		for ( let i = 0; i < filtersMap.length; i++ ) {
+			const number = filtersMap[ i ].ref;
+			const newString = `.components-dropdown-menu div[role=menuitemradio]:nth-of-type(${ number })`;
+			const childElement = document.body.querySelector( newString );
+			if ( childElement ) {
+				childElement.classList.remove( 'filter-dropdown-multi-select' );
+			}
+		}
+	};
+
 	// Filter selection
 	useEffect( () => {
 		const filtersSelected =
@@ -117,12 +149,69 @@ export default function SitesDashboardV2() {
 				const filterType =
 					filtersMap.find( ( filterMap ) => filterMap.ref === filter.value )?.filterType ||
 					'all_issues';
-
 				return filterType;
 			} ) || [];
 
-		updateDashboardURLQueryArgs( { filter: filtersSelected || [] } );
-	}, [ sitesViewState.filters ] );
+		// Logic to update prevFilter and combinedFilters
+		let combinedFilters: AgencyDashboardFilterOption[] = [];
+		if ( filtersSelected.length > 0 ) {
+			combinedFilters = Array.from( new Set( [ ...prevFilter, ...filtersSelected ] ) );
+			setPrevFilter( combinedFilters );
+			if ( combinedFilters.length > 1 ) {
+				handleMultiSelect( combinedFilters );
+			}
+		} else {
+			// If no filters selected, reset prevFilter and combinedFilters
+			removeMultiFilterClass();
+			setPrevFilter( [] );
+		}
+		handleMultiSelect( combinedFilters );
+
+		// Logic to update dashboard URL query args based on selected filters
+		if ( filtersSelected.includes( 'all_issues' ) ) {
+			updateDashboardURLQueryArgs( { filter: filtersSelected } );
+			setPrevFilter( [] );
+		} else {
+			updateDashboardURLQueryArgs( { filter: combinedFilters } );
+		}
+	}, [ sitesViewState.filters, updateDashboardURLQueryArgs ] );
+
+	// Update filter dropdown menu based on selected filters
+	useEffect( () => {
+		if ( componentsDropdownMenu && sitesViewState.filters[ 0 ]?.value !== undefined ) {
+			const selectedFilters = [
+				sitesViewState.filters[ 0 ].value,
+				...prevFilter.map(
+					( filterType ) =>
+						filtersMap.find( ( filterMap ) => filterMap.filterType === filterType )?.ref || 1
+				),
+			];
+			const needsAttention = document.body.querySelector(
+				'.components-dropdown-menu div[role=menuitemradio]:nth-of-type(1)'
+			);
+
+			selectedFilters.forEach( ( number ) => {
+				const newString = `.components-dropdown-menu div[role=menuitemradio]:nth-of-type(${ number })`;
+				const childElement = document.body.querySelector( newString );
+				if ( childElement ) {
+					childElement.classList.add( 'filter-dropdown-multi-select' );
+					if ( number !== 1 && needsAttention ) {
+						needsAttention.classList.remove( 'filter-dropdown-multi-select' );
+					}
+				}
+			} );
+
+			if ( selectedFilters.includes( 1 ) ) {
+				removeMultiFilterClass();
+				const childElement = document.body.querySelector(
+					'.components-dropdown-menu div[role=menuitemradio]:nth-of-type(1)'
+				);
+				childElement ? childElement.classList.add( 'filter-dropdown-multi-select' ) : null;
+			} else if ( selectedFilters.length === 0 ) {
+				removeMultiFilterClass();
+			}
+		}
+	}, [ componentsDropdownMenu, sitesViewState.filters ] );
 
 	// Search query
 	useEffect( () => {
@@ -132,9 +221,11 @@ export default function SitesDashboardV2() {
 	// Set or clear filter depending on sites submenu path selected
 	useEffect( () => {
 		if ( path === '/sites' || path === '/sites/favorites' ) {
+			setPrevFilter( [] );
 			setSitesViewState( { ...sitesViewState, filters: [], search: '' } );
 		}
 		if ( path === '/sites?issue_types=all_issues' ) {
+			setPrevFilter( [] );
 			setSitesViewState( {
 				...sitesViewState,
 				filters: [ { field: 'status', operator: 'in', value: 1 } ],
