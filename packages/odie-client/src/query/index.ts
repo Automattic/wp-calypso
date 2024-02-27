@@ -274,7 +274,7 @@ export const useOdieSendMessageFeedback = (): UseMutationResult<
 				}
 
 				return {
-					...old,
+					...currentChatCache,
 					messages: currentChatCache.messages.map( ( m ) =>
 						m.internal_message_id === message.internal_message_id ? { ...m, rating_value } : m
 					),
