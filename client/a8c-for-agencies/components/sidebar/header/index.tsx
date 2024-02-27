@@ -9,7 +9,7 @@ import { setLayoutFocus } from 'calypso/state/ui/layout-focus/actions';
 import { getCurrentLayoutFocus } from 'calypso/state/ui/layout-focus/selectors';
 import getSelectedSiteId from 'calypso/state/ui/selectors/get-selected-site-id';
 import { AppState } from 'calypso/types';
-import A4ALogo, { LOGO_COLOR_PRIMARY, LOGO_COLOR_SECONDARY_ALT } from '../../a4a-logo';
+import A4ALogo, { LOGO_COLOR_SECONDARY_ALT } from '../../a4a-logo';
 import ProfileDropdown from './profile-dropdown';
 
 type Props = {
@@ -20,7 +20,7 @@ type Props = {
 const AllSitesIcon = () => (
 	<A4ALogo
 		className="a4a-sidebar__all-sites-icon"
-		colors={ { primary: LOGO_COLOR_PRIMARY, secondary: LOGO_COLOR_SECONDARY_ALT } }
+		colors={ { secondary: LOGO_COLOR_SECONDARY_ALT } }
 		size={ 32 }
 	/>
 );
