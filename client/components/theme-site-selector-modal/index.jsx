@@ -36,7 +36,7 @@ export default function ThemeSiteSelectorModal( { isOpen, navigateOnClose = true
 
 	return (
 		<Modal
-			className="theme-site-selector-modal"
+			overlayClassName="theme-site-selector-modal"
 			onRequestClose={ onClose }
 			size="medium"
 			title={ translate( 'Select a site', {
