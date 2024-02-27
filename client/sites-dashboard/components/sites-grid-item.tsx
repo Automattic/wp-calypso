@@ -5,7 +5,6 @@ import styled from '@emotion/styled';
 import { useI18n } from '@wordpress/react-i18n';
 import { memo } from 'react';
 import { useInView } from 'react-intersection-observer';
-import { SiteExcerptData } from 'calypso/data/sites/site-excerpt-types';
 import SitesMigrationTrialBadge from 'calypso/sites-dashboard/components/sites-migration-trial-badge';
 import { useSelector } from 'calypso/state';
 import { isTrialSite } from 'calypso/state/sites/plans/selectors';
@@ -29,6 +28,7 @@ import SitesStagingBadge from './sites-staging-badge';
 import TransferNoticeWrapper from './sites-transfer-notice-wrapper';
 import { ThumbnailLink } from './thumbnail-link';
 import { WithAtomicTransfer } from './with-atomic-transfer';
+import type { SiteExcerptData } from '@automattic/sites';
 
 const SIZES_ATTR = [
 	'(min-width: 1345px) calc((1280px - 64px) / 3)',

@@ -39,7 +39,6 @@ import {
 	useSetEdgeCacheMutation,
 	purgeEdgeCache,
 } from 'calypso/data/hosting/use-cache';
-import { SiteExcerptData } from 'calypso/data/sites/site-excerpt-types';
 import { useAddNewSiteUrl } from 'calypso/lib/paths/use-add-new-site-url';
 import wpcom from 'calypso/lib/wp';
 import { useOpenPhpMyAdmin } from 'calypso/my-sites/hosting/phpmyadmin-card';
@@ -54,6 +53,7 @@ import type {
 	CommandCallBackParams,
 	useCommandsParams,
 } from '@automattic/command-palette';
+import type { SiteExcerptData } from '@automattic/sites';
 
 function useCommandNavigation( {
 	navigate,

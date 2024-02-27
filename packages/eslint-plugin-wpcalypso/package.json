@@ -24,7 +24,7 @@
 		"node": ">=v20.8.1"
 	},
 	"peerDependencies": {
-		"@babel/core": ">=7.23.7",
+		"@babel/core": ">=7.23.9",
 		"eslint": ">=8.56.0",
 		"eslint-plugin-inclusive-language": "^2.2.1",
 		"eslint-plugin-jsdoc": "^46.10.1",
@@ -41,9 +41,9 @@
 	},
 	"devDependencies": {
 		"@automattic/calypso-typescript-config": "workspace:^",
-		"@babel/core": "^7.23.7",
-		"@babel/eslint-parser": "^7.23.3",
-		"@babel/parser": "^7.23.6",
+		"@babel/core": "^7.23.9",
+		"@babel/eslint-parser": "^7.23.10",
+		"@babel/parser": "^7.23.9",
 		"eslint": "^8.56.0"
 	}
 }

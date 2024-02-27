@@ -2,6 +2,7 @@ import CommandPalette, { useSingleSiteCommands } from '@automattic/command-palet
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import domReady from '@wordpress/dom-ready';
 import { render } from 'react-dom';
+import setLocale from './set-locale';
 
 function CommandPaletteApp() {
 	if ( ! window.commandPaletteConfig ) {
@@ -34,6 +35,9 @@ function CommandPaletteApp() {
 
 		window.open( url, openInNewTab ? '_blank' : '_self' );
 	};
+
+	const locale = document.documentElement.lang ?? 'en';
+	setLocale( locale );
 
 	return (
 		<QueryClientProvider client={ new QueryClient() }>
