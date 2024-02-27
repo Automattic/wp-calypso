@@ -81,6 +81,19 @@ export interface P2ThumbnailElements {
 	header_image: string | null;
 }
 
+export interface SiteFeatures {
+	/**
+	 * We don't have a `FeatureSlug` yet defined globally
+	 * @todo Features are being migrated to calypso-products in other work. Update the type here when one exists
+	 */
+	active: string[];
+	/**
+	 * We don't have a `FeatureSlug` yet defined globally
+	 * @todo Features are being migrated to calypso-products in other work. Update the type here when one exists
+	 */
+	available: Record< string, string[] >;
+}
+
 export interface SiteDetailsPlan {
 	product_id: number;
 	product_slug: string;

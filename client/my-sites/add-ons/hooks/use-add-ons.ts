@@ -17,7 +17,6 @@ import useMediaStorageQuery from 'calypso/data/media-storage/use-media-storage-q
 import { filterTransactions } from 'calypso/me/purchases/billing-history/filter-transactions';
 import { useSelector } from 'calypso/state';
 import getBillingTransactionFilters from 'calypso/state/selectors/get-billing-transaction-filters';
-import getFeaturesBySiteId from 'calypso/state/selectors/get-site-features';
 import { usePastBillingTransactions } from 'calypso/state/sites/hooks/use-billing-history';
 import { STORAGE_LIMIT } from '../constants';
 import customDesignIcon from '../icons/custom-design';
@@ -194,7 +193,7 @@ const useAddOns = ( {
 	} );
 	const activeAddOns = useActiveAddOnsDefs( selectedSiteId );
 	const productsList = ProductsList.useProducts();
-	const siteFeatures = useSelector( ( state ) => getFeaturesBySiteId( state, selectedSiteId ) );
+	const siteFeatures = Site.useSiteFeatures( { siteIdOrSlug: selectedSiteId } );
 
 	return useMemo(
 		() =>
@@ -203,7 +202,7 @@ const useAddOns = ( {
 					// remove the Jetpack AI add-on if the site already supports the feature
 					if (
 						addOn.productSlug === PRODUCT_JETPACK_AI_MONTHLY &&
-						siteFeatures?.active?.includes( WPCOM_FEATURES_AI_ASSISTANT )
+						siteFeatures.data?.active?.includes( WPCOM_FEATURES_AI_ASSISTANT )
 					) {
 						return false;
 					}
@@ -273,7 +272,14 @@ const useAddOns = ( {
 						description,
 					};
 				} ),
-		[ activeAddOns, isLoading, mediaStorage, productsList, siteFeatures, spaceUpgradesPurchased ]
+		[
+			activeAddOns,
+			isLoading,
+			mediaStorage,
+			productsList.data,
+			siteFeatures.data,
+			spaceUpgradesPurchased,
+		]
 	);
 };
 
