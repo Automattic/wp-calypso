@@ -704,6 +704,7 @@ const useSingleSiteCommands = ( { navigate, currentRoute }: useCommandsParams ):
 			].join( ' ' ),
 			callback: commandNavigation( '/wp-admin/theme-install.php' ),
 			capability: SiteCapabilities.EDIT_THEME_OPTIONS,
+			siteType: SiteType.ATOMIC,
 			icon: brushIcon,
 		},
 		{
