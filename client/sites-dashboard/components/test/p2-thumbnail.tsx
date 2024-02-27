@@ -4,7 +4,7 @@
 import { render, screen } from '@testing-library/react';
 import { P2Thumbnail } from '../p2-thumbnail';
 import type { P2ThumbnailElements } from '@automattic/data-stores/src/site/types';
-import type { SiteExcerptData } from 'calypso/data/sites/site-excerpt-types';
+import type { SiteExcerptData } from '@automattic/sites';
 
 function makeTestSite( {
 	p2_thumbnail_elements,

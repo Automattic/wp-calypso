@@ -1,8 +1,8 @@
 import { get } from 'lodash';
-
+import { UTMMetricItem } from './types';
 import 'calypso/state/stats/init';
 
-const EMPTY_RESULT = {};
+const EMPTY_RESULT = [] as Array< UTMMetricItem >;
 
 /**
  * Returns UTM metrics for a given site
@@ -11,7 +11,11 @@ const EMPTY_RESULT = {};
  * @returns {Object}           Highlights object; see schema.
  */
 export function getMetrics( state: object, siteId: number ) {
-	return get( state, [ 'stats', 'utmMetrics', 'data', siteId ], EMPTY_RESULT );
+	return get( state, [ 'stats', 'utmMetrics', 'data', siteId, 'metrics' ], EMPTY_RESULT );
+}
+
+export function getTopPosts( state: object, siteId: number ) {
+	return get( state, [ 'stats', 'utmMetrics', 'data', siteId, 'topPosts' ], {} );
 }
 
 /**

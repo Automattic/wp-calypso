@@ -17,6 +17,7 @@ import QuerySites from 'calypso/components/data/query-sites';
 import JetpackCloudMasterbar from 'calypso/components/jetpack/masterbar';
 import { withCurrentRoute } from 'calypso/components/route';
 import SympathyDevWarning from 'calypso/components/sympathy-dev-warning';
+import { useSiteExcerptsSorted } from 'calypso/data/sites/use-site-excerpts-sorted';
 import { retrieveMobileRedirect } from 'calypso/jetpack-connect/persistence-utils';
 import wooDnaConfig from 'calypso/jetpack-connect/woo-dna-config';
 import HtmlIsIframeClassname from 'calypso/layout/html-is-iframe-classname';
@@ -30,7 +31,6 @@ import { navigate } from 'calypso/lib/navigate';
 import isReaderTagEmbedPage from 'calypso/lib/reader/is-reader-tag-embed-page';
 import { getMessagePathForJITM } from 'calypso/lib/route';
 import UserVerificationChecker from 'calypso/lib/user/verification-checker';
-import wpcom from 'calypso/lib/wp';
 import { useCommandsArrayWpcom } from 'calypso/sites-dashboard/components/wpcom-smp-commands';
 import { isOffline } from 'calypso/state/application/selectors';
 import { closeCommandPalette } from 'calypso/state/command-palette/actions';
@@ -383,8 +383,9 @@ class Layout extends Component {
 						currentSiteId={ this.props.siteId }
 						navigate={ navigate }
 						useCommands={ useCommandsArrayWpcom }
-						wpcom={ wpcom }
 						currentRoute={ this.props.currentRoutePattern }
+						useSites={ useSiteExcerptsSorted }
+						userCapabilities={ this.props.userCapabilities }
 					/>
 				) }
 			</div>
@@ -484,6 +485,7 @@ export default withCurrentRoute(
 				isGlobalSidebarVisible: shouldShowGlobalSidebar,
 				isGlobalSiteSidebarVisible: shouldShowGlobalSiteSidebar,
 				currentRoutePattern: getCurrentRoutePattern( state ),
+				userCapabilities: state.currentUser.capabilities,
 			};
 		},
 		{

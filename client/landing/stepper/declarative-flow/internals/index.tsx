@@ -159,7 +159,7 @@ export const FlowRenderer: React.FC< { flow: Flow } > = ( { flow } ) => {
 	}, [ location ] );
 
 	useEffect( () => {
-		if ( isFlowStart() ) {
+		if ( flow.isSignupFlow && isFlowStart() ) {
 			recordSignupStart( flow.name, ref );
 		}
 	}, [ flow, ref, isFlowStart ] );

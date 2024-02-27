@@ -158,39 +158,18 @@ const OdieAssistantProvider: FC< OdieAssistantProviderProps > = ( {
 		} );
 	};
 
-	// This might need a rework in the future, like connecting messages to a client_chat_id and
-	// Update it to be a message.type = 'message' in order to keep simplicity.
 	const addMessage = useCallback(
 		( message: Message | Message[] ) => {
 			setChat( ( prevChat ) => {
 				// Normalize message to always be an array
 				const newMessages = Array.isArray( message ) ? message : [ message ];
 
-				// Check if the new message is of type 'dislike-feedback'
-				const isNewMessageDislikeFeedback = newMessages.some(
-					( msg ) => msg.type === 'dislike-feedback'
-				);
+				// Filter out 'placeholder' messages if new message is not 'dislike-feedback'
+				const filteredMessages = newMessages.some( ( msg ) => msg.type === 'dislike-feedback' )
+					? prevChat.messages
+					: prevChat.messages.filter( ( msg ) => msg.type !== 'placeholder' );
 
-				const filteredMessages = ! isNewMessageDislikeFeedback
-					? prevChat.messages.filter( ( msg ) => msg.type !== 'placeholder' )
-					: prevChat.messages;
-
-				// If the new message is 'dislike-feedback' and there's a placeholder, insert it before the placeholder
-				if ( isNewMessageDislikeFeedback ) {
-					const lastPlaceholderIndex = prevChat.messages
-						.map( ( msg ) => msg.type )
-						.lastIndexOf( 'placeholder' );
-					return {
-						chat_id: prevChat.chat_id,
-						messages: [
-							...prevChat.messages.slice( 0, lastPlaceholderIndex ), // Take all messages before the last placeholder
-							...newMessages, // Insert new 'dislike-feedback' messages
-							...prevChat.messages.slice( lastPlaceholderIndex ), // Add back the placeholder and any messages after it
-						],
-					};
-				}
-
-				// For all other cases, append new messages at the end, without placeholders if not 'dislike-feedback'
+				// Append new messages at the end
 				return {
 					chat_id: prevChat.chat_id,
 					messages: [ ...filteredMessages, ...newMessages ],
@@ -202,18 +181,22 @@ const OdieAssistantProvider: FC< OdieAssistantProviderProps > = ( {
 
 	useOdieBroadcastWithCallbacks( { addMessage, clearChat }, odieClientId );
 
-	const updateMessage = ( message: Partial< Message > ) => {
-		setChat( ( prevChat ) => {
-			const updatedMessages = prevChat.messages.map( ( m ) =>
-				( message.internal_message_id && m.internal_message_id === message.internal_message_id ) ||
-				( message.message_id && m.message_id === message.message_id )
-					? { ...m, ...message }
-					: m
-			);
+	const updateMessage = useCallback(
+		( message: Partial< Message > ) => {
+			setChat( ( prevChat ) => {
+				const updatedMessages = prevChat.messages.map( ( prevMessage ) =>
+					( message.internal_message_id &&
+						prevMessage.internal_message_id === message.internal_message_id ) ||
+					( message.message_id && prevMessage.message_id === message.message_id )
+						? { ...prevMessage, ...message }
+						: prevMessage
+				);
 
-			return { ...prevChat, messages: updatedMessages };
-		} );
-	};
+				return { ...prevChat, messages: updatedMessages };
+			} );
+		},
+		[ setChat ]
+	);
 
 	if ( ! enabled ) {
 		return <>{ children }</>;

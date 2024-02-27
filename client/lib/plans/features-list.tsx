@@ -648,11 +648,11 @@ export const FEATURES_LIST: FeatureList = {
 
 	[ FEATURE_GOOGLE_MY_BUSINESS ]: {
 		getSlug: () => FEATURE_GOOGLE_MY_BUSINESS,
-		getTitle: () => i18n.translate( 'Google My Business' ),
+		getTitle: () => i18n.translate( 'Google Business Profile' ),
 		getDescription: () =>
 			i18n.translate(
 				'See how customers find you on Google -- and whether they visited your site ' +
-					'and looked for more info on your business -- by connecting to a Google My Business location.'
+					'and looked for more info on your business -- by connecting to a Google Business Profile location.'
 			),
 	},
 

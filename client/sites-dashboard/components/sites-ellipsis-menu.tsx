@@ -42,7 +42,7 @@ import {
 	isNotAtomicJetpack,
 	isP2Site,
 } from '../utils';
-import type { SiteExcerptData } from 'calypso/data/sites/site-excerpt-types';
+import type { SiteExcerptData } from '@automattic/sites';
 
 interface SitesMenuItemProps {
 	site: SiteExcerptData;

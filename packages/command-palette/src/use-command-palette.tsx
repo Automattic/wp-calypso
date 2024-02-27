@@ -1,15 +1,12 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { Gridicon } from '@automattic/components';
-import { useSitesListSorting } from '@automattic/sites';
 import styled from '@emotion/styled';
 import { __ } from '@wordpress/i18n';
 import { useCommandState } from 'cmdk';
 import { useCallback } from 'react';
 import { useCommandsParams } from './commands/types';
-import { SiteData, useSites } from './use-sites';
-import { useSitesSortingQuery } from './use-sites-sorting-query';
 import { isCustomDomain } from './utils';
-import type { WPCOM } from 'wpcom';
+import type { SiteExcerptData } from '@automattic/sites';
 
 const FillDefaultIconWhite = styled.div( {
 	flexShrink: 0,
@@ -39,13 +36,13 @@ type OnClickSiteFunction = ( {
 	command,
 }: {
 	close: CloseFunction;
-	site: SiteData;
+	site: SiteExcerptData;
 	command: Command;
 } ) => void;
 interface SiteFunctions {
 	capabilityFilter?: string;
 	onClick: OnClickSiteFunction;
-	filter?: ( site: SiteData ) => boolean | undefined | null;
+	filter?: ( site: SiteExcerptData ) => boolean | undefined | null;
 	filterNotice?: string;
 	emptyListNotice?: string;
 }
@@ -79,8 +76,9 @@ interface useCommandPaletteOptions {
 	search: string;
 	navigate: ( path: string, openInNewTab?: boolean ) => void;
 	useCommands: ( options: useCommandsParams ) => Command[];
-	wpcom: WPCOM;
 	currentRoute: string | null;
+	useSites: () => SiteExcerptData[];
+	userCapabilities: { [ key: number ]: { [ key: string ]: boolean } };
 }
 
 interface SiteToActionParameters {
@@ -104,7 +102,7 @@ const useSiteToAction = ( { currentRoute }: { currentRoute: string | null } ) =>
 				search,
 			}: SiteToActionParameters[ 'properties' ]
 		) =>
-			( site: SiteData ): Command => {
+			( site: SiteExcerptData ): Command => {
 				const siteName = site.name || site.URL; // Use site.name if present, otherwise default to site.URL
 				return {
 					name: `${ site.ID }`,
@@ -150,21 +148,19 @@ export const useCommandPalette = ( {
 	search,
 	navigate,
 	useCommands,
-	wpcom,
 	currentRoute,
+	useSites = () => [],
+	userCapabilities = {},
 }: useCommandPaletteOptions ): {
 	commands: Command[];
 	filterNotice: string | undefined;
 	emptyListNotice: string | undefined;
 } => {
-	const { data: allSites = [] } = useSites( wpcom );
 	const siteToAction = useSiteToAction( { currentRoute } );
 
 	const listVisibleCount = useCommandState( ( state ) => state.filtered.count );
 
-	// Sort sites in the nested commands to be consistent with site switcher and /sites page
-	const { data: sitesSorting } = useSitesSortingQuery( wpcom );
-	const sortedSites = useSitesListSorting( allSites, sitesSorting ) as SiteData[];
+	const sites = useSites();
 
 	// Call the generateCommandsArray function to get the commands array
 	const commands = useCommands( {
@@ -172,11 +168,6 @@ export const useCommandPalette = ( {
 		navigate,
 		currentRoute,
 	} ) as Command[];
-
-	const userCapabilities: { [ key: number ]: { [ key: string ]: boolean } } = {};
-	allSites.forEach( ( site: SiteData ) => {
-		userCapabilities[ site.ID ] = site.capabilities;
-	} );
 
 	// Logic for selected command (sites)
 	if ( selectedCommandName ) {
@@ -186,14 +177,14 @@ export const useCommandPalette = ( {
 		let emptyListNotice = undefined;
 		if ( selectedCommand?.siteFunctions ) {
 			const { capabilityFilter, onClick, filter } = selectedCommand.siteFunctions;
-			let filteredSites = filter ? sortedSites.filter( filter ) : sortedSites;
+			let filteredSites = filter ? sites.filter( filter ) : sites;
 			if ( capabilityFilter ) {
 				filteredSites = filteredSites.filter( ( site ) => {
 					const siteCapabilities = userCapabilities[ site.ID ];
 					return siteCapabilities?.[ capabilityFilter ];
 				} );
 			}
-			if ( sortedSites.length === 0 ) {
+			if ( sites.length === 0 ) {
 				emptyListNotice = __( "You don't have any sites yet.", __i18n_text_domain__ );
 			} else if ( filteredSites.length === 0 ) {
 				emptyListNotice = selectedCommand.siteFunctions?.emptyListNotice;

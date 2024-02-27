@@ -18,6 +18,7 @@ const videopressTv: Flow = {
 	get title() {
 		return translate( 'VideoPress TV' );
 	},
+	isSignupFlow: false,
 	useSteps() {
 		return [
 			{
