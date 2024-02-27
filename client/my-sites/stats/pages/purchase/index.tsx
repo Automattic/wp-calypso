@@ -159,22 +159,22 @@ const StatsPurchasePage = ( {
 	return (
 		<Main fullWidthLayout>
 			<DocumentHead title={ translate( 'Jetpack Stats' ) } />
-			<PageViewTracker
-				path="/stats/purchase/:site"
-				title="Stats > Purchase"
-				from={ query.from ?? '' }
-				// properties={
-				// 	isTierUpgradeSliderEnabled
-				// 		? {
-				// 				variant:
-				// 					( ! isForceProductRedirect && isCommercial ) || redirectToCommercial
-				// 						? 'commercial'
-				// 						: 'personal',
-				// 				is_upgrade: isCommercialOwned,
-				// 		  }
-				// 		: null
-				// }
-			/>
+			{ ! isLoading && (
+				<PageViewTracker
+					path="/stats/purchase/:site"
+					title="Stats > Purchase"
+					from={ query.from ?? '' }
+					variant={
+						( ! isForceProductRedirect &&
+							( isCommercial || isCommercial === null || isCommercialOwned ) ) ||
+						redirectToCommercial
+							? 'commercial'
+							: 'personal'
+					}
+					is_upgrade={ +supportCommercialUse }
+					is_site_commercial={ isCommercial === null ? '' : +isCommercial }
+				/>
+			) }
 			<div
 				className={ classNames( 'stats', 'stats-purchase-page', {
 					'stats-purchase-page--is-wpcom': isTypeDetectionEnabled && isWPCOMSite,
