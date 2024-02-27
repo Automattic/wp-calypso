@@ -22,7 +22,12 @@ import {
 	WEEKLY_OPTION,
 	MAX_SELECTABLE_PLUGINS,
 } from './schedule-form.const';
-import { prepareTimestamp, validateName, validateTimeSlot } from './schedule-form.helper';
+import {
+	prepareTimestamp,
+	validateName,
+	validatePlugins,
+	validateTimeSlot,
+} from './schedule-form.helper';
 
 import './schedule-form.scss';
 
@@ -83,6 +88,13 @@ export const ScheduleForm = ( props: Props ) => {
 	useEffect(
 		() => setValidationErrors( { ...validationErrors, name: validateName( name ) } ),
 		[ name ]
+	);
+
+	// Plugin selection validation
+	useEffect(
+		() =>
+			setValidationErrors( { ...validationErrors, plugins: validatePlugins( selectedPlugins ) } ),
+		[ selectedPlugins ]
 	);
 
 	// Time slot/timestamp validation
@@ -228,13 +240,16 @@ export const ScheduleForm = ( props: Props ) => {
 						<span className="plugin-select-stats">
 							{ selectedPlugins.length }/{ MAX_SELECTABLE_PLUGINS }
 						</span>
-						<Text className="info-msg">
-							Plugins not listed below are managed by WordPress.com and update automatically.
-						</Text>
-						<Text className="validation-msg">
-							<Icon className="icon-info" icon={ info } size={ 16 } />
-							Please select a different set of plugins, as this one has already been chosen.
-						</Text>
+						{ fieldTouched?.plugins && validationErrors?.plugins ? (
+							<Text className="validation-msg">
+								<Icon className="icon-info" icon={ info } size={ 16 } />
+								{ validationErrors?.plugins }
+							</Text>
+						) : (
+							<Text className="info-msg">
+								Plugins not listed below are managed by WordPress.com and update automatically.
+							</Text>
+						) }
 						<div className="checkbox-options">
 							<SearchControl
 								id="plugins"
@@ -265,7 +280,10 @@ export const ScheduleForm = ( props: Props ) => {
 												className={ classnames( {
 													disabled: isPluginSelectionDisabled( plugin ),
 												} ) }
-												onChange={ ( isChecked ) => onPluginSelectionChange( plugin, isChecked ) }
+												onChange={ ( isChecked ) => {
+													setFieldTouched( { ...fieldTouched, plugins: true } );
+													onPluginSelectionChange( plugin, isChecked );
+												} }
 											/>
 										) }
 									</Fragment>
