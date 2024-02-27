@@ -17,6 +17,11 @@ export function getCurrentPlan( state, siteId ) {
 		}
 
 		const site = getSite( state, siteId );
+
+		if ( ! site || ! site.plan ) {
+			return null;
+		}
+
 		const plan = createSitePlanObject( site.plan );
 		debug( 'current plan: %o', plan );
 		return plan;
