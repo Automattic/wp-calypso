@@ -198,7 +198,7 @@
 		"ssr/prefetch-timebox": false,
 		"stats/checkout-flows-v2": true,
 		"stats/date-control": true,
-		"stats/flexible-grid": false,
+		"stats/flexible-grid": true,
 		"stats/new-video-summary": true,
 		"stats/paid-wpcom-stats": true,
 		"stats/paid-wpcom-v2": true,

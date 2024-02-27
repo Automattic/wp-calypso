@@ -169,7 +169,7 @@
 		"ssr/sample-log-cache-misses": true,
 		"stats/checkout-flows-v2": true,
 		"stats/date-control": true,
-		"stats/flexible-grid": false,
+		"stats/flexible-grid": true,
 		"stats/new-video-summary": false,
 		"stats/paid-wpcom-stats": true,
 		"stats/paid-wpcom-v2": true,
