@@ -40,17 +40,13 @@
 		"@automattic/calypso-apps-builder": "workspace:^",
 		"@automattic/calypso-build": "workspace:^",
 		"@automattic/calypso-eslint-overrides": "workspace:^",
-<<<<<<< HEAD
-		"@wordpress/dependency-extraction-webpack-plugin": "^5.3.0",
-=======
 		"@automattic/languages": "workspace:^",
 		"@automattic/wp-babel-makepot": "workspace:^",
-		"@wordpress/dependency-extraction-webpack-plugin": "^5.2.0",
+		"@wordpress/dependency-extraction-webpack-plugin": "^5.3.0",
 		"gettext-parser": "^6.0.0",
 		"lodash": "^4.17.21",
 		"mkdirp": "^1.0.4",
 		"node-fetch": "^2.6.6",
->>>>>>> a857c3f7952 (Make i18n work for the command-palette app)
 		"npm-run-all": "^4.1.5",
 		"postcss": "^8.4.5",
 		"webpack": "^5.90.2",
