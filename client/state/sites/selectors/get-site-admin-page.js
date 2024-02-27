@@ -13,6 +13,7 @@ export default function getSiteAdminPage( state, siteId, productSlug ) {
 		getSiteOption( state, siteId, 'jetpack_connection_active_plugins' ) ?? [];
 	let plugins = [
 		'jetpack-backup',
+		'jetpack-boost',
 		'jetpack-search',
 		'jetpack-social',
 		'jetpack-protect',
