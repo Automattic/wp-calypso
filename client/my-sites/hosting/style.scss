@@ -74,16 +74,6 @@
 					position: absolute;
 					left: 24px;
 				}
-
-				&.is-highlight {
-					padding-left: 69px;
-
-					> .card-icon,
-					> .material-icon,
-					> .gridicon {
-						left: 21px;
-					}
-				}
 			}
 		}
 	}
@@ -101,6 +91,16 @@
 		display: block;
 		margin-left: auto;
 		margin-right: auto;
+	}
+
+	.github-deployments-card {
+		.banner__icons .banner__icon-no-circle {
+			margin-right: 13px;
+		}
+
+		.banner__action {
+			margin-right: 0;
+		}
 	}
 }
 
