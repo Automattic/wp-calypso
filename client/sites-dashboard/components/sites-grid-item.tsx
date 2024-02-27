@@ -8,7 +8,6 @@ import { useInView } from 'react-intersection-observer';
 import { SiteExcerptData } from 'calypso/data/sites/site-excerpt-types';
 import SitesMigrationTrialBadge from 'calypso/sites-dashboard/components/sites-migration-trial-badge';
 import { useSelector } from 'calypso/state';
-import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
 import { isTrialSite } from 'calypso/state/sites/plans/selectors';
 import {
 	displaySiteUrl,
@@ -117,7 +116,6 @@ export const SitesGridItem = memo( ( props: SitesGridItemProps ) => {
 	const isWpcomStagingSite = isStagingSite( site );
 	const translatedStatus = useSiteLaunchStatusLabel( site );
 	const isTrialSitePlan = useSelector( ( state ) => isTrialSite( state, site.ID ) );
-	const isAtomicSite = useSelector( ( state ) => isSiteAutomatedTransfer( state, site.ID ) );
 	const wpAdminUrl = getSiteWpAdminUrl( site );
 	const { ref, inView } = useInView( { triggerOnce: true } );
 
@@ -126,7 +124,7 @@ export const SitesGridItem = memo( ( props: SitesGridItemProps ) => {
 	const siteDashboardUrlProps = showThumbnailLink
 		? {
 				href:
-					isAtomicSite && siteDefaultInterface( site ) === 'wp-admin'
+					siteDefaultInterface( site ) === 'wp-admin'
 						? wpAdminUrl || getDashboardUrl( site.slug )
 						: getDashboardUrl( site.slug ),
 				title: __( 'Visit Dashboard' ),
