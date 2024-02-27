@@ -309,14 +309,6 @@ const useSingleSiteCommands = ( { navigate, currentRoute }: useCommandsParams ):
 			icon: <JetpackLogo className="gridicon" size={ 18 } />,
 		},
 		{
-			name: 'openJetpackSettings',
-			label: __( 'Open Jetpack settings', __i18n_text_domain__ ),
-			callback: commandNavigation( `INVESTIGATE IF WE NEED A SIMPLE SITE VERSION` ),
-			capability: SiteCapabilities.MANAGE_OPTIONS,
-			siteType: SiteType.SIMPLE,
-			icon: <JetpackLogo className="gridicon" size={ 18 } />,
-		},
-		{
 			name: 'manageJetpackModules',
 			label: __( 'Manage Jetpack modules', __i18n_text_domain__ ),
 			callback: commandNavigation( `/wp-admin/admin.php?page=jetpack_modules` ),
