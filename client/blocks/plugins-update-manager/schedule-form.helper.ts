@@ -13,39 +13,35 @@ export const WEEKLY_OPTION = {
 export const DAY_OPTIONS = [
 	{
 		label: 'Monday',
-		value: 'a',
+		value: '1',
 	},
 	{
 		label: 'Tuesday',
-		value: 'b',
+		value: '2',
 	},
 	{
 		label: 'Wednesday',
-		value: 'c',
+		value: '3',
 	},
 	{
 		label: 'Thursday',
-		value: 'd',
+		value: '4',
 	},
 	{
 		label: 'Friday',
-		value: 'e',
+		value: '5',
 	},
 	{
 		label: 'Saturday',
-		value: 'f',
+		value: '6',
 	},
 	{
 		label: 'Sunday',
-		value: 'g',
+		value: '0',
 	},
 ];
 
 export const HOUR_OPTIONS = [
-	{
-		label: '00',
-		value: '0',
-	},
 	{
 		label: '01',
 		value: '1',
@@ -89,6 +85,10 @@ export const HOUR_OPTIONS = [
 	{
 		label: '11',
 		value: '11',
+	},
+	{
+		label: '12',
+		value: '12',
 	},
 ];
 
