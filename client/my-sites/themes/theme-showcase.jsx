@@ -93,7 +93,6 @@ const defaultStaticFilter = Object.values( staticFilters ).find(
 class ThemeShowcase extends Component {
 	state = {
 		isDesignThemeModalVisible: false,
-		isDesignThemeFlow: false,
 		isSiteSelectorModalVisible: false,
 	};
 
@@ -378,7 +377,7 @@ class ThemeShowcase extends Component {
 		} );
 
 		if ( shouldSelectSite( { isLoggedIn, siteCount, siteId } ) ) {
-			this.setState( { isDesignThemeFlow: true, isDesignThemeModalVisible: true } );
+			this.setState( { isDesignThemeModalVisible: true } );
 		} else {
 			this.redirectToSiteAssembler( this.props.site );
 		}
@@ -623,19 +622,19 @@ class ThemeShowcase extends Component {
 				/>
 				<ThemeSiteSelectorModal
 					isOpen={ this.state.isSiteSelectorModalVisible }
-					navigateOnClose={ ! this.state.isDesignThemeFlow }
+					navigateOnClose={ false }
 					onClose={ ( args ) => {
-						if ( args?.siteSlug && this.state.isDesignThemeFlow ) {
+						if ( args?.siteSlug ) {
 							this.redirectToSiteAssembler( { slug: args.siteSlug } );
 						}
 
-						this.setState( { isDesignThemeFlow: false, isSiteSelectorModalVisible: false } );
+						this.setState( { isSiteSelectorModalVisible: false } );
 					} }
 				/>
 				<ThemeDesignYourOwnModal
 					isOpen={ this.state.isDesignThemeModalVisible }
 					onClose={ () => {
-						this.setState( { isDesignThemeFlow: false, isDesignThemeModalVisible: false } );
+						this.setState( { isDesignThemeModalVisible: false } );
 					} }
 					onCreateNewSite={ () => {
 						this.redirectToSiteAssembler( this.props.site );
