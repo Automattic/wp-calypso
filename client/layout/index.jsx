@@ -3,7 +3,8 @@ import { HelpCenter } from '@automattic/data-stores';
 import { shouldLoadInlineHelp } from '@automattic/help-center';
 import { isWithinBreakpoint, subscribeIsWithinBreakpoint } from '@automattic/viewport';
 import { useBreakpoint } from '@automattic/viewport-react';
-import { useDispatch } from '@wordpress/data';
+import { useWhatsNewAnnouncementsQuery } from '@automattic/whats-new';
+import { useDispatch, useSelect } from '@wordpress/data';
 import classnames from 'classnames';
 import PropTypes from 'prop-types';
 import { useCallback, useEffect, Component } from 'react';
@@ -53,7 +54,6 @@ import {
 import BodySectionCssClass from './body-section-css-class';
 import LayoutLoader from './loader';
 import { handleScroll } from './utils';
-
 // goofy import for environment badge, which is SSR'd
 import 'calypso/components/environment-badge/style.scss';
 
@@ -94,13 +94,36 @@ function SidebarScrollSynchronizer() {
 }
 
 function WhatsNewLoader( { loadWhatsNew } ) {
-	const { setShowWhatsNewModal } = useDispatch( HELP_CENTER_STORE );
-	// todo: only show if the user hasn't seen critical notifications yet.
-	setShowWhatsNewModal( true );
+	const { setShowWhatsNewModal, fetchLatestSeenWhatsNewModalItem } =
+		useDispatch( HELP_CENTER_STORE );
+
+	const { data, isLoading } = useWhatsNewAnnouncementsQuery();
+
+	useEffect( () => {
+		fetchLatestSeenWhatsNewModalItem();
+	}, [ fetchLatestSeenWhatsNewModalItem ] );
+
+	const { latestSeenWhatsNewModalItem } = useSelect( ( select ) => {
+		const helpCenterSelect = select( HELP_CENTER_STORE );
+		return {
+			latestSeenWhatsNewModalItem: helpCenterSelect.getLatestSeenWhatsNewModalItem(),
+		};
+	}, [] );
+
+	useEffect( () => {
+		if ( data && data.length > 0 && ! isLoading ) {
+			data.forEach( ( item ) => {
+				if ( item.critical && item.announcementId > latestSeenWhatsNewModalItem ) {
+					setShowWhatsNewModal( true );
+				}
+			} );
+		}
+	}, [ data, isLoading, latestSeenWhatsNewModalItem, setShowWhatsNewModal ] );
 
 	const handleClose = useCallback( () => {
 		setShowWhatsNewModal( false );
 	}, [ setShowWhatsNewModal ] );
+
 	if ( ! loadWhatsNew ) {
 		return null;
 	}

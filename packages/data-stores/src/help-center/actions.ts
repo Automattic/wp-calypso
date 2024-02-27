@@ -11,6 +11,30 @@ export const receiveHasSeenWhatsNewModal = ( value: boolean | undefined ) =>
 		value,
 	} ) as const;
 
+export const receiveLatestSeenWhatsNewModalItem = ( value: number | undefined ) =>
+	( {
+		type: 'HELP_CENTER_SET_LATEST_WHATS_NEW_MODAL_ITEM',
+		value,
+	} ) as const;
+
+export function* fetchLatestSeenWhatsNewModalItem() {
+	let response: {
+		latest_seen_whats_new_modal_item: number;
+	};
+	if ( canAccessWpcomApis() ) {
+		response = yield wpcomRequest( {
+			path: `/whats-new/latest-seen-whats-new-modal-item`,
+			apiNamespace: 'wpcom/v2',
+		} );
+	} else {
+		response = yield apiFetch( {
+			global: true,
+			path: `/wpcom/v2/whats-new/latest-seen-whats-new-modal-item`,
+		} as APIFetchOptions );
+	}
+
+	return receiveLatestSeenWhatsNewModalItem( response.latest_seen_whats_new_modal_item );
+}
 export function* setHasSeenWhatsNewModal( value: boolean ) {
 	let response: {
 		has_seen_whats_new_modal: boolean;
@@ -34,6 +58,31 @@ export function* setHasSeenWhatsNewModal( value: boolean ) {
 	}
 
 	return receiveHasSeenWhatsNewModal( response.has_seen_whats_new_modal );
+}
+
+export function* setLatestSeenWhatsNewModalItem( id: number ) {
+	let response: {
+		latest_seen_whats_new_modal_item: number;
+	};
+	if ( canAccessWpcomApis() ) {
+		response = yield wpcomRequest( {
+			path: `/whats-new/latest-seen-whats-new-modal-item`,
+			apiNamespace: 'wpcom/v2',
+			method: 'PUT',
+			body: {
+				latest_seen_whats_new_modal_item: id,
+			},
+		} );
+	} else {
+		response = yield apiFetch( {
+			global: true,
+			path: `/wpcom/v2/whats-new/latest-seen-whats-new-modal-item`,
+			method: 'PUT',
+			data: { latest_seen_whats_new_modal_item: id },
+		} as APIFetchOptions );
+	}
+
+	return receiveLatestSeenWhatsNewModalItem( response.latest_seen_whats_new_modal_item );
 }
 
 export const setSite = ( site: HelpCenterSite | undefined ) =>
@@ -154,6 +203,7 @@ export type HelpCenterAction =
 			| typeof setSubject
 			| typeof resetStore
 			| typeof receiveHasSeenWhatsNewModal
+			| typeof receiveLatestSeenWhatsNewModalItem
 			| typeof setMessage
 			| typeof setUserDeclaredSite
 			| typeof setUserDeclaredSiteUrl
@@ -162,4 +212,9 @@ export type HelpCenterAction =
 			| typeof setInitialRoute
 			| typeof setShowWhatsNewModal
 	  >
-	| GeneratorReturnType< typeof setShowHelpCenter | typeof setHasSeenWhatsNewModal >;
+	| GeneratorReturnType<
+			| typeof setShowHelpCenter
+			| typeof setHasSeenWhatsNewModal
+			| typeof setLatestSeenWhatsNewModalItem
+			| typeof fetchLatestSeenWhatsNewModalItem
+	  >;
