@@ -28,7 +28,7 @@ export default function getDomainFooterDetails( limit?: number ): ThankYouFooter
 			buttonHref: '/support/category/domains-and-email/',
 			buttonOnClick: () => {
 				recordTracksEvent( 'calypso_thank_you_footer_link_click', {
-					type: 'footer-domain-resources',
+					type: 'domain-resources',
 				} );
 			},
 		},
