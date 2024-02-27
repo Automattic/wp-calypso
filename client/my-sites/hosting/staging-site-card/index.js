@@ -176,7 +176,15 @@ export const StagingSiteCard = ( {
 				successNotice( __( 'Staging site added.' ), { id: stagingSiteAddSuccessNoticeId } )
 			);
 		}
-	}, [ dispatch, queryClient, __, siteId, stagingSiteStatus ] );
+	}, [ __, dispatch, queryClient, siteId, stagingSiteStatus ] );
+
+	useEffect( () => {
+		//Something went wrong, and we want to set the status to none.
+		//Lock is not there (expired) but neither is the staging site.
+		if ( ! lock && hasCompletedInitialLoading && ! stagingSite.id ) {
+			dispatch( setStagingSiteStatus( siteId, StagingSiteStatus.COMPLETE ) );
+		}
+	}, [ dispatch, hasCompletedInitialLoading, lock, siteId, stagingSite.id ] );
 
 	useEffect( () => {
 		// If we are done with the transfer, and we have not errored we want to set the action to NONE, and display a success notice.
