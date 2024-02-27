@@ -2,6 +2,11 @@
 @import "@wordpress/base-styles/mixins";
 
 .main.a4a-layout {
+	background: var(--color-surface);
+	margin: 0;
+	padding-block-start: 48px;
+	border-radius: 8px; /* stylelint-disable-line scales/radii */
+
 	header.current-section {
 		button {
 			padding: 20px 8px;
@@ -11,7 +16,7 @@
 
 .a4a-layout__container {
 	max-width: 100%;
-	min-height: calc(100vh - 123px);
+	min-height: calc(100vh - 80px);
 	display: flex;
 	flex-direction: column;
 	margin: auto;
@@ -20,36 +25,29 @@
 
 .a4a-layout__body {
 	width: 100%;
-	margin-block-end: -32px;
 	flex: 1 1 100%;
-
-	@include breakpoint-deprecated( ">660px" ) {
-		// We need these negative margin values because we want to make the container full-width,
-		// but our element is inside a limited-width parent.
-		margin-inline-start: -73px;
-		padding-inline: 73px;
-	}
+	padding-block-start: 16px;
 }
 
 .a4a-layout__top-wrapper,
-.a4a-layout__body-wrapper {
+.a4a-layout__body {
 	margin-inline: 0;
 
 	> * {
-		max-width: 1500px;
-		margin-inline: auto !important;
+		padding-inline: 16px;
+
+		@include breakpoint-deprecated( ">660px" ) {
+			max-width: 1500px;
+			margin-inline: auto !important;
+			padding-inline: 64px;
+		}
 	}
 }
 
 .main.a4a-layout.is-with-border {
 	@include breakpoint-deprecated( ">660px" ) {
-		.a4a-layout__top {
-			border-block-end: 1px solid var(--color-primary-5);
-		}
-
-		.a4a-layout__body {
-			background: rgba(255, 255, 255, 0.5);
-			padding-block: 16px;
+		.a4a-layout__top-wrapper {
+			border-block-end: 1px solid var(--color-neutral-5);
 		}
 	}
 }
@@ -200,8 +198,9 @@
 		z-index: 23;
 	}
 
-	@include breakpoint-deprecated( ">960px" ) {
+	@include breakpoint-deprecated( ">1040px" ) {
 		margin-block-start: 32px;
+		margin-inline: -16px;
 	}
 }
 

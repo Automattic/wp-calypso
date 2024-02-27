@@ -20,9 +20,10 @@ import {
 } from 'calypso/my-sites/checkout/src/payment-methods/netbanking';
 import { createReduxStore } from 'calypso/state';
 
+const queryClient = new QueryClient();
+
 function TestWrapper( { paymentMethods, paymentProcessors = undefined } ) {
 	const store = createReduxStore();
-	const queryClient = new QueryClient();
 	return (
 		<ReduxProvider store={ store }>
 			<QueryClientProvider client={ queryClient }>

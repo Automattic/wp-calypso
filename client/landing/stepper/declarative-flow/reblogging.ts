@@ -20,6 +20,7 @@ const reblogging: Flow = {
 	get title() {
 		return translate( 'Reblogging' );
 	},
+	isSignupFlow: true,
 	useSteps() {
 		return [
 			{ slug: 'domains', asyncComponent: () => import( './internals/steps-repository/domains' ) },

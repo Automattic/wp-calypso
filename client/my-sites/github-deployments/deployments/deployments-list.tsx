@@ -1,13 +1,12 @@
 import { useFuzzySearch } from '@automattic/search';
-import { useI18n } from '@wordpress/react-i18n';
 import { useState } from 'react';
 import { SortDirection, useSort } from '../components/sort-button/use-sort';
 import { SearchDeployments } from './deployments-list-search';
 import { DeploymentsListTable } from './deployments-list-table';
+import { NoResults } from './no-results';
 import { CodeDeploymentData } from './use-code-deployments-query';
 
 import './styles.scss';
-
 interface GitHubDeploymentsListProps {
 	deployments: CodeDeploymentData[];
 }
@@ -66,7 +65,6 @@ function applySort( deployments: CodeDeploymentData[], key: string, direction: S
 export const GitHubDeploymentsList = ( { deployments }: GitHubDeploymentsListProps ) => {
 	const { key, direction, handleSortChange } = useSort( 'name' );
 	const [ query, setQuery ] = useState( '' );
-	const { __ } = useI18n();
 
 	const filteredDeployments = useFuzzySearch( {
 		data: deployments,
@@ -76,7 +74,7 @@ export const GitHubDeploymentsList = ( { deployments }: GitHubDeploymentsListPro
 
 	const getContent = () => {
 		if ( filteredDeployments.length === 0 ) {
-			<i css={ { color: 'var(--Gray-Gray-40, #50575E)' } }>{ __( 'No results.' ) }</i>;
+			return <NoResults />;
 		}
 
 		return (
