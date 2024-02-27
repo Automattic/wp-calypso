@@ -57,7 +57,7 @@ const TitanSetUpThankYou = ( {
 					context: 'checkout-thank-you',
 				} );
 				recordTracksEvent( 'calypso_thank_you_footer_link_click', {
-					type: 'footer-manage-email',
+					type: 'manage-email',
 				} );
 			},
 		},
