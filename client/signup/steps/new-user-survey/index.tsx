@@ -5,6 +5,7 @@ import { ChangeEvent, useEffect, useRef, useState } from 'react';
 import CardHeading from 'calypso/components/card-heading';
 import FormInputCheckbox from 'calypso/components/forms/form-checkbox';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
+import { useExperiment } from 'calypso/lib/explat';
 import StepWrapper from 'calypso/signup/step-wrapper';
 import {
 	ButtonContainer,
@@ -69,12 +70,21 @@ function ControlledCheckbox( props: {
 }
 
 function SurveyForm( props: Props ) {
+	const [ isExperimentLoading, experimentAssignment ] = useExperiment(
+		'calypso_signup_onboarding_site_goals_survey'
+	);
+	const isScrambled = experimentAssignment?.variationName === 'treatment_scrambled';
+
 	const [ formState, setFormState ] = useState< FormState >( defaultFormState );
 	const [ orderGoals, setOrderGoals ] = useState< string[] | null >( [] );
 	const [ orderDescribeYourself, setOrderDescribeYourself ] = useState< string[] | null >( [] );
 	const translate = useTranslate();
 	const isMobileViewport = useMobileBreakpoint();
 	const isDesktopViewport = useDesktopBreakpoint();
+
+	if ( isExperimentLoading ) {
+		return null;
+	}
 
 	const handleChange = ( e: ChangeEvent< HTMLInputElement > ) => {
 		const { name, value } = e.target as { name: keyof FormState; value: string | 'on' };
@@ -158,6 +168,7 @@ function SurveyForm( props: Props ) {
 						</CardHeading>
 						<OptionsContainer>
 							<Shuffle
+								isActive={ isScrambled }
 								getChildKey={ getCheckBoxKey }
 								childOrder={ orderGoals }
 								setChildOrder={ setOrderGoals }
@@ -202,6 +213,7 @@ function SurveyForm( props: Props ) {
 						</CardHeading>
 						<OptionsContainer>
 							<Shuffle
+								isActive={ isScrambled }
 								getChildKey={ getCheckBoxKey }
 								childOrder={ orderDescribeYourself }
 								setChildOrder={ setOrderDescribeYourself }
