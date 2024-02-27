@@ -4,11 +4,11 @@ import { translate } from 'i18n-calypso';
 import { FC } from 'react';
 
 const ThemeDesignYourOwnModal: FC< {
-	handleCreateNewSite: () => void;
-	handleOpenSiteSelector: () => void;
 	isOpen: boolean;
 	onClose: () => void;
-} > = ( { handleCreateNewSite, handleOpenSiteSelector, isOpen, onClose } ) => {
+	onCreateNewSite: () => void;
+	onSelectSite: () => void;
+} > = ( { isOpen, onClose, onCreateNewSite, onSelectSite } ) => {
 	if ( ! isOpen ) {
 		return null;
 	}
@@ -30,12 +30,12 @@ const ThemeDesignYourOwnModal: FC< {
 			</p>
 
 			<div className="theme-design-your-own-modal__footer">
-				<Button variant="primary" onClick={ handleCreateNewSite }>
+				<Button variant="primary" onClick={ onCreateNewSite }>
 					{ translate( 'Create a new site', {
 						comment: 'TODO',
 					} ) }
 				</Button>
-				<Button variant="secondary" onClick={ handleOpenSiteSelector }>
+				<Button variant="secondary" onClick={ onSelectSite }>
 					{ translate( 'Select one of my sites', {
 						comment: 'TODO',
 					} ) }

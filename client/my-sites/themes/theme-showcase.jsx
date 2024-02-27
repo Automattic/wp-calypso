@@ -651,15 +651,15 @@ class ThemeShowcase extends Component {
 					} }
 				/>
 				<ThemeDesignYourOwnModal
-					handleCreateNewSite={ () => {
-						this.redirectToSiteAssembler( this.props.site );
-					} }
-					handleOpenSiteSelector={ () => {
-						this.setState( { isDesignThemeModalVisible: false, isSiteSelectorModalVisible: true } );
-					} }
 					isOpen={ this.state.isDesignThemeModalVisible }
 					onClose={ () => {
 						this.setState( { isDesignThemeFlow: false, isDesignThemeModalVisible: false } );
+					} }
+					onCreateNewSite={ () => {
+						this.redirectToSiteAssembler( this.props.site );
+					} }
+					onSelectSite={ () => {
+						this.setState( { isDesignThemeModalVisible: false, isSiteSelectorModalVisible: true } );
 					} }
 				/>
 				{ isLoggedIn && (
