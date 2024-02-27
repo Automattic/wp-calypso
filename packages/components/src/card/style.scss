@@ -51,7 +51,13 @@
 	}
 
 	&.is-highlight {
-		padding-left: 21px;
+		padding-left: 13px;
+	}
+
+	@include break-mobile {
+		&.is-highlight {
+			padding-left: 21px;
+		}
 	}
 
 	&.is-error {

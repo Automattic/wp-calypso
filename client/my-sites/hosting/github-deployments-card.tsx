@@ -21,7 +21,7 @@ export const GitHubDeploymentsCard = () => {
 				size={ 32 }
 				css={ { marginBottom: '0 !important' } }
 			/>
-			<div css={ { flex: 1 } }>
+			<div css={ { flex: 1, paddingRight: '16px' } }>
 				<CardHeading size={ 14 } isBold css={ { margin: 0 } }>
 					{ __( 'GitHub Deployments' ) }
 				</CardHeading>
