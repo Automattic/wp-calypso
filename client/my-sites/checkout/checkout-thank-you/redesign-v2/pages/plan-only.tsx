@@ -68,7 +68,7 @@ export default function PlanOnlyThankYou( { primaryPurchase }: PlanOnlyThankYouP
 		buttonText: translate( 'Explore support resources' ),
 		buttonHref: '/support',
 		buttonOnClick: () => {
-			recordTracksEvent( 'calypso_thank_you_footer_link_click', { type: 'footer-support' } );
+			recordTracksEvent( 'calypso_thank_you_footer_link_click', { type: 'support' } );
 		},
 	} );
 
