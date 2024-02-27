@@ -1,5 +1,4 @@
 import { Button } from '@automattic/components';
-import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import Layout from 'calypso/a8c-for-agencies/components/layout';
 import LayoutBody from 'calypso/a8c-for-agencies/components/layout/body';
@@ -13,11 +12,14 @@ import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import LicenseSearch from '../license-search';
 import LicenseStateFilter from '../license-state-filter';
 import LicensesOverviewContext from './context';
+import EmptyState from './empty-state';
 import type {
 	LicenseFilter,
 	LicenseSortDirection,
 	LicenseSortField,
 } from 'calypso/jetpack-cloud/sections/partner-portal/types';
+
+import './style.scss';
 
 interface Props {
 	filter: LicenseFilter;
@@ -55,7 +57,13 @@ export default function LicensesOverview( {
 	const showEmptyStateContent = false; // FIXME: get this from state
 
 	return (
-		<Layout title={ title } wide withBorder sidebarNavigation={ <MobileSidebarNavigation /> }>
+		<Layout
+			className="licenses-overview"
+			title={ title }
+			wide
+			withBorder
+			sidebarNavigation={ <MobileSidebarNavigation /> }
+		>
 			<PageViewTracker
 				title="Partner Portal > Licenses"
 				path="/partner-portal/licenses/:filter"
@@ -87,13 +95,7 @@ export default function LicensesOverview( {
 					<LicenseStateFilter />
 				</LayoutTop>
 
-				<LayoutBody>
-					{ showEmptyStateContent ? (
-						<div>{ /* TODO: <SHOW_EMPTY_CONTENT_HERE /> */ }</div>
-					) : (
-						<LicenseSearch />
-					) }
-				</LayoutBody>
+				<LayoutBody>{ showEmptyStateContent ? <EmptyState /> : <LicenseSearch /> }</LayoutBody>
 			</LicensesOverviewContext.Provider>
 		</Layout>
 	);
