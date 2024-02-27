@@ -1,4 +1,10 @@
-import { STATS_UTM_METRICS_REQUEST, STATS_UTM_METRICS_RECEIVE } from 'calypso/state/action-types';
+import {
+	STATS_UTM_METRICS_REQUEST,
+	STATS_UTM_METRICS_RECEIVE,
+	STATS_UTM_METRICS_REQUEST_FAILURE,
+	STATS_UTM_TOP_POSTS_REQUEST,
+	STATS_UTM_TOP_POSTS_RECEIVE,
+} from 'calypso/state/action-types';
 import 'calypso/state/data-layer/wpcom/sites/stats/utm-metrics';
 import 'calypso/state/stats/init';
 
@@ -17,6 +23,13 @@ export function requestMetrics( siteId: number, utmParam: string ) {
 	};
 }
 
+export function requestMetricsFail( siteId: number ) {
+	return {
+		type: STATS_UTM_METRICS_REQUEST_FAILURE,
+		siteId,
+	};
+}
+
 /**
  * Returns an action object to be used in signalling that a top UTM values object has
  * been received.
@@ -28,6 +41,24 @@ export function receiveMetrics( siteId: number, data: object ) {
 	return {
 		type: STATS_UTM_METRICS_RECEIVE,
 		siteId,
+		data,
+	};
+}
+
+export function requestTopPosts( siteId: number, utmParam: string, paramValues: string ) {
+	return {
+		type: STATS_UTM_TOP_POSTS_REQUEST,
+		siteId,
+		utmParam,
+		paramValues,
+	};
+}
+
+export function receiveTopPosts( siteId: number, paramValues: string, data: object ) {
+	return {
+		type: STATS_UTM_TOP_POSTS_RECEIVE,
+		siteId,
+		paramValues,
 		data,
 	};
 }

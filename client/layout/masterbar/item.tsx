@@ -62,7 +62,7 @@ class MasterbarItem extends Component< MasterbarItemProps > {
 					<span className="masterbar__item-bubble" aria-label="You have unseen content" />
 				) }
 				{ !! icon && ( typeof icon !== 'string' ? icon : <Gridicon icon={ icon } size={ 24 } /> ) }
-				<span className="masterbar__item-content">{ children }</span>
+				{ children && <span className="masterbar__item-content">{ children }</span> }
 			</Fragment>
 		);
 	}

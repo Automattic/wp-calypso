@@ -470,11 +470,18 @@ $font-size: rem(14px);
 	&:not(.is-classic-bright):not(.is-contrast) {
 		.upsell-nudge.banner.card.is-compact {
 			background-color: var(--studio-white);
-			color: #000;
+			color: var(--studio-black);
 		}
 
 		.upsell-nudge.banner.card.is-compact .banner__info .banner__title {
-			color: #000;
+			color: var(--studio-black);
+			text-wrap: wrap;
+		}
+
+		.upsell-nudge.banner.card.is-compact .dismissible-card__close-button .gridicon {
+			fill: var(--studio-black);
+			width: 16px;
+			height: 16px;
 		}
 	}
 
@@ -806,7 +813,7 @@ $font-size: rem(14px);
 	}
 }
 
-@media screen and ( max-width: 782px ) {
+@media screen and ( max-width: 781px ) {
 	// client/layout/sidebar/style.scss
 	.theme-default {
 		.focus-content .layout__content {

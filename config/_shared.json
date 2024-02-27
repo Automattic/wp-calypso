@@ -162,6 +162,7 @@
 		"a8c-for-agencies-plugins": false,
 		"a8c-for-agencies-sites": false,
 		"a8c-for-agencies-marketplace": false,
+		"a8c-for-agencies-purchases": false,
 		"jetpack-cloud": false,
 		"jetpack-cloud-overview": false,
 		"jetpack-cloud-agency-dashboard": false,

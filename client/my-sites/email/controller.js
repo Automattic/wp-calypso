@@ -1,4 +1,5 @@
 import page from '@automattic/calypso-router';
+import Main from 'calypso/components/main';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import CalypsoShoppingCartProvider from 'calypso/my-sites/checkout/calypso-shopping-cart-provider';
 import AddMailboxes from 'calypso/my-sites/email/add-mailboxes';
@@ -190,20 +191,19 @@ export default {
 		next();
 	},
 
+	// Thank you page for when user sets up a mailbox after purchasing a Titan subscription.
 	emailManagementTitanSetUpThankYou( pageContext, next ) {
 		pageContext.primary = (
-			<>
+			<Main className="checkout-thank-you is-redesign-v2">
 				<PageViewTracker
 					path={ paths.getTitanSetUpThankYouPath( ':site', ':domain' ) }
 					title="Checkout > Purchased Titan mailbox"
 				/>
-
 				<TitanSetUpThankYou
-					containerClassName="titan-set-up-thank-you__container_wrapped"
 					domainName={ pageContext.params.domain }
 					emailAddress={ pageContext.query.email }
 				/>
-			</>
+			</Main>
 		);
 
 		next();
