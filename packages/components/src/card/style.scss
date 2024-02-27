@@ -51,13 +51,7 @@
 	}
 
 	&.is-highlight {
-		padding-left: 13px;
-	}
-
-	@include break-mobile {
-		&.is-highlight {
-			padding-left: 21px;
-		}
+		padding-left: 21px;
 	}
 
 	&.is-error {
@@ -74,10 +68,6 @@
 
 	&.is-warning {
 		border-left: 3px solid var(--color-warning-20);
-	}
-
-	&.is-primary {
-		border-left: 3px solid var(--color-accent);
 	}
 }
 
