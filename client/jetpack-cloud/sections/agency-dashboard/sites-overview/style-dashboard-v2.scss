@@ -292,6 +292,22 @@
 	.sites-overview__content-wrapper {
 		max-width: none;
 	}
+
+	.filter-multi-select-hide {
+		visibility: hidden;
+		width: 0;
+	}
+
+	.dataviews-filters-count {
+		display: inline-block;
+	}
+
+	.components-dropdown-menu {
+		span circle {
+			display: none;
+		}
+	}
+
 }
 
 .sites-dashboard__layout {
@@ -362,5 +378,11 @@
 		.sites-overview__page-heading {
 			display: none;
 		}
+	}
+}
+
+.filter-dropdown-multi-select {
+	div {
+		display: list-item;
 	}
 }
