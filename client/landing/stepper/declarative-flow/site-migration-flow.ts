@@ -15,6 +15,7 @@ import type { OnboardSelect, SiteSelect, UserSelect } from '@automattic/data-sto
 
 const siteMigration: Flow = {
 	name: 'site-migration',
+	isSignupFlow: false,
 
 	useSteps() {
 		return [
