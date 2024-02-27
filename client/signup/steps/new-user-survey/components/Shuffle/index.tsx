@@ -41,7 +41,7 @@ type ShuffleProps = {
 	/**
 	 * A boolean indicating whether the Shuffling of elements is active is active.
 	 */
-	isActive?: boolean;
+	isShuffleActive?: boolean;
 };
 /**
  * A controlled component which shuffles children by random order based on provided keys.
@@ -50,43 +50,43 @@ type ShuffleProps = {
  * @returns {ReactNode} The shuffled children.
  */
 const Shuffle = ( props: ShuffleProps ) => {
-	const { children, setChildOrder, childOrder, getChildKey, isActive } = props;
+	const { children, setChildOrder, childOrder, getChildKey, isShuffleActive = true } = props;
 
 	useEffect( () => {
-		if ( isActive ) {
-			setChildOrder( ( prevChildOrder ) => {
-				// If the previous child order is null, shuffle the children based on provided keys
-				if ( prevChildOrder === null || prevChildOrder.length !== Children.count( children ) ) {
-					const newChildOrder = Children.toArray( children ).map( ( child ) => {
-						return getChildKey( child );
-					} );
+		setChildOrder( ( prevChildOrder ) => {
+			// If the previous child order is null, shuffle the children based on provided keys
+			if ( prevChildOrder === null || prevChildOrder.length !== Children.count( children ) ) {
+				const newChildOrder = Children.toArray( children ).map( ( child ) => {
+					return getChildKey( child );
+				} );
+				if ( isShuffleActive ) {
 					newChildOrder.sort( () => Math.random() - Math.random() );
-					return newChildOrder;
 				}
-				// If the previous child order exists, maintain it
-				return prevChildOrder;
-			} );
-		}
-	}, [ children, setChildOrder, getChildKey, isActive ] );
+				return newChildOrder;
+			}
+			// If the previous child order exists, maintain it
+			return prevChildOrder;
+		} );
+	}, [ children, setChildOrder, getChildKey, isShuffleActive ] );
 
 	// If a child order exists, sort the children based on that order
 	let sortedChildrenClone = children;
-	if ( isActive && childOrder !== null ) {
+	if ( isShuffleActive && childOrder !== null ) {
 		sortedChildrenClone = [ ...children ];
 		sortedChildrenClone.sort( ( child1, child2 ) => {
 			return (
 				childOrder.indexOf( getChildKey( child1 ) ) - childOrder.indexOf( getChildKey( child2 ) )
 			);
 		} );
-
-		sortedChildrenClone =
-			sortedChildrenClone.map( ( child, i ) => {
-				if ( isValidElement( child ) ) {
-					return React.cloneElement< any >( child, { ...child.props, 'data-testid': i + 1 } );
-				}
-				return child;
-			} ) ?? [];
 	}
+	/*** Testing helper */
+	sortedChildrenClone =
+		sortedChildrenClone.map( ( child, i ) => {
+			if ( isValidElement( child ) ) {
+				return React.cloneElement< any >( child, { ...child.props, 'data-testid': i + 1 } );
+			}
+			return child;
+		} ) ?? [];
 	return sortedChildrenClone;
 };
 

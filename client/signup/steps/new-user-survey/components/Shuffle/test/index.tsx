@@ -2,16 +2,17 @@
  * @jest-environment jsdom
  */
 
-import { render, screen } from '@testing-library/react';
+import { render } from '@testing-library/react';
 import React, { ReactNode, useState } from 'react';
 import Shuffle from '../index';
 interface MockComponentProps {
 	children?: ReactNode[];
 	childOrderOverride?: string[] | null;
 	ref?: React.Ref< any >;
+	isShuffleActive?: boolean;
 }
 const DEBUG_PRINT_DIV_ID = 'render-order-print';
-function MockComponent( { children, childOrderOverride }: MockComponentProps ) {
+function MockComponent( { children, childOrderOverride, isShuffleActive }: MockComponentProps ) {
 	const [ childOrder, setChildOrder ] = useState< string[] | null >( childOrderOverride ?? null );
 	if ( children ) {
 		return (
@@ -39,6 +40,7 @@ function MockComponent( { children, childOrderOverride }: MockComponentProps ) {
 				getChildKey={ ( child: any ) => {
 					return child.props.children[ 1 ].props.name;
 				} }
+				isShuffleActive={ isShuffleActive }
 			>
 				<label key={ 1 }>
 					<span>Child 1</span>
@@ -70,7 +72,6 @@ describe( 'Shuffle Component', () => {
 		const { getByTestId } = render(
 			<MockComponent childOrderOverride={ [ '5', '4', '3', '2', '1' ] } />
 		);
-		screen.debug();
 		expect( getByTestId( '1' ) ).toHaveTextContent( 'Child 5' );
 		expect( getByTestId( '2' ) ).toHaveTextContent( 'Child 4' );
 		expect( getByTestId( '3' ) ).toHaveTextContent( 'Child 3' );
@@ -86,5 +87,17 @@ describe( 'Shuffle Component', () => {
 		finalOrder.forEach( ( id, i ) => {
 			expect( getByTestId( String( i + 1 ) ) ).toHaveTextContent( `Child ${ id }` );
 		} );
+	} );
+
+	test( 'If shuffle flag is disabled no scrambling will occur', () => {
+		const { getByTestId } = render( <MockComponent isShuffleActive={ false } /> );
+		const debugPrint = getByTestId( DEBUG_PRINT_DIV_ID );
+
+		expect( debugPrint.innerHTML ).toEqual( '1,2,3,4,5' );
+		expect( getByTestId( '1' ) ).toHaveTextContent( 'Child 1' );
+		expect( getByTestId( '2' ) ).toHaveTextContent( 'Child 2' );
+		expect( getByTestId( '3' ) ).toHaveTextContent( 'Child 3' );
+		expect( getByTestId( '4' ) ).toHaveTextContent( 'Child 4' );
+		expect( getByTestId( '5' ) ).toHaveTextContent( 'Child 5' );
 	} );
 } );
