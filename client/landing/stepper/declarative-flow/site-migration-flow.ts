@@ -19,11 +19,9 @@ const siteMigration: Flow = {
 	useSteps() {
 		return [
 			STEPS.SITE_MIGRATION_IMPORT_OR_MIGRATE,
-			STEPS.SITE_MIGRATION_PLUGIN_INSTALL,
+			STEPS.BUNDLE_TRANSFER,
 			STEPS.PROCESSING,
 			STEPS.SITE_MIGRATION_UPGRADE_PLAN,
-			STEPS.WAIT_FOR_ATOMIC,
-			STEPS.WAIT_FOR_PLUGIN_INSTALL,
 			STEPS.SITE_MIGRATION_INSTRUCTIONS,
 			STEPS.ERROR,
 		];
@@ -124,11 +122,20 @@ const siteMigration: Flow = {
 			[]
 		);
 		const siteSlugParam = useSiteSlugParam();
+		const { setBundledPluginSlug } = useDispatch( SITE_STORE );
 
 		const { getSiteIdBySlug } = useSelect( ( select ) => select( SITE_STORE ) as SiteSelect, [] );
 		const exitFlow = ( to: string ) => {
 			window.location.assign( to );
 		};
+
+		useEffect( () => {
+			if ( ! siteSlugParam ) {
+				return;
+			}
+
+			setBundledPluginSlug( siteSlugParam, 'site-migration' );
+		}, [ siteSlugParam, setBundledPluginSlug ] );
 
 		// TODO - We may need to add `...params: string[]` back once we start adding more steps.
 		function submit( providedDependencies: ProvidedDependencies = {} ) {
@@ -155,18 +162,14 @@ const siteMigration: Flow = {
 					}
 
 					// Continue with the migration flow.
-					return navigate( STEPS.SITE_MIGRATION_PLUGIN_INSTALL.slug, {
+					return navigate( STEPS.BUNDLE_TRANSFER.slug, {
 						siteId,
 						siteSlug,
 					} );
 				}
 
-				case STEPS.SITE_MIGRATION_PLUGIN_INSTALL.slug: {
-					if ( providedDependencies?.error ) {
-						return navigate( STEPS.ERROR.slug );
-					}
-
-					return navigate( STEPS.SITE_MIGRATION_INSTRUCTIONS.slug );
+				case STEPS.BUNDLE_TRANSFER.slug: {
+					return navigate( STEPS.PROCESSING.slug );
 				}
 
 				case STEPS.PROCESSING.slug: {
@@ -174,19 +177,7 @@ const siteMigration: Flow = {
 						return navigate( STEPS.ERROR.slug );
 					}
 
-					if ( providedDependencies?.finishedWaitingForAtomic ) {
-						return navigate( STEPS.WAIT_FOR_PLUGIN_INSTALL.slug, { siteId, siteSlug } );
-					}
-
-					if ( providedDependencies?.pluginsInstalled ) {
-						return navigate( STEPS.SITE_MIGRATION_INSTRUCTIONS.slug );
-					}
-				}
-
-				case STEPS.WAIT_FOR_ATOMIC.slug: {
-					return navigate( STEPS.PROCESSING.slug, {
-						currentStep,
-					} );
+					return navigate( STEPS.SITE_MIGRATION_INSTRUCTIONS.slug );
 				}
 
 				case STEPS.SITE_MIGRATION_UPGRADE_PLAN.slug: {
@@ -211,10 +202,6 @@ const siteMigration: Flow = {
 						// not yet implemented
 						return;
 					}
-				}
-
-				case STEPS.WAIT_FOR_PLUGIN_INSTALL.slug: {
-					return navigate( STEPS.PROCESSING.slug );
 				}
 
 				case STEPS.SITE_MIGRATION_INSTRUCTIONS.slug: {
