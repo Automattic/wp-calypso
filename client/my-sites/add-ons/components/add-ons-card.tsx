@@ -2,9 +2,9 @@ import { PRODUCT_1GB_SPACE } from '@automattic/calypso-products';
 import { Badge, Button, Gridicon, Spinner } from '@automattic/components';
 import styled from '@emotion/styled';
 import { Card, CardBody, CardFooter, CardHeader } from '@wordpress/components';
-import { useSelector } from '@wordpress/element';
 import { Icon } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
+import { useSelector } from 'react-redux';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import type { AddOnMeta } from '@automattic/data-stores';
 
