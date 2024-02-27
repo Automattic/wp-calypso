@@ -385,19 +385,61 @@ function ReceiptItemDiscountIntroductoryOfferDate( { item }: { item: BillingTran
 	) {
 		return null;
 	}
+	const dueDate = item.introductory_offer_terms.subscription_auto_renew_date;
+	const dueAmount = item.introductory_offer_terms.renewal_price_integer;
+	const renewAmount = item.introductory_offer_terms.regular_renewal_price_integer;
 
 	return (
 		<div>
-			{ translate( 'Amount paid in transaction: %(price)s', {
-				args: {
-					price: formatCurrency( item.amount_integer, item.currency, {
+			<div>
+				{ translate( 'Amount paid in transaction: %(price)s', {
+					args: {
+						price: formatCurrency( item.amount_integer, item.currency, {
+							isSmallestUnit: true,
+							stripZeros: true,
+						} ),
+					},
+				} ) }
+			</div>
+			<div>
+				{ translate( 'Amount that will be billed %(dueDate)s: %(price)s', {
+					args: {
+						dueDate: new Date( dueDate ).toLocaleDateString( undefined, {
+							dateStyle: 'long',
+						} ),
+						price: formatCurrency( dueAmount, item.currency, {
+							isSmallestUnit: true,
+							stripZeros: true,
+						} ),
+					},
+				} ) }
+			</div>
+			<div>
+				<ReceiptItemRenewalInterval item={ item } />{ ' ' }
+				<span>
+					{ formatCurrency( renewAmount, item.currency, {
 						isSmallestUnit: true,
 						stripZeros: true,
-					} ),
-				},
-			} ) }
+					} ) }
+				</span>
+			</div>
 		</div>
 	);
+}
+
+function ReceiptItemRenewalInterval( { item }: { item: BillingTransactionItem } ) {
+	const translate = useTranslate();
+	switch ( item.months_per_renewal_interval ) {
+		case 1:
+			return <span>{ translate( 'Billed every month' ) }</span>;
+		case 12:
+			return <span>{ translate( 'Billed every year' ) }</span>;
+		case 24:
+			return <>{ translate( 'Billed every two years' ) }</>;
+		case 36:
+			return <>{ translate( 'Billed every three years' ) }</>;
+	}
+	return null;
 }
 
 function ReceiptItemDiscounts( {
