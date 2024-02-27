@@ -7,16 +7,12 @@ import DocumentHead from 'calypso/components/data/document-head';
 import JetpackColophon from 'calypso/components/jetpack-colophon';
 import Main from 'calypso/components/main';
 import NavigationHeader from 'calypso/components/navigation-header';
-import version_compare from 'calypso/lib/version-compare';
+import { EmptyListView } from 'calypso/my-sites/subscribers/components/empty-list-view';
 import { SubscriberLaunchpad } from 'calypso/my-sites/subscribers/components/subscriber-launchpad';
 import { useSelector } from 'calypso/state';
 import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
-import {
-	isJetpackSite,
-	getSiteSlug,
-	getJetpackStatsAdminVersion,
-	isSimpleSite,
-} from 'calypso/state/sites/selectors';
+import { isJetpackSite, getSiteSlug, isSimpleSite } from 'calypso/state/sites/selectors';
+import getEnvStatsFeatureSupportChecks from 'calypso/state/sites/selectors/get-env-stats-feature-supports';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import useSubscribersTotalsQueries from '../../hooks/use-subscribers-totals-query';
 import Followers from '../../stats-followers';
@@ -44,22 +40,16 @@ const StatsSubscribersPage = ( { period }: StatsSubscribersPageProps ) => {
 	const siteId = useSelector( getSelectedSiteId );
 	const siteSlug = useSelector( ( state ) => getSiteSlug( state, siteId ) );
 	const isJetpack = useSelector( ( state ) => isJetpackSite( state, siteId ) );
-	// Run-time configuration.
-	const statsAdminVersion = useSelector( ( state ) =>
-		getJetpackStatsAdminVersion( state, siteId )
-	);
 	const isOdysseyStats = config.isEnabled( 'is_running_in_jetpack_site' );
-	// Always show chart for Calypso, and check compatibility for Odyssey.
-	const isChartVisible =
-		! isOdysseyStats ||
-		( statsAdminVersion && version_compare( statsAdminVersion, '0.11.0-alpha', '>=' ) );
-
+	const { supportsEmailStats, supportsSubscriberChart } = useSelector( ( state ) =>
+		getEnvStatsFeatureSupportChecks( state, siteId )
+	);
 	const today = new Date().toISOString().slice( 0, 10 );
 
 	const statsModuleListClass = classNames(
 		'stats__module-list stats__module--unified',
 		{
-			'is-odyssey-stats': isOdysseyStats,
+			'is-email-stats-unavailable': ! supportsEmailStats,
 			'is-jetpack': isJetpack,
 		},
 		'subscribers-page'
@@ -72,7 +62,14 @@ const StatsSubscribersPage = ( { period }: StatsSubscribersPageProps ) => {
 	const hasNoSubscriberOtherThanAdmin =
 		! subscribersTotals?.total ||
 		( subscribersTotals?.total === 1 && subscribersTotals?.is_owner_subscribing );
-	const showLaunchpad = ! isLoading && ( isSimple || isAtomic ) && hasNoSubscriberOtherThanAdmin;
+	const showLaunchpad = ! isLoading && hasNoSubscriberOtherThanAdmin;
+
+	const emptyComponent =
+		isSimple || isAtomic ? (
+			<SubscriberLaunchpad launchpadContext="subscriber-stats" />
+		) : (
+			<EmptyListView />
+		);
 
 	// Track the last viewed tab.
 	// Necessary to properly configure the fixed navigation headers.
@@ -100,11 +97,11 @@ const StatsSubscribersPage = ( { period }: StatsSubscribersPageProps ) => {
 				{ isLoading && <StatsModulePlaceholder className="is-subscriber-page" isLoading /> }
 				{ ! isLoading &&
 					( showLaunchpad ? (
-						<SubscriberLaunchpad launchpadContext="subscriber-stats" />
+						emptyComponent
 					) : (
 						<>
 							<SubscribersHighlightSection siteId={ siteId } />
-							{ isChartVisible && (
+							{ supportsSubscriberChart && (
 								<>
 									<SubscribersChartSection
 										siteId={ siteId }
@@ -116,7 +113,7 @@ const StatsSubscribersPage = ( { period }: StatsSubscribersPageProps ) => {
 							) }
 							<div className={ statsModuleListClass }>
 								<Followers path="followers" />
-								{ ! isOdysseyStats && period && (
+								{ supportsEmailStats && period && (
 									<StatsModuleEmails period={ period } query={ { period, date: today } } />
 								) }
 							</div>

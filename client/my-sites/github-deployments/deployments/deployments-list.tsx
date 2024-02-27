@@ -1,4 +1,7 @@
-import { ComponentProps, useState } from 'react';
+import { useFuzzySearch } from '@automattic/search';
+import { useI18n } from '@wordpress/react-i18n';
+import { useState } from 'react';
+import { SortDirection, useSort } from '../components/sort-button/use-sort';
 import { SearchDeployments } from './deployments-list-search';
 import { DeploymentsListTable } from './deployments-list-table';
 import { CodeDeploymentData } from './use-code-deployments-query';
@@ -9,24 +12,89 @@ interface GitHubDeploymentsListProps {
 	deployments: CodeDeploymentData[];
 }
 
-type SortKey = ComponentProps< typeof DeploymentsListTable >[ 'sortKey' ];
+function applySort( deployments: CodeDeploymentData[], key: string, direction: SortDirection ) {
+	switch ( key ) {
+		case 'name':
+			if ( direction === 'asc' ) {
+				return deployments.sort( ( left, right ) => {
+					return left.repository_name.localeCompare( right.repository_name );
+				} );
+			}
+			return deployments.sort( ( left, right ) => {
+				return left.repository_name.localeCompare( right.repository_name ) * -1;
+			} );
+
+		case 'date':
+			if ( direction === 'asc' ) {
+				return deployments.sort( ( left, right ) => {
+					return left.updated_on.localeCompare( right.updated_on );
+				} );
+			}
+			return deployments.sort( ( left, right ) => {
+				return left.updated_on.localeCompare( right.updated_on ) * -1;
+			} );
+
+		case 'status':
+			if ( direction === 'asc' ) {
+				return deployments.sort( ( left, right ) => {
+					const leftRun = left.current_deployment_run;
+					const rightRun = right.current_deployment_run;
+					if ( leftRun && rightRun ) {
+						return leftRun?.status.localeCompare( rightRun.status );
+					} else if ( leftRun ) {
+						return 1;
+					}
+					return -1;
+				} );
+			}
+			return deployments.sort( ( left, right ) => {
+				const leftRun = left.current_deployment_run;
+				const rightRun = right.current_deployment_run;
+				if ( leftRun && rightRun ) {
+					return leftRun?.status.localeCompare( rightRun.status );
+				} else if ( leftRun ) {
+					return -1;
+				}
+				return 1;
+			} );
+
+		default:
+			return deployments;
+	}
+}
 
 export const GitHubDeploymentsList = ( { deployments }: GitHubDeploymentsListProps ) => {
-	const [ sort, setSort ] = useState< SortKey >( 'name_asc' );
+	const { key, direction, handleSortChange } = useSort( 'name' );
 	const [ query, setQuery ] = useState( '' );
+	const { __ } = useI18n();
+
+	const filteredDeployments = useFuzzySearch( {
+		data: deployments,
+		keys: [ 'repository_name' ],
+		query,
+	} );
+
+	const getContent = () => {
+		if ( filteredDeployments.length === 0 ) {
+			<i css={ { color: 'var(--Gray-Gray-40, #50575E)' } }>{ __( 'No results.' ) }</i>;
+		}
+
+		return (
+			<DeploymentsListTable
+				deployments={ applySort( filteredDeployments, key, direction ) }
+				sortKey={ key }
+				sortDirection={ direction }
+				onSortChange={ handleSortChange }
+			/>
+		);
+	};
 
 	return (
 		<div className="github-deployments-list">
 			<div className="github-deployments-list__header">
 				<SearchDeployments value={ query } onChange={ setQuery } />
 			</div>
-			<div className="github-deployments__body">
-				<DeploymentsListTable
-					deployments={ deployments }
-					sortKey={ sort }
-					onSortChange={ setSort }
-				/>
-			</div>
+			<div className="github-deployments__body">{ getContent() }</div>
 		</div>
 	);
 };

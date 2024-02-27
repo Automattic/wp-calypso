@@ -318,9 +318,8 @@ body.is-mobile-app-view {
 // Move the secondary element off screen when focused
 // on the content. This only applies to small screens.
 .layout.focus-content .layout__secondary {
-	@media only screen and ( max-width: 782px ) {
+	@media only screen and ( max-width: 781px ) {
 		transform: translateX(-100%);
-		padding: 71px 24px 24px;
 	}
 }
 

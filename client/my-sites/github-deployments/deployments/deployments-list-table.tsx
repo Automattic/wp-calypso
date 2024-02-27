@@ -1,84 +1,82 @@
-import { Button } from '@automattic/components';
-import { Icon } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
-import { chevronDown, chevronUp } from '@wordpress/icons';
+import { useMemo } from 'react';
+import { SortButton } from 'calypso/my-sites/github-deployments/components/sort-button/sort-button';
+import { SortDirection } from 'calypso/my-sites/github-deployments/components/sort-button/use-sort';
 import { CodeDeploymentData } from 'calypso/my-sites/github-deployments/deployments/use-code-deployments-query';
 import { DeploymentsListItem } from './deployments-list-item';
 
-type SortOption =
-	| 'name_asc'
-	| 'name_desc'
-	| 'date_asc'
-	| 'date_desc'
-	| 'status_asc'
-	| 'status_desc'
-	| 'duration_asc'
-	| 'duration_desc';
-
 interface DeploymentsListProps {
 	deployments: CodeDeploymentData[];
-	sortKey: SortOption;
-	onSortChange( sort: SortOption ): void;
+	sortKey: string;
+	sortDirection: SortDirection;
+	onSortChange( sortKey: string ): void;
 }
-
-type SortPair = [ SortOption, SortOption ];
-
-const nameSorts: SortPair = [ 'name_asc', 'name_desc' ];
-const dateSorts: SortPair = [ 'date_asc', 'date_desc' ];
-const statusSorts: SortPair = [ 'status_asc', 'status_desc' ];
-const durationSorts: SortPair = [ 'duration_asc', 'duration_desc' ];
 
 export const DeploymentsListTable = ( {
 	deployments,
 	sortKey,
+	sortDirection,
 	onSortChange,
 }: DeploymentsListProps ) => {
-	function getSortIcon( pair: SortPair ) {
-		if ( sortKey === pair[ 0 ] ) {
-			return <Icon size={ 16 } icon={ chevronDown } />;
-		} else if ( sortKey === pair[ 1 ] ) {
-			return <Icon size={ 16 } icon={ chevronUp } />;
-		}
-	}
-
-	function handleChangeSort( pair: SortPair ) {
-		if ( sortKey === pair[ 0 ] ) {
-			return pair[ 1 ];
-		}
-		return pair[ 0 ];
-	}
+	const hasRuns = useMemo( () => {
+		return !! deployments.find(
+			( deployment ) => deployment.current_deployed_run || deployment.current_deployment_run
+		);
+	}, [ deployments ] );
 
 	return (
 		<table>
 			<thead>
 				<tr>
 					<th>
-						<Button plain onClick={ () => onSortChange( handleChangeSort( nameSorts ) ) }>
+						<SortButton
+							value="name"
+							activeValue={ sortKey }
+							direction={ sortDirection }
+							onChange={ onSortChange }
+						>
 							<span>{ __( 'Repository' ) }</span>
-							{ getSortIcon( nameSorts ) }
-						</Button>
+						</SortButton>
 					</th>
-					<th>
+					<th style={ { width: '100%' } }>
 						<span>{ __( 'Last commit' ) }</span>
 					</th>
-					<th>
-						<Button plain onClick={ () => onSortChange( handleChangeSort( statusSorts ) ) }>
-							<span>{ __( 'Status ' ) }</span>
-							{ getSortIcon( statusSorts ) }
-						</Button>
-					</th>
-					<th>
-						<Button plain onClick={ () => onSortChange( handleChangeSort( dateSorts ) ) }>
-							<span>{ __( 'Date ' ) }</span>
-							{ getSortIcon( dateSorts ) }
-						</Button>
-					</th>
-					<th>
-						<Button plain onClick={ () => onSortChange( handleChangeSort( durationSorts ) ) }>
-							<span>{ __( 'Duration ' ) }</span>
-							{ getSortIcon( durationSorts ) }
-						</Button>
-					</th>
+					{ hasRuns ? (
+						<>
+							<th>
+								<SortButton
+									value="status"
+									activeValue={ sortKey }
+									direction={ sortDirection }
+									onChange={ onSortChange }
+								>
+									<span>{ __( 'Status' ) }</span>
+								</SortButton>
+							</th>
+							<th>
+								<SortButton
+									value="date"
+									activeValue={ sortKey }
+									direction={ sortDirection }
+									onChange={ onSortChange }
+								>
+									<span>{ __( 'Date' ) }</span>
+								</SortButton>
+							</th>
+							<th>
+								<SortButton
+									value="duration"
+									activeValue={ sortKey }
+									direction={ sortDirection }
+									onChange={ onSortChange }
+								>
+									<span>{ __( 'Duration' ) }</span>
+								</SortButton>
+							</th>
+						</>
+					) : (
+						<th colSpan={ 3 } />
+					) }
 					<th> </th>
 				</tr>
 			</thead>

@@ -1,4 +1,3 @@
-import config from '@automattic/calypso-config';
 import { CheckoutErrorBoundary } from '@automattic/composite-checkout';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback } from 'react';
@@ -10,7 +9,6 @@ import NavigationHeader from 'calypso/components/navigation-header';
 import SidebarNavigation from 'calypso/components/sidebar-navigation';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
-import { logToLogstash } from 'calypso/lib/logstash';
 import CancelPurchase from 'calypso/me/purchases/cancel-purchase';
 import ConfirmCancelDomain from 'calypso/me/purchases/confirm-cancel-domain';
 import ManagePurchase from 'calypso/me/purchases/manage-purchase';
@@ -23,7 +21,7 @@ import getAvailableConciergeSessions from 'calypso/state/selectors/get-available
 import getConciergeNextAppointment from 'calypso/state/selectors/get-concierge-next-appointment';
 import getConciergeUserBlocked from 'calypso/state/selectors/get-concierge-user-blocked';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
-import { convertErrorToString } from '../checkout/src/lib/analytics';
+import { logStashLoadErrorEvent } from '../checkout/src/lib/analytics';
 import {
 	getPurchaseListUrlFor,
 	getCancelPurchaseUrlFor,
@@ -37,16 +35,7 @@ import { getChangeOrAddPaymentMethodUrlFor } from './utils';
 function useLogPurchasesError( message: string ) {
 	return useCallback(
 		( error: Error ) => {
-			logToLogstash( {
-				feature: 'calypso_client',
-				message,
-				severity: config( 'env_id' ) === 'production' ? 'error' : 'debug',
-				extra: {
-					env: config( 'env_id' ),
-					type: 'site_level_purchases',
-					message: convertErrorToString( error ),
-				},
-			} );
+			logStashLoadErrorEvent( 'site_level_purchases', error, { message } );
 		},
 		[ message ]
 	);

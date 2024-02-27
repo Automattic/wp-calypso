@@ -23,14 +23,18 @@ export default class HeaderCake extends Component {
 			'is-compact': this.props.isCompact,
 		} );
 
+		const hasBackButton = !! backHref || !! this.props.onClick;
+
 		return (
 			<Card className={ classes }>
-				<HeaderCakeBack
-					text={ backText }
-					href={ backHref }
-					onClick={ this.props.onClick }
-					alwaysShowActionText={ alwaysShowBackText }
-				/>
+				{ hasBackButton && (
+					<HeaderCakeBack
+						text={ backText }
+						href={ backHref }
+						onClick={ this.props.onClick }
+						alwaysShowActionText={ alwaysShowBackText }
+					/>
+				) }
 
 				<div className="header-cake__title" role="presentation" onClick={ this.props.onTitleClick }>
 					{ this.props.children }

@@ -19,7 +19,7 @@ import type {
 
 const debug = debugFactory( 'calypso:use-cached-domain-contact-details' );
 
-function useCachedContactDetails(): PossiblyCompleteDomainContactDetails | null {
+export function useCachedContactDetails(): PossiblyCompleteDomainContactDetails | null {
 	const reduxDispatch = useReduxDispatch();
 	const haveRequestedCachedDetails = useRef< 'not-started' | 'pending' | 'done' >( 'not-started' );
 	const cachedContactDetails = useSelector( getContactDetailsCache );

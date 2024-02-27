@@ -1,3 +1,4 @@
+import config from '@automattic/calypso-config';
 import { Button } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { useQueryClient } from '@tanstack/react-query';
@@ -143,6 +144,16 @@ const Home = ( {
 		return <WooCommerceHomePlaceholder />;
 	}
 
+	const headerActions = (
+		<>
+			<Button href={ site.URL } onClick={ trackViewSiteAction } target="_blank">
+				{ config.isEnabled( 'layout/dotcom-nav-redesign' ) &&
+				'wp-admin' === site?.options?.wpcom_admin_interface
+					? translate( 'View site' )
+					: translate( 'Visit site' ) }
+			</Button>
+		</>
+	);
 	const header = (
 		<div className="customer-home__heading">
 			<NavigationHeader
@@ -150,11 +161,9 @@ const Home = ( {
 				navigationItems={ [] }
 				mobileItem={ null }
 				title={ translate( 'My Home' ) }
-				subtitle={ translate( 'Your hub for posting, editing, and growing your site.' ) }
+				subtitle={ translate( 'Your hub for next steps, support center, and quick links.' ) }
 			>
-				<Button href={ site.URL } onClick={ trackViewSiteAction } target="_blank">
-					{ translate( 'Visit site' ) }
-				</Button>
+				{ headerActions }
 			</NavigationHeader>
 
 			<div className="customer-home__site-content">

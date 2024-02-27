@@ -56,7 +56,6 @@ const SiteSelector = () => {
 			isJetpackAgencyDashboard={ canAccessJetpackManage }
 			allSitesPath="/dashboard"
 			siteBasePath="/landing"
-			wpcomSiteBasePath="https://wordpress.com/home"
 		/>
 	);
 };

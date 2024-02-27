@@ -6,6 +6,7 @@
  * These two cases might be to be split up?
  */
 
+import classnames from 'classnames';
 import PropTypes from 'prop-types';
 import { memo } from 'react';
 import { useDispatch } from 'react-redux';
@@ -23,7 +24,10 @@ export const MySitesSidebarUnifiedItem = ( {
 	slug,
 	title,
 	url,
+	className = '',
 	shouldOpenExternalLinksInCurrentTab,
+	forceExternalLink = false,
+	forceShowExternalIcon = false,
 	trackClickEvent,
 } ) => {
 	const reduxDispatch = useDispatch();
@@ -47,7 +51,12 @@ export const MySitesSidebarUnifiedItem = ( {
 			selected={ selected }
 			customIcon={ <SidebarCustomIcon icon={ icon } /> }
 			forceInternalLink={ shouldOpenExternalLinksInCurrentTab }
-			className={ isSubItem ? 'sidebar__menu-item--child' : 'sidebar__menu-item-parent' }
+			forceExternalLink={ forceExternalLink }
+			forceShowExternalIcon={ forceShowExternalIcon }
+			className={ classnames(
+				isSubItem ? 'sidebar__menu-item--child' : 'sidebar__menu-item-parent',
+				className
+			) }
 		>
 			<MySitesSidebarUnifiedStatsSparkline slug={ slug } />
 		</SidebarItem>
@@ -63,6 +72,8 @@ MySitesSidebarUnifiedItem.propTypes = {
 	title: PropTypes.string,
 	url: PropTypes.string,
 	shouldOpenExternalLinksInCurrentTab: PropTypes.bool.isRequired,
+	forceExternalLink: PropTypes.bool,
+	forceShowExternalIcon: PropTypes.bool,
 	trackClickEvent: PropTypes.func,
 };
 

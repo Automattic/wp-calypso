@@ -3,7 +3,13 @@ import { useTranslate } from 'i18n-calypso';
 import { useEffect, useState } from 'react';
 import { LoadingBar } from 'calypso/components/loading-bar';
 import Notice from 'calypso/components/notice';
+import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { useConfirmTransfer } from './use-confirm-transfer';
+
+type SiteTransferResponse = {
+	transfer?: boolean;
+	email_sent?: boolean;
+};
 
 /**
  * Component to display the confirmation of the site transfer when the new owner clicks on the link in the email.
@@ -18,12 +24,21 @@ export function ConfirmationTransfer( {
 } ) {
 	const translate = useTranslate();
 	const progress = 0.3;
+	const [ isEmailSent, setIsEmailSent ] = useState< boolean >( false );
 	const [ error, setError ] = useState< { message?: string } | null >( null );
 	const { confirmTransfer } = useConfirmTransfer(
 		{ siteId },
 		{
-			onSuccess: () => {
-				page.redirect( `/sites?site-transfer-confirm=true` );
+			onSuccess: ( data ) => {
+				const { transfer, email_sent } = data as SiteTransferResponse;
+
+				if ( transfer ) {
+					recordTracksEvent( 'calypso_site_owner_transfer_confirm_success' );
+					page.redirect( `/sites?site-transfer-confirm=true` );
+				} else if ( email_sent ) {
+					recordTracksEvent( 'calypso_site_owner_transfer_pending_invitation_sent' );
+					setIsEmailSent( true );
+				}
 			},
 			onError: ( error ) => {
 				setError( error as Error );
@@ -33,6 +48,18 @@ export function ConfirmationTransfer( {
 	useEffect( () => {
 		confirmTransfer( confirmationHash );
 	}, [ confirmTransfer, confirmationHash ] );
+
+	if ( isEmailSent ) {
+		return (
+			<Notice status="is-success" showDismiss={ false }>
+				<p>
+					{ translate(
+						'We have invited the new user to accept the site transfer. They will need to click the link included in the email invitation for the site transfer to complete. The invitation will expire in 7 days.'
+					) }
+				</p>
+			</Notice>
+		);
+	}
 
 	if ( error ) {
 		return (

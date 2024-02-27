@@ -7,6 +7,7 @@ import { Gridicon } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import { FunctionComponent, useCallback, useEffect, useState } from 'react';
 import isJetpackCheckout from 'calypso/lib/jetpack/is-jetpack-checkout';
+import { useCheckoutV2 } from '../../hooks/use-checkout-v2';
 import { JetpackItemVariantDropDownPrice } from './jetpack-variant-dropdown-price';
 import { CurrentOption, Dropdown, OptionList, Option } from './styles';
 import { ItemVariantDropDownPrice } from './variant-dropdown-price';
@@ -26,7 +27,7 @@ export const ItemVariationDropDown: FunctionComponent< ItemVariationPickerProps 
 	isOpen,
 } ) => {
 	const translate = useTranslate();
-
+	const shouldUseCheckoutV2 = useCheckoutV2() === 'treatment';
 	const [ highlightedVariantIndex, setHighlightedVariantIndex ] = useState< number | null >( null );
 
 	// Multi-year domain products must be compared by volume because they have the same product id.
@@ -137,6 +138,7 @@ export const ItemVariationDropDown: FunctionComponent< ItemVariationPickerProps 
 			aria-expanded={ isOpen }
 			aria-haspopup="listbox"
 			onKeyDown={ handleKeyDown }
+			shouldUseCheckoutV2={ shouldUseCheckoutV2 }
 		>
 			<CurrentOption
 				aria-label={ translate( 'Pick a product term' ) }
@@ -144,6 +146,7 @@ export const ItemVariationDropDown: FunctionComponent< ItemVariationPickerProps 
 				onClick={ () => toggle( id ) }
 				open={ isOpen }
 				role="button"
+				shouldUseCheckoutV2={ shouldUseCheckoutV2 }
 			>
 				{ selectedVariantIndex !== null ? (
 					<ItemVariantDropDownPriceWrapper variant={ variants[ selectedVariantIndex ] } />
@@ -213,6 +216,7 @@ function ItemVariantOption( {
 	allVariants: WPCOMProductVariant[];
 } ) {
 	const { variantLabel, productId, productSlug } = variant;
+	const shouldUseCheckoutV2 = useCheckoutV2() === 'treatment';
 	return (
 		<Option
 			id={ productId.toString() }
@@ -222,6 +226,7 @@ function ItemVariantOption( {
 			role="option"
 			onClick={ onSelect }
 			selected={ isSelected }
+			shouldUseCheckoutV2={ shouldUseCheckoutV2 }
 		>
 			{ isJetpack( variant ) ? (
 				<JetpackItemVariantDropDownPrice variant={ variant } allVariants={ allVariants } />
