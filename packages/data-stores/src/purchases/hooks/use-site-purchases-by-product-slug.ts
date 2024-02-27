@@ -16,19 +16,19 @@ const useSitePurchasesByProductSlug = ( {
 }: Props ): PurchasesIndex | null | undefined => {
 	const sitePurchases = useSitePurchases( { siteId } );
 
-	const matches = useMemo( () => {
-		return Object.fromEntries(
-			Object.entries( sitePurchases?.data ?? {} ).filter(
+	return useMemo( () => {
+		if ( ! sitePurchases.data ) {
+			return undefined;
+		}
+
+		const found = Object.fromEntries(
+			Object.entries( sitePurchases.data ).filter(
 				( [ , purchase ] ) => purchase.productSlug === productSlug
 			)
 		);
+
+		return Object.keys( found ).length ? found : null;
 	}, [ sitePurchases.data, productSlug ] );
-
-	if ( ! sitePurchases.data ) {
-		return undefined;
-	}
-
-	return Object.keys( matches ).length === 0 ? null : matches;
 };
 
 export default useSitePurchasesByProductSlug;
