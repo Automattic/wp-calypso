@@ -115,6 +115,8 @@ const JetpackCloudSidebar = ( {
 				<ul>
 					{ ! isJetpackManage && jetpackAdminUrl && (
 						<SidebarNavigatorMenuItem
+							isExternalLink
+							openInSameTab
 							title={ translate( 'WP Admin' ) }
 							link={ jetpackAdminUrl }
 							path={ jetpackAdminUrl }
