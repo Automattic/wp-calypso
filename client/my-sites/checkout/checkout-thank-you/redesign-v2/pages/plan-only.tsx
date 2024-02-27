@@ -42,7 +42,7 @@ export default function PlanOnlyThankYou( { primaryPurchase }: PlanOnlyThankYouP
 			buttonText: translate( 'Add members' ),
 			buttonHref: `/people/new/${ siteSlug }`,
 			buttonOnClick: () => {
-				recordTracksEvent( 'calypso_thank_you_footer_link_click', { type: 'footer-add-members' } );
+				recordTracksEvent( 'calypso_thank_you_footer_link_click', { type: 'add-members' } );
 			},
 		} );
 	} else if ( isMonthsOld( 6, siteCreatedTimeStamp ) ) {
