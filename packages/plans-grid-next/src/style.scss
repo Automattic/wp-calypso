@@ -171,7 +171,7 @@ $mobile-card-max-width: 440px;
 		}
 	}
 
-	.features-grid__highlighted-feature .features-grid__features-item {
+	.features-grid__highlighted-feature .features-grid__features-item-info-container {
 		padding-bottom: 24px;
 	}
 }
@@ -355,7 +355,7 @@ $mobile-card-max-width: 440px;
 	border-bottom: solid 1px var(--color-neutral-5);
 
 	&.is-last-feature {
-		.features-grid__features-item-info {
+		.features-grid__features-item {
 			padding-bottom: 30px;
 		}
 	}

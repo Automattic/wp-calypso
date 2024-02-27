@@ -107,7 +107,6 @@ const Features = ( {
 				return (
 					<div key={ key } className={ divClasses }>
 						<FeaturesItem
-							isAnnualPlanFeature={ currentFeature.availableOnlyForAnnualPlans }
 							isAvailable={
 								isFreePlanAndCustomDomainFeature || currentFeature.availableForCurrentPlan
 							}

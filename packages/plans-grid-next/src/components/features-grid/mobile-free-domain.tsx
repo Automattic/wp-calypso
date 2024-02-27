@@ -39,8 +39,10 @@ const MobileFreeDomain = ( {
 
 	return (
 		<div className="features-grid__highlighted-feature">
-			<FeaturesItem isAnnualPlanFeature isAvailable>
-				<span className="features-grid__features-item-title is-bold">{ displayText }</span>
+			<FeaturesItem isAvailable>
+				<span className="features-grid__features-item-title features-grid__features-item-title--bold">
+					{ displayText }
+				</span>
 			</FeaturesItem>
 		</div>
 	);

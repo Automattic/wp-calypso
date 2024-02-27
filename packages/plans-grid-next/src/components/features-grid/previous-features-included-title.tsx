@@ -57,7 +57,7 @@ const PreviousFeaturesIncludedTitle = ( {
 			>
 				{ shouldShowFeatureTitle && <div className={ classes }>{ title }</div> }
 				{ shouldRenderEnterpriseLogos && (
-					<div className="features-grid__features-item features-grid__enterprise-logo">
+					<div className="features-grid__features-item-info-container features-grid__enterprise-logo">
 						<TimeLogo />
 						<SlackLogo />
 						<DisneyLogo />
