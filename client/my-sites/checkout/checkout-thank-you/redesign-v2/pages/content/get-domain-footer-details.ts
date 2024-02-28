@@ -18,7 +18,7 @@ export default function getDomainFooterDetails(
 			buttonOnClick: () => {
 				recordTracksEvent( 'calypso_thank_you_footer_link_click', {
 					context: context,
-					type: 'footer-domain-essentials',
+					type: 'domain-essentials',
 				} );
 			},
 		},
