@@ -1,6 +1,11 @@
 /**
  * Notifications
  */
+//
+$min_page_width: 800px; // Default min-width
+.is-global-sidebar-visible #wpnc-panel {
+	$min_page_width: 1114px; // Override min-width if .is-global-sidebar-visible is present
+}
 
 #wpnc-panel {
 	position: fixed;
@@ -110,13 +115,13 @@
 		left: inherit;
 		width: 400px;
 
-		@include breakpoint-deprecated( "<800px" ) {
+		@include breakpoint-deprecated( $min_page_width ) {
 			left: 0;
 			width: auto;
 		}
 	}
 
-	@include breakpoint-deprecated( "<800px" ) {
+	@include breakpoint-deprecated( $min_page_width ) {
 		&.wpnc__main header {
 			top: 47px;
 		}
@@ -216,7 +221,7 @@ div.reader-notifications__panel {
 		}
 	}
 }
-@media only screen and (max-width: 783px) {
+@media only screen and (max-width: calc(#{$min_page_width} - 17px) ) {
 	div.reader-notifications__panel #wpnc-panel.wpnc__main {
 		&.wpnt-open {
 			left: 0;
