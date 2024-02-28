@@ -1,0 +1,16 @@
+.site-migration-instructions {
+	.site-migration-instructions__list {
+		li {
+			margin-bottom: 0.5rem;
+		}
+	}
+
+	.site-migration-instructions-header {
+		margin-bottom: 1.5rem;
+	}
+	.site-migration-instructions__migration-key {
+		background: --var(--color-primary);
+		margin-bottom: 1.5rem;
+		margin-right: 1.5rem;
+	}
+}

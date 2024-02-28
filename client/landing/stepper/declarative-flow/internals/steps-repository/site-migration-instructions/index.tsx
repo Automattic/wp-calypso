@@ -1,15 +1,30 @@
 import { StepContainer } from '@automattic/onboarding';
+import { ClipboardButton } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
+import { useState } from 'react';
 import DocumentHead from 'calypso/components/data/document-head';
 import FormattedHeader from 'calypso/components/formatted-header';
+import FormTextInput from 'calypso/components/forms/form-text-input';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import type { Step } from '../../types';
+import './style.scss';
 
 const SiteMigrationInstructions: Step = function () {
 	const translate = useTranslate();
+	const siteMigrationKey = '1234567890';
+	const buttonTextCopy = translate( 'Copy key' );
+	const [ buttonText, setButtonText ] = useState( buttonTextCopy );
+	const onCopy = () => {
+		recordTracksEvent( 'calypso_site_migration_instructions_key_copied' );
+		setButtonText( translate( 'Copied!' ) );
+		setTimeout( () => {
+			setButtonText( buttonTextCopy );
+		}, 2000 );
+	};
+
 	const stepContent = (
 		<div>
-			<ol>
+			<ol className="site-migration-instructions__list">
 				<li>
 					{ translate( 'Install the {{a}}Migrate Guru plugin{{/a}} on your existing site.', {
 						components: {
@@ -32,6 +47,19 @@ const SiteMigrationInstructions: Step = function () {
 							},
 						}
 					) }
+					<div>
+						<FormTextInput
+							className="site-migration-instructions__migration-key"
+							value={ siteMigrationKey }
+						/>
+						<ClipboardButton
+							text={ siteMigrationKey }
+							className="site-migration-instructions__copy-key-button"
+							onCopy={ onCopy }
+						>
+							{ buttonText }
+						</ClipboardButton>
+					</div>
 				</li>
 				<li>
 					{ translate(
@@ -71,19 +99,27 @@ const SiteMigrationInstructions: Step = function () {
 
 	return (
 		<>
-			<DocumentHead title="Site migration instructions" />
+			<DocumentHead title={ translate( 'Migrate your site' ) } />
 			<StepContainer
 				stepName="site-migration-instructions"
 				shouldHideNavButtons={ false }
 				className="is-step-site-migration-instructions"
 				hideSkip={ true }
 				hideBack={ true }
+				isHorizontalLayout={ true }
 				formattedHeader={
-					<FormattedHeader
-						id="site-migration-instructions-header"
-						headerText="Site migration instructions"
-						align="left"
-					/>
+					<>
+						<FormattedHeader
+							id="site-migration-instructions-header"
+							headerText={ translate( 'Migrate your site' ) }
+							align="left"
+						/>
+						<p>
+							{ translate(
+								'Move your existing WordPress site to WordPress.com. Follow these steps to get started:'
+							) }
+						</p>
+					</>
 				}
 				stepContent={ stepContent }
 				recordTracksEvent={ recordTracksEvent }
