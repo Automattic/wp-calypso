@@ -1,0 +1,43 @@
+@import "@wordpress/base-styles/mixins";
+@import "@wordpress/base-styles/breakpoints";
+.migration-success {
+	.migration-success__site {
+		overflow-wrap: break-word;
+	}
+	.migration-success__ctas {
+		@include break-medium {
+			flex-direction: row;
+		}
+		flex-direction: column;
+		width: 100%;
+	}
+	.card {
+		margin: 50px 0;
+		padding: 20px 25px;
+		.components-card__body {
+			padding: 0;
+			.components-button {
+				margin-bottom: 0;
+				&.is-secondary {
+					color: var(--studio-gray-100);
+				}
+			}
+		}
+	}
+	.migration-success-links-wrapper {
+		display: flex;
+		text-align: left;
+		flex-direction: column;
+		gap: 40px;
+		@include break-medium {
+			padding: 0 25px 0 25px;
+			flex-direction: row;
+		}
+		.migration-success-links-wrapper__link {
+			margin-top: 16px;
+			text-decoration: underline;
+			text-underline-offset: 4px;
+		}
+	}
+
+}

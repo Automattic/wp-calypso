@@ -9,6 +9,7 @@ import { localize } from 'i18n-calypso';
 import { get } from 'lodash';
 import { connect } from 'react-redux';
 import PreMigrationScreen from 'calypso/blocks/importer/wordpress/import-everything/pre-migration';
+import AsyncLoad from 'calypso/components/async-load';
 import { LoadingEllipsis } from 'calypso/components/loading-ellipsis';
 import { EVERY_FIVE_SECONDS, Interval } from 'calypso/lib/interval';
 import { SectionMigrate } from 'calypso/my-sites/migrate/section-migrate';
@@ -212,12 +213,10 @@ export class ImportEverything extends SectionMigrate {
 
 	renderMigrationComplete() {
 		const { isMigrateFromWp } = this.props;
-		return (
-			<Hooray>
-				{ ! isMigrateFromWp
-					? this.renderDefaultHoorayScreen()
-					: this.renderHoorayScreenWithDomainInfo() }
-			</Hooray>
+		return ! isMigrateFromWp ? (
+			this.renderMigrationSuccessScreen()
+		) : (
+			<Hooray>{ this.renderHoorayScreenWithDomainInfo() }</Hooray>
 		);
 	}
 
@@ -239,21 +238,15 @@ export class ImportEverything extends SectionMigrate {
 		);
 	}
 
-	renderDefaultHoorayScreen() {
-		const { translate, stepNavigator } = this.props;
-
+	renderMigrationSuccessScreen() {
+		const { translate, targetSite, recordTracksEvent } = this.props;
 		return (
-			<div className="import__heading import__heading-center">
-				<Title>{ translate( 'Hooray!' ) }</Title>
-				<SubTitle>
-					{ translate( 'Congratulations. Your content was successfully imported.' ) }
-				</SubTitle>
-				<DoneButton
-					label={ translate( 'View site' ) }
-					onSiteViewClick={ () => {
-						this.props.recordTracksEvent( 'calypso_site_importer_view_site' );
-						stepNavigator?.goToSiteViewPage?.();
-					} }
+			<div className="import__heading import__heading-center migration-success">
+				<AsyncLoad
+					translate={ translate }
+					targetSite={ targetSite }
+					recordTracksEvent={ recordTracksEvent }
+					require="./migration-success"
 				/>
 			</div>
 		);
