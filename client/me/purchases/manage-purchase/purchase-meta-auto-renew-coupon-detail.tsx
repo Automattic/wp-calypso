@@ -16,7 +16,7 @@ function PurchaseMetaAutoRenewCouponDetail( {
 	return (
 		<RenewalSubtext
 			text={ translate(
-				'Your renewal will automatically apply coupon code "%(code)s" for %(discount)s%% discount.',
+				'Coupon code "%(code)s" has been applied for the next renewal for a %(discount)s%% discount.',
 				{
 					args: {
 						discount: purchase.autoRenewCouponDiscount,
