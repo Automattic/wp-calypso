@@ -933,9 +933,9 @@ const useSingleSiteCommands = ( { navigate, currentRoute }: useCommandsParams ):
 			),
 			callback: ( { close }: CommandCallBackParams ) => {
 				close();
-				document?.getElementById( 'wp-admin-bar-help-center' )?.click();
-				document?.querySelector( '.help-center-contact-page__button' )?.click();
-				document?.querySelector( '.help-center-contact-page__box.email' )?.click();
+				document?.getElementById< HTMLElement >( 'wp-admin-bar-help-center' )?.click();
+				document?.querySelector< HTMLElement >( '.help-center-contact-page__button' )?.click();
+				document?.querySelector< HTMLElement >( '.help-center-contact-page__box.email' )?.click();
 			},
 			icon: feedbackIcon,
 		},
