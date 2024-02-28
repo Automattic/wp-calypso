@@ -33,15 +33,17 @@ export const PATTERN_CATEGORIES = [
 ];
 
 export function getPatternCategoriesQueryOptions(
+	locale: string,
 	siteId: undefined | number,
 	queryOptions: Omit< UseQueryOptions< Category[] >, 'queryKey' > = {}
 ): UseQueryOptions< Category[] > {
 	return {
-		queryKey: [ siteId, 'pattern-library', 'categories' ],
+		queryKey: [ locale, siteId, 'pattern-library', 'categories' ],
 		queryFn() {
 			return wpcom.req.get( {
 				path: `/sites/${ encodeURIComponent( siteId ?? '' ) }/block-patterns/categories`,
 				apiNamespace: 'wp/v2',
+				query: { locale },
 			} );
 		},
 		select( categories ) {
@@ -63,8 +65,9 @@ export function getPatternCategoriesQueryOptions(
 }
 
 export function usePatternCategories(
+	locale: string,
 	siteId: undefined | number,
 	queryOptions: Omit< UseQueryOptions< Category[] >, 'queryKey' > = {}
 ) {
-	return useQuery< Category[] >( getPatternCategoriesQueryOptions( siteId, queryOptions ) );
+	return useQuery< Category[] >( getPatternCategoriesQueryOptions( locale, siteId, queryOptions ) );
 }

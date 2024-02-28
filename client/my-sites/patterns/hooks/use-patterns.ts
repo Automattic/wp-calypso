@@ -15,8 +15,8 @@ export function getPatternsQueryOptions(
 				post_type: 'wp_block',
 			} );
 		},
-		...queryOptions,
 		staleTime: Infinity,
+		...queryOptions,
 	};
 }
 

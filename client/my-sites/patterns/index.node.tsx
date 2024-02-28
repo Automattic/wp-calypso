@@ -42,7 +42,9 @@ function fetchPatterns( context: Context, next: Next ) {
 	const locale = getCurrentUserLocale( store.getState() ) || lang || 'en';
 
 	const categoryPromise = queryClient.fetchQuery< Category[] >(
-		getPatternCategoriesQueryOptions( Number( rendererSiteId ), { staleTime: 10 * 60 * 1000 } )
+		getPatternCategoriesQueryOptions( locale, Number( rendererSiteId ), {
+			staleTime: 10 * 60 * 1000,
+		} )
 	);
 
 	const patternPromise = params.category
