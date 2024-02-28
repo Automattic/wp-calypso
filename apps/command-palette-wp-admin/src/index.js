@@ -30,8 +30,8 @@ function CommandPaletteApp() {
 			url = `https://wordpress.com${ path }`;
 		}
 
-		url = url.replace( ':site', siteHostname );
-		url = url.replace( ':siteId', siteId );
+		url = url.replace( /:site/g, siteHostname );
+		url = url.replace( /:siteId/g, siteId );
 
 		if ( url.startsWith( siteHostname ) ) {
 			url = url.replace( siteHostname, window.location.origin );
