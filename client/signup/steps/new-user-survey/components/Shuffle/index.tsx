@@ -50,7 +50,7 @@ type ShuffleProps = {
  * @returns {ReactNode} The shuffled children.
  */
 const Shuffle = ( props: ShuffleProps ) => {
-	const { children, setChildOrder, childOrder, getChildKey, isShuffleActive = true } = props;
+	const { children, setChildOrder, childOrder, getChildKey, isShuffleActive = false } = props;
 
 	useEffect( () => {
 		setChildOrder( ( prevChildOrder ) => {
