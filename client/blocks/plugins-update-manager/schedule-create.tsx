@@ -10,8 +10,6 @@ import { arrowLeft } from '@wordpress/icons';
 import { SiteSlug } from 'calypso/types';
 import { ScheduleForm } from './schedule-form';
 
-import './styles.scss';
-
 interface Props {
 	siteSlug: SiteSlug;
 	onNavBack?: () => void;
