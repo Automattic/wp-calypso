@@ -41,8 +41,10 @@ enum SiteType {
 interface CapabilityCommand extends Command {
 	capability?: string;
 	siteType?: SiteType;
+	publicOnly?: boolean;
 	isCustomDomain?: boolean;
 	filterP2?: boolean;
+	filterStaging?: boolean;
 }
 
 interface CustomWindow {
@@ -50,12 +52,17 @@ interface CustomWindow {
 		siteId: string;
 		isAdmin: boolean;
 		isAtomic: boolean;
+		isStaging: boolean;
 		isSelfHosted: boolean;
 		isSimple: boolean;
+		isPrivate: boolean;
+		isComingSoon: boolean;
 		isP2: boolean;
 		capabilities: {
 			[ key: string ]: string;
 		};
+		isWpcomStore: boolean;
+		shouldUseWpAdmin: boolean;
 	};
 }
 
@@ -65,10 +72,15 @@ const useSingleSiteCommands = ( { navigate, currentRoute }: useCommandsParams ):
 	const customWindow = window as CustomWindow | undefined;
 	const {
 		isAtomic = false,
+		isStaging = false,
 		isSelfHosted = false,
 		isSimple = false,
+		isPrivate = false,
+		isComingSoon = false,
 		capabilities = {},
 		isP2 = false,
+		isWpcomStore = false,
+		shouldUseWpAdmin = false,
 	} = customWindow?.commandPaletteConfig || {};
 
 	let siteType: SiteType | null = null;
@@ -118,6 +130,7 @@ const useSingleSiteCommands = ( { navigate, currentRoute }: useCommandsParams ):
 			callback: commandNavigation( '/hosting-config/:site#edge' ),
 			capability: SiteCapabilities.MANAGE_OPTIONS,
 			siteType: SiteType.ATOMIC,
+			publicOnly: true,
 			icon: cacheIcon,
 		},
 		{
@@ -126,6 +139,7 @@ const useSingleSiteCommands = ( { navigate, currentRoute }: useCommandsParams ):
 			callback: commandNavigation( '/hosting-config/:site#edge' ),
 			capability: SiteCapabilities.MANAGE_OPTIONS,
 			siteType: SiteType.ATOMIC,
+			publicOnly: true,
 			icon: cacheIcon,
 		},
 		{
@@ -616,7 +630,7 @@ const useSingleSiteCommands = ( { navigate, currentRoute }: useCommandsParams ):
 				_x( 'write post', 'Keyword for the Add new post command', __i18n_text_domain__ ),
 			].join( ' ' ),
 			context: [ '/posts' ],
-			callback: commandNavigation( '/wp-admin/post-new.php' ),
+			callback: commandNavigation( shouldUseWpAdmin ? '/wp-admin/post-new.php' : '/post/:site' ),
 			capability: SiteCapabilities.EDIT_POSTS,
 			icon: plusIcon,
 		},
@@ -627,7 +641,7 @@ const useSingleSiteCommands = ( { navigate, currentRoute }: useCommandsParams ):
 				_x( 'manage posts', 'Keyword for the Manage posts command', __i18n_text_domain__ ),
 				_x( 'edit posts', 'Keyword for the Manage posts command', __i18n_text_domain__ ),
 			].join( ' ' ),
-			callback: commandNavigation( '/wp-admin/edit.php' ),
+			callback: commandNavigation( shouldUseWpAdmin ? '/wp-admin/edit.php' : '/posts/:site' ),
 			capability: SiteCapabilities.EDIT_POSTS,
 			icon: editIcon,
 		},
@@ -642,14 +656,14 @@ const useSingleSiteCommands = ( { navigate, currentRoute }: useCommandsParams ):
 				),
 				_x( 'manage uploads', 'Keyword for the View media uploads command', __i18n_text_domain__ ),
 			].join( ' ' ),
-			callback: commandNavigation( '/wp-admin/upload.php' ),
+			callback: commandNavigation( shouldUseWpAdmin ? '/wp-admin/upload.php' : '/media/:site' ),
 			capability: SiteCapabilities.UPLOAD_FILES,
 			icon: mediaIcon,
 		},
 		{
 			name: 'uploadMedia',
 			label: __( 'Upload media', __i18n_text_domain__ ),
-			callback: commandNavigation( '/wp-admin/media-new.php' ),
+			callback: commandNavigation( shouldUseWpAdmin ? '/wp-admin/media-new.php' : '/media/:site' ),
 			capability: SiteCapabilities.UPLOAD_FILES,
 			icon: mediaIcon,
 		},
@@ -661,7 +675,9 @@ const useSingleSiteCommands = ( { navigate, currentRoute }: useCommandsParams ):
 				_x( 'edit pages', 'Keyword for the Manage pages command', __i18n_text_domain__ ),
 				_x( 'delete pages', 'Keyword for the Manage pages command', __i18n_text_domain__ ),
 			].join( ' ' ),
-			callback: commandNavigation( '/wp-admin/edit.php?post_type=page' ),
+			callback: commandNavigation(
+				shouldUseWpAdmin ? '/wp-admin/edit.php?post_type=page' : '/pages/:site'
+			),
 			capability: SiteCapabilities.EDIT_PAGES,
 			icon: editIcon,
 		},
@@ -674,7 +690,9 @@ const useSingleSiteCommands = ( { navigate, currentRoute }: useCommandsParams ):
 				_x( 'write page', 'Keyword for the Add new page command', __i18n_text_domain__ ),
 			].join( ' ' ),
 			context: [ '/pages' ],
-			callback: commandNavigation( '/wp-admin/post-new.php?post_type=page' ),
+			callback: commandNavigation(
+				shouldUseWpAdmin ? '/wp-admin/post-new.php?post_type=page' : '/page/:site'
+			),
 			capability: SiteCapabilities.EDIT_PAGES,
 			icon: plusIcon,
 		},
@@ -686,7 +704,9 @@ const useSingleSiteCommands = ( { navigate, currentRoute }: useCommandsParams ):
 				_x( 'edit comments', 'Keyword for the Manage comments command', __i18n_text_domain__ ),
 				_x( 'delete comments', 'Keyword for the Manage comments command', __i18n_text_domain__ ),
 			].join( ' ' ),
-			callback: commandNavigation( '/wp-admin/edit-comments.php' ),
+			callback: commandNavigation(
+				shouldUseWpAdmin ? '/wp-admin/edit-comments.php' : '/comments/:site'
+			),
 			capability: SiteCapabilities.MODERATE_COMMENTS,
 			icon: postCommentsIcon,
 		},
@@ -699,7 +719,7 @@ const useSingleSiteCommands = ( { navigate, currentRoute }: useCommandsParams ):
 				_x( 'install theme', 'Keyword for the Manage themes command', __i18n_text_domain__ ),
 				_x( 'delete theme', 'Keyword for the Manage themes command', __i18n_text_domain__ ),
 			].join( ' ' ),
-			callback: commandNavigation( '/wp-admin/themes.php' ),
+			callback: commandNavigation( shouldUseWpAdmin ? '/wp-admin/themes.php' : '/themes/:site' ),
 			capability: SiteCapabilities.EDIT_THEME_OPTIONS,
 			filterP2: true,
 			icon: brushIcon,
@@ -712,7 +732,9 @@ const useSingleSiteCommands = ( { navigate, currentRoute }: useCommandsParams ):
 				_x( 'add theme', 'Keyword for the Install theme command', __i18n_text_domain__ ),
 				_x( 'upload theme', 'Keyword for the Install theme command', __i18n_text_domain__ ),
 			].join( ' ' ),
-			callback: commandNavigation( '/wp-admin/theme-install.php' ),
+			callback: commandNavigation(
+				shouldUseWpAdmin ? '/wp-admin/theme-install.php' : '/themes/:site'
+			),
 			capability: SiteCapabilities.EDIT_THEME_OPTIONS,
 			siteType: SiteType.ATOMIC,
 			icon: brushIcon,
@@ -728,7 +750,7 @@ const useSingleSiteCommands = ( { navigate, currentRoute }: useCommandsParams ):
 				_x( 'delete plugin', 'Keyword for the Manage plugins command', __i18n_text_domain__ ),
 				_x( 'update plugin', 'Keyword for the Manage plugins command', __i18n_text_domain__ ),
 			].join( ' ' ),
-			callback: commandNavigation( '/wp-admin/plugins.php' ),
+			callback: commandNavigation( shouldUseWpAdmin ? '/wp-admin/plugins.php' : '/plugins/:site' ),
 			capability: SiteCapabilities.ACTIVATE_PLUGINS,
 			filterP2: true,
 			icon: pluginsIcon,
@@ -741,7 +763,9 @@ const useSingleSiteCommands = ( { navigate, currentRoute }: useCommandsParams ):
 				_x( 'add plugin', 'Keyword for the Install plugin command', __i18n_text_domain__ ),
 				_x( 'upload plugin', 'Keyword for the Install plugin command', __i18n_text_domain__ ),
 			].join( ' ' ),
-			callback: commandNavigation( '/wp-admin/plugin-install.php' ),
+			callback: commandNavigation(
+				shouldUseWpAdmin ? '/wp-admin/plugin-install.php' : '/plugins/:site'
+			),
 			capability: SiteCapabilities.ACTIVATE_PLUGINS,
 			icon: pluginsIcon,
 		},
@@ -757,6 +781,7 @@ const useSingleSiteCommands = ( { navigate, currentRoute }: useCommandsParams ):
 			callback: commandNavigation( '/plans/:site' ),
 			capability: SiteCapabilities.MANAGE_OPTIONS,
 			filterP2: true,
+			filterStaging: true,
 			icon: creditCardIcon,
 		},
 		{
@@ -770,6 +795,7 @@ const useSingleSiteCommands = ( { navigate, currentRoute }: useCommandsParams ):
 			callback: commandNavigation( '/plans/my-plan/:site' ),
 			capability: SiteCapabilities.MANAGE_OPTIONS,
 			filterP2: true,
+			filterStaging: true,
 			icon: creditCardIcon,
 		},
 		{
@@ -783,7 +809,9 @@ const useSingleSiteCommands = ( { navigate, currentRoute }: useCommandsParams ):
 				_x( 'remove user', 'Keyword for the Manage users command', __i18n_text_domain__ ),
 				_x( 'update user', 'Keyword for the Manage users command', __i18n_text_domain__ ),
 			].join( ' ' ),
-			callback: commandNavigation( '/wp-admin/users.php' ),
+			callback: commandNavigation(
+				shouldUseWpAdmin ? '/wp-admin/users.php' : '/people/team/:site'
+			),
 			capability: SiteCapabilities.LIST_USERS,
 			icon: peopleIcon,
 		},
@@ -795,7 +823,9 @@ const useSingleSiteCommands = ( { navigate, currentRoute }: useCommandsParams ):
 				_x( 'create user', 'Keyword for the Add new user command', __i18n_text_domain__ ),
 				_x( 'invite user', 'Keyword for the Add new user command', __i18n_text_domain__ ),
 			].join( ' ' ),
-			callback: commandNavigation( '/wp-admin/user-new.php' ),
+			callback: commandNavigation(
+				shouldUseWpAdmin ? '/wp-admin/user-new.php' : '/people/new/:site'
+			),
 			capability: SiteCapabilities.LIST_USERS,
 			icon: peopleIcon,
 		},
@@ -841,18 +871,10 @@ const useSingleSiteCommands = ( { navigate, currentRoute }: useCommandsParams ):
 		{
 			name: 'openWooCommerceSettings',
 			label: __( 'Open WooCommerce settings', __i18n_text_domain__ ),
-			callback: commandNavigation( '/wp-admin/admin.php?page=wc-admin' ),
+			callback: isWpcomStore
+				? commandNavigation( '/wp-admin/admin.php?page=wc-admin' )
+				: commandNavigation( '/woocommerce-installation/:site' ),
 			capability: SiteCapabilities.MANAGE_OPTIONS,
-			siteType: SiteType.ATOMIC,
-			filterP2: true,
-			icon: <WooCommerceWooLogo className="woo-command-palette" />,
-		},
-		{
-			name: 'openWooCommerceSettings',
-			label: __( 'Open WooCommerce settings', __i18n_text_domain__ ),
-			callback: commandNavigation( '/woocommerce-installation/:site' ),
-			capability: SiteCapabilities.MANAGE_OPTIONS,
-			siteType: SiteType.SIMPLE,
 			filterP2: true,
 			icon: <WooCommerceWooLogo className="woo-command-palette" />,
 		},
@@ -860,7 +882,9 @@ const useSingleSiteCommands = ( { navigate, currentRoute }: useCommandsParams ):
 			name: 'manageSettingsGeneral',
 			label: __( 'Manage general settings', __i18n_text_domain__ ),
 			context: [ '/settings' ],
-			callback: commandNavigation( '/wp-admin/options-general.php' ),
+			callback: commandNavigation(
+				shouldUseWpAdmin ? '/wp-admin/options-general.php' : '/settings/general/:site'
+			),
 			capability: SiteCapabilities.MANAGE_OPTIONS,
 			icon: settingsIcon,
 		},
@@ -868,7 +892,9 @@ const useSingleSiteCommands = ( { navigate, currentRoute }: useCommandsParams ):
 			name: 'manageSettingsWriting',
 			label: __( 'Manage writing settings', __i18n_text_domain__ ),
 			context: [ '/settings' ],
-			callback: commandNavigation( '/wp-admin/options-general.php' ),
+			callback: commandNavigation(
+				shouldUseWpAdmin ? '/wp-admin/options-writing.php' : '/settings/writing/:site'
+			),
 			capability: SiteCapabilities.MANAGE_OPTIONS,
 			icon: settingsIcon,
 		},
@@ -876,7 +902,9 @@ const useSingleSiteCommands = ( { navigate, currentRoute }: useCommandsParams ):
 			name: 'manageSettingsReading',
 			label: __( 'Manage reading settings', __i18n_text_domain__ ),
 			context: [ '/settings' ],
-			callback: commandNavigation( '/wp-admin/options-reading.php' ),
+			callback: commandNavigation(
+				shouldUseWpAdmin ? '/wp-admin/options-reading.php' : '/settings/reading/:site'
+			),
 			capability: SiteCapabilities.MANAGE_OPTIONS,
 			icon: settingsIcon,
 		},
@@ -884,7 +912,9 @@ const useSingleSiteCommands = ( { navigate, currentRoute }: useCommandsParams ):
 			name: 'manageSettingsDiscussion',
 			label: __( 'Manage discussion settings', __i18n_text_domain__ ),
 			context: [ '/settings' ],
-			callback: commandNavigation( '/wp-admin/options-discussion.php' ),
+			callback: commandNavigation(
+				shouldUseWpAdmin ? '/wp-admin/options-discussion.php' : '/settings/discussion/:site'
+			),
 			capability: SiteCapabilities.MANAGE_OPTIONS,
 			icon: settingsIcon,
 		},
@@ -920,7 +950,15 @@ const useSingleSiteCommands = ( { navigate, currentRoute }: useCommandsParams ):
 				return false;
 			}
 
+			if ( command?.publicOnly && ( isPrivate || isComingSoon ) ) {
+				return false;
+			}
+
 			if ( command?.filterP2 && isP2 ) {
+				return false;
+			}
+
+			if ( command?.filterStaging && isStaging ) {
 				return false;
 			}
 
