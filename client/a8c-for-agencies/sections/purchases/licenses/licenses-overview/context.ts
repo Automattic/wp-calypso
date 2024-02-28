@@ -4,9 +4,9 @@ import {
 	LicenseSortDirection,
 	LicenseSortField,
 } from 'calypso/jetpack-cloud/sections/partner-portal/types';
-import { LicenseListContext as LicensesOverviewContext } from 'calypso/state/partner-portal/types';
+import { LicenseListContext } from 'calypso/state/partner-portal/types';
 
-const LicensesOverview = createContext< LicensesOverviewContext >( {
+const LicensesOverviewContext = createContext< LicenseListContext >( {
 	currentPage: 1,
 	search: '',
 	filter: LicenseFilter.NotRevoked,
@@ -14,4 +14,4 @@ const LicensesOverview = createContext< LicensesOverviewContext >( {
 	sortDirection: LicenseSortDirection.Descending,
 } );
 
-export default LicensesOverview;
+export default LicensesOverviewContext;
