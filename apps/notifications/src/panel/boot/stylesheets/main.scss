@@ -1,3 +1,8 @@
+$min_page_width: 800px; // Default min-width
+.is-global-sidebar-visible .wpnc__main {
+	$min_page_width: 1114px; // Override min-width if .is-global-sidebar-visible is present
+}
+
 .wpnc {
 	margin: 0;
 }
@@ -895,7 +900,7 @@
 		padding: $wpnc__padding-large $wpnc__padding-medium 0;
 	}
 
-	@media only screen and ( min-width: 800px ) {
+	@media only screen and ( min-width: #{$min_page_width} ) {
 		.wpnc__list-view.wpnc__current {
 			display: block;
 
