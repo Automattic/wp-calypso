@@ -28,7 +28,7 @@ import {
 	wordpress as wordpressIcon,
 } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
-import { Command } from '../use-command-palette';
+import { Command, CommandCallBackParams } from '../use-command-palette';
 import { isCustomDomain } from '../utils';
 import { useCommandsParams } from './types';
 import useCommandNavigation from './use-command-navigation';
@@ -100,8 +100,10 @@ const useSingleSiteCommands = ( { navigate, currentRoute }: useCommandsParams ):
 				_x( 'contact support', 'Keyword for the Get help command', __i18n_text_domain__ ),
 				_x( 'help center', 'Keyword for the Get help command', __i18n_text_domain__ ),
 			].join( ' ' ),
-			// eslint-disable-next-line wpcalypso/i18n-unlocalized-url
-			callback: commandNavigation( 'https://wordpress.com/support' ),
+			callback: ( { close }: CommandCallBackParams ) => {
+				close();
+				document?.getElementById( 'wp-admin-bar-help-center' )?.click();
+			},
 			icon: helpIcon,
 		},
 		{
