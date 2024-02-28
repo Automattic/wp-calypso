@@ -19,6 +19,7 @@ function MockComponent( { children, childOrderOverride, isShuffleActive }: MockC
 			<>
 				<div data-testid={ DEBUG_PRINT_DIV_ID }>{ childOrder?.join( ',' ) }</div>
 				<Shuffle
+					isShuffleActive={ isShuffleActive }
 					childOrder={ childOrder }
 					getChildKey={ ( child: React.ReactNode ) => {
 						// @ts-expect-error - Resolver does not have to have proper form
@@ -70,7 +71,7 @@ function MockComponent( { children, childOrderOverride, isShuffleActive }: MockC
 describe( 'Shuffle Component', () => {
 	test( 'Given an order of ids renders according to the given order', () => {
 		const { getByTestId } = render(
-			<MockComponent childOrderOverride={ [ '5', '4', '3', '2', '1' ] } />
+			<MockComponent childOrderOverride={ [ '5', '4', '3', '2', '1' ] } isShuffleActive={ true } />
 		);
 		expect( getByTestId( '1' ) ).toHaveTextContent( 'Child 5' );
 		expect( getByTestId( '2' ) ).toHaveTextContent( 'Child 4' );
@@ -80,7 +81,7 @@ describe( 'Shuffle Component', () => {
 	} );
 
 	test( 'Given no order renders a random order accurately', () => {
-		const { getByTestId } = render( <MockComponent /> );
+		const { getByTestId } = render( <MockComponent isShuffleActive={ true } /> );
 		const debugPrint = getByTestId( DEBUG_PRINT_DIV_ID );
 		const finalOrder = debugPrint.textContent?.split( ',' ) ?? [];
 
@@ -89,7 +90,7 @@ describe( 'Shuffle Component', () => {
 		} );
 	} );
 
-	test( 'If shuffle flag is disabled no scrambling will occur', () => {
+	test( 'If shuffle flag is disabled no change in order will occur', () => {
 		const { getByTestId } = render( <MockComponent isShuffleActive={ false } /> );
 		const debugPrint = getByTestId( DEBUG_PRINT_DIV_ID );
 
