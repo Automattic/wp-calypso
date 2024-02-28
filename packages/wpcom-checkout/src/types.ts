@@ -387,6 +387,7 @@ export type ManagedContactDetailsTldExtraFieldsShape< T > = {
 	};
 	fr?: {
 		registrantType?: T;
+		registrantVatId?: T;
 		trademarkNumber?: T;
 		sirenSiret?: T;
 	};

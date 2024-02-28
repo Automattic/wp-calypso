@@ -4,6 +4,7 @@ import { useTranslate } from 'i18n-calypso';
 import { Fragment } from 'react';
 import ManagedContactDetailsFormFields from 'calypso/components/domains/contact-details-form-fields/managed-contact-details-form-fields';
 import RegistrantExtraInfoForm from 'calypso/components/domains/registrant-extra-info';
+import RegistrantExtraInfoFrForm from 'calypso/components/domains/registrant-extra-info/fr-form';
 import {
 	hasGoogleApps,
 	hasDomainRegistration,
@@ -71,8 +72,6 @@ export default function DomainContactDetails( {
 					}
 					tld="ca"
 					getDomainNames={ () => domainNames }
-					translate={ translate }
-					isManaged={ true }
 				/>
 			) }
 			{ tlds.includes( 'uk' ) && (
@@ -85,22 +84,16 @@ export default function DomainContactDetails( {
 					}
 					tld="uk"
 					getDomainNames={ () => domainNames }
-					translate={ translate }
-					isManaged={ true }
 				/>
 			) }
 			{ tlds.includes( 'fr' ) && (
-				<RegistrantExtraInfoForm
+				<RegistrantExtraInfoFrForm
 					contactDetails={ contactDetails }
 					ccTldDetails={ contactDetails?.extra?.fr ?? {} }
 					onContactDetailsChange={ updateDomainContactFields }
 					contactDetailsValidationErrors={
 						shouldShowContactDetailsValidationErrors ? contactDetailsErrors : {}
 					}
-					tld="fr"
-					getDomainNames={ () => domainNames }
-					translate={ translate }
-					isManaged={ true }
 				/>
 			) }
 			{ isVatSupported && (
