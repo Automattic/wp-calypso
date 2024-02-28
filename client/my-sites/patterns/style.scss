@@ -2,6 +2,19 @@
 	background: #e5f4ff;
 }
 
+.pattern-categories {
+	display: flex;
+	flex-wrap: nowrap;
+	gap: 16px;
+	list-style: none;
+	margin: 0;
+	overflow: auto;
+	padding: 0;
+}
+.pattern-category {
+	white-space: nowrap;
+}
+
 .patterns {
 	display: grid;
 	padding: 24px 0;

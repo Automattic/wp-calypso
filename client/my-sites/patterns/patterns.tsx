@@ -5,6 +5,7 @@ import DocumentHead from 'calypso/components/data/document-head';
 import Main from 'calypso/components/main';
 import { PatternPreview } from 'calypso/my-sites/patterns/components/pattern-preview';
 import { PatternPreviewPlaceholder } from 'calypso/my-sites/patterns/components/pattern-preview-placeholder';
+import { usePatternCategories } from 'calypso/my-sites/patterns/hooks/use-pattern-categories';
 import { usePatterns } from 'calypso/my-sites/patterns/hooks/use-patterns';
 
 import './style.scss';
@@ -18,6 +19,8 @@ type Props = {
 
 export default function Patterns( { category, isGridView }: Props ) {
 	const locale = useLocale();
+
+	const { data: categories } = usePatternCategories( Number( RENDERER_SITE_ID ) );
 	const { data: patterns } = usePatterns( locale, category );
 
 	const patternIdsByCategory = {
@@ -28,6 +31,14 @@ export default function Patterns( { category, isGridView }: Props ) {
 		<Main isLoggedOut fullWidthLayout>
 			<DocumentHead title="WordPress Patterns" />
 			<h1>Build your perfect site with patterns</h1>
+
+			<ul className="pattern-categories">
+				{ categories?.map( ( category ) => (
+					<li className="pattern-category" key={ category.name }>
+						<a href={ `/patterns/${ category.name }` }>{ category.label }</a>
+					</li>
+				) ) }
+			</ul>
 
 			<BlockRendererProvider
 				siteId={ RENDERER_SITE_ID }

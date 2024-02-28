@@ -5,7 +5,7 @@ import type { Pattern } from 'calypso/landing/stepper/declarative-flow/internals
 export function getPatternsQueryOptions(
 	locale: string,
 	category: string,
-	queryOptions: Omit< UseQueryOptions< any, unknown, Pattern[] >, 'queryKey' > = {}
+	queryOptions: Omit< UseQueryOptions< Pattern[] >, 'queryKey' > = {}
 ) {
 	return {
 		queryKey: [ 'patterns', 'library', locale, category ],
@@ -23,9 +23,7 @@ export function getPatternsQueryOptions(
 export function usePatterns(
 	locale: string,
 	category: string,
-	queryOptions: Omit< UseQueryOptions< any, unknown, Pattern[] >, 'queryKey' > = {}
+	queryOptions: Omit< UseQueryOptions< Pattern[] >, 'queryKey' > = {}
 ) {
-	return useQuery< any, unknown, Pattern[] >(
-		getPatternsQueryOptions( locale, category, queryOptions )
-	);
+	return useQuery< Pattern[] >( getPatternsQueryOptions( locale, category, queryOptions ) );
 }
