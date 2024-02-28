@@ -82,21 +82,29 @@ const HomepagePopover = ( { isAdmin, template }: HomepagePopoverProps ) => {
 	return <InfoPopover position="right">{ msg }</InfoPopover>;
 };
 
-interface Props {
-	site: SiteDetails;
-	id: string;
-	type: string;
-	title: string;
-	previewUrl?: string;
-	isHomepage?: boolean;
-
+interface StateProps {
 	isAdmin: boolean;
+}
+
+interface DispatchProps {
 	recordGoogleEvent: any;
 	recordTracksEvent: any;
 	setPreviewUrl: any;
 	setLayoutFocus: any;
 	infoNotice: any;
 }
+
+interface OwnProps {
+	site: SiteDetails;
+	id: string;
+	type: string;
+	title: string;
+	previewUrl?: string;
+	isHomepage?: boolean;
+	isLoaded?: boolean;
+}
+
+type Props = StateProps & DispatchProps & OwnProps;
 
 const VirtualPage = ( {
 	site,
@@ -105,17 +113,18 @@ const VirtualPage = ( {
 	title,
 	previewUrl,
 	isHomepage,
+	isLoaded,
 	isAdmin,
 	...props
 }: Props ) => {
 	const translate = useTranslate();
 	const defaultEditorUrl = `/site-editor/${ site.slug }`;
 	const editorUrl = ! isHomepage
-		? addQueryArgs( { templateId: id, templateType: type }, defaultEditorUrl )
+		? addQueryArgs( { postId: id, postType: type }, defaultEditorUrl )
 		: defaultEditorUrl;
 
 	const { data: template, isInitialLoading } = useTemplate( site.ID, id, {
-		enabled: isAdmin && !! id,
+		enabled: isAdmin && !! id && ! isLoaded,
 	} );
 
 	const recordGoogleEvent = ( action: string ) => {
@@ -246,7 +255,7 @@ const VirtualPage = ( {
 	);
 };
 
-const mapStateToProps = ( state: any, ownProps: Props ) => {
+const mapStateToProps = ( state: any, ownProps: OwnProps ) => {
 	return {
 		isAdmin: canCurrentUser( state, ownProps.site.ID, 'edit_theme_options' ),
 	};
@@ -260,4 +269,7 @@ const mapDispatchToProps = {
 	infoNotice,
 };
 
-export default connect( mapStateToProps, mapDispatchToProps )( VirtualPage );
+export default connect< StateProps, DispatchProps, OwnProps >(
+	mapStateToProps,
+	mapDispatchToProps
+)( VirtualPage );

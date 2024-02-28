@@ -28,6 +28,7 @@ import BlogPostsPage from './blog-posts-page';
 import { sortPagesHierarchically } from './helpers';
 import Page from './page';
 import Placeholder from './placeholder';
+import TemplateList from './template-list';
 import VirtualPage from './virtual-page';
 
 class Pages extends Component {
@@ -333,13 +334,16 @@ class Pages extends Component {
 		}, this );
 
 		return (
-			<div id="pages" className="pages__page-list">
-				{ this.renderBlogPostsPage() }
-				{ this.renderVirtualHomePage() }
-				{ site && this.renderSectionHeader() }
-				{ rows }
+			<>
+				<div id="pages" className="pages__page-list">
+					{ this.renderBlogPostsPage() }
+					{ this.renderVirtualHomePage() }
+					{ site && this.renderSectionHeader() }
+					{ rows }
+				</div>
+				<TemplateList site={ site } />
 				{ this.renderListEnd() }
-			</div>
+			</>
 		);
 	}
 
@@ -367,14 +371,17 @@ class Pages extends Component {
 		}
 
 		return (
-			<div id="pages" className="pages__page-list">
-				{ this.renderBlogPostsPage() }
-				{ this.renderVirtualHomePage() }
-				{ site && this.renderSectionHeader() }
-				{ rows }
-				<InfiniteScroll nextPageMethod={ this.fetchPages } />
+			<>
+				<div id="pages" className="pages__page-list">
+					{ this.renderBlogPostsPage() }
+					{ this.renderVirtualHomePage() }
+					{ site && this.renderSectionHeader() }
+					{ rows }
+					<InfiniteScroll nextPageMethod={ this.fetchPages } />
+				</div>
+				<TemplateList site={ site } />
 				{ this.renderListEnd() }
-			</div>
+			</>
 		);
 	}
 
