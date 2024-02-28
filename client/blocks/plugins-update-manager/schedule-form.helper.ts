@@ -66,7 +66,7 @@ export const validateTimeSlot = ( newSchedule: TimeSlot, existingSchedules: Time
 			( newSchedule.frequency === 'daily' || schedule.frequency === 'daily' ) &&
 			existingDate.getHours() === newDate.getHours()
 		) {
-			error = 'Please pick another time for optimal performance, as this slot is already taken.';
+			error = 'Please choose another time, as this slot is already scheduled.';
 		} else if (
 			newSchedule.frequency === 'weekly' &&
 			schedule.frequency === 'weekly' &&
