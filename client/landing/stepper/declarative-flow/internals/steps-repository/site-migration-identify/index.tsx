@@ -1,5 +1,6 @@
 import { StepContainer, Title } from '@automattic/onboarding';
 import { useTranslate } from 'i18n-calypso';
+import { isError } from 'lodash';
 import { type FC, useEffect, useState } from 'react';
 import CaptureInput from 'calypso/blocks/import/capture/capture-input';
 import ScanningStep from 'calypso/blocks/import/scanning';
@@ -25,6 +26,7 @@ export const Analyzer: FC< Props > = ( props ) => {
 		data: siteInfo,
 		isError: hasError,
 		isFetching,
+		isFetched,
 	} = useAnalyzeUrlQuery( siteURL, siteURL !== '' );
 
 	useEffect( () => {
@@ -33,7 +35,7 @@ export const Analyzer: FC< Props > = ( props ) => {
 		}
 	}, [ onComplete, siteInfo ] );
 
-	if ( isFetching ) {
+	if ( isFetching || ( isFetched && ! isError ) ) {
 		return <ScanningStep />;
 	}
 
