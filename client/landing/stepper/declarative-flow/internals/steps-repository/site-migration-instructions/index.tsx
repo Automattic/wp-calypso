@@ -14,7 +14,7 @@ const SiteMigrationInstructions: Step = function () {
 	const buttonTextCopy = translate( 'Copy key' );
 	const [ buttonText, setButtonText ] = useState( buttonTextCopy );
 	const onCopy = () => {
-		recordTracksEvent( 'calypso_site_migration_instructions_key_copied' );
+		recordTracksEvent( 'calypso_migration_instructions_key_copied' );
 		setButtonText( translate( 'Copied!' ) );
 		setTimeout( () => {
 			setButtonText( buttonTextCopy );
