@@ -139,7 +139,11 @@ export default function CampaignItemDetails( props: Props ) {
 	} );
 
 	// Target block
-	const { topics: topicsList, languages: languagesList } = audience_list || {};
+	const {
+		devices: devicesList,
+		topics: topicsList,
+		languages: languagesList,
+	} = audience_list || {};
 
 	// Formatted labels
 	const ctrFormatted = clickthrough_rate ? `${ clickthrough_rate.toFixed( 2 ) }%` : '-';
@@ -152,6 +156,7 @@ export default function CampaignItemDetails( props: Props ) {
 	const deliveryEstimateFormatted = getCampaignEstimatedImpressions( display_delivery_estimate );
 	const campaignTitleFormatted = title || __( 'Untitled' );
 	const campaignCreatedFormatted = moment.utc( created_at ).format( 'MMMM DD, YYYY' );
+	const devicesListFormatted = devicesList ? `${ devicesList }` : __( 'All' );
 	const durationDateFormatted = getCampaignDurationFormatted( start_date, end_date );
 	const durationFormatted = duration_days
 		? sprintf(
@@ -628,6 +633,14 @@ export default function CampaignItemDetails( props: Props ) {
 								<div className="campaign-item-details__secondary-stats-row">
 									<div>
 										<span className="campaign-item-details__label">
+											{ translate( 'Audience' ) }
+										</span>
+										<span className="campaign-item-details__details">
+											{ ! isLoading ? devicesListFormatted : <FlexibleSkeleton /> }
+										</span>
+									</div>
+									<div>
+										<span className="campaign-item-details__label">
 											{ translate( 'Languages' ) }
 										</span>
 										<span className="campaign-item-details__details">
@@ -654,7 +667,7 @@ export default function CampaignItemDetails( props: Props ) {
 											) }
 										</span>
 									</div>
-									<div>
+									<div className="campaign-item-details__destination">
 										<span className="campaign-item-details__label">
 											{ translate( 'Destination' ) }
 										</span>
