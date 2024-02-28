@@ -119,13 +119,13 @@ const AddOnCard = ( {
 	// if product is space upgrade choose the action based on the purchased status
 	const shouldRenderPrimaryAction =
 		addOnMeta.productSlug === PRODUCT_1GB_SPACE
-			? ! addOnMeta.purchased
-			: availabilityStatus?.available;
+			? ! addOnMeta.purchased && ! shouldRenderLoadingState
+			: availabilityStatus?.available && ! shouldRenderLoadingState;
 
 	const shouldRenderSecondaryAction =
 		addOnMeta.productSlug === PRODUCT_1GB_SPACE
-			? addOnMeta.purchased
-			: ! availabilityStatus?.available;
+			? addOnMeta.purchased && ! shouldRenderLoadingState
+			: ! availabilityStatus?.available && ! shouldRenderLoadingState;
 
 	return (
 		<Container>
