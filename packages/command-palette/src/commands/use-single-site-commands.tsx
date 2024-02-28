@@ -41,6 +41,7 @@ enum SiteType {
 interface CapabilityCommand extends Command {
 	capability?: string;
 	siteType?: SiteType;
+	publicOnly?: boolean;
 	isCustomDomain?: boolean;
 	filterP2?: boolean;
 }
@@ -52,6 +53,8 @@ interface CustomWindow {
 		isAtomic: boolean;
 		isSelfHosted: boolean;
 		isSimple: boolean;
+		isPrivate: boolean;
+		isComingSoon: boolean;
 		isP2: boolean;
 		capabilities: {
 			[ key: string ]: string;
@@ -67,6 +70,8 @@ const useSingleSiteCommands = ( { navigate, currentRoute }: useCommandsParams ):
 		isAtomic = false,
 		isSelfHosted = false,
 		isSimple = false,
+		isPrivate = false,
+		isComingSoon = false,
 		capabilities = {},
 		isP2 = false,
 	} = customWindow?.commandPaletteConfig || {};
@@ -118,6 +123,7 @@ const useSingleSiteCommands = ( { navigate, currentRoute }: useCommandsParams ):
 			callback: commandNavigation( '/hosting-config/:site#edge' ),
 			capability: SiteCapabilities.MANAGE_OPTIONS,
 			siteType: SiteType.ATOMIC,
+			publicOnly: true,
 			icon: cacheIcon,
 		},
 		{
@@ -126,6 +132,7 @@ const useSingleSiteCommands = ( { navigate, currentRoute }: useCommandsParams ):
 			callback: commandNavigation( '/hosting-config/:site#edge' ),
 			capability: SiteCapabilities.MANAGE_OPTIONS,
 			siteType: SiteType.ATOMIC,
+			publicOnly: true,
 			icon: cacheIcon,
 		},
 		{
@@ -917,6 +924,10 @@ const useSingleSiteCommands = ( { navigate, currentRoute }: useCommandsParams ):
 			}
 
 			if ( command?.isCustomDomain && ! isCustomDomain( window.location.host ) ) {
+				return false;
+			}
+
+			if ( command?.publicOnly && ( isPrivate || isComingSoon ) ) {
 				return false;
 			}
 
