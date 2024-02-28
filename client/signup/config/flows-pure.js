@@ -141,8 +141,8 @@ export function generateFlows( {
 		{
 			name: 'onboarding',
 			steps: isEnabled( 'signup/professional-email-step' )
-				? [ userSocialStep, 'new-user-survey', 'domains', 'emails', 'plans' ]
-				: [ userSocialStep, 'new-user-survey', 'domains', 'plans' ],
+				? [ userSocialStep, 'domains', 'emails', 'plans' ]
+				: [ userSocialStep, 'domains', 'plans' ],
 			destination: getSignupDestination,
 			description: 'Abridged version of the onboarding flow. Read more in https://wp.me/pau2Xa-Vs.',
 			lastModified: '2023-10-11',
