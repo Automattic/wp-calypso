@@ -48,20 +48,16 @@ function getPlanFromRecurType( recurType: string ) {
 
 const ecommerceFlow: Flow = {
 	name: ECOMMERCE_FLOW,
-	/* This is technically a signup flow, but we're manually triggering an event in useSteps()
-	 * for now, so we're disabling the centralised tracking for calypso_signup_start events.
-	 */
-	isSignupFlow: false,
-	useSteps() {
-		const recurType = useSelect(
+	isSignupFlow: true,
+	useSignupStartEventProps() {
+		const recur = useSelect(
 			( select ) => ( select( ONBOARD_STORE ) as OnboardSelect ).getEcommerceFlowRecurType(),
 			[]
 		);
 
-		useEffect( () => {
-			recordTracksEvent( 'calypso_signup_start', { flow: this.name, recur: recurType } );
-		}, [] );
-
+		return { recur };
+	},
+	useSteps() {
 		return [
 			{
 				slug: 'storeProfiler',
