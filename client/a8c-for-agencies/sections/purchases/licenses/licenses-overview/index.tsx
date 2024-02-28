@@ -9,6 +9,7 @@ import LayoutHeader, {
 import LayoutTop from 'calypso/a8c-for-agencies/components/layout/top';
 import MobileSidebarNavigation from 'calypso/a8c-for-agencies/components/sidebar/mobile-sidebar-navigation';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
+import LicenseList from '../license-list';
 import LicenseSearch from '../license-search';
 import LicenseStateFilter from '../license-state-filter';
 import LicensesOverviewContext from './context';
@@ -95,7 +96,16 @@ export default function LicensesOverview( {
 					<LicenseStateFilter />
 				</LayoutTop>
 
-				<LayoutBody>{ showEmptyStateContent ? <EmptyState /> : <LicenseSearch /> }</LayoutBody>
+				<LayoutBody>
+					{ showEmptyStateContent ? (
+						<EmptyState />
+					) : (
+						<>
+							<LicenseSearch />
+							<LicenseList />
+						</>
+					) }
+				</LayoutBody>
 			</LicensesOverviewContext.Provider>
 		</Layout>
 	);

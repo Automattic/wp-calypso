@@ -96,7 +96,7 @@ const StatsRedirectFlow: React.FC< StatsRedirectFlowProps > = ( { children } ) =
 		const event_from = isOdysseyStats ? 'jetpack_odyssey' : 'calypso';
 		recordTracksEvent( `${ event_from }_stats_purchase_flow_redirected` );
 
-		// redirect to the Traffic page
+		// redirect to the Purchase page
 		setTimeout(
 			() => page.redirect( `/stats/purchase/${ siteSlug }?${ queryParams.toString() }` ),
 			250

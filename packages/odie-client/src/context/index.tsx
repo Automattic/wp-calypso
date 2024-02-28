@@ -43,6 +43,7 @@ type OdieAssistantContextInterface = {
 	setIsLoading: ( isLoading: boolean ) => void;
 	trackEvent: ( event: string, properties?: Record< string, unknown > ) => void;
 	updateMessage: ( message: Message ) => void;
+	version?: string | null;
 };
 
 const defaultContextInterfaceValues = {
@@ -91,6 +92,7 @@ type OdieAssistantProviderProps = {
 	extraContactOptions?: ReactNode;
 	logger?: ( message: string, properties: Record< string, unknown > ) => void;
 	loggerEventNamePrefix?: string;
+	version?: string | null;
 	children?: ReactNode;
 } & PropsWithChildren;
 // Create a provider component for the context
@@ -103,6 +105,7 @@ const OdieAssistantProvider: FC< OdieAssistantProviderProps > = ( {
 	enabled = true,
 	logger,
 	loggerEventNamePrefix,
+	version = null,
 	children,
 } ) => {
 	const [ isVisible, setIsVisible ] = useState( false );
@@ -112,6 +115,9 @@ const OdieAssistantProvider: FC< OdieAssistantProviderProps > = ( {
 	const existingChatIdString = useOdieStorage( 'chat_id' );
 	const existingChatId = existingChatIdString ? parseInt( existingChatIdString, 10 ) : null;
 	const existingChat = useLoadPreviousChat( botNameSlug, existingChatId );
+
+	const urlSearchParams = new URLSearchParams( window.location.search );
+	const versionParams = urlSearchParams.get( 'version' );
 
 	const [ chat, setChat ] = useState< Chat >( existingChat );
 
@@ -198,6 +204,8 @@ const OdieAssistantProvider: FC< OdieAssistantProviderProps > = ( {
 		[ setChat ]
 	);
 
+	const overridenVersion = versionParams || version;
+
 	if ( ! enabled ) {
 		return <>{ children }</>;
 	}
@@ -229,6 +237,7 @@ const OdieAssistantProvider: FC< OdieAssistantProviderProps > = ( {
 				setIsVisible,
 				trackEvent,
 				updateMessage,
+				version: overridenVersion,
 			} }
 		>
 			{ children }

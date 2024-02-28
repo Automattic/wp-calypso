@@ -341,6 +341,7 @@
 		"@wordpress/customize-widgets": "4.29.0",
 		"@wordpress/data-controls": "3.21.0",
 		"@wordpress/data": "^9.22.0",
+		"@wordpress/dataviews": "0.4.1",
 		"@wordpress/date": "4.52.0",
 		"@wordpress/dependency-extraction-webpack-plugin": "5.3.0",
 		"@wordpress/deprecated": "3.52.0",
