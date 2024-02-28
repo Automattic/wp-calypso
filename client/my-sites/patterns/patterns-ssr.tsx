@@ -2,16 +2,17 @@ import { useLocale } from '@automattic/i18n-utils';
 import classNames from 'classnames';
 import DocumentHead from 'calypso/components/data/document-head';
 import Main from 'calypso/components/main';
+import { PatternPreviewPlaceholder } from 'calypso/my-sites/patterns/components/pattern-preview-placeholder';
 import { usePatterns } from 'calypso/my-sites/patterns/hooks/use-patterns';
 
 import './style.scss';
 
-type PatternsSSRProps = {
+type Props = {
 	category: string;
 	isGridView?: boolean;
 };
 
-export default function PatternsSSR( { category, isGridView }: PatternsSSRProps ) {
+export default function PatternsSSR( { category, isGridView }: Props ) {
 	const locale = useLocale();
 	const { data: patterns } = usePatterns( locale, category );
 
@@ -23,10 +24,7 @@ export default function PatternsSSR( { category, isGridView }: PatternsSSRProps 
 
 			<div className={ classNames( 'patterns', { patterns_grid: isGridView } ) }>
 				{ patterns?.map( ( pattern ) => (
-					<div className="patterns__item patterns__item_loading" key={ pattern.ID }>
-						<div className="patterns__preview" />
-						<div className="patterns__title">{ pattern.title }</div>
-					</div>
+					<PatternPreviewPlaceholder key={ pattern.ID } pattern={ pattern } />
 				) ) }
 			</div>
 		</Main>

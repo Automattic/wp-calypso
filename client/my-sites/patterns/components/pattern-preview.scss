@@ -1,0 +1,23 @@
+.pattern-preview {
+	display: flex;
+	flex-direction: column;
+	gap: 16px;
+	justify-content: space-between;
+
+	.pattern-preview__renderer {
+		background: var(--color-surface);
+		border-radius: 4px;
+		box-shadow: 0 0 8px hsla(0, 0%, 0%, 0.08);
+		display: grid;
+		flex: 1;
+		overflow: hidden;
+
+		.pattern-preview_loading & {
+			aspect-ratio: 7 / 3;
+		}
+	}
+
+	.pattern-preview__title {
+		min-height: 3rem;
+	}
+}
