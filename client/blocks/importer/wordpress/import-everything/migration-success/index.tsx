@@ -117,7 +117,7 @@ export default function MigrationSuccess( {
 						) }
 						target="_blank"
 						rel="noopener noreferrer"
-						title="Migration support resources"
+						title={ translate( 'Migration support resources' ) }
 					>
 						{ translate( 'Migration support resources' ) }
 					</Link>
