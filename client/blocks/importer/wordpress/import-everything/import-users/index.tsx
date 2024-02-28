@@ -165,7 +165,8 @@ const ImportUsers = ( { site, onSubmit }: Props ) => {
 				<NextButton
 					type="button"
 					onClick={ handleSubmit }
-					disabled={ isSubmittingInvites || checkedUsersNumber < 1 }
+					isBusy={ isSubmittingInvites }
+					disabled={ checkedUsersNumber < 1 }
 				>
 					{
 						/* translators: The number of selected users to send WP.com invite */
