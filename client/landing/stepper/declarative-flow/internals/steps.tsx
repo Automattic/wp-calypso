@@ -211,6 +211,11 @@ export const STEPS = {
 		asyncComponent: () => import( './steps-repository/site-migration-instructions' ),
 	},
 
+	SITE_MIGRATION_CAPTURE: {
+		slug: 'site-migration-capture',
+		asyncComponent: () => import( './steps-repository/site-migration-analyzer' ),
+	},
+
 	SITE_MIGRATION_IMPORT_OR_MIGRATE: {
 		slug: 'site-migration-import-or-migrate',
 		asyncComponent: () => import( './steps-repository/site-migration-import-or-migrate' ),
