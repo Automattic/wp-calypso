@@ -42,8 +42,10 @@ enum SiteType {
 interface CapabilityCommand extends Command {
 	capability?: string;
 	siteType?: SiteType;
+	publicOnly?: boolean;
 	isCustomDomain?: boolean;
 	filterP2?: boolean;
+	filterStaging?: boolean;
 }
 
 interface CustomWindow {
@@ -51,8 +53,11 @@ interface CustomWindow {
 		siteId: string;
 		isAdmin: boolean;
 		isAtomic: boolean;
+		isStaging: boolean;
 		isSelfHosted: boolean;
 		isSimple: boolean;
+		isPrivate: boolean;
+		isComingSoon: boolean;
 		isP2: boolean;
 		capabilities: {
 			[ key: string ]: string;
@@ -68,8 +73,11 @@ const useSingleSiteCommands = ( { navigate, currentRoute }: useCommandsParams ):
 	const customWindow = window as CustomWindow | undefined;
 	const {
 		isAtomic = false,
+		isStaging = false,
 		isSelfHosted = false,
 		isSimple = false,
+		isPrivate = false,
+		isComingSoon = false,
 		capabilities = {},
 		isP2 = false,
 		isWpcomStore = false,
@@ -123,6 +131,7 @@ const useSingleSiteCommands = ( { navigate, currentRoute }: useCommandsParams ):
 			callback: commandNavigation( '/hosting-config/:site#edge' ),
 			capability: SiteCapabilities.MANAGE_OPTIONS,
 			siteType: SiteType.ATOMIC,
+			publicOnly: true,
 			icon: cacheIcon,
 		},
 		{
@@ -131,6 +140,7 @@ const useSingleSiteCommands = ( { navigate, currentRoute }: useCommandsParams ):
 			callback: commandNavigation( '/hosting-config/:site#edge' ),
 			capability: SiteCapabilities.MANAGE_OPTIONS,
 			siteType: SiteType.ATOMIC,
+			publicOnly: true,
 			icon: cacheIcon,
 		},
 		{
@@ -772,6 +782,7 @@ const useSingleSiteCommands = ( { navigate, currentRoute }: useCommandsParams ):
 			callback: commandNavigation( '/plans/:site' ),
 			capability: SiteCapabilities.MANAGE_OPTIONS,
 			filterP2: true,
+			filterStaging: true,
 			icon: creditCardIcon,
 		},
 		{
@@ -785,6 +796,7 @@ const useSingleSiteCommands = ( { navigate, currentRoute }: useCommandsParams ):
 			callback: commandNavigation( '/plans/my-plan/:site' ),
 			capability: SiteCapabilities.MANAGE_OPTIONS,
 			filterP2: true,
+			filterStaging: true,
 			icon: creditCardIcon,
 		},
 		{
@@ -955,7 +967,15 @@ const useSingleSiteCommands = ( { navigate, currentRoute }: useCommandsParams ):
 				return false;
 			}
 
+			if ( command?.publicOnly && ( isPrivate || isComingSoon ) ) {
+				return false;
+			}
+
 			if ( command?.filterP2 && isP2 ) {
+				return false;
+			}
+
+			if ( command?.filterStaging && isStaging ) {
 				return false;
 			}
 
