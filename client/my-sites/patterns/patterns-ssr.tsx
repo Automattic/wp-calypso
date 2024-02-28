@@ -6,12 +6,12 @@ import { usePatterns } from 'calypso/my-sites/patterns/hooks/use-patterns';
 
 import './style.scss';
 
-type Props = {
+type PatternsSSRProps = {
 	category: string;
 	isGridView?: boolean;
 };
 
-export default function PatternsSSR( { category, isGridView }: Props ) {
+export default function PatternsSSR( { category, isGridView }: PatternsSSRProps ) {
 	const locale = useLocale();
 	const { data: patterns } = usePatterns( locale, category );
 
@@ -24,7 +24,7 @@ export default function PatternsSSR( { category, isGridView }: Props ) {
 			<div className={ classNames( 'patterns', { patterns_grid: isGridView } ) }>
 				{ patterns?.map( ( pattern ) => (
 					<div className="patterns__item patterns__item_loading" key={ pattern.ID }>
-						<div className="patterns__preview">Loading…</div>
+						<div className="patterns__preview" />
 						<div className="patterns__title">{ pattern.title }</div>
 					</div>
 				) ) }

@@ -6,6 +6,7 @@ import {
 import { usePatternsRendererContext } from '@automattic/block-renderer/src/components/patterns-renderer-context';
 import { getPlaceholderSiteID } from '@automattic/data-stores/src/site/constants';
 import { useLocale } from '@automattic/i18n-utils';
+import { useResizeObserver } from '@wordpress/compose';
 import classNames from 'classnames';
 import DocumentHead from 'calypso/components/data/document-head';
 import Main from 'calypso/components/main';
@@ -26,6 +27,7 @@ function PatternPreview( { isGridView, pattern }: PatternPreviewProps ) {
 	const { renderedPatterns } = usePatternsRendererContext();
 	const patternId = encodePatternId( pattern.ID );
 	const renderedPattern = renderedPatterns[ patternId ];
+	const [ resizeObserver, nodeSize ] = useResizeObserver();
 
 	return (
 		<div
@@ -33,13 +35,27 @@ function PatternPreview( { isGridView, pattern }: PatternPreviewProps ) {
 				patterns__item_loading: ! renderedPattern,
 			} ) }
 		>
+			{ resizeObserver }
+
 			<div className="patterns__preview">
 				<PatternRenderer
+					minHeight={ nodeSize.width ? nodeSize.width / ( 7 / 3 ) : undefined }
 					patternId={ patternId }
 					viewportWidth={ isGridView ? DESKTOP_VIEWPORT_WIDTH : undefined }
 				/>
 			</div>
 
+			<div className="patterns__title">{ pattern.title }</div>
+		</div>
+	);
+}
+
+type PatternPreviewPlaceholderProps = { pattern: Pattern };
+
+function PatternPreviewPlaceholder( { pattern }: PatternPreviewPlaceholderProps ) {
+	return (
+		<div className="patterns__item patterns__item_loading">
+			<div className="patterns__preview" />
 			<div className="patterns__title">{ pattern.title }</div>
 		</div>
 	);
@@ -64,7 +80,16 @@ export default function Patterns( { category, isGridView }: PatternsProps ) {
 			<DocumentHead title="WordPress Patterns" />
 			<h1>Build your perfect site with patterns</h1>
 
-			<BlockRendererProvider siteId={ rendererSiteId }>
+			<BlockRendererProvider
+				siteId={ rendererSiteId }
+				placeholder={
+					<div className="patterns">
+						{ patterns?.map( ( pattern ) => (
+							<PatternPreviewPlaceholder key={ pattern.ID } pattern={ pattern } />
+						) ) }
+					</div>
+				}
+			>
 				<PatternsRendererProvider
 					patternIdsByCategory={ patternIdsByCategory }
 					shouldShufflePosts={ false }
