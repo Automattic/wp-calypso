@@ -48,7 +48,7 @@
 		"cookie-banner": false,
 		"google-my-business": true,
 		"help": true,
-		"help/gpt-response": false,
+		"help/gpt-response": true,
 		"i18n/empathy-mode": true,
 		"importer/site-backups": true,
 		"importer/unified": true,

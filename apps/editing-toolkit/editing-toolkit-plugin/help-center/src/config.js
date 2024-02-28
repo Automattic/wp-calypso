@@ -40,7 +40,7 @@ window.configData = {
 	is_running_in_jetpack_site: false,
 	gutenboarding_url: '/new',
 	features: {
-		'help/gpt-response': false,
+		'help/gpt-response': true,
 	},
 	signup_url: '/',
 	wapuu: false,
