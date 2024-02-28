@@ -152,7 +152,6 @@ const siteMigration: Flow = {
 					if ( platform === 'wordpress' ) {
 						return navigate(
 							addQueryArgs(
-								{ from: from as string, siteSlug, siteId },
 								{ from: from, siteSlug, siteId },
 								STEPS.SITE_MIGRATION_IMPORT_OR_MIGRATE.slug
 							)
