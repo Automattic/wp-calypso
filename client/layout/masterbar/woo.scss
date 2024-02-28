@@ -794,17 +794,8 @@
 		}
 	}
 
-	.signup-form,
-	.login {
-		.auth-form__separator-text {
-			background: #fff;
-			padding: 0 27px !important;
-		}
-	}
-
 	.auth-form__separator .auth-form__separator-text {
-		padding: 0 27px;
-		height: 24px;
+		padding: 0 27px !important;
 		background: #fff;
 	}
 
