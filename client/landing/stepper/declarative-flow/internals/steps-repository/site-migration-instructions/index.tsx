@@ -59,9 +59,16 @@ const SiteMigrationInstructions: Step = function () {
 				</li>
 				<li>
 					{ translate(
-						'Go to the Migrate Guru page on the source site, enter your email address, and click {{strong}}Migrate{{/strong}}.',
+						'Go to the {{a}}Migrate Guru page on the source site{{/a}}, enter your email address, and click {{strong}}Migrate{{/strong}}.',
 						{
 							components: {
+								a: (
+									<a
+										href="https://replacethiswiththerealsiteurl"
+										target="_blank"
+										rel="noreferrer"
+									/>
+								),
 								strong: <strong />,
 							},
 						}
