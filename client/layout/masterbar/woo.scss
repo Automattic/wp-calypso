@@ -123,21 +123,6 @@
 		}
 	}
 
-	.validation-fieldset {
-		.validation-fieldset__validation-message p {
-			font-size: rem(14px);
-			font-style: normal;
-			font-weight: 400;
-			line-height: 21px;
-		}
-
-		&:has(.is-error) {
-			input {
-				border: 2px solid  #e26f56;
-			}
-		}
-	}
-
 	button {
 		background-color: initial;
 	}
@@ -328,7 +313,7 @@
 		font-style: normal;
 		font-weight: 400;
 		line-height: 21px;
-		padding: 0;
+		padding: 0 24px 11px 0;
 		margin-top: 8px;
 
 		svg {
@@ -336,6 +321,13 @@
 		}
 	}
 
+	.validation-fieldset {
+		&:has(.is-error) {
+			input {
+				border: 2px solid  #e26f56;
+			}
+		}
+	}
 
 	.jetpack-connect__logged-in-form .formatted-header,
 	.jetpack-connect__authorize-form .formatted-header,
