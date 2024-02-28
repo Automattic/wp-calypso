@@ -247,11 +247,15 @@ export default {
 			const experiment = await loadExperimentAssignment(
 				'calypso_signup_onboarding_site_goals_survey'
 			);
-			initialContext.isSignupSurveyActive = experiment.variationName === 'treatment' || experiment.variationName === 'treatment_scrambled';
-
+			initialContext.isSignupSurveyActive =
+				experiment.variationName === 'treatment' ||
+				experiment.variationName === 'treatment_scrambled';
 		}
 
-		if ( config.isEnabled( 'onboarding/new-user-survey' ) ) {
+		if (
+			config.isEnabled( 'onboarding/new-user-survey' ) ||
+			config.isEnabled( 'onboarding/new-user-survey-scrambled' )
+		) {
 			// Force display of the new user survey for the onboarding flow
 			initialContext.isSignupSurveyActive = true;
 		}
