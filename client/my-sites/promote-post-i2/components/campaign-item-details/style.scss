@@ -873,6 +873,10 @@ body.is-section-promote-post-i2 .layout__content .campaign-item-details.main {
 		.campaign-item-details__text {
 			@include campaign-data-row-font-mobile;
 		}
+
+		.campaign-item-details-interests {
+			display: none;
+		}
 	}
 	.campaign-item__container .campaign-item-details__wrapper
 	.campaign-item-details__secondary-stats-row > div:not(.campaign-item-details__ad-destination).campaign-item-details__second-column
@@ -891,12 +895,6 @@ body.is-section-promote-post-i2 .layout__content .campaign-item-details.main {
 
 	.campaign-item__container .campaign-item-details__preview-container {
 		background: linear-gradient(to bottom, #f6f7f7, #ffff);
-	}
-
-	.campaign-item-details__secondary-stats-row-bottom {
-		.campaign-item-details-interests {
-			display: none;
-		}
 	}
 
 	.campaign-item-details__preview-disclosure {
