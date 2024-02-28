@@ -1210,7 +1210,8 @@ export function excludeStepIfEmailVerified( stepName, defaultDependencies, nextP
 }
 
 export function excludeSurveyStepIfInactive( stepName, defaultDependencies, nextProps ) {
-	if ( nextProps.initialContext?.isSignupSurveyActive === false ) {
+	if ( ! nextProps.initialContext?.isSignupSurveyActive ) {
+		nextProps.submitSignupStep( { stepName, wasSkipped: true } );
 		flows.excludeStep( stepName );
 	}
 }
