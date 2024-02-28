@@ -144,8 +144,8 @@ export interface Purchase {
 	taxAmount: number | string | undefined;
 	taxText: string | undefined;
 
-	autoRenewCouponCode?: string;
-	autoRenewCouponDiscount?: string;
+	autoRenewCouponCode: string | null;
+	autoRenewCouponDiscount: string | null;
 }
 
 export interface PurchasePriceTier {
@@ -167,8 +167,8 @@ export interface RawPurchase {
 	active: boolean;
 	amount: number | string;
 	attached_to_purchase_id: number | string;
-	auto_renew_coupon_code?: string;
-	auto_renew_coupon_discount?: string;
+	auto_renew_coupon_code: string | null;
+	auto_renew_coupon_discount: string | null;
 	bill_period_days: number | string;
 	bill_period_label: string;
 	most_recent_renew_date: string;
