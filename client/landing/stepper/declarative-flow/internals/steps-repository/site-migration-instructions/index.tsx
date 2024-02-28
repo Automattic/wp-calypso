@@ -64,7 +64,7 @@ const SiteMigrationInstructions: Step = function () {
 							components: {
 								a: (
 									<a
-										href="https://replacethiswiththerealsiteurl"
+										href="https://replacethiswiththerealsiteurl/wp-admin/admin.php?page=migrateguru"
 										target="_blank"
 										rel="noreferrer"
 									/>
