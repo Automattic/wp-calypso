@@ -501,6 +501,38 @@ class ThemeShowcase extends Component {
 		return upsellBanner;
 	};
 
+	renderSiteAssemblerSelectorModal = () => {
+		const { isDesignThemeModalVisible, isSiteSelectorModalVisible } = this.state;
+
+		return (
+			<>
+				<ThemeSiteSelectorModal
+					isOpen={ isSiteSelectorModalVisible }
+					navigateOnClose={ false }
+					onClose={ ( args ) => {
+						if ( args?.siteSlug ) {
+							this.redirectToSiteAssembler( { slug: args.siteSlug } );
+						}
+
+						this.setState( { isSiteSelectorModalVisible: false } );
+					} }
+				/>
+				<ThemeDesignYourOwnModal
+					isOpen={ isDesignThemeModalVisible }
+					onClose={ () => {
+						this.setState( { isDesignThemeModalVisible: false } );
+					} }
+					onCreateNewSite={ () => {
+						this.redirectToSiteAssembler();
+					} }
+					onSelectSite={ () => {
+						this.setState( { isDesignThemeModalVisible: false, isSiteSelectorModalVisible: true } );
+					} }
+				/>
+			</>
+		);
+	};
+
 	renderThemes = ( themeProps ) => {
 		const tabKey = this.getSelectedTabFilter().key;
 
@@ -564,7 +596,6 @@ class ThemeShowcase extends Component {
 			isCollectionView,
 			lastNonEditorRoute,
 		} = this.props;
-		const { isDesignThemeModalVisible, isSiteSelectorModalVisible } = this.state;
 		const tier = this.props.tier || 'all';
 		const canonicalUrl = 'https://wordpress.com' + pathName;
 
@@ -621,29 +652,7 @@ class ThemeShowcase extends Component {
 					isSiteWooExpressOrEcomFreeTrial={ isSiteWooExpressOrEcomFreeTrial }
 					isSiteECommerceFreeTrial={ isSiteECommerceFreeTrial }
 				/>
-				<ThemeSiteSelectorModal
-					isOpen={ isSiteSelectorModalVisible }
-					navigateOnClose={ false }
-					onClose={ ( args ) => {
-						if ( args?.siteSlug ) {
-							this.redirectToSiteAssembler( { slug: args.siteSlug } );
-						}
-
-						this.setState( { isSiteSelectorModalVisible: false } );
-					} }
-				/>
-				<ThemeDesignYourOwnModal
-					isOpen={ isDesignThemeModalVisible }
-					onClose={ () => {
-						this.setState( { isDesignThemeModalVisible: false } );
-					} }
-					onCreateNewSite={ () => {
-						this.redirectToSiteAssembler();
-					} }
-					onSelectSite={ () => {
-						this.setState( { isDesignThemeModalVisible: false, isSiteSelectorModalVisible: true } );
-					} }
-				/>
+				{ this.renderSiteAssemblerSelectorModal() }
 				{ isLoggedIn && (
 					<ThemeShowcaseSurvey
 						survey={ SurveyType.FEBRUARY_2024 }
