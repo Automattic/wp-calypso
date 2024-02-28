@@ -56,6 +56,7 @@ interface CustomWindow {
 		capabilities: {
 			[ key: string ]: string;
 		};
+		shouldUseWpAdmin: boolean;
 	};
 }
 
