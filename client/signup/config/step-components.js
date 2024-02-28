@@ -20,6 +20,7 @@ const stepNameToModuleName = {
 	emails: 'emails',
 	mailbox: 'emails',
 	launch: 'launch-site',
+	'new-user-survey': 'new-user-survey',
 	'mailbox-plan': 'plans',
 	plans: 'plans',
 	'plans-new': 'plans',
