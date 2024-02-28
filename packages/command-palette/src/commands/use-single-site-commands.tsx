@@ -56,6 +56,7 @@ interface CustomWindow {
 		capabilities: {
 			[ key: string ]: string;
 		};
+		isWpcomStore: boolean;
 		shouldUseWpAdmin: boolean;
 	};
 }
@@ -70,6 +71,7 @@ const useSingleSiteCommands = ( { navigate, currentRoute }: useCommandsParams ):
 		isSimple = false,
 		capabilities = {},
 		isP2 = false,
+		isWpcomStore = false,
 		shouldUseWpAdmin = false,
 	} = customWindow?.commandPaletteConfig || {};
 
@@ -857,18 +859,10 @@ const useSingleSiteCommands = ( { navigate, currentRoute }: useCommandsParams ):
 		{
 			name: 'openWooCommerceSettings',
 			label: __( 'Open WooCommerce settings', __i18n_text_domain__ ),
-			callback: commandNavigation( '/wp-admin/admin.php?page=wc-admin' ),
+			callback: isWpcomStore
+				? commandNavigation( '/wp-admin/admin.php?page=wc-admin' )
+				: commandNavigation( '/woocommerce-installation/:site' ),
 			capability: SiteCapabilities.MANAGE_OPTIONS,
-			siteType: SiteType.ATOMIC,
-			filterP2: true,
-			icon: <WooCommerceWooLogo className="woo-command-palette" />,
-		},
-		{
-			name: 'openWooCommerceSettings',
-			label: __( 'Open WooCommerce settings', __i18n_text_domain__ ),
-			callback: commandNavigation( '/woocommerce-installation/:site' ),
-			capability: SiteCapabilities.MANAGE_OPTIONS,
-			siteType: SiteType.SIMPLE,
 			filterP2: true,
 			icon: <WooCommerceWooLogo className="woo-command-palette" />,
 		},
