@@ -1,3 +1,4 @@
+import config from '@automattic/calypso-config';
 import { Button } from '@automattic/components';
 import { useDesktopBreakpoint, useMobileBreakpoint } from '@automattic/viewport-react';
 import { useTranslate } from 'i18n-calypso';
@@ -73,7 +74,9 @@ function SurveyForm( props: Props ) {
 	const [ isExperimentLoading, experimentAssignment ] = useExperiment(
 		'calypso_signup_onboarding_site_goals_survey'
 	);
-	const isScrambled = experimentAssignment?.variationName === 'treatment_scrambled' || true;
+	const isScrambled =
+		experimentAssignment?.variationName === 'treatment_scrambled' ||
+		config.isEnabled( 'onboarding/new-user-survey-scrambled' );
 
 	const [ formState, setFormState ] = useState< FormState >( defaultFormState );
 	const [ orderGoals, setOrderGoals ] = useState< string[] | null >( [] );
