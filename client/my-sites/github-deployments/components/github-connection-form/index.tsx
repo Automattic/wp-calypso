@@ -107,7 +107,7 @@ export const GitHubConnectionForm = ( {
 						targetDir: destPath,
 						installationId: installation.external_id,
 						isAutomated: isAutoDeploy,
-						workflowPath: workflowPath,
+						workflowPath: workflowPath ?? undefined,
 					} );
 				} finally {
 					setIsPending( false );

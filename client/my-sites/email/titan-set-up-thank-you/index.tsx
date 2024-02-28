@@ -61,7 +61,7 @@ const TitanSetUpThankYou = ( {
 			key: 'footer-questions-email',
 			title: translate( 'Email questions? We have the answers' ),
 			description: translate(
-				'Explore our comprehensive support guides and find solutions to all your email tinquiries.'
+				'Explore our comprehensive support guides and find solutions to all your email inquiries.'
 			),
 			buttonText: translate( 'Email support resources' ),
 			buttonHref: '/support/category/domains-and-email/email/',

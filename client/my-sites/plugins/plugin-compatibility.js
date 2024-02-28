@@ -24,6 +24,7 @@ const incompatiblePlugins = new Set( [
 	'plugins-garbage-collector',
 	'post-type-switcher',
 	'reset-wp',
+	'reset',
 	'secure-file-manager',
 	'ultimate-reset',
 	'ultimate-wp-reset',

@@ -421,6 +421,13 @@ class Login extends Component {
 							) }
 						</p>
 					);
+				} else if ( this.showContinueAsUser() ) {
+					headerText = <h3>{ translate( 'Get started in minutes' ) }</h3>;
+					postHeader = (
+						<p className="login__header-subtitle">
+							{ translate( 'First, select the account you’d like to use.' ) }
+						</p>
+					);
 				} else {
 					headerText = <h3>{ translate( "Let's get started" ) }</h3>;
 					const poweredByWpCom =
@@ -430,9 +437,11 @@ class Login extends Component {
 								<br />
 							</>
 						) : null;
-					const accountSelectionOrLoginToContinue = this.showContinueAsUser()
-						? translate( "First, select the account you'd like to use." )
-						: translate(
+
+					postHeader = (
+						<p className="login__header-subtitle">
+							{ poweredByWpCom }
+							{ translate(
 								"Please, log in to continue. Don't have an account? {{signupLink}}Sign up{{/signupLink}}",
 								{
 									components: {
@@ -440,11 +449,7 @@ class Login extends Component {
 										br: <br />,
 									},
 								}
-						  );
-					postHeader = (
-						<p className="login__header-subtitle">
-							{ poweredByWpCom }
-							{ accountSelectionOrLoginToContinue }
+							) }
 						</p>
 					);
 				}
@@ -782,7 +787,7 @@ class Login extends Component {
 		if ( this.showContinueAsUser() ) {
 			if ( isWoo ) {
 				return (
-					<Fragment>
+					<div className="login__body login__body--continue-as-user">
 						<ContinueAsUser
 							onChangeAccount={ this.handleContinueAsAnotherUser }
 							isWooOAuth2Client={ isWoo }
@@ -802,7 +807,7 @@ class Login extends Component {
 							showSocialLoginFormOnly={ true }
 							sendMagicLoginLink={ this.sendMagicLoginLink }
 						/>
-					</Fragment>
+					</div>
 				);
 			}
 
