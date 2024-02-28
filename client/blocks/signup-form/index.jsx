@@ -57,6 +57,8 @@ import { getCurrentUser } from 'calypso/state/current-user/selectors';
 import { createSocialUserFailed } from 'calypso/state/login/actions';
 import { getCurrentOAuth2Client } from 'calypso/state/oauth2-clients/ui/selectors';
 import getCurrentQueryArguments from 'calypso/state/selectors/get-current-query-arguments';
+import getWccomFrom from 'calypso/state/selectors/get-wccom-from';
+import getWooPasswordless from 'calypso/state/selectors/get-woo-passwordless';
 import isWooCommerceCoreProfilerFlow from 'calypso/state/selectors/is-woocommerce-core-profiler-flow';
 import { resetSignup } from 'calypso/state/signup/actions';
 import { getSectionName } from 'calypso/state/ui/selectors';
@@ -1230,7 +1232,11 @@ class SignupForm extends Component {
 		const showSeparator =
 			! config.isEnabled( 'desktop' ) && this.isHorizontal() && ! this.userCreationComplete();
 
-		if ( ( this.props.isPasswordless && 'wpcc' !== this.props.flowName ) || isGravatar ) {
+		if (
+			( this.props.isPasswordless &&
+				( 'wpcc' !== this.props.flowName || this.props.wooPasswordless ) ) ||
+			isGravatar
+		) {
 			const gravatarProps = isGravatar
 				? {
 						inputPlaceholder: this.props.translate( 'Enter your email address' ),
@@ -1352,7 +1358,8 @@ export default connect(
 				'woocommerce-onboarding' === get( getCurrentQueryArguments( state ), 'from' ),
 			isJetpackWooDnaFlow: wooDnaConfig( getCurrentQueryArguments( state ) ).isWooDnaFlow(),
 			from: get( getCurrentQueryArguments( state ), 'from' ),
-			wccomFrom: get( getCurrentQueryArguments( state ), 'wccom-from' ),
+			wccomFrom: getWccomFrom( state ),
+			wooPasswordless: getWooPasswordless( state ),
 			isWoo: isWooOAuth2Client( oauth2Client ) || isWooCoreProfilerFlow,
 			isWooCoreProfilerFlow,
 			isP2Flow:

@@ -1,4 +1,3 @@
-import config from '@automattic/calypso-config';
 import {
 	FEATURE_ACCEPT_PAYMENTS,
 	FEATURE_AD_FREE_EXPERIENCE,
@@ -376,7 +375,7 @@ export const ThemeUpgradeModal = ( {
 
 	const getPersonalPlanFeatureList = () => {
 		return getPlanFeaturesObject( [
-			...( config.isEnabled( 'themes/tiers' ) ? [ WPCOM_FEATURES_PREMIUM_THEMES_LIMITED ] : [] ),
+			WPCOM_FEATURES_PREMIUM_THEMES_LIMITED,
 			FEATURE_CUSTOM_DOMAIN,
 			FEATURE_AD_FREE_EXPERIENCE,
 			FEATURE_FAST_DNS,
@@ -433,10 +432,7 @@ export const ThemeUpgradeModal = ( {
 		featureListHeader = translate( 'Included with your %(businessPlanName)s plan', {
 			args: { businessPlanName: businessPlanName },
 		} );
-	} else if (
-		config.isEnabled( 'themes/tiers' ) &&
-		theme?.data?.theme_tier?.feature === WPCOM_FEATURES_PREMIUM_THEMES_LIMITED
-	) {
+	} else if ( theme?.data?.theme_tier?.feature === WPCOM_FEATURES_PREMIUM_THEMES_LIMITED ) {
 		modalData = getPersonalPlanModalData();
 		featureList = getPersonalPlanFeatureList();
 		featureListHeader = translate( 'Included with your %(plan)s plan', {

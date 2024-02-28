@@ -111,19 +111,20 @@ function ContinueAsUser( {
 							className="continue-as-user__change-user-link"
 							onClick={ onChangeAccount }
 						>
-							{ translate( 'Log in with a different WordPress.com account' ) }
+							{ translate( 'Sign in as a different user' ) }
 						</button>
 					</div>
-					<Button
-						busy={ isLoading }
-						primary
-						href={ validatedRedirectUrlFromQuery || validatedRedirectPath || '/' }
-					>
-						{ `${ translate( 'Continue as', {
-							context: 'Continue as an existing WordPress.com user',
-						} ) } ${ userName }` }
-					</Button>
 				</div>
+				<Button
+					primary
+					busy={ isLoading }
+					className="continue-as-user__continue-button"
+					href={ validatedRedirectUrlFromQuery || validatedRedirectPath || '/' }
+				>
+					{ `${ translate( 'Continue as', {
+						context: 'Continue as an existing WordPress.com user',
+					} ) } ${ userName }` }
+				</Button>
 			</div>
 		);
 	}

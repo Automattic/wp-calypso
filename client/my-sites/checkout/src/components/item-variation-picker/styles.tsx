@@ -1,4 +1,3 @@
-import { hasCheckoutVersion } from '@automattic/wpcom-checkout';
 import { css } from '@emotion/react';
 import styled from '@emotion/styled';
 import { CurrentOptionProps, OptionProps } from './types';
@@ -11,7 +10,8 @@ export const CurrentOption = styled.button< CurrentOptionProps >`
 	display: flex;
 	flex-direction: row;
 	justify-content: space-between;
-	${ hasCheckoutVersion( '2' ) ? `padding: 10px; min-height: 40px` : `padding:14px 16px` };
+	${ ( props ) =>
+		props.shouldUseCheckoutV2 ? `padding: 10px; min-height: 40px` : `padding:14px 16px` };
 	width: 100%;
 	cursor: pointer;
 
@@ -36,16 +36,15 @@ export const Option = styled.li< OptionProps >`
 	font-weight: ${ ( props ) => props.theme.weights.normal };
 	cursor: pointer;
 
-	${
-		hasCheckoutVersion( '2' )
+	${ ( props ) =>
+		props.shouldUseCheckoutV2
 			? `flex-direction: column; justify-content: center;
 		align-items: flex-start;
 		padding: 10px; min-height: 40px;`
 			: `flex-direction: row;
 		justify-content: space-between; align-items: center;
 		/* the calc aligns the price with the price in CurrentOption */
-		padding: 10px calc( 14px + 24px + 16px ) 10px 16px;`
-	}
+		padding: 10px calc( 14px + 24px + 16px ) 10px 16px;` }
 
 
 	&:hover {
@@ -58,10 +57,10 @@ export const Option = styled.li< OptionProps >`
 	}
 `;
 
-export const Dropdown = styled.div`
+export const Dropdown = styled.div< { shouldUseCheckoutV2: boolean } >`
 	position: relative;
 	width: 100%;
-	margin: ${ hasCheckoutVersion( '2' ) ? null : '16px 0' };
+	margin: ${ ( props ) => ( props.shouldUseCheckoutV2 ? null : '16px 0' ) };
 	> ${ Option } {
 		border-radius: 3px;
 	}
@@ -86,9 +85,7 @@ export const OptionList = styled.ul`
 export const Discount = styled.span`
 	color: ${ ( props ) => props.theme.colors.discount };
 	margin-right: 8px;
-	${ hasCheckoutVersion( '2' )
-		? `align-items: left; font-size: 14px;`
-		: `align-items: center; font-size: 100%;` }
+	font-size: 100%;
 
 	.rtl & {
 		margin-right: 0;
@@ -132,7 +129,7 @@ export const Price = styled.span`
 	}
 `;
 
-export const Variant = styled.div`
+export const Variant = styled.div< { shouldUseCheckoutV2: boolean } >`
 	display: flex;
 	font-size: 14px;
 	font-weight: 400;
@@ -141,20 +138,21 @@ export const Variant = styled.div`
 	width: 100%;
 	column-gap: 20px;
 
-	${ hasCheckoutVersion( '2' )
-		? `flex-direction: column; align-items: left`
-		: `flex-direciton: row; align-items: center` }
+	${ ( props ) =>
+		props.shouldUseCheckoutV2
+			? `flex-direction: column; align-items: left`
+			: `flex-direciton: row; align-items: center` }
 
 	.item-variant-option--selected & {
 		color: var( --studio-white );
 	}
 `;
 
-export const Label = styled.span`
+export const Label = styled.span< { shouldUseCheckoutV2: boolean } >`
 	display: flex;
 	white-space: nowrap;
 
-	${ hasCheckoutVersion( '2' ) ? 'font-size: 14px' : 'font-size: inherit' };
+	${ ( props ) => ( props.shouldUseCheckoutV2 ? 'font-size: 14px' : 'font-size: inherit' ) };
 
 	// MOBILE_BREAKPOINT is <480px, used in useMobileBreakpoint
 	@media ( max-width: 480px ) {
@@ -175,8 +173,9 @@ export const IntroPricingText = styled.span`
 	margin-bottom: 0rem;
 `;
 
-export const PriceTextContainer = styled.span`
-	${ hasCheckoutVersion( '2' )
-		? 'font-size: 12px; text-align: initial;'
-		: 'font-size: inherit;	text-align: right;' };
+export const PriceTextContainer = styled.span< { shouldUseCheckoutV2: boolean } >`
+	${ ( props ) =>
+		props.shouldUseCheckoutV2
+			? 'font-size: 12px; text-align: initial;'
+			: 'font-size: inherit;	text-align: right;' };
 `;

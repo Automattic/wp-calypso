@@ -35,13 +35,13 @@ import { useShoppingCart } from '@automattic/shopping-cart';
 import {
 	getTaxBreakdownLineItemsFromCart,
 	getTotalLineItemFromCart,
-	hasCheckoutVersion,
 	getSubtotalWithoutDiscounts,
 	filterAndGroupCostOverridesForDisplay,
 	getCreditsLineItemFromCart,
 } from '@automattic/wpcom-checkout';
 import { keyframes } from '@emotion/react';
 import styled from '@emotion/styled';
+import { Icon, reusableBlock } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import * as React from 'react';
 import { hasFreeCouponTransfersOnly } from 'calypso/lib/cart-values/cart-items';
@@ -50,6 +50,7 @@ import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
 import { getSignupCompleteFlowName } from 'calypso/signup/storageUtils';
 import { useSelector } from 'calypso/state';
 import { getCurrentPlan } from 'calypso/state/sites/plans/selectors';
+import { useCheckoutV2 } from '../hooks/use-checkout-v2';
 import getAkismetProductFeatures from '../lib/get-akismet-product-features';
 import getFlowPlanFeatures from '../lib/get-flow-plan-features';
 import getJetpackProductFeatures from '../lib/get-jetpack-product-features';
@@ -62,6 +63,16 @@ import type { TranslateResult } from 'i18n-calypso';
 
 // This will make converting to TS less noisy. The order of components can be reorganized later
 /* eslint-disable @typescript-eslint/no-use-before-define */
+
+const StyledIcon = styled( Icon )`
+	fill: '#1E1E1E';
+	margin-right: 0.3em;
+
+	.rtl & {
+		margin-right: 0;
+		margin-left: 0.3em;
+	}
+`;
 
 export function WPCheckoutOrderSummary( {
 	siteId,
@@ -79,13 +90,15 @@ export function WPCheckoutOrderSummary( {
 	const cartKey = useCartKey();
 	const { responseCart } = useShoppingCart( cartKey );
 	const isCartUpdating = FormStatus.VALIDATING === formStatus;
+	const shouldUseCheckoutV2 = useCheckoutV2() === 'treatment';
 
 	return (
 		<CheckoutSummaryCard
 			className={ isCartUpdating ? 'is-loading' : '' }
 			data-e2e-cart-is-loading={ isCartUpdating }
+			shouldUseCheckoutV2={ shouldUseCheckoutV2 }
 		>
-			{ ! hasCheckoutVersion( '2' ) && (
+			{ ! shouldUseCheckoutV2 && (
 				<CheckoutSummaryFeaturedList
 					responseCart={ responseCart }
 					siteId={ siteId }
@@ -115,6 +128,7 @@ export function CheckoutSummaryFeaturedList( {
 	) => void;
 } ) {
 	const translate = useTranslate();
+	const shouldUseCheckoutV2 = useCheckoutV2() === 'treatment';
 
 	// Return early if the cart is only Chargebacks fees
 	if ( responseCart.products.every( isChargeback || isCredits ) ) {
@@ -129,9 +143,10 @@ export function CheckoutSummaryFeaturedList( {
 
 	const plan = responseCart.products.find( ( product ) => isPlan( product ) );
 	const hasMonthlyPlanInCart = Boolean( plan && isMonthly( plan?.product_slug ) );
+
 	return (
 		<>
-			<CheckoutSummaryFeatures>
+			<CheckoutSummaryFeatures shouldUseCheckoutV2={ shouldUseCheckoutV2 }>
 				<CheckoutSummaryFeaturesTitle>
 					{ responseCart.is_gift_purchase
 						? translate( 'WordPress.com Gift Subscription' )
@@ -162,10 +177,11 @@ function CheckoutSummaryPriceList() {
 	const costOverridesList = filterAndGroupCostOverridesForDisplay( responseCart, translate );
 
 	const subtotalBeforeDiscounts = getSubtotalWithoutDiscounts( responseCart );
+	const shouldUseCheckoutV2 = useCheckoutV2() === 'treatment';
 
 	return (
 		<>
-			{ ! hasCheckoutVersion( '2' ) && costOverridesList.length > 0 && (
+			{ ! shouldUseCheckoutV2 && costOverridesList.length > 0 && (
 				<CheckoutFirstSubtotalLineItem key="checkout-summary-line-item-subtotal-one">
 					<span>{ translate( 'Subtotal before discounts' ) }</span>
 					<span>
@@ -176,7 +192,7 @@ function CheckoutSummaryPriceList() {
 					</span>
 				</CheckoutFirstSubtotalLineItem>
 			) }
-			{ ! hasCheckoutVersion( '2' ) && costOverridesList.length > 0 && (
+			{ ! shouldUseCheckoutV2 && costOverridesList.length > 0 && (
 				<CostOverridesList
 					costOverridesList={ costOverridesList }
 					currency={ responseCart.currency }
@@ -208,8 +224,8 @@ function CheckoutSummaryPriceList() {
 					) }
 				</CheckoutSubtotalSection>
 
-				<CheckoutSummaryTotal>
-					<span>{ translate( 'Total' ) }</span>
+				<CheckoutSummaryTotal shouldUseCheckoutV2={ shouldUseCheckoutV2 }>
+					<span className="wp-checkout-order-summary__label">{ translate( 'Total' ) }</span>
 					<span className="wp-checkout-order-summary__total-price">
 						{ totalLineItem.formattedAmount }
 					</span>
@@ -306,9 +322,11 @@ function CheckoutSummaryGiftFeaturesList( { siteSlug }: { siteSlug: string } ) {
 export function CheckoutSummaryRefundWindows( {
 	cart,
 	highlight = false,
+	includeRefundIcon,
 }: {
 	cart: ResponseCart;
 	highlight?: boolean;
+	includeRefundIcon?: boolean;
 } ) {
 	const translate = useTranslate();
 
@@ -404,10 +422,13 @@ export function CheckoutSummaryRefundWindows( {
 	}
 
 	return (
-		<CheckoutSummaryFeaturesListItem>
-			<WPCheckoutCheckIcon id="features-list-refund-text" />
-			{ highlight ? <strong>{ text }</strong> : text }
-		</CheckoutSummaryFeaturesListItem>
+		<>
+			{ includeRefundIcon && <StyledIcon icon={ reusableBlock } size={ 24 } /> }
+			<CheckoutSummaryFeaturesListItem>
+				<WPCheckoutCheckIcon id="features-list-refund-text" />
+				{ highlight ? <strong>{ text }</strong> : text }
+			</CheckoutSummaryFeaturesListItem>
+		</>
 	);
 }
 
@@ -768,7 +789,7 @@ function CheckoutSummaryAnnualUpsell( props: {
 } ) {
 	const translate = useTranslate();
 	const productSlug = props.plan?.product_slug;
-
+	const shouldUseCheckoutV2 = useCheckoutV2() === 'treatment';
 	if ( ! productSlug || ! isWpComPlan( productSlug ) ) {
 		return null;
 	}
@@ -779,7 +800,7 @@ function CheckoutSummaryAnnualUpsell( props: {
 	);
 
 	return (
-		<CheckoutSummaryFeaturesUpsell>
+		<CheckoutSummaryFeaturesUpsell shouldUseCheckoutV2={ shouldUseCheckoutV2 }>
 			<CheckoutSummaryFeaturesTitle>
 				<SwitchToAnnualPlan
 					plan={ props.plan }
@@ -814,12 +835,18 @@ const pulse = keyframes`
 	100% { opacity: 1; }
 `;
 
-const CheckoutSummaryCard = styled.div`
+const CheckoutSummaryCard = styled.div< { shouldUseCheckoutV2?: boolean } >`
 	border-bottom: none 0;
+	${ ( props ) => props.shouldUseCheckoutV2 && `grid-area: summary` }
 `;
 
-const CheckoutSummaryFeatures = styled.div`
+const CheckoutSummaryFeatures = styled.div< { shouldUseCheckoutV2: boolean } >`
 	padding: 24px 0;
+	${ ( props ) => props.shouldUseCheckoutV2 && `grid-area: features; justify-self: flex-start;` }
+
+	@media ( ${ ( props ) => props.theme.breakpoints.tabletUp } ) {
+		${ ( props ) => ( props.shouldUseCheckoutV2 ? ` padding: 0 0 24px` : `padding: 24px 0;` ) }
+	}
 
 	@media ( ${ ( props ) => props.theme.breakpoints.desktopUp } ) {
 		padding: 24px 0;
@@ -913,6 +940,7 @@ const CheckoutSubtotalSection = styled.div`
 const CheckoutSummaryAmountWrapper = styled.div`
 	border-top: 1px solid ${ ( props ) => props.theme.colors.borderColorLight };
 	padding: 20px 0;
+	margin-top: 20px;
 `;
 
 const CheckoutFirstSubtotalLineItem = styled.div`
@@ -943,12 +971,24 @@ const CheckoutSummaryLineItem = styled.div< { isDiscount?: boolean } >`
 	}
 `;
 
-const CheckoutSummaryTotal = styled( CheckoutSummaryLineItem )`
+const CheckoutSummaryTotal = styled( CheckoutSummaryLineItem )< { shouldUseCheckoutV2: boolean } >`
 	color: ${ ( props ) => props.theme.colors.textColorDark };
-	font-size: 20px;
 	font-weight: ${ ( props ) => props.theme.weights.bold };
 	line-height: 26px;
-	margin-bottom: 16px;
+	${ ( props ) => ( props.shouldUseCheckoutV2 ? `margin-bottom: 0px;` : `margin-bottom: 16px;` ) }
+	font-size: 20px;
+
+	& span {
+		${ ( props ) => ( props.shouldUseCheckoutV2 ? `font-family: 'Recoleta', sans-serif;` : null ) }
+	}
+
+	& .wp-checkout-order-summary__label {
+		${ ( props ) => props.shouldUseCheckoutV2 && 'font-size: 28px; line-height: 40px; ' }
+	}
+
+	& .wp-checkout-order-summary__total-price {
+		${ ( props ) => props.shouldUseCheckoutV2 && 'font-size: 40px; line-height: 44px;' }
+	}
 `;
 
 const LoadingCopy = styled.p`

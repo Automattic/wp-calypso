@@ -88,4 +88,3 @@ export { canPublishThemeReview } from 'calypso/state/themes/selectors/can-publis
 export { getThemeTiers } from 'calypso/state/themes/selectors/get-theme-tiers';
 export { getThemeTier } from 'calypso/state/themes/selectors/get-theme-tier';
 export { getThemeTierForTheme } from 'calypso/state/themes/selectors/get-theme-tier-for-theme';
-export { isThemeAllowedOnSite } from 'calypso/state/themes/selectors/is-theme-allowed-on-site';

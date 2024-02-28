@@ -13,6 +13,7 @@ import type { Flow, ProvidedDependencies } from './internals/types';
 
 const transferringHostedSite: Flow = {
 	name: TRANSFERRING_HOSTED_SITE_FLOW,
+	isSignupFlow: false,
 
 	useSteps() {
 		return [

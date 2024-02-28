@@ -81,6 +81,10 @@ export function normalizeWpcomTheme( theme ) {
  * @returns {Object}        Normalized theme object
  */
 export function normalizeWporgTheme( theme ) {
+	if ( ! theme ) {
+		return {};
+	}
+
 	const attributesMap = {
 		slug: 'id',
 		preview_url: 'demo_uri',
@@ -104,6 +108,10 @@ export function normalizeWporgTheme( theme ) {
 	if ( author ) {
 		normalizedTheme.author = author;
 	}
+
+	// Manually add the theme_tier for tracking purposes.
+	// @TODO: Replace this with the real tier definition from a new endpoint.
+	normalizedTheme.theme_tier = { slug: 'community' };
 
 	if ( ! normalizedTheme.tags ) {
 		return normalizedTheme;

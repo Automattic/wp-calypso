@@ -2,8 +2,10 @@ import { useLocale } from '@automattic/i18n-utils';
 import { useSelect, useDispatch } from '@wordpress/data';
 import { useEffect } from 'react';
 import { getLocaleFromQueryParam, getLocaleFromPathname } from 'calypso/boot/locale';
+import { addQueryArgs } from 'calypso/lib/url';
 import { useSiteSlugParam } from '../hooks/use-site-slug-param';
 import { USER_STORE, ONBOARD_STORE, SITE_STORE } from '../stores';
+import { goToCheckout } from '../utils/checkout';
 import { getLoginUrl } from '../utils/path';
 import { recordSubmitStep } from './internals/analytics/record-submit-step';
 import { STEPS } from './internals/steps';
@@ -13,13 +15,14 @@ import type { OnboardSelect, SiteSelect, UserSelect } from '@automattic/data-sto
 
 const siteMigration: Flow = {
 	name: 'site-migration',
+	isSignupFlow: false,
 
 	useSteps() {
 		return [
-			STEPS.IMPORT,
-			STEPS.WAIT_FOR_ATOMIC,
-			STEPS.WAIT_FOR_PLUGIN_INSTALL,
+			STEPS.SITE_MIGRATION_IMPORT_OR_MIGRATE,
+			STEPS.BUNDLE_TRANSFER,
 			STEPS.PROCESSING,
+			STEPS.SITE_MIGRATION_UPGRADE_PLAN,
 			STEPS.SITE_MIGRATION_INSTRUCTIONS,
 			STEPS.ERROR,
 		];
@@ -120,12 +123,20 @@ const siteMigration: Flow = {
 			[]
 		);
 		const siteSlugParam = useSiteSlugParam();
+		const { setBundledPluginSlug } = useDispatch( SITE_STORE );
 
 		const { getSiteIdBySlug } = useSelect( ( select ) => select( SITE_STORE ) as SiteSelect, [] );
-
 		const exitFlow = ( to: string ) => {
 			window.location.assign( to );
 		};
+
+		useEffect( () => {
+			if ( ! siteSlugParam ) {
+				return;
+			}
+
+			setBundledPluginSlug( siteSlugParam, 'site-migration' );
+		}, [ siteSlugParam, setBundledPluginSlug ] );
 
 		// TODO - We may need to add `...params: string[]` back once we start adding more steps.
 		function submit( providedDependencies: ProvidedDependencies = {} ) {
@@ -134,31 +145,67 @@ const siteMigration: Flow = {
 			const siteId = getSiteIdBySlug( siteSlug );
 
 			switch ( currentStep ) {
-				case 'import': {
-					return navigate( 'waitForAtomic', { siteId, siteSlug } );
-				}
-
-				case 'processing': {
-					if ( providedDependencies?.finishedWaitingForAtomic ) {
-						return navigate( 'waitForPluginInstall', { siteId, siteSlug } );
+				case STEPS.SITE_MIGRATION_IMPORT_OR_MIGRATE.slug: {
+					// Switch to the normal Import flow.
+					if ( providedDependencies?.destination === 'import' ) {
+						return exitFlow(
+							`/setup/site-setup/importList?siteSlug=${ siteSlug }&siteId=${ siteId }`
+						);
 					}
 
-					if ( providedDependencies?.pluginsInstalled ) {
-						return navigate( 'site-migration-instructions' );
+					// Take the user to the upgrade plan step.
+					if ( providedDependencies?.destination === 'upgrade' ) {
+						// TODO - Once the upgrade plan step is available, we'll want to change this to use the slug constant.
+						return navigate( 'site-migration-upgrade-plan', {
+							siteId,
+							siteSlug,
+						} );
 					}
-				}
 
-				case 'waitForAtomic': {
-					return navigate( 'processing', {
-						currentStep,
+					// Continue with the migration flow.
+					return navigate( STEPS.BUNDLE_TRANSFER.slug, {
+						siteId,
+						siteSlug,
 					} );
 				}
 
-				case 'waitForPluginInstall': {
-					return navigate( 'processing' );
+				case STEPS.BUNDLE_TRANSFER.slug: {
+					return navigate( STEPS.PROCESSING.slug );
 				}
 
-				case 'site-migration-instructions': {
+				case STEPS.PROCESSING.slug: {
+					if ( providedDependencies?.error ) {
+						return navigate( STEPS.ERROR.slug );
+					}
+
+					return navigate( STEPS.SITE_MIGRATION_INSTRUCTIONS.slug );
+				}
+
+				case STEPS.SITE_MIGRATION_UPGRADE_PLAN.slug: {
+					if ( providedDependencies?.goToCheckout ) {
+						const destination = addQueryArgs(
+							{
+								flags: 'onboarding/new-migration-flow',
+								siteSlug,
+							},
+							'/setup/site-migration/site-migration-instructions'
+						);
+						goToCheckout( {
+							flowName: 'site-migration',
+							stepName: 'site-migration-upgrade-plan',
+							siteSlug: siteSlug,
+							destination: destination,
+							plan: providedDependencies.plan as string,
+						} );
+						return;
+					}
+					if ( providedDependencies?.verifyEmail ) {
+						// not yet implemented
+						return;
+					}
+				}
+
+				case STEPS.SITE_MIGRATION_INSTRUCTIONS.slug: {
 					return exitFlow( `/home/${ siteSlug }` );
 				}
 			}

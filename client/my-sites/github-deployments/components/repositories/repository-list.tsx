@@ -1,27 +1,39 @@
+import { ExternalLink, Spinner } from '@wordpress/components';
+import { useI18n } from '@wordpress/react-i18n';
 import { useLayoutEffect, useState } from 'react';
 import Pagination from 'calypso/components/pagination';
-import { GitHubAccountData } from '../../use-github-accounts-query';
+import {
+	SortDirection,
+	useSort,
+} from 'calypso/my-sites/github-deployments/components/sort-button/use-sort';
+import { GitHubInstallationData } from '../../use-github-installations-query';
 import {
 	GitHubRepositoryData,
 	useGithubRepositoriesQuery,
 } from '../../use-github-repositories-query';
-import { GitHubLoadingPlaceholder } from '../loading-placeholder';
-import { GitHubRepositoryListTable, SortOption } from './repository-list-table';
+import { NoResults } from './no-results';
+import { GitHubRepositoryListTable } from './repository-list-table';
+
+import './style.scss';
 
 const pageSize = 10;
 
 interface RepositoriesListProps {
-	account: GitHubAccountData;
+	installation: GitHubInstallationData;
 	query: string;
-	onSelectRepository( installation: GitHubAccountData, repository: GitHubRepositoryData ): void;
+	onSelectRepository(
+		installation: GitHubInstallationData,
+		repository: GitHubRepositoryData
+	): void;
 }
 
 export const GitHubBrowseRepositoriesList = ( {
-	account,
+	installation,
 	query,
 	onSelectRepository,
 }: RepositoriesListProps ) => {
-	const [ sort, setSort ] = useState< SortOption >( 'name_asc' );
+	const { __ } = useI18n();
+	const { key, direction, handleSortChange } = useSort( 'name' );
 	const [ page, setPage ] = useState( 1 );
 
 	useLayoutEffect( () => {
@@ -29,10 +41,14 @@ export const GitHubBrowseRepositoriesList = ( {
 	}, [ query ] );
 
 	const { data: repositories = [], isLoading: isLoadingRepositories } = useGithubRepositoriesQuery(
-		account.external_id
+		installation.external_id
 	);
 
-	const filteredRepositories = sortRepositories( filterRepositories( repositories, query ), sort );
+	const filteredRepositories = applySort(
+		filterRepositories( repositories, query ),
+		key,
+		direction
+	);
 
 	const currentPage = filteredRepositories.slice(
 		( page - 1 ) * pageSize,
@@ -40,24 +56,35 @@ export const GitHubBrowseRepositoriesList = ( {
 	);
 
 	if ( isLoadingRepositories ) {
-		return <GitHubLoadingPlaceholder />;
+		return <Spinner />;
+	}
+
+	if ( currentPage.length === 0 ) {
+		return <NoResults manageInstallationUrl={ installation.management_url } />;
 	}
 
 	return (
-		<>
+		<div className="github-repositories-list">
 			<GitHubRepositoryListTable
 				repositories={ currentPage }
-				onSelect={ ( repository ) => onSelectRepository( account, repository ) }
-				sortKey={ sort }
-				onSortChange={ setSort }
+				onSelect={ ( repository ) => onSelectRepository( installation, repository ) }
+				sortKey={ key }
+				sortDirection={ direction }
+				onSortChange={ handleSortChange }
 			/>
+			<p css={ { marginBottom: 0 } }>
+				{ __( 'Missing GitHub repositories?' ) }{ ' ' }
+				<ExternalLink href={ installation.management_url }>
+					{ __( 'Adjust permissions on GitHub' ) }
+				</ExternalLink>
+			</p>
 			<Pagination
 				page={ page }
 				perPage={ pageSize }
 				total={ filteredRepositories.length }
 				pageClick={ setPage }
 			/>
-		</>
+		</div>
 	);
 };
 
@@ -71,24 +98,28 @@ function filterRepositories( repositories: GitHubRepositoryData[], query: string
 	return repositories;
 }
 
-function sortRepositories( repositories: GitHubRepositoryData[], sortKey: SortOption ) {
-	switch ( sortKey ) {
-		case 'name_asc':
-			return repositories.sort( ( left, right ) => {
-				return left.name.localeCompare( right.name );
-			} );
-		case 'date_asc':
-			return repositories.sort( ( left, right ) => {
-				return left.updated_at.localeCompare( right.updated_at );
-			} );
-		case 'name_desc':
+function applySort( repositories: GitHubRepositoryData[], key: string, direction: SortDirection ) {
+	switch ( key ) {
+		case 'name':
+			if ( direction === 'asc' ) {
+				return repositories.sort( ( left, right ) => {
+					return left.name.localeCompare( right.name );
+				} );
+			}
 			return repositories.sort( ( left, right ) => {
 				return left.name.localeCompare( right.name ) * -1;
 			} );
-		case 'date_desc':
+
+		case 'date':
+			if ( direction === 'asc' ) {
+				return repositories.sort( ( left, right ) => {
+					return left.updated_at.localeCompare( right.updated_at );
+				} );
+			}
 			return repositories.sort( ( left, right ) => {
 				return left.updated_at.localeCompare( right.updated_at ) * -1;
 			} );
+
 		default:
 			return repositories;
 	}

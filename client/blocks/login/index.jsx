@@ -48,6 +48,7 @@ import getCurrentQueryArguments from 'calypso/state/selectors/get-current-query-
 import getCurrentRoute from 'calypso/state/selectors/get-current-route';
 import getInitialQueryArguments from 'calypso/state/selectors/get-initial-query-arguments';
 import getPartnerSlugFromQuery from 'calypso/state/selectors/get-partner-slug-from-query';
+import getWccomFrom from 'calypso/state/selectors/get-wccom-from';
 import isFetchingMagicLoginEmail from 'calypso/state/selectors/is-fetching-magic-login-email';
 import isMagicLoginEmailRequested from 'calypso/state/selectors/is-magic-login-email-requested';
 import isWooCommerceCoreProfilerFlow from 'calypso/state/selectors/is-woocommerce-core-profiler-flow';
@@ -420,15 +421,27 @@ class Login extends Component {
 							) }
 						</p>
 					);
+				} else if ( this.showContinueAsUser() ) {
+					headerText = <h3>{ translate( 'Get started in minutes' ) }</h3>;
+					postHeader = (
+						<p className="login__header-subtitle">
+							{ translate( 'First, select the account you’d like to use.' ) }
+						</p>
+					);
 				} else {
 					headerText = <h3>{ translate( "Let's get started" ) }</h3>;
 					const poweredByWpCom =
-						wccomFrom === 'nux'
-							? translate( 'All Woo Express stores are powered by WordPress.com!' )
-							: translate( 'All Woo stores are powered by WordPress.com!' );
-					const accountSelectionOrLoginToContinue = this.showContinueAsUser()
-						? translate( "First, select the account you'd like to use." )
-						: translate(
+						wccomFrom === 'nux' ? (
+							<>
+								{ translate( 'All Woo Express stores are powered by WordPress.com!' ) }
+								<br />
+							</>
+						) : null;
+
+					postHeader = (
+						<p className="login__header-subtitle">
+							{ poweredByWpCom }
+							{ translate(
 								"Please, log in to continue. Don't have an account? {{signupLink}}Sign up{{/signupLink}}",
 								{
 									components: {
@@ -436,12 +449,7 @@ class Login extends Component {
 										br: <br />,
 									},
 								}
-						  );
-					postHeader = (
-						<p className="login__header-subtitle">
-							{ poweredByWpCom }
-							<br />
-							{ accountSelectionOrLoginToContinue }
+							) }
 						</p>
 					);
 				}
@@ -779,7 +787,7 @@ class Login extends Component {
 		if ( this.showContinueAsUser() ) {
 			if ( isWoo ) {
 				return (
-					<Fragment>
+					<div className="login__body login__body--continue-as-user">
 						<ContinueAsUser
 							onChangeAccount={ this.handleContinueAsAnotherUser }
 							isWooOAuth2Client={ isWoo }
@@ -799,7 +807,7 @@ class Login extends Component {
 							showSocialLoginFormOnly={ true }
 							sendMagicLoginLink={ this.sendMagicLoginLink }
 						/>
-					</Fragment>
+					</div>
 				);
 			}
 
@@ -881,7 +889,7 @@ export default connect(
 		isJetpackWooCommerceFlow:
 			'woocommerce-onboarding' === get( getCurrentQueryArguments( state ), 'from' ),
 		isWooCoreProfilerFlow: isWooCommerceCoreProfilerFlow( state ),
-		wccomFrom: get( getCurrentQueryArguments( state ), 'wccom-from' ),
+		wccomFrom: getWccomFrom( state ),
 		isAnchorFmSignup: getIsAnchorFmSignup(
 			get( getCurrentQueryArguments( state ), 'redirect_to' )
 		),

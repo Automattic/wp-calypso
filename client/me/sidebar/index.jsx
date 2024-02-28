@@ -6,7 +6,6 @@ import { Component } from 'react';
 import { connect } from 'react-redux';
 import { withCurrentRoute } from 'calypso/components/route';
 import GlobalSidebar from 'calypso/layout/global-sidebar';
-import { useGlobalSidebar } from 'calypso/layout/global-sidebar/hooks/use-global-sidebar';
 import Sidebar from 'calypso/layout/sidebar';
 import CollapseSidebar from 'calypso/layout/sidebar/collapse-sidebar';
 import SidebarFooter from 'calypso/layout/sidebar/footer';
@@ -20,6 +19,7 @@ import { itemLinkMatches } from 'calypso/my-sites/sidebar/utils';
 import { recordGoogleEvent } from 'calypso/state/analytics/actions';
 import { redirectToLogout } from 'calypso/state/current-user/actions';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
+import { getShouldShowGlobalSidebar } from 'calypso/state/global-sidebar/selectors';
 import { logoutUser } from 'calypso/state/logout/actions';
 import { setNextLayoutFocus } from 'calypso/state/ui/layout-focus/actions';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
@@ -66,7 +66,7 @@ class MeSidebar extends Component {
 			path: this.props.path,
 			requireBackLink: true,
 		};
-		return <GlobalSidebar { ...props }>{ this.renderMenu() }</GlobalSidebar>;
+		return <GlobalSidebar { ...props }>{ this.renderMenu( { isGlobal: true } ) }</GlobalSidebar>;
 	}
 
 	renderSidebar() {
@@ -80,126 +80,134 @@ class MeSidebar extends Component {
 		);
 	}
 
-	renderMenu() {
+	renderMenu( options = {} ) {
 		const { context, locale, translate } = this.props;
 		const path = context.path.replace( '/me', '' ); // Remove base path.
 
-		return (
+		const { isGlobal } = options;
+
+		const mainContent = (
 			<>
-				<SidebarRegion>
-					<ProfileGravatar inSidebar user={ this.props.currentUser } />
+				<ProfileGravatar inSidebar user={ this.props.currentUser } />
 
-					<div className="sidebar__me-signout">
-						<Button
-							compact
-							className="sidebar__me-signout-button"
-							onClick={ this.onSignOut }
-							title={ translate( 'Log out of WordPress.com' ) }
-						>
-							<span className="sidebar__me-signout-text">{ translate( 'Log out' ) }</span>
-							<Gridicon icon="popout" size={ 16 } />
-						</Button>
-					</div>
+				<div className="sidebar__me-signout">
+					<Button
+						compact
+						className="sidebar__me-signout-button"
+						onClick={ this.onSignOut }
+						title={ translate( 'Log out of WordPress.com' ) }
+					>
+						<span className="sidebar__me-signout-text">{ translate( 'Log out' ) }</span>
+						<Gridicon icon="popout" size={ 16 } />
+					</Button>
+				</div>
 
-					<SidebarMenu>
+				<SidebarMenu>
+					<SidebarItem
+						selected={ itemLinkMatches( '', path ) }
+						link="/me"
+						label={ translate( 'My Profile' ) }
+						materialIcon="person"
+						onNavigate={ this.onNavigate }
+					/>
+
+					<SidebarItem
+						selected={ itemLinkMatches( '/account', path ) }
+						link="/me/account"
+						label={ translate( 'Account Settings' ) }
+						materialIcon="settings"
+						onNavigate={ this.onNavigate }
+						preloadSectionName="account"
+					/>
+
+					<SidebarItem
+						selected={ itemLinkMatches( '/purchases', path ) }
+						link={ purchasesRoot }
+						label={ translate( 'Purchases' ) }
+						materialIcon="credit_card"
+						onNavigate={ this.onNavigate }
+						preloadSectionName="purchases"
+					/>
+
+					<SidebarItem
+						selected={ itemLinkMatches( '/security', path ) }
+						link="/me/security"
+						label={ translate( 'Security' ) }
+						materialIcon="lock"
+						onNavigate={ this.onNavigate }
+						preloadSectionName="security"
+					/>
+
+					<SidebarItem
+						selected={ itemLinkMatches( '/privacy', path ) }
+						link="/me/privacy"
+						label={ translate( 'Privacy' ) }
+						materialIcon="visibility"
+						onNavigate={ this.onNavigate }
+						preloadSectionName="privacy"
+					/>
+
+					<SidebarItem
+						selected={ itemLinkMatches( '/developer', path ) }
+						link="/me/developer"
+						label={ translate( 'Developer Features' ) }
+						icon="code"
+						onNavigate={ this.onNavigate }
+						preloadSectionName="developer"
+					/>
+
+					<SidebarItem
+						link="https://dashboard.wordpress.com/wp-admin/index.php?page=my-blogs"
+						label={ translate( 'Manage Blogs' ) }
+						materialIcon="apps"
+					/>
+
+					{ ( englishLocales.includes( locale ) ||
+						i18n.hasTranslation( 'Manage All Domains' ) ) && (
 						<SidebarItem
-							selected={ itemLinkMatches( '', path ) }
-							link="/me"
-							label={ translate( 'My Profile' ) }
-							materialIcon="person"
-							onNavigate={ this.onNavigate }
+							link="/domains/manage"
+							label={ translate( 'Manage All Domains' ) }
+							materialIcon="language"
+							forceExternalLink
 						/>
+					) }
 
-						<SidebarItem
-							selected={ itemLinkMatches( '/account', path ) }
-							link="/me/account"
-							label={ translate( 'Account Settings' ) }
-							materialIcon="settings"
-							onNavigate={ this.onNavigate }
-							preloadSectionName="account"
-						/>
+					<SidebarItem
+						selected={ itemLinkMatches( '/notifications', path ) }
+						link="/me/notifications"
+						label={ translate( 'Notification Settings' ) }
+						materialIcon="notifications"
+						onNavigate={ this.onNavigate }
+						preloadSectionName="notification-settings"
+					/>
 
-						<SidebarItem
-							selected={ itemLinkMatches( '/purchases', path ) }
-							link={ purchasesRoot }
-							label={ translate( 'Purchases' ) }
-							materialIcon="credit_card"
-							onNavigate={ this.onNavigate }
-							preloadSectionName="purchases"
-						/>
+					<SidebarItem
+						selected={ itemLinkMatches( '/site-blocks', path ) }
+						link="/me/site-blocks"
+						label={ translate( 'Blocked Sites' ) }
+						materialIcon="block"
+						onNavigate={ this.onNavigate }
+						preloadSectionName="site-blocks"
+					/>
 
-						<SidebarItem
-							selected={ itemLinkMatches( '/security', path ) }
-							link="/me/security"
-							label={ translate( 'Security' ) }
-							materialIcon="lock"
-							onNavigate={ this.onNavigate }
-							preloadSectionName="security"
-						/>
-
-						<SidebarItem
-							selected={ itemLinkMatches( '/privacy', path ) }
-							link="/me/privacy"
-							label={ translate( 'Privacy' ) }
-							materialIcon="visibility"
-							onNavigate={ this.onNavigate }
-							preloadSectionName="privacy"
-						/>
-
-						<SidebarItem
-							selected={ itemLinkMatches( '/developer', path ) }
-							link="/me/developer"
-							label={ translate( 'Developer Features' ) }
-							icon="code"
-							onNavigate={ this.onNavigate }
-							preloadSectionName="developer"
-						/>
-
-						<SidebarItem
-							link="https://dashboard.wordpress.com/wp-admin/index.php?page=my-blogs"
-							label={ translate( 'Manage Blogs' ) }
-							materialIcon="apps"
-						/>
-
-						{ ( englishLocales.includes( locale ) ||
-							i18n.hasTranslation( 'Manage All Domains' ) ) && (
-							<SidebarItem
-								link="/domains/manage"
-								label={ translate( 'Manage All Domains' ) }
-								materialIcon="language"
-								forceExternalLink
-							/>
-						) }
-
-						<SidebarItem
-							selected={ itemLinkMatches( '/notifications', path ) }
-							link="/me/notifications"
-							label={ translate( 'Notification Settings' ) }
-							materialIcon="notifications"
-							onNavigate={ this.onNavigate }
-							preloadSectionName="notification-settings"
-						/>
-
-						<SidebarItem
-							selected={ itemLinkMatches( '/site-blocks', path ) }
-							link="/me/site-blocks"
-							label={ translate( 'Blocked Sites' ) }
-							materialIcon="block"
-							onNavigate={ this.onNavigate }
-							preloadSectionName="site-blocks"
-						/>
-
-						<SidebarItem
-							selected={ itemLinkMatches( '/get-apps', path ) }
-							link="/me/get-apps"
-							label={ translate( 'Apps' ) }
-							icon="plans"
-							onNavigate={ this.onNavigate }
-						/>
-					</SidebarMenu>
-				</SidebarRegion>
+					<SidebarItem
+						selected={ itemLinkMatches( '/get-apps', path ) }
+						link="/me/get-apps"
+						label={ translate( 'Apps' ) }
+						icon="plans"
+						onNavigate={ this.onNavigate }
+					/>
+				</SidebarMenu>
 			</>
 		);
+
+		// The SkipNavigation that SidebarRegion supplies is already added within the global
+		// sidebar, only add SidebarRegion if we are not using the global sidebar.
+		if ( isGlobal ) {
+			return mainContent;
+		}
+
+		return <SidebarRegion>{ mainContent }</SidebarRegion>;
 	}
 
 	render() {
@@ -215,7 +223,7 @@ export default withCurrentRoute(
 		( state, { currentSection } ) => {
 			const sectionGroup = currentSection?.group ?? null;
 			const siteId = getSelectedSiteId( state );
-			const { shouldShowGlobalSidebar } = useGlobalSidebar( siteId, sectionGroup );
+			const shouldShowGlobalSidebar = getShouldShowGlobalSidebar( state, siteId, sectionGroup );
 			return {
 				currentUser: getCurrentUser( state ),
 				shouldShowGlobalSidebar,

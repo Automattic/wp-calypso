@@ -41,9 +41,11 @@ import {
 	getSelectedSiteId,
 	getSelectedSiteSlug,
 } from 'calypso/state/ui/selectors';
+import { useIsGitHubDeploymentsAvailableQuery } from '../github-deployments/use-is-feature-available';
 import { TrialAcknowledgeModal } from '../plans/trials/trial-acknowledge/acknowlege-modal';
 import { WithOnclickTrialRequest } from '../plans/trials/trial-acknowledge/with-onclick-trial-request';
 import CacheCard from './cache-card';
+import { GitHubDeploymentsCard } from './github-deployments-card';
 import HostingActivateStatus from './hosting-activate-status';
 import { HostingUpsellNudge } from './hosting-upsell-nudge';
 import PhpMyAdminCard from './phpmyadmin-card';
@@ -89,9 +91,17 @@ const MainCards = ( {
 	isBasicHostingDisabled,
 	isWpcomStagingSite,
 	isBusinessTrial,
+	isGitHubDeploymentsAvailable,
 	siteId,
 } ) => {
 	const mainCards = [
+		isGitHubDeploymentsAvailable
+			? {
+					feature: 'github-deployments',
+					content: <GitHubDeploymentsCard />,
+					type: 'advanced',
+			  }
+			: null,
 		{
 			feature: 'sftp',
 			content: <SFTPCard disabled={ isAdvancedHostingDisabled } />,
@@ -192,6 +202,11 @@ const Hosting = ( props ) => {
 		transferState,
 	} = props;
 
+	const { data: gitHubDeploymentsAvailable } = useIsGitHubDeploymentsAvailableQuery( {
+		siteId,
+		options: { enabled: hasSftpFeature },
+	} );
+
 	const [ isTrialAcknowledgeModalOpen, setIsTrialAcknowledgeModalOpen ] = useState( false );
 	const [ hasTransfer, setHasTransferring ] = useState(
 		transferState &&
@@ -201,6 +216,7 @@ const Hosting = ( props ) => {
 				transferStates.ERROR,
 				transferStates.COMPLETED,
 				transferStates.COMPLETE,
+				transferStates.REVERTED,
 			].includes( transferState )
 	);
 
@@ -294,6 +310,7 @@ const Hosting = ( props ) => {
 								isBasicHostingDisabled={ ! hasAtomicFeature || ! isSiteAtomic }
 								isWpcomStagingSite={ isWpcomStagingSite }
 								isBusinessTrial={ isBusinessTrial && ! hasTransfer }
+								isGitHubDeploymentsAvailable={ gitHubDeploymentsAvailable?.available ?? false }
 								siteId={ siteId }
 							/>
 						</Column>

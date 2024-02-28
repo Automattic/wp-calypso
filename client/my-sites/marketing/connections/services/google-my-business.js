@@ -113,7 +113,7 @@ export class GoogleMyBusiness extends SharingService {
 	}
 
 	renderLogo() {
-		// Render a custom logo here because Google My Business is not part of SocialLogos
+		// Render a custom logo here because Google Business Profile is not part of SocialLogos
 		return (
 			<GoogleMyBusinessLogo
 				// eslint-disable-next-line wpcalypso/jsx-classname-namespace

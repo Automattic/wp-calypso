@@ -60,6 +60,9 @@ const ChatMessage = (
 	const hasSources = message?.context?.sources && message.context?.sources.length > 0;
 	const hasFeedback = !! message?.rating_value;
 
+	const isPositiveFeedback =
+		hasFeedback && message && message.rating_value && +message.rating_value === 1;
+
 	// dedupe sources based on url
 	let sources = message?.context?.sources ?? [];
 	if ( sources.length > 0 ) {
@@ -262,6 +265,7 @@ const ChatMessage = (
 						{ ! hasFeedback && ! isUser && messageFullyTyped && (
 							<WasThisHelpfulButtons message={ message } onDislike={ onDislike } />
 						) }
+						{ hasFeedback && messageFullyTyped && ! isPositiveFeedback && extraContactOptions }
 					</>
 				) }
 				{ message.type === 'introduction' && (

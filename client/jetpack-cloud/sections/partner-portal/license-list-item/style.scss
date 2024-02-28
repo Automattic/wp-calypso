@@ -76,10 +76,6 @@ $grid-wide: 0.5fr 0.5fr 128px 128px 128px 74px;
 	@include break-wide() {
 		grid-template-columns: $grid-wide;
 
-		> *:last-child {
-			margin-left: 12px;
-		}
-
 		.license-preview__product-small {
 			display: none;
 		}

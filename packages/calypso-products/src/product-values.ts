@@ -110,6 +110,7 @@ export { isJetpackBoostSlug } from './is-jetpack-boost-slug';
 export { isJetpackVideoPressSlug } from './is-jetpack-videopress-slug';
 export { isJetpackCreatorSlug } from './is-jetpack-creator-slug';
 export { default as isJetpackLegacyItem } from './is-jetpack-legacy-item';
+export { default as isJetpackLegacyTermUpgrade } from './is-jetpack-legacy-term-upgrade';
 export { default as isJetpackPurchasableItem } from './is-jetpack-purchasable-item';
 export * from './is-monthly';
 export { isNoAds } from './is-no-ads';

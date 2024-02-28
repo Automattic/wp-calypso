@@ -14,7 +14,7 @@ import classNames from 'classnames';
 import DOMPurify from 'dompurify';
 import { size } from 'lodash';
 import PropTypes from 'prop-types';
-import { Component } from 'react';
+import { Component, isValidElement } from 'react';
 import { connect } from 'react-redux';
 import DismissibleCard from 'calypso/blocks/dismissible-card';
 import JetpackLogo from 'calypso/components/jetpack-logo';
@@ -195,6 +195,8 @@ export class Banner extends Component {
 		let iconComponent;
 		if ( iconPath ) {
 			iconComponent = <img src={ iconPath } alt="" />;
+		} else if ( isValidElement( icon ) ) {
+			iconComponent = icon;
 		} else {
 			iconComponent = <Gridicon icon={ icon || 'star' } size={ isMobile() ? 24 : 18 } />;
 		}
@@ -203,7 +205,7 @@ export class Banner extends Component {
 			<div className="banner__icons">
 				<div className="banner__icon">{ iconComponent }</div>
 				{ ! disableCircle && <div className="banner__icon-circle">{ iconComponent }</div> }
-				{ disableCircle && iconPath && (
+				{ disableCircle && iconComponent && (
 					<div className="banner__icon-no-circle">{ iconComponent }</div>
 				) }
 			</div>

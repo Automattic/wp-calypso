@@ -75,7 +75,9 @@ export interface BoostData {
 }
 
 export interface Site {
+	sticker: string[];
 	blog_id: number;
+	blogname: string;
 	url: string;
 	url_with_scheme: string;
 	monitor_active: boolean;
@@ -98,7 +100,10 @@ export interface Site {
 	has_paid_agency_monitor: boolean;
 	is_atomic: boolean;
 	has_pending_boost_one_time_score: boolean;
+	has_vulnerable_plugins: boolean;
+	latest_scan_has_threats_found: boolean;
 	active_paid_subscription_slugs: Array< string >;
+	site_color?: string;
 }
 export interface SiteNode {
 	value: Site;
@@ -207,10 +212,12 @@ export interface DashboardSortInterface {
 	direction: 'asc' | 'desc' | '';
 }
 export interface DashboardOverviewContextInterface {
+	path: string;
 	search: string;
 	currentPage: number;
 	filter: { issueTypes: Array< AgencyDashboardFilterOption >; showOnlyFavorites: boolean };
 	sort: DashboardSortInterface;
+	showSitesDashboardV2: boolean;
 }
 
 export interface SitesOverviewContextInterface extends DashboardOverviewContextInterface {
@@ -238,12 +245,18 @@ export interface DashboardDataContextInterface {
 }
 
 export type AgencyDashboardFilterOption =
+	| 'all_issues'
 	| 'backup_failed'
 	| 'backup_warning'
 	| 'threats_found'
 	| 'site_disconnected'
 	| 'site_down'
 	| 'plugin_updates';
+
+export interface AgencyDashboardFilterMap {
+	filterType: AgencyDashboardFilterOption;
+	ref: number;
+}
 
 export type AgencyDashboardFilter = {
 	issueTypes: Array< AgencyDashboardFilterOption >;

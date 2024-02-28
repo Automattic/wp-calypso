@@ -44,6 +44,7 @@ function isLaunchpadIntent( intent: string ) {
 
 const siteSetupFlow: Flow = {
 	name: 'site-setup',
+	isSignupFlow: false,
 
 	useSideEffect( currentStep, navigate ) {
 		const selectedDesign = useSelect(
@@ -320,6 +321,12 @@ const siteSetupFlow: Flow = {
 
 					switch ( intent ) {
 						case SiteIntent.Import:
+							if ( config.isEnabled( 'onboarding/new-migration-flow' ) ) {
+								return exitFlow(
+									`/setup/site-migration?siteSlug=${ siteSlug }&flags=onboarding/new-migration-flow`
+								);
+							}
+
 							return navigate( 'import' );
 						case SiteIntent.DIFM:
 							return navigate( 'difmStartingPoint' );

@@ -76,7 +76,7 @@ Within the components inside [CheckoutProvider](#CheckoutProvider), [usePaymentM
 
 When a payment method is ready to submit its data, it can use an appropriate "payment processor" function. These are functions passed to [CheckoutProvider](#CheckoutProvider) with the `paymentProcessors` prop and each one has a unique key. For convenience, the `submitButton` will be provided with an `onClick` function prop that will begin the transaction. The `onClick` function takes one argument, an object that contains the data needed by the payment processor function.
 
-The payment processor function's response will control what happens next. Each payment processor function must return a Promise that resolves to one of four results: [makeManualResponse](#makeManualResponse), [makeRedirectResponse](#makeRedirectResponse), [makeSuccessResponse](#makeSuccessResponse), or [makeErrorResponse](#makeErrorResponse).
+The payment processor function's response will control what happens next. Each payment processor function must return a Promise that resolves to one of three results: [makeRedirectResponse](#makeRedirectResponse), [makeSuccessResponse](#makeSuccessResponse), or [makeErrorResponse](#makeErrorResponse).
 
 ## API
 
@@ -212,7 +212,6 @@ An enum that holds the values of the [payment processor function return value's 
 
 - `.SUCCESS` (the payload will be an `unknown` object that is the server response).
 - `.REDIRECT` (the payload will be a `string` that is the redirect URL).
-- `.MANUAL` (the payload will be an `unknown` object that is determined by the payment processor function).
 - `.ERROR` (the payload will be a `string` that is the error message).
 
 ### TransactionStatus
@@ -236,10 +235,6 @@ A function to create a `CheckoutStepGroupStore` which can be passed to [Checkout
 ### makeErrorResponse
 
 An action creator function to be used by a [payment processor function](#payment-methods) for a [ERROR](#PaymentProcessorResponseType) response. It takes one string argument and will record the string as the error.
-
-### makeManualResponse
-
-An action creator function to be used by a [payment processor function](#payment-methods) for a [MANUAL](#PaymentProcessorResponseType) response; it will do nothing but pass along its argument as a `payload` property to the resolved Promise of the `onClick` function.
 
 ### makeRedirectResponse
 

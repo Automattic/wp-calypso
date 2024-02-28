@@ -489,7 +489,7 @@ export const normalizers = {
 		if ( ! data ) {
 			return null;
 		}
-		const { total_wpcom, total_email } = data;
+		const { total_wpcom, total_email, total } = data;
 		const subscriberData = get( data, [ 'subscribers' ], [] );
 
 		const subscribers = subscriberData.map( ( item ) => {
@@ -511,7 +511,7 @@ export const normalizers = {
 			};
 		} );
 
-		return { total_wpcom, total_email, subscribers };
+		return { total_wpcom, total_email, total, subscribers };
 	},
 
 	statsCommentFollowers( data ) {
