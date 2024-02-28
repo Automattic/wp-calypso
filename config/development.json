@@ -152,8 +152,6 @@
 		"onboarding/import-light": false,
 		"onboarding/import-redirect-to-themes": true,
 		"onboarding/interval-dropdown": true,
-		"onboarding/new-user-survey": false,
-		"onboarding/new-user-survey-scrambled": false,
 		"p2/p2-plus": true,
 		"page/export": true,
 		"pattern-assembler/v2": true,
