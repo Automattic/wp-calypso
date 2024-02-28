@@ -4,14 +4,13 @@ import { useTranslate } from 'i18n-calypso';
 import { useState } from 'react';
 import DocumentHead from 'calypso/components/data/document-head';
 import FormattedHeader from 'calypso/components/formatted-header';
-import FormTextInput from 'calypso/components/forms/form-text-input';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import type { Step } from '../../types';
 import './style.scss';
 
 const SiteMigrationInstructions: Step = function () {
 	const translate = useTranslate();
-	const siteMigrationKey = '1234567890';
+	const siteMigrationKey = 'Yjx3xUYYTm89s9xBFe7jitNA94noUg6tzgjnpx9zPVwGdbewfL';
 	const buttonTextCopy = translate( 'Copy key' );
 	const [ buttonText, setButtonText ] = useState( buttonTextCopy );
 	const onCopy = () => {
@@ -40,21 +39,18 @@ const SiteMigrationInstructions: Step = function () {
 				</li>
 				<li>
 					{ translate(
-						'Click {{strong}}Copy Key{{/strong}} below to get your migration key - you will need that in a few minutes to start the migration.',
+						'Click {{strong}}Copy key{{/strong}} below to get your migration key - you will need that in a few minutes to start the migration.',
 						{
 							components: {
 								strong: <strong />,
 							},
 						}
 					) }
-					<div>
-						<FormTextInput
-							className="site-migration-instructions__migration-key"
-							value={ siteMigrationKey }
-						/>
+					<div className="site-migration-instructions__migration-key">
+						<code className="site-migration-instructions__key">{ siteMigrationKey }</code>
 						<ClipboardButton
 							text={ siteMigrationKey }
-							className="site-migration-instructions__copy-key-button"
+							className="site-migration-instructions__copy-key-button is-primary"
 							onCopy={ onCopy }
 						>
 							{ buttonText }
@@ -116,7 +112,7 @@ const SiteMigrationInstructions: Step = function () {
 						/>
 						<p>
 							{ translate(
-								'Move your existing WordPress site to WordPress.com. Follow these steps to get started:'
+								'Move your existing WordPress site to WordPress.com. Follow these steps to get started.'
 							) }
 						</p>
 					</>
