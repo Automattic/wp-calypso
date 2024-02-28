@@ -14,10 +14,10 @@ export const getParamFromUrlOrOauth2Redirect = (
 	paramName: string
 ): string | null => {
 	const currentQuery = getCurrentQueryArguments( state );
-	const wccomFrom = get( currentQuery, paramName ) as string | null;
+	const paramValue = get( currentQuery, paramName ) as string | null;
 
-	if ( wccomFrom ) {
-		return wccomFrom;
+	if ( paramValue ) {
+		return paramValue;
 	}
 
 	try {
