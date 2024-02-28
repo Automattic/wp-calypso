@@ -281,6 +281,7 @@ const PlansFeaturesMain = ( {
 			: null
 	);
 	const getPlanTypeDestination = usePlanTypeDestinationCallback();
+	const couponCode = coupon || withDiscount;
 
 	const resolveModal = useModalResolutionCallback( {
 		isCustomDomainAllowedOnFreePlan,
@@ -371,7 +372,7 @@ const PlansFeaturesMain = ( {
 				: `/checkout/${ siteSlug }/${ planPath }`;
 
 			const checkoutUrlWithArgs = addQueryArgs(
-				{ ...( withDiscount && { coupon: withDiscount } ) },
+				{ ...( withDiscount && { coupon: couponCode } ) },
 				checkoutUrl
 			);
 
@@ -435,7 +436,7 @@ const PlansFeaturesMain = ( {
 		showLegacyStorageFeature,
 		isSubdomainNotGenerated: ! resolvedSubdomainName.result,
 		storageAddOns,
-		coupon,
+		coupon: couponCode,
 		selectedSiteId: siteId,
 	} );
 
@@ -513,7 +514,7 @@ const PlansFeaturesMain = ( {
 			currentSitePlanSlug: sitePlanSlug,
 			useCheckPlanAvailabilityForPurchase,
 			recordTracksEvent,
-			coupon,
+			coupon: couponCode,
 			selectedSiteId: siteId,
 			withDiscount,
 		};
@@ -569,7 +570,7 @@ const PlansFeaturesMain = ( {
 		planTypeSelector,
 		gridPlansForFeaturesGrid,
 		sitePlanSlug,
-		coupon,
+		couponCode,
 		siteId,
 		withDiscount,
 		getPlanTypeDestination,
@@ -744,7 +745,7 @@ const PlansFeaturesMain = ( {
 					'is-pricing-grid-2023-plans-features-main'
 				) }
 			>
-				<QueryPlans coupon={ coupon } />
+				<QueryPlans coupon={ couponCode } />
 				<QuerySites siteId={ siteId } />
 				<QuerySitePlans siteId={ siteId } />
 				<QueryActivePromotions />
@@ -814,7 +815,7 @@ const PlansFeaturesMain = ( {
 								layoutClassName="plans-features-main__plan-type-selector-layout"
 								enableStickyBehavior={ enablePlanTypeSelectorStickyBehavior }
 								stickyPlanTypeSelectorOffset={ masterbarHeight - 1 }
-								coupon={ coupon }
+								coupon={ couponCode }
 							/>
 						) }
 						<div
@@ -854,7 +855,7 @@ const PlansFeaturesMain = ( {
 									onStorageAddOnClick={ handleStorageAddOnClick }
 									showRefundPeriod={ isAnyHostingFlow( flowName ) }
 									recordTracksEvent={ recordTracksEvent }
-									coupon={ coupon }
+									coupon={ couponCode }
 									planUpgradeCreditsApplicable={ planUpgradeCreditsApplicable }
 								/>
 								{ showEscapeHatch && hidePlansFeatureComparison && (
@@ -892,7 +893,7 @@ const PlansFeaturesMain = ( {
 												<PlanTypeSelector
 													{ ...planTypeSelectorProps }
 													layoutClassName="plans-features-main__plan-type-selector-layout"
-													coupon={ coupon }
+													coupon={ couponCode }
 												/>
 											) }
 											<ComparisonGrid
@@ -918,7 +919,7 @@ const PlansFeaturesMain = ( {
 												planTypeSelectorProps={
 													! hidePlanSelector ? planTypeSelectorProps : undefined
 												}
-												coupon={ coupon }
+												coupon={ couponCode }
 												recordTracksEvent={ recordTracksEvent }
 												planUpgradeCreditsApplicable={ planUpgradeCreditsApplicable }
 											/>

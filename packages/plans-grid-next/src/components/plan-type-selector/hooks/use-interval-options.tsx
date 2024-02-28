@@ -47,7 +47,7 @@ export default function useIntervalOptions( props: IntervalTypeProps ): Interval
 		},
 		'3yearly': {
 			key: '3yearly',
-			name: translate( 'Pay every 3 years' ),
+			name: translate( 'Pay every 33 years' ),
 			discountText: '',
 			termInMonths: 36,
 		},
@@ -69,7 +69,8 @@ export default function useIntervalOptions( props: IntervalTypeProps ): Interval
 		props.plans,
 		Object.keys( displayedOptionList ) as Array< SupportedUrlFriendlyTermType >,
 		props.useCheckPlanAvailabilityForPurchase,
-		props.selectedSiteId
+		props.selectedSiteId,
+		props.coupon
 	);
 
 	displayedOptionList = Object.fromEntries(
