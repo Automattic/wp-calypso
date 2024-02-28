@@ -23,7 +23,13 @@ const SitesDataViews = ( {
 }: SitesDataViewsProps ) => {
 	const translate = useTranslate();
 
-	const sites = useFormattedSites( data?.sites ?? [] );
+	const totalSites = data ? data.sites.length : 0;
+	const sitesPerPage = sitesViewState.perPage;
+	const totalPages = Math.ceil( totalSites / sitesPerPage );
+	const endpoint = sitesViewState.page * sitesPerPage;
+	const startPoint = endpoint - ( sitesPerPage - 1 );
+	const unformattedSites = data ? data.sites.slice( startPoint - 1, endpoint ) : [];
+	const sites = useFormattedSites( unformattedSites );
 
 	const openSitePreviewPane = useCallback(
 		( site: Site ) => {
@@ -219,7 +225,7 @@ const SitesDataViews = ( {
 		<>
 			<DataViews
 				data={ sites }
-				paginationInfo={ { totalItems: 0, totalPages: 0 } }
+				paginationInfo={ { totalItems: totalSites, totalPages: totalPages } }
 				fields={ fields }
 				view={ sitesViewState }
 				search={ true }
