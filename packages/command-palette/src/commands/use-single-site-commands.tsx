@@ -26,9 +26,10 @@ import {
 	settings as settingsIcon,
 	tool as toolIcon,
 	wordpress as wordpressIcon,
+	comment as feedbackIcon,
 } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
-import { Command } from '../use-command-palette';
+import { Command, CommandCallBackParams } from '../use-command-palette';
 import { isCustomDomain } from '../utils';
 import { useCommandsParams } from './types';
 import useCommandNavigation from './use-command-navigation';
@@ -921,6 +922,22 @@ const useSingleSiteCommands = ( { navigate, currentRoute }: useCommandsParams ):
 			callback: commandNavigation( '/settings/podcasting/:site' ),
 			capability: SiteCapabilities.MANAGE_OPTIONS,
 			icon: settingsIcon,
+		},
+		{
+			name: 'sendFeedback',
+			label: __( 'Send feedback', __i18n_text_domain__ ),
+			searchLabel: _x(
+				'suggest command',
+				'Keyword for the Send feedback command',
+				__i18n_text_domain__
+			),
+			callback: ( { close }: CommandCallBackParams ) => {
+				close();
+				document?.getElementById( 'wp-admin-bar-help-center' )?.click();
+				document?.querySelector( '.help-center-contact-page__button' )?.click();
+				document?.querySelector( '.help-center-contact-page__box.email' )?.click();
+			},
+			icon: feedbackIcon,
 		},
 	];
 
