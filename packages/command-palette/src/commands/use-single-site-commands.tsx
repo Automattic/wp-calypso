@@ -43,6 +43,7 @@ interface CapabilityCommand extends Command {
 	siteType?: SiteType;
 	isCustomDomain?: boolean;
 	filterP2?: boolean;
+	filterStaging?: boolean;
 }
 
 interface CustomWindow {
@@ -50,6 +51,7 @@ interface CustomWindow {
 		siteId: string;
 		isAdmin: boolean;
 		isAtomic: boolean;
+		isStaging: boolean;
 		isSelfHosted: boolean;
 		isSimple: boolean;
 		isP2: boolean;
@@ -67,6 +69,7 @@ const useSingleSiteCommands = ( { navigate, currentRoute }: useCommandsParams ):
 	const customWindow = window as CustomWindow | undefined;
 	const {
 		isAtomic = false,
+		isStaging = false,
 		isSelfHosted = false,
 		isSimple = false,
 		capabilities = {},
@@ -771,6 +774,7 @@ const useSingleSiteCommands = ( { navigate, currentRoute }: useCommandsParams ):
 			callback: commandNavigation( '/plans/:site' ),
 			capability: SiteCapabilities.MANAGE_OPTIONS,
 			filterP2: true,
+			filterStaging: true,
 			icon: creditCardIcon,
 		},
 		{
@@ -784,6 +788,7 @@ const useSingleSiteCommands = ( { navigate, currentRoute }: useCommandsParams ):
 			callback: commandNavigation( '/plans/my-plan/:site' ),
 			capability: SiteCapabilities.MANAGE_OPTIONS,
 			filterP2: true,
+			filterStaging: true,
 			icon: creditCardIcon,
 		},
 		{
@@ -939,6 +944,10 @@ const useSingleSiteCommands = ( { navigate, currentRoute }: useCommandsParams ):
 			}
 
 			if ( command?.filterP2 && isP2 ) {
+				return false;
+			}
+
+			if ( command?.filterStaging && isStaging ) {
 				return false;
 			}
 
