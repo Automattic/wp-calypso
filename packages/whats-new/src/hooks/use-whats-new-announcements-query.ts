@@ -1,7 +1,10 @@
+/* eslint-disable no-restricted-imports */
 import { useLocale } from '@automattic/i18n-utils';
 import { useQuery } from '@tanstack/react-query';
 import apiFetch from '@wordpress/api-fetch';
+import { useSelector } from 'react-redux';
 import wpcomRequest, { canAccessWpcomApis } from 'wpcom-proxy-request';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 
 export interface WhatsNewAnnouncement {
 	announcementId: string;
@@ -26,27 +29,20 @@ interface APIFetchOptions {
  */
 export const useWhatsNewAnnouncementsQuery = () => {
 	const locale = useLocale();
+	const siteId = useSelector( getSelectedSiteId );
 
 	return useQuery< WhatsNewAnnouncement[] >( {
-		queryKey: [ 'WhatsNewAnnouncements-' + locale ],
+		queryKey: [ `WhatsNewAnnouncements-${ locale }-${ siteId }` ],
 		queryFn: async () =>
 			canAccessWpcomApis()
 				? await wpcomRequest( {
-						path: `/whats-new/list?_locale=${ locale }`,
+						path: `/whats-new/list?_locale=${ locale }&site_id=${ siteId }`,
 						apiNamespace: 'wpcom/v2',
 				  } )
 				: await apiFetch( {
 						global: true,
-						path: `/wpcom/v2/block-editor/whats-new-list?_locale=${ locale }`,
+						path: `/wpcom/v2/block-editor/whats-new-list?_locale=${ locale }&site_id=${ siteId }`,
 				  } as APIFetchOptions ),
 		refetchOnWindowFocus: false,
-		select: ( data ) => {
-			return data.filter( ( announcement: WhatsNewAnnouncement ) => {
-				if ( announcement.showTo === 'CLASSIC_NAV' ) {
-					// If the announcement is only for the classic nav, we should only show it if the user is using the classic nav
-				}
-				return true;
-			} );
-		},
 	} );
 };

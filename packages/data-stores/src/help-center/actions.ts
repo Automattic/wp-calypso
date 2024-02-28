@@ -23,13 +23,13 @@ export function* fetchLatestSeenWhatsNewModalItem() {
 	};
 	if ( canAccessWpcomApis() ) {
 		response = yield wpcomRequest( {
-			path: `/whats-new/latest-seen-whats-new-modal-item`,
+			path: `/whats-new/latest-seen-announcement-id`,
 			apiNamespace: 'wpcom/v2',
 		} );
 	} else {
 		response = yield apiFetch( {
 			global: true,
-			path: `/wpcom/v2/whats-new/latest-seen-whats-new-modal-item`,
+			path: `/wpcom/v2/whats-new/latest-seen-announcement-id`,
 		} as APIFetchOptions );
 	}
 
@@ -66,7 +66,7 @@ export function* setLatestSeenWhatsNewModalItem( id: number ) {
 	};
 	if ( canAccessWpcomApis() ) {
 		response = yield wpcomRequest( {
-			path: `/whats-new/latest-seen-whats-new-modal-item`,
+			path: `/whats-new/latest-seen-announcement-id`,
 			apiNamespace: 'wpcom/v2',
 			method: 'PUT',
 			body: {
@@ -76,7 +76,7 @@ export function* setLatestSeenWhatsNewModalItem( id: number ) {
 	} else {
 		response = yield apiFetch( {
 			global: true,
-			path: `/wpcom/v2/whats-new/latest-seen-whats-new-modal-item`,
+			path: `/wpcom/v2/whats-new/latest-seen-announcement-id`,
 			method: 'PUT',
 			data: { latest_seen_whats_new_modal_item: id },
 		} as APIFetchOptions );

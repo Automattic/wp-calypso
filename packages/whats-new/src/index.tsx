@@ -19,6 +19,7 @@ interface Props {
 
 const WhatsNewGuide: React.FC< Props > = ( { onClose } ) => {
 	const { setLatestSeenWhatsNewModalItem } = useDispatch( HELP_CENTER_STORE );
+
 	const { isWhatsNewModalShown } = useSelect( ( select ) => {
 		const helpCenterSelect: HelpCenterSelect = select( HELP_CENTER_STORE );
 		return {

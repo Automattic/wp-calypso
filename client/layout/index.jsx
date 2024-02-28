@@ -111,9 +111,9 @@ function WhatsNewLoader( { loadWhatsNew } ) {
 	}, [] );
 
 	useEffect( () => {
-		if ( data && data.length > 0 && ! isLoading ) {
+		if ( data && data.length > 0 && ! isLoading && latestSeenWhatsNewModalItem !== undefined ) {
 			data.forEach( ( item ) => {
-				if ( item.critical && item.announcementId > latestSeenWhatsNewModalItem ) {
+				if ( item.critical && parseInt( item.announcementId ) > latestSeenWhatsNewModalItem ) {
 					setShowWhatsNewModal( true );
 				}
 			} );
