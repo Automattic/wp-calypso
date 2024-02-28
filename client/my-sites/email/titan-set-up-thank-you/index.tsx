@@ -43,7 +43,7 @@ const TitanSetUpThankYou = ( {
 
 	const footerDetails = [
 		{
-			key: 'footer-manage-email',
+			key: 'footer-get-the-app',
 			title: translate( 'Manage your email and site from anywhere' ),
 			description: translate(
 				'The Jetpack mobile app for iOS and Android makes managing your email, domain, and website even simpler.'
@@ -58,7 +58,7 @@ const TitanSetUpThankYou = ( {
 				} );
 				recordTracksEvent( 'calypso_thank_you_footer_link_click', {
 					context: 'titan-setup',
-					type: 'manage-email',
+					type: 'get-the-app',
 				} );
 			},
 		},
