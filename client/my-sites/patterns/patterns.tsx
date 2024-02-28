@@ -1,5 +1,4 @@
 import { BlockRendererProvider, PatternsRendererProvider } from '@automattic/block-renderer';
-import { getPlaceholderSiteID } from '@automattic/data-stores/src/site/constants';
 import { useLocale } from '@automattic/i18n-utils';
 import classNames from 'classnames';
 import DocumentHead from 'calypso/components/data/document-head';
@@ -10,6 +9,8 @@ import { usePatterns } from 'calypso/my-sites/patterns/hooks/use-patterns';
 
 import './style.scss';
 
+const RENDERER_SITE_ID = '226011606'; // assemblerdemo
+
 type Props = {
 	category: string;
 	isGridView?: boolean;
@@ -18,7 +19,6 @@ type Props = {
 export default function Patterns( { category, isGridView }: Props ) {
 	const locale = useLocale();
 	const { data: patterns } = usePatterns( locale, category );
-	const rendererSiteId = getPlaceholderSiteID();
 
 	const patternIdsByCategory = {
 		intro: patterns?.map( ( { ID } ) => `${ ID }` ) ?? [],
@@ -30,7 +30,7 @@ export default function Patterns( { category, isGridView }: Props ) {
 			<h1>Build your perfect site with patterns</h1>
 
 			<BlockRendererProvider
-				siteId={ rendererSiteId }
+				siteId={ RENDERER_SITE_ID }
 				placeholder={
 					<div className="patterns">
 						{ patterns?.map( ( pattern ) => (
@@ -42,7 +42,7 @@ export default function Patterns( { category, isGridView }: Props ) {
 				<PatternsRendererProvider
 					patternIdsByCategory={ patternIdsByCategory }
 					shouldShufflePosts={ false }
-					siteId={ rendererSiteId }
+					siteId={ RENDERER_SITE_ID }
 				>
 					<div className={ classNames( 'patterns', { patterns_grid: isGridView } ) }>
 						{ patterns?.map( ( pattern ) => (

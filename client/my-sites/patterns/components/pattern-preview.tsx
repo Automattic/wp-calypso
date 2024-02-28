@@ -23,7 +23,7 @@ export function PatternPreview( { isGridView, pattern }: Props ) {
 	return (
 		<div
 			className={ classNames( 'pattern-preview', {
-				'pattern-preview_loading': ! renderedPattern,
+				'is-loading': ! renderedPattern,
 			} ) }
 		>
 			{ resizeObserver }

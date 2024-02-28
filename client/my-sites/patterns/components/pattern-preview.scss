@@ -3,6 +3,7 @@
 	flex-direction: column;
 	gap: 16px;
 	justify-content: space-between;
+	position: relative;
 
 	.pattern-preview__renderer {
 		background: var(--color-surface);
@@ -11,10 +12,10 @@
 		display: grid;
 		flex: 1;
 		overflow: hidden;
+	}
 
-		.pattern-preview_loading & {
-			aspect-ratio: 7 / 3;
-		}
+	&.is-loading .pattern-preview__renderer {
+		aspect-ratio: 7 / 3;
 	}
 
 	.pattern-preview__title {

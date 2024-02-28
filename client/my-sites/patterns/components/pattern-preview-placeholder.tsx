@@ -6,7 +6,7 @@ type Props = { pattern: Pattern };
 
 export function PatternPreviewPlaceholder( { pattern }: Props ) {
 	return (
-		<div className="pattern-preview pattern-preview_loading">
+		<div className="pattern-preview is-loading">
 			<div className="pattern-preview__renderer" />
 			<div className="pattern-preview__title">{ pattern.title }</div>
 		</div>
