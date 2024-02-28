@@ -5,7 +5,7 @@ import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import nock from 'nock';
 import React from 'react';
-import SiteMigrationFrom from '..';
+import SiteMigrationIdentify from'..';
 import { UrlData } from '../../../../../../../blocks/import/types';
 import { StepProps } from '../../../types';
 import { RenderStepOptions, mockStepProps, renderStep } from '../../test/helpers';
@@ -14,7 +14,7 @@ const mockApi = () => nock( 'https://public-api.wordpress.com:443' );
 
 const render = ( props?: Partial< StepProps >, renderOptions?: RenderStepOptions ) => {
 	const combinedProps = { ...mockStepProps( props ) };
-	return renderStep( <SiteMigrationFrom { ...combinedProps } />, renderOptions );
+	return renderStep( <SiteMigrationIdentify { ...combinedProps } />, renderOptions );
 };
 
 const API_RESPONSE_WORDPRESS_PLATFORM: UrlData = {
@@ -35,7 +35,7 @@ const API_RESPONSE_WITH_OTHER_PLATFORM: UrlData = {
 	},
 };
 
-describe( 'SiteMigrationFrom', () => {
+describe( 'SiteMigrationIdentify', () => {
 	beforeAll( () => nock.disableNetConnect() );
 
 	it( 'continues the flow when the platform is wordpress', async () => {

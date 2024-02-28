@@ -53,7 +53,7 @@ export const Analyzer: FC< Props > = ( props ) => {
 	);
 };
 
-const SiteMigrationFrom: Step = function ( { navigation } ) {
+const SiteMigrationIdentify: Step = function ( { navigation } ) {
 	return (
 		<>
 			<DocumentHead title="Site migration instructions" />
@@ -79,4 +79,4 @@ const SiteMigrationFrom: Step = function ( { navigation } ) {
 	);
 };
 
-export default SiteMigrationFrom;
+export default SiteMigrationIdentify;
