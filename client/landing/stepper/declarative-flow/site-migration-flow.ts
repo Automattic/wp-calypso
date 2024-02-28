@@ -188,7 +188,7 @@ const siteMigration: Flow = {
 								flags: 'onboarding/new-migration-flow',
 								siteSlug,
 							},
-							'/setup/site-migration/site-migration-instructions'
+							`/setup/site-migration/${ STEPS.BUNDLE_TRANSFER.slug }`
 						);
 						goToCheckout( {
 							flowName: 'site-migration',
