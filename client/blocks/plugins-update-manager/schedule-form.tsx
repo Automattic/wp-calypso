@@ -44,7 +44,7 @@ export const ScheduleForm = ( props: Props ) => {
 	const [ frequency, setFrequency ] = useState( 'daily' );
 	const [ day, setDay ] = useState< string >( '1' );
 	const [ hour, setHour ] = useState< string >( '6' );
-	const [ period, setPeriod ] = useState< string >( 'pm' );
+	const [ period, setPeriod ] = useState< string >( '1m' );
 	const [ timestamp, setTimestamp ] = useState( prepareTimestamp( frequency, day, hour, period ) );
 	const [ pluginSearchTerm, setPluginSearchTerm ] = useState( '' );
 	const [ validationErrors, setValidationErrors ] = useState< Record< string, string > >( {} );
