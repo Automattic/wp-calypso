@@ -5,6 +5,7 @@ import {
 	redirectWithoutLocaleParamInFrontIfLoggedIn,
 	render as clientRender,
 } from 'calypso/controller/index.web';
+import { getPatternCategorySlugs } from 'calypso/my-sites/patterns/controller';
 import Patterns from 'calypso/my-sites/patterns/patterns';
 import type { Context as PageJSContext } from '@automattic/calypso-router';
 
@@ -20,12 +21,13 @@ function renderPatterns( context: PageJSContext, next: Next ) {
 
 export default function ( router: typeof clientRouter ) {
 	const langParam = getLanguageRouteParam();
+	const categorySlugs = getPatternCategorySlugs();
 	const middleware = [ renderPatterns, makeLayout, clientRender ];
 
 	router(
-		`/${ langParam }/patterns/:category?`,
+		`/${ langParam }/patterns/:category(${ categorySlugs })?`,
 		redirectWithoutLocaleParamInFrontIfLoggedIn,
 		...middleware
 	);
-	router( '/patterns/:category?', ...middleware );
+	router( `/patterns/:category(${ categorySlugs })?`, ...middleware );
 }

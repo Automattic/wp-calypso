@@ -1,7 +1,8 @@
 import { getPlaceholderSiteID } from '@automattic/data-stores/src/site/constants';
 import { getLanguageRouteParam } from '@automattic/i18n-utils';
-import { makeLayout, ssrSetupLocale, notFound } from 'calypso/controller';
+import { makeLayout, ssrSetupLocale } from 'calypso/controller';
 import { setHrefLangLinks, setLocalizedCanonicalUrl } from 'calypso/controller/localized-links';
+import { getPatternCategorySlugs } from 'calypso/my-sites/patterns/controller';
 import { getPatternCategoriesQueryOptions } from 'calypso/my-sites/patterns/hooks/use-pattern-categories';
 import { getPatternsQueryOptions } from 'calypso/my-sites/patterns/hooks/use-patterns';
 import PatternsSSR from 'calypso/my-sites/patterns/patterns-ssr';
@@ -29,7 +30,7 @@ type Context = PageJSContext & {
 	queryClient: QueryClient;
 };
 
-async function fetchPatterns( context: Context, next: Next ): Promise< void > {
+function fetchPatterns( context: Context, next: Next ) {
 	const { cachedMarkup, queryClient, lang, params, store } = context;
 
 	if ( cachedMarkup ) {
@@ -40,37 +41,34 @@ async function fetchPatterns( context: Context, next: Next ): Promise< void > {
 	const rendererSiteId = getPlaceholderSiteID();
 	const locale = getCurrentUserLocale( store.getState() ) || lang || 'en';
 
-	try {
-		// Always fetch list of categories
-		const categories = await queryClient.fetchQuery< Category[] >(
-			getPatternCategoriesQueryOptions( Number( rendererSiteId ), { staleTime: 10 * 60 * 1000 } )
-		);
+	const categoryPromise = queryClient.fetchQuery< Category[] >(
+		getPatternCategoriesQueryOptions( Number( rendererSiteId ), { staleTime: 10 * 60 * 1000 } )
+	);
 
-		// Fetch patterns only if the user is requesting a category page
-		if ( params.category ) {
-			const categoryNames = categories.map( ( category ) => category.name );
-
-			if ( ! categoryNames.includes( params.category ) ) {
-				notFound( context, next );
-				return;
-			}
-
-			await queryClient.fetchQuery< Pattern[] >(
+	const patternPromise = params.category
+		? queryClient.fetchQuery< Pattern[] >(
 				getPatternsQueryOptions( locale, params.category, { staleTime: 10 * 60 * 1000 } )
-			);
-		}
-	} catch ( error ) {
-		next( error as Error );
-	}
+		  )
+		: Promise.resolve();
 
-	next();
+	Promise.all( [ categoryPromise, patternPromise ] )
+		.then( () => {
+			next();
+		} )
+		.catch( ( error ) => {
+			next( error );
+		} );
 }
 
 export default function ( router: ReturnType< typeof serverRouter > ) {
 	const langParam = getLanguageRouteParam();
+	const categorySlugs = getPatternCategorySlugs();
 
 	router(
-		[ `/${ langParam }/patterns/:category?`, '/patterns/:category?' ],
+		[
+			`/${ langParam }/patterns/:category(${ categorySlugs })?`,
+			`/patterns/:category(${ categorySlugs })?`,
+		],
 		ssrSetupLocale,
 		setHrefLangLinks,
 		setLocalizedCanonicalUrl,
