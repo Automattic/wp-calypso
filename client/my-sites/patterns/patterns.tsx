@@ -21,9 +21,7 @@ export default function Patterns( { category, isGridView }: Props ) {
 	const locale = useLocale();
 
 	const { data: categories } = usePatternCategories( locale, RENDERER_SITE_ID );
-	const { data: patterns } = usePatterns( locale, category, {
-		enabled: !! category,
-	} );
+	const { data: patterns } = usePatterns( locale, category );
 
 	const patternIdsByCategory = {
 		intro: patterns?.map( ( { ID } ) => `${ ID }` ) ?? [],
