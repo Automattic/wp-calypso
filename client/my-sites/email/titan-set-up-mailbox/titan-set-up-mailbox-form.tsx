@@ -14,11 +14,11 @@ import {
 	FIELD_PASSWORD_RESET_EMAIL,
 } from 'calypso/my-sites/email/form/mailboxes/constants';
 import { EmailProvider } from 'calypso/my-sites/email/form/mailboxes/types';
-import { getTitanSetUpThankYouPath } from 'calypso/my-sites/email/paths';
+import { getEmailManagementPath } from 'calypso/my-sites/email/paths';
 import { useDispatch, useSelector } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getCurrentUserEmail } from 'calypso/state/current-user/selectors';
-import { errorNotice } from 'calypso/state/notices/actions';
+import { successNotice, errorNotice } from 'calypso/state/notices/actions';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import type { MailboxForm } from 'calypso/my-sites/email/form/mailboxes';
 import type { MailboxOperations } from 'calypso/my-sites/email/form/mailboxes/components/utilities/mailbox-operations';
@@ -37,11 +37,6 @@ interface DispatchCompleteSetupClickProps {
 	domainName: string;
 	mailboxName: string;
 }
-
-const goToThankYouPage = ( siteSlug: string, selectedDomainName: string, mailboxName: string ) => {
-	const emailAddress = `${ mailboxName }@${ selectedDomainName }`;
-	page( getTitanSetUpThankYouPath( siteSlug, selectedDomainName, emailAddress ) );
-};
 
 const dispatchCompleteSetupClick = ( dispatchProps: DispatchCompleteSetupClickProps ) => {
 	const { canContinue, dispatch, domainName, mailboxName } = dispatchProps;
@@ -75,8 +70,8 @@ const useHandleCompleteSetup = (
 	};
 
 	const { isError, mutateAsync } = useCreateTitanMailboxMutation();
-	const selectedSite = useSelector( getSelectedSite );
 	const translate = useTranslate();
+	const selectedSite = useSelector( getSelectedSite );
 
 	return async ( mailboxOperations: MailboxOperations ) => {
 		const mailbox = mailboxOperations.mailboxes[ 0 ];
@@ -91,10 +86,17 @@ const useHandleCompleteSetup = (
 		try {
 			await mutateAsync( mailbox.getAsFlatObject() as TitanMailboxFields );
 
-			goToThankYouPage(
-				selectedSite?.slug as string,
-				selectedDomainName,
-				mailbox.formFields.mailbox.value
+			// The provision of new user (mailbox) is done through an async process, which means
+			// the new mailbox won't be immediately available. To account for this, we redirect
+			// users back to the Email Management page with a 5 seconds delay, to prevent
+			// users from seeing the "Set up mailbox" CTA again. There's a chance that the
+			// new mailbox is still unavailable after 5 seconds, but that is an edge case that we will
+			// cope with for the time being.
+			await new Promise( ( resolve ) => setTimeout( resolve, 5000 ) );
+
+			page( getEmailManagementPath( selectedSite?.slug, selectedDomainName ) );
+			dispatch(
+				successNotice( translate( 'Your email is now ready to use!' ), { duration: 5000 } )
 			);
 		} catch ( createError ) {
 			let message = translate( 'Unknown error' );

@@ -12,7 +12,7 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { useDispatch } from '@wordpress/data';
-import { useEffect } from 'react';
+import { useEffect, useMemo } from 'react';
 import { Provider as ReduxProvider } from 'react-redux';
 import {
 	createNetBankingMethod,
@@ -20,10 +20,9 @@ import {
 } from 'calypso/my-sites/checkout/src/payment-methods/netbanking';
 import { createReduxStore } from 'calypso/state';
 
-const queryClient = new QueryClient();
-
 function TestWrapper( { paymentMethods, paymentProcessors = undefined } ) {
 	const store = createReduxStore();
+	const queryClient = useMemo( () => new QueryClient(), [] );
 	return (
 		<ReduxProvider store={ store }>
 			<QueryClientProvider client={ queryClient }>

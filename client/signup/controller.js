@@ -5,10 +5,11 @@ import { createElement } from 'react';
 import store from 'store';
 import { notFound } from 'calypso/controller';
 import { recordPageView } from 'calypso/lib/analytics/page-view';
+import { loadExperimentAssignment } from 'calypso/lib/explat';
 import { login } from 'calypso/lib/paths';
 import { sectionify } from 'calypso/lib/route';
 import flows from 'calypso/signup/config/flows';
-import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
+import { getCurrentUserSiteCount, isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { updateDependencies } from 'calypso/state/signup/actions';
 import { getSignupDependencyStore } from 'calypso/state/signup/dependency-store/selectors';
 import { setCurrentFlowName, setPreviousFlowName } from 'calypso/state/signup/flow/actions';
@@ -160,7 +161,7 @@ export default {
 		next();
 	},
 
-	redirectToFlow( context, next ) {
+	async redirectToFlow( context, next ) {
 		const userLoggedIn = isUserLoggedIn( context.store.getState() );
 		const flowName = getFlowName( context.params, userLoggedIn );
 		const localeFromParams = context.params.lang;
@@ -233,6 +234,31 @@ export default {
 
 		store.set( 'signup-locale', localeFromParams );
 
+		/**
+		 * The experiment is only loaded on the onboarding flow
+		 * If user is logged out we load the experiment
+		 * If user is logged in we load the experiment only if the user has no sites
+		 * More info: pbxNRc-3xO-p2
+		 */
+		const isNewUser = ! getCurrentUserSiteCount( context.store.getState() );
+		initialContext.isSignupSurveyActive = false;
+		const isOnboardingFlow = flowName === 'onboarding';
+		if ( isOnboardingFlow && ( ! userLoggedIn || ( userLoggedIn && isNewUser ) ) ) {
+			const experiment = await loadExperimentAssignment(
+				'calypso_signup_onboarding_site_goals_survey'
+			);
+			initialContext.isSignupSurveyActive =
+				experiment.variationName === 'treatment' ||
+				experiment.variationName === 'treatment_scrambled';
+		}
+
+		if (
+			config.isEnabled( 'onboarding/new-user-survey' ) ||
+			config.isEnabled( 'onboarding/new-user-survey-scrambled' )
+		) {
+			// Force display of the new user survey for the onboarding flow
+			initialContext.isSignupSurveyActive = true;
+		}
 		next();
 	},
 

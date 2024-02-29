@@ -16,6 +16,8 @@ import QuerySitePlans from 'calypso/components/data/query-site-plans';
 import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
 import QueryThemeFilters from 'calypso/components/data/query-theme-filters';
 import { SearchThemes, SearchThemesV2 } from 'calypso/components/search-themes';
+import ThemeDesignYourOwnModal from 'calypso/components/theme-design-your-own-modal';
+import ThemeSiteSelectorModal from 'calypso/components/theme-site-selector-modal';
 import { THEME_TIERS } from 'calypso/components/theme-tier/constants';
 import getSiteAssemblerUrl from 'calypso/components/themes-list/get-site-assembler-url';
 import { getOptionLabel } from 'calypso/landing/subscriptions/helpers';
@@ -26,7 +28,7 @@ import ShowcaseThemeCollection from 'calypso/my-sites/themes/collections/showcas
 import ThemeCollectionViewHeader from 'calypso/my-sites/themes/collections/theme-collection-view-header';
 import ThemeShowcaseSurvey, { SurveyType } from 'calypso/my-sites/themes/survey';
 import ThanksModal from 'calypso/my-sites/themes/thanks-modal';
-import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
+import { getCurrentUserSiteCount, isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import getLastNonEditorRoute from 'calypso/state/selectors/get-last-non-editor-route';
 import getSiteEditorUrl from 'calypso/state/selectors/get-site-editor-url';
 import getSiteFeaturesById from 'calypso/state/selectors/get-site-features';
@@ -53,6 +55,7 @@ import {
 	localizeThemesPath,
 	isStaticFilter,
 	constructThemeShowcaseUrl,
+	shouldSelectSite,
 } from './helpers';
 import PatternAssemblerButton from './pattern-assembler-button';
 import ThemePreview from './theme-preview';
@@ -88,6 +91,11 @@ const defaultStaticFilter = Object.values( staticFilters ).find(
 );
 
 class ThemeShowcase extends Component {
+	state = {
+		isDesignThemeModalVisible: false,
+		isSiteSelectorModalVisible: false,
+	};
+
 	constructor( props ) {
 		super( props );
 		this.scrollRef = createRef();
@@ -108,6 +116,7 @@ class ThemeShowcase extends Component {
 		secondaryOption: optionShape,
 		getScreenshotOption: PropTypes.func,
 		siteCanInstallThemes: PropTypes.bool,
+		siteCount: PropTypes.number,
 		siteSlug: PropTypes.string,
 		upsellBanner: PropTypes.any,
 		loggedOutComponent: PropTypes.bool,
@@ -361,11 +370,22 @@ class ThemeShowcase extends Component {
 	};
 
 	onDesignYourOwnClick = () => {
-		const { isLoggedIn, site: selectedSite, siteEditorUrl } = this.props;
-		const shouldGoToAssemblerStep = isAssemblerSupported();
+		const { isLoggedIn, siteCount, siteId } = this.props;
+
 		recordTracksEvent( 'calypso_themeshowcase_pattern_assembler_top_button_click', {
 			is_logged_in: isLoggedIn,
 		} );
+
+		if ( shouldSelectSite( { isLoggedIn, siteCount, siteId } ) ) {
+			this.setState( { isDesignThemeModalVisible: true } );
+		} else {
+			this.redirectToSiteAssembler();
+		}
+	};
+
+	redirectToSiteAssembler = ( selectedSite = this.props.site ) => {
+		const { isLoggedIn, siteEditorUrl } = this.props;
+		const shouldGoToAssemblerStep = isAssemblerSupported();
 
 		const destinationUrl = getSiteAssemblerUrl( {
 			isLoggedIn,
@@ -479,6 +499,38 @@ class ThemeShowcase extends Component {
 		}
 
 		return upsellBanner;
+	};
+
+	renderSiteAssemblerSelectorModal = () => {
+		const { isDesignThemeModalVisible, isSiteSelectorModalVisible } = this.state;
+
+		return (
+			<>
+				<ThemeSiteSelectorModal
+					isOpen={ isSiteSelectorModalVisible }
+					navigateOnClose={ false }
+					onClose={ ( args ) => {
+						if ( args?.siteSlug ) {
+							this.redirectToSiteAssembler( { slug: args.siteSlug } );
+						}
+
+						this.setState( { isSiteSelectorModalVisible: false } );
+					} }
+				/>
+				<ThemeDesignYourOwnModal
+					isOpen={ isDesignThemeModalVisible }
+					onClose={ () => {
+						this.setState( { isDesignThemeModalVisible: false } );
+					} }
+					onCreateNewSite={ () => {
+						this.redirectToSiteAssembler();
+					} }
+					onSelectSite={ () => {
+						this.setState( { isDesignThemeModalVisible: false, isSiteSelectorModalVisible: true } );
+					} }
+				/>
+			</>
+		);
 	};
 
 	renderThemes = ( themeProps ) => {
@@ -600,6 +652,7 @@ class ThemeShowcase extends Component {
 					isSiteWooExpressOrEcomFreeTrial={ isSiteWooExpressOrEcomFreeTrial }
 					isSiteECommerceFreeTrial={ isSiteECommerceFreeTrial }
 				/>
+				{ this.renderSiteAssemblerSelectorModal() }
 				{ isLoggedIn && (
 					<ThemeShowcaseSurvey
 						survey={ SurveyType.FEBRUARY_2024 }
@@ -702,6 +755,7 @@ const mapStateToProps = ( state, { siteId, filter } ) => {
 		areSiteFeaturesLoaded: !! getSiteFeaturesById( state, siteId ),
 		site: getSite( state, siteId ),
 		siteCanInstallThemes: siteHasFeature( state, siteId, FEATURE_INSTALL_THEMES ),
+		siteCount: getCurrentUserSiteCount( state ),
 		siteEditorUrl: getSiteEditorUrl( state, siteId ),
 		siteSlug: getSiteSlug( state, siteId ),
 		subjects: getThemeFilterTerms( state, 'subject' ) || {},
