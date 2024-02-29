@@ -5,12 +5,14 @@ import { translate } from 'i18n-calypso';
 export default function globalSiteSidebarMenu( {
 	showSiteMonitoring,
 	siteDomain,
+	shouldShowAddOns,
 	selectedSiteSlug,
 	isStagingSite,
 	isDesktop,
 }: {
 	showSiteMonitoring: boolean;
 	siteDomain: string;
+	shouldShowAddOns: boolean;
 	selectedSiteSlug: string;
 	isStagingSite: boolean;
 	isDesktop: boolean;
@@ -47,7 +49,7 @@ export default function globalSiteSidebarMenu( {
 			title: translate( 'Add-ons' ),
 			type: 'menu-item',
 			url: `/add-ons/${ siteDomain }`,
-			shouldHide: isStagingSite,
+			shouldHide: ! shouldShowAddOns,
 		},
 		{
 			slug: 'domains',
