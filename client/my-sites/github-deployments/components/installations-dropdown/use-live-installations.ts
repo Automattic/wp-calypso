@@ -42,7 +42,7 @@ export const useLiveInstallations = ( {
 			}
 		}
 
-		setInstallation( installations[ 0 ] );
+		setInstallation( installations.find( ( installation ) => installation.is_admin === true ) );
 	}, [ installations, installation, initialInstallationId ] );
 
 	const onNewInstallationRequest = () => {

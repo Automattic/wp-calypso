@@ -17,6 +17,7 @@ export interface GitHubInstallationData {
 	external_id: number;
 	account_name: string;
 	management_url: string;
+	is_admin: boolean;
 }
 
 export const useGithubInstallationsQuery = (

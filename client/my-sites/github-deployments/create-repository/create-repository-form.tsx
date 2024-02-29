@@ -102,7 +102,9 @@ export const CreateRepositoryForm = ( {
 							) : (
 								<GitHubInstallationsDropdown
 									onAddInstallation={ onNewInstallationRequest }
-									installations={ installations }
+									installations={ installations.filter(
+										( installation ) => installation.is_admin === true
+									) }
 									value={ installation }
 									onChange={ setInstallation }
 								/>
