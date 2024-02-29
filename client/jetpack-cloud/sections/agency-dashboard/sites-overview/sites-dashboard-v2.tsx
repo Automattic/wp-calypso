@@ -99,9 +99,10 @@ export default function SitesDashboardV2() {
 	const { data, isError, isLoading, refetch } = useFetchDashboardSites(
 		isPartnerOAuthTokenLoaded,
 		search,
-		currentPage,
+		sitesViewState.page,
 		filter,
-		sort
+		sort,
+		sitesViewState.perPage
 	);
 
 	const onSitesViewChange = useCallback(

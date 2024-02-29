@@ -23,13 +23,10 @@ const SitesDataViews = ( {
 }: SitesDataViewsProps ) => {
 	const translate = useTranslate();
 
-	const totalSites = data ? data.sites.length : 0;
-	const sitesPerPage = sitesViewState.perPage;
+	const totalSites = data ? data?.total : 0;
+	const sitesPerPage = sitesViewState.perPage > 0 ? sitesViewState.perPage : 10;
 	const totalPages = Math.ceil( totalSites / sitesPerPage );
-	const pageEndPoint = sitesViewState.page * sitesPerPage;
-	const pageStartPoint = pageEndPoint - ( sitesPerPage - 1 );
-	const unformattedSites = data ? data.sites.slice( pageStartPoint - 1, pageEndPoint ) : [];
-	const sites = useFormattedSites( unformattedSites );
+	const sites = useFormattedSites( data?.sites ?? [] );
 
 	const openSitePreviewPane = useCallback(
 		( site: Site ) => {
