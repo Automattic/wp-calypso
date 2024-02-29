@@ -1,4 +1,5 @@
 import { Card } from '@automattic/components';
+import { useLocalizeUrl } from '@automattic/i18n-utils';
 import { localize } from 'i18n-calypso';
 import { get, isEmpty } from 'lodash';
 import { connect } from 'react-redux';
@@ -8,6 +9,8 @@ import { isAmbiguousThemeFilterTerm } from 'calypso/state/themes/selectors';
 import { isDelistedTaxonomyTermSlug } from 'calypso/state/themes/utils';
 
 const ThemeFeaturesCard = ( { isWpcomTheme, siteSlug, features, translate, onClick } ) => {
+	const localizeUrl = useLocalizeUrl();
+
 	if ( isEmpty( features ) ) {
 		return null;
 	}
@@ -27,7 +30,13 @@ const ThemeFeaturesCard = ( { isWpcomTheme, siteSlug, features, translate, onCli
 							{ ! isWpcomTheme ? (
 								<span>{ name }</span>
 							) : (
-								<a href={ `/themes/filter/${ term }/${ siteSlug || '' }` }>{ name }</a>
+								<a
+									href={ localizeUrl(
+										`https://wordpress.com/themes/filter/${ term }/${ siteSlug || '' }`
+									) }
+								>
+									{ name }
+								</a>
 							) }
 						</li>
 					) ) }
