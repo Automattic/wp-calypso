@@ -3,14 +3,14 @@ import { useLocale } from '@automattic/i18n-utils';
 import classNames from 'classnames';
 import DocumentHead from 'calypso/components/data/document-head';
 import Main from 'calypso/components/main';
+import { LocalizedLink } from 'calypso/my-sites/patterns/components/localized-link';
 import { PatternPreview } from 'calypso/my-sites/patterns/components/pattern-preview';
 import { PatternPreviewPlaceholder } from 'calypso/my-sites/patterns/components/pattern-preview-placeholder';
+import { RENDERER_SITE_ID } from 'calypso/my-sites/patterns/controller';
 import { usePatternCategories } from 'calypso/my-sites/patterns/hooks/use-pattern-categories';
 import { usePatterns } from 'calypso/my-sites/patterns/hooks/use-patterns';
 
 import './style.scss';
-
-const RENDERER_SITE_ID = 226011606; // assemblerdemo
 
 type Props = {
 	category: string;
@@ -37,7 +37,9 @@ export default function Patterns( { category, isGridView }: Props ) {
 			<ul className="pattern-categories">
 				{ categories?.map( ( category ) => (
 					<li className="pattern-category" key={ category.name }>
-						<a href={ `/patterns/${ category.name }` }>{ category.label }</a>
+						<LocalizedLink href={ `/patterns/${ category.name }` }>
+							{ category.label }
+						</LocalizedLink>
 					</li>
 				) ) }
 			</ul>
