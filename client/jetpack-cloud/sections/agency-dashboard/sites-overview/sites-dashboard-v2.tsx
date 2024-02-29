@@ -151,7 +151,7 @@ export default function SitesDashboardV2() {
 				search: '',
 			} );
 		}
-	}, [ path ] );
+	}, [ path, sitesViewState ] );
 
 	useEffect( () => {
 		if ( jetpackSiteDisconnected ) {
