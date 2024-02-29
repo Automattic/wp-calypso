@@ -7,7 +7,7 @@ const StatsModuleUTM = ( { siteId, period, postId, query, summary } ) => {
 	const moduleStrings = statsStrings();
 
 	// Fetch UTM metrics with switched UTM parameters.
-	const { isFetching: isFetchingMetricsAndTopPosts, metrics } = useUTMMetricsQuery(
+	const { isFetching: isFetching, metrics } = useUTMMetricsQuery(
 		siteId,
 		'utm_source,utm_medium',
 		postId
@@ -19,6 +19,10 @@ const StatsModuleUTM = ( { siteId, period, postId, query, summary } ) => {
 	const data = metrics.map( ( metric ) => {
 		const paramValues = metric.paramValues;
 		const children = topPosts[ paramValues ] || [];
+
+		if ( ! children.length ) {
+			return metric;
+		}
 
 		return {
 			...metric,
@@ -36,7 +40,7 @@ const StatsModuleUTM = ( { siteId, period, postId, query, summary } ) => {
 			moduleStrings={ moduleStrings.utm }
 			period={ period }
 			query={ query }
-			isLoading={ isFetchingMetricsAndTopPosts ?? true }
+			isLoading={ isFetching ?? true }
 			hideSummaryLink={ hideSummaryLink }
 		/>
 	);
