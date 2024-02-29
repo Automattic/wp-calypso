@@ -81,7 +81,7 @@
 	}
 
 	&--is-revoked {
-		color: var(--color-scary-60);
+		color: var(--color-error-60);
 	}
 
 	svg {
@@ -198,7 +198,7 @@ button {
 		}
 
 		&.is-destructive {
-			color: var(--color-scary-50);
+			color: var(--color-error-50);
 		}
 	}
 }
@@ -259,10 +259,10 @@ button {
 	&,
 	&:hover,
 	&:focus {
-		color: var(--color-scary-50);
+		color: var(--color-error-50);
 
 		.gridicon {
-			fill: var(--color-scary-50);
+			fill: var(--color-error-50);
 		}
 	}
 }
