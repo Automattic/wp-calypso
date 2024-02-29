@@ -10,6 +10,9 @@
 		}
 		flex-direction: column;
 		width: 100%;
+		.migration-success-ctas__buttons {
+			min-width: 220px;
+		}
 	}
 	.card {
 		margin: 50px 0;

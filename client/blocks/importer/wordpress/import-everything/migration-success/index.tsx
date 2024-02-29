@@ -57,7 +57,7 @@ export default function MigrationSuccess( {
 								<p className="migration-success__site">{ targetSite.domain }</p>
 							</FlexItem>
 
-							<FlexItem>
+							<FlexItem className="migration-success-ctas__buttons">
 								<Flex gap={ 4 }>
 									<Button variant="primary" onClick={ navigateToSite( targetSite.URL ) }>
 										{ translate( 'View site' ) }
