@@ -36,7 +36,7 @@
 		display: flex;
 		justify-content: flex-end;
 		align-items: stretch;
-		background: var(--studio-gray-0);
+		background: var(--color-neutral-0);
 		border: 0;
 		padding: 12px 24px;
 
@@ -78,8 +78,8 @@
 		font-size: 1.125rem; /* stylelint-disable-line scales/font-sizes */
 		font-weight: 600;
 		line-height: 20px;
-		color: var(--studio-gray-60);
-		border-bottom: 1px solid var(--studio-gray-5);
+		color: var(--color-neutral-60);
+		border-bottom: 1px solid var(--color-neutral-5);
 
 		@include break-mobile {
 			margin: -24px -24px 24px;
@@ -88,7 +88,7 @@
 
 	.revoke-license-dialog__warning {
 		font-weight: 500;
-		color: var(--studio-red-60);
+		color: var(--color-error-60);
 
 		.gridicon {
 			position: relative;
