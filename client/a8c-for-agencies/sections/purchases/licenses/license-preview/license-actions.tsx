@@ -2,12 +2,12 @@ import { Button, Gridicon } from '@automattic/components';
 import { useState, useRef } from 'react';
 import PopoverMenu from 'calypso/components/popover-menu';
 import PopoverMenuItem from 'calypso/components/popover-menu/item';
-import RevokeLicenseDialog from 'calypso/jetpack-cloud/sections/partner-portal/revoke-license-dialog';
 import {
 	LicenseAction,
 	LicenseRole,
 	LicenseType,
 } from 'calypso/jetpack-cloud/sections/partner-portal/types';
+import RevokeLicenseDialog from '../revoke-license-dialog';
 import useLicenseActions from './use-license-actions';
 
 interface Props {

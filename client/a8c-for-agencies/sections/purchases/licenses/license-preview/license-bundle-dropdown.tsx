@@ -4,10 +4,10 @@ import { useTranslate } from 'i18n-calypso';
 import { useCallback, useRef, useState } from 'react';
 import PopoverMenu from 'calypso/components/popover-menu';
 import PopoverMenuItem from 'calypso/components/popover-menu/item';
-import RevokeLicenseDialog from 'calypso/jetpack-cloud/sections/partner-portal/revoke-license-dialog';
 import { LicenseRole } from 'calypso/jetpack-cloud/sections/partner-portal/types';
 import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import RevokeLicenseDialog from '../revoke-license-dialog';
 
 type Props = {
 	licenseKey: string;
