@@ -185,24 +185,6 @@ export default function () {
 
 	registerMultiPage( {
 		paths: [
-			paths.getTitanSetUpThankYouPath(
-				':site',
-				':domain',
-				null,
-				paths.emailManagementAllSitesPrefix
-			),
-			paths.getTitanSetUpThankYouPath( ':site', ':domain' ),
-		],
-		handlers: [
-			...commonHandlers,
-			controller.emailManagementTitanSetUpThankYou,
-			makeLayout,
-			clientRender,
-		],
-	} );
-
-	registerMultiPage( {
-		paths: [
 			paths.getForwardingPath( ':site', ':domain', paths.emailManagementAllSitesPrefix ),
 			paths.getForwardingPath( ':site', ':domain' ),
 		],
