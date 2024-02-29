@@ -56,6 +56,7 @@ export default function LicenseActions( {
 				<Gridicon icon="ellipsis" size={ 18 } />
 			</Button>
 			<PopoverMenu
+				className="license-actions__menu"
 				context={ buttonActionRef.current }
 				isVisible={ isOpen }
 				onClose={ () => setIsOpen( false ) }
