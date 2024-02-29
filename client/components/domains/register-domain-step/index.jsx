@@ -28,7 +28,6 @@ import { Component } from 'react';
 import { connect } from 'react-redux';
 import { v4 as uuid } from 'uuid';
 import Illustration from 'calypso/assets/images/domains/domain.svg';
-import QueryContactDetailsCache from 'calypso/components/data/query-contact-details-cache';
 import DomainSearchResults from 'calypso/components/domains/domain-search-results';
 import ExampleDomainSuggestions from 'calypso/components/domains/example-domain-suggestions';
 import FreeDomainExplainer from 'calypso/components/domains/free-domain-explainer';
@@ -522,7 +521,6 @@ class RegisterDomainStep extends Component {
 					{ this.renderFilterContent() }
 					{ this.renderDomainExplanationImage() }
 					{ this.renderSideContent() }
-					<QueryContactDetailsCache />
 				</div>
 				{ showAlreadyOwnADomain && (
 					<AlreadyOwnADomain
