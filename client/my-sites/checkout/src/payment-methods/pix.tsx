@@ -10,7 +10,7 @@ import {
 } from 'calypso/components/domains/contact-details-form-fields/custom-form-fieldsets/utils';
 import { StateSelect } from 'calypso/my-sites/domains/components/form';
 import useCartKey from '../../use-cart-key';
-import { useCachedContactDetails } from '../hooks/use-cached-domain-contact-details';
+import { useCachedContactDetails } from '../hooks/use-cached-contact-details';
 import type { PaymentMethod, ProcessPayment } from '@automattic/composite-checkout';
 
 // We currently only show Pix for Brazil so we hard-code the country to avoid

@@ -14,7 +14,7 @@ import { useSelect } from '@wordpress/data';
 import { useMemo, useState } from 'react';
 import { Provider as ReduxProvider } from 'react-redux';
 import { useExperiment } from 'calypso/lib/explat';
-import useCachedDomainContactDetails from 'calypso/my-sites/checkout/src/hooks/use-cached-domain-contact-details';
+import { usePrefillCheckoutContactForm } from 'calypso/my-sites/checkout/src/hooks/use-prefill-checkout-contact-form';
 import { CHECKOUT_STORE } from 'calypso/my-sites/checkout/src/lib/wpcom-store';
 import {
 	countryList,
@@ -78,7 +78,7 @@ function MyTestContent( { countries }: { countries: CountryListItem[] } ) {
 	const { responseCart, reloadFromServer, updateLocation } = useShoppingCart(
 		initialCart.cart_key
 	);
-	useCachedDomainContactDetails( {
+	usePrefillCheckoutContactForm( {
 		setShouldShowContactDetailsValidationErrors: () => null,
 		overrideCountryList: countries,
 	} );
