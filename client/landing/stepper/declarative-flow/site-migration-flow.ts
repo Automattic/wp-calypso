@@ -19,7 +19,7 @@ const siteMigration: Flow = {
 
 	useSteps() {
 		return [
-			STEPS.SITE_MIGRATION_CAPTURE,
+			STEPS.SITE_MIGRATION_IDENTIFY,
 			STEPS.SITE_MIGRATION_IMPORT_OR_MIGRATE,
 			STEPS.BUNDLE_TRANSFER,
 			STEPS.PROCESSING,
@@ -146,7 +146,7 @@ const siteMigration: Flow = {
 			const siteId = getSiteIdBySlug( siteSlug );
 
 			switch ( currentStep ) {
-				case STEPS.SITE_MIGRATION_CAPTURE.slug: {
+				case STEPS.SITE_MIGRATION_IDENTIFY.slug: {
 					const { from, platform } = providedDependencies as { from: string; platform: string };
 
 					if ( platform === 'wordpress' ) {

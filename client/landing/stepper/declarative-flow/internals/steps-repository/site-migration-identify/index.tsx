@@ -60,7 +60,7 @@ const SiteMigrationIdentify: Step = function ( { navigation } ) {
 		<>
 			<DocumentHead title="Site migration instructions" />
 			<StepContainer
-				stepName="site-migration-analyze"
+				stepName="site-migration-identify"
 				flowName="site-migration"
 				className="import__onboarding-page"
 				hideSkip={ true }

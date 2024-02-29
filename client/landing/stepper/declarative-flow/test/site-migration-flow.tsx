@@ -22,7 +22,7 @@ describe( 'Site Migration Flow', () => {
 		it( 'redirects the user to the migrate or import page when the platform is wordpress', async () => {
 			const { runUseStepNavigationSubmit } = renderFlow( siteMigrationFlow );
 			runUseStepNavigationSubmit( {
-				currentStep: STEPS.SITE_MIGRATION_CAPTURE.slug,
+				currentStep: STEPS.SITE_MIGRATION_IDENTIFY.slug,
 				dependencies: {
 					platform: 'wordpress',
 					from: 'https://site-to-be-migrated.com',
@@ -38,7 +38,7 @@ describe( 'Site Migration Flow', () => {
 		it( 'redirects the user to the import content flow when was not possible to indentify the platform', () => {
 			const { runUseStepNavigationSubmit } = renderFlow( siteMigrationFlow );
 			runUseStepNavigationSubmit( {
-				currentStep: STEPS.SITE_MIGRATION_CAPTURE.slug,
+				currentStep: STEPS.SITE_MIGRATION_IDENTIFY.slug,
 				dependencies: {
 					platform: 'unknown',
 					from: 'https://example-to-be-migrated.com',
