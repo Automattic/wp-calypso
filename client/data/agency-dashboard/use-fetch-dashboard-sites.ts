@@ -31,7 +31,7 @@ const useFetchDashboardSites = (
 	currentPage: number,
 	filter: AgencyDashboardFilter,
 	sort: DashboardSortInterface,
-	per_page: number
+	per_page?: number
 ) => {
 	return useQuery( {
 		queryKey: [
