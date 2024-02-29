@@ -103,7 +103,7 @@ const SharingServicesGroup = ( {
 						status="is-warning"
 						showDismiss={ false }
 						text={ translate(
-							'You have to enable Jetpack Social to be able to connect your social media accounts and share your posts automatically.'
+							'Please enable Jetpack Social to connect your social media accounts and share your posts automatically.'
 						) }
 					>
 						<NoticeAction onClick={ activatePublicize }>{ translate( 'Enable' ) }</NoticeAction>
