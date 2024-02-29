@@ -1,32 +1,53 @@
-import { useEffect } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
-import ScanPage from 'calypso/my-sites/scan/main';
-import { setSelectedSiteId } from 'calypso/state/ui/actions';
-import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import {
+	showJetpackIsDisconnected,
+	showNotAuthorizedForNonAdmins,
+	showUpsellIfNoScan,
+	showUnavailableForVaultPressSites,
+	scan,
+} from 'calypso/my-sites/scan/controller';
 import SitePreviewPaneContent from '../site-preview-pane/site-preview-pane-content';
 import SitePreviewPaneFooter from '../site-preview-pane/site-preview-pane-footer';
-import { Site } from '../types';
 
 import 'calypso/my-sites/scan/style.scss';
 
 type Props = {
-	site: Site;
+	sideId: number;
 };
+type ContextHandler = ( context: object, next: () => void ) => void;
 
-export function JetpackScanPreview( { site }: Props ) {
-	const dispatch = useDispatch();
-	const siteId = useSelector( getSelectedSiteId );
-
-	useEffect( () => {
-		if ( site ) {
-			dispatch( setSelectedSiteId( site.blog_id ) );
+// Hack: to simulate the contexts chain
+function processContextsChain( contextsChain: ContextHandler[], context: object ) {
+	const next = ( index: number ) => {
+		if ( index < contextsChain.length ) {
+			contextsChain[ index ]( context, () => next( index + 1 ) );
 		}
-	}, [ site ] );
+	};
+	next( 0 );
+}
+
+export function JetpackScanPreview( { sideId }: Props ) {
+	const contextsChain: ContextHandler[] = [
+		showNotAuthorizedForNonAdmins,
+		showJetpackIsDisconnected,
+		showUnavailableForVaultPressSites,
+		showUpsellIfNoScan,
+		//wrapInSiteOffsetProvider,
+		scan,
+	];
+
+	const context = {
+		primary: null,
+		params: {
+			site: sideId,
+		},
+	};
+
+	processContextsChain( contextsChain, context );
 
 	return (
 		<>
 			<SitePreviewPaneContent>
-				{ siteId ? <ScanPage /> : <div>Loading Scan page...</div> }
+				{ sideId ? context.primary : <div>Loading Scan page...</div> }
 			</SitePreviewPaneContent>
 			<SitePreviewPaneFooter />
 		</>
