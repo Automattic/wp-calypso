@@ -127,7 +127,7 @@ export default function SitesDashboardV2() {
 			} ) || [];
 
 		updateDashboardURLQueryArgs( { filter: filtersSelected || [] } );
-	}, [ isLoading, isError, sitesViewState.filters ] );
+	}, [ isLoading, isError, sitesViewState.filters ] ); // filtersMap omitted as dependency due to rendering loop and continuous console errors, even if wrapped in useMemo.
 
 	// Search query
 	useEffect( () => {
@@ -149,7 +149,7 @@ export default function SitesDashboardV2() {
 				search: '',
 			} );
 		}
-	}, [ path ] );
+	}, [ path ] ); // sitesViewState omitted as dependency due to rendering loop and continuous console errors.
 
 	useEffect( () => {
 		if ( jetpackSiteDisconnected ) {
