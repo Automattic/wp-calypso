@@ -52,7 +52,7 @@ export const ScheduleForm = ( props: Props ) => {
 	const [ day, setDay ] = useState< string >( '1' );
 	const [ hour, setHour ] = useState< string >( '6' );
 	const [ period, setPeriod ] = useState< string >( '1m' );
-	const [ timestamp, setTimestamp ] = useState( prepareTimestamp( frequency, day, hour, period ) );
+	const timestamp = prepareTimestamp( frequency, day, hour, period );
 	const [ pluginSearchTerm, setPluginSearchTerm ] = useState( '' );
 	const [ validationErrors, setValidationErrors ] = useState< Record< string, string > >( {
 		name: validateName( name ),
@@ -133,12 +133,6 @@ export const ScheduleForm = ( props: Props ) => {
 				timestamp: validateTimeSlot( { frequency, timestamp } ),
 			} ),
 		[ timestamp ]
-	);
-
-	// Prepare timestamp on frequency, day, hour, period change
-	useEffect(
-		() => setTimestamp( prepareTimestamp( frequency, day, hour, period ) ),
-		[ frequency, day, hour, period ]
 	);
 
 	return (
