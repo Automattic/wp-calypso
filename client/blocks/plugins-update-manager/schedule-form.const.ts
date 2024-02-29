@@ -1,5 +1,3 @@
-export const MAX_SELECTABLE_PLUGINS = 10;
-
 export const DAILY_OPTION = {
 	label: 'Daily',
 	value: 'daily',
