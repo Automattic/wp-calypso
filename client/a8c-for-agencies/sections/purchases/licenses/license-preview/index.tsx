@@ -4,10 +4,9 @@ import { Badge, Button, Gridicon } from '@automattic/components';
 import { getQueryArg, removeQueryArgs } from '@wordpress/url';
 import classnames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
-import { useCallback, useEffect, useContext } from 'react';
+import { useCallback, useEffect, useState, useContext } from 'react';
 import FormattedDate from 'calypso/components/formatted-date';
 import getLicenseState from 'calypso/jetpack-cloud/sections/partner-portal/lib/get-license-state';
-import LicenseListContext from 'calypso/jetpack-cloud/sections/partner-portal/license-list-context';
 import LicenseListItem from 'calypso/jetpack-cloud/sections/partner-portal/license-list-item';
 import {
 	LicenseState,
@@ -16,8 +15,12 @@ import {
 } from 'calypso/jetpack-cloud/sections/partner-portal/types';
 import { addQueryArgs } from 'calypso/lib/url';
 import { useDispatch, useSelector } from 'calypso/state';
-import { errorNotice } from 'calypso/state/notices/actions';
-import { doesPartnerRequireAPaymentMethod } from 'calypso/state/partner-portal/partner/selectors';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import { infoNotice, errorNotice } from 'calypso/state/notices/actions';
+import { getSite } from 'calypso/state/sites/selectors';
+import LicenseDetails from '../license-details';
+import BundleDetails from '../license-details/bundle-details';
+import LicensesOverviewContext from '../licenses-overview/context';
 
 import './style.scss';
 
@@ -38,8 +41,10 @@ interface Props {
 
 export default function LicensePreview( {
 	licenseKey,
+	blogId,
 	product,
 	siteUrl,
+	hasDownloads,
 	issuedAt,
 	attachedAt,
 	revokedAt,
@@ -51,22 +56,36 @@ export default function LicensePreview( {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 
-	const { filter } = useContext( LicenseListContext );
+	const site = useSelector( ( state ) => getSite( state, blogId as number ) );
+
+	const { filter } = useContext( LicensesOverviewContext );
 
 	const isHighlighted = getQueryArg( window.location.href, 'highlight' ) === licenseKey;
 
-	const paymentMethodRequired = useSelector( doesPartnerRequireAPaymentMethod );
+	const [ isOpen, setOpen ] = useState( isHighlighted );
+
+	const open = useCallback( () => {
+		setOpen( ! isOpen );
+		dispatch( recordTracksEvent( 'calypso_a4a_license_list_preview_toggle' ) );
+	}, [ dispatch, isOpen ] );
+
+	const onCopyLicense = useCallback( () => {
+		dispatch( infoNotice( translate( 'License copied!' ), { duration: 2000 } ) );
+		dispatch( recordTracksEvent( 'calypso_a4a_license_list_copy_license_click' ) );
+	}, [ dispatch, translate ] );
+
+	const paymentMethodRequired = false; // FIXME: Fix this with actual data
 	const licenseState = getLicenseState( attachedAt, revokedAt );
 	const domain = siteUrl ? getUrlParts( siteUrl ).hostname || siteUrl : '';
 
 	const assign = useCallback( () => {
-		const redirectUrl = addQueryArgs( { key: licenseKey }, '/partner-portal/assign-license' );
+		const redirectUrl = addQueryArgs( { key: licenseKey }, '/marketplace/assign-license' );
 		if ( paymentMethodRequired ) {
 			const noticeLinkHref = addQueryArgs(
 				{
 					return: redirectUrl,
 				},
-				'/partner-portal/payment-methods/add'
+				'/purchases/payment-methods/add'
 			);
 			const errorMessage = translate(
 				'A primary payment method is required.{{br/}} ' +
@@ -92,9 +111,11 @@ export default function LicensePreview( {
 				removeQueryArgs( window.location.pathname + window.location.search, 'highlight' )
 			);
 		}
-	}, [] );
+	}, [ isHighlighted ] );
 
 	const isParentLicense = quantity && parentLicenseId;
+
+	const isSiteAtomic = site?.is_wpcom_atomic;
 
 	const bundleCountContent = quantity && (
 		<Badge className="license-preview__license-count" type="info">
@@ -111,6 +132,7 @@ export default function LicensePreview( {
 		<div
 			className={ classnames( {
 				'license-preview': true,
+				'license-preview--is-open': isOpen && ! isChildLicense,
 			} ) }
 		>
 			<LicenseListItem
@@ -205,6 +227,86 @@ export default function LicensePreview( {
 								<Badge type="success">{ translate( 'Standard license' ) }</Badge>
 						  ) }
 				</div>
+
+				<div>
+					{ isParentLicense && (
+						<>
+							{
+								// TODO: Add bundle actions
+							 }
+						</>
+					) }
+					{ isSiteAtomic ? (
+						<>
+							{
+								// TODO: Add actions for atomic sites
+							 }
+						</>
+					) : (
+						<Button onClick={ open } className="license-preview__toggle" borderless>
+							<Gridicon icon={ isOpen ? 'chevron-up' : 'chevron-down' } />
+						</Button>
+					) }
+				</div>
+			</LicenseListItem>
+
+			{ isOpen &&
+				( isParentLicense ? (
+					<BundleDetails parentLicenseId={ parentLicenseId } />
+				) : (
+					<LicenseDetails
+						licenseKey={ licenseKey }
+						product={ product }
+						siteUrl={ siteUrl }
+						blogId={ blogId }
+						hasDownloads={ hasDownloads }
+						issuedAt={ issuedAt }
+						attachedAt={ attachedAt }
+						revokedAt={ revokedAt }
+						onCopyLicense={ onCopyLicense }
+						licenseType={ licenseType }
+						isChildLicense={ isChildLicense }
+					/>
+				) ) }
+		</div>
+	);
+}
+
+export function LicensePreviewPlaceholder() {
+	const translate = useTranslate();
+
+	return (
+		<div className="license-preview license-preview--placeholder">
+			<LicenseListItem className="license-preview__card">
+				<div>
+					<h3 className="license-preview__domain">{ translate( 'Loading' ) }</h3>
+
+					<div className="license-preview__product" />
+				</div>
+
+				<div>
+					<div className="license-preview__label">{ translate( 'Issued on:' ) }</div>
+
+					<div />
+				</div>
+
+				<div>
+					<div className="license-preview__label">{ translate( 'Assigned on:' ) }</div>
+
+					<div />
+				</div>
+
+				<div>
+					<div className="license-preview__label">{ translate( 'Revoked on:' ) }</div>
+
+					<div />
+				</div>
+
+				<div>
+					<div className="license-preview__copy-license-key" />
+				</div>
+
+				<div />
 			</LicenseListItem>
 		</div>
 	);
