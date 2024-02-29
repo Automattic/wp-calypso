@@ -67,6 +67,16 @@ interface CustomWindow {
 	};
 }
 
+const waitForElementAndClick = ( selector: string, attempt = 1 ) => {
+	const element = document.querySelector< HTMLElement >( selector );
+	if ( element ) {
+		element.click();
+	} else if ( attempt <= 5 ) {
+		// Try again in 250ms, but no more than 5 times.
+		setTimeout( () => waitForElementAndClick( selector, attempt + 1 ), 250 );
+	}
+};
+
 const useSingleSiteCommands = ( { navigate, currentRoute }: useCommandsParams ): Command[] => {
 	const { __, _x } = useI18n();
 	const commandNavigation = useCommandNavigation( { navigate, currentRoute } );
@@ -116,7 +126,7 @@ const useSingleSiteCommands = ( { navigate, currentRoute }: useCommandsParams ):
 			].join( ' ' ),
 			callback: ( { close }: CommandCallBackParams ) => {
 				close();
-				document?.getElementById( 'wp-admin-bar-help-center' )?.click();
+				waitForElementAndClick( '#wp-admin-bar-help-center' );
 			},
 			icon: helpIcon,
 		},
