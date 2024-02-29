@@ -214,7 +214,7 @@ button {
 	max-height: 24px;
 	&:hover,
 	&:focus {
-		background: var(--color-sidebar-menu-hover-background);
+		background: var(--color-sidebar-text-alternative);
 		color: var(--color-text);
 		fill: var(--color-text);
 	}
@@ -241,7 +241,7 @@ button {
 
 	.popover__menu-item:hover,
 	.popover__menu-item:focus {
-		background: var(--color-sidebar-menu-hover-background);
+		background: var(--color-sidebar-text-alternative);
 		color: var(--color-text);
 		fill: var(--color-text);
 

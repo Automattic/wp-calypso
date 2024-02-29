@@ -21,6 +21,8 @@ import { getSite } from 'calypso/state/sites/selectors';
 import LicenseDetails from '../license-details';
 import BundleDetails from '../license-details/bundle-details';
 import LicensesOverviewContext from '../licenses-overview/context';
+import LicenseActions from './license-actions';
+import LicenseBundleDropDown from './license-bundle-dropdown';
 
 import './style.scss';
 
@@ -230,18 +232,22 @@ export default function LicensePreview( {
 
 				<div>
 					{ isParentLicense && (
-						<>
-							{
-								// TODO: Add bundle actions
-							 }
-						</>
+						<LicenseBundleDropDown
+							product={ product }
+							licenseKey={ licenseKey }
+							bundleSize={ quantity }
+						/>
 					) }
 					{ isSiteAtomic ? (
-						<>
-							{
-								// TODO: Add actions for atomic sites
-							 }
-						</>
+						<LicenseActions
+							siteUrl={ siteUrl }
+							licenseKey={ licenseKey }
+							product={ product }
+							attachedAt={ attachedAt }
+							revokedAt={ revokedAt }
+							licenseType={ licenseType }
+							isChildLicense={ isChildLicense }
+						/>
 					) : (
 						<Button onClick={ open } className="license-preview__toggle" borderless>
 							<Gridicon icon={ isOpen ? 'chevron-up' : 'chevron-down' } />
