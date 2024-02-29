@@ -48,6 +48,7 @@ import {
 	domainManagementList,
 	domainManagementTransferInPrecheck,
 } from 'calypso/my-sites/domains/paths';
+import { GoogleWorkspaceSetUpThankYou } from 'calypso/my-sites/email/google-workspace-set-up-thank-you';
 import { getEmailManagementPath } from 'calypso/my-sites/email/paths';
 import TitanSetUpThankYou from 'calypso/my-sites/email/titan-set-up-thank-you';
 import { fetchAtomicTransfer } from 'calypso/state/atomic-transfer/actions';
@@ -87,7 +88,6 @@ import DomainThankYou from './domains/domain-thank-you';
 import EcommercePlanDetails from './ecommerce-plan-details';
 import FailedPurchaseDetails from './failed-purchase-details';
 import CheckoutThankYouFeaturesHeader from './features-header';
-import GoogleAppsDetails from './google-apps-details';
 import CheckoutThankYouHeader from './header';
 import JetpackPlanDetails from './jetpack-plan-details';
 import PersonalPlanDetails from './personal-plan-details';
@@ -576,6 +576,9 @@ export class CheckoutThankYou extends Component<
 		if ( isRefactoredForThankYouV2( this.props ) ) {
 			let pageContent = null;
 			const domainPurchase = getDomainPurchase( purchases );
+			const gSuiteOrExtraLicenseOrGoogleWorkspace = purchases.find(
+				isGSuiteOrExtraLicenseOrGoogleWorkspace
+			);
 
 			if ( wasBulkDomainTransfer ) {
 				pageContent = (
@@ -607,6 +610,10 @@ export class CheckoutThankYou extends Component<
 						domainName={ domainPurchase.meta }
 						isDomainOnlySite={ this.props.domainOnlySiteFlow }
 					/>
+				);
+			} else if ( gSuiteOrExtraLicenseOrGoogleWorkspace ) {
+				pageContent = (
+					<GoogleWorkspaceSetUpThankYou purchase={ gSuiteOrExtraLicenseOrGoogleWorkspace } />
 				);
 			}
 
@@ -1096,9 +1103,6 @@ function PurchaseDetailsWrapper(
 				selectedSite={ props.selectedSite }
 			/>
 		);
-	}
-	if ( purchases.some( isGSuiteOrExtraLicenseOrGoogleWorkspace ) ) {
-		return <GoogleAppsDetails purchases={ purchases } />;
 	}
 	if ( purchases.some( isDomainMapping ) ) {
 		return <DomainMappingDetails domain={ domain } isRootDomainWithUs={ isRootDomainWithUs } />;

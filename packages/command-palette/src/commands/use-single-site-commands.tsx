@@ -1,4 +1,4 @@
-import { Gridicon, JetpackLogo, WooCommerceWooLogo } from '@automattic/components';
+import { JetpackLogo, WooCommerceWooLogo } from '@automattic/components';
 import { SiteCapabilities } from '@automattic/data-stores';
 import {
 	alignJustify as acitvityLogIcon,
@@ -26,9 +26,10 @@ import {
 	settings as settingsIcon,
 	tool as toolIcon,
 	wordpress as wordpressIcon,
+	comment as feedbackIcon,
 } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
-import { Command } from '../use-command-palette';
+import { Command, CommandCallBackParams } from '../use-command-palette';
 import { isCustomDomain } from '../utils';
 import { useCommandsParams } from './types';
 import useCommandNavigation from './use-command-navigation';
@@ -41,8 +42,10 @@ enum SiteType {
 interface CapabilityCommand extends Command {
 	capability?: string;
 	siteType?: SiteType;
+	publicOnly?: boolean;
 	isCustomDomain?: boolean;
 	filterP2?: boolean;
+	filterStaging?: boolean;
 }
 
 interface CustomWindow {
@@ -50,14 +53,30 @@ interface CustomWindow {
 		siteId: string;
 		isAdmin: boolean;
 		isAtomic: boolean;
+		isStaging: boolean;
 		isSelfHosted: boolean;
 		isSimple: boolean;
+		isPrivate: boolean;
+		isComingSoon: boolean;
 		isP2: boolean;
 		capabilities: {
 			[ key: string ]: string;
 		};
+		isWpcomStore: boolean;
+		shouldUseWpAdmin: boolean;
+		siteHostname: string;
 	};
 }
+
+const waitForElementAndClick = ( selector: string, attempt = 1 ) => {
+	const element = document.querySelector< HTMLElement >( selector );
+	if ( element ) {
+		element.click();
+	} else if ( attempt <= 5 ) {
+		// Try again in 250ms, but no more than 5 times.
+		setTimeout( () => waitForElementAndClick( selector, attempt + 1 ), 250 );
+	}
+};
 
 const useSingleSiteCommands = ( { navigate, currentRoute }: useCommandsParams ): Command[] => {
 	const { __, _x } = useI18n();
@@ -65,10 +84,16 @@ const useSingleSiteCommands = ( { navigate, currentRoute }: useCommandsParams ):
 	const customWindow = window as CustomWindow | undefined;
 	const {
 		isAtomic = false,
+		isStaging = false,
 		isSelfHosted = false,
 		isSimple = false,
+		isPrivate = false,
+		isComingSoon = false,
 		capabilities = {},
 		isP2 = false,
+		isWpcomStore = false,
+		shouldUseWpAdmin = false,
+		siteHostname,
 	} = customWindow?.commandPaletteConfig || {};
 
 	let siteType: SiteType | null = null;
@@ -100,8 +125,10 @@ const useSingleSiteCommands = ( { navigate, currentRoute }: useCommandsParams ):
 				_x( 'contact support', 'Keyword for the Get help command', __i18n_text_domain__ ),
 				_x( 'help center', 'Keyword for the Get help command', __i18n_text_domain__ ),
 			].join( ' ' ),
-			// eslint-disable-next-line wpcalypso/i18n-unlocalized-url
-			callback: commandNavigation( 'https://wordpress.com/support' ),
+			callback: ( { close }: CommandCallBackParams ) => {
+				close();
+				waitForElementAndClick( '#wp-admin-bar-help-center' );
+			},
 			icon: helpIcon,
 		},
 		{
@@ -118,6 +145,7 @@ const useSingleSiteCommands = ( { navigate, currentRoute }: useCommandsParams ):
 			callback: commandNavigation( '/hosting-config/:site#edge' ),
 			capability: SiteCapabilities.MANAGE_OPTIONS,
 			siteType: SiteType.ATOMIC,
+			publicOnly: true,
 			icon: cacheIcon,
 		},
 		{
@@ -126,6 +154,7 @@ const useSingleSiteCommands = ( { navigate, currentRoute }: useCommandsParams ):
 			callback: commandNavigation( '/hosting-config/:site#edge' ),
 			capability: SiteCapabilities.MANAGE_OPTIONS,
 			siteType: SiteType.ATOMIC,
+			publicOnly: true,
 			icon: cacheIcon,
 		},
 		{
@@ -298,7 +327,16 @@ const useSingleSiteCommands = ( { navigate, currentRoute }: useCommandsParams ):
 			name: 'openReader',
 			label: __( 'Open reader', __i18n_text_domain__ ),
 			callback: commandNavigation( `/read` ),
-			icon: <Gridicon icon="reader" />,
+			icon: (
+				<svg height="24" viewBox="4 4 24 24" width="24" xmlns="http://www.w3.org/2000/svg">
+					<clipPath id="a">
+						<path d="m4 11.2002h24v10.2857h-24z"></path>
+					</clipPath>
+					<g clipPath="url(#a)">
+						<path d="m4.94437 16.8443-.94437-.0656v-1.4979l1.05696-.0515c.73758-2.4238 2.27248-3.924 4.78852-4.0248 2.48152-.0961 4.13592 1.2541 5.05502 3.6099.3317-.1946.7077-.297 1.0903-.297s.7586.1024 1.0903.297c.9604-2.3863 2.6355-3.7505 5.1722-3.6005 2.4632.1406 3.9591 1.6408 4.6828 4.0177l1.057.0492v1.444c-.0528.0304-.0873.0726-.1149.0679-.6893-.1054-.9007.211-1.0615.8861-.586 2.4589-2.7872 3.9732-5.3538 3.7927-2.2977-.1618-4.2302-2.1097-4.5381-4.5475-.0359-.2323-.1505-.4444-.3239-.5995-.1734-.155-.3945-.2431-.625-.249-.2239.01-.4376.0984-.6051.2505-.1674.152-.2783.3582-.314.5839-.3332 2.5785-2.3506 4.4983-4.8115 4.5756-2.60796.0821-4.67824-1.608-5.20213-4.245-.01149-.1313-.05974-.2509-.0988-.3962zm5.05505 3.0942c.93708.0075 1.83898-.3643 2.50778-1.034.6689-.6696 1.0503-1.5824 1.0606-2.5384.0049-.9553-.3621-1.8736-1.0204-2.5531s-1.5541-1.0646-2.4905-1.0708c-.93734-.0075-1.83926.3647-2.50784 1.0349s-1.04921 1.5836-1.05831 2.5398c-.00302.4737.08568.9433.261 1.382.17532.4386.43381.8376.76065 1.1741s.7156.6038 1.14397.7866c.42836.1829.88789.2776 1.35223.2789zm11.96208 0c.9375 0 1.8366-.3798 2.4997-1.0558.6631-.6761 1.0359-1.593 1.0365-2.5494-.0048-.956-.381-1.871-1.046-2.5446-.665-.6735-1.5646-1.0507-2.5017-1.0488-.9374 0-1.8366.3797-2.4997 1.0557-.6631.6761-1.0359 1.5931-1.0365 2.5494.0021.4744.0958.9437.2757 1.3811s.4424.8344.7727 1.1683.7219.5982 1.1523.7777c.4304.1796.8912.2709 1.3562.2687z"></path>
+					</g>
+				</svg>
+			),
 		},
 		{
 			name: 'openJetpackSettings',
@@ -306,7 +344,7 @@ const useSingleSiteCommands = ( { navigate, currentRoute }: useCommandsParams ):
 			callback: commandNavigation( `/wp-admin/admin.php?page=jetpack#/settings` ),
 			capability: SiteCapabilities.MANAGE_OPTIONS,
 			siteType: SiteType.ATOMIC,
-			icon: <JetpackLogo className="gridicon" size={ 18 } />,
+			icon: <JetpackLogo size={ 18 } />,
 		},
 		{
 			name: 'addJetpack',
@@ -324,7 +362,7 @@ const useSingleSiteCommands = ( { navigate, currentRoute }: useCommandsParams ):
 				),
 			].join( ' ' ),
 			callback: commandNavigation( `/jetpack/connect?cta_from=command-palette` ),
-			icon: <JetpackLogo className="gridicon" size={ 18 } />,
+			icon: <JetpackLogo size={ 18 } />,
 		},
 		{
 			name: 'manageJetpackModules',
@@ -332,7 +370,7 @@ const useSingleSiteCommands = ( { navigate, currentRoute }: useCommandsParams ):
 			callback: commandNavigation( `/wp-admin/admin.php?page=jetpack_modules` ),
 			capability: SiteCapabilities.MANAGE_OPTIONS,
 			siteType: SiteType.ATOMIC,
-			icon: <JetpackLogo className="gridicon" size={ 18 } />,
+			icon: <JetpackLogo size={ 18 } />,
 		},
 		{
 			name: 'importSite',
@@ -616,7 +654,7 @@ const useSingleSiteCommands = ( { navigate, currentRoute }: useCommandsParams ):
 				_x( 'write post', 'Keyword for the Add new post command', __i18n_text_domain__ ),
 			].join( ' ' ),
 			context: [ '/posts' ],
-			callback: commandNavigation( '/wp-admin/post-new.php' ),
+			callback: commandNavigation( shouldUseWpAdmin ? '/wp-admin/post-new.php' : '/post/:site' ),
 			capability: SiteCapabilities.EDIT_POSTS,
 			icon: plusIcon,
 		},
@@ -627,7 +665,7 @@ const useSingleSiteCommands = ( { navigate, currentRoute }: useCommandsParams ):
 				_x( 'manage posts', 'Keyword for the Manage posts command', __i18n_text_domain__ ),
 				_x( 'edit posts', 'Keyword for the Manage posts command', __i18n_text_domain__ ),
 			].join( ' ' ),
-			callback: commandNavigation( '/wp-admin/edit.php' ),
+			callback: commandNavigation( shouldUseWpAdmin ? '/wp-admin/edit.php' : '/posts/:site' ),
 			capability: SiteCapabilities.EDIT_POSTS,
 			icon: editIcon,
 		},
@@ -642,14 +680,14 @@ const useSingleSiteCommands = ( { navigate, currentRoute }: useCommandsParams ):
 				),
 				_x( 'manage uploads', 'Keyword for the View media uploads command', __i18n_text_domain__ ),
 			].join( ' ' ),
-			callback: commandNavigation( '/wp-admin/upload.php' ),
+			callback: commandNavigation( shouldUseWpAdmin ? '/wp-admin/upload.php' : '/media/:site' ),
 			capability: SiteCapabilities.UPLOAD_FILES,
 			icon: mediaIcon,
 		},
 		{
 			name: 'uploadMedia',
 			label: __( 'Upload media', __i18n_text_domain__ ),
-			callback: commandNavigation( '/wp-admin/media-new.php' ),
+			callback: commandNavigation( shouldUseWpAdmin ? '/wp-admin/media-new.php' : '/media/:site' ),
 			capability: SiteCapabilities.UPLOAD_FILES,
 			icon: mediaIcon,
 		},
@@ -661,7 +699,9 @@ const useSingleSiteCommands = ( { navigate, currentRoute }: useCommandsParams ):
 				_x( 'edit pages', 'Keyword for the Manage pages command', __i18n_text_domain__ ),
 				_x( 'delete pages', 'Keyword for the Manage pages command', __i18n_text_domain__ ),
 			].join( ' ' ),
-			callback: commandNavigation( '/wp-admin/edit.php?post_type=page' ),
+			callback: commandNavigation(
+				shouldUseWpAdmin ? '/wp-admin/edit.php?post_type=page' : '/pages/:site'
+			),
 			capability: SiteCapabilities.EDIT_PAGES,
 			icon: editIcon,
 		},
@@ -674,7 +714,9 @@ const useSingleSiteCommands = ( { navigate, currentRoute }: useCommandsParams ):
 				_x( 'write page', 'Keyword for the Add new page command', __i18n_text_domain__ ),
 			].join( ' ' ),
 			context: [ '/pages' ],
-			callback: commandNavigation( '/wp-admin/post-new.php?post_type=page' ),
+			callback: commandNavigation(
+				shouldUseWpAdmin ? '/wp-admin/post-new.php?post_type=page' : '/page/:site'
+			),
 			capability: SiteCapabilities.EDIT_PAGES,
 			icon: plusIcon,
 		},
@@ -686,7 +728,9 @@ const useSingleSiteCommands = ( { navigate, currentRoute }: useCommandsParams ):
 				_x( 'edit comments', 'Keyword for the Manage comments command', __i18n_text_domain__ ),
 				_x( 'delete comments', 'Keyword for the Manage comments command', __i18n_text_domain__ ),
 			].join( ' ' ),
-			callback: commandNavigation( '/wp-admin/edit-comments.php' ),
+			callback: commandNavigation(
+				shouldUseWpAdmin ? '/wp-admin/edit-comments.php' : '/comments/:site'
+			),
 			capability: SiteCapabilities.MODERATE_COMMENTS,
 			icon: postCommentsIcon,
 		},
@@ -699,7 +743,7 @@ const useSingleSiteCommands = ( { navigate, currentRoute }: useCommandsParams ):
 				_x( 'install theme', 'Keyword for the Manage themes command', __i18n_text_domain__ ),
 				_x( 'delete theme', 'Keyword for the Manage themes command', __i18n_text_domain__ ),
 			].join( ' ' ),
-			callback: commandNavigation( '/wp-admin/themes.php' ),
+			callback: commandNavigation( shouldUseWpAdmin ? '/wp-admin/themes.php' : '/themes/:site' ),
 			capability: SiteCapabilities.EDIT_THEME_OPTIONS,
 			filterP2: true,
 			icon: brushIcon,
@@ -712,7 +756,9 @@ const useSingleSiteCommands = ( { navigate, currentRoute }: useCommandsParams ):
 				_x( 'add theme', 'Keyword for the Install theme command', __i18n_text_domain__ ),
 				_x( 'upload theme', 'Keyword for the Install theme command', __i18n_text_domain__ ),
 			].join( ' ' ),
-			callback: commandNavigation( '/wp-admin/theme-install.php' ),
+			callback: commandNavigation(
+				shouldUseWpAdmin ? '/wp-admin/theme-install.php' : '/themes/:site'
+			),
 			capability: SiteCapabilities.EDIT_THEME_OPTIONS,
 			siteType: SiteType.ATOMIC,
 			icon: brushIcon,
@@ -728,7 +774,7 @@ const useSingleSiteCommands = ( { navigate, currentRoute }: useCommandsParams ):
 				_x( 'delete plugin', 'Keyword for the Manage plugins command', __i18n_text_domain__ ),
 				_x( 'update plugin', 'Keyword for the Manage plugins command', __i18n_text_domain__ ),
 			].join( ' ' ),
-			callback: commandNavigation( '/wp-admin/plugins.php' ),
+			callback: commandNavigation( shouldUseWpAdmin ? '/wp-admin/plugins.php' : '/plugins/:site' ),
 			capability: SiteCapabilities.ACTIVATE_PLUGINS,
 			filterP2: true,
 			icon: pluginsIcon,
@@ -741,7 +787,9 @@ const useSingleSiteCommands = ( { navigate, currentRoute }: useCommandsParams ):
 				_x( 'add plugin', 'Keyword for the Install plugin command', __i18n_text_domain__ ),
 				_x( 'upload plugin', 'Keyword for the Install plugin command', __i18n_text_domain__ ),
 			].join( ' ' ),
-			callback: commandNavigation( '/wp-admin/plugin-install.php' ),
+			callback: commandNavigation(
+				shouldUseWpAdmin ? '/wp-admin/plugin-install.php' : '/plugins/:site'
+			),
 			capability: SiteCapabilities.ACTIVATE_PLUGINS,
 			icon: pluginsIcon,
 		},
@@ -757,6 +805,7 @@ const useSingleSiteCommands = ( { navigate, currentRoute }: useCommandsParams ):
 			callback: commandNavigation( '/plans/:site' ),
 			capability: SiteCapabilities.MANAGE_OPTIONS,
 			filterP2: true,
+			filterStaging: true,
 			icon: creditCardIcon,
 		},
 		{
@@ -770,6 +819,7 @@ const useSingleSiteCommands = ( { navigate, currentRoute }: useCommandsParams ):
 			callback: commandNavigation( '/plans/my-plan/:site' ),
 			capability: SiteCapabilities.MANAGE_OPTIONS,
 			filterP2: true,
+			filterStaging: true,
 			icon: creditCardIcon,
 		},
 		{
@@ -783,7 +833,9 @@ const useSingleSiteCommands = ( { navigate, currentRoute }: useCommandsParams ):
 				_x( 'remove user', 'Keyword for the Manage users command', __i18n_text_domain__ ),
 				_x( 'update user', 'Keyword for the Manage users command', __i18n_text_domain__ ),
 			].join( ' ' ),
-			callback: commandNavigation( '/wp-admin/users.php' ),
+			callback: commandNavigation(
+				shouldUseWpAdmin ? '/wp-admin/users.php' : '/people/team/:site'
+			),
 			capability: SiteCapabilities.LIST_USERS,
 			icon: peopleIcon,
 		},
@@ -795,7 +847,9 @@ const useSingleSiteCommands = ( { navigate, currentRoute }: useCommandsParams ):
 				_x( 'create user', 'Keyword for the Add new user command', __i18n_text_domain__ ),
 				_x( 'invite user', 'Keyword for the Add new user command', __i18n_text_domain__ ),
 			].join( ' ' ),
-			callback: commandNavigation( '/wp-admin/user-new.php' ),
+			callback: commandNavigation(
+				shouldUseWpAdmin ? '/wp-admin/user-new.php' : '/people/new/:site'
+			),
 			capability: SiteCapabilities.LIST_USERS,
 			icon: peopleIcon,
 		},
@@ -841,18 +895,10 @@ const useSingleSiteCommands = ( { navigate, currentRoute }: useCommandsParams ):
 		{
 			name: 'openWooCommerceSettings',
 			label: __( 'Open WooCommerce settings', __i18n_text_domain__ ),
-			callback: commandNavigation( '/wp-admin/admin.php?page=wc-admin' ),
+			callback: isWpcomStore
+				? commandNavigation( '/wp-admin/admin.php?page=wc-admin' )
+				: commandNavigation( '/woocommerce-installation/:site' ),
 			capability: SiteCapabilities.MANAGE_OPTIONS,
-			siteType: SiteType.ATOMIC,
-			filterP2: true,
-			icon: <WooCommerceWooLogo className="woo-command-palette" />,
-		},
-		{
-			name: 'openWooCommerceSettings',
-			label: __( 'Open WooCommerce settings', __i18n_text_domain__ ),
-			callback: commandNavigation( '/woocommerce-installation/:site' ),
-			capability: SiteCapabilities.MANAGE_OPTIONS,
-			siteType: SiteType.SIMPLE,
 			filterP2: true,
 			icon: <WooCommerceWooLogo className="woo-command-palette" />,
 		},
@@ -860,7 +906,9 @@ const useSingleSiteCommands = ( { navigate, currentRoute }: useCommandsParams ):
 			name: 'manageSettingsGeneral',
 			label: __( 'Manage general settings', __i18n_text_domain__ ),
 			context: [ '/settings' ],
-			callback: commandNavigation( '/wp-admin/options-general.php' ),
+			callback: commandNavigation(
+				shouldUseWpAdmin ? '/wp-admin/options-general.php' : '/settings/general/:site'
+			),
 			capability: SiteCapabilities.MANAGE_OPTIONS,
 			icon: settingsIcon,
 		},
@@ -868,7 +916,9 @@ const useSingleSiteCommands = ( { navigate, currentRoute }: useCommandsParams ):
 			name: 'manageSettingsWriting',
 			label: __( 'Manage writing settings', __i18n_text_domain__ ),
 			context: [ '/settings' ],
-			callback: commandNavigation( '/wp-admin/options-general.php' ),
+			callback: commandNavigation(
+				shouldUseWpAdmin ? '/wp-admin/options-writing.php' : '/settings/writing/:site'
+			),
 			capability: SiteCapabilities.MANAGE_OPTIONS,
 			icon: settingsIcon,
 		},
@@ -876,7 +926,9 @@ const useSingleSiteCommands = ( { navigate, currentRoute }: useCommandsParams ):
 			name: 'manageSettingsReading',
 			label: __( 'Manage reading settings', __i18n_text_domain__ ),
 			context: [ '/settings' ],
-			callback: commandNavigation( '/wp-admin/options-reading.php' ),
+			callback: commandNavigation(
+				shouldUseWpAdmin ? '/wp-admin/options-reading.php' : '/settings/reading/:site'
+			),
 			capability: SiteCapabilities.MANAGE_OPTIONS,
 			icon: settingsIcon,
 		},
@@ -884,7 +936,9 @@ const useSingleSiteCommands = ( { navigate, currentRoute }: useCommandsParams ):
 			name: 'manageSettingsDiscussion',
 			label: __( 'Manage discussion settings', __i18n_text_domain__ ),
 			context: [ '/settings' ],
-			callback: commandNavigation( '/wp-admin/options-discussion.php' ),
+			callback: commandNavigation(
+				shouldUseWpAdmin ? '/wp-admin/options-discussion.php' : '/settings/discussion/:site'
+			),
 			capability: SiteCapabilities.MANAGE_OPTIONS,
 			icon: settingsIcon,
 		},
@@ -904,6 +958,22 @@ const useSingleSiteCommands = ( { navigate, currentRoute }: useCommandsParams ):
 			capability: SiteCapabilities.MANAGE_OPTIONS,
 			icon: settingsIcon,
 		},
+		{
+			name: 'sendFeedback',
+			label: __( 'Send feedback', __i18n_text_domain__ ),
+			searchLabel: _x(
+				'suggest command',
+				'Keyword for the Send feedback command',
+				__i18n_text_domain__
+			),
+			callback: ( { close }: CommandCallBackParams ) => {
+				close();
+				waitForElementAndClick( '#wp-admin-bar-help-center' );
+				waitForElementAndClick( '.help-center-contact-page__button' );
+				waitForElementAndClick( '.help-center-contact-page__box.email' );
+			},
+			icon: feedbackIcon,
+		},
 	];
 
 	return commands
@@ -916,11 +986,19 @@ const useSingleSiteCommands = ( { navigate, currentRoute }: useCommandsParams ):
 				return false;
 			}
 
-			if ( command?.isCustomDomain && ! isCustomDomain( window.location.host ) ) {
+			if ( command?.isCustomDomain && ! isCustomDomain( siteHostname ) ) {
+				return false;
+			}
+
+			if ( command?.publicOnly && ( isPrivate || isComingSoon ) ) {
 				return false;
 			}
 
 			if ( command?.filterP2 && isP2 ) {
+				return false;
+			}
+
+			if ( command?.filterStaging && isStaging ) {
 				return false;
 			}
 
