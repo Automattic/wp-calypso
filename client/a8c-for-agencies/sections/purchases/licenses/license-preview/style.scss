@@ -151,44 +151,6 @@
 	}
 }
 
-.license-actions__menu .popover__menu {
-	padding: 8px 4px;
-}
-
-a.license-actions__menu-item,
-button.license-actions__menu-item {
-	font-size: 0.875rem;
-	height: 40px;
-	box-sizing: border-box;
-	color: var(--color-neutral);
-	display: flex;
-	align-items: center;
-	min-width: 200px;
-	padding: 8px 4px;
-	margin-block: 5px;
-	border: none;
-
-	&:hover,
-	&:focus {
-		background: var(--color-sidebar-text-alternative);
-		color: var(--color-text);
-		fill: var(--color-text);
-		cursor: pointer;
-		outline: none;
-	}
-
-	svg.gridicon {
-		vertical-align: middle;
-		position: absolute;
-		inset-inline-end: 10px;
-		inset-block-start: unset;
-	}
-
-	&.is-destructive {
-		color: var(--color-scary-50);
-	}
-}
-
 .card.license-preview__card.license-preview__card--child-license {
 	padding: 16px 32px;
 	background-color: #fafafa;
@@ -206,7 +168,7 @@ button.license-actions__menu-item {
 	}
 }
 
-.license-bundle-dropdown__popover-menu {
+.license-actions__menu {
 	font-size: rem(14px);
 	font-weight: 400;
 	border-radius: 2px;
@@ -223,6 +185,12 @@ button.license-actions__menu-item {
 		display: flex;
 		justify-content: space-between;
 		align-items: center;
+		border: none;
+		outline: none;
+	}
+
+	.popover__menu-item .gridicon {
+		margin: 0;
 	}
 
 	.popover__menu-item:hover,
@@ -236,17 +204,8 @@ button.license-actions__menu-item {
 		}
 	}
 
-	.popover__menu-item .gridicon {
-		margin: 0;
-	}
-}
-
-.popover__menu-item.license-bundle-dropdown__popover-menu-item-revoke {
-	&,
-	&:hover,
-	&:focus {
-		color: var(--color-error-50);
-
+	.popover__menu-item.is-destructive {
+		color: var(--color-scary-50);
 		.gridicon {
 			fill: var(--color-error-50);
 		}

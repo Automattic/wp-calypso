@@ -54,17 +54,14 @@ export default function LicenseBundleDropDown( { licenseKey, product, bundleSize
 			</Button>
 
 			<PopoverMenu
-				className="license-bundle-dropdown__popover-menu"
+				className="license-actions__menu"
 				context={ buttonActionRef.current }
 				isVisible={ showContextMenu }
 				onClose={ onHideContextMenu }
 				position="bottom left"
 				focusOnShow={ false }
 			>
-				<PopoverMenuItem
-					onClick={ onShowRevokeDialog }
-					className="license-bundle-dropdown__popover-menu-item-revoke"
-				>
+				<PopoverMenuItem onClick={ onShowRevokeDialog } className="is-destructive">
 					{ translate( 'Revoke bundle' ) } <Icon className="gridicon" icon={ trash } size={ 24 } />
 				</PopoverMenuItem>
 			</PopoverMenu>
