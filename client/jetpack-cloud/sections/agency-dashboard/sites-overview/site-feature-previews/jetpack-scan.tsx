@@ -6,7 +6,6 @@ import {
 	scan,
 } from 'calypso/my-sites/scan/controller';
 import SitePreviewPaneContent from '../site-preview-pane/site-preview-pane-content';
-import SitePreviewPaneFooter from '../site-preview-pane/site-preview-pane-footer';
 
 import 'calypso/my-sites/scan/style.scss';
 
@@ -49,7 +48,6 @@ export function JetpackScanPreview( { sideId }: Props ) {
 			<SitePreviewPaneContent>
 				{ sideId ? context.primary : <div>Loading Scan page...</div> }
 			</SitePreviewPaneContent>
-			<SitePreviewPaneFooter />
 		</>
 	);
 }

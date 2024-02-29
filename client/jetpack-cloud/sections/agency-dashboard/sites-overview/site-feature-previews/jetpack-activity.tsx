@@ -1,6 +1,5 @@
 import ActivityLogV2 from 'calypso/my-sites/activity/activity-log-v2';
 import SitePreviewPaneContent from '../site-preview-pane/site-preview-pane-content';
-import SitePreviewPaneFooter from '../site-preview-pane/site-preview-pane-footer';
 
 import 'calypso/my-sites/activity/activity-log-v2/style.scss';
 
@@ -16,7 +15,6 @@ export function JetpackActivityPreview( { isLoading = true }: Props ) {
 					{ isLoading ? <div>Loading Activity page...</div> : <ActivityLogV2 /> }
 				</div>
 			</SitePreviewPaneContent>
-			<SitePreviewPaneFooter />
 		</>
 	);
 }

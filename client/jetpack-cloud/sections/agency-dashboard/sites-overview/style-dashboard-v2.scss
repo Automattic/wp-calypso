@@ -298,7 +298,7 @@
 	display: flex;
 	flex-wrap: nowrap;
 	gap: 16px;
-	max-height: calc(100vh - 12px);
+	max-height: calc(100vh - 32px);
 
 	.dataviews-wrapper {
 		.components-button:focus:not(:disabled) {
