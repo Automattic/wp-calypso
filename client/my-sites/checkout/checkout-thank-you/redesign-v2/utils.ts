@@ -1,4 +1,9 @@
-import { isWpComPlan, isP2Plus, isTitanMail } from '@automattic/calypso-products';
+import {
+	isGSuiteOrExtraLicenseOrGoogleWorkspace,
+	isP2Plus,
+	isTitanMail,
+	isWpComPlan,
+} from '@automattic/calypso-products';
 import { CheckoutThankYouCombinedProps, getFailedPurchases, getPurchases } from '..';
 import {
 	getDomainPurchase,
@@ -28,6 +33,10 @@ export const isRefactoredForThankYouV2 = ( props: CheckoutThankYouCombinedProps 
 	}
 
 	if ( isDomainOnly( purchases ) ) {
+		return true;
+	}
+
+	if ( purchases.some( isGSuiteOrExtraLicenseOrGoogleWorkspace ) ) {
 		return true;
 	}
 
