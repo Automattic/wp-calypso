@@ -126,7 +126,7 @@ export default function SitesDashboardV2() {
 			} ) || [];
 
 		updateDashboardURLQueryArgs( { filter: filtersSelected || [] } );
-	}, [ isLoading, isError, sitesViewState.filters ] );
+	}, [ isLoading, isError, sitesViewState.filters, filtersMap ] );
 
 	// Search query
 	useEffect( () => {
