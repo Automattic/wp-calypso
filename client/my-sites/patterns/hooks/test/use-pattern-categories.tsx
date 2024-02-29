@@ -6,7 +6,7 @@ import { renderHook, waitFor } from '@testing-library/react';
 import React from 'react';
 import wpcom from 'calypso/lib/wp';
 import { usePatternCategories } from '../use-pattern-categories';
-import type { Category } from 'calypso/landing/stepper/declarative-flow/internals/steps-repository/pattern-assembler/types';
+import type { Category } from 'calypso/my-sites/patterns/types';
 
 jest.mock( 'calypso/lib/wp', () => ( { req: { get: jest.fn() } } ) );
 

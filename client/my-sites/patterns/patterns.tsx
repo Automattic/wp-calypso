@@ -10,7 +10,7 @@ import { usePatterns } from 'calypso/my-sites/patterns/hooks/use-patterns';
 
 import './style.scss';
 
-const RENDERER_SITE_ID = '226011606'; // assemblerdemo
+const RENDERER_SITE_ID = 226011606; // assemblerdemo
 
 type Props = {
 	category: string;
@@ -20,7 +20,7 @@ type Props = {
 export default function Patterns( { category, isGridView }: Props ) {
 	const locale = useLocale();
 
-	const { data: categories } = usePatternCategories( locale, Number( RENDERER_SITE_ID ) );
+	const { data: categories } = usePatternCategories( locale, RENDERER_SITE_ID );
 	const { data: patterns } = usePatterns( locale, category, {
 		enabled: !! category,
 	} );

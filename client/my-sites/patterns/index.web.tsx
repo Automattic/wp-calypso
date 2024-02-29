@@ -7,11 +7,9 @@ import {
 } from 'calypso/controller/index.web';
 import { getPatternCategorySlugs } from 'calypso/my-sites/patterns/controller';
 import Patterns from 'calypso/my-sites/patterns/patterns';
-import type { Context as PageJSContext } from '@automattic/calypso-router';
+import type { RouterContext, RouterNext } from 'calypso/my-sites/patterns/types';
 
-type Next = ( error?: Error ) => void;
-
-function renderPatterns( context: PageJSContext, next: Next ) {
+function renderPatterns( context: RouterContext, next: RouterNext ) {
 	context.primary = (
 		<Patterns category={ context.params.category } isGridView={ !! context.query.grid } />
 	);

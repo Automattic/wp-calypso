@@ -14,7 +14,9 @@ type Props = {
 
 export default function PatternsSSR( { category, isGridView }: Props ) {
 	const locale = useLocale();
-	const { data: patterns } = usePatterns( locale, category );
+	const { data: patterns } = usePatterns( locale, category, {
+		enabled: !! category,
+	} );
 
 	return (
 		<Main isLoggedOut fullWidthLayout>

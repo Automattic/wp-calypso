@@ -8,16 +8,9 @@ import { getPatternsQueryOptions } from 'calypso/my-sites/patterns/hooks/use-pat
 import PatternsSSR from 'calypso/my-sites/patterns/patterns-ssr';
 import { serverRouter } from 'calypso/server/isomorphic-routing';
 import { getCurrentUserLocale } from 'calypso/state/current-user/selectors';
-import type { Context as PageJSContext } from '@automattic/calypso-router';
-import type { QueryClient } from '@tanstack/react-query';
-import type {
-	Category,
-	Pattern,
-} from 'calypso/landing/stepper/declarative-flow/internals/steps-repository/pattern-assembler/types';
+import type { RouterContext, RouterNext, Category, Pattern } from 'calypso/my-sites/patterns/types';
 
-type Next = ( error?: Error ) => void;
-
-function renderPatterns( context: PageJSContext, next: Next ) {
+function renderPatterns( context: RouterContext, next: RouterNext ) {
 	context.primary = (
 		<PatternsSSR category={ context.params.category } isGridView={ !! context.query.grid } />
 	);
@@ -25,12 +18,7 @@ function renderPatterns( context: PageJSContext, next: Next ) {
 	next();
 }
 
-type Context = PageJSContext & {
-	cachedMarkup?: string;
-	queryClient: QueryClient;
-};
-
-function fetchPatterns( context: Context, next: Next ) {
+function fetchPatterns( context: RouterContext, next: RouterNext ) {
 	const { cachedMarkup, queryClient, lang, params, store } = context;
 
 	if ( cachedMarkup ) {

@@ -1,6 +1,6 @@
 import { useQuery, UseQueryOptions } from '@tanstack/react-query';
 import wpcom from 'calypso/lib/wp';
-import type { Pattern } from 'calypso/landing/stepper/declarative-flow/internals/steps-repository/pattern-assembler/types';
+import type { Pattern } from 'calypso/my-sites/patterns/types';
 
 export function getPatternsQueryOptions(
 	locale: string,
