@@ -63,7 +63,7 @@ const useSpaceUpgradesPurchased = ( {
 const useActiveAddOnsDefs = ( selectedSiteId: Props[ 'selectedSiteId' ] ) => {
 	const translate = useTranslate();
 	const checkoutLink = useAddOnCheckoutLink();
-	const selectedSite = Site.useSite( { siteId: selectedSiteId } );
+	const selectedSite = Site.useSite( { siteIdOrSlug: selectedSiteId } );
 	const selectedSiteSlug = selectedSite.data?.slug;
 
 	/*
