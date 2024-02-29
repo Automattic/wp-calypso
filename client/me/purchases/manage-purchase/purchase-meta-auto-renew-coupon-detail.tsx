@@ -1,6 +1,10 @@
+import styled from '@emotion/styled';
 import { useTranslate } from 'i18n-calypso';
 import type { Purchase } from 'calypso/lib/purchases/types';
-import type { ReactNode } from 'react';
+
+const RenewalSubtext = styled.div`
+	margin-top: 1em;
+`;
 
 function PurchaseMetaAutoRenewCouponDetail( {
 	purchase,
@@ -9,30 +13,22 @@ function PurchaseMetaAutoRenewCouponDetail( {
 } ): JSX.Element | null {
 	const translate = useTranslate();
 
-	if ( ! purchase.autoRenewCouponDiscount || ! purchase.autoRenewCouponCode ) {
+	if ( ! purchase.autoRenewCouponDiscountPercentage || ! purchase.autoRenewCouponCode ) {
 		return null;
 	}
 
 	return (
-		<RenewalSubtext
-			text={ translate(
-				'Coupon code "%(code)s" has been applied for the next renewal for a %(discount)s%% discount.',
+		<RenewalSubtext>
+			{ translate(
+				'Coupon code "%(code)s" has been applied for the next renewal for a %(discount)d%% discount.',
 				{
 					args: {
-						discount: purchase.autoRenewCouponDiscount,
+						discount: purchase.autoRenewCouponDiscountPercentage,
 						code: purchase.autoRenewCouponCode,
 					},
 				}
 			) }
-		/>
-	);
-}
-
-function RenewalSubtext( { text }: { text: ReactNode } ): JSX.Element {
-	return (
-		<>
-			<br /> <br /> <> { text } </>{ ' ' }
-		</>
+		</RenewalSubtext>
 	);
 }
 

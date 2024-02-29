@@ -144,8 +144,15 @@ export interface Purchase {
 	taxAmount: number | string | undefined;
 	taxText: string | undefined;
 
+	/**
+	 * The coupon code that will automatically apply on the next renewal.
+	 */
 	autoRenewCouponCode: string | null;
-	autoRenewCouponDiscount: string | null;
+	/**
+	 * The discount percentage applied automatically by the coupon on the next renewal.
+	 * Example: If the discount is 10%, this will have the value `10`.
+	 */
+	autoRenewCouponDiscountPercentage: number | null;
 }
 
 export interface PurchasePriceTier {
@@ -168,7 +175,7 @@ export interface RawPurchase {
 	amount: number | string;
 	attached_to_purchase_id: number | string;
 	auto_renew_coupon_code: string | null;
-	auto_renew_coupon_discount: string | null;
+	auto_renew_coupon_discount_percentage: number | null;
 	bill_period_days: number | string;
 	bill_period_label: string;
 	most_recent_renew_date: string;
