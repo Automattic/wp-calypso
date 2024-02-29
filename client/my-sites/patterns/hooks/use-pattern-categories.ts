@@ -40,11 +40,13 @@ export function getPatternCategoriesQueryOptions(
 	return {
 		queryKey: [ locale, siteId, 'pattern-library', 'categories' ],
 		queryFn() {
-			return wpcom.req.get( {
-				path: `/sites/${ encodeURIComponent( siteId ?? '' ) }/block-patterns/categories`,
-				apiNamespace: 'wp/v2',
-				query: { locale },
-			} );
+			return wpcom.req.get(
+				`/sites/${ encodeURIComponent( siteId ?? '' ) }/block-patterns/categories`,
+				{
+					apiNamespace: 'wp/v2',
+					_locale: locale,
+				}
+			);
 		},
 		select( categories ) {
 			const result = [];

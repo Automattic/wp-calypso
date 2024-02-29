@@ -1,8 +1,7 @@
-import { getPlaceholderSiteID } from '@automattic/data-stores/src/site/constants';
 import { getLanguageRouteParam } from '@automattic/i18n-utils';
 import { makeLayout, ssrSetupLocale } from 'calypso/controller';
 import { setHrefLangLinks, setLocalizedCanonicalUrl } from 'calypso/controller/localized-links';
-import { getPatternCategorySlugs } from 'calypso/my-sites/patterns/controller';
+import { RENDERER_SITE_ID, getPatternCategorySlugs } from 'calypso/my-sites/patterns/controller';
 import { getPatternCategoriesQueryOptions } from 'calypso/my-sites/patterns/hooks/use-pattern-categories';
 import { getPatternsQueryOptions } from 'calypso/my-sites/patterns/hooks/use-patterns';
 import PatternsSSR from 'calypso/my-sites/patterns/patterns-ssr';
@@ -26,11 +25,10 @@ function fetchPatterns( context: RouterContext, next: RouterNext ) {
 		return;
 	}
 
-	const rendererSiteId = getPlaceholderSiteID();
 	const locale = getCurrentUserLocale( store.getState() ) || lang || 'en';
 
 	const categoryPromise = queryClient.fetchQuery< Category[] >(
-		getPatternCategoriesQueryOptions( locale, Number( rendererSiteId ), {
+		getPatternCategoriesQueryOptions( locale, RENDERER_SITE_ID, {
 			staleTime: 10 * 60 * 1000,
 		} )
 	);
