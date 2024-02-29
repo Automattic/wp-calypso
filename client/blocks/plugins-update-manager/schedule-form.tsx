@@ -238,7 +238,8 @@ export const ScheduleForm = ( props: Props ) => {
 					<div className="form-field">
 						<label htmlFor="plugins">Select plugins</label>
 						<span className="plugin-select-stats">
-							{ selectedPlugins.length }/{ MAX_SELECTABLE_PLUGINS }
+							{ selectedPlugins.length }/
+							{ plugins.length < MAX_SELECTABLE_PLUGINS ? plugins.length : MAX_SELECTABLE_PLUGINS }
 						</span>
 						{ fieldTouched?.plugins && validationErrors?.plugins ? (
 							<Text className="validation-msg">
