@@ -38,9 +38,13 @@ export const renderFlow = ( flow: Flow ) => {
 	};
 
 	// The Flow>useStepNavigation>submit function needs to be called from inside a component
-	const runUseStepNavigationSubmit = ( { currentStep, dependencies } ) => {
+	const runUseStepNavigationSubmit = ( {
+		currentStep,
+		dependencies,
+		currentURL = '/some-path?siteSlug=example.wordpress.com',
+	} ) => {
 		renderWithProvider(
-			<MemoryRouter initialEntries={ [ '/some-path?siteSlug=example.wordpress.com' ] }>
+			<MemoryRouter initialEntries={ [ currentURL ] }>
 				<FakeStepRender currentStep={ currentStep } dependencies={ dependencies } />
 			</MemoryRouter>
 		);
