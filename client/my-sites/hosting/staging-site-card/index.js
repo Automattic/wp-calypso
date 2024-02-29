@@ -391,10 +391,11 @@ export const StagingSiteCard = ( {
 	] );
 
 	const onAddClick = useCallback( () => {
+		dispatch( setStagingSiteStatus( siteId, StagingSiteStatus.INITIATE_TRANSFERRING ) );
 		dispatch( recordTracksEvent( 'calypso_hosting_configuration_staging_site_add_click' ) );
 		setProgress( 0.1 );
 		addStagingSite();
-	}, [ dispatch, addStagingSite ] );
+	}, [ dispatch, siteId, addStagingSite ] );
 
 	const onDeleteClick = useCallback( () => {
 		dispatch( setStagingSiteStatus( siteId, StagingSiteStatus.INITIATE_REVERTING ) );
