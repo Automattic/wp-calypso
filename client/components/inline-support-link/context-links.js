@@ -101,16 +101,18 @@ const contextLinks = {
 		blog_id: DEVELOPER_WORDPRESS_BLOG_ID,
 	},
 	'hosting-staging-site': {
-		link: 'https://wordpress.com/support/how-to-create-a-staging-site/',
-		post_id: 239448,
+		link: 'https://developer.wordpress.com/docs/developer-tools/staging-sites/',
+		post_id: 99381,
+		blog_id: DEVELOPER_WORDPRESS_BLOG_ID,
 	},
 	'hosting-clear-cache': {
 		link: 'https://wordpress.com/support/clear-your-sites-cache/',
 		post_id: 164969,
 	},
 	'hosting-connect-to-ssh': {
-		link: 'https://wordpress.com/support/connect-to-ssh-on-wordpress-com/',
-		post_id: 213309,
+		link: 'https://developer.wordpress.com/docs/developer-tools/sftp-ssh/',
+		post_id: 99380,
+		blog_id: DEVELOPER_WORDPRESS_BLOG_ID,
 	},
 	'hosting-mysql': {
 		link: 'https://developer.wordpress.com/docs/developer-tools/database-access/',
