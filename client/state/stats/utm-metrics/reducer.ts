@@ -16,6 +16,32 @@ import {
 import { schema } from './schema';
 import type { Reducer, AnyAction } from 'redux';
 
+const metricsParser = ( UTMValues: { [ key: string ]: number }, stopFurtherRequest?: boolean ) => {
+	const combinedKeys = Object.keys( UTMValues );
+
+	return combinedKeys.map( ( combinedKey: string ) => {
+		const parsedKey = JSON.parse( combinedKey );
+		const value = UTMValues[ combinedKey ];
+
+		const data = {
+			source: parsedKey[ 0 ],
+			medium: parsedKey[ 1 ],
+			label: `${ parsedKey[ 0 ] } / ${ parsedKey[ 1 ] }`,
+			value,
+		} as UTMMetricItem;
+
+		// Set no `paramValues` to prevent top post requests.
+		if ( stopFurtherRequest ) {
+			return data;
+		}
+
+		return {
+			...data,
+			paramValues: combinedKey,
+		};
+	} );
+};
+
 /**
  * Returns the updated UTM metrics state after an action has been dispatched.
  * @param  {Object} state  Current state
@@ -26,28 +52,15 @@ const dataReducer = ( state = {}, action: AnyAction ) => {
 	switch ( action.type ) {
 		case STATS_UTM_METRICS_RECEIVE: {
 			const data = action.data.top_utm_values;
-			const UTMMetricKeys = Object.keys( data );
 
 			return {
 				...state,
-				metrics: UTMMetricKeys.map( ( UTMMetricKey: string ) => {
-					const parsedKey = JSON.parse( UTMMetricKey );
-					const value = data[ UTMMetricKey ];
-
-					return {
-						source: parsedKey[ 0 ],
-						medium: parsedKey[ 1 ],
-						label: `${ parsedKey[ 0 ] } / ${ parsedKey[ 1 ] }`,
-						value,
-						paramValues: UTMMetricKey,
-					} as UTMMetricItem;
-				} ),
+				metrics: metricsParser( data ),
 			};
 		}
 
 		case STATS_UTM_METRICS_RECEIVE_BY_POST: {
 			const data = action.data.top_utm_values;
-			const UTMMetricKeys = Object.keys( data );
 
 			const { metricsByPost } = state as {
 				metricsByPost: { [ key: string ]: Array< UTMMetricItem > };
@@ -57,23 +70,14 @@ const dataReducer = ( state = {}, action: AnyAction ) => {
 				...state,
 				metricsByPost: {
 					...metricsByPost,
-					[ action.postId ]: UTMMetricKeys.map( ( UTMMetricKey: string ) => {
-						const parsedKey = JSON.parse( UTMMetricKey );
-						const value = data[ UTMMetricKey ];
-
-						return {
-							source: parsedKey[ 0 ],
-							medium: parsedKey[ 1 ],
-							label: `${ parsedKey[ 0 ] } / ${ parsedKey[ 1 ] }`,
-							value,
-						} as UTMMetricItem;
-					} ),
+					[ action.postId ]: metricsParser( data, true ),
 				},
 			};
 		}
 
 		case STATS_UTM_TOP_POSTS_RECEIVE: {
 			const data = action.data.top_posts;
+
 			const { topPosts } = state as {
 				topPosts: { [ key: string ]: Array< UTMMetricItemTopPost > };
 			};
