@@ -62,15 +62,18 @@ export default function SitesDashboardV2() {
 		? selectedSiteLicenses.reduce( ( acc, { products } ) => acc + products.length, 0 )
 		: selectedLicenses?.length;
 
-	const filtersMap: AgencyDashboardFilterMap[] = [
-		{ filterType: 'all_issues', ref: 1 },
-		{ filterType: 'backup_failed', ref: 2 },
-		{ filterType: 'backup_warning', ref: 3 },
-		{ filterType: 'threats_found', ref: 4 },
-		{ filterType: 'site_disconnected', ref: 5 },
-		{ filterType: 'site_down', ref: 6 },
-		{ filterType: 'plugin_updates', ref: 7 },
-	];
+	const filtersMap = useMemo< AgencyDashboardFilterMap[] >(
+		() => [
+			{ filterType: 'all_issues', ref: 1 },
+			{ filterType: 'backup_failed', ref: 2 },
+			{ filterType: 'backup_warning', ref: 3 },
+			{ filterType: 'threats_found', ref: 4 },
+			{ filterType: 'site_disconnected', ref: 5 },
+			{ filterType: 'site_down', ref: 6 },
+			{ filterType: 'plugin_updates', ref: 7 },
+		],
+		[]
+	);
 
 	const { path, search, currentPage, filter, sort } = useContext( SitesOverviewContext );
 
