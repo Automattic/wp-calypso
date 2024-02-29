@@ -1,5 +1,6 @@
 // Links are localized at InlineSupportLink during render
 /* eslint-disable wpcalypso/i18n-unlocalized-url */
+import { DEVELOPER_WORDPRESS_BLOG_ID } from 'calypso/blocks/inline-help/constants';
 
 const contextLinks = {
 	'account-settings': {
@@ -95,8 +96,9 @@ const contextLinks = {
 		post_id: 98905,
 	},
 	'hosting-sftp': {
-		link: 'https://wordpress.com/support/sftp/',
-		post_id: 159771,
+		link: 'https://developer.wordpress.com/docs/developer-tools/sftp-ssh/',
+		post_id: 99380,
+		blog_id: DEVELOPER_WORDPRESS_BLOG_ID,
 	},
 	'hosting-staging-site': {
 		link: 'https://wordpress.com/support/how-to-create-a-staging-site/',
@@ -111,8 +113,9 @@ const contextLinks = {
 		post_id: 213309,
 	},
 	'hosting-mysql': {
-		link: 'https://wordpress.com/support/phpmyadmin-and-mysql/',
-		post_id: 159822,
+		link: 'https://developer.wordpress.com/docs/developer-tools/database-access/',
+		post_id: 99378,
+		blog_id: DEVELOPER_WORDPRESS_BLOG_ID,
 	},
 	import: {
 		link: 'https://wordpress.com/support/import/',
@@ -307,8 +310,9 @@ const contextLinks = {
 		post_id: 5022,
 	},
 	'site-monitoring': {
-		link: 'https://wordpress.com/support/site-monitoring/',
-		post_id: 259521,
+		link: 'https://developer.wordpress.com/docs/troubleshooting/site-monitoring/',
+		post_id: 99421,
+		blog_id: DEVELOPER_WORDPRESS_BLOG_ID,
 	},
 	'subscriptions-and-newsletters': {
 		link: 'https://wordpress.com/support/subscriptions-and-newsletters/',
