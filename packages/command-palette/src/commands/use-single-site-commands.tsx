@@ -1,4 +1,4 @@
-import { Gridicon, JetpackLogo, WooCommerceWooLogo } from '@automattic/components';
+import { JetpackLogo, WooCommerceWooLogo } from '@automattic/components';
 import { SiteCapabilities } from '@automattic/data-stores';
 import {
 	alignJustify as acitvityLogIcon,
@@ -327,7 +327,14 @@ const useSingleSiteCommands = ( { navigate, currentRoute }: useCommandsParams ):
 			name: 'openReader',
 			label: __( 'Open reader', __i18n_text_domain__ ),
 			callback: commandNavigation( `/read` ),
-			icon: <Gridicon icon="reader" />,
+			icon: (
+				<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+					<rect x="0" fill="none" width="24" height="24" />
+					<g>
+						<path d="M3 4v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V4H3zm7 11H5v-1h5v1zm2-2H5v-1h7v1zm0-2H5v-1h7v1zm7 4h-5v-5h5v5zm0-7H5V6h14v2z" />
+					</g>
+				</svg>
+			),
 		},
 		{
 			name: 'openJetpackSettings',
@@ -335,7 +342,7 @@ const useSingleSiteCommands = ( { navigate, currentRoute }: useCommandsParams ):
 			callback: commandNavigation( `/wp-admin/admin.php?page=jetpack#/settings` ),
 			capability: SiteCapabilities.MANAGE_OPTIONS,
 			siteType: SiteType.ATOMIC,
-			icon: <JetpackLogo className="gridicon" size={ 18 } />,
+			icon: <JetpackLogo size={ 18 } />,
 		},
 		{
 			name: 'addJetpack',
@@ -353,7 +360,7 @@ const useSingleSiteCommands = ( { navigate, currentRoute }: useCommandsParams ):
 				),
 			].join( ' ' ),
 			callback: commandNavigation( `/jetpack/connect?cta_from=command-palette` ),
-			icon: <JetpackLogo className="gridicon" size={ 18 } />,
+			icon: <JetpackLogo size={ 18 } />,
 		},
 		{
 			name: 'manageJetpackModules',
@@ -361,7 +368,7 @@ const useSingleSiteCommands = ( { navigate, currentRoute }: useCommandsParams ):
 			callback: commandNavigation( `/wp-admin/admin.php?page=jetpack_modules` ),
 			capability: SiteCapabilities.MANAGE_OPTIONS,
 			siteType: SiteType.ATOMIC,
-			icon: <JetpackLogo className="gridicon" size={ 18 } />,
+			icon: <JetpackLogo size={ 18 } />,
 		},
 		{
 			name: 'importSite',
