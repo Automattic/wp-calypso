@@ -12,7 +12,12 @@ import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { convertErrorToString } from '../lib/analytics';
 import { CHECKOUT_STORE } from '../lib/wpcom-store';
 import useCountryList from './use-country-list';
-import type { CountryListItem } from '@automattic/wpcom-checkout';
+import type {
+	CountryListItem,
+	DomainContactValidationRequest,
+	ManagedContactDetailsTldExtraFieldsShape,
+	PossiblyCompleteDomainContactDetails,
+} from '@automattic/wpcom-checkout';
 
 const debug = debugFactory( 'calypso:use-cached-domain-contact-details' );
 
@@ -90,38 +95,38 @@ export type ContactDetailsCamelCaseExtra< T = string | null > = {
 	};
 };
 
-async function fetchCachedContactDetails(): Promise< ContactDetailsCamelCase > {
+async function fetchCachedContactDetails(): Promise< PossiblyCompleteDomainContactDetails > {
 	const rawData: ContactDetailsSnakeCase = await wpcom.req.get( '/me/domain-contact-information' );
 	return convertSnakeCaseContactDetailsToCamelCase( rawData );
 }
 
-async function setCachedContactDetails( rawData: ContactDetailsSnakeCase ): Promise< void > {
-	wpcom.req.post( '/me/domain-contact-information', { contact_information: rawData } );
+async function setCachedContactDetails( rawData: DomainContactValidationRequest ): Promise< void > {
+	wpcom.req.post( '/me/domain-contact-information', rawData );
 }
 
 function convertSnakeCaseContactDetailsToCamelCase(
 	rawData: ContactDetailsSnakeCase
-): ContactDetailsCamelCase {
+): PossiblyCompleteDomainContactDetails {
 	return {
-		firstName: rawData.first_name,
-		lastName: rawData.last_name,
-		organization: rawData.organization,
-		email: rawData.email,
-		phone: rawData.phone,
-		address1: rawData.address_1,
-		address2: rawData.address_2,
-		city: rawData.city,
-		state: rawData.state,
-		postalCode: rawData.postal_code,
-		countryCode: rawData.country_code,
-		fax: rawData.fax,
+		firstName: rawData.first_name ?? null,
+		lastName: rawData.last_name ?? null,
+		organization: rawData.organization ?? null,
+		email: rawData.email ?? null,
+		phone: rawData.phone ?? null,
+		address1: rawData.address_1 ?? null,
+		address2: rawData.address_2 ?? null,
+		city: rawData.city ?? null,
+		state: rawData.state ?? null,
+		postalCode: rawData.postal_code ?? null,
+		countryCode: rawData.country_code ?? null,
+		fax: rawData.fax ?? null,
 		extra: convertSnakeCaseContactDetailsExtraToCamelCase( rawData.extra ),
 	};
 }
 
 function convertSnakeCaseContactDetailsExtraToCamelCase(
 	extra: ContactDetailsSnakeCaseExtra | undefined
-): ContactDetailsCamelCaseExtra | undefined {
+): ManagedContactDetailsTldExtraFieldsShape< string | null > | undefined {
 	if ( ! extra ) {
 		return undefined;
 	}
@@ -130,7 +135,7 @@ function convertSnakeCaseContactDetailsExtraToCamelCase(
 			lang: extra.ca?.lang,
 			legalType: extra.ca?.legal_type,
 			ciraAgreementAccepted: extra.ca?.cira_agreement_accepted
-				? extra.ca.cira_agreement_accepted
+				? String( extra.ca.cira_agreement_accepted )
 				: undefined,
 		},
 		uk: {
@@ -146,59 +151,13 @@ function convertSnakeCaseContactDetailsExtraToCamelCase(
 	};
 }
 
-function convertCamelCaseContactDetailsToSnakeCase(
-	details: ContactDetailsCamelCase
-): ContactDetailsSnakeCase {
-	const extra: ContactDetailsSnakeCaseExtra = {};
-
-	if ( details.extra?.ca ) {
-		extra.ca = {
-			lang: details.extra.ca.lang ?? undefined,
-			legal_type: details.extra.ca.legalType ?? undefined,
-			cira_agreement_accepted: details.extra.ca.ciraAgreementAccepted,
-		};
-	}
-	if ( details.extra?.uk ) {
-		extra.uk = {
-			registrant_type: details.extra.uk.registrantType ?? undefined,
-			registration_number: details.extra.uk.registrationNumber ?? undefined,
-			trading_name: details.extra.uk.tradingName ?? undefined,
-		};
-	}
-	if ( details.extra?.fr ) {
-		extra.fr = {
-			registrant_type: details.extra.fr.registrantType ?? undefined,
-			registrant_vat_id: details.extra.fr.registrantVatId ?? undefined,
-			trademark_number: details.extra.fr.trademarkNumber ?? undefined,
-			siren_siret: details.extra.fr.sirenSiret ?? undefined,
-		};
-	}
-
-	return {
-		address_1: details.address1 ?? undefined,
-		address_2: details.address2 ?? undefined,
-		city: details.city ?? undefined,
-		country_code: details.countryCode ?? undefined,
-		email: details.email ?? undefined,
-		fax: details.fax ?? undefined,
-		first_name: details.firstName ?? undefined,
-		last_name: details.lastName ?? undefined,
-		organization: details.organization ?? undefined,
-		phone: details.phone ?? undefined,
-		phone_number_country: details.phone ?? undefined,
-		postal_code: details.postalCode ?? undefined,
-		state: details.state ?? undefined,
-		extra,
-	};
-}
-
 const cachedContactDetailsQueryKey = [ 'user-cached-contact-details' ];
 
 export function useCachedContactDetails( {
 	isLoggedOut,
 }: {
 	isLoggedOut?: boolean;
-} ): ContactDetailsCamelCase | null {
+} ): PossiblyCompleteDomainContactDetails | null {
 	const result = useQuery( {
 		queryKey: cachedContactDetailsQueryKey,
 		queryFn: fetchCachedContactDetails,
@@ -207,10 +166,11 @@ export function useCachedContactDetails( {
 	return result.data ?? null;
 }
 
-export function useUpdateCachedContactDetails(): ( updatedData: ContactDetailsCamelCase ) => void {
+export function useUpdateCachedContactDetails(): (
+	updatedData: DomainContactValidationRequest
+) => void {
 	const queryClient = useQueryClient();
-
-	const mutation = useMutation< void, Error, ContactDetailsSnakeCase >( {
+	const mutation = useMutation< void, Error, DomainContactValidationRequest >( {
 		mutationFn: setCachedContactDetails,
 		onSuccess: () => {
 			queryClient.invalidateQueries( {
@@ -218,14 +178,11 @@ export function useUpdateCachedContactDetails(): ( updatedData: ContactDetailsCa
 			} );
 		},
 	} );
-
-	return ( updatedData: ContactDetailsCamelCase ) => {
-		mutation.mutate( convertCamelCaseContactDetailsToSnakeCase( updatedData ) );
-	};
+	return mutation.mutate;
 }
 
 function useCachedContactDetailsForCheckoutForm(
-	cachedContactDetails: ContactDetailsCamelCase | null,
+	cachedContactDetails: PossiblyCompleteDomainContactDetails | null,
 	setShouldShowContactDetailsValidationErrors?: ( allowed: boolean ) => void,
 	overrideCountryList?: CountryListItem[]
 ): boolean {
@@ -275,18 +232,7 @@ function useCachedContactDetailsForCheckoutForm(
 		debug( 'using fetched cached contact details for checkout data store', cachedContactDetails );
 		didFillForm.current = true;
 		loadDomainContactDetailsFromCache( {
-			address1: cachedContactDetails.address1 ?? null,
-			address2: cachedContactDetails.address2 ?? null,
-			city: cachedContactDetails.city ?? null,
-			countryCode: cachedContactDetails.countryCode ?? null,
-			email: cachedContactDetails.email ?? null,
-			extra: cachedContactDetails.extra,
-			fax: cachedContactDetails.fax ?? null,
-			firstName: cachedContactDetails.firstName ?? null,
-			lastName: cachedContactDetails.lastName ?? null,
-			organization: cachedContactDetails.organization ?? null,
-			phone: cachedContactDetails.phone ?? null,
-			state: cachedContactDetails.state ?? null,
+			...cachedContactDetails,
 			postalCode: arePostalCodesSupported ? cachedContactDetails.postalCode ?? null : '',
 		} )
 			.then( () => {
