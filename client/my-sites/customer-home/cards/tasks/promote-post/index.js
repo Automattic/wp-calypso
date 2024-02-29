@@ -1,6 +1,6 @@
 import { useTranslate } from 'i18n-calypso';
 import { useEffect } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import blazeIllustration from 'calypso/assets/images/customer-home/illustration--blaze.svg';
 import {
 	loadDSPWidgetJS,
@@ -8,15 +8,15 @@ import {
 	usePromoteWidget,
 	PromoteWidgetStatus,
 } from 'calypso/lib/promote-post';
+import useAdvertisingUrl from 'calypso/my-sites/advertising/useAdvertisingUrl';
 import { TASK_PROMOTE_POST } from 'calypso/my-sites/customer-home/cards/constants';
 import Task from 'calypso/my-sites/customer-home/cards/tasks/task';
-import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 
 const PromotePost = () => {
 	const translate = useTranslate();
 	const showPromotePost = usePromoteWidget() === PromoteWidgetStatus.ENABLED;
 	const dispatch = useDispatch();
-	const selectedSiteSlug = useSelector( getSelectedSiteSlug );
+	const advertisingUrl = useAdvertisingUrl();
 	const trackDspAction = async () => {
 		dispatch( recordDSPEntryPoint( 'myhome_tasks-swipeable' ) );
 	};
@@ -36,7 +36,7 @@ const PromotePost = () => {
 						'Grow your audience by promoting your content with Blaze campaigns. Reach interested users across millions of sites on Tumblr and WordPress.com.'
 					) }
 					actionText={ translate( 'Create campaign' ) }
-					actionUrl={ `/advertising/${ selectedSiteSlug }` }
+					actionUrl={ advertisingUrl }
 					actionOnClick={ trackDspAction }
 					completeOnStart={ false }
 					illustration={ blazeIllustration }

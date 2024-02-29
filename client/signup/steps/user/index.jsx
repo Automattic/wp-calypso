@@ -209,7 +209,7 @@ export class UserStep extends Component {
 						break;
 					case 'nux':
 						subHeaderText = translate(
-							'All Woo Express stores are powered by WordPress.com.{{br/}}Please create an account to continue. Already registered? {{a}}Log in{{/a}}',
+							'All Woo Express stores are powered by WordPress.com. Please create an account to continue. Already registered? {{a}}Log in{{/a}}',
 							{
 								components: {
 									a: <a href={ loginUrl } />,
@@ -486,7 +486,7 @@ export class UserStep extends Component {
 
 			return (
 				<div className={ classNames( 'signup-form__woo-wrapper' ) }>
-					<h3>{ translate( "Let's get started" ) }</h3>
+					<h3>{ translate( 'Create an account' ) }</h3>
 				</div>
 			);
 		}
@@ -605,6 +605,7 @@ export class UserStep extends Component {
 					isReskinned={ isReskinned }
 					shouldDisplayUserExistsError={ ! isWooOAuth2Client( oauth2Client ) }
 					isSocialFirst={ this.props.isSocialFirst }
+					labelText={ this.props.wooPasswordless ? this.props.translate( 'Your email' ) : null }
 				/>
 				<div id="g-recaptcha"></div>
 			</>
