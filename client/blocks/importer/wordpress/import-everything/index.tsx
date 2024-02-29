@@ -237,11 +237,10 @@ export class ImportEverything extends SectionMigrate {
 	}
 
 	renderMigrationSuccessScreen() {
-		const { translate, targetSite, recordTracksEvent } = this.props;
+		const { targetSite, recordTracksEvent } = this.props;
 		return (
 			<div className="import__heading import__heading-center migration-success">
 				<AsyncLoad
-					translate={ translate }
 					targetSite={ targetSite }
 					recordTracksEvent={ recordTracksEvent }
 					require="./migration-success"

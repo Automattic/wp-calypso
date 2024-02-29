@@ -1,6 +1,6 @@
 import { Card } from '@automattic/components';
 import { type SiteDetails } from '@automattic/data-stores';
-import { localizeUrl } from '@automattic/i18n-utils';
+import { localizeUrl, useIsEnglishLocale } from '@automattic/i18n-utils';
 import { SubTitle, Title } from '@automattic/onboarding';
 import {
 	CardBody,
@@ -10,11 +10,11 @@ import {
 	__experimentalVStack as VStack,
 	Button,
 } from '@wordpress/components';
+import { useI18n } from '@wordpress/react-i18n';
 import { Link } from 'react-router-dom';
 import './style.scss';
 
 interface MigrationSuccessProps {
-	translate: ( text: string ) => string;
 	recordTracksEvent: ( eventName: string, eventProperties?: object ) => void;
 	targetSite: SiteDetails;
 }
@@ -25,10 +25,11 @@ const redirect = ( url: string, isWpAdmin = false ): void => {
 };
 
 export default function MigrationSuccess( {
-	translate,
 	targetSite,
 	recordTracksEvent,
 }: MigrationSuccessProps ) {
+	const { __, hasTranslation } = useI18n();
+	const isEnglishLocale = useIsEnglishLocale();
 	const navigateToSite =
 		( url: string, isWpAdmin = false ) =>
 		( e: React.MouseEvent< HTMLButtonElement > ): void => {
@@ -39,10 +40,25 @@ export default function MigrationSuccess( {
 			redirect( url, isWpAdmin );
 		};
 
+	const linkText =
+		isEnglishLocale || hasTranslation( 'Migration support resources' )
+			? __( 'Migration support resources' )
+			: 'Explore support resources'; //Temporary fallback
+
+	const titleText =
+		isEnglishLocale || hasTranslation( 'Say hello to your new home' )
+			? __( 'Say hello to your new home' )
+			: __( 'Hooray' ); //Temporary fallback
+
+	const subtitleText =
+		isEnglishLocale || hasTranslation( 'All set! Your content was successfully imported.' )
+			? __( 'All set! Your content was successfully imported.' )
+			: __( 'Congratulations. Your content was successfully imported.' ); //Temporary fallback
+
 	return (
 		<>
-			<Title> { translate( 'Say hello to your new home' ) } </Title>
-			<SubTitle>{ translate( 'All set! Your content was successfully imported.' ) }</SubTitle>
+			<Title> { titleText } </Title>
+			<SubTitle>{ subtitleText }</SubTitle>
 
 			<Card size="small">
 				<CardBody>
@@ -60,10 +76,10 @@ export default function MigrationSuccess( {
 							<FlexItem className="migration-success-ctas__buttons">
 								<Flex gap={ 4 }>
 									<Button variant="primary" onClick={ navigateToSite( targetSite.URL ) }>
-										{ translate( 'View site' ) }
+										{ __( 'View site' ) }
 									</Button>
 									<Button variant="secondary" onClick={ navigateToSite( targetSite.URL, true ) }>
-										{ translate( 'Go to WP Admin' ) }
+										{ __( 'Go to WP Admin' ) }
 									</Button>
 								</Flex>
 							</FlexItem>
@@ -83,10 +99,10 @@ export default function MigrationSuccess( {
 					justify="space-between"
 				>
 					<strong className="screen-confirmation__list-item-title">
-						{ translate( 'Manage your site from anywhere' ) }
+						{ __( 'Manage your site from anywhere' ) }
 					</strong>
 					<p className="screen-confirmation__list-item-description">
-						{ translate(
+						{ __(
 							'The Jetpack mobile app for iOS and Android makes managing your email, domain, and website even simpler.'
 						) }
 					</p>
@@ -95,9 +111,9 @@ export default function MigrationSuccess( {
 						to={ localizeUrl( 'https://apps.wordpress.com/mobile/' ) }
 						target="_blank"
 						rel="noopener noreferrer"
-						title={ translate( 'Get the app' ) }
+						title={ __( 'Get the app' ) }
 					>
-						{ translate( 'Get the app' ) }
+						{ __( 'Get the app' ) }
 					</Link>
 				</VStack>
 
@@ -107,10 +123,10 @@ export default function MigrationSuccess( {
 					justify="space-between"
 				>
 					<strong className="screen-confirmation__list-item-title">
-						{ translate( 'Migration questions? find answers' ) }
+						{ __( 'Migration questions? find answers' ) }
 					</strong>
 					<p className="screen-confirmation__list-item-description">
-						{ translate(
+						{ __(
 							'Explore our comprehensive support guides and find solutions to all your email inquiries.'
 						) }
 					</p>
@@ -121,9 +137,9 @@ export default function MigrationSuccess( {
 						) }
 						target="_blank"
 						rel="noopener noreferrer"
-						title={ translate( 'Migration support resources' ) }
+						title={ linkText }
 					>
-						{ translate( 'Migration support resources' ) }
+						{ linkText }
 					</Link>
 				</VStack>
 			</Flex>
