@@ -4,7 +4,7 @@ import { getCountryPostalCodeSupport } from '@automattic/wpcom-checkout';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useDispatch as useWordPressDataDispatch } from '@wordpress/data';
 import debugFactory from 'debug';
-import { ComponentType, useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { logToLogstash } from 'calypso/lib/logstash';
 import wpcom from 'calypso/lib/wp';
 import { useDispatch as useReduxDispatch } from 'calypso/state';
@@ -55,43 +55,6 @@ export type ContactDetailsSnakeCaseExtra< T = string | null > = {
 		registrant_type?: T;
 		registration_number?: T;
 		trading_name?: T;
-	};
-};
-
-export type ContactDetailsCamelCase< T = string | null > = {
-	address1?: T;
-	address2?: T;
-	city?: T;
-	countryCode?: T;
-	email?: T;
-	extra?: ContactDetailsCamelCaseExtra< T >;
-	fax?: T;
-	firstName?: T;
-	lastName?: T;
-	organization?: T;
-	phone?: T;
-	phoneNumberCountry?: T;
-	postalCode?: T;
-	state?: T;
-	vatId?: T;
-};
-
-export type ContactDetailsCamelCaseExtra< T = string | null > = {
-	ca?: {
-		lang?: T;
-		legalType?: T;
-		ciraAgreementAccepted?: boolean;
-	};
-	fr?: {
-		registrantType?: T;
-		registrantVatId?: T;
-		trademarkNumber?: T;
-		sirenSiret?: T;
-	};
-	uk?: {
-		registrantType?: T;
-		registrationNumber?: T;
-		tradingName?: T;
 	};
 };
 
@@ -304,32 +267,4 @@ export default function useCachedDomainContactDetails( {
 		setShouldShowContactDetailsValidationErrors,
 		overrideCountryList
 	);
-}
-
-export interface WithCachedDomainContactDetailsProps {
-	cachedContactDetails: ReturnType< typeof useCachedContactDetails >;
-}
-
-export function withCachedContactDetails< P >( Component: ComponentType< P > ) {
-	return function CachedDomainContactDetailsWrapper(
-		props: Omit< P, keyof WithCachedDomainContactDetailsProps >
-	) {
-		const cachedContactDetails = useCachedContactDetails( {} );
-		return <Component { ...( props as P ) } cachedContactDetails={ cachedContactDetails } />;
-	};
-}
-
-export interface WithUpdateCachedDomainContactDetailsProps {
-	updateCachedContactDetails: ReturnType< typeof useUpdateCachedContactDetails >;
-}
-
-export function withUpdateCachedContactDetails< P >( Component: ComponentType< P > ) {
-	return function CachedDomainContactDetailsWrapper(
-		props: Omit< P, keyof WithUpdateCachedDomainContactDetailsProps >
-	) {
-		const updateCachedContactDetails = useUpdateCachedContactDetails();
-		return (
-			<Component { ...( props as P ) } updateCachedContactDetails={ updateCachedContactDetails } />
-		);
-	};
 }
