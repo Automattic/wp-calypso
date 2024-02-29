@@ -15,13 +15,13 @@ import { Fragment, useState, useCallback, useEffect } from 'react';
 import { useCreateScheduleUpdatesMutation } from 'calypso/data/plugins/use-schedule-updates-mutation';
 import { useSitePluginsQuery, type SitePlugin } from 'calypso/data/plugins/use-site-plugins-query';
 import { SiteSlug } from 'calypso/types';
+import { MAX_SELECTABLE_PLUGINS } from './config';
 import {
 	DAILY_OPTION,
 	DAY_OPTIONS,
 	HOUR_OPTIONS,
 	PERIOD_OPTIONS,
 	WEEKLY_OPTION,
-	MAX_SELECTABLE_PLUGINS,
 } from './schedule-form.const';
 import {
 	prepareTimestamp,
