@@ -8,6 +8,7 @@ import {
 	Flex,
 	FlexItem,
 	FlexBlock,
+	Spinner,
 } from '@wordpress/components';
 import { Icon, info } from '@wordpress/icons';
 import classnames from 'classnames';
@@ -37,7 +38,11 @@ interface Props {
 }
 export const ScheduleForm = ( props: Props ) => {
 	const { siteSlug } = props;
-	const { data: dataPlugins } = useSitePluginsQuery( siteSlug );
+	const {
+		data: dataPlugins,
+		isLoading: isPluginsFetching,
+		isFetched: isPluginsFetched,
+	} = useSitePluginsQuery( siteSlug );
 	const { createScheduleUpdates } = useCreateScheduleUpdatesMutation( siteSlug );
 	const { plugins = [] } = dataPlugins ?? {};
 
@@ -281,7 +286,8 @@ export const ScheduleForm = ( props: Props ) => {
 								value={ pluginSearchTerm }
 							/>
 							<div className="checkbox-options-container">
-								{ plugins.length <= MAX_SELECTABLE_PLUGINS && (
+								{ isPluginsFetching && <Spinner /> }
+								{ isPluginsFetched && plugins.length <= MAX_SELECTABLE_PLUGINS && (
 									<CheckboxControl
 										label="Select all"
 										indeterminate={
@@ -291,27 +297,28 @@ export const ScheduleForm = ( props: Props ) => {
 										onChange={ onPluginSelectAllChange }
 									/>
 								) }
-								{ plugins.map( ( plugin ) => (
-									<Fragment key={ plugin.name }>
-										{ plugin.display_name
-											.toLowerCase()
-											.includes( pluginSearchTerm.toLowerCase() ) && (
-											<CheckboxControl
-												key={ plugin.name }
-												label={ plugin.display_name }
-												checked={ selectedPlugins.includes( plugin.name ) }
-												disabled={ isPluginSelectionDisabled( plugin ) }
-												className={ classnames( {
-													disabled: isPluginSelectionDisabled( plugin ),
-												} ) }
-												onChange={ ( isChecked ) => {
-													setFieldTouched( { ...fieldTouched, plugins: true } );
-													onPluginSelectionChange( plugin, isChecked );
-												} }
-											/>
-										) }
-									</Fragment>
-								) ) }
+								{ isPluginsFetched &&
+									plugins.map( ( plugin ) => (
+										<Fragment key={ plugin.name }>
+											{ plugin.display_name
+												.toLowerCase()
+												.includes( pluginSearchTerm.toLowerCase() ) && (
+												<CheckboxControl
+													key={ plugin.name }
+													label={ plugin.display_name }
+													checked={ selectedPlugins.includes( plugin.name ) }
+													disabled={ isPluginSelectionDisabled( plugin ) }
+													className={ classnames( {
+														disabled: isPluginSelectionDisabled( plugin ),
+													} ) }
+													onChange={ ( isChecked ) => {
+														setFieldTouched( { ...fieldTouched, plugins: true } );
+														onPluginSelectionChange( plugin, isChecked );
+													} }
+												/>
+											) }
+										</Fragment>
+									) ) }
 							</div>
 						</div>
 					</div>

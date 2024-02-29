@@ -65,7 +65,7 @@
 		> * {
 			margin-bottom: 0.875rem;
 
-			&:last-child {
+			&:last-child:not(.components-spinner) {
 				margin-bottom: 0;
 			}
 		}

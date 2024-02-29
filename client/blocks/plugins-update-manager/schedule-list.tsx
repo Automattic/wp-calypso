@@ -27,7 +27,7 @@ export const ScheduleList = ( props: Props ) => {
 
 	const { siteSlug, onNavBack, onCreateNewSchedule } = props;
 	const [ isConfirmOpen, setIsConfirmOpen ] = useState( false );
-	const { data: schedules = [], isFetching, isFetched } = useScheduleUpdatesQuery( siteSlug );
+	const { data: schedules = [], isLoading, isFetched } = useScheduleUpdatesQuery( siteSlug );
 
 	const closeConfirm = () => {
 		setIsConfirmOpen( false );
@@ -51,7 +51,7 @@ export const ScheduleList = ( props: Props ) => {
 					<div className="ch-placeholder"></div>
 				</CardHeader>
 				<CardBody>
-					{ isFetching && <Spinner /> }
+					{ isLoading && <Spinner /> }
 					{ isFetched && schedules.length === 0 && (
 						<ScheduleListEmpty onCreateNewSchedule={ onCreateNewSchedule } />
 					) }
