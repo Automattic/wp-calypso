@@ -9,7 +9,8 @@ const StatsModuleUTM = ( { siteId, period, postId, query, summary } ) => {
 	// Fetch UTM metrics with switched UTM parameters.
 	const { isFetching: isFetchingMetricsAndTopPosts, metrics } = useUTMMetricsQuery(
 		siteId,
-		'utm_source,utm_medium'
+		'utm_source,utm_medium',
+		postId
 	);
 	// Fetch top posts for all UTM metric items.
 	const { topPosts } = useUTMMetricTopPostsQuery( siteId, 'utm_source,utm_medium', metrics );

@@ -2,6 +2,7 @@ import {
 	STATS_UTM_METRICS_REQUEST,
 	STATS_UTM_METRICS_REQUEST_FAILURE,
 	STATS_UTM_METRICS_RECEIVE,
+	STATS_UTM_METRICS_RECEIVE_BY_POST,
 	STATS_UTM_TOP_POSTS_REQUEST,
 	STATS_UTM_TOP_POSTS_RECEIVE,
 } from 'calypso/state/action-types';
@@ -41,6 +42,33 @@ const dataReducer = ( state = {}, action: AnyAction ) => {
 						paramValues: UTMMetricKey,
 					} as UTMMetricItem;
 				} ),
+			};
+		}
+
+		case STATS_UTM_METRICS_RECEIVE_BY_POST: {
+			const data = action.data.top_utm_values;
+			const UTMMetricKeys = Object.keys( data );
+
+			const { metricsByPost } = state as {
+				metricsByPost: { [ key: string ]: Array< UTMMetricItem > };
+			};
+
+			return {
+				...state,
+				metricsByPost: {
+					...metricsByPost,
+					[ action.postId ]: UTMMetricKeys.map( ( UTMMetricKey: string ) => {
+						const parsedKey = JSON.parse( UTMMetricKey );
+						const value = data[ UTMMetricKey ];
+
+						return {
+							source: parsedKey[ 0 ],
+							medium: parsedKey[ 1 ],
+							label: `${ parsedKey[ 0 ] } / ${ parsedKey[ 1 ] }`,
+							value,
+						} as UTMMetricItem;
+					} ),
+				},
 			};
 		}
 
@@ -90,6 +118,9 @@ const isLoadingReducer = ( state = {}, action: AnyAction ) => {
 			return false;
 		}
 		case STATS_UTM_METRICS_RECEIVE: {
+			return false;
+		}
+		case STATS_UTM_METRICS_RECEIVE_BY_POST: {
 			return false;
 		}
 		case STATS_UTM_TOP_POSTS_REQUEST: {
