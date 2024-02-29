@@ -12,10 +12,6 @@ import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormLegend from 'calypso/components/forms/form-legend';
 import FormRadio from 'calypso/components/forms/form-radio';
 import FormTextInput from 'calypso/components/forms/form-text-input';
-import {
-	WithUpdateCachedDomainContactDetailsProps,
-	withUpdateCachedContactDetails,
-} from 'calypso/my-sites/checkout/src/hooks/use-cached-domain-contact-details';
 
 const noop = () => {};
 const debug = debugFactory( 'calypso:domains:registrant-extra-info' );
@@ -58,9 +54,7 @@ export interface FormProps {
 	onSubmit?: () => void;
 }
 
-class RegistrantExtraInfoFrForm extends PureComponent<
-	FormProps & LocalizeProps & WithUpdateCachedDomainContactDetailsProps
-> {
+class RegistrantExtraInfoFrForm extends PureComponent< FormProps & LocalizeProps > {
 	static propTypes = {};
 
 	static defaultProps = {
@@ -87,8 +81,6 @@ class RegistrantExtraInfoFrForm extends PureComponent<
 			},
 		};
 
-		this.props.updateCachedContactDetails( payload );
-
 		// If the state is managed, only set the default registrant type if it's empty
 		if ( ! this.props.ccTldDetails?.registrantType ) {
 			this.props.onContactDetailsChange?.( payload );
@@ -98,8 +90,6 @@ class RegistrantExtraInfoFrForm extends PureComponent<
 	updateContactDetails( field: string, value: string ) {
 		const sanitizedValue = this.sanitizeField( field, value );
 		debug( 'Setting ' + field + ' to ' + value );
-		const payload = set( {}, field, sanitizedValue );
-		this.props.updateCachedContactDetails( payload );
 
 		if ( field === 'extra.fr.registrantVatId' ) {
 			field = 'vatId';
@@ -348,4 +338,4 @@ class RegistrantExtraInfoFrForm extends PureComponent<
 	}
 }
 
-export default withUpdateCachedContactDetails( localize( RegistrantExtraInfoFrForm ) );
+export default localize( RegistrantExtraInfoFrForm );
