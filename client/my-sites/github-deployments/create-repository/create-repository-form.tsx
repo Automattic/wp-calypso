@@ -1,6 +1,5 @@
 import { Button, FormInputValidation, FormLabel } from '@automattic/components';
 import { FormToggle, Spinner } from '@wordpress/components';
-import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
 import { ChangeEvent, FormEventHandler, useEffect, useState } from 'react';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
@@ -8,6 +7,7 @@ import FormSettingExplanation from 'calypso/components/forms/form-setting-explan
 import FormTextInput from 'calypso/components/forms/form-text-input';
 import { GitHubInstallationsDropdown } from 'calypso/my-sites/github-deployments/components/installations-dropdown';
 import { useLiveInstallations } from 'calypso/my-sites/github-deployments/components/installations-dropdown/use-live-installations';
+import { AutomatedDeploymentsToggle } from '../components/automated-deployments-toggle';
 import {
 	FormRadioWithTemplateSelect,
 	ProjectType,
@@ -194,22 +194,11 @@ export const CreateRepositoryForm = ( {
 						{ __( 'This path is relative to the server root' ) }
 					</FormSettingExplanation>
 				</FormFieldset>
-				<FormFieldset>
-					<FormLabel htmlFor="is-automated">{ __( 'Automatic deploys' ) }</FormLabel>
-					<div className="github-deployments-create-repository__switch">
-						<FormToggle
-							id="is-automated"
-							checked={ isAutomated }
-							onChange={ () => setIsAutomated( ! isAutomated ) }
-						/>
-						{
-							// Translators: %(condition)s is the when we are going to deploy the changes
-							sprintf( __( 'Deploy changes on %(condition)s' ), {
-								condition: template.workflowFilename ? __( 'workflow run' ) : __( 'push' ),
-							} )
-						}
-					</div>
-				</FormFieldset>
+				<AutomatedDeploymentsToggle
+					onChange={ setIsAutomated }
+					value={ isAutomated }
+					hasWorkflowPath={ !! template.workflowFilename }
+				/>
 				<Button
 					primary
 					type="submit"

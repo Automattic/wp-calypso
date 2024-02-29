@@ -38,16 +38,6 @@
 		}
 	}
 
-	&__switch {
-		display: flex;
-		align-items: center;
-		gap: 8px;
-
-		.components-form-toggle {
-			line-height: 1;
-		}
-	}
-
 	&__deployment-style {
 		flex: 1;
 	}
