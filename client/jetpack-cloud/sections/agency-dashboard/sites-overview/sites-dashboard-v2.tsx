@@ -140,13 +140,14 @@ export default function SitesDashboardV2() {
 	// Set or clear filter depending on sites submenu path selected
 	useEffect( () => {
 		if ( path === '/sites' || path === '/sites/favorites' ) {
-			setSitesViewState( { ...sitesViewState, filters: [], search: '' } );
+			setSitesViewState( { ...sitesViewState, filters: [], search: '', page: 1 } );
 		}
 		if ( path === '/sites?issue_types=all_issues' ) {
 			setSitesViewState( {
 				...sitesViewState,
 				filters: [ { field: 'status', operator: 'in', value: 1 } ],
 				search: '',
+				page: 1,
 			} );
 		}
 	}, [ path ] ); // sitesViewState omitted as dependency due to rendering loop and continuous console errors.
