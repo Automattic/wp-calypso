@@ -16,6 +16,7 @@ import {
 	usePromoteWidget,
 	PromoteWidgetStatus,
 } from 'calypso/lib/promote-post';
+import useAdvertisingUrl from 'calypso/my-sites/advertising/useAdvertisingUrl';
 import { bumpStat, composeAnalytics, recordTracksEvent } from 'calypso/state/analytics/actions';
 import { savePreference } from 'calypso/state/preferences/actions';
 import { getPreference } from 'calypso/state/preferences/selectors';
@@ -87,6 +88,7 @@ export const QuickLinks = ( {
 	const hasBackups = getAllFeaturesForPlan( currentSitePlanSlug ).includes( 'backups' );
 	const hasBoost = site?.options?.jetpack_connection_active_plugins?.includes( 'jetpack-boost' );
 	const [ isAILogoGeneratorOpen, setIsAILogoGeneratorOpen ] = useState( false );
+	const advertisingUrl = useAdvertisingUrl();
 
 	const addNewDomain = () => {
 		trackAddDomainAction();
@@ -127,7 +129,7 @@ export const QuickLinks = ( {
 			/>
 			{ isPromotePostActive && ! isWpcomStagingSite && (
 				<ActionBox
-					href={ `/advertising/${ siteSlug }` }
+					href={ advertisingUrl }
 					hideLinkIndicator
 					onClick={ trackPromotePostAction }
 					label={ translate( 'Promote with Blaze' ) }

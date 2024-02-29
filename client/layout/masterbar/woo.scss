@@ -11,8 +11,8 @@
 	$woo-gray-40: #787c82;
 	$woo-font-size-small: $font-body-extra-small;
 	$woo-font-size-base: $font-body-small;
-	$woo-font-size-input: $font-body-small;
-	$woo-radius-input: 4px;
+	$woo-font-size-input: $font-body;
+	$woo-radius-input: 8px;
 	$woo-form-whitespace: 60px;
 	$woo-form-whitespace-660: 20px;
 	$woo-form-divider-border: 1px solid #e6e6e6;
@@ -38,24 +38,28 @@
 	input[type="tel"].form-text-input,
 	textarea.form-text-input {
 		background-color: #fff;
-		border: 1px solid #c3c4c7;
 		border-radius: $woo-radius-input;
 		box-sizing: border-box;
-		color: $woo-gray-100;
-		padding: 12px 16px;
-		transition: all ease-in-out 0.2s;
-		width: 100%;
-		font-weight: 400;
+		border: 2px solid var(--studio-gray-10);
+		height: 48px;
+		padding: 8px 16px;
 		font-size: $woo-font-size-input;
-		line-height: 18px;
+		font-style: normal;
+		font-weight: 400;
+		line-height: 24px;
 		margin-bottom: 16px;
 
 		&:focus,
 		&:hover,
 		&:focus:hover {
-			border-color: $woo-purple-50;
 			outline: none;
-			box-shadow: 0 0 0 2px #e5cfe8;
+			border: 2px solid $woo-purple-50;
+			box-shadow: none;
+		}
+
+		&:disabled {
+			border: 2px solid var(--studio-gray-5);
+			background: var(--studio-gray-0);
 		}
 	}
 
@@ -303,6 +307,27 @@
 		text-align: left;
 	}
 
+	.form-input-validation.is-error {
+		color: #8a2424;
+		font-size: rem(14px);
+		font-style: normal;
+		font-weight: 400;
+		line-height: 21px;
+		padding: 0 24px 11px 0;
+		margin-top: 8px;
+
+		svg {
+			display: none;
+		}
+	}
+
+	.validation-fieldset {
+		&:has(.is-error) {
+			input {
+				border: 2px solid  #e26f56;
+			}
+		}
+	}
 
 	.jetpack-connect__logged-in-form .formatted-header,
 	.jetpack-connect__authorize-form .formatted-header,
@@ -338,13 +363,15 @@
 		font-weight: 400;
 		line-height: 27px;
 		letter-spacing: -0.025px;
-		-webkit-font-smoothing: subpixel-antialiased;
 
 		a {
-			color: $woo-purple-70;
-			font-weight: 400;
-			font-size: 1rem;
+			color: $woo-purple-50;
+			font-size: rem(18px);
 			text-decoration: none;
+			font-style: normal;
+			font-weight: 500;
+			line-height: 27px;
+			letter-spacing: -0.025px;
 
 			&:hover {
 				color: $woo-purple-40;
@@ -537,9 +564,11 @@
 		}
 	}
 
+	.is-woo-passwordless .signup-form,
 	.login__body--continue-as-user {
 		width: 100%;
 		margin: 48px auto 0;
+		padding: 0;
 		max-width: 327px;
 		display: flex;
 		flex-direction: column;
@@ -559,7 +588,7 @@
 					gap: 16px;
 				}
 
-				button.social-buttons__button.button {
+				.social-buttons__button.button {
 					display: flex;
 					height: 48px;
 					padding: 8px 16px;
@@ -570,6 +599,10 @@
 					border: 2px solid var(--studio-gray-10);
 					width: 100%;
 					margin: 0;
+
+					&:hover {
+						background: var(--studio-gray-0, #f6f7f7);
+					}
 				}
 
 				.social-buttons__service-name {
@@ -597,10 +630,10 @@
 					}
 				}
 			}
-		}
 
-		.auth-form__social-buttons-tos {
-			display: none;
+			.auth-form__social-buttons-tos {
+				margin-top: 32px;
+			}
 		}
 	}
 
@@ -889,6 +922,55 @@
 		color: var(--color-primary);
 	}
 
+	.is-woo-passwordless {
+		.signup-form {
+			input[type="email"].form-text-input {
+				margin-bottom: 0;
+			}
+
+			.signup-form__passwordless-form-wrapper .logged-out-form__footer {
+				padding: 0;
+				margin-top: 24px;
+			}
+		}
+
+		.logged-out-form {
+			padding: 0;
+			margin: 0;
+
+			label.form-label {
+				color: var(--color-gray-100);
+				font-size: 1rem;
+				font-style: normal;
+				font-weight: 600;
+				line-height: 24px;
+				margin-bottom: 16px;
+			}
+		}
+
+		.auth-form__separator + .auth-form__social.card {
+			border: 0;
+			padding: 0;
+		}
+
+		.formatted-header__title {
+			@media screen and ( max-width: 660px ) {
+				padding: 0;
+				max-width: 327px;
+				margin: 0 auto 16px;
+			}
+		}
+
+		.formatted-header__subtitle {
+			@media screen and ( max-width: 660px ) {
+				padding: 0;
+				max-width: 327px;
+				margin: 0 auto;
+				width: 100%;
+			}
+		}
+	}
+
 	&.is-woocommerce-core-profiler-flow {
 		background: #fff;
 
@@ -985,6 +1067,7 @@
 		.login__header-subtitle,
 		.formatted-header__subtitle {
 			color: $gray-700;
+			-webkit-font-smoothing: subpixel-antialiased;
 
 			@media screen and ( max-width: 660px ) {
 				width: auto;

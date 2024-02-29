@@ -119,7 +119,7 @@ export default function DomainOnlyThankYou( { purchases, receiptId }: DomainOnly
 					}
 				) }
 				products={ products }
-				footerDetails={ getDomainFooterDetails() }
+				footerDetails={ getDomainFooterDetails( 'domain-only' ) }
 				upsellProps={ upsellProps }
 			/>
 		</>
