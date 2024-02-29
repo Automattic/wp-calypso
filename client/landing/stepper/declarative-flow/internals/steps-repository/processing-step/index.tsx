@@ -14,6 +14,7 @@ import { useEffect, useState } from 'react';
 import DocumentHead from 'calypso/components/data/document-head';
 import { LoadingBar } from 'calypso/components/loading-bar';
 import { LoadingEllipsis } from 'calypso/components/loading-ellipsis';
+import availableFlows from 'calypso/landing/stepper/declarative-flow/registered-flows';
 import { useRecordSignupComplete } from 'calypso/landing/stepper/hooks/use-record-signup-complete';
 import { ONBOARD_STORE } from 'calypso/landing/stepper/stores';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
@@ -98,12 +99,20 @@ const ProcessingStep: React.FC< ProcessingStepProps > = function ( props ) {
 	// When the hasActionSuccessfullyRun flag turns on, run submit() and fire the sign-up completion event.
 	useEffect( () => {
 		if ( hasActionSuccessfullyRun ) {
-			recordSignupComplete();
+			// We should only trigger signup completion for signup flows, so check if we have one.
+			if ( availableFlows[ flow ] ) {
+				availableFlows[ flow ]().then( ( flowExport ) => {
+					if ( flowExport.default.isSignupFlow ) {
+						recordSignupComplete();
+					}
+				} );
+			}
+
 			submit?.( destinationState, ProcessingResult.SUCCESS );
 		}
 		// A change in submit() doesn't cause this effect to rerun.
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [ hasActionSuccessfullyRun, recordSignupComplete ] );
+	}, [ hasActionSuccessfullyRun, recordSignupComplete, flow ] );
 
 	const getSubtitle = () => {
 		return props.subtitle || loadingMessages[ currentMessageIndex ]?.subtitle;
