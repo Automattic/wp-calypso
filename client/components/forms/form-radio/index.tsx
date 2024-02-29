@@ -10,7 +10,7 @@ const FormRadio = ( {
 }: {
 	className?: string;
 	label?: ReactNode;
-} & HTMLProps< HTMLInputElement > ) => (
+} & Omit< HTMLProps< HTMLInputElement >, 'label' > ) => (
 	<>
 		<input { ...otherProps } type="radio" className={ classnames( className, 'form-radio' ) } />
 		{ label && <span className="form-radio__label">{ label }</span> }
