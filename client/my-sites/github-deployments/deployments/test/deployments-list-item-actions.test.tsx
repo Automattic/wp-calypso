@@ -2,8 +2,8 @@
  * @jest-environment jsdom
  */
 import { fireEvent, render } from '@testing-library/react';
+import { createDeployment } from '../../test-utils';
 import { DeploymentsListItemActions } from '../deployments-list-item-actions';
-import { createDeployment, createDeploymentRun } from './utils';
 
 const siteSlug = 'mysite.wpcomstaging.com';
 

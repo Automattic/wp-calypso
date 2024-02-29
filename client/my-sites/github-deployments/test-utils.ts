@@ -1,5 +1,5 @@
-import { DeploymentRun } from '../../deployment-run-logs/use-code-deployment-run-query';
-import { CodeDeploymentData } from '../use-code-deployments-query';
+import { DeploymentRun } from './deployment-run-logs/use-code-deployment-run-query';
+import { CodeDeploymentData } from './deployments/use-code-deployments-query';
 
 export const createDeployment = ( args?: Partial< CodeDeploymentData > ): CodeDeploymentData => ( {
 	id: 1,

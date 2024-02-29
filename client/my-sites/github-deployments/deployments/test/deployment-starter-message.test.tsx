@@ -3,8 +3,8 @@
  */
 import { render as testRenderer } from '@testing-library/react';
 import { ReactNode } from 'react';
+import { createDeployment } from '../../test-utils';
 import { DeploymentStarterMessage } from '../deployment-starter-message';
-import { createDeployment } from './utils';
 
 const render = ( element: ReactNode ) => {
 	const tr = document.createElement( 'tr' );
