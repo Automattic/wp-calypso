@@ -53,7 +53,7 @@ const useFetchDashboardSites = (
 					...( currentPage && { page: currentPage } ),
 					...agencyDashboardFilterToQueryObject( filter ),
 					...agencyDashboardSortToQueryObject( sort ),
-					per_page: per_page ?? null,
+					per_page: per_page ?? 20,
 				}
 			),
 		select: ( data ) => {

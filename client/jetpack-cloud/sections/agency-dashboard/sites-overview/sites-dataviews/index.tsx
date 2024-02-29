@@ -24,7 +24,7 @@ const SitesDataViews = ( {
 	const translate = useTranslate();
 
 	const totalSites = data ? data?.total : 0;
-	const sitesPerPage = sitesViewState.perPage > 0 ? sitesViewState.perPage : 10;
+	const sitesPerPage = sitesViewState.perPage > 0 ? sitesViewState.perPage : 20;
 	const totalPages = Math.ceil( totalSites / sitesPerPage );
 	const sites = useFormattedSites( data?.sites ?? [] );
 
