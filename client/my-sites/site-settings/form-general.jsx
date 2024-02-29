@@ -28,7 +28,6 @@ import InlineSupportLink from 'calypso/components/inline-support-link';
 import SiteLanguagePicker from 'calypso/components/language-picker/site-language-picker';
 import Notice from 'calypso/components/notice';
 import NoticeAction from 'calypso/components/notice/notice-action';
-import SitePreviewLink from 'calypso/components/site-preview-link';
 import Timezone from 'calypso/components/timezone';
 import { preventWidows } from 'calypso/lib/formatting';
 import scrollToAnchor from 'calypso/lib/scroll-to-anchor';
@@ -610,49 +609,47 @@ export class SiteSettingsFormGeneral extends Component {
 					urlRef="unlaunched-settings"
 				/>
 				{ ! isWpcomStagingSite && this.giftOptions() }
-				{ ! isWPForTeamsSite &&
-					! ( siteIsJetpack && ! siteIsAtomic ) &&
-					! ( isEnabled( 'layout/dotcom-nav-redesign' ) && isClassicView ) && (
-						<div className="site-settings__footer-credit-container">
-							<SettingsSectionHeader
-								title={ translate( 'Footer credit' ) }
-								id="site-settings__footer-credit-header"
-							/>
-							<CompactCard className="site-settings__footer-credit-explanation">
-								<p>
-									{ preventWidows(
-										translate(
-											'You can customize your website by changing the footer credit in customizer.'
-										),
-										2
-									) }
-								</p>
-								<div>
-									<Button className="site-settings__footer-credit-change" href={ customizerUrl }>
-										{ translate( 'Change footer credit' ) }
-									</Button>
-								</div>
-							</CompactCard>
-							{ ! hasNoWpcomBranding && (
-								<UpsellNudge
-									feature={ WPCOM_FEATURES_NO_WPCOM_BRANDING }
-									plan={ PLAN_BUSINESS }
-									title={ translate(
-										'Remove the footer credit entirely with WordPress.com %(businessPlanName)s',
+				{ ! isWPForTeamsSite && ! ( siteIsJetpack && ! siteIsAtomic ) && (
+					<div className="site-settings__footer-credit-container">
+						<SettingsSectionHeader
+							title={ translate( 'Footer credit' ) }
+							id="site-settings__footer-credit-header"
+						/>
+						<CompactCard className="site-settings__footer-credit-explanation">
+							<p>
+								{ preventWidows(
+									translate(
+										'You can customize your website by changing the footer credit in customizer.'
+									),
+									2
+								) }
+							</p>
+							<div>
+								<Button className="site-settings__footer-credit-change" href={ customizerUrl }>
+									{ translate( 'Change footer credit' ) }
+								</Button>
+							</div>
+						</CompactCard>
+						{ ! hasNoWpcomBranding && (
+							<UpsellNudge
+								feature={ WPCOM_FEATURES_NO_WPCOM_BRANDING }
+								plan={ PLAN_BUSINESS }
+								title={ translate(
+									'Remove the footer credit entirely with WordPress.com %(businessPlanName)s',
 
-										{ args: { businessPlanName: getPlan( PLAN_BUSINESS ).getTitle() } }
-									) }
-									description={ translate(
-										'Upgrade to remove the footer credit, use advanced SEO tools and more'
-									) }
-									showIcon={ true }
-									event="settings_remove_footer"
-									tracksImpressionName="calypso_upgrade_nudge_impression"
-									tracksClickName="calypso_upgrade_nudge_cta_click"
-								/>
-							) }
-						</div>
-					) }
+									{ args: { businessPlanName: getPlan( PLAN_BUSINESS ).getTitle() } }
+								) }
+								description={ translate(
+									'Upgrade to remove the footer credit, use advanced SEO tools and more'
+								) }
+								showIcon={ true }
+								event="settings_remove_footer"
+								tracksImpressionName="calypso_upgrade_nudge_impression"
+								tracksClickName="calypso_upgrade_nudge_cta_click"
+							/>
+						) }
+					</div>
+				) }
 				{ this.toolbarOption() }
 			</div>
 		);
