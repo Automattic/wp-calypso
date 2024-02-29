@@ -15,6 +15,7 @@ import { useIsPluginBundleEligible } from '../hooks/use-is-plugin-bundle-eligibl
 import { useSiteData } from '../hooks/use-site-data';
 import { useCanUserManageOptions } from '../hooks/use-user-can-manage-options';
 import { ONBOARD_STORE, SITE_STORE, USER_STORE, STEPPER_INTERNAL_STORE } from '../stores';
+import { shouldRedirectToSiteMigration } from './helpers';
 import { recordSubmitStep } from './internals/analytics/record-submit-step';
 import { STEPS } from './internals/steps';
 import { redirect } from './internals/steps-repository/import/util';
@@ -127,7 +128,7 @@ const siteSetupFlow: Flow = {
 
 		const origin = urlQueryParams.get( 'origin' );
 		const from = urlQueryParams.get( 'from' );
-		const hasOriginOnSiteMigrationFlow = origin === STEPS.SITE_MIGRATION_IDENTIFY.slug;
+
 		const adminUrl = useSelect(
 			( select ) =>
 				site && ( select( SITE_STORE ) as SiteSelect ).getSiteOption( site.ID, 'admin_url' ),
@@ -383,9 +384,9 @@ const siteSetupFlow: Flow = {
 				case 'importList':
 				case 'importReady': {
 					const depUrl = ( providedDependencies?.url as string ) || '';
-					const isWordpress = providedDependencies?.platform === 'wordpress';
-					const isImportList = currentStep === STEPS.IMPORT_LIST.slug;
-					if ( hasOriginOnSiteMigrationFlow && isWordpress && isImportList ) {
+					const { platform } = providedDependencies as { platform: ImporterMainPlatform };
+
+					if ( shouldRedirectToSiteMigration( currentStep, platform, origin ) ) {
 						return window.location.assign(
 							addQueryArgs(
 								{ siteSlug, siteId, from },
