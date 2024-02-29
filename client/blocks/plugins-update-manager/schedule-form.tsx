@@ -94,14 +94,14 @@ export const ScheduleForm = ( props: Props ) => {
 	);
 
 	const onFormSubmit = () => {
-		const forValid = ! Object.values( validationErrors ).filter( ( e ) => !! e ).length;
+		const formValid = ! Object.values( validationErrors ).filter( ( e ) => !! e ).length;
 		setFieldTouched( {
 			name: true,
 			plugins: true,
 			timestamp: true,
 		} );
 
-		forValid &&
+		formValid &&
 			createScheduleUpdates( {
 				hook: name,
 				plugins: selectedPlugins,
