@@ -30,6 +30,9 @@ const SiteMigrationUpgradePlan: Step = function ( { navigation } ) {
 					plan: plan.getPathSlug ? plan.getPathSlug() : '',
 				} );
 			} }
+			onFreeTrialSelectionSuccess={ () => {
+				navigation.submit?.( { freeTrialSelected: true } );
+			} }
 			navigateToVerifyEmailStep={ () => {
 				navigation.submit?.( { verifyEmail: true } );
 			} }
