@@ -18,39 +18,47 @@ export default function useFetchLicenses(
 
 	const getLicenses = () => {
 		if ( showDummyData ) {
+			const items = [
+				{
+					licenseId: 1,
+					licenseKey: 'license-key',
+					product: 'dummy-product',
+					blogId: 1,
+					siteUrl: 'dummy-url',
+					hasDownloads: true,
+					issuedAt: '2021-01-01',
+					attachedAt: '2021-01-01',
+					quantity: 5,
+					revokedAt: null,
+					ownerType: 'jetpack_partner_key',
+					parentLicenseId: undefined,
+				},
+				{
+					licenseId: 2,
+					licenseKey: 'license-key-2',
+					product: 'dummy-product-2',
+					blogId: 1,
+					siteUrl: null,
+					hasDownloads: true,
+					issuedAt: '2021-01-01',
+					attachedAt: null,
+					quantity: undefined,
+					revokedAt: null,
+					ownerType: 'jetpack_partner_key',
+					parentLicenseId: undefined,
+				},
+			];
+
+			const result = search
+				? items.filter( ( item ) => {
+						return item.licenseKey.includes( search ) || item.product.includes( search );
+				  } )
+				: items;
+
 			return {
-				items: [
-					{
-						licenseId: 1,
-						licenseKey: 'license-key',
-						product: 'dummy-product',
-						blogId: 1,
-						siteUrl: 'dummy-url',
-						hasDownloads: true,
-						issuedAt: '2021-01-01',
-						attachedAt: '2021-01-01',
-						quantity: 5,
-						revokedAt: null,
-						ownerType: 'jetpack_partner_key',
-						parentLicenseId: undefined,
-					},
-					{
-						licenseId: 2,
-						licenseKey: 'license-key-2',
-						product: 'dummy-product-2',
-						blogId: 1,
-						siteUrl: null,
-						hasDownloads: true,
-						issuedAt: '2021-01-01',
-						attachedAt: null,
-						quantity: undefined,
-						revokedAt: null,
-						ownerType: 'jetpack_partner_key',
-						parentLicenseId: undefined,
-					},
-				],
-				total_pages: 1,
-				total_items: 2,
+				items: result,
+				total_pages: Math.ceil( result.length / LICENSES_PER_PAGE ),
+				total_items: result.length,
 				items_per_page: LICENSES_PER_PAGE,
 			};
 		}
