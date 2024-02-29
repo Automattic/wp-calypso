@@ -36,23 +36,18 @@ const ConditionalLink: FC< { active: boolean } & LinkProps > = ( { active, ...pr
 	return <span { ...props }></span>;
 };
 
-const noop = () => {};
 type ContactOption = 'chat' | 'forum' | 'email';
 const generateContactOnClickEvent = (
 	contactOption: ContactOption,
-	contactOptionEventName?: string,
-	onClick?: () => void
+	contactOptionEventName?: string
 ): ( () => void ) => {
-	if ( ! onClick || ! contactOptionEventName ) {
-		return noop;
-	}
-
 	return () => {
-		recordTracksEvent( contactOptionEventName, {
-			location: 'help-center',
-			contact_option: contactOption,
-		} );
-		onClick();
+		if ( contactOptionEventName ) {
+			recordTracksEvent( contactOptionEventName, {
+				location: 'help-center',
+				contact_option: contactOption,
+			} );
+		}
 	};
 };
 
@@ -73,7 +68,6 @@ type HelpCenterContactPageProps = {
 
 export const HelpCenterContactPage: FC< HelpCenterContactPageProps > = ( {
 	hideHeaders = false,
-	onClick,
 	trackEventName,
 } ) => {
 	const { __ } = useI18n();
@@ -183,9 +177,9 @@ export const HelpCenterContactPage: FC< HelpCenterContactPageProps > = ( {
 	const emailUrl = `/contact-form?${ emailUrlSearchParams.toString() }`;
 
 	const contactOptionsEventMap: Record< ContactOption, () => void > = {
-		chat: generateContactOnClickEvent( 'chat', trackEventName, onClick ),
-		forum: generateContactOnClickEvent( 'forum', trackEventName, onClick ),
-		email: generateContactOnClickEvent( 'email', trackEventName, onClick ),
+		chat: generateContactOnClickEvent( 'chat', trackEventName ),
+		forum: generateContactOnClickEvent( 'forum', trackEventName ),
+		email: generateContactOnClickEvent( 'email', trackEventName ),
 	};
 
 	return (
