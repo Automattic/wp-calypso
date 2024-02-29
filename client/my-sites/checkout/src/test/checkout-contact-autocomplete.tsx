@@ -26,6 +26,7 @@ import {
 	mockGetSupportedCountriesEndpoint,
 	mockGetPaymentMethodsEndpoint,
 	mockUserSignupValidationEndpoint,
+	mockSetCachedContactDetailsEndpoint,
 } from './util';
 import { MockCheckout } from './util/mock-checkout';
 import type { CartKey } from '@automattic/shopping-cart';
@@ -69,6 +70,7 @@ describe( 'Checkout contact step', () => {
 		mockGetVatInfoEndpoint( {} );
 		mockGetPaymentMethodsEndpoint( [] );
 		mockLogStashEndpoint();
+		mockSetCachedContactDetailsEndpoint();
 		mockGetSupportedCountriesEndpoint( countryList );
 	} );
 
