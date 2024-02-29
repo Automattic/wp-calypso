@@ -12,11 +12,14 @@
 		width: 100%;
 		.migration-success-ctas__buttons {
 			min-width: 220px;
+			button {
+				border-radius: 4px;
+			}
 		}
 	}
 	.card {
-		margin: 50px 0;
-		padding: 20px 25px;
+		margin: 3.125rem 0;
+		padding: 1.25rem 1.563rem;
 		.components-card__body {
 			padding: 0;
 			.components-button {
@@ -28,19 +31,14 @@
 		}
 	}
 	.migration-success-links-wrapper {
-		display: flex;
 		text-align: left;
-		flex-direction: column;
-		gap: 40px;
 		@include break-medium {
-			padding: 0 25px 0 25px;
-			flex-direction: row;
+			padding: 0 1.563rem 0 1.563rem;
 		}
 		.migration-success-links-wrapper__link {
-			margin-top: 16px;
+			margin-top: 1rem;
 			text-decoration: underline;
 			text-underline-offset: 4px;
 		}
 	}
-
 }

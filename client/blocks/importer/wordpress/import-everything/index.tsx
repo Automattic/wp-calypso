@@ -213,11 +213,9 @@ export class ImportEverything extends SectionMigrate {
 
 	renderMigrationComplete() {
 		const { isMigrateFromWp } = this.props;
-		return ! isMigrateFromWp ? (
-			this.renderMigrationSuccessScreen()
-		) : (
-			<Hooray>{ this.renderHoorayScreenWithDomainInfo() }</Hooray>
-		);
+		return ! isMigrateFromWp
+			? this.renderMigrationSuccessScreen()
+			: this.renderHoorayScreenWithDomainInfo();
 	}
 
 	renderMigrationError( status: MigrationStatusError | null = null ) {
@@ -255,35 +253,37 @@ export class ImportEverything extends SectionMigrate {
 	renderHoorayScreenWithDomainInfo() {
 		const { translate, stepNavigator, targetSite } = this.props;
 		return (
-			<div className="import__heading import__heading-center">
-				<Title>{ translate( "Migration done! You're all set!" ) }</Title>
-				<SubTitle>
-					{ createInterpolateElement(
-						translate(
-							'You have a temporary domain name on WordPress.com.<br />We recommend updating your domain name.'
-						),
-						{ br: createElement( 'br' ) }
-					) }
-				</SubTitle>
-				<DomainInfo domain={ targetSite.slug } />
-				<DoneButton
-					className="is-normal-width"
-					label={ translate( 'Update domain name' ) }
-					onSiteViewClick={ () => {
-						this.props.recordTracksEvent( 'calypso_site_importer_click_add_domain' );
-						stepNavigator?.goToAddDomainPage?.();
-					} }
-				/>
-				<DoneButton
-					className="is-normal-width"
-					label={ translate( 'View your dashboard' ) }
-					isPrimary={ false }
-					onSiteViewClick={ () => {
-						this.props.recordTracksEvent( 'calypso_site_importer_view_site' );
-						stepNavigator?.goToSiteViewPage?.();
-					} }
-				/>
-			</div>
+			<Hooray>
+				<div className="import__heading import__heading-center">
+					<Title>{ translate( "Migration done! You're all set!" ) }</Title>
+					<SubTitle>
+						{ createInterpolateElement(
+							translate(
+								'You have a temporary domain name on WordPress.com.<br />We recommend updating your domain name.'
+							),
+							{ br: createElement( 'br' ) }
+						) }
+					</SubTitle>
+					<DomainInfo domain={ targetSite.slug } />
+					<DoneButton
+						className="is-normal-width"
+						label={ translate( 'Update domain name' ) }
+						onSiteViewClick={ () => {
+							this.props.recordTracksEvent( 'calypso_site_importer_click_add_domain' );
+							stepNavigator?.goToAddDomainPage?.();
+						} }
+					/>
+					<DoneButton
+						className="is-normal-width"
+						label={ translate( 'View your dashboard' ) }
+						isPrimary={ false }
+						onSiteViewClick={ () => {
+							this.props.recordTracksEvent( 'calypso_site_importer_view_site' );
+							stepNavigator?.goToSiteViewPage?.();
+						} }
+					/>
+				</div>
+			</Hooray>
 		);
 	}
 

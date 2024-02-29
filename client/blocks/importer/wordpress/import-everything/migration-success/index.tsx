@@ -72,7 +72,11 @@ export default function MigrationSuccess( {
 				</CardBody>
 			</Card>
 
-			<div className="migration-success-links-wrapper">
+			<Flex
+				className="migration-success-links-wrapper"
+				direction={ [ 'column', 'row' ] }
+				gap={ 10 }
+			>
 				<VStack
 					spacing="1"
 					className="screen-confirmation__list-item-wrapper"
@@ -122,7 +126,7 @@ export default function MigrationSuccess( {
 						{ translate( 'Migration support resources' ) }
 					</Link>
 				</VStack>
-			</div>
+			</Flex>
 		</>
 	);
 }
