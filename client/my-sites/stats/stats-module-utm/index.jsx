@@ -30,6 +30,11 @@ const StatsModuleUTM = ( { siteId, period, postId, query, summary } ) => {
 		};
 	} );
 
+	// Hide the module if the specific post is the Home page.
+	if ( postId === 0 ) {
+		return null;
+	}
+
 	const hideSummaryLink = postId !== undefined || summary === true;
 
 	return (
