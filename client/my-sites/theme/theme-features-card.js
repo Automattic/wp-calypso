@@ -1,15 +1,17 @@
 import { Card } from '@automattic/components';
 import { useLocalizeUrl } from '@automattic/i18n-utils';
-import { localize } from 'i18n-calypso';
+import { getLocaleSlug, localize } from 'i18n-calypso';
 import { get, isEmpty } from 'lodash';
 import { connect } from 'react-redux';
 import QueryThemeFilters from 'calypso/components/data/query-theme-filters';
 import SectionHeader from 'calypso/components/section-header';
+import { useIsLoggedIn } from 'calypso/lib/request-with-subkey-fallback';
 import { isAmbiguousThemeFilterTerm } from 'calypso/state/themes/selectors';
 import { isDelistedTaxonomyTermSlug } from 'calypso/state/themes/utils';
 
 const ThemeFeaturesCard = ( { isWpcomTheme, siteSlug, features, translate, onClick } ) => {
 	const localizeUrl = useLocalizeUrl();
+	const { isLoggedIn } = useIsLoggedIn();
 
 	if ( isEmpty( features ) ) {
 		return null;
@@ -32,7 +34,9 @@ const ThemeFeaturesCard = ( { isWpcomTheme, siteSlug, features, translate, onCli
 							) : (
 								<a
 									href={ localizeUrl(
-										`https://wordpress.com/themes/filter/${ term }/${ siteSlug || '' }`
+										`https://wordpress.com/themes/filter/${ term }/${ siteSlug || '' }`,
+										getLocaleSlug(),
+										isLoggedIn
 									) }
 								>
 									{ name }
