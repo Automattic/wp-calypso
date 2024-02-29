@@ -1,5 +1,5 @@
 import classnames from 'classnames';
-import type { HTMLProps } from 'react';
+import type { HTMLProps, ReactNode } from 'react';
 
 import './style.scss';
 
@@ -9,11 +9,11 @@ const FormRadio = ( {
 	...otherProps
 }: {
 	className?: string;
-	label: string;
+	label?: ReactNode;
 } & HTMLProps< HTMLInputElement > ) => (
 	<>
 		<input { ...otherProps } type="radio" className={ classnames( className, 'form-radio' ) } />
-		{ label != null && <span className="form-radio__label">{ label }</span> }
+		{ label && <span className="form-radio__label">{ label }</span> }
 	</>
 );
 
