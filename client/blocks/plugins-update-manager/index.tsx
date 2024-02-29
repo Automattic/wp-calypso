@@ -36,7 +36,11 @@ export const PluginsUpdateManager = ( props: Props ) => {
 			</NavigationHeader>
 
 			{ context === 'list' && (
-				<ScheduleList onNavBack={ onNavBack } onCreateNewSchedule={ onCreateNewSchedule } />
+				<ScheduleList
+					siteSlug={ siteSlug }
+					onNavBack={ onNavBack }
+					onCreateNewSchedule={ onCreateNewSchedule }
+				/>
 			) }
 			{ context === 'create' && <ScheduleCreate siteSlug={ siteSlug } onNavBack={ onNavBack } /> }
 		</MainComponent>
