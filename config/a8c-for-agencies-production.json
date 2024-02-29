@@ -14,7 +14,7 @@
 	},
 	"enable_all_sections": false,
 	"sections": {
-		"a8c-for-agencies": false
+		"a8c-for-agencies": true
 	},
 	"site_filter": [],
 	"theme": "a8c-for-agencies",
