@@ -1,7 +1,6 @@
 import config from '@automattic/calypso-config';
 import page from '@automattic/calypso-router';
-import { Button as CalypsoButton } from '@automattic/components';
-import { Button } from '@wordpress/components';
+import { Button } from '@automattic/components';
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import React, { ReactNode } from 'react';
@@ -35,9 +34,6 @@ const StatsCardUpsellJetpack: React.FC< Props > = ( { className, siteSlug } ) =>
 	const siteId = useSelector( getSelectedSiteId );
 	const isWPCOMSite = useSelector( ( state ) => siteId && getIsSiteWPCOM( state, siteId ) );
 
-	// The button of @automattic/components has built-in color scheme support for Calypso.
-	const ButtonComponent = isWPCOMSite ? CalypsoButton : Button;
-
 	const onClick = () => {
 		// We need to ensure we pass the irclick id for impact affiliate tracking if its set.
 		const currentParams = new URLSearchParams( window.location.search );
@@ -65,14 +61,15 @@ const StatsCardUpsellJetpack: React.FC< Props > = ( { className, siteSlug } ) =>
 			onClick={ onClick }
 			copyText={ copyText }
 			buttonComponent={
-				<ButtonComponent
-					className={ classNames( className, { [ 'stats__odyssey' ]: ! isWPCOMSite } ) }
+				<Button
+					className={ classNames( {
+						[ 'jetpack-emerald-button' ]: ! isWPCOMSite,
+					} ) }
 					onClick={ onClick }
-					variant="primary"
-					primary={ isWPCOMSite ? true : undefined }
+					primary
 				>
 					{ translate( 'Upgrade plan' ) }
-				</ButtonComponent>
+				</Button>
 			}
 		/>
 	);
