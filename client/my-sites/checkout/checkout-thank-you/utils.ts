@@ -24,7 +24,9 @@ const buildKeyValuePairByProductSlugs = (
 	productSlugs: ReadonlyArray< string >,
 	value: string
 ) => {
-	return productSlugs.reduce( ( map, productSlug ) => ( { ...map, [ productSlug ]: value } ), {} );
+	return productSlugs
+		? productSlugs.reduce( ( map, productSlug ) => ( { ...map, [ productSlug ]: value } ), {} )
+		: {};
 };
 
 const WPORG_PLUGIN_SLUG_MAP: Record< string, string > = {
