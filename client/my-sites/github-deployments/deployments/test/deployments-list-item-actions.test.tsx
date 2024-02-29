@@ -3,39 +3,18 @@
  */
 import { fireEvent, render } from '@testing-library/react';
 import { DeploymentsListItemActions } from '../deployments-list-item-actions';
-import { CodeDeploymentData } from '../use-code-deployments-query';
-
-const createDeployment = ( args?: Partial< CodeDeploymentData > ): CodeDeploymentData => ( {
-	id: 1,
-	blog_id: 1,
-	branch_name: 'trunk',
-	created_by: {
-		id: 1,
-		name: 'Luis Felipe Zaguini',
-	},
-	created_by_user_id: 1,
-	created_on: new Date().toString(),
-	external_repository_id: 1,
-	installation_id: 1,
-	is_automated: true,
-	repository_name: 'repository',
-	target_dir: '/',
-	updated_on: new Date().toString(),
-	...args,
-} );
+import { createDeployment, createDeploymentRun } from './utils';
 
 const siteSlug = 'mysite.wpcomstaging.com';
 
 describe( 'DeploymentsListItemActions', () => {
-	test( 'lets the user trigger a manual deployment on simple connections', () => {
+	test( 'does not let the user see logs if there are no runs', () => {
 		const onManualDeployment = jest.fn();
 
 		const { getByText, getByLabelText } = render(
 			<DeploymentsListItemActions
 				siteSlug={ siteSlug }
-				deployment={ createDeployment( {
-					workflow_path: undefined,
-				} ) }
+				deployment={ createDeployment() }
 				onManualDeployment={ onManualDeployment }
 				onDisconnectRepository={ jest.fn() }
 			/>
@@ -43,22 +22,20 @@ describe( 'DeploymentsListItemActions', () => {
 
 		fireEvent.click( getByLabelText( 'Deployment actions' ) );
 
-		const triggerManualDeployButton = getByText( 'Trigger manual deployment' );
+		const triggerManualDeployButton = getByText( 'See deployment runs' );
 
 		expect( triggerManualDeployButton ).toBeInTheDocument();
-
-		fireEvent.click( triggerManualDeployButton );
-		expect( onManualDeployment ).toHaveBeenCalled();
+		expect( triggerManualDeployButton.parentElement ).toBeDisabled();
 	} );
 
-	test( 'does not the user trigger a manual deployment on ineligible advanced connections', () => {
+	test( 'lets the user see logs if there is at least one run', () => {
 		const onManualDeployment = jest.fn();
 
 		const { getByText, getByLabelText } = render(
 			<DeploymentsListItemActions
 				siteSlug={ siteSlug }
 				deployment={ createDeployment( {
-					workflow_path: '.github/workflows/workflow.yml',
+					current_deployment_run: createDeploymentRun(),
 				} ) }
 				onManualDeployment={ onManualDeployment }
 				onDisconnectRepository={ jest.fn() }
@@ -67,36 +44,9 @@ describe( 'DeploymentsListItemActions', () => {
 
 		fireEvent.click( getByLabelText( 'Deployment actions' ) );
 
-		const triggerManualDeployButton = getByText( 'Trigger manual deployment' );
+		const triggerManualDeployButton = getByText( 'See deployment runs' );
 
 		expect( triggerManualDeployButton ).toBeInTheDocument();
-
-		fireEvent.click( triggerManualDeployButton );
-		expect( onManualDeployment ).not.toHaveBeenCalled();
-	} );
-
-	test( 'lets the user trigger a manual deployment on eligible advanced connections', () => {
-		const onManualDeployment = jest.fn();
-
-		const { getByText, getByLabelText } = render(
-			<DeploymentsListItemActions
-				siteSlug={ siteSlug }
-				deployment={ createDeployment( {
-					workflow_path: '.github/workflows/workflow.yml',
-					workflow_run_status: 'eligible',
-				} ) }
-				onManualDeployment={ onManualDeployment }
-				onDisconnectRepository={ jest.fn() }
-			/>
-		);
-
-		fireEvent.click( getByLabelText( 'Deployment actions' ) );
-
-		const triggerManualDeployButton = getByText( 'Trigger manual deployment' );
-
-		expect( triggerManualDeployButton ).toBeInTheDocument();
-
-		fireEvent.click( triggerManualDeployButton );
-		expect( onManualDeployment ).toHaveBeenCalled();
+		expect( triggerManualDeployButton.parentElement ).not.toBeDisabled();
 	} );
 } );
