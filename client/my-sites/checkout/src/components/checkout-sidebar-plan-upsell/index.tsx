@@ -24,6 +24,33 @@ import './style.scss';
 
 const debug = debugFactory( 'calypso:checkout-sidebar-plan-upsell' );
 
+const PromoCardV2 = styled.div`
+	position: relative;
+	background-color: #bbe0fa;
+	border-radius: 4px;
+	font-size: 12px;
+	font-weight: 500;
+	align-self: flex-end;
+
+	p {
+		margin: 0;
+		padding: 8px 16px;
+	}
+
+	&:before {
+		background-color: #bbe0fa;
+		display: block;
+		top: -5px;
+		content: '';
+		height: 8px;
+		right: 8%;
+		margin-left: -4px;
+		position: absolute;
+		transform: rotate( 225deg );
+		width: 8px;
+	}
+`;
+
 const CheckoutPromoCard: React.FC< {
 	responseCart: ResponseCart;
 	variants: WPCOMProductVariant[];
@@ -32,61 +59,79 @@ const CheckoutPromoCard: React.FC< {
 	const plan = responseCart.products.find(
 		( product ) => isPlan( product ) && ! isJetpackPlan( product )
 	);
-	const hasDomainRegistration = responseCart.products.find(
-		( product ) => product.is_domain_registration
-	)?.is_domain_registration;
+	const domainInCart = responseCart.products.find( ( product ) => product.is_domain_registration );
 
-	const PromoCardV2 = styled.div`
-		position: relative;
-		background-color: #bbe0fa;
-		border-radius: 4px;
-		font-size: 12px;
-		font-weight: 500;
-		align-self: flex-end;
+	if ( ! plan ) {
+		debug( 'no plan found in cart' );
+		return null;
+	}
 
-		p {
-			margin: 0;
-			padding: 8px 16px;
-		}
+	const biennialVariant = variants?.find( ( product ) => product.termIntervalInMonths === 24 );
+	const triennialVariant = variants?.find( ( product ) => product.termIntervalInMonths === 36 );
+	const currentVariant = variants?.find( ( product ) => product.productId === plan.product_id );
 
-		&:before {
-			background-color: #bbe0fa;
-			display: block;
-			top: -5px;
-			content: '';
-			height: 8px;
-			right: 8%;
-			margin-left: -4px;
-			position: absolute;
-			transform: rotate( 225deg );
-			width: 8px;
-		}
-	`;
+	if ( ! biennialVariant ) {
+		debug( 'plan in cart has no biennial variant; variants are', variants );
+		return null;
+	}
 
-	const currentVariant = variants?.find( ( product ) => product.productId === plan?.product_id );
+	if ( ! currentVariant ) {
+		debug( 'plan in cart has no current variant; variants are', variants );
+		return null;
+	}
+
+	if ( biennialVariant.productId === plan.product_id ) {
+		debug( 'plan in cart is already biennial' );
+		return null;
+	}
+
+	// If the current plan is a triennial plan, we don't want to show an upsell.
+	if ( triennialVariant?.productId === plan.product_id ) {
+		debug( 'plan is triennial. hide upsell.' );
+		return null;
+	}
+
+	const percentSavings = getItemVariantDiscountPercentage( biennialVariant, currentVariant );
+	if ( percentSavings === 0 ) {
+		debug( 'percent savings is too low', percentSavings );
+		return null;
+	}
 
 	const isMonthly = currentVariant?.termIntervalInMonths === 1;
 	const isYearly = currentVariant?.termIntervalInMonths === 12;
 	const isBiennially = currentVariant?.termIntervalInMonths === 24;
 	const isTriennially = currentVariant?.termIntervalInMonths === 36;
 
-	let labelText = '';
+	let labelText;
 
 	if ( isMonthly ) {
-		if ( hasDomainRegistration ) {
-			labelText = translate(
-				'Save money with longer billing cycles and get [domain name] free for the first year with annual plans'
-			);
-		}
-
 		labelText = translate(
 			'Longer plan billing cycles save you money and include a custom domain for free for the first year.'
 		);
+
+		if ( domainInCart ) {
+			labelText = translate(
+				'Save money with longer billing cycles and get %(domainMeta)s free for the first year by switching to an annual plan.',
+				{
+					comment: '"domainMeta" is the domain name and TLD, like "example.com" or "example.org"',
+					args: {
+						domainMeta: domainInCart.meta,
+					},
+				}
+			);
+		}
 	}
 
 	if ( isYearly ) {
 		labelText = translate(
-			`Save up to XX% on longer billing cycles! It's hassle-free and easy on your wallet. Don't miss out!`
+			"Save up to %(savingsPercentage)s% on longer billing cycles! It's hassle-free and easy on your wallet. Don't miss out!",
+			{
+				comment:
+					'"savingsPercentage is the savings percentage for the upgrade as a number, like "20" for 20%"',
+				args: {
+					savingsPercentage: percentSavings,
+				},
+			}
 		);
 	}
 
@@ -97,9 +142,7 @@ const CheckoutPromoCard: React.FC< {
 	}
 
 	if ( isTriennially ) {
-		labelText = translate(
-			'Longer plan billing cycles save you money and include a custom domain for free for the first year.'
-		);
+		return null;
 	}
 
 	return (
@@ -274,12 +317,6 @@ export function CheckoutSidebarPlanUpsell() {
 							busy: isBusy(),
 							text: __( 'Switch to a two-year plan' ),
 							action: onUpgradeClick,
-						} }
-						learnMoreLink={ {
-							url: '#',
-							onClick: onUpgradeClick,
-							selfTarget: true,
-							label: 'Switch to a two-year plan',
 						} }
 					/>
 				</PromoCard>
