@@ -71,8 +71,7 @@
 	a,
 	.wp-login__links a,
 	.wp-login__links button,
-	.button:not(.social-buttons__button),
-	.magic-login__footer a {
+	.button:not(.social-buttons__button) {
 		font-size: $woo-font-size-base;
 		line-height: 28px;
 		text-align: center;
@@ -383,11 +382,6 @@
 		}
 	}
 
-	.magic-login__form-action {
-		text-align: center;
-		margin-top: 25px;
-	}
-
 	.auth-form__social-buttons {
 		align-items: center;
 
@@ -444,10 +438,6 @@
 		background-color: initial;
 	}
 
-	.magic-login {
-		margin-top: 50px;
-	}
-
 	.wp-login__container,
 	.magic-login,
 	.step-wrapper,
@@ -499,29 +489,117 @@
 		}
 	}
 
-	.magic-login__form-header {
-		margin-bottom: 0;
-	}
+	.magic-login {
+		h1.magic-login__form-header {
+			color: var(--studio-gray-100);
+			font-feature-settings: "ss01" on, "salt" on;
+			font-family: proxima-nova, sans-serif;
+			text-align: center;
+			font-size: 2.25rem;
+			font-weight: 700;
+			line-height: 39.6px;
+			letter-spacing: -0.72px;
+			margin: 0;
 
-	.magic-login__form {
-		border: none;
-		.logged-out-form {
-			max-width: 100%;
-			box-shadow: none;
-			padding-left: 0;
-			padding-right: 0;
-			padding-bottom: 32px;
+			@media screen and ( max-width: 660px ) {
+				text-align: left;
+				max-width: 327px;
+				margin: 0 auto;
+			}
+		}
+
+		.magic-login__form-action {
+			margin-top: 8px;
+		}
+
+		.magic-login__form {
+			border: none;
+			padding: 0;
 
 			p {
 				text-align: center;
-				max-width: 415px;
-				margin: 0 auto 24px;
+			}
+
+			.logged-out-form {
+				max-width: 100%;
+				padding: 0;
+				box-shadow: none;
+
+				form {
+					max-width: 327px;
+				}
+			}
+
+			label.form-label {
+				color: var(--studio-gray-100);
+				font-size: 1rem;
+				font-style: normal;
+				font-weight: 600;
+				line-height: 24px;
+				margin-bottom: 16px;
 			}
 		}
-	}
 
-	.magic-login__request-link .magic-login__form > p {
-		text-align: center;
+		.magic-login__form p.magic-login__form-sub-header,
+		.magic-login__form-text {
+			color: var(--studio-gray-60);
+			text-align: center;
+			font-size: rem(18px);
+			font-style: normal;
+			font-weight: 400;
+			line-height: 27px;
+			letter-spacing: -0.025px;
+			margin: 12px auto 48px;
+
+			strong {
+				font-weight: 600;
+			}
+		}
+
+		.magic-login__emails-list {
+			max-width: 327px;
+			margin-inline: auto;
+
+			li {
+				border-radius: 8px; // stylelint-disable-line scales/radii
+				border: 2px solid var(--studio-gray-10);
+			}
+
+			a {
+				color: var(--studio-gray-100);
+				text-decoration: none;
+				font-size: 1rem;
+				font-style: normal;
+				font-weight: 500;
+				line-height: 24px;
+			}
+		}
+
+		.magic-login__footer {
+			margin: 0;
+			max-width: 327px;
+			margin-inline: auto;
+
+			p {
+				color: var(--studio-gray-60);
+				text-align: center;
+
+				font-family: "SF Pro Text", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
+				font-size: rem(14px);
+				font-style: normal;
+				font-weight: 400;
+				line-height: 20px;
+			}
+
+			a {
+				text-decoration: none;
+				color: $woo-purple-50;
+				font-size: rem(14px);
+				font-style: normal;
+				font-weight: 500;
+				line-height: 20px;
+			}
+		}
 	}
 
 	.auth-form__social {
