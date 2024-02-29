@@ -655,7 +655,7 @@ class ThemeShowcase extends Component {
 				{ this.renderSiteAssemblerSelectorModal() }
 				{ isLoggedIn && (
 					<ThemeShowcaseSurvey
-						survey={ SurveyType.FEBRUARY_2024 }
+						survey={ SurveyType.MARCH_2024 }
 						condition={ () => lastNonEditorRoute.includes( 'theme/' ) }
 					/>
 				) }
