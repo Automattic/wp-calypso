@@ -125,6 +125,9 @@ const siteSetupFlow: Flow = {
 		const urlQueryParams = useQuery();
 		const isPluginBundleEligible = useIsPluginBundleEligible();
 
+		const origin = urlQueryParams.get( 'origin' );
+		const from = urlQueryParams.get( 'from' );
+		const hasOriginOnSiteMigrationFlow = origin === STEPS.SITE_MIGRATION_IDENTIFY.slug;
 		const adminUrl = useSelect(
 			( select ) =>
 				site && ( select( SITE_STORE ) as SiteSelect ).getSiteOption( site.ID, 'admin_url' ),
@@ -380,6 +383,16 @@ const siteSetupFlow: Flow = {
 				case 'importList':
 				case 'importReady': {
 					const depUrl = ( providedDependencies?.url as string ) || '';
+					const isWordpress = providedDependencies?.platform === 'wordpress';
+					const isImportList = currentStep === STEPS.IMPORT_LIST.slug;
+					if ( hasOriginOnSiteMigrationFlow && isWordpress && isImportList ) {
+						return window.location.assign(
+							addQueryArgs(
+								{ siteSlug, siteId, from },
+								'/setup/site-migration/' + STEPS.SITE_MIGRATION_IMPORT_OR_MIGRATE.slug
+							)
+						);
+					}
 
 					if (
 						depUrl.startsWith( 'http' ) ||
