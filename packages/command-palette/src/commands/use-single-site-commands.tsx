@@ -64,6 +64,7 @@ interface CustomWindow {
 		};
 		isWpcomStore: boolean;
 		shouldUseWpAdmin: boolean;
+		siteHostname: string;
 	};
 }
 
@@ -92,6 +93,7 @@ const useSingleSiteCommands = ( { navigate, currentRoute }: useCommandsParams ):
 		isP2 = false,
 		isWpcomStore = false,
 		shouldUseWpAdmin = false,
+		siteHostname,
 	} = customWindow?.commandPaletteConfig || {};
 
 	let siteType: SiteType | null = null;
@@ -123,8 +125,10 @@ const useSingleSiteCommands = ( { navigate, currentRoute }: useCommandsParams ):
 				_x( 'contact support', 'Keyword for the Get help command', __i18n_text_domain__ ),
 				_x( 'help center', 'Keyword for the Get help command', __i18n_text_domain__ ),
 			].join( ' ' ),
-			// eslint-disable-next-line wpcalypso/i18n-unlocalized-url
-			callback: commandNavigation( 'https://wordpress.com/support' ),
+			callback: ( { close }: CommandCallBackParams ) => {
+				close();
+				waitForElementAndClick( '#wp-admin-bar-help-center' );
+			},
 			icon: helpIcon,
 		},
 		{
@@ -973,7 +977,7 @@ const useSingleSiteCommands = ( { navigate, currentRoute }: useCommandsParams ):
 				return false;
 			}
 
-			if ( command?.isCustomDomain && ! isCustomDomain( window.location.host ) ) {
+			if ( command?.isCustomDomain && ! isCustomDomain( siteHostname ) ) {
 				return false;
 			}
 
