@@ -13,6 +13,8 @@ import FormLegend from 'calypso/components/forms/form-legend';
 import FormRadio from 'calypso/components/forms/form-radio';
 import FormTextInput from 'calypso/components/forms/form-text-input';
 
+import './style.scss';
+
 const noop = () => {};
 const debug = debugFactory( 'calypso:domains:registrant-extra-info' );
 let defaultRegistrantType: string;
