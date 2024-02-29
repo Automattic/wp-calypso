@@ -8,6 +8,8 @@
 	border-radius: 8px; /* stylelint-disable-line scales/radii */
 
 	header.current-section {
+		margin-block-end: 16px;
+
 		button {
 			padding: 20px 8px;
 		}
@@ -66,10 +68,6 @@
 	@include breakpoint-deprecated( "<1280px" ) {
 		flex-wrap: wrap;
 
-		> * {
-			width: 100%;
-		}
-
 		> * + * {
 			margin-inline-start: 0;
 		}
@@ -79,6 +77,22 @@
 .a4a-layout__header.has-actions > .a4a-layout__header-main {
 	@include breakpoint-deprecated( "660px-1280px" ) {
 		margin-block-end: 16px;
+	}
+}
+
+.a4a-layout__header-actions {
+	width: 100%;
+	display: flex;
+
+	> * {
+		flex-grow: 1;
+	}
+
+	@include break-medium {
+		width: auto;
+		> * {
+			flex-grow: 0;
+		}
 	}
 }
 
