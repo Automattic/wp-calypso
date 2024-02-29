@@ -27,7 +27,7 @@ const buildKeyValuePairByProductSlugs = (
 	return productSlugs.reduce( ( map, productSlug ) => ( { ...map, [ productSlug ]: value } ), {} );
 };
 
-export const WPORG_PLUGIN_SLUG_MAP: Record< string, string > = {
+const WPORG_PLUGIN_SLUG_MAP: Record< string, string > = {
 	...buildKeyValuePairByProductSlugs( JETPACK_BACKUP_PRODUCTS, 'jetpack-backup' ),
 	...buildKeyValuePairByProductSlugs( JETPACK_BOOST_PRODUCTS, 'jetpack-boost' ),
 	...buildKeyValuePairByProductSlugs( JETPACK_SOCIAL_PRODUCTS, 'jetpack-social' ),
@@ -139,6 +139,8 @@ export const getDomainPurchase = ( purchases: ReceiptPurchase[] ) =>
 			isDomainTransfer( purchase ) ||
 			isDomainRegistration( purchase )
 	);
+
+export const getWPORGPluginSlugMap = () => WPORG_PLUGIN_SLUG_MAP;
 
 export const isTitanWithoutMailboxes = ( selectedFeature: string ) =>
 	selectedFeature === 'email-license';

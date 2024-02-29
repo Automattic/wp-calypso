@@ -1,4 +1,4 @@
-import { WPORG_PLUGIN_SLUG_MAP } from 'calypso/my-sites/checkout/checkout-thank-you/utils';
+import { getWPORGPluginSlugMap } from 'calypso/my-sites/checkout/checkout-thank-you/utils';
 import getSiteOption from './get-site-option';
 
 /**
@@ -22,7 +22,7 @@ export default function getSiteAdminPage( state, siteId, productSlug ) {
 
 	// If we have a known product slug, check for a corresponding plugin
 	if ( productSlug ) {
-		const wporgPluginSlug = WPORG_PLUGIN_SLUG_MAP[ productSlug ];
+		const wporgPluginSlug = getWPORGPluginSlugMap()[ productSlug ];
 		if ( wporgPluginSlug ) {
 			plugins = [ wporgPluginSlug ];
 		}
