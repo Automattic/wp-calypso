@@ -4,6 +4,7 @@
 import { screen } from '@testing-library/react';
 import React, { useEffect } from 'react';
 import { MemoryRouter, useNavigate, useLocation } from 'react-router';
+import themeReducer from 'calypso/state/themes/reducer';
 import { renderWithProvider } from '../../../../../test-helpers/testing-library';
 import type { Flow } from '../../internals/types';
 
@@ -46,7 +47,13 @@ export const renderFlow = ( flow: Flow ) => {
 		renderWithProvider(
 			<MemoryRouter initialEntries={ [ currentURL ] }>
 				<FakeStepRender currentStep={ currentStep } dependencies={ dependencies } />
-			</MemoryRouter>
+			</MemoryRouter>,
+			{
+				initialState: { themes: { queries: [] } },
+				reducers: {
+					themes: themeReducer,
+				},
+			}
 		);
 	};
 
