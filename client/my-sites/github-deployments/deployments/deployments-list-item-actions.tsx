@@ -22,16 +22,12 @@ export const DeploymentsListItemActions = ( {
 }: DeploymentsListItemActionsProps ) => {
 	const { __ } = useI18n();
 
-	const canManualDeploy =
-		! deployment.workflow_path || deployment.workflow_run_status === 'eligible';
-
 	return (
 		<DropdownMenu icon={ <Gridicon icon="ellipsis" /> } label={ __( 'Deployment actions' ) }>
 			{ ( { onClose } ) => (
 				<Fragment>
 					<MenuGroup>
 						<MenuItem
-							disabled={ ! canManualDeploy }
 							onClick={ () => {
 								onManualDeployment();
 								onClose();
