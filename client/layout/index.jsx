@@ -94,31 +94,37 @@ function SidebarScrollSynchronizer() {
 }
 
 function WhatsNewLoader( { loadWhatsNew } ) {
-	const { setShowWhatsNewModal, fetchLatestSeenWhatsNewModalItem } =
-		useDispatch( HELP_CENTER_STORE );
+	const { setShowWhatsNewModal, fetchSeenWhatsNewAnnouncements } = useDispatch( HELP_CENTER_STORE );
 
 	const { data, isLoading } = useWhatsNewAnnouncementsQuery();
 
 	useEffect( () => {
-		fetchLatestSeenWhatsNewModalItem();
-	}, [ fetchLatestSeenWhatsNewModalItem ] );
+		fetchSeenWhatsNewAnnouncements();
+	}, [ fetchSeenWhatsNewAnnouncements ] );
 
-	const { latestSeenWhatsNewModalItem } = useSelect( ( select ) => {
+	const { seenWhatsNewAnnouncements } = useSelect( ( select ) => {
 		const helpCenterSelect = select( HELP_CENTER_STORE );
 		return {
-			latestSeenWhatsNewModalItem: helpCenterSelect.getLatestSeenWhatsNewModalItem(),
+			seenWhatsNewAnnouncements: helpCenterSelect.getSeenWhatsNewAnnouncements(),
 		};
 	}, [] );
 
 	useEffect( () => {
-		if ( data && data.length > 0 && ! isLoading && latestSeenWhatsNewModalItem !== undefined ) {
+		if (
+			data &&
+			data.length > 0 &&
+			! isLoading &&
+			seenWhatsNewAnnouncements &&
+			typeof seenWhatsNewAnnouncements.indexOf === 'function'
+		) {
 			data.forEach( ( item ) => {
-				if ( item.critical && parseInt( item.announcementId ) > latestSeenWhatsNewModalItem ) {
+				if ( item.critical && -1 === seenWhatsNewAnnouncements.indexOf( item.announcementId ) ) {
 					setShowWhatsNewModal( true );
+					return;
 				}
 			} );
 		}
-	}, [ data, isLoading, latestSeenWhatsNewModalItem, setShowWhatsNewModal ] );
+	}, [ data, isLoading, seenWhatsNewAnnouncements, setShowWhatsNewModal ] );
 
 	const handleClose = useCallback( () => {
 		setShowWhatsNewModal( false );

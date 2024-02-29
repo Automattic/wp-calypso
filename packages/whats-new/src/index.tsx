@@ -18,7 +18,7 @@ interface Props {
 }
 
 const WhatsNewGuide: React.FC< Props > = ( { onClose } ) => {
-	const { setLatestSeenWhatsNewModalItem } = useDispatch( HELP_CENTER_STORE );
+	const { setSeenWhatsNewAnnouncements } = useDispatch( HELP_CENTER_STORE );
 
 	const { isWhatsNewModalShown } = useSelect( ( select ) => {
 		const helpCenterSelect: HelpCenterSelect = select( HELP_CENTER_STORE );
@@ -34,10 +34,10 @@ const WhatsNewGuide: React.FC< Props > = ( { onClose } ) => {
 		// check for whether the announcement has been seen already.
 		if ( isWhatsNewModalShown && data && data.length ) {
 			// get highest announcement id and set it as the latest seen announcement
-			const highestId = Math.max( ...data.map( ( item ) => parseInt( item.announcementId ) ) );
-			setLatestSeenWhatsNewModalItem( highestId );
+			const announcementIds = data.map( ( item ) => item.announcementId );
+			setSeenWhatsNewAnnouncements( announcementIds );
 		}
-	}, [ data, isWhatsNewModalShown, setLatestSeenWhatsNewModalItem ] );
+	}, [ data, isWhatsNewModalShown, setSeenWhatsNewAnnouncements ] );
 
 	if ( ! isWhatsNewModalShown || ! data || isLoading ) {
 		return null;

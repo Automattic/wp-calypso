@@ -11,29 +11,29 @@ export const receiveHasSeenWhatsNewModal = ( value: boolean | undefined ) =>
 		value,
 	} ) as const;
 
-export const receiveLatestSeenWhatsNewModalItem = ( value: number | undefined ) =>
+export const receiveSeenWhatsNewAnnouncements = ( value: string[] | undefined ) =>
 	( {
-		type: 'HELP_CENTER_SET_LATEST_WHATS_NEW_MODAL_ITEM',
+		type: 'HELP_CENTER_SET_SEEN_WHATS_NEW_ANNOUNCEMENTS',
 		value,
 	} ) as const;
 
-export function* fetchLatestSeenWhatsNewModalItem() {
+export function* fetchSeenWhatsNewAnnouncements() {
 	let response: {
-		latest_seen_whats_new_modal_item: number;
+		seen_announcement_ids: string[];
 	};
 	if ( canAccessWpcomApis() ) {
 		response = yield wpcomRequest( {
-			path: `/whats-new/latest-seen-announcement-id`,
+			path: `/whats-new/seen-announcement-ids`,
 			apiNamespace: 'wpcom/v2',
 		} );
 	} else {
 		response = yield apiFetch( {
 			global: true,
-			path: `/wpcom/v2/whats-new/latest-seen-announcement-id`,
+			path: `/wpcom/v2/whats-new/seen-announcement-ids`,
 		} as APIFetchOptions );
 	}
 
-	return receiveLatestSeenWhatsNewModalItem( response.latest_seen_whats_new_modal_item );
+	return receiveSeenWhatsNewAnnouncements( response.seen_announcement_ids );
 }
 export function* setHasSeenWhatsNewModal( value: boolean ) {
 	let response: {
@@ -60,29 +60,29 @@ export function* setHasSeenWhatsNewModal( value: boolean ) {
 	return receiveHasSeenWhatsNewModal( response.has_seen_whats_new_modal );
 }
 
-export function* setLatestSeenWhatsNewModalItem( id: number ) {
+export function* setSeenWhatsNewAnnouncements( ids: string[] ) {
 	let response: {
-		latest_seen_whats_new_modal_item: number;
+		seen_announcement_ids: string[];
 	};
 	if ( canAccessWpcomApis() ) {
 		response = yield wpcomRequest( {
-			path: `/whats-new/latest-seen-announcement-id`,
+			path: `/whats-new/seen-announcement-ids`,
 			apiNamespace: 'wpcom/v2',
-			method: 'PUT',
+			method: 'POST',
 			body: {
-				latest_seen_whats_new_modal_item: id,
+				seen_announcement_ids: ids,
 			},
 		} );
 	} else {
 		response = yield apiFetch( {
 			global: true,
-			path: `/wpcom/v2/whats-new/latest-seen-announcement-id`,
-			method: 'PUT',
-			data: { latest_seen_whats_new_modal_item: id },
+			path: `/wpcom/v2/whats-new/seen-announcement-ids`,
+			method: 'POST',
+			data: { seen_announcement_ids: ids },
 		} as APIFetchOptions );
 	}
 
-	return receiveLatestSeenWhatsNewModalItem( response.latest_seen_whats_new_modal_item );
+	return receiveSeenWhatsNewAnnouncements( response.seen_announcement_ids );
 }
 
 export const setSite = ( site: HelpCenterSite | undefined ) =>
@@ -203,7 +203,7 @@ export type HelpCenterAction =
 			| typeof setSubject
 			| typeof resetStore
 			| typeof receiveHasSeenWhatsNewModal
-			| typeof receiveLatestSeenWhatsNewModalItem
+			| typeof receiveSeenWhatsNewAnnouncements
 			| typeof setMessage
 			| typeof setUserDeclaredSite
 			| typeof setUserDeclaredSiteUrl
@@ -215,6 +215,6 @@ export type HelpCenterAction =
 	| GeneratorReturnType<
 			| typeof setShowHelpCenter
 			| typeof setHasSeenWhatsNewModal
-			| typeof setLatestSeenWhatsNewModalItem
-			| typeof fetchLatestSeenWhatsNewModalItem
+			| typeof setSeenWhatsNewAnnouncements
+			| typeof fetchSeenWhatsNewAnnouncements
 	  >;
