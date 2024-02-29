@@ -13,7 +13,7 @@ export const repositoryTemplates = {
 			link: 'https://github.com/Automattic/githubdeployments-wp-plugin-boilerplate',
 		},
 		{
-			name: 'Wordpress Plugin Template',
+			name: 'WordPress Plugin Template',
 			repositoryName: 'githubdeployments-wordpress-plugin-template',
 			link: 'https://github.com/Automattic/githubdeployments-wordpress-plugin-template',
 			workflowFilename: '.github/workflows/dotcom-build-artifact.yml',
@@ -64,7 +64,7 @@ export const repositoryTemplates = {
 	],
 	site: [
 		{
-			name: 'LocalWp',
+			name: 'Local',
 			repositoryName: 'githubdeployments-site-localwp',
 			link: 'https://github.com/Automattic/githubdeployments-site-localwp',
 		},
@@ -81,7 +81,7 @@ export const repositoryTemplates = {
 			workflowFilename: '.github/workflows/dotcom-build-artifact.yml',
 		},
 		{
-			name: 'Wordpress Playground',
+			name: 'WordPress Playground',
 			repositoryName: 'githubdeployments-site-wordpress-playground',
 			link: 'https://github.com/Automattic/githubdeployments-site-wordpress-playground',
 		},
