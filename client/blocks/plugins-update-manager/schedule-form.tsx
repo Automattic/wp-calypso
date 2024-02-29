@@ -12,6 +12,7 @@ import {
 import { Icon, info } from '@wordpress/icons';
 import classnames from 'classnames';
 import { Fragment, useState, useCallback, useEffect } from 'react';
+import { useCreateScheduleUpdatesMutation } from 'calypso/data/plugins/use-schedule-updates-mutation';
 import { useSitePluginsQuery, type SitePlugin } from 'calypso/data/plugins/use-site-plugins-query';
 import { SiteSlug } from 'calypso/types';
 import {
@@ -37,6 +38,7 @@ interface Props {
 export const ScheduleForm = ( props: Props ) => {
 	const { siteSlug } = props;
 	const { data: dataPlugins } = useSitePluginsQuery( siteSlug );
+	const { createScheduleUpdates } = useCreateScheduleUpdatesMutation( siteSlug );
 	const { plugins = [] } = dataPlugins ?? {};
 
 	const [ name, setName ] = useState( '' );
@@ -47,7 +49,11 @@ export const ScheduleForm = ( props: Props ) => {
 	const [ period, setPeriod ] = useState< string >( '1m' );
 	const [ timestamp, setTimestamp ] = useState( prepareTimestamp( frequency, day, hour, period ) );
 	const [ pluginSearchTerm, setPluginSearchTerm ] = useState( '' );
-	const [ validationErrors, setValidationErrors ] = useState< Record< string, string > >( {} );
+	const [ validationErrors, setValidationErrors ] = useState< Record< string, string > >( {
+		name: validateName( name ),
+		plugins: validatePlugins( selectedPlugins ),
+		timestamp: validateTimeSlot( { frequency, timestamp } ),
+	} );
 	const [ fieldTouched, setFieldTouched ] = useState< Record< string, boolean > >( {} );
 
 	const onPluginSelectionChange = useCallback(
@@ -82,7 +88,24 @@ export const ScheduleForm = ( props: Props ) => {
 		[ selectedPlugins, MAX_SELECTABLE_PLUGINS ]
 	);
 
-	const onFormSubmit = () => {};
+	const onFormSubmit = () => {
+		const forValid = ! Object.values( validationErrors ).filter( ( e ) => !! e ).length;
+		setFieldTouched( {
+			name: true,
+			plugins: true,
+			timestamp: true,
+		} );
+
+		forValid &&
+			createScheduleUpdates( {
+				hook: name,
+				plugins: selectedPlugins,
+				schedule: {
+					timestamp,
+					interval: frequency,
+				},
+			} );
+	};
 
 	// Name validation
 	useEffect(
