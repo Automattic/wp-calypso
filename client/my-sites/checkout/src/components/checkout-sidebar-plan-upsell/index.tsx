@@ -86,7 +86,7 @@ const CheckoutPromoCard: React.FC< {
 
 	if ( isYearly ) {
 		labelText = translate(
-			'Longer plan billing cycles save you money and include a custom domain for free for the first year.'
+			`Save up to XX% on longer billing cycles! It's hassle-free and easy on your wallet. Don't miss out!`
 		);
 	}
 
@@ -274,6 +274,12 @@ export function CheckoutSidebarPlanUpsell() {
 							busy: isBusy(),
 							text: __( 'Switch to a two-year plan' ),
 							action: onUpgradeClick,
+						} }
+						learnMoreLink={ {
+							url: '#',
+							onClick: onUpgradeClick,
+							selfTarget: true,
+							label: 'Switch to a two-year plan',
 						} }
 					/>
 				</PromoCard>
