@@ -6,8 +6,15 @@ import {
 	isProductsListFetching,
 	getProductsList,
 } from 'calypso/state/products-list/selectors';
+import type { ReactNode } from 'react';
 
-export const PluginAnnualSaving = ( { plugin, children } ) => {
+export const PluginAnnualSaving = ( {
+	plugin,
+	renderContent,
+}: {
+	plugin?: { variations?: { yearly?: string; monthly?: string } };
+	renderContent: ( { isFetching, saving }: { isFetching: boolean; saving: string } ) => ReactNode;
+} ) => {
 	const productList = useSelector( getProductsList );
 
 	const variationYearly = plugin?.variations?.yearly;
@@ -27,7 +34,7 @@ export const PluginAnnualSaving = ( { plugin, children } ) => {
 		return totalDiscount > 0 && formatCurrency( totalDiscount, productYearly.currency_code );
 	};
 
-	return children( {
+	return renderContent( {
 		isFetching,
 		saving: getAnnualPriceSavingText(),
 	} );
