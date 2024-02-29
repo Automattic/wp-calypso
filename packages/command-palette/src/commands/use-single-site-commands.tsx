@@ -510,7 +510,9 @@ const useSingleSiteCommands = ( { navigate, currentRoute }: useCommandsParams ):
 		{
 			name: 'openJetpackBackup',
 			label: __( 'Open Jetpack Backup', __i18n_text_domain__ ),
-			callback: commandNavigation( '/backup/:site' ),
+			callback: commandNavigation(
+				`${ siteType === SiteType.ATOMIC ? 'https://cloud.jetpack.com' : '' }/backup/:site`
+			),
 			capability: SiteCapabilities.MANAGE_OPTIONS,
 			filterP2: true,
 			icon: backupIcon,
