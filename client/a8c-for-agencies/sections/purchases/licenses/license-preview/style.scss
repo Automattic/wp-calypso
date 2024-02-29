@@ -187,6 +187,9 @@
 		align-items: center;
 		border: none;
 		outline: none;
+		margin-block: 5px;
+		min-height: 40px;
+		box-sizing: border-box;
 	}
 
 	.popover__menu-item .gridicon {
