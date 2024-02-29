@@ -231,5 +231,56 @@
 	}
 }
 
+$odyssey-button-padding: 8px 24px;
+
+.stats__odyssey {
+	--font-body: 16px;
+	--jp-black: #000;
+	--jp-white: #fff;
+	--jp-green-50: #008710;
+	--gray-gray-50: #646970;
+
+	&.components-button {
+		&.is-primary {
+			border-radius: 4px;
+			color: var(--jp-white);
+			background-color: #1a1a1a;
+			border-color: #1a1a1a;
+			transition: all 0.25s ease-out;
+			font-size: var(--font-body);
+			line-height: 24px;
+			padding: $odyssey-button-padding;
+			height: auto;
+
+			&:hover,
+			&:active,
+			&:focus {
+				background: var(--studio-gray-80);
+				border-color: var(--studio-gray-80);
+			}
+
+			&[disabled],
+			&:disabled,
+			&.disabled {
+				opacity: 0.3;
+			}
+		}
+
+		&.is-secondary {
+			border-radius: 4px;
+			font-size: var(--font-body);
+			line-height: 24px;
+			padding: $odyssey-button-padding;
+			height: auto;
+		}
+
+		&.is-link {
+			color: var(--jp-green-50);
+			font-size: inherit;
+			display: inline;
+		}
+	}
+}
+
 
 @import "calypso/my-sites/stats/grid-layout.scss";

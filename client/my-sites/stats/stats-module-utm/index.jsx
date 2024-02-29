@@ -1,9 +1,10 @@
+import classNames from 'classnames';
 import useUTMMetricTopPostsQuery from '../hooks/use-utm-metric-top-posts-query';
 import useUTMMetricsQuery from '../hooks/use-utm-metrics-query';
 import StatsModuleDataQuery from '../stats-module/stats-module-data-query';
 import statsStrings from '../stats-strings';
 
-const StatsModuleUTM = ( { siteId, period, postId, query, summary } ) => {
+const StatsModuleUTM = ( { siteId, period, postId, query, summary, className } ) => {
 	const moduleStrings = statsStrings();
 
 	// Fetch UTM metrics with switched UTM parameters.
@@ -31,7 +32,7 @@ const StatsModuleUTM = ( { siteId, period, postId, query, summary } ) => {
 		<StatsModuleDataQuery
 			data={ data }
 			path="utm"
-			className="stats-module-utm"
+			className={ classNames( className, 'stats-module-utm' ) }
 			moduleStrings={ moduleStrings.utm }
 			period={ period }
 			query={ query }
