@@ -390,9 +390,13 @@ export default function CampaignItemDetails( props: Props ) {
 									</Button>
 
 									{ ! canCancelCampaign( status ) && (
-										<Button primary className="promote-again-button" onClick={ onClickPromote }>
+										<WPButton
+											variant="primary"
+											className="promote-again-button"
+											onClick={ onClickPromote }
+										>
 											{ translate( 'Promote Again' ) }
-										</Button>
+										</WPButton>
 									) }
 
 									{ canCancelCampaign( status ) && (
