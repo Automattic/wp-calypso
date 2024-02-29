@@ -30,10 +30,11 @@ const useFetchDashboardSites = (
 	searchQuery: string,
 	currentPage: number,
 	filter: AgencyDashboardFilter,
-	sort: DashboardSortInterface
+	sort: DashboardSortInterface,
+	perPage: number
 ) => {
 	return useQuery( {
-		queryKey: [ 'jetpack-agency-dashboard-sites', searchQuery, currentPage, filter, sort ],
+		queryKey: [ 'jetpack-agency-dashboard-sites', searchQuery, currentPage, filter, sort, perPage ],
 		queryFn: () =>
 			wpcomJpl.req.get(
 				{
@@ -45,6 +46,7 @@ const useFetchDashboardSites = (
 					...( currentPage && { page: currentPage } ),
 					...agencyDashboardFilterToQueryObject( filter ),
 					...agencyDashboardSortToQueryObject( sort ),
+					...( perPage && { perPage: perPage } ),
 				}
 			),
 		select: ( data ) => {
