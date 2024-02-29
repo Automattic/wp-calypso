@@ -116,6 +116,13 @@ const recorder = withEnhancer( recordPageView, [ enhancer1, enhancer2, enhancer3
 - `user_is_dev_account` is captured by default when tracking calls are handled by [`<PageViewTracker>`]
 - To include the `user_is_dev_account` property in any other tracking calls, the respective analytics Redux action must be accompanied by `enhanceWithUserIsDevAccount`
 
+#### enhanceWithInterfaceSetting
+
+- Enhances any analytics Redux action
+- Adds the property `interface_setting` (`classic` or `default`) to specify whether the user has the `wpcom_admin_interface` setting enabled to `wp-admin` (classic view).
+- `interface_setting` is captured by default when tracking calls are handled by [`<PageViewTracker>`]
+- To include the `interface_setting` property in any other tracking calls, the respective analytics Redux action must be accompanied by `enhanceWithUserIsDevAccount`
+
 ### Internal Helpers
 
 These can be used in client code but are intended to be used internally within the middleware library to create service-specific handlers for tracking analytics.

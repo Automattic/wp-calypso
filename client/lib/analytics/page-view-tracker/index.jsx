@@ -9,6 +9,7 @@ import {
 	enhanceWithSiteMainProduct,
 	enhanceWithSiteType,
 	enhanceWithUserIsDevAccount,
+	enhanceWithInterfaceSetting,
 } from 'calypso/state/analytics/actions';
 import { getCurrentUserId } from 'calypso/state/current-user/selectors';
 import { getSiteSlug } from 'calypso/state/sites/selectors';
@@ -119,6 +120,7 @@ const mapDispatchToProps = {
 		enhanceWithSiteType,
 		enhanceWithSiteMainProduct,
 		enhanceWithUserIsDevAccount,
+		enhanceWithInterfaceSetting,
 	] ),
 };
 
