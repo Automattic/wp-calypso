@@ -34,10 +34,9 @@ describe( 'usePatternCategories', () => {
 
 		await waitFor( () => expect( result.current.isSuccess ).toBe( true ) );
 
-		expect( wpcom.req.get ).toHaveBeenCalledWith( {
-			path: '/sites/12345/block-patterns/categories',
+		expect( wpcom.req.get ).toHaveBeenCalledWith( '/sites/12345/block-patterns/categories', {
 			apiNamespace: 'wp/v2',
-			query: { locale: 'fr' },
+			_locale: 'fr',
 		} );
 		expect( result.current.data ).toEqual( [] );
 	} );
