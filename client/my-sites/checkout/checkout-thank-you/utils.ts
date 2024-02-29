@@ -5,10 +5,10 @@ import {
 	JETPACK_SOCIAL_PRODUCTS,
 	JETPACK_SEARCH_PRODUCTS,
 	JETPACK_VIDEOPRESS_PRODUCTS,
+	JETPACK_SCAN_PRODUCTS,
 	isDomainTransfer,
 	isDomainMapping,
 	isDomainRegistration,
-	JETPACK_SCAN_PRODUCTS,
 } from '@automattic/calypso-products';
 import JetpackBackupPluginImage from 'calypso/assets/images/jetpack/jetpack-plugin-image-backup.svg';
 import JetpackBoostPluginImage from 'calypso/assets/images/jetpack/jetpack-plugin-image-boost.svg';
