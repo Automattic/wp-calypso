@@ -40,7 +40,7 @@ export const DeploymentsListItemActions = ( {
 							{ __( 'Trigger manual deployment' ) }
 						</MenuItem>
 						<MenuItem
-							disabled={ !! deployment.current_deployment_run }
+							disabled={ ! deployment.current_deployment_run }
 							onClick={ () => {
 								page( viewDeploymentLogs( siteSlug, deployment.id ) );
 								onClose();
