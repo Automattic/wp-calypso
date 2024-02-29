@@ -1,10 +1,17 @@
 import { Button } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
-import { useCallback } from 'react';
-import { LicenseState, LicenseType } from 'calypso/jetpack-cloud/sections/partner-portal/types';
+import { useCallback, useState } from 'react';
+import {
+	LicenseRole,
+	LicenseState,
+	LicenseType,
+} from 'calypso/jetpack-cloud/sections/partner-portal/types';
 import { addQueryArgs } from 'calypso/lib/url';
 import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import { errorNotice } from 'calypso/state/notices/actions';
+import RevokeLicenseDialog from '../revoke-license-dialog';
+import useLicenseDownloadUrlMutation from '../revoke-license-dialog/hooks/use-license-download-url-mutation';
 
 interface Props {
 	licenseKey: string;
@@ -18,6 +25,7 @@ interface Props {
 
 export default function LicenseDetailsActions( {
 	licenseKey,
+	product,
 	siteUrl,
 	licenseState,
 	licenseType,
@@ -26,21 +34,33 @@ export default function LicenseDetailsActions( {
 }: Props ) {
 	const dispatch = useDispatch();
 	const translate = useTranslate();
-	const debugUrl = ''; // TODO: Implement debug URL
-	const downloadUrl = {
-		isPending: false,
-		url: '',
-	}; // TODO: Implement download URL
+
+	const [ revokeDialog, setRevokeDialog ] = useState( false );
+
+	const debugUrl = ''; // FIXME: Fix the debugUrl
+	const downloadUrl = useLicenseDownloadUrlMutation( licenseKey );
 
 	const openRevokeDialog = useCallback( () => {
-		// TODO: Implement revoke dialog
+		setRevokeDialog( true );
 		dispatch( recordTracksEvent( 'calypso_a4a_license_details_revoke_dialog_open' ) );
 	}, [ dispatch ] );
 
-	const download = useCallback( () => {
-		// TODO: Implement download
-		dispatch( recordTracksEvent( 'calypso_a4a_license_details_download' ) );
+	const closeRevokeDialog = useCallback( () => {
+		setRevokeDialog( false );
+		dispatch( recordTracksEvent( 'calypso_a4a_license_details_revoke_dialog_close' ) );
 	}, [ dispatch ] );
+
+	const download = useCallback( () => {
+		downloadUrl.mutate( null, {
+			onSuccess: ( data ) => {
+				window.location.replace( data.download_url );
+			},
+			onError: ( error: Error ) => {
+				dispatch( errorNotice( error.message ) );
+			},
+		} );
+		dispatch( recordTracksEvent( 'calypso_a4a_license_details_download' ) );
+	}, [ dispatch, downloadUrl ] );
 
 	return (
 		<div className="license-details__actions">
@@ -86,6 +106,16 @@ export default function LicenseDetailsActions( {
 				>
 					{ translate( 'Assign License' ) }
 				</Button>
+			) }
+
+			{ revokeDialog && (
+				<RevokeLicenseDialog
+					licenseKey={ licenseKey }
+					product={ product }
+					siteUrl={ siteUrl }
+					onClose={ closeRevokeDialog }
+					licenseRole={ isChildLicense ? LicenseRole.Child : LicenseRole.Single }
+				/>
 			) }
 		</div>
 	);
