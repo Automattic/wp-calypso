@@ -1,50 +1,16 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import wpcom from 'calypso/lib/wp';
 import type {
+	RawCachedDomainContactDetails,
 	DomainContactValidationRequest,
 	ManagedContactDetailsTldExtraFieldsShape,
 	PossiblyCompleteDomainContactDetails,
 } from '@automattic/wpcom-checkout';
 
-export type ContactDetailsSnakeCase< T = string | null > = {
-	address_1?: T;
-	address_2?: T;
-	city?: T;
-	country_code?: T;
-	email?: T;
-	extra?: ContactDetailsSnakeCaseExtra< T >;
-	fax?: T;
-	first_name?: T;
-	last_name?: T;
-	organization?: T;
-	phone?: T;
-	phone_number_country?: T;
-	postal_code?: T;
-	state?: T;
-	vat_id?: T;
-};
-
-export type ContactDetailsSnakeCaseExtra< T = string | null > = {
-	ca?: {
-		lang?: T;
-		legal_type?: T;
-		cira_agreement_accepted?: boolean;
-	};
-	fr?: {
-		registrant_type?: T;
-		registrant_vat_id?: T;
-		trademark_number?: T;
-		siren_siret?: T;
-	};
-	uk?: {
-		registrant_type?: T;
-		registration_number?: T;
-		trading_name?: T;
-	};
-};
-
 async function fetchCachedContactDetails(): Promise< PossiblyCompleteDomainContactDetails > {
-	const rawData: ContactDetailsSnakeCase = await wpcom.req.get( '/me/domain-contact-information' );
+	const rawData: RawCachedDomainContactDetails = await wpcom.req.get(
+		'/me/domain-contact-information'
+	);
 	return convertSnakeCaseContactDetailsToCamelCase( rawData );
 }
 
@@ -53,7 +19,7 @@ async function setCachedContactDetails( rawData: DomainContactValidationRequest 
 }
 
 function convertSnakeCaseContactDetailsToCamelCase(
-	rawData: ContactDetailsSnakeCase
+	rawData: RawCachedDomainContactDetails
 ): PossiblyCompleteDomainContactDetails {
 	return {
 		firstName: rawData.first_name ?? null,
@@ -73,7 +39,7 @@ function convertSnakeCaseContactDetailsToCamelCase(
 }
 
 function convertSnakeCaseContactDetailsExtraToCamelCase(
-	extra: ContactDetailsSnakeCaseExtra | undefined
+	extra: RawCachedDomainContactDetails[ 'extra' ] | undefined
 ): ManagedContactDetailsTldExtraFieldsShape< string | null > | undefined {
 	if ( ! extra ) {
 		return undefined;
