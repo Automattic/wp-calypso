@@ -63,6 +63,7 @@ interface CustomWindow {
 		};
 		isWpcomStore: boolean;
 		shouldUseWpAdmin: boolean;
+		siteHostname: string;
 	};
 }
 
@@ -81,6 +82,7 @@ const useSingleSiteCommands = ( { navigate, currentRoute }: useCommandsParams ):
 		isP2 = false,
 		isWpcomStore = false,
 		shouldUseWpAdmin = false,
+		siteHostname,
 	} = customWindow?.commandPaletteConfig || {};
 
 	let siteType: SiteType | null = null;
@@ -946,7 +948,7 @@ const useSingleSiteCommands = ( { navigate, currentRoute }: useCommandsParams ):
 				return false;
 			}
 
-			if ( command?.isCustomDomain && ! isCustomDomain( window.location.host ) ) {
+			if ( command?.isCustomDomain && ! isCustomDomain( siteHostname ) ) {
 				return false;
 			}
 
