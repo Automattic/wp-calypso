@@ -1,5 +1,4 @@
 import { translate } from 'i18n-calypso';
-
 /**
  * Menu items for the Global Site View sidebar.
  */
@@ -8,11 +7,13 @@ export default function globalSiteSidebarMenu( {
 	siteDomain,
 	selectedSiteSlug,
 	isStagingSite,
+	isDesktop,
 }: {
 	showSiteMonitoring: boolean;
 	siteDomain: string;
 	selectedSiteSlug: string;
 	isStagingSite: boolean;
+	isDesktop: boolean;
 } ) {
 	return [
 		{
@@ -25,6 +26,14 @@ export default function globalSiteSidebarMenu( {
 		{
 			type: 'current-site',
 			url: `/home/${ siteDomain }`,
+			shouldHide: ! isDesktop,
+		},
+		{
+			slug: 'home',
+			title: translate( 'My Home' ),
+			type: 'menu-item',
+			url: `/home/${ siteDomain }`,
+			shouldHide: isDesktop,
 		},
 		{
 			slug: 'upgrades',

@@ -99,7 +99,7 @@ export const usePlanSelection = ( {
 
 	// Auto-select YEARLY plan when coming from senseilms.com site.
 	useEffect( () => {
-		if ( undefined === getDefaultPlan() ) {
+		if ( undefined === getDefaultPlan() || status === Status.Error ) {
 			return;
 		}
 

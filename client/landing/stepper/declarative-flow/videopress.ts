@@ -31,6 +31,7 @@ const videopress: Flow = {
 	get title() {
 		return translate( 'Video' );
 	},
+	isSignupFlow: true,
 	useSteps() {
 		return [
 			{

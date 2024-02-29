@@ -1,12 +1,8 @@
-import CommandPalette, {
-	useAtomicCommands,
-	useAtomicLimitedCommands,
-	useWpcomSimpleSiteLimitedCommands,
-	useWpcomSimpleSiteCommands,
-} from '@automattic/command-palette';
+import CommandPalette, { useSingleSiteCommands } from '@automattic/command-palette';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import domReady from '@wordpress/dom-ready';
 import { render } from 'react-dom';
+import setLocale from './set-locale';
 
 function CommandPaletteApp() {
 	if ( ! window.commandPaletteConfig ) {
@@ -14,45 +10,45 @@ function CommandPaletteApp() {
 		return null;
 	}
 
-	const currentRoute = window.location.pathname;
-	const siteHostname = window.location.hostname;
-
-	const navigate = ( path, openInNewTab ) => {
-		if ( path.startsWith( '/' ) && ! path.startsWith( '/wp-admin' ) ) {
-			path = `https://wordpress.com${ path }/${ siteHostname }`;
-		}
-
-		window.open( path, openInNewTab ? '_blank' : '_self' );
-	};
-
 	const {
 		siteId,
-		isAdmin = false,
 		isAtomic = false,
-		isSelfHosted = false,
 		isSimple = false,
+		siteHostname,
 	} = window?.commandPaletteConfig || {};
 
-	let useCommands;
-	if ( isAtomic && ! isSelfHosted ) {
-		useCommands = isAdmin ? useAtomicCommands : useAtomicLimitedCommands;
+	if ( ! isSimple && ! isAtomic ) {
+		return;
 	}
 
-	if ( isSimple ) {
-		useCommands = isAdmin ? useWpcomSimpleSiteCommands : useWpcomSimpleSiteLimitedCommands;
-	}
+	const currentRoute = window.location.pathname;
 
-	if ( ! useCommands ) {
-		// Can't load the command palette without a valid commands provider function.
-		return null;
-	}
+	const navigate = ( path, openInNewTab ) => {
+		let url = path;
+
+		if ( path.startsWith( '/' ) && ! path.startsWith( '/wp-admin' ) ) {
+			url = `https://wordpress.com${ path }`;
+		}
+
+		url = url.replace( /:site/g, siteHostname );
+		url = url.replace( /:siteId/g, siteId );
+
+		if ( url.startsWith( siteHostname ) ) {
+			url = url.replace( siteHostname, window.location.origin );
+		}
+
+		window.open( url, openInNewTab ? '_blank' : '_self' );
+	};
+
+	const locale = document.documentElement.lang ?? 'en';
+	setLocale( locale );
 
 	return (
 		<QueryClientProvider client={ new QueryClient() }>
 			<CommandPalette
 				navigate={ navigate }
 				currentRoute={ currentRoute }
-				useCommands={ useCommands }
+				useCommands={ useSingleSiteCommands }
 				currentSiteId={ siteId }
 			/>
 		</QueryClientProvider>

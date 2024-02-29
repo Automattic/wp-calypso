@@ -7,19 +7,19 @@ import { getFlowLocation, renderFlow } from './helpers';
 
 describe( 'Site Migration Flow', () => {
 	describe( 'navigation', () => {
-		it( 'migrate redirects from the import-from page to site-migration-plugin-install page', async () => {
+		it( 'migrate redirects from the import-from page to bundleTransfer step', async () => {
 			const { runUseStepNavigationSubmit } = renderFlow( siteMigrationFlow );
 
 			runUseStepNavigationSubmit( {
-				currentStep: STEPS.SITE_MIGRATION_IMPORT_OR_MIGRATE.slug,
+				currentStep: STEPS.BUNDLE_TRANSFER.slug,
 				dependencies: {
 					destination: 'migrate',
 				},
 			} );
 
 			expect( getFlowLocation() ).toEqual( {
-				path: '/site-migration-plugin-install',
-				state: { siteSlug: 'example.wordpress.com' },
+				path: '/processing',
+				state: null,
 			} );
 		} );
 
@@ -35,23 +35,6 @@ describe( 'Site Migration Flow', () => {
 
 			expect( getFlowLocation() ).toEqual( {
 				path: '/site-migration-upgrade-plan',
-				state: { siteSlug: 'example.wordpress.com' },
-			} );
-		} );
-
-		// TODO - This will need to be updated once the flow has been updated to include these steps.
-		it( 'redirect from the processing page to the waitForPluginInstall when atomic waiting is finished', () => {
-			const { runUseStepNavigationSubmit } = renderFlow( siteMigrationFlow );
-
-			runUseStepNavigationSubmit( {
-				currentStep: 'processing',
-				dependencies: {
-					finishedWaitingForAtomic: true,
-				},
-			} );
-
-			expect( getFlowLocation() ).toEqual( {
-				path: '/waitForPluginInstall',
 				state: { siteSlug: 'example.wordpress.com' },
 			} );
 		} );

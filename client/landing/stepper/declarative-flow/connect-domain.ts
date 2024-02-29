@@ -30,6 +30,7 @@ const connectDomain: Flow = {
 	get title() {
 		return translate( 'Connect your domain' );
 	},
+	isSignupFlow: false,
 	useAssertConditions: () => {
 		const { domain, provider } = useDomainParams();
 		const flowName = CONNECT_DOMAIN_FLOW;

@@ -2,6 +2,7 @@ import config from '@automattic/calypso-config';
 import page from '@automattic/calypso-router';
 import { Button, FormInputValidation, FormLabel } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
+import { Spinner } from '@wordpress/components';
 import classNames from 'classnames';
 import debugModule from 'debug';
 import { localize } from 'i18n-calypso';
@@ -22,7 +23,7 @@ import {
 	isEmpty,
 } from 'lodash';
 import PropTypes from 'prop-types';
-import { Component, useEffect, Fragment } from 'react';
+import { Component, useEffect } from 'react';
 import { connect } from 'react-redux';
 import { FormDivider } from 'calypso/blocks/authentication';
 import ContinueAsUser from 'calypso/blocks/login/continue-as-user';
@@ -58,6 +59,7 @@ import { createSocialUserFailed } from 'calypso/state/login/actions';
 import { getCurrentOAuth2Client } from 'calypso/state/oauth2-clients/ui/selectors';
 import getCurrentQueryArguments from 'calypso/state/selectors/get-current-query-arguments';
 import getWccomFrom from 'calypso/state/selectors/get-wccom-from';
+import getWooPasswordless from 'calypso/state/selectors/get-woo-passwordless';
 import isWooCommerceCoreProfilerFlow from 'calypso/state/selectors/is-woocommerce-core-profiler-flow';
 import { resetSignup } from 'calypso/state/signup/actions';
 import { getSectionName } from 'calypso/state/ui/selectors';
@@ -1229,16 +1231,33 @@ class SignupForm extends Component {
 		const isGravatar = this.props.isGravatar;
 		const emailErrorMessage = this.getErrorMessagesWithLogin( 'email' );
 		const showSeparator =
-			! config.isEnabled( 'desktop' ) && this.isHorizontal() && ! this.userCreationComplete();
+			( ! config.isEnabled( 'desktop' ) && this.isHorizontal() && ! this.userCreationComplete() ) ||
+			this.props.isWoo;
 
-		if ( ( this.props.isPasswordless && 'wpcc' !== this.props.flowName ) || isGravatar ) {
-			const gravatarProps = isGravatar
-				? {
+		if (
+			( this.props.isPasswordless &&
+				( 'wpcc' !== this.props.flowName || this.props.wooPasswordless ) ) ||
+			isGravatar
+		) {
+			let formProps = {
+				submitButtonLabel: this.props.submitButtonLabel,
+			};
+
+			switch ( true ) {
+				case isGravatar:
+					formProps = {
 						inputPlaceholder: this.props.translate( 'Enter your email address' ),
 						submitButtonLabel: this.props.translate( 'Continue' ),
 						submitButtonLoadingLabel: this.props.translate( 'Continue' ),
-				  }
-				: {};
+					};
+					break;
+				case this.props.isWoo:
+					formProps = {
+						inputPlaceholder: null,
+						submitButtonLabel: this.props.translate( 'Continue with email' ),
+						submitButtonLoadingLabel: <Spinner />,
+					};
+			}
 
 			return (
 				<div
@@ -1259,12 +1278,11 @@ class SignupForm extends Component {
 						disableSubmitButton={ this.props.disableSubmitButton || emailErrorMessage }
 						queryArgs={ this.props.queryArgs }
 						userEmail={ this.getEmailValue() }
-						{ ...gravatarProps }
-						submitButtonLabel={ this.props.submitButtonLabel }
 						isInviteLoggedOutForm={ this.props.isInviteLoggedOutForm }
 						labelText={ this.props.labelText }
 						onInputBlur={ this.handleBlur }
 						onInputChange={ this.handleChangeEvent }
+						{ ...formProps }
 					>
 						{ emailErrorMessage && (
 							<ValidationFieldset errorMessages={ [ emailErrorMessage ] }></ValidationFieldset>
@@ -1282,6 +1300,7 @@ class SignupForm extends Component {
 									socialServiceResponse={ this.props.socialServiceResponse }
 									isReskinned={ this.props.isReskinned }
 									redirectToAfterLoginUrl={ this.props.redirectToAfterLoginUrl }
+									compact={ this.props.isWoo }
 								/>
 							) }
 							{ this.props.footerLink || this.footerLink() }
@@ -1312,18 +1331,15 @@ class SignupForm extends Component {
 				{ showSeparator && <FormDivider /> }
 
 				{ this.props.isSocialSignupEnabled && ! this.userCreationComplete() && (
-					<Fragment>
-						{ this.props.isWoo && <FormDivider /> }
-						<SocialSignupForm
-							handleResponse={ this.props.handleSocialResponse }
-							socialService={ this.props.socialService }
-							socialServiceResponse={ this.props.socialServiceResponse }
-							isReskinned={ this.props.isReskinned }
-							flowName={ this.props.flowName }
-							compact={ this.props.isWoo }
-							redirectToAfterLoginUrl={ this.props.redirectToAfterLoginUrl }
-						/>
-					</Fragment>
+					<SocialSignupForm
+						handleResponse={ this.props.handleSocialResponse }
+						socialService={ this.props.socialService }
+						socialServiceResponse={ this.props.socialServiceResponse }
+						isReskinned={ this.props.isReskinned }
+						flowName={ this.props.flowName }
+						compact={ this.props.isWoo }
+						redirectToAfterLoginUrl={ this.props.redirectToAfterLoginUrl }
+					/>
 				) }
 
 				{ this.props.footerLink || this.footerLink() }
@@ -1354,6 +1370,7 @@ export default connect(
 			isJetpackWooDnaFlow: wooDnaConfig( getCurrentQueryArguments( state ) ).isWooDnaFlow(),
 			from: get( getCurrentQueryArguments( state ), 'from' ),
 			wccomFrom: getWccomFrom( state ),
+			wooPasswordless: getWooPasswordless( state ),
 			isWoo: isWooOAuth2Client( oauth2Client ) || isWooCoreProfilerFlow,
 			isWooCoreProfilerFlow,
 			isP2Flow:

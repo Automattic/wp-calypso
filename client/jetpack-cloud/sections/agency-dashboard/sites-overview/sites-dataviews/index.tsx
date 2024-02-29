@@ -17,6 +17,7 @@ import './style.scss';
 const SitesDataViews = ( {
 	data,
 	isLoading,
+	isLargeScreen,
 	onSitesViewChange,
 	sitesViewState,
 }: SitesDataViewsProps ) => {
@@ -46,14 +47,14 @@ const SitesDataViews = ( {
 					<SiteStatusContent
 						rows={ item }
 						type={ column }
-						isLargeScreen
+						isLargeScreen={ isLargeScreen }
 						isFavorite={ item.isFavorite }
 						siteError={ item.site.error }
 					/>
 				);
 			}
 		},
-		[ isLoading ]
+		[ isLoading, isLargeScreen ]
 	);
 
 	const fields = useMemo(
@@ -192,7 +193,11 @@ const SitesDataViews = ( {
 					}
 					return (
 						<div className="sites-dataviews__actions">
-							<SiteActions isLargeScreen site={ item.site } siteError={ item.site.error } />
+							<SiteActions
+								isLargeScreen={ isLargeScreen }
+								site={ item.site }
+								siteError={ item.site.error }
+							/>
 							<Button
 								onClick={ () => openSitePreviewPane( item.site.value ) }
 								className="site-preview__open"
@@ -207,7 +212,7 @@ const SitesDataViews = ( {
 				enableSorting: false,
 			},
 		],
-		[ isLoading, openSitePreviewPane, renderField, translate ]
+		[ isLoading, isLargeScreen, openSitePreviewPane, renderField, translate ]
 	);
 
 	return (

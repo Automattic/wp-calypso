@@ -30,41 +30,42 @@ export const MySitesSidebarUnifiedBody = ( { path, children } ) => {
 
 	return (
 		<>
-			{ menuItems.map( ( item, i ) => {
-				const isSelected = item?.url && itemLinkMatches( item.url, path );
+			{ menuItems &&
+				menuItems.map( ( item, i ) => {
+					const isSelected = item?.url && itemLinkMatches( item.url, path );
 
-				if ( 'current-site' === item?.type ) {
-					return (
-						<Site key={ item.type } site={ site } href={ item?.url } isSelected={ isSelected } />
-					);
-				}
-				if ( 'separator' === item?.type ) {
-					return <SidebarSeparator key={ i } />;
-				}
+					if ( 'current-site' === item?.type ) {
+						return (
+							<Site key={ item.type } site={ site } href={ item?.url } isSelected={ isSelected } />
+						);
+					}
+					if ( 'separator' === item?.type ) {
+						return <SidebarSeparator key={ i } />;
+					}
 
-				if ( item?.children?.length ) {
+					if ( item?.children?.length ) {
+						return (
+							<MySitesSidebarUnifiedMenu
+								key={ item.slug }
+								path={ path }
+								link={ item.url }
+								selected={ isSelected }
+								sidebarCollapsed={ sidebarIsCollapsed }
+								shouldOpenExternalLinksInCurrentTab={ shouldOpenExternalLinksInCurrentTab }
+								{ ...item }
+							/>
+						);
+					}
+
 					return (
-						<MySitesSidebarUnifiedMenu
+						<MySitesSidebarUnifiedItem
 							key={ item.slug }
-							path={ path }
-							link={ item.url }
 							selected={ isSelected }
-							sidebarCollapsed={ sidebarIsCollapsed }
 							shouldOpenExternalLinksInCurrentTab={ shouldOpenExternalLinksInCurrentTab }
 							{ ...item }
 						/>
 					);
-				}
-
-				return (
-					<MySitesSidebarUnifiedItem
-						key={ item.slug }
-						selected={ isSelected }
-						shouldOpenExternalLinksInCurrentTab={ shouldOpenExternalLinksInCurrentTab }
-						{ ...item }
-					/>
-				);
-			} ) }
+				} ) }
 			{ children }
 		</>
 	);
