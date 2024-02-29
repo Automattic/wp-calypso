@@ -23,6 +23,11 @@ const SitesDataViews = ( {
 }: SitesDataViewsProps ) => {
 	const translate = useTranslate();
 
+	const totalSites =
+		window.location.pathname === '/sites/favorites' ? data?.totalFavorites || 0 : data?.total || 0;
+
+	const sitesPerPage = sitesViewState.perPage > 0 ? sitesViewState.perPage : 20;
+	const totalPages = Math.ceil( totalSites / sitesPerPage );
 	const sites = useFormattedSites( data?.sites ?? [] );
 
 	const openSitePreviewPane = useCallback(
@@ -67,13 +72,13 @@ const SitesDataViews = ( {
 				render: () => {},
 				type: 'enumeration',
 				elements: [
-					{ value: 1, label: 'Needs Attention' },
-					{ value: 2, label: 'Backup Failed' },
-					{ value: 3, label: 'Backup Warning' },
-					{ value: 4, label: 'Threat Found' },
-					{ value: 5, label: 'Site Disconnected' },
-					{ value: 6, label: 'Site Down' },
-					{ value: 7, label: 'Plugins Needing Updates' },
+					{ value: 1, label: translate( 'Needs Attention' ) },
+					{ value: 2, label: translate( 'Backup Failed' ) },
+					{ value: 3, label: translate( 'Backup Warning' ) },
+					{ value: 4, label: translate( 'Threat Found' ) },
+					{ value: 5, label: translate( 'Site Disconnected' ) },
+					{ value: 6, label: translate( 'Site Down' ) },
+					{ value: 7, label: translate( 'Plugins Needing Updates' ) },
 				],
 				filterBy: {
 					operators: [ 'in' ],
@@ -219,7 +224,7 @@ const SitesDataViews = ( {
 		<>
 			<DataViews
 				data={ sites }
-				paginationInfo={ { totalItems: 0, totalPages: 0 } }
+				paginationInfo={ { totalItems: totalSites, totalPages: totalPages } }
 				fields={ fields }
 				view={ sitesViewState }
 				search={ true }

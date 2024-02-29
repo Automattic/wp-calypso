@@ -30,10 +30,24 @@ const useFetchDashboardSites = (
 	searchQuery: string,
 	currentPage: number,
 	filter: AgencyDashboardFilter,
-	sort: DashboardSortInterface
+	sort: DashboardSortInterface,
+	per_page?: number
 ) => {
+	let query_key = [
+		'jetpack-agency-dashboard-sites',
+		searchQuery,
+		currentPage,
+		filter,
+		sort,
+		per_page,
+	];
+	// If per_page is not provided, we want to remove per_page from the query_key as existing tests don't pass otherwise.
+	if ( ! per_page ) {
+		query_key = [ 'jetpack-agency-dashboard-sites', searchQuery, currentPage, filter, sort ];
+	}
+
 	return useQuery( {
-		queryKey: [ 'jetpack-agency-dashboard-sites', searchQuery, currentPage, filter, sort ],
+		queryKey: query_key,
 		queryFn: () =>
 			wpcomJpl.req.get(
 				{
@@ -45,6 +59,7 @@ const useFetchDashboardSites = (
 					...( currentPage && { page: currentPage } ),
 					...agencyDashboardFilterToQueryObject( filter ),
 					...agencyDashboardSortToQueryObject( sort ),
+					per_page: per_page ?? 20,
 				}
 			),
 		select: ( data ) => {
