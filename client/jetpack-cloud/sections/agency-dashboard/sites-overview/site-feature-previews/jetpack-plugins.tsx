@@ -12,8 +12,8 @@ export function JetpackPluginsPreview( { featureText, link, linkLabel }: Props )
 	return (
 		<>
 			<SitePreviewPaneContent>
-				<div>{ featureText }</div>
-				<div style={ { marginTop: '20px' } }>
+				<h3>{ featureText }</h3>
+				<div style={ { marginTop: '40px' } }>
 					<Button href={ link } primary>
 						{ linkLabel }
 					</Button>
