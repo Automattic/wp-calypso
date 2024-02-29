@@ -62,7 +62,7 @@ const CaptureInput: FunctionComponent< Props > = ( props ) => {
 		isValid && onInputEnter( urlValue );
 		setSubmitted( true );
 
-		if ( ! isValid ) {
+		if ( ! isValid && urlValue?.length > 4 ) {
 			recordTracksEvent( 'calypso_importer_capture_input_invalid', {
 				url: urlValue,
 			} );
