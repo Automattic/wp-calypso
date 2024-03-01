@@ -117,6 +117,14 @@ export default function SitesDashboardV2() {
 
 	// Filter selection
 	useEffect( () => {
+		if (
+			isLoading ||
+			( window.location.pathname !== sitesPath() &&
+				window.location.pathname !== sitesFavoritesPath() )
+		) {
+			return;
+		}
+
 		const filtersSelected =
 			sitesViewState.filters?.map( ( filter ) => {
 				const filterType =
@@ -131,7 +139,14 @@ export default function SitesDashboardV2() {
 
 	// Search query
 	useEffect( () => {
-		updateDashboardURLQueryArgs( { search: sitesViewState.search, isSitesDashboard: true } );
+		if (
+			isLoading ||
+			( window.location.pathname !== sitesPath() &&
+				window.location.pathname !== sitesFavoritesPath() )
+		) {
+			return;
+		}
+		updateDashboardURLQueryArgs( { search: sitesViewState.search } );
 	}, [ sitesViewState.search ] );
 
 	// Set or clear filter depending on sites submenu path selected
