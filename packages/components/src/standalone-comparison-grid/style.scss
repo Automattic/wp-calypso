@@ -9,7 +9,7 @@
 	gap: 20px;
 	padding: 20px;
 
-	.standalone-comparison-grid__column {
+	.&__column {
 		display: flex;
 		flex-direction: column;
 		gap: 10px;
