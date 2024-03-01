@@ -362,7 +362,7 @@ function addDIFMLiteProductToCart( callback, dependencies, step, reduxStore ) {
 	const extra = buildDIFMCartExtrasObject(
 		dependencies,
 		siteSlug,
-		`step-actions-flow-${ step.lastKnownFlow }`
+		`step-actions-flow-${ step.lastKnownFlow || '' }`
 	);
 	const cartItem = {
 		product_slug: WPCOM_DIFM_LITE,
