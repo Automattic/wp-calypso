@@ -19,11 +19,11 @@ import getSelectedSite from 'calypso/state/ui/selectors/get-selected-site';
 import { useCheckoutV2 } from '../hooks/use-checkout-v2';
 import { WPOrderReviewLineItems, WPOrderReviewSection } from './wp-order-review-line-items';
 import type { OnChangeItemVariant } from './item-variation-picker';
-import type { CouponFieldStateProps } from '../hooks/use-coupon-field-state';
 import type { SiteDetails } from '@automattic/data-stores';
 import type {
 	ResponseCart,
 	RemoveProductFromCart,
+	RemoveCouponFromCart,
 	ReplaceProductInCart,
 } from '@automattic/shopping-cart';
 
@@ -75,8 +75,8 @@ const SitePreviewWrapper = styled.div`
 export default function WPCheckoutOrderReview( {
 	className,
 	removeProductFromCart,
+	removeCoupon,
 	replaceProductInCart,
-	couponFieldStateProps,
 	onChangeSelection,
 	siteUrl,
 	isSummary,
@@ -84,8 +84,8 @@ export default function WPCheckoutOrderReview( {
 }: {
 	className?: string;
 	removeProductFromCart?: RemoveProductFromCart;
+	removeCoupon: RemoveCouponFromCart;
 	replaceProductInCart?: ReplaceProductInCart;
-	couponFieldStateProps: CouponFieldStateProps;
 	onChangeSelection?: OnChangeItemVariant;
 	siteUrl?: string;
 	isSummary?: boolean;
@@ -93,7 +93,7 @@ export default function WPCheckoutOrderReview( {
 } ) {
 	const translate = useTranslate();
 	const cartKey = useCartKey();
-	const { responseCart, removeCoupon } = useShoppingCart( cartKey );
+	const { responseCart } = useShoppingCart( cartKey );
 	const reduxDispatch = useDispatch();
 	const shouldUseCheckoutV2 = useCheckoutV2() === 'treatment';
 
@@ -130,12 +130,6 @@ export default function WPCheckoutOrderReview( {
 
 	// This is what will be displayed at the top of checkout prefixed by "Site: ".
 	const domainUrl = getDomainToDisplayInCheckoutHeader( responseCart, selectedSiteData, siteUrl );
-
-	const removeCouponAndClearField = () => {
-		couponFieldStateProps.setCouponFieldValue( '' );
-		setCouponFieldVisible( false );
-		return removeCoupon();
-	};
 
 	const planIsP2Plus = hasP2PlusPlan( responseCart );
 
@@ -179,7 +173,7 @@ export default function WPCheckoutOrderReview( {
 					<WPOrderReviewLineItems
 						removeProductFromCart={ removeProductFromCart }
 						replaceProductInCart={ replaceProductInCart }
-						removeCoupon={ removeCouponAndClearField }
+						removeCoupon={ removeCoupon }
 						onChangeSelection={ onChangeSelection }
 						isSummary={ isSummary }
 						createUserAndSiteBeforeTransaction={ createUserAndSiteBeforeTransaction }

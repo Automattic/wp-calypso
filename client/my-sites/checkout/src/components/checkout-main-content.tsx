@@ -25,7 +25,13 @@ import {
 import { formatCurrency } from '@automattic/format-currency';
 import { useLocale } from '@automattic/i18n-utils';
 import { useShoppingCart } from '@automattic/shopping-cart';
-import { styled, joinClasses } from '@automattic/wpcom-checkout';
+import {
+	styled,
+	joinClasses,
+	getCouponLineItemFromCart,
+	CouponLineItem,
+	getPartnerCoupon,
+} from '@automattic/wpcom-checkout';
 import { keyframes } from '@emotion/react';
 import { useSelect, useDispatch } from '@wordpress/data';
 import debugFactory from 'debug';
@@ -56,6 +62,8 @@ import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
 import useOneDollarOfferTrack from 'calypso/my-sites/plans/hooks/use-onedollar-offer-track';
 import { useDispatch as useReduxDispatch, useSelector } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import { NON_PRIMARY_DOMAINS_TO_FREE_USERS } from 'calypso/state/current-user/constants';
+import { currentUserHasFlag, getCurrentUser } from 'calypso/state/current-user/selectors';
 import { saveContactDetailsCache } from 'calypso/state/domains/management/actions';
 import { errorNotice, removeNotice } from 'calypso/state/notices/actions';
 import { isMarketplaceProduct } from 'calypso/state/products-list/selectors';
@@ -284,6 +292,7 @@ export default function CheckoutMainContent( {
 		responseCart,
 		couponStatus,
 		applyCoupon,
+		removeCoupon,
 		updateLocation,
 		replaceProductInCart,
 		isPendingUpdate: isCartPendingUpdate,
@@ -292,8 +301,21 @@ export default function CheckoutMainContent( {
 	const [ isCouponFieldVisible, setCouponFieldVisible ] = useState( false );
 	const couponFieldStateProps = useCouponFieldState( applyCoupon );
 	const reduxDispatch = useReduxDispatch();
+	const isPwpoUser = useSelector(
+		( state ) =>
+			getCurrentUser( state ) && currentUserHasFlag( state, NON_PRIMARY_DOMAINS_TO_FREE_USERS )
+	);
 	usePresalesChat( getPresalesChatKey( responseCart ), responseCart?.products?.length > 0 );
 
+	const removeCouponAndClearField = () => {
+		couponFieldStateProps.setCouponFieldValue( '' );
+		setCouponFieldVisible( false );
+		return removeCoupon();
+	};
+	const couponLineItem = getCouponLineItemFromCart( responseCart );
+	const hasPartnerCoupon = getPartnerCoupon( {
+		coupon: responseCart.coupon,
+	} );
 	const hasCartJetpackProductsOnly = responseCart?.products?.every( ( product ) =>
 		isJetpackPurchasableItem( product.product_slug )
 	);
@@ -476,7 +498,7 @@ export default function CheckoutMainContent( {
 								{ shouldUseCheckoutV2 && (
 									<WPCheckoutOrderReview
 										removeProductFromCart={ removeProductFromCart }
-										couponFieldStateProps={ couponFieldStateProps }
+										removeCoupon={ removeCouponAndClearField }
 										onChangeSelection={ changeSelection }
 										siteUrl={ siteUrl }
 										createUserAndSiteBeforeTransaction={ createUserAndSiteBeforeTransaction }
@@ -662,6 +684,16 @@ export default function CheckoutMainContent( {
 							isPurchaseFree={ responseCart.total_cost_integer === 0 }
 							couponStatus={ couponStatus }
 							couponFieldStateProps={ couponFieldStateProps }
+						/>
+					) }
+					{ ! shouldUseCheckoutV2 && couponLineItem && (
+						<CouponLineItem
+							lineItem={ couponLineItem }
+							hasDeleteButton
+							removeProductFromCart={ removeCouponAndClearField }
+							createUserAndSiteBeforeTransaction={ createUserAndSiteBeforeTransaction }
+							isPwpoUser={ isPwpoUser ?? false }
+							hasPartnerCoupon={ hasPartnerCoupon }
 						/>
 					) }
 					<CheckoutTermsAndCheckboxes

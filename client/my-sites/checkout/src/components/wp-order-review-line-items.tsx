@@ -8,11 +8,9 @@ import { FormStatus, useFormStatus } from '@automattic/composite-checkout';
 import { isCopySiteFlow } from '@automattic/onboarding';
 import {
 	canItemBeRemovedFromCart,
-	getCouponLineItemFromCart,
 	getCreditsLineItemFromCart,
 	isWpComProductRenewal,
 	joinClasses,
-	CouponLineItem,
 	NonProductLineItem,
 	LineItem,
 	getPartnerCoupon,
@@ -97,7 +95,6 @@ export function WPOrderReviewLineItems( {
 	const reduxDispatch = useDispatch();
 	const translate = useTranslate();
 	const creditsLineItem = getCreditsLineItemFromCart( responseCart );
-	const couponLineItem = getCouponLineItemFromCart( responseCart );
 	const { formStatus } = useFormStatus();
 	const isDisabled = formStatus !== FormStatus.READY;
 	const hasPartnerCoupon = getPartnerCoupon( {
@@ -208,19 +205,6 @@ export function WPOrderReviewLineItems( {
 					akQuantityOpenId={ akQuantityOpenId }
 				/>
 			) ) }
-			{ ! shouldUseCheckoutV2 && couponLineItem && (
-				<WPOrderReviewListItem key={ couponLineItem.id }>
-					<CouponLineItem
-						lineItem={ couponLineItem }
-						isSummary={ isSummary }
-						hasDeleteButton
-						removeProductFromCart={ removeCoupon }
-						createUserAndSiteBeforeTransaction={ createUserAndSiteBeforeTransaction }
-						isPwpoUser={ isPwpoUser }
-						hasPartnerCoupon={ hasPartnerCoupon }
-					/>
-				</WPOrderReviewListItem>
-			) }
 			{ ! shouldUseCheckoutV2 && creditsLineItem && responseCart.sub_total_integer > 0 && (
 				<NonProductLineItem
 					subtotal
