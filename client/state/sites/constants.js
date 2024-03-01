@@ -85,4 +85,5 @@ export const SITE_REQUEST_OPTIONS = [
 	'can_blaze',
 	'is_commercial',
 	'wpcom_admin_interface',
+	'wpcom_classic_early_release',
 ].join();
