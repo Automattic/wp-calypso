@@ -30,18 +30,14 @@ const StatsModuleDataQuery = ( {
 	const siteId = useSelector( getSelectedSiteId );
 	const siteSlug = useSelector( ( state ) => getSiteSlug( state, siteId ) );
 	const translate = useTranslate();
-	const { isLoading: isLoadingFeatureCheck, advancedFeaturesEnabled: isAdvancedFeatureEnabled } =
+	const { isLoading: isLoadingFeatureCheck, isAdvancedFeatureEnabled } =
 		useIsAdvancedFeatureEnabled( siteId );
 	const [ showLoader, setShowLoader ] = useState( isLoading || isLoadingFeatureCheck );
 
 	// Show error and loading based on the query
-	// const isLoading = false;
 	const hasError = false;
 
 	const displaySummaryLink = data && ! hideSummaryLink;
-	// const footerClass = classNames( 'stats-module__footer-actions', {
-	// 	'stats-module__footer-actions--summary': summary,
-	// } );
 
 	useEffect( () => {
 		setShowLoader( isLoading || isLoadingFeatureCheck );
