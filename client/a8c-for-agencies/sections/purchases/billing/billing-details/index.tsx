@@ -165,8 +165,9 @@ export default function BillingDetails() {
 			{ billing.isSuccess && useDailyPrices && billing.data.products.length > 0 && (
 				<Card compact className="billing-details__footer">
 					<small>
-						* Estimate of the combined number of full days each license will be active for by the
-						end of the current month, accounting for licenses that were newly issued or revoked.
+						{ translate(
+							'* Estimate of the combined number of full days each license will be active for by the end of the current month, accounting for licenses that were newly issued or revoked.'
+						) }
 					</small>
 				</Card>
 			) }
