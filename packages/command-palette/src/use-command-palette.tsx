@@ -90,6 +90,16 @@ interface SiteToActionParameters {
 	};
 }
 
+const isExcludedRoute = ( route: string | null ): boolean => {
+	switch ( route ) {
+		case '/sites':
+		case '/reader':
+			return true;
+		default:
+			return false;
+	}
+};
+
 const useSiteToAction = ( { currentRoute }: { currentRoute: string | null } ) => {
 	const siteToAction = useCallback(
 		(
@@ -178,6 +188,16 @@ export const useCommandPalette = ( {
 		currentRoute,
 	} ) as Command[];
 
+	const filterCurrentSiteCommands = ( site: SiteExcerptData, command: Command ) => {
+		const { capabilityFilter = false, filter = () => true } = command?.siteFunctions ?? {};
+		let hasCapability = false;
+		if ( capabilityFilter ) {
+			hasCapability = userCapabilities?.[ site.ID ]?.[ capabilityFilter ] ?? false;
+		}
+
+		return filter?.( site ) && hasCapability;
+	};
+
 	// Logic for selected command (sites)
 	if ( selectedCommandName ) {
 		const selectedCommand = commands.find( ( c ) => c.name === selectedCommandName );
@@ -253,7 +273,7 @@ export const useCommandPalette = ( {
 		} );
 
 	// Inject a tracks event on the callback of each command
-	const finalSortedCommands = sortedCommands.map( ( command ) => ( {
+	let finalSortedCommands = sortedCommands.map( ( command ) => ( {
 		...command,
 		callback: ( params: CommandCallBackParams ) => {
 			recordTracksEvent( 'calypso_hosting_command_palette_command_select', {
@@ -271,6 +291,41 @@ export const useCommandPalette = ( {
 	// Add the "viewMySites" command to the beginning in all contexts except "/sites"
 	if ( viewMySitesCommand && currentRoute !== '/sites' ) {
 		finalSortedCommands.unshift( viewMySitesCommand );
+	}
+
+	if ( currentSiteId && ! isExcludedRoute( currentRoute ) ) {
+		const currentSite = sites.find( ( site ) => site.ID === currentSiteId );
+
+		if ( currentSite ) {
+			finalSortedCommands = finalSortedCommands.filter( ( command ) =>
+				filterCurrentSiteCommands( currentSite, command )
+			);
+
+			finalSortedCommands = finalSortedCommands.map( ( command: Command ) => {
+				const callback = ( params: CommandCallBackParams ) => {
+					if ( command?.siteFunctions?.onClick ) {
+						return command?.siteFunctions?.onClick( {
+							close: params.close,
+							site: currentSite,
+							command,
+						} );
+					}
+
+					return command.callback( params );
+				};
+
+				return {
+					name: command.name,
+					label: command.label,
+					...( command.subLabel ? { subLabel: command.subLabel } : {} ),
+					...( command.searchLabel ? { searchLabel: command.searchLabel } : {} ),
+					...( command.context ? { context: command.context } : {} ),
+					...( command.icon ? { icon: command.icon } : {} ),
+					...( command.image ? { image: command.image } : {} ),
+					callback,
+				};
+			} );
+		}
 	}
 
 	// Return the sorted commands
