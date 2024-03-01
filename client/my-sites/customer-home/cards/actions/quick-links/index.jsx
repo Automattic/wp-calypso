@@ -30,6 +30,7 @@ import {
 	getSiteFrontPage,
 	getCustomizerUrl,
 	getSiteOption,
+	isGlobalSiteViewEnabled as getIsGlobalSiteViewEnabled,
 	isNewSite,
 	getSitePlanSlug,
 	getSite,
@@ -106,6 +107,9 @@ export const QuickLinks = ( {
 		) : null;
 
 	const usesWpAdminInterface = adminInterface === 'wp-admin';
+	const isGlobalSiteViewEnabled = useSelector( ( state ) =>
+		getIsGlobalSiteViewEnabled( state, siteId )
+	);
 
 	const quickLinks = (
 		<div className="quick-links__boxes">
@@ -279,7 +283,7 @@ export const QuickLinks = ( {
 			{ isAtomic && hasBackups && (
 				<ActionBox
 					href={
-						config.isEnabled( 'layout/dotcom-nav-redesign' ) && usesWpAdminInterface
+						isGlobalSiteViewEnabled
 							? `https://jetpack.com/redirect/?source=calypso-backups&site=${ siteSlug }`
 							: `/backup/${ siteSlug }`
 					}
