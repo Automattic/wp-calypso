@@ -135,6 +135,7 @@ export function submitSignupStep( step, providedDependencies, optionalProps ) {
 			recordSubmitStep( lastKnownFlow, step.stepName, providedDependencies, {
 				intent,
 				...optionalProps,
+				...( step.wasSkipped && { wasSkipped: step.wasSkipped } ),
 			} )
 		);
 
