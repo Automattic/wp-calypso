@@ -35,6 +35,7 @@ export function* fetchSeenWhatsNewAnnouncements() {
 
 	return receiveSeenWhatsNewAnnouncements( response.seen_announcement_ids );
 }
+
 export function* setHasSeenWhatsNewModal( value: boolean ) {
 	let response: {
 		has_seen_whats_new_modal: boolean;

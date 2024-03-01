@@ -15,9 +15,10 @@ export {
 
 interface Props {
 	onClose: () => void;
+	siteId: string;
 }
 
-const WhatsNewGuide: React.FC< Props > = ( { onClose } ) => {
+const WhatsNewGuide: React.FC< Props > = ( { onClose, siteId } ) => {
 	const { setSeenWhatsNewAnnouncements } = useDispatch( HELP_CENTER_STORE );
 
 	const { isWhatsNewModalShown } = useSelect( ( select ) => {
@@ -27,8 +28,7 @@ const WhatsNewGuide: React.FC< Props > = ( { onClose } ) => {
 		};
 	}, [] );
 
-	// needs to be made accessible in other places...
-	const { data, isLoading } = useWhatsNewAnnouncementsQuery();
+	const { data, isLoading } = useWhatsNewAnnouncementsQuery( siteId );
 
 	useEffect( () => {
 		// check for whether the announcement has been seen already.

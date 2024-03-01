@@ -1,7 +1,6 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import HelpCenter, { HelpIcon } from '@automattic/help-center';
 import { LocaleProvider } from '@automattic/i18n-utils';
-import WhatsNewGuide from '@automattic/whats-new';
 import { QueryClientProvider } from '@tanstack/react-query';
 import { Button, Fill } from '@wordpress/components';
 import { useMediaQuery } from '@wordpress/compose';
@@ -28,7 +27,7 @@ function HelpCenterContent() {
 	const isDesktop = useMediaQuery( '(min-width: 480px)' );
 	const sectionName = useSelector( getSectionName );
 	const [ showHelpIcon, setShowHelpIcon ] = useState( false );
-	const { setShowHelpCenter, setShowWhatsNewModal } = useDispatch( 'automattic/help-center' );
+	const { setShowHelpCenter } = useDispatch( 'automattic/help-center' );
 
 	const show = useSelect( ( select ) => select( 'automattic/help-center' ).isHelpCenterShown() );
 
@@ -46,10 +45,6 @@ function HelpCenterContent() {
 		const timeout = setTimeout( () => setShowHelpIcon( true ), 0 );
 		return () => clearTimeout( timeout );
 	}, [] );
-
-	const handleCloseWhatsNew = useCallback( () => {
-		setShowWhatsNewModal( false );
-	}, [ setShowWhatsNewModal ] );
 
 	useActionHooks();
 
@@ -86,7 +81,6 @@ function HelpCenterContent() {
 				</>
 			) }
 			<HelpCenter handleClose={ closeCallback } />
-			<WhatsNewGuide onClose={ handleCloseWhatsNew } />
 		</>
 	);
 }

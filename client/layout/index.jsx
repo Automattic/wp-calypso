@@ -93,10 +93,10 @@ function SidebarScrollSynchronizer() {
 	return null;
 }
 
-function WhatsNewLoader( { loadWhatsNew } ) {
+function WhatsNewLoader( { loadWhatsNew, siteId } ) {
 	const { setShowWhatsNewModal, fetchSeenWhatsNewAnnouncements } = useDispatch( HELP_CENTER_STORE );
 
-	const { data, isLoading } = useWhatsNewAnnouncementsQuery();
+	const { data, isLoading } = useWhatsNewAnnouncementsQuery( siteId );
 
 	useEffect( () => {
 		fetchSeenWhatsNewAnnouncements();
@@ -133,7 +133,7 @@ function WhatsNewLoader( { loadWhatsNew } ) {
 	if ( ! loadWhatsNew ) {
 		return null;
 	}
-	return <AsyncLoad require="@automattic/whats-new" onClose={ handleClose } />;
+	return <AsyncLoad require="@automattic/whats-new" onClose={ handleClose } siteId={ siteId } />;
 }
 
 function HelpCenterLoader( { sectionName, loadHelpCenter, currentRoute } ) {
@@ -337,7 +337,7 @@ class Layout extends Component {
 
 		return (
 			<div className={ sectionClass }>
-				<WhatsNewLoader loadWhatsNew={ loadHelpCenter } />
+				<WhatsNewLoader loadWhatsNew={ loadHelpCenter } siteId={ this.props.siteId } />
 				<HelpCenterLoader
 					sectionName={ this.props.sectionName }
 					loadHelpCenter={ loadHelpCenter }

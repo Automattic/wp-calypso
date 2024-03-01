@@ -2,9 +2,7 @@
 import { useLocale } from '@automattic/i18n-utils';
 import { useQuery } from '@tanstack/react-query';
 import apiFetch from '@wordpress/api-fetch';
-import { useSelector } from 'react-redux';
 import wpcomRequest, { canAccessWpcomApis } from 'wpcom-proxy-request';
-import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 
 export interface WhatsNewAnnouncement {
 	announcementId: string;
@@ -27,9 +25,8 @@ interface APIFetchOptions {
  * Get the "whats new" announcements
  * @returns Returns the result of querying the "whats new" list endpoint
  */
-export const useWhatsNewAnnouncementsQuery = () => {
+export const useWhatsNewAnnouncementsQuery = ( siteId: string ) => {
 	const locale = useLocale();
-	const siteId = useSelector( getSelectedSiteId );
 
 	return useQuery< WhatsNewAnnouncement[] >( {
 		queryKey: [ `WhatsNewAnnouncements-${ locale }-${ siteId }` ],
