@@ -1,5 +1,6 @@
 import { DomainsTable, useDomainsTable } from '@automattic/domains-table';
 import { useTranslate } from 'i18n-calypso';
+import DocumentHead from 'calypso/components/data/document-head';
 import InlineSupportLink from 'calypso/components/inline-support-link';
 import Main from 'calypso/components/main';
 import BodySectionCssClass from 'calypso/layout/body-section-css-class';
@@ -61,6 +62,7 @@ export default function BulkAllDomains( props: BulkAllDomainsProps ) {
 		<>
 			<PageViewTracker path={ props.analyticsPath } title={ props.analyticsTitle } />
 			<Main>
+				<DocumentHead title={ translate( 'Domains' ) } />
 				<BodySectionCssClass bodyClass={ [ 'edit__body-white', 'is-bulk-domains-page' ] } />
 				<DomainHeader items={ [ item ] } buttons={ buttons } mobileButtons={ buttons } />
 				{ ! isLoading && <GoogleDomainOwnerBanner /> }

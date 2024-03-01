@@ -7,6 +7,8 @@ export function createPurchaseObject( purchase: RawPurchase | RawPurchaseCreditC
 		active: Boolean( purchase.active ),
 		amount: Number( purchase.amount ),
 		attachedToPurchaseId: Number( purchase.attached_to_purchase_id ),
+		autoRenewCouponCode: purchase.auto_renew_coupon_code,
+		autoRenewCouponDiscountPercentage: Number( purchase.auto_renew_coupon_discount_percentage ),
 		billPeriodDays: Number( purchase.bill_period_days ),
 		billPeriodLabel: purchase.bill_period_label,
 		mostRecentRenewDate: purchase.most_recent_renew_date,

@@ -19,6 +19,7 @@ const siteMigration: Flow = {
 
 	useSteps() {
 		return [
+			STEPS.SITE_MIGRATION_IDENTIFY,
 			STEPS.SITE_MIGRATION_IMPORT_OR_MIGRATE,
 			STEPS.BUNDLE_TRANSFER,
 			STEPS.PROCESSING,
@@ -145,6 +146,22 @@ const siteMigration: Flow = {
 			const siteId = getSiteIdBySlug( siteSlug );
 
 			switch ( currentStep ) {
+				case STEPS.SITE_MIGRATION_IDENTIFY.slug: {
+					const { from, platform } = providedDependencies as { from: string; platform: string };
+
+					if ( platform === 'wordpress' ) {
+						return navigate(
+							addQueryArgs(
+								{ from: from, siteSlug, siteId },
+								STEPS.SITE_MIGRATION_IMPORT_OR_MIGRATE.slug
+							)
+						);
+					}
+
+					return exitFlow(
+						addQueryArgs( { siteId, siteSlug, from }, '/setup/site-setup/importList' )
+					);
+				}
 				case STEPS.SITE_MIGRATION_IMPORT_OR_MIGRATE.slug: {
 					// Switch to the normal Import flow.
 					if ( providedDependencies?.destination === 'import' ) {

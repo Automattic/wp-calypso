@@ -27,17 +27,17 @@ const useIsAdvancedFeatureEnabled = ( siteId: number ) => {
 	);
 
 	const isLoading = ! hasLoadedSitePurchases || isRequestingSitePurchases || isLoadingNotices;
-	const hasAdcancedPlan = isCommercialOwned;
+	const hasAdvancedPlan = isCommercialOwned;
 
 	// to redirect the user can't have a plan purached and can't have the flag true, if either is true the user either has a plan or is postponing
-	const advancedFeaturesEnabled =
+	const isAdvancedFeatureEnabled =
 		config.isEnabled( 'stats/utm-module' ) &&
 		isSiteJetpackNotAtomic &&
-		hasAdcancedPlan &&
+		hasAdvancedPlan &&
 		canUserViewStats && // this might be a redundant check
 		purchaseNotPostponed; // what about editors?
 
-	return { isLoading, advancedFeaturesEnabled };
+	return { isLoading, isAdvancedFeatureEnabled };
 };
 
 export default useIsAdvancedFeatureEnabled;

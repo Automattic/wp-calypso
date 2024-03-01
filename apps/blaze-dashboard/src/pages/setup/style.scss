@@ -1,0 +1,19 @@
+@import "@automattic/color-studio/dist/color-variables";
+
+.promote-post-i2 {
+	.empty-promotion-list__container.promote-post-i2__setup-container {
+		display: flex;
+		flex-direction: column;
+		margin-top: 40px;
+
+		.promote-post-i2__active-steps {
+			align-self: center;
+			text-align: justify;
+
+			li {
+				font-size: $font-body;
+				color: $studio-gray-50;
+			}
+		}
+	}
+}
