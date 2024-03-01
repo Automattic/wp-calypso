@@ -5,8 +5,8 @@ import { ReactNode } from 'react';
 interface StandAloneComparisonGridColumn {
 	title: string;
 	features: ReactNode[];
-	intro_copy?: string;
-	action_copy: string;
+	introCopy?: string;
+	actionCopy: string;
 	action: () => void;
 }
 
@@ -18,17 +18,17 @@ export interface StandAloneComparisonGridProps {
 
 const StandAloneComparisonGridColumn = ( {
 	title,
-	intro_copy,
+	introCopy,
 	action,
-	action_copy,
+	actionCopy,
 	features,
 }: StandAloneComparisonGridColumn ) => {
 	return (
 		<div className="standalone-comparison-grid__column standalone-comparison-grid__body">
 			<h2 className="standalone-comparison-grid__title">{ title }</h2>
-			<p className="standalone-comparison-grid__intro">{ intro_copy }</p>
+			<p className="standalone-comparison-grid__intro">{ introCopy }</p>
 			<Button className="standalone-comparison-grid__action" variant="primary" onClick={ action }>
-				{ action_copy }
+				{ actionCopy }
 			</Button>
 			<ul className="standalone-comparison-grid__row-list">
 				{ features.map( ( feature, index ) => (

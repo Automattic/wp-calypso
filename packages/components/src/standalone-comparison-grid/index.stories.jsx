@@ -12,9 +12,9 @@ const columns = [
 			'Import your users**',
 			'Import your menus** and FSE templates**',
 		],
-		intro_copy:
+		introCopy:
 			'Import your site content, without themes, customizations, or plugins. You will probably have to do some work to get things looking exactly the same.',
-		action_copy: 'Import my website content',
+		actionCopy: 'Import my website content',
 		action: () => {},
 	},
 	{
@@ -31,8 +31,8 @@ const columns = [
 			'Import content from page builders like Elementor, Divi, or WP Bakery',
 			'Import all WooCommerce products and orders',
 		],
-		intro_copy: 'Available with the Creator Plan from $NN/month',
-		action_copy: 'Migrate my website',
+		introCopy: 'Available with the Creator Plan from $NN/month',
+		actionCopy: 'Migrate my website',
 		action: () => {},
 	},
 ];
