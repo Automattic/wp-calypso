@@ -1,0 +1,50 @@
+{
+	"name": "@automattic/masterbar-cart",
+	"version": "1.0.0",
+	"description": "WordPress.com Masterbar Shopping Cart",
+	"main": "dist/build.min.js",
+	"sideEffects": true,
+	"repository": {
+		"type": "git",
+		"url": "git://github.com/Automattic/wp-calypso.git",
+		"directory": "apps/master-bar-cart"
+	},
+	"private": true,
+	"author": "Automattic Inc.",
+	"license": "GPL-2.0-or-later",
+	"bugs": {
+		"url": "https://github.com/Automattic/wp-calypso/issues"
+	},
+	"homepage": "https://github.com/Automattic/wp-calypso",
+	"scripts": {
+		"clean": "npx rimraf dist",
+		"build": "BROWSERSLIST_ENV=evergreen webpack --config='./webpack.config.js'",
+		"show-stats": "NODE_ENV=production EMIT_STATS=true yarn build",
+		"dev-server": "NODE_ENV=development webpack serve",
+		"start": "yarn dev-server",
+		"sync": "yarn clean && yarn build && sh ./bin/wpcom-watch-and-sync.sh"
+	},
+	"dependencies": {
+		"@automattic/mini-cart": "workspace:^",
+		"@automattic/webpack-extensive-lodash-replacement-plugin": "workspace:^",
+		"@emotion/react": "^11.4.1",
+		"react": "^17.0.2",
+		"react-dom": "^17.0.2",
+		"react-query": "^3.32.1",
+		"redux": "^4.1.2",
+		"wpcom": "workspace:^",
+		"wpcom-proxy-request": "workspace:^",
+		"wpcom-xhr-request": "workspace:^"
+	},
+	"devDependencies": {
+		"@automattic/calypso-build": "workspace:^",
+		"autoprefixer": "^10.2.5",
+		"enzyme": "^3.11.0",
+		"html-webpack-plugin": "^5.0.0-beta.4",
+		"jest": "^27.3.1",
+		"postcss": "^8.4.5",
+		"webpack": "^5.65.0",
+		"webpack-bundle-analyzer": "^4.5.0",
+		"webpack-dev-server": "^4.7.2"
+	}
+}
