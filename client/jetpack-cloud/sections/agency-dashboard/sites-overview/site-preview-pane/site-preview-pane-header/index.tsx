@@ -10,6 +10,7 @@ import { Site } from '../../types';
 import './style.scss';
 
 const ICON_SIZE = 24;
+
 interface Props {
 	site: Site;
 	closeSitePreviewPane?: () => void;
