@@ -138,7 +138,6 @@ export default function PostItem( {
 								{ __( 'View' ) }
 							</a>
 							<Button
-								variant="secondary"
 								isBusy={ false }
 								disabled={ false }
 								onClick={ onClickPromote }
@@ -173,7 +172,6 @@ export default function PostItem( {
 			</td>
 			<td className="post-item__post-promote">
 				<Button
-					variant="secondary"
 					isBusy={ false }
 					disabled={ false }
 					onClick={ onClickPromote }

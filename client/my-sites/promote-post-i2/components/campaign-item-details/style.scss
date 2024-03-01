@@ -10,6 +10,10 @@ body.is-section-promote-post-i2 .layout__content .campaign-item-details.main {
 	}
 }
 
+#screen-meta-links {
+	display: none;
+}
+
 @mixin campaign-data-row-font-mobile {
 	font-size: 1.5rem;
 	font-weight: 400;
@@ -344,7 +348,7 @@ body.is-section-promote-post-i2 .layout__content .campaign-item-details.main {
 				margin-right: 6px;
 
 				path {
-					fill: var(--color-link);
+					fill: var(--color-primary);
 				}
 			}
 
@@ -353,7 +357,7 @@ body.is-section-promote-post-i2 .layout__content .campaign-item-details.main {
 				display: flex;
 				text-decoration: none;
 				cursor: pointer;
-				color: var(--color-link);
+				color: var(--color-primary);
 			}
 		}
 
