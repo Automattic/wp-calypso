@@ -60,8 +60,9 @@ const PromoCardV2 = styled.div`
 const CheckoutPromoCard: React.FC< {
 	onUpgradeClick: () => void;
 	responseCart: ResponseCart;
-	variants: WPCOMProductVariant[];
-} > = ( { onUpgradeClick, responseCart, variants } ) => {
+	currentVariant: WPCOMProductVariant;
+	percentSavings: number;
+} > = ( { onUpgradeClick, responseCart, currentVariant, percentSavings } ) => {
 	const translate = useTranslate();
 	const plan = responseCart.products.find(
 		( product ) => isPlan( product ) && ! isJetpackPlan( product )
@@ -70,13 +71,6 @@ const CheckoutPromoCard: React.FC< {
 	const domainRegistrationOrTransferInCart = responseCart.products.find(
 		( product ) => isDomainRegistration( product ) || isDomainTransfer( product )
 	);
-	const [ currentVariant, biennialVariant ] = variants;
-
-	const percentSavings = getItemVariantDiscountPercentage( biennialVariant, currentVariant );
-	if ( percentSavings === 0 ) {
-		debug( 'percent savings is too low', percentSavings );
-		return null;
-	}
 
 	const isMonthly = currentVariant?.termIntervalInMonths === 1;
 	const isYearly = currentVariant?.termIntervalInMonths === 12;
@@ -114,12 +108,15 @@ const CheckoutPromoCard: React.FC< {
 
 	if ( isYearly ) {
 		labelText = translate(
-			"Save up to %(savingsPercentage)s% on longer billing cycles! It's hassle-free and easy on your wallet. Don't miss out!",
+			"Save up to %(savingsPercentage)s% on longer billing cycles! It's hassle-free and easy on your wallet. {{upgradeLink}}Switch to a two-year plan and save.{{/upgradeLink}}",
 			{
 				comment:
 					'"savingsPercentage is the savings percentage for the upgrade as a number, like "20" for 20%"',
 				args: {
 					savingsPercentage: percentSavings,
+				},
+				components: {
+					upgradeLink: <Button onClick={ onUpgradeClick } variant="link" />,
 				},
 			}
 		);
@@ -171,10 +168,15 @@ export function CheckoutSidebarPlanUpsell() {
 		debug( 'no plan found in cart' );
 		return null;
 	}
-
+	const annualVariant = variants?.find( ( product ) => product.termIntervalInMonths === 12 );
 	const biennialVariant = variants?.find( ( product ) => product.termIntervalInMonths === 24 );
 	const triennialVariant = variants?.find( ( product ) => product.termIntervalInMonths === 36 );
 	const currentVariant = variants?.find( ( product ) => product.productId === plan.product_id );
+
+	if ( ! annualVariant ) {
+		debug( 'plan in cart has no annual variant; variants are', variants );
+		return null;
+	}
 
 	if ( ! biennialVariant ) {
 		debug( 'plan in cart has no biennial variant; variants are', variants );
@@ -202,10 +204,27 @@ export function CheckoutSidebarPlanUpsell() {
 		if ( isFormLoading ) {
 			return;
 		}
-		const newPlan = {
-			product_slug: biennialVariant.productSlug,
-			product_id: biennialVariant.productId,
-		};
+
+		let newPlan;
+
+		if ( currentVariant.termIntervalInMonths === 1 ) {
+			newPlan = {
+				product_slug: annualVariant.productSlug,
+				product_id: annualVariant.productId,
+			};
+		}
+
+		if ( currentVariant.termIntervalInMonths === 12 ) {
+			newPlan = {
+				product_slug: biennialVariant.productSlug,
+				product_id: biennialVariant.productId,
+			};
+		}
+
+		if ( ! newPlan ) {
+			return;
+		}
+
 		debug( 'switching from', plan.product_slug, 'to', newPlan.product_slug );
 		reduxDispatch(
 			recordTracksEvent( 'calypso_checkout_sidebar_upsell_click', {
@@ -255,7 +274,8 @@ export function CheckoutSidebarPlanUpsell() {
 				<CheckoutPromoCard
 					onUpgradeClick={ onUpgradeClick }
 					responseCart={ responseCart }
-					variants={ [ biennialVariant, currentVariant ] }
+					currentVariant={ currentVariant }
+					percentSavings={ percentSavings }
 				/>
 			) : (
 				<PromoCard title={ cardTitle } className="checkout-sidebar-plan-upsell">

@@ -5,6 +5,7 @@ import CartFreeUserPlanUpsell from 'calypso/my-sites/checkout/cart/cart-free-use
 import UpcomingRenewalsReminder from 'calypso/my-sites/checkout/cart/upcoming-renewals-reminder';
 import { useSelector } from 'calypso/state';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import { useCheckoutV2 } from '../hooks/use-checkout-v2';
 import type { ResponseCart, MinimalRequestCartProduct } from '@automattic/shopping-cart';
 
 export type PartialCart = Partial< ResponseCart > & Pick< ResponseCart, 'products' >;
@@ -16,6 +17,7 @@ interface Props {
 
 type DivProps = {
 	theme?: any; // eslint-disable-line @typescript-eslint/no-explicit-any
+	shouldUseCheckoutV2?: boolean;
 };
 const UpsellWrapper = styled.div< DivProps >`
 	background: ${ ( props ) => props.theme.colors.surface };
@@ -28,7 +30,7 @@ const UpsellWrapper = styled.div< DivProps >`
 
 		@media ( ${ ( props ) => props.theme.breakpoints.desktopUp } ) {
 			border: 1px solid ${ ( props ) => props.theme.colors.borderColorLight };
-			margin-top: 24px;
+			${ ( props ) => ( props.shouldUseCheckoutV2 ? `margin-top: 0` : `margin-top: 24px` ) }
 		}
 	}
 
@@ -71,6 +73,7 @@ const SecondaryCartPromotions: FunctionComponent< Props > = ( {
 	addItemToCart,
 	isCartPendingUpdate,
 } ) => {
+	const shouldUseCheckoutV2 = useCheckoutV2() === 'treatment';
 	const selectedSiteId = useSelector( ( state ) => getSelectedSiteId( state ) as number );
 	const isPurchaseRenewal = useMemo(
 		() => responseCart?.products?.some?.( ( product ) => product.is_renewal ),
@@ -90,7 +93,7 @@ const SecondaryCartPromotions: FunctionComponent< Props > = ( {
 	}
 
 	return (
-		<UpsellWrapper>
+		<UpsellWrapper shouldUseCheckoutV2={ shouldUseCheckoutV2 }>
 			<CartFreeUserPlanUpsell
 				cart={ responseCart }
 				addItemToCart={ addItemToCart }
