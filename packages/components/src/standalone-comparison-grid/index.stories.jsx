@@ -1,3 +1,4 @@
+import { Button } from '@wordpress/components';
 import { StandAloneComparisonGrid, Column } from '.';
 import './stories.scss';
 
@@ -14,8 +15,11 @@ const columns = [
 		],
 		introCopy:
 			'Import your site content, without themes, customizations, or plugins. You will probably have to do some work to get things looking exactly the same.',
-		actionCopy: 'Import my website content',
-		action: () => {},
+		controls: (
+			<Button variant="primary" onClick={ () => {} }>
+				Import my website content
+			</Button>
+		),
 	},
 	{
 		title: 'Migrate',
@@ -32,7 +36,11 @@ const columns = [
 			'Import all WooCommerce products and orders',
 		],
 		introCopy: 'Available with the Creator Plan from $NN/month',
-		actionCopy: 'Migrate my website',
+		controls: (
+			<Button variant="primary" onClick={ () => {} }>
+				Migrate my website
+			</Button>
+		),
 		action: () => {},
 	},
 ];
