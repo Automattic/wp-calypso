@@ -1,4 +1,4 @@
-import type { Pattern } from 'calypso/landing/stepper/declarative-flow/internals/steps-repository/pattern-assembler/types';
+import type { Pattern } from 'calypso/my-sites/patterns/types';
 
 import './pattern-preview.scss';
 

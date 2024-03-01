@@ -5,11 +5,12 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { renderHook, waitFor } from '@testing-library/react';
 import React from 'react';
 import wpcom from 'calypso/lib/wp';
-import { usePatterns } from '../use-patterns';
+import { usePatternCategories } from '../use-pattern-categories';
+import type { Category } from 'calypso/my-sites/patterns/types';
 
 jest.mock( 'calypso/lib/wp', () => ( { req: { get: jest.fn() } } ) );
 
-describe( 'usePatterns', () => {
+describe( 'usePatternCategories', () => {
 	let wrapper: React.FC< React.PropsWithChildren< any > >;
 
 	beforeEach( () => {
@@ -29,32 +30,34 @@ describe( 'usePatterns', () => {
 	test( 'calls the API endpoint with the right parameters', async () => {
 		( wpcom.req.get as jest.MockedFunction< typeof wpcom.req.get > ).mockResolvedValue( [] );
 
-		const { result } = renderHook( () => usePatterns( 'fr', 'intro' ), { wrapper } );
+		const { result } = renderHook( () => usePatternCategories( 'fr', 12345 ), { wrapper } );
 
 		await waitFor( () => expect( result.current.isSuccess ).toBe( true ) );
 
-		expect( wpcom.req.get ).toHaveBeenCalledWith( '/ptk/patterns/fr', {
-			categories: 'intro',
-			post_type: 'wp_block',
+		expect( wpcom.req.get ).toHaveBeenCalledWith( '/sites/12345/block-patterns/categories', {
+			apiNamespace: 'wp/v2',
+			_locale: 'fr',
 		} );
 		expect( result.current.data ).toEqual( [] );
 	} );
 
 	test( 'returns the expected data when successful', async () => {
-		const patterns = [
+		const categories: Category[] = [
 			{
-				ID: 1,
-				html: '<div>Test pattern</div>',
-				title: 'Test pattern',
+				name: 'about',
+				title: 'À propos',
+				description: '',
 			},
 		];
 
-		( wpcom.req.get as jest.MockedFunction< typeof wpcom.req.get > ).mockResolvedValue( patterns );
+		( wpcom.req.get as jest.MockedFunction< typeof wpcom.req.get > ).mockResolvedValue(
+			categories
+		);
 
-		const { result } = renderHook( () => usePatterns( 'en', 'about' ), { wrapper } );
+		const { result } = renderHook( () => usePatternCategories( 'fr', 12345 ), { wrapper } );
 
 		await waitFor( () => expect( result.current.isSuccess ).toBe( true ) );
 
-		expect( result.current.data ).toEqual( patterns );
+		expect( result.current.data ).toEqual( categories );
 	} );
 } );
