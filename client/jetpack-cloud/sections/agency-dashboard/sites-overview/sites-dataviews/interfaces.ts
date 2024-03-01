@@ -1,4 +1,4 @@
-import { Site } from '../types';
+import { Site, SiteData } from '../types';
 
 export interface SitesDataViewsProps {
 	data:
@@ -31,4 +31,8 @@ export interface SitesViewState {
 	hiddenFields: string[];
 	layout: object;
 	selectedSite?: Site | undefined;
+}
+
+export interface SiteInfo extends SiteData {
+	id: number;
 }
