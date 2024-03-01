@@ -33,6 +33,7 @@ import { useSelector } from 'calypso/state';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import BlazePageViewTracker from './components/blaze-page-view-tracker';
 import CreditBalance from './components/credit-balance';
+import DebtNotifier from './components/debt-notifier';
 import MainWrapper from './components/main-wrapper';
 import PostsListBanner from './components/posts-list-banner';
 import WooBanner from './components/woo-banner';
@@ -257,6 +258,8 @@ export default function PromotedPosts( { tab }: Props ) {
 			{ headerSubtitle( true ) /* for mobile */ }
 
 			{ showBanner && ( isWooBlaze ? <WooBanner /> : <PostsListBanner /> ) }
+
+			<DebtNotifier />
 
 			<PromotePostTabBar tabs={ tabs } selectedTab={ selectedTab } />
 
