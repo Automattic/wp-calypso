@@ -251,8 +251,12 @@ export function CheckoutSidebarPlanUpsell() {
 	);
 	return (
 		<>
-			{ plan && shouldUseCheckoutV2 ? (
-				<CheckoutPromoCard responseCart={ responseCart } variants={ variants } />
+			{ shouldUseCheckoutV2 ? (
+				<CheckoutPromoCard
+					onUpgradeClick={ onUpgradeClick }
+					responseCart={ responseCart }
+					variants={ [ biennialVariant, currentVariant ] }
+				/>
 			) : (
 				<PromoCard title={ cardTitle } className="checkout-sidebar-plan-upsell">
 					<div className="checkout-sidebar-plan-upsell__plan-grid">
