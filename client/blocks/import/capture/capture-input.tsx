@@ -72,8 +72,11 @@ const CaptureInput: FunctionComponent< Props > = ( props ) => {
 	return (
 		<form className="import__capture" onSubmit={ onFormSubmit }>
 			<FormFieldset>
-				<FormLabel>{ translate( 'Enter the URL of the site:' ) }</FormLabel>
+				<FormLabel htmlFor="capture-site-url">
+					{ translate( 'Enter the URL of the site:' ) }
+				</FormLabel>
 				<FormTextInput
+					id="capture-site-url"
 					type="text"
 					className={ classnames( { 'is-error': showValidationMsg } ) }
 					// eslint-disable-next-line jsx-a11y/no-autofocus
