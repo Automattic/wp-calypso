@@ -1,6 +1,6 @@
 import { Button } from '@wordpress/components';
 import './style.scss';
-import { ReactNode } from 'react';
+import { type ReactNode } from 'react';
 
 interface StandAloneComparisonGridColumn {
 	title: string;
