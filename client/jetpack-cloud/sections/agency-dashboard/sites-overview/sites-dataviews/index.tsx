@@ -7,6 +7,7 @@ import SiteActions from 'calypso/jetpack-cloud/sections/agency-dashboard/sites-o
 import useFormattedSites from 'calypso/jetpack-cloud/sections/agency-dashboard/sites-overview/site-content/hooks/use-formatted-sites';
 import SiteStatusContent from 'calypso/jetpack-cloud/sections/agency-dashboard/sites-overview/site-status-content';
 import SiteDataField from 'calypso/jetpack-cloud/sections/agency-dashboard/sites-overview/sites-dataviews/site-data-field';
+import { JETPACK_MANAGE_ONBOARDING_TOURS_EXAMPLE_SITE } from 'calypso/jetpack-cloud/sections/onboarding-tours/constants';
 import TextPlaceholder from 'calypso/jetpack-cloud/sections/partner-portal/text-placeholder';
 import SiteSetFavorite from '../site-set-favorite';
 import SiteSort from '../site-sort';
@@ -215,10 +216,14 @@ const SitesDataViews = ( {
 		[ isLoading, isLargeScreen, openSitePreviewPane, renderField, translate ]
 	);
 
+	const urlParams = new URLSearchParams( window.location.search );
+	const isOnboardingTourActive = urlParams.get( 'tour' ) !== null;
+	const useExampleDataForTour = isOnboardingTourActive && ( ! sites || sites.length === 0 );
+
 	return (
 		<>
 			<DataViews
-				data={ sites }
+				data={ ! useExampleDataForTour ? sites : JETPACK_MANAGE_ONBOARDING_TOURS_EXAMPLE_SITE }
 				paginationInfo={ { totalItems: 0, totalPages: 0 } }
 				fields={ fields }
 				view={ sitesViewState }
