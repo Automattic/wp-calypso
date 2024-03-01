@@ -24,11 +24,13 @@ const StatsModuleDataQuery = ( {
 	metricLabel,
 	hideSummaryLink,
 	isLoading,
+	selectedOption,
+	toggleControl,
 } ) => {
 	const siteId = useSelector( getSelectedSiteId );
 	const siteSlug = useSelector( ( state ) => getSiteSlug( state, siteId ) );
 	const translate = useTranslate();
-	const { isLoading: isLoadingFeatureCheck, isAdvancedFeatureEnabled } =
+	const { isLoading: isLoadingFeatureCheck, advancedFeaturesEnabled: isAdvancedFeatureEnabled } =
 		useIsAdvancedFeatureEnabled( siteId );
 	const [ showLoader, setShowLoader ] = useState( isLoading || isLoadingFeatureCheck );
 
@@ -89,8 +91,9 @@ const StatsModuleDataQuery = ( {
 			}
 			error={ hasError && <ErrorPanel /> }
 			loader={ showLoader && <StatsModulePlaceholder isLoading={ showLoader } /> }
-			// splitHeader={ !! additionalColumns }
-			// mainItemLabel={ mainItemLabel }
+			splitHeader
+			mainItemLabel={ selectedOption?.headerLabel }
+			toggleControl={ toggleControl }
 			overlay={
 				siteSlug &&
 				! isAdvancedFeatureEnabled && (
