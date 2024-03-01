@@ -33,6 +33,7 @@ type OdieAssistantContextInterface = {
 	extraContactOptions?: ReactNode;
 	lastNudge: Nudge | null;
 	odieClientId: string;
+	referrer?: string;
 	sendNudge: ( nudge: Nudge ) => void;
 	setChat: ( chat: Chat ) => void;
 	setIsLoadingChat: ( isLoadingChat: boolean ) => void;
@@ -92,6 +93,7 @@ type OdieAssistantProviderProps = {
 	extraContactOptions?: ReactNode;
 	logger?: ( message: string, properties: Record< string, unknown > ) => void;
 	loggerEventNamePrefix?: string;
+	refferer?: string;
 	version?: string | null;
 	children?: ReactNode;
 } & PropsWithChildren;
