@@ -234,7 +234,7 @@ function makeIntroductoryOfferCostOverrideUnique(
 	if ( product.is_renewal ) {
 		return {
 			...costOverride,
-			human_readable_reason: translate( 'Prorated introductory offer renewal' ),
+			human_readable_reason: translate( 'Prorated renewal discount' ),
 		};
 	}
 	return {
