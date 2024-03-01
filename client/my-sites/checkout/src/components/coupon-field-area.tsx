@@ -75,13 +75,12 @@ function CouponFieldArea( {
 	return (
 		<CouponAreaWrapper shouldUseCheckoutV2={ shouldUseCheckoutV2 }>
 			<CouponLinkWrapper shouldUseCheckoutV2={ shouldUseCheckoutV2 }>
-				{ translate( 'Have a coupon? ' ) }{ ' ' }
 				<CouponEnableButton
 					className="wp-checkout-order-review__show-coupon-field-button"
 					onClick={ () => setCouponFieldVisible( true ) }
 					shouldUseCheckoutV2={ shouldUseCheckoutV2 }
 				>
-					{ translate( 'Add a coupon code' ) }
+					{ translate( 'Have a coupon?' ) }
 				</CouponEnableButton>
 			</CouponLinkWrapper>
 		</CouponAreaWrapper>
