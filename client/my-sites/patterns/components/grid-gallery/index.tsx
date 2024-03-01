@@ -6,7 +6,7 @@ import './style.scss';
 type PatternsGridGalleryProps = {
 	title: string;
 	description: string;
-	itemMinWidth?: number;
+	columnCount?: number;
 	list?: {
 		name?: string;
 		label?: string;
@@ -19,7 +19,7 @@ type PatternsGridGalleryProps = {
 export const PatternsGridGallery = ( {
 	title,
 	description,
-	itemMinWidth = 287,
+	columnCount = 4,
 	list,
 }: PatternsGridGalleryProps ) => {
 	if ( ! list ) {
@@ -30,7 +30,7 @@ export const PatternsGridGallery = ( {
 		<PatternsSection title={ title } description={ description }>
 			<div
 				className="patterns-grid-gallery"
-				style={ { '--item-min-width': `${ itemMinWidth }px` } as CSSProperties }
+				style={ { '--column-count': columnCount } as CSSProperties }
 			>
 				{ list.map( ( { name, label, number, image, link } ) => (
 					<a className="patterns-grid-gallery__item" href={ link } key={ name }>

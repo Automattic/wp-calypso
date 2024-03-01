@@ -108,7 +108,7 @@ export const PatternsHomePage = ( {
 			<PatternsGridGallery
 				title="Beautifully curated page layouts"
 				description="Entire pages built of patterns, ready to be added to your site."
-				itemMinWidth={ 391 }
+				columnCount={ 3 }
 				list={ Array.from( Array( 5 ) ).map( () => ( {
 					name: 'About',
 					number: 7,

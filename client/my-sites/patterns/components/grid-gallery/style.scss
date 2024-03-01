@@ -3,7 +3,7 @@
 
 .patterns-grid-gallery {
 	display: grid;
-	grid-template-columns: repeat(auto-fill, minmax(var(--item-min-width), 1fr));
+	grid-template-columns: repeat(var(--column-count), 1fr);
 	gap: 32px 24px;
 }
 
@@ -47,8 +47,14 @@
 	}
 }
 
+@media ( max-width: $break-huge ) {
+	.patterns-grid-gallery {
+		grid-template-columns: repeat(calc(var(--column-count) - 1), 1fr);
+	}
+}
+
 @media ( max-width: $break-medium ) {
-	.patterns-grid-gallery__item {
-		flex: 0 0 100%;
+	.patterns-grid-gallery {
+		grid-template-columns: 1fr;
 	}
 }
