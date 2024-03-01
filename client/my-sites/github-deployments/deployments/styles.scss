@@ -106,6 +106,7 @@
 
 	&__commit-details {
 		display: flex;
+		white-space: normal !important;
 		flex-direction: column;
 		> div {
 			display: inline-flex;

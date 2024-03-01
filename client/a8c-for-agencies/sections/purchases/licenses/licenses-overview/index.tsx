@@ -76,20 +76,16 @@ export default function LicensesOverview( {
 					<LayoutHeader>
 						<Title>{ title } </Title>
 						<Actions>
-							<div className="issue-license__controls">
-								<div className="issue-license__actions">
-									{ /* TODO: <SHOW_PARTNER_KEY_SELECTION_HERE /> */ }
-									<Button
-										disabled={ ! partnerCanIssueLicense }
-										href={ partnerCanIssueLicense ? '/marketplace' : undefined }
-										onClick={ onIssueNewLicenseClick }
-										primary
-										style={ { marginLeft: 'auto' } }
-									>
-										{ translate( 'Issue New License' ) }
-									</Button>
-								</div>
-							</div>
+							{ /* TODO: <SHOW_PARTNER_KEY_SELECTION_HERE /> */ }
+							<Button
+								disabled={ ! partnerCanIssueLicense }
+								href={ partnerCanIssueLicense ? '/marketplace' : undefined }
+								onClick={ onIssueNewLicenseClick }
+								primary
+								style={ { marginLeft: 'auto' } }
+							>
+								{ translate( 'Issue New License' ) }
+							</Button>
 						</Actions>
 					</LayoutHeader>
 

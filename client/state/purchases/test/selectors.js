@@ -78,6 +78,8 @@ describe( 'selectors', () => {
 				active: false,
 				amount: NaN,
 				attachedToPurchaseId: NaN,
+				autoRenewCouponCode: undefined,
+				autoRenewCouponDiscountPercentage: NaN,
 				billPeriodDays: NaN,
 				billPeriodLabel: undefined,
 				blogCreatedDate: undefined,

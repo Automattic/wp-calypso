@@ -10,7 +10,7 @@ import getSitesItems from 'calypso/state/selectors/get-sites-items';
 import getVisibleSites from 'calypso/state/selectors/get-visible-sites';
 import { getSiteSlug, getSiteTitle } from 'calypso/state/sites/selectors';
 
-export default function ThemeSiteSelectorModal( { isOpen, onClose } ) {
+export default function ThemeSiteSelectorModal( { isOpen, navigateOnClose = true, onClose } ) {
 	const store = useStore();
 	const translate = useTranslate();
 
@@ -26,8 +26,8 @@ export default function ThemeSiteSelectorModal( { isOpen, onClose } ) {
 		const siteTitle = getSiteTitle( state, siteId );
 
 		const pathWithSite = addSiteFragment( currentRoute, siteSlug );
-		navigate( pathWithSite );
-		onClose( { siteTitle } );
+		navigateOnClose && navigate( pathWithSite );
+		onClose( { siteSlug, siteTitle } );
 	};
 
 	if ( ! isOpen ) {
@@ -36,7 +36,7 @@ export default function ThemeSiteSelectorModal( { isOpen, onClose } ) {
 
 	return (
 		<Modal
-			className="theme-site-selector-modal"
+			overlayClassName="theme-site-selector-modal"
 			onRequestClose={ onClose }
 			size="medium"
 			title={ translate( 'Select a site', {
