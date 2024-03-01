@@ -223,20 +223,29 @@ function makeIntroductoryOfferCostOverrideUnique(
 	translate: ReturnType< typeof useTranslate >,
 	allowFreeText: boolean
 ): ResponseCartCostOverride {
+	if ( 'introductory-offer' !== costOverride.override_code || ! product.introductory_offer_terms ) {
+		return costOverride;
+	}
+
 	// Replace introductory offer cost override text with wording specific to
-	// that offer.
-	if ( 'introductory-offer' === costOverride.override_code && product.introductory_offer_terms ) {
+	// that offer, but not for renewals because an introductory offer manual
+	// renewal can be hard to explain simply and saying "Discount for first 3
+	// months" may not be accurate.
+	if ( product.is_renewal ) {
 		return {
 			...costOverride,
-			human_readable_reason: getDiscountReasonForIntroductoryOffer(
-				product,
-				product.introductory_offer_terms,
-				translate,
-				allowFreeText
-			),
+			human_readable_reason: translate( 'Prorated renewal discount' ),
 		};
 	}
-	return costOverride;
+	return {
+		...costOverride,
+		human_readable_reason: getDiscountReasonForIntroductoryOffer(
+			product,
+			product.introductory_offer_terms,
+			translate,
+			allowFreeText
+		),
+	};
 }
 
 function getDiscountForCostOverrideForDisplay( costOverride: ResponseCartCostOverride ): number {
@@ -300,6 +309,16 @@ export function filterCostOverridesForLineItem(
 				makeIntroductoryOfferCostOverrideUnique( costOverride, product, translate, true )
 			)
 			.map( ( costOverride ) => {
+				// Introductory offers which are renewals may have a prorated
+				// discount amount which is hard to display as a simple
+				// discount, so we will hide the discounted amount here.
+				if ( costOverride.override_code === 'introductory-offer' && product.is_renewal ) {
+					return {
+						humanReadableReason: costOverride.human_readable_reason,
+						overrideCode: costOverride.override_code,
+					};
+				}
+
 				// Introductory offer discounts with term lengths that differ from
 				// the term length of the product (eg: a 3 month discount for an
 				// annual plan) need to be displayed differently because the
