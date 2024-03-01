@@ -206,17 +206,6 @@ export class LoginLinks extends Component {
 	}
 
 	renderMagicLoginLink() {
-		if (
-			! canDoMagicLogin(
-				this.props.twoFactorAuthType,
-				this.props.oauth2Client,
-				this.props.wccomFrom,
-				this.props.isJetpackWooCommerceFlow
-			)
-		) {
-			return null;
-		}
-
 		if ( this.props.isLoggedIn ) {
 			return null;
 		}

@@ -423,12 +423,7 @@ export class Login extends Component {
 		const isJetpackMagicLinkSignUpFlow =
 			isJetpack && config.isEnabled( 'jetpack/magic-link-signup' );
 
-		const shouldRenderFooter =
-			! socialConnect &&
-			! isJetpackMagicLinkSignUpFlow &&
-			// We don't want to render the footer for woo oauth2 flows but render it if it's partner signup
-			! ( isWooOAuth2Client( oauth2Client ) && ! isPartnerSignup ) &&
-			! isWooCoreProfilerFlow;
+		const shouldRenderFooter = true;
 
 		const footer = (
 			<>
