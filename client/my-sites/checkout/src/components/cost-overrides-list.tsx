@@ -174,6 +174,14 @@ function LineItemCostOverrideIntroOfferDueDate( { product }: { product: Response
 	if ( ! doesIntroductoryOfferHaveDifferentTermLengthThanProduct( product ) ) {
 		return null;
 	}
+
+	// Introductory offer manual renewals often have prorated prices that are
+	// difficult to display as a simple discount so we keep their display
+	// simple.
+	if ( product.is_renewal ) {
+		return null;
+	}
+
 	const tosData = responseCart.terms_of_service?.find( ( tos ) => {
 		if ( ! new RegExp( `product_id:${ product.product_id }` ).test( tos.key ) ) {
 			return false;

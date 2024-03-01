@@ -5,13 +5,18 @@ import {
 	redirectWithoutLocaleParamInFrontIfLoggedIn,
 	render as clientRender,
 } from 'calypso/controller/index.web';
-import { fetchPatterns, Next } from 'calypso/my-sites/patterns/controller';
-import Patterns from 'calypso/my-sites/patterns/patterns';
-import type { Context as PageJSContext } from '@automattic/calypso-router';
+import { PatternGalleryClient } from 'calypso/my-sites/patterns/components/pattern-gallery/client';
+import { getPatternCategorySlugs } from 'calypso/my-sites/patterns/controller';
+import { Patterns } from 'calypso/my-sites/patterns/patterns';
+import type { RouterContext, RouterNext } from 'calypso/my-sites/patterns/types';
 
-function renderPatterns( context: PageJSContext, next: Next ) {
+function renderPatterns( context: RouterContext, next: RouterNext ) {
 	context.primary = (
-		<Patterns category={ context.params.category } isGridView={ !! context.query.grid } />
+		<Patterns
+			category={ context.params.category }
+			isGridView={ !! context.query.grid }
+			patternGallery={ PatternGalleryClient }
+		/>
 	);
 
 	next();
@@ -19,8 +24,13 @@ function renderPatterns( context: PageJSContext, next: Next ) {
 
 export default function ( router: typeof clientRouter ) {
 	const langParam = getLanguageRouteParam();
-	const middleware = [ fetchPatterns, renderPatterns, makeLayout, clientRender ];
+	const categorySlugs = getPatternCategorySlugs();
+	const middleware = [ renderPatterns, makeLayout, clientRender ];
 
-	router( `/${ langParam }/patterns`, redirectWithoutLocaleParamInFrontIfLoggedIn, ...middleware );
-	router( '/patterns', ...middleware );
+	router(
+		`/${ langParam }/patterns/:category(${ categorySlugs })?`,
+		redirectWithoutLocaleParamInFrontIfLoggedIn,
+		...middleware
+	);
+	router( `/patterns/:category(${ categorySlugs })?`, ...middleware );
 }
