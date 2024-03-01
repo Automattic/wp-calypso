@@ -71,12 +71,12 @@
 	}
 
 	&__cost-label {
-		margin-bottom: 8px;
+		margin-block-end: 8px;
 		font-size: 1rem;
 	}
 
 	&__cost-amount {
-		margin-bottom: 8px;
+		margin-block-end: 8px;
 		font-size: 1.25rem;
 
 		@media ( min-width: 661px ) and ( max-width: 781px ) {
@@ -89,7 +89,7 @@
 	&__line-item-meta {
 		display: block;
 		font-size: 0.875rem;
-		color: var(--studio-gray-70);
+		color: var(--color-neutral-70);
 
 		&--is-mobile {
 			@include break-xlarge() {
