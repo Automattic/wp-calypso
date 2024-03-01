@@ -79,6 +79,7 @@ const CheckoutPromoCard: React.FC< {
 
 	let labelText;
 
+	// TODO: this currently doesn't work because the !plan guard found in CheckoutSidebarPlanUpsell disallows this to be reached.
 	if ( ! plan && domainRegistrationOrTransferInCart ) {
 		labelText = translate(
 			'Longer plan billing cycles save you money and include a custom domain for free for the first year.'
