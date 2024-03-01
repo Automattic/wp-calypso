@@ -1,6 +1,6 @@
 /* eslint-disable no-restricted-imports */
-import { HelpCenter, HelpCenterSelect } from '@automattic/data-stores';
-import { useSelect, useDispatch } from '@wordpress/data';
+import { HelpCenter } from '@automattic/data-stores';
+import { useDispatch } from '@wordpress/data';
 import { useEffect } from 'react';
 import Guide from './components/guide';
 import { useWhatsNewAnnouncementsQuery } from './hooks/use-whats-new-announcements-query';
@@ -20,26 +20,18 @@ interface Props {
 
 const WhatsNewGuide: React.FC< Props > = ( { onClose, siteId } ) => {
 	const { setSeenWhatsNewAnnouncements } = useDispatch( HELP_CENTER_STORE );
-
-	const { isWhatsNewModalShown } = useSelect( ( select ) => {
-		const helpCenterSelect: HelpCenterSelect = select( HELP_CENTER_STORE );
-		return {
-			isWhatsNewModalShown: helpCenterSelect.isWhatsNewModalShown(),
-		};
-	}, [] );
-
 	const { data, isLoading } = useWhatsNewAnnouncementsQuery( siteId );
 
 	useEffect( () => {
 		// check for whether the announcement has been seen already.
-		if ( isWhatsNewModalShown && data && data.length ) {
+		if ( data && data.length ) {
 			// get highest announcement id and set it as the latest seen announcement
 			const announcementIds = data.map( ( item ) => item.announcementId );
 			setSeenWhatsNewAnnouncements( announcementIds );
 		}
-	}, [ data, isWhatsNewModalShown, setSeenWhatsNewAnnouncements ] );
+	}, [ data, setSeenWhatsNewAnnouncements ] );
 
-	if ( ! isWhatsNewModalShown || ! data || isLoading ) {
+	if ( ! data || isLoading ) {
 		return null;
 	}
 

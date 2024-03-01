@@ -3,11 +3,11 @@ import { HelpCenter } from '@automattic/data-stores';
 import { shouldLoadInlineHelp } from '@automattic/help-center';
 import { isWithinBreakpoint, subscribeIsWithinBreakpoint } from '@automattic/viewport';
 import { useBreakpoint } from '@automattic/viewport-react';
-import { useWhatsNewAnnouncementsQuery } from '@automattic/whats-new';
+import WhatsNewGuide, { useWhatsNewAnnouncementsQuery } from '@automattic/whats-new';
 import { useDispatch, useSelect } from '@wordpress/data';
 import classnames from 'classnames';
 import PropTypes from 'prop-types';
-import { useCallback, useEffect, Component } from 'react';
+import { useCallback, useEffect, useState, Component } from 'react';
 import { connect } from 'react-redux';
 import AsyncLoad from 'calypso/components/async-load';
 import DocumentHead from 'calypso/components/data/document-head';
@@ -94,7 +94,8 @@ function SidebarScrollSynchronizer() {
 }
 
 function WhatsNewLoader( { loadWhatsNew, siteId } ) {
-	const { setShowWhatsNewModal, fetchSeenWhatsNewAnnouncements } = useDispatch( HELP_CENTER_STORE );
+	const { fetchSeenWhatsNewAnnouncements } = useDispatch( HELP_CENTER_STORE );
+	const [ showWhatsNew, setShowWhatsNew ] = useState( false );
 
 	const { data, isLoading } = useWhatsNewAnnouncementsQuery( siteId );
 
@@ -119,21 +120,22 @@ function WhatsNewLoader( { loadWhatsNew, siteId } ) {
 		) {
 			data.forEach( ( item ) => {
 				if ( item.critical && -1 === seenWhatsNewAnnouncements.indexOf( item.announcementId ) ) {
-					setShowWhatsNewModal( true );
+					setShowWhatsNew( true );
 					return;
 				}
 			} );
 		}
-	}, [ data, isLoading, seenWhatsNewAnnouncements, setShowWhatsNewModal ] );
+	}, [ data, isLoading, seenWhatsNewAnnouncements, setShowWhatsNew ] );
 
 	const handleClose = useCallback( () => {
-		setShowWhatsNewModal( false );
-	}, [ setShowWhatsNewModal ] );
+		setShowWhatsNew( false );
+	}, [ setShowWhatsNew ] );
 
 	if ( ! loadWhatsNew ) {
 		return null;
 	}
-	return <AsyncLoad require="@automattic/whats-new" onClose={ handleClose } siteId={ siteId } />;
+
+	return showWhatsNew && <WhatsNewGuide onClose={ handleClose } siteId={ siteId } />;
 }
 
 function HelpCenterLoader( { sectionName, loadHelpCenter, currentRoute } ) {

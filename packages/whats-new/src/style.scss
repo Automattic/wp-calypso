@@ -31,7 +31,6 @@ $wpcom-modal-footer-height: 30px + ( $wpcom-modal-content-spacing * 2 );
 			min-width: 90vw;
 			left: 5vw;
 			right: 5vw;
-			height: 520px;
 		}
 
 		@media ( min-width: $wpcom-modal-breakpoint ) {

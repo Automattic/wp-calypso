@@ -12,14 +12,6 @@ const showHelpCenter: Reducer< boolean | undefined, HelpCenterAction > = ( state
 	return state;
 };
 
-const showWhatsNewModal: Reducer< boolean | undefined, HelpCenterAction > = ( state, action ) => {
-	switch ( action.type ) {
-		case 'HELP_CENTER_SET_SHOW_WHATS_NEW_MODAL':
-			return action.show;
-	}
-	return state;
-};
-
 const showMessagingLauncher: Reducer< boolean | undefined, HelpCenterAction > = (
 	state,
 	action
@@ -135,7 +127,6 @@ const initialRoute: Reducer< string | undefined, HelpCenterAction > = ( state, a
 
 const reducer = combineReducers( {
 	showHelpCenter,
-	showWhatsNewModal,
 	showMessagingLauncher,
 	showMessagingWidget,
 	site,
