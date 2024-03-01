@@ -1,5 +1,6 @@
 import { Gridicon } from '@automattic/components';
 import { Button } from '@wordpress/components';
+import { useMediaQuery } from '@wordpress/compose';
 import { Icon, external } from '@wordpress/icons';
 import classNames from 'classnames';
 import { translate } from 'i18n-calypso';
@@ -9,7 +10,6 @@ import { Site } from '../../types';
 import './style.scss';
 
 const ICON_SIZE = 24;
-
 interface Props {
 	site: Site;
 	closeSitePreviewPane?: () => void;
@@ -17,10 +17,12 @@ interface Props {
 }
 
 export default function SitePreviewPaneHeader( { site, closeSitePreviewPane, className }: Props ) {
+	const isLargerThan960px = useMediaQuery( '(min-width: 960px)' );
+	const size = isLargerThan960px ? 64 : 50;
 	return (
 		<div className={ classNames( 'site-preview__header', className ) }>
 			<div className="site-preview__header-content">
-				<SiteFavicon site={ site } className="site-preview__header-favicon" size={ 64 } />
+				<SiteFavicon site={ site } className="site-preview__header-favicon" size={ size } />
 				<div className="site-preview__header-title-summary">
 					<div className="site-preview__header-title">{ site.blogname }</div>
 					<div className="site-preview__header-summary">
