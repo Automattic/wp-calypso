@@ -6,7 +6,7 @@ export default { title: 'packages/components/StandaloneComparisonGrid' };
 const columns = [
 	{
 		title: 'Import',
-		rows: [
+		features: [
 			'Import your pages and posts',
 			'Import your uploaded images and files',
 			'Import your users**',
@@ -19,7 +19,7 @@ const columns = [
 	},
 	{
 		title: 'Migrate',
-		rows: [
+		features: [
 			'Import your pages and posts',
 			'Import your uploaded images and files',
 			'Import your users',
