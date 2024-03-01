@@ -1,8 +1,14 @@
-import { isPlan, isJetpackPlan } from '@automattic/calypso-products';
+import {
+	isPlan,
+	isJetpackPlan,
+	isDomainRegistration,
+	isDomainTransfer,
+} from '@automattic/calypso-products';
 import { FormStatus, useFormStatus } from '@automattic/composite-checkout';
 import formatCurrency from '@automattic/format-currency';
 import { ResponseCart, useShoppingCart } from '@automattic/shopping-cart';
 import styled from '@emotion/styled';
+import { Button } from '@wordpress/components';
 import { createElement, createInterpolateElement, useState } from '@wordpress/element';
 import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
@@ -52,44 +58,19 @@ const PromoCardV2 = styled.div`
 `;
 
 const CheckoutPromoCard: React.FC< {
+	onUpgradeClick: () => void;
 	responseCart: ResponseCart;
 	variants: WPCOMProductVariant[];
-} > = ( { responseCart, variants } ) => {
+} > = ( { onUpgradeClick, responseCart, variants } ) => {
 	const translate = useTranslate();
 	const plan = responseCart.products.find(
 		( product ) => isPlan( product ) && ! isJetpackPlan( product )
 	);
-	const domainInCart = responseCart.products.find( ( product ) => product.is_domain_registration );
 
-	if ( ! plan ) {
-		debug( 'no plan found in cart' );
-		return null;
-	}
-
-	const biennialVariant = variants?.find( ( product ) => product.termIntervalInMonths === 24 );
-	const triennialVariant = variants?.find( ( product ) => product.termIntervalInMonths === 36 );
-	const currentVariant = variants?.find( ( product ) => product.productId === plan.product_id );
-
-	if ( ! biennialVariant ) {
-		debug( 'plan in cart has no biennial variant; variants are', variants );
-		return null;
-	}
-
-	if ( ! currentVariant ) {
-		debug( 'plan in cart has no current variant; variants are', variants );
-		return null;
-	}
-
-	if ( biennialVariant.productId === plan.product_id ) {
-		debug( 'plan in cart is already biennial' );
-		return null;
-	}
-
-	// If the current plan is a triennial plan, we don't want to show an upsell.
-	if ( triennialVariant?.productId === plan.product_id ) {
-		debug( 'plan is triennial. hide upsell.' );
-		return null;
-	}
+	const domainRegistrationOrTransferInCart = responseCart.products.find(
+		( product ) => isDomainRegistration( product ) || isDomainTransfer( product )
+	);
+	const [ currentVariant, biennialVariant ] = variants;
 
 	const percentSavings = getItemVariantDiscountPercentage( biennialVariant, currentVariant );
 	if ( percentSavings === 0 ) {
@@ -104,18 +85,27 @@ const CheckoutPromoCard: React.FC< {
 
 	let labelText;
 
+	if ( ! plan && domainRegistrationOrTransferInCart ) {
+		labelText = translate(
+			'Longer plan billing cycles save you money and include a custom domain for free for the first year.'
+		);
+	}
+
 	if ( isMonthly ) {
 		labelText = translate(
 			'Longer plan billing cycles save you money and include a custom domain for free for the first year.'
 		);
 
-		if ( domainInCart ) {
+		if ( domainRegistrationOrTransferInCart ) {
 			labelText = translate(
-				'Save money with longer billing cycles and get %(domainMeta)s free for the first year by switching to an annual plan.',
+				'Save money with longer billing cycles and get %(domainMeta)s free for the first year by {{upgradeLink}}switching to an annual plan.{{/upgradeLink}}',
 				{
 					comment: '"domainMeta" is the domain name and TLD, like "example.com" or "example.org"',
 					args: {
-						domainMeta: domainInCart.meta,
+						domainMeta: domainRegistrationOrTransferInCart.meta,
+					},
+					components: {
+						upgradeLink: <Button onClick={ onUpgradeClick } variant="link" />,
 					},
 				}
 			);
@@ -135,13 +125,7 @@ const CheckoutPromoCard: React.FC< {
 		);
 	}
 
-	if ( isBiennially ) {
-		labelText = translate(
-			'Longer plan billing cycles save you money and include a custom domain for free for the first year.'
-		);
-	}
-
-	if ( isTriennially ) {
+	if ( isBiennially || isTriennially ) {
 		return null;
 	}
 
@@ -165,6 +149,7 @@ export function CheckoutSidebarPlanUpsell() {
 	const plan = responseCart.products.find(
 		( product ) => isPlan( product ) && ! isJetpackPlan( product )
 	);
+
 	const variants = useGetProductVariants( plan );
 	const shouldUseCheckoutV2 = useCheckoutV2() === 'treatment';
 
