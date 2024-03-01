@@ -1,5 +1,5 @@
 import page from '@automattic/calypso-router';
-import { chevronLeft, key } from '@wordpress/icons';
+import { chevronLeft, key, store } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { useMemo } from 'react';
 import Sidebar from '../sidebar';
@@ -34,7 +34,7 @@ export default function ( { path }: Props ) {
 			),
 			createItem(
 				{
-					icon: key,
+					icon: store,
 					path: A4A_PURCHASES_LINK,
 					link: A4A_BILLING_LINK,
 					title: translate( 'Billing' ),

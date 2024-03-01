@@ -8,6 +8,7 @@ import LayoutHeader, {
 } from 'calypso/a8c-for-agencies/components/layout/header';
 import LayoutTop from 'calypso/a8c-for-agencies/components/layout/top';
 import MobileSidebarNavigation from 'calypso/a8c-for-agencies/components/sidebar/mobile-sidebar-navigation';
+import { A4A_MARKETPLACE_LINK } from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 
 export default function BillingDashboard() {
@@ -28,7 +29,7 @@ export default function BillingDashboard() {
 			wide
 			sidebarNavigation={ <MobileSidebarNavigation /> }
 		>
-			<PageViewTracker title="Partner Portal > Billing" path="/partner-portal/billing" />
+			<PageViewTracker title="Purchases > Billing" path="/purchases/billing" />
 
 			<LayoutTop>
 				<LayoutHeader>
@@ -36,7 +37,7 @@ export default function BillingDashboard() {
 					<Actions>
 						<Button
 							disabled={ ! partnerCanIssueLicense }
-							href={ partnerCanIssueLicense ? '/marketplace' : undefined }
+							href={ partnerCanIssueLicense ? A4A_MARKETPLACE_LINK : undefined }
 							onClick={ onIssueNewLicenseClick }
 							primary
 						>
