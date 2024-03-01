@@ -8,6 +8,7 @@ import PropTypes from 'prop-types';
 import { parse } from 'qs';
 import { Component } from 'react';
 import { connect } from 'react-redux';
+import Site from 'calypso/blocks/site';
 import AsyncLoad from 'calypso/components/async-load';
 import Gravatar from 'calypso/components/gravatar';
 import { getStatsPathForTab } from 'calypso/lib/route';
@@ -15,6 +16,8 @@ import wpcom from 'calypso/lib/wp';
 import { domainManagementList } from 'calypso/my-sites/domains/paths';
 import { preload } from 'calypso/sections-helper';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import { openCommandPalette } from 'calypso/state/command-palette/actions';
+import { isCommandPaletteOpen as getIsCommandPaletteOpen } from 'calypso/state/command-palette/selectors';
 import {
 	getCurrentUser,
 	getCurrentUserDate,
@@ -284,6 +287,16 @@ class MasterbarLoggedIn extends Component {
 		);
 	}
 
+	getHomeUrl() {
+		const { hasNoSites, siteSlug, isCustomerHomeEnabled, isSiteTrialExpired } = this.props;
+		// eslint-disable-next-line no-nested-ternary
+		return hasNoSites || isSiteTrialExpired
+			? '/sites'
+			: isCustomerHomeEnabled
+			? `/home/${ siteSlug }`
+			: getStatsPathForTab( 'day', siteSlug );
+	}
+
 	// will render as back button on mobile and in editor
 	renderMySites() {
 		const {
@@ -292,20 +305,12 @@ class MasterbarLoggedIn extends Component {
 			hasMoreThanOneSite,
 			siteSlug,
 			translate,
-			isCustomerHomeEnabled,
 			section,
 			currentRoute,
-			isSiteTrialExpired,
 		} = this.props;
 		const { isMenuOpen, isResponsiveMenu } = this.state;
 
-		const homeUrl =
-			// eslint-disable-next-line no-nested-ternary
-			hasNoSites || isSiteTrialExpired
-				? '/sites'
-				: isCustomerHomeEnabled
-				? `/home/${ siteSlug }`
-				: getStatsPathForTab( 'day', siteSlug );
+		const homeUrl = this.getHomeUrl();
 
 		let mySitesUrl = domainOnlySite
 			? domainManagementList( siteSlug, currentRoute, true )
@@ -503,6 +508,23 @@ class MasterbarLoggedIn extends Component {
 		);
 	}
 
+	renderCommandPaletteSearch() {
+		const handleClick = () => {
+			this.props.recordTracksEvent( 'calypso_masterbar_command_palette_search_clicked' );
+			this.props.openCommandPalette();
+		};
+
+		return (
+			<Item
+				className="masterbar__item-menu"
+				icon="search"
+				tooltip={ this.props.translate( 'Jump to…' ) }
+				isActive={ this.props.isCommandPaletteOpen }
+				onClick={ handleClick }
+			/>
+		);
+	}
+
 	renderMenu() {
 		const { menuBtnRef } = this.state;
 		const { translate, hasDismissedThePopover, isFetchingPrefs, isUserNewerThanNewNavigation } =
@@ -591,8 +613,16 @@ class MasterbarLoggedIn extends Component {
 	}
 
 	render() {
-		const { isInEditor, isCheckout, isCheckoutPending, isCheckoutFailed, loadHelpCenterIcon } =
-			this.props;
+		const {
+			isInEditor,
+			isCheckout,
+			isCheckoutPending,
+			isCheckoutFailed,
+			loadHelpCenterIcon,
+			currentSelectedSiteId,
+			isGlobalSiteView,
+			isGlobalView,
+		} = this.props;
 		const { isMobile } = this.state;
 
 		if ( isCheckout || isCheckoutPending || isCheckoutFailed ) {
@@ -602,14 +632,23 @@ class MasterbarLoggedIn extends Component {
 		if ( this.props.isMobileGlobalNavVisible ) {
 			return (
 				<>
-					<Masterbar>
+					<Masterbar className="masterbar__global-nav">
 						<div className="masterbar__section masterbar__section--left">
 							{ this.renderSidebarMobileMenu() }
-							{ this.renderGlobalMySites() }
+							{ isGlobalView && this.renderGlobalMySites() }
+							{ isGlobalSiteView && currentSelectedSiteId && (
+								<Site
+									siteId={ currentSelectedSiteId }
+									href={ this.getHomeUrl() }
+									isSelected={ true }
+									inlineBadges={ true }
+								/>
+							) }
 						</div>
 						<div className="masterbar__section masterbar__section--right">
 							{ this.renderSearch() }
 							{ this.renderCart() }
+							{ this.renderCommandPaletteSearch() }
 							{ this.renderNotifications() }
 						</div>
 					</Masterbar>
@@ -733,6 +772,9 @@ export default connect(
 			isSiteTrialExpired: isTrialExpired( state, siteId ),
 			isMobileGlobalNavVisible:
 				( shouldShowGlobalSidebar || shouldShowGlobalSiteSidebar ) && ! isDesktop,
+			isGlobalView: shouldShowGlobalSidebar,
+			isGlobalSiteView: shouldShowGlobalSiteSidebar,
+			isCommandPaletteOpen: getIsCommandPaletteOpen( state ),
 		};
 	},
 	{
@@ -741,5 +783,6 @@ export default connect(
 		updateSiteMigrationMeta,
 		activateNextLayoutFocus,
 		savePreference,
+		openCommandPalette,
 	}
 )( localize( MasterbarLoggedIn ) );

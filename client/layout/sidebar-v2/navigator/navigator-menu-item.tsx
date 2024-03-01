@@ -22,6 +22,7 @@ interface Props {
 	withChevron?: boolean;
 	isExternalLink?: boolean;
 	isSelected?: boolean;
+	openInSameTab?: boolean;
 }
 
 export const SidebarNavigatorMenuItem = ( {
@@ -34,6 +35,7 @@ export const SidebarNavigatorMenuItem = ( {
 	withChevron = false,
 	isExternalLink = false,
 	isSelected = false,
+	openInSameTab = false,
 }: Props ) => {
 	const SidebarItem = ( { children }: { children?: JSX.Element } ) => {
 		return (
@@ -45,10 +47,17 @@ export const SidebarNavigatorMenuItem = ( {
 				href={ link }
 				id={ id }
 				as="a"
-				target={ isExternalLink ? '_blank' : undefined }
+				target={ isExternalLink && ! openInSameTab ? '_blank' : undefined }
 			>
 				<HStack justify="flex-start">
-					{ icon && <Icon style={ { fill: 'currentcolor' } } icon={ icon } size={ ICON_SIZE } /> }
+					{ icon && (
+						<Icon
+							className="sidebar__menu-icon"
+							style={ { fill: 'currentcolor' } }
+							icon={ icon }
+							size={ ICON_SIZE }
+						/>
+					) }
 					<FlexBlock>{ children }</FlexBlock>
 					{ withChevron && <Icon icon={ chevronRightSmall } size={ ICON_SIZE } /> }
 					{ isExternalLink && (

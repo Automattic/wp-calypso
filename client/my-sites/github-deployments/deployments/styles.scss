@@ -49,10 +49,32 @@
 			white-space: nowrap;
 		}
 
+		.github-deployments-list__repository-details {
+			white-space: normal;
+		}
+
 		&:last-child {
 			padding-left: 32px;
 			padding-right: 0;
 			text-align: right;
+		}
+	}
+
+	&__no-results {
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		width: 517px;
+		margin: 64px auto;
+		text-align: center;
+		p:first-child {
+			line-height: 24px;
+			font-size: $font-body;
+			font-weight: 500;
+			margin-bottom: 8px;
+		}
+		p:last-of-type {
+			line-height: 20px;
 		}
 	}
 
@@ -63,11 +85,15 @@
 		padding: 21px 0;
 		font-weight: 500;
 
-		a {
+		button {
+			text-align: left;
+			padding: 0;
+			border: none;
 			color: var(--studio-gray-100, #101517);
 
 			&:hover {
 				text-decoration: underline;
+				color: var(--studio-gray-100, #101517);
 			}
 		}
 
@@ -80,6 +106,7 @@
 
 	&__commit-details {
 		display: flex;
+		white-space: normal !important;
 		flex-direction: column;
 		> div {
 			display: inline-flex;

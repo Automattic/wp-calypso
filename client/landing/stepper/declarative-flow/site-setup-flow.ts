@@ -44,6 +44,7 @@ function isLaunchpadIntent( intent: string ) {
 
 const siteSetupFlow: Flow = {
 	name: 'site-setup',
+	isSignupFlow: false,
 
 	useSideEffect( currentStep, navigate ) {
 		const selectedDesign = useSelect(

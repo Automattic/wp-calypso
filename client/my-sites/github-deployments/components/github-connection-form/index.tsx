@@ -1,6 +1,6 @@
 import { Button, FormLabel, Spinner } from '@automattic/components';
-import { ExternalLink, FormToggle } from '@wordpress/components';
-import { __ } from '@wordpress/i18n';
+import { ExternalLink } from '@wordpress/components';
+import { useI18n } from '@wordpress/react-i18n';
 import { ChangeEvent, useMemo, useState } from 'react';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormSelect from 'calypso/components/forms/form-select';
@@ -9,6 +9,7 @@ import FormTextInput from 'calypso/components/forms/form-text-input';
 import { GitHubInstallationData } from 'calypso/my-sites/github-deployments/use-github-installations-query';
 import { useGithubRepositoryBranchesQuery } from 'calypso/my-sites/github-deployments/use-github-repository-branches-query';
 import { GitHubRepositoryData } from '../../use-github-repositories-query';
+import { AutomatedDeploymentsToggle } from '../automated-deployments-toggle';
 import { DeploymentStyle } from '../deployment-style';
 import { useCheckWorkflowQuery } from '../deployment-style/use-check-workflow-query';
 
@@ -58,6 +59,7 @@ export const GitHubConnectionForm = ( {
 	const [ workflowPath, setWorkflowPath ] = useState< string | undefined >(
 		initialValues.workflowPath
 	);
+	const { __ } = useI18n();
 
 	const { data: branches, isLoading: isFetchingBranches } = useGithubRepositoryBranchesQuery(
 		installation.external_id,
@@ -107,7 +109,7 @@ export const GitHubConnectionForm = ( {
 						targetDir: destPath,
 						installationId: installation.external_id,
 						isAutomated: isAutoDeploy,
-						workflowPath: workflowPath,
+						workflowPath: workflowPath ?? undefined,
 					} );
 				} finally {
 					setIsPending( false );
@@ -164,17 +166,11 @@ export const GitHubConnectionForm = ( {
 						{ __( 'This path is relative to the server root' ) }
 					</FormSettingExplanation>
 				</FormFieldset>
-				<FormFieldset className="github-deployments-connect-repository__automatic-deploys">
-					<FormLabel htmlFor="is-automated">{ __( 'Automatic deploys' ) }</FormLabel>
-					<div className="github-deployments-connect-repository__automatic-deploys-switch">
-						<FormToggle
-							id="is-automated"
-							checked={ isAutoDeploy }
-							onChange={ () => setIsAutoDeploy( ! isAutoDeploy ) }
-						/>
-						<span>{ __( 'Deploy changes on push' ) }</span>
-					</div>
-				</FormFieldset>
+				<AutomatedDeploymentsToggle
+					onChange={ setIsAutoDeploy }
+					value={ isAutoDeploy }
+					hasWorkflowPath={ !! workflowPath }
+				/>
 				<Button type="submit" primary busy={ isPending } disabled={ isPending || submitDisabled }>
 					{ ctaLabel }
 				</Button>

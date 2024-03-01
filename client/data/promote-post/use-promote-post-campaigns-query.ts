@@ -22,6 +22,8 @@ export type CampaignResponse = {
 	target_urn: string;
 	delivery_percent: number;
 	format: string;
+	budget_cents: number;
+	type: string;
 	campaign_stats: {
 		impressions_total: number;
 		clicks_total: number;
@@ -36,6 +38,10 @@ export type CampaignResponse = {
 		views_organic: number;
 		views_organic_rate: number;
 		views_ad_rate: number;
+		conversions_total?: number;
+		conversion_rate?: number;
+		conversion_value?: Record< string, number >;
+		conversion_last_currency_found?: string;
 	};
 	billing_data: {
 		payment_method: string;

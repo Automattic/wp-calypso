@@ -148,6 +148,15 @@
 						display: block;
 						align-self: center;
 					}
+					.help-center-search-results__content {
+						width: 100%;
+						.help-center-search-results__badge {
+							height: auto;
+							font-size: $font-body-extra-small;
+							padding: 0 8px;
+							text-transform: uppercase;
+						}
+					}
 				}
 			}
 		}
@@ -563,6 +572,7 @@
 			color: var(--color-neutral-80);
 			list-style-type: circle;
 			list-style-position: inside;
+			margin: 0 0 1.5em 1.5em;
 		}
 
 		span.noticon.noticon-star {

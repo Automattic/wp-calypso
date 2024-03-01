@@ -1,5 +1,6 @@
 import { isEnabled } from '@automattic/calypso-config';
 import { useLocale } from '@automattic/i18n-utils';
+import { useBreakpoint } from '@automattic/viewport-react';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect, useMemo } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
@@ -47,6 +48,7 @@ const useSiteMenuItems = () => {
 	const shouldShowGlobalSiteSidebar = useSelector( ( state ) => {
 		return getShouldShowGlobalSiteSidebar( state, selectedSiteId, currentSection?.group );
 	} );
+	const isDesktop = useBreakpoint( '>782px' );
 
 	useEffect( () => {
 		if ( selectedSiteId && siteDomain ) {
@@ -75,7 +77,7 @@ const useSiteMenuItems = () => {
 
 	const shouldShowMailboxes = ! isP2;
 
-	const shouldShowAddOnsInFallbackMenu = isEnabled( 'my-sites/add-ons' ) && ! isAtomic;
+	const shouldShowAddOns = isEnabled( 'my-sites/add-ons' ) && ! isAtomic && ! isStagingSite;
 
 	const hasSiteWithPlugins = useSelector( canAnySiteHavePlugins );
 
@@ -121,10 +123,11 @@ const useSiteMenuItems = () => {
 	if ( shouldShowGlobalSiteSidebar ) {
 		return globalSiteSidebarMenu( {
 			siteDomain,
-			shouldShowAddOns: shouldShowAddOnsInFallbackMenu,
+			shouldShowAddOns,
 			showSiteMonitoring: isAtomic,
 			selectedSiteSlug,
 			isStagingSite,
+			isDesktop,
 		} );
 	}
 
@@ -159,7 +162,7 @@ const useSiteMenuItems = () => {
 		shouldShowWooCommerce,
 		shouldShowThemes,
 		shouldShowMailboxes,
-		shouldShowAddOns: shouldShowAddOnsInFallbackMenu,
+		shouldShowAddOns,
 		showSiteMonitoring: isAtomic,
 	};
 

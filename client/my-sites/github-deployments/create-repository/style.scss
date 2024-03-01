@@ -38,17 +38,6 @@
 		}
 	}
 
-	&__switch {
-		display: flex;
-		align-items: center;
-		gap: 8px;
-
-		.components-form-toggle {
-			margin-left: 5px;
-			margin-top: 1px;
-		}
-	}
-
 	&__deployment-style {
 		flex: 1;
 	}

@@ -16,6 +16,7 @@
 		{ "path": "./calypso-razorpay" },
 		{ "path": "./calypso-stripe" },
 		{ "path": "./calypso-url" },
+		{ "path": "./command-palette" },
 		{ "path": "./components" },
 		{ "path": "./composite-checkout" },
 		{ "path": "./create-calypso-config" },

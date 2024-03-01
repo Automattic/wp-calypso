@@ -11,7 +11,6 @@ import TimeSince from 'calypso/components/time-since';
 import SitesMigrationTrialBadge from 'calypso/sites-dashboard/components/sites-migration-trial-badge';
 import { useSelector } from 'calypso/state';
 import { getCurrentUserId } from 'calypso/state/current-user/selectors';
-import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
 import { isTrialSite } from 'calypso/state/sites/plans/selectors';
 import { hasSiteStatsQueryFailed } from 'calypso/state/stats/lists/selectors';
 import {
@@ -33,7 +32,7 @@ import SitesStagingBadge from './sites-staging-badge';
 import TransferNoticeWrapper from './sites-transfer-notice-wrapper';
 import { ThumbnailLink } from './thumbnail-link';
 import { WithAtomicTransfer } from './with-atomic-transfer';
-import type { SiteExcerptData } from 'calypso/data/sites/site-excerpt-types';
+import type { SiteExcerptData } from '@automattic/sites';
 
 interface SiteTableRowProps {
 	site: SiteExcerptData;
@@ -152,7 +151,6 @@ export default memo( function SitesTableRow( { site }: SiteTableRowProps ) {
 	const isP2Site = site.options?.is_wpforteams_site;
 	const isWpcomStagingSite = isStagingSite( site );
 	const isTrialSitePlan = useSelector( ( state ) => isTrialSite( state, site.ID ) );
-	const isAtomicSite = useSelector( ( state ) => isSiteAutomatedTransfer( state, site.ID ) );
 
 	const hasStatsLoadingError = useSelector( ( state ) => {
 		const siteId = site.ID;
@@ -161,13 +159,13 @@ export default memo( function SitesTableRow( { site }: SiteTableRowProps ) {
 		return siteId && hasSiteStatsQueryFailed( state, siteId, statType, query );
 	} );
 
-	const computeDashboardUrl = ( site: SiteExcerptData, isAtomicSite: boolean | null ) => {
+	const computeDashboardUrl = ( site: SiteExcerptData ) => {
 		if ( siteDefaultInterface( site ) === 'wp-admin' ) {
 			return getSiteWpAdminUrl( site ) || getDashboardUrl( site.slug );
 		}
 		return getDashboardUrl( site.slug );
 	};
-	const dashboardUrl = computeDashboardUrl( site, isAtomicSite );
+	const dashboardUrl = computeDashboardUrl( site );
 
 	let siteUrl = site.URL;
 	if ( site.options?.is_redirect && site.options?.unmapped_url ) {

@@ -8,7 +8,7 @@ interface Props {
 }
 
 const useStorageAddOns = ( { siteId, isInSignup }: Props ) => {
-	const addOns = useAddOns( siteId ?? undefined, isInSignup );
+	const addOns = useAddOns( { selectedSiteId: siteId, isInSignup } );
 
 	return useMemo(
 		() => addOns.filter( ( addOn ) => addOn?.productSlug === PRODUCT_1GB_SPACE ),

@@ -7,7 +7,7 @@ import WhatsNewGuide, { useWhatsNewAnnouncementsQuery } from '@automattic/whats-
 import { useDispatch, useSelect } from '@wordpress/data';
 import classnames from 'classnames';
 import PropTypes from 'prop-types';
-import { useCallback, useEffect, useState, Component } from 'react';
+import { Component, useCallback, useEffect, useState } from 'react';
 import { connect } from 'react-redux';
 import AsyncLoad from 'calypso/components/async-load';
 import DocumentHead from 'calypso/components/data/document-head';
@@ -18,6 +18,7 @@ import QuerySites from 'calypso/components/data/query-sites';
 import JetpackCloudMasterbar from 'calypso/components/jetpack/masterbar';
 import { withCurrentRoute } from 'calypso/components/route';
 import SympathyDevWarning from 'calypso/components/sympathy-dev-warning';
+import { useSiteExcerptsSorted } from 'calypso/data/sites/use-site-excerpts-sorted';
 import { retrieveMobileRedirect } from 'calypso/jetpack-connect/persistence-utils';
 import wooDnaConfig from 'calypso/jetpack-connect/woo-dna-config';
 import HtmlIsIframeClassname from 'calypso/layout/html-is-iframe-classname';
@@ -26,10 +27,12 @@ import MasterbarLoggedIn from 'calypso/layout/masterbar/logged-in';
 import WooCoreProfilerMasterbar from 'calypso/layout/masterbar/woo-core-profiler';
 import OfflineStatus from 'calypso/layout/offline-status';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
-import { isWpMobileApp, isWcMobileApp } from 'calypso/lib/mobile-app';
+import { isWcMobileApp, isWpMobileApp } from 'calypso/lib/mobile-app';
+import { navigate } from 'calypso/lib/navigate';
 import isReaderTagEmbedPage from 'calypso/lib/reader/is-reader-tag-embed-page';
 import { getMessagePathForJITM } from 'calypso/lib/route';
 import UserVerificationChecker from 'calypso/lib/user/verification-checker';
+import { useCommandsArrayWpcom } from 'calypso/sites-dashboard/components/wpcom-smp-commands';
 import { isOffline } from 'calypso/state/application/selectors';
 import { closeCommandPalette } from 'calypso/state/command-palette/actions';
 import { isCommandPaletteOpen as getIsCommandPaletteOpen } from 'calypso/state/command-palette/selectors';
@@ -41,6 +44,7 @@ import {
 import { getCurrentOAuth2Client } from 'calypso/state/oauth2-clients/ui/selectors';
 import { getPreference } from 'calypso/state/preferences/selectors';
 import getCurrentQueryArguments from 'calypso/state/selectors/get-current-query-arguments';
+import { getCurrentRoutePattern } from 'calypso/state/selectors/get-current-route-pattern';
 import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
 import isWooCommerceCoreProfilerFlow from 'calypso/state/selectors/is-woocommerce-core-profiler-flow';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
@@ -48,8 +52,8 @@ import { isSupportSession } from 'calypso/state/support/selectors';
 import { getCurrentLayoutFocus } from 'calypso/state/ui/layout-focus/selectors';
 import {
 	getSelectedSiteId,
-	masterbarIsVisible,
 	getSidebarIsCollapsed,
+	masterbarIsVisible,
 } from 'calypso/state/ui/selectors';
 import BodySectionCssClass from './body-section-css-class';
 import LayoutLoader from './loader';
@@ -418,10 +422,16 @@ class Layout extends Component {
 				) }
 				{ config.isEnabled( 'yolo/command-palette' ) && (
 					<AsyncLoad
-						require="calypso/components/command-palette"
+						require="@automattic/command-palette"
 						placeholder={ null }
 						isOpenGlobal={ this.props.isCommandPaletteOpen }
 						onClose={ this.props.closeCommandPalette }
+						currentSiteId={ this.props.siteId }
+						navigate={ navigate }
+						useCommands={ useCommandsArrayWpcom }
+						currentRoute={ this.props.currentRoutePattern }
+						useSites={ useSiteExcerptsSorted }
+						userCapabilities={ this.props.userCapabilities }
 					/>
 				) }
 			</div>
@@ -518,8 +528,10 @@ export default withCurrentRoute(
 				sidebarIsCollapsed: sectionName !== 'reader' && getSidebarIsCollapsed( state ),
 				userAllowedToHelpCenter,
 				currentRoute,
-				isGlobalSidebarVisible: shouldShowGlobalSidebar,
-				isGlobalSiteSidebarVisible: shouldShowGlobalSiteSidebar,
+				isGlobalSidebarVisible: shouldShowGlobalSidebar && ! sidebarIsHidden,
+				isGlobalSiteSidebarVisible: shouldShowGlobalSiteSidebar && ! sidebarIsHidden,
+				currentRoutePattern: getCurrentRoutePattern( state ),
+				userCapabilities: state.currentUser.capabilities,
 			};
 		},
 		{

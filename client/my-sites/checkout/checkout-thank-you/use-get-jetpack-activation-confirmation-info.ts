@@ -29,7 +29,9 @@ const useGetJetpackActivationConfirmationInfo = (
 ): ActivationConfirmationInfo => {
 	const translate = useTranslate();
 	const siteSlug = useSelector( ( state ) => getSiteSlug( state, siteId ) );
-	const jetpackAdminUrl = useSelector( ( state ) => getJetpackAdminUrl( state, siteId ) );
+	const jetpackAdminUrl = useSelector( ( state ) =>
+		getJetpackAdminUrl( state, siteId, productSlug )
+	);
 
 	const baseJetpackCloudUrl = 'https://cloud.jetpack.com';
 

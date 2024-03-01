@@ -48,6 +48,7 @@ import {
 	domainManagementList,
 	domainManagementTransferInPrecheck,
 } from 'calypso/my-sites/domains/paths';
+import { GoogleWorkspaceSetUpThankYou } from 'calypso/my-sites/email/google-workspace-set-up-thank-you';
 import { getEmailManagementPath } from 'calypso/my-sites/email/paths';
 import TitanSetUpThankYou from 'calypso/my-sites/email/titan-set-up-thank-you';
 import { fetchAtomicTransfer } from 'calypso/state/atomic-transfer/actions';
@@ -87,7 +88,6 @@ import DomainThankYou from './domains/domain-thank-you';
 import EcommercePlanDetails from './ecommerce-plan-details';
 import FailedPurchaseDetails from './failed-purchase-details';
 import CheckoutThankYouFeaturesHeader from './features-header';
-import GoogleAppsDetails from './google-apps-details';
 import CheckoutThankYouHeader from './header';
 import JetpackPlanDetails from './jetpack-plan-details';
 import PersonalPlanDetails from './personal-plan-details';
@@ -102,7 +102,13 @@ import SiteRedirectDetails from './site-redirect-details';
 import StarterPlanDetails from './starter-plan-details';
 import TransferPending from './transfer-pending';
 import './style.scss';
-import { getDomainPurchaseTypeAndPredicate, isBulkDomainTransfer, isDomainOnly } from './utils';
+import {
+	getDomainPurchase,
+	getDomainPurchaseTypeAndPredicate,
+	isBulkDomainTransfer,
+	isDomainOnly,
+	isTitanWithoutMailboxes,
+} from './utils';
 import type { FindPredicate } from './utils';
 import type { SitesPlansResult } from '../src/hooks/product-variants';
 import type { OnboardActions, SiteDetails } from '@automattic/data-stores';
@@ -569,6 +575,10 @@ export class CheckoutThankYou extends Component<
 
 		if ( isRefactoredForThankYouV2( this.props ) ) {
 			let pageContent = null;
+			const domainPurchase = getDomainPurchase( purchases );
+			const gSuiteOrExtraLicenseOrGoogleWorkspace = purchases.find(
+				isGSuiteOrExtraLicenseOrGoogleWorkspace
+			);
 
 			if ( wasBulkDomainTransfer ) {
 				pageContent = (
@@ -581,6 +591,30 @@ export class CheckoutThankYou extends Component<
 				pageContent = <DomainOnlyThankYou purchases={ purchases } receiptId={ receiptId } />;
 			} else if ( purchases.length === 1 && isPlan( purchases[ 0 ] ) ) {
 				pageContent = <PlanOnlyThankYou primaryPurchase={ purchases[ 0 ] } />;
+			} else if ( wasTitanEmailOnlyProduct ) {
+				const titanPurchase = purchases.find( ( purchase ) => isTitanMail( purchase ) );
+
+				pageContent = (
+					<TitanSetUpThankYou
+						domainName={ purchases[ 0 ].meta }
+						numberOfMailboxesPurchased={ titanPurchase?.newQuantity }
+						emailAddress={ email }
+						isDomainOnlySite={ this.props.domainOnlySiteFlow }
+					/>
+				);
+			} else if ( isTitanWithoutMailboxes( selectedFeature ) && domainPurchase ) {
+				// Users may purchase Titan subscription without specifying the mailbox name using
+				// the onboard with email flow (https://wordpress.com/start/onboarding-with-email/mailbox-domain)
+				pageContent = (
+					<TitanSetUpThankYou
+						domainName={ domainPurchase.meta }
+						isDomainOnlySite={ this.props.domainOnlySiteFlow }
+					/>
+				);
+			} else if ( gSuiteOrExtraLicenseOrGoogleWorkspace ) {
+				pageContent = (
+					<GoogleWorkspaceSetUpThankYou purchase={ gSuiteOrExtraLicenseOrGoogleWorkspace } />
+				);
 			}
 
 			if ( pageContent ) {
@@ -607,7 +641,6 @@ export class CheckoutThankYou extends Component<
 		}
 
 		/** LEGACY - The ultimate goal is to remove everything below */
-
 		if ( wasEcommercePlanPurchased ) {
 			// Continue to show the TransferPending progress bar until both the Atomic transfer is complete _and_ we've verified WooCommerce is finished installed.
 			if ( ! this.props.transferComplete || ! this.props.isWooCommerceInstalled ) {
@@ -654,18 +687,6 @@ export class CheckoutThankYou extends Component<
 			const [ purchaseType, predicate ] = getDomainPurchaseTypeAndPredicate( purchases );
 			const [ domainPurchase, domainName ] = findPurchaseAndDomain( purchases, predicate );
 
-			if ( selectedFeature === 'email-license' && domainName ) {
-				return (
-					<TitanSetUpThankYou
-						domainName={ domainName }
-						emailNeedsSetup
-						isDomainOnlySite={ this.props.domainOnlySiteFlow }
-						subtitle={ translate( 'You will receive an email confirmation shortly.' ) }
-						title={ translate( 'Congratulations on your purchase!' ) }
-					/>
-				);
-			}
-
 			const professionalEmailPurchase = this.getProfessionalEmailPurchaseFromPurchases(
 				predicate,
 				purchases
@@ -686,16 +707,6 @@ export class CheckoutThankYou extends Component<
 					isDomainOnly={ this.props.domainOnlySiteFlow }
 					selectedSiteId={ this.props.domainOnlySiteFlow ? domainPurchase?.blogId : undefined }
 					type={ purchaseType as DomainThankYouType }
-				/>
-			);
-		} else if ( wasTitanEmailOnlyProduct ) {
-			return (
-				<TitanSetUpThankYou
-					domainName={ purchases[ 0 ].meta }
-					emailAddress={ email }
-					isDomainOnlySite={ this.props.domainOnlySiteFlow }
-					subtitle={ translate( 'You will receive an email confirmation shortly.' ) }
-					title={ translate( 'Congratulations on your purchase!' ) }
 				/>
 			);
 		}
@@ -1092,9 +1103,6 @@ function PurchaseDetailsWrapper(
 				selectedSite={ props.selectedSite }
 			/>
 		);
-	}
-	if ( purchases.some( isGSuiteOrExtraLicenseOrGoogleWorkspace ) ) {
-		return <GoogleAppsDetails purchases={ purchases } />;
 	}
 	if ( purchases.some( isDomainMapping ) ) {
 		return <DomainMappingDetails domain={ domain } isRootDomainWithUs={ isRootDomainWithUs } />;

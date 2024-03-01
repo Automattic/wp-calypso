@@ -1,18 +1,21 @@
 import { translate } from 'i18n-calypso';
-
 /**
  * Menu items for the Global Site View sidebar.
  */
 export default function globalSiteSidebarMenu( {
 	showSiteMonitoring,
 	siteDomain,
+	shouldShowAddOns,
 	selectedSiteSlug,
 	isStagingSite,
+	isDesktop,
 }: {
 	showSiteMonitoring: boolean;
 	siteDomain: string;
+	shouldShowAddOns: boolean;
 	selectedSiteSlug: string;
 	isStagingSite: boolean;
+	isDesktop: boolean;
 } ) {
 	return [
 		{
@@ -25,6 +28,14 @@ export default function globalSiteSidebarMenu( {
 		{
 			type: 'current-site',
 			url: `/home/${ siteDomain }`,
+			shouldHide: ! isDesktop,
+		},
+		{
+			slug: 'home',
+			title: translate( 'My Home' ),
+			type: 'menu-item',
+			url: `/home/${ siteDomain }`,
+			shouldHide: isDesktop,
 		},
 		{
 			slug: 'upgrades',
@@ -38,7 +49,7 @@ export default function globalSiteSidebarMenu( {
 			title: translate( 'Add-ons' ),
 			type: 'menu-item',
 			url: `/add-ons/${ siteDomain }`,
-			shouldHide: isStagingSite,
+			shouldHide: ! shouldShowAddOns,
 		},
 		{
 			slug: 'domains',
@@ -80,12 +91,6 @@ export default function globalSiteSidebarMenu( {
 			title: translate( 'Monetize' ),
 			type: 'menu-item',
 			url: `/earn/${ siteDomain }`,
-		},
-		{
-			slug: 'options-podcasting-php',
-			title: translate( 'Podcasting' ),
-			type: 'menu-item',
-			url: `/settings/podcasting/${ siteDomain }`,
 		},
 		{
 			slug: 'subscribers',

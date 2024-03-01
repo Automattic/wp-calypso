@@ -1,7 +1,8 @@
 import classNames from 'classnames';
 
-const LOGO_COLOR_PRIMARY = '#029CD7';
-const LOGO_COLOR_SECONDARY = '#021A23';
+export const LOGO_COLOR_PRIMARY = '#029CD7';
+export const LOGO_COLOR_SECONDARY = '#021A23';
+export const LOGO_COLOR_SECONDARY_ALT = '#fff';
 
 interface A4ALogoProps {
 	full?: boolean;

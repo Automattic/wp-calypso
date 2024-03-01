@@ -3,7 +3,7 @@ import styled from '@emotion/styled';
 import { useI18n } from '@wordpress/react-i18n';
 import { useInView } from 'react-intersection-observer';
 import { getDashboardUrl, getLaunchpadUrl } from '../utils';
-import type { SiteExcerptData } from 'calypso/data/sites/site-excerpt-types';
+import type { SiteExcerptData } from '@automattic/sites';
 
 interface SiteLaunchNagProps {
 	site: SiteExcerptData;

@@ -43,6 +43,9 @@
 
 		}
 	}
+	ul.dataviews-view-list li:hover {
+		background-color: var(--studio-gray-0);
+	}
 }
 
 .components-search-control input[type="search"].components-search-control__input {
@@ -79,14 +82,6 @@
 	font-weight: 400;
 }
 
-.sites-dataviews__site-favicon {
-	width: 40px;
-	height: 40px;
-	background: linear-gradient(45deg, #ff0056, #ff8a78, #57b7ff, #9c00d4);
-	margin-right: 16px;
-	border-radius: 10px; /* stylelint-disable-line scales/radii */
-}
-
 .sites-dataviews__actions {
 	display: flex;
 	flex-direction: row;
@@ -107,4 +102,8 @@
 			height: 18px;
 		}
 	}
+}
+
+.dataviews-pagination {
+	margin-bottom: 2rem;
 }
