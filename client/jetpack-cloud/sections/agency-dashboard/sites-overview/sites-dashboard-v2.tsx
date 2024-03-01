@@ -151,7 +151,10 @@ export default function SitesDashboardV2() {
 				search: '',
 			} );
 		}
-	}, [ path, sitesViewState ] );
+		// We are excluding the warning about missing dependencies because we want
+		// this effect to only re-run when `path` changes. This is the desired behavior.
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [ path ] );
 
 	useEffect( () => {
 		if ( jetpackSiteDisconnected ) {
