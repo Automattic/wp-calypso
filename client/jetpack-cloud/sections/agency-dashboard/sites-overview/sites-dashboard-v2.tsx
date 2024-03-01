@@ -11,7 +11,6 @@ import SidebarNavigation from 'calypso/components/sidebar-navigation';
 import useFetchDashboardSites from 'calypso/data/agency-dashboard/use-fetch-dashboard-sites';
 import useFetchMonitorVerfiedContacts from 'calypso/data/agency-dashboard/use-fetch-monitor-verified-contacts';
 import { AgencyDashboardFilterMap } from 'calypso/jetpack-cloud/sections/agency-dashboard/sites-overview/types';
-import { sitesPath } from 'calypso/lib/jetpack/paths';
 import { useDispatch, useSelector } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import {
@@ -114,9 +113,6 @@ export default function SitesDashboardV2() {
 
 	// Filter selection
 	useEffect( () => {
-		if ( isLoading || isError || window.location.pathname !== sitesPath() ) {
-			return;
-		}
 		const filtersSelected =
 			sitesViewState.filters?.map( ( filter ) => {
 				const filterType =
@@ -127,15 +123,12 @@ export default function SitesDashboardV2() {
 			} ) || [];
 
 		updateDashboardURLQueryArgs( { filter: filtersSelected || [] } );
-	}, [ isLoading, isError, sitesViewState.filters ] ); // filtersMap omitted as dependency due to rendering loop and continuous console errors, even if wrapped in useMemo.
+	}, [ sitesViewState.filters ] ); // filtersMap omitted as dependency due to rendering loop and continuous console errors, even if wrapped in useMemo.
 
 	// Search query
 	useEffect( () => {
-		if ( isLoading || isError || window.location.pathname !== sitesPath() ) {
-			return;
-		}
 		updateDashboardURLQueryArgs( { search: sitesViewState.search } );
-	}, [ isLoading, isError, sitesViewState.search ] );
+	}, [ sitesViewState.search ] );
 
 	// Set or clear filter depending on sites submenu path selected
 	useEffect( () => {

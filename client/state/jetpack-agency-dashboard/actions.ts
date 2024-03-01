@@ -6,6 +6,7 @@ import {
 	PurchasedProductsInfo,
 	DashboardSortInterface,
 } from 'calypso/jetpack-cloud/sections/agency-dashboard/sites-overview/types';
+import { sitesPath, sitesFavoritesPath } from 'calypso/lib/jetpack/paths';
 import { addQueryArgs } from 'calypso/lib/url';
 import './init';
 import {
@@ -45,6 +46,13 @@ export const updateDashboardURLQueryArgs = ( {
 		: ( params.getAll( 'issue_types' ) as AgencyDashboardFilterOption[] );
 	const sortField = sort ? sort.field : params.get( 'sort_field' );
 	const sortDirection = sort ? sort.direction : params.get( 'sort_direction' );
+
+	if (
+		window.location.pathname !== sitesPath() &&
+		window.location.pathname !== sitesFavoritesPath()
+	) {
+		return;
+	}
 
 	page.replace(
 		addQueryArgs(
