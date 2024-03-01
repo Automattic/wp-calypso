@@ -5,7 +5,7 @@ import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import nock from 'nock';
 import React from 'react';
-import SiteMigrationIdentify from'..';
+import SiteMigrationIdentify from '..';
 import { UrlData } from '../../../../../../../blocks/import/types';
 import { StepProps } from '../../../types';
 import { RenderStepOptions, mockStepProps, renderStep } from '../../test/helpers';

@@ -6,7 +6,6 @@ import {
 	PurchasedProductsInfo,
 	DashboardSortInterface,
 } from 'calypso/jetpack-cloud/sections/agency-dashboard/sites-overview/types';
-import { sitesPath, sitesFavoritesPath } from 'calypso/lib/jetpack/paths';
 import { addQueryArgs } from 'calypso/lib/url';
 import './init';
 import {
@@ -33,12 +32,10 @@ export const updateDashboardURLQueryArgs = ( {
 	filter,
 	sort,
 	search,
-	isSitesDashboard,
 }: {
 	filter?: AgencyDashboardFilterOption[];
 	sort?: DashboardSortInterface;
 	search?: string;
-	isSitesDashboard?: boolean;
 } ) => {
 	const params = new URLSearchParams( window.location.search );
 
@@ -48,13 +45,7 @@ export const updateDashboardURLQueryArgs = ( {
 		: ( params.getAll( 'issue_types' ) as AgencyDashboardFilterOption[] );
 	const sortField = sort ? sort.field : params.get( 'sort_field' );
 	const sortDirection = sort ? sort.direction : params.get( 'sort_direction' );
-	if (
-		isSitesDashboard &&
-		window.location.pathname !== sitesPath() &&
-		window.location.pathname !== sitesFavoritesPath()
-	) {
-		return;
-	}
+	const currentTour = params.get( 'tour' );
 
 	page.replace(
 		addQueryArgs(
@@ -63,6 +54,7 @@ export const updateDashboardURLQueryArgs = ( {
 				...filterStateToQuery( filterOptions ),
 				...( sortField && { sort_field: sortField } ),
 				...( sortDirection && { sort_direction: sortDirection } ),
+				...( currentTour && { tour: currentTour } ),
 			},
 			window.location.pathname
 		)
