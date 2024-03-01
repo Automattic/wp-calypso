@@ -83,6 +83,22 @@ describe( 'Site Migration Flow', () => {
 				state: { siteSlug: 'example.wordpress.com' },
 			} );
 		} );
+
+		it( 'redirects from upgrade-plan to bundleTransfer step after selecting a free trial', async () => {
+			const { runUseStepNavigationSubmit } = renderFlow( siteMigrationFlow );
+
+			runUseStepNavigationSubmit( {
+				currentStep: STEPS.SITE_MIGRATION_UPGRADE_PLAN.slug,
+				dependencies: {
+					freeTrialSelected: true,
+				},
+			} );
+
+			expect( getFlowLocation() ).toEqual( {
+				path: '/bundleTransfer',
+				state: { siteSlug: 'example.wordpress.com' },
+			} );
+		} );
 	} );
 
 	describe( 'goBack', () => {
