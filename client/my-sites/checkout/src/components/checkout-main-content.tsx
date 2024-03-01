@@ -544,8 +544,8 @@ export default function CheckoutMainContent( {
 							completeStepContent={
 								<WPCheckoutOrderReview
 									removeProductFromCart={ removeProductFromCart }
+									removeCoupon={ removeCouponAndClearField }
 									replaceProductInCart={ replaceProductInCart }
-									couponFieldStateProps={ couponFieldStateProps }
 									onChangeSelection={ changeSelection }
 									siteUrl={ siteUrl }
 									createUserAndSiteBeforeTransaction={ createUserAndSiteBeforeTransaction }
@@ -686,7 +686,7 @@ export default function CheckoutMainContent( {
 							couponFieldStateProps={ couponFieldStateProps }
 						/>
 					) }
-					{ ! shouldUseCheckoutV2 && couponLineItem && (
+					{ couponLineItem && (
 						<CouponLineItem
 							lineItem={ couponLineItem }
 							hasDeleteButton

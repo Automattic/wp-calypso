@@ -1,4 +1,3 @@
-import { FormStatus, useFormStatus, Button } from '@automattic/composite-checkout';
 import formatCurrency from '@automattic/format-currency';
 import {
 	type ResponseCart,
@@ -13,8 +12,6 @@ import {
 import styled from '@emotion/styled';
 import { useTranslate } from 'i18n-calypso';
 import useCartKey from '../../use-cart-key';
-import { useCheckoutV2 } from '../hooks/use-checkout-v2';
-import type { Theme } from '@automattic/composite-checkout';
 import type {
 	CostOverrideForDisplay,
 	LineItemCostOverrideForDisplay,
@@ -63,12 +60,6 @@ const CostOverridesListStyle = styled.div`
 	}
 `;
 
-const DeleteButton = styled( Button )< { theme?: Theme; shouldUseCheckoutV2: boolean } >`
-	width: auto;
-	font-size: ${ ( props ) => ( props.shouldUseCheckoutV2 ? '12px' : 'inherit' ) };
-	color: ${ ( props ) => props.theme.colors.textColorLight };
-`;
-
 export function CostOverridesList( {
 	costOverridesList,
 	currency,
@@ -82,8 +73,6 @@ export function CostOverridesList( {
 	couponCode: ResponseCart[ 'coupon' ];
 	showOnlyCoupons?: boolean;
 } ) {
-	const shouldUseCheckoutV2 = useCheckoutV2() === 'treatment';
-
 	const translate = useTranslate();
 	// Let's put the coupon code last because it will have its own "Remove" button.
 	const nonCouponOverrides = costOverridesList.filter(
@@ -92,8 +81,6 @@ export function CostOverridesList( {
 	const couponOverrides = costOverridesList.filter(
 		( override ) => override.overrideCode === 'coupon-discount'
 	);
-	const { formStatus } = useFormStatus();
-	const isDisabled = formStatus !== FormStatus.READY;
 	return (
 		<CostOverridesListStyle>
 			{ ! showOnlyCoupons &&
@@ -144,18 +131,6 @@ export function CostOverridesList( {
 								{ formatCurrency( -costOverride.discountAmount, currency, {
 									isSmallestUnit: true,
 								} ) }
-							</span>
-							<span className="cost-overrides-list-item__actions">
-								<DeleteButton
-									buttonType="text-button"
-									disabled={ isDisabled }
-									className="cost-overrides-list-item__actions-remove"
-									onClick={ removeCoupon }
-									aria-label={ translate( 'Remove coupon' ) }
-									shouldUseCheckoutV2={ shouldUseCheckoutV2 }
-								>
-									{ translate( 'Remove' ) }
-								</DeleteButton>
 							</span>
 						</div>
 					);
