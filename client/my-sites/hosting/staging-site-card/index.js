@@ -144,9 +144,7 @@ export const StagingSiteCard = ( {
 	} = useGetLockQuery( siteId, {
 		enabled: ! disabled,
 		refetchInterval: () => {
-			return ! stagingSite.id && stagingSiteStatus === StagingSiteStatus.INITIATE_TRANSFERRING
-				? 5000
-				: 0;
+			return isLoadingAddStagingSite ? 5000 : 0;
 		},
 	} );
 
@@ -223,7 +221,7 @@ export const StagingSiteCard = ( {
 		// Lock is not there (expired), neither is the staging site.
 		// but the status is still in progress.
 		if (
-			hasCompletedInitialLoading &&
+			! isLoadingAddStagingSite &&
 			! lock &&
 			! stagingSite.id &&
 			stagingSiteStatus === StagingSiteStatus.INITIATE_TRANSFERRING
@@ -239,7 +237,7 @@ export const StagingSiteCard = ( {
 	}, [
 		__,
 		dispatch,
-		hasCompletedInitialLoading,
+		isLoadingAddStagingSite,
 		lock,
 		queryClient,
 		siteId,
