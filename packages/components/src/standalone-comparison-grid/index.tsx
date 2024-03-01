@@ -11,41 +11,40 @@ interface StandAloneComparisonGridColumn {
 }
 
 export interface StandAloneComparisonGridProps {
-	columns: StandAloneComparisonGridColumn[];
+	children:
+		| React.ReactElement< typeof StandAloneComparisonGridColumn >
+		| React.ReactElement< typeof StandAloneComparisonGridColumn >[];
 }
 
-const StandAloneComparisonGrid = ( props: StandAloneComparisonGridProps ) => {
-	const { columns } = props;
-
+const StandAloneComparisonGridColumn = ( {
+	title,
+	intro_copy,
+	action,
+	action_copy,
+	features,
+}: StandAloneComparisonGridColumn ) => {
 	return (
-		<div className="standalone-comparison-grid">
-			{ columns.map( ( column, index ) => {
-				return (
-					<div
-						className="standalone-comparison-grid__column standalone-comparison-grid__body"
-						key={ `scd_${ index }` }
-					>
-						<h2 className="standalone-comparison-grid__title">{ column.title }</h2>
-						<p className="standalone-comparison-grid__intro">{ column.intro_copy }</p>
-						<Button
-							className="standalone-comparison-grid__action"
-							variant="primary"
-							onClick={ column.action }
-						>
-							{ column.action_copy }
-						</Button>
-						<ul className="standalone-comparison-grid__row-list">
-							{ column.features.map( ( feature, index ) => (
-								<li key={ `scdi_${ index }` } className="standalone-comparison-grid__row-item">
-									{ feature }
-								</li>
-							) ) }
-						</ul>
-					</div>
-				);
-			} ) }
+		<div className="standalone-comparison-grid__column standalone-comparison-grid__body">
+			<h2 className="standalone-comparison-grid__title">{ title }</h2>
+			<p className="standalone-comparison-grid__intro">{ intro_copy }</p>
+			<Button className="standalone-comparison-grid__action" variant="primary" onClick={ action }>
+				{ action_copy }
+			</Button>
+			<ul className="standalone-comparison-grid__row-list">
+				{ features.map( ( feature, index ) => (
+					<li key={ `scdi_${ index }` } className="standalone-comparison-grid__row-item">
+						{ feature }
+					</li>
+				) ) }
+			</ul>
 		</div>
 	);
+};
+
+export { StandAloneComparisonGridColumn };
+
+const StandAloneComparisonGrid: React.FC< StandAloneComparisonGridProps > = ( { children } ) => {
+	return <div className="standalone-comparison-grid">{ children }</div>;
 };
 
 export default StandAloneComparisonGrid;
