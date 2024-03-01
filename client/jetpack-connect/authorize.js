@@ -4,6 +4,7 @@ import {
 	WPCOM_FEATURES_BACKUPS,
 	getProductFromSlug,
 	getJetpackProductDisplayName,
+	getPlan,
 } from '@automattic/calypso-products';
 import { getUrlParts } from '@automattic/calypso-url';
 import { Button, Card, FormLabel, Gridicon, Spinner, JetpackLogo } from '@automattic/components';
@@ -888,7 +889,14 @@ export class JetpackAuthorize extends Component {
 		const productSlug = searchParams.get( 'productSlug' );
 		const siteSlug = searchParams.get( 'fromSiteSlug' );
 		const product = getProductFromSlug( productSlug );
-		const productName = getJetpackProductDisplayName( product );
+		let productName = '';
+
+		if ( product?.product_name ) {
+			productName = getJetpackProductDisplayName( product );
+		} else {
+			productName = getPlan( productSlug )?.getTitle();
+		}
+
 		const siteName = formatSlugToURL( siteSlug ).replace( /^https?:\/\//, '' );
 
 		if ( authorizeSuccess || isAlreadyOnSitesList ) {
