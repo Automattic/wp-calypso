@@ -32,6 +32,7 @@ import {
 } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
 import { useCallback } from 'react';
+import GitHubIcon from 'calypso/components/social-icons/github';
 import WooCommerceLogo from 'calypso/components/woocommerce-logo';
 import {
 	EDGE_CACHE_ENABLE_DISABLE_NOTICE_ID,
@@ -727,6 +728,25 @@ export const useCommandsArrayWpcom = ( {
 				...siteFilters.hostingEnabled,
 			},
 			icon: statsIcon,
+		},
+		{
+			name: 'openGitHubDeployments',
+			label: __( 'Open GitHub Deployments' ),
+			callback: setStateCallback(
+				'openGitHubDeployments',
+				__( 'Select site to open GitHub Deployments' )
+			),
+			searchLabel: [
+				_x( 'open github deployments', 'Keyword for the Open GitHub Deployments command' ),
+				_x( 'github', 'Keyword for the Open GitHub Deployments command' ),
+				_x( 'deployments', 'Keyword for the Open GitHub Deployments command' ),
+			].join( ' ' ),
+			siteFunctions: {
+				onClick: ( param ) =>
+					commandNavigation( `/github-deployments/${ param.site.slug }` )( param ),
+				...siteFilters.hostingEnabled,
+			},
+			icon: <GitHubIcon width={ 18 } height={ 18 } />,
 		},
 		{
 			name: 'openPHPLogs',
