@@ -75,6 +75,7 @@ import badgeSecurity from './assets/icons/security.svg';
 import { CheckoutCompleteRedirecting } from './checkout-complete-redirecting';
 import CheckoutNextSteps from './checkout-next-steps';
 import { CheckoutSidebarPlanUpsell } from './checkout-sidebar-plan-upsell';
+import CouponFieldArea from './coupon-field-area';
 import { EmptyCart, shouldShowEmptyCartPage } from './empty-cart';
 import { GoogleDomainsCopy } from './google-transfers-copy';
 import JetpackAkismetCheckoutSidebarPlanUpsell from './jetpack-akismet-checkout-sidebar-plan-upsell';
@@ -281,12 +282,14 @@ export default function CheckoutMainContent( {
 	const cartKey = useCartKey();
 	const {
 		responseCart,
+		couponStatus,
 		applyCoupon,
 		updateLocation,
 		replaceProductInCart,
 		isPendingUpdate: isCartPendingUpdate,
 	} = useShoppingCart( cartKey );
 	const translate = useTranslate();
+	const [ isCouponFieldVisible, setCouponFieldVisible ] = useState( false );
 	const couponFieldStateProps = useCouponFieldState( applyCoupon );
 	const reduxDispatch = useReduxDispatch();
 	usePresalesChat( getPresalesChatKey( responseCart ), responseCart?.products?.length > 0 );
@@ -652,6 +655,15 @@ export default function CheckoutMainContent( {
 							return Boolean( paymentMethod ) && ! paymentMethod?.hasRequiredFields;
 						} }
 					/>
+					{ ! isAkismetCheckout() && (
+						<CouponFieldArea
+							isCouponFieldVisible={ isCouponFieldVisible }
+							setCouponFieldVisible={ setCouponFieldVisible }
+							isPurchaseFree={ responseCart.total_cost_integer === 0 }
+							couponStatus={ couponStatus }
+							couponFieldStateProps={ couponFieldStateProps }
+						/>
+					) }
 					<CheckoutTermsAndCheckboxes
 						is3PDAccountConsentAccepted={ is3PDAccountConsentAccepted }
 						setIs3PDAccountConsentAccepted={ setIs3PDAccountConsentAccepted }

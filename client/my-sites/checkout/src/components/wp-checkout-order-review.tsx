@@ -6,8 +6,7 @@ import {
 import { useShoppingCart } from '@automattic/shopping-cart';
 import { styled, joinClasses } from '@automattic/wpcom-checkout';
 import { useTranslate } from 'i18n-calypso';
-import { useState, useCallback } from 'react';
-import isAkismetCheckout from 'calypso/lib/akismet/is-akismet-checkout';
+import { useCallback } from 'react';
 import { hasP2PlusPlan } from 'calypso/lib/cart-values/cart-items';
 import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
 import SitePreview from 'calypso/my-sites/customer-home/cards/features/site-preview';
@@ -18,7 +17,6 @@ import { currentUserHasFlag, getCurrentUser } from 'calypso/state/current-user/s
 import { getWpComDomainBySiteId } from 'calypso/state/sites/domains/selectors';
 import getSelectedSite from 'calypso/state/ui/selectors/get-selected-site';
 import { useCheckoutV2 } from '../hooks/use-checkout-v2';
-import CouponFieldArea from './coupon-field-area';
 import { WPOrderReviewLineItems, WPOrderReviewSection } from './wp-order-review-line-items';
 import type { OnChangeItemVariant } from './item-variation-picker';
 import type { CouponFieldStateProps } from '../hooks/use-coupon-field-state';
@@ -94,10 +92,8 @@ export default function WPCheckoutOrderReview( {
 	createUserAndSiteBeforeTransaction?: boolean;
 } ) {
 	const translate = useTranslate();
-	const [ isCouponFieldVisible, setCouponFieldVisible ] = useState( false );
 	const cartKey = useCartKey();
-	const { responseCart, removeCoupon, couponStatus } = useShoppingCart( cartKey );
-	const isPurchaseFree = responseCart.total_cost_integer === 0;
+	const { responseCart, removeCoupon } = useShoppingCart( cartKey );
 	const reduxDispatch = useDispatch();
 	const shouldUseCheckoutV2 = useCheckoutV2() === 'treatment';
 
@@ -194,16 +190,6 @@ export default function WPCheckoutOrderReview( {
 						onRemoveProductCancel={ onRemoveProductCancel }
 					/>
 				</WPOrderReviewSection>
-
-				{ ! isAkismetCheckout() && (
-					<CouponFieldArea
-						isCouponFieldVisible={ isCouponFieldVisible }
-						setCouponFieldVisible={ setCouponFieldVisible }
-						isPurchaseFree={ isPurchaseFree }
-						couponStatus={ couponStatus }
-						couponFieldStateProps={ couponFieldStateProps }
-					/>
-				) }
 			</div>
 		</>
 	);
