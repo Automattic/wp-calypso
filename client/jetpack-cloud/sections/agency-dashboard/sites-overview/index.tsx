@@ -44,8 +44,6 @@ import SiteSearchFilterContainer from './site-search-filter-container/SiteSearch
 import SiteTopHeaderButtons from './site-top-header-buttons';
 import type { Site } from '../sites-overview/types';
 
-import './style.scss';
-
 const QUERY_PARAM_PROVISIONING = 'provisioning';
 
 export default function SitesOverview() {
