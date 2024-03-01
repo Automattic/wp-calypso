@@ -45,6 +45,7 @@ export const updateDashboardURLQueryArgs = ( {
 		: ( params.getAll( 'issue_types' ) as AgencyDashboardFilterOption[] );
 	const sortField = sort ? sort.field : params.get( 'sort_field' );
 	const sortDirection = sort ? sort.direction : params.get( 'sort_direction' );
+	const currentTour = params.get( 'tour' );
 
 	page.replace(
 		addQueryArgs(
@@ -53,6 +54,7 @@ export const updateDashboardURLQueryArgs = ( {
 				...filterStateToQuery( filterOptions ),
 				...( sortField && { sort_field: sortField } ),
 				...( sortDirection && { sort_direction: sortDirection } ),
+				...( currentTour && { tour: currentTour } ),
 			},
 			window.location.pathname
 		)
