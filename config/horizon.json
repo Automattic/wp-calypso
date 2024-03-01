@@ -70,6 +70,7 @@
 		"launchpad/navigator": false,
 		"launchpad/new-task-definition-parser": true,
 		"layout/app-banner": true,
+		"layout/dotcom-nav-redesign-early-release": true,
 		"layout/guided-tours": true,
 		"layout/query-selected-editor": true,
 		"layout/support-article-dialog": true,
