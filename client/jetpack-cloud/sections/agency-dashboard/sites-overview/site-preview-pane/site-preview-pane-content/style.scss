@@ -3,6 +3,7 @@
 	background-color: var(--studio-white);
 	padding: 48px;
 	text-align: center;
+	overflow-y: auto;
 
 	.expanded-card {
 		max-width: 320px;
