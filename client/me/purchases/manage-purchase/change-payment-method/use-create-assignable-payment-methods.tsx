@@ -33,26 +33,8 @@ export default function useCreateAssignablePaymentMethods(
 		error: allowedPaymentMethodsError,
 	} = useFetchAvailablePaymentMethods();
 
-	const stripeMethod = useCreateCreditCard( {
-		isStripeLoading,
-		stripeLoadingError,
-		shouldUseEbanx: false,
-		shouldShowTaxFields: true,
-		submitButtonContent: (
-			<PaymentMethodSelectorSubmitButtonContent text={ translate( 'Save card' ) } />
-		),
-		allowUseForAllSubscriptions: true,
-	} );
-
-	const payPalMethod = useCreatePayPal( {
-		shouldShowTaxFields: true,
-		labelText:
-			currentPaymentMethodId === 'paypal-existing'
-				? String( translate( 'New PayPal account' ) )
-				: String( translate( 'PayPal' ) ),
-	} );
-
 	const { paymentMethods: storedCards } = useStoredPaymentMethods( { type: 'card' } );
+
 	const existingCardMethods = useCreateExistingCards( {
 		isStripeLoading,
 		stripeLoadingError,
@@ -62,6 +44,26 @@ export default function useCreateAssignablePaymentMethods(
 		),
 		allowEditingTaxInfo: true,
 		isTaxInfoRequired: true,
+	} );
+	const hasExistingCardMethods = existingCardMethods && existingCardMethods.length > 0;
+	const stripeMethod = useCreateCreditCard( {
+		isStripeLoading,
+		stripeLoadingError,
+		shouldUseEbanx: false,
+		shouldShowTaxFields: true,
+		submitButtonContent: (
+			<PaymentMethodSelectorSubmitButtonContent text={ translate( 'Save card' ) } />
+		),
+		allowUseForAllSubscriptions: true,
+		hasExistingCardMethods,
+	} );
+
+	const payPalMethod = useCreatePayPal( {
+		shouldShowTaxFields: true,
+		labelText:
+			currentPaymentMethodId === 'paypal-existing'
+				? String( translate( 'New PayPal account' ) )
+				: String( translate( 'PayPal' ) ),
 	} );
 
 	const paymentMethods = useMemo(

@@ -93,7 +93,7 @@ const NoAccess = () => {
 const AddOnsMain = () => {
 	const translate = useTranslate();
 	const selectedSite = useSelector( getSelectedSite ) ?? null;
-	const addOns = useAddOns( selectedSite?.ID );
+	const addOns = useAddOns( { selectedSiteId: selectedSite?.ID } );
 	const filteredAddOns = addOns.filter( ( addOn ) => ! addOn?.exceedsSiteStorageLimits );
 
 	const checkoutLink = useAddOnCheckoutLink();

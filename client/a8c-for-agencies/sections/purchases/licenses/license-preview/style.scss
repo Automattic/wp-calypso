@@ -81,7 +81,7 @@
 	}
 
 	&--is-revoked {
-		color: var(--color-scary-60);
+		color: var(--color-error-60);
 	}
 
 	svg {
@@ -151,58 +151,6 @@
 	}
 }
 
-a,
-button {
-	&.license-actions__menu-item {
-		margin: 0 -1px;
-		border-style: solid;
-		border-color: var(--color-neutral-5);
-		border-width: 0 0 1px;
-		font-size: 0.875rem;
-		height: 40px;
-		box-sizing: border-box;
-		color: var(--color-neutral);
-		display: flex;
-		align-items: center;
-		padding: 0 16px;
-		min-width: 200px;
-
-		&:last-child {
-			margin-bottom: 5px;
-			border-bottom-width: 0;
-		}
-
-		&:first-child {
-			margin-block-start: 5px;
-		}
-
-		&:hover,
-		&:focus {
-			border-style: solid;
-			border-color: var(--color-neutral-5);
-			border-width: 0 0 1px;
-			background: var(--color-neutral);
-			cursor: pointer;
-			color: var(--color-masterbar-item-hover-background);
-
-			&:last-child {
-				border-bottom-width: 0;
-			}
-		}
-
-		svg.gridicon {
-			vertical-align: middle;
-			position: absolute;
-			inset-inline-end: 10px;
-			inset-block-start: unset;
-		}
-
-		&.is-destructive {
-			color: var(--color-scary-50);
-		}
-	}
-}
-
 .card.license-preview__card.license-preview__card--child-license {
 	padding: 16px 32px;
 	background-color: #fafafa;
@@ -214,13 +162,13 @@ button {
 	max-height: 24px;
 	&:hover,
 	&:focus {
-		background: var(--color-sidebar-menu-hover-background);
+		background: var(--color-sidebar-text-alternative);
 		color: var(--color-text);
 		fill: var(--color-text);
 	}
 }
 
-.license-bundle-dropdown__popover-menu {
+.license-actions__menu {
 	font-size: rem(14px);
 	font-weight: 400;
 	border-radius: 2px;
@@ -237,11 +185,20 @@ button {
 		display: flex;
 		justify-content: space-between;
 		align-items: center;
+		border: none;
+		outline: none;
+		margin-block: 5px;
+		min-height: 40px;
+		box-sizing: border-box;
+	}
+
+	.popover__menu-item .gridicon {
+		margin: 0;
 	}
 
 	.popover__menu-item:hover,
 	.popover__menu-item:focus {
-		background: var(--color-sidebar-menu-hover-background);
+		background: var(--color-sidebar-text-alternative);
 		color: var(--color-text);
 		fill: var(--color-text);
 
@@ -250,19 +207,10 @@ button {
 		}
 	}
 
-	.popover__menu-item .gridicon {
-		margin: 0;
-	}
-}
-
-.popover__menu-item.license-bundle-dropdown__popover-menu-item-revoke {
-	&,
-	&:hover,
-	&:focus {
+	.popover__menu-item.is-destructive {
 		color: var(--color-scary-50);
-
 		.gridicon {
-			fill: var(--color-scary-50);
+			fill: var(--color-error-50);
 		}
 	}
 }

@@ -2,11 +2,16 @@ import { STATS_UTM_METRICS_REQUEST, STATS_UTM_TOP_POSTS_REQUEST } from 'calypso/
 import { registerHandlers } from 'calypso/state/data-layer/handler-registry';
 import { http } from 'calypso/state/data-layer/wpcom-http/actions';
 import { dispatchRequest } from 'calypso/state/data-layer/wpcom-http/utils';
-import { receiveMetrics, requestMetricsFail, receiveTopPosts } from 'calypso/state/stats/utm-metrics/actions';
+import {
+	receiveMetrics,
+	receiveMetricsByPost,
+	requestMetricsFail,
+	receiveTopPosts,
+} from 'calypso/state/stats/utm-metrics/actions';
 import type { AnyAction } from 'redux';
 
 export const fetch = ( action: AnyAction ) => {
-	const { siteId, utmParam } = action;
+	const { siteId, utmParam, postId } = action;
 
 	return [
 		http(
@@ -19,6 +24,7 @@ export const fetch = ( action: AnyAction ) => {
 					// Today's date in yyyy-mm-dd format.
 					date: new Date().toISOString().split( 'T' )[ 0 ],
 					days: 7,
+					post_id: postId || '',
 				},
 			},
 			action
@@ -52,7 +58,13 @@ registerHandlers( 'state/data-layer/wpcom/sites/stats/utm-metrics/index.js', {
 	[ STATS_UTM_METRICS_REQUEST ]: [
 		dispatchRequest( {
 			fetch,
-			onSuccess: ( { siteId }: AnyAction, data: object ) => receiveMetrics( siteId, data ),
+			onSuccess: ( { siteId, postId }: AnyAction, data: object ) => {
+				if ( postId ) {
+					return receiveMetricsByPost( siteId, postId, data );
+				}
+
+				return receiveMetrics( siteId, data );
+			},
 			onError: ( { siteId }: AnyAction ) => requestMetricsFail( siteId ),
 			// fromApi,
 		} ),

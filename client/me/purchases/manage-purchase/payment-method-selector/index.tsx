@@ -74,6 +74,7 @@ const TOSItemWrapper = styled.div`
 	padding-left: 24px;
 	position: relative;
 	font-size: 12px;
+	margin: 1.5em auto 0;
 
 	> svg {
 		position: absolute;

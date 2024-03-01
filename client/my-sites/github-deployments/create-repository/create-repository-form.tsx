@@ -7,6 +7,7 @@ import FormSettingExplanation from 'calypso/components/forms/form-setting-explan
 import FormTextInput from 'calypso/components/forms/form-text-input';
 import { GitHubInstallationsDropdown } from 'calypso/my-sites/github-deployments/components/installations-dropdown';
 import { useLiveInstallations } from 'calypso/my-sites/github-deployments/components/installations-dropdown/use-live-installations';
+import { AutomatedDeploymentsToggle } from '../components/automated-deployments-toggle';
 import {
 	FormRadioWithTemplateSelect,
 	ProjectType,
@@ -193,17 +194,11 @@ export const CreateRepositoryForm = ( {
 						{ __( 'This path is relative to the server root' ) }
 					</FormSettingExplanation>
 				</FormFieldset>
-				<FormFieldset>
-					<FormLabel htmlFor="is-automated">{ __( 'Automatic deploys' ) }</FormLabel>
-					<div className="github-deployments-create-repository__switch">
-						<FormToggle
-							id="is-automated"
-							checked={ isAutomated }
-							onChange={ () => setIsAutomated( ! isAutomated ) }
-						/>
-						{ __( 'Deploy changes on push' ) }
-					</div>
-				</FormFieldset>
+				<AutomatedDeploymentsToggle
+					onChange={ setIsAutomated }
+					value={ isAutomated }
+					hasWorkflowPath={ !! template.workflowFilename }
+				/>
 				<Button
 					primary
 					type="submit"

@@ -375,11 +375,13 @@ function OneClickPurchaseModal( {
 	siteSlug,
 	selectedPages,
 	isStoreFlow,
+	flowName,
 }: {
 	onClose: () => void;
 	siteSlug: SiteSlug;
 	selectedPages: string[];
 	isStoreFlow: boolean;
+	flowName: string;
 } ) {
 	const translate = useTranslate();
 	const signupDependencies = useSelector( getSignupDependencyStore );
@@ -392,11 +394,12 @@ function OneClickPurchaseModal( {
 					selectedPageTitles: selectedPages,
 					isStoreFlow,
 				},
-				siteSlug
+				siteSlug,
+				`page-picker-one-click-modal-flow-${ flowName }`
 			),
 			quantity: selectedPages.length,
 		} );
-	}, [ isStoreFlow, selectedPages, signupDependencies, siteSlug ] );
+	}, [ flowName, isStoreFlow, selectedPages, signupDependencies, siteSlug ] );
 
 	return (
 		<CalypsoShoppingCartProvider>
@@ -560,6 +563,7 @@ function DIFMPagePicker( props: StepProps ) {
 							siteSlug={ siteSlug }
 							selectedPages={ selectedPages }
 							isStoreFlow={ isStoreFlow }
+							flowName={ flowName }
 						/>
 					) }
 					<PageSelector
