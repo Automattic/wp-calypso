@@ -12,7 +12,7 @@ export {
 } from './record';
 export { recordTracksEventWithClientId, recordPageViewWithClientId } from './record-with-client-id';
 export { withAnalytics } from './with-analytics';
-export { enhanceWithInterfaceSetting } from './enhance-with-interface-setting';
+export { enhanceWithGlobalSiteViewEnabled } from './enhance-with-global-site-view-enabled';
 export { enhanceWithUserIsDevAccount } from './enhance-with-user-is-dev-account';
 export { enhanceWithSiteMainProduct } from './enhance-with-site-main-product';
 export { enhanceWithSiteType } from './enhance-with-site-type';
