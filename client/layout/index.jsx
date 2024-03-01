@@ -482,8 +482,8 @@ export default withCurrentRoute(
 				sidebarIsCollapsed: sectionName !== 'reader' && getSidebarIsCollapsed( state ),
 				userAllowedToHelpCenter,
 				currentRoute,
-				isGlobalSidebarVisible: shouldShowGlobalSidebar,
-				isGlobalSiteSidebarVisible: shouldShowGlobalSiteSidebar,
+				isGlobalSidebarVisible: shouldShowGlobalSidebar && ! sidebarIsHidden,
+				isGlobalSiteSidebarVisible: shouldShowGlobalSiteSidebar && ! sidebarIsHidden,
 				currentRoutePattern: getCurrentRoutePattern( state ),
 				userCapabilities: state.currentUser.capabilities,
 			};

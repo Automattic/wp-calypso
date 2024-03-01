@@ -4,6 +4,7 @@ import LayoutNavigation, {
 	LayoutNavigationTabs,
 } from 'calypso/a8c-for-agencies/components/layout/nav';
 import { A4A_LICENSES_LINK } from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
+import useFetchLicenseCounts from 'calypso/a8c-for-agencies/data/purchases/use-fetch-license-counts';
 import { internalToPublicLicenseFilter } from 'calypso/jetpack-cloud/sections/partner-portal/lib/license-filters';
 import { LicenseFilter } from 'calypso/jetpack-cloud/sections/partner-portal/types';
 import { useDispatch } from 'calypso/state';
@@ -14,6 +15,8 @@ function LicenseStateFilter() {
 	const dispatch = useDispatch();
 	const translate = useTranslate();
 	const { filter } = useContext( LicenseListContext );
+
+	const { data } = useFetchLicenseCounts();
 
 	const navItems = [
 		{
@@ -38,7 +41,7 @@ function LicenseStateFilter() {
 		},
 	].map( ( navItem ) => ( {
 		...navItem,
-		count: 0, // FIXME: get this from state
+		count: data?.[ navItem.key ] || 0,
 		selected: filter === navItem.key,
 		path: `${ A4A_LICENSES_LINK }/${ internalToPublicLicenseFilter( navItem.key ) }`,
 		onClick: () => {

@@ -1,5 +1,5 @@
 import { isEnabled } from '@automattic/calypso-config';
-import { getSiteOption } from '../sites/selectors';
+import { isGlobalSiteViewEnabled } from '../sites/selectors';
 import type { AppState } from 'calypso/types';
 
 export const getShouldShowGlobalSidebar = ( _: AppState, siteId: number, sectionGroup: string ) => {
@@ -19,12 +19,6 @@ export const getShouldShowGlobalSiteSidebar = (
 	siteId: number,
 	sectionGroup: string
 ) => {
-	let shouldShowGlobalSiteSidebar = false;
-	if ( isEnabled( 'layout/dotcom-nav-redesign' ) ) {
-		// Global Site View should be limited to classic interface users only for now.
-		const adminInterface = getSiteOption( state, siteId, 'wpcom_admin_interface' );
-		shouldShowGlobalSiteSidebar =
-			adminInterface === 'wp-admin' && sectionGroup === 'sites' && !! siteId;
-	}
-	return shouldShowGlobalSiteSidebar;
+	// Global Site View should be limited to classic interface users only for now.
+	return isGlobalSiteViewEnabled( state, siteId ) && sectionGroup === 'sites' && !! siteId;
 };

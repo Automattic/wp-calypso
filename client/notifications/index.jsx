@@ -259,6 +259,7 @@ export class Notifications extends Component {
 				className={ classNames( 'wide', 'wpnc__main', {
 					'wpnt-open': this.props.isShowing,
 					'wpnt-closed': ! this.props.isShowing,
+					'global-sidebar-visible': this.props.isGlobalSidebarVisible ?? false,
 				} ) }
 			>
 				<NotificationsPanel

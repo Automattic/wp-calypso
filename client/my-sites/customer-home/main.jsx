@@ -1,4 +1,3 @@
-import config from '@automattic/calypso-config';
 import { Button } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { useQueryClient } from '@tanstack/react-query';
@@ -49,6 +48,7 @@ import {
 	canCurrentUserUseCustomerHome,
 	getSitePlan,
 	getSiteOption,
+	isGlobalSiteViewEnabled as getIsGlobalSiteViewEnabled,
 } from 'calypso/state/sites/selectors';
 import isJetpackSite from 'calypso/state/sites/selectors/is-jetpack-site';
 import { getSelectedSite, getSelectedSiteId } from 'calypso/state/ui/selectors';
@@ -75,6 +75,9 @@ const Home = ( {
 	const [ launchedSiteId, setLaunchedSiteId ] = useState( null );
 	const queryClient = useQueryClient();
 	const translate = useTranslate();
+	const isGlobalSiteViewEnabled = useSelector( ( state ) =>
+		getIsGlobalSiteViewEnabled( state, siteId )
+	);
 
 	const { data: layout, isLoading, error: homeLayoutError } = useHomeLayoutQuery( siteId );
 
@@ -147,10 +150,7 @@ const Home = ( {
 	const headerActions = (
 		<>
 			<Button href={ site.URL } onClick={ trackViewSiteAction } target="_blank">
-				{ config.isEnabled( 'layout/dotcom-nav-redesign' ) &&
-				'wp-admin' === site?.options?.wpcom_admin_interface
-					? translate( 'View site' )
-					: translate( 'Visit site' ) }
+				{ isGlobalSiteViewEnabled ? translate( 'View site' ) : translate( 'Visit site' ) }
 			</Button>
 		</>
 	);

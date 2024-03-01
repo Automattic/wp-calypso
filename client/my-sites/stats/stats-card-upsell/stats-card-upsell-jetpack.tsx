@@ -1,22 +1,38 @@
 import config from '@automattic/calypso-config';
 import page from '@automattic/calypso-router';
+import { Button } from '@automattic/components';
+import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
-import React from 'react';
+import React, { ReactNode } from 'react';
+import InlineSupportLink from 'calypso/components/inline-support-link';
+import { useSelector } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import getIsSiteWPCOM from 'calypso/state/selectors/is-site-wpcom';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import StatsCardUpsellOverlay from './stats-card-upsell-overlay';
 
 interface Props {
 	className: string;
 	statType: string;
 	siteSlug: string;
-	buttonLabel?: string;
+	buttonComponent?: ReactNode;
 }
 
 // TODO: avoid making UTM call and show a ghost element instead
-const StatsCardUpsellJetpack: React.FC< Props > = ( { className, siteSlug, buttonLabel } ) => {
+const StatsCardUpsellJetpack: React.FC< Props > = ( { className, siteSlug } ) => {
 	const translate = useTranslate();
 	const isOdysseyStats = config.isEnabled( 'is_running_in_jetpack_site' );
-	const copyText = translate( 'Track your campaign performance data with UTM codes. Learn more' );
+	const copyText = translate(
+		'Track your campaign performance data with UTM codes. {{learnMoreLink}}Learn more{{/learnMoreLink}}',
+		{
+			components: {
+				learnMoreLink: <InlineSupportLink supportContext="stats" showIcon={ false } />,
+			},
+		}
+	);
+
+	const siteId = useSelector( getSelectedSiteId );
+	const isWPCOMSite = useSelector( ( state ) => siteId && getIsSiteWPCOM( state, siteId ) );
 
 	const onClick = () => {
 		// We need to ensure we pass the irclick id for impact affiliate tracking if its set.
@@ -44,7 +60,17 @@ const StatsCardUpsellJetpack: React.FC< Props > = ( { className, siteSlug, butto
 			className={ className }
 			onClick={ onClick }
 			copyText={ copyText }
-			buttonLabel={ buttonLabel }
+			buttonComponent={
+				<Button
+					className={ classNames( {
+						[ 'jetpack-emerald-button' ]: ! isWPCOMSite,
+					} ) }
+					onClick={ onClick }
+					primary
+				>
+					{ translate( 'Upgrade plan' ) }
+				</Button>
+			}
 		/>
 	);
 };
