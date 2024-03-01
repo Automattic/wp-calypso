@@ -4,15 +4,13 @@
 @import "../styles/typography.scss";
 
 .standalone-comparison-grid {
-	display: grid;
-	grid-template-columns: repeat(auto-fit, minmax(293px, 1fr));
+	display: flex;
+	flex-wrap: wrap;
 	gap: 20px;
 	padding: 20px;
 
 	.standalone-comparison-grid__column {
-		display: flex;
-		flex-direction: column;
-		gap: 10px;
+		flex: 1 1 293px;
 	}
 
 	.standalone-comparison-grid__body {
