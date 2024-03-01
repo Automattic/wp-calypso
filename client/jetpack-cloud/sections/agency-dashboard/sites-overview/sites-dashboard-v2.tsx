@@ -99,9 +99,10 @@ export default function SitesDashboardV2() {
 	const { data, isError, isLoading, refetch } = useFetchDashboardSites(
 		isPartnerOAuthTokenLoaded,
 		search,
-		currentPage,
+		sitesViewState.page,
 		filter,
-		sort
+		sort,
+		sitesViewState.perPage
 	);
 
 	const onSitesViewChange = useCallback(
@@ -126,7 +127,7 @@ export default function SitesDashboardV2() {
 			} ) || [];
 
 		updateDashboardURLQueryArgs( { filter: filtersSelected || [] } );
-	}, [ isLoading, isError, sitesViewState.filters ] );
+	}, [ isLoading, isError, sitesViewState.filters ] ); // filtersMap omitted as dependency due to rendering loop and continuous console errors, even if wrapped in useMemo.
 
 	// Search query
 	useEffect( () => {
@@ -139,16 +140,17 @@ export default function SitesDashboardV2() {
 	// Set or clear filter depending on sites submenu path selected
 	useEffect( () => {
 		if ( path === '/sites' || path === '/sites/favorites' ) {
-			setSitesViewState( { ...sitesViewState, filters: [], search: '' } );
+			setSitesViewState( { ...sitesViewState, filters: [], search: '', page: 1 } );
 		}
 		if ( path === '/sites?issue_types=all_issues' ) {
 			setSitesViewState( {
 				...sitesViewState,
 				filters: [ { field: 'status', operator: 'in', value: 1 } ],
 				search: '',
+				page: 1,
 			} );
 		}
-	}, [ path ] );
+	}, [ path ] ); // sitesViewState omitted as dependency due to rendering loop and continuous console errors.
 
 	useEffect( () => {
 		if ( jetpackSiteDisconnected ) {
