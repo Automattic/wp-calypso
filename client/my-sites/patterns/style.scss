@@ -3,6 +3,10 @@
 }
 
 .patterns {
-	list-style-type: none;
-	padding: 20px;
+	display: grid;
+	padding: 24px 0;
+}
+.patterns_grid {
+	gap: 24px;
+	grid-template-columns: repeat(3, 1fr);
 }

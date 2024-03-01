@@ -1,7 +1,6 @@
 import config from '@automattic/calypso-config';
 import { Button } from '@automattic/components';
 import { useI18n } from '@wordpress/react-i18n';
-import { addQueryArgs } from '@wordpress/url';
 import { useState } from 'react';
 import SocialLogo from 'calypso/components/social-logo';
 import { useDispatch } from 'calypso/state';
@@ -11,9 +10,8 @@ import { useGithubInstallationsQuery } from '../use-github-installations-query';
 import { openPopup } from '../utils/open-popup';
 import { useSaveGitHubCredentialsMutation } from './use-save-github-credentials-mutation';
 
-const AUTHORIZE_URL = addQueryArgs( 'https://github.com/login/oauth/authorize', {
-	client_id: config( 'github_oauth_client_id' ),
-} );
+const AUTHORIZE_URL =
+	'https://public-api.wordpress.com/wpcom/v2/hosting/github/app-redirect?ux_mode=popup';
 
 const POPUP_ID = 'github-app-authorize';
 

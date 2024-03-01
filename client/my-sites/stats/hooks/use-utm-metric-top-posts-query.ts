@@ -15,7 +15,9 @@ export default function useUTMMetricTopPostsQuery(
 	useEffect( () => {
 		if ( JSON.parse( metricsKey ).length > 0 ) {
 			JSON.parse( metricsKey ).forEach( ( metric: UTMMetricItem ) => {
-				dispatch( requestTopPosts( siteId, UTMParam, metric.paramValues || '' ) );
+				if ( metric.paramValues ) {
+					dispatch( requestTopPosts( siteId, UTMParam, metric.paramValues ) );
+				}
 			} );
 		}
 	}, [ dispatch, siteId, UTMParam, metricsKey ] );

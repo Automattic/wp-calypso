@@ -286,7 +286,8 @@ export function useCartForDIFM(
 						selectedPageTitles: selectedPages,
 						isStoreFlow,
 					},
-					siteSlug
+					siteSlug,
+					'use-cart-for-difm'
 				),
 				quantity: selectedPages.length,
 			};

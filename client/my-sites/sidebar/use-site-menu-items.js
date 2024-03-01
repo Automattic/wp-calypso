@@ -77,7 +77,7 @@ const useSiteMenuItems = () => {
 
 	const shouldShowMailboxes = ! isP2;
 
-	const shouldShowAddOnsInFallbackMenu = isEnabled( 'my-sites/add-ons' ) && ! isAtomic;
+	const shouldShowAddOns = isEnabled( 'my-sites/add-ons' ) && ! isAtomic && ! isStagingSite;
 
 	const hasSiteWithPlugins = useSelector( canAnySiteHavePlugins );
 
@@ -123,7 +123,7 @@ const useSiteMenuItems = () => {
 	if ( shouldShowGlobalSiteSidebar ) {
 		return globalSiteSidebarMenu( {
 			siteDomain,
-			shouldShowAddOns: shouldShowAddOnsInFallbackMenu,
+			shouldShowAddOns,
 			showSiteMonitoring: isAtomic,
 			selectedSiteSlug,
 			isStagingSite,
@@ -162,7 +162,7 @@ const useSiteMenuItems = () => {
 		shouldShowWooCommerce,
 		shouldShowThemes,
 		shouldShowMailboxes,
-		shouldShowAddOns: shouldShowAddOnsInFallbackMenu,
+		shouldShowAddOns,
 		showSiteMonitoring: isAtomic,
 	};
 

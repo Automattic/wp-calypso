@@ -5,7 +5,17 @@ import {
 	redirectWithoutLocaleParamInFrontIfLoggedIn,
 	render as clientRender,
 } from 'calypso/controller/index.web';
-import { fetchPatterns, renderPatterns } from 'calypso/my-sites/patterns/controller';
+import { fetchPatterns, Next } from 'calypso/my-sites/patterns/controller';
+import Patterns from 'calypso/my-sites/patterns/patterns';
+import type { Context as PageJSContext } from '@automattic/calypso-router';
+
+function renderPatterns( context: PageJSContext, next: Next ) {
+	context.primary = (
+		<Patterns category={ context.params.category } isGridView={ !! context.query.grid } />
+	);
+
+	next();
+}
 
 export default function ( router: typeof clientRouter ) {
 	const langParam = getLanguageRouteParam();

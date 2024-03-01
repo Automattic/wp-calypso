@@ -16,6 +16,7 @@ import {
 	usePromoteWidget,
 	PromoteWidgetStatus,
 } from 'calypso/lib/promote-post';
+import useAdvertisingUrl from 'calypso/my-sites/advertising/useAdvertisingUrl';
 import { bumpStat, composeAnalytics, recordTracksEvent } from 'calypso/state/analytics/actions';
 import { savePreference } from 'calypso/state/preferences/actions';
 import { getPreference } from 'calypso/state/preferences/selectors';
@@ -29,6 +30,7 @@ import {
 	getSiteFrontPage,
 	getCustomizerUrl,
 	getSiteOption,
+	isGlobalSiteViewEnabled as getIsGlobalSiteViewEnabled,
 	isNewSite,
 	getSitePlanSlug,
 	getSite,
@@ -87,6 +89,7 @@ export const QuickLinks = ( {
 	const hasBackups = getAllFeaturesForPlan( currentSitePlanSlug ).includes( 'backups' );
 	const hasBoost = site?.options?.jetpack_connection_active_plugins?.includes( 'jetpack-boost' );
 	const [ isAILogoGeneratorOpen, setIsAILogoGeneratorOpen ] = useState( false );
+	const advertisingUrl = useAdvertisingUrl();
 
 	const addNewDomain = () => {
 		trackAddDomainAction();
@@ -104,6 +107,9 @@ export const QuickLinks = ( {
 		) : null;
 
 	const usesWpAdminInterface = adminInterface === 'wp-admin';
+	const isGlobalSiteViewEnabled = useSelector( ( state ) =>
+		getIsGlobalSiteViewEnabled( state, siteId )
+	);
 
 	const quickLinks = (
 		<div className="quick-links__boxes">
@@ -127,7 +133,7 @@ export const QuickLinks = ( {
 			/>
 			{ isPromotePostActive && ! isWpcomStagingSite && (
 				<ActionBox
-					href={ `/advertising/${ siteSlug }` }
+					href={ advertisingUrl }
 					hideLinkIndicator
 					onClick={ trackPromotePostAction }
 					label={ translate( 'Promote with Blaze' ) }
@@ -277,7 +283,7 @@ export const QuickLinks = ( {
 			{ isAtomic && hasBackups && (
 				<ActionBox
 					href={
-						config.isEnabled( 'layout/dotcom-nav-redesign' ) && usesWpAdminInterface
+						isGlobalSiteViewEnabled
 							? `https://jetpack.com/redirect/?source=calypso-backups&site=${ siteSlug }`
 							: `/backup/${ siteSlug }`
 					}
