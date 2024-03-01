@@ -3,7 +3,12 @@ import { chevronLeft, key } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { useMemo } from 'react';
 import Sidebar from '../sidebar';
-import { A4A_OVERVIEW_LINK, A4A_PURCHASES_LINK, A4A_LICENSES_LINK } from './lib/constants';
+import {
+	A4A_OVERVIEW_LINK,
+	A4A_PURCHASES_LINK,
+	A4A_LICENSES_LINK,
+	A4A_BILLING_LINK,
+} from './lib/constants';
 import { createItem } from './lib/utils';
 
 type Props = {
@@ -23,6 +28,18 @@ export default function ( { path }: Props ) {
 					title: translate( 'Licenses' ),
 					trackEventProps: {
 						menu_item: 'Automattic for Agencies / Purchases / Licenses',
+					},
+				},
+				path
+			),
+			createItem(
+				{
+					icon: key,
+					path: A4A_PURCHASES_LINK,
+					link: A4A_BILLING_LINK,
+					title: translate( 'Billing' ),
+					trackEventProps: {
+						menu_item: 'Automattic for Agencies / Purchases / Billing',
 					},
 				},
 				path
