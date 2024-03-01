@@ -16,7 +16,7 @@ import 'calypso/state/stats/init';
  * @returns {Object}  Action object
  */
 
-export function requestMetrics( siteId: number, utmParam: string, postId: number | undefined ) {
+export function requestMetrics( siteId: number, utmParam: string, postId?: number ) {
 	return {
 		type: STATS_UTM_METRICS_REQUEST,
 		siteId,

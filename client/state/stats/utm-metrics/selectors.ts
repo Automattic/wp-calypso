@@ -10,13 +10,9 @@ const EMPTY_RESULT = [] as Array< UTMMetricItem >;
  * @param   {number}  siteId   Site ID
  * @returns {Object}           Highlights object; see schema.
  */
-export function getMetrics( state: object, siteId: number, postId: number | undefined ) {
+export function getMetrics( state: object, siteId: number, postId?: number ) {
 	const metrics = postId
-		? get(
-				state,
-				[ 'stats', 'utmMetrics', 'data', siteId, 'metricsByPost', postId || 0 ],
-				EMPTY_RESULT
-		  )
+		? get( state, [ 'stats', 'utmMetrics', 'data', siteId, 'metricsByPost', postId ], EMPTY_RESULT )
 		: get( state, [ 'stats', 'utmMetrics', 'data', siteId, 'metrics' ], EMPTY_RESULT );
 
 	return metrics;
