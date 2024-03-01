@@ -8,6 +8,7 @@ import LayoutHeader, {
 } from 'calypso/a8c-for-agencies/components/layout/header';
 import LayoutTop from 'calypso/a8c-for-agencies/components/layout/top';
 import MobileSidebarNavigation from 'calypso/a8c-for-agencies/components/sidebar/mobile-sidebar-navigation';
+import { A4A_MARKETPLACE_LINK } from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import LicenseList from '../license-list';
 import LicenseSearch from '../license-search';
@@ -66,8 +67,8 @@ export default function LicensesOverview( {
 			sidebarNavigation={ <MobileSidebarNavigation /> }
 		>
 			<PageViewTracker
-				title="Partner Portal > Licenses"
-				path="/partner-portal/licenses/:filter"
+				title="Purchases > Licenses"
+				path="/purchases/licenses/:filter"
 				properties={ { filter } }
 			/>
 			{ /*  TODO: <FETCH_LICENSES_HERE /> */ }
@@ -79,7 +80,7 @@ export default function LicensesOverview( {
 							{ /* TODO: <SHOW_PARTNER_KEY_SELECTION_HERE /> */ }
 							<Button
 								disabled={ ! partnerCanIssueLicense }
-								href={ partnerCanIssueLicense ? '/marketplace' : undefined }
+								href={ partnerCanIssueLicense ? A4A_MARKETPLACE_LINK : undefined }
 								onClick={ onIssueNewLicenseClick }
 								primary
 								style={ { marginLeft: 'auto' } }
