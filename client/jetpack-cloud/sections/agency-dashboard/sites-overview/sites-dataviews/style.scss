@@ -107,3 +107,11 @@
 .dataviews-pagination {
 	margin-bottom: 2rem;
 }
+
+
+.dataviews-wrapper {
+	.dataviews-no-results,
+	.dataviews-loading {
+		padding-left: 16px;
+	}
+}
