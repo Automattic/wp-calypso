@@ -1,6 +1,6 @@
 import { Button } from '@wordpress/components';
 import './style.scss';
-import { type ReactNode } from 'react';
+import { ReactElement, type ReactNode } from 'react';
 
 interface StandAloneComparisonGridColumn {
 	title: string;
@@ -10,13 +10,11 @@ interface StandAloneComparisonGridColumn {
 	action: () => void;
 }
 
-export interface StandAloneComparisonGridProps {
-	children:
-		| ReactElement< typeof StandAloneComparisonGridColumn >
-		| React.ReactElement< typeof StandAloneComparisonGridColumn >[];
+interface Props {
+	children: ReactElement< typeof Column > | ReactElement< typeof Column >[];
 }
 
-const StandAloneComparisonGridColumn = ( {
+export const Column = ( {
 	title,
 	introCopy,
 	action,
@@ -41,10 +39,6 @@ const StandAloneComparisonGridColumn = ( {
 	);
 };
 
-export { StandAloneComparisonGridColumn };
-
-const StandAloneComparisonGrid: React.FC< StandAloneComparisonGridProps > = ( { children } ) => {
+export const StandAloneComparisonGrid: React.FC< Props > = ( { children } ) => {
 	return <div className="standalone-comparison-grid">{ children }</div>;
 };
-
-export default StandAloneComparisonGrid;

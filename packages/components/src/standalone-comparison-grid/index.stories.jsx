@@ -1,4 +1,4 @@
-import StandaloneComparisonGrid, { StandAloneComparisonGridColumn } from '.';
+import { StandAloneComparisonGrid, Column } from '.';
 import './stories.scss';
 
 export default { title: 'packages/components/StandaloneComparisonGrid' };
@@ -38,12 +38,10 @@ const columns = [
 ];
 
 const GridVariations = () => (
-	<>
-		<StandaloneComparisonGrid>
-			<StandAloneComparisonGridColumn { ...columns[ 0 ] } />
-			<StandAloneComparisonGridColumn { ...columns[ 1 ] } />
-		</StandaloneComparisonGrid>
-	</>
+	<StandAloneComparisonGrid>
+		<Column { ...columns[ 0 ] } />
+		<Column { ...columns[ 1 ] } />
+	</StandAloneComparisonGrid>
 );
 
 export const Normal = () => <GridVariations />;

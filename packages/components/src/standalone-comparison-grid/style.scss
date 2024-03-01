@@ -9,13 +9,13 @@
 	gap: 20px;
 	padding: 20px;
 
-	.&__column {
+	.standalone-comparison-grid__column {
 		display: flex;
 		flex-direction: column;
 		gap: 10px;
 	}
 
-	.&_body {
+	.standalone-comparison-grid__body {
 		font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
 		border-collapse: collapse;
 		font-size: 0.875rem;
