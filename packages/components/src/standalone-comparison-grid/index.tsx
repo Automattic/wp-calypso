@@ -12,7 +12,7 @@ interface StandAloneComparisonGridColumn {
 
 export interface StandAloneComparisonGridProps {
 	children:
-		| React.ReactElement< typeof StandAloneComparisonGridColumn >
+		| ReactElement< typeof StandAloneComparisonGridColumn >
 		| React.ReactElement< typeof StandAloneComparisonGridColumn >[];
 }
 
