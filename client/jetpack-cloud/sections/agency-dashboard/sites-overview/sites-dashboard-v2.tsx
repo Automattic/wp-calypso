@@ -11,6 +11,7 @@ import SidebarNavigation from 'calypso/components/sidebar-navigation';
 import useFetchDashboardSites from 'calypso/data/agency-dashboard/use-fetch-dashboard-sites';
 import useFetchMonitorVerfiedContacts from 'calypso/data/agency-dashboard/use-fetch-monitor-verified-contacts';
 import { AgencyDashboardFilterMap } from 'calypso/jetpack-cloud/sections/agency-dashboard/sites-overview/types';
+import { sitesPath, sitesFavoritesPath } from 'calypso/lib/jetpack/paths';
 import { useDispatch, useSelector } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import {
@@ -132,7 +133,7 @@ export default function SitesDashboardV2() {
 
 	// Set or clear filter depending on sites submenu path selected
 	useEffect( () => {
-		if ( path === '/sites' || path === '/sites/favorites' ) {
+		if ( path === sitesPath() || path === sitesFavoritesPath() ) {
 			setSitesViewState( { ...sitesViewState, filters: [], search: '', page: 1 } );
 		}
 		if ( path === '/sites?issue_types=all_issues' ) {
