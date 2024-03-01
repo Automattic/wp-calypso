@@ -32,10 +32,18 @@ export const updateDashboardURLQueryArgs = ( {
 	filter,
 	sort,
 	search,
+	activePage,
+	perPage,
+	selectedSiteUrl,
+	selectedPreviewTab,
 }: {
 	filter?: AgencyDashboardFilterOption[];
 	sort?: DashboardSortInterface;
 	search?: string;
+	activePage?: number;
+	perPage?: number;
+	selectedSiteUrl?: string;
+	selectedPreviewTab?: number;
 } ) => {
 	const params = new URLSearchParams( window.location.search );
 
@@ -45,7 +53,12 @@ export const updateDashboardURLQueryArgs = ( {
 		: ( params.getAll( 'issue_types' ) as AgencyDashboardFilterOption[] );
 	const sortField = sort ? sort.field : params.get( 'sort_field' );
 	const sortDirection = sort ? sort.direction : params.get( 'sort_direction' );
+	const newActivePage = activePage ?? params.get( 'active_page' );
+	const newPerPage = perPage ?? params.get( 'per_page' );
+	const newSelectedSiteUrl = selectedSiteUrl;
+	const newSelectedPreviewTab = selectedPreviewTab;
 
+	// We omit pagination and tab information from the URL when we're on the first page or the first tab to streamline the URL.
 	page.replace(
 		addQueryArgs(
 			{
@@ -53,6 +66,12 @@ export const updateDashboardURLQueryArgs = ( {
 				...filterStateToQuery( filterOptions ),
 				...( sortField && { sort_field: sortField } ),
 				...( sortDirection && { sort_direction: sortDirection } ),
+				...( newActivePage && newActivePage !== 1 && { active_page: newActivePage } ),
+				...( newPerPage && newActivePage !== 1 && { per_page: newPerPage } ),
+				...( newSelectedSiteUrl && { selected_site_url: newSelectedSiteUrl } ),
+				...( newSelectedSiteUrl &&
+					newSelectedPreviewTab &&
+					newSelectedPreviewTab !== 1 && { selected_site_preview_tab: newSelectedPreviewTab } ),
 			},
 			window.location.pathname
 		)

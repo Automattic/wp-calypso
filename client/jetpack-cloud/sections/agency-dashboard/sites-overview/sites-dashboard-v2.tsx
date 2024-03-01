@@ -40,6 +40,7 @@ import SiteNotifications from './site-notifications';
 import SiteTopHeaderButtons from './site-top-header-buttons';
 import SitesDataViews from './sites-dataviews';
 import { SitesViewState } from './sites-dataviews/interfaces';
+import { Site } from './types';
 
 import './style.scss';
 import './style-dashboard-v2.scss';
@@ -107,16 +108,23 @@ export default function SitesDashboardV2() {
 
 	const onSitesViewChange = useCallback(
 		( sitesViewData: SitesViewState ) => {
+			const urlParams = new URLSearchParams( window.location.search );
+			const selectedSiteUrlParam = urlParams.get( 'selected_site_url' );
+			if ( selectedSiteUrlParam && ! sitesViewData.selectedSite ) {
+				sitesViewData.selectedSite =
+					data?.sites.find( ( item: Site ) => item.url === selectedSiteUrlParam ) ?? undefined;
+			}
+
 			setSitesViewState( sitesViewData );
 		},
-		[ setSitesViewState ]
+		[ setSitesViewState, data?.sites ]
 	);
 
-	// Filter selection
 	useEffect( () => {
 		if ( isLoading || isError || window.location.pathname !== sitesPath() ) {
 			return;
 		}
+
 		const filtersSelected =
 			sitesViewState.filters?.map( ( filter ) => {
 				const filterType =
@@ -126,16 +134,15 @@ export default function SitesDashboardV2() {
 				return filterType;
 			} ) || [];
 
-		updateDashboardURLQueryArgs( { filter: filtersSelected || [] } );
-	}, [ isLoading, isError, sitesViewState.filters ] ); // filtersMap omitted as dependency due to rendering loop and continuous console errors, even if wrapped in useMemo.
-
-	// Search query
-	useEffect( () => {
-		if ( isLoading || isError || window.location.pathname !== sitesPath() ) {
-			return;
-		}
-		updateDashboardURLQueryArgs( { search: sitesViewState.search } );
-	}, [ isLoading, isError, sitesViewState.search ] );
+		updateDashboardURLQueryArgs( {
+			activePage: sitesViewState.page || 1,
+			perPage: sitesViewState.page || 1,
+			selectedSiteUrl: sitesViewState.selectedSite?.url,
+			selectedPreviewTab: 1,
+			filter: filtersSelected || [],
+			search: sitesViewState.search,
+		} );
+	}, [ isError, isLoading, sitesViewState ] );
 
 	// Set or clear filter depending on sites submenu path selected
 	useEffect( () => {
