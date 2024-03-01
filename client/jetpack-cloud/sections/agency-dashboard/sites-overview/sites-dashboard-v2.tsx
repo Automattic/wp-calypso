@@ -123,12 +123,12 @@ export default function SitesDashboardV2() {
 				return filterType;
 			} ) || [];
 
-		updateDashboardURLQueryArgs( { filter: filtersSelected || [] } );
+		updateDashboardURLQueryArgs( { filter: filtersSelected || [], isSitesDashboard: true } );
 	}, [ sitesViewState.filters ] ); // filtersMap omitted as dependency due to rendering loop and continuous console errors, even if wrapped in useMemo.
 
 	// Search query
 	useEffect( () => {
-		updateDashboardURLQueryArgs( { search: sitesViewState.search } );
+		updateDashboardURLQueryArgs( { search: sitesViewState.search, isSitesDashboard: true } );
 	}, [ sitesViewState.search ] );
 
 	// Set or clear filter depending on sites submenu path selected
