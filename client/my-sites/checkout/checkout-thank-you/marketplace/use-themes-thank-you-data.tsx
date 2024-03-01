@@ -1,4 +1,3 @@
-import { isEnabled } from '@automattic/calypso-config';
 import page from '@automattic/calypso-router';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect, useMemo } from 'react';
@@ -57,9 +56,7 @@ export function useThemesThankYouData(
 
 	const siteAdminUrl = useSelector( ( state ) => getSiteAdminUrl( state, siteId ) );
 	const themeUrl =
-		adminInterface === 'wp-admin' && isEnabled( 'layout/dotcom-nav-redesign' )
-			? `${ siteAdminUrl }themes.php`
-			: `/themes/${ siteSlug }`;
+		adminInterface === 'wp-admin' ? `${ siteAdminUrl }themes.php` : `/themes/${ siteSlug }`;
 
 	useQueryThemes( 'wpcom', themeSlugs );
 	useQueryThemes( 'wporg', themeSlugs );
