@@ -14,12 +14,3 @@
 .pattern-category {
 	white-space: nowrap;
 }
-
-.patterns {
-	display: grid;
-	padding: 24px 0;
-}
-.patterns_grid {
-	gap: 24px;
-	grid-template-columns: repeat(3, 1fr);
-}

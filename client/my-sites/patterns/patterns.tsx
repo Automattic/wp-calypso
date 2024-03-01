@@ -1,31 +1,25 @@
-import { BlockRendererProvider, PatternsRendererProvider } from '@automattic/block-renderer';
 import { useLocale } from '@automattic/i18n-utils';
-import classNames from 'classnames';
 import DocumentHead from 'calypso/components/data/document-head';
 import Main from 'calypso/components/main';
 import { LocalizedLink } from 'calypso/my-sites/patterns/components/localized-link';
-import { PatternPreview } from 'calypso/my-sites/patterns/components/pattern-preview';
-import { PatternPreviewPlaceholder } from 'calypso/my-sites/patterns/components/pattern-preview-placeholder';
 import { RENDERER_SITE_ID } from 'calypso/my-sites/patterns/controller';
 import { usePatternCategories } from 'calypso/my-sites/patterns/hooks/use-pattern-categories';
 import { usePatterns } from 'calypso/my-sites/patterns/hooks/use-patterns';
+import type { PatternGalleryFC } from 'calypso/my-sites/patterns/types';
 
 import './style.scss';
 
 type Props = {
 	category: string;
 	isGridView?: boolean;
+	patternGallery: PatternGalleryFC;
 };
 
-export default function Patterns( { category, isGridView }: Props ) {
+export function Patterns( { category, isGridView, patternGallery: PatternGallery }: Props ) {
 	const locale = useLocale();
 
 	const { data: categories } = usePatternCategories( locale, RENDERER_SITE_ID );
 	const { data: patterns } = usePatterns( locale, category );
-
-	const patternIdsByCategory = {
-		intro: patterns?.map( ( { ID } ) => `${ ID }` ) ?? [],
-	};
 
 	return (
 		<Main isLoggedOut fullWidthLayout>
@@ -42,28 +36,7 @@ export default function Patterns( { category, isGridView }: Props ) {
 				) ) }
 			</ul>
 
-			<BlockRendererProvider
-				siteId={ RENDERER_SITE_ID }
-				placeholder={
-					<div className="patterns">
-						{ patterns?.map( ( pattern ) => (
-							<PatternPreviewPlaceholder key={ pattern.ID } pattern={ pattern } />
-						) ) }
-					</div>
-				}
-			>
-				<PatternsRendererProvider
-					patternIdsByCategory={ patternIdsByCategory }
-					shouldShufflePosts={ false }
-					siteId={ RENDERER_SITE_ID }
-				>
-					<div className={ classNames( 'patterns', { patterns_grid: isGridView } ) }>
-						{ patterns?.map( ( pattern ) => (
-							<PatternPreview isGridView={ isGridView } key={ pattern.ID } pattern={ pattern } />
-						) ) }
-					</div>
-				</PatternsRendererProvider>
-			</BlockRendererProvider>
+			<PatternGallery patterns={ patterns } isGridView={ isGridView } />
 		</Main>
 	);
 }
