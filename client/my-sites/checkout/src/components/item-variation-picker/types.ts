@@ -37,8 +37,10 @@ export type OnChangeItemVariant = (
 
 export type CurrentOptionProps = {
 	open: boolean;
+	shouldUseCheckoutV2: boolean;
 };
 
 export type OptionProps = {
 	selected: boolean;
+	shouldUseCheckoutV2: boolean;
 };

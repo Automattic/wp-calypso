@@ -98,9 +98,7 @@ class ThemeShowcase extends Component {
 	}
 
 	static propTypes = {
-		tier: config.isEnabled( 'themes/tiers' )
-			? PropTypes.oneOf( [ '', ...Object.keys( THEME_TIERS ) ] )
-			: PropTypes.oneOf( [ '', 'free', 'premium', 'marketplace' ] ),
+		tier: PropTypes.oneOf( [ '', ...Object.keys( THEME_TIERS ) ] ),
 		search: PropTypes.string,
 		isCollectionView: PropTypes.bool,
 		pathName: PropTypes.string,
@@ -198,42 +196,22 @@ class ThemeShowcase extends Component {
 	};
 
 	getTiers = () => {
-		const { isSiteWooExpressOrEcomFreeTrial, themeTiers } = this.props;
+		const { themeTiers } = this.props;
 
-		if ( config.isEnabled( 'themes/tiers' ) ) {
-			const tiers = Object.keys( themeTiers ).reduce( ( availableTiers, tier ) => {
-				if ( ! THEME_TIERS[ tier ]?.isFilterable ) {
-					return availableTiers;
-				}
-				return [
-					...availableTiers,
-					{
-						value: tier,
-						label: THEME_TIERS[ tier ].label,
-					},
-				];
-			}, [] );
+		const tiers = Object.keys( themeTiers ).reduce( ( availableTiers, tier ) => {
+			if ( ! THEME_TIERS[ tier ]?.isFilterable ) {
+				return availableTiers;
+			}
+			return [
+				...availableTiers,
+				{
+					value: tier,
+					label: THEME_TIERS[ tier ].label,
+				},
+			];
+		}, [] );
 
-			return [ { value: 'all', label: translate( 'All' ) }, ...tiers ];
-		}
-
-		const tiers = [
-			{ value: 'all', label: this.props.translate( 'All' ) },
-			{ value: 'free', label: this.props.translate( 'Free' ) },
-		];
-
-		if ( ! isSiteWooExpressOrEcomFreeTrial ) {
-			tiers.push( { value: 'premium', label: this.props.translate( 'Premium' ) } );
-		}
-
-		tiers.push( {
-			value: 'marketplace',
-			label: this.props.translate( 'Partner', {
-				context: 'This theme is developed and supported by a theme partner',
-			} ),
-		} );
-
-		return tiers;
+		return [ { value: 'all', label: translate( 'All' ) }, ...tiers ];
 	};
 
 	findTabFilter = ( tabFilters, filterKey ) =>
@@ -422,9 +400,7 @@ class ThemeShowcase extends Component {
 			...( isCollectionView && tier && ! filter && { tabFilter: '' } ),
 		};
 
-		const themeCollection = config.isEnabled( 'themes/tiers' )
-			? THEME_COLLECTIONS.partner
-			: THEME_COLLECTIONS.marketplace;
+		const themeCollection = THEME_COLLECTIONS.partner;
 
 		return (
 			<div className="theme-showcase__all-themes">

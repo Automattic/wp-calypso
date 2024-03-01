@@ -1,7 +1,7 @@
 import { translate } from 'i18n-calypso';
 import type { Member } from '@automattic/data-stores';
 
-export const renderNameOrEmail = ( user: Member ) => {
+export const getNameOrEmail = ( user: Member ) => {
 	let name;
 
 	if ( user.linked_user_ID ) {

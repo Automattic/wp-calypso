@@ -1,5 +1,4 @@
 import { Button, SelectDropdown } from '@automattic/components';
-import { external, Icon } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
 import {
 	GitHubInstallationData,
@@ -45,10 +44,9 @@ export const GitHubInstallationsDropdown = ( {
 				<SelectDropdown.Item
 					onClick={ onAddInstallation }
 					key="add"
-					secondaryIcon={ <Icon icon={ external } /> }
 					className="github-deployments-installations-select__add-installation"
 				>
-					{ __( 'Add GitHub installation' ) }
+					{ __( 'Add GitHub account' ) }
 				</SelectDropdown.Item>
 			</SelectDropdown>
 		);
@@ -62,7 +60,7 @@ export const GitHubInstallationsDropdown = ( {
 			onClick={ onAddInstallation }
 			key="add"
 		>
-			{ __( 'Add GitHub installation' ) }
+			{ __( 'Add GitHub account' ) }
 		</Button>
 	);
 };

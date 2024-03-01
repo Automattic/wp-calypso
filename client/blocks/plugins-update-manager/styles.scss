@@ -1,0 +1,105 @@
+@import "@wordpress/base-styles/breakpoints";
+
+.tooltip--selected-plugins {
+	text-align: left;
+}
+
+.plugins-update-manager {
+	@media screen and (max-width: $break-small) {
+		margin: 0 1rem;
+	}
+
+	.ch-placeholder {
+		min-width: 60px;
+		min-height: 2.25rem;
+	}
+
+	.components-text {
+		color: var(--studio-gray-60);
+		font-size: 0.875rem;
+	}
+
+	p.components-text {
+		margin-bottom: 0.5rem;
+	}
+
+	svg.icon-info {
+		fill: var(--studio-gray-60);
+		vertical-align: middle;
+		margin: -2px 4px 0 4px;
+	}
+
+	.plugin-select-stats {
+		float: right;
+		margin-top: 2px;
+		font-size: 0.875rem;
+		font-weight: 500;
+	}
+
+	.empty-state {
+		text-align: center;
+		padding: 0.5rem 0;
+
+		p {
+			margin-bottom: 1.75rem;
+		}
+	}
+
+	table {
+		th,
+		td {
+			font-size: 0.875rem;
+			padding: 1rem 0;
+			color: var(--studio-gray-60);
+			border-bottom: solid 1px var(--studio-gray-0);
+		}
+
+		th {
+			font-weight: 500;
+		}
+
+		td {
+			padding: 0.5rem 0;
+			vertical-align: middle;
+
+			&.name {
+				font-weight: 500;
+				color: var(--studio-gray-100);
+			}
+		}
+	}
+
+	.schedule-list--card {
+		margin-bottom: 1rem;
+		border-bottom: solid 1px var(--studio-gray-5);
+		position: relative;
+	}
+
+	.schedule-list--card-actions {
+		position: absolute;
+		top: 0;
+		right: -10px;
+
+		svg {
+			transform: rotate(90deg);
+		}
+	}
+
+	.schedule-list--card-label {
+		font-size: 0.875rem;
+		margin-bottom: 0.75rem;
+
+		label {
+			display: block;
+			color: var(--studio-gray-40);
+		}
+
+		strong {
+			font-weight: 500;
+		}
+
+		.badge-component {
+			margin-inline-start: 0.5rem;
+		}
+	}
+}

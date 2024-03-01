@@ -3,29 +3,29 @@ import { localizeUrl } from '@automattic/i18n-utils';
 import { NextButton, Title, SubTitle } from '@automattic/onboarding';
 import { Button } from '@wordpress/components';
 import { useEffect, useState } from '@wordpress/element';
-import { sprintf, _n } from '@wordpress/i18n';
 import { useTranslate } from 'i18n-calypso';
+import { useSelector } from 'react-redux';
 import ExternalLink from 'calypso/components/external-link';
 import InfiniteList from 'calypso/components/infinite-list';
 import useExternalContributorsQuery from 'calypso/data/external-contributors/use-external-contributors';
 import useP2GuestsQuery from 'calypso/data/p2/use-p2-guests-query';
 import useUsersQuery from 'calypso/data/users/use-users-query';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
+import { getCurrentUserId } from 'calypso/state/current-user/selectors';
 import ImportedUserItem from './imported-user-item';
 import { getRole } from './utils';
-import type { UsersQuery, Member } from '@automattic/data-stores';
+import type { UsersQuery, Member, SiteDetails } from '@automattic/data-stores';
 
 import './style.scss';
 
 interface Props {
-	site: {
-		ID: number;
-	};
+	site: SiteDetails;
 	onSubmit: () => void;
 }
 
 const ImportUsers = ( { site, onSubmit }: Props ) => {
 	const defaultTeamFetchOptions = { include_viewers: true };
+	const userId = useSelector( getCurrentUserId );
 	const translate = useTranslate();
 	const usersQuery = useUsersQuery( site?.ID, defaultTeamFetchOptions ) as unknown as UsersQuery;
 	const { data: externalContributors } = useExternalContributorsQuery( site?.ID );
@@ -36,7 +36,6 @@ const ImportUsers = ( { site, onSubmit }: Props ) => {
 	const users = usersData?.users?.map( ( user ) => ( { user, checked: true } ) ) || [];
 	const [ usersList, setUsersList ] = useState( users );
 	const [ checkedUsersNumber, setCheckedUsersNumber ] = useState( usersList?.length || 0 );
-	const [ userInviteError, setUserInviteError ] = useState( '' );
 
 	const handleSubmit = async () => {
 		const selectedUsers = usersList
@@ -55,25 +54,13 @@ const ImportUsers = ( { site, onSubmit }: Props ) => {
 			number_of_invites: selectedUsers.length,
 		} );
 
-		const result = await sendInvites( selectedUsers )
-			.then( ( response ) => {
+		try {
+			await sendInvites( selectedUsers ).then( ( response ) => {
 				return response;
-			} )
-			.catch( () => {
-				// Show generic error message (adding this basic idea for now)
-				setUserInviteError( 'generic_error' );
 			} );
+		} catch ( e ) {}
 
-		if ( result && Array.isArray( result ) ) {
-			const hasError = result.some( ( item ) => item.errors.length > 0 );
-			if ( hasError ) {
-				// Show error message (adding this basic idea for now)
-				setUserInviteError( 'found_failure' );
-			}
-
-			// Should we call onSubmit if any errors?
-			onSubmit?.();
-		}
+		onSubmit?.();
 	};
 
 	const getUserRef = ( user: Member ) => {
@@ -112,26 +99,19 @@ const ImportUsers = ( { site, onSubmit }: Props ) => {
 		);
 	};
 
-	const getUserInviteError = () => {
-		switch ( userInviteError ) {
-			case 'generic_error':
-				return translate( 'There was an error inviting users. Please try again.' );
-			case 'found_failure':
-				return translate(
-					'Some users were not invited. Please try again or contact support if the issue persists.'
-				);
-			default:
-				return null;
-		}
-	};
-
 	useEffect( () => {
-		const users = usersData?.users?.map( ( user ) => ( { user, checked: true } ) ) || [];
+		let users = usersData?.users?.map( ( user ) => ( { user, checked: true } ) ) || [];
+		if ( userId && users ) {
+			// Remove the current user from users array
+			users = users.filter( ( userItem ) => {
+				return userItem?.user?.linked_user_ID !== userId;
+			} );
+		}
 		if ( JSON.stringify( users ) !== JSON.stringify( usersList ) ) {
 			setUsersList( users );
 			setCheckedUsersNumber( users?.length || 0 );
 		}
-	}, [ usersData, usersList ] );
+	}, [ userId, usersData, usersList ] );
 
 	return (
 		<div className="import__user-migration">
@@ -160,9 +140,6 @@ const ImportUsers = ( { site, onSubmit }: Props ) => {
 					) }
 				</SubTitle>
 			</div>
-			{ userInviteError ? (
-				<div className="import__user-migration-error-message">{ getUserInviteError() }</div>
-			) : null }
 			<InfiniteList
 				items={ usersList }
 				fetchNextPage={ fetchNextPage }
@@ -171,7 +148,7 @@ const ImportUsers = ( { site, onSubmit }: Props ) => {
 				renderItem={ renderUser }
 				getItemRef={ getUserRef }
 				guessedItemHeight={ 126 }
-				renderLoadingPlaceholders={ () => <div>Loading...</div> }
+				renderLoadingPlaceholders={ () => <div>{ translate( 'Loading' ) }...</div> }
 				className="import__user-migration-list"
 			/>
 			<div className="import__user-migration-footer">
@@ -188,19 +165,16 @@ const ImportUsers = ( { site, onSubmit }: Props ) => {
 				<NextButton
 					type="button"
 					onClick={ handleSubmit }
-					disabled={ isSubmittingInvites || checkedUsersNumber < 1 }
+					isBusy={ isSubmittingInvites }
+					disabled={ checkedUsersNumber < 1 }
 				>
-					{ sprintf(
+					{
 						/* translators: The number of selected users to send WP.com invite */
-						_n(
-							'Invite %(checkedUsersNumber)d user',
-							'Invite %(checkedUsersNumber)d users',
-							checkedUsersNumber
-						),
-						{
-							checkedUsersNumber,
-						}
-					) }
+						translate( 'Invite %(value)d user', 'Invite %(value)d users', {
+							count: checkedUsersNumber,
+							args: { value: checkedUsersNumber },
+						} )
+					}
 				</NextButton>
 			</div>
 			<div className="import__user-migration-button-container">

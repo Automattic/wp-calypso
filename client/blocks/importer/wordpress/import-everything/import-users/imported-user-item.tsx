@@ -3,10 +3,10 @@ import { CheckboxControl } from '@wordpress/components';
 import { useState } from '@wordpress/element';
 import classNames from 'classnames';
 import { translate } from 'i18n-calypso';
-import { getRole, getRoleBadgeText, renderNameOrEmail } from './utils';
+import { getRole, getRoleBadgeText, getNameOrEmail } from './utils';
 import type { Member } from '@automattic/data-stores';
 
-interface UserListItemProps {
+interface ImportedUserItemProps {
 	user: Member;
 	isChecked: boolean;
 	isExternalContributor: boolean;
@@ -14,13 +14,13 @@ interface UserListItemProps {
 	onChangeChecked: ( isChecked: boolean ) => void;
 }
 
-const UserListItem = ( {
+const ImportedUserItem = ( {
 	user,
 	isChecked,
 	isExternalContributor,
 	isP2Guest,
 	onChangeChecked,
-}: UserListItemProps ) => {
+}: ImportedUserItemProps ) => {
 	const [ isCheckedState, setIsCheckedState ] = useState( isChecked );
 
 	if ( ! user ) {
@@ -37,10 +37,6 @@ const UserListItem = ( {
 		let superAdminBadge;
 		let roleBadge;
 		let p2GuestBadge;
-
-		if ( ! user ) {
-			return null;
-		}
 
 		if ( user && user.is_super_admin ) {
 			superAdminBadge = (
@@ -93,12 +89,12 @@ const UserListItem = ( {
 		<CompactCard className="imported-user-item">
 			<CheckboxControl checked={ isCheckedState } onChange={ handleOnCheckChange } />
 			<div className="imported-user-item__user-info">
-				<div className="imported-user-item__display-name">{ renderNameOrEmail( user ) }</div>
+				<div className="imported-user-item__display-name">{ getNameOrEmail( user ) }</div>
 				<div className="imported-user-item__email">{ user.email }</div>
 			</div>
-			{ renderRole( user ) }
+			{ user && renderRole( user ) }
 		</CompactCard>
 	);
 };
 
-export default UserListItem;
+export default ImportedUserItem;

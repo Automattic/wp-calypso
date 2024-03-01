@@ -11,6 +11,7 @@ import SidebarNavigation from 'calypso/components/sidebar-navigation';
 import useFetchDashboardSites from 'calypso/data/agency-dashboard/use-fetch-dashboard-sites';
 import useFetchMonitorVerfiedContacts from 'calypso/data/agency-dashboard/use-fetch-monitor-verified-contacts';
 import { AgencyDashboardFilterMap } from 'calypso/jetpack-cloud/sections/agency-dashboard/sites-overview/types';
+import { sitesPath } from 'calypso/lib/jetpack/paths';
 import { useDispatch, useSelector } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import {
@@ -34,14 +35,14 @@ import useQueryProvisioningBlogIds from './hooks/use-query-provisioning-blog-ids
 import { DASHBOARD_PRODUCT_SLUGS_BY_TYPE } from './lib/constants';
 import SiteAddLicenseNotification from './site-add-license-notification';
 import SiteContentHeader from './site-content-header';
+import { JetpackPreviewPane } from './site-feature-previews/jetpack-preview-pane';
 import SiteNotifications from './site-notifications';
-import SitePreviewPane from './site-preview-pane';
 import SiteTopHeaderButtons from './site-top-header-buttons';
 import SitesDataViews from './sites-dataviews';
 import { SitesViewState } from './sites-dataviews/interfaces';
 
 import './style.scss';
-import './sites-dashboard-v2.scss';
+import './style-dashboard-v2.scss';
 
 const QUERY_PARAM_PROVISIONING = 'provisioning';
 
@@ -71,7 +72,7 @@ export default function SitesDashboardV2() {
 		{ filterType: 'plugin_updates', ref: 7 },
 	];
 
-	const { search, currentPage, filter, sort } = useContext( SitesOverviewContext );
+	const { path, search, currentPage, filter, sort } = useContext( SitesOverviewContext );
 
 	const [ sitesViewState, setSitesViewState ] = useState< SitesViewState >( {
 		type: 'table',
@@ -112,6 +113,9 @@ export default function SitesDashboardV2() {
 
 	// Filter selection
 	useEffect( () => {
+		if ( isLoading || isError || window.location.pathname !== sitesPath() ) {
+			return;
+		}
 		const filtersSelected =
 			sitesViewState.filters?.map( ( filter ) => {
 				const filterType =
@@ -122,12 +126,29 @@ export default function SitesDashboardV2() {
 			} ) || [];
 
 		updateDashboardURLQueryArgs( { filter: filtersSelected || [] } );
-	}, [ sitesViewState.filters ] );
+	}, [ isLoading, isError, sitesViewState.filters ] );
 
 	// Search query
 	useEffect( () => {
+		if ( isLoading || isError || window.location.pathname !== sitesPath() ) {
+			return;
+		}
 		updateDashboardURLQueryArgs( { search: sitesViewState.search } );
-	}, [ sitesViewState.search ] );
+	}, [ isLoading, isError, sitesViewState.search ] );
+
+	// Set or clear filter depending on sites submenu path selected
+	useEffect( () => {
+		if ( path === '/sites' || path === '/sites/favorites' ) {
+			setSitesViewState( { ...sitesViewState, filters: [], search: '' } );
+		}
+		if ( path === '/sites?issue_types=all_issues' ) {
+			setSitesViewState( {
+				...sitesViewState,
+				filters: [ { field: 'status', operator: 'in', value: 1 } ],
+				search: '',
+			} );
+		}
+	}, [ path ] );
 
 	useEffect( () => {
 		if ( jetpackSiteDisconnected ) {
@@ -332,6 +353,7 @@ export default function SitesDashboardV2() {
 							<SitesDataViews
 								data={ data }
 								isLoading={ isLoading }
+								isLargeScreen={ isLargeScreen || false }
 								onSitesViewChange={ onSitesViewChange }
 								sitesViewState={ sitesViewState }
 							/>
@@ -345,9 +367,11 @@ export default function SitesDashboardV2() {
 				) }
 			</div>
 			{ sitesViewState.selectedSite && (
-				<SitePreviewPane
-					selectedSite={ sitesViewState.selectedSite }
+				<JetpackPreviewPane
+					site={ sitesViewState.selectedSite }
 					closeSitePreviewPane={ closeSitePreviewPane }
+					isSmallScreen={ ! isLargeScreen }
+					hasError={ isError }
 				/>
 			) }
 		</div>

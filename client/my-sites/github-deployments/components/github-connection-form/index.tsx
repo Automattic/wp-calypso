@@ -1,13 +1,16 @@
-import { Button, FormLabel, SelectDropdown } from '@automattic/components';
+import { Button, FormLabel, Spinner } from '@automattic/components';
 import { ExternalLink, FormToggle } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { ChangeEvent, useMemo, useState } from 'react';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
+import FormSelect from 'calypso/components/forms/form-select';
+import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
 import FormTextInput from 'calypso/components/forms/form-text-input';
 import { GitHubInstallationData } from 'calypso/my-sites/github-deployments/use-github-installations-query';
 import { useGithubRepositoryBranchesQuery } from 'calypso/my-sites/github-deployments/use-github-repository-branches-query';
 import { GitHubRepositoryData } from '../../use-github-repositories-query';
-import { DeploymentStyle } from '../repositories/deployment-style/deployment-style';
+import { DeploymentStyle } from '../deployment-style';
+import { useCheckWorkflowQuery } from '../deployment-style/use-check-workflow-query';
 
 import './style.scss';
 
@@ -64,16 +67,30 @@ export const GitHubConnectionForm = ( {
 
 	const branchOptions = useMemo( () => {
 		if ( ! branches?.length ) {
-			return [ initialValues.branch ];
+			return [ branch ];
 		}
 
-		return [
-			repository.default_branch,
-			...branches.filter( ( branch ) => branch !== repository.default_branch ),
-		];
-	}, [ branches, initialValues.branch, repository.default_branch ] );
+		return [ branch, ...branches.filter( ( remoteBranch ) => remoteBranch !== branch ) ];
+	}, [ branches, branch ] );
 	const [ isPending, setIsPending ] = useState( false );
-	const [ submitDisabled, setSubmitDisabled ] = useState( false );
+
+	const {
+		data: workflowCheckResult,
+		isFetching: isCheckingWorkflow,
+		refetch: checkWorkflow,
+	} = useCheckWorkflowQuery(
+		{
+			repository,
+			branchName: branch,
+			workflowFilename: workflowPath,
+		},
+		{
+			enabled: !! workflowPath,
+			refetchOnWindowFocus: false,
+		}
+	);
+
+	const submitDisabled = !! workflowPath && workflowCheckResult?.conclusion !== 'success';
 
 	return (
 		<form
@@ -90,7 +107,7 @@ export const GitHubConnectionForm = ( {
 						targetDir: destPath,
 						installationId: installation.external_id,
 						isAutomated: isAutoDeploy,
-						workflowPath: workflowPath,
+						workflowPath: workflowPath ?? undefined,
 					} );
 				} finally {
 					setIsPending( false );
@@ -112,42 +129,46 @@ export const GitHubConnectionForm = ( {
 					</div>
 				</FormFieldset>
 				<FormFieldset>
-					<FormLabel>{ __( 'Deployment branch' ) }</FormLabel>
-					<SelectDropdown
-						className="github-deployments-branch-select"
-						selectedText={ branch }
-						isLoading={ isFetchingBranches }
-					>
-						{ branchOptions.map( ( branchOption ) => (
-							<SelectDropdown.Item
-								key={ branchOption }
-								selected={ branch === branchOption }
-								onClick={ () => setBranch( branchOption ) }
-							>
-								{ branchOption }
-							</SelectDropdown.Item>
-						) ) }
-					</SelectDropdown>
+					<FormLabel htmlFor="branch">{ __( 'Deployment branch' ) }</FormLabel>
+					<div className="github-deployments-connect-repository__branch-select">
+						<FormSelect
+							id="branch"
+							disabled={ isFetchingBranches }
+							onChange={ ( event: ChangeEvent< HTMLSelectElement > ) =>
+								setBranch( event.target.value )
+							}
+							value={ branch }
+						>
+							{ branchOptions.map( ( branchOption ) => (
+								<option key={ branchOption } value={ branchOption }>
+									{ branchOption }
+								</option>
+							) ) }
+						</FormSelect>
+						{ isFetchingBranches && <Spinner /> }
+					</div>
 				</FormFieldset>
 				<FormFieldset>
-					<FormLabel>{ __( 'Destination directory' ) }</FormLabel>
+					<FormLabel htmlFor="target">{ __( 'Destination directory' ) }</FormLabel>
 					<FormTextInput
-						className="github-deployments-connect-repository__destination-directory-input"
+						id="target"
 						value={ destPath }
-						onChange={ ( event: ChangeEvent< HTMLInputElement > ) =>
-							setDestPath( event.currentTarget.value )
-						}
+						onChange={ ( event: ChangeEvent< HTMLInputElement > ) => {
+							let targetDir = event.currentTarget.value.trim();
+							targetDir = targetDir.startsWith( '/' ) ? targetDir : `/${ targetDir }`;
+
+							setDestPath( targetDir );
+						} }
 					/>
-					<span className="github-deployments-connect-repository__default-path-hint">
-						{ __(
-							"If this field is empty, we'll place the files in the root directory of your site"
-						) }
-					</span>
+					<FormSettingExplanation>
+						{ __( 'This path is relative to the server root' ) }
+					</FormSettingExplanation>
 				</FormFieldset>
 				<FormFieldset className="github-deployments-connect-repository__automatic-deploys">
-					<FormLabel>{ __( 'Automatic deploys' ) }</FormLabel>
+					<FormLabel htmlFor="is-automated">{ __( 'Automatic deploys' ) }</FormLabel>
 					<div className="github-deployments-connect-repository__automatic-deploys-switch">
 						<FormToggle
+							id="is-automated"
 							checked={ isAutoDeploy }
 							onChange={ () => setIsAutoDeploy( ! isAutoDeploy ) }
 						/>
@@ -158,24 +179,16 @@ export const GitHubConnectionForm = ( {
 					{ ctaLabel }
 				</Button>
 			</div>
-			<div className="github-deployments-connect-repository__deployment-style">
-				<FormFieldset>
-					<DeploymentStyle
-						branchName={ branch }
-						installationId={ installation.external_id }
-						repository={ repository }
-						workflowPath={ workflowPath }
-						onChooseWorkflow={ ( filePath ) => setWorkflowPath( filePath ) }
-						onValidationChange={ ( status ) => {
-							if ( status === 'success' ) {
-								setSubmitDisabled( false );
-							} else {
-								setSubmitDisabled( true );
-							}
-						} }
-					/>
-				</FormFieldset>
-			</div>
+			<DeploymentStyle
+				isDisabled={ isFetchingBranches }
+				branchName={ branch }
+				repository={ repository }
+				workflowPath={ workflowPath }
+				onChooseWorkflow={ ( filePath ) => setWorkflowPath( filePath ) }
+				workflowCheckResult={ workflowCheckResult }
+				isCheckingWorkflow={ isCheckingWorkflow }
+				onWorkflowVerify={ checkWorkflow }
+			/>
 		</form>
 	);
 };

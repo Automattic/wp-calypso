@@ -1,9 +1,11 @@
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
+import { useEffect, useState } from 'react';
 import { useSelector } from 'calypso/state';
 import { getSiteSlug } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
-// import { shouldGateStats } from '../hooks/use-should-gate-stats';
+import useIsAdvancedFeatureEnabled from '../hooks/use-is-advanced-feature-enabled';
+import StatsCardUpsellJetpack from '../stats-card-upsell/stats-card-upsell-jetpack';
 import ErrorPanel from '../stats-error';
 import StatsListCard from '../stats-list/stats-list-card';
 import StatsModulePlaceholder from './placeholder';
@@ -25,8 +27,10 @@ const StatsModuleDataQuery = ( {
 } ) => {
 	const siteId = useSelector( getSelectedSiteId );
 	const siteSlug = useSelector( ( state ) => getSiteSlug( state, siteId ) );
-	// const gateStats = useSelector( ( state ) => shouldGateStats( state, siteId, statType ) );
 	const translate = useTranslate();
+	const { isLoading: isLoadingFeatureCheck, isAdvancedFeatureEnabled } =
+		useIsAdvancedFeatureEnabled( siteId );
+	const [ showLoader, setShowLoader ] = useState( isLoading || isLoadingFeatureCheck );
 
 	// Show error and loading based on the query
 	// const isLoading = false;
@@ -36,6 +40,10 @@ const StatsModuleDataQuery = ( {
 	// const footerClass = classNames( 'stats-module__footer-actions', {
 	// 	'stats-module__footer-actions--summary': summary,
 	// } );
+
+	useEffect( () => {
+		setShowLoader( isLoading || isLoadingFeatureCheck );
+	}, [ isLoadingFeatureCheck, isLoading ] );
 
 	const getHref = () => {
 		// const { summary, period, path, siteSlug } = this.props;
@@ -80,20 +88,19 @@ const StatsModuleDataQuery = ( {
 					: undefined
 			}
 			error={ hasError && <ErrorPanel /> }
-			loader={ isLoading && <StatsModulePlaceholder isLoading={ isLoading } /> }
+			loader={ showLoader && <StatsModulePlaceholder isLoading={ showLoader } /> }
 			// splitHeader={ !! additionalColumns }
 			// mainItemLabel={ mainItemLabel }
-			// overlay={
-			// 	siteId &&
-			// 	statType &&
-			// 	gateStats && (
-			// 		<StatsCardUpsell
-			// 			className="stats-module__upsell"
-			// 			statType={ statType }
-			// 			siteId={ siteId }
-			// 		/>
-			// 	)
-			// }
+			overlay={
+				siteSlug &&
+				! isAdvancedFeatureEnabled && (
+					<StatsCardUpsellJetpack
+						className="stats-module__upsell"
+						siteSlug={ siteSlug }
+						buttonLabel={ translate( 'Upgrade plan' ) }
+					/>
+				)
+			}
 		/>
 	);
 };

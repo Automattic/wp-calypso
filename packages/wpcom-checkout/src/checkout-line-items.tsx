@@ -32,7 +32,6 @@ import styled from '@emotion/styled';
 import { useTranslate } from 'i18n-calypso';
 import { useState, PropsWithChildren, useRef } from 'react';
 import { getLabel, DefaultLineItemSublabel } from './checkout-labels';
-import { hasCheckoutVersion } from './checkout-version-checker';
 import {
 	getIntroductoryOfferIntervalDisplay,
 	getItemIntroductoryOfferDisplay,
@@ -54,14 +53,13 @@ import type {
 	TitanProductUser,
 } from '@automattic/shopping-cart';
 
-const hasCheckoutVersion2 = hasCheckoutVersion( '2' );
-
 export const NonProductLineItem = styled( WPNonProductLineItem )< {
 	theme?: Theme;
 	total?: boolean;
 	tax?: boolean;
 	coupon?: boolean;
 	subtotal?: boolean;
+	shouldUseCheckoutV2?: boolean;
 } >`
 	display: flex;
 	flex-wrap: wrap;
@@ -87,9 +85,11 @@ export const NonProductLineItem = styled( WPNonProductLineItem )< {
 
 export const LineItem = styled( CheckoutLineItem )< {
 	theme?: Theme;
+	shouldUseCheckoutV2?: boolean;
 } >`
-	${ hasCheckoutVersion2
-		? `display: grid;
+	${ ( props ) =>
+		props.shouldUseCheckoutV2
+			? `display: grid;
 	grid-template-columns: 1fr min-content;
 	grid-template-rows: auto;
 	grid-template-areas:
@@ -100,7 +100,7 @@ export const LineItem = styled( CheckoutLineItem )< {
 	gap: 6px 4px;
 	margin-bottom: 8px;
 	padding: 10px 0;`
-		: `display: flex;
+			: `display: flex;
 			flex-wrap: wrap;
 			justify-content: space-between;
 			padding: 20px 0;` }
@@ -140,7 +140,7 @@ const GiftBadge = styled.span`
 	font-size: small;
 `;
 
-const LineItemMeta = styled.div< { theme?: Theme } >`
+const LineItemMeta = styled.div< { theme?: Theme; shouldUseCheckoutV2?: boolean } >`
 	color: ${ ( props ) => props.theme.colors.textColorLight };
 	font-size: 14px;
 	width: 100%;
@@ -149,9 +149,10 @@ const LineItemMeta = styled.div< { theme?: Theme } >`
 	flex-wrap: wrap;
 	overflow-wrap: anywhere;
 
-	${ hasCheckoutVersion2
-		? `grid-area: meta; flex-direction: column; align-content: flex-start; `
-		: 'flex-direction: row; align-content: center; gap: 2px 10px;' }
+	${ ( props ) =>
+		props.shouldUseCheckoutV2
+			? `grid-area: meta; flex-direction: column; align-content: flex-start; `
+			: 'flex-direction: row; align-content: center; gap: 2px 10px;' }
 `;
 
 const UpgradeCreditInformationLineItem = styled( LineItemMeta )< { theme?: Theme } >`
@@ -187,30 +188,38 @@ const NotApplicableCallout = styled.div< { theme?: Theme } >`
 	display: block;
 `;
 
-const LineItemTitle = styled.div< { theme?: Theme; isSummary?: boolean } >`
+const LineItemTitle = styled.div< {
+	theme?: Theme;
+	isSummary?: boolean;
+	shouldUseCheckoutV2?: boolean;
+} >`
 	word-break: break-word;
 	font-weight: ${ ( { theme } ) => theme.weights.bold };
 
-	${ hasCheckoutVersion2
-		? `grid-area: label;
+	${ ( props ) =>
+		props.shouldUseCheckoutV2
+			? `grid-area: label;
 		   font-size: 14px;
 		   align-self: center;`
-		: `flex: 1;
+			: `flex: 1;
 		   display: flex;
 		   gap: 0.5em;
 		   font-size: inherit;` }
 `;
 
-const LineItemPriceWrapper = styled.span`
+const LineItemPriceWrapper = styled.span< {
+	shouldUseCheckoutV2?: boolean;
+} >`
 	display: flex;
 	gap: 4px;
 
-	${ hasCheckoutVersion2
-		? `margin-left: 0px;
+	${ ( props ) =>
+		props.shouldUseCheckoutV2
+			? `margin-left: 0px;
 		   font-size: 14px;
 		   grid-area: price;
 		   justify-self: flex-end;`
-		: `
+			: `
 		margin-left: 12px;
 		font-size: inherit;` }
 	.rtl & {
@@ -232,35 +241,38 @@ const BillingInterval = styled.div< { theme?: Theme } >`
 	align-content: flex-start;
 `;
 
-const DeleteButtonWrapper = styled.div`
+const DeleteButtonWrapper = styled.div< { shouldUseCheckoutV2?: boolean } >`
 	width: 100%;
 
-	${ hasCheckoutVersion2
-		? `
+	${ ( props ) =>
+		props.shouldUseCheckoutV2
+			? `
 	grid-area: remove;
 	display: grid;
 	align-items: center;
 	justify-content: end;
 	`
-		: `display: inherit };
+			: `display: inherit };
 	justify-content: 'inherit' }` };
 `;
 
-const DeleteButton = styled( Button )< { theme?: Theme } >`
+const DeleteButton = styled( Button )< { theme?: Theme; shouldUseCheckoutV2?: boolean } >`
 	width: auto;
-	${ hasCheckoutVersion2 ? `font-size:  12px;` : `font-size: 0.75rem` };
+	${ ( props ) => ( props.shouldUseCheckoutV2 ? `font-size:  12px;` : `font-size: 0.75rem` ) };
 	color: ${ ( props ) => props.theme.colors.textColorLight };
 `;
 
 function LineItemPrice( {
 	actualAmount,
 	crossedOutAmount,
+	shouldUseCheckoutV2,
 }: {
 	actualAmount?: string;
 	crossedOutAmount?: string;
+	shouldUseCheckoutV2?: boolean;
 } ) {
 	return (
-		<LineItemPriceWrapper>
+		<LineItemPriceWrapper shouldUseCheckoutV2={ shouldUseCheckoutV2 }>
 			{ crossedOutAmount && <s>{ crossedOutAmount }</s> }
 			<span>{ actualAmount }</span>
 		</LineItemPriceWrapper>
@@ -275,6 +287,7 @@ function WPNonProductLineItem( {
 	removeProductFromCart,
 	createUserAndSiteBeforeTransaction,
 	isPwpoUser,
+	shouldUseCheckoutV2,
 }: {
 	lineItem: LineItemType;
 	className?: string | null;
@@ -283,6 +296,7 @@ function WPNonProductLineItem( {
 	removeProductFromCart?: () => void;
 	createUserAndSiteBeforeTransaction?: boolean;
 	isPwpoUser?: boolean;
+	shouldUseCheckoutV2?: boolean;
 } ) {
 	const id = lineItem.id;
 	const itemSpanId = `checkout-line-item-${ id }`;
@@ -306,11 +320,20 @@ function WPNonProductLineItem( {
 			data-e2e-product-slug={ lineItem.id }
 			data-product-type={ lineItem.type }
 		>
-			<LineItemTitle id={ itemSpanId } isSummary={ isSummary }>
+			<LineItemTitle
+				id={ itemSpanId }
+				isSummary={ isSummary }
+				shouldUseCheckoutV2={ shouldUseCheckoutV2 }
+			>
 				{ label }
 			</LineItemTitle>
-			{ hasCheckoutVersion2 ? (
-				<LineItemPrice aria-labelledby={ itemSpanId } actualAmount={ actualAmountDisplay } />
+
+			{ shouldUseCheckoutV2 ? (
+				<LineItemPrice
+					aria-labelledby={ itemSpanId }
+					actualAmount={ actualAmountDisplay }
+					shouldUseCheckoutV2={ shouldUseCheckoutV2 }
+				/>
 			) : (
 				<span aria-labelledby={ itemSpanId } className="checkout-line-item__price">
 					<LineItemPrice actualAmount={ actualAmountDisplay } />
@@ -318,7 +341,7 @@ function WPNonProductLineItem( {
 			) }
 			{ hasDeleteButton && removeProductFromCart && (
 				<>
-					<DeleteButtonWrapper>
+					<DeleteButtonWrapper shouldUseCheckoutV2={ shouldUseCheckoutV2 }>
 						<DeleteButton
 							className="checkout-line-item__remove-product"
 							buttonType="text-button"
@@ -331,8 +354,9 @@ function WPNonProductLineItem( {
 							onClick={ () => {
 								setIsModalVisible( true );
 							} }
+							shouldUseCheckoutV2={ shouldUseCheckoutV2 }
 						>
-							{ hasCheckoutVersion2 ? translate( 'Remove' ) : translate( 'Remove from cart' ) }
+							{ shouldUseCheckoutV2 ? translate( 'Remove' ) : translate( 'Remove from cart' ) }
 						</DeleteButton>
 					</DeleteButtonWrapper>
 
@@ -395,7 +419,15 @@ function WPCouponLineItem( {
 	);
 }
 
-function EmailMeta( { product, isRenewal }: { product: ResponseCartProduct; isRenewal: boolean } ) {
+function EmailMeta( {
+	product,
+	isRenewal,
+	shouldUseCheckoutV2,
+}: {
+	product: ResponseCartProduct;
+	isRenewal: boolean;
+	shouldUseCheckoutV2?: boolean;
+} ) {
 	const translate = useTranslate();
 
 	if ( isRenewal ) {
@@ -414,7 +446,7 @@ function EmailMeta( { product, isRenewal }: { product: ResponseCartProduct; isRe
 		}
 
 		return (
-			<LineItemMeta>
+			<LineItemMeta shouldUseCheckoutV2={ shouldUseCheckoutV2 }>
 				{ translate(
 					'%(numberOfMailboxes)d mailbox for %(domainName)s',
 					'%(numberOfMailboxes)d mailboxes for %(domainName)s',
@@ -447,7 +479,7 @@ function EmailMeta( { product, isRenewal }: { product: ResponseCartProduct; isRe
 		<>
 			{ mailboxes.map( ( mailbox, index ) => {
 				return (
-					<LineItemMeta key={ mailbox.email }>
+					<LineItemMeta key={ mailbox.email } shouldUseCheckoutV2={ shouldUseCheckoutV2 }>
 						<div key={ mailbox.email }>{ mailbox.email }</div>
 
 						{ index === 0 && <GSuiteDiscountCallout product={ product } /> }
@@ -666,7 +698,13 @@ function JetpackSearchMeta( { product }: { product: ResponseCartProduct } ) {
 	return <ProductTier product={ product } />;
 }
 
-function ProductTier( { product }: { product: ResponseCartProduct } ) {
+function ProductTier( {
+	product,
+	shouldUseCheckoutV2,
+}: {
+	product: ResponseCartProduct;
+	shouldUseCheckoutV2?: boolean;
+} ) {
 	const translate = useTranslate();
 	if ( isJetpackSearch( product ) && product.price_tier_transform_quantity_divide_by ) {
 		const currentQuantity = product.current_quantity || 1;
@@ -679,7 +717,7 @@ function ProductTier( { product }: { product: ResponseCartProduct } ) {
 		const purchaseQuantityDividedByThousand =
 			( units_used * product.price_tier_transform_quantity_divide_by ) / 1000;
 		return (
-			<LineItemMeta>
+			<LineItemMeta shouldUseCheckoutV2={ shouldUseCheckoutV2 }>
 				{ translate(
 					'Up to %(purchaseQuantityDividedByThousand)sk records and/or requests per month',
 					{ args: { purchaseQuantityDividedByThousand } }
@@ -1168,12 +1206,21 @@ function JetpackAkismetSaleCouponCallout( { product }: { product: ResponseCartPr
 	return <DiscountCallout>{ discountText }</DiscountCallout>;
 }
 
-function PartnerLogo( { className }: { className?: string } ) {
+function PartnerLogo( {
+	className,
+	shouldUseCheckoutV2,
+}: {
+	className?: string;
+	shouldUseCheckoutV2?: boolean;
+} ) {
 	const translate = useTranslate();
 
 	/* eslint-disable wpcalypso/jsx-classname-namespace */
 	return (
-		<LineItemMeta className={ joinClasses( [ className, 'jetpack-partner-logo' ] ) }>
+		<LineItemMeta
+			className={ joinClasses( [ className, 'jetpack-partner-logo' ] ) }
+			shouldUseCheckoutV2={ shouldUseCheckoutV2 }
+		>
 			<div>{ translate( 'Included in your IONOS plan' ) }</div>
 			<div className="checkout-line-item__partner-logo-image">
 				<IonosLogo />
@@ -1251,6 +1298,7 @@ function CheckoutLineItem( {
 	onRemoveProductCancel,
 	isAkPro500Cart,
 	shouldShowBillingInterval,
+	shouldUseCheckoutV2,
 }: PropsWithChildren< {
 	product: ResponseCartProduct;
 	className?: string;
@@ -1265,6 +1313,7 @@ function CheckoutLineItem( {
 	onRemoveProductCancel?: ( label: string ) => void;
 	isAkPro500Cart?: boolean;
 	shouldShowBillingInterval?: boolean;
+	shouldUseCheckoutV2?: boolean;
 } > ) {
 	const id = product.uuid;
 	const translate = useTranslate();
@@ -1355,15 +1404,19 @@ function CheckoutLineItem( {
 					<GiftBadgeWithText />
 				</MobileGiftWrapper>
 			) }
-			<LineItemTitle id={ itemSpanId } isSummary={ isSummary }>
-				{ hasCheckoutVersion2 && isRenewal ? `${ label } Renewal` : label }
+			<LineItemTitle
+				id={ itemSpanId }
+				isSummary={ isSummary }
+				shouldUseCheckoutV2={ shouldUseCheckoutV2 }
+			>
+				{ shouldUseCheckoutV2 && isRenewal ? `${ label } Renewal` : label }
 				{ responseCart.is_gift_purchase && (
 					<DesktopGiftWrapper>
 						<GiftBadgeWithText />
 					</DesktopGiftWrapper>
 				) }
 			</LineItemTitle>
-			{ hasCheckoutVersion2 ? (
+			{ shouldUseCheckoutV2 ? (
 				<LineItemPrice
 					actualAmount={
 						isIntroductoryOfferWithDifferentLength
@@ -1381,6 +1434,7 @@ function CheckoutLineItem( {
 							  } )
 							: undefined
 					}
+					shouldUseCheckoutV2={ shouldUseCheckoutV2 }
 				/>
 			) : (
 				<span aria-labelledby={ itemSpanId } className="checkout-line-item__price">
@@ -1393,14 +1447,14 @@ function CheckoutLineItem( {
 
 			{ ! containsPartnerCoupon && (
 				<>
-					{ hasCheckoutVersion2 ? (
+					{ shouldUseCheckoutV2 ? (
 						<>
 							{ shouldShowBillingInterval && (
 								<BillingInterval>
 									<LineItemBillingIntervalWrapper product={ product } />
 								</BillingInterval>
 							) }
-							<LineItemMeta>
+							<LineItemMeta shouldUseCheckoutV2={ shouldUseCheckoutV2 }>
 								<LineItemMetaInfoWrapper product={ product } />
 								{ isJetpackSearch( product ) && <JetpackSearchMeta product={ product } /> }
 								{ isEmail && <EmailMeta product={ product } isRenewal={ isRenewal } /> }
@@ -1408,10 +1462,10 @@ function CheckoutLineItem( {
 						</>
 					) : (
 						<>
-							<UpgradeCreditInformationLineItem>
+							<UpgradeCreditInformationLineItem shouldUseCheckoutV2={ shouldUseCheckoutV2 }>
 								<UpgradeCreditInformation product={ product } />
 							</UpgradeCreditInformationLineItem>
-							<LineItemMeta>
+							<LineItemMeta shouldUseCheckoutV2={ shouldUseCheckoutV2 }>
 								<LineItemSublabelAndPrice product={ product } />
 								<DomainDiscountCallout product={ product } />
 								<IntroductoryOfferCallout product={ product } />
@@ -1423,8 +1477,8 @@ function CheckoutLineItem( {
 			) }
 
 			{ containsPartnerCoupon && (
-				<LineItemMeta>
-					{ hasCheckoutVersion2 ? (
+				<LineItemMeta shouldUseCheckoutV2={ shouldUseCheckoutV2 }>
+					{ shouldUseCheckoutV2 ? (
 						<LineItemBillingInterval product={ product } />
 					) : (
 						<LineItemSublabelAndPrice product={ product } />
@@ -1432,11 +1486,11 @@ function CheckoutLineItem( {
 				</LineItemMeta>
 			) }
 
-			{ ! hasCheckoutVersion2 && isJetpackSearch( product ) && (
+			{ ! shouldUseCheckoutV2 && isJetpackSearch( product ) && (
 				<JetpackSearchMeta product={ product } />
 			) }
 
-			{ ! hasCheckoutVersion2 && isEmail && (
+			{ ! shouldUseCheckoutV2 && isEmail && (
 				<EmailMeta product={ product } isRenewal={ isRenewal } />
 			) }
 
@@ -1444,7 +1498,7 @@ function CheckoutLineItem( {
 
 			{ hasDeleteButton && removeProductFromCart && (
 				<>
-					<DeleteButtonWrapper>
+					<DeleteButtonWrapper shouldUseCheckoutV2={ shouldUseCheckoutV2 }>
 						<DeleteButton
 							className="checkout-line-item__remove-product"
 							buttonType="text-button"
@@ -1458,8 +1512,9 @@ function CheckoutLineItem( {
 								setIsModalVisible( true );
 								onRemoveProductClick?.( label );
 							} }
+							shouldUseCheckoutV2={ shouldUseCheckoutV2 }
 						>
-							{ hasCheckoutVersion2 ? translate( 'Remove' ) : translate( 'Remove from cart' ) }
+							{ shouldUseCheckoutV2 ? translate( 'Remove' ) : translate( 'Remove from cart' ) }
 						</DeleteButton>
 					</DeleteButtonWrapper>
 

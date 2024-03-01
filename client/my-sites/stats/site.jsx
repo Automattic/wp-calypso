@@ -400,7 +400,7 @@ class StatsSite extends Component {
 							statType="statsTopPosts"
 							showSummaryLink
 							className={ classNames(
-								'stats__flexible-grid-item--two-thirds',
+								'stats__flexible-grid-item--60',
 								'stats__flexible-grid-item--full--large',
 								'stats__flexible-grid-item--full--medium'
 							) }
@@ -413,7 +413,7 @@ class StatsSite extends Component {
 							statType="statsReferrers"
 							showSummaryLink
 							className={ classNames(
-								'stats__flexible-grid-item--one-third--once-space',
+								'stats__flexible-grid-item--40--once-space',
 								'stats__flexible-grid-item--full--large',
 								'stats__flexible-grid-item--full--medium'
 							) }
@@ -537,7 +537,7 @@ class StatsSite extends Component {
 						// - May have to move from grid to flexbox.
 					 }
 					{ config.isEnabled( 'stats/utm-module' ) && (
-						<StatsModuleUTM period={ this.props.period } query={ query } />
+						<StatsModuleUTM siteId={ siteId } period={ this.props.period } query={ query } />
 					) }
 				</div>
 				{ supportsPlanUsage && (
@@ -623,7 +623,7 @@ class StatsSite extends Component {
 				{ config.isEnabled( 'stats/paid-wpcom-v2' ) && ! isOdysseyStats && (
 					<QuerySiteFeatures siteIds={ [ siteId ] } />
 				) }
-				{ /* Odyssey: Google My Business pages are currently unsupported. */ }
+				{ /* Odyssey: Google Business Profile pages are currently unsupported. */ }
 				{ ! isOdysseyStats && (
 					<>
 						<QueryKeyringConnections />

@@ -158,9 +158,13 @@ export const FlowRenderer: React.FC< { flow: Flow } > = ( { flow } ) => {
 		window.scrollTo( 0, 0 );
 	}, [ location ] );
 
+	// Get any flow-specific event props to include in the
+	// `calypso_signup_start` Tracks event triggerd in the effect below.
+	const signupStartEventProps = flow.useSignupStartEventProps?.() ?? {};
+
 	useEffect( () => {
-		if ( isFlowStart() ) {
-			recordSignupStart( flow.name, ref );
+		if ( flow.isSignupFlow && isFlowStart() ) {
+			recordSignupStart( flow.name, ref, signupStartEventProps );
 		}
 	}, [ flow, ref, isFlowStart ] );
 

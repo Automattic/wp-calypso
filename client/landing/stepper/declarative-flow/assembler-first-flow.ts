@@ -28,6 +28,7 @@ const SiteIntent = Onboard.SiteIntent;
 
 const assemblerFirstFlow: Flow = {
 	name: ASSEMBLER_FIRST_FLOW,
+	isSignupFlow: true,
 	useSideEffect() {
 		const selectedDesign = useSelect(
 			( select ) => ( select( ONBOARD_STORE ) as OnboardSelect ).getSelectedDesign(),

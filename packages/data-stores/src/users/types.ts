@@ -15,7 +15,7 @@ export type Member = {
 	roles?: string[];
 	site_ID: number;
 	site_visible: boolean;
-	linked_user_ID?: boolean;
+	linked_user_ID?: boolean | number;
 	linked_user_info?: {
 		avatar_URL: string;
 		name: string;

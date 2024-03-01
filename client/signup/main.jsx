@@ -58,6 +58,7 @@ import {
 } from 'calypso/state/current-user/selectors';
 import { getCurrentOAuth2Client } from 'calypso/state/oauth2-clients/ui/selectors';
 import getCurrentLocaleSlug from 'calypso/state/selectors/get-current-locale-slug';
+import getWooPasswordless from 'calypso/state/selectors/get-woo-passwordless';
 import isDomainOnlySite from 'calypso/state/selectors/is-domain-only-site';
 import isUserRegistrationDaysWithinRange from 'calypso/state/selectors/is-user-registration-days-within-range';
 import { getSignupDependencyStore } from 'calypso/state/signup/dependency-store/selectors';
@@ -897,7 +898,11 @@ class Signup extends Component {
 
 		return (
 			<>
-				<div className={ `signup is-${ kebabCase( this.props.flowName ) }` }>
+				<div
+					className={ `signup is-${ kebabCase( this.props.flowName ) } ${
+						this.props.wooPasswordless ? 'is-woo-passwordless' : ''
+					}` }
+				>
 					<DocumentHead title={ this.props.pageTitle } />
 					{ showPageHeader && (
 						<SignupHeader
@@ -966,6 +971,7 @@ export default connect(
 			oauth2Client,
 			isGravatar: isGravatarOAuth2Client( oauth2Client ),
 			hostingFlow,
+			wooPasswordless: getWooPasswordless( state ),
 		};
 	},
 	{

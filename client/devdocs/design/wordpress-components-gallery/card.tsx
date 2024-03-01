@@ -1,5 +1,3 @@
-/** @jsxImportSource react */
-
 import {
 	Button,
 	Card,
