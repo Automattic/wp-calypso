@@ -8,6 +8,7 @@ import FormSettingExplanation from 'calypso/components/forms/form-setting-explan
 import FormTextInput from 'calypso/components/forms/form-text-input';
 import { GitHubInstallationData } from 'calypso/my-sites/github-deployments/use-github-installations-query';
 import { useGithubRepositoryBranchesQuery } from 'calypso/my-sites/github-deployments/use-github-repository-branches-query';
+import { useGithubRepositoryChecksQuery } from 'calypso/my-sites/github-deployments/use-github-repository-checks-query';
 import { GitHubRepositoryData } from '../../use-github-repositories-query';
 import { AutomatedDeploymentsToggle } from '../automated-deployments-toggle';
 import { DeploymentStyle } from '../deployment-style';
@@ -90,6 +91,14 @@ export const GitHubConnectionForm = ( {
 			enabled: !! workflowPath,
 			refetchOnWindowFocus: false,
 		}
+	);
+
+	//TODO use the response here to pre-populated fields, show warnings, and make suggestions
+	useGithubRepositoryChecksQuery(
+		installation.external_id,
+		repository.owner,
+		repository.name,
+		branch
 	);
 
 	const submitDisabled = !! workflowPath && workflowCheckResult?.conclusion !== 'success';
