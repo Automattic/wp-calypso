@@ -41,7 +41,6 @@ import SiteTopHeaderButtons from './site-top-header-buttons';
 import SitesDataViews from './sites-dataviews';
 import { SitesViewState } from './sites-dataviews/interfaces';
 
-import './style.scss';
 import './style-dashboard-v2.scss';
 
 const QUERY_PARAM_PROVISIONING = 'provisioning';
