@@ -751,8 +751,13 @@ export const useCommandsArrayWpcom = ( {
 							_x( 'deployments', 'Keyword for the Open GitHub Deployments command' ),
 						].join( ' ' ),
 						siteFunctions: {
-							onClick: ( param ) =>
-								commandNavigation( `/github-deployments/${ param.site.slug }` )( param ),
+							onClick: (
+								param: Pick< CommandCallBackParams, 'close' | 'command' > & {
+									site: SiteExcerptData;
+								}
+							) => {
+								return commandNavigation( `/github-deployments/${ param.site.slug }` )( param );
+							},
 							...siteFilters.hostingEnabled,
 						},
 						icon: <GitHubIcon width={ 18 } height={ 18 } />,
