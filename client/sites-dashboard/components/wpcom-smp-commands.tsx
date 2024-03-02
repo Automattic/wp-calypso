@@ -42,12 +42,14 @@ import {
 } from 'calypso/data/hosting/use-cache';
 import { useAddNewSiteUrl } from 'calypso/lib/paths/use-add-new-site-url';
 import wpcom from 'calypso/lib/wp';
+import { useIsGitHubDeploymentsAvailableQuery } from 'calypso/my-sites/github-deployments/use-is-feature-available';
 import { useOpenPhpMyAdmin } from 'calypso/my-sites/hosting/phpmyadmin-card';
-import { useDispatch } from 'calypso/state';
+import { useDispatch, useSelector } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { clearWordPressCache } from 'calypso/state/hosting/actions';
 import { createNotice, removeNotice } from 'calypso/state/notices/actions';
 import { NoticeStatus } from 'calypso/state/notices/types';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { generateSiteInterfaceLink, isCustomDomain, isNotAtomicJetpack, isP2Site } from '../utils';
 import type {
 	Command,
@@ -103,6 +105,11 @@ export const useCommandsArrayWpcom = ( {
 	const dispatch = useDispatch();
 
 	const { setEdgeCache } = useSetEdgeCacheMutation();
+	//temporary patch to not add github deployments to the command palette if feature is not available, will be removed.
+	const selectedSiteId = useSelector( getSelectedSiteId );
+	const { data } = useIsGitHubDeploymentsAvailableQuery( {
+		siteId: selectedSiteId || 0,
+	} );
 
 	const displayNotice = (
 		message: string,
@@ -729,25 +736,34 @@ export const useCommandsArrayWpcom = ( {
 			},
 			icon: statsIcon,
 		},
-		{
-			name: 'openGitHubDeployments',
-			label: __( 'Open GitHub Deployments' ),
-			callback: setStateCallback(
-				'openGitHubDeployments',
-				__( 'Select site to open GitHub Deployments' )
-			),
-			searchLabel: [
-				_x( 'open github deployments', 'Keyword for the Open GitHub Deployments command' ),
-				_x( 'github', 'Keyword for the Open GitHub Deployments command' ),
-				_x( 'deployments', 'Keyword for the Open GitHub Deployments command' ),
-			].join( ' ' ),
-			siteFunctions: {
-				onClick: ( param ) =>
-					commandNavigation( `/github-deployments/${ param.site.slug }` )( param ),
-				...siteFilters.hostingEnabled,
-			},
-			icon: <GitHubIcon width={ 18 } height={ 18 } />,
-		},
+		...( data?.available
+			? [
+					{
+						name: 'openGitHubDeployments',
+						label: __( 'Open GitHub Deployments' ),
+						callback: setStateCallback(
+							'openGitHubDeployments',
+							__( 'Select site to open GitHub Deployments' )
+						),
+						searchLabel: [
+							_x( 'open github deployments', 'Keyword for the Open GitHub Deployments command' ),
+							_x( 'github', 'Keyword for the Open GitHub Deployments command' ),
+							_x( 'deployments', 'Keyword for the Open GitHub Deployments command' ),
+						].join( ' ' ),
+						siteFunctions: {
+							onClick: (
+								param: Pick< CommandCallBackParams, 'close' | 'command' > & {
+									site: SiteExcerptData;
+								}
+							) => {
+								return commandNavigation( `/github-deployments/${ param.site.slug }` )( param );
+							},
+							...siteFilters.hostingEnabled,
+						},
+						icon: <GitHubIcon width={ 18 } height={ 18 } />,
+					},
+			  ]
+			: [] ),
 		{
 			name: 'openPHPLogs',
 			label: __( 'Open PHP logs' ),
