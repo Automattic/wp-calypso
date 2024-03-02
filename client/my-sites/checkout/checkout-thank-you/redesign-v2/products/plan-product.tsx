@@ -109,14 +109,16 @@ export default function ThankYouPlanProduct( {
 			details={ expirationDate }
 			actions={
 				<>
-					<Button
-						isBusy={ letsWorkButtonBusy }
-						variant="primary"
-						href={ letsWorkHref }
-						onClick={ letsWorkButtonOnClick }
-					>
-						{ translate( 'Let’s work on the site' ) }
-					</Button>
+					{ purchase.productSlug !== 'ecommerce-bundle' && (
+						<Button
+							isBusy={ letsWorkButtonBusy }
+							variant="primary"
+							href={ letsWorkHref }
+							onClick={ letsWorkButtonOnClick }
+						>
+							{ translate( 'Let’s work on the site' ) }
+						</Button>
+					) }
 					<Button variant="secondary" href={ `/plans/my-plan/${ siteSlug }` }>
 						{ translate( 'Manage plan' ) }
 					</Button>
