@@ -36,6 +36,7 @@ export function getCouponLineItemFromCart( responseCart: ResponseCart ): LineIte
 	}
 	return {
 		id: 'coupon-line-item',
+		hasDeleteButton: ! responseCart.is_coupon_recurring,
 		// translators: The label of the coupon line item in checkout, including the coupon code
 		label: String(
 			translate( 'Coupon: %(couponCode)s', { args: { couponCode: responseCart.coupon } } )

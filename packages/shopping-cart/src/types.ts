@@ -298,6 +298,7 @@ export interface ResponseCart< P = ResponseCartProduct > {
 	allowed_payment_methods: string[];
 	coupon: string;
 	is_coupon_applied: boolean;
+	is_coupon_recurring: boolean;
 	locale: string;
 	is_signup: boolean;
 	messages?: ResponseCartMessages;
